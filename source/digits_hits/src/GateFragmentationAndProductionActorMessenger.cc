@@ -30,7 +30,7 @@ GateFragmentationAndProductionActorMessenger::GateFragmentationAndProductionActo
 //-----------------------------------------------------------------------------
 GateFragmentationAndProductionActorMessenger::~GateFragmentationAndProductionActorMessenger()
 {
-  //delete pEmaxCmd;
+  delete pNBinsCmd;
   //delete pEminCmd;
 }
 //-----------------------------------------------------------------------------
@@ -38,12 +38,9 @@ GateFragmentationAndProductionActorMessenger::~GateFragmentationAndProductionAct
 //-----------------------------------------------------------------------------
 void GateFragmentationAndProductionActorMessenger::BuildCommands(G4String base)
 {
-  //bb = base+"/energySpectrum/setEmin";
-  //pEminCmd = new G4UIcmdWithADoubleAndUnit(bb, this); 
-  //guidance = G4String("Set minimum energy of the energy spectrum");
-  //pEminCmd->SetGuidance(guidance);
-  //pEminCmd->SetParameterName("Emin", false);
-  //pEminCmd->SetDefaultUnit("MeV");
+  pNBinsCmd = new G4UIcmdWithAnInteger((base+"/setNBins").c_str(), this); 
+  pNBinsCmd->SetGuidance("set number of bins in histograms");
+  pNBinsCmd->SetParameterName("nBins",false/*omittable*/);
 
   //bb = base+"/energyLossHisto/setNumberOfBins";
   //pEdepNBinsCmd = new G4UIcmdWithAnInteger(bb, this); 
@@ -58,6 +55,7 @@ void GateFragmentationAndProductionActorMessenger::BuildCommands(G4String base)
 void GateFragmentationAndProductionActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
 
+  if(cmd==pNBinsCmd) pActor->SetNBins(pNBinsCmd->GetNewIntValue(newValue));
   //if(cmd == pEminCmd) pActor->SetEmin(  pEminCmd->GetNewDoubleValue(newValue)  ) ;
 
   GateActorMessenger::SetNewValue(cmd,newValue);

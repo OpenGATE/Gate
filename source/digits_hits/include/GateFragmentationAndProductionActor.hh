@@ -20,6 +20,7 @@
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TVector2.h"
 
 ///----------------------------------------------------------------------------
 /// \brief Actor displaying nb events/tracks/step
@@ -53,16 +54,21 @@ class GateFragmentationAndProductionActor : public GateVActor
   virtual void ResetData();
  
 //  virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
-  virtual void clear(){ResetData();}
+  //virtual void clear(){ResetData();}
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
+
+  void SetNBins(unsigned int aNBins) { pNBins = aNBins; }
+  unsigned int GetNBins() const { return pNBins; } 
 
 protected:
   GateFragmentationAndProductionActor(G4String name, G4int depth=0);
 
-  TFile * pTfile;
+  unsigned int pNBins;
+  TFile * pTFile;
   TH1D * pGammaProduction;
   TH1D * pNeutronProduction;
+  TVector2 * pNEvent;
 
   GateFragmentationAndProductionActorMessenger * pMessenger;
 };

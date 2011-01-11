@@ -25,7 +25,7 @@ See GATE/LICENSE.txt for further details
 //-----------------------------------------------------------------------------
 /// Constructors (Prototype)
 GateFragmentationAndProductionActor::GateFragmentationAndProductionActor(G4String name, G4int depth):
-  GateVActor(name,depth)
+  GateVActor(name,depth), pNBins(100)
 {
   GateDebugMessageInc("Actor",4,"GateFragmentationAndProductionActor() -- begin"<<G4endl);
 
@@ -63,18 +63,20 @@ void GateFragmentationAndProductionActor::Construct()
   EnableEndOfEventAction(true); // for save every n
 
   //mHistName = "Precise/output/EnergySpectrum.root";
-  pTfile = new TFile(mSaveFilename,"RECREATE");
+  pTFile = new TFile(mSaveFilename,"RECREATE");
 
   double halfLength = mVolume->GetHalfDimension(2);
-  GateMessage("Actor", 0, "GateFragmentationAndProductionActor -- Construct -- halfLength=" << halfLength << G4endl);
+  GateMessage("Actor", 0, "GateFragmentationAndProductionActor -- Construct -- halfLength=" << halfLength << " nBins=" << pNBins << G4endl);
+
   pGammaProduction = new TH1D("gammaProduction","Gamma production",100,-halfLength,halfLength);
   pGammaProduction->SetXTitle("z [mm]");
   pGammaProduction->SetYTitle("count");
 
-  GateMessage("Actor", 0, "GateFragmentationAndProductionActor -- Construct -- halfLength=" << halfLength << G4endl);
   pNeutronProduction = new TH1D("neutronProduction","Neutron production",100,-halfLength,halfLength);
   pNeutronProduction->SetXTitle("z [mm]");
   pNeutronProduction->SetYTitle("count");
+
+  pNEvent = new TVector2(0,0);
 
   //pEnergySpectrum = new TH1D("energySpectrum","Energy Spectrum",GetENBins(),GetEmin() ,GetEmax() );
   //pEnergySpectrum->SetXTitle("Energy (MeV)");
@@ -92,8 +94,10 @@ void GateFragmentationAndProductionActor::Construct()
 void GateFragmentationAndProductionActor::SaveData()
 {
   GateMessage("Actor", 0, "GateFragmentationAndProductionActor -- Saving data to " << mSaveFilename << G4endl);
-  pTfile->Write();
-  pTfile->Close();
+  pTFile->cd();
+  pNEvent->Write("nevents");
+  pTFile->Write();
+  pTFile->Close();
 }
 //-----------------------------------------------------------------------------
 
@@ -101,6 +105,7 @@ void GateFragmentationAndProductionActor::SaveData()
 //-----------------------------------------------------------------------------
 void GateFragmentationAndProductionActor::ResetData() 
 {
+  pNEvent->Set(0.f,0.f);
   pGammaProduction->Reset();
   pNeutronProduction->Reset();
   //GateWarning("GateFragmentationAndProductionActor -- ResetData not implemented" << G4endl);
@@ -118,6 +123,7 @@ void GateFragmentationAndProductionActor::BeginOfRunAction(const G4Run *)
 void GateFragmentationAndProductionActor::BeginOfEventAction(const G4Event*)
 {
   GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- Begin of Event" << G4endl);
+  pNEvent->Set(pNEvent->X()+1,0);
 }
 //-----------------------------------------------------------------------------
 
