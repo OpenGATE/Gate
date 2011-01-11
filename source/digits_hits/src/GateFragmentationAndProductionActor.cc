@@ -147,8 +147,7 @@ void GateFragmentationAndProductionActor::PreUserTrackingAction(const GateVVolum
 //-----------------------------------------------------------------------------
 void GateFragmentationAndProductionActor::PostUserTrackingAction(const GateVVolume *, const G4Track* t) 
 {
-  //GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- End of Track" << G4endl);
-  //const G4String &name = t->GetDefinition()->GetParticleName();
+  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- End of Track" << G4endl);
   //G4cout << name << " " << (t->GetCreatorProcess()? t->GetCreatorProcess()->GetProcessName():"no process") << G4endl;
   //if (name=="C12[0.0]") {
   //  G4cout << "*** c12 fragment" << G4endl;
@@ -162,9 +161,21 @@ void GateFragmentationAndProductionActor::PostUserTrackingAction(const GateVVolu
 }
 //-----------------------------------------------------------------------------
 
+G4String getProcessName(const G4StepPoint *point) {
+  if (!point) return "nopoint";
+  const G4VProcess *process = point->GetProcessDefinedStep();
+  if (!process) return "noprocess";
+  return process->GetProcessName();
+}
+
 //G4bool GateFragmentationAndProductionActor::ProcessHits(G4Step * step , G4TouchableHistory* /*th*/)
 void GateFragmentationAndProductionActor::UserSteppingAction(const GateVVolume *, const G4Step* step)
 {
+  //const G4String &name = step->GetTrack()->GetDefinition()->GetParticleName();
+  //if (name=="e-") return;
+  //G4cout << "name=" << name << G4endl;
+  //G4cout << "trackid=" << step->GetTrack()->GetTrackID() << " stepnumber=" << step->GetTrack()->GetCurrentStepNumber() << G4endl;
+  //G4cout << "prepoint=" << getProcessName(step->GetPreStepPoint()) << " postpoint=" << getProcessName(step->GetPostStepPoint()) << G4endl;
 }
 //-----------------------------------------------------------------------------
 
