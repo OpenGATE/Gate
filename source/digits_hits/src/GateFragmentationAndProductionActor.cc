@@ -68,11 +68,11 @@ void GateFragmentationAndProductionActor::Construct()
   double halfLength = mVolume->GetHalfDimension(2);
   GateMessage("Actor", 0, "GateFragmentationAndProductionActor -- Construct -- halfLength=" << halfLength << " nBins=" << pNBins << G4endl);
 
-  pGammaProduction = new TH1D("gammaProduction","Gamma production",100,-halfLength,halfLength);
+  pGammaProduction = new TH1D("gammaProduction","Gamma production",pNBins,-halfLength,halfLength);
   pGammaProduction->SetXTitle("z [mm]");
   pGammaProduction->SetYTitle("count");
 
-  pNeutronProduction = new TH1D("neutronProduction","Neutron production",100,-halfLength,halfLength);
+  pNeutronProduction = new TH1D("neutronProduction","Neutron production",pNBins,-halfLength,halfLength);
   pNeutronProduction->SetXTitle("z [mm]");
   pNeutronProduction->SetYTitle("count");
 
