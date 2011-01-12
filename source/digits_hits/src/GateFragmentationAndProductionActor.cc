@@ -76,6 +76,10 @@ void GateFragmentationAndProductionActor::Construct()
   pNeutronProduction->SetXTitle("z [mm]");
   pNeutronProduction->SetYTitle("count");
 
+  pFragmentation = new TH1D("fragmentation","Fragmentation",pNBins,-halfLength,halfLength);
+  pFragmentation->SetXTitle("z [mm]");
+  pFragmentation->SetYTitle("count");
+
   pNEvent = new TVector2(0,0);
 
   //pEnergySpectrum = new TH1D("energySpectrum","Energy Spectrum",GetENBins(),GetEmin() ,GetEmax() );
@@ -108,6 +112,7 @@ void GateFragmentationAndProductionActor::ResetData()
   pNEvent->Set(0.f,0.f);
   pGammaProduction->Reset();
   pNeutronProduction->Reset();
+  pFragmentation->Reset();
   //GateWarning("GateFragmentationAndProductionActor -- ResetData not implemented" << G4endl);
 }
 //-----------------------------------------------------------------------------
@@ -161,16 +166,27 @@ void GateFragmentationAndProductionActor::PostUserTrackingAction(const GateVVolu
 }
 //-----------------------------------------------------------------------------
 
-G4String getProcessName(const G4StepPoint *point) {
-  if (!point) return "nopoint";
-  const G4VProcess *process = point->GetProcessDefinedStep();
-  if (!process) return "noprocess";
-  return process->GetProcessName();
-}
+//G4String getProcessName(const G4StepPoint *point) {
+//  if (!point) return "nopoint";
+//  const G4VProcess *process = point->GetProcessDefinedStep();
+//  if (!process) return "noprocess";
+//  return process->GetProcessName();
+//}
 
 //G4bool GateFragmentationAndProductionActor::ProcessHits(G4Step * step , G4TouchableHistory* /*th*/)
 void GateFragmentationAndProductionActor::UserSteppingAction(const GateVVolume *, const G4Step* step)
 {
+  const G4StepPoint *point = step->GetPostStepPoint();
+  assert(point);
+  const G4String &processName = point->GetProcessDefinedStep()->GetProcessName();
+  if (processName =="IonInelastic" ||
+      processName =="NeutronInelastic" ||
+      processName =="AlphaInelastic" ||
+      processName =="ProtonInelastic" ||
+      processName =="DeuteronInelastic" ||
+      processName =="TritonInelastic") {
+    pFragmentation->Fill(point->GetPosition()[2],point->GetWeight());
+  }
   //const G4String &name = step->GetTrack()->GetDefinition()->GetParticleName();
   //if (name=="e-") return;
   //G4cout << "name=" << name << G4endl;

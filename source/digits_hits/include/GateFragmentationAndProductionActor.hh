@@ -68,6 +68,7 @@ protected:
   TFile * pTFile;
   TH1D * pGammaProduction;
   TH1D * pNeutronProduction;
+  TH1D * pFragmentation;
   TVector2 * pNEvent;
 
   GateFragmentationAndProductionActorMessenger * pMessenger;
