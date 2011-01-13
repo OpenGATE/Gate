@@ -176,6 +176,7 @@ void GateFragmentationAndProductionActor::PostUserTrackingAction(const GateVVolu
 //G4bool GateFragmentationAndProductionActor::ProcessHits(G4Step * step , G4TouchableHistory* /*th*/)
 void GateFragmentationAndProductionActor::UserSteppingAction(const GateVVolume *, const G4Step* step)
 {
+  //FIXME use middle step point
   const G4StepPoint *point = step->GetPostStepPoint();
   assert(point);
   const G4String &processName = point->GetProcessDefinedStep()->GetProcessName();
