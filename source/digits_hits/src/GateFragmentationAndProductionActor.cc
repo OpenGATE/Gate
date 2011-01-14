@@ -176,7 +176,6 @@ void GateFragmentationAndProductionActor::PostUserTrackingAction(const GateVVolu
 //G4bool GateFragmentationAndProductionActor::ProcessHits(G4Step * step , G4TouchableHistory* /*th*/)
 void GateFragmentationAndProductionActor::UserSteppingAction(const GateVVolume *, const G4Step* step)
 {
-  //FIXME use middle step point
   const G4StepPoint *point = step->GetPostStepPoint();
   assert(point);
   const G4String &processName = point->GetProcessDefinedStep()->GetProcessName();
@@ -186,7 +185,8 @@ void GateFragmentationAndProductionActor::UserSteppingAction(const GateVVolume *
       processName =="ProtonInelastic" ||
       processName =="DeuteronInelastic" ||
       processName =="TritonInelastic") {
-    pFragmentation->Fill(point->GetPosition()[2],point->GetWeight());
+    double zfrag = (step->GetPostStepPoint()->GetPosition() + step->GetPreStepPoint()->GetPosition())[2]/2.;
+    pFragmentation->Fill(zfrag,point->GetWeight());
   }
   //const G4String &name = step->GetTrack()->GetDefinition()->GetParticleName();
   //if (name=="e-") return;
