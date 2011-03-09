@@ -18,9 +18,6 @@ See GATE/LICENSE.txt for further details
 
 #include "GateImageActorMessenger.hh"
 
-#include "G4UIcmdWithAnInteger.hh"
-#include "G4UIcmdWithADoubleAndUnit.hh"
-
 class GateProductionActor;
 
 //-----------------------------------------------------------------------------

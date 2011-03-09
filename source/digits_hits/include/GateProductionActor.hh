@@ -27,6 +27,11 @@ class GateProductionActor : public GateVImageActor
     virtual void Construct();
 
     //-----------------------------------------------------------------------------
+    // Save production image
+    virtual void Save();
+    virtual void SaveData();
+
+    //-----------------------------------------------------------------------------
     // Callbacks
     virtual void UserPreTrackActionInVoxel(const int index, const G4Track* track); 
     virtual void UserSteppingActionInVoxel(int, const G4Step*) { assert(false); }
@@ -34,7 +39,7 @@ class GateProductionActor : public GateVImageActor
 
   protected:
     GateProductionActor(G4String name, G4int depth=0);
-    GateProductionActorMessenger * pMessenger;
+    GateProductionActorMessenger *pMessenger;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(ProductionActor,GateProductionActor)
