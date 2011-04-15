@@ -6,6 +6,11 @@
 #ifndef GATEDETECTIONPROFILEACTOR_HH
 #define GATEDETECTIONPROFILEACTOR_HH
 
+#ifdef G4ANALYSIS_USE_ROOT
+#include <TFile.h>
+#include <TH1D.h>
+#include <TH2D.h>
+
 #include "GateVActor.hh"
 #include "GateActorManager.hh"
 #include "GateDetectionProfileActorMessenger.hh"
@@ -39,6 +44,12 @@ MAKE_AUTO_CREATOR_ACTOR(DetectionProfileActor,GateDetectionProfileActor)
 class GateDetectionProfilePrimaryTimerActor : public GateVActor
 {
   public: 
+    struct TriggerData {
+      G4double time;
+      G4String name;
+      G4ThreeVector position;
+      G4ThreeVector direction;
+    };
     virtual ~GateDetectionProfilePrimaryTimerActor();
 
     FCT_FOR_AUTO_CREATOR_ACTOR(GateDetectionProfilePrimaryTimerActor)
@@ -56,10 +67,16 @@ class GateDetectionProfilePrimaryTimerActor : public GateVActor
 
   protected:
     GateDetectionProfilePrimaryTimerActor(G4String name, G4int depth=0);
-
-    GateDetectionProfilePrimaryTimerActorMessenger * pMessenger;
+    TFile *rootFile;
+    GateDetectionProfilePrimaryTimerActorMessenger * messenger;
+    bool triggered;
+    TriggerData data;
+    TH1D *histoTime;
+    TH1D *histoDirz;
+    TH2D *histoPosition;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(DetectionProfilePrimaryTimerActor,GateDetectionProfilePrimaryTimerActor)
 
+#endif
 #endif

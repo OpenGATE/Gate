@@ -11,6 +11,8 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEDETECTIONPROFILEACTOR_CC
 #define GATEDETECTIONPROFILEACTOR_CC
 
+#ifdef G4ANALYSIS_USE_ROOT
+
 #include "GateDetectionProfileActor.hh"
 #include "GateMiscFunctions.hh"
 
@@ -95,15 +97,14 @@ void GateDetectionProfileActor::UserSteppingAction(const GateVVolume *, const G4
 GateDetectionProfilePrimaryTimerActor::GateDetectionProfilePrimaryTimerActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateDetectionProfilePrimaryTimerActor() -- begin"<<G4endl);
-  pMessenger = new GateDetectionProfilePrimaryTimerActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateDetectionProfilePrimaryTimerActor() -- end"<<G4endl);
+  messenger = new GateDetectionProfilePrimaryTimerActorMessenger(this);
+  rootFile  = NULL;
+  triggered = false;
 }
-
 
 GateDetectionProfilePrimaryTimerActor::~GateDetectionProfilePrimaryTimerActor()
 {
-  delete pMessenger;
+  delete messenger;
 }
 
 void GateDetectionProfilePrimaryTimerActor::Construct()
@@ -111,63 +112,80 @@ void GateDetectionProfilePrimaryTimerActor::Construct()
   GateVActor::Construct();
 
   // Enable callbacks
-  EnableBeginOfRunAction(true);
+  EnableBeginOfRunAction(false);
   EnableBeginOfEventAction(true);
-  EnablePreUserTrackingAction(true);
-  EnablePostUserTrackingAction(true);
+  EnablePreUserTrackingAction(false);
+  EnablePostUserTrackingAction(false);
   EnableUserSteppingAction(true);
-  EnableEndOfEventAction(true); // for save every n
+  EnableEndOfEventAction(false);
 
-  //mHistName = "Precise/output/EnergySpectrum.root";
-  //pTfile = new TFile(mSaveFilename,"RECREATE");
+  rootFile = new TFile(mSaveFilename,"RECREATE");
 
-  //pEnergySpectrum = new TH1D("energySpectrum","Energy Spectrum",GetENBins(),GetEmin() ,GetEmax() );
-  //pEnergySpectrum->SetXTitle("Energy (MeV)");
+  histoTime = new TH1D("triggerTime","Trigger Time",100,0.,1.);
+  histoTime->SetXTitle("time [ns]");
 
-  //pEdep  = new TH1D("edepHisto","Energy deposited",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
-  //pEdep->SetXTitle("E_{dep} (MeV)");
+  histoPosition = new TH2D("triggerPosition","Trigger Position",101,-5.,5.,101,-5.,5.);
+  histoPosition->SetXTitle("x [mm]");
+  histoPosition->SetYTitle("y [mm]");
+
+  histoDirz = new TH1D("triggerDirection","Trigger Direction",100,.5,1.5);
 
   ResetData();
 }
 
 void GateDetectionProfilePrimaryTimerActor::SaveData()
 {
-  GateMessage("Actor", 0, "GateDetectionProfilePrimaryTimerActor -- Saving data" << G4endl);
-  //pTfile->Write();
-  //pTfile->Close();
+  rootFile->Write();
+  rootFile->Close();
 }
 
 void GateDetectionProfilePrimaryTimerActor::ResetData() 
 {
+  histoTime->Reset();
+  histoPosition->Reset();
 }
 
-void GateDetectionProfilePrimaryTimerActor::BeginOfRunAction(const G4Run *)
+void GateDetectionProfilePrimaryTimerActor::BeginOfRunAction(const G4Run*)
 {
-  GateDebugMessage("Actor", 3, "GateDetectionProfilePrimaryTimerActor -- Begin of Run" << G4endl);
 }
 
 void GateDetectionProfilePrimaryTimerActor::BeginOfEventAction(const G4Event*)
 {
-  GateDebugMessage("Actor", 3, "GateDetectionProfilePrimaryTimerActor -- Begin of Event" << G4endl);
+  triggered = false;
 }
 
 void GateDetectionProfilePrimaryTimerActor::EndOfEventAction(const G4Event*)
 {
-  GateDebugMessage("Actor", 3, "GateDetectionProfilePrimaryTimerActor -- End of Event" << G4endl);
 }
 
-void GateDetectionProfilePrimaryTimerActor::PreUserTrackingAction(const GateVVolume *, const G4Track* t) 
-{
-  GateDebugMessage("Actor", 3, "GateDetectionProfilePrimaryTimerActor -- Begin of Track" << G4endl);
-}
-
-void GateDetectionProfilePrimaryTimerActor::PostUserTrackingAction(const GateVVolume *, const G4Track* t) 
-{
-  GateDebugMessage("Actor", 3, "GateDetectionProfilePrimaryTimerActor -- End of Track" << G4endl);
-}
-
-void GateDetectionProfilePrimaryTimerActor::UserSteppingAction(const GateVVolume *, const G4Step* step)
+void GateDetectionProfilePrimaryTimerActor::PreUserTrackingAction(const GateVVolume*, const G4Track*) 
 {
 }
 
+void GateDetectionProfilePrimaryTimerActor::PostUserTrackingAction(const GateVVolume*, const G4Track*) 
+{
+}
+
+void GateDetectionProfilePrimaryTimerActor::UserSteppingAction(const GateVVolume*, const G4Step *step)
+{
+  if (triggered) return;
+  if (!step->IsLastStepInVolume()) return;
+
+  const G4StepPoint *point = step->GetPostStepPoint();
+
+  triggered = true;
+  data.name = step->GetTrack()->GetDefinition()->GetParticleName();
+  data.position = point->GetPosition();
+  data.direction = point->GetMomentumDirection();
+  data.time = point->GetGlobalTime();
+  G4double weight = point->GetWeight();
+
+  histoTime->Fill(data.time,weight);
+  histoPosition->Fill(data.position[0],data.position[1],weight);
+  histoDirz->Fill(data.direction[2],weight);
+
+  GateMessage("Actor",4,"triggered by " << data.name << " at " << data.time/ns << "ns " << data.position/mm << "mm" << G4endl);
+}
+
+#endif 
 #endif 
