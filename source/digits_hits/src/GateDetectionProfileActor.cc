@@ -17,7 +17,7 @@ See GATE/LICENSE.txt for further details
 #include "GateMiscFunctions.hh"
 
 GateDetectionProfileActor::GateDetectionProfileActor(G4String name, G4int depth):
-  GateVActor(name,depth)
+  GateVImageActor(name,depth)
 {
   messenger  = new GateDetectionProfileActorMessenger(this);
   timerActor = NULL;
@@ -53,11 +53,10 @@ void GateDetectionProfileActor::SetDetectionPosition(GateDetectionProfileActor::
 
 void GateDetectionProfileActor::Construct()
 {
+  GateVImageActor::Construct();
+
   if (!timerActor) GateError("set timer actor");
 
-  GateVActor::Construct();
-
-  // Enable callbacks
   EnableBeginOfRunAction(false);
   EnableBeginOfEventAction(false);
   EnablePreUserTrackingAction(true);
@@ -65,54 +64,32 @@ void GateDetectionProfileActor::Construct()
   EnableUserSteppingAction(true);
   EnableEndOfEventAction(false);
 
-  //mHistName = "Precise/output/EnergySpectrum.root";
-  //pTfile = new TFile(mSaveFilename,"RECREATE");
-
-  //pEnergySpectrum = new TH1D("energySpectrum","Energy Spectrum",GetENBins(),GetEmin() ,GetEmax() );
-  //pEnergySpectrum->SetXTitle("Energy (MeV)");
-
-  //pEdep  = new TH1D("edepHisto","Energy deposited",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
-  //pEdep->SetXTitle("E_{dep} (MeV)");
+  mImage.Allocate();
+  //G4cout << "resolution=" << mImage.GetResolution() << " halfSize=" << mImage.GetHalfSize() << G4endl;
 
   ResetData();
 }
 
 void GateDetectionProfileActor::SaveData()
 {
-  GateMessage("Actor", 0, "GateDetectionProfileActor -- Saving data" << G4endl);
-  //pTfile->Write();
-  //pTfile->Close();
+  mImage.Write(mSaveFilename);
 }
 
 void GateDetectionProfileActor::ResetData() 
 {
+  mImage.Fill(0);
 }
 
-void GateDetectionProfileActor::BeginOfRunAction(const G4Run *)
-{
-  GateDebugMessage("Actor", 3, "GateDetectionProfileActor -- Begin of Run" << G4endl);
-}
-
-void GateDetectionProfileActor::BeginOfEventAction(const G4Event*)
-{
-  GateDebugMessage("Actor", 3, "GateDetectionProfileActor -- Begin of Event" << G4endl);
-}
-
-void GateDetectionProfileActor::EndOfEventAction(const G4Event*)
-{
-  GateDebugMessage("Actor", 3, "GateDetectionProfileActor -- End of Event" << G4endl);
-}
-
-void GateDetectionProfileActor::PreUserTrackingAction(const GateVVolume *, const G4Track* t) 
+void GateDetectionProfileActor::UserPreTrackActionInVoxel(const int, const G4Track *)
 {
   firstStepForTrack = true;
 }
 
-void GateDetectionProfileActor::PostUserTrackingAction(const GateVVolume *, const G4Track* t) 
+void GateDetectionProfileActor::UserPostTrackActionInVoxel(const int, const G4Track *)
 {
 }
 
-void GateDetectionProfileActor::UserSteppingAction(const GateVVolume *, const G4Step* step)
+void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Step *step)
 {
   if (!firstStepForTrack) return;
   firstStepForTrack = false;
@@ -126,6 +103,7 @@ void GateDetectionProfileActor::UserSteppingAction(const GateVVolume *, const G4
   const GateDetectionProfilePrimaryTimerActor::TriggerData &triggerData = timerActor->GetTriggerData();
 
   const G4double deltaTime = point->GetGlobalTime()-triggerData.time;
+  const G4double weight = point->GetWeight();
 
   // find minimum distance between two lines according to 
   // http://softsurfer.com/Archive/algorithm_0106/algorithm_0106.htm
@@ -166,7 +144,10 @@ void GateDetectionProfileActor::UserSteppingAction(const GateVVolume *, const G4
 
   if (distanceThreshold>0 && minDistance>distanceThreshold) return;
 
-  G4cout << "hit name=" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " flytime=" << deltaTime/ns << " position=" << minPosition/mm << " distance=" << minDistance << G4endl;
+  int index = mImage.GetIndexFromPosition(minPosition);
+  if (index>=0) mImage.AddValue(index,weight);
+
+  G4cout << "hit name=" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " flytime=" << deltaTime/ns << " position=" << minPosition/mm << " distance=" << minDistance << " index=" << index << G4endl;
 }
 
 GateDetectionProfilePrimaryTimerActor::GateDetectionProfilePrimaryTimerActor(G4String name, G4int depth):
@@ -230,25 +211,9 @@ void GateDetectionProfilePrimaryTimerActor::ResetData()
   histoPosition->Reset();
 }
 
-void GateDetectionProfilePrimaryTimerActor::BeginOfRunAction(const G4Run*)
-{
-}
-
 void GateDetectionProfilePrimaryTimerActor::BeginOfEventAction(const G4Event*)
 {
   triggered = false;
-}
-
-void GateDetectionProfilePrimaryTimerActor::EndOfEventAction(const G4Event*)
-{
-}
-
-void GateDetectionProfilePrimaryTimerActor::PreUserTrackingAction(const GateVVolume*, const G4Track*) 
-{
-}
-
-void GateDetectionProfilePrimaryTimerActor::PostUserTrackingAction(const GateVVolume*, const G4Track*) 
-{
 }
 
 void GateDetectionProfilePrimaryTimerActor::UserSteppingAction(const GateVVolume*, const G4Step *step)

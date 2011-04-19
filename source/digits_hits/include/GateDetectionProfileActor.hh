@@ -11,11 +11,11 @@
 #include <TH1D.h>
 #include <TH2D.h>
 
-#include "GateVActor.hh"
+#include "GateVImageActor.hh"
 #include "GateActorManager.hh"
 #include "GateDetectionProfileActorMessenger.hh"
 
-class GateDetectionProfileActor : public GateVActor
+class GateDetectionProfileActor : public GateVImageActor
 {
   public: 
     enum DetectionPosition { Beam, Detected, Middle };
@@ -28,12 +28,9 @@ class GateDetectionProfileActor : public GateVActor
     FCT_FOR_AUTO_CREATOR_ACTOR(GateDetectionProfileActor)
     virtual void Construct();
 
-    virtual void BeginOfRunAction(const G4Run * r);
-    virtual void BeginOfEventAction(const G4Event *) ;
-    virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
-    virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*) ;
-    virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*) ;
-    virtual void EndOfEventAction(const G4Event*);
+    virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
+    virtual void UserPreTrackActionInVoxel(const int index, const G4Track* track);
+    virtual void UserPostTrackActionInVoxel(const int index, const G4Track* track);
 
     virtual void SaveData();
     virtual void ResetData();
@@ -68,12 +65,8 @@ class GateDetectionProfilePrimaryTimerActor : public GateVActor
     FCT_FOR_AUTO_CREATOR_ACTOR(GateDetectionProfilePrimaryTimerActor)
     virtual void Construct();
 
-    virtual void BeginOfRunAction(const G4Run * r);
     virtual void BeginOfEventAction(const G4Event *) ;
     virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
-    virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*) ;
-    virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*) ;
-    virtual void EndOfEventAction(const G4Event*);
 
     virtual void SaveData();
     virtual void ResetData();

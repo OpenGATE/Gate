@@ -21,11 +21,12 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcmdWithADoubleAndUnit.hh"
 
 #include "GateActorMessenger.hh"
+#include "GateImageActorMessenger.hh"
 
 class GateDetectionProfileActor;
 class GateDetectionProfilePrimaryTimerActor;
 
-class GateDetectionProfileActorMessenger : public GateActorMessenger 
+class GateDetectionProfileActorMessenger : public GateImageActorMessenger 
 {
   public: 
     GateDetectionProfileActorMessenger(GateDetectionProfileActor * v);

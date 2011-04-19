@@ -14,8 +14,8 @@ See GATE/LICENSE.txt for further details
 #include "GateDetectionProfileActorMessenger.hh"
 #include "GateDetectionProfileActor.hh"
 
-GateDetectionProfileActorMessenger::GateDetectionProfileActorMessenger(GateDetectionProfileActor *v)
-: GateActorMessenger(v),
+GateDetectionProfileActorMessenger::GateDetectionProfileActorMessenger(GateDetectionProfileActor *v) :
+  GateImageActorMessenger(v),
   actor(v)
 {
   G4String base = baseName + actor->GetObjectName();
@@ -55,12 +55,13 @@ void GateDetectionProfileActorMessenger::SetNewValue(G4UIcommand* cmd, G4String 
     else if (newValue=="middle") actor->SetDetectionPosition(GateDetectionProfileActor::Middle);
     else assert(false);
   }
-  GateActorMessenger::SetNewValue(cmd,newValue);
+
+  GateImageActorMessenger::SetNewValue(cmd,newValue);
 }
 
 
-GateDetectionProfilePrimaryTimerActorMessenger::GateDetectionProfilePrimaryTimerActorMessenger(GateDetectionProfilePrimaryTimerActor * v)
-: GateActorMessenger(v),
+GateDetectionProfilePrimaryTimerActorMessenger::GateDetectionProfilePrimaryTimerActorMessenger(GateDetectionProfilePrimaryTimerActor * v) :
+  GateActorMessenger(v),
   pActor(v)
 {
   //BuildCommands(baseName+pActor->GetObjectName());
