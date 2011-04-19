@@ -18,6 +18,11 @@
 class GateDetectionProfileActor : public GateVActor
 {
   public: 
+    enum DetectionPosition { Beam, Detected, Middle };
+    void SetTimer(const G4String &timerName);
+    void SetDistanceThreshold(double distance);
+    void SetDetectionPosition(DetectionPosition type);
+
     virtual ~GateDetectionProfileActor();
 
     FCT_FOR_AUTO_CREATOR_ACTOR(GateDetectionProfileActor)
@@ -36,7 +41,11 @@ class GateDetectionProfileActor : public GateVActor
   protected:
     GateDetectionProfileActor(G4String name, G4int depth=0);
 
-    GateDetectionProfileActorMessenger * pMessenger;
+    GateDetectionProfileActorMessenger *messenger;
+    GateDetectionProfilePrimaryTimerActor *timerActor;
+    bool firstStepForTrack;
+    G4double distanceThreshold;
+    DetectionPosition detectionPosition;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(DetectionProfileActor,GateDetectionProfileActor)
@@ -50,6 +59,10 @@ class GateDetectionProfilePrimaryTimerActor : public GateVActor
       G4ThreeVector position;
       G4ThreeVector direction;
     };
+
+    bool IsTriggered() const;
+    const TriggerData &GetTriggerData() const;
+
     virtual ~GateDetectionProfilePrimaryTimerActor();
 
     FCT_FOR_AUTO_CREATOR_ACTOR(GateDetectionProfilePrimaryTimerActor)
@@ -68,7 +81,7 @@ class GateDetectionProfilePrimaryTimerActor : public GateVActor
   protected:
     GateDetectionProfilePrimaryTimerActor(G4String name, G4int depth=0);
     TFile *rootFile;
-    GateDetectionProfilePrimaryTimerActorMessenger * messenger;
+    GateDetectionProfilePrimaryTimerActorMessenger *messenger;
     bool triggered;
     TriggerData data;
     TH1D *histoTime;
