@@ -119,7 +119,7 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
     //G4cout << "a=" << a << " b=" << b << " c=" << c << " d=" << d << " e=" << e << G4endl;
 
     const G4double det = a*c-b*b;
-    assert(det!=0);
+    if (det==0) return; // lines are parallel so there is no precise detection point that can be precised
     const G4double sc = (b*e - c*d)/det;
     const G4double tc = (a*e - b*d)/det;
     //G4cout << "det=" << det << " sc=" << sc << " tc=" << tc << G4endl;
@@ -147,7 +147,12 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
   int index = mImage.GetIndexFromPosition(minPosition);
   if (index>=0) mImage.AddValue(index,weight);
 
-  G4cout << "hit name=" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " flytime=" << deltaTime/ns << " position=" << minPosition/mm << " distance=" << minDistance << " index=" << index << G4endl;
+  GateMessage("Actor",4,
+    "hit name=" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << 
+    " flytime=" << deltaTime/ns << 
+    " position=" << minPosition/mm << 
+    " distance=" << minDistance << 
+    " index=" << index << G4endl);
 }
 
 GateDetectionProfilePrimaryTimerActor::GateDetectionProfilePrimaryTimerActor(G4String name, G4int depth):
