@@ -147,8 +147,8 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
   int index = mImage.GetIndexFromPosition(minPosition);
   if (index>=0) mImage.AddValue(index,weight);
 
-  GateMessage("Actor",0,
-    "detector hittted" <<
+  GateMessage("Actor",4,
+    "detector hitted" <<
     " name=" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << 
     " flytime=" << deltaTime/ns << 
     " position=" << minPosition/mm << 
