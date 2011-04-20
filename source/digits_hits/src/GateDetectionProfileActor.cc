@@ -134,7 +134,7 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
       case Beam:
 	minPosition = minBeam;
 	break;
-      case Detected:
+      case Particle:
 	minPosition = minDetected;
 	break;
       case Middle:

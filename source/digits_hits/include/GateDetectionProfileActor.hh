@@ -19,7 +19,7 @@
 class GateDetectionProfileActor : public GateVImageActor
 {
   public: 
-    enum DetectionPosition { Beam, Detected, Middle };
+    enum DetectionPosition { Beam, Particle, Middle };
     void SetTimer(const G4String &timerName);
     void SetDistanceThreshold(double distance);
     void SetDetectionPosition(DetectionPosition type);

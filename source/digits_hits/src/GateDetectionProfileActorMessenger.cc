@@ -51,7 +51,7 @@ void GateDetectionProfileActorMessenger::SetNewValue(G4UIcommand* cmd, G4String 
   if (cmd==cmdSetThreshold) actor->SetDistanceThreshold(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
   if (cmd==cmdSetDetectionPosition) {
     if (newValue=="beam") actor->SetDetectionPosition(GateDetectionProfileActor::Beam);
-    else if (newValue=="detected") actor->SetDetectionPosition(GateDetectionProfileActor::Detected);
+    else if (newValue=="particle") actor->SetDetectionPosition(GateDetectionProfileActor::Particle);
     else if (newValue=="middle") actor->SetDetectionPosition(GateDetectionProfileActor::Middle);
     else assert(false);
   }
