@@ -33,7 +33,7 @@ GateDetectionProfileActorMessenger::GateDetectionProfileActorMessenger(GateDetec
   {
     cmdSetDetectionPosition = new G4UIcmdWithAString((base+"/setDetectionPosition").c_str(),this);
     cmdSetDetectionPosition->SetGuidance("Set which position is used for fill profiles.");
-    cmdSetDetectionPosition->SetCandidates("beam detected middle");
+    cmdSetDetectionPosition->SetCandidates("beam particle middle");
     cmdSetDetectionPosition->SetParameterName("detectedPosition",false);
   }
 }
