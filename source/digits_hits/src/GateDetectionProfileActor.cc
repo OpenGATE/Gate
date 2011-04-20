@@ -15,6 +15,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateDetectionProfileActor.hh"
 #include "GateMiscFunctions.hh"
+#include <list>
 
 GateDetectionProfileActor::GateDetectionProfileActor(G4String name, G4int depth):
   GateVImageActor(name,depth)
@@ -147,6 +148,8 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
   int index = mImage.GetIndexFromPosition(minPosition);
   if (index>=0) mImage.AddValue(index,weight);
 
+  timerActor->ReportDetectedParticle(GetName(),*point);
+
   GateMessage("Actor",4,
     "detector hitted" <<
     " name=" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << 
@@ -167,6 +170,11 @@ GateDetectionProfilePrimaryTimerActor::GateDetectionProfilePrimaryTimerActor(G4S
 GateDetectionProfilePrimaryTimerActor::~GateDetectionProfilePrimaryTimerActor()
 {
   delete messenger;
+}
+
+void GateDetectionProfilePrimaryTimerActor::AddReportForDetector(const G4String &detectorName) {
+  assert(histosTimeEnergy.find(detectorName)==histosTimeEnergy.end());
+  histosTimeEnergy[detectorName] = NULL;
 }
 
 void GateDetectionProfilePrimaryTimerActor::Construct()
@@ -191,6 +199,21 @@ void GateDetectionProfilePrimaryTimerActor::Construct()
   histoPosition->SetYTitle("y [mm]");
 
   histoDirz = new TH1D("triggerDirection","Trigger Direction",100,.5,1.5);
+
+  typedef std::list<G4String> Actors;
+  Actors actors;
+  for (HistosTimeEnergy::const_iterator iter=histosTimeEnergy.begin(); iter!=histosTimeEnergy.end(); iter++) {
+    assert(iter->second==NULL);
+    actors.push_back(iter->first);
+  }
+  histosTimeEnergy.clear();
+
+  for (Actors::const_iterator iter=actors.begin(); iter!=actors.end(); iter++) {
+    TH2D *histo = new TH2D(*iter,"Time Energy Spectrum",200,0.,20.,200,0.,20.);
+    histo->SetXTitle("Time [ns]");
+    histo->SetYTitle("Energy [MeV]");
+    histosTimeEnergy[*iter] = histo;
+  }
 
   ResetData();
 }
@@ -241,6 +264,20 @@ void GateDetectionProfilePrimaryTimerActor::UserSteppingAction(const GateVVolume
   histoDirz->Fill(data.direction[2],weight);
 
   GateMessage("Actor",4,"triggered by " << data.name << " at " << data.time/ns << "ns " << data.position/mm << "mm" << G4endl);
+}
+
+void GateDetectionProfilePrimaryTimerActor::ReportDetectedParticle(const G4String &detectorName, const G4StepPoint &point)
+{
+  assert(triggered);
+
+  HistosTimeEnergy::const_iterator iter = histosTimeEnergy.find(detectorName);
+  if (iter==histosTimeEnergy.end()) return;
+  assert(iter->second);
+
+  double flytime = point.GetGlobalTime()-data.time;
+  iter->second->Fill(flytime/ns,point.GetKineticEnergy()/MeV,point.GetWeight());
+
+  GateMessage("Actor",4,detectorName << " reports detection flytime=" << flytime/ns << "ns ekine=" << point.GetKineticEnergy()/MeV << "MeV weight=" << point.GetWeight() << G4endl);
 }
 
 #endif 

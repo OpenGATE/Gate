@@ -46,9 +46,8 @@ class GateDetectionProfilePrimaryTimerActorMessenger : public GateActorMessenger
     virtual ~GateDetectionProfilePrimaryTimerActorMessenger();
     virtual void SetNewValue(G4UIcommand*, G4String);
   protected:
-    GateDetectionProfilePrimaryTimerActor * pActor; 
-    //G4UIcmdWithAnInteger * pNBinsCmd;
-    //G4UIcmdWithADoubleAndUnit * pEmaxCmd;
+    GateDetectionProfilePrimaryTimerActor *actor; 
+    G4UIcmdWithAString *cmdAddReportForDetector;
 };
 
 #endif
