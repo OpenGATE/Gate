@@ -24,7 +24,7 @@ GateDetectionProfileActor::GateDetectionProfileActor(G4String name, G4int depth)
   timerActor = NULL;
   firstStepForTrack = true;
   distanceThreshold = 0;
-  detectionPosition = Beam;
+  detectionPosition = Middle;
 }
 
 void GateDetectionProfileActor::SetTimer(const G4String &timerName)

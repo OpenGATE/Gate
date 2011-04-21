@@ -26,13 +26,13 @@ GateDetectionProfileActorMessenger::GateDetectionProfileActorMessenger(GateDetec
   }
   {
     cmdSetThreshold = new G4UIcmdWithADoubleAndUnit((base+"/setDistanceThreshold").c_str(),this);
-    cmdSetThreshold->SetGuidance("Set distance threshold to reject bad reconstruction. value<=0 means no thresholding is performed.");
+    cmdSetThreshold->SetGuidance("Set distance threshold to reject bad reconstruction. value<=0 means no thresholding is performed. Default is value=0 (no thresholding).");
     cmdSetThreshold->SetUnitCategory("Length");
     cmdSetThreshold->SetParameterName("maxDistance",false);
   }
   {
     cmdSetDetectionPosition = new G4UIcmdWithAString((base+"/setDetectionPosition").c_str(),this);
-    cmdSetDetectionPosition->SetGuidance("Set which position is used for fill profiles.");
+    cmdSetDetectionPosition->SetGuidance("Set which position is used for fill profiles. Default is middle.");
     cmdSetDetectionPosition->SetCandidates("beam particle middle");
     cmdSetDetectionPosition->SetParameterName("detectedPosition",false);
   }
