@@ -113,7 +113,6 @@ void GateFragmentationAndProductionActor::ResetData()
   pGammaProduction->Reset();
   pNeutronProduction->Reset();
   pFragmentation->Reset();
-  //GateWarning("GateFragmentationAndProductionActor -- ResetData not implemented" << G4endl);
 }
 //-----------------------------------------------------------------------------
 
