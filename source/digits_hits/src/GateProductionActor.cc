@@ -57,14 +57,16 @@ void GateProductionActor::Construct()
 }
 
 //-----------------------------------------------------------------------------
-/// Save production image
-void GateProductionActor::Save()
+// Save production image
+void GateProductionActor::SaveData()
 {
   GateMessage("Actor",2,"GateProductionActor -- saving filename="<< mSaveFilename <<G4endl);
   mImage.Write(mSaveFilename);
 }
 
-void GateProductionActor::SaveData() { Save(); }
+void GateProductionActor::ResetData() {
+  mImage.Fill(0);
+}
 
 //-----------------------------------------------------------------------------
 /// Start of track callback

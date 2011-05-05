@@ -28,8 +28,8 @@ class GateProductionActor : public GateVImageActor
 
     //-----------------------------------------------------------------------------
     // Save production image
-    virtual void Save();
     virtual void SaveData();
+    virtual void ResetData();
 
     //-----------------------------------------------------------------------------
     // Callbacks
