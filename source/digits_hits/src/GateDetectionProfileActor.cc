@@ -236,6 +236,7 @@ void GateDetectionProfilePrimaryTimerActor::SaveData()
 
 void GateDetectionProfilePrimaryTimerActor::ResetData() 
 {
+  //FIXME should reset all histograms
   histoTime->Reset();
   histoPosition->Reset();
 }
