@@ -61,9 +61,9 @@ void GateDetectionProfileActor::Construct()
   EnableBeginOfRunAction(false);
   EnableBeginOfEventAction(false);
   EnablePreUserTrackingAction(true);
-  EnablePostUserTrackingAction(false);
+  EnablePostUserTrackingAction(true);
   EnableUserSteppingAction(true);
-  EnableEndOfEventAction(false);
+  EnableEndOfEventAction(true);
 
   mImage.Allocate();
   //G4cout << "resolution=" << mImage.GetResolution() << " halfSize=" << mImage.GetHalfSize() << G4endl;
@@ -83,11 +83,22 @@ void GateDetectionProfileActor::ResetData()
 
 void GateDetectionProfileActor::UserPreTrackActionInVoxel(const int, const G4Track *)
 {
+  detectedSomething = false;
   firstStepForTrack = true;
 }
 
-void GateDetectionProfileActor::UserPostTrackActionInVoxel(const int, const G4Track *)
+void GateDetectionProfileActor::UserPostTrackActionInVoxel(const int, const G4Track *track)
 {
+  if (!detectedSomething) return;
+  assert(timerActor->IsTriggered());
+
+  double deltaEnergy = detectedEnergy - track->GetKineticEnergy();
+  timerActor->ReportDetectedParticle(GetName(),detectedTime,detectedEnergy,deltaEnergy,detectedWeight);
+
+  if (detectedIndex>=0) mImage.AddValue(detectedIndex,detectedWeight);
+
+  GateMessage("Actor",4,
+    "hit finished de=" << deltaEnergy/MeV << G4endl);
 }
 
 void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Step *step)
@@ -102,9 +113,6 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
 
   const G4StepPoint *point = step->GetPreStepPoint();
   const GateDetectionProfilePrimaryTimerActor::TriggerData &triggerData = timerActor->GetTriggerData();
-
-  const G4double deltaTime = point->GetGlobalTime()-triggerData.time;
-  const G4double weight = point->GetWeight();
 
   // find minimum distance between two lines according to 
   // http://softsurfer.com/Archive/algorithm_0106/algorithm_0106.htm
@@ -144,19 +152,21 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
   }
 
   if (distanceThreshold>0 && minDistance>distanceThreshold) return;
-
-  int index = mImage.GetIndexFromPosition(minPosition);
-  if (index>=0) mImage.AddValue(index,weight);
-
-  timerActor->ReportDetectedParticle(GetName(),*point);
+  detectedSomething = true;
+  detectedEnergy = point->GetKineticEnergy();
+  detectedWeight = point->GetWeight();
+  detectedTime   = point->GetGlobalTime();
+  detectedIndex  = mImage.GetIndexFromPosition(minPosition);
 
   GateMessage("Actor",4,
     "detector hitted" <<
     " name=" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << 
-    " flytime=" << deltaTime/ns << 
+    " flytime=" << (detectedTime-triggerData.time)/ns << 
     " position=" << minPosition/mm << 
-    " distance=" << minDistance << 
-    " index=" << index << G4endl);
+    " distance=" << minDistance/mm << 
+    " e=" << detectedEnergy <<
+    " index=" << detectedIndex << G4endl);
+
 }
 
 GateDetectionProfilePrimaryTimerActor::GateDetectionProfilePrimaryTimerActor(G4String name, G4int depth):
@@ -207,12 +217,30 @@ void GateDetectionProfilePrimaryTimerActor::Construct()
     actors.push_back(iter->first);
   }
   histosTimeEnergy.clear();
+  assert(histosTimeEnergy.empty());
+  assert(histosTimeDeltaEnergy.empty());
+  assert(histosEnergyDeltaEnergy.empty());
 
   for (Actors::const_iterator iter=actors.begin(); iter!=actors.end(); iter++) {
-    TH2D *histo = new TH2D(*iter,"Time Energy Spectrum",200,0.,20.,200,0.,20.);
-    histo->SetXTitle("Time [ns]");
-    histo->SetYTitle("Energy [MeV]");
-    histosTimeEnergy[*iter] = histo;
+    {
+      G4String name = "TESpectrum"+(*iter);
+      TH2D *histo = new TH2D(name,"Time Energy Spectrum",200,0.,20.,200,0.,20.);
+      histo->SetXTitle("Time [ns]");
+      histo->SetYTitle("Energy [MeV]");
+      histosTimeEnergy[*iter] = histo;
+    } {
+      G4String name = "TDESpectrum"+(*iter);
+      TH2D *histo = new TH2D(name,"Time DeltaEnergy Spectrum",200,0.,20.,200,0.,20.);
+      histo->SetXTitle("Time [ns]");
+      histo->SetYTitle("DeltaEnergy [MeV]");
+      histosTimeDeltaEnergy[*iter] = histo;
+    } {
+      G4String name = "EDESpectrum"+(*iter);
+      TH2D *histo = new TH2D(name,"Energy DeltaEnergy Spectrum",200,0.,20.,200,0.,20.);
+      histo->SetXTitle("Energy [MeV]");
+      histo->SetYTitle("DeltaEnergy [MeV]");
+      histosEnergyDeltaEnergy[*iter] = histo;
+    }
   }
 
   ResetData();
@@ -236,7 +264,6 @@ void GateDetectionProfilePrimaryTimerActor::SaveData()
 
 void GateDetectionProfilePrimaryTimerActor::ResetData() 
 {
-  //FIXME should reset all histograms
   histoTime->Reset();
   histoPosition->Reset();
 }
@@ -267,18 +294,24 @@ void GateDetectionProfilePrimaryTimerActor::UserSteppingAction(const GateVVolume
   GateMessage("Actor",4,"triggered by " << data.name << " at " << data.time/ns << "ns " << data.position/mm << "mm" << G4endl);
 }
 
-void GateDetectionProfilePrimaryTimerActor::ReportDetectedParticle(const G4String &detectorName, const G4StepPoint &point)
+void GateDetectionProfilePrimaryTimerActor::ReportDetectedParticle(const G4String &detectorName, double time, double energy, double deltaEnergy, double weight)
 {
   assert(triggered);
 
-  HistosTimeEnergy::const_iterator iter = histosTimeEnergy.find(detectorName);
-  if (iter==histosTimeEnergy.end()) return;
-  assert(iter->second);
+  HistosTimeEnergy::const_iterator iterte = histosTimeEnergy.find(detectorName);
+  if (iterte==histosTimeEnergy.end()) return;
+  HistosTimeEnergy::const_iterator itertde = histosTimeDeltaEnergy.find(detectorName);
+  HistosTimeEnergy::const_iterator iterede = histosEnergyDeltaEnergy.find(detectorName);
+  assert(iterte->second);
+  assert(itertde->second);
+  assert(iterede->second);
 
-  double flytime = point.GetGlobalTime()-data.time;
-  iter->second->Fill(flytime/ns,point.GetKineticEnergy()/MeV,point.GetWeight());
+  double flytime = time-data.time;
+  iterte->second->Fill(flytime/ns,energy/MeV,weight);
+  itertde->second->Fill(flytime/ns,deltaEnergy/MeV,weight);
+  iterede->second->Fill(energy/MeV,deltaEnergy/MeV,weight);
 
-  GateMessage("Actor",4,detectorName << " reports detection flytime=" << flytime/ns << "ns ekine=" << point.GetKineticEnergy()/MeV << "MeV weight=" << point.GetWeight() << G4endl);
+  GateMessage("Actor",1,detectorName << " reports detection flytime=" << flytime/ns << "ns e=" << energy/MeV << "MeV de=" << deltaEnergy/MeV << "MeV weight=" << weight << G4endl);
 }
 
 #endif 

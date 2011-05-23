@@ -42,6 +42,11 @@ class GateDetectionProfileActor : public GateVImageActor
     GateDetectionProfileActorMessenger *messenger;
     GateDetectionProfilePrimaryTimerActor *timerActor;
     bool firstStepForTrack;
+    bool detectedSomething;
+    G4double detectedEnergy;
+    G4double detectedWeight;
+    G4double detectedTime;
+    int detectedIndex;
     G4double distanceThreshold;
     DetectionPosition detectionPosition;
 };
@@ -61,7 +66,7 @@ class GateDetectionProfilePrimaryTimerActor : public GateVActor
     bool IsTriggered() const;
     const TriggerData &GetTriggerData() const;
     void AddReportForDetector(const G4String &detectorName);
-    void ReportDetectedParticle(const G4String &detectorName, const G4StepPoint &point);
+    void ReportDetectedParticle(const G4String &detectorName, double time, double energy, double deltaEnergy, double weight);
 
     virtual ~GateDetectionProfilePrimaryTimerActor();
 
@@ -86,6 +91,8 @@ class GateDetectionProfilePrimaryTimerActor : public GateVActor
     
     typedef std::map<G4String,TH2D*> HistosTimeEnergy;
     HistosTimeEnergy histosTimeEnergy;
+    HistosTimeEnergy histosTimeDeltaEnergy;
+    HistosTimeEnergy histosEnergyDeltaEnergy;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(DetectionProfilePrimaryTimerActor,GateDetectionProfilePrimaryTimerActor)
