@@ -22,6 +22,7 @@ class GateDetectionProfileActor : public GateVImageActor
     enum DetectionPosition { Beam, Particle, Middle };
     void SetTimer(const G4String &timerName);
     void SetDistanceThreshold(double distance);
+    void SetDeltaEnergyThreshold(double energy);
     void SetDetectionPosition(DetectionPosition type);
 
     virtual ~GateDetectionProfileActor();
@@ -48,6 +49,7 @@ class GateDetectionProfileActor : public GateVImageActor
     G4double detectedTime;
     int detectedIndex;
     G4double distanceThreshold;
+    G4double deltaEnergyThreshold;
     DetectionPosition detectionPosition;
 };
 

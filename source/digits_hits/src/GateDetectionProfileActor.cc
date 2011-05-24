@@ -24,6 +24,7 @@ GateDetectionProfileActor::GateDetectionProfileActor(G4String name, G4int depth)
   timerActor = NULL;
   firstStepForTrack = true;
   distanceThreshold = 0;
+  deltaEnergyThreshold = -1;
   detectionPosition = Middle;
 }
 
@@ -45,6 +46,11 @@ GateDetectionProfileActor::~GateDetectionProfileActor()
 void GateDetectionProfileActor::SetDistanceThreshold(double distance)
 {
   distanceThreshold = distance;
+}
+
+void GateDetectionProfileActor::SetDeltaEnergyThreshold(double energy)
+{
+  deltaEnergyThreshold = energy;
 }
 
 void GateDetectionProfileActor::SetDetectionPosition(GateDetectionProfileActor::DetectionPosition type)
@@ -95,10 +101,13 @@ void GateDetectionProfileActor::UserPostTrackActionInVoxel(const int, const G4Tr
   double deltaEnergy = detectedEnergy - track->GetKineticEnergy();
   timerActor->ReportDetectedParticle(GetName(),detectedTime,detectedEnergy,deltaEnergy,detectedWeight);
 
+  if (deltaEnergy<=deltaEnergyThreshold) return;
+
   if (detectedIndex>=0) mImage.AddValue(detectedIndex,detectedWeight);
 
   GateMessage("Actor",4,
-    "hit finished de=" << deltaEnergy/MeV << G4endl);
+    "hit finished de=" << deltaEnergy/MeV << 
+    " dethresh=" << deltaEnergyThreshold/MeV << G4endl);
 }
 
 void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Step *step)

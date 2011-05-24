@@ -25,10 +25,16 @@ GateDetectionProfileActorMessenger::GateDetectionProfileActorMessenger(GateDetec
     cmdSetTimer->SetParameterName("timerActor",false);
   }
   {
-    cmdSetThreshold = new G4UIcmdWithADoubleAndUnit((base+"/setDistanceThreshold").c_str(),this);
-    cmdSetThreshold->SetGuidance("Set distance threshold to reject bad reconstruction. value<=0 means no thresholding is performed. Default is value=0 (no thresholding).");
-    cmdSetThreshold->SetUnitCategory("Length");
-    cmdSetThreshold->SetParameterName("maxDistance",false);
+    cmdSetDistanceThreshold = new G4UIcmdWithADoubleAndUnit((base+"/setDistanceThreshold").c_str(),this);
+    cmdSetDistanceThreshold->SetGuidance("Set distance threshold to reject bad reconstruction. value<=0 means no thresholding is performed. Default is value=0 (no thresholding).");
+    cmdSetDistanceThreshold->SetUnitCategory("Length");
+    cmdSetDistanceThreshold->SetParameterName("maxDistance",false);
+  }
+  {
+    cmdSetDeltaEnergyThreshold = new G4UIcmdWithADoubleAndUnit((base+"/setDeltaEnergyThreshold").c_str(),this);
+    cmdSetDeltaEnergyThreshold->SetGuidance("Set energy deposition threshold to detect event. value<0 means no thresholding is performed. Default is value=-1 (all event used).");
+    cmdSetDeltaEnergyThreshold->SetUnitCategory("Energy");
+    cmdSetDeltaEnergyThreshold->SetParameterName("minDeltaEnergy",false);
   }
   {
     cmdSetDetectionPosition = new G4UIcmdWithAString((base+"/setDetectionPosition").c_str(),this);
@@ -41,14 +47,16 @@ GateDetectionProfileActorMessenger::GateDetectionProfileActorMessenger(GateDetec
 GateDetectionProfileActorMessenger::~GateDetectionProfileActorMessenger()
 {
   delete cmdSetTimer;
-  delete cmdSetThreshold;
+  delete cmdSetDistanceThreshold;
+  delete cmdSetDeltaEnergyThreshold;
   delete cmdSetDetectionPosition;
 }
 
 void GateDetectionProfileActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
   if (cmd==cmdSetTimer) actor->SetTimer(newValue);
-  if (cmd==cmdSetThreshold) actor->SetDistanceThreshold(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
+  if (cmd==cmdSetDistanceThreshold) actor->SetDistanceThreshold(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
+  if (cmd==cmdSetDeltaEnergyThreshold) actor->SetDeltaEnergyThreshold(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
   if (cmd==cmdSetDetectionPosition) {
     if (newValue=="beam") actor->SetDetectionPosition(GateDetectionProfileActor::Beam);
     else if (newValue=="particle") actor->SetDetectionPosition(GateDetectionProfileActor::Particle);
