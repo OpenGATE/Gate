@@ -93,25 +93,36 @@ void GateDetectionProfileActor::UserPreTrackActionInVoxel(const int, const G4Tra
   firstStepForTrack = true;
 }
 
-void GateDetectionProfileActor::UserPostTrackActionInVoxel(const int, const G4Track *track)
+void GateDetectionProfileActor::UserPostTrackActionInVoxel(const int, const G4Track * /*track*/)
 {
   if (!detectedSomething) return;
   assert(timerActor->IsTriggered());
 
-  double deltaEnergy = detectedEnergy - track->GetKineticEnergy();
-  timerActor->ReportDetectedParticle(GetName(),detectedTime,detectedEnergy,deltaEnergy,detectedWeight);
+  //G4cout << "track e=" << track->GetKineticEnergy()/MeV << "MeV in " << track->GetVolume()->GetName() << G4endl;
+  //G4cout << "de=" << detectedDeltaEnergy/MeV << "MeV" << G4endl;
+  //G4cout << "*********************" << G4endl;
 
-  if (deltaEnergy<=deltaEnergyThreshold) return;
+  timerActor->ReportDetectedParticle(GetName(),detectedTime,detectedEnergy,detectedDeltaEnergy,detectedWeight);
+  GateMessage("Actor",4,
+    "hit finished de=" << detectedDeltaEnergy/MeV << 
+    " dethresh=" << deltaEnergyThreshold/MeV << G4endl);
 
+  if (detectedDeltaEnergy<=deltaEnergyThreshold) return;
   if (detectedIndex>=0) mImage.AddValue(detectedIndex,detectedWeight);
 
-  GateMessage("Actor",4,
-    "hit finished de=" << deltaEnergy/MeV << 
-    " dethresh=" << deltaEnergyThreshold/MeV << G4endl);
 }
 
 void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Step *step)
 {
+  if (detectedSomething) {
+    detectedDeltaEnergy += step->GetPreStepPoint()->GetKineticEnergy() - step->GetPostStepPoint()->GetKineticEnergy();
+    //G4cout << "step " << step->GetTrack()->GetCurrentStepNumber() << G4endl;
+    //G4cout << "pre   e=" << step->GetPreStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << G4endl;
+    //G4cout << "post  e=" << step->GetPostStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPostStepPoint()->GetPhysicalVolume()->GetName() << G4endl;
+    //G4cout << "track e=" << step->GetTrack()->GetKineticEnergy()/MeV << "MeV in " << step->GetTrack()->GetVolume()->GetName() << " to " << step->GetTrack()->GetNextVolume()->GetName() << G4endl;
+    //G4cout << "de=" << detectedDeltaEnergy/MeV << "MeV" << G4endl;
+    //G4cout << G4endl;
+  }
   if (!firstStepForTrack) return;
   firstStepForTrack = false;
 
@@ -166,6 +177,7 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
   detectedWeight = point->GetWeight();
   detectedTime   = point->GetGlobalTime();
   detectedIndex  = mImage.GetIndexFromPosition(minPosition);
+  detectedDeltaEnergy = step->GetPreStepPoint()->GetKineticEnergy() - step->GetPostStepPoint()->GetKineticEnergy();
 
   GateMessage("Actor",4,
     "detector hitted" <<
@@ -176,6 +188,14 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
     " e=" << detectedEnergy <<
     " index=" << detectedIndex << G4endl);
 
+  //G4cout << "*********************" << G4endl;
+  //G4cout << GetName() << G4endl;
+  //G4cout << "step " << step->GetTrack()->GetCurrentStepNumber() << G4endl;
+  //G4cout << "pre   e=" << step->GetPreStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << G4endl;
+  //G4cout << "post  e=" << step->GetPostStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPostStepPoint()->GetPhysicalVolume()->GetName() << G4endl;
+  //G4cout << "track e=" << step->GetTrack()->GetKineticEnergy()/MeV << "MeV in " << step->GetTrack()->GetVolume()->GetName() << " to " << step->GetTrack()->GetNextVolume()->GetName() << G4endl;
+  //G4cout << "de=" << detectedDeltaEnergy/MeV << "MeV" << G4endl;
+  //G4cout << G4endl;
 }
 
 GateDetectionProfilePrimaryTimerActor::GateDetectionProfilePrimaryTimerActor(G4String name, G4int depth):

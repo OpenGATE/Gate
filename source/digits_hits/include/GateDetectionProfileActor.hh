@@ -45,6 +45,7 @@ class GateDetectionProfileActor : public GateVImageActor
     bool firstStepForTrack;
     bool detectedSomething;
     G4double detectedEnergy;
+    G4double detectedDeltaEnergy;
     G4double detectedWeight;
     G4double detectedTime;
     int detectedIndex;
