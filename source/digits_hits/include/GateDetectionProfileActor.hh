@@ -69,6 +69,7 @@ class GateDetectionProfilePrimaryTimerActor : public GateVActor
     bool IsTriggered() const;
     const TriggerData &GetTriggerData() const;
     void AddReportForDetector(const G4String &detectorName);
+    void SetDetectionSize(double size);
     void ReportDetectedParticle(const G4String &detectorName, double time, double energy, double deltaEnergy, double weight);
 
     virtual ~GateDetectionProfilePrimaryTimerActor();
@@ -85,6 +86,7 @@ class GateDetectionProfilePrimaryTimerActor : public GateVActor
   protected:
     GateDetectionProfilePrimaryTimerActor(G4String name, G4int depth=0);
     TFile *rootFile;
+    double detectionSize;
     GateDetectionProfilePrimaryTimerActorMessenger *messenger;
     bool triggered;
     TriggerData data;

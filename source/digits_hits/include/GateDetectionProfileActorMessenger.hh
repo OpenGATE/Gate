@@ -49,6 +49,7 @@ class GateDetectionProfilePrimaryTimerActorMessenger : public GateActorMessenger
   protected:
     GateDetectionProfilePrimaryTimerActor *actor; 
     G4UIcmdWithAString *cmdAddReportForDetector;
+    G4UIcmdWithADoubleAndUnit *cmdSetDetectionSize;
 };
 
 #endif

@@ -78,17 +78,25 @@ GateDetectionProfilePrimaryTimerActorMessenger::GateDetectionProfilePrimaryTimer
     cmdAddReportForDetector->SetGuidance("Will add flytime / energy report for detector to output file.");
     cmdAddReportForDetector->SetParameterName("detectorActor",false);
   }
+  {
+    cmdSetDetectionSize = new G4UIcmdWithADoubleAndUnit((base+"/setDetectionSize").c_str(),this);
+    cmdSetDetectionSize->SetGuidance("Set the size of detected particles histogram.");
+    cmdSetDetectionSize->SetUnitCategory("Length");
+    cmdSetDetectionSize->SetParameterName("Size",false);
+  }
 }
 
 GateDetectionProfilePrimaryTimerActorMessenger::~GateDetectionProfilePrimaryTimerActorMessenger()
 {
   delete cmdAddReportForDetector;
+  delete cmdSetDetectionSize;
 }
 
 
 void GateDetectionProfilePrimaryTimerActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
   if (cmd==cmdAddReportForDetector) actor->AddReportForDetector(newValue);
+  if (cmd==cmdSetDetectionSize) actor->SetDetectionSize(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
   GateActorMessenger::SetNewValue(cmd,newValue);
 }
 

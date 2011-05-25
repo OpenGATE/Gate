@@ -203,7 +203,13 @@ GateDetectionProfilePrimaryTimerActor::GateDetectionProfilePrimaryTimerActor(G4S
 {
   messenger = new GateDetectionProfilePrimaryTimerActorMessenger(this);
   rootFile  = NULL;
+  detectionSize = 1*cm;
   triggered = false;
+}
+
+void GateDetectionProfilePrimaryTimerActor::SetDetectionSize(double size)
+{
+  detectionSize = size;
 }
 
 GateDetectionProfilePrimaryTimerActor::~GateDetectionProfilePrimaryTimerActor()
@@ -233,7 +239,7 @@ void GateDetectionProfilePrimaryTimerActor::Construct()
   histoTime = new TH1D("triggerTime","Trigger Time",100,0.,1.);
   histoTime->SetXTitle("time [ns]");
 
-  histoPosition = new TH2D("triggerPosition","Trigger Position",101,-5.,5.,101,-5.,5.);
+  histoPosition = new TH2D("triggerPosition","Trigger Position",401,-detectionSize/2./mm,detectionSize/2./mm,401,-detectionSize/2./mm,detectionSize/2./mm);
   histoPosition->SetXTitle("x [mm]");
   histoPosition->SetYTitle("y [mm]");
 
@@ -323,8 +329,8 @@ void GateDetectionProfilePrimaryTimerActor::UserSteppingAction(const GateVVolume
   data.time = point->GetGlobalTime();
   G4double weight = point->GetWeight();
 
-  histoTime->Fill(data.time,weight);
-  histoPosition->Fill(data.position[0],data.position[1],weight);
+  histoTime->Fill(data.time/ns,weight);
+  histoPosition->Fill(data.position[0]/mm,data.position[1]/mm,weight);
   histoDirz->Fill(data.direction[2],weight);
 
   GateMessage("Actor",4,"triggered by " << data.name << " at " << data.time/ns << "ns " << data.position/mm << "mm" << G4endl);
