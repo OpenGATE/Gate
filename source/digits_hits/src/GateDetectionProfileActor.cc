@@ -241,7 +241,7 @@ void GateDetectionProfilePrimaryTimerActor::Construct()
 
   typedef std::list<G4String> Actors;
   Actors actors;
-  for (HistosTimeEnergy::const_iterator iter=histosTimeEnergy.begin(); iter!=histosTimeEnergy.end(); iter++) {
+  for (ActorHistos::const_iterator iter=histosTimeEnergy.begin(); iter!=histosTimeEnergy.end(); iter++) {
     assert(iter->second==NULL);
     actors.push_back(iter->first);
   }
@@ -249,6 +249,7 @@ void GateDetectionProfilePrimaryTimerActor::Construct()
   assert(histosTimeEnergy.empty());
   assert(histosTimeDeltaEnergy.empty());
   assert(histosEnergyDeltaEnergy.empty());
+  assert(histosEnergyDeltaEnergyPercent.empty());
 
   for (Actors::const_iterator iter=actors.begin(); iter!=actors.end(); iter++) {
     {
@@ -269,6 +270,12 @@ void GateDetectionProfilePrimaryTimerActor::Construct()
       histo->SetXTitle("Energy [MeV]");
       histo->SetYTitle("DeltaEnergy [MeV]");
       histosEnergyDeltaEnergy[*iter] = histo;
+    } {
+      G4String name = "EDEPercentSpectrum"+(*iter);
+      TH2D *histo = new TH2D(name,"Energy DeltaEnergy Spectrum",200,0.,20.,200,0.,1.);
+      histo->SetXTitle("Energy [MeV]");
+      histo->SetYTitle("DeltaEnergyPercent [%]");
+      histosEnergyDeltaEnergyPercent[*iter] = histo;
     }
   }
 
@@ -327,18 +334,21 @@ void GateDetectionProfilePrimaryTimerActor::ReportDetectedParticle(const G4Strin
 {
   assert(triggered);
 
-  HistosTimeEnergy::const_iterator iterte = histosTimeEnergy.find(detectorName);
+  ActorHistos::const_iterator iterte = histosTimeEnergy.find(detectorName);
   if (iterte==histosTimeEnergy.end()) return;
-  HistosTimeEnergy::const_iterator itertde = histosTimeDeltaEnergy.find(detectorName);
-  HistosTimeEnergy::const_iterator iterede = histosEnergyDeltaEnergy.find(detectorName);
+  ActorHistos::const_iterator itertde  = histosTimeDeltaEnergy.find(detectorName);
+  ActorHistos::const_iterator iterede  = histosEnergyDeltaEnergy.find(detectorName);
+  ActorHistos::const_iterator iteredep = histosEnergyDeltaEnergyPercent.find(detectorName);
   assert(iterte->second);
   assert(itertde->second);
   assert(iterede->second);
+  assert(iteredep->second);
 
   double flytime = time-data.time;
   iterte->second->Fill(flytime/ns,energy/MeV,weight);
   itertde->second->Fill(flytime/ns,deltaEnergy/MeV,weight);
   iterede->second->Fill(energy/MeV,deltaEnergy/MeV,weight);
+  iteredep->second->Fill(energy/MeV,deltaEnergy/energy,weight);
 
   GateMessage("Actor",1,detectorName << " reports detection flytime=" << flytime/ns << "ns e=" << energy/MeV << "MeV de=" << deltaEnergy/MeV << "MeV weight=" << weight << G4endl);
 }

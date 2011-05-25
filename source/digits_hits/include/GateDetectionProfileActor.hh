@@ -92,10 +92,11 @@ class GateDetectionProfilePrimaryTimerActor : public GateVActor
     TH1D *histoDirz;
     TH2D *histoPosition;
     
-    typedef std::map<G4String,TH2D*> HistosTimeEnergy;
-    HistosTimeEnergy histosTimeEnergy;
-    HistosTimeEnergy histosTimeDeltaEnergy;
-    HistosTimeEnergy histosEnergyDeltaEnergy;
+    typedef std::map<G4String,TH2D*> ActorHistos;
+    ActorHistos histosTimeEnergy;
+    ActorHistos histosTimeDeltaEnergy;
+    ActorHistos histosEnergyDeltaEnergy;
+    ActorHistos histosEnergyDeltaEnergyPercent;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(DetectionProfilePrimaryTimerActor,GateDetectionProfilePrimaryTimerActor)
