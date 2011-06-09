@@ -101,7 +101,7 @@ void GateFragmentationAndProductionActor::SaveData()
   pTFile->cd();
   pNEvent->Write("nevents");
   pTFile->Write();
-  pTFile->Close();
+  //pTFile->Close();
 }
 //-----------------------------------------------------------------------------
 
