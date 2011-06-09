@@ -301,13 +301,14 @@ const GateDetectionProfilePrimaryTimerActor::TriggerData &GateDetectionProfilePr
 void GateDetectionProfilePrimaryTimerActor::SaveData()
 {
   rootFile->Write();
-  rootFile->Close();
+  //rootFile->Close();
 }
 
 void GateDetectionProfilePrimaryTimerActor::ResetData() 
 {
   histoTime->Reset();
   histoPosition->Reset();
+  //FIXME should reset all histos
 }
 
 void GateDetectionProfilePrimaryTimerActor::BeginOfEventAction(const G4Event*)
