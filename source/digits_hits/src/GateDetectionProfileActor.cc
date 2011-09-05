@@ -26,6 +26,9 @@ GateDetectionProfileActor::GateDetectionProfileActor(G4String name, G4int depth)
   distanceThreshold = 0;
   deltaEnergyThreshold = -1;
   detectionPosition = Middle;
+
+  useCristalNormal = false;
+  useCristalPosition = false;
 }
 
 void GateDetectionProfileActor::SetTimer(const G4String &timerName)
@@ -41,6 +44,16 @@ void GateDetectionProfileActor::SetTimer(const G4String &timerName)
 GateDetectionProfileActor::~GateDetectionProfileActor()
 {
   delete messenger;
+}
+
+void GateDetectionProfileActor::SetUseCristalNormal(bool state)
+{
+    useCristalNormal = state;
+}
+
+void GateDetectionProfileActor::SetUseCristalPosition(bool state)
+{
+    useCristalPosition = state;
 }
 
 void GateDetectionProfileActor::SetDistanceThreshold(double distance)
@@ -116,15 +129,20 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
 {
   if (detectedSomething) {
     detectedDeltaEnergy += step->GetPreStepPoint()->GetKineticEnergy() - step->GetPostStepPoint()->GetKineticEnergy();
-    //G4cout << "step " << step->GetTrack()->GetCurrentStepNumber() << G4endl;
-    //G4cout << "pre   e=" << step->GetPreStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << G4endl;
-    //G4cout << "post  e=" << step->GetPostStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPostStepPoint()->GetPhysicalVolume()->GetName() << G4endl;
-    //G4cout << "track e=" << step->GetTrack()->GetKineticEnergy()/MeV << "MeV in " << step->GetTrack()->GetVolume()->GetName() << " to " << step->GetTrack()->GetNextVolume()->GetName() << G4endl;
-    //G4cout << "de=" << detectedDeltaEnergy/MeV << "MeV" << G4endl;
-    //G4cout << G4endl;
+    return;
   }
   if (!firstStepForTrack) return;
   firstStepForTrack = false;
+
+  //G4cout << G4endl;
+  //G4cout << "name " << step->GetTrack()->GetParticleDefinition()->GetParticleName() << G4endl;
+  //G4cout << "useCristalNormal = " << useCristalNormal << " useCristalPosition = " << useCristalPosition << G4endl;
+  //G4cout << "step " << step->GetTrack()->GetCurrentStepNumber() << G4endl;
+  //G4cout << "pre   e=" << step->GetPreStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << G4endl;
+  //G4cout << "post  e=" << step->GetPostStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPostStepPoint()->GetPhysicalVolume()->GetName() << G4endl;
+  //G4cout << "track e=" << step->GetTrack()->GetKineticEnergy()/MeV << "MeV in " << step->GetTrack()->GetVolume()->GetName() << " to " << step->GetTrack()->GetNextVolume()->GetName() << G4endl;
+  //G4cout << "de=" << detectedDeltaEnergy/MeV << "MeV" << G4endl;
+  //G4cout << "replica=" << point->GetTouchable()->GetHistory()->GetTopReplicaNo() << G4endl;
 
   const bool isSecondary = (step->GetTrack()->GetLogicalVolumeAtVertex()==mVolume->GetLogicalVolume()); //FIXME dirty hacked to know is the particle was created inside the volume
   if (isSecondary) return;
@@ -139,12 +157,21 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
   G4double minDistance;
   G4ThreeVector minPosition;
   {
+    G4ThreeVector interaction_normal = point->GetMomentumDirection();
+    G4ThreeVector interaction_position = point->GetPosition();
+    if (useCristalPosition || useCristalNormal) {
+	G4AffineTransform transform = point->GetTouchable()->GetHistory()->GetTopTransform().Inverse();
+	if (useCristalPosition) interaction_position = transform.TransformPoint(G4ThreeVector(0,0,0));
+	if (useCristalNormal)   interaction_normal = transform.TransformAxis(G4ThreeVector(1,0,0));
+    }
+    //G4cout << "interaction_position=" << interaction_position << " interaction_normal=" << interaction_normal << G4endl;
+
     const G4double a = triggerData.direction.mag2();
-    const G4double b = triggerData.direction.dot(point->GetMomentumDirection());
-    const G4double c = point->GetMomentumDirection().mag2();
-    const G4ThreeVector w0 = triggerData.position - point->GetPosition();
+    const G4double b = triggerData.direction.dot(interaction_normal);
+    const G4double c = interaction_normal.mag2();
+    const G4ThreeVector w0 = triggerData.position - interaction_position;
     const G4double d = w0.dot(triggerData.direction);
-    const G4double e = w0.dot(point->GetMomentumDirection());
+    const G4double e = w0.dot(interaction_normal);
     //G4cout << "a=" << a << " b=" << b << " c=" << c << " d=" << d << " e=" << e << G4endl;
 
     const G4double det = a*c-b*b;
@@ -154,7 +181,7 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
     //G4cout << "det=" << det << " sc=" << sc << " tc=" << tc << G4endl;
 
     const G4ThreeVector minBeam = triggerData.position + triggerData.direction*sc;
-    const G4ThreeVector minDetected = point->GetPosition() + point->GetMomentumDirection()*tc;
+    const G4ThreeVector minDetected = interaction_position + interaction_normal*tc;
     minDistance = (minBeam-minDetected).mag();
     //G4cout << "minDistance=" << minDistance << " minBeam=" << minBeam << " minDetected=" << minDetected << G4endl;
 

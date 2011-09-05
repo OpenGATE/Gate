@@ -24,6 +24,8 @@ class GateDetectionProfileActor : public GateVImageActor
     void SetDistanceThreshold(double distance);
     void SetDeltaEnergyThreshold(double energy);
     void SetDetectionPosition(DetectionPosition type);
+    void SetUseCristalNormal(bool state);
+    void SetUseCristalPosition(bool state);
 
     virtual ~GateDetectionProfileActor();
 
@@ -44,6 +46,8 @@ class GateDetectionProfileActor : public GateVImageActor
     GateDetectionProfilePrimaryTimerActor *timerActor;
     bool firstStepForTrack;
     bool detectedSomething;
+    bool useCristalNormal;
+    bool useCristalPosition;
     G4double detectedEnergy;
     G4double detectedDeltaEnergy;
     G4double detectedWeight;

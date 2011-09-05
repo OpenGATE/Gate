@@ -38,6 +38,8 @@ class GateDetectionProfileActorMessenger : public GateImageActorMessenger
     G4UIcmdWithADoubleAndUnit *cmdSetDistanceThreshold;
     G4UIcmdWithADoubleAndUnit *cmdSetDeltaEnergyThreshold;
     G4UIcmdWithAString *cmdSetDetectionPosition;
+    G4UIcmdWithABool *cmdSetUseCristalNormal;
+    G4UIcmdWithABool *cmdSetUseCristalPosition;
 };
 
 class GateDetectionProfilePrimaryTimerActorMessenger : public GateActorMessenger 

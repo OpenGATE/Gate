@@ -42,6 +42,16 @@ GateDetectionProfileActorMessenger::GateDetectionProfileActorMessenger(GateDetec
     cmdSetDetectionPosition->SetCandidates("beam particle middle");
     cmdSetDetectionPosition->SetParameterName("detectedPosition",false);
   }
+  {
+    cmdSetUseCristalNormal = new G4UIcmdWithABool((base+"/useCristalNormal").c_str(),this);
+    cmdSetUseCristalNormal->SetGuidance("Use of cristal direction instead of momentum direction in reconstruction algorithm.");
+    cmdSetUseCristalNormal->SetParameterName("useCristalNormal",false);
+  }
+  {
+    cmdSetUseCristalPosition = new G4UIcmdWithABool((base+"/useCristalPosition").c_str(),this);
+    cmdSetUseCristalPosition->SetGuidance("Use of cristal direction instead of momentum direction in reconstruction algorithm.");
+    cmdSetUseCristalPosition->SetParameterName("useCristalPosition",false);
+  }
 }
 
 GateDetectionProfileActorMessenger::~GateDetectionProfileActorMessenger()
@@ -63,6 +73,8 @@ void GateDetectionProfileActorMessenger::SetNewValue(G4UIcommand* cmd, G4String 
     else if (newValue=="middle") actor->SetDetectionPosition(GateDetectionProfileActor::Middle);
     else assert(false);
   }
+  if (cmd==cmdSetUseCristalNormal) actor->SetUseCristalNormal(G4UIcmdWithABool::GetNewBoolValue(newValue));
+  if (cmd==cmdSetUseCristalPosition) actor->SetUseCristalPosition(G4UIcmdWithABool::GetNewBoolValue(newValue));
 
   GateImageActorMessenger::SetNewValue(cmd,newValue);
 }
