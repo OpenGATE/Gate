@@ -1,0 +1,433 @@
+/control/verbose 0
+
+# SPECT flexibility benchmark
+# finalized 13/9/2003
+# OpenGate Collaboration 
+
+
+# VISUALISATION
+#/vis/disable
+#/control/execute vis.mac
+
+#	V I S U A L I S A T I O N
+/vis/open OGLSX
+#/vis/viewer/set/viewpointThetaPhi 60 60
+/vis/viewer/zoom 1.5
+/vis/drawVolume
+#/vis/viewer/flush
+#/tracking/verbose 0
+/tracking/storeTrajectory 1
+/vis/scene/add/trajectories 
+/vis/scene/endOfEventAction accumulate
+
+/gate/geometry/setMaterialDatabase GateMaterials.db
+
+
+# GEOMETRY
+# Set the geometry in auto-update mode, so that we see the geometry being init
+#/gate/geometry/enableAutoUpdate
+
+
+# World
+# Define the world dimensions
+/gate/world/geometry/setXLength 100 cm
+/gate/world/geometry/setYLength 100 cm
+/gate/world/geometry/setZLength 100 cm
+
+
+# Scanner Head
+# Create a new box representing the main head-volume
+# SPECThead is the name of the predefined SPECT system
+# Create the SPECT system, which will yield an Interfile output of projection data
+/gate/world/daughters/name SPECThead
+/gate/world/daughters/insert box
+
+
+# Define the dimensions of the main volume
+/gate/SPECThead/geometry/setXLength  7. cm
+/gate/SPECThead/geometry/setYLength 21. cm
+/gate/SPECThead/geometry/setZLength 30. cm
+
+
+# Define the position of the main volume
+# Move the head 9 cm away from the Z axis, which is the rotation axis and the replication axis
+/gate/SPECThead/placement/setTranslation  20.0 0. 0. cm
+
+# Set the material associated with the main volume
+/gate/SPECThead/setMaterial Air
+/gate/SPECThead/attachPhantomSD
+
+# Replicate the head (around the Z axis by default) to get a four-head system (heads at 90 degrees)
+/gate/SPECThead/repeaters/insert ring
+/gate/SPECThead/ring/setRepeatNumber 4
+
+# Define the rotation speed of the head 
+# Define the orbiting around the Z axis
+/gate/SPECThead/moves/insert orbiting
+/gate/SPECThead/orbiting/setSpeed 0.15 deg/s
+/gate/SPECThead/orbiting/setSpeed 125. deg/s
+/gate/SPECThead/orbiting/setPoint1 0 0 0 cm
+/gate/SPECThead/orbiting/setPoint2 0 0 1 cm
+#/gate/SPECThead/vis/forceWireframe
+
+
+# Shielding
+# Create the shielding volume
+/gate/SPECThead/daughters/name shielding
+/gate/SPECThead/daughters/insert box
+
+# Define the dimensions of the shielding volume
+/gate/shielding/geometry/setXLength  7. cm
+/gate/shielding/geometry/setYLength 21. cm
+/gate/shielding/geometry/setZLength 30. cm
+
+# Define the position of the shielding volume
+/gate/shielding/placement/setTranslation  0. 0. 0. cm
+
+# Set the material corresponding to the shielding volume
+/gate/shielding/setMaterial Lead
+
+# Define some visualisation options
+#/gate/shielding/vis/setColor red
+#/gate/shielding/vis/forceWireframe
+
+
+# Attach phantom SD to record Compton interactions in the shielding volume
+# Needed to discriminate between scattered and unscattered photons
+/gate/shielding/attachPhantomSD
+
+# Collimator
+# Create a full volume defining the shape of the collimator
+/gate/SPECThead/daughters/name collimator
+/gate/SPECThead/daughters/insert box
+
+
+# Define the dimensions of the collimator volume
+/gate/collimator/geometry/setXLength 3. cm
+/gate/collimator/geometry/setYLength 19. cm
+/gate/collimator/geometry/setZLength 28. cm
+
+# Define the position of the collimator volume
+/gate/collimator/placement/setTranslation  -2. 0. 0. cm
+
+# Set the material of the collimator volume
+/gate/collimator/setMaterial Lead
+
+# Define some visualisation options
+#/gate/collimator/vis/setColor red
+#/gate/collimator/vis/forceWireframe
+
+
+# Insert the first hole of air in the collimator
+/gate/collimator/daughters/name hole
+/gate/collimator/daughters/insert hexagone
+/gate/hole/geometry/setHeight 3. cm
+/gate/hole/geometry/setRadius .15 cm
+/gate/hole/placement/setRotationAxis 0 1 0
+/gate/hole/placement/setRotationAngle 90 deg
+/gate/hole/setMaterial Air
+# Repeat the hole in an array
+/gate/hole/repeaters/insert cubicArray
+/gate/hole/cubicArray/setRepeatNumberX 1
+/gate/hole/cubicArray/setRepeatNumberY 52
+/gate/hole/cubicArray/setRepeatNumberZ 44
+/gate/hole/cubicArray/setRepeatVector 0. 0.36  0.624 cm
+# Repeat these holes in a linear
+/gate/hole/repeaters/insert linear
+/gate/hole/linear/setRepeatNumber 2
+/gate/hole/linear/setRepeatVector 0. 0.18 0.312 cm
+
+
+# Crystal
+# Create the crystal volume
+/gate/SPECThead/daughters/name crystal
+/gate/SPECThead/daughters/insert box
+
+# Define the dimensions of the crystal volume
+/gate/crystal/geometry/setXLength 1. cm
+/gate/crystal/geometry/setYLength  19. cm
+/gate/crystal/geometry/setZLength  28. cm
+
+# Define the position of the crystal volume
+/gate/crystal/placement/setTranslation  0. 0. 0. cm
+
+
+# Set the material associated with the crystal volume
+/gate/crystal/setMaterial NaI
+
+# Define some visualisation options
+/gate/crystal/vis/setColor yellow
+
+# Back-compartment
+# Create the back-compartment volume
+/gate/SPECThead/daughters/name compartment
+/gate/SPECThead/daughters/insert box
+
+# Define the dimensions of the  back-compartment volume
+/gate/compartment/geometry/setXLength 2.5 cm
+/gate/compartment/geometry/setYLength 19. cm
+/gate/compartment/geometry/setZLength 28. cm
+
+# Define the position of the back-compartment volume
+/gate/compartment/placement/setTranslation   1.75 0. 0. cm
+
+# Set the material of the  back-compartment volume
+/gate/compartment/setMaterial Glass
+
+# Define some visualisation optbenchmarkPET.Cions
+/gate/compartment/vis/setColor grey
+
+#Attach PhantomSD to record Compton interactions in the back-compartment volume
+/gate/compartment/attachPhantomSD
+
+
+# Table
+# Create the table volume
+/gate/world/daughters/name table
+/gate/world/daughters/insert box
+
+# Define the dimensions of the table volume
+#/gate/table/geometry/setXLength 0.6 cm
+#/gate/table/geometry/setYLength 8. cm
+#/gate/table/geometry/setZLength 34. cm
+#/gate/table/placement/setRotationAxis 0 0 1
+#/gate/table/placement/setRotationAngle 90 deg
+
+# Define the position of the table volume
+#/gate/table/placement/setTransl7049ation 0. -5.3 0. cm
+
+# Translate the table along the Z axis
+#/gate/table/moves/insert translation
+#/gate/table/translation/setSpeed 0 0 0.04 cm/s
+
+# Set the material associated with the table volume
+#/gate/table/setMaterial Glass
+
+# Define some visualisation options
+#/gate/table/vis/setColor grey
+
+# Attach PhantomSD to record Compton interactions in the table volume
+#/gate/table/attachPhantomSD
+
+
+# PHANTOM
+# Create the phantom volume
+/gate/world/daughters/name Phantom
+/gate/world/daughters/insert cylinder
+
+# Define the dimensions of the phantom volume
+/gate/Phantom/geometry/setRmax 5.  cm
+/gate/Phantom/geometry/setRmin 0. cm
+/gate/Phantom/geometry/setHeight 20. cm
+
+# Define the position of the phantom volume
+/gate/Phantom/placement/setTranslation 0. 0. -6. cm
+
+# Translate the phantom along the Z axis
+/gate/Phantom/moves/insert translation
+/gate/Phantom/translation/setSpeed 0 0 0.04 cm/s
+ 
+# Set the material corresponding to the phantom volume
+/gate/Phantom/setMaterial Water
+#/gate/Phantom/setMaterial Air
+
+# Define some visualisation options
+/gate/Phantom/vis/setColor blue
+/gate/Phantom/vis/forceWireframe
+
+# Attach PhantomSD to record Compton interactions in the phantom volume
+/gate/Phantom/attachPhantomSD
+
+# SOURCE
+# Add an extra object for source confinement
+/gate/Phantom/daughters/name movsource
+/gate/Phantom/daughters/insert cylinder
+
+# Define the dimensions of the source volume
+/gate/movsource/geometry/setRmax 2.  cm
+/gate/movsource/geometry/setRmin 0. cm
+/gate/movsource/geometry/setHeight 5. cm
+/gate/movsource/placement/setTranslation 0. 0. -6. cm
+
+
+# Set the material corresponding to the phantom volume
+/gate/movsource/setMaterial Water
+
+# Define some visualisation options
+/gate/movsource/vis/setColor magenta
+/gate/movsource/attachPhantomSD
+
+# Show how the geometry moves with time
+#/gate/timing/setTime 0. s
+#/gate/timing/setTime 37.5 s
+#/gate/timing/setTime 75 s
+#/gate/timing/setTime 112.5 s
+#/gate/timing/setTime 150 s
+#/gate/timing/setTime 187.5 s
+#/gate/timing/setTime 225 s
+#/gate/timing/setTime 262.5 s
+#/gate/timing/setTime 300 s
+#/gate/timing/setTime 337.5 s
+#/gate/timing/setTime 375 s
+#/gate/timing/setTime 412.5 s
+#/gate/timing/setTime 450 s
+#/gate/timing/setTime 487.5 s
+#/gate/timing/setTime 525 s
+#/gate/timing/setTime 562.5 s
+#/gate/timing/setTime 600 s
+
+
+# SENSITIVE DETECTORS
+# GATE provides two sensitive detectors, which have two different functions
+# Using them properly is very important for getting accurate results
+ 
+# Crystal SD
+# The crystal SD makes it possible to record hits in a sensitive volume (e.g.,. in a scintillation crystal)
+# It must be attached to any volume for which hit-data must be obtained
+# For recording hits in the NaI volume only, the name of which is crystal, this volume is attached 
+# to the crystal SD
+/gate/crystal/attachCrystalSD
+
+# Phantom SD
+# The phantom SD makes it possible to record Compton events in the volumes within the field of view
+# This can provide information for result analysis to discriminate between 
+# scattered and unscattered photons
+# It must be attached to each and every volume for whom Compton interactions have to be recorded
+/gate/Phantom/attachPhantomSD
+
+
+# SYSTEM
+# The system acts as an interpretor between the GATE geometry and data outputs for reconstruction 
+# in our case, the Interfile writer
+# A system must know which components of the geometry are parts of the scanner, and what 
+# their role are.
+# For the moment, there is only a system SPECThead, which was built when the SPECThead volume
+# was inserted. 
+
+
+# The SPECThead system is made of three levels: base (for the head), crystal (for the crystal and crystal matrix) 
+# and pixel (for individual crystals for pixellated gamma camera)
+# For now, only the base of the system is attached to a volume: the volume SPECThead
+# For the system to get information about your crystal, the level crystal must be attached to the volume 
+# that has been defined for the scintillating crystal (crystal)
+/gate/systems/SPECThead/crystal/attach crystal
+# Look at the system
+/gate/systems/SPECThead/describe
+
+
+
+/gate/run/initialize
+
+# Show how the geometry moves with time
+/gate/timing/setTime 0. s
+/gate/timing/setTime 37.5 s
+/gate/timing/setTime 75 s
+/gate/timing/setTime 112.5 s
+/gate/timing/setTime 150 s
+/gate/timing/setTime 187.5 s
+/gate/timing/setTime 225 s
+/gate/timing/setTime 262.5 s
+/gate/timing/setTime 300 s
+/gate/timing/setTime 337.5 s
+/gate/timing/setTime 375 s
+/gate/timing/setTime 412.5 s
+/gate/timing/setTime 450 s
+/gate/timing/setTime 487.5 s
+/gate/timing/setTime 525 s
+/gate/timing/setTime 562.5 s
+/gate/timing/setTime 600 s
+
+
+/control/execute Physicslist_EM_std.mac
+/gate/physics/init
+
+
+# PHYSICS
+# Select the processes to consider
+#/gate/physics/gamma/selectRayleigh lowenergy
+#/gate/physics/gamma/selectPhotoelectric lowenergy
+#/gate/physics/gamma/selectCompton lowenergy
+#/gate/physics/gamma/selectGammaConversion inactive
+#/gate/physics/gamma/listProcesses
+
+#Set some cuts to speed up the simulation
+# X-rays are traked until their energy fell under 20 keV
+#/gate/physics/setXRayCut 200. keV
+#Cut in order not to follow the secondary electrons
+#/gate/physics/setElectronCut 1. km
+#/gate/physics/setDeltaRayCut 1. GeV
+
+
+/gate/source/addSource SourceConfinement
+
+# Define the shape of the source
+/gate/source/SourceConfinement/gps/type Volume
+/gate/source/SourceConfinement/gps/shape Cylinder
+
+# Define the dimensions of the source
+#/gate/source/SourceConfinement/gps/radius 4. cm
+#/gate/source/SourceConfinement/gps/halfz 30. cm
+/gate/source/SourceConfinement/gps/radius 2. cm
+/gate/source/SourceConfinement/gps/halfz 14.5 cm
+
+
+
+
+# Define the placement of the source
+/gate/source/SourceConfinement/gps/centre 0. 0. 0. cm
+
+# Define the source as a gamma source
+/gate/source/SourceConfinement/gps/particle gamma
+
+# Define the gamma energy 
+/gate/source/SourceConfinement/gps/energy 140. keV
+
+# Set the activity of the source
+/gate/source/SourceConfinement/setActivity 30000. Bq
+
+# Define a confinement
+# the activity cannot move with time so the attenuating medium is moved and the activity is forced to be in the 
+# attenuating medium
+/gate/source/SourceConfinement/gps/confine movsource_P
+
+# Define the emission direction (4 str)
+/gate/source/SourceConfinement/gps/angtype iso
+/gate/source/SourceConfinement/gps/mintheta 0. deg
+/gate/source/SourceConfinement/gps/maxtheta 180. deg
+/gate/source/SourceConfinement/gps/minphi 0. deg
+/gate/source/SourceConfinement/gps/maxphi 360. deg
+
+
+#/gate/geometry/enableAutoUpdate
+
+
+# EXPERIMENT
+# Define the parameters of the experiment  (start time, stop time and time slice)
+# The number of projections depends on the number of time slice, the rotation speed of the system and the 
+# number of heads
+# Here, define a total acquisition of 8 seconds by step of 0.05 seconds 
+# This will give 8 projections by head by table position
+#/gate/application/setTimeSlice      37.5  s
+#/gate/application/setTimeStart      0.    s
+#/gate/application/setTimeStop      600.  s
+/gate/application/setTimeSlice     0.1 s
+/gate/application/setTimeStart     0.0   s
+/gate/application/setTimeStop      0.6 s
+
+
+# VERBOSITY
+/control/verbose 0
+#/grdm/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+/gate/application/verbose 0
+#/gate/generator/verbose 0
+#/gate/stacking/verbose 0
+#/gate/event/verbose 0
+/gate/source/verbose 0
+#/gate/output/projection/verbose 0
+#/gate/output/verbose 2	
+
+# LET'S RUN THE SIMULATION!
+/gate/application/startDAQ

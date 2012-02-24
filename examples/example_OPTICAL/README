@@ -1,0 +1,9 @@
+For the optical photon applications, start the following macro :
+--------------------------------------------------------------
+opticalMacro.mac
+
+
+All macros which are launch by the main macro are includedin the "macro" folder.
+
+To analyse the output data, you need to run the code "compare_to_reference.C"
+with the ROOT software. (root -l compare_to_reference.C)

@@ -1,0 +1,162 @@
+
+# SPECT flexibility benchmark
+# using ARF simulation
+# Patrice Descourt nov 2008
+# 3rd stage : using ARF tables for projection 
+
+# VISUALISATION
+/vis/disable
+#/control/execute visu.mac
+
+/gate/geometry/setMaterialDatabase ../../GateMaterials.db
+
+# World
+# Define the world dimensions
+/gate/world/geometry/setXLength 100 cm
+/gate/world/geometry/setYLength 100 cm
+/gate/world/geometry/setZLength 100 cm
+
+
+# Scanner Head
+# Create a new box representing the main head-volume
+# SPECThead is the name of the predefined SPECT system
+# Create the SPECT system, which will yield an Interfile output of projection data
+/gate/world/daughters/name SPECThead
+/gate/world/daughters/insert box
+/gate/systems/SPECThead/arf/setARFStage useTables
+
+# Define the dimensions of the main volume
+/gate/SPECThead/geometry/setXLength  4. cm
+/gate/SPECThead/geometry/setYLength 45. cm
+/gate/SPECThead/geometry/setZLength 45. cm
+# Replicate the head (around the Z axis by default) to get a four-head system (heads at 90 degrees)
+/gate/SPECThead/repeaters/insert ring
+/gate/SPECThead/ring/setRepeatNumber 4
+# Define the position of the main volume
+# Move the head 9 cm away from the Z axis, which is the rotation axis and the replication axis
+/gate/SPECThead/placement/setTranslation  24.55 0. 0. cm
+
+# Set the material associated with the main volume
+/gate/SPECThead/setMaterial Air
+/gate/SPECThead/moves/insert orbiting
+/gate/SPECThead/orbiting/setSpeed 0.15 deg/s
+/gate/SPECThead/orbiting/setPoint1 0 0 0 cm
+/gate/SPECThead/orbiting/setPoint2 0 0 1 cm
+
+#
+# now let us use the ARF tables computed in previous stage
+#
+
+/gate/systems/SPECThead/setProjectionPlane 1.5 cm
+/gate/systems/SPECThead/attachToARFSD
+/gate/systems/SPECThead/ARFTables/loadARFTablesFromBinaryFile ARFSPECTBench.bin
+
+
+
+# Look at the system
+/gate/systems/SPECThead/describe
+
+#  P H Y S I C S
+#####
+/gate/physics/addProcess PhotoElectric
+/gate/physics/processes/PhotoElectric/setModel StandardModel
+
+/gate/physics/addProcess Compton
+/gate/physics/processes/Compton/setModel PenelopeModel
+
+/gate/physics/addProcess RayleighScattering
+/gate/physics/processes/RayleighScattering/setModel PenelopeModel
+
+/gate/physics/addProcess ElectronIonisation
+/gate/physics/processes/ElectronIonisation/setModel StandardModel e-
+
+/gate/physics/addProcess Bremsstrahlung
+/gate/physics/processes/Bremsstrahlung/setModel StandardModel e-
+
+/gate/physics/addProcess MultipleScattering e-
+
+/gate/physics/processList Enabled
+/gate/physics/processList Initialized
+
+# INITIALIZE
+# Physics initialization
+/gate/run/initialize
+
+/gate/source/addSource SourceConfinement
+
+# Define the shape of the source
+/gate/source/SourceConfinement/gps/type Point
+# Define the placement of the source
+/gate/source/SourceConfinement/gps/centre 0. 0. 0. cm
+
+# Define the source as a gamma source
+/gate/source/SourceConfinement/gps/particle gamma
+
+# Define the gamma energy 
+/gate/source/SourceConfinement/gps/energy 364.5 keV
+
+
+/gate/source/SourceConfinement/setForcedUnstableFlag true
+/gate/source/SourceConfinement/setForcedHalfLife 694656 s
+
+# Set the activity of the source
+/gate/source/SourceConfinement/setActivity 26666666.6666 Bq
+# Define the emission direction (4 str)
+/gate/source/SourceConfinement/gps/angtype iso
+/gate/source/SourceConfinement/gps/mintheta 0. deg
+/gate/source/SourceConfinement/gps/maxtheta 180. deg
+/gate/source/SourceConfinement/gps/minphi 0. deg
+/gate/source/SourceConfinement/gps/maxphi 360. deg
+
+
+#  R A N D O M
+###############
+# JamesRandom Ranlux64 MersenneTwister
+/gate/random/setEngineName JamesRandom
+#/gate/random/setEngineSeed default
+#/gate/random/setEngineSeed auto
+#/gate/random/setEngineSeed 123456789
+/gate/random/setEngineSeed default
+#/gate/random/resetEngineFrom fileName
+/gate/random/verbose 1
+
+# OUTPUT
+# Select the options of the data output 
+# As there are several modules, settings have to be defined for each module, especially in SPECT, where there 
+# are a lots of hits for only a few counts, so it's better to limit the amount of data produced
+# Here the SingleDigi output can be used if you have your own program to process the data
+
+
+# PROJECTION
+# Makes a set of projections from the crystal hits
+# Define the binning the projection module to be used
+/gate/output/projection/enable
+/gate/output/projection/pixelSizeX 0.45 cm
+/gate/output/projection/pixelSizeY 0.45 cm
+/gate/output/projection/pixelNumberX 100
+/gate/output/projection/pixelNumberY 100
+
+# Specify the projection plane (XY, YZ or ZX)
+/gate/output/projection/projectionPlane YZ
+/gate/output/projection/setFileName benchARFMultiProjections
+
+#	V E R B O S I T Y
+#/gate/verbose Physic    0
+#/gate/verbose Cuts      0
+#/gate/verbose Actor     0
+#/gate/verbose SD        0
+#/gate/verbose Actions   0
+#/gate/verbose Step      0
+#/gate/verbose Error     0
+#/gate/verbose Warning   0
+#/gate/verbose Output    0
+#/gate/verbose Core      0
+
+# EXPERIMENT
+/gate/application/setTimeSlice      37.5  s
+/gate/application/setTimeStart      0.    s
+/gate/application/setTimeStop      600.  s
+
+
+# LET'S RUN THE SIMULATION!
+/gate/application/startDAQ

@@ -1,0 +1,63 @@
+####################
+# CTscanner system #
+####################
+/gate/world/daughters/name CTscanner
+/gate/world/daughters/insert box
+/gate/CTscanner/placement/setTranslation 0. 0. 150.5 mm
+/gate/CTscanner/geometry/setXLength 50. mm
+/gate/CTscanner/geometry/setYLength 50. mm
+/gate/CTscanner/geometry/setZLength 1. mm
+/gate/CTscanner/setMaterial Air
+/gate/CTscanner/vis/forceWireframe
+/gate/CTscanner/vis/setColor white
+
+#############           ############
+# CTSCANNER #   ---->   #  MODULE  #
+#############           ############
+/gate/CTscanner/daughters/name module
+/gate/CTscanner/daughters/insert box
+/gate/module/geometry/setXLength 50. mm
+/gate/module/geometry/setYLength 50. mm
+/gate/module/geometry/setZLength  1. mm
+/gate/module/setMaterial Silicon
+/gate/module/vis/forceWireframe
+/gate/module/vis/setColor white
+
+############           #############
+#  MODULE  #   ---->   # CLUSTER_0 #
+############           #############
+/gate/module/daughters/name cluster
+/gate/module/daughters/insert box
+/gate/cluster/geometry/setXLength 50. mm
+/gate/cluster/geometry/setYLength 50. mm
+/gate/cluster/geometry/setZLength  1. mm
+/gate/cluster/setMaterial Air
+/gate/cluster/vis/forceWireframe
+/gate/cluster/vis/setColor white
+
+############             #############           ###########
+#  MODULE  #   ---->     # CLUSTER_0 #   ---->   # PIXEL_0 #
+############             #############           ###########
+/gate/cluster/daughters/name pixel
+/gate/cluster/daughters/insert box
+/gate/pixel/geometry/setXLength 0.5 mm
+/gate/pixel/geometry/setYLength 0.5 mm
+/gate/pixel/geometry/setZLength 1. mm
+/gate/pixel/setMaterial Silicon
+/gate/pixel/vis/setColor red
+
+# REPEAT PIXEl_0
+/gate/pixel/repeaters/insert cubicArray
+/gate/pixel/cubicArray/setRepeatNumberX 100
+/gate/pixel/cubicArray/setRepeatNumberY 100
+/gate/pixel/cubicArray/setRepeatNumberZ   1
+/gate/pixel/cubicArray/setRepeatVector 0.5 0.5 0.00 mm
+/gate/pixel/cubicArray/autoCenter true
+
+# ATTACH SYSTEM
+/gate/systems/CTscanner/module/attach module
+/gate/systems/CTscanner/cluster_0/attach cluster
+/gate/systems/CTscanner/pixel_0/attach pixel
+
+# ATTACH LAYER
+/gate/pixel/attachCrystalSD

@@ -1,0 +1,8 @@
+/gate/source/addSource                 beamsource
+/gate/source/beamsource/setActivity    1 becquerel
+/gate/source/beamsource/gps/particle   gamma
+/gate/source/beamsource/gps/energytype Mono
+/gate/source/beamsource/gps/monoenergy 511 keV
+/gate/source/beamsource/gps/type       Beam
+/gate/source/beamsource/gps/centre     0 0 -60 mm
+/gate/source/beamsource/gps/direction  0 0 1

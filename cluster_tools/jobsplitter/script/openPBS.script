@@ -1,0 +1,66 @@
+#!/bin/bash
+##############################################################
+#
+#  Standard batch script for pbs in ClusterGATE 
+#  This script will be proccessed by gjs. The
+#  following keywords 
+#   GC_JOBNAME
+#   GC_LOG
+#   GC_ERR
+#   GC_GATE
+#   GC_WORKDIR
+#  will be replaced by actual values.
+#  Do not remove any of them!
+#
+#  The user m u s t edit the 
+#   QUEUEU@HOST 
+#  entry and the name of the my_environment file
+#
+#  DK 31.5.2005
+#    
+##############################################################
+#
+###                            Queue to submit to  <<<<<<<<<< queue and host name must be adapted to your system
+#PBS -q QUEUE@HOST
+#
+###                   batch job stderr and stdout
+#PBS -o localhost:GC_WORKDIR/GC_LOG
+#PBS -e localhost:GC_WORKDIR/GC_ERR
+###                                      Job name
+#PBS -N GC_JOBNAME
+#
+###                     Declare job non-rerunable
+#PBS -r n
+
+
+# FYI
+echo
+echo ---------------------- Job Info ------------------------------
+echo
+echo -e "Name of the working queue \t"     $PBS_QUEUE
+echo -e "Job name                  \t"    $PBS_JOBNAME
+echo -e "Job identifier            \t"    $PBS_JOBID
+echo -e "Working directory is      \t"    $PBS_O_WORKDIR
+echo -e "Running on host           \t"    `hostname`
+echo -e "Start time                \t"    `date`
+echo
+cd $PBS_O_WORKDIR    
+echo $CLUSTERWORKDIR
+
+echo
+echo ---------------------- Job Output ----------------------------
+echo
+
+# H E R E you may set up your environment      <<<<<<<<<<  see include/my_environment.example
+. my_environment
+# executable 
+GC_GATE 
+
+echo
+echo ----------------------- DONE ---------------------------------
+echo
+echo -e "Time after job execution \t"     `date`
+
+exit 0
+
+

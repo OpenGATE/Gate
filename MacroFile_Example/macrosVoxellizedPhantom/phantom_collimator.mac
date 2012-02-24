@@ -1,0 +1,35 @@
+#	V I S U A L I S A T I O N
+#/vis/open OGLSX
+#/vis/viewer/set/viewpointThetaPhi 60 60
+#/vis/viewer/zoom 1.5
+#/vis/drawVolume
+#/vis/viewer/flush
+#/tracking/storeTrajectory 1
+#/vis/scene/add/trajectories 
+#/vis/scene/endOfEventAction accumulate
+/gate/geometry/setMaterialDatabase GateMaterials.db
+
+/gate/verbose Geometry 5
+# 
+# V O X E L I Z E D  M A T R I X   Sebal   B R A I N   P H A N T O M
+/gate/world/setMaterial Vacuum 
+/gate/world/geometry/setXLength 10.0 m
+/gate/world/geometry/setYLength 10.0 m
+/gate/world/geometry/setZLength 10.0 m
+
+/gate/world/daughters/name hof_brain
+/gate/world/daughters/insert collimator
+/gate/hof_brain/geometry/setDimensionX 1. mm
+/gate/hof_brain/geometry/setDimensionY 1. mm
+/gate/hof_brain/geometry/setFocalDistanceX 2. mm
+/gate/hof_brain/geometry/setFocalDistanceY 2. mm
+/gate/hof_brain/geometry/setHeight         4. mm 
+/gate/hof_brain/geometry/setSeptalThickness 4. mm
+/gate/hof_brain/geometry/setInnerRadius     1. mm
+/gate/hof_brain/placement/setTranslation  0. 0. 0. mm
+/gate/hof_brain/placement/setRotationAxis 1 0 0
+/gate/hof_brain/placement/setRotationAngle 0 deg
+/gate/hof_brain/attachPhantomSD
+/gate/geometry/listVolumes
+
+/gate/run/initialize

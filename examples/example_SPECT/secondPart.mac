@@ -1,0 +1,120 @@
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+
+
+# Show how the geometry moves with time
+# ! After the initialization !
+##
+
+/control/execute MoveVisu.mac
+
+
+# D E F I N E  T H E  S O U R C E
+#####
+/gate/source/addSource SourceConfinement
+/gate/source/SourceConfinement/gps/type Volume
+/gate/source/SourceConfinement/gps/shape Cylinder
+/gate/source/SourceConfinement/gps/radius 2. cm
+/gate/source/SourceConfinement/gps/halfz 14.5 cm
+/gate/source/SourceConfinement/gps/centre 0. 0. 0. cm
+/gate/source/SourceConfinement/gps/particle gamma
+/gate/source/SourceConfinement/gps/energy 140. keV
+/gate/source/SourceConfinement/setActivity 30000. Bq
+/gate/source/SourceConfinement/gps/angtype iso
+
+# Define a confinement
+# the activity cannot move with time so the attenuating medium is moved and the activity is forced to be in the 
+# attenuating medium
+##
+/gate/source/SourceConfinement/gps/confine movsource
+
+
+# D I G I T I Z E R
+#####
+
+/gate/digitizer/Singles/insert adder
+/gate/digitizer/Singles/insert blurring
+/gate/digitizer/Singles/blurring/setResolution 0.10
+/gate/digitizer/Singles/blurring/setEnergyOfReference 140. keV
+/gate/digitizer/Singles/insert spblurring
+/gate/digitizer/Singles/spblurring/setSpresolution 2.0 mm
+/gate/digitizer/Singles/spblurring/verbose 0
+/gate/digitizer/Singles/insert thresholder
+/gate/digitizer/Singles/thresholder/setThreshold 20. keV
+/gate/digitizer/Singles/insert upholder
+/gate/digitizer/Singles/upholder/setUphold 190. keV
+
+
+# O U T P U T
+#####
+
+/gate/output/root/enable
+/gate/output/root/setFileName benchSPECT
+/gate/output/root/setRootSinglesAdderFlag 1
+/gate/output/root/setRootSinglesBlurringFlag 1 
+/gate/output/root/setRootSinglesSpblurringFlag 1
+/gate/output/root/setRootSinglesThresholderFlag 1
+/gate/output/root/setRootSinglesUpholderFlag 1
+
+
+
+/gate/output/ascii/setOutFileSinglesAdderFlag 0
+/gate/output/ascii/setOutFileSinglesSpblurringFlag 0
+/gate/output/ascii/setOutFileSinglesBlurringFlag 0
+/gate/output/ascii/setOutFileSinglesThresholderFlag 0
+/gate/output/ascii/setOutFileSinglesUpholderFlag 0
+
+#   R A N D O M
+# JamesRandom Ranlux64 MersenneTwister
+/gate/random/setEngineName Ranlux64
+#/gate/random/setEngineSeed default
+#/gate/random/setEngineSeed auto
+/gate/random/setEngineSeed 123456789
+#/gate/random/resetEngineFrom fileName
+/gate/random/verbose 1
+
+
+# P R O J E C T I O N
+#####
+/gate/output/projection/enable
+/gate/output/projection/setFileName YourProjection
+/gate/output/projection/pixelSizeX 0.904 mm
+/gate/output/projection/pixelSizeY 0.904 mm
+/gate/output/projection/pixelNumberX 128
+/gate/output/projection/pixelNumberY 128
+
+# Specify the projection plane (XY, YZ or ZX)
+##
+/gate/output/projection/projectionPlane YZ
+
+
+
+# E X P E R I M E N T 
+#####
+
+/gate/application/setTimeSlice      37.5  s
+/gate/application/setTimeStart      0.    s
+/gate/application/setTimeStop      600.  s
+
+
+# V E R B O S I T Y
+#####
+
+/control/execute Verbose.mac
+
+# L E T' S   R U N   T H E   S I M U L A T I O N  !
+#####
+/gate/application/startDAQ

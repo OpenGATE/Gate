@@ -1,0 +1,23 @@
+   Examples of a ROOT C++ code-macro to:          
+   -----------------------------------           
+   1/ read an output root data file              
+   2/ create a loop on each event which are      
+      stored during the simultion                
+   3/ perfome a data processing                  
+   4/ plot the results                           
+                                                 
+
+How To Execute the examples ?
+
+1/ Tape "root" to start a session
+2/ To execute a macro file, tape: .X macroFileName
+3/ .q to quit root
+
+In The Directory execROOT you have the execute root files.
+1/ cd execROOT
+2/ make
+3/ ./PET_Analyse ../data_PET.root
+4/ ./VoxelPhantom_Analyse ../data_Voxel_Phantom.root
+
+For details about the root package:
+http://root.cern.ch/

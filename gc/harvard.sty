@@ -1,0 +1,288 @@
+%% harvard.sty - harvard bibliography style Version 2.0.5
+%% Author: Peter Williams pwil3058@bigpond.net.au
+%% Copyright: Peter Williams 1994
+%%
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%   http://www.latex-project.org/lppl.txt
+%% and version 1.3 or later is part of all distributions of LaTeX
+%% version 2005/12/01 or later.
+%%
+%% This work has the LPPL maintenance status `maintained'.
+%% 
+%% The Current Maintainers of this work are Peter Williams and Thorsten Schnier.
+%%
+%% This work consists of all files listed in manifest.txt.
+%%
+%% Licence notice added on behalf of Peter Williams and Thorsten Schnier
+%% by Clea F. Rees 2009/01/30.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{harvard}
+\RequirePackage{ifthen}
+\IfFileExists{html.sty}{\RequirePackage{html}
+\newcommand{\harvardurl}[1]{\htmladdnormallink*{\textbf{URL:} \textit{##1}}{##1}}
+}{
+\newcommand{\harvardurl}[1]{\textbf{URL:} \textit{##1}}
+}
+\DeclareOption{full}{\citationmode{full}}
+\DeclareOption{abbr}{\citationmode{abbr}}
+\DeclareOption{default}{\citationmode{default}}
+\DeclareOption{agsmcite}{\citationstyle{agsm}}
+\DeclareOption{dcucite}{\citationstyle{dcu}}
+\DeclareOption{round}{\harvardparenthesis{round}\harvardyearparenthesis{round}}
+\DeclareOption{curly}{\harvardparenthesis{curly}\harvardyearparenthesis{curly}}
+\DeclareOption{angle}{\harvardparenthesis{angle}\harvardyearparenthesis{angle}}
+\DeclareOption{square}{\harvardparenthesis{square}\harvardyearparenthesis{square}}
+\DeclareOption{none}{\harvardparenthesis{none}\harvardyearparenthesis{none}}
+\DeclareOption*{
+  \global\edef\HAR@tmp{\CurrentOption}
+%% Berwin A. Turlach <berwin@alphasun.anu.edu.au>
+  \AtEndDocument{\bibliographystyle{\HAR@tmp}}
+}
+
+%% Kristoffer H. Rose <kris@diku.dk> 1995/03/01:
+%%   do not expand macros in citations: put definitions on .aux file instead.
+{\catcode`\:=12 \catcode`\-=12 \catcode`\>=12 \catcode`\<=12 %
+ \gdef\codeof#1{\expandafter\codeof@\meaning#1<-:}%
+ \gdef\codeof@#1:->#2<-:{#2}}
+
+\def\harvardpreambletext{\catcode`\#=12 \harvardpreambletext@}
+\def\harvardpreambletext@#1{\def\next{#1}\catcode`\#=6 %
+  \immediate\write\@auxout{\string\harvardpreambledefs{%
+      \string\AtBeginDocument{\codeof\next}}}}
+
+\def\harvardpreambledefs#1{#1\gdef\harvardpreambledefs##1{}}
+
+\newcommand{\harvarditem}[4][\null]{\item[]%
+\if@filesw{ \def\protect##1{\string ##1\space}%
+\ifthenelse{\equal{#1}{\null}}
+  {\def\next{{#4}{#2}{#2}{#3}}}
+  {\def\next{{#4}{#2}{#1}{#3}}}
+\immediate\write\@auxout{\string\harvardcite\codeof\next}%
+}\fi%
+\protect\hspace*{-\labelwidth}\protect\hspace*{-\labelsep}\ignorespaces%
+}
+
+\newcommand{\harvardcite}[4]{
+  \global\@namedef{HAR@fn@#1}{#2}
+  \global\@namedef{HAR@an@#1}{#3}
+  \global\@namedef{HAR@yr@#1}{#4}
+  \global\@namedef{HAR@df@#1}{\csname HAR@fn@#1\endcsname}
+}
+
+\newcommand{\citationmode}[1]{
+  \renewcommand{\HAR@citemode}{\csname HAR@cite@#1\endcsname}
+}
+
+\newcommand{\HAR@cite@full}{HAR@fn@}
+\newcommand{\HAR@cite@abbr}{HAR@an@}
+\newcommand{\HAR@cite@default}{HAR@df@}
+\newcommand{\HAR@citemode}{\HAR@cite@default}
+
+\newcommand{\HAR@citetoaux}[1]{%
+  \if@filesw\immediate\write\@auxout{\string\citation{#1}}\fi%
+}
+
+\newcommand{\HAR@checkdef}[2]{\@ifundefined{HAR@df@#1}%
+  {\textbf{?}\@warning{Citation '#1' on page \thepage \space undefined}}%
+  {#2}%
+}
+
+\newcommand{\HAR@dolist}[2]{\def\@citea{\null}\@for\@citeb:=#1\do%
+{\@citea\def\@citea{\HAR@hisep\penalty\@m\ }\HAR@checkdef{\@citeb}%
+{#2{\@citeb}\HAR@hysep\penalty\@m\ %
+\HAR@year{\@citeb}\HAR@setd{\@citeb}}}%
+}
+
+\def\@enamedef#1{\expandafter\def\csname #1\expandafter\endcsname\expandafter}
+\newcommand{\HAR@name}[1]{\csname \HAR@citemode#1\endcsname}
+\newcommand{\HAR@fname}[1]{\csname HAR@fn@#1\endcsname}
+\newcommand{\HAR@aname}[1]{\csname HAR@an@#1\endcsname}
+\newcommand{\HAR@year}[1]{\csname HAR@yr@#1\endcsname}
+\newcommand{\HAR@setd}[1]{%
+\global\@enamedef{HAR@df@#1}{\csname HAR@an@#1\endcsname}%
+}
+
+%% Berwin A. Turlach <berwin@alphasun.anu.edu.au>
+\global\@namedef{HAR@df@*}{\csname HAR@fn@*\endcsname}
+\renewcommand{\nocite}[1]{\HAR@citetoaux{#1}%
+\@for\@citeb:=#1\do%
+{\HAR@checkdef{\@citeb}{}}}%
+
+\renewcommand{\cite}{\@ifstar{\@ifstar{\HAR@acite}{\HAR@fcite}}{\HAR@dcite}}
+
+\newcommand{\HAR@dcite}[2][\null]{\HAR@citetoaux{#2}%
+{\harvardleft\HAR@dolist{#2}{\HAR@name}\ifthenelse{\equal{#1}{\null}}%
+  {}{, #1}\harvardright}%
+}
+
+\newcommand{\HAR@acite}[2][\null]{\HAR@citetoaux{#2}%
+{\harvardleft\HAR@dolist{#2}{\HAR@aname}\ifthenelse{\equal{#1}{\null}}%
+  {}{, #1}\harvardright}%
+}
+
+\newcommand{\HAR@fcite}[2][\null]{\HAR@citetoaux{#2}%
+{\harvardleft\HAR@dolist{#2}{\HAR@fname}\ifthenelse{\equal{#1}{\null}}%
+  {}{, #1}\harvardright}%
+}
+
+\newcommand{\citeaffixed}{\@ifstar{\@ifstar{\HAR@aciteaff}{\HAR@fciteaff}}%
+{\HAR@dciteaff}%
+}
+
+\newcommand{\HAR@fciteaff}[3][\null]{\HAR@citetoaux{#2}%
+{\harvardleft#3\ \HAR@dolist{#2}{\HAR@fname}\ifthenelse{\equal{#1}{\null}}%
+    {}{, #1}\harvardright}%
+}
+
+\newcommand{\HAR@aciteaff}[3][\null]{\HAR@citetoaux{#2}%
+{\harvardleft#3\ \HAR@dolist{#2}{\HAR@aname}\ifthenelse{\equal{#1}{\null}}%
+    {}{, #1}\harvardright}%
+}
+
+\newcommand{\HAR@dciteaff}[3][\null]{\HAR@citetoaux{#2}%
+{\harvardleft#3\ \HAR@dolist{#2}{\HAR@name}\ifthenelse{\equal{#1}{\null}}%
+    {}{, #1}\harvardright}%
+}
+
+\newcommand{\citeasnoun}{\@ifstar{\@ifstar{\HAR@aciteasn}{\HAR@fciteasn}}%
+{\HAR@dciteasn}%
+}
+
+\newcommand{\HAR@fciteasn}[2][\null]{\HAR@citetoaux{#2}\HAR@checkdef{#2}{%
+{\HAR@fname{#2}\ \harvardyearleft\HAR@year{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{, #1}\harvardyearright}\HAR@setd{#2}}%
+}
+
+\newcommand{\HAR@aciteasn}[2][\null]{\HAR@citetoaux{#2}\HAR@checkdef{#2}{%
+{\HAR@aname{#2}\ \harvardyearleft\HAR@year{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{, #1}\harvardyearright}\HAR@setd{#2}}%
+}
+
+\newcommand{\HAR@dciteasn}[2][\null]{\HAR@citetoaux{#2}\HAR@checkdef{#2}{%
+{\HAR@name{#2}\ \harvardyearleft\HAR@year{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{, #1}\harvardyearright}\HAR@setd{#2}}%
+}
+
+\newcommand{\possessivecite}{\@ifstar{\@ifstar{\HAR@acitepos}{\HAR@fcitepos}}%
+{\HAR@dcitepos}%
+}
+
+\newcommand{\HAR@fcitepos}[2][\null]{\HAR@citetoaux{#2}\HAR@checkdef{#2}{%
+{\HAR@fname{#2}'s \harvardyearleft\HAR@year{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{, #1}\harvardyearright}\HAR@setd{#2}}%
+}
+
+\newcommand{\HAR@acitepos}[2][\null]{\HAR@citetoaux{#2}\HAR@checkdef{#2}{%
+{\HAR@aname{#2}'s \harvardyearleft\HAR@year{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{, #1}\harvardyearright}\HAR@setd{#2}}%
+}
+
+\newcommand{\HAR@dcitepos}[2][\null]{\HAR@citetoaux{#2}\HAR@checkdef{#2}{%
+{\HAR@name{#2}'s \harvardyearleft\HAR@year{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{, #1}\harvardyearright}\HAR@setd{#2}}%
+}
+
+\newcommand{\citename}{\@ifstar{\@ifstar{\HAR@acitenam}\HAR@fcitenam}%
+{\HAR@dcitenam}%
+}
+
+\newcommand{\HAR@fcitenam}[2][\null]{\HAR@citetoaux{#2}\HAR@checkdef{#2}{%
+{\HAR@fname{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{\ \harvardleft#1\harvardright}}}%
+}
+
+\newcommand{\HAR@acitenam}[2][\null]{\HAR@citetoaux{#2}\HAR@checkdef{#2}{%
+{\HAR@aname{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{\ \harvardleft#1\harvardright}}}%
+}
+
+\newcommand{\HAR@dcitenam}[2][\null]{\HAR@citetoaux{#2}\HAR@checkdef{#2}{%
+{\HAR@name{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{\ \harvardleft#1\harvardright}}}%
+}
+
+\newcommand{\citeyear}{\@ifstar{\HAR@citeyrnb}{\HAR@citeyr}}
+
+\newcommand{\HAR@citeyrnb}[2][\null]{\HAR@citetoaux{#2}%
+{\def\@citea{\null}\@for\@citeb:=#2\do%
+{\@citea\def\@citea{\HAR@hisep\penalty\@m\ }\HAR@checkdef{\@citeb}%
+{\HAR@year{\@citeb}}}\ifthenelse{\equal{#1}{\null}}%
+{}{, #1}}%
+}
+
+\newcommand{\HAR@citeyr}[2][\null]{\HAR@citetoaux{#2}%
+{\harvardleft\def\@citea{\null}\@for\@citeb:=#2\do%
+{\@citea\def\@citea{\HAR@hisep\penalty\@m\ }\HAR@checkdef{\@citeb}%
+{\HAR@year{\@citeb}}}\ifthenelse{\equal{#1}{\null}}%
+{}{, #1}\harvardright}%
+}
+
+\newcommand{\HAR@hysep@apsr}{\null}
+\newcommand{\HAR@hisep@apsr}{;}
+\newcommand{\HAR@hysep@agsm}{\null}
+\newcommand{\HAR@hisep@agsm}{,}
+\newcommand{\HAR@hysep@dcu}{,}
+\newcommand{\HAR@hisep@dcu}{;}
+\newcommand{\HAR@and@agsm}{\&}
+\newcommand{\HAR@and@dcu}{and}
+\newcommand{\HAR@and@apsr}{and}
+\newcommand{\HAR@hysep}{\HAR@hysep@agsm}
+\newcommand{\HAR@hisep}{\HAR@hisep@agsm}
+\newcommand{\harvardand}{\HAR@and@agsm}
+\newcommand{\citationstyle}[1]{%
+  \renewcommand{\HAR@hysep}{\csname HAR@hysep@#1\endcsname}
+  \renewcommand{\HAR@hisep}{\csname HAR@hisep@#1\endcsname}
+  \renewcommand{\harvardand}{\csname HAR@and@#1\endcsname}
+}
+
+\newcommand{\HAR@bl@round}{(}
+\newcommand{\HAR@br@round}{)}
+\newcommand{\HAR@bl@square}{[}
+\newcommand{\HAR@br@square}{]}
+\newcommand{\HAR@bl@curly}{\{}
+\newcommand{\HAR@br@curly}{\}}
+\newcommand{\HAR@bl@angle}{$<$}
+\newcommand{\HAR@br@angle}{$>$}
+\newcommand{\HAR@bl@none}{}
+\newcommand{\HAR@br@none}{}
+\newcommand{\harvardleft}{\HAR@bl@round}
+\newcommand{\harvardright}{\HAR@br@round}
+\newcommand{\harvardparenthesis}[1]{
+  \renewcommand{\harvardleft}{\csname HAR@bl@#1\endcsname}
+  \renewcommand{\harvardright}{\csname HAR@br@#1\endcsname}
+  \harvardyearparenthesis{#1}
+}
+
+\newcommand{\harvardyearleft}{\HAR@bl@round}
+\newcommand{\harvardyearright}{\HAR@br@round}
+\newcommand{\harvardyearparenthesis}[1]{
+  \renewcommand{\harvardyearleft}{\csname HAR@bl@#1\endcsname}
+  \renewcommand{\harvardyearright}{\csname HAR@br@#1\endcsname}
+}
+
+\newcommand{\HAR@checkcitations}[4]{
+  \def\HAR@tempa{#2}\expandafter
+  \ifx \csname HAR@fn@#1\endcsname \HAR@tempa
+    \def\HAR@tempa{#3}\expandafter
+    \ifx \csname HAR@an@#1\endcsname \HAR@tempa
+      \def\HAR@tempa{#4}\expandafter
+      \ifx \csname HAR@yr@#1\endcsname \HAR@tempa
+      \else
+        \@tempswatrue
+      \fi
+    \else
+      \@tempswatrue
+    \fi
+  \else
+    \@tempswatrue
+  \fi
+}
+ 
+\AtEndDocument{\renewcommand{\harvardcite}{\HAR@checkcitations}}
+
+\ExecuteOptions{agsm,agsmcite,default,round}
+\ProcessOptions*

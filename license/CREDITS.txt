@@ -1,0 +1,69 @@
+Institutions who contributed code:
+---------------------------------
+
+1. Institute for High Enegry Physics (IPHE/LPHE)
+   University of Lausanne (UNIL/EPFL)
+   CH-1015 Lausanne, Switzerland
+
+2. CEA I²BM/SHFJ
+   Orsay, France 
+
+3. ELIS, University of Ghent
+   B-9000 Ghent, Belgium
+
+4. University of Massachusetts Medical School (UMASS)
+   Division of Nuclear Medicine
+   Worcester, MA 01655, USA
+   
+5. CEA IRFU
+   Saclay, France 
+
+6. CNRS Creatis 
+   Lyon, France 
+
+7. Delft University of Technology
+   2629 JB Delft, Netherlands
+
+8. CNRS IN2P3/CPPM 
+   Marseille, France
+
+9. CNRS IN2P3/IMNC
+   Orsay, France
+
+
+Programmers:
+-----------
+
+        Daniel STRUL (UNIL)
+	Giovanni SANTIN (UNIL)
+        Luc SIMON (UNIL)
+	Martin REY (UNIL/EPFL)
+	Jean Marc VIEIRA (UNIL/EPFL)
+	Claude COMTAT (CEA-SHFJ)
+        Sebastien JAN (CEA-SHFJ)
+	Steven STAELENS (ELIS)
+	Corinne GROISELLE (UMASS)
+	David GUEZ (CEA-DAPNIA)
+	Richard TACHEREAU (UCLA)
+	David GUEZ (CEA-DAPNIA)
+	Delphine LAZARO (INSERM Paris)
+	D.J. van der Laan (Delft University)
+	Franca Cassol-Brunner (CPPM Marseille)
+	Didier Benoit (CPPM Marseille)
+	Simon Stute (IMNC Orsay)
+	Niklas Rehfeld (IMNC Orsay)
+	David Sarrut (CNRS Creatis)
+	Thibault Frisson (CNRS Creatis)
+
+
+Technical Coordination:
+----------------------
+	 
+	Daniel STRUL (UNIL) 2002-2003
+        Sébastien JAN (CEA) 2003-
+         
+Spokesperson:
+------------
+
+        Christian MOREL (UNIL/EPFL) 2002-2005
+	Irène Buvat (IMNC/CNRS) 2005-

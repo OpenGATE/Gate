@@ -1,0 +1,61 @@
+# GEOMETRY
+# Set the geometry in auto-update mode, so that we see the geometry being build
+#/control/execute visu.mac
+/vis/disable
+
+
+/gate/geometry/setMaterialDatabase ../../GateMaterials.db
+
+
+# World
+# Define the world dimensions
+
+/gate/world/geometry/setXLength 74 cm
+/gate/world/geometry/setYLength 66 cm
+/gate/world/geometry/setZLength 66 cm
+
+# Scanner Head
+# Create a new box representing the main head-volume
+# SPECThead is the name of the predefined SPECT system
+# Create the SPECT system, which will yield an Interfile output of projection data
+/gate/world/daughters/name SPECThead
+/gate/world/daughters/insert box
+#
+# WE WANT TO COMPUTE THE ARF TABLES FROM ARF DATA
+#
+/gate/systems/SPECThead/arf/setARFStage computeTables
+
+# Define the dimensions of the main volume
+/gate/SPECThead/geometry/setXLength  4. cm
+/gate/SPECThead/geometry/setYLength 65. cm
+/gate/SPECThead/geometry/setZLength 65. cm
+
+
+
+/gate/systems/SPECThead/ARFTables/verbose 0
+#
+# DIGITIZER PART OF THE ARF SENSITIVE DETECTOR
+#
+/gate/systems/SPECThead/ARFTables/setEnergyDepositionThreshHold 328. keV
+/gate/systems/SPECThead/ARFTables/setEnergyDepositionUpHold 400. keV
+/gate/systems/SPECThead/ARFTables/setEnergyResolution 0.09
+/gate/systems/SPECThead/ARFTables/setEnergyOfReference 140. keV
+#
+# if we are not interested in photons which deposited less than say 130 keV
+# we put
+#
+/gate/systems/SPECThead/setEnergyDepositionThreshHold 130. keV
+#
+# DISTANCE FROM SOURCE TO DETECTOR PLANE
+# TAKEN TO BE THE PLANE AT HALF DIMENSION OF THE CRYSTAL RESPECTIVELY
+# TO THE SPECTHEAD FRAME
+# here it is 34.5 cm + 1.5 cm
+#
+/gate/systems/SPECThead/ARFTables/setDistanceFromSourceToDetector 36 cm
+#
+# NOW WE ARE  READY TO COMPUTE THE ARF TABLES
+#
+/gate/systems/SPECThead/ARFTables/ComputeTablesFromEnergyWindows ARFData.txt
+/gate/systems/SPECThead/ARFTables/list
+ # SAVE ARF TABLES TO A BINARY FILE FOR PRODUCTION USE
+/gate/systems/SPECThead/ARFTables/saveARFTablesToBinaryFile ARFSPECTBench.bin

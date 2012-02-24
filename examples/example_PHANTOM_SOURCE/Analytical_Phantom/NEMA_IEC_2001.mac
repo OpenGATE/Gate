@@ -1,0 +1,530 @@
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+#
+#  The following phantom is Gate representation of the 
+#  NEMA 2-2001 IQ Phantom.  The dimensions of this phantom 
+#  are taken directly from "NEMA NU 2, Chapter 7, 2001".
+#  
+#   
+#       P H A N T O M   G E O M E T R Y
+/gate/world/daughters/name NEMA_IQ
+/gate/world/daughters/insert box
+/gate/NEMA_IQ/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/NEMA_IQ/geometry/setXLength 30. cm
+/gate/NEMA_IQ/geometry/setYLength 23. cm
+/gate/NEMA_IQ/geometry/setZLength 22. cm
+/gate/NEMA_IQ/setMaterial Air
+/gate/NEMA_IQ/vis/forceWireframe
+/gate/NEMA_IQ/vis/setColor gray
+
+# Upper Half of Phantom
+# Center Section of Upper Outer Shell
+/gate/NEMA_IQ/daughters/name outershell1
+/gate/NEMA_IQ/daughters/insert cylinder
+/gate/outershell1/placement/setTranslation 0.0 -3.5 0.0 cm
+/gate/outershell1/geometry/setRmax 15. cm
+/gate/outershell1/geometry/setHeight 21.4 cm
+/gate/outershell1/geometry/setPhiStart 0. deg
+/gate/outershell1/geometry/setDeltaPhi 180. deg
+/gate/outershell1/setMaterial Plastic
+/gate/outershell1/vis/forceWireframe
+/gate/outershell1/vis/setColor red
+
+# Water in Phantom
+/gate/outershell1/daughters/name upperinterior
+/gate/outershell1/daughters/insert cylinder
+/gate/upperinterior/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/upperinterior/geometry/setRmax 14.7 cm
+/gate/upperinterior/geometry/setRmin  0.0 cm
+/gate/upperinterior/geometry/setHeight 21.4 cm
+/gate/upperinterior/geometry/setPhiStart 0. deg
+/gate/upperinterior/geometry/setDeltaPhi 180. deg
+/gate/upperinterior/setMaterial Water
+/gate/upperinterior/vis/forceWireframe
+/gate/upperinterior/vis/setColor blue
+
+# Plastic Shell Surrounding Center Cylinder
+/gate/upperinterior/daughters/name centercyl
+/gate/upperinterior/daughters/insert cylinder
+/gate/centercyl/placement/setTranslation 0.0 3.5 0.0 cm
+/gate/centercyl/geometry/setRmax 2.5 cm
+/gate/centercyl/geometry/setHeight 21.4 cm
+/gate/centercyl/setMaterial Plastic
+/gate/centercyl/vis/forceWireframe
+/gate/centercyl/vis/setColor red
+
+# Hollow Space in Central Cylinder
+/gate/centercyl/daughters/name centercylin
+/gate/centercyl/daughters/insert cylinder
+/gate/centercylin/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/centercylin/geometry/setRmax 2.1 cm
+/gate/centercylin/geometry/setRmin 0.0 cm
+/gate/centercylin/geometry/setHeight 21.4 cm
+/gate/centercylin/setMaterial Air
+#/gate/centercylin/vis/forceWireframe
+/gate/centercylin/vis/setColor gray
+
+# 10 mm Sphere Exterior
+/gate/upperinterior/daughters/name sphere10
+/gate/upperinterior/daughters/insert sphere
+/gate/sphere10/placement/setTranslation 2.86 8.45367 3.7 cm
+/gate/sphere10/geometry/setRmax 0.6 cm
+/gate/sphere10/setMaterial Plastic
+/gate/sphere10/vis/forceWireframe
+/gate/sphere10/vis/setColor red
+
+# 10 mm Sphere
+/gate/sphere10/daughters/name sphere10in
+/gate/sphere10/daughters/insert sphere
+/gate/sphere10in/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/sphere10in/geometry/setRmax 0.5 cm
+/gate/sphere10in/geometry/setRmin 0.0 cm
+/gate/sphere10in/setMaterial Air
+#/gate/sphere10in/vis/forceWireframe
+/gate/sphere10in/vis/setColor gray
+
+# 10 mm Fill Capillary Exterior
+/gate/upperinterior/daughters/name fill10
+/gate/upperinterior/daughters/insert cylinder
+/gate/fill10/placement/setTranslation 2.86 8.45367 7.5 cm
+/gate/fill10/geometry/setRmax 0.35 cm
+/gate/fill10/geometry/setHeight 6.4 cm
+/gate/fill10/setMaterial Plastic
+/gate/fill10/vis/forceWireframe
+/gate/fill10/vis/setColor red
+
+# 10 mm Fill Capillary
+/gate/fill10/daughters/name fill10in
+/gate/fill10/daughters/insert cylinder
+/gate/fill10in/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/fill10in/geometry/setRmax 0.25 cm
+/gate/fill10in/geometry/setRmin 0. cm
+/gate/fill10in/geometry/setHeight 6.4 cm
+/gate/fill10in/setMaterial Air
+#/gate/fill10in/vis/forceWireframe
+/gate/fill10in/vis/setColor gray
+
+# 13 mm Sphere Exterior
+/gate/upperinterior/daughters/name sphere13
+/gate/upperinterior/daughters/insert sphere
+/gate/sphere13/placement/setTranslation -2.86 8.45367 3.7 cm
+/gate/sphere13/geometry/setRmax 0.75 cm
+/gate/sphere13/setMaterial Plastic
+/gate/sphere13/vis/forceWireframe
+/gate/sphere13/vis/setColor red
+
+# 13 mm Sphere
+/gate/sphere13/daughters/name sphere13in
+/gate/sphere13/daughters/insert sphere
+/gate/sphere13in/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/sphere13in/geometry/setRmax 0.65 cm
+/gate/sphere13in/geometry/setRmin 0.0 cm
+/gate/sphere13in/setMaterial Air
+#/gate/sphere13in/vis/forceWireframe
+/gate/sphere13in/vis/setColor gray
+
+# 13 mm Fill Capillary Exterior
+/gate/upperinterior/daughters/name fill13
+/gate/upperinterior/daughters/insert cylinder
+/gate/fill13/placement/setTranslation -2.86 8.45367 7.5875 cm
+/gate/fill13/geometry/setRmax 0.35 cm
+/gate/fill13/geometry/setHeight 6.225 cm
+/gate/fill13/setMaterial Plastic
+/gate/fill13/vis/forceWireframe
+/gate/fill13/vis/setColor red
+
+# 13 mm Fill Capillary
+/gate/fill13/daughters/name fill13in
+/gate/fill13/daughters/insert cylinder
+/gate/fill13in/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/fill13in/geometry/setRmax 0.25 cm
+/gate/fill13in/geometry/setRmin 0. cm
+/gate/fill13in/geometry/setHeight 6.225 cm
+/gate/fill13in/setMaterial Air
+#/gate/fill13in/vis/forceWireframe
+/gate/fill13in/vis/setColor gray
+
+# 17 mm Sphere Exterior
+/gate/upperinterior/daughters/name sphere17
+/gate/upperinterior/daughters/insert sphere
+/gate/sphere17/placement/setTranslation -5.72 3.5 3.7 cm
+/gate/sphere17/geometry/setRmax 0.9 cm
+/gate/sphere17/setMaterial Plastic
+/gate/sphere17/vis/forceWireframe
+/gate/sphere17/vis/setColor red
+
+# 17 mm Sphere
+/gate/sphere17/daughters/name sphere17in
+/gate/sphere17/daughters/insert sphere
+/gate/sphere17in/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/sphere17in/geometry/setRmax 0.85 cm
+/gate/sphere17in/geometry/setRmin 0.0 cm
+/gate/sphere17in/setMaterial Air
+#/gate/sphere17in/vis/forceWireframe
+/gate/sphere17in/vis/setColor gray
+
+# 17 mm Fill Capillary Exterior
+/gate/upperinterior/daughters/name fill17
+/gate/upperinterior/daughters/insert cylinder
+/gate/fill17/placement/setTranslation -5.72 3.5 7.675 cm
+/gate/fill17/geometry/setRmax 0.3 cm
+/gate/fill17/geometry/setHeight 6.05 cm
+/gate/fill17/setMaterial Plastic
+/gate/fill17/vis/forceWireframe
+/gate/fill17/vis/setColor red
+
+# 17 mm Fill Capillary
+/gate/fill17/daughters/name fill17in
+/gate/fill17/daughters/insert cylinder
+/gate/fill17in/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/fill17in/geometry/setRmax 0.25 cm
+/gate/fill17in/geometry/setRmin 0. cm
+/gate/fill17in/geometry/setHeight 6.05 cm
+/gate/fill17in/setMaterial Air
+#/gate/fill17in/vis/forceWireframe
+/gate/fill17in/vis/setColor gray
+
+# 37 mm Sphere Exterior
+/gate/upperinterior/daughters/name sphere37
+/gate/upperinterior/daughters/insert sphere
+/gate/sphere37/placement/setTranslation 5.72 3.5 3.7 cm
+/gate/sphere37/geometry/setRmax 1.95 cm
+/gate/sphere37/setMaterial Plastic
+/gate/sphere37/vis/forceWireframe
+/gate/sphere37/vis/setColor red
+
+# 37 mm Sphere
+/gate/sphere37/daughters/name sphere37in
+/gate/sphere37/daughters/insert sphere
+/gate/sphere37in/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/sphere37in/geometry/setRmax 1.85 cm
+/gate/sphere37in/geometry/setRmin 0.0 cm
+/gate/sphere37in/setMaterial Air
+#/gate/sphere37in/vis/forceWireframe
+/gate/sphere37in/vis/setColor gray
+
+# 37 mm Fill Capillary Exterior
+/gate/upperinterior/daughters/name fill37
+/gate/upperinterior/daughters/insert cylinder
+/gate/fill37/placement/setTranslation 5.72 3.5 8.175 cm
+/gate/fill37/geometry/setRmax 0.35 cm
+/gate/fill37/geometry/setHeight 5.05 cm
+/gate/fill37/setMaterial Plastic
+/gate/fill37/vis/forceWireframe
+/gate/fill37/vis/setColor red
+
+# 37 mm Fill Capillary
+/gate/fill37/daughters/name fill37in
+/gate/fill37/daughters/insert cylinder
+/gate/fill37in/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/fill37in/geometry/setRmax 0.25 cm
+/gate/fill37in/geometry/setRmin 0. cm
+/gate/fill37in/geometry/setHeight 5.05 cm
+/gate/fill37in/setMaterial Air
+#/gate/fill37in/vis/forceWireframe
+/gate/fill37in/vis/setColor gray
+
+# Exterior Shell of Upper Half of Phantom
+# Top Side
+/gate/NEMA_IQ/daughters/name topshell1
+/gate/NEMA_IQ/daughters/insert cylinder
+/gate/topshell1/placement/setTranslation 0.0 -3.5 10.85 cm
+/gate/topshell1/geometry/setRmax 15. cm
+/gate/topshell1/geometry/setRmin 0. cm
+/gate/topshell1/geometry/setHeight 0.3 cm
+/gate/topshell1/geometry/setPhiStart 0. deg
+/gate/topshell1/geometry/setDeltaPhi 180. deg
+/gate/topshell1/setMaterial Plastic
+/gate/topshell1/vis/forceWireframe
+/gate/topshell1/vis/setColor yellow
+
+/gate/NEMA_IQ/daughters/name bottomshell1
+/gate/NEMA_IQ/daughters/insert cylinder
+/gate/bottomshell1/placement/setTranslation 0.0 -3.5 -10.85 cm
+/gate/bottomshell1/geometry/setRmax 15. cm
+/gate/bottomshell1/geometry/setRmin 0. cm
+/gate/bottomshell1/geometry/setHeight 0.3 cm
+/gate/bottomshell1/geometry/setPhiStart 0. deg
+/gate/bottomshell1/geometry/setDeltaPhi 180. deg
+/gate/bottomshell1/setMaterial Plastic
+#/gate/bottomshell1/vis/forceWireframe
+/gate/bottomshell1/vis/setColor yellow
+
+# Lower Half Of Phantom
+# Lower Left Corner Center Section Cylinder 
+/gate/NEMA_IQ/daughters/name outershell2
+/gate/NEMA_IQ/daughters/insert cylinder
+/gate/outershell2/placement/setTranslation 7.0 -3.5 0.0 cm
+/gate/outershell2/geometry/setRmax 8. cm
+/gate/outershell2/geometry/setHeight 21.4 cm
+/gate/outershell2/geometry/setPhiStart 270. deg
+/gate/outershell2/geometry/setDeltaPhi  90. deg
+/gate/outershell2/setMaterial Plastic
+/gate/outershell2/vis/forceWireframe
+/gate/outershell2/vis/setColor red
+
+/gate/outershell2/daughters/name LLinterior
+/gate/outershell2/daughters/insert cylinder
+/gate/LLinterior/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/LLinterior/geometry/setRmax 7.7 cm
+/gate/LLinterior/geometry/setRmin 0. cm
+/gate/LLinterior/geometry/setHeight 21.4 cm
+/gate/LLinterior/geometry/setPhiStart 270. deg
+/gate/LLinterior/geometry/setDeltaPhi  90. deg
+/gate/LLinterior/setMaterial Water
+/gate/LLinterior/vis/forceWireframe
+/gate/LLinterior/vis/setColor blue
+
+# Lower Right Corner Center Section Cylinder 
+/gate/NEMA_IQ/daughters/name outershell3
+/gate/NEMA_IQ/daughters/insert cylinder
+/gate/outershell3/placement/setTranslation -7.0 -3.5 0.0 cm
+/gate/outershell3/geometry/setRmax 8. cm
+/gate/outershell3/geometry/setHeight 21.4 cm
+/gate/outershell3/geometry/setPhiStart 180. deg
+/gate/outershell3/geometry/setDeltaPhi  90. deg
+/gate/outershell3/setMaterial Plastic
+/gate/outershell3/vis/forceWireframe
+/gate/outershell3/vis/setColor red
+
+/gate/outershell3/daughters/name LRinterior
+/gate/outershell3/daughters/insert cylinder
+/gate/LRinterior/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/LRinterior/geometry/setRmax 7.7 cm
+/gate/LRinterior/geometry/setRmin 0. cm
+/gate/LRinterior/geometry/setHeight 21.4 cm
+/gate/LRinterior/geometry/setPhiStart 180. deg
+/gate/LRinterior/geometry/setDeltaPhi  90. deg
+/gate/LRinterior/setMaterial Water
+/gate/LRinterior/vis/forceWireframe
+/gate/LRinterior/vis/setColor blue
+
+# Bottom Box
+/gate/NEMA_IQ/daughters/name outershell4
+/gate/NEMA_IQ/daughters/insert box
+/gate/outershell4/placement/setTranslation 0.0 -7.5 0.0 cm
+/gate/outershell4/geometry/setXLength 14. cm
+/gate/outershell4/geometry/setYLength  8. cm
+/gate/outershell4/geometry/setZLength 21.4 cm
+/gate/outershell4/setMaterial Plastic
+/gate/outershell4/vis/forceWireframe
+/gate/outershell4/vis/setColor red
+
+# Interior Box
+/gate/outershell4/daughters/name IBox
+/gate/outershell4/daughters/insert box
+/gate/IBox/placement/setTranslation 0.0 0.15 0.0 cm
+/gate/IBox/geometry/setXLength 14. cm
+/gate/IBox/geometry/setYLength  7.7 cm
+/gate/IBox/geometry/setZLength 21.4 cm
+/gate/IBox/setMaterial Water
+/gate/IBox/vis/forceWireframe
+/gate/IBox/vis/setColor blue
+
+# 22 mm Sphere Exterior
+/gate/IBox/daughters/name sphere22
+/gate/IBox/daughters/insert sphere
+/gate/sphere22/placement/setTranslation -2.86 2.39633 3.7 cm
+/gate/sphere22/geometry/setRmax 1.2 cm
+/gate/sphere22/setMaterial Plastic
+/gate/sphere22/vis/forceWireframe
+/gate/sphere22/vis/setColor red
+
+# 22 mm Sphere Interior
+/gate/sphere22/daughters/name sphere22in
+/gate/sphere22/daughters/insert sphere
+/gate/sphere22in/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/sphere22in/geometry/setRmax 1.1 cm
+/gate/sphere22in/geometry/setRmin 0.0 cm
+/gate/sphere22in/setMaterial Air
+#/gate/sphere22in/vis/forceWireframe
+/gate/sphere22in/vis/setColor gray
+
+# 22 mm Fill Capillary Exterior
+/gate/IBox/daughters/name fill22
+/gate/IBox/daughters/insert cylinder
+/gate/fill22/placement/setTranslation -2.86 2.39633 7.8 cm
+/gate/fill22/geometry/setRmax 0.35 cm
+/gate/fill22/geometry/setHeight 5.8 cm
+/gate/fill22/setMaterial Plastic
+/gate/fill22/vis/forceWireframe
+/gate/fill22/vis/setColor red
+
+# 22 mm Fill Capillary
+/gate/fill22/daughters/name fill22in
+/gate/fill22/daughters/insert cylinder
+/gate/fill22in/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/fill22in/geometry/setRmax 0.25 cm
+/gate/fill22in/geometry/setRmin 0. cm
+/gate/fill22in/geometry/setHeight 5.8 cm
+/gate/fill22in/setMaterial Air
+#/gate/fill22in/vis/forceWireframe
+/gate/fill22in/vis/setColor gray
+
+# 28 mm Sphere Exterior
+/gate/IBox/daughters/name sphere28
+/gate/IBox/daughters/insert sphere
+/gate/sphere28/placement/setTranslation 2.86 2.39633 3.7 cm
+/gate/sphere28/geometry/setRmax 1.5 cm
+/gate/sphere28/setMaterial Plastic
+/gate/sphere28/vis/forceWireframe
+/gate/sphere28/vis/setColor red
+
+# 28 mm Sphere
+/gate/sphere28/daughters/name sphere28in
+/gate/sphere28/daughters/insert sphere
+/gate/sphere28in/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/sphere28in/geometry/setRmax 1.4 cm
+/gate/sphere28in/geometry/setRmin 0.0 cm
+/gate/sphere28in/setMaterial Air
+#/gate/sphere28in/vis/forceWireframe
+/gate/sphere28in/vis/setColor gray
+
+# 28 mm Fill Capillary Exterior
+/gate/IBox/daughters/name fill28
+/gate/IBox/daughters/insert cylinder
+/gate/fill28/placement/setTranslation 2.86 2.39633 7.95 cm
+/gate/fill28/geometry/setRmax 0.35 cm
+/gate/fill28/geometry/setHeight 5.5 cm
+/gate/fill28/setMaterial Plastic
+/gate/fill28/vis/forceWireframe
+/gate/fill28/vis/setColor red
+
+# 28 mm Fill Capillary
+/gate/fill28/daughters/name fill28in
+/gate/fill28/daughters/insert cylinder
+/gate/fill28in/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/fill28in/geometry/setRmax 0.25 cm
+/gate/fill28in/geometry/setRmin 0. cm
+/gate/fill28in/geometry/setHeight 5.5 cm
+/gate/fill28in/setMaterial Air
+#/gate/fill28in/vis/forceWireframe
+/gate/fill28in/vis/setColor gray
+
+/gate/NEMA_IQ/daughters/name topshell2
+/gate/NEMA_IQ/daughters/insert cylinder
+/gate/topshell2/placement/setTranslation 7.0 -3.5 10.85 cm
+/gate/topshell2/geometry/setRmax 8. cm
+/gate/topshell2/geometry/setRmin 0. cm
+/gate/topshell2/geometry/setHeight 0.3 cm
+/gate/topshell2/geometry/setPhiStart 270. deg
+/gate/topshell2/geometry/setDeltaPhi  90. deg
+/gate/topshell2/setMaterial Plastic
+#/gate/topshell2/vis/forceWireframe
+/gate/topshell2/vis/setColor yellow
+
+/gate/NEMA_IQ/daughters/name topshell3
+/gate/NEMA_IQ/daughters/insert cylinder
+/gate/topshell3/placement/setTranslation -7.0 -3.5 10.85 cm
+/gate/topshell3/geometry/setRmax 8. cm
+/gate/topshell3/geometry/setRmin 0. cm
+/gate/topshell3/geometry/setHeight 0.3 cm
+/gate/topshell3/geometry/setPhiStart 180. deg
+/gate/topshell3/geometry/setDeltaPhi  90. deg
+/gate/topshell3/setMaterial Plastic
+#/gate/topshell3/vis/forceWireframe
+/gate/topshell3/vis/setColor yellow
+
+/gate/NEMA_IQ/daughters/name topshell4
+/gate/NEMA_IQ/daughters/insert box
+/gate/topshell4/placement/setTranslation 0.0 -7.5 10.85 cm
+/gate/topshell4/geometry/setXLength 14. cm
+/gate/topshell4/geometry/setYLength 8. cm
+/gate/topshell4/geometry/setZLength 0.3 cm
+/gate/topshell4/setMaterial Plastic
+/gate/topshell4/vis/forceWireframe
+/gate/topshell4/vis/setColor yellow
+
+/gate/NEMA_IQ/daughters/name bottomshell2
+/gate/NEMA_IQ/daughters/insert cylinder
+/gate/bottomshell2/placement/setTranslation 7.0 -3.5 -10.85 cm
+/gate/bottomshell2/geometry/setRmax 8. cm
+/gate/bottomshell2/geometry/setRmin 0. cm
+/gate/bottomshell2/geometry/setHeight 0.3 cm
+/gate/bottomshell2/geometry/setPhiStart 270. deg
+/gate/bottomshell2/geometry/setDeltaPhi  90. deg
+/gate/bottomshell2/setMaterial Plastic
+#/gate/bottomshell2/vis/forceWireframe
+/gate/bottomshell2/vis/setColor yellow
+
+/gate/NEMA_IQ/daughters/name bottomshell3
+/gate/NEMA_IQ/daughters/insert cylinder
+/gate/bottomshell3/placement/setTranslation -7.0 -3.5 -10.85 cm
+/gate/bottomshell3/geometry/setRmax 8. cm
+/gate/bottomshell3/geometry/setRmin 0. cm
+/gate/bottomshell3/geometry/setHeight 0.3 cm
+/gate/bottomshell3/geometry/setPhiStart 180. deg
+/gate/bottomshell3/geometry/setDeltaPhi  90. deg
+/gate/bottomshell3/setMaterial Plastic
+#/gate/bottomshell3/vis/forceWireframe
+/gate/bottomshell3/vis/setColor yellow
+
+/gate/NEMA_IQ/daughters/name bottomshell4
+/gate/NEMA_IQ/daughters/insert box
+/gate/bottomshell4/placement/setTranslation 0.0 -7.5 -10.85 cm
+/gate/bottomshell4/geometry/setXLength 14. cm
+/gate/bottomshell4/geometry/setYLength 8. cm
+/gate/bottomshell4/geometry/setZLength 0.3 cm
+/gate/bottomshell4/setMaterial Plastic
+#/gate/bottomshell4/vis/forceWireframe
+/gate/bottomshell4/vis/setColor yellow
+
+#      A t t a c h   P h a n t o m
+/gate/NEMA_IQ/attachPhantomSD
+/gate/upperinterior/attachPhantomSD
+/gate/centercyl/attachPhantomSD
+/gate/centercylin/attachPhantomSD
+/gate/sphere10/attachPhantomSD
+/gate/sphere10in/attachPhantomSD
+/gate/fill10/attachPhantomSD
+/gate/fill10in/attachPhantomSD
+/gate/sphere13/attachPhantomSD
+/gate/sphere13in/attachPhantomSD
+/gate/fill13/attachPhantomSD
+/gate/fill13in/attachPhantomSD
+/gate/sphere17/attachPhantomSD
+/gate/sphere17in/attachPhantomSD
+/gate/fill17/attachPhantomSD
+/gate/fill17in/attachPhantomSD
+/gate/sphere37/attachPhantomSD
+/gate/sphere37in/attachPhantomSD
+/gate/fill37/attachPhantomSD
+/gate/fill37in/attachPhantomSD
+/gate/sphere22/attachPhantomSD
+/gate/sphere22in/attachPhantomSD
+/gate/fill22/attachPhantomSD
+/gate/fill22in/attachPhantomSD
+/gate/sphere28/attachPhantomSD
+/gate/sphere28in/attachPhantomSD
+/gate/fill28/attachPhantomSD
+/gate/fill28in/attachPhantomSD
+/gate/IBox/attachPhantomSD
+/gate/LLinterior/attachPhantomSD
+/gate/LRinterior/attachPhantomSD
+/gate/outershell1/attachPhantomSD
+/gate/outershell2/attachPhantomSD
+/gate/outershell3/attachPhantomSD
+/gate/outershell4/attachPhantomSD
+/gate/topshell1/attachPhantomSD
+/gate/topshell2/attachPhantomSD
+/gate/topshell3/attachPhantomSD
+/gate/topshell4/attachPhantomSD
+/gate/bottomshell1/attachPhantomSD
+/gate/bottomshell2/attachPhantomSD
+/gate/bottomshell3/attachPhantomSD
+/gate/bottomshell4/attachPhantomSD
+
+

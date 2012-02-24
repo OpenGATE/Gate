@@ -1,0 +1,48 @@
+##################
+# Water Cylinder #
+##################
+/gate/world/daughters/name waterCylinder
+/gate/world/daughters/insert cylinder
+/gate/waterCylinder/geometry/setRmin 0. mm
+/gate/waterCylinder/geometry/setRmax 8. mm
+/gate/waterCylinder/geometry/setHeight 20. mm
+/gate/waterCylinder/placement/setRotationAxis 1 0 0
+/gate/waterCylinder/placement/setRotationAngle 90. deg
+/gate/waterCylinder/setMaterial Water
+/gate/waterCylinder/vis/forceWireframe
+/gate/waterCylinder/vis/setColor cyan
+
+###################
+# Aluminium Balls #
+###################
+/gate/waterCylinder/daughters/name aluminiumBall
+/gate/waterCylinder/daughters/insert sphere
+/gate/aluminiumBall/placement/setTranslation 4.76314 -2.75 -6. mm
+/gate/aluminiumBall/geometry/setRmin 0. mm
+/gate/aluminiumBall/geometry/setRmax 1. mm
+/gate/aluminiumBall/setMaterial Aluminium
+/gate/aluminiumBall/vis/setColor white
+
+/gate/waterCylinder/daughters/name PVCBall
+/gate/waterCylinder/daughters/insert sphere
+/gate/PVCBall/placement/setTranslation 4.76314 2.75 -6. mm
+/gate/PVCBall/geometry/setRmin 0. mm
+/gate/PVCBall/geometry/setRmax 1. mm
+/gate/PVCBall/setMaterial PVC
+/gate/PVCBall/vis/setColor cyan
+
+/gate/waterCylinder/daughters/name glassBall
+/gate/waterCylinder/daughters/insert sphere
+/gate/glassBall/placement/setTranslation -4.76314 -2.75 6. mm
+/gate/glassBall/geometry/setRmin 0. mm
+/gate/glassBall/geometry/setRmax 1. mm
+/gate/glassBall/setMaterial Glass
+/gate/glassBall/vis/setColor red
+
+/gate/waterCylinder/daughters/name spineBoneBall
+/gate/waterCylinder/daughters/insert sphere
+/gate/spineBoneBall/placement/setTranslation -4.76314 2.75 6. mm
+/gate/spineBoneBall/geometry/setRmin 0. mm
+/gate/spineBoneBall/geometry/setRmax 1. mm
+/gate/spineBoneBall/setMaterial SpineBone
+/gate/spineBoneBall/vis/setColor yellow

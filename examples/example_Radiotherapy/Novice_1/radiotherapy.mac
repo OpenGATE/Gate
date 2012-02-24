@@ -1,0 +1,172 @@
+                                                             
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+#
+#           D E F I N E   Y O U R   C O M P L E T E   
+#
+#                S I M U L A T I O N    F O R   
+#
+#       R A D I O T H E R A P Y    A P P L I CA T I O N S                                                            
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+
+#=====================================================
+# VISUALISATION
+#=====================================================
+
+#/vis/disable
+
+/vis/open                             OGLSX
+/vis/viewer/set/viewpointThetaPhi     60 60
+/vis/viewer/zoom                      5.0
+/vis/drawVolume
+/tracking/storeTrajectory             1
+/vis/scene/add/trajectories 
+/vis/scene/endOfEventAction           accumulate
+
+/control/execute                      Verbose.mac
+
+
+#=====================================================
+# GEOMETRY: PHANTOM ; BEAM LINE ETC...
+#=====================================================
+
+/gate/geometry/setMaterialDatabase                 ../../../GateMaterials.db
+
+#
+#     W O R L D
+#
+
+/gate/world/setMaterial                            Air
+/gate/world/geometry/setXLength                    2.0 m
+/gate/world/geometry/setYLength                    2.0 m
+/gate/world/geometry/setZLength                    2.0 m
+
+###
+
+/gate/world/daughters/name                      waterTank
+/gate/world/daughters/insert                    box
+/gate/waterTank/setMaterial                     Water
+/gate/waterTank/geometry/setXLength             20.0 cm
+/gate/waterTank/geometry/setYLength             20.0 cm
+/gate/waterTank/geometry/setZLength             20.0 cm
+/gate/waterTank/placement/setTranslation        0 0 -10 cm
+/gate/waterTank/vis/forceSolid
+/gate/waterTank/vis/setColor                    blue
+
+#/control/execute                                Voxel_Patient.mac
+
+#=====================================================
+# PHYSICS
+#=====================================================
+
+/control/execute                Physicslist_EM_std.mac
+/control/execute                Physicslist_HAD_std.mac
+
+#=====================================================
+# CUTS
+#=====================================================
+
+/gate/physics/Gamma/SetCutInRegion      world 1 mm
+/gate/physics/Electron/SetCutInRegion   world 1 mm
+/gate/physics/Positron/SetCutInRegion   world 1 mm
+
+/gate/physics/Gamma/SetCutInRegion      waterTank 0.1 mm
+/gate/physics/Electron/SetCutInRegion   waterTank 0.1 mm
+/gate/physics/Positron/SetCutInRegion   waterTank 0.1 mm
+
+/gate/physics/SetMaxStepSizeInRegion    waterTank 0.01 mm
+
+/gate/physics/displayCuts
+
+#=====================================================
+# OUTPUT - DETECTOR
+#=====================================================
+
+# ----------------------------------------------------
+# the following actor stores 3D distributions of
+# dose/edep/uncertainty/nbHit into files (hdr image file format)
+
+/gate/actor/addActor                               DoseActor  doseDistribution
+/gate/actor/doseDistribution/save                  output/dose.hdr
+/gate/actor/doseDistribution/attachTo    	   waterTank
+/gate/actor/doseDistribution/stepHitType           random
+/gate/actor/doseDistribution/setPosition           0 0 0 mm
+/gate/actor/doseDistribution/setVoxelSize          2 2 2 mm
+/gate/actor/doseDistribution/enableEdep            true
+/gate/actor/doseDistribution/enableUncertaintyEdep true
+/gate/actor/doseDistribution/enableDose            true
+/gate/actor/doseDistribution/enableSquaredDose     true
+/gate/actor/doseDistribution/enableUncertaintyDose true
+/gate/actor/doseDistribution/enableNumberOfHits    true
+/gate/actor/doseDistribution/saveEveryNEvents      5000
+
+/gate/actor/addActor ProductionAndStoppingActor    carbonMap
+/gate/actor/carbonMap/save                         output/C11.hdr
+/gate/actor/carbonMap/attachTo                     waterTank
+/gate/actor/carbonMap/stepHitType                  random
+/gate/actor/carbonMap/setVoxelSize                 2 2 2 mm
+/gate/actor/carbonMap/addFilter                    particleFilter
+/gate/actor/carbonMap/particleFilter/addParticle   C11[0.0]
+/gate/actor/carbonMap/saveEveryNEvents             5000
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+
+#=====================================================
+# BEAMS
+#=====================================================
+
+
+# Carbon 12 beam
+################
+/gate/source/addSource   C12     gps
+/gate/source/C12/gps/particle        ion
+/gate/source/C12/gps/ion             6 12 
+/gate/source/C12/gps/ene/type        Mono 
+/gate/source/C12/gps/ene/mono        2314.24 MeV 
+/gate/source/C12/gps/pos/type        Beam 
+/gate/source/C12/gps/pos/shape       Circle 
+/gate/source/C12/gps/pos/sigma_x     2.0 mm 
+/gate/source/C12/gps/pos/sigma_y     2.0 mm 
+/gate/source/C12/gps/ang/type        beam2d
+/gate/source/C12/gps/ang/sigma_x     0 deg
+/gate/source/C12/gps/ang/sigma_y     0 deg
+/gate/source/C12/gps/pos/centre      0.0 0.0 30.0  cm
+
+
+# Proton beam
+#############
+#/gate/source/addSource   prot     gps
+#/gate/source/prot/gps/particle        proton
+#/gate/source/prot/gps/ene/type        Gauss
+#/gate/source/prot/gps/ene/mono        150 MeV
+#/gate/source/prot/gps/ene/sigma       10. MeV 
+#/gate/source/prot/gps/ang/type        cos
+#/gate/source/prot/gps/ang/type        beam1d 
+#/gate/source/prot/gps/ang/sigma_r     0. deg
+#/gate/source/prot/gps/pos/type        Beam
+#/gate/source/prot/gps/pos/shape       Circle 
+#/gate/source/prot/gps/pos/centre      0. 0. 30. cm
+#/gate/source/prot/gps/pos/radius      3. mm
+#/gate/source/prot/gps/pos/sigma_r     0.2 mm
+
+#=====================================================
+# START BEAMS
+#=====================================================
+#
+# To use the classical Geant4 "beamOn" command line to start a simulation
+#
+#/gate/EnableGeneralParticleSource
+#/run/beamOn 50
+#
+#
+# To use the "Gate-oriented" command lines
+#
+/gate/application/setTotalNumberOfPrimaries 50
+/gate/application/start
+
+
+

@@ -1,0 +1,380 @@
+<!> *** Warning *** <!>  Processes not yet initialized!
+
+List of particles with their associated processes
+
+<!> *** Warning *** <!>  Processes not yet initialized!
+
+
+
+-----------------------------------------------------------------------------
+
+List of processes:
+
+   ===  Process: UHadronElastic  ===
+Particle: sigma0
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: anti_sigma0
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: pi+
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: pi-
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: pi0
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: kaon+
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: kaon-
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: kaon0L
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: kaon0S
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: sigma+
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: sigma-
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: proton
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: anti_proton
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: neutron
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: anti_neutron
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: lambda
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: anti_lambda
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: xi-
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: anti_xi-
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: anti_sigma+
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: anti_sigma-
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: omega-
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: anti_omega-
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: xi0
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: anti_xi0
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: deuteron
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: triton
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+Particle: alpha
+    * Model(s):
+       - G4HadronElastic
+    * DataSet(s):
+        - G4HadronElasticDataSet
+
+   ===  Process: RadioactiveDecay  ===
+Particle: GenericIon
+
+   ===  Process: ProtonInelastic  ===
+Particle: proton
+    * Model(s):
+       - PreCompound
+    * DataSet(s):
+        - G4ProtonInelasticCrossSection
+
+   ===  Process: PositronAnnihilation  ===
+Particle: e+
+
+   ===  Process: PhotoElectric  ===
+Particle: gamma
+    * Model(s):
+       - StandardModel
+
+   ===  Process: NeutronInelastic  ===
+Particle: neutron
+    * Model(s):
+       - PreCompound
+         + Emin = 19.9 MeV
+       - G4NeutronHPInelastic
+         + Emax =  20 MeV
+    * DataSet(s):
+        - G4HadronInelasticDataSet
+        - G4NeutronHPInelasticData
+
+   ===  Process: IonIonisation  ===
+Particle: GenericIon
+
+Particle: alpha
+
+Particle: deuteron
+
+Particle: triton
+
+Particle: He3
+
+   ===  Process: IonInelastic  ===
+Particle: GenericIon
+    * Model(s):
+       - G4BinaryLightIonReaction
+    * DataSet(s):
+        - G4IonsShenCrossSection
+
+Particle: alpha
+    * Model(s):
+       - G4BinaryLightIonReaction
+         + Emin =  80 MeV  -->  Emax =  20 GeV
+       - G4LEAlphaInelastic
+         + Emax =   1 GeV
+    * DataSet(s):
+        - G4TripathiLightCrossSection
+
+Particle: deuteron
+    * Model(s):
+       - G4BinaryLightIonReaction
+         + Emin =  80 MeV  -->  Emax =  20 GeV
+       - G4LEDeuteronInelastic
+         + Emax =   1 GeV
+    * DataSet(s):
+        - G4TripathiLightCrossSection
+
+Particle: triton
+    * Model(s):
+       - G4BinaryLightIonReaction
+         + Emin =  80 MeV  -->  Emax =  20 GeV
+       - G4LETritonInelastic
+         + Emax =   1 GeV
+    * DataSet(s):
+        - G4TripathiLightCrossSection
+
+   ===  Process: hMultipleScattering  ===
+Particle: proton
+
+Particle: alpha
+
+Particle: deuteron
+
+Particle: triton
+
+Particle: He3
+
+Particle: GenericIon
+
+   ===  Process: HadronIonisation  ===
+Particle: proton
+
+   ===  Process: NeutronCapture  ===
+Particle: neutron
+    * Model(s):
+       - G4LCapture
+         + Emin = 19.9 MeV
+       - G4NeutronHPorLCapture
+         + Emax =  20 MeV
+    * DataSet(s):
+        - G4HadronCaptureDataSet
+        - G4NeutronHPCaptureData
+
+   ===  Process: GammaConversion  ===
+Particle: gamma
+    * Model(s):
+       - StandardModel
+
+   ===  Process: Fission  ===
+Particle: neutron
+    * Model(s):
+       - G4LFission
+         + Emin = 19.9 MeV
+       - G4NeutronHPorLFission
+         + Emax =  20 MeV
+    * DataSet(s):
+        - G4HadronFissionDataSet
+        - G4NeutronHPFissionData
+
+   ===  Process: eMultipleScattering  ===
+Particle: e-
+
+Particle: e+
+
+   ===  Process: ElectronIonisation  ===
+Particle: e-
+    * Model(s):
+       - StandardModel
+
+Particle: e+
+    * Model(s):
+       - StandardModel
+
+   ===  Process: Decay  ===
+Particle: mu+
+
+Particle: mu-
+
+Particle: tau+
+
+Particle: tau-
+
+Particle: sigma0
+
+Particle: anti_sigma0
+
+Particle: pi+
+
+Particle: pi-
+
+Particle: pi0
+
+Particle: kaon+
+
+Particle: kaon-
+
+Particle: kaon0L
+
+Particle: kaon0S
+
+Particle: sigma+
+
+Particle: sigma-
+
+Particle: neutron
+
+Particle: lambda
+
+Particle: anti_lambda
+
+Particle: xi-
+
+Particle: anti_xi-
+
+Particle: anti_sigma+
+
+Particle: anti_sigma-
+
+Particle: omega-
+
+Particle: anti_omega-
+
+Particle: xi0
+
+Particle: anti_xi0
+
+   ===  Process: Compton  ===
+Particle: gamma
+    * Model(s):
+       - StandardModel
+
+   ===  Process: Bremsstrahlung  ===
+Particle: e-
+    * Model(s):
+       - StandardModel
+
+Particle: e+
+    * Model(s):
+       - StandardModel
+
+

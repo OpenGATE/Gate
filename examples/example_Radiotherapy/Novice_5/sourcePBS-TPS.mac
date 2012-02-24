@@ -1,0 +1,7 @@
+	/gate/source/addSource PBS TPSPencilBeam
+	/gate/source/PBS/setTestFlag false
+	/gate/source/PBS/setPlan data/PlanDescriptionToGATE.txt
+#	/gate/source/PBS/setNotAllowedFieldID 1
+#	/gate/source/PBS/setNotAllowedFieldID 2
+	/gate/source/PBS/setFlatGenerationFlag false
+	/gate/source/PBS/setSourceDescriptionFile data/Source-Properties.txt

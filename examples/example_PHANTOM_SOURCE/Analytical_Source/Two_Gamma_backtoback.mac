@@ -1,0 +1,70 @@
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+#
+#  This macro has been prepared by:  
+#     Sebastien JAN
+
+
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+#                                                                 #
+#         Gamma production with a back to back emission           #
+#                                                                 #
+#                                                                 #         
+#  NB :  In this example, the isotope source is generated         #
+#	   in a sphere placed at the center of the FOV.           #
+#                The sphere radius is set at 0.1 mm.              #
+#                                                                 #   
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+
+# We create a new source with an arbitrary name ('twogamma')
+/gate/source/addSource twogamma
+
+# We set the total activity of the source
+/gate/source/twogamma/setActivity 0.0000001 Ci
+
+# The source emits pairs of particles back-to-back
+/gate/source/twogamma/setType backtoback
+
+# The particles emitted by the source are gammas
+/gate/source/twogamma/gps/particle gamma
+
+# The gammas have an energy of 511 keV
+/gate/source/twogamma/gps/energytype Mono
+/gate/source/twogamma/gps/monoenergy 0.511 MeV
+
+
+# The source is a full sphere with radius 0.1 mm, located at the centre of the FOV
+/gate/source/twogamma/gps/type Volume
+/gate/source/twogamma/gps/shape Sphere
+/gate/source/twogamma/gps/radius 0.1 mm
+/gate/source/twogamma/gps/centre 0. 0. 0. cm
+
+# The angular distribution of emission angles is isotropic
+/gate/source/twogamma/gps/angtype iso
+
+# The parameters below mean that the source emits at all angles along the z axis
+/gate/source/twogamma/gps/mintheta    0. deg
+/gate/source/twogamma/gps/maxtheta  180. deg
+
+# Uncomment the parameters below if you want the source to emit in an XY (transverse) plane
+#/gate/source/twogamma/gps/mintheta    90. deg
+#/gate/source/twogamma/gps/maxtheta    90. deg
+
+# The parameters below mean that the source emits at all angles in the transverse (XY) directions
+/gate/source/twogamma/gps/minphi      0. deg
+/gate/source/twogamma/gps/maxphi    360. deg
+

@@ -1,0 +1,112 @@
+
+/control/execute verbose.mac
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+
+# World
+/gate/world/geometry/setXLength 5 m
+/gate/world/geometry/setYLength 5 m
+/gate/world/geometry/setZLength 5 m
+/gate/world/setMaterial Air
+
+/gate/world/daughters/name             mainBoxEntrance
+/gate/world/daughters/insert           box
+/gate/mainBoxEntrance/geometry/setXLength 40 cm
+/gate/mainBoxEntrance/geometry/setYLength 40 cm
+/gate/mainBoxEntrance/geometry/setZLength 1 nm
+/gate/mainBoxEntrance/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/mainBoxEntrance/setMaterial Water
+/gate/mainBoxEntrance/vis/setVisible 1
+/gate/mainBoxEntrance/vis/setColor yellow
+
+/gate/geometry/setIonisationPotential Water 75 eV
+/gate/geometry/setIonisationPotential Air 85.7 eV
+
+
+#=====================================================
+# PHYSICS
+#=====================================================
+
+/control/execute hadrontherapyStandardPhys.mac
+
+/gate/physics/Gamma/SetCutInRegion      world 1 mm
+/gate/physics/Electron/SetCutInRegion   world 1 mm
+/gate/physics/Positron/SetCutInRegion   world 1 mm
+
+# /gate/physics/Gamma/SetCutInRegion      mainbox 0.1 mm
+# /gate/physics/Electron/SetCutInRegion   mainbox 0.1 mm
+# /gate/physics/Positron/SetCutInRegion   mainbox 0.1 mm
+
+/gate/physics/SetMaxStepSizeInRegion world 1 mm
+/gate/physics/ActivateStepLimiter proton       
+/gate/physics/ActivateStepLimiter deuteron     
+/gate/physics/ActivateStepLimiter triton       
+/gate/physics/ActivateStepLimiter alpha        
+/gate/physics/ActivateStepLimiter GenericIon   
+
+/gate/physics/displayCuts
+
+
+#=====================================================
+# DETECTORS
+#=====================================================
+
+/gate/actor/addActor               SimulationStatisticActor stat
+/gate/actor/stat/save              output/stat-proton.txt
+/gate/actor/stat/saveEveryNSeconds 100
+
+/gate/actor/addActor PhaseSpaceActor PHS_GLOBALBOX
+/gate/actor/PHS_GLOBALBOX/attachTo mainBoxEntrance
+#/gate/actor/PHS_GLOBALBOX/useVolumeFrame
+/gate/actor/PHS_GLOBALBOX/save output/GlobalBoxEntrance2Beams.root
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+# Enable the following lines to display available and enabled processes
+# /gate/physics/processList Available
+# /gate/physics/processList Enabled
+
+
+#=====================================================
+# BEAMS
+#=====================================================
+
+/control/execute sourcePBS-TPS.mac
+
+#=====================================================
+# VISUALISATION
+#=====================================================
+
+# /vis/open OGLSX
+# /vis/viewer/set/viewpointThetaPhi 40 45
+# /vis/viewer/zoom 1
+# /vis/viewer/set/style surface
+# /vis/drawVolume
+# /vis/viewer/flush
+# /tracking/verbose 0
+# /tracking/storeTrajectory 1
+# /vis/scene/add/trajectories 
+# /vis/scene/endOfEventAction accumulate
+
+#=====================================================
+
+# JamesRandom Ranlux64 MersenneTwister
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed 100
+
+# /gate/random/verbose 1
+# /gate/source/verbose 0
+
+/gate/application/noGlobalOutput
+/gate/application/setTotalNumberOfPrimaries 10000
+/gate/application/start
+
+
+

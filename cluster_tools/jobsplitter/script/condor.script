@@ -1,0 +1,31 @@
+##############################################################
+#
+#  Standard script for Condor in ClusterGATE 
+#  Supply this script to the job splitter command line.
+#  following keywords 
+#   GC_EXEC
+#   GC_MACRO
+#  will be replaced by actual values.
+#  Do not remove any of them! 
+#
+#  The user can edit anything before the "#GJS PART"  
+#  except the line with $GC_EXEC
+#
+#  JDB 3.8.2005
+#    
+##############################################################                                                
+                                                                         
+Executable     = $GC_EXEC                                                   
+universe       = vanilla
+#Requirements   = Memory >= 512 && Arch =="INTEL"     
+#Rank	       = Memory >= 512
+#Image_Size     = 28 Meg     
+  
+#GJS PART => DO NOT REMOVE OR CHANGE ANYTHING FROM THIS POINT ON
+#INCLUDING THESE COMMENT LINES!!                                                                       
+Arguments      = $GC_MACRO                                              
+Input   = $GC_EXEC.in1
+Output  = $GC_EXEC.out1                                                     
+Error   = $GC_EXEC.err1
+Log     = $GC_EXEC.log1
+Queue                                                                  

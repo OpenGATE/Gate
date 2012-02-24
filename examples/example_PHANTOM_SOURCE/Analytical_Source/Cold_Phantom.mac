@@ -1,0 +1,41 @@
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+#
+#  This macro has been prepared by:  
+#     Sebastien JAN
+
+#
+## First you define a classical source as usual
+#
+
+/gate/source/addSource number1
+/gate/source/number1/setActivity 100000. becquerel
+/gate/source/number1/gps/particle gamma
+/gate/source/number1/setType backtoback
+/gate/source/number1/gps/type Volume
+/gate/source/number1/gps/shape Cylinder
+/gate/source/number1/gps/radius 5. cm
+/gate/source/number1/gps/halfz 0.5 cm
+/gate/source/number1/gps/centre 0. 0. 0. cm
+/gate/source/number1/gps/monoenergy 511. keV
+/gate/source/number1/gps/angtype iso
+
+#
+## With the following line you define the cold area:
+## "volume_name" is defined as a classical volume in your simulation 
+#
+
+/gate/source/number1/gps/Forbid volume_name

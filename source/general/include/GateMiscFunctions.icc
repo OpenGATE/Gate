@@ -1,0 +1,27 @@
+/*----------------------
+   GATE version name: gate_v...
+
+   Copyright (C): OpenGATE Collaboration
+
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See GATE/LICENSE.txt for further details
+----------------------*/
+
+
+
+#ifndef GATEMISCFUNCTIONS_ICC
+#define GATEMISCFUNCTIONS_ICC
+
+
+template<typename T>
+bool ConvertFromString( const std::string & Str, T & Dest )
+{
+  // http://c.developpez.com/faq/cpp/?page=strings#STRINGS_convert_to
+  // créer un flux à partir de la chaîne donnée
+  std::istringstream iss( Str );
+  // tenter la conversion vers Dest
+  return iss >> Dest != 0;
+}
+
+#endif // GATEMISCFUNCTIONS_ICC

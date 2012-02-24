@@ -1,0 +1,20 @@
+####################################################
+#####                                           ####
+#####         SPECT BENCHMARK RESULTS           ####
+#####         OpenGATE Collaboration            ####
+#####                                           ####
+####################################################
+
+##### Number of emitted particles :  17998933.000000
+##### Number of detected counts from 20 to 190 keV :  38517.000000
+##### Primary events : 14078.000000
+##### Scatter in the phantom : 20187.000000
+##### Scatter in the table : 1182.000000
+##### Scatter in the collimator: 178.000000
+##### Scatter in the crystal : 2458.000000
+##### Scatter in the backcompartment :  430.000000
+##### Scatter order 1: 12182.000000
+##### Scatter order 2 : 6474.000000
+##### Scatter order 3 : 3057.000000
+##### Scatter order 4 : 1428.000000
+##### Scatter order >4 : 1298.000000

@@ -1,0 +1,139 @@
+%%
+%% This is file `setstack.sty', created by VIK 15 Dec 1998
+%% Reproduces useful macros from amsmath.sty, thus avoiding the need to load the entire
+%% amsmath.sty and run into conflicts
+%% Adds definitions for \overset, \underset, \sideset, \substack, \boxed, \leftroot,
+%% \uproot, \dddot, \ddddot, \varrow, \harrow (see The LateX Companion, pp 225-227)
+\NeedsTeXFormat{LaTeX2e}% LaTeX 2.09 can't be used (nor non-LaTeX)
+[1998/12/15]% LaTeX date must December 1998 or later
+\ProvidesPackage{setstack}
+\DeclareRobustCommand{\text}{%
+  \ifmmode\expandafter\text@\else\expandafter\mbox\fi}
+  \let\nfss@text\text
+  \def\text@#1{\mathchoice
+    {\textdef@\displaystyle\f@size{#1}}%
+      {\textdef@\textstyle\tf@size{\firstchoice@false #1}}%
+        {\textdef@\textstyle\sf@size{\firstchoice@false #1}}%
+          {\textdef@\textstyle \ssf@size{\firstchoice@false #1}}%
+            \check@mathfonts
+}
+\def\textdef@#1#2#3{\hbox{{%
+             \everymath{#1}%
+             \let\f@size#2\selectfont #3}}}
+
+% adds underset, overset, sideset and 
+% substack features from amsmath.sty (Companion p. 226)
+
+\def\invalid@tag#1{\@amsmath@err{#1}{\the\tag@help}\gobble@tag}
+\def\dft@tag{\invalid@tag{\string\tag\space not allowed here}}
+\def\default@tag{\let\tag\dft@tag}
+
+\def\Let@{\let\\\math@cr}
+\def\restore@math@cr{\def\math@cr@@@{\cr}}
+
+\def\overset#1#2{\binrel@{#2}%
+\binrel@@{\mathop{\kern\z@#2}\limits^{#1}}}
+\def\underset#1#2{\binrel@{#2}%
+\binrel@@{\mathop{\kern\z@#2}\limits_{#1}}}
+\def\sideset#1#2#3{%
+\@mathmeasure\z@\displaystyle{#3}%
+\global\setbox\@ne\vbox to\ht\z@{}\dp\@ne\dp\z@
+ \setbox\tw@\box\@ne
+\@mathmeasure4\displaystyle{\copy\tw@#1}%
+\@mathmeasure6\displaystyle{#3\nolimits#2}%
+\dimen@-\wd6 \advance\dimen@\wd4 \advance\dimen@\wd\z@
+\hbox to\dimen@{}\mathop{\kern-\dimen@\box4\box6}%
+}
+
+\newenvironment{subarray}[1]{%
+\vcenter\bgroup
+\Let@ \restore@math@cr \default@tag
+\baselineskip\fontdimen10 \scriptfont\tw@
+\advance\baselineskip\fontdimen12 \scriptfont\tw@
+\lineskip\thr@@\fontdimen8 \scriptfont\thr@@
+\lineskiplimit\lineskip
+\ialign\bgroup\ifx c#1\hfil\fi
+$\m@th\scriptstyle##$\hfil\crcr
+}{%
+\crcr\egroup\egroup
+}
+\newcommand{\substack}[1]{\subarray{c}#1\endsubarray}
+
+% definitions of dddot and ddddot(p. 225)
+
+\def\dddot#1{{\mathop{#1}\limits^{\vbox to-1.4\ex@{\kern-\tw@\ex@
+ \hbox{\normalfont ...}\vss}}}}
+\def\ddddot#1{{\mathop{#1}\limits^{\vbox to-1.4\ex@{\kern-\tw@\ex@
+ \hbox{\normalfont....}\vss}}}}
+
+% definitions of leftroot, uproot (p.225)
+
+\begingroup \catcode`\"=12
+\gdef\@@sqrt#1{\radical"270370 {#1}}
+\endgroup
+
+\def\leftroot{\@amsmath@err{\Invalid@@\leftroot}\@eha}
+\def\uproot{\@amsmath@err{\Invalid@@\uproot}\@eha}
+\newcount\uproot@
+\newcount\leftroot@
+\def\root{\relaxnext@
+  \DN@{\ifx\@let@token\uproot\let\next@\nextii@\else
+   \ifx\@let@token\leftroot\let\next@\nextiii@\else
+   \let\next@\plainroot@\fi\fi\next@}%
+  \def\nextii@\uproot##1{\uproot@##1\relax\FN@\nextiv@}%
+  \def\nextiv@{\ifx\@let@token\@sptoken\DN@. {\FN@\nextv@}\else
+   \DN@.{\FN@\nextv@}\fi\next@.}%
+  \def\nextv@{\ifx\@let@token\leftroot\let\next@\nextvi@\else
+   \let\next@\plainroot@\fi\next@}%
+  \def\nextvi@\leftroot##1{\leftroot@##1\relax\plainroot@}%
+   \def\nextiii@\leftroot##1{\leftroot@##1\relax\FN@\nextvii@}%
+  \def\nextvii@{\ifx\@let@token\@sptoken
+   \DN@. {\FN@\nextviii@}\else
+   \DN@.{\FN@\nextviii@}\fi\next@.}%
+  \def\nextviii@{\ifx\@let@token\uproot\let\next@\nextix@\else
+   \let\next@\plainroot@\fi\next@}%
+  \def\nextix@\uproot##1{\uproot@##1\relax\plainroot@}%
+  \bgroup\uproot@\z@\leftroot@\z@\FN@\next@}
+\def\plainroot@#1\of#2{\setbox\rootbox\hbox{%
+ $\m@th\scriptscriptstyle{#1}$}%
+ \mathchoice{\r@@t\displaystyle{#2}}{\r@@t\textstyle{#2}}
+ {\r@@t\scriptstyle{#2}}{\r@@t\scriptscriptstyle{#2}}\egroup}
+\def\r@@t#1#2{\setboxz@h{$\m@th#1\@@sqrt{#2}$}%
+ \dimen@\ht\z@\advance\dimen@-\dp\z@
+ \setbox\@ne\hbox{$\m@th#1\mskip\uproot@ mu$}%
+ \advance\dimen@ by1.667\wd\@ne
+ \mkern-\leftroot@ mu\mkern5mu\raise.6\dimen@\copy\rootbox
+ \mkern-10mu\mkern\leftroot@ mu\boxz@}
+ 
+%   definition of \boxed (math in frame, no dollars) p 225
+
+\def\boxed#1{\fbox{\m@th$\displaystyle#1$}}
+
+% definition of \smash for top and bottom parts of expression in braces (p.227)
+\renewcommand{\smash}[2][tb]{%
+  \def\smash@{#1}%
+  \ifmmode\@xp\mathpalette\@xp\mathsm@sh\else
+        \@xp\makesm@sh\fi{#2}}
+
+% additional difinitions for arrows 
+% zero mm wide #2 mm long vertical arrow shifted 1 mm to left, 1 mm up
+\newcommand{\varrow}[2]{%
+\unitlength=1mm
+  \begin{picture}(0,6) % (0,0)
+  % - for #1 to point arrow down,+ to point arrow up
+  \end{picture}%
+  \put(0,6){\vector(0,#1 3){#2}}    % 6,- for down, 0, + for up
+}
+% 1 mm high #2 mm long horizontal arrow shifted 1 mm up (0,-1)
+\newcommand{\harrow}[2]{%
+\unitlength=1mm
+  \begin{picture}(8,1)(0,-1) %
+  % 1 mm distance between arrow and stackreled object over it (8,1)
+  \put(0,0){\vector(#1 2,0){#2}}     % - to point arrow left, + right
+  \end{picture}%
+}
+
+\endinput
+%% end of setstack.sty
+%% Corrections history:
+%% 

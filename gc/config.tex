@@ -1,0 +1,184 @@
+% ==========================================
+\newif\ifpdf 
+\ifx\pdfoutput\undefined \pdffalse % we are not running PDFLaTeX 
+\else 
+\pdfoutput=1 \pdftrue % we are running PDFLaTeX 
+\fi
+% ==========================================
+\usepackage[a4paper,twoside,textwidth=14cm]{geometry}
+\usepackage[latin1]{inputenc}
+\usepackage{varioref}
+\usepackage{url}
+\usepackage{multicol}
+%\usepackage[boxed]{algorithm}
+%\usepackage{algorithmic}
+\usepackage{colortbl}
+\usepackage[active]{srcltx}
+\usepackage{color}
+%\usepackage{backref}
+\usepackage[greek,francais]{babel}
+\usepackage{picins}
+\usepackage{fancyhdr}
+\usepackage{textcomp}
+%\usepackage{eurosans}
+%\usepackage[greek,frenchb]{babel}
+\usepackage{eurosym}
+\usepackage{picins}                        % fig ds paragraphe
+\usepackage[tight]{shorttoc}
+%\usepackage{minitoc} % not by section in report 
+
+% ==========================================
+%%% Math
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{bm}
+\usepackage{theorem}
+\usepackage{stmaryrd}
+
+% ==========================================
+%%% Graphics
+\usepackage{graphics}
+\ifpdf
+\usepackage[pdftex]{graphicx} 
+\else
+\usepackage[ps2pdf]{graphicx} 
+\fi
+\graphicspath{{figures/}}
+
+\usepackage{pdfpages}
+
+% ==========================================
+%%% Page style
+\setcounter{secnumdepth}{3}      % depth of numbering of sectionning commands
+% \renewcommand{\chaptermark}[1]{%           % chapitre en minuscule
+%   \markboth{\thechapter.\ #1}{}}
+% % \renewcommand{\sectionmark}[1]{%           % section en minuscule
+% %   \markboth{\thesection.\ #1}{}}
+% \lhead{\slshape\footnotesize{\leftmark}} 
+% \rhead{} 
+% \renewcommand{\headrulewidth}{0pt} 
+% \pagestyle{fancy} 
+
+% ==========================================
+% pour avoir des zolis points au lieu de bête tiret
+\newenvironment{myitemize}{%
+  \begin{list}{\textbullet}{}%
+    \setlength{\itemsep}{0mm}%
+    \setlength{\parsep}{0mm}}%
+  {\end{list}}
+
+% ==========================================
+% multiple bib
+%%% Bib
+%\usepackage{multibib}
+%\newcites{group}{Publications}
+
+\usepackage[numbers,square]{natbib}
+%\usepackage[super,square]{natbib}
+\usepackage{bibunits}
+
+%\let\citenumfont=\tiny
+\let\citenumfont=\small
+
+%\bibliographystyle{my_bibstyle_fr_with_url}
+%\bibliographystyle{my_bibstyle_fr}
+
+%\newcommand{\mcitep}[1]{{\scriptsize \citep{#1}}}
+%\newcommand{\mcite}[1]{{\scriptsize \cite{#1}}}
+%\newcommand{\mcitep}[1]{{\citep{#1}}}
+%\newcommand{\mcite}[1]{{\cite{#1}}}
+
+% splitbib bib dos not work with natbib ? 
+% \usepackage[export]{splitbib}
+% \begin{category}[]{Toto}
+%   \SBentries{monge1999,aapm2005,keall2004}
+% \end{category}
+
+% ==========================================
+%% PDF configuration 
+% http://www.p-joeckel.de/pdflatex/)
+% http://ringlord.com/publications/latex-pdf-howto/
+
+%%%% Options of pdflatex
+\ifpdf
+\DeclareGraphicsExtensions{.pdf,.jpg,.mps,.png,.eps}
+\usepackage[pdftex,bookmarks,pagebackref]{hyperref}
+\pdfadjustspacing=1
+
+%%%% Options for latex + dvips -Ppdf + ps2pdf
+\else
+\DeclareGraphicsExtensions{.eps,.ps}
+\usepackage[ps2pdf,bookmarks,pagebackref]{hyperref}
+\fi
+
+%%%% Commun options
+\hypersetup{
+  linktocpage,%
+  %%------------- Color Links ------------------------------ 
+  colorlinks=true,% 
+  linkcolor=myred,%
+  citecolor=mydarkblue,% 
+  urlcolor=myblue,%
+  menucolor=red,%
+  %%------------- Doc Info --------------------------------- 
+  pdftitle={HDR},%
+  pdfauthor={David Sarrut},%
+  %%------------ Doc View ----------------------------------}
+  pdfhighlight=/P,%
+  bookmarksopen=false,%
+  plainpages=false,
+  pdfpagelabels,
+  pdfpagemode=None}
+
+\hyperbaseurl{http://www.creatis.insa-lyon.fr/\string~dsarrut/bib/}
+
+\definecolor{myblue}{rgb}{0,0,0.7}
+\definecolor{myred}{rgb}{0.7,0,0}
+\definecolor{mygreen}{rgb}{0,0.7,0}
+\definecolor{mydarkblue}{rgb}{0,0,0.5} 
+
+\def\todo{\scriptsize\fbox{\bf TODO !!}\normalsize}
+
+\newcommand{\num}[1]{n$^\circ$#1}
+
+% ==========================================
+%% section en couleur
+\makeatletter
+\renewcommand\section{\@startsection {section}{1}{\z@}%
+        {-3.5ex \@plus -1ex \@minus -.2ex}%
+        {2.3ex \@plus.2ex}%
+        {\reset@font\Large\bfseries\color{mydarkblue}}}
+\makeatother
+
+%\def\u{{\bf u}}
+\def\d{{\bf \phi}}
+\def\x{{\bf x}}
+% \def\p{{\bf p}}
+% \def\r{{\bf r}}
+% \def\g{{\bf g}}
+% \def\A{{\bf A}}
+% \def\E{{\bf E}}
+% \def\h{{\bf h}}
+% \def\b{{\bf b}}
+% \def\k{{\bf k}}
+% \def\K{{\bf K}}
+% \def\P{{\bf P}}
+
+% \def\p{{\bf p}}
+% \def\q{{\bf q}}
+% \def\r{{\bf r}}
+% \def\c{{\bf c}}
+
+\def\A{{\bf A}}
+
+% \def\zero{{\bf 0}}
+% \newcommand{\diverg}{\textrm{div}\,}
+% \newcommand{\setR}{\mathbb{R}}
+% \newcommand{\setN}{\mathbb{N}}
+% \newcommand{\setZ}{\mathbb{Z}}
+
+% \newcommand{\deriv}[2]{\frac{\partial #1}{\partial #2}}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "rapport2006"
+%%% End: 

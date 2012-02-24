@@ -1,0 +1,220 @@
+# GEOMETRY
+# Set the geometry in auto-update mode, so that we see the geometry being build
+#/control/execute visu.mac
+
+/vis/disable
+
+
+/gate/geometry/setMaterialDatabase ../../GateMaterials.db
+
+
+
+
+# World
+# Define the world dimensions
+
+/gate/world/geometry/setXLength 74 cm
+/gate/world/geometry/setYLength 66 cm
+/gate/world/geometry/setZLength 66 cm
+
+# Scanner Head
+# Create a new box representing the main head-volume
+# SPECThead is the name of the predefined SPECT system
+# Create the SPECT system, which will yield an Interfile output of projection data
+/gate/world/daughters/name SPECThead
+/gate/world/daughters/insert box
+# Define the dimensions of the main volume
+/gate/SPECThead/geometry/setXLength  4. cm
+/gate/SPECThead/geometry/setYLength 65. cm
+/gate/SPECThead/geometry/setZLength 65. cm
+
+/gate/systems/SPECThead/arf/setARFStage generateData
+
+# Define the position of the main volume
+# Move the head 9 cm away from the Z axis, which is the rotation axis and the replication axis
+
+/gate/SPECThead/placement/setTranslation 34.5 0. 0. cm
+
+
+# Set the material associated with the main volume
+/gate/SPECThead/setMaterial Air
+/gate/SPECThead/vis/forceWireframe
+# Replicate the head (around the Z axis by default) to get a four-head system (heads at 90 degrees)
+/gate/SPECThead/repeaters/insert ring
+/gate/SPECThead/ring/setRepeatNumber 2
+
+# Shielding
+# Create the shielding volume
+/gate/SPECThead/daughters/name shielding
+/gate/SPECThead/daughters/insert box
+
+# Define the dimensions of the shielding volume
+/gate/shielding/geometry/setXLength  4. cm
+/gate/shielding/geometry/setYLength 65. cm
+/gate/shielding/geometry/setZLength 65. cm
+
+# Define the position of the shielding volume
+/gate/shielding/placement/setTranslation  0. 0. 0. cm
+
+# Set the material corresponding to the shielding volume
+/gate/shielding/setMaterial Lead
+
+
+# Define some visualisation options
+/gate/shielding/vis/setColor red
+/gate/shielding/vis/forceWireframe
+
+# Collimator
+# Create a full volume defining the shape of the collimator
+/gate/SPECThead/daughters/name collimator
+/gate/SPECThead/daughters/insert box
+
+# Define the dimensions of the collimator volume
+/gate/collimator/geometry/setXLength 3. cm
+/gate/collimator/geometry/setYLength 65. cm
+/gate/collimator/geometry/setZLength 65. cm
+
+# Define the position of the collimator volume
+/gate/collimator/placement/setTranslation  -0.5 0. 0. cm
+
+# Set the material of the collimator volume
+/gate/collimator/setMaterial Lead
+
+# Define some visualisation options
+/gate/collimator/vis/setColor red
+/gate/collimator/vis/forceWireframe
+
+# Attach PhantomSD to record Compton interactions in the collimator volume
+#/gate/collimator/attachPhantomSD
+
+# Insert the first hole of air in the collimator
+/gate/collimator/daughters/name hole
+/gate/collimator/daughters/insert hexagone
+/gate/hole/vis/forceWireframe
+/gate/hole/geometry/setHeight 3. cm
+/gate/hole/geometry/setRadius .15 cm
+/gate/hole/placement/setRotationAxis 0 1 0
+/gate/hole/placement/setRotationAngle 90 deg
+/gate/hole/setMaterial Air
+# Repeat the hole in an array
+/gate/hole/repeaters/insert cubicArray
+/gate/hole/cubicArray/setRepeatNumberX 1
+/gate/hole/cubicArray/setRepeatNumberY 180
+/gate/hole/cubicArray/setRepeatNumberZ 104
+/gate/hole/cubicArray/setRepeatVector 0. 0.36  0.624 cm
+# Repeat these holes in a linear
+/gate/hole/repeaters/insert linear
+/gate/hole/linear/setRepeatNumber 2
+/gate/hole/linear/setRepeatVector 0. 0.18 0.312 cm
+
+# detector
+# Create the detector volume
+/gate/SPECThead/daughters/name detector
+/gate/SPECThead/daughters/insert box
+
+# Define the dimensions of the detector volume
+/gate/detector/geometry/setXLength 1. cm
+/gate/detector/geometry/setYLength  65. cm
+/gate/detector/geometry/setZLength  65. cm
+
+# Define the position of the detector volume
+/gate/detector/placement/setTranslation  1.5 0. 0. cm
+
+# Set the material associated with the detector volume
+/gate/detector/setMaterial NaI
+
+# Define some visualisation options
+/gate/detector/vis/setColor yellow
+/gate/detector/vis/forceWireframe
+
+
+/gate/collimator/attachPhantomSD
+/gate/hole/attachPhantomSD
+/gate/detector/attachCrystalSD
+
+
+/gate/systems/SPECThead/describe
+
+
+#  P H Y S I C S
+#####
+/gate/physics/addProcess PhotoElectric
+/gate/physics/processes/PhotoElectric/setModel StandardModel
+
+/gate/physics/addProcess Compton
+/gate/physics/processes/Compton/setModel PenelopeModel
+
+/gate/physics/addProcess RayleighScattering
+/gate/physics/processes/RayleighScattering/setModel PenelopeModel
+
+/gate/physics/addProcess ElectronIonisation
+/gate/physics/processes/ElectronIonisation/setModel StandardModel e-
+
+/gate/physics/addProcess Bremsstrahlung
+/gate/physics/processes/Bremsstrahlung/setModel StandardModel e-
+
+/gate/physics/addProcess MultipleScattering e-
+
+/gate/physics/processList Enabled
+/gate/physics/processList Initialized
+
+# INITIALIZE
+# Physics initialization
+/gate/run/initialize
+
+
+#	A D D E R
+/gate/digitizer/Singles/insert adder
+
+#       R E A D O U T 
+/gate/digitizer/Singles/insert readout
+/gate/digitizer/Singles/readout/setDepth 2
+
+#       E N E R G Y   C U T
+/gate/digitizer/Singles/insert thresholder
+/gate/digitizer/Singles/thresholder/setThreshold 50. keV
+/gate/digitizer/Singles/insert upholder
+/gate/digitizer/Singles/upholder/setUphold 400. keV
+
+# define the source
+
+/gate/source/addSource ARFSource
+# Define the placement of the source
+/gate/source/ARFSource/gps/centre 0. 0. 0. cm
+/gate/source/ARFSource/gps/type Plane
+/gate/source/ARFSource/gps/shape Rectangle
+/gate/source/ARFSource/gps/ene/type Range
+/gate/source/ARFSource/setMinEnergy 364.5 keV
+/gate/source/ARFSource/setEnergyRange 0. keV
+
+/gate/source/ARFSource/gps/halfx 2. cm
+/gate/source/ARFSource/gps/halfy 1.2 cm
+# we rotate the x-y plane such that the particle is emitted in the y-z plane
+/gate/source/ARFSource/gps/posrot1  0. 0. -1.
+/gate/source/ARFSource/gps/posrot2  0. -1. 0.
+
+# Define the source as a gamma source
+/gate/source/ARFSource/setForcedHalfLife 694656 s
+/gate/source/ARFSource/gps/particle gamma
+
+# Set the activity of the source
+/gate/source/ARFSource/setActivity 1000000. Bq
+/gate/source/ARFSource/gps/angtype iso
+/gate/source/ARFSource/gps/mintheta 0. deg
+/gate/source/ARFSource/gps/maxtheta 180. deg
+/gate/source/ARFSource/gps/minphi 0. deg
+/gate/source/ARFSource/gps/maxphi 360. deg
+
+/gate/source/list
+
+/gate/output/arf/enable
+/gate/output/arf/setFileName testARFdata
+
+/gate/application/setTimeSlice      1.  s
+/gate/application/setTimeStart      0.    s
+/gate/application/setTimeStop     1.  s
+
+
+
+# LET'S RUN THE SIMULATION!
+/gate/application/startDAQ

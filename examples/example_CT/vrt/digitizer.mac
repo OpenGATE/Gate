@@ -1,0 +1,10 @@
+#############
+# DIGITIZER #
+#############
+/gate/digitizer/Singles/insert adder
+/gate/digitizer/Singles/insert readout
+/gate/digitizer/Singles/readout/setDepth 2
+/gate/digitizer/Singles/insert thresholder
+/gate/digitizer/Singles/thresholder/setThreshold 10 keV
+/gate/digitizer/convertor/verbose 0
+/gate/digitizer/verbose 0

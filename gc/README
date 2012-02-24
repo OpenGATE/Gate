@@ -1,0 +1,59 @@
+# harvard family of bibliographic styles
+# Copyright 1994 - Peter Williams pwil3058@bigpond.net.au
+#
+# This work may be distributed and/or modified under the
+# conditions of the LaTeX Project Public License, either version 1.3
+# of this license or (at your option) any later version.
+# The latest version of this license is in
+#   http://www.latex-project.org/lppl.txt
+# and version 1.3 or later is part of all distributions of LaTeX
+# version 2005/12/01 or later.
+#
+# This work has the LPPL maintenance status `maintained'.
+# 
+# The Current Maintainers of this work are Peter Williams and Thorsten Schnier.
+#
+# This work consists of all files listed in manifest.txt.
+#
+# Licence notice added on behalf of Peter Williams and Thorsten Schnier
+# by Clea F. Rees 2009/01/30.
+
+This is version 2.0.5 of the harvard family of bibliographic styles.
+It is a bug fix of 2.0 which was a major rewrite to bring the sty file into
+line with the new latex described in ``The LaTeX Companion''.  Due to the
+efforts of Thorsten Schnier (thorsten@archsci.arch.su.edu.au) it incorporates
+support for the LaTeX to html translator by Nikos Drakos
+(nikos@cbl.leeds.ac.uk).
+
+It includes a fixes by Berwin A. Turlach (berwin@alphasun.anu.edu.au) for
+problems with \AtBeginDocument introduced in the latest version of LaTeX2e
+and problems with the \nocite command.
+
+A new style apsr.bst (American Political Science Review) is enclosed
+courtesy of Nathaneil L. Beck (nbeck@weber.ucsd.edu)
+
+NB.  The file harvard.sty makes considerable use of features in the new latex
+that were not present in latex version 2.09 and is, therefore, not compatible
+with that version.  However, the *.bbl files produced by the various bst files
+should be still useable with latex version 2.09.
+
+The following files are enclosed.
+
+  README	- This file
+  INSTALL	- Installation instructions
+  Makefile	- Makefile for installation
+  harvard.ps	- Postscript version of the documentation
+  harvard.tex	- LaTeX source for the documentation
+  harvard.bib	- BibTeX database file for the documentation
+  doc_Makefile	- Makefile for documentation
+  harvard.sty	- LaTeX style file for harvard bibliographic style
+  harvard.perl	- LaTeX2html style file for harvard bibliographic style
+  agsm.bst	- harvard BibTeX style file to satisfy the requirements
+		  of the Australian Government Style Manual
+  dcu.bst	- harvard BibTeX style file to satisfy the requirements
+		  of the Design Computing Unit, Sydney University
+  <other>.bst	- various style files contributed by users
+
+Online documentation is available via the WWW at:
+
+HREF="http://www.arch.su.edu.au/~peterw/latex/harvard/"

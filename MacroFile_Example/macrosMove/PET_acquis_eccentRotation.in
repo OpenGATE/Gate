@@ -1,0 +1,256 @@
+#	V I S U A L I S A T I O N
+/vis/open OGLSX
+#/vis/viewer/set/viewpointThetaPhi 60 60
+/vis/viewer/zoom 1.5
+/vis/drawVolume
+#/vis/viewer/flush
+#/tracking/verbose 0
+/tracking/storeTrajectory 1
+/vis/scene/add/trajectories 
+/vis/scene/endOfEventAction accumulate
+
+/gate/geometry/setMaterialDatabase ../../GateMaterials.db
+
+# GEOMETRY
+# Set the geometry in auto-update mode, so that we see the geometry being init
+#/gate/geometry/enableAutoUpdate
+
+
+
+#     W O R L D
+/gate/world/geometry/setXLength 150. cm
+/gate/world/geometry/setYLength 150. cm
+/gate/world/geometry/setZLength 150. cm
+
+
+#	CYLINDRICAL
+/gate/world/daughters/name cylindricalPET
+/gate/world/daughters/insert cylinder
+/gate/cylindricalPET/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/cylindricalPET/geometry/setRmax 52.0 cm
+/gate/cylindricalPET/geometry/setRmin 39.9 cm
+/gate/cylindricalPET/geometry/setHeight 40.2 cm
+/gate/cylindricalPET/setMaterial Air
+
+#	HEAD
+/gate/cylindricalPET/daughters/name head
+/gate/cylindricalPET/daughters/insert box
+/gate/head/placement/setTranslation 44.0 0.0 0.0 cm
+/gate/head/geometry/setXLength  8.0 cm
+/gate/head/geometry/setYLength 32.0 cm
+/gate/head/geometry/setZLength 40.2 cm
+/gate/head/setMaterial Air
+
+#	END-SHIELDING
+/gate/head/daughters/name endshielding
+/gate/head/daughters/insert box
+/gate/endshielding/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/endshielding/geometry/setXLength 8.0 cm
+/gate/endshielding/geometry/setYLength 32.0 cm
+/gate/endshielding/geometry/setZLength 1.0 mm
+/gate/endshielding/setMaterial Lead
+/gate/endshielding/repeaters/insert cubicArray
+/gate/endshielding/cubicArray/setRepeatNumberX 1
+/gate/endshielding/cubicArray/setRepeatNumberY 1
+/gate/endshielding/cubicArray/setRepeatNumberZ 2
+/gate/endshielding/cubicArray/setRepeatVector 0.0 0.0 40.1 cm
+
+#	SEPTA
+/gate/head/daughters/name septa
+/gate/head/daughters/insert box
+/gate/septa/placement/setTranslation -1.5 0.0 0.0 cm
+/gate/septa/geometry/setXLength 5.0 cm
+/gate/septa/geometry/setYLength 32.0 cm
+/gate/septa/geometry/setZLength .5 mm
+/gate/septa/setMaterial Tungsten
+/gate/septa/repeaters/insert cubicArray
+/gate/septa/cubicArray/setRepeatNumberX 1
+/gate/septa/cubicArray/setRepeatNumberY 1
+/gate/septa/cubicArray/setRepeatNumberZ 3
+/gate/septa/cubicArray/setRepeatVector 0.0 0.0 10.0 cm
+
+#	MODULE
+/gate/head/daughters/name module
+/gate/head/daughters/insert box
+/gate/module/placement/setTranslation 2.5 0.0 0.0 cm
+/gate/module/geometry/setXLength 3.0 cm
+/gate/module/geometry/setYLength 8.0 cm
+/gate/module/geometry/setZLength 10.0 cm
+/gate/module/setMaterial Air
+
+
+#	BLOCK
+/gate/module/daughters/name block
+/gate/module/daughters/insert box
+/gate/block/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/block/geometry/setXLength 30 mm
+/gate/block/geometry/setYLength 15.9 mm
+/gate/block/geometry/setZLength 19.9 mm
+/gate/block/setMaterial Air
+
+#	C R Y S T A L
+/gate/block/daughters/name crystal
+/gate/block/daughters/insert box
+/gate/crystal/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/crystal/geometry/setXLength 3.0 cm
+/gate/crystal/geometry/setYLength 3.0 mm
+/gate/crystal/geometry/setZLength 3.8 mm
+/gate/crystal/setMaterial Air
+
+
+#	LSO layer
+/gate/crystal/daughters/name LSO
+/gate/crystal/daughters/insert box
+/gate/LSO/placement/setTranslation -0.75 0.0 0.0 cm
+/gate/LSO/geometry/setXLength 1.5 cm
+/gate/LSO/geometry/setYLength 3.0 mm
+/gate/LSO/geometry/setZLength 3.8 mm
+/gate/LSO/setMaterial LSO
+
+#	BGO layer
+/gate/crystal/daughters/name BGO
+/gate/crystal/daughters/insert box
+/gate/BGO/placement/setTranslation +0.75 0.0 0.0 cm
+/gate/BGO/geometry/setXLength 1.5 cm
+/gate/BGO/geometry/setYLength 3.0 mm
+/gate/BGO/geometry/setZLength 3.8 mm
+/gate/BGO/setMaterial BGO
+
+#	R E P E A T    C R Y S T A L
+/gate/crystal/repeaters/insert cubicArray
+/gate/crystal/cubicArray/setRepeatNumberX 1
+/gate/crystal/cubicArray/setRepeatNumberY 5
+/gate/crystal/cubicArray/setRepeatNumberZ 5
+/gate/crystal/cubicArray/setRepeatVector 0.0 3.2 4.0 mm
+
+
+#	R E P E A T    BLOCK
+/gate/block/repeaters/insert cubicArray
+/gate/block/cubicArray/setRepeatNumberX 1
+/gate/block/cubicArray/setRepeatNumberY 5
+/gate/block/cubicArray/setRepeatNumberZ 5
+/gate/block/cubicArray/setRepeatVector 0.0 1.6 2.0 cm
+
+#	R E P E A T MODULE
+/gate/module/repeaters/insert cubicArray
+/gate/module/cubicArray/setRepeatNumberX 1
+/gate/module/cubicArray/setRepeatNumberY 4
+/gate/module/cubicArray/setRepeatNumberZ 4
+/gate/module/cubicArray/setRepeatVector 0.0 8.0 10.0 cm
+
+#	R E P E A T HEAD
+/gate/head/repeaters/insert ring
+/gate/head/ring/setRepeatNumber 8
+
+
+
+# ECCENT-ROTATION MOVE
+/gate/cylindricalPET/moves/insert eccent-rot
+/gate/cylindricalPET/eccent-rot/setShiftXYZ 5. 0. 0. cm
+/gate/cylindricalPET/eccent-rot/setSpeed 10 deg/s
+
+
+
+#############################################################
+
+
+#/run/initialize
+
+#/run/initialize
+
+
+# Show how the geometry moves with time
+#/gate/timing/setTime 0. s
+#/gate/timing/setTime 37.5 s
+#/gate/timing/setTime 75 s
+#/gate/timing/setTime 112.5 s
+#/gate/timing/setTime 150 s
+#/gate/timing/setTime 187.5 s
+#/gate/timing/setTime 225 s
+#/gate/timing/setTime 262.5 s
+#/gate/timing/setTime 300 s
+#/gate/timing/setTime 337.5 s
+#/gate/timing/setTime 375 s
+#/gate/timing/setTime 412.5 s
+#/gate/timing/setTime 450 s
+#/gate/timing/setTime 487.5 s
+#/gate/timing/setTime 525 s
+#/gate/timing/setTime 562.5 s
+#/gate/timing/setTime 600 s
+
+
+
+#	A T T A C H    S Y S T E M 
+/gate/systems/cylindricalPET/rsector/attach head
+/gate/systems/cylindricalPET/module/attach module
+/gate/systems/cylindricalPET/submodule/attach block
+/gate/systems/cylindricalPET/crystal/attach crystal
+/gate/systems/cylindricalPET/layer0/attach LSO
+/gate/systems/cylindricalPET/layer1/attach BGO
+
+
+#	A T T A C H    C R Y S T A L  SD
+
+/gate/LSO/attachCrystalSD
+/gate/BGO/attachCrystalSD
+
+#/gate/systems/cylindricalPET/describe
+
+
+/gate/geometry/init
+
+# Show how the geometry moves with time
+/gate/timing/setTime 0. s
+/gate/timing/setTime 37.5 s
+/gate/timing/setTime 75 s
+/gate/timing/setTime 112.5 s
+/gate/timing/setTime 150 s
+/gate/timing/setTime 187.5 s
+/gate/timing/setTime 225 s
+/gate/timing/setTime 262.5 s
+/gate/timing/setTime 300 s
+/gate/timing/setTime 337.5 s
+/gate/timing/setTime 375 s
+/gate/timing/setTime 412.5 s
+/gate/timing/setTime 450 s
+/gate/timing/setTime 487.5 s
+/gate/timing/setTime 525 s
+/gate/timing/setTime 562.5 s
+/gate/timing/setTime 600 s
+
+
+/control/execute Physicslist_EM_std.mac
+/gate/physics/init
+
+
+#	S O U R C E
+/gate/source/addSource F18LineSource
+/gate/source/F18LineSource/setActivity 100000. becquerel
+
+/gate/source/F18LineSource/gps/particle e+
+/gate/source/F18LineSource/setForcedUnstableFlag true
+/gate/source/F18LineSource/setForcedHalfLife 6586.2 s
+/gate/source/F18LineSource/gps/energytype Fluor18
+/gate/source/F18LineSource/gps/type Volume
+/gate/source/F18LineSource/gps/shape Cylinder
+/gate/source/F18LineSource/gps/radius .5 mm
+/gate/source/F18LineSource/gps/halfz 34.0 cm
+/gate/source/F18LineSource/gps/angtype iso
+/gate/source/F18LineSource/gps/centre 0. -2.0 0. cm
+/gate/source/F18LineSource/gps/confine NULL
+
+#/gate/geometry/enableAutoUpdate
+
+#/calcul/sethistName test_move_orbiting.root
+
+#	S T A R T 
+#/gate/application/setTimeSlice     37.5 s
+#/gate/application/setTimeStart     0.0   s
+#/gate/application/setTimeStop      600.0 s
+/gate/application/setTimeSlice     0.01 s
+/gate/application/setTimeStart     0.0   s
+/gate/application/setTimeStop      0.02 s
+/gate/application/startDAQ
+
+/gate/application/describe
+

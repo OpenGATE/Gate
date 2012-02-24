@@ -1,0 +1,32 @@
+# SOURCE PBS
+/gate/source/addSource PBS PencilBeam
+
+#particle type
+/gate/source/PBS/setParticleType proton
+
+#energy spectrum
+/gate/source/PBS/setEnergy 180 MeV
+/gate/source/PBS/setSigmaEnergy 0.8 MeV
+
+#position
+/gate/source/PBS/setPosition 0 0 -2.49 m
+
+# spot size
+/gate/source/PBS/setSigmaX 6 mm
+/gate/source/PBS/setSigmaY 10 mm
+
+#divergence
+/gate/source/PBS/setSigmaTheta 3 mrad
+/gate/source/PBS/setSigmaPhi 4 mrad
+
+#emittance
+/gate/source/PBS/setEllipseXThetaEmittance 30 mm*mrad
+/gate/source/PBS/setEllipseYPhiEmittance 40 mm*mrad
+
+#positive-> converging beam; negative diverging beam
+/gate/source/PBS/setEllipseXThetaRotationNorm positive
+/gate/source/PBS/setEllipseYPhiRotationNorm positive
+
+#beam direction rotation
+#/gate/source/PBS/setRotationAxis 1 0 0
+#/gate/source/PBS/setRotationAngle 180 deg

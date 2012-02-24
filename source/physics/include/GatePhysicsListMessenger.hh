@@ -1,0 +1,82 @@
+/*----------------------
+   GATE version name: gate_v6
+
+   Copyright (C): OpenGATE Collaboration
+
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See GATE/LICENSE.txt for further details
+----------------------*/
+
+
+
+#ifndef GATEPHYSICSLISTMESSENGER_HH
+#define GATEPHYSICSLISTMESSENGER_HH
+
+#include "globals.hh"
+
+//#include "GateMessageManager.hh"
+
+#include "G4UImessenger.hh"
+#include "GateUIcmdWith2String.hh"
+#include "G4UIcmdWithoutParameter.hh"
+#include "G4UIcmdWithAString.hh"
+#include "GateUIcmdWithAStringAndAnInteger.hh"
+#include "G4UIcmdWithAnInteger.hh"
+#include "G4UIcmdWithABool.hh"
+#include "G4UIcmdWithADoubleAndUnit.hh"
+
+class GatePhysicsList;
+
+class GatePhysicsListMessenger:public G4UImessenger
+{
+public:
+  GatePhysicsListMessenger(GatePhysicsList * pl);
+  ~GatePhysicsListMessenger();
+  
+  void BuildCommands(G4String base);
+  void SetNewValue(G4UIcommand*, G4String);
+
+  G4double ScaleValue(G4double value,G4String unit);
+
+protected:
+  GatePhysicsList * pPhylist;
+  GateUIcmdWith2String * pRemove;
+  GateUIcmdWith2String * pAdd;
+  GateUIcmdWith2String * pList;
+  G4UIcmdWithoutParameter * pInit;
+  G4UIcmdWithAString * pPrint;
+ 
+  G4UIcmdWithAString * gammaCutCmd;
+  G4UIcmdWithAString * electronCutCmd;
+  G4UIcmdWithAString * positronCutCmd;
+ G4UIcmdWithAString * protonCutCmd;
+ 
+  G4UIcmdWithAString * pMaxStepSizeCmd;
+  G4UIcmdWithAString * pMaxTrackLengthCmd;
+  G4UIcmdWithAString * pMaxToFCmd;
+  G4UIcmdWithAString * pMinKineticEnergyCmd;
+  G4UIcmdWithAString * pMinRemainingRangeCmd;
+
+  G4UIcmdWithAString * pActivateStepLimiterCmd;
+  G4UIcmdWithAString * pActivateSpecialCutsCmd;
+
+  G4UIcmdWithoutParameter * pCutInMaterial;
+
+//#ifdef G4VERSION9_2
+
+  G4UIcmdWithAnInteger * pSetDEDXBinning;
+  G4UIcmdWithAnInteger * pSetLambdaBinning;
+  G4UIcmdWithADoubleAndUnit * pSetEMin;
+  G4UIcmdWithADoubleAndUnit * pSetEMax;
+  G4UIcmdWithABool * pSetSplineFlag;
+
+//#endif
+    
+
+private:
+  int nInit;
+  int nEMStdOpt;
+}; 
+
+#endif /* end #define GATEPHYSICSLISTMESSENGER_HH */

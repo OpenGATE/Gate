@@ -1,0 +1,149 @@
+# Binning parameter - from geant4 opt3 physic list
+# 20bins/dec from .1keV to 10TeV -> 220 bins
+/gate/physics/setEMin 100 eV
+/gate/physics/setEMax 10 TeV
+/gate/physics/setDEDXBinning 220
+/gate/physics/setLambdaBinning 220
+
+#===============================================================================================================#
+#					EM PROCESS      							#
+#===============================================================================================================#
+
+# standard em processes
+/gate/physics/addProcess PhotoElectric
+/gate/physics/addProcess Compton
+/gate/physics/addProcess GammaConversion
+/gate/physics/processes/PhotoElectric/setModel StandardModel
+/gate/physics/processes/Compton/setModel StandardModel
+/gate/physics/processes/GammaConversion/setModel StandardModel
+
+# e- and e+ em processes
+# step function and linear loss values are extracted from geant4 opt3 physic list
+/gate/physics/addProcess ElectronIonisation e-
+/gate/physics/addProcess ElectronIonisation e+
+/gate/physics/addProcess Bremsstrahlung e-
+/gate/physics/addProcess Bremsstrahlung e+
+/gate/physics/addProcess PositronAnnihilation e+
+/gate/physics/processes/ElectronIonisation/setModel StandardModel
+/gate/physics/processes/Bremsstrahlung/setModel StandardModel
+/gate/physics/processes/ElectronIonisation/setStepFunction e- 0.2 100 um
+/gate/physics/processes/ElectronIonisation/setStepFunction e+ 0.2 100 um
+/gate/physics/processes/ElectronIonisation/setLinearLossLimit electron 0.01
+
+# hadron and ions em processes
+# step function and linear loss values are extracted from geant4 opt3 physic list
+/gate/physics/addProcess HadronIonisation proton
+/gate/physics/addProcess IonIonisation
+/gate/physics/processes/HadronIonisation/setStepFunction proton 0.2 50 um
+/gate/physics/processes/HadronIonisation/setLinearLossLimit proton 0.01
+/gate/physics/processes/IonIonisation/setStepFunction GenericIon 0.1 20 um
+/gate/physics/processes/IonIonisation/setStepFunction alpha 0.1 20 um
+/gate/physics/processes/IonIonisation/setStepFunction deuteron 0.1 20 um
+/gate/physics/processes/IonIonisation/setStepFunction triton 0.1 20 um
+/gate/physics/processes/IonIonisation/setStepFunction He3 0.1 20 um
+
+# Coulomb Scattering
+# Gate MultipleScattering use hMultipleScattering for e+ and e-. this fixes that
+# step function values are extracted from geant4 opt3 physic list
+/gate/physics/addProcess eMultipleScattering e-
+/gate/physics/addProcess eMultipleScattering e+
+/gate/physics/addProcess hMultipleScattering proton
+/gate/physics/addProcess hMultipleScattering alpha
+/gate/physics/addProcess hMultipleScattering deuteron
+/gate/physics/addProcess hMultipleScattering triton
+/gate/physics/addProcess hMultipleScattering He3
+/gate/physics/addProcess hMultipleScattering GenericIon
+/gate/physics/processes/eMultipleScattering/setGeometricalStepLimiterType e- distanceToBoundary
+/gate/physics/processes/eMultipleScattering/setGeometricalStepLimiterType e+ distanceToBoundary
+/gate/physics/processes/hMultipleScattering/setGeometricalStepLimiterType proton safety
+
+#===============================================================================================================#
+#					HADRONIC PROCESS							#
+#===============================================================================================================#
+
+# decay process
+/gate/physics/addProcess Decay
+/gate/physics/addProcess RadioactiveDecay
+
+# elastic process
+# may not be the best choice for neutrons and proton
+/gate/physics/addProcess UHadronElastic
+/gate/physics/processes/UHadronElastic/setModel G4HadronElastic
+/gate/physics/processes/UHadronElastic/setDataSet G4HadronElasticDataSet
+
+# proton inelastic process
+# uncomment as needed
+/gate/physics/addProcess ProtonInelastic
+/gate/physics/processes/ProtonInelastic/setDataSet G4ProtonInelasticCrossSection
+# precompound 
+#/gate/physics/processes/ProtonInelastic/setModel PreCompound
+# or binary cascade
+/gate/physics/processes/ProtonInelastic/setModel G4BinaryCascade
+
+# Ions inelactic process
+/gate/physics/addProcess IonInelastic
+/gate/physics/processes/IonInelastic/setModel G4BinaryLightIonReaction
+/gate/physics/processes/IonInelastic/setModel G4LEDeuteronInelastic deuteron
+/gate/physics/processes/IonInelastic/setModel G4LETritonInelastic triton
+/gate/physics/processes/IonInelastic/setModel G4LEAlphaInelastic alpha
+
+/gate/physics/processes/IonInelastic/G4LEDeuteronInelastic/setEmin 0 MeV deuteron
+/gate/physics/processes/IonInelastic/G4LEDeuteronInelastic/setEmax 80 MeV deuteron
+/gate/physics/processes/IonInelastic/G4BinaryLightIonReaction/setEmin 80 MeV deuteron
+/gate/physics/processes/IonInelastic/G4BinaryLightIonReaction/setEmax 20 GeV deuteron
+/gate/physics/processes/IonInelastic/G4LETritonInelastic/setEmin 0 MeV triton
+/gate/physics/processes/IonInelastic/G4LETritonInelastic/setEmax 80 MeV triton
+/gate/physics/processes/IonInelastic/G4BinaryLightIonReaction/setEmin 80 MeV triton
+/gate/physics/processes/IonInelastic/G4BinaryLightIonReaction/setEmax 20 GeV triton
+/gate/physics/processes/IonInelastic/G4LEAlphaInelastic/setEmin 0 MeV alpha
+/gate/physics/processes/IonInelastic/G4LEAlphaInelastic/setEmax 80 MeV alpha
+/gate/physics/processes/IonInelastic/G4BinaryLightIonReaction/setEmin 80 MeV alpha
+/gate/physics/processes/IonInelastic/G4BinaryLightIonReaction/setEmax 20 GeV alpha
+
+/gate/physics/processes/IonInelastic/setDataSet G4IonsShenCrossSection GenericIon
+/gate/physics/processes/IonInelastic/setDataSet G4TripathiLightCrossSection deuteron
+/gate/physics/processes/IonInelastic/setDataSet G4TripathiLightCrossSection triton
+/gate/physics/processes/IonInelastic/setDataSet G4TripathiLightCrossSection alpha
+
+# neutrons Capture
+/gate/physics/addProcess NeutronCapture
+/gate/physics/processes/NeutronCapture/setModel G4NeutronHPorLCapture
+/gate/physics/processes/NeutronCapture/setModel G4LCapture
+/gate/physics/processes/NeutronCapture/G4NeutronHPorLCapture/setEmin 0 MeV neutron
+/gate/physics/processes/NeutronCapture/G4NeutronHPorLCapture/setEmax 20 MeV neutron
+/gate/physics/processes/NeutronCapture/G4LCapture/setEmin 20 MeV neutron
+/gate/physics/processes/NeutronCapture/G4LCapture/setEmax 20 GeV neutron
+/gate/physics/processes/NeutronCapture/setDataSet G4HadronCaptureDataSet
+/gate/physics/processes/NeutronCapture/setDataSet G4NeutronHPCaptureData
+
+# neutrons Fission
+/gate/physics/addProcess Fission
+/gate/physics/processes/Fission/setModel G4LFission
+/gate/physics/processes/Fission/setModel G4NeutronHPorLFission
+/gate/physics/processes/Fission/G4NeutronHPorLFission/setEmin 0 MeV neutron
+/gate/physics/processes/Fission/G4NeutronHPorLFission/setEmax 20 MeV neutron
+/gate/physics/processes/Fission/G4LFission/setEmin 20 MeV neutron
+/gate/physics/processes/Fission/G4LFission/setEmax 20 GeV neutron
+/gate/physics/processes/Fission/setDataSet G4HadronFissionDataSet
+/gate/physics/processes/Fission/setDataSet G4NeutronHPFissionData
+
+# Neutrons inelastic process
+# uncomment as needed
+/gate/physics/addProcess NeutronInelastic
+/gate/physics/processes/NeutronInelastic/setModel G4NeutronHPInelastic
+/gate/physics/processes/NeutronInelastic/G4NeutronHPInelastic/setEmin 0 MeV neutron
+/gate/physics/processes/NeutronInelastic/G4NeutronHPInelastic/setEmax 20 MeV neutron
+/gate/physics/processes/NeutronInelastic/setDataSet G4HadronInelasticDataSet
+/gate/physics/processes/NeutronInelastic/setDataSet G4NeutronHPInelasticData
+# precompound 
+#/gate/physics/processes/NeutronInelastic/setModel PreCompound
+#/gate/physics/processes/NeutronInelastic/PreCompound/setEmin 20 MeV neutron
+#/gate/physics/processes/NeutronInelastic/PreCompound/setEmax 20 GeV neutron
+# or binary cascade
+/gate/physics/processes/NeutronInelastic/setModel G4BinaryCascade
+/gate/physics/processes/NeutronInelastic/G4BinaryCascade/setEmin 20 MeV neutron
+/gate/physics/processes/NeutronInelastic/G4BinaryCascade/setEmax 20 GeV neutron
+
+# display stuff
+/gate/physics/processList Enabled
+

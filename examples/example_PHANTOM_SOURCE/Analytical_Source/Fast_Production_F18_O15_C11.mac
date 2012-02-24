@@ -1,0 +1,92 @@
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+#
+#  This macro has been prepared by:  
+#     Sebastien JAN
+
+
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+#                                                                 #
+#         P O S I T R O N   E M I S S I O N   S O U R C E         #
+#                                                                 #
+#                Fluor 18 - Carbon 11 - Oxygen 15                 #
+#                                                                 #         
+#  NB :  In this example, each isotope source is generated        #
+#	   in a sphere placed at the center of the FOV.           #
+#                The sphere radius is set at 0.5 cm.              #
+#                                                                 #   
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+#
+# For F18
+#
+
+/gate/source/addSource sourceF18
+/gate/source/sourceF18/setActivity 1000. becquerel
+/gate/source/sourceF18/gps/particle e+
+/gate/source/sourceF18/setForcedUnstableFlag true
+/gate/source/sourceF18/gps/energytype Fluor18
+/gate/source/sourceF18/setForcedHalfLife 6586 s
+/gate/source/sourceF18/gps/type Volume
+/gate/source/sourceF18/gps/shape Sphere
+/gate/source/sourceF18/gps/radius 0.5 cm
+/gate/source/sourceF18/gps/centre 0. 0. 0. cm
+/gate/source/sourceF18/vis/setColor green
+/gate/source/sourceF18/gps/confine NULL 
+/gate/source/sourceF18/gps/angtype iso
+
+#
+# For O15
+# NB: LifeTime != HalfLife
+# Ex: for O15, LifeTime (tau) = 176.3 s, HalfLife (T_1/2) = 122.2 s
+#
+
+/gate/source/addSource sourceO15
+/gate/source/sourceO15/setActivity 1000. becquerel
+/gate/source/sourceO15/gps/particle e+
+/gate/source/sourceO15/setForcedUnstableFlag true
+/gate/source/sourceO15/gps/energytype Oxygen15
+/gate/source/sourceO15/setForcedLifeTime 176.3 s
+/gate/source/sourceO15/gps/type Volume
+/gate/source/sourceO15/gps/shape Sphere
+/gate/source/sourceO15/gps/radius 0.5 cm
+/gate/source/sourceO15/gps/centre 0. 0. 0. cm
+/gate/source/sourceO15/vis/setColor green
+/gate/source/sourceO15/gps/confine NULL 
+/gate/source/sourceO15/gps/angtype iso
+
+#
+# For C11
+#
+
+/gate/source/addSource sourceC11
+/gate/source/sourceC11/setActivity 1000. becquerel
+/gate/source/sourceC11/gps/particle e+
+/gate/source/sourceC11/setForcedUnstableFlag true
+/gate/source/sourceC11/gps/energytype Carbon11
+/gate/source/sourceC11/setForcedHalfLife 1223 s
+
+/gate/source/sourceC11/gps/type Volume
+/gate/source/sourceC11/gps/shape Sphere
+/gate/source/sourceC11/gps/radius 0.5 cm
+/gate/source/sourceC11/gps/centre 0. 0. 0. cm
+/gate/source/sourceC11/vis/setColor green
+/gate/source/sourceC11/gps/confine NULL 
+/gate/source/sourceC11/gps/angtype iso
+
+#################
+
+/gate/source/list

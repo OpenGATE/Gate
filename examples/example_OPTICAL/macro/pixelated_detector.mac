@@ -1,0 +1,76 @@
+# ===============================================
+#
+# Models an 9 by 9 array of LSO pixels on top of
+# an PMT. The pixels are 2x2x10 mm. The PMT has
+# a radius of 14 mm and a height of 50 mm. The
+# surface of the pixels is rough and the pixels
+# are clad in teflon. The surface between the
+# pixels and the PMT absorbs all light.
+#
+# ===============================================
+
+# === scanner ===
+# the scanner contains in this case one module,
+# but could contain for example a ring of 
+# modules
+/gate/world/daughters/name              scanner
+/gate/world/daughters/insert            box
+/gate/scanner/geometry/setXLength       31.0 mm
+/gate/scanner/geometry/setYLength       31.0 mm
+/gate/scanner/geometry/setZLength       71.0 mm
+/gate/scanner/setMaterial               Air
+/gate/scanner/vis/forceWireframe        1
+
+# === module ===
+# the module contains the pixels and the PMT
+/gate/scanner/daughters/name            module
+/gate/scanner/daughters/insert          box
+/gate/module/geometry/setXLength        30.0 mm
+/gate/module/geometry/setYLength        30.0 mm
+/gate/module/geometry/setZLength        70.0 mm
+/gate/module/setMaterial                Air
+/gate/module/vis/forceWireframe         1
+
+/gate/systems/scanner/level1/attach     module
+
+# === pixels ===
+/gate/module/daughters/name             pixel
+/gate/module/daughters/insert           box
+/gate/pixel/geometry/setXLength         2.0  mm
+/gate/pixel/geometry/setYLength         2.0  mm
+/gate/pixel/geometry/setZLength         10.0 mm
+/gate/pixel/setMaterial                 LSO
+/gate/pixel/placement/setTranslation    0 0 25 mm
+/gate/pixel/vis/setColor                red
+
+/gate/pixel/repeaters/insert            cubicArray
+/gate/pixel/cubicArray/setRepeatNumberX 9
+/gate/pixel/cubicArray/setRepeatNumberY 9
+/gate/pixel/cubicArray/setRepeatNumberZ 1
+/gate/pixel/cubicArray/setRepeatVector  2.1 2.1 0 mm
+ 
+/gate/pixel/attachCrystalSD
+/gate/systems/scanner/level2/attach     pixel
+
+# === PMT ===
+/gate/module/daughters/name             PMT
+/gate/module/daughters/insert           cylinder
+/gate/PMT/geometry/setRmax              14.0 mm
+/gate/PMT/geometry/setRmin              0    mm
+/gate/PMT/geometry/setHeight            50.0 mm
+/gate/PMT/setMaterial                   Water
+/gate/PMT/placement/setTranslation      0 0 -5 mm
+/gate/PMT/vis/setColor                  blue
+
+# === surfaces ===
+# here we define all surfaces that exist between
+# all the volumes. 
+
+/gate/pixel/surfaces/name              teflonsurf
+/gate/pixel/surfaces/insert            module
+/gate/pixel/surfaces/teflonsurf/setSurface polished_teflon_wrapped
+
+/gate/pixel/surfaces/name              pmtsurf
+/gate/pixel/surfaces/insert            PMT
+/gate/pixel/surfaces/pmtsurf/setSurface perfect_apd
+

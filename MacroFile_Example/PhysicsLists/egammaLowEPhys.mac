@@ -1,0 +1,21 @@
+/gate/physics/addProcess LowEnergyPhotoElectric
+/gate/physics/addProcess LowEnergyCompton
+/gate/physics/addProcess LowEnergyGammaConversion
+/gate/physics/addProcess LowEnergyRayleighScattering
+
+/gate/physics/addProcess LowEnergyBremsstrahlung e-
+/gate/physics/addProcess LowEnergyElectronIonisation e-
+
+/gate/physics/addProcess ElectronIonisation e+
+/gate/physics/addProcess Bremsstrahlung e+
+/gate/physics/addProcess PositronAnnihilation e+
+
+/gate/physics/addProcess MultipleScattering e+
+/gate/physics/addProcess MultipleScattering e-
+/gate/physics/processes/MultipleScattering/setGeometricalStepLimiterType e- distanceToBoundary
+/gate/physics/processes/MultipleScattering/setGeometricalStepLimiterType e+ distanceToBoundary
+
+/gate/physics/setEMin 0.1 keV
+/gate/physics/setEMax 10 GeV
+/gate/physics/setDEDXBinning 220
+/gate/physics/setLambdaBinning 220

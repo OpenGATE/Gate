@@ -1,0 +1,11 @@
+#   this file contains all the energy windows computed during first step
+#   with their associated root files
+#   it has to be formatted the following way
+# [Emin,Emax] is the energy window of the incident photons
+# the Base FileName is the the name of the root files name.root, name_1.root name_2.root ...
+# the number of these files has to be given as the last parameter
+#
+# enter the datas for each energy window
+# Incident Energy Window :  Emin (keV)   -    Emax (keV) |   Associated Root Base FileName | number of these files
+                              0.                   365.                 testARFdata                      1
+

@@ -1,0 +1,60 @@
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+
+
+Some GATE Macro examples about sources and phantoms :
+
+1)
+
+"Analytical_Phantom/"
+- "Derenzo.mac"
+- "NEMA_IEC_2001.mac"
+- "Cylinder.mac"
+
+2)
+
+"Analytical_Source/"
+- "Single_Gamma.mac"
+- "Two_Gamma_backtoback.mac"
+- "Fast_Production_F18_O15_C11.mac"
+- "RadioActive_Isotope.mac"
+
+3)
+
+"Voxelized_Phantom_Source/"
+
+Complete simulation description about How To Use the voxelized approach for imaging applications.
+Users need to execute the mainMacro.mac file to start the complete example.
+
+The list of macro files which are involved in this example is the following:
+
+- mainMacro.mac
+- MoveVisu.mac
+- VoxelizedPhantom.mac
+- VoxelizedSource.mac
+- MoveVisu.mac
+- Verbose.mac
+
+The phantom used in this application (Interfile Format)
+
+- raw data:    brain_phantom.i33
+- Header file: brain_phantom.h33
+
+And the associated ASCII files to convert phantom voxel values in material properties and activity values:
+
+- range_atten_brain.dat
+- activity_range_brain.dat
+

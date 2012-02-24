@@ -1,0 +1,10 @@
+/vis/open OGLSX
+/vis/drawVolume
+/vis/scene/add/trajectories
+
+/vis/viewer/set/viewpointThetaPhi 45 45
+
+/vis/viewer/zoom 1
+
+/vis/viewer/set/style surface
+/vis/scene/endOfEventAction accumulate

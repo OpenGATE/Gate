@@ -1,0 +1,36 @@
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+
+
+
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+#                                                                 #
+#                 C Y L I N D E R   P H A N T O M                 #
+#                                                                 #
+#                                                                 #         
+#                       Diameter : 20 cm                          #
+#                       Height   : 20 cm                          #
+#                                                                 #   
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+/gate/world/daughters/name phantom
+/gate/world/daughters/insert cylinder
+/gate/phantom/setMaterial Water
+/gate/phantom/vis/forceWireframe
+/gate/phantom/vis/setColor blue
+/gate/phantom/geometry/setRmax   10. cm
+/gate/phantom/geometry/setHeight 20. cm
+/gate/phantom/attachPhantomSD
