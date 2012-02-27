@@ -160,9 +160,9 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
     G4ThreeVector interaction_normal = point->GetMomentumDirection();
     G4ThreeVector interaction_position = point->GetPosition();
     if (useCristalPosition || useCristalNormal) {
-	G4AffineTransform transform = point->GetTouchable()->GetHistory()->GetTopTransform().Inverse();
-	if (useCristalPosition) interaction_position = transform.TransformPoint(G4ThreeVector(0,0,0));
-	if (useCristalNormal)   interaction_normal = transform.TransformAxis(G4ThreeVector(1,0,0));
+		G4AffineTransform transform = point->GetTouchable()->GetHistory()->GetTopTransform().Inverse();
+		if (useCristalPosition) interaction_position = transform.TransformPoint(G4ThreeVector(0,0,0));
+		if (useCristalNormal)   interaction_normal = transform.TransformAxis(G4ThreeVector(1,0,0));
     }
     //G4cout << "interaction_position=" << interaction_position << " interaction_normal=" << interaction_normal << G4endl;
 
