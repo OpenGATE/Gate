@@ -25,8 +25,8 @@
 struct AugerDeposition
 {
 	G4ThreeVector position;
-	G4double deposited_energy;
-	G4double deposition_time;
+	G4double energy;
+	G4double time;
 };
 
 typedef std::list<AugerDeposition> AugerDepositions;
@@ -40,6 +40,10 @@ class GateAugerDetectorActor : public GateVActor
   virtual ~GateAugerDetectorActor();
   void setMaxTOF(G4double tof);
   void setMinEdep(G4double edep);
+  void setProjectionDirection(const G4ThreeVector& dir);
+  void setMinimumProfileAxis(G4double min);
+  void setMaximumProfileAxis(G4double max);
+  void setProfileSize(int nbpts);
     
   //-----------------------------------------------------------------------------
   // This macro initialize the CreatePrototype and CreateInstance
@@ -72,7 +76,8 @@ protected:
   GateAugerDetectorActor(G4String name, G4int depth=0);
 
   G4double GetTotalDepositedEnergy() const;
-  G4ThreeVector GetWeighedBarycenter() const; 
+  G4ThreeVector GetWeighedBarycenterPosition() const; 
+  G4double GetWeighedBarycenterTime() const; 
 
   TFile* pTfile;
   TH1D* pProfileHisto;
@@ -81,6 +86,10 @@ protected:
   AugerDepositions depositions;
   G4double max_time_of_flight;
   G4double min_energy_deposition;
+  G4ThreeVector projection_direction;
+  G4double profile_min;
+  G4double profile_max;
+  int profile_nbpts;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(AugerDetectorActor,GateAugerDetectorActor)
