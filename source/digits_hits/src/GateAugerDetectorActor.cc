@@ -24,6 +24,7 @@ GateAugerDetectorActor::GateAugerDetectorActor(G4String name, G4int depth)
 	profile_min = -160*mm;
 	profile_max = 160*mm;
 	profile_nbpts = 361;
+	profile_noise_fwhm = 5*mm;
 
 	pMessenger = new GateAugerDetectorActorMessenger(this);
 }
@@ -60,6 +61,11 @@ void GateAugerDetectorActor::setMaximumProfileAxis(G4double max)
 void GateAugerDetectorActor::setProfileSize(int nbpts)
 {
 	profile_nbpts = nbpts;
+}
+
+void GateAugerDetectorActor::setProfileNoiseFWHM(G4double noise_fwhm)
+{
+	profile_noise_fwhm = noise_fwhm;
 }
 
 void GateAugerDetectorActor::Construct()
@@ -117,10 +123,11 @@ void GateAugerDetectorActor::EndOfEventAction(const G4Event*)
 
 	if (total_deposited_energy < min_energy_deposition) return;
 	const G4ThreeVector hit_position = GetWeighedBarycenterPosition();
+	const G4double noise_projection = G4RandGauss::shoot(0,profile_noise_fwhm/2.3548);
 	//G4cout << "HITTTTTED!!!!!" << G4endl;
 	//G4cout << "ndep = " << depositions.size() << " total_edep = " << total_deposited_energy << G4endl;
 	//G4cout << "position = " << hit_position << G4endl;
-	pProfileHisto->Fill(projection_direction.dot(hit_position)/mm);
+	pProfileHisto->Fill((projection_direction.dot(hit_position)+noise_projection)/mm);
 }
 
 void GateAugerDetectorActor::PreUserTrackingAction(const GateVVolume*, const G4Track*) 

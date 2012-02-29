@@ -38,6 +38,7 @@ class GateAugerDetectorActorMessenger : public GateActorMessenger
 		G4UIcmdWithADoubleAndUnit* pMinProfileCmd;
 		G4UIcmdWithADoubleAndUnit* pMaxProfileCmd;
 		G4UIcmdWithAnInteger* pSizeProfileCmd;
+		G4UIcmdWithADoubleAndUnit* pProfileNoiseFWHMCmd;
 };
 
 #endif

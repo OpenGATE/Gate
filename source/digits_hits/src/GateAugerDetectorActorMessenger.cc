@@ -21,6 +21,7 @@ GateAugerDetectorActorMessenger::~GateAugerDetectorActorMessenger()
 	delete pMinProfileCmd;
 	delete pMaxProfileCmd;
 	delete pSizeProfileCmd;
+	delete pProfileNoiseFWHMCmd;
 }
 
 void GateAugerDetectorActorMessenger::BuildCommands(G4String base)
@@ -52,6 +53,11 @@ void GateAugerDetectorActorMessenger::BuildCommands(G4String base)
 	pSizeProfileCmd = new G4UIcmdWithAnInteger((base+"/setProfileSize").c_str(),this); 
 	pSizeProfileCmd->SetGuidance("Set the number of pixel in the profile");
 	pSizeProfileCmd->SetParameterName("ProfileSize",false);
+
+	pProfileNoiseFWHMCmd = new G4UIcmdWithADoubleAndUnit((base+"/setProfileNoiseFWHM").c_str(),this); 
+	pProfileNoiseFWHMCmd->SetGuidance("Set profile additive noise FWHM");
+	pProfileNoiseFWHMCmd->SetParameterName("ProfileNoiseFWHM",false);
+	pProfileNoiseFWHMCmd->SetDefaultUnit("mm");
 }
 
 void GateAugerDetectorActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
@@ -62,6 +68,7 @@ void GateAugerDetectorActorMessenger::SetNewValue(G4UIcommand* cmd, G4String new
 	if(cmd == pMinProfileCmd) pActor->setMinimumProfileAxis(  G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue)  );
 	if(cmd == pMaxProfileCmd) pActor->setMaximumProfileAxis(  G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue)  );
 	if(cmd == pSizeProfileCmd) pActor->setProfileSize(  G4UIcmdWithAnInteger::GetNewIntValue(newValue)  );
+	if(cmd == pProfileNoiseFWHMCmd) pActor->setProfileNoiseFWHM(  G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue)  );
 
 	GateActorMessenger::SetNewValue(cmd,newValue);
 }

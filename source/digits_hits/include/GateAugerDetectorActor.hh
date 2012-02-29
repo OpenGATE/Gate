@@ -44,6 +44,7 @@ class GateAugerDetectorActor : public GateVActor
 		void setMinimumProfileAxis(G4double min);
 		void setMaximumProfileAxis(G4double max);
 		void setProfileSize(int nbpts);
+		void setProfileNoiseFWHM(G4double noise_fwhm);
 
 		//-----------------------------------------------------------------------------
 		// This macro initialize the CreatePrototype and CreateInstance
@@ -92,6 +93,7 @@ class GateAugerDetectorActor : public GateVActor
 		G4double profile_min;
 		G4double profile_max;
 		int profile_nbpts;
+		G4double profile_noise_fwhm;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(AugerDetectorActor,GateAugerDetectorActor)
