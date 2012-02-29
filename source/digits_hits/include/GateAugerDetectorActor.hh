@@ -4,7 +4,7 @@
 /*!
   \class  GateAugerDetectorActor
   \author pierre.gueth@creatis.insa-lyon.fr
- */
+  */
 
 #ifndef GATEAUGERDETECTORACTOR_HH
 #define GATEAUGERDETECTORACTOR_HH
@@ -35,61 +35,63 @@ typedef std::list<AugerDeposition> AugerDepositions;
 /// \brief Actor displaying nb events/tracks/step
 class GateAugerDetectorActor : public GateVActor
 {
- public: 
-  
-  virtual ~GateAugerDetectorActor();
-  void setMaxTOF(G4double tof);
-  void setMinEdep(G4double edep);
-  void setProjectionDirection(const G4ThreeVector& dir);
-  void setMinimumProfileAxis(G4double min);
-  void setMaximumProfileAxis(G4double max);
-  void setProfileSize(int nbpts);
-    
-  //-----------------------------------------------------------------------------
-  // This macro initialize the CreatePrototype and CreateInstance
-  FCT_FOR_AUTO_CREATOR_ACTOR(GateAugerDetectorActor)
+	public: 
 
-  //-----------------------------------------------------------------------------
-  // Constructs the sensor
-  virtual void Construct();
+		virtual ~GateAugerDetectorActor();
+		void setMaxTOF(G4double tof);
+		void setMinEdep(G4double edep);
+		void setProjectionDirection(const G4ThreeVector& dir);
+		void setMinimumProfileAxis(G4double min);
+		void setMaximumProfileAxis(G4double max);
+		void setProfileSize(int nbpts);
 
-  //-----------------------------------------------------------------------------
-  // Callbacks
+		//-----------------------------------------------------------------------------
+		// This macro initialize the CreatePrototype and CreateInstance
+		FCT_FOR_AUTO_CREATOR_ACTOR(GateAugerDetectorActor)
 
-  virtual void BeginOfRunAction(const G4Run * r);
-  virtual void BeginOfEventAction(const G4Event *) ;
-  virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
+			//-----------------------------------------------------------------------------
+			// Constructs the sensor
+			virtual void Construct();
 
-  virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*) ;
-  virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*) ;
-  virtual void EndOfEventAction(const G4Event*);
-  //-----------------------------------------------------------------------------
-  /// Saves the data collected to the file
-  virtual void SaveData();
-  virtual void ResetData();
- 
-//  virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
-  virtual void Initialize(G4HCofThisEvent*){}
-  virtual void EndOfEvent(G4HCofThisEvent*){}
+		//-----------------------------------------------------------------------------
+		// Callbacks
 
-protected:
-  GateAugerDetectorActor(G4String name, G4int depth=0);
+		virtual void BeginOfRunAction(const G4Run * r);
+		virtual void BeginOfEventAction(const G4Event *) ;
+		virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
 
-  G4double GetTotalDepositedEnergy() const;
-  G4ThreeVector GetWeighedBarycenterPosition() const; 
-  G4double GetWeighedBarycenterTime() const; 
+		virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*) ;
+		virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*) ;
+		virtual void EndOfEventAction(const G4Event*);
+		//-----------------------------------------------------------------------------
+		/// Saves the data collected to the file
+		virtual void SaveData();
+		virtual void ResetData();
 
-  TFile* pTfile;
-  TH1D* pProfileHisto;
-  TH1D* pEnergyDepositionHisto;
-  GateAugerDetectorActorMessenger * pMessenger;
-  AugerDepositions depositions;
-  G4double max_time_of_flight;
-  G4double min_energy_deposition;
-  G4ThreeVector projection_direction;
-  G4double profile_min;
-  G4double profile_max;
-  int profile_nbpts;
+		//  virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
+		virtual void Initialize(G4HCofThisEvent*){}
+		virtual void EndOfEvent(G4HCofThisEvent*){}
+
+	protected:
+		GateAugerDetectorActor(G4String name, G4int depth=0);
+
+		G4double GetTotalDepositedEnergy() const;
+		G4ThreeVector GetWeighedBarycenterPosition() const; 
+		G4double GetWeighedBarycenterTime() const; 
+
+		TFile* pTfile;
+		TH1D* pProfileHisto;
+		TH1D* pEnergyDepositionHisto;
+		TH1D* pTimeOfFlightHisto;
+
+		GateAugerDetectorActorMessenger * pMessenger;
+		AugerDepositions depositions;
+		G4double max_time_of_flight;
+		G4double min_energy_deposition;
+		G4ThreeVector projection_direction;
+		G4double profile_min;
+		G4double profile_max;
+		int profile_nbpts;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(AugerDetectorActor,GateAugerDetectorActor)

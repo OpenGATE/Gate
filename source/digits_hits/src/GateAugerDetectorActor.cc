@@ -78,8 +78,11 @@ void GateAugerDetectorActor::Construct()
 	pProfileHisto = new TH1D("reconstructedProfileHisto","reconstructed profile",profile_nbpts,-profile_min,profile_max);
 	pProfileHisto->SetXTitle("position (mm)");
 
-	pEnergyDepositionHisto  = new TH1D("edepHisto","energy deposited",500,0,5);
+	pEnergyDepositionHisto = new TH1D("edepHisto","energy deposited",500,0,5);
 	pEnergyDepositionHisto->SetXTitle("deposited energy (MeV)");
+
+	pTimeOfFlightHisto = new TH1D("tofHisto","time of flight",500,0,max_time_of_flight);
+	pTimeOfFlightHisto->SetXTitle("time of flight (ns)");
 
 	ResetData();
 }
@@ -95,7 +98,7 @@ void GateAugerDetectorActor::ResetData()
 	pEnergyDepositionHisto->Reset();
 }
 
-void GateAugerDetectorActor::BeginOfRunAction(const G4Run *)
+void GateAugerDetectorActor::BeginOfRunAction(const G4Run*)
 {
 }
 
@@ -110,6 +113,7 @@ void GateAugerDetectorActor::EndOfEventAction(const G4Event*)
 
 	if (total_deposited_energy <= 0) return;
 	pEnergyDepositionHisto->Fill(total_deposited_energy/MeV);
+	pTimeOfFlightHisto->Fill(GetWeighedBarycenterTime()/ns);
 
 	if (total_deposited_energy < min_energy_deposition) return;
 	const G4ThreeVector hit_position = GetWeighedBarycenterPosition();
@@ -177,5 +181,5 @@ G4double GateAugerDetectorActor::GetWeighedBarycenterTime() const
 	return accum/total_weight;
 }
 
-#endif /* end #define GATEAUGERDETECTORACTOR_CC */
+#endif
 #endif
