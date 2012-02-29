@@ -75,7 +75,7 @@ void GateAugerDetectorActor::Construct()
 
 	pTfile = new TFile(mSaveFilename,"RECREATE");
 
-	pProfileHisto = new TH1D("reconstructedProfileHisto","reconstructed profile",profile_nbpts,-profile_min,profile_max);
+	pProfileHisto = new TH1D("reconstructedProfileHisto","reconstructed profile",profile_nbpts,profile_min,profile_max);
 	pProfileHisto->SetXTitle("position (mm)");
 
 	pEnergyDepositionHisto = new TH1D("edepHisto","energy deposited",500,0,5);
