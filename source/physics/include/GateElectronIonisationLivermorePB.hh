@@ -8,15 +8,16 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-
-#ifndef GATEHIONISATIONLOWEPB_HH
-#define GATEHIONISATIONLOWEPB_HH
+#ifndef G4VERSION9_3
+#ifndef GATEIONISATIONLIVERMOREPB_HH
+#define GATEIONISATIONLIVERMOREPB_HH
 
 
 #include "GateVProcess.hh"
 
-#include "G4hLowEnergyIonisation.hh"
+#include "G4LivermoreIonisationModel.hh"
 
-MAKE_PROCESS_AUTO_CREATOR_WITH_MODEL(GateHadronIonisationLowEPB)
+MAKE_PROCESS_AUTO_CREATOR(GateElectronIonisationLivermorePB)
 
+#endif
 #endif

@@ -17,6 +17,7 @@
 #include <fstream>
 
 #include "GateImageCT.hh"
+#include "GateConfiguration.h"
 
 GateImageCT::GateImageCT()
 {

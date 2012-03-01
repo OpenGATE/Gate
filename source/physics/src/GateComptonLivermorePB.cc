@@ -9,31 +9,30 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #ifndef G4VERSION9_3
-#include "GateRayleighLowEPB.hh"
+#include "GateComptonLivermorePB.hh"
 
 #include "GateEMStandardProcessMessenger.hh"
 
 //-----------------------------------------------------------------------------
-GateRayleighLowEPB::GateRayleighLowEPB():GateVProcess("LowEnergyRayleighScattering")
+GateComptonLivermorePB::GateComptonLivermorePB():GateVProcess("LivermoreCompton")
 {  
   SetDefaultParticle("gamma");
-  SetProcessInfo("Rayleigh scattering of gammas at low energy");
+  SetProcessInfo("Compton scattering of gammas at low energy");
   pMessenger = new GateEMStandardProcessMessenger(this);  
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-G4VProcess* GateRayleighLowEPB::CreateProcess(G4ParticleDefinition *)
+G4VProcess* GateComptonLivermorePB::CreateProcess(G4ParticleDefinition * par)
 {
-  return new G4LowEnergyRayleigh(GetG4ProcessName());
-  
+  return dynamic_cast<G4VProcess*>( new G4LivermoreComptonModel(par, GetG4ProcessName()) );
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GateRayleighLowEPB::ConstructProcess(G4ProcessManager * manager)
+void GateComptonLivermorePB::ConstructProcess(G4ProcessManager * manager)
 {
   manager->AddDiscreteProcess(GetProcess());           
 }
@@ -41,7 +40,7 @@ void GateRayleighLowEPB::ConstructProcess(G4ProcessManager * manager)
 
 
 //-----------------------------------------------------------------------------
-bool GateRayleighLowEPB::IsApplicable(G4ParticleDefinition * par)
+bool GateComptonLivermorePB::IsApplicable(G4ParticleDefinition * par)
 {
   if(par == G4Gamma::Gamma()) return true;
   return false;
@@ -49,5 +48,5 @@ bool GateRayleighLowEPB::IsApplicable(G4ParticleDefinition * par)
 //-----------------------------------------------------------------------------
 
 
-MAKE_PROCESS_AUTO_CREATOR_CC(GateRayleighLowEPB)
+MAKE_PROCESS_AUTO_CREATOR_CC(GateComptonLivermorePB)
 #endif

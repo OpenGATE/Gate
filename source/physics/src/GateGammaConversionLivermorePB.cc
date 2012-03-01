@@ -9,12 +9,12 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #ifndef G4VERSION9_3
-#include "GateGammaConversionLowEPB.hh"
+#include "GateGammaConversionLivermorePB.hh"
 
 #include "GateEMStandardProcessMessenger.hh"
 
 //-----------------------------------------------------------------------------
-GateGammaConversionLowEPB::GateGammaConversionLowEPB():GateVProcess("LowEnergyGammaConversion")
+GateGammaConversionLivermorePB::GateGammaConversionLivermorePB():GateVProcess("LivermoreGammaConversion")
 {  
   SetDefaultParticle("gamma");
   SetProcessInfo("Pair production by gammas at low energy");
@@ -24,15 +24,15 @@ GateGammaConversionLowEPB::GateGammaConversionLowEPB():GateVProcess("LowEnergyGa
 
 
 //-----------------------------------------------------------------------------
-G4VProcess* GateGammaConversionLowEPB::CreateProcess(G4ParticleDefinition *)
+G4VProcess* GateGammaConversionLivermorePB::CreateProcess(G4ParticleDefinition * par)
 {
-  return new G4LowEnergyGammaConversion(GetG4ProcessName());
+  return dynamic_cast<G4VProcess*>( new G4LivermoreGammaConversionModel(par, GetG4ProcessName()) );
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GateGammaConversionLowEPB::ConstructProcess(G4ProcessManager * manager)
+void GateGammaConversionLivermorePB::ConstructProcess(G4ProcessManager * manager)
 {
   manager->AddDiscreteProcess(GetProcess());           
 }
@@ -40,7 +40,7 @@ void GateGammaConversionLowEPB::ConstructProcess(G4ProcessManager * manager)
 
 
 //-----------------------------------------------------------------------------
-bool GateGammaConversionLowEPB::IsApplicable(G4ParticleDefinition * par)
+bool GateGammaConversionLivermorePB::IsApplicable(G4ParticleDefinition * par)
 {
   if(par == G4Gamma::Gamma()) return true;
   return false;
@@ -48,5 +48,5 @@ bool GateGammaConversionLowEPB::IsApplicable(G4ParticleDefinition * par)
 //-----------------------------------------------------------------------------
 
 
-MAKE_PROCESS_AUTO_CREATOR_CC(GateGammaConversionLowEPB)
+MAKE_PROCESS_AUTO_CREATOR_CC(GateGammaConversionLivermorePB)
 #endif

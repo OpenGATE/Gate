@@ -83,6 +83,7 @@ See GATE/LICENSE.txt for further details
 #include <iostream>
 #include <sstream>
 #include "G4ExceptionHandler.hh"
+#include "GateConfiguration.h"
 
 // Uncomment out these symbols to force messages compilation 
 #define GATE_COMPILE_MESSAGES

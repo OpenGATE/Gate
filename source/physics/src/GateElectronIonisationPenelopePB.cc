@@ -28,9 +28,9 @@ GateElectronIonisationPenelopePB::GateElectronIonisationPenelopePB():GateVProces
 
 
 //-----------------------------------------------------------------------------
-G4VProcess* GateElectronIonisationPenelopePB::CreateProcess(G4ParticleDefinition *)
+G4VProcess* GateElectronIonisationPenelopePB::CreateProcess(G4ParticleDefinition * par)
 {
-  return new G4PenelopeIonisation(GetG4ProcessName());
+  return dynamic_cast<G4VProcess*>( new G4PenelopeIonisationModel(par, GetG4ProcessName()) );
 }
 //-----------------------------------------------------------------------------
 

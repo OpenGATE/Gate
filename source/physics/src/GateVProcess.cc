@@ -12,7 +12,7 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEVPROCESS_CC
 #define GATEVPROCESS_CC
 
-
+//#include "GateConfiguration.h"
 #include "GateVProcess.hh"
 #include "GateVProcessMessenger.hh"
 

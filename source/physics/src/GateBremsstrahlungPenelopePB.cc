@@ -26,9 +26,9 @@ GateBremsstrahlungPenelopePB::GateBremsstrahlungPenelopePB():GateVProcess("Penel
 
 
 //-----------------------------------------------------------------------------
-G4VProcess* GateBremsstrahlungPenelopePB::CreateProcess(G4ParticleDefinition *)
+G4VProcess* GateBremsstrahlungPenelopePB::CreateProcess(G4ParticleDefinition * par)
 {
-  return new G4PenelopeBremsstrahlung(GetG4ProcessName());
+  return dynamic_cast<G4VProcess*>( new G4PenelopeBremsstrahlungModel(par, GetG4ProcessName()) );
 }
 //-----------------------------------------------------------------------------
 

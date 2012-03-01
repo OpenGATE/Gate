@@ -16,7 +16,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVProcess.hh"
 
-#include "G4PenelopeCompton.hh"
+#include "G4PenelopeComptonModel.hh"
 
 MAKE_PROCESS_AUTO_CREATOR(GateComptonPenelopePB)
 

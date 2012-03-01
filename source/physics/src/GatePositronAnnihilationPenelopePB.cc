@@ -26,9 +26,9 @@ GatePositronAnnihilationPenelopePB::GatePositronAnnihilationPenelopePB():GateVPr
 
 
 //-----------------------------------------------------------------------------
-G4VProcess* GatePositronAnnihilationPenelopePB::CreateProcess(G4ParticleDefinition *)
+G4VProcess* GatePositronAnnihilationPenelopePB::CreateProcess(G4ParticleDefinition * par)
 {
-  return new G4PenelopeAnnihilation();
+  return dynamic_cast<G4VProcess*>( new G4PenelopeAnnihilationModel(par, GetG4ProcessName()) );
 }
 //-----------------------------------------------------------------------------
 

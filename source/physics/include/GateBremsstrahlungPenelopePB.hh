@@ -16,7 +16,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVProcess.hh"
 
-#include "G4PenelopeBremsstrahlung.hh"
+#include "G4PenelopeBremsstrahlungModel.hh"
 
 MAKE_PROCESS_AUTO_CREATOR(GateBremsstrahlungPenelopePB)
 

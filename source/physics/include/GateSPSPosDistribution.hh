@@ -23,6 +23,7 @@ See GATE/LICENSE.txt for further details
 #include "G4SPSPosDistribution.hh"
 #include "G4VPhysicalVolume.hh"
 #include <vector>
+#include "GateConfiguration.h"
 
 //-------------------------------------------------------------------------------------------------
 class GateSPSPosDistribution : public G4SPSPosDistribution

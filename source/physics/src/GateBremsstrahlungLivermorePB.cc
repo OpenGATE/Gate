@@ -9,44 +9,44 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #ifndef G4VERSION9_3
-#include "GateElectronIonisationLowEPB.hh"
+#include "GateBremsstrahlungLivermorePB.hh"
 
 #include "GateEMStandardProcessMessenger.hh"
 
 //-----------------------------------------------------------------------------
-GateElectronIonisationLowEPB::GateElectronIonisationLowEPB():GateVProcess("LowEnergyElectronIonisation")
+GateBremsstrahlungLivermorePB::GateBremsstrahlungLivermorePB():GateVProcess("LivermoreBremsstrahlung")
 {  
   SetDefaultParticle("e-");
-  SetProcessInfo("Ionization and energy loss by electrons at low energy");
+  SetProcessInfo("Bremsstrahlung by electrons at low energy");
   pMessenger = new GateEMStandardProcessMessenger(this);  
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-G4VProcess* GateElectronIonisationLowEPB::CreateProcess(G4ParticleDefinition *)
+G4VProcess *GateBremsstrahlungLivermorePB::CreateProcess(G4ParticleDefinition * par )
 {
-  return new G4LowEnergyIonisation(GetG4ProcessName());
+  return dynamic_cast<G4VProcess*>( new G4LivermoreBremsstrahlungModel(par,GetG4ProcessName()) );
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GateElectronIonisationLowEPB::ConstructProcess(G4ProcessManager * manager)
+void GateBremsstrahlungLivermorePB::ConstructProcess(G4ProcessManager * manager)
 {
-  manager->AddProcess(GetProcess(),-1, 2, 2);           
+  manager->AddProcess(GetProcess(),-1, -1, 3); //addProcessToManager(manager, -1,-1,3)          
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-bool GateElectronIonisationLowEPB::IsApplicable(G4ParticleDefinition * par)
+bool GateBremsstrahlungLivermorePB::IsApplicable(G4ParticleDefinition * par)
 {
-  if(par == G4Electron::Electron()) return true;
+  if(par == G4Electron::Electron() ) return true;
   return false;
 }
 //-----------------------------------------------------------------------------
 
-MAKE_PROCESS_AUTO_CREATOR_CC(GateElectronIonisationLowEPB)
+MAKE_PROCESS_AUTO_CREATOR_CC(GateBremsstrahlungLivermorePB)
 #endif
 

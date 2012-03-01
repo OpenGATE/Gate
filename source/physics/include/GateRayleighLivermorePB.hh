@@ -9,16 +9,15 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #ifndef G4VERSION9_3
-#ifndef GATEBREMLOWEPB_HH
-#define GATEBREMLOWEPB_HH
+#ifndef GATERAYLEIGHLIVERMOREPB_HH
+#define GATERAYLEIGHLIVERMOREPB_HH
 
 
 #include "GateVProcess.hh"
 
-#include "G4LowEnergyBremsstrahlung.hh"
+#include "G4LivermoreRayleighModel.hh"
 
-MAKE_PROCESS_AUTO_CREATOR(GateBremsstrahlungLowEPB)
-
+MAKE_PROCESS_AUTO_CREATOR(GateRayleighLivermorePB)
 
 #endif
 #endif

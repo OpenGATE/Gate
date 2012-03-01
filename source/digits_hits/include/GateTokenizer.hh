@@ -14,8 +14,8 @@ See GATE/LICENSE.txt for further details
 #define GateTokenizer_hh
 
 #include "globals.hh"
-
 #include "G4Tokenizer.hh"
+#include "GateConfiguration.h"
 
 class GateTokenizer
 : public G4Tokenizer

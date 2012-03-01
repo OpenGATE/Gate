@@ -16,6 +16,9 @@ See GATE/LICENSE.txt for further details
 #include "GateVProcess.hh"
 
 #include "G4ComptonScattering.hh"
+#include "G4LivermoreComptonModel.hh"
+#include "G4LivermorePolarizedComptonModel.hh"
+#include "G4PenelopeComptonModel.hh"
 
 
 #ifdef G4VERSION9_3

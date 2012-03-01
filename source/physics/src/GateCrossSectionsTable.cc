@@ -19,12 +19,12 @@ See GATE/LICENSE.txt for further details
 #include "G4ios.hh"
 #include "GatePETVRTManager.hh"
 #include "GateMaterialTableToProductionCutsTable.hh"
-#include "G4LowEnergyPolarizedRayleigh.hh"
-#include "G4LowEnergyRayleigh.hh"
+#include "G4LivermorePolarizedRayleighModel.hh"
+#include "G4LivermoreRayleighModel.hh"
 #include "G4VEmProcess.hh"
 #include "G4ForceCondition.hh"
-#include "G4LowEnergyCompton.hh"
-#include "G4LowEnergyPhotoElectric.hh"
+#include "G4LivermoreComptonModel.hh"
+#include "G4LivermorePhotoElectricModel.hh"
 
 
 using namespace std;
@@ -130,50 +130,54 @@ size_t GateCrossSectionsTable::AddMaterial ( const G4MaterialCutsCouple* couple 
 				G4StepPoint* point=const_cast<G4StepPoint*> ( trackTmp.GetStep()->GetPreStepPoint() );
 				point->SetMaterialCutsCouple ( couple );
 				G4ForceCondition forc=NotForced;
-				G4LowEnergyRayleigh* ray= dynamic_cast<G4LowEnergyRayleigh*> ( m_oProcessVec[j] );
+				G4LivermoreRayleighModel* ray= dynamic_cast<G4LivermoreRayleighModel*> ( m_oProcessVec[j] );
 				if ( ray )
 				{
-					c=ray->DumpMeanFreePath ( trackTmp,0., &forc );
+					//c=ray->DumpMeanFreePath ( trackTmp,0., &forc );
+          c=ray->ComputeMeanFreePath(pParticleDefinition, energy, couple->GetMaterial());
 					assert ( c>0 );
 					b+=1./c;
 				}
 				else
 				{
-					G4LowEnergyPolarizedRayleigh* polray=dynamic_cast<G4LowEnergyPolarizedRayleigh*> ( m_oProcessVec[j] );
+					G4LivermorePolarizedRayleighModel* polray=dynamic_cast<G4LivermorePolarizedRayleighModel*> ( m_oProcessVec[j] );
 					if ( polray )
 
 					{
-						c=polray->DumpMeanFreePath ( trackTmp,0.,&forc );
+						//c=polray->DumpMeanFreePath ( trackTmp,0.,&forc );
+						c=polray->ComputeMeanFreePath(pParticleDefinition, energy, couple->GetMaterial());						
 						assert ( c>0 );
 						b+=1./c;
 					}
 					else
 					{
-						G4LowEnergyCompton*
-						lcomp=dynamic_cast<G4LowEnergyCompton*> ( m_oProcessVec[j] );
+						G4LivermoreComptonModel*
+						lcomp=dynamic_cast<G4LivermoreComptonModel*> ( m_oProcessVec[j] );
 						if ( lcomp )
 
 						{
-							c=lcomp->DumpMeanFreePath ( trackTmp,0.,&forc );
+							//c=lcomp->DumpMeanFreePath ( trackTmp,0.,&forc );
+              c=lcomp->ComputeMeanFreePath(pParticleDefinition, energy, couple->GetMaterial());
 							assert ( c>0 );
 							b+=1./c;
 						}
 						else
 						{
 							/*  Does not work for some reason
-														G4LowEnergyPhotoElectric*
-														lphot=dynamic_cast<G4LowEnergyPhotoElectric*> ( m_oProcessVec[j] );
+														G4LivermorePhotoElectricModel*
+														lphot=dynamic_cast<G4LivermorePhotoElectricModel*> ( m_oProcessVec[j] );
 														if ( lphot )
 
 														{
-															c=lphot->DumpMeanFreePath ( trackTmp,0.,&forc );
+															//c=lphot->DumpMeanFreePath ( trackTmp,0.,&forc );
+                              c=lphot->ComputeMeanFreePath(pParticleDefinition, energy, couple->GetMaterial());
 															assert ( c>0 );
 															b+=1./c;
 														}
 														else
 														{
 							*/
-							G4Exception ( "GateCrossSectionsTable::AddMaterial(const G4MaterialCutsCouple*)", G4String ( "'" + m_oProcessVec[j]->GetProcessName() +"' is neither G4VEmProcess (='standard') nor G4LowEnergyRayleigh, G4LowEnergyPolarizedRayleigh, G4LowEnergyCompton. At present other processes cannot be used together with fictitious." ).c_str(), FatalException,"Cannot build fast tables." );
+							G4Exception ( "GateCrossSectionsTable::AddMaterial(const G4MaterialCutsCouple*)", G4String ( "'" + m_oProcessVec[j]->GetProcessName() +"' is neither G4VEmProcess (='standard') nor G4LivermoreRayleighModel, G4LivermorePolarizedRayleighModel, G4LivermoreComptonModel. At present other processes cannot be used together with fictitious." ).c_str(), FatalException,"Cannot build fast tables." );
 
 							//						}
 						}

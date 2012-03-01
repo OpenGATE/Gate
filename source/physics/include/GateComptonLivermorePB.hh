@@ -9,15 +9,15 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #ifndef G4VERSION9_3
-#ifndef GATEPHOTOELECTRICLOWEPB_HH
-#define GATEPHOTOELECTRICLOWEPB_HH
+#ifndef GATECOMPTONLIVERMOREPB_HH
+#define GATECOMPTONLIVERMOREPB_HH
 
 
 #include "GateVProcess.hh"
 
-#include "G4LowEnergyPhotoElectric.hh"
+#include "G4LivermoreComptonModel.hh"
 
-MAKE_PROCESS_AUTO_CREATOR(GatePhotoElectricLowEPB)
+MAKE_PROCESS_AUTO_CREATOR(GateComptonLivermorePB)
 
 #endif
 #endif

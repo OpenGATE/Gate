@@ -16,7 +16,7 @@ See GATE/LICENSE.txt for further details
 #include "GateVProcess.hh"
 
 #include "G4eplusAnnihilation.hh"
-
+#include "G4PenelopeAnnihilationModel.hh"
 
 #ifdef G4VERSION9_3
 MAKE_PROCESS_AUTO_CREATOR_WITH_MODEL(GatePositronAnnihilationStdPB)

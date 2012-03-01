@@ -16,6 +16,9 @@ See GATE/LICENSE.txt for further details
 #include "GateVProcess.hh"
 
 #include "G4GammaConversion.hh"
+#include "G4LivermoreGammaConversionModel.hh"
+#include "G4LivermorePolarizedGammaConversionModel.hh"
+#include "G4PenelopeGammaConversionModel.hh"
 
 #ifdef G4VERSION9_3
 MAKE_PROCESS_AUTO_CREATOR_WITH_MODEL(GateGammaConversionPB)

@@ -9,13 +9,13 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
-#include "GateUHadronElasticProcessPB.hh"
+#include "GateHadronElasticProcessPB.hh"
 
 #include "GateHadronicStandardProcessMessenger.hh"
 
 
 //-----------------------------------------------------------------------------
-GateUHadronElasticPB::GateUHadronElasticPB():GateVProcess("UHadronElastic")
+GateHadronElasticPB::GateHadronElasticPB():GateVProcess("HadronElastic")
 {   
   SetDefaultParticle("sigma0");  SetDefaultParticle("anti_sigma0");
   SetDefaultParticle("pi+"); SetDefaultParticle("pi-");SetDefaultParticle("pi0");
@@ -51,15 +51,15 @@ GateUHadronElasticPB::GateUHadronElasticPB():GateVProcess("UHadronElastic")
 
 
 //-----------------------------------------------------------------------------
-G4VProcess* GateUHadronElasticPB::CreateProcess(G4ParticleDefinition *)
+G4VProcess* GateHadronElasticPB::CreateProcess(G4ParticleDefinition *)
 {
-  return new G4UHadronElasticProcess(GetG4ProcessName());
+  return dynamic_cast<G4VProcess*>( new G4HadronElastic(GetG4ProcessName()) );
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GateUHadronElasticPB::ConstructProcess( G4ProcessManager * manager)
+void GateHadronElasticPB::ConstructProcess( G4ProcessManager * manager)
 {
   manager->AddDiscreteProcess(GetProcess());        
 }
@@ -67,7 +67,7 @@ void GateUHadronElasticPB::ConstructProcess( G4ProcessManager * manager)
 
 
 //-----------------------------------------------------------------------------
-bool GateUHadronElasticPB::IsApplicable(G4ParticleDefinition * par)
+bool GateHadronElasticPB::IsApplicable(G4ParticleDefinition * par)
 {
   if(par == G4PionPlus::PionPlus() ||
      par == G4PionZero::PionZero() ||
@@ -106,7 +106,7 @@ bool GateUHadronElasticPB::IsApplicable(G4ParticleDefinition * par)
 
 
 //-----------------------------------------------------------------------------
-bool GateUHadronElasticPB::IsModelApplicable(G4String model,G4ParticleDefinition * par)
+bool GateHadronElasticPB::IsModelApplicable(G4String model,G4ParticleDefinition * par)
 {
   if(model == "G4NeutronHPElastic" && par != G4Neutron::Neutron()) return false;
   if(model == "G4NeutronHPorLElastic" && par != G4Neutron::Neutron()) return false;
@@ -116,7 +116,7 @@ bool GateUHadronElasticPB::IsModelApplicable(G4String model,G4ParticleDefinition
 
 
 //-----------------------------------------------------------------------------
-bool GateUHadronElasticPB::IsDatasetApplicable(G4String cs, G4ParticleDefinition * par)
+bool GateHadronElasticPB::IsDatasetApplicable(G4String cs, G4ParticleDefinition * par)
 {
   if(cs == "G4NeutronHPElasticData" && par != G4Neutron::Neutron()) return false;
   return true;
@@ -126,10 +126,10 @@ bool GateUHadronElasticPB::IsDatasetApplicable(G4String cs, G4ParticleDefinition
 
 
 //-----------------------------------------------------------------------------
-void GateUHadronElasticPB::AddUserDataSet(G4String ){}
-void GateUHadronElasticPB::AddUserModel(GateListOfHadronicModels *){}
+void GateHadronElasticPB::AddUserDataSet(G4String ){}
+void GateHadronElasticPB::AddUserModel(GateListOfHadronicModels *){}
 //-----------------------------------------------------------------------------
 
 
 
-MAKE_PROCESS_AUTO_CREATOR_CC(GateUHadronElasticPB)
+MAKE_PROCESS_AUTO_CREATOR_CC(GateHadronElasticPB)

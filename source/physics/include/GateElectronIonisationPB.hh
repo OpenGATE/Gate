@@ -16,6 +16,8 @@ See GATE/LICENSE.txt for further details
 #include "GateVProcess.hh"
 
 #include "G4eIonisation.hh"
+#include "G4LivermoreIonisationModel.hh"
+#include "G4PenelopeIonisationModel.hh"
 
 #ifdef G4VERSION9_3
 MAKE_PROCESS_AUTO_CREATOR_WITH_MODEL(GateElectronIonisationPB)

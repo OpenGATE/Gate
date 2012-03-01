@@ -16,7 +16,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVProcess.hh"
 
-#include "G4PenelopeRayleigh.hh"
+#include "G4PenelopeRayleighModel.hh"
 
 MAKE_PROCESS_AUTO_CREATOR(GateRayleighPenelopePB)
 

@@ -15,6 +15,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UnitsTable.hh"
 
 #include "Randomize.hh"
+#include "GateConfiguration.h"
 
 // Reset the matrix and prepare a new acquisition
 void GateSinogram::Reset(size_t ringNumber, size_t crystalNumber, size_t radialElemNb)   	      	  

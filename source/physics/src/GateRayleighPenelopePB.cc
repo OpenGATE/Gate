@@ -14,7 +14,7 @@ See GATE/LICENSE.txt for further details
 #include "GateEMStandardProcessMessenger.hh"
 
 //-----------------------------------------------------------------------------
-GateRayleighPenelopePB::GateRayleighPenelopePB():GateVProcess("PenelopeRayleighScattering")
+GateRayleighPenelopePB::GateRayleighPenelopePB():GateVProcess("PenelopeRayleigh")
 {  
   SetDefaultParticle("gamma");
   SetProcessInfo("Rayleigh scattering of gammas (Penelope)");
@@ -24,9 +24,9 @@ GateRayleighPenelopePB::GateRayleighPenelopePB():GateVProcess("PenelopeRayleighS
 
 
 //-----------------------------------------------------------------------------
-G4VProcess* GateRayleighPenelopePB::CreateProcess(G4ParticleDefinition *)
+G4VProcess* GateRayleighPenelopePB::CreateProcess(G4ParticleDefinition * par)
 {
-  return new G4PenelopeRayleigh(GetG4ProcessName());
+  return dynamic_cast<G4VProcess*>( new G4PenelopeRayleighModel(par, GetG4ProcessName()) );
 }
 //-----------------------------------------------------------------------------
 

@@ -14,12 +14,12 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVProcess.hh"
 
-#include "G4LowEnergyRayleigh.hh"
-#include "G4LowEnergyPhotoElectric.hh"
+#include "G4LivermoreRayleighModel.hh"
+#include "G4LivermorePhotoElectricModel.hh"
 #include "G4PhotoElectricEffect.hh"
-#include "G4LowEnergyCompton.hh"
+#include "G4LivermoreComptonModel.hh"
 #include "G4ComptonScattering.hh"
-#include "G4LowEnergyGammaConversion.hh"
+#include "G4LivermoreGammaConversionModel.hh"
 #include "G4GammaConversion.hh"
 
 #include "GateTotalDiscreteProcess.hh"

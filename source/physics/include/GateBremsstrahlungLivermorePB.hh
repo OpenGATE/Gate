@@ -8,15 +8,17 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#ifndef G4VERSION9_3
+#ifndef GATEBREMLIVERMOREPB_HH
+#define GATEBREMLIVERMOREPB_HH
 
-#ifndef GATEUHADELASTICPB_HH
-#define GATEUHADELASTICPB_HH
 
 #include "GateVProcess.hh"
 
-#include "G4UHadronElasticProcess.hh"
+#include "G4LivermoreBremsstrahlungModel.hh"
 
-MAKE_PROCESS_AUTO_CREATOR_WITH_MODEL(GateUHadronElasticPB)
+MAKE_PROCESS_AUTO_CREATOR(GateBremsstrahlungLivermorePB)
 
 
+#endif
 #endif

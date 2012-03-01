@@ -44,6 +44,8 @@
 #include "G4ShortLivedConstructor.hh"
 #include <typeinfo>
 
+#include "GateConfiguration.h"
+
 //   turn on general debugging info, and consistency checks
 //#define debug_G4BinaryCascade 1
 

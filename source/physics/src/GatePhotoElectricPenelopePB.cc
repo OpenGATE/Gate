@@ -25,18 +25,18 @@ GatePhotoElectricPenelopePB::GatePhotoElectricPenelopePB():GateVProcess("Penelop
 
 
 //-----------------------------------------------------------------------------
-G4VProcess* GatePhotoElectricPenelopePB::CreateProcess(G4ParticleDefinition *)
+G4VProcess* GatePhotoElectricPenelopePB::CreateProcess(G4ParticleDefinition * par)
 {
-  G4PenelopePhotoElectric * proc = new G4PenelopePhotoElectric(GetG4ProcessName());
+  G4PenelopePhotoElectricModel * proc = new G4PenelopePhotoElectricModel(par, GetG4ProcessName());
 
-  bool auger = dynamic_cast<GatePhotoElectricMessenger*>(pMessenger)->GetIsAugerActivated();
+  /*bool auger = dynamic_cast<GatePhotoElectricMessenger*>(pMessenger)->GetIsAugerActivated();
   double lowEGamma = dynamic_cast<GatePhotoElectricMessenger*>(pMessenger)->GetLowEnergyGammaCut();
   double lowEElec = dynamic_cast<GatePhotoElectricMessenger*>(pMessenger)->GetLowEnergyElectronCut();
   if(auger) proc->ActivateAuger(true);
   if( lowEGamma>0 ) proc->SetCutForLowEnSecPhotons(lowEGamma);
-  if( lowEElec>0  ) proc->SetCutForLowEnSecElectrons(lowEElec);
+  if( lowEElec>0  ) proc->SetCutForLowEnSecElectrons(lowEElec);*/
 
-  return proc; 
+  return dynamic_cast<G4VProcess*>(proc); 
 }
 //-----------------------------------------------------------------------------
 

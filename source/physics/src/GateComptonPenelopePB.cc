@@ -25,9 +25,9 @@ GateComptonPenelopePB::GateComptonPenelopePB():GateVProcess("PenelopeCompton")
 
 
 //-----------------------------------------------------------------------------
-G4VProcess* GateComptonPenelopePB::CreateProcess(G4ParticleDefinition *)
+G4VProcess* GateComptonPenelopePB::CreateProcess(G4ParticleDefinition * par)
 {
-  return new G4PenelopeCompton(GetG4ProcessName());
+  return dynamic_cast<G4VProcess*>( new G4PenelopeComptonModel(par, GetG4ProcessName()) );
 }
 //-----------------------------------------------------------------------------
 

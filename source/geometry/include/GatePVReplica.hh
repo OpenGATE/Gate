@@ -14,6 +14,7 @@ See GATE/LICENSE.txt for further details
 
 #include "globals.hh"
 #include "G4PVReplica.hh"
+#include "GateConfiguration.h"
 
 /*! \class  GatePVReplica
     \brief  Base-class for replicas used in the GATE geometry

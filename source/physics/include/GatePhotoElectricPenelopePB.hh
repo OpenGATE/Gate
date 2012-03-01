@@ -16,7 +16,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVProcess.hh"
 
-#include "G4PenelopePhotoElectric.hh"
+#include "G4PenelopePhotoElectricModel.hh"
 
 MAKE_PROCESS_AUTO_CREATOR(GatePhotoElectricPenelopePB)
 

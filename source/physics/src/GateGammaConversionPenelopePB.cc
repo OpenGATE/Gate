@@ -25,9 +25,9 @@ GateGammaConversionPenelopePB::GateGammaConversionPenelopePB():GateVProcess("Pen
 
 
 //-----------------------------------------------------------------------------
-G4VProcess* GateGammaConversionPenelopePB::CreateProcess(G4ParticleDefinition *)
+G4VProcess* GateGammaConversionPenelopePB::CreateProcess(G4ParticleDefinition * par)
 {
-  return new G4PenelopeGammaConversion(GetG4ProcessName());
+  return dynamic_cast<G4VProcess*>( new G4PenelopeGammaConversionModel(par, GetG4ProcessName()) );
 }
 //-----------------------------------------------------------------------------
 
