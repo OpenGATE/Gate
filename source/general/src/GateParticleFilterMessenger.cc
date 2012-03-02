@@ -16,7 +16,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateParticleFilter.hh"
 
-
+#include "GateConfiguration.h"
 
 //-----------------------------------------------------------------------------
 GateParticleFilterMessenger::GateParticleFilterMessenger(GateParticleFilter* partFilter)

@@ -33,6 +33,7 @@ string(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION
 
 OPTION(GATE_USE_ROOT "Gate use ROOT (Recommanded)" ON)
 OPTION(GATE_USE_ANALYSIS_USE_GENERAL "Gate use  G4ANALYSIS_USE_GENERAL (Recommanded)" ON)
+OPTION(GATE_USE_OWN_CLHEP "Gate does not use the standard CLHEP of GEANT4" ON)
 
 IF (GATE_USE_ROOT)
    FIND_PACKAGE(ROOT REQUIRED)
@@ -40,6 +41,13 @@ IF (GATE_USE_ROOT)
    SET(LINK_DIRECTORIES ${ROOT_LIBRARY_DIR})
    # MESSAGE("Found Root in ${ROOT_INCLUDE_DIR} ${ROOT_LIBRARY_DIR}")
 ENDIF(GATE_USE_ROOT)
+
+IF (GATE_USE_OWN_CLHEP)
+   FIND_PACKAGE(CLHEP REQUIRED)
+   INCLUDE_DIRECTORIES(${CLHEP_INCLUDE_DIR})
+   SET(LINK_DIRECTORIES ${CLHEP_LIBRARIES})
+   #MESSAGE("Found Clhep in ${CLHEP_INCLUDE_DIR} ${CLHEP_LIBRARY}")
+ENDIF(GATE_USE_OWN_CLHEP)
 
 # G4ANALYSIS_USE_GENERAL
 # G4ANALYSIS_USE_FILE
@@ -82,7 +90,7 @@ file(GLOB headers
 #=========================================================
 # Add the executable, and link it to the Geant4 libraries
 add_executable(Gate Gate.cc ${sources} ${headers})
-target_link_libraries(Gate ${Geant4_LIBRARIES})
+target_link_libraries(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES})
 
 #=========================================================
 install(TARGETS Gate DESTINATION bin)

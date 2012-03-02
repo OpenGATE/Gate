@@ -18,6 +18,7 @@
 
 #if (G4VERSION_MAJOR > 9) || ((G4VERSION_MAJOR==9) && (G4VERSION_MINOR >=5))
 #include "G4ExceptionSeverity.hh"
+
 void G4Exception(char *a) {
   G4Exception("TODO", "TODO", FatalException, a);
 }
