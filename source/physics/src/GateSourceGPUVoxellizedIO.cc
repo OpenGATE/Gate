@@ -36,7 +36,7 @@ void GateSourceGPUVoxellizedInput_delete(GateSourceGPUVoxellizedInput* input)
 	if (input->phantom_material_data) delete input->phantom_material_data;
 }
 
-#if !(GATE_USE_CUDA && CUDA_FOUND)
+#ifndef GATE_USE_CUDA
 void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput*, GateSourceGPUVoxellizedOutput&)
 {
 	std::cout << "DUMMY GPU CALL" << std::endl;
