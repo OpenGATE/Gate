@@ -56,8 +56,11 @@ ENDIF(GATE_USE_OWN_CLHEP)
 #=========================================================
 # Option for Cuda use
 
-FIND_PACKAGE(CUDA REQUIRED)
-SET(CUDA_NVCC_FLAGS "-arch;compute_20;-use_fast_math;-w")
+option(GATE_USE_CUDA "Gate use CUDA for primaries generation" ON)
+
+if(GATE_USE_CUDA)
+    FIND_PACKAGE(CUDA)
+endif(GATE_USE_CUDA)
 
 # GATE_USE_OPTICAL
 # GATE_USE_LMF
@@ -100,8 +103,15 @@ file(GLOB headers
 
 #=========================================================
 # Add the executable, and link it to the Geant4 libraries
-CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
+if(GATE_USE_CUDA AND CUDA_FOUND)
+    SET(CUDA_NVCC_FLAGS "-arch;compute_20;-use_fast_math;-w")
+    CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
+else(GATE_USE_CUDA AND CUDA_FOUND)
+    ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
+endif(GATE_USE_CUDA AND CUDA_FOUND)
+
 target_link_libraries(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES})
+
 
 
 #=========================================================
