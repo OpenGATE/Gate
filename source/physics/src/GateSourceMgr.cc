@@ -21,6 +21,7 @@
 #include "GateSourceMgr.hh"
 #include "GateSourceMgrMessenger.hh"
 #include "GateSourceVoxellized.hh"
+#include "GateSourceGPUVoxellized.hh"
 #include "GateSourceLinacBeam.hh"
 #include "GateClock.hh"
 #include "GateApplicationMgr.hh"
@@ -175,6 +176,11 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
       if( sourceGeomType == G4String("voxel") || sourceGeomType == G4String("Voxel") )
         {
           source = new GateSourceVoxellized( sourceName );
+          source->SetSourceID( m_sourceProgressiveNumber );
+        }
+      if( sourceGeomType == G4String("GPUvoxel") || sourceGeomType == G4String("GPUVoxel") )
+        {
+          source = new GateSourceGPUVoxellized( sourceName );
           source->SetSourceID( m_sourceProgressiveNumber );
         }
       else if ((sourceGeomType == "linacBeam") ||
