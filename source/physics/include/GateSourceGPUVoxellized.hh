@@ -47,7 +47,7 @@ public:
 
 protected:
 
-  GateSourceGPUVoxellizedMessenger* m_sourceVoxellizedMessenger;
+  GateSourceGPUVoxellizedMessenger* m_sourceGPUVoxellizedMessenger;
 
   // Even if for a standard source the position is completely controlled by its GPS,
   // for Voxel sources (and maybe in the future for all sources) a position and a 
