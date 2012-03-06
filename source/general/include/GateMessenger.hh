@@ -48,7 +48,7 @@ class GateMessenger: public G4UImessenger
     virtual ~GateMessenger();
     
     //! UI command interpreter method
-    void SetNewValue(G4UIcommand*, G4String);
+    virtual void SetNewValue(G4UIcommand*, G4String);
 
     //! Returns the directory base-name
     inline const G4String& GetName() const 

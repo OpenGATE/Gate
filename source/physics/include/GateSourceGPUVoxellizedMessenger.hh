@@ -22,7 +22,7 @@ class GateSourceGPUVoxellizedMessenger: public GateSourceVoxellizedMessenger
 		GateSourceGPUVoxellizedMessenger(GateSourceGPUVoxellized* source);
 		~GateSourceGPUVoxellizedMessenger();
 
-		void SetNewValue(G4UIcommand*, G4String);
+		virtual void SetNewValue(G4UIcommand*, G4String);
 
 	private:
 		GateSourceGPUVoxellized* m_gpu_source;
