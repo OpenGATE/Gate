@@ -44,7 +44,7 @@ GateSourceGPUVoxellized::GateSourceGPUVoxellized(G4String name)
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   gamma_particle_definition = particleTable->FindParticle("gamma");
 
-  m_sourceVoxellizedMessenger = new GateSourceGPUVoxellizedMessenger(this);
+  m_sourceGPUVoxellizedMessenger = new GateSourceGPUVoxellizedMessenger(this);
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -94,14 +94,14 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
     // Go GPU
     GateGPUGeneratePrimaries(m_gpu_input, m_gpu_output);
     
-    std::cout << "End gpu" << std::endl;
+    std::cout << "End gpu with particles = " << m_gpu_output.particles.size() << std::endl;
   }
 
   // Generate one particle
   if (!m_gpu_output.particles.empty()) {
-  GeneratePrimaryEventFromGPUOutput(m_gpu_output.particles.front(), event);
-  m_gpu_output.particles.pop_front();
-  std::cout << "even id = " << event->GetEventID() << std::endl;
+    GeneratePrimaryEventFromGPUOutput(m_gpu_output.particles.front(), event);
+    m_gpu_output.particles.pop_front();
+    std::cout << "even id = " << event->GetEventID() << std::endl;
   }
 
   return 0; // Number of vertex
