@@ -70,6 +70,8 @@ public:
 
   virtual void Dump(G4int level);
 
+  typedef std::map<std::vector<G4int>,G4double>   GateSourceActivityMap;
+  GateSourceActivityMap GetSourceActivityMap() { return m_sourceVoxelActivities; }
 protected:
   G4int nVerboseLevel;
 
@@ -79,7 +81,6 @@ protected:
 
   std::vector<G4int>                  m_firstSource;
   
-  typedef std::map<std::vector<G4int>,G4double>   GateSourceActivityMap;
   typedef std::map<G4double,std::vector<G4int> >  GateSourceIntegratedActivityMap;
   GateSourceActivityMap           m_sourceVoxelActivities;
   GateSourceIntegratedActivityMap m_sourceVoxelIntegratedActivities;

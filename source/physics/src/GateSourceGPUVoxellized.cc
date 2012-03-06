@@ -86,7 +86,16 @@ void GateSourceGPUVoxellized::AttachToVolume(const G4String& volume_name)
 G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event) 
 {
   G4cout << "GateSourceGPUVoxellizedMessenger GeneratePrimaries" << G4endl;
+  G4cout << m_voxelReader << G4endl;
+  if (!m_voxelReader) return 0;
+
   assert(m_gpu_input);
+  if (m_gpu_input->phatom_activity_index == NULL)
+  { // import activity to gpu (fill input)
+	  GateVSourceVoxelReader::GateSourceActivityMap buffer = m_voxelReader->GetSourceActivityMap();
+	  G4cout << "BUFFER HERE " << buffer.size() << G4endl;
+  }
+
 
   if (m_gpu_output.particles.empty()) {
     std::cout << "output is empty" << std::endl;
@@ -153,7 +162,7 @@ void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVox
 void GateSourceGPUVoxellized::ReaderInsert(G4String readerType)
 {
   G4cout << "GateSourceGPUVoxellizedMessenger ReaderInsert" << G4endl;
-  return GateSourceVoxellized::ReaderInsert(readerType);
+  GateSourceVoxellized::ReaderInsert(readerType);
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -162,7 +171,7 @@ void GateSourceGPUVoxellized::ReaderInsert(G4String readerType)
 void GateSourceGPUVoxellized::ReaderRemove()
 {
   G4cout << "GateSourceGPUVoxellizedMessenger ReaderRemove" << G4endl;
-  return GateSourceVoxellized::ReaderRemove();
+  GateSourceVoxellized::ReaderRemove();
 }
 //-------------------------------------------------------------------------------------------------
 

@@ -39,24 +39,16 @@ public:
 
   virtual G4int GeneratePrimaries(G4Event* event);
 
-  void ReaderInsert(G4String readerType);
-  void AttachToVolume(const G4String& volume_name);
+  virtual void ReaderInsert(G4String readerType);
 
-  void ReaderRemove();
+  virtual void ReaderRemove();
+
+  void AttachToVolume(const G4String& volume_name);
 
 
 protected:
 
   GateSourceGPUVoxellizedMessenger* m_sourceGPUVoxellizedMessenger;
-
-  // Even if for a standard source the position is completely controlled by its GPS,
-  // for Voxel sources (and maybe in the future for all sources) a position and a 
-  // rotation are needed to align them to a Geometry Voxel Matrix
-
-  G4ThreeVector                  m_sourcePosition;
-  G4RotationMatrix               m_sourceRotation;
-
-  GateVSourceVoxelReader*        m_voxelReader;
 
   GateSourceGPUVoxellizedInput * m_gpu_input;
   GateSourceGPUVoxellizedOutput  m_gpu_output;

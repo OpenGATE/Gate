@@ -25,6 +25,7 @@ GateSourceGPUVoxellizedInput* GateSourceGPUVoxellizedInput_new()
 	input->phantom_size_z = -1;
 	input->phantom_spacing = -1*mm/mm;
 	input->phantom_activity_data = NULL;
+	input->phatom_activity_index = NULL;
 	input->phantom_material_data = NULL;
 
 	return input;
