@@ -37,7 +37,12 @@ GateSourceGPUVoxellized::GateSourceGPUVoxellized(G4String name)
   //  Build input and init (allocate) FIXME to be in Init
   // to init in contructor, fill in messenger
   m_gpu_input = GateSourceGPUVoxellizedInput_new();
-  m_gpu_output = GateSourceGPUVoxellizedOutputParticles_new(0);
+
+
+
+  // Create particle definition 
+  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+  gamma_particle_definition = particleTable->FindParticle("gamma");
 
   m_sourceVoxellizedMessenger = new GateSourceGPUVoxellizedMessenger(this);
 }
@@ -77,24 +82,63 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
   G4cout << "GateSourceGPUVoxellizedMessenger GeneratePrimaries" << G4endl;
   assert(m_gpu_input);
 
-  m_gpu_output->index = 0;
-  m_gpu_output->size = 0;
-  if (m_gpu_output->index == m_gpu_output->size) {
-    // Free output
-    GateSourceGPUVoxellizedOutputParticles_delete(m_gpu_output);
+  if (m_gpu_output.particles.empty()) {
+    std::cout << "output is empty" << std::endl;
 
-    // Declare Output (no allocation)
-    m_gpu_output =  GateSourceGPUVoxellizedOutputParticles_new(m_gpu_input->nb_events);
-    
     // Go GPU
     GateGPUGeneratePrimaries(m_gpu_input, m_gpu_output);
+    
+    std::cout << "End gpu" << std::endl;
   }
 
-  // Generate one particles
-  // convert m_gpu_output[index] into G4Event
-  m_gpu_output->index++;
+  // Generate one particle
+  if (!m_gpu_output.particles.empty()) {
+  GeneratePrimaryEventFromGPUOutput(m_gpu_output.particles.front(), event);
+  m_gpu_output.particles.pop_front();
+  std::cout << "even id = " << event->GetEventID() << std::endl;
+  }
 
-  return GateSourceVoxellized::GeneratePrimaries(event);
+  return 0; // Number of vertex
+}
+//-------------------------------------------------------------------------------------------------
+
+
+
+//-------------------------------------------------------------------------------------------------
+void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVoxellizedOutputParticle & particle, G4Event * event)
+{
+  // Position
+  G4ThreeVector particle_position;
+  particle_position.setX(particle.px);
+  particle_position.setY(particle.py);
+  particle_position.setZ(particle.pz);
+  std::cout << "Position = " << particle_position << std::endl;
+  //FIXME -> change position according to source orientation/position
+
+  // Create the vertex
+  G4PrimaryVertex* vertex;
+  double particle_time = particle.t;
+  vertex = new G4PrimaryVertex(particle_position, particle_time);
+
+  // Direction
+  G4ThreeVector particle_direction;
+  particle_direction.setX(particle.dx);
+  particle_direction.setY(particle.dy);
+  particle_direction.setZ(particle.dz);
+  std::cout << "Direction = " << particle_direction << std::endl;
+  //FIXME -> change position according to source orientation/position
+
+  // Compute momentum
+  G4ThreeVector particle_momentum = particle.E * particle_direction.unit();
+  std::cout << "Momentum = " << particle_momentum << std::endl;
+
+  // Create a G4PrimaryParticle
+  G4PrimaryParticle* g4particle =  new G4PrimaryParticle(gamma_particle_definition, 
+                                                         particle_momentum.x(), 
+                                                         particle_momentum.y(), 
+                                                         particle_momentum.z());
+  vertex->SetPrimary( g4particle ); 
+  event->AddPrimaryVertex( vertex );
 }
 //-------------------------------------------------------------------------------------------------
 

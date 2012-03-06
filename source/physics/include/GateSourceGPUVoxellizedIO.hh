@@ -12,6 +12,7 @@ See GATE/LICENSE.txt for further details
 #ifndef GATESOURCEGPUVOXELLIZEDIO_H
 #define GATESOURCEGPUVOXELLIZEDIO_H
 
+#include <list>
 
 struct GateSourceGPUVoxellizedInput {
   long nb_events;
@@ -48,23 +49,12 @@ struct GateSourceGPUVoxellizedOutputParticle {
 
 struct GateSourceGPUVoxellizedOutput { 
   std::list<GateSourceGPUVoxellizedOutputParticle> particles;
-}; //
-
-// for int i== 00
-//  {
-//    if (!sparse) {
-//     GateSourceGPUVoxellizedOutputParticle a;
-//     a.E = 12;
-//     a .dx = 8;
-//     list.push_back(a);
-//    }
-// }
+};
 
 
-
-// 
+// Main function that lunch GPU calculation
 void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input, 
-                              GateSourceGPUVoxellizedOutputParticles & output);
+                              GateSourceGPUVoxellizedOutput & output);
 
 #endif
 

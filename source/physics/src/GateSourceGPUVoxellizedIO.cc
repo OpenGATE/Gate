@@ -36,27 +36,6 @@ void GateSourceGPUVoxellizedInput_delete(GateSourceGPUVoxellizedInput* input)
 	if (input->phantom_material_data) delete input->phantom_material_data;
 }
 
-// To be used in GPU
-GateSourceGPUVoxellizedOutputParticles * 
-GateSourceGPUVoxellizedOutputParticles_new(unsigned long size) 
-{
-  std::cout << " GateSourceGPUVoxellizedOutputParticles_new" << std::endl;
-  return new GateSourceGPUVoxellizedOutputParticles;
-}
 
-// To be used in CPU
-void GateSourceGPUVoxellizedOutputParticles_delete(GateSourceGPUVoxellizedOutputParticles * output)
-{
-  std::cout << " GateSourceGPUVoxellizedOutputParticles_delete" << std::endl;
-
-}
-
-// 
-void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input, 
-                              GateSourceGPUVoxellizedOutputParticles * output) 
-{
-  std::cout << " GateGPUGeneratePrimaries " << std::endl;
-
-}
 
 

@@ -58,8 +58,13 @@ protected:
   GateVSourceVoxelReader*        m_voxelReader;
 
   GateSourceGPUVoxellizedInput * m_gpu_input;
-  GateSourceGPUVoxellizedOutputParticles * m_gpu_output;
-  
+  GateSourceGPUVoxellizedOutput  m_gpu_output;
+
+  // Used for creating a primary
+  G4ParticleDefinition* gamma_particle_definition;
+
+
+  void GeneratePrimaryEventFromGPUOutput(GateSourceGPUVoxellizedOutputParticle & particle, G4Event * event);  
 };
 
 #endif
