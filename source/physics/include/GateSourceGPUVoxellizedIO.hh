@@ -31,40 +31,37 @@ struct GateSourceGPUVoxellizedInput {
 
 };
 
-struct GateSourceGPUVoxellizedOutputParticles{ // Allocated by GPU
-  unsigned long size; // size of the array
-  float* E; // MeV
-  float* dx; // direction (unary)
-  float* dy; // direction (unary)
-  float* dz; // direction (unary)
-  float* px; // mm position
-  float* py; // mm position
-  float* pz; // mm position
-  float* t;  // ns time
+struct GateSourceGPUVoxellizedOutputParticle {
+  float E;  // MeV
+  float dx; // direction (unary)
+  float dy; // direction (unary)
+  float dz; // direction (unary)
+  float px; // mm position
+  float py; // mm position
+  float pz; // mm position
+  float t;  // ns time
+};
 
-  unsigned long int index; // current index
 
-  // Internal GPU
-  unsigned int* seed;
-  unsigned char* interaction; // internal gpu
-  unsigned char* live; // internal  gpu
-  unsigned char* endsimu;  // internal  gpu
-  unsigned char* ct_cpt; //internal gpu
-  unsigned char* ct_pe;  //internal gpu
-  unsigned char* ct_ray;  //internal gpu
-  unsigned long* table_x_brent;  //internal gpu
+struct GateSourceGPUVoxellizedOutput { 
+  std::list<GateSourceGPUVoxellizedOutputParticle> particles;
 }; //
 
+// for int i== 00
+//  {
+//    if (!sparse) {
+//     GateSourceGPUVoxellizedOutputParticle a;
+//     a.E = 12;
+//     a .dx = 8;
+//     list.push_back(a);
+//    }
+// }
 
-// To be used in GPU
-GateSourceGPUVoxellizedOutputParticles * GateSourceGPUVoxellizedOutputParticles_new(unsigned long size);
 
-// To be used in CPU
-void GateSourceGPUVoxellizedOutputParticles_delete(GateSourceGPUVoxellizedOutputParticles * output);
 
 // 
 void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input, 
-                              GateSourceGPUVoxellizedOutputParticles * output);
+                              GateSourceGPUVoxellizedOutputParticles & output);
 
 #endif
 
