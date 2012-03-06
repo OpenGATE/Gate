@@ -43,12 +43,21 @@ IF (GATE_USE_ROOT)
    # MESSAGE("Found Root in ${ROOT_INCLUDE_DIR} ${ROOT_LIBRARY_DIR}")
 ENDIF(GATE_USE_ROOT)
 
+#=========================================================
+# Option for Clhep use
+
 IF (GATE_USE_OWN_CLHEP)
    FIND_PACKAGE(CLHEP REQUIRED)
    INCLUDE_DIRECTORIES(${CLHEP_INCLUDE_DIR})
    SET(LINK_DIRECTORIES ${CLHEP_LIBRARIES})
    #MESSAGE("Found Clhep in ${CLHEP_INCLUDE_DIR} ${CLHEP_LIBRARY}")
 ENDIF(GATE_USE_OWN_CLHEP)
+
+#=========================================================
+# Option for Cuda use
+
+FIND_PACKAGE(CUDA REQUIRED)
+SET(CUDA_NVCC_FLAGS "-arch;compute_20;-use_fast_math;-w")
 
 # GATE_USE_OPTICAL
 # GATE_USE_LMF
@@ -79,17 +88,21 @@ file(GLOB sources
 	${PROJECT_SOURCE_DIR}/source/digits_hits/src/*.cc
 	${PROJECT_SOURCE_DIR}/source/physics/src/*.cc
 	${PROJECT_SOURCE_DIR}/source/general/src/*.cc)
+file(GLOB sourcesGPU
+	${PROJECT_SOURCE_DIR}/source/gpu/src/track_gpu.cu)
 file(GLOB headers
 	${PROJECT_SOURCE_DIR}/source/arf/include/*.hh
 	${PROJECT_SOURCE_DIR}/source/geometry/include/*.hh
 	${PROJECT_SOURCE_DIR}/source/physics/include/*.hh
 	${PROJECT_SOURCE_DIR}/source/digits_hits/include/*.hh
-	${PROJECT_SOURCE_DIR}/source/general/include/*.hh)
+	${PROJECT_SOURCE_DIR}/source/general/include/*.hh
+	${PROJECT_SOURCE_DIR}/source/gpu/include/*.hh)
 
 #=========================================================
 # Add the executable, and link it to the Geant4 libraries
-add_executable(Gate Gate.cc ${sources} ${headers})
+CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
 target_link_libraries(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES})
+
 
 #=========================================================
 install(TARGETS Gate DESTINATION bin)

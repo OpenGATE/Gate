@@ -20,7 +20,7 @@
 #======================================
 # GEOMETRY
 #======================================
-/gate/geometry/setMaterialDatabase GateMaterials.db
+/gate/geometry/setMaterialDatabase ../GateMaterials.db
 
 #=============================================
 #     W O R L D
@@ -108,7 +108,7 @@
 #=======================================
 
 # V O X E L    S O U R C E
-/gate/source/addSource												voxel voxel
+/gate/source/addSource												voxel GPUvoxel
 /gate/source/voxel/reader/insert 			      					interfile
 /gate/source/voxel/interfileReader/translator/insert				range
 /gate/source/voxel/interfileReader/rangeTranslator/readTable 		activites.dat
