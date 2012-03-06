@@ -11,22 +11,10 @@
 #define GATESOURCEGPUVOXELLIZEDMESSENGER_H 1
 
 #include "globals.hh"
-#include "G4UImessenger.hh"
-#include "GateMessenger.hh"
 #include "GateSourceVoxellizedMessenger.hh"
+#include "G4UIcmdWithAString.hh"
 
 class GateSourceGPUVoxellized;
-
-class GateClock;
-class G4UIdirectory;
-class G4UIcmdWithAString;
-class G4UIcmdWithAnInteger;
-class G4UIcmdWithADouble;
-class G4UIcmdWithADoubleAndUnit;
-class G4UIcmdWith3VectorAndUnit;
-class G4UIcmdWithoutParameter;
-
-#include "GateUIcmdWithAVector.hh"
 
 class GateSourceGPUVoxellizedMessenger: public GateSourceVoxellizedMessenger
 {
@@ -38,6 +26,7 @@ class GateSourceGPUVoxellizedMessenger: public GateSourceVoxellizedMessenger
 
 	private:
 		GateSourceGPUVoxellized* m_gpu_source;
+		G4UIcmdWithAString* m_attach_to_cmd;
 
 };
 

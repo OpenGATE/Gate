@@ -13,7 +13,7 @@
 #cmakedefine G4VERSION_MINOR          @G4VERSION_MINOR@
 #cmakedefine G4VERSION_PATCH          @G4VERSION_PATCH@
 #cmakedefine GATE_USE_CUDA           @GATE_USE_CUDA@
-#cmakedefine GATE_FOUND              @GATE_FOUND@
+#cmakedefine CUDA_FOUND              @CUDA_FOUND@
 
 // WARNING : Replace all G4VERSION_3 and other with a correct test
 

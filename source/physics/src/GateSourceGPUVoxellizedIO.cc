@@ -8,7 +8,7 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-
+#include "GateConfiguration.h"
 #include "GateSourceGPUVoxellizedIO.hh"
 #include "GateRandomEngine.hh"
 #include <iostream>
@@ -36,6 +36,12 @@ void GateSourceGPUVoxellizedInput_delete(GateSourceGPUVoxellizedInput* input)
 	if (input->phantom_material_data) delete input->phantom_material_data;
 }
 
+#if !(GATE_USE_CUDA && CUDA_FOUND)
+void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput*, GateSourceGPUVoxellizedOutput&)
+{
+	std::cout << "DUMMY GPU CALL" << std::endl;
+}
+#endif
 
 
 

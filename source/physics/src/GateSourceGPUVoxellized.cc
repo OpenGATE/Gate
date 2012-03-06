@@ -71,10 +71,16 @@ G4double GateSourceGPUVoxellized::GetNextTime(G4double timeNow)
 void GateSourceGPUVoxellized::Dump(G4int level) 
 {
   G4cout << "GateSourceGPUVoxellizedMessenger Dump" << G4endl;
-  return GateSourceVoxellized::Dump(level);
+  GateSourceVoxellized::Dump(level);
 }
 //-------------------------------------------------------------------------------------------------
 
+//-------------------------------------------------------------------------------------------------
+void GateSourceGPUVoxellized::AttachToVolume(const G4String& volume_name)
+{
+  G4cout << "GateSourceGPUVoxellizedMessenger Attach to " << volume_name << G4endl;
+}
+//-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
 G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event) 

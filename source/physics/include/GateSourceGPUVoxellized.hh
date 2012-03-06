@@ -40,6 +40,7 @@ public:
   virtual G4int GeneratePrimaries(G4Event* event);
 
   void ReaderInsert(G4String readerType);
+  void AttachToVolume(const G4String& volume_name);
 
   void ReaderRemove();
 

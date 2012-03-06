@@ -11,18 +11,12 @@
 #include "GateSourceGPUVoxellizedMessenger.hh"
 #include "GateSourceGPUVoxellized.hh"
 
-#include "GateClock.hh"
-#include "G4UIdirectory.hh"
-#include "G4UIcmdWithAString.hh"
-#include "G4UIcmdWithAnInteger.hh"
-#include "G4UIcmdWithADouble.hh"
-#include "G4UIcmdWithADoubleAndUnit.hh"
-#include "G4UIcmdWith3VectorAndUnit.hh"
-#include "G4UIcmdWithoutParameter.hh"
-
 GateSourceGPUVoxellizedMessenger::GateSourceGPUVoxellizedMessenger(GateSourceGPUVoxellized* source)
 : GateSourceVoxellizedMessenger(source), m_gpu_source(source)
 { 
+	m_attach_to_cmd = new G4UIcmdWithAString((GetDirectoryName()+"attachTo").c_str(),this);
+	m_attach_to_cmd->SetGuidance("Attach to gate volume");
+
 }
 
 GateSourceGPUVoxellizedMessenger::~GateSourceGPUVoxellizedMessenger()
@@ -32,6 +26,7 @@ GateSourceGPUVoxellizedMessenger::~GateSourceGPUVoxellizedMessenger()
 void GateSourceGPUVoxellizedMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
 	G4cout << " GateSourceGPUVoxellizedMessenger::SetNewValue" << G4endl;
+	if (command == m_attach_to_cmd) m_gpu_source->AttachToVolume(newValue);
 	GateSourceVoxellizedMessenger::SetNewValue(command,newValue);
 }
 

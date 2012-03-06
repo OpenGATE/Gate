@@ -107,7 +107,7 @@ if(GATE_USE_CUDA AND CUDA_FOUND)
     SET(CUDA_NVCC_FLAGS "-arch;compute_20;-use_fast_math;-w")
     CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
 else(GATE_USE_CUDA AND CUDA_FOUND)
-    ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
+    ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
 endif(GATE_USE_CUDA AND CUDA_FOUND)
 
 target_link_libraries(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES})
