@@ -19,6 +19,7 @@ See GATE/LICENSE.txt for further details
 #include <map>
 #include "GateVSource.hh"
 #include "GateSourceVoxellized.hh"
+#include "GateSourceGPUVoxellizedIO.hh"
 
 class GateSourceGPUVoxellizedMessenger;
 class GateVSourceVoxelReader;
@@ -55,6 +56,10 @@ protected:
   G4RotationMatrix               m_sourceRotation;
 
   GateVSourceVoxelReader*        m_voxelReader;
+
+  GateSourceGPUVoxellizedInput * m_gpu_input;
+  GateSourceGPUVoxellizedOutputParticles * m_gpu_output;
+  
 };
 
 #endif
