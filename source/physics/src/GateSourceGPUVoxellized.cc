@@ -48,6 +48,7 @@ GateSourceGPUVoxellized::GateSourceGPUVoxellized(G4String name)
 GateSourceGPUVoxellized::~GateSourceGPUVoxellized()
 {
   G4cout << "GateSourceGPUVoxellizedMessenger destructor" << G4endl;
+  GateSourceGPUVoxellizedInput_delete(m_gpu_input);
 }
 //-------------------------------------------------------------------------------------------------
 

@@ -1,13 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
-
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "GateSourceGPUVoxellizedMessenger.hh"
 #include "GateSourceGPUVoxellized.hh"
@@ -21,55 +20,18 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcmdWith3VectorAndUnit.hh"
 #include "G4UIcmdWithoutParameter.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
 GateSourceGPUVoxellizedMessenger::GateSourceGPUVoxellizedMessenger(GateSourceGPUVoxellized* source)
-  : GateSourceVoxellizedMessenger(source)
+: GateSourceVoxellizedMessenger(source), m_gpu_source(source)
 { 
-
-  G4String cmdName;
-
-  cmdName = GetDirectoryName()+"reader/insert";
-  ReaderInsertCmd = new GateUIcmdWithAVector<G4String>(cmdName,this);
-  ReaderInsertCmd->SetGuidance("Insert a reader");
-  ReaderInsertCmd->SetGuidance("1. Reader type");
-
-  cmdName = GetDirectoryName()+"reader/remove";
-  ReaderRemoveCmd = new G4UIcmdWithoutParameter(cmdName,this);
-  ReaderRemoveCmd->SetGuidance("Remove the reader");
-
-  cmdName = GetDirectoryName()+"setPosition";
-  PositionCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
-  PositionCmd->SetGuidance("Set the source global position");
-  PositionCmd->SetGuidance("1. Position xyz and unit");
-
 }
-
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 GateSourceGPUVoxellizedMessenger::~GateSourceGPUVoxellizedMessenger()
 {
-   delete PositionCmd;
-   delete ReaderInsertCmd;
-   delete ReaderRemoveCmd;
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 void GateSourceGPUVoxellizedMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
-  G4cout << " GateSourceGPUVoxellizedMessenger::SetNewValue" << G4endl;
-  if( command == ReaderInsertCmd ) {
-    m_source->ReaderInsert(ReaderInsertCmd->GetNewVectorValue(newValue)[0]);
-  } else if( command == ReaderRemoveCmd ) {
-    m_source->ReaderRemove();
-  } else if( command == PositionCmd ) {
-    m_source->SetPosition(PositionCmd->GetNew3VectorValue(newValue));
-  }
+	G4cout << " GateSourceGPUVoxellizedMessenger::SetNewValue" << G4endl;
+	GateSourceVoxellizedMessenger::SetNewValue(command,newValue);
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-
 

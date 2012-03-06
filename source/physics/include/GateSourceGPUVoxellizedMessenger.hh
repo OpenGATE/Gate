@@ -1,19 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
-
-
-//      ------------ GateSourceGPUVoxellizedMessenger  ------
-//           by G.Santin (18 Dec 2001)
-// ************************************************************
-
-
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 #ifndef GATESOURCEGPUVOXELLIZEDMESSENGER_H
 #define GATESOURCEGPUVOXELLIZEDMESSENGER_H 1
 
@@ -35,21 +28,16 @@ class G4UIcmdWithoutParameter;
 
 #include "GateUIcmdWithAVector.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
 class GateSourceGPUVoxellizedMessenger: public GateSourceVoxellizedMessenger
 {
-public:
-  GateSourceGPUVoxellizedMessenger(GateSourceGPUVoxellized* source);
-  ~GateSourceGPUVoxellizedMessenger();
-  
-  void SetNewValue(G4UIcommand*, G4String);
-    
-private:
-  GateSourceGPUVoxellized*            m_source;
-  G4UIcmdWith3VectorAndUnit*          PositionCmd;
-  GateUIcmdWithAVector<G4String>*     ReaderInsertCmd;
-  G4UIcmdWithoutParameter*            ReaderRemoveCmd;
+	public:
+		GateSourceGPUVoxellizedMessenger(GateSourceGPUVoxellized* source);
+		~GateSourceGPUVoxellizedMessenger();
+
+		void SetNewValue(G4UIcommand*, G4String);
+
+	private:
+		GateSourceGPUVoxellized* m_gpu_source;
 
 };
 
