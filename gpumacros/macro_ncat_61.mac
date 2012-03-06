@@ -1,0 +1,141 @@
+#=======================================
+# VISU
+#=======================================
+#/vis/open				OGLSX
+#/vis/viewer/set/viewpointThetaPhi 	90 90
+#/vis/viewer/zoom 			        2.0
+#/vis/drawVolume
+#/tracking/storeTrajectory		1
+#/vis/scene/add/trajectories 
+##/vis/scene/endOfEventAction accumulate
+
+#======================================
+# VERBOSITY
+#======================================
+/control/verbose	0
+/run/verbose		2
+/tracking/verbose	0
+/event/verbose 		0
+
+#======================================
+# GEOMETRY
+#======================================
+/gate/geometry/setMaterialDatabase GateMaterials.db
+
+#=============================================
+#     W O R L D
+#=============================================
+/gate/world/geometry/setXLength		1 m
+/gate/world/geometry/setYLength 	1 m
+/gate/world/geometry/setZLength 	1 m
+/gate/world/setMaterial 			Vacuum
+
+#===================================================
+# PHANTOM
+#===================================================
+
+/gate/world/daughters/name              mybox
+/gate/world/daughters/insert            box
+/gate/mybox/geometry/setXLength         60 cm
+/gate/mybox/geometry/setYLength         60 cm
+/gate/mybox/geometry/setZLength         60 cm
+/gate/mybox/placement/setTranslation    0.0 0.0 0.0 cm
+/gate/mybox/setMaterial                 Vacuum
+/gate/mybox/vis/forceWireframe
+/gate/mybox/vis/setColor                blue
+
+/gate/world/daughters/name								ncat
+/gate/world/daughters/insert							fictitiousVoxelMap
+
+/gate/ncat/geometry/insertReader						interfile
+/gate/ncat/interfileReader/insertTranslator 			range
+/gate/ncat/interfileReader/rangeTranslator/readTable 	range.dat
+/gate/ncat/interfileReader/rangeTranslator/describe 	1
+/gate/ncat/interfileReader/readFile 					ncat_header_bed1.hdr
+/gate/ncat/placement/setTranslation  					0. 0. 0. mm
+/gate/ncat/placement/setRotationAxis 					1 0 0
+/gate/ncat/placement/setRotationAngle 					0 deg
+
+#==================================================
+# ACTOR
+#==================================================
+
+/gate/actor/addActor								KillActor MyActor_1
+/gate/actor/MyActor_1/save  						electron.txt
+/gate/actor/MyActor_1/attachTo  					mybox
+/gate/actor/MyActor_1/addFilter 					particleFilter
+/gate/actor/MyActor_1/particleFilter/addParticle 	e-
+
+/gate/actor/addActor								PhaseSpaceActor MyActor_2
+/gate/actor/MyActor_2/save 							Out_gammas.root
+/gate/actor/MyActor_2/attachTo 						mybox
+/gate/actor/MyActor_2/storeOutgoingParticles
+/gate/actor/MyActor_2/addFilter						particleFilter
+/gate/actor/MyActor_2/particleFilter/addParticle	gamma
+
+/gate/actor/MyActor_2/enableEkine              true
+/gate/actor/MyActor_2/enableXPosition          true
+/gate/actor/MyActor_2/enableYPosition          true
+/gate/actor/MyActor_2/enableZPosition          true
+/gate/actor/MyActor_2/enableXDirection         true
+/gate/actor/MyActor_2/enableYDirection         true
+/gate/actor/MyActor_2/enableZDirection         true
+/gate/actor/MyActor_2/enableTime               true
+/gate/actor/MyActor_2/enableProductionVolume   true
+/gate/actor/MyActor_2/enableProductionProcess  true
+/gate/actor/MyActor_2/enableParticleName       true
+/gate/actor/MyActor_2/enableWeight             true
+
+#==================================================
+# PHYSICS
+#==================================================
+/gate/physics/addProcess							PhotoElectric
+/gate/physics/processes/PhotoElectric/setModel     	StandardModel
+
+/gate/physics/addProcess							Compton
+/gate/physics/processes/Compton/setModel            StandardModel
+
+/gate/physics/processList 		Enabled
+/gate/physics/processList		Initialized
+
+#========================================
+# INITIALIZATION
+#========================================
+/gate/run/initialize
+
+#=======================================
+# SOURCES
+#=======================================
+
+# V O X E L    S O U R C E
+/gate/source/addSource												voxel voxel
+/gate/source/voxel/reader/insert 			      					interfile
+/gate/source/voxel/interfileReader/translator/insert				range
+/gate/source/voxel/interfileReader/rangeTranslator/readTable 		activites.dat
+/gate/source/voxel/interfileReader/rangeTranslator/describe 		1
+/gate/source/voxel/interfileReader/verbose 							0
+/gate/source/voxel/interfileReader/readFile 						ncat_header_bed1.hdr
+/gate/source/voxel/setType 											backtoback
+/gate/source/voxel/gps/particle 									gamma
+#/gate/source/voxel/setForcedUnstableFlag 							true
+#/gate/source/voxel/setForcedHalfLife 								6586.2 s
+/gate/source/voxel/gps/energytype 									Mono
+/gate/source/voxel/gps/monoenergy 									0.511 MeV
+/gate/source/voxel/setPosition  									-25.6 -12.6 -9.2 cm
+/gate/source/voxel/gps/confine 										NULL
+/gate/source/voxel/gps/angtype 										iso
+#/gate/source/voxel/visualize 2000 yellow 3
+
+/gate/source/list
+
+#==============================================
+# RANDOM
+#==============================================
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed 10
+
+#==============================================
+# START
+#==============================================
+/gate/application/setNumberOfPrimariesPerRun 10
+/gate/application/start
