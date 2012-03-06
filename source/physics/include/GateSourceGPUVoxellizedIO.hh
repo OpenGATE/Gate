@@ -16,20 +16,23 @@ See GATE/LICENSE.txt for further details
 struct GateSourceGPUVoxellizedInput {
   long nb_events;
   double E; // MeV
-  long seed;
+  unsigned int seed;
   
   // Phantom and activity map (same size)
   // Coordinate system : 0,0,0 corner 
   int phantom_size_x;
   int phantom_size_y;
   int phantom_size_z;
-  float phantom_spacing; // to be change into spacingx spacingy spacingz FIXME
-  float * phantom_activity_data; // no unit (relative) FIXME ? GATE PROCESS ????
-  unsigned short int * phantom_phantom_data; // value = ID material CONSTANT (mc_cst_pet.cu l550)
+  float phantom_spacing; // mm // to be change into spacingx spacingy spacingz FIXME
+  float* phantom_activity_data; // no unit (relative) FIXME ? GATE PROCESS ????
+  unsigned short int* phantom_material_data; // value = ID material CONSTANT (mc_cst_pet.cu l550)
   // GPU (later) : ID gpu, nb thread/block
   // Physics (later) : 
 
 };
+
+GateSourceGPUVoxellizedInput* GateSourceGPUVoxellizedInput_new();
+void GateSourceGPUVoxellizedInput_delete(GateSourceGPUVoxellizedInput* input);
 
 struct GateSourceGPUVoxellizedOutputParticle {
   float E;  // MeV
@@ -41,7 +44,6 @@ struct GateSourceGPUVoxellizedOutputParticle {
   float pz; // mm position
   float t;  // ns time
 };
-
 
 struct GateSourceGPUVoxellizedOutput { 
   std::list<GateSourceGPUVoxellizedOutputParticle> particles;

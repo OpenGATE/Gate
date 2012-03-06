@@ -183,7 +183,7 @@ void GateSourceVoxellized::ReaderRemove()
 
 
 //-------------------------------------------------------------------------------------------------
-void GateSourceVoxellized::Update()
+void GateSourceVoxellized::Update(G4double time)
 {
   // insert here any specific update needed for the voxel matrix source, otherwise for the standard updates
   // the GateVSource::Update() is called
@@ -210,6 +210,6 @@ void GateSourceVoxellized::Update()
     // the position is set through the source command
   }
 
-  GateVSource::Update(m_time);
+  GateVSource::Update(time);
 }
 //-------------------------------------------------------------------------------------------------

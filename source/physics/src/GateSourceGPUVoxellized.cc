@@ -30,13 +30,13 @@
 
 //-------------------------------------------------------------------------------------------------
 GateSourceGPUVoxellized::GateSourceGPUVoxellized(G4String name)
-  : GateSourceVoxellized(name)
+  : GateSourceVoxellized(name), m_gpu_input(NULL)
 {
   G4cout << "GateSourceGPUVoxellizedMessenger constructor" << G4endl;
 
   //  Build input and init (allocate) FIXME to be in Init
   // to init in contructor, fill in messenger
-  m_gpu_input = new GateSourceGPUVoxellizedInput;
+  m_gpu_input = GateSourceGPUVoxellizedInput_new();
   m_gpu_output = GateSourceGPUVoxellizedOutputParticles_new(0);
 
   m_sourceVoxellizedMessenger = new GateSourceGPUVoxellizedMessenger(this);
@@ -74,6 +74,7 @@ void GateSourceGPUVoxellized::Dump(G4int level)
 G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event) 
 {
   G4cout << "GateSourceGPUVoxellizedMessenger GeneratePrimaries" << G4endl;
+  assert(m_gpu_input);
 
   m_gpu_output->index = 0;
   m_gpu_output->size = 0;
@@ -116,10 +117,10 @@ void GateSourceGPUVoxellized::ReaderRemove()
 
 
 //-------------------------------------------------------------------------------------------------
-void GateSourceGPUVoxellized::Update()
+void GateSourceGPUVoxellized::Update(double time)
 {
   G4cout << "GateSourceGPUVoxellizedMessenger Update" << G4endl;
-  return GateSourceVoxellized::Update();
+  return GateSourceVoxellized::Update(time);
 }
 //-------------------------------------------------------------------------------------------------
 

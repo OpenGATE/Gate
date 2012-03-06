@@ -33,7 +33,7 @@ public:
 
   virtual void Dump(G4int level);
 
-  virtual void Update();
+  virtual void Update(G4double time);
 
   virtual G4int GeneratePrimaries(G4Event* event);
 
