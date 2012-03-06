@@ -103,10 +103,7 @@ void GateQuantumEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePuls
 	{
 	  G4cerr << 	G4endl << "[GateQuantumEfficiency::ProcessOnePulse]:" << G4endl
 		 <<   "Sorry, but you don't have choosen any volume !" << G4endl;
-	  G4Exception("You must choose a volume for crosstalk, e.g. crystal:\n"
-		      "\t/gate/digitizer/Singles/quantumEfficiency/chooseQEVolume VOLUME NAME\n"
-		      "or disable the quantumEfficiency using:\n"
-		      "\t/gate/digitizer/Singles/quantumEfficiency/disable\n");
+	  G4Exception( "GateQuantumEfficiency::ProcessOnePulse", "ProcessOnePulse", FatalException, "You must choose a volume for crosstalk, e.g. crystal:\n\t/gate/digitizer/Singles/quantumEfficiency/chooseQEVolume VOLUME NAME\n or disable the quantumEfficiency using:\n\t/gate/digitizer/Singles/quantumEfficiency/disable\n");
 	}
       //Create the table containing the quantum efficiencies
       CreateTable();

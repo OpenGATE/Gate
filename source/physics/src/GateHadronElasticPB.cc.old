@@ -9,7 +9,7 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
-#include "GateHadronElasticProcessPB.hh"
+#include "GateHadronElasticPB.hh"
 
 #include "GateHadronicStandardProcessMessenger.hh"
 

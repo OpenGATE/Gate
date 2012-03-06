@@ -11,6 +11,8 @@
 #ifndef GateToASCII_H
 #define GateToASCII_H
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_FILE
 
 #include "GateVOutputModule.hh"

@@ -8,7 +8,7 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-
+#include "GateConfiguration.h"
 #include "GateComptonPB.hh"
 
 #include "GateEMStandardProcessMessenger.hh"

@@ -1,6 +1,8 @@
 #include "GateRunManager.hh"
 #include "G4UImanager.hh"
 
+#include "GateConfiguration.h"
+
 #include <queue>
 
 #include "G4UIterminal.hh"
@@ -78,7 +80,7 @@ void AbortIfRootNotFound()
 	  << "         touch Gate.cc `grep -l G4ANALYSIS_USE_ROOT include/* src/*`" << G4endl
 	  << "         make" << G4endl
 	  << G4endl;
-  G4Exception("Correct problem then try again... Sorry!");	    
+  G4Exception( "Gate.cc AbortIfRootNotFound", "AbortIfRootNotFound", FatalException, "Correct problem then try again... Sorry!" );	    
 }
 //-------------------------------------------------------------------------------------
 #endif
@@ -109,10 +111,13 @@ void DecodeArguments(int argc,char** argv)
       else if (!strcmp(argv[nextArg],"-a")) {
 	// Pass an alias to Gate
 	if ( argc <= (nextArg+2) )
-	  G4Exception("Not enough arguments after the option flag '-a'\n"
-		      "The syntax to use this flag, which allows to create an alias, is:\n"
-		      "\tGate -a ALIAS_NAME ALIAS_VALUE\n\n"
-		      "Aborting!");
+	{
+	  //G4Exception("Not enough arguments after the option flag '-a'\n" "The syntax to use this flag, which allows to create an alias, is:\n" "\tGate -a ALIAS_NAME ALIAS_VALUE\n\n" "Aborting!");
+		G4String msg = "Not enough arguments after the option flag '-a'\n";
+		msg += "The syntax to use this flag, which allows to create an alias, is:\n";
+		msg += "Gate -a ALIAS_NAME ALIAS_VALUE\n\n";
+		G4Exception( "Gate.cc DecodeArguments", "DecodeArguments", FatalException, msg );
+	}
 	//G4String newCommand = G4String("/control/alias ") + argv[++nextArg] + " \"" + argv[++nextArg] + "\"";
 	nextArg++ ; 
 	G4String newCommand = G4String("/control/alias ") + argv[nextArg] ;
@@ -164,7 +169,7 @@ void ExecuteCommandQueue()
 void Welcome() {
   GateMessage("Core", 0, G4endl);
   GateMessage("Core", 0, "**********************************************************************"<< G4endl);
-  GateMessage("Core", 0, " GATE version name: gate_v6.1                                         "<< G4endl);
+  GateMessage("Core", 0, " GATE version name: gate_v6.2                                         "<< G4endl);
   GateMessage("Core", 0, "                    Copyright : OpenGATE Collaboration                "<< G4endl);
   GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 49 (2004) 4543-4561  "<< G4endl);
   GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 56 (2011) 881-901    "<< G4endl);
@@ -337,11 +342,10 @@ GateRecorderBase* myRecords = 0;
 
   delete sourceMgr;
   delete appMgr;
-  delete runManager;
+ // delete runManager;
   delete randomEngine;
   delete myRecords;
   delete controlMessenger;
-
   return 0;
 }
 //-------------------------------------------------------------------------------------

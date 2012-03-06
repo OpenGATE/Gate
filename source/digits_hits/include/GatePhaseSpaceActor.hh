@@ -12,6 +12,8 @@
   \class GatePhaseSpaceActor
  */
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_ROOT
 #ifndef GATESOURCEACTOR_HH
 #define GATESOURCEACTOR_HH

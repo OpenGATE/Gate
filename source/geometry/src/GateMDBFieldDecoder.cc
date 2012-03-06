@@ -192,11 +192,8 @@ G4double GateMDBFieldDecoder::DecodeFieldUnit(const G4String& elementName, G4Str
 // Common G4Exception function used by a lot of read functions
 void GateMDBFieldDecoder::DecodingException(const G4String& elementName,const G4String& errorMsg)
 {
-  G4Exception(  "\n!!! GateMDBFile:   \n"
-		"\tThe definition of the element/material '" + elementName + "' is incorrect: \n" 
-		+ errorMsg 
-		+ "\tYou should check this definition in the database file.\n"
-		"\tComputation aborted!!!\n");
+	G4String msg = "The definition of the element/material '" + elementName + "' is incorrect: " + errorMsg + "You should check this definition in the database file.";
+  G4Exception(  "GateMDBFieldDecoder::DecodingException", "DecodingException", FatalException, msg );
 }
 //-------------------------------------------------------------------------------------------------
 

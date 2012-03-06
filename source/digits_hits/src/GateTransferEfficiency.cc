@@ -80,12 +80,13 @@ void GateTransferEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePul
 	G4cerr << 	G4endl << "[GateLightYield::ProcessOnePulse]:" << G4endl
 	       <<   "Sorry, but the transfer efficiency (" << (*im).second << ") for " 
 	       << (*im).first << " is invalid" << G4endl;
-	G4Exception("It must be a number between 0 and 1 !!!\n"
-		    "You must set the transfer efficiency:\n"
-		    "\t/gate/digitizer/Singles/transferEfficiency/" + 
-		    (*im).first + "/setTECoef NUMBER\n"
-		    "or disable the transfer efficiency module using:\n"
-		    "\t/gate/digitizer/Singles/transferEfficiency/disable\n");
+	G4String msg = "It must be a number between 0 and 1 !!!\n"
+        "You must set the transfer efficiency:\n"
+        "\t/gate/digitizer/Singles/transferEfficiency/" + 
+        (*im).first + "/setTECoef NUMBER\n"
+        "or disable the transfer efficiency module using:\n"
+        "\t/gate/digitizer/Singles/transferEfficiency/disable\n";
+	G4Exception( "GateTransferEfficiency::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
       }
       else 
 	{

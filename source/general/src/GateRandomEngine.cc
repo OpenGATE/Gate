@@ -72,8 +72,8 @@ void GateRandomEngine::SetRandomEngine(const G4String& aName) {
     theRandomEngine = new CLHEP::MTwistEngine();
   }
   else {
-    G4Exception("\n!!! GateRandomEngine::SetRandomEngine: "
-                "Unknown random engine '"+aName+"'. Computation aborted !!!\n");
+		G4String msg = "Unknown random engine '"+aName+"'. Computation aborted !!!\n";
+    G4Exception( "GateRandomEngine::SetRandomEngine", "SetRandomEngine", FatalException, msg);
   }
 
 
@@ -134,7 +134,7 @@ void GateRandomEngine::Initialize() {
   }
 
   if (isSeed) {
-    if(theSeedFile !=" " && theSeed !="default") G4Exception("ERROR !! => Please: choose between a status file and a seed (defined by a number) or auto computation of initial seed!");
+    if(theSeedFile !=" " && theSeed !="default") G4Exception( "GateRandomEngine::Initialize", "Initialize", FatalException, "ERROR !! => Please: choose between a status file and a seed (defined by a number) or auto computation of initial seed!");
 
     if(theSeedFile == " ") {
 

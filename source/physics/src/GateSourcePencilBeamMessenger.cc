@@ -10,6 +10,8 @@
 #ifndef GATESOURCEPENCILBEAMMESSENGER_CC
 #define GATESOURCEPENCILBEAMMESSENGER_CC
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_ROOT
 #include "GateSourcePencilBeamMessenger.hh"
 #include "GateSourcePencilBeam.hh"

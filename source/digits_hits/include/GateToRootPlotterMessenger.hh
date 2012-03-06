@@ -12,6 +12,8 @@ See GATE/LICENSE.txt for further details
 #ifndef GateToRootPlotterMessenger_h
 #define GateToRootPlotterMessenger_h 1
 
+#include "GateConfiguration.h"
+
 //e #ifdef G4ANALYSIS_USE_ROOT
 #ifdef G4ANALYSIS_USE_ROOT_PLOTTER
 

@@ -11,6 +11,9 @@ See GATE/LICENSE.txt for further details
 
 #ifndef GateARFDataToRootMessenger_h
 #define GateARFDataToRootMessenger_h 1
+
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "GateOutputModuleMessenger.hh"

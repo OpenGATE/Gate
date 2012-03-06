@@ -76,11 +76,9 @@ void GateLightYield::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& 
       if((*im).second < 0 ) {
 	G4cerr << 	G4endl << "[GateLightYield::ProcessOnePulse]:" << G4endl
 	       <<   "Sorry, but the light output (" << (*im).second << ") for " << (*im).first << " is invalid" << G4endl;
-	G4Exception("You must set the light output:\n"
-		    "\t/gate/digitizer/Singles/lightYield/" + 
-		    (*im).first + "/setLightOutput NBphotons/ENERGY\n"
-		    "or disable the light yield module using:\n"
-		    "\t/gate/digitizer/Singles/lightYield/disable\n");
+	
+	G4String msg = "You must set the light output:\n\t/gate/digitizer/Singles/lightYield/" + (*im).first + "/setLightOutput NBphotons/ENERGY\n or disable the light yield module using:\n\t/gate/digitizer/Singles/lightYield/disable";
+	G4Exception( "GateLightYield::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
       }
       else {
 	m_lightOutput = (*im).second;  

@@ -28,9 +28,10 @@ G4Element* GateElementCreator::Construct()
 {
   G4Element* element = new G4Element(name,symbol,atomicNumber,molarMass);
   if (!element)
-    G4Exception("\n\n!!! GateElementCreator::Construct:\n"
-      	      	"Failed to create a new element for '" + name + "'!\n"
-		"Computation aborted!!!\n\n");
+	{
+		G4String msg = "Failed to create a new element for '" + name;
+    G4Exception( "GateElementCreator::Construct", "Construct", FatalException, msg );
+	}
 
 
 
@@ -43,9 +44,10 @@ void GateEByFComponentCreator::AddToMaterial(G4Material* material)
 {
   G4Element* componentElement = mDatabase->GetElement(name);
   if (!componentElement)
-    G4Exception("\n\n!!! GateEByFComponentCreator::AddToMaterial:\n"
-      	      	"Failed to retrieve component element '" + name + "'!\n"
-		"Computation aborted!!!\n\n");
+	{
+		G4String msg = "Failed to retrieve component element '" + name + "'!";
+    G4Exception( "GateEByFComponentCreator::AddToMaterial", "AddToMaterial", FatalException, msg );
+	}
   material->AddElement(componentElement,fraction);
 }
 //-----------------------------------------------------------------------------
@@ -55,10 +57,11 @@ void GateEByNComponentCreator::AddToMaterial(G4Material* material)
 {
   G4Element* componentElement = mDatabase->GetElement(name);
   if (!componentElement)
-    G4Exception("\n\n!!! GateEByNComponentCreator::AddToMaterial:\n"
-      	      	"Failed to retrieve component element '" + name + "'!\n"
-		"Computation aborted!!!\n\n");
-  material->AddElement(componentElement,nAtoms);
+	{
+		G4String msg = "Failed to retrieve component element '" + name + "'!";
+    G4Exception( "GateEByNComponentCreator::AddToMaterial", "AddToMaterial", FatalException, msg );
+  }
+	material->AddElement(componentElement,nAtoms);
 }
 //-----------------------------------------------------------------------------
 
@@ -67,9 +70,10 @@ void GateMatComponentCreator::AddToMaterial(G4Material* material)
 {
   G4Material* componentMaterial = mDatabase->GetMaterial(name);
   if (!componentMaterial)
-    G4Exception("\n\n!!! GateMatComponentCreator::AddToMaterial:\n"
-      	      	"Failed to retrieve component material '" + name + "'!\n"
-		"Computation aborted!!!\n\n");
+	{
+		G4String msg = "Failed to retrieve component material '" + name + "'!";
+    G4Exception( "GateMatComponentCreator::AddToMaterial", "AddToMaterial", FatalException, msg );
+	}
   material->AddMaterial(componentMaterial,fraction);
 }
 //-----------------------------------------------------------------------------
@@ -79,10 +83,10 @@ G4Material* GateScratchMaterialCreator::Construct()
 {
   G4Material* material = new G4Material(name,atomicNumber,molarMass,density,state,temp,pressure);
   if (!material)
-    G4Exception("\n\n!!! componentMaterial::Construct:\n"
-      	      	"Failed to create a new material for '" + name + "'!\n"
-		"Computation aborted!!!\n\n");
-
+	{
+		G4String msg = "Failed to create a new material for '" + name + "'!";
+    G4Exception( "GateScratchMaterialCreator::Construct", "Construct", FatalException, msg );
+	}
   return material;
 }
 //-----------------------------------------------------------------------------
@@ -93,9 +97,10 @@ G4Material* GateCompoundMaterialCreator::Construct()
   G4Material* material = new G4Material(name,density,nComponents,state,temp,pressure);
   
   if (!material)
-    G4Exception("\n\n!!! GateCompoundMaterialCreator::Construct:\n"
-      	      	"Failed to create a new material for '" + name + "'!\n"
-		"Computation aborted!!!\n\n");
+	{
+		G4String msg = "Failed to create a new material for '" + name + "'!";
+    G4Exception( "GateCompoundMaterialCreator::Construct", "Construct", FatalException, msg );
+	}
   for (G4int i=0; i<nComponents ; i++)
     components[i]->AddToMaterial(material);
 

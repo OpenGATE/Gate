@@ -89,10 +89,13 @@ void GateCrosstalk::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& o
     {
       G4cerr << 	G4endl << "[GateCrosstalk::ProcessOnePulse]:" << G4endl
 	     <<   "Sorry, but you don't have choosen any volume !" << G4endl;
-      G4Exception("You must choose a volume for crosstalk, e.g. crystal:\n"
-		  "\t/gate/digitizer/Singles/crosstalk/chooseCrosstalkVolume VOLUME NAME\n"
-		  "or disable the crosstalk using:\n"
-		  "\t/gate/digitizer/Singles/crosstalk/disable\n");
+      
+			G4String msg = "You must choose a volume for crosstalk, e.g. crystal:\n"
+      "\t/gate/digitizer/Singles/crosstalk/chooseCrosstalkVolume VOLUME NAME\n"
+      "or disable the crosstalk using:\n"
+      "\t/gate/digitizer/Singles/crosstalk/disable\n";
+
+			G4Exception( "GateCrosstalk::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
     }    
 
   //Find the pulse position in the array
@@ -189,11 +192,13 @@ void GateCrosstalk::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& o
     {
       G4cerr << 	G4endl << "[GateCrosstalk::ProcessOnePulse]:" << G4endl
 	     <<   "Sorry, but you have too much energy !" << G4endl;
-      G4Exception("You must change your fractions of energy for the close crystals :\n"
-		  "\t/gate/digitizer/Singles/crosstalk/setSidesFraction NUMBER\n" 
-		  "\t/gate/digitizer/Singles/crosstalk/setCornersFraction NUMBER\n"
-		  "or disable the crosstalk using:\n"
-		  "\t/gate/digitizer/Singles/crosstalk/disable\n");
+      
+			G4String msg = "You must change your fractions of energy for the close crystals :\n"
+      "\t/gate/digitizer/Singles/crosstalk/setSidesFraction NUMBER\n"
+      "\t/gate/digitizer/Singles/crosstalk/setCornersFraction NUMBER\n"
+      "or disable the crosstalk using:\n"
+      "\t/gate/digitizer/Singles/crosstalk/disable\n";
+			G4Exception( "GateCrosstalk::ProcessOnePulse", "ProcessOnePulse", FatalException,msg);
     }
   // Add the incident pulse in the pulse list with less energy
   GatePulse* outputPulse = new GatePulse(*inputPulse);

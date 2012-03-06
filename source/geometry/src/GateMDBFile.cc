@@ -42,9 +42,10 @@ GateMDBFile::GateMDBFile(GateMaterialDatabase* db, const G4String& itsFileName)
 	      << fileName << ">" << G4endl); 
   filePath = GateTools::FindGateFile(fileName);
   if (filePath.empty())
-    G4Exception("\nGateMDBFile::GateMDBFile: \n"
-		"\tCould not find material database file '" + fileName + "'.\n"
-		+ "\tComputation aborted.\n");
+	{
+		G4String msg = "Could not find material database file '" + fileName + "'";
+    G4Exception( "GateMDBFile::GateMDBFile", "GateMDBFile", FatalException, msg );
+	}
   dbStream.open(filePath);
 
   if (dbStream) {
@@ -53,9 +54,8 @@ GateMDBFile::GateMDBFile(GateMaterialDatabase* db, const G4String& itsFileName)
 		<< filePath << ">" << G4endl);
   }
   else {
-    G4Exception("\nGateMDBFile::GateMDBFile: \n"
-		"\tCould not open material database file '" + filePath + "'.\n"
-		+ "\tComputation aborted.\n");
+		G4String msg = "Could not open material database file '" + filePath + "'";
+    G4Exception( "GateMDBFile::GateMDBFile", "GateMDBFile", FatalException, msg );
   }
 }
 //-----------------------------------------------------------------------------
@@ -148,9 +148,8 @@ GateMaterialCreator* GateMDBFile::ReadMaterial(const G4String& materialName)
   case materialtype_compound:
     return ReadCompoundMaterial(materialName,line);
   default:
-    G4Exception("GateMDBFile::ReadMaterial:\n"
-		"\tAbnormal prefix code found for the first field of material '" + materialName + "'!\n"
-		"\tComputation has to be aborted!!!\n\n");
+		G4String msg = "Abnormal prefix code found for the first field of material '" + materialName + "'";
+    G4Exception( "GateMDBFile::ReadMaterial", "ReadMaterial", FatalException, msg );
   }
   return 0;
 }
@@ -242,10 +241,9 @@ GateComponentCreator* GateMDBFile::ReadComponent(const G4String& materialName,co
   // Read the next non-empty line (if any)
   G4String line;
   if (ReadNonEmptyLine(line)) {
-    G4Exception("\n!!! GateMDBFile::ReadComponent:   \n"
-		"\tI could not find the " +  componentOrdinal +  " component of the compound material '" + materialName + "'. \n"
-		"\tYou should check the list of components in the database file for this material.\n"
-		"\tComputation aborted!!!\n");
+		G4String msg = "I could not find the " +  componentOrdinal +  " component of the compound material '" + materialName + "' ";
+		msg += "You should check the list of components in the database file for this material.";
+    G4Exception( "GateMDBFile::ReadComponent", "ReadComponent", FatalException, msg );
   }
 
   // Check the line starter to see whether it's a material-type or an element-type component
@@ -261,12 +259,9 @@ GateComponentCreator* GateMDBFile::ReadComponent(const G4String& materialName,co
     return ReadMatComponent(materialName,componentOrdinal,stringPair.second);
     break;
   default:
-    G4Exception("\n!!! GateMDBFile::ReadComponent:   \n"
-		"\tIncorrect definition line for the  " +  componentOrdinal +  " component \n"
-		"\tof the compound material '" + materialName + "'. \n"
-		"\tThis line should start with '+el:' or '+mat:'. \n"
-		"\tYou should check the list of components in the database file for this material.\n"
-		"\tComputation aborted!!!\n");
+		G4String msg = "Incorrect definition line for the  " +  componentOrdinal +  " component of the compound material '" + materialName + "'";
+		msg += " This line should start with '+el:' or '+mat:'. You should check the list of components in the database file for this material.";
+    G4Exception("GateMDBFile::ReadComponent", "ReadComponent" , FatalException, msg );
   }
   return 0;
 }
@@ -296,10 +291,8 @@ GateElemComponentCreator* GateMDBFile::ReadElemComponent(const G4String& materia
   case elemcomponent_byFraction:
     return ReadEByFComponent(materialName,componentOrdinal,field,name);
   default:
-    G4Exception("GateMDBFile::ReadElemComponent:\n"
-		"\tAbnormal prefix code found for the abundance field " 
-		"\tof  "+ componentOrdinal + " component of material '" + materialName + "'!\n"
-		"\tComputation has to be aborted!!!\n\n");
+		G4String msg = "Abnormal prefix code found for the abundance field of  "+ componentOrdinal + " component of material '" + materialName + "'";
+    G4Exception( "GateMDBFile::ReadElemComponent", "ReadElemComponent", FatalException, msg );
   }
   return 0;
 }
@@ -402,9 +395,8 @@ void GateMDBFile::ReadMaterialOption(const G4String& materialName,const G4String
     creator->pressure = ReadMaterialPressure(materialName,field);
     break;
   default:
-    G4Exception("GateMDBFile::ReadMaterialOptions:\n"
-		"\tAbnormal prefix code found for an option field of material '" + materialName + "'!\n"
-		"\tComputation has to be aborted!!!\n\n");
+		G4String msg = "Abnormal prefix code found for an option field of material '" + materialName + "'!";
+    G4Exception( "GateMDBFile::ReadMaterialOptions", "ReadMaterialOptions", FatalException, msg );
   }
 }
 //-----------------------------------------------------------------------------

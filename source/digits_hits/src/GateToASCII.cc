@@ -8,6 +8,8 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_FILE
 
 #include "GateToASCII.hh"
@@ -249,8 +251,10 @@ void GateToASCII::RecordVoxels(GateVGeometryVoxelStore* voxelStore)
     G4String voxelFileName = "voxels.dat";
     voxelFile.open(voxelFileName.c_str(),std::ios::out | std::ios::trunc);
     if (!(voxelFile.is_open()))
-        	G4Exception("[GateToASCII::RecordVoxels]:\n"
-        	      	    "Could not open the voxel file '" + voxelFileName);
+		{
+			G4String msg = "Could not open the voxel file '" + voxelFileName;
+        	G4Exception( "GateToASCII::RecordVoxels", "RecordVoxels", FatalException, msg);
+		}
 
     // Write the header: number of voxels, voxel dimensions
     G4int nx = voxelStore->GetVoxelNx();

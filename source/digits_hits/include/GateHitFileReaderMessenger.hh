@@ -12,6 +12,8 @@ See GATE/LICENSE.txt for further details
 #ifndef GateHitFileReaderMessenger_h
 #define GateHitFileReaderMessenger_h 1
 
+#include "GateConfiguration.h"
+
 //e #ifdef G4ANALYSIS_USE_ROOT
 
 #include "GateClockDependentMessenger.hh"

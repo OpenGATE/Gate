@@ -8,7 +8,7 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-
+#include "GateConfiguration.h"
 #ifndef GATEPHOTOELECTRICPB_HH
 #define GATEPHOTOELECTRICPB_HH
 

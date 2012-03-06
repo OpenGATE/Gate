@@ -12,6 +12,8 @@ See GATE/LICENSE.txt for further details
 #ifndef GateToRootMessenger_h
 #define GateToRootMessenger_h 1
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "GateOutputModuleMessenger.hh"

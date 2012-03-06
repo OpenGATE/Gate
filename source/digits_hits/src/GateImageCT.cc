@@ -77,7 +77,7 @@ void GateImageCT::Reset( std::vector<size_t>& moduleByAxis,
 	if( !m_data )
 	{
 		G4cout << "you are in GateImageCT::Reset()" << G4endl;
-		G4Exception( "Could not allocate a new image (out of memory?)\n" );
+		G4Exception( "GateImageCT::Reset", "reset", FatalException, "Could not allocate a new image (out of memory?)" );
 	}
 }
 

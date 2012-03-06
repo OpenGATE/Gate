@@ -151,7 +151,10 @@ G4double theInEnergy = theTrack->GetTotalEnergy();
   headID = volumeID.GetVolume( volumeID.GetCreatorDepth("SPECThead") )->GetCopyNo();
   
 
-if (volumeID.IsInvalid()) G4Exception("[GateARFSD]: could not get the volume ID! Aborting!\n");
+if (volumeID.IsInvalid()) //G4Exception("[GateARFSD]: could not get the volume ID! Aborting!\n");
+{
+	G4Exception( "GateARFSD::ProcessHits", "ProcessHits", FatalException, "Could not get the volume ID! Aborting!" );
+}
 
 // now we compute the position in the current frame to be able to extract the angles theta and phi
 
@@ -209,7 +212,10 @@ void GateARFSD::SetSystem(GateVSystem* aSystem)
 void GateARFSD::computeTables()
 { // open the root files generated from the ARF simu
 
-if ( m_ARFStage != 1 )G4Exception("GateARFSD::computeTables() : Illegal state of the Gate ARF Sensitive Detector ");
+if ( m_ARFStage != 1 )
+{
+	G4Exception( "GateARFSD::computeTable", "computeTable", FatalException, "Illegal state of the Gate ARF Sensitive Detector" );
+}
 
 G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Detector " << GetName() << G4endl;
 
@@ -382,7 +388,7 @@ G4double theARFvalue = m_ARFTableMgr->ScanTables(  theDirection.z() , theDirecti
 
 if ( theProjectionSet == 0 ) {GateOutputMgr* outputMgr = GateOutputMgr::GetInstance(); 
                               GateToProjectionSet* PSet = dynamic_cast<GateToProjectionSet*>( outputMgr->GetModule("projection") );
-                              if ( PSet == 0 ) { G4Exception("GateARFSD::ComputeProjectionSet : ERROR No Projection Set Module has been enabled. Aborting.");}
+                              if ( PSet == 0 ) { G4Exception( "GateARFSD::ComputeProjectionSet()", "ComputeProjectionSet", FatalException, "ERROR No Projection Set Module has been enabled. Aborting.");}
                               theProjectionSet = PSet->GetProjectionSet();
                              }
 

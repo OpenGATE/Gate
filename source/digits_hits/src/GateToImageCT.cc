@@ -134,7 +134,7 @@ void GateToImageCT::ModuleGeometry()
 		G4cerr << "The module repeater vector must be parallel to the Y axis" 
 			   << G4endl;
 		G4Exception(
-			"You must change these parameters then restart the simulation" );
+			"GateToImageCT::ModuleGeometry", "ModuleGeometry", FatalException,"You must change these parameters then restart the simulation" );
 	}
 	
 	if( nVerboseLevel > 0 )
@@ -263,7 +263,7 @@ void GateToImageCT::RecordBeginOfAcquisition()
 			   << ") does not seem to be a multiple of the time-slice ( "
 			   << G4BestUnit( GetFrameDuration(), "Time" ) << ")." << G4endl;
 		G4Exception( 
-			"You must change these parameters then restart the simulation\n" );
+			"GateToImageCT::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must change these parameters then restart the simulation\n" );
 	}
 	
 	//store cluster in a array of const G4String
@@ -355,7 +355,7 @@ void GateToImageCT::RecordEndOfRun( const G4Run* aRun )
 		G4cerr 
 		      << "you are in GateToImageCT::RecordEndOfRun( const G4Run* aRun )"
 			  << G4endl;
-		G4Exception( "probleme creating your output data file" );
+		G4Exception( "GateToImageCT::RecordEndOfRun", "RecordEndOfRun", FatalException, "probleme creating your output data file" );
 	}
 	
 	m_gateImageCT->StreamOut( m_dataFile );
@@ -552,7 +552,7 @@ void GateToImageCT::RecordStepWithVolume( const GateVVolume*,
 		 GateVolumeID volumeID(touchable);
 		 if (volumeID.IsInvalid())
 			 G4Exception(
-				 "[GateCrystalSD]: could not get the volume ID! Aborting!\n");
+				 "GateToImageCT::RecordStepWithVolume", "RecordStepWithVolume", FatalException, "could not get the volume ID! Aborting!\n");
 			 
 		GateOutputVolumeID outputVolumeID = 
 			m_system->ComputeOutputVolumeID(volumeID);

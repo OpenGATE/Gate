@@ -139,9 +139,10 @@ void GateToInterfile::RecordBeginOfAcquisition()
   // Open the header file
   m_headerFile.open((m_fileName+".hdr").c_str(),std::ios::out | std::ios::trunc);
   if (!(m_headerFile.is_open()))
-      	G4Exception("[GateToInterfile::RecordBeginOfAcquisition]:\n"
-      	      	    "Could not open the header file '" + m_fileName + ".hdr'!");
-
+	{
+		G4String msg = "Could not open the header file '" + m_fileName + ".hdr'!";
+      	G4Exception("GateToInterfile::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException,msg);
+	}
   // Pre-write the header file
   WriteGeneralInfo();
   WriteGateScannerInfo();
@@ -150,9 +151,10 @@ void GateToInterfile::RecordBeginOfAcquisition()
   // Open the data file
   m_dataFile.open((m_fileName+".sin").c_str(),std::ios::out | std::ios::trunc | std::ios::binary);
   if (!(m_dataFile.is_open()))
-      	G4Exception("[GateToInterfile::RecordBeginOfAcquisition]:\n"
-      	      	    "Could not open the data file '" + m_fileName + ".sin'!");
-
+	{
+		G4String msg = "Could not open the data file '" + m_fileName + ".sin'!";
+      	G4Exception("GateToInterfile::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException,msg);
+}
 }
 
 
@@ -165,8 +167,7 @@ void GateToInterfile::RecordEndOfAcquisition()
 
   // Fully rewrite the header, so as to store the maximum counts
   m_headerFile.seekp(0,std::ios::beg);
-  if ( m_headerFile.bad() ) G4Exception( "\n[GateToInterfile]:\n"
-      	      	              	      	 "Could not go to back to the beginning of the header file (file missing?)!\n"); 
+  if ( m_headerFile.bad() ) G4Exception( "GateToInterfile::RecordEndOfAcquisition", "RecordEndOfAcquisition", FatalException, "Could not go to back to the beginning of the header file (file missing?)!\n"); 
   WriteGeneralInfo();
   WriteGateScannerInfo();
   WriteGateRunInfo( m_system->GetProjectionSetMaker()->GetProjectionSet()->GetCurrentProjectionID()+1 );
@@ -295,7 +296,7 @@ void GateToInterfile::WriteGeneralInfo()
 		if (!aPulseProcessorChain) {
 			G4cerr  << 	G4endl << "[GateToInterfile::WriteGeneralInfo]:" << G4endl
 					<< "Can't find digitizer chain '" << aChainName << "', aborting" << G4endl;
-			G4Exception("You must change this parameter then restart the simulation\n");
+			G4Exception( "GateToInterfile::WriteGeneralInfo", "WriteGeneralInfo", FatalException, "You must change this parameter then restart the simulation\n");
 		}
 		
 		// Try to find a thresholder and/or a upholder into the pulse processor chain.

@@ -70,7 +70,7 @@ void   GateRTVPhantom::SetBaseFileName( G4String aFN )
   if ( header_FN == G4String("NotDefined") )
   {
    G4cout<<"GateRTVPhantom::SetBaseFileName ERROR : No header file name has been provided for the attenuation map.";
-   G4Exception(" Please set it before setting the base file name. Aborting.");
+   G4Exception( "GateRTVPhantom::SetBaseFileName", "SetBaseFileName", FatalException, " Please set it before setting the base file name. Aborting.");
   }
   current_FN = base_FN+"_atn_1.bin";
   
@@ -95,7 +95,7 @@ void GateRTVPhantom::Compute(G4double aTime)
 {
   static G4bool IsFirstTime = true;
   
- if ( GetNbOfFrames() == 0 ) { G4Exception( "GateRTVPhantom::Compute() : ERROR  the Number of Frames is set to 0.");}
+ if ( GetNbOfFrames() == 0 ) { G4Exception( "GateRTVPhantom::Compute", "Compute", FatalException, "ERROR  the Number of Frames is set to 0.");}
 
      G4double time_s = aTime/s;
 

@@ -118,21 +118,18 @@ if ( stage == 2 )
     free(m_ARFdataMax);
 
     m_ARFdata = (ARFProjectionDataType**) malloc( m_headNb * sizeof(ARFProjectionDataType*) );
-    if (!m_ARFdata) G4Exception("\n[GateProjectionSet::Reset]:\n"
-      		      	   "Could not allocate a new projection set for ARF Projections (out of memory?)\n");
+    if (!m_ARFdata) G4Exception( "GateProjectionSet::Reset", "Reset", FatalException, "Could not allocate a new projection set for ARF Projections (out of memory?)\n");
   
     for (headID=0;headID<m_headNb;headID++)
      {
       m_ARFdata[headID] = (ARFProjectionDataType*) malloc( ARFBytesPerProjection() );
-      if (!m_ARFdata[headID]) G4Exception("\n[GateProjectionSet::Reset ARF projection bins]:\n"
-                           "Could not allocate a new projection set (out of memory?)\n");
+      if (!m_ARFdata[headID]) G4Exception( "GateProjectionSet::Reset", "Reset", FatalException, "Could not allocate a new projection set (out of memory?)");
       G4cout << " ARF projection bins allocated at " << m_ARFdata[headID] << G4endl;
      }
  
   // Allocate the data-max pointer
   m_ARFdataMax = (ARFProjectionDataType*) calloc( m_headNb , ARFBytesPerPixel() );
-  if (!m_ARFdataMax) G4Exception("\n[GateProjectionSet::Reset]:\n"
-      		      	      "Could not allocate a statistics array (out of memory?)\n");
+  if (!m_ARFdataMax) G4Exception( "GateProjectionSet::Reset", "Reset", FatalException, "Could not allocate a statistics array (out of memory?)\n");
       		      	      
  G4cout << " GateProjectionSet::Reset : Estimated size for the Binary Projection Output file " <<ARFBytesPerHead() * G4double(m_headNb) / ( 1024.* 1024. )<<" Mo"<<G4endl;
 G4cout << " GateProjectionSet::Reset : Estimated size for the Binary Projection Output file " <<ARFBytesPerHead() * G4double(m_headNb) / 1024.<<" Ko"<<G4endl; 		      	      
@@ -145,32 +142,27 @@ G4cout << " GateProjectionSet::Reset : Estimated size for the Binary Projection 
   // Allocate the data pointer
   // Modified by HDS : allocation of a 3D array
   m_data = (ProjectionDataType***) malloc( m_energyWindowNb * sizeof(ProjectionDataType**)  );
-  if (!m_data) G4Exception("\n[GateProjectionSet::Reset]:\n"
-      			 "Could not allocate a new projection set (out of memory?)\n");
+  if (!m_data) G4Exception( "GateProjectionSet::Reset", "Reset", FatalException, "Could not allocate a new projection set (out of memory?)");
       			 
   // Do the allocations for each energy window  
   	for (energyWindowID = 0; energyWindowID < m_energyWindowNb; energyWindowID++) {
 		m_data[energyWindowID] = (ProjectionDataType**) malloc( m_headNb * sizeof(ProjectionDataType*) );
-  		if (!m_data[energyWindowID]) G4Exception("\n[GateProjectionSet::Reset]:\n"
-      		      	   "Could not allocate a new projection (out of memory?)\n");
+  		if (!m_data[energyWindowID]) G4Exception( "GateProjectionSet::Reset", "Reset", FatalException, "Could not allocate a new projection (out of memory?)");
   
  		 // Do the allocations for each head
 		for (headID=0;headID<m_headNb;headID++) {
 			m_data[energyWindowID][headID] = (ProjectionDataType*) malloc( BytesPerProjection() );
-    		if (!(m_data[energyWindowID][headID])) G4Exception("\n[GateProjectionSet::Reset]:\n"
-      		      	      	       "Could not allocate a new projection (out of memory?)\n");
+    		if (!(m_data[energyWindowID][headID])) G4Exception( "GateProjectionSet::Reset", "Reset", FatalException, "Could not allocate a new projection (out of memory?)");
       	}
   	} 
 
   // Allocate the data-max pointer
   m_dataMax =  (ProjectionDataType**) malloc( m_energyWindowNb * sizeof(ProjectionDataType*) );
-  if (!m_dataMax) G4Exception("\n[GateProjectionSet::Reset]:\n"
-      		      	    "Could not allocate a statistics array (out of memory?)\n");
+  if (!m_dataMax) G4Exception( "GateProjectionSet::Reset", "Reset", FatalException, "Could not allocate a statistics array (out of memory?)");
       		      	      
   for (energyWindowID = 0; energyWindowID < m_energyWindowNb; energyWindowID++) {
   	m_dataMax[energyWindowID] = (ProjectionDataType*) calloc( m_headNb , BytesPerPixel() );
- 	if (!m_dataMax[energyWindowID]) G4Exception("\n[GateProjectionSet::Reset]:\n"
-      		      	      "Could not allocate a statistics array (out of memory?)\n");
+ 	if (!m_dataMax[energyWindowID]) G4Exception( "GateProjectionSet::Reset", "Reset", FatalException, "Could not allocate a statistics array (out of memory?)\n");
   }
 
 }
@@ -285,11 +277,9 @@ void GateProjectionSet::Fill( G4int energyWindowID, G4int headID, G4double x, G4
 void GateProjectionSet::StreamOut(std::ofstream& dest, size_t energyWindowID, size_t headID)
 {
     dest.seekp(energyWindowID * BytesPerEnergyWindow() + headID * BytesPerHead() + m_currentProjectionID * BytesPerProjection(),std::ios::beg);
-    if ( dest.bad() ) G4Exception( "\n[GateToProjectionSet]:\n"
-      	      	              	     "Could not write a projection onto the disk (out of disk space?)!\n"); 
+    if ( dest.bad() ) G4Exception( "GateProjectionSet::StreamOut", "StreamOut", FatalException, "Could not write a projection onto the disk (out of disk space?)!\n"); 
     dest.write((const char*)(m_data[energyWindowID][headID]),BytesPerProjection() );
-    if ( dest.bad() ) G4Exception( "\n[GateToProjectionSet]:\n"
-      	      	              	     "Could not write a projection onto the disk (out of disk space?)!\n"); 
+    if ( dest.bad() ) G4Exception( "GateProjectionSet::StreamOut", "StreamOut", FatalException, "Could not write a projection onto the disk (out of disk space?)!\n"); 
     dest.flush();
 }
 
@@ -359,11 +349,9 @@ m_rec++;
 void GateProjectionSet::StreamOutARFProjection(std::ofstream& dest, size_t headID)
 {
     dest.seekp(headID * ARFBytesPerHead() + m_currentProjectionID * ARFBytesPerProjection(),std::ios::beg);
-    if ( dest.bad() ) G4Exception( "\n[GateToProjectionSet]:\n"
-      	      	              	     "Could not write a projection onto the disk (out of disk space?)!\n"); 
+    if ( dest.bad() ) G4Exception( "GateProjectionSet::StreamOutARFProjection", "StreamOutARFProjection", FatalException, "Could not write a projection onto the disk (out of disk space?)!\n"); 
     dest.write((const char*)(m_ARFdata[headID]),ARFBytesPerProjection() );
-    if ( dest.bad() ) G4Exception( "\n[GateToProjectionSet]:\n"
-      	      	              	     "Could not write a projection onto the disk (out of disk space?)!\n"); 
+    if ( dest.bad() ) G4Exception( "GateProjectionSet::StreamOutARFProjection", "StreamOutARFProjection", FatalException, "Could not write a projection onto the disk (out of disk space?)!\n"); 
     dest.flush();
 }
 /* PY Descourt 08/09/2009 */

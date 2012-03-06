@@ -10,6 +10,8 @@
 
 #include <sstream>
 
+#include "GateConfiguration.h"
+
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4Navigator.hh"

@@ -2698,7 +2698,7 @@ G4double GateBinaryCascade::GetIonMass(G4int Z, G4int A)
    {
       G4cerr << "GateBinaryCascade::GetIonMass() - invalid (A,Z) = ("
               << A << "," << Z << ")" <<G4endl;
-      G4Exception("GateBinaryCascade::GetIonMass() - giving up");
+      G4Exception( "GateBinaryCascade::GetIonMass", "GetIonMass", FatalException, "Giving up");
    }
    return mass;
 }

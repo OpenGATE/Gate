@@ -21,9 +21,7 @@ GatePVReplica::GatePVReplica(const G4String& pName,
   : G4PVReplica(pName,pLogical,pMother,pAxis,nReplicas ,width,offset) 
 {
   if ((pAxis!=kXAxis) && (pAxis!=kYAxis) && (pAxis!=kZAxis) ) 
-    G4Exception("[GatePVReplica::GatePVReplica]:\n"
-      	      	"\tSorry, an object tried to create a replicate along a non-Caretsian axis, but this kind of replication is not handled by GATE.\n"
-		"\tMust abort computation!\n");
+    G4Exception( "GatePVReplica::GatePVReplica", "GatePVReplica", FatalException, "Sorry, an object tried to create a replicate along a non-Caretsian axis, but this kind of replication is not handled by GATE." );
 }
 			     
 
@@ -38,21 +36,15 @@ void GatePVReplica::Update(const EAxis pAxis,const G4int nReplicas,
 		      	   const G4double width,const G4double offset)
 {
   if ((pAxis!=kXAxis) && (pAxis!=kYAxis) && (pAxis!=kZAxis) ) 
-    G4Exception("[GatePVReplica::GatePVReplica]:\n"
-      	      	"\tSorry, an object tried to create a replicate along a non-Caretsian axis, but this kind of replication is not handled by GATE.\n"
-		"\tMust abort computation!\n");
+    G4Exception( "GatePVReplica::Update", "Update", FatalException, "Sorry, an object tried to create a replicate along a non-Caretsian axis, but this kind of replication is not handled by GATE" );
   faxis=pAxis;
 
   if (nReplicas<1)
-    G4Exception("[GatePVReplica::GatePVReplica]:\n"
-      	      	"\tSorry, an object tried to create a replicate with less than one copy!\n"
-		"\tMust abort computation!\n");
+    G4Exception( "GatePVReplica::Update", "Update", FatalException, "Sorry, an object tried to create a replicate with less than one copy!" );
   fnReplicas=nReplicas;
 
   if (width<0)
-    G4Exception("[GatePVReplica::GatePVReplica]:\n"
-      	      	"\tSorry, an object tried to create a replicate with a negative width!\n"
-		"\tMust abort computation!\n");
+    G4Exception("GatePVReplica::Update", "Update", FatalException, "Sorry, an object tried to create a replicate with a negative width!" );
   fwidth=width;
 
   foffset=offset;

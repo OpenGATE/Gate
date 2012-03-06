@@ -19,7 +19,7 @@ GateClock* GateClock::pInstance = 0;
 GateClock::GateClock() : mTime(0.)
 {
   nVerboseLevel = 0;
-  if(pInstance != 0) { G4Exception("GateClock constructed twice."); }
+  if(pInstance != 0) { G4Exception( "GateClock::GateClock", "GateClock", FatalException, "constructed twice."); }
   pClockMessenger = new GateClockMessenger();
 }
 //------------------------------------------------------------------------------------

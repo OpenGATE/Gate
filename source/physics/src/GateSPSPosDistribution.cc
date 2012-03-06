@@ -197,7 +197,8 @@ G4ThreeVector GateSPSPosDistribution::GenerateOne()
   {
     char tmp[20];
     sprintf(tmp,"%d",limitShoot);
-    G4Exception("GateSPSPosDistribution::GenerateOne(): "+((G4String)tmp)+" primaries were always generated in forbidden volumes !\n It seems that all sources are forbidden.");
+		G4String msg = ((G4String)tmp)+" primaries were always generated in forbidden volumes !\n It seems that all sources are forbidden.";
+    G4Exception("GateSPSPosDistribution::GenerateOne", "GenerateOne", FatalException, msg );
   }
 
   return particle_position ;

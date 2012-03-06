@@ -22,6 +22,8 @@ See GATE/LICENSE.txt for further details
 #include "G4ThreeVector.hh"
 #include "G4GeometryTolerance.hh"
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_ROOT
 #include "TFile.h"
 #include "TH1.h"

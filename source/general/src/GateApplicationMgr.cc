@@ -34,7 +34,7 @@ GateApplicationMgr::GateApplicationMgr():
   mCstTimeSliceIsSet(false)
 {
   if(instance != 0)
-    { G4Exception("GateApplicationMgr constructed twice."); }
+    { G4Exception( "GateApplicationMgr::GateApplicationMgr", "GateApplicationMgr", FatalException, "GateApplicationMgr constructed twice."); }
   m_appMgrMessenger = new GateApplicationMgrMessenger();
 
   mRequestedAmountOfPrimaries = 0;

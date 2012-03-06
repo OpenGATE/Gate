@@ -16,6 +16,8 @@ See GATE/LICENSE.txt for further details
 #include "GateDetectorConstruction.hh"
 #include "GateVVolume.hh"
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_GENERAL
 #include "GateOutputMgr.hh"
 #endif

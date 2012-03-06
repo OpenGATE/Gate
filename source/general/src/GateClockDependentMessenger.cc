@@ -105,7 +105,7 @@ void GateClockDependentMessenger::SetNewValue(G4UIcommand* command,G4String newV
      if ( creator != 0 ) creator->AttachARFSD();
      else {
      	   G4cout << " GateObjectCreatorStore : could not find ' "<< GetClockDependent()->GetObjectName()<<" ' "<<G4endl;
-     	   G4Exception("Aborting...");
+     	   G4Exception( "GateClockDependentMessenger::SetNewValue", "SetNewValue", FatalException, "Aborting...");
      	  }
      return;
     }

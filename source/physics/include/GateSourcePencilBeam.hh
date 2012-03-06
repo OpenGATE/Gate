@@ -10,6 +10,8 @@
 #ifndef GATESOURCEPENCILBEAM_HH
 #define GATESOURCEPENCILBEAM_HH
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_ROOT
 #include "G4Event.hh"
 #include "globals.hh"

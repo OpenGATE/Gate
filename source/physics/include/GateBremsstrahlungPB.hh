@@ -12,7 +12,7 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEBREMPB_HH
 #define GATEBREMPB_HH
 
-
+#include "GateConfiguration.h"
 #include "GateVProcess.hh"
 
 #include "G4eBremsstrahlung.hh"

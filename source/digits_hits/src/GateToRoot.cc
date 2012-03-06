@@ -13,6 +13,8 @@
             - Leaves are defined in GateRootDefs class.
 */
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include <iomanip>
@@ -265,12 +267,13 @@ if (nVerboseLevel > 1) G4cout << "GateToRoot::RecordBeginOfAcquisition  gROOT is
     FILE* rootFile = fopen ( GetFilePath() , "r");
     if (rootFile!=NULL) {
       fclose(rootFile);
-      G4Exception(G4String("[GateToRoot::RecordBeginOfAcquisition]:\n") + 
-		  " I am sorry, but there is already a ROOT file '" + GetFilePath() + "' on your directory.\n"
-		  " In Digigate mode, you are not allowed to overwrite ROOT files (security to avoid accidental data destruction).\n"
-		  " You must remove the file '" + GetFilePath() + "' of the current directory (move it elsewhere or delete it), then launch DigiGate again.\n"
-		  " Note that you could also change the name of your output ROOT file with the command:\n"
-		  "\t/gate/output/root/setFileName NEW_NAME\n");
+			G4String msg = " I am sorry, but there is already a ROOT file '";
+			msg += GetFilePath();
+			msg += "' on your directory. In Digigate mode, you are not allowed to overwrite ROOT files (security to avoid accidental data destruction). You must remove the file '";
+			msg += GetFilePath();
+			msg +=  "' of the current directory (move it elsewhere or delete it), then launch DigiGate again.\n Note that you could also change the name of your output ROOT file with the command:\n\t /gate/output/root/setFileName NEW_NAME";
+
+      G4Exception( "GateToRoot::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException,msg );
     }
     m_hfile = new TFile( GetFilePath(),"CREATE","ROOT file with histograms");
     break;
@@ -278,12 +281,15 @@ if (nVerboseLevel > 1) G4cout << "GateToRoot::RecordBeginOfAcquisition  gROOT is
   
   // Check that we succeeded in opening the file
   if (!m_hfile)
-    G4Exception("[GateToRoot::RecordBeginOfAcquisition]:\n"
-		"Could not open the requested output ROOT file '" + m_fileName + ".root'!");
+	{
+		G4String msg = "Could not open the requested output ROOT file '" + m_fileName + ".root'!";
+    G4Exception( "GateToRoot::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, msg );
+	}
   if (!(m_hfile->IsOpen()))
-    G4Exception("[GateToRoot::RecordBeginOfAcquisition]:\n"
-		"Could not open the requested output ROOT file '" + m_fileName + ".root'!");
-
+	{
+		G4String msg = "Could not open the requested output ROOT file '" + m_fileName + ".root'!";
+    G4Exception( "GateToRoot::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, msg );
+	}
   //! We book histos and ntuples only once per acquisition
   Book();
   return;
@@ -301,12 +307,15 @@ if ( theMode == kTracker )
 
   // Check that we succeeded in opening the file
   if (!m_hfile)
-       G4Exception("[GateToRoot::RecordBeginOfAcquisition]: TRACKER MODE DETECTED\n"
-                  "Could not open the requested output ROOT file '" + m_fileName + "_TrackerData.root'!");
+	{
+			G4String msg = "Could not open the requested output ROOT file '" + m_fileName + "_TrackerData.root'!";
+       G4Exception( "GateToRoot::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException,msg );
+	}
   if (!(m_hfile->IsOpen()))
-       G4Exception("[GateToRoot::RecordBeginOfAcquisition]: TRACKER MODE DETECTED\n"
-                  "Could not open the requested output ROOT file '" + m_fileName + "_TrackerData.root'!");
-
+	{
+			G4String msg = "Could not open the requested output ROOT file '" + m_fileName + "_TrackerData.root'!";
+       G4Exception( "GateToRoot::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException,msg );
+	}
  if (nVerboseLevel > 0) G4cout << "GateToRoot: ROOT: Ntuple " << "PhTracksData" << " being Created"<<G4endl;
  
  tracksTuple = new TTree(G4String("PhTracksData").c_str(),"PhantomTracksData");
@@ -1168,13 +1177,15 @@ G4cout << "GateToRoot::OpenTracksFile() :::: Opening Tracks Data Root File " << 
   // Check that we succeeded in opening the file
 
   if (!m_TracksFile)
-       G4Exception("[GateToRoot::RecordBeginOfAcquisition]: DETECTOR MODE DETECTED\n"
-                  "Could not instantiate the pointer to  output ROOT file '" +fTracksFN+"'");
-
+	{
+			G4String msg = "Could not instantiate the pointer to  output ROOT file '" +fTracksFN+"'";
+       G4Exception( "GateToRoot::OpenTracksFile", "OpenTracksFile", FatalException, msg );
+	}
   if (!(m_TracksFile->IsOpen()))
-       G4Exception("[GateToRoot::RecordBeginOfAcquisition]: DETECTOR MODE DETECTED\n"
-                  "Could not open the requested output ROOT file '" + fTracksFN+"'");
-
+	{
+		G4String msg = "Could not instantiate the pointer to  output ROOT file '" +fTracksFN+"'";
+       G4Exception( "GateToRoot::OpenTracksFile", "OpenTracksFile", FatalException, msg );
+	}
         tracksTuple = (TTree* ) ( m_TracksFile->Get( G4String("PhTracksData").c_str() ) );
 
  //       tracksTuple->Print();
@@ -1306,7 +1317,7 @@ if ( m_RSEventID != evt->GetEventID() )
   G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentTracksData = "<<m_currentTracksData  <<"     tracksTuple->GetEntries()   "<< tracksTuple->GetEntries() <<G4endl;
  G4cout << " GateToRoot::GetCurrentRecStepData :::: current event ID read from RecStep File "<<m_RSEventID<<"     current event ID " << evt->GetEventID()<<G4endl;
   G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentRSData = "<<m_currentRSData<<"    m_RecStepTree->GetEntries()  "<<m_RecStepTree->GetEntries()<<G4endl;
- G4Exception("Aborting ...");
+ G4Exception( "GateToRoot::GetCurrentRecStepData", "GetCurrentRecStepData", FatalException, "Aborting ...");
 }
 //G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentRSData = "<<m_currentRSData<<"    m_RecStepTree->GetEntries()  "<<m_RecStepTree->GetEntries()<<G4endl;
     m_currentRSData++;
@@ -1364,7 +1375,7 @@ m_currentGTrack->SetVertexVolumeName( m_volumeName );
 m_currentGTrack->SetTime( m_EventTime );
  G4ParticleTable  *particleTable = G4ParticleTable::GetParticleTable();
  G4ParticleDefinition* pd = particleTable->FindParticle( PDGCode );
- if(pd == NULL){G4Exception(" GateToRoot:: GetCurrentTracksData()   : ERROR PDGCode of the particle  is not defined. \n"); }
+ if(pd == NULL){G4Exception( "GateToRoot:: GetCurrentTracksData", "GetCurrentTracksData", FatalException, "ERROR PDGCode of the particle  is not defined. \n"); }
 m_particleName = (G4String) ( pd->GetParticleName() );
 m_currentGTrack->SetParticleName( m_particleName );
 }
@@ -1472,7 +1483,7 @@ m_EventTime = (*iter)->GetTime();
 
  if(pd == NULL){
                  if (PDGCode == 0 ) m_particleName = G4String("GenericIon");
-                 else G4Exception(" GateToRoot:: RecordTracks()   : ERROR PDGCode of the particle  is not defined. \n");
+                 else G4Exception(  "GateToRoot::RecordTracks", "RecordTracks", FatalException, "ERROR PDGCode of the particle  is not defined. \n");
                }
                 else m_particleName = (G4String) ( pd->GetParticleName() );
 

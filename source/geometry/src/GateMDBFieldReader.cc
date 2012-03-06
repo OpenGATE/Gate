@@ -247,10 +247,12 @@ GateMDBFieldReader::ElemComponentType GateMDBFieldReader::EvaluateElemComponentT
     case prefix_fraction:
       return elemcomponent_byFraction;
     default:
-      G4Exception("GateMDBFile::EvaluateElemComponentType:\n"
-		  "\tAbnormal prefix code found for the abundance field " 
-		  "\tof  "+ componentOrdinal + " component of material '" + materialName + "'!\n"
-		  "\tComputation has to be aborted!!!\n\n");
+			G4String msg = "Abnormal prefix code found for the abundance field of ";
+			msg += componentOrdinal;
+			msg += " component of material '";
+			msg += materialName;
+			msg += "'!";
+      G4Exception( "GateMDBFile::EvaluateElemComponentType", "EvaluateElemComponentType", FatalException, msg );
   }
   return elemcomponent_error;
 }
@@ -271,12 +273,9 @@ GateMDBFieldReader::ComponentType GateMDBFieldReader::EvaluateComponentType(cons
   else if (field=="+mat") 
     return componenttype_mat;
   else {
-	G4Exception("\n!!! GateMDBFieldReader::EvaluateComponentType:   \n"
-		    "\tIncorrect definition line for the  " +  componentOrdinal +  " component \n"
-		    "\tof the compound material '" + materialName + "'. \n"
-		    "\tThis line should start with '+el:' or '+mat:'. \n"
-		    "\tYou should check the list of components in the database file for this material.\n"
-		    "\tComputation aborted!!!\n");
+	G4String msg = "Incorrect definition line for the " +  componentOrdinal +  " component of the compound material '" + materialName + "'.";
+	msg += "This line should start with '+el:' or '+mat:'. You should check the list of components in the database file for this material.";
+	G4Exception( "GateMDBFieldReader::EvaluateComponentType", "EvaluateComponentType", FatalException, msg );
   }
   return componenttype_error;
 }
@@ -299,9 +298,10 @@ GateMDBFieldReader::MaterialType GateMDBFieldReader::EvaluateMaterialType(const 
     case prefix_density:
       return materialtype_compound;
     default:
-      G4Exception("GateMDBFieldReader::EvaluateMaterialType:\n"
-		  "\tAbnormal prefix code found for the first field of material '" + materialName + "'!\n"
-		  "\tComputation aborted!!!\n\n");
+			G4String msg = "Abnormal prefix code found for the first field of material '";
+			msg += materialName;
+			msg += "'";
+      G4Exception( "GateMDBFieldReader::EvaluateMaterialType", "EvaluateMaterialType", FatalException, msg );
   }
   return materialtype_error;
 }

@@ -71,7 +71,7 @@ public:
   // This is inlined because it is called by the parameterization and has to be fast
   virtual inline  G4Material*      GetVoxelMaterial(G4int copyNo){
     if (m_geometryVoxelMaterials) return m_geometryVoxelMaterials[copyNo];
-    else G4Exception("GateGeometryVoxelImageReader::GetVoxelMaterial - No material array.");
+    else G4Exception( "GateGeometryVoxelImageReader::GetVoxelMaterial", "GetVoxelMaterial", FatalException, "No material array" );
     return m_geometryVoxelMaterials[copyNo];   //  not really, just to silence the warning
   }
 

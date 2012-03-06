@@ -12,7 +12,7 @@ See GATE/LICENSE.txt for further details
 #ifndef GATECOMPTONPB_HH
 #define GATECOMPTONPB_HH
 
-
+#include "GateConfiguration.h"
 #include "GateVProcess.hh"
 
 #include "G4ComptonScattering.hh"

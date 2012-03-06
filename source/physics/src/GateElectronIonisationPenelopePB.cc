@@ -8,6 +8,7 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateConfiguration.h"
 #ifndef G4VERSION9_3
 
 #include "GateElectronIonisationPenelopePB.hh"

@@ -11,6 +11,7 @@
 #include "GateOutputMgr.hh"
 #include "GateVOutputModule.hh"
 #include "GateOutputMgrMessenger.hh"
+#include "GateConfiguration.h"
 
 #include "GateAnalysis.hh"
 #ifdef GATE_USE_OPTICAL

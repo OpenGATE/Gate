@@ -57,21 +57,18 @@ void GateSinogram::Reset(size_t ringNumber, size_t crystalNumber, size_t radialE
   // Allocate the data pointer
   m_data = (SinogramDataType**) malloc( m_sinogramNb * sizeof(SinogramDataType*) );
   if (!m_data) {
-    G4Exception("\n[GateSinogram::Reset]:\n"
-      		      	   "Could not allocate a 2D sinogram set (out of memory?)\n");
+    G4Exception( "GateSinogram::Reset", "Reset", FatalException, "Could not allocate a 2D sinogram set (out of memory?)\n");
   }
   // Do the allocations for each 2D sinogram
   for (sinoID=0;sinoID<m_sinogramNb;sinoID++) {
     m_data[sinoID] = (SinogramDataType*) malloc( BytesPerSinogram() );
     if (!(m_data[sinoID])) {
-     G4Exception("\n[GateSinogram::Reset]:\n"
-      		      	      	       "Could not allocate a new 2D sinogram (out of memory?)\n");
+     G4Exception( "GateSinogram::Reset", "Reset", FatalException, "Could not allocate a new 2D sinogram (out of memory?)\n");
     } 
   }
   // Allocate the randoms pointer
   m_randomsNb = (SinogramDataType*) calloc( m_sinogramNb , sizeof(SinogramDataType) );
-  if (!m_randomsNb) G4Exception("\n[GateSinogram::Reset]:\n"
-      		      	      "Could not allocate a new randoms array (out of memory?)\n");
+  if (!m_randomsNb) G4Exception( "GateSinogram::Reset", "Reset", FatalException, "Could not allocate a new randoms array (out of memory?)\n");
 }
 
 
@@ -254,13 +251,10 @@ G4int GateSinogram::Fill( G4int ring1ID, G4int ring2ID, G4int crystal1ID, G4int 
 */
 void GateSinogram::StreamOut(std::ofstream& dest, size_t sinoID, size_t seekID)
 {
-    if (sinoID >= m_sinogramNb) G4Exception( "\n[GateSinogram]:\n"
-                                             "SinoID out of range !\n");
+    if (sinoID >= m_sinogramNb) G4Exception( "GateSinogram::StreamOut", "StreamOut", FatalException, "SinoID out of range !\n");
     dest.seekp(seekID * BytesPerSinogram(),std::ios::beg);
-    if ( dest.bad() ) G4Exception( "\n[GateToSinogram]:\n"
-      	      	              	     "Could not write a 2D sinogram onto the disk (out of disk space?)!\n"); 
+    if ( dest.bad() ) G4Exception( "GateSinogram::StreamOut", "StreamOut", FatalException, "Could not write a 2D sinogram onto the disk (out of disk space?)!\n"); 
     dest.write((const char*)(m_data[sinoID]),BytesPerSinogram() );
-    if ( dest.bad() ) G4Exception( "\n[GateToSinogram]:\n"
-      	      	              	     "Could not write a 2D sinogram onto the disk (out of disk space?)!\n"); 
+    if ( dest.bad() ) G4Exception( "GateToSinogram:StreamOut", "StreamOut", FatalException, "Could not write a 2D sinogram onto the disk (out of disk space?)!\n"); 
     dest.flush();
 }

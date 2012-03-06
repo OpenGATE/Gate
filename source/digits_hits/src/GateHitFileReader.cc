@@ -8,6 +8,7 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateConfiguration.h"
 
 #ifdef G4ANALYSIS_USE_ROOT
 
@@ -84,18 +85,22 @@ void GateHitFileReader::PrepareAcquisition()
   // Open the input file
   m_hitFile = new TFile((m_fileName+".root").c_str(),"READ");
   if (!m_hitFile)
-    G4Exception("[GateHitFileReader::PrepareBeforeAcquisition]:\n"
-      	      	"Could not open the requested hit file '" + m_fileName + ".root'!");
+	{
+		G4String msg = "Could not open the requested hit file '" + m_fileName + ".root'!";
+    G4Exception( "GateHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg );
+	}
   if (!(m_hitFile->IsOpen()))
-    G4Exception("[GateHitFileReader::PrepareBeforeAcquisition]:\n"
-      	      	"Could not open the requested hit file '" + m_fileName + ".root'!");
-
+	{
+		G4String msg = "Could not open the requested hit file '" + m_fileName + ".root'!";
+    G4Exception( "GateHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg );
+	}
   // Get the hit tree
   m_hitTree = (TTree*)( m_hitFile->Get(GateHitConvertor::GetOutputAlias()) );
   if (!m_hitTree)
-    G4Exception("[GateHitFileReader::PrepareBeforeAcquisition]:\n"
-      	      	"Could not find a tree of hits in the ROOT file '" + m_fileName + ".root'!");
-
+	{
+		G4String msg = "Could not find a tree of hits in the ROOT file '" + m_fileName + ".root'!";
+    G4Exception( "GateHitFileReader::PrepareBeforeAcquisition", "PrepareBeforeAcquisition", FatalException, msg);
+	}
   // Reset the entry counters
   m_currentEntry=0;
   m_entries = m_hitTree->GetEntries();

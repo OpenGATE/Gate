@@ -242,7 +242,7 @@ void GateFictitiousVoxelMapParameterized::ConstructGeometry ( G4LogicalVolume* m
 	{
 		G4Envelope* region=GetCreator()->GetLogicalVolume()->GetRegion();
 		if ( region==NULL )
-			G4Exception ( "GateFictitiousVoxelMapParameterized::ConstructGeometry: Cannot create/allocate G4Region! Aborting." );
+			G4Exception ( "GateFictitiousVoxelMapParameterized::ConstructGeometry", "ConstructGeometry", FatalException, "Cannot create/allocate G4Region! Aborting." );
 		if ( m_pProductionCuts!=NULL )
 			region->SetProductionCuts ( m_pProductionCuts );
 		GatePETVRTManager::GetInstance()->GetOrCreatePETVRTSettings()->RegisterEnvelope ( region );
@@ -293,14 +293,14 @@ void GateFictitiousVoxelMapParameterized::ConstructOwnPhysicalVolume ( G4bool fl
       G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolume]:" << G4endl
       	      << "The size of the placement queue (" << pQueue->size() << ") is different from " << G4endl 
 	      << "the number of physical volumes to update (" << theListOfOwnPhysVolume.size() << ")!!!" << G4endl;
-      G4Exception("Can not complete placement update.");
+      G4Exception( "GateFictitiousVoxelMapParameterized::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException,  "Can not complete placement update.");
     }
   }
   else {
     if (theListOfOwnPhysVolume.size()) {
       G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolume]:" << G4endl
       	      << "Attempting to create new placements without having emptied the vector of placements!!!" << G4endl;
-      G4Exception("Can not complete placement creation.");
+      G4Exception( "GateFictitiousVoxelMapParameterized::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Can not complete placement creation.");
     }
   }
  
@@ -326,7 +326,7 @@ void GateFictitiousVoxelMapParameterized::ConstructOwnPhysicalVolume ( G4bool fl
       // is updating
       if (flagUpdateOnly && !pOwnPhys){ 
         G4cout << " Physical volume " << GetPhysicalVolumeName() << " does not exist!" << G4endl; 
-        G4Exception("Failed to construct the volume!");
+        G4Exception( "GateFictitiousVoxelMapParameterized::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Failed to construct the volume!");
       }
 
       if (flagUpdateOnly)

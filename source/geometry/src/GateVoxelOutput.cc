@@ -168,7 +168,7 @@ void GateVoxelOutput::RecordEndOfAcquisition()
   }
 
 //  GateVGeometryVoxelReader* theReader( m_inserter->GetReader());
-  if(!theReader) G4Exception("GateVoxelOutput::RecordEndOfAcquisition - No reader.");
+  if(!theReader) G4Exception( "GateVoxelOutput::RecordEndOfAcquisition", "RecordEndOfAcquisition", FatalException, "No reader" );
   
   const double voxelSize ( theReader->GetVoxelSize().x() * 
 			   theReader->GetVoxelSize().y() * 
@@ -280,7 +280,7 @@ void GateVoxelOutput::RecordEndOfEvent(const G4Event* )
   }
 
 //  GateVGeometryVoxelReader* theReader( m_inserter->GetReader());
-  if(!theReader) G4Exception("GateVoxelOutput::RecordEndOfAcquisition - No reader.");
+  if(!theReader) G4Exception( "GateVoxelOutput::RecordEndOfAcquisition", "RecordEndOfAcquisition", FatalException, "No reader.");
 
   // Set the array size if necessary
   if(m_array->size() == 0) {

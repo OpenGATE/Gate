@@ -146,10 +146,10 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
   // C. Comtat, 07.02.2006
   if (m_offset > 0.0 && m_offset/s < MIN_COINC_OFFSET) {
     G4cout << "Delayed coincidences offset (" << m_offset/s << " sec) should be bigger or equal to " << MIN_COINC_OFFSET << " sec" << G4endl;
-    G4Exception("Goodbye\n");
+    G4Exception( "GateCoincidenceSorter::ProcessSinglePulseList", "ProcessSinglePulseList", FatalException, "Goodbye\n");
   } else if (m_coincidenceWindow/s > MIN_COINC_OFFSET/4) {
     G4cout << "Coincidence window (" << m_coincidenceWindow/s << " sec) should be smaller or equal to " << MIN_COINC_OFFSET/4 << " sec" << G4endl;
-    G4Exception("Goodbye\n");
+    G4Exception( "GateCoincidenceSorter::ProcessSinglePulseList", "ProcessSinglePulseList", FatalException, "Goodbye\n");
   }
   
   GatePulseList* inputPulseList = inp ? inp : m_digitizer->FindPulseList( m_inputName );

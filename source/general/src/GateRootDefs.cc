@@ -12,6 +12,8 @@
             - Added ROOT structure to store phantom hits
 */
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "GateRootDefs.hh"
@@ -140,7 +142,8 @@ void GateRootHitBuffer::Fill(GateCrystalHit* aHit)
   PDGEncoding     = aHit->GetPDGEncoding();
   trackID         = aHit->GetTrackID();
   parentID        = aHit->GetParentID();
-  SetTime(          aHit->GetTime() );
+  
+SetTime(          aHit->GetTime() );
   SetEdep(          aHit->GetEdep() );
   SetStepLength(    aHit->GetStepLength() );
   SetPos(           aHit->GetGlobalPos() );

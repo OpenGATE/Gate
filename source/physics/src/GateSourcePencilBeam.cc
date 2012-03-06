@@ -28,6 +28,8 @@
 #ifndef GATESOURCEPENCILBEAM_CC
 #define GATESOURCEPENCILBEAM_CC
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_ROOT
 #include "GateSourcePencilBeam.hh"
 #include "G4Proton.hh"

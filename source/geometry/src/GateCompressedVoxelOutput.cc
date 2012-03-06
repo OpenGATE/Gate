@@ -123,7 +123,7 @@ void GateCompressedVoxelOutput::RecordEndOfAcquisition()
     expandedArray = new std::valarray<float>;
     expandedArray->resize( totalVoxelNumber );
   }
-  catch(...){  G4Exception("GateCompressedVoxelOutput::RecordEndOfAcquisition - No memory for expanded array."); }
+  catch(...){  G4Exception( "GateCompressedVoxelOutput::RecordEndOfAcquisition", "RecordEndOfAcquisition", FatalException , "No memory for expanded array"); }
 
   // Process each (compressed) voxel:
   for (unsigned int i=0; i<m_array->size(); i++){
@@ -184,7 +184,7 @@ void GateCompressedVoxelOutput::RecordBeginOfEvent(const G4Event* )
 void GateCompressedVoxelOutput::RecordEndOfEvent(const G4Event* )
 {
   GateVGeometryVoxelReader* theReader( m_inserter->GetReader());
-  if(!theReader) G4Exception("GateCompressedVoxelOutput::RecordEndOfEvent - No reader.");
+  if(!theReader) G4Exception("GateCompressedVoxelOutput::RecordEndOfEvent", "RecordEndOfEvent", FatalException, "No reader.");
 
   // Set the array size if necessary
   if(m_array->size() == 0) {

@@ -7,8 +7,8 @@
 /gate/physics/addProcess Compton
 /gate/physics/processes/Compton/setModel StandardModel
 
-/gate/physics/addProcess RayleighScattering
-/gate/physics/processes/RayleighScattering/setModel PenelopeRayleighModel
+/gate/physics/addProcess RayleighScattering 
+/gate/physics/processes/RayleighScattering/setModel LivermoreModel
 
 /gate/physics/addProcess ElectronIonisation
 /gate/physics/processes/ElectronIonisation/setModel StandardModel e-

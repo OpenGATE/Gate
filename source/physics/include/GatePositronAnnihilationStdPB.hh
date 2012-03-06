@@ -12,7 +12,7 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEPOSITRONANNIHILATIONSTDPB_HH
 #define GATEPOSITRONANNIHILATIONSTDPB_HH
 
-
+#include "GateConfiguration.h"
 #include "GateVProcess.hh"
 
 #include "G4eplusAnnihilation.hh"

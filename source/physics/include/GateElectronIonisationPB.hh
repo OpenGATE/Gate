@@ -9,6 +9,7 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
+#include "GateConfiguration.h"
 #ifndef GATEEIONISATIONPB_HH
 #define GATEEIONISATIONPB_HH
 

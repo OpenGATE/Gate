@@ -76,8 +76,12 @@ void GateARFTableMgr::ComputeARFTablesFromEW(G4String aS)
 
   std::ifstream inFile( m_filename.c_str(), std::ios::in );
 
- if ( !inFile ) { G4String AString = "GateARFTableMgr::ComputeARFTables : cannot open file "+m_filename;
-                 G4Exception(AString);return;}
+ if ( !inFile )
+ {
+	G4String AString = "Cannot open file "+m_filename;
+  G4Exception( "GateARFTableMgr::ComputeARFTables", "ComputeARFTables", FatalException , AString);
+	return;
+ }
 
  char buffer [200];
   G4double Emin, Emax;
@@ -254,8 +258,11 @@ for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
 
     dest.seekp( pos, std::ios::beg);
 
-    if ( dest.bad() ) G4Exception( "\nGateARFTableMgr::SaveARFToBinaryFile() :\n"
-                                     "Could not locate the position where to write the ARFTable onto the disk (out of disk space?)!\n");
+    if ( dest.bad() ) //G4Exception( "\nGateARFTableMgr::SaveARFToBinaryFile() :\n" "Could not locate the position where to write the ARFTable onto the disk (out of disk space?)!\n");
+		{
+			G4String msg = "Could not locate the position where to write the ARFTable onto the disk (out of disk space?)";
+			G4Exception( "GateARFTableMgr::SaveARFToBinaryFile", "SaveARFToBinaryFile", FatalException, msg );
+		}
 
     G4cout << " Writing ARF Table " <<( (*aIt).second )->GetName()<<" to file " <<theFN<<" at position " <<pos;
 
@@ -263,8 +270,12 @@ for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
 
     G4cout << "...[OK] : "<<theBufferSize<<" bytes"<<G4endl;
 
-    if ( dest.bad() ) G4Exception( "\nGateARFTableMgr::SaveARFToBinaryFile() :\n"
-                                     "Could not write the ARFTable onto the disk (out of disk space?)!\n");
+    if ( dest.bad() ) //G4Exception( "\nGateARFTableMgr::SaveARFToBinaryFile() :\n" "Could not write the ARFTable onto the disk (out of disk space?)!\n");
+		{
+			G4String msg = "Could not write the ARFTable onto the disk (out of disk space?)";
+			G4Exception( "GateARFTableMgr::SaveARFToBinaryFile", "SaveARFToBinaryFile", FatalException, msg );
+		}
+
     dest.flush();
     delete [] theBuffer;
 

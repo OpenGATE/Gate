@@ -258,14 +258,14 @@ void GateRegularParameterized::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
       G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolumes]:" << G4endl
       	      << "The size of the placement queue (" << pQueue->size() << ") is different from " << G4endl 
 	      << "the number of physical volumes to update (" << theListOfOwnPhysVolume.size() << ")!!!" << G4endl;
-      G4Exception("Can not complete placement update.");
+      G4Exception( "GateRegularParameterized::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Can not complete placement update.");
     }
   }
   else {
     if (theListOfOwnPhysVolume.size()) {
       G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolumes]:" << G4endl
       	      << "Attempting to create new placements without having emptied the vector of placements!!!" << G4endl;
-      G4Exception("Can not complete placement creation.");
+      G4Exception( "GateRegularParameterized::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Can not complete placement creation.");
     }
   }
  
@@ -291,7 +291,7 @@ void GateRegularParameterized::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
   // is updating
   if (flagUpdateOnly && !pOwnPhys){ 
     G4cout << " Physical volume " << GetPhysicalVolumeName() << " does not exist!" << G4endl; 
-    G4Exception("Failed to construct the volume!");
+    G4Exception( "GateRegularParameterized::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException,  "Failed to construct the volume!");
   }
 
    

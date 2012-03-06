@@ -21,6 +21,7 @@
 #include "G4NeutrinoE.hh"
 #include "G4SteppingManager.hh"
 #include "GateRecorderBase.hh"
+#include "GateConfiguration.h"
 
 #ifdef G4ANALYSIS_USE_GENERAL
 #include "GateOutputMgr.hh"
@@ -185,7 +186,7 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
 	      i = CHC->GetSize();
 	      size << i ;
 	      G4String message = " GateEventAction::EndOfEventAction : ERROR  Event "+ event_id.str() + " processed " + size.str() + " Crystal Hits.\n"+"Your Stepping policies may not be appropriately set. For instance You specified to stop after Phantom Boundaries and the distance between the phantom and the detectors is not sufficient so some particles reached the detectors.\n";
-	      G4Exception( message );       
+	      G4Exception( "GateEventAction::EndOfEventAction", "EndOfEventAction", FatalException, message );       
 	    }
 	}
       if (  anEvent->GetNumberOfPrimaryVertex() > 0 )
@@ -624,7 +625,7 @@ if ( ARFStage == 0 )
 	
 static GateARFDataToRoot* ARFDataToRoot = dynamic_cast<GateARFDataToRoot*>( GateOutputMgr::GetInstance()->GetModule("arf") );
 if ( ARFDataToRoot == 0 )
-G4Exception("ARF stage is 'generateARFTables' but the output module ARFDataToRoot is not enabled.just add '/gate/output/arf/enable' in your macro. Exiting");
+G4Exception( "GateSteppingAction::UserSteppingAction", "UserSteppingAction", FatalException, "ARF stage is 'generateARFTables' but the output module ARFDataToRoot is not enabled.just add '/gate/output/arf/enable' in your macro. Exiting");
 static G4int IsCountedInCrystal = 0;
 static G4int IsCountedOutCrystal = 0;
 static G4int IsCountedOutCamera = 0;
@@ -1086,7 +1087,7 @@ if ( ARFStage == 0 )
 	
 static GateARFDataToRoot* ARFDataToRoot = dynamic_cast<GateARFDataToRoot*>( GateOutputMgr::GetInstance()->GetModule("arf") );
 if ( ARFDataToRoot == 0 )
-G4Exception("ARF stage is 'generateARFTables' but the output module ARFDataToRoot is not enabled.just add '/gate/output/arf/enable' in your macro. Exiting");
+G4Exception( "GateSteppingAction::UserSteppingAction", "UserSteppingAction", FatalException, "ARF stage is 'generateARFTables' but the output module ARFDataToRoot is not enabled.just add '/gate/output/arf/enable' in your macro. Exiting");
 static G4int IsCountedInCrystal = 0;
 static G4int IsCountedOutCrystal = 0;
 static G4int IsCountedOutCamera = 0;

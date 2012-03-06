@@ -12,7 +12,7 @@ See GATE/LICENSE.txt for further details
 #ifndef GATECOMPTONLIVERMOREPB_HH
 #define GATECOMPTONLIVERMOREPB_HH
 
-
+#include "GateConfiguration.h"
 #include "GateVProcess.hh"
 
 #include "G4LivermoreComptonModel.hh"

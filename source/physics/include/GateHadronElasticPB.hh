@@ -14,7 +14,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVProcess.hh"
 
-#include "G4HadronElastic.hh"
+#include "G4HadronElasticProcess.hh"
 
 MAKE_PROCESS_AUTO_CREATOR_WITH_MODEL(GateHadronElasticPB)
 

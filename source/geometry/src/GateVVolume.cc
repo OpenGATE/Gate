@@ -251,14 +251,14 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
       G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolume]:" << G4endl
       	      << "The size of the placement queue (" << pQueue->size() << ") is different from " << G4endl 
 	      << "the number of physical volumes to update (" << theListOfOwnPhysVolume.size() << ")!!!" << G4endl;
-      G4Exception("Can not complete placement update.");
+      G4Exception( "GateVVolume::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Can not complete placement update.");
     }
   }
   else {
     if (theListOfOwnPhysVolume.size()) {
       G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolume]:" << G4endl
       	      << "Attempting to create new placements without having emptied the vector of placements!!!" << G4endl;
-      G4Exception("Can not complete placement creation.");
+      G4Exception( "GateVVolume::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Can not complete placement creation.");
     }
   }
  
@@ -287,7 +287,7 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
     // is updating
     if (flagUpdateOnly && !pOwnPhys){ 
       G4cout << " Physical volume " << GetPhysicalVolumeName() << " does not exist!" << G4endl; 
-      G4Exception("Failed to construct the volume!");
+      G4Exception( "GateVVolume::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Failed to construct the volume!");
     }
  
     if (flagUpdateOnly)
@@ -505,9 +505,9 @@ void GateVVolume::DefineOwnMaterials()
   pOwnMaterial = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(mMaterialName);
   // If we could not get the material, it is unsafe to proceed: abort!
   if (!pOwnMaterial)
-    G4Exception("\n\n!!! GateVVolume::DefineOwnMaterials: \n"
+    G4Exception( "GateVVolume::DefineOwnMaterials", "DefineOwnMaterials", FatalException, "GateVVolume::DefineOwnMaterials: \n"
 	      	"Could not find a material needed for the construction of the scene!\n"
-		"Computation aborted!!!\n\n");
+		"Computation aborted!!!");
 
 }
 //-----------------------------------------------------------------------------------------

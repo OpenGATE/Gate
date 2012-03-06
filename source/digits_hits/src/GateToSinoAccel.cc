@@ -85,7 +85,7 @@ void GateToSinoAccel::RecordBeginOfAcquisition()
     G4cerr  <<  G4endl << " !!! [GateToSinoAccel::RecordBeginOfAcquisition]:" << G4endl
 	    <<   "Sorry, but the study duration (" << G4BestUnit(duration,"Time") << ") " 
 	    <<   " does not seem to be a multiple of the time-slice (" << G4BestUnit(timeStep,"Time") << ")." << G4endl;
-    G4Exception("You must change these parameters then restart the simulation\n");
+    G4Exception( "GateToSinoAccel::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must change these parameters then restart the simulation\n");
   }
   m_frameNb = static_cast<size_t>(rint(fstepNumber));
   if (nVerboseLevel>1) G4cout << "    Number of frames: " << m_frameNb << G4endl;
@@ -109,7 +109,7 @@ void GateToSinoAccel::RecordBeginOfAcquisition()
     G4cerr  <<  G4endl << " !!! [GateToSinoAccel::RecordBeginOfAcquisition]:" << G4endl
 	    <<   "Sorry, but the number of radial sinogram bins (" << m_radialElemNb << ") should be smaller or equal to " << m_crystalNb << G4endl
 	    <<   "The default is " << m_crystalNb/2 << G4endl;
-    G4Exception("You must change this parameter then restart the simulation\n");
+    G4Exception( "GateToSinoAccel::RecordBeginOfAcquisition" , "RecordBeginOfAcquisition", FatalException,"You must change this parameter then restart the simulation");
   }
   if (nVerboseLevel > 1) {
     G4cout << "    Number of radial sinogram bins:    " << m_radialElemNb << G4endl;
@@ -195,8 +195,7 @@ void GateToSinoAccel::RecordEndOfRun(const G4Run * r)
 	  ring_2 = ring_1 + ringdiff;
 	  sinoID = m_sinogram->GetSinoID(ring_1,ring_2);
 	  if (sinoID < 0 || (unsigned)sinoID >= m_sinogram->GetSinogramNb()) {
-	    G4Exception("\n[GateToSinoAccel::RecordEndOfRun]:\n"
-      		      	"Wrong 2D sinogram ID\n");
+	    G4Exception( "GateToSinoAccel::RecordEndOfRun", "RecordEndOfRun", FatalException,"Wrong 2D sinogram ID");
           }	
 	  if (nVerboseLevel>2) {
             G4cout << " >> rings " << ring_1 << "," << ring_2  << " give sino ID " << sinoID << G4endl;

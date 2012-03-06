@@ -40,18 +40,23 @@ G4double GateLinearBlurringLaw::ComputeResolution(G4double energy) const {
 	if(m_resolution < 0. ) {
 		G4cerr << 	G4endl << "[GateLinearBlurringLaw::ComputeResolution]:" << G4endl
       	   <<   "Sorry, but the resolution (" << GetResolution() << ") is invalid" << G4endl;
-    	G4Exception("You must set the energy of reference AND the resolution AND the slope:\n"
-			"\t/gate/digitizer/blurring/linear/setResolution NUMBER\n"
-			"or disable the blurring using:\n"
-			"\t/gate/digitizer/blurring/disable\n");
+    	G4String msg = "You must set the energy of reference AND the resolution AND the slope:\n"
+      "\t/gate/digitizer/blurring/linear/setResolution NUMBER\n"
+      "or disable the blurring using:\n"
+      "\t/gate/digitizer/blurring/disable\n";
+
+			G4Exception( "GateLinearBlurringLaw::ComputeResolution", "ComputeResolution", FatalException, msg );
 	} 
 	else if (m_eref < 0.) {
 		G4cerr <<   G4endl << "[GateLinearBlurringLaw::ComputeResolution]:" << G4endl
 			<<   "Sorry, but the energy of reference (" << G4BestUnit(GetEnergyRef(),"Energy") << ") is invalid" << G4endl;
-	 	G4Exception("You must set the resolution AND the energy of reference AND the slope:\n"
-		     "\t/gate/digitizer/blurring/linear/setEnergyOfReference ENERGY\n"
-		     "or disable the blurring using:\n"
-		     "\t/gate/digitizer/blurring/disable\n");
+
+		G4String msg = "You must set the resolution AND the energy of reference AND the slope:\n"
+         "\t/gate/digitizer/blurring/linear/setEnergyOfReference ENERGY\n"
+         "or disable the blurring using:\n"
+         "\t/gate/digitizer/blurring/disable\n";
+
+	 	G4Exception( "GateLinearBlurringLaw::ComputeResolution", "ComputeResolution", FatalException, msg );
 	}
 	
 	return (m_slope * (energy - m_eref) + m_resolution) ;

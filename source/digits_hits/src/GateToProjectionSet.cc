@@ -140,14 +140,14 @@ const G4String& GateToProjectionSet::GiveNameOfFile()
 void GateToProjectionSet::SetOutputFileName(const G4String& aName)
 {
   GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
-  if (!interfileModule) G4Exception("No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
+  if (!interfileModule) G4Exception( "GateToProjectionSet::SetOutputFileName", "SetOutputFileName", FatalException, "No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
   interfileModule->SetFileName(aName); // It is the GateToInterfile module that manages the output file
 }
 
 void GateToProjectionSet::SetVerboseToProjectionSetAndInterfile(G4int aVerbosity)
 {
   GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
-  if (!interfileModule) G4Exception("No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
+  if (!interfileModule) G4Exception( "GateToProjectionSet::SetVerboseToProjectionSetAndInterfile", "SetVerboseToProjectionSetAndInterfile", FatalException, "No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
   interfileModule->SetVerboseLevel(aVerbosity); // We update the verbosity level for the GateToInterfile module
   SetVerboseLevel(aVerbosity); // We update the verbosity level for the GateToProjectionSet module
 }
@@ -155,7 +155,7 @@ void GateToProjectionSet::SetVerboseToProjectionSetAndInterfile(G4int aVerbosity
 void GateToProjectionSet::SendDescribeToProjectionSetAndInterfile()
 {
   GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
-  if (!interfileModule) G4Exception("No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
+  if (!interfileModule) G4Exception( "GateToProjectionSet::SendDescribeToProjectionSetAndInterfile", "SendDescribeToProjectionSetAndInterfile", FatalException, "No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
   interfileModule->Describe(); // The GateToInterfile module describes itself
   Describe(); // The GateToProjectionSet module describes itself
 }
@@ -163,7 +163,7 @@ void GateToProjectionSet::SendDescribeToProjectionSetAndInterfile()
 void GateToProjectionSet::SetEnableToProjectionSetAndInterfile()
 {
   GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
-  if (!interfileModule) G4Exception("No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
+  if (!interfileModule) G4Exception( "GateToProjectionSet::SetEnableToProjectionSetAndInterfile", "SetEnableToProjectionSetAndInterfile", FatalException, "No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
   interfileModule->Enable(true); // We enable the GateToInterfile module
   Enable(true); // We enable the GateToProjectionSet module
 }
@@ -171,7 +171,7 @@ void GateToProjectionSet::SetEnableToProjectionSetAndInterfile()
 void GateToProjectionSet::SetDisableToProjectionSetAndInterfile()
 {
   GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
-  if (!interfileModule) G4Exception("No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
+  if (!interfileModule) G4Exception("GateToProjectionSet::SetDisableToProjectionSetAndInterfile", "SetDisableToProjectionSetAndInterfile", FatalException,"No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
   interfileModule->Enable(false); // We disable the GateToInterfile module
   Enable(false); // We disable the GateToProjectionSet module
 }
@@ -188,44 +188,27 @@ void GateToProjectionSet::RecordBeginOfAcquisition()
   if ( GetPixelNbX() <= 0 ) {
     G4cerr << 	G4endl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << G4endl
       	   <<   "Sorry, but the number of pixels along X for the projection-set (" << GetPixelNbX() << ") is invalid" << G4endl;
-    G4Exception("You must either define this number with:\n"
-		"\t/gate/output/projection/pixelNumberX NUMBER\n"
-		"or disable the projection-maker using:\n"
-		"\t/gate/output/projection/disable\n");
+    G4Exception( "GateToProjectionSet::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must either define this number with:\n\t/gate/output/projection/pixelNumberX NUMBER\n or disable the projection-maker using:\n\t/gate/output/projection/disable\n");
   }
   if ( GetPixelNbY() <= 0 ) {
      G4cerr << 	G4endl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << G4endl
       	    <<   "Sorry, but the number of pixels along Y for the projection-set (" << GetPixelNbY() << ") is invalid" << G4endl;
-     G4Exception("You must either define this number with:\n"
-		"\t/gate/output/projection/pixelNumberX NUMBER\n"
-		"or disable the projection-maker using:\n"
-		"\t/gate/output/projection/disable\n");
+     G4Exception( "GateToProjectionSet::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must either define this number with:\n\t/gate/output/projection/pixelNumberX NUMBER\n or disable the projection-maker using:\n\t/gate/output/projection/disable\n");
   }
   if ( GetPixelSizeX() <= 0 ) {
     G4cerr  << 	G4endl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << G4endl
       	    <<   "Sorry, but the pixel size along X for the projection-set (" << G4BestUnit(GetPixelSizeX(),"Length") << ") is invalid" << G4endl;
-    G4Exception("You must either define this size with:\n"
-		"\t/gate/output/projection/pixelSizeX SIZE UNIT\n"
-		"or disable the projection-maker using:\n"
-		"\t/gate/output/projection/disable\n");
+    G4Exception( "GateToProjectionSet::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must either define this size with:\n\t/gate/output/projection/pixelSizeX SIZE UNIT\n or disable the projection-maker using:\n\t/gate/output/projection/disable\n");
   }
   if ( GetPixelSizeY() <= 0 ) {
     G4cerr  << 	G4endl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << G4endl
       	    <<   "Sorry, but the pixel size along Y for the projection-set (" << G4BestUnit(GetPixelSizeY(),"Length") << ") is invalid" << G4endl;
-    G4Exception("You must either define this size with:\n"
-		"\t/gate/output/projection/pixelSizeY SIZE UNIT\n"
-		"or disable the projection-maker using:\n"
-		"\t/gate/output/projection/disable\n");
+    G4Exception( "GateToProjectionSet::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException,  "You must either define this size with:\n\t/gate/output/projection/pixelSizeY SIZE UNIT\n or disable the projection-maker using:\n\t/gate/output/projection/disable\n");
   }
    if ( m_projectionPlane == "Unknown" ) {
     G4cerr  << 	G4endl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << G4endl
       	    <<   "Sorry, but the pixel size along Y for the projection-set (" << G4BestUnit(GetPixelSizeY(),"Length") << ") is invalid" << G4endl;
-    G4Exception("\n[GateToProjectionSet::RecordBeginOfAcquisition]:\n"
-      	      	"Sorry, but you have not defined the projection plane.\n"
-      	      	"You must either define this plane with:\n"
-		"\t/gate/output/projection/projectionPlane PLANE (XY or YZ or ZX )\n"
-		"or disable the projection-maker using:\n"
-		"\t/gate/output/projection/disable\n");
+    G4Exception( "GateToProjectionSet::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "Sorry, but you have not defined the projection plane.\nYou must either define this plane with:\n\t/gate/output/projection/projectionPlane PLANE (XY or YZ or ZX )\n or disable the projection-maker using:\n\t/gate/output/projection/disable\n");
   }
   
   // Added by HDS : retrieve all the input channel IDs (energy windows)
@@ -247,7 +230,7 @@ void GateToProjectionSet::RecordBeginOfAcquisition()
     G4cerr  << 	G4endl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << G4endl
       	    <<   "Sorry, but the study duration (" << G4BestUnit(duration,"Time") << ") " 
 	    <<   " does not seem to be a multiple of the time-slice (" << G4BestUnit(timeStep,"Time") << ")." << G4endl;
-    G4Exception("You must change these parameters then restart the simulation\n");
+    G4Exception( "GateToProjectionSet::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must change these parameters then restart the simulation\n");
   }
   m_projNb = static_cast<size_t>(rint(fstepNumber));
   if (nVerboseLevel>2) G4cout << "Number of acquisition steps: " << m_projNb << G4endl;

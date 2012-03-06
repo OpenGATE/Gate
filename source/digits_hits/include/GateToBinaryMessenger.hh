@@ -1,6 +1,8 @@
 #ifndef GUARD_GATETOBINARYMESSENGER_HH
 #define GUARD_GATETOBINARYMESSENGER_HH
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_FILE
 
 /*!	

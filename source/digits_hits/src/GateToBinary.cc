@@ -10,6 +10,8 @@
  *	Public Licence (LGPL) See GATE/LICENSE.txt for further details
  */
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_FILE
 
 #include <limits>
@@ -331,8 +333,8 @@ void GateToBinary::RecordVoxels( GateVGeometryVoxelStore* voxelStore )
 			std::ios::trunc | std::ios::binary );
 		if( !( voxelFile.is_open() ) )
 		{
-			G4Exception( "[GateToBinary::RecordVoxels]:\n"
-				"Could not open the voxel file '" + voxelFileName );
+			G4String msg = "Could not open the voxel file '" + voxelFileName;
+			G4Exception( "GateToBinary::RecordVoxels", "RecordVoxels", FatalException, msg );
 		}
 
 		// Write the header: number of voxels, voxel dimensions

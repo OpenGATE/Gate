@@ -16,6 +16,8 @@ See GATE/LICENSE.txt for further details
 #ifndef GateToRoot_H
 #define GateToRoot_H
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "TROOT.h"

@@ -8,6 +8,7 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
+#include "GateConfiguration.h"
 #ifdef G4ANALYSIS_USE_ROOT
 #ifndef GateSourceTPSPencilBeamMessenger_h
 #define GateSourceTPSPencilBeamMessenger_h 1

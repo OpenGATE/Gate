@@ -29,6 +29,8 @@ See GATE/LICENSE.txt for further details
 //#include "GateOutputMgr.hh"
 //#include "GateHitFileReader.hh"
 
+#include "GateConfiguration.h"
+
 //---------------------------------------------------------------------------
 GatePrimaryGeneratorAction::GatePrimaryGeneratorAction()
 {

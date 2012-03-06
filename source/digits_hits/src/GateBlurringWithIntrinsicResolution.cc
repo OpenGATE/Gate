@@ -62,19 +62,15 @@ void GateBlurringWithIntrinsicResolution::ProcessOnePulse(const GatePulse* input
       if((*im).second.resolution < 0 ) {
 	G4cerr << 	G4endl << "[GateBlurringWithIntrinsicResolution::ProcessOnePulse]:" << G4endl
 	       <<   "Sorry, but the resolution (" << (*im).second.resolution << ") for " << (*im).first << " is invalid" << G4endl;
-	G4Exception("You must set the energy of reference AND the resolution:\n"
-		    "\t/gate/digitizer/Singles/intrinsicResolutionBlurring/" + (*im).first + "/setEnergyOfReference ENERGY\n"
-		    "or disable the intrinsic resolution blurring using:\n"
-		    "\t/gate/digitizer/Singles/intrinsicResolutionBlurring/disable\n");
+	G4String msg = "You must set the energy of reference AND the resolution:\n\t/gate/digitizer/Singles/intrinsicResolutionBlurring/" + (*im).first + "/setEnergyOfReference ENERGY\n or disable the intrinsic resolution blurring using:\n\t/gate/digitizer/Singles/intrinsicResolutionBlurring/disable";
+	G4Exception( "GateBlurringWithIntrinsicResolution::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
       }
       else if((*im).second.eref < 0) {
 	G4cerr <<   G4endl << "[GateBlurringWithIntrinsicResolution::ProcessOnePulse]:" << G4endl
 	       <<   "Sorry, but the energy of reference (" << G4BestUnit((*im).second.eref,"Energy") << ") for " 
 	       << (*im).first <<" is invalid" << G4endl;
-	G4Exception("You must set the resolution AND the energy of reference:\n"
-		    "\t/gate/digitizer/Singles/intrinsicResolutionBlurring/" + (*im).first + "/setEnergyOfReference ENERGY\n"
-		    "or disable the intrinsic resolution blurring using:\n"
-		    "\t/gate/digitizer/Singles/intrinsicResolutionBlurring/disable\n");
+	G4String msg = "You must set the resolution AND the energy of reference:\n\t/gate/digitizer/Singles/intrinsicResolutionBlurring/" + (*im).first + "/setEnergyOfReference ENERGY\n or disable the intrinsic resolution blurring using:\n\t/gate/digitizer/Singles/intrinsicResolutionBlurring/disable";
+	G4Exception( "GateBlurringWithIntrinsicResolution::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
 	}
       else {
 	G4String LayerName = ((inputPulse->GetVolumeID()).GetBottomCreator())->GetObjectName();

@@ -30,6 +30,8 @@
 #include "GateDetectorConstruction.hh"
 #include "GateSystemListMessenger.hh"
 
+#include "GateConfiguration.h"
+
 G4int GateVSystem::m_insertionOrder=-1;
 //-----------------------------------------------------------------------------
 /* Constructor

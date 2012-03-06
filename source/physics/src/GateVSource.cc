@@ -447,7 +447,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
         {
           std::vector<GateTrack*>::iterator iter;
           for ( iter = aTrackVector->begin(); iter != aTrackVector->end() ; iter++){(*iter)->Print();}
-          G4Exception("GateSource::GeneratePrimaries :: ERROR : The tracks Vector is not empty.\n");
+          G4Exception( "GateSource::GeneratePrimaries", "GeneratePrimaries", FatalException, "ERROR : The tracks Vector is not empty.\n");
         }
    
       /// READ DATA FROM ROOT FILE
@@ -522,7 +522,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
           G4int PDGCode = (*iter)->GetPDGCode();
           DirectionMomentum = (*iter)->GetMomentumDirection() ;
           eventID = (*iter)->GetEventID();
-          if ( eventID != event_id ){G4cout << " GateSource::GeneratePrimaries()   GateTrack # "<<k<<" event_ID is "<<eventID<<"   current event_ID is " << event_id<<G4endl;G4Exception("ABORTING...");}
+          if ( eventID != event_id ){G4cout << " GateSource::GeneratePrimaries()   GateTrack # "<<k<<" event_ID is "<<eventID<<"   current event_ID is " << event_id<<G4endl;G4Exception( "GateVSource::GeneratePrimaries","GeneratePrimaries",FatalException,"ABORTING...");}
           RunID = (*iter)->GetRunID();
           Weight = (*iter)->GetWeight();
           properTime = (*iter)->GetProperTime();
@@ -539,7 +539,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
           if ( m_sourceID != m_previous_SourceID )
             { G4cout << "GateSource::GeneratePrimaries :::: ERROR "<< G4endl;
               G4cout << "GateSource::GeneratePrimaries :::: Run ID " << RunID << " Event ID " << eventID <<" source ID " << m_sourceID << " event Time " <<  (GateSourceMgr::GetInstance())->GetTime()/s << "  track ID " << TrackID << "   parent ID " << ParentID <<    G4endl;
-              if ( k == aTrackVector->size() ){G4Exception("The sources ID of primaries do not correspond");}
+              if ( k == aTrackVector->size() ){G4Exception( "GateSource::GeneratePrimaries", "GeneratePrimaries", FatalException, "The sources ID of primaries do not correspond");}
             }
 
           G4double eventTime = (*iter)->GetTime();
@@ -548,7 +548,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
           /// we generate 1 particle for each  PrimaryVertex we got from Tracks Root file
           G4ParticleTable  *particleTable = G4ParticleTable::GetParticleTable();
           m_pd = particleTable->FindParticle( PDGCode );
-          if( m_pd == NULL){G4Exception(" Gate::GeneratePrimaries() : ERROR PDGCode of the particle  is not defined. \n"); }
+          if( m_pd == NULL){G4Exception( "Gate::GeneratePrimaries", "GeneratePrimaries", FatalException, "ERROR PDGCode of the particle  is not defined. \n"); }
           ParticleName = (G4String) ( m_pd->GetParticleName() );
           (*iter)->SetParticleName( ParticleName );
           SetNumberOfParticles(1);
@@ -613,6 +613,8 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
 
 
       ChangeParticlePositionRelativeToAttachedVolume(particle_position);
+
+			std::cout << GetParticleTime() << std::endl;
 
       G4PrimaryVertex* vertex = new G4PrimaryVertex(particle_position, GetParticleTime());
       if (GetNumberOfParticles() == 0) {

@@ -59,19 +59,15 @@ void GateLocalBlurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseLis
       if((*im).second.resolution < 0 ) {
 	G4cerr << 	G4endl << "[GateLocalBlurring::ProcessOnePulse]:" << G4endl
 	       <<   "Sorry, but the resolution (" << (*im).second.resolution << ") for " << (*im).first << " is invalid" << G4endl;
-	G4Exception("You must set the energy of reference AND the resolution:\n"
-		    "\t/gate/digitizer/Singles/localBlurring/" + (*im).first + "/setEnergyOfReference ENERGY\n"
-		    "or disable the local blurring using:\n"
-		    "\t/gate/digitizer/Singles/localBlurring/disable\n");
+	G4String msg = "You must set the energy of reference AND the resolution: /gate/digitizer/Singles/localBlurring/" + (*im).first + "/setEnergyOfReference ENERGY or disable the local blurring using: /gate/digitizer/Singles/localBlurring/disable\n";
+	G4Exception( "GateLocalBlurring::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
       }
       else if((*im).second.eref < 0) {
 	G4cerr <<   G4endl << "[GateLocalBlurring::ProcessOnePulse]:" << G4endl
 	       <<   "Sorry, but the energy of reference (" << G4BestUnit((*im).second.eref,"Energy") << ") for " 
 	       << (*im).first <<" is invalid" << G4endl;
-	G4Exception("You must set the resolution AND the energy of reference:\n"
-		    "\t/gate/digitizer/Singles/localBlurring/" + (*im).first + "/setEnergyOfReference ENERGY\n"
-		    "or disable the local blurring using:\n"
-		    "\t/gate/digitizer/Singles/localBlurring/disable\n");
+	G4String msg = "You must set the resolution AND the energy of reference:\n\t/gate/digitizer/Singles/localBlurring/" + (*im).first + "/setEnergyOfReference ENERGY\nor disable the local blurring using:\n\t/gate/digitizer/Singles/localBlurring/disable";
+	G4Exception( "GateLocalBlurring::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
 	}
       else {
 	G4double m_coeff = (*im).second.resolution * sqrt((*im).second.eref);

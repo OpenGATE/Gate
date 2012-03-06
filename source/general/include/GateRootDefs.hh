@@ -15,6 +15,8 @@ See GATE/LICENSE.txt for further details
 #ifndef GateRootHitBuffer_H
 #define GateRootHitBuffer_H
 
+#include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "globals.hh"

@@ -224,7 +224,7 @@ void GateVSourceVoxelReader::UpdateActivities(G4String  HFN, G4String FN )
   static G4bool IsFirstTime = true;
   static int p_cK = 0;
   
-if ( GetTimeSampling() < 1e-8 ) { G4Exception( " GateVSourceVoxelReader::UpdateActivities :: Time Sampling too small.");return;}
+if ( GetTimeSampling() < 1e-8 ) { G4Exception( "GateVSourceVoxelReader::UpdateActivities", "UpdateActivities", FatalException, "Time Sampling too small.");return;}
  
 
 if ( m_TimeActivTables.empty() == true) { //G4cout << " GateVSourceVoxelReader::UpdateActivities()  No time activity curves supplied." << G4endl;
@@ -361,7 +361,7 @@ m_voxelTranslator->Describe( 2 ) ;
 
 void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
 {
- if ( m_voxelTranslator == 0 ) G4Exception("GateVSourceVoxelReader::SetTimeActivTables  ERROR no translator found . Exiting." );
+ if ( m_voxelTranslator == 0 ) G4Exception("GateVSourceVoxelReader::SetTimeActivTables", "SetTimeActivTables", FatalException, " ERROR no translator found . Exiting." );
   m_TimeActivTables.clear();
 
   std::ifstream inFile;
@@ -370,7 +370,7 @@ void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
 
 if (!inFile.is_open())
   {G4cout << " Source Voxel Reader Message : ERROR - Time Activities Tables  file " << fileName << " not found " << G4endl;
-   G4Exception("Aborting...");
+   G4Exception( "GateVSourceVoxelReader::SetTimeActivTables", "SetTimeActivTables", FatalException, "Aborting...");
   }
 
   G4String fname;
@@ -408,7 +408,7 @@ for (G4int iCol=0; iCol<nTotCol; iCol++)
      TimeCurveFile.open(fname.c_str(),std::ios::in);
      if (  !TimeCurveFile.is_open()  )
        {G4cout << " Source Voxel Reader Message : ERROR - Time Activities Tables  file " << fname << " not found " << G4endl;
-        G4Exception("Aborting...");
+        G4Exception( "GateVSourceVoxelReader::SetTimeActivTables", "SetTimeActivTables", FatalException, "Aborting...");
        }
 
    { ////// now we read from file fname the time activity data set points corresponding to the integer key value named activ

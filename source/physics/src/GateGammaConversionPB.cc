@@ -10,7 +10,7 @@ See GATE/LICENSE.txt for further details
 
 
 #include "GateGammaConversionPB.hh"
-
+#include "GateConfiguration.h"
 #include "GateEMStandardProcessMessenger.hh"
 
 #ifdef G4VERSION9_3

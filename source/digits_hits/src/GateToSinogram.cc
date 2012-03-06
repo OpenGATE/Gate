@@ -126,7 +126,7 @@ void GateToSinogram::RecordBeginOfAcquisition()
     G4cerr  <<  G4endl << " !!! [GateToSinogram::RecordBeginOfAcquisition]:" << G4endl
 	    <<   "Sorry, but the study duration (" << G4BestUnit(duration,"Time") << ") " 
 	    <<   " does not seem to be a multiple of the time-slice (" << G4BestUnit(timeStep,"Time") << ")." << G4endl;
-    G4Exception("You must change these parameters then restart the simulation\n");
+    G4Exception( "GateToSinogram::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must change these parameters then restart the simulation\n");
     } else { // we allow for one additional frame
       fstepNumber++;
       G4cout << " [GateToSinogram::RecordBeginOfAcquisition]: "<<G4endl;
@@ -157,7 +157,7 @@ void GateToSinogram::RecordBeginOfAcquisition()
     G4cerr  <<  G4endl << " !!! [GateToSinogram::RecordBeginOfAcquisition]:" << G4endl
 	    <<   "Sorry, but the number of radial sinogram bins (" << m_radialElemNb << ") should be smaller or equal to " << m_crystalNb << G4endl
 	    <<   "The default is " << m_crystalNb/2 << G4endl;
-    G4Exception("You must change this parameter then restart the simulation\n");
+    G4Exception( "GateToSinogram::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must change this parameter then restart the simulation\n");
   }
   if (nVerboseLevel > 1) {
     G4cout << "    Number of radial sinogram bins:    " << m_radialElemNb << G4endl;
@@ -276,8 +276,7 @@ void GateToSinogram::RecordEndOfRun(const G4Run * r)
 	  ring_2 = ring_1 + ringdiff;
 	  sinoID = m_sinogram->GetSinoID(ring_1,ring_2);
 	  if (sinoID < 0 || (unsigned)sinoID >= m_sinogram->GetSinogramNb()) {
-	    G4Exception("\n[GateToSinogram::RecordEndOfRun]:\n"
-      		      	"Wrong 2D sinogram ID\n");
+	    G4Exception( "GateToSinogram::RecordEndOfRun", "RecordEndOfRun", FatalException, "Wrong 2D sinogram ID\n");
           }	
 	  if (nVerboseLevel>2) {
             G4cout << " >> rings " << ring_1 << "," << ring_2  << " give sino ID " << sinoID << G4endl;
@@ -330,8 +329,7 @@ void GateToSinogram::RecordEndOfRun(const G4Run * r)
 	    ring_2 = ring_1 + ringdiff;
 	    sinoID = m_sinoDelayeds->GetSinoID(ring_1,ring_2);
 	    if (sinoID < 0 || (unsigned)sinoID >= m_sinoDelayeds->GetSinogramNb()) {
-	      G4Exception("\n[GateToSinogram::RecordEndOfRun]:\n"
-       		      	  "Wrong 2D sinogram ID\n");
+	      G4Exception( "GateToSinogram::RecordEndOfRun", "RecordEndOfRun", FatalException, "Wrong 2D sinogram ID\n");
             }	
 	    if (nVerboseLevel>2) {
               G4cout << " >> rings " << ring_1 << "," << ring_2  << " give sino ID " << sinoID << G4endl;
@@ -383,8 +381,7 @@ void GateToSinogram::RecordEndOfRun(const G4Run * r)
 	    ring_2 = ring_1 + ringdiff;
 	    sinoID = m_sinoScatters->GetSinoID(ring_1,ring_2);
 	    if (sinoID < 0 || (unsigned)sinoID >= m_sinoScatters->GetSinogramNb()) {
-	      G4Exception("\n[GateToSinogram::RecordEndOfRun]:\n"
-       		      	  "Wrong 2D sinogram ID\n");
+	      G4Exception( "GateToSinogram::RecordEndOfRun", "RecordEndOfRun", FatalException, "Wrong 2D sinogram ID\n");
             }	
 	    if (nVerboseLevel>2) {
               G4cout << " >> rings " << ring_1 << "," << ring_2  << " give sino ID " << sinoID << G4endl;
@@ -466,7 +463,7 @@ void GateToSinogram::RecordEndOfEvent(const G4Event* )
     G4double DiffTime = fabs(((*CDC)[iDigi]->GetPulse(0)).GetTime()/s-((*CDC)[iDigi]->GetPulse(1)).GetTime()/s);
     if (DiffTime > MIN_COINC_OFFSET/2.) Delayed = 1;  else Delayed = 0;
     if (Delayed && (eventID1 == eventID2)) {
-      G4Exception("Delayed coincidence with same event ID !!!\n");
+      G4Exception("GateToSinogram::RecordEndOfEvent","RecordEndOfEvent",FatalException, "Delayed coincidence with same event ID !!!\n");
     }
     
     if (m_flagTruesOnly && (eventID1 != eventID2)) {

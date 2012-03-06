@@ -111,7 +111,7 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 
      
   if (volumeID.IsInvalid())
-    G4Exception("[GateCrystalSD]: could not get the volume ID! Aborting!\n");
+    G4Exception( "GateCrystalSD::ProcessHits", "ProcessHits", FatalException, "could not get the volume ID! Aborting!\n");
 
   // Get the hit global position
   //Modifs Seb 22-06-2011

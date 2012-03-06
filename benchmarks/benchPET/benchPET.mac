@@ -44,24 +44,17 @@
 
 #	O U T P U T 
 
-/gate/output/ascii/setOutFileHitsFlag 0
-/gate/output/ascii/setOutFileSinglesFlag 0
-/gate/output/ascii/setOutFileCoincidencesFlag 0
-/gate/output/ascii/setOutFiledelayFlag 0
-
-#/gate/output/BasicROOT/setFileName  test.root
-
 /gate/output/root/enable
 /gate/output/root/setFileName benchmarkPET
-/gate/output/root/setRootHitFlag 0
-/gate/output/root/setRootSinglesFlag 0
+/gate/output/root/setRootHitFlag 1
+/gate/output/root/setRootSinglesFlag 1
 /gate/output/root/setRootCoincidencesFlag 1
 /gate/output/root/setRootdelayFlag 1
 
 
 #   R A N D O M
 # JamesRandom Ranlux64 MersenneTwister
-/gate/random/setEngineName Ranlux64
+/gate/random/setEngineName MersenneTwister
 #/gate/random/setEngineSeed default
 #/gate/random/setEngineSeed auto
 /gate/random/setEngineSeed 123456789

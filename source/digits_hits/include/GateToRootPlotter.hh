@@ -11,6 +11,8 @@
 #ifndef GateToRootPlotter_H
 #define GateToRootPlotter_H
 
+#include "GateConfiguration.h"
+
 //e #ifdef G4ANALYSIS_USE_ROOT
 #ifdef G4ANALYSIS_USE_ROOT_PLOTTER
 
