@@ -14,7 +14,8 @@
 GateSourceGPUVoxellizedMessenger::GateSourceGPUVoxellizedMessenger(GateSourceGPUVoxellized* source)
 : GateSourceVoxellizedMessenger(source), m_gpu_source(source)
 { 
-	m_attach_to_cmd = new G4UIcmdWithAString((GetDirectoryName()+"attachTo").c_str(),this);
+	G4cout << "***********************" << GetDirectoryName() << G4endl;
+	m_attach_to_cmd = new G4UIcmdWithAString((GetDirectoryName()+"attachPhantomTo").c_str(),this);
 	m_attach_to_cmd->SetGuidance("Attach to gate volume");
 
 }
