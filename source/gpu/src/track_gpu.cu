@@ -65,6 +65,7 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	cudaMemcpy(dphantom, &(input->phantom_material_data[0]), mem_phantom, cudaMemcpyHostToDevice);
 	cudaBindTexture(NULL, tex_phantom, dphantom, mem_phantom);
 
+
 	// load activities in texture mem
 	int nb_act = input->activity_data.size();
 	unsigned int mem_act_f = nb_act * sizeof(float);
@@ -72,7 +73,7 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	cudaMalloc((void**) &dactivities, mem_act_f);
 	cudaMemcpy(dactivities, &(input->activity_data[0]), mem_act_f, cudaMemcpyHostToDevice);
 	cudaBindTexture(NULL, tex_act_val, dactivities, mem_act_f);
-
+	
 	// load activities indices in the texture mem
 	unsigned int mem_act_i = nb_act * sizeof(unsigned int);
 	unsigned int* dindex;
@@ -132,7 +133,6 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 			particle.pz = phasespace2.pz[i];
 			particle.t = phasespace2.t[i];
 			output.particles.push_back(particle);
-
 		}
 		++i;
 	}

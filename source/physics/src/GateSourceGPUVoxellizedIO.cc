@@ -129,7 +129,6 @@ void GateSourceGPUVoxellizedInput_parse_activities(const ActivityMap& activities
 	//		cout << input->activity_index[kk] << " " << input->activity_data[kk] << endl;
 	//	}
 	//}
-
 }
 
 #ifndef GATE_USE_CUDA

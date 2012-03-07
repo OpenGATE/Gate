@@ -1,8 +1,10 @@
 #ifndef track_gpu_h
 #define track_gpu_h 1
 
-#include "mc_fun_pet.cu"
+#include "fun_gpu.cu"
 
-int track_gpu()
+void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input, 
+                              GateSourceGPUVoxellizedOutputParticles * output);
 
+	
 #endif
