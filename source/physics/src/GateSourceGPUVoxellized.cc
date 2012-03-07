@@ -143,7 +143,7 @@ void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVox
   particle_position.setX(particle.px*mm);
   particle_position.setY(particle.py*mm);
   particle_position.setZ(particle.pz*mm);
-  //std::cout << "Position = " << particle_position << std::endl;
+  //std::cout << "Position = " << G4BestUnit(particle_position,"Length") << std::endl;
   //FIXME -> change position according to source orientation/position
 
   // Create the vertex
@@ -162,7 +162,7 @@ void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVox
   // Compute momentum
   G4ThreeVector particle_momentum = (particle.E*MeV) * particle_direction.unit();
   //std::cout << "Momentum = " << particle_momentum << std::endl;
-  std::cout << "Energy = " << particle.E << std::endl;
+  //std::cout << "Energy = " << particle.E << std::endl;
   
   // Create a G4PrimaryParticle
   G4PrimaryParticle* g4particle =  new G4PrimaryParticle(gamma_particle_definition, 
