@@ -162,6 +162,7 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
   // DD(sourceName);
   // DD(sourceGeomType);
   if( bAddSource ) {
+	G4cout << "################GateSourceMgr::AddSource: " << sourceGeomType << G4endl;
     GateVSource* source = 0;
 #ifdef G4ANALYSIS_USE_ROOT
     if(sourceGeomType == "phaseSpace"){
@@ -178,7 +179,7 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
           source = new GateSourceVoxellized( sourceName );
           source->SetSourceID( m_sourceProgressiveNumber );
         }
-      if( sourceGeomType == G4String("GPUvoxel") || sourceGeomType == G4String("GPUVoxel") )
+      else if( sourceGeomType == G4String("GPUvoxel") || sourceGeomType == G4String("GPUVoxel") )
         {
           source = new GateSourceGPUVoxellized( sourceName );
           source->SetSourceID( m_sourceProgressiveNumber );

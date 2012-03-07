@@ -257,7 +257,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 
               // Modif by DS and LS on Oct 4, 2002: we need to be able to recognise both 'compt' 
               // and 'LowEnCompt", hence the find on 'ompt'
-              //	if (processName.find("ompt") != G4String::npos || processName.find("LowEnRayleigh") != G4String::npos) {
+              //	if (processName.find("ompt") != G4String::npos || processName.find("Rayleigh") != G4String::npos) {
               // modif. by CJG to separate Compton and Rayleigh photons
               if (processName.find("ompt") != G4String::npos)
                 {
@@ -289,7 +289,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
                 }
 	
               // Counting Rayleigh scatter in phantom
-              if (processName.find("LowEnRayleigh") != G4String::npos)
+              if (processName.find("Rayleigh") != G4String::npos)
                 {
                   if ((phantomTrackID == photon1ID)||(phantomTrackID == photon2ID))
                     {
@@ -378,7 +378,7 @@ if (  theMode == kDetector ) // in tracker mode we store the infos about the num
               G4int    crystalTrackID = (*CHC)[iHit]->GetTrackID();
               G4String processName = (*CHC)[iHit]->GetProcess();
               // Counting Compton in the Crystal  
-              //      if (processName.find("ompt") != G4String::npos || processName.find("LowEnRayleigh") != G4String::npos) {  
+              //      if (processName.find("ompt") != G4String::npos || processName.find("Rayleigh") != G4String::npos) {  
               if (processName.find("ompt") != G4String::npos)
                 {
 	  
@@ -387,7 +387,7 @@ if (  theMode == kDetector ) // in tracker mode we store the infos about the num
                 }
 	
               // Counting Rayleigh scatter in crystal
-              if (processName.find("LowEnRayleigh") != G4String::npos)
+              if (processName.find("Rayleigh") != G4String::npos)
                 {  
 	  
                   if (crystalTrackID == photon1ID) photon1_crystal_Rayleigh++;
