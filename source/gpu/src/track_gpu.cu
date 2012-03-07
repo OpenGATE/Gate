@@ -1,16 +1,14 @@
 #include "fun_gpu.cu"
 #include "GateSourceGPUVoxellizedIO.hh"
 
+#include <vector>
+
 void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input, 
                               GateSourceGPUVoxellizedOutput & output) {
-	
-}
-
-/*
 
 	int positron = input->nb_events / 2.0f; // positron generated (nb gamma = 2*ptot) 
-	unsigned short int most_att_mat = input->phantom_most_attenuate_material; // 1 Water  -  7 RibBone
-
+	unsigned short int most_att_mat = 7; // 1 Water  -  7 RibBone  FIXME add most att mat selector
+	
 	// Energy
 	float E = input->E; // 511 keV
 	long seed = input->seed;
@@ -21,9 +19,6 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	dim_phantom.y = input->phantom_size_y; // vox
 	dim_phantom.x = input->phantom_size_x; // vox
 	float size_voxel = input->phantom_spacing; // mm
-	//const char* phantom_name = "ncat_12mat_128x63x46.bin";
-	//const char* activities_val_name = "ncat_act.bin";
-	//const char* activities_ind_name = "ncat_ind.bin";
 
 	// Select a GPU
 	cudaSetDevice(0);
@@ -63,25 +58,25 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	unsigned int mem_phantom = nb * sizeof(unsigned short int);
 	unsigned short int* dphantom;
 	cudaMalloc((void**) &dphantom, mem_phantom);
-	cudaMemcpy(dphantom, input->phantom_phantom_data, mem_phantom, cudaMemcpyHostToDevice);
+	cudaMemcpy(dphantom, &(input->phantom_material_data[0]), mem_phantom, cudaMemcpyHostToDevice);
 	cudaBindTexture(NULL, tex_phantom, dphantom, mem_phantom);
 
 	// load activities in texture mem
-	unsigned int mem_act_f = nb * sizeof(float);
-	float* activities = &(input->phantom_activity_data[0]); // &phan[0]   !!! check std:vector
+	int nb_act = input->activity_data.size();
+	unsigned int mem_act_f = nb_act * sizeof(float);
 	float* dactivities;
 	cudaMalloc((void**) &dactivities, mem_act_f);
-	cudaMemcpy(dactivities, activities, mem_act_f, cudaMemcpyHostToDevice);
+	cudaMemcpy(dactivities, &(input->activity_data[0]), mem_act_f, cudaMemcpyHostToDevice);
 	cudaBindTexture(NULL, tex_act_val, dactivities, mem_act_f);
 
 	// load activities indices in the texture mem
-	unsigned int* index = &(input->phantom_activity_index[0]); // &ind[0]  !!! check std:vector
-	unsigned int* dindex; // FIXME long
+	unsigned int mem_act_i = nb_act * sizeof(unsigned int);
+	unsigned int* dindex;
 	cudaMalloc((void**) &dindex, mem_act_i);
-	cudaMemcpy(dindex, , mem_act_i, cudaMemcpyHostToDevice);
+	cudaMemcpy(dindex, &(input->activity_index[0]), mem_act_i, cudaMemcpyHostToDevice);
 	cudaBindTexture(NULL, tex_act_ind, dindex, mem_act_i);
-
-
+	cudaThreadSynchronize();
+	
 	// Generation
 	kernel_voxelized_source_b2b<<<grid, threads>>>(stackgamma1, stackgamma2, dim_phantom, E, size_voxel);
 	cudaThreadSynchronize();
@@ -105,8 +100,7 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 		get_nb_particles_simulated(stackgamma1, stackgamma2, phasespace1, phasespace2, &gamma_sim);		
 		cudaThreadSynchronize();
 	} // while
-
-
+	
 	int i=0;
 	while (i<gamma_max_sim) {
 		if (phasespace1.live[i]) {
@@ -119,7 +113,7 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 			particle.py = phasespace1.py[i];
 			particle.pz = phasespace1.pz[i];
 			particle.t = phasespace1.t[i];
-			output.push_back(particle);
+			output.particles.push_back(particle);
 		}
 		if (phasespace2.live[i]) {
 			GateSourceGPUVoxellizedOutputParticle particle;
@@ -131,7 +125,7 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 			particle.py = phasespace2.py[i];
 			particle.pz = phasespace2.pz[i];
 			particle.t = phasespace2.t[i];
-			output.push_back(particle);
+			output.particles.push_back(particle);
 		}
 		++i;
 	}
@@ -141,6 +135,6 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	free_device_stackgamma(stackgamma2);
 	free_host_stackgamma(phasespace1);
 	free_host_stackgamma(phasespace2);
+
 }
 
-*/

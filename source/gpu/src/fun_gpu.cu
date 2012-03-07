@@ -320,7 +320,6 @@ __device__ float PhotoElec_CS_Standard(int mat, float E) {
 __global__ void kernel_voxelized_source_b2b(StackGamma stackgamma1, StackGamma stackgamma2,
 											int3 dim_vol, float E, float size_voxel) {
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
-	int nb_act = dim_vol.x*dim_vol.y*dim_vol.z;
 
 	if (id < stackgamma1.size) {
 		float jump = (float)(dim_vol.y * dim_vol.x);
