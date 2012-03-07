@@ -70,6 +70,15 @@ G4double GateSourceGPUVoxellized::GetNextTime(G4double timeNow)
 
 
 //-------------------------------------------------------------------------------------------------
+void GateSourceGPUVoxellized::SetGPUBufferSize(int n)
+{
+  assert(m_gpu_input);
+  m_gpu_input->nb_events = n;
+}
+//-------------------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------
 void GateSourceGPUVoxellized::Dump(G4int level) 
 {
   G4cout << "GateSourceGPUVoxellizedMessenger Dump" << G4endl;

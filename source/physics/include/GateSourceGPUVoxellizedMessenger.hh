@@ -18,16 +18,16 @@ class GateSourceGPUVoxellized;
 
 class GateSourceGPUVoxellizedMessenger: public GateSourceVoxellizedMessenger
 {
-	public:
-		GateSourceGPUVoxellizedMessenger(GateSourceGPUVoxellized* source);
-		~GateSourceGPUVoxellizedMessenger();
-
-		virtual void SetNewValue(G4UIcommand*, G4String);
-
-	private:
-		GateSourceGPUVoxellized* m_gpu_source;
-		G4UIcmdWithAString* m_attach_to_cmd;
-
+public:
+  GateSourceGPUVoxellizedMessenger(GateSourceGPUVoxellized* source);
+  ~GateSourceGPUVoxellizedMessenger();
+  
+  virtual void SetNewValue(G4UIcommand*, G4String);
+  
+private:
+  GateSourceGPUVoxellized * m_gpu_source;
+  G4UIcmdWithAString * m_attach_to_cmd;
+  G4UIcmdWithAnInteger * m_gpu_buffer_size_cmd;
 };
 
 #endif

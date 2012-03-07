@@ -45,6 +45,7 @@ public:
 
   void AttachToVolume(const G4String& volume_name);
 
+  void SetGPUBufferSize(int n);
 
 protected:
 

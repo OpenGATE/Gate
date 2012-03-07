@@ -111,6 +111,7 @@
 # V O X E L    S O U R C E
 /gate/source/addSource												voxel GPUvoxel
 /gate/source/voxel/attachPhantomTo ncat
+/gate/source/voxel/setGPUBufferSize 100
 /gate/source/voxel/reader/insert 			      					interfile
 /gate/source/voxel/interfileReader/translator/insert				range
 /gate/source/voxel/interfileReader/rangeTranslator/readTable 		activites.dat
@@ -139,5 +140,5 @@
 #==============================================
 # START
 #==============================================
-/gate/application/setNumberOfPrimariesPerRun 10
+/gate/application/setNumberOfPrimariesPerRun 200
 /gate/application/start
