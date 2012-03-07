@@ -27,6 +27,8 @@
 #include "GateSourceVoxelTestReader.hh"
 #include "GateSourceVoxelImageReader.hh"
 #include "GateSourceVoxelInterfileReader.hh"
+#include "GateObjectStore.hh"
+#include "GateFictitiousVoxelMapParameterized.hh"
 
 //-------------------------------------------------------------------------------------------------
 GateSourceGPUVoxellized::GateSourceGPUVoxellized(G4String name)
@@ -38,7 +40,7 @@ GateSourceGPUVoxellized::GateSourceGPUVoxellized(G4String name)
   // to init in contructor, fill in messenger
   m_gpu_input = GateSourceGPUVoxellizedInput_new();
 
-
+  attachedVolumeName = "no_attached_volume_given";
 
   // Create particle definition 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
@@ -79,6 +81,7 @@ void GateSourceGPUVoxellized::Dump(G4int level)
 void GateSourceGPUVoxellized::AttachToVolume(const G4String& volume_name)
 {
   G4cout << "GateSourceGPUVoxellizedMessenger Attach to " << volume_name << G4endl;
+  attachedVolumeName = volume_name;
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -89,6 +92,12 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
   if (!m_voxelReader) return 0;
 
   assert(m_gpu_input);
+
+  if (m_gpu_input->phantom_material_data.size() ==0)
+  { // import phantom to gpu (fill input)
+    SetPhantomVolumeData();
+  }
+
   if (m_gpu_input->activity_index == NULL)
   { // import activity to gpu
 	  ActivityMap activities = m_voxelReader->GetSourceActivityMap();
@@ -182,3 +191,47 @@ void GateSourceGPUVoxellized::Update(double time)
 }
 //-------------------------------------------------------------------------------------------------
 
+
+//-------------------------------------------------------------------------------------------------
+void GateSourceGPUVoxellized::SetPhantomVolumeData() 
+{
+  GateVVolume* v = GateObjectStore::GetInstance()->FindVolumeCreator(attachedVolumeName);
+  // FindVolumeCreator raise an error if not found
+  // FIXME -> change the error message
+  
+  std::cout << " vol name = " << v->GetSolidName() << std::endl;
+
+  GateFictitiousVoxelMapParameterized * m = dynamic_cast<GateFictitiousVoxelMapParameterized*>(v);
+  if (m == NULL) {
+    GateError(attachedVolumeName << " is not a GateFictitiousVoxelMapParameterized.");
+  }
+  else {
+    std::cout << " fict !" << std::endl;
+    GateVGeometryVoxelReader* reader = m->GetReader();
+    std::cout << "size " << reader->GetVoxelNx() << " " << reader->GetVoxelNy() << " " << reader->GetVoxelNz() << std::endl;
+    m_gpu_input->phantom_size_x = reader->GetVoxelNx();
+    m_gpu_input->phantom_size_y = reader->GetVoxelNy();
+    m_gpu_input->phantom_size_z = reader->GetVoxelNz();
+    m_gpu_input->phantom_spacing = reader->GetVoxelSize().x(); // FIXME only isotrop
+
+    std::cout <<" loop" << std::endl;
+    for(int k=0; k<m_gpu_input->phantom_size_z; k++)
+      for(int j=0; j<m_gpu_input->phantom_size_y; j++)
+        for(int i=0; i<m_gpu_input->phantom_size_x; i++) {
+          std::cout << "ijk = " << i << " " << j << " " << k << std::endl;
+          G4Material * m = reader->GetVoxelMaterial(i,j,k); 
+          G4String n = m->GetName();
+          std::cout << n << std::endl;
+          try {
+            n = n.substr(4,2);
+          }
+          catch(std::exception & e) {
+            GateError("The volume name must be GPU_xx_Name.");
+          }
+          std::cout << n << std::endl;
+          int index = atoi(n);
+          m_gpu_input->phantom_material_data.push_back(index);          
+        }
+  }
+}
+//-------------------------------------------------------------------------------------------------

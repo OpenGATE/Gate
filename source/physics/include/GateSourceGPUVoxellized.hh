@@ -55,9 +55,12 @@ protected:
 
   // Used for creating a primary
   G4ParticleDefinition* gamma_particle_definition;
-
+  
+  // Name of the attached volume
+  G4String attachedVolumeName;
 
   void GeneratePrimaryEventFromGPUOutput(GateSourceGPUVoxellizedOutputParticle & particle, G4Event * event);  
+  void SetPhantomVolumeData();
 };
 
 #endif

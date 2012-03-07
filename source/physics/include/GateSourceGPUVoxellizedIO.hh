@@ -26,8 +26,8 @@ struct GateSourceGPUVoxellizedInput {
 	int phantom_size_x;
 	int phantom_size_y;
 	int phantom_size_z;
-	float phantom_spacing; // mm // to be change into spacingx spacingy spacingz FIXME
-	unsigned short int* phantom_material_data; // value = ID material CONSTANT (mc_cst_pet.cu l550)
+    float phantom_spacing; // mm // to be change into spacingx spacingy spacingz FIXME
+    std::vector<unsigned short int> phantom_material_data; // value = ID material CONSTANT (mc_cst_pet.cu l550)
 
 	int activity_size;
 	float* activity_data; // no unit (relative) FIXME ? GATE PROCESS ????

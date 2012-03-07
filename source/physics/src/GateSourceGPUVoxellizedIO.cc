@@ -27,7 +27,6 @@ GateSourceGPUVoxellizedInput* GateSourceGPUVoxellizedInput_new()
 	input->phantom_size_y = -1;
 	input->phantom_size_z = -1;
 	input->phantom_spacing = -1*mm/mm;
-	input->phantom_material_data = NULL;
 
 	input->activity_size = -1;
 	input->activity_data = NULL;
@@ -38,8 +37,6 @@ GateSourceGPUVoxellizedInput* GateSourceGPUVoxellizedInput_new()
 
 void GateSourceGPUVoxellizedInput_delete(GateSourceGPUVoxellizedInput* input)
 {
-	if (input->phantom_material_data) delete [] input->phantom_material_data;
-
 	if (input->activity_data) delete [] input->activity_data;
 	if (input->activity_index) delete [] input->activity_index;
 }
