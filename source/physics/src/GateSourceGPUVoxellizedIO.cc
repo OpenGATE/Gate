@@ -12,6 +12,7 @@ See GATE/LICENSE.txt for further details
 #include "GateSourceGPUVoxellizedIO.hh"
 #include "GateRandomEngine.hh"
 #include <iostream>
+#include <cassert>
 
 GateSourceGPUVoxellizedInput* GateSourceGPUVoxellizedInput_new()
 {
@@ -25,7 +26,7 @@ GateSourceGPUVoxellizedInput* GateSourceGPUVoxellizedInput_new()
 	input->phantom_size_z = -1;
 	input->phantom_spacing = -1*mm/mm;
 	input->phantom_activity_data = NULL;
-	input->phatom_activity_index = NULL;
+	input->phantom_activity_index = NULL;
 	input->phantom_material_data = NULL;
 
 	return input;
@@ -35,6 +36,11 @@ void GateSourceGPUVoxellizedInput_delete(GateSourceGPUVoxellizedInput* input)
 {
 	if (input->phantom_activity_data) delete input->phantom_activity_data;
 	if (input->phantom_material_data) delete input->phantom_material_data;
+}
+
+void GateSourceGPUVoxellizedInput_parse_activities(const ActivityMap& activities, GateSourceGPUVoxellizedInput* input)
+{
+	assert(input);
 }
 
 #ifndef GATE_USE_CUDA

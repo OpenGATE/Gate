@@ -90,10 +90,11 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
   if (!m_voxelReader) return 0;
 
   assert(m_gpu_input);
-  if (m_gpu_input->phatom_activity_index == NULL)
+  if (m_gpu_input->phantom_activity_index == NULL)
   { // import activity to gpu (fill input)
-	  GateVSourceVoxelReader::GateSourceActivityMap buffer = m_voxelReader->GetSourceActivityMap();
-	  G4cout << "BUFFER HERE " << buffer.size() << G4endl;
+	  ActivityMap buffer = m_voxelReader->GetSourceActivityMap();
+	  GateSourceGPUVoxellizedInput_parse_activities(buffer,m_gpu_input);
+	  G4cout << "PARSING ACTIVITIES HERE " << buffer.size() << G4endl;
   }
 
 
