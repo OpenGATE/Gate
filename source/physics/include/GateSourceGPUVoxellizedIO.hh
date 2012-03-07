@@ -28,7 +28,7 @@ struct GateSourceGPUVoxellizedInput {
 	int phantom_size_z;
 	float phantom_spacing; // mm // to be change into spacingx spacingy spacingz FIXME
 	float* phantom_activity_data; // no unit (relative) FIXME ? GATE PROCESS ????
-	unsigned long int* phantom_activity_index; 
+	unsigned int* phantom_activity_index; 
 	unsigned short int* phantom_material_data; // value = ID material CONSTANT (mc_cst_pet.cu l550)
 	// GPU (later) : ID gpu, nb thread/block
 	// Physics (later) : 
