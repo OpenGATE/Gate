@@ -109,18 +109,18 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
 
     // Go GPU
     GateGPUGeneratePrimaries(m_gpu_input, m_gpu_output);
-    
     std::cout << "End gpu with particles = " << m_gpu_output.particles.size() << std::endl;
   }
 
   // Generate one particle
   if (!m_gpu_output.particles.empty()) {
+    std::cout << "event in buffer = " << m_gpu_output.particles.size() << std::endl;
     GeneratePrimaryEventFromGPUOutput(m_gpu_output.particles.front(), event);
     m_gpu_output.particles.pop_front();
     std::cout << "even id = " << event->GetEventID() << std::endl;
   }
 
-  return 0; // Number of vertex
+  return 1; // Number of vertex
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -221,7 +221,7 @@ void GateSourceGPUVoxellized::SetPhantomVolumeData()
           //std::cout << "ijk = " << i << " " << j << " " << k << std::endl;
           G4Material * m = reader->GetVoxelMaterial(i,j,k); 
           G4String n = m->GetName();
-          std::cout << n << std::endl;
+          //std::cout << n << std::endl;
           try {
             n = n.substr(4,2);
           }
