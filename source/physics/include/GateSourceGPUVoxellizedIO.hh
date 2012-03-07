@@ -29,12 +29,10 @@ struct GateSourceGPUVoxellizedInput {
     float phantom_spacing; // mm // to be change into spacingx spacingy spacingz FIXME
     std::vector<unsigned short int> phantom_material_data; // value = ID material CONSTANT (mc_cst_pet.cu l550)
 
-	int activity_size;
-	float* activity_data; // no unit (relative) FIXME ? GATE PROCESS ????
-	unsigned int* activity_index; 
+	std::vector<float> activity_data; // no unit (relative) FIXME ? GATE PROCESS ????
+	std::vector<unsigned int> activity_index; 
 	// GPU (later) : ID gpu, nb thread/block
 	// Physics (later) : 
-
 };
 
 typedef std::map<std::vector<int>,double> ActivityMap;

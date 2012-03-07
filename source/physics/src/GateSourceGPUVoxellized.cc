@@ -93,12 +93,12 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
 
   assert(m_gpu_input);
 
-  if (m_gpu_input->phantom_material_data.size() ==0)
+  if (m_gpu_input->phantom_material_data.empty())
   { // import phantom to gpu (fill input)
     SetPhantomVolumeData();
   }
 
-  if (m_gpu_input->activity_index == NULL)
+  if (m_gpu_input->activity_index.empty())
   { // import activity to gpu
 	  ActivityMap activities = m_voxelReader->GetSourceActivityMap();
 	  GateSourceGPUVoxellizedInput_parse_activities(activities,m_gpu_input);

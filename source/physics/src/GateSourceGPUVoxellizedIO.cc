@@ -28,17 +28,11 @@ GateSourceGPUVoxellizedInput* GateSourceGPUVoxellizedInput_new()
 	input->phantom_size_z = -1;
 	input->phantom_spacing = -1*mm/mm;
 
-	input->activity_size = -1;
-	input->activity_data = NULL;
-	input->activity_index = NULL;
-
 	return input;
 }
 
-void GateSourceGPUVoxellizedInput_delete(GateSourceGPUVoxellizedInput* input)
+void GateSourceGPUVoxellizedInput_delete(GateSourceGPUVoxellizedInput*)
 {
-	if (input->activity_data) delete [] input->activity_data;
-	if (input->activity_index) delete [] input->activity_index;
 }
 
 struct ActivityMaterialTuple
@@ -60,26 +54,40 @@ typedef std::vector<ActivityMaterialTuple> ActivityMaterialTuplesVector;
 void GateSourceGPUVoxellizedInput_parse_activities(const ActivityMap& activities, GateSourceGPUVoxellizedInput* input)
 {
 	assert(input);
-	assert(input->activity_data == NULL);
-	assert(input->activity_index == NULL);
-	assert(input->activity_size < 0);
+	assert(input->activity_data.empty());
+	assert(input->activity_index.empty());
+
+	assert(input->phantom_size_x > 0);
+	assert(input->phantom_size_y > 0);
+	assert(input->phantom_size_z > 0);
 
 	cout << "PARSING ACTIVITIES HERE " << activities.size() << endl;
 
 	ActivityMaterialTuplesVector tuples;
 	double total_activity = 0;
 	{ // fill tuples structure
-		unsigned int current_index = 0;
 		for (ActivityMap::const_iterator iter = activities.begin(); iter != activities.end(); iter++)
 		{
+			const int ii = iter->first[0];
+			const int jj = iter->first[1];
+			const int kk = iter->first[2];
+			assert(ii >= 0);
+			assert(jj >= 0);
+			assert(kk >= 0);
+			assert(ii < input->phantom_size_x);
+			assert(jj < input->phantom_size_y);
+			assert(kk < input->phantom_size_z);
+
+			const int index = ii + jj*input->phantom_size_x + kk*input->phantom_size_y*input->phantom_size_x;
+			assert(index >= 0);
+			assert(index < input->phantom_size_x*input->phantom_size_y*input->phantom_size_z);
+
 			ActivityMaterialTuple tuple;
-			tuple.index = current_index; // FIXME index should be linear
+			tuple.index = index;
 			tuple.activity = iter->second;
 
 			tuples.push_back(tuple);
 			total_activity += tuple.activity;
-
-			current_index++;
 		}
 	}
 
@@ -88,21 +96,12 @@ void GateSourceGPUVoxellizedInput_parse_activities(const ActivityMap& activities
 	}
 
 	{ // allocate and fill gpu input structure
-		input->activity_size = tuples.size();
-		input->activity_data = new float[input->activity_size];
-		input->activity_index = new unsigned int[input->activity_size];
-
-		float* activity_iter = input->activity_data;
-		unsigned int* index_iter = input->activity_index;
 		double cumulated_activity = 0;
 		for (ActivityMaterialTuplesVector::const_iterator iter = tuples.begin(); iter != tuples.end(); iter++)
 		{
 			cumulated_activity += iter->activity;
-			*activity_iter = cumulated_activity/total_activity;
-			*index_iter = iter->index;
-
-			activity_iter++;
-			index_iter++;
+			input->activity_data.push_back(cumulated_activity/total_activity);
+			input->activity_index.push_back(iter->index);
 		}
 	}
 
