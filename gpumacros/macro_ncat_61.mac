@@ -21,6 +21,7 @@
 # GEOMETRY
 #======================================
 /gate/geometry/setMaterialDatabase ../GateMaterials.db
+/gate/geometry/setMaterialDatabase ../GateMaterialsGPU.db
 
 #=============================================
 #     W O R L D
