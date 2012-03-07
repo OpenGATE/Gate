@@ -86,17 +86,14 @@ void GateSourceGPUVoxellized::AttachToVolume(const G4String& volume_name)
 G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event) 
 {
   G4cout << "GateSourceGPUVoxellizedMessenger GeneratePrimaries" << G4endl;
-  G4cout << m_voxelReader << G4endl;
   if (!m_voxelReader) return 0;
 
   assert(m_gpu_input);
-  if (m_gpu_input->phantom_activity_index == NULL)
-  { // import activity to gpu (fill input)
-	  ActivityMap buffer = m_voxelReader->GetSourceActivityMap();
-	  GateSourceGPUVoxellizedInput_parse_activities(buffer,m_gpu_input);
-	  G4cout << "PARSING ACTIVITIES HERE " << buffer.size() << G4endl;
+  if (m_gpu_input->activity_index == NULL)
+  { // import activity to gpu
+	  ActivityMap activities = m_voxelReader->GetSourceActivityMap();
+	  GateSourceGPUVoxellizedInput_parse_activities(activities,m_gpu_input);
   }
-
 
   if (m_gpu_output.particles.empty()) {
     std::cout << "output is empty" << std::endl;
