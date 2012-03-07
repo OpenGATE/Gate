@@ -33,11 +33,9 @@ class GateVoxelBoxParameterization : public GatePVParameterisation
   ~GateVoxelBoxParameterization(){;}
  
  
-#ifdef G4VERSION8
-  G4Material* ComputeMaterial(const G4int copyNo, G4VPhysicalVolume * aVolume, const G4VTouchable*);
-#else
+
   G4Material* ComputeMaterial(const G4int copyNo, G4VPhysicalVolume * aVolume);
-#endif  
+
 
   void ComputeTransformation(const G4int copyNo,  G4VPhysicalVolume *aVolume) const;
   void ComputeDimensions(G4Box*, const G4int ,const G4VPhysicalVolume* ) const;

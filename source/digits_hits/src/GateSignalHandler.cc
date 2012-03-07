@@ -53,35 +53,24 @@ void GateSignalHandler::QuitSignalHandler(int sig)
   G4ApplicationState state = stateManager->GetCurrentState();
   switch (state)
   {
-#ifdef G4VERSION4
-    case GeomClosed:
-    case EventProc:
-#else
+
     case G4State_GeomClosed:
     case G4State_EventProc:
-#endif
+
       // If a beamOn/StartDAQ is running, launch abort sequence
       G4cerr << "--- Aborting run/acquisition! ---" << G4endl << G4endl;
-#ifdef G4VERSION4
-      G4RunManager::GetRunManager()->AbortRun();
-#else
+
       G4RunManager::GetRunManager()->AbortRun(true);
-#endif
+
       GateApplicationMgr::GetInstance()->StopDAQ();
       break;
-#ifdef G4VERSION4
-    case PreInit:
-    case Init:
-    case Idle:
-    case Quit:
-    case Abort:
-#else
+
     case G4State_PreInit:
     case G4State_Init:
     case G4State_Idle:
     case G4State_Quit:
     case G4State_Abort:
-#endif
+
     default:
       // If no beamOn/StartDAQ is running, ignore the signal
       G4cerr << "Signal received in state '" << stateManager->GetStateString(state) << "' "

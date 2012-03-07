@@ -73,11 +73,9 @@ void GateVoxelBoxParameterization::ComputeDimensions(G4Box*, const G4int ,const 
 //  and return a pointer to its material
 
 
-#ifdef G4VERSION8
-G4Material* GateVoxelBoxParameterization::ComputeMaterial(G4int copyNo , G4VPhysicalVolume * pv ,const G4VTouchable*){
-#else
+
 G4Material* GateVoxelBoxParameterization::ComputeMaterial(G4int copyNo , G4VPhysicalVolume * pv ){
-#endif
+
 
   G4Material*      mp( voxelReader  ->GetVoxelMaterial(copyNo)  );
   G4LogicalVolume* lv( pv->GetLogicalVolume()                   );
