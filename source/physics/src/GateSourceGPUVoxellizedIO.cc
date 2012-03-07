@@ -11,6 +11,7 @@ See GATE/LICENSE.txt for further details
 #include "GateConfiguration.h"
 #include "GateSourceGPUVoxellizedIO.hh"
 #include "GateRandomEngine.hh"
+#include "GateMessageManager.hh"
 #include <iostream>
 #include <cassert>
 using std::cout;
@@ -134,7 +135,7 @@ void GateSourceGPUVoxellizedInput_parse_activities(const ActivityMap& activities
 #ifndef GATE_USE_CUDA
 void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput*, GateSourceGPUVoxellizedOutput&)
 {
-	cout << "DUMMY GPU CALL" << endl;
+  GateError("Gate is compiled without CUDA enabled. You cannot use 'GPUvoxel' as source (GateSourceGPUVoxellized), use 'voxel' instead.");
 }
 #endif
 

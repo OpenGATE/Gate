@@ -140,9 +140,9 @@ void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVox
 {
   // Position
   G4ThreeVector particle_position;
-  particle_position.setX(particle.px);
-  particle_position.setY(particle.py);
-  particle_position.setZ(particle.pz);
+  particle_position.setX(particle.px*mm);
+  particle_position.setY(particle.py*mm);
+  particle_position.setZ(particle.pz*mm);
   std::cout << "Position = " << particle_position << std::endl;
   //FIXME -> change position according to source orientation/position
 
@@ -160,7 +160,7 @@ void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVox
   //FIXME -> change position according to source orientation/position
 
   // Compute momentum
-  G4ThreeVector particle_momentum = particle.E * particle_direction.unit();
+  G4ThreeVector particle_momentum = (particle.E*MeV) * particle_direction.unit();
   std::cout << "Momentum = " << particle_momentum << std::endl;
 
   // Create a G4PrimaryParticle
