@@ -45,7 +45,7 @@ struct ActivityMaterialTupleStrictWeakOrdering
 {
 	bool operator()(const ActivityMaterialTuple& a, const ActivityMaterialTuple& b)
 	{
-		return a.activity > b.activity;
+		return a.activity < b.activity;
 	}
 };
 
