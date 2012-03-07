@@ -148,7 +148,7 @@ void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVox
 
   // Create the vertex
   G4PrimaryVertex* vertex;
-  double particle_time = particle.t;
+  double particle_time = particle.t*ns;
   vertex = new G4PrimaryVertex(particle_position, particle_time);
 
   // Direction
