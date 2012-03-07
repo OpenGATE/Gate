@@ -36,15 +36,19 @@ GateHadronElasticPB::GateHadronElasticPB():GateVProcess("HadronElastic")
   SetDefaultParticle("GenericIon");
 
   SetProcessInfo("Elastic scattering of all long-lived hadrons and light ions");
-
   AddToModelList("G4LElastic");
   AddToModelList("G4NeutronHPElastic");
   AddToModelList("G4NeutronHPorLElastic");
   AddToModelList("G4ElasticHadrNucleusHE");
   AddToModelList("G4LEpp");
   AddToModelList("G4LEnp");
+  AddToModelList("G4HadronElastic");
 
-  pMessenger = new GateHadronicStandardProcessMessenger(this);  
+  AddToDataSetList("G4HadronElasticDataSet");
+  AddToDataSetList("G4NeutronHPElasticData");
+  
+
+pMessenger = new GateHadronicStandardProcessMessenger(this);  
 }
 //-----------------------------------------------------------------------------
 
@@ -108,7 +112,7 @@ bool GateHadronElasticPB::IsApplicable(G4ParticleDefinition * par)
 //-----------------------------------------------------------------------------
 bool GateHadronElasticPB::IsModelApplicable(G4String model,G4ParticleDefinition * par)
 {
-  if (model == "G4LElastic" ||
+/*  if (model == "G4LElastic" ||
      ((par == G4PionPlus::PionPlus() ||
        par == G4PionMinus::PionMinus() ||
        par == G4KaonPlus::KaonPlus() ||
@@ -129,19 +133,28 @@ bool GateHadronElasticPB::IsModelApplicable(G4String model,G4ParticleDefinition 
        par == G4AntiXiMinus::AntiXiMinus() ||
        par == G4OmegaMinus::OmegaMinus() ||
        par == G4AntiOmegaMinus::AntiOmegaMinus()) &&
-      model == "G4NeutronHPElastic") || 
+       model == "G4NeutronHPElastic") || 
       (model == "G4NeutronHPorLElastic" && par == G4Neutron::Neutron()) ||
       (( model == "G4LEpp" || model == "G4LEnp") && (par == G4Neutron::Neutron() || par == G4Proton::Proton())))
       return true;
-  return false;
+
+  if(model == "G4NeutronHPElastic" && par != G4Neutron::Neutron()) return false;
+  if(model == "G4NeutronHPorLElastic" && par != G4Neutron::Neutron()) return false;
+  return true;
+
+
+
+  return false;*/
+
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-bool GateHadronElasticPB::IsDatasetApplicable(G4String, G4ParticleDefinition *)
+bool GateHadronElasticPB::IsDatasetApplicable(G4String cs, G4ParticleDefinition * par)
 {
-  return false;
+ /* if(cs == "G4NeutronHPElasticData" && par != G4Neutron::Neutron()) return false;
+  return true;*/
 }
 //-----------------------------------------------------------------------------
 

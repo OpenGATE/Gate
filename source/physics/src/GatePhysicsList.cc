@@ -394,6 +394,9 @@ std::vector<GateVProcess*> GatePhysicsList::FindProcess(G4String name)
 //-----------------------------------------------------------------------------------------
 void GatePhysicsList::AddProcesses(G4String processname, G4String particle)
 {
+	if ( processname == "UHadronElastic")
+		G4Exception( "GatePhysicsList::AddProcesses","AddProcesses", FatalException,"####### WARNING: 'HadronElastic' process name replace 'UHadronElastic' process name since Geant4 9.5");
+
   std::vector<GateVProcess *>  process = FindProcess(processname);
   if(process.size()>0)
     for(unsigned int i=0; i<process.size(); i++) process[i]->CreateEnabledParticle(particle);
@@ -410,6 +413,7 @@ void GatePhysicsList::AddProcesses(G4String processname, G4String particle)
 //-----------------------------------------------------------------------------------------
 void GatePhysicsList::RemoveProcesses(G4String processname, G4String particle)
 {
+
   std::vector<GateVProcess *>  process = FindProcess(processname);
   if(process.size()>0)
     for(unsigned int i=0; i<process.size(); i++) process[i]->RemoveElementOfParticleList(particle);
