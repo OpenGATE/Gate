@@ -29,9 +29,9 @@ G4VParticleChange* GatePositronAnnihilation::AtRestDoIt(const G4Track& aTrack,
 // Note : Effects due to binding of atomic electrons are negliged.
  
 {
-   aParticleChange.Initialize(aTrack);
+   fParticleChange.InitializeForPostStep(aTrack);
 
-   aParticleChange.SetNumberOfSecondaries(2) ;
+   fParticleChange.SetNumberOfSecondaries(2) ;
    
    G4double r  = CLHEP::RandGauss::shoot(0.,0.0011);
       
@@ -50,19 +50,20 @@ G4VParticleChange* GatePositronAnnihilation::AtRestDoIt(const G4Track& aTrack,
 	DirectionPhoton.rotateUz(Direction);
 	   
 
-	aParticleChange.AddSecondary( new G4DynamicParticle (G4Gamma::Gamma(),
+	fParticleChange.AddSecondary( new G4DynamicParticle (G4Gamma::Gamma(),
                                                  DirectionPhoton, E1) );
-        aParticleChange.AddSecondary( new G4DynamicParticle (G4Gamma::Gamma(),
+        fParticleChange.AddSecondary( new G4DynamicParticle (G4Gamma::Gamma(),
                                                 -Direction, E2) ); 
 
-        aParticleChange.ProposeLocalEnergyDeposit(0.);
+        fParticleChange.ProposeLocalEnergyDeposit(0.);
        
   // G4double cosdev;
   // G4double dev;
   
    // Kill the incident positron 
    //
-   aParticleChange.ProposeTrackStatus( fStopAndKill );
+   fParticleChange.ProposeTrackStatus( fStopAndKill );
       
-   return &aParticleChange;
+   return &fParticleChange;
+
 }
