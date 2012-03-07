@@ -218,7 +218,7 @@ void GateSourceGPUVoxellized::SetPhantomVolumeData()
     for(int k=0; k<m_gpu_input->phantom_size_z; k++)
       for(int j=0; j<m_gpu_input->phantom_size_y; j++)
         for(int i=0; i<m_gpu_input->phantom_size_x; i++) {
-          std::cout << "ijk = " << i << " " << j << " " << k << std::endl;
+          //std::cout << "ijk = " << i << " " << j << " " << k << std::endl;
           G4Material * m = reader->GetVoxelMaterial(i,j,k); 
           G4String n = m->GetName();
           std::cout << n << std::endl;
@@ -228,8 +228,8 @@ void GateSourceGPUVoxellized::SetPhantomVolumeData()
           catch(std::exception & e) {
             GateError("The volume name must be GPU_xx_Name.");
           }
-          std::cout << n << std::endl;
-          int index = atoi(n);
+          //std::cout << n << std::endl;
+          unsigned short int index = atoi(n);
           m_gpu_input->phantom_material_data.push_back(index);          
         }
   }
