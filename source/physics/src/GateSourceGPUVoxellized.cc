@@ -97,7 +97,7 @@ void GateSourceGPUVoxellized::AttachToVolume(const G4String& volume_name)
 //-------------------------------------------------------------------------------------------------
 G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event) 
 {
-  G4cout << "GateSourceGPUVoxellizedMessenger GeneratePrimaries" << G4endl;
+	//G4cout << "GateSourceGPUVoxellizedMessenger GeneratePrimaries" << G4endl;
   if (!m_voxelReader) return 0;
 
   assert(m_gpu_input);
@@ -123,10 +123,10 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
 
   // Generate one particle
   if (!m_gpu_output.particles.empty()) {
-    std::cout << "event in buffer = " << m_gpu_output.particles.size() << std::endl;
+	  //std::cout << "event in buffer = " << m_gpu_output.particles.size() << std::endl;
     GeneratePrimaryEventFromGPUOutput(m_gpu_output.particles.front(), event);
     m_gpu_output.particles.pop_front();
-    std::cout << "even id = " << event->GetEventID() << std::endl;
+    //std::cout << "even id = " << event->GetEventID() << std::endl;
   }
 
   return 1; // Number of vertex
@@ -143,7 +143,7 @@ void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVox
   particle_position.setX(particle.px*mm);
   particle_position.setY(particle.py*mm);
   particle_position.setZ(particle.pz*mm);
-  std::cout << "Position = " << particle_position << std::endl;
+  //std::cout << "Position = " << particle_position << std::endl;
   //FIXME -> change position according to source orientation/position
 
   // Create the vertex
@@ -156,13 +156,14 @@ void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVox
   particle_direction.setX(particle.dx);
   particle_direction.setY(particle.dy);
   particle_direction.setZ(particle.dz);
-  std::cout << "Direction = " << particle_direction << std::endl;
+  //std::cout << "Direction = " << particle_direction << std::endl;
   //FIXME -> change position according to source orientation/position
 
   // Compute momentum
   G4ThreeVector particle_momentum = (particle.E*MeV) * particle_direction.unit();
-  std::cout << "Momentum = " << particle_momentum << std::endl;
-
+  //std::cout << "Momentum = " << particle_momentum << std::endl;
+  std::cout << "Energy = " << particle.E << std::endl;
+  
   // Create a G4PrimaryParticle
   G4PrimaryParticle* g4particle =  new G4PrimaryParticle(gamma_particle_definition, 
                                                          particle_momentum.x(), 
