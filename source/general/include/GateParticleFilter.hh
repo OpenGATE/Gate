@@ -37,7 +37,7 @@ public:
 
   FCT_FOR_AUTO_CREATOR_FILTER(GateParticleFilter)
 
-  virtual G4bool Accept(const G4Track*) ;
+  virtual G4bool Accept(const G4Track*);
 
   void Add(const G4String& particleName);
   void AddParent(const G4String& particleName);

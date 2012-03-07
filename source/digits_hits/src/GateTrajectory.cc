@@ -80,22 +80,22 @@ GateTrajectory::~GateTrajectory()
   delete positionRecord;
 }
 
-void GateTrajectory::ShowTrajectory() const
+void GateTrajectory::ShowTrajectory(std::ostream& os) const
 {
-   G4cout << G4endl << "TrackID =" << fTrackID 
+   os << G4endl << "TrackID =" << fTrackID 
         << " : ParentID=" << fParentID << G4endl;
-   G4cout << "Particle name : " << ParticleName 
+   os << "Particle name : " << ParticleName 
         << "  Charge : " << PDGCharge << G4endl;
-   G4cout << "Original momentum : " <<
+   os << "Original momentum : " <<
         G4BestUnit(momentum,"Energy") << G4endl;
-   G4cout << "Vertex : " << G4BestUnit(vertexPosition,"Length")
+   os << "Vertex : " << G4BestUnit(vertexPosition,"Length")
         << "  Global time : " << G4BestUnit(globalTime,"Time") << G4endl;
-   G4cout << "  Current trajectory has " << positionRecord->size() 
+   os << "  Current trajectory has " << positionRecord->size() 
         << " points." << G4endl;
 
    for( size_t i=0 ; i < positionRecord->size() ; i++){
        G4TrajectoryPoint* aTrajectoryPoint = (G4TrajectoryPoint*)((*positionRecord)[i]);
-       G4cout << "Point[" << i << "]" 
+       os << "Point[" << i << "]" 
             << " Position= " << aTrajectoryPoint->GetPosition() << G4endl;
    }
 }
