@@ -114,7 +114,7 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
   if (m_gpu_input->phantom_material_data.empty())
   { // import phantom to gpu (fill input)
     SetPhantomVolumeData();
-    m_gpu_input->startTime = GetStartTime()*ns;
+    m_gpu_input->startTime = GetStartTime();
     //    m_gpu_output.deltaTime = 0.0;
   }
 
@@ -128,7 +128,8 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
     std::cout << "output is empty" << std::endl;
 
     // m_gpu_input->startTime += m_gpu_output.deltaTime;
-    std::cout << "time (struct) " << m_gpu_input->startTime / ns << std::endl;
+    //    std::cout << "time (struct) " << m_gpu_input->startTime / ns << std::endl;
+    m_gpu_input->startTime = GetTime();
     std::cout << "time gate " << GetTime() / ns << std::endl;
 
     // Go GPU
@@ -166,8 +167,8 @@ void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVox
   // Create the vertex
   G4PrimaryVertex* vertex;
   double particle_time = particle.t*ns;
-  std::cout << " particle time = " << particle.t << std::endl;
-  std::cout << " particle time = " << particle_time/ns << std::endl;
+  // std::cout << " particle time = " << particle.t << std::endl;
+  std::cout << " gpu particle time = " << particle_time/ns << std::endl;
   vertex = new G4PrimaryVertex(particle_position, particle_time);
 
   // Set global current time
