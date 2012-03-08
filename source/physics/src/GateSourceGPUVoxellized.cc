@@ -64,8 +64,11 @@ GateSourceGPUVoxellized::~GateSourceGPUVoxellized()
 //-------------------------------------------------------------------------------------------------
 G4double GateSourceGPUVoxellized::GetNextTime(G4double timeNow)
 {
-  G4cout << "GateSourceGPUVoxellizedMessenger GetNextTime " << timeNow*ns << " ns " << G4endl;
-  return GateSourceVoxellized::GetNextTime(timeNow);
+  G4cout << "GateSourceGPUVoxellizedMessenger GetNextTime " << timeNow/ns << " ns " << G4endl;
+  //  G4cout << "GateSourceGPUVoxellizedMessenger current particle time  " << G4BestUnit(m_gpu_output.particles.front().t, "Time") << G4endl;
+  G4cout << "GateSourceGPUVoxellizedMessenger current particle time  " << m_gpu_output.particles.front().t/ns << G4endl;
+  return m_gpu_output.particles.front().t;
+  //  return GateSourceVoxellized::GetNextTime(timeNow);
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -112,7 +115,7 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
   { // import phantom to gpu (fill input)
     SetPhantomVolumeData();
     m_gpu_input->startTime = GetStartTime()*ns;
-    m_gpu_output.deltaTime = 0.0;
+    //    m_gpu_output.deltaTime = 0.0;
   }
 
   if (m_gpu_input->activity_index.empty())
@@ -124,12 +127,14 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
   if (m_gpu_output.particles.empty()) {
     std::cout << "output is empty" << std::endl;
 
-    m_gpu_input->startTime += m_gpu_output.deltaTime;
+    // m_gpu_input->startTime += m_gpu_output.deltaTime;
+    std::cout << "time (struct) " << m_gpu_input->startTime / ns << std::endl;
+    std::cout << "time gate " << GetTime() / ns << std::endl;
 
     // Go GPU
     GateGPUGeneratePrimaries(m_gpu_input, m_gpu_output);
     std::cout << "End gpu with particles = " << m_gpu_output.particles.size() << std::endl;
-    std::cout << "End gpu with deltaTime = " << m_gpu_output.deltaTime*ns << " ns" << std::endl;
+    //    std::cout << "End gpu with deltaTime = " << m_gpu_output.deltaTime*ns << " ns" << std::endl;
   }
 
   // Generate one particle
@@ -152,7 +157,7 @@ void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVox
 {
   // Position
   G4ThreeVector particle_position;
-  particle_position.setX(particle.px*mm-256*mm);
+  particle_position.setX(particle.px*mm-256*mm); // HECTOR to replace by m_gpu_input.phantom_size ...
   particle_position.setY(particle.py*mm-126*mm);
   particle_position.setZ(particle.pz*mm-92*mm);
   //std::cout << "Position = " << G4BestUnit(particle_position,"Length") << std::endl;
@@ -161,8 +166,13 @@ void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVox
   // Create the vertex
   G4PrimaryVertex* vertex;
   double particle_time = particle.t*ns;
+  std::cout << " particle time = " << particle.t << std::endl;
+  std::cout << " particle time = " << particle_time/ns << std::endl;
   vertex = new G4PrimaryVertex(particle_position, particle_time);
 
+  // Set global current time
+  m_gpu_input->startTime = particle_time;
+  
   // Direction
   G4ThreeVector particle_direction;
   particle_direction.setX(particle.dx);
