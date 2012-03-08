@@ -140,9 +140,9 @@ void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVox
 {
   // Position
   G4ThreeVector particle_position;
-  particle_position.setX(particle.px*mm);
-  particle_position.setY(particle.py*mm);
-  particle_position.setZ(particle.pz*mm);
+  particle_position.setX(particle.px*mm-256*mm);
+  particle_position.setY(particle.py*mm-126*mm);
+  particle_position.setZ(particle.pz*mm-92*mm);
   //std::cout << "Position = " << G4BestUnit(particle_position,"Length") << std::endl;
   //FIXME -> change position according to source orientation/position
 

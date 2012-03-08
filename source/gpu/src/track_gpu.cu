@@ -65,7 +65,6 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	cudaMemcpy(dphantom, &(input->phantom_material_data[0]), mem_phantom, cudaMemcpyHostToDevice);
 	cudaBindTexture(NULL, tex_phantom, dphantom, mem_phantom);
 
-
 	// load activities in texture mem
 	int nb_act = input->activity_data.size();
 	unsigned int mem_act_f = nb_act * sizeof(float);
@@ -73,7 +72,7 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	cudaMalloc((void**) &dactivities, mem_act_f);
 	cudaMemcpy(dactivities, &(input->activity_data[0]), mem_act_f, cudaMemcpyHostToDevice);
 	cudaBindTexture(NULL, tex_act_val, dactivities, mem_act_f);
-	
+
 	// load activities indices in the texture mem
 	unsigned int mem_act_i = nb_act * sizeof(unsigned int);
 	unsigned int* dindex;
@@ -85,6 +84,7 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	// Generation
 	kernel_voxelized_source_b2b<<<grid, threads>>>(stackgamma1, stackgamma2, dim_phantom, E, size_voxel);
 	cudaThreadSynchronize();
+	//get_nb_particles_simulated(stackgamma1, stackgamma2, phasespace1, phasespace2, &gamma_sim);
 	
 	// Main loop
 	while (gamma_sim < gamma_max_sim) {
@@ -106,6 +106,18 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 		cudaThreadSynchronize();
 	} // while
 	
+	// Phasespace
+	FILE* pfile1 = fopen("./results/gpu_1.phsp", "wb");
+	if (pfile1==NULL){
+		fputs ("Cannot open phase-space file",pfile1);
+		return;
+	}
+	
+	FILE* pfile2 = fopen("./results/gpu_2.phsp", "wb");
+	if (pfile2==NULL){
+		fputs ("Cannot open phase-space file",pfile2);
+		return;
+	}
 	
 	int i=0;
 	while (i<positron) {
@@ -120,6 +132,15 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 			particle.pz = phasespace1.pz[i];
 			particle.t = phasespace1.t[i];
 			output.particles.push_back(particle);
+
+			
+			fwrite(&phasespace1.E[i], sizeof(float), 1, pfile1);
+			fwrite(&phasespace1.px[i], sizeof(float), 1, pfile1);
+			fwrite(&phasespace1.py[i], sizeof(float), 1, pfile1);
+			fwrite(&phasespace1.pz[i], sizeof(float), 1, pfile1);
+			fwrite(&phasespace1.dx[i], sizeof(float), 1, pfile1);
+			fwrite(&phasespace1.dy[i], sizeof(float), 1, pfile1);
+			fwrite(&phasespace1.dz[i], sizeof(float), 1, pfile1);
 			
 		}
 		if (phasespace2.live[i]) {
@@ -133,18 +154,29 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 			particle.pz = phasespace2.pz[i];
 			particle.t = phasespace2.t[i];
 			output.particles.push_back(particle);
+			
+			fwrite(&phasespace2.E[i], sizeof(float), 1, pfile2);
+			fwrite(&phasespace2.px[i], sizeof(float), 1, pfile2);
+			fwrite(&phasespace2.py[i], sizeof(float), 1, pfile2);
+			fwrite(&phasespace2.pz[i], sizeof(float), 1, pfile2);
+			fwrite(&phasespace2.dx[i], sizeof(float), 1, pfile2);
+			fwrite(&phasespace2.dy[i], sizeof(float), 1, pfile2);
+			fwrite(&phasespace2.dz[i], sizeof(float), 1, pfile2);
 		}
 		++i;
 	}
 	
 	printf("Simulated gamma = %d\n", gamma_max_sim);
-	printf("Simulated gamma outpu = %d\n", output.particles.size());
+	printf("Simulated gamma output = %d\n", output.particles.size());
 	
 	cudaThreadExit();
 	free_device_stackgamma(stackgamma1);
 	free_device_stackgamma(stackgamma2);
 	free_host_stackgamma(phasespace1);
 	free_host_stackgamma(phasespace2);
+	
+	fclose(pfile1);
+	fclose(pfile2);
 
 }
 

@@ -400,17 +400,17 @@ __global__ void kernel_voxelized_source_b2b(StackGamma stackgamma1, StackGamma s
 __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, float dimvox, int most_att_mat) {
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 	int jump = dimvol.x * dimvol.y;
-	int i = 0;
-	float3 p, p0, dp, delta, dimvolmm;
-	float3 cur_CS;
+	float3 p, p0, delta, dimvolmm, dp;
+	float3 cur_CS,prob_CS;
 	int3 vox;
 	float path, rec_mu_maj, E, sum_CS, t;
+	int i=0;
 	unsigned short int mat;
 	dimvolmm.x = dimvol.x * dimvox;
 	dimvolmm.y = dimvol.y * dimvox;
 	dimvolmm.z = dimvol.z * dimvox;
 	dimvox = __fdividef(1.0f, dimvox);
-	
+
 	if (id < stackgamma.size && !stackgamma.endsimu[id]) {
 		p0.x = stackgamma.px[id];
 		p0.y = stackgamma.py[id];
@@ -423,6 +423,7 @@ __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, flo
 		delta.z = stackgamma.dz[id];
 		E = stackgamma.E[id];
 		t = stackgamma.t[id];
+		
 
 		// Most attenuate material
 		cur_CS.x = PhotoElec_CS_Standard(most_att_mat, E);
@@ -442,26 +443,40 @@ __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, flo
 			p.y = p.y + delta.y * path;
 			p.z = p.z + delta.z * path;
 
-			// still inside the volume?
+			// still inside the phantom? if not
 			if (p.x < 0 || p.y < 0 || p.z < 0
 				|| p.x >= dimvolmm.x || p.y >= dimvolmm.y || p.z >= dimvolmm.z) {
 				stackgamma.endsimu[id] = 1; // stop simulation for this one
 				stackgamma.interaction[id] = 0;
+				
+				float dimvoxbis = __fdividef(1.0f, dimvox);
+				float r=dimvoxbis*0.1;
+				
+				while(p.x < -r || p.y < -r || p.z < -r
+				|| p.x >= dimvolmm.x+r || p.y >= dimvolmm.y+r || p.z >= dimvolmm.z+r){
+					p.x = p.x - delta.x * r;
+					p.y = p.y - delta.y * r;
+					p.z = p.z - delta.z * r;
+				}
+				
 				dp.x = p0.x - p.x;
 				dp.y = p0.y - p.y;
 				dp.z = p0.z - p.z;
+				
 				t += (3.33564095198e-03f * sqrt(dp.x*dp.x + dp.y*dp.y + dp.z*dp.z));
+				
 				stackgamma.px[id] = p.x;
 				stackgamma.py[id] = p.y;
 				stackgamma.pz[id] = p.z;
 				stackgamma.t[id] = t;
+
 				return;
 			}
 		
 			// which voxel?
-			vox.x = int(p.x * dimvox);
-			vox.y = int(p.y * dimvox);
-			vox.z = int(p.z * dimvox);
+			vox.x = floor(p.x * dimvox);
+			vox.y = floor(p.y * dimvox);
+			vox.z = floor(p.z * dimvox);
 			
 			// get mat
 			mat = tex1Dfetch(tex_phantom, vox.z*jump + vox.y*dimvol.x + vox.x);
@@ -484,26 +499,24 @@ __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, flo
 		dp.x = p0.x - p.x;
 		dp.y = p0.y - p.y;
 		dp.z = p0.z - p.z;
+	
 		t += (3.33564095198e-03f * sqrt(dp.x*dp.x + dp.y*dp.y + dp.z*dp.z));
-
+		
 		stackgamma.px[id] = p.x;
 		stackgamma.py[id] = p.y;
 		stackgamma.pz[id] = p.z;
 		stackgamma.t[id] = t;
-
-		// Select an interaction, first get again the current CS and not only the sum_CS in shared mem
-		cur_CS.x = PhotoElec_CS_Standard(mat, E);
-		cur_CS.y = Compton_CS_Standard(mat, E);
-		sum_CS = cur_CS.x + cur_CS.y;
 		
-		if (__fdividef(cur_CS.x, sum_CS) > Brent_real(id, stackgamma.table_x_brent, 0)) {
-			stackgamma.interaction[id] = 1;
-		} else {
-			stackgamma.interaction[id] = 2;
-		}
-
+		// Select an interaction
+		// Re-use CS variables to select an interaction
+		prob_CS.x = __fdividef(cur_CS.x, sum_CS);                      // pe
+		prob_CS.y = __fdividef(cur_CS.y, sum_CS) + prob_CS.x;  			// cpt				
+		// re-use p.x as rnd variable
+		p.x = Brent_real(id, stackgamma.table_x_brent, 0);
+		// selecting interaction				
+		if (p.x>=0 && p.x<prob_CS.x) stackgamma.interaction[id] = 1;
+		if (p.x>=prob_CS.x && p.x<prob_CS.y) stackgamma.interaction[id] = 2;
 	}
-
 }
 
 /***********************************************************
