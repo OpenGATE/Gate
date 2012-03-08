@@ -8,12 +8,13 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 
 	int positron = input->nb_events / 2.0f; // positron generated (nb gamma = 2*ptot) 
 	unsigned short int most_att_mat = 7; // 1 Water  -  7 RibBone  FIXME add most att mat selector
+
+	// T0 run
+	float T0 = input->startTime;
 	
 	// Energy
 	float E = input->E; // 511 keV
 	long seed = input->seed;
-	
-	//printf("Energy = %f\n Seed = %d\n", E, seed);
 
 	// Define phantom
 	int3 dim_phantom;
@@ -21,8 +22,6 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	dim_phantom.y = input->phantom_size_y; // vox
 	dim_phantom.x = input->phantom_size_x; // vox
 	float size_voxel = input->phantom_spacing; // mm
-	
-	//printf("phantom_x = %d\n phantom_y = %d\n phantom_z = %d\n", dim_phantom.x, dim_phantom.y, dim_phantom.z);
 
 	// Select a GPU
 	cudaSetDevice(0);
@@ -84,7 +83,6 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	// Generation
 	kernel_voxelized_source_b2b<<<grid, threads>>>(stackgamma1, stackgamma2, dim_phantom, E, size_voxel);
 	cudaThreadSynchronize();
-	//get_nb_particles_simulated(stackgamma1, stackgamma2, phasespace1, phasespace2, &gamma_sim);
 	
 	// Main loop
 	while (gamma_sim < gamma_max_sim) {
@@ -105,20 +103,7 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 		get_nb_particles_simulated(stackgamma1, stackgamma2, phasespace1, phasespace2, &gamma_sim);		
 		cudaThreadSynchronize();
 	} // while
-	
-	// Phasespace
-	FILE* pfile1 = fopen("./results/gpu_1.phsp", "wb");
-	if (pfile1==NULL){
-		fputs ("Cannot open phase-space file",pfile1);
-		return;
-	}
-	
-	FILE* pfile2 = fopen("./results/gpu_2.phsp", "wb");
-	if (pfile2==NULL){
-		fputs ("Cannot open phase-space file",pfile2);
-		return;
-	}
-	
+
 	int i=0;
 	while (i<positron) {
 		if (phasespace1.live[i]) {
@@ -132,16 +117,6 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 			particle.pz = phasespace1.pz[i];
 			particle.t = phasespace1.t[i];
 			output.particles.push_back(particle);
-
-			
-			fwrite(&phasespace1.E[i], sizeof(float), 1, pfile1);
-			fwrite(&phasespace1.px[i], sizeof(float), 1, pfile1);
-			fwrite(&phasespace1.py[i], sizeof(float), 1, pfile1);
-			fwrite(&phasespace1.pz[i], sizeof(float), 1, pfile1);
-			fwrite(&phasespace1.dx[i], sizeof(float), 1, pfile1);
-			fwrite(&phasespace1.dy[i], sizeof(float), 1, pfile1);
-			fwrite(&phasespace1.dz[i], sizeof(float), 1, pfile1);
-			
 		}
 		if (phasespace2.live[i]) {
 			GateSourceGPUVoxellizedOutputParticle particle;
@@ -154,29 +129,14 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 			particle.pz = phasespace2.pz[i];
 			particle.t = phasespace2.t[i];
 			output.particles.push_back(particle);
-			
-			fwrite(&phasespace2.E[i], sizeof(float), 1, pfile2);
-			fwrite(&phasespace2.px[i], sizeof(float), 1, pfile2);
-			fwrite(&phasespace2.py[i], sizeof(float), 1, pfile2);
-			fwrite(&phasespace2.pz[i], sizeof(float), 1, pfile2);
-			fwrite(&phasespace2.dx[i], sizeof(float), 1, pfile2);
-			fwrite(&phasespace2.dy[i], sizeof(float), 1, pfile2);
-			fwrite(&phasespace2.dz[i], sizeof(float), 1, pfile2);
 		}
 		++i;
 	}
-	
-	printf("Simulated gamma = %d\n", gamma_max_sim);
-	printf("Simulated gamma output = %d\n", output.particles.size());
 	
 	cudaThreadExit();
 	free_device_stackgamma(stackgamma1);
 	free_device_stackgamma(stackgamma2);
 	free_host_stackgamma(phasespace1);
 	free_host_stackgamma(phasespace2);
-	
-	fclose(pfile1);
-	fclose(pfile2);
-
 }
 
