@@ -20,6 +20,7 @@ struct GateSourceGPUVoxellizedInput {
 	long nb_events;
 	double E; // MeV
 	unsigned int seed;
+    double startTime;
 
 	// Phantom and activity map (same size)
 	// Coordinate system : 0,0,0 corner 
@@ -55,6 +56,7 @@ struct GateSourceGPUVoxellizedOutputParticle {
 struct GateSourceGPUVoxellizedOutput { 
 	typedef std::list<GateSourceGPUVoxellizedOutputParticle> ParticlesList;
 	ParticlesList particles;
+    double deltaTime;
 };
 
 

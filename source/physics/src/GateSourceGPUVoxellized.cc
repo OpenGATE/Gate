@@ -29,6 +29,7 @@
 #include "GateSourceVoxelInterfileReader.hh"
 #include "GateObjectStore.hh"
 #include "GateFictitiousVoxelMapParameterized.hh"
+#include "GateApplicationMgr.hh"
 
 //-------------------------------------------------------------------------------------------------
 GateSourceGPUVoxellized::GateSourceGPUVoxellized(G4String name)
@@ -63,7 +64,7 @@ GateSourceGPUVoxellized::~GateSourceGPUVoxellized()
 //-------------------------------------------------------------------------------------------------
 G4double GateSourceGPUVoxellized::GetNextTime(G4double timeNow)
 {
-  G4cout << "GateSourceGPUVoxellizedMessenger GetNextTime" << G4endl;
+  G4cout << "GateSourceGPUVoxellizedMessenger GetNextTime " << timeNow*ns << " ns " << G4endl;
   return GateSourceVoxellized::GetNextTime(timeNow);
 }
 //-------------------------------------------------------------------------------------------------
@@ -102,9 +103,16 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
 
   assert(m_gpu_input);
 
+  std::cout << "start time " << GetStartTime()*ns << " ns " << std::endl;
+  //    std::cout << "next time " << GetNextTime()*ns << " ns " << std::endl;
+  std::cout << " time " << GetTime() << " ns " << std::endl;
+  std::cout << "app time" << GateApplicationMgr::GetInstance()->GetCurrentTime()*ns << std::endl;
+
   if (m_gpu_input->phantom_material_data.empty())
   { // import phantom to gpu (fill input)
     SetPhantomVolumeData();
+    m_gpu_input->startTime = GetStartTime()*ns;
+    m_gpu_output.deltaTime = 0.0;
   }
 
   if (m_gpu_input->activity_index.empty())
@@ -116,19 +124,23 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
   if (m_gpu_output.particles.empty()) {
     std::cout << "output is empty" << std::endl;
 
+    m_gpu_input->startTime += m_gpu_output.deltaTime;
+
     // Go GPU
     GateGPUGeneratePrimaries(m_gpu_input, m_gpu_output);
     std::cout << "End gpu with particles = " << m_gpu_output.particles.size() << std::endl;
+    std::cout << "End gpu with deltaTime = " << m_gpu_output.deltaTime*ns << " ns" << std::endl;
   }
 
   // Generate one particle
   if (!m_gpu_output.particles.empty()) {
-	  //std::cout << "event in buffer = " << m_gpu_output.particles.size() << std::endl;
+    std::cout << "event in buffer = " << m_gpu_output.particles.size() << std::endl;
     GeneratePrimaryEventFromGPUOutput(m_gpu_output.particles.front(), event);
     m_gpu_output.particles.pop_front();
-    //std::cout << "even id = " << event->GetEventID() << std::endl;
+    std::cout << "even id = " << event->GetEventID() << std::endl;
   }
-
+  
+  std::cout << "end" << std::endl;
   return 1; // Number of vertex
 }
 //-------------------------------------------------------------------------------------------------
