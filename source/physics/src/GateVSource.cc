@@ -614,8 +614,6 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
 
       ChangeParticlePositionRelativeToAttachedVolume(particle_position);
 
-			std::cout << GetParticleTime() << std::endl;
-
       G4PrimaryVertex* vertex = new G4PrimaryVertex(particle_position, GetParticleTime());
       if (GetNumberOfParticles() == 0) {
         GateError("Something went wrong, nb of particle is 0 in GateVSource::GeneratePrimaryVertex\n");
