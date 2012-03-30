@@ -59,6 +59,10 @@ protected:
   
   // Name of the attached volume
   G4String attachedVolumeName;
+  
+  // FIXME
+  int mNumberOfNextTime;
+  int mCurrentTimeID;
 
   void GeneratePrimaryEventFromGPUOutput(GateSourceGPUVoxellizedOutputParticle & particle, G4Event * event);  
   void SetPhantomVolumeData();
