@@ -60,7 +60,6 @@ GateSourceVoxellizedMessenger::~GateSourceVoxellizedMessenger()
 
 void GateSourceVoxellizedMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
-  G4cout << " GateSourceVoxellizedMessenger::SetNewValue" << G4endl;
   if( command == ReaderInsertCmd ) {
     m_source->ReaderInsert(ReaderInsertCmd->GetNewVectorValue(newValue)[0]);
   } else if( command == ReaderRemoveCmd ) {
