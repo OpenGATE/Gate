@@ -394,11 +394,11 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
   if (event) GateMessage("Beam", 2, "Generating particle " << event->GetEventID() << G4endl);
 
   G4int numVertices = 0;
-  //  DD(GetType());
 
   GateSteppingAction* myAction = (GateSteppingAction *) ( G4RunManager::GetRunManager()->GetUserSteppingAction() );
 
   TrackingMode theMode =myAction->GetMode();
+
   G4bool test = (theMode ==1 ) || ( theMode == 2 );
   if ( test == 1  ) 
     {
@@ -408,7 +408,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
         // decay time for ions inside the timeSlice controlled here and not by RDM
         // NB: temporary: secondary ions of the decay chain not properly treated
         SetParticleTime( m_time );
-	GeneratePrimaryVertex( event );
+        GeneratePrimaryVertex( event );
       }
       else {
         GateError("Sorry, I don't know the source type '"<< GetType() << "'. Known source types are"
@@ -417,14 +417,17 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       numVertices++;
 
       if (event) {
-        G4PrimaryParticle  * p = event->GetPrimaryVertex(0)->GetPrimary(0);
-
-        GateMessage("Beam", 3, "(" << event->GetEventID() << ") " << p->GetG4code()->GetParticleName() 
-                    << " pos=" << event->GetPrimaryVertex(0)->GetPosition()
-                    << " weight=" << p->GetWeight()                                
-                    << " energy=" <<  G4BestUnit(mEnergy, "Energy")
-                    << " mom=" << p->GetMomentum()
-                    << ")" << G4endl);  
+        for(int i=0; i< event->GetPrimaryVertex(0)->GetNumberOfParticle(); i++) {
+          G4PrimaryParticle  * p = event->GetPrimaryVertex(0)->GetPrimary(i);
+          GateMessage("Beam", 3, "(" << event->GetEventID() << ") " << p->GetG4code()->GetParticleName() 
+                      << " pos=" << event->GetPrimaryVertex(0)->GetPosition()
+                      << " weight=" << p->GetWeight()                                
+                      << " energy=" <<  G4BestUnit(mEnergy, "Energy")
+                      << " mom=" << p->GetMomentum()
+                      << " ptime=" <<  G4BestUnit(p->GetProperTime(), "Time")
+                      << " atime=" <<  G4BestUnit(GetTime(), "Time")
+                      << ")" << G4endl);  
+        }
       }
 
 
