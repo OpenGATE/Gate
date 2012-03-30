@@ -6,11 +6,72 @@
 void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input, 
                               GateSourceGPUVoxellizedOutput & output) {
 
+  //--------------------------------------------------------------------------
+  // BEGIN TEST
+  // DS FIXME --> test because GPU do not work on my computer
+
+  int initialID = input->firstInitialID;
+
+  // Send n times the same particles
+  for(int n=0; n<input->nb_events/6; n++) {
+    GateSourceGPUVoxellizedOutputParticle particle;
+    particle.E = 0.511;
+    particle.px = 256+133.46; particle.py = 126 + 81.14; particle.pz = 92 + 131.289; 
+    double nn = sqrt(pow(0.0507817, 2) + pow(-0.152974,2) + pow(-0.484913,2));
+    particle.dx = 0.0507817/nn; particle.dy = -0.152974/nn; particle.dz = -0.484913/nn;
+    particle.t = 0.789737;  // express in ns ==> this is the particle TOF (from 0)
+    particle.initialID = initialID; // First pair of particle (first photon)
+    output.particles.push_back(particle);
+    
+    particle.E = 0.511;
+    particle.px = 256+133.46; particle.py = 126 + 81.14; particle.pz = 92 + 131.289; 
+    particle.dx = -0.0507817/nn; particle.dy = 0.152974/nn; particle.dz = 0.484913/nn;
+    particle.t = 0.846211;
+    particle.initialID = initialID;  // First pair of particle (second photon)
+    output.particles.push_back(particle);
+    
+    particle.E = 0.511;
+    particle.px = 256+186.792; particle.py = 126 + 120.485; particle.pz = 92 + 111.315; 
+    nn = sqrt(pow(0.00673269, 2) + pow(0.508965,2) + pow(0.045058,2));
+    particle.dx = 0.00673269/nn; particle.dy = 0.508965/nn; particle.dz = 0.045058/nn;
+    particle.t = 1;
+    particle.initialID = initialID+1; // Next pair of particle (first photon)
+    output.particles.push_back(particle);
+    
+    particle.E = 0.511;
+    particle.px = 256+186.792; particle.py = 126 + 120.485; particle.pz = 92 + 111.315; 
+    particle.dx = -0.00673269/nn; particle.dy = -0.508965/nn; particle.dz = -0.045058/nn;
+    particle.t = 2;
+    particle.initialID = initialID+1;// Next pair of particle (second photon)
+    output.particles.push_back(particle);
+    
+    particle.E = 0.511;
+    particle.px = 256+186.792; particle.py = 126 + 120.485; particle.pz = 92 + 111.315; 
+    nn = sqrt(pow(0.00673269, 2) + pow(0.508965,2) + pow(0.045058,2));
+    particle.dx = 0.00673269/nn; particle.dy = 0.508965/nn; particle.dz = 0.045058/nn;
+    particle.t = 1;
+    particle.initialID = initialID+3; // Another pair of particle (first photon), let suppose that the number 2 does not go out of the volume
+    output.particles.push_back(particle);
+    
+    particle.E = 0.511;
+    particle.px = 256+186.792; particle.py = 126 + 120.485; particle.pz = 92 + 111.315; 
+    particle.dx = -0.00673269/nn; particle.dy = -0.508965/nn; particle.dz = -0.045058/nn;
+    particle.t = 2;
+    particle.initialID = initialID+4; // Another pair of particle (first photon), let suppose that the number 3/second photon does not go out of the volume
+    output.particles.push_back(particle);
+    
+  }
+
+  return;
+  // END TEST 
+  //--------------------------------------------------------------------------
+  
+
 	int positron = input->nb_events / 2.0f; // positron generated (nb gamma = 2*ptot) 
 	unsigned short int most_att_mat = 7; // 1 Water  -  7 RibBone  FIXME add most att mat selector
 
 	// T0 run
-	float T0 = input->startTime;
+	float T0 = 0.0;// input->startTime;
 	
 	// Energy
 	float E = input->E; // 511 keV
