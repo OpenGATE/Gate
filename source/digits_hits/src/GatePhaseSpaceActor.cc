@@ -244,8 +244,14 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
 
   t = stepPoint->GetGlobalTime() ;
   //t = step->GetTrack()->GetProperTime() ; //tibo : which time?????
-  GateMessage("Actor",4,st<<" stepPoint time proper="<<stepPoint->GetProperTime()/ns<<" global="<<stepPoint->GetGlobalTime()/ns<<" local="<<stepPoint->GetLocalTime()/ns<<G4endl);
+  GateMessage("Actor",4,st << " stepPoint time proper=" << G4BestUnit(stepPoint->GetProperTime(), "Time")
+              << " global=" << G4BestUnit(stepPoint->GetGlobalTime(), "Time") 
+              << " local=" << G4BestUnit(stepPoint->GetLocalTime(), "Time") <<G4endl);
   GateMessage("Actor",4,"trackid="<<step->GetTrack()->GetParentID()<<" event="<<G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID()<<" run="<<G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID()<<G4endl);
+  
+  GateMessage("Actor", 4, "pos = " << x << " " << y  << " " << z << G4endl);
+  GateMessage("Actor", 4, "E = " << G4BestUnit(stepPoint->GetKineticEnergy(), "Energy") << G4endl);
+
   //GateMessage("Actor",4,st<<" track time proper="<<step->GetTrack()->GetProperTime()/ns<<" global="<<step->GetTrack()->GetGlobalTime()/ns<<" local="<<step->GetTrack()->GetLocalTime()/ns<<G4endl);
 
   e = stepPoint->GetKineticEnergy();
