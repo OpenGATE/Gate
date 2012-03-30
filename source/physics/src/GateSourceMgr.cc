@@ -159,10 +159,7 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
   G4bool bAddSource = true;
   if (CheckSourceName(sourceName)) bAddSource = false;
   
-  // DD(sourceName);
-  // DD(sourceGeomType);
   if( bAddSource ) {
-	G4cout << "################GateSourceMgr::AddSource: " << sourceGeomType << G4endl;
     GateVSource* source = 0;
 #ifdef G4ANALYSIS_USE_ROOT
     if(sourceGeomType == "phaseSpace"){
@@ -311,7 +308,6 @@ GateVSource* GateSourceMgr::GetNextSource()
 
 
     m_firstTime = GateApplicationMgr::GetInstance()->GetTimeStepInTotalAmountOfPrimariesMode();
-    // DD(m_firstTime);
   }
   else {
     // if there is at least one source
