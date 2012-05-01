@@ -43,6 +43,10 @@
 #include "G4VisExecutive.hh"
 #endif
 
+#ifdef G4UI_USE
+#include "G4UIExecutive.hh"
+#endif
+
 #ifndef G4ANALYSIS_USE_ROOT
 //-------------------------------------------------------------------------------------
 void AbortIfRootNotFound()
@@ -278,52 +282,67 @@ GateRecorderBase* myRecords = 0;
   // Get the pointer to the UI manager and set verbosities
   //******************************************************
   
-  // Start the execution of fGATE
+  // Start the execution of GATE
   // Two modes are possible: batch or interactive
-  G4UIsession* session=0;
+
  
-  if (!isMacroFile)  // Define (G)UI terminal for interactive mode
-    {   
-#ifdef G4UI_USE_TCSH
-      session = new G4UIterminal(new G4UItcsh);      
-#else
-      session = new G4UIterminal();
+#ifdef G4UI_USE
+G4UIExecutive * ui = new G4UIExecutive(argc,argv);
 #endif
-    }
+
+G4UIsession* session = NULL;
+if( !ui && !isMacroFile ) // Define (G)UI terminal for interactive mode
+{   
+	#ifdef G4UI_USE_TCSH
+	session = new G4UIterminal(new G4UItcsh);      
+	#else
+	session = new G4UIterminal();
+	#endif
+}
 
   //******************************************************     
   // Get the pointer to the User Interface manager
   //******************************************************
-  G4UImanager* UI = G4UImanager::GetUIpointer(); 
+  G4UImanager* UImanager = G4UImanager::GetUIpointer(); 
 
-  if (session)   // Define UI session for interactive mode
-    {
-      Welcome();
-      // G4UIterminal is a (dumb) terminal      //
-      // UI->ApplyCommand("/control/execute vis.mac");    
-           
-#ifdef G4UI_USE_ROOT
-      // G4UIRoot is a ROOT based GUI.
-      GateMessage("Core", 0,  << "Creating the ROOT UI session..." << G4endl);
-      session = new G4UIRoot(argc,argv,"GATE", "Geant4 Application for Tomographic Emission","root_logo.xpm", "logoGate_medium.xpm");
-#endif
-      
-      session->SessionStart();
-      //delete session;
-    }
-  else           // Batch mode
-    { 
-#ifdef G4VIS_USE
-      visManager->SetVerboseLevel("quiet");
-#endif
-      Welcome();      
-      ExecuteCommandQueue();
-			GateMessage("Core", 0, "Starting macro " << argv[nextArg] << G4endl);
-      G4String command = "/control/execute ";
-      G4String fileName = argv[nextArg];
-      UI->ApplyCommand(command+fileName);
-      GateMessage("Core", 0, "End of macro " << fileName << G4endl);
-    }
+if( ui || session )   // Define UI session for interactive mode
+{
+	Welcome();
+	G4String fileName;
+	if( argc > 1 )
+	{
+		ExecuteCommandQueue();
+		GateMessage("Core", 0, "Starting macro " << argv[nextArg] << G4endl);
+		G4String command = "/control/execute ";
+		fileName = argv[nextArg];
+		UImanager->ApplyCommand(command+fileName);
+	}
+	if( ui )
+	{
+		ui->SessionStart();
+		GateMessage("Core", 0, "End of macro " << fileName << G4endl);
+		delete ui;
+	}
+	else
+	{
+		session->SessionStart();
+		GateMessage("Core", 0, "End of macro " << fileName << G4endl);
+		delete session;
+	}
+}
+else           // Batch mode
+{ 
+	#ifdef G4VIS_USE
+	visManager->SetVerboseLevel("quiet");
+	#endif
+	Welcome();      
+	ExecuteCommandQueue();
+	GateMessage("Core", 0, "Starting macro " << argv[nextArg] << G4endl);
+	G4String command = "/control/execute ";
+	G4String fileName = argv[nextArg];
+	UImanager->ApplyCommand(command+fileName);
+	GateMessage("Core", 0, "End of macro " << fileName << G4endl);
+}
   
   // Job termination 
   // Free the store: user actions, physics_list and
