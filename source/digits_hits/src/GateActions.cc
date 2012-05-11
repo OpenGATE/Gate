@@ -11,7 +11,6 @@
 #ifndef GATEACTION_CC
 #define GATEACTION_CC
 
-#include "GateActions.hh"
 #include "G4Run.hh"
 #include "G4UImanager.hh"
 #include "G4VVisManager.hh"
@@ -20,9 +19,10 @@
 #include "G4VisAttributes.hh"
 #include "G4NeutrinoE.hh"
 #include "G4SteppingManager.hh"
+#include "GateActions.hh"
 #include "GateRecorderBase.hh"
-#include "GateConfiguration.h"
 
+#include "GateConfiguration.h"
 #ifdef G4ANALYSIS_USE_GENERAL
 #include "GateOutputMgr.hh"
 #endif
