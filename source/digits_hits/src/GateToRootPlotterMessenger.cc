@@ -8,12 +8,11 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-#include "GateConfiguration.h"
+#include "GateToRootPlotterMessenger.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 #ifdef G4ANALYSIS_USE_ROOT_PLOTTER
 
-#include "GateToRootPlotterMessenger.hh"
 #include "GateToRootPlotter.hh"
 #include "GateOutputMgr.hh"
 

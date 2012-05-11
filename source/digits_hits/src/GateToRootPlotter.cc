@@ -9,12 +9,11 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
-#include "GateConfiguration.h"
+#include "GateToRootPlotter.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 #ifdef G4ANALYSIS_USE_ROOT_PLOTTER
 
-#include "GateToRootPlotter.hh"
 #include "GateToRootPlotterMessenger.hh"
 
 #include "globals.hh"

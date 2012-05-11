@@ -13,7 +13,7 @@
             - Leaves are defined in GateRootDefs class.
 */
 
-#include "GateConfiguration.h"
+#include "GateToRoot.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 
@@ -22,8 +22,6 @@
 #include "G4Run.hh"
 #include "G4Step.hh"
 #include "G4Event.hh"
-#include "GateCrystalHit.hh"
-#include "GatePhantomHit.hh"
 #include "G4VHitsCollection.hh"
 #include "G4Trajectory.hh"
 #include "G4VProcess.hh"
@@ -34,6 +32,9 @@
 #include "G4Positron.hh"
 #include "G4GenericIon.hh"
 #include "G4Gamma.hh"
+
+#include "GateCrystalHit.hh"
+#include "GatePhantomHit.hh"
 #include "GateApplicationMgr.hh"
 #include "GatePrimaryGeneratorAction.hh"
 #include "GateHitConvertor.hh"
@@ -44,7 +45,6 @@
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
 #include "GateVVolume.hh"
-#include "GateToRoot.hh"
 #include "GateToRootMessenger.hh"
 #include "GateVGeometryVoxelStore.hh"
 
