@@ -1,0 +1,11 @@
+###### List of placement (translation and rotation) 
+###### Column 1      is time (should be 0 here)
+###### Column 2      is rotationAngle in degree 
+###### Columns 3,4,5 are rotation axis  
+###### Columns 6,7,8 are translation in mm
+Time s
+Rotation deg 
+Translation mm
+0  0      0 1 0       50  0  0
+0 40      0 1 1        0  0 30
+0 40      1 0 0        0 30 20 
