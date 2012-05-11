@@ -1,0 +1,158 @@
+
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+# Example of proton beam in heterogeneous phantom (water, bones, Lung)
+# with Pencil Beam Scanning source: comparison between dose to water
+# and dose to dose to medium (conventional one).
+
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+#=====================================================
+# VERBOSE and VISUALISATION 
+#=====================================================
+
+/control/execute mac/verbose.mac
+#/control/execute mac/visu.mac
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+/gate/geometry/setMaterialDatabase data/patient-HUmaterials.db
+
+# WORLD
+/gate/world/setMaterial Air
+/gate/world/geometry/setXLength 5.0 m
+/gate/world/geometry/setYLength 5.0 m
+/gate/world/geometry/setZLength 5.0 m
+#/gate/world/placement/setTranslation 0 0 0 mm
+
+# WATERBOX
+/gate/world/daughters/name water_box
+/gate/world/daughters/insert box
+/gate/water_box/setMaterial G4_WATER
+/gate/water_box/geometry/setXLength 30 cm
+/gate/water_box/geometry/setYLength 30 cm
+/gate/water_box/geometry/setZLength 30 cm
+/gate/water_box/placement/setTranslation 0.0 0.0 0.0 cm
+
+# Bone1-d109 BOX GEOMETRY
+/gate/water_box/daughters/name Bone1-d109
+/gate/water_box/daughters/insert box
+/gate/Bone1-d109/setMaterial Marrow_Bone01_1124
+/gate/Bone1-d109/geometry/setXLength 30 cm
+/gate/Bone1-d109/geometry/setYLength 30 cm
+/gate/Bone1-d109/geometry/setZLength 2 cm
+/gate/Bone1-d109/placement/setTranslation 0.0 0.0 -14.0 cm
+
+# Bone2-d125 BOX GEOMETRY
+/gate/water_box/daughters/name Bone2-d125
+/gate/water_box/daughters/insert box
+/gate/Bone2-d125/setMaterial Marrow_Bone03_1285
+/gate/Bone2-d125/geometry/setXLength 30 cm
+/gate/Bone2-d125/geometry/setYLength 30 cm
+/gate/Bone2-d125/geometry/setZLength 4 cm
+/gate/Bone2-d125/placement/setTranslation 0.0 0.0 -11.0 cm
+
+# Lung1-d026 BOX GEOMETRY
+/gate/water_box/daughters/name Lung1-d026
+/gate/water_box/daughters/insert box
+/gate/Lung1-d026/setMaterial Lung_259
+/gate/Lung1-d026/geometry/setXLength 30 cm
+/gate/Lung1-d026/geometry/setYLength 30 cm
+/gate/Lung1-d026/geometry/setZLength 4 cm
+/gate/Lung1-d026/placement/setTranslation 0.0 0.0 -7.0 cm
+
+# Bone3-d190 BOX GEOMETRY
+/gate/water_box/daughters/name Bone3-d190
+/gate/water_box/daughters/insert box
+/gate/Bone3-d190/setMaterial Marrow_Bone14_1944
+/gate/Bone3-d190/geometry/setXLength 30 cm
+/gate/Bone3-d190/geometry/setYLength 30 cm
+/gate/Bone3-d190/geometry/setZLength 4 cm
+/gate/Bone3-d190/placement/setTranslation 0.0 0.0 -3.0 cm
+
+
+#=====================================================
+# PHYSICS
+#=====================================================
+
+/control/execute mac/physicslist_EM_std.mac
+/control/execute mac/physicslist_HAD_std.mac
+
+# Print Physics
+/gate/physics/print output/physics.txt
+
+#=====================================================
+# Statistics actor
+#=====================================================
+/gate/actor/addActor                    SimulationStatisticActor stat
+/gate/actor/stat/saveEveryNSeconds      120
+/gate/actor/stat/save                   output/statistics.txt
+
+#=====================================================
+# EmCalculator actor
+#=====================================================
+/gate/actor/addActor                            EmCalculatorActor EM-properties
+/gate/actor/EM-properties/setParticleName       proton
+/gate/actor/EM-properties/setEnergy             150 MeV
+/gate/actor/EM-properties/save                  output/EM-properties.txt
+
+#=====================================================
+# Dose actor
+#=====================================================
+/gate/actor/addActor                            DoseActor   dose0
+/gate/actor/dose0/attachTo                      water_box
+/gate/actor/dose0/stepHitType                   random
+/gate/actor/dose0/setPosition                   0 0 0 cm
+#/gate/actor/dose0/setSize                      400 400 400 mm
+/gate/actor/dose0/setResolution                 1 1 300
+/gate/actor/dose0/enableDose                    true
+/gate/actor/dose0/enableDoseToWater             true
+#/gate/actor/dose0/enableUncertaintyDose        true
+#/gate/actor/dose0/enableEdep                   true
+/gate/actor/dose0/save                          output/IDD.txt
+/gate/actor/dose0/saveEveryNSeconds             120
+
+#=====================================
+# SOURCE
+#=====================================
+/gate/source/addSource          PBS PencilBeam
+/gate/source/PBS/setPosition    0 0 -20 cm
+/gate/source/PBS/setEnergy      150 MeV
+/gate/source/PBS/setSigmaEnergy 0.1 MeV
+/gate/source/PBS/setSigmaX      3 mm
+/gate/source/PBS/setSigmaY      3 mm
+/gate/source/PBS/setSigmaTheta  1 mrad
+/gate/source/PBS/setSigmaPhi    1 mrad
+/gate/source/PBS/setEllipseXThetaEmittance      9 mm*mrad
+/gate/source/PBS/setEllipseXThetaRotationNorm   positive
+/gate/source/PBS/setEllipseYPhiEmittance        9 mm*mrad
+/gate/source/PBS/setEllipseYPhiRotationNorm     positive
+/gate/source/PBS/setParticleType                proton
+#/gate/source/PBS/setRotationAxis               1 0 0
+#/gate/source/PBS/setRotationAngle              90 deg
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+
+
+#=====================================================
+# START BEAMS
+#=====================================================
+
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed auto
+
+# When only using the EmCalculator actor for various configurations
+# (without caring of the dose deposition)
+#/gate/application/setTotalNumberOfPrimaries 1
+# Otherwise
+/gate/application/setTotalNumberOfPrimaries 1000
+
+/gate/application/start
+
