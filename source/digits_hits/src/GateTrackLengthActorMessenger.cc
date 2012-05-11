@@ -8,14 +8,10 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-#include "GateConfiguration.h"
+#include "GateTrackLengthActorMessenger.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 
-#ifndef GATETRACKLENGTHACTORMESSENGER_CC
-#define GATETRACKLENGTHACTORMESSENGER_CC
-
-#include "GateTrackLengthActorMessenger.hh"
 #include "GateTrackLengthActor.hh"
 
 
@@ -80,5 +76,4 @@ void GateTrackLengthActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newVa
 }
 //-----------------------------------------------------------------------------
 
-#endif /* end #define GATETRACKLENGTHACTORMESSENGER_CC */
 #endif

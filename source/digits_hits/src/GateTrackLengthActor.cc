@@ -8,19 +8,9 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-#include "GateConfiguration.h"
+#include "GateTrackLengthActor.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
-
-/*
-  \brief Class GateTrackLengthActor : 
-  \brief 
- */
-
-#ifndef GATETRACKLENGTHACTOR_CC
-#define GATETRACKLENGTHACTOR_CC
-
-#include "GateTrackLengthActor.hh"
 
 #include "GateMiscFunctions.hh"
 
@@ -113,8 +103,4 @@ void GateTrackLengthActor::PostUserTrackingAction(const GateVVolume * /*vol*/, c
 }
 //-----------------------------------------------------------------------------
 
-
-
-
-#endif /* end #define GATETRACKLENGTHACTOR_CC */
 #endif
