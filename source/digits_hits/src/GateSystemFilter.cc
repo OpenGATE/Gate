@@ -85,10 +85,11 @@ void GateSystemFilter::SetSystemToItsChain()
 
 //=============================================================================
 //=============================================================================
-void GateSystemFilter::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
+void GateSystemFilter::ProcessOnePulse(const GatePulse* /*inputPulse*/,
+                                       GatePulseList& /*outputPulseList*/)
 {
-   ;
-  }
+  ;
+}
 
 //=============================================================================
 //=============================================================================
