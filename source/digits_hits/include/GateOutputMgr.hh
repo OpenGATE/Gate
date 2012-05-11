@@ -11,8 +11,6 @@
 #ifndef GateOutputMgr_H
 #define GateOutputMgr_H
 
-#include "GateRecorderBase.hh"
-
 #include "globals.hh"
 
 #include "G4Run.hh"
@@ -21,12 +19,13 @@
 #include "G4Timer.hh"
 #include "G4UserSteppingAction.hh"
 
+#include "GateConfiguration.h"
+#include "GateRecorderBase.hh"
 #include "GateVOutputModule.hh"
 #include "GateCrystalHit.hh"
 #include "GatePhantomHit.hh"
 #include "GateSingleDigi.hh"
 #include "GateCoincidenceDigi.hh"
-
 
 class GateOutputMgrMessenger;
 class GateVVolume;
