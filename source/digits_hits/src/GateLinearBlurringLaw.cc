@@ -10,12 +10,10 @@ See GATE/LICENSE.txt for further details
 
 
 #include "GateLinearBlurringLaw.hh"
-#include "GateConfiguration.h"
-/*! \class  GateLinearBlurringLaw
-    \brief  Linear law giving the resolution in energy
 
-    
-      \sa GateVBluringLaw
+/*! \class  GateLinearBlurringLaw
+  \brief  Linear law giving the resolution in energy
+  \sa GateVBluringLaw
 */
 
 

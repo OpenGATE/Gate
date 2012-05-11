@@ -11,37 +11,33 @@
 #include "GateOutputMgr.hh"
 #include "GateVOutputModule.hh"
 #include "GateOutputMgrMessenger.hh"
-#include "GateConfiguration.h"
 
 #include "GateAnalysis.hh"
 #ifdef GATE_USE_OPTICAL
 #include "GateFastAnalysis.hh"
 #endif
 
-#include "GateToDigi.hh"
-#include "GateToASCII.hh"
-#include "GateToBinary.hh"
-#include "GateDigitizer.hh"
 #include "G4DigiManager.hh"
-#include "GateCrystalSD.hh"
-#include "GatePhantomSD.hh"
-#include "GateHitFileReader.hh"
-#include "GateRandomEngine.hh"
-
-
 #include "G4UImanager.hh"
 #include "G4UserSteppingAction.hh"
 #include "G4SteppingManager.hh"
 #include "G4RunManager.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
-#include "GateARFDataToRoot.hh"
 #include "G4VVisManager.hh"
-// CC
-#include "GateToRoot.hh"
-#include "GateToRootPlotter.hh"
 
 #include "GateMessageManager.hh"
+#include "GateToDigi.hh"
+#include "GateToASCII.hh"
+#include "GateToBinary.hh"
+#include "GateDigitizer.hh"
+#include "GateCrystalSD.hh"
+#include "GatePhantomSD.hh"
+#include "GateHitFileReader.hh"
+#include "GateRandomEngine.hh"
+#include "GateARFDataToRoot.hh"
+#include "GateToRoot.hh"
+#include "GateToRootPlotter.hh"
 
 GateOutputMgr* GateOutputMgr::instance = 0;
 
