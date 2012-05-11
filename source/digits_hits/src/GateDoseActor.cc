@@ -317,7 +317,17 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
   if (mIsDoseImageEnabled) {
     double density = step->GetPreStepPoint()->GetMaterial()->GetDensity();
-    dose = edep/density*1e12/mDoseImage.GetVoxelVolume();		
+
+    // ------------------------------------
+    // Convert deposited energy into Gray
+
+    // OLD version (correct but not clear)
+    // dose = edep/density*1e12/mDoseImage.GetVoxelVolume();
+
+    // NEW version (same results but more clear) 
+    dose = edep/density/mDoseImage.GetVoxelVolume()/gray;
+    // ------------------------------------
+    
     GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose = " 
 		     << G4BestUnit(dose, "Dose")
 		     << " rho = " 
