@@ -676,17 +676,17 @@ bool computeSEDT(const Vol &input, Longvol &output, const bool isMultiregion,
       return false;
     }
 
-  std::cout << "Scan X..." << std::flush; 
+  //  std::cout << "Scan X..." << std::flush; 
   phaseSaitoX(input, output, isMultiregion, isToric, NbThreads);
-  std::cout << " Ok" << std::endl;
+  // std::cout << " Ok" << std::endl;
   
-  std::cout <<"Scan Y..." << std::flush;
+  // std::cout <<"Scan Y..." << std::flush;
   phaseSaitoY(input, output, sdt_x, isMultiregion, isToric, NbThreads);
-  std::cout << " Ok" << std::endl;
+  // std::cout << " Ok" << std::endl;
 
-  std::cout <<"Scan Z..." << std::flush;
+  // std::cout <<"Scan Z..." << std::flush;
   phaseSaitoZ(input, sdt_x, output, isMultiregion, isToric, NbThreads);
-  std::cout << " Ok" << std::endl;
+  // std::cout << " Ok" << std::endl;
 
   return true;
 }
