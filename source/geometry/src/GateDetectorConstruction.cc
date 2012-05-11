@@ -130,20 +130,25 @@ G4VPhysicalVolume* GateDetectorConstruction::Construct()
    pworldPhysicalVolume = pworld->GateVVolume::Construct();
    SetGeometryStatusFlag(geometry_is_uptodate);
 
-   GateMessage("Geometry", 2, " "<<G4endl);
-   GateMessage("Geometry", 2, "----------------------------------------------------------"<<G4endl);
-   GateMessage("Geometry", 2, "                    Ionization potential "<<G4endl);
+   GateMessage("Physic", 1, " "<<G4endl);
+   GateMessage("Physic", 1, "----------------------------------------------------------"<<G4endl);
+   GateMessage("Physic", 1, "                    Ionization potential "<<G4endl);
+
    const G4MaterialTable * theTable = G4Material::GetMaterialTable();
    for(unsigned int i =0;i<(*theTable).size();i++){
-     GateMessage("Geometry", 2, "   - "<<(*theTable)[i]->GetName()<<"  defaut value: I = "<< G4BestUnit((*theTable)[i]->GetIonisation()->GetMeanExcitationEnergy(),"Energy")<< G4endl );
      if(theListOfIonisationPotential[(*theTable)[i]->GetName()]){
           (*theTable)[i]->GetIonisation()->SetMeanExcitationEnergy(theListOfIonisationPotential[(*theTable)[i]->GetName()]);
-          GateMessage("Geometry", 2, "          -->  new value: I = "<< G4BestUnit((*theTable)[i]->GetIonisation()->GetMeanExcitationEnergy(),"Energy") << G4endl);
+          GateMessage("Physic", 1, " - " << (*theTable)[i]->GetName() << "\t defaut value: I = " << 
+                      G4BestUnit((*theTable)[i]->GetIonisation()->GetMeanExcitationEnergy(),"Energy") << 
+                      "\t-->  new value: I = " <<  
+                      G4BestUnit((*theTable)[i]->GetIonisation()->GetMeanExcitationEnergy(),"Energy") << G4endl);
+     }
+     else {
+       GateMessage("Physic", 1, " - " << (*theTable)[i]->GetName() << "\t defaut value: I = " << 
+                   G4BestUnit((*theTable)[i]->GetIonisation()->GetMeanExcitationEnergy(),"Energy") << G4endl);
      }
    }
-   GateMessage("Geometry", 2, "----------------------------------------------------------\n"<<G4endl);
-
-
+   GateMessage("Physic", 1, "----------------------------------------------------------"<<G4endl);
 
    GateMessage("Geometry", 3, "Geometry has been constructed (status = " << nGeometryStatus << ").\n");
 
