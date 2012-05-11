@@ -26,6 +26,7 @@
 
 #include "globals.hh"
 #include <vector>
+#include "GateConfiguration.h"
 
 class GateImageCT
 {
