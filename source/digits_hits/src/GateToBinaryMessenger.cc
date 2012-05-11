@@ -10,12 +10,11 @@
  *	Public Licence (LGPL) See GATE/LICENSE.txt for further details
  */
 
-#include "GateConfiguration.h"
+#include "GateToBinary.hh"
+#include "GateToBinaryMessenger.hh"
 
 #ifdef G4ANALYSIS_USE_FILE
 
-#include "GateToBinary.hh"
-#include "GateToBinaryMessenger.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithAnInteger.hh"

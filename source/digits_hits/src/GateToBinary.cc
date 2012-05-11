@@ -10,7 +10,7 @@
  *	Public Licence (LGPL) See GATE/LICENSE.txt for further details
  */
 
-#include "GateConfiguration.h"
+#include "GateToBinary.hh"
 
 #ifdef G4ANALYSIS_USE_FILE
 
@@ -18,7 +18,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "GateToBinary.hh"
 #include "GateToBinaryMessenger.hh"
 #include "GateOutputMgr.hh"
 #include "GateVGeometryVoxelStore.hh"

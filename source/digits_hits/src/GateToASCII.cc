@@ -8,11 +8,10 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-#include "GateConfiguration.h"
+#include "GateToASCII.hh"
 
 #ifdef G4ANALYSIS_USE_FILE
 
-#include "GateToASCII.hh"
 #include "GateToASCIIMessenger.hh"
 #include "GateVGeometryVoxelStore.hh"
 
