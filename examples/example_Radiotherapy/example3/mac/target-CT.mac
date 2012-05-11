@@ -1,0 +1,42 @@
+# ---------------------------------------
+# Patient
+# ---------------------------------------
+
+###  Generate materials from Hounsfield units
+/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt 
+/gate/HounsfieldMaterialGenerator/SetDensityTable                   data/Schneider2000DensitiesTable.txt
+/gate/HounsfieldMaterialGenerator/SetDensityTolerance               0.1 g/cm3
+/gate/HounsfieldMaterialGenerator/SetOutputMaterialDatabaseFilename data/patient4-HUmaterials.db
+/gate/HounsfieldMaterialGenerator/SetOutputHUMaterialFilename       data/patient4-HU2mat.txt
+/gate/HounsfieldMaterialGenerator/Generate
+
+###  Insert image
+
+/gate/world/daughters/name                      patient
+#/gate/world/daughters/insert                    ImageNestedParametrisedVolume
+/gate/world/daughters/insert                    ImageRegionalizedVolume
+
+/gate/geometry/setMaterialDatabase              data/patient4-HUmaterials.db
+/gate/patient/geometry/SetHUToMaterialFile      data/patient4-HU2mat.txt
+/gate/patient/geometry/SetImage                 data/patient4-4mm.hdr
+
+# If "ImageRegionalizedVolume" is used instead of "ImageNestedParametrisedVolume"
+# You should compute (at least once the dmap image) with "buildAndDumpDistanceTransfo"
+# and used it with "distanceMap"
+# With photon simulation, ImageRegionalizedVolume is faster than ImageNestedParametrisedVolume
+#/gate/patient/geometry/buildAndDumpDistanceTransfo   data/patient4-4mm-dmap.hdr
+/gate/patient/geometry/distanceMap                   data/patient4-4mm-dmap.hdr
+
+### optional : dump used image (with labels)
+#/gate/patient/geometry/buildAndDumpLabeledImage  data/patient4-labeled.hdr
+
+### Put the following image point at center
+/gate/patient/geometry/setOrigin                         -293 -223 -246 mm
+/gate/patient/geometry/TranslateTheImageAtThisIsoCenter  5.2 69.5 -18.0 mm
+
+### rotate the patient
+/gate/patient/placement/setRotationAxis 1 0 0
+/gate/patient/placement/setRotationAngle -90 deg
+
+### debug only
+#/gate/patient/geometry/enableBoundingBoxOnly true

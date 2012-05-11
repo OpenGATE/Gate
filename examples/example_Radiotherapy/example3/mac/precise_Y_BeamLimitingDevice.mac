@@ -1,0 +1,193 @@
+# -----------------------------------------------------
+# MACRO TEMPLATE FOR BEAM LIMITING DEVICE Y (BACKUP Y)
+# -----------------------------------------------------
+
+# [BLD_DISTANCE_TO_SOURCE_IN_MM] 411
+# white white
+# backupY backupY
+# [BLD_ROUNDED_PART_RADIUS] 150
+# [BLD_LEAF_LENGTH] 185
+## [BLD_LEAF_WIDTH] 420
+
+# -----------------------------------------------------
+/gate/mylinacGantry/daughters/name backupY
+/gate/mylinacGantry/daughters/insert box
+/gate/backupY/setMaterial Air
+#/gate/backupY/geometry/setXLength 800.0 mm  
+#/gate/backupY/geometry/setYLength 800.0 mm  
+#/gate/backupY/geometry/setZLength 30.1 mm  
+/gate/backupY/geometry/setXLength 500.0 mm  
+/gate/backupY/geometry/setYLength 500.0 mm  
+#/gate/backupY/geometry/setZLength 30.1 mm  
+/gate/backupY/geometry/setZLength 30.5 mm  
+/gate/backupY/placement/setTranslation 0.0 0.0 -411 mm
+/gate/backupY/placement/setRotationAxis  0 0 1
+/gate/backupY/placement/setRotationAngle -90 deg
+#/gate/backupY/vis/setVisible 1
+
+/gate/backupY/daughters/name backupY_1
+/gate/backupY/daughters/insert box
+/gate/backupY_1/setMaterial Air
+/gate/backupY_1/geometry/setXLength 185.1 mm  
+/gate/backupY_1/geometry/setYLength 485.1 mm
+/gate/backupY_1/geometry/setZLength 30.1 mm
+#/gate/backupY_1/geometry/setZLength 30.2 mm
+/gate/backupY_1/placement/setRotationAxis  0 0 1
+/gate/backupY_1/placement/setRotationAngle 90 deg
+
+## KILL PLANE
+/gate/backupY_1/daughters/name                      backupY_1_Kill_Plane
+/gate/backupY_1/daughters/insert                    box
+/gate/backupY_1_Kill_Plane/setMaterial              Vacuum
+/gate/backupY_1_Kill_Plane/geometry/setXLength      180.1 mm  
+/gate/backupY_1_Kill_Plane/geometry/setYLength      485.1 mm
+/gate/backupY_1_Kill_Plane/geometry/setZLength      1 nm
+/gate/backupY_1_Kill_Plane/placement/setTranslation 0.0 0.0 15.05 mm
+/gate/backupY_1_Kill_Plane/vis/setColor             blue
+/gate/backupY_1_Kill_Plane/vis/setVisible           1
+
+
+/gate/backupY_1/daughters/name backupY_trp_inf_1
+/gate/backupY_1/daughters/insert general_trpd
+/gate/backupY_trp_inf_1/setMaterial AcceleratorCollimatorLeafMaterial
+/gate/backupY_trp_inf_1/geometry/setX1Length 35 mm
+/gate/backupY_trp_inf_1/geometry/setX2Length 35 mm
+/gate/backupY_trp_inf_1/geometry/setX3Length 184.248 mm
+/gate/backupY_trp_inf_1/geometry/setX4Length 184.248 mm
+/gate/backupY_trp_inf_1/geometry/setY1Length 485 mm
+/gate/backupY_trp_inf_1/geometry/setY2Length 485 mm
+/gate/backupY_trp_inf_1/geometry/setZLength  15 mm
+/gate/backupY_trp_inf_1/geometry/setTheta    78.6346 deg
+/gate/backupY_trp_inf_1/geometry/setPhi      0 deg
+/gate/backupY_trp_inf_1/geometry/setAlp1     0 deg
+/gate/backupY_trp_inf_1/geometry/setAlp2     0 deg
+/gate/backupY_trp_inf_1/placement/setTranslation    -37.688  0.0 7.5 mm
+#/gate/backupY_trp_inf_1/placement/setTranslation    -38.790  0.0 19.5 mm
+#/gate/backupY_trp_inf_1/placement/setTranslation     19.812  0.0 7.5 mm
+
+/gate/backupY_1/daughters/name backupY_trp_sup_1
+/gate/backupY_1/daughters/insert general_trpd
+/gate/backupY_trp_sup_1/setMaterial AcceleratorCollimatorLeafMaterial
+/gate/backupY_trp_sup_1/geometry/setX1Length 184.248 mm
+/gate/backupY_trp_sup_1/geometry/setX2Length 184.248 mm
+/gate/backupY_trp_sup_1/geometry/setX3Length 35 mm
+/gate/backupY_trp_sup_1/geometry/setX4Length 35 mm
+/gate/backupY_trp_sup_1/geometry/setY1Length 485 mm
+/gate/backupY_trp_sup_1/geometry/setY2Length 485 mm
+/gate/backupY_trp_sup_1/geometry/setZLength  15 mm
+/gate/backupY_trp_sup_1/geometry/setTheta   -78.6346 deg
+/gate/backupY_trp_sup_1/geometry/setPhi      0 deg
+/gate/backupY_trp_sup_1/geometry/setAlp1     0 deg
+/gate/backupY_trp_sup_1/geometry/setAlp2     0 deg
+/gate/backupY_trp_sup_1/placement/setTranslation    -37.688 0.0 -7.51 mm
+#/gate/backupY_trp_sup_1/placement/setTranslation    -38.790 0.0 -19.51 mm
+#/gate/backupY_trp_sup_1/placement/setTranslation     1.210  0.0 -19.5 mm
+
+/gate/backupY_1/daughters/name backupY_rounded_part_1
+/gate/backupY_1/daughters/insert cylinder
+/gate/backupY_rounded_part_1/setMaterial AcceleratorCollimatorLeafMaterial
+/gate/backupY_rounded_part_1/geometry/setRmin 0 mm
+/gate/backupY_rounded_part_1/geometry/setRmax 150 mm
+/gate/backupY_rounded_part_1/geometry/setHeight 485 mm
+/gate/backupY_rounded_part_1/geometry/setPhiStart -5.739 deg
+/gate/backupY_rounded_part_1/geometry/setDeltaPhi  11.478 deg
+/gate/backupY_rounded_part_1/placement/setTranslation -57.45 0 0 mm
+/gate/backupY_rounded_part_1/placement/setRotationAxis 1 0 0 
+/gate/backupY_rounded_part_1/placement/setRotationAngle 90 deg
+
+
+#ss_boite colli backup x droite
+/gate/backupY/daughters/name backupY_2
+/gate/backupY/daughters/insert box
+/gate/backupY_2/setMaterial Air
+/gate/backupY_2/geometry/setXLength 185.1 mm  
+/gate/backupY_2/geometry/setYLength 485.1 mm
+/gate/backupY_2/geometry/setZLength 30.1 mm
+/gate/backupY_2/placement/setRotationAxis  0 0 1
+/gate/backupY_2/placement/setRotationAngle -90 deg
+
+## KILL PLANE
+/gate/backupY_2/daughters/name                      backupY_2_Kill_Plane
+/gate/backupY_2/daughters/insert                    box
+/gate/backupY_2_Kill_Plane/setMaterial              Vacuum
+/gate/backupY_2_Kill_Plane/geometry/setXLength      180.1 mm  
+/gate/backupY_2_Kill_Plane/geometry/setYLength      485.1 mm
+/gate/backupY_2_Kill_Plane/geometry/setZLength      1 nm
+/gate/backupY_2_Kill_Plane/placement/setTranslation 0.0 0.0 15.05 mm
+/gate/backupY_2_Kill_Plane/vis/setColor             blue
+/gate/backupY_2_Kill_Plane/vis/setVisible           1
+
+
+
+/gate/backupY_2/daughters/name backupY_trp_inf_2
+/gate/backupY_2/daughters/insert general_trpd
+/gate/backupY_trp_inf_2/setMaterial AcceleratorCollimatorLeafMaterial
+/gate/backupY_trp_inf_2/geometry/setX1Length 35 mm
+/gate/backupY_trp_inf_2/geometry/setX2Length 35 mm
+/gate/backupY_trp_inf_2/geometry/setX3Length 184.248 mm
+/gate/backupY_trp_inf_2/geometry/setX4Length 184.248 mm
+/gate/backupY_trp_inf_2/geometry/setY1Length 485 mm
+/gate/backupY_trp_inf_2/geometry/setY2Length 485 mm
+/gate/backupY_trp_inf_2/geometry/setZLength  15 mm
+/gate/backupY_trp_inf_2/geometry/setTheta    78.6346 deg
+/gate/backupY_trp_inf_2/geometry/setPhi      0 deg
+/gate/backupY_trp_inf_2/geometry/setAlp1     0 deg
+/gate/backupY_trp_inf_2/geometry/setAlp2     0 deg
+/gate/backupY_trp_inf_2/placement/setTranslation    -37.688  0.0 7.5 mm
+#/gate/backupY_trp_inf_2/placement/setTranslation    -38.790  0.0 19.5 mm
+#/gate/backupY_trp_inf_2/placement/setTranslation     19.812  0.0 7.5 mm
+
+/gate/backupY_2/daughters/name backupY_trp_sup_2
+/gate/backupY_2/daughters/insert general_trpd
+/gate/backupY_trp_sup_2/setMaterial AcceleratorCollimatorLeafMaterial
+/gate/backupY_trp_sup_2/geometry/setX1Length 184.248 mm
+/gate/backupY_trp_sup_2/geometry/setX2Length 184.248 mm
+/gate/backupY_trp_sup_2/geometry/setX3Length 35 mm
+/gate/backupY_trp_sup_2/geometry/setX4Length 35 mm
+/gate/backupY_trp_sup_2/geometry/setY1Length 485 mm
+/gate/backupY_trp_sup_2/geometry/setY2Length 485 mm
+/gate/backupY_trp_sup_2/geometry/setZLength  15 mm
+/gate/backupY_trp_sup_2/geometry/setTheta   -78.6346 deg
+/gate/backupY_trp_sup_2/geometry/setPhi      0 deg
+/gate/backupY_trp_sup_2/geometry/setAlp1     0 deg
+/gate/backupY_trp_sup_2/geometry/setAlp2     0 deg
+/gate/backupY_trp_sup_2/placement/setTranslation    -37.688 0.0 -7.51 mm
+#/gate/backupY_trp_sup_2/placement/setTranslation    -38.790 0.0 -19.51 mm
+#/gate/backupY_trp_sup_2/placement/setTranslation     1.210  0.0 -19.5 mm
+
+/gate/backupY_2/daughters/name backupY_rounded_part_2
+/gate/backupY_2/daughters/insert cylinder
+/gate/backupY_rounded_part_2/setMaterial AcceleratorCollimatorLeafMaterial
+/gate/backupY_rounded_part_2/geometry/setRmin 0 mm
+/gate/backupY_rounded_part_2/geometry/setRmax 150 mm
+/gate/backupY_rounded_part_2/geometry/setHeight 485 mm
+/gate/backupY_rounded_part_2/geometry/setPhiStart -5.739 deg
+/gate/backupY_rounded_part_2/geometry/setDeltaPhi  11.478 deg
+/gate/backupY_rounded_part_2/placement/setTranslation -57.45 0 0 mm
+/gate/backupY_rounded_part_2/placement/setRotationAxis 1 0 0 
+/gate/backupY_rounded_part_2/placement/setRotationAngle 90 deg
+
+# -----------------------------------------------------
+# Color
+/gate/backupY/vis/setVisible 0
+/gate/backupY_1/vis/setColor white
+/gate/backupY_trp_inf_1/vis/setColor white
+/gate/backupY_trp_sup_1/vis/setColor white
+/gate/backupY_rounded_part_1/vis/setColor white
+
+# -----------------------------------------------------
+# Color
+/gate/backupY_2/vis/setColor white
+/gate/backupY_trp_inf_2/vis/setColor white
+/gate/backupY_trp_sup_2/vis/setColor white
+/gate/backupY_rounded_part_2/vis/setColor white
+
+# -----------------------------------------------------
+# Translation & Motion 
+
+/gate/backupY_1/moves/insert genericMove
+/gate/backupY_1/genericMove/setPlacementsFilename data/precise_Y_BLD1.placements
+
+/gate/backupY_2/moves/insert genericMove
+/gate/backupY_2/genericMove/setPlacementsFilename data/precise_Y_BLD2.placements
+

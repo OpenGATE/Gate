@@ -1,0 +1,67 @@
+# -----------------------------------------------------
+# MACRO TEMPLATE FOR MAIN LINAC BOX
+# -----------------------------------------------------
+
+# mylinac mylinac
+
+# -----------------------------------------------------
+# Main Linac box with initial position ("gantry at zero")
+/gate/world/daughters/name mylinac
+/gate/world/daughters/insert box
+/gate/mylinac/setMaterial Air
+/gate/mylinac/geometry/setXLength 0.7 m  
+/gate/mylinac/geometry/setYLength 0.7 m
+/gate/mylinac/geometry/setZLength 1.1 m
+/gate/mylinac/vis/setColor white
+/gate/mylinac/vis/setVisible 0
+/gate/mylinac/moves/insert genericMove
+/gate/mylinac/genericMove/setPlacementsFilename data/precise_Linac.placements
+#/gate/mylinac/genericMove/useRelativeTranslation 1
+
+# -----------------------------------------------------
+# Main Linac box including gantry rotation
+/gate/mylinac/daughters/name mylinacGantry
+/gate/mylinac/daughters/insert box
+/gate/mylinacGantry/setMaterial Air
+/gate/mylinacGantry/geometry/setXLength 0.7 m  
+/gate/mylinacGantry/geometry/setYLength 0.7 m
+/gate/mylinacGantry/geometry/setZLength 1.1 m
+/gate/mylinacGantry/vis/setColor red
+/gate/mylinacGantry/vis/setVisible 0
+
+# -----------------------------------------------------
+# Plane for Phase Space
+/gate/mylinacGantry/daughters/name linacPhSPlane
+/gate/mylinacGantry/daughters/insert box
+/gate/linacPhSPlane/setMaterial Air
+/gate/linacPhSPlane/geometry/setXLength 0.7 m  
+/gate/linacPhSPlane/geometry/setYLength 0.7 m
+/gate/linacPhSPlane/geometry/setZLength 1 nm
+/gate/linacPhSPlane/vis/setColor red
+/gate/linacPhSPlane/vis/setVisible 1
+/gate/linacPhSPlane/placement/setTranslation 0.0 0.0 -297 mm
+
+# -----------------------------------------------------
+# MLC box
+/gate/mylinacGantry/daughters/name mylinac_MLC
+/gate/mylinacGantry/daughters/insert box
+/gate/mylinac_MLC/setMaterial Air
+/gate/mylinac_MLC/geometry/setXLength 500.0 mm  
+/gate/mylinac_MLC/geometry/setYLength 500.0 mm  
+/gate/mylinac_MLC/geometry/setZLength 100.0 mm  
+#/gate/mylinac_MLC/geometry/setXLength 800.0 mm  
+#/gate/mylinac_MLC/geometry/setYLength 800.0 mm  
+#/gate/mylinac_MLC/geometry/setZLength 76.0 mm  
+/gate/mylinac_MLC/placement/setTranslation 0.0 0.0 -335.5 mm
+/gate/mylinac_MLC/vis/setVisible 0
+# All leafs
+/control/execute mac/precise_MultiLeafsCollimator.mac
+
+# -----------------------------------------------------
+# Beam Limiting Device Y
+/control/execute mac/precise_Y_BeamLimitingDevice.mac
+
+# -----------------------------------------------------
+# Beam Limiting Device X
+/control/execute mac/precise_X_BeamLimitingDevice.mac
+

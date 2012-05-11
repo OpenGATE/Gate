@@ -1,0 +1,204 @@
+# -----------------------------------------------------
+# MACRO TEMPLATE FOR A SINGLE LEAF
+# -----------------------------------------------------
+
+# 3 3
+# -83 -83
+# [LEAF_DISTANCE_TO_SOURCE_IN_MM] 329.77
+# [LEAF_ROUNDED_PART_RADIUS] 150
+# [LEAF_LEFT_COLOR] yellow
+# [LEAF_RIGHT_COLOR] magenta
+
+# -----------------------------------------------------
+# Main leaf box
+/gate/mylinac_MLC/daughters/name mylinac_MLC_Leaf1_Left
+/gate/mylinac_MLC/daughters/insert box
+/gate/mylinac_MLC_Leaf1_Left/setMaterial Air
+
+/gate/mylinac_MLC_Leaf1_Left/geometry/setXLength 166.1 mm  
+/gate/mylinac_MLC_Leaf1_Left/geometry/setYLength 3 mm
+# /gate/mylinac_MLC_Leaf1_Left/geometry/setZLength 76.0 mm
+# greater size to insert kill plane
+/gate/mylinac_MLC_Leaf1_Left/geometry/setZLength 77.0 mm
+
+/gate/mylinac_MLC_Leaf1_Left/placement/setTranslation -83 0 0 mm
+/gate/mylinac_MLC_Leaf1_Left/placement/setRotationAxis  0 0 1
+/gate/mylinac_MLC_Leaf1_Left/placement/setRotationAngle 0 deg
+
+## KILL PLANE
+/gate/mylinac_MLC_Leaf1_Left/daughters/name                           mylinac_MLC_Leaf1_Left_Leaf_Kill_Plane
+/gate/mylinac_MLC_Leaf1_Left/daughters/insert                         box
+/gate/mylinac_MLC_Leaf1_Left_Leaf_Kill_Plane/setMaterial              Vacuum
+/gate/mylinac_MLC_Leaf1_Left_Leaf_Kill_Plane/geometry/setXLength      158 mm  
+/gate/mylinac_MLC_Leaf1_Left_Leaf_Kill_Plane/geometry/setYLength      3 mm
+/gate/mylinac_MLC_Leaf1_Left_Leaf_Kill_Plane/geometry/setZLength      1 nm
+/gate/mylinac_MLC_Leaf1_Left_Leaf_Kill_Plane/placement/setTranslation 0 0 38 mm
+## 38 is half 76 mm
+/gate/mylinac_MLC_Leaf1_Left_Leaf_Kill_Plane/vis/setColor             blue
+/gate/mylinac_MLC_Leaf1_Left_Leaf_Kill_Plane/vis/setVisible           1
+
+
+## TRPD SUP
+/gate/mylinac_MLC_Leaf1_Left/daughters/name mylinac_MLC_Leaf1_Left_trp_sup
+/gate/mylinac_MLC_Leaf1_Left/daughters/insert general_trpd
+/gate/mylinac_MLC_Leaf1_Left_trp_sup/setMaterial AcceleratorCollimatorLeafMaterial
+/gate/mylinac_MLC_Leaf1_Left_trp_sup/geometry/setX1Length 16 mm
+/gate/mylinac_MLC_Leaf1_Left_trp_sup/geometry/setX2Length 16 mm
+/gate/mylinac_MLC_Leaf1_Left_trp_sup/geometry/setX3Length 162.60 mm
+/gate/mylinac_MLC_Leaf1_Left_trp_sup/geometry/setX4Length 162.60 mm
+/gate/mylinac_MLC_Leaf1_Left_trp_sup/geometry/setY1Length 3 mm
+/gate/mylinac_MLC_Leaf1_Left_trp_sup/geometry/setY2Length 3 mm
+/gate/mylinac_MLC_Leaf1_Left_trp_sup/geometry/setZLength  31.77 mm
+/gate/mylinac_MLC_Leaf1_Left_trp_sup/geometry/setTheta    66.567 deg
+/gate/mylinac_MLC_Leaf1_Left_trp_sup/geometry/setPhi  0 deg
+/gate/mylinac_MLC_Leaf1_Left_trp_sup/geometry/setAlp1     0 deg
+/gate/mylinac_MLC_Leaf1_Left_trp_sup/geometry/setAlp2     0 deg
+/gate/mylinac_MLC_Leaf1_Left_trp_sup/placement/setTranslation    -38.38 0.0 21.615 mm
+#/gate/mylinac_MLC_Leaf1_Left_trp_sup/placement/setTranslation     28.63 0.0 15.885 mm
+
+## TRPD INF
+/gate/mylinac_MLC_Leaf1_Left/daughters/name mylinac_MLC_Leaf1_Left_trp_inf
+/gate/mylinac_MLC_Leaf1_Left/daughters/insert general_trpd
+/gate/mylinac_MLC_Leaf1_Left_trp_inf/setMaterial AcceleratorCollimatorLeafMaterial
+/gate/mylinac_MLC_Leaf1_Left_trp_inf/geometry/setX1Length 159.64 mm
+/gate/mylinac_MLC_Leaf1_Left_trp_inf/geometry/setX2Length 159.64 mm
+/gate/mylinac_MLC_Leaf1_Left_trp_inf/geometry/setX3Length 16 mm
+/gate/mylinac_MLC_Leaf1_Left_trp_inf/geometry/setX4Length 16 mm
+/gate/mylinac_MLC_Leaf1_Left_trp_inf/geometry/setY1Length 3 mm
+/gate/mylinac_MLC_Leaf1_Left_trp_inf/geometry/setY2Length 3 mm
+/gate/mylinac_MLC_Leaf1_Left_trp_inf/geometry/setZLength  43.23 mm
+/gate/mylinac_MLC_Leaf1_Left_trp_inf/geometry/setTheta   -58.955 deg
+/gate/mylinac_MLC_Leaf1_Left_trp_inf/geometry/setPhi    0 deg
+/gate/mylinac_MLC_Leaf1_Left_trp_inf/geometry/setAlp1     0 deg
+/gate/mylinac_MLC_Leaf1_Left_trp_inf/geometry/setAlp2     0 deg
+/gate/mylinac_MLC_Leaf1_Left_trp_inf/placement/setTranslation    -39.095 0.0 -15.885 mm
+#/gate/mylinac_MLC_Leaf1_Left_trp_inf/placement/setTranslation     27.905 0.0 -21.615 mm
+
+# ROUNDED PART
+/gate/mylinac_MLC_Leaf1_Left/daughters/name mylinac_MLC_Leaf1_Left_rounded_part
+/gate/mylinac_MLC_Leaf1_Left/daughters/insert cylinder
+/gate/mylinac_MLC_Leaf1_Left_rounded_part/setMaterial AcceleratorCollimatorLeafMaterial
+/gate/mylinac_MLC_Leaf1_Left_rounded_part/geometry/setRmin 0 mm
+/gate/mylinac_MLC_Leaf1_Left_rounded_part/geometry/setRmax 150 mm
+/gate/mylinac_MLC_Leaf1_Left_rounded_part/geometry/setHeight 3 mm
+/gate/mylinac_MLC_Leaf1_Left_rounded_part/geometry/setPhiStart -16.75 deg
+/gate/mylinac_MLC_Leaf1_Left_rounded_part/geometry/setDeltaPhi 28.98 deg
+/gate/mylinac_MLC_Leaf1_Left_rounded_part/placement/setTranslation -67.0 0 5.730 mm
+#/gate/mylinac_MLC_Leaf1_Left_rounded_part/placement/setTranslation 0 0 5.73 mm
+/gate/mylinac_MLC_Leaf1_Left_rounded_part/placement/setRotationAxis 1 0 0 
+/gate/mylinac_MLC_Leaf1_Left_rounded_part/placement/setRotationAngle 90 deg
+
+# Visu
+/gate/mylinac_MLC_Leaf1_Left/vis/setVisible 0
+/gate/mylinac_MLC_Leaf1_Left_trp_sup/vis/setColor yellow
+/gate/mylinac_MLC_Leaf1_Left_trp_inf/vis/setColor yellow
+/gate/mylinac_MLC_Leaf1_Left_rounded_part/vis/setColor yellow
+
+# -----------------------------------------------------
+# Repeater and motion
+/gate/mylinac_MLC_Leaf1_Left/moves/insert genericRepeaterMove
+/gate/mylinac_MLC_Leaf1_Left/genericRepeaterMove/setPlacementsFilename data/precise_MultiLeafsCollimator_Leaf1Left.placements
+/gate/mylinac_MLC_Leaf1_Left/genericRepeaterMove/useRelativeTranslation 1
+
+# -----------------------------------------------------
+# MACRO TEMPLATE FOR A SINGLE LEAF
+# -----------------------------------------------------
+
+# 3 3
+# 83 -83
+# [LEAF_DISTANCE_TO_SOURCE_IN_MM] 329.77
+# [LEAF_ROUNDED_PART_RADIUS] 150
+# [LEAF_LEFT_COLOR] yellow
+# [LEAF_RIGHT_COLOR] magenta
+
+# -----------------------------------------------------
+# Main leaf box
+/gate/mylinac_MLC/daughters/name mylinac_MLC_Leaf2_Right
+/gate/mylinac_MLC/daughters/insert box
+/gate/mylinac_MLC_Leaf2_Right/setMaterial Air
+
+/gate/mylinac_MLC_Leaf2_Right/geometry/setXLength 166.1 mm  
+/gate/mylinac_MLC_Leaf2_Right/geometry/setYLength 3 mm
+# /gate/mylinac_MLC_Leaf2_Right/geometry/setZLength 76.0 mm
+# greater size to insert kill plane
+/gate/mylinac_MLC_Leaf2_Right/geometry/setZLength 77.0 mm
+
+/gate/mylinac_MLC_Leaf2_Right/placement/setTranslation 83 0 0 mm
+/gate/mylinac_MLC_Leaf2_Right/placement/setRotationAxis  0 0 1
+/gate/mylinac_MLC_Leaf2_Right/placement/setRotationAngle 180 deg
+
+## KILL PLANE
+/gate/mylinac_MLC_Leaf2_Right/daughters/name                           mylinac_MLC_Leaf2_Right_Leaf_Kill_Plane
+/gate/mylinac_MLC_Leaf2_Right/daughters/insert                         box
+/gate/mylinac_MLC_Leaf2_Right_Leaf_Kill_Plane/setMaterial              Vacuum
+/gate/mylinac_MLC_Leaf2_Right_Leaf_Kill_Plane/geometry/setXLength      158 mm  
+/gate/mylinac_MLC_Leaf2_Right_Leaf_Kill_Plane/geometry/setYLength      3 mm
+/gate/mylinac_MLC_Leaf2_Right_Leaf_Kill_Plane/geometry/setZLength      1 nm
+/gate/mylinac_MLC_Leaf2_Right_Leaf_Kill_Plane/placement/setTranslation 0 0 38 mm
+## 38 is half 76 mm
+/gate/mylinac_MLC_Leaf2_Right_Leaf_Kill_Plane/vis/setColor             blue
+/gate/mylinac_MLC_Leaf2_Right_Leaf_Kill_Plane/vis/setVisible           1
+
+
+## TRPD SUP
+/gate/mylinac_MLC_Leaf2_Right/daughters/name mylinac_MLC_Leaf2_Right_trp_sup
+/gate/mylinac_MLC_Leaf2_Right/daughters/insert general_trpd
+/gate/mylinac_MLC_Leaf2_Right_trp_sup/setMaterial AcceleratorCollimatorLeafMaterial
+/gate/mylinac_MLC_Leaf2_Right_trp_sup/geometry/setX1Length 16 mm
+/gate/mylinac_MLC_Leaf2_Right_trp_sup/geometry/setX2Length 16 mm
+/gate/mylinac_MLC_Leaf2_Right_trp_sup/geometry/setX3Length 162.60 mm
+/gate/mylinac_MLC_Leaf2_Right_trp_sup/geometry/setX4Length 162.60 mm
+/gate/mylinac_MLC_Leaf2_Right_trp_sup/geometry/setY1Length 3 mm
+/gate/mylinac_MLC_Leaf2_Right_trp_sup/geometry/setY2Length 3 mm
+/gate/mylinac_MLC_Leaf2_Right_trp_sup/geometry/setZLength  31.77 mm
+/gate/mylinac_MLC_Leaf2_Right_trp_sup/geometry/setTheta    66.567 deg
+/gate/mylinac_MLC_Leaf2_Right_trp_sup/geometry/setPhi  0 deg
+/gate/mylinac_MLC_Leaf2_Right_trp_sup/geometry/setAlp1     0 deg
+/gate/mylinac_MLC_Leaf2_Right_trp_sup/geometry/setAlp2     0 deg
+/gate/mylinac_MLC_Leaf2_Right_trp_sup/placement/setTranslation    -38.38 0.0 21.615 mm
+#/gate/mylinac_MLC_Leaf2_Right_trp_sup/placement/setTranslation     28.63 0.0 15.885 mm
+
+## TRPD INF
+/gate/mylinac_MLC_Leaf2_Right/daughters/name mylinac_MLC_Leaf2_Right_trp_inf
+/gate/mylinac_MLC_Leaf2_Right/daughters/insert general_trpd
+/gate/mylinac_MLC_Leaf2_Right_trp_inf/setMaterial AcceleratorCollimatorLeafMaterial
+/gate/mylinac_MLC_Leaf2_Right_trp_inf/geometry/setX1Length 159.64 mm
+/gate/mylinac_MLC_Leaf2_Right_trp_inf/geometry/setX2Length 159.64 mm
+/gate/mylinac_MLC_Leaf2_Right_trp_inf/geometry/setX3Length 16 mm
+/gate/mylinac_MLC_Leaf2_Right_trp_inf/geometry/setX4Length 16 mm
+/gate/mylinac_MLC_Leaf2_Right_trp_inf/geometry/setY1Length 3 mm
+/gate/mylinac_MLC_Leaf2_Right_trp_inf/geometry/setY2Length 3 mm
+/gate/mylinac_MLC_Leaf2_Right_trp_inf/geometry/setZLength  43.23 mm
+/gate/mylinac_MLC_Leaf2_Right_trp_inf/geometry/setTheta   -58.955 deg
+/gate/mylinac_MLC_Leaf2_Right_trp_inf/geometry/setPhi    0 deg
+/gate/mylinac_MLC_Leaf2_Right_trp_inf/geometry/setAlp1     0 deg
+/gate/mylinac_MLC_Leaf2_Right_trp_inf/geometry/setAlp2     0 deg
+/gate/mylinac_MLC_Leaf2_Right_trp_inf/placement/setTranslation    -39.095 0.0 -15.885 mm
+#/gate/mylinac_MLC_Leaf2_Right_trp_inf/placement/setTranslation     27.905 0.0 -21.615 mm
+
+# ROUNDED PART
+/gate/mylinac_MLC_Leaf2_Right/daughters/name mylinac_MLC_Leaf2_Right_rounded_part
+/gate/mylinac_MLC_Leaf2_Right/daughters/insert cylinder
+/gate/mylinac_MLC_Leaf2_Right_rounded_part/setMaterial AcceleratorCollimatorLeafMaterial
+/gate/mylinac_MLC_Leaf2_Right_rounded_part/geometry/setRmin 0 mm
+/gate/mylinac_MLC_Leaf2_Right_rounded_part/geometry/setRmax 150 mm
+/gate/mylinac_MLC_Leaf2_Right_rounded_part/geometry/setHeight 3 mm
+/gate/mylinac_MLC_Leaf2_Right_rounded_part/geometry/setPhiStart -16.75 deg
+/gate/mylinac_MLC_Leaf2_Right_rounded_part/geometry/setDeltaPhi 28.98 deg
+/gate/mylinac_MLC_Leaf2_Right_rounded_part/placement/setTranslation -67.0 0 5.730 mm
+#/gate/mylinac_MLC_Leaf2_Right_rounded_part/placement/setTranslation 0 0 5.73 mm
+/gate/mylinac_MLC_Leaf2_Right_rounded_part/placement/setRotationAxis 1 0 0 
+/gate/mylinac_MLC_Leaf2_Right_rounded_part/placement/setRotationAngle 90 deg
+
+# Visu
+/gate/mylinac_MLC_Leaf2_Right/vis/setVisible 0
+/gate/mylinac_MLC_Leaf2_Right_trp_sup/vis/setColor magenta
+/gate/mylinac_MLC_Leaf2_Right_trp_inf/vis/setColor magenta
+/gate/mylinac_MLC_Leaf2_Right_rounded_part/vis/setColor magenta
+
+# -----------------------------------------------------
+# Repeater and motion
+/gate/mylinac_MLC_Leaf2_Right/moves/insert genericRepeaterMove
+/gate/mylinac_MLC_Leaf2_Right/genericRepeaterMove/setPlacementsFilename data/precise_MultiLeafsCollimator_Leaf2Right.placements
+/gate/mylinac_MLC_Leaf2_Right/genericRepeaterMove/useRelativeTranslation 1
+
