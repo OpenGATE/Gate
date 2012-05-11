@@ -194,11 +194,10 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
     G4String regionName;
     double cutValue;
     GetStringAndValueFromCommand(command, param, regionName, cutValue);
-    if (command == gammaCutCmd) {G4cout << "<<<<<<<SetNewValue call gamma " << G4endl; pPhylist->SetCutInRegion("gamma", regionName, cutValue); }
-    if (command == electronCutCmd){G4cout << "<<<<<<<<<<<<SetNewValue call electron " << G4endl; pPhylist->SetCutInRegion("e-", regionName, cutValue); }
-    if (command == positronCutCmd){ G4cout << "<<<<<<<<<SetNewValue call positron " << G4endl;pPhylist->SetCutInRegion("e+", regionName, cutValue); }
-    if (command == protonCutCmd){ G4cout << "<<<<<<<<<<SetNewValue call proton" << G4endl; pPhylist->SetCutInRegion("proton", regionName, cutValue);}
- 
+    if (command == gammaCutCmd) { pPhylist->SetCutInRegion("gamma", regionName, cutValue); }
+    if (command == electronCutCmd){ pPhylist->SetCutInRegion("e-", regionName, cutValue); }
+    if (command == positronCutCmd){ pPhylist->SetCutInRegion("e+", regionName, cutValue); }
+    if (command == protonCutCmd){ pPhylist->SetCutInRegion("proton", regionName, cutValue);} 
 
     if (command == pMaxStepSizeCmd) pPhylist->SetSpecialCutInRegion("MaxStepSize", regionName, cutValue);
     if (command == pMaxToFCmd) pPhylist->SetSpecialCutInRegion("MaxToF", regionName, cutValue);
@@ -274,27 +273,27 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
   if(command == pSetDEDXBinning){
     int nbBins = pSetDEDXBinning->GetNewIntValue(param);
     pPhylist->SetOptDEDXBinning(nbBins);
-    GateMessage("Physic", 1, " DEDXBinning set to "<<nbBins<<" bins. DEDXBinning defaut Value 84."<<G4endl);
+    GateMessage("Physic", 1, "(EM Options) DEDXBinning set to "<<nbBins<<" bins. DEDXBinning defaut Value 84."<<G4endl);
   }
   if(command == pSetLambdaBinning){
     int nbBins = pSetLambdaBinning->GetNewIntValue(param);
     pPhylist->SetOptLambdaBinning(nbBins);
-    GateMessage("Physic", 1, " LambdaBinning set to "<<nbBins<<" bins. LambdaBinning defaut Value 84."<<G4endl);
+    GateMessage("Physic", 1, "(EM Options) LambdaBinning set to "<<nbBins<<" bins. LambdaBinning defaut Value 84."<<G4endl);
   }
   if(command == pSetEMin){
     double val = pSetEMin->GetNewDoubleValue(param);
     pPhylist->SetOptEMin(val);
-    GateMessage("Physic", 1, " Min Energy set to "<<G4BestUnit(val,"Energy")<<". MinEnergy defaut Value 0.1keV."<<G4endl);
+    GateMessage("Physic", 1, "(EM Options) Min Energy set to "<<G4BestUnit(val,"Energy")<<". MinEnergy defaut Value 0.1keV."<<G4endl);
   }
   if(command == pSetEMax){
     double val = pSetEMax->GetNewDoubleValue(param);
     pPhylist->SetOptEMax(val);
-    GateMessage("Physic", 1, " Max Energy set to "<<G4BestUnit(val,"Energy")<<". MaxEnergy defaut Value 100TeV."<<G4endl);
+    GateMessage("Physic", 1, "(EM Options) Max Energy set to "<<G4BestUnit(val,"Energy")<<". MaxEnergy defaut Value 100TeV."<<G4endl);
   }
   if(command == pSetSplineFlag){
     G4bool flag = pSetSplineFlag->GetNewBoolValue(param);
     pPhylist->SetOptSplineFlag(flag);
-    GateMessage("Physic", 1, " Spline Falg set to "<<flag<<". Spline Flag defaut 1."<<G4endl);
+    GateMessage("Physic", 1, "(EM Options) Spline Falg set to "<<flag<<". Spline Flag defaut 1."<<G4endl);
   }
 
 //#endif
