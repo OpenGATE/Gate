@@ -8,15 +8,11 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-#include "GateConfiguration.h"
+#include "GateHitFileReader.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "TBranch.h"
-
-
-
-#include "GateHitFileReader.hh"
 #include "GateCrystalHit.hh"
 #include "GateOutputVolumeID.hh"
 #include "GateOutputMgr.hh"
@@ -24,9 +20,7 @@ See GATE/LICENSE.txt for further details
 #include "GateHitFileReaderMessenger.hh"
 #include "GateHitConvertor.hh"
 
-
 GateHitFileReader* GateHitFileReader::instance = 0; 
-
 
 // Private constructor: this function should only be called from GetInstance()
 GateHitFileReader::GateHitFileReader()

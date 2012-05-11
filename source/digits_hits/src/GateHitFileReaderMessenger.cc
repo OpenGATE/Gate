@@ -8,13 +8,11 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-#include "GateConfiguration.h"
+#include "GateHitFileReaderMessenger.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 
-#include "GateHitFileReaderMessenger.hh"
 #include "GateHitFileReader.hh"
-
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
