@@ -14,6 +14,7 @@
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
+#include "GateConfiguration.h"
 #include "GateApplicationMgrMessenger.hh"
 #include <vector>
 
