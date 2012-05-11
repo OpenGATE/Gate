@@ -8,11 +8,11 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-#include "GateConfiguration.h"
-#ifdef G4ANALYSIS_USE_ROOT
-
 #include "GateROOTBasicOutput.hh"
+
+#ifdef G4ANALYSIS_USE_ROOT
 #include "GateROOTBasicOutputMessenger.hh"
+
 // Include files for ROOT.
 #include "Rtypes.h"
 #include "TROOT.h"
@@ -33,7 +33,6 @@ See GATE/LICENSE.txt for further details
 #include "G4Step.hh"
 #include "GateRecorderBase.hh"
 #include "G4ios.hh"
-//#include <iomanip.h>
 #include "G4SDManager.hh"
 #include "Randomize.hh"
 #include "G4VVisManager.hh"
