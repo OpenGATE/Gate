@@ -13,6 +13,7 @@ See GATE/LICENSE.txt for further details
 #define GateVOutputModule_H
 
 #include "GateRecorderBase.hh"
+#include "GateConfiguration.h"
 
 #include "globals.hh"
 

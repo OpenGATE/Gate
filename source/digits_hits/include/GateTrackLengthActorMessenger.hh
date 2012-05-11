@@ -15,14 +15,10 @@ See GATE/LICENSE.txt for further details
 	  david.sarrut@creatis.insa-lyon.fr
 */
 
-#include "GateConfiguration.h"
-
 #ifdef G4ANALYSIS_USE_ROOT
-
 
 #ifndef GATETRACKLENGTHACTORMESSENGER_HH
 #define GATETRACKLENGTHACTORMESSENGER_HH
-
 
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"

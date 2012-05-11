@@ -23,13 +23,12 @@
 #ifndef GATEVACTOR_HH
 #define GATEVACTOR_HH
 
-#include "GateNamedObject.hh"
-
 #include "globals.hh"
 #include "G4String.hh"
 #include <iomanip>   
 #include <vector>
 
+#include "GateNamedObject.hh"
 #include "GateMessageManager.hh"
 #include "GateFilterManager.hh"
 #include "GateObjectStore.hh"
@@ -37,8 +36,6 @@
 #include "G4VPrimitiveScorer.hh"
 #include "G4THitsMap.hh"
 #include "G4TouchableHistory.hh"
-
-//#include "GateVFilter.hh"
 
 class G4Run;
 class G4Event;
