@@ -20,7 +20,6 @@ See GATE/LICENSE.txt for further details
 #define GATEACTORMESSENGER_HH
 
 #include "globals.hh"
-
 #include "G4UImessenger.hh"
 
 class G4UIcmdWithAString;

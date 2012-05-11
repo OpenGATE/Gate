@@ -8,8 +8,6 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-#include "GateConfiguration.h"
-
 #ifdef G4ANALYSIS_USE_ROOT
 
 /*
@@ -19,10 +17,8 @@ See GATE/LICENSE.txt for further details
 	  david.sarrut@creatis.insa-lyon.fr
 */
 
-
 #ifndef GATEENERGYSPECTRUMACTORMESSENGER_HH
 #define GATEENERGYSPECTRUMACTORMESSENGER_HH
-
 
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"

@@ -8,10 +8,7 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-#include "GateConfiguration.h"
-
 #ifdef G4ANALYSIS_USE_ROOT
-
 
 /*!
   \class  GateEnergySpectrumActor
@@ -24,9 +21,7 @@ See GATE/LICENSE.txt for further details
 #define GATEENERGYSPECTRUMACTOR_HH
 
 #include "GateVActor.hh"
-
 #include "GateActorManager.hh"
-
 #include "GateEnergySpectrumActorMessenger.hh"
 #include "GateVImageActor.hh"
 
