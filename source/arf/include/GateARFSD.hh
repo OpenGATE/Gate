@@ -8,6 +8,10 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateConfiguration.h"
+
+#ifdef G4ANALYSIS_USE_ROOT
+
 #ifndef GateARFSD_h
 #define GateARFSD_h 1
 
@@ -152,3 +156,4 @@ class GateARFSD : public G4VSensitiveDetector
 
 #endif
 
+#endif

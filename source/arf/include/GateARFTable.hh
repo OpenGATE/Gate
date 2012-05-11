@@ -8,6 +8,10 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateConfiguration.h"
+
+#ifdef G4ANALYSIS_USE_ROOT
+
 #ifndef GateARFTable_h
 #define GateARFTable_h
 
@@ -111,5 +115,4 @@ void SetDistanceFromSourceToDetector( G4double aD ){fDist_src2img = aD; };
 };
 #endif
 
-
-
+#endif // G4ANALYSIS_USE_ROOT
