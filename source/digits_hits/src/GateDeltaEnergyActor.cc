@@ -187,7 +187,7 @@ void GateStoppingPowerActor::BeginOfEventAction(const G4Event * e) {
 void GateStoppingPowerActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
   GateDebugMessageInc("Actor", 4, "GateStoppingPowerActor -- UserSteppingActionInVoxel - begin" << G4endl);
 
-  double weight = step->GetTrack()->GetWeight();
+  // double weight = step->GetTrack()->GetWeight(); // unused yet. Keep it for debug
   double stoppingPower = step->GetPreStepPoint()->GetKineticEnergy() - step->GetPostStepPoint()->GetKineticEnergy() ;
   double kineE = step->GetPreStepPoint()->GetKineticEnergy();
   double relativeStopPower = stoppingPower/kineE;
