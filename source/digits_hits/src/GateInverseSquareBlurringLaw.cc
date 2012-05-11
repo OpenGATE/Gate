@@ -10,13 +10,10 @@ See GATE/LICENSE.txt for further details
 
 
 #include "GateInverseSquareBlurringLaw.hh"
-#include "GateConfiguration.h"
 
 /*! \class  GateInverseSquareBlurringLaw
-    \brief  InverseSquare law giving the resolution in energy
-
-    
-      \sa GateVBluringLaw
+  \brief  InverseSquare law giving the resolution in energy
+  \sa GateVBluringLaw
 */
 
 
