@@ -9,13 +9,10 @@
   ----------------------*/
 
 #include "GateConfiguration.h"
-
 #ifdef G4ANALYSIS_USE_ROOT
 
 #ifndef GATESOURCEACTORMESSENGER_CC
 #define GATESOURCEACTORMESSENGER_CC
-
-#include "GatePhaseSpaceActorMessenger.hh"
 
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithoutParameter.hh"
@@ -23,6 +20,7 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
 
+#include "GatePhaseSpaceActorMessenger.hh"
 #include "GatePhaseSpaceActor.hh"
 
 //-----------------------------------------------------------------------------

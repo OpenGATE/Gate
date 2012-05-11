@@ -9,8 +9,8 @@
   ----------------------*/
 
 #include "GateConfiguration.h"
-
 #ifdef G4ANALYSIS_USE_ROOT
+
 /*
   \brief Class GatePhaseSpaceActor
   \author thibault.frisson@creatis.insa-lyon.fr
@@ -18,19 +18,16 @@
   david.sarrut@creatis.insa-lyon.fr
 */
 
-
 #ifndef GATESOURCEACTOR_CC
 #define GATESOURCEACTOR_CC
 
-#include "GatePhaseSpaceActor.hh"
 #include "G4VProcess.hh"
 #include "G4RunManager.hh"
 #include "G4Run.hh"
 
+#include "GatePhaseSpaceActor.hh"
 #include "GateMiscFunctions.hh"
-
 #include "GateObjectStore.hh"
-
 #include "GateIAEAHeader.h"
 #include "GateIAEARecord.h"
 #include "GateIAEAUtilities.h"
@@ -244,15 +241,16 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
 
   t = stepPoint->GetGlobalTime() ;
   //t = step->GetTrack()->GetProperTime() ; //tibo : which time?????
-  GateMessage("Actor",4,st << " stepPoint time proper=" << G4BestUnit(stepPoint->GetProperTime(), "Time")
-              << " global=" << G4BestUnit(stepPoint->GetGlobalTime(), "Time") 
-              << " local=" << G4BestUnit(stepPoint->GetLocalTime(), "Time") <<G4endl);
-  GateMessage("Actor",4,"trackid="<<step->GetTrack()->GetParentID()<<" event="<<G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID()<<" run="<<G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID()<<G4endl);
-  
-  GateMessage("Actor", 4, "pos = " << x << " " << y  << " " << z << G4endl);
-  GateMessage("Actor", 4, "E = " << G4BestUnit(stepPoint->GetKineticEnergy(), "Energy") << G4endl);
-
-  //GateMessage("Actor",4,st<<" track time proper="<<step->GetTrack()->GetProperTime()/ns<<" global="<<step->GetTrack()->GetGlobalTime()/ns<<" local="<<step->GetTrack()->GetLocalTime()/ns<<G4endl);
+  GateDebugMessage("Actor", 4, st 
+                   << " stepPoint time proper=" << G4BestUnit(stepPoint->GetProperTime(), "Time")
+                   << " global=" << G4BestUnit(stepPoint->GetGlobalTime(), "Time") 
+                   << " local=" << G4BestUnit(stepPoint->GetLocalTime(), "Time") << G4endl);
+  GateDebugMessage("Actor", 4, "trackid=" 
+                   << step->GetTrack()->GetParentID() 
+                   << " event="<<G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID()
+                   << " run="<<G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID() << G4endl);
+  GateDebugMessage("Actor", 4, "pos = " << x << " " << y  << " " << z << G4endl);
+  GateDebugMessage("Actor", 4, "E = " << G4BestUnit(stepPoint->GetKineticEnergy(), "Energy") << G4endl);
 
   e = stepPoint->GetKineticEnergy();
 
