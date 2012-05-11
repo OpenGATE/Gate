@@ -34,7 +34,6 @@
 GatePhysicsList::GatePhysicsList(): G4VUserPhysicsList() 
 {
 
-G4cout << " GatePhysicsList() is contructed " << G4endl;
   // default cut value  (1.0mm) 
   defaultCutValue = 1.0*mm;
   // default cut value  (1.0mm) 
@@ -156,6 +155,9 @@ GatePhysicsList::~GatePhysicsList()
 //-----------------------------------------------------------------------------------------
 void GatePhysicsList::ConstructProcess()
 {
+  GateMessage("Physic",2,"GatePhysicsList::ConstructProcess " << G4endl);
+  GateMessage("Physic",3,"mLoadState = " << mLoadState << G4endl);
+  GateMessage("Physic",3,"mListOfStepLimiter.size = " << mListOfStepLimiter.size() << G4endl);
 
   if(mLoadState==0)
     {
@@ -186,9 +188,10 @@ void GatePhysicsList::ConstructProcess()
      //#endif
 
   }
-  else GateMessage("Physics",1,"GatePhysicsList::Construct() -- Warning: processes already defined!" << G4endl);
+  else GateMessage("Physic",1,"GatePhysicsList::Construct() -- Warning: processes already defined!" << G4endl);
 
   //SetCuts();
+
   if(mLoadState>0) DefineCuts();
 
   if(mLoadState==1 && mListOfStepLimiter.size()!=0){
@@ -199,8 +202,12 @@ void GatePhysicsList::ConstructProcess()
       G4ParticleDefinition* particle = theParticleIterator->value();
       G4ProcessManager* pmanager = particle->GetProcessManager();
       G4String particleName = particle->GetParticleName();
-      for(unsigned int i=0; i<mListOfStepLimiter.size(); i++)
-	if(mListOfStepLimiter[i]==particleName) pmanager->AddProcess(new G4StepLimiter, -1,-1,3);  
+      for(unsigned int i=0; i<mListOfStepLimiter.size(); i++) {
+	if(mListOfStepLimiter[i]==particleName) {
+          GateMessage("Physic", 2, "Activate G4StepLimiter for " << particleName << G4endl);
+          pmanager->AddProcess(new G4StepLimiter, -1,-1,3);  
+        }
+      }
     }
   }
 
@@ -213,8 +220,12 @@ void GatePhysicsList::ConstructProcess()
       G4ParticleDefinition* particle = theParticleIterator->value();
       G4ProcessManager* pmanager = particle->GetProcessManager();
       G4String particleName = particle->GetParticleName();      
-      for(unsigned int i=0; i<mListOfG4UserSpecialCut.size(); i++)
-	if(mListOfG4UserSpecialCut[i]==particleName) pmanager-> AddProcess(new G4UserSpecialCuts,   -1,-1,4);       
+      for(unsigned int i=0; i<mListOfG4UserSpecialCut.size(); i++) {
+	if(mListOfG4UserSpecialCut[i]==particleName) {
+          GateMessage("Physic", 2, "Activate G4UserSpecialCuts for " << particleName << G4endl);
+          pmanager-> AddProcess(new G4UserSpecialCuts,   -1,-1,4);
+        }
+      }
     }
   }
 
@@ -582,7 +593,7 @@ void GatePhysicsList::DefineCuts()
   SetCutValue(worldCuts.gammaCut, "gamma","DefaultRegionForTheWorld");
   SetCutValue(worldCuts.electronCut, "e-","DefaultRegionForTheWorld");
   SetCutValue(worldCuts.positronCut, "e+","DefaultRegionForTheWorld");
- SetCutValue(worldCuts.protonCut, "proton","DefaultRegionForTheWorld");
+  SetCutValue(worldCuts.protonCut, "proton","DefaultRegionForTheWorld");
   //-----------------------------------------------------------------------------
   // Set default production cut to other regions
   G4RegionStore * RegionStore = G4RegionStore::GetInstance();
@@ -859,10 +870,9 @@ void GatePhysicsList::DefineCuts()
 void GatePhysicsList::SetCutInRegion(G4String particleName, G4String regionName, G4double cutValue)
 {
 
-G4cout << "SetCutInRegion is called " << G4endl;
-  GateDebugMessage("Cuts",3,"SetCutInRegion '" << regionName 
-		   << "' for particle '" << particleName 
-		   << "' : " << cutValue << G4endl);
+  GateMessage("Cuts",3,"SetCutInRegion '" << regionName 
+              << "' for particle '" << particleName 
+              << "' : " << cutValue << G4endl);
 
   if(regionName=="world") regionName="DefaultRegionForTheWorld";
 
