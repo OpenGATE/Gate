@@ -10,7 +10,6 @@ See GATE/LICENSE.txt for further details
 
 
 #include "GateIonIonisationPB.hh"
-
 #include "GateHadronIonIonisationProcessMessenger.hh"
 
 //-----------------------------------------------------------------------------
@@ -74,7 +73,7 @@ bool GateIonIonisationPB::IsDatasetApplicable(G4String ,G4ParticleDefinition * )
 
 
 //-----------------------------------------------------------------------------
-void GateIonIonisationPB::AddUserModel(GateListOfHadronicModels *model)
+void GateIonIonisationPB::AddUserModel(GateListOfHadronicModels * /*model*/)
 {
 /*  if(model->GetModelName() == "CalculationOfNuclearStoppingPower_On"){
       dynamic_cast<G4ionIonisation*>(GetUserModelProcess())->ActivateNuclearStopping(true);
