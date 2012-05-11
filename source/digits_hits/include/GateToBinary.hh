@@ -2,6 +2,7 @@
 #define GUARD_GATETOBINARY_HH
 
 #include "GateConfiguration.h"
+
 #ifdef G4ANALYSIS_USE_FILE
 
 /*!	
