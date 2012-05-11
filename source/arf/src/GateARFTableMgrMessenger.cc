@@ -8,6 +8,10 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateConfiguration.h"
+
+#ifdef G4ANALYSIS_USE_ROOT
+
 #include "GateARFTableMgrMessenger.hh"
 
 #include "GateClock.hh"
@@ -154,5 +158,4 @@ if( command == cptTableEWCmd ) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-
-
+#endif

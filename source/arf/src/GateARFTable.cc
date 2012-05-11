@@ -8,6 +8,10 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateConfiguration.h"
+
+#ifdef G4ANALYSIS_USE_ROOT
+
 #include "GateARFTable.hh"
 #include <vector>
 #include <cmath>
@@ -567,3 +571,4 @@ void GateARFTable::FillTableFromBuffer(G4double*& theBuffer)
 
 }
 
+ #endif

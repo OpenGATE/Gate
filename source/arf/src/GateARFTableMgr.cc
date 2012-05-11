@@ -8,6 +8,10 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateConfiguration.h"
+
+#ifdef G4ANALYSIS_USE_ROOT
+
 #include "GateARFTableMgr.hh"
 #include "GateARFTable.hh"
 #include "GateARFTableMgrMessenger.hh"
@@ -358,4 +362,5 @@ dest.close();
 
 }
 
+#endif
 
