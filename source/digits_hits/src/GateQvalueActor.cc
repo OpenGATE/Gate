@@ -91,7 +91,7 @@ void GateQvalueActor::UserSteppingActionInVoxel(const int index, const G4Step* s
   double energyKinPre =  step->GetPreStepPoint()->GetKineticEnergy();
   double energyKinPost = step->GetPostStepPoint()->GetKineticEnergy();
   double energyKinSec = 0.;
-  int nSec = step->GetSecondary()->size();
+  // int nSec = step->GetSecondary()->size(); // unused now (keep it for debug)
 
   k = 0;
     
@@ -154,7 +154,7 @@ void GateQvalueActor::EndOfEventAction(const G4Event * ) {
 
 
 //-----------------------------------------------------------------------------
-void GateQvalueActor::UserPreTrackActionInVoxel(const  int /*index*/, const G4Track* t)
+void GateQvalueActor::UserPreTrackActionInVoxel(const  int /*index*/, const G4Track* /*t*/)
 {
   mNSec = 0;
 
