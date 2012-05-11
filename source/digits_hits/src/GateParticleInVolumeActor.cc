@@ -108,7 +108,7 @@ void GateParticleInVolumeActor::BeginOfEventAction(const G4Event * e) {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateParticleInVolumeActor::UserPreTrackActionInVoxel(const int index, const G4Track* t){ 
+void GateParticleInVolumeActor::UserPreTrackActionInVoxel(const int index, const G4Track* /*t*/){ 
   if(index<0) outsideTrack=true;
   else outsideTrack=false;
 }
@@ -118,7 +118,7 @@ void GateParticleInVolumeActor::UserPreTrackActionInVoxel(const int index, const
 void GateParticleInVolumeActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
   GateDebugMessageInc("Actor", 4, "GateParticleInVolumeActor -- UserSteppingActionInVoxel - begin" << G4endl);
 
-  double weight = step->GetTrack()->GetWeight();
+  // double weight = step->GetTrack()->GetWeight(); // unused yet. Keep it for debug
 
   if (index <0) {
     GateDebugMessage("Actor", 5, "index<0 : do nothing" << G4endl);
