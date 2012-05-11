@@ -13,6 +13,7 @@ See GATE/LICENSE.txt for further details
 #define GateTools_h 1
 
 #include "globals.hh"
+#include "GateConfiguration.h"
 
 /*! \namespace  GateTools
     \brief  Namespace to provide general-purpose utility functions to GATE
