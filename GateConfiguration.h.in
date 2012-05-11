@@ -5,13 +5,31 @@
 #define GATE_CONFIGURATION_H
 //This file is interpreted by cmake, to define macros based on the cmake configuration options
 
-#cmakedefine01 G4ANALYSIS_USE_ROOT    @GATE_USE_ROOT@
-#cmakedefine01 G4ANALYSIS_USE_GENERAL @GATE_USE_ANALYSIS_USE_GENERAL@
-#cmakedefine01 G4ANALYSIS_USE_FILE @GATE_USE_FILEL@
-#cmakedefine01 G4VERSION              @Geant4_VERSION@
-#cmakedefine G4VERSION_MAJOR          @G4VERSION_MAJOR@
-#cmakedefine G4VERSION_MINOR          @G4VERSION_MINOR@
-#cmakedefine G4VERSION_PATCH          @G4VERSION_PATCH@
+// Check : GATE_USE_ROOT                 = @GATE_USE_ROOT@
+// Check : GATE_ANALYSIS_USE_GENERAL     = @GATE_ANALYSIS_USE_GENERAL@
+// Check : GATE_ANALYSIS_USE_FILE        = @GATE_ANALYSIS_USE_FILE@
+
+#cmakedefine GATE_USE_ROOT                 @GATE_USE_ROOT@
+#cmakedefine GATE_ANALYSIS_USE_GENERAL     @GATE_ANALYSIS_USE_GENERAL@
+#cmakedefine GATE_USE_FILE                 @GATE_USE_FILE@
+
+#ifdef GATE_USE_ROOT
+ #define G4ANALYSIS_USE_ROOT 1
+#endif
+
+#ifdef GATE_ANALYSIS_USE_GENERAL
+ #define G4ANALYSIS_USE_GENERAL 1
+#endif
+
+#ifdef GATE_ANALYSIS_USE_FILE
+ #define  G4ANALYSIS_USE_FILE 1
+#endif
+
+
+//#cmakedefine G4VERSION             @Geant4_VERSION@
+#cmakedefine G4VERSION_MAJOR         @G4VERSION_MAJOR@
+#cmakedefine G4VERSION_MINOR         @G4VERSION_MINOR@
+#cmakedefine G4VERSION_PATCH         @G4VERSION_PATCH@
 #cmakedefine GATE_USE_CUDA           @GATE_USE_CUDA@
 #cmakedefine CUDA_FOUND              @CUDA_FOUND@
 

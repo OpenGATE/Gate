@@ -32,16 +32,21 @@ string(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION
 # Option for Root use
 
 OPTION(GATE_USE_ROOT "Gate use ROOT (Recommanded)" ON)
-OPTION(GATE_USE_ANALYSIS_USE_GENERAL "Gate use  G4ANALYSIS_USE_GENERAL (Recommanded)" ON)
-OPTION(GATE_USE_OWN_CLHEP "Gate does not use the standard CLHEP of GEANT4" ON)
-OPTION(GATE_USE_FILE "Gate use G4ANALYSIS_USE_FILE (Recommanded)" ON)
+OPTION(GATE_ANALYSIS_USE_GENERAL "Gate use  G4ANALYSIS_USE_GENERAL (Recommanded)" ON)
+OPTION(GATE_ANALYSIS_USE_FILE "Gate use G4ANALYSIS_USE_FILE (Recommanded)" ON)
+OPTION(GATE_USE_OWN_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4" ON)
 
 IF (GATE_USE_ROOT)
    FIND_PACKAGE(ROOT REQUIRED)
    INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
    SET(LINK_DIRECTORIES ${ROOT_LIBRARY_DIR})
-   # MESSAGE("Found Root in ${ROOT_INCLUDE_DIR} ${ROOT_LIBRARY_DIR}")
-ENDIF(GATE_USE_ROOT)
+   #MESSAGE("Found Root in ${ROOT_INCLUDE_DIR} ${ROOT_LIBRARY_DIR}")r
+   IF (ROOT_INCLUDE_DIR)
+   ELSE() 
+      MESSAGE("Root Not found ! Please install Root and make it available in PATH")   
+   ENDIF()
+ENDIF()
+
 
 #=========================================================
 # Option for Clhep use
@@ -56,7 +61,7 @@ ENDIF(GATE_USE_OWN_CLHEP)
 #=========================================================
 # Option for Cuda use
 
-option(GATE_USE_CUDA "Gate use CUDA for primaries generation" ON)
+option(GATE_USE_CUDA "Gate use CUDA for primaries generation" OFF)
 
 if(GATE_USE_CUDA)
     FIND_PACKAGE(CUDA)
