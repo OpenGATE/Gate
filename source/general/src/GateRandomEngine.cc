@@ -146,10 +146,15 @@ void GateRandomEngine::Initialize() {
       fread(static_cast<void*>(&rest),sizeof(rest),1,hrandom);
       fclose(hrandom);
 
-      //std::cout << "*********************************** SEED " << seed << " " << (sizeof(seed)*8) << "bits REST " << rest << " " << (sizeof(rest)*8) << "bits" << std::endl;
+      //std::cout << "SEED " << seed << " " << (sizeof(seed)*8) << "bits REST " << rest << " " << (sizeof(rest)*8) << "bits" << std::endl;
+      //std::cout << "rest = " << rest << std::endl;
+      rest = seed%10+seed%100+1;
+      //std::cout << "rest = " << rest << std::endl;
       theRandomEngine->setSeed(seed,rest);
     } else theRandomEngine->restoreStatus(theSeedFile);
   }
+
+  //std::cout << "seed = " << seed << std::endl;
 
   // True initialization
   CLHEP::HepRandom::setTheEngine(theRandomEngine);
