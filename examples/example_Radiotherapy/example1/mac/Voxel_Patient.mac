@@ -1,0 +1,30 @@
+#=====================================================
+# VOXEL PATIENT
+#=====================================================
+
+#=====================================================
+# Generate materials from Hounsfield units. 
+# Once the files patient-HUmaterials.db and patient-HU2mat.txt are
+# generated, the following lines can be commented.
+
+/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt 
+/gate/HounsfieldMaterialGenerator/SetDensityTable                   data/Schneider2000DensitiesTable.txt
+/gate/HounsfieldMaterialGenerator/SetDensityTolerance               0.1 g/cm3
+/gate/HounsfieldMaterialGenerator/SetOutputMaterialDatabaseFilename data/patient-HUmaterials.db
+/gate/HounsfieldMaterialGenerator/SetOutputHUMaterialFilename       data/patient-HU2mat.txt
+/gate/HounsfieldMaterialGenerator/Generate
+
+#=====================================================
+# Insert image 
+/gate/world/daughters/name                     target
+/gate/world/daughters/insert                   ImageNestedParametrisedVolume
+
+/gate/geometry/setMaterialDatabase             data/patient-HUmaterials.db
+/gate/target/geometry/SetHUToMaterialFile      data/patient-HU2mat.txt
+/gate/target/geometry/SetImage                 data/patient-2mm.hdr
+
+# Put the following image point (in image coordinate, in mm) at the
+# world center
+
+/gate/target/placement/setTranslation                  0 0 0 mm
+/gate/target/geometry/TranslateTheImageAtThisIsoCenter 110 98 146 mm
