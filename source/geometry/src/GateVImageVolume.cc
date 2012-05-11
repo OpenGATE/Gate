@@ -506,7 +506,7 @@ void GateVImageVolume::BuildLabelToG4MaterialVector( std::vector<G4Material*>& M
 /// Remaps the labels form 0 to NbLabels-1. If marginAdded is true
 /// then assigns the new label 0 to the label -1 which was created for
 /// margin voxels (see LoadImage).
-void GateVImageVolume::RemapLabelsContiguously( std::vector<LabelType>& labels,bool marginAdded ) 
+void GateVImageVolume::RemapLabelsContiguously( std::vector<LabelType>& labels, bool /*marginAdded*/ ) 
 {
   GateMessageInc("Volume",5,"Begin GateVImageVolume::RemapLabelsContiguously" << G4endl);
   std::map<LabelType,LabelType> lmap; 
