@@ -16,13 +16,11 @@ See GATE/LICENSE.txt for further details
 #ifndef __GateImage_cc__
 #define __GateImage_cc__
 
-#include "GateImage.hh"
-#include "GateMiscFunctions.hh"
-
 #include "G4ThreeVector.hh"
 #include "G4GeometryTolerance.hh"
 
-#include "GateConfiguration.h"
+#include "GateImage.hh"
+#include "GateMiscFunctions.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 #include "TFile.h"
