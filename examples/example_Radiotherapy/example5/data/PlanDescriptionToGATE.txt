@@ -1,0 +1,150 @@
+#TREATMENT-PLAN-DESCRIPTION
+#PlanName
+IMPT
+#NumberOfFractions			***	CURRENTLY THIS VALUE IS NOT USED	***
+1
+##FractionID				***	CURRENTLY THIS VALUE IS NOT USED	***
+1
+##NumberOfFields
+2
+###FieldsID
+1
+###FieldsID
+2
+#TotalMetersetWeightOfAllFields		***	CURRENTLY THIS VALUE IS NOT USED	***
+662421
+
+#FIELD-DESCRIPTION
+###FieldID
+1
+###FinalCumulativeMeterSetWeight	***	CURRENTLY THIS VALUE IS NOT USED	***
+336732
+###GantryAngle (in degrees)
+0
+###PatientSupportAngle			***	CURRENTLY THIS VALUE IS NOT USED	***
+0
+###IsocenterPosition			***	CURRENTLY THIS VALUE IS NOT USED	***
+4.4 3.8 -1218.5
+###NumberOfControlPoints
+4
+
+#SPOTS-DESCRIPTION
+####ControlPointIndex
+0
+####SpotTunnedID			***	CURRENTLY THIS VALUE IS NOT USED	***
+4
+####CumulativeMetersetWeight		***	CURRENTLY THIS VALUE IS NOT USED	***
+0
+####Energy (MeV)
+187
+####NbOfScannedSpots
+11
+####X Y Weight (spot position at isocenter in mm, with weight in MU (default) or number of protons "setSpotIntensityAsNbProtons true")
+-80 20 100
+-100 20 100
+-120 20 100
+-120 0 100
+-120 -20 100
+-120 -40 100
+-100 -40 100
+-80 -40 100
+-80 -20 100
+-90 -20 50
+-70 -20 50
+####ControlPointIndex
+1
+####SpotTunnedID			***	CURRENTLY THIS VALUE IS NOT USED	***
+0
+####CumulativeMetersetWeight		***	CURRENTLY THIS VALUE IS NOT USED	***
+700
+####Energy (MeV)
+160
+####NbOfScannedSpots
+10
+####X Y Weight
+0 20 100
+-20 20 100
+-40 20 100
+0 0 100
+-20 0 100
+-40 0 100
+0 -20 100
+-40 -20 100
+0 -40 100
+-40 -40 100
+####ControlPointIndex
+2
+####SpotTunnedID			***	CURRENTLY THIS VALUE IS NOT USED	***
+0
+####CumulativeMetersetWeight		***	CURRENTLY THIS VALUE IS NOT USED	***
+1700
+####Energy (MeV)
+120
+####NbOfScannedSpots
+6
+####X Y Weight
+40 20 100
+60 20 100
+80 20 100
+60 0 100
+60 -20 100
+60 -40 100
+####ControlPointIndex
+3
+####SpotTunnedID
+0
+####CumulativeMetersetWeight		***	CURRENTLY THIS VALUE IS NOT USED	***
+2450
+####Energy (MeV)
+230
+####NbOfScannedSpots
+9
+####X Y Weight
+120 20 100
+140 20 100
+160 20 100
+120 0 100
+140 0 100
+120 -20 100
+120 -40 100
+140 -40 100
+160 -40 100
+
+#FIELD-DESCRIPTION
+###FieldID
+2
+###FinalCumulativeMeterSetWeight		***	CURRENTLY THIS VALUE IS NOT USED	***
+325689
+###GantryAngle
+-85
+###PatientSupportAngle				***	CURRENTLY THIS VALUE IS NOT USED	***
+0
+###IsocenterPosition				***	CURRENTLY THIS VALUE IS NOT USED	***
+4.4 3.8 -1218.5
+###NumberOfControlPoints
+2
+
+#SPOTS-DESCRIPTION
+####ControlPointIndex
+0
+####SpotTunnedID				***	CURRENTLY THIS VALUE IS NOT USED	***
+4
+####CumulativeMetersetWeight			***	CURRENTLY THIS VALUE IS NOT USED	***
+0
+####Energy (MeV)
+250
+####NbOfScannedSpots
+1
+####X Y Weight
+0 -60 2000
+####ControlPointIndex
+1
+####SpotTunnedID				***	CURRENTLY THIS VALUE IS NOT USED	***
+0
+####CumulativeMetersetWeight			***	CURRENTLY THIS VALUE IS NOT USED	***
+325689
+####Energy (MeV)
+0
+####NbOfScannedSpots
+0
+####X Y Weight
