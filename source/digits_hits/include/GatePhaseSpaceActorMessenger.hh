@@ -9,7 +9,6 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #include "GateConfiguration.h"
-
 #ifdef G4ANALYSIS_USE_ROOT
 /*
   \class  GatePhaseSpaceActorMessenger
@@ -18,19 +17,16 @@ See GATE/LICENSE.txt for further details
 	  david.sarrut@creatis.insa-lyon.fr
 */
 
-
 #ifndef GATESOURCEACTORMESSENGER_HH
 #define GATESOURCEACTORMESSENGER_HH
 
 #include "globals.hh"
-
 #include "GateActorMessenger.hh"
 
 class G4UIcmdWithABool;
 class G4UIcmdWithoutParameter;
 class G4UIcmdWithADoubleAndUnit;
 class G4UIcmdWithAString;
-
 class GatePhaseSpaceActor;
 
 class GatePhaseSpaceActorMessenger : public  GateActorMessenger

@@ -8,17 +8,12 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-/*!
-  \class GatePhaseSpaceActor
- */
-
 #include "GateConfiguration.h"
 
 #ifdef G4ANALYSIS_USE_ROOT
+
 #ifndef GATESOURCEACTOR_HH
 #define GATESOURCEACTOR_HH
-
-#include "GateVActor.hh"
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -27,8 +22,8 @@
 #include "TBranch.h"
 #include "TString.h"
 
+#include "GateVActor.hh"
 #include "GateActorManager.hh"
-
 #include "GatePhaseSpaceActorMessenger.hh"
 
 class iaea_header_type;
