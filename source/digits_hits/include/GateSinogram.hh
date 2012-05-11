@@ -12,6 +12,7 @@ See GATE/LICENSE.txt for further details
 #ifndef GateSinogram_H
 #define GateSinogram_H
 
+#include "GateConfiguration.h"
 #include "globals.hh"
 #include <fstream>
 
