@@ -77,9 +77,9 @@ bool GateHadronIonisationPB::IsDatasetApplicable(G4String ,G4ParticleDefinition 
 
 
 //-----------------------------------------------------------------------------
-void GateHadronIonisationPB::AddUserModel(GateListOfHadronicModels *model)
+void GateHadronIonisationPB::AddUserModel(GateListOfHadronicModels * /*model*/)
 {
- /* if(model->GetModelName() == "CalculationOfNuclearStoppingPower_On"){
+  /* if(model->GetModelName() == "CalculationOfNuclearStoppingPower_On"){
       dynamic_cast<G4hIonisation*>(GetUserModelProcess())->ActivateNuclearStopping(true);
           
   }
