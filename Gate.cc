@@ -1,57 +1,105 @@
-#include "GateRunManager.hh"
-#include "G4UImanager.hh"
+/*!
+ *	\file Gate.cc
+ *	\author Didier Benoit <benoit@imnc.in2p3.fr>
+ *	\date May 2012, QIM IMNC-IN2P3/CNRS, Paris VII-XI Universities, Orsay
+ *	\version 2.0
+ *	\brief To launch GATE:
+ *	- 'Gate' or 'Gate --qt' using the Qt visualization
+ *	- 'Gate your_macro.mac' or 'Gate --qt your_macro.mac' using the Qt visualization
+ *	- 'Gate -d your_macro.mac' using the DigiGate
+ *	- 'Gate -a activity 10' using the parameterized macro creating an alias in your macro
+ */
 
-#include "GateConfiguration.h"
-
+#include <getopt.h>
+#include <cstdlib>
 #include <queue>
 
+#include "G4UImanager.hh"
 #include "G4UIterminal.hh"
 #include "G4UItcsh.hh"
+
+#include "GateRunManager.hh"
+#include "GateMessageManager.hh"
 #include "GateSteppingVerbose.hh"
-
-#ifdef G4UI_USE_ROOT
-#include "G4UIRoot.hh"
-#endif
-
-#include "GateDetectorConstruction.hh"
-#include "GatePhysicsList.hh"
-#include "GatePrimaryGeneratorAction.hh"
-#include "GateUserActions.hh"
 #include "GateRandomEngine.hh"
-
 #include "GateApplicationMgr.hh"
 #include "GateSourceMgr.hh"
-#include "GateClock.hh"
-#include "GateOutputMgr.hh"
-#include "GateUIcontrolMessenger.hh"
-#include "GateUIterminal.hh"
-#include "GateDigitizer.hh"
-#include "GatePulseProcessorChain.hh"
 #include "GateSignalHandler.hh"
-
-#include "GateRecorderBase.hh"
+#include "GateDetectorConstruction.hh"
+#include "GatePhysicsList.hh"
+#include "GateConfiguration.h"
+#include "GateSignalHandler.hh"
+#include "GateOutputMgr.hh"
+#include "GatePrimaryGeneratorAction.hh"
+#include "GateUserActions.hh"
+#include "GateDigitizer.hh"
+#include "GateClock.hh"
+#include "GateUIcontrolMessenger.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 #include "GateROOTBasicOutput.hh"
 #include "TPluginManager.h"
 #include "GateHitFileReader.hh"
 #endif
-
-#include "GateMessageManager.hh"
-
 #ifdef G4VIS_USE
 #include "G4VisExecutive.hh"
 #endif
-
 #ifdef G4UI_USE
 #include "G4UIExecutive.hh"
 #endif
 
-#ifndef G4ANALYSIS_USE_ROOT
-//-------------------------------------------------------------------------------------
-void AbortIfRootNotFound()
+void printHelpAndQuit( G4String msg )
 {
-  G4cout  << G4endl 
+	GateMessage( "Core", 0, msg << G4endl );
+	GateMessage( "Core", 0, "Usage: Gate [OPTION]... MACRO_FILE" << G4endl );
+	GateMessage( "Core", 0, G4endl);
+	GateMessage( "Core", 0, "Mandatory arguments to long options are mandatory for short options too." << G4endl );
+	GateMessage( "Core", 0, "  -h, --help             print the help" << G4endl );
+	GateMessage( "Core", 0, "  -a, --param            use the parameterized macro" << G4endl );
+	GateMessage( "Core", 0, "  --d                    use the DigiMode" << G4endl );
+	GateMessage( "Core", 0, "  --b                    use the batch mode" << G4endl );
+	GateMessage( "Core", 0, "  --qt                   use the Qt visualization mode" << G4endl );
+	exit( EXIT_FAILURE );
+}
+
+std::queue < G4String > decodeParameters( G4String listOfParameters )
+{
+	// Command queue storing the '/control/alias ALIAS VALUE' command line
+	std::queue < G4String > commandQueue;
+
+	// Find the first '[' position and ']' position
+	size_t foundBracket1; // '['
+	size_t foundBracket2; // ']'
+	size_t foundComma; // ','
+
+	foundBracket1 = listOfParameters.find_first_of( "[" );
+	foundBracket2 = listOfParameters.find_first_of( "]" );
+	foundComma = listOfParameters.find_first_of( "," );
+
+	while( foundBracket1 != G4String::npos )
+	{
+		// Getting alias
+		G4String alias = listOfParameters.substr( foundBracket1 + 1, foundComma - foundBracket1 - 1 );
+		// Getting value
+		G4String value = listOfParameters.substr( foundComma + 1, foundBracket2 - foundComma - 1 );
+		
+		// Creating alias command and store it
+		G4String newAliasCommand = G4String( "/control/alias " ) + alias + G4String( " " ) + value;
+		commandQueue.push( newAliasCommand );
+
+		// Fetching other bounds []
+		foundBracket1 = listOfParameters.find_first_of( "[", foundBracket1 + 1 );
+		foundBracket2 = listOfParameters.find_first_of( "]", foundBracket2 + 1 );
+		foundComma = listOfParameters.find_first_of( ",", foundComma + 1 );
+	}
+
+	return commandQueue;
+}
+
+#ifndef G4ANALYSIS_USE_ROOT
+void abortIfRootNotFound()
+{
+  G4cerr  << G4endl 
 	  << "Sorry, but it seems that GATE was compiled without the ROOT option." << G4endl
 	  << "Consequently, you can not run GATE in DigiGate mode, and the execution will abort." << G4endl
 	  << G4endl
@@ -66,307 +114,268 @@ void AbortIfRootNotFound()
 	  << G4endl
 	  << "1) I'm sorry but you won't have access to DigiGate, as it needs ROOT to work." << G4endl 
 	  << "   We apologize for this inconvenience, but there is nothing we can do about it," << G4endl
-	  << "   because DigiGate works by re-reading a ROOT hit-file" << G4endl 
-	  << G4endl
-	  << "2,3) You must enable the ROOT option with:" << G4endl
-	  << "         setenv G4ANALYSIS_USE_ROOT 1 (csh)" << G4endl
-	  << "         export G4ANALYSIS_USE_ROOT=1 (sh)"  << G4endl
-	  << "   Then rebuild the ROOT-dependent part of GATE (see below)" << G4endl 
-	  << G4endl
-	  << "4) The script 'env_gate.csh' decides whether or not to set the ROOT option by checking the value of " << G4endl
-	  << "   the environment variable 'ROOTSYS'. Maybe ROOT is installed on your system but ROOTSYS is not set." << G4endl
-	  << "   If that's the case, you must set the variable ROOTSYS with:" << G4endl
-	  << "         setenv ROOTSYS the_home_dir_of_ROOT (csh)" << G4endl
-	  << "         export ROOTSYS=the_home_dir_of_ROOT (sh)"  << G4endl
-	  << "   Then source 'env_gate.csh' again, then rebuild the ROOT-dependent part of GATE (see below)" << G4endl 
-	  << G4endl
-	  << "Note: to rebuild the ROOT-dependent part of GATE, use the following command:" << G4endl
-	  << "         touch Gate.cc `grep -l G4ANALYSIS_USE_ROOT include/* src/*`" << G4endl
-	  << "         make" << G4endl
+	  << "   because DigiGate works by re-reading a ROOT hit-file" << G4endl
 	  << G4endl;
   G4Exception( "Gate.cc AbortIfRootNotFound", "AbortIfRootNotFound", FatalException, "Correct problem then try again... Sorry!" );	    
 }
-//-------------------------------------------------------------------------------------
 #endif
 
-//-------------------------------------------------------------------------------------
-// Variables decoded from the Gate arguments
-DigiMode aDigiMode=kruntimeMode; 
-/* OBSOLETE
-G4bool isBatchMode = false;
-char* batchFileName = 0;
-*/
-std::queue<G4String> commandQueue;
-
-//-------------------------------------------------------------------------------------
-// Decode the arguments passed to Gate
-int nextArg = 1; // Need to be global to be used in main
-bool isMacroFile = false;
-void DecodeArguments(int argc,char** argv)
+void executeCommandQueue( std::queue< G4String > commandQueue, G4UImanager* UImanager )
 {
-  // Loop while there are optional arguments on the command line
-  while (nextArg<argc)
-    {
-      if (!strcmp(argv[nextArg],"-d")) {
-	// Select DigiGate mode
-	aDigiMode=kofflineMode;
-	nextArg++;
-      }
-      else if (!strcmp(argv[nextArg],"-a")) {
-	// Pass an alias to Gate
-	if ( argc <= (nextArg+2) )
+	while( commandQueue.size() )
 	{
-	  //G4Exception("Not enough arguments after the option flag '-a'\n" "The syntax to use this flag, which allows to create an alias, is:\n" "\tGate -a ALIAS_NAME ALIAS_VALUE\n\n" "Aborting!");
-		G4String msg = "Not enough arguments after the option flag '-a'\n";
-		msg += "The syntax to use this flag, which allows to create an alias, is:\n";
-		msg += "Gate -a ALIAS_NAME ALIAS_VALUE\n\n";
-		G4Exception( "Gate.cc DecodeArguments", "DecodeArguments", FatalException, msg );
+		G4cout << commandQueue.front() << G4endl;
+		UImanager->ApplyCommand( commandQueue.front() );
+		commandQueue.pop();
 	}
-	//G4String newCommand = G4String("/control/alias ") + argv[++nextArg] + " \"" + argv[++nextArg] + "\"";
-	nextArg++ ; 
-	G4String newCommand = G4String("/control/alias ") + argv[nextArg] ;
-        nextArg++ ; 
-	newCommand = newCommand + " \"" + argv[nextArg] + "\"";
-	commandQueue.push(newCommand);	    
-        nextArg++;
-      }
-#ifdef G4ANALYSIS_USE_ROOT
-      else if (!strcmp(argv[nextArg],"-b")) {
-	// disable X connection if asked...
-	gROOT->SetBatch();
-	nextArg++;
-      }
-#endif
-      else {
-	// The argument was not recognised: exit
-	isMacroFile = true;
-	break;
-      }
-    }
-
-/* OBSOLETE
-  // If there is an argument left on the command line, select the batch mode
-  // and use it as the batch-file name
-  isBatchMode = (argc!=nextArg);
-  if (isBatchMode)
-    batchFileName = argv[nextArg];
-*/
 }
-//-------------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------------
-// Execute the list of commands obtained from the command-line arguments
-void ExecuteCommandQueue()
+void welcome()
 {
-  G4UImanager* anUImanager = G4UImanager::GetUIpointer();
-
-  while ( commandQueue.size() )
-    { 
-      G4cout << commandQueue.front() << G4endl;
-      anUImanager->ApplyCommand(commandQueue.front());
-      commandQueue.pop() ; 
-    }
+	GateMessage( "Core", 0, G4endl );
+	GateMessage( "Core", 0, "**********************************************************************" << G4endl );
+	GateMessage( "Core", 0, " GATE version name: gate_v6.2                                         " << G4endl );
+	GateMessage( "Core", 0, "                    Copyright : OpenGATE Collaboration                " << G4endl );
+	GateMessage( "Core", 0, "                    Reference : Phys. Med. Biol. 49 (2004) 4543-4561  " << G4endl );
+	GateMessage( "Core", 0, "                    Reference : Phys. Med. Biol. 56 (2011) 881-901    " << G4endl );
+	GateMessage( "Core", 0, "                    WWW : http://www.opengatecollaboration.org        " << G4endl );
+	GateMessage( "Core", 0, "**********************************************************************" << G4endl );
+	GateMessage( "Core", 0, G4endl );
 }
-//-------------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------------
-void Welcome() {
-  GateMessage("Core", 0, G4endl);
-  GateMessage("Core", 0, "**********************************************************************"<< G4endl);
-  GateMessage("Core", 0, " GATE version name: gate_v6.2                                         "<< G4endl);
-  GateMessage("Core", 0, "                    Copyright : OpenGATE Collaboration                "<< G4endl);
-  GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 49 (2004) 4543-4561  "<< G4endl);
-  GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 56 (2011) 881-901    "<< G4endl);
-  GateMessage("Core", 0, "                    WWW : http://www.opengatecollaboration.org/       "<< G4endl);
-  GateMessage("Core", 0, "**********************************************************************"<< G4endl);
-  GateMessage("Core", 0, G4endl);
-}
-//-------------------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------------------
-int main(int argc,char** argv)
+int main( int argc, char* argv[] )
 {
-  // First of all, set the G4cout to our message manager
-  GateMessageManager * theGateMessageManager = GateMessageManager::GetInstance();
-  G4UImanager::GetUIpointer()->SetCoutDestination(theGateMessageManager);
+	// First of all, set the G4cout to our message manager
+	GateMessageManager* theGateMessageManager = GateMessageManager::GetInstance();
+	G4UImanager::GetUIpointer()->SetCoutDestination( theGateMessageManager );
 
-#ifdef G4ANALYSIS_USE_ROOT
+	#ifdef G4ANALYSIS_USE_ROOT
   // "Magic" line to avoid problem with ROOT plugin. It is useful when
   // compiling Gate on a given system and executing it remotely on
   // another (grid or cluster).  See
   // http://root.cern.ch/root/roottalk/roottalk08/0690.html
   // DS.
-  gROOT->GetPluginManager()->AddHandler("TVirtualStreamerInfo", "*",
-                                        "TStreamerInfo", "RIO", "TStreamerInfo()");
-#endif
- 
- GateSteppingVerbose* verbosity = new GateSteppingVerbose;
- G4VSteppingVerbose::SetInstance(verbosity);
-
-
-
-  // random engine
-  GateRandomEngine* randomEngine = GateRandomEngine::GetInstance();
-
-  // Call the argument decoding function
-  DecodeArguments(argc,argv);
-
-  // Install the signal handler to handle interrupt calls
-  GateSignalHandler::Install();
-
-  // Construct the default run manager
-  GateRunManager* runManager = new GateRunManager;  
-
-  // Set the Basic ROOT Output
-GateRecorderBase* myRecords = 0;
-#ifdef G4ANALYSIS_USE_ROOT
-  myRecords= new GateROOTBasicOutput;
-#endif
-  
-  // Set the DetectorConstruction
-  GateDetectorConstruction* gateDC = new GateDetectorConstruction();
-  runManager->SetUserInitialization(gateDC);
-  
-  // Set the PhysicsList  
-  runManager->SetUserInitialization(GatePhysicsList::GetInstance());
-
-  // Set the users actions to handle callback for actors - before the initialisation
-  new GateUserActions(runManager, myRecords);
-
-  // Set the Visualization Manager
-#ifdef G4VIS_USE
-  theGateMessageManager->EnableG4Messages(false);
-  G4VisManager* visManager = new G4VisExecutive;
-  visManager->Initialize();
-  theGateMessageManager->EnableG4Messages(true);
-#endif
-  
-  // Initialize G4 kernel
-  runManager->InitializeAll();
-
- // Incorporate the user actions
-  // Set the particles generator
-  runManager->SetUserAction(new GatePrimaryGeneratorAction());  
-
-  // Set the users actions to handle callback for actors - before the initialisation
-  //new GateUserActions(runManager, myRecords);
-   
-
-  // Create various singleton objets
-#ifdef G4ANALYSIS_USE_GENERAL
-  GateOutputMgr::SetDigiMode(aDigiMode);
-  GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
-  GateDigitizer* digitizer = GateDigitizer::GetInstance();
-  GatePulseProcessorChain* singleChain = new GatePulseProcessorChain(digitizer,"Singles"); 
-  digitizer->StoreNewPulseProcessorChain(singleChain);
-#endif
-
-  if (aDigiMode==kofflineMode)
-#ifdef G4ANALYSIS_USE_ROOT
-    GateHitFileReader::GetInstance();
-#else
-  AbortIfRootNotFound();
-#endif
-
-  GateSourceMgr*      sourceMgr = GateSourceMgr::GetInstance();
-  GateApplicationMgr* appMgr    = GateApplicationMgr::GetInstance();
-  GateClock::GetInstance()->SetTime(0);
-  GateUIcontrolMessenger* controlMessenger = new GateUIcontrolMessenger;
-
-#ifdef G4VMC
-  new TG4XMLMessenger(new TG4XMLGeometryGenerator);
-#endif
-
-
-  //******************************************************
-  // Get the pointer to the UI manager and set verbosities
-  //******************************************************
-  
-  // Start the execution of GATE
-  // Two modes are possible: batch or interactive
-
- 
-#ifdef G4UI_USE
-G4UIExecutive * ui = new G4UIExecutive(argc,argv);
-#endif
-
-G4UIsession* session = NULL;
-if( !ui && !isMacroFile ) // Define (G)UI terminal for interactive mode
-{   
-	#ifdef G4UI_USE_TCSH
-	session = new G4UIterminal(new G4UItcsh);      
-	#else
-	session = new G4UIterminal();
+  gROOT->GetPluginManager()->AddHandler( "TVirtualStreamerInfo", "*", "TStreamerInfo", "RIO", "TStreamerInfo()" );
 	#endif
-}
 
-  //******************************************************     
-  // Get the pointer to the User Interface manager
-  //******************************************************
-  G4UImanager* UImanager = G4UImanager::GetUIpointer(); 
+	GateSteppingVerbose* verbosity = new GateSteppingVerbose;
+	G4VSteppingVerbose::SetInstance( verbosity );
 
-if( ui || session )   // Define UI session for interactive mode
-{
-	Welcome();
-	G4String fileName;
-	if( argc > 1 )
+	// random engine
+	GateRandomEngine* randomEngine = GateRandomEngine::GetInstance();
+
+	// analyzing arguments
+	static G4int isDigiMode = 0; // DigiMode false by default
+	static G4int isBatchMode = 0; // Batch mode with ROOT
+	static G4int isQt = 0; // Enable Qt or not
+	G4String listOfParameters = ""; // List of parameters for parameterized macro
+	DigiMode aDigiMode = kruntimeMode;
+
+	// Loop over arguments
+	G4int c = 0;
+	while( 1 )
 	{
-		ExecuteCommandQueue();
-		GateMessage("Core", 0, "Starting macro " << argv[nextArg] << G4endl);
-		G4String command = "/control/execute ";
-		fileName = argv[nextArg];
-		UImanager->ApplyCommand(command+fileName);
+		// Declaring options
+		G4int optionIndex = 0;
+		static struct option longOptions[] = {
+			{ "help", no_argument, 0, 'h' },
+			{ "d", no_argument, &isDigiMode, 1 },
+			{ "qt", no_argument, &isQt, 1 },
+			{ "b", no_argument, &isBatchMode, 1 },
+			{ "param", required_argument, 0, 'a' }
+		};
+
+		// Getting the option
+		c = getopt_long( argc, argv, "ha:", longOptions, &optionIndex );
+
+		// Exit the loop if -1
+		if( c == -1 ) break;
+
+		// Analyzing each option
+		switch( c )
+		{
+			case 0:
+				// If this option set a flag, do nothing else now
+				if( longOptions[ optionIndex ].flag != 0 ) break;
+				break;
+			case 'h':
+				printHelpAndQuit( "Printing help!!!" );
+				break;
+			case 'a':
+				listOfParameters = optarg;
+				break;
+			default:
+				printHelpAndQuit( "Out of switch options" );
+				break;
+		}
 	}
-	if( ui )
+
+	// Checking if the DigiMode is activated
+	if( isDigiMode )
+		aDigiMode = kofflineMode;
+
+	// Checking batch mode with ROOT
+	#ifdef G4ANALYSIS_USE_ROOT
+	if( isBatchMode )
+		gROOT->SetBatch();
+	#endif
+
+	// Analyzing parameterized macro
+	std::queue< G4String > commandQueue = decodeParameters( listOfParameters );
+
+	// Install the signal handler to handle interrupt calls
+	GateSignalHandler::Install();
+
+	// Construct the default run manager
+	GateRunManager* runManager = new GateRunManager;  
+
+	// Set the Basic ROOT Output
+	GateRecorderBase* myRecords = 0;
+	#ifdef G4ANALYSIS_USE_ROOT
+	myRecords = new GateROOTBasicOutput;
+	#endif
+
+  // Set the DetectorConstruction
+	GateDetectorConstruction* gateDC = new GateDetectorConstruction();
+	runManager->SetUserInitialization( gateDC );
+
+	// Set the PhysicsList  
+	runManager->SetUserInitialization( GatePhysicsList::GetInstance() );
+
+	// Set the users actions to handle callback for actors - before the initialisation
+	new GateUserActions( runManager, myRecords );
+
+	// Set the Visualization Manager
+	#ifdef G4VIS_USE
+	G4VisManager* visManager = new G4VisExecutive;
+	visManager->Initialize();
+	#endif
+
+	// Initialize G4 kernel
+	runManager->InitializeAll();
+
+	// Incorporate the user actions, set the particles generator
+	runManager->SetUserAction( new GatePrimaryGeneratorAction() );  
+
+	// Create various singleton objets
+	#ifdef G4ANALYSIS_USE_GENERAL
+	GateOutputMgr::SetDigiMode( aDigiMode );
+	GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
+	GateDigitizer* digitizer = GateDigitizer::GetInstance();
+	GatePulseProcessorChain* singleChain = new GatePulseProcessorChain( digitizer, "Singles" ); 
+	digitizer->StoreNewPulseProcessorChain( singleChain );
+	#endif
+
+	if( aDigiMode == kofflineMode )
+		#ifdef G4ANALYSIS_USE_ROOT
+		GateHitFileReader::GetInstance();
+		#else
+		abortIfRootNotFound();
+		#endif
+
+	GateSourceMgr* sourceMgr = GateSourceMgr::GetInstance();
+	GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
+	GateClock::GetInstance()->SetTime( 0 );
+	GateUIcontrolMessenger* controlMessenger = new GateUIcontrolMessenger;
+
+	#ifdef G4VMC
+	new TG4XMLMessenger( new TG4XMLGeometryGenerator );
+	#endif
+
+	// Get the pointer to the User Interface manager
+	G4UImanager* UImanager = G4UImanager::GetUIpointer(); 
+
+	// Declaring pointers
+	G4UIExecutive* ui = NULL;
+	G4UIsession* session = NULL;
+	if( isQt )
 	{
-		ui->SessionStart();
-		GateMessage("Core", 0, "End of macro " << fileName << G4endl);
-		delete ui;
+		#ifdef G4UI_USE
+		ui = new G4UIExecutive( argc, argv );
+		#else
+			#ifdef G4UI_USE_TCSH
+			session = new G4UIterminal( new G4UItcsh );      
+			#else
+			session = new G4UIterminal();
+			#endif
+		#endif
 	}
 	else
 	{
-		session->SessionStart();
-		GateMessage("Core", 0, "End of macro " << fileName << G4endl);
-		delete session;
+		#ifdef G4UI_USE_TCSH
+		session = new G4UIterminal( new G4UItcsh );      
+		#else
+		session = new G4UIterminal();
+		#endif
 	}
-}
-else           // Batch mode
-{ 
-	#ifdef G4VIS_USE
-	visManager->SetVerboseLevel("quiet");
-	#endif
-	Welcome();      
-	ExecuteCommandQueue();
-	GateMessage("Core", 0, "Starting macro " << argv[nextArg] << G4endl);
-	G4String command = "/control/execute ";
-	G4String fileName = argv[nextArg];
-	UImanager->ApplyCommand(command+fileName);
-	GateMessage("Core", 0, "End of macro " << fileName << G4endl);
-}
-  
-  // Job termination 
-  // Free the store: user actions, physics_list and
-  // detector_description are owned and deleted by the run manager, so
-  // they should not be deleted in the main() program !
 
+	// Macro file parameters	
+	G4int isMacroFile = 0;
+	G4String macrofilename = "";
+	// Checking if macro file is here
+	// macrofilename always the last arguments, check if '.mac' is in the string
+	G4String lastArgument = argv[ argc - 1 ];
+	// Finding a point in 'lastArgument'
+	size_t foundPoint = lastArgument.find_last_of( "." );
+	// Finding suffix
+	G4String suffix = "";
+	if( foundPoint != G4String::npos )
+		suffix = lastArgument.substr( foundPoint + 1 );
+	if( suffix == "mac" )
+	{
+		isMacroFile = 1;
+		macrofilename = lastArgument;
+	}
 
+	// Using 'session' if not Qt
+	welcome();
+	// Batch mode, execute macro in a simple terminal without visualization
+	if( isBatchMode || isMacroFile )
+	{
+		if( macrofilename.empty() )
+			G4Exception( "Gate.cc macro filename not found", "macro filename not found", FatalException, "Complete your command 'Gate --b macro.mac'" );
+		#ifdef G4VIS_USE
+		visManager->SetVerboseLevel( "quiet" );
+		#endif
+		executeCommandQueue( commandQueue, UImanager );
+		GateMessage( "Core", 0, "Starting macro " << macrofilename << G4endl);
+		G4String command = "/control/execute ";
+		UImanager->ApplyCommand( command + macrofilename );
+		GateMessage( "Core", 0, "End of macro " << macrofilename << G4endl);
+	}
+	else
+	{
+		 // Launching interactive mode
+    if( ui ) // Qt
+    {
+      ui->SessionStart();
+      delete ui;
+    }
+    else if( session ) // Terminal
+    {
+      session->SessionStart();
+      delete session;
+    }
 
-#ifdef G4ANALYSIS_USE_GENERAL
-  if (outputMgr) delete outputMgr;
-#endif
+	}
 
-#ifdef G4VIS_USE
-  delete visManager;
-#endif
-
-  delete sourceMgr;
+	// Freeing memory
+	delete verbosity;
+	delete sourceMgr;
   delete appMgr;
- // delete runManager;
-  delete randomEngine;
-  delete myRecords;
-  delete controlMessenger;
-  return 0;
+	delete UImanager;
+	delete randomEngine;
+	delete controlMessenger;
+	#ifdef G4ANALYSIS_USE_ROOT
+	delete myRecords;
+	#endif
+	#ifdef G4ANALYSIS_USE_GENERAL
+	if (outputMgr) delete outputMgr;
+	#endif
+
+	#ifdef G4VIS_USE
+	delete visManager;
+	#endif
+
+	return 0;
 }
-//-------------------------------------------------------------------------------------
-
-
