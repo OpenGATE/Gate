@@ -330,7 +330,7 @@ int main( int argc, char* argv[] )
 	// Using 'session' if not Qt
 	welcome();
 	// Batch mode, execute macro in a simple terminal without visualization
-	if( isBatchMode || isMacroFile )
+	if( isBatchMode )
 	{
 		if( macrofilename.empty() )
 			G4Exception( "Gate.cc macro filename not found", "macro filename not found", FatalException, "Complete your command 'Gate --b macro.mac'" );
@@ -345,6 +345,16 @@ int main( int argc, char* argv[] )
 	}
 	else
 	{
+		// Launching Gate if macro file
+		if( isMacroFile )
+		{
+			//executeCommandQueue( commandQueue, UImanager );
+			GateMessage( "Core", 0, "Starting macro " << macrofilename << G4endl);
+			G4String command = "/control/execute ";
+			UImanager->ApplyCommand( command + macrofilename );
+			GateMessage( "Core", 0, "End of macro " << macrofilename << G4endl);
+		}
+
 		 // Launching interactive mode
     if( ui ) // Qt
     {
@@ -356,7 +366,6 @@ int main( int argc, char* argv[] )
       session->SessionStart();
       delete session;
     }
-
 	}
 
 	// Freeing memory
