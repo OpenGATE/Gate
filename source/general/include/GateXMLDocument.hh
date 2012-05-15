@@ -8,11 +8,12 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-
-#ifdef GATE_USE_OPTICAL
-
 #ifndef GateXMLDocument_hh
 #define GateXMLDocument_hh
+
+#include "GateConfiguration.h"
+
+#ifdef GATE_USE_OPTICAL
 
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>

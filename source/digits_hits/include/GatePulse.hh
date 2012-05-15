@@ -12,6 +12,7 @@ See GATE/LICENSE.txt for further details
 #ifndef GatePulse_h
 #define GatePulse_h 1
 
+#include "GateConfiguration.h"
 #include "globals.hh"
 #include <iostream>
 #include <vector>

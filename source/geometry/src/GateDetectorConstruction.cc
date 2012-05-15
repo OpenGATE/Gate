@@ -35,6 +35,8 @@ See GATE/LICENSE.txt for further details
 #include "globals.hh"
 #include "G4Material.hh"
 
+#include "GateConfiguration.h"
+
 #ifdef GATE_USE_OPTICAL
 #include "GateSurfaceList.hh"
 #endif

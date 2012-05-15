@@ -12,6 +12,8 @@
             New output file (ntuple) dedicated to the Optical Photon Validation. 
 */
 
+#include "GateConfiguration.h"
+
 #ifdef GATE_USE_OPTICAL
 
 #ifndef GateFastAnalysis_H

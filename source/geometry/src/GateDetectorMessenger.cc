@@ -24,6 +24,8 @@ See GATE/LICENSE.txt for further details
 #include "G4Material.hh"
 #include "GateMiscFunctions.hh"
 
+#include "GateConfiguration.h"
+
 //-----------------------------------------------------------------------------
 GateDetectorMessenger::GateDetectorMessenger(GateDetectorConstruction* GateDet)
 :pDetectorConstruction(GateDet)

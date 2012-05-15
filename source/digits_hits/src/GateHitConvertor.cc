@@ -15,6 +15,7 @@
 #include "GateHitConvertorMessenger.hh"
 #include "GateTools.hh"
 #include "GateDigitizer.hh"
+#include "GateConfiguration.h"
 
 const G4String GateHitConvertor::theOutputAlias = "Hits";  
 

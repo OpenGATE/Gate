@@ -27,6 +27,8 @@
 #include "G4UserLimits.hh"
 #include "GateUserLimits.hh"
 
+#include "GateConfiguration.h"
+
 #ifdef GATE_USE_OPTICAL
 #include "G4OpticalPhoton.hh"
 #endif

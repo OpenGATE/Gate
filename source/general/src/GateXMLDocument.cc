@@ -14,6 +14,8 @@ See GATE/LICENSE.txt for further details
  * \brief Class GateXMLDocument
  */ 
 
+#include "GateConfiguration.h"
+
 #ifdef GATE_USE_OPTICAL
 
 #include "GateXMLDocument.hh"
@@ -340,7 +342,7 @@ G4MaterialPropertiesTable* ReadMaterialPropertiesTable(GateXMLDocument* doc)
 	  G4double energy    = G4UIcmdWithADouble::GetNewDoubleValue(energystr.c_str());
 	  G4String valuestr  = doc->GetProperty("value");
 	  G4double value     = G4UIcmdWithADouble::GetNewDoubleValue(valuestr.c_str());
-	  vector->AddElement(energy*energyunit, value*unit);
+	  vector->InsertValues(energy*energyunit, value*unit);
 	}
 	table->AddProperty(property.c_str(), vector);
 	doc->Leave();

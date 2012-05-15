@@ -12,6 +12,8 @@
 #ifndef GateDetectorConstruction_H
 #define GateDetectorConstruction_H 1
 
+#include "GateConfiguration.h"
+
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 

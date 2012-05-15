@@ -20,6 +20,7 @@ See GATE/LICENSE.txt for further details
 #include "G4THitsCollection.hh"
 #include "G4Allocator.hh"
 #include "G4ThreeVector.hh"
+#include "GateConfiguration.h"
 
 class GatePhantomHit : public G4VHit
 {

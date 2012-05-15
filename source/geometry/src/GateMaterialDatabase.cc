@@ -13,6 +13,8 @@
 #include "GateMessageManager.hh"
 #include "GateMDBFile.hh"
 
+#include "GateConfiguration.h"
+
 #ifdef GATE_USE_OPTICAL
 #include "GateXMLDocument.hh"
 #endif

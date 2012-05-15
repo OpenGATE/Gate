@@ -8,7 +8,7 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-
+#include "GateConfiguration.h"
 #include "GateVVolume.hh"
 
 #include "G4Box.hh"

@@ -14,6 +14,7 @@
 */
 
 #include "GateToRoot.hh"
+#include "GateConfiguration.h"
 
 #ifdef G4ANALYSIS_USE_ROOT
 

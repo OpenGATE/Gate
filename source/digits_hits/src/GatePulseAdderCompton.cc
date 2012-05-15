@@ -20,7 +20,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GatePulseAdderComptonMessenger.hh"
 #include "G4Electron.hh"
-
+#include "GateConfiguration.h"
 
 GatePulseAdderCompton::GatePulseAdderCompton(GatePulseProcessorChain* itsChain,
 											 const G4String& itsName) 

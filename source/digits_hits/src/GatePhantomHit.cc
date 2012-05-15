@@ -17,7 +17,7 @@ See GATE/LICENSE.txt for further details
 #include "G4Circle.hh"
 #include "G4Colour.hh"
 #include "G4VisAttributes.hh"
-
+#include "GateConfiguration.h"
 
 G4Allocator<GatePhantomHit> GatePhantomHitAllocator;
 
