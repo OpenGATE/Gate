@@ -247,8 +247,10 @@ int main( int argc, char* argv[] )
 
 	// Set the Visualization Manager
 	#ifdef G4VIS_USE
+	theGateMessageManager->EnableG4Messages( false );
 	G4VisManager* visManager = new G4VisExecutive;
 	visManager->Initialize();
+	theGateMessageManager->EnableG4Messages( true );
 	#endif
 
 	// Initialize G4 kernel
@@ -277,10 +279,6 @@ int main( int argc, char* argv[] )
 	GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
 	GateClock::GetInstance()->SetTime( 0 );
 	GateUIcontrolMessenger* controlMessenger = new GateUIcontrolMessenger;
-
-	#ifdef G4VMC
-	new TG4XMLMessenger( new TG4XMLGeometryGenerator );
-	#endif
 
 	// Get the pointer to the User Interface manager
 	G4UImanager* UImanager = G4UImanager::GetUIpointer(); 
@@ -348,15 +346,13 @@ int main( int argc, char* argv[] )
 		// Launching Gate if macro file
 		if( isMacroFile )
 		{
-			//executeCommandQueue( commandQueue, UImanager );
+			executeCommandQueue( commandQueue, UImanager );
 			GateMessage( "Core", 0, "Starting macro " << macrofilename << G4endl);
 			G4String command = "/control/execute ";
 			UImanager->ApplyCommand( command + macrofilename );
 			GateMessage( "Core", 0, "End of macro " << macrofilename << G4endl);
 		}
-
-		 // Launching interactive mode
-    if( ui ) // Qt
+		else if( ui ) // Launching interactive mode // Qt
     {
       ui->SessionStart();
       delete ui;
@@ -368,8 +364,14 @@ int main( int argc, char* argv[] )
     }
 	}
 
-	// Freeing memory
-	delete verbosity;
+	#ifdef G4ANALYSIS_USE_GENERAL
+	if (outputMgr) delete outputMgr;
+	#endif
+
+	#ifdef G4VIS_USE
+	delete visManager;
+	#endif
+
 	delete sourceMgr;
   delete appMgr;
 	delete UImanager;
@@ -378,13 +380,7 @@ int main( int argc, char* argv[] )
 	#ifdef G4ANALYSIS_USE_ROOT
 	delete myRecords;
 	#endif
-	#ifdef G4ANALYSIS_USE_GENERAL
-	if (outputMgr) delete outputMgr;
-	#endif
-
-	#ifdef G4VIS_USE
-	delete visManager;
-	#endif
+	delete verbosity;
 
 	return 0;
 }
