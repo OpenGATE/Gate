@@ -430,6 +430,9 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
         }
       }
 
+      //if (event) {
+      //  printf("time %e ns\n", GetTime());
+      //}
 
       //G4cout<<"Generate primaries"<<G4endl;
       return numVertices;

@@ -71,7 +71,8 @@ G4double GateSourceGPUVoxellized::GetNextTime(G4double timeNow)
     t += GateSourceVoxellized::GetNextTime(a);
   }
 
-  GateMessage("Beam", 5, "Compute " << mNumberOfNextTime << " NextTime from " << G4BestUnit(timeNow, "Time") << " -> found = " << G4BestUnit(t, "Time") << std::endl);  
+  GateMessage("Beam", 5, "Compute " << mNumberOfNextTime << " NextTime from " << G4BestUnit(timeNow, "Time") << " -> found = " << G4BestUnit(t, "Time") << "=" << G4BestUnit(timeNow+t, "Time") << std::endl);  
+
   return t;
 }
 //-------------------------------------------------------------------------------------------------
@@ -126,6 +127,7 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
     GateMessage("Beam", 5, "No particles in the buffer, we ask the gpu for " << m_gpu_input->nb_events << " events" << std::endl);
 
     // Go GPU
+    m_gpu_input->firstInitialID = mCurrentTimeID; // add by JB
     GateGPUGeneratePrimaries(m_gpu_input, m_gpu_output);
     GateMessage("Beam", 5, "Done : GPU send " << m_gpu_output.particles.size() << " events" << std::endl);
   }
@@ -136,7 +138,8 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
     // Create a new particle
     GeneratePrimaryEventFromGPUOutput(m_gpu_output.particles.front(), event);
     double tof = m_gpu_output.particles.front().t;
-    
+    //printf("t %e\n", tof);
+
     // Set the current timeID
     mCurrentTimeID = m_gpu_output.particles.front().initialID;
     
