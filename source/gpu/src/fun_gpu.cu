@@ -401,7 +401,7 @@ __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, flo
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 	int jump = dimvol.x * dimvol.y;
 	float3 p, p0, delta, dimvolmm, dp;
-	float3 cur_CS,prob_CS;
+	float3 cur_CS;
 	int3 vox;
 	float path, rec_mu_maj, E, sum_CS, t;
 	int i=0;
@@ -449,7 +449,8 @@ __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, flo
 				stackgamma.endsimu[id] = 1; // stop simulation for this one
 				stackgamma.interaction[id] = 0;
 				
-				float dimvoxbis = __fdividef(1.0f, dimvox);
+				/*    
+                float dimvoxbis = __fdividef(1.0f, dimvox);
 				float r=dimvoxbis*0.1;
 				
 				while(p.x < -r || p.y < -r || p.z < -r
@@ -457,7 +458,7 @@ __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, flo
 					p.x = p.x - delta.x * r;
 					p.y = p.y - delta.y * r;
 					p.z = p.z - delta.z * r;
-				}
+				}*/
 				
 				dp.x = p0.x - p.x;
 				dp.y = p0.y - p.y;
@@ -474,9 +475,9 @@ __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, flo
 			}
 		
 			// which voxel?
-			vox.x = floor(p.x * dimvox);
-			vox.y = floor(p.y * dimvox);
-			vox.z = floor(p.z * dimvox);
+			vox.x = int(p.x * dimvox);
+			vox.y = int(p.y * dimvox);
+			vox.z = int(p.z * dimvox);
 			
 			// get mat
 			mat = tex1Dfetch(tex_phantom, vox.z*jump + vox.y*dimvol.x + vox.x);
@@ -507,16 +508,17 @@ __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, flo
 		stackgamma.pz[id] = p.z;
 		stackgamma.t[id] = t;
 		
-		// Select an interaction
-		// Re-use CS variables to select an interaction
-		prob_CS.x = __fdividef(cur_CS.x, sum_CS);                      // pe
-		prob_CS.y = __fdividef(cur_CS.y, sum_CS) + prob_CS.x;  			// cpt				
-		// re-use p.x as rnd variable
-		p.x = Brent_real(id, stackgamma.table_x_brent, 0);
-		// selecting interaction				
-		if (p.x>=0 && p.x<prob_CS.x) stackgamma.interaction[id] = 1;
-		if (p.x>=prob_CS.x && p.x<prob_CS.y) stackgamma.interaction[id] = 2;
-	}
+        cur_CS.x = PhotoElec_CS_Standard(mat, E);
+        cur_CS.y = Compton_CS_Standard(mat, E);
+        sum_CS = cur_CS.x + cur_CS.y;
+
+	    if (__fdividef(cur_CS.x, sum_CS)>Brent_real(id, stackgamma.table_x_brent, 0)) {
+            stackgamma.interaction[id] = 1;
+        } else {
+            stackgamma.interaction[id] = 2;
+        }
+
+    }
 }
 
 /***********************************************************
@@ -757,3 +759,110 @@ int get_nb_active_voxel(const char* filename_act) {
 	fclose(pfile_act);
 	return nb;
 }
+
+// back raytrace and check the collision
+void back_raytrace_phasespace(StackGamma &stack, int nbgamma, int3 dim_phantom, float size_voxel) {
+
+	float xmin, xmax, ymin, ymax, zmin, zmax;
+	xmin = 0;
+	xmax = dim_phantom.x * size_voxel;
+	ymin = 0;
+	ymax = dim_phantom.y * size_voxel;
+	zmin = 0;
+	zmax = dim_phantom.z * size_voxel;
+
+	int i = 0;
+	float eps = 0.1f;
+	float dx, dy, dz;
+	double dof, tof;
+
+	float xi1, yi1, zi1;
+	float xd, yd, zd;
+	float tmin, tmax, tymin, tymax, tzmin, tzmax;
+	float xdi, ydi, zdi;
+	float buf, newz;
+	while (i < nbgamma) {
+        if (!stack.live[i]) {++i; continue;}
+
+		xi1 = stack.px[i];
+		yi1 = stack.py[i];
+		zi1 = stack.pz[i];
+		xd = -stack.dx[i];
+		yd = -stack.dy[i];
+		zd = -stack.dz[i];
+
+		tmin = -1e9f;
+		tmax = 1e9f;
+		
+		// on x
+		if (xd != 0.0f) {
+			xdi = 1.0f / xd;
+			tmin = (xmin - xi1) * xdi;
+			tmax = (xmax - xi1) * xdi;
+			if (tmin > tmax) {
+				buf = tmin;
+				tmin = tmax;
+				tmax = buf;
+			}
+		}
+		// on y
+		if (yd != 0.0f) {
+			ydi = 1.0f / yd;
+			tymin = (ymin - yi1) * ydi;
+			tymax = (ymax - yi1) * ydi;
+			if (tymin > tymax) {
+				buf = tymin;
+				tymin = tymax;
+				tymax = buf;
+			}
+			if (tymin > tmin) {tmin = tymin;}
+			if (tymax < tmax) {tmax = tymax;}
+		}
+		// on z
+		if (zd != 0.0f) {
+			zdi = 1.0f / zd;
+			tzmin = (zmin - zi1) * zdi;
+			tzmax = (zmax - zi1) * zdi;
+			if (tzmin > tzmax) {
+				buf = tzmin;
+				tzmin = tzmax;
+				tzmax = buf;
+			}
+			if (tzmin > tmin) {tmin = tzmin;}
+			if (tzmax < tmax) {tmax = tzmax;}
+		}
+		// compute points
+		dz = zd * tmin;
+        dx = xd * tmin;
+        dy = yd * tmin;
+        stack.px[i] = xi1 + dx;
+        stack.py[i] = yi1 + dy;
+        stack.pz[i] = zi1 + dz;
+
+        dof = sqrt(dx*dx + dy*dy + dz*dz);
+        tof = 3.33564095198e-03f * dof;
+        stack.t[i] = stack.t[i] - tof;
+			
+		++i;
+	} // while gamma
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

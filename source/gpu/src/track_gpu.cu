@@ -6,6 +6,7 @@
 void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input, 
                               GateSourceGPUVoxellizedOutput & output) {
 
+  /*
   //--------------------------------------------------------------------------
   // BEGIN TEST
   // DS FIXME --> test because GPU do not work on my computer
@@ -65,19 +66,19 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
   return;
   // END TEST 
   //--------------------------------------------------------------------------
-  
+  */
 
 	int positron = input->nb_events / 2.0f; // positron generated (nb gamma = 2*ptot) 
-	unsigned short int most_att_mat = 7; // 1 Water  -  7 RibBone  FIXME add most att mat selector
+    unsigned short int most_att_mat = 7; // 1 Water  -  7 RibBone  FIXME add most att mat selector
 
 	// T0 run
-	float T0 = 0.0;// input->startTime;
-	
+    int firstInitialID = input->firstInitialID;
+
 	// Energy
 	float E = input->E; // 511 keV
-	long seed = input->seed;
-
-	// Define phantom
+	long seed = input->seed + firstInitialID; // Avoid to use the same seed each time
+	
+    // Define phantom
 	int3 dim_phantom;
 	dim_phantom.z = input->phantom_size_z; // vox
 	dim_phantom.y = input->phantom_size_y; // vox
@@ -165,6 +166,10 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 		cudaThreadSynchronize();
 	} // while
 
+    // Rewind particules by mapping them to the phantom faces
+    back_raytrace_phasespace(phasespace1, positron, dim_phantom, size_voxel);
+    back_raytrace_phasespace(phasespace2, positron, dim_phantom, size_voxel);
+
 	int i=0;
 	while (i<positron) {
 		if (phasespace1.live[i]) {
@@ -177,7 +182,10 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 			particle.py = phasespace1.py[i];
 			particle.pz = phasespace1.pz[i];
 			particle.t = phasespace1.t[i];
+            particle.initialID = firstInitialID + i;
 			output.particles.push_back(particle);
+            //printf("dum dum x %e y %e z %e\n", 
+            //        phasespace1.px[i], phasespace1.py[i], phasespace1.pz[i]);
 		}
 		if (phasespace2.live[i]) {
 			GateSourceGPUVoxellizedOutputParticle particle;
@@ -189,7 +197,10 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 			particle.py = phasespace2.py[i];
 			particle.pz = phasespace2.pz[i];
 			particle.t = phasespace2.t[i];
+            particle.initialID = firstInitialID + i;
 			output.particles.push_back(particle);
+            //printf("dum dum x %e y %e z %e\n", 
+            //        phasespace1.px[i], phasespace1.py[i], phasespace1.pz[i]);
 		}
 		++i;
 	}
