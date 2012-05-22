@@ -9,7 +9,6 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #include "GateConfiguration.h"
-#ifndef G4VERSION9_3
 
 #include "GateBremsstrahlungPenelopePB.hh"
 
@@ -52,4 +51,3 @@ bool GateBremsstrahlungPenelopePB::IsApplicable(G4ParticleDefinition * par)
 
 MAKE_PROCESS_AUTO_CREATOR_CC(GateBremsstrahlungPenelopePB)
 
-#endif

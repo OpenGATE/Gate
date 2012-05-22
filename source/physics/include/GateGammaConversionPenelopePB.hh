@@ -10,7 +10,6 @@ See GATE/LICENSE.txt for further details
 
 #include "GateConfiguration.h"
 
-#ifndef G4VERSION9_3
 #ifndef GATEGAMMACONVERSIONPENEPB_HH
 #define GATEGAMMACONVERSIONPENEPB_HH
 
@@ -21,5 +20,4 @@ See GATE/LICENSE.txt for further details
 
 MAKE_PROCESS_AUTO_CREATOR(GateGammaConversionPenelopePB)
 
-#endif
 #endif

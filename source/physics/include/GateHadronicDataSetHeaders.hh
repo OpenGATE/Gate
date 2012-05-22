@@ -11,9 +11,6 @@ See GATE/LICENSE.txt for further details
 
 // Elastic
 #include "G4HadronElasticDataSet.hh"
-//#ifdef G4VERSION9_2 
-//#include "G4QElasticCrossSection.hh"
-//#endif
 
 // Inelastic
 #include "G4HadronInelasticDataSet.hh"

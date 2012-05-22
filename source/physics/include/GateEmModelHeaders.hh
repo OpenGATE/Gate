@@ -10,7 +10,6 @@ See GATE/LICENSE.txt for further details
 
 #include "GateConfiguration.h"
 
-#ifdef G4VERSION9_3 
 // Compton
 #include "G4LivermoreComptonModel.hh"
 #include "G4LivermorePolarizedComptonModel.hh"
@@ -44,4 +43,3 @@ See GATE/LICENSE.txt for further details
 
 
 
-#endif

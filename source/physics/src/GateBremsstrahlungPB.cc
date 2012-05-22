@@ -13,7 +13,6 @@ See GATE/LICENSE.txt for further details
 
 #include "GateEMStandardProcessMessenger.hh"
 
-#ifdef G4VERSION9_3
 //-----------------------------------------------------------------------------
 GateBremsstrahlungPB::GateBremsstrahlungPB():GateVProcess("Bremsstrahlung")
 {  
@@ -101,41 +100,6 @@ void GateBremsstrahlungPB::AddUserModel(GateListOfHadronicModels *model){
 //-----------------------------------------------------------------------------
 
 
-#else
-//-----------------------------------------------------------------------------
-GateBremsstrahlungPB::GateBremsstrahlungPB():GateVProcess("Bremsstrahlung")
-{  
-  SetDefaultParticle("e+");
-  SetDefaultParticle("e-");
-  SetProcessInfo("Bremsstrahlung by electrons and positrons");
-  pMessenger = new GateEMStandardProcessMessenger(this);  
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-G4VProcess* GateBremsstrahlungPB::CreateProcess(G4ParticleDefinition *)
-{
-  return new G4eBremsstrahlung(GetG4ProcessName());
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void GateBremsstrahlungPB::ConstructProcess(G4ProcessManager * manager)
-{
-  manager->AddProcess(pFinalProcess,-1, -3, 3);           
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-bool GateBremsstrahlungPB::IsApplicable(G4ParticleDefinition * par)
-{
-  if(par == G4Electron::Electron() || par == G4Positron::Positron()) return true;
-  return false;
-}
-//-----------------------------------------------------------------------------
-#endif
 
 MAKE_PROCESS_AUTO_CREATOR_CC(GateBremsstrahlungPB)
 

@@ -12,7 +12,6 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEVPROCESS_CC
 #define GATEVPROCESS_CC
 
-//#include "GateConfiguration.h"
 #include "GateVProcess.hh"
 #include "GateVProcessMessenger.hh"
 
@@ -1227,9 +1226,6 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
      if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
      dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
   }
-
-
-//#ifdef G4VERSION9_2 
   else if(model->GetModelName() == "G4QMDReaction")
   {
      theListOfG4HadronicModels.push_back(new G4QMDReaction);
@@ -1237,7 +1233,6 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
      if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
      dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
   }
-//#endif
 
 
 

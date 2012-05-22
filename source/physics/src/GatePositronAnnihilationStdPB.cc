@@ -13,7 +13,6 @@ See GATE/LICENSE.txt for further details
 #include "GateEMStandardProcessMessenger.hh"
 
 
-#ifdef G4VERSION9_3
 //-----------------------------------------------------------------------------
 GatePositronAnnihilationStdPB::GatePositronAnnihilationStdPB():GateVProcess("G4PositronAnnihilation")
 {  
@@ -91,43 +90,6 @@ void GatePositronAnnihilationStdPB::AddUserModel(GateListOfHadronicModels *model
   }
 }
 //-----------------------------------------------------------------------------
-
-
-#else
-//-----------------------------------------------------------------------------
-GatePositronAnnihilationStdPB::GatePositronAnnihilationStdPB():GateVProcess("PositronAnnihilationStd")
-{  
-  SetDefaultParticle("e+");
-  SetProcessInfo("Standard G4 positron annihilation process");
-  pMessenger = new GateEMStandardProcessMessenger(this);  
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-G4VProcess* GatePositronAnnihilationStdPB::CreateProcess(G4ParticleDefinition *)
-{
-  return new G4eplusAnnihilation();
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void GatePositronAnnihilationStdPB::ConstructProcess(G4ProcessManager * manager)
-{
-  manager->AddProcess(GetProcess(),0, -1, 4); 
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-bool GatePositronAnnihilationStdPB::IsApplicable(G4ParticleDefinition * par)
-{
-  if(par == G4Positron::Positron()) return true;
-  return false;
-}
-//-----------------------------------------------------------------------------
-#endif
 
 
 MAKE_PROCESS_AUTO_CREATOR_CC(GatePositronAnnihilationStdPB)

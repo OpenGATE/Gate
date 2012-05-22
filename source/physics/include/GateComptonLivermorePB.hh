@@ -9,7 +9,6 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #include "GateConfiguration.h"
-#ifndef G4VERSION9_3
 #ifndef GATECOMPTONLIVERMOREPB_HH
 #define GATECOMPTONLIVERMOREPB_HH
 
@@ -19,5 +18,4 @@ See GATE/LICENSE.txt for further details
 
 MAKE_PROCESS_AUTO_CREATOR(GateComptonLivermorePB)
 
-#endif
 #endif

@@ -9,7 +9,6 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #include "GateConfiguration.h"
-#ifndef G4VERSION9_3
 
 #include "GateElectronIonisationPenelopePB.hh"
 
@@ -54,4 +53,3 @@ bool GateElectronIonisationPenelopePB::IsApplicable(G4ParticleDefinition * par)
 
 MAKE_PROCESS_AUTO_CREATOR_CC(GateElectronIonisationPenelopePB)
 
-#endif

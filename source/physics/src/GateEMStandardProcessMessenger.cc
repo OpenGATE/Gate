@@ -60,9 +60,7 @@ void GateEMStandardProcessMessenger::BuildCommands(G4String base)
   pSetLinearlossLimit->SetGuidance(guidance);
   pSetLinearlossLimit->SetParameterName("Particle or Group of particles","Limit", false,false);
 
-#ifdef G4VERSION9_3 
   BuildModelsCommands(base);
-#endif
   BuildWrapperCommands(base);
 
 }
@@ -98,9 +96,7 @@ void GateEMStandardProcessMessenger::SetNewValue(G4UIcommand* command, G4String 
      pProcess->SetLinearlosslimit(par1 , par2  );
   }
 
-#ifdef G4VERSION9_3 
   SetModelsNewValue(command,param);
-#endif
   SetWrapperNewValue(command,param);
 
 }

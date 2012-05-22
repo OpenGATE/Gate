@@ -9,7 +9,6 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #include "GateConfiguration.h"
-#ifndef G4VERSION9_3
 #ifndef GATEPOSITRONANNIHILATIONPENELPB_HH
 #define GATEPOSITRONANNIHILATIONPENELPB_HH
 
@@ -22,5 +21,4 @@ See GATE/LICENSE.txt for further details
 
 MAKE_PROCESS_AUTO_CREATOR(GatePositronAnnihilationPenelopePB)
 
-#endif
 #endif

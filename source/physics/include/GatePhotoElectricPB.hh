@@ -20,10 +20,6 @@ See GATE/LICENSE.txt for further details
 #include "G4PenelopePhotoElectricModel.hh"
 #include "G4LivermorePolarizedPhotoElectricModel.hh"
 
-#ifdef G4VERSION9_3
 MAKE_PROCESS_AUTO_CREATOR_WITH_MODEL(GatePhotoElectricPB)
-#else
-MAKE_PROCESS_AUTO_CREATOR(GatePhotoElectricPB)
-#endif
 
 #endif

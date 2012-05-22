@@ -37,7 +37,6 @@
 #include "GateRandomEngine.hh"
 #include "GateARFDataToRoot.hh"
 #include "GateToRoot.hh"
-#include "GateToRootPlotter.hh"
 
 GateOutputMgr* GateOutputMgr::instance = 0;
 
@@ -110,11 +109,6 @@ GateOutputMgr::GateOutputMgr(const G4String name)
   AddOutputModule((GateVOutputModule*)gateToRoot);
   GateARFDataToRoot* gateARFDataToRoot = new GateARFDataToRoot("arf", this,m_digiMode);
   AddOutputModule((GateVOutputModule*)gateARFDataToRoot);
-#endif
-
-#ifdef G4ANALYSIS_USE_ROOT_PLOTTER
-  GateToRootPlotter* gateToRootPlotter = new GateToRootPlotter("plotter", this,m_digiMode);
-  AddOutputModule((GateVOutputModule*)gateToRootPlotter);
 #endif
 
   GateMessage("Output",4,"GateOutputMgr() -- end"<<G4endl);

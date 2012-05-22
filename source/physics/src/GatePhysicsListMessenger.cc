@@ -50,7 +50,6 @@ GatePhysicsListMessenger::~GatePhysicsListMessenger()
   delete pActivateStepLimiterCmd;
   delete pActivateSpecialCutsCmd;
 
-//#ifdef G4VERSION9_2
 
   delete pSetDEDXBinning;
   delete pSetLambdaBinning;
@@ -58,7 +57,6 @@ GatePhysicsListMessenger::~GatePhysicsListMessenger()
   delete pSetEMax;
   delete pSetSplineFlag;
 
-//#endif
 
 }
 //----------------------------------------------------------------------------------------
@@ -152,7 +150,6 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   pActivateSpecialCutsCmd = new G4UIcmdWithAString(bb,this);  
   pActivateSpecialCutsCmd->SetGuidance("Activate special cuts for a given particle");
 
-//#ifdef G4VERSION9_2
 
   // options messengers	G4ReferenceManual5.2
   bb = base+"/setDEDXBinning";
@@ -180,7 +177,6 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   guidance = "Set SplineFlag for Standard EM Processes";
   pSetSplineFlag->SetGuidance(guidance);
 
-//#endif
 
 }
 //----------------------------------------------------------------------------------------
@@ -267,7 +263,6 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
         }
     }
 
-//#ifdef G4VERSION9_2
   // options for EM standard
 
   if(command == pSetDEDXBinning){
@@ -296,7 +291,6 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
     GateMessage("Physic", 1, "(EM Options) Spline Falg set to "<<flag<<". Spline Flag defaut 1."<<G4endl);
   }
 
-//#endif
 
 
 }

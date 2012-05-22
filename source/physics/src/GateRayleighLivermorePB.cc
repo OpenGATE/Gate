@@ -10,7 +10,6 @@ See GATE/LICENSE.txt for further details
 
 #include "GateConfiguration.h"
 
-#ifndef G4VERSION9_3
 #include "GateRayleighLivermorePB.hh"
 
 #include "GateEMStandardProcessMessenger.hh"
@@ -52,4 +51,3 @@ bool GateRayleighLivermorePB::IsApplicable(G4ParticleDefinition * par)
 
 
 MAKE_PROCESS_AUTO_CREATOR_CC(GateRayleighLivermorePB)
-#endif

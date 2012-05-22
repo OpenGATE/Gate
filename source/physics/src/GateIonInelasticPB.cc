@@ -30,9 +30,7 @@ GateIonInelasticPB::GateIonInelasticPB():GateVProcess("IonInelastic")
   AddToModelList("G4LEDeuteronInelastic");
   AddToModelList("G4LETritonInelastic");
   AddToModelList("G4LEAlphaInelastic");
-//#ifdef G4VERSION9_2 
   AddToModelList("G4QMDReaction");
-//#endif
 
   AddToDataSetList("G4TripathiCrossSection");
   AddToDataSetList("G4IonsKoxCrossSection");

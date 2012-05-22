@@ -8,7 +8,6 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-//#ifdef G4VERSION9_2
 
 #include "GateMuPairProductionPB.hh"
 
@@ -51,4 +50,3 @@ bool GateMuPairProductionPB::IsApplicable(G4ParticleDefinition * par)
 
 
 MAKE_PROCESS_AUTO_CREATOR_CC(GateMuPairProductionPB)
-//#endif

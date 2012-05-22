@@ -11,7 +11,6 @@
 #cmakedefine GATE_USE_FILE                 @GATE_USE_FILE@
 #cmakedefine GATE_USE_LMF                  @GATE_USE_LMF@
 #cmakedefine GATE_USE_ECAT7                @GATE_USE_ECAT7@
-//#cmakedefine GATE_USE_ROOT_PLOTTER         @GATE_USE_ROOT_PLOTTER@
 
 #ifdef GATE_USE_ROOT
  #define G4ANALYSIS_USE_ROOT 1
@@ -25,14 +24,10 @@
  #define  G4ANALYSIS_USE_FILE 1
 #endif
 
-//#ifdef GATE_USE_ROOT_PLOTTER
-	//#define G4ANALYSIS_USE_ROOT_PLOTTER 1
-//#endif
-
 //#cmakedefine G4VERSION             @Geant4_VERSION@
-#cmakedefine G4VERSION_MAJOR         @G4VERSION_MAJOR@
-#cmakedefine G4VERSION_MINOR         @G4VERSION_MINOR@
-#cmakedefine G4VERSION_PATCH         @G4VERSION_PATCH@
+//#cmakedefine G4VERSION_MAJOR         @G4VERSION_MAJOR@
+//#cmakedefine G4VERSION_MINOR         @G4VERSION_MINOR@
+//#cmakedefine G4VERSION_PATCH         @G4VERSION_PATCH@
 #cmakedefine GATE_USE_CUDA           @GATE_USE_CUDA@
 #cmakedefine CUDA_FOUND              @CUDA_FOUND@
 

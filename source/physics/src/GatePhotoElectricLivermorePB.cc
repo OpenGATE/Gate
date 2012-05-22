@@ -10,7 +10,6 @@ See GATE/LICENSE.txt for further details
 
 #include "GateConfiguration.h"
 
-#ifndef G4VERSION9_3
 #include "GatePhotoElectricLivermorePB.hh"
 
 #include "GatePhotoElectricMessenger.hh"
@@ -59,4 +58,3 @@ bool GatePhotoElectricLivermorePB::IsApplicable(G4ParticleDefinition * par)
 //-----------------------------------------------------------------------------
 
 MAKE_PROCESS_AUTO_CREATOR_CC(GatePhotoElectricLivermorePB)
-#endif

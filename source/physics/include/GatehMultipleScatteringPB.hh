@@ -12,7 +12,6 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEHMULTISCATTERINGPB_HH
 #define GATEHMULTISCATTERINGPB_HH
 
-//#ifdef G4VERSION9_2
 
 #include "GateVProcess.hh"
 
@@ -21,5 +20,4 @@ See GATE/LICENSE.txt for further details
 MAKE_PROCESS_AUTO_CREATOR(GatehMultipleScatteringPB)
 
 
-//#endif
 #endif

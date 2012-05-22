@@ -63,9 +63,7 @@ GatePhysicsList::GatePhysicsList(): G4VUserPhysicsList()
   pMessenger = new GatePhysicsListMessenger(this);
   pMessenger->BuildCommands("/gate/physics");
 
-//#ifdef G4VERSION9_2
   opt = new G4EmProcessOptions();
-//#endif
 
 
 }
@@ -101,9 +99,7 @@ GatePhysicsList::~GatePhysicsList()
   GateVProcess::Delete();
 
 
-//#ifdef G4VERSION9_2
   delete opt;
-//#endif
 
 
 // delete the transportation process (should be done in ~G4VUserPhysicsList())
@@ -179,7 +175,6 @@ void GatePhysicsList::ConstructProcess()
      for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++) 
         (*GetTheListOfProcesss())[i]->ConstructProcess();
 
-     //#ifdef G4VERSION9_2 
      //opt->SetVerbose(2);
      if(mDEDXBinning>0)   opt->SetDEDXBinning(mDEDXBinning);
      if(mLambdaBinning>0) opt->SetLambdaBinning(mLambdaBinning);
@@ -187,7 +182,6 @@ void GatePhysicsList::ConstructProcess()
      if(mEmax>0)          opt->SetMaxEnergy(mEmax);
      opt->SetSplineFlag(mSplineFlag);
      //opt->SetStepFunction(0.3,0.077);
-     //#endif
 
   }
   else GateMessage("Physic",1,"GatePhysicsList::Construct() -- Warning: processes already defined!" << G4endl);
@@ -929,7 +923,6 @@ void GatePhysicsList::GetCuts()
 
 
 //-----------------------------------------------------------------------------
-//#ifdef G4VERSION9_2
 void GatePhysicsList::SetOptDEDXBinning(G4int val)
 {
   //G4EmProcessOptions * opt = new G4EmProcessOptions();

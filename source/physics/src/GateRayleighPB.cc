@@ -10,7 +10,6 @@ See GATE/LICENSE.txt for further details
 
 #include "GateConfiguration.h"
 
-#ifdef G4VERSION9_3
 
 #include "GateRayleighPB.hh"
 
@@ -107,4 +106,3 @@ void GateRayleighPB::AddUserModel(GateListOfHadronicModels *model){
 
 
 MAKE_PROCESS_AUTO_CREATOR_CC(GateRayleighPB)
-#endif

@@ -13,7 +13,6 @@ See GATE/LICENSE.txt for further details
 
 
 
-#ifdef G4VERSION9_3
 #include "GatePhotoElectricMessenger.hh"
 
 
@@ -130,46 +129,6 @@ void GatePhotoElectricPB::AddUserModel(GateListOfHadronicModels *model){
   }
 }
 //-----------------------------------------------------------------------------
-
-
-#else
-#include "GateEMStandardProcessMessenger.hh"
-
-
-//-----------------------------------------------------------------------------
-GatePhotoElectricPB::GatePhotoElectricPB():GateVProcess("PhotoElectric")
-{  
-  SetDefaultParticle("gamma");
-  SetProcessInfo("Photo electric effect");
-  pMessenger = new GateEMStandardProcessMessenger(this);  
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-G4VProcess* GatePhotoElectricPB::CreateProcess(G4ParticleDefinition *)
-{
-  return new G4PhotoElectricEffect(GetG4ProcessName());
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void GatePhotoElectricPB::ConstructProcess(G4ProcessManager * manager)
-{
-  manager->AddDiscreteProcess(GetProcess());           
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-bool GatePhotoElectricPB::IsApplicable(G4ParticleDefinition * par)
-{
-  if(par == G4Gamma::Gamma()) return true;
-  return false;
-}
-//-----------------------------------------------------------------------------
-#endif
 
 
 MAKE_PROCESS_AUTO_CREATOR_CC(GatePhotoElectricPB)

@@ -10,7 +10,6 @@ See GATE/LICENSE.txt for further details
 
 #include "GateConfiguration.h"
 
-#ifdef G4VERSION9_3 
 
 #ifndef GATERAYLEIGHPB_HH
 #define GATERAYLEIGHPB_HH
@@ -22,5 +21,4 @@ See GATE/LICENSE.txt for further details
 
 MAKE_PROCESS_AUTO_CREATOR_WITH_MODEL(GateRayleighPB)
 
-#endif
 #endif

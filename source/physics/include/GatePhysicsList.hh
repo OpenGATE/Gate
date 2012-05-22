@@ -26,9 +26,7 @@ See GATE/LICENSE.txt for further details
 #include "GateUserLimits.hh"
 #include "G4ProductionCuts.hh"
 
-//#ifdef G4VERSION9_2
 #include "G4EmProcessOptions.hh"
-//#endif
 
 
 //class GateVProcess;
@@ -121,7 +119,6 @@ private:
   bool mSplineFlag;
   G4UserLimits * userlimits;
 
-//#ifdef G4VERSION9_2
 public:
   void SetOptDEDXBinning(G4int val);
   void SetOptLambdaBinning(G4int val);
@@ -131,7 +128,6 @@ public:
 
 private:
   G4EmProcessOptions *opt;
-//#endif
 
 
 };

@@ -20,10 +20,6 @@ See GATE/LICENSE.txt for further details
 #include "G4LivermoreIonisationModel.hh"
 #include "G4PenelopeIonisationModel.hh"
 
-#ifdef G4VERSION9_3
 MAKE_PROCESS_AUTO_CREATOR_WITH_MODEL(GateElectronIonisationPB)
-#else
-MAKE_PROCESS_AUTO_CREATOR(GateElectronIonisationPB)
-#endif
 
 #endif

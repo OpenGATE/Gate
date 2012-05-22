@@ -63,7 +63,6 @@ protected:
 
   G4UIcmdWithoutParameter * pCutInMaterial;
 
-//#ifdef G4VERSION9_2
 
   G4UIcmdWithAnInteger * pSetDEDXBinning;
   G4UIcmdWithAnInteger * pSetLambdaBinning;
@@ -71,7 +70,6 @@ protected:
   G4UIcmdWithADoubleAndUnit * pSetEMax;
   G4UIcmdWithABool * pSetSplineFlag;
 
-//#endif
     
 
 private:

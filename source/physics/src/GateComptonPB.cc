@@ -14,7 +14,6 @@ See GATE/LICENSE.txt for further details
 #include "GateEMStandardProcessMessenger.hh"
 
 
-#ifdef G4VERSION9_3
 //-----------------------------------------------------------------------------
 GateComptonPB::GateComptonPB():GateVProcess("Compton")
 {  
@@ -107,40 +106,5 @@ void GateComptonPB::AddUserModel(GateListOfHadronicModels * model){
 
 
 
-#else
-//-----------------------------------------------------------------------------
-GateComptonPB::GateComptonPB():GateVProcess("Compton")
-{  
-  SetDefaultParticle("gamma");
-  SetProcessInfo("Compton scattering of gammas");
-  pMessenger = new GateEMStandardProcessMessenger(this);  
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-G4VProcess* GateComptonPB::CreateProcess(G4ParticleDefinition *)
-{
-  return new G4ComptonScattering(GetG4ProcessName());
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void GateComptonPB::ConstructProcess(G4ProcessManager * manager)
-{
-  manager->AddDiscreteProcess(GetProcess());           
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-bool GateComptonPB::IsApplicable(G4ParticleDefinition * par)
-{
-  if(par == G4Gamma::Gamma()) return true;
-  return false;
-}
-//-----------------------------------------------------------------------------
-#endif
 
 MAKE_PROCESS_AUTO_CREATOR_CC(GateComptonPB)

@@ -21,10 +21,6 @@ See GATE/LICENSE.txt for further details
 #include "G4PenelopeComptonModel.hh"
 
 
-#ifdef G4VERSION9_3
 MAKE_PROCESS_AUTO_CREATOR_WITH_MODEL(GateComptonPB)
-#else
-MAKE_PROCESS_AUTO_CREATOR(GateComptonPB)
-#endif
 
 #endif

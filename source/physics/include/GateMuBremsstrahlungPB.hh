@@ -12,7 +12,6 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEMUBREMPB_HH
 #define GATEMUBREMPB_HH
 
-//#ifdef G4VERSION9_2
 #include "GateVProcess.hh"
 
 #include "G4MuBremsstrahlung.hh"
@@ -20,5 +19,4 @@ See GATE/LICENSE.txt for further details
 MAKE_PROCESS_AUTO_CREATOR(GateMuBremsstrahlungPB)
 
 
-//#endif
 #endif

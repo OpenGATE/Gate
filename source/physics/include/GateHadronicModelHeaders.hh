@@ -23,9 +23,7 @@ See GATE/LICENSE.txt for further details
 #include "G4LEAlphaInelastic.hh"
 #include "G4WilsonAbrasionModel.hh"
 #include "G4EMDissociation.hh"
-//#ifdef G4VERSION9_2 
 #include "G4QMDReaction.hh"
-//#endif
 
 // Low energy parameterized
 #include "G4LEProtonInelastic.hh"

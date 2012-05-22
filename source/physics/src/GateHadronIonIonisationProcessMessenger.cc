@@ -42,7 +42,6 @@ void GateHadronIonIonisationProcessMessenger::BuildCommands(G4String base)
   G4String bb;
   G4String guidance;
 
-//#ifdef G4VERSION9_2 
   bb = baseModel+"/setNuclearStoppingOn";
   pSetNuclearStopping = new G4UIcmdWithAString(bb,this);
   guidance = "Set nuclear stopping on";
@@ -56,7 +55,6 @@ void GateHadronIonIonisationProcessMessenger::BuildCommands(G4String base)
   pUnsetNuclearStopping->SetGuidance(guidance);
   pUnsetNuclearStopping->SetParameterName("Particle or Group of particles",   true);
   pUnsetNuclearStopping->SetDefaultValue("Default");
-//#endif
 
 }
 //-----------------------------------------------------------------------------

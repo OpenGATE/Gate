@@ -8,7 +8,6 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-//#ifdef G4VERSION9_2
 
 #ifndef GATEEMULTISCATTERINGPB_HH
 #define GATEEMULTISCATTERINGPB_HH
@@ -22,4 +21,3 @@ MAKE_PROCESS_AUTO_CREATOR(GateeMultipleScatteringPB)
 
 
 #endif
-//#endif

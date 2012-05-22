@@ -44,14 +44,12 @@ void GateMultiScatteringMessenger::BuildCommands(G4String base)
   G4String bb;
   G4String guidance;
 
-//#ifdef G4VERSION9_2 
   bb = baseModel+"/setGeometricalStepLimiterType";
   pSetDistanceToBoundary = new GateUIcmdWith2String(bb,this);
   guidance = "Set geometrical step limiter type";
   pSetDistanceToBoundary->SetGuidance(guidance);
   pSetDistanceToBoundary->SetParameterName("Particle or Group of particles","Limit type", false,false);
   //pSetDistanceToBoundary->SetCandidates(" ","safety distanceToBoundary");
-//#endif
 
 
 }

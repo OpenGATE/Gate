@@ -13,7 +13,6 @@ See GATE/LICENSE.txt for further details
 #include "GateConfiguration.h"
 #include "GateEMStandardProcessMessenger.hh"
 
-#ifdef G4VERSION9_3
 //-----------------------------------------------------------------------------
 GateGammaConversionPB::GateGammaConversionPB():GateVProcess("GammaConversion")
 {  
@@ -101,42 +100,6 @@ void GateGammaConversionPB::AddUserModel(GateListOfHadronicModels *model){
 //-----------------------------------------------------------------------------
 
 
-
-#else
-//-----------------------------------------------------------------------------
-GateGammaConversionPB::GateGammaConversionPB():GateVProcess("GammaConversion")
-{  
-  SetDefaultParticle("gamma");
-  SetProcessInfo("Pair production by gammas");
-  pMessenger = new GateEMStandardProcessMessenger(this);  
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-G4VProcess* GateGammaConversionPB::CreateProcess(G4ParticleDefinition *)
-{
-  return new G4GammaConversion(GetG4ProcessName());
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void GateGammaConversionPB::ConstructProcess(G4ProcessManager * manager)
-{
-  manager->AddDiscreteProcess(GetProcess());           
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-bool GateGammaConversionPB::IsApplicable(G4ParticleDefinition * par)
-{
-  if(par == G4Gamma::Gamma()) return true;
-  return false;
-}
-//-----------------------------------------------------------------------------
-#endif
 
 
 MAKE_PROCESS_AUTO_CREATOR_CC(GateGammaConversionPB)
