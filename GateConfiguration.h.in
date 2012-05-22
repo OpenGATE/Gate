@@ -1,23 +1,20 @@
-
 /* GATE : configuration file */
 
 #ifndef GATE_CONFIGURATION_H
 #define GATE_CONFIGURATION_H
 //This file is interpreted by cmake, to define macros based on the cmake configuration options
-
-// Check : GATE_USE_ROOT                 = @GATE_USE_ROOT@
-// Check : GATE_ANALYSIS_USE_GENERAL     = @GATE_ANALYSIS_USE_GENERAL@
 // Check : GATE_ANALYSIS_USE_FILE        = @GATE_ANALYSIS_USE_FILE@
 
 #cmakedefine GATE_USE_ROOT                 @GATE_USE_ROOT@
 #cmakedefine GATE_USE_OPTICAL              @GATE_USE_OPTICAL@
 #cmakedefine GATE_ANALYSIS_USE_GENERAL     @GATE_ANALYSIS_USE_GENERAL@
 #cmakedefine GATE_USE_FILE                 @GATE_USE_FILE@
+#cmakedefine GATE_USE_LMF                  @GATE_USE_LMF@
+#cmakedefine GATE_USE_ECAT7                @GATE_USE_ECAT7@
 
 #ifdef GATE_USE_ROOT
  #define G4ANALYSIS_USE_ROOT 1
 #endif
-
 
 #ifdef GATE_ANALYSIS_USE_GENERAL
  #define G4ANALYSIS_USE_GENERAL 1
@@ -42,5 +39,3 @@
 #endif
 
 #endif // GATE_CONFIGURATION_H
-
-

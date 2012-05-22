@@ -18,11 +18,14 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details 
 ----------------------*/
 
-#ifdef GATE_USE_LMF
-
 #ifndef GateToLMF_h
 #define GateToLMF_h 1
-#include <iostream.h>
+
+#include "GateConfiguration.h"
+
+#ifdef GATE_USE_LMF
+
+#include <iostream>
 #include <stdio.h>
 #include "GateVOutputModule.hh"
 #include "G4UserEventAction.hh"
@@ -51,6 +54,8 @@ public :
   void RecordBeginOfEvent(const G4Event *) {}; //!< This function doesn't do anything.
   void RecordEndOfEvent(const G4Event *);      //!< This function gives the digis to LMF.
   void RecordStep(const G4Step *) {};          //!< This function doesn't do anything.
+	const G4String& GiveNameOfFile(){};          //!< This function doesn't do anything.
+	void RecordStepWithVolume(const GateVVolume *, const G4Step *) {}; //!< This function doesn't do anything.
 
   //! saves the geometry voxel information
   void RecordVoxels(GateVGeometryVoxelStore *) {};

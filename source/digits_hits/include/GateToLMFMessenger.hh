@@ -22,6 +22,8 @@ See GATE/LICENSE.txt for further details
 
 #ifndef GateToLMFMessenger_h
 #define GateToLMFMessenger_h 1
+
+#include "GateConfiguration.h"
 #ifdef GATE_USE_LMF
 
 #include "GateOutputModuleMessenger.hh"

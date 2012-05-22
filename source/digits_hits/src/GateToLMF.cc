@@ -16,6 +16,8 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details 
 ----------------------*/
 
+#include "GateConfiguration.h"
+
 #ifdef GATE_USE_LMF
 
 //#include <iostream.h>
@@ -69,7 +71,7 @@ GateToLMF::GateToLMF(const G4String& name,GateOutputMgr* outputMgr,GateVSystem *
 
 
   m_pSystem = psystem ;
-  m_verboseLevel = 0;
+  nVerboseLevel = 0;
   m_LMFMessenger = new GateToLMFMessenger(this);
 
   //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...
@@ -138,7 +140,7 @@ GateToLMF::~GateToLMF()
 {
   delete m_LMFMessenger;
   
-  if (m_verboseLevel > 0) G4cout << "GateToLMF deleting..." << G4endl;
+  if (nVerboseLevel > 0) G4cout << "GateToLMF deleting..." << G4endl;
  
   if(pEncoH->scanContent.eventRecordBool == 1)
     {
@@ -199,7 +201,7 @@ void GateToLMF::buildLMFEventRecord()
 				   m_LMFLayerID[0],
 				   pEncoH,
 				   &flag);//Crystal ID
-    if(m_verboseLevel > 7) {
+    if(nVerboseLevel > 7) {
       printf("builded detector ID = %llu\n", pER[0]->crystalIDs[0]);
       printf("%d %d %d %d %d \n\n\n\n",m_LMFRsectorID[0],
 	     m_LMFModuleID[0],
@@ -339,20 +341,20 @@ void GateToLMF::StoreTheDigiInLMF(GateSingleDigi *digi)
 
 
   /*         Time              */
-  if(m_verboseLevel > 2)
+  if(nVerboseLevel > 2)
     printf("\n************* EVENT TIME IS = %f\n",digi->GetTime());
   SetTime(0,digi->GetTime());  //!< time
   
   if(pEH->gateDigiBool)   // advanced storage of digi in LMF
     StoreMoreDigiInLMF_GDR(digi);
 
-  if (m_verboseLevel > 0)
+  if (nVerboseLevel > 0)
     {
       showOneLMFDigi(); 
-      if (m_verboseLevel > 2)
+      if (nVerboseLevel > 2)
 	{
 	  G4cout << "One digi store in " << m_nameOfFile <<G4endl;
-	  if (m_verboseLevel > 7)
+	  if (nVerboseLevel > 7)
 	    {
 	      G4cout << "type enter to continue" << G4endl;
 	      getchar(); // let's see this beautiful event record
@@ -413,7 +415,7 @@ void GateToLMF::StoreTheCoinciDigiInLMF(GateCoincidenceDigi *digi)
     aPulse[i] = &(digi->GetPulse(i));
 
     /*         Time              */
-    if(m_verboseLevel > 2)
+    if(nVerboseLevel > 2)
       printf("\n************* EVENT TIME IS = %f\n",aPulse[i]->GetTime());
     SetTime(i,aPulse[i]->GetTime());
     
@@ -487,7 +489,7 @@ void GateToLMF::StoreTheCoinciDigiInLMF(GateCoincidenceDigi *digi)
   }
 
   
-  fillCoinciRecordForGate(pEncoH, pEH, pGDH, pER[0], pER[1], m_verboseLevel, pERC);
+  fillCoinciRecordForGate(pEncoH, pEH, pGDH, pER[0], pER[1], nVerboseLevel, pERC);
 
   LMFCbuilder(pEncoH, pEH, pGDH, pcC, pERC, &m_pfile, m_nameOfFile.c_str());
 
@@ -503,7 +505,7 @@ void GateToLMF::StoreTheCoinciDigiInLMF(GateCoincidenceDigi *digi)
 void GateToLMF::RecordBeginOfAcquisition()
 {
   if (!IsEnabled()) return;
-  if (m_verboseLevel > 2)
+  if (nVerboseLevel > 2)
     G4cout << "GateToLMF::RecordBeginOfAcquisition" << G4endl;
 
   if(pEH->coincidenceBool) {
@@ -519,7 +521,7 @@ void GateToLMF::RecordBeginOfAcquisition()
   // 2 count rate records
   // 4 gate digi records
   // and 5 gate digi + event ...
-  if (m_verboseLevel > 5)
+  if (nVerboseLevel > 5)
     G4cout << "GateToLMF::RecordBeginOfAcquisition" << G4endl;
 
   if(pEH->gateDigiBool)
@@ -618,7 +620,7 @@ if ( crystalComponent->GetActiveChildNumber() > rL ) rL = crystalComponent->GetA
 
 }
 
-for (G4int k = 1;k < RingID;k++)if ( TRNumber[k] != TRNumber[k-1] ){G4cout<<"GateToLMF::RecordBeginOfAcquisition() Ring # "<<k<<" and Ring # "<<k-1<<" do not have the same number of tangential Rsectors."<<G4endl;G4Exception("Aborting...");}
+for (G4int k = 1;k < RingID;k++)if ( TRNumber[k] != TRNumber[k-1] ){G4cout<<"GateToLMF::RecordBeginOfAcquisition() Ring # "<<k<<" and Ring # "<<k-1<<" do not have the same number of tangential Rsectors."<<G4endl;G4Exception("GateToLMF::RecordBeginOfAcquisition","Aborting...",FatalException,"Aborting...");}
 
   fillEncoHforGate( AxialRsectorNumber,TRNumber[0] ,
 		   AxialModulesNumber ,
@@ -649,7 +651,7 @@ for (G4int k = 1;k < RingID;k++)if ( TRNumber[k] != TRNumber[k-1] ){G4cout<<"Gat
 void GateToLMF::RecordEndOfAcquisition()
 {
   if (!IsEnabled()) return;
-  if (m_verboseLevel > 2)
+  if (nVerboseLevel > 2)
     G4cout << "GateToLMF::RecordEndOfAcquisition" << G4endl;
   if((pEncoH->scanContent.nRecord != 0)&&(m_pfile != NULL))
     {
@@ -666,7 +668,7 @@ void GateToLMF::RecordEndOfAcquisition()
 void GateToLMF::RecordBeginOfRun(const G4Run * r)
 {
   if (!IsEnabled()) return;
-  if (m_verboseLevel > 5)
+  if (nVerboseLevel > 5)
     G4cout << "GateToLMF::RecordBeginOfRun" << G4endl;
 }
 
@@ -677,7 +679,7 @@ void GateToLMF::RecordBeginOfRun(const G4Run * r)
 void GateToLMF::RecordEndOfEvent(const G4Event* event)
 {
   if (!IsEnabled()) return;
-  if (m_verboseLevel > 5)
+  if (nVerboseLevel > 5)
     G4cout << "GateToLMF::RecordEndOfEvent" << G4endl;
 
   size_t iDigi, n_digi;
@@ -686,7 +688,7 @@ void GateToLMF::RecordEndOfEvent(const G4Event* event)
 
     if (!SDC) 
       {
-	if (m_verboseLevel>0) 
+	if (nVerboseLevel>0) 
 	  G4cout << "GateToLMF::RecordEndOfEvent::GateSingleDigiCollection not found" << G4endl;
 	return;
       }
@@ -698,7 +700,7 @@ void GateToLMF::RecordEndOfEvent(const G4Event* event)
     const GateCoincidenceDigiCollection * CDC = GetOutputMgr()->GetCoincidenceDigiCollection(m_inputDataChannel);
 
     if (!CDC) {
-      if (m_verboseLevel>0) 
+      if (nVerboseLevel>0) 
 	G4cout << "GateToLMF::RecordEndOfEvent::GateCoincidenceDigiCollection not found" << G4endl;
       return;
     }
@@ -719,7 +721,7 @@ void GateToLMF::SetOutputFileName(G4String ofname)
   m_nameOfFile = ofname + ".ccs";
   m_nameOfASCIIfile =  ofname + ".cch";
   m_name = ofname;
-  if (m_verboseLevel > 0)
+  if (nVerboseLevel > 0)
     G4cout << "GateToLMF::SetOutputFileName: file name set to " << m_nameOfFile << G4endl;
 }
 

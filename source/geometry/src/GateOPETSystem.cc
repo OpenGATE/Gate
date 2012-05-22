@@ -19,6 +19,8 @@
 #include "GateVolumePlacement.hh"
 #include "GateCoincidenceSorter.hh"
 #include "GateOutputMgr.hh"
+
+#include "GateConfiguration.h"
 #ifdef GATE_USE_LMF
 #include "GateToLMF.hh"
 #endif
