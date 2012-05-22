@@ -57,7 +57,6 @@ void printHelpAndQuit( G4String msg )
 	GateMessage( "Core", 0, "  -h, --help             print the help" << G4endl );
 	GateMessage( "Core", 0, "  -a, --param            use the parameterized macro" << G4endl );
 	GateMessage( "Core", 0, "  --d                    use the DigiMode" << G4endl );
-	GateMessage( "Core", 0, "  --b                    use the batch mode" << G4endl );
 	GateMessage( "Core", 0, "  --qt                   use the Qt visualization mode" << G4endl );
 	exit( EXIT_FAILURE );
 }
@@ -166,7 +165,6 @@ int main( int argc, char* argv[] )
 
 	// analyzing arguments
 	static G4int isDigiMode = 0; // DigiMode false by default
-	static G4int isBatchMode = 0; // Batch mode with ROOT
 	static G4int isQt = 0; // Enable Qt or not
 	G4String listOfParameters = ""; // List of parameters for parameterized macro
 	DigiMode aDigiMode = kruntimeMode;
@@ -181,7 +179,6 @@ int main( int argc, char* argv[] )
 			{ "help", no_argument, 0, 'h' },
 			{ "d", no_argument, &isDigiMode, 1 },
 			{ "qt", no_argument, &isQt, 1 },
-			{ "b", no_argument, &isBatchMode, 1 },
 			{ "param", required_argument, 0, 'a' }
 		};
 
@@ -213,12 +210,6 @@ int main( int argc, char* argv[] )
 	// Checking if the DigiMode is activated
 	if( isDigiMode )
 		aDigiMode = kofflineMode;
-
-	// Checking batch mode with ROOT
-	#ifdef G4ANALYSIS_USE_ROOT
-	if( isBatchMode )
-		gROOT->SetBatch();
-	#endif
 
 	// Analyzing parameterized macro
 	std::queue< G4String > commandQueue = decodeParameters( listOfParameters );
@@ -327,41 +318,24 @@ int main( int argc, char* argv[] )
 
 	// Using 'session' if not Qt
 	welcome();
-	// Batch mode, execute macro in a simple terminal without visualization
-	if( isBatchMode )
+	// Launching Gate if macro file
+	if( isMacroFile )
 	{
-		if( macrofilename.empty() )
-			G4Exception( "Gate.cc macro filename not found", "macro filename not found", FatalException, "Complete your command 'Gate --b macro.mac'" );
-		#ifdef G4VIS_USE
-		visManager->SetVerboseLevel( "quiet" );
-		#endif
 		executeCommandQueue( commandQueue, UImanager );
 		GateMessage( "Core", 0, "Starting macro " << macrofilename << G4endl);
 		G4String command = "/control/execute ";
 		UImanager->ApplyCommand( command + macrofilename );
 		GateMessage( "Core", 0, "End of macro " << macrofilename << G4endl);
 	}
-	else
+	else if( ui ) // Launching interactive mode // Qt
+  {
+		ui->SessionStart();
+		delete ui;
+	}
+	else if( session ) // Terminal
 	{
-		// Launching Gate if macro file
-		if( isMacroFile )
-		{
-			executeCommandQueue( commandQueue, UImanager );
-			GateMessage( "Core", 0, "Starting macro " << macrofilename << G4endl);
-			G4String command = "/control/execute ";
-			UImanager->ApplyCommand( command + macrofilename );
-			GateMessage( "Core", 0, "End of macro " << macrofilename << G4endl);
-		}
-		else if( ui ) // Launching interactive mode // Qt
-    {
-      ui->SessionStart();
-      delete ui;
-    }
-    else if( session ) // Terminal
-    {
-      session->SessionStart();
-      delete session;
-    }
+		session->SessionStart();
+		delete session;
 	}
 
 	#ifdef G4ANALYSIS_USE_GENERAL
