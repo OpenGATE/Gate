@@ -8,6 +8,8 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
+#include "GateConfiguration.h"
+
 #ifdef GATE_USE_ECAT7
 
 #ifndef GateSinoToEcat7_H

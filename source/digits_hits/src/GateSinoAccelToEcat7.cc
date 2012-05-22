@@ -8,6 +8,7 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateConfiguration.h"
 
 #ifdef GATE_USE_ECAT7
 
@@ -78,8 +79,8 @@ void GateSinoAccelToEcat7::RecordBeginOfAcquisition()
   // Create main header
   mh = (Main_header *) calloc(1,sizeof(Main_header));
   if (mh == NULL) {
-     G4Exception(" !!! [GateSinoAccelToEcat7::RecordBeginOfAcquisition]:\n"
-      	      	    "Could not allocate memory for main header");
+     G4Exception( "GateSinoAccelToEcat7::RecordBeginOfAcquisition", "Could not allocate memory for main header",
+			FatalException, "Could not allocate memory for main header" );
   }
   if (nVerboseLevel > 2) G4cout << "    Memory allocated for main header " << G4endl;
   // Fill main header
@@ -88,8 +89,8 @@ void GateSinoAccelToEcat7::RecordBeginOfAcquisition()
   // Create subheader
   sh = (Scan3D_subheader *) calloc(1,sizeof(Scan3D_subheader));
   if (sh == NULL) {
-     G4Exception(" !!! [GateSinoAccelToEcat7::RecordBeginOfAcquisition]:\n"
-      	      	    "Could not allocate memory for subheader");
+     G4Exception( "GateSinoAccelToEcat7::RecordBeginOfAcquisition", "Could not allocate memory for subheader",
+				FatalException, "Could not allocate memory for subheader");
   }
   if (nVerboseLevel > 2) G4cout << "    Memory allocated for sub header " << G4endl;
   sh->frame_duration = 0;
@@ -98,8 +99,9 @@ void GateSinoAccelToEcat7::RecordBeginOfAcquisition()
   // Create ECAT7 file and write the main header
   m_ptr = matrix_create((m_fileName+".S").c_str(),MAT_CREATE,mh); 
   if (m_ptr == NULL) {
-     G4Exception(" !!! [GateSinoAccelToEcat7::RecordBeginOfAcquisition]:\n"
-      	      	    "Could not create ECAT7 file '"+m_fileName+".S' !");
+			G4String msg = "Could not create ECAT7 file '"+m_fileName+".S' !";
+     G4Exception( "GateSinoAccelToEcat7::RecordBeginOfAcquisition", "RecordBeginOfAcquisition",
+				FatalException, msg );
   }
   if (nVerboseLevel > 1) G4cout << "    ECAT7 file " << m_fileName << ".S created" << G4endl;
 
@@ -145,14 +147,12 @@ void GateSinoAccelToEcat7::RecordBeginOfRun(const G4Run * )
   if (m_maxRingDiff >= setMaker->GetRingNb()) {
     G4cout << " !!! [GateSinoAccelToEcat7]: maximum ring difference (" << m_maxRingDiff 
            << ") is too big (should be <" << setMaker->GetRingNb() << ")" << G4endl;
-    G4Exception(" !!! [GateSinoAccelToEcat7]:\n"
-      	      	"Could not fill subheader");
+    G4Exception( "GateSinoAccelToEcat7::RecordBeginOfRun", "RecordBeginOfRun", FatalException, "Could not fill subheader");
   }
   if ((m_span<1)||((float)((m_span-1)/2)) != (((float)m_span-1.0)/2.0)) {
     G4cout << " !!! [GateSinoAccelToEcat7]: span factor (" << m_maxRingDiff 
            << ") should be odd" << G4endl;
-    G4Exception(" !!! [GateSinoAccelToEcat7::FillData]:\n"
-      	      	"Could not fill subheader");
+    G4Exception( "GateSinoAccelToEcat7::RecordBeginOfRun", "RecordBeginOfRun", FatalException, "Could not fill subheader");
   }		
   if ((float)((2*m_maxRingDiff+1-m_span)/(2*m_span)) != (2.0*(float)m_maxRingDiff+1.0-(float)m_span)/(2.0*(float)m_span)) {
     G4int bin,maxRingDiff;
@@ -166,8 +166,7 @@ void GateSinoAccelToEcat7::RecordBeginOfRun(const G4Run * )
       bin++;
       maxRingDiff = ((2*bin+1)*m_span-1)/2;
     }
-    G4Exception(" !!! [GateSinoAccelToEcat7::FillData]:\n"
-      	      	"Could not fill subheader");
+    G4Exception( "GateSinoAccelToEcat7::FillData", "FillData", FatalException, "Could not fill subheader");
   }
   m_segmentNb = (2*m_maxRingDiff+1-m_span)/(2*m_span);
   if (m_delRingMinSeg != NULL) free(m_delRingMinSeg);
@@ -236,8 +235,7 @@ void GateSinoAccelToEcat7::FillMainHeader()
   G4ThreeVector         crystalPitchVector = crystalComponent->GetRepeatVector();
   G4int                 RingNb = blockComponent->GetSphereAxialRepeatNumber() * crystalComponent->GetRepeatNumber(2);
   if (setMaker->GetRingNb() != RingNb) {
-     G4Exception(" !!! [GateSinoAccelToEcat7::FillMainHeader]:\n"
-      	      	    "Uncoherent crystal rings number");  
+     G4Exception( "GateSinoAccelToEcat7::FillMainHeader", "FillMainHeader", FatalException, "Uncoherent crystal rings number");  
   }		      
   if (nVerboseLevel > 1) {
     G4cout << "    Number of crystal rings: " << RingNb << G4endl;
@@ -389,8 +387,7 @@ void GateSinoAccelToEcat7::FillData()
 	  // sinoID = ring_1 + ring_2 * setMaker->GetRingNb();
 	  sinoID = setMaker->GetSinogram()->GetSinoID(ring_1,ring_2);
 	  if (sinoID < 0 || sinoID >= (G4int) setMaker->GetSinogram()->GetSinogramNb()) {
-	    G4Exception("\n[GateToSinoAccel::RecordEndOfRun]:\n"
-      		      	"Wrong 2D sinogram ID\n");
+	    G4Exception( "GateToSinoAccel::RecordEndOfRun", "RecordEndOfRun", FatalException, "Wrong 2D sinogram ID");
 	  }
 	  if (nVerboseLevel>2 && view==0) {
             G4cout << " >> ring difference " << ringdiff << ", slice " << z << G4endl;       
@@ -408,8 +405,7 @@ void GateSinoAccelToEcat7::FillData()
 	//sinoID = ring_1 + ring_2 * setMaker->GetRingNb();
 	sinoID = setMaker->GetSinogram()->GetSinoID(ring_1,ring_2);
 	if (sinoID < 0 || sinoID >= (G4int) setMaker->GetSinogram()->GetSinogramNb()) {
-	  G4Exception("\n[GateToSinoAccel::RecordEndOfRun]:\n"
-      		      "Wrong 2D sinogram ID\n");
+	  G4Exception( "GateToSinoAccel::RecordEndOfRun", "RecordEndOfRun", FatalException, "Wrong 2D sinogram ID");
 	}
 	m_randoms = setMaker->GetSinogram()->GetRandoms();
 	sh->delayed += (short int) m_randoms[sinoID];
@@ -431,13 +427,11 @@ void GateSinoAccelToEcat7::FillData()
     if (fseek(m_ptr->fptr,file_pos,0) == EOF) {
       G4cout << " !!! [GateSinoAccelToEcat7::FillData]: can not seek position " << file_pos 
              << " for " << m_ptr->fname << G4endl;
-      G4Exception(" !!! [GateSinoAccelToEcat7::FillData]:\n"
-         	  "Could not fill data");
+      G4Exception( "GateSinoAccelToEcat7::FillData", "FillData", FatalException,  "Could not fill data");
     } else if (fwrite(cdata,sizeof(short),data_size,m_ptr->fptr) != (size_t) data_size) {
       G4cout << " !!! [GateSinoAccelToEcat7::FillData]: can not write segment " << segment_occurance 
              << " in " << m_ptr->fname << G4endl;
-      G4Exception(" !!! [GateSinoAccelToEcat7::FillData]:\n"
-     	      	  "Could not fill data");
+      G4Exception( "GateSinoAccelToEcat7::FillData", "FillData", FatalException, "Could not fill data");
     }
     offset += data_size * sizeof(short);
   }
@@ -453,8 +447,7 @@ void GateSinoAccelToEcat7::FillData()
   if (mh_update(m_ptr)) {
        G4cout << " !!! [GateSinoAccelToEcat7::FillData]: can not update main header in  " 
               << m_ptr->fname << G4endl;
-       G4Exception(" !!! [GateSinoAccelToEcat7::FillData]:\n"
-      	      	   "Could not fill data");
+       G4Exception( "GateSinoAccelToEcat7::FillData", "FillData", FatalException, "Could not fill data");
   }
   free(cdata);
   free(sdata);

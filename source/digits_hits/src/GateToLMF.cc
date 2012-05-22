@@ -848,21 +848,21 @@ void GateToLMF::SetTime(u8 id, G4double value)
   //  memcpy(m_pLMFTime, doubleToChar(timeForLMF) , 8 );
   for(int i =0 ; i<8 ; i++)
     m_pLMFTime[i][id] = bufCharTime[i];
-};
+}
 
 // .....ooooooOOOOOOoooooo...........ooooooOOOOOOoooooo......
 
 
 
 //.........................GET / SET IDs
-void GateToLMF::SetGantryAxialPos(G4int value){  m_LMFgantryAxialPos = (unsigned short)value;};
-void GateToLMF::SetGantryAngularPos(G4int value){  m_LMFgantryAngularPos = (unsigned short)value;};
-void GateToLMF::SetSourceAxialPos(G4int value){  m_LMFsourceAxialPos = (unsigned short)value;};
-void GateToLMF::SetSourceAngularPos(G4int value){  m_LMFsourceAngularPos = (unsigned short)value;};
-unsigned short GateToLMF::GetGantryAngularPos(){return(m_LMFgantryAngularPos);};
-unsigned short GateToLMF::GetGantryAxialPos(){return(m_LMFgantryAxialPos);};
-unsigned short GateToLMF::GetSourceAngularPos(){return(m_LMFsourceAngularPos);};
-unsigned short GateToLMF::GetSourceAxialPos(){return(m_LMFsourceAxialPos);};
+void GateToLMF::SetGantryAxialPos(G4int value){  m_LMFgantryAxialPos = (unsigned short)value;}
+void GateToLMF::SetGantryAngularPos(G4int value){  m_LMFgantryAngularPos = (unsigned short)value;}
+void GateToLMF::SetSourceAxialPos(G4int value){  m_LMFsourceAxialPos = (unsigned short)value;}
+void GateToLMF::SetSourceAngularPos(G4int value){  m_LMFsourceAngularPos = (unsigned short)value;}
+unsigned short GateToLMF::GetGantryAngularPos(){return(m_LMFgantryAngularPos);}
+unsigned short GateToLMF::GetGantryAxialPos(){return(m_LMFgantryAxialPos);}
+unsigned short GateToLMF::GetSourceAngularPos(){return(m_LMFsourceAngularPos);}
+unsigned short GateToLMF::GetSourceAxialPos(){return(m_LMFsourceAxialPos);}
 
 
 
@@ -888,7 +888,7 @@ void GateToLMF::showOneLMFDigi()   // Display a digi in his LMF standard
   // .................SHOW Energy
   G4cout <<  "\nEnergy in LMFstep = " << (G4int) m_LMFEnergy[0] << "\n";
   
-};
+}
 
 
 
