@@ -216,7 +216,7 @@ int GateToPlatform::GenerateCondorSubmitfile()
 		if (noCopy==0) 
 		{
 			if (scriptline.contains("Executable")!=0 && scriptline.contains("$GC_EXEC")!=0) 
-				submitFile<<"Executable     = "<<dir+"fGate"<<endl;
+				submitFile<<"Executable     = "<<dir+"Gate"<<endl;
 			else submitFile<<scriptline<<endl;
 			
 		}
