@@ -36,8 +36,8 @@ public:
   GateVFilter(G4String name);
   virtual ~GateVFilter(){}
 
-  virtual G4bool Accept(const G4Step*);
-  virtual G4bool Accept(const G4Track*);
+  virtual G4bool Accept(const G4Step* s);
+  virtual G4bool Accept(const G4Track* t);
 
  
   virtual void show();
