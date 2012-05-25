@@ -62,3 +62,9 @@ Example to use repeater/mover and both at the same time.
 (This example is similar to the example5 presented on the wiki web
 site of Gate V6.1)
 
+------------------------------------------------------------------
+- Example 8
+
+Photon beam from a Linac into a box with water/alu/lung. See Figure4
+from [Jan et al PMB 2011].
+
