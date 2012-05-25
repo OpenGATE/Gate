@@ -63,6 +63,7 @@ class GateApplicationMgrMessenger: public G4UImessenger
   G4UIcmdWithAString *      ReadTimeSlicesInAFileCmd;
   G4UIcmdWithADouble *      SetTotalNumberOfPrimariesCmd;
   G4UIcmdWithADouble *      SetNumberOfPrimariesPerRunCmd;
+  G4UIcmdWithADouble *      SetNumberOfPrimariesPerRunCmd2;
 };
 
 #endif
