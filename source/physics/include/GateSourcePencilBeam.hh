@@ -105,8 +105,8 @@ class GateSourcePencilBeam : public GateVSource
     string mEllipseXThetaRotationNorm;
     string mEllipseYPhiRotationNorm;
     //Gaussian distribution generation for direction
-    RandMultiGauss * mGaussian2DXTheta;
     RandMultiGauss * mGaussian2DYPhi;
+    RandMultiGauss * mGaussian2DXTheta;
     HepVector mUXTheta, mUYPhi;
     HepSymMatrix mSXTheta, mSYPhi;
     //Gaussian distribution generation for energy
