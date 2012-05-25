@@ -33,7 +33,7 @@ public:
 
   FCT_FOR_AUTO_CREATOR_FILTER(GateAngleFilter)
 
-  virtual G4bool Accept(const G4Track*);
+  virtual G4bool Accept(const G4Track* t);
 
   void SetMomentum(G4ThreeVector direction);
   // Set acceptable direction.
