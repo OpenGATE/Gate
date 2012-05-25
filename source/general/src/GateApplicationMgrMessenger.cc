@@ -115,6 +115,9 @@ GateApplicationMgrMessenger::GateApplicationMgrMessenger()
   SetNumberOfPrimariesPerRunCmd = new G4UIcmdWithADouble("/gate/application/setNumberOfPrimariesPerRun", this);
   SetNumberOfPrimariesPerRunCmd->SetGuidance("Set the number of primaries to generate per per run.");
 
+  SetNumberOfPrimariesPerRunCmd2 = new G4UIcmdWithADouble("/gate/application/SetNumberOfPrimariesPerRun", this);
+  SetNumberOfPrimariesPerRunCmd2->SetGuidance("Set the number of primaries to generate per per run.");
+
   TimeStudyCmd = new G4UIcmdWithAString("/gate/application/enableTrackTimeStudy", this);
   TimeStudyCmd->SetGuidance("Activate the time measurement of tracks (Slow down the simulation).");
   TimeStudyCmd->SetParameterName("File name",false);
@@ -147,6 +150,7 @@ GateApplicationMgrMessenger::~GateApplicationMgrMessenger()
   delete ReadTimeSlicesInAFileCmd;
   delete SetTotalNumberOfPrimariesCmd;
   delete SetNumberOfPrimariesPerRunCmd;
+  delete SetNumberOfPrimariesPerRunCmd2;
   delete AddSliceCmd;
   delete TimeStudyCmd;
   delete TimeStudyForStepsCmd;
@@ -214,6 +218,9 @@ void GateApplicationMgrMessenger::SetNewValue(G4UIcommand* command, G4String new
   }
   else if (command == SetNumberOfPrimariesPerRunCmd) {
     appMgr->SetNumberOfPrimariesPerRun(SetNumberOfPrimariesPerRunCmd->GetNewDoubleValue(newValue));
+  }
+  else if (command == SetNumberOfPrimariesPerRunCmd2) {
+    appMgr->SetNumberOfPrimariesPerRun(SetNumberOfPrimariesPerRunCmd2->GetNewDoubleValue(newValue));
   }
   else if (command == TimeStudyCmd) {
     appMgr->EnableTimeStudy(newValue);
