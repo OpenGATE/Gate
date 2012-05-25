@@ -21,6 +21,7 @@
 /gate/physics/processes/ElectronIonisation/setModel StandardModel e+
 /gate/physics/processes/ElectronIonisation/setStepFunction e+ 0.2 0.1 mm
 /gate/physics/processes/ElectronIonisation/setStepFunction e- 0.2 0.1 mm
+/gate/physics/processes/ElectronIonisation/setLinearLossLimit electron 0.01
 
 /gate/physics/addProcess Bremsstrahlung
 /gate/physics/processes/Bremsstrahlung/setModel StandardModel e-
@@ -38,6 +39,6 @@
 
 /gate/physics/setEMin 0.1 keV
 /gate/physics/setEMax 10 GeV
-/gate/physics/setDEDXBinning 220
-/gate/physics/setLambdaBinning 220
+/gate/physics/setDEDXBinning 350
+/gate/physics/setLambdaBinning 350
 
