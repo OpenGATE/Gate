@@ -105,7 +105,7 @@
 /gate/random/setEngineSeed auto
 
 /gate/application/readTimeSlicesIn data/precise_BeamSource.timeslices
-/gate/application/setTotalNumberOfPrimaries 100000
+/gate/application/setTotalNumberOfPrimaries 1000000
 
 /gate/application/start
 /gate/application/describe
