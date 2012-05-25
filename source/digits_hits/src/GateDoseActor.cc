@@ -115,6 +115,8 @@ void GateDoseActor::Construct() {
     //  mEdepImage.SetLastHitEventImage(&mLastHitEventImage);
     mEdepImage.EnableSquaredImage(mIsEdepSquaredImageEnabled);
     mEdepImage.EnableUncertaintyImage(mIsEdepUncertaintyImageEnabled);
+    // Force the computation of squared image if uncertainty is enabled
+    if (mIsEdepUncertaintyImageEnabled) mEdepImage.EnableSquaredImage(true);
     mEdepImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mEdepImage.Allocate();
     mEdepImage.SetFilename(mEdepFilename);
@@ -124,6 +126,9 @@ void GateDoseActor::Construct() {
     mDoseImage.EnableSquaredImage(mIsDoseSquaredImageEnabled);
     mDoseImage.EnableUncertaintyImage(mIsDoseUncertaintyImageEnabled);
     mDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    // Force the computation of squared image if uncertainty is enabled
+    if (mIsDoseUncertaintyImageEnabled) mDoseImage.EnableSquaredImage(true);
+
     // DD(mDoseImage.GetVoxelVolume());
     //mDoseImage.SetScaleFactor(1e12/mDoseImage.GetVoxelVolume());
     mDoseImage.Allocate();
@@ -132,6 +137,8 @@ void GateDoseActor::Construct() {
     if (mIsDoseToWaterImageEnabled) {
     mDoseToWaterImage.EnableSquaredImage(mIsDoseToWaterSquaredImageEnabled);
     mDoseToWaterImage.EnableUncertaintyImage(mIsDoseToWaterUncertaintyImageEnabled);
+    // Force the computation of squared image if uncertainty is enabled
+    if (mIsDoseToWaterUncertaintyImageEnabled) mDoseToWaterImage.EnableSquaredImage(true);
     mDoseToWaterImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mDoseToWaterImage.Allocate();
     mDoseToWaterImage.SetFilename(mDoseToWaterFilename);
