@@ -40,8 +40,6 @@ the produced phase spaces.
 ------------------------------------------------------------------
 - Example 5
 
-PB DE WATERBOX ??? only entrance ?
-
 Example of proton beam in water box with Pencil Beam Scanning source
 with a treatment plan obtained from a TPS.
 
