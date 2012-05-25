@@ -11,7 +11,7 @@
 /gate/physics/processes/HadronIonisation/setStepFunction proton 0.2 0.05 mm
 /gate/physics/processes/HadronIonisation/setStepFunction pi+    0.2 0.05 mm
 /gate/physics/processes/HadronIonisation/setStepFunction pi-    0.2 0.05 mm
-
+/gate/physics/processes/HadronIonisation/setLinearLossLimit proton 0.01
 
 /gate/physics/addProcess IonIonisation 
 /gate/physics/processes/IonIonisation/setStepFunction GenericIon 0.1 0.02 mm
