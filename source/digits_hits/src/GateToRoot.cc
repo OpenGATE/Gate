@@ -596,7 +596,7 @@ void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
                               m_ionDecayPos = m_ionDecayPos_copy;
                               m_positronGenerationPos = m_positronGenerationPos_copy;
                               m_positronAnnihilPos = m_positronAnnihilPos_copy;
-  			      dxg1 = dxg1_copy;
+  			                  dxg1 = dxg1_copy;
                               dyg1 = dyg1_copy;
                               dzg1 = dzg1_copy;
                               dxg2 = dxg2_copy;
@@ -728,8 +728,7 @@ if ( theMode == kTracker )return;
       
     } 
 
-
-  } // end CHC
+  }
  
 // v. cuplov 15.02.12
 #ifdef GATE_USE_OPTICAL
@@ -785,6 +784,7 @@ void GateToRoot::RecordDigitizer(const G4Event* )
     m_outputChannelList[i]->RecordDigitizer();
 
 }
+//--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 void GateToRoot::RecordStepWithVolume(const GateVVolume *, const G4Step* aStep)

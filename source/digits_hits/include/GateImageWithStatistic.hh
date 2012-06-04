@@ -38,13 +38,13 @@ class GateImageWithStatistic
   void Allocate();
   void Reset(double val=0.0);
 
-  void AddTempValue(const int index, float value);
-  void AddValueAndUpdate(const int index, float value);
-  void AddValue(const int index, float value);
+  void AddTempValue(const int index, double value);
+  void AddValueAndUpdate(const int index, double value);
+  void AddValue(const int index, double value);
 
-  float GetValue(const int index);
-  void  SetValue(const int index, float value );
-  void Fill(float value);
+  double GetValue(const int index);
+  void  SetValue(const int index, double value );
+  void Fill(double value);
 
   void EnableSquaredImage(bool b)     { mIsSquaredImageEnabled = b; }
   void EnableUncertaintyImage(bool b) { mIsUncertaintyImageEnabled = b; }

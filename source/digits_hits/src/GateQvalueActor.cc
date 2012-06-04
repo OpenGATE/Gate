@@ -78,7 +78,8 @@ void GateQvalueActor::SaveData() {
 
 //-----------------------------------------------------------------------------
 void GateQvalueActor::ResetData() {
-  
+  mCurrentEvent = -1;
+  mQvalueImage.Reset();
 }
 //-----------------------------------------------------------------------------
 

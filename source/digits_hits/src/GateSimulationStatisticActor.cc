@@ -19,6 +19,7 @@
 
 #include "GateSimulationStatisticActor.hh"
 #include "GateMiscFunctions.hh"
+#include "GateApplicationMgr.hh"
 #include "G4Event.hh"
 
 double get_elapsed_time(const timeval &start, const timeval &end) {
@@ -135,7 +136,8 @@ void GateSimulationStatisticActor::SaveData()
      << "# NumberOfPhysicalSteps     = " << mNumberOfPhysicalSteps << std::endl
      << "# ElapsedTime = " << get_elapsed_time(start,end) << std::endl
      << "# StartDate = " << startDateStr 
-     << "# EndDate = " << get_date_string();
+     << "# EndDate = " << get_date_string()
+     << "# CurrentSimulationTime = " << (GateApplicationMgr::GetInstance()->GetCurrentTime() - GateApplicationMgr::GetInstance()->GetTimeStart()) << std::endl;
   if (!os) {
     GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << G4endl);
   }
@@ -154,6 +156,8 @@ void GateSimulationStatisticActor::ResetData()
   mNumberOfGeometricalSteps = 0;
   mNumberOfPhysicalSteps = 0;
   mNumberOfSteps = 0;  
+  gettimeofday(&start,NULL);
+  startDateStr = get_date_string();
 }
 //-----------------------------------------------------------------------------
 

@@ -15,6 +15,7 @@
 #include <sys/time.h>
 #include <stdio.h>
 #include <unistd.h>
+#include "GateActorManager.hh"
 
 //-----------------------------------------------------------------------------
 GateVActor::GateVActor(G4String name, G4int depth)
@@ -60,7 +61,7 @@ void GateVActor::BeginOfRunAction(const G4Run*)
 // default callback for EndOfRunAction allowing to call Save
 void GateVActor::EndOfRunAction(const G4Run*) 
 {
-  Save();
+  SaveData();
 }
 //-----------------------------------------------------------------------------
 
@@ -73,7 +74,7 @@ void GateVActor::EndOfEventAction(const G4Event*e)
  
   // Save every n events
   if ((ne != 0) && (mSaveEveryNEvents != 0)) 
-    if (ne % mSaveEveryNEvents == 0)  Save();
+    if (ne % mSaveEveryNEvents == 0)  SaveData();
 
   // Save every n seconds
   if (mSaveEveryNSeconds != 0) { // need to check time
@@ -82,7 +83,7 @@ void GateVActor::EndOfEventAction(const G4Event*e)
     long seconds  = end.tv_sec  - mTimeOfLastSaveEvent.tv_sec;
     if (seconds > mSaveEveryNSeconds) {
       //GateMessage("Core", 0, "Actor " << GetName() << " : " << mSaveEveryNSeconds << " seconds." << G4endl);
-      Save();
+      SaveData();
       mTimeOfLastSaveEvent = end;
     }
   }
@@ -93,13 +94,6 @@ void GateVActor::EndOfEventAction(const G4Event*e)
 void GateVActor::SetSaveFilename(G4String  f) 
 {
   mSaveFilename = f;
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void GateVActor::Save() 
-{
-  SaveData();
 }
 //-----------------------------------------------------------------------------
 

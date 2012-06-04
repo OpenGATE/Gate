@@ -141,11 +141,3 @@ GateCompoundMaterialCreator::~GateCompoundMaterialCreator()
     delete *iter;
 }
 //-----------------------------------------------------------------------------
-
-
-
-
-
-
-
-

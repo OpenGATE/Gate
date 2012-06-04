@@ -28,21 +28,25 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
 {
   GateDebugMessageInc("Actor",4,"GateEnergySpectrumActor() -- begin"<<G4endl);
 
-   mEmin = 0.;
-   mEmax = 50.;
-   mNBins = 10;
-   mEdepmin = 0.;
-   mEdepmax = 50.;
-   mEdepNBins = 10;
-   Ei = 0.;
-   Ef = 0.;
-   newEvt = true;
-   newTrack = true;
-   sum =0.;sumNi=0.;nTrack=0;
-   sumM1=0.;
-   sumM2=0.;
-   sumM3=0.; 
-   edep = 0.;
+  mEmin = 0.;
+  mEmax = 50.;
+  mENBins = 100;
+
+  mEdepmin = 0.;
+  mEdepmax = 50.;
+  mEdepNBins = 100;
+
+  Ei = 0.;
+  Ef = 0.;
+  newEvt = true;
+  newTrack = true;
+  sumNi=0.;
+  nTrack=0;
+  sumM1=0.;
+  sumM2=0.;
+  sumM3=0.; 
+  edep = 0.;
+
   pMessenger = new GateEnergySpectrumActorMessenger(this);
 
   GateDebugMessageDec("Actor",4,"GateEnergySpectrumActor() -- end"<<G4endl);
@@ -77,20 +81,23 @@ void GateEnergySpectrumActor::Construct()
   EnableEndOfEventAction(true); // for save every n
 
   //mHistName = "Precise/output/EnergySpectrum.root";
-   pTfile = new TFile(mSaveFilename,"RECREATE");
+  pTfile = new TFile(mSaveFilename,"RECREATE");
 
-   pEnergySpectrum = new TH1D("energySpectrum","Energy Spectrum",GetNBins(),GetEmin() ,GetEmax() );
-   pEnergySpectrum->SetXTitle("Energy (MeV)");
+  pEnergySpectrum = new TH1D("energySpectrum","Energy Spectrum",GetENBins(),GetEmin() ,GetEmax() );
+  pEnergySpectrum->SetXTitle("Energy (MeV)");
 
-   pEdep  = new TH1D("edepHisto","Energy deposited",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
-   pEdep->SetXTitle("E_{dep} (MeV)");
+  pEdep  = new TH1D("edepHisto","Energy deposited per event",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
+  pEdep->SetXTitle("E_{dep} (MeV)");
 
-   pEdepTrack  = new TH1D("edepTrackHisto","Energy deposited by Tracks",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
-   pEdepTrack->SetXTitle("E_{dep} (MeV)");
+  pEdepTime  = new TH2D("edepHistoTime","Energy deposited with time per event",GetEdepNBins(),0,20,GetEdepNBins(),GetEdepmin(),GetEdepmax());
+  pEdepTime->SetXTitle("t (ns)");
+  pEdepTime->SetYTitle("E_{dep} (MeV)");
 
-   pDeltaEc = new TH1D("eLossHisto","Energy loss",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
-   pDeltaEc ->SetXTitle("E_{loss} (MeV)");
+  pEdepTrack  = new TH1D("edepTrackHisto","Energy deposited per track",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
+  pEdepTrack->SetXTitle("E_{dep} (MeV)");
 
+  pDeltaEc = new TH1D("eLossHisto","Energy loss",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
+  pDeltaEc ->SetXTitle("E_{loss} (MeV)");
 
   ResetData();
 }
@@ -101,8 +108,8 @@ void GateEnergySpectrumActor::Construct()
 /// Save data
 void GateEnergySpectrumActor::SaveData()
 {
- pTfile->Write();
-    pTfile->Close();
+  pTfile->Write();
+  //pTfile->Close();
 }
 //-----------------------------------------------------------------------------
 
@@ -110,7 +117,11 @@ void GateEnergySpectrumActor::SaveData()
 //-----------------------------------------------------------------------------
 void GateEnergySpectrumActor::ResetData() 
 {
-
+  pEnergySpectrum->Reset();
+  pEdep->Reset();
+  pEdepTime->Reset();
+  pEdepTrack->Reset();
+  pDeltaEc->Reset();
 }
 //-----------------------------------------------------------------------------
 
@@ -126,8 +137,9 @@ void GateEnergySpectrumActor::BeginOfRunAction(const G4Run *)
 void GateEnergySpectrumActor::BeginOfEventAction(const G4Event*)
 {
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- Begin of Event" << G4endl);
-  newEvt = true;  edep = 0.;
-
+  newEvt = true;
+  edep = 0.;
+  tof  = 0;
 }
 //-----------------------------------------------------------------------------
 
@@ -135,7 +147,12 @@ void GateEnergySpectrumActor::BeginOfEventAction(const G4Event*)
 void GateEnergySpectrumActor::EndOfEventAction(const G4Event*)
 {
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Event" << G4endl);
-  pEdep->Fill(edep);
+  if (edep > 0)
+  {
+	  //G4cout << "hitted " << edep/MeV << "MeV " << tof/MeV << "ns" << G4endl;
+	  pEdep->Fill(edep/MeV);
+	  pEdepTime->Fill(tof/ns,edep/MeV);
+  }
 }
 //-----------------------------------------------------------------------------
 
@@ -155,14 +172,9 @@ void GateEnergySpectrumActor::PostUserTrackingAction(const GateVVolume *, const 
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Track" << G4endl);
 
   double eloss = Ei-Ef;
-  pDeltaEc->Fill( eloss,t->GetWeight() );
-  pEdepTrack->Fill(edepTrack,t->GetWeight() );
-  sum+=eloss;
- // G4cout<<sum<<"  "<<sumNi<<"  "<<sumM1+sumM2+sumM3 <<G4endl;
-
+  if (eloss > 0) pDeltaEc->Fill(eloss/MeV,t->GetWeight() );
+  if (edepTrack > 0)  pEdepTrack->Fill(edepTrack/MeV,t->GetWeight() );
 }
-//-----------------------------------------------------------------------------
-//#include "G4VProcess.hh"
 //-----------------------------------------------------------------------------
 
 //G4bool GateEnergySpectrumActor::ProcessHits(G4Step * step , G4TouchableHistory* /*th*/)
@@ -177,21 +189,36 @@ sumNi+=step->GetTotalEnergyDeposit();}
 //if(step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()!="ElectronIonisation" )
  //   G4cout<<"post "<<step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()<<G4endl;
 
-
-
-
+  assert(step->GetTrack()->GetWeight() == 1.); // edep doesnt handle weight
 
   if(step->GetTotalEnergyDeposit()>0.01) sumM1+=step->GetTotalEnergyDeposit();
   else if(step->GetTotalEnergyDeposit()>0.00001) sumM2+=step->GetTotalEnergyDeposit();
   else sumM3+=step->GetTotalEnergyDeposit();
 
-  edep+=step->GetTotalEnergyDeposit()*step->GetTrack()->GetWeight();
-  edepTrack+=step->GetTotalEnergyDeposit();
+  edep += step->GetTotalEnergyDeposit();
+  edepTrack += step->GetTotalEnergyDeposit();
+
+  //cout << "--- " << step->GetTrack()->GetTrackID() << " " << step->GetTrack()->GetParentID() << endl;
+  if (newEvt) {
+    double pretof = step->GetPreStepPoint()->GetGlobalTime();
+    double posttof = step->GetPostStepPoint()->GetGlobalTime();
+    tof = pretof + posttof;
+    tof /= 2;
+    //cout << "****************** new event tof=" << pretof << "/" << posttof << "/" << tof << " edep=" << edep << endl;
+    newEvt = false;
+  } else {
+    double pretof = step->GetPreStepPoint()->GetGlobalTime();
+    double posttof = step->GetPostStepPoint()->GetGlobalTime();
+    double ltof = pretof + posttof;
+    ltof /= 2;
+    //cout << "****************** diff tof=" << ltof << " edep=" << edep << endl;
+  }
+
 
   Ef=step->GetPostStepPoint()->GetKineticEnergy();
   if(newTrack){
      Ei=step->GetPreStepPoint()->GetKineticEnergy();
-     pEnergySpectrum->Fill( Ei,step->GetTrack()->GetWeight() ); 
+     pEnergySpectrum->Fill(Ei/MeV,step->GetTrack()->GetWeight()); 
      newTrack=false;  
   }
 

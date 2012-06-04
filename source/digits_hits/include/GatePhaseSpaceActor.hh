@@ -52,9 +52,8 @@ class GatePhaseSpaceActor : public GateVActor
 
   //=======================================================
   /// Saves the data collected to the file
-  virtual void clear(){ResetData();}
   virtual void SaveData();
-  virtual void ResetData(){}
+  virtual void ResetData();
 
   void SetIsXPositionEnabled(bool b){EnableXPosition = b;}
   void SetIsYPositionEnabled(bool b){EnableYPosition = b;}

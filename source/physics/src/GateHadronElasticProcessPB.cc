@@ -47,8 +47,7 @@ GateHadronElasticPB::GateHadronElasticPB():GateVProcess("HadronElastic")
   AddToDataSetList("G4HadronElasticDataSet");
   AddToDataSetList("G4NeutronHPElasticData");
   
-
-pMessenger = new GateHadronicStandardProcessMessenger(this);  
+  pMessenger = new GateHadronicStandardProcessMessenger(this);  
 }
 //-----------------------------------------------------------------------------
 

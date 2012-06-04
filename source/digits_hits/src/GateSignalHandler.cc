@@ -25,12 +25,32 @@ G4int GateSignalHandler::Install()
     G4cerr << G4endl << "Warning! Could not install handler for CTRL-\\ (SIGQUIT)!" << G4endl << G4endl;
     return -1;
   }
+  if (signal(SIGXCPU,QuitSignalHandler) == SIG_ERR) {
+    G4cerr << G4endl << "Warning! Could not install handler for SIGXCPU!" << G4endl << G4endl;
+    return -1;
+  }
+  if (signal(SIGUSR1,QuitSignalHandler) == SIG_ERR) {
+    G4cerr << G4endl << "Warning! Could not install handler for SIGUSR1!" << G4endl << G4endl;
+    return -1;
+  }
   return 0;
 }
 
 
-
-
+void GateSignalHandler::IgnoreSignalHandler(int sig) {
+  G4cerr << "ignoring signal ";
+  switch (sig) {
+  case SIGXCPU:
+    G4cerr << "SIGXCPU" << G4endl;
+    break;
+  case SIGUSR1:
+    G4cerr << "SIGUSR1" << G4endl;
+    break;
+  default:
+    G4cerr << sig << G4endl;
+    break;
+  }
+}
 
 // Handles the signal SIGQUIT (CTRL-\). 
 // When a BeamOn/StartDAQ is running, aborts the current run and stops the DAQ, returning GATE in Idle state.

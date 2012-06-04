@@ -35,13 +35,13 @@ See GATE/LICENSE.txt for further details
 #include "G4ThreeVector.hh"
 
 class G4String;
-typedef float PixelType;
 
 /// \brief Handler for "Analyze" header files (free 3D medical images
 /// headers) 
 class GateAnalyzeHeader 
 {
 public:
+  typedef float PixelType;
   //-----------------------------------------------------------------------------
   /// Structure storing general information 
   typedef struct Header_key          		/*      header_key       */
@@ -212,6 +212,7 @@ public:
     nbchannels = m_data.ic.unused1;
   }
   /// Sets the voxels size 
+  //FIXME pixel type is not the same as pixel size type !!!
   void SetVoxelSize ( PixelType sx, PixelType sy, PixelType sz ) { 
     m_data.ic.pixdim[1] = sx;
     m_data.ic.pixdim[2] = sy;

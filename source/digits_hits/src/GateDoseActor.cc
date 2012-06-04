@@ -297,9 +297,10 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   GateDebugMessageInc("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel - begin" << G4endl);
   GateDebugMessageInc("Actor", 4, "enedepo = " << step->GetTotalEnergyDeposit() << G4endl);
   GateDebugMessageInc("Actor", 4, "weight = " <<  step->GetTrack()->GetWeight() << G4endl);
-  double weight = step->GetTrack()->GetWeight();
-  double edep = step->GetTotalEnergyDeposit()*weight;//*step->GetTrack()->GetWeight();
+  const double weight = step->GetTrack()->GetWeight();
+  const double edep = step->GetTotalEnergyDeposit()*weight;//*step->GetTrack()->GetWeight();
 
+  // if no energy is deposited or energy is deposited outside image => do nothing
   if (step->GetTotalEnergyDeposit() == 0) {
     GateDebugMessage("Actor", 5, "edep == 0 : do nothing" << G4endl);
     GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end" << G4endl);
@@ -311,6 +312,8 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     return;
   }
 
+  // compute sameEvent
+  // sameEvent is false the first time some energy is deposited for each primary particle
   bool sameEvent=true;  
   if (mIsLastHitEventImageEnabled) {
     GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);

@@ -81,9 +81,6 @@ protected:
   G4String m_dataByteOrder; // Added by HDS : LITTLE/BIG ENDIAN for interfile
   GateGeometryVoxelInterfileReaderMessenger* m_messenger;
   G4bool IsFirstFrame; // for RTPhantom
-  
-
-      
 };
 
 #endif

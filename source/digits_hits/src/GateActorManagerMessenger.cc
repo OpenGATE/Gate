@@ -36,6 +36,7 @@ GateActorManagerMessenger::~GateActorManagerMessenger()
   delete pAddActor;
   delete pActorCommand;
   delete pInitActor;
+  delete pResetAfterSaving;
 }
 //-----------------------------------------------------------------------------
 
@@ -63,6 +64,9 @@ void GateActorManagerMessenger::BuildCommands(G4String base)
   guidance = "Initialization of sensors";
   pInitActor->SetGuidance(guidance);
 
+  pResetAfterSaving = new G4UIcmdWithABool((base+"/resetAfterSaving").c_str(),this);
+  pResetAfterSaving->SetGuidance("reset actor after saving results. usefull for checkpointing.");
+  pResetAfterSaving->SetParameterName("reset",false);
 }
 //-----------------------------------------------------------------------------
 
@@ -70,18 +74,18 @@ void GateActorManagerMessenger::BuildCommands(G4String base)
 //-----------------------------------------------------------------------------
 void GateActorManagerMessenger::SetNewValue(G4UIcommand* command, G4String param)
 {
-  if(command==pAddActor)
-    {
-      char par1[30];
-      char par2[30];
-      std::istringstream is(param);
-      is >> par1 >> par2 ;
-      pActorManager->AddActor(par1,par2);
-    }
-  if(command==pInitActor)
-    {
-      GateActorManager::GetInstance() ->CreateListsOfEnabledActors();
-    }
+  if (command==pAddActor) {
+    std::string par1,par2;
+    std::istringstream is(param);
+    is >> par1 >> par2 ;
+    pActorManager->AddActor(par1,par2);
+  }
+
+  if (command==pInitActor)
+    GateActorManager::GetInstance() ->CreateListsOfEnabledActors();
+
+  if (command==pResetAfterSaving)
+    GateActorManager::GetInstance()->SetResetAfterSaving( G4UIcmdWithABool::GetNewBoolValue(param) );
 }
 //-----------------------------------------------------------------------------
 

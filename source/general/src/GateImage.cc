@@ -18,9 +18,11 @@ See GATE/LICENSE.txt for further details
 
 #include "G4ThreeVector.hh"
 #include "G4GeometryTolerance.hh"
+#include <iomanip>
 
 #include "GateImage.hh"
 #include "GateMiscFunctions.hh"
+#include "GateMachine.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 #include "TFile.h"
@@ -952,7 +954,7 @@ void GateImage::ReadAnalyze(G4String filename) {
   short int rx,ry,rz,rc;
   hdr.GetImageSize(rx,ry,rz,rc);
 
-  PixelType vx,vy,vz;
+  GateAnalyzeHeader::PixelType vx,vy,vz;
   hdr.GetVoxelSize(vx,vy,vz);
   		  
   // update sizes and allocate
@@ -988,8 +990,15 @@ void GateImage::ReadAnalyze(G4String filename) {
   }
   else if (hdr.GetVoxelType() == GateAnalyzeHeader::FloatType) {
     GateMessage("Image",5,"Voxel Type = FloatType" << G4endl);
+    typedef float VoxelType;
+    std::vector<VoxelType> temp(nbOfValues);
     data.resize(nbOfValues);
-    is.read((char*)(&(data[0])), nbOfValues*sizeof(PixelType));
+    is.read((char*)(&(temp[0])), nbOfValues*sizeof(VoxelType));
+    for(unsigned int i=0; i<temp.size(); i++) {
+      if(!hdr.IsRightEndian())  
+	GateMachine::SwapEndians(temp[i]);
+      data[i] = (PixelType)temp[i];
+    }
   }
     else if (hdr.GetVoxelType() == GateAnalyzeHeader::SignedIntType) {	
     GateMessage("Image",5,"Voxel Type = SignedIntType" << G4endl);
@@ -1127,12 +1136,6 @@ void GateImage::MergeDataByAddition(G4String filename) {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateImage::Write(G4String filename) {
-  Write(filename, "");  
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
 void GateImage::Write(G4String filename, const G4String & comment) {
   GateMessage("Actor",5,"GateImage::write " << filename << G4endl);  
 
@@ -1164,15 +1167,15 @@ void GateImage::Write(G4String filename, const G4String & comment) {
       else {
 	if (extension == "hdr") {
 	  // Header
-	  //GateMessage("Image",8,"Analyze format : writing header (" << filename<<")" << G4endl);
 	  GateAnalyzeHeader hdr;
 	  hdr.SetVoxelType(GateAnalyzeHeader::FloatType);
 	  hdr.SetImageSize((short int)resolution.x(),(short int)resolution.y(),(short int)resolution.z());
-	  hdr.SetVoxelSize((PixelType)voxelSize.x(),(PixelType)voxelSize.y(),(PixelType)voxelSize.z());
+	  hdr.SetVoxelSize((GateAnalyzeHeader::PixelType)voxelSize.x(),
+	      (GateAnalyzeHeader::PixelType)voxelSize.y(),
+	      (GateAnalyzeHeader::PixelType)voxelSize.z());
 	  hdr.Write(filename);
 	  // Data
 	  setExtension(filename,"img");
-	  //GateMessage("Image",8,"Analyze format : writing data (" << filename<<")"<< G4endl);
 	  // open
 	  OpenFileOutput(filename, os);
 	  WriteBin(os);
@@ -1198,7 +1201,6 @@ void GateImage::Write(G4String filename, const G4String & comment) {
 
 //-----------------------------------------------------------------------------
 void GateImage::WriteBin(std::ofstream & os) {
-  //GateMessage("Image",8,"GateImage::WriteBin " << G4endl);
   // write
   os.write((char*)(&(data[0])), nbOfValues*sizeof(PixelType));
   if (!os) {
@@ -1221,11 +1223,11 @@ void GateImage::WriteAscii(std::ofstream & os, const G4String & comment) {
   GateMessage("Actor",5,"GateImage::WriteAscii " <<G4endl);
   // write comment in header
   os  << "#################################### " << G4endl
-      << "# Matrix Size= " << size        << G4endl
-      << "# Resol      = " << resolution  << G4endl
-      << "# VoxelSize  = " << voxelSize   << G4endl
-      << "# nbVal      = " << nbOfValues  << G4endl
-      << "#################################### " << G4endl;
+    << "# Matrix Size= " << size        << G4endl
+    << "# Resol      = " << resolution  << G4endl
+    << "# VoxelSize  = " << voxelSize   << G4endl
+    << "# nbVal      = " << nbOfValues  << G4endl
+    << "#################################### " << G4endl;
   if (comment != "") os << comment << G4endl;
   
   // write data
@@ -1238,7 +1240,7 @@ void GateImage::WriteAscii(std::ofstream & os, const G4String & comment) {
   if (dim <= 1) {
     // write values in columns
     for(int i=0; i<nbOfValues; i++)
-      os << data[i] << std::endl;	
+      os << std::setprecision(10) << data[i] << std::endl;
   }
   if (dim == 2) {
     // write values in line/columns
@@ -1307,7 +1309,7 @@ GateImage::ESide GateImage::GetSideFromPointAndCoordinate(const G4ThreeVector & 
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-PixelType GateImage::GetNeighborValueFromCoordinate(const ESide & side, const G4ThreeVector & coord) {
+GateImage::PixelType GateImage::GetNeighborValueFromCoordinate(const ESide & side, const G4ThreeVector & coord) {
   //GateMessage("Image", 8, "GateImage::GetNeighborValueFromCoordinate(" << coord
   //			  << ", side=" << side << G4endl);
   int ttt;
@@ -1338,8 +1340,6 @@ void GateImage::UpdateDataForRootOutput() {
   if (resolution.x() != 1) mRootHistoDim++;
   if (resolution.y() != 1) mRootHistoDim++;
   if (resolution.z() != 1) mRootHistoDim++;
-
- // std::vector<int> axes(mRootHistoDim);
 
   if (mRootHistoDim == 1 || mRootHistoDim == 2) {
     if (resolution.x() != 1) { 
@@ -1460,7 +1460,7 @@ bool GateImage::HasSameResolutionThan(const GateImage * pImage) const {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-PixelType GateImage::GetMinValue()
+GateImage::PixelType GateImage::GetMinValue()
 { 
    PixelType minVal = GetValue(0); 
    for(int i =1; i<GetNumberOfValues();i++)

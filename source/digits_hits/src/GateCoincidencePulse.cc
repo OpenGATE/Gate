@@ -62,8 +62,8 @@ void GateCoincidencePulse::InsertUniqueSortedCopy(GatePulse* newPulse)
     GatePulseList::InsertUniqueSortedCopy(newPulse);
     if ( newPulse->GetTime() < m_startTime)
       m_startTime = newPulse->GetTime();
-////     if ( newPulse->GetTime() > m_Time)
-////       m_Time = newPulse->GetTime();
+//     if ( newPulse->GetTime() > m_Time)
+//       m_Time = newPulse->GetTime();
 }
 
 

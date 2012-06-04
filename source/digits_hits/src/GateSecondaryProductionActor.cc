@@ -159,13 +159,13 @@ void GateSecondaryProductionActor::Construct() {
 void GateSecondaryProductionActor::SaveData() {
   
   pTfile->Write();
-  pTfile->Close();
+  //pTfile->Close();
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateSecondaryProductionActor::ResetData() {
-  
+  pFrag->Reset();
 }
 //-----------------------------------------------------------------------------
 

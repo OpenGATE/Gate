@@ -59,13 +59,14 @@ public:
     return singleton_ActorManager;
   };
 
+  void SetResetAfterSaving(bool reset);
+  bool GetResetAfterSaving() const;
+
   void AddActor(G4String actorType, G4String actorName, int depth=0);
   void CreateListsOfEnabledActors();
-  void GetListOfActors();
-  //added by Emilia
-  GateVActor*  GetActor(G4String actorType, G4String actorName, int depth=0);
-  inline virtual void SetActor(GateVActor* anActor) { m_actor = anActor; }; 
-  inline GateVActor*  GetActor() {return m_actor;};
+  void PrintListOfActors() const;
+  void PrintListOfActorTypes() const;
+  GateVActor*  GetActor(const G4String &actorType, const G4String &actorName);
   
   std::vector<GateVActor*> ReturnListOfActors();
   
@@ -117,8 +118,8 @@ protected:
 
 private:
   int IsInitialized;
+  bool resetAfterSaving;
 
-  GateVActor* m_actor;
   GateActorManager();
   static GateActorManager *singleton_ActorManager;
 };

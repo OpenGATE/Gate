@@ -56,10 +56,8 @@ class GateQvalueActor : public GateVImageActor
   virtual void SaveData();
   virtual void ResetData();
 
-  virtual void clear(){ResetData();}
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
-
 
 protected:
   GateQvalueActor(G4String name, G4int depth=0);

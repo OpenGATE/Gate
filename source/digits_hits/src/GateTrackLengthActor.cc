@@ -72,8 +72,7 @@ void GateTrackLengthActor::Construct()
 /// Save data
 void GateTrackLengthActor::SaveData()
 {
- pTfile->Write();
-    pTfile->Close();
+  pTfile->Write();
 }
 //-----------------------------------------------------------------------------
 
@@ -81,7 +80,7 @@ void GateTrackLengthActor::SaveData()
 //-----------------------------------------------------------------------------
 void GateTrackLengthActor::ResetData() 
 {
-
+  pTrackLength->Reset();
 }
 //-----------------------------------------------------------------------------
 

@@ -191,33 +191,36 @@ void GateVImageActor::SetStepHitType(G4String t)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateVImageActor::PreUserTrackingAction(const GateVVolume * , const G4Track * t)
+void GateVImageActor::PreUserTrackingAction(const GateVVolume *foo , const G4Track * t)
 {
   //GateVActor::PreUserTrackingAction(v, t);
   //int index = GetIndexFromTrackPosition(v, t);
 
+  assert(foo==NULL);
   int index = GetIndexFromTrackPosition(GetVolume(), t);
   UserPreTrackActionInVoxel(index, t);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateVImageActor::PostUserTrackingAction(const GateVVolume * , const G4Track * t)
+void GateVImageActor::PostUserTrackingAction(const GateVVolume *foo , const G4Track * t)
 {
   //GateVActor::PostUserTrackingAction(v, t);
   //int index = GetIndexFromTrackPosition(v, t);
 
+  assert(foo==NULL);
   int index = GetIndexFromTrackPosition(GetVolume(), t);
   UserPostTrackActionInVoxel(index, t);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateVImageActor::UserSteppingAction(const GateVVolume * , const G4Step * step)
+void GateVImageActor::UserSteppingAction(const GateVVolume *foo , const G4Step * step)
 {
   // GateVActor::UserSteppingAction(v, step);
   //int index = GetIndexFromStepPosition(v, step);
 
+  assert(foo==NULL);
   int index = GetIndexFromStepPosition(GetVolume(), step);
   UserSteppingActionInVoxel(index, step);
 }

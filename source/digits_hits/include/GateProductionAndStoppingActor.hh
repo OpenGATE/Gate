@@ -54,7 +54,6 @@ class GateProductionAndStoppingActor : public GateVImageActor
   virtual void SaveData();
   virtual void ResetData();
 
-  virtual void clear(){ResetData();}
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
 

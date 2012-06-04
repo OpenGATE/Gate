@@ -109,10 +109,9 @@ public:
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
-  void Save();
   void SetSaveFilename(G4String  f);
-  virtual void SaveData() {}
-  virtual void ResetData() {}
+  virtual void SaveData() = 0;
+  virtual void ResetData() = 0;
   void EnableSaveEveryNEvents(int n) { mSaveEveryNEvents = n; }
   void EnableSaveEveryNSeconds(int n) { mSaveEveryNSeconds = n; }
   //-----------------------------------------------------------------------------
@@ -172,7 +171,7 @@ private:
   static NAME##Creator ActorCreator##NAME;
 
 #define FCT_FOR_AUTO_CREATOR_ACTOR(CLASS)				\
-  static GateVActor *make_sensor(G4String name, G4int depth){return new CLASS(name, depth); };
+  static GateVActor *make_sensor(G4String name, G4int depth){ GateVActor *instance=new CLASS(name, depth); instance->SetTypeName(#CLASS); return instance; };
 //-----------------------------------------------------------------------------
 
 #endif /* end #define GATEVACTOR_HH */

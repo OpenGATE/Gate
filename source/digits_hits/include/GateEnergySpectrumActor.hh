@@ -15,6 +15,7 @@ See GATE/LICENSE.txt for further details
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
 	  david.sarrut@creatis.insa-lyon.fr
+	  pierre.gueth@creatis.insa-lyon.fr
  */
 
 #ifndef GATEENERGYSPECTRUMACTOR_HH
@@ -28,6 +29,7 @@ See GATE/LICENSE.txt for further details
 #include "TROOT.h"
 #include "TFile.h"
 #include "TH1.h"
+#include "TH2.h"
 
 //-----------------------------------------------------------------------------
 /// \brief Actor displaying nb events/tracks/step
@@ -61,17 +63,16 @@ class GateEnergySpectrumActor : public GateVActor
   virtual void ResetData();
  
 //  virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
-  virtual void clear(){ResetData();}
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
 
   double GetEmin() {return mEmin; }
   double GetEmax() {return mEmax;}
-  int GetNBins() {return mNBins;}
+  int GetENBins() {return mENBins;}
 
   void SetEmin(double v) {mEmin = v;}
   void SetEmax(double v) {mEmax = v;}
-  void SetNBins(int v) {mNBins = v;}
+  void SetENBins(int v) {mENBins = v;}
 
   double GetEdepmin() {return mEdepmin; }
   double GetEdepmax() {return mEdepmax;}
@@ -91,10 +92,13 @@ protected:
   TH1D * pEnergySpectrum;
   TH1D * pDeltaEc;
   TH1D * pEdep;
+  TH2D * pEdepTime;
   TH1D * pEdepTrack;
+
   double mEmin;
   double mEmax;
-  int mNBins;
+  int mENBins;
+
   double mEdepmin;
   double mEdepmax;
   int mEdepNBins;
@@ -103,13 +107,13 @@ protected:
   int nTrack;
   bool newEvt;  
   bool newTrack;  
-  double sum;
   double sumNi;
   double sumM1;
   double sumM2;
   double sumM3;
   
   double edep;
+  double tof;
   double edepTrack;
 
   GateEnergySpectrumActorMessenger * pMessenger;

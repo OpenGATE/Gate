@@ -333,6 +333,16 @@ void GatePhaseSpaceActor::SaveData()
     fclose(pIAEARecordType->p_file);
   }
 }
+
+void GatePhaseSpaceActor::ResetData()
+{
+  if (mFileType=="rootFile") {
+    pListeVar->Reset();
+    return;
+  }
+
+  GateError("Can't reset phase space");
+}
 // --------------------------------------------------------------------
 
 

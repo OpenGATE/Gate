@@ -24,11 +24,7 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEVPROCESS_HH
 #define GATEVPROCESS_HH
 
-//#include "GateConfiguration.h"
-
-#include "globals.hh"
-//#include "G4String.hh"
-//#include <iomanip>   
+#include "globals.hh"  
 #include <vector>
 #include "G4ios.hh"
 

@@ -224,8 +224,7 @@ void GateSourceLinacBeam::GeneratePrimaryVertex(G4Event* evt) {
     //if (volumeNumber==0) Rmax=25.;   // cible  
 
     // Get angle from (flat random)
-    angle =  ((double)std::rand()/((double)RAND_MAX+1.)*360.);
-    angle=angle*TMath::Pi()/180;
+    angle = CLHEP::RandFlat::shoot(2*TMath::Pi());
       
     // Get distance from center 
     r = mHistoRadius[volumeNumber]->GetRandom();

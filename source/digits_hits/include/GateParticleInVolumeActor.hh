@@ -23,7 +23,6 @@ See GATE/LICENSE.txt for further details
 #include "GateActorManager.hh"
 #include "G4UnitsTable.hh"
 #include "GateImageActorMessenger.hh"
-#include "GateIntImage.hh"
 
 
 class GateParticleInVolumeActor : public GateVImageActor
@@ -57,7 +56,6 @@ class GateParticleInVolumeActor : public GateVImageActor
 
   ///Scorer related
   //virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
-  virtual void clear(){ResetData();}
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
 
@@ -70,8 +68,8 @@ protected:
   bool mIsParticleInVolumeImageEnabled;
   bool outsideTrack;
 
-  GateIntImage mParticleInVolumeImage;
   GateImage mLastHitEventImage;
+  GateImage mParticleInVolumeImage;
 
   G4String mParticleInVolumeFilename;
 };

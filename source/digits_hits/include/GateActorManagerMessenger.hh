@@ -25,6 +25,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateUIcmdWith2String.hh"
 #include "G4UIcmdWithoutParameter.hh"
+#include "G4UIcmdWithABool.hh"
 
 
 class GateActorManager;
@@ -44,6 +45,7 @@ protected:
 
   GateUIcmdWith2String * pAddActor;
   G4UIcmdWithoutParameter * pInitActor;
+  G4UIcmdWithABool *pResetAfterSaving;
 
   G4UIdirectory*            pActorCommand;   
 };

@@ -23,6 +23,7 @@ GateActorManager::GateActorManager()
   
   pActorManagerMessenger = new GateActorManagerMessenger(this);
   IsInitialized =0;
+  resetAfterSaving = false;
   GateDebugMessageDec("Actor",4,"GateActormanager() -- end"<<G4endl);
 }
 //-----------------------------------------------------------------------------
@@ -59,6 +60,9 @@ GateActorManager::~GateActorManager()
 }
 //-----------------------------------------------------------------------------
 
+void GateActorManager::SetResetAfterSaving(bool reset) { resetAfterSaving = reset; }
+bool GateActorManager::GetResetAfterSaving() const { return resetAfterSaving; }
+
 //-----------------------------------------------------------------------------
 void GateActorManager::AddActor(G4String actorType, G4String actorName, int depth)
 {
@@ -67,6 +71,17 @@ void GateActorManager::AddActor(G4String actorType, G4String actorName, int dept
     theListOfActors.push_back(GateActorManager::theListOfActorPrototypes[actorType](actorName,depth));
   else GateWarning("Actor type: "<<actorType<<" does not exist!");
   GateDebugMessageDec("Actor",5,"Actor Manager -- AddActor(): "<<actorName<<" -- end\n"<<G4endl);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+GateVActor*  GateActorManager::GetActor(const G4String &actorType, const G4String &actorName)
+{
+  for (std::vector<GateVActor*>::const_iterator iter=theListOfActors.begin(); iter!=theListOfActors.end(); iter++) {
+    GateVActor *actor = *iter;
+    if (actor->GetName()==actorName and actor->GetTypeName()==actorType) return actor;
+  }
+  return NULL;
 }
 //-----------------------------------------------------------------------------
 
@@ -125,9 +140,20 @@ void GateActorManager::CreateListsOfEnabledActors()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateActorManager::GetListOfActors()
+void GateActorManager::PrintListOfActorTypes() const
 {
-  std::vector<GateVActor*>::iterator sit;
+  G4cout << "***********************" << G4endl;
+  for (std::map<G4String,maker_actor>::const_iterator iter=theListOfActorPrototypes.begin(); iter!=theListOfActorPrototypes.end(); iter++) {
+    G4cout << iter->first << G4endl;
+  }
+  G4cout << "***********************" << G4endl;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateActorManager::PrintListOfActors() const
+{
+  std::vector<GateVActor*>::const_iterator sit;
   for(sit= theListOfActors.begin(); sit!=theListOfActors.end(); ++sit)
     {
       GateMessage("Actor", 1,"Name = "<<  (*sit)->GetObjectName() <<"  Volume name = " << (*sit)->GetVolumeName() << G4endl);

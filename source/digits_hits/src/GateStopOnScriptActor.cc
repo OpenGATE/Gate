@@ -62,21 +62,37 @@ void GateStopOnScriptActor::SaveData()
   std::string cmd("source ");
   cmd += mSaveFilename;
   cmd += " "+DoubletoString(GateUserActions::GetUserActions()->GetCurrentEventNumber());
-  //DD(cmd);
-  int r = system(cmd.c_str());
-  // DD(r);
   if (mSaveAllActors) { // enable save of all actors (except me !!)
-    std::vector<GateVActor*> & l = GateActorManager::GetInstance()->GetTheListOfActors();
+    GateMessage("Actor", 0, "GateStopOnScriptActor -- saving actors" << G4endl);
+    std::vector<GateVActor*> &l = GateActorManager::GetInstance()->GetTheListOfActors();
     std::vector<GateVActor*>::iterator sit;
     for(sit = l.begin(); sit!=l.end(); ++sit) {
-      // GateMessage("Core", 0, "save actor " << (*sit)->GetName() << G4endl);
-      if (*sit != this) (*sit)->Save();
+      GateMessage("Actor", 1, "GateStopOnScriptActor -- save actor " << (*sit)->GetName() << G4endl);
+      if (*sit != this) (*sit)->SaveData();
+    }
+  }
+
+  GateMessage("Actor", 0, "GateStopOnScriptActor -- executing command '" << cmd << "'" << G4endl);
+  int r = system(cmd.c_str());
+  GateMessage("Actor", 0, "GateStopOnScriptActor -- executed command returncode=" << r << G4endl);
+
+  if (GateActorManager::GetInstance()->GetResetAfterSaving()) {
+    GateMessage("Actor", 0, "GateStopOnScriptActor -- resetting actors" << G4endl);
+    std::vector<GateVActor*> &l = GateActorManager::GetInstance()->GetTheListOfActors();
+    std::vector<GateVActor*>::iterator sit;
+    for(sit = l.begin(); sit!=l.end(); ++sit) {
+      GateMessage("Actor", 1, "GateStopOnScriptActor -- reseting actor " << (*sit)->GetName() << G4endl);
+      if (*sit != this) (*sit)->ResetData();
     }
   }
   if (r == 0) return;
   else exit(0);
 }
+
+void GateStopOnScriptActor::ResetData() {}
 //-----------------------------------------------------------------------------
+
+
 
 //-----------------------------------------------------------------------------
 void GateStopOnScriptActor::EnableSaveAllActors(bool b) 

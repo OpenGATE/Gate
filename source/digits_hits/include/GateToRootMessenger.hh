@@ -50,7 +50,7 @@ class GateToRootMessenger: public GateOutputModuleMessenger
 
     G4UIcmdWithABool*        RootHitCmd;
     G4UIcmdWithABool*        RootNtupleCmd;
-		G4UIcmdWithABool*        RootRecordCmd;
+    G4UIcmdWithABool*        RootRecordCmd;
     G4UIcmdWithABool*        SaveRndmCmd;
     G4UIcmdWithAString*      SetFileNameCmd;
 

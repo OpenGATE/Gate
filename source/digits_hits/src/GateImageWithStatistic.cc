@@ -115,39 +115,39 @@ void GateImageWithStatistic::Reset(double val) {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateImageWithStatistic::Fill(float value) {
+void GateImageWithStatistic::Fill(double value) {
   mValueImage.Fill(value);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-float GateImageWithStatistic::GetValue(const int index) {
+double GateImageWithStatistic::GetValue(const int index) {
   return mValueImage.GetValue(index);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateImageWithStatistic::SetValue(const int index, float value) {
+void GateImageWithStatistic::SetValue(const int index, double value) {
   mValueImage.SetValue(index, value); 
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateImageWithStatistic::AddValue(const int index, float value) {
+void GateImageWithStatistic::AddValue(const int index, double value) {
   GateDebugMessage("Actor", 2, "AddValue index=" << index << " value=" << value << G4endl);
   mValueImage.AddValue(index, value);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateImageWithStatistic::AddTempValue(const int index, float value) {
+void GateImageWithStatistic::AddTempValue(const int index, double value) {
   GateDebugMessage("Actor", 2, "AddTempValue index=" << index << " value=" << value << G4endl);
   mTempImage.AddValue(index, value);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateImageWithStatistic::AddValueAndUpdate(const int index, float value) {
+void GateImageWithStatistic::AddValueAndUpdate(const int index, double value) {
  
   GateDebugMessageInc("Actor", 2, "AddValue and update -- start: "<<mTempImage.GetSize() << G4endl);
   double tmp = mTempImage.GetValue(index);
@@ -215,6 +215,7 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
     if (!mIsSquaredImageEnabled) UpdateSquaredImage();
     UpdateUncertaintyImage(numberOfEvents);
     mUncertaintyImage.Write(mUncertaintyFilename);
+    mSquaredImage.Write(mSquaredFilename); // force output of squared dose for grid 
   } 
 }
 //-----------------------------------------------------------------------------

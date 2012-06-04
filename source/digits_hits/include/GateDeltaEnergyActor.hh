@@ -63,11 +63,8 @@ class GateStoppingPowerActor : public GateVImageActor
 
   ///Scorer related
   //virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
-  virtual void clear(){ResetData();}
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
-
-
 
 protected:
   GateStoppingPowerActor(G4String name, G4int depth=0);

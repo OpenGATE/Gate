@@ -42,6 +42,7 @@ class GateStopOnScriptActor : public GateVActor
   //-----------------------------------------------------------------------------
   /// Saves the data collected to the file
   virtual void SaveData();
+  virtual void ResetData();
   
   void EnableSaveAllActors(bool b);
 

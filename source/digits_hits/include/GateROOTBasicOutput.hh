@@ -36,7 +36,6 @@ See GATE/LICENSE.txt for further details
 #include "G4Event.hh"
 #include "G4VProcess.hh"
 #include "GateUserActions.hh"
-#include "GateConfiguration.h"
 
 class GateVVolume;
 class GateCrystalHit;

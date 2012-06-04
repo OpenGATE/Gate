@@ -16,9 +16,13 @@
 #include "CLHEP/Random/JamesRandom.h"
 #include "CLHEP/Random/MTwistEngine.h"
 #include "CLHEP/Random/Ranlux64Engine.h"
-#include <time.h>
-#include <unistd.h>
+#include <ctime>
+#include <cstdlib>
 #include "GateMessageManager.hh"
+
+#ifdef G4ANALYSIS_USE_ROOT
+#include "TRandom.h"
+#endif
 
 GateRandomEngine* GateRandomEngine::instance = 0;
 
@@ -114,22 +118,25 @@ void GateRandomEngine::ShowStatus() {
 void GateRandomEngine::Initialize() {
   bool isSeed = false;
   long seed = 0;
+  // rest bits are additionnal bit used for engine initialization
+  // default engine doesn't use it
+  int rest = 0;
 
-  if (theSeed=="default" && theSeedFile==" ") isSeed=false;
-
-  else if (theSeed=="auto") {
-
+  if (theSeed=="default" && theSeedFile==" ") {
+    isSeed=false;
+  } else if (theSeed=="auto") {
     // initialize seed by reading from kernel random generator /dev/random
     // FIXME may not be protable
     FILE *hrandom = fopen("/dev/random","rb");
     fread(static_cast<void*>(&seed),sizeof(seed),1,hrandom);
+    fread(static_cast<void*>(&rest),sizeof(rest),1,hrandom);
     fclose(hrandom);
 
-    //if (seed<0) seed*=(-1); // default engine (HepJamesRandom) only accept positive seed but other engine may accept negative seed
     isSeed=true;
   } else {
     seed = atoi(theSeed.c_str());
-    //if (seed<0) seed*=(-1);
+    rest = 0;
+
     isSeed=true;
   }
 
@@ -137,24 +144,30 @@ void GateRandomEngine::Initialize() {
     if(theSeedFile !=" " && theSeed !="default") G4Exception( "GateRandomEngine::Initialize", "Initialize", FatalException, "ERROR !! => Please: choose between a status file and a seed (defined by a number) or auto computation of initial seed!");
 
     if(theSeedFile == " ") {
-
-      // rest bits are additionnal bit used for engine initialization
-      // default engine doesn't use it
-      int rest = 0;
-      // we read them from /dev/random as well
-      FILE *hrandom = fopen("/dev/random","rb");
-      fread(static_cast<void*>(&rest),sizeof(rest),1,hrandom);
-      fclose(hrandom);
-
-      //std::cout << "SEED " << seed << " " << (sizeof(seed)*8) << "bits REST " << rest << " " << (sizeof(rest)*8) << "bits" << std::endl;
-      //std::cout << "rest = " << rest << std::endl;
-      rest = seed%10+seed%100+1;
-      //std::cout << "rest = " << rest << std::endl;
       theRandomEngine->setSeed(seed,rest);
-    } else theRandomEngine->restoreStatus(theSeedFile);
+    } else {
+      theRandomEngine->restoreStatus(theSeedFile);
+    }
   }
 
-  //std::cout << "seed = " << seed << std::endl;
+  // use clhep engine to initialize other engine
+  std::srand(static_cast<unsigned int>(*theRandomEngine));
+  srandom(static_cast<unsigned int>(*theRandomEngine));
+
+#ifdef G4ANALYSIS_USE_ROOT
+  gRandom->SetSeed(static_cast<unsigned int>(*theRandomEngine));
+#endif
+
+/*
+  std::cout << "***********************************" << std::endl;
+  std::cout << "SEED " << seed << " " << (sizeof(seed)*8) << "bits REST " << rest << " " << (sizeof(rest)*8) << "bits" << std::endl;
+  std::cout << "stdrand=" << std::rand() << " stdrandom=" << random() << std::endl;
+  std::cout << "clhep=" << theRandomEngine->name() << " seed=" << theRandomEngine->getSeed() << std::endl;
+#ifdef G4ANALYSIS_USE_ROOT
+  std::cout << "root=" << gRandom->GetName() << " seed=" << gRandom->GetSeed() << std::endl;
+#endif
+  std::cout << "***********************************" << std::endl;
+*/
 
   // True initialization
   CLHEP::HepRandom::setTheEngine(theRandomEngine);

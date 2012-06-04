@@ -142,8 +142,7 @@ void GateRootHitBuffer::Fill(GateCrystalHit* aHit)
   PDGEncoding     = aHit->GetPDGEncoding();
   trackID         = aHit->GetTrackID();
   parentID        = aHit->GetParentID();
-  
-SetTime(          aHit->GetTime() );
+  SetTime(          aHit->GetTime() );
   SetEdep(          aHit->GetEdep() );
   SetStepLength(    aHit->GetStepLength() );
   SetPos(           aHit->GetGlobalPos() );
@@ -411,7 +410,7 @@ void GateRootSingleBuffer::Fill(GateSingleDigi* aDigi)
       strcpy (comptonVolumeName,(aDigi->GetComptonVolumeName()).c_str());
       strcpy (RayleighVolumeName,(aDigi->GetRayleighVolumeName()).c_str());
 
-	// HDS : septal penetration
+      // HDS : septal penetration
       septalNb = aDigi->GetNSeptal();
 }
 
