@@ -109,7 +109,7 @@ bool GateHadronElasticPB::IsApplicable(G4ParticleDefinition * par)
 
 
 //-----------------------------------------------------------------------------
-bool GateHadronElasticPB::IsModelApplicable(G4String model,G4ParticleDefinition * par)
+bool GateHadronElasticPB::IsModelApplicable(G4String /*model*/,G4ParticleDefinition * /*par*/)
 {
 /*  if (model == "G4LElastic" ||
      ((par == G4PionPlus::PionPlus() ||
@@ -138,22 +138,17 @@ bool GateHadronElasticPB::IsModelApplicable(G4String model,G4ParticleDefinition 
       return true;
 
   if(model == "G4NeutronHPElastic" && par != G4Neutron::Neutron()) return false;
-  if(model == "G4NeutronHPorLElastic" && par != G4Neutron::Neutron()) return false;
+  if(model == "G4NeutronHPorLElastic" && par != G4Neutron::Neutron()) return false; */
   return true;
-
-
-
-  return false;*/
-
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-bool GateHadronElasticPB::IsDatasetApplicable(G4String cs, G4ParticleDefinition * par)
+bool GateHadronElasticPB::IsDatasetApplicable(G4String /*cs*/, G4ParticleDefinition * /*par*/)
 {
- /* if(cs == "G4NeutronHPElasticData" && par != G4Neutron::Neutron()) return false;
-  return true;*/
+ /* if(cs == "G4NeutronHPElasticData" && par != G4Neutron::Neutron()) return false; */
+  return true;
 }
 //-----------------------------------------------------------------------------
 

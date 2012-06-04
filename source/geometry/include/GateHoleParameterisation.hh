@@ -31,6 +31,7 @@ class GateHoleParameterisation : public GatePVParameterisation
 
    virtual void ComputeTransformation(const G4int copyNumber, G4VPhysicalVolume *aVolume) const;
 
+   using G4VPVParameterisation::ComputeDimensions;
    virtual void ComputeDimensions(G4Trap& Coll_Trap, const G4int copyNo, const G4VPhysicalVolume* physVol) const;
 
    virtual inline int GetNbOfCopies()

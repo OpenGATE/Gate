@@ -33,11 +33,12 @@ class GateVoxelBoxParameterization : public GatePVParameterisation
   ~GateVoxelBoxParameterization(){;}
  
  
-
+  using G4VPVParameterisation::ComputeMaterial;
   G4Material* ComputeMaterial(const G4int copyNo, G4VPhysicalVolume * aVolume);
 
 
   void ComputeTransformation(const G4int copyNo,  G4VPhysicalVolume *aVolume) const;
+  using G4VPVParameterisation::ComputeDimensions;
   void ComputeDimensions(G4Box*, const G4int ,const G4VPhysicalVolume* ) const;
 
   //! Implementation of the pure virtual method declared by the base class GatePVParameterization

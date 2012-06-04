@@ -129,7 +129,7 @@ size_t GateCrossSectionsTable::AddMaterial ( const G4MaterialCutsCouple* couple 
 				trackTmp.SetKineticEnergy ( energy );
 				G4StepPoint* point=const_cast<G4StepPoint*> ( trackTmp.GetStep()->GetPreStepPoint() );
 				point->SetMaterialCutsCouple ( couple );
-				G4ForceCondition forc=NotForced;
+				//G4ForceCondition forc=NotForced;
 				G4LivermoreRayleighModel* ray= dynamic_cast<G4LivermoreRayleighModel*> ( m_oProcessVec[j] );
 				if ( ray )
 				{

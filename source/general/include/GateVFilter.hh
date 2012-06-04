@@ -56,7 +56,8 @@ private:
       GateActorManager::GetInstance()->theListOfFilterPrototypes[#NAME]= CLASS::make_filter; } }; \
   static NAME##Creator ActorCreator##NAME;
 
-#define FCT_FOR_AUTO_CREATOR_FILTER(CLASS)				\
-  static GateVFilter *make_filter(G4String name){return new CLASS(name); };
+#define FCT_FOR_AUTO_CREATOR_FILTER(CLASS) \
+  static GateVFilter *make_filter(G4String name){ return new CLASS(name); }; \
+  using GateVFilter::Accept;
 
 #endif /* end #define GATEVFILTER_HH */

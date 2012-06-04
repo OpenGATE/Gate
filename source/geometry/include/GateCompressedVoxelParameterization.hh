@@ -35,6 +35,7 @@ public:
   virtual G4Material* ComputeMaterial      (const G4int copyNo, G4VPhysicalVolume * aVolume, const G4VTouchable*);
     
   
+  using G4VPVParameterisation::ComputeDimensions;
    void ComputeDimensions(G4Box &,
 				 const G4int,
 				 const G4VPhysicalVolume *) const;

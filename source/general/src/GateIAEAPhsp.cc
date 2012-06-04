@@ -918,7 +918,7 @@ void IAEA_SET_TOTAL_ORIGINAL_PARTICLES__(const IAEA_I32 *id,
 * or to some error code if it didnt.
 **************************************************************************/
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_parallel(const IAEA_I32 *id, const IAEA_I32 *i_parallel,
+void iaea_set_parallel(const IAEA_I32 *id, const IAEA_I32 * /*i_parallel*/,
                        const IAEA_I32 *i_chunk, const IAEA_I32 *n_chunk, 
                                        IAEA_I32 *result)
 {
@@ -949,7 +949,7 @@ void iaea_set_parallel(const IAEA_I32 *id, const IAEA_I32 *i_parallel,
    */
    if( fseek(p_iaea_record[*id]->p_file, offset ,SEEK_SET) == 0) 
    {
-         IAEA_I32 pos = ftell(p_iaea_record[*id]->p_file);
+         /*IAEA_I32 pos =*/ ftell(p_iaea_record[*id]->p_file);
          *result = 0; 
          return;
    }
@@ -1098,7 +1098,7 @@ void iaea_set_record(const IAEA_I32 *id, const IAEA_I64 *record_num,
    
    if( fseek(p_iaea_record[*id]->p_file, offset ,SEEK_SET) == 0) 
    {
-         IAEA_I32 pos = ftell(p_iaea_record[*id]->p_file);
+         /*IAEA_I32 pos =*/ ftell(p_iaea_record[*id]->p_file);
          *result = 0; 
          return;
    }

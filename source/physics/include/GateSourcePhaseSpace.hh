@@ -100,7 +100,7 @@ protected:
   G4int mResidu;
   double mResiduRun;
   G4int mLastPartIndex;
-  G4int mCurrentParticleInIAEAFiles;
+  unsigned int mCurrentParticleInIAEAFiles;
   G4int mCurrentUsedParticleInIAEAFiles;
   bool mInitialized;
   G4String mFileType;

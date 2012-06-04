@@ -484,7 +484,7 @@ int readBinaryDataFromFile(FILE *iStream, int nItemsToRead, float *inputArray, i
    // Read in the array....
    int nRead=fread(inputArray,sizeof(float),nItemsToRead, iStream); 
    if(nRead != nItemsToRead) {
-     eprintf("\n ERROR: Wrong number read from file (%d %d)\n",
+     eprintf((char*)"\n ERROR: Wrong number read from file (%d %d)\n",
 	     nRead, nItemsToRead); return(FAIL); 
    }
    // Check if need to swab the data
@@ -540,7 +540,7 @@ int writeBinaryDataToFile(FILE *outputStream, int nItemsToWrite, float *arrayToW
    // Write the dose distribution
    int nWrite=fwrite(swabbedArray,sizeof(float),nItemsToWrite, outputStream); 
    if(nWrite != nItemsToWrite) {
-     eprintf("\n ERROR: Wrong number written to file (%d %d)\n",
+     eprintf((char*)"\n ERROR: Wrong number written to file (%d %d)\n",
 	     nWrite, nItemsToWrite); return(FAIL); 
    }
    // free swabbedArray if it was allocated here

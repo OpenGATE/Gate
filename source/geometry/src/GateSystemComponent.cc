@@ -672,7 +672,7 @@ void GateSystemComponent::setInCoincidenceWith(G4String aRsectorName )
        std::vector<G4String>::iterator it;
        G4cout << " vector is not empty  looking for " << aRsectorName<< G4endl;
        G4cout << " it contains " <<G4endl;
-       for (G4int i = 0; i < m_coincidence_rsector.size(); i++ ) G4cout << m_coincidence_rsector[i]<<"  ";       G4cout<<G4endl;
+       for (size_t i = 0; i < m_coincidence_rsector.size(); i++ ) G4cout << m_coincidence_rsector[i]<<"  ";       G4cout<<G4endl;
        it = std::find( m_coincidence_rsector.begin() , m_coincidence_rsector.end
 () , aRsectorName );
        if ( it == m_coincidence_rsector.end() )        {
@@ -681,7 +681,7 @@ aRsectorName );
          if ( theComponent != 0 )
          { size_t pos = GetObjectName().rfind( "/");           G4String thename = GetObjectName().substr( pos + 1);
           m_coincidence_rsector.push_back(aRsectorName);           theComponent->setInCoincidenceWith( thename );
-           for (G4int i = 0; i < m_coincidence_rsector.size(); i++ )theComponent
+           for (size_t i = 0; i < m_coincidence_rsector.size(); i++ )theComponent
 ->setInCoincidenceWith( m_coincidence_rsector[i] );
            G4cout<<"GateSystemComponent::setInCoincidenceWith() :: setting " << 
 thename<< " in coincidence with " << aRsectorName <<G4endl;

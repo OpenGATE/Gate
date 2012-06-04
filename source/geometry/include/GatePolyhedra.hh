@@ -52,6 +52,7 @@ class GatePolyhedra : public G4Polyhedra
 	{}
 	
   //! Overload of G4VCSGfaceted::DistanceToOut to fix the hexagon-trapping bug
+  using G4VCSGfaceted::DistanceToOut;
   virtual G4double DistanceToOut( const G4ThreeVector& p,
                                   const G4ThreeVector& v,
                                   const G4bool calcNorm=false,
