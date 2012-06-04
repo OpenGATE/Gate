@@ -3,8 +3,7 @@
   \author pierre.gueth@creatis.insa-lyon.fr
  */
 
-#ifndef GATEDETECTIONPROFILEACTOR_HH
-#define GATEDETECTIONPROFILEACTOR_HH
+#include <GateConfiguration.h>
 
 #ifdef G4ANALYSIS_USE_ROOT
 #include <TFile.h>
@@ -107,5 +106,4 @@ class GateDetectionProfilePrimaryTimerActor : public GateVActor
 
 MAKE_AUTO_CREATOR_ACTOR(DetectionProfilePrimaryTimerActor,GateDetectionProfilePrimaryTimerActor)
 
-#endif
 #endif

@@ -8,9 +8,6 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-#ifndef GATEDETECTIONPROFILEACTORMESSENGER_CC
-#define GATEDETECTIONPROFILEACTORMESSENGER_CC
-
 #include "GateDetectionProfileActorMessenger.hh"
 #include "GateDetectionProfileActor.hh"
 
@@ -112,4 +109,3 @@ void GateDetectionProfilePrimaryTimerActorMessenger::SetNewValue(G4UIcommand* cm
   GateActorMessenger::SetNewValue(cmd,newValue);
 }
 
-#endif

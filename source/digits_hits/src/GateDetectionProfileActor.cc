@@ -8,12 +8,10 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-#ifndef GATEDETECTIONPROFILEACTOR_CC
-#define GATEDETECTIONPROFILEACTOR_CC
+#include "GateDetectionProfileActor.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 
-#include "GateDetectionProfileActor.hh"
 #include "GateMiscFunctions.hh"
 #include <list>
 
@@ -387,5 +385,4 @@ void GateDetectionProfilePrimaryTimerActor::ReportDetectedParticle(const G4Strin
   GateMessage("Actor",1,detectorName << " reports detection flytime=" << flytime/ns << "ns e=" << energy/MeV << "MeV de=" << deltaEnergy/MeV << "MeV weight=" << weight << G4endl);
 }
 
-#endif 
 #endif 
