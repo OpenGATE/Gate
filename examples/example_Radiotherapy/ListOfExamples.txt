@@ -66,3 +66,9 @@ site of Gate V6.1)
 Photon beam from a Linac into a box with water/alu/lung. See Figure4
 from [Jan et al PMB 2011].
 
+------------------------------------------------------------------
+- Example 9
+
+Electron beam from a Linac into a box with water/alu/lung. See Figure5
+from [Jan et al PMB 2011].
+
