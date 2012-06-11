@@ -118,7 +118,7 @@
 # PHYSICS
 #=====================================================
 
-/control/execute mac/physicslist_EM_std
+/control/execute mac/physicslist_EM_std.mac
 
 /gate/physics/Gamma/SetCutInRegion      world 1 mm
 /gate/physics/Electron/SetCutInRegion   world 1 mm
@@ -238,5 +238,5 @@
 
 /gate/random/setEngineName MersenneTwister
 /gate/random/setEngineSeed auto
-/gate/application/setTotalNumberOfPrimaries 100000
+/gate/application/setTotalNumberOfPrimaries 3000
 /gate/application/start

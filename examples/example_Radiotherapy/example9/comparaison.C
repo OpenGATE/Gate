@@ -1,14 +1,14 @@
 {
   TFile * fileEGS = new TFile("data/EGS.root","OPEN");
-  TFile * fileDose = new TFile("output/Electron-20MeV-Dose.root","OPEN");
-  TFile * fileDoseInc = new TFile("output/Electron-20MeV-Dose-Uncertainty.root","OPEN");
+  TFile * fileDose = new TFile("output-240277-1338362573/Electron-20MeV-Dose.root","OPEN");
+  TFile * fileDoseInc = new TFile("output-240277-1338362573/Electron-20MeV-Dose-Uncertainty.root","OPEN");
 
-  std::ifstream file("output/counterElectron-20MeV.txt");
+  std::ifstream file("output-240277-1338362573/counterElectron-20MeV.txt");
   if (file.fail()){//file
     cout << "Probleme d'ouverture"<<endl;
     continue;
   }
-  int n;
+  double n;
   TString texte;
   file>>texte;
   file>>texte>>texte>>texte>>texte;
