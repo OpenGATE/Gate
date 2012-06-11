@@ -81,6 +81,19 @@
 /control/execute mac/physicslist_EM_std.mac
 /control/execute mac/physicslist_HAD_std.mac
 
+/gate/physics/Gamma/SetCutInRegion      world 1 mm
+/gate/physics/Electron/SetCutInRegion   world 1 mm
+/gate/physics/Positron/SetCutInRegion   world 1 mm
+
+/gate/physics/Gamma/SetCutInRegion      water_box 0.1 mm
+/gate/physics/Electron/SetCutInRegion   water_box 0.1 mm
+/gate/physics/Positron/SetCutInRegion   water_box 0.1 mm
+
+/gate/physics/SetMaxStepSizeInRegion    water_box 0.01 mm
+
+/gate/physics/ActivateStepLimiter proton
+/gate/physics/ActivateStepLimiter e-
+
 # Print Physics
 /gate/physics/print output/physics.txt
 
@@ -152,7 +165,7 @@
 # (without caring of the dose deposition)
 #/gate/application/setTotalNumberOfPrimaries 1
 # Otherwise
-/gate/application/setTotalNumberOfPrimaries 1000
+/gate/application/setTotalNumberOfPrimaries 1000000
 
 /gate/application/start
 
