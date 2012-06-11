@@ -1,14 +1,14 @@
 {
   TFile * fileEGS = new TFile("data/EGS.root","OPEN");
-  TFile * fileDose = new TFile("output/Photon-18MeV-Dose.root","OPEN");
-  TFile * fileDoseInc = new TFile("output/Photon-18MeV-Dose-Uncertainty.root","OPEN");
+  TFile * fileDose = new TFile("output-90516209-1338304228/Photon-18MeV-Dose.root","OPEN");
+  TFile * fileDoseInc = new TFile("output-90516209-1338304228/Photon-18MeV-Dose-Uncertainty.root","OPEN");
 
-  std::ifstream file("output/counterPhoton-18MeV.txt");
+  std::ifstream file("output-90516209-1338304228/counterPhoton-18MeV.txt");
   if (file.fail()){//file
     cout << "Probleme d'ouverture"<<endl;
     continue;
   }
-  int n;
+  double n;
   TString texte;
   file>>texte;
   file>>texte>>texte>>texte>>texte;
