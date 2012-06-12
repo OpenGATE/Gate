@@ -226,7 +226,7 @@ void GateToRoot::Book()
 // Method called at the beginning of each acquisition by the application manager: opens the ROOT file and prepare the trees
 void GateToRoot::RecordBeginOfAcquisition()
 {
-
+  
   if (nVerboseLevel > 2)
     G4cout << "GateToRoot::RecordBeginOfAcquisition" << G4endl;
 
@@ -436,7 +436,7 @@ void GateToRoot::RecordEndOfAcquisition()
   {
     G4cerr << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'total_nb_primaries' histogram to fill it !" << G4endl;
   }
-
+  
   /* PY Descourt 08/09/2009 */
   
 GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
@@ -611,7 +611,7 @@ void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
                 }
                  
  /*PY Descourt 08/09/2009 */
-
+    
 //  GateMessage("Output", 5, " GateToRoot::RecordBeginOfEvent -- end" << G4endl;); 
 
 }
@@ -623,7 +623,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
 {   
 
  // GateMessage("Output", 5 , " GateToRoot::RecordEndOfEvent -- begin" << G4endl;); 
-
+  
 GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
 TrackingMode theMode = myAction->GetMode();
 if ( theMode == kTracker )return;
@@ -659,7 +659,7 @@ if ( theMode == kTracker )return;
 	if (m_rootHitFlag) m_treeHit->Fill();
       }
     }
-  
+       
     if (m_recordFlag > 0) {
       G4double eventTime = (GateSourceMgr::GetInstance())->GetTime();
       TH1F *hist;
@@ -709,7 +709,7 @@ if ( theMode == kTracker )return;
 	//if (nVerboseLevel > 0) 
 	G4cout << "GateToRoot:  ROOT: Cannot find histo "<< hist_name << G4endl;
       }
-    
+		    
       TNtuple *ntuple;
       G4String ntuple_name="Gate";
       if ((ntuple=(TNtuple *)gDirectory->GetList()->FindObject(ntuple_name))==NULL) {
@@ -726,7 +726,7 @@ if ( theMode == kTracker )return;
 					   posAnnihilDist.mag()/mm);
       }
       
-    } 
+    }   
 
   }
  
@@ -739,7 +739,7 @@ RecordOpticalData(event);
   RecordDigitizer(event);
 
  // GateMessage("Output", 5, " GateToRoot::RecordEndOfEvent -- end" << G4endl;); 
-
+ 
 }
 //--------------------------------------------------------------------------
 

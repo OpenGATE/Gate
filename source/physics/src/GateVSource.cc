@@ -72,7 +72,7 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
   mEnableRegularActivity = false;
 
   mSourceTime = 0.*s;
- 
+
   m_posSPS = new GateSPSPosDistribution();
   m_posSPS->SetBiasRndm( GetBiasRndm() );
   m_eneSPS = new GateSPSEneDistribution();
@@ -653,10 +653,10 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
 		
           G4double particle_weight = GetBiasRndm()->GetBiasWeight();
           particle->SetWeight( particle_weight );
-	  
+
           // Add one particle
           vertex->SetPrimary( particle );
-		          
+		
 	  // Verbose
           if( nVerboseLevel > 1 ) {
             G4cout << "Particle name: " << GetParticleDefinition()->GetParticleName() << G4endl;

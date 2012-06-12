@@ -72,11 +72,11 @@ void GateRootDefs::SetOutputIDName(char * anOutputIDName, size_t depth)
 	If no GateAnalysis output module is currently running, this method will throw a warning.
 	If more than one GateAnalysis module is present, only the first one will be taken into account.
 */
-	
+
 G4bool GateRootDefs::GetRecordSeptalFlag()
 {
 	G4bool ans = false;
-	
+
 	GateOutputMgr* theOutputMgr = GateOutputMgr::GetInstance();
 	GateAnalysis* analysis = dynamic_cast<GateAnalysis*>(theOutputMgr->GetModule("analysis"));
 	if ( ! analysis ) {
@@ -86,7 +86,7 @@ G4bool GateRootDefs::GetRecordSeptalFlag()
 	} else {
 		ans = analysis->GetRecordSeptalFlag();
 	} 
-	
+
 	return ans;
 }
 
@@ -162,7 +162,7 @@ void GateRootHitBuffer::Fill(GateCrystalHit* aHit)
   runID           = aHit->GetRunID();
   SetAxialPos(      aHit->GetScannerPos().z() );
   SetRotationAngle( aHit->GetScannerRotAngle() );
-	
+	  
 // HDS : septal
 	septalNb = aHit->GetNSeptal();
 	
@@ -187,7 +187,7 @@ void GateRootHitBuffer::Fill(GateCrystalHit* aHit)
 }
 
 GateCrystalHit* GateRootHitBuffer::CreateHit()
-{
+{	
     // Create a volumeID from the root-hit data
     GateVolumeID aVolumeID(volumeID,ROOT_VOLUMEIDSIZE);
 

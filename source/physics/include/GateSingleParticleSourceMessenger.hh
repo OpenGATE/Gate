@@ -119,7 +119,7 @@ class GateSingleParticleSourceMessenger : public GateMessenger
   
   G4String GetCurrentValue( G4UIcommand* command ) ;
   inline G4bool GetIonShooting() const                 { return fShootIon; }
-  
+
  private:
 
   void IonCommand( G4String newValues ) ;

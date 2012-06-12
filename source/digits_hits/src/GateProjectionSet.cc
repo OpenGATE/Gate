@@ -70,7 +70,7 @@ void GateProjectionSet::Reset(size_t energyWindowNumber, size_t headNumber,size_
       		free(m_data[energyWindowID][headID]);  
     	}
     	free(m_data[energyWindowID]);
-    }
+    } 	      	      	      	      	      	      
     	
     free(m_data);
     m_data=0; 	      	      	      	      	      
@@ -143,7 +143,7 @@ G4cout << " GateProjectionSet::Reset : Estimated size for the Binary Projection 
   // Modified by HDS : allocation of a 3D array
   m_data = (ProjectionDataType***) malloc( m_energyWindowNb * sizeof(ProjectionDataType**)  );
   if (!m_data) G4Exception( "GateProjectionSet::Reset", "Reset", FatalException, "Could not allocate a new projection set (out of memory?)");
-      			 
+  
   // Do the allocations for each energy window  
   	for (energyWindowID = 0; energyWindowID < m_energyWindowNb; energyWindowID++) {
 		m_data[energyWindowID] = (ProjectionDataType**) malloc( m_headNb * sizeof(ProjectionDataType*) );
@@ -163,10 +163,10 @@ G4cout << " GateProjectionSet::Reset : Estimated size for the Binary Projection 
   for (energyWindowID = 0; energyWindowID < m_energyWindowNb; energyWindowID++) {
   	m_dataMax[energyWindowID] = (ProjectionDataType*) calloc( m_headNb , BytesPerPixel() );
  	if (!m_dataMax[energyWindowID]) G4Exception( "GateProjectionSet::Reset", "Reset", FatalException, "Could not allocate a statistics array (out of memory?)\n");
-  }
+  } 
 
 }
-  
+
 
 
 // Clear the matrix and prepare a new run

@@ -161,7 +161,7 @@ void GateFastAnalysis::RecordEndOfEvent(const G4Event* event)
                 {
                 GatePhantomHit* pHit = (*PHC)[iPHit];
                 G4String processName = (*PHC)[iPHit]->GetProcess();
-
+  
                 PhantomOpticalPhoton_x = pHit->GetPos().x(); // record phantom optical photon hit x-position
                 PhantomOpticalPhoton_y = pHit->GetPos().y(); // record phantom optical photon hit y-position
                 PhantomOpticalPhoton_z = pHit->GetPos().z(); // record phantom optical photon hit z-position

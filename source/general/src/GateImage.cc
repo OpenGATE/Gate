@@ -134,15 +134,15 @@ int GateImage::GetIndexFromPosition(const G4ThreeVector& position) const{
   // if (fabs(ix-x) < kCarTolerance) {
   // 	std::cerr << "Surface x=" << x << " for p=" << position << std::endl;
   //   }
-  
+
   //   if (fabs(iy-y) < kCarTolerance) {
   // 	std::cerr << "Surface y=" << x << " for p=" << position << std::endl;
   //   }
-  
+
   //   if (fabs(iz-z) < kCarTolerance) {
   // 	std::cerr << "Surface z=" << x << " for p=" << position << std::endl;
   //   }
-  
+
   // Check if not out of the volume ... (should not append with 'middle' ?)
   if (ix >= resolution.x()) return -1;
   if (iy >= resolution.y()) return -1;
@@ -151,7 +151,7 @@ int GateImage::GetIndexFromPosition(const G4ThreeVector& position) const{
   if (iy < 0) return -1;
   if (iz < 0) return -1;
   GateDebugMessage("Image",9,ix << " " << iy << " " << iz << G4endl);
-  
+
   return (ix+iy*lineSize+iz*planeSize);
 }
 //-----------------------------------------------------------------------------
@@ -196,7 +196,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
     ///GateDebugMessage("Image",9,"GIFPAD ZSurf inf : iz = " << iz << G4endl);
   }
   //-----------------------------------------------------------------------------
-  
+
   //-----------------------------------------------------------------------------
   // Special case for corners :
   if (xmin && ymin) {
@@ -206,7 +206,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
     else { ix++; xmin = false; }
     //GateDebugMessage("Run",9, "final ix/iy : " << ix << " " << iy << G4endl;);
   }
-  
+
   if (xmin && zmin) {
     //GateDebugMessage("Run",9, "xmin && zmin : " << x << " " << ix << " et " 
     //			 << z << " " << iz << " d=" << direction << G4endl);
@@ -214,7 +214,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
     else { ix++; xmin = false; }
     //GateDebugMessage("Run",9, "final ix/iz : " << ix << " " << iz << G4endl;);
   }
-  
+
   if (ymin && zmin) {
     //GateDebugMessage("Run",9, "ymin && zmin : " << y << " " << iy << " et " 
     //				 << z << " " << iz << " d=" << direction << G4endl);
@@ -223,7 +223,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
     //GateDebugMessage("Run",9, "final iy/iz : " << iy << " " << iz << G4endl;);
   }
   //-----------------------------------------------------------------------------
-  
+
   //-----------------------------------------------------------------------------
   // Special case for surfaces :  
   if ((ix+1 -x < kCarTolerance*0.5/voxelSize.x())&&(direction.x()>0)) {
@@ -251,7 +251,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
     else { ix++; xmax = false; }
     //GateDebugMessage("Run",9, "final ix/iy : " << ix << " " << iy << G4endl;);
   }
-  
+
   if (xmax && zmax) {
     //GateDebugMessage("Run",9, "xmax && zmax : " << x << " " << ix << " et " 
     //					 << z << " " << iz << " d=" << direction << G4endl);
@@ -259,7 +259,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
     else { ix++; xmax = false; }
     //	GateDebugMessage("Run",9, "final ix/iz : " << ix << " " << iz << G4endl;);
   }
-  
+
   if (ymax && zmax) {
     //GateDebugMessage("Run",9, "ymax && zmax : " << y << " " << iy << " et " 
     //					 << z << " " << iz << " d=" << direction << G4endl);
@@ -277,7 +277,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
   if (iy < 0) return -1;
   if (iz < 0) return -1;
   // TEMP GateMessage("Image",9,ix << " " << iy << " " << iz << G4endl);
-  
+
   return (ix+iy*lineSize+iz*planeSize);
 }
 //-----------------------------------------------------------------------------
@@ -336,15 +336,15 @@ int GateImage::GetIndexFromPostPositionAndDirection(const G4ThreeVector& positio
   // if (fabs(ix-x) < kCarTolerance) {
   // 	std::cerr << "Surface x=" << x << " for p=" << position << std::endl;
   //   }
-  
+
   //   if (fabs(iy-y) < kCarTolerance) {
   // 	std::cerr << "Surface y=" << x << " for p=" << position << std::endl;
   //   }
-  
+
   //   if (fabs(iz-z) < kCarTolerance) {
   // 	std::cerr << "Surface z=" << x << " for p=" << position << std::endl;
   //   }
-  
+
   // Check if not out of the volume ... (should not append with 'middle' ?)
   if (ix >= resolution.x()) return -1;
   if (iy >= resolution.y()) return -1;
@@ -353,7 +353,7 @@ int GateImage::GetIndexFromPostPositionAndDirection(const G4ThreeVector& positio
   if (iy < 0) return -1;
   if (iz < 0) return -1;
   // TEMP GateMessage("Image",9,ix << " " << iy << " " << iz << G4endl);
-  
+
   return (ix+iy*lineSize+iz*planeSize);
 }
 //-----------------------------------------------------------------------------
@@ -463,7 +463,7 @@ int GateImage::GetIndexFromPrePosition(const G4ThreeVector& pre,
   // TEMP GateDebugMessage("Image",9,"Position (pre) in voxel = " 
   // TEMP 		   << (int)floor(x) << " " << (int)floor(y) << " " << (int)floor(z) 
   // TEMP 		   << G4endl);
-  
+
   // DEBUG
   // TEMP double xx = (post.x()+halfSize.x())/voxelSize.x();
   // TEMP double yy = (post.y()+halfSize.y())/voxelSize.y();
@@ -480,7 +480,7 @@ int GateImage::GetIndexFromPrePosition(const G4ThreeVector& pre,
   int fx = GetIndexFromPrePosition(x, pre.x(), post.x(), resolution.x());
   int fy = GetIndexFromPrePosition(y, pre.y(), post.y(), resolution.y());
   int fz = GetIndexFromPrePosition(z, pre.z(), post.z(), resolution.z());
-  
+
   /*
     int fx = (int)floor(x);
     int fy = (int)floor(y);
@@ -551,7 +551,7 @@ int GateImage::GetIndexFromPostPosition(const double t,
       }
     }
   }
-  
+
   // check out of volume 
   if (ft<0) {
     // TEMP GateDebugMessage("Image",9,"Outside LEFT." << G4endl);
@@ -618,7 +618,7 @@ int GateImage::GetIndexFromPrePosition(const double t,
       }
     }
   }
-  
+
   // check out of volume // DEVRAIT PAS ETRE NEEDED !!!!!!!!
   // if (ft<0) {
   // 	// TEMP GateDebugMessage("Image",9,"Outside LEFT." << G4endl);
@@ -672,7 +672,7 @@ G4ThreeVector GateImage::GetCoordinatesFromPosition(const G4ThreeVector & positi
   if (i.y() == resolution.y()) i.setY( i.y()-1 );
   if (i.z() == resolution.z()) i.setZ( i.z()-1 );
   // TEMP GateDebugMessage("Image",9," floor xyz = " << i << G4endl);
-  
+
   // no check if is inside
   return i;
 }
@@ -779,10 +779,10 @@ void GateImage::UpdateNumberOfValues() {
 //-----------------------------------------------------------------------------
 void GateImage::Read(G4String filename) {
   //GateMessage("Image",3,"Read GateImage " << filename << G4endl);
-  
+
   G4String extension = getExtension(filename);
   //GateMessage("Image",4,"extension = " << extension << G4endl);
-  
+
   if (extension == "vox") ReadVox(filename);
   else if (extension == "txt") ReadAscii(filename);
   else if (extension == "hdr") ReadAnalyze(filename);
@@ -825,10 +825,10 @@ void GateImage::ReadVox(G4String filename) {
     //	   << " header (vox format)" << G4endl);
     exit(0);
   }
-  
+
   // allocate
   Allocate();
-  
+
   // read data
   //  G4cout << nbOfValues << G4endl);
   std::vector<unsigned char> temp(nbOfValues);
@@ -956,7 +956,7 @@ void GateImage::ReadAnalyze(G4String filename) {
 
   GateAnalyzeHeader::PixelType vx,vy,vz;
   hdr.GetVoxelSize(vx,vy,vz);
-  		  
+
   // update sizes and allocate
   resolution = G4ThreeVector(rx,ry,rz);
   voxelSize = G4ThreeVector(vx,vy,vz);
@@ -1032,7 +1032,7 @@ void GateImage::ReadAscii(G4String filename) {
 
   std::ifstream is;
   OpenFileInput(filename, is);
-  
+
   // Header
   std::string s;
   is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read ####################################
@@ -1057,7 +1057,7 @@ void GateImage::ReadAscii(G4String filename) {
   is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read =
   is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read value
   is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read ####################################
-  
+
   // set size
   SetResolutionAndVoxelSize(resol, voxsize);
   Allocate();
@@ -1069,7 +1069,7 @@ void GateImage::ReadAscii(G4String filename) {
   if (resolution.y() == 1) dim--;
   if (resolution.z() == 1) dim--;
   //GateDebugMessage("Image",8,"Image dimension is " << dim << G4endl);
-  
+
   if (dim <= 1) {
     // read values in columns
     for(int i=0; i<nbOfValues; i++) {
@@ -1229,14 +1229,14 @@ void GateImage::WriteAscii(std::ofstream & os, const G4String & comment) {
     << "# nbVal      = " << nbOfValues  << G4endl
     << "#################################### " << G4endl;
   if (comment != "") os << comment << G4endl;
-  
+
   // write data
   int dim = 3;
   if (resolution.x() == 1) dim--;
   if (resolution.y() == 1) dim--;
   if (resolution.z() == 1) dim--;
   GateMessage("Actor",5,"Image dimension is " << dim << G4endl);
-  
+
   if (dim <= 1) {
     // write values in columns
     for(int i=0; i<nbOfValues; i++)
@@ -1303,7 +1303,7 @@ GateImage::ESide GateImage::GetSideFromPointAndCoordinate(const G4ThreeVector & 
 
   if (p.z()-v.z() <= kCarTolerance*0.5) return kMZ; // front 
   if (v.z()+s.z()-p.z() <= kCarTolerance*0.5) return kPZ; // rear
-  
+
   return kUndefined;
 }
 //-----------------------------------------------------------------------------
@@ -1317,7 +1317,7 @@ GateImage::PixelType GateImage::GetNeighborValueFromCoordinate(const ESide & sid
   switch (side) {
   case kMX:c.setX(coord.x()-1); if (coord.x() <0) ttt=0;  break;
   case kPX:c.setX(coord.x()+1); if (coord.x() >= GetResolution().x()) ttt=0; break;
-	
+
   case kMY:c.setY(coord.y()-1); if (coord.y() <0) ttt=0; break;
   case kPY:c.setY(coord.y()+1); if (coord.y() >= GetResolution().y()) ttt=0; break;
 
@@ -1327,7 +1327,7 @@ GateImage::PixelType GateImage::GetNeighborValueFromCoordinate(const ESide & sid
   default: ttt=0;
     //	GateError("I don't know side = " << side);
   }
-  
+
   return GetValue(GetIndexFromCoordinates(c));
 }
 //-----------------------------------------------------------------------------
@@ -1428,7 +1428,7 @@ void GateImage::WriteRoot(G4String filename) {
         h2->Fill(x,y, data[i*mRootHistoBinyNb+j]);
       }
     }
-  
+
     h2->Write();
     f->Close();
   }

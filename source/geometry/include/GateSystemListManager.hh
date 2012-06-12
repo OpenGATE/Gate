@@ -120,7 +120,7 @@ class GateSystemListManager : public GateListManager
     //! Lists all the system-names onto the standard output
     virtual void ListChoices() 
       { G4cout << "The available choices are: " << DumpChoices() << "\n"; }
-    
+
     // Get the list of inserted systems names
     inline std::vector<G4String>* GetInsertedSystemsNames() const {return theInsertedSystemsNames;}
 

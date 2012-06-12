@@ -61,7 +61,7 @@ GateVSourceMessenger::GateVSourceMessenger(GateVSource* source)
   cmdName = GetDirectoryName()+"setAccoValue";
   AccoValueCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   AccoValueCmd->SetGuidance("Set accolinearity angle value");
-  AccoValueCmd->SetParameterName("AccoValue",false);  
+  AccoValueCmd->SetParameterName("AccoValue",false);
   AccoValueCmd->SetUnitCategory("Angle");
   AccoValueCmd->SetRange("AccoValue>=0.0");
 

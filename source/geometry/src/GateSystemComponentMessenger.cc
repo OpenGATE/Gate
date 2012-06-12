@@ -93,7 +93,7 @@ GateSystemComponentMessenger::~GateSystemComponentMessenger()
 
 // UI command interpreter method
 void GateSystemComponentMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{
+{ 
 	if ( command == minSectorDiffCmd ) {GetSystemComponent()->SetminSectorDiff( minSectorDiffCmd->GetNewIntValue(newValue) );
                                                            return;}
 

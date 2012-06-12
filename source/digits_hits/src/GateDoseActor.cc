@@ -236,7 +236,7 @@ void GateDoseActor::SaveData() {
     else 
       mDoseImage.SaveData(mCurrentEvent+1, false);
   }
-
+  
   if (mIsDoseToWaterImageEnabled) {
     if (mIsDoseToWaterNormalisationEnabled)
       mDoseToWaterImage.SaveData(mCurrentEvent+1, true);
@@ -417,7 +417,7 @@ else {
     }
     else mDoseToWaterImage.AddValue(index, doseToWater);
   }
-  
+
   if (mIsEdepImageEnabled) {
     if (mIsEdepUncertaintyImageEnabled || mIsEdepSquaredImageEnabled) {
       if (sameEvent) mEdepImage.AddTempValue(index, edep);

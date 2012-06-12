@@ -23,7 +23,7 @@ GateBlurring::GateBlurring(GatePulseProcessorChain* itsChain,
 {
   m_messenger = new GateBlurringMessenger(this);
   m_blurringLaw = new GateInverseSquareBlurringLaw(GetObjectName());
-}
+}  
 
 
 GateBlurring::~GateBlurring() 

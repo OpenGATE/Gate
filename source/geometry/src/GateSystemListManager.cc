@@ -132,7 +132,7 @@ void GateSystemListManager::CheckScannerAutoCreation(GateVVolume* newChildCreato
 {
   // Check whether the name of the new inserter,or the system type, has the same name as one of the predefined systems
    G4String baseName;
-
+  
    if(m_messenger->GetSystemType().empty() == false)
    {
       baseName = m_messenger->GetSystemType();
@@ -148,7 +148,7 @@ void GateSystemListManager::CheckScannerAutoCreation(GateVVolume* newChildCreato
     // Create the system
       theInsertedSystemsNames->push_back(newChildCreator->GetObjectName());
       GateVSystem* newSystem = InsertNewSystem(baseName);
-
+    
     // Attach the system's base to the inserter
       newSystem->GetBaseComponent()->SetCreator(newChildCreator);        
    }

@@ -183,7 +183,7 @@ void GateToProjectionSet::SetDisableToProjectionSetAndInterfile()
 void GateToProjectionSet::RecordBeginOfAcquisition()
 {
   if (nVerboseLevel>2) G4cout << "entering [GateToProjectionSet::RecordBeginOfAcquisition]" << G4endl;
-  
+
   // First, we check that all the parameters are valid
   if ( GetPixelNbX() <= 0 ) {
     G4cerr << 	G4endl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << G4endl
@@ -281,19 +281,19 @@ void GateToProjectionSet::RecordEndOfEvent(const G4Event* )
 {
   if (nVerboseLevel>2)
 	G4cout << "entering [GateToProjectionSet::RecordEndOfEvent]" << G4endl;
-	
+
 	G4DigiManager * fDM = G4DigiManager::GetDMpointer();
 	const GateSingleDigiCollection * SDC;
-  
+
 	for (size_t energyWindowID=0; energyWindowID < m_energyWindowNb; energyWindowID++) {
 		SDC = dynamic_cast<const GateSingleDigiCollection*>(fDM->GetDigiCollection( m_inputDataChannelIDList[energyWindowID] ));
-	
+
 		if (!SDC) {
 			if (nVerboseLevel>2) G4cout << "No digi collection for this event" << G4endl 
 									<< "leaving [GateToProjectionSet::RecordEndOfEvent]" << G4endl;
 			continue;
 		}
-	  
+  
 		G4int n_digi =  SDC->entries();
 		for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
 			G4int headID = m_system->GetMainComponentID( (*SDC)[iDigi]->GetPulse() );

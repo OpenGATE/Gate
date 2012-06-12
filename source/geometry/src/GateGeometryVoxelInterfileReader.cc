@@ -314,7 +314,7 @@ m_fileName = Header_fileName;
   G4cout << " Pixel size:             " << m_pixelSize[0] << " " << m_pixelSize[1] << G4endl; 
   G4cout << " Slice thickness:        " << m_planeThickness << G4endl;
   G4cout << " Matrix size:            " << m_matrixSize[0] << " " << m_matrixSize[1] << G4endl; 
-  G4cout << " Data type:              " << m_dataTypeName << G4endl;
+  G4cout << " Data type:              " << m_dataTypeName << G4endl; 
   G4cout << " Data byte order:	 " << m_dataByteOrder << G4endl;
   G4cout << G4endl;
 
@@ -353,7 +353,7 @@ memset( buffer,0,pixelNumber);
                  << "is inferior to the number computed from its header file (" << pixelNumber << ")!" << G4endl;
       return;
   }
-  
+
 // Section added by Henri Der Sarkissian : Process the data buffer to match image byte order
 // If the image byte order is different from the native CPU byte order, swap the bytes in buffer
 	if (((BYTE_ORDER == LITTLE_ENDIAN) && (m_dataByteOrder.compare("BIGENDIAN") == 0)) || ((BYTE_ORDER == BIG_ENDIAN) && (m_dataByteOrder.compare("LITTLEENDIAN") == 0))) {

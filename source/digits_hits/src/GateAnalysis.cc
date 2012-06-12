@@ -166,7 +166,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
           G4int photon2_phantom_Rayleigh = 0;
         
           G4int photon1_crystal_Rayleigh = 0;
-          G4int photon2_crystal_Rayleigh = 0;
+          G4int photon2_crystal_Rayleigh = 0;      
           
           G4int septalNb = 0; // HDS : septal penetration
           

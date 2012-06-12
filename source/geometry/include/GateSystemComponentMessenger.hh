@@ -67,7 +67,7 @@ class GateSystemComponentMessenger: public GateClockDependentMessenger
     //! Finds an creator from its name and attaches this creator to the system component
     void AddCreator(const G4String& creatorName);
     G4String FabricateDirName(const GateSystemComponent* component);// Fabricate the directory name (multi-system approach)
-    
+
   private:
     
     G4UIcmdWithAString	      	*AttachCmd;         //!< The UI command "attach"

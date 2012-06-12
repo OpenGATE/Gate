@@ -44,7 +44,7 @@ void GateBackToBack::GenerateVertex( G4Event* aEvent, G4bool accolinearityFlag)
 
   if( accolinearityFlag == true )
     {
-      
+        
       G4ThreeVector gammaMom = particle->GetMomentum();
 
       G4double dev = CLHEP::RandGauss::shoot( 0.,m_source->GetAccoValue() / 2.35 );      
@@ -76,7 +76,7 @@ void GateBackToBack::GenerateVertex( G4Event* aEvent, G4bool accolinearityFlag)
       particle1->SetMomentum( -gammaMom.x(),-gammaMom.y(),-gammaMom.z() );
 
      /* G4ThreeVector gammaMom1 = particle1->GetMomentum();
-      
+
       if(gammaMom1.x()/gammaMom.x() != -1 ||gammaMom1.y()/gammaMom.y() != -1 || gammaMom1.z()/gammaMom.z() != -1){
       G4cout<<"gammaMom1.x() / gammaMom.x() = "<<gammaMom1.x()/gammaMom.x() <<G4endl;
       G4cout<<"gammaMom1.y() / gammaMom.y() = "<<gammaMom1.y()/gammaMom.y() <<G4endl;

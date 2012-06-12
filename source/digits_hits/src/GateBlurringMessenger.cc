@@ -25,7 +25,7 @@ GateBlurringMessenger::GateBlurringMessenger(GateBlurring* itsResolution)
 {
   
   G4String cmdName;
-  
+
 
   cmdName = GetDirectoryName() + "setLaw";
   lawCmd = new G4UIcmdWithAString(cmdName,this);

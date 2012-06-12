@@ -34,7 +34,7 @@ class G4String;
 class GateImage
 {
   public:
- 
+
     typedef float PixelType;
     typedef std::vector<PixelType>::iterator iterator;
     typedef std::vector<PixelType>::const_iterator const_iterator;
@@ -52,7 +52,7 @@ class GateImage
 
     /// Allocates the data
     void Allocate();
-  
+
     /// Returns the size of the image
     inline G4ThreeVector GetSize()           const { return size; }
 
@@ -104,13 +104,13 @@ class GateImage
 
     /// Adds a value to the voxel of index provided
     inline void AddValue(int index, PixelType value) { data[index] += value; }
- 
+
     /// Fills the image with a value
     //  inline void Fill(PixelType v) { for (iterator i=begin(); i!=end(); ++i) (*i)=v; }
     inline void Fill(PixelType v) { fill(data.begin(), data.end(), v); }
-  
+
     PixelType GetMinValue();
-  
+
     inline PixelType GetOutsideValue()   { return mOutsideValue; } 
     inline void SetOutsideValue( PixelType v ) { mOutsideValue=v; }
 

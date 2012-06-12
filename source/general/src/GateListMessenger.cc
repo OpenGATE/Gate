@@ -47,7 +47,7 @@ GateListMessenger::GateListMessenger(GateListManager* itsListManager)
     pSystemTypeCmd = new G4UIcmdWithAString(cmdName,this);
     pSystemTypeCmd->SetGuidance(guidance);
     pSystemTypeCmd->SetParameterName("Name",false);
-     
+
     cmdName = GetDirectoryName()+"name";
     guidance = "Sets the name given to the next " + elementTypeName + " to insert.";
     pDefineNameCmd = new G4UIcmdWithAString(cmdName,this);

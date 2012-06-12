@@ -84,7 +84,7 @@ void GatePhotoElectricPB::AddUserDataSet(G4String ){}
 //-----------------------------------------------------------------------------
 void GatePhotoElectricPB::AddUserModel(GateListOfHadronicModels *model){
 
-  
+
   if(model->GetModelName() == "LivermoreModel")
   {
     G4LivermorePhotoElectricModel* theLivermorePhotoElectricModel = new G4LivermorePhotoElectricModel();

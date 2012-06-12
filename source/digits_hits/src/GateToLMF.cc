@@ -632,7 +632,7 @@ for (G4int k = 1;k < RingID;k++)if ( TRNumber[k] != TRNumber[k-1] ){G4cout<<"Gat
 		   1, // tangential number of layer always 1
 		   rL,
 		   pEncoH,codeForRecords);
-
+  
 
   pcC->typeOfCarrier = pEncoH->scanContent.eventRecordTag;                                 //|
 
@@ -657,7 +657,7 @@ void GateToLMF::RecordEndOfAcquisition()
     {
       CloseLMFfile(m_pfile);
     } // these lines works but just for 1 file...
-
+      
       //for( G4int i = 0;i <  pEncoH->scannerTopology.totalNumberOfRsectors;i++)G4cout <<i<<" "<<bins[i]<<G4endl;;
 }
 

@@ -20,8 +20,8 @@ See GATE/LICENSE.txt for further details
 #include "GateMessageManager.hh"
 
 //-----------------------------------------------------------
-GateMessageManager::GateMessageManager() 
-  : mMaxMessageLength(8), mAllLevel(0)     
+GateMessageManager::GateMessageManager()
+  : mMaxMessageLength(8), mAllLevel(0)
 {
   std::string key;
 
