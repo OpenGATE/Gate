@@ -132,10 +132,10 @@ public:
     virtual void Clear() = 0;
     virtual void RecordDigitizer() = 0 ;
     virtual void Book() = 0;
-
+    
     inline void SetOutputFlag(G4bool flag) { m_outputFlag = flag; };
     inline void SetVerboseLevel(G4int val) { nVerboseLevel = val; };
-
+  
     G4int             nVerboseLevel;
     G4bool            m_outputFlag;
     G4String          m_collectionName;
@@ -239,12 +239,12 @@ private:
   G4ThreeVector  m_positronAnnihilPos;
   
   G4double dxg1,dyg1,dzg1,dxg2,dyg2,dzg2;
-
+  
   G4int saveRndm;    
   
   G4double latestEventID; // Used by the gjs an d gjm programs (cluster mode)
   G4double nbPrimaries;
-
+  
   G4double m_positronKinEnergy;
   G4int    m_recordFlag;
 
@@ -253,7 +253,7 @@ private:
   GateHitTree*       m_treeHit; // the tree for hit quantities
 
   GateRootHitBuffer  m_hitBuffer; 
-
+  
 // v. cuplov 15.02.12
 #ifdef GATE_USE_OPTICAL
   GatePhantomHitTree*       m_treePhantomHit; // the tree for phantom hit quantities

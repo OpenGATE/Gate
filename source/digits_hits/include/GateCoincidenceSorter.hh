@@ -140,7 +140,7 @@ class GateCoincidenceSorter : public GateClockDependent
        { m_system = aSystem; }
     void SetMultiplesPolicy(const G4String& policy);
     void SetSystem(G4String& inputName); //This method was added for the multi-system approach
-    
+
   protected:
     //! \name Parameters of the sorter
     //@{

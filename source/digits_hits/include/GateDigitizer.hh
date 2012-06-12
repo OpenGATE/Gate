@@ -149,7 +149,7 @@ class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
   virtual GateCoincidencePulseProcessorChain* GetCoincChain(size_t i)
   {return (i<m_coincidenceChainList.size()) ? m_coincidenceChainList[i] : 0; }
   //mhadi_add]
-  
+
   protected:
   G4String 					m_elementTypeName;	 //!< Type-name for all digitizer modules 
     

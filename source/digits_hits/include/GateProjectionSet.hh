@@ -79,7 +79,7 @@ Modified some getters and setters to work with the new implementation :
       into an output file using a set-writer such as GateToInterfile
       
     \sa GateToProjectionSet, GateToInterfile
-*/     
+*/      
 
 
 /* Modified by HDS on 25/11/2010 <henri.dersarkissian@gmail.com>
@@ -116,7 +116,7 @@ class GateProjectionSet
     //! Set the number of energy windows
     inline void SetEnergyWindowNb(size_t aNb)
       { m_energyWindowNb = aNb;}
-        
+
     //! Returns the number of heads 
     inline size_t GetHeadNb() const
       { return m_headNb;}
@@ -192,7 +192,7 @@ class GateProjectionSet
      //! Returns the nb of bytes per pixel
     inline size_t BytesPerPixel() const
       { return sizeof(ProjectionDataType);}
-	
+
 	 // Modified by HDS : For multple energy window support. This function only works for ARF data,
 	 // otherwise one must use the overloaded function : GetMaxCounts(energyWindowID, headID)
      //! Returns the data-max counter for a head
@@ -258,7 +258,7 @@ class GateProjectionSet
     void StreamOutARFProjection(std::ofstream&, size_t);/*PY Descourt 08/09/2009*/
     //! \name Data fields
     //@{
-	
+
 	size_t				  m_energyWindowNb;					//!< Nb of energy windows
     size_t    	      	  m_headNb;     	      	      	//!< Nb of scanner heads
     size_t    	      	  m_projectionNb;     	      	      	//!< Nb of projections per head

@@ -158,7 +158,7 @@ public:
     //! Returns the number of heads per energy window
     inline size_t GetHeadNb() const
       { return m_headNb;}
-      
+
     //! Returns the number of energy windows
     inline size_t GetEnergyWindowNb() const
       { return m_energyWindowNb;}
@@ -167,11 +167,11 @@ public:
     inline size_t GetTotalImageNb() const
       { return GetProjectionNb() * GetHeadNb() * GetEnergyWindowNb();}
 
-	 
+
 	//! Get the input data channel name for energy window
     const G4String& GetInputDataName(size_t energyWindowID) const                
           { return m_inputDataChannelList.at(energyWindowID);       };
-          
+
     //! Get the input data channel id for energy window
     G4int GetInputDataID(size_t energyWindowID) const       
           { return m_inputDataChannelIDList.at(energyWindowID);       };
