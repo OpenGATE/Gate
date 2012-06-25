@@ -70,7 +70,7 @@ void GateProductionActor::ResetData() {
 
 //-----------------------------------------------------------------------------
 /// Start of track callback
-void GateProductionActor::UserPreTrackActionInVoxel(const int index, const G4Track* track)
+void GateProductionActor::UserPreTrackActionInVoxel(const int index, const G4Track* /*track*/)
 {
   if (index<0) return;
   assert(index>=0 && index<mImage.GetNumberOfValues());
