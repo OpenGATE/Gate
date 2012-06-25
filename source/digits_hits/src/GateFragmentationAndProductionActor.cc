@@ -148,7 +148,7 @@ void GateFragmentationAndProductionActor::PreUserTrackingAction(const GateVVolum
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateFragmentationAndProductionActor::PostUserTrackingAction(const GateVVolume *, const G4Track* t) 
+void GateFragmentationAndProductionActor::PostUserTrackingAction(const GateVVolume *, const G4Track* /*t*/) 
 {
   GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- End of Track" << G4endl);
   //G4cout << name << " " << (t->GetCreatorProcess()? t->GetCreatorProcess()->GetProcessName():"no process") << G4endl;
