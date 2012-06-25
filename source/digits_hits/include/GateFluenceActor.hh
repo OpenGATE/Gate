@@ -14,6 +14,8 @@ See GATE/LICENSE.txt for further details
   \author simon.rit@creatis.insa-lyon.fr
  */
 
+#include "GateConfiguration.h"
+
 #ifndef GATEFLUENCEACTOR_HH
 #define GATEFLUENCEACTOR_HH
 
