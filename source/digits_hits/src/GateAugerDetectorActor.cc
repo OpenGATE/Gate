@@ -7,13 +7,11 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
   ----------------------*/
+#include "GateAugerDetectorActor.hh"
 #ifdef G4ANALYSIS_USE_ROOT
 
-#ifndef GATEAUGERDETECTORACTOR_CC
-#define GATEAUGERDETECTORACTOR_CC
-
-#include "GateAugerDetectorActor.hh"
-#include "GateMiscFunctions.hh"
+#include <Randomize.hh>
+#include "GateAugerDetectorActorMessenger.hh"
 
 GateAugerDetectorActor::GateAugerDetectorActor(G4String name, G4int depth) 
 : GateVActor(name,depth)
@@ -31,6 +29,7 @@ GateAugerDetectorActor::GateAugerDetectorActor(G4String name, G4int depth)
 
 GateAugerDetectorActor::~GateAugerDetectorActor() 
 {
+	delete pMessenger;
 }
 
 void GateAugerDetectorActor::setMaxTOF(G4double tof)
@@ -188,5 +187,4 @@ G4double GateAugerDetectorActor::GetWeighedBarycenterTime() const
 	return accum/total_weight;
 }
 
-#endif
 #endif

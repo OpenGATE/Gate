@@ -1,5 +1,5 @@
+#include "GateConfiguration.h"
 #ifdef G4ANALYSIS_USE_ROOT
-
 
 /*!
   \class  GateAugerDetectorActor
@@ -10,16 +10,12 @@
 #define GATEAUGERDETECTORACTOR_HH
 
 #include "GateVActor.hh"
+#include "GateActorMessenger.hh"
 
-#include "GateActorManager.hh"
-
-#include "GateAugerDetectorActorMessenger.hh"
-#include "GateVImageActor.hh"
-
-#include "TROOT.h"
-#include "TFile.h"
-#include "TH1.h"
-#include "TH2.h"
+#include <TROOT.h>
+#include <TFile.h>
+#include <TH1.h>
+#include <TH2.h>
 #include <list>
 
 struct AugerDeposition
@@ -85,7 +81,7 @@ class GateAugerDetectorActor : public GateVActor
 		TH1D* pEnergyDepositionHisto;
 		TH1D* pTimeOfFlightHisto;
 
-		GateAugerDetectorActorMessenger * pMessenger;
+		GateActorMessenger * pMessenger;
 		AugerDepositions depositions;
 		G4double max_time_of_flight;
 		G4double min_energy_deposition;

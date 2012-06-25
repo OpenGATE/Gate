@@ -1,11 +1,7 @@
+#include "GateAugerDetectorActorMessenger.hh"
 #ifdef G4ANALYSIS_USE_ROOT
 
-#ifndef GATEAUGERDETECTORACTORMESSENGER_CC
-#define GATEAUGERDETECTORACTORMESSENGER_CC
-
-#include "GateAugerDetectorActorMessenger.hh"
 #include "GateAugerDetectorActor.hh"
-
 
 GateAugerDetectorActorMessenger::GateAugerDetectorActorMessenger(GateAugerDetectorActor * v)
 : GateActorMessenger(v), pActor(v)
@@ -73,5 +69,4 @@ void GateAugerDetectorActorMessenger::SetNewValue(G4UIcommand* cmd, G4String new
 	GateActorMessenger::SetNewValue(cmd,newValue);
 }
 
-#endif
 #endif
