@@ -7,14 +7,11 @@ This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
+#include "GateFragmentationAndProductionActorMessenger.hh"
+
 #ifdef G4ANALYSIS_USE_ROOT
 
-#ifndef GATEFRAGMENTATIONANDPRODUCTIONACTORMESSENGER_CC
-#define GATEFRAGMENTATIONANDPRODUCTIONACTORMESSENGER_CC
-
-#include "GateFragmentationAndProductionActorMessenger.hh"
 #include "GateFragmentationAndProductionActor.hh"
-
 
 //-----------------------------------------------------------------------------
 GateFragmentationAndProductionActorMessenger::GateFragmentationAndProductionActorMessenger(GateFragmentationAndProductionActor * v)
@@ -62,5 +59,4 @@ void GateFragmentationAndProductionActorMessenger::SetNewValue(G4UIcommand* cmd,
 }
 //-----------------------------------------------------------------------------
 
-#endif /* end #define GATEFRAGMENTATIONANDPRODUCTIONACTORMESSENGER_CC */
 #endif

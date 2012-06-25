@@ -7,7 +7,6 @@ This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
-#ifdef G4ANALYSIS_USE_ROOT
 
 /*
   \class  GateFragmentationAndProductionActorMessenger
@@ -16,10 +15,11 @@ See GATE/LICENSE.txt for further details
 	  david.sarrut@creatis.insa-lyon.fr
 */
 
-
 #ifndef GATEFRAGMENTATIONANDPRODUCTIONACTORMESSENGER_HH
 #define GATEFRAGMENTATIONANDPRODUCTIONACTORMESSENGER_HH
 
+#include "GateConfiguration.h"
+#ifdef G4ANALYSIS_USE_ROOT
 
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"

@@ -1,10 +1,11 @@
-#ifdef G4ANALYSIS_USE_ROOT
-
-
 /*!
   \class  GateFragmentationAndProductionActor
   \author pierre.gueth@creatis.insa-lyon.fr
  */
+
+#include "GateConfiguration.h"
+
+#ifdef G4ANALYSIS_USE_ROOT
 
 #ifndef GATEFRAGMENTATIONANDPRODUCTIONACTOR_HH
 #define GATEFRAGMENTATIONANDPRODUCTIONACTOR_HH

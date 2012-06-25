@@ -7,17 +7,15 @@ This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
-#ifdef G4ANALYSIS_USE_ROOT
 
 /*
   \brief Class GateFragmentationAndProductionActor : 
   \brief 
  */
 
-#ifndef GATEFRAGMENTATIONANDPRODUCTIONACTOR_CC
-#define GATEFRAGMENTATIONANDPRODUCTIONACTOR_CC
-
 #include "GateFragmentationAndProductionActor.hh"
+
+#ifdef G4ANALYSIS_USE_ROOT
 
 #include "GateMiscFunctions.hh"
 #include "G4VProcess.hh"
@@ -42,6 +40,7 @@ GateFragmentationAndProductionActor::~GateFragmentationAndProductionActor()
 {
   GateDebugMessageInc("Actor",4,"~GateFragmentationAndProductionActor() -- begin"<<G4endl);
  
+  delete pMessenger;
 
 
   GateDebugMessageDec("Actor",4,"~GateFragmentationAndProductionActor() -- end"<<G4endl);
@@ -197,5 +196,4 @@ void GateFragmentationAndProductionActor::UserSteppingAction(const GateVVolume *
 
 
 
-#endif /* end #define GATEFRAGMENTATIONANDPRODUCTIONACTOR_CC */
 #endif
