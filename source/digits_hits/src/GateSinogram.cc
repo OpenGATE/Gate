@@ -8,6 +8,14 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+/*----------------------
+   Modifications history
+
+     Gate 6.2
+
+	C. Comtat, CEA/SHFJ, 10/02/2011	   Allows for virtual crystals, needed to simulate ecat like sinogram output for Biograph scanners
+
+----------------------*/
 
 #include "GateSinogram.hh"
 
@@ -17,7 +25,7 @@ See GATE/LICENSE.txt for further details
 #include "Randomize.hh"
 
 // Reset the matrix and prepare a new acquisition
-void GateSinogram::Reset(size_t ringNumber, size_t crystalNumber, size_t radialElemNb)   	      	  
+void GateSinogram::Reset(size_t ringNumber, size_t crystalNumber, size_t radialElemNb, size_t virtualRingNumber, size_t virtualCrystalPerBlockNumber)
 {
    size_t sinoID;
 
@@ -44,6 +52,9 @@ void GateSinogram::Reset(size_t ringNumber, size_t crystalNumber, size_t radialE
   m_currentDataID = -1;
   m_currentBedID = -1;
 
+  // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
+  m_virtualRingPerBlockNb = virtualRingNumber; 
+  m_virtualCrystalPerBlockNb = virtualCrystalPerBlockNumber;
   
   if (!m_ringNb || !m_crystalNb || !m_radialElemNb) {
     return;

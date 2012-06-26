@@ -8,6 +8,14 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+/*----------------------
+   Modifications history
+
+     Gate 6.2
+
+	C. Comtat, CEA/SHFJ, 10/02/2011	   Allows for virtual crystals, needed to simulate ecat like sinogram output for Biograph scanners
+
+----------------------*/
 
 #ifndef GateToSinogram_H
 #define GateToSinogram_H
@@ -153,6 +161,26 @@ public:
     //! Set the number of crystal rings
     inline void SetRingNb(size_t aNb)
       { m_sinogram->SetRingNb(aNb);}
+
+
+    // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
+    //! Returns the number of virtual crystal rings per block
+    inline size_t GetVirtualRingPerBlockNb() const
+      { return m_sinogram->GetVirtualRingPerBlockNb();}
+    //! Set the number of rings
+    inline void SetVirtualRingPerBlockNb(size_t aNb)
+      { m_sinogram->SetVirtualRingPerBlockNb(aNb); m_virtualRingPerBlockNb = aNb;}
+
+    // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
+    //! Returns the number of virtual transaxial crystal per block
+    inline size_t GetVirtualCrystalPerBlockNb() const
+      { return m_sinogram->GetVirtualCrystalPerBlockNb();}
+    //! Set the number of rings
+    inline void SetVirtualCrystalPerBlockNb(size_t aNb)
+      { m_sinogram->SetVirtualCrystalPerBlockNb(aNb); m_virtualCrystalPerBlockNb = aNb;}
+
+
+
       
      //! Returns the number of radial sinogram bins
      inline size_t GetRadialElemNb() const
@@ -215,8 +243,10 @@ protected:
   G4int               m_nRandom;                  //!< Number of random coincidences
   G4int               m_nDelayed;                 //!< Number of delayed coincidences
   
-  // CC & AC: Durty work
-  // std::ofstream     m_dataFile;   	      	  //!< Output stream for the data file
+  // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
+  size_t              m_virtualRingPerBlockNb;     //! < Number of virtual axial crystals in one block, i.e. Biograph
+  size_t              m_virtualCrystalPerBlockNb;  //! < Number of virtual transaxial crystals in one block, i.e. Biograph
+  // std::ofstream     m_dataFile;   	      	   //!< Output stream for the data file
 
 };
 

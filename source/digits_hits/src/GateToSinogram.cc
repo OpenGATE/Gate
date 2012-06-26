@@ -8,6 +8,15 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+/*----------------------
+   Modifications history
+
+     Gate 6.2
+
+	C. Comtat, CEA/SHFJ, 10/02/2011	   Allows for virtual crystals, needed to simulate ecat like sinogram output for Biograph scanners
+
+----------------------*/
+
 
 #include "GateToSinogram.hh"
 
@@ -63,6 +72,10 @@ GateToSinogram::GateToSinogram(const G4String& name, GateOutputMgr* outputMgr,Ga
   , m_nScatter(0)
   , m_nRandom(0)
   , m_nDelayed(0)
+
+  // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
+  , m_virtualRingPerBlockNb(0)
+  , m_virtualCrystalPerBlockNb(0)
 
 {
   m_isEnabled = false; // Keep this flag false: all output are disabled by default
@@ -141,11 +154,20 @@ void GateToSinogram::RecordBeginOfAcquisition()
   // Retrieve the number of crystal rings and crystals per crystal ring
   GateSystemComponent* blockComponent   = m_system->GetMainComponent();
   GateArrayComponent*  crystalComponent = m_system->GetDetectorComponent(); 
-  m_ringNb    = blockComponent->GetLinearRepeatNumber() * crystalComponent->GetRepeatNumber(2);
-  m_crystalNb = blockComponent->GetAngularRepeatNumber() * crystalComponent->GetRepeatNumber(1);
+
+  m_ringNb    = blockComponent->GetLinearRepeatNumber() * crystalComponent->GetRepeatNumber(2)+m_virtualRingPerBlockNb*(blockComponent->GetLinearRepeatNumber()-1);
+  m_crystalNb = blockComponent->GetAngularRepeatNumber() * (crystalComponent->GetRepeatNumber(1)+m_virtualCrystalPerBlockNb);
   if (nVerboseLevel > 1) {
-    G4cout << "    Number of crystals per crystal rings: " << m_crystalNb << G4endl
-	   << "    Number of crystal rings:              " << m_ringNb << G4endl;
+    if (m_virtualCrystalPerBlockNb > 0) {
+      G4cout << "    Total number of crystals per crystal rings: " << m_crystalNb << ", including "<< m_virtualCrystalPerBlockNb << " virtual cristals per block"<< G4endl;
+    } else {
+      G4cout << "    Total number of crystals per crystal rings: " << m_crystalNb << G4endl;
+    }
+    if (m_virtualRingPerBlockNb > 0) {
+      G4cout << "    Number of crystal rings: " << m_ringNb  << ", including "<< m_virtualRingPerBlockNb << " virtual rings per block" << G4endl;
+    } else {
+      G4cout << "    Number of crystal rings: " << m_ringNb  << G4endl;
+    }
   }
 
   // 10.04.2003; Claude & Arion
@@ -176,12 +198,12 @@ void GateToSinogram::RecordBeginOfAcquisition()
   }  
   
   // Prepare the sinogram
-  m_sinogram->Reset(m_ringNb,m_crystalNb,m_radialElemNb);
+  m_sinogram->Reset(m_ringNb,m_crystalNb,m_radialElemNb,m_virtualRingPerBlockNb,m_virtualCrystalPerBlockNb);
   
   // 07.02.2006, C. Comtat, Store randoms and scatters sino
   if (m_flagTruesOnly) StoreDelayeds(false);
-  if (m_flagStoreDelayeds) m_sinoDelayeds->Reset(m_ringNb,m_crystalNb,m_radialElemNb);
-  if (m_flagStoreScatters) m_sinoScatters->Reset(m_ringNb,m_crystalNb,m_radialElemNb);
+  if (m_flagStoreDelayeds) m_sinoDelayeds->Reset(m_ringNb,m_crystalNb,m_radialElemNb,m_virtualRingPerBlockNb,m_virtualCrystalPerBlockNb);
+  if (m_flagStoreScatters) m_sinoScatters->Reset(m_ringNb,m_crystalNb,m_radialElemNb,m_virtualRingPerBlockNb,m_virtualCrystalPerBlockNb);
 
   if (nVerboseLevel>0) {
   
@@ -445,14 +467,14 @@ void GateToSinogram::RecordEndOfEvent(const G4Event* )
     G4int crystal1ID = m_system->GetDetectorComponentID( (*CDC)[iDigi]->GetPulse(0) );
     G4int crystal2ID = m_system->GetDetectorComponentID( (*CDC)[iDigi]->GetPulse(1) );
     // crystal ring ID
-    G4int ring1 = (int) (block1ID/blockComponent->GetAngularRepeatNumber())*(crystalComponent->GetRepeatNumber(2))+
+    G4int ring1 = (int) (block1ID/blockComponent->GetAngularRepeatNumber())*(crystalComponent->GetRepeatNumber(2)+m_virtualRingPerBlockNb)+
 		  (int)(crystal1ID/crystalComponent->GetRepeatNumber(1));
-    G4int ring2 = (int) (block2ID/blockComponent->GetAngularRepeatNumber())*(crystalComponent->GetRepeatNumber(2))+
+    G4int ring2 = (int) (block2ID/blockComponent->GetAngularRepeatNumber())*(crystalComponent->GetRepeatNumber(2)+m_virtualRingPerBlockNb)+
 		  (int)(crystal2ID/crystalComponent->GetRepeatNumber(1));
     // crystal ID within a crystal ring
-    G4int crystal1 = (block1ID % blockComponent->GetAngularRepeatNumber())*crystalComponent->GetRepeatNumber(1)+
+    G4int crystal1 = (block1ID % blockComponent->GetAngularRepeatNumber())*(crystalComponent->GetRepeatNumber(1)+m_virtualCrystalPerBlockNb)+
 		     (crystal1ID % crystalComponent->GetRepeatNumber(1));                 
-    G4int crystal2 = (block2ID % blockComponent->GetAngularRepeatNumber())*crystalComponent->GetRepeatNumber(1)+
+    G4int crystal2 = (block2ID % blockComponent->GetAngularRepeatNumber())*(crystalComponent->GetRepeatNumber(1)+m_virtualCrystalPerBlockNb)+
 		     (crystal2ID % crystalComponent->GetRepeatNumber(1));                 
     G4int eventID1 = ((*CDC)[iDigi]->GetPulse(0)).GetEventID();
     G4int eventID2 = ((*CDC)[iDigi]->GetPulse(1)).GetEventID();

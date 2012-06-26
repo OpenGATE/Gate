@@ -41,18 +41,32 @@ GateSpblurring::~GateSpblurring()
 
 void GateSpblurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
 {
+GatePulse* outputPulse = new GatePulse(*inputPulse);
 
-  GatePulse* outputPulse = new GatePulse(*inputPulse);
-  G4ThreeVector P = inputPulse->GetGlobalPos();
-  G4double Px = P.x();
-  G4double Py = P.y();
-  G4double Pz = P.z();
-  G4double PxNew = G4RandGauss::shoot(Px,m_spresolution/2.35);
-  G4double PyNew = G4RandGauss::shoot(Py,m_spresolution/2.35);
-  G4double PzNew = Pz;
-  outputPulse->SetGlobalPos(G4ThreeVector(PxNew,PyNew,PzNew));	
-  outputPulse->SetLocalPos(G4ThreeVector(PxNew,PyNew,PzNew));	
-  outputPulseList.push_back(outputPulse);
+//TC G4ThreeVector P = inputPulse->GetGlobalPos();
+
+G4ThreeVector P = inputPulse->GetVolumeID().MoveToBottomVolumeFrame(inputPulse->GetGlobalPos()); //TC
+
+G4double Px = P.x();
+
+G4double Py = P.y();
+
+G4double Pz = P.z();
+
+G4double PxNew = G4RandGauss::shoot(Px,m_spresolution/2.35);
+
+G4double PyNew = G4RandGauss::shoot(Py,m_spresolution/2.35);
+
+G4double PzNew = G4RandGauss::shoot(Pz,m_spresolution/2.35); //TC
+
+//TC G4double PzNew = Pz;
+
+outputPulse->SetLocalPos(G4ThreeVector(PxNew,PyNew,PzNew)); //TC
+outputPulse->SetGlobalPos(outputPulse->GetVolumeID().MoveToAncestorVolumeFrame(outputPulse->GetLocalPos())); //TC
+
+//TC outputPulse->SetGlobalPos(G4ThreeVector(PxNew,PyNew,PzNew));
+
+outputPulseList.push_back(outputPulse); 
 }
 
 void GateSpblurring::DescribeMyself(size_t indent)

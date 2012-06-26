@@ -8,8 +8,18 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+/*----------------------
+   Modifications history
+
+     Gate 6.2
+
+	C. Comtat, CEA/SHFJ, 10/02/2011	   Allows for span 1 (means less slices per segment)
+
+                                           Allows for an interfile-like ("ecat8") output instead of ecat7. 
+					   It does not require the ecat library! (GATE_USE_ECAT7 not set)
+----------------------*/
+
 #include "GateConfiguration.h"
-#ifdef GATE_USE_ECAT7
 
 #include "GateSinoToEcat7Messenger.hh"
 #include "GateSinoToEcat7.hh"
@@ -49,7 +59,7 @@ GateSinoToEcat7Messenger::GateSinoToEcat7Messenger(GateSinoToEcat7* gateSinoToEc
   SetSpanCmd = new G4UIcmdWithAnInteger(cmdName,this);
   SetSpanCmd->SetGuidance("Set span (polar mashing) factor.");
   SetSpanCmd->SetParameterName("Number",false);
-  SetSpanCmd->SetRange("Number>2");
+  SetSpanCmd->SetRange("Number>0");
 
   cmdName = GetDirectoryName()+"maxringdiff";
   SetMaxRingDiffCmd = new G4UIcmdWithAnInteger(cmdName,this);
@@ -79,6 +89,14 @@ GateSinoToEcat7Messenger::GateSinoToEcat7Messenger(GateSinoToEcat7* gateSinoToEc
   SetIsotopeBranchingFractionCmd->SetGuidance("Set isotope branching fraction for the ecat7 main header only");
   SetIsotopeBranchingFractionCmd->SetParameterName("Number",false);
   SetIsotopeBranchingFractionCmd->SetRange("Number<=1.0");
+
+  #ifdef GATE_USE_ECAT7
+  cmdName = GetDirectoryName()+"version";
+  SetEcatVersionCmd = new G4UIcmdWithAnInteger(cmdName,this);
+  SetEcatVersionCmd->SetGuidance("Set ecat version (7 for ecat7 or 8 for interfile-like");
+  SetEcatVersionCmd->SetParameterName("Number",false);
+  SetEcatVersionCmd->SetRange("Number>6 && Number<9");
+  #endif
 }
 
 
@@ -95,6 +113,9 @@ GateSinoToEcat7Messenger::~GateSinoToEcat7Messenger()
   delete SetIsotopeCodeCmd;
   delete SetIsotopeHalflifeCmd;
   delete SetIsotopeBranchingFractionCmd;
+  #ifdef GATE_USE_ECAT7
+  delete SetEcatVersionCmd;
+  #endif
 }
 
 
@@ -119,8 +140,11 @@ void GateSinoToEcat7Messenger::SetNewValue(G4UIcommand* command,G4String newValu
     { m_gateSinoToEcat7->SetIsotopeHalflife(SetIsotopeHalflifeCmd->GetNewDoubleValue(newValue)); }  
   else if ( command==SetIsotopeBranchingFractionCmd )
     { m_gateSinoToEcat7->SetIsotopeBranchingFraction(SetIsotopeBranchingFractionCmd->GetNewDoubleValue(newValue)); }  
+  #ifdef GATE_USE_ECAT7
+  else if ( command==SetEcatVersionCmd )
+    { m_gateSinoToEcat7->SetEcatVersion(SetEcatVersionCmd->GetNewIntValue(newValue)); }    
+  #endif
   else 
     { GateOutputModuleMessenger::SetNewValue(command,newValue);  }
    
 }
-#endif

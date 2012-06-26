@@ -8,9 +8,16 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-#include "GateConfiguration.h"
+/*----------------------
+   Modifications history
 
-#ifdef GATE_USE_ECAT7
+     Gate 6.2
+
+	C. Comtat, CEA/SHFJ, 10/02/2011	   Allows for an interfile-like ("ecat8") output instead of ecat7. 
+					   It does not require the ecat library! (GATE_USE_ECAT7 not set)
+----------------------*/
+
+#include "GateConfiguration.h"
 
 #ifndef GateSinoToEcat7Messenger_h
 #define GateSinoToEcat7Messenger_h 1
@@ -42,15 +49,16 @@ class GateSinoToEcat7Messenger: public GateOutputModuleMessenger
   protected:
     GateSinoToEcat7*             m_gateSinoToEcat7;
     
-    G4UIcmdWithAString*         SetFileNameCmd;
-    G4UIcmdWithAnInteger*       SetMashingCmd;
-    G4UIcmdWithAnInteger*       SetSpanCmd;
-    G4UIcmdWithAnInteger*       SetMaxRingDiffCmd;
-    G4UIcmdWithAnInteger*       SetEcatCameraNumberCmd;
-    G4UIcmdWithAString*         SetIsotopeCodeCmd;
+    G4UIcmdWithAString*          SetFileNameCmd;
+    G4UIcmdWithAnInteger*        SetMashingCmd;
+    G4UIcmdWithAnInteger*        SetSpanCmd;
+    G4UIcmdWithAnInteger*        SetMaxRingDiffCmd;
+    G4UIcmdWithAnInteger*        SetEcatCameraNumberCmd;
+    G4UIcmdWithAString*          SetIsotopeCodeCmd;
     G4UIcmdWithADoubleAndUnit*   SetIsotopeHalflifeCmd;
     G4UIcmdWithADouble*          SetIsotopeBranchingFractionCmd;
+    #ifdef GATE_USE_ECAT7
+    G4UIcmdWithAnInteger*        SetEcatVersionCmd;
+    #endif
 };
-
-#endif
 #endif

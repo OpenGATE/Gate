@@ -181,7 +181,7 @@ GateOutputVolumeID GateVSystem::ComputeOutputVolumeID(const GateVolumeID& aVolum
   // Ask the component-tree to compute the output-volume ID
   outputVolumeID[0]=ComputeSubtreeID(m_BaseComponent,aVolumeID,outputVolumeID,0);
   // Set the first cell to the systemID
-  outputVolumeID[0]=this->GetItsNumber();
+  //outputVolumeID[0]=this->GetItsNumber();
 
   // verbose output
   if (nVerboseLevel)

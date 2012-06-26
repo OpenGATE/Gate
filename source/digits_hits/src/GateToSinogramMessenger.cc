@@ -8,6 +8,14 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+/*----------------------
+   Modifications history
+
+     Gate 6.2
+
+	C. Comtat, CEA/SHFJ, 10/02/2011	   Allows for virtual crystals, needed to simulate ecat like sinogram output for Biograph scanners
+
+----------------------*/
 
 #include "GateToSinogramMessenger.hh"
 #include "GateToSinogram.hh"
@@ -87,6 +95,21 @@ GateToSinogramMessenger::GateToSinogramMessenger(GateToSinogram* gateToSinogram)
   StoreScattersCmd->SetParameterName("flag",true);
   StoreScattersCmd->SetDefaultValue(true);
 
+  // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals  
+  cmdName = GetDirectoryName()+"setVirtualRings";
+  SetVirtualRingCmd = new G4UIcmdWithAnInteger(cmdName,this);
+  SetVirtualRingCmd->SetGuidance("Set the number of virtual rings between blocks, used only for sinogram bin numbering");
+  SetVirtualRingCmd->SetParameterName("Number",false);
+  SetVirtualRingCmd->SetRange("Number>=0");
+  SetVirtualRingCmd->SetDefaultValue(0);
+
+  // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
+  cmdName = GetDirectoryName()+"setVirtualCrystals";
+  SetVirtualCrystalCmd = new G4UIcmdWithAnInteger(cmdName,this);
+  SetVirtualCrystalCmd->SetGuidance("Set the number of virtual crystals between transaxial blocks, used only for sinogram bin numbering");
+  SetVirtualCrystalCmd->SetParameterName("Number",false);
+  SetVirtualCrystalCmd->SetRange("Number>=0");
+  SetVirtualCrystalCmd->SetDefaultValue(0);
 
 }
 GateToSinogramMessenger::~GateToSinogramMessenger()
@@ -102,7 +125,12 @@ GateToSinogramMessenger::~GateToSinogramMessenger()
   // 07.02.2006, C. Comtat, Store randoms and scatters sino
   delete StoreDelayedsCmd;
   delete StoreScattersCmd;
+
+  // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
+  delete SetVirtualRingCmd;
+  delete SetVirtualCrystalCmd;
 }
+
 
 void GateToSinogramMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
@@ -127,6 +155,18 @@ void GateToSinogramMessenger::SetNewValue(G4UIcommand* command,G4String newValue
   else if (command == StoreScattersCmd)
     { m_gateToSinogram->StoreScatters(StoreScattersCmd->GetNewBoolValue(newValue)) ; }
       
+ // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
+ else if (command == SetVirtualRingCmd) 
+  { 
+    m_gateToSinogram->SetVirtualRingPerBlockNb(SetVirtualRingCmd->GetNewIntValue(newValue));
+   G4cout << G4endl<< G4endl<< " GateToSinogramMessenger: virtual rings = " << m_gateToSinogram->GetVirtualRingPerBlockNb() << G4endl<< G4endl<< G4endl;
+     
+  }
+ // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
+ else if (command == SetVirtualCrystalCmd)
+    { m_gateToSinogram->SetVirtualCrystalPerBlockNb(SetVirtualCrystalCmd->GetNewIntValue(newValue)) ; }
+
+
   else 
     { GateOutputModuleMessenger::SetNewValue(command,newValue); }   
 }

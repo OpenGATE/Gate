@@ -8,6 +8,14 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+/*----------------------
+   Modifications history
+
+     Gate 6.2
+
+	C. Comtat, CEA/SHFJ, 10/02/2011	   Allows for virtual crystals, needed to simulate ecat like sinogram output for Biograph scanners
+
+----------------------*/
 
 #ifndef GateSinogram_H
 #define GateSinogram_H
@@ -21,7 +29,7 @@ See GATE/LICENSE.txt for further details
     
     - GateSinogram - by By jan@shfj.cea.fr & comtat@shfj.cea.fr (december 2002)
     
-    - This structure is generated during a PEC simulation by GateToSinogram. It can be stored
+    - This structure is generated during a PET simulation by GateToSinogram. It can be stored
       into an output file using a set-writer such as GateSinoToEcat7
       
     \sa GateToSinogram, GateSinoToEcat7
@@ -37,7 +45,7 @@ class GateSinogram
     inline virtual ~GateSinogram() {Reset();}    	  //!< Public destructor
 
     //! Reset the sinogrames and prepare a new acquisition
-    void Reset(size_t ringNumber=0, size_t crystalNumber=0, size_t radialElemNb=0);    	      	  
+    void Reset(size_t ringNumber=0, size_t crystalNumber=0, size_t radialElemNb=0, size_t virtualRingNumber=0, size_t virtualCrystalPerBlockNumber=0);    	      	  
 
     //! Clear the matrix and prepare a new run
     void ClearData(size_t frameID, size_t gateID, size_t dataID, size_t bedID);
@@ -64,6 +72,23 @@ class GateSinogram
     //! Set the number of rings
     inline void SetRingNb(size_t aNb)
       { m_ringNb = aNb;}
+
+    // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
+    //! Returns the number of virtual crystal rings per block
+    inline size_t GetVirtualRingPerBlockNb() const
+      { return m_virtualRingPerBlockNb;}
+    //! Set the number of rings
+    inline void SetVirtualRingPerBlockNb(size_t aNb)
+      { m_virtualRingPerBlockNb = aNb;}
+
+    // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
+    //! Returns the number of virtual transaxial crystal per block
+    inline size_t GetVirtualCrystalPerBlockNb() const
+      { return m_virtualCrystalPerBlockNb;}
+    //! Set the number of rings
+    inline void SetVirtualCrystalPerBlockNb(size_t aNb)
+      { m_virtualCrystalPerBlockNb = aNb;}
+
 
      //! Returns the number of radial sinogram bins
      inline size_t GetRadialElemNb() const
@@ -155,6 +180,10 @@ class GateSinogram
     size_t		  m_radialElemNb;			//!< Nb of radial sinogram bins
     size_t                m_sinogramNb;                         //!< Nb of 2D sinograms
 
+    // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
+    size_t                m_virtualRingPerBlockNb;              //!< Nb of virtual crystal rings per block, used for sinogram output bin identifacation
+    size_t                m_virtualCrystalPerBlockNb;           //!< Nb of virtual crystals in transaxial direction per block, used for sinogram output bin identifacation
+
     // ProjectionDataType   *m_dataMax;       	      	      	//!< Max count for each projection
 
     //@}
@@ -177,6 +206,8 @@ inline GateSinogram::GateSinogram()
   , m_randomsNb(0)
   , m_radialElemNb(0)
   , m_sinogramNb(0)
+  , m_virtualRingPerBlockNb(0)
+  , m_virtualCrystalPerBlockNb(0)
 {
 }
 
