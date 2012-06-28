@@ -23,6 +23,7 @@ See GATE/LICENSE.txt for further details
 #include "GateCoincidenceGeometrySelector.hh"
 #include "GateCoincidenceBuffer.hh"
 #include "GateCoincidenceMultiplesKiller.hh"
+#include "GateTriCoincidenceSorter.hh" //mhadi_add
 
 GateCoincidencePulseProcessorChainMessenger::GateCoincidencePulseProcessorChainMessenger(GateCoincidencePulseProcessorChain* itsProcessorChain)
 :GateListMessenger(itsProcessorChain)
@@ -56,10 +57,8 @@ GateCoincidencePulseProcessorChainMessenger::~GateCoincidencePulseProcessorChain
 void GateCoincidencePulseProcessorChainMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
   if (command == AddInputNameCmd) 
-     { 
-        GetProcessorChain()->GetInputNames().push_back(newValue);
-        GetProcessorChain()->SetSystem(newValue);
-     }
+  { GetProcessorChain()->GetInputNames().push_back(newValue);  //mhadi_modif
+    GetProcessorChain()->SetSystem(newValue); } //mhadi
   else if (command == usePriorityCmd) 
     { GetProcessorChain()->SetNoPriority(!usePriorityCmd->GetNewBoolValue(newValue)); }
   else
@@ -71,7 +70,7 @@ void GateCoincidencePulseProcessorChainMessenger::SetNewValue(G4UIcommand* comma
 
 const G4String& GateCoincidencePulseProcessorChainMessenger::DumpMap()
 {
-  static G4String theList = "deadtime timeDiffSelector geometrySelector buffer multiplesKiller";
+   static G4String theList = "deadtime timeDiffSelector geometrySelector buffer multiplesKiller triCoincProcessor";//mhadi_modif
   return theList;
 }
 
@@ -98,6 +97,8 @@ void GateCoincidencePulseProcessorChainMessenger::DoInsertion(const G4String& ch
     newProcessor = new GateCoincidenceBuffer(GetProcessorChain(),newInsertionName);
   else if (childTypeName=="multiplesKiller")
     newProcessor = new GateCoincidenceMultiplesKiller(GetProcessorChain(),newInsertionName);
+  else if (childTypeName=="triCoincProcessor") //mhadi_add
+     newProcessor = new GateTriCoincidenceSorter(GetProcessorChain(),newInsertionName);//mhadi_add
   else {
     G4cout << "Pulse-processor type name '" << childTypeName << "' was not recognised --> insertion request must be ignored!\n";
     return;

@@ -58,7 +58,10 @@ class GateVCoincidencePulseProcessor : public GateClockDependent
 
      inline GateCoincidencePulseProcessorChain* GetChain()
        { return m_chain; }
-
+     //mhadi_add[
+     virtual inline bool IsTriCoincProcessor() const { return 0; } 
+     virtual void CollectSingles() {}
+     //mhadi_add]
    //@}
 
      //! Method overloading GateClockDependent::Describe()
@@ -70,6 +73,7 @@ class GateVCoincidencePulseProcessor : public GateClockDependent
      virtual void DescribeMyself(size_t indent=0) =0 ;
      
   protected:
+/*    bool                                m_isTriCoincProc;*/
     GateCoincidencePulseProcessorChain* m_chain;
 };
 

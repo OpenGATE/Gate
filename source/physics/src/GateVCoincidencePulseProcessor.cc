@@ -20,6 +20,7 @@ See GATE/LICENSE.txt for further details
 GateVCoincidencePulseProcessor::GateVCoincidencePulseProcessor(GateCoincidencePulseProcessorChain* itsChain,
       	      	      	   const G4String& itsName) 
     : GateClockDependent(itsName),
+/*      m_isTriCoincProc(0), //mhadi_add*/
       m_chain(itsChain)
 {
   GateDigitizer* digitizer = GateDigitizer::GetInstance();
