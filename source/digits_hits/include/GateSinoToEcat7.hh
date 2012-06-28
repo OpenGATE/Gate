@@ -245,9 +245,9 @@ private:
   G4String              m_isotope_code;       //! Isotope code to be stored in ecat7 main header
   G4double              m_isotope_halflife;   //! Isotope half-life to be stored in ecat7 main header
   G4double              m_isotope_branching_fraction; //! Isotope branching fration to be stored in ecat7 main header
-  #ifdef GATE_USE_ECAT7
+  //#ifdef GATE_USE_ECAT7
   G4int                 m_ecatVersion; //! version V7: regular ecat7 file, version V8: interfile-like file
-  #endif
+  //#endif
   //std::ofstream     	      	m_headerFile; 	      	    //!< Output stream for the header file
   //std::ofstream     	      	m_dataFile;   	      	    //!< Output stream for the data file
 
