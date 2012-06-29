@@ -8,23 +8,12 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-/*  Update for Optical Photons: V. Cuplov   15 Feb. 2012
-            - Added ROOT structure to store phantom hits
-*/
-
 #include "GateConfiguration.h"
 
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "GateRootDefs.hh"
 #include "GateCrystalHit.hh"
-
-// v. cuplov 15.02.12
-#ifdef GATE_USE_OPTICAL
-#include "GatePhantomHit.hh"
-#endif
-// v. cuplov 15.02.12
-
 #include "GateSingleDigi.hh"
 #include "GateCoincidenceDigi.hh"
 
@@ -305,52 +294,6 @@ void GateHitTree::SetBranchAddresses(TTree* hitTree,GateRootHitBuffer& buffer)
   hitTree->SetBranchAddress("RayleighVolName",&buffer.RayleighVolumeName);
   hitTree->SetBranchAddress("volumeID",buffer.volumeID);
 }
-
-// v. cuplov 15.02.12
-// This is the place where we can add new leaves to the PhantomHit Tree:
-#ifdef GATE_USE_OPTICAL
-void GateRootPhantomHitBuffer::Clear()
-{
-// Global position of Hits in the Phantom
-  posX            = 0./mm;
-  posY            = 0./mm;
-  posZ            = 0./mm;
-}
-
-void GateRootPhantomHitBuffer::Fill(GatePhantomHit* aHit)
-{
-  SetPos( aHit->GetPos() );
-}
-
-GatePhantomHit* GateRootPhantomHitBuffer::CreatePhantomHit()
-{
-    // Create a new hit
-    GatePhantomHit* aHit = new GatePhantomHit();
-
-    // Initialise the hit data from the root-hit data
-    aHit->SetPos( GetPos() );
-
-    return aHit;
-}
-
-void GatePhantomHitTree::Init(GateRootPhantomHitBuffer& buffer)
-{
-    SetAutoSave(1000);
-    Branch("posX", &buffer.posX,"posX/F");
-    Branch("posY", &buffer.posY,"posY/F");
-    Branch("posZ", &buffer.posZ,"posZ/F");
-}
-
-void GatePhantomHitTree::SetBranchAddresses(TTree* phantomhitTree,GateRootPhantomHitBuffer& buffer)
-{
-  // Set the addresses of the branch buffers: each buffer is a field of the root-hit structure
-  phantomhitTree->SetBranchAddress("posX",&buffer.posX);
-  phantomhitTree->SetBranchAddress("posY",&buffer.posY);
-  phantomhitTree->SetBranchAddress("posZ",&buffer.posZ);
-
-}
-#endif
-// v. cuplov 15.02.12
 
 
 void GateRootSingleBuffer::Clear()

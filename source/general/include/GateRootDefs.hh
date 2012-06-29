@@ -26,13 +26,6 @@ See GATE/LICENSE.txt for further details
 #include "TTree.h"
 
 class GateCrystalHit;
-
-// v. cuplov 15.02.12
-#ifdef GATE_USE_OPTICAL
-class GatePhantomHit;
-#endif
-// v. cuplov 15.02.12
-
 class GateSingleDigi;
 class GateCoincidenceDigi;
 
@@ -201,60 +194,6 @@ class GateHitTree : public  TTree
     void Init(GateRootHitBuffer& buffer);
     static void SetBranchAddresses(TTree* hitTree,GateRootHitBuffer& buffer);
 };
-
-// v. cuplov 15.02.12
-#ifdef GATE_USE_OPTICAL
-/*! \class  GateRootPhantomHitBuffer
-    \brief  ROOT structure to store phantom hits
-*/      
-
-class GateRootPhantomHitBuffer
-{
-  public:
-
-    inline GateRootPhantomHitBuffer() {Clear();}   	      	  //!< Public constructor
-    inline virtual ~GateRootPhantomHitBuffer() {} 	      	  //!< Public destructor
-
-    void Clear();     	      	      	      	  //!< Reset the fields of the structure
-    void Fill(GatePhantomHit* aHit);
-    GatePhantomHit* CreatePhantomHit();
-
-    //! \name getters and setters for unit-dependent fields
-
-    //! Returns the global position in G4 units (conversion from millimeters)
-    inline G4ThreeVector GetPos() const
-      { return G4ThreeVector(posX,posY,posZ) * mm ;}
-    //! Set the global position from a value given in G4 units (conversion into millimeters)
-    inline void SetPos(const G4ThreeVector& aPosition)
-      { 
-      	posX = aPosition.x() / mm; 
-	posY = aPosition.y() / mm; 
-	posZ = aPosition.z() / mm; 
-      }
-
-    //! \name Data fields
-    Float_t  posX,posY,posZ;  	      	      	//!< Global hit position
-
-};
-
-/*! \class  GatePhantomHitTree
-    \brief  ROOT tree to store phantom hits
-*/      
-
-class GatePhantomHitTree : public  TTree
-{
-  public:
-    inline GatePhantomHitTree( const G4String& treeName,
-    			const G4String& treeDescription="The root tree for phantom hits")
-      : TTree(treeName,treeDescription)
-      {}
-    virtual inline ~GatePhantomHitTree() {}
-
-    void Init(GateRootPhantomHitBuffer& buffer);
-    static void SetBranchAddresses(TTree* phantomhitTree,GateRootPhantomHitBuffer& buffer);
-};
-#endif
-// v. cuplov 15.02.12
 
 
 /*! \class  GateRootSingleBuffer

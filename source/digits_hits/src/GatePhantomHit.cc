@@ -8,10 +8,6 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-/*  Update for Optical Photons: V. Cuplov   15 Feb. 2012
-            - Output alias for the phantom hits tree 
-*/
-
 #include "GatePhantomHit.hh"
 #include "G4VVisManager.hh"
 #include "G4Circle.hh"
@@ -57,9 +53,10 @@ void GatePhantomHit::Print()
 	 << G4endl;
 }
 
-// v. cuplov 15.02.12
+// v. cuplov - optical photons
 #ifdef GATE_USE_OPTICAL
 const G4String GatePhantomHit::theOutputAlias = "PhantomHits";
 #endif
-// v. cuplov 15.02.12
+// v. cuplov - optical photons
+
 

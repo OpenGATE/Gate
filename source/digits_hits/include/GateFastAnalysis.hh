@@ -8,10 +8,6 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-/*  Update: V. Cuplov   15 Feb. 2012
-            New output file (ntuple) dedicated to the Optical Photon Validation. 
-*/
-
 #include "GateConfiguration.h"
 
 #ifdef GATE_USE_OPTICAL
@@ -24,20 +20,6 @@
 
 class GateFastAnalysisMessenger; 
 class GateVVolume;
-
-// v. cuplov 15.02.12
-class GateTrajectoryNavigator; 
-#include "TROOT.h"
-#include "TFile.h"
-#include "TH1.h"
-#include "TH2.h"
-#include "TH3.h"
-#include "TNtuple.h"
-#include "TRandom.h"
-#include "TDirectory.h"
-#include "TTree.h"
-#include "TBranch.h"
-// v. cuplov 15.02.12
 
 //! Faster alternative for GateAnalysis class
 /**
@@ -84,26 +66,6 @@ private:
 
   GateFastAnalysisMessenger* m_messenger;
   G4String m_noFileName;
-
-// v. cuplov 15.02.12
-        G4int nPhantomOpticalRayleigh;
-        G4int nPhantomOpticalMie;
-        G4int nPhantomOpticalAbsorption;
-        G4int nPhantomTransport;
-        G4int nCrystalOpticalRayleigh;
-        G4int nCrystalOpticalMie;
-        G4int nCrystalOpticalAbsorption;
-        G4int nCrystalTransport;
-
-        G4double CrystalOpticalAbsorption_x,CrystalOpticalAbsorption_y,CrystalOpticalAbsorption_z;
-        G4double PhantomOpticalAbsorption_x,PhantomOpticalAbsorption_y,PhantomOpticalAbsorption_z;
-        G4double CrystalOpticalPhoton_x,CrystalOpticalPhoton_y,CrystalOpticalPhoton_z;
-        G4double PhantomOpticalPhoton_x,PhantomOpticalPhoton_y,PhantomOpticalPhoton_z;
-
-        TFile*  m_opticalfile; // the file for histograms, tree ...
-        GateTrajectoryNavigator* m_trajectoryNavigator;
-        TTree *OpticalTuple; // new ntuple
-// v. cuplov 15.02.12
 
 };
 

@@ -8,9 +8,9 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-/*  Update for Optical Photons: V. Cuplov   15 Feb. 2012
-            - New function RecordOpticalData(event) used to fill the PhantomHit tree. 
-            - Leaves are defined in GateRootDefs class.
+/*  Optical Photons: V. Cuplov - 2012
+        - New function RecordOpticalData(event).
+        - New ntuple for optical photon data is defined in GateToRoot class (previously was in GateFastAnalysis)
 */
 
 #ifndef GateToRoot_H
@@ -48,6 +48,10 @@ See GATE/LICENSE.txt for further details
 class GateToRootMessenger;
 class GateVVolume;
 
+#ifdef GATE_USE_OPTICAL
+class GateTrajectoryNavigator; 
+#endif
+
  class ComptonRayleighData
 { public:
   G4int photon1_phantom_Rayleigh,photon2_phantom_Rayleigh;
@@ -80,11 +84,11 @@ public:
 
   void RecordDigitizer(const G4Event *);
 
-// v. cuplov 15.02.12
+// v. cuplov - optical photons
 #ifdef GATE_USE_OPTICAL
-  void RecordOpticalData(const G4Event *);
+  void RecordOpticalData(const G4Event * event);
 #endif
-// v. cuplov 15.02.12
+// v. cuplov - optical photons
 
   void RecordVoxels(const G4Step *);
 
@@ -211,8 +215,14 @@ public:
 
   //! Get the output file name
   const  G4String& GetFileName()             { return m_fileName; };
-  //! Set the output file name
-  void   SetFileName(const G4String aName)   { m_fileName = aName + ".root"; };
+
+// v. cuplov - m_fileName from SetFileName is defined without ".root"
+// Additionnal root files names will be of the form GateOutPut_additionnalName.root.
+// In the previous version of the code, file names would appear as GateOutPut.root_additionnalName.root
+//! Set the output file name
+//  void   SetFileName(const G4String aName)   { m_fileName = aName + ".root"; };
+  void   SetFileName(const G4String aName)   { m_fileName = aName; };
+// v. cuplov
 
   //! Get the output file path
   const char* GetFilePath()                  { return m_fileName.c_str(); };
@@ -254,12 +264,28 @@ private:
 
   GateRootHitBuffer  m_hitBuffer; 
   
-// v. cuplov 15.02.12
+// v. cuplov - optical photons
 #ifdef GATE_USE_OPTICAL
-  GatePhantomHitTree*       m_treePhantomHit; // the tree for phantom hit quantities
-  GateRootPhantomHitBuffer  m_phantomhitBuffer; 
+  GateTrajectoryNavigator* m_trajectoryNavigator;
+  TFile*  m_opticalfile; // the file for histograms, tree ...
+  TTree *OpticalTuple; // new ntuple
+
+  G4int nPhantomOpticalRayleigh;
+  G4int nPhantomOpticalMie;
+  G4int nPhantomOpticalAbsorption;
+  G4int nCrystalOpticalRayleigh;
+  G4int nCrystalOpticalMie;
+  G4int nCrystalOpticalAbsorption;
+  G4int nScintillation, nCrystalOpticalWLS, nPhantomOpticalWLS;
+  G4int NumCrystalWLS, NumPhantomWLS;
+
+  G4int CrystalLastHit, PhantomLastHit;
+  G4double CrystalLastHitPos_X,CrystalLastHitPos_Y,CrystalLastHitPos_Z, CrystalLastHitEnergy, CrystalLastHitPos_R;
+  G4double CrystalAbsorbedPhotonHitPos_X, CrystalAbsorbedPhotonHitPos_Y,CrystalAbsorbedPhotonHitPos_Z;
+  G4double PhantomLastHitPos_X,PhantomLastHitPos_Y,PhantomLastHitPos_Z, PhantomLastHitEnergy;
+  G4double PhantomAbsorbedPhotonHitPos_X, PhantomAbsorbedPhotonHitPos_Y,PhantomAbsorbedPhotonHitPos_Z;
 #endif
-// v. cuplov 15.02.12
+// v. cuplov - optical photons
 
   G4int    m_updateROOTmodulo;
   G4bool   m_rootHitFlag;

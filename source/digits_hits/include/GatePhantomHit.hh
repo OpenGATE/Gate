@@ -8,11 +8,6 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-/*  Update for Optical Photons: V. Cuplov   15 Feb. 2012
-            - Output alias for the phantom hits tree 
-            - GoodForAnalysis() boolean applied to each phantom Hit before filling the tree.
-*/
-
 #ifndef GatePhantomHit_h
 #define GatePhantomHit_h 1
 
@@ -48,11 +43,11 @@ private:
   G4int  m_voxelCoordinates;  //  voxellized phantom voxel number
   G4String m_physVolName;
 
-// v. cuplov 15.02.12
+// v. cuplov - optical photons
 #ifdef GATE_USE_OPTICAL
   static const G4String theOutputAlias; 
 #endif
-// v. cuplov 15.02.12
+// v. cuplov - optical photons
 
   public:
       inline void SetEdep(G4double de)          { m_edep = de; }
@@ -87,14 +82,14 @@ private:
       inline void SetPhysVolName(G4String name) { m_physVolName = name ;   }
       inline G4String GetPhysVolName()const     { return m_physVolName; }
 
-// v. cuplov 15.02.12 
+// v. cuplov - optical photons
 #ifdef GATE_USE_OPTICAL
       inline G4bool GoodForAnalysis() const 
       	  { return ( (m_process != "Transportation") || (m_edep!=0.) ); }
 
      static  const G4String& GetOutputAlias() {return theOutputAlias;}
 #endif
-// v. cuplov 15.02.12
+// v. cuplov - optical photons
 
 };
 
