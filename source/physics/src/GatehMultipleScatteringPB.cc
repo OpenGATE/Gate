@@ -16,8 +16,8 @@ See GATE/LICENSE.txt for further details
 //-----------------------------------------------------------------------------
 GatehMultipleScatteringPB::GatehMultipleScatteringPB():GateVProcess("hMultipleScattering")
 {  
-  //SetDefaultParticle("e+"); SetDefaultParticle("e-");
-  //SetDefaultParticle("mu+"); SetDefaultParticle("mu-");
+
+  SetDefaultParticle("mu+"); SetDefaultParticle("mu-");
   SetDefaultParticle("tau+"); SetDefaultParticle("tau-");
   SetDefaultParticle("pi+"); SetDefaultParticle("pi-");
   SetDefaultParticle("kaon+"); SetDefaultParticle("kaon-");

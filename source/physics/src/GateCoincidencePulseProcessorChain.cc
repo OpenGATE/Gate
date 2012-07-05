@@ -26,7 +26,7 @@ See GATE/LICENSE.txt for further details
 GateCoincidencePulseProcessorChain::GateCoincidencePulseProcessorChain( GateDigitizer* itsDigitizer,
     			                          const G4String& itsOutputName)
   : GateModuleListManager(itsDigitizer,itsDigitizer->GetObjectName() + "/" + itsOutputName,"pulse-processor"),
-    m_system(0),
+    m_system(0 /*itsDigitizer->GetSystem() */),//mhadi_modif
     m_outputName(itsOutputName),
     m_inputNames(),
     m_noPriority(true)
@@ -118,7 +118,12 @@ void GateCoincidencePulseProcessorChain::ProcessCoincidencePulses()
   if (m_inputNames.empty()) m_inputNames.push_back("Coincidences");
   std::vector<GateCoincidencePulse*> pulseList = MakeInputList();
 
-
+  //mhadi_add[
+  for (size_t processorID = 0 ; processorID < GetProcessorNumber(); processorID++) 
+     if (GetProcessor(processorID)->IsEnabled() && GetProcessor(processorID)->IsTriCoincProcessor())
+        GetProcessor(processorID)->CollectSingles();
+  //mhadi_add]
+        
   if (pulseList.empty())
     return;
 
@@ -144,10 +149,8 @@ void GateCoincidencePulseProcessorChain::ProcessCoincidencePulses()
 }
 //------------------------------------------------------------------------------------------------------
 
-
+//mhadi_add[
 //------------------------------------------------------------------------------------------------------
-// Next method was added for the multi-system approach
-// Find the suitable system, from the m_systemList of the digitizer, to be attached to
 GateVSystem* GateCoincidencePulseProcessorChain::FindSystem(G4String& inputName)
 {
    GateDigitizer* digitizer = GateDigitizer::GetInstance();
@@ -170,3 +173,4 @@ GateVSystem* GateCoincidencePulseProcessorChain::FindSystem(G4String& inputName)
    
    return system;
 }
+//mhadi_add]
