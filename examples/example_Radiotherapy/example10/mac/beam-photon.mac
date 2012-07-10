@@ -1,0 +1,102 @@
+#=====================================================
+# Type of particle & Energy spectrum
+#=====================================================
+/gate/source/addSource mybeam gps
+#/gate/source/mybeam/setIntensity 10.0
+/gate/source/mybeam/gps/particle gamma
+/gate/source/mybeam/gps/ene/type   User
+/gate/source/mybeam/gps/hist/type  energy
+/gate/source/mybeam/gps/hist/point	0.008	0
+/gate/source/mybeam/gps/hist/point	0.009	1.22018704408557E-016
+/gate/source/mybeam/gps/hist/point	0.01	0.000000000000505397767065596
+/gate/source/mybeam/gps/hist/point	0.011	0.000000000064392397008331
+/gate/source/mybeam/gps/hist/point	0.012	0.00000000460580972493099
+/gate/source/mybeam/gps/hist/point	0.013	0.000000113273532394405
+/gate/source/mybeam/gps/hist/point	0.014	0.00000182260671953458
+/gate/source/mybeam/gps/hist/point	0.015	0.0000145270770463357
+/gate/source/mybeam/gps/hist/point	0.016	0.0000656837267561139
+/gate/source/mybeam/gps/hist/point	0.017	0.000212992406869583
+/gate/source/mybeam/gps/hist/point	0.018	0.000500524192943408
+/gate/source/mybeam/gps/hist/point	0.019	0.00105103241253155
+/gate/source/mybeam/gps/hist/point	0.02	0.00195666587816552
+/gate/source/mybeam/gps/hist/point	0.021	0.00300350864307093
+/gate/source/mybeam/gps/hist/point	0.022	0.00430927258781235
+/gate/source/mybeam/gps/hist/point	0.023	0.00599095697024167
+/gate/source/mybeam/gps/hist/point	0.024	0.00789829883474465
+/gate/source/mybeam/gps/hist/point	0.025	0.0100771547354759
+/gate/source/mybeam/gps/hist/point	0.026	0.0123781130379142
+/gate/source/mybeam/gps/hist/point	0.027	0.0149153846841967
+/gate/source/mybeam/gps/hist/point	0.028	0.0171821944888603
+/gate/source/mybeam/gps/hist/point	0.029	0.0195586716680301
+/gate/source/mybeam/gps/hist/point	0.03	0.0216075337074845
+/gate/source/mybeam/gps/hist/point	0.031	0.023006569921638
+/gate/source/mybeam/gps/hist/point	0.032	0.0241717797973874
+/gate/source/mybeam/gps/hist/point	0.033	0.0253120717917074
+/gate/source/mybeam/gps/hist/point	0.034	0.0262006023122374
+/gate/source/mybeam/gps/hist/point	0.035	0.0269640173283155
+/gate/source/mybeam/gps/hist/point	0.036	0.0275984428506985
+/gate/source/mybeam/gps/hist/point	0.037	0.028141470923155
+/gate/source/mybeam/gps/hist/point	0.038	0.02849835620382
+/gate/source/mybeam/gps/hist/point	0.039	0.0287555221317396
+/gate/source/mybeam/gps/hist/point	0.04	0.028862319884584
+/gate/source/mybeam/gps/hist/point	0.041	0.0286851685739993
+/gate/source/mybeam/gps/hist/point	0.042	0.0281217183607167
+/gate/source/mybeam/gps/hist/point	0.043	0.0275427721904607
+/gate/source/mybeam/gps/hist/point	0.044	0.0272384966402609
+/gate/source/mybeam/gps/hist/point	0.045	0.0268646327647639
+/gate/source/mybeam/gps/hist/point	0.046	0.0263110827462144
+/gate/source/mybeam/gps/hist/point	0.047	0.0257216146298653
+/gate/source/mybeam/gps/hist/point	0.048	0.0251458728704649
+/gate/source/mybeam/gps/hist/point	0.049	0.0245102994994173
+/gate/source/mybeam/gps/hist/point	0.05	0.0237583629699861
+/gate/source/mybeam/gps/hist/point	0.051	0.0228612714114986
+/gate/source/mybeam/gps/hist/point	0.052	0.0220616035084271
+/gate/source/mybeam/gps/hist/point	0.053	0.0212257783724177
+/gate/source/mybeam/gps/hist/point	0.054	0.020351978576418
+/gate/source/mybeam/gps/hist/point	0.055	0.0194578044666199
+/gate/source/mybeam/gps/hist/point	0.056	0.0200749644320047
+/gate/source/mybeam/gps/hist/point	0.057	0.0207400470791406
+/gate/source/mybeam/gps/hist/point	0.058	0.0212810185894062
+/gate/source/mybeam/gps/hist/point	0.059	0.0217563714176734
+/gate/source/mybeam/gps/hist/point	0.06	0.0184378452739822
+/gate/source/mybeam/gps/hist/point	0.061	0.014898693051531
+/gate/source/mybeam/gps/hist/point	0.062	0.0138241153932648
+/gate/source/mybeam/gps/hist/point	0.063	0.0127098413020113
+/gate/source/mybeam/gps/hist/point	0.064	0.0119687136808393
+/gate/source/mybeam/gps/hist/point	0.065	0.0111278667069219
+/gate/source/mybeam/gps/hist/point	0.066	0.0110022251051654
+/gate/source/mybeam/gps/hist/point	0.067	0.0108997317848136
+/gate/source/mybeam/gps/hist/point	0.068	0.00976967477442051
+/gate/source/mybeam/gps/hist/point	0.069	0.00829148482943069
+/gate/source/mybeam/gps/hist/point	0.07	0.00701182487640557
+/gate/source/mybeam/gps/hist/point	0.071	0.00573847809103627
+/gate/source/mybeam/gps/hist/point	0.072	0.00511380928230323
+/gate/source/mybeam/gps/hist/point	0.073	0.00438812022567142
+/gate/source/mybeam/gps/hist/point	0.074	0.00376247574557339
+/gate/source/mybeam/gps/hist/point	0.075	0.00321745806876471
+/gate/source/mybeam/gps/hist/point	0.076	0.0025820664404223
+/gate/source/mybeam/gps/hist/point	0.077	0.0018611696519656
+/gate/source/mybeam/gps/hist/point	0.078	0.0011988561897333
+/gate/source/mybeam/gps/hist/point	0.079	0.00023865399857969
+/gate/source/mybeam/gps/hist/point	0.08	0.0000104276790214574
+/gate/source/mybeam/gps/hist/point	0.081	0
+
+
+#=====================================================
+# Position and shape
+#=====================================================
+/gate/source/mybeam/gps/position      0 -1000 0 mm
+/gate/source/mybeam/gps/pos/type      Point
+/gate/source/mybeam/gps/ang/type      iso
+/gate/source/mybeam/gps/ang/mintheta  0. deg
+/gate/source/mybeam/gps/ang/maxtheta  10.3168 deg
+/gate/source/mybeam/gps/ang/minphi    0. deg
+#/gate/source/mybeam/gps/ang/maxphi    5.3684 deg
+/gate/source/mybeam/gps/ang/maxphi    360 deg
+/gate/source/mybeam/gps/ang/rot1      1 0 0 
+/gate/source/mybeam/gps/ang/rot2      0 0 1 
+/gate/source/mybeam/gps/pos/rot1      1 0 0
+/gate/source/mybeam/gps/pos/rot2      0 0 1
+
+
+

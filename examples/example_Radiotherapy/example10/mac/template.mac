@@ -1,0 +1,8 @@
+
+/gate/random/setEngineSeed auto
+/gate/application/noGlobalOutput
+
+#/gate/application/enableTrackTimeStudy *
+/gate/application/setTotalNumberOfPrimaries <nb_particules>
+/gate/application/start
+

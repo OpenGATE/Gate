@@ -1,0 +1,77 @@
+/control/execute mac/verbose.mac
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+
+# Generate materials from Hounsfield units
+/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/SimpleMaterialsTable.txt 
+/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt 
+/gate/HounsfieldMaterialGenerator/SetDensityTable                   data/Schneider2000DensitiesTable.txt
+/gate/HounsfieldMaterialGenerator/SetDensityTolerance               0.1 g/cm3
+/gate/HounsfieldMaterialGenerator/SetOutputMaterialDatabaseFilename data/Thorax-HUmaterials.db
+/gate/HounsfieldMaterialGenerator/SetOutputHUMaterialFilename       data/Thorax-HU2mat.txt
+/gate/HounsfieldMaterialGenerator/Generate
+
+
+/gate/world/setMaterial            Air
+/gate/world/geometry/setXLength    10.0 m
+/gate/world/geometry/setYLength    10.0 m
+/gate/world/geometry/setZLength    10.0 m
+
+/gate/world/daughters/name                      thorax
+/gate/world/daughters/insert                    ImageNestedParametrisedVolume
+
+
+/gate/geometry/setMaterialDatabase             data/Thorax-HUmaterials.db
+/gate/thorax/geometry/SetHUToMaterialFile      data/Thorax-HU2mat.txt
+/gate/thorax/geometry/SetImage                 data/resampledTHORAX.hdr
+
+/gate/thorax/placement/setTranslation                  0 0 0 mm
+
+/gate/random/setEngineName MersenneTwister 
+
+
+#=====================================================
+# PHYSICS
+#=====================================================
+
+/control/execute mac/Physicslist_Penelope.mac
+
+/gate/physics/Gamma/SetCutInRegion      thorax 0.5 mm
+/gate/physics/Electron/SetCutInRegion   thorax 2.8 m
+/gate/physics/Positron/SetCutInRegion   thorax 2.8 m
+
+/gate/physics/SetMinKineticEnergyInRegion thorax 100 keV
+/gate/physics/ActivateSpecialCuts e-
+
+
+#=====================================================
+# DETECTORS
+#=====================================================
+
+/control/execute mac/detectors.mac
+
+# Set the names of the outputs
+/gate/actor/stat/save              output/stat-photon-thorax.txt
+
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+
+#=====================================================
+# BEAMS
+#=====================================================
+
+/control/execute mac/beam-photon.mac
+
+#=====================================================
+# START BEAMS
+#=====================================================
+
+/control/execute mac/start.mac
