@@ -10,12 +10,12 @@
 	<ve energy="2.95167" value="1"/>
       </propertyvector>
       <propertyvector name="ABSLENGTH" unit="m" energyunit="eV">
-	<ve energy="4.08" value="50"/>
 	<ve energy="1.84" value="50"/>
+	<ve energy="4.08" value="50"/>
       </propertyvector>
       <propertyvector name="RINDEX" energyunit="eV">
-	<ve energy="4.08" value="1.82"/>
 	<ve energy="1.84" value="1.82"/>
+	<ve energy="4.08" value="1.82"/>
       </propertyvector>
     </propertiestable>
   </material>
@@ -23,12 +23,12 @@
   <material name="Air">  
     <propertiestable>
       <propertyvector name="ABSLENGTH" unit="m" energyunit="eV">
-	<ve energy="4.08" value="50"/>
 	<ve energy="1.84" value="50"/>
+	<ve energy="4.08" value="50"/>
       </propertyvector>
       <propertyvector name="RINDEX" energyunit="eV">
-	<ve energy="4.08" value="1.000277"/>
 	<ve energy="1.84" value="1.000277"/>
+	<ve energy="4.08" value="1.000277"/>
       </propertyvector>
     </propertiestable>
   </material>
@@ -36,12 +36,12 @@
   <material name="Epoxy">
     <propertiestable>
       <propertyvector name="ABSLENGTH" unit="m" energyunit="eV">
-	<ve energy="4.08" value="50"/>
 	<ve energy="1.84" value="50"/>
+	<ve energy="4.08" value="50"/>
       </propertyvector>
       <propertyvector name="RINDEX" energyunit="eV">
-	<ve energy="4.08" value="1.5"/>
 	<ve energy="1.84" value="1.5"/>
+	<ve energy="4.08" value="1.5"/>
       </propertyvector>
     </propertiestable>
   </material>
@@ -49,19 +49,19 @@
   <material name="Biomimic">
     <propertiestable>
      <propertyvector name="ABSLENGTH" unit="cm" energyunit="eV">
-	<ve energy="2.34" value="0.847"/>
 	<ve energy="1.97" value="0.926"/>
+	<ve energy="2.34" value="0.847"/>
       </propertyvector>
       <propertyvector name="RINDEX" energyunit="eV">
-	<ve energy="2.34" value="1.521"/>
 	<ve energy="1.97" value="1.521"/>
+	<ve energy="2.34" value="1.521"/>
       </propertyvector>
    <property name="MIEHG_FORWARD" value="0.62" />
       <property name="MIEHG_BACKWARD" value="0.62" />
       <property name="MIEHG_FORWARD_RATIO" value="1.0" />
       <propertyvector name="MIEHG" unit="cm" energyunit="eV">
-	<ve energy="2.34" value="0.043"/>
 	<ve energy="1.97" value="0.04"/>
+	<ve energy="2.34" value="0.043"/>
       </propertyvector>
     </propertiestable>
   </material>
