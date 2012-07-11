@@ -804,6 +804,7 @@ if ( theMode == kTracker )return;
 }
 //--------------------------------------------------------------------------
 // v.cuplov - optical photon: Record OpticalPhoton Data
+#ifdef GATE_USE_OPTICAL
 void GateToRoot::RecordOpticalData(const G4Event * event) 
 { 
 // !!! New !!! NTUPLE code is moved from FastAnalysis to GateToRoot: 03.28.12 vc
@@ -939,6 +940,7 @@ if(CrystalLastHit!=-1) {
   if (trajectoryContainer) {OpticalTuple->Fill();}
 
 }
+#endif
 
 //--------------------------------------------------------------------------
 
