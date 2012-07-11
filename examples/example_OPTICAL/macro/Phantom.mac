@@ -1,0 +1,46 @@
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+
+/gate/world/daughters/name                   casper
+/gate/world/daughters/insert                 box
+/gate/casper/geometry/setXLength             50.0  mm
+/gate/casper/geometry/setYLength             50.0  mm
+/gate/casper/geometry/setZLength             17.0 mm
+/gate/casper/placement/setTranslation        0.0 0.0 -4.0 cm
+
+## The phantom is made of a fluorescent material, named GFP:
+/gate/casper/setMaterial                     GFP
+
+## An other case would be a phantom made of water with a GFP cylinder insertion (see below)
+#/gate/casper/setMaterial                     Water
+
+/gate/casper/vis/setColor                    blue
+/gate/casper/vis/forceWireframe
+/gate/casper/attachPhantomSD
+
+
+#/gate/casper/daughters/name                           fluorescent
+#/gate/casper/daughters/insert                         cylinder
+#/gate/fluorescent/geometry/setRmin                    0.0 cm 
+#/gate/fluorescent/geometry/setRmax                    0.75 mm
+#/gate/fluorescent/geometry/setHeight                  30. mm
+#/gate/fluorescent/placement/setTranslation            0. 0. 0. cm
+#/gate/fluorescent/placement/setRotationAxis           1 0 0
+#/gate/fluorescent/placement/setRotationAngle          -90 deg
+#/gate/fluorescent/setMaterial                         GFP
+#/gate/fluorescent/vis/setColor                        yellow
+#/gate/fluorescent/vis/forceSolid
+#/gate/fluorescent/attachPhantomSD

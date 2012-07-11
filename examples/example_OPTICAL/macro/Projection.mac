@@ -1,0 +1,37 @@
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+
+
+/gate/output/projection/enable
+/gate/output/projection/setFileName       ./OpticalSimulationProjection
+
+/gate/output/projection/pixelSizeX    	   0.1 cm
+/gate/output/projection/pixelSizeY    	   0.1 cm
+/gate/output/projection/pixelNumberX  	   100
+/gate/output/projection/pixelNumberY  	   100
+
+# GATE can not decide which sampling plane you want to use, as it depends
+# on the orientation you have chosen when you built the head
+# Thus, you must specify the projection plane ('XY', 'YZ' or 'ZX').
+# In our case, the head was built orthogonally to the X-axis, so put logical sampling plane is 'YZ'
+/gate/output/projection/projectionPlane XY
+
+# You can select the level of verbosity of the module
+# At level 1, it tells about incorrect (out-of-bounds) counts (digis)
+# At level 2, it tells where it stores each count (digis)
+# For this example, I pick level 1, so that you can see if you lose some counts
+/gate/output/projection/verbose 1
+/gate/output/projection/describe

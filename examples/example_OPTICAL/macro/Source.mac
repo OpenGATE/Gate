@@ -1,0 +1,34 @@
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+
+/gate/source/addSource                           Mysource gps
+/gate/source/Mysource/gps/particle               opticalphoton
+/gate/source/Mysource/gps/energytype             Mono
+
+# Defining the optical photon source activity = counts/second
+# Needed if we want to use the StartDAQ acquisition and therefore the orbiting of the detector.
+#/gate/source/Mysource/setActivity 1000. becquerel 
+
+
+# Should set a polarization, because a photon which is not assigned a polarization 
+# at production may not be Rayleigh scattered.
+/gate/source/Mysource/gps/polarization           1 0 0
+
+/gate/source/Mysource/gps/monoenergy             3.0 eV
+
+/gate/source/Mysource/gps/type Point
+/gate/source/Mysource/gps/direction              0. 0. 1.
+/gate/source/Mysource/gps/centre                 0. 0. -6. cm 

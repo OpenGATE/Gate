@@ -1,0 +1,161 @@
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+                                                             
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+#
+#         D E F I N E   Y O U R   O P T I C A L   S Y S T E M       
+#                                                             
+#        A N D   Y O U R   C O M P L E T E   S I M U L A T I O N   
+#                                                             
+#        F O R   I M A G I N G    A P P L I C A T I O N S       
+#                                                     
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+
+#=====================================================
+# VISUALISATION and VERBOSE
+#=====================================================
+
+#/vis/disable
+/control/execute                    ./macro/Visualisation.mac
+/control/execute                    ./macro/Verbose.mac
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+/gate/geometry/setMaterialDatabase    ./GateMaterials.db
+
+#=====================================================
+#     W O R L D
+#=====================================================
+
+/gate/world/geometry/setXLength       100. cm
+/gate/world/geometry/setYLength       100. cm
+/gate/world/geometry/setZLength       100. cm
+/gate/world/setMaterial               Air
+
+
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+#                                                                 #
+#     D E F I N I T I O N   A N D   D E S C R I T I O N           #
+#        O F   Y O U R   D E V I C E                              #
+#                                                                 #
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+#=======================================================
+#                   G E O M E T R Y
+#=======================================================
+
+/control/execute                    ./macro/Geometry.mac
+      
+
+#=======================================================
+# O R B I T I N G   the    O p t i c a l   S y s t e m
+#=======================================================
+
+#/gate/OpticalSystem/moves/insert             orbiting
+#/gate/OpticalSystem/orbiting/setSpeed        20 deg/s
+#/gate/OpticalSystem/orbiting/setPoint1       0 0 0 cm
+#/gate/OpticalSystem/orbiting/setPoint2       0 1 0 cm
+
+#=====================================================
+#                   P H A N T O M
+#=====================================================
+
+/control/execute ./macro/Phantom.mac
+
+
+#=====================================================
+#                  P H Y S I C S
+#=====================================================
+
+/gate/physics/addProcess OpticalAbsorption
+/gate/physics/addProcess OpticalRayleigh
+/gate/physics/addProcess OpticalBoundary
+/gate/physics/addProcess OpticalMie
+/gate/physics/addProcess OpticalWLS
+
+/gate/physics/processList Enabled
+/gate/physics/processList Initialized
+
+#=====================================================
+#                    A C T O R
+#=====================================================
+# This actor will record information on your simulation:
+/gate/actor/addActor               SimulationStatisticActor stat
+/gate/actor/stat/save              OpticalSimulation_stat.txt
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+
+#=====================================================
+#   D I G I T I Z E R: DETECTOR ELECTRONIC RESPONSE
+#===================================================== 
+/gate/digitizer/name                                 OpticalSingles
+/gate/digitizer/insert                               singleChain
+/gate/digitizer/OpticalSingles/insert                opticaladder
+/gate/digitizer/OpticalSingles/insert                readout
+/gate/digitizer/OpticalSingles/readout/setDepth      2
+
+
+#=====================================================
+#  S O U R C E
+#=====================================================
+
+/control/execute ./macro/Source.mac
+
+#=====================================================
+#  D A T A   O U T P U T   
+#=====================================================
+
+/gate/output/root/enable
+/gate/output/root/setFileName                     OpticalSimulation
+
+/gate/output/analysis/enable
+/gate/output/fastanalysis/enable
+
+/control/execute                        ./macro/Projection.mac
+
+
+#=====================================================
+#   R A N D O M
+#=====================================================
+
+# Choose between: JamesRandom Ranlux64 MersenneTwister
+/gate/random/setEngineName MersenneTwister
+#/gate/random/setEngineSeed default
+#/gate/random/setEngineSeed auto
+/gate/random/setEngineSeed 123456789
+/gate/random/verbose 1
+
+#=====================================================
+#   MEASUREMENT SETTINGS   
+#=====================================================
+
+# A C Q U I S I T I O N
+
+#/gate/application/noGlobalOutput
+
+/control/execute                        ./macro/StartPrimaries.mac
+
+# If using DAQ: setActivity is needed in the Source
+#/control/execute                        ./macro/StartDAQ.mac
+
+

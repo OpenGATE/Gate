@@ -54,9 +54,9 @@ void GatePhantomHit::Print()
 }
 
 // v. cuplov - optical photons
-#ifdef GATE_USE_OPTICAL
-const G4String GatePhantomHit::theOutputAlias = "PhantomHits";
-#endif
+//#ifdef GATE_USE_OPTICAL
+//const G4String GatePhantomHit::theOutputAlias = "PhantomHits";
+//#endif
 // v. cuplov - optical photons
 
 

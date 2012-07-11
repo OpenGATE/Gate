@@ -1,0 +1,24 @@
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+
+/vis/open                           OGLSX
+
+/vis/viewer/set/viewpointThetaPhi   120 30
+/vis/viewer/zoom                     10.0
+/vis/drawVolume
+/tracking/storeTrajectory           1
+/vis/scene/add/trajectories 
+/vis/scene/endOfEventAction         accumulate

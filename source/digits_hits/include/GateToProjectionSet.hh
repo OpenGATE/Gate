@@ -14,6 +14,11 @@
    \file GateToProjectionSet.hh
 
    $Log: GateToProjectionSet.hh,v $
+
+   Revision v6.2   2012/07/09  by vesna.cuplov@gmail.com
+   Implemented functions that have a link with the GateToOpticalRaw class for Optical photons which is
+   used to write as an output file the result of the GateToProjectionSet module for Optical Photons. 
+
    Revision 1.1.1.1.4.1  2011/03/10 16:32:35  henri
    Implemented multiple energy window interfile output
 
@@ -77,6 +82,7 @@
 #include "GateVOutputModule.hh"
 #include "GateProjectionSet.hh"
 #include "GateToInterfile.hh"
+#include "GateToOpticalRaw.hh" // v. cuplov -- GateToOpticalRaw for optical photons
 
 class GateVSystem;
 class GateToProjectionSetMessenger;
@@ -240,7 +246,7 @@ public:
    //@}
 
 protected:
-  GateProjectionSet*  m_projectionSet;	      	  //!< Projection set for SPECT simulations
+  GateProjectionSet*  m_projectionSet;	      	  //!< Projection set for SPECT or OPTICAL simulations
   size_t			  m_energyWindowNb;			//!< Number of energy windows
   size_t       	      m_projNb;    	      	  //!< Total number of projections
   size_t      	      m_headNb;       	      	  //!< Number of heads
@@ -261,6 +267,9 @@ protected:
   G4String            m_noFileName;
 
   GateToInterfile*    m_gateToInterfile;
+  GateToOpticalRaw*   m_gateToOpticalRaw; // v. cuplov -- GateToOpticalRaw for optical photons
+
+
 };
 
 #endif

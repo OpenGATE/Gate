@@ -10,7 +10,10 @@
 
 /*  Optical Photons: V. Cuplov -  2012
          - New function RecordOpticalData(event). 
-         - New ntuple for optical photon data is defined in GateToRoot class (previously was in GateFastAnalysis)
+         - New ntuple for optical photon data is defined in GateToRoot class (previously was in GateFastAnalysis)   
+         - Revision v6.2   2012/07/09  by vesna.cuplov@gmail.com
+           we trigger the output file using GATE_USE_OPTICAL: the output ROOT file is dedicated to optical 
+           photons [different from the default output file with Hits, Singles and Coincidences used for other systems].
 */
 
 #include "GateToRoot.hh"
@@ -135,7 +138,6 @@ GateToRoot::GateToRoot(const G4String& name, GateOutputMgr* outputMgr,DigiMode d
    /* PY Descourt Tracker/Detector 08/09/2009  */
 
 #ifdef GATE_USE_OPTICAL
-   m_opticalfile = 0;
    m_trajectoryNavigator = new GateTrajectoryNavigator();
 #endif
 
@@ -234,36 +236,26 @@ void GateToRoot::RecordBeginOfAcquisition()
 
 // v. cuplov - optical photons
 #ifdef GATE_USE_OPTICAL
-  m_opticalfile = new TFile( (m_fileName+"_OpticalPhotonData.root").c_str() ,"RECREATE","ROOT file with Event Data");
+  m_hfile = new TFile( (m_fileName+".root").c_str() ,"RECREATE","ROOT file with Optical Data"); 
   OpticalTuple = new TTree(G4String("EventData").c_str(),"EventData");
 
   OpticalTuple->Branch(G4String("NumScintillation").c_str(),&nScintillation,"nScintillation/I");
   OpticalTuple->Branch(G4String("NumCrystalWLS").c_str(),&NumCrystalWLS,"NumCrystalWLS/I");
   OpticalTuple->Branch(G4String("NumPhantomWLS").c_str(),&NumPhantomWLS,"NumPhantomWLS/I");
-
   OpticalTuple->Branch(G4String("CrystalLastHitPos_X").c_str(),&CrystalLastHitPos_X,"CrystalLastHitPos_X/D");
   OpticalTuple->Branch(G4String("CrystalLastHitPos_Y").c_str(),&CrystalLastHitPos_Y,"CrystalLastHitPos_Y/D");
   OpticalTuple->Branch(G4String("CrystalLastHitPos_Z").c_str(),&CrystalLastHitPos_Z,"CrystalLastHitPos_Z/D");
-
-  OpticalTuple->Branch(G4String("CrystalLastHitPos_R").c_str(),&CrystalLastHitPos_R,"CrystalLastHitPos_R/D");
-
   OpticalTuple->Branch(G4String("CrystalLastHitEnergy").c_str(),&CrystalLastHitEnergy,"CrystalLastHitEnergy/D");
-
   OpticalTuple->Branch(G4String("PhantomLastHitPos_X").c_str(),&PhantomLastHitPos_X,"PhantomLastHitPos_X/D");
   OpticalTuple->Branch(G4String("PhantomLastHitPos_Y").c_str(),&PhantomLastHitPos_Y,"PhantomLastHitPos_Y/D");
   OpticalTuple->Branch(G4String("PhantomLastHitPos_Z").c_str(),&PhantomLastHitPos_Z,"PhantomLastHitPos_Z/D");
-
   OpticalTuple->Branch(G4String("PhantomLastHitEnergy").c_str(),&PhantomLastHitEnergy,"PhantomLastHitEnergy/D");
-
-
   OpticalTuple->Branch(G4String("CrystalAbsorbedPhotonHitPos_X").c_str(),&CrystalAbsorbedPhotonHitPos_X,"CrystalAbsorbedPhotonHitPos_X/D");
   OpticalTuple->Branch(G4String("CrystalAbsorbedPhotonHitPos_Y").c_str(),&CrystalAbsorbedPhotonHitPos_Y,"CrystalAbsorbedPhotonHitPos_Y/D");
   OpticalTuple->Branch(G4String("CrystalAbsorbedPhotonHitPos_Z").c_str(),&CrystalAbsorbedPhotonHitPos_Z,"CrystalAbsorbedPhotonHitPos_Z/D");
-
   OpticalTuple->Branch(G4String("PhantomAbsorbedPhotonHitPos_X").c_str(),&PhantomAbsorbedPhotonHitPos_X,"PhantomAbsorbedPhotonHitPos_X/D");
   OpticalTuple->Branch(G4String("PhantomAbsorbedPhotonHitPos_Y").c_str(),&PhantomAbsorbedPhotonHitPos_Y,"PhantomAbsorbedPhotonHitPos_Y/D");
   OpticalTuple->Branch(G4String("PhantomAbsorbedPhotonHitPos_Z").c_str(),&PhantomAbsorbedPhotonHitPos_Z,"PhantomAbsorbedPhotonHitPos_Z/D");
-
   OpticalTuple->Branch(G4String("NumCrystalOptAbs").c_str(),&nCrystalOpticalAbsorption,"nCrystalOpticalAbsorption/I");
   OpticalTuple->Branch(G4String("NumCrystalOptRay").c_str(),&nCrystalOpticalRayleigh,"nCrystalOpticalRayleigh/I");
   OpticalTuple->Branch(G4String("NumCrystalOptMie").c_str(),&nCrystalOpticalMie,"nCrystalOpticalMie/I");
@@ -271,8 +263,7 @@ void GateToRoot::RecordBeginOfAcquisition()
   OpticalTuple->Branch(G4String("NumPhantomOptRay").c_str(),&nPhantomOpticalRayleigh,"nPhantomOpticalRayleigh/I");
   OpticalTuple->Branch(G4String("NumPhantomOptMie").c_str(),&nPhantomOpticalMie,"nPhantomOpticalMie/I");
 
-#endif
-// v. cuplov - optical photons
+#else  // v. cuplov - optical photons
 
 GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
 TrackingMode theMode = myAction->GetMode();
@@ -450,9 +441,10 @@ if ( theMode == kTracker )
   m_RecStepTree->Branch(G4String("EventID").c_str(), &m_RSEventID,"EventID/I");
   m_RecStepTree->Branch(G4String("RunID").c_str(), &m_RSRunID,"RunID/I");
 ////////////////////////
-
-
 }
+
+#endif // v. cuplov - optical photons
+
 }
 //--------------------------------------------------------------------------
 
@@ -461,8 +453,15 @@ if ( theMode == kTracker )
 //--------------------------------------------------------------------------
 void GateToRoot::RecordEndOfAcquisition()
 {
-  //GateMessage("Output", 5, " GateToRoot::RecordEndOfAcquisition -- begin." << G4endl;); 
-  
+  //GateMessage("Output", 5, " GateToRoot::RecordEndOfAcquisition -- begin." << G4endl;);
+
+// v. cuplov - optical photons
+#ifdef GATE_USE_OPTICAL
+  m_hfile = OpticalTuple->GetCurrentFile();
+  m_hfile->Write();
+  if ( m_hfile->IsOpen() ){ m_hfile->Close();}
+#else  // v. cuplov - optical photons
+
   //=================  cluster  ===============================================
   //we store the latest event ID at end of time split
   //we have to consider the case that virtualStop == end of Timeslice 
@@ -542,8 +541,6 @@ TrackingMode theMode = myAction->GetMode();
   //GateMessage("Output", 1, " GateToRoot: ROOT: files writing..." << G4endl;); 
   m_hfile->Write();
    
-   
-   
   if (nVerboseLevel > 0)
     G4cout << "GateToRoot: ROOT: files closing..." << G4endl;
   //GateMessage("Output", 1, " GateToRoot: ROOT: files closing..." << G4endl;); 
@@ -551,14 +548,8 @@ TrackingMode theMode = myAction->GetMode();
 }
   /* PY Descourt 08/09/2009 */
 
-// v. cuplov - optical photons
-#ifdef GATE_USE_OPTICAL
-  if ( OpticalTuple != 0 ) {OpticalTuple->Print();}
-  m_opticalfile = OpticalTuple->GetCurrentFile();
-  m_opticalfile->Write();
-  if ( m_opticalfile->IsOpen() ){ m_opticalfile->Close();}
-#endif
-// v. cuplov - optical photons
+
+#endif  // v. cuplov - optical photons
 
 }
 //--------------------------------------------------------------------------
@@ -692,6 +683,12 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
 
  // GateMessage("Output", 5 , " GateToRoot::RecordEndOfEvent -- begin" << G4endl;); 
   
+// v. cuplov - optical photons
+#ifdef GATE_USE_OPTICAL
+  RecordOpticalData(event);
+#else   // v. cuplov - optical photons
+
+
 GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
 TrackingMode theMode = myAction->GetMode();
 if ( theMode == kTracker )return;
@@ -798,20 +795,15 @@ if ( theMode == kTracker )return;
 
   }
 
-// v. cuplov - optical photons
-#ifdef GATE_USE_OPTICAL
-  RecordOpticalData(event);
-#endif
-// v. cuplov - optical photons
-
   RecordDigitizer(event);
 
  // GateMessage("Output", 5, " GateToRoot::RecordEndOfEvent -- end" << G4endl;); 
  
+#endif  // v. cuplov - optical photons
+
 }
 //--------------------------------------------------------------------------
 // v.cuplov - optical photon: Record OpticalPhoton Data
-#ifdef GATE_USE_OPTICAL
 void GateToRoot::RecordOpticalData(const G4Event * event) 
 { 
 // !!! New !!! NTUPLE code is moved from FastAnalysis to GateToRoot: 03.28.12 vc
@@ -828,7 +820,6 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
         nCrystalOpticalRayleigh = 0;
         nCrystalOpticalMie = 0;
         nCrystalOpticalAbsorption = 0;
-
         nScintillation = 0;
         nCrystalOpticalWLS = 0;
         nPhantomOpticalWLS = 0;
@@ -898,10 +889,6 @@ if(PhantomLastHit!=-1) {
     CrystalLastHitPos_X = -999;
     CrystalLastHitPos_Y = -999;
     CrystalLastHitPos_Z = -999;
-
-   CrystalLastHitPos_R = -999;
-
-
     CrystalAbsorbedPhotonHitPos_X = -999;
     CrystalAbsorbedPhotonHitPos_Y = -999;
     CrystalAbsorbedPhotonHitPos_Z = -999;
@@ -927,7 +914,6 @@ if(PhantomLastHit!=-1) {
                               CrystalAbsorbedPhotonHitPos_X = (*CHC)[iHit]->GetGlobalPos().x();
                               CrystalAbsorbedPhotonHitPos_Y = (*CHC)[iHit]->GetGlobalPos().y();
                               CrystalAbsorbedPhotonHitPos_Z = (*CHC)[iHit]->GetGlobalPos().z();
-
                    }
                }  // end if optical photon
 
@@ -940,9 +926,7 @@ if(CrystalLastHit!=-1) {
                      CrystalLastHitPos_X = (*CHC)[CrystalLastHit]->GetGlobalPos().x();
                      CrystalLastHitPos_Y = (*CHC)[CrystalLastHit]->GetGlobalPos().y();
                      CrystalLastHitPos_Z = (*CHC)[CrystalLastHit]->GetGlobalPos().z();
-                     CrystalLastHitEnergy = (*CHC)[CrystalLastHit]->GetEdep();
-                     CrystalLastHitPos_R = sqrt((*CHC)[CrystalLastHit]->GetGlobalPos().x()*(*CHC)[CrystalLastHit]->GetGlobalPos().x()+(*CHC)[CrystalLastHit]->GetGlobalPos().y()*(*CHC)[CrystalLastHit]->GetGlobalPos().y());
-
+                     CrystalLastHitEnergy = (*CHC)[CrystalLastHit]->GetEdep();               
 
 }
 
@@ -952,16 +936,9 @@ if(CrystalLastHit!=-1) {
        if(nCrystalOpticalWLS >0) NumCrystalWLS++;
        if(nPhantomOpticalWLS >0) NumPhantomWLS++;
 
-// Fill the new ntuple:
-//  if (!trajectoryContainer) {
-//               G4cerr << "GateToRoot::RecordEndOfEvent : ERROR : NULL trajectoryContainer!" << G4endl;
-//                            } else { OpticalTuple->Fill();}
-
   if (trajectoryContainer) {OpticalTuple->Fill();}
 
 }
-#endif
-// v. cuplov - optical photon
 
 //--------------------------------------------------------------------------
 

@@ -34,6 +34,7 @@ class GateVVolume;
       \sa GateVSystem
 */      
 //    Last modification in 12/2011 by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr, for the multi-system approach.
+//    Last modification in 07/2012 by vesna.cuplov@gmail.com, for the OPTICAL system.
 
 class GateSystemListManager : public GateListManager
 {
@@ -53,7 +54,7 @@ class GateSystemListManager : public GateListManager
 
 
   public:
-    //! \name Methods to manage the list
+    //! \name Methods to manage the listgeometry/include/GateOPETSystem.hh:#ifndef
     //@{
     virtual void RegisterSystem(GateVSystem* newSystem);   //!< Registers a new system in the list
     virtual void UnregisterSystem(GateVSystem* system);    //!< Removes a deleted system from the system-list

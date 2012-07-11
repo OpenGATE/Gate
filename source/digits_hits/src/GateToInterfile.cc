@@ -11,6 +11,10 @@
 /*! \file GateToInterfile.cc
 
     $Log: GateToInterfile.cc,v $
+
+    Revision v6.2   2012/07/09  by vesna.cuplov@gmail.com
+    Fixed some text typos in the WriteGateScannerInfo()
+
     Revision 1.1.1.1.4.1  2011/03/10 16:32:35  henri
     Implemented multiple energy window interfile output
 
@@ -383,10 +387,10 @@ void GateToInterfile::WriteGateScannerInfo()
 
   GateVVolume *pixelInserter  = m_system->GetPixelComponent()->GetCreator();
   if ( pixelInserter )
-    m_headerFile  << ";crystal x dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(0)/cm << G4endl
-      	      	  << ";crystal y dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(1)/cm << G4endl
-      	      	  << ";crystal z dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(2)/cm << G4endl
-      	      	  << ";crystal material := "                 <<  pixelInserter->GetCreator()->GetMaterialName() << G4endl;
+    m_headerFile  << ";pixel x dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(0)/cm << G4endl
+      	      	  << ";pixel y dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(1)/cm << G4endl
+      	      	  << ";pixel z dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(2)/cm << G4endl
+      	      	  << ";pixel material := "                 <<  pixelInserter->GetCreator()->GetMaterialName() << G4endl;
 
   m_headerFile  << ";" << G4endl;
 }

@@ -8,12 +8,17 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
+/*
+   Revision v6.2   2012/07/09  by vesna.cuplov@gmail.com
+   Added the new OpticalSystem for optical imaging.
+*/
 
 #include "GateSystemListManager.hh"
 #include "GateSystemListMessenger.hh"
 #include "GateScannerSystem.hh"
 #include "GateCylindricalPETSystem.hh"
 #include "GateSPECTHeadSystem.hh"
+#include "GateOpticalSystem.hh" // v. cuplov
 #include "GateEcatSystem.hh"
 #include "GateEcatAccelSystem.hh"
 #include "GateCPETSystem.hh"
@@ -41,6 +46,7 @@ const G4String GateSystemListManager::theSystemNameList[]= {
   "PETscanner",
   "CTscanner",
   "OPET",
+  "OpticalSystem", // Optical System name - v. cuplov
   ""
 };
 //-----------------------------------------------------------------------------
@@ -216,6 +222,9 @@ GateVSystem* GateSystemListManager::InsertNewSystem(const G4String& typeName)
       break;
     case 9:  
       newSystem = new GateOPETSystem(MakeElementName(typeName));
+      break;
+    case 10:  
+      newSystem = new GateOpticalSystem(MakeElementName(typeName));  // Optical System - v. cuplov
       break;
     default:
       G4cout << "System type name '" << typeName << "' was not recognised --> insertion request must be ignored!\n";

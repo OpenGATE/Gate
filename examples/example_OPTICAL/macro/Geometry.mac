@@ -1,0 +1,85 @@
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+
+
+# === optical system ===
+
+/gate/world/daughters/name                      OpticalSystem
+/gate/world/daughters/insert                    box
+
+/gate/OpticalSystem/geometry/setXLength         10.5 cm
+/gate/OpticalSystem/geometry/setYLength         10.5 cm
+/gate/OpticalSystem/geometry/setZLength         2.0 cm
+/gate/OpticalSystem/placement/setTranslation    0 0 0 cm
+/gate/OpticalSystem/setMaterial                 Air
+
+
+# === crystal: pixels and an additionnal volume behind the pixels  ===
+/gate/OpticalSystem/daughters/name              crystal
+/gate/OpticalSystem/daughters/insert            box
+/gate/crystal/geometry/setXLength               10.5 cm
+/gate/crystal/geometry/setYLength               10.5 cm
+/gate/crystal/geometry/setZLength               1.0 cm
+/gate/crystal/placement/setTranslation          0 0 -0.5 cm
+/gate/crystal/setMaterial                       Air
+/gate/crystal/vis/forceWireframe                1
+/gate/systems/OpticalSystem/crystal/attach      crystal
+
+# === pixels ===
+/gate/crystal/daughters/name                    pixel
+/gate/crystal/daughters/insert                  box
+/gate/pixel/geometry/setXLength                 2.0  cm
+/gate/pixel/geometry/setYLength                 2.0  cm
+/gate/pixel/geometry/setZLength                 1.0 cm
+/gate/pixel/setMaterial                         Air
+/gate/pixel/placement/setTranslation            0 0 0 cm
+/gate/pixel/vis/setColor                        red
+/gate/pixel/repeaters/insert                    cubicArray
+/gate/pixel/cubicArray/setRepeatNumberX         5
+/gate/pixel/cubicArray/setRepeatNumberY         5
+/gate/pixel/cubicArray/setRepeatNumberZ         1
+/gate/pixel/cubicArray/setRepeatVector          2.1 2.1 0 cm
+/gate/pixel/vis/forceSolid           
+/gate/pixel/attachCrystalSD
+/gate/systems/OpticalSystem/pixel/attach        pixel
+
+
+# === additionnal volume behind pixels (ex: electronic board) ===
+/gate/OpticalSystem/daughters/name              Electronics
+/gate/OpticalSystem/daughters/insert            box
+/gate/Electronics/geometry/setXLength           10.5  cm
+/gate/Electronics/geometry/setYLength           10.5  cm
+/gate/Electronics/geometry/setZLength           1.0 cm
+/gate/Electronics/setMaterial                   Air                  
+/gate/Electronics/placement/setTranslation      0 0 0.5 cm
+/gate/Electronics/vis/setColor                  yellow
+/gate/Electronics/vis/forceSolid
+
+
+
+
+#===============================================================
+# Optical photons Detection Surface should be DIELECTRIC-METAL
+#===============================================================
+
+/gate/pixel/surfaces/name                           Detection1
+/gate/pixel/surfaces/insert                         Electronics
+/gate/pixel/surfaces/Detection1/setSurface          perfect_apd  
+
+/gate/Electronics/surfaces/name                     Detection2
+/gate/Electronics/surfaces/insert                   pixel
+/gate/Electronics/surfaces/Detection2/setSurface    perfect_apd  
+

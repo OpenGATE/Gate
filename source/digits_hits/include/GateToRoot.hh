@@ -8,9 +8,12 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-/*  Optical Photons: V. Cuplov - 2012
-        - New function RecordOpticalData(event).
-        - New ntuple for optical photon data is defined in GateToRoot class (previously was in GateFastAnalysis)
+/*  Optical Photons: V. Cuplov -  2012
+         - New function RecordOpticalData(event). 
+         - New ntuple for optical photon data is defined in GateToRoot class (previously was in GateFastAnalysis)
+         - Revision v6.2   2012/07/09  by vesna.cuplov@gmail.com
+           we trigger the output file using GATE_USE_OPTICAL: the output ROOT file is dedicated to optical 
+           photons [different from the default output file with Hits, Singles and Coincidences used for other systems].
 */
 
 #ifndef GateToRoot_H
@@ -267,7 +270,6 @@ private:
 // v. cuplov - optical photons
 #ifdef GATE_USE_OPTICAL
   GateTrajectoryNavigator* m_trajectoryNavigator;
-  TFile*  m_opticalfile; // the file for histograms, tree ...
   TTree *OpticalTuple; // new ntuple
 
   G4int nPhantomOpticalRayleigh;
@@ -280,7 +282,7 @@ private:
   G4int NumCrystalWLS, NumPhantomWLS;
 
   G4int CrystalLastHit, PhantomLastHit;
-  G4double CrystalLastHitPos_X,CrystalLastHitPos_Y,CrystalLastHitPos_Z, CrystalLastHitEnergy, CrystalLastHitPos_R;
+  G4double CrystalLastHitPos_X,CrystalLastHitPos_Y,CrystalLastHitPos_Z, CrystalLastHitEnergy;
   G4double CrystalAbsorbedPhotonHitPos_X, CrystalAbsorbedPhotonHitPos_Y,CrystalAbsorbedPhotonHitPos_Z;
   G4double PhantomLastHitPos_X,PhantomLastHitPos_Y,PhantomLastHitPos_Z, PhantomLastHitEnergy;
   G4double PhantomAbsorbedPhotonHitPos_X, PhantomAbsorbedPhotonHitPos_Y,PhantomAbsorbedPhotonHitPos_Z;

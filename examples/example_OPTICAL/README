@@ -1,9 +1,61 @@
-For the optical photon applications, start the following macro :
---------------------------------------------------------------
-opticalMacro.mac
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+
+#  *****************************************************************************
+# *****  O P T I C A L   I M A G I N G   S Y S T E M   S I M U L A T I O N ***** 
+#  *****************************************************************************
+
+GATE Optical Imaging contact: vesna.cuplov@cea.fr (SHFJ-Orsay)
+
+The following macros will simulate a simple OpticalSystem experiment:
 
 
-All macros which are launch by the main macro are includedin the "macro" folder.
+== The main macro (the one you run with Gate) is Optical_System.mac 
 
-To analyse the output data, you need to run the code "compare_to_reference.C"
-with the ROOT software. (root -l compare_to_reference.C)
+
+== A PHANTOM is made of a water box plus a cylindrical insertion of a fluorescent material named GFP. 
+This material has been defined in the Material.xml (and GateMaterials.db) file with several properties: 
+BULK ABSORPTION, MIE scattering(anisotropy and scattering lengths) and FLUORESCENCE (WLS absorption 
+and emission spectra).
+Defining the GFP in GateMaterials.db is mendatory but the given density and element's component number 
+are "fake". We use the following description but it doesn't matter in the simulation:
+GFP:  d=1.0 g/cm3 ; n=1  <== this can be anything but is mendatory.
+        +el: name=Carbon   ; n=1   <== this can be anything but is mendatory.
+
+
+== The experiment GEOMETRY is described in Geometry.mac
+We use an OpticalSystem made of a crystal, that is pixelated (cubicArray). Behind the pixels, we added 
+an other volume (part of the crystal) which can be some electronics boards for example. For testing purpose, 
+all these volumes are made of Air. Any other material should be defined in Materials.xml with property 
+vecors values given in INCREASING ORDER OF ENERGY. (http://hypernews.slac.stanford.edu/HyperNews/geant4/get/opticalphotons/458/1/1.html)
+In order to detect optical photons, we need to define the detection surface as a DIELECTRIC-METAL (Surface.xml)
+with property vecors values given in INCREASING ORDER OF ENERGY. 
+
+
+== The Optical Photon source is defined in Source.mac
+It is assigned a polarization along the x-axis. A photon which is not assigned a polarization at production 
+may NOT be Rayleigh scattered. The optical photon energy is set to 3.0eV (which corresponds to a wavelength 
+of 413nm).    ==> 1240/E[in eV] ~ lambda [in nm].
+
+
+== The optical imaging simulation gives the following output files: 
+- OpticalSimulationOutput.root ROOT tree	
+- If you use the Projection.mac in your simulation, you get additionnal files: OpticalSystemProjection.bin and a
+header file OpticalSystemProjection.hdr
+You can look at the binary file using imagej for example (File->Import->Raw and Width=100, Height=100 pixels)
+
+
+
