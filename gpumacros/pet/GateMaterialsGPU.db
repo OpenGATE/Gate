@@ -1,0 +1,169 @@
+[Materials]
+GPU_00_Air: d=1.29 mg/cm3 ; n=4 ; state=gas
+	+el: name=Nitrogen;   f=0.755268
+	+el: name=Oxygen;     f=0.231781
+	+el: name=Argon;      f=0.012827
+	+el: name=Carbon;     f=0.000124
+
+GPU_01_Water: d=1.00 g/cm3; n=2 ; state=liquid
+	+el: name=Hydrogen ; n=2
+	+el: name=Oxygen; n=1
+
+GPU_02_Body:   d=1.00 g/cm3 ; n=2
+    +el: name=Hydrogen  ; f=0.112
+    +el: name=Oxygen    ; f=0.888
+
+GPU_03_Lung:  d=0.26 g/cm3 ; n=9
+        +el: name=Hydrogen  ; f=0.103
+	+el: name=Carbon    ; f=0.105
+	+el: name=Nitrogen  ; f=0.031
+	+el: name=Oxygen    ; f=0.749
+	+el: name=Sodium    ; f=0.002
+	+el: name=Phosphor  ; f=0.002
+	+el: name=Sulfur    ; f=0.003
+	+el: name=Chlorine  ; f=0.003
+    +el: name=Potassium ; f=0.002
+
+GPU_04_Breast: d=1.020 g/cm3 ; n = 8
+	+el: name=Oxygen;     f=0.5270
+	+el: name=Carbon;     f=0.3320
+	+el: name=Hydrogen ;  f=0.1060
+	+el: name=Nitrogen;   f=0.0300
+	+el: name=Sulfur ;    f=0.0020
+	+el: name=Sodium ;    f=0.0010
+	+el: name=Phosphor;   f=0.0010
+	+el: name=Chlorine ;  f=0.0010
+
+GPU_05_Heart:  d=1.05 g/cm3 ; n=11
+    +el: name=Hydrogen  ; f=0.104
+    +el: name=Carbon    ; f=0.139
+    +el: name=Nitrogen  ; f=0.029
+    +el: name=Oxygen    ; f=0.718
+    +el: name=Sodium    ; f=0.001
+    +el: name=Phosphor  ; f=0.002
+    +el: name=Sulfur    ; f=0.002
+    +el: name=Chlorine  ; f=0.002
+    +el: name=Potassium ; f=0.003
+    +el: name=Calcium   ; f=0.0
+    +el: name=Scandium  ; f=0.0
+                                                                                                                                       
+GPU_06_SpineBone: d=1.42 g/cm3 ; n=11
+    +el: name=Hydrogen  ; f=0.063
+    +el: name=Carbon    ; f=0.261
+    +el: name=Nitrogen  ; f=0.039
+    +el: name=Oxygen    ; f=0.436
+    +el: name=Sodium    ; f=0.001
+    +el: name=Magnesium ; f=0.001
+    +el: name=Phosphor  ; f=0.061
+    +el: name=Sulfur    ; f=0.003
+    +el: name=Chlorine  ; f=0.001
+    +el: name=Potassium ; f=0.001
+    +el: name=Calcium   ; f=0.133
+                                                                                                                                          
+GPU_07_RibBone: d=1.92 g/cm3 ; n=11
+    +el: name=Hydrogen  ; f=0.034
+    +el: name=Carbon    ; f=0.155
+    +el: name=Nitrogen  ; f=0.042
+    +el: name=Oxygen    ; f=0.435
+    +el: name=Sodium    ; f=0.001
+    +el: name=Magnesium ; f=0.002
+    +el: name=Phosphor  ; f=0.103
+    +el: name=Sulfur    ; f=0.003
+    +el: name=Calcium   ; f=0.225
+    +el: name=Scandium  ; f=0.0
+    +el: name=Titanium  ; f=0.0
+
+GPU_08_Intestine: d=1.03 g/cm3 ; n=11
+    +el: name=Hydrogen  ; f=0.106
+    +el: name=Carbon    ; f=0.115
+    +el: name=Nitrogen  ; f=0.022
+    +el: name=Oxygen    ; f=0.751
+    +el: name=Sodium    ; f=0.001
+    +el: name=Phosphor  ; f=0.001
+    +el: name=Sulfur    ; f=0.001
+    +el: name=Chlorine  ; f=0.002
+    +el: name=Potassium ; f=0.001
+    +el: name=Calcium   ; f=0.0
+    +el: name=Scandium  ; f=0.0
+
+GPU_09_Spleen: d=1.06 g/cm3 ; n=11
+    +el: name=Hydrogen  ; f=0.103
+    +el: name=Carbon    ; f=0.113
+    +el: name=Nitrogen  ; f=0.032
+    +el: name=Oxygen    ; f=0.741
+    +el: name=Sodium    ; f=0.001
+    +el: name=Phosphor  ; f=0.003
+    +el: name=Sulfur    ; f=0.002
+    +el: name=Chlorine  ; f=0.002
+    +el: name=Potassium ; f=0.003
+    +el: name=Calcium   ; f=0.0
+    +el: name=Scandium  ; f=0.0
+	
+GPU_10_Blood:  d=1.06 g/cm3 ; n=11
+    +el: name=Hydrogen  ; f=0.102
+    +el: name=Carbon    ; f=0.11
+    +el: name=Nitrogen  ; f=0.033
+    +el: name=Oxygen    ; f=0.745
+    +el: name=Sodium    ; f=0.001
+    +el: name=Phosphor  ; f=0.001
+    +el: name=Sulfur    ; f=0.002
+    +el: name=Chlorine  ; f=0.003
+    +el: name=Potassium ; f=0.002
+    +el: name=Iron      ; f=0.001
+    +el: name=Cobalt    ; f=0.0
+
+GPU_11_Liver:  d=1.06 g/cm3 ; n=11
+    +el: name=Hydrogen  ; f=0.102
+    +el: name=Carbon    ; f=0.139
+    +el: name=Nitrogen  ; f=0.03
+    +el: name=Oxygen    ; f=0.716
+    +el: name=Sodium    ; f=0.002
+    +el: name=Phosphor  ; f=0.003
+    +el: name=Sulfur    ; f=0.003
+    +el: name=Chlorine  ; f=0.002
+    +el: name=Potassium ; f=0.003
+    +el: name=Calcium   ; f=0.0
+    +el: name=Scandium  ; f=0.0
+ 
+GPU_12_Kidney: d=1.05 g/cm3 ; n=11
+    +el: name=Hydrogen  ; f=0.103
+    +el: name=Carbon    ; f=0.132
+    +el: name=Nitrogen  ; f=0.03
+    +el: name=Oxygen    ; f=0.724
+    +el: name=Sodium    ; f=0.002
+    +el: name=Phosphor  ; f=0.002
+    +el: name=Sulfur    ; f=0.002
+    +el: name=Chlorine  ; f=0.002
+    +el: name=Potassium ; f=0.002
+    +el: name=Calcium   ; f=0.001
+    +el: name=Scandium  ; f=0.0
+ 
+GPU_13_Brain:  d=1.04 g/cm3 ; n=11
+    +el: name=Hydrogen  ; f=0.107
+    +el: name=Carbon    ; f=0.145
+    +el: name=Nitrogen  ; f=0.022
+    +el: name=Oxygen    ; f=0.712
+    +el: name=Sodium    ; f=0.002
+    +el: name=Phosphor  ; f=0.004
+    +el: name=Sulfur    ; f=0.002
+    +el: name=Chlorine  ; f=0.003
+    +el: name=Potassium ; f=0.003
+    +el: name=Calcium   ; f=0.0
+    +el: name=Scandium  ; f=0.0
+
+GPU_14_Pancreas: d=1.04 g/cm3 ; n=11
+    +el: name=Hydrogen  ; f=0.106
+    +el: name=Carbon    ; f=0.169
+    +el: name=Nitrogen  ; f=0.022
+    +el: name=Oxygen    ; f=0.694
+    +el: name=Sodium    ; f=0.002
+    +el: name=Phosphor  ; f=0.002
+    +el: name=Sulfur    ; f=0.001
+    +el: name=Chlorine  ; f=0.002
+    +el: name=Potassium ; f=0.002
+    +el: name=Calcium   ; f=0.0
+    +el: name=Scandium  ; f=0.0
+ 
+ 
+
+

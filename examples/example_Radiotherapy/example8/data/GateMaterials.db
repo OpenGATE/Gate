@@ -32,13 +32,16 @@ Zinc:       S= Zn  ; Z= 30. ; A=  65.39  g/mole
 Gallium:    S= Ga  ; Z= 31. ; A=  69.723 g/mole
 Germanium:  S= Ge  ; Z= 32. ; A=  72.61  g/mole
 Yttrium:    S= Y   ; Z= 39. ; A=  88.91  g/mole
+Silver:     S= Ag  ; Z= 47. ; A= 107.868 g/mole
 Cadmium:    S= Cd  ; Z= 48. ; A= 112.41  g/mole
+Tin:        S= Sn  ; Z= 50. ; A= 118.71  g/mole
 Tellurium:  S= Te  ; Z= 52. ; A= 127.6   g/mole
 Iodine:	    S= I   ; Z= 53. ; A= 126.90  g/mole
 Cesium:     S= Cs  ; Z= 55. ; A= 132.905 g/mole
 Gadolinium: S= Gd  ; Z= 64. ; A= 157.25  g/mole
 Lutetium:   S= Lu  ; Z= 71. ; A= 174.97  g/mole
 Tungsten:   S= W   ; Z= 74. ; A= 183.84  g/mole
+Gold:       S= Au  ; Z= 79. ; A= 196.967 g/mole
 Thallium:   S= Tl  ; Z= 81. ; A= 204.37  g/mole
 Lead: 	    S= Pb  ; Z= 82. ; A= 207.20  g/mole
 Bismuth:    S= Bi  ; Z= 83. ; A= 208.98  g/mole
@@ -48,8 +51,11 @@ Uranium:    S= U   ; Z= 92. ; A= 238.03  g/mole
 Vacuum: d=0.000001 mg/cm3 ; n=1 
 	+el: name=Hydrogen ; n=1
 
-Aluminium: d=2.699 g/cm3 ; n=1 ; state=solid
+Aluminium: d=2.7 g/cm3 ; n=1 ; state=solid
 	+el: name=auto ; n=1
+
+AluminiumEGS: d=2.702 g/cm3 ; n=1 ; state=solid
+         +el: name=Aluminium ; n=1
 
 Uranium: d=18.90 g/cm3 ; n=1 ; state=solid
 	+el: name=auto ; n=1
@@ -102,7 +108,6 @@ Plexiglass: d=1.19 g/cm3; n=3; state=solid
         +el: name=Carbon;     f=0.599848
         +el: name=Oxygen;     f=0.319614
 
-	
 GSO: d=6.7 g/cm3; n=3 ; state=Solid
 	+el: name=Gadolinium ; n=2
 	+el: name=Silicon; n=1
@@ -119,8 +124,8 @@ YAP: d=5.55 g/cm3; n=3 ; state=Solid
 	+el: name=Oxygen; n=3
 
 Water: d=1.00 g/cm3; n=2 ; state=liquid
-	+el: name=Hydrogen ; f=0.111898
-	+el: name=Oxygen; f=0.888102
+	+el: name=Hydrogen ; n=2
+	+el: name=Oxygen; n=1
 
 Quartz: d=2.2 g/cm3; n=2 ; state=Solid
 	+el: name=Silicon ; n=1
@@ -166,6 +171,11 @@ LuYAP-80: d=7.5 g/cm3 ; n=4
 	
 Plastic:  d=1.18 g/cm3 ; n=3; state=solid
         +el: name=Carbon ; n=5
+        +el: name=Hydrogen ; n=8
+        +el: name=Oxygen ; n=2
+
+Biomimic:  d=1.05 g/cm3 ; n=3; state=solid
+        +el: name=Carbon   ; n=5
         +el: name=Hydrogen ; n=8
         +el: name=Oxygen ; n=2
 
@@ -418,8 +428,12 @@ Spleen: d=1.06 g/cm3 ; n=11
         +el: name=Calcium   ; f=0.0
         +el: name=Scandium  ; f=0.0
 
+G4_WATER: d=1.00 g/cm3; n=2 ; state=liquid
+	+el: name=Hydrogen ; n=2
+	+el: name=Oxygen; n=1
+
 Testis: d=1.04 g/cm3 ; n=9
-	+el: name=Hydrogen   ; f=0.106000
+        +el: name=Hydrogen   ; f=0.106000
         +el: name=Carbon     ; f=0.099000
         +el: name=Nitrogen   ; f=0.020000
         +el: name=Oxygen     ; f=0.766000
@@ -429,7 +443,12 @@ Testis: d=1.04 g/cm3 ; n=9
         +el: name=Chlorine   ; f=0.002000
         +el: name=Potassium  ; f=0.002000
 
-PMMA:   d=1.19 g/cm3; n=3 ; state=Solid
+PMMA:   d=1.195 g/cm3; n=3 ; state=Solid
         +el: name=Hydrogen ; f=0.080541
         +el: name=Carbon ; f=0.599846
-        +el: name=Sulfur; f=0.319613
+        +el: name=Oxygen; f=0.319613
+
+Epoxy: d=1.0 g/cm3; n=3; state=Solid
+        +el: name=Carbon; n=1
+        +el: name=Hydrogen; n=1
+        +el: name=Oxygen; n=1

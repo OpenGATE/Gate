@@ -223,7 +223,7 @@
 /gate/physics/processes/Compton/setModel PenelopeModel
 
 /gate/physics/addProcess RayleighScattering
-/gate/physics/processes/RayleighScattering/setModel PenelopeRayleighModel
+/gate/physics/processes/RayleighScattering/setModel PenelopeModel
 
 /gate/physics/addProcess ElectronIonisation
 /gate/physics/processes/ElectronIonisation/setModel StandardModel e-
@@ -282,7 +282,7 @@
 /gate/source/SourceConfinement/gps/centre 0. 0. 0. cm
 /gate/source/SourceConfinement/gps/particle gamma
 /gate/source/SourceConfinement/gps/energy 140. keV
-/gate/source/SourceConfinement/setActivity 30000. Bq
+/gate/source/SourceConfinement/setActivity 300. Bq
 /gate/source/SourceConfinement/gps/angtype iso
 
 # Define a confinement
@@ -337,8 +337,7 @@
 /gate/output/root/setRootSinglesAdderFlag 1
 /gate/output/root/setRootSinglesBlurringFlag 1 
 /gate/output/root/setRootSinglesSpblurringFlag 1
-/gate/output/root/setRootSinglesThresholderFlag 1
-/gate/output/root/setRootSinglesUpholderFlag 1
+
 
 
 

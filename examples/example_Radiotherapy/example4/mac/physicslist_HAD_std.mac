@@ -20,6 +20,7 @@
 /gate/physics/processes/IonIonisation/setStepFunction triton     0.1 0.02 mm
 /gate/physics/processes/IonIonisation/setStepFunction He3        0.1 0.02 mm
 
+/gate/physics/addProcess hMultipleScattering
 
 #=====================================
 # Hadronic  processes for hadrons

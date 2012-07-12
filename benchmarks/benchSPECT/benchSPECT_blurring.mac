@@ -223,7 +223,7 @@
 /gate/physics/processes/Compton/setModel PenelopeModel
 
 /gate/physics/addProcess RayleighScattering
-/gate/physics/processes/RayleighScattering/setModel PenelopeRayleighModel
+/gate/physics/processes/RayleighScattering/setModel PenelopeModel
 
 /gate/physics/addProcess ElectronIonisation
 /gate/physics/processes/ElectronIonisation/setModel StandardModel e-
@@ -282,7 +282,7 @@
 /gate/source/SourceConfinement/gps/centre 0. 0. 0. cm
 /gate/source/SourceConfinement/gps/particle gamma
 /gate/source/SourceConfinement/gps/energy 140. keV
-/gate/source/SourceConfinement/setActivity 30000. Bq
+/gate/source/SourceConfinement/setActivity 300. Bq
 /gate/source/SourceConfinement/gps/angtype iso
 
 # Define a confinement
@@ -299,10 +299,10 @@
 ##
 /gate/digitizer/Singles/insert adder
 /gate/digitizer/Singles/insert blurring
-/gate/digitizer/Singles/blurring/setLaw Linear
-/gate/digitizer/Singles/blurring/setResolution 0.10
-/gate/digitizer/Singles/blurring/setEnergyOfReference 140. keV
-/gate/digitizer/Singles/blurring/setSlope 0.001 1/keV
+/gate/digitizer/Singles/blurring/setLaw linear
+/gate/digitizer/Singles/blurring/linear/setResolution 0.10
+/gate/digitizer/Singles/blurring/linear/setEnergyOfReference 140. keV
+/gate/digitizer/Singles/blurring/linear/setSlope 0.001 1/keV
 /gate/digitizer/Singles/insert spblurring
 /gate/digitizer/Singles/spblurring/setSpresolution 2.0 mm
 /gate/digitizer/Singles/spblurring/verbose 0
@@ -332,7 +332,7 @@
 
 #   R A N D O M
 # JamesRandom Ranlux64 MersenneTwister
-/gate/random/setEngineName Ranlux64
+/gate/random/setEngineName MersenneTwister
 #/gate/random/setEngineSeed default
 #/gate/random/setEngineSeed auto
 /gate/random/setEngineSeed 123456789

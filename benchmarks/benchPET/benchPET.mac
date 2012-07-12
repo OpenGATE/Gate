@@ -1,5 +1,5 @@
 /vis/disable
-/control/execute visu.mac
+#/control/execute visu.mac
 
 /gate/geometry/setMaterialDatabase ../../GateMaterials.db
 
@@ -22,7 +22,7 @@
 /control/execute digitizer.mac
 
 #	S O U R C E
-/control/execute sources.mac
+/control/execute sourcesBis.mac
 
 
 

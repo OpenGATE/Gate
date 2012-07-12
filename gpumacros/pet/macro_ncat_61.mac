@@ -17,14 +17,14 @@
 /tracking/verbose	0
 /event/verbose 		0
 
-/gate/verbose Beam      3
+/gate/verbose Beam      0
 /gate/verbose Actor     0
 
 #======================================
 # GEOMETRY
 #======================================
-/gate/geometry/setMaterialDatabase ../GateMaterials.db
-/gate/geometry/setMaterialDatabase ../GateMaterialsGPU.db
+/gate/geometry/setMaterialDatabase GateMaterials.db
+/gate/geometry/setMaterialDatabase GateMaterialsGPU.db
 
 #=============================================
 #     W O R L D

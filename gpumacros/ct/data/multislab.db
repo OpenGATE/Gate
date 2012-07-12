@@ -1,0 +1,49 @@
+[Materials]
+# Material 0 corresponding to H=[ -1000;-701 ]
+Air_0: d=130.174 mg/cm3; n=3; 
++el: name=Nitrogen; f=0.755
++el: name=Oxygen; f=0.232
++el: name=Argon; f=0.013
+
+# Material 1 corresponding to H=[ -701;-699 ]
+Lung_1: d=260 mg/cm3; n=9; 
++el: name=Hydrogen; f=0.103
++el: name=Carbon; f=0.105
++el: name=Nitrogen; f=0.031
++el: name=Oxygen; f=0.749
++el: name=Sodium; f=0.002
++el: name=Phosphor; f=0.002
++el: name=Sulfur; f=0.003
++el: name=Chlorine; f=0.003
++el: name=Potassium; f=0.002
+
+# Material 2 corresponding to H=[ -699;-1 ]
+Lung_2: d=630 mg/cm3; n=9; 
++el: name=Hydrogen; f=0.103
++el: name=Carbon; f=0.105
++el: name=Nitrogen; f=0.031
++el: name=Oxygen; f=0.749
++el: name=Sodium; f=0.002
++el: name=Phosphor; f=0.002
++el: name=Sulfur; f=0.003
++el: name=Chlorine; f=0.003
++el: name=Potassium; f=0.002
+
+# Material 3 corresponding to H=[ -1;1 ]
+Water_3: d=1 g/cm3 ; n=2; 
++el: name=Hydrogen; f=0.1119
++el: name=Oxygen; f=0.8881
+
+# Material 4 corresponding to H=[ 1;2499 ]
+Water_4: d=1.85 g/cm3 ; n=2; 
++el: name=Hydrogen; f=0.1119
++el: name=Oxygen; f=0.8881
+
+# Material 5 corresponding to H=[ 2499;2501 ]
+Alu_5: d=2.7 g/cm3 ; n=1; 
++el: name=Aluminium; f=1
+
+# Material 6 corresponding to H=[ 2501;2502 ]
+Alu_6: d=2.7219 g/cm3 ; n=1; 
++el: name=Aluminium; f=1
+
