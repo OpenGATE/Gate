@@ -8,8 +8,6 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-#ifdef G4ANALYSIS_USE_ROOT
-
 /*!
   \class GateTrackLengthActor
   \author thibault.frisson@creatis.insa-lyon.fr
@@ -20,12 +18,12 @@ See GATE/LICENSE.txt for further details
 #ifndef GATETRACKLENGTHACTOR_HH
 #define GATETRACKLENGTHACTOR_HH
 
+#include "GateConfiguration.h"
+
+#ifdef G4ANALYSIS_USE_ROOT
+
 #include "GateVActor.hh"
-
-#include "GateActorManager.hh"
-
 #include "GateTrackLengthActorMessenger.hh"
-#include "GateVImageActor.hh"
 
 #include "TROOT.h"
 #include "TFile.h"

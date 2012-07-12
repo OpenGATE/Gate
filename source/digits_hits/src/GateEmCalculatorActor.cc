@@ -14,14 +14,12 @@
   \brief 
 */
 
-#ifndef GATEEmCalculatorActor_CC
-#define GATEEmCalculatorActor_CC
-
 #include "GateEmCalculatorActor.hh"
 #include "GateMiscFunctions.hh"
 #include "G4Event.hh"
 #include "G4MaterialTable.hh"
 #include "G4ParticleTable.hh"
+
 //-----------------------------------------------------------------------------
 /// Constructors (Prototype)
 GateEmCalculatorActor::GateEmCalculatorActor(G4String name, G4int depth):
@@ -175,6 +173,4 @@ void GateEmCalculatorActor::ResetData()
 }
 //-----------------------------------------------------------------------------
 
-
-#endif /* end #define GATEEmCalculatorActor_CC */
 

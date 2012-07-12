@@ -106,7 +106,10 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
 {
   // Initial checking
   if (!m_voxelReader) return 0;
-  assert(GetType() == "backtoback");
+  //  assert(GetType() == "backtoback");
+  if (GetType() != "backtoback") {
+    GateError("Error, the source GPUvoxel is only available for type 'backtoback' (PET application), but you used '" << GetType() << "'. Abort.");
+  }
   assert(m_gpu_input);
 
   // First time here -> phantom data are set
@@ -148,6 +151,7 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
 
     // Display information
     G4PrimaryParticle  * p = event->GetPrimaryVertex(0)->GetPrimary(0);
+    event->SetEventID(mCurrentTimeID);
     GateMessage("Beam", 3, "(" << event->GetEventID() << ") " << p->GetG4code()->GetParticleName() 
                 << " pos=" << event->GetPrimaryVertex(0)->GetPosition()
                 << " weight=" << p->GetWeight()                                
@@ -188,10 +192,17 @@ void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVox
 
   // Position
   G4ThreeVector particle_position;
-  particle_position.setX(particle.px*mm-256*mm); // FIXME HECTOR to replace by m_gpu_input.phantom_size ...
-  particle_position.setY(particle.py*mm-126*mm);
-  particle_position.setZ(particle.pz*mm-92*mm);
+  particle_position.setX(particle.px*mm-m_gpu_input->phantom_size_x*m_gpu_input->phantom_spacing/2.0*mm);
+  particle_position.setY(particle.py*mm-m_gpu_input->phantom_size_y*m_gpu_input->phantom_spacing/2.0*mm);
+  particle_position.setZ(particle.pz*mm-m_gpu_input->phantom_size_z*m_gpu_input->phantom_spacing/2.0*mm);
 
+  
+/*
+G4ThreeVector particle_position;
+particle_position.setX(particle.px*mm-256*mm); // FIXME HECTOR to replace by m_gpu_input.phantom_size ...
+particle_position.setY(particle.py*mm-126*mm);
+particle_position.setZ(particle.pz*mm-92*mm);
+*/
   // Create the vertex
   G4PrimaryVertex* vertex;
   double particle_time = particle.t*ns; // assume time is in ns

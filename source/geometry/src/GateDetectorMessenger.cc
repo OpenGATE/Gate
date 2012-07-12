@@ -8,6 +8,7 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateConfiguration.h"
 
 #include "GateDetectorMessenger.hh"
 #include "GateDetectorConstruction.hh"
@@ -24,7 +25,7 @@ See GATE/LICENSE.txt for further details
 #include "G4Material.hh"
 #include "GateMiscFunctions.hh"
 
-#include "GateConfiguration.h"
+#include "GateObjectStore.hh"
 
 //-----------------------------------------------------------------------------
 GateDetectorMessenger::GateDetectorMessenger(GateDetectorConstruction* GateDet)

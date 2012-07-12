@@ -9,9 +9,9 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #include "GateConfiguration.h"
+
 #ifndef GATEPHOTOELECTRICPB_HH
 #define GATEPHOTOELECTRICPB_HH
-
 
 #include "GateVProcess.hh"
 

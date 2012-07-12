@@ -125,6 +125,7 @@ public:
   void SetOptEMin(G4double val);
   void SetOptEMax(G4double val);
   void SetOptSplineFlag(G4bool val);
+  RegionCutMapType & GetMapOfRegionCuts() { return mapOfRegionCuts; }
 
 private:
   G4EmProcessOptions *opt;

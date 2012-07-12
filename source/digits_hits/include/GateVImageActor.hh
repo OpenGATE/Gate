@@ -20,11 +20,8 @@ See GATE/LICENSE.txt for further details
 #define GATEVIMAGEACTOR_HH
 
 #include "GateVActor.hh"
-
 #include "GateImage.hh"
-
 #include "GateVVolume.hh"
-
 #include "Randomize.hh"
 
 //-----------------------------------------------------------------------------

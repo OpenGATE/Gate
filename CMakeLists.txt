@@ -7,6 +7,14 @@ PROJECT(Gate)
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake-modules ${CMAKE_MODULE_PATH})
 
 #=========================================================
+# Default build type
+IF(NOT CMAKE_BUILD_TYPE)
+  SET(CMAKE_BUILD_TYPE Release CACHE STRING
+      "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+      FORCE)
+ENDIF(NOT CMAKE_BUILD_TYPE)
+
+#=========================================================
 # Option to use visualisation feature of G4
 OPTION(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
 IF(WITH_GEANT4_UIVIS)
@@ -38,6 +46,7 @@ OPTION(GATE_ANALYSIS_USE_GENERAL "Gate use  G4ANALYSIS_USE_GENERAL (Recommanded)
 OPTION(GATE_ANALYSIS_USE_FILE "Gate use G4ANALYSIS_USE_FILE (Recommanded)" ON)
 OPTION(GATE_USE_OWN_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4" ON)
 OPTION(GATE_USE_CUDA "Gate use CUDA for primaries generation" OFF)
+OPTION(GATE_cuda_actor_tracking "Gate cuda tracking" OFF)
 
 IF(GATE_USE_ROOT)
    FIND_PACKAGE(ROOT REQUIRED)
@@ -54,11 +63,9 @@ ENDIF()
 # Option for Optical Photon use
 
 IF(GATE_USE_OPTICAL)
-	FIND_PACKAGE(XML2 REQUIRED)
-	STRING(REGEX REPLACE "-I" "" XML2_INCLUDE_DIR ${XML2_INCLUDE_DIR})
-	INCLUDE_DIRECTORIES(${XML2_INCLUDE_DIR})
-	SET(LINK_DIRECTORIES ${XML2_LIBRARIES})
-	#MESSAGE("Found Xml2 in ${XML2_INCLUDE_DIR} ${XML2_LIBRARY_DIR} ${XML2_LIBRARIES}")
+    FIND_PACKAGE(LIBXML2 REQUIRED)
+    INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
+    SET(LINK_DIRECTORIES ${LIBXML2_LIBRARIES})
 ENDIF(GATE_USE_OPTICAL)
 
 #=========================================================
@@ -117,7 +124,11 @@ INCLUDE_DIRECTORIES(
 	${PROJECT_SOURCE_DIR}/source/geometry/include
 	${PROJECT_SOURCE_DIR}/source/physics/include
 	${PROJECT_SOURCE_DIR}/source/digits_hits/include
-	${PROJECT_SOURCE_DIR}/source/general/include)
+	${PROJECT_SOURCE_DIR}/source/general/include
+	${PROJECT_SOURCE_DIR}/source/itk-mhd/
+	${PROJECT_SOURCE_DIR}/source/itk-mhd/itkzlib
+	${PROJECT_SOURCE_DIR}/source/itk-mhd/MetaIO
+        ${PROJECT_BINARY_DIR}/itk-mhd/)
 
 #=========================================================
 # Locate sources and headers for this project
@@ -127,8 +138,16 @@ FILE(GLOB sources
 	${PROJECT_SOURCE_DIR}/source/digits_hits/src/*.cc
 	${PROJECT_SOURCE_DIR}/source/physics/src/*.cc
 	${PROJECT_SOURCE_DIR}/source/general/src/*.cc)
-FILE(GLOB sourcesGPU
+
+IF (GATE_cuda_actor_tracking)
+    FILE(GLOB sourcesGPU
+    ${PROJECT_SOURCE_DIR}/source/gpu/src/actor_track_gpu.cu)
+ELSE()
+    FILE(GLOB sourcesGPU
 	${PROJECT_SOURCE_DIR}/source/gpu/src/track_gpu.cu)
+    #${PROJECT_SOURCE_DIR}/source/gpu/src/actor_track_gpu.cu)
+ENDIF()
+
 FILE(GLOB headers
 	${PROJECT_SOURCE_DIR}/source/arf/include/*.hh
 	${PROJECT_SOURCE_DIR}/source/geometry/include/*.hh
@@ -146,7 +165,13 @@ ELSE(GATE_USE_CUDA AND CUDA_FOUND)
     ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
 ENDIF(GATE_USE_CUDA AND CUDA_FOUND)
 
-TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${XML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY})
+TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ITKMetaIO itkzlib)
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
+
+
+#=========================================================
+# TRIAL ITK
+ADD_SUBDIRECTORY(source/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
+

@@ -60,6 +60,8 @@ class GateImageWithStatistic
   virtual void UpdateUncertaintyImage(int numberOfEvents);
 
   GateImage & GetValueImage() { return mValueImage; }
+  
+  void SetOrigin(G4ThreeVector v);
 
   protected:
   GateImage mValueImage;
@@ -82,9 +84,7 @@ class GateImageWithStatistic
 
   int mValueFD;
   int mSquaredFD;
-  int mUncertaintyFD;
-
-
+  int mUncertaintyFD;  
 
 }; // end class GateImageWithStatistic
 

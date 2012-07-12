@@ -15,6 +15,8 @@ See GATE/LICENSE.txt for further details
 	  david.sarrut@creatis.insa-lyon.fr
  */
 
+#include "GateConfiguration.h"
+
 #ifndef GATEEmCalculatorActor_HH
 #define GATEEmCalculatorActor_HH
 
@@ -23,6 +25,7 @@ See GATE/LICENSE.txt for further details
 #include "GateActorManager.hh"
 //#include "GateActorMessenger.hh"
 #include "G4EmCalculator.hh"
+
 //-----------------------------------------------------------------------------
 /// \brief Actor displaying stopping powers
 class GateEmCalculatorActor : public GateVActor

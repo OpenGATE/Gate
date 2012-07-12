@@ -8,12 +8,10 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateEnergySpectrumActorMessenger.hh"
+
 #ifdef G4ANALYSIS_USE_ROOT
 
-#ifndef GATEENERGYSPECTRUMACTORMESSENGER_CC
-#define GATEENERGYSPECTRUMACTORMESSENGER_CC
-
-#include "GateEnergySpectrumActorMessenger.hh"
 #include "GateEnergySpectrumActor.hh"
 
 //-----------------------------------------------------------------------------
@@ -103,5 +101,4 @@ void GateEnergySpectrumActorMessenger::SetNewValue(G4UIcommand* cmd, G4String ne
 }
 //-----------------------------------------------------------------------------
 
-#endif /* end #define GATEENERGYSPECTRUMACTORMESSENGER_CC */
 #endif

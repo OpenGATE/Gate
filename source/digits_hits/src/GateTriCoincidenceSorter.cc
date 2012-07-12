@@ -160,7 +160,7 @@ G4String GateTriCoincidenceSorter::SetSinglesTreeName(const G4String& name)
 
 //=============================================================================
 //=============================================================================
-void GateTriCoincidenceSorter::DescribeMyself(size_t indent)
+void GateTriCoincidenceSorter::DescribeMyself(size_t /*indent*/)
 {
 //   G4cout << GateTools::Indent(indent) << "Buffer: " << G4BestUnit(m_bufferSize,"Memory size")
 //          << "Read @ "<< G4BestUnit(m_readFrequency,"Frequency")<<G4endl;

@@ -8,6 +8,7 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateConfiguration.h"
 #ifdef G4ANALYSIS_USE_ROOT
 
 /*!
@@ -22,14 +23,12 @@ See GATE/LICENSE.txt for further details
 #define GATEENERGYSPECTRUMACTOR_HH
 
 #include "GateVActor.hh"
-#include "GateActorManager.hh"
-#include "GateEnergySpectrumActorMessenger.hh"
-#include "GateVImageActor.hh"
+#include "GateActorMessenger.hh"
 
-#include "TROOT.h"
-#include "TFile.h"
-#include "TH1.h"
-#include "TH2.h"
+#include <TROOT.h>
+#include <TFile.h>
+#include <TH1.h>
+#include <TH2.h>
 
 //-----------------------------------------------------------------------------
 /// \brief Actor displaying nb events/tracks/step
@@ -116,7 +115,7 @@ protected:
   double tof;
   double edepTrack;
 
-  GateEnergySpectrumActorMessenger * pMessenger;
+  GateActorMessenger* pMessenger;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(EnergySpectrumActor,GateEnergySpectrumActor)

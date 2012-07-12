@@ -32,6 +32,19 @@ GateImageWithStatistic::~GateImageWithStatistic()  {
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
+void GateImageWithStatistic::SetOrigin(G4ThreeVector o) {
+  mValueImage.SetOrigin(o);
+  mSquaredImage.SetOrigin(o);
+  mTempImage.SetOrigin(o);
+  mUncertaintyImage.SetOrigin(o);
+  mScaledValueImage.SetOrigin(o);
+  mScaledSquaredImage.SetOrigin(o);   
+}
+//-----------------------------------------------------------------------------
+
+
 //-----------------------------------------------------------------------------
 void GateImageWithStatistic::SetScaleFactor(double s) {
   // if (s==1.0) mIsValuesMustBeScaled = false;

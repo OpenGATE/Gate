@@ -110,7 +110,7 @@ void GateVImageVolumeMessenger::SetNewValue(G4UIcommand* command,
     pVImageVolume->SetIsoCenter(pIsoCenterCmd->GetNew3VectorValue(newValue));
   }
   else if (command == pSetOriginCmd) {
-    pVImageVolume->SetOrigin(pSetOriginCmd->GetNew3VectorValue(newValue));
+    pVImageVolume->SetOriginByUser(pSetOriginCmd->GetNew3VectorValue(newValue));
   }
   else if (command == pBuildDistanceTransfoCmd) {
     pVImageVolume->SetBuildDistanceTransfoFilename(newValue);  

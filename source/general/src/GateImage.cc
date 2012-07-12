@@ -23,6 +23,7 @@ See GATE/LICENSE.txt for further details
 #include "GateImage.hh"
 #include "GateMiscFunctions.hh"
 #include "GateMachine.hh"
+#include "GateMHDImage.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 #include "TFile.h"
@@ -36,6 +37,7 @@ GateImage::GateImage() {
   halfSize   = G4ThreeVector(0.0, 0.0, 0.0);
   resolution = G4ThreeVector(0.0, 0.0, 0.0);
   mPosition = G4ThreeVector(0.0, 0.0, 0.0);
+  origin = G4ThreeVector(0.0, 0.0, 0.0);
   UpdateSizesFromResolutionAndHalfSize();
   mOutsideValue = 0;
   kCarTolerance = G4GeometryTolerance::GetInstance()->GetSurfaceTolerance();
@@ -776,6 +778,7 @@ void GateImage::UpdateNumberOfValues() {
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateImage::Read(G4String filename) {
   //GateMessage("Image",3,"Read GateImage " << filename << G4endl);
@@ -788,6 +791,7 @@ void GateImage::Read(G4String filename) {
   else if (extension == "hdr") ReadAnalyze(filename);
   else if (extension == "img") ReadAnalyze(filename);
   else if (extension == "img.gz") ReadAnalyze(filename);
+  else if (extension == "mhd") ReadMHD(filename);
   else {
     // GateError( "Unknow image file extension. Knowns extensions are : "
     //	   << G4endl << ".vox, .hdr, .img " << G4endl);
@@ -1026,6 +1030,27 @@ void GateImage::ReadAnalyze(G4String filename) {
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
+void GateImage::ReadMHD(G4String filename) {
+
+  // Read mhd image
+  GateMHDImage * mhd = new GateMHDImage;
+  mhd->ReadHeader(filename);
+  
+  // Get image information
+  resolution = G4ThreeVector(mhd->size[0], mhd->size[1], mhd->size[2]);
+  voxelSize = G4ThreeVector(mhd->spacing[0], mhd->spacing[1], mhd->spacing[2]);
+  origin = G4ThreeVector(mhd->origin[0], mhd->origin[1], mhd->origin[2]);
+  UpdateSizesFromResolutionAndVoxelSize();
+  Allocate();
+  
+  // Get image data
+  mhd->ReadData(filename, data);
+}
+//-----------------------------------------------------------------------------
+
+
 //-----------------------------------------------------------------------------
 void GateImage::ReadAscii(G4String filename) {
   //GateMessage("Image",8,"GateImage::ReadAscii " << filename << G4endl);
@@ -1112,6 +1137,7 @@ void GateImage::ReadAscii(G4String filename) {
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateImage::MergeDataByAddition(G4String filename) {
   //GateDebugMessage("Image", 5, "GateImage::MergeDataByAddition in " << filename << G4endl);
@@ -1134,6 +1160,7 @@ void GateImage::MergeDataByAddition(G4String filename) {
   }
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateImage::Write(G4String filename, const G4String & comment) {
@@ -1180,18 +1207,23 @@ void GateImage::Write(G4String filename, const G4String & comment) {
 	  OpenFileOutput(filename, os);
 	  WriteBin(os);
 	}
-	else {
-	  if (extension == "root") {
-	    WriteRoot(filename);
-	  }
-	  else {
-	    //GateMessage("Image",1,"WARNING : Don't know how to write '" << extension 
-	    //	   << " format... I try ASCII file" << G4endl);
-	    // open
-	    OpenFileOutput(filename, os);
-	    WriteAscii(os, comment);
-	  }
-	}
+        else {
+          if (extension == "mhd") {
+            WriteMHD(filename);
+          }
+          else {
+            if (extension == "root") {
+              WriteRoot(filename);
+            }
+            else {
+              //GateMessage("Image",1,"WARNING : Don't know how to write '" << extension 
+              //	   << " format... I try ASCII file" << G4endl);
+              // open
+              OpenFileOutput(filename, os);
+              WriteAscii(os, comment);
+            }
+          }
+        }
       }
     }
   }
@@ -1217,6 +1249,19 @@ void GateImage::WriteVox(std::ofstream & ) {
   //DS TODO
 }
 //-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateImage::WriteMHD(std::string filename) {
+  GateMessage("Image",1,"GateImage::WriteMHD " << G4endl);
+
+  // Write mhd image
+  GateMHDImage * mhd = new GateMHDImage;
+  mhd->WriteHeader(filename, this);
+  mhd->WriteData(filename, this);  
+}
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateImage::WriteAscii(std::ofstream & os, const G4String & comment) {

@@ -8,11 +8,8 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-#include "GateConfiguration.h"
+#include "GatePhaseSpaceActorMessenger.hh"
 #ifdef G4ANALYSIS_USE_ROOT
-
-#ifndef GATESOURCEACTORMESSENGER_CC
-#define GATESOURCEACTORMESSENGER_CC
 
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithoutParameter.hh"
@@ -20,7 +17,6 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
 
-#include "GatePhaseSpaceActorMessenger.hh"
 #include "GatePhaseSpaceActor.hh"
 
 //-----------------------------------------------------------------------------
@@ -193,5 +189,4 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
 }
 //-----------------------------------------------------------------------------
 
-#endif /* end #define GATESOURCEACTORMESSENGER_CC */
 #endif

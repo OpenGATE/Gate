@@ -30,6 +30,7 @@
 //#cmakedefine G4VERSION_PATCH         @G4VERSION_PATCH@
 #cmakedefine GATE_USE_CUDA           @GATE_USE_CUDA@
 #cmakedefine CUDA_FOUND              @CUDA_FOUND@
+#cmakedefine GATE_cuda_actor_tracking @GATE_cuda_actor_tracking@
 
 // WARNING : Replace all G4VERSION_3 and other with a correct test
 

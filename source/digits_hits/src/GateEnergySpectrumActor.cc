@@ -8,18 +8,10 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateEnergySpectrumActor.hh"
 #ifdef G4ANALYSIS_USE_ROOT
 
-/*
-  \brief Class GateEnergySpectrumActor : 
-  \brief 
- */
-
-#ifndef GATEENERGYSPECTRUMACTOR_CC
-#define GATEENERGYSPECTRUMACTOR_CC
-
-#include "GateEnergySpectrumActor.hh"
-#include "GateMiscFunctions.hh"
+#include "GateEnergySpectrumActorMessenger.hh"
 
 //-----------------------------------------------------------------------------
 /// Constructors (Prototype)
@@ -227,7 +219,4 @@ sumNi+=step->GetTotalEnergyDeposit();}
 }
 //-----------------------------------------------------------------------------
 
-
-
-#endif /* end #define GATEENERGYSPECTRUMACTOR_CC */
 #endif

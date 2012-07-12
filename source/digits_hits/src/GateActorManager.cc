@@ -13,8 +13,8 @@
 #define GATEACTORMANAGER_CC
 
 #include "GateActorManager.hh"
-
-//#include "GateOutputMgr.hh"
+#include "GateVActor.hh"
+#include "GateMultiSensitiveDetector.hh"
 
 //-----------------------------------------------------------------------------
 GateActorManager::GateActorManager()

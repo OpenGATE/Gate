@@ -93,11 +93,11 @@ void GateVImageVolume::SetIsoCenter(const G4ThreeVector & i)
 
 
 //--------------------------------------------------------------------
-void GateVImageVolume::SetOrigin(const G4ThreeVector & i) 
+void GateVImageVolume::SetOriginByUser(const G4ThreeVector & i) 
 {
-  mOrigin = i;
+  origin = i;
   mOriginIsSetByUser = true;
-  GateMessage("Volume",5,"Origin = " << mOrigin << G4endl);
+  GateMessage("Volume",5,"Origin = " << origin << G4endl);
 }
 //--------------------------------------------------------------------
 
@@ -114,26 +114,19 @@ void GateVImageVolume::UpdatePositionWithIsoCenter()
 
     const G4ThreeVector & tcurrent = mInitialTranslation;//GetVolumePlacement()->GetTranslation();
 
-    // DD(mIsoCenterIsSetByUser);
-    //     DD(mOriginIsSetByUser);
-    if ((mOriginIsSetByUser) && (!mIsoCenterIsSetByUser)) {
-      GateError("You could not setOrigin without providing isocenter with TranslateTheImageAtThisIsoCenter\n");
+    if (!mOriginIsSetByUser) {
+      origin = GetImage()->GetOrigin();
     }
-
-    if (!mOriginIsSetByUser) SetOrigin(G4ThreeVector(0,0,0));
     
-    // GateMessage("Volume",0,"Current T = " << tcurrent << G4endl);
-    //     GateMessage("Volume",0,"Isocenter = " << GetIsoCenter() << G4endl);
-    //     GateMessage("Volume",0,"Origin = " << GetOrigin() << G4endl);
-    //     GateMessage("Volume",0,"Half = " << GetHalfSize() << G4endl);
+    GateMessage("Volume",3,"Current T = " << tcurrent << G4endl);
+    GateMessage("Volume",3,"Isocenter = " << GetIsoCenter() << G4endl);
+    GateMessage("Volume",3,"Origin = " << GetOrigin() << G4endl);
+    GateMessage("Volume",3,"Half = " << GetHalfSize() << G4endl);
 
     G4ThreeVector q;
     q = GetIsoCenter()-GetOrigin();
-    // DD(q);
     q = q - GetHalfSize();
-    // DD(q);
     q = tcurrent - q;
-    // DD(q);
     // G4ThreeVector p;
     //     p.setX(tcurrent.x()-(GetIsoCenter().x()-GetOrigin().x()-GetHalfSize().x()));
     //     p.setY(tcurrent.y()-(GetIsoCenter().y()-GetOrigin().y()-GetHalfSize().y()));
@@ -274,6 +267,9 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
     pImage->SetOutsideValue(  pImage->GetMinValue() - 1 );
   }
 
+  // Get origin from the image
+  origin = pImage->GetOrigin();
+
   GateMessage("Volume",4,"voxel size" << pImage->GetVoxelSize() << G4endl);
   GateMessageDec("Volume",4,"End GateVImageVolume::LoadImage("<<mImageFilename<<")" << G4endl);
 }
@@ -378,6 +374,7 @@ void GateVImageVolume::DumpHLabelImage() {
   if (mWriteHLabelImage) {
     ImageType output;
     output.SetResolutionAndVoxelSize(pImage->GetResolution(), pImage->GetVoxelSize());
+    output.SetOrigin(pImage->GetOrigin());
     output.Allocate();
    
    //  GateHounsfieldMaterialTable::LabelToMaterialNameType lab2mat;

@@ -8,16 +8,17 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateConfiguration.h"
 
 #ifndef GATEEMULTISCATTERINGPB_HH
 #define GATEEMULTISCATTERINGPB_HH
 
-
 #include "GateVProcess.hh"
 
 #include "G4eMultipleScattering.hh"
+#include "G4UrbanMscModel93.hh"
+#include "G4UrbanMscModel95.hh"
 
-MAKE_PROCESS_AUTO_CREATOR(GateeMultipleScatteringPB)
-
+MAKE_PROCESS_AUTO_CREATOR_WITH_MODEL(GateeMultipleScatteringPB)
 
 #endif

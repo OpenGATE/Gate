@@ -216,6 +216,11 @@ void GateVSource::SetRelativePlacementVolume(G4String volname) {
 //-------------------------------------------------------------------------------------------------
 G4double GateVSource::GetNextTime( G4double timeStart )
 {
+
+/* GetVolumeID ??? */
+
+
+ 
   // returns the proposed time for the next event of this source, sampled from the 
   // source time distribution
   G4double aTime = DBL_MAX;
@@ -292,7 +297,7 @@ G4double GateVSource::GetNextTime( G4double timeStart )
 
   if( nVerboseLevel > 0 )
     G4cout << "GateVSource::GetNextTime : next time (s) " << aTime/s << G4endl;
-
+   
   return aTime;
 }
 //-------------------------------------------------------------------------------------------------
@@ -409,6 +414,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
         // NB: temporary: secondary ions of the decay chain not properly treated
         SetParticleTime( m_time );
         GeneratePrimaryVertex( event );
+
       }
       else {
         GateError("Sorry, I don't know the source type '"<< GetType() << "'. Known source types are"
@@ -433,6 +439,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       //if (event) {
       //  printf("time %e ns\n", GetTime());
       //}
+
 
       //G4cout<<"Generate primaries"<<G4endl;
       return numVertices;
@@ -668,7 +675,16 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
             G4cout << "Creating primaries and assigning to vertex" << G4endl;
           }
         } // end loop on NumberOfParticles
-  
+
+/*G4StepPoint point1;
+G4ThreeVector position(particle_position.x(),particle_position.y(),particle_position.z());
+point1.SetPosition(position);
+G4cout << particle_position.x()/mm << " " << particle_position.y()/mm << " " << particle_position.z()/mm << G4endl;
+G4cout << point1.GetPosition().x()/mm << " " << point1.GetPosition().y()/mm << " " << point1.GetPosition().z()/mm << G4endl;
+G4Material* material = point1.GetMaterial();
+G4String nameMaterial = material->GetName();*/
+//G4cout<<"####### Material Name du step : "<<point1.GetMaterial()->GetName()<<G4endl;
+
       aEvent->AddPrimaryVertex( vertex );
     }
 

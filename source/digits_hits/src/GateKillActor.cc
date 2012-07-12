@@ -14,9 +14,6 @@
   \brief 
 */
 
-#ifndef GATEKILLACTOR_CC
-#define GATEKILLACTOR_CC
-
 #include "GateKillActor.hh"
 
 #include "GateMiscFunctions.hh"
@@ -26,8 +23,7 @@
 GateKillActor::GateKillActor(G4String name, G4int depth):GateVActor(name,depth)
 {
   GateDebugMessageInc("Actor",4,"GateKillActor() -- begin"<<G4endl);
-  //SetTypeName("KillActor");
-  pActor = new GateActorMessenger(this);
+  pMessenger = new GateActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateKillActor() -- end"<<G4endl);
 }
 //-----------------------------------------------------------------------------
@@ -38,6 +34,7 @@ GateKillActor::GateKillActor(G4String name, G4int depth):GateVActor(name,depth)
 GateKillActor::~GateKillActor() 
 {
   GateDebugMessageInc("Actor",4,"~GateKillActor() -- begin"<<G4endl);
+  delete pMessenger;
   GateDebugMessageDec("Actor",4,"~GateKillActor() -- end"<<G4endl);
 }
 //-----------------------------------------------------------------------------
@@ -90,6 +87,4 @@ void GateKillActor::ResetData()
 }
 //-----------------------------------------------------------------------------
 
-
-#endif /* end #define GATEKILLACTOR_CC */
 

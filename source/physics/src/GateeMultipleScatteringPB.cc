@@ -8,29 +8,19 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-
+#include "GateConfiguration.h"
 #include "GateeMultipleScatteringPB.hh"
-
 #include "GateMultiScatteringMessenger.hh"
 
 //-----------------------------------------------------------------------------
 GateeMultipleScatteringPB::GateeMultipleScatteringPB():GateVProcess("eMultipleScattering")
 {  
-  SetDefaultParticle("e+"); SetDefaultParticle("e-");
-  /*SetDefaultParticle("mu+"); SetDefaultParticle("mu-");
-  SetDefaultParticle("tau+"); SetDefaultParticle("tau-");
-  SetDefaultParticle("pi+"); SetDefaultParticle("pi-");
-  SetDefaultParticle("kaon+"); SetDefaultParticle("kaon-");
-  SetDefaultParticle("sigma+"); SetDefaultParticle("sigma-");
-  SetDefaultParticle("proton"); SetDefaultParticle("anti_proton");
-  SetDefaultParticle("xi-"); SetDefaultParticle("anti_xi-");
-  SetDefaultParticle("anti_sigma+"); SetDefaultParticle("anti_sigma-");
-  SetDefaultParticle("omega-"); SetDefaultParticle("anti_omega-");
-  SetDefaultParticle("deuteron");
-  SetDefaultParticle("triton");
-  SetDefaultParticle("He3");
-  SetDefaultParticle("alpha");
-  SetDefaultParticle("GenericIon");*/
+  SetDefaultParticle("e+"); 
+  SetDefaultParticle("e-");
+
+  AddToModelList("Urban95Model");
+  AddToModelList("Urban93Model");
+
   SetProcessInfo("Multiple Coulomb scattering of charged particles");
   pMessenger = new GateMultiScatteringMessenger(this);  
 }
@@ -60,6 +50,50 @@ bool GateeMultipleScatteringPB::IsApplicable(G4ParticleDefinition * par)
       if(par->GetParticleName() == theListOfDefaultParticles[i]) return true;
   return false;
 }
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+bool GateeMultipleScatteringPB::IsModelApplicable(G4String ,G4ParticleDefinition * par)
+{
+  for(unsigned int k = 0; k<theListOfParticlesWithSelectedModels.size();k++) 
+    if(par==theListOfParticlesWithSelectedModels[k]) 
+      GateError("A " << GetG4ProcessName() << " model has been already selected for " << par->GetParticleName());
+  if(par == G4Electron::Electron()) return true;
+  if(par == G4Positron::Positron()) return true;
+  return false;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateeMultipleScatteringPB::AddUserModel(GateListOfHadronicModels *model){
+  if(model->GetModelName() == "Urban93Model")
+  {
+    dynamic_cast<G4VMultipleScattering*>(pProcess)->AddEmModel(1, new G4UrbanMscModel93());
+  }
+
+  if(model->GetModelName() == "Urban95Model")
+  {
+    dynamic_cast<G4VMultipleScattering*>(pProcess)->AddEmModel(1, new G4UrbanMscModel95());
+  }
+
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+bool GateeMultipleScatteringPB::IsDatasetApplicable(G4String ,G4ParticleDefinition * par)
+{
+  if(par == G4Electron::Electron()) return true;
+  if(par == G4Positron::Positron()) return true;
+  return false;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateeMultipleScatteringPB::AddUserDataSet(G4String ){}
 //-----------------------------------------------------------------------------
 
 

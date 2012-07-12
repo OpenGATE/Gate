@@ -28,6 +28,7 @@
 #include <iomanip>   
 #include <vector>
 
+#include "GateActorManager.hh"
 #include "GateNamedObject.hh"
 #include "GateMessageManager.hh"
 #include "GateFilterManager.hh"
@@ -36,13 +37,6 @@
 #include "G4VPrimitiveScorer.hh"
 #include "G4THitsMap.hh"
 #include "G4TouchableHistory.hh"
-
-class G4Run;
-class G4Event;
-class G4Track;
-class G4Step;
-
-class GateActorMessenger;
 
 class GateVActor : 
   public GateNamedObject,

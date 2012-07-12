@@ -8,7 +8,7 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-#include "GateConfiguration.h"
+#include "GatePhaseSpaceActor.hh"
 #ifdef G4ANALYSIS_USE_ROOT
 
 /*
@@ -18,14 +18,10 @@
   david.sarrut@creatis.insa-lyon.fr
 */
 
-#ifndef GATESOURCEACTOR_CC
-#define GATESOURCEACTOR_CC
-
 #include "G4VProcess.hh"
-#include "G4RunManager.hh"
+#include "GateRunManager.hh"
 #include "G4Run.hh"
 
-#include "GatePhaseSpaceActor.hh"
 #include "GateMiscFunctions.hh"
 #include "GateObjectStore.hh"
 #include "GateIAEAHeader.h"
@@ -37,6 +33,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
   GateDebugMessageInc("Actor",4,"GatePhaseSpaceActor() -- begin"<<G4endl);
+
+  pMessenger = new GatePhaseSpaceActorMessenger(this);
 
   EnableXPosition = true;
   EnableYPosition = true;
@@ -61,7 +59,6 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   pIAEARecordType = 0;
   pIAEAheader = 0;
   mFileSize = 0;
-  pActorMessenger = new GatePhaseSpaceActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GatePhaseSpaceActor() -- end"<<G4endl);
 }
 // --------------------------------------------------------------------
@@ -72,13 +69,13 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
 GatePhaseSpaceActor::~GatePhaseSpaceActor() 
 {
   GateDebugMessageInc("Actor",4,"~GatePhaseSpaceActor() -- begin"<<G4endl);
-  delete pActorMessenger;  
   // if(pIAEAFile) fclose(pIAEAFile);
   //  pIAEAFile = 0;
   free(pIAEAheader);
   free(pIAEARecordType);
   pIAEAheader = 0;
   pIAEARecordType = 0;
+  delete pMessenger;
   GateDebugMessageDec("Actor",4,"~GatePhaseSpaceActor() -- end"<<G4endl);
 }
 // --------------------------------------------------------------------
@@ -121,6 +118,9 @@ void GatePhaseSpaceActor::Construct()
     if(EnablePartName) pListeVar->Branch("ParticleName", pname ,"ParticleName/C");
     if(EnableProdVol) pListeVar->Branch("ProductionVolume", vol,"ProductionVolume/C");
     if(EnableProdProcess) pListeVar->Branch("ProductionProcess", pro,"ProductionProcess/C");
+    pListeVar->Branch("TrackID",&trackid,"TrackID/I");
+    pListeVar->Branch("EventID",&eventid,"EventID/I");
+    pListeVar->Branch("RunID",&runid,"RunID/I");
 
   }
   else if(mFileType == "IAEAFile"){
@@ -216,6 +216,10 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
     const G4AffineTransform transformation = step->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform();
     localPosition = transformation.TransformPoint(localPosition);
   }
+
+  trackid = step->GetTrack()->GetTrackID();
+  eventid = GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+  runid   = GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
 
   x = localPosition.x();
   y = localPosition.y();
@@ -313,7 +317,7 @@ void GatePhaseSpaceActor::SaveData()
   if(mFileType == "rootFile"){
     pFile = pListeVar->GetCurrentFile();
     pFile->Write();
-    pFile->Close();
+    //pFile->Close();
   }
   else if(mFileType == "IAEAFile"){
     pIAEAheader->orig_histories = mNevent;
@@ -346,5 +350,4 @@ void GatePhaseSpaceActor::ResetData()
 // --------------------------------------------------------------------
 
 
-#endif /* end #define GATESOURCEACTOR_CC */
 #endif /* end #define G4ANALYSIS_USE_ROOT */

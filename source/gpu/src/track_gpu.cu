@@ -86,7 +86,7 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	float size_voxel = input->phantom_spacing; // mm
 
 	// Select a GPU
-	cudaSetDevice(0);
+	cudaSetDevice(1);
 
 	// Vars
 	int gamma_sim = 0;	

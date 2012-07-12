@@ -50,49 +50,49 @@
 
 void printHelpAndQuit( G4String msg )
 {
-	GateMessage( "Core", 0, msg << G4endl );
-	GateMessage( "Core", 0, "Usage: Gate [OPTION]... MACRO_FILE" << G4endl );
-	GateMessage( "Core", 0, G4endl);
-	GateMessage( "Core", 0, "Mandatory arguments to long options are mandatory for short options too." << G4endl );
-	GateMessage( "Core", 0, "  -h, --help             print the help" << G4endl );
-	GateMessage( "Core", 0, "  -a, --param            use the parameterized macro" << G4endl );
-	GateMessage( "Core", 0, "  --d                    use the DigiMode" << G4endl );
-	GateMessage( "Core", 0, "  --qt                   use the Qt visualization mode" << G4endl );
-	exit( EXIT_FAILURE );
+  GateMessage( "Core", 0, msg << G4endl );
+  GateMessage( "Core", 0, "Usage: Gate [OPTION]... MACRO_FILE" << G4endl );
+  GateMessage( "Core", 0, G4endl);
+  GateMessage( "Core", 0, "Mandatory arguments to long options are mandatory for short options too." << G4endl );
+  GateMessage( "Core", 0, "  -h, --help             print the help" << G4endl );
+  GateMessage( "Core", 0, "  -a, --param            set alias. format is '[alias1,value1] [alias2,value2] ...'" << G4endl );
+  GateMessage( "Core", 0, "  --d                    use the DigiMode" << G4endl );
+  GateMessage( "Core", 0, "  --qt                   use the Qt visualization mode" << G4endl );
+  exit( EXIT_FAILURE );
 }
 
 std::queue < G4String > decodeParameters( G4String listOfParameters )
 {
-	// Command queue storing the '/control/alias ALIAS VALUE' command line
-	std::queue < G4String > commandQueue;
+  // Command queue storing the '/control/alias ALIAS VALUE' command line
+  std::queue < G4String > commandQueue;
 
-	// Find the first '[' position and ']' position
-	size_t foundBracket1; // '['
-	size_t foundBracket2; // ']'
-	size_t foundComma; // ','
+  // Find the first '[' position and ']' position
+  size_t foundBracket1; // '['
+  size_t foundBracket2; // ']'
+  size_t foundComma; // ','
 
-	foundBracket1 = listOfParameters.find_first_of( "[" );
-	foundBracket2 = listOfParameters.find_first_of( "]" );
-	foundComma = listOfParameters.find_first_of( "," );
+  foundBracket1 = listOfParameters.find_first_of( "[" );
+  foundBracket2 = listOfParameters.find_first_of( "]" );
+  foundComma = listOfParameters.find_first_of( "," );
 
-	while( foundBracket1 != G4String::npos )
-	{
-		// Getting alias
-		G4String alias = listOfParameters.substr( foundBracket1 + 1, foundComma - foundBracket1 - 1 );
-		// Getting value
-		G4String value = listOfParameters.substr( foundComma + 1, foundBracket2 - foundComma - 1 );
+  while( foundBracket1 != G4String::npos )
+    {
+      // Getting alias
+      G4String alias = listOfParameters.substr( foundBracket1 + 1, foundComma - foundBracket1 - 1 );
+      // Getting value
+      G4String value = listOfParameters.substr( foundComma + 1, foundBracket2 - foundComma - 1 );
 		
-		// Creating alias command and store it
-		G4String newAliasCommand = G4String( "/control/alias " ) + alias + G4String( " " ) + value;
-		commandQueue.push( newAliasCommand );
+      // Creating alias command and store it
+      G4String newAliasCommand = G4String( "/control/alias " ) + alias + G4String( " " ) + value;
+      commandQueue.push( newAliasCommand );
 
-		// Fetching other bounds []
-		foundBracket1 = listOfParameters.find_first_of( "[", foundBracket1 + 1 );
-		foundBracket2 = listOfParameters.find_first_of( "]", foundBracket2 + 1 );
-		foundComma = listOfParameters.find_first_of( ",", foundComma + 1 );
-	}
+      // Fetching other bounds []
+      foundBracket1 = listOfParameters.find_first_of( "[", foundBracket1 + 1 );
+      foundBracket2 = listOfParameters.find_first_of( "]", foundBracket2 + 1 );
+      foundComma = listOfParameters.find_first_of( ",", foundComma + 1 );
+    }
 
-	return commandQueue;
+  return commandQueue;
 }
 
 #ifndef G4ANALYSIS_USE_ROOT
@@ -121,240 +121,240 @@ void abortIfRootNotFound()
 
 void executeCommandQueue( std::queue< G4String > commandQueue, G4UImanager* UImanager )
 {
-	while( commandQueue.size() )
-	{
-		G4cout << commandQueue.front() << G4endl;
-		UImanager->ApplyCommand( commandQueue.front() );
-		commandQueue.pop();
-	}
+  while( commandQueue.size() )
+    {
+      G4cout << commandQueue.front() << G4endl;
+      UImanager->ApplyCommand( commandQueue.front() );
+      commandQueue.pop();
+    }
 }
 
 void welcome()
 {
-	GateMessage( "Core", 0, G4endl );
-	GateMessage( "Core", 0, "**********************************************************************" << G4endl );
-	GateMessage( "Core", 0, " GATE version name: gate_v6.2                                         " << G4endl );
-	GateMessage( "Core", 0, "                    Copyright : OpenGATE Collaboration                " << G4endl );
-	GateMessage( "Core", 0, "                    Reference : Phys. Med. Biol. 49 (2004) 4543-4561  " << G4endl );
-	GateMessage( "Core", 0, "                    Reference : Phys. Med. Biol. 56 (2011) 881-901    " << G4endl );
-	GateMessage( "Core", 0, "                    WWW : http://www.opengatecollaboration.org        " << G4endl );
-	GateMessage( "Core", 0, "**********************************************************************" << G4endl );
-	GateMessage( "Core", 0, G4endl );
+  GateMessage( "Core", 0, G4endl );
+  GateMessage( "Core", 0, "**********************************************************************" << G4endl );
+  GateMessage( "Core", 0, " GATE version name: gate_v6.2                                         " << G4endl );
+  GateMessage( "Core", 0, "                    Copyright : OpenGATE Collaboration                " << G4endl );
+  GateMessage( "Core", 0, "                    Reference : Phys. Med. Biol. 49 (2004) 4543-4561  " << G4endl );
+  GateMessage( "Core", 0, "                    Reference : Phys. Med. Biol. 56 (2011) 881-901    " << G4endl );
+  GateMessage( "Core", 0, "                    WWW : http://www.opengatecollaboration.org        " << G4endl );
+  GateMessage( "Core", 0, "**********************************************************************" << G4endl );
+  GateMessage( "Core", 0, G4endl );
 }
 
 int main( int argc, char* argv[] )
 {
-	// First of all, set the G4cout to our message manager
-	GateMessageManager* theGateMessageManager = GateMessageManager::GetInstance();
-	G4UImanager::GetUIpointer()->SetCoutDestination( theGateMessageManager );
+  // First of all, set the G4cout to our message manager
+  GateMessageManager* theGateMessageManager = GateMessageManager::GetInstance();
+  G4UImanager::GetUIpointer()->SetCoutDestination( theGateMessageManager );
 
-	#ifdef G4ANALYSIS_USE_ROOT
+#ifdef G4ANALYSIS_USE_ROOT
   // "Magic" line to avoid problem with ROOT plugin. It is useful when
   // compiling Gate on a given system and executing it remotely on
   // another (grid or cluster).  See
   // http://root.cern.ch/root/roottalk/roottalk08/0690.html
   // DS.
   gROOT->GetPluginManager()->AddHandler( "TVirtualStreamerInfo", "*", "TStreamerInfo", "RIO", "TStreamerInfo()" );
-	#endif
+#endif
 
-	GateSteppingVerbose* verbosity = new GateSteppingVerbose;
-	G4VSteppingVerbose::SetInstance( verbosity );
+  GateSteppingVerbose* verbosity = new GateSteppingVerbose;
+  G4VSteppingVerbose::SetInstance( verbosity );
 
-	// random engine
-	GateRandomEngine* randomEngine = GateRandomEngine::GetInstance();
+  // random engine
+  GateRandomEngine* randomEngine = GateRandomEngine::GetInstance();
 
-	// analyzing arguments
-	static G4int isDigiMode = 0; // DigiMode false by default
-	static G4int isQt = 0; // Enable Qt or not
-	G4String listOfParameters = ""; // List of parameters for parameterized macro
-	DigiMode aDigiMode = kruntimeMode;
+  // analyzing arguments
+  static G4int isDigiMode = 0; // DigiMode false by default
+  static G4int isQt = 0; // Enable Qt or not
+  G4String listOfParameters = ""; // List of parameters for parameterized macro
+  DigiMode aDigiMode = kruntimeMode;
 
-	// Loop over arguments
-	G4int c = 0;
-	while( 1 )
-	{
-		// Declaring options
-		G4int optionIndex = 0;
-		static struct option longOptions[] = {
-			{ "help", no_argument, 0, 'h' },
-			{ "d", no_argument, &isDigiMode, 1 },
-			{ "qt", no_argument, &isQt, 1 },
-			{ "param", required_argument, 0, 'a' }
-		};
+  // Loop over arguments
+  G4int c = 0;
+  while( 1 )
+    {
+      // Declaring options
+      G4int optionIndex = 0;
+      static struct option longOptions[] = {
+        { "help", no_argument, 0, 'h' },
+        { "d", no_argument, &isDigiMode, 1 },
+        { "qt", no_argument, &isQt, 1 },
+        { "param", required_argument, 0, 'a' }
+      };
 
-		// Getting the option
-		c = getopt_long( argc, argv, "ha:", longOptions, &optionIndex );
+      // Getting the option
+      c = getopt_long( argc, argv, "ha:", longOptions, &optionIndex );
 
-		// Exit the loop if -1
-		if( c == -1 ) break;
+      // Exit the loop if -1
+      if( c == -1 ) break;
 
-		// Analyzing each option
-		switch( c )
-		{
-			case 0:
-				// If this option set a flag, do nothing else now
-				if( longOptions[ optionIndex ].flag != 0 ) break;
-				break;
-			case 'h':
-				printHelpAndQuit( "Printing help!!!" );
-				break;
-			case 'a':
-				listOfParameters = optarg;
-				break;
-			default:
-				printHelpAndQuit( "Out of switch options" );
-				break;
-		}
-	}
+      // Analyzing each option
+      switch( c )
+        {
+        case 0:
+          // If this option set a flag, do nothing else now
+          if( longOptions[ optionIndex ].flag != 0 ) break;
+          break;
+        case 'h':
+          printHelpAndQuit( "Printing help!!!" );
+          break;
+        case 'a':
+          listOfParameters = optarg;
+          break;
+        default:
+          printHelpAndQuit( "Out of switch options" );
+          break;
+        }
+    }
 
-	// Checking if the DigiMode is activated
-	if( isDigiMode )
-		aDigiMode = kofflineMode;
+  // Checking if the DigiMode is activated
+  if( isDigiMode )
+    aDigiMode = kofflineMode;
 
-	// Analyzing parameterized macro
-	std::queue< G4String > commandQueue = decodeParameters( listOfParameters );
+  // Analyzing parameterized macro
+  std::queue< G4String > commandQueue = decodeParameters( listOfParameters );
 
-	// Install the signal handler to handle interrupt calls
-	GateSignalHandler::Install();
+  // Install the signal handler to handle interrupt calls
+  GateSignalHandler::Install();
 
-	// Construct the default run manager
-	GateRunManager* runManager = new GateRunManager;  
+  // Construct the default run manager
+  GateRunManager* runManager = new GateRunManager;  
 
-	// Set the Basic ROOT Output
-	GateRecorderBase* myRecords = 0;
-	#ifdef G4ANALYSIS_USE_ROOT
-	myRecords = new GateROOTBasicOutput;
-	#endif
+  // Set the Basic ROOT Output
+  GateRecorderBase* myRecords = 0;
+#ifdef G4ANALYSIS_USE_ROOT
+  myRecords = new GateROOTBasicOutput;
+#endif
 
   // Set the DetectorConstruction
-	GateDetectorConstruction* gateDC = new GateDetectorConstruction();
-	runManager->SetUserInitialization( gateDC );
+  GateDetectorConstruction* gateDC = new GateDetectorConstruction();
+  runManager->SetUserInitialization( gateDC );
 
-	// Set the PhysicsList  
-	runManager->SetUserInitialization( GatePhysicsList::GetInstance() );
+  // Set the PhysicsList  
+  runManager->SetUserInitialization( GatePhysicsList::GetInstance() );
 
-	// Set the users actions to handle callback for actors - before the initialisation
-	new GateUserActions( runManager, myRecords );
+  // Set the users actions to handle callback for actors - before the initialisation
+  new GateUserActions( runManager, myRecords );
 
-	// Set the Visualization Manager
-	#ifdef G4VIS_USE
-	theGateMessageManager->EnableG4Messages( false );
-	G4VisManager* visManager = new G4VisExecutive;
-	visManager->Initialize();
-	theGateMessageManager->EnableG4Messages( true );
-	#endif
+  // Set the Visualization Manager
+#ifdef G4VIS_USE
+  theGateMessageManager->EnableG4Messages( false );
+  G4VisManager* visManager = new G4VisExecutive;
+  visManager->Initialize();
+  theGateMessageManager->EnableG4Messages( true );
+#endif
 
-	// Initialize G4 kernel
-	runManager->InitializeAll();
+  // Initialize G4 kernel
+  runManager->InitializeAll();
 
-	// Incorporate the user actions, set the particles generator
-	runManager->SetUserAction( new GatePrimaryGeneratorAction() );  
+  // Incorporate the user actions, set the particles generator
+  runManager->SetUserAction( new GatePrimaryGeneratorAction() );  
 
-	// Create various singleton objets
-	#ifdef G4ANALYSIS_USE_GENERAL
-	GateOutputMgr::SetDigiMode( aDigiMode );
-	GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
-	GateDigitizer* digitizer = GateDigitizer::GetInstance();
-	GatePulseProcessorChain* singleChain = new GatePulseProcessorChain( digitizer, "Singles" ); 
-	digitizer->StoreNewPulseProcessorChain( singleChain );
-	#endif
+  // Create various singleton objets
+#ifdef G4ANALYSIS_USE_GENERAL
+  GateOutputMgr::SetDigiMode( aDigiMode );
+  GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
+  GateDigitizer* digitizer = GateDigitizer::GetInstance();
+  GatePulseProcessorChain* singleChain = new GatePulseProcessorChain( digitizer, "Singles" ); 
+  digitizer->StoreNewPulseProcessorChain( singleChain );
+#endif
 
-	if( aDigiMode == kofflineMode )
-		#ifdef G4ANALYSIS_USE_ROOT
-		GateHitFileReader::GetInstance();
-		#else
-		abortIfRootNotFound();
-		#endif
+  if( aDigiMode == kofflineMode )
+#ifdef G4ANALYSIS_USE_ROOT
+    GateHitFileReader::GetInstance();
+#else
+  abortIfRootNotFound();
+#endif
 
-	GateSourceMgr* sourceMgr = GateSourceMgr::GetInstance();
-	GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
-	GateClock::GetInstance()->SetTime( 0 );
-	GateUIcontrolMessenger* controlMessenger = new GateUIcontrolMessenger;
+  GateSourceMgr* sourceMgr = GateSourceMgr::GetInstance();
+  GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
+  GateClock::GetInstance()->SetTime( 0 );
+  GateUIcontrolMessenger* controlMessenger = new GateUIcontrolMessenger;
 
-	// Get the pointer to the User Interface manager
-	G4UImanager* UImanager = G4UImanager::GetUIpointer(); 
+  // Get the pointer to the User Interface manager
+  G4UImanager* UImanager = G4UImanager::GetUIpointer(); 
 
-	// Declaring pointers
-	G4UIExecutive* ui = NULL;
-	G4UIsession* session = NULL;
-	if( isQt )
-	{
-		#ifdef G4UI_USE
-		ui = new G4UIExecutive( argc, argv );
-		#else
-			#ifdef G4UI_USE_TCSH
-			session = new G4UIterminal( new G4UItcsh );      
-			#else
-			session = new G4UIterminal();
-			#endif
-		#endif
-	}
-	else
-	{
-		#ifdef G4UI_USE_TCSH
-		session = new G4UIterminal( new G4UItcsh );      
-		#else
-		session = new G4UIterminal();
-		#endif
-	}
+  // Declaring pointers
+  G4UIExecutive* ui = NULL;
+  G4UIsession* session = NULL;
+  if( isQt )
+    {
+#ifdef G4UI_USE
+      ui = new G4UIExecutive( argc, argv );
+#else
+#ifdef G4UI_USE_TCSH
+      session = new G4UIterminal( new G4UItcsh );      
+#else
+      session = new G4UIterminal();
+#endif
+#endif
+    }
+  else
+    {
+#ifdef G4UI_USE_TCSH
+      session = new G4UIterminal( new G4UItcsh );      
+#else
+      session = new G4UIterminal();
+#endif
+    }
 
-	// Macro file parameters	
-	G4int isMacroFile = 0;
-	G4String macrofilename = "";
-	// Checking if macro file is here
-	// macrofilename always the last arguments, check if '.mac' is in the string
-	G4String lastArgument = argv[ argc - 1 ];
-	// Finding a point in 'lastArgument'
-	size_t foundPoint = lastArgument.find_last_of( "." );
-	// Finding suffix
-	G4String suffix = "";
-	if( foundPoint != G4String::npos )
-		suffix = lastArgument.substr( foundPoint + 1 );
-	if( suffix == "mac" )
-	{
-		isMacroFile = 1;
-		macrofilename = lastArgument;
-	}
+  // Macro file parameters	
+  G4int isMacroFile = 0;
+  G4String macrofilename = "";
+  // Checking if macro file is here
+  // macrofilename always the last arguments, check if '.mac' is in the string
+  G4String lastArgument = argv[ argc - 1 ];
+  // Finding a point in 'lastArgument'
+  size_t foundPoint = lastArgument.find_last_of( "." );
+  // Finding suffix
+  G4String suffix = "";
+  if( foundPoint != G4String::npos )
+    suffix = lastArgument.substr( foundPoint + 1 );
+  if( suffix == "mac" )
+    {
+      isMacroFile = 1;
+      macrofilename = lastArgument;
+    }
 
-	// Using 'session' if not Qt
-	welcome();
-	// Launching Gate if macro file
-	if( isMacroFile )
-	{
-		executeCommandQueue( commandQueue, UImanager );
-		GateMessage( "Core", 0, "Starting macro " << macrofilename << G4endl);
-		G4String command = "/control/execute ";
-		UImanager->ApplyCommand( command + macrofilename );
-		GateMessage( "Core", 0, "End of macro " << macrofilename << G4endl);
-	}
-	else if( ui ) // Launching interactive mode // Qt
-  {
-		ui->SessionStart();
-		delete ui;
-	}
-	else if( session ) // Terminal
-	{
-		session->SessionStart();
-		delete session;
-	}
+  // Using 'session' if not Qt
+  welcome();
+  // Launching Gate if macro file
+  if( isMacroFile )
+    {
+      executeCommandQueue( commandQueue, UImanager );
+      GateMessage( "Core", 0, "Starting macro " << macrofilename << G4endl);
+      G4String command = "/control/execute ";
+      UImanager->ApplyCommand( command + macrofilename );
+      GateMessage( "Core", 0, "End of macro " << macrofilename << G4endl);
+    }
+  else if( ui ) // Launching interactive mode // Qt
+    {
+      ui->SessionStart();
+      delete ui;
+    }
+  else if( session ) // Terminal
+    {
+      session->SessionStart();
+      delete session;
+    }
 
-	#ifdef G4ANALYSIS_USE_GENERAL
-	if (outputMgr) delete outputMgr;
-	#endif
+#ifdef G4ANALYSIS_USE_GENERAL
+  if (outputMgr) delete outputMgr;
+#endif
 
-	#ifdef G4VIS_USE
-	delete visManager;
-	#endif
+#ifdef G4VIS_USE
+  delete visManager;
+#endif
 
-	delete sourceMgr;
+  delete sourceMgr;
   delete appMgr;
-	delete UImanager;
-	delete randomEngine;
-	delete controlMessenger;
-	#ifdef G4ANALYSIS_USE_ROOT
-	delete myRecords;
-	#endif
-	delete verbosity;
+  delete UImanager;
+  delete randomEngine;
+  delete controlMessenger;
+#ifdef G4ANALYSIS_USE_ROOT
+  delete myRecords;
+#endif
+  delete verbosity;
 
-	return 0;
+  return 0;
 }

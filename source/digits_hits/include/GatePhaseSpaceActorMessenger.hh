@@ -15,10 +15,11 @@ See GATE/LICENSE.txt for further details
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
 	  david.sarrut@creatis.insa-lyon.fr
+	  pierre.gueth@creatis.insa-lyon.fr
 */
 
-#ifndef GATESOURCEACTORMESSENGER_HH
-#define GATESOURCEACTORMESSENGER_HH
+#ifndef GATEPHASESPACEACTORMESSENGER_HH
+#define GATEPHASESPACEACTORMESSENGER_HH
 
 #include "globals.hh"
 #include "GateActorMessenger.hh"

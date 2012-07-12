@@ -9,11 +9,10 @@
   ----------------------*/
 
 #include "GateConfiguration.h"
-
 #ifdef G4ANALYSIS_USE_ROOT
 
-#ifndef GATESOURCEACTOR_HH
-#define GATESOURCEACTOR_HH
+#ifndef GATEPHASESPACEACTOR_HH
+#define GATEPHASESPACEACTOR_HH
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -23,7 +22,6 @@
 #include "TString.h"
 
 #include "GateVActor.hh"
-#include "GateActorManager.hh"
 #include "GatePhaseSpaceActorMessenger.hh"
 
 class iaea_header_type;
@@ -112,7 +110,7 @@ protected:
  
   bool mIsFistStep;
 
-  Char_t  pname[64];
+  Char_t  pname[256];
   float x;
   float y;
   float z;
@@ -125,13 +123,14 @@ protected:
   float m;
   Char_t vol[256];
   Char_t pro[256];
+  int trackid;
+  int eventid;
+  int runid;
 
-  GatePhaseSpaceActorMessenger * pActorMessenger;
+  GatePhaseSpaceActorMessenger* pMessenger;
 
   iaea_record_type *pIAEARecordType;
   iaea_header_type *pIAEAheader;
-
-
 };
 
 MAKE_AUTO_CREATOR_ACTOR(PhaseSpaceActor,GatePhaseSpaceActor)

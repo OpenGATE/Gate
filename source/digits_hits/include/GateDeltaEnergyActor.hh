@@ -16,11 +16,12 @@ See GATE/LICENSE.txt for further details
 	  david.sarrut@creatis.insa-lyon.fr
  */
 
+#include "GateConfiguration.h"
+
 #ifndef GATESTOPPOWACTOR_HH
 #define GATESTOPPOWACTOR_HH
 
 #include "GateVImageActor.hh"
-#include "GateActorManager.hh"
 #include "G4UnitsTable.hh"
 #include "GateImageWithStatistic.hh"
 #include "GateImageActorMessenger.hh"

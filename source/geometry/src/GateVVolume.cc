@@ -109,6 +109,9 @@ GateVVolume::GateVVolume(const G4String& itsName,
   // Attach volume creator messenger
   pMessenger = new GateVolumeMessenger(this);
 
+  // Init origin
+  origin = G4ThreeVector(0.0, 0.0, 0.0);
+
   // Register with the creator-store
   GateObjectStore::GetInstance()->RegisterCreator(this);
   

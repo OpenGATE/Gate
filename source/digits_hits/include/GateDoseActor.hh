@@ -27,7 +27,8 @@ See GATE/LICENSE.txt for further details
 #include "G4UnitsTable.hh"
 #include "GateDoseActorMessenger.hh"
 #include "GateImageWithStatistic.hh"
-#include "GateEmCalculatorActor.hh"
+
+class G4EmCalculator;
 
 class GateDoseActor : public GateVImageActor
 {
@@ -72,7 +73,7 @@ class GateDoseActor : public GateVImageActor
   virtual void UserPreTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/) {}
   virtual void UserPostTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/) {}
 
- /// Saves the data collected to the file
+  /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
 

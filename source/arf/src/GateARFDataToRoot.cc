@@ -49,12 +49,7 @@ See GATE/LICENSE.txt for further details
 #include "GateOutputMgr.hh"
 
 #include "TROOT.h"
-#include "TApplication.h"
-#include "TGClient.h"
-#include "TCanvas.h"
-#include "TSystem.h"
 #include "TTree.h"
-#include "TBranch.h"
 #include "TFile.h"
 #include "G4DigiManager.hh"
 

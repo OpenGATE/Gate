@@ -202,6 +202,9 @@ public :
   
  // virtual void PropagateRegionToChild(){}
 
+  /// Returns origin
+  inline G4ThreeVector GetOrigin()     const { return origin; }
+
 protected :
 
   //! This method retrieves a material from its name, and stores a pointer to this 
@@ -275,6 +278,9 @@ protected :
   G4VSensitiveDetector* m_sensitiveDetector;
 
   GateVActor * pActor;
+
+  // Some volume can have an origin, store it.
+  G4ThreeVector origin;
 
 private :
   

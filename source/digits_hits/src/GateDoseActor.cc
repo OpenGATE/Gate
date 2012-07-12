@@ -19,6 +19,8 @@
 
 #include "GateDoseActor.hh"
 #include "GateMiscFunctions.hh"
+#include <G4EmCalculator.hh>
+#include <G4VoxelLimits.hh>
 
 //-----------------------------------------------------------------------------
 GateDoseActor::GateDoseActor(G4String name, G4int depth):
@@ -102,6 +104,39 @@ void GateDoseActor::Construct() {
   mRBE1BetaFilename = G4String(removeExtension(mSaveFilename))+"-RBE1-Beta."+G4String(getExtension(mSaveFilename));
   mRBE1FactorFilename = G4String(removeExtension(mSaveFilename))+"-RBE1-Factor."+G4String(getExtension(mSaveFilename));
   mRBE1BioDoseFilename = G4String(removeExtension(mSaveFilename))+"-RBE1-BioDose."+G4String(getExtension(mSaveFilename));
+
+  
+  // Set origin, take into account the origin of the attached volume (if exist)
+  G4VoxelLimits limits;
+  G4double min, max;
+  G4AffineTransform origin;
+  double size[3];
+  mVolume->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, origin, min, max);
+  size[0] = max-min;
+  mVolume->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, origin, min, max);
+  size[1] = max-min;
+  mVolume->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, origin, min, max);
+  size[2] = max-min;
+  
+  G4ThreeVector offset;
+  offset[0] = size[0]/2.0 - mHalfSize.x();
+  offset[1] = size[1]/2.0 - mHalfSize.y();
+  offset[2] = size[2]/2.0 - mHalfSize.z();
+
+  offset[0] = mVolume->GetOrigin().x()+offset[0];
+  offset[1] = mVolume->GetOrigin().y()+offset[1];
+  offset[2] = mVolume->GetOrigin().z()+offset[2];
+  offset = offset + mPosition;
+
+  mEdepImage.SetOrigin(offset);
+  mDoseImage.SetOrigin(offset);
+  mNumberOfHitsImage.SetOrigin(offset);
+  mLastHitEventImage.SetOrigin(offset);
+  mDoseToWaterImage.SetOrigin(offset);
+  mRBE1AlphaImage.SetOrigin(offset);
+  mRBE1BetaImage.SetOrigin(offset);
+  mRBE1FactorImage.SetOrigin(offset);
+  mRBE1BioDoseImage.SetOrigin(offset);  
 
   // Resize and allocate images
   if (mIsEdepSquaredImageEnabled || mIsEdepUncertaintyImageEnabled ||

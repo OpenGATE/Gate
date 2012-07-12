@@ -14,7 +14,6 @@
   \brief 
 */
 
-
 #include "GateDeltaEnergyActor.hh"
 #include "GateMiscFunctions.hh"
 

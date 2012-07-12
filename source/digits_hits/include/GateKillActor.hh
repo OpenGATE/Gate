@@ -16,13 +16,11 @@ See GATE/LICENSE.txt for further details
 	  david.sarrut@creatis.insa-lyon.fr
  */
 
+#include "GateConfiguration.h"
 #ifndef GATEKILLACTOR_HH
 #define GATEKILLACTOR_HH
 
 #include "GateVActor.hh"
-
-#include "GateActorManager.hh"
-
 #include "GateActorMessenger.hh"
 
 //-----------------------------------------------------------------------------
@@ -54,10 +52,9 @@ class GateKillActor : public GateVActor
 protected:
   GateKillActor(G4String name, G4int depth=5);
 
-
   long int mNumberOfTrack;
-   
-  GateActorMessenger * pActor;
+
+  GateActorMessenger* pMessenger;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(KillActor,GateKillActor)

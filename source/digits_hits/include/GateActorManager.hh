@@ -23,25 +23,27 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEACTORMANAGER_HH
 #define GATEACTORMANAGER_HH
 
-
 #include "globals.hh"
-#include "G4String.hh"
 #include <iomanip>   
 #include <vector>
 #include <map>
 
-#include "G4SDManager.hh"
+#include <G4String.hh>
+#include <G4SDManager.hh>
+#include <G4MultiFunctionalDetector.hh>
+#include <G4Run.hh>
+#include <G4Event.hh>
 
 #include "GateMessageManager.hh"
 
-#include "GateVActor.hh"
 #include "GateVFilter.hh"
 
-#include "GateMultiSensitiveDetector.hh"
-#include "G4MultiFunctionalDetector.hh"
 
 #include "GateActorManagerMessenger.hh"
 #include "GateObjectChildList.hh"
+
+class GateVActor;
+class GateMultiSensitiveDetector;
 
 class GateActorManager
 {

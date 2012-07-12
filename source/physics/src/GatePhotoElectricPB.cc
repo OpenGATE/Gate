@@ -7,12 +7,10 @@ This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
+
+
 #include "GateConfiguration.h"
-
 #include "GatePhotoElectricPB.hh"
-
-
-
 #include "GatePhotoElectricMessenger.hh"
 
 
@@ -55,6 +53,7 @@ bool GatePhotoElectricPB::IsApplicable(G4ParticleDefinition * par)
   return false;
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 bool GatePhotoElectricPB::IsModelApplicable(G4String ,G4ParticleDefinition * par)
