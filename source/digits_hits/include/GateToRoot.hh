@@ -272,6 +272,9 @@ private:
   GateTrajectoryNavigator* m_trajectoryNavigator;
   TTree *OpticalTuple; // new ntuple
 
+  Char_t   NameOfProcessInCrystal[40]; 	 
+  Char_t   NameOfProcessInPhantom[40]; 
+	 
   G4int nPhantomOpticalRayleigh;
   G4int nPhantomOpticalMie;
   G4int nPhantomOpticalAbsorption;

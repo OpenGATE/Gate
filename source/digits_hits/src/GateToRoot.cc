@@ -262,6 +262,8 @@ void GateToRoot::RecordBeginOfAcquisition()
   OpticalTuple->Branch(G4String("NumPhantomOptAbs").c_str(),&nPhantomOpticalAbsorption,"nPhantomOpticalAbsorption/I");
   OpticalTuple->Branch(G4String("NumPhantomOptRay").c_str(),&nPhantomOpticalRayleigh,"nPhantomOpticalRayleigh/I");
   OpticalTuple->Branch(G4String("NumPhantomOptMie").c_str(),&nPhantomOpticalMie,"nPhantomOpticalMie/I");
+  OpticalTuple->Branch(G4String("PhantomProcessName").c_str(),&NameOfProcessInPhantom,"PhantomProcessName/C");
+  OpticalTuple->Branch(G4String("CrystalProcessName").c_str(),&NameOfProcessInCrystal,"CrystalProcessName/C");
 
 #else  // v. cuplov - optical photons
 
@@ -833,6 +835,9 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
 
 // Needed for phantom last hit Position:
     G4int PhantomLastHit = -1;
+
+    strcpy (NameOfProcessInPhantom, "");
+
     PhantomLastHitPos_X = -999;
     PhantomLastHitPos_Y = -999;
     PhantomLastHitPos_Z = -999;
@@ -847,6 +852,8 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
                 {
                       GatePhantomHit* pHit = (*PHC)[iPHit];
                       G4String processName = (*PHC)[iPHit]->GetProcess();
+
+               strcpy (NameOfProcessInPhantom, pHit->GetProcess().c_str());
 
 // Ntuple work:
                if(processName.find("OpticalWLS") != G4String::npos) nPhantomOpticalWLS++; // Fluorescence counting
@@ -886,7 +893,10 @@ if(PhantomLastHit!=-1) {
         G4int NbHits = CHC->entries();  
 
 // Needed for crystal last hit Position:
-    G4int CrystalLastHit = -1;
+    G4int CrystalLastHit = -1;    
+
+    strcpy (NameOfProcessInCrystal, "");
+
     CrystalLastHitPos_X = -999;
     CrystalLastHitPos_Y = -999;
     CrystalLastHitPos_Z = -999;
@@ -902,6 +912,9 @@ if(PhantomLastHit!=-1) {
                GateCrystalHit* aHit = (*CHC)[iHit];
                G4String processName = aHit->GetProcess();
 
+               strcpy (NameOfProcessInCrystal, aHit->GetProcess().c_str());
+
+
                if(processName.find("Scintillation") != G4String::npos) nScintillation++;
                if(processName.find("OpticalWLS") != G4String::npos) nCrystalOpticalWLS++;
 
@@ -915,7 +928,9 @@ if(PhantomLastHit!=-1) {
                               CrystalAbsorbedPhotonHitPos_X = (*CHC)[iHit]->GetGlobalPos().x();
                               CrystalAbsorbedPhotonHitPos_Y = (*CHC)[iHit]->GetGlobalPos().y();
                               CrystalAbsorbedPhotonHitPos_Z = (*CHC)[iHit]->GetGlobalPos().z();
+                     
                    }
+
                }  // end if optical photon
 
                      CrystalLastHit=iHit;

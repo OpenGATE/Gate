@@ -14,7 +14,7 @@
 	<ve energy="3.54" value="1.4"/>
 	<ve energy="4.13" value="1.4"/>
       </propertyvector>
-  <property name="MIEHG_FORWARD" value="0.87" />
+<!--  <property name="MIEHG_FORWARD" value="0.87" />
       <property name="MIEHG_BACKWARD" value="0.87" />
       <property name="MIEHG_FORWARD_RATIO" value="1.0" />
       <propertyvector name="MIEHG" unit="cm" energyunit="eV">
@@ -27,7 +27,7 @@
 	<ve energy="3.1" value="0.01"/>
 	<ve energy="3.54" value="0.01"/>
 	<ve energy="4.13" value="0.01"/>
-      </propertyvector>
+      </propertyvector>-->
      <propertyvector name="WLSABSLENGTH" unit="cm" energyunit="eV">
 	<ve energy="1.0" value="20.00"/>
 	<ve energy="1.77" value="16.66"/>

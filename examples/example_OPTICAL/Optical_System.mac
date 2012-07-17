@@ -149,6 +149,8 @@
 #   MEASUREMENT SETTINGS   
 #=====================================================
 
+#/gate/systems/OpticalSystem/describe
+
 # A C Q U I S I T I O N
 
 #/gate/application/noGlobalOutput

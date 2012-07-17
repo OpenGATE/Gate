@@ -47,12 +47,16 @@ with property vecors values given in INCREASING ORDER OF ENERGY.
 
 == The Optical Photon source is defined in Source.mac
 It is assigned a polarization along the x-axis. A photon which is not assigned a polarization at production 
-may NOT be Rayleigh scattered. The optical photon energy is set to 3.0eV (which corresponds to a wavelength 
-of 413nm).    ==> 1240/E[in eV] ~ lambda [in nm].
+may NOT be Rayleigh scattered. The optical photon energy is set to 2.1eV (which corresponds to a wavelength 
+of 590nm).    ==> 1240/E[in eV] ~ lambda [in nm].
 
 
 == The optical imaging simulation gives the following output files: 
-- OpticalSimulationOutput.root ROOT tree	
+
+- OpticalSimulationOutput.root ROOT tree
+A simple root macro is available: [in Root: .x DrawBranches.C]
+It produces a postscript file (validation_reference.ps) with all tree branches drawn. 
+	
 - If you use the Projection.mac in your simulation, you get additionnal files: OpticalSystemProjection.bin and a
 header file OpticalSystemProjection.hdr
 You can look at the binary file using imagej for example (File->Import->Raw and Width=100, Height=100 pixels)
