@@ -182,7 +182,7 @@ GateOutputVolumeID GateVSystem::ComputeOutputVolumeID(const GateVolumeID& aVolum
   outputVolumeID[0]=ComputeSubtreeID(m_BaseComponent,aVolumeID,outputVolumeID,0);
   // Set the first cell to the systemID
   //outputVolumeID[0]=this->GetItsNumber();
-
+  
   // verbose output
   if (nVerboseLevel)
     G4cout << "[" << GetObjectName() << "::ComputeOutputVolumeID]:" << G4endl

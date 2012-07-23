@@ -8,6 +8,7 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
+#include <G4NistManager.hh>
 
 #include "GateMaterialDatabase.hh"
 #include "GateMessageManager.hh"
@@ -112,9 +113,12 @@ G4Material* GateMaterialDatabase::ReadMaterialFromDBFile(const G4String& materia
     
   GateMaterialCreator *Creator = 0;
   GateMaterialCreator *CreatorTemp = 0;
-  G4Material* material = 0;
+  G4Material* material = G4NistManager::Instance()->FindOrBuildMaterial(materialName);
   int nDef=0;
   G4String fileName= "";
+
+  // If material is in NIST tables, you are done
+  if(material!=NULL) return material;
 
   std::vector<GateMDBFile*>::iterator i;
   for (i=mMDBFile.begin();i!=mMDBFile.end();++i) {

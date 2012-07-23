@@ -14,7 +14,7 @@
  //T->Add("output/BeamLineEntrance.root");
  //T->Add("output/BeamLineMiddle.root");
  //T->Add("output/BeamLineExit.root");
- T->Add("output/GlobalBoxEntrance.root");
+ T->Add("output-1/GlobalBoxEntrance.root");
   
  T->SetBranchAddress("ParticleName",&particleName);
  T->SetBranchAddress("ProductionVolume",&volumeName);

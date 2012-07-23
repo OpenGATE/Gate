@@ -76,6 +76,10 @@ void GateDoseActor::Construct() {
   GateDebugMessageInc("Actor", 4, "GateDoseActor -- Construct - begin" << G4endl);
   GateVImageActor::Construct();
 
+  // Find G4_WATER. This it needed here because we will used this
+  // material for dedx computation for DoseToWater.
+  G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
+
   // Enable callbacks
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
@@ -169,7 +173,7 @@ void GateDoseActor::Construct() {
     mDoseImage.Allocate();
     mDoseImage.SetFilename(mDoseFilename);
   }
-    if (mIsDoseToWaterImageEnabled) {
+  if (mIsDoseToWaterImageEnabled) {
     mDoseToWaterImage.EnableSquaredImage(mIsDoseToWaterSquaredImageEnabled);
     mDoseToWaterImage.EnableUncertaintyImage(mIsDoseToWaterUncertaintyImageEnabled);
     // Force the computation of squared image if uncertainty is enabled
@@ -379,13 +383,13 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 		     << G4BestUnit(density, "Volumic Mass")<<G4endl );
   }
 
-double doseToWater = 0;
-if (mIsDoseToWaterImageEnabled) {  
+  double doseToWater = 0;
+  if (mIsDoseToWaterImageEnabled) {  
   
-  // to get nuclear inelastic cross-section, see "geant4.9.4.p01/examples/extended/hadronic/Hadr00/"
-  // #include "G4HadronicProcessStore.hh"
-  // G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
-  // store->GetInelasticCrossSectionPerAtom(particle,e,elm);
+    // to get nuclear inelastic cross-section, see "geant4.9.4.p01/examples/extended/hadronic/Hadr00/"
+    // #include "G4HadronicProcessStore.hh"
+    // G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
+    // store->GetInelasticCrossSectionPerAtom(particle,e,elm);
   
     double cut = DBL_MAX;
     cut=1;
@@ -393,34 +397,31 @@ if (mIsDoseToWaterImageEnabled) {
     G4String material = step->GetPreStepPoint()->GetMaterial()->GetName();
     double Energy = step->GetPreStepPoint()->GetKineticEnergy();
     G4String PartName = step->GetTrack()->GetDefinition()->GetParticleName();
-//    const G4ParticleDefinition * PartDef = step->GetTrack()->GetParticleDefinition();
-//    G4Material  * MatDef = step->GetTrack()->GetMaterial();
-     double DEDX=0, DEDX_Water=0;
-//    G4cout<<PartName<<"\t";//G4endl;//"  "<<edep<<"  "<<NonIonizingEdep<<G4endl;
+    //    const G4ParticleDefinition * PartDef = step->GetTrack()->GetParticleDefinition();
+    //    G4Material  * MatDef = step->GetTrack()->GetMaterial();
+    double DEDX=0, DEDX_Water=0;
+    //    G4cout<<PartName<<"\t";//G4endl;//"  "<<edep<<"  "<<NonIonizingEdep<<G4endl;
 
-if (PartName== "proton" || PartName== "e-" || PartName== "e+" || PartName== "deuteron"){
-//if (PartName != "O16[0.0]" && PartName != "alpha" && PartName != "Be7[0.0]" && PartName != "C12[0.0]"){
-//    double EmDEDX = emcalc->ComputeElectronicDEDX(Energy, PartName, material, cut);
-//    double NuclearDEDX = emcalc->ComputeNuclearDEDX(Energy, PartName, material);    
-//    double EmDEDX_Water = emcalc->ComputeElectronicDEDX(Energy, PartName, "G4_WATER", cut);
-//    double NuclearDEDX_Water = emcalc->ComputeNuclearDEDX(Energy, PartName, "G4_WATER");    
-    DEDX = emcalc->ComputeTotalDEDX(Energy, PartName, material, cut);
-    DEDX_Water = emcalc->ComputeTotalDEDX(Energy, PartName, "G4_WATER", cut);
-//    double NonIonizingEdep = step->GetNonIonizingEnergyDeposit()*weight;//*step->GetTrack()->GetWeight();
-//    double stepLength=step->GetTrack()->GetStepLength();
-    doseToWater=edep/density*1e12/mDoseToWaterImage.GetVoxelVolume()*(DEDX_Water/1.)/(DEDX/(density*1.6e-19));
-/*    G4cout<<PartName<<"\t Edep "<<edep<<"\t non-I Edep "<<NonIonizingEdep<<G4endl;
-    G4cout<<"\t DEDX "<<(NuclearDEDX+EmDEDX)*stepLength<<"\t Em Edep"<<EmDEDX*stepLength<<"\t Nucl Edep"<<NuclearDEDX*stepLength<<"\n"<<G4endl;*/
-}
-else {
-    DEDX = emcalc->ComputeTotalDEDX(100, "proton", material, cut);
-    DEDX_Water = emcalc->ComputeTotalDEDX(100, "proton", "G4_WATER", cut);
-    doseToWater=edep/density*1e12/mDoseToWaterImage.GetVoxelVolume()*(DEDX_Water/1.)/(DEDX/(density*1.6e-19));
-}
-// else if (PartName=="alpha"){
-// G4cout<<PartName<<G4endl;
-// double DEDX = emcalc->ComputeTotalDEDX(Energy, PartDef, MatDef, cut);
-// }
+    
+    // Dose to water: it could be possible to make this process more
+    // generic by choosing any material in place of water
+
+
+    // Other particles should be taken into account (Helium etc), but bug ? FIXME
+    if (PartName== "proton" || PartName== "e-" || PartName== "e+" || PartName== "deuteron"){
+      //if (PartName != "O16[0.0]" && PartName != "alpha" && PartName != "Be7[0.0]" && PartName != "C12[0.0]"){
+
+      DEDX = emcalc->ComputeTotalDEDX(Energy, PartName, material, cut);
+      DEDX_Water = emcalc->ComputeTotalDEDX(Energy, PartName, "G4_WATER", cut);
+
+      doseToWater=edep/density*1e12/mDoseToWaterImage.GetVoxelVolume()*(DEDX_Water/1.)/(DEDX/(density*1.6e-19));
+
+    }
+    else {
+      DEDX = emcalc->ComputeTotalDEDX(100, "proton", material, cut);
+      DEDX_Water = emcalc->ComputeTotalDEDX(100, "proton", "G4_WATER", cut);
+      doseToWater=edep/density*1e12/mDoseToWaterImage.GetVoxelVolume()*(DEDX_Water/1.)/(DEDX/(density*1.6e-19));
+    }
 
     GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = " 
 		     << G4BestUnit(doseToWater, "Dose to water")
