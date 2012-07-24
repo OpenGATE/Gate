@@ -310,7 +310,7 @@
 #=====================================================
 
 /gate/output/root/enable
-/gate/output/root/setFileName             YourFile
+/gate/output/root/setFileName             slinky
 /gate/output/root/setRootHitFlag          0
 /gate/output/root/setRootSinglesFlag      1
 /gate/output/root/setRootCoincidencesFlag 1

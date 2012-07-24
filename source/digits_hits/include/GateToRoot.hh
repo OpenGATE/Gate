@@ -12,8 +12,9 @@ See GATE/LICENSE.txt for further details
          - New function RecordOpticalData(event). 
          - New ntuple for optical photon data is defined in GateToRoot class (previously was in GateFastAnalysis)
          - Revision v6.2   2012/07/09  by vesna.cuplov@gmail.com
-           we trigger the output file using GATE_USE_OPTICAL: the output ROOT file is dedicated to optical 
-           photons [different from the default output file with Hits, Singles and Coincidences used for other systems].
+           output ROOT file is dedicated to optical photons         
+         - Revision v6.2   2012/07/24  by vesna.cuplov@gmail.com
+           Unique output file with Gate default trees (Hits,Singles,Coincidences...) + OpticalData Tree.
 */
 
 #ifndef GateToRoot_H
@@ -51,9 +52,9 @@ See GATE/LICENSE.txt for further details
 class GateToRootMessenger;
 class GateVVolume;
 
-#ifdef GATE_USE_OPTICAL
+// v. cuplov - optical photons
 class GateTrajectoryNavigator; 
-#endif
+// v. cuplov - optical photons
 
  class ComptonRayleighData
 { public:
@@ -88,9 +89,7 @@ public:
   void RecordDigitizer(const G4Event *);
 
 // v. cuplov - optical photons
-#ifdef GATE_USE_OPTICAL
   void RecordOpticalData(const G4Event * event);
-#endif
 // v. cuplov - optical photons
 
   void RecordVoxels(const G4Step *);
@@ -268,13 +267,10 @@ private:
   GateRootHitBuffer  m_hitBuffer; 
   
 // v. cuplov - optical photons
-#ifdef GATE_USE_OPTICAL
   GateTrajectoryNavigator* m_trajectoryNavigator;
-  TTree *OpticalTuple; // new ntuple
-
+  TTree *OpticalTree; // new tree
   Char_t   NameOfProcessInCrystal[40]; 	 
   Char_t   NameOfProcessInPhantom[40]; 
-	 
   G4int nPhantomOpticalRayleigh;
   G4int nPhantomOpticalMie;
   G4int nPhantomOpticalAbsorption;
@@ -283,13 +279,11 @@ private:
   G4int nCrystalOpticalAbsorption;
   G4int nScintillation, nCrystalOpticalWLS, nPhantomOpticalWLS;
   G4int NumCrystalWLS, NumPhantomWLS;
-
   G4int CrystalLastHit, PhantomLastHit;
   G4double CrystalLastHitPos_X,CrystalLastHitPos_Y,CrystalLastHitPos_Z, CrystalLastHitEnergy;
   G4double CrystalAbsorbedPhotonHitPos_X, CrystalAbsorbedPhotonHitPos_Y,CrystalAbsorbedPhotonHitPos_Z;
   G4double PhantomLastHitPos_X,PhantomLastHitPos_Y,PhantomLastHitPos_Z, PhantomLastHitEnergy;
   G4double PhantomAbsorbedPhotonHitPos_X, PhantomAbsorbedPhotonHitPos_Y,PhantomAbsorbedPhotonHitPos_Z;
-#endif
 // v. cuplov - optical photons
 
   G4int    m_updateROOTmodulo;

@@ -41,8 +41,8 @@
 # === pixels ===
 /gate/crystal/daughters/name                    pixel
 /gate/crystal/daughters/insert                  box
-/gate/pixel/geometry/setXLength                 2.0  cm
-/gate/pixel/geometry/setYLength                 2.0  cm
+/gate/pixel/geometry/setXLength                 2.  cm
+/gate/pixel/geometry/setYLength                 2.  cm
 /gate/pixel/geometry/setZLength                 1 cm
 /gate/pixel/setMaterial                         Air
 /gate/pixel/placement/setTranslation            0 0 0 cm

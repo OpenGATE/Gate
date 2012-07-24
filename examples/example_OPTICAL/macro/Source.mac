@@ -27,6 +27,7 @@
 # at production may not be Rayleigh scattered.
 /gate/source/Mysource/gps/polarization           1 0 0
 
+# optical excitation photon energy: 
 /gate/source/Mysource/gps/monoenergy             2.21 eV
 
 /gate/source/Mysource/gps/type Point

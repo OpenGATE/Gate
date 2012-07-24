@@ -44,11 +44,19 @@ vecors values given in INCREASING ORDER OF ENERGY. (http://hypernews.slac.stanfo
 In order to detect optical photons, we need to define the detection surface as a DIELECTRIC-METAL (Surface.xml)
 with property vecors values given in INCREASING ORDER OF ENERGY. 
 
+== The digitizer is defined in the main macro: Optical_System.mac
+The user defines a digitizer named OpticalSingles. That will be the name of the Optical Singles Tree in the 
+output file. 
+In this fluorescence experiment, we are interested in fluorescent photons. These photons have an energy smaller that the
+excitation photon energy. An energy cut (2eV) is performed at the digitization level. Therefore the result of the ProjectionSet 
+module will contain only fluorescent photons. 
+
+
 
 == The Optical Photon source is defined in Source.mac
 It is assigned a polarization along the x-axis. A photon which is not assigned a polarization at production 
-may NOT be Rayleigh scattered. The optical photon energy is set to 2.1eV (which corresponds to a wavelength 
-of 590nm).    ==> 1240/E[in eV] ~ lambda [in nm].
+may NOT be Rayleigh scattered. The optical photon energy is set to 2.21eV (which corresponds to a wavelength 
+of 561nm).    ==> 1240/E[in eV] ~ lambda [in nm].
 
 
 == The optical imaging simulation gives the following output files: 
@@ -59,7 +67,7 @@ It produces a postscript file (validation_reference.ps) with all tree branches d
 	
 - If you use the Projection.mac in your simulation, you get additionnal files: OpticalSystemProjection.bin and a
 header file OpticalSystemProjection.hdr
-You can look at the binary file using imagej for example (File->Import->Raw and Width=100, Height=100 pixels)
+You can look at the binary file using imagej for example (example: File->Import->Raw and Width=100, Height=100 pixels)
 
 
 

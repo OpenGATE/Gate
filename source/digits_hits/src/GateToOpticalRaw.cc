@@ -227,15 +227,14 @@ void GateToOpticalRaw::WriteGeneralInfo()
 		// Write description for each head
 		for (size_t headID=0; headID<setMaker->GetHeadNb() ; headID++) {
 
-			m_headerFile  << "!number of images/energy window := "    << setMaker->GetTotalImageNb()  / setMaker->GetEnergyWindowNb() << G4endl
-				  << "!matrix size [1] := "     	      << setMaker->GetPixelNbX() << G4endl
-				  << "!matrix size [2] := "     	      << setMaker->GetPixelNbY() << G4endl
-				  << "!number of bytes per pixel := "  	      << setMaker->BytesPerPixel() << G4endl
+			m_headerFile  << "!number of images divided by number of energy window := "    << setMaker->GetTotalImageNb()  / setMaker->GetEnergyWindowNb() << G4endl
+				  << "projection matrix size [1] := "     	      << setMaker->GetPixelNbX() << G4endl
+				  << "projection matrix size [2] := "     	      << setMaker->GetPixelNbY() << G4endl
+				  << "projection pixel size along X-axis (cm) [1] := "     << setMaker->GetPixelSizeX()/cm << G4endl
+				  << "projection pixel size along Y-axis (cm) [2] := "     << setMaker->GetPixelSizeY()/cm << G4endl
 				  << "!number of projections := "             << setMaker->GetProjectionNb()<< G4endl
 				  << "!extent of rotation := "       	      << setMaker->GetAngularSpan()/deg << G4endl
 				  << "!time per projection (sec) := "         << setMaker->GetTimePerProjection() / second << G4endl
-				  << "study duration (sec) := "      << setMaker->GetStudyDuration() / second << G4endl   
-				  << "!maximum pixel count := " 	      << setMaker->GetProjectionSet()->GetMaxCounts(energyWindowID, headID) << G4endl
 				  << ";" << G4endl;
 		}
   
@@ -244,24 +243,28 @@ void GateToOpticalRaw::WriteGeneralInfo()
   m_headerFile  << ";GATE GEOMETRY :="               	  << G4endl;
 
   GateVVolume *baseInserter  = m_system->GetBaseComponent()->GetCreator();
-  m_headerFile  << ";Optical System head x dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(0)/cm << G4endl
-      	      	<< ";Optical System head y dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(1)/cm << G4endl
-      	      	<< ";Optical System head z dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(2)/cm << G4endl
-      	      	<< ";Optical System head material := "                	  <<  baseInserter->GetCreator()->GetMaterialName() << G4endl
-		<< ";Optical System head x translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().x()/cm << G4endl
-		<< ";Optical System head y translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().y()/cm << G4endl
-		<< ";Optical System head z translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().z()/cm << G4endl;
+  m_headerFile  << ";Optical System x dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(0)/cm << G4endl
+      	      	<< ";Optical System y dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(1)/cm << G4endl
+      	      	<< ";Optical System z dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(2)/cm << G4endl
+      	      	<< ";Optical System material := "                	  <<  baseInserter->GetCreator()->GetMaterialName() << G4endl
+		<< ";Optical System x translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().x()/cm << G4endl
+		<< ";Optical System y translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().y()/cm << G4endl
+		<< ";Optical System z translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().z()/cm << G4endl;
 
   GateVVolume *crystalInserter  = m_system->GetCrystalComponent()->GetCreator();
   if ( crystalInserter )
-    m_headerFile  << ";Optical System crystal x dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(0)/cm << G4endl
+    m_headerFile  << ";"          << G4endl
+                  << ";Optical System LEVEL 1 element is crystal := "          << G4endl
+                  << ";Optical System crystal x dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(0)/cm << G4endl
       	      	  << ";Optical System crystal y dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(1)/cm << G4endl
       	      	  << ";Optical System crystal z dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(2)/cm << G4endl
       	      	  << ";Optical System crystal material := "                 <<  crystalInserter->GetCreator()->GetMaterialName() << G4endl;
 
   GateVVolume *pixelInserter  = m_system->GetPixelComponent()->GetCreator();
   if ( pixelInserter )
-    m_headerFile  << ";Optical System pixel x dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(0)/cm << G4endl
+    m_headerFile  << ";"          << G4endl
+                  << ";Optical System LEVEL 2 element is pixel := "          << G4endl
+                  << ";Optical System pixel x dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(0)/cm << G4endl
       	      	  << ";Optical System pixel y dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(1)/cm << G4endl
       	      	  << ";Optical System pixel z dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(2)/cm << G4endl
       	      	  << ";Optical System pixel material := "                 <<  pixelInserter->GetCreator()->GetMaterialName() << G4endl;

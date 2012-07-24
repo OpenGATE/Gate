@@ -29,8 +29,8 @@
 # VISUALISATION and VERBOSE
 #=====================================================
 
-#/vis/disable
-/control/execute                    ./macro/Visualisation.mac
+/vis/disable
+#/control/execute                    ./macro/Visualisation.mac
 /control/execute                    ./macro/Verbose.mac
 
 #=====================================================
@@ -110,9 +110,18 @@
 #===================================================== 
 /gate/digitizer/name                                 OpticalSingles
 /gate/digitizer/insert                               singleChain
-/gate/digitizer/OpticalSingles/insert                opticaladder
-/gate/digitizer/OpticalSingles/insert                readout
-/gate/digitizer/OpticalSingles/readout/setDepth      2
+
+# If you want to apply an upper cut (usually it is the case for fluorescence experiments)
+# This cut will be taken into account in the the ProjectionSet result.
+/gate/digitizer/OpticalSingles/setInputName Singles
+/gate/digitizer/OpticalSingles/insert upholder
+# Fluorescent photons have an energy smaller than the excitation photon energy:
+/gate/digitizer/OpticalSingles/upholder/setUphold 2.0 eV
+# new
+
+/gate/digitizer/OpticalSingles/insert opticaladder
+/gate/digitizer/OpticalSingles/insert                        readout
+/gate/digitizer/OpticalSingles/readout/setDepth              2
 
 
 #=====================================================

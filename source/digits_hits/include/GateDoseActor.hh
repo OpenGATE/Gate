@@ -22,6 +22,8 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEDOSEACTOR_HH
 #define GATEDOSEACTOR_HH
 
+#include <G4NistManager.hh>
+
 #include "GateVImageActor.hh"
 #include "GateActorManager.hh"
 #include "G4UnitsTable.hh"

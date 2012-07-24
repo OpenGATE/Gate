@@ -44,9 +44,7 @@ private:
   G4String m_physVolName;
 
 // v. cuplov - optical photons
-//#ifdef GATE_USE_OPTICAL
 //  static const G4String theOutputAlias; 
-//#endif
 // v. cuplov - optical photons
 
   public:
@@ -83,12 +81,10 @@ private:
       inline G4String GetPhysVolName()const     { return m_physVolName; }
 
 // v. cuplov - optical photons
-#ifdef GATE_USE_OPTICAL
       inline G4bool GoodForAnalysis() const 
       	  { return ( (m_process != "Transportation") || (m_edep!=0.) ); }
 
 //     static  const G4String& GetOutputAlias() {return theOutputAlias;}
-#endif
 // v. cuplov - optical photons
 
 };

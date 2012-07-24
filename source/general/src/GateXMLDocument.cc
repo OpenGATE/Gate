@@ -8,6 +8,11 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+/*! Updated on 2012/07/24  by vesna.cuplov@gmail.com
+    A warning message is added in case the simulation doesn't load the Materials.xml file.
+    I/O warning: This is only a problem when OPTICAL PHOTONS are transported in your simulation.
+*/
+
 
 /**
  * \file GateXMLDocument.cpp
@@ -42,7 +47,13 @@ GateXMLDocument::GateXMLDocument(const G4String& filename) :
     if (m_cur==0) xmlFreeDoc(m_doc);
     else m_ok = true;
   }
+  else
+  {
+    std::cout << "I/O warning: Discard the previous warning if your simulation doesn't transport OPTICAL PHOTONS. " << std::endl;
+    std::cout << "Otherwise, please copy the Materials.xml file from the gate-source directory in the directory where you run your main macro." << std::endl;
+  }
 }
+
   
 //! Destructor.
 GateXMLDocument::~GateXMLDocument()

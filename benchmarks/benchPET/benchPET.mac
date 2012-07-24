@@ -22,7 +22,7 @@
 /control/execute digitizer.mac
 
 #	S O U R C E
-/control/execute sourcesBis.mac
+/control/execute sources.mac
 
 
 
@@ -64,5 +64,8 @@
 #	S T A R T 
 /gate/application/setTimeSlice     120. s
 /gate/application/setTimeStart     0. s
-/gate/application/setTimeStop      240. s
+#/gate/application/setTimeStop      240. s
+/gate/application/setTimeStop      12000. s
+
+
 /gate/application/startDAQ
