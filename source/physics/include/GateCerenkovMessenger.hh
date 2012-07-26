@@ -1,3 +1,20 @@
+/*##########################################
+#
+#Cerenkov physics process
+#developed by Hermann Fuchs
+#
+#Christian Doppler Laboratory for Medical Radiation Research for Radiation Oncology
+#Department of Radiation Oncology
+#Medical University of Vienna
+#
+#and 
+#
+#Pierre Gueth
+#CREATIS
+#
+#July 2012
+##########################################
+*/
 #ifndef GATECERENKOVPROCESSMESSENGER_HH
 #define GATECERENKOVPROCESSMESSENGER_HH
 
