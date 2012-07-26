@@ -755,14 +755,16 @@ void GateMacfileParser::CheckOutput(ofstream& output,ofstream& /*splitfile*/,G4i
 	if(enable[LMF]==1 && filenames[LMF]==1)     output << "/gate/output/lmf/enable" << endl;
 	if(enable[CT]==1 && filenames[CT]==1)       output << "/gate/output/imageCT/enable" << endl;
 }
-
+//CHANGED
 void GateMacfileParser::AddPWD(G4String key)
 {
 	G4String filename=ExtractFileName(key);
 	long unsigned int pos=filename.rfind("/");
 	stringstream ss;
 	if((pos!=string::npos && pos==key.length()-1) || pos==string::npos) ss<<key<<" "<<filename;
-	else ss<<key<<" "<<PWD<<"/"<<filename;
+	else ss<<key<<" "<<filename;
+        //if((pos!=string::npos && pos==key.length()-1) || pos==string::npos) ss<<key<<" "<<filename;
+	//else ss<<key<<" "<<PWD<<"/"<<filename;
 	macline=ss.str();
 }
 
