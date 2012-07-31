@@ -281,7 +281,7 @@ Adipose: d=0.92 g/cm3 ; n=11
         +el: name=Calcium   ; f=0.001
         +el: name=Scandium  ; f=0.0
         +el: name=Titanium  ; f=0.0
-        +el: name=Vandium   , f=0.0
+        +el: name=Vandium   ; f=0.0
         +el: name=Chromium  ; f=0.0
         +el: name=Manganese ; f=0.0
  
