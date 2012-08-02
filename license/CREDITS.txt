@@ -14,38 +14,43 @@ Institutions who contributed code:
 4. University of Massachusetts Medical School (UMASS)
    Division of Nuclear Medicine
    Worcester, MA 01655, USA
-   
-5. CEA IRFU
+
+5. Department of Molecular & Medical Pharmacology
+   Crump Institute for Molecular Imaging
+   David Geffen School of Medicine at UCLA
+   Los Angeles, CA 90095-1770
+
+6. CEA IRFU
    Saclay, France 
 
-6. CNRS Creatis 
+7. CNRS Creatis 
    Lyon, France 
 
-7. Delft University of Technology
+8. Delft University of Technology
    2629 JB Delft, Netherlands
 
-8. CNRS IN2P3/CPPM 
+9. CNRS IN2P3/CPPM 
    Marseille, France
 
-9. CNRS IN2P3/IMNC
-   Orsay, France
-
+10. CNRS IN2P3/IMNC
+    Orsay, France
 
 Programmers:
 -----------
 
-        Daniel STRUL (UNIL)
+   Daniel STRUL (UNIL)
 	Giovanni SANTIN (UNIL)
-        Luc SIMON (UNIL)
+   Luc SIMON (UNIL)
 	Martin REY (UNIL/EPFL)
 	Jean Marc VIEIRA (UNIL/EPFL)
-	Claude COMTAT (CEA-SHFJ)
-        Sebastien JAN (CEA-SHFJ)
+	Claude COMTAT (CEA Orsay)
+   Sebastien JAN (CEA Orsay)
+   Vesna Cuplov (CEA Orsay)
 	Steven STAELENS (ELIS)
 	Corinne GROISELLE (UMASS)
 	David GUEZ (CEA-DAPNIA)
 	Richard TACHEREAU (UCLA)
-	David GUEZ (CEA-DAPNIA)
+	David GUEZ (CEA Saclay)
 	Delphine LAZARO (INSERM Paris)
 	D.J. van der Laan (Delft University)
 	Franca Cassol-Brunner (CPPM Marseille)
@@ -54,16 +59,16 @@ Programmers:
 	Niklas Rehfeld (IMNC Orsay)
 	David Sarrut (CNRS Creatis)
 	Thibault Frisson (CNRS Creatis)
-
+   Pierre Gueth (CNRS Creatis)
 
 Technical Coordination:
 ----------------------
 	 
 	Daniel STRUL (UNIL) 2002-2003
-        Sébastien JAN (CEA) 2003-
+   Sébastien JAN (CEA) 2003-
          
 Spokesperson:
 ------------
 
-        Christian MOREL (UNIL/EPFL) 2002-2005
+   Christian MOREL (UNIL/EPFL) 2002-2005
 	Irène Buvat (IMNC/CNRS) 2005-
