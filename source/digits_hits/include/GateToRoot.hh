@@ -15,6 +15,7 @@ See GATE/LICENSE.txt for further details
            output ROOT file is dedicated to optical photons         
          - Revision v6.2   2012/07/24  by vesna.cuplov@gmail.com
            Unique output file with Gate default trees (Hits,Singles,Coincidences...) + OpticalData Tree.
+         - Revision v6.2 2012/08/06  Added optical photon momentum direction (x,y,z) in tree.
 */
 
 #ifndef GateToRoot_H
@@ -284,6 +285,7 @@ private:
   G4double CrystalAbsorbedPhotonHitPos_X, CrystalAbsorbedPhotonHitPos_Y,CrystalAbsorbedPhotonHitPos_Z;
   G4double PhantomLastHitPos_X,PhantomLastHitPos_Y,PhantomLastHitPos_Z, PhantomLastHitEnergy;
   G4double PhantomAbsorbedPhotonHitPos_X, PhantomAbsorbedPhotonHitPos_Y,PhantomAbsorbedPhotonHitPos_Z;
+  G4double MomentumDirectionx, MomentumDirectiony, MomentumDirectionz;
 // v. cuplov - optical photons
 
   G4int    m_updateROOTmodulo;
