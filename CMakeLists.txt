@@ -168,10 +168,11 @@ ENDIF(GATE_USE_CUDA AND CUDA_FOUND)
 TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ITKMetaIO itkzlib)
 
 #=========================================================
+# TRIAL ITK
+ADD_SUBDIRECTORY(source/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
+
+#=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
 
 
-#=========================================================
-# TRIAL ITK
-ADD_SUBDIRECTORY(source/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
 
