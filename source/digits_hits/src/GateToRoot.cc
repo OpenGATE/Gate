@@ -15,6 +15,7 @@
            output ROOT file is dedicated to optical photons 
          - Revision v6.2   2012/07/24  by vesna.cuplov@gmail.com
            Unique output file with Gate default trees (Hits,Singles,Coincidences...) + OpticalData Tree.
+         - Revision v6.2 2012/08/06  Added optical photon momentum direction (x,y,z) in tree.
 */
 
 #include "GateToRoot.hh"
@@ -249,6 +250,9 @@ void GateToRoot::Book()
   OpticalTree->Branch(G4String("NumPhantomOptMie").c_str(),&nPhantomOpticalMie,"nPhantomOpticalMie/I");
   OpticalTree->Branch(G4String("PhantomProcessName").c_str(),&NameOfProcessInPhantom,"PhantomProcessName/C");
   OpticalTree->Branch(G4String("CrystalProcessName").c_str(),&NameOfProcessInCrystal,"CrystalProcessName/C");
+  OpticalTree->Branch(G4String("MomentumDirectionx").c_str(),&MomentumDirectionx,"MomentumDirectionx/D");
+  OpticalTree->Branch(G4String("MomentumDirectiony").c_str(),&MomentumDirectiony,"MomentumDirectiony/D");
+  OpticalTree->Branch(G4String("MomentumDirectionz").c_str(),&MomentumDirectionz,"MomentumDirectionz/D");
 // v. cuplov - optical photons
 
   for (size_t i=0; i<m_outputChannelList.size(); ++i)
@@ -817,6 +821,7 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
         NumCrystalWLS = 0;
         NumPhantomWLS = 0;
 
+
 // Looking at Phantom Hit Collection:
    if (PHC) {
 
@@ -887,6 +892,7 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
                GateCrystalHit* aHit = (*CHC)[iHit];
                G4String processName = aHit->GetProcess();
 
+
               if (aHit->GoodForAnalysis() && aHit-> GetPDGEncoding()==0) // looking at optical photons only
                {
 
@@ -925,7 +931,7 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
 
 }
 
-//--------------------------------------------------------------------------
+
 
 //--------------------------------------------------------------------------
 void GateToRoot::RecordDigitizer(const G4Event* ) 
@@ -944,6 +950,14 @@ void GateToRoot::RecordDigitizer(const G4Event* )
 //--------------------------------------------------------------------------
 void GateToRoot::RecordStepWithVolume(const GateVVolume *, const G4Step* aStep)
 {
+
+// v. cuplov - optical photon momentum direction 
+     G4ThreeVector momentumDirection = aStep->GetTrack()->GetMomentumDirection();
+     MomentumDirectionx = momentumDirection.x();
+     MomentumDirectiony = momentumDirection.y();
+     MomentumDirectionz = momentumDirection.z();
+// v. cuplov - optical photon momentum direction 
+
    if (m_recordFlag > 0) {
   //GateMessage("OutputMgr", 5, " GateToRoot::RecordStep -- begin " << G4endl;);
    
@@ -1015,6 +1029,7 @@ void GateToRoot::RecordStepWithVolume(const GateVVolume *, const G4Step* aStep)
 	
   //GateMessage("OutputMgr", 5, " GateToRoot::RecordStep -- end " << G4endl;);	
  }
+
 }
 
 
@@ -1592,9 +1607,10 @@ if (nVerboseLevel > 0)
   Polarizationz = (*iter)->GetPolarization().z();
 
   PTime =           (*iter)->GetProperTime();
-  MDirectionx = (*iter)->GetMomentumDirection().x();
+  		MDirectionx = (*iter)->GetMomentumDirection().x();
 		MDirectiony = (*iter)->GetMomentumDirection().y();
 		MDirectionz = (*iter)->GetMomentumDirection().z();
+
 		Momentumx = (*iter)->GetMomentum().x();
 		Momentumy = (*iter)->GetMomentum().y();
 		Momentumz = (*iter)->GetMomentum().z();
