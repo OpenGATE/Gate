@@ -952,10 +952,13 @@ void GateToRoot::RecordStepWithVolume(const GateVVolume *, const G4Step* aStep)
 {
 
 // v. cuplov - optical photon momentum direction 
-     G4ThreeVector momentumDirection = aStep->GetTrack()->GetMomentumDirection();
-     MomentumDirectionx = momentumDirection.x();
-     MomentumDirectiony = momentumDirection.y();
-     MomentumDirectionz = momentumDirection.z();
+  G4ParticleDefinition* partDef = aStep->GetTrack()->GetDefinition();  
+  if (partDef == G4OpticalPhoton::OpticalPhotonDefinition()) {
+     	G4ThreeVector momentumDirection = aStep->GetTrack()->GetMomentumDirection();
+     	MomentumDirectionx = momentumDirection.x();
+     	MomentumDirectiony = momentumDirection.y();
+     	MomentumDirectionz = momentumDirection.z();
+  }
 // v. cuplov - optical photon momentum direction 
 
    if (m_recordFlag > 0) {
