@@ -1,4 +1,4 @@
-#include "cst_gpu.cu"
+#include "voxsrc_cst_gpu.cu"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
@@ -8,10 +8,11 @@
 /***********************************************************
  * Vars
  ***********************************************************/
+
+// FIXME this must be declared once
 texture<unsigned short int, 1, cudaReadModeElementType> tex_phantom;
 texture<float, 1, cudaReadModeElementType> tex_act_val;
 texture<unsigned int, 1, cudaReadModeElementType> tex_act_ind;
-
 __constant__ const float pi = 3.14159265358979323846;
 __constant__ const float twopi = 2*pi;
 
@@ -65,8 +66,8 @@ __device__ float3 deflect_particle(float3 p, float3 dir) {
  ***********************************************************/
 
 // Brent PRNG integer version
-__device__ unsigned long weyl;
-__device__ unsigned long brent_int(unsigned int index, unsigned long *device_x_brent, unsigned long seed)
+__device__ unsigned long voxsrc_weyl;
+__device__ unsigned long voxsrc_Brent_int(unsigned int index, unsigned long *device_x_brent, unsigned long seed)
 
 {
 	
@@ -94,11 +95,11 @@ __device__ unsigned long brent_int(unsigned int index, unsigned long *device_x_b
 	int k;
 	
 	if (seed != zero) { // Initialisation necessary
-		// weyl = odd approximation to 2**wlen*(3-sqrt(5))/2.
+		// voxsrc_weyl = odd approximation to 2**wlen*(3-sqrt(5))/2.
 		if (UINT32) 
-			weyl = 0x61c88647;
+			voxsrc_weyl = 0x61c88647;
 		else 
-			weyl = ((((unsigned long)0x61c88646)<<16)<<16) + (unsigned long)0x80b583eb;
+			voxsrc_weyl = ((((unsigned long)0x61c88646)<<16)<<16) + (unsigned long)0x80b583eb;
 		
 		v = (seed!=zero)? seed:~seed;  // v must be nonzero
 		
@@ -109,7 +110,7 @@ __device__ unsigned long brent_int(unsigned int index, unsigned long *device_x_b
 		for (w = v, k = 0; k < r; k++) { // Initialise circular array
 			v ^= v<<10; v ^= v>>15; 
 			v ^= v<<4;  v ^= v>>13;
-			device_x_brent[k + z*index] = v + (w+=weyl);              
+			device_x_brent[k + z*index] = v + (w+=voxsrc_weyl);              
 		}
 		for (i_brent = r-1, k = 4*r; k > 0; k--) { // Discard first 4*r results
 			t = device_x_brent[(i_brent = (i_brent+1)&(r-1)) + z*index];   t ^= t<<a;  t ^= t>>b;			
@@ -124,7 +125,7 @@ __device__ unsigned long brent_int(unsigned int index, unsigned long *device_x_b
 	t ^= t<<a;  t ^= t>>b;                                       // (I + L^a)(I + R^b)
 	v ^= v<<c;  v ^= v>>d;                                       // (I + L^c)(I + R^d)
 	device_x_brent[i_brent + z*index] = (v ^= t); 				 // Update circular array                 
-	w += weyl;                                                   // Update Weyl generator
+	w += voxsrc_weyl;                                                   // Update Weyl generator
 	
 	device_x_brent[z*index + z_w] = w;
 	device_x_brent[z*index + z_i_brent] = i_brent;
@@ -144,7 +145,7 @@ __device__ unsigned long brent_int(unsigned int index, unsigned long *device_x_b
 }	
 
 // Brent PRNG real version
-__device__ double Brent_real(int index, unsigned long *device_x_brent, unsigned long seed)
+__device__ double voxsrc_Brent_real(int index, unsigned long *device_x_brent, unsigned long seed)
 
 {
 	
@@ -171,10 +172,10 @@ __device__ double Brent_real(int index, unsigned long *device_x_brent, unsigned 
 	res = (double)0; 
 	while (res == (double)0)  // Loop until nonzero result.
     {   // Usually only one iteration.
-		res = (double)(brent_int(index, device_x_brent, seed)>>sr);     // Discard sr random bits.
+		res = (double)(voxsrc_Brent_int(index, device_x_brent, seed)>>sr);     // Discard sr random bits.
 		seed = (unsigned long)0;                                        // Zero seed for next time.
 		if (UINT32 && UREAL64)                                          // Need another call to xor4096i.
-			res += SC32*(double)brent_int(index, device_x_brent, seed); // Add low-order 32 bits.
+			res += SC32*(double)voxsrc_Brent_int(index, device_x_brent, seed); // Add low-order 32 bits.
     }
 	return (SCALE*res); // Return result in (0.0, 1.0).
 	
@@ -189,12 +190,12 @@ __device__ double Brent_real(int index, unsigned long *device_x_brent, unsigned 
 }
 
 // Init Brent seed
-__global__ void kernel_brent_init(StackGamma stackgamma) {
+__global__ void kernel_voxsrc_Brent_init(StackGamma stackgamma) {
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
 	if (id < stackgamma.size) {
 		unsigned int seed = stackgamma.seed[id];
-		float dummy = brent_int(id, stackgamma.table_x_brent, seed);
+		float dummy = voxsrc_Brent_int(id, stackgamma.table_x_brent, seed);
 	}
 }
 
@@ -203,7 +204,7 @@ __global__ void kernel_brent_init(StackGamma stackgamma) {
  ***********************************************************/
 
 // Compton Cross Section Per Atom (Standard - Klein-Nishina)
-__device__ float Compton_CSPA_Standard(float E, unsigned short int Z) {
+__device__ float voxsrc_Compton_CSPA_Standard(float E, unsigned short int Z) {
 	float CrossSection = 0.0;
 	if (Z<1 || E < 1e-4f) {return CrossSection;}
 
@@ -230,7 +231,7 @@ __device__ float Compton_CSPA_Standard(float E, unsigned short int Z) {
 }
 
 // PhotoElectric Cross Section Per Atom (Standard)
-__device__ float PhotoElec_CSPA_Standard(float E, unsigned short int Z) {
+__device__ float voxsrc_PhotoElec_CSPA_Standard(float E, unsigned short int Z) {
 	 // from Sandia, the same for all Z
 	float Emin = fmax(PhotoElec_std_IonizationPotentials[Z]*1e-6f, 0.01e-3f);
 	if (E < Emin) {return 0.0f;}
@@ -250,7 +251,7 @@ __device__ float PhotoElec_CSPA_Standard(float E, unsigned short int Z) {
 }
 
 // Compton Scatter (Standard, Klein-Nishina)
-__device__ float3 Compton_scatter_Standard(StackGamma stack, unsigned int id) {
+__device__ float3 voxsrc_Compton_scatter_Standard(StackGamma stack, unsigned int id) {
 	float E = stack.E[id];
 	float E0 = __fdividef(E, 0.510998910f);
 
@@ -261,17 +262,17 @@ __device__ float3 Compton_scatter_Standard(StackGamma stack, unsigned int id) {
 
 	float greject, onecost, eps, eps2, sint2, cosTheta, sinTheta, phi;
 	do {
-		if (a2 > Brent_real(id, stack.table_x_brent, 0)) {
-			eps = __expf(-a1 * Brent_real(id, stack.table_x_brent, 0));
+		if (a2 > voxsrc_Brent_real(id, stack.table_x_brent, 0)) {
+			eps = __expf(-a1 * voxsrc_Brent_real(id, stack.table_x_brent, 0));
 			eps2 = eps*eps;
 		} else {
-			eps2 = eps02 + (1.0f - eps02) * Brent_real(id, stack.table_x_brent, 0);
+			eps2 = eps02 + (1.0f - eps02) * voxsrc_Brent_real(id, stack.table_x_brent, 0);
 			eps = sqrt(eps2);
 		}
 		onecost = __fdividef(1.0f - eps, eps * E0);
 		sint2 = onecost * (2.0f - onecost);
 		greject = 1.0f - eps * __fdividef(sint2, 1.0f + eps2);
-	} while (greject < Brent_real(id, stack.table_x_brent, 0));
+	} while (greject < voxsrc_Brent_real(id, stack.table_x_brent, 0));
 
 	E *= eps;
 	stack.E[id] = E;
@@ -284,31 +285,31 @@ __device__ float3 Compton_scatter_Standard(StackGamma stack, unsigned int id) {
 
 	cosTheta = 1.0f - onecost;
 	sinTheta = sqrt(sint2);
-	phi = Brent_real(id, stack.table_x_brent, 0) * twopi;
+	phi = voxsrc_Brent_real(id, stack.table_x_brent, 0) * twopi;
 
 	return make_float3(sinTheta*__cosf(phi), sinTheta*__sinf(phi), cosTheta);
 }
 
 // Compute the total Compton cross section for a given material
-__device__ float Compton_CS_Standard(int mat, float E) {
+__device__ float voxsrc_Compton_CS_Standard(int mat, float E) {
 	float CS = 0.0f;
 	int i;
 	int index = mat_index[mat];
 	// Model standard
 	for (i = 0; i < mat_nb_elements[mat]; ++i) {
-		CS += (mat_atom_num_dens[index+i] * Compton_CSPA_Standard(E, mat_mixture[index+i]));
+		CS += (mat_atom_num_dens[index+i] * voxsrc_Compton_CSPA_Standard(E, mat_mixture[index+i]));
 	}
 	return CS;
 }
 
 // Compute the total Compton cross section for a given material
-__device__ float PhotoElec_CS_Standard(int mat, float E) {
+__device__ float voxsrc_PhotoElec_CS_Standard(int mat, float E) {
 	float CS = 0.0f;
 	int i;
 	int index = mat_index[mat];
 	// Model standard
 	for (i = 0; i < mat_nb_elements[mat]; ++i) {
-		CS += (mat_atom_num_dens[index+i] * PhotoElec_CSPA_Standard(E, mat_mixture[index+i]));
+		CS += (mat_atom_num_dens[index+i] * voxsrc_PhotoElec_CSPA_Standard(E, mat_mixture[index+i]));
 	}
 	return CS;
 }
@@ -326,7 +327,7 @@ __global__ void kernel_voxelized_source_b2b(StackGamma stackgamma1, StackGamma s
 		float jump = (float)(dim_vol.y * dim_vol.x);
 		float ind, x, y, z;
 		
-		float rnd = Brent_real(id, stackgamma1.table_x_brent, 0);
+		float rnd = voxsrc_Brent_real(id, stackgamma1.table_x_brent, 0);
 		//int pos = (int)(rnd * (float)nb_act);
 		int pos = 0;
 		while (tex1Dfetch(tex_act_val, pos) < rnd) {++pos;};
@@ -339,9 +340,9 @@ __global__ void kernel_voxelized_source_b2b(StackGamma stackgamma1, StackGamma s
 		x = ind - y*dim_vol.x;
 
 		// random position inside the voxel
-		x += Brent_real(id, stackgamma1.table_x_brent, 0);
-		y += Brent_real(id, stackgamma1.table_x_brent, 0);
-		z += Brent_real(id, stackgamma1.table_x_brent, 0);
+		x += voxsrc_Brent_real(id, stackgamma1.table_x_brent, 0);
+		y += voxsrc_Brent_real(id, stackgamma1.table_x_brent, 0);
+		z += voxsrc_Brent_real(id, stackgamma1.table_x_brent, 0);
 
 		// must be in mm
 		x *= size_voxel;
@@ -349,8 +350,8 @@ __global__ void kernel_voxelized_source_b2b(StackGamma stackgamma1, StackGamma s
 		z *= size_voxel;
 
 		// random orientation
-		float phi   = Brent_real(id, stackgamma1.table_x_brent, 0);
-		float theta = Brent_real(id, stackgamma1.table_x_brent, 0);
+		float phi   = voxsrc_Brent_real(id, stackgamma1.table_x_brent, 0);
+		float theta = voxsrc_Brent_real(id, stackgamma1.table_x_brent, 0);
 		phi   = twopi * phi;
 		theta = acosf(1.0f - 2.0f*theta);
 		
@@ -397,7 +398,7 @@ __global__ void kernel_voxelized_source_b2b(StackGamma stackgamma1, StackGamma s
  ***********************************************************/
 
 // Fictitious tracking (or delta-tracking)
-__global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, float dimvox, int most_att_mat) {
+__global__ void kernel_voxsrc_woodcock_Standard(int3 dimvol, StackGamma stackgamma, float dimvox, int most_att_mat) {
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 	int jump = dimvol.x * dimvol.y;
 	float3 p, p0, delta, dimvolmm, dp;
@@ -426,8 +427,8 @@ __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, flo
 		
 
 		// Most attenuate material
-		cur_CS.x = PhotoElec_CS_Standard(most_att_mat, E);
-		cur_CS.y = Compton_CS_Standard(most_att_mat, E);
+		cur_CS.x = voxsrc_PhotoElec_CS_Standard(most_att_mat, E);
+		cur_CS.y = voxsrc_Compton_CS_Standard(most_att_mat, E);
 		rec_mu_maj = __fdividef(1.0f, cur_CS.x + cur_CS.y);
 
 		// init mem share
@@ -436,7 +437,7 @@ __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, flo
 			
 		while (1) {
 			// get mean path from the most attenuate material (RibBone)
-			path = -__logf(Brent_real(id, stackgamma.table_x_brent, 0)) * rec_mu_maj; // mm
+			path = -__logf(voxsrc_Brent_real(id, stackgamma.table_x_brent, 0)) * rec_mu_maj; // mm
 			
 			// fly along the path
 			p.x = p.x + delta.x * path;
@@ -485,8 +486,8 @@ __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, flo
 			// Bib of sum_CS
 			if (CS[threadIdx.x][mat] == 0.0f) {
 				// get CS
-				cur_CS.x = PhotoElec_CS_Standard(mat, E);
-				cur_CS.y = Compton_CS_Standard(mat, E);
+				cur_CS.x = voxsrc_PhotoElec_CS_Standard(mat, E);
+				cur_CS.y = voxsrc_Compton_CS_Standard(mat, E);
 				sum_CS = cur_CS.x + cur_CS.y;
 				CS[threadIdx.x][mat] = sum_CS;
 			} else {
@@ -494,7 +495,7 @@ __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, flo
 			}
 
 			// Does the interaction is real?
-			if (sum_CS * rec_mu_maj > Brent_real(id, stackgamma.table_x_brent, 0)) {break;}
+			if (sum_CS * rec_mu_maj > voxsrc_Brent_real(id, stackgamma.table_x_brent, 0)) {break;}
 		}
 
 		dp.x = p0.x - p.x;
@@ -508,11 +509,11 @@ __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, flo
 		stackgamma.pz[id] = p.z;
 		stackgamma.t[id] = t;
 		
-        cur_CS.x = PhotoElec_CS_Standard(mat, E);
-        cur_CS.y = Compton_CS_Standard(mat, E);
+        cur_CS.x = voxsrc_PhotoElec_CS_Standard(mat, E);
+        cur_CS.y = voxsrc_Compton_CS_Standard(mat, E);
         sum_CS = cur_CS.x + cur_CS.y;
 
-	    if (__fdividef(cur_CS.x, sum_CS)>Brent_real(id, stackgamma.table_x_brent, 0)) {
+	    if (__fdividef(cur_CS.x, sum_CS)>voxsrc_Brent_real(id, stackgamma.table_x_brent, 0)) {
             stackgamma.interaction[id] = 1;
         } else {
             stackgamma.interaction[id] = 2;
@@ -526,7 +527,7 @@ __global__ void kernel_woodcock_Standard(int3 dimvol, StackGamma stackgamma, flo
  ***********************************************************/
 
 // Kernel interactions
-__global__ void kernel_interactions(StackGamma stackgamma, int3 dimvol, float dimvox) {
+__global__ void kernel_voxsrc_interactions(StackGamma stackgamma, int3 dimvol, float dimvox) {
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 	float3 dir;
 
@@ -545,7 +546,7 @@ __global__ void kernel_interactions(StackGamma stackgamma, int3 dimvol, float di
 			// Compton scattering
 			++stackgamma.ct_cpt[id];
 			// Model standard
-			dir = Compton_scatter_Standard(stackgamma, id);
+			dir = voxsrc_Compton_scatter_Standard(stackgamma, id);
 			break;
 		}
 
@@ -707,7 +708,9 @@ void get_nb_particles_simulated(StackGamma &stackgamma1, StackGamma &stackgamma2
 	} // i
 }
 
+// FIXME this function is the same than the actor_fun.cu and not used
 // Load phantom in the tex mem
+/*
 void load_phantom_in_tex(const char* filename, int3 dim_phantom) {
 	int nb = dim_phantom.z * dim_phantom.y * dim_phantom.x;
 	unsigned int mem_phantom = nb * sizeof(unsigned short int);
@@ -722,7 +725,7 @@ void load_phantom_in_tex(const char* filename, int3 dim_phantom) {
 	cudaMemcpy(dphantom, phantom, mem_phantom, cudaMemcpyHostToDevice);
 	cudaBindTexture(NULL, tex_phantom, dphantom, mem_phantom);
 	free(phantom);
-}
+} */
 
 // Load activities in the tex mem
 void load_activities_in_tex(const char* filename_act, const char* filename_ind, int nb) {
