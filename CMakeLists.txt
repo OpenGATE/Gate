@@ -45,8 +45,7 @@ OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
 OPTION(GATE_ANALYSIS_USE_GENERAL "Gate use  G4ANALYSIS_USE_GENERAL (Recommanded)" ON)
 OPTION(GATE_ANALYSIS_USE_FILE "Gate use G4ANALYSIS_USE_FILE (Recommanded)" ON)
 OPTION(GATE_USE_OWN_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4" ON)
-OPTION(GATE_USE_CUDA "Gate use CUDA for primaries generation" OFF)
-OPTION(GATE_cuda_actor_tracking "Gate cuda tracking" OFF)
+OPTION(GATE_USE_GPU "Gate use GPU (voxelized src and tracking), need CUDA " OFF)
 
 IF(GATE_USE_ROOT)
    FIND_PACKAGE(ROOT REQUIRED)
@@ -79,11 +78,16 @@ IF(GATE_USE_OWN_CLHEP)
 ENDIF(GATE_USE_OWN_CLHEP)
 
 #=========================================================
-# Option for Cuda use
+# Option for GPU use
 
-IF(GATE_USE_CUDA)
+IF(GATE_USE_GPU)
     FIND_PACKAGE(CUDA)
-ENDIF(GATE_USE_CUDA)
+    INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/source/gpu/include/)
+    FILE(GLOB sourcesGPU
+    ${PROJECT_SOURCE_DIR}/source/gpu/src/actor_track_gpu.cu 
+    ${PROJECT_SOURCE_DIR}/source/gpu/src/voxsrc_track_gpu.cu
+    )    
+ENDIF(GATE_USE_GPU)
 
 #=========================================================
 # Option for LMF use
@@ -139,15 +143,6 @@ FILE(GLOB sources
 	${PROJECT_SOURCE_DIR}/source/physics/src/*.cc
 	${PROJECT_SOURCE_DIR}/source/general/src/*.cc)
 
-IF (GATE_cuda_actor_tracking)
-    FILE(GLOB sourcesGPU
-    ${PROJECT_SOURCE_DIR}/source/gpu/src/actor_track_gpu.cu)
-ELSE()
-    FILE(GLOB sourcesGPU
-	${PROJECT_SOURCE_DIR}/source/gpu/src/track_gpu.cu)
-    #${PROJECT_SOURCE_DIR}/source/gpu/src/actor_track_gpu.cu)
-ENDIF()
-
 FILE(GLOB headers
 	${PROJECT_SOURCE_DIR}/source/arf/include/*.hh
 	${PROJECT_SOURCE_DIR}/source/geometry/include/*.hh
@@ -158,12 +153,12 @@ FILE(GLOB headers
 
 #=========================================================
 # Add the executable, and link it to the Geant4 libraries
-IF(GATE_USE_CUDA AND CUDA_FOUND)
+IF(GATE_USE_GPU AND CUDA_FOUND)
     SET(CUDA_NVCC_FLAGS "-arch;compute_20;-use_fast_math;-w")
     CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
-ELSE(GATE_USE_CUDA AND CUDA_FOUND)
+ELSE(GATE_USE_GPU AND CUDA_FOUND)
     ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
-ENDIF(GATE_USE_CUDA AND CUDA_FOUND)
+ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 
 TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ITKMetaIO itkzlib)
 

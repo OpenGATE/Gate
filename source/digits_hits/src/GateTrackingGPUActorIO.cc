@@ -204,7 +204,7 @@ void GateTrackingGPUActorParticle_Print(const GateTrackingGPUActorParticle & p)
 //-----------------------------------------------------------------------------
 
 
-#ifndef GATE_USE_CUDA
+#ifndef GATE_USE_GPU
 void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input, 
                                GateTrackingGPUActorOutput * output)
 {

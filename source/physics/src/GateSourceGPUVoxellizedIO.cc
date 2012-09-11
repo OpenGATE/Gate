@@ -130,19 +130,10 @@ void GateSourceGPUVoxellizedInput_parse_activities(const ActivityMap& activities
   //}
 }
 
-#ifdef GATE_USE_CUDA
-#ifdef GATE_cuda_actor_tracking
+#ifndef GATE_USE_GPU
 void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput*, GateSourceGPUVoxellizedOutput&)
 {
-  GateError("Gate is compiled without CUDA enabled. You cannot use 'GPUvoxel' as source (GateSourceGPUVoxellized), use 'voxel' instead.");
-}
-#endif
-#endif
-
-#ifndef GATE_USE_CUDA
-void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput*, GateSourceGPUVoxellizedOutput&)
-{
-  GateError("Gate is compiled without CUDA enabled. You cannot use 'GPUvoxel' as source (GateSourceGPUVoxellized), use 'voxel' instead.");
+  GateError("Gate is compiled without GPU enabled. You cannot use 'GPUvoxel' as source (GateSourceGPUVoxellized), use 'voxel' instead.");
 }
 #endif
 
