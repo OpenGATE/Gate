@@ -10,20 +10,20 @@
 /gate/physics/addProcess RayleighScattering 
 /gate/physics/processes/RayleighScattering/setModel LivermoreModel
 
-/gate/physics/addProcess ElectronIonisation
-/gate/physics/processes/ElectronIonisation/setModel StandardModel e-
-/gate/physics/processes/ElectronIonisation/setModel StandardModel e+
+#/gate/physics/addProcess ElectronIonisation
+#/gate/physics/processes/ElectronIonisation/setModel StandardModel e-
+#/gate/physics/processes/ElectronIonisation/setModel StandardModel e+
 
 /gate/physics/addProcess Bremsstrahlung
 /gate/physics/processes/Bremsstrahlung/setModel StandardModel e-
 /gate/physics/processes/Bremsstrahlung/setModel StandardModel e+
 
-/gate/physics/addProcess PositronAnnihilation
+#/gate/physics/addProcess PositronAnnihilation
 
-/gate/physics/addProcess MultipleScattering e+
-/gate/physics/addProcess MultipleScattering e-
+#/gate/physics/addProcess MultipleScattering e+
+#/gate/physics/addProcess MultipleScattering e-
 
-/gate/physics/addProcess RadioactiveDecay
+#/gate/physics/addProcess RadioactiveDecay
 
 /gate/physics/processList Enabled
 /gate/physics/processList Initialized

@@ -16,6 +16,8 @@ See GATE/LICENSE.txt for further details
          - Revision v6.2   2012/07/24  by vesna.cuplov@gmail.com
            Unique output file with Gate default trees (Hits,Singles,Coincidences...) + OpticalData Tree.
          - Revision v6.2 2012/08/06  Added optical photon momentum direction (x,y,z) in tree.
+         - Revision 2012/09/17  /gate/output/root/setRootOpticalFlag functionality added.
+           Set the flag for Optical ROOT output.
 */
 
 #ifndef GateToRoot_H
@@ -209,12 +211,19 @@ public:
 
 
   //! flag to decide if it writes or not Hits, Singles and Digis to the ROOT file
+
+
+
+
   G4bool GetRootHitFlag()                   { return m_rootHitFlag; };
   void   SetRootHitFlag(G4bool flag)        { m_rootHitFlag = flag; };
   G4bool GetRootNtupleFlag()                { return m_rootNtupleFlag; };
   void   SetRootNtupleFlag(G4bool flag)     { m_rootNtupleFlag = flag; };
   G4bool GetSaveRndmFlag()                  { return m_saveRndmFlag; };
   void   SetSaveRndmFlag(G4bool flag)       { m_saveRndmFlag = flag; };
+  G4bool GetRootOpticalFlag()                   { return m_rootOpticalFlag; };
+  void   SetRootOpticalFlag(G4bool flag)        { m_rootOpticalFlag = flag; };
+
 
   //! Get the output file name
   const  G4String& GetFileName()             { return m_fileName; };
@@ -294,7 +303,8 @@ private:
   G4bool   m_rootCoincDigiFlag;
   G4bool   m_rootNtupleFlag;
   G4bool   m_saveRndmFlag;
-  
+  G4bool   m_rootOpticalFlag;
+
   G4String m_fileName;
 
   GateToRootMessenger* m_rootMessenger;

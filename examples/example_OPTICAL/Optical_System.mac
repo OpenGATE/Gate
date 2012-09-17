@@ -29,8 +29,8 @@
 # VISUALISATION and VERBOSE
 #=====================================================
 
-/vis/disable
-#/control/execute                    ./macro/Visualisation.mac
+#/vis/disable
+/control/execute                    ./macro/Visualisation.mac
 /control/execute                    ./macro/Verbose.mac
 
 #=====================================================
@@ -43,9 +43,9 @@
 #     W O R L D
 #=====================================================
 
-/gate/world/geometry/setXLength       100. cm
-/gate/world/geometry/setYLength       100. cm
-/gate/world/geometry/setZLength       100. cm
+/gate/world/geometry/setXLength       200. cm
+/gate/world/geometry/setYLength       200. cm
+/gate/world/geometry/setZLength       200. cm
 /gate/world/setMaterial               Air
 
 
@@ -68,16 +68,18 @@
 #=======================================================
 
 #/gate/OpticalSystem/moves/insert             orbiting
-#/gate/OpticalSystem/orbiting/setSpeed        20 deg/s
-#/gate/OpticalSystem/orbiting/setPoint1       0 0 0 cm
-#/gate/OpticalSystem/orbiting/setPoint2       0 1 0 cm
+#/gate/OpticalSystem/orbiting/setSpeed        22.5 deg/s
+#/gate/OpticalSystem/orbiting/setPoint1       0 1 0 cm
+#/gate/OpticalSystem/orbiting/setPoint2       0 0 0 cm
+#/gate/geometry/update
 
 #=====================================================
 #                   P H A N T O M
 #=====================================================
 
-/control/execute ./macro/Phantom.mac
-
+#/control/execute ./macro/Phantom.mac
+#/control/execute ./macro/VoxelizedPhantom.mac
+/control/execute ./macro/waterMousePhantom.mac
 
 #=====================================================
 #                  P H Y S I C S
@@ -96,8 +98,8 @@
 #                    A C T O R
 #=====================================================
 # This actor will record information on your simulation:
-/gate/actor/addActor               SimulationStatisticActor stat
-/gate/actor/stat/save              OpticalSimulation_stat.txt
+#/gate/actor/addActor               SimulationStatisticActor stat
+#/gate/actor/stat/save              OpticalSimulation_stat.txt
 
 #=====================================================
 # INITIALISATION
@@ -108,27 +110,20 @@
 #=====================================================
 #   D I G I T I Z E R: DETECTOR ELECTRONIC RESPONSE
 #===================================================== 
-/gate/digitizer/name                                 OpticalSingles
-/gate/digitizer/insert                               singleChain
 
-# If you want to apply an upper cut (usually it is the case for fluorescence experiments)
-# This cut will be taken into account in the the ProjectionSet result.
-/gate/digitizer/OpticalSingles/setInputName Singles
-/gate/digitizer/OpticalSingles/insert upholder
-# Fluorescent photons have an energy smaller than the excitation photon energy:
-/gate/digitizer/OpticalSingles/upholder/setUphold 2.0 eV
-# new
-
-/gate/digitizer/OpticalSingles/insert opticaladder
-/gate/digitizer/OpticalSingles/insert                        readout
-/gate/digitizer/OpticalSingles/readout/setDepth              2
-
+/gate/digitizer/Singles/insert opticaladder 
+/gate/digitizer/Singles/insert                        readout 
+# for pixels:
+#/gate/digitizer/Singles/readout/setDepth              2
+# for crystal:
+/gate/digitizer/Singles/readout/setDepth              1
 
 #=====================================================
 #  S O U R C E
 #=====================================================
 
-/control/execute ./macro/Source.mac
+#/control/execute ./macro/Source.mac
+/control/execute ./macro/VoxelizedSource.mac
 
 #=====================================================
 #  D A T A   O U T P U T   
@@ -136,12 +131,14 @@
 
 /gate/output/root/enable
 /gate/output/root/setFileName                     OpticalSimulation
+/gate/output/root/setRootHitFlag          0
+/gate/output/root/setRootSinglesFlag      0
+/gate/output/root/setRootOpticalFlag      1
 
 /gate/output/analysis/enable
 /gate/output/fastanalysis/enable
 
 /control/execute                        ./macro/Projection.mac
-
 
 #=====================================================
 #   R A N D O M
@@ -163,10 +160,9 @@
 # A C Q U I S I T I O N
 
 #/gate/application/noGlobalOutput
-
-/control/execute                        ./macro/StartPrimaries.mac
+#/control/execute                        ./macro/StartPrimaries.mac
 
 # If using DAQ: setActivity is needed in the Source
-#/control/execute                        ./macro/StartDAQ.mac
+/control/execute                        ./macro/StartDAQ.mac
 
 

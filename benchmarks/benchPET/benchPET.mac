@@ -62,9 +62,12 @@
 /gate/random/verbose 1
 
 #	S T A R T 
-/gate/application/setTimeSlice     120. s
-/gate/application/setTimeStart     0. s
-/gate/application/setTimeStop      240. s
+#/gate/application/setTimeSlice     120. s
+#/gate/application/setTimeStart     0. s
+#/gate/application/setTimeStop      240. s
 
+/gate/application/setTimeSlice     1. s
+/gate/application/setTimeStart     0. s
+/gate/application/setTimeStop      1. s
 
 /gate/application/startDAQ

@@ -8,6 +8,12 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+/*  Optical Photons: V. Cuplov -  2012
+         - Revision 2012/09/17  /gate/output/root/setRootOpticalFlag functionality added.
+           Set the flag for Optical ROOT output.
+*/
+
+
 #include "GateToRootMessenger.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
@@ -51,8 +57,15 @@ GateToRootMessenger::GateToRootMessenger(GateToRoot* gateToRoot)
   RootNtupleCmd = new G4UIcmdWithABool(cmdName,this);
   RootNtupleCmd->SetGuidance("Set the flag for Ntuples ROOT output");
   RootNtupleCmd->SetGuidance("1. true/false");
-  
-	cmdName = GetDirectoryName()+"setRootRecordFlag";
+
+// optical data
+  cmdName = GetDirectoryName()+"setRootOpticalFlag";
+  RootOpticalCmd = new G4UIcmdWithABool(cmdName,this);
+  RootOpticalCmd->SetGuidance("Set the flag for Optical ROOT output");
+  RootOpticalCmd->SetGuidance("1. true/false");
+// optical data
+
+  cmdName = GetDirectoryName()+"setRootRecordFlag";
   RootRecordCmd = new G4UIcmdWithABool(cmdName,this);
   RootRecordCmd->SetGuidance("Set the flag for Histogram ROOT output");
   RootRecordCmd->SetGuidance("1. true/false");
@@ -74,6 +87,7 @@ GateToRootMessenger::~GateToRootMessenger()
 
   delete RootHitCmd;
   delete RootNtupleCmd;
+  delete RootOpticalCmd;
   delete SetFileNameCmd;
   delete SaveRndmCmd;
   for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i) 
@@ -96,6 +110,8 @@ void GateToRootMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     m_gateToRoot->SetSaveRndmFlag(SaveRndmCmd->GetNewBoolValue(newValue));
   } else if (command == RootNtupleCmd) {
     m_gateToRoot->SetRootNtupleFlag(RootNtupleCmd->GetNewBoolValue(newValue));
+  } else if (command == RootOpticalCmd) {
+    m_gateToRoot->SetRootOpticalFlag(RootOpticalCmd->GetNewBoolValue(newValue));
   } else if (command == RootRecordCmd) {
 	  m_gateToRoot->SetRecordFlag(RootRecordCmd->GetNewBoolValue(newValue));
 	} else if ( IsAnOutputChannelCmd(command) ) {

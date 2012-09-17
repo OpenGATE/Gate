@@ -17,15 +17,12 @@
 
 /gate/output/projection/enable
 
-# Only photons with Energy < 2eV (see the digitization details in main macro)
-/gate/output/projection/setInputDataName OpticalSingles
-
 /gate/output/projection/setFileName       ./OpticalSimulationProjection
 
-/gate/output/projection/pixelSizeX    	   0.105 cm
-/gate/output/projection/pixelSizeY    	   0.105 cm
-/gate/output/projection/pixelNumberX  	   100
-/gate/output/projection/pixelNumberY  	   100
+/gate/output/projection/pixelSizeX    	   0.02 cm
+/gate/output/projection/pixelSizeY    	   0.04 cm
+/gate/output/projection/pixelNumberX  	   1000
+/gate/output/projection/pixelNumberY  	   1000
 
 # GATE can not decide which sampling plane you want to use, as it depends
 # on the orientation you have chosen when you built the head

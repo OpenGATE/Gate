@@ -20,48 +20,62 @@
 /gate/world/daughters/name                      OpticalSystem
 /gate/world/daughters/insert                    box
 
-/gate/OpticalSystem/geometry/setXLength         10.5 cm
-/gate/OpticalSystem/geometry/setYLength         10.5 cm
+#/gate/OpticalSystem/geometry/setXLength         10.5 cm
+#/gate/OpticalSystem/geometry/setYLength         10.5 cm
+/gate/OpticalSystem/geometry/setXLength         20. cm
+/gate/OpticalSystem/geometry/setYLength         40. cm
 /gate/OpticalSystem/geometry/setZLength         2.0 cm
-/gate/OpticalSystem/placement/setTranslation    0 0 0 cm
+/gate/OpticalSystem/placement/setTranslation    0 0 3.0 cm
 /gate/OpticalSystem/setMaterial                 Air
 
+#/gate/OpticalSystem/repeaters/insert ring 
+#/gate/OpticalSystem/ring/setRepeatNumber 16
+#/gate/OpticalSystem/ring/setPoint1 0. 1. 0. mm 
+#/gate/OpticalSystem/ring/setPoint2 0. 0. 0. mm 
 
 # === crystal: pixels and an additionnal volume behind the pixels  ===
 /gate/OpticalSystem/daughters/name              crystal
 /gate/OpticalSystem/daughters/insert            box
-/gate/crystal/geometry/setXLength               10.5 cm
-/gate/crystal/geometry/setYLength               10.5 cm
+/gate/crystal/geometry/setXLength               20. cm
+/gate/crystal/geometry/setYLength               40. cm
 /gate/crystal/geometry/setZLength               1.0 cm
 /gate/crystal/placement/setTranslation          0 0 -0.5 cm
 /gate/crystal/setMaterial                       Air
-/gate/crystal/vis/forceWireframe                1
+/gate/crystal/vis/setColor                      green
+/gate/crystal/vis/forceSolid
+/gate/crystal/attachCrystalSD
 /gate/systems/OpticalSystem/crystal/attach      crystal
 
+
 # === pixels ===
-/gate/crystal/daughters/name                    pixel
-/gate/crystal/daughters/insert                  box
-/gate/pixel/geometry/setXLength                 2.  cm
-/gate/pixel/geometry/setYLength                 2.  cm
-/gate/pixel/geometry/setZLength                 1 cm
-/gate/pixel/setMaterial                         Air
-/gate/pixel/placement/setTranslation            0 0 0 cm
-/gate/pixel/vis/setColor                        red
-/gate/pixel/repeaters/insert                    cubicArray
-/gate/pixel/cubicArray/setRepeatNumberX         5
-/gate/pixel/cubicArray/setRepeatNumberY         5
-/gate/pixel/cubicArray/setRepeatNumberZ         1
-/gate/pixel/cubicArray/setRepeatVector          2.1 2.1 0 cm
-/gate/pixel/vis/forceSolid           
-/gate/pixel/attachCrystalSD
-/gate/systems/OpticalSystem/pixel/attach        pixel
+#/gate/crystal/daughters/name                    pixel
+#/gate/crystal/daughters/insert                  box
+#/gate/pixel/geometry/setXLength                 2.  cm
+#/gate/pixel/geometry/setYLength                 2.  cm
+#/gate/pixel/geometry/setXLength                 0.105  cm
+#/gate/pixel/geometry/setYLength                 0.105  cm
+#/gate/pixel/geometry/setZLength                 1 cm
+#/gate/pixel/setMaterial                         Air
+#/gate/pixel/placement/setTranslation            0 0 0 cm
+#/gate/pixel/vis/setColor                        red
+#/gate/pixel/repeaters/insert                    cubicArray
+#/gate/pixel/cubicArray/setRepeatNumberX         5
+#/gate/pixel/cubicArray/setRepeatNumberY         5
+#/gate/pixel/cubicArray/setRepeatNumberX         100
+#/gate/pixel/cubicArray/setRepeatNumberY         100
+#/gate/pixel/cubicArray/setRepeatNumberZ         1
+#/gate/pixel/cubicArray/setRepeatVector          2.1 2.1 0 cm
+#/gate/pixel/cubicArray/setRepeatVector          0.105 0.105 0 cm
+#/gate/pixel/vis/forceSolid           
+#/gate/pixel/attachCrystalSD
+#/gate/systems/OpticalSystem/pixel/attach        pixel
 
 
 # === additionnal volume behind pixels (ex: electronic board) ===
 /gate/OpticalSystem/daughters/name              Electronics
 /gate/OpticalSystem/daughters/insert            box
-/gate/Electronics/geometry/setXLength           10.5  cm
-/gate/Electronics/geometry/setYLength           10.5  cm
+/gate/Electronics/geometry/setXLength           20.  cm
+/gate/Electronics/geometry/setYLength           40.  cm
 /gate/Electronics/geometry/setZLength           1.0 cm
 /gate/Electronics/setMaterial                   Air                  
 /gate/Electronics/placement/setTranslation      0 0 0.5 cm
@@ -69,17 +83,28 @@
 /gate/Electronics/vis/forceSolid
 
 
-
-
 #===============================================================
 # Optical photons Detection Surface should be DIELECTRIC-METAL
 #===============================================================
 
-/gate/pixel/surfaces/name                           Detection1
-/gate/pixel/surfaces/insert                         Electronics
-/gate/pixel/surfaces/Detection1/setSurface          perfect_apd  
+#/gate/pixel/surfaces/name                           Detection1
+#/gate/pixel/surfaces/insert                         Electronics
+#/gate/pixel/surfaces/Detection1/setSurface          perfect_apd  
+
+#/gate/Electronics/surfaces/name                     Detection2
+#/gate/Electronics/surfaces/insert                   pixel
+#/gate/Electronics/surfaces/Detection2/setSurface    perfect_apd  
+
+
+/gate/crystal/surfaces/name                           Detection1
+/gate/crystal/surfaces/insert                         Electronics
+/gate/crystal/surfaces/Detection1/setSurface          perfect_apd  
 
 /gate/Electronics/surfaces/name                     Detection2
-/gate/Electronics/surfaces/insert                   pixel
+/gate/Electronics/surfaces/insert                   crystal
 /gate/Electronics/surfaces/Detection2/setSurface    perfect_apd  
+
+
+
+
 

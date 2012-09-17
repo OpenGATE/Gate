@@ -19,7 +19,7 @@
 /gate/casper/geometry/setXLength             50.0  mm
 /gate/casper/geometry/setYLength             50.0  mm
 /gate/casper/geometry/setZLength             17.0 mm
-/gate/casper/placement/setTranslation        0.0 0.0 -4.0 cm
+/gate/casper/placement/setTranslation        0.0 0.0 -40.0 cm
 
 ## The phantom is made of a fluorescent material, named GFP:
 /gate/casper/setMaterial                     GFP

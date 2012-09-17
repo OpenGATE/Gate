@@ -71,11 +71,11 @@
 
 
 
-/gate/output/ascii/setOutFileSinglesAdderFlag 0
-/gate/output/ascii/setOutFileSinglesSpblurringFlag 0
-/gate/output/ascii/setOutFileSinglesBlurringFlag 0
-/gate/output/ascii/setOutFileSinglesThresholderFlag 0
-/gate/output/ascii/setOutFileSinglesUpholderFlag 0
+#/gate/output/ascii/setOutFileSinglesAdderFlag 0
+#/gate/output/ascii/setOutFileSinglesSpblurringFlag 0
+#/gate/output/ascii/setOutFileSinglesBlurringFlag 0
+#/gate/output/ascii/setOutFileSinglesThresholderFlag 0
+#/gate/output/ascii/setOutFileSinglesUpholderFlag 0
 
 #   R A N D O M
 # JamesRandom Ranlux64 MersenneTwister
@@ -105,9 +105,13 @@
 # E X P E R I M E N T 
 #####
 
-/gate/application/setTimeSlice      37.5  s
+#/gate/application/setTimeSlice      37.5  s
+#/gate/application/setTimeStart      0.    s
+#/gate/application/setTimeStop      600.  s
+
+/gate/application/setTimeSlice      1  s
 /gate/application/setTimeStart      0.    s
-/gate/application/setTimeStop      600.  s
+/gate/application/setTimeStop      2.  s
 
 
 # V E R B O S I T Y

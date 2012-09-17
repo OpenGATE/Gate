@@ -14,7 +14,7 @@ void DrawBranches() {
 
   canvas->Print("validation_reference.ps[");
 
-  TFile *f = new TFile("./OpticalSimulation_Reference.root"); 
+  TFile *f = new TFile("./OpticalSimulation.root"); 
   TTree *t = (TTree*)f->Get("EventData"); 
 
   cout << t->GetEntries() << endl;

@@ -16,6 +16,8 @@
          - Revision v6.2   2012/07/24  by vesna.cuplov@gmail.com
            Unique output file with Gate default trees (Hits,Singles,Coincidences...) + OpticalData Tree.
          - Revision v6.2 2012/08/06  Added optical photon momentum direction (x,y,z) in tree.
+         - Revision 2012/09/17  /gate/output/root/setRootOpticalFlag functionality added.
+           Set the flag for Optical ROOT output.
 */
 
 #include "GateToRoot.hh"
@@ -927,7 +929,7 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
        if(nCrystalOpticalWLS >0) NumCrystalWLS++;
        if(nPhantomOpticalWLS >0) NumPhantomWLS++;
 
-  if (trajectoryContainer) {OpticalTree->Fill();}
+  if (m_rootOpticalFlag && trajectoryContainer) {OpticalTree->Fill();}
 
 }
 

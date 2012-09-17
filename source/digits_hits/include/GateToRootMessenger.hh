@@ -8,6 +8,11 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+/*  Optical Photons: V. Cuplov -  2012
+         - Revision 2012/09/17  /gate/output/root/setRootOpticalFlag functionality added.
+           Set the flag for Optical ROOT output.
+*/
+
 
 #ifndef GateToRootMessenger_h
 #define GateToRootMessenger_h 1
@@ -50,6 +55,7 @@ class GateToRootMessenger: public GateOutputModuleMessenger
 
     G4UIcmdWithABool*        RootHitCmd;
     G4UIcmdWithABool*        RootNtupleCmd;
+    G4UIcmdWithABool*        RootOpticalCmd;
     G4UIcmdWithABool*        RootRecordCmd;
     G4UIcmdWithABool*        SaveRndmCmd;
     G4UIcmdWithAString*      SetFileNameCmd;

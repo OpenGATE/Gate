@@ -1,2 +1,2 @@
-/gate/application/setTotalNumberOfPrimaries       10000
+/gate/application/setTotalNumberOfPrimaries       2
 /gate/application/start

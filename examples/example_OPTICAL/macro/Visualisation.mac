@@ -15,8 +15,9 @@
 #  *********************************************************************
 
 /vis/open                           OGLSX
-/vis/viewer/set/viewpointThetaPhi   120 30
-/vis/viewer/zoom                     10.0
+/vis/viewer/zoom                     5.0
+/vis/viewer/set/viewpointThetaPhi   100 30
+#/vis/viewer/zoom                     10.0
 /vis/drawVolume
 /tracking/storeTrajectory           1
 /vis/scene/add/trajectories 
