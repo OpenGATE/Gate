@@ -15,7 +15,7 @@
 #  *********************************************************************
 
 /vis/open                           OGLSX
-/vis/viewer/zoom                     5.0
+/vis/viewer/zoom                     6.0
 /vis/viewer/set/viewpointThetaPhi   100 30
 #/vis/viewer/zoom                     10.0
 /vis/drawVolume

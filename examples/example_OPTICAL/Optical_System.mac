@@ -77,9 +77,7 @@
 #                   P H A N T O M
 #=====================================================
 
-#/control/execute ./macro/Phantom.mac
-#/control/execute ./macro/VoxelizedPhantom.mac
-/control/execute ./macro/waterMousePhantom.mac
+/control/execute ./macro/Phantom.mac
 
 #=====================================================
 #                  P H Y S I C S
@@ -122,8 +120,7 @@
 #  S O U R C E
 #=====================================================
 
-#/control/execute ./macro/Source.mac
-/control/execute ./macro/VoxelizedSource.mac
+/control/execute ./macro/Source.mac
 
 #=====================================================
 #  D A T A   O U T P U T   

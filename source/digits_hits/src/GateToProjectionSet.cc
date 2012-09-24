@@ -14,6 +14,10 @@
 
    $Log: GateToProjectionSet.cc,v $
 
+   Bug fix v6.2: 2012/09/24   by vesna.cuplov@gmail.com 
+   ProjectionSet is triggered by the name of the system: GateOpticalSystem or SPECThead and works
+   when USE_GATE_OPTICAL is ON or OFF. 
+
    Revision v6.2   2012/07/09  by vesna.cuplov@gmail.com
    Implemented functions that have a link with the GateToOpticalRaw class for Optical photons which is
    used to write as an output file the result of the GateToProjectionSet module for Optical Photons. 
@@ -85,11 +89,12 @@
 #include "GateProjectionSet.hh"
 #include "GateToProjectionSetMessenger.hh"
 #include "GateToInterfile.hh"
-#include "GateToOpticalRaw.hh" // v. cuplov
 #include "GateTools.hh"
 #include "GateVSystem.hh"
 #include "GateApplicationMgr.hh"
 #include "G4DigiManager.hh"
+
+#include "GateToOpticalRaw.hh" // v. cuplov
 
 /*
  *  GateToInterfile is used to write as an output file the result of the GateToProjectionSet module.
@@ -149,79 +154,79 @@ const G4String& GateToProjectionSet::GiveNameOfFile()
 void GateToProjectionSet::SetOutputFileName(const G4String& aName)
 {
 // v. cuplov -- GateToOpticalRaw for optical photons
-#ifdef GATE_USE_OPTICAL
-  GateToOpticalRaw* opticalrawModule = dynamic_cast<GateToOpticalRaw*>( GateOutputMgr::GetInstance()->GetModule("opticalraw") );
+if (m_system->GetName()=="systems/OpticalSystem") // v. cuplov -- GateToOpticalRaw for optical photons
+{ GateToOpticalRaw* opticalrawModule = dynamic_cast<GateToOpticalRaw*>( GateOutputMgr::GetInstance()->GetModule("opticalraw") );
   if (!opticalrawModule) G4Exception( "GateToProjectionSet::SetOutputFileName", "SetOutputFileName", FatalException, "No GateToOpticalRaw module has been constructed, so no output can be possible with GateToProjectionSet");
   opticalrawModule->SetFileName(aName); // It is the GateToOpticalRaw module that manages the output file
-#else  // v. cuplov -- GateToOpticalRaw for optical photons
-  GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
+}
+else {  GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
   if (!interfileModule) G4Exception( "GateToProjectionSet::SetOutputFileName", "SetOutputFileName", FatalException, "No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
   interfileModule->SetFileName(aName); // It is the GateToInterfile module that manages the output file
-#endif  // v. cuplov -- GateToOpticalRaw for optical photons
+}
 }
 
 void GateToProjectionSet::SetVerboseToProjectionSetAndInterfile(G4int aVerbosity)
 {
 // v. cuplov -- GateToOpticalRaw for optical photons
-#ifdef GATE_USE_OPTICAL
-  GateToOpticalRaw* opticalrawModule = dynamic_cast<GateToOpticalRaw*>( GateOutputMgr::GetInstance()->GetModule("opticalraw") );
+if (m_system->GetName()=="systems/OpticalSystem") // v. cuplov -- GateToOpticalRaw for optical photons
+{ GateToOpticalRaw* opticalrawModule = dynamic_cast<GateToOpticalRaw*>( GateOutputMgr::GetInstance()->GetModule("opticalraw") );
   if (!opticalrawModule) G4Exception( "GateToProjectionSet::SetVerboseToProjectionSetAndInterfile", "SetVerboseToProjectionSetAndInterfile", FatalException, "No GateToOpticalRaw module has been constructed, so no output can be possible with GateToProjectionSet");
   opticalrawModule->SetVerboseLevel(aVerbosity); // We update the verbosity level for the GateToOpticalRaw module
   SetVerboseLevel(aVerbosity); // We update the verbosity level for the GateToProjectionSet module
-#else  // v. cuplov -- GateToOpticalRaw for optical photons
-  GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
+}
+else {  GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
   if (!interfileModule) G4Exception( "GateToProjectionSet::SetVerboseToProjectionSetAndInterfile", "SetVerboseToProjectionSetAndInterfile", FatalException, "No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
   interfileModule->SetVerboseLevel(aVerbosity); // We update the verbosity level for the GateToInterfile module
   SetVerboseLevel(aVerbosity); // We update the verbosity level for the GateToProjectionSet module
-#endif  // v. cuplov -- GateToOpticalRaw for optical photons
+}
 }
 
 void GateToProjectionSet::SendDescribeToProjectionSetAndInterfile()
 {
 // v. cuplov -- GateToOpticalRaw for optical photons
-#ifdef GATE_USE_OPTICAL
-  GateToOpticalRaw* opticalrawModule = dynamic_cast<GateToOpticalRaw*>( GateOutputMgr::GetInstance()->GetModule("opticalraw") );
+if (m_system->GetName()=="systems/OpticalSystem") // v. cuplov -- GateToOpticalRaw for optical photons
+{ GateToOpticalRaw* opticalrawModule = dynamic_cast<GateToOpticalRaw*>( GateOutputMgr::GetInstance()->GetModule("opticalraw") );
   if (!opticalrawModule) G4Exception( "GateToProjectionSet::SendDescribeToProjectionSetAndInterfile", "SendDescribeToProjectionSetAndInterfile", FatalException, "No GateToOpticalRaw module has been constructed, so no output can be possible with GateToProjectionSet");
   opticalrawModule->Describe(); // The GateToOpticalRaw module describes itself
   Describe(); // The GateToProjectionSet module describes itself
-#else // v. cuplov -- GateToOpticalRaw for optical photons
-  GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
+}
+else {  GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
   if (!interfileModule) G4Exception( "GateToProjectionSet::SendDescribeToProjectionSetAndInterfile", "SendDescribeToProjectionSetAndInterfile", FatalException, "No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
   interfileModule->Describe(); // The GateToInterfile module describes itself
   Describe(); // The GateToProjectionSet module describes itself
-#endif // v. cuplov -- GateToOpticalRaw for optical photons
+}
 }
 
 void GateToProjectionSet::SetEnableToProjectionSetAndInterfile()
 {
 // v. cuplov -- GateToOpticalRaw for optical photons
-#ifdef GATE_USE_OPTICAL
-  GateToOpticalRaw* opticalrawModule = dynamic_cast<GateToOpticalRaw*>( GateOutputMgr::GetInstance()->GetModule("opticalraw") );
+if (m_system->GetName()=="systems/OpticalSystem") 
+{ GateToOpticalRaw* opticalrawModule = dynamic_cast<GateToOpticalRaw*>( GateOutputMgr::GetInstance()->GetModule("opticalraw") );
   if (!opticalrawModule) G4Exception( "GateToProjectionSet::SetEnableToProjectionSetAndInterfile", "SetEnableToProjectionSetAndInterfile", FatalException, "No GateToOpticalRaw module has been constructed, so no output can be possible with GateToProjectionSet");
   opticalrawModule->Enable(true); // We enable the GateToOpticalRaw module
   Enable(true); // We enable the GateToProjectionSet module
-#else // v. cuplov -- GateToOpticalRaw for optical photons
-  GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
+  }
+else {  GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
   if (!interfileModule) G4Exception( "GateToProjectionSet::SetEnableToProjectionSetAndInterfile", "SetEnableToProjectionSetAndInterfile", FatalException, "No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
   interfileModule->Enable(true); // We enable the GateToInterfile module
   Enable(true); // We enable the GateToProjectionSet module
-#endif // v. cuplov -- GateToOpticalRaw for optical photons
+}
 }
 
 void GateToProjectionSet::SetDisableToProjectionSetAndInterfile()
 {
 // v. cuplov -- GateToOpticalRaw for optical photons
-#ifdef GATE_USE_OPTICAL
-  GateToOpticalRaw* opticalrawModule = dynamic_cast<GateToOpticalRaw*>( GateOutputMgr::GetInstance()->GetModule("opticalraw") );
+if (m_system->GetName()=="systems/OpticalSystem") 
+{ GateToOpticalRaw* opticalrawModule = dynamic_cast<GateToOpticalRaw*>( GateOutputMgr::GetInstance()->GetModule("opticalraw") );
   if (!opticalrawModule) G4Exception("GateToProjectionSet::SetDisableToProjectionSetAndInterfile", "SetDisableToProjectionSetAndInterfile", FatalException,"No GateToOpticalRaw module has been constructed, so no output can be possible with GateToProjectionSet");
   opticalrawModule->Enable(false); // We disable the GateToOpticalRaw module
   Enable(false); // We disable the GateToProjectionSet module
-#else // v. cuplov -- GateToOpticalRaw for optical photons
-  GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
+}
+else {  GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateOutputMgr::GetInstance()->GetModule("interfile") );
   if (!interfileModule) G4Exception("GateToProjectionSet::SetDisableToProjectionSetAndInterfile", "SetDisableToProjectionSetAndInterfile", FatalException,"No GateToInterfile module has been constructed, so no output can be possible with GateToProjectionSet");
   interfileModule->Enable(false); // We disable the GateToInterfile module
   Enable(false); // We disable the GateToProjectionSet module
-#endif // v. cuplov -- GateToOpticalRaw for optical photons
+}
 }
 // End of functions for messenger commands that have a link with the GateToInterfile or GateToOpticalRaw class 
 // ======================================================================================================

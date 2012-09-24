@@ -20,7 +20,7 @@
 
 # Defining the optical photon source activity = counts/second
 # Needed if we want to use the StartDAQ acquisition and therefore the orbiting of the detector.
-#/gate/source/Mysource/setActivity 1000. becquerel 
+/gate/source/Mysource/setActivity 1000. becquerel 
 
 
 # Should set a polarization, because a photon which is not assigned a polarization 
