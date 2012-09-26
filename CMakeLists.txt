@@ -141,7 +141,9 @@ FILE(GLOB sources
 	${PROJECT_SOURCE_DIR}/source/geometry/src/*.cc
 	${PROJECT_SOURCE_DIR}/source/digits_hits/src/*.cc
 	${PROJECT_SOURCE_DIR}/source/physics/src/*.cc
-	${PROJECT_SOURCE_DIR}/source/general/src/*.cc)
+	${PROJECT_SOURCE_DIR}/source/general/src/*.cc
+    ${PROJECT_SOURCE_DIR}/source/gpu/src/actor_ct_track.cu
+    ${PROJECT_SOURCE_DIR}/source/gpu/src/voxsrc_track_gpu.cu)
 
 FILE(GLOB headers
 	${PROJECT_SOURCE_DIR}/source/arf/include/*.hh
@@ -154,7 +156,7 @@ FILE(GLOB headers
 #=========================================================
 # Add the executable, and link it to the Geant4 libraries
 IF(GATE_USE_GPU AND CUDA_FOUND)
-    SET(CUDA_NVCC_FLAGS "-arch;compute_20;-use_fast_math;-w")
+    SET(CUDA_NVCC_FLAGS "-arch;compute_30;-use_fast_math;-w")
     CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
 ELSE(GATE_USE_GPU AND CUDA_FOUND)
     ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})

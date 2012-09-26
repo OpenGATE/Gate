@@ -104,6 +104,7 @@ void GateSourceGPUVoxellized::AttachToVolume(const G4String& volume_name)
 //-------------------------------------------------------------------------------------------------
 G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event) 
 {
+
   // Initial checking
   if (!m_voxelReader) return 0;
   //  assert(GetType() == "backtoback");

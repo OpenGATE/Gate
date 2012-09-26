@@ -21,6 +21,8 @@
 #include "G4Gamma.hh"
 #include "G4Electron.hh"
 
+#include <sys/time.h>
+
 //-----------------------------------------------------------------------------
 GateTrackingGPUActor::GateTrackingGPUActor(G4String name, G4int depth):
   GateVActor(name,depth) {
@@ -54,7 +56,7 @@ void GateTrackingGPUActor::Construct() {
   EnablePreUserTrackingAction(false);
   EnablePostUserTrackingAction(false);
   EnableUserSteppingAction(true);
- 
+
   ResetData();
   GateMessageDec("Actor", 4, "GateTrackingGPUActor -- Construct - end" << G4endl);
 }
@@ -142,7 +144,7 @@ void GateTrackingGPUActor::UserSteppingAction(const GateVVolume * /*v*/,
                                               const G4Step * step)
 {
   GateDebugMessage("Actor", 4, "GateTrackingGPUActor -- UserSteppingAction" << G4endl);
-
+  
   // Check if we are on the boundary
   G4StepPoint * preStep = step->GetPreStepPoint();
   //  G4StepPoint * postStep = step->GetPostStepPoint();
@@ -205,6 +207,7 @@ void GateTrackingGPUActor::UserSteppingAction(const GateVVolume * /*v*/,
   
   // STEP2 if enough particles in the buffer, start the gpu tracking
   if (gpu_input->particles.size() == max_buffer_size) {
+    
     // DD(max_buffer_size);
     gpu_input->seed = static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
     // DD(gpu_input->seed);
@@ -250,7 +253,7 @@ void GateTrackingGPUActor::CreateNewParticle(const GateTrackingGPUActorParticle 
   // DD(dir);
   G4ThreeVector position(p.px*mm, p.py*mm, p.pz*mm);
   // DD(position);
-  DD(G4BestUnit(p.E, "Energy"));
+  //DD(G4BestUnit(p.E, "Energy"));
 
   G4DynamicParticle * dp = new G4DynamicParticle(G4Gamma::Gamma(), dir, p.E*MeV);
   double time = p.t;

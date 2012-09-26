@@ -44,7 +44,7 @@
 # /gate/source/mybeam/gps/hist/point   7.63 0.000000000
 # /gate/source/mybeam/gps/hist/point   7.88 0.000000000
 
-/gate/source/mybeam/gps/energy 20 MeV
+/gate/source/mybeam/gps/energy 60 keV
 
 
 #=====================================================
@@ -65,7 +65,8 @@
 #/gate/source/mybeam/gps/ang/maxtheta  2.8624 deg
 
 #### 5x5 square field (at isocenter)
-/gate/source/mybeam/gps/ang/maxtheta  1.4312 deg
+#/gate/source/mybeam/gps/ang/maxtheta  1.4312 deg
+/gate/source/mybeam/gps/ang/maxtheta   0.0 deg
 
 #### 1.5x1.5 square field (at isocenter)
 #/gate/source/mybeam/gps/ang/maxtheta  0.4297223 deg
