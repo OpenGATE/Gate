@@ -3,7 +3,7 @@
 
 #include <vector>
 
-void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input, 
+void GateTrackingGPUActorTrack_RT(const GateTrackingGPUActorInput * input, 
 			       GateTrackingGPUActorOutput * output) {
 
   // FIXME

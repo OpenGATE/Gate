@@ -251,7 +251,7 @@ __device__ float voxsrc_PhotoElec_CSPA_Standard(float E, unsigned short int Z) {
 }
 
 // Compton Scatter (Standard, Klein-Nishina)
-__device__ float3 voxsrc_Compton_scatter_Standard(StackGamma stack, unsigned int id) {
+__device__ float3 voxsrc_Compton_scatter_Standard(StackGamma stack, unsigned int id, int* gamma_sim_d) {
 	float E = stack.E[id];
 	float E0 = __fdividef(E, 0.510998910f);
 
@@ -280,6 +280,7 @@ __device__ float3 voxsrc_Compton_scatter_Standard(StackGamma stack, unsigned int
 	if (E <= 1.0e-6f) { // 1 eV
 		stack.live[id] = 0;
 		stack.endsimu[id] = 1; // stop this particle
+        atomicAdd(gamma_sim_d, 1);
 		return make_float3(0.0f, 0.0f, 1.0f);
 	}
 
@@ -398,7 +399,7 @@ __global__ void kernel_voxelized_source_b2b(StackGamma stackgamma1, StackGamma s
  ***********************************************************/
 
 // Fictitious tracking (or delta-tracking)
-__global__ void kernel_voxsrc_woodcock_Standard(int3 dimvol, StackGamma stackgamma, float dimvox, int most_att_mat) {
+__global__ void kernel_voxsrc_woodcock_Standard(int3 dimvol, StackGamma stackgamma, float dimvox, int most_att_mat, int* gamma_sim_d) {
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 	int jump = dimvol.x * dimvol.y;
 	float3 p, p0, delta, dimvolmm, dp;
@@ -449,6 +450,7 @@ __global__ void kernel_voxsrc_woodcock_Standard(int3 dimvol, StackGamma stackgam
 				|| p.x >= dimvolmm.x || p.y >= dimvolmm.y || p.z >= dimvolmm.z) {
 				stackgamma.endsimu[id] = 1; // stop simulation for this one
 				stackgamma.interaction[id] = 0;
+                atomicAdd(gamma_sim_d, 1);
 				
 				/*    
                 float dimvoxbis = __fdividef(1.0f, dimvox);
@@ -527,7 +529,7 @@ __global__ void kernel_voxsrc_woodcock_Standard(int3 dimvol, StackGamma stackgam
  ***********************************************************/
 
 // Kernel interactions
-__global__ void kernel_voxsrc_interactions(StackGamma stackgamma, int3 dimvol, float dimvox) {
+__global__ void kernel_voxsrc_interactions(StackGamma stackgamma, int3 dimvol, float dimvox, int* gamma_sim_d) {
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 	float3 dir;
 
@@ -541,12 +543,13 @@ __global__ void kernel_voxsrc_interactions(StackGamma stackgamma, int3 dimvol, f
 			stackgamma.live[id] = 0;    // kill the particle.
 			stackgamma.endsimu[id] = 1; // stop the simulation
 			++stackgamma.ct_pe[id];
+            atomicAdd(gamma_sim_d, 1);
 			return;
 		case 2:
 			// Compton scattering
 			++stackgamma.ct_cpt[id];
 			// Model standard
-			dir = voxsrc_Compton_scatter_Standard(stackgamma, id);
+			dir = voxsrc_Compton_scatter_Standard(stackgamma, id, gamma_sim_d);
 			break;
 		}
 
@@ -851,6 +854,12 @@ void back_raytrace_phasespace(StackGamma &stack, int nbgamma, int3 dim_phantom, 
 
 }
 
+// Get time
+double voxsrc_time() {
+    timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec + tv.tv_usec / 1000000.0;
+}
 
 
 

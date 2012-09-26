@@ -7,6 +7,10 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
                               GateSourceGPUVoxellizedOutput & output) {
 
 
+    // TIMING
+    double tg = voxsrc_time();
+    double tinit = voxsrc_time();
+
 	int positron = input->nb_events / 2.0f; // positron generated (nb gamma = 2*ptot) 
     unsigned short int most_att_mat = 7; // 1 Water  -  7 RibBone  FIXME add most att mat selector
 
@@ -25,10 +29,9 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	float size_voxel = input->phantom_spacing; // mm
 
 	// Select a GPU
-	cudaSetDevice(1);
+	cudaSetDevice(0);
 
 	// Vars
-	int gamma_sim = 0;	
 	int gamma_max_sim = 2 * positron; // maximum number of particles simulated (2 gammas per positron)
 
 	// Defined Stacks
@@ -81,33 +84,63 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	cudaBindTexture(NULL, tex_act_ind, dindex, mem_act_i);
 	cudaThreadSynchronize();
 	
+    // Count simulated photons
+    int* gamma_sim_d;
+    int gamma_sim_h = 0;
+    int gamma_sim = 0;
+    cudaMalloc((void**) &gamma_sim_d, sizeof(int));
+    cudaMemcpy(gamma_sim_d, &gamma_sim_h, sizeof(int), cudaMemcpyHostToDevice);
+
+    // TIMING
+    tinit = voxsrc_time() - tinit;
+    double tsrc = voxsrc_time();
+	
 	// Generation
 	kernel_voxelized_source_b2b<<<grid, threads>>>(stackgamma1, stackgamma2, dim_phantom, E, size_voxel);
-	cudaThreadSynchronize();
+	//cudaThreadSynchronize();
+    
+    // TIMING
+    tsrc = voxsrc_time() - tsrc;
+    double ttrack = voxsrc_time();    
 	
 	// Main loop
-	while (gamma_sim < gamma_max_sim) {
+	while (gamma_sim_h < gamma_max_sim) {
 		
 		// Navigation Standard model
 		kernel_voxsrc_woodcock_Standard<<<grid, threads>>>(dim_phantom, stackgamma1, size_voxel,
-													most_att_mat);
+													most_att_mat, gamma_sim_d);
 		kernel_voxsrc_woodcock_Standard<<<grid, threads>>>(dim_phantom, stackgamma2, size_voxel,
-													most_att_mat);
-		cudaThreadSynchronize();
+													most_att_mat, gamma_sim_d);
+		//cudaThreadSynchronize();
 		
 		// Interaction
-		kernel_voxsrc_interactions<<<grid, threads>>>(stackgamma1, dim_phantom, size_voxel);
-		kernel_voxsrc_interactions<<<grid, threads>>>(stackgamma2, dim_phantom, size_voxel);
-		cudaThreadSynchronize();
+		kernel_voxsrc_interactions<<<grid, threads>>>(stackgamma1, dim_phantom, size_voxel,
+                                                      gamma_sim_d);
+		kernel_voxsrc_interactions<<<grid, threads>>>(stackgamma2, dim_phantom, size_voxel,
+                                                      gamma_sim_d);
+		//cudaThreadSynchronize();
 
-		// Check simu
-		get_nb_particles_simulated(stackgamma1, stackgamma2, phasespace1, phasespace2, &gamma_sim);		
-		cudaThreadSynchronize();
+        // get back the number of simulated photons
+        cudaMemcpy(&gamma_sim_h, gamma_sim_d, sizeof(int), cudaMemcpyDeviceToHost);
+
+		//cudaThreadSynchronize();
+        //printf("gamma sim %i - %i / %i\n", gamma_sim, gamma_sim_h, gamma_max_sim);
+
 	} // while
 
+    // TIMING
+    ttrack = voxsrc_time() - ttrack;
+    double tray = voxsrc_time();
+
     // Rewind particules by mapping them to the phantom faces
+	copy_device_to_host_stackgamma(stackgamma1, phasespace1);
+	copy_device_to_host_stackgamma(stackgamma2, phasespace2);
     back_raytrace_phasespace(phasespace1, positron, dim_phantom, size_voxel);
     back_raytrace_phasespace(phasespace2, positron, dim_phantom, size_voxel);
+
+    // TIMING
+    tray = voxsrc_time() - tray;
+    double texport = voxsrc_time();
 
 	int i=0;
 	while (i<positron) {
@@ -143,11 +176,20 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 		}
 		++i;
 	}
-	
-	cudaThreadExit();
+    
+    // TIMING
+    texport = voxsrc_time()-texport;
+
 	free_device_stackgamma(stackgamma1);
 	free_device_stackgamma(stackgamma2);
 	free_host_stackgamma(phasespace1);
 	free_host_stackgamma(phasespace2);
+    cudaFree(gamma_sim_d);
+
+    // TIMING
+    tg = voxsrc_time() - tg;
+    printf(">> GPU: init %e src %e track %e ray %e exp %e tot %e\n", tinit, tsrc, ttrack, tray, texport, tg);
+
+	cudaThreadExit();
 }
 
