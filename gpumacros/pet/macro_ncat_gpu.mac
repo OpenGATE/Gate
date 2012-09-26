@@ -1,0 +1,251 @@
+#=======================================
+# VISU
+#=======================================
+#/vis/open				OGLIX
+#/vis/viewer/set/viewpointThetaPhi 	0 0
+#/vis/viewer/zoom 			        2.0
+#/vis/drawVolume
+#/tracking/storeTrajectory		1
+#/vis/scene/add/trajectories 
+##/vis/scene/endOfEventAction accumulate
+
+#======================================
+# VERBOSITY
+#======================================
+/control/verbose	0
+/run/verbose		1
+/tracking/verbose	0
+/event/verbose 		0
+
+/gate/verbose Beam      0
+/gate/verbose Actor     0
+
+#======================================
+# GEOMETRY
+#======================================
+/gate/geometry/setMaterialDatabase ./GateMaterials.db
+/gate/geometry/setMaterialDatabase ./GateMaterialsGPU.db
+
+#=============================================
+#     W O R L D
+#=============================================
+/gate/world/geometry/setXLength		1.2 m
+/gate/world/geometry/setYLength 	1.2 m
+/gate/world/geometry/setZLength 	1.2 m
+/gate/world/setMaterial 			Vacuum
+
+#===================================================
+# SCANNER ALLEGRO
+#===================================================
+
+#     T E T E
+/gate/world/daughters/name						cylindricalPET
+/gate/world/daughters/insert 					cylinder
+/gate/cylindricalPET/setMaterial 				Air
+/gate/cylindricalPET/geometry/setRmax 			50 cm
+/gate/cylindricalPET/geometry/setRmin 			28 cm
+/gate/cylindricalPET/geometry/setHeight 		24.02 cm
+/gate/cylindricalPET/vis/forceWireframe
+
+#    S H I E L D I N G
+/gate/cylindricalPET/daughters/name				Shielding
+/gate/cylindricalPET/daughters/insert 			cylinder
+/gate/Shielding/setMaterial 					Lead
+/gate/Shielding/geometry/setRmax 				46.132 cm
+/gate/Shielding/geometry/setRmin 				28 cm
+/gate/Shielding/geometry/setHeight 				2.86 cm
+/gate/Shielding/vis/forceWireframe
+/gate/Shielding/vis/setColor					yellow
+
+#  R E P E A T   S H I E L D I N G
+/gate/Shielding/repeaters/insert				linear
+/gate/Shielding/linear/setRepeatNumber 			2
+/gate/Shielding/linear/setRepeatVector 			0. 0. 21.16 cm
+
+#   F E U I L L E   A L U M I N I U M
+/gate/cylindricalPET/daughters/name				coucheAlu
+/gate/cylindricalPET/daughters/insert 			cylinder
+/gate/coucheAlu/setMaterial 					Aluminium
+/gate/coucheAlu/geometry/setRmax 				43.2 cm
+/gate/coucheAlu/geometry/setRmin 				43.1 cm
+/gate/coucheAlu/geometry/setHeight 				18.3 cm
+/gate/coucheAlu/vis/forceWireframe
+
+#     D E T E C T E U R  =  R S E C T O R
+/gate/cylindricalPET/daughters/name				rsector
+/gate/cylindricalPET/daughters/insert 			box
+/gate/rsector/geometry/setXLength 				40 mm
+/gate/rsector/geometry/setYLength 				94.5 mm
+/gate/rsector/geometry/setZLength 				18.3 cm
+/gate/rsector/setMaterial 						Glass
+/gate/rsector/placement/setTranslation 			45.2 0 0 cm
+/gate/rsector/vis/forceWireframe
+
+#     M O D U L E
+/gate/rsector/daughters/name					module
+/gate/rsector/daughters/insert 					box
+/gate/module/geometry/setXLength 				20 mm
+/gate/module/geometry/setYLength 				94.5 mm
+/gate/module/geometry/setZLength 				18.3 cm
+/gate/module/setMaterial 						PTFE
+/gate/module/placement/setTranslation  			-10 0 0 mm
+#/gate/module/vis/forceWireframe
+
+#      C R Y S T A L
+/gate/module/daughters/name						crystal
+/gate/module/daughters/insert 					box
+/gate/crystal/geometry/setXLength 				20 mm
+/gate/crystal/geometry/setYLength 				4 mm
+/gate/crystal/geometry/setZLength 				6 mm
+/gate/crystal/setMaterial 						GSO
+/gate/crystal/placement/setTranslation 			0 0 0 mm
+/gate/crystal/vis/forceWireframe
+
+#     L A Y E R   G S O
+/gate/crystal/daughters/name					GSO
+/gate/crystal/daughters/insert 					box
+/gate/GSO/geometry/setXLength 					20 mm
+/gate/GSO/geometry/setYLength 					4 mm
+/gate/GSO/geometry/setZLength 					6 mm
+/gate/GSO/placement/setTranslation 				0 0 0 mm
+/gate/GSO/setMaterial 							GSO
+/gate/GSO/vis/forceWireframe
+
+#  R E P E T I T I O N    C R I S T A L
+/gate/crystal/repeaters/insert					cubicArray
+/gate/crystal/cubicArray/setRepeatNumberX 		1
+/gate/crystal/cubicArray/setRepeatNumberY 		22
+/gate/crystal/cubicArray/setRepeatNumberZ 		29
+/gate/crystal/cubicArray/setRepeatVector 		0. 4.3 6.3 mm
+
+#  R E P E T I T I O N    R S E C T O R
+/gate/rsector/repeaters/insert					ring
+/gate/rsector/ring/setRepeatNumber 				28
+
+#	A T T A C H    S Y S T E M 
+/gate/systems/cylindricalPET/rsector/attach		rsector
+/gate/systems/cylindricalPET/module/attach 		module
+/gate/systems/cylindricalPET/crystal/attach 	crystal
+/gate/systems/cylindricalPET/layer0/attach 		GSO
+/gate/GSO/attachCrystalSD
+
+/gate/systems/cylindricalPET/describe
+
+
+#===================================================
+# PHANTOM
+#===================================================
+
+#	A T T A C H 
+/gate/rsector/attachPhantomSD
+/gate/module/attachPhantomSD
+
+/gate/world/daughters/name								ncat
+/gate/world/daughters/insert							fictitiousVoxelMap
+
+/gate/ncat/geometry/insertReader						interfile
+/gate/ncat/interfileReader/insertTranslator 			range
+/gate/ncat/interfileReader/rangeTranslator/readTable 	range.dat
+/gate/ncat/interfileReader/rangeTranslator/describe 	1
+/gate/ncat/interfileReader/readFile 					ncat_header_bed1.hdr
+/gate/ncat/placement/setTranslation  					0. 0. 0. mm
+/gate/ncat/placement/setRotationAxis 					1 0 0
+/gate/ncat/placement/setRotationAngle 					0 deg
+
+#==================================================
+# PHYSICS
+#==================================================
+/gate/physics/addProcess							PhotoElectric
+/gate/physics/processes/PhotoElectric/setModel     	StandardModel
+
+/gate/physics/addProcess							Compton
+/gate/physics/processes/Compton/setModel            StandardModel
+
+/gate/physics/addProcess                            ElectronIonisation
+
+/gate/physics/processList 		Enabled
+/gate/physics/processList		Initialized
+
+#========================================
+# INITIALIZATION
+#========================================
+/gate/run/initialize
+
+#==================================================
+# DIGITIZER
+#==================================================
+/gate/digitizer/Singles/insert							adder
+/gate/digitizer/Singles/insert							readout
+/gate/digitizer/Singles/readout/setDepth				1
+/gate/digitizer/Singles/insert							blurring
+/gate/digitizer/Singles/blurring/setResolution			0.15
+/gate/digitizer/Singles/blurring/setEnergyOfReference 	511. keV
+/gate/digitizer/Singles/insert 							thresholder
+/gate/digitizer/Singles/thresholder/setThreshold 		350. keV
+/gate/digitizer/Singles/insert 							upholder
+/gate/digitizer/Singles/upholder/setUphold 				650. keV
+
+#==================================================
+# COINCIDENCE SORTER
+#==================================================
+/gate/digitizer/Coincidences/setWindow					7.5 ns
+/gate/digitizer/Coincidences/MultiplesPolicy            takeWinnerOfGoods
+
+#=======================================
+# SOURCES
+#=======================================
+
+# V O X E L    S O U R C E
+
+# VERSION GPU
+/gate/source/addSource												voxel GPUvoxel
+/gate/source/voxel/attachPhantomTo ncat
+/gate/source/voxel/setGPUBufferSize 5000000
+
+/gate/source/voxel/reader/insert 			      					interfile
+/gate/source/voxel/interfileReader/translator/insert				range
+/gate/source/voxel/interfileReader/rangeTranslator/readTable 		activites.dat
+/gate/source/voxel/interfileReader/rangeTranslator/describe 		1
+/gate/source/voxel/interfileReader/verbose 							0
+/gate/source/voxel/interfileReader/readFile 						ncat_header_bed1.hdr
+/gate/source/voxel/setType 											backtoback
+/gate/source/voxel/gps/particle 									gamma
+
+/gate/source/voxel/gps/energytype 									Mono
+/gate/source/voxel/gps/monoenergy 									0.511 MeV
+/gate/source/voxel/setPosition  									0 0 0 cm
+/gate/source/voxel/gps/confine 										NULL
+/gate/source/voxel/gps/angtype 										iso
+
+/gate/source/list
+
+#==================================================
+# DATA OUTPUT
+#==================================================
+
+/gate/output/ascii/enable
+/gate/output/ascii/setFileName                  ListMode_gpu_
+/gate/output/ascii/setOutFileHitsFlag           0
+/gate/output/ascii/setOutFileSinglesFlag        0
+/gate/output/ascii/setOutFileCoincidencesFlag   1
+
+/gate/output/root/disable
+
+/gate/output/binary/disable
+
+#==============================================
+# RANDOM
+#==============================================
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed 10
+
+#==============================================
+# START
+#==============================================
+
+/gate/application/setTimeStart     0.0 ns
+/gate/application/setTimeSlice     13.0 s
+/gate/application/setTimeStop      13.0 s
+/gate/application/startDAQ
+
+
