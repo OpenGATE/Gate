@@ -17,6 +17,7 @@
 #include "GateRunManager.hh"
 #include "GateVImageVolume.hh"
 #include "GateRandomEngine.hh"
+#include "GateApplicationMgr.hh"
 
 #include "G4Gamma.hh"
 #include "G4Electron.hh"
@@ -132,9 +133,14 @@ void GateTrackingGPUActor::ResetData() {
 //-----------------------------------------------------------------------------
 void GateTrackingGPUActor::BeginOfRunAction(const G4Run *)
 {
+  DD("GateTrackingGPUActor::BeginOfRunAction");
   // Set materials
   GateVImageVolume * im = dynamic_cast<GateVImageVolume*>(mVolume);
   GateTrackingGPUActorInput_Init_Materials(gpu_input, im);
+  // Get number of particles
+  GateApplicationMgr * a = GateApplicationMgr::GetInstance();
+  DD(a->IsTotalAmountOfPrimariesModeEnabled());
+  DD(a->GetRequestedAmountOfPrimariesPerRun());
 }
 //-----------------------------------------------------------------------------
 
@@ -160,6 +166,13 @@ void GateTrackingGPUActor::UserSteppingAction(const GateVVolume * /*v*/,
   // DD(step->GetTrack()->GetDefinition()->GetParticleName());
   if (step->GetTrack()->GetDefinition() == G4Gamma::Gamma()) p.type = 0;
   if (step->GetTrack()->GetDefinition() == G4Electron::Electron()) p.type = 1;
+
+  // We dont store e- yet
+  if (p.type == 1) {
+    // DD("stop because e-");
+    return;
+  }
+
   p.E = preStep->GetKineticEnergy()/MeV;
   p.eventID = GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   p.trackID = step->GetTrack()->GetTrackID();
@@ -180,7 +193,7 @@ void GateTrackingGPUActor::UserSteppingAction(const GateVVolume * /*v*/,
 
   G4ThreeVector localPosition = transformation.TransformPoint(preStep->GetPosition());
   // DD(preStep->GetPosition());
-  // DD(localPosition);
+  //  DD(localPosition);
   
   p.px = localPosition.x();
   p.py = localPosition.y();
@@ -193,13 +206,7 @@ void GateTrackingGPUActor::UserSteppingAction(const GateVVolume * /*v*/,
   p.dz = preStep->GetMomentumDirection().z();
   //  GateTrackingGPUActorParticle_Print(p);
 
-  // We dont store e- yet
-  if (p.type == 1) {
-    // DD("stop because e-");
-    return;
-  }
-
-  gpu_input->particles.push_back(p);
+  gpu_input->particles.push_back(p); // FIXME SLOW 
   // DD(gpu_input->particles.size());
 
   // We kill the particle without mercy
@@ -253,7 +260,7 @@ void GateTrackingGPUActor::CreateNewParticle(const GateTrackingGPUActorParticle 
   // DD(dir);
   G4ThreeVector position(p.px*mm, p.py*mm, p.pz*mm);
   // DD(position);
-  //DD(G4BestUnit(p.E, "Energy"));
+  // DD(G4BestUnit(p.E, "Energy"));
 
   G4DynamicParticle * dp = new G4DynamicParticle(G4Gamma::Gamma(), dir, p.E*MeV);
   double time = p.t;
@@ -262,7 +269,9 @@ void GateTrackingGPUActor::CreateNewParticle(const GateTrackingGPUActorParticle 
   // DD(newTrack->GetMomentumDirection().mag2());
 
   //FIXME
-  newTrack->SetTrackID(p.trackID);
+  static long trackid=0;
+  newTrack->SetTrackID(p.trackID+trackid);
+  ++trackid;
   newTrack->SetParentID(666);//p.eventID);
   // SetTrackID ; SetParentID ; 
   

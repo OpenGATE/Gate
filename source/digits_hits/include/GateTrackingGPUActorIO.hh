@@ -32,7 +32,7 @@ struct GateTrackingGPUActorParticle {
 };
 
 struct GateTrackingGPUActorInput {
-  typedef std::list<GateTrackingGPUActorParticle> ParticlesList;
+  typedef std::vector<GateTrackingGPUActorParticle> ParticlesList;
   ParticlesList particles;
   
   // Phantom 
@@ -74,7 +74,7 @@ struct GateTrackingGPUActorInput {
 
 struct GateTrackingGPUActorOutput
  { 
-  typedef std::list<GateTrackingGPUActorParticle> ParticlesList;
+  typedef std::vector<GateTrackingGPUActorParticle> ParticlesList;
   ParticlesList particles;
 };
 
