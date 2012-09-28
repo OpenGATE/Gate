@@ -83,6 +83,7 @@ public:
 
   void EnableTimeStudy(G4String filename);
   void EnableTimeStudyForSteps(G4String filename);
+  long GetRequestedAmountOfPrimariesPerRun() { return mRequestedAmountOfPrimariesPerRun; }
 
 protected:
 
