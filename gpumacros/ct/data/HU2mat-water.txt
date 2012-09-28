@@ -1,3 +1,7 @@
--1000 -999 Air
--999 2502 Water
+-701 -699 Water
+-699 -1 Water
+-1 1 Water
+1 2499 Water
+2499 2501 Water
+
 
