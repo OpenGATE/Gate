@@ -19,58 +19,62 @@
 
 /gate/geometry/setMaterialDatabase data/GateMaterials.db
 
-# Generate materials from Hounsfield units
-#/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/SimpleMaterialsTable.txt 
-# /gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt 
-# /gate/HounsfieldMaterialGenerator/SetDensityTable                   data/Schneider2000DensitiesTable.txt
-# /gate/HounsfieldMaterialGenerator/SetDensityTolerance               0.1 g/cm3
-# /gate/HounsfieldMaterialGenerator/SetOutputMaterialDatabaseFilename data/patient-HUmaterials.db
-# /gate/HounsfieldMaterialGenerator/SetOutputHUMaterialFilename       data/patient-HU2mat.txt
-# /gate/HounsfieldMaterialGenerator/Generate
-
 # WORLD
 /gate/world/setMaterial            Air
 /gate/world/geometry/setXLength    3.0 m
 /gate/world/geometry/setYLength    3.0 m
 /gate/world/geometry/setZLength    3.0 m
 
-/gate/world/daughters/name                   autour
-/gate/world/daughters/insert                 box
-/gate/autour/setMaterial                     Air
-/gate/autour/geometry/setXLength             2.9 m
-/gate/autour/geometry/setYLength             2.9 m
-/gate/autour/geometry/setZLength             2.9 m
-/gate/autour/vis/forceSolid
-/gate/autour/vis/setColor                    blue
-
-
-/gate/autour/daughters/name                      patient
-/gate/autour/daughters/insert                    ImageNestedParametrisedVolume
-
-# /gate/geometry/setMaterialDatabase              data/patient-HUmaterials.db
-# /gate/patient/geometry/SetHUToMaterialFile      data/patient-HU2mat.txt
-# /gate/patient/geometry/SetImage                 data/patient-2mm.hdr
-
+/gate/world/daughters/name   patient
+/gate/world/daughters/insert ImageNestedParametrisedVolume
 /gate/geometry/setMaterialDatabase              data/multislab.db
+#/gate/patient/geometry/SetHUToMaterialFile      data/HU2mat-multislab.txt
+#/gate/patient/geometry/SetHUToMaterialFile      data/HU2mat-empty.txt
 /gate/patient/geometry/SetHUToMaterialFile      data/HU2mat-water.txt
-/gate/patient/geometry/SetImage                 data/multislab.hdr
+/gate/patient/geometry/SetImage                 data/multislab.mhd
+/gate/patient/placement/setTranslation          0 0 0 mm
+
+# /gate/world/daughters/name               patient
+# /gate/world/daughters/insert             box
+# /gate/patient/setMaterial                Water
+# /gate/patient/geometry/setXLength        305 mm
+# /gate/patient/geometry/setYLength        395 mm
+# /gate/patient/geometry/setZLength        80 mm
+# /gate/patient/placement/setTranslation   0 0 0 cm
+# /gate/patient/vis/setColor               white
+# /gate/patient/vis/forceSolid
+
+
+# Multislab
+# Size : 61x79x16  Spacing 5x5x5
+# in mm : 305 395 80
+# Start  = 40 mm 
 
 # optional : dump used image
-#/gate/patient/geometry/buildAndDumpLabeledImage  data/patient-2mm-labeled-NPV.hdr
+#/gate/patient/geometry/buildAndDumpLabeledImage  data/test.mhd
 
-/gate/patient/placement/setTranslation                  0 0 0 mm
-#/gate/patient/geometry/TranslateTheImageAtThisIsoCenter 109.7 99.3 146.2 mm
 
 # DETECTOR
-/gate/autour/daughters/name                   detector
-/gate/autour/daughters/insert                 box
-/gate/detector/setMaterial                     Lead
-/gate/detector/geometry/setXLength             20.0 cm
-/gate/detector/geometry/setYLength             1 cm
-/gate/detector/geometry/setZLength             20.0 cm
-/gate/detector/placement/setTranslation        0 100 0 cm
-/gate/detector/vis/forceSolid
-/gate/detector/vis/setColor                    blue
+/gate/world/daughters/name                   detectorOut
+/gate/world/daughters/insert                 box
+/gate/detectorOut/setMaterial                Air
+/gate/detectorOut/geometry/setXLength        20.0 cm
+/gate/detectorOut/geometry/setYLength        20.0 cm
+/gate/detectorOut/geometry/setZLength        1.0 cm
+/gate/detectorOut/placement/setTranslation   0 0 -10 cm
+/gate/detectorOut/vis/setColor               blue
+/gate/detectorOut/vis/forceSolid
+
+
+/gate/world/daughters/name                  detectorIn
+/gate/world/daughters/insert                box
+/gate/detectorIn/setMaterial                Air
+/gate/detectorIn/geometry/setXLength        20.0 cm
+/gate/detectorIn/geometry/setYLength        20.0 cm
+/gate/detectorIn/geometry/setZLength        1.0 cm
+/gate/detectorIn/placement/setTranslation   0 0 10 cm
+/gate/detectorIn/vis/setColor               blue
+/gate/detectorIn/vis/forceSolid
 
 
 #=====================================================
@@ -79,19 +83,18 @@
 
 /control/execute mac/physicslist_EM_std.mac
 
-/gate/physics/Gamma/SetCutInRegion      world 1 mm
-/gate/physics/Electron/SetCutInRegion   world 1 mm
-/gate/physics/Positron/SetCutInRegion   world 1 mm
+/gate/physics/Gamma/SetCutInRegion      world 10 m
+/gate/physics/Electron/SetCutInRegion   world 10 m
+/gate/physics/Positron/SetCutInRegion   world 10 m
 
-/gate/physics/Gamma/SetCutInRegion      patient 0.5 mm
-/gate/physics/Electron/SetCutInRegion   patient 0.01 mm
-/gate/physics/Positron/SetCutInRegion   patient 0.5 mm
-
-/gate/physics/Gamma/SetCutInRegion      detector 5 m
-/gate/physics/Electron/SetCutInRegion   detector 5 m
-/gate/physics/Positron/SetCutInRegion   detector 5 m
+/gate/physics/Gamma/SetCutInRegion      patient 10 m
+/gate/physics/Electron/SetCutInRegion   patient 10 m
+/gate/physics/Positron/SetCutInRegion   patient 10 m
 
 /gate/physics/SetMaxStepSizeInRegion    patient 0.1 mm
+
+/gate/physics/SetMinKineticEnergyInRegion world 1000 keV
+/gate/physics/ActivateSpecialCuts e-
 
 /gate/physics/displayCuts
 /gate/physics/print output-gpu/physics.txt
@@ -103,43 +106,46 @@
 # GPU Tracking
 /gate/actor/addActor              TrackingGPUActor gpuactor
 /gate/actor/gpuactor/attachTo     patient
-/gate/actor/gpuactor/setCudaDeviceID 1
-/gate/actor/gpuactor/setGPUBufferSize 3
+/gate/actor/gpuactor/setCudaDeviceID 0
+/gate/actor/gpuactor/setGPUBufferSize 500000
 
-/tracking/verbose 1
+# count particle in detector, in 2D mhd
+/gate/actor/addActor                 ParticleInVolumeActor counterOut
+/gate/actor/counterOut/save          output-gpu/output-out.mhd
+/gate/actor/counterOut/attachTo      detectorOut
+/gate/actor/counterOut/setResolution 100 100 1
 
-# Detector : flat panel
-/gate/actor/addActor              ParticleInVolumeActor counter
-/gate/actor/counter/save          output-gpu/output.mhd
-/gate/actor/counter/attachTo      detector
-/gate/actor/counter/setResolution 100 2 100
+# count particle in detector, in 2D mhd
+/gate/actor/addActor                ParticleInVolumeActor counterIn
+/gate/actor/counterIn/save          output-gpu/output-in.mhd
+/gate/actor/counterIn/attachTo      detectorIn
+/gate/actor/counterIn/setResolution 100 100 1
 
-# Ddebug
-/gate/actor/addActor              ParticleInVolumeActor counter2
+# count particle in detector, in 1D (in txt)
+/gate/actor/addActor               ParticleInVolumeActor counter2
 /gate/actor/counter2/save          output-gpu/a.txt
-/gate/actor/counter2/attachTo      detector
+/gate/actor/counter2/attachTo      detectorOut
 /gate/actor/counter2/setResolution 1 1 1
 
-# Ddebug
+# Phase space in detectorOut
 /gate/actor/addActor         PhaseSpaceActor ps
+/gate/actor/ps/attachTo      detectorOut
 /gate/actor/ps/save          output-gpu/ps.root
-/gate/actor/ps/attachTo      autour
 
-
-# Detector : energy spectrum
-/gate/actor/addActor              EnergySpectrumActor es
+# Energy spectrum
+/gate/actor/addActor         EnergySpectrumActor es
 /gate/actor/es/save          output-gpu/spectrum.root
-/gate/actor/es/attachTo      detector
+/gate/actor/es/attachTo      detectorOut
 /gate/actor/es/energySpectrum/setEmin 0 eV
-/gate/actor/es/energySpectrum/setEmax 10 MeV
+/gate/actor/es/energySpectrum/setEmax 0.1 MeV
 /gate/actor/es/energySpectrum/setNumberOfBins 200
 /gate/actor/es/energyLossHisto/setEmin 0 eV
-/gate/actor/es/energyLossHisto/setEmax 10 MeV
+/gate/actor/es/energyLossHisto/setEmax 0.1 MeV
 /gate/actor/es/energyLossHisto/setNumberOfBins 120
 
-# Set the names of the outputs
+# Global stats
 /gate/actor/addActor               SimulationStatisticActor stat
-/gate/actor/stat/saveEveryNSeconds 10
+/gate/actor/stat/saveEveryNSeconds 20
 /gate/actor/stat/save              output-gpu/stat.txt
 
 #=====================================================
@@ -156,17 +162,31 @@
 # BEAMS
 #=====================================================
 
-/control/execute mac/beam-photon.mac
+#/control/execute mac/beam-photon.mac
+/gate/source/addSource               src     gps
+/gate/source/src/gps/particle        gamma
+/gate/source/src/gps/pos/type        Beam
+/gate/source/src/gps/pos/shape       Circle 
+/gate/source/src/gps/pos/sigma_x     10.0 mm 
+/gate/source/src/gps/pos/sigma_y     10.0 mm
+/gate/source/src/gps/ang/type        beam2d
+/gate/source/src/gps/ang/sigma_x     1 deg
+/gate/source/src/gps/ang/sigma_y     1 deg
+/gate/source/src/gps/energy          80 keV
+/gate/source/src/gps/pos/centre      0 0 50 cm
+/gate/source/src/gps/ang/rot1        -1 0 0
+/gate/source/src/gps/ang/rot2        0 -1 0
+
 
 #=====================================================
 # START BEAMS
 #=====================================================
+#/tracking/verbose 2
 
 /gate/random/setEngineName MersenneTwister
-/gate/random/setEngineSeed auto
-/gate/application/setTotalNumberOfPrimaries 10
-
-
+#/gate/random/setEngineSeed auto
+/gate/random/setEngineSeed 123456789
+/gate/application/setTotalNumberOfPrimaries 1000000
 
 /gate/application/start
 
