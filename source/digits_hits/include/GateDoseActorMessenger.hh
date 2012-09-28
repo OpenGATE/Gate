@@ -53,6 +53,7 @@ protected:
   G4UIcmdWithAString * pSetRBE1AlphaDataFilenameCmd;
   G4UIcmdWithAString * pSetRBE1BetaDataFilenameCmd;
   G4UIcmdWithABool * pEnableRBE1Test1Cmd;
+  G4UIcmdWithABool * pSetOverWriteFilesFlagCmd;
 };
 
 #endif /* end #define GATEDOSEACTORMESSENGER_HH*/

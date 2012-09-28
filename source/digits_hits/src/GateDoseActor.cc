@@ -21,6 +21,7 @@
 #include "GateMiscFunctions.hh"
 #include <G4EmCalculator.hh>
 #include <G4VoxelLimits.hh>
+#include <G4NistManager.hh>
 
 //-----------------------------------------------------------------------------
 GateDoseActor::GateDoseActor(G4String name, G4int depth):
@@ -49,6 +50,7 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mIsRBE1Enabled = false;
   mIsRBE1Test1Enabled = false;
   //mIsRBE1DoseAveragedLetIsEnabled = false;
+  mOverWriteFilesFlag = true;
 
   mRBE1AlphaDataFilename = "pleaseSetAlphaDataFilename.txt";
   mRBE1AlphaDataFilename = "pleaseSetBetaDataFilename.txt";
@@ -141,6 +143,11 @@ void GateDoseActor::Construct() {
   mRBE1BetaImage.SetOrigin(offset);
   mRBE1FactorImage.SetOrigin(offset);
   mRBE1BioDoseImage.SetOrigin(offset);  
+
+  // Set Overwrite flag
+  mEdepImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
+  mDoseImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
+  mDoseToWaterImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
 
   // Resize and allocate images
   if (mIsEdepSquaredImageEnabled || mIsEdepUncertaintyImageEnabled ||

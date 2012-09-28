@@ -13,7 +13,6 @@ See GATE/LICENSE.txt for further details
 #define GATEDOSEACTORMESSENGER_CC
 
 #include "GateDoseActorMessenger.hh"
-
 #include "GateDoseActor.hh"
 
 //-----------------------------------------------------------------------------
@@ -41,6 +40,7 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
   pSetRBE1AlphaDataFilenameCmd= 0;
   pSetRBE1BetaDataFilenameCmd= 0;
   pEnableRBE1Test1Cmd= 0;
+  pSetOverWriteFilesFlagCmd = 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -69,6 +69,7 @@ GateDoseActorMessenger::~GateDoseActorMessenger()
   if(pSetRBE1AlphaDataFilenameCmd) delete pSetRBE1AlphaDataFilenameCmd;
   if(pSetRBE1BetaDataFilenameCmd) delete pSetRBE1BetaDataFilenameCmd;
   if(pEnableRBE1Test1Cmd) delete pEnableRBE1Test1Cmd;
+  if(pSetOverWriteFilesFlagCmd) delete pSetOverWriteFilesFlagCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -137,6 +138,11 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   guid = G4String("Enable number of hits computation");
   pEnableNumberOfHitsCmd->SetGuidance(guid);
 
+  n = base+"/setOverWriteFilesFlag";
+  pSetOverWriteFilesFlagCmd = new G4UIcmdWithABool(n, this); 
+  guid = G4String("True by default, if false change the filename every time output are written.");
+  pSetOverWriteFilesFlagCmd->SetGuidance(guid);
+
   // Experimental
 #ifdef GATEDEV 
   n = base+"/enableRBE1Alpha";
@@ -202,6 +208,8 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pSetRBE1AlphaDataFilenameCmd) pDoseActor->SetRBE1AlphaDataFilename(newValue);
   if (cmd == pSetRBE1BetaDataFilenameCmd) pDoseActor->SetRBE1BetaDataFilename(newValue);
   if (cmd == pEnableRBE1Test1Cmd) pDoseActor->EnableRBE1Test1(pEnableRBE1Test1Cmd->GetNewBoolValue(newValue));
+
+  if (cmd == pSetOverWriteFilesFlagCmd) pDoseActor->SetOverWriteFilesFlag(pSetOverWriteFilesFlagCmd->GetNewBoolValue(newValue));
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
