@@ -97,13 +97,13 @@ void GateTriCoincidenceSorter::CollectSingles()
    else
    {
       // 2) Fill the m_waitingSingles buffer by sPulseList elements.
-      if(m_waitingSingles->size() <= m_waitingSinglesSize)
+      if(m_waitingSingles->size() <= (size_t)m_waitingSinglesSize)
          for(GatePulseIterator itr=sPulseList->begin(); itr!=sPulseList->end(); itr++)
             m_waitingSingles->push_back(new GatePulse(*itr));
       else
       {
          // 3) If the size of the buffer exceeds 'm_waitingSinglesSize', we empty it,from the begin, until that its size becomes 'm_waitingSinglesSize'
-         while(m_waitingSingles->size() > m_waitingSinglesSize)
+         while(m_waitingSingles->size() > (size_t)m_waitingSinglesSize)
          {
             delete m_waitingSingles->at(0);
             m_waitingSingles->erase(m_waitingSingles->begin());

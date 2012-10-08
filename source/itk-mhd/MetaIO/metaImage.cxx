@@ -1201,9 +1201,9 @@ CanRead(const char *_headerName) const
     return false;
     }
 
-  bool usePath;
-  char pathName[255];
-  usePath = MET_GetFilePath(_headerName, pathName);
+  //bool usePath;
+  //char pathName[255];
+  //usePath = MET_GetFilePath(_headerName, pathName);
 
   char* buf = new char[8001];
   inputStream.read(buf,8000);

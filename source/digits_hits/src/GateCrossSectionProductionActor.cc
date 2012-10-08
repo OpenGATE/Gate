@@ -345,7 +345,7 @@ void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index,
 	G4Track * aTrack= step->GetTrack();
 	G4int i_find_nb_elemt =0;
 	
-  	while((nb_elemt_C12_in_table==-1 || nb_elemt_O16_in_table==-1 )&& i_find_nb_elemt<step->GetPreStepPoint()->GetMaterial()->GetNumberOfElements() ){
+  	while((nb_elemt_C12_in_table==-1 || nb_elemt_O16_in_table==-1 )&& i_find_nb_elemt<(G4int)step->GetPreStepPoint()->GetMaterial()->GetNumberOfElements() ){
 	//G4cout << step->GetPreStepPoint()->GetMaterial()->GetNumberOfElements() << G4endl;
 	//G4cout << i_find_nb_elemt << G4endl;
 	//G4cout << step->GetPreStepPoint()->GetMaterial()->GetName()<< G4endl; 
@@ -518,7 +518,7 @@ int ne =eve->GetEventID()+1;
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateCrossSectionProductionActor::PreUserTrackingAction(const GateVVolume *, const G4Track* t) 
+void GateCrossSectionProductionActor::PreUserTrackingAction(const GateVVolume *, const G4Track*) 
 {
   GateDebugMessage("Actor", 3, "GateCrossSectionProductionActor -- Begin of Track" << G4endl);
 

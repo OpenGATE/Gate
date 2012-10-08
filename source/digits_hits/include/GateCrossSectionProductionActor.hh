@@ -22,7 +22,7 @@ See GATE/LICENSE.txt for further details
 #include "GateCrossSectionProductionActorMessenger.hh"
 #include "GateImageWithStatistic.hh"
 
-#include "G4Event.hh";
+#include "G4Event.hh"
 #include <time.h>
 
 
