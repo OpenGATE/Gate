@@ -50,6 +50,7 @@ GateSourceMgr::GateSourceMgr()
   m_fictiveSource = new GateVSource("FictiveSource"); 
   m_currentSourceID = -1;
   mTotalIntensity=0.;
+	m_launchLastBuffer = false;
 }
 //----------------------------------------------------------------------------------------
 
@@ -630,6 +631,8 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
       if (m_time > m_timeLimit) {  numVertices = 0 ;}
 
     }
+
+	if( ( m_time + 5.0 * m_firstTime ) > m_timeLimit ) {  m_launchLastBuffer = true;}
 
   if (mVerboseLevel>1)
     G4cout << "GateSourceMgr::PrepareNextEvent : numVertices : " << numVertices << G4endl; 

@@ -91,6 +91,7 @@ public:
    * at each event, to prepare the Primary Vertices.
    */
   G4int PrepareNextEvent( G4Event* event );
+	G4bool IsLaunchLastBuffer() { return m_launchLastBuffer; }
 
   /** It is called by the PrimaryGeneratorAction
    * at the beginning of the Run, to initialize the run-related variables.
@@ -140,8 +141,9 @@ protected:
   G4double                  m_time;
   G4double                  m_timeLimit; 
   G4double                  m_timeClock;
-  G4double                  m_firstTime;
-  G4int                     m_sourceProgressiveNumber;
+	G4double                  m_firstTime;
+  G4bool                    m_launchLastBuffer;
+	G4int                     m_sourceProgressiveNumber;
   G4int                     mVerboseLevel;
   G4int                     m_TotNPart;
   G4int                     m_runNumber;

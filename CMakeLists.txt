@@ -86,6 +86,7 @@ IF(GATE_USE_GPU)
     FILE(GLOB sourcesGPU
     ${PROJECT_SOURCE_DIR}/source/gpu/src/actor_track_gpu.cu 
     ${PROJECT_SOURCE_DIR}/source/gpu/src/voxsrc_track_gpu.cu
+    ${PROJECT_SOURCE_DIR}/source/gpu/src/GateCollim_gpu.cu
     )    
 ENDIF(GATE_USE_GPU)
 
@@ -143,7 +144,8 @@ FILE(GLOB sources
 	${PROJECT_SOURCE_DIR}/source/physics/src/*.cc
 	${PROJECT_SOURCE_DIR}/source/general/src/*.cc
     ${PROJECT_SOURCE_DIR}/source/gpu/src/actor_ct_track.cu
-    ${PROJECT_SOURCE_DIR}/source/gpu/src/voxsrc_track_gpu.cu)
+    ${PROJECT_SOURCE_DIR}/source/gpu/src/voxsrc_track_gpu.cu
+    ${PROJECT_SOURCE_DIR}/source/gpu/src/GateCollim_gpu.cu)
 
 FILE(GLOB headers
 	${PROJECT_SOURCE_DIR}/source/arf/include/*.hh
