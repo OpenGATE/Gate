@@ -202,7 +202,7 @@ void GateToLMF::buildLMFEventRecord()
 				   pEncoH,
 				   &flag);//Crystal ID
     if(nVerboseLevel > 7) {
-      printf("builded detector ID = %llu\n", pER[0]->crystalIDs[0]);
+      printf("builded detector ID = %lu\n", pER[0]->crystalIDs[0]);
       printf("%d %d %d %d %d \n\n\n\n",m_LMFRsectorID[0],
 	     m_LMFModuleID[0],
 	     m_LMFSubmoduleID[0],
@@ -616,7 +616,7 @@ if ( aCN > AxialCrystalsNumber ) AxialCrystalsNumber = aCN;
 if ( tCN > TangentialCrystalsNumber ) TangentialCrystalsNumber = tCN;
 
  
-if ( crystalComponent->GetActiveChildNumber() > rL ) rL = crystalComponent->GetActiveChildNumber();
+if ( (G4int)crystalComponent->GetActiveChildNumber() > rL ) rL = crystalComponent->GetActiveChildNumber();
 
 }
 
@@ -665,7 +665,7 @@ void GateToLMF::RecordEndOfAcquisition()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 
-void GateToLMF::RecordBeginOfRun(const G4Run * r)
+void GateToLMF::RecordBeginOfRun(const G4Run *)
 {
   if (!IsEnabled()) return;
   if (nVerboseLevel > 5)
@@ -676,7 +676,7 @@ void GateToLMF::RecordBeginOfRun(const G4Run * r)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void GateToLMF::RecordEndOfEvent(const G4Event* event)
+void GateToLMF::RecordEndOfEvent(const G4Event*)
 {
   if (!IsEnabled()) return;
   if (nVerboseLevel > 5)

@@ -54,7 +54,7 @@ public :
   void RecordBeginOfEvent(const G4Event *) {}; //!< This function doesn't do anything.
   void RecordEndOfEvent(const G4Event *);      //!< This function gives the digis to LMF.
   void RecordStep(const G4Step *) {};          //!< This function doesn't do anything.
-	const G4String& GiveNameOfFile(){};          //!< This function doesn't do anything.
+	const G4String& GiveNameOfFile(){ return m_nameOfFile; };          //!< This function doesn't do anything.
 	void RecordStepWithVolume(const GateVVolume *, const G4Step *) {}; //!< This function doesn't do anything.
 
   //! saves the geometry voxel information
