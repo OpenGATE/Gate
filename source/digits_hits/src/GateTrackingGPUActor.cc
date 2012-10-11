@@ -211,7 +211,7 @@ void GateTrackingGPUActor::UserSteppingAction(const GateVVolume * /*v*/,
 
   // We kill the particle without mercy
   step->GetTrack()->SetTrackStatus( fStopAndKill );
-  
+
   // STEP2 if enough particles in the buffer, start the gpu tracking
   if (gpu_input->particles.size() == max_buffer_size) {
     

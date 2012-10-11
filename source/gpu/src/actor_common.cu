@@ -333,7 +333,7 @@ __device__ float dot_vector(float3 u, float3 v) {
 }
 
 //// Return the next voxel boundary distance, it is used by the standard navigator
-__device__ float2 get_boundary_voxel_by_raycasting(int4 vox, float3 p, float3 d, float3 res) {
+__device__ float get_boundary_voxel_by_raycasting(int4 vox, float3 p, float3 d, float3 res) {
     
     
 	float xmin, xmax, ymin, ymax, zmin, zmax;
@@ -342,14 +342,13 @@ __device__ float2 get_boundary_voxel_by_raycasting(int4 vox, float3 p, float3 d,
 	
     // Define the voxel bounding box
     xmin = vox.x*res.x;
-    if (d.x >= 0) {xmax = xmin+res.x;}
-    else {xmax = xmin-res.x;}
-	ymin = vox.y*res.y;
-    if (d.y >= 0) {ymax = ymin+res.y;}
-    else {ymax = ymin-res.y;}
-	zmin = vox.z*res.z;
-    if (d.z >= 0) {zmax = zmin+res.z;}
-    else {zmax = zmin-res.z;}
+    ymin = vox.y*res.y;
+    zmin = vox.z*res.z;
+    xmax = (d.x<0 && p.x==xmin) ? xmin-res.x : xmin+res.x;
+    ymax = (d.y<0 && p.y==ymin) ? ymin-res.y : ymin+res.y;
+    zmax = (d.z<0 && p.z==zmin) ? zmin-res.z : zmin+res.z;
+    
+    //printf("Raycasting x %e %e y %e %e z %e %e\n", xmin, xmax, ymin, ymax, zmin, zmax);
 
     tmin = -1e9f;
     tmax = 1e9f;
@@ -389,7 +388,7 @@ __device__ float2 get_boundary_voxel_by_raycasting(int4 vox, float3 p, float3 d,
         if (tzmax < tmax) {tmax = tzmax;}
     }
 
-    return make_float2(tmin, tmax);
+    return tmax;
 }
 
 

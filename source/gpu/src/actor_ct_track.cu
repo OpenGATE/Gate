@@ -11,14 +11,15 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
   // add density correction coefficient
   // track event ID
   // init phantom
-  printf("====> Gpu start\n");
+  printf("====> GPU START\n");
 
   // TIMING
   double t_init = time();
   double t_g = time();
     
   // Select a GPU
-  cudaSetDevice(input->cudaDeviceID);
+  //cudaSetDevice(input->cudaDeviceID);
+  cudaSetDevice(1);
     
   long seed = input->seed;
   DD(seed);
@@ -60,10 +61,13 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
     photons_h.endsimu[i] = 0;
     photons_h.active[i] = 1;
     photons_h.interaction[i] = 1;
+        
+    //printf("g %e %e %e %e %e %e %e\n", p.E, p.px, p.py, p.pz, p.dx, p.dy, p.dz);
 
     ++iter;
     ++i;
   }
+  
   // Copy particles from host to device
   stack_copy_host2device(photons_h, photons_d);
 
@@ -127,7 +131,9 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
 
   // Copy photons from device to host
   stack_copy_device2host(photons_d, photons_h);
-    
+ 
+  // DEBUG (not export particles)
+  
   i=0;
   while (i<nb_of_particles) {
     
@@ -148,7 +154,7 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
         
         output->particles.push_back(particle);
     
-        //printf("e %e p %e %e %e d %e %e %e\n", photons_h.E[i], particle.px, particle.py,
+        //printf("g %e %e %e %e %e %e %e\n", photons_h.E[i], particle.px, particle.py,
         //                  particle.pz, photons_h.dx[i], photons_h.dy[i], photons_h.dz[i]);
     }
     //else {
@@ -156,21 +162,23 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
     //}
     ++i;
   }
+  
 
   // TIMING
-  t_out = time() - t_out;
+  //t_out = time() - t_out;
 
   stack_device_free(photons_d);
   stack_host_free(photons_h);
-  volume_device_free(phantom_d);
+  //volume_device_free(phantom_d);
 
 
   cudaDeviceSynchronize();
-  t_g = time() - t_g;
-  printf(">> GPU: init %e input %e track %e output %e tot %e\n", t_init+t_init_2, 
-          t_in, t_track, t_out, t_g);
+  //t_g = time() - t_g;
+  //printf(">> GPU: init %e input %e track %e output %e tot %e\n", t_init+t_init_2, 
+  //        t_in, t_track, t_out, t_g);
 
   cudaThreadExit();
+  printf("====> GPU STOP\n");
 }
 
 

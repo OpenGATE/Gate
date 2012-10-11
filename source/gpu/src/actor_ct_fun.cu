@@ -93,7 +93,7 @@ template <typename T1>
 __global__ void kernel_ct_navigation_regular(StackParticle photons,
                                            Volume<T1> phantom,
                                            int* count_d) {
-	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
+    unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
     if (id >= photons.size) return;
     if (photons.endsimu[id]) return;
@@ -107,19 +107,15 @@ __global__ void kernel_ct_navigation_regular(StackParticle photons,
     position.y = photons.py[id];
     position.z = photons.pz[id];
 
-    //printf(">>> ID %i :\n", id);
-    //printf("    position %.2f %.2f %.2f direction %e %e %e\n", position.x, position.y, position.z,
-    //            photons.dx[id], photons.dy[id], photons.dz[id]);
-   
     // Defined index phantom
-	int4 index_phantom;
+    int4 index_phantom;
     float3 ivoxsize = inverse_vector(phantom.voxel_size);
     index_phantom.x = int(position.x * ivoxsize.x);
     index_phantom.y = int(position.y * ivoxsize.y);
     index_phantom.z = int(position.z * ivoxsize.z);
     index_phantom.w = index_phantom.z*phantom.nb_voxel_slice
-                      + index_phantom.y*phantom.size_in_vox.x
-                      + index_phantom.x; // linear index
+                     + index_phantom.y*phantom.size_in_vox.x
+                     + index_phantom.x; // linear index
 
     // Read direction
     float3 direction;
@@ -132,9 +128,8 @@ __global__ void kernel_ct_navigation_regular(StackParticle photons,
 
     // Get material
     T1 material = phantom.data[index_phantom.w];
-
-    //printf("id %02i E %e p %e %e %e d %e %e %e\n", id, energy, position.x, position.y, position.z,
-    //        direction.x, direction.y, direction.z);
+    // FIXME TO DEBUG
+    material = 1;
 
     //// Find next discrete interaction ///////////////////////////////////////
 
@@ -147,69 +142,96 @@ __global__ void kernel_ct_navigation_regular(StackParticle photons,
     // Photoelectric
     cross_section = PhotoElec_CS_Standard(material, energy);
     interaction_distance = __fdividef(-__logf(Brent_real(id, photons.table_x_brent, 0)),
-                                      cross_section);
+                                     cross_section);
     if (interaction_distance < next_interaction_distance) {
-        next_interaction_distance = interaction_distance;
-        next_discrete_process = PHOTON_PHOTOELECTRIC;
+       next_interaction_distance = interaction_distance;
+       next_discrete_process = PHOTON_PHOTOELECTRIC;
     }
 
     // Compton
     cross_section = Compton_CS_Standard(material, energy);
     interaction_distance = __fdividef(-__logf(Brent_real(id, photons.table_x_brent, 0)),
-                                      cross_section);
+                                     cross_section);
     if (interaction_distance < next_interaction_distance) {
-        next_interaction_distance = interaction_distance;
-        next_discrete_process = PHOTON_COMPTON;
+       next_interaction_distance = interaction_distance;
+       next_discrete_process = PHOTON_COMPTON;
     }
-    
+
     // Step limiter
     interaction_distance = 10.0f; // FIXME step limiter
     if (interaction_distance < next_interaction_distance) {
-        next_interaction_distance = interaction_distance;
-        next_discrete_process = PHOTON_STEP_LIMITER;
+       next_interaction_distance = interaction_distance;
+       next_discrete_process = PHOTON_STEP_LIMITER;
     }
 
     // Distance to the next voxel boundary (raycasting)
-    float2 toto = get_boundary_voxel_by_raycasting(index_phantom, position, 
-                                                   direction, phantom.voxel_size);
-    interaction_distance = toto.y;
-
+    interaction_distance = get_boundary_voxel_by_raycasting(index_phantom, position, 
+                                                          direction, phantom.voxel_size);
     if (interaction_distance < next_interaction_distance) {
-        next_interaction_distance = interaction_distance;
-        next_discrete_process = PHOTON_BOUNDARY_VOXEL;
+      next_interaction_distance = interaction_distance;
+      next_discrete_process = PHOTON_BOUNDARY_VOXEL;
     }
 
-    //printf("    tmin %e tmax %e   dist %.3f process %i\n", toto.x, toto.y, 
-    //        next_interaction_distance, next_discrete_process);
 
     //// Move particle //////////////////////////////////////////////////////
 
     position.x += direction.x * next_interaction_distance;
     position.y += direction.y * next_interaction_distance;
     position.z += direction.z * next_interaction_distance;
-    //printf("    move to %.2f %.2f %.2f\n", position.x, position.y, position.z);
+    // Dirty part FIXME
+    //   apply "magnetic grid" on the particle position due to aproximation 
+    //   from the GPU (on the next_interaction_distance).
+    float eps = 1.0e-6f; // 1 um
+    float res_min, res_max, grid_pos_min, grid_pos_max;
+    index_phantom.x = int(position.x * ivoxsize.x);
+    index_phantom.y = int(position.y * ivoxsize.y);
+    index_phantom.z = int(position.z * ivoxsize.z);
+    // on x 
+    grid_pos_min = index_phantom.x * phantom.voxel_size.x;
+    grid_pos_max = (index_phantom.x+1) * phantom.voxel_size.x;
+    res_min = position.x - grid_pos_min;
+    res_max = position.x - grid_pos_max;
+    if (res_min < eps) {position.x = grid_pos_min;}
+    if (res_max > eps) {position.x = grid_pos_max;}
+    // on y
+    grid_pos_min = index_phantom.y * phantom.voxel_size.y;
+    grid_pos_max = (index_phantom.y+1) * phantom.voxel_size.y;
+    res_min = position.y - grid_pos_min;
+    res_max = position.y - grid_pos_max;
+    if (res_min < eps) {position.y = grid_pos_min;}
+    if (res_max > eps) {position.y = grid_pos_max;}
+    // on z
+    grid_pos_min = index_phantom.z * phantom.voxel_size.z;
+    grid_pos_max = (index_phantom.z+1) * phantom.voxel_size.z;
+    res_min = position.z - grid_pos_min;
+    res_max = position.z - grid_pos_max;
+    if (res_min < eps) {position.z = grid_pos_min;}
+    if (res_max > eps) {position.z = grid_pos_max;}
+
     photons.px[id] = position.x;
     photons.py[id] = position.y;
     photons.pz[id] = position.z;
 
     // Stop simulation if out of phantom or no more energy
-    if ( position.x < 0 || position.x >= phantom.size_in_mm.x
-      || position.y < 0 || position.y >= phantom.size_in_mm.y 
-      || position.z < 0 || position.z >= phantom.size_in_mm.z ) {
-        photons.endsimu[id] = 1;                     // stop the simulation
-        atomicAdd(count_d, 1);                       // count simulated primaries
-        return;
+    if ( position.x <= 0 || position.x >= phantom.size_in_mm.x
+     || position.y <= 0 || position.y >= phantom.size_in_mm.y 
+     || position.z <= 0 || position.z >= phantom.size_in_mm.z ) {
+       photons.endsimu[id] = 1;                     // stop the simulation
+       atomicAdd(count_d, 1);                       // count simulated primaries
+       return;
     }
 
     //// Resolve discrete processe //////////////////////////////////////////
 
     // Resolve discrete processes
     if (next_discrete_process == PHOTON_PHOTOELECTRIC) {
-        float discrete_loss = PhotoElec_ct_SampleSecondaries_Standard(photons, id, count_d);
+       float discrete_loss = PhotoElec_ct_SampleSecondaries_Standard(photons, id, count_d);
+       //printf("id %i PE\n", id);
     }
 
     if (next_discrete_process == PHOTON_COMPTON) {
-        float discrete_loss = Compton_ct_SampleSecondaries_Standard(photons, id, count_d);
+       float discrete_loss = Compton_ct_SampleSecondaries_Standard(photons, id, count_d);
+       //printf("id %i Compton\n", id);
     }
 }
 #undef PHOTON_PHOTOELECTRIC 1
