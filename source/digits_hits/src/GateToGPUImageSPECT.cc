@@ -417,6 +417,7 @@ void GateToGPUImageSPECT::RecordBeginOfAcquisition()
 				m_spaceBetweenCollimatorDetector, m_centerOfPxlY, m_centerOfPxlZ,
 				y_pixel_size, z_pixel_size );
 		}
+		#ifdef GATE_USE_GPU
 		else
 		{
 			if( nVerboseLevel>0 )
@@ -428,6 +429,7 @@ void GateToGPUImageSPECT::RecordBeginOfAcquisition()
         y_pixel_size, z_pixel_size, m_cudaDevice );
 				GateGPUCollimator_init( m_gpuCollimator );
 		}
+		#endif
 
 
 	if( nVerboseLevel > 1 )
@@ -781,6 +783,7 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					if( nVerboseLevel > 0 )
 						G4cout << "Particle exit: " << sizeAfter<< G4endl;
 				}
+				#ifdef GATE_USE_GPU
 				else
 				{
 					// CPU -> GPU
@@ -793,6 +796,7 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					if( nVerboseLevel > 0 )
 						G4cout << "Particle exit: " << m_gpuParticle->size << G4endl;
 				}
+				#endif
 
 				// Storing the point emission source
 				if( m_rootExitCollimatorSourceFlag )
