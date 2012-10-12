@@ -204,6 +204,7 @@ void GateVSourceVoxelReader::PrepareIntegratedActivityMap()
 	     << "   integrated: (Bq) " << ((*intVoxel).first)  / becquerel << G4endl;
     }
   }
+  m_tactivityTotal = m_activityTotal;  // added by I. Martinez-Rovira (immamartinez@gmail.com)
 }
 
 /* PY Descourt 08/09/2009 */

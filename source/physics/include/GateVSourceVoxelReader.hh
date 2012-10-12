@@ -40,6 +40,10 @@ public:
 
   virtual G4double GetTotalActivity() { return m_activityTotal; };
 
+  virtual G4double GetTempTotalActivity() { return m_tactivityTotal; };  // added by I. Martinez-Rovira (immamartinez@gmail.com)
+    
+  virtual void SetTempTotalActivity(G4double value) { m_tactivityTotal = value; };  // added by I. Martinez-Rovira (immamartinez@gmail.com)
+
   virtual void SetVerboseLevel(G4int value) { nVerboseLevel = value; };
 
   virtual void AddVoxel(G4int ix, G4int iy, G4int iz, G4double activity);
@@ -92,6 +96,7 @@ protected:
 
   G4double                       m_activityMax;
   G4double                       m_activityTotal;
+  G4double                       m_tactivityTotal;  // added by I. Martinez-Rovira (immamartinez@gmail.com)
 
   G4String                       m_type;
 

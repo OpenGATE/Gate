@@ -68,6 +68,7 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
 
   m_forcedUnstableFlag  = false;
   m_forcedLifeTime      = -1.*s;
+  m_materialName = "Air";
   mRelativePlacementVolumeName = "World";
   mEnableRegularActivity = false;
 
@@ -164,7 +165,7 @@ void GateVSource::SetTimeActivityFilename(G4String filename) {
   ReadTimeDoubleValue(filename, "Activity", mTimeList, mActivityList);
   //DD(mTimeList.size());
   if (mTimeList.size()<1) {
-    GateError("While readin time-actu=ivity file 'filename', no time ?\n");
+    GateError("While readin time-activity file 'filename', no time ?\n");
   }
   m_activity = mTimeList[0];
 }
@@ -198,7 +199,7 @@ void GateVSource::SetRelativePlacementVolume(G4String volname) {
   mRelativePlacementVolumeName = volname;
   // Search for volume 
   mVolume =   GateObjectStore::GetInstance()->FindVolumeCreator(volname);
-  // mVolume->Describe();
+//mVolume->Describe();
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -224,8 +225,8 @@ G4double GateVSource::GetNextTime( G4double timeStart )
   // returns the proposed time for the next event of this source, sampled from the 
   // source time distribution
   G4double aTime = DBL_MAX;
-
-  //if(m_activity==0 && m_timeInterval!=0.)  SetActivity();
+ 
+//if(m_activity==0 && m_timeInterval!=0.)  SetActivity();
 
   if( m_activity > 0. )
     {
@@ -298,14 +299,29 @@ G4double GateVSource::GetNextTime( G4double timeStart )
   if( nVerboseLevel > 0 )
     G4cout << "GateVSource::GetNextTime : next time (s) " << aTime/s << G4endl;
    
+
+//Dump(0);
+/*G4cout<< "    CentreCoords       (mm)  : " 
+             << m_posSPS->GetCentreCoords().x()/mm << " " 
+             << m_posSPS->GetCentreCoords().y()/mm << " " 
+             << m_posSPS->GetCentreCoords().z()/mm << G4endl;*/
   return aTime;
 }
 //-------------------------------------------------------------------------------------------------
 
+void GateVSource::TrigMat()
+{
+// Retrieve position according to world
+  GateVVolume * v = mVolume;
+  G4cout<<"------------------|||||||||||| TEST de SEBES =          "<<v->GetObjectName()<<G4endl;
+ 
+}
+
 //-------------------------------------------------------------------------------------------------
 void GateVSource::Dump( G4int level ) 
 {
-  G4cout << "Source --------------> " << m_name << G4endl
+
+ G4cout << "Source --------------> " << m_name << G4endl
          << "  ID                 : " << m_sourceID << G4endl
          << "  type               : " << m_type << G4endl
          << "  activity (Bq)      : " << m_activity/becquerel << G4endl

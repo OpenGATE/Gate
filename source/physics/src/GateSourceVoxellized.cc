@@ -59,7 +59,7 @@ G4double GateSourceVoxellized::GetNextTime(G4double timeNow)
     return 0.;
   }
   // compute random time for this source as if it was one source with the total activity
-  m_activity = m_voxelReader->GetTotalActivity();
+  m_activity = m_voxelReader->GetTempTotalActivity();  // modified by I. Martinez-Rovira (immamartinez@gmail.com)
   G4double firstTime = GateVSource::GetNextTime(timeNow); 
 
   if (nVerboseLevel>1) 

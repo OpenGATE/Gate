@@ -8,7 +8,6 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-
 /*
   \brief Class GateProductionAndStoppingActor : 
   \brief 
@@ -51,9 +50,9 @@ void GateProductionAndStoppingActor::Construct() {
   // Enable callbacks
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
-  EnablePreUserTrackingAction(true);
+  EnablePreUserTrackingAction(false);
   EnablePostUserTrackingAction(true);
-  EnableUserSteppingAction(false);
+  EnableUserSteppingAction(true);
  
   // Output Filename
   mProdFilename = G4String(removeExtension(mSaveFilename))+"-Prod."+G4String(getExtension(mSaveFilename));
@@ -110,12 +109,14 @@ void GateProductionAndStoppingActor::BeginOfEventAction(const G4Event * ) {
 
 
 //-----------------------------------------------------------------------------
-void GateProductionAndStoppingActor::UserPreTrackActionInVoxel(const  int index, const G4Track* /*t*/)
+void GateProductionAndStoppingActor::UserSteppingActionInVoxel(const int index, const G4Step* aStep)
 {
-  if(index>-1)  mProdImage.AddValue(index, 1);
+  if(index>-1) {
+    if ( aStep->GetTrack()->GetCurrentStepNumber() == 1 )  {
+      mProdImage.AddValue(index, 1); }
+  }
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 void GateProductionAndStoppingActor::UserPostTrackActionInVoxel(const int index, const G4Track* /*t*/)
@@ -123,7 +124,6 @@ void GateProductionAndStoppingActor::UserPostTrackActionInVoxel(const int index,
   if(index>-1) mStopImage.AddValue(index, 1);
 }
 //-----------------------------------------------------------------------------
-
 
 
 #endif /* end #define GATEPRODANDSTOPACTOR_CC */

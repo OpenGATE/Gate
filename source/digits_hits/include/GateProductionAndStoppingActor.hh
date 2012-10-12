@@ -14,6 +14,8 @@ See GATE/LICENSE.txt for further details
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
 	  david.sarrut@creatis.insa-lyon.fr
+	  
+          modified by I. Martinez-Rovira (immamartinez@gmail.com)       	  
  */
 
 #ifndef GATEPRODANDSTOPACTOR_HH
@@ -46,8 +48,8 @@ class GateProductionAndStoppingActor : public GateVImageActor
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
 
-  virtual void UserSteppingActionInVoxel(const int /*index*/, const G4Step* /*step*/){}
-  virtual void UserPreTrackActionInVoxel(const  int index, const G4Track* t) ;
+  virtual void UserPreTrackActionInVoxel(const  int /*index*/, const G4Track* /*t*/){}
+  virtual void UserSteppingActionInVoxel(const int index, const G4Step* step) ;
   virtual void UserPostTrackActionInVoxel(const int index, const G4Track* t) ;
 
  /// Saves the data collected to the file

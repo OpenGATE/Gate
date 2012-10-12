@@ -69,6 +69,8 @@ public:
   virtual void SetAccoValue( G4double value ) { m_accoValue = value; }
   virtual G4double GetAccoValue()             { return m_accoValue; }
 
+
+
   // getter and setter for T_1/2, without introducing one more variable
   virtual void SetForcedHalfLife( G4double value ) { m_forcedLifeTime =  value / log( 2. ); }
   virtual G4double GetForcedHalfLife()             { return m_forcedLifeTime * log( 2. ); };
@@ -112,7 +114,9 @@ public:
   G4double GetIntensity(){return m_intensity ;}
   
   void Visualize( G4String parms); 
-
+ 
+  void TrigMat();
+ 
   private:
   typedef GateMap<G4String,G4Colour> GateColorMap ;
   typedef GateColorMap::MapPair GateColorPair ;
@@ -143,7 +147,9 @@ protected:
   G4bool     m_accolinearityFlag;
   G4double   m_accoValue;
   G4String   mRelativePlacementVolumeName;
+  G4String   m_materialName;
   GateVVolume * mVolume;
+
   G4double mEnergy;
   bool mEnableRegularActivity;
   G4double m_timeInterval;
