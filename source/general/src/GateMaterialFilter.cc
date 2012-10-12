@@ -1,0 +1,86 @@
+/*----------------------
+   GATE version name: gate_v6
+
+   Copyright (C): OpenGATE Collaboration
+
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See GATE/LICENSE.txt for further details
+----------------------*/
+
+/*
+  \brief Class GateMaterialFilter
+*/
+
+#include "GateMaterialFilter.hh"
+
+#include "GateUserActions.hh"
+#include "GateTrajectory.hh"
+
+
+//---------------------------------------------------------------------------
+GateMaterialFilter::GateMaterialFilter(G4String name)
+  :GateVFilter(name)
+{
+  theMdef.clear();
+  pMatMessenger = new GateMaterialFilterMessenger(this);
+  nFilteredParticles = 0;
+}
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+GateMaterialFilter::~GateMaterialFilter()
+{
+  if(nFilteredParticles==0) GateWarning("No particle has been selected by filter: " << GetObjectName()); 
+  delete pMatMessenger ;
+}
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+G4bool GateMaterialFilter::Accept(const G4Step* aStep) 
+{
+    for ( size_t i = 0; i < theMdef.size(); i++){
+      if ( theMdef[i] == aStep->GetPreStepPoint()->GetMaterial()->GetName() ) {
+        nFilteredParticles++;
+        return true;
+      } 
+    }
+  return false;
+}
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+G4bool GateMaterialFilter::Accept(const G4Track* aTrack) 
+{
+    for ( size_t i = 0; i < theMdef.size(); i++){ 	
+      if ( theMdef[i] == aTrack->GetStep()->GetPostStepPoint()->GetMaterial()->GetName() ) {
+        nFilteredParticles++;
+        return true;
+      } 
+    }
+  return false;
+}
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+void GateMaterialFilter::Add(const G4String& materialName)
+{
+  for ( size_t i = 0; i < theMdef.size(); i++ ){
+    if ( theMdef[i] == materialName ) return;
+  }
+  theMdef.push_back(materialName);
+}
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+void GateMaterialFilter::show()
+{
+  G4cout << "------ Filter: " << GetObjectName() << " ------" << G4endl;
+  G4cout << "       Material list: " << G4endl;
+
+  for ( size_t i = 0; i < theMdef.size(); i++ ){
+    G4cout << theMdef[i] << G4endl;
+  }
+  G4cout << "-------------------------------------------" << G4endl;
+}
+//---------------------------------------------------------------------------
