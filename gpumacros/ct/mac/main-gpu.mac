@@ -181,7 +181,10 @@
 #=====================================================
 # START BEAMS
 #=====================================================
-#/tracking/verbose 2
+#/tracking/verbose 1
+
+/gate/application/noGlobalOutput
+/gate/run/enableGlobalOutput false
 
 /gate/random/setEngineName MersenneTwister
 #/gate/random/setEngineSeed auto
