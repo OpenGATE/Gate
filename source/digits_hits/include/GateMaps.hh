@@ -117,7 +117,7 @@ inline GateMap<Tkey,Tvalue>::GateMap(size_t n, GateMap<Tkey,Tvalue> *mapArray[])
   for (size_t i=0; i<n ; i++){
     GateMap<Tkey,Tvalue>* mapElement = mapArray[i];
     for (iterator iter = mapElement->begin(); iter != mapElement->end(); iter++)
-      insert(*iter);
+      this->insert(*iter);
   }
 }
 
