@@ -33,7 +33,6 @@
 #include "GateHounsfieldToMaterialsBuilder.hh"
 
 class GateRunManagerMessenger;
-
 class GateDetectorConstruction;
 
 class GateRunManager : public G4RunManager
@@ -65,6 +64,9 @@ public:
   static GateRunManager* GetRunManager()
   {	return dynamic_cast<GateRunManager*>(G4RunManager::GetRunManager()); }
 
+  bool GetGlobalOutputFlag() { return mGlobalOutputFlag; }
+  void EnableGlobalOutput(bool b) { mGlobalOutputFlag = b; }
+
 private :
 
   GateDetectorConstruction* detConstruction;
@@ -72,6 +74,7 @@ private :
   GateRunManagerMessenger* pMessenger;
   bool mIsGateInitializationCalled;
   GateHounsfieldToMaterialsBuilder * mHounsfieldToMaterialsBuilder;
+  bool mGlobalOutputFlag;
 };
 //----------------------------------------------------------------------------------------
 

@@ -27,6 +27,7 @@ GateRunManager::GateRunManager():G4RunManager()
   pMessenger = new GateRunManagerMessenger(this);
   mHounsfieldToMaterialsBuilder = new GateHounsfieldToMaterialsBuilder();
   mIsGateInitializationCalled = false;
+  EnableGlobalOutput(true);
 }
 //----------------------------------------------------------------------------------------
 
