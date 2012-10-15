@@ -250,6 +250,7 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
 			tmp->GetResolution().y() + 2,
 			tmp->GetResolution().z() + 2);
     pImage->SetResolutionAndVoxelSize(res,tmp->GetVoxelSize());
+    pImage->SetOrigin(tmp->GetOrigin());
     pImage->Allocate();
     //pImage->Fill(-1);
     pImage->SetOutsideValue(  tmp->GetMinValue() - 1 );
@@ -634,10 +635,12 @@ void GateVImageVolume::BuildDistanceTransfo()
   voxel * p = v.getDataPointer();
   GateImage::const_iterator iter = pImage->begin();
   while (iter != pImage->end()) {
-    if ((*iter < 0) || (*iter > 255)) 
+    /*
+    if ((*iter < 0) || (*iter > 255)) //FIXME
       {
 	GateError("Error image value not uchar =" << *iter << G4endl);
       }
+    */
     *p = static_cast<voxel>(lrint(*iter));
     ++p;
     ++iter;
@@ -673,6 +676,7 @@ void GateVImageVolume::BuildDistanceTransfo()
   GateDebugMessage("Geometry", 4, "Convert and output" << G4endl);
   GateImage output;
   output.SetResolutionAndHalfSize(pImage->GetResolution(), pImage->GetHalfSize());
+  output.SetOrigin(pImage->GetOrigin());
   output.Allocate();
   double spacingFactor = pImage->GetVoxelSize().x();
   // DD(spacingFactor);
