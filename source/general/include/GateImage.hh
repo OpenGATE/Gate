@@ -123,7 +123,7 @@ public:
   /// Returns the voxel's coordinates from its index : OK
   G4ThreeVector GetCoordinatesFromIndex(int index) const;
   /// Returns the voxel's index from its coordinates : OK
-  int GetIndexFromCoordinates(G4ThreeVector coords) const 
+  inline int GetIndexFromCoordinates(const G4ThreeVector & coords) const
   { return (int)(coords.x()+coords.y()*lineSize+coords.z()*planeSize); }
 
 
