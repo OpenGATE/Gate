@@ -73,14 +73,17 @@ void GateSimulationStatisticActor::Construct()
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 // Callback Begin of Run
 void GateSimulationStatisticActor::BeginOfRunAction(const G4Run*r)
 {
+  gettimeofday(&start_afterinit,NULL);
   GateVActor::BeginOfRunAction(r);
   mNumberOfRuns++;
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 // Callback Begin Event
@@ -134,9 +137,10 @@ void GateSimulationStatisticActor::SaveData()
      << "# NumberOfSteps  = " << mNumberOfSteps << std::endl
      << "# NumberOfGeometricalSteps  = " << mNumberOfGeometricalSteps << std::endl
      << "# NumberOfPhysicalSteps     = " << mNumberOfPhysicalSteps << std::endl
-     << "# ElapsedTime = " << get_elapsed_time(start,end) << std::endl
-     << "# StartDate = " << startDateStr
-     << "# EndDate = " << get_date_string()
+     << "# ElapsedTime           = " << get_elapsed_time(start,end) << std::endl
+     << "# ElapsedTime (wo init) = " << get_elapsed_time(start_afterinit,end) << std::endl
+     << "# StartDate             = " << startDateStr
+     << "# EndDate               = " << get_date_string()
      << "# CurrentSimulationTime = " << (GateApplicationMgr::GetInstance()->GetCurrentTime() - GateApplicationMgr::GetInstance()->GetTimeStart()) << std::endl;
   if (!os) {
     GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << G4endl);

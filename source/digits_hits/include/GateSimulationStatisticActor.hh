@@ -8,7 +8,6 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-
 /*!
   \class GateSimulationStatisticActor
   \author thibault.frisson@creatis.insa-lyon.fr
@@ -20,10 +19,9 @@ See GATE/LICENSE.txt for further details
 #define GATESIMULATIONSTATISTICACTOR_HH
 
 #include "GateVActor.hh"
-
 #include "GateActorManager.hh"
-
 #include "GateActorMessenger.hh"
+
 #include <sys/time.h>
 
 //-----------------------------------------------------------------------------
@@ -64,6 +62,7 @@ protected:
   long long int mNumberOfGeometricalSteps;
   long long int mNumberOfPhysicalSteps;
   timeval start;
+  timeval start_afterinit;
   std::string startDateStr;
   
   GateActorMessenger * pActor;
