@@ -27,7 +27,8 @@ This file is part of libvol.
 #include <string.h>
 
 //! Voxel type
-typedef unsigned char voxel;
+//typedef unsigned char voxel; // FIXME 
+typedef unsigned short voxel;
 
 //! This class handles voxel 3D pictures. It can save them to disk and read them.
 //! See test.cc for an example of use of this class.
