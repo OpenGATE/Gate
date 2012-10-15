@@ -124,23 +124,23 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   
   bb = base+"/SetMaxStepSizeInRegion";
   pMaxStepSizeCmd = new G4UIcmdWithAString(bb,this);  
-  pMaxStepSizeCmd->SetGuidance("Set the maximum step size for a given region (two parameters 'regionName' and 'cutValue')");
+  pMaxStepSizeCmd->SetGuidance("Set the maximum step size for a given region (two parameters 'regionName' and 'cutValue') YOU ALSO NEED TO SET ActivateStepLimiter");
 
   bb = base+"/SetMaxToFInRegion";
   pMaxToFCmd = new G4UIcmdWithAString(bb,this);  
-  pMaxToFCmd->SetGuidance("Set the maximum time of flight for a given region (two parameters 'regionName' and 'cutValue')");
+  pMaxToFCmd->SetGuidance("Set the maximum time of flight for a given region (two parameters 'regionName' and 'cutValue') YOU ALSO NEED TO SET ActivateSpecialCuts");
 
   bb = base+"/SetMinKineticEnergyInRegion";
   pMinKineticEnergyCmd = new G4UIcmdWithAString(bb,this);  
-  pMinKineticEnergyCmd->SetGuidance("Set the minimum energy of the track for a given region (two parameters 'regionName' and 'cutValue')");
+  pMinKineticEnergyCmd->SetGuidance("Set the minimum energy of the track for a given region (two parameters 'regionName' and 'cutValue') YOU ALSO NEED TO SET ActivateSpecialCuts");
 
   bb = base+"/SetMaxTrackLengthInRegion";
   pMaxTrackLengthCmd = new G4UIcmdWithAString(bb,this);  
-  pMaxTrackLengthCmd->SetGuidance("Set the maximum length of the track for a given region (two parameters 'regionName' and 'cutValue')");
+  pMaxTrackLengthCmd->SetGuidance("Set the maximum length of the track for a given region (two parameters 'regionName' and 'cutValue') YOU ALSO NEED TO SET ActivateSpecialCuts");
 
   bb = base+"/SetMinRemainingRangeInRegion";
   pMinRemainingRangeCmd = new G4UIcmdWithAString(bb,this);  
-  pMinRemainingRangeCmd->SetGuidance("Set the minimum remaining range of the track for a given region (two parameters 'regionName' and 'cutValue')");
+  pMinRemainingRangeCmd->SetGuidance("Set the minimum remaining range of the track for a given region (two parameters 'regionName' and 'cutValue') YOU ALSO NEED TO SET ActivateSpecialCuts");
 
   bb = base+"/ActivateStepLimiter";
   pActivateStepLimiterCmd = new G4UIcmdWithAString(bb,this);  
