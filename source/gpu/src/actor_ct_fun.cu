@@ -129,7 +129,10 @@ __global__ void kernel_ct_navigation_regular(StackParticle photons,
     // Get material
     T1 material = phantom.data[index_phantom.w];
     // FIXME TO DEBUG
-    material = 1;
+    //material = 1;
+    if (material == 1) {material = 0;} // Air
+    if (material == 2) {material = 13;} // Brain
+    if (material == 3) {material = 7;}  // RibBone
 
     //// Find next discrete interaction ///////////////////////////////////////
 

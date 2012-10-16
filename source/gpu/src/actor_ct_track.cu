@@ -165,7 +165,7 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
   
 
   // TIMING
-  //t_out = time() - t_out;
+  t_out = time() - t_out;
 
   stack_device_free(photons_d);
   stack_host_free(photons_h);
@@ -173,9 +173,9 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
 
 
   cudaDeviceSynchronize();
-  //t_g = time() - t_g;
-  //printf(">> GPU: init %e input %e track %e output %e tot %e\n", t_init+t_init_2, 
-  //        t_in, t_track, t_out, t_g);
+  t_g = time() - t_g;
+  printf(">> GPU: init %e input %e track %e output %e tot %e\n", t_init+t_init_2, 
+          t_in, t_track, t_out, t_g);
 
   cudaThreadExit();
   printf("====> GPU STOP\n");
