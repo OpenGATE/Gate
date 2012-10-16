@@ -1,0 +1,81 @@
+#SCANNER HEAD COLLIMATOR + DETECTOR VOLUME
+/gate/world/daughters/name SPECThead
+/gate/world/daughters/insert box
+/gate/SPECThead/geometry/setXLength    25.0   mm
+/gate/SPECThead/geometry/setYLength   100.0   mm
+/gate/SPECThead/geometry/setZLength   100.0   mm
+/gate/SPECThead/placement/setTranslation  48.5 0.0 0.0 mm #ROR 36 mm
+/gate/SPECThead/setMaterial Air
+/gate/SPECThead/vis/forceWireframe
+/gate/SPECThead/vis/setColor white
+
+#ADDING ALUMINIUM WIDTH
+/gate/SPECThead/daughters/name aluminiumWidth
+/gate/SPECThead/daughters/insert box
+/gate/aluminiumWidth/geometry/setXLength     6.5 mm
+/gate/aluminiumWidth/geometry/setYLength   100.0 mm
+/gate/aluminiumWidth/geometry/setZLength   100.0 mm
+/gate/aluminiumWidth/placement/setTranslation  9.25 0.00 0.00 mm
+/gate/aluminiumWidth/setMaterial Aluminium
+/gate/aluminiumWidth/vis/forceWireframe
+/gate/aluminiumWidth/vis/setColor grey
+
+#ADDING AIR WIDTH
+/gate/aluminiumWidth/daughters/name airWidth
+/gate/aluminiumWidth/daughters/insert box 
+/gate/airWidth/geometry/setXLength     5.5   mm
+/gate/airWidth/geometry/setYLength   100.0   mm
+/gate/airWidth/geometry/setZLength   100.0   mm
+/gate/airWidth/placement/setTranslation  0.5 0.0 0.0 mm
+/gate/airWidth/setMaterial Air
+/gate/airWidth/vis/forceWireframe
+/gate/airWidth/vis/setColor green
+
+#ADDING SEMICONDUCTOR SPACE
+/gate/airWidth/daughters/name semicon
+/gate/airWidth/daughters/insert box
+/gate/semicon/geometry/setXLength    5.00   mm
+/gate/semicon/geometry/setYLength   98.25   mm
+/gate/semicon/geometry/setZLength   98.25   mm
+/gate/semicon/placement/setTranslation 0.25 0.00 0.00 mm
+/gate/semicon/setMaterial CZT
+/gate/semicon/vis/forceWireframe
+/gate/semicon/vis/setColor red
+
+#PIXEL
+/gate/semicon/daughters/name pixel
+/gate/semicon/daughters/insert box
+/gate/pixel/setMaterial CZT
+/gate/pixel/geometry/setXLength 5 mm
+/gate/pixel/geometry/setYLength 0.75 mm
+/gate/pixel/geometry/setZLength 0.75 mm
+/gate/pixel/vis/forceSolid
+/gate/pixel/vis/setColor red
+/gate/pixel/repeaters/insert cubicArray
+/gate/pixel/cubicArray/setRepeatNumberX 1
+/gate/pixel/cubicArray/setRepeatNumberY 131
+/gate/pixel/cubicArray/setRepeatNumberZ 131
+/gate/pixel/cubicArray/setRepeatVector 0. 0.75 0.75 mm
+
+#COLLIMATOR
+/gate/SPECThead/daughters/name collimator
+/gate/SPECThead/daughters/insert box
+/gate/collimator/geometry/setXLength    18.5 mm
+/gate/collimator/geometry/setYLength   100.0 mm
+/gate/collimator/geometry/setZLength   100.0 mm
+/gate/collimator/placement/setTranslation  -3.25 0.00 0.00 mm
+/gate/collimator/setMaterial Air
+/gate/collimator/vis/forceSolid
+/gate/collimator/vis/setColor yellow
+
+#REPEAT HEAD AND ROTATION
+/gate/SPECThead/moves/insert orbiting
+/gate/SPECThead/orbiting/setSpeed -0.0 deg/s
+/gate/SPECThead/orbiting/enableAutoRotation
+/gate/SPECThead/orbiting/setPoint1 0 0 0 cm
+/gate/SPECThead/orbiting/setPoint2 0 1 0 cm
+
+#ATTACH CRYSTAL AND PHANTOM
+/gate/systems/SPECThead/crystal/attach semicon
+/gate/systems/SPECThead/pixel/attach pixel
+/gate/pixel/attachCrystalSD

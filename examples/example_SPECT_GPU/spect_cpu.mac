@@ -1,0 +1,64 @@
+/vis/disable
+
+#INITIALIZE MATERIALS
+/gate/geometry/setMaterialDatabase GateMaterials.db
+
+#WORLD
+/gate/world/geometry/setXLength 300. mm
+/gate/world/geometry/setYLength 250. mm
+/gate/world/geometry/setZLength 300. mm
+/gate/world/vis/setVisible 1
+
+#DETECTOR
+/control/execute spect_detector_collimator.mac
+
+#PHYSICS
+/control/execute physicsStandard.mac
+
+#INITIALIZE 
+/gate/run/initialize
+
+#DIGITIZER
+/control/execute digitizer.mac
+
+#SOURCE
+/control/execute points_source.mac
+
+#VERBOSITY
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+#OUTPUT
+/gate/output/spectGPU/enable
+/gate/output/spectGPU/setFileName points_source_cpu
+/gate/output/spectGPU/attachTo collimator_phys
+/gate/output/spectGPU/bufferParticleEntry 5000000
+/gate/output/spectGPU/setNZpixel                         131
+/gate/output/spectGPU/setNYpixel                         131
+/gate/output/spectGPU/setSepta                           0.15 mm
+/gate/output/spectGPU/setFy                              100.0 mm
+/gate/output/spectGPU/setFz                              100.0 mm
+/gate/output/spectGPU/setRor                             36.0 mm
+/gate/output/spectGPU/setCollimatorHeight                20.0 mm
+/gate/output/spectGPU/setSpaceBetweenCollimatorDetector  1.5 mm
+/gate/output/spectGPU/cpuNumber 24
+/gate/output/spectGPU/setCPUflag 1
+/gate/output/spectGPU/setRootHitFlag 0
+/gate/output/spectGPU/setRootSingleFlag 1
+/gate/output/spectGPU/setRootSourceFlag 0
+/gate/output/spectGPU/setRootExitCollimatorSourceFlag 0
+/gate/output/spectGPU/verbose 1
+/gate/output/spectGPU/timeFlag 1
+/gate/output/spectGPU/describe
+
+#RANDOM
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed auto
+
+#START
+/gate/application/setTimeSlice 0.1 s
+/gate/application/setTimeStop  0.1 s
+/gate/application/setTimeStart 0.0 s
+/gate/application/startDAQ
+exit
