@@ -19,7 +19,13 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 
 	// Energy
 	float E = input->E; // 511 keV
-	long seed = input->seed + firstInitialID; // Avoid to use the same seed each time
+    
+    // Seed managment
+    srand(input->seed);
+    input->seed = rand(); // FIXME here I am not sure
+    
+	//long seed = input->seed + firstInitialID; // Avoid to use the same seed each time
+    //srand(seed);
 	
     // Define phantom
 	int3 dim_phantom;
@@ -50,8 +56,7 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	grid.x = grid_size;
 	
 	// Init random
-	int* tmp = (int*)malloc(positron * sizeof(int));
-	srand(seed);
+	int* tmp = (int*)malloc(positron * sizeof(int));	
 	int n=0; while (n<positron) {tmp[n] = rand(); ++n;};
 	cudaMemcpy(stackgamma1.seed, tmp, positron * sizeof(int), cudaMemcpyHostToDevice);
 	n=0; while (n<positron) {tmp[n] = rand(); ++n;};

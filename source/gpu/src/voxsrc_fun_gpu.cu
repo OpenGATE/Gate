@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <math.h>
+#include <float.h>
 
 
 /***********************************************************
@@ -397,6 +398,152 @@ __global__ void kernel_voxelized_source_b2b(StackGamma stackgamma1, StackGamma s
 /***********************************************************
  * Tracking kernel
  ***********************************************************/
+
+// Regular tracking navigator
+#define PHOTON_PHOTOELECTRIC 1
+#define PHOTON_COMPTON 2
+#define PHOTON_BOUNDARY_VOXEL 3
+__global__ void kernel_voxsrc_regular_navigator(int3 dimvol, StackGamma stackgamma, float voxsize, int *gamma_sim_d) {
+    
+    unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
+    
+    if (id >= stackgamma.size) return;
+    if (stackgamma.endsimu[id]) return;
+    
+    // Read position
+    float3 position; // mm
+    position.x = stackgamma.px[id];
+    position.y = stackgamma.py[id];
+    position.z = stackgamma.pz[id];
+    
+    // Defined index phantom
+    int4 index_phantom;
+    int jump = dimvol.x * dimvol.y;
+    float ivoxsize = __fdividef(voxsize);
+    index_phantom.x = int(position.x * ivoxsize);
+    index_phantom.y = int(position.y * ivoxsize);
+    index_phantom.z = int(position.z * ivoxsize);    
+    index_phantom.w = index_phantom.z * jump
+                    + index_phantom.y * dimvol.x
+                    + index_phantom.x; // linear index
+    
+    // Read direction
+    float3 direction;
+    direction.x = stackgamma.dx[id];
+    direction.y = stackgamma.dy[id];
+    direction.z = stackgamma.dz[id];
+    
+    // Get energy
+    float energy = stackgamma.E[id];
+    
+    // Get material
+    unsigned short int material = tex1Dfetch(tex_phantom, index_phantom.w);
+    
+    //// Find next discrete interaction ///////////////////////////////////////
+    
+    // Find next discrete interaction and next discrete intraction distance
+    float next_interaction_distance =  FLT_MAX;
+    unsigned char next_discrete_process = 0;
+    float interaction_distance;
+    float cross_section;
+    
+    // PhotoElectric
+    cross_section = voxsrc_PhotoElec_CS_Standard(material, energy);
+    interaction_distance = __fdividef(-__logf(voxsrc_Brent_real(id, stackgamma.table_x_brent, 0)), cross_section);
+    
+    if (interaction_distance < next_interaction_distance) {
+        next_interaction_distance = interaction_distance;
+        next_discrete_process = PHOTON_PHOTOELECTRIC;
+    }
+    
+    // Compton
+    cross_section = voxsrc_Compton_CS_Standard(material, energy);
+    interaction_distance = __fdividef(-__logf(voxsrc_Brent_real(id, stackgamma.table_x_brent, 0)), cross_section);
+    
+    if (interaction_distance < next_interaction_distance) {
+        next_interaction_distance = interaction_distance;
+        next_discrete_process = PHOTON_COMPTON;
+    }
+    
+    // FIXME need to be include with the h file?
+    interaction_distance = get_boundary_voxel_by_raycasting(index_phantom, position, direction, make_float3(voxsize, voxsize, voxsize));
+    if (interaction_distance < next_interaction_distance) {
+        next_interaction_distance = interaction_distance;
+        next_discrete_process = PHOTON_BOUNDARY_VOXEL;
+    }
+    
+    //// Move particle //////////////////////////////////////////////////////
+    
+    position.x += direction.x * next_interaction_distance;
+    position.y += direction.y * next_interaction_distance;
+    position.z += direction.z * next_interaction_distance;
+    // Dirty part FIXME
+    //   apply "magnetic grid" on the particle position due to aproximation
+    //   from the GPU (on the next_interaction_distance).
+    float eps = 1.0e-6f; // 1 um
+    float res_min, res_max, grid_pos_min, grid_pos_max;
+    index_phantom.x = int(position.x * ivoxsize);
+    index_phantom.y = int(position.y * ivoxsize);
+    index_phantom.z = int(position.z * ivoxsize);
+    // on x
+    grid_pos_min = index_phantom.x * dimvol.x;
+    grid_pos_max = (index_phantom.x+1) * dimvol.x;
+    res_min = position.x - grid_pos_min;
+    res_max = position.x - grid_pos_max;
+    if (res_min < eps) {position.x = grid_pos_min;}
+    if (res_max > eps) {position.x = grid_pos_max;}
+    // on y
+    grid_pos_min = index_phantom.y * dimvol.y;
+    grid_pos_max = (index_phantom.y+1) * dimvol.y;
+    res_min = position.y - grid_pos_min;
+    res_max = position.y - grid_pos_max;
+    if (res_min < eps) {position.y = grid_pos_min;}
+    if (res_max > eps) {position.y = grid_pos_max;}
+    // on z
+    grid_pos_min = index_phantom.z * dimvol.z;
+    grid_pos_max = (index_phantom.z+1) * dimvol.z;
+    res_min = position.z - grid_pos_min;
+    res_max = position.z - grid_pos_max;
+    if (res_min < eps) {position.z = grid_pos_min;}
+    if (res_max > eps) {position.z = grid_pos_max;}
+    
+    stackgamma.px[id] = position.x;
+    stackgamma.py[id] = position.y;
+    stackgamma.pz[id] = position.z;
+
+    // Stop simulation if out of phantom or no more energy
+    if ( position.x <= 0 || position.x >= dimvol.x*voxsize
+        || position.y <= 0 || position.y >= dimvol.y*voxsize
+        || position.z <= 0 || position.z >= dimvol.z*voxsize) {
+        stackgamma.endsimu[id] = 1;                     // stop the simulation
+        atomicAdd(gamma_sim_d, 1);                       // count simulated primaries
+        return;
+    }
+    
+    //// Resolve discrete processe //////////////////////////////////////////
+    
+    // Resolve discrete processes
+    if (next_discrete_process == PHOTON_PHOTOELECTRIC) {
+        stackgamma.live[id] = 0;    // kill the particle.
+        stackgamma.endsimu[id] = 1; // stop the simulation
+        atomicAdd(gamma_sim_d, 1);
+        return;
+    }
+    
+    if (next_discrete_process == PHOTON_COMPTON) {
+        float3 newdir = voxsrc_Compton_scatter_Standard(stackgamma, id, gamma_sim_d);
+		direction = deflect_particle(direction, newdir);
+		stackgamma.dx[id] = direction.x;
+		stackgamma.dy[id] = direction.y;
+		stackgamma.dz[id] = direction.z;
+        return
+    }
+    
+}
+#undef PHOTON_PHOTOELECTRIC 1
+#undef PHOTON_COMPTON 2
+#undef PHOTON_BOUNDARY_VOXEL 3
+
 
 // Fictitious tracking (or delta-tracking)
 __global__ void kernel_voxsrc_woodcock_Standard(int3 dimvol, StackGamma stackgamma, float dimvox, int most_att_mat, int* gamma_sim_d) {
