@@ -28,6 +28,7 @@ private:
   GateSourceGPUVoxellized * m_gpu_source;
   G4UIcmdWithAString * m_attach_to_cmd;
   G4UIcmdWithAnInteger * m_gpu_buffer_size_cmd;
+  G4UIcmdWithAnInteger * m_gpu_seed_value_cmd;
 };
 
 #endif

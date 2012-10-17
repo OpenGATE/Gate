@@ -22,7 +22,8 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
     
     // Seed managment
     srand(input->seed);
-    input->seed = rand(); // FIXME here I am not sure
+    //long toto = rand();
+    //input->seed = &toto; // FIXME here I am not sure
     
 	//long seed = input->seed + firstInitialID; // Avoid to use the same seed each time
     //srand(seed);

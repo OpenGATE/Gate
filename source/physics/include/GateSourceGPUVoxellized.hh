@@ -47,6 +47,8 @@ public:
 
   void SetGPUBufferSize(int n);
 
+  void SetSeedValue(int n);
+
 protected:
 
   GateSourceGPUVoxellizedMessenger* m_sourceGPUVoxellizedMessenger;

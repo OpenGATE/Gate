@@ -348,8 +348,6 @@ __device__ float get_boundary_voxel_by_raycasting(int4 vox, float3 p, float3 d, 
     ymax = (d.y<0 && p.y==ymin) ? ymin-res.y : ymin+res.y;
     zmax = (d.z<0 && p.z==zmin) ? zmin-res.z : zmin+res.z;
     
-    //printf("Raycasting x %e %e y %e %e z %e %e\n", xmin, xmax, ymin, ymax, zmin, zmax);
-
     tmin = -1e9f;
     tmax = 1e9f;
     

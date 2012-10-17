@@ -62,6 +62,65 @@ __device__ float3 deflect_particle(float3 p, float3 dir) {
 	return make_float3(dir.x, dir.y, dir.z);
 }
 
+//// Return the next voxel boundary distance, it is used by the standard navigator
+__device__ float voxsrc_get_boundary_voxel_by_raycasting(int4 vox, float3 p, float3 d, float3 res) {
+    
+    
+	float xmin, xmax, ymin, ymax, zmin, zmax;
+    float3 di = make_float3(__fdividef(1.0f, d.x), __fdividef(1.0f, d.y),__fdividef(1.0f, d.z));
+	float tmin, tmax, tymin, tymax, tzmin, tzmax, buf;
+	
+    // Define the voxel bounding box
+    xmin = vox.x*res.x;
+    ymin = vox.y*res.y;
+    zmin = vox.z*res.z;
+    xmax = (d.x<0 && p.x==xmin) ? xmin-res.x : xmin+res.x;
+    ymax = (d.y<0 && p.y==ymin) ? ymin-res.y : ymin+res.y;
+    zmax = (d.z<0 && p.z==zmin) ? zmin-res.z : zmin+res.z;
+    
+    //printf("Raycasting x %e %e y %e %e z %e %e\n", xmin, xmax, ymin, ymax, zmin, zmax);
+
+    tmin = -1e9f;
+    tmax = 1e9f;
+    
+    // on x
+    if (d.x != 0.0f) {
+        tmin = (xmin - p.x) * di.x;
+        tmax = (xmax - p.x) * di.x;
+        if (tmin > tmax) {
+            buf = tmin;
+            tmin = tmax;
+            tmax = buf;
+        }
+    }
+    // on y
+    if (d.y != 0.0f) {
+        tymin = (ymin - p.y) * di.y;
+        tymax = (ymax - p.y) * di.y;
+        if (tymin > tymax) {
+            buf = tymin;
+            tymin = tymax;
+            tymax = buf;
+        }
+        if (tymin > tmin) {tmin = tymin;}
+        if (tymax < tmax) {tmax = tymax;}
+    }
+    // on z
+    if (d.z != 0.0f) {
+        tzmin = (zmin - p.z) * di.z;
+        tzmax = (zmax - p.z) * di.z;
+        if (tzmin > tzmax) {
+            buf = tzmin;
+            tzmin = tzmax;
+            tzmax = buf;
+        }
+        if (tzmin > tmin) {tmin = tzmin;}
+        if (tzmax < tmax) {tmax = tzmax;}
+    }
+
+    return tmax;
+}
+
 /***********************************************************
  * PRNG Brent xor256
  ***********************************************************/
@@ -419,7 +478,7 @@ __global__ void kernel_voxsrc_regular_navigator(int3 dimvol, StackGamma stackgam
     // Defined index phantom
     int4 index_phantom;
     int jump = dimvol.x * dimvol.y;
-    float ivoxsize = __fdividef(voxsize);
+    float ivoxsize = __fdividef(1.0f, voxsize);
     index_phantom.x = int(position.x * ivoxsize);
     index_phantom.y = int(position.y * ivoxsize);
     index_phantom.z = int(position.z * ivoxsize);    
@@ -466,7 +525,7 @@ __global__ void kernel_voxsrc_regular_navigator(int3 dimvol, StackGamma stackgam
     }
     
     // FIXME need to be include with the h file?
-    interaction_distance = get_boundary_voxel_by_raycasting(index_phantom, position, direction, make_float3(voxsize, voxsize, voxsize));
+    interaction_distance = voxsrc_get_boundary_voxel_by_raycasting(index_phantom, position, direction, make_float3(voxsize, voxsize, voxsize));
     if (interaction_distance < next_interaction_distance) {
         next_interaction_distance = interaction_distance;
         next_discrete_process = PHOTON_BOUNDARY_VOXEL;
@@ -536,7 +595,7 @@ __global__ void kernel_voxsrc_regular_navigator(int3 dimvol, StackGamma stackgam
 		stackgamma.dx[id] = direction.x;
 		stackgamma.dy[id] = direction.y;
 		stackgamma.dz[id] = direction.z;
-        return
+        return;
     }
     
 }

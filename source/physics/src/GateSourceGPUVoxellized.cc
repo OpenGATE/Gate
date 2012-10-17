@@ -86,6 +86,11 @@ void GateSourceGPUVoxellized::SetGPUBufferSize(int n)
 }
 //-------------------------------------------------------------------------------------------------
 
+void GateSourceGPUVoxellized::SetSeedValue(int n)
+{
+  assert(m_gpu_input);
+  m_gpu_input->seed = n;
+}
 
 //-------------------------------------------------------------------------------------------------
 void GateSourceGPUVoxellized::Dump(G4int level) 
@@ -131,7 +136,11 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
     GateMessage("Beam", 5, "No particles in the buffer, we ask the gpu for " << m_gpu_input->nb_events << " events" << std::endl);
 
     // Go GPU
-    m_gpu_input->firstInitialID = mCurrentTimeID; // add by JB
+    m_gpu_input->firstInitialID = mCurrentTimeID; // fix a bug - JB
+    srand(m_gpu_input->seed); // fix a bug, new seed for each round - JB
+    m_gpu_input->seed = rand();
+    printf("seed from input %i\n", m_gpu_input->seed);
+
     GateGPUGeneratePrimaries(m_gpu_input, m_gpu_output);
     GateMessage("Beam", 5, "Done : GPU send " << m_gpu_output.particles.size() << " events" << std::endl);
   }

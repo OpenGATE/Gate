@@ -22,9 +22,10 @@ GateSourceGPUVoxellizedInput* GateSourceGPUVoxellizedInput_new()
   GateSourceGPUVoxellizedInput* input = new GateSourceGPUVoxellizedInput;
   input->nb_events = 10000;
   input->E = 511*keV/MeV;
-  input->seed = static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
+  // This doesn't work, it is always the same value...  JB.
+  //input->seed = static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
+  input->seed = 0;
   input->firstInitialID = 0;
-
   input->phantom_size_x = -1;
   input->phantom_size_y = -1;
   input->phantom_size_z = -1;
