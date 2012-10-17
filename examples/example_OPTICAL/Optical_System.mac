@@ -29,8 +29,8 @@
 # VISUALISATION and VERBOSE
 #=====================================================
 
-#/vis/disable
-/control/execute                    ./macro/Visualisation.mac
+/vis/disable
+#/control/execute                    ./macro/Visualisation.mac
 /control/execute                    ./macro/Verbose.mac
 
 #=====================================================
@@ -42,6 +42,7 @@
 #=====================================================
 #     W O R L D
 #=====================================================
+
 
 /gate/world/geometry/setXLength       200. cm
 /gate/world/geometry/setYLength       200. cm
@@ -116,6 +117,12 @@
 # for crystal:
 /gate/digitizer/Singles/readout/setDepth              1
 
+# In order to detect only fluorescent photons, you can use an upholder cut:
+/gate/digitizer/Singles/insert upholder
+/gate/digitizer/Singles/upholder/setUphold 2.1 eV
+
+
+
 #=====================================================
 #  S O U R C E
 #=====================================================
@@ -128,8 +135,8 @@
 
 /gate/output/root/enable
 /gate/output/root/setFileName                     OpticalSimulation
-/gate/output/root/setRootHitFlag          0
-/gate/output/root/setRootSinglesFlag      0
+/gate/output/root/setRootHitFlag          1
+/gate/output/root/setRootSinglesFlag      1
 /gate/output/root/setRootOpticalFlag      1
 
 /gate/output/analysis/enable

@@ -33,10 +33,11 @@ void GateOpticalAdder::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList
     for (iter=outputPulseList.begin(); iter!= outputPulseList.end() ; ++iter)
       if ( (*iter)->GetVolumeID()   == inputPulse->GetVolumeID() ) 
       {
-	G4double energy = (*iter)->GetEnergy();
+//	G4double energy = (*iter)->GetEnergy();
+
 	(*iter)->CentroidMerge( inputPulse );
-	energy += 1;
-	(*iter)->SetEnergy(energy);
+//	energy += 1;
+//	(*iter)->SetEnergy(energy);
 
 	if (nVerboseLevel>1)
 	  G4cout << "Merged previous pulse for volume " << inputPulse->GetVolumeID() 
@@ -49,7 +50,7 @@ void GateOpticalAdder::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList
     if ( iter == outputPulseList.end() )
     {  
       GatePulse* outputPulse = new GatePulse(*inputPulse);
-      outputPulse->SetEnergy(1);
+//      outputPulse->SetEnergy(1);
       if (nVerboseLevel>1)
 	  G4cout << "Created new pulse for volume " << inputPulse->GetVolumeID() << ".\n"
 		 << "Resulting pulse is: " << G4endl

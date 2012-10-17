@@ -1,5 +1,5 @@
-/gate/application/setTimeSlice   1 s
+/gate/application/setTimeSlice   10 s
 /gate/application/setTimeStart   0 s
-/gate/application/setTimeStop    1 s
+/gate/application/setTimeStop    10 s
 /gate/application/startDAQ
 
