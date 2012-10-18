@@ -22,11 +22,6 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
     
     // Seed managment
     srand(input->seed);
-    //long toto = rand();
-    //input->seed = &toto; // FIXME here I am not sure
-    
-	//long seed = input->seed + firstInitialID; // Avoid to use the same seed each time
-    //srand(seed);
 	
     // Define phantom
 	int3 dim_phantom;
@@ -112,7 +107,13 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	// Main loop
 	while (gamma_sim_h < gamma_max_sim) {
 		
-		// Navigation Standard model
+        //kernel_voxsrc_regular_navigator<<<grid, threads>>>(dim_phantom, stackgamma1, 
+        //                                                   size_voxel, gamma_sim_d);
+        
+        //kernel_voxsrc_regular_navigator<<<grid, threads>>>(dim_phantom, stackgamma2, 
+        //                                                   size_voxel, gamma_sim_d);
+
+        // Navigation Standard model
 		kernel_voxsrc_woodcock_Standard<<<grid, threads>>>(dim_phantom, stackgamma1, size_voxel,
 													most_att_mat, gamma_sim_d);
 		kernel_voxsrc_woodcock_Standard<<<grid, threads>>>(dim_phantom, stackgamma2, size_voxel,

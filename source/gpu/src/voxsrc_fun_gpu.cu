@@ -524,7 +524,7 @@ __global__ void kernel_voxsrc_regular_navigator(int3 dimvol, StackGamma stackgam
         next_discrete_process = PHOTON_COMPTON;
     }
     
-    // FIXME need to be include with the h file?
+    // Distance to the next voxel boundary (raycasting)
     interaction_distance = voxsrc_get_boundary_voxel_by_raycasting(index_phantom, position, direction, make_float3(voxsize, voxsize, voxsize));
     if (interaction_distance < next_interaction_distance) {
         next_interaction_distance = interaction_distance;
