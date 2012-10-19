@@ -50,6 +50,8 @@ GateSourceGPUVoxellized::GateSourceGPUVoxellized(G4String name)
   
   mNumberOfNextTime = 1;
   mCurrentTimeID = 0;
+
+  mCudaDeviceID = 0;
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -86,6 +88,12 @@ void GateSourceGPUVoxellized::SetGPUBufferSize(int n)
   m_gpu_input->nb_events = n;
 }
 //-------------------------------------------------------------------------------------------------
+
+void GateSourceGPUVoxellized::SetGPUDeviceID(int n)
+{
+  assert(m_gpu_input);
+  m_gpu_input->cudaDeviceID = n;
+}
 
 //-------------------------------------------------------------------------------------------------
 void GateSourceGPUVoxellized::Dump(G4int level) 

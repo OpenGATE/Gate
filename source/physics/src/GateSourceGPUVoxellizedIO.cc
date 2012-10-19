@@ -30,6 +30,7 @@ GateSourceGPUVoxellizedInput* GateSourceGPUVoxellizedInput_new()
   input->phantom_size_y = -1;
   input->phantom_size_z = -1;
   input->phantom_spacing = -1*mm/mm;
+  input->cudaDeviceID = 0;
 
   return input;
 }

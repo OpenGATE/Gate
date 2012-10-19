@@ -31,7 +31,8 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	float size_voxel = input->phantom_spacing; // mm
 
 	// Select a GPU
-	cudaSetDevice(0);
+	cudaSetDevice(input->cudaDeviceID);
+    printf("Cuda device ID is %i\n", input->cudaDeviceID);
 
 	// Vars
 	int gamma_max_sim = 2 * positron; // maximum number of particles simulated (2 gammas per positron)
@@ -106,27 +107,29 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 	
 	// Main loop
 	while (gamma_sim_h < gamma_max_sim) {
-		
-        //kernel_voxsrc_regular_navigator<<<grid, threads>>>(dim_phantom, stackgamma1, 
-        //                                                   size_voxel, gamma_sim_d);
+	    /*	
+        kernel_voxsrc_regular_navigator<<<grid, threads>>>(dim_phantom, stackgamma1, 
+                                                           size_voxel, gamma_sim_d);
         
-        //kernel_voxsrc_regular_navigator<<<grid, threads>>>(dim_phantom, stackgamma2, 
-        //                                                   size_voxel, gamma_sim_d);
-
+        kernel_voxsrc_regular_navigator<<<grid, threads>>>(dim_phantom, stackgamma2, 
+                                                           size_voxel, gamma_sim_d);
+        */                                                   
+        
+        
         // Navigation Standard model
 		kernel_voxsrc_woodcock_Standard<<<grid, threads>>>(dim_phantom, stackgamma1, size_voxel,
 													most_att_mat, gamma_sim_d);
 		kernel_voxsrc_woodcock_Standard<<<grid, threads>>>(dim_phantom, stackgamma2, size_voxel,
 													most_att_mat, gamma_sim_d);
-		//cudaThreadSynchronize();
+		cudaThreadSynchronize();
 		
 		// Interaction
 		kernel_voxsrc_interactions<<<grid, threads>>>(stackgamma1, dim_phantom, size_voxel,
                                                       gamma_sim_d);
 		kernel_voxsrc_interactions<<<grid, threads>>>(stackgamma2, dim_phantom, size_voxel,
                                                       gamma_sim_d);
-		//cudaThreadSynchronize();
-
+		cudaThreadSynchronize();
+        
         // get back the number of simulated photons
         cudaMemcpy(&gamma_sim_h, gamma_sim_d, sizeof(int), cudaMemcpyDeviceToHost);
 
@@ -163,8 +166,12 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 			particle.t = phasespace1.t[i];
             particle.initialID = firstInitialID + i;
 			output.particles.push_back(particle);
-            //printf("dum dum x %e y %e z %e\n", 
-            //        phasespace1.px[i], phasespace1.py[i], phasespace1.pz[i]);
+            /*
+            printf("%e %e %e %e %e %e %e %e\n", 
+                    particle.E,
+                    particle.px, particle.py, particle.pz,
+                    particle.dx, particle.dy, particle.dz,
+                    particle.t); */
 		}
 		if (phasespace2.live[i]) {
 			GateSourceGPUVoxellizedOutputParticle particle;
@@ -178,8 +185,12 @@ void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input,
 			particle.t = phasespace2.t[i];
             particle.initialID = firstInitialID + i;
 			output.particles.push_back(particle);
-            //printf("dum dum x %e y %e z %e\n", 
-            //        phasespace1.px[i], phasespace1.py[i], phasespace1.pz[i]);
+            /*
+            printf("%e %e %e %e %e %e %e %e\n", 
+                    particle.E,
+                    particle.px, particle.py, particle.pz,
+                    particle.dx, particle.dy, particle.dz,
+                    particle.t); */
 		}
 		++i;
 	}

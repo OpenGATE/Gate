@@ -21,6 +21,7 @@ struct GateSourceGPUVoxellizedInput {
   double E; // MeV
   unsigned int seed;
   int firstInitialID; // The ID of each particle will start from this number
+  int cudaDeviceID;
 
   // Phantom and activity map (same size)
   // Coordinate system : 0,0,0 corner 

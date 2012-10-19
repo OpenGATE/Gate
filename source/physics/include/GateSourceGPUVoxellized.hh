@@ -47,6 +47,8 @@ public:
 
   void SetGPUBufferSize(int n);
 
+  void SetGPUDeviceID(int n);
+
 protected:
 
   GateSourceGPUVoxellizedMessenger* m_sourceGPUVoxellizedMessenger;
@@ -63,6 +65,8 @@ protected:
   // FIXME
   int mNumberOfNextTime;
   int mCurrentTimeID;
+
+  int mCudaDeviceID;
 
   void GeneratePrimaryEventFromGPUOutput(GateSourceGPUVoxellizedOutputParticle & particle, G4Event * event);  
   void SetPhantomVolumeData();

@@ -531,11 +531,22 @@ __global__ void kernel_voxsrc_regular_navigator(int3 dimvol, StackGamma stackgam
         next_discrete_process = PHOTON_BOUNDARY_VOXEL;
     }
     
-    //// Move particle //////////////////////////////////////////////////////
+    //printf("id %i p %e %e %e d %e %e %e mat %i inte %i dist %e\n", id, 
+    //        position.x, position.y, position.z,
+    //        direction.x, direction.y, direction.z, material, 
+    //        next_discrete_process, next_interaction_distance);
     
+    //// Move particle //////////////////////////////////////////////////////
     position.x += direction.x * next_interaction_distance;
     position.y += direction.y * next_interaction_distance;
     position.z += direction.z * next_interaction_distance;
+	stackgamma.t[id] += (3.33564095198e-03f * next_interaction_distance);
+    /*printf("id %i before p %e %e %e d %e %e %e dist %e\n", 
+            id, 
+            position.x, position.y, position.z,
+            direction.x, direction.y, direction.z,
+            next_interaction_distance);*/
+
     // Dirty part FIXME
     //   apply "magnetic grid" on the particle position due to aproximation
     //   from the GPU (on the next_interaction_distance).
@@ -545,37 +556,50 @@ __global__ void kernel_voxsrc_regular_navigator(int3 dimvol, StackGamma stackgam
     index_phantom.y = int(position.y * ivoxsize);
     index_phantom.z = int(position.z * ivoxsize);
     // on x
-    grid_pos_min = index_phantom.x * dimvol.x;
-    grid_pos_max = (index_phantom.x+1) * dimvol.x;
+    grid_pos_min = index_phantom.x * voxsize;
+    grid_pos_max = (index_phantom.x+1) * voxsize;
     res_min = position.x - grid_pos_min;
     res_max = position.x - grid_pos_max;
     if (res_min < eps) {position.x = grid_pos_min;}
     if (res_max > eps) {position.x = grid_pos_max;}
     // on y
-    grid_pos_min = index_phantom.y * dimvol.y;
-    grid_pos_max = (index_phantom.y+1) * dimvol.y;
+    grid_pos_min = index_phantom.y * voxsize;
+    grid_pos_max = (index_phantom.y+1) * voxsize;
     res_min = position.y - grid_pos_min;
     res_max = position.y - grid_pos_max;
     if (res_min < eps) {position.y = grid_pos_min;}
     if (res_max > eps) {position.y = grid_pos_max;}
     // on z
-    grid_pos_min = index_phantom.z * dimvol.z;
-    grid_pos_max = (index_phantom.z+1) * dimvol.z;
+    grid_pos_min = index_phantom.z * voxsize;
+    grid_pos_max = (index_phantom.z+1) * voxsize;
     res_min = position.z - grid_pos_min;
     res_max = position.z - grid_pos_max;
     if (res_min < eps) {position.z = grid_pos_min;}
     if (res_max > eps) {position.z = grid_pos_max;}
+   
+    /*printf("id %i p %.2f %.2f %.2f d %.2f %.2f %.2f int %i\n", 
+            id, 
+            position.x, position.y, position.z,
+            direction.x, direction.y, direction.z,
+            next_discrete_process);*/
     
     stackgamma.px[id] = position.x;
     stackgamma.py[id] = position.y;
     stackgamma.pz[id] = position.z;
+    
 
     // Stop simulation if out of phantom or no more energy
     if ( position.x <= 0 || position.x >= dimvol.x*voxsize
         || position.y <= 0 || position.y >= dimvol.y*voxsize
         || position.z <= 0 || position.z >= dimvol.z*voxsize) {
         stackgamma.endsimu[id] = 1;                     // stop the simulation
-        atomicAdd(gamma_sim_d, 1);                       // count simulated primaries
+        atomicAdd(gamma_sim_d, 1);                      // count simulated primaries
+    
+        /*printf(">> id OUT %i p %.2f %.2f %.2f d %.2f %.2f %.2f int %i\n", 
+            id, 
+            position.x, position.y, position.z,
+            direction.x, direction.y, direction.z,
+            next_discrete_process);*/
         return;
     }
     
