@@ -77,6 +77,9 @@ protected:
   MapType mNumberOfLimitingProcess;
   MapType mNumberOfAlongByProcess;
   //MapType mNumberOfPostByProcess;
+  
+  void UpdateCurrentTextOutput();
+  std::string mCurrentTextOutput;
 
   GateTimeActorMessenger * pMessenger;
 };

@@ -88,36 +88,46 @@ void GateTimeActor::EndOfRunAction(const G4Run*r)
 {
   GateVActor::EndOfRunAction(r);
   mCurrentRunTimer.Stop();
-  DD("GateTimeActor::EndOfRunAction");
 
-  std::cout << mCurrentRunTimer << std::endl;
-  std::cout << "Mean Event time = " << mTotalEventUserTime/mNumberOfEvents
+  UpdateCurrentTextOutput();
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateTimeActor::UpdateCurrentTextOutput()
+{
+  std::ostringstream ss;
+  ss << mCurrentRunTimer << std::endl;
+  ss << "Mean Event time = " << mTotalEventUserTime/mNumberOfEvents
             << " " << mNumberOfEvents << " " << mTotalEventUserTime << std::endl;
-  std::cout << "Mean Track time = " << mTotalTrackUserTime/mNumberOfTracks
+  ss << "Mean Track time = " << mTotalTrackUserTime/mNumberOfTracks
             << " " << mNumberOfTracks << " " << mTotalTrackUserTime << std::endl;
-  std::cout << "Mean Step time = " << mTotalStepUserTime/mNumberOfSteps
+  ss << "Mean Step time = " << mTotalStepUserTime/mNumberOfSteps
             << " " << mNumberOfSteps << " " << mTotalStepUserTime << std::endl;
-  std::cout << "PPS = " << mNumberOfEvents/mTotalEventUserTime << std::endl;
-  std::cout << "SPS = " << mNumberOfSteps/mTotalEventUserTime << std::endl;
+  ss << "PPS = " << mNumberOfEvents/mTotalEventUserTime << std::endl;
+  ss << "SPS = " << mNumberOfSteps/mTotalEventUserTime << std::endl;
 
-  std::cout << std::endl << "Time per particle " << std::endl;
+  ss << std::endl << "Time per particle " << std::endl;
   MapType::iterator iter;
   MapType::iterator iterT = mTrackPerParticle.begin();
   for(iter = mTimePerParticle.begin(); iter != mTimePerParticle.end(); ++iter) {
-    std::cout << iter->first << " " << iter->second << " " << iterT->second << std::endl;
+    ss << iter->first << " " << iter->second << " " << iterT->second << std::endl;
     ++iterT;
   }
 
-  std::cout << std::endl << "Limiting process" << std::endl;
+  ss << std::endl << "Limiting process" << std::endl;
   for(iter = mNumberOfLimitingProcess.begin(); iter != mNumberOfLimitingProcess.end(); ++iter) {
-    std::cout << iter->first << " " << iter->second << " " << std::endl;
+    ss << iter->first << " " << iter->second << " " << std::endl;
   }
 
-  std::cout << std::endl << "Along process" << std::endl;
+  ss << std::endl << "Along process" << std::endl;
   for(iter = mNumberOfAlongByProcess.begin(); iter != mNumberOfAlongByProcess.end(); ++iter) {
-    std::cout << iter->first << " " << iter->second << " " << std::endl;
+    ss << iter->first << " " << iter->second << " " << std::endl;
   }
-
+  
+  mCurrentTextOutput = ss.str();
+  std::cout << mCurrentTextOutput;
 }
 //-----------------------------------------------------------------------------
 
@@ -235,7 +245,13 @@ void GateTimeActor::UserSteppingAction(const GateVVolume * v, const G4Step * ste
 /// Save data
 void GateTimeActor::SaveData()
 {
-  DD("GateTimeActor::SaveData");
+  GateVActor::SaveData();
+  UpdateCurrentTextOutput();
+  std::ofstream os;  
+  OpenFileOutput(mSaveFilename, os);
+  os << mCurrentTextOutput;
+  os.flush();
+  os.close();
 }
 //-----------------------------------------------------------------------------
 
