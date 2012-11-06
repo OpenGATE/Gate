@@ -15,6 +15,7 @@ See GATE/LICENSE.txt for further details
 #include "GateMiscFunctions.hh"
 #include <list>
 
+//-----------------------------------------------------------------------------
 GateDetectionProfileActor::GateDetectionProfileActor(G4String name, G4int depth):
   GateVImageActor(name,depth)
 {
@@ -28,7 +29,9 @@ GateDetectionProfileActor::GateDetectionProfileActor(G4String name, G4int depth)
   useCristalNormal = false;
   useCristalPosition = false;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfileActor::SetTimer(const G4String &timerName)
 {
   GateVActor *abstractActor = GateActorManager::GetInstance()->GetActor("GateDetectionProfilePrimaryTimerActor",timerName);
@@ -38,37 +41,51 @@ void GateDetectionProfileActor::SetTimer(const G4String &timerName)
   }
   timerActor = dynamic_cast<GateDetectionProfilePrimaryTimerActor*>(abstractActor);
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 GateDetectionProfileActor::~GateDetectionProfileActor()
 {
   delete messenger;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfileActor::SetUseCristalNormal(bool state)
 {
     useCristalNormal = state;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfileActor::SetUseCristalPosition(bool state)
 {
     useCristalPosition = state;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfileActor::SetDistanceThreshold(double distance)
 {
   distanceThreshold = distance;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfileActor::SetDeltaEnergyThreshold(double energy)
 {
   deltaEnergyThreshold = energy;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfileActor::SetDetectionPosition(GateDetectionProfileActor::DetectionPosition type)
 {
   detectionPosition = type;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfileActor::Construct()
 {
   GateVImageActor::Construct();
@@ -87,23 +104,32 @@ void GateDetectionProfileActor::Construct()
 
   ResetData();
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfileActor::SaveData()
 {
+  GateVActor::SaveData();
   mImage.Write(mSaveFilename);
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfileActor::ResetData() 
 {
   mImage.Fill(0);
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfileActor::UserPreTrackActionInVoxel(const int, const G4Track *)
 {
   detectedSomething = false;
   firstStepForTrack = true;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfileActor::UserPostTrackActionInVoxel(const int, const G4Track * /*track*/)
 {
   if (!detectedSomething) return;
@@ -122,7 +148,9 @@ void GateDetectionProfileActor::UserPostTrackActionInVoxel(const int, const G4Tr
   if (detectedIndex>=0) mImage.AddValue(detectedIndex,detectedWeight);
 
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Step *step)
 {
   if (detectedSomething) {
@@ -222,7 +250,9 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
   //G4cout << "de=" << detectedDeltaEnergy/MeV << "MeV" << G4endl;
   //G4cout << G4endl;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 GateDetectionProfilePrimaryTimerActor::GateDetectionProfilePrimaryTimerActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
@@ -231,22 +261,30 @@ GateDetectionProfilePrimaryTimerActor::GateDetectionProfilePrimaryTimerActor(G4S
   detectionSize = 1*cm;
   triggered = false;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfilePrimaryTimerActor::SetDetectionSize(double size)
 {
   detectionSize = size;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 GateDetectionProfilePrimaryTimerActor::~GateDetectionProfilePrimaryTimerActor()
 {
   delete messenger;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfilePrimaryTimerActor::AddReportForDetector(const G4String &detectorName) {
   assert(histosTimeEnergy.find(detectorName)==histosTimeEnergy.end());
   histosTimeEnergy[detectorName] = NULL;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfilePrimaryTimerActor::Construct()
 {
   GateVActor::Construct();
@@ -312,23 +350,31 @@ void GateDetectionProfilePrimaryTimerActor::Construct()
 
   ResetData();
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 bool GateDetectionProfilePrimaryTimerActor::IsTriggered() const
 {
   return triggered;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 const GateDetectionProfilePrimaryTimerActor::TriggerData &GateDetectionProfilePrimaryTimerActor::GetTriggerData() const
 {
   return data;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfilePrimaryTimerActor::SaveData()
 {
   rootFile->Write();
   //rootFile->Close();
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfilePrimaryTimerActor::ResetData() 
 {
   histoTime->Reset();
@@ -336,11 +382,14 @@ void GateDetectionProfilePrimaryTimerActor::ResetData()
   //FIXME should reset all histos
 }
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfilePrimaryTimerActor::BeginOfEventAction(const G4Event*)
 {
   triggered = false;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfilePrimaryTimerActor::UserSteppingAction(const GateVVolume*, const G4Step *step)
 {
   if (triggered) return;
@@ -361,7 +410,9 @@ void GateDetectionProfilePrimaryTimerActor::UserSteppingAction(const GateVVolume
 
   GateMessage("Actor",4,"triggered by " << data.name << " at " << data.time/ns << "ns " << data.position/mm << "mm" << G4endl);
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateDetectionProfilePrimaryTimerActor::ReportDetectedParticle(const G4String &detectorName, double time, double energy, double deltaEnergy, double weight)
 {
   assert(triggered);
@@ -384,5 +435,6 @@ void GateDetectionProfilePrimaryTimerActor::ReportDetectedParticle(const G4Strin
 
   GateMessage("Actor",1,detectorName << " reports detection flytime=" << flytime/ns << "ns e=" << energy/MeV << "MeV de=" << deltaEnergy/MeV << "MeV weight=" << weight << G4endl);
 }
+//-----------------------------------------------------------------------------
 
 #endif 
