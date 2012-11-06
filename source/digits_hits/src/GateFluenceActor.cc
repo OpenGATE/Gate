@@ -61,18 +61,20 @@ void GateFluenceActor::Construct() {
 //-----------------------------------------------------------------------------
 /// Save data
 void GateFluenceActor::SaveData() {
+  GateVImageActor::SaveData();
+  
   GateImage mFluenceImage;
   mFluenceImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mFluenceImage.Allocate();
 
   for(size_t i=0; i<mCounts.size(); i++)
     mFluenceImage.SetValue(i, mCounts[i]);
-  mFluenceImage.Write(mSaveFilename);
+  mFluenceImage.Write(mSaveCurrentFilename);
 
   if(mIsScatterImageEnabled) {
     for(size_t i=0; i<mScatterCounts.size(); i++)
       mFluenceImage.SetValue(i, mScatterCounts[i]);
-    mFluenceImage.Write(G4String(removeExtension(mSaveFilename))+"-scatter."+G4String(getExtension(mSaveFilename)));  
+    mFluenceImage.Write(G4String(removeExtension(mSaveCurrentFilename))+"-scatter."+G4String(getExtension(mSaveCurrentFilename)));  
   }
 }
 //-----------------------------------------------------------------------------
