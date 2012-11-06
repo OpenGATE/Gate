@@ -127,7 +127,7 @@ void GateTimeActor::UpdateCurrentTextOutput()
   }
   
   mCurrentTextOutput = ss.str();
-  std::cout << mCurrentTextOutput;
+  // std::cout << mCurrentTextOutput;
 }
 //-----------------------------------------------------------------------------
 
