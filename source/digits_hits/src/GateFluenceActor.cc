@@ -40,13 +40,20 @@ GateFluenceActor::~GateFluenceActor()  {
 /// Construct
 void GateFluenceActor::Construct() {
   GateDebugMessageInc("Actor", 4, "GateFluenceActor -- Construct - begin" << G4endl);
-  GateVImageActor::Construct();
+  GateVImageActor::Construct(); // mImage is allocated here
 
   // Enable callbacks
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(false);
   EnableUserSteppingAction(true);
+
+  // Allocate scatter image
+  if (mIsScatterImageEnabled) {
+    mImageScatter.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    mImageScatter.Allocate();
+    mImageScatter.SetOrigin(mOrigin);
+  }
 
   // Print information
   GateMessage("Actor", 1, 
@@ -63,34 +70,30 @@ void GateFluenceActor::Construct() {
 void GateFluenceActor::SaveData()
 {
   GateVActor::SaveData();
-  
-  GateImage mFluenceImage;
-  mFluenceImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-  mFluenceImage.Allocate();
 
   for(size_t i=0; i<mCounts.size(); i++)
-    mFluenceImage.SetValue(i, mCounts[i]);
-  mFluenceImage.Write(mSaveFilename);
+    mImage.SetValue(i, mCounts[i]);
+  mImage.Write(mSaveFilename);
 
   if(mIsScatterImageEnabled) {
     for(size_t i=0; i<mScatterCounts.size(); i++)
-      mFluenceImage.SetValue(i, mScatterCounts[i]);
-    mFluenceImage.Write(G4String(removeExtension(mSaveFilename))+"-scatter."+G4String(getExtension(mSaveFilename)));  
+      mImageScatter.SetValue(i, mScatterCounts[i]);
+    mImageScatter.Write(G4String(removeExtension(mSaveFilename))+"-scatter."+G4String(getExtension(mSaveFilename)));  
   }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateFluenceActor::ResetData() {
-  GateImage mFluenceImage;
-  mFluenceImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+  mImage.Fill(0);
 
-  mCounts.resize(mFluenceImage.GetNumberOfValues());
+  mCounts.resize(mImage.GetNumberOfValues());
   std::fill(mCounts.begin(), mCounts.end(), 0);
 
   if(mIsScatterImageEnabled) {
-    mScatterCounts.resize(mFluenceImage.GetNumberOfValues());
+    mScatterCounts.resize(mImage.GetNumberOfValues());
     std::fill(mScatterCounts.begin(), mScatterCounts.end(), 0);
+    mImageScatter.Fill(0);
   }
 }
 //-----------------------------------------------------------------------------

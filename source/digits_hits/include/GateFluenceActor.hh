@@ -57,6 +57,7 @@ protected:
   GateFluenceActorMessenger * pMessenger;
 
   bool mIsScatterImageEnabled;
+  GateImage mImageScatter;
 
   std::vector<size_t> mCounts;
   std::vector<size_t> mScatterCounts;
