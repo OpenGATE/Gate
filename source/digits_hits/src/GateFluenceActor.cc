@@ -40,7 +40,8 @@ GateFluenceActor::~GateFluenceActor()  {
 /// Construct
 void GateFluenceActor::Construct() {
   GateDebugMessageInc("Actor", 4, "GateFluenceActor -- Construct - begin" << G4endl);
-  GateVImageActor::Construct(); // mImage is allocated here
+  GateVImageActor::Construct(); // mImage is not allocated here
+  mImage.Allocate();
 
   // Enable callbacks
   EnableBeginOfRunAction(true);
