@@ -77,7 +77,6 @@ void GateTimeActor::Construct()
 void GateTimeActor::BeginOfRunAction(const G4Run*r)
 {
   GateVActor::BeginOfRunAction(r);
-  DD("Start current Run timer");
   mCurrentRunTimer.Start();
 }
 //-----------------------------------------------------------------------------
