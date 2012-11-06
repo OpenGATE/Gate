@@ -96,6 +96,7 @@ void GateFragmentationAndProductionActor::Construct()
 /// Save data
 void GateFragmentationAndProductionActor::SaveData()
 {
+  GateVActor::SaveData();
   GateMessage("Actor", 0, "GateFragmentationAndProductionActor -- Saving data to " << mSaveFilename << G4endl);
   pTFile->cd();
   pNEvent->Write("nevents");
