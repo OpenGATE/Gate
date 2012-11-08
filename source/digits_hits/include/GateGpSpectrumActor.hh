@@ -34,6 +34,8 @@ class GateGpSpectrumActor : public GateVActor
 	protected:
 		GateGpSpectrumActor(G4String name, G4int depth=0);
 
+		size_t last_secondaries_size;
+		bool first_step;
 		GateActorMessenger* pMessenger;
 		TFile* pTfile;
 		TH2D* pHEpEgp;
