@@ -110,6 +110,13 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
     return;
   }
 
+  //FIXME
+  DD(step->GetPreStepPoint()->GetPosition());
+  DD(index);
+  DD(mImage.GetCoordinatesFromIndex(index));
+  DD(mImage.GetVoxelCenterFromIndex(index));
+  
+
   /* http://geant4.org/geant4/support/faq.shtml
     To check that the particle has just entered in the current volume
     (i.e. it is at the first step in the volume; the preStepPoint is at the boundary):
