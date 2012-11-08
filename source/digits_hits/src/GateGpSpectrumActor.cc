@@ -95,13 +95,13 @@ void GateGpSpectrumActor::UserSteppingAction(const GateVVolume*, const G4Step* s
 	//const G4double particle_energy_post = step->GetPostStepPoint()->GetKineticEnergy();
 	const G4double particle_energy = particle_energy_pre;
 
-	G4cout << "coucou " << particle_name << " " << particle_energy/MeV << " " << process_name << " " << secondaries->size() << " " << created_this_step << G4endl;
+	//G4cout << "coucou " << particle_name << " " << particle_energy/MeV << " " << process_name << " " << secondaries->size() << " " << created_this_step << G4endl;
 	for (G4TrackVector::const_reverse_iterator iter=secondaries->rbegin(); iter!=secondaries->rend(); iter++)
 	{
 		if (!created_this_step) break;
 		created_this_step--;
 		if ((*iter)->GetParticleDefinition()->GetParticleName() != "gamma") continue;
-		G4cout << "    " << (*iter)->GetParticleDefinition()->GetParticleName() << " " << (*iter)->GetKineticEnergy()/MeV << G4endl;
+		//G4cout << "    " << (*iter)->GetParticleDefinition()->GetParticleName() << " " << (*iter)->GetKineticEnergy()/MeV << G4endl;
 		pHEpEgp->Fill(particle_energy/MeV,(*iter)->GetKineticEnergy()/MeV);
 	}
 	
