@@ -30,7 +30,7 @@ void GateGpSpectrumActor::Construct()
 
 	pTfile = new TFile(mSaveFilename,"RECREATE");
 
-	pHEpEgp = new TH2D("EpEgp","PG versus proton energy",100,0,250,100,0,10);
+	pHEpEgp = new TH2D("EpEgp","PG versus proton energy",256,0,200,256,0,10);
 	pHEpEgp->SetXTitle("E_{proton} [MeV]");
 	pHEpEgp->SetYTitle("E_{gp} [MeV]");
 
