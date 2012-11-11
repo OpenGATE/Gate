@@ -14,7 +14,129 @@ __constant__ const float gpu_pi = 3.14159265358979323846;
 __constant__ const float gpu_twopi = 2*gpu_pi;
 
 /***********************************************************
- * Stack data strucutre
+ * Data material strucutre
+ ***********************************************************/
+/*
+// Structure for materials
+struct Materials{
+    unsigned int nb_materials;              // n
+    unsigned int nb_elements_total;         // k
+    
+    unsigned short int *nb_elements;        // n
+    unsigned short int *index;              // n
+    unsigned short int *mixture;            // k
+    float *atom_num_dens;                   // k
+    float *nb_atoms_per_vol;                // n
+    float *nb_electrons_per_vol;            // n
+    float *electron_cut_energy;             // n
+    float *electron_max_energy;             // n
+    float *electron_mean_excitation_energy; // n
+    float *fX0;                             // n
+    float *fX1;
+    float *fD0;
+    float *fC;
+    float *fA;
+    float *fM;
+}
+
+// Materials device allocation
+void materials_device_malloc(Materials &mat, unsigned int nb_mat, unsigned int nb_elm) {
+	
+    mat.nb_materials = nb_mat;
+    mat.nb_elements_total = nb_elm;
+    
+    unsigned int mem_mat_usi = nb_mat * sizeof(unsigned short int);
+    unsigned int mem_mat_float = nb_mat * sizeof(float);
+    unsigned int mem_elm_usi = nb_elm * sizeof(unsigned short int);
+    unsigned int mem_elm_float = nb_elm * sizeof(float);
+    
+    cudaMalloc((void**) &mat.nb_elements, mem_mat_usi);
+    cudaMalloc((void**) &mat.index, mem_mat_usi);
+    cudaMalloc((void**) &mat.mixture, mem_elm_usi);
+    cudaMalloc((void**) &mat.atom_num_dens, mem_elm_float);
+    
+    cudaMalloc((void**) &mat.nb_atoms_per_vol, mem_mat_float);
+    cudaMalloc((void**) &mat.nb_electrons_per_vol, mem_mat_float);
+    cudaMalloc((void**) &mat.electron_cut_energy, mem_mat_float);
+    cudaMalloc((void**) &mat.electron_max_energy, mem_mat_float);
+    cudaMalloc((void**) &mat.electron_mean_excitation_energy, mem_mat_float);
+    cudaMalloc((void**) &mat.fX0, mem_mat_float);
+    cudaMalloc((void**) &mat.fX1, mem_mat_float);
+    cudaMalloc((void**) &mat.fD0, mem_mat_float);
+    cudaMalloc((void**) &mat.fC, mem_mat_float);
+    cudaMalloc((void**) &mat.fA, mem_mat_float);
+    cudaMalloc((void**) &mat.fM, mem_mat_float);
+}
+
+// Materials free device memory
+void materials_device_free(Materials &mat) {
+    cudaFree(mat.nb_elements);
+    cudaFree(mat.index);
+    cudaFree(mat.mixture);
+    cudaFree(mat.atom_num_dens);
+    cudaFree(mat.nb_atoms_per_vol);
+    cudaFree(mat.nb_electrons_per_vol);
+    cudaFree(mat.electron_cut_energy);
+    cudaFree(mat.electron_max_energy);
+    cudaFree(mat.electron_mean_excitation_energy);
+    cudaFree(mat.fX0);
+    cudaFree(mat.fX1);
+    cudaFree(mat.fD0);
+    cudaFree(mat.fC);
+    cudaFree(mat.fA);
+    cudaFree(mat.fM);
+}
+
+
+// Materials host allocation
+void materials_host_malloc(Materials &mat, unsigned int nb_mat, unsigned int nb_elm) {
+	
+    mat.nb_materials = nb_mat;
+    mat.nb_elements_total = nb_elm;
+    
+    unsigned int mem_mat_usi = nb_mat * sizeof(unsigned short int);
+    unsigned int mem_mat_float = nb_mat * sizeof(float);
+    unsigned int mem_elm_usi = nb_elm * sizeof(unsigned short int);
+    unsigned int mem_elm_float = nb_elm * sizeof(float);
+    
+    mat.nb_elements = (unsigned short int*)malloc(mem_mat_usi);
+    mat.index = (unsigned short int*)malloc(mem_mat_usi);
+    mat.mixture = (unsigned short int*)malloc(mem_elm_usi);
+    mat.atom_num_dens = (float*)malloc(mem_elm_float);
+    mat.nb_atoms_per_vol = (float*)malloc(mem_mat_float);
+    mat.nb_electrons_per_vol = (float*)malloc(mem_mat_float);
+    mat.electron_cut_energy = (float*)malloc(mem_mat_float);
+    mat.electron_max_energy = (float*)malloc(mem_mat_float);
+    mat.electron_mean_excitation_energy = (float*)malloc(mem_mat_float);
+    mat.fX0 = (float*)malloc(mem_mat_float);
+    mat.fX1 = (float*)malloc(mem_mat_float);
+    mat.fD0 = (float*)malloc(mem_mat_float);
+    mat.fC = (float*)malloc(mem_mat_float);
+    mat.fA = (float*)malloc(mem_mat_float);
+    mat.fM = (float*)malloc(mem_mat_float);
+}
+
+// Materials free memory
+void materials_host_free(Materials &mat) {
+    free(mat.nb_elements);
+    free(mat.index);
+    free(mat.mixture);
+    free(mat.atom_num_dens);
+    free(mat.nb_atoms_per_vol);
+    free(mat.nb_electrons_per_vol);
+    free(mat.electron_cut_energy);
+    free(mat.electron_max_energy);
+    free(mat.electron_mean_excitation_energy);
+    free(mat.fX0);
+    free(mat.fX1);
+    free(mat.fD0);
+    free(mat.fC);
+    free(mat.fA);
+    free(mat.fM);
+}
+*/
+/***********************************************************
+ * Stack data particle strucutre
  ***********************************************************/
 
 // Stack of gamma particles, format data is defined as SoA
@@ -186,6 +308,35 @@ void volume_device_free(Volume<T> &vol) {
  * Copy structure functions
  ***********************************************************/
 
+/*
+// Copy materials from host to device
+void materials_copy_host2device(Materials &host, Materials &device) {
+    unsigned int nb_mat = host.nb_materials;
+    unsigned int nb_elm = hot.nb_elements_total;
+    
+    unsigned int mem_mat_usi = nb_mat * sizeof(unsigned short int);
+    unsigned int mem_mat_float = nb_mat * sizeof(float);
+    unsigned int mem_elm_usi = nb_elm * sizeof(unsigned short int);
+    unsigned int mem_elm_float = nb_elm * sizeof(float);
+    
+    cudaMemcpy(host.nb_elements, device.nb_elements, mem_mat_usi, cudaMemcpyDeviceToHost);
+    cudaMemcpy(host.index, device.index, mem_mat_usi, cudaMemcpyDeviceToHost);
+    cudaMemcpy(host.mixture, device.mixture, mem_elm_usi, cudaMemcpyDeviceToHost);
+    cudaMemcpy(host.atom_num_dens, device.atom_num_dens, mem_elm_float, cudaMemcpyDeviceToHost);
+    cudaMemcpy(host.nb_atoms_per_vol, device.nb_atoms_per_vol, mem_mat_float, cudaMemcpyDeviceToHost);
+    cudaMemcpy(host.nb_electrons_per_vol, device.nb_electrons_per_vol, mem_mat_float, cudaMemcpyDeviceToHost);
+    cudaMemcpy(host.electron_cut_energy, device.electron_cut_energy, mem_mat_float, cudaMemcpyDeviceToHost);
+    cudaMemcpy(host.electron_max_energy, device.electron_max_energy, mem_mat_float, cudaMemcpyDeviceToHost);
+    cudaMemcpy(host.electron_mean_excitation_energy, device.electron_mean_excitation_energy, mem_mat_float, cudaMemcpyDeviceToHost);
+    cudaMemcpy(host.fX0, device.fX0, mem_mat_float, cudaMemcpyDeviceToHost);
+    cudaMemcpy(host.fX1, device.fX1, mem_mat_float, cudaMemcpyDeviceToHost);
+    cudaMemcpy(host.fD0, device.fD0, mem_mat_float, cudaMemcpyDeviceToHost);
+    cudaMemcpy(host.fC, device.fC, mem_mat_float, cudaMemcpyDeviceToHost);
+    cudaMemcpy(host.fA, device.fA, mem_mat_float, cudaMemcpyDeviceToHost);
+    cudaMemcpy(host.fM, device.fM, mem_mat_float, cudaMemcpyDeviceToHost);
+}
+*/
+ 
 // Copy stack from device to host
 void stack_copy_device2host(StackParticle &stackpart, StackParticle &phasespace) {
 	int stack_size = stackpart.size;

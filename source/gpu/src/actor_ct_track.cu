@@ -34,6 +34,37 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
   stack_device_malloc(photons_d, nb_of_particles);
   StackParticle photons_h;
   stack_host_malloc(photons_h, nb_of_particles);
+  
+  /*
+  // Materials def, alloc & loading  
+  Materials materials_h;
+  materials_host_malloc(materials_h, input->nb_materials, input->nb_elements_total);
+  
+  materials_h.nb_elements = input->mat_nb_elements;
+  materials_h.index = input->mat_index;
+  materials_h.mixture = input->mat_mixture;
+  materials_h.atom_num_dens = input->mat_atom_num_dens;
+  materials_h.nb_atoms_per_vol = input->mat_nb_atoms_per_vol;
+  materials_h.nb_electrons_per_vol = input->mat_nb_electrons_per_vol;
+  materials_h.electron_cut_energy = input->electron_cut_energy;
+  materials_h.electron_max_energy = input->electron_max_energy;
+  materials_h.electron_mean_excitation_energy = input->electron_mean_excitation_energy;
+  materials_h.fX0 = input->fX0;
+  materials_h.fX1 = input->fX1;
+  materials_h.fD0 = input->fD0;
+  materials_h.fC = input->fD;
+  materials_h.fA = input->fA;
+  materials_h.fM = input->fM;
+  
+  Materials materials_d;
+  materials_device_malloc(materials_d, input->nb_materials, input->nb_elements_total);
+  
+  materials_copy_host2device(materials_h, materials_d);
+  
+  // To be continued... (JB)
+   
+  */
+  
 
   // TIMING
   t_init = time() - t_init;
@@ -45,7 +76,7 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
   while (iter != input->particles.end()) {
     GateTrackingGPUActorParticle p = *iter;
     photons_h.E[i] = p.E;
-	//DD(p.E);
+	  //DD(p.E);
     photons_h.dx[i] = p.dx;
     photons_h.dy[i] = p.dy;
     photons_h.dz[i] = p.dz;
