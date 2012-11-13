@@ -46,8 +46,8 @@
 
 /gate/output/root/enable
 /gate/output/root/setFileName benchmarkPET
-/gate/output/root/setRootHitFlag 1
-/gate/output/root/setRootSinglesFlag 1
+/gate/output/root/setRootHitFlag 0
+/gate/output/root/setRootSinglesFlag 0
 /gate/output/root/setRootCoincidencesFlag 1
 /gate/output/root/setRootdelayFlag 1
 
@@ -62,12 +62,12 @@
 /gate/random/verbose 1
 
 #	S T A R T 
-#/gate/application/setTimeSlice     120. s
-#/gate/application/setTimeStart     0. s
-#/gate/application/setTimeStop      240. s
-
-/gate/application/setTimeSlice     1. s
+/gate/application/setTimeSlice     120. s
 /gate/application/setTimeStart     0. s
-/gate/application/setTimeStop      1. s
+/gate/application/setTimeStop      240. s
 
-#/gate/application/startDAQ
+#/gate/application/setTimeSlice     1. s
+#/gate/application/setTimeStart     0. s
+#/gate/application/setTimeStop      1. s
+
+/gate/application/startDAQ

@@ -21,7 +21,7 @@
 #/gate/source/F18LineSource/gps/angtype iso
 
 /gate/source/addSource F18LineSource
-/gate/source/F18LineSource/setActivity 10. becquerel
+/gate/source/F18LineSource/setActivity 100000. becquerel
 
 /gate/source/F18LineSource/gps/particle e+
 /gate/source/F18LineSource/setForcedUnstableFlag true
@@ -35,7 +35,7 @@
 /gate/source/F18LineSource/gps/centre 0. -2.0 0. cm
 
 /gate/source/addSource O15LineSource
-/gate/source/O15LineSource/setActivity 10. becquerel
+/gate/source/O15LineSource/setActivity 100000. becquerel
 /gate/source/O15LineSource/gps/particle e+
 /gate/source/O15LineSource/setForcedUnstableFlag true
 /gate/source/O15LineSource/setForcedHalfLife 122.24 s
