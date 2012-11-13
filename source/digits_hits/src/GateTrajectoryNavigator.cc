@@ -312,7 +312,7 @@ G4int GateTrajectoryNavigator::FindPrimaryID(G4int trackID)
     G4cout << "GateTrajectoryNavigator::FindPrimaryID : ERROR : NULL trajectoryContainer" << G4endl;
   } else {
     G4int tempParentID = trackID;
-    G4int primaryIndex = -1;
+    //G4int primaryIndex = -1;
     G4bool found;
     G4int n_trajectories = m_trajectoryContainer->entries();
     // we go up and up starting from the trackID, via the parentID's, until
@@ -324,7 +324,7 @@ G4int GateTrajectoryNavigator::FindPrimaryID(G4int trackID)
 	G4Trajectory* trj = (G4Trajectory*)((*m_trajectoryContainer)[iTrj]);
 	if (primaryID == trj->GetTrackID()) {
 	  tempParentID = trj->GetParentID();
-	  primaryIndex = iTrj;
+	  //primaryIndex = iTrj;
 	  found = true;
 	}
       }

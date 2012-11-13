@@ -745,11 +745,11 @@ void GateVProcess::ClearModelEnergyRange(G4String model,G4String par)
 
      G4ParticleDefinition * particle=0;
    
-     bool alreadySet = false;
+     //bool alreadySet = false;
 
      for(unsigned int i=0; i<theListOfParticles.size(); i++)
      {
-       alreadySet = false;
+       //alreadySet = false;
        particle = theListOfParticles[i];
 
        for(unsigned int j=0; j<theListOfParticlesWithSelectedModels.size(); j++)

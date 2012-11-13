@@ -949,7 +949,7 @@ void iaea_set_parallel(const IAEA_I32 *id, const IAEA_I32 * /*i_parallel*/,
    */
    if( fseek(p_iaea_record[*id]->p_file, offset ,SEEK_SET) == 0) 
    {
-         /*IAEA_I32 pos =*/ ftell(p_iaea_record[*id]->p_file);
+         /*IAEA_I32 pos =*/ if( ftell(p_iaea_record[*id]->p_file) == EOF ){fprintf( stderr, "Error telling position!!!\n" ); }
          *result = 0; 
          return;
    }
@@ -1098,7 +1098,7 @@ void iaea_set_record(const IAEA_I32 *id, const IAEA_I64 *record_num,
    
    if( fseek(p_iaea_record[*id]->p_file, offset ,SEEK_SET) == 0) 
    {
-         /*IAEA_I32 pos =*/ ftell(p_iaea_record[*id]->p_file);
+         /*IAEA_I32 pos =*/ if(ftell(p_iaea_record[*id]->p_file)==EOF){ fprintf( stderr, "Error telling position!!!\n" ); }
          *result = 0; 
          return;
    }

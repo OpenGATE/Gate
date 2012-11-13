@@ -1357,19 +1357,19 @@ GateImage::ESide GateImage::GetSideFromPointAndCoordinate(const G4ThreeVector & 
 GateImage::PixelType GateImage::GetNeighborValueFromCoordinate(const ESide & side, const G4ThreeVector & coord) {
   //GateMessage("Image", 8, "GateImage::GetNeighborValueFromCoordinate(" << coord
   //			  << ", side=" << side << G4endl);
-  int ttt;
+  //int ttt;
   G4ThreeVector c(coord);
   switch (side) {
-  case kMX:c.setX(coord.x()-1); if (coord.x() <0) ttt=0;  break;
-  case kPX:c.setX(coord.x()+1); if (coord.x() >= GetResolution().x()) ttt=0; break;
+  case kMX:c.setX(coord.x()-1); /*if (coord.x() <0) ttt=0;*/  break;
+  case kPX:c.setX(coord.x()+1); /*if (coord.x() >= GetResolution().x()) ttt=0;*/ break;
 
-  case kMY:c.setY(coord.y()-1); if (coord.y() <0) ttt=0; break;
-  case kPY:c.setY(coord.y()+1); if (coord.y() >= GetResolution().y()) ttt=0; break;
+  case kMY:c.setY(coord.y()-1); /*if (coord.y() <0) ttt=0;*/ break;
+  case kPY:c.setY(coord.y()+1); /*if (coord.y() >= GetResolution().y()) ttt=0;*/ break;
 
-  case kMZ:c.setZ(coord.z()-1); if (coord.z() <0) ttt=0;  break;
-  case kPZ:c.setZ(coord.z()+1); if (coord.z() >= GetResolution().z()) ttt=0;  break;
+  case kMZ:c.setZ(coord.z()-1); /*if (coord.z() <0) ttt=0;*/  break;
+  case kPZ:c.setZ(coord.z()+1); /*if (coord.z() >= GetResolution().z()) ttt=0;*/  break;
 
-  default: ttt=0;
+  default:;// ttt=0;
     //	GateError("I don't know side = " << side);
   }
 

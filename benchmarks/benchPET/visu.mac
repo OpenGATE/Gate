@@ -1,5 +1,6 @@
 #	V I S U A L I S A T I O N
-/vis/open OGL
+/vis/open OGLSQt 800x600-0+0
+#/vis/open OGL
 /vis/viewer/set/viewpointThetaPhi 60 60
 /vis/viewer/zoom 1.5
 /vis/drawVolume

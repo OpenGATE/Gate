@@ -258,7 +258,7 @@ void GateImageNestedParametrisedVolume::PrintInfo()
 /// transformation and material) of the voxel 'index'. Used by the
 /// optimized navigator
 void GateImageNestedParametrisedVolume::GetPhysVolForAVoxel(const G4int index,
-							    const G4VTouchable& pTouchable, 
+							    const G4VTouchable&, 
 							    G4VPhysicalVolume ** ppPhysVol, 
 							    G4NavigationHistory & history) const
 {
@@ -273,8 +273,8 @@ void GateImageNestedParametrisedVolume::GetPhysVolForAVoxel(const G4int index,
   }
 
   G4VSolid * pSolid = 0;	
-  G4Material * pMat = 0;
-  // Get solid (no computation)
+	//G4Material * pMat = 0;
+// Get solid (no computation)
   pSolid = mVoxelParametrisation->ComputeSolid(index, pPhysVol);
 
   if (!pSolid) {
@@ -313,11 +313,11 @@ void GateImageNestedParametrisedVolume::GetPhysVolForAVoxel(const G4int index,
     
     GateDebugMessage("Volume",6," fHistory.GetTopReplicaNo() "
 		     << history.GetTopReplicaNo() << G4endl);
-    pMat = mVoxelParametrisation->ComputeMaterial(iz, pPhysVol, &t);
+    //pMat = mVoxelParametrisation->ComputeMaterial(iz, pPhysVol, &t);
   }
   else {
     // Get material
-    pMat = mVoxelParametrisation->ComputeMaterial(iz, pPhysVol, &pTouchable);
+    //pMat = mVoxelParametrisation->ComputeMaterial(iz, pPhysVol, &pTouchable);
   }
   // Update history
   history.NewLevel(pPhysVol, kParameterised, iz);
@@ -325,7 +325,7 @@ void GateImageNestedParametrisedVolume::GetPhysVolForAVoxel(const G4int index,
   GateDebugMessage("Volume",5,"Trans = " << mPhysVolX->GetTranslation() << G4endl);
   GateDebugMessage("Volume",5,"Trans = " << mPhysVolY->GetTranslation() << G4endl);
   GateDebugMessage("Volume",5,"Trans = " << mPhysVolZ->GetTranslation() << G4endl);
-  GateDebugMessage("Volume",5,"Mat   = " << pMat->GetName() << G4endl);
+  //GateDebugMessage("Volume",5,"Mat   = " << pMat->GetName() << G4endl);
 }
 //---------------------------------------------------------------------------
 

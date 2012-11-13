@@ -397,9 +397,9 @@ void GateToImageCT::RecordBeginOfEvent( const G4Event* aEvent )
 		G4cout << " >> leaving [GateToImageCT::RecordBeginOfEvent]" << G4endl;
 }
 
-void GateToImageCT::RecordEndOfEvent( const G4Event* aEvent )
+void GateToImageCT::RecordEndOfEvent( const G4Event* )
 {
-	aEvent = 0;
+	//aEvent = 0;
 	
 	const GateSingleDigiCollection* CDS = GetOutputMgr()->
 		GetSingleDigiCollection( m_inputDataChannel );

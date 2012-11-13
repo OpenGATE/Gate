@@ -187,11 +187,11 @@ void GateToOpticalRaw::WriteGeneralInfo()
 	GateDigitizer* theDigitizer = GateDigitizer::GetInstance();
 
  	GatePulseProcessorChain* aPulseProcessorChain;
-	G4double aThreshold = 0.;
-	G4double aUphold = 0.;
+	//G4double aThreshold = 0.;
+	//G4double aUphold = 0.;
 	G4String aChainName;
-	GateThresholder* aThresholder;
-	GateUpholder* aUpholder;
+	//GateThresholder* aThresholder;
+	//GateUpholder* aUpholder;
 
 	// Loop over the energy windows first and then over detector heads
 	for (size_t energyWindowID=0; energyWindowID < setMaker->GetEnergyWindowNb(); energyWindowID++) {
@@ -207,18 +207,18 @@ void GateToOpticalRaw::WriteGeneralInfo()
   
 		// Try to find a thresholder and/or a upholder into the pulse processor chain.
 		// Update the threshold or uphold value if we find them
-		aThresholder = dynamic_cast<GateThresholder*>(aPulseProcessorChain->FindProcessor("digitizer/" + aChainName + "/thresholder"));
+		/*aThresholder = dynamic_cast<GateThresholder*>(aPulseProcessorChain->FindProcessor("digitizer/" + aChainName + "/thresholder"));
 		if (aThresholder) {
 			aThreshold = aThresholder->GetThreshold();
-		}
+		}*/
 
-		aUpholder = dynamic_cast<GateUpholder*>(aPulseProcessorChain->FindProcessor("digitizer/" + aChainName + "/upholder"));
+		/*aUpholder = dynamic_cast<GateUpholder*>(aPulseProcessorChain->FindProcessor("digitizer/" + aChainName + "/upholder"));
 		if (aUpholder) {
 			aUphold = aUpholder->GetUphold();
 		}
 		
 		aThreshold = 0.;
-		aUphold = 0.;
+		aUphold = 0.;*/
 
 		m_headerFile  << "!OPTICAL STUDY (general) :="        	    << G4endl
       	   	<< "number of detector heads := "     	    << setMaker->GetHeadNb() << G4endl

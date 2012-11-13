@@ -150,7 +150,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
           //G4cout << "     " << NbHits << " hits are stored in essaiCrystalHitsCollection." << G4endl;
     
           //G4int ionID      = 1; // the primary vertex particle
-          G4int positronID = 0;
+          //G4int positronID = 0;
           G4int photon1ID  = 0;
           G4int photon2ID  = 0;
           G4int rootID     = 0;
@@ -172,7 +172,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
           
 	  ////////////
           // search the positron
-          positronID = m_trajectoryNavigator->FindPositronTrackID();
+          //positronID = m_trajectoryNavigator->FindPositronTrackID();
 
           /*if (positronID == 0)
             {

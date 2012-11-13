@@ -521,7 +521,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       G4int TrackID;
       G4int ParentID;
       G4String ParticleName;
-      G4int sourceID;
+      //G4int sourceID;
       G4int test = 1;
       G4bool id1 = true;
       while ( test == 1 )
@@ -562,7 +562,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
           ParentID = (*iter)->GetParentID();
           Momentum = (*iter)->GetMomentum();
           /// Source Infos
-          sourceID = (*iter)->GetSourceID();
+         // sourceID = (*iter)->GetSourceID();
           fPosition = (*iter)->GetVertexPosition();
           m_sourceID = (*iter)->GetSourceID(); // we set the source ID to the current one
           if ( m_sourceID != m_previous_SourceID )

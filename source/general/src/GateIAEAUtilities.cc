@@ -206,7 +206,7 @@ FILE *open_file(char *filename,char*extension, char *access)
   if(filename[0]=='\0')
    {
       printf("\n INPUT FILENAME (%s) > ",access);
-      fgets(string,MAX_STR_LEN,stdin);
+      if(!fgets(string,MAX_STR_LEN,stdin)){fprintf( stderr, "Problem getting data!!!\n");}
       sscanf(string,"%s",filename);
       printf(" FILE %s opened \n", filename);
    }
@@ -240,7 +240,7 @@ int ok_check(void)                          /* GETS RESPONSE FROM USER      */
 {                                           /* IF OK TO DO SOMETHING        */
    char reply[MAX_STR_LEN];                 /* RETURNS 1 ONLY IF REPLY Y    */
                                             /* OR y ELSE RETURNS 0          */
-   fgets(reply,MAX_STR_LEN,stdin);
+   if( !fgets(reply,MAX_STR_LEN,stdin) ){fprintf( stderr, "Problem getting data!!!\n");}
    if(  ( strncmp(reply,"Y",1)==0 )||
    ( strncmp(reply,"y",1)==0 ))
      return(1);

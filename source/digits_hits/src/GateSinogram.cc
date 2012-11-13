@@ -170,8 +170,9 @@ G4int GateSinogram::Fill( G4int ring1ID, G4int ring2ID, G4int crystal1ID, G4int 
 {
 
   size_t  binElemID, binViewID;
-  G4int   sinoID,det1_c,det2_c,diff1,diff2,sigma,itemp;
-  sinoID = GetSinoID(ring1ID,ring2ID);
+  G4int   sinoID,det1_c,diff1,diff2,sigma,itemp;
+  //G4int det2_c;
+	sinoID = GetSinoID(ring1ID,ring2ID);
   if (nVerboseLevel > 3) {
     G4cout << " >> [GateSinogram::Fill]: rings " << ring1ID << "," << ring2ID  << " give sino ID " << sinoID << G4endl;
   }
@@ -203,7 +204,7 @@ G4int GateSinogram::Fill( G4int ring1ID, G4int ring2ID, G4int crystal1ID, G4int 
   binViewID = itemp;
   
   det1_c = binViewID;
-  det2_c = binViewID + (m_crystalNb/2);
+  //det2_c = binViewID + (m_crystalNb/2);
   if (fabs(crystal1ID - det1_c) < fabs(crystal1ID - (det1_c + (G4int)m_crystalNb)))
     diff1 = crystal1ID - det1_c;
   else

@@ -1,5 +1,5 @@
-/vis/disable
-#/control/execute visu.mac
+#/vis/disable
+/control/execute visu.mac
 
 /gate/geometry/setMaterialDatabase ../../GateMaterials.db
 
@@ -70,4 +70,4 @@
 /gate/application/setTimeStart     0. s
 /gate/application/setTimeStop      1. s
 
-/gate/application/startDAQ
+#/gate/application/startDAQ

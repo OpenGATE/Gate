@@ -74,7 +74,7 @@ std::vector<vContentType> GateUIcmdWithAVector<vContentType>::GetNewVectorValue(
 //    G4cout << "GateUIcmdWithAVector::GetNewVectorValue : ";
   G4String aToken;
   GateTokenizer parameterToken( paramString );
-  G4bool isGood = true;
+  //G4bool isGood = true;
   std::vector<G4String> inputVec;
   G4int length = 0;
   do {
@@ -101,7 +101,7 @@ std::vector<vContentType> GateUIcmdWithAVector<vContentType>::GetNewVectorValue(
 //  	   << " istrToken.good() " << istrToken.good() 
 //  	   << " istrToken.bad() "  << istrToken.bad() << G4endl;
     if (istrToken.good() == 0) {
-      isGood = false;
+      ;//isGood = false;
     } else {
       vec.push_back(value);
 //        G4cout << value << ", ";

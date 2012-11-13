@@ -1147,14 +1147,14 @@ G4bool GateBinaryCascade::ApplyCollision(G4CollisionInitialState * collision)
   primary->Set4Momentum(mom4Primary);
 
 
-  G4int lateBaryon(0), lateCharge(0);
+  //G4int lateBaryon(0), lateCharge(0);
 
   if ( lateParticleCollision )
   {  // for late particles, reset charges
         //G4cout << "lateP, initial B C state " << initialBaryon << " " 
         //        << initialCharge<< " " << primary->GetState() << " "<< primary->GetDefinition()->GetParticleName()<< G4endl;
-      lateBaryon = initialBaryon;
-      lateCharge = initialCharge;
+    //  lateBaryon = initialBaryon;
+      //lateCharge = initialCharge;
       initialBaryon=initialCharge=0;
   }
   

@@ -72,7 +72,7 @@ void GateSystemComponentListMessenger::DoInsertion(const G4String& childTypeName
     
   AvoidNameConflicts();
 
-  GateSystemComponent* newComponent=0;
+  /*GateSystemComponent* newComponent=0;
 
   if (childTypeName=="boxComponent")
     newComponent = new GateBoxComponent(GetNewInsertionBaseName(),GetMotherComponent(),GetMotherComponent()->GetSystem());
@@ -85,7 +85,7 @@ void GateSystemComponentListMessenger::DoInsertion(const G4String& childTypeName
   else {
     G4cout << "System-component type name '" << childTypeName << "' was not recognised --> insertion request must be ignored!\n";
     return;
-  }
+  }*/
   
   SetNewInsertionBaseName("");
 }

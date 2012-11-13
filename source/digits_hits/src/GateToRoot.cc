@@ -180,47 +180,47 @@ void GateToRoot::Book()
 
   if (m_recordFlag > 0)
   {
-    TH1F *hist;
+    //TH1F *hist;
     G4String hist_name;
     G4String hist_title;
     hist_name  = "Positron_Kinetic_Energy_MeV";
     hist_title = "Positron Kinetic Energy (MeV)";
-    hist = new TH1F(hist_name,hist_title,100,0.0, 5.0);
+    //hist = new TH1F(hist_name,hist_title,100,0.0, 5.0);
 
     hist_name  = "Ion_decay_time_s";
     hist_title = "Ion decay time (s)";
-    hist = new TH1F(hist_name,hist_title,100,0., 1.E3);
+    //hist = new TH1F(hist_name,hist_title,100,0., 1.E3);
 
     hist_name  = "Positron_annihil_distance_mm";
     hist_title = "Positron annihilation distance (mm)";
-    hist = new TH1F(hist_name,hist_title,100,0., 1.E1);
+    //hist = new TH1F(hist_name,hist_title,100,0., 1.E1);
   
     hist_name  = "Acolinea_Angle_Distribution_deg";
     hist_title = "Acolinearity Angle Distribution (deg)";
-    hist = new TH1F(hist_name,hist_title,100,-5, 5);
+    //hist = new TH1F(hist_name,hist_title,100,-5, 5);
 
     //! Root simple ntuple, float sequence 
-    TNtuple *ntuple;
+    //TNtuple *ntuple;
     G4String ntuple_name="Gate";
     if (nVerboseLevel > 0) G4cout 
   			   << "GateToRoot: ROOT: Ntuple " << ntuple_name << " being Created"<<G4endl;
-    ntuple = new TNtuple(ntuple_name,"Gate","event:iontime:poskinene:posannihildist");
+    //ntuple = new TNtuple(ntuple_name,"Gate","event:iontime:poskinene:posannihildist");
 
   }
 
   //! This histogram will be needed when using the cluster mode of Gate.
   //! When we merge all root files, we need the last event ID
-  TH1D* latest_histo;
+  //TH1D* latest_histo;
   G4String hist_name="latest_event_ID";
   G4String hist_title="latest_event_ID(#)";
-  latest_histo=new TH1D(hist_name,hist_title,100,0,900000000000.);
+  //latest_histo=new TH1D(hist_name,hist_title,100,0,900000000000.);
 
   //! This histogram will be used to store in a ROOT tree the total
   //! number of emitted primaries.
-  TH1D* primaries_histo;
+  //TH1D* primaries_histo;
   hist_name  = "total_nb_primaries";
   hist_title = "total_nb_primaries(#)";
-  primaries_histo = new TH1D(hist_name,hist_title,100,0,900000000000.);
+  //primaries_histo = new TH1D(hist_name,hist_title,100,0,900000000000.);
 
   m_treeHit = new GateHitTree(GateHitConvertor::GetOutputAlias());
   m_treeHit->Init(m_hitBuffer);
