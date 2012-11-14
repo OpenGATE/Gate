@@ -1,5 +1,5 @@
-#/vis/disable
-/control/execute visu.mac
+/vis/disable
+#/control/execute visu.mac
 
 /gate/geometry/setMaterialDatabase ../../GateMaterials.db
 
@@ -46,8 +46,8 @@
 
 /gate/output/root/enable
 /gate/output/root/setFileName benchmarkPET
-/gate/output/root/setRootHitFlag 0
-/gate/output/root/setRootSinglesFlag 0
+/gate/output/root/setRootHitFlag 1
+/gate/output/root/setRootSinglesFlag 1
 /gate/output/root/setRootCoincidencesFlag 1
 /gate/output/root/setRootdelayFlag 1
 

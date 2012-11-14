@@ -714,12 +714,12 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					{
 						G4cout << "->->->->-> Launching CPU on " << m_cpuNumber
 							<< " thread(s) ... <-<-<-<-<-" << G4endl;
-						G4cout << "Particle entry: " << m_cpuParticle->size << G4endl;
+						G4cout << "Particle entry CPU: " << m_cpuParticle->size << G4endl;
 					}
 					else
 					{
 						G4cout << "->->->->-> Launching GPU... <-<-<-<-<-" << G4endl;
-						G4cout << "Particle entry: " << m_gpuParticle->size << G4endl;
+						G4cout << "Particle entry GPU: " << m_gpuParticle->size << G4endl;
 					}
 				}
 
@@ -781,7 +781,7 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					// Getting the number of particles after the CPU
 					sizeAfter = m_cpuParticle->size;
 					if( nVerboseLevel > 0 )
-						G4cout << "Particle exit: " << sizeAfter<< G4endl;
+						G4cout << "Particle exit CPU: " << sizeAfter<< G4endl;
 				}
 				#ifdef GATE_USE_GPU
 				else
@@ -794,7 +794,7 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					// Getting the number of particles after the GPU
 					sizeAfter = m_gpuParticle->size;
 					if( nVerboseLevel > 0 )
-						G4cout << "Particle exit: " << m_gpuParticle->size << G4endl;
+						G4cout << "Particle exit GPU: " << m_gpuParticle->size << G4endl;
 				}
 				#endif
 

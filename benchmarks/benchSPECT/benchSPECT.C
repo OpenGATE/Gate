@@ -2,7 +2,7 @@
 
 
 TFile *f =  (TFile*)gROOT->GetListOfFiles()->FindObject("benchSPECT.root");
-if (!f) {YouSimu
+if (!f) {
 	   f = new TFile("benchSPECT.root");
 }
 

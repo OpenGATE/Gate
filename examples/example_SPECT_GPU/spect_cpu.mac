@@ -33,7 +33,7 @@
 /gate/output/spectGPU/enable
 /gate/output/spectGPU/setFileName points_source_cpu
 /gate/output/spectGPU/attachTo collimator_phys
-/gate/output/spectGPU/bufferParticleEntry 5000000
+/gate/output/spectGPU/bufferParticleEntry 20000000
 /gate/output/spectGPU/setNZpixel                         131
 /gate/output/spectGPU/setNYpixel                         131
 /gate/output/spectGPU/setSepta                           0.15 mm
@@ -42,7 +42,7 @@
 /gate/output/spectGPU/setRor                             36.0 mm
 /gate/output/spectGPU/setCollimatorHeight                20.0 mm
 /gate/output/spectGPU/setSpaceBetweenCollimatorDetector  1.5 mm
-/gate/output/spectGPU/cpuNumber 24
+/gate/output/spectGPU/cpuNumber 1
 /gate/output/spectGPU/setCPUflag 1
 /gate/output/spectGPU/setRootHitFlag 0
 /gate/output/spectGPU/setRootSingleFlag 1
