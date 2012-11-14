@@ -288,6 +288,7 @@ private:
   G4int nCrystalOpticalMie;
   G4int nCrystalOpticalAbsorption;
   G4int nScintillation, nCrystalOpticalWLS, nPhantomOpticalWLS;
+
   G4int NumCrystalWLS, NumPhantomWLS;
   G4int CrystalLastHit, PhantomLastHit;
   G4double CrystalLastHitPos_X,CrystalLastHitPos_Y,CrystalLastHitPos_Z, CrystalLastHitEnergy;

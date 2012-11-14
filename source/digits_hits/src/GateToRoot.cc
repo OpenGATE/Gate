@@ -854,10 +854,10 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
                    if (processName.find("OpticalMie") != G4String::npos)  nPhantomOpticalMie++;
                    if (processName.find("OpticalAbsorption") != G4String::npos) {
 
-                              nPhantomOpticalAbsorption++;
-                              PhantomAbsorbedPhotonHitPos_X = (*PHC)[iPHit]->GetPos().x();
-                              PhantomAbsorbedPhotonHitPos_Y = (*PHC)[iPHit]->GetPos().y();
-                              PhantomAbsorbedPhotonHitPos_Z = (*PHC)[iPHit]->GetPos().z();
+                      nPhantomOpticalAbsorption++;
+                      PhantomAbsorbedPhotonHitPos_X = (*PHC)[iPHit]->GetPos().x();
+                      PhantomAbsorbedPhotonHitPos_Y = (*PHC)[iPHit]->GetPos().y();
+                      PhantomAbsorbedPhotonHitPos_Z = (*PHC)[iPHit]->GetPos().z();
                    }
 
                    PhantomLastHit=iPHit;
@@ -889,33 +889,35 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
     CrystalAbsorbedPhotonHitPos_Y = -999;
     CrystalAbsorbedPhotonHitPos_Z = -999;
 
-        for (G4int iHit=0;iHit<NbHits;iHit++) 
-           {
-               GateCrystalHit* aHit = (*CHC)[iHit];
-               G4String processName = aHit->GetProcess();
+    for (G4int iHit=0;iHit<NbHits;iHit++) 
+    {
+      GateCrystalHit* aHit = (*CHC)[iHit];
+      G4String processName = aHit->GetProcess();
 
+	if (aHit->GoodForAnalysis()) {
 
-              if (aHit->GoodForAnalysis() && aHit-> GetPDGEncoding()==0) // looking at optical photons only
-               {
+	  strcpy (NameOfProcessInCrystal, aHit->GetProcess().c_str());
 
-               strcpy (NameOfProcessInCrystal, aHit->GetProcess().c_str());
+	  if(processName.find("Scintillation") != G4String::npos) nScintillation++;
 
-               if(processName.find("Scintillation") != G4String::npos) nScintillation++;
+	     if(aHit-> GetPDGEncoding()==0){  // looking at optical photons only
+
                if(processName.find("OpticalWLS") != G4String::npos) nCrystalOpticalWLS++;
                if (processName.find("OpRayleigh") != G4String::npos)  nCrystalOpticalRayleigh++;
                if (processName.find("OpticalMie") != G4String::npos)  nCrystalOpticalMie++;
                if (processName.find("OpticalAbsorption") != G4String::npos) {
 
-                              nCrystalOpticalAbsorption++;
-                              CrystalAbsorbedPhotonHitPos_X = (*CHC)[iHit]->GetGlobalPos().x();
-                              CrystalAbsorbedPhotonHitPos_Y = (*CHC)[iHit]->GetGlobalPos().y();
-                              CrystalAbsorbedPhotonHitPos_Z = (*CHC)[iHit]->GetGlobalPos().z();
-                   }
+                 nCrystalOpticalAbsorption++;
+                 CrystalAbsorbedPhotonHitPos_X = (*CHC)[iHit]->GetGlobalPos().x();
+                 CrystalAbsorbedPhotonHitPos_Y = (*CHC)[iHit]->GetGlobalPos().y();
+                 CrystalAbsorbedPhotonHitPos_Z = (*CHC)[iHit]->GetGlobalPos().z();
+             }
 
                      CrystalLastHit=iHit;
-                } // end GoodForAnalysis() and optical photon
-          } // end loop over crystal hits
 
+       } // end optical photon
+     } // end GoodForAnalysis()
+   } // end loop over crystal hits
 
                if(CrystalLastHit!=-1) {
                      CrystalLastHitPos_X = (*CHC)[CrystalLastHit]->GetGlobalPos().x();
