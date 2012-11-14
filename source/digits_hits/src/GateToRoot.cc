@@ -18,6 +18,8 @@
          - Revision v6.2 2012/08/06  Added optical photon momentum direction (x,y,z) in tree.
          - Revision 2012/09/17  /gate/output/root/setRootOpticalFlag functionality added.
            Set the flag for Optical ROOT output.
+         - Revision 2012/11/14  - added new leaves: position (x,y,z) of fluorescent (OpticalWLS process) hits
+ 				- Scintillation counter bug-fixed
 */
 
 #include "GateToRoot.hh"
@@ -227,6 +229,7 @@ void GateToRoot::Book()
 
 // v. cuplov - optical photons
   OpticalTree = new TTree(G4String("OpticalData").c_str(),"OpticalData");
+
   OpticalTree->Branch(G4String("NumScintillation").c_str(),&nScintillation,"nScintillation/I");
   OpticalTree->Branch(G4String("NumCrystalWLS").c_str(),&NumCrystalWLS,"NumCrystalWLS/I");
   OpticalTree->Branch(G4String("NumPhantomWLS").c_str(),&NumPhantomWLS,"NumPhantomWLS/I");
@@ -244,6 +247,9 @@ void GateToRoot::Book()
   OpticalTree->Branch(G4String("PhantomAbsorbedPhotonHitPos_X").c_str(),&PhantomAbsorbedPhotonHitPos_X,"PhantomAbsorbedPhotonHitPos_X/D");
   OpticalTree->Branch(G4String("PhantomAbsorbedPhotonHitPos_Y").c_str(),&PhantomAbsorbedPhotonHitPos_Y,"PhantomAbsorbedPhotonHitPos_Y/D");
   OpticalTree->Branch(G4String("PhantomAbsorbedPhotonHitPos_Z").c_str(),&PhantomAbsorbedPhotonHitPos_Z,"PhantomAbsorbedPhotonHitPos_Z/D");
+  OpticalTree->Branch(G4String("PhantomWLSPos_X").c_str(),&PhantomWLSPos_X,"PhantomWLSPos_X/D");
+  OpticalTree->Branch(G4String("PhantomWLSPos_Y").c_str(),&PhantomWLSPos_Y,"PhantomWLSPos_Y/D");
+  OpticalTree->Branch(G4String("PhantomWLSPos_Z").c_str(),&PhantomWLSPos_Z,"PhantomWLSPos_Z/D");
   OpticalTree->Branch(G4String("NumCrystalOptAbs").c_str(),&nCrystalOpticalAbsorption,"nCrystalOpticalAbsorption/I");
   OpticalTree->Branch(G4String("NumCrystalOptRay").c_str(),&nCrystalOpticalRayleigh,"nCrystalOpticalRayleigh/I");
   OpticalTree->Branch(G4String("NumCrystalOptMie").c_str(),&nCrystalOpticalMie,"nCrystalOpticalMie/I");
@@ -485,7 +491,7 @@ void GateToRoot::RecordEndOfAcquisition()
     }
     else
     {
-      G4cerr << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'latest_event_ID' histogram to fill it !" << G4endl;
+//      G4cerr << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'latest_event_ID' histogram to fill it !" << G4endl;
     }
   }
   //=============================================================================
@@ -499,7 +505,7 @@ void GateToRoot::RecordEndOfAcquisition()
   }
   else
   {
-    G4cerr << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'total_nb_primaries' histogram to fill it !" << G4endl;
+//    G4cerr << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'total_nb_primaries' histogram to fill it !" << G4endl;
   }
   
   /* PY Descourt 08/09/2009 */
@@ -810,19 +816,18 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
    GateCrystalHitsCollection* CHC = GetOutputMgr()->GetCrystalHitCollection();
    GatePhantomHitsCollection* PHC = GetOutputMgr()->GetPhantomHitCollection();
 
-        // Initialization of variables:
-        nPhantomOpticalRayleigh = 0;
-        nPhantomOpticalMie = 0;
-        nPhantomOpticalAbsorption = 0;
-        nCrystalOpticalRayleigh = 0;
-        nCrystalOpticalMie = 0;
-        nCrystalOpticalAbsorption = 0;
-        nScintillation = 0;
-        nCrystalOpticalWLS = 0;
-        nPhantomOpticalWLS = 0;
-        NumCrystalWLS = 0;
-        NumPhantomWLS = 0;
-
+   // Initialization of variables:
+   nPhantomOpticalRayleigh = 0;
+   nPhantomOpticalMie = 0;
+   nPhantomOpticalAbsorption = 0;
+   nCrystalOpticalRayleigh = 0;
+   nCrystalOpticalMie = 0;
+   nCrystalOpticalAbsorption = 0;
+   nScintillation = 0;
+   nCrystalOpticalWLS = 0;
+   nPhantomOpticalWLS = 0;
+   NumCrystalWLS = 0;
+   NumPhantomWLS = 0;
 
 // Looking at Phantom Hit Collection:
    if (PHC) {
@@ -849,21 +854,25 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
                 {
                    strcpy (NameOfProcessInPhantom, pHit->GetProcess().c_str());
 
-               	   if(processName.find("OpticalWLS") != G4String::npos) nPhantomOpticalWLS++; // Fluorescence counting
                    if (processName.find("OpRayleigh") != G4String::npos)  nPhantomOpticalRayleigh++;
                    if (processName.find("OpticalMie") != G4String::npos)  nPhantomOpticalMie++;
                    if (processName.find("OpticalAbsorption") != G4String::npos) {
+                          nPhantomOpticalAbsorption++;
+                          PhantomAbsorbedPhotonHitPos_X = (*PHC)[iPHit]->GetPos().x();
+                          PhantomAbsorbedPhotonHitPos_Y = (*PHC)[iPHit]->GetPos().y();
+                          PhantomAbsorbedPhotonHitPos_Z = (*PHC)[iPHit]->GetPos().z();
+                   }
 
-                              nPhantomOpticalAbsorption++;
-                              PhantomAbsorbedPhotonHitPos_X = (*PHC)[iPHit]->GetPos().x();
-                              PhantomAbsorbedPhotonHitPos_Y = (*PHC)[iPHit]->GetPos().y();
-                              PhantomAbsorbedPhotonHitPos_Z = (*PHC)[iPHit]->GetPos().z();
+                   if (processName.find("OpticalWLS") != G4String::npos) {
+                          nPhantomOpticalWLS++;      // Fluorescence counting
+                          PhantomWLSPos_X = (*PHC)[iPHit]->GetPos().x();
+                          PhantomWLSPos_Y = (*PHC)[iPHit]->GetPos().y();
+                          PhantomWLSPos_Z = (*PHC)[iPHit]->GetPos().z();
                    }
 
                    PhantomLastHit=iPHit;
                 }  // end GoodForAnalysis() and optical photon
             } // end loop over phantom hits
-
 
             if(PhantomLastHit!=-1) {
                    PhantomLastHitPos_X = (*PHC)[PhantomLastHit]->GetPos().x();
@@ -894,28 +903,29 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
                GateCrystalHit* aHit = (*CHC)[iHit];
                G4String processName = aHit->GetProcess();
 
-
-              if (aHit->GoodForAnalysis() && aHit-> GetPDGEncoding()==0) // looking at optical photons only
+//              if (aHit->GoodForAnalysis() && aHit-> GetPDGEncoding()==0) // looking at optical photons only
+		if (aHit->GoodForAnalysis()) 
                {
+               	  strcpy (NameOfProcessInCrystal, aHit->GetProcess().c_str());
 
-               strcpy (NameOfProcessInCrystal, aHit->GetProcess().c_str());
+		  if(processName.find("Scintillation") != G4String::npos) nScintillation++;
 
-               if(processName.find("Scintillation") != G4String::npos) nScintillation++;
-               if(processName.find("OpticalWLS") != G4String::npos) nCrystalOpticalWLS++;
-               if (processName.find("OpRayleigh") != G4String::npos)  nCrystalOpticalRayleigh++;
-               if (processName.find("OpticalMie") != G4String::npos)  nCrystalOpticalMie++;
-               if (processName.find("OpticalAbsorption") != G4String::npos) {
-
+		  if(aHit-> GetPDGEncoding()==0)  // looking at optical photons only
+        	   {
+               		if(processName.find("OpticalWLS") != G4String::npos) nCrystalOpticalWLS++;
+               		if (processName.find("OpRayleigh") != G4String::npos)  nCrystalOpticalRayleigh++;
+               		if (processName.find("OpticalMie") != G4String::npos)  nCrystalOpticalMie++;
+               		if (processName.find("OpticalAbsorption") != G4String::npos) {
                               nCrystalOpticalAbsorption++;
                               CrystalAbsorbedPhotonHitPos_X = (*CHC)[iHit]->GetGlobalPos().x();
                               CrystalAbsorbedPhotonHitPos_Y = (*CHC)[iHit]->GetGlobalPos().y();
                               CrystalAbsorbedPhotonHitPos_Z = (*CHC)[iHit]->GetGlobalPos().z();
-                   }
+                   	}
 
                      CrystalLastHit=iHit;
-                } // end GoodForAnalysis() and optical photon
+                  }
+                } // end GoodForAnalysis()
           } // end loop over crystal hits
-
 
                if(CrystalLastHit!=-1) {
                      CrystalLastHitPos_X = (*CHC)[CrystalLastHit]->GetGlobalPos().x();

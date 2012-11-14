@@ -18,6 +18,8 @@ See GATE/LICENSE.txt for further details
          - Revision v6.2 2012/08/06  Added optical photon momentum direction (x,y,z) in tree.
          - Revision 2012/09/17  /gate/output/root/setRootOpticalFlag functionality added.
            Set the flag for Optical ROOT output.
+         - Revision 2012/11/14  - added new leaves: position (x,y,z) of fluorescent (OpticalWLS process) hits
+ 				- Scintillation counter bug-fixed
 */
 
 #ifndef GateToRoot_H
@@ -294,6 +296,7 @@ private:
   G4double CrystalAbsorbedPhotonHitPos_X, CrystalAbsorbedPhotonHitPos_Y,CrystalAbsorbedPhotonHitPos_Z;
   G4double PhantomLastHitPos_X,PhantomLastHitPos_Y,PhantomLastHitPos_Z, PhantomLastHitEnergy;
   G4double PhantomAbsorbedPhotonHitPos_X, PhantomAbsorbedPhotonHitPos_Y,PhantomAbsorbedPhotonHitPos_Z;
+  G4double PhantomWLSPos_X, PhantomWLSPos_Y,PhantomWLSPos_Z;
   G4double MomentumDirectionx, MomentumDirectiony, MomentumDirectionz;
 // v. cuplov - optical photons
 
