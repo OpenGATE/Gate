@@ -30,7 +30,7 @@ public:
 
 protected:
   G4UIcmdWithABool * pEnableScatterCmd;
-
+  G4UIcmdWithABool * pEnableSourceMotionCmd;
   GateFluenceActor * pFluenceActor;
 };
 

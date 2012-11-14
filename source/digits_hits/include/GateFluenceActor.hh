@@ -21,6 +21,8 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVImageActor.hh"
 #include "GateActorManager.hh"
+#include "GateMiscFunctions.hh"
+#include "GateSourceMoveRandom.hh"
 #include "GateFluenceActorMessenger.hh"
 
 class GateFluenceActor : public GateVImageActor
@@ -38,7 +40,9 @@ class GateFluenceActor : public GateVImageActor
   virtual void Construct();
 
   void EnableScatterImage(bool b) { mIsScatterImageEnabled = b; }
+  void EnableSourceMotionByStack(bool b) { mIsSourceMotionByStackEnabled = b; }
 
+  virtual void BeginOfEventAction(const G4Event * e);
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
   virtual void UserPreTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/) {}
   virtual void UserPostTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/) {}
@@ -57,10 +61,11 @@ protected:
   GateFluenceActorMessenger * pMessenger;
 
   bool mIsScatterImageEnabled;
+  bool mIsSourceMotionByStackEnabled;
   GateImage mImageScatter;
-
-  std::vector<size_t> mCounts;
-  std::vector<size_t> mScatterCounts;
+  int mCurrentEventFrame;
+  bool mUseFrameFlag;
+  int mDimension;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(FluenceActor,GateFluenceActor)
