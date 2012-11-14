@@ -91,8 +91,9 @@ __device__ float PhotoElec_ct_SampleSecondaries_Standard(StackParticle photons,
 #define PHOTON_BOUNDARY_VOXEL 4
 template <typename T1>
 __global__ void kernel_ct_navigation_regular(StackParticle photons,
-                                           Volume<T1> phantom,
-                                           int* count_d) {
+                                             Volume<T1> phantom,
+                                             Materials materials,
+                                             int* count_d) {
     unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
     if (id >= photons.size) return;
@@ -127,12 +128,24 @@ __global__ void kernel_ct_navigation_regular(StackParticle photons,
     float energy = photons.E[id];
 
     // Get material
-    T1 material = phantom.data[index_phantom.w];
-    // FIXME TO DEBUG
-    //material = 1;
-    if (material == 1) {material = 0;} // Air
-    if (material == 2) {material = 13;} // Brain
-    if (material == 3) {material = 7;}  // RibBone
+    T1 mat = phantom.data[index_phantom.w];
+
+    /*
+	int index = materials.index[mat];
+    printf("nb_mat %i mat %i index %i nb_elts %i\n", materials.nb_materials, mat, index, materials.nb_elements[mat]);
+
+    int toto=0;
+    while (toto<2) {
+        printf("mixture: %i num_dens %e\n", materials.mixture[index+toto], materials.atom_num_dens[index+toto]);
+        ++toto;
+    }
+
+    toto=0;
+    while(toto<materials.nb_elements_total) {
+        printf("elts %i\n", materials.mixture[toto]);
+        ++toto;
+    }
+    */
 
     //// Find next discrete interaction ///////////////////////////////////////
 
@@ -143,7 +156,7 @@ __global__ void kernel_ct_navigation_regular(StackParticle photons,
     float cross_section;
 
     // Photoelectric
-    cross_section = PhotoElec_CS_Standard(material, energy);
+    cross_section = PhotoElec_CS_Standard(materials, mat, energy);
     interaction_distance = __fdividef(-__logf(Brent_real(id, photons.table_x_brent, 0)),
                                      cross_section);
     if (interaction_distance < next_interaction_distance) {
@@ -152,7 +165,7 @@ __global__ void kernel_ct_navigation_regular(StackParticle photons,
     }
 
     // Compton
-    cross_section = Compton_CS_Standard(material, energy);
+    cross_section = Compton_CS_Standard(materials, mat, energy);
     interaction_distance = __fdividef(-__logf(Brent_real(id, photons.table_x_brent, 0)),
                                      cross_section);
     if (interaction_distance < next_interaction_distance) {
@@ -169,7 +182,7 @@ __global__ void kernel_ct_navigation_regular(StackParticle photons,
 
     // Distance to the next voxel boundary (raycasting)
     interaction_distance = get_boundary_voxel_by_raycasting(index_phantom, position, 
-                                                          direction, phantom.voxel_size);
+                                                            direction, phantom.voxel_size);
     if (interaction_distance < next_interaction_distance) {
       next_interaction_distance = interaction_distance;
       next_discrete_process = PHOTON_BOUNDARY_VOXEL;

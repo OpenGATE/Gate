@@ -18,8 +18,8 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
   double t_g = time();
     
   // Select a GPU
-  //cudaSetDevice(input->cudaDeviceID);
-  cudaSetDevice(1);
+  cudaSetDevice(input->cudaDeviceID);
+  //cudaSetDevice(1);
     
   long seed = input->seed;
   DD(seed);
@@ -35,11 +35,10 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
   StackParticle photons_h;
   stack_host_malloc(photons_h, nb_of_particles);
   
-  /*
   // Materials def, alloc & loading  
   Materials materials_h;
   materials_host_malloc(materials_h, input->nb_materials, input->nb_elements_total);
-  
+
   materials_h.nb_elements = input->mat_nb_elements;
   materials_h.index = input->mat_index;
   materials_h.mixture = input->mat_mixture;
@@ -52,20 +51,14 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
   materials_h.fX0 = input->fX0;
   materials_h.fX1 = input->fX1;
   materials_h.fD0 = input->fD0;
-  materials_h.fC = input->fD;
+  materials_h.fC = input->fC;
   materials_h.fA = input->fA;
   materials_h.fM = input->fM;
   
   Materials materials_d;
   materials_device_malloc(materials_d, input->nb_materials, input->nb_elements_total);
-  
   materials_copy_host2device(materials_h, materials_d);
-  
-  // To be continued... (JB)
-   
-  */
-  
-
+    
   // TIMING
   t_init = time() - t_init;
   double t_in = time();
@@ -149,11 +142,11 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
   while (count_h < nb_of_particles) {
     ++step;
 
-    kernel_ct_navigation_regular<unsigned short int><<<grid, threads>>>(photons_d, phantom_d, count_d);
+    kernel_ct_navigation_regular<unsigned short int><<<grid, threads>>>(photons_d, phantom_d, 
+                                                                        materials_d, count_d);
 
     // get back the number of simulated photons
     cudaMemcpy(&count_h, count_d, sizeof(int), cudaMemcpyDeviceToHost);
-
   }
 
   // TIMING

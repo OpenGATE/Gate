@@ -77,7 +77,7 @@ void GateTrackingGPUActorInput_Init_Materials(GateTrackingGPUActorInput * input,
     //DD(m[i]->GetName());
     input->mat_nb_elements[i] = m[i]->GetNumberOfElements();
     if (i == 0) input->mat_index[i] = 0;
-    else  input->mat_index[i] = input->mat_nb_elements[i]+input->mat_index[i-1];
+    else  input->mat_index[i] = input->mat_nb_elements[i-1]+input->mat_index[i-1];
     //GateTrackingGPUActorInput_Print_mat(input, i);
     //DD(input->mat_nb_elements[i]);
     //DD(input->mat_index[i]);

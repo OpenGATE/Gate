@@ -16,7 +16,7 @@ __constant__ const float gpu_twopi = 2*gpu_pi;
 /***********************************************************
  * Data material strucutre
  ***********************************************************/
-/*
+
 // Structure for materials
 struct Materials{
     unsigned int nb_materials;              // n
@@ -37,7 +37,7 @@ struct Materials{
     float *fC;
     float *fA;
     float *fM;
-}
+};
 
 // Materials device allocation
 void materials_device_malloc(Materials &mat, unsigned int nb_mat, unsigned int nb_elm) {
@@ -134,7 +134,7 @@ void materials_host_free(Materials &mat) {
     free(mat.fA);
     free(mat.fM);
 }
-*/
+
 /***********************************************************
  * Stack data particle strucutre
  ***********************************************************/
@@ -308,34 +308,32 @@ void volume_device_free(Volume<T> &vol) {
  * Copy structure functions
  ***********************************************************/
 
-/*
 // Copy materials from host to device
 void materials_copy_host2device(Materials &host, Materials &device) {
     unsigned int nb_mat = host.nb_materials;
-    unsigned int nb_elm = hot.nb_elements_total;
+    unsigned int nb_elm = host.nb_elements_total;
     
     unsigned int mem_mat_usi = nb_mat * sizeof(unsigned short int);
     unsigned int mem_mat_float = nb_mat * sizeof(float);
     unsigned int mem_elm_usi = nb_elm * sizeof(unsigned short int);
     unsigned int mem_elm_float = nb_elm * sizeof(float);
     
-    cudaMemcpy(host.nb_elements, device.nb_elements, mem_mat_usi, cudaMemcpyDeviceToHost);
-    cudaMemcpy(host.index, device.index, mem_mat_usi, cudaMemcpyDeviceToHost);
-    cudaMemcpy(host.mixture, device.mixture, mem_elm_usi, cudaMemcpyDeviceToHost);
-    cudaMemcpy(host.atom_num_dens, device.atom_num_dens, mem_elm_float, cudaMemcpyDeviceToHost);
-    cudaMemcpy(host.nb_atoms_per_vol, device.nb_atoms_per_vol, mem_mat_float, cudaMemcpyDeviceToHost);
-    cudaMemcpy(host.nb_electrons_per_vol, device.nb_electrons_per_vol, mem_mat_float, cudaMemcpyDeviceToHost);
-    cudaMemcpy(host.electron_cut_energy, device.electron_cut_energy, mem_mat_float, cudaMemcpyDeviceToHost);
-    cudaMemcpy(host.electron_max_energy, device.electron_max_energy, mem_mat_float, cudaMemcpyDeviceToHost);
-    cudaMemcpy(host.electron_mean_excitation_energy, device.electron_mean_excitation_energy, mem_mat_float, cudaMemcpyDeviceToHost);
-    cudaMemcpy(host.fX0, device.fX0, mem_mat_float, cudaMemcpyDeviceToHost);
-    cudaMemcpy(host.fX1, device.fX1, mem_mat_float, cudaMemcpyDeviceToHost);
-    cudaMemcpy(host.fD0, device.fD0, mem_mat_float, cudaMemcpyDeviceToHost);
-    cudaMemcpy(host.fC, device.fC, mem_mat_float, cudaMemcpyDeviceToHost);
-    cudaMemcpy(host.fA, device.fA, mem_mat_float, cudaMemcpyDeviceToHost);
-    cudaMemcpy(host.fM, device.fM, mem_mat_float, cudaMemcpyDeviceToHost);
+    cudaMemcpy(device.nb_elements, host.nb_elements, mem_mat_usi, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.index, host.index, mem_mat_usi, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.mixture, host.mixture, mem_elm_usi, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.atom_num_dens, host.atom_num_dens, mem_elm_float, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.nb_atoms_per_vol, host.nb_atoms_per_vol, mem_mat_float, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.nb_electrons_per_vol, host.nb_electrons_per_vol, mem_mat_float, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.electron_cut_energy, host.electron_cut_energy, mem_mat_float, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.electron_max_energy, host.electron_max_energy, mem_mat_float, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.electron_mean_excitation_energy, host.electron_mean_excitation_energy, mem_mat_float, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.fX0, host.fX0, mem_mat_float, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.fX1, host.fX1, mem_mat_float, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.fD0, host.fD0, mem_mat_float, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.fC, host.fC, mem_mat_float, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.fA, host.fA, mem_mat_float, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.fM, host.fM, mem_mat_float, cudaMemcpyHostToDevice);
 }
-*/
  
 // Copy stack from device to host
 void stack_copy_device2host(StackParticle &stackpart, StackParticle &phasespace) {
@@ -708,18 +706,18 @@ __device__ float Compton_CSPA_Standard(float E, unsigned short int Z) {
 		d5 = __logf(__fdividef(E, T0)); // y
 		CrossSection *= __expf(-d5 * (d3 + d4*d5));
 	}
-
-	return CrossSection;
+	
+    return CrossSection;
 }
 
 // Compute the total Compton cross section for a given material
-__device__ float Compton_CS_Standard(int mat, float E) {
+__device__ float Compton_CS_Standard(Materials materials, unsigned int mat, float E) {
 	float CS = 0.0f;
 	int i;
-	int index = mat_index[mat];
+	int index = materials.index[mat];
 	// Model standard
-	for (i = 0; i < mat_nb_elements[mat]; ++i) {
-		CS += (mat_atom_num_dens[index+i] * Compton_CSPA_Standard(E, mat_mixture[index+i]));
+	for (i = 0; i < materials.nb_elements[mat]; ++i) {
+		CS += (materials.atom_num_dens[index+i] * Compton_CSPA_Standard(E, materials.mixture[index+i]));
 	}
 	return CS;
 }
@@ -747,13 +745,13 @@ __device__ float PhotoElec_CSPA_Standard(float E, unsigned short int Z) {
 }
 
 // Compute the total Compton cross section for a given material
-__device__ float PhotoElec_CS_Standard(unsigned int mat, float E) {
+__device__ float PhotoElec_CS_Standard(Materials materials, unsigned int mat, float E) {
 	float CS = 0.0f;
 	int i;
-	int index = mat_index[mat];
+	int index = materials.index[mat];
 	// Model standard
-	for (i = 0; i < mat_nb_elements[mat]; ++i) {
-		CS += (mat_atom_num_dens[index+i] * PhotoElec_CSPA_Standard(E, mat_mixture[index+i]));
+	for (i = 0; i < materials.nb_elements[mat]; ++i) {
+		CS += (materials.atom_num_dens[index+i] * PhotoElec_CSPA_Standard(E, materials.mixture[index+i]));
 	}
 	return CS;
 }
@@ -787,6 +785,7 @@ __device__ float PhotoElec_ElecCosThetaDistribution(StackParticle part,
  * Electrons Physics Effects
  ***********************************************************/
 
+/* TODO Materials
 // eIonisation Cross Section Per Atom (Möller model)
 __device__ float eIonisation_CSPA_Standard(float E, unsigned short int Z) {
     float cutE = electron_cut_energy[1]; 
@@ -883,6 +882,7 @@ __device__ float eIonisation_dedx_Standard(int mat, float E, float cutE) {
 
     return dedx;
 }
+*/
 
 /***********************************************************
  * Utils Host
