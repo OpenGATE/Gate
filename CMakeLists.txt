@@ -158,7 +158,7 @@ FILE(GLOB headers
 #=========================================================
 # Add the executable, and link it to the Geant4 libraries
 IF(GATE_USE_GPU AND CUDA_FOUND)
-    SET(CUDA_NVCC_FLAGS "-arch;compute_30;-use_fast_math;-w;")
+    SET(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20;-gencode arch=compute_30,code=sm_30;-use_fast_math;-w;")
     CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
 ELSE(GATE_USE_GPU AND CUDA_FOUND)
     ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
