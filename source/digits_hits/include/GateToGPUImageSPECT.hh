@@ -102,6 +102,8 @@ class GateToGPUImageSPECT : public GateVOutputModule
 				void SetTimeFlag( G4bool );
         void SetNYpixel( G4int );
         void SetNZpixel( G4int );
+				void SetZPixelSize( G4double );
+				void SetYPixelSize( G4double );
         void SetSepta( G4double );
         inline G4double GetSepta() { return m_septa; }
         void SetFy( G4double );
@@ -128,6 +130,8 @@ class GateToGPUImageSPECT : public GateVOutputModule
 				G4bool                            m_timeFlag;
         G4int                             m_ny_pixel;
         G4int                             m_nz_pixel;
+				G4double                          m_z_pixel_size;
+				G4double                          m_y_pixel_size;
         
         G4double                         *m_centerOfPxlZ;
         G4double                         *m_centerOfPxlY;

@@ -91,6 +91,17 @@ GateToGPUImageSPECTMessenger::GateToGPUImageSPECTMessenger( GateToGPUImageSPECT*
     nyPixelCmd->SetGuidance( "Set the number of pixel in Y" );
 	nyPixelCmd->SetParameterName( "number of pixel in Y", false );
 
+		cmdName = GetDirectoryName() + "setZpixelSize";
+    zPixelSizeCmd = new G4UIcmdWithADoubleAndUnit( cmdName, this );
+    zPixelSizeCmd->SetGuidance( "Set the size of pixel in Z" );
+    zPixelSizeCmd->SetUnitCategory("Length");
+
+		cmdName = GetDirectoryName() + "setYpixelSize";
+    yPixelSizeCmd = new G4UIcmdWithADoubleAndUnit( cmdName, this );
+    yPixelSizeCmd->SetGuidance( "Set the size of pixel in Y" );
+    yPixelSizeCmd->SetUnitCategory("Length");
+
+
     cmdName = GetDirectoryName() + "setSepta";
     septaCmd = new G4UIcmdWithADoubleAndUnit( cmdName, this );
     septaCmd->SetGuidance( "Set the size of septa" );
@@ -138,6 +149,8 @@ GateToGPUImageSPECTMessenger::~GateToGPUImageSPECTMessenger()
 	delete septaCmd;
 	delete fyCmd;
 	delete fzCmd;
+	delete zPixelSizeCmd;
+	delete yPixelSizeCmd;
 	delete collimatorHeightCmd;
 	delete spaceBetweenCollimatorDetectorCmd;
 	delete rorCmd;
@@ -183,6 +196,12 @@ void GateToGPUImageSPECTMessenger::SetNewValue( G4UIcommand* command,
     else if( command == nyPixelCmd )
         m_gateToGPUImageSPECT->SetNYpixel(
             nyPixelCmd->GetNewIntValue( newValue ) );
+		else if( command == zPixelSizeCmd )
+			m_gateToGPUImageSPECT->SetZPixelSize(
+				zPixelSizeCmd->GetNewDoubleValue( newValue ) );
+		else if( command == yPixelSizeCmd )
+			m_gateToGPUImageSPECT->SetYPixelSize(
+				yPixelSizeCmd->GetNewDoubleValue( newValue ) );
     else if( command == septaCmd )
         m_gateToGPUImageSPECT->SetSepta(
             septaCmd->GetNewDoubleValue( newValue ) );

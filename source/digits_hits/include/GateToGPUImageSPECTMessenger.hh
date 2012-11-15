@@ -45,6 +45,8 @@ class GateToGPUImageSPECTMessenger : public GateOutputModuleMessenger
 				G4UIcmdWithABool          *timeCmd;
         G4UIcmdWithAnInteger      *nzPixelCmd;
         G4UIcmdWithAnInteger      *nyPixelCmd;
+				G4UIcmdWithADoubleAndUnit *zPixelSizeCmd;
+				G4UIcmdWithADoubleAndUnit *yPixelSizeCmd;
         G4UIcmdWithADoubleAndUnit *septaCmd;
         G4UIcmdWithADoubleAndUnit *fyCmd;
         G4UIcmdWithADoubleAndUnit *fzCmd;

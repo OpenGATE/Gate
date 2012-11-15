@@ -266,6 +266,16 @@ void GateToGPUImageSPECT::SetNZpixel( G4int nz )
     m_nz_pixel = nz;
 }
 
+void GateToGPUImageSPECT::SetZPixelSize( G4double zPixelSize )
+{
+	m_z_pixel_size = zPixelSize;
+}
+
+void GateToGPUImageSPECT::SetYPixelSize( G4double yPixelSize )
+{
+	m_y_pixel_size = yPixelSize;
+}
+
 void GateToGPUImageSPECT::SetSepta( G4double septa )
 {
     m_septa = septa;
@@ -384,10 +394,11 @@ void GateToGPUImageSPECT::RecordBeginOfAcquisition()
 			&m_runID_ExitCollimatorSource, "runID/I" );
 
     // Getting detector geometry
-    G4double y_pixel_size = m_system->FindComponent( "pixel" )
+/*    G4double y_pixel_size = m_system->FindComponent( "pixel" )
         ->GetCreator()->GetHalfDimension( 1 )/mm * 2.0;
     G4double z_pixel_size = m_system->FindComponent( "pixel" )
         ->GetCreator()->GetHalfDimension( 2 )/mm * 2.0;
+*/
 
     // Computing first pixel in Z and Y
     m_centerOfPxlZ = new G4double[ m_nz_pixel ];
@@ -397,13 +408,13 @@ void GateToGPUImageSPECT::RecordBeginOfAcquisition()
     for( G4int i = 0; i < m_nz_pixel; ++i )
     {
         m_centerOfPxlZ[ i ] =
-            ( ( ( m_nz_pixel - 1.0 ) / 2.0 ) - i ) * z_pixel_size;
+            ( ( ( m_nz_pixel - 1.0 ) / 2.0 ) - i ) * m_z_pixel_size;
     }
     // In Y
     for( G4int i = 0; i < m_ny_pixel; ++i )
     {
         m_centerOfPxlY[ i ] =
-            ( ( ( m_ny_pixel - 1.0 ) / 2.0 ) - i ) * y_pixel_size;
+            ( ( ( m_ny_pixel - 1.0 ) / 2.0 ) - i ) * m_y_pixel_size;
     }
 
     // Allocating memory for the collimator
@@ -415,7 +426,7 @@ void GateToGPUImageSPECT::RecordBeginOfAcquisition()
 			m_cpuCollimator = GateCPUCollimator_new( m_ny_pixel, m_nz_pixel, m_septa,
 				m_fy, m_fz, m_collimatorHeight,
 				m_spaceBetweenCollimatorDetector, m_centerOfPxlY, m_centerOfPxlZ,
-				y_pixel_size, z_pixel_size );
+				m_y_pixel_size, m_z_pixel_size );
 		}
 		#ifdef GATE_USE_GPU
 		else
@@ -426,7 +437,7 @@ void GateToGPUImageSPECT::RecordBeginOfAcquisition()
 			m_gpuCollimator = GateGPUCollimator_new( m_ny_pixel, m_nz_pixel, m_septa,
         m_fy, m_fz, m_collimatorHeight,
         m_spaceBetweenCollimatorDetector, m_centerOfPxlY, m_centerOfPxlZ,
-        y_pixel_size, z_pixel_size, m_cudaDevice );
+        m_y_pixel_size, m_z_pixel_size, m_cudaDevice );
 				GateGPUCollimator_init( m_gpuCollimator );
 		}
 		#endif
