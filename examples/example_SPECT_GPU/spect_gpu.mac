@@ -36,6 +36,8 @@
 /gate/output/spectGPU/bufferParticleEntry 20000000
 /gate/output/spectGPU/setNZpixel                         131
 /gate/output/spectGPU/setNYpixel                         131
+/gate/output/spectGPU/setZpixelSize                      0.75 mm
+/gate/output/spectGPU/setYpixelSize                      0.75 mm
 /gate/output/spectGPU/setSepta                           0.15 mm
 /gate/output/spectGPU/setFy                              100.0 mm
 /gate/output/spectGPU/setFz                              100.0 mm
