@@ -1,7 +1,7 @@
 /gate/source/addSource tc99m_0 gps
 /gate/source/verbose 0
 /gate/source/tc99m_0/gps/particle gamma
-/gate/source/tc99m_0/setActivity 1000000000.00 Bq
+/gate/source/tc99m_0/setActivity 1000000.00 Bq
 /gate/source/tc99m_0/setForcedUnstableFlag false
 /gate/source/tc99m_0/gps/energytype Mono
 /gate/source/tc99m_0/gps/monoenergy 140.5 keV

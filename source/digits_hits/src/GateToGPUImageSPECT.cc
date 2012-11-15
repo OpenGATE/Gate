@@ -167,6 +167,10 @@ static void* cpuSPECT( void *args )
 		py += momentum[ 1 ] * s;
 		pz += momentum[ 2 ] * s;
 
+		cpuParticle->px[ p ] = px;
+		cpuParticle->py[ p ] = py;
+		cpuParticle->pz[ p ] = pz;
+		
 		if( py > exit_collim_y[ 0 ] || py < exit_collim_y[ y_size - 1 ] )
 		{
 			hole[ p ] = -1.0f;
