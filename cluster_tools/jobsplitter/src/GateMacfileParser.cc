@@ -636,7 +636,8 @@ void GateMacfileParser::ExtractLocalDirectory(G4String macfileName)
 /*just note if there is an enable command*/
 void GateMacfileParser::LookForEnableOutput()
 {
-	// {ROOT=0,ASCII=1,ARF=2,PROJ=3,ECAT=4,SINO=5,ACCEL=6,LMF=7,CT=8,DAQ=9,MDB=10,SIZE=11}
+	// {ROOT=0,ASCII=1,ARF=2,PROJ=3,ECAT=4,SINO=5,ACCEL=6,LMF=7,CT=8,DAQ=9,MDB=10,SIZE=11,
+	//GPUSPECT=12}
 	if      (macline.contains("/gate/output/root/disable"))            {enable[ROOT]=0;macline="";}
 	else if (macline.contains("/gate/output/root/enable"))             {enable[ROOT]=1;macline="";}
 	else if (macline.contains("/gate/output/ascii/disable"))           {enable[ASCII]=0;macline="";}
@@ -655,6 +656,8 @@ void GateMacfileParser::LookForEnableOutput()
 	else if (macline.contains("/gate/output/lmf/enable"))              {enable[LMF]=1;macline="";}
 	else if (macline.contains("/gate/output/imageCT/disable"))         {enable[CT]=0;macline="";}
 	else if (macline.contains("/gate/output/imageCT/enable"))          {enable[CT]=1;macline="";}
+	else if (macline.contains("/gate/output/spectGPU/disable"))         {enable[GPUSPECT]=0;macline="";}
+	else if (macline.contains("/gate/output/spectGPU/enable"))          {enable[GPUSPECT]=1;macline="";}
 }
 
 void GateMacfileParser::CheckOutputPrint()
@@ -662,7 +665,8 @@ void GateMacfileParser::CheckOutputPrint()
 	// ===========================================================================================
 	// Concerning output modules
 	// ===========================================================================================
-	// {ROOT=0,ASCII=1,ARF=2,PROJ=3,ECAT=4,SINO=5,ACCEL=6,LMF=7,CT=8,DAQ=9,MDB=10,SIZE=11}
+	// {ROOT=0,ASCII=1,ARF=2,PROJ=3,ECAT=4,SINO=5,ACCEL=6,LMF=7,CT=8,DAQ=9,MDB=10,SIZE=11,
+	//GPUSPECT=12}
 	//cases are:
 	//1) output disabled and not filename is given -> ok 
 	//2) output disabled but a filename is given -> output is let disabled
@@ -732,6 +736,13 @@ void GateMacfileParser::CheckOutputPrint()
         }
         else if (filenames[CT]==1) cout << "  CT         output is disabled but a filename is given (let it disable)" << endl;
         else cout << "  CT         output is disabled" << endl;
+				if (enable[GPUSPECT]==1) // the enable command was found
+        {
+                if (filenames[GPUSPECT]==1) cout << "  GPUSPECT   output is enabled" << endl; // a filaname was given, it's good
+                else cout << "  GPUSPECT   output is enabled but no filename is given (disable it by default)" << endl; // no filename given
+        }
+        else if (filenames[GPUSPECT]==1) cout << "  GPUSPECT   output is disabled but a filename is given (let it disable)" << endl;
+        else cout << "  GPUSPECT   output is disabled" << endl;
 	// ===========================================================================================
 	// Concerning actors
 	// ===========================================================================================
@@ -754,8 +765,10 @@ void GateMacfileParser::CheckOutput(ofstream& output,ofstream& /*splitfile*/,G4i
 	if(enable[ACCEL]==1 && filenames[ACCEL]==1) output << "/gate/output/sinoAccel/enable" << endl;
 	if(enable[LMF]==1 && filenames[LMF]==1)     output << "/gate/output/lmf/enable" << endl;
 	if(enable[CT]==1 && filenames[CT]==1)       output << "/gate/output/imageCT/enable" << endl;
+	if(enable[GPUSPECT]==1 && filenames[GPUSPECT]==1)       output << "/gate/output/spectGPU/enable" << endl;
 }
-//CHANGED
+
+//CHANGED$
 void GateMacfileParser::AddPWD(G4String key)
 {
 	G4String filename=ExtractFileName(key);
@@ -771,7 +784,8 @@ void GateMacfileParser::AddPWD(G4String key)
 /*assumes that aliasing has been completed beforehand*/
 void GateMacfileParser::InsertOutputFileNames(G4int splitNumber,ofstream& splitfile)
 {
-	// {ROOT=0,ASCII=1,ARF=2,PROJ=3,ECAT=4,SINO=5,ACCEL=6,LMF=7,CT=8,DAQ=9,MDB=10,SIZE=11}
+	// {ROOT=0,ASCII=1,ARF=2,PROJ=3,ECAT=4,SINO=5,ACCEL=6,LMF=7,CT=8,DAQ=9,MDB=10,SIZE=11,
+	// GPUSPECT=12}
 	char SplitNumberAsString[10];
 	sprintf(SplitNumberAsString,"%i",splitNumber);
 
@@ -820,6 +834,11 @@ void GateMacfileParser::InsertOutputFileNames(G4int splitNumber,ofstream& splitf
         {
                 AddPWD("/gate/output/imageCT/setFileName");
                 filenames[CT]=1;
+        }
+	else if( TreatOutputStream("/gate/output/spectGPU/setFileName", "spectGPUfile", originalSPECTGPUFileName, SplitNumberAsString) )
+        {
+                AddPWD("/gate/output/spectGPU/setFileName");
+                filenames[GPUSPECT]=1;
         }
 	else if( macline.contains("/gate/geometry/setMaterialDatabase") )
 	{

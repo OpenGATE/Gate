@@ -24,7 +24,7 @@ using namespace std;
 
 /*use this class to generate fully resolved macfiles and a splitfile*/
 
-enum {ROOT=0,ASCII=1,ARF=2,PROJ=3,ECAT=4,SINO=5,ACCEL=6,LMF=7,CT=8,DAQ=9,MDB=10,SIZE=11};
+enum {ROOT=0,ASCII=1,ARF=2,PROJ=3,ECAT=4,SINO=5,ACCEL=6,LMF=7,CT=8, GPUSPECT=9, DAQ=10,MDB=11,SIZE=12};
 
 class GateMacfileParser
 {
@@ -73,6 +73,7 @@ public:
   G4String originalLmfFileName;
   G4String originalAsciiFileName;
   G4String originalCTFileName;
+	G4String originalSPECTGPUFileName;
   G4String originalARFFileName;
   // Conerning actor
   vector<G4String> listOfActorType;
