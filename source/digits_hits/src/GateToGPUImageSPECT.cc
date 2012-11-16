@@ -30,6 +30,7 @@
 #include "G4Gamma.hh"
 #include "G4Electron.hh"
 #include <cstddef>
+#include <sys/time.h>
 
 #define PI ( 4 * ::atan( 1 ) )
 
@@ -485,8 +486,9 @@ void GateToGPUImageSPECT::RecordEndOfAcquisition()
 
 		if( m_timeFlag )
 		{
-			G4cout << "Elapsed time in GPU/SPECT collimator: " << m_elapsedTime
-				<< " seconds" << G4endl;
+			//G4cout << "Elapsed time in GPU/SPECT collimator: " << m_elapsedTime
+			//	<< " seconds" << G4endl;
+            printf("Elapsed time in SPECT collimator: %f s\n", m_elapsedTime);
 		}
 
 	if( nVerboseLevel > 1 )
@@ -738,15 +740,22 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					}
 				}
 
+                // A real timing :)
+	            timeval tv;
+                G4double start, end;
+
 				unsigned int sizeAfter = 0;
 				if( m_cpuFlag )
 				{
+                    // timing - JB
+	                gettimeofday(&tv, NULL);
+	                start = tv.tv_sec + tv.tv_usec / 1000000.0;
+                                        
 					pthread_t *threads = new pthread_t[ m_cpuNumber ];
 					pthread_attr_t attr;
 					pthread_attr_init( &attr );
 					pthread_attr_setdetachstate( &attr, PTHREAD_CREATE_JOINABLE );
 
-					clock_t start = clock();
 					ThreadArgSPECT *arg = new ThreadArgSPECT[ m_cpuNumber ];
 					for( int t = 0; t < m_cpuNumber; ++t )
 					{
@@ -760,12 +769,9 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					{
 						pthread_join( threads[ t ], NULL );
 					}
-					clock_t end = clock();
 					delete[] arg;
 					delete[] threads;
 					pthread_attr_destroy( &attr );
-
-					m_elapsedTime += (G4double)( end - start) / CLOCKS_PER_SEC;
 
 					// Pack data
 					int pack = 0;
@@ -793,6 +799,11 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					}
 					m_cpuParticle->size = pack;
 
+                    // timing - JB
+	                gettimeofday(&tv, NULL);
+	                end = tv.tv_sec + tv.tv_usec / 1000000.0;
+					m_elapsedTime += (G4double)(end - start);
+
 					// Getting the number of particles after the CPU
 					sizeAfter = m_cpuParticle->size;
 					if( nVerboseLevel > 0 )
@@ -802,10 +813,17 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 				else
 				{
 					// CPU -> GPU
-					clock_t start = clock();
+                    // timing - JB
+	                gettimeofday(&tv, NULL);
+	                start = tv.tv_sec + tv.tv_usec / 1000000.0;
+
 					GateGPUCollimator_process( m_gpuCollimator, m_gpuParticle );
-					clock_t end = clock();
-					m_elapsedTime += (G4double)( end - start) / CLOCKS_PER_SEC;
+                    
+                    // timing - JB
+	                gettimeofday(&tv, NULL);
+	                end = tv.tv_sec + tv.tv_usec / 1000000.0;
+					m_elapsedTime += (G4double)(end - start);
+
 					// Getting the number of particles after the GPU
 					sizeAfter = m_gpuParticle->size;
 					if( nVerboseLevel > 0 )
