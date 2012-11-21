@@ -160,11 +160,11 @@ void GateSourceVoxelInterfileReader::ReadKey(FILE* fp)
   char keyBuffer[256],valueBuffer[256];
   if( fscanf(fp,"%[^=]",keyBuffer) == EOF )
 	{
-		G4cerr << "Number of receiving arguments failed!!!" << G4endl;
+		;//G4cerr << "Number of receiving arguments failed!!!" << G4endl;
 	}
   if( fscanf(fp,"%[^\n]",valueBuffer) == EOF )
 	{
-		G4cerr << "Number of receiving arguments failed!!!" << G4endl;
+		;//G4cerr << "Number of receiving arguments failed!!!" << G4endl;
 	}
 
   char *keyPtr = keyBuffer;
@@ -352,11 +352,11 @@ void GateSourceVoxelInterfileReader::ReadKeyFrames(FILE* fp)
   char keyBuffer[256],valueBuffer[256];
   if( fscanf(fp,"%[^=]",keyBuffer) == EOF )
 	{
-		G4cerr << "Number of receiving arguments failed!!!" << G4endl;
+		;//G4cerr << "Number of receiving arguments failed!!!" << G4endl;
 	}
   if( fscanf(fp,"%[^\n]",valueBuffer) == EOF )
 	{
-		G4cerr << "Number of receiving arguments failed!!!" << G4endl;
+		;//G4cerr << "Number of receiving arguments failed!!!" << G4endl;
 	}
 
   char *keyPtr = keyBuffer;
