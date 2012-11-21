@@ -112,9 +112,10 @@ void GateWashOutActor::BeginOfEventAction(const G4Event * event)
     G4String SourceName = mGateWashOutSources[iRow]; // WashOut sources 
   
     if ( SourceName == SourceNameNow ) { 
-    
+        
       mTimeNow = (GateSourceMgr::GetInstance())->GetTime(); // Present time
 
+      mSourceWashOutID = iRow;  
       mModel = GetWashOutModelValue(); // Get the value of the model
   
       G4double ActivityNew = mGateWashOutActivityIni[mSourceID] * mModel;  // Apply the washout model  
@@ -162,9 +163,9 @@ void GateWashOutActor::EndOfEventAction(const G4Event * event)
 //-----------------------------------------------------------------------------
 G4double GateWashOutActor::GetWashOutModelValue()
 {
-  mModel = mGateWashOutParameters[mSourceID][0] * exp( - (mTimeNow * log(2.0) / mGateWashOutParameters[mSourceID][1] ) ) +  // First component
-    mGateWashOutParameters[mSourceID][2] * exp( - (mTimeNow * log(2.0) / mGateWashOutParameters[mSourceID][3] ) ) +  // Second component
-    mGateWashOutParameters[mSourceID][4] * exp( - (mTimeNow * log(2.0) / mGateWashOutParameters[mSourceID][5] ) );  // Third component  
+  mModel = mGateWashOutParameters[mSourceWashOutID][0] * exp( - (mTimeNow * log(2.0) / mGateWashOutParameters[mSourceWashOutID][1] ) ) +  // First component
+    mGateWashOutParameters[mSourceWashOutID][2] * exp( - (mTimeNow * log(2.0) / mGateWashOutParameters[mSourceWashOutID][3] ) ) +  // Second component
+    mGateWashOutParameters[mSourceWashOutID][4] * exp( - (mTimeNow * log(2.0) / mGateWashOutParameters[mSourceWashOutID][5] ) );  // Third component  
     
   return mModel;
 }
@@ -177,8 +178,7 @@ G4double GateWashOutActor::GetWashOutModelValue()
     al PMB 48 (2003) has been incorporated. This model is expressed in terms
     of three components (slow, medium and fast; order not important). 
     For each component and for each source (& material), its fraction and its 
-    half life (with units) are required. The sum of the ratios has to be equal 
-    to the unity. Example (in fileName):
+    half life (with units) are required. Example (in fileName):
     SourceName MaterialName   0.35  10000 s    0.3  140 s    0.35  2.0 s  */
 //-----------------------------------------------------------------------------
 void GateWashOutActor::ReadWashOutTable(G4String fileName)
@@ -219,9 +219,8 @@ void GateWashOutActor::ReadWashOutTable(G4String fileName)
       parWashOut[5] = ScaleValue(parWashOut[5],unit);   
       
       G4double sumWashOut = parWashOut[0] + parWashOut[2] + parWashOut[4];
-      
-      if ( fabs(sumWashOut-1.0) > diff ) {
-        GateError("WashOut Actor :: ERROR: Total WashOut Ratio non equal to 1." << G4endl);
+      if ( (sumWashOut-1.0) > diff ) {
+        GateMessage("Actor", 0, "WARNING :: Total WashOut Ratio non equal to 1." << G4endl);
       }  
 
 // Print information

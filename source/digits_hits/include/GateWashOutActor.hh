@@ -62,7 +62,8 @@ class GateWashOutActor : public GateVActor
   GateVSource * mSourceNow;
   GateVSourceVoxelReader * mSVReader;
   
-  G4int mSourceID;  
+  G4int mSourceID; 
+  G4int mSourceWashOutID;  
   G4double mTimeNow; 
   G4double mModel; 
   
