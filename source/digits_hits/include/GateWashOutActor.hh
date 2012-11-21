@@ -41,17 +41,17 @@ class GateWashOutActor : public GateVActor
   virtual void BeginOfRunAction(const G4Run * r);
   virtual void BeginOfEventAction(const G4Event * event);
   virtual void EndOfEventAction(const G4Event * event);  
-  virtual void UserSteppingAction(const GateVVolume * vol, const G4Step* step);
-  virtual void PreUserTrackingAction(const GateVVolume * /*v*/, const G4Track* /*t*/); 
+  virtual void UserSteppingAction(const GateVVolume * /*v*/, const G4Step* /*s*/){};
+  virtual void PreUserTrackingAction(const GateVVolume * /*v*/, const G4Track* /*t*/) {};
+  virtual void PostUserTrackingAction(const GateVVolume * /*v*/, const G4Track* /*t*/) {}; 
 
+  G4double GetWashOutModelValue();  
   virtual void ReadWashOutTable(G4String fileName);    
-  G4double ScaleValue(G4double value,G4String unit);
-
+  G4double ScaleValue(G4double value,G4String unit);  
+  
   virtual void SaveData() {};
   virtual void ResetData() {};
   
-  GateVSourceVoxelReader* GetSReader(){return mSVReader;};
- 
   protected:
     
   GateWashOutActor(G4String name, G4int depth=0);
@@ -60,15 +60,15 @@ class GateWashOutActor : public GateVActor
   
   GateVVolume * v; 
   GateVSource * mSourceNow;
-  GateVSourceVoxelReader * mSVReader; 
-
-  G4bool mWashOutIsFistStep;
+  GateVSourceVoxelReader * mSVReader;
+  
   G4int mSourceID;  
   G4double mTimeNow; 
+  G4double mModel; 
   
   std::vector<G4double> mGateWashOutActivityIni;
-  std::vector< std::vector<G4double> > mGateWashOutParemeters;
-  std::vector<G4String> mGateWashOutMaterials;
+  std::vector< std::vector<G4double> > mGateWashOutParameters;
+  std::vector<G4String> mGateWashOutSources;
  
 };
 

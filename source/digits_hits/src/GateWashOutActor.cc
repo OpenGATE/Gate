@@ -62,8 +62,8 @@ void GateWashOutActor::Construct()
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
   EnableEndOfEventAction(true);
-  EnablePreUserTrackingAction(true);
-  EnableUserSteppingAction(true);
+  EnablePreUserTrackingAction(false);
+  EnableUserSteppingAction(false);
   EnablePostUserTrackingAction(false);
 
 }
@@ -77,21 +77,20 @@ void GateWashOutActor::BeginOfRunAction(const G4Run * r) {
   G4double ActWashOut;   
   mGateWashOutActivityIni.clear(); 
 
-  for(G4int nsource= 0 ; nsource<GateSourceMgr::GetInstance()->GetNumberOfSources() ; nsource++ ) {
+  for( G4int nsource= 0 ; nsource < GateSourceMgr::GetInstance()->GetNumberOfSources() ; nsource++ ) {
     
     GateVSource * SourceIni = (GateSourceMgr::GetInstance())->GetSource(nsource); 
     
-    if ( SourceIni->GetType() == G4String("gps") ) {
+    if ( SourceIni->GetType() == G4String("gps") || SourceIni->GetType() == G4String("backtoback") || SourceIni->GetType() == G4String("") );
+    else { GateError("WashOut Actor :: ERROR. Source type is not valid." << G4endl); }
+          
+    if ( !(SourceIni->GetIfSourceVoxelized()) ) {
       ActWashOut = SourceIni->GetActivity(); }
-
-    else if ( SourceIni->GetType() == G4String("") ) {
+    else {
       GateSourceVoxellized * SourceVoxlIni = (GateSourceVoxellized *) SourceIni;
-      GateVSourceVoxelReader * VSReaderIni = SourceVoxlIni->GetReader();      
+      GateVSourceVoxelReader * VSReaderIni = SourceVoxlIni->GetReader();   
       ActWashOut = VSReaderIni->GetTempTotalActivity(); }
-      
-    else{
-      GateError("WashOut Actor :: ERROR: Source Type non recognised." << G4endl); }        
-      
+     
     mGateWashOutActivityIni.push_back(ActWashOut);  
   }
 }
@@ -103,15 +102,44 @@ void GateWashOutActor::BeginOfEventAction(const G4Event * event)
 {
   GateMessage("Actor", 4, "GateWashOutActor -- Begin of Event" << G4endl);
   GateVActor::BeginOfEventAction(event);
-  
+
   mSourceID = (GateSourceMgr::GetInstance())->GetCurrentSourceID();  // Source ID       
   mSourceNow = (GateSourceMgr::GetInstance())->GetSource(mSourceID);  
+  G4String SourceNameNow = mSourceNow->GetName();
+
+  for ( G4int iRow = 0; iRow<(G4int)mGateWashOutSources.size(); iRow++ ) { 
+
+    G4String SourceName = mGateWashOutSources[iRow]; // WashOut sources 
   
-  if ( mSourceNow->GetType() == G4String("") ) {
-    GateSourceVoxellized * SourceVoxlNow = (GateSourceVoxellized *) mSourceNow; // Voxelized source
-    mSVReader = SourceVoxlNow->GetReader(); } 
-   
-  mTimeNow = (GateSourceMgr::GetInstance())->GetTime(); // Present time
+    if ( SourceName == SourceNameNow ) { 
+    
+      mTimeNow = (GateSourceMgr::GetInstance())->GetTime(); // Present time
+
+      mModel = GetWashOutModelValue(); // Get the value of the model
+  
+      G4double ActivityNew = mGateWashOutActivityIni[mSourceID] * mModel;  // Apply the washout model  
+      
+      // Set the total activity of the source (with the washout decay)  
+
+    if ( !(mSourceNow->GetIfSourceVoxelized()) ) {    // Non-voxelized source
+        mSourceNow->SetActivity( ActivityNew ); }
+    else {
+        GateSourceVoxellized * SourceVoxlNow = (GateSourceVoxellized *) mSourceNow;
+        mSVReader = SourceVoxlNow->GetReader();        
+        mSVReader->SetTempTotalActivity( ActivityNew ); }   // Voxelized source
+      
+//      G4cout << "##############################################################################################"  << G4endl;
+//      G4cout << "######### WashOutActor Event :: Source ID = " << mSourceID << G4endl;
+//      G4cout << "######### WashOutActor Event :: Source Type = " << mSourceNow->GetType() << G4endl;  
+//      G4cout << "######### WashOutActor Event :: Source Name = " << mSourceNow->GetName() << G4endl;   
+//      G4cout << "######### WashOutActor Event :: Initial Activity (Bq) = " << mGateWashOutActivityIni[mSourceID]/becquerel << G4endl;      
+//      G4cout << "######### WashOutActor Event :: Time for this Event (s) = " << mTimeNow/s << G4endl;      
+//      G4cout << "######### WashOutActor Event :: Washout Model value = " << mModel << G4endl;         
+//      G4cout << "######### WashOutActor Event :: Final Activity (Bq) = " << ActivityNew/becquerel << G4endl;  
+//      G4cout << "##############################################################################################"  << G4endl;   
+    
+    }
+  }
 }
 //-----------------------------------------------------------------------------
 
@@ -126,80 +154,37 @@ void GateWashOutActor::EndOfEventAction(const G4Event * event)
 
 
 //-----------------------------------------------------------------------------
-void GateWashOutActor::PreUserTrackingAction(const GateVVolume * /*v*/, const G4Track* /*t*/)
+/*  GateWashOutActor::GetWashOutModelValue() returns the value of the
+    model, for a given time and washout parameters. The model described
+    in Mizuno et al PMB 48 (2003) has been incorporated. 
+    This model is expressed in terms of three exponential 
+    components (slow, medium and fast) and its corresponding parameters. */
+//-----------------------------------------------------------------------------
+G4double GateWashOutActor::GetWashOutModelValue()
 {
-  mWashOutIsFistStep = true; // First step of the particle 
+  mModel = mGateWashOutParameters[mSourceID][0] * exp( - (mTimeNow * log(2.0) / mGateWashOutParameters[mSourceID][1] ) ) +  // First component
+    mGateWashOutParameters[mSourceID][2] * exp( - (mTimeNow * log(2.0) / mGateWashOutParameters[mSourceID][3] ) ) +  // Second component
+    mGateWashOutParameters[mSourceID][4] * exp( - (mTimeNow * log(2.0) / mGateWashOutParameters[mSourceID][5] ) );  // Third component  
+    
+  return mModel;
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GateWashOutActor::UserSteppingAction(const GateVVolume * vol, const G4Step* step) {
- GateVActor::UserSteppingAction(vol,step);
-
-  if ( !mWashOutIsFistStep ) return; 
- 
-  if ( mWashOutIsFistStep && step->GetTrack()->GetTrackID() == 1 ) {  // Primary particle, first step
-   
-    G4String ParticleNameNow = step->GetTrack()->GetParticleDefinition()->GetParticleName(); // Particle name
-
- //   if ( ParticleNameNow == G4String("e+") ) { 
-
-      G4String MatNameNow = step->GetPreStepPoint()->GetMaterial()->GetName();  // Present material name
-   
-      for ( G4int iRow = 0; iRow<(G4int)mGateWashOutMaterials.size(); iRow++ ) { 
-
-        G4String MatName = mGateWashOutMaterials[iRow]; // WashOut materials
-         
-          if ( MatName == MatNameNow ) { 
-
-            G4double Model = mGateWashOutParemeters[iRow][0] * exp( - (mTimeNow * log(2.0) / mGateWashOutParemeters[iRow][1] ) ) +  // First component
-            mGateWashOutParemeters[iRow][2] * exp( - (mTimeNow * log(2.0) / mGateWashOutParemeters[iRow][3] ) ) +  // Second component
-            mGateWashOutParemeters[iRow][4] * exp( - (mTimeNow * log(2.0) / mGateWashOutParemeters[iRow][5] ) );  // Third component  
-    
-            G4double ActivityNew = mGateWashOutActivityIni[mSourceID] * Model;  // Apply the washout model
-
-            if ( mSourceNow->GetType() == G4String("") ) {    // Set the total activity of the source (with the washout decay)
-              mSVReader->SetTempTotalActivity( ActivityNew ); 
-	    }  
-            else if ( mSourceNow->GetType() == G4String("gps") ) {      
-              mSourceNow->SetActivity( ActivityNew ); 
-	    }
-
-//            G4cout << "##############################################################################################"  << G4endl;
-//            G4cout << "######### WashOutActor Step :: Source ID = " << mSourceID << G4endl;
-//            G4cout << "######### WashOutActor Step :: Source Type = " << mSourceNow->GetType() << G4endl;
-//            G4cout << "######### WashOutActor Step :: Particle at Position = " << ParticleNameNow << " at " << step->GetPreStepPoint()->GetPosition() << G4endl;	      
-//            G4cout << "######### WashOutActor Step :: Current Material for this Event = " << MatNameNow << G4endl;
-//            G4cout << "######### WashOutActor Step :: Time for this Event (s) = " << mTimeNow/s << G4endl;
-//            G4cout << "######### WashOutActor Step :: Initial Activity (Bq) = " << mGateWashOutActivityIni[mSourceID]/becquerel << G4endl;      	    
-//            G4cout << "######### WashOutActor Step :: Washout Model value = " << Model << G4endl;         
-//            G4cout << "######### WashOutActor Step :: Activity after modification (Bq) = " << ActivityNew/becquerel << G4endl;  
-//            G4cout << "##############################################################################################"  << G4endl;
-    
-   //    }	
-      }  
-    }
-    mWashOutIsFistStep = false; 
-  }
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-/*  GateWashOutActor::ReadWashOutTable(G4String fileName) reads the washout 
-    parameters from a file (fileName).The model described in Mizuno et al 
-    PMB 48 (2003) has been incorporated. This model is expressed in terms
+/*  GateWashOutActorMessenger::ReadWashOutTable(G4String fileName) reads the  
+    washout parameters from a file (fileName).The model described in Mizuno et
+    al PMB 48 (2003) has been incorporated. This model is expressed in terms
     of three components (slow, medium and fast; order not important). 
-    For each component and for each material, its fraction and its 
+    For each component and for each source (& material), its fraction and its 
     half life (with units) are required. The sum of the ratios has to be equal 
     to the unity. Example (in fileName):
-    Brain   0.35  10000 s    0.3  140 s    0.35  2.0 s  */
+    SourceName MaterialName   0.35  10000 s    0.3  140 s    0.35  2.0 s  */
 //-----------------------------------------------------------------------------
 void GateWashOutActor::ReadWashOutTable(G4String fileName)
 {        
-  mGateWashOutMaterials.clear();
-  mGateWashOutParemeters.clear();
+  mGateWashOutSources.clear();
+  mGateWashOutParameters.clear();
   
   std::ifstream inFile;
 
@@ -210,7 +195,8 @@ void GateWashOutActor::ReadWashOutTable(G4String fileName)
   if (inFile.is_open()){
     G4int nTotCol;
     inFile >> nTotCol;
-  
+
+    G4String sourceWashOut;
     G4String matWashOut;
     std::vector<G4double> parWashOut (6); 
     
@@ -219,6 +205,8 @@ void GateWashOutActor::ReadWashOutTable(G4String fileName)
     
     for ( G4int iRow=0; iRow<nTotCol; iRow++ ) {
 
+      inFile >> sourceWashOut; 
+      
       inFile >> matWashOut; 
       
       inFile >> parWashOut[0] >> parWashOut[1] >> unit; 
@@ -239,7 +227,8 @@ void GateWashOutActor::ReadWashOutTable(G4String fileName)
 // Print information
       GateMessage("Actor", 0, 
               "Line " << iRow+1 << " of " << nTotCol << G4endl <<
-              "\tMaterial: " << matWashOut << G4endl <<
+              "\tSource Name: " << sourceWashOut << G4endl <<              
+              "\tMaterial (associated to Source): " << matWashOut << G4endl <<
               "\tRatio First WashOut Component: " << parWashOut[0] << G4endl <<                 
               "\tHalf Life First WashOut Component (ns): " << parWashOut[1] << G4endl <<              
               "\tRatio Second WashOut Component: " << parWashOut[2] << G4endl <<    
@@ -247,16 +236,14 @@ void GateWashOutActor::ReadWashOutTable(G4String fileName)
               "\tRatio Third WashOut Component: " << parWashOut[4] << G4endl <<   
               "\tHalf Life Third WashOut Component (ns): " << parWashOut[5] << G4endl);    
 
-      mGateWashOutMaterials.push_back(matWashOut);
-      mGateWashOutParemeters.push_back(parWashOut);
+      mGateWashOutSources.push_back(sourceWashOut);
+      mGateWashOutParameters.push_back(parWashOut);
      
     }
   }
   
   else {
-
     GateError("WashOut Actor :: ERROR in opening/reading WashOut datafile." << G4endl);
-
     inFile.close();
   }
 }

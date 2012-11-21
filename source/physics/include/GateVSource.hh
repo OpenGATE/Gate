@@ -69,7 +69,8 @@ public:
   virtual void SetAccoValue( G4double value ) { m_accoValue = value; }
   virtual G4double GetAccoValue()             { return m_accoValue; }
 
-
+  virtual void SetIfSourceVoxelized( G4bool value ) { mIsSourceVoxelized = value; };      // added by I. Martinez-Rovira (immamartinez@gmail.com)
+  virtual G4bool GetIfSourceVoxelized() { return mIsSourceVoxelized; };    // added by I. Martinez-Rovira (immamartinez@gmail.com)
 
   // getter and setter for T_1/2, without introducing one more variable
   virtual void SetForcedHalfLife( G4double value ) { m_forcedLifeTime =  value / log( 2. ); }
@@ -149,6 +150,7 @@ protected:
   G4String   mRelativePlacementVolumeName;
   G4String   m_materialName;
   GateVVolume * mVolume;
+  G4bool    mIsSourceVoxelized;  // added by I. Martinez-Rovira (immamartinez@gmail.com)  
 
   G4double mEnergy;
   bool mEnableRegularActivity;

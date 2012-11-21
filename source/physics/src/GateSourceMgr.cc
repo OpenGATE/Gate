@@ -176,6 +176,7 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
         {
           source = new GateSourceVoxellized( sourceName );
           source->SetSourceID( m_sourceProgressiveNumber );
+          source->SetIfSourceVoxelized(true);  // added by I. Martinez-Rovira (immamartinez@gmail.com)       	  
         }
       else if( sourceGeomType == G4String("GPUvoxel") || sourceGeomType == G4String("GPUVoxel") )
         {
@@ -202,6 +203,7 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
         source  =new GateVSource( sourceName );
         source->SetType("gps");
         source->SetSourceID( m_sourceProgressiveNumber );
+        source->SetIfSourceVoxelized(false);  // added by I. Martinez-Rovira (immamartinez@gmail.com)          
         //mSources.push_back( new GateVSource( sourceName ));
         //mSources[mSources.size()-1]->SetType("gps");
 	//mSources[mSources.size()-1]->SetSourceID( m_sourceProgressiveNumber );
@@ -210,6 +212,7 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
         source = new GateVSource( sourceName );
         source->SetType("backtoback");
         source->SetSourceID( m_sourceProgressiveNumber );
+        source->SetIfSourceVoxelized(false);  // added by I. Martinez-Rovira (immamartinez@gmail.com)   	
       }
       else if (sourceGeomType == "fastI124") {
         source = new GateVSource( sourceName );
@@ -220,6 +223,7 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
         source = new GateVSource( sourceName );
         source->SetType("gps");
         source->SetSourceID( m_sourceProgressiveNumber );
+        source->SetIfSourceVoxelized(false);  // added by I. Martinez-Rovira (immamartinez@gmail.com)   	
       }
       else {
         GateError("Unknown source type '" << sourceGeomType
