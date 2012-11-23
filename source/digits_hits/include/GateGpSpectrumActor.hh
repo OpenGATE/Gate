@@ -39,6 +39,8 @@ class GateGpSpectrumActor : public GateVActor
 		GateActorMessenger* pMessenger;
 		TFile* pTfile;
 		TH2D* pHEpEgp;
+		TH1D* pHEpInelastic;
+		TH1D* pHEpInelasticProducedGamma;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(GpSpectrumActor,GateGpSpectrumActor)

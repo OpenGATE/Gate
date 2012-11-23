@@ -30,9 +30,19 @@ void GateGpSpectrumActor::Construct()
 
 	pTfile = new TFile(mSaveFilename,"RECREATE");
 
-	pHEpEgp = new TH2D("EpEgp","PG versus proton energy",256,0,200,256,0,10);
+	const G4double max_proton_energy = 250*MeV;
+	const G4double max_pg_energy = 10*MeV;
+	const G4int bin = 256;
+
+	pHEpEgp = new TH2D("EpEgp","PG versus proton energy",bin,0,max_proton_energy/MeV,bin,0,max_pg_energy/MeV);
 	pHEpEgp->SetXTitle("E_{proton} [MeV]");
 	pHEpEgp->SetYTitle("E_{gp} [MeV]");
+
+	pHEpInelastic = new TH1D("EpInelastic","proton energy for each inelastic interaction",bin,0,max_proton_energy/MeV);
+	pHEpInelastic->SetXTitle("E_{proton} [MeV]");
+
+	pHEpInelasticProducedGamma = new TH1D("EpInelasticProducedGamma","proton energy for each inelastic interaction if gamma production",bin,0,max_proton_energy/MeV);
+	pHEpInelasticProducedGamma->SetXTitle("E_{proton} [MeV]");
 
 	ResetData();
 }
@@ -45,6 +55,8 @@ void GateGpSpectrumActor::SaveData()
 void GateGpSpectrumActor::ResetData() 
 {
 	pHEpEgp->Reset();
+	pHEpInelastic->Reset();
+	pHEpInelasticProducedGamma->Reset();
 }
 
 void GateGpSpectrumActor::BeginOfRunAction(const G4Run*)
@@ -91,11 +103,13 @@ void GateGpSpectrumActor::UserSteppingAction(const GateVVolume*, const G4Step* s
 	const G4String process_name = process->GetProcessName();
 	if (process_name != "ProtonInelastic") return;
 
-	const G4double particle_energy_pre = step->GetPreStepPoint()->GetKineticEnergy();
-	//const G4double particle_energy_post = step->GetPostStepPoint()->GetKineticEnergy();
-	const G4double particle_energy = particle_energy_pre;
+	const G4double particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
+	//const G4double particle_energy = step->GetPostStepPoint()->GetKineticEnergy();
+
+	pHEpInelastic->Fill(particle_energy/MeV);
 
 	//G4cout << "coucou " << particle_name << " " << particle_energy/MeV << " " << process_name << " " << secondaries->size() << " " << created_this_step << G4endl;
+	G4bool produced_any_gamma = false;
 	for (G4TrackVector::const_reverse_iterator iter=secondaries->rbegin(); iter!=secondaries->rend(); iter++)
 	{
 		if (!created_this_step) break;
@@ -103,7 +117,10 @@ void GateGpSpectrumActor::UserSteppingAction(const GateVVolume*, const G4Step* s
 		if ((*iter)->GetParticleDefinition()->GetParticleName() != "gamma") continue;
 		//G4cout << "    " << (*iter)->GetParticleDefinition()->GetParticleName() << " " << (*iter)->GetKineticEnergy()/MeV << G4endl;
 		pHEpEgp->Fill(particle_energy/MeV,(*iter)->GetKineticEnergy()/MeV);
+		produced_any_gamma = true;
 	}
+
+	if (produced_any_gamma) pHEpInelasticProducedGamma->Fill(particle_energy/MeV);
 	
 }
 
