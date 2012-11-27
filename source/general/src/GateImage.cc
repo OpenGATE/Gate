@@ -1386,7 +1386,7 @@ void GateImage::UpdateDataForRootOutput() {
   if (resolution.y() != 1) mRootHistoDim++;
   if (resolution.z() != 1) mRootHistoDim++;
 
-  if (mRootHistoDim == 1 || mRootHistoDim == 2) {
+  if (mRootHistoDim == 1 || mRootHistoDim == 2 || mRootHistoDim == 3) {
     if (resolution.x() != 1) { 
       mRootHistoBinxNb = resolution.x(); 
       mRootHistoBinxLow = -halfSize.x()+mPosition.x(); 
@@ -1406,7 +1406,7 @@ void GateImage::UpdateDataForRootOutput() {
     mRootHistoBinxSize = (mRootHistoBinxUp-mRootHistoBinxLow)/mRootHistoBinxNb;
 
   }
-  if (mRootHistoDim == 2) {
+  if (mRootHistoDim == 2 || mRootHistoDim == 3) {
     /*if (resolution.x() != 1) { 
       mRootHistoBinxNb = resolution.x(); 
       mRootHistoBinxLow = -halfSize.x()+mPosition.x(); 
@@ -1426,6 +1426,17 @@ void GateImage::UpdateDataForRootOutput() {
     mRootHistoBinySize = (mRootHistoBinyUp-mRootHistoBinyLow)/mRootHistoBinyNb;
 
   }
+    if (mRootHistoDim == 3) {
+
+      mRootHistoBinzNb = resolution.z(); 
+      mRootHistoBinzLow = -halfSize.z()+mPosition.z(); 
+      mRootHistoBinzUp = halfSize.z()+mPosition.z(); 
+
+
+    mRootHistoBinzSize = (mRootHistoBinzUp-mRootHistoBinzLow)/mRootHistoBinzNb;
+
+  }
+  
 }
 //-----------------------------------------------------------------------------
 
@@ -1466,20 +1477,63 @@ void GateImage::WriteRoot(G4String filename) {
     double y=mRootHistoBinyLow+sy;
     for(int i = 0;i<mRootHistoBinxNb;i++)
     {
+      y=mRootHistoBinyLow+sy;
       for(int j = 0;j<mRootHistoBinyNb;j++)
       {
-        x+=mRootHistoBinxSize*i;
-        y+=mRootHistoBinySize*j;
         h2->Fill(x,y, data[i*mRootHistoBinyNb+j]);
+	y+=mRootHistoBinySize;
       }
+       x+=mRootHistoBinxSize;
     }
 
     h2->Write();
     f->Close();
   }
   else { 
-    GateError("sorry try to output root OD or 3D histogram : not yet !!");
-  }
+        TFile * f = new TFile(filename, "RECREATE"); 
+    TH3F * h3 = new TH3F("histo", 
+			std::string("3D distribution "+filename).c_str(), 
+			mRootHistoBinxNb, 
+			mRootHistoBinxLow, 
+			mRootHistoBinxUp,
+			mRootHistoBinyNb, 
+			mRootHistoBinyLow, 
+			mRootHistoBinyUp,
+			mRootHistoBinzNb, 
+			mRootHistoBinzLow, 
+			mRootHistoBinzUp);
+    
+
+    double sx = mRootHistoBinxSize/2.0; 
+    double sy = mRootHistoBinySize/2.0;
+    double sz = mRootHistoBinzSize/2.0;
+    double x=mRootHistoBinxLow+sx;
+    double y=mRootHistoBinyLow+sy;
+    double z=mRootHistoBinzLow+sz;   
+    for(int i = 0;i<mRootHistoBinxNb;i++)
+    {
+            y=mRootHistoBinyLow+sy; 
+      for(int j = 0;j<mRootHistoBinyNb;j++)
+      {
+	      z=mRootHistoBinzLow+sz;
+	for(int k = 0;k<mRootHistoBinzNb;k++)
+	{
+
+	  h3->Fill(x,y,z, data[k*mRootHistoBinxNb*mRootHistoBinyNb+ j*mRootHistoBinxNb+i]);
+	  z+=mRootHistoBinzSize;	 
+
+	}
+      	 y+=mRootHistoBinySize;
+      }
+       x+=mRootHistoBinxSize;
+
+       h3->Write();
+
+    }
+
+    f->Close(); 
+    }
+
 #endif
 #ifndef G4ANALYSIS_USE_ROOT
   GateError(filename<<" was not created. GATE was compiled without ROOT!");
