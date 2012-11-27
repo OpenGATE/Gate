@@ -237,7 +237,10 @@ protected:
   double mRootHistoBinyLow;
   double mRootHistoBinyUp;
   double mRootHistoBinySize;
-
+  int mRootHistoBinzNb;
+  double mRootHistoBinzLow;
+  double mRootHistoBinzUp;
+  double mRootHistoBinzSize;  
 };
 
 #endif 
