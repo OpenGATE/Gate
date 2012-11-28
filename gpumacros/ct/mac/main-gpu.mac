@@ -106,8 +106,9 @@
 # GPU Tracking
 /gate/actor/addActor              TrackingGPUActor gpuactor
 /gate/actor/gpuactor/attachTo     patient
-/gate/actor/gpuactor/setCudaDeviceID 0
-/gate/actor/gpuactor/setGPUBufferSize 500000
+/gate/actor/gpuactor/setGPUDeviceID 0
+/gate/actor/gpuactor/setGPUBufferSize 5
+#00000
 
 # count particle in detector, in 2D mhd
 /gate/actor/addActor                 ParticleInVolumeActor counterOut
