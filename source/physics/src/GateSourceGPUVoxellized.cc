@@ -32,39 +32,38 @@
 #include "GateFictitiousVoxelMapParameterized.hh"
 #include "GateApplicationMgr.hh"
 
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 GateSourceGPUVoxellized::GateSourceGPUVoxellized(G4String name)
   : GateSourceVoxellized(name), m_gpu_input(NULL)
 {
-  // FIXME : Build input and init (allocate) to be in Init to init in
-  // contructor, fill in messenger
-  m_gpu_input = GateSourceGPUVoxellizedInput_new();
-
+  // Build IO for gpu
+  m_gpu_input = GateGPUIO_Input_new();
+  m_gpu_output = GateGPUIO_Output_new();
+  m_gpu_input->E = 511*keV/MeV;
   attachedVolumeName = "no_attached_volume_given";
 
   // Create particle definition 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   gamma_particle_definition = particleTable->FindParticle("gamma");
 
-  m_sourceGPUVoxellizedMessenger = new GateSourceGPUVoxellizedMessenger(this);
-  
+  m_sourceGPUVoxellizedMessenger = new GateSourceGPUVoxellizedMessenger(this); 
   mNumberOfNextTime = 1;
   mCurrentTimeID = 0;
-
   mCudaDeviceID = 0;
 }
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 
 
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 GateSourceGPUVoxellized::~GateSourceGPUVoxellized()
 {
-  GateSourceGPUVoxellizedInput_delete(m_gpu_input);
+  GateGPUIO_Input_delete(m_gpu_input);
+  GateGPUIO_Output_delete(m_gpu_output);
 }
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 
 
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 G4double GateSourceGPUVoxellized::GetNextTime(G4double timeNow)
 {
   // Loop on the mother's GetNextTime
@@ -78,16 +77,16 @@ G4double GateSourceGPUVoxellized::GetNextTime(G4double timeNow)
 
   return t;
 }
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 
 
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 void GateSourceGPUVoxellized::SetGPUBufferSize(int n)
 {
   assert(m_gpu_input);
   m_gpu_input->nb_events = n;
 }
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 
 void GateSourceGPUVoxellized::SetGPUDeviceID(int n)
 {
@@ -95,21 +94,21 @@ void GateSourceGPUVoxellized::SetGPUDeviceID(int n)
   m_gpu_input->cudaDeviceID = n;
 }
 
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 void GateSourceGPUVoxellized::Dump(G4int level) 
 {
   GateSourceVoxellized::Dump(level);
 }
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 void GateSourceGPUVoxellized::AttachToVolume(const G4String& volume_name)
 {
   attachedVolumeName = volume_name;
 }
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event) 
 {
 
@@ -124,42 +123,54 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
   // First time here -> phantom data are set
   if (m_gpu_input->phantom_material_data.empty())
     { // import phantom to gpu (fill input)
-      SetPhantomVolumeData();
+      SetPhantomVolumeData(); 
+      m_current_particle_index_in_buffer = 0;     
     }
   
   if (m_gpu_input->activity_index.empty())
     { // import activity to gpu
       m_gpu_input->firstInitialID = mCurrentTimeID;
       ActivityMap activities = m_voxelReader->GetSourceActivityMap();
-      GateSourceGPUVoxellizedInput_parse_activities(activities,m_gpu_input);
+      GateGPUIO_Input_parse_activities(activities,m_gpu_input);
     }
 
   // Main loop : if particles buffer is empty, we ask the gpu 
-  if (m_gpu_output.particles.empty()) {
-    GateMessage("Beam", 5, "No particles in the buffer, we ask the gpu for " << m_gpu_input->nb_events << " events" << std::endl);
+  // FIXME  if (m_gpu_output->particles.empty()) {
+  if (m_current_particle_index_in_buffer >= m_gpu_output->particles.size()) {
+    GateMessage("Beam", 5, "No particles in the buffer, we ask the gpu for " 
+                << m_gpu_input->nb_events << " events" << std::endl);
 
     // Go GPU
     m_gpu_input->firstInitialID = mCurrentTimeID; // fix a bug - JB
-    m_gpu_input->seed = static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
-    printf("seed from input %u\n", m_gpu_input->seed);
+    m_gpu_input->seed = 
+      static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
+    printf("seed from input %ld\n", m_gpu_input->seed);
 
-    GateGPUGeneratePrimaries(m_gpu_input, m_gpu_output);
-    GateMessage("Beam", 5, "Done : GPU send " << m_gpu_output.particles.size() << " events" << std::endl);
+    GateGPU_VoxelSource_GeneratePrimaries(m_gpu_input, m_gpu_output);
+    GateMessage("Beam", 5, "Done : GPU send " << m_gpu_output->particles.size() 
+                << " events" << std::endl);
+    m_current_particle_index_in_buffer = 0;
   }
 
   // Generate one particle
-  if (!m_gpu_output.particles.empty()) {
-
+  //FIXME  if (!m_gpu_output->particles.empty()) {
+  if (m_current_particle_index_in_buffer < m_gpu_output->particles.size())  {
+    
     // Create a new particle
-    GeneratePrimaryEventFromGPUOutput(m_gpu_output.particles.front(), event);
-    double tof = m_gpu_output.particles.front().t;
+    //FIXME    GeneratePrimaryEventFromGPUOutput(m_gpu_output->particles.front(), event);
+    const GateGPUIO_Particle & part = m_gpu_output->particles[m_current_particle_index_in_buffer];
+    GeneratePrimaryEventFromGPUOutput(part, event);
+    //FIXME double tof = m_gpu_output->particles.front().t;
+    double tof = part.t;
     //printf("t %e\n", tof);
 
     // Set the current timeID
-    mCurrentTimeID = m_gpu_output.particles.front().initialID;
+    //FIXME mCurrentTimeID = m_gpu_output->particles.front().initialID;
+    mCurrentTimeID = part.initialID;
     
     // Remove the particle from the list
-    m_gpu_output.particles.pop_front();
+    //m_gpu_output->particles.pop_front();
+    m_current_particle_index_in_buffer++;
 
     // Display information
     G4PrimaryParticle  * p = event->GetPrimaryVertex(0)->GetPrimary(0);
@@ -176,9 +187,10 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
                 << G4endl);  
 
     // Prepare for next particle
-    if (!m_gpu_output.particles.empty()) {
-      GateMessage("Beam", 5, "The next particle will be time ID = " << m_gpu_output.particles.front().initialID << std::endl);
-      mNumberOfNextTime = m_gpu_output.particles.front().initialID - mCurrentTimeID;
+    if (m_current_particle_index_in_buffer < m_gpu_output->particles.size())  {
+      // FIXME if (!m_gpu_output->particles.empty()) {
+      GateMessage("Beam", 5, "The next particle will be time ID = " << part.initialID << std::endl);
+      mNumberOfNextTime = m_gpu_output->particles.front().initialID - mCurrentTimeID;
     }  
     else {
       GateMessage("Beam", 5, "No more particules in gpu buffer, time stay the same." << std::endl);
@@ -188,12 +200,13 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
 
   return 1; // Return a single particle at a time
 }
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 
 
 
-//-------------------------------------------------------------------------------------------------
-void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVoxellizedOutputParticle & particle, G4Event * event)
+//----------------------------------------------------------
+void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(const GateGPUIO_Particle & particle, 
+                                                                G4Event * event)
 {
   /*
   std::cout << "From gpu pos = " << particle.px << " " << particle.py << " " << particle.pz << std::endl
@@ -204,9 +217,9 @@ void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(GateSourceGPUVox
 
   // Position
   G4ThreeVector particle_position;
-  particle_position.setX(particle.px*mm-m_gpu_input->phantom_size_x*m_gpu_input->phantom_spacing/2.0*mm);
-  particle_position.setY(particle.py*mm-m_gpu_input->phantom_size_y*m_gpu_input->phantom_spacing/2.0*mm);
-  particle_position.setZ(particle.pz*mm-m_gpu_input->phantom_size_z*m_gpu_input->phantom_spacing/2.0*mm);
+  particle_position.setX(particle.px*mm-m_gpu_input->phantom_size_x*m_gpu_input->phantom_spacing_x/2.0*mm);
+  particle_position.setY(particle.py*mm-m_gpu_input->phantom_size_y*m_gpu_input->phantom_spacing_y/2.0*mm);
+  particle_position.setZ(particle.pz*mm-m_gpu_input->phantom_size_z*m_gpu_input->phantom_spacing_z/2.0*mm);
 
   
 /*
@@ -254,37 +267,37 @@ particle_position.setZ(particle.pz*mm-92*mm);
   vertex->SetPrimary( g4particle ); 
   event->AddPrimaryVertex( vertex );
 }
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 
 
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 void GateSourceGPUVoxellized::ReaderInsert(G4String readerType)
 {
   G4cout << "GateSourceGPUVoxellizedMessenger ReaderInsert" << G4endl;
   GateSourceVoxellized::ReaderInsert(readerType);
 }
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 
 
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 void GateSourceGPUVoxellized::ReaderRemove()
 {
   G4cout << "GateSourceGPUVoxellizedMessenger ReaderRemove" << G4endl;
   GateSourceVoxellized::ReaderRemove();
 }
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 
 
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 void GateSourceGPUVoxellized::Update(double time)
 {
   G4cout << "GateSourceGPUVoxellizedMessenger Update" << G4endl;
   return GateSourceVoxellized::Update(time);
 }
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 
 
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------
 void GateSourceGPUVoxellized::SetPhantomVolumeData() 
 {
   GateVVolume* v = GateObjectStore::GetInstance()->FindVolumeCreator(attachedVolumeName);
@@ -296,29 +309,45 @@ void GateSourceGPUVoxellized::SetPhantomVolumeData()
     GateError(attachedVolumeName << " is not a GateFictitiousVoxelMapParameterized.");
   }
   else {
+
+    // Size of the image
     GateVGeometryVoxelReader* reader = m->GetReader();
     m_gpu_input->phantom_size_x = reader->GetVoxelNx();
     m_gpu_input->phantom_size_y = reader->GetVoxelNy();
     m_gpu_input->phantom_size_z = reader->GetVoxelNz();
-    m_gpu_input->phantom_spacing = reader->GetVoxelSize().x(); // FIXME only isotrop
+    m_gpu_input->phantom_spacing_x = reader->GetVoxelSize().x();
+    m_gpu_input->phantom_spacing_y = reader->GetVoxelSize().y();
+    m_gpu_input->phantom_spacing_z = reader->GetVoxelSize().z();
 
+    
+    // Find the list of material in the image and set the pixel
+    std::vector<G4Material*> materials;
     for(int k=0; k<m_gpu_input->phantom_size_z; k++)
       for(int j=0; j<m_gpu_input->phantom_size_y; j++)
         for(int i=0; i<m_gpu_input->phantom_size_x; i++) {
-          //std::cout << "ijk = " << i << " " << j << " " << k << std::endl;
+          // Get the material
           G4Material * m = reader->GetVoxelMaterial(i,j,k); 
-          G4String n = m->GetName();
-          //std::cout << n << std::endl;
-          try {
-            n = n.substr(4,2);
+          std::vector<G4Material*>::iterator iter;
+          iter = std::find(materials.begin(), materials.end(), m);
+          // Store it if this is the first time
+          if (iter == materials.end()) {
+            DD(m->GetName());
+            materials.push_back(m);
           }
-          catch(std::exception & e) {
-            GateError("The volume name must be GPU_xx_Name.");
-          }
-          //std::cout << n << std::endl;
-          unsigned short int index = atoi(n);
-          m_gpu_input->phantom_material_data.push_back(index);          
+          // Store the pixel value with the correct index
+          // DD(i);
+          // DD(j);
+          // DD(k);
+          unsigned short int index = iter-materials.begin();
+          // DD(index);
+          m_gpu_input->phantom_material_data.push_back(index);
         }
+    DD(materials.size());
+
+    // Init the materials
+    G4String name = v->GetObjectName();
+    GateGPUIO_Input_Init_Materials(m_gpu_input, materials, name);
+    DD("mat done");
   }
 }
-//-------------------------------------------------------------------------------------------------
+//----------------------------------------------------------

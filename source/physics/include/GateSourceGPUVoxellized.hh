@@ -19,7 +19,7 @@ See GATE/LICENSE.txt for further details
 #include <map>
 #include "GateVSource.hh"
 #include "GateSourceVoxellized.hh"
-#include "GateSourceGPUVoxellizedIO.hh"
+#include "GateGPUIO.hh"
 
 class GateSourceGPUVoxellizedMessenger;
 class GateVSourceVoxelReader;
@@ -53,8 +53,9 @@ protected:
 
   GateSourceGPUVoxellizedMessenger* m_sourceGPUVoxellizedMessenger;
 
-  GateSourceGPUVoxellizedInput * m_gpu_input;
-  GateSourceGPUVoxellizedOutput  m_gpu_output;
+  GateGPUIO_Input  * m_gpu_input;
+  GateGPUIO_Output * m_gpu_output;
+  unsigned int m_current_particle_index_in_buffer;
 
   // Used for creating a primary
   G4ParticleDefinition* gamma_particle_definition;
@@ -68,7 +69,7 @@ protected:
 
   int mCudaDeviceID;
 
-  void GeneratePrimaryEventFromGPUOutput(GateSourceGPUVoxellizedOutputParticle & particle, G4Event * event);  
+  void GeneratePrimaryEventFromGPUOutput(const GateGPUIO_Particle & particle, G4Event * event);  
   void SetPhantomVolumeData();
 };
 
