@@ -1,10 +1,10 @@
 #include "actor_fun_gpu.cu"
-#include "GateTrackingGPUActorIO.hh"
+#include "GateGPUIO.hh"
 
 #include <vector>
 
 void GateTrackingGPUActorTrack_RT(const GateTrackingGPUActorInput * input, 
-			       GateTrackingGPUActorOutput * output) {
+                                  GateTrackingGPUActorOutput * output) {
 
   // FIXME
   // add ecut, emax, meanexcitation

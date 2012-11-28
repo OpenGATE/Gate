@@ -3,8 +3,7 @@
 
 #include "fun_gpu.cu"
 
-void GateGPUGeneratePrimaries(const GateSourceGPUVoxellizedInput * input, 
-                              GateSourceGPUVoxellizedOutputParticles * output);
-
+void GateGPU_VoxelSource_GeneratePrimaries(const GateGPUIO_Input * input, 
+                                           GateGPUIO_Output & output);
 	
 #endif

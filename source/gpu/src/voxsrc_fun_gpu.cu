@@ -14,8 +14,8 @@
 texture<unsigned short int, 1, cudaReadModeElementType> tex_phantom;
 texture<float, 1, cudaReadModeElementType> tex_act_val;
 texture<unsigned int, 1, cudaReadModeElementType> tex_act_ind;
-__constant__ const float pi = 3.14159265358979323846;
-__constant__ const float twopi = 2*pi;
+__constant__ const float pi_gpu = 3.14159265358979323846;
+__constant__ const float twopi_gpu = 2*pi_gpu;
 
 // Stack of gamma particles, format data is defined as SoA
 struct StackGamma{
@@ -346,7 +346,7 @@ __device__ float3 voxsrc_Compton_scatter_Standard(StackGamma stack, unsigned int
 
 	cosTheta = 1.0f - onecost;
 	sinTheta = sqrt(sint2);
-	phi = voxsrc_Brent_real(id, stack.table_x_brent, 0) * twopi;
+	phi = voxsrc_Brent_real(id, stack.table_x_brent, 0) * twopi_gpu;
 
 	return make_float3(sinTheta*__cosf(phi), sinTheta*__sinf(phi), cosTheta);
 }
@@ -413,7 +413,7 @@ __global__ void kernel_voxelized_source_b2b(StackGamma stackgamma1, StackGamma s
 		// random orientation
 		float phi   = voxsrc_Brent_real(id, stackgamma1.table_x_brent, 0);
 		float theta = voxsrc_Brent_real(id, stackgamma1.table_x_brent, 0);
-		phi   = twopi * phi;
+		phi   = twopi_gpu * phi;
 		theta = acosf(1.0f - 2.0f*theta);
 		
 		// convert to cartesian
@@ -623,9 +623,9 @@ __global__ void kernel_voxsrc_regular_navigator(int3 dimvol, StackGamma stackgam
     }
     
 }
-#undef PHOTON_PHOTOELECTRIC 1
-#undef PHOTON_COMPTON 2
-#undef PHOTON_BOUNDARY_VOXEL 3
+#undef PHOTON_PHOTOELECTRIC
+#undef PHOTON_COMPTON
+#undef PHOTON_BOUNDARY_VOXEL
 
 
 // Fictitious tracking (or delta-tracking)

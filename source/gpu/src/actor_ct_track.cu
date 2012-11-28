@@ -1,10 +1,10 @@
 #include "actor_ct_fun.cu"
-#include "GateTrackingGPUActorIO.hh"
+#include "GateGPUIO.hh"
 
 #include <vector>
 
-void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input, 
-			       GateTrackingGPUActorOutput * output) {
+void GateGPU_ActorTrack(const GateGPUIO_Input * input, 
+                        GateGPUIO_Output * output) {
 
   // FIXME
   // add ecut, emax, meanexcitation
@@ -28,6 +28,7 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
   // Vars
   int particle_simulated = 0;
   int nb_of_particles = input->particles.size();
+  DD(nb_of_particles);
 
   // Photons Stacks
   StackParticle photons_d;
@@ -65,9 +66,9 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
 	
   // Fill photons stack with particles from GATE
   int i = 0;
-  GateTrackingGPUActorInput::ParticlesList::const_iterator iter = input->particles.begin();
+  GateGPUIO_Input::ParticlesList::const_iterator iter = input->particles.begin();
   while (iter != input->particles.end()) {
-    GateTrackingGPUActorParticle p = *iter;
+    GateGPUIO_Particle p = *iter;
     photons_h.E[i] = p.E;
 	  //DD(p.E);
     photons_h.dx[i] = p.dx;
@@ -86,7 +87,7 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
     photons_h.active[i] = 1;
     photons_h.interaction[i] = 1;
         
-    //printf("g %e %e %e %e %e %e %e\n", p.E, p.px, p.py, p.pz, p.dx, p.dy, p.dz);
+    printf("g %e %e %e %e %e %e %e\n", p.E, p.px, p.py, p.pz, p.dx, p.dy, p.dz);
 
     ++iter;
     ++i;
@@ -141,7 +142,9 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
   int step = 0;
   while (count_h < nb_of_particles) {
     ++step;
-
+    DD(step);
+    DD(count_h);
+    //    DD(count_d);
     kernel_ct_navigation_regular<unsigned short int><<<grid, threads>>>(photons_d, phantom_d, 
                                                                         materials_d, count_d);
 
@@ -163,7 +166,7 @@ void GateTrackingGPUActorTrack(const GateTrackingGPUActorInput * input,
     
     // Test if the particle was absorbed -> no output.
     if (photons_h.active[i]) {
-        GateTrackingGPUActorParticle particle;
+        GateGPUIO_Particle particle;
         particle.E =  photons_h.E[i];
         particle.dx = photons_h.dx[i];
         particle.dy = photons_h.dy[i];

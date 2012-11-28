@@ -250,8 +250,9 @@ __global__ void kernel_ct_navigation_regular(StackParticle photons,
        //printf("id %i Compton\n", id);
     }
 }
-#undef PHOTON_PHOTOELECTRIC 1
-#undef PHOTON_COMPTON 2
-#undef PHOTON_STEP_LIMITER 3
-#undef PHOTON_BOUNDARY_VOXEL 4
+#undef PHOTON_PHOTOELECTRIC
+#undef PHOTON_COMPTON
+#undef PHOTON_STEP_LIMITER
+#undef PHOTON_BOUNDARY_VOXEL
+
 
