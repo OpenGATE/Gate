@@ -12,7 +12,6 @@
 #define GATETRACKINGGPUACTOR_CC
 
 #include "GateTrackingGPUActor.hh"
-#include "GateTrackingGPUActorIO.hh"
 #include "GateMiscFunctions.hh"
 #include "GateRunManager.hh"
 #include "GateVImageVolume.hh"
@@ -30,7 +29,7 @@ GateTrackingGPUActor::GateTrackingGPUActor(G4String name, G4int depth):
   GateDebugMessageInc("Actor",4,"GateTrackingGPUActor() -- begin"<<G4endl);
   gpu_input = 0;
   gpu_output = 0;
-  mCudaDeviceID = 0;
+  mGPUDeviceID = 0;
   max_buffer_size = 5;
   pMessenger = new GateTrackingGPUActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateTrackingGPUActor() -- end"<<G4endl);
@@ -42,6 +41,8 @@ GateTrackingGPUActor::GateTrackingGPUActor(G4String name, G4int depth):
 /// Destructor 
 GateTrackingGPUActor::~GateTrackingGPUActor()  {
   delete pMessenger;
+  GateGPUIO_Input_delete(gpu_input);
+  GateGPUIO_Output_delete(gpu_output);
 }
 //-----------------------------------------------------------------------------
 
@@ -74,8 +75,8 @@ void GateTrackingGPUActor::SaveData() {
 
 
 //-----------------------------------------------------------------------------
-void GateTrackingGPUActor::SetCudaDeviceID(int n) {
-  mCudaDeviceID = n;
+void GateTrackingGPUActor::SetGPUDeviceID(int n) {
+  mGPUDeviceID = n;
 }
 //-----------------------------------------------------------------------------
 
@@ -91,8 +92,8 @@ void GateTrackingGPUActor::SetGPUBufferSize(int n) {
 void GateTrackingGPUActor::ResetData() {
   DD("ResetData");
 
-  GateTrackingGPUActorInput_delete(gpu_input);
-  gpu_input = GateTrackingGPUActorInput_new();
+  GateGPUIO_Input_delete(gpu_input);
+  gpu_input = GateGPUIO_Input_new();
 
   GateVImageVolume * im = dynamic_cast<GateVImageVolume*>(mVolume);
   G4ThreeVector s = im->GetImage()->GetResolution();
@@ -105,11 +106,11 @@ void GateTrackingGPUActor::ResetData() {
   gpu_input->phantom_spacing_y = spacing.y();
   gpu_input->phantom_spacing_z = spacing.z();
   
-  gpu_input->cudaDeviceID = mCudaDeviceID;
+  gpu_input->cudaDeviceID = mGPUDeviceID;
   DD(gpu_input->phantom_size_x);
   DD(gpu_input->phantom_size_y);
   DD(gpu_input->phantom_size_z);
-  DD(mCudaDeviceID);
+  DD(mGPUDeviceID);
 
   // Data in unsigned int
   DD(im->GetImage()->end()-im->GetImage()->begin());
@@ -120,8 +121,8 @@ void GateTrackingGPUActor::ResetData() {
   }
   DD(gpu_input->phantom_material_data.size());
   
-  GateTrackingGPUActorOutput_delete(gpu_output);
-  gpu_output = GateTrackingGPUActorOutput_new();
+  GateGPUIO_Output_delete(gpu_output);
+  gpu_output = GateGPUIO_Output_new();
   DD("end");
 
   DD(max_buffer_size);
@@ -136,7 +137,10 @@ void GateTrackingGPUActor::BeginOfRunAction(const G4Run *)
   DD("GateTrackingGPUActor::BeginOfRunAction");
   // Set materials
   GateVImageVolume * im = dynamic_cast<GateVImageVolume*>(mVolume);
-  GateTrackingGPUActorInput_Init_Materials(gpu_input, im);
+  std::vector<G4Material*> m;
+  im->BuildLabelToG4MaterialVector(m);
+  G4String name = im->GetObjectName();
+  GateGPUIO_Input_Init_Materials(gpu_input, m, name);
   // Get number of particles
   GateApplicationMgr * a = GateApplicationMgr::GetInstance();
   DD(a->IsTotalAmountOfPrimariesModeEnabled());
@@ -162,7 +166,7 @@ void GateTrackingGPUActor::UserSteppingAction(const GateVVolume * /*v*/,
 
   // STEP1 ---------------------------------
   // Store a particle
-  GateTrackingGPUActorParticle p;
+  GateGPUIO_Particle p;
   // DD(step->GetTrack()->GetDefinition()->GetParticleName());
   if (step->GetTrack()->GetDefinition() == G4Gamma::Gamma()) p.type = 0;
   if (step->GetTrack()->GetDefinition() == G4Electron::Electron()) p.type = 1;
@@ -204,7 +208,7 @@ void GateTrackingGPUActor::UserSteppingAction(const GateVVolume * /*v*/,
   p.dx = preStep->GetMomentumDirection().x();
   p.dy = preStep->GetMomentumDirection().y();
   p.dz = preStep->GetMomentumDirection().z();
-  //  GateTrackingGPUActorParticle_Print(p);
+  //  GateGPUIO_Particle_Print(p);
 
   gpu_input->particles.push_back(p); // FIXME SLOW 
   // DD(gpu_input->particles.size());
@@ -218,11 +222,11 @@ void GateTrackingGPUActor::UserSteppingAction(const GateVVolume * /*v*/,
     // DD(max_buffer_size);
     gpu_input->seed = static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
     // DD(gpu_input->seed);
-    GateTrackingGPUActorTrack(gpu_input, gpu_output); // FIXME
+    GateGPU_ActorTrack(gpu_input, gpu_output);
 
     // STEP3 get particles from gpu and create tracks
     DD(gpu_output->particles.size());
-    GateTrackingGPUActorOutput::ParticlesList::const_iterator 
+    GateGPUIO_Output::ParticlesList::const_iterator 
       iter = gpu_output->particles.begin();
     while (iter != gpu_output->particles.end()) {
       CreateNewParticle(*iter);
@@ -244,7 +248,7 @@ void GateTrackingGPUActor::UserSteppingAction(const GateVVolume * /*v*/,
 
 
 //-----------------------------------------------------------------------------
-void GateTrackingGPUActor::CreateNewParticle(const GateTrackingGPUActorParticle & p) 
+void GateTrackingGPUActor::CreateNewParticle(const GateGPUIO_Particle & p) 
 {
   // DD("CreateNewParticle");
   G4ThreeVector dir(p.dx, p.dy, p.dz);

@@ -30,7 +30,7 @@ public:
 
 protected:
   GateTrackingGPUActor * pTrackingGPUActor;
-  G4UIcmdWithAnInteger * pSetCudaDeviceIDCmd;
+  G4UIcmdWithAnInteger * pSetGPUDeviceIDCmd;
   G4UIcmdWithAnInteger * pSetGPUBufferCmd;
 };
 

@@ -22,7 +22,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UnitsTable.hh"
 #include "GateTrackingGPUActorMessenger.hh"
 #include "GateImageWithStatistic.hh"
-#include "GateTrackingGPUActorIO.hh"
+#include "GateGPUIO.hh"
 
 class GateTrackingGPUActor: public GateVActor
 {
@@ -49,7 +49,7 @@ class GateTrackingGPUActor: public GateVActor
   virtual void SaveData();
   virtual void ResetData();  
 
-  void SetCudaDeviceID(int n);
+  void SetGPUDeviceID(int n);
   void SetGPUBufferSize(int n);
 
   //-----------------------------------------------------------------------------
@@ -57,15 +57,15 @@ protected:
   GateTrackingGPUActor(G4String name, G4int depth=0);
   GateTrackingGPUActorMessenger * pMessenger;
 
-  void CreateNewParticle(const GateTrackingGPUActorParticle & p);
+  void CreateNewParticle(const GateGPUIO_Particle & p);
 
   // Input and output structure for gpu.
-  GateTrackingGPUActorInput * gpu_input;
-  GateTrackingGPUActorOutput * gpu_output;
+  GateGPUIO_Input * gpu_input;
+  GateGPUIO_Output * gpu_output;
   
   // max buffer size
   unsigned int max_buffer_size;
-  int mCudaDeviceID;
+  int mGPUDeviceID;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(TrackingGPUActor,GateTrackingGPUActor)

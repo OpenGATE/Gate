@@ -20,7 +20,7 @@ GateTrackingGPUActorMessenger::GateTrackingGPUActorMessenger(GateTrackingGPUActo
   :GateActorMessenger(sensor),
   pTrackingGPUActor(sensor)
 {
-  pSetCudaDeviceIDCmd = 0;
+  pSetGPUDeviceIDCmd = 0;
   pSetGPUBufferCmd = 0;
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -30,7 +30,7 @@ GateTrackingGPUActorMessenger::GateTrackingGPUActorMessenger(GateTrackingGPUActo
 //-----------------------------------------------------------------------------
 GateTrackingGPUActorMessenger::~GateTrackingGPUActorMessenger()
 {
-  if (pSetCudaDeviceIDCmd) delete pSetCudaDeviceIDCmd;
+  if (pSetGPUDeviceIDCmd) delete pSetGPUDeviceIDCmd;
   if (pSetGPUBufferCmd) delete pSetGPUBufferCmd;
 }
 //-----------------------------------------------------------------------------
@@ -39,10 +39,10 @@ GateTrackingGPUActorMessenger::~GateTrackingGPUActorMessenger()
 //-----------------------------------------------------------------------------
 void GateTrackingGPUActorMessenger::BuildCommands(G4String base)
 {
-  G4String n = base+"/setCudaDeviceID"; 
-  pSetCudaDeviceIDCmd = new G4UIcmdWithAnInteger(n, this); 
+  G4String n = base+"/setGPUDeviceID"; 
+  pSetGPUDeviceIDCmd = new G4UIcmdWithAnInteger(n, this); 
   G4String guid = G4String("Set the CUDA Device ID");
-  pSetCudaDeviceIDCmd->SetGuidance(guid);
+  pSetGPUDeviceIDCmd->SetGuidance(guid);
 
   n = base+"/setGPUBufferSize"; 
   pSetGPUBufferCmd = new G4UIcmdWithAnInteger(n, this); 
@@ -55,8 +55,8 @@ void GateTrackingGPUActorMessenger::BuildCommands(G4String base)
 //-----------------------------------------------------------------------------
 void GateTrackingGPUActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
-  if (cmd == pSetCudaDeviceIDCmd) 
-    pTrackingGPUActor->SetCudaDeviceID(pSetCudaDeviceIDCmd->GetNewIntValue(newValue));
+  if (cmd == pSetGPUDeviceIDCmd) 
+    pTrackingGPUActor->SetGPUDeviceID(pSetGPUDeviceIDCmd->GetNewIntValue(newValue));
   if (cmd == pSetGPUBufferCmd) 
     pTrackingGPUActor->SetGPUBufferSize(pSetGPUBufferCmd->GetNewIntValue(newValue));
   GateActorMessenger::SetNewValue( cmd, newValue);
