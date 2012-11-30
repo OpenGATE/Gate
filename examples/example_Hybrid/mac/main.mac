@@ -1,0 +1,115 @@
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+# Example of CT imaging.
+
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+#=====================================================
+# VERBOSE and VISUALISATION 
+#=====================================================
+
+/control/execute mac/verbose.mac
+#/control/execute mac/visu.mac
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+# World
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+/gate/world/setMaterial            Air
+/gate/world/geometry/setXLength    3 m
+/gate/world/geometry/setYLength    3 m
+/gate/world/geometry/setZLength    3 m
+
+# Insert phantom
+#/control/execute mac/catphan.mac
+/control/execute mac/patient.mac
+
+# Detection plane
+/gate/world/daughters/name                     DetectorPlane
+/gate/world/daughters/insert                   box
+/gate/DetectorPlane/geometry/setXLength        409.6 mm
+/gate/DetectorPlane/geometry/setYLength        409.6 mm
+/gate/DetectorPlane/geometry/setZLength        1 mm
+/gate/DetectorPlane/placement/setTranslation   -536 0 0 mm
+/gate/DetectorPlane/placement/setRotationAxis  0 1 0
+/gate/DetectorPlane/placement/setRotationAngle 090 deg
+/gate/DetectorPlane/setMaterial                Air
+/gate/DetectorPlane/vis/setVisible             1
+/gate/DetectorPlane/vis/setColor               yellow
+
+#=====================================================
+# PHYSIC
+#=====================================================
+
+/control/execute mac/Physicslist_std_no_e.mac
+
+/gate/physics/Gamma/SetCutInRegion      world 10 mm
+/gate/physics/Electron/SetCutInRegion   world 10 mm
+/gate/physics/Positron/SetCutInRegion   world 10 mm
+
+/gate/physics/SetMinRemainingRangeInRegion world 10 mm
+/gate/physics/ActivateSpecialCuts e-
+
+/gate/physics/displayCuts
+
+#=====================================================
+# DETECTORS
+#=====================================================
+
+# -----------------------------------------------------
+# timing
+/gate/actor/addActor  TimeActor statt
+/gate/actor/statt/enableDetailedStats false
+/gate/actor/statt/save output/time.txt
+
+# -----------------------------------------------------
+# Hybrid ForcedDetection Actor (hfda)
+/gate/actor/addActor          HybridForcedDectectionActor hfda
+/gate/actor/hfda/attachTo     patient
+#/gate/actor/hfda/setFlatPanel DetectorPlane
+/gate/actor/hfda/save         output/hfda.mhd
+
+# -----------------------------------------------------
+# Complete fluence of gamma
+/gate/actor/addActor FluenceActor           DetectorActor
+/gate/actor/DetectorActor/save              output/fluence.mhd
+/gate/actor/DetectorActor/attachTo          DetectorPlane
+/gate/actor/DetectorActor/stepHitType       pre
+/gate/actor/DetectorActor/setResolution     1 512 512
+/gate/actor/DetectorActor/enableScatter     true
+/gate/actor/DetectorActor/saveEveryNSeconds  30
+
+# -----------------------------------------------------
+# Save particles stats 
+/gate/actor/addActor  SimulationStatisticActor stat
+/gate/actor/stat/save output/stats.txt
+/gate/actor/stat/saveEveryNSeconds 20
+
+#=====================================================
+# BEAM
+#=====================================================
+
+/gate/source/addSource mybeam gps
+/control/execute mac/beam-with-spektrum.mac
+
+#=====================================================
+# MAIN
+#=====================================================
+
+# DEBUG
+#/tracking/verbose 1
+#/tracking/verbose 1
+
+/gate/run/initialize
+
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed auto
+
+/gate/application/noGlobalOutput
+/gate/run/enableGlobalOutput false
+
+# PARTICLE
+/gate/application/setTotalNumberOfPrimaries 10
+/gate/application/start
