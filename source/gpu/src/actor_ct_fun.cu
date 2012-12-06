@@ -77,6 +77,8 @@ __device__ float PhotoElec_ct_SampleSecondaries_Standard(StackParticle photons,
     photons.endsimu[id] = 1; // stop the simulation
     photons.active[id] = 0;  // this particle is absorbed
     atomicAdd(count_d, 1);   // count simulated primaries
+
+    return 0.0f;
         
 }
 

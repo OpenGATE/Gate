@@ -59,6 +59,8 @@ void GateGPU_ActorTrack(const GateGPUIO_Input * input,
   Materials materials_d;
   materials_device_malloc(materials_d, input->nb_materials, input->nb_elements_total);
   materials_copy_host2device(materials_h, materials_d);
+
+  dump_materials(materials_h, "CT_materials_ecut_10um.bin");
     
   // TIMING
   t_init = time() - t_init;
@@ -127,6 +129,12 @@ void GateGPU_ActorTrack(const GateGPUIO_Input * input,
   phantom_d.mem_data = phantom_d.nb_voxel_volume * sizeof(unsigned short int);
   volume_device_malloc<unsigned short int>(phantom_d, phantom_d.nb_voxel_volume); 
   cudaMemcpy(phantom_d.data, &(input->phantom_material_data[0]), phantom_d.mem_data, cudaMemcpyHostToDevice);
+
+
+  dump_phantom(&(input->phantom_material_data[0]), 
+               input->phantom_size_x, input->phantom_size_y, input->phantom_size_z, 
+               input->phantom_spacing_x, input->phantom_spacing_y, input->phantom_spacing_z,
+               "labeled_phantom.mhd", "labeled_phantom.raw");
 
   // Count simulated photons
   int* count_d;

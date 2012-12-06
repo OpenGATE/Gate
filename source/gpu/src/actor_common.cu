@@ -1013,3 +1013,80 @@ void volume_host_export_vol(Volume<T> &dosemap, const char* name) {
     fwrite(dosemap.data, sizeof(T), dosemap.nb_voxel_volume, pfile);
     fclose(pfile);
 }
+/*
+struct Materials{
+    unsigned int nb_materials;              // n
+    unsigned int nb_elements_total;         // k
+    
+    unsigned short int *nb_elements;        // n
+    unsigned short int *index;              // n
+    unsigned short int *mixture;            // k
+    float *atom_num_dens;                   // k
+    float *nb_atoms_per_vol;                // n
+    float *nb_electrons_per_vol;            // n
+    float *electron_cut_energy;             // n
+    float *electron_max_energy;             // n
+    float *electron_mean_excitation_energy; // n
+    float *fX0;                             // n
+    float *fX1;
+    float *fD0;
+    float *fC;
+    float *fA;
+    float *fM;
+};
+*/
+// Dump materials
+void dump_materials(Materials &mat, const char* filename) {
+	FILE* pfile = fopen(filename, "wb");
+	
+	//int i = 0;
+    fwrite(&mat.nb_materials, sizeof(unsigned int), 1, pfile);
+    fwrite(&mat.nb_elements_total, sizeof(unsigned int), 1, pfile);
+    int n = mat.nb_materials;
+    int k = mat.nb_elements_total;
+
+    fwrite(mat.nb_elements, sizeof(unsigned short int), n, pfile);
+    fwrite(mat.index, sizeof(unsigned short int), n, pfile);
+
+    fwrite(mat.mixture, sizeof(unsigned short int), k, pfile);
+    fwrite(mat.atom_num_dens, sizeof(float), k, pfile);
+    fwrite(mat.nb_atoms_per_vol, sizeof(float), n, pfile);
+    fwrite(mat.nb_electrons_per_vol, sizeof(float), n, pfile);
+    fwrite(mat.electron_cut_energy, sizeof(float), n, pfile);
+    fwrite(mat.electron_max_energy, sizeof(float), n, pfile);
+    fwrite(mat.electron_mean_excitation_energy, sizeof(float), n, pfile);
+    fwrite(mat.fX0, sizeof(float), n, pfile);
+    fwrite(mat.fX1, sizeof(float), n, pfile);
+    fwrite(mat.fD0, sizeof(float), n, pfile);
+    fwrite(mat.fC, sizeof(float), n, pfile);
+    fwrite(mat.fA, sizeof(float), n, pfile);
+    fwrite(mat.fM, sizeof(float), n, pfile);
+
+	fclose(pfile);
+}
+
+// Dump phantom
+void dump_phantom(const unsigned short int *data, 
+                  int sizex, int sizey, int sizez,
+                  float resx, float resy, float resz,
+                  const char* filenameheader, const char* filenameraw) {
+        
+    FILE *pfile = fopen(filenameheader, "w");
+    fprintf(pfile, "ObjectType = Image\n");
+    fprintf(pfile, "NDims = 3\n");
+    fprintf(pfile, "BinaryData = True\n");
+    fprintf(pfile, "BinaryDataByteOrderMSB = False\n");
+    fprintf(pfile, "CompressedData = False\n");
+    fprintf(pfile, "TransformMatrix = 1 0 0 0 1 0 0 0 1\n");
+    fprintf(pfile, "Offset = 0 0 0 \n");
+    fprintf(pfile, "CenterOfRotation = 0 0 0\n");
+    fprintf(pfile, "ElementSpacing = %f %f %f\n", resx, resy, resz);
+    fprintf(pfile, "DimSize = %i %i %i\n", sizex, sizey, sizez);
+    fprintf(pfile, "ElementType = MET_SHORT\n");
+    fprintf(pfile, "ElementDataFile = %s\n", filenameraw);
+	fclose(pfile);
+
+	pfile = fopen(filenameraw, "wb");
+    fwrite(data, sizeof(unsigned short int), sizex*sizey*sizez, pfile);
+	fclose(pfile);
+}
