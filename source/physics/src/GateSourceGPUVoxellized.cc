@@ -146,7 +146,11 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
       static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
     printf("seed from input %ld\n", m_gpu_input->seed);
 
+#ifdef GATE_USE_GPU
     GateGPU_VoxelSource_GeneratePrimaries(m_gpu_input, m_gpu_output);
+#endif    
+
+
     GateMessage("Beam", 5, "Done : GPU send " << m_gpu_output->particles.size() 
                 << " events" << std::endl);
     m_current_particle_index_in_buffer = 0;
