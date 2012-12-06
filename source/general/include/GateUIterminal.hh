@@ -40,8 +40,8 @@ class GateUIterminal : public G4UIterminal
 
     ~GateUIterminal() {}
 
-  virtual G4int ReceiveG4cout(G4String coutString);
-  virtual G4int ReceiveG4cerr(G4String cerrString);
+  virtual G4int ReceiveG4cout( const G4String& coutString);
+  virtual G4int ReceiveG4cerr( const G4String& cerrString);
 
 };
 

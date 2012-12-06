@@ -256,7 +256,7 @@ void GateMessageManager::EnableG4Messages(bool b)
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
-G4int GateMessageManager::ReceiveG4cout (G4String s) 
+G4int GateMessageManager::ReceiveG4cout (const G4String& s) 
 { 
   if (mEnableG4Message) std::cout << "[G4] " << s;
   return 0;
@@ -273,7 +273,7 @@ std::string GateMessageManager::GetSpace(int n)
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
-G4int GateMessageManager::ReceiveG4cerr (G4String s) 
+G4int GateMessageManager::ReceiveG4cerr (const G4String& s) 
 { 
   std::cerr << "\t[G4-cerr] " << s; 
   // Check if this error is 'command not found' (or related) to stop Gate
