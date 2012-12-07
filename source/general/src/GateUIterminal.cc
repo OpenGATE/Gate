@@ -16,7 +16,9 @@ See GATE/LICENSE.txt for further details
 #include "GateUIterminal.hh"
 
 //////////////////////////////////////////////////////
-G4int GateUIterminal::ReceiveG4cout(const G4String& coutString)
+G4int GateUIterminal::ReceiveG4cout(G4String coutString)
+// FOR GEANT4 9.6
+//G4int GateUIterminal::ReceiveG4cout(const G4String& coutString)
 //////////////////////////////////////////////////////
 {
   if ( coutString == "G4PhysicalVolumeModel::Validate() called.\n" )
@@ -35,7 +37,9 @@ G4int GateUIterminal::ReceiveG4cout(const G4String& coutString)
 }
 
 //////////////////////////////////////////////////////
-G4int GateUIterminal::ReceiveG4cerr(const G4String& cerrString)
+G4int GateUIterminal::ReceiveG4cerr(G4String cerrString)
+// FOR GEANT4 9.6
+//G4int GateUIterminal::ReceiveG4cerr(const G4String& cerrString)
 //////////////////////////////////////////////////////
 {
   std::cerr << cerrString << std::flush;
