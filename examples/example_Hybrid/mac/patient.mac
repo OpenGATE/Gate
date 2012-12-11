@@ -42,5 +42,5 @@
 /gate/patient/geometry/buildAndDumpLabeledImage         data/patient-lung-2mm-label.mhd
 
 # For visu debug, enable the following
-/gate/patient/geometry/enableBoundingBoxOnly            true
+#/gate/patient/geometry/enableBoundingBoxOnly            true
 
