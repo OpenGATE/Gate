@@ -9,7 +9,7 @@
 #=====================================================
 
 /control/execute mac/verbose.mac
-#/control/execute mac/visu.mac
+/control/execute mac/visu.mac
 
 #=====================================================
 # GEOMETRY
@@ -26,6 +26,19 @@
 #/control/execute mac/catphan.mac
 /control/execute mac/patient.mac
 
+# Bidon 
+# /gate/world/daughters/name             Bidon
+# /gate/world/daughters/insert           box
+# /gate/Bidon/geometry/setXLength        500 mm
+# /gate/Bidon/geometry/setYLength        500 mm
+# /gate/Bidon/geometry/setZLength        100 mm
+# /gate/Bidon/placement/setTranslation   100 0 0 mm
+# /gate/Bidon/placement/setRotationAxis  0 1 0
+# /gate/Bidon/placement/setRotationAngle 45 deg
+# /gate/Bidon/setMaterial                Air
+# /gate/Bidon/vis/setVisible             1
+# /gate/Bidon/vis/setColor               red
+
 # Detection plane
 /gate/world/daughters/name                     DetectorPlane
 /gate/world/daughters/insert                   box
@@ -34,7 +47,7 @@
 /gate/DetectorPlane/geometry/setZLength        1 mm
 /gate/DetectorPlane/placement/setTranslation   -536 0 0 mm
 /gate/DetectorPlane/placement/setRotationAxis  0 1 0
-/gate/DetectorPlane/placement/setRotationAngle 090 deg
+/gate/DetectorPlane/placement/setRotationAngle 90 deg
 /gate/DetectorPlane/setMaterial                Air
 /gate/DetectorPlane/vis/setVisible             1
 /gate/DetectorPlane/vis/setColor               yellow
@@ -66,9 +79,15 @@
 
 # -----------------------------------------------------
 # Hybrid ForcedDetection Actor (hfda)
-/gate/actor/addActor          HybridForcedDectectionActor hfda
+/gate/actor/addActor          HybridForcedDetectionActor hfda
 /gate/actor/hfda/attachTo     patient
-#/gate/actor/hfda/setFlatPanel DetectorPlane
+/gate/actor/hfda/setDetector  DetectorPlane
+/gate/actor/hfda/setDetectorResolution 256 256
+
+# find source if gps. --> keep the first one.
+# assumption : ponctuel (focuspoint ou centre)
+
+# Origin = centre du detecteur dans le world
 /gate/actor/hfda/save         output/hfda.mhd
 
 # -----------------------------------------------------
@@ -92,7 +111,8 @@
 #=====================================================
 
 /gate/source/addSource mybeam gps
-/control/execute mac/beam-with-spektrum.mac
+#/control/execute mac/beam-with-spektrum.mac
+/control/execute mac/beam-with-spektrum-bidon.mac
 
 #=====================================================
 # MAIN
