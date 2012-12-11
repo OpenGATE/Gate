@@ -14,8 +14,6 @@
 // Gate 
 #include "GateHybridForcedDetectionActor.hh"
 #include "GateMiscFunctions.hh"
-#include "GateVImageVolume.hh"
-#include "GateMaterialMuHandler.hh"
 
 // G4
 #include "G4Event.hh"
@@ -74,9 +72,28 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   GateImage * gate_image = gate_image_volume->GetImage();
   G4ThreeVector gate_size = gate_image->GetResolution();
   G4ThreeVector gate_spacing = gate_image->GetVoxelSize();
-  G4ThreeVector gate_origin = gate_image->GetOrigin();
+  G4ThreeVector gate_origin = gate_image->GetOrigin();  
+  typename InputImageType::SizeType size;
+  typename InputImageType::PointType origin;
+  typename InputImageType::RegionType region;
+  typename InputImageType::SpacingType spacing;
+  for(uint i=0; i<3; i++) {
+    size[i] = gate_size[i];
+    spacing[i] = gate_spacing[i];
+    origin[i] = gate_origin[i];
+  }
+  DD(size);
+  DD(origin);
+  DD(spacing);
+  region.SetSize(size);
+  InputImageType::Pointer input = InputImageType::New();
+  input->SetRegions(region);
+  input->SetSpacing(spacing);
+  input->SetOrigin(origin);
+  input->Allocate();
+  DD("allocated");
 
-  // Get information on the detector plane and source
+  // Get information on the detector plane
   DD(mDetectorName);
   mDetector = GateObjectStore::GetInstance()->FindVolumeCreator(mDetectorName);
 
@@ -90,7 +107,6 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   }
   mSource = sm->GetSource(0);
   DD(mSource->GetName());
-  
   
   // Create list of mu according to E and materials
   G4String st = mSource->GetEneDist()->GetEnergyDisType();
@@ -110,10 +126,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     GateError("Error, source type is not Mono or User. Abort.");
   }
 
-
-
   // Create geometry and param of output image 
-  InputImageType::Pointer input = InputImageType::New();
   GeometryType::Pointer geometry = GeometryType::New(); 
   OutputImageType::Pointer output = CreateGeometry(mDetector, mSource, geometry);
 
@@ -126,20 +139,29 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 
     // Create conversion label to mu
     std::vector<double> label2mu;
-    CreateLabelToMuConversion(E, label2mu);
+    CreateLabelToMuConversion(E, gate_image_volume, label2mu);
 
     // create mu image
     CreateMuImage(label2mu, gate_image, input);
     
-    // launch drr
-    GenerateDRR(input, output, geometry, output);
+    // Debug: write mu image
+    typedef itk::ImageFileWriter<InputImageType> WriterTypeIn;
+    typename WriterTypeIn::Pointer writerin = WriterTypeIn::New();
+    std::string name = "output/mu-"+DoubletoString(E)+".mhd";
+    writerin->SetFileName(name);
+    writerin->SetInput(input);
+    writerin->Update();
+
+    // Generate drr
+    output = GenerateDRR(input, output, geometry);
 
     // (merge) TODO
+    
 
     // Debug: write DRR
     typedef itk::ImageFileWriter<OutputImageType> WriterType;
-    typename WriterType::Pointer writer = WriterType::New();
-    std::string name = "output/drr-"+DoubletoString(E)+".mhd";
+    WriterType::Pointer writer = WriterType::New();
+    name = "output/drr-"+DoubletoString(E)+".mhd";
     writer->SetFileName(name);
     writer->SetInput(output);
     writer->Update();
@@ -430,10 +452,10 @@ void GateHybridForcedDetectionActor::CreateMuImage(const std::vector<double> & l
 
 
 //-----------------------------------------------------------------------------
-void GateHybridForcedDetectionActor::GenerateDRR(const InputImageType * input, 
-                                                 const OutputImageType * projInput, 
-                                                 GeometryType * geometry,
-                                                 OutputImageType * output)
+GateHybridForcedDetectionActor::OutputImageType::Pointer 
+GateHybridForcedDetectionActor::GenerateDRR(const InputImageType * input, 
+                                            const OutputImageType * projInput, 
+                                            GeometryType * geometry)
 {
   DD("GenerateDRR");
   
@@ -446,16 +468,42 @@ void GateHybridForcedDetectionActor::GenerateDRR(const InputImageType * input,
   DD("START");
   jfp->Update();
   DD("done");
-  output = jfp->GetOutput();  
+  return jfp->GetOutput();  
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void GateHybridForcedDetectionActor::CreateLabelToMuConversion(const double E, 
+                                                               GateVImageVolume * gate_image_volume,
                                                                std::vector<double> & label2mu)
 {
-
+  DD("CreateLabelToMuConversion");
+  
+  G4EmCalculator * emcalc = new G4EmCalculator;
+  std::vector<G4Material*> m;
+  gate_image_volume->BuildLabelToG4MaterialVector(m);
+  G4String part = "gamma";
+  G4String proc_compton = "Compton";
+  G4String proc_rayleigh= "Rayleigh";
+  DD(E);
+  DD(m.size());
+  label2mu.clear();
+  label2mu.resize(m.size());
+  for(uint i=0; i<m.size(); i++) {
+    // DD(i);
+    G4Material * mat = m[i];
+    DD(mat->GetName());
+    double d = mat->GetDensity();
+    DD(d);
+    double xs_c = emcalc->ComputeCrossSectionPerVolume(E, part, proc_compton, mat->GetName());
+    double xs_r = emcalc->ComputeCrossSectionPerVolume(E, part, proc_rayleigh, mat->GetName());
+    DD(xs_c);
+    DD(xs_r);
+    double mu = (xs_c+xs_r)/d;
+    DD(mu);
+    label2mu[i] = mu;
+  }
 }
 //-----------------------------------------------------------------------------
 

@@ -28,6 +28,7 @@
 #include "GateHybridForcedDetectionActorMessenger.hh"
 #include "GateImage.hh"
 #include "GateSourceMgr.hh"
+#include "GateVImageVolume.hh"
 
 // rtk
 #include "rtkProjectionGeometry.h"
@@ -79,14 +80,15 @@ public:
   void CreateMuImage(const std::vector<double> & label2mu, 
                      const GateImage * gate_image, 
                      InputImageType * input);
-  void GenerateDRR(const InputImageType * input, 
-                   const OutputImageType * projInput, 
-                   GeometryType * geometry,
-                   OutputImageType * output);
+  OutputImageType::Pointer  GenerateDRR(const InputImageType * input, 
+                                        const OutputImageType * projInput, 
+                                        GeometryType * geometry);
   OutputImageType::Pointer CreateGeometry(GateVVolume * detector,
                                           GateVSource * src, 
                                           GeometryType * geometry);
-  void CreateLabelToMuConversion(const double E, std::vector<double> & label2mu);
+  void CreateLabelToMuConversion(const double E, 
+                                 GateVImageVolume * gate_image_volume,
+                                 std::vector<double> & label2mu);
     
 protected:
   GateHybridForcedDetectionActorMessenger * pActorMessenger;
