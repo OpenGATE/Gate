@@ -118,8 +118,9 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   else if (st == "User") { // histo
     G4PhysicsOrderedFreeVector h = mSource->GetEneDist()->GetUserDefinedEnergyHisto ();
     for(uint i=0; i<h.GetVectorLength(); i++) {
-      mEnergyList.push_back(h.Energy(i));
-      std::cout << G4BestUnit(mEnergyList[i], "Energy") << std::endl;
+      double E = h.Energy(i);
+      mEnergyList.push_back(E);
+      std::cout << G4BestUnit(E, "Energy") << " value = " << h.Value(E) << std::endl;
     }
   }
   else {
@@ -166,119 +167,6 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     writer->SetInput(output);
     writer->Update();
   }
-
-
-  DD("OLD");
-
-  /*
-  // FIXME  - test RTK here
-  typename InputImageType::SizeType size;
-  typename InputImageType::PointType origin;
-  typename InputImageType::RegionType region;
-  typename InputImageType::SpacingType spacing;
-  for(uint i=0; i<3; i++) {
-    size[i] = gate_size[i];
-    spacing[i] = gate_spacing[i];
-    origin[i] = gate_origin[i];
-  }
-  DD(size);
-  DD(origin);
-  DD(spacing);
-  region.SetSize(size);
-  input->SetRegions(region);
-  input->SetSpacing(spacing);
-  input->SetOrigin(origin);
-  input->Allocate();
-  DD("allocated");
-  
-  // copy values
-  G4EmCalculator * emcalc = new G4EmCalculator;
-  std::vector<G4Material*> m;
-  gate_image_volume->BuildLabelToG4MaterialVector(m);
-  double E = 60*keV;
-  G4String part = "gamma";
-  G4String proc_compton = "Compton";
-  G4String proc_rayleigh= "Rayleigh";
-  DD(E);
-  DD(m.size());
-  //  GateMaterialMuHandler * muHandler = new GateMaterialMuHandler(m.size());
-  std::vector<double> ed;
-  for(uint i=0; i<m.size(); i++) {
-    // DD(i);
-    G4Material * mat = m[i];
-    // DD(mat->GetName());
-    //muHandler->AddMaterial(mat);
-    //    double d = mat->GetDensity();
-    double d = mat->GetDensity();
-    //DD(d/(g/cm3));
-    double xs_c = emcalc->ComputeCrossSectionPerVolume(E, part, proc_compton, mat->GetName());
-    double xs_r = emcalc->ComputeCrossSectionPerVolume(E, part, proc_rayleigh, mat->GetName());
-    double mu = (xs_c+xs_r)/d;
-    // DD(mu);
-    ed.push_back(mu);
-  }
-  DD("done");
-  
-  typedef itk::ImageRegionIterator<InputImageType> IteratorType;
-  IteratorType pi(input,input->GetLargestPossibleRegion());
-  pi.GoToBegin();
-  GateImage::const_iterator data = gate_image->begin();
-  while (!pi.IsAtEnd()) {
-    double e = ed[(int)(*data)];
-    pi.Set(e); // FIXME --> to change 
-    ++pi;
-    ++data;
-  }
-
-  // debug write image
-  typedef itk::ImageFileWriter<OutputImageType> InputWriterType;
-  typename InputWriterType::Pointer iwriter = InputWriterType::New();
-  iwriter->SetFileName("titi.mhd");
-  iwriter->SetInput(input);
-  iwriter->Update();
-  DD("done write titi input");
-
-  typedef rtk::ConstantImageSource< OutputImageType > ConstantImageSourceType;
-  const ConstantImageSourceType::Pointer projInput = ConstantImageSourceType::New();
-  size[2] = 1;
-  size[0] = size[1] = 128;
-  spacing[0] = spacing[1] = 3;
-  // projInput->SetOrigin(origin);
-  projInput->SetSpacing(spacing);
-  projInput->SetSize(size);
-  projInput->SetConstant(0.);
-  projInput->Update();
-
-  // geometry
-  typedef rtk::ThreeDCircularProjectionGeometry GeometryType;
-  double sid = 1000;
-  double sdd = 1536;
-  double gantryAngle = 0.0;
-  double sx = (size[0] * spacing[0])/2.0;
-  double sy = (size[1] * spacing[1])/2.0;
-  DD(sx);
-  DD(sy);
-  geometry->AddProjection(sid, sdd, gantryAngle, -sx, -sy);
-  //  cout <<geometry;
-
-  // projection
-  typedef rtk::JosephForwardProjectionImageFilter<InputImageType, OutputImageType> JFPType;
-  JFPType::Pointer jfp = JFPType::New();
-  jfp->InPlaceOff();
-  jfp->SetInput(projInput->GetOutput()); // output //FIXME
-  jfp->SetInput(1, input); // input
-  jfp->SetGeometry(geometry);
-  DD("START");
-  jfp->Update();
-  DD("done");
-  output = jfp->GetOutput();
-  
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
-  typename WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName("output/toto.mhd");
-  writer->SetInput(output);
-  writer->Update();
-  */
 
 }
 //-----------------------------------------------------------------------------
