@@ -27,7 +27,7 @@ struct GateGPUIO_Particle {
   float t;  // ns time
   int   eventID; // event ID of the particle
   int   trackID; // track ID of the particle
-  int   type; // gamma = 0 ; e- = 1
+  int   type; // See G4 Particle Type
   int   initialID; // initial ID of the particle
 };
 //----------------------------------------------------------
