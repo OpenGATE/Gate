@@ -223,7 +223,7 @@ void GateTrackingGPUActor::UserSteppingAction(const GateVVolume * /*v*/,
     gpu_input->seed = static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
     // DD(gpu_input->seed);
 #ifdef GATE_USE_GPU
-    GateGPU_ActorTrack(gpu_input, gpu_output);
+    //GateGPU_ActorTrack(gpu_input, gpu_output);
 #endif    
 
     // STEP3 get particles from gpu and create tracks

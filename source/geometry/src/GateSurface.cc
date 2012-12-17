@@ -111,7 +111,7 @@ G4OpticalSurface* GateSurface::ReadOpticalSurface(const G4String& name) const
 {
   G4OpticalSurface* surface = 0;
   // open the xml document containing the surface descriptions
-  GateXMLDocument* doc = new GateXMLDocument("Surfaces.xml");
+  GateXMLDocument* doc = new GateXMLDocument("./Surfaces.xml");
   // if correctly opened
   if (doc->Ok())
   {

@@ -40,6 +40,8 @@ See GATE/LICENSE.txt for further details
 GateXMLDocument::GateXMLDocument(const G4String& filename) :
   m_ok(false), m_reset(true)
 { 
+  //std::cout << "===== XML PATH ====: " << filename.c_str() << std::endl;
+
   m_doc = xmlParseFile(filename.c_str());
   if (m_doc)
   {

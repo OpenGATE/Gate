@@ -1,3 +1,6 @@
+#ifndef ACTOR_COMMON_CU
+#define ACTOR_COMMON_CU
+
 #include "actor_cst.cu"
 #include <stdio.h>
 #include <stdlib.h>
@@ -1090,3 +1093,5 @@ void dump_phantom(const unsigned short int *data,
     fwrite(data, sizeof(unsigned short int), sizex*sizey*sizez, pfile);
 	fclose(pfile);
 }
+
+#endif

@@ -31,7 +31,7 @@ public:
   GateOpticalBiolumGPU(G4String name);
   virtual ~GateOpticalBiolumGPU();
 
-  virtual G4double GetNextTime(G4double timeNow);
+  //virtual G4double GetNextTime(G4double timeNow);
 
   virtual void Dump(G4int level);
 

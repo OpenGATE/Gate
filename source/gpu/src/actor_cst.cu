@@ -23,6 +23,11 @@
 //                                                          occupancy      77.3 %
 //                                                          remains        14,888
 
+#define OPTICALPHOTON 0
+#define GAMMA 22
+#define ELECTRON 11
+#define POSITRON 11
+
 
 // ************************************************************************
 // * PE - Standard (Sandia table)

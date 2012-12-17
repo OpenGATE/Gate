@@ -13,6 +13,7 @@
 #include "globals.hh"
 #include "GateSourceVoxellizedMessenger.hh"
 #include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithADoubleAndUnit.hh"
 
 class GateOpticalBiolumGPU;
 
@@ -29,6 +30,7 @@ private:
   G4UIcmdWithAString * m_attach_to_cmd;
   G4UIcmdWithAnInteger * m_gpu_buffer_size_cmd;
   G4UIcmdWithAnInteger * m_gpu_device_id_cmd;
+  G4UIcmdWithADoubleAndUnit * m_gpu_energy_cmd;
 };
 
 #endif

@@ -116,9 +116,14 @@ void GateGPUIO_Output_delete(GateGPUIO_Output* output);
 // Main function that lunch GPU calculation : Actor Tracking
 void GateGPU_ActorTrack(const GateGPUIO_Input * input, 
                         GateGPUIO_Output * output);
+
 // Main function that lunch GPU calculation : Voxelized Source 
 void GateGPU_VoxelSource_GeneratePrimaries(const GateGPUIO_Input * input, 
                                            GateGPUIO_Output * output);
+
+// Main function that lunch GPU calculation : Optical photon
+void GateOpticalBiolum_GPU(const GateGPUIO_Input * input, 
+                           GateGPUIO_Output * output);
 //----------------------------------------------------------
 
 #endif

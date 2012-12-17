@@ -161,7 +161,7 @@ G4Material* GateMaterialDatabase::ReadMaterialFromDBFile(const G4String& materia
   // initialize the properties table
   G4MaterialPropertiesTable* table = 0;
   // open the file
-  GateXMLDocument* doc = new GateXMLDocument("Materials.xml");
+  GateXMLDocument* doc = new GateXMLDocument("./Materials.xml");
   // when the has opened correctly
   if (doc->Ok())
     {
