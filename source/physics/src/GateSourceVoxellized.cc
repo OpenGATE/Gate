@@ -16,6 +16,10 @@
 #include "G4ParticleDefinition.hh"
 
 #include "G4Gamma.hh"
+// vesna
+#include "G4OpticalPhoton.hh"
+// vesna
+
 #include "G4GenericIon.hh"
 #include "G4Event.hh"
 #include "G4UnitsTable.hh"
