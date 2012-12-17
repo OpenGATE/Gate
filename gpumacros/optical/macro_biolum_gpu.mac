@@ -129,7 +129,7 @@
 # V O X E L    S O U R C E
 
 # VERSION GPU
-/gate/source/addSource				voxel GPUvoxel
+/gate/source/addSource				voxel GPUOpticalVoxel
 /gate/source/voxel/attachPhantomTo 		biolumi
 /gate/source/voxel/setGPUBufferSize 		50000
 /gate/source/voxel/setGPUDeviceID 		1

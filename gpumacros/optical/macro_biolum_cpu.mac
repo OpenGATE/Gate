@@ -33,7 +33,7 @@
 /gate/world/geometry/setXLength       400. cm
 /gate/world/geometry/setYLength       400. cm
 /gate/world/geometry/setZLength       400. cm
-/gate/world/setMaterial 	      Vacuum
+/gate/world/setMaterial 	          Air
 
 #===================================================
 # SCANNER OPTICAL
@@ -74,13 +74,13 @@
 # Optical photons Detection Surface should be DIELECTRIC-METAL
 #===============================================================
 
-/gate/crystal/surfaces/name                           Detection1
-/gate/crystal/surfaces/insert                         Electronics
-/gate/crystal/surfaces/Detection1/setSurface          perfect_apd  
+#/gate/crystal/surfaces/name                           Detection1
+#/gate/crystal/surfaces/insert                         Electronics
+#/gate/crystal/surfaces/Detection1/setSurface          perfect_apd  
 
-/gate/Electronics/surfaces/name                       Detection2
-/gate/Electronics/surfaces/insert                     crystal
-/gate/Electronics/surfaces/Detection2/setSurface      perfect_apd  
+#/gate/Electronics/surfaces/name                       Detection2
+#/gate/Electronics/surfaces/insert                     crystal
+#/gate/Electronics/surfaces/Detection2/setSurface      perfect_apd  
 
 
 #===================================================
@@ -90,11 +90,11 @@
 /gate/world/daughters/name					biolumi
 /gate/world/daughters/insert					fictitiousVoxelMap
 
-/gate/biolumi/geometry/insertReader				interfile
-/gate/biolumi/interfileReader/insertTranslator 			range
-/gate/biolumi/interfileReader/rangeTranslator/readTable 	range_biolumi.dat
+/gate/biolumi/geometry/insertReader				            interfile
+/gate/biolumi/interfileReader/insertTranslator 			    range
+/gate/biolumi/interfileReader/rangeTranslator/readTable 	optical_range.dat
 /gate/biolumi/interfileReader/rangeTranslator/describe 		1
-/gate/biolumi/interfileReader/readFile 				biolumi_header_bed.hdr
+/gate/biolumi/interfileReader/readFile 				        optical_phantom.hdr
 /gate/biolumi/placement/setTranslation  			0. 0. 0. mm
 /gate/biolumi/placement/setRotationAxis 			1 0 0
 /gate/biolumi/placement/setRotationAngle 			0 deg
@@ -104,9 +104,9 @@
 #==================================================
 /gate/physics/addProcess OpticalAbsorption
 /gate/physics/addProcess OpticalRayleigh
-/gate/physics/addProcess OpticalBoundary
+#/gate/physics/addProcess OpticalBoundary
 /gate/physics/addProcess OpticalMie
-/gate/physics/addProcess OpticalWLS
+#/gate/physics/addProcess OpticalWLS
 
 /gate/physics/processList Enabled
 /gate/physics/processList Initialized
@@ -133,10 +133,10 @@
 /gate/source/addSource							voxel voxel
 /gate/source/voxel/reader/insert 			      		interfile
 /gate/source/voxel/interfileReader/translator/insert			range
-/gate/source/voxel/interfileReader/rangeTranslator/readTable 		activites_optical.dat
+/gate/source/voxel/interfileReader/rangeTranslator/readTable 		optical_activities.dat
 /gate/source/voxel/interfileReader/rangeTranslator/describe 		1
 /gate/source/voxel/interfileReader/verbose 				0
-/gate/source/voxel/interfileReader/readFile 				biolumi_header_bed.hdr
+/gate/source/voxel/interfileReader/readFile 				optical_phantom.hdr
 
 /gate/source/voxel/gps/particle 					opticalphoton
 /gate/source/voxel/gps/energytype 					Mono
@@ -152,7 +152,6 @@
 /gate/output/ascii/setFileName                  ListModeOPTICAL_cpu_
 /gate/output/ascii/setOutFileHitsFlag           1
 /gate/output/ascii/setOutFileSinglesFlag        0
-/gate/output/ascii/setOutFileCoincidencesFlag   0
 
 /gate/output/root/disable
 /gate/output/binary/disable
