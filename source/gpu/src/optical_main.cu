@@ -14,7 +14,7 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
   int nb_of_particles = input->nb_events;
   int nb_act = input->activity_data.size();
   float E = input->E;
-  //float E = 6.0e-06f;
+  int firstInitialID = input->firstInitialID;
   long seed = input->seed;
   int i;
   srand(seed);
@@ -94,7 +94,7 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
   while (count_h < nb_of_particles) {
     ++step;
     //DD(step);
-    DD(count_h);
+    //DD(count_h);
     kernel_optical_navigation_regular<unsigned short int ><<<grid, threads>>>(photons_d,
                                                                 phantom_mat_d, count_d);
 
@@ -146,37 +146,35 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
   f->Write();
   f->Close();
 
-  // DEBUG (not export particles)
- /* 
-  i=0;
-  while (i<nb_of_particles) {
+  i=0; while (i<nb_of_particles) {
     
     // Test if the particle was absorbed -> no output.
-    if (photons_h.active[i]) {
-        GateGPUIO_Particle particle;
-        particle.E =  photons_h.E[i];
-        particle.dx = photons_h.dx[i];
-        particle.dy = photons_h.dy[i];
-        particle.dz = photons_h.dz[i];
-        particle.px = photons_h.px[i] - (input->phantom_size_x/2.0)*input->phantom_spacing_x;
-        particle.py = photons_h.py[i] - (input->phantom_size_y/2.0)*input->phantom_spacing_y;
-        particle.pz = photons_h.pz[i] - (input->phantom_size_z/2.0)*input->phantom_spacing_z;
-        particle.t =  photons_h.t[i];
-        particle.type = photons_h.type[i];
-        particle.eventID = photons_h.eventID[i];
-        particle.trackID = photons_h.trackID[i];
-        
-        output->particles.push_back(particle);
+    //if (photons_h.active[i]) {
+    GateGPUIO_Particle particle;
+    particle.E =  photons_h.E[i];
+    particle.dx = photons_h.dx[i];
+    particle.dy = photons_h.dy[i];
+    particle.dz = photons_h.dz[i];
+    particle.px = photons_h.px[i] - (input->phantom_size_x/2.0)*input->phantom_spacing_x;
+    particle.py = photons_h.py[i] - (input->phantom_size_y/2.0)*input->phantom_spacing_y;
+    particle.pz = photons_h.pz[i] - (input->phantom_size_z/2.0)*input->phantom_spacing_z;
+    particle.t =  photons_h.t[i];
+    particle.type = photons_h.type[i];
+    particle.eventID = photons_h.eventID[i];
+    particle.trackID = i; //photons_h.trackID[i];
+    particle.initialID = firstInitialID + i;
+    
+    output->particles.push_back(particle);
     
         //printf("g %e %e %e %e %e %e %e\n", photons_h.E[i], particle.px, particle.py,
         //                  particle.pz, photons_h.dx[i], photons_h.dy[i], photons_h.dz[i]);
-    }
+    //}
     //else {
       // DD("Particle is still in volume. Ignored.");
     //}
     ++i;
   }
-  */
+  
 
   stack_device_free(photons_d);
   stack_host_free(photons_h);

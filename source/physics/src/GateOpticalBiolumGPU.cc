@@ -152,7 +152,7 @@ G4int GateOpticalBiolumGPU::GeneratePrimaries(G4Event* event)
     }
 
 
-  DD(m_gpu_input->activity_data.size());
+  //DD(m_gpu_input->activity_data.size());
 
   //int i=0; while (i<100) {
   //    DD(m_gpu_input->activity_data[i]);
@@ -163,23 +163,25 @@ G4int GateOpticalBiolumGPU::GeneratePrimaries(G4Event* event)
   // Main loop : if particles buffer is empty, we ask the gpu 
   // FIXME  if (m_gpu_output->particles.empty()) {
   if (m_current_particle_index_in_buffer >= m_gpu_output->particles.size()) {
-    GateMessage("Beam", 5, "No particles in the buffer, we ask the gpu for " 
-                << m_gpu_input->nb_events << " events" << std::endl);
+    //GateMessage("Beam", 5, "No particles in the buffer, we ask the gpu for " 
+    //            << m_gpu_input->nb_events << " events" << std::endl);
 
     // Go GPU
     m_gpu_input->firstInitialID = mCurrentTimeID; // fix a bug - JB
     m_gpu_input->seed = 
       static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
-    printf("seed from input %ld\n", m_gpu_input->seed);
+    //printf("seed from input %ld\n", m_gpu_input->seed);
 
 #ifdef GATE_USE_GPU
     GateOpticalBiolum_GPU(m_gpu_input, m_gpu_output);
 #endif    
 
 
-    GateMessage("Beam", 5, "Done : GPU send " << m_gpu_output->particles.size() 
-                << " events" << std::endl);
+    //GateMessage("Beam", 5, "Done : GPU send " << m_gpu_output->particles.size() 
+    //            << " events" << std::endl);
     m_current_particle_index_in_buffer = 0;
+    DD(m_gpu_output->particles.size());  
+    DD(m_current_particle_index_in_buffer);
   }
 
   // Generate one particle
@@ -190,19 +192,20 @@ G4int GateOpticalBiolumGPU::GeneratePrimaries(G4Event* event)
     //FIXME    GeneratePrimaryEventFromGPUOutput(m_gpu_output->particles.front(), event);
     const GateGPUIO_Particle & part = m_gpu_output->particles[m_current_particle_index_in_buffer];
     GeneratePrimaryEventFromGPUOutput(part, event);
-    //FIXME double tof = m_gpu_output->particles.front().t;
+    ////FIXME double tof = m_gpu_output->particles.front().t;
     double tof = part.t;
     //printf("t %e\n", tof);
 
     // Set the current timeID
-    //FIXME mCurrentTimeID = m_gpu_output->particles.front().initialID;
+    ////FIXME mCurrentTimeID = m_gpu_output->particles.front().initialID;
     mCurrentTimeID = part.initialID;
     
     // Remove the particle from the list
-    //m_gpu_output->particles.pop_front();
+    ////m_gpu_output->particles.pop_front();
     m_current_particle_index_in_buffer++;
 
-    // Display information
+    // Display information 
+    
     G4PrimaryParticle  * p = event->GetPrimaryVertex(0)->GetPrimary(0);
     event->SetEventID(mCurrentTimeID);
     GateMessage("Beam", 3, "(" << event->GetEventID() << ") " << p->GetG4code()->GetParticleName() 
@@ -247,10 +250,15 @@ void GateOpticalBiolumGPU::GeneratePrimaryEventFromGPUOutput(const GateGPUIO_Par
 
   // Position
   G4ThreeVector particle_position;
-  particle_position.setX(particle.px*mm-m_gpu_input->phantom_size_x*m_gpu_input->phantom_spacing_x/2.0*mm);
-  particle_position.setY(particle.py*mm-m_gpu_input->phantom_size_y*m_gpu_input->phantom_spacing_y/2.0*mm);
-  particle_position.setZ(particle.pz*mm-m_gpu_input->phantom_size_z*m_gpu_input->phantom_spacing_z/2.0*mm);
+  //particle_position.setX(particle.px*mm-m_gpu_input->phantom_size_x*m_gpu_input->phantom_spacing_x/2.0*mm);
+  //particle_position.setY(particle.py*mm-m_gpu_input->phantom_size_y*m_gpu_input->phantom_spacing_y/2.0*mm);
+  //particle_position.setZ(particle.pz*mm-m_gpu_input->phantom_size_z*m_gpu_input->phantom_spacing_z/2.0*mm);
 
+  particle_position.setX(particle.px*mm);
+  particle_position.setY(particle.py*mm);
+  particle_position.setZ(particle.pz*mm);
+
+  //printf("New part %e %f %f %f\n", particle.E*MeV, particle.px, particle.py, particle.pz);
   
 /*
 G4ThreeVector particle_position;
@@ -294,6 +302,8 @@ particle_position.setZ(particle.pz*mm-92*mm);
                                                          particle_momentum.x(), 
                                                          particle_momentum.y(), 
                                                          particle_momentum.z());
+  g4particle->SetPolarization(1.0, 0.0, 0.0);
+  g4particle->SetTrackID(particle.trackID);
   vertex->SetPrimary( g4particle ); 
   event->AddPrimaryVertex( vertex );
 }

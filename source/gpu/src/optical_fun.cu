@@ -104,24 +104,25 @@ __device__ float3 Mie_scatter(StackParticle stack, unsigned int id, int mat) {
 // vesna - Surface effects
 
 // Compute the Fresnel reflectance (MCML code)
-__device__ float RFresnel(float n_incident, /* incident refractive index.*/
-				float n_transmit, /* transmit refractive index.*/
-				float c_incident_angle, /* cosine of the incident angle. 0<a1<90 degrees. */
-				float *c_transmission_angle_Ptr) /* pointer to the cosine of the transmission angle. a2>0. */
+__device__ float2 RFresnel(float n_incident, /* incident refractive index.*/
+				           float n_transmit, /* transmit refractive index.*/
+				           float c_incident_angle) 
+                           /* cosine of the incident angle. 0<a1<90 degrees. */
 {
   float r;
+  float c_transmission_angle;
   
   if(n_incident==n_transmit) {			/** matched boundary. **/
-    *c_transmission_angle_Ptr = c_incident_angle;
+    c_transmission_angle = c_incident_angle;
     r = 0.0;
   }
   else if(c_incident_angle>COSZERO) {	/** normal incident. **/
-    *c_transmission_angle_Ptr = c_incident_angle;
+    c_transmission_angle = c_incident_angle;
     r = (n_transmit-n_incident)/(n_transmit+n_incident);
     r *= r;
   }
   else if(c_incident_angle<COS90D)  {	/** very slant. **/
-    *c_transmission_angle_Ptr = 0.0;
+    c_transmission_angle = 0.0;
     r = 1.0;
   }
   else  {		/** general. **/
@@ -131,7 +132,7 @@ __device__ float RFresnel(float n_incident, /* incident refractive index.*/
     sa1 = sqrt(1-c_incident_angle*c_incident_angle);
     sa2 = n_incident*sa1/n_transmit;
     if(sa2>=1.0) { 	/* double check for total internal reflection. */
-      *c_transmission_angle_Ptr = 0.0;
+      c_transmission_angle = 0.0;
       r = 1.0;
     }
     else  {
@@ -139,7 +140,7 @@ __device__ float RFresnel(float n_incident, /* incident refractive index.*/
 			/* angles. ap = a_incident+a_transmit am = a_incident - a_transmit. */
       float sap, sam;	/* sines. */
       
-      *c_transmission_angle_Ptr = ca2 = sqrt(1-sa2*sa2);
+      c_transmission_angle = ca2 = sqrt(1-sa2*sa2);
       
       cap = c_incident_angle*ca2 - sa1*sa2; /* c+ = cc - ss. */
       cam = c_incident_angle*ca2 + sa1*sa2; /* c- = cc + ss. */
@@ -148,36 +149,45 @@ __device__ float RFresnel(float n_incident, /* incident refractive index.*/
       r = 0.5*sam*sam*(cam*cam+cap*cap)/(sap*sap*cam*cam); 
     }
   }
-  return(r);
+
+  return make_float2(r, c_transmission_angle);
 }
 // Fresnel Reflectance
 
 // Fresnel Processes
 __device__ float3 Fresnel_process(StackParticle photon, unsigned int id, 
-                                    unsigned short int *mat_i_Ptr, unsigned short int mat_t) { 
+                                  unsigned short int mat_i, unsigned short int mat_t) { 
 
+  float ux = photon.dx[id];
+  float uy = photon.dy[id];
   float uz = photon.dz[id]; /* z directional cosine. */
   float uz1;	/* cosines of transmission angle. */
   float r=0.0;	/* reflectance */
-  float ni = mat_Rindex[*mat_i_Ptr];
+  float ni = mat_Rindex[mat_i];
   float nt = mat_Rindex[mat_t];
   
   /* Get r. */
-//  if( uz <= 0.7) /* 0.7 is the cosine of the critical angle of total internal reflection */
- //   r=1.0;		/* total internal reflection. */
-//  else r = RFresnel(ni, nt, uz, &uz1);
+  //  if( uz <= 0.7) /* 0.7 is the cosine of the critical angle of total internal reflection */
+  //   r=1.0;		/* total internal reflection. */
+  //  else r = RFresnel(ni, nt, uz, &uz1);
  
-  r = RFresnel(ni, nt, uz, &uz1);
+  //r = RFresnel(ni, nt, uz, &uz1);
+  float2 res = RFresnel(ni, nt, uz); // res.x=r  res.y=uz1
 
-  if (Brent_real(id, photon.table_x_brent, 0) > r) {	/* transmitted */
-      photon.dx[id] *= ni/nt;
-      photon.dy[id] *= ni/nt;
-      photon.dz[id] = uz1;
-    }
+  if (Brent_real(id, photon.table_x_brent, 0) > res.x) {	/* transmitted */
+      ux *= ni/nt;
+      uy *= ni/nt;
+      uz = res.y;
+  }
   else {						/* reflected. */
-    photon.dz[id] = -uz;
-}
-	return make_float3(photon.dx[id], photon.dy[id], photon.dz[id]);
+      uz = -uz;
+  }
+
+  float3 Dir1 = make_float3(ux, uy, uz);
+  Dir1 = rotateUz(Dir1, make_float3(photon.dx[id], photon.dy[id], photon.dz[id]));
+  photon.dx[id] = Dir1.x;
+  photon.dy[id] = Dir1.y;
+  photon.dz[id] = Dir1.z;
 
 }  // vesna - Fresnel Processes
 
@@ -245,6 +255,8 @@ __global__ void kernel_optical_voxelized_source(StackParticle photons,
     photons.interaction[id] = 0;
     photons.type[id] = OPTICALPHOTON;
     photons.active[id] = 1;
+    photons.eventID[id] = id;
+    photons.trackID[id] = 0;
 }
 
 
@@ -313,22 +325,29 @@ __global__ void kernel_optical_navigation_regular(StackParticle photons,
     // Distance to the next voxel boundary (raycasting)
     interaction_distance = get_boundary_voxel_by_raycasting(index_phantom, position, 
                                                             direction, phantom.voxel_size);
+    // Overshoot the distance to the particle inside the next voxel
+    interaction_distance += 1.0e-06f; // 1um
     if (interaction_distance < next_interaction_distance) {
       next_interaction_distance = interaction_distance;
       next_discrete_process = OPTICALPHOTON_BOUNDARY_VOXEL;
     }
 
-
-    //printf("Next %i dist %f\n", next_discrete_process, next_interaction_distance);
+    int3 old_ind;
+    old_ind.x=index_phantom.x;
+    old_ind.y=index_phantom.y;
+    old_ind.z=index_phantom.z;
 
     //// Move particle //////////////////////////////////////////////////////
 
     position.x += direction.x * next_interaction_distance;
     position.y += direction.y * next_interaction_distance;
     position.z += direction.z * next_interaction_distance;
+    
+
     // Dirty part FIXME
     //   apply "magnetic grid" on the particle position due to aproximation 
     //   from the GPU (on the next_interaction_distance).
+    /*
     float eps = 1.0e-6f; // 1 um
     float res_min, res_max, grid_pos_min, grid_pos_max;
     index_phantom.x = int(position.x * ivoxsize.x);
@@ -355,10 +374,15 @@ __global__ void kernel_optical_navigation_regular(StackParticle photons,
     res_max = position.z - grid_pos_max;
     if (res_min < eps) {position.z = grid_pos_min;}
     if (res_max > eps) {position.z = grid_pos_max;}
+    */
 
     photons.px[id] = position.x;
     photons.py[id] = position.y;
     photons.pz[id] = position.z;
+
+
+    
+   
 
     // Stop simulation if out of phantom or no more energy
     if ( position.x <= 0 || position.x >= phantom.size_in_mm.x
@@ -371,8 +395,56 @@ __global__ void kernel_optical_navigation_regular(StackParticle photons,
 
     //// Resolve discrete processe //////////////////////////////////////////
 
+    /*
+        index_phantom.x = int(position.x * ivoxsize.x);
+        index_phantom.y = int(position.y * ivoxsize.y);
+        index_phantom.z = int(position.z * ivoxsize.z);
+        index_phantom.w = index_phantom.z*phantom.nb_voxel_slice
+                     + index_phantom.y*phantom.size_in_vox.x
+                     + index_phantom.x; // linear index
+
+        T1 old_mat = mat;
+        mat = phantom.data[index_phantom.w];
+   
+    printf("%i %f %f %f next %i %f - %i %i %i - %i %i %i - %i %i\n", id,
+            position.x, position.y, position.z, 
+            next_discrete_process, next_interaction_distance,
+            old_ind.x, old_ind.y, old_ind.z,
+            index_phantom.x, index_phantom.y, index_phantom.z,
+            old_mat, mat);
+    */
+    
     // Resolve discrete processes
+    if (next_discrete_process == OPTICALPHOTON_BOUNDARY_VOXEL) {
+        
+        // Check the change of material for Fresnel
+        index_phantom.x = int(position.x * ivoxsize.x);
+        index_phantom.y = int(position.y * ivoxsize.y);
+        index_phantom.z = int(position.z * ivoxsize.z);
+        index_phantom.w = index_phantom.z*phantom.nb_voxel_slice
+                     + index_phantom.y*phantom.size_in_vox.x
+                     + index_phantom.x; // linear index
+
+        T1 old_mat = mat;
+        mat = phantom.data[index_phantom.w];
+    
+        if (old_mat != mat) {
+            // Fresnel
+            //printf("%i FRESNEL\n", id);
+            Fresnel_process(photons, id, old_mat, mat);
+            /*
+		float3 dir = Fresnel_process(stackgamma, id, &mat_initial, mat);
+		float3 toto = make_float3(stackgamma.dx[id], stackgamma.dy[id], stackgamma.dz[id]);
+		toto = deflect_particle(toto, dir);
+		stackgamma.dx[id] = toto.x;
+		stackgamma.dy[id] = toto.y;
+		stackgamma.dz[id] = toto.z;*/
+
+        }
+    }
+
     if (next_discrete_process == OPTICALPHOTON_MIE) {
+        // Mie scattering
         Mie_scatter(photons, id, mat);
     }
 }
