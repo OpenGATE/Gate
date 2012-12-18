@@ -111,14 +111,14 @@
 <!-- If you do not provide any RAYLEIGH property vector for Water, Geant4 automatically calculates Water scattering 
 lengths using Einstein-Smoluchowski formula -->
 <!--   </propertiestable>-->
-<!--  <property name="MIEHG_FORWARD" value="0.6" />
+  <property name="MIEHG_FORWARD" value="0.6" />
       <property name="MIEHG_BACKWARD" value="0.6" />
       <property name="MIEHG_FORWARD_RATIO" value="1.0" />
       <propertyvector name="MIEHG" unit="mm" energyunit="eV">
-	<ve energy="5.0" value="5.3"/>
-	<ve energy="6.0" value="6.2"/>
-	<ve energy="7.0" value="6.7"/>
-      </propertyvector>-->
+	<ve energy="5.0" value="1.3"/>
+	<ve energy="6.0" value="1.2"/>
+	<ve energy="7.0" value="1.7"/>
+      </propertyvector>
     </propertiestable>
   </material>
 
@@ -133,9 +133,9 @@ lengths using Einstein-Smoluchowski formula -->
       <property name="MIEHG_BACKWARD" value="0.6" />
       <property name="MIEHG_FORWARD_RATIO" value="1.0" />
       <propertyvector name="MIEHG" unit="mm" energyunit="eV">
-	<ve energy="5.0" value="2.3"/>
-	<ve energy="6.0" value="3.2"/>
-	<ve energy="7.0" value="4.7"/>
+	<ve energy="5.0" value="1.3"/>
+	<ve energy="6.0" value="1.2"/>
+	<ve energy="7.0" value="1.7"/>
       </propertyvector>   
    </propertiestable>
   </material>

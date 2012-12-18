@@ -43,7 +43,7 @@
 /gate/OpticalSystem/geometry/setXLength         10. cm
 /gate/OpticalSystem/geometry/setYLength         10. cm
 /gate/OpticalSystem/geometry/setZLength         2.0 cm
-/gate/OpticalSystem/placement/setTranslation    0 0 3.0 cm
+/gate/OpticalSystem/placement/setTranslation    0 0 10.0 cm
 /gate/OpticalSystem/setMaterial                 Air
 
 /gate/OpticalSystem/daughters/name              crystal
@@ -73,13 +73,13 @@
 # Optical photons Detection Surface should be DIELECTRIC-METAL
 #===============================================================
 
-/gate/crystal/surfaces/name                           Detection1
-/gate/crystal/surfaces/insert                         Electronics
-/gate/crystal/surfaces/Detection1/setSurface          perfect_apd  
+#/gate/crystal/surfaces/name                           Detection1
+#/gate/crystal/surfaces/insert                         Electronics
+#/gate/crystal/surfaces/Detection1/setSurface          perfect_apd  
 
-/gate/Electronics/surfaces/name                       Detection2
-/gate/Electronics/surfaces/insert                     crystal
-/gate/Electronics/surfaces/Detection2/setSurface      perfect_apd  
+#/gate/Electronics/surfaces/name                       Detection2
+#/gate/Electronics/surfaces/insert                     crystal
+#/gate/Electronics/surfaces/Detection2/setSurface      perfect_apd  
 
 
 #===================================================
@@ -87,16 +87,13 @@
 #===================================================
 
 /gate/world/daughters/name					            biolumi
-/gate/world/daughters/insert					        fictitiousVoxelMap
-
+/gate/world/daughters/insert					       fictitiousVoxelMap
 /gate/biolumi/geometry/insertReader				        interfile
 /gate/biolumi/interfileReader/insertTranslator 			range
 /gate/biolumi/interfileReader/rangeTranslator/readTable optical_range_gpu.dat
 /gate/biolumi/interfileReader/rangeTranslator/describe 	1
 /gate/biolumi/interfileReader/readFile 				    optical_phantom.hdr
 #/gate/biolumi/placement/setTranslation  			    0. 0. 0. mm
-#/gate/biolumi/placement/setRotationAxis 			    1 0 0
-#/gate/biolumi/placement/setRotationAngle 			    0 deg
 
 #==================================================
 # PHYSICS
@@ -129,18 +126,18 @@
 # V O X E L    S O U R C E
 
 # VERSION GPU
-/gate/source/addSource				    voxel GPUOpticalVoxel
+/gate/source/addSource				voxel   GPUOpticalVoxel
 /gate/source/voxel/attachPhantomTo 		biolumi
-/gate/source/voxel/setGPUBufferSize 	100000
+/gate/source/voxel/setGPUBufferSize 	        1000000
 /gate/source/voxel/setGPUDeviceID 		1
-/gate/source/voxel/energy 			    6.0 eV
+/gate/source/voxel/energy 			6.0 eV
 
-/gate/source/voxel/reader/insert 			      		        interfile
+/gate/source/voxel/reader/insert 			      		interfile
 /gate/source/voxel/interfileReader/translator/insert			range
-/gate/source/voxel/interfileReader/rangeTranslator/readTable 	optical_activities.dat
-/gate/source/voxel/interfileReader/rangeTranslator/describe 	1
-/gate/source/voxel/interfileReader/verbose 				        0
-/gate/source/voxel/interfileReader/readFile 				    optical_phantom.hdr
+/gate/source/voxel/interfileReader/rangeTranslator/readTable 	        optical_activities.dat
+/gate/source/voxel/interfileReader/rangeTranslator/describe 	        1
+/gate/source/voxel/interfileReader/verbose 				0
+/gate/source/voxel/interfileReader/readFile 				optical_phantom.hdr
 
 #/gate/source/voxel/gps/particle 					opticalphoton
 #/gate/source/voxel/gps/energytype 					Mono
@@ -159,6 +156,7 @@
 
 /gate/output/root/disable
 /gate/output/binary/disable
+/gate/output/allowNoOutput
 
 #==============================================
 # RANDOM
@@ -175,7 +173,7 @@
 #/gate/application/setTimeStop      1.0 s
 #/gate/application/startDAQ
 
-/gate/application/setTotalNumberOfPrimaries 100000
+/gate/application/setTotalNumberOfPrimaries 1000000
 /gate/application/start
 
 
