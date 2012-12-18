@@ -6,6 +6,15 @@
 #include <math.h>
 #include <float.h>
 
+// vesna - for ROOT output
+#include <TROOT.h>
+#include <TFile.h>
+#include <TTree.h>
+#include <TBranch.h>
+#include <TSystem.h>
+#include <TPluginManager.h>
+// vesna - for ROOT output
+
 __device__ float loglog_interpolation(float x, float x0, float y0, float x1, float y1) {
 	if (x < x0) {return y0;}
 	if (x > x1) {return y1;}

@@ -93,8 +93,8 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
   int step = 0;
   while (count_h < nb_of_particles) {
     ++step;
-    DD(step);
-    //DD(count_h);
+    //DD(step);
+    DD(count_h);
     kernel_optical_navigation_regular<unsigned short int ><<<grid, threads>>>(photons_d,
                                                                 phantom_mat_d, count_d);
 
@@ -111,15 +111,43 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
     }
     */
 
-    if (step > 50) {DD("WATCHDOG AT 50 STEP"); break;}
+    //if (step > 50) {DD("WATCHDOG AT 50 STEP"); break;}
   }
-
-  /*
+  
   // Copy photons from device to host
   stack_copy_device2host(photons_d, photons_h);
- 
+
+  // ROOT export
+  gROOT->Reset();
+  gPluginMgr->AddHandler("TVirtualStreamerInfo", "*", "TStreamerInfo","RIO", "TStreamerInfo()");
+  TFile* f = new TFile("gpu_1M.root", "RECREATE", "ROOT file for phase space", 9);
+  TTree* tree = new TTree("PhaseSpace", "Phase space tree");
+
+  float px, py, pz, dx, dy, dz, energy;
+  tree->Branch("Ekine", &energy, "Ekine/F");
+  tree->Branch("X", &px, "X/F");
+  tree->Branch("Y", &py, "Y/F");
+  tree->Branch("Z", &pz, "Z/F");
+  tree->Branch("dX", &dx, "dX/F");
+  tree->Branch("dY", &dy, "dY/F");
+  tree->Branch("dZ", &dz, "dZ/F");
+
+  i=0; while (i<nb_of_particles) {
+    energy = photons_h.E[i];
+    dx = photons_h.dx[i];
+    dy = photons_h.dy[i];
+    dz = photons_h.dz[i];
+    px = photons_h.px[i] - (input->phantom_size_x/2.0)*input->phantom_spacing_x;
+    py = photons_h.py[i] - (input->phantom_size_y/2.0)*input->phantom_spacing_y;
+    pz = photons_h.pz[i] - (input->phantom_size_z/2.0)*input->phantom_spacing_z;
+	tree->Fill();
+    ++i;
+  }
+  f->Write();
+  f->Close();
+
   // DEBUG (not export particles)
-  
+ /* 
   i=0;
   while (i<nb_of_particles) {
     
