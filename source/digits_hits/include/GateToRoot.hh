@@ -297,6 +297,9 @@ private:
   G4double PhantomLastHitPos_X,PhantomLastHitPos_Y,PhantomLastHitPos_Z, PhantomLastHitEnergy;
   G4double PhantomAbsorbedPhotonHitPos_X, PhantomAbsorbedPhotonHitPos_Y,PhantomAbsorbedPhotonHitPos_Z;
   G4double PhantomWLSPos_X, PhantomWLSPos_Y,PhantomWLSPos_Z;
+
+  G4double PhantomHitPos_X, PhantomHitPos_Y,PhantomHitPos_Z;
+
   G4double MomentumDirectionx, MomentumDirectiony, MomentumDirectionz;
 // v. cuplov - optical photons
 

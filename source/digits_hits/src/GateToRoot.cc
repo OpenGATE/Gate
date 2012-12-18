@@ -247,6 +247,12 @@ void GateToRoot::Book()
   OpticalTree->Branch(G4String("PhantomLastHitPos_X").c_str(),&PhantomLastHitPos_X,"PhantomLastHitPos_X/D");
   OpticalTree->Branch(G4String("PhantomLastHitPos_Y").c_str(),&PhantomLastHitPos_Y,"PhantomLastHitPos_Y/D");
   OpticalTree->Branch(G4String("PhantomLastHitPos_Z").c_str(),&PhantomLastHitPos_Z,"PhantomLastHitPos_Z/D");
+
+  OpticalTree->Branch(G4String("PhantomHitPos_X").c_str(),&PhantomHitPos_X,"PhantomHitPos_X/D");
+  OpticalTree->Branch(G4String("PhantomHitPos_Y").c_str(),&PhantomHitPos_Y,"PhantomHitPos_Y/D");
+  OpticalTree->Branch(G4String("PhantomHitPos_Z").c_str(),&PhantomHitPos_Z,"PhantomHitPos_Z/D");
+
+
   OpticalTree->Branch(G4String("PhantomLastHitEnergy").c_str(),&PhantomLastHitEnergy,"PhantomLastHitEnergy/D");
   OpticalTree->Branch(G4String("CrystalAbsorbedPhotonHitPos_X").c_str(),&CrystalAbsorbedPhotonHitPos_X,"CrystalAbsorbedPhotonHitPos_X/D");
   OpticalTree->Branch(G4String("CrystalAbsorbedPhotonHitPos_Y").c_str(),&CrystalAbsorbedPhotonHitPos_Y,"CrystalAbsorbedPhotonHitPos_Y/D");
@@ -876,6 +882,12 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
                           PhantomWLSPos_Y = (*PHC)[iPHit]->GetPos().y();
                           PhantomWLSPos_Z = (*PHC)[iPHit]->GetPos().z();
                    }
+
+                          PhantomHitPos_X = (*PHC)[iPHit]->GetPos().x();
+                          PhantomHitPos_Y = (*PHC)[iPHit]->GetPos().y();
+                          PhantomHitPos_Z = (*PHC)[iPHit]->GetPos().z();
+
+
 
                    PhantomLastHit=iPHit;
                 }  // end GoodForAnalysis() and optical photon
