@@ -94,17 +94,17 @@
 /gate/biolumi/interfileReader/rangeTranslator/readTable optical_range_gpu.dat
 /gate/biolumi/interfileReader/rangeTranslator/describe 	1
 /gate/biolumi/interfileReader/readFile 				    optical_phantom.hdr
-/gate/biolumi/placement/setTranslation  			    0. 0. 0. mm
-/gate/biolumi/placement/setRotationAxis 			    1 0 0
-/gate/biolumi/placement/setRotationAngle 			    0 deg
+#/gate/biolumi/placement/setTranslation  			    0. 0. 0. mm
+#/gate/biolumi/placement/setRotationAxis 			    1 0 0
+#/gate/biolumi/placement/setRotationAngle 			    0 deg
 
 #==================================================
 # PHYSICS
 #==================================================
-/gate/physics/addProcess 	OpticalAbsorption
-/gate/physics/addProcess 	OpticalRayleigh
-/gate/physics/addProcess 	OpticalBoundary
-/gate/physics/addProcess 	OpticalMie
+#/gate/physics/addProcess 	OpticalAbsorption
+#/gate/physics/addProcess 	OpticalRayleigh
+#/gate/physics/addProcess 	OpticalBoundary
+#/gate/physics/addProcess 	OpticalMie
 #/gate/physics/addProcess 	OpticalWLS
 
 /gate/physics/processList 	Enabled
@@ -131,7 +131,7 @@
 # VERSION GPU
 /gate/source/addSource				    voxel GPUOpticalVoxel
 /gate/source/voxel/attachPhantomTo 		biolumi
-/gate/source/voxel/setGPUBufferSize 	5
+/gate/source/voxel/setGPUBufferSize 	100000
 /gate/source/voxel/setGPUDeviceID 		1
 /gate/source/voxel/energy 			    6.0 eV
 
@@ -145,17 +145,17 @@
 #/gate/source/voxel/gps/particle 					opticalphoton
 #/gate/source/voxel/gps/energytype 					Mono
 #/gate/source/voxel/setPosition  					0. 0. 0. cm
-#/gate/source/voxel/gps/angtype 						iso
+#/gate/source/voxel/gps/angtype 					iso
 
 
 #==================================================
 # DATA OUTPUT
 #==================================================
 
-/gate/output/ascii/enable
-/gate/output/ascii/setFileName                  ListModeOPTICAL_gpu
-/gate/output/ascii/setOutFileHitsFlag           1
-/gate/output/ascii/setOutFileSinglesFlag        0
+#/gate/output/ascii/enable
+#/gate/output/ascii/setFileName                  ListModeOPTICAL_gpu
+#/gate/output/ascii/setOutFileHitsFlag           1
+#/gate/output/ascii/setOutFileSinglesFlag        0
 
 /gate/output/root/disable
 /gate/output/binary/disable
@@ -175,7 +175,7 @@
 #/gate/application/setTimeStop      1.0 s
 #/gate/application/startDAQ
 
-/gate/application/setTotalNumberOfPrimaries 5
+/gate/application/setTotalNumberOfPrimaries 100000
 /gate/application/start
 
 
