@@ -151,6 +151,15 @@ G4int GateOpticalBiolumGPU::GeneratePrimaries(G4Event* event)
       GateGPUIO_Input_parse_activities(activities,m_gpu_input);
     }
 
+
+  DD(m_gpu_input->activity_data.size());
+
+  //int i=0; while (i<100) {
+  //    DD(m_gpu_input->activity_data[i]);
+  //    ++i;
+  //}
+
+
   // Main loop : if particles buffer is empty, we ask the gpu 
   // FIXME  if (m_gpu_output->particles.empty()) {
   if (m_current_particle_index_in_buffer >= m_gpu_output->particles.size()) {
@@ -348,27 +357,21 @@ void GateOpticalBiolumGPU::SetPhantomVolumeData()
         for(int i=0; i<m_gpu_input->phantom_size_x; i++) {
           // Get the material
           G4Material * m = reader->GetVoxelMaterial(i,j,k); 
-          std::vector<G4Material*>::iterator iter;
-          iter = std::find(materials.begin(), materials.end(), m);
-          // Store it if this is the first time
-          if (iter == materials.end()) {
-            DD(m->GetName());
-            materials.push_back(m);
+          G4String n = m->GetName();
+          try {
+            n = n.substr(4,2);
           }
-          // Store the pixel value with the correct index
-          // DD(i);
-          // DD(j);
-          // DD(k);
-          unsigned short int index = iter-materials.begin();
-          // DD(index);
+          catch(std::exception & e) {
+            GateError("The volume name must be GPU_xx_Name.");
+          }
+          unsigned short int index = atoi(n); 
           m_gpu_input->phantom_material_data.push_back(index);
         }
-    DD(materials.size());
 
     // Init the materials
-    G4String name = v->GetObjectName();
-    GateGPUIO_Input_Init_Materials(m_gpu_input, materials, name);
-    DD("mat done");
+    //G4String name = v->GetObjectName();
+    //GateGPUIO_Input_Init_Materials(m_gpu_input, materials, name);
   }
 }
 //----------------------------------------------------------
+

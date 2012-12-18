@@ -23,6 +23,14 @@
 //                                                          occupancy      77.3 %
 //                                                          remains        14,888
 
+#define PHOTON_PHOTOELECTRIC 1
+#define PHOTON_COMPTON 2
+#define PHOTON_STEP_LIMITER 3
+#define PHOTON_BOUNDARY_VOXEL 4
+
+#define OPTICALPHOTON_MIE 1
+#define OPTICALPHOTON_BOUNDARY_VOXEL 2
+
 #define OPTICALPHOTON 0
 #define GAMMA 22
 #define ELECTRON 11
@@ -541,136 +549,6 @@ __constant__ float PhotoElec_std_SandiaTable[220][5] =
 { 100.0,        0.4820E+00, -0.1832E+03,  0.3296E+06,  0.6802E+06 } ,
 { 500.0,        0.1669E+00,  0.2696E+03,  0.1000E+06,  0.4382E+08 }
 };
-
-// ************************************************************************
-// * Materials definition
-// ************************************************************************
-// * JB - 2011-08-05 15:15:44
-
-// List of index materials
-//  0- Air
-//  1- Water
-//  2- Body
-//  3- Lung
-//  4- Breast
-//  5- Heart
-//  6- SpineBone
-//  7- RibBone
-//  8- Intestine
-//  9- Spleen
-// 10- Blood
-// 11- Liver
-// 12- Kidney
-// 13- Brain
-// 14- Pancreas
-
-// Number of elements per material
-__constant__ unsigned short int mat_nb_elements [15] = {
-	// Air Water Body Lung Breast Heart SpineBone RibBone Intestine Spleen
-	   4,  2,    2,   9,   8,     9,    11,       9,      9,        9,
-	// Blood Liver Kidney Brain Pancreas
-	   10,   9,    10,    9,    9
-};
-
-// Index to access material mixture 
-__constant__ unsigned short int mat_index [15] = {
-	// Air Water Body Lung Breast Heart SpineBone RibBone Intestine Spleen
-	   0,  4,    6,   8,   17,    25,   34,       45,     54,       63,
-	// Blood Liver Kidney Brain Pancreas
-	   72,   82,   91,    101,  110
-};
-
-// Mixture of each material
-__constant__ unsigned short int mat_mixture [119] = {
-	// Air C N O Ar
-	6, 7, 8, 18,
-	// Water H O
-	1, 8,
-	// Body H 0
-	1, 8,
-	// Lung H C N O Na P S Cl K
-	1, 6, 7, 8, 11, 15, 16, 17, 19,
-	// Breast H C N O Na P S Cl
-	1, 6, 7, 8, 11, 15, 16, 17,
-	// Heart H C N O Na P S Cl K
-	1, 6, 7, 8, 11, 15, 16, 17, 19,
-	// SpineBone H C N O Na Mg P S Cl K Ca
-	1, 6, 7, 8, 11, 12, 15, 16, 17, 19, 20,
-	// RibBone H C N O Na Mg P S Ca
-	1, 6, 7, 8, 11, 12, 15, 16, 20,
-	// Intestine H C N O Na P S Cl K
-	1, 6, 7, 8, 11, 15, 16, 17, 19,
-	// Spleen H C N O Na P S Cl K
-	1, 6, 7, 8, 11, 15, 16, 17, 19,
-	// Blood H C N O Na P S Cl K Fe
-	1, 6, 7, 8, 11, 15, 16, 17, 19, 26,
-	// Liver H C N O Na P S Cl K
-	1, 6, 7, 8, 11, 15, 16, 17, 19,
-	// Kidney H C N O Na P S Cl K Ca
-	1, 6, 7, 8, 11, 15, 16, 17, 19, 20,
-	// Brain H C N O Na P S Cl K
-	1, 6, 7, 8, 11, 15, 16, 17, 19,
-	// Pancreas H C N O Na P S Cl K
-	1, 6, 7, 8, 11, 15, 16, 17, 19
-};
-
-// Atomic number density of each element of materials (Avo*density*MassFraction / Ai)
-__constant__ float mat_atom_num_dens [119] = {
-	// Air C N O Ar
-	8.02083098025e12f,  4.18797071465e16f,  1.12537829977e16f,  2.49430178811e14f,
-	// Water H O
-	6.685593328e19f,    3.342796664e+19f,
-	// Body H 0
-	6.67801861861e+19f, 3.34228869345e19f,
-	// Lung H C N O Na P S Cl K
-	1.59676195184e+19f, 1.36889651013e+18f, 3.46455837455e+17f, 7.32969932615e+18f,
-	1.3621199351e+16f,  1.0111442463e+16f,  1.46487575507e+16f, 1.32504107086e+16f,
-	8.00939621157e+15f,
-	// Breast H C N O Na P S Cl
-	6.44667297361e+19f, 1.69803338532e+19f, 1.31532861366e+18f, 2.02321381112e+19f,
-	2.67185064193e+16f, 1.98339832929e+16f, 3.83121351325e+16f, 1.73274601574e+16f,
-	// Heart H C N O Na P S Cl K
-	6.51106815315e+19f, 7.31833134264e+18f, 1.30888092438e+18f, 2.83755793468e+19f,
-	2.75043448434e+16f, 4.08346714853e+16f, 3.94389626364e+16f, 3.5674182677e+16f,
-	4.85184578201e+16f,
-	// SpineBone H C N O Na Mg P S Cl K Ca
-	5.33406737116e+19f, 1.85838983365e+19f, 2.38048688316e+18f, 2.33026776564e+19f,
-	3.71963520739e+16f, 3.5183877152e+16f,  1.68433297336e+18f, 8.00047527768e+16f, 
-	2.41225425721e+16f, 2.18718127316e+16f, 2.83767888837e+18f,
-	// RibBone H C N O Na Mg P S Ca
-	3.89233085199e+19f, 1.49224762423e+19f, 3.46627775836e+18f, 3.14355801438e+19f,
-	5.02936591422e+16f, 9.51451325801e+16f, 3.84545934902e+18f, 1.08175440374e+17f,
-	6.49093127066e+18f,
-	// Intestine H C N O Na P S Cl K
-	6.50987564982e+19f, 5.93940628664e+18f, 9.74030927633e+17f, 2.91144208676e+19f,
-	2.69804525607e+16f, 2.00284341095e+16f, 1.93438721503e+16f, 3.49946744355e+16f,
-	1.58647655729e+16f,	
-	// Spleen H C N O Na P S Cl K
-	6.50987564982e+19f, 6.00609611662e+18f, 1.45803746978e+18f, 2.95634468148e+19f,
-	2.77662909848e+16f, 6.18353596778e+16f, 3.98145718044e+16f, 3.60139367977e+16f,
-	4.89805383708e+16f,	
-	// Blood H C N O Na P S Cl K Fe
-	6.44667297361e+19f, 5.84664223742e+18f, 1.50360114072e+18f, 2.97230335723e+19f,
-	2.77662909848e+16f, 2.06117865593e+16f, 3.98145718044e+16f, 5.40209051966e+16f, 
-	3.26536922472e+16f, 1.14306926267e+16f,	
-	// Liver H C N O Na P S Cl K
-	6.44667297361e+19f, 7.38802973637e+18f, 1.36691012792e+18f, 2.85660295809e+19f,
-	5.55325819696e+16f, 6.18353596778e+16f, 5.97218577066e+16f, 3.60139367977e+16f, 
-	4.89805383708e+16f,	
-	// Kidney H C N O Na P S Cl K Ca
-	6.4484617286e+19f,  6.94978228221e+18f, 1.35401474936e+18f, 2.86127011797e+19f,
-	5.50086896868e+16f, 4.08346714853e+16f, 3.94389626364e+16f, 3.5674182677e+16f,
-	3.23456385467e+16f, 1.57765690606e+16f,	
-	// Brain H C N O Na P S Cl K
-	6.63508849892e+19f, 7.56152357978e+18f, 9.83487538581e+17f, 2.78704722041e+19f,
-	5.44847974041e+16f, 8.08915397042e+16f, 3.90633534685e+16f, 5.30016428344e+16f,
-	4.80563772694e+16f,
-	// Pancreas H C N O Na P S Cl K
-	6.57307832604e+19f, 8.81308610333e+18f, 9.83487538581e+17f, 2.71658816147e+19f, 
-	5.44847974041e+16f, 4.04457698521e+16f, 1.95316767342e+16f, 3.53344285563e+16f,
-	3.20375848463e+16f	
-};
-
 
 // Total number of atoms per volume (sum{mat_atom_num_dens_i})
 __constant__ float mat_nb_atoms_per_vol [15] = {

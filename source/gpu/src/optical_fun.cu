@@ -1,24 +1,186 @@
 #include "actor_common.cu"
+#include "optical_cst.cu"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include <math.h>
 #include <float.h>
 
+__device__ float loglog_interpolation(float x, float x0, float y0, float x1, float y1) {
+	if (x < x0) {return y0;}
+	if (x > x1) {return y1;}
+	x0 = __fdividef(1.0f, x0);
+	return __powf(10.0f, __log10f(y0) + __log10f(__fdividef(y1, y0)) *
+		__fdividef(__log10f(x * x0), __log10f(x1 * x0)));
+}
+
+__device__ float lin_interpolation(float x, float x0, float y0, float x1, float y1) {
+	if (x < x0) {return y0;}
+	if (x > x1) {return y1;}
+	return y0 + (y1 - y0) * __fdividef(x - x0, x1 - x0);
+}
+
 /***********************************************************
  * Photons Physics Effects
  ***********************************************************/
 
 
+// vesna - Compute the total Mie cross section for a given material
+__device__ float Mie_CS(int mat, float E) {
+
+	int start = 0;
+	int stop  = start +5; 
+	int pos;
+
+	for (pos=start; pos<stop; pos+=2) {
+		if (Mie_scatteringlength_Table[mat][pos] >= E) {break;}
+	}
+
+      if (pos == 0) {
+      return __fdividef(1.0f, Mie_scatteringlength_Table[mat][pos+1]);
+      }
+      else{
+		return __fdividef(1.0f, loglog_interpolation(E, Mie_scatteringlength_Table[mat][pos-2], 
+                                                    Mie_scatteringlength_Table[mat][pos-1], 
+                                                    Mie_scatteringlength_Table[mat][pos], 
+                                                    Mie_scatteringlength_Table[mat][pos+1]));
+    }
+
+}  // vesna - Compute the total Mie cross section for a given material
+
+
+// vesna - Mie Scatter (Henyey-Greenstein approximation)
+__device__ float3 Mie_scatter(StackParticle stack, unsigned int id, int mat) { 
+
+      float forward_g = mat_anisotropy[mat];
+      float backward_g = mat_anisotropy[mat];
+      float ForwardRatio = 1.0f;
+      unsigned char direction=0; 
+      float g;
+      
+      if (Brent_real(id, stack.table_x_brent, 0)<= ForwardRatio) {
+      	g = forward_g;
+      }
+      else {
+      	g = backward_g;
+      	direction = 1; 
+      }
+
+	float r = Brent_real(id, stack.table_x_brent, 0);	
+      	float theta;
+      	if(g == 0.0f) {	
+		theta = acosf(2.0f * r - 1.0f); 
+		}else {
+        float val_in_acos = __fdividef(2.0f*r*(1.0f + g)*(1.0f + g)*(1.0f - g + g * r),(1.0f - g + 2.0f*g*r)*(1.0f - g + 2.0f*g*r))- 1.0f; 
+        val_in_acos = fmin(val_in_acos, 1.0f); 
+		theta = acosf(val_in_acos); 
+		}
+		
+	float costheta, sintheta, phi;	
+		
+	costheta = cosf(theta);	
+	sintheta = sqrt(1.0f - costheta*costheta);
+	phi = Brent_real(id, stack.table_x_brent, 0) * gpu_twopi;
+	
+	if (direction) theta = gpu_pi - theta;
+
+    float3 Dir1 = make_float3(sintheta*__cosf(phi), sintheta*__sinf(phi), costheta);
+    Dir1 = rotateUz(Dir1, make_float3(stack.dx[id], stack.dy[id], stack.dz[id]));
+    stack.dx[id] = Dir1.x;
+    stack.dy[id] = Dir1.y;
+    stack.dz[id] = Dir1.z;
+}  // vesna - Mie Scatter (Henyey-Greenstein approximation)
+
+
+// vesna - Surface effects
+
+// Compute the Fresnel reflectance (MCML code)
+__device__ float RFresnel(float n_incident, /* incident refractive index.*/
+				float n_transmit, /* transmit refractive index.*/
+				float c_incident_angle, /* cosine of the incident angle. 0<a1<90 degrees. */
+				float *c_transmission_angle_Ptr) /* pointer to the cosine of the transmission angle. a2>0. */
+{
+  float r;
+  
+  if(n_incident==n_transmit) {			/** matched boundary. **/
+    *c_transmission_angle_Ptr = c_incident_angle;
+    r = 0.0;
+  }
+  else if(c_incident_angle>COSZERO) {	/** normal incident. **/
+    *c_transmission_angle_Ptr = c_incident_angle;
+    r = (n_transmit-n_incident)/(n_transmit+n_incident);
+    r *= r;
+  }
+  else if(c_incident_angle<COS90D)  {	/** very slant. **/
+    *c_transmission_angle_Ptr = 0.0;
+    r = 1.0;
+  }
+  else  {		/** general. **/
+    float sa1, sa2;	/* sine of the incident and transmission angles. */
+    float ca2;
+    
+    sa1 = sqrt(1-c_incident_angle*c_incident_angle);
+    sa2 = n_incident*sa1/n_transmit;
+    if(sa2>=1.0) { 	/* double check for total internal reflection. */
+      *c_transmission_angle_Ptr = 0.0;
+      r = 1.0;
+    }
+    else  {
+      float cap, cam;	/* cosines of the sum ap or difference am of the two */
+			/* angles. ap = a_incident+a_transmit am = a_incident - a_transmit. */
+      float sap, sam;	/* sines. */
+      
+      *c_transmission_angle_Ptr = ca2 = sqrt(1-sa2*sa2);
+      
+      cap = c_incident_angle*ca2 - sa1*sa2; /* c+ = cc - ss. */
+      cam = c_incident_angle*ca2 + sa1*sa2; /* c- = cc + ss. */
+      sap = sa1*ca2 + c_incident_angle*sa2; /* s+ = sc + cs. */
+      sam = sa1*ca2 - c_incident_angle*sa2; /* s- = sc - cs. */
+      r = 0.5*sam*sam*(cam*cam+cap*cap)/(sap*sap*cam*cam); 
+    }
+  }
+  return(r);
+}
+// Fresnel Reflectance
+
+// Fresnel Processes
+__device__ float3 Fresnel_process(StackParticle photon, unsigned int id, 
+                                    unsigned short int *mat_i_Ptr, unsigned short int mat_t) { 
+
+  float uz = photon.dz[id]; /* z directional cosine. */
+  float uz1;	/* cosines of transmission angle. */
+  float r=0.0;	/* reflectance */
+  float ni = mat_Rindex[*mat_i_Ptr];
+  float nt = mat_Rindex[mat_t];
+  
+  /* Get r. */
+//  if( uz <= 0.7) /* 0.7 is the cosine of the critical angle of total internal reflection */
+ //   r=1.0;		/* total internal reflection. */
+//  else r = RFresnel(ni, nt, uz, &uz1);
+ 
+  r = RFresnel(ni, nt, uz, &uz1);
+
+  if (Brent_real(id, photon.table_x_brent, 0) > r) {	/* transmitted */
+      photon.dx[id] *= ni/nt;
+      photon.dy[id] *= ni/nt;
+      photon.dz[id] = uz1;
+    }
+  else {						/* reflected. */
+    photon.dz[id] = -uz;
+}
+	return make_float3(photon.dx[id], photon.dy[id], photon.dz[id]);
+
+}  // vesna - Fresnel Processes
 
 /***********************************************************
  * Source
  ***********************************************************/
 
-template <typename T1, typename T2>
+template <typename T1>
 __global__ void kernel_optical_voxelized_source(StackParticle photons, 
-                                                Volume<T1> phantom_act, 
-                                                Volume<T2> phantom_ind, float E) {
+                                                Volume<T1> phantom_mat,
+                                                float *phantom_act,
+                                                unsigned int *phantom_ind, float E) {
 
     unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
@@ -28,14 +190,17 @@ __global__ void kernel_optical_voxelized_source(StackParticle photons,
     
     float rnd = Brent_real(id, photons.table_x_brent, 0);
     int pos = 0;
-    while (phantom_act.data[pos] < rnd) {++pos;};
+    while (phantom_act[pos] < rnd) {++pos;};
     
     // get the voxel position (x, y, z)
-    ind = (float)(phantom_ind.data[pos]);
-    z = floor(ind / (float)phantom_act.nb_voxel_slice);
-    ind -= (z * (float)phantom_act.nb_voxel_slice);
-    y = floor(ind / (float)(phantom_act.size_in_vox.x));
-    x = ind - y * (float)phantom_act.size_in_vox.x;
+    ind = (float)(phantom_ind[pos]);
+    //float debug = phantom_act.data[10];
+    
+    z = floor(ind / (float)phantom_mat.nb_voxel_slice);
+    ind -= (z * (float)phantom_mat.nb_voxel_slice);
+    y = floor(ind / (float)(phantom_mat.size_in_vox.x));
+    x = ind - y * (float)phantom_mat.size_in_vox.x;
+
 
     // random position inside the voxel
     x += Brent_real(id, photons.table_x_brent, 0);
@@ -43,9 +208,9 @@ __global__ void kernel_optical_voxelized_source(StackParticle photons,
     z += Brent_real(id, photons.table_x_brent, 0);
 
     // must be in mm
-    x *= phantom_act.voxel_size.x;
-    y *= phantom_act.voxel_size.y;
-    z *= phantom_act.voxel_size.z;
+    x *= phantom_mat.voxel_size.x;
+    y *= phantom_mat.voxel_size.y;
+    z *= phantom_mat.voxel_size.z;
 
     // random orientation
     float phi   = Brent_real(id, photons.table_x_brent, 0);
@@ -78,23 +243,15 @@ __global__ void kernel_optical_voxelized_source(StackParticle photons,
  * Tracking Kernel
  ***********************************************************/
 
-/*
-
-// Photons - regular tracking
-#define PHOTON_PHOTOELECTRIC 1
-#define PHOTON_COMPTON 2
-#define PHOTON_STEP_LIMITER 3
-#define PHOTON_BOUNDARY_VOXEL 4
+// Optical Photons - regular tracking
 template <typename T1>
-__global__ void kernel_ct_navigation_regular(StackParticle photons,
-                                             Volume<T1> phantom,
-                                             Materials materials,
-                                             int* count_d) {
+__global__ void kernel_optical_navigation_regular(StackParticle photons,
+                                                  Volume<T1> phantom,
+                                                  int* count_d) {
     unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
     if (id >= photons.size) return;
     if (photons.endsimu[id]) return;
-    if (!photons.active[id]) return;
 
     //// Init ///////////////////////////////////////////////////////////////////
 
@@ -126,22 +283,6 @@ __global__ void kernel_ct_navigation_regular(StackParticle photons,
     // Get material
     T1 mat = phantom.data[index_phantom.w];
 
-    
-	int index = materials.index[mat];
-    printf("nb_mat %i mat %i index %i nb_elts %i\n", materials.nb_materials, mat, index, materials.nb_elements[mat]);
-
-    int toto=0;
-    while (toto<2) {
-        printf("mixture: %i num_dens %e\n", materials.mixture[index+toto], materials.atom_num_dens[index+toto]);
-        ++toto;
-    }
-
-    toto=0;
-    while(toto<materials.nb_elements_total) {
-        printf("elts %i\n", materials.mixture[toto]);
-        ++toto;
-    }
-    
 
     //// Find next discrete interaction ///////////////////////////////////////
 
@@ -151,29 +292,13 @@ __global__ void kernel_ct_navigation_regular(StackParticle photons,
     float interaction_distance;
     float cross_section;
 
-    // Photoelectric
-    cross_section = PhotoElec_CS_Standard(materials, mat, energy);
+    // Mie
+    cross_section = Mie_CS(mat, energy); 
     interaction_distance = __fdividef(-__logf(Brent_real(id, photons.table_x_brent, 0)),
                                      cross_section);
     if (interaction_distance < next_interaction_distance) {
        next_interaction_distance = interaction_distance;
-       next_discrete_process = PHOTON_PHOTOELECTRIC;
-    }
-
-    // Compton
-    cross_section = Compton_CS_Standard(materials, mat, energy);
-    interaction_distance = __fdividef(-__logf(Brent_real(id, photons.table_x_brent, 0)),
-                                     cross_section);
-    if (interaction_distance < next_interaction_distance) {
-       next_interaction_distance = interaction_distance;
-       next_discrete_process = PHOTON_COMPTON;
-    }
-
-    // Step limiter
-    interaction_distance = 10.0f; // FIXME step limiter
-    if (interaction_distance < next_interaction_distance) {
-       next_interaction_distance = interaction_distance;
-       next_discrete_process = PHOTON_STEP_LIMITER;
+       next_discrete_process = OPTICALPHOTON_MIE;
     }
 
     // Distance to the next voxel boundary (raycasting)
@@ -181,9 +306,11 @@ __global__ void kernel_ct_navigation_regular(StackParticle photons,
                                                             direction, phantom.voxel_size);
     if (interaction_distance < next_interaction_distance) {
       next_interaction_distance = interaction_distance;
-      next_discrete_process = PHOTON_BOUNDARY_VOXEL;
+      next_discrete_process = OPTICALPHOTON_BOUNDARY_VOXEL;
     }
 
+
+    //printf("Next %i dist %f\n", next_discrete_process, next_interaction_distance);
 
     //// Move particle //////////////////////////////////////////////////////
 
@@ -236,19 +363,9 @@ __global__ void kernel_ct_navigation_regular(StackParticle photons,
     //// Resolve discrete processe //////////////////////////////////////////
 
     // Resolve discrete processes
-    if (next_discrete_process == PHOTON_PHOTOELECTRIC) {
-       float discrete_loss = PhotoElec_ct_SampleSecondaries_Standard(photons, id, count_d);
-       //printf("id %i PE\n", id);
-    }
-
-    if (next_discrete_process == PHOTON_COMPTON) {
-       float discrete_loss = Compton_ct_SampleSecondaries_Standard(photons, id, count_d);
-       //printf("id %i Compton\n", id);
+    if (next_discrete_process == OPTICALPHOTON_MIE) {
+        Mie_scatter(photons, id, mat);
     }
 }
-#undef PHOTON_PHOTOELECTRIC
-#undef PHOTON_COMPTON
-#undef PHOTON_STEP_LIMITER
-#undef PHOTON_BOUNDARY_VOXEL
 
-*/
+

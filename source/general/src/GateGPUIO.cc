@@ -210,6 +210,7 @@ void GateGPUIO_Input_parse_activities(const ActivityMap& activities,
         const int ii = iter->first[0];
         const int jj = iter->first[1];
         const int kk = iter->first[2];
+
         assert(ii >= 0);
         assert(jj >= 0);
         assert(kk >= 0);
@@ -218,15 +219,15 @@ void GateGPUIO_Input_parse_activities(const ActivityMap& activities,
         assert(kk < input->phantom_size_z);
 
         const int index = ii + jj*input->phantom_size_x + kk*input->phantom_size_y*input->phantom_size_x;
+    
         assert(index >= 0);
         assert(index < input->phantom_size_x*input->phantom_size_y*input->phantom_size_z);
 
         ActivityMaterialTuple tuple;
         tuple.index = index;
         tuple.activity = iter->second;
-
         tuples.push_back(tuple);
-        total_activity += tuple.activity;
+        total_activity += tuple.activity; // Unit ? - JB
       }
   }
 
