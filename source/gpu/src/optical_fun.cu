@@ -114,39 +114,43 @@ __device__ float2 RFresnel(float n_incident, /* incident refractive index.*/
   
   if(n_incident==n_transmit) {			/** matched boundary. **/
     c_transmission_angle = c_incident_angle;
-    r = 0.0;
+    r = 0.0f;
+    //printf("case 1\n");
   }
-  else if(c_incident_angle>COSZERO) {	/** normal incident. **/
+  else if(c_incident_angle > COSZERO) {	/** normal incident. **/
     c_transmission_angle = c_incident_angle;
-    r = (n_transmit-n_incident)/(n_transmit+n_incident);
+    r = __fdividef(n_transmit-n_incident, n_transmit+n_incident);
     r *= r;
+    //printf("case 2\n");
   }
-  else if(c_incident_angle<COS90D)  {	/** very slant. **/
-    c_transmission_angle = 0.0;
-    r = 1.0;
+  else if(c_incident_angle < COS90D)  {	/** very slant. **/
+    c_transmission_angle = 0.0f;
+    r = 1.0f;
+    //printf("case 3\n");
   }
   else  {		/** general. **/
     float sa1, sa2;	/* sine of the incident and transmission angles. */
     float ca2;
     
-    sa1 = sqrt(1-c_incident_angle*c_incident_angle);
-    sa2 = n_incident*sa1/n_transmit;
-    if(sa2>=1.0) { 	/* double check for total internal reflection. */
-      c_transmission_angle = 0.0;
-      r = 1.0;
+    sa1 = sqrtf(1.0f-c_incident_angle*c_incident_angle);
+    sa2 = __fdividef(n_incident*sa1, n_transmit);
+    if(sa2 >= 1.0f) { 	/* double check for total internal reflection. */
+      c_transmission_angle = 0.0f;
+      r = 1.0f;
+    //printf("case 4\n");
     }
     else  {
       float cap, cam;	/* cosines of the sum ap or difference am of the two */
-			/* angles. ap = a_incident+a_transmit am = a_incident - a_transmit. */
+			            /* angles. ap = a_incident+a_transmit am = a_incident - a_transmit. */
       float sap, sam;	/* sines. */
-      
-      c_transmission_angle = ca2 = sqrt(1-sa2*sa2);
-      
+      c_transmission_angle = sqrtf(1.0f-sa2*sa2);
+      ca2 = c_transmission_angle;
       cap = c_incident_angle*ca2 - sa1*sa2; /* c+ = cc - ss. */
       cam = c_incident_angle*ca2 + sa1*sa2; /* c- = cc + ss. */
       sap = sa1*ca2 + c_incident_angle*sa2; /* s+ = sc + cs. */
       sam = sa1*ca2 - c_incident_angle*sa2; /* s- = sc - cs. */
-      r = 0.5*sam*sam*(cam*cam+cap*cap)/(sap*sap*cam*cam); 
+      r = __fdividef(0.5f*sam*sam*(cam*cam+cap*cap), sap*sap*cam*cam); 
+      //printf("case 5\n");
     }
   }
 
@@ -158,13 +162,20 @@ __device__ float2 RFresnel(float n_incident, /* incident refractive index.*/
 __device__ float3 Fresnel_process(StackParticle photon, unsigned int id, 
                                   unsigned short int mat_i, unsigned short int mat_t) { 
 
-  float ux = photon.dx[id];
-  float uy = photon.dy[id];
+  //float ux = photon.dx[id];
+  //float uy = photon.dy[id];
   float uz = photon.dz[id]; /* z directional cosine. */
-  float uz1;	/* cosines of transmission angle. */
-  float r=0.0;	/* reflectance */
   float ni = mat_Rindex[mat_i];
   float nt = mat_Rindex[mat_t];
+
+  // DEBUG
+  //ux = 0.0f;
+  //uy = 0.0f;
+  //uz = 1.0f;
+  //ni = 1.2f;
+  //nt = 1.4f;
+ 
+  //printf("before ux %f uy %f uz %f\n", ux, uy, uz);
   
   /* Get r. */
   //  if( uz <= 0.7) /* 0.7 is the cosine of the critical angle of total internal reflection */
@@ -174,20 +185,27 @@ __device__ float3 Fresnel_process(StackParticle photon, unsigned int id,
   //r = RFresnel(ni, nt, uz, &uz1);
   float2 res = RFresnel(ni, nt, uz); // res.x=r  res.y=uz1
 
+  //printf("ni %f nt %f r %f uz1 %f\n", ni, nt, res.x, res.y);
+
   if (Brent_real(id, photon.table_x_brent, 0) > res.x) {	/* transmitted */
-      ux *= ni/nt;
-      uy *= ni/nt;
-      uz = res.y;
+      photon.dx[id] *= __fdividef(ni, nt);
+      photon.dy[id] *= __fdividef(ni, nt);
+      photon.dz[id] = res.y;
   }
   else {						/* reflected. */
-      uz = -uz;
+      photon.dz[id] = -uz;
   }
+  
+  //printf("(ux, uy, uz) = %f %f %f %f %f\n", ux, uy, uz, res.x, res.y);
 
-  float3 Dir1 = make_float3(ux, uy, uz);
-  Dir1 = rotateUz(Dir1, make_float3(photon.dx[id], photon.dy[id], photon.dz[id]));
-  photon.dx[id] = Dir1.x;
-  photon.dy[id] = Dir1.y;
-  photon.dz[id] = Dir1.z;
+  //float3 Dir1 = make_float3(ux, uy, uz);
+  //Dir1 = rotateUz(Dir1, make_float3(photon.dx[id], photon.dy[id], photon.dz[id]));
+  //photon.dx[id] = Dir1.x;
+  //photon.dy[id] = Dir1.y;
+  //photon.dz[id] = Dir1.z;
+
+  //printf("after ux %f uy %f uz %f\n", Dir1.x, Dir1.y, Dir1.z);
+
 
 }  // vesna - Fresnel Processes
 

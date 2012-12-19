@@ -21,8 +21,8 @@
 // 14- Pancreas
 
 // vesna - fresnel
-__constant__ const float COSZERO = 1.0-1.0E-12;
-__constant__ const float COS90D = 1.0E-6;
+__constant__ const float COSZERO = 0.999999f;
+__constant__ const float COS90D = 1.0e-6f;
 // vesna - fresnel
 
 // Number of elements per material
