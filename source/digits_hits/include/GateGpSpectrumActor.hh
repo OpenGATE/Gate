@@ -39,6 +39,7 @@ class GateGpSpectrumActor : public GateVActor
 		GateActorMessenger* pMessenger;
 		TFile* pTfile;
 		TH2D* pHEpEgp;
+		TH2D* pHEpEgpNormalized;
 		TH1D* pHEpInelastic;
 		TH1D* pHEpInelasticProducedGamma;
 };
