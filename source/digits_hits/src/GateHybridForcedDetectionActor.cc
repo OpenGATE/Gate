@@ -64,7 +64,7 @@ void GateHybridForcedDetectionActor::Construct()
 // Callback Begin of Run
 void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 {
-  DD("GateHybridForcedDetectionActor BeginOfRunAction");
+DD("GateHybridForcedDetectionActor BeginOfRunAction");
   GateVActor::BeginOfRunAction(r);
 
   // Get information on the attached 3D image
@@ -73,28 +73,28 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   G4ThreeVector gate_size = gate_image->GetResolution();
   G4ThreeVector gate_spacing = gate_image->GetVoxelSize();
   G4ThreeVector gate_origin = gate_image->GetOrigin();  
-  typename InputImageType::SizeType size;
-  typename InputImageType::PointType origin;
-  typename InputImageType::RegionType region;
-  typename InputImageType::SpacingType spacing;
-  for(uint i=0; i<3; i++) {
+  InputImageType::SizeType size;
+  InputImageType::PointType origin;
+  InputImageType::RegionType region;
+  InputImageType::SpacingType spacing;
+  for(unsigned int i=0; i<3; i++) {
     size[i] = gate_size[i];
     spacing[i] = gate_spacing[i];
     origin[i] = gate_origin[i];
   }
-  DD(size);
-  DD(origin);
-  DD(spacing);
+DD(size);
+DD(origin);
+DD(spacing);
   region.SetSize(size);
   InputImageType::Pointer input = InputImageType::New();
   input->SetRegions(region);
   input->SetSpacing(spacing);
   input->SetOrigin(origin);
   input->Allocate();
-  DD("allocated");
+DD("allocated");
 
   // Get information on the detector plane
-  DD(mDetectorName);
+DD(mDetectorName);
   mDetector = GateObjectStore::GetInstance()->FindVolumeCreator(mDetectorName);
 
   // Get information on the source
@@ -106,37 +106,57 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     GateWarning("Several sources found, we consider the first one.");
   }
   mSource = sm->GetSource(0);
-  DD(mSource->GetName());
   
   // Create list of mu according to E and materials
   G4String st = mSource->GetEneDist()->GetEnergyDisType();
-  DD(st);
   if (st == "Mono") { // Mono
     mEnergyList.push_back(mSource->GetEneDist()->GetMonoEnergy());
     std::cout << G4BestUnit(mEnergyList[0], "Energy") << std::endl;
   }
   else if (st == "User") { // histo
     G4PhysicsOrderedFreeVector h = mSource->GetEneDist()->GetUserDefinedEnergyHisto ();
-    for(uint i=0; i<h.GetVectorLength(); i++) {
+    for(unsigned int i=0; i<h.GetVectorLength(); i++) {
       double E = h.Energy(i);
       mEnergyList.push_back(E);
-      std::cout << G4BestUnit(E, "Energy") << " value = " << h.Value(E) << std::endl;
+ //     std::cout << G4BestUnit(E, "Energy") << " value = " << h.Value(E) << std::endl;
     }
   }
   else {
     GateError("Error, source type is not Mono or User. Abort.");
   }
 
-  // Create geometry and param of output image 
-  GeometryType::Pointer geometry = GeometryType::New(); 
+  // Create geometry and param of output image
+  PointType primarySourcePosition, detectorPosition;
+  VectorType detectorRowVector, detectorColVector;
+  ComputeGeometryInfoInImageCoordinateSystem(gate_image_volume,
+                                             mDetector,
+                                             mSource,
+                                             primarySourcePosition,
+                                             detectorPosition,
+                                             detectorRowVector,
+                                             detectorColVector);
+  GeometryType::Pointer geometry = GeometryType::New();
+DD(primarySourcePosition)
+DD(detectorPosition)
+DD(detectorRowVector)
+DD(detectorColVector)
+  geometry->AddReg23Projection(primarySourcePosition,
+                               detectorPosition,
+                               detectorRowVector,
+                               detectorColVector);
+DD("done")
+// DEBUG write geometry
+rtk::ThreeDCircularProjectionGeometryXMLFileWriter::Pointer writer =
+  rtk::ThreeDCircularProjectionGeometryXMLFileWriter::New();
+writer->SetObject(geometry);
+writer->SetFilename("bidon.xml");
+writer->WriteFile();
+return;
   OutputImageType::Pointer output = CreateGeometry(mDetector, mSource, geometry);
 
   // loop on Energy to create DRR
-  DD(mEnergyList.size());
-  for(uint i=0; i<mEnergyList.size(); i++) {
-    DD(i);
+  for(unsigned int i=0; i<mEnergyList.size(); i++) {
     double E = mEnergyList[i];
-    std::cout << G4BestUnit(E, "Energy");
 
     // Create conversion label to mu
     std::vector<double> label2mu;
@@ -146,12 +166,12 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     CreateMuImage(label2mu, gate_image, input);
     
     // Debug: write mu image
-    typedef itk::ImageFileWriter<InputImageType> WriterTypeIn;
-    typename WriterTypeIn::Pointer writerin = WriterTypeIn::New();
-    std::string name = "output/mu-"+DoubletoString(E)+".mhd";
-    writerin->SetFileName(name);
-    writerin->SetInput(input);
-    writerin->Update();
+//    typedef itk::ImageFileWriter<InputImageType> WriterTypeIn;
+//    typename WriterTypeIn::Pointer writerin = WriterTypeIn::New();
+//    std::string name = "output/mu-"+DoubletoString(E)+".mhd";
+//    writerin->SetFileName(name);
+//    writerin->SetInput(input);
+//    writerin->Update();
 
     // Generate drr
     output = GenerateDRR(input, output, geometry);
@@ -160,12 +180,12 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     
 
     // Debug: write DRR
-    typedef itk::ImageFileWriter<OutputImageType> WriterType;
-    WriterType::Pointer writer = WriterType::New();
-    name = "output/drr-"+DoubletoString(E)+".mhd";
-    writer->SetFileName(name);
-    writer->SetInput(output);
-    writer->Update();
+//    typedef itk::ImageFileWriter<OutputImageType> WriterType;
+//    WriterType::Pointer writer = WriterType::New();
+//    name = "output/drr-"+DoubletoString(E)+".mhd";
+//    writer->SetFileName(name);
+//    writer->SetInput(output);
+//    writer->Update();
   }
 
 }
@@ -234,19 +254,19 @@ GateHybridForcedDetectionActor::CreateGeometry(GateVVolume * detector,
   typedef rtk::ConstantImageSource< OutputImageType > ConstantImageSourceType;
   //  projInput = ConstantImageSourceType::New();
 
-  typename OutputImageType::SizeType size;
+  OutputImageType::SizeType size;
   size[2] = 1;
   size[0] = GetDetectorResolution()[0];
   size[1] = GetDetectorResolution()[1];
   DD(size);
 
-  typename OutputImageType::SpacingType spacing;
+  OutputImageType::SpacingType spacing;
   spacing[2] = 1.0;
   spacing[0] = detector->GetHalfDimension(0)*2.0/size[0]*mm; //FIXME (in mm ?)
   spacing[1] = detector->GetHalfDimension(1)*2.0/size[1]*mm;
   DD(spacing);
 
-  typename OutputImageType::PointType origin;
+  OutputImageType::PointType origin;
   GateVVolume * v = detector;
   G4ThreeVector du(1,0,0);
   G4ThreeVector dv(0,1,0);
@@ -318,12 +338,80 @@ GateHybridForcedDetectionActor::CreateGeometry(GateVVolume * detector,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridForcedDetectionActor::CreateMuImage(const std::vector<double> & label2mu, 
+void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
+        GateVImageVolume *ct,
+        GateVVolume *detector,
+        GateVSource *src,
+        PointType &primarySourcePosition,
+        PointType &detectorPosition,
+        VectorType &detectorRowVector,
+        VectorType &detectorColVector)
+{
+  // To understand the use of GetRotation and GetTranslation check 4.1.4.1 at
+  // http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/ForApplicationDeveloper/html/ch04.html
+
+  // Detector to world
+  GateVVolume * v = detector;
+  G4VPhysicalVolume * phys = v->GetPhysicalVolume();
+  G4AffineTransform detectorToWorld(phys->GetRotation(), phys->GetTranslation());
+  while (v->GetLogicalVolumeName() != "world_log") {
+    v = v->GetParentVolume();
+    phys = v->GetPhysicalVolume();
+    G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
+    detectorToWorld *= detectorToWorld;
+  }
+
+  // CT to world
+  v = ct;
+  phys = v->GetPhysicalVolume();
+  G4AffineTransform ctToWorld(phys->GetRotation(), phys->GetTranslation());
+  while (v->GetLogicalVolumeName() != "world_log") {
+    v = v->GetParentVolume();
+    phys = v->GetPhysicalVolume();
+    G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
+    ctToWorld *= x;
+  }
+
+  // Source to world
+  G4String volname = src->GetRelativePlacementVolume();
+  v = GateObjectStore::GetInstance()->FindVolumeCreator(volname);
+  phys = v->GetPhysicalVolume();
+  G4AffineTransform sourceToWorld(phys->GetRotation(), phys->GetTranslation());
+  while (v->GetLogicalVolumeName() != "world_log") {
+    v = v->GetParentVolume();
+    phys = v->GetPhysicalVolume();
+    G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
+    sourceToWorld *= x;
+  }
+
+  // Detector parameters
+  G4AffineTransform detectorToCT(ctToWorld.Inverse() * detectorToWorld);
+
+  // TODO: get rot1 and rot2 in beam
+  G4ThreeVector du = detectorToCT.TransformAxis(G4ThreeVector(1,0,0));
+  G4ThreeVector dv = detectorToCT.TransformAxis(G4ThreeVector(0,1,0));
+  G4ThreeVector dp = detectorToCT.TransformPoint(G4ThreeVector(0,0,0));
+
+  // Source (assumed focus)
+  G4ThreeVector s = src->GetAngDist()->GetFocusPointCopy();
+  G4AffineTransform sourceToCT(ctToWorld.Inverse() * sourceToWorld);
+  s = sourceToCT.TransformPoint(s);
+
+  for(int i=0; i<3; i++) {
+      detectorRowVector[i] = du[i];
+      detectorColVector[i] = dv[i];
+      detectorPosition[i] = dp[i];
+      primarySourcePosition[i] = s[i];
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateHybridForcedDetectionActor::CreateMuImage(const std::vector<double> & label2mu,
                                                    const GateImage * gate_image, 
                                                    InputImageType * input)
 {
-  DD("CreateMuImage");
-  
   typedef itk::ImageRegionIterator<InputImageType> IteratorType;
   IteratorType pi(input,input->GetLargestPossibleRegion());
   pi.GoToBegin();
@@ -334,7 +422,6 @@ void GateHybridForcedDetectionActor::CreateMuImage(const std::vector<double> & l
     ++pi;
     ++data;
   }
-
 }
 //-----------------------------------------------------------------------------
 
@@ -345,17 +432,13 @@ GateHybridForcedDetectionActor::GenerateDRR(const InputImageType * input,
                                             const OutputImageType * projInput, 
                                             GeometryType * geometry)
 {
-  DD("GenerateDRR");
-  
   typedef rtk::JosephForwardProjectionImageFilter<InputImageType, OutputImageType> JFPType;
   JFPType::Pointer jfp = JFPType::New();
   jfp->InPlaceOff();
-  jfp->SetInput(projInput);   // output
-  jfp->SetInput(1, input); // input
+  jfp->SetInput(projInput);
+  jfp->SetInput(1, input);
   jfp->SetGeometry(geometry);
-  DD("START");
   jfp->Update();
-  DD("done");
   return jfp->GetOutput();  
 }
 //-----------------------------------------------------------------------------
@@ -366,30 +449,21 @@ void GateHybridForcedDetectionActor::CreateLabelToMuConversion(const double E,
                                                                GateVImageVolume * gate_image_volume,
                                                                std::vector<double> & label2mu)
 {
-  DD("CreateLabelToMuConversion");
-  
   G4EmCalculator * emcalc = new G4EmCalculator;
   std::vector<G4Material*> m;
   gate_image_volume->BuildLabelToG4MaterialVector(m);
   G4String part = "gamma";
   G4String proc_compton = "Compton";
   G4String proc_rayleigh= "Rayleigh";
-  DD(E);
-  DD(m.size());
   label2mu.clear();
   label2mu.resize(m.size());
-  for(uint i=0; i<m.size(); i++) {
-    // DD(i);
+  for(unsigned int i=0; i<m.size(); i++) {
     G4Material * mat = m[i];
-    DD(mat->GetName());
     double d = mat->GetDensity();
-    DD(d);
+    //SR: why not looping over the list of processes like Edward does?
     double xs_c = emcalc->ComputeCrossSectionPerVolume(E, part, proc_compton, mat->GetName());
     double xs_r = emcalc->ComputeCrossSectionPerVolume(E, part, proc_rayleigh, mat->GetName());
-    DD(xs_c);
-    DD(xs_r);
     double mu = (xs_c+xs_r)/d;
-    DD(mu);
     label2mu[i] = mu;
   }
 }

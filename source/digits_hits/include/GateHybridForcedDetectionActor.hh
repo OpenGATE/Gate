@@ -34,6 +34,7 @@
 #include "rtkProjectionGeometry.h"
 #include "rtkJosephForwardProjectionImageFilter.h"
 #include "rtkConstantImageSource.h"
+#include "rtkReg23ProjectionGeometry.h"
 
 // itk
 #include "itkImageFileWriter.h"
@@ -70,11 +71,13 @@ public:
 
   // Typedef for rtk
   static const unsigned int Dimension = 3;
-  typedef float                                  InputPixelType;
-  typedef itk::Image<InputPixelType, Dimension>  InputImageType;
-  typedef float                                  OutputPixelType;
-  typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
-  typedef rtk::ThreeDCircularProjectionGeometry GeometryType;
+  typedef float                                       InputPixelType;
+  typedef itk::Image<InputPixelType, Dimension>       InputImageType;
+  typedef float                                       OutputPixelType;
+  typedef itk::Image<OutputPixelType, Dimension>      OutputImageType;
+  typedef rtk::Reg23ProjectionGeometry                GeometryType;
+  typedef rtk::Reg23ProjectionGeometry::PointType     PointType;
+  typedef rtk::Reg23ProjectionGeometry::VectorType    VectorType;
   typedef rtk::ConstantImageSource< OutputImageType > ConstantImageSourceType;
   
   void CreateMuImage(const std::vector<double> & label2mu, 
@@ -83,6 +86,13 @@ public:
   OutputImageType::Pointer  GenerateDRR(const InputImageType * input, 
                                         const OutputImageType * projInput, 
                                         GeometryType * geometry);
+  void ComputeGeometryInfoInImageCoordinateSystem(GateVImageVolume *image,
+                                                  GateVVolume *detector,
+                                                  GateVSource *src,
+                                                  PointType &primarySourcePosition,
+                                                  PointType &detectorPosition,
+                                                  VectorType &detectorRowVector,
+                                                  VectorType &detectorColVector);
   OutputImageType::Pointer CreateGeometry(GateVVolume * detector,
                                           GateVSource * src, 
                                           GeometryType * geometry);
@@ -103,7 +113,7 @@ protected:
 };
 //-----------------------------------------------------------------------------
 
-MAKE_AUTO_CREATOR_ACTOR(HybridForcedDetectionActor,GateHybridForcedDetectionActor)
+MAKE_AUTO_CREATOR_ACTOR(HybridForcedDetectionActor, GateHybridForcedDetectionActor)
 
 
 #endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTOR_HH */
