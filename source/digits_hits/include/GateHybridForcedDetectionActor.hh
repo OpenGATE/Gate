@@ -99,7 +99,8 @@ public:
   void CreateLabelToMuConversion(const double E, 
                                  GateVImageVolume * gate_image_volume,
                                  std::vector<double> & label2mu);
-    
+  InputImageType::Pointer ConvertGateImageToITKImage(GateImage * gateImg);
+
 protected:
   GateHybridForcedDetectionActorMessenger * pActorMessenger;
   

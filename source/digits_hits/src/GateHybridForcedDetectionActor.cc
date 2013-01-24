@@ -23,7 +23,10 @@
 #include "G4TransportationManager.hh"
 
 // rtk
-#include "rtkThreeDCircularProjectionGeometryXMLFile.h"
+#include <rtkThreeDCircularProjectionGeometryXMLFile.h>
+
+// itk
+#include <itkImportImageFilter.h>
 
 //-----------------------------------------------------------------------------
 /// Constructors
@@ -82,6 +85,8 @@ DD("GateHybridForcedDetectionActor BeginOfRunAction");
     spacing[i] = gate_spacing[i];
     origin[i] = gate_origin[i];
   }
+
+  ConvertGateImageToITKImage(gate_image);
 DD(size);
 DD(origin);
 DD(spacing);
@@ -151,7 +156,7 @@ rtk::ThreeDCircularProjectionGeometryXMLFileWriter::Pointer writer =
 writer->SetObject(geometry);
 writer->SetFilename("bidon.xml");
 writer->WriteFile();
-return;
+
   OutputImageType::Pointer output = CreateGeometry(mDetector, mSource, geometry);
 
   // loop on Energy to create DRR
@@ -387,16 +392,20 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
   // Detector parameters
   G4AffineTransform detectorToCT(ctToWorld.Inverse() * detectorToWorld);
 
-  // TODO: get rot1 and rot2 in beam
+  // TODO: check where to get the two directions of the detector.
+  // Probably the dimension that has 1 in one of the three directions.
   G4ThreeVector du = detectorToCT.TransformAxis(G4ThreeVector(1,0,0));
   G4ThreeVector dv = detectorToCT.TransformAxis(G4ThreeVector(0,1,0));
   G4ThreeVector dp = detectorToCT.TransformPoint(G4ThreeVector(0,0,0));
 
-  // Source (assumed focus)
-  G4ThreeVector s = src->GetAngDist()->GetFocusPointCopy();
+  // Source (assumed point or focus)
+  G4ThreeVector s = src->GetPosDist()->GetCentreCoords();
+  if(src->GetPosDist()->GetPosDisType()!=G4String("Point"))
+    s = src->GetAngDist()->GetFocusPointCopy();
   G4AffineTransform sourceToCT(ctToWorld.Inverse() * sourceToWorld);
   s = sourceToCT.TransformPoint(s);
 
+  // Copy in ITK vectors
   for(int i=0; i<3; i++) {
       detectorRowVector[i] = du[i];
       detectorColVector[i] = dv[i];
@@ -469,6 +478,41 @@ void GateHybridForcedDetectionActor::CreateLabelToMuConversion(const double E,
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+GateHybridForcedDetectionActor::InputImageType::Pointer
+GateHybridForcedDetectionActor::ConvertGateImageToITKImage(GateImage * gateImg)
+{
+  DD("ConvertGateImageToITKImage begin")
+  InputImageType::SizeType size;
+  InputImageType::PointType origin;
+  InputImageType::RegionType region;
+  InputImageType::SpacingType spacing;
+  for(unsigned int i=0; i<3; i++) {
+    size[i] = gateImg->GetResolution()[i];
+    spacing[i] = gateImg->GetVoxelSize()[i];
+    origin[i] = gateImg->GetOrigin()[i];
+  }
+  region.SetSize(size);
+
+  itk::ImportImageFilter<InputPixelType, Dimension>::Pointer import;
+  import = itk::ImportImageFilter<InputPixelType, Dimension>::New();
+  //SR: import->SetDirection()?
+  import->SetRegion(region);
+  import->SetImportPointer(&*(gateImg->begin()), gateImg->GetNumberOfValues(), true);
+  import->SetSpacing(spacing);
+  import->SetOrigin(origin);
+  import->Update();
+
+//  itk::ImageFileWriter<InputImageType>::Pointer writer;
+//  writer = itk::ImageFileWriter<InputImageType>::New();
+//  writer->SetFileName("toto.mha");
+//  writer->SetInput(import->GetOutput());
+//  writer->Update();
+
+  return import->GetOutput();
+}
+
+//-----------------------------------------------------------------------------
 
 #endif
 
