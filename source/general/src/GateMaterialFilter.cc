@@ -53,7 +53,7 @@ G4bool GateMaterialFilter::Accept(const G4Step* aStep)
 G4bool GateMaterialFilter::Accept(const G4Track* aTrack) 
 {
     for ( size_t i = 0; i < theMdef.size(); i++){ 	
-      if ( theMdef[i] == aTrack->GetStep()->GetPostStepPoint()->GetMaterial()->GetName() ) {
+      if ( theMdef[i] == aTrack->GetMaterial()->GetName() ) {
         nFilteredParticles++;
         return true;
       } 
