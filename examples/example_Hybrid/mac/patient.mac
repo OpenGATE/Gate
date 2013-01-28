@@ -18,9 +18,15 @@
 /gate/FOV/setMaterial                Air
 /gate/FOV/vis/setVisible             1
 /gate/FOV/vis/setColor               green
+
+# Rotation
 # The patient is rotated instead of the linac => change rotation sign
+/gate/FOV/moves/insert               rotation
+/gate/FOV/rotation/setSpeed          1 deg/s
+/gate/FOV/rotation/setAxis           0 -1 0
+# Starting angle
 /gate/FOV/placement/setRotationAxis  0 -1 0
-/gate/FOV/placement/setRotationAngle 000 deg
+/gate/FOV/placement/setRotationAngle 0 deg
 
 # -----------------------------------------------------
 # Patient
@@ -37,8 +43,9 @@
 # --> Commmon part
 /gate/geometry/setMaterialDatabase                      data/HUmaterials-tol-0.1.db
 /gate/patient/geometry/SetHUToMaterialFile              data/HU2mat-tol-0.1.txt
-/gate/patient/geometry/SetImage                         data/patient-lung-2mm.mhd
-/gate/patient/geometry/TranslateTheImageAtThisIsoCenter 75.5 108.9 -646.7 mm
+/gate/patient/geometry/SetImage                         data/patient.mhd
+#/gate/patient/geometry/TranslateTheImageAtThisIsoCenter 75.5 108.9 -646.7 mm
+#/gate/patient/geometry/TranslateTheImageAtThisIsoCenter 0 0 0 mm
 /gate/patient/geometry/buildAndDumpLabeledImage         data/patient-lung-2mm-label.mhd
 
 # For visu debug, enable the following

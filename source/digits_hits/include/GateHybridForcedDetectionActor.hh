@@ -68,11 +68,15 @@ public:
   const G4ThreeVector & GetDetectorResolution() const { return mDetectorResolution; }
   void SetDetectorResolution(int x, int y) { mDetectorResolution[0] = x; mDetectorResolution[1] = y; }
   void SetDetectorVolumeName(G4String name) { mDetectorName = name; }
+  void SetGeometryFilename(G4String name) { mGeometryFilename = name; }
+  void SetPrimaryFilename(G4String name) { mPrimaryFilename = name; }
 
   // Typedef for rtk
   static const unsigned int Dimension = 3;
   typedef float                                       InputPixelType;
   typedef itk::Image<InputPixelType, Dimension>       InputImageType;
+  typedef itk::Image<int, Dimension>                  IntegerImageType;
+  typedef itk::Image<double, Dimension>               DoubleImageType;
   typedef float                                       OutputPixelType;
   typedef itk::Image<OutputPixelType, Dimension>      OutputImageType;
   typedef rtk::Reg23ProjectionGeometry                GeometryType;
@@ -80,11 +84,8 @@ public:
   typedef rtk::Reg23ProjectionGeometry::VectorType    VectorType;
   typedef rtk::ConstantImageSource< OutputImageType > ConstantImageSourceType;
   
-  void CreateMuImage(const std::vector<double> & label2mu, 
-                     const GateImage * gate_image, 
-                     InputImageType * input);
-  OutputImageType::Pointer  GenerateDRR(const InputImageType * input, 
-                                        const OutputImageType * projInput, 
+  DoubleImageType::Pointer  GenerateDRR(const DoubleImageType * input,
+                                        const DoubleImageType * projInput,
                                         GeometryType * geometry);
   void ComputeGeometryInfoInImageCoordinateSystem(GateVImageVolume *image,
                                                   GateVVolume *detector,
@@ -93,13 +94,11 @@ public:
                                                   PointType &detectorPosition,
                                                   VectorType &detectorRowVector,
                                                   VectorType &detectorColVector);
-  OutputImageType::Pointer CreateGeometry(GateVVolume * detector,
-                                          GateVSource * src, 
-                                          GeometryType * geometry);
   void CreateLabelToMuConversion(const double E, 
                                  GateVImageVolume * gate_image_volume,
-                                 std::vector<double> & label2mu);
+                                 itk::Image<double, 1>::Pointer & label2mu);
   InputImageType::Pointer ConvertGateImageToITKImage(GateImage * gateImg);
+  DoubleImageType::Pointer CreateVoidProjectionImage();
 
 protected:
   GateHybridForcedDetectionActorMessenger * pActorMessenger;
@@ -107,10 +106,18 @@ protected:
   G4String mDetectorName;
   GateVVolume * mDetector;
   GateVSource * mSource;
-  
-  G4ThreeVector mDetectorResolution;
-  std::vector<double> mEnergyList;
+  G4String mGeometryFilename;
+  G4String mPrimaryFilename;
 
+  G4ThreeVector mDetectorResolution;
+
+  GeometryType::Pointer mGeometry;
+  DoubleImageType::Pointer mPrimaryImage;
+
+  // Geometry information initialized at the beginning of the run
+  PointType mDetectorPosition;
+  VectorType mDetectorRowVector;
+  VectorType mDetectorColVector;
 };
 //-----------------------------------------------------------------------------
 

@@ -9,7 +9,7 @@
 #=====================================================
 
 /control/execute mac/verbose.mac
-/control/execute mac/visu.mac
+#/control/execute mac/visu.mac
 
 #=====================================================
 # GEOMETRY
@@ -42,12 +42,12 @@
 # Detection plane
 /gate/world/daughters/name                     DetectorPlane
 /gate/world/daughters/insert                   box
-/gate/DetectorPlane/geometry/setXLength        409.6 mm
-/gate/DetectorPlane/geometry/setYLength        409.6 mm
-/gate/DetectorPlane/geometry/setZLength        1 mm
-/gate/DetectorPlane/placement/setTranslation   -536 0 0 mm
+/gate/DetectorPlane/geometry/setXLength        1024 mm
+/gate/DetectorPlane/geometry/setYLength        1024 mm
+/gate/DetectorPlane/geometry/setZLength        1 nm
+/gate/DetectorPlane/placement/setTranslation   0 0 -536 mm
 /gate/DetectorPlane/placement/setRotationAxis  0 1 0
-/gate/DetectorPlane/placement/setRotationAngle 90 deg
+/gate/DetectorPlane/placement/setRotationAngle 0 deg
 /gate/DetectorPlane/setMaterial                Air
 /gate/DetectorPlane/vis/setVisible             1
 /gate/DetectorPlane/vis/setColor               yellow
@@ -79,10 +79,12 @@
 
 # -----------------------------------------------------
 # Hybrid ForcedDetection Actor (hfda)
-/gate/actor/addActor          HybridForcedDetectionActor hfda
-/gate/actor/hfda/attachTo     patient
-/gate/actor/hfda/setDetector  DetectorPlane
-/gate/actor/hfda/setDetectorResolution 256 256
+/gate/actor/addActor                   HybridForcedDetectionActor hfda
+/gate/actor/hfda/attachTo              patient
+/gate/actor/hfda/setDetector           DetectorPlane
+/gate/actor/hfda/setDetectorResolution 512 512
+/gate/actor/hfda/geometryFilename      output/geometry.xml
+/gate/actor/hfda/primaryFilename       output/primary%.04d.mha
 
 # find source if gps. --> keep the first one.
 # assumption : ponctuel (focuspoint ou centre)
@@ -96,7 +98,7 @@
 /gate/actor/DetectorActor/save              output/fluence.mhd
 /gate/actor/DetectorActor/attachTo          DetectorPlane
 /gate/actor/DetectorActor/stepHitType       pre
-/gate/actor/DetectorActor/setResolution     1 512 512
+/gate/actor/DetectorActor/setResolution     512 512 1
 /gate/actor/DetectorActor/enableScatter     true
 /gate/actor/DetectorActor/saveEveryNSeconds  30
 
@@ -111,8 +113,8 @@
 #=====================================================
 
 /gate/source/addSource mybeam gps
+/control/execute mac/beam-mono.mac
 #/control/execute mac/beam-with-spektrum.mac
-/control/execute mac/beam-with-spektrum-bidon.mac
 
 #=====================================================
 # MAIN
@@ -127,9 +129,13 @@
 /gate/random/setEngineName MersenneTwister
 /gate/random/setEngineSeed auto
 
+/gate/application/setTimeSlice 1 s
+/gate/application/setTimeStart 0 s
+/gate/application/setTimeStop 360 s
+
 /gate/application/noGlobalOutput
 /gate/run/enableGlobalOutput false
 
 # PARTICLE
-/gate/application/setTotalNumberOfPrimaries 10
+/gate/application/setTotalNumberOfPrimaries 360
 /gate/application/start

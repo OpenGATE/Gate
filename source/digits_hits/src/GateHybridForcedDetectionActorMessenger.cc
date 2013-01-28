@@ -51,11 +51,15 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
   guidance = "Set the resolution of the detector (2D).";
   pSetDetectorResolCmd->SetGuidance(guidance);
 
-  // bb = base+"/setParticleName";
-  // pSetParticleNameCmd = new G4UIcmdWithAString(bb,this);
-  // guidance = "Set the particle name for the calculation.";
-  // pSetParticleNameCmd->SetGuidance(guidance);
+  bb = base+"/geometryFilename";
+  pSetGeometryFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for the RTK geometry filename.";
+  pSetGeometryFilenameCmd->SetGuidance(guidance);
 
+  bb = base+"/primaryFilename";
+  pSetPrimaryFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for the primary x-rays (printf format with runId as a single parameter).";
+  pSetPrimaryFilenameCmd->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -65,7 +69,9 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
 {
   if(command == pSetDetectorCmd) pHybridActor->SetDetectorVolumeName(param);
   if(command == pSetDetectorResolCmd) pHybridActor->SetDetectorResolution(pSetDetectorResolCmd->GetNew2VectorValue(param)[0], pSetDetectorResolCmd->GetNew2VectorValue(param)[1]);
-  
+  if(command == pSetGeometryFilenameCmd) pHybridActor->SetGeometryFilename(param);
+  if(command == pSetPrimaryFilenameCmd) pHybridActor->SetPrimaryFilename(param);
+
   GateActorMessenger::SetNewValue(command ,param );}
 //-----------------------------------------------------------------------------
 

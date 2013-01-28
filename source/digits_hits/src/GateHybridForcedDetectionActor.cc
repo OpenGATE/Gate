@@ -24,9 +24,13 @@
 
 // rtk
 #include <rtkThreeDCircularProjectionGeometryXMLFile.h>
+#include <rtkLookupTableImageFilter.h>
 
 // itk
 #include <itkImportImageFilter.h>
+#include <itkCastImageFilter.h>
+#include <itkMultiplyImageFilter.h>
+#include <itkAddImageFilter.h>
 
 //-----------------------------------------------------------------------------
 /// Constructors
@@ -67,40 +71,7 @@ void GateHybridForcedDetectionActor::Construct()
 // Callback Begin of Run
 void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 {
-DD("GateHybridForcedDetectionActor BeginOfRunAction");
   GateVActor::BeginOfRunAction(r);
-
-  // Get information on the attached 3D image
-  GateVImageVolume * gate_image_volume = dynamic_cast<GateVImageVolume*>(mVolume);
-  GateImage * gate_image = gate_image_volume->GetImage();
-  G4ThreeVector gate_size = gate_image->GetResolution();
-  G4ThreeVector gate_spacing = gate_image->GetVoxelSize();
-  G4ThreeVector gate_origin = gate_image->GetOrigin();  
-  InputImageType::SizeType size;
-  InputImageType::PointType origin;
-  InputImageType::RegionType region;
-  InputImageType::SpacingType spacing;
-  for(unsigned int i=0; i<3; i++) {
-    size[i] = gate_size[i];
-    spacing[i] = gate_spacing[i];
-    origin[i] = gate_origin[i];
-  }
-
-  ConvertGateImageToITKImage(gate_image);
-DD(size);
-DD(origin);
-DD(spacing);
-  region.SetSize(size);
-  InputImageType::Pointer input = InputImageType::New();
-  input->SetRegions(region);
-  input->SetSpacing(spacing);
-  input->SetOrigin(origin);
-  input->Allocate();
-DD("allocated");
-
-  // Get information on the detector plane
-DD(mDetectorName);
-  mDetector = GateObjectStore::GetInstance()->FindVolumeCreator(mDetectorName);
 
   // Get information on the source
   GateSourceMgr * sm = GateSourceMgr::GetInstance();
@@ -111,86 +82,122 @@ DD(mDetectorName);
     GateWarning("Several sources found, we consider the first one.");
   }
   mSource = sm->GetSource(0);
-  
-  // Create list of mu according to E and materials
+
+  // Create list of energies
+  std::vector<double> energyList;
+  std::vector<double> energyWeightList;
+  energyList.clear();
   G4String st = mSource->GetEneDist()->GetEnergyDisType();
-  if (st == "Mono") { // Mono
-    mEnergyList.push_back(mSource->GetEneDist()->GetMonoEnergy());
-    std::cout << G4BestUnit(mEnergyList[0], "Energy") << std::endl;
+  if (st == "Mono") {
+    energyList.push_back(mSource->GetEneDist()->GetMonoEnergy());
+    energyWeightList.push_back(1.);
   }
   else if (st == "User") { // histo
     G4PhysicsOrderedFreeVector h = mSource->GetEneDist()->GetUserDefinedEnergyHisto ();
+    double weightSum = 0.;
     for(unsigned int i=0; i<h.GetVectorLength(); i++) {
       double E = h.Energy(i);
-      mEnergyList.push_back(E);
- //     std::cout << G4BestUnit(E, "Energy") << " value = " << h.Value(E) << std::endl;
+      energyList.push_back(E);
+      energyWeightList.push_back(h.Value(E));
+      weightSum += energyWeightList.back();
     }
+    for(unsigned int i=0; i<h.GetVectorLength(); i++)
+      energyWeightList[i] /= weightSum;
   }
   else {
     GateError("Error, source type is not Mono or User. Abort.");
   }
 
+  // Conversion of CT to ITK and to int values
+  // SR: is this a safe cast? Shouldn't we add 0.5? To check with DS
+  GateVImageVolume * gate_image_volume = dynamic_cast<GateVImageVolume*>(mVolume);
+  GateImage * gate_image = gate_image_volume->GetImage();
+  InputImageType::Pointer input = ConvertGateImageToITKImage(gate_image);
+  itk::CastImageFilter<InputImageType, IntegerImageType>::Pointer cast;
+  cast = itk::CastImageFilter<InputImageType, IntegerImageType>::New();
+  cast->SetInput(input);
+  cast->Update();
+
+  // Create projection image
+  mPrimaryImage = CreateVoidProjectionImage();
+
   // Create geometry and param of output image
-  PointType primarySourcePosition, detectorPosition;
-  VectorType detectorRowVector, detectorColVector;
+  PointType primarySourcePosition;
   ComputeGeometryInfoInImageCoordinateSystem(gate_image_volume,
                                              mDetector,
                                              mSource,
                                              primarySourcePosition,
-                                             detectorPosition,
-                                             detectorRowVector,
-                                             detectorColVector);
-  GeometryType::Pointer geometry = GeometryType::New();
-DD(primarySourcePosition)
-DD(detectorPosition)
-DD(detectorRowVector)
-DD(detectorColVector)
-  geometry->AddReg23Projection(primarySourcePosition,
-                               detectorPosition,
-                               detectorRowVector,
-                               detectorColVector);
-DD("done")
-// DEBUG write geometry
-rtk::ThreeDCircularProjectionGeometryXMLFileWriter::Pointer writer =
-  rtk::ThreeDCircularProjectionGeometryXMLFileWriter::New();
-writer->SetObject(geometry);
-writer->SetFilename("bidon.xml");
-writer->WriteFile();
+                                             mDetectorPosition,
+                                             mDetectorRowVector,
+                                             mDetectorColVector);
 
-  OutputImageType::Pointer output = CreateGeometry(mDetector, mSource, geometry);
+  // There are two geometry objects. One stores all projection images
+  // (one per run) and the other contains the geometry of one projection
+  // image.
+  mGeometry->AddReg23Projection(primarySourcePosition,
+                                mDetectorPosition,
+                                mDetectorRowVector,
+                                mDetectorColVector);
+  GeometryType::Pointer oneProjGeometry = GeometryType::New();
+  oneProjGeometry->AddReg23Projection(primarySourcePosition,
+                                      mDetectorPosition,
+                                      mDetectorRowVector,
+                                      mDetectorColVector);
 
   // loop on Energy to create DRR
-  for(unsigned int i=0; i<mEnergyList.size(); i++) {
-    double E = mEnergyList[i];
+  for(unsigned int i=0; i<energyList.size(); i++) {
+    double E = energyList[i];
 
     // Create conversion label to mu
-    std::vector<double> label2mu;
+    itk::Image<double, 1>::Pointer label2mu;
     CreateLabelToMuConversion(E, gate_image_volume, label2mu);
 
     // create mu image
-    CreateMuImage(label2mu, gate_image, input);
-    
-    // Debug: write mu image
-//    typedef itk::ImageFileWriter<InputImageType> WriterTypeIn;
-//    typename WriterTypeIn::Pointer writerin = WriterTypeIn::New();
-//    std::string name = "output/mu-"+DoubletoString(E)+".mhd";
-//    writerin->SetFileName(name);
-//    writerin->SetInput(input);
-//    writerin->Update();
+    rtk::LookupTableImageFilter<IntegerImageType, DoubleImageType>::Pointer lutFilter;
+    lutFilter = rtk::LookupTableImageFilter<IntegerImageType, DoubleImageType>::New();
+    lutFilter->SetLookupTable(label2mu);
+    lutFilter->SetInput(cast->GetOutput());
+    lutFilter->Update();
 
     // Generate drr
-    output = GenerateDRR(input, output, geometry);
+    DoubleImageType::Pointer drr = GenerateDRR(lutFilter->GetOutput(), mPrimaryImage, oneProjGeometry);
+//// Debug: write DRR
+//typedef itk::ImageFileWriter<DoubleImageType> WriterType;
+//WriterType::Pointer writer = WriterType::New();
+//std::ostringstream os;
+//os << "output/drr-" << E/CLHEP::keV << "-";
+//os.fill('0');
+//os.width(4);
+//os << r->GetRunID() << ".mha";
+//writer->SetFileName(os.str());
+//writer->SetInput(drr);
+//writer->Update();
 
-    // (merge) TODO
-    
+    // Multiply by energy weight
+    itk::MultiplyImageFilter<DoubleImageType, DoubleImageType>::Pointer multiply;
+    multiply = itk::MultiplyImageFilter<DoubleImageType, DoubleImageType>::New();
+    multiply->SetInput(drr);
+    multiply->SetConstant(energyWeightList[i]);
+    multiply->Update();
 
-    // Debug: write DRR
-//    typedef itk::ImageFileWriter<OutputImageType> WriterType;
-//    WriterType::Pointer writer = WriterType::New();
-//    name = "output/drr-"+DoubletoString(E)+".mhd";
-//    writer->SetFileName(name);
-//    writer->SetInput(output);
-//    writer->Update();
+    // Add to current image
+    itk::AddImageFilter<DoubleImageType, DoubleImageType>::Pointer add;
+    add = itk::AddImageFilter<DoubleImageType, DoubleImageType>::New();
+    add->SetInput1(mPrimaryImage);
+    add->SetInput2(multiply->GetOutput());
+    add->Update();
+    mPrimaryImage = add->GetOutput();
+
+//// Debug: write mu image
+//if(!r->GetRunID()) {
+//typedef itk::ImageFileWriter<DoubleImageType> WriterTypeIn;
+//WriterTypeIn::Pointer writerin = WriterTypeIn::New();
+//std::string name = "output/mu-"+DoubletoString(E/CLHEP::keV)+".mha";
+//writerin->SetFileName(name);
+//writerin->SetInput(lutFilter->GetOutput());
+//writerin->Update();
+//}
+
   }
 
 }
@@ -213,7 +220,7 @@ writer->WriteFile();
 //-----------------------------------------------------------------------------
 // Callbacks
 void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v, 
-                                                         const G4Step * step)
+                                                        const G4Step * step)
 {
   //DD("GateHybridForcedDetectionActor UserSteppingAction");
   GateVActor::UserSteppingAction(v, step);
@@ -235,6 +242,23 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
 void GateHybridForcedDetectionActor::SaveData()
 {
   GateVActor::SaveData();
+
+  // Geometry
+  rtk::ThreeDCircularProjectionGeometryXMLFileWriter::Pointer geoWriter =
+      rtk::ThreeDCircularProjectionGeometryXMLFileWriter::New();
+  geoWriter->SetObject(mGeometry);
+  geoWriter->SetFilename(mGeometryFilename);
+  geoWriter->WriteFile();
+
+  // Write the image of primary radiation
+  itk::ImageFileWriter<DoubleImageType>::Pointer imgWriter =
+      itk::ImageFileWriter<DoubleImageType>::New();
+  char filename [1024];
+  G4int rID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+  sprintf(filename, mPrimaryFilename.c_str(), rID);
+  imgWriter->SetFileName(filename);
+  imgWriter->SetInput(mPrimaryImage);
+  imgWriter->Update();
 }
 //-----------------------------------------------------------------------------
 
@@ -242,105 +266,10 @@ void GateHybridForcedDetectionActor::SaveData()
 //-----------------------------------------------------------------------------
 void GateHybridForcedDetectionActor::ResetData() 
 {
-  // GateVActor::ResetData();
+  mGeometry = GeometryType::New();
 }
 //-----------------------------------------------------------------------------
 
-
-//-----------------------------------------------------------------------------
-GateHybridForcedDetectionActor::OutputImageType::Pointer 
-GateHybridForcedDetectionActor::CreateGeometry(GateVVolume * detector,
-                                               GateVSource * src, 
-                                               GeometryType * geometry)
-{
-  DD("CreateGeometry");
-  
-  // projection input image
-  typedef rtk::ConstantImageSource< OutputImageType > ConstantImageSourceType;
-  //  projInput = ConstantImageSourceType::New();
-
-  OutputImageType::SizeType size;
-  size[2] = 1;
-  size[0] = GetDetectorResolution()[0];
-  size[1] = GetDetectorResolution()[1];
-  DD(size);
-
-  OutputImageType::SpacingType spacing;
-  spacing[2] = 1.0;
-  spacing[0] = detector->GetHalfDimension(0)*2.0/size[0]*mm; //FIXME (in mm ?)
-  spacing[1] = detector->GetHalfDimension(1)*2.0/size[1]*mm;
-  DD(spacing);
-
-  OutputImageType::PointType origin;
-  GateVVolume * v = detector;
-  G4ThreeVector du(1,0,0);
-  G4ThreeVector dv(0,1,0);
-  DD(du);
-  DD(dv);
-  G4ThreeVector tdu=du;
-  G4ThreeVector tdv=dv;
-  G4RotationMatrix rotation;
-  G4ThreeVector translation;
-  while (v->GetLogicalVolumeName() != "world_log") {
-    G4VPhysicalVolume * phys = v->GetPhysicalVolume();
-    const G4RotationMatrix* ro = phys->GetObjectRotation();
-    G4ThreeVector to = phys->GetObjectTranslation();
-    rotation = (*ro)*rotation;
-    translation = translation + to;
-    v = v->GetParentVolume();
-  }
-
-  DD(rotation);
-  DD(translation);
-  tdu = rotation * tdu + translation;
-  DD(tdu);
-  tdv = rotation * tdv + translation;
-  DD(tdv);
-  origin[0] = translation[0];
-  origin[1] = translation[1];
-  origin[2] = translation[2];
-  DD(origin);
-
-  // http://hypernews.slac.stanford.edu/HyperNews/geant4/get/geometry/17/1.html
-  typedef rtk::ConstantImageSource< OutputImageType > ConstantImageSourceType;
-  const ConstantImageSourceType::Pointer projInput = ConstantImageSourceType::New();  
-  // Set values
-  projInput->SetOrigin(origin);
-  projInput->SetSpacing(spacing);
-  projInput->SetSize(size);
-  projInput->SetConstant(0.0);
-  projInput->Update();
-
-  // source
-  DD(src->GetType());
-  DD(src->GetName());
-  G4ThreeVector c = src->GetPosDist()->GetCentreCoords();
-  DD(c);
-
-  // geometry (in mm)
-  DD(mm);
-  double sid = sqrt(norm(c))*mm; //1000;
-  double sdd = sqrt(norm(c-translation))*mm; //1536;
-  DD(sid);
-  DD(sdd);
-  double gantryAngle = 0.0;
-  double sx = (size[0] * spacing[0])/2.0;
-  double sy = (size[1] * spacing[1])/2.0;
-  DD(sx);
-  DD(sy);
-  geometry->AddProjection(sid, sdd, gantryAngle, -sx, -sy);
-
-  // DEBUG write geometry
-  rtk::ThreeDCircularProjectionGeometryXMLFileWriter::Pointer writer = 
-    rtk::ThreeDCircularProjectionGeometryXMLFileWriter::New();
-  writer->SetObject(geometry);
-  writer->SetFilename("bidon.xml");
-  writer->WriteFile();
-
-  // Return output image
-  return projInput->GetOutput();
-}
-//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
@@ -351,9 +280,14 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
         PointType &detectorPosition,
         VectorType &detectorRowVector,
         VectorType &detectorColVector)
-{
-  // To understand the use of GetRotation and GetTranslation check 4.1.4.1 at
-  // http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/ForApplicationDeveloper/html/ch04.html
+{ 
+  // The placement of a volume relative to its mother's coordinate system is not
+  // very well explained in Geant4's doc but the code follows what's done in
+  // source/geometry/volumes/src/G4PVPlacement.cc.
+  //
+  // One must be extremely careful with the multiplication order. It is not
+  // intuitive in Geant4, i.e., G4AffineTransform.Product(A, B) means
+  // B*A in matrix notations.
 
   // Detector to world
   GateVVolume * v = detector;
@@ -363,7 +297,7 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
     v = v->GetParentVolume();
     phys = v->GetPhysicalVolume();
     G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
-    detectorToWorld *= detectorToWorld;
+    detectorToWorld = x * detectorToWorld;
   }
 
   // CT to world
@@ -374,7 +308,7 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
     v = v->GetParentVolume();
     phys = v->GetPhysicalVolume();
     G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
-    ctToWorld *= x;
+    ctToWorld = x * ctToWorld;
   }
 
   // Source to world
@@ -386,11 +320,11 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
     v = v->GetParentVolume();
     phys = v->GetPhysicalVolume();
     G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
-    sourceToWorld *= x;
+    sourceToWorld = x * sourceToWorld;
   }
 
   // Detector parameters
-  G4AffineTransform detectorToCT(ctToWorld.Inverse() * detectorToWorld);
+  G4AffineTransform detectorToCT(detectorToWorld * ctToWorld.Inverse());
 
   // TODO: check where to get the two directions of the detector.
   // Probably the dimension that has 1 in one of the three directions.
@@ -402,46 +336,27 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
   G4ThreeVector s = src->GetPosDist()->GetCentreCoords();
   if(src->GetPosDist()->GetPosDisType()!=G4String("Point"))
     s = src->GetAngDist()->GetFocusPointCopy();
-  G4AffineTransform sourceToCT(ctToWorld.Inverse() * sourceToWorld);
+  G4AffineTransform sourceToCT( sourceToWorld * ctToWorld.Inverse());
   s = sourceToCT.TransformPoint(s);
 
   // Copy in ITK vectors
   for(int i=0; i<3; i++) {
-      detectorRowVector[i] = du[i];
-      detectorColVector[i] = dv[i];
-      detectorPosition[i] = dp[i];
-      primarySourcePosition[i] = s[i];
+    detectorRowVector[i] = du[i];
+    detectorColVector[i] = dv[i];
+    detectorPosition[i] = dp[i];
+    primarySourcePosition[i] = s[i];
   }
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GateHybridForcedDetectionActor::CreateMuImage(const std::vector<double> & label2mu,
-                                                   const GateImage * gate_image, 
-                                                   InputImageType * input)
-{
-  typedef itk::ImageRegionIterator<InputImageType> IteratorType;
-  IteratorType pi(input,input->GetLargestPossibleRegion());
-  pi.GoToBegin();
-  GateImage::const_iterator data = gate_image->begin();
-  while (!pi.IsAtEnd()) {
-    double e = label2mu[(int)(*data)];
-    pi.Set(e); 
-    ++pi;
-    ++data;
-  }
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-GateHybridForcedDetectionActor::OutputImageType::Pointer 
-GateHybridForcedDetectionActor::GenerateDRR(const InputImageType * input, 
-                                            const OutputImageType * projInput, 
+GateHybridForcedDetectionActor::DoubleImageType::Pointer
+GateHybridForcedDetectionActor::GenerateDRR(const DoubleImageType * input,
+                                            const DoubleImageType * projInput,
                                             GeometryType * geometry)
 {
-  typedef rtk::JosephForwardProjectionImageFilter<InputImageType, OutputImageType> JFPType;
+  typedef rtk::JosephForwardProjectionImageFilter<DoubleImageType, DoubleImageType> JFPType;
   JFPType::Pointer jfp = JFPType::New();
   jfp->InPlaceOff();
   jfp->SetInput(projInput);
@@ -456,7 +371,7 @@ GateHybridForcedDetectionActor::GenerateDRR(const InputImageType * input,
 //-----------------------------------------------------------------------------
 void GateHybridForcedDetectionActor::CreateLabelToMuConversion(const double E, 
                                                                GateVImageVolume * gate_image_volume,
-                                                               std::vector<double> & label2mu)
+                                                               itk::Image<double, 1>::Pointer & label2mu)
 {
   G4EmCalculator * emcalc = new G4EmCalculator;
   std::vector<G4Material*> m;
@@ -464,16 +379,24 @@ void GateHybridForcedDetectionActor::CreateLabelToMuConversion(const double E,
   G4String part = "gamma";
   G4String proc_compton = "Compton";
   G4String proc_rayleigh= "Rayleigh";
-  label2mu.clear();
-  label2mu.resize(m.size());
+
+  itk::Image<double, 1>::RegionType region;
+  region.SetSize(0, m.size());
+  label2mu = itk::Image<double, 1>::New();
+  label2mu->SetRegions(region);
+  label2mu->Allocate();
+  itk::ImageRegionIterator< itk::Image<double, 1> > it(label2mu, region);
   for(unsigned int i=0; i<m.size(); i++) {
     G4Material * mat = m[i];
     double d = mat->GetDensity();
     //SR: why not looping over the list of processes like Edward does?
     double xs_c = emcalc->ComputeCrossSectionPerVolume(E, part, proc_compton, mat->GetName());
     double xs_r = emcalc->ComputeCrossSectionPerVolume(E, part, proc_rayleigh, mat->GetName());
-    double mu = (xs_c+xs_r)/d;
-    label2mu[i] = mu;
+    // In (length unit)^{-1} according to
+    // http://www.lcsim.org/software/geant4/doxygen/html/classG4EmCalculator.html#a870d5fffaca35f6e2946da432034bd4c
+    double mu = (xs_c+xs_r);
+    it.Set(mu);
+    ++it;
   }
 }
 //-----------------------------------------------------------------------------
@@ -482,7 +405,7 @@ void GateHybridForcedDetectionActor::CreateLabelToMuConversion(const double E,
 GateHybridForcedDetectionActor::InputImageType::Pointer
 GateHybridForcedDetectionActor::ConvertGateImageToITKImage(GateImage * gateImg)
 {
-  DD("ConvertGateImageToITKImage begin")
+  // The direction is not accounted for in Gate.
   InputImageType::SizeType size;
   InputImageType::PointType origin;
   InputImageType::RegionType region;
@@ -496,22 +419,48 @@ GateHybridForcedDetectionActor::ConvertGateImageToITKImage(GateImage * gateImg)
 
   itk::ImportImageFilter<InputPixelType, Dimension>::Pointer import;
   import = itk::ImportImageFilter<InputPixelType, Dimension>::New();
-  //SR: import->SetDirection()?
   import->SetRegion(region);
-  import->SetImportPointer(&*(gateImg->begin()), gateImg->GetNumberOfValues(), true);
+  import->SetImportPointer(&*(gateImg->begin()), gateImg->GetNumberOfValues(), false);
   import->SetSpacing(spacing);
   import->SetOrigin(origin);
   import->Update();
 
-//  itk::ImageFileWriter<InputImageType>::Pointer writer;
-//  writer = itk::ImageFileWriter<InputImageType>::New();
-//  writer->SetFileName("toto.mha");
-//  writer->SetInput(import->GetOutput());
-//  writer->Update();
-
   return import->GetOutput();
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+GateHybridForcedDetectionActor::DoubleImageType::Pointer
+GateHybridForcedDetectionActor::CreateVoidProjectionImage()
+{
+  mDetector = GateObjectStore::GetInstance()->FindVolumeCreator(mDetectorName);
+
+  DoubleImageType::SizeType size;
+  size[0] = GetDetectorResolution()[0];
+  size[1] = GetDetectorResolution()[1];
+  size[2] = 1;
+
+  DoubleImageType::SpacingType spacing;
+  // SR : there seems to be a blurry definition of Half dimension
+  spacing[0] = mDetector->GetHalfDimension(0)*2.0/size[0];
+  spacing[1] = mDetector->GetHalfDimension(1)*2.0/size[1];
+  spacing[2] = 1.0;
+
+  DoubleImageType::PointType origin;
+
+  origin[0] = mDetector->GetHalfDimension(0)*-1.0;
+  origin[1] = mDetector->GetHalfDimension(1)*-1.0;
+  origin[2] = 0.0;
+
+  rtk::ConstantImageSource<DoubleImageType>::Pointer source;
+  source = rtk::ConstantImageSource<DoubleImageType>::New();
+  source->SetSpacing(spacing);
+  source->SetOrigin(origin);
+  source->SetSize(size);
+  source->Update();
+
+  return source->GetOutput();
+}
 //-----------------------------------------------------------------------------
 
 #endif

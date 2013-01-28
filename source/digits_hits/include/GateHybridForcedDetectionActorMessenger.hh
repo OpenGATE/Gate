@@ -33,6 +33,8 @@ protected:
   GateHybridForcedDetectionActor * pHybridActor;
   G4UIcmdWithAString * pSetDetectorCmd;
   GateUIcmdWith2Vector * pSetDetectorResolCmd;
+  G4UIcmdWithAString * pSetGeometryFilenameCmd;
+  G4UIcmdWithAString * pSetPrimaryFilenameCmd;
 };
 
 #endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH*/
