@@ -31,6 +31,8 @@
 #include <itkCastImageFilter.h>
 #include <itkMultiplyImageFilter.h>
 #include <itkAddImageFilter.h>
+#include <itkExpImageFilter.h>
+#include <itkLogImageFilter.h>
 
 //-----------------------------------------------------------------------------
 /// Constructors
@@ -173,10 +175,23 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 //writer->SetInput(drr);
 //writer->Update();
 
+    // Multiply by -1
+    itk::MultiplyImageFilter<DoubleImageType, DoubleImageType>::Pointer opp;
+    opp = itk::MultiplyImageFilter<DoubleImageType, DoubleImageType>::New();
+    opp->SetInput(drr);
+    opp->SetConstant(-1.);
+    opp->Update();
+
+    // Take exponential
+    itk::ExpImageFilter<DoubleImageType, DoubleImageType>::Pointer exp;
+    exp = itk::ExpImageFilter<DoubleImageType, DoubleImageType>::New();
+    exp->SetInput(opp->GetOutput());
+    exp->Update();
+
     // Multiply by energy weight
     itk::MultiplyImageFilter<DoubleImageType, DoubleImageType>::Pointer multiply;
     multiply = itk::MultiplyImageFilter<DoubleImageType, DoubleImageType>::New();
-    multiply->SetInput(drr);
+    multiply->SetInput(exp->GetOutput());
     multiply->SetConstant(energyWeightList[i]);
     multiply->Update();
 
@@ -250,14 +265,25 @@ void GateHybridForcedDetectionActor::SaveData()
   geoWriter->SetFilename(mGeometryFilename);
   geoWriter->WriteFile();
 
+  // Convert primary to line integral
+  itk::LogImageFilter<DoubleImageType, DoubleImageType>::Pointer log;
+  log = itk::LogImageFilter<DoubleImageType, DoubleImageType>::New();
+  log->SetInput(mPrimaryImage);
+  log->Update();
+  itk::MultiplyImageFilter<DoubleImageType, DoubleImageType>::Pointer mult;
+  mult = itk::MultiplyImageFilter<DoubleImageType, DoubleImageType>::New();
+  mult->SetInput(log->GetOutput());
+  mult->SetConstant(-1.);
+  mult->Update();
+
   // Write the image of primary radiation
-  itk::ImageFileWriter<DoubleImageType>::Pointer imgWriter =
-      itk::ImageFileWriter<DoubleImageType>::New();
-  char filename [1024];
+  itk::ImageFileWriter<DoubleImageType>::Pointer imgWriter;
+  imgWriter = itk::ImageFileWriter<DoubleImageType>::New();
+  char filename[1024];
   G4int rID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
   sprintf(filename, mPrimaryFilename.c_str(), rID);
   imgWriter->SetFileName(filename);
-  imgWriter->SetInput(mPrimaryImage);
+  imgWriter->SetInput(mult->GetOutput());
   imgWriter->Update();
 }
 //-----------------------------------------------------------------------------
