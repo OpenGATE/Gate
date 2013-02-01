@@ -56,14 +56,14 @@
 # PHYSIC
 #=====================================================
 
-/control/execute mac/Physicslist_std_no_e.mac
+#/control/execute mac/Physicslist_std_no_e.mac
+#/control/execute mac/Physicslist_Penelope_no_e.mac
+/control/execute mac/Physicslist_Livermore_no_e.mac
 
-/gate/physics/Gamma/SetCutInRegion      world 10 mm
-/gate/physics/Electron/SetCutInRegion   world 10 mm
-/gate/physics/Positron/SetCutInRegion   world 10 mm
-
-/gate/physics/SetMinRemainingRangeInRegion world 10 mm
-/gate/physics/ActivateSpecialCuts e-
+# Be sure there is no e- 
+/gate/physics/Gamma/SetCutInRegion      world 10 m
+/gate/physics/Electron/SetCutInRegion   world 10 m
+/gate/physics/Positron/SetCutInRegion   world 10 m
 
 /gate/physics/displayCuts
 
@@ -121,7 +121,7 @@
 #=====================================================
 
 # DEBUG
-#/tracking/verbose 1
+/tracking/verbose 1
 #/tracking/verbose 1
 
 /gate/run/initialize
@@ -131,7 +131,8 @@
 
 /gate/application/setTimeSlice 1 s
 /gate/application/setTimeStart 0 s
-/gate/application/setTimeStop 360 s
+/gate/application/setTimeStop 1 s
+#/gate/application/setTimeStop 360 s
 
 /gate/application/noGlobalOutput
 /gate/run/enableGlobalOutput false
