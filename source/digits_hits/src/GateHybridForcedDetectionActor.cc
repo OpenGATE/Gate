@@ -353,14 +353,14 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
   G4AffineTransform detectorToCT(detectorToWorld * ctToWorld.Inverse());
 
   // TODO: check where to get the two directions of the detector.
-  // Probably the dimension that has 1 in one of the three directions.
+  // Probably the dimension that has lowest size in one of the three directions. 
   G4ThreeVector du = detectorToCT.TransformAxis(G4ThreeVector(1,0,0));
   G4ThreeVector dv = detectorToCT.TransformAxis(G4ThreeVector(0,1,0));
   G4ThreeVector dp = detectorToCT.TransformPoint(G4ThreeVector(0,0,0));
 
   // Source (assumed point or focus)
-  G4ThreeVector s = src->GetPosDist()->GetCentreCoords();
-  if(src->GetPosDist()->GetPosDisType()!=G4String("Point"))
+  G4ThreeVector s = src->GetPosDist()->GetCentreCoords(); // point 
+  if(src->GetPosDist()->GetPosDisType()!=G4String("Point")) // Focus
     s = src->GetAngDist()->GetFocusPointCopy();
   G4AffineTransform sourceToCT( sourceToWorld * ctToWorld.Inverse());
   s = sourceToCT.TransformPoint(s);
@@ -404,7 +404,7 @@ void GateHybridForcedDetectionActor::CreateLabelToMuConversion(const double E,
   gate_image_volume->BuildLabelToG4MaterialVector(m);
   G4String part = "gamma";
   G4String proc_compton = "Compton";
-  G4String proc_rayleigh= "Rayleigh";
+  G4String proc_rayleigh= "Rayleigh"; // FIXME retrieve user process
 
   itk::Image<double, 1>::RegionType region;
   region.SetSize(0, m.size());
@@ -439,7 +439,7 @@ GateHybridForcedDetectionActor::ConvertGateImageToITKImage(GateImage * gateImg)
   for(unsigned int i=0; i<3; i++) {
     size[i] = gateImg->GetResolution()[i];
     spacing[i] = gateImg->GetVoxelSize()[i];
-    origin[i] = gateImg->GetOrigin()[i];
+    origin[i] = -gateImg->GetHalfSize()[i]+0.5*spacing[i];
   }
   region.SetSize(size);
 
@@ -467,15 +467,13 @@ GateHybridForcedDetectionActor::CreateVoidProjectionImage()
   size[2] = 1;
 
   DoubleImageType::SpacingType spacing;
-  // SR : there seems to be a blurry definition of Half dimension
   spacing[0] = mDetector->GetHalfDimension(0)*2.0/size[0];
   spacing[1] = mDetector->GetHalfDimension(1)*2.0/size[1];
   spacing[2] = 1.0;
 
   DoubleImageType::PointType origin;
-
-  origin[0] = mDetector->GetHalfDimension(0)*-1.0;
-  origin[1] = mDetector->GetHalfDimension(1)*-1.0;
+  origin[0] = -mDetector->GetHalfDimension(0)+0.5*spacing[0];
+  origin[1] = -mDetector->GetHalfDimension(1)+0.5*spacing[1];
   origin[2] = 0.0;
 
   rtk::ConstantImageSource<DoubleImageType>::Pointer source;
