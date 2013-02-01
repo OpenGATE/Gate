@@ -1,0 +1,14 @@
+
+
+/gate/physics/addProcess PhotoElectric
+/gate/physics/processes/PhotoElectric/setModel PenelopeModel
+
+/gate/physics/addProcess Compton
+/gate/physics/processes/Compton/setModel PenelopeModel
+
+/gate/physics/addProcess RayleighScattering
+/gate/physics/processes/RayleighScattering/setModel PenelopeModel
+
+/gate/physics/addProcess GammaConversion
+/gate/physics/processes/GammaConversion/setModel PenelopeModel
+
