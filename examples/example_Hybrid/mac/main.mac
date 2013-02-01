@@ -121,7 +121,7 @@
 #=====================================================
 
 # DEBUG
-/tracking/verbose 1
+#/tracking/verbose 1
 #/tracking/verbose 1
 
 /gate/run/initialize
