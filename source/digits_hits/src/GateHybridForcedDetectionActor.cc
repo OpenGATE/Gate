@@ -402,9 +402,18 @@ void GateHybridForcedDetectionActor::CreateLabelToMuConversion(const double E,
   G4EmCalculator * emcalc = new G4EmCalculator;
   std::vector<G4Material*> m;
   gate_image_volume->BuildLabelToG4MaterialVector(m);
-  G4String part = "gamma";
-  G4String proc_compton = "Compton";
-  G4String proc_rayleigh= "Rayleigh"; // FIXME retrieve user process
+
+  // Get the list of involved processes (Rayleigh, Compton, PhotoElectric)
+  G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
+  G4ProcessVector* plist = particle->GetProcessManager()->GetProcessList();
+  std::vector<G4String> processNameVector;
+  for (G4int j = 0; j < plist->size(); j++) {
+    G4ProcessType type = (*plist)[j]->GetProcessType();
+    std::string name = (*plist)[j]->GetProcessName();
+    if ((type == fElectromagnetic) && (name != "msc")) {
+      processNameVector.push_back(name);
+    }
+  }
 
   itk::Image<double, 1>::RegionType region;
   region.SetSize(0, m.size());
@@ -414,13 +423,17 @@ void GateHybridForcedDetectionActor::CreateLabelToMuConversion(const double E,
   itk::ImageRegionIterator< itk::Image<double, 1> > it(label2mu, region);
   for(unsigned int i=0; i<m.size(); i++) {
     G4Material * mat = m[i];
-    double d = mat->GetDensity();
-    //SR: why not looping over the list of processes like Edward does?
-    double xs_c = emcalc->ComputeCrossSectionPerVolume(E, part, proc_compton, mat->GetName());
-    double xs_r = emcalc->ComputeCrossSectionPerVolume(E, part, proc_rayleigh, mat->GetName());
-    // In (length unit)^{-1} according to
-    // http://www.lcsim.org/software/geant4/doxygen/html/classG4EmCalculator.html#a870d5fffaca35f6e2946da432034bd4c
-    double mu = (xs_c+xs_r);
+    //double d = mat->GetDensity(); // not needed
+    double mu = 0;
+    for (uint j = 0; j < processNameVector.size(); j++) {
+      // Note: the G4EmCalculator retrive the correct G4VProcess
+      // (standard, Penelope, Livermore) from the processName.
+      double xs = 
+        emcalc->ComputeCrossSectionPerVolume(E, "gamma", processNameVector[j], mat->GetName());
+      // In (length unit)^{-1} according to
+      // http://www.lcsim.org/software/geant4/doxygen/html/classG4EmCalculator.html#a870d5fffaca35f6e2946da432034bd4c
+      mu += xs;
+    }
     it.Set(mu);
     ++it;
   }
