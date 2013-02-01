@@ -7,7 +7,7 @@
 /gate/physics/processes/Compton/setModel StandardModel
 
 /gate/physics/addProcess RayleighScattering
-/gate/physics/processes/RayleighScattering/setModel PenelopeModel
+/gate/physics/processes/RayleighScattering/setModel StandardModel
 
 /gate/physics/addProcess GammaConversion
 /gate/physics/processes/GammaConversion/setModel StandardModel
