@@ -6,7 +6,7 @@
 /gate/source/mybeam/gps/pos/halfy 8 mm
 /gate/source/mybeam/gps/pos/rot1 1 0 0
 /gate/source/mybeam/gps/pos/rot2 0 1 0
-/gate/source/mybeam/gps/pos/centre 1060.0 0 -4.49218 mm
+/gate/source/mybeam/gps/pos/centre 0 0 1060 mm
 /gate/source/mybeam/gps/pos/type Plane
 /gate/source/mybeam/gps/pos/shape Rectangle
 /gate/source/mybeam/gps/ang/type focused
