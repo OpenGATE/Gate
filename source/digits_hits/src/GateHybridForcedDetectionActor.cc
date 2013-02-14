@@ -425,7 +425,7 @@ void GateHybridForcedDetectionActor::CreateLabelToMuConversion(const double E,
     G4Material * mat = m[i];
     //double d = mat->GetDensity(); // not needed
     double mu = 0;
-    for (uint j = 0; j < processNameVector.size(); j++) {
+    for (unsigned int j = 0; j < processNameVector.size(); j++) {
       // Note: the G4EmCalculator retrive the correct G4VProcess
       // (standard, Penelope, Livermore) from the processName.
       double xs = 
