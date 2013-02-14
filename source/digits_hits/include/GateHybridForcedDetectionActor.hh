@@ -85,7 +85,6 @@ public:
   typedef rtk::ConstantImageSource< OutputImageType > ConstantImageSourceType;
   
   DoubleImageType::Pointer  GenerateDRR(const DoubleImageType * input,
-                                        const DoubleImageType * projInput,
                                         GeometryType * geometry);
   void ComputeGeometryInfoInImageCoordinateSystem(GateVImageVolume *image,
                                                   GateVVolume *detector,

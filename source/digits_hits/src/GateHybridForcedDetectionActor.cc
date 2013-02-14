@@ -162,7 +162,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     lutFilter->Update();
 
     // Generate drr
-    DoubleImageType::Pointer drr = GenerateDRR(lutFilter->GetOutput(), mPrimaryImage, oneProjGeometry);
+    DoubleImageType::Pointer drr = GenerateDRR(lutFilter->GetOutput(), oneProjGeometry);
 //// Debug: write DRR
 //typedef itk::ImageFileWriter<DoubleImageType> WriterType;
 //WriterType::Pointer writer = WriterType::New();
@@ -379,13 +379,13 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
 //-----------------------------------------------------------------------------
 GateHybridForcedDetectionActor::DoubleImageType::Pointer
 GateHybridForcedDetectionActor::GenerateDRR(const DoubleImageType * input,
-                                            const DoubleImageType * projInput,
                                             GeometryType * geometry)
 {
+  DoubleImageType::Pointer drr = CreateVoidProjectionImage();
   typedef rtk::JosephForwardProjectionImageFilter<DoubleImageType, DoubleImageType> JFPType;
   JFPType::Pointer jfp = JFPType::New();
-  jfp->InPlaceOff();
-  jfp->SetInput(projInput);
+  jfp->InPlaceOn();
+  jfp->SetInput(drr);
   jfp->SetInput(1, input);
   jfp->SetGeometry(geometry);
   jfp->Update();
