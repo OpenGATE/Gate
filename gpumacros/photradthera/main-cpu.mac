@@ -1,0 +1,112 @@
+
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+# Example of CT imaging.
+
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+
+#=====================================================
+# VERBOSE and VISUALISATION 
+#=====================================================
+
+/control/execute mac/verbose.mac
+#/control/execute mac/visu.mac
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+
+# WORLD
+/gate/world/setMaterial            Air
+/gate/world/geometry/setXLength    3.0 m
+/gate/world/geometry/setYLength    3.0 m
+/gate/world/geometry/setZLength    3.0 m
+
+/gate/world/daughters/name                      patient
+/gate/world/daughters/insert                    ImageNestedParametrisedVolume
+/gate/geometry/setMaterialDatabase              data/patient-HUmaterials.db
+/gate/patient/geometry/SetHUToMaterialFile      data/patient-HU2mat.txt
+/gate/patient/geometry/SetImage                 data/patient-2mm.mhd
+/gate/patient/placement/setTranslation          0 0 0 mm
+
+#=====================================================
+# PHYSICS
+#=====================================================
+
+/control/execute mac/physicslist_EM_std.mac
+
+/gate/physics/Gamma/SetCutInRegion      world 10 m
+/gate/physics/Electron/SetCutInRegion   world 10 m
+/gate/physics/Positron/SetCutInRegion   world 10 m
+
+/gate/physics/Gamma/SetCutInRegion      patient 0.01 mm
+/gate/physics/Electron/SetCutInRegion   patient 0.01 mm
+/gate/physics/Positron/SetCutInRegion   patient 10 m
+
+/gate/physics/SetMaxStepSizeInRegion    patient 10.0 mm
+
+#/gate/physics/SetMinKineticEnergyInRegion world 1000 keV
+#/gate/physics/ActivateSpecialCuts e-
+
+/gate/physics/displayCuts
+/gate/physics/print output-cpu/physics.txt
+
+#=====================================================
+# DETECTORS
+#=====================================================
+
+/gate/actor/addActor                        DoseActor  dactor
+/gate/actor/dactor/save                     output-cpu/dosemap.mhd
+/gate/actor/dactor/attachTo                 patient
+/gate/actor/dactor/setPosition              0. 0. 0. mm
+/gate/actor/dactor/setVoxelSize             2. 2. 2. mm
+/gate/actor/dactor/stepHitType              random
+/gate/actor/dactor/enableEdep               true
+/gate/actor/dactor/enableUncertaintyEdep    false
+/gate/actor/dactor/enableSquaredEdep        false
+/gate/actor/dactor/enableDose               false
+/gate/actor/dactor/normaliseDose            false
+
+# Global stats
+/gate/actor/addActor                 SimulationStatisticActor stat
+/gate/actor/stat/saveEveryNSeconds   20
+/gate/actor/stat/save                output-cpu/stat.txt
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+
+#=====================================================
+# BEAMS
+#=====================================================
+
+/gate/source/addSource               src     gps
+/gate/source/src/gps/particle        gamma
+/gate/source/src/gps/energy          1.0 MeV
+/gate/source/src/gps/type            Plane
+/gate/source/src/gps/shape           Rectangle 
+/gate/source/src/gps/halfx           0.65 mm 
+/gate/source/src/gps/halfy           0.65 mm 
+/gate/source/src/gps/mintheta        0.0 deg 
+/gate/source/src/gps/maxtheta        0.0 deg
+/gate/source/src/gps/angtype         iso
+/gate/source/src/gps/centre          0 0 165 cm
+
+#=====================================================
+# START BEAMS
+#=====================================================
+#/tracking/verbose 2
+
+/gate/application/noGlobalOutput
+/gate/run/enableGlobalOutput        false
+
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed 123456789
+/gate/application/setTotalNumberOfPrimaries 10000
+
+/gate/application/start

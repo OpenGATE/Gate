@@ -1,0 +1,158 @@
+
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+# Example of CT imaging.
+
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+
+#=====================================================
+# VERBOSE and VISUALISATION 
+#=====================================================
+
+/control/execute mac/verbose.mac
+#/control/execute mac/visu.mac
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+
+# WORLD
+/gate/world/setMaterial            Vacuum
+/gate/world/geometry/setXLength    3.0 m
+/gate/world/geometry/setYLength    3.0 m
+/gate/world/geometry/setZLength    3.0 m
+
+/gate/world/daughters/name                      patient
+/gate/world/daughters/insert                    ImageNestedParametrisedVolume
+/gate/geometry/setMaterialDatabase              data/patient-HUmaterials.db
+/gate/patient/geometry/SetHUToMaterialFile      data/patient-HU2mat.txt
+/gate/patient/geometry/SetImage                 data/patient-2mm.mhd
+/gate/patient/placement/setTranslation          0 0 0 mm
+
+# DETECTOR
+/gate/world/daughters/name                   detectorOut
+/gate/world/daughters/insert                 box
+/gate/detectorOut/setMaterial                Vacuum
+/gate/detectorOut/geometry/setXLength        30.0 cm
+/gate/detectorOut/geometry/setYLength        30.0 cm
+/gate/detectorOut/geometry/setZLength        1.0 cm
+/gate/detectorOut/placement/setTranslation   0 0 -15 cm
+/gate/detectorOut/vis/setColor               blue
+/gate/detectorOut/vis/forceWireframe
+
+/gate/world/daughters/name                   detectorIn
+/gate/world/daughters/insert                 box
+/gate/detectorIn/setMaterial                 Vacuum
+/gate/detectorIn/geometry/setXLength         30.0 cm
+/gate/detectorIn/geometry/setYLength         30.0 cm
+/gate/detectorIn/geometry/setZLength         1.0 cm
+/gate/detectorIn/placement/setTranslation    0 0 15 cm
+/gate/detectorIn/vis/setColor                blue
+/gate/detectorIn/vis/forceWireframe
+
+
+#=====================================================
+# PHYSICS
+#=====================================================
+
+/control/execute mac/physicslist_EM_std.mac
+
+/gate/physics/Gamma/SetCutInRegion      world 10 m
+/gate/physics/Electron/SetCutInRegion   world 10 m
+/gate/physics/Positron/SetCutInRegion   world 10 m
+
+/gate/physics/Gamma/SetCutInRegion      patient 10 m
+/gate/physics/Electron/SetCutInRegion   patient 10 m
+/gate/physics/Positron/SetCutInRegion   patient 10 m
+
+/gate/physics/SetMaxStepSizeInRegion    patient 0.1 mm
+
+/gate/physics/SetMinKineticEnergyInRegion world 1000 keV
+/gate/physics/ActivateSpecialCuts e-
+
+/gate/physics/displayCuts
+/gate/physics/print output-gpu/physics.txt
+
+#=====================================================
+# DETECTORS
+#=====================================================
+
+# GPU Tracking
+/gate/actor/addActor                  GPUTransTomoActor gpuactor
+/gate/actor/gpuactor/attachTo         patient
+/gate/actor/gpuactor/setGPUDeviceID   1
+/gate/actor/gpuactor/setGPUBufferSize 10000000   # 1M buffer size =  400MB on the GPU
+                                                 # 5M             =  760MB
+                                                 #10M             = 1300MB
+
+# count particle in detector, in 2D mhd
+/gate/actor/addActor                 ParticleInVolumeActor counterOut
+/gate/actor/counterOut/save          output-gpu/output-out.mhd
+/gate/actor/counterOut/attachTo      detectorOut
+/gate/actor/counterOut/setResolution 100 100 1
+
+# count particle in detector, in 2D mhd
+/gate/actor/addActor                 ParticleInVolumeActor counterIn
+/gate/actor/counterIn/save           output-gpu/output-in.mhd
+/gate/actor/counterIn/attachTo       detectorIn
+/gate/actor/counterIn/setResolution  100 100 1
+
+# count particle in detector, in 1D (in txt)
+/gate/actor/addActor                 ParticleInVolumeActor counter2
+/gate/actor/counter2/save            output-gpu/a.txt
+/gate/actor/counter2/attachTo        detectorOut
+/gate/actor/counter2/setResolution   1 1 1
+
+# Phase space in detectorOut
+/gate/actor/addActor                 PhaseSpaceActor ps
+/gate/actor/ps/attachTo              detectorOut
+/gate/actor/ps/save                  output-gpu/ps.root
+
+# Global stats
+/gate/actor/addActor                 SimulationStatisticActor stat
+/gate/actor/stat/saveEveryNSeconds   20
+/gate/actor/stat/save                output-gpu/stat.txt
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+
+#=====================================================
+# BEAMS
+#=====================================================
+
+/gate/source/addSource               src     gps
+/gate/source/src/gps/particle        gamma
+/gate/source/src/gps/energy          80 keV
+/gate/source/src/gps/type            Plane
+/gate/source/src/gps/shape           Rectangle 
+/gate/source/src/gps/halfx           0.65 mm 
+/gate/source/src/gps/halfy           0.65 mm 
+/gate/source/src/gps/mintheta        0.0 deg 
+/gate/source/src/gps/maxtheta        4.0 deg
+/gate/source/src/gps/angtype         iso
+/gate/source/src/gps/centre          0 0 165 cm
+
+#=====================================================
+# START BEAMS
+#=====================================================
+#/tracking/verbose 2
+
+/gate/application/noGlobalOutput
+/gate/run/enableGlobalOutput false
+
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed 123456789
+/gate/application/setTotalNumberOfPrimaries 10000000
+
+/gate/application/start
+
+# Run time
+#     12.6 s on GPU
+# 7 m 40.0 s total time
+

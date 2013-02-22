@@ -1,5 +1,5 @@
 !INTERFILE :=
-!name of data file := cas1_phantom1_bed1_128x63x46.bin
+!name of data file := data/thorax_phantom.bin
 imagedata byte order := LITTLEENDIAN
 !matrix size [1] := 128
 !matrix size [2] := 63

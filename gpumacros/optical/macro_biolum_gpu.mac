@@ -87,13 +87,16 @@
 #===================================================
 
 /gate/world/daughters/name					            biolumi
-/gate/world/daughters/insert					       fictitiousVoxelMap
+/gate/world/daughters/insert					        fictitiousVoxelMap
+
 /gate/biolumi/geometry/insertReader				        interfile
 /gate/biolumi/interfileReader/insertTranslator 			range
-/gate/biolumi/interfileReader/rangeTranslator/readTable optical_range_gpu.dat
+/gate/biolumi/interfileReader/rangeTranslator/readTable range_biolumi_gpu.dat
 /gate/biolumi/interfileReader/rangeTranslator/describe 	1
-/gate/biolumi/interfileReader/readFile 				    optical_phantom.hdr
-#/gate/biolumi/placement/setTranslation  			    0. 0. 0. mm
+/gate/biolumi/interfileReader/readFile 			    	biolumi_header.hdr
+/gate/biolumi/placement/setTranslation  			    0. 0. 0. mm
+/gate/biolumi/placement/setRotationAxis 			    1 0 0
+/gate/biolumi/placement/setRotationAngle 			    0 deg
 
 #==================================================
 # PHYSICS
@@ -126,33 +129,35 @@
 # V O X E L    S O U R C E
 
 # VERSION GPU
-/gate/source/addSource				voxel   GPUOpticalVoxel
+/gate/source/addSource				    voxel GPUOpticalVoxel
 /gate/source/voxel/attachPhantomTo 		biolumi
-/gate/source/voxel/setGPUBufferSize 	        1000000
+/gate/source/voxel/setGPUBufferSize 	100
 /gate/source/voxel/setGPUDeviceID 		1
 /gate/source/voxel/energy 			6.0 eV
 
-/gate/source/voxel/reader/insert 			      		interfile
+/gate/source/voxel/reader/insert 			      		        interfile
 /gate/source/voxel/interfileReader/translator/insert			range
-/gate/source/voxel/interfileReader/rangeTranslator/readTable 	        optical_activities.dat
-/gate/source/voxel/interfileReader/rangeTranslator/describe 	        1
-/gate/source/voxel/interfileReader/verbose 				0
-/gate/source/voxel/interfileReader/readFile 				optical_phantom.hdr
+/gate/source/voxel/interfileReader/rangeTranslator/readTable 	activites_optical.dat
+/gate/source/voxel/interfileReader/rangeTranslator/describe 	1
+/gate/source/voxel/interfileReader/verbose 				        0
+/gate/source/voxel/interfileReader/readFile 				    biolumi_header_bed.hdr
 
-#/gate/source/voxel/gps/particle 					opticalphoton
-#/gate/source/voxel/gps/energytype 					Mono
-#/gate/source/voxel/setPosition  					0. 0. 0. cm
-#/gate/source/voxel/gps/angtype 					iso
+/gate/source/voxel/gps/particle 					opticalphoton
+/gate/source/voxel/gps/energytype 					Mono
+/gate/source/voxel/gps/monoenergy 					6.0 eV
+/gate/source/voxel/setPosition  					0. 0. 0. cm
+/gate/source/voxel/gps/angtype 						iso
 
 
 #==================================================
 # DATA OUTPUT
 #==================================================
 
-#/gate/output/ascii/enable
-#/gate/output/ascii/setFileName                  ListModeOPTICAL_gpu
-#/gate/output/ascii/setOutFileHitsFlag           1
-#/gate/output/ascii/setOutFileSinglesFlag        0
+/gate/output/ascii/enable
+/gate/output/ascii/setFileName                  ListModeOPTICAL_gpu
+/gate/output/ascii/setOutFileHitsFlag           1
+/gate/output/ascii/setOutFileSinglesFlag        0
+/gate/output/ascii/setOutFileCoincidencesFlag   0
 
 /gate/output/root/disable
 /gate/output/binary/disable
