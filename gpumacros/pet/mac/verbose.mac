@@ -1,0 +1,7 @@
+/control/verbose	0
+/run/verbose		1
+/tracking/verbose	0
+/event/verbose 		0
+
+/gate/verbose Beam      0
+/gate/verbose Actor     0

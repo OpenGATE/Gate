@@ -1,0 +1,6 @@
+/vis/open				OGLIX
+/vis/viewer/set/viewpointThetaPhi 	90 0
+/vis/viewer/zoom 			        2.0
+/vis/drawVolume
+/tracking/storeTrajectory		1
+/vis/scene/add/trajectories 
