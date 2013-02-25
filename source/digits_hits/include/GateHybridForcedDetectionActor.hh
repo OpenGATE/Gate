@@ -70,6 +70,7 @@ public:
   void SetDetectorVolumeName(G4String name) { mDetectorName = name; }
   void SetGeometryFilename(G4String name) { mGeometryFilename = name; }
   void SetPrimaryFilename(G4String name) { mPrimaryFilename = name; }
+  void SetMaterialMuFilename(G4String name) { mMaterialMuFilename = name; }
 
   // Typedef for rtk
   static const unsigned int Dimension = 3;
@@ -84,8 +85,6 @@ public:
   typedef rtk::Reg23ProjectionGeometry::VectorType    VectorType;
   typedef rtk::ConstantImageSource< OutputImageType > ConstantImageSourceType;
   
-  DoubleImageType::Pointer  GenerateDRR(const DoubleImageType * input,
-                                        GeometryType * geometry);
   void ComputeGeometryInfoInImageCoordinateSystem(GateVImageVolume *image,
                                                   GateVVolume *detector,
                                                   GateVSource *src,
@@ -93,11 +92,10 @@ public:
                                                   PointType &detectorPosition,
                                                   VectorType &detectorRowVector,
                                                   VectorType &detectorColVector);
-  void CreateLabelToMuConversion(const double E, 
-                                 GateVImageVolume * gate_image_volume,
-                                 itk::Image<double, 1>::Pointer & label2mu);
+  void CreateLabelToMuConversion(const std::vector<double> &E,
+                                 GateVImageVolume * gate_image_volume);
   InputImageType::Pointer ConvertGateImageToITKImage(GateImage * gateImg);
-  DoubleImageType::Pointer CreateVoidProjectionImage();
+  InputImageType::Pointer CreateVoidProjectionImage();
 
 protected:
   GateHybridForcedDetectionActorMessenger * pActorMessenger;
@@ -107,16 +105,22 @@ protected:
   GateVSource * mSource;
   G4String mGeometryFilename;
   G4String mPrimaryFilename;
+  G4String mMaterialMuFilename;
 
   G4ThreeVector mDetectorResolution;
 
   GeometryType::Pointer mGeometry;
-  DoubleImageType::Pointer mPrimaryImage;
+  InputImageType::Pointer mPrimaryImage;
+  itk::Image<double, 2>::Pointer mMaterialMu;
 
   // Geometry information initialized at the beginning of the run
   PointType mDetectorPosition;
   VectorType mDetectorRowVector;
   VectorType mDetectorColVector;
+
+  // Callback classes for forward projection
+  class PrimaryInterpolationWeightMultiplication;
+  class PrimaryValueAccumulation;
 };
 //-----------------------------------------------------------------------------
 

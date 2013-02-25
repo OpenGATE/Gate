@@ -85,6 +85,7 @@
 /gate/actor/hfda/setDetectorResolution 512 512
 /gate/actor/hfda/geometryFilename      output/geometry.xml
 /gate/actor/hfda/primaryFilename       output/primary%.04d.mha
+/gate/actor/hfda/materialMuFilename    output/materialMu.mha
 
 # find source if gps. --> keep the first one.
 # assumption : ponctuel (focuspoint ou centre)
@@ -113,8 +114,8 @@
 #=====================================================
 
 /gate/source/addSource mybeam gps
-/control/execute mac/beam-mono.mac
-#/control/execute mac/beam-with-spektrum.mac
+#/control/execute mac/beam-mono.mac
+/control/execute mac/beam-with-spektrum.mac
 
 #=====================================================
 # MAIN

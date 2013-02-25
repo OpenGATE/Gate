@@ -35,6 +35,7 @@ protected:
   GateUIcmdWith2Vector * pSetDetectorResolCmd;
   G4UIcmdWithAString * pSetGeometryFilenameCmd;
   G4UIcmdWithAString * pSetPrimaryFilenameCmd;
+  G4UIcmdWithAString * pSetMaterialMuFilenameCmd;
 };
 
 #endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH*/

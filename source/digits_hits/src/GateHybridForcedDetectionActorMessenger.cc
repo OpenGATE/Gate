@@ -60,6 +60,11 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
   pSetPrimaryFilenameCmd = new G4UIcmdWithAString(bb,this);
   guidance = "Set the file name for the primary x-rays (printf format with runId as a single parameter).";
   pSetPrimaryFilenameCmd->SetGuidance(guidance);
+
+  bb = base+"/materialMuFilename";
+  pSetMaterialMuFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for writing the image that provides the attenuation of each material at each energy.";
+  pSetMaterialMuFilenameCmd->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -71,6 +76,7 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetDetectorResolCmd) pHybridActor->SetDetectorResolution(pSetDetectorResolCmd->GetNew2VectorValue(param)[0], pSetDetectorResolCmd->GetNew2VectorValue(param)[1]);
   if(command == pSetGeometryFilenameCmd) pHybridActor->SetGeometryFilename(param);
   if(command == pSetPrimaryFilenameCmd) pHybridActor->SetPrimaryFilename(param);
+  if(command == pSetMaterialMuFilenameCmd) pHybridActor->SetMaterialMuFilename(param);
 
   GateActorMessenger::SetNewValue(command ,param );}
 //-----------------------------------------------------------------------------
