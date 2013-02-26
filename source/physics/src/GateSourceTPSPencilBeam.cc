@@ -16,6 +16,11 @@
 // It will simulate each single pencil beam of the treatment plan using the GateSourcePencilBeam class.
 //=======================================================
 
+//Modified by Hermann Fuchs
+//Medical University Vienna
+//Added missing Couch Angle
+//Corrected angle calculation to be conform with DICOM standards
+
 #ifndef GATESOURCETPSPENCILBEAM_CC
 #define GATESOURCETPSPENCILBEAM_CC
 
@@ -68,6 +73,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
     char oneline[MAXLINE];
     int NbFields, FieldID, TotalMeterSet, NbOfLayers;
     double GantryAngle;
+    double CouchAngle;
     double IsocenterPosition[3];
     double NbProtons;
     bool again=true;
@@ -101,8 +107,12 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 
 	for (int i=0;i<4;i++) inFile.getline(oneline, MAXLINE);
 	GantryAngle=atof(oneline)*TMath::Pi()/180.;
+        
+//MISSING COUCH ANGLE inserted
+        for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
+	CouchAngle=atof(oneline)*TMath::Pi()/180.;
 
-	for (int i=0;i<4;i++) inFile.getline(oneline, MAXLINE);
+	for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
 	ReadLineTo3Doubles(IsocenterPosition, oneline);
 	for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
 	NbOfLayers=atoi(oneline);
@@ -119,6 +129,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 	    G4cout<<"TESTREAD TotalMeterSet "<<TotalMeterSet<<G4endl;
 	    G4cout<<"TESTREAD FieldID "<<FieldID <<G4endl;
 	    G4cout<<"TESTREAD GantryAngle "<<GantryAngle <<G4endl;
+	    G4cout<<"TESTREAD CouchAngle "<<CouchAngle <<G4endl;            
 	    G4cout<<"TESTREAD Layers N° "<<j<<G4endl;
 	    G4cout<<"TESTREAD NbOfSpots "<<NbOfSpots<<G4endl;
 	  }
@@ -136,8 +147,24 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 	    position[0]=SpotParameters[0]*(mDistanceSMXToIsocenter-mDistanceSourcePatient)/mDistanceSMXToIsocenter;
 	    position[1]=SpotParameters[1]*(mDistanceSMYToIsocenter-mDistanceSourcePatient)/mDistanceSMYToIsocenter;
 	    position[2]=mDistanceSourcePatient;
-	    //if (GantryAngle!=0)
-	    position.rotateY(GantryAngle);
+//            position[0]=SpotParameters[0]*(mDistanceSMXToIsocenter-mDistanceSourcePatient)/mDistanceSMXToIsocenter;
+//	    position[1]=SpotParameters[1]*(mDistanceSMYToIsocenter-mDistanceSourcePatient)/mDistanceSMYToIsocenter;
+//	    position[2]=mDistanceSourcePatient;
+            //correct orientation problem by rotation 90 degrees around x-Axis
+            double xCorrection=90.*TMath::Pi()/180.;
+//            position.rotateX(xCorrection-CouchAngle);
+            position.rotateX(xCorrection-CouchAngle);
+	    //if (GantryAngle!=0)//orig
+//            position.rotateY(GantryAngle);//orig
+	    //position.rotateY(GantryAngle);
+            
+            //include couch rotation            
+            //if (CouchAngle!=0)
+//            position.rotateY(CouchAngle);
+            //include gantry rotation
+            //if (GantryAngle!=0)
+            position.rotateZ(GantryAngle);
+//            position.rotateX(-CouchAngle);
 
 	    if (mTestFlag){
 	      G4cout<<"TESTREAD Spot Effective source position "<<position[0]<<" "<<position[1]<<" "<<position[2]<<G4endl;
@@ -148,17 +175,78 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 	    //DIRECTION
 	    // To calculate the 3 required rotation angles to rotate the beam according to the direction set in the TPS
 	    G4ThreeVector rotation, direction, test;
+            
+            
 	    // GantryAngle at 0 (Default)
-	    rotation[0]=TMath::Pi();
-	    // deltaY in the patient plan
-	    rotation[0]+=atan(SpotParameters[1]/mDistanceSMYToIsocenter);
-	    // deltaX in the patient plan
-	    rotation[1]=-atan(SpotParameters[0]/mDistanceSMXToIsocenter);
-	    // no gantry head rotation
-	    rotation[2]=0;
-	    //set gantry angle rotation
-	    rotation[1]+=GantryAngle;
+//            //ORIGINAL BLOCK
+//            rotation[0]=TMath::Pi();
+//	    // deltaY in the patient plan
+//	    rotation[0]+=atan(SpotParameters[1]/mDistanceSMYToIsocenter);
+//	    // deltaX in the patient plan
+//	    rotation[1]=-atan(SpotParameters[0]/mDistanceSMXToIsocenter);
+//	    // no gantry head rotation
+//	    rotation[2]=0;
+//	    //set gantry angle rotation
+//            rotation[1]+=GantryAngle;
+            
+            
+//                        // GantryAngle at 0 (Default)
+//            //rotation[0]=TMath::Pi()+xCorrection;//270 degrees
+//            rotation[0]=-xCorrection;//270 degrees
+//
+//	    // deltaY in the patient plan
+//	    rotation[0]+=atan(SpotParameters[1]/mDistanceSMYToIsocenter);
+//	    // deltaX in the patient plan
+//	    rotation[2]=-atan(SpotParameters[0]/mDistanceSMXToIsocenter);
+//	    // no gantry head rotation
+//	    rotation[1]=0.;
+//	    //set gantry angle rotation
+//	    rotation[2]+=GantryAngle;//+CouchAngle;
+////            rotation[2]+=CouchAngle;
+////            rotation[0]+=-CouchAngle;//-couchAngle
+            
+            
+            // GantryAngle at 0 (Default)
+            //rotation[0]=TMath::Pi()+xCorrection;//270 degrees
+            rotation[0]=-xCorrection;//270 degrees
 
+	    // deltaY in the patient plan
+            double y=atan(SpotParameters[1]/mDistanceSMYToIsocenter);
+	    rotation[0]+=y;
+	    // deltaX in the patient plan
+            double x=-atan(SpotParameters[0]/mDistanceSMXToIsocenter);
+            double z=0.;
+	    rotation[1]=sin(CouchAngle)*(x) +cos(CouchAngle)*z;
+	    // no gantry head rotation
+	    rotation[2]=cos(CouchAngle)*(x) +sin(CouchAngle)*z;
+	    //set gantry angle rotation
+	    rotation[2]+=GantryAngle;//+CouchAngle;
+//            rotation[2]+=CouchAngle;
+            rotation[0]+=-CouchAngle;//-couchAngle
+            
+            
+//            rotation[0]=0;//TMath::Pi();
+//	    // deltaY in the patient plan
+//	    rotation[0]+=atan(SpotParameters[1]/mDistanceSMYToIsocenter);
+//	    // deltaX in the patient plan
+//	    rotation[2]=-atan(SpotParameters[0]/mDistanceSMXToIsocenter);
+//	    // no gantry head rotation
+//	    rotation[1]=0;
+//	    //set gantry angle rotation
+//            //rotation[1]+=GantryAngle;
+//            rotation[1]-=GantryAngle;
+//            rotation[2]+=0.;
+            
+//            G4cout<<"TESTREAD Spot Effective source position "<<position[0]<<" "<<position[1]<<" "<<position[2]<<G4endl;
+//            G4cout<<"TESTREAD source rotation "<<rotation[0]<<" "<<rotation[1]<<" "<<rotation[2]<<G4endl;
+//            G4cout<<"TESTREAD couch angle "<<CouchAngle<<G4endl;
+//            G4cout<<"TESTREAD gantry angle "<<GantryAngle<<G4endl;
+//            G4cout<<G4endl;
+            if (mTestFlag){
+	      G4cout<<"TESTREAD source rotation "<<rotation[0]<<" "<<rotation[1]<<" "<<rotation[2]<<G4endl;
+	    }
+
+            
 	    bool allowedField=true;
 	    for (unsigned int i=0; i<mNotAllowedFields.size(); i++) {
 	      if (FieldID==mNotAllowedFields[i]) allowedField=false;
@@ -192,7 +280,8 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 	      Pencil->SetEllipseXThetaArea(GetEllipseXThetaArea(energy));
 	      Pencil->SetSigmaPhi(GetSigmaPhi(energy));
 	      Pencil->SetEllipseYPhiArea(GetEllipseYPhiArea(energy));  
-	      Pencil->SetRotation(rotation);
+	      Pencil->SetRotation(rotation); 
+
 	      //Correlation Position/Direction
 	      if (mConvergentSource){
 		Pencil->SetEllipseXThetaRotationNorm("positive");	// convergent beam
