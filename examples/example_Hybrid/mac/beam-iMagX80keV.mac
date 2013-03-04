@@ -1,0 +1,91 @@
+#/gate/source/addSource mybeam gps
+/gate/source/mybeam/gps/particle gamma
+/gate/source/mybeam/gps/ene/type User
+/gate/source/mybeam/gps/hist/type energy
+
+/gate/source/mybeam/gps/hist/point 0.008  7.158833e-15
+/gate/source/mybeam/gps/hist/point 0.009  1.136395e-8
+/gate/source/mybeam/gps/hist/point 0.010  0.0001235
+/gate/source/mybeam/gps/hist/point 0.011  0.0289557
+/gate/source/mybeam/gps/hist/point 0.012  1.843535
+/gate/source/mybeam/gps/hist/point 0.013  38.66807
+/gate/source/mybeam/gps/hist/point 0.014  406.9098
+/gate/source/mybeam/gps/hist/point 0.015  2417.68
+/gate/source/mybeam/gps/hist/point 0.016  9755.169
+/gate/source/mybeam/gps/hist/point 0.017  28811.27
+/gate/source/mybeam/gps/hist/point 0.018  67446.2
+/gate/source/mybeam/gps/hist/point 0.019  134160.3
+/gate/source/mybeam/gps/hist/point 0.020  233768.8
+/gate/source/mybeam/gps/hist/point 0.021  367319.4
+/gate/source/mybeam/gps/hist/point 0.022  530736
+/gate/source/mybeam/gps/hist/point 0.023  718611
+/gate/source/mybeam/gps/hist/point 0.024  921793.1
+/gate/source/mybeam/gps/hist/point 0.025  1.121458e+6
+/gate/source/mybeam/gps/hist/point 0.026  1.333078e+6
+/gate/source/mybeam/gps/hist/point 0.027  1.532588e+6
+/gate/source/mybeam/gps/hist/point 0.028  1.722119e+6
+/gate/source/mybeam/gps/hist/point 0.029  1.893767e+6
+/gate/source/mybeam/gps/hist/point 0.030  2.036166e+6
+/gate/source/mybeam/gps/hist/point 0.031  2.165260e+6
+/gate/source/mybeam/gps/hist/point 0.032  2.277101e+6
+/gate/source/mybeam/gps/hist/point 0.033  2.367041e+6
+/gate/source/mybeam/gps/hist/point 0.034  2.439022e+6
+/gate/source/mybeam/gps/hist/point 0.035  2.489499e+6
+/gate/source/mybeam/gps/hist/point 0.036  2.522634e+6
+/gate/source/mybeam/gps/hist/point 0.037  2.544012e+6
+/gate/source/mybeam/gps/hist/point 0.038  2.551419e+6
+/gate/source/mybeam/gps/hist/point 0.039  2.544526e+6
+/gate/source/mybeam/gps/hist/point 0.040  2.529003e+6
+/gate/source/mybeam/gps/hist/point 0.041  2.505326e+6
+/gate/source/mybeam/gps/hist/point 0.042  2.472257e+6
+/gate/source/mybeam/gps/hist/point 0.043  2.432528e+6
+/gate/source/mybeam/gps/hist/point 0.044  2.387968e+6
+/gate/source/mybeam/gps/hist/point 0.045  2.338354e+6
+/gate/source/mybeam/gps/hist/point 0.046  2.285362e+6
+/gate/source/mybeam/gps/hist/point 0.047  2.228713e+6
+/gate/source/mybeam/gps/hist/point 0.048  2.167335e+6
+/gate/source/mybeam/gps/hist/point 0.049  2.107508e+6
+/gate/source/mybeam/gps/hist/point 0.050  2.044043e+6
+/gate/source/mybeam/gps/hist/point 0.051  1.978795e+6
+/gate/source/mybeam/gps/hist/point 0.052  1.912571e+6
+/gate/source/mybeam/gps/hist/point 0.053  1.847759e+6
+/gate/source/mybeam/gps/hist/point 0.054  1.781271e+6
+/gate/source/mybeam/gps/hist/point 0.055  1.714722e+6
+/gate/source/mybeam/gps/hist/point 0.056  1.647069e+6
+/gate/source/mybeam/gps/hist/point 0.057  1.580785e+6
+/gate/source/mybeam/gps/hist/point 0.058  2.091849e+6
+/gate/source/mybeam/gps/hist/point 0.059  2.456488e+6
+/gate/source/mybeam/gps/hist/point 0.060  1.383887e+6
+/gate/source/mybeam/gps/hist/point 0.061  1.319201e+6
+/gate/source/mybeam/gps/hist/point 0.062  1.254761e+6
+/gate/source/mybeam/gps/hist/point 0.063  1.190586e+6
+/gate/source/mybeam/gps/hist/point 0.064  1.128178e+6
+/gate/source/mybeam/gps/hist/point 0.065  1.064677e+6
+/gate/source/mybeam/gps/hist/point 0.066  1.003339e+6
+/gate/source/mybeam/gps/hist/point 0.067  1.277563e+6
+/gate/source/mybeam/gps/hist/point 0.068  879245
+/gate/source/mybeam/gps/hist/point 0.069  906560.2
+/gate/source/mybeam/gps/hist/point 0.070  696138.5
+/gate/source/mybeam/gps/hist/point 0.071  644084.7
+/gate/source/mybeam/gps/hist/point 0.072  591583.5
+/gate/source/mybeam/gps/hist/point 0.073  537615
+/gate/source/mybeam/gps/hist/point 0.074  482747.5
+/gate/source/mybeam/gps/hist/point 0.075  426270.6
+/gate/source/mybeam/gps/hist/point 0.076  363824.3
+/gate/source/mybeam/gps/hist/point 0.077  301274.4
+/gate/source/mybeam/gps/hist/point 0.078  237592.3
+/gate/source/mybeam/gps/hist/point 0.079  131839.5
+/gate/source/mybeam/gps/hist/point 0.080  0
+
+/gate/source/mybeam/gps/pos/halfx 8 mm
+/gate/source/mybeam/gps/pos/halfy 8 mm
+/gate/source/mybeam/gps/pos/rot1 1 0 0
+/gate/source/mybeam/gps/pos/rot2 0 1 0
+/gate/source/mybeam/gps/pos/centre 0 0 3000.0 mm
+#/gate/source/mybeam/gps/pos/centre 0 0 1060 mm
+#/gate/source/mybeam/gps/pos/type Point
+/gate/source/mybeam/gps/pos/type Plane
+/gate/source/mybeam/gps/pos/shape Rectangle
+/gate/source/mybeam/gps/ang/type focused
+/gate/source/mybeam/gps/ang/focuspoint 0 0 2819.05 mm
+
