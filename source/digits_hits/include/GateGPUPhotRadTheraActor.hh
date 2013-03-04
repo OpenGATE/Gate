@@ -9,30 +9,29 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 /*
-  GateTrackingGPUActor
-  Track particles in voxelized volume with GPU
-  July 2012
+  GateGPUPhotRadTheraActor
+  Feb 2013
 */
 
-#ifndef GATETRACKINGGPUACTOR_HH
-#define GATETRACKINGGPUACTOR_HH
+#ifndef GateGPUPhotRadTheraActor_HH
+#define GateGPUPhotRadTheraActor_HH
 
 #include "GateVImageActor.hh"
 #include "GateActorManager.hh"
 #include "G4UnitsTable.hh"
-#include "GateTrackingGPUActorMessenger.hh"
+#include "GateGPUPhotRadTheraActorMessenger.hh"
 #include "GateImageWithStatistic.hh"
 #include "GateGPUIO.hh"
 
-class GateTrackingGPUActor: public GateVActor
+class GateGPUPhotRadTheraActor: public GateVActor
 {
  public: 
   
   //-----------------------------------------------------------------------------
   // Actor name
-  virtual ~GateTrackingGPUActor();
+  virtual ~GateGPUPhotRadTheraActor();
 
-  FCT_FOR_AUTO_CREATOR_ACTOR(GateTrackingGPUActor)
+  FCT_FOR_AUTO_CREATOR_ACTOR(GateGPUPhotRadTheraActor)
 
   //-----------------------------------------------------------------------------
   // Constructs the sensor
@@ -54,20 +53,26 @@ class GateTrackingGPUActor: public GateVActor
 
   //-----------------------------------------------------------------------------
 protected:
-  GateTrackingGPUActor(G4String name, G4int depth=0);
-  GateTrackingGPUActorMessenger * pMessenger;
-
-  void CreateNewParticle(const GateGPUIO_Particle & p);
+  GateGPUPhotRadTheraActor(G4String name, G4int depth=0);
+  GateGPUPhotRadTheraActorMessenger * pMessenger;
 
   // Input and output structure for gpu.
   GateGPUIO_Input * gpu_input;
   GateGPUIO_Output * gpu_output;
+
+  // Init GPU
+  Dosimetry gpu_dosemap;
+  Materials gpu_materials;
+  Volume gpu_phantom;
+  
+
+  // FIXME Add dose_ouput
   
   // max buffer size
   unsigned int max_buffer_size;
   int mGPUDeviceID;
 };
 
-MAKE_AUTO_CREATOR_ACTOR(TrackingGPUActor,GateTrackingGPUActor)
+MAKE_AUTO_CREATOR_ACTOR(GPUPhotRadTheraActor,GateGPUPhotRadTheraActor)
 
-#endif /* end #define GATESIMULATIONSTATISTICACTOR_HH */
+#endif /* end #define GateGPUPhotRadTheraActor_HH */

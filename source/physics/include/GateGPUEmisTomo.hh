@@ -9,8 +9,8 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
-#ifndef GATESOURCEGPUVOXELLIZED_H
-#define GATESOURCEGPUVOXELLIZED_H 1
+#ifndef GATEGPUEMISTOMO_H
+#define GATEGPUEMISTOMO_H 1
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -21,15 +21,15 @@ See GATE/LICENSE.txt for further details
 #include "GateSourceVoxellized.hh"
 #include "GateGPUIO.hh"
 
-class GateSourceGPUVoxellizedMessenger;
+class GateGPUEmisTomoMessenger;
 class GateVSourceVoxelReader;
 
-class GateSourceGPUVoxellized : public GateSourceVoxellized
+class GateGPUEmisTomo : public GateSourceVoxellized
 {
 public:
 
-  GateSourceGPUVoxellized(G4String name);
-  virtual ~GateSourceGPUVoxellized();
+  GateGPUEmisTomo(G4String name);
+  virtual ~GateGPUEmisTomo();
 
   virtual G4double GetNextTime(G4double timeNow);
 
@@ -51,7 +51,7 @@ public:
 
 protected:
 
-  GateSourceGPUVoxellizedMessenger* m_sourceGPUVoxellizedMessenger;
+  GateGPUEmisTomoMessenger* m_sourceGPUVoxellizedMessenger;
 
   GateGPUIO_Input  * m_gpu_input;
   GateGPUIO_Output * m_gpu_output;

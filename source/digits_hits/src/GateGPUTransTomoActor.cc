@@ -8,10 +8,10 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-#ifndef GATETRACKINGGPUACTOR_CC
-#define GATETRACKINGGPUACTOR_CC
+#ifndef GATEGPUTRANSTOMOACTOR_CC
+#define GATEGPUTRANSTOMOACTOR_CC
 
-#include "GateTrackingGPUActor.hh"
+#include "GateGPUTransTomoActor.hh"
 #include "GateMiscFunctions.hh"
 #include "GateRunManager.hh"
 #include "GateVImageVolume.hh"
@@ -24,22 +24,22 @@
 #include <sys/time.h>
 
 //-----------------------------------------------------------------------------
-GateTrackingGPUActor::GateTrackingGPUActor(G4String name, G4int depth):
+GateGPUTransTomoActor::GateGPUTransTomoActor(G4String name, G4int depth):
   GateVActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateTrackingGPUActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateGPUTransTomoActor() -- begin"<<G4endl);
   gpu_input = 0;
   gpu_output = 0;
   mGPUDeviceID = 0;
   max_buffer_size = 5;
-  pMessenger = new GateTrackingGPUActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateTrackingGPUActor() -- end"<<G4endl);
+  pMessenger = new GateGPUTransTomoActorMessenger(this);
+  GateDebugMessageDec("Actor",4,"GateGPUTransTomoActor() -- end"<<G4endl);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 /// Destructor 
-GateTrackingGPUActor::~GateTrackingGPUActor()  {
+GateGPUTransTomoActor::~GateGPUTransTomoActor()  {
   delete pMessenger;
   GateGPUIO_Input_delete(gpu_input);
   GateGPUIO_Output_delete(gpu_output);
@@ -48,8 +48,8 @@ GateTrackingGPUActor::~GateTrackingGPUActor()  {
 
 //-----------------------------------------------------------------------------
 /// Construct
-void GateTrackingGPUActor::Construct() {
-  GateDebugMessageInc("Actor", 4, "GateTrackingGPUActor -- Construct - begin" << G4endl);
+void GateGPUTransTomoActor::Construct() {
+  GateDebugMessageInc("Actor", 4, "GateGPUTransTomoActor -- Construct - begin" << G4endl);
   GateVActor::Construct();
 
   // Enable callbacks
@@ -60,14 +60,14 @@ void GateTrackingGPUActor::Construct() {
   EnableUserSteppingAction(true);
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateTrackingGPUActor -- Construct - end" << G4endl);
+  GateMessageDec("Actor", 4, "GateGPUTransTomoActor -- Construct - end" << G4endl);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 /// Save data
-void GateTrackingGPUActor::SaveData() {
+void GateGPUTransTomoActor::SaveData() {
   //FIXME
   DD("SaveData");
 }
@@ -75,21 +75,21 @@ void GateTrackingGPUActor::SaveData() {
 
 
 //-----------------------------------------------------------------------------
-void GateTrackingGPUActor::SetGPUDeviceID(int n) {
+void GateGPUTransTomoActor::SetGPUDeviceID(int n) {
   mGPUDeviceID = n;
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GateTrackingGPUActor::SetGPUBufferSize(int n) {
+void GateGPUTransTomoActor::SetGPUBufferSize(int n) {
   max_buffer_size = n;
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GateTrackingGPUActor::ResetData() {
+void GateGPUTransTomoActor::ResetData() {
   DD("ResetData");
 
   GateGPUIO_Input_delete(gpu_input);
@@ -132,9 +132,9 @@ void GateTrackingGPUActor::ResetData() {
 
 
 //-----------------------------------------------------------------------------
-void GateTrackingGPUActor::BeginOfRunAction(const G4Run *)
+void GateGPUTransTomoActor::BeginOfRunAction(const G4Run *)
 {
-  DD("GateTrackingGPUActor::BeginOfRunAction");
+  DD("GateGPUTransTomoActor::BeginOfRunAction");
   // Set materials
   GateVImageVolume * im = dynamic_cast<GateVImageVolume*>(mVolume);
   std::vector<G4Material*> m;
@@ -150,10 +150,10 @@ void GateTrackingGPUActor::BeginOfRunAction(const G4Run *)
 
 
 //-----------------------------------------------------------------------------
-void GateTrackingGPUActor::UserSteppingAction(const GateVVolume * /*v*/, 
+void GateGPUTransTomoActor::UserSteppingAction(const GateVVolume * /*v*/, 
                                               const G4Step * step)
 {
-  GateDebugMessage("Actor", 4, "GateTrackingGPUActor -- UserSteppingAction" << G4endl);
+  GateDebugMessage("Actor", 4, "GateGPUTransTomoActor -- UserSteppingAction" << G4endl);
   
   // Check if we are on the boundary
   G4StepPoint * preStep = step->GetPreStepPoint();
@@ -211,19 +211,19 @@ void GateTrackingGPUActor::UserSteppingAction(const GateVVolume * /*v*/,
   //  GateGPUIO_Particle_Print(p);
 
   gpu_input->particles.push_back(p); // FIXME SLOW 
-  // DD(gpu_input->particles.size());
 
   // We kill the particle without mercy
   step->GetTrack()->SetTrackStatus( fStopAndKill );
 
+  // FIXME If there are less than max_buffer_size the GPU will nerver proceed particles
   // STEP2 if enough particles in the buffer, start the gpu tracking
   if (gpu_input->particles.size() == max_buffer_size) {
     
     // DD(max_buffer_size);
     gpu_input->seed = static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
-    // DD(gpu_input->seed);
+    DD(gpu_input->seed);
 #ifdef GATE_USE_GPU
-    //GateGPU_ActorTrack(gpu_input, gpu_output);
+    GPU_GateTransTomo(gpu_input, gpu_output);
 #endif    
 
     // STEP3 get particles from gpu and create tracks
@@ -250,7 +250,7 @@ void GateTrackingGPUActor::UserSteppingAction(const GateVVolume * /*v*/,
 
 
 //-----------------------------------------------------------------------------
-void GateTrackingGPUActor::CreateNewParticle(const GateGPUIO_Particle & p) 
+void GateGPUTransTomoActor::CreateNewParticle(const GateGPUIO_Particle & p) 
 {
   // DD("CreateNewParticle");
   G4ThreeVector dir(p.dx, p.dy, p.dz);
@@ -294,4 +294,4 @@ void GateTrackingGPUActor::CreateNewParticle(const GateGPUIO_Particle & p)
 
 
 
-#endif /* end #define GATETRACKINGGPUACTOR_CC */
+#endif /* end #define GATEGPUTRANSTOMOACTOR_CC */

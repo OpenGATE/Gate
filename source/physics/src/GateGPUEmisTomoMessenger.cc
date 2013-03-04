@@ -8,12 +8,12 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-#include "GateSourceGPUVoxellizedMessenger.hh"
-#include "GateSourceGPUVoxellized.hh"
+#include "GateGPUEmisTomoMessenger.hh"
+#include "GateGPUEmisTomo.hh"
 #include "G4UIcmdWithAnInteger.hh"
 
 //----------------------------------------------------------------------------------------
-GateSourceGPUVoxellizedMessenger::GateSourceGPUVoxellizedMessenger(GateSourceGPUVoxellized* source)
+GateGPUEmisTomoMessenger::GateGPUEmisTomoMessenger(GateGPUEmisTomo* source)
   : GateSourceVoxellizedMessenger(source), m_gpu_source(source)
 { 
   m_attach_to_cmd = new G4UIcmdWithAString((GetDirectoryName()+"attachPhantomTo").c_str(),this);
@@ -30,14 +30,14 @@ GateSourceGPUVoxellizedMessenger::GateSourceGPUVoxellizedMessenger(GateSourceGPU
 
 
 //----------------------------------------------------------------------------------------
-GateSourceGPUVoxellizedMessenger::~GateSourceGPUVoxellizedMessenger()
+GateGPUEmisTomoMessenger::~GateGPUEmisTomoMessenger()
 {
 }
 //----------------------------------------------------------------------------------------
 
 
 //----------------------------------------------------------------------------------------
-void GateSourceGPUVoxellizedMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
+void GateGPUEmisTomoMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
   if (command == m_attach_to_cmd) m_gpu_source->AttachToVolume(newValue);
   if (command == m_gpu_buffer_size_cmd) m_gpu_source->SetGPUBufferSize(m_gpu_buffer_size_cmd->GetNewIntValue(newValue));

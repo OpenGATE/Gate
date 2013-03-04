@@ -1,4 +1,3 @@
-#include "optical_fun.cu"
 #include "GateGPUIO.hh"
 
 #include <vector>
@@ -40,9 +39,8 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
   kernel_brent_init<<<grid, threads>>>(photons_d);
     
   // Phantoms Mat
-  Volume<unsigned short int> phantom_mat_d;
+  Volume phantom_mat_d;
 
-  phantom_mat_d.most_att_data = 1;
   phantom_mat_d.size_in_mm = make_float3(input->phantom_size_x*input->phantom_spacing_x,
 				     input->phantom_size_y*input->phantom_spacing_y,
 				     input->phantom_size_z*input->phantom_spacing_z);
@@ -56,7 +54,7 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
   phantom_mat_d.nb_voxel_volume = phantom_mat_d.nb_voxel_slice * phantom_mat_d.size_in_vox.z;
   
   phantom_mat_d.mem_data = phantom_mat_d.nb_voxel_volume * sizeof(unsigned short int);
-  volume_device_malloc<unsigned short int>(phantom_mat_d, phantom_mat_d.nb_voxel_volume); 
+  volume_device_malloc(phantom_mat_d, phantom_mat_d.nb_voxel_volume); 
   cudaMemcpy(phantom_mat_d.data, &(input->phantom_material_data[0]), phantom_mat_d.mem_data, cudaMemcpyHostToDevice);
 
   // Phantoms Activities + Indices
@@ -75,9 +73,8 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
 
   
   // Source
-  kernel_optical_voxelized_source<unsigned short int><<<grid, threads>>>(photons_d, 
-                                                                phantom_mat_d,
-                                                                phantom_act_d, phantom_ind_d, E);
+  kernel_optical_voxelized_source<<<grid, threads>>>(photons_d, phantom_mat_d,
+                                                     phantom_act_d, phantom_ind_d, E);
   /*i
   stack_copy_device2host(photons_d, photons_h);
     i=0; while(i<nb_of_particles) {
@@ -95,8 +92,7 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
     ++step;
     //DD(step);
     //DD(count_h);
-    kernel_optical_navigation_regular<unsigned short int ><<<grid, threads>>>(photons_d,
-                                                                phantom_mat_d, count_d);
+    kernel_optical_navigation_regular<<<grid, threads>>>(photons_d, phantom_mat_d, count_d);
 
     // get back the number of simulated photons
     cudaMemcpy(&count_h, count_d, sizeof(int), cudaMemcpyDeviceToHost);

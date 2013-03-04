@@ -1,5 +1,3 @@
-#include "actor_common.cu"
-#include "optical_cst.cu"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
@@ -213,9 +211,8 @@ __device__ float3 Fresnel_process(StackParticle photon, unsigned int id,
  * Source
  ***********************************************************/
 
-template <typename T1>
 __global__ void kernel_optical_voxelized_source(StackParticle photons, 
-                                                Volume<T1> phantom_mat,
+                                                Volume phantom_mat,
                                                 float *phantom_act,
                                                 unsigned int *phantom_ind, float E) {
 
@@ -270,7 +267,6 @@ __global__ void kernel_optical_voxelized_source(StackParticle photons,
     photons.pz[id] = z;
     photons.t[id] = 0.0f;
     photons.endsimu[id] = 0;
-    photons.interaction[id] = 0;
     photons.type[id] = OPTICALPHOTON;
     photons.active[id] = 1;
     photons.eventID[id] = id;
@@ -283,9 +279,8 @@ __global__ void kernel_optical_voxelized_source(StackParticle photons,
  ***********************************************************/
 
 // Optical Photons - regular tracking
-template <typename T1>
 __global__ void kernel_optical_navigation_regular(StackParticle photons,
-                                                  Volume<T1> phantom,
+                                                  Volume phantom,
                                                   int* count_d) {
     unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
@@ -320,7 +315,7 @@ __global__ void kernel_optical_navigation_regular(StackParticle photons,
     float energy = photons.E[id];
 
     // Get material
-    T1 mat = phantom.data[index_phantom.w];
+    unsigned short int mat = phantom.data[index_phantom.w];
 
 
     //// Find next discrete interaction ///////////////////////////////////////
@@ -443,7 +438,7 @@ __global__ void kernel_optical_navigation_regular(StackParticle photons,
                      + index_phantom.y*phantom.size_in_vox.x
                      + index_phantom.x; // linear index
 
-        T1 old_mat = mat;
+        unsigned short int old_mat = mat;
         mat = phantom.data[index_phantom.w];
     
         if (old_mat != mat) {

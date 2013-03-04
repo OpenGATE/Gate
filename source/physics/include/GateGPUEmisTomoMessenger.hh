@@ -7,25 +7,25 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
   ----------------------*/
-#ifndef GATESOURCEGPUVOXELLIZEDMESSENGER_H
-#define GATESOURCEGPUVOXELLIZEDMESSENGER_H 1
+#ifndef GATEGPUEMISTOMOMESSENGER_H
+#define GATEGPUEMISTOMOMESSENGER_H 1
 
 #include "globals.hh"
 #include "GateSourceVoxellizedMessenger.hh"
 #include "G4UIcmdWithAString.hh"
 
-class GateSourceGPUVoxellized;
+class GateGPUEmisTomo;
 
-class GateSourceGPUVoxellizedMessenger: public GateSourceVoxellizedMessenger
+class GateGPUEmisTomoMessenger: public GateSourceVoxellizedMessenger
 {
 public:
-  GateSourceGPUVoxellizedMessenger(GateSourceGPUVoxellized* source);
-  ~GateSourceGPUVoxellizedMessenger();
+  GateGPUEmisTomoMessenger(GateGPUEmisTomo* source);
+  ~GateGPUEmisTomoMessenger();
   
   virtual void SetNewValue(G4UIcommand*, G4String);
   
 private:
-  GateSourceGPUVoxellized * m_gpu_source;
+  GateGPUEmisTomo * m_gpu_source;
   G4UIcmdWithAString * m_attach_to_cmd;
   G4UIcmdWithAnInteger * m_gpu_buffer_size_cmd;
   G4UIcmdWithAnInteger * m_gpu_device_id_cmd;

@@ -9,16 +9,16 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
-#ifndef GATETRACKINGGPUACTORMESSENGER_CC
-#define GATETRACKINGGPUACTORMESSENGER_CC
+#ifndef GateGPUPhotRadTheraActorMESSENGER_CC
+#define GateGPUPhotRadTheraActorMESSENGER_CC
 
-#include "GateTrackingGPUActorMessenger.hh"
-#include "GateTrackingGPUActor.hh"
+#include "GateGPUPhotRadTheraActorMessenger.hh"
+#include "GateGPUPhotRadTheraActor.hh"
 
 //-----------------------------------------------------------------------------
-GateTrackingGPUActorMessenger::GateTrackingGPUActorMessenger(GateTrackingGPUActor* sensor)
+GateGPUPhotRadTheraActorMessenger::GateGPUPhotRadTheraActorMessenger(GateGPUPhotRadTheraActor* sensor)
   :GateActorMessenger(sensor),
-  pTrackingGPUActor(sensor)
+  pPhotRadTheraActor(sensor)
 {
   pSetGPUDeviceIDCmd = 0;
   pSetGPUBufferCmd = 0;
@@ -28,7 +28,7 @@ GateTrackingGPUActorMessenger::GateTrackingGPUActorMessenger(GateTrackingGPUActo
 
 
 //-----------------------------------------------------------------------------
-GateTrackingGPUActorMessenger::~GateTrackingGPUActorMessenger()
+GateGPUPhotRadTheraActorMessenger::~GateGPUPhotRadTheraActorMessenger()
 {
   if (pSetGPUDeviceIDCmd) delete pSetGPUDeviceIDCmd;
   if (pSetGPUBufferCmd) delete pSetGPUBufferCmd;
@@ -37,7 +37,7 @@ GateTrackingGPUActorMessenger::~GateTrackingGPUActorMessenger()
 
 
 //-----------------------------------------------------------------------------
-void GateTrackingGPUActorMessenger::BuildCommands(G4String base)
+void GateGPUPhotRadTheraActorMessenger::BuildCommands(G4String base)
 {
   G4String n = base+"/setGPUDeviceID"; 
   pSetGPUDeviceIDCmd = new G4UIcmdWithAnInteger(n, this); 
@@ -53,14 +53,14 @@ void GateTrackingGPUActorMessenger::BuildCommands(G4String base)
 
 
 //-----------------------------------------------------------------------------
-void GateTrackingGPUActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
+void GateGPUPhotRadTheraActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
   if (cmd == pSetGPUDeviceIDCmd) 
-    pTrackingGPUActor->SetGPUDeviceID(pSetGPUDeviceIDCmd->GetNewIntValue(newValue));
+    pPhotRadTheraActor->SetGPUDeviceID(pSetGPUDeviceIDCmd->GetNewIntValue(newValue));
   if (cmd == pSetGPUBufferCmd) 
-    pTrackingGPUActor->SetGPUBufferSize(pSetGPUBufferCmd->GetNewIntValue(newValue));
+    pPhotRadTheraActor->SetGPUBufferSize(pSetGPUBufferCmd->GetNewIntValue(newValue));
   GateActorMessenger::SetNewValue( cmd, newValue);
 }
 //-----------------------------------------------------------------------------
 
-#endif /* end #define GATETRACKINGGPUACTORMESSENGER_CC */
+#endif /* end #define GateGPUPhotRadTheraActorMESSENGER_CC */

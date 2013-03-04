@@ -9,29 +9,29 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 /*
-  GateTrackingGPUActorMessenger
+  GATEGPUTransTomoActorMessenger
 */
 
-#ifndef GATETRACKINGGPUACTORMESSENGER_HH
-#define GATETRACKINGGPUACTORMESSENGER_HH
+#ifndef GATEGPUTRANSTOMOACTORMESSENGER_HH
+#define GATEGPUTRANSTOMOACTORMESSENGER_HH
 
 #include "G4UIcmdWithAnInteger.hh"
 #include "GateImageActorMessenger.hh"
 
-class GateTrackingGPUActor;
-class GateTrackingGPUActorMessenger : public GateActorMessenger
+class GateGPUTransTomoActor;
+class GateGPUTransTomoActorMessenger : public GateActorMessenger
 {
 public:
-  GateTrackingGPUActorMessenger(GateTrackingGPUActor* sensor);
-  virtual ~GateTrackingGPUActorMessenger();
+  GateGPUTransTomoActorMessenger(GateGPUTransTomoActor* sensor);
+  virtual ~GateGPUTransTomoActorMessenger();
 
   void BuildCommands(G4String base);
   void SetNewValue(G4UIcommand*, G4String);
 
 protected:
-  GateTrackingGPUActor * pTrackingGPUActor;
+  GateGPUTransTomoActor * pTransTomoActor;
   G4UIcmdWithAnInteger * pSetGPUDeviceIDCmd;
   G4UIcmdWithAnInteger * pSetGPUBufferCmd;
 };
 
-#endif /* end #define GATEDOSEACTORMESSENGER_HH*/
+#endif /* end #define GATEGPUTRANSTOMOACTOR_HH*/

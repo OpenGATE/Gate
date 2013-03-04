@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<materials>
+<?xml version="1.0" encoding='utf-8'?>
+<materials label="Materials.xml">
 
 <material name="GFP">
     <propertiestable>

@@ -1,32 +1,12 @@
-// ***************************************
-// * Overview of the constant mem
-// ***************************************
-//
-//                                short int       int       float          mem tot (Bytes)
-// Rayleigh Livermore:            303             101       2,618          11,482
-//  including Z selection
-//
-// Compton Livermore:             333             0         7,877          32,174          
-//  including Z selection
-//  including shell data
-//  including doppler profile
-//
-// PhotoElectric Livermore:       101             101       0              606
-//
-// PhotoElectric Standard:        202                       1,302          5,612
-//
-// Materials:                     149             0         119            774
-//                     ________ ________________________________________________________
-//                       Tot      1,088           202       11,815         50,648
-//
-//                                                          mem GTX580     65,536
-//                                                          occupancy      77.3 %
-//                                                          remains        14,888
-
 #define PHOTON_PHOTOELECTRIC 1
 #define PHOTON_COMPTON 2
 #define PHOTON_STEP_LIMITER 3
 #define PHOTON_BOUNDARY_VOXEL 4
+
+#define ELECTRON_EIONISATION 1
+#define ELECTRON_STEP_LIMITER 2
+#define ELECTRON_BOUNDARY_VOXEL 3
+#define ELECTRON_SAFETY 4
 
 #define OPTICALPHOTON_MIE 1
 #define OPTICALPHOTON_BOUNDARY_VOXEL 2
@@ -548,132 +528,6 @@ __constant__ float PhotoElec_std_SandiaTable[220][5] =
 { 9.659,       -0.1158E+01, -0.3871E+02,  0.3499E+06, -0.1154E+07 } ,
 { 100.0,        0.4820E+00, -0.1832E+03,  0.3296E+06,  0.6802E+06 } ,
 { 500.0,        0.1669E+00,  0.2696E+03,  0.1000E+06,  0.4382E+08 }
-};
-
-// Total number of atoms per volume (sum{mat_atom_num_dens_i})
-__constant__ float mat_nb_atoms_per_vol [15] = {
-	// Air C N O Ar
-    5.3390941154e+16f,	
-	// Water H O
-    1.00257632464e+20f,
-	// Body H 0
-    1.00203073121e+20f,
-	// Lung H C N O Na P S Cl K
-    2.50723123985e+19f,
-	// Breast H C N O Na P S Cl
-    1.03096722399e+20f,
-	// Heart H C N O Na P S Cl K
-    1.02305443765e+20f,
-	// SpineBone H C N O Na Mg P S Cl K Ca
-    1.02328127791e+20f,
-	// RibBone H C N O Na Mg P S Ca
-    9.93376475162e+19f,
-	// Intestine H C N O Na P S Cl K
-    1.01243826779e+20f,
-	// Spleen H C N O Na P S Cl K
-    1.02340747597e+20f,
-	// Blood H C N O Na P S Cl K Fe
-    1.01726304626e+20f,
-	// Liver H C N O Na P S Cl K
-    1.02049783456e+20f,
-	// Kidney H C N O Na P S Cl K Ca
-    1.01620194211e+20f,
-	// Brain H C N O Na P S Cl K
-    1.03041866022e+20f,
-	// Pancreas H C N O Na P S Cl K
-    1.02875072774e+20f
-};
-
-// Total number of electrons per volume (sum{mat_atom_num_dens_i*Z_i})
-__constant__ float mat_nb_electrons_per_vol [15] = {
-	// Air C N O Ar
-    3.87726082212e+17f,
-	// Water H O
-    3.34192108213e+20f,
-	// Body H 0
-    3.34163281662e+20f,
-	// Lung H C N O Na P S Cl K
-    8.61571045116e+19f,
-	// Breast H C N O Na P S Cl
-    3.38912112345e+20f,
-	// Heart H C N O Na P S Cl K
-    3.48261873904e+20f,
-	// SpineBone H C N O Na Mg P S Cl K Ca
-    4.52884555645e+20f,
-	// RibBone H C N O Na Mg P S Ca
-    5.95133045969e+20f,
-	// Intestine H C N O Na P S Cl K
-    3.42271831108e+20f,
-	// Spleen H C N O Na P S Cl K
-    3.51262029905e+20f,
-	// Blood H C N O Na P S Cl K Fe
-    3.50943672421e+20f,
-	// Liver H C N O Na P S Cl K
-    3.50928321371e+20f,
-	// Kidney H C N O Na P S Cl K Ca
-    3.47948222343e+20f,
-	// Brain H C N O Na P S Cl K
-    3.4582003549e+20f,
-	// Pancreas H C N O Na P S Cl K
-    3.45548691112e+20f
-};
-
-// ************************************************************************
-// * Electron energy threshold (eIonisation)
-// ************************************************************************
-// * JB - 2012-06-06
-
-// 10 um
-__constant__ float electron_cut_energy [2] = {
-    // Air   Water
-       0.0f, 1.407479e-02f // Air is not defined
-};
-
-// 10 um
-__constant__ float electron_max_energy [2] = {
-    // Air   Water
-       0.0f, 1.797693e+127 // Air is not defined
-};
-
-// 10 um
-__constant__ float electron_mean_excitation_energy [2] = {
-    // Air   Water
-       0.0f, 6.899842e-05f // Air is not defined
-};
-
-// ************************************************************************
-// * Materials density correction (eIonisation)
-// ************************************************************************
-// * JB - 2012-04-11
-
-__constant__ float fX0 [2] = {
-    // Air   Water
-       1.7f, 0.2f
-};
-
-__constant__ float fX1 [2] = {
-    // Air   Water
-       4.0f, 2.0f
-};
-
-__constant__ float fD0 [2] = {
-    // Air   Water
-       0.0f, 0.0f
-};
-
-__constant__ float fC [2] = {
-    // Air       Water
-       10.5272f, 3.335207f
-};
-
-__constant__ float fA [2] = {
-    // Air         Water
-       0.2217814f, 0.4139529f
-};
-
-__constant__ float fM [2] = {
-    // Air   Water
-       3.0f, 3.0f
 };
 
 // **************************************************

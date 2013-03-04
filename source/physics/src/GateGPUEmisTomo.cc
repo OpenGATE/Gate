@@ -9,7 +9,7 @@
   ----------------------*/
 
 
-#include "GateSourceGPUVoxellized.hh"
+#include "GateGPUEmisTomo.hh"
 #include "GateClock.hh"
 #include "Randomize.hh"
 #include "G4ParticleTable.hh"
@@ -23,17 +23,18 @@
 
 #include <vector>
 #include <map>
-#include "GateSourceGPUVoxellizedMessenger.hh"
+#include "GateGPUEmisTomoMessenger.hh"
 #include "GateVSourceVoxelReader.hh"
 #include "GateSourceVoxelTestReader.hh"
 #include "GateSourceVoxelImageReader.hh"
 #include "GateSourceVoxelInterfileReader.hh"
 #include "GateObjectStore.hh"
-#include "GateFictitiousVoxelMapParameterized.hh"
+//#include "GateFictitiousVoxelMapParameterized.hh"
+#include "GateRegularParameterized.hh"
 #include "GateApplicationMgr.hh"
 
 //----------------------------------------------------------
-GateSourceGPUVoxellized::GateSourceGPUVoxellized(G4String name)
+GateGPUEmisTomo::GateGPUEmisTomo(G4String name)
   : GateSourceVoxellized(name), m_gpu_input(NULL)
 {
   // Build IO for gpu
@@ -46,7 +47,7 @@ GateSourceGPUVoxellized::GateSourceGPUVoxellized(G4String name)
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   gamma_particle_definition = particleTable->FindParticle("gamma");
 
-  m_sourceGPUVoxellizedMessenger = new GateSourceGPUVoxellizedMessenger(this); 
+  m_sourceGPUVoxellizedMessenger = new GateGPUEmisTomoMessenger(this); 
   mNumberOfNextTime = 1;
   mCurrentTimeID = 0;
   mCudaDeviceID = 0;
@@ -55,7 +56,7 @@ GateSourceGPUVoxellized::GateSourceGPUVoxellized(G4String name)
 
 
 //----------------------------------------------------------
-GateSourceGPUVoxellized::~GateSourceGPUVoxellized()
+GateGPUEmisTomo::~GateGPUEmisTomo()
 {
   GateGPUIO_Input_delete(m_gpu_input);
   GateGPUIO_Output_delete(m_gpu_output);
@@ -64,7 +65,7 @@ GateSourceGPUVoxellized::~GateSourceGPUVoxellized()
 
 
 //----------------------------------------------------------
-G4double GateSourceGPUVoxellized::GetNextTime(G4double timeNow)
+G4double GateGPUEmisTomo::GetNextTime(G4double timeNow)
 {
   // Loop on the mother's GetNextTime
   G4double t = 0.0;
@@ -81,35 +82,35 @@ G4double GateSourceGPUVoxellized::GetNextTime(G4double timeNow)
 
 
 //----------------------------------------------------------
-void GateSourceGPUVoxellized::SetGPUBufferSize(int n)
+void GateGPUEmisTomo::SetGPUBufferSize(int n)
 {
   assert(m_gpu_input);
   m_gpu_input->nb_events = n;
 }
 //----------------------------------------------------------
 
-void GateSourceGPUVoxellized::SetGPUDeviceID(int n)
+void GateGPUEmisTomo::SetGPUDeviceID(int n)
 {
   assert(m_gpu_input);
   m_gpu_input->cudaDeviceID = n;
 }
 
 //----------------------------------------------------------
-void GateSourceGPUVoxellized::Dump(G4int level) 
+void GateGPUEmisTomo::Dump(G4int level) 
 {
   GateSourceVoxellized::Dump(level);
 }
 //----------------------------------------------------------
 
 //----------------------------------------------------------
-void GateSourceGPUVoxellized::AttachToVolume(const G4String& volume_name)
+void GateGPUEmisTomo::AttachToVolume(const G4String& volume_name)
 {
   attachedVolumeName = volume_name;
 }
 //----------------------------------------------------------
 
 //----------------------------------------------------------
-G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event) 
+G4int GateGPUEmisTomo::GeneratePrimaries(G4Event* event) 
 {
 
   // Initial checking
@@ -147,7 +148,7 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
     printf("seed from input %ld\n", m_gpu_input->seed);
 
 #ifdef GATE_USE_GPU
-    GateGPU_VoxelSource_GeneratePrimaries(m_gpu_input, m_gpu_output);
+    GPU_GateEmisTomo(m_gpu_input, m_gpu_output);
 #endif    
 
 
@@ -209,7 +210,7 @@ G4int GateSourceGPUVoxellized::GeneratePrimaries(G4Event* event)
 
 
 //----------------------------------------------------------
-void GateSourceGPUVoxellized::GeneratePrimaryEventFromGPUOutput(const GateGPUIO_Particle & particle, 
+void GateGPUEmisTomo::GeneratePrimaryEventFromGPUOutput(const GateGPUIO_Particle & particle, 
                                                                 G4Event * event)
 {
   /*
@@ -236,12 +237,12 @@ particle_position.setZ(particle.pz*mm-92*mm);
   G4PrimaryVertex* vertex;
   double particle_time = particle.t*ns; // assume time is in ns
 
-  /*
+  
   std::cout << " gpu particle time (ns)             = " << particle.t << std::endl;
   std::cout << " gpu particle time check best unit  = " << G4BestUnit(particle_time, "Time") << std::endl;
   std::cout << " Gettime =" << G4BestUnit(GetTime() , "Time") << std::endl;
   std::cout << " a+b =" << G4BestUnit(GetTime()+particle_time, "Time") << std::endl;
-  */
+  
 
   // Set the time of this particle to the current time plus the TOF.
   vertex = new G4PrimaryVertex(particle_position, GetTime() + particle_time);
@@ -275,42 +276,44 @@ particle_position.setZ(particle.pz*mm-92*mm);
 
 
 //----------------------------------------------------------
-void GateSourceGPUVoxellized::ReaderInsert(G4String readerType)
+void GateGPUEmisTomo::ReaderInsert(G4String readerType)
 {
-  G4cout << "GateSourceGPUVoxellizedMessenger ReaderInsert" << G4endl;
+  G4cout << "GateGPUEmisTomoMessenger ReaderInsert" << G4endl;
   GateSourceVoxellized::ReaderInsert(readerType);
 }
 //----------------------------------------------------------
 
 
 //----------------------------------------------------------
-void GateSourceGPUVoxellized::ReaderRemove()
+void GateGPUEmisTomo::ReaderRemove()
 {
-  G4cout << "GateSourceGPUVoxellizedMessenger ReaderRemove" << G4endl;
+  G4cout << "GateGPUEmisTomoMessenger ReaderRemove" << G4endl;
   GateSourceVoxellized::ReaderRemove();
 }
 //----------------------------------------------------------
 
 
 //----------------------------------------------------------
-void GateSourceGPUVoxellized::Update(double time)
+void GateGPUEmisTomo::Update(double time)
 {
-  G4cout << "GateSourceGPUVoxellizedMessenger Update" << G4endl;
+  G4cout << "GateGPUEmisTomoMessenger Update" << G4endl;
   return GateSourceVoxellized::Update(time);
 }
 //----------------------------------------------------------
 
 
 //----------------------------------------------------------
-void GateSourceGPUVoxellized::SetPhantomVolumeData() 
+void GateGPUEmisTomo::SetPhantomVolumeData() 
 {
   GateVVolume* v = GateObjectStore::GetInstance()->FindVolumeCreator(attachedVolumeName);
   // FindVolumeCreator raise an error if not found
   // FIXME -> change the error message
   
-  GateFictitiousVoxelMapParameterized * m = dynamic_cast<GateFictitiousVoxelMapParameterized*>(v);
+  //GateFictitiousVoxelMapParameterized * m = dynamic_cast<GateFictitiousVoxelMapParameterized*>(v);
+  GateRegularParameterized *m = dynamic_cast<GateRegularParameterized*>(v);
   if (m == NULL) {
-    GateError(attachedVolumeName << " is not a GateFictitiousVoxelMapParameterized.");
+    //GateError(attachedVolumeName << " is not a GateFictitiousVoxelMapParameterized.");
+    GateError(attachedVolumeName << " is not a GateRegularParameterized.");
   }
   else {
 

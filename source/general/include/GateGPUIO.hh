@@ -15,6 +15,78 @@
 #include <vector>
 #include "GateVImageVolume.hh"
 
+#ifndef __CUDACC__
+#ifndef FLOAT3
+#define FLOAT3
+    struct float3 {
+        float x, y, z;
+    };
+#endif
+
+#ifndef INT3
+#define INT3
+    struct int3 {
+        int x, y, z;
+    };
+#endif
+#endif
+
+#ifndef DOSIMETRY
+#define DOSIMETRY
+struct Dosimetry {
+    float *edep;
+    float *edep2;
+    
+    unsigned int mem_data;
+    float3 size_in_mm;
+    int3 size_in_vox;
+    float3 voxel_size;
+    int nb_voxel_volume;
+    int nb_voxel_slice;
+    float3 position;
+};
+#endif
+
+#ifndef MATERIALS
+#define MATERIALS
+// Structure for materials
+struct Materials{
+    unsigned int nb_materials;              // n
+    unsigned int nb_elements_total;         // k
+    
+    unsigned short int *nb_elements;        // n
+    unsigned short int *index;              // n
+    unsigned short int *mixture;            // k
+    float *atom_num_dens;                   // k
+    float *nb_atoms_per_vol;                // n
+    float *nb_electrons_per_vol;            // n
+    float *electron_cut_energy;             // n
+    float *electron_max_energy;             // n
+    float *electron_mean_excitation_energy; // n
+    float *fX0;                             // n
+    float *fX1;
+    float *fD0;
+    float *fC;
+    float *fA;
+    float *fM;
+};
+#endif
+
+#ifndef VOLUME
+#define VOLUME
+// Volume structure data
+struct Volume {
+    unsigned short int *data;
+    unsigned int mem_data;
+    float3 size_in_mm;
+    int3 size_in_vox;
+    float3 voxel_size;
+    int nb_voxel_volume;
+    int nb_voxel_slice;
+    float3 position;
+};
+#endif
+
 //----------------------------------------------------------
 struct GateGPUIO_Particle {
   float E;  // MeV
@@ -32,7 +104,6 @@ struct GateGPUIO_Particle {
 };
 //----------------------------------------------------------
 
-
 //----------------------------------------------------------
 struct GateGPUIO_Input {
   typedef std::vector<GateGPUIO_Particle> ParticlesList;
@@ -47,7 +118,6 @@ struct GateGPUIO_Input {
   float phantom_spacing_y; // mm 
   float phantom_spacing_z; // mm 
   
-  // value = ID material CONSTANT (mc_cst_pet.cu l550)
   std::vector<unsigned short int> phantom_material_data; 
 
   int cudaDeviceID;
@@ -113,15 +183,29 @@ void GateGPUIO_Output_delete(GateGPUIO_Output* output);
 
 
 //----------------------------------------------------------
-// Main function that lunch GPU calculation : Actor Tracking
-void GateGPU_ActorTrack(const GateGPUIO_Input * input, 
-                        GateGPUIO_Output * output);
+// Main function that lunch GPU calculation: Transmission Tomography Application
+void GPU_GateTransTomo(const GateGPUIO_Input * input, 
+                             GateGPUIO_Output * output);
 
-// Main function that lunch GPU calculation : Voxelized Source 
-void GateGPU_VoxelSource_GeneratePrimaries(const GateGPUIO_Input * input, 
-                                           GateGPUIO_Output * output);
+// Main function that lunch GPU calculation: Emission Tomography Application
+void GPU_GateEmisTomo(const GateGPUIO_Input * input, 
+                            GateGPUIO_Output * output);
 
-// Main function that lunch GPU calculation : Optical photon
+// Main function that lunch GPU calculation: Photon Radiation Therapy
+void GPU_GatePhotRadThera_init(const GateGPUIO_Input *input, 
+                                     Dosimetry &dose_d,
+                                     Materials &materials_d,
+                                     Volume &phantom_d);
+void GPU_GatePhotRadThera(const GateGPUIO_Input * input,
+                                GateGPUIO_Output * output,
+                                Dosimetry &dosemap_d,
+                                Materials &materials_d,
+                                Volume &phantom_d);
+void GPU_GatePhotRadThera_end(Dosimetry &dosemap_d, 
+                              Materials &materials_d, 
+                              Volume &phantom_d);
+
+// Main function that lunch GPU calculation: Optical photon
 void GateOpticalBiolum_GPU(const GateGPUIO_Input * input, 
                            GateGPUIO_Output * output);
 //----------------------------------------------------------

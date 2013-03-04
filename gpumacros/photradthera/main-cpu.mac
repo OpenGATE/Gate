@@ -20,7 +20,7 @@
 /gate/geometry/setMaterialDatabase data/GateMaterials.db
 
 # WORLD
-/gate/world/setMaterial            Air
+/gate/world/setMaterial            Vacuum
 /gate/world/geometry/setXLength    3.0 m
 /gate/world/geometry/setYLength    3.0 m
 /gate/world/geometry/setZLength    3.0 m
@@ -28,7 +28,7 @@
 /gate/world/daughters/name                      patient
 /gate/world/daughters/insert                    ImageNestedParametrisedVolume
 /gate/geometry/setMaterialDatabase              data/patient-HUmaterials.db
-/gate/patient/geometry/SetHUToMaterialFile      data/patient-HU2mat.txt
+/gate/patient/geometry/SetHUToMaterialFile      data/water-HU2mat.txt
 /gate/patient/geometry/SetImage                 data/patient-2mm.mhd
 /gate/patient/placement/setTranslation          0 0 0 mm
 
@@ -87,7 +87,7 @@
 
 /gate/source/addSource               src     gps
 /gate/source/src/gps/particle        gamma
-/gate/source/src/gps/energy          1.0 MeV
+/gate/source/src/gps/energy          0.1 MeV
 /gate/source/src/gps/type            Plane
 /gate/source/src/gps/shape           Rectangle 
 /gate/source/src/gps/halfx           0.65 mm 
@@ -107,6 +107,6 @@
 
 /gate/random/setEngineName MersenneTwister
 /gate/random/setEngineSeed 123456789
-/gate/application/setTotalNumberOfPrimaries 10000
+/gate/application/setTotalNumberOfPrimaries 5000000
 
 /gate/application/start
