@@ -62,7 +62,7 @@
 /gate/actor/addActor                  GPUPhotRadTheraActor gpuactor
 /gate/actor/gpuactor/attachTo         patient
 /gate/actor/gpuactor/setGPUDeviceID   1
-/gate/actor/gpuactor/setGPUBufferSize 1000000   # 1M buffer size =  400MB on the GPU
+/gate/actor/gpuactor/setGPUBufferSize 5000000   # 1M buffer size =  400MB on the GPU
                                              # 5M             =  760MB
                                              #10M             = 1300MB
 
@@ -98,6 +98,6 @@
 
 /gate/random/setEngineName MersenneTwister
 /gate/random/setEngineSeed 123456789
-/gate/application/setTotalNumberOfPrimaries 2000000
+/gate/application/setTotalNumberOfPrimaries 5000000
 
 /gate/application/start

@@ -87,6 +87,29 @@ struct Volume {
 };
 #endif
 
+#ifndef STACKPARTICLE
+#define STACKPARTICLE
+// Stack of particles, format data is defined as SoA
+struct StackParticle{
+	float* E;
+	float* dx;
+	float* dy;
+	float* dz;
+	float* px;
+	float* py;
+	float* pz;
+	float* t;
+    unsigned short int* type;
+    unsigned int* eventID;
+    unsigned int* trackID;
+	unsigned int* seed;
+    unsigned char* active;
+	unsigned char* endsimu;
+	unsigned long* table_x_brent;
+	unsigned int size;
+}; //
+#endif
+
 //----------------------------------------------------------
 struct GateGPUIO_Particle {
   float E;  // MeV
@@ -195,15 +218,21 @@ void GPU_GateEmisTomo(const GateGPUIO_Input * input,
 void GPU_GatePhotRadThera_init(const GateGPUIO_Input *input, 
                                      Dosimetry &dose_d,
                                      Materials &materials_d,
-                                     Volume &phantom_d);
-void GPU_GatePhotRadThera(const GateGPUIO_Input * input,
-                                GateGPUIO_Output * output,
-                                Dosimetry &dosemap_d,
-                                Materials &materials_d,
-                                Volume &phantom_d);
+                                     Volume &phantom_d,
+                                     StackParticle &photons_d, StackParticle &electrons_d,
+                                     StackParticle &photons_h, 
+                                     unsigned int nb_of_particles, unsigned int seed);
+void GPU_GatePhotRadThera(Dosimetry &dosemap_d,
+                          Materials &materials_d,
+                          Volume &phantom_d,
+                          StackParticle &photons_d, StackParticle &electrons_d,
+                          StackParticle &photons_h,
+                          unsigned int nb_of_particles);
 void GPU_GatePhotRadThera_end(Dosimetry &dosemap_d, 
                               Materials &materials_d, 
-                              Volume &phantom_d);
+                              Volume &phantom_d,
+                              StackParticle &photons_d, StackParticle &electrons_d,
+                              StackParticle &photons_h);
 
 // Main function that lunch GPU calculation: Optical photon
 void GateOpticalBiolum_GPU(const GateGPUIO_Input * input, 

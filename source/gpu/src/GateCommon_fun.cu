@@ -148,7 +148,9 @@ void materials_host_free(Materials &mat) {
  * Stack data particle structure
  ***********************************************************/
 
-// Stack of gamma particles, format data is defined as SoA
+#ifndef STACKPARTICLE
+#define STACKPARTICLE
+// Stack of particles, format data is defined as SoA
 struct StackParticle{
 	float* E;
 	float* dx;
@@ -167,6 +169,7 @@ struct StackParticle{
 	unsigned long* table_x_brent;
 	unsigned int size;
 }; //
+#endif
 
 // Stack host allocation
 void stack_host_malloc(StackParticle &phasespace, int stack_size) {
@@ -1522,7 +1525,8 @@ __global__ void kernel_NavRegularPhan_Photon_WiSec(StackParticle photons,
     unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
     
     if (id >= photons.size) return;
-    //printf("Nav gamma endsimu %i active %i\n", photons.endsimu[id], photons.active[id]);
+    //printf("ID %i Nav gamma endsimu %i active %i\n", 
+    //          id, photons.endsimu[id], photons.active[id]);
     if (photons.endsimu[id]) return;
     if (!photons.active[id]) return;
 

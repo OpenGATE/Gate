@@ -3,9 +3,51 @@
 
 
 void GPU_GatePhotRadThera_init(const GateGPUIO_Input *input, Dosimetry &dose_d,
-                               Materials &materials_d, Volume &phantom_d) {
+                               Materials &materials_d, Volume &phantom_d,
+                               StackParticle &photons_d, StackParticle &electrons_d,
+                               StackParticle &photons_h, 
+                               unsigned int nb_of_particles, unsigned int seed) {
     // Select a GPU
     cudaSetDevice(input->cudaDeviceID);
+
+    // Init rand
+    srand(seed);
+    
+    // Photons and electrons Stacks
+    StackParticle electrons_h;
+    stack_device_malloc(photons_d, nb_of_particles);
+    stack_device_malloc(electrons_d, nb_of_particles);
+    stack_host_malloc(photons_h, nb_of_particles);
+    stack_host_malloc(electrons_h, nb_of_particles);
+    
+    // init electrons stack
+    int i=0; while(i<nb_of_particles) {
+        electrons_h.E[i]  = 0.0f;
+        electrons_h.dx[i] = 0.0f;
+        electrons_h.dy[i] = 0.0f;
+        electrons_h.dz[i] = 0.0f;
+        electrons_h.px[i] = 0.0f;
+        electrons_h.py[i] = 0.0f;
+        electrons_h.pz[i] = 0.0f;
+        electrons_h.t[i]  = 0.0f;
+        electrons_h.eventID[i] = 0;
+        electrons_h.trackID[i] = 0;
+        electrons_h.type[i] = 11; // G4_electron 
+        electrons_h.seed[i] = rand();
+        electrons_h.endsimu[i] = 0;
+        electrons_h.active[i] = 0;
+        ++i;
+    }
+    stack_copy_host2device(electrons_h, electrons_d);
+    
+    // init electrons PRNG
+    dim3 threads, grid;
+    int block_size = 512;
+    int grid_size = (nb_of_particles + block_size - 1) / block_size;
+    threads.x = block_size;
+    grid.x = grid_size;
+    kernel_brent_init<<<grid, threads>>>(electrons_d);
+    printf(" :: Stack init\n");
    
     // Dosemap
     Dosimetry dose_h;
@@ -75,8 +117,9 @@ void GPU_GatePhotRadThera_init(const GateGPUIO_Input *input, Dosimetry &dose_d,
 }
 
 
-void GPU_GatePhotRadThera_end(Dosimetry &dosemap_d, Materials &materials_d, Volume &phantom_d) {
-
+void GPU_GatePhotRadThera_end(Dosimetry &dosemap_d, Materials &materials_d, Volume &phantom_d,
+                              StackParticle &photons_d, StackParticle &electrons_d,
+                              StackParticle &photons_h) {
     // Dosemap
     Dosimetry dosemap_h;
 
@@ -97,17 +140,18 @@ void GPU_GatePhotRadThera_end(Dosimetry &dosemap_d, Materials &materials_d, Volu
     volume_device_free(phantom_d);
     dosimetry_device_free(dosemap_d);
     
+    stack_device_free(photons_d);
+    stack_device_free(electrons_d);
+    stack_host_free(photons_h);
+    
     cudaThreadExit();
 }
 
 #define EPS 1.0e-03f
-void GPU_GatePhotRadThera(const GateGPUIO_Input * input, GateGPUIO_Output * output,
-                                Dosimetry &dosemap_d, Materials &materials_d,
-                                Volume &phantom_d) {
-
-    // FIXME
-    // track event ID
-    printf("====> GPU START\n");
+void GPU_GatePhotRadThera(Dosimetry &dosemap_d, Materials &materials_d,
+                          Volume &phantom_d,
+                          StackParticle &photons_d, StackParticle &electrons_d, 
+                          StackParticle &photons_h, unsigned int nb_of_particles) {
 
     // FIXME
     float step_limiter = 1000.0f; // mm
@@ -116,87 +160,8 @@ void GPU_GatePhotRadThera(const GateGPUIO_Input * input, GateGPUIO_Output * outp
     double t_init = time();
     double t_g = time();
 
-    // Select a GPU
-    cudaSetDevice(input->cudaDeviceID);
-
-    // Seed management
-    srand(input->seed);
-
-    // Vars
-    int nb_of_particles = input->particles.size();
-
-    // Photons and electrons Stacks
-    StackParticle photons_d, electrons_d;
-    stack_device_malloc(photons_d, nb_of_particles);
-    stack_device_malloc(electrons_d, nb_of_particles);
-    StackParticle photons_h, electrons_h;
-    stack_host_malloc(photons_h, nb_of_particles);
-    stack_host_malloc(electrons_h, nb_of_particles);
-    printf(" :: Stack init\n");
-
-
-    // TIMING
-    t_init = time() - t_init;
-    double t_in = time();
-
-    // Fill photons stack with particles from GATE
-    int i = 0;
-    GateGPUIO_Input::ParticlesList::const_iterator iter = input->particles.begin();
-    while (iter != input->particles.end()) {
-        GateGPUIO_Particle p = *iter;
-        photons_h.E[i] = p.E;
-        photons_h.dx[i] = p.dx;
-        photons_h.dy[i] = p.dy;
-        photons_h.dz[i] = p.dz;
-        
-        // FIXME need to change the world frame
-        p.px += (phantom_d.size_in_mm.x*0.5f);
-        p.py += (phantom_d.size_in_mm.y*0.5f);
-        p.pz += (phantom_d.size_in_mm.z*0.5f);
-        // If the particle in just on the volume boundary, push it inside the volume
-        //  (this fix a bug during the navigation)
-        if (p.px == phantom_d.size_in_mm.x) p.px -= EPS;
-        if (p.py == phantom_d.size_in_mm.y) p.py -= EPS;
-        if (p.pz == phantom_d.size_in_mm.z) p.pz -= EPS;
-        
-        photons_h.px[i] = p.px;
-        photons_h.py[i] = p.py;
-        photons_h.pz[i] = p.pz;
-        photons_h.t[i] = p.t;
-        photons_h.eventID[i] = p.eventID;
-        photons_h.trackID[i] = p.trackID;
-        photons_h.type[i] = GAMMA; //p.type; 
-        photons_h.seed[i] = rand();
-        photons_h.endsimu[i] = 0;
-        photons_h.active[i] = 1;
-
-        electrons_h.E[i]  = 0.0f;
-        electrons_h.dx[i] = 0.0f;
-        electrons_h.dy[i] = 0.0f;
-        electrons_h.dz[i] = 0.0f;
-        electrons_h.px[i] = 0.0f;
-        electrons_h.py[i] = 0.0f;
-        electrons_h.pz[i] = 0.0f;
-        electrons_h.t[i]  = 0.0f;
-        electrons_h.eventID[i] = 0;
-        electrons_h.trackID[i] = 0;
-        electrons_h.type[i] = ELECTRON; 
-        electrons_h.seed[i] = rand();
-        electrons_h.endsimu[i] = 0;
-        electrons_h.active[i] = 0;
-
-        ++iter;
-        ++i;
-    }
-    printf(" :: Load particles from GATE\n");
-
-    // Copy particles from host to device
+    // Copy paticles from host to device
     stack_copy_host2device(photons_h, photons_d);
-    stack_copy_host2device(electrons_h, electrons_d);
-
-    // TIMING
-    t_in = time() - t_in;
-    double t_init_2 = time();
 
     // Kernel vars
     dim3 threads, grid;
@@ -207,7 +172,6 @@ void GPU_GatePhotRadThera(const GateGPUIO_Input * input, GateGPUIO_Output * outp
 
     // Init random
     kernel_brent_init<<<grid, threads>>>(photons_d);
-    kernel_brent_init<<<grid, threads>>>(electrons_d);
 
     // Count simulated photons
     int *count_phot_d, *count_elec_d;
@@ -218,11 +182,9 @@ void GPU_GatePhotRadThera(const GateGPUIO_Input * input, GateGPUIO_Output * outp
     cudaMemcpy(count_elec_d, &count_elec_h, sizeof(int), cudaMemcpyHostToDevice);
 
     // TIMING
-    t_init_2 = time() - t_init_2;
     double t_track = time();
 
     // Simulation loop
-    printf("Before loop\n");
     int step=0;
     while (count_phot_h < nb_of_particles) {
         ++step;
@@ -242,27 +204,23 @@ void GPU_GatePhotRadThera(const GateGPUIO_Input * input, GateGPUIO_Output * outp
         cudaMemcpy(&count_phot_h, count_phot_d, sizeof(int), cudaMemcpyDeviceToHost);
         cudaMemcpy(&count_elec_h, count_elec_d, sizeof(int), cudaMemcpyDeviceToHost);
 
-        printf("sim %i phot %i/%i e- %i\n", step, count_phot_h, nb_of_particles, count_elec_h);
+        //printf("sim %i phot %i/%i e- %i\n", step, count_phot_h, nb_of_particles, count_elec_h);
 
-        if (step > 100000) break;
+        if (step > 100000) {
+            printf("WARNING - GPU reachs max step\n");
+            break;
+        }
     }
 
     // TIMING
     t_track = time() - t_track;
-    
 
-    stack_device_free(photons_d);
-    stack_device_free(electrons_d);
-    stack_host_free(photons_h);
-    stack_host_free(electrons_h);
     cudaFree(count_phot_d);
     cudaFree(count_elec_d);
 
     t_g = time() - t_g;
-    printf(">> GPU: init %e input %e track %e tot %e\n", t_init+t_init_2, 
-          t_in, t_track, t_g);
+    printf(">> GPU: track %e tot %e\n", t_track, t_g);
 
-    printf("====> GPU STOP\n");
 }
 #undef EPS
 

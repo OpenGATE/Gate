@@ -39,13 +39,14 @@ class GateGPUPhotRadTheraActor: public GateVActor
 
   //-----------------------------------------------------------------------------
   virtual void BeginOfRunAction(const G4Run*r);
+  virtual void EndOfRunAction(const G4Run *r);
   // virtual void BeginOfEventAction(const G4Event * event);
   // virtual void PreUserTrackingAction(const GateVVolume * v, const G4Track*t);
   // virtual void PostUserTrackingAction(const GateVVolume * v, const G4Track*t);
   virtual void UserSteppingAction(const GateVVolume * v, const G4Step*);
 
   //-----------------------------------------------------------------------------
-  virtual void SaveData();
+  virtual void SaveData(){};
   virtual void ResetData();  
 
   void SetGPUDeviceID(int n);
@@ -56,20 +57,21 @@ protected:
   GateGPUPhotRadTheraActor(G4String name, G4int depth=0);
   GateGPUPhotRadTheraActorMessenger * pMessenger;
 
-  // Input and output structure for gpu.
-  GateGPUIO_Input * gpu_input;
-  GateGPUIO_Output * gpu_output;
+  GateGPUIO_Input * gpu_input; 
 
   // Init GPU
   Dosimetry gpu_dosemap;
   Materials gpu_materials;
   Volume gpu_phantom;
-  
+  StackParticle gpu_photons, gpu_electrons;
+  StackParticle cpu_photons;
 
-  // FIXME Add dose_ouput
-  
+  // Half phantom size
+  float half_phan_size_x, half_phan_size_y, half_phan_size_z;
+
   // max buffer size
   unsigned int max_buffer_size;
+  unsigned int ct_photons;
   int mGPUDeviceID;
 };
 

@@ -28,7 +28,7 @@
 /gate/world/daughters/name                      patient
 /gate/world/daughters/insert                    ImageNestedParametrisedVolume
 /gate/geometry/setMaterialDatabase              data/patient-HUmaterials.db
-/gate/patient/geometry/SetHUToMaterialFile      data/water-HU2mat.txt
+/gate/patient/geometry/SetHUToMaterialFile      data/patient-HU2mat.txt
 /gate/patient/geometry/SetImage                 data/patient-2mm.mhd
 /gate/patient/placement/setTranslation          0 0 0 mm
 
@@ -59,7 +59,7 @@
 #=====================================================
 
 /gate/actor/addActor                        DoseActor  dactor
-/gate/actor/dactor/save                     output-cpu/dosemap.mhd
+/gate/actor/dactor/save                     output-cpu/dosemap_patient_100keV_cpu.mhd
 /gate/actor/dactor/attachTo                 patient
 /gate/actor/dactor/setPosition              0. 0. 0. mm
 /gate/actor/dactor/setVoxelSize             2. 2. 2. mm
