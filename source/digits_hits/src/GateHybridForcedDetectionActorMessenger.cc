@@ -65,6 +65,11 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
   pSetMaterialMuFilenameCmd = new G4UIcmdWithAString(bb,this);
   guidance = "Set the file name for writing the image that provides the attenuation of each material at each energy.";
   pSetMaterialMuFilenameCmd->SetGuidance(guidance);
+
+  bb = base+"/attenuationFilename";
+  pSetAttenuationFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for writing the image that provides the flat field image.";
+  pSetAttenuationFilenameCmd->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -77,6 +82,7 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetGeometryFilenameCmd) pHybridActor->SetGeometryFilename(param);
   if(command == pSetPrimaryFilenameCmd) pHybridActor->SetPrimaryFilename(param);
   if(command == pSetMaterialMuFilenameCmd) pHybridActor->SetMaterialMuFilename(param);
+  if(command == pSetAttenuationFilenameCmd) pHybridActor->SetAttenuationFilename(param);
 
   GateActorMessenger::SetNewValue(command ,param );}
 //-----------------------------------------------------------------------------

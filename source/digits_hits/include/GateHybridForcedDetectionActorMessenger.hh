@@ -36,6 +36,7 @@ protected:
   G4UIcmdWithAString * pSetGeometryFilenameCmd;
   G4UIcmdWithAString * pSetPrimaryFilenameCmd;
   G4UIcmdWithAString * pSetMaterialMuFilenameCmd;
+  G4UIcmdWithAString * pSetAttenuationFilenameCmd;
 };
 
 #endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH*/

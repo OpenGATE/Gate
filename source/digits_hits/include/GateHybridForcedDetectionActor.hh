@@ -71,6 +71,8 @@ public:
   void SetGeometryFilename(G4String name) { mGeometryFilename = name; }
   void SetPrimaryFilename(G4String name) { mPrimaryFilename = name; }
   void SetMaterialMuFilename(G4String name) { mMaterialMuFilename = name; }
+  void SetAttenuationFilename(G4String name) { mAttenuationFilename = name; }
+
 
   // Typedef for rtk
   static const unsigned int Dimension = 3;
@@ -106,11 +108,13 @@ protected:
   G4String mGeometryFilename;
   G4String mPrimaryFilename;
   G4String mMaterialMuFilename;
+  G4String mAttenuationFilename;
 
   G4ThreeVector mDetectorResolution;
 
   GeometryType::Pointer mGeometry;
   InputImageType::Pointer mPrimaryImage;
+  InputImageType::Pointer mFlatFieldImage;
   itk::Image<double, 2>::Pointer mMaterialMu;
 
   // Geometry information initialized at the beginning of the run

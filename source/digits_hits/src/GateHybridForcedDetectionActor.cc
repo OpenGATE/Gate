@@ -24,10 +24,14 @@
 
 // rtk
 #include <rtkThreeDCircularProjectionGeometryXMLFile.h>
+#include "rtkConstantImageSource.h"
 
 // itk
 #include <itkImportImageFilter.h>
 #include <itkTimeProbe.h>
+#include <itkDivideImageFilter.h>
+#include <itkLogImageFilter.h>
+#include <itkMultiplyImageFilter.h>
 
 #define TRY_AND_EXIT_ON_ITK_EXCEPTION(execFunc)                         \
   try                                                                   \
@@ -236,6 +240,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 
   // Create projection image
   mPrimaryImage = CreateVoidProjectionImage();
+  InputImageType::Pointer mPrimaryImage2 = CreateVoidProjectionImage();
 
   // Create geometry and param of output image
   PointType primarySourcePosition;
@@ -278,18 +283,54 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                                    InputImageType,
                                                    PrimaryInterpolationWeightMultiplication,
                                                    PrimaryValueAccumulation> JFPType;
-  JFPType::Pointer jfp = JFPType::New();
-  jfp->InPlaceOn();
-  jfp->SetInput(mPrimaryImage);
-  jfp->SetInput(1, input );
-  jfp->SetGeometry( oneProjGeometry.GetPointer() );
-  jfp->GetProjectedValueAccumulation().SetSpacing( input->GetSpacing() );
-  jfp->GetProjectedValueAccumulation().SetInterpolationWeights( jfp->GetInterpolationWeightMultiplication().GetInterpolationWeights() );
-  jfp->GetProjectedValueAccumulation().SetEnergyWeightList( &energyWeightList );
-  jfp->GetProjectedValueAccumulation().SetMaterialMu( mMaterialMu );
-  jfp->GetProjectedValueAccumulation().Init( jfp->GetNumberOfThreads() );
-  TRY_AND_EXIT_ON_ITK_EXCEPTION(jfp->Update());
-  mPrimaryImage = jfp->GetOutput();
+    JFPType::Pointer jfp = JFPType::New();
+    jfp->InPlaceOn();
+    jfp->SetInput(mPrimaryImage);
+    jfp->SetInput(1, input );
+    jfp->SetGeometry( oneProjGeometry.GetPointer() );
+    jfp->GetProjectedValueAccumulation().SetSpacing( input->GetSpacing() );
+    jfp->GetProjectedValueAccumulation().SetInterpolationWeights( jfp->GetInterpolationWeightMultiplication().GetInterpolationWeights() );
+    jfp->GetProjectedValueAccumulation().SetEnergyWeightList( &energyWeightList );
+    jfp->GetProjectedValueAccumulation().SetMaterialMu( mMaterialMu );
+    jfp->GetProjectedValueAccumulation().Init( jfp->GetNumberOfThreads() );
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(jfp->Update());
+    mPrimaryImage = jfp->GetOutput();
+
+  if(mAttenuationFilename != "")
+  {
+    // Constant image source of 1x1x1
+    typedef rtk::ConstantImageSource< InputImageType > ConstantImageSourceType;
+    ConstantImageSourceType::PointType origin;
+    ConstantImageSourceType::SizeType dim;
+    ConstantImageSourceType::SpacingType spacing;
+    ConstantImageSourceType::Pointer flatFieldSource  = ConstantImageSourceType::New();
+    origin[0] = 0.;
+    origin[1] = 0.;
+    origin[2] = 0.;
+    dim[0] = 1;
+    dim[1] = 1;
+    dim[2] = 1;
+    spacing[0] = 1.;
+    spacing[1] = 1.;
+    spacing[2] = 1.;
+    flatFieldSource->SetOrigin( origin );
+    flatFieldSource->SetSpacing( spacing );
+    flatFieldSource->SetSize( dim );
+    flatFieldSource->SetConstant( -1000. );
+    // Joseph Forward projector
+    JFPType::Pointer jfpFlat = JFPType::New();
+    jfpFlat->InPlaceOn();
+    jfpFlat->SetInput(mPrimaryImage2);
+    jfpFlat->SetInput(1, flatFieldSource->GetOutput() );
+    jfpFlat->SetGeometry( oneProjGeometry.GetPointer() );
+    jfpFlat->GetProjectedValueAccumulation().SetSpacing( flatFieldSource->GetSpacing() );
+    jfpFlat->GetProjectedValueAccumulation().SetInterpolationWeights( jfpFlat->GetInterpolationWeightMultiplication().GetInterpolationWeights() );
+    jfpFlat->GetProjectedValueAccumulation().SetEnergyWeightList( &energyWeightList );
+    jfpFlat->GetProjectedValueAccumulation().SetMaterialMu( mMaterialMu );
+    jfpFlat->GetProjectedValueAccumulation().Init( jfpFlat->GetNumberOfThreads() );
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(jfpFlat->Update());
+    mFlatFieldImage = jfpFlat->GetOutput();
+  }
   primaryProbe.Stop();
   G4cout << "Computation of the primary took "
          << primaryProbe.GetTotal()
@@ -338,7 +379,6 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
 void GateHybridForcedDetectionActor::SaveData()
 {
   GateVActor::SaveData();
-
   // Geometry
   rtk::ThreeDCircularProjectionGeometryXMLFileWriter::Pointer geoWriter =
       rtk::ThreeDCircularProjectionGeometryXMLFileWriter::New();
@@ -362,6 +402,39 @@ void GateHybridForcedDetectionActor::SaveData()
     w->SetInput(mMaterialMu);
     w->SetFileName(mMaterialMuFilename);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(w->Update());
+  }
+
+  if(mAttenuationFilename != "") {
+    //Writing attenuation image (-log(primaryImage/flatFieldImage))
+    itk::DivideImageFilter<InputImageType,InputImageType,InputImageType>::Pointer      divFilter;
+    itk::LogImageFilter<InputImageType, InputImageType>::Pointer                       logFilter;
+    itk::MultiplyImageFilter< InputImageType, InputImageType, InputImageType>::Pointer mulFilter;
+    itk::ImageFileWriter<InputImageType>::Pointer                                      imgAttWriter;
+
+    divFilter  = itk::DivideImageFilter<InputImageType,InputImageType,InputImageType>::New();
+    logFilter  = itk::LogImageFilter<InputImageType,InputImageType>::New();
+    mulFilter  = itk::MultiplyImageFilter<InputImageType,InputImageType>::New();
+    imgAttWriter = itk::ImageFileWriter<InputImageType>::New();
+
+    divFilter->SetInput1(mPrimaryImage);
+    divFilter->SetInput2(mFlatFieldImage);
+    logFilter->SetInput(divFilter->GetOutput());
+    mulFilter->SetInput(logFilter->GetOutput());
+    mulFilter->SetConstant(-1.0);
+    mulFilter->InPlaceOn();
+
+    //Writing flat field image SR: Do we set an option for this image in main.mac?
+    imgAttWriter->SetFileName("output/flatFieldImage.mha");
+    imgAttWriter->SetInput(mFlatFieldImage);
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgAttWriter->Update());
+
+    //Writing attenuation image
+    char filename[1024];
+    G4int rID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+    sprintf(filename, mAttenuationFilename.c_str(), rID);
+    imgAttWriter->SetFileName(filename);
+    imgAttWriter->SetInput(mulFilter->GetOutput());
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgAttWriter->Update());
   }
 }
 //-----------------------------------------------------------------------------
@@ -395,6 +468,7 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
   GateVVolume * v = detector;
   G4VPhysicalVolume * phys = v->GetPhysicalVolume();
   G4AffineTransform detectorToWorld(phys->GetRotation(), phys->GetTranslation());
+
   while (v->GetLogicalVolumeName() != "world_log") {
     v = v->GetParentVolume();
     phys = v->GetPhysicalVolume();
