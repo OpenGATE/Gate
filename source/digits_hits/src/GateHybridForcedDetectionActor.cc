@@ -316,7 +316,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     flatFieldSource->SetOrigin( origin );
     flatFieldSource->SetSpacing( spacing );
     flatFieldSource->SetSize( dim );
-    flatFieldSource->SetConstant( -1000. );
+    flatFieldSource->SetConstant( mMaterialMu->GetLargestPossibleRegion().GetSize(0)-1 );
     // Joseph Forward projector
     JFPType::Pointer jfpFlat = JFPType::New();
     jfpFlat->InPlaceOn();
@@ -409,12 +409,10 @@ void GateHybridForcedDetectionActor::SaveData()
     itk::DivideImageFilter<InputImageType,InputImageType,InputImageType>::Pointer      divFilter;
     itk::LogImageFilter<InputImageType, InputImageType>::Pointer                       logFilter;
     itk::MultiplyImageFilter< InputImageType, InputImageType, InputImageType>::Pointer mulFilter;
-    itk::ImageFileWriter<InputImageType>::Pointer                                      imgAttWriter;
 
     divFilter  = itk::DivideImageFilter<InputImageType,InputImageType,InputImageType>::New();
     logFilter  = itk::LogImageFilter<InputImageType,InputImageType>::New();
     mulFilter  = itk::MultiplyImageFilter<InputImageType,InputImageType>::New();
-    imgAttWriter = itk::ImageFileWriter<InputImageType>::New();
 
     divFilter->SetInput1(mPrimaryImage);
     divFilter->SetInput2(mFlatFieldImage);
@@ -424,17 +422,15 @@ void GateHybridForcedDetectionActor::SaveData()
     mulFilter->InPlaceOn();
 
     //Writing flat field image SR: Do we set an option for this image in main.mac?
-    imgAttWriter->SetFileName("output/flatFieldImage.mha");
-    imgAttWriter->SetInput(mFlatFieldImage);
-    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgAttWriter->Update());
+    imgWriter->SetFileName("output/flatFieldImage.mha");
+    imgWriter->SetInput(mFlatFieldImage);
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
 
     //Writing attenuation image
-    char filename[1024];
-    G4int rID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
     sprintf(filename, mAttenuationFilename.c_str(), rID);
-    imgAttWriter->SetFileName(filename);
-    imgAttWriter->SetInput(mulFilter->GetOutput());
-    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgAttWriter->Update());
+    imgWriter->SetFileName(filename);
+    imgWriter->SetInput(mulFilter->GetOutput());
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
   }
 }
 //-----------------------------------------------------------------------------
