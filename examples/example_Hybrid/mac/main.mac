@@ -86,6 +86,8 @@
 /gate/actor/hfda/geometryFilename      output/geometry.xml
 /gate/actor/hfda/primaryFilename       output/primary%.04d.mha
 /gate/actor/hfda/materialMuFilename    output/materialMu.mha
+#/gate/actor/hfda/attenuationFilename   output/attenuation%.04d.mha
+#/gate/actor/hfda/flatFieldFilename     output/flatField%.04d.mha
 
 # find source if gps. --> keep the first one.
 # assumption : ponctuel (focuspoint ou centre)
@@ -115,6 +117,9 @@
 
 /gate/source/addSource mybeam gps
 #/control/execute mac/beam-mono.mac
+#/control/execute mac/beam-mono-iMagX.mac
+#/control/execute mac/beam-iMagX120keV.mac
+#/control/execute mac/beam-iMagX80keV.mac
 /control/execute mac/beam-with-spektrum.mac
 
 #=====================================================
