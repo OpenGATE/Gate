@@ -1,0 +1,70 @@
+!INTERFILE :=
+!imaging modality := nucmed
+!originating system := greetings
+!version of keys := 3.3
+date of keys := 1996:09:24
+conversion program := (X)MedCon
+program author := Erik Nolf
+program version := 0.7.4
+program date := 2002:02:18
+;
+!GENERAL DATA :=
+!data offset in bytes := 0
+!name of data file := ./voxelized-source-phantom/optical_tumor.i33
+patient name := hf
+!patient ID := 271097
+patient dob := 0000:00:00
+patient sex := Unknown
+!study ID := brain
+exam type := pet   study
+data compression := none
+data encode := none
+;
+!GENERAL IMAGE DATA :=
+!type of data := Tomographic
+!total number of images := 9
+study date := 1997:11:28
+study time := 00:00:00
+imagedata byte order := LITTLEENDIAN
+;
+number of energy windows := 1
+;
+energy window [1] :=
+energy window lower level [1] :=
+energy window upper level [1] :=
+flood corrected := N
+decay corrected := N
+;
+!SPECT STUDY (general) :=
+number of detector heads := 1
+;
+!number of images/energy window := 9
+!process status := Reconstructed
+!matrix size [1] := 15
+!matrix size [2] := 15
+!number format := unsigned integer
+!number of bytes per pixel := 2
+scaling factor (mm/pixel) [1] := +0.474519e+00
+scaling factor (mm/pixel) [2] := +0.474519e+00
+!number of projections := 9
+!extent of rotation := 
+!time per projection (sec) := 0
+study duration (sec) := 0
+!maximum pixel count := +2.000000e+02
+patient orientation := head_in
+patient rotation := supine
+;
+!SPECT STUDY (reconstructed data) :=
+method of reconstruction := Unknown
+!number of slices := 9
+number of reference frame := 0
+slice orientation := Transverse
+slice thickness (pixels) := +0.796e+00
+centre-centre slice separation (pixels) := +0.796e+00
+filter name := Unknown
+filter parameters := Cutoff
+method of attenuation correction := measured
+scatter corrected := N
+oblique reconstruction := N
+!END OF INTERFILE :=
+

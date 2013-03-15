@@ -179,6 +179,12 @@ Biomimic:  d=1.05 g/cm3 ; n=3; state=solid
         +el: name=Hydrogen ; n=8
         +el: name=Oxygen ; n=2
 
+FITC:  d=1.0 g/cm3 ; n=1
+        +el: name=Carbon   ; n=1
+
+RhB:  d=1.0 g/cm3 ; n=1
+        +el: name=Carbon   ; n=1
+
 CZT:  d=5.68 g/cm3 ; n=3; state=solid  
         +el: name=Cadmium   ; n=9
         +el: name=Zinc      ; n=1
@@ -284,7 +290,33 @@ Adipose: d=0.92 g/cm3 ; n=11
         +el: name=Vandium   ; f=0.0
         +el: name=Chromium  ; f=0.0
         +el: name=Manganese ; f=0.0
- 
+
+Epidermis: d=0.92 g/cm3 ; n=11
+        +el: name=Hydrogen  ; f=0.120
+        +el: name=Carbon    ; f=0.640
+        +el: name=Nitrogen  ; f=0.008
+        +el: name=Oxygen    ; f=0.229
+        +el: name=Phosphor  ; f=0.002
+        +el: name=Calcium   ; f=0.001
+        +el: name=Scandium  ; f=0.0
+        +el: name=Titanium  ; f=0.0
+        +el: name=Vandium   ; f=0.0
+        +el: name=Chromium  ; f=0.0
+        +el: name=Manganese ; f=0.0
+
+Hypodermis: d=0.92 g/cm3 ; n=11
+        +el: name=Hydrogen  ; f=0.120
+        +el: name=Carbon    ; f=0.640
+        +el: name=Nitrogen  ; f=0.008
+        +el: name=Oxygen    ; f=0.229
+        +el: name=Phosphor  ; f=0.002
+        +el: name=Calcium   ; f=0.001
+        +el: name=Scandium  ; f=0.0
+        +el: name=Titanium  ; f=0.0
+        +el: name=Vandium   ; f=0.0
+        +el: name=Chromium  ; f=0.0
+        +el: name=Manganese ; f=0.0
+
 Blood:  d=1.06 g/cm3 ; n=11
         +el: name=Hydrogen  ; f=0.102
         +el: name=Carbon    ; f=0.11

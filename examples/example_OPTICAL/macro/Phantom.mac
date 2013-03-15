@@ -21,10 +21,10 @@
 /gate/casper/geometry/setZLength             17.0 mm
 /gate/casper/placement/setTranslation        0.0 0.0 -2.0 cm
 
-## The phantom is made of a fluorescent material, named GFP:
-/gate/casper/setMaterial                     GFP
+## The phantom is made of a fluorescent material, named RhB:
+/gate/casper/setMaterial                     RhB
 
-## An other case would be a phantom made of water with a GFP cylinder insertion (see below)
+## An other case would be a phantom made of water with a fluorophore cylinder insertion (see below)
 #/gate/casper/setMaterial                     Water
 
 /gate/casper/vis/setColor                    blue
@@ -40,7 +40,7 @@
 #/gate/fluorescent/placement/setTranslation            0. 0. 0. cm
 #/gate/fluorescent/placement/setRotationAxis           1 0 0
 #/gate/fluorescent/placement/setRotationAngle          -90 deg
-#/gate/fluorescent/setMaterial                         GFP
+#/gate/fluorescent/setMaterial                         RhB
 #/gate/fluorescent/vis/setColor                        yellow
 #/gate/fluorescent/vis/forceSolid
 #/gate/fluorescent/attachPhantomSD

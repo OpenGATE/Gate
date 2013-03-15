@@ -18,7 +18,7 @@
 # *****  O P T I C A L   I M A G I N G   S Y S T E M   S I M U L A T I O N ***** 
 #  *****************************************************************************
 
-GATE Optical Imaging contact: vesna.cuplov@cea.fr (SHFJ-Orsay)
+GATE Optical Imaging contact: vesna.cuplov@gmail.com (SHFJ-Orsay)
 
 The following macros will simulate a simple OpticalSystem experiment:
 
@@ -26,13 +26,13 @@ The following macros will simulate a simple OpticalSystem experiment:
 == The main macro (the one you run with Gate) is Optical_System.mac 
 
 
-== A PHANTOM is made of a water box plus a cylindrical insertion of a fluorescent material named GFP. 
+== A PHANTOM is made of a water box plus a cylindrical insertion of a fluorescent material. 
 This material has been defined in the Material.xml (and GateMaterials.db) file with several properties: 
 BULK ABSORPTION, MIE scattering(anisotropy and scattering lengths) and FLUORESCENCE (WLS absorption 
 and emission spectra).
-Defining the GFP in GateMaterials.db is mendatory but the given density and element's component number 
+Defining the fluorophore in GateMaterials.db is mendatory but the given density and element's component number 
 are "fake". We use the following description but it doesn't matter in the simulation:
-GFP:  d=1.0 g/cm3 ; n=1  <== this can be anything but is mendatory.
+RhB:  d=1.0 g/cm3 ; n=1  <== this can be anything but is mendatory.
         +el: name=Carbon   ; n=1   <== this can be anything but is mendatory.
 
 
@@ -52,12 +52,10 @@ excitation photon energy. An energy cut (2eV) is performed at the digitization l
 module will contain only fluorescent photons. 
 
 
-
 == The Optical Photon source is defined in Source.mac
 It is assigned a polarization along the x-axis. A photon which is not assigned a polarization at production 
 may NOT be Rayleigh scattered. The optical photon energy is set to 2.21eV (which corresponds to a wavelength 
-of 561nm).    ==> 1240/E[in eV] ~ lambda [in nm].
-
+of 561nm).    ==> 1238.7/E[in eV] ~ lambda [in nm].
 
 == The optical imaging simulation gives the following output files: 
 
@@ -68,6 +66,22 @@ It produces a postscript file (validation_reference.ps) with all tree branches d
 - If you use the Projection.mac in your simulation, you get additionnal files: OpticalSystemProjection.bin and a
 header file OpticalSystemProjection.hdr
 You can look at the binary file using imagej for example (example: File->Import->Raw and Width=100, Height=100 pixels)
+
+== BIOLUMINESCENCE SIMULATION == 
+
+  Gate < bioluminescence.mac  
+
+  A 2D image of the bioluminescent light detected by the optical system: in ROOT
+  root [0] .x MakeBioluminescencePlots.C
+
+
+== FLUORESCENCE SIMULATION == 
+
+  Gate < fluorescence.mac  
+
+  A 2D image of the fluorescent light detected by the optical system: in ROOT
+  root [0] .x MakeFluorescencePlots.C
+
 
 
 

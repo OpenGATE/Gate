@@ -283,23 +283,19 @@ private:
   TTree *OpticalTree; // new tree
   Char_t   NameOfProcessInCrystal[40]; 	 
   Char_t   NameOfProcessInPhantom[40]; 
-  G4int nPhantomOpticalRayleigh;
-  G4int nPhantomOpticalMie;
-  G4int nPhantomOpticalAbsorption;
-  G4int nCrystalOpticalRayleigh;
-  G4int nCrystalOpticalMie;
-  G4int nCrystalOpticalAbsorption;
+//  G4int nPhantomOpticalRayleigh;
+//  G4int nPhantomOpticalMie;
+//  G4int nPhantomOpticalAbsorption;
+//  G4int nCrystalOpticalRayleigh;
+//  G4int nCrystalOpticalMie;
+//  G4int nCrystalOpticalAbsorption;
   G4int nScintillation, nCrystalOpticalWLS, nPhantomOpticalWLS;
   G4int NumCrystalWLS, NumPhantomWLS;
-  G4int CrystalLastHit, PhantomLastHit;
   G4double CrystalLastHitPos_X,CrystalLastHitPos_Y,CrystalLastHitPos_Z, CrystalLastHitEnergy;
-  G4double CrystalAbsorbedPhotonHitPos_X, CrystalAbsorbedPhotonHitPos_Y,CrystalAbsorbedPhotonHitPos_Z;
+//  G4double CrystalAbsorbedPhotonHitPos_X, CrystalAbsorbedPhotonHitPos_Y,CrystalAbsorbedPhotonHitPos_Z;
   G4double PhantomLastHitPos_X,PhantomLastHitPos_Y,PhantomLastHitPos_Z, PhantomLastHitEnergy;
-  G4double PhantomAbsorbedPhotonHitPos_X, PhantomAbsorbedPhotonHitPos_Y,PhantomAbsorbedPhotonHitPos_Z;
+//  G4double PhantomAbsorbedPhotonHitPos_X, PhantomAbsorbedPhotonHitPos_Y,PhantomAbsorbedPhotonHitPos_Z;
   G4double PhantomWLSPos_X, PhantomWLSPos_Y,PhantomWLSPos_Z;
-
-  G4double PhantomHitPos_X, PhantomHitPos_Y,PhantomHitPos_Z;
-
   G4double MomentumDirectionx, MomentumDirectiony, MomentumDirectionz;
 // v. cuplov - optical photons
 
@@ -352,6 +348,7 @@ private:
  G4double posx,posy,posz,MDirectionx,MDirectiony,MDirectionz,Momentumx,Momentumy,Momentumz;
  G4double VertexPositionx,VertexPositiony,VertexPositionz,VtxMomDirx,VtxMomDiry,VtxMomDirz,Polarizationx,Polarizationy,Polarizationz;
  G4double LTime,GTime,PTime,Energy,KinEnergy,Velocity,VertexKineticEnergy,Weight;
+ G4double Wavelength;
  G4double m_EventTime;
  G4String m_particleName;
  Char_t   m_volumeName[40],m_processName[40],m_parentparticleName[40];

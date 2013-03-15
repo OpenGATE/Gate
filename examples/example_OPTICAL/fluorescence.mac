@@ -1,0 +1,174 @@
+#######################################################################
+#####            F L U O R E S C E N C E  -  S K I N              #####
+#######################################################################
+
+/vis/disable 
+/gate/geometry/setMaterialDatabase    ./GateMaterials.db 
+/gate/world/geometry/setXLength       200. cm 
+/gate/world/geometry/setYLength       200. cm 
+/gate/world/geometry/setZLength       200. cm 
+/gate/world/setMaterial                         Air 
+
+# A N G U L  A R    A P E R T U R E 
+/gate/world/daughters/name                      objectif1  
+/gate/world/daughters/insert                    cylinder  
+/gate/objectif1/geometry/setRmin		0.3 cm  
+/gate/objectif1/geometry/setRmax		4. cm  
+/gate/objectif1/geometry/setHeight              0.2 cm  
+/gate/objectif1/placement/setTranslation        -0.3 -0.2 -3.0 cm  
+/gate/objectif1/setMaterial                     Air  
+/gate/world/daughters/name                      objectif2  
+/gate/world/daughters/insert                    cylinder  
+/gate/objectif2/geometry/setRmin	        0.3 cm  
+/gate/objectif2/geometry/setRmax	        4. cm 
+/gate/objectif2/geometry/setHeight              0.2 cm  
+/gate/objectif2/placement/setTranslation        -0.3 -0.2 -3.2 cm  
+/gate/objectif2/setMaterial                     Air  
+
+# O P T I C A L   S Y S T E M
+/gate/world/daughters/name                      OpticalSystem
+/gate/world/daughters/insert                    box
+/gate/OpticalSystem/geometry/setXLength         3. cm 
+/gate/OpticalSystem/geometry/setYLength         3. cm 
+/gate/OpticalSystem/geometry/setZLength         2.0 cm 
+/gate/OpticalSystem/placement/setTranslation    0 0 3.0 cm 
+/gate/OpticalSystem/setMaterial                 Air 
+/gate/OpticalSystem/daughters/name              crystal 
+/gate/OpticalSystem/daughters/insert            box 
+/gate/crystal/geometry/setXLength               3. cm 
+/gate/crystal/geometry/setYLength               3. cm 
+/gate/crystal/geometry/setZLength               1.0 cm 
+/gate/crystal/placement/setTranslation          0 0 -0.5 cm 
+/gate/crystal/setMaterial                       Air 
+/gate/crystal/attachCrystalSD 
+/gate/systems/OpticalSystem/crystal/attach      crystal 
+/gate/OpticalSystem/daughters/name              Electronics 
+/gate/OpticalSystem/daughters/insert            box 
+/gate/Electronics/geometry/setXLength           3.  cm 
+/gate/Electronics/geometry/setYLength           3.  cm 
+/gate/Electronics/geometry/setZLength           1.0 cm 
+/gate/Electronics/setMaterial                   Air       
+/gate/Electronics/placement/setTranslation      0 0 0.5 cm 
+
+# S U R F A C E S: DETECTION AND BLACK
+/gate/crystal/surfaces/name                           Detection1 
+/gate/crystal/surfaces/insert                         Electronics  
+/gate/crystal/surfaces/Detection1/setSurface          perfect_apd   
+/gate/Electronics/surfaces/name                     Detection2 
+/gate/Electronics/surfaces/insert                   crystal 
+/gate/Electronics/surfaces/Detection2/setSurface    perfect_apd   
+/gate/objectif1/surfaces/name                         Black1  
+/gate/objectif1/surfaces/insert                       objectif2  
+/gate/objectif1/surfaces/Black1/setSurface            black   
+/gate/objectif2/surfaces/name                         Black2  
+/gate/objectif2/surfaces/insert                       objectif1  
+/gate/objectif2/surfaces/Black2/setSurface            black 
+
+# P H A N T O M 
+/gate/world/daughters/name                    waterMouse   
+/gate/world/daughters/insert                  box   
+/gate/waterMouse/geometry/setXLength             2 cm   
+/gate/waterMouse/geometry/setYLength             2 cm   
+/gate/waterMouse/geometry/setZLength             2.2 cm   
+/gate/waterMouse/placement/setTranslation        0.0 0.0 -9.2 cm   
+/gate/waterMouse/setMaterial                     Water  
+/gate/waterMouse/daughters/name                      EpidermeLayer   
+/gate/waterMouse/daughters/insert                    box   
+/gate/EpidermeLayer/geometry/setXLength             2 cm   
+/gate/EpidermeLayer/geometry/setYLength             2 cm   
+/gate/EpidermeLayer/geometry/setZLength             0.5 mm    
+/gate/EpidermeLayer/placement/setTranslation        0.0 0.0 1.075 cm   
+#/gate/EpidermeLayer/setMaterial                     Epidermis   
+/gate/EpidermeLayer/setMaterial                     Water
+/gate/waterMouse/daughters/name                     HypodermeLayer   
+/gate/waterMouse/daughters/insert                    box   
+/gate/HypodermeLayer/geometry/setXLength             2 cm   
+/gate/HypodermeLayer/geometry/setYLength             2 cm   
+/gate/HypodermeLayer/geometry/setZLength             1. mm    
+/gate/HypodermeLayer/placement/setTranslation        0.0 0.0 1.0 cm    
+#/gate/HypodermeLayer/setMaterial                     Hypodermis  
+/gate/HypodermeLayer/setMaterial                     Water  
+/gate/waterMouse/daughters/name                      fluo_tumor    
+/gate/waterMouse/daughters/insert                             compressedMatrix    
+/gate/fluo_tumor/geometry/insertReader interfile    
+/gate/fluo_tumor/interfileReader/insertTranslator range    
+/gate/fluo_tumor/interfileReader/rangeTranslator/readTable ./voxelized-source-phantom/Tumor-fluo-attenuation.dat 
+/gate/fluo_tumor/interfileReader/rangeTranslator/describe 1    
+/gate/fluo_tumor/interfileReader/readFile  ./voxelized-source-phantom/optical_tumor.h33
+/gate/fluo_tumor/placement/setTranslation -3. -2. 4.0 mm   
+/gate/fluo_tumor/attachVoxelPhantomSD    
+/gate/waterMouse/attachPhantomSD  
+
+# P H Y S I C S   P R O C E S S E S
+/gate/physics/addProcess OpticalAbsorption 
+/gate/physics/addProcess OpticalRayleigh 
+/gate/physics/addProcess OpticalBoundary 
+/gate/physics/addProcess OpticalMie 
+/gate/physics/addProcess OpticalWLS 
+/gate/physics/processList Enabled 
+/gate/physics/processList Initialized 
+
+/gate/actor/addActor      SimulationStatisticActor stat  
+/gate/actor/stat/save     ./FLUORESCENCE-STAT.txt
+
+# D I G I T I Z E R
+/gate/run/initialize 
+/gate/digitizer/Singles/insert opticaladder  
+/gate/digitizer/Singles/insert                        readout  
+/gate/digitizer/Singles/readout/setDepth              1 
+/gate/digitizer/Singles/insert upholder  
+/gate/digitizer/Singles/upholder/setUphold 2.19 eV 
+
+# E X C I T A T I O N   S O U R C E 
+ 
+/gate/source/addSource                           Mysource1 gps  
+/gate/source/Mysource1/gps/particle              opticalphoton  
+/gate/source/Mysource1/gps/energytype            Mono  
+/gate/source/Mysource1/setActivity               1000. becquerel 
+/gate/source/Mysource1/gps/polarization          1 0 0  
+/gate/source/Mysource1/gps/monoenergy            2.21 eV  
+/gate/source/Mysource1/gps/type 		 Beam 
+/gate/source/Mysource1/gps/pos/centre            -40. 30. -40. mm 
+/gate/source/Mysource1/gps/direction 		 37.0 -32. -48.0 
+/gate/source/Mysource1/gps/pos/shape 		 Circle 
+/gate/source/Mysource1/gps/pos/radius		 5. mm 
+/gate/source/addSource                           Mysource2 gps  
+/gate/source/Mysource2/gps/particle              opticalphoton  
+/gate/source/Mysource2/gps/energytype            Mono  
+/gate/source/Mysource2/setActivity               1000. becquerel 
+/gate/source/Mysource2/gps/polarization          1 0 0  
+/gate/source/Mysource2/gps/monoenergy            2.21 eV  
+/gate/source/Mysource2/gps/type 		 Beam 
+/gate/source/Mysource2/gps/pos/centre            40. 30. -40. mm 
+/gate/source/Mysource2/gps/direction 		 -43.0 -32. -48.0 
+/gate/source/Mysource2/gps/pos/shape 		 Circle 
+/gate/source/Mysource2/gps/pos/radius		 5. mm 
+
+# ROOT OUTPUT
+/gate/output/root/enable 
+/gate/output/root/setFileName      ./Fluorescence_skin 
+/gate/output/root/setRootHitFlag          0 
+/gate/output/root/setRootSinglesFlag      0 
+/gate/output/root/setRootOpticalFlag      1 
+/gate/output/fastanalysis/enable 
+/gate/output/projection/enable 
+
+# PROJECTION SET
+/gate/output/projection/setFileName  ./Fluorescence-ProjectionSet_skin
+/gate/output/projection/pixelSizeX    	   0.003 cm 
+/gate/output/projection/pixelSizeY    	   0.003 cm 
+/gate/output/projection/pixelNumberX  	   1000 
+/gate/output/projection/pixelNumberY  	   1000 
+/gate/output/projection/projectionPlane XY 
+/gate/output/projection/verbose 1 
+/gate/output/projection/describe 
+
+
+/gate/random/setEngineName MersenneTwister 
+/gate/random/setEngineSeed 1684778 
+
+# D A Q
+/gate/application/setTimeSlice     300 s 
+/gate/application/setTimeStart     0 s 
+/gate/application/setTimeStop      300 s 
+/gate/application/startDAQ 
