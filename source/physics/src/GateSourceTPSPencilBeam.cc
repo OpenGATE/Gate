@@ -20,6 +20,7 @@
 //Medical University Vienna
 //Added missing Couch Angle
 //Corrected angle calculation to be conform with DICOM standards
+//Corrected energy distribution to conform to expected behaviour and publication
 
 #ifndef GATESOURCETPSPENCILBEAM_CC
 #define GATESOURCETPSPENCILBEAM_CC
@@ -259,7 +260,9 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 	      Pencil->SetParticleType(mParticleType);
 	      //Energy
 	      Pencil->SetEnergy(GetEnergy(energy));
-	      Pencil->SetSigmaEnergy(GetSigmaEnergy(energy)*GetEnergy(energy)/100.);
+	      Pencil->SetSigmaEnergy(GetSigmaEnergy(energy));
+	      //changed because obiously incorrect.
+	      //Pencil->SetSigmaEnergy(GetSigmaEnergy(energy)*GetEnergy(energy)/100.);
 	      //Weight
 
 	      if (mSpotIntensityAsNbProtons) {
