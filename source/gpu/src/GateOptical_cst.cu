@@ -1,7 +1,7 @@
 // ************************************************************************
 // * Materials definition
 // ************************************************************************
-// * JB - 2011-08-05 15:15:44
+// * vc. - 2012-dec
 
 // List of index materials
 //  0- Air
@@ -20,10 +20,10 @@
 // 13- Brain
 // 14- Pancreas
 
-// vesna - fresnel
+// fresnel
 __constant__ const float COSZERO = 0.999999f;
 __constant__ const float COS90D = 1.0e-6f;
-// vesna - fresnel
+// fresnel
 
 // Number of elements per material
 __constant__ unsigned short int mat_nb_elements [15] = {
@@ -33,7 +33,7 @@ __constant__ unsigned short int mat_nb_elements [15] = {
 	   10,   9,    10,    9,    9
 };
 
-// vesna
+
 // Anisotropy (g) per material
 __constant__ float mat_anisotropy [15] = {
 	// Air   Water   Body   Lung   Breast Heart SpineBone RibBone Intestine Spleen
@@ -43,7 +43,6 @@ __constant__ float mat_anisotropy [15] = {
 };
 
 // Rindex per material
-// !!! make sure we use same rindex for 2 materials when only looking at Mie scattering!!!
 __constant__ float mat_Rindex [15] = {
 	// Air   Water   Body   Lung   Breast Heart SpineBone RibBone Intestine Spleen
 	   1.0,   1.2,   1.3,    1.4,   1.2,   1.3,    1.4,     1.6,    1.1,      1.6,
@@ -71,5 +70,5 @@ __constant__ float Mie_scatteringlength_Table[15][6] =
 { 5.0000E-06,  9.3000E+00, 6.0000E-06,  1.2000E+00, 7.0000E-06,  6.5000E+00  } ,
 { 5.0000E-06,  3.3000E+00, 6.0000E-06,  2.2000E+00, 7.0000E-06,  8.7000E+00  }
 };
-// vesna
+
 

@@ -4,7 +4,6 @@
 #/vis/open				OGLIX
 #/vis/viewer/set/viewpointThetaPhi 	120 30
 #/vis/viewer/set/viewpointThetaPhi 	90 0
-
 #/vis/viewer/zoom 			100.0
 #/vis/drawVolume
 #/tracking/storeTrajectory		1
@@ -18,7 +17,6 @@
 /run/verbose		1
 /tracking/verbose	0
 /event/verbose 		0
-
 /gate/verbose Beam      0
 /gate/verbose Actor     0
 
@@ -35,7 +33,6 @@
 /gate/world/geometry/setXLength       400. cm
 /gate/world/geometry/setYLength       400. cm
 /gate/world/geometry/setZLength       400. cm
-#/gate/world/setMaterial 	          Air
 
 #===================================================
 # SCANNER OPTICAL
@@ -71,46 +68,20 @@
 /gate/Electronics/vis/setColor                  yellow
 /gate/Electronics/vis/forceSolid
 
-
-#===============================================================
-# Optical photons Detection Surface should be DIELECTRIC-METAL
-#===============================================================
-
-#/gate/crystal/surfaces/name                           Detection1
-#/gate/crystal/surfaces/insert                         Electronics
-#/gate/crystal/surfaces/Detection1/setSurface          perfect_apd  
-
-#/gate/Electronics/surfaces/name                       Detection2
-#/gate/Electronics/surfaces/insert                     crystal
-#/gate/Electronics/surfaces/Detection2/setSurface      perfect_apd  
-
-
 #===================================================
 # PHANTOM
 #===================================================
 
-#/gate/world/daughters/name					biolumi
-#/gate/world/daughters/insert					regularMatrix
-#/gate/biolumi/geometry/insertReader				interfile
-#/gate/biolumi/interfileReader/insertTranslator 		range
-#/gate/biolumi/interfileReader/rangeTranslator/readTable 	optical_range.dat
-#/gate/biolumi/interfileReader/rangeTranslator/describe 	1
-#/gate/biolumi/interfileReader/readFile 			optical_phantom.hdr
-#/gate/biolumi/placement/setTranslation  			0. 0. 0. mm
-#/gate/biolumi/placement/setRotationAxis 			1 0 0
-#/gate/biolumi/placement/setRotationAngle 			0 deg
-#/gate/biolumi/attachVoxelPhantomSD
-
 /gate/world/daughters/name                        phantom
 /gate/world/daughters/insert                      box
-/gate/phantom/geometry/setXLength                10 mm
-/gate/phantom/geometry/setYLength                10 mm
-/gate/phantom/geometry/setZLength                10 mm
-/gate/phantom/placement/setTranslation           0. 0. 0. mm
-/gate/phantom/setMaterial                        Air
+/gate/phantom/geometry/setXLength                 10 mm
+/gate/phantom/geometry/setYLength                 10 mm
+/gate/phantom/geometry/setZLength                 10 mm
+/gate/phantom/placement/setTranslation            0. 0. 0. mm
+/gate/phantom/setMaterial                         Air
 
-/gate/phantom/daughters/name                        WaterBox
-/gate/phantom/daughters/insert                      box
+/gate/phantom/daughters/name                      WaterBox
+/gate/phantom/daughters/insert                    box
 /gate/WaterBox/geometry/setXLength                10 mm
 /gate/WaterBox/geometry/setYLength                5 mm
 /gate/WaterBox/geometry/setZLength                10 mm
@@ -119,14 +90,14 @@
 /gate/WaterBox/vis/setColor                       blue
 /gate/WaterBox/vis/forceWireframe
 
-/gate/phantom/daughters/name                        LungBox
-/gate/phantom/daughters/insert                      box
-/gate/LungBox/geometry/setXLength                10 mm
-/gate/LungBox/geometry/setYLength                5 mm
-/gate/LungBox/geometry/setZLength                10 mm
-/gate/LungBox/placement/setTranslation           0. -2.5 0. mm
-/gate/LungBox/setMaterial                        Lung
-/gate/LungBox/vis/setColor                       red
+/gate/phantom/daughters/name                      LungBox
+/gate/phantom/daughters/insert                    box
+/gate/LungBox/geometry/setXLength                 10 mm
+/gate/LungBox/geometry/setYLength                 5 mm
+/gate/LungBox/geometry/setZLength                 10 mm
+/gate/LungBox/placement/setTranslation            0. -2.5 0. mm
+/gate/LungBox/setMaterial                         Lung
+/gate/LungBox/vis/setColor                        red
 /gate/LungBox/vis/forceWireframe
 
 /gate/phantom/attachPhantomSD
@@ -134,10 +105,12 @@
 /gate/LungBox/attachPhantomSD
 
 /gate/actor/addActor PhaseSpaceActor MyActor
-/gate/actor/MyActor/save cpu_1M.root
+/gate/actor/MyActor/save cpu-test.root
 /gate/actor/MyActor/attachTo phantom
 /gate/actor/MyActor/storeOutgoingParticles
 
+/gate/actor/addActor      SimulationStatisticActor stat  
+/gate/actor/stat/save     stat_cpu.txt 
 
 #==================================================
 # PHYSICS
@@ -145,12 +118,14 @@
 
 #/gate/physics/addProcess OpticalAbsorption
 #/gate/physics/addProcess OpticalRayleigh
-#/gate/physics/addProcess OpticalBoundary
+/gate/physics/addProcess OpticalBoundary
 /gate/physics/addProcess OpticalMie
 #/gate/physics/addProcess OpticalWLS
 
 /gate/physics/processList Enabled
 /gate/physics/processList Initialized
+
+
 
 #========================================
 # INITIALIZATION
@@ -173,21 +148,18 @@
 # VERSION CPU
 /gate/source/addSource							voxelsource voxel
 /gate/source/voxelsource/reader/insert 			      		interfile
-/gate/source/voxelsource/interfileReader/translator/insert			range
-/gate/source/voxelsource/interfileReader/rangeTranslator/readTable 		optical_activities.dat
-/gate/source/voxelsource/interfileReader/rangeTranslator/describe 		1
-/gate/source/voxelsource/interfileReader/verbose 				0
-/gate/source/voxelsource/interfileReader/readFile 				optical_phantom.hdr
+/gate/source/voxelsource/interfileReader/translator/insert		range
+/gate/source/voxelsource/interfileReader/rangeTranslator/readTable 	optical_activities.dat
+/gate/source/voxelsource/interfileReader/rangeTranslator/describe 	1
+/gate/source/voxelsource/interfileReader/verbose 			0
+/gate/source/voxelsource/interfileReader/readFile 			optical_phantom.h33
 /gate/source/voxelsource/setPosition  					-5. -5. -5. mm
 
 /gate/source/voxelsource/gps/particle 					opticalphoton
-/gate/source/voxelsource/setForcedUnstableFlag true
-/gate/source/voxelsource/setForcedHalfLife 6586.2 s
-/gate/source/voxelsource/gps/energytype 					Mono
-/gate/source/voxelsource/gps/monoenergy 					6. eV
-/gate/source/voxelsource/gps/confine NULL
-/gate/source/voxelsource/gps/polarization           1 0 0
-/gate/source/voxelsource/gps/angtype 						iso
+/gate/source/voxelsource/gps/energytype 				Mono
+/gate/source/voxelsource/gps/monoenergy 				6. eV
+#/gate/source/voxelsource/gps/polarization                              1 0 0
+/gate/source/voxelsource/gps/angtype 					iso
 /gate/source/voxelsource/dump 1
 
 /gate/source/list
@@ -221,12 +193,12 @@
 # START
 #==============================================
 
-#/gate/application/setTimeStart     0.0 ns
-#/gate/application/setTimeSlice     400.0 s
-#/gate/application/setTimeStop      400.0 s
+#/gate/application/setTimeStart     0.0 s
+#/gate/application/setTimeSlice     10.0 s
+#/gate/application/setTimeStop      10.0 s
 #/gate/application/startDAQ
 
-/gate/application/setTotalNumberOfPrimaries       1000000
+/gate/application/setTotalNumberOfPrimaries       5000000
 /gate/application/start
 
 

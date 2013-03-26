@@ -78,7 +78,7 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
   /*i
   stack_copy_device2host(photons_d, photons_h);
     i=0; while(i<nb_of_particles) {
-        printf("%i %f %f %f %f %f %f\n", i, photons_h.px[i], photons_h.py[i], photons_h.pz[i],
+        // printf("%i %f %f %f %f %f %f\n", i, photons_h.px[i], photons_h.py[i], photons_h.pz[i],
                                             photons_h.dx[i], photons_h.dy[i], photons_h.dz[i]);
 
         ++i;
@@ -86,7 +86,7 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
     }
   */
 
-  // Simualtion loop
+  // Simulation loop
   int step = 0;
   while (count_h < nb_of_particles) {
     ++step;
@@ -100,7 +100,7 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
     /*
     stack_copy_device2host(photons_d, photons_h);
     i=0; while(i<nb_of_particles) {
-        printf("%i %f %f %f %f %f %f\n", i, photons_h.px[i], photons_h.py[i], photons_h.pz[i],
+        // printf("%i %f %f %f %f %f %f\n", i, photons_h.px[i], photons_h.py[i], photons_h.pz[i],
                                             photons_h.dx[i], photons_h.dy[i], photons_h.dz[i]);
 
         ++i;
@@ -116,7 +116,7 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
   // ROOT export
   gROOT->Reset();
   gPluginMgr->AddHandler("TVirtualStreamerInfo", "*", "TStreamerInfo","RIO", "TStreamerInfo()");
-  TFile* f = new TFile("gpu_1M.root", "RECREATE", "ROOT file for phase space", 9);
+  TFile* f = new TFile("gpu-test.root", "RECREATE", "ROOT file for phase space", 9);
   TTree* tree = new TTree("PhaseSpace", "Phase space tree");
 
   float px, py, pz, dx, dy, dz, energy;
@@ -136,7 +136,23 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
     px = photons_h.px[i] - (input->phantom_size_x/2.0)*input->phantom_spacing_x;
     py = photons_h.py[i] - (input->phantom_size_y/2.0)*input->phantom_spacing_y;
     pz = photons_h.pz[i] - (input->phantom_size_z/2.0)*input->phantom_spacing_z;
-	tree->Fill();
+
+
+  // printf("Result Main (BEFORE raytracing back): (x,y,z) =  %f %f %f  and (dx,dy,dz) = %f %f %f \n", px, py, pz, dx, dy, dz);
+
+
+// Ray Tracing Back: start
+   float3 backp = back_raytrace_particle(px, py, pz, dx, dy, dz);
+
+	px = backp.x;
+	py = backp.y;
+	pz = backp.z;
+// Ray Tracing Back: end
+
+  // printf("Result Main (AFTER raytracing back): (x,y,z) =  %f %f %f  and (dx,dy,dz) = %f %f %f \n", px, py, pz, dx, dy, dz);
+
+
+    tree->Fill();
     ++i;
   }
   f->Write();
@@ -162,8 +178,8 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
     
     output->particles.push_back(particle);
     
-        //printf("g %e %e %e %e %e %e %e\n", photons_h.E[i], particle.px, particle.py,
-        //                  particle.pz, photons_h.dx[i], photons_h.dy[i], photons_h.dz[i]);
+ //        printf("g %e %e %e %e %e %e %e\n", photons_h.E[i], particle.px, particle.py,
+   //                       particle.pz, photons_h.dx[i], photons_h.dy[i], photons_h.dz[i]);
     //}
     //else {
       // DD("Particle is still in volume. Ignored.");
