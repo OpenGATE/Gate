@@ -152,13 +152,13 @@
 /gate/source/voxelsource/interfileReader/rangeTranslator/readTable 	optical_activities.dat
 /gate/source/voxelsource/interfileReader/rangeTranslator/describe 	1
 /gate/source/voxelsource/interfileReader/verbose 			0
-/gate/source/voxelsource/interfileReader/readFile 			optical_phantom.h33
+/gate/source/voxelsource/interfileReader/readFile 			optical_phantom.hdr
 /gate/source/voxelsource/setPosition  					-5. -5. -5. mm
 
 /gate/source/voxelsource/gps/particle 					opticalphoton
 /gate/source/voxelsource/gps/energytype 				Mono
 /gate/source/voxelsource/gps/monoenergy 				6. eV
-#/gate/source/voxelsource/gps/polarization                              1 0 0
+/gate/source/voxelsource/gps/polarization                               1 0 0
 /gate/source/voxelsource/gps/angtype 					iso
 /gate/source/voxelsource/dump 1
 

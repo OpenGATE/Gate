@@ -78,7 +78,7 @@
 /gate/biolumi/interfileReader/insertTranslator 			range
 /gate/biolumi/interfileReader/rangeTranslator/readTable optical_range_gpu.dat
 /gate/biolumi/interfileReader/rangeTranslator/describe 	1
-/gate/biolumi/interfileReader/readFile 				    optical_phantom.h33
+/gate/biolumi/interfileReader/readFile 				    optical_phantom.hdr
 /gate/biolumi/placement/setTranslation  			    0. 0. 0. mm
 
 #==================================================
@@ -126,7 +126,7 @@
 /gate/source/voxel/interfileReader/rangeTranslator/readTable 	        optical_activities.dat
 /gate/source/voxel/interfileReader/rangeTranslator/describe 	        1
 /gate/source/voxel/interfileReader/verbose 				0
-/gate/source/voxel/interfileReader/readFile 				optical_phantom.h33
+/gate/source/voxel/interfileReader/readFile 				optical_phantom.hdr
 /gate/source/voxel/setPosition   					0. 0. 0. mm
 
 
