@@ -127,6 +127,7 @@ void GateGPUIO_Input_Init_Materials(GateGPUIO_Input * input,
   input->electron_cut_energy = new float[n];
   input->electron_max_energy = new float[n];
   input->electron_mean_excitation_energy = new float[n];
+  input->rad_length = new float[n];
   input->fX0 = new float[n];
   input->fX1 = new float[n];
   input->fD0 = new float[n];
@@ -149,6 +150,9 @@ void GateGPUIO_Input_Init_Materials(GateGPUIO_Input * input,
     //DD(input->electron_max_energy[i]);
     input->electron_mean_excitation_energy[i] = m[i]->GetIonisation()->GetMeanExcitationEnergy();
     //DD(input->electron_mean_excitation_energy[i]);
+    
+    input->rad_length[i] = m[i]->GetRadlen();
+    //DD(m[i]->GetRadlen());
 
     input->fX0[i] = m[i]->GetIonisation()->GetX0density();
     input->fX1[i] = m[i]->GetIonisation()->GetX1density();

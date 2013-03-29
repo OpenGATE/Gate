@@ -63,6 +63,7 @@ struct Materials{
     float *electron_cut_energy;             // n
     float *electron_max_energy;             // n
     float *electron_mean_excitation_energy; // n
+    float *rad_length;                      // n
     float *fX0;                             // n
     float *fX1;
     float *fD0;
@@ -90,7 +91,7 @@ struct Volume {
 #ifndef STACKPARTICLE
 #define STACKPARTICLE
 // Stack of particles, format data is defined as SoA
-struct StackParticle{
+struct StackParticle {
 	float* E;
 	float* dx;
 	float* dy;
@@ -108,6 +109,16 @@ struct StackParticle{
 	unsigned long* table_x_brent;
 	unsigned int size;
 }; //
+#endif
+
+#ifndef PRESTEPGPU
+#define PRESTEPGPU
+// PresStep memory used by GPU module
+struct PreStepGPU {
+    float *x;
+    float *y;
+    float *z;
+};
 #endif
 
 //----------------------------------------------------------
@@ -160,6 +171,7 @@ struct GateGPUIO_Input {
   float * electron_cut_energy;
   float * electron_max_energy;
   float * electron_mean_excitation_energy;
+  float * rad_length;
 
   float * fX0;
   float * fX1;

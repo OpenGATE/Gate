@@ -85,6 +85,7 @@ void GPU_GatePhotRadThera_init(const GateGPUIO_Input *input, Dosimetry &dose_d,
     materials_h.electron_cut_energy = input->electron_cut_energy;
     materials_h.electron_max_energy = input->electron_max_energy;
     materials_h.electron_mean_excitation_energy = input->electron_mean_excitation_energy;
+    materials_h.rad_length = input->rad_length;
     materials_h.fX0 = input->fX0;
     materials_h.fX1 = input->fX1;
     materials_h.fD0 = input->fD0;
@@ -153,6 +154,7 @@ void GPU_GatePhotRadThera(Dosimetry &dosemap_d, Materials &materials_d,
                           StackParticle &photons_d, StackParticle &electrons_d, 
                           StackParticle &photons_h, unsigned int nb_of_particles) {
 
+    printf(" :: Start tracking\n");
     // FIXME
     float step_limiter = 1000.0f; // mm
 
@@ -184,29 +186,39 @@ void GPU_GatePhotRadThera(Dosimetry &dosemap_d, Materials &materials_d,
     // TIMING
     double t_track = time();
 
+    //double ta, tb;
+
     // Simulation loop
     int step=0;
     while (count_phot_h < nb_of_particles) {
         ++step;
+
+        //ta = time();
         // Regular photon navigator
         kernel_NavRegularPhan_Photon_WiSec<<<grid, threads>>>(photons_d, electrons_d, 
                                                               phantom_d, materials_d, 
                                                               dosemap_d,
                                                               count_phot_d, step_limiter);
+        //cudaThreadSynchronize();
+        //ta = time() - ta;
 
+        //tb = time();
         // Regular electron navigator
         kernel_NavRegularPhan_Electron_BdPhoton<<<grid, threads>>>(electrons_d, photons_d,
                                                                    phantom_d, materials_d,
                                                                    dosemap_d,
                                                                    count_elec_d, step_limiter);
+        //cudaThreadSynchronize();
+        //tb = time() - tb;
 
         // get back the number of simulated photons
         cudaMemcpy(&count_phot_h, count_phot_d, sizeof(int), cudaMemcpyDeviceToHost);
         cudaMemcpy(&count_elec_h, count_elec_d, sizeof(int), cudaMemcpyDeviceToHost);
 
-        //printf("sim %i phot %i/%i e- %i\n", step, count_phot_h, nb_of_particles, count_elec_h);
+        //printf("sim %i phot %i/%i e- %i\n", step, count_phot_h, 
+        //        nb_of_particles, count_elec_h);
 
-        if (step > 100000) {
+        if (step > 2000) {
             printf("WARNING - GPU reachs max step\n");
             break;
         }

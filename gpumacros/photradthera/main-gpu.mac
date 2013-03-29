@@ -27,7 +27,7 @@
 /gate/world/daughters/name                      patient
 /gate/world/daughters/insert                    ImageNestedParametrisedVolume
 /gate/geometry/setMaterialDatabase              data/patient-HUmaterials.db
-/gate/patient/geometry/SetHUToMaterialFile      data/patient-HU2mat.txt
+/gate/patient/geometry/SetHUToMaterialFile      data/water-HU2mat.txt
 /gate/patient/geometry/SetImage                 data/patient-2mm.mhd
 /gate/patient/placement/setTranslation          0 0 0 mm
 
@@ -78,15 +78,18 @@
 
 /gate/source/addSource               src     gps
 /gate/source/src/gps/particle        gamma
-/gate/source/src/gps/energy          0.1 MeV
+/gate/source/src/gps/energy          5.0 MeV
 /gate/source/src/gps/type            Plane
 /gate/source/src/gps/shape           Rectangle 
+#/gate/source/src/gps/halfx           20.0 mm 
+#/gate/source/src/gps/halfy           20.0 mm 
 /gate/source/src/gps/halfx           0.65 mm 
 /gate/source/src/gps/halfy           0.65 mm 
 /gate/source/src/gps/mintheta        0.0 deg 
 /gate/source/src/gps/maxtheta        0.0 deg
 /gate/source/src/gps/angtype         iso
-/gate/source/src/gps/centre          0 0 165 cm
+#/gate/source/src/gps/centre          70 25 1650 mm
+/gate/source/src/gps/centre          0 0 1650 mm
 
 #=====================================================
 # START BEAMS

@@ -41,6 +41,7 @@ struct Materials{
     float *electron_cut_energy;             // n
     float *electron_max_energy;             // n
     float *electron_mean_excitation_energy; // n
+    float *rad_length;                      // n
     float *fX0;                             // n
     float *fX1;
     float *fD0;
@@ -70,6 +71,7 @@ void materials_device_malloc(Materials &mat, unsigned int nb_mat, unsigned int n
     cudaMalloc((void**) &mat.electron_cut_energy, mem_mat_float);
     cudaMalloc((void**) &mat.electron_max_energy, mem_mat_float);
     cudaMalloc((void**) &mat.electron_mean_excitation_energy, mem_mat_float);
+    cudaMalloc((void**) &mat.rad_length, mem_mat_float);
     cudaMalloc((void**) &mat.fX0, mem_mat_float);
     cudaMalloc((void**) &mat.fX1, mem_mat_float);
     cudaMalloc((void**) &mat.fD0, mem_mat_float);
@@ -89,6 +91,7 @@ void materials_device_free(Materials &mat) {
     cudaFree(mat.electron_cut_energy);
     cudaFree(mat.electron_max_energy);
     cudaFree(mat.electron_mean_excitation_energy);
+    cudaFree(mat.rad_length);
     cudaFree(mat.fX0);
     cudaFree(mat.fX1);
     cudaFree(mat.fD0);
@@ -117,6 +120,7 @@ void materials_host_malloc(Materials &mat, unsigned int nb_mat, unsigned int nb_
     mat.electron_cut_energy = (float*)malloc(mem_mat_float);
     mat.electron_max_energy = (float*)malloc(mem_mat_float);
     mat.electron_mean_excitation_energy = (float*)malloc(mem_mat_float);
+    mat.rad_length = (float*)malloc(mem_mat_float);
     mat.fX0 = (float*)malloc(mem_mat_float);
     mat.fX1 = (float*)malloc(mem_mat_float);
     mat.fD0 = (float*)malloc(mem_mat_float);
@@ -136,6 +140,7 @@ void materials_host_free(Materials &mat) {
     free(mat.electron_cut_energy);
     free(mat.electron_max_energy);
     free(mat.electron_mean_excitation_energy);
+    free(mat.rad_length);
     free(mat.fX0);
     free(mat.fX1);
     free(mat.fD0);
@@ -414,6 +419,7 @@ void materials_copy_host2device(Materials &host, Materials &device) {
     cudaMemcpy(device.electron_cut_energy, host.electron_cut_energy, mem_mat_float, cudaMemcpyHostToDevice);
     cudaMemcpy(device.electron_max_energy, host.electron_max_energy, mem_mat_float, cudaMemcpyHostToDevice);
     cudaMemcpy(device.electron_mean_excitation_energy, host.electron_mean_excitation_energy, mem_mat_float, cudaMemcpyHostToDevice);
+    cudaMemcpy(device.rad_length, host.rad_length, mem_mat_float, cudaMemcpyHostToDevice);
     cudaMemcpy(device.fX0, host.fX0, mem_mat_float, cudaMemcpyHostToDevice);
     cudaMemcpy(device.fX1, host.fX1, mem_mat_float, cudaMemcpyHostToDevice);
     cudaMemcpy(device.fD0, host.fD0, mem_mat_float, cudaMemcpyHostToDevice);
@@ -1336,10 +1342,10 @@ __device__ float eIonisation_dedx_Standard(Materials materials, unsigned int mat
 }
 
 // Compute the scattering due to the ionization
-__device__ void eIonisation_Effect_Standard_NoSec(StackParticle electrons,
-                                                  StackParticle photons, 
-                                                  float tmin, float maxE, // tmin=cutE
-                                                  unsigned int id, int *count_d) {
+__device__ float eIonisation_Effect_Standard_NoSec(StackParticle electrons,
+                                                   StackParticle photons, 
+                                                   float tmin, float maxE, // tmin=cutE
+                                                   unsigned int id, int *count_d) {
     float E = electrons.E[id];
     float tmax = E * 0.5f;
     if (maxE < tmax) {tmax = maxE;};
@@ -1350,7 +1356,7 @@ __device__ void eIonisation_Effect_Standard_NoSec(StackParticle electrons,
         electrons.active[id] = 0;
         photons.active[id] = 1;
         atomicAdd(count_d, 1);   // count simulated secondaries
-        return;
+        return E;
     }
 
     float energy = E + 0.510998910f; // electron_mass_c2
@@ -1391,8 +1397,135 @@ __device__ void eIonisation_Effect_Standard_NoSec(StackParticle electrons,
     electrons.dx[id] = dir.x;
     electrons.dy[id] = dir.y;
     electrons.dz[id] = dir.z;
+
+    return deltaKinEnergy;
 }
 
+// Multiple Scattering 
+__device__ float MSC_CSPA(float E, unsigned short int Z) {
+
+    float Z23 = __expf( 0.666666666666f*__logf((float)Z) ); 
+
+    float eTotalEnergy = E + 0.51099891f;
+    float beta2 = E * __fdividef(eTotalEnergy+0.51099891f, eTotalEnergy*eTotalEnergy);
+    double bg2  = E * __fdividef(eTotalEnergy+0.51099891f, 0.26111988f); // e_mass_c2*e_mass_c2
+
+    float eps = 37557.7634f * __fdividef(bg2, Z23); // epsfactor
+    float epsmin = 1.0e-04f;
+    float epsmax = 1.0e+10f;
+    float sigma;
+    if     (eps<epsmin)  sigma = 2.0f*eps*eps;
+    else if(eps<epsmax)  sigma = __logf(1.0f+2.0f*eps) - 2.0f*__fdividef(eps, (1.0f+2.0f*eps));
+    else                 sigma = __logf(2.0f*eps) - 1.0f+__fdividef(1.0f, eps);
+    sigma *= __fdividef(Z*Z, (beta2*bg2));
+
+    // get bin number in Z
+    int iZ = 14;
+    while ((iZ >= 0) && (Zdat[iZ] >= Z)) iZ -= 1;
+    if (iZ == 14)                        iZ  = 13;
+    if (iZ == -1)                        iZ  = 0 ;
+
+    float Z1 = Zdat[iZ];
+    float Z2 = Zdat[iZ+1];
+    float ratZ = __fdividef((Z-Z1)*(Z+Z1), (Z2-Z1)*(Z2+Z1));
+
+    float c1, c2;
+    if(E <= 10.0f) { // Tlim = 10 MeV
+        // get bin number in T (beta2)
+        int iT = 21;
+        while ((iT >= 0) && (Tdat[iT] >= E)) iT -= 1;
+        if (iT == 21)                        iT  = 20;
+        if (iT == -1)                        iT  = 0 ;
+
+        //  calculate betasquare values
+        float T  = Tdat[iT];   
+        float EE = T + 0.51099891f;
+        float b2small = T * __fdividef(EE + 0.51099891f, EE*EE);
+
+        T = Tdat[iT+1]; 
+        EE = T + 0.51099891f;
+        float b2big = T * __fdividef(EE + 0.51099891f, EE*EE);
+        float ratb2 = __fdividef(beta2-b2small, b2big-b2small);
+
+        c1 = celectron[iZ][iT];
+        c2 = celectron[iZ+1][iT];
+        float cc1 = c1 + ratZ*(c2-c1);
+        
+        c1 = celectron[iZ][iT+1];
+        c2 = celectron[iZ+1][iT+1];
+        float cc2 = c1 + ratZ*(c2-c1);
+
+        sigma *= __fdividef(4.98934390e-23f, cc1 + ratb2*(cc2-cc1)); // sigmafactor
+
+    } else {
+        //   bg2lim                                                       beta2lim
+        c1 = 422.104880f*sig0[iZ]   * __fdividef(1.0f+hecorr[iZ]  *(beta2-0.997636519f), bg2);
+        c2 = 422.104880f*sig0[iZ+1] * __fdividef(1.0f+hecorr[iZ+1]*(beta2-0.997636519f), bg2);
+
+        if ((Z >= Z1) && (Z <= Z2)) {
+            sigma = c1 + ratZ*(c2-c1);
+
+        } else if(Z < Z1) {
+            sigma = Z*Z*__fdividef(c1, (Z1*Z1));
+
+        } else if(Z > Z2) {
+            sigma = Z*Z*__fdividef(c2, (Z2*Z2));
+        }
+    }
+
+    return sigma;
+}
+
+// Compute the total MSC cross section for a given material
+__device__ float MSC_CS(Materials materials, unsigned int mat, float E) {
+	float CS = 0.0f;
+	int i;
+	int index = materials.index[mat];
+	for (i = 0; i < materials.nb_elements[mat]; ++i) {
+        CS += (materials.atom_num_dens[index+i] * 
+                MSC_CSPA(E, materials.mixture[index+i]));
+	}
+    return CS;
+}
+
+// Multiple Scattering effect
+__device__ float MSC_Effect(StackParticle electrons, Materials materials, float trueStepLength, 
+                            unsigned int mat, unsigned int id) {
+
+    // double betacp = sqrt(currentKinEnergy*(currentKinEnergy+2.*mass)*KineticEnergy*(KineticEnergy+2.*mass)/((currentKinEnergy+mass)*(KineticEnergy+mass)));
+   
+    //E = 1.0f;
+
+    float E = electrons.E[id];
+
+    // !!!! Approx Seb :   currentKinEnergy = KineticEnergy
+    float betacp = E * __fdividef(E+1.02199782f, E+0.51099891f);
+    float y = __fdividef(trueStepLength, materials.rad_length[mat]);
+    float theta = 13.6f * __fdividef(__powf(y, 0.5f), betacp);
+    y = __logf(y);
+
+    // correction in theta formula
+    float Zeff = __fdividef(materials.nb_electrons_per_vol[mat], 
+                            materials.nb_atoms_per_vol[mat]);
+    float lnZ = __logf(Zeff);
+    float coeffth1 = (1.0f - __fdividef(8.7780e-2f, Zeff)) * (0.87f + 0.03f*lnZ);
+    float coeffth2 = (4.0780e-2f + 1.7315e-4f*Zeff) * (0.87f + 0.03f*lnZ);
+    float corr = coeffth1 + coeffth2 * y;
+    theta *= corr ;
+
+    float phi = gpu_twopi * Brent_real(id, electrons.table_x_brent, 0);
+    
+    float3 direction = make_float3(electrons.dx[id], electrons.dy[id], electrons.dz[id]);
+    float3 deltaDirection = make_float3(__cosf(phi)*__sinf(theta),
+                                        __sinf(phi)*__sinf(theta),
+                                        __cosf(theta));
+    direction = rotateUz(deltaDirection, direction);
+    electrons.dx[id] = direction.x;
+    electrons.dy[id] = direction.y;
+    electrons.dz[id] = direction.z;
+
+    return 0.0f;
+}
 
 /***********************************************************
  * Navigator
@@ -1627,7 +1760,7 @@ __global__ void kernel_NavRegularPhan_Photon_WiSec(StackParticle photons,
     }
 
     //// Resolve discrete processe //////////////////////////////////////////
-    
+
     float discrete_loss = 0.0f;
     if (next_discrete_process == PHOTON_BOUNDARY_VOXEL ||
         next_discrete_process == PHOTON_STEP_LIMITER) { 
@@ -1724,10 +1857,19 @@ __global__ void kernel_NavRegularPhan_Electron_BdPhoton(StackParticle electrons,
     interaction_distance = __fdividef(-__logf(Brent_real(id, electrons.table_x_brent, 0)),
                                       cross_section);
     total_dedx += eIonisation_dedx_Standard(materials, mat, energy);
-    //printf("eIo CS %e PIL %e dedx %e\n", cross_section, interaction_distance, total_dedx);
     if (interaction_distance < next_interaction_distance) {
         next_interaction_distance = interaction_distance;
         next_discrete_process = ELECTRON_EIONISATION;
+    }
+    
+    // Multiple Scattering
+    cross_section = MSC_CS(materials, mat, energy);
+    interaction_distance = __fdividef(-__logf(Brent_real(id, electrons.table_x_brent, 0)),
+                                      cross_section);
+    // dedx = 0.0
+    if (interaction_distance < next_interaction_distance) {
+        next_interaction_distance = interaction_distance;
+        next_discrete_process = ELECTRON_MSC;
     }
 
     // Distance to the next voxel boundary (raycasting)
@@ -1739,12 +1881,15 @@ __global__ void kernel_NavRegularPhan_Electron_BdPhoton(StackParticle electrons,
         next_interaction_distance = interaction_distance+1.0e-03f;
         next_discrete_process = ELECTRON_BOUNDARY_VOXEL;
     }
-    
+   
+    // FIXME STEP LIMITER was not valided yet!
     // step limiter
     if (step_limiter < next_interaction_distance) {
         next_interaction_distance = step_limiter;
         next_discrete_process = PHOTON_STEP_LIMITER;
     }
+
+    //printf("E %e dist %e\n", energy, next_interaction_distance);
 
     //// Resolve continuous processes ///////////////////////////////////////
 
@@ -1785,7 +1930,7 @@ __global__ void kernel_NavRegularPhan_Electron_BdPhoton(StackParticle electrons,
     //// Move particle //////////////////////////////////////////////////////
 
     //printf("E %e dist %e\n", energy, next_interaction_distance);
-
+    
     position.x += direction.x * next_interaction_distance;
     position.y += direction.y * next_interaction_distance;
     position.z += direction.z * next_interaction_distance;
@@ -1808,6 +1953,8 @@ __global__ void kernel_NavRegularPhan_Electron_BdPhoton(StackParticle electrons,
 
     //// Resolve discrete processe //////////////////////////////////////////
 
+    float discrete_loss = 0.0f;
+
     if (next_discrete_process == ELECTRON_BOUNDARY_VOXEL ||
         next_discrete_process == ELECTRON_STEP_LIMITER) {
         //printf("Boundary || step limiter\n");
@@ -1826,10 +1973,27 @@ __global__ void kernel_NavRegularPhan_Electron_BdPhoton(StackParticle electrons,
 
     if (next_discrete_process == ELECTRON_EIONISATION) {
         //printf("eIonisation\n");
-        eIonisation_Effect_Standard_NoSec(electrons, photons, 
+        discrete_loss = eIonisation_Effect_Standard_NoSec(electrons, photons, 
                                           materials.electron_cut_energy[mat], 
                                           materials.electron_max_energy[mat],
                                           id, count_d);
     }
+    
+    if (next_discrete_process == ELECTRON_MSC) {
+        //printf("MSC\n");
+        // FIXME trueStepLength = next_interaction_distance?!
+        discrete_loss = MSC_Effect(electrons, materials, next_interaction_distance, mat, id);
+    }
+    
+    // Dosemap scoring
+    ivoxsize = inverse_vector(dosemap.voxel_size);
+    index_phantom.x = int(position.x * ivoxsize.x);
+    index_phantom.y = int(position.y * ivoxsize.y);
+    index_phantom.z = int(position.z * ivoxsize.z);
+    index_phantom.w = index_phantom.z*dosemap.nb_voxel_slice
+                       + index_phantom.y*dosemap.size_in_vox.x
+                       + index_phantom.x; // linear index
+    //printf("index dosemap %i\n", index_phantom.w);
+    atomicAdd(&dosemap.edep[index_phantom.w], discrete_loss);
 
 }
