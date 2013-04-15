@@ -55,6 +55,7 @@ class GateFluenceActor : public GateVImageActor
   //virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
+  void SetScatterOrderFilename(G4String name) { mScatterOrderFilename = name; }
 
 protected:
   GateFluenceActor(G4String name, G4int depth=0);
@@ -63,6 +64,8 @@ protected:
   bool mIsScatterImageEnabled;
   bool mIsSourceMotionByStackEnabled;
   GateImage mImageScatter;
+  std::vector<GateImage *> mFluencePerOrderImages;
+  G4String mScatterOrderFilename;
   int mCurrentEventFrame;
   bool mUseFrameFlag;
   int mDimension;

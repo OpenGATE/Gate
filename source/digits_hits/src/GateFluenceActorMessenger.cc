@@ -42,6 +42,11 @@ void GateFluenceActorMessenger::BuildCommands(G4String base)
   pEnableSourceMotionCmd = new G4UIcmdWithABool(n, this); 
   guid = G4String("Enable to store by stack if a source move");
   pEnableSourceMotionCmd->SetGuidance(guid);
+
+  n = base+"/scatterOrderFilename";
+  pSetScatterOrderFilenameCmd = new G4UIcmdWithAString(n,this);
+  guid = "Set the file name for the scatter x-rays that hit the detector (printf format with runId as a single parameter).";
+  pSetScatterOrderFilenameCmd->SetGuidance(guid);
 }
 //-----------------------------------------------------------------------------
 
@@ -53,6 +58,8 @@ void GateFluenceActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
     pFluenceActor->EnableScatterImage(pEnableScatterCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableSourceMotionCmd) 
     pFluenceActor->EnableSourceMotionByStack(pEnableSourceMotionCmd->GetNewBoolValue(newValue));
+  if(cmd == pSetScatterOrderFilenameCmd)
+    pFluenceActor->SetScatterOrderFilename(newValue);
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
 //-----------------------------------------------------------------------------

@@ -14,7 +14,12 @@
   \brief 
 */
 
+// Gate
 #include "GateFluenceActor.hh"
+#include "GateScatterOrderTrackInformationActor.hh"
+
+// RTK
+#include "rtkMacro.h"
 
 //-----------------------------------------------------------------------------
 GateFluenceActor::GateFluenceActor(G4String name, G4int depth):
@@ -81,11 +86,29 @@ void GateFluenceActor::Construct()
 /// Save data
 void GateFluenceActor::SaveData()
 {
+  G4int rID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+  char filename[1024];
+  // Printing all particles
   GateVImageActor::SaveData();
-  mImage.Write(mSaveFilename);
-  if(mIsScatterImageEnabled) {
-    G4String fn = removeExtension(mSaveFilename)+"-scatter."+G4String(getExtension(mSaveFilename));
-    mImageScatter.Write(fn);  
+  if(mSaveFilename != "")
+  {
+    sprintf(filename, mSaveFilename, rID);
+    mImage.Write(filename);
+    // Printing just scatter
+    if(mIsScatterImageEnabled)
+    {
+      G4String fn = removeExtension(filename)+"-scatter."+G4String(getExtension(filename));
+      mImageScatter.Write(fn);
+    }
+  }
+  // Printing scatter of each order
+  if(mScatterOrderFilename != "")
+  {
+    for(unsigned int k = 0; k<mFluencePerOrderImages.size(); k++)
+    {
+      sprintf(filename, mScatterOrderFilename, rID, k+1);
+      mFluencePerOrderImages[k]->Write((G4String)filename);
+    }
   }
 }
 //-----------------------------------------------------------------------------
@@ -172,18 +195,38 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
     G4ThreeVector d = mImage.GetCoordinatesFromIndex(newIndex);
   }
   
+  GateScatterOrderTrackInformation * info = dynamic_cast<GateScatterOrderTrackInformation *>(step->GetTrack()->GetUserInformation());
+
   /* http://geant4.org/geant4/support/faq.shtml
      To check that the particle has just entered in the current volume
      (i.e. it is at the first step in the volume; the preStepPoint is at the boundary):
   */
   if (step->GetPreStepPoint()->GetStepStatus() == fGeomBoundary) {
     mImage.AddValue(newIndex, 1);
+    // Scatter order
+    if(info)
+    {
+      unsigned int order = info->GetScatterOrder();
+      if(order)
+      {
+        while(order>mFluencePerOrderImages.size() && order>0)
+        {
+          GateImage * voidImage = new GateImage;
+          voidImage->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+          voidImage->Allocate();
+          voidImage->SetOrigin(mOrigin);
+          voidImage->Fill(0);
+          mFluencePerOrderImages.push_back( voidImage );
+        }
+          mFluencePerOrderImages[order-1]->AddValue(newIndex, 1);
+      }
+    }
     
     if(mIsScatterImageEnabled &&
        !step->GetTrack()->GetParentID() &&
        !step->GetTrack()->GetDynamicParticle()->GetPrimaryParticle()->GetMomentum().isNear(
                                                                                            step->GetTrack()->GetDynamicParticle()->GetMomentum())) {
-      mImageScatter.AddValue(newIndex, 1);
+        mImageScatter.AddValue(newIndex, 1);
     }
   }
 

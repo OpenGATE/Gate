@@ -32,6 +32,7 @@ protected:
   G4UIcmdWithABool * pEnableScatterCmd;
   G4UIcmdWithABool * pEnableSourceMotionCmd;
   GateFluenceActor * pFluenceActor;
+  G4UIcmdWithAString * pSetScatterOrderFilenameCmd;
 };
 
 #endif /* end #define GATEFLUENCEACTORMESSENGER_HH*/
