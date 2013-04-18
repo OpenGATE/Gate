@@ -13,13 +13,11 @@
   \brief Class GateFluenceActor : 
   \brief 
 */
-
 // Gate
 #include "GateFluenceActor.hh"
 #include "GateScatterOrderTrackInformationActor.hh"
 
-// RTK
-#include "rtkMacro.h"
+#ifdef GATE_USE_RTK
 
 //-----------------------------------------------------------------------------
 GateFluenceActor::GateFluenceActor(G4String name, G4int depth):
@@ -234,4 +232,5 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 }
 //-----------------------------------------------------------------------------
 
+#endif // GATE_USE_RTK
 
