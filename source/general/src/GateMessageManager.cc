@@ -8,7 +8,6 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-
  
 //-----------------------------------------------------------
 /**
@@ -256,13 +255,19 @@ void GateMessageManager::EnableG4Messages(bool b)
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
-G4int GateMessageManager::ReceiveG4cout (G4String s)
-// FOR GEANT4 9.6
-//G4int GateMessageManager::ReceiveG4cout (const G4String& s) 
+#ifdef Geant496_COMPATIBILITY
+G4int GateMessageManager::ReceiveG4cout (const G4String& s)
 { 
   if (mEnableG4Message) std::cout << "[G4] " << s;
   return 0;
 }
+#else
+G4int GateMessageManager::ReceiveG4cout (G4String s)
+{ 
+  if (mEnableG4Message) std::cout << "[G4] " << s;
+  return 0;
+} 
+#endif
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
@@ -275,9 +280,8 @@ std::string GateMessageManager::GetSpace(int n)
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
-G4int GateMessageManager::ReceiveG4cerr (G4String s)
-// FOR GEANT4 9.6
-//G4int GateMessageManager::ReceiveG4cerr (const G4String& s) 
+#ifdef Geant496_COMPATIBILITY
+G4int GateMessageManager::ReceiveG4cerr (const G4String& s)
 { 
   std::cerr << "\t[G4-cerr] " << s; 
   // Check if this error is 'command not found' (or related) to stop Gate
@@ -297,4 +301,26 @@ G4int GateMessageManager::ReceiveG4cerr (G4String s)
   // Ciao
   return 0;
 }
+#else
+G4int GateMessageManager::ReceiveG4cerr (G4String s)
+{ 
+  std::cerr << "\t[G4-cerr] " << s; 
+  // Check if this error is 'command not found' (or related) to stop Gate
+  bool isMacroError = false;
+  std::string::size_type i = s.find("***** COMMAND NOT FOUND <", 0);
+  isMacroError = isMacroError || (i != std::string::npos);
+  i = s.find("***** Illegal application state <", 0);
+  isMacroError = isMacroError || (i != std::string::npos);
+  i = s.find("***** Illegal parameter (", 0);
+  isMacroError = isMacroError || (i != std::string::npos);
+  i = s.find("***** Can not open a macro file <", 0);
+  isMacroError = isMacroError || (i != std::string::npos);
+  if (isMacroError) { 
+    std::cerr << "[Gate] Sorry, error in a macro command : abort." << std::endl;
+    exit(-1);
+  }      
+  // Ciao
+  return 0;
+}
+#endif
 //-----------------------------------------------------------
