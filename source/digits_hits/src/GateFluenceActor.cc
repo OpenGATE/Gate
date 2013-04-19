@@ -17,8 +17,6 @@
 #include "GateFluenceActor.hh"
 #include "GateScatterOrderTrackInformationActor.hh"
 
-#ifdef GATE_USE_RTK
-
 //-----------------------------------------------------------------------------
 GateFluenceActor::GateFluenceActor(G4String name, G4int depth):
   GateVImageActor(name,depth)
@@ -231,6 +229,3 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
   GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end" << G4endl);
 }
 //-----------------------------------------------------------------------------
-
-#endif // GATE_USE_RTK
-

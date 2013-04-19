@@ -12,8 +12,6 @@ See GATE/LICENSE.txt for further details
 #include "GateFluenceActorMessenger.hh"
 #include "GateFluenceActor.hh"
 
-#ifdef GATE_USE_RTK
-
 //-----------------------------------------------------------------------------
 GateFluenceActorMessenger::GateFluenceActorMessenger(GateFluenceActor* sensor)
   :GateImageActorMessenger(sensor),
@@ -65,5 +63,3 @@ void GateFluenceActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
 //-----------------------------------------------------------------------------
-
-#endif // GATE_USE_RTK

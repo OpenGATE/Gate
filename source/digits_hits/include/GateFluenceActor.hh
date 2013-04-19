@@ -19,8 +19,6 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEFLUENCEACTOR_HH
 #define GATEFLUENCEACTOR_HH
 
-#ifdef GATE_USE_RTK
-
 #include "GateVImageActor.hh"
 #include "GateActorManager.hh"
 #include "GateMiscFunctions.hh"
@@ -75,5 +73,4 @@ protected:
 
 MAKE_AUTO_CREATOR_ACTOR(FluenceActor,GateFluenceActor)
 
-#endif // GATE_USE_RTK
 #endif /* end #define GATESIMULATIONSTATISTICACTOR_HH */
