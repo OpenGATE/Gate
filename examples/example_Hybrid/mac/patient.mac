@@ -43,7 +43,13 @@
 # --> Commmon part
 /gate/geometry/setMaterialDatabase                      data/HUmaterials-tol-0.1.db
 /gate/patient/geometry/SetHUToMaterialFile              data/HU2mat-tol-0.1.txt
-/gate/patient/geometry/SetImage                         data/patient.mhd
+#/gate/patient/geometry/SetImage                         data/patient.mhd
+#/gate/patient/geometry/SetImage                         data/headCT.mhd
+#/gate/patient/geometry/SetHUToMaterialFile              data/sphere.mat
+#/gate/patient/geometry/SetImage                         data/sphere.mha
+/gate/patient/geometry/SetHUToMaterialFile              data/cylinder.mat
+/gate/patient/geometry/SetImage                         data/cylinder.mha
+
 #/gate/patient/geometry/TranslateTheImageAtThisIsoCenter 75.5 108.9 -646.7 mm
 #/gate/patient/geometry/TranslateTheImageAtThisIsoCenter 0 0 0 mm
 /gate/patient/geometry/buildAndDumpLabeledImage         data/patient-lung-2mm-label.mhd

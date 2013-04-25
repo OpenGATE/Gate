@@ -14,24 +14,24 @@
 // Gate 
 #include "GateHybridForcedDetectionActor.hh"
 #include "GateMiscFunctions.hh"
+#include "GateScatterOrderTrackInformationActor.hh"
 
 // G4
-#include "G4Event.hh"
-#include "G4MaterialTable.hh"
-#include "G4ParticleTable.hh"
-#include "G4EmCalculator.hh"
-#include "G4TransportationManager.hh"
+#include <G4Event.hh>
+#include <G4MaterialTable.hh>
+#include <G4ParticleTable.hh>
+#include <G4VEmProcess.hh>
+#include <G4TransportationManager.hh>
+#include <G4LivermoreComptonModel.hh>
 
 // rtk
 #include <rtkThreeDCircularProjectionGeometryXMLFile.h>
-#include "rtkConstantImageSource.h"
 
 // itk
 #include <itkImportImageFilter.h>
-#include <itkTimeProbe.h>
-#include <itkDivideImageFilter.h>
-#include <itkLogImageFilter.h>
+#include <itkChangeInformationImageFilter.h>
 #include <itkMultiplyImageFilter.h>
+#include <itkConstantPadImageFilter.h>
 
 #define TRY_AND_EXIT_ON_ITK_EXCEPTION(execFunc)                         \
   try                                                                   \
@@ -73,123 +73,12 @@ void GateHybridForcedDetectionActor::Construct()
   GateVActor::Construct();
   //  Callbacks
   EnableBeginOfRunAction(true);
-  //   EnableBeginOfEventAction(true);
+  EnableBeginOfEventAction(true);
   //   EnablePreUserTrackingAction(true);
   EnableUserSteppingAction(true);
   ResetData();
+  mEMCalculator = new G4EmCalculator;
 }
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-// Handling of the interpolation weight in primary: store the weights and
-// the material indices in vectors and return nada. The integral is computed in the
-// ProjectedValueAccumulation since one has to repeat the same ray cast for each
-// and every energy of the primary.
-class GateHybridForcedDetectionActor::PrimaryInterpolationWeightMultiplication
-{
-public:
-  PrimaryInterpolationWeightMultiplication() {};
-  ~PrimaryInterpolationWeightMultiplication() {};
-  bool operator!=( const PrimaryInterpolationWeightMultiplication & ) const {
-    return false;
-  }
-  bool operator==(const PrimaryInterpolationWeightMultiplication & other) const {
-    return !( *this != other );
-  }
-
-  inline double operator()( const rtk::ThreadIdType threadId,
-                            const double stepLengthInVoxel,
-                            const double weight,
-                            const float *p,
-                            const unsigned int i) {
-    m_InterpolationWeights[threadId][(unsigned int)(p[i])] += stepLengthInVoxel * weight;
-    return 0.;
-  }
-
-  std::vector<double>* GetInterpolationWeights() { return m_InterpolationWeights; }
-
-private:
-  std::vector<double> m_InterpolationWeights[ITK_MAX_THREADS];
-};
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-// Most of the computation for the primary is done in this functor. After a ray
-// has been cast, it loops over the energies, computes the ray line integral for
-// that energy and takes the exponential of the opposite and add.
-class GateHybridForcedDetectionActor::PrimaryValueAccumulation
-{
-public:
-  typedef itk::Vector<double, 3> VectorType;
-
-  PrimaryValueAccumulation() {};
-  ~PrimaryValueAccumulation() {};
-  bool operator!=( const PrimaryValueAccumulation & ) const
-  {
-    return false;
-  }
-  bool operator==(const PrimaryValueAccumulation & other) const
-  {
-    return !( *this != other );
-  }
-
-  inline double operator()( const rtk::ThreadIdType threadId,
-                            double input,
-                            const double &itkNotUsed(rayCastValue),
-                            const VectorType &stepInMM,
-                            const VectorType &source,
-                            const VectorType &sourceToPixel,
-                            const VectorType &nearestPoint,
-                            const VectorType &farthestPoint) const
-  {
-    double *p = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
-
-    // Multiply interpolation weights by step norm in MM to convert voxel
-    // intersection length to MM.
-    const double stepInMMNorm = stepInMM.GetNorm();
-    for(unsigned int j=0; j<m_InterpolationWeights[threadId].size()-1; j++)
-      m_InterpolationWeights[threadId][j] *= stepInMMNorm;
-
-    // The last material is the world material. One must fill the weight with
-    // the length from source to nearest point and farthest point to pixel
-    // point.
-    VectorType worldVector = sourceToPixel - nearestPoint + farthestPoint;
-    for(int i=0; i<3; i++)
-      worldVector[i] *= m_Spacing[i];
-    m_InterpolationWeights[threadId].back() = worldVector.GetNorm();
-
-    // Loops over energy, multiply weights by mu, accumulate using Beer Lambert
-    for(unsigned int i=0; i<m_EnergyWeightList->size(); i++) {
-      double rayIntegral = 0.;
-      for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++){
-        rayIntegral += m_InterpolationWeights[threadId][j] * *p++;
-      }
-      input += vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i];
-    }
-
-    // Reset weights for next ray in thread.
-    std::fill(m_InterpolationWeights[threadId].begin(), m_InterpolationWeights[threadId].end(), 0.);
-    return input;
-  }
-
-  void SetSpacing(const VectorType &_arg){ m_Spacing = _arg; }
-  void SetInterpolationWeights(std::vector<double> *_arg){ m_InterpolationWeights = _arg; }
-  void SetEnergyWeightList(std::vector<double> *_arg) { m_EnergyWeightList = _arg; }
-  void SetMaterialMu(itk::Image<double, 2>::Pointer _arg) { m_MaterialMu = _arg; }
-  void Init(unsigned int nthreads) {
-    for(unsigned int i=0; i<nthreads; i++) {
-      m_InterpolationWeights[i].resize(m_MaterialMu->GetLargestPossibleRegion().GetSize()[0]);
-      std::fill(m_InterpolationWeights[i].begin(), m_InterpolationWeights[i].end(), 0.);
-    }
-  }
-
-private:
-  VectorType                      m_Spacing;
-  std::vector<double>            *m_InterpolationWeights;
-  std::vector<double>            *m_EnergyWeightList;
-  itk::Image<double, 2>::Pointer  m_MaterialMu;
-  unsigned int nmat;
-};
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -197,6 +86,7 @@ private:
 void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 {
   GateVActor::BeginOfRunAction(r);
+  mNumberOfEventsInRun = 0;
 
   // Get information on the source
   GateSourceMgr * sm = GateSourceMgr::GetInstance();
@@ -209,13 +99,14 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   mSource = sm->GetSource(0);
 
   // Create list of energies
+  double energyMax = 0.;
   std::vector<double> energyList;
   std::vector<double> energyWeightList;
-  energyList.clear();
   G4String st = mSource->GetEneDist()->GetEnergyDisType();
   if (st == "Mono") {
     energyList.push_back(mSource->GetEneDist()->GetMonoEnergy());
     energyWeightList.push_back(1.);
+    energyMax = std::max(energyMax, energyList.back());
   }
   else if (st == "User") { // histo
     G4PhysicsOrderedFreeVector h = mSource->GetEneDist()->GetUserDefinedEnergyHisto ();
@@ -225,6 +116,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       energyList.push_back(E);
       energyWeightList.push_back(h.Value(E));
       weightSum += energyWeightList.back();
+      energyMax = std::max(energyMax, energyList.back());
     }
     for(unsigned int i=0; i<h.GetVectorLength(); i++)
       energyWeightList[i] /= weightSum;
@@ -232,15 +124,36 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   else
     GateError("Error, source type is not Mono or User. Abort.");
 
-  // Conversion of CT to ITK and to int values
-  // SR: is this a safe cast? Shouldn't we add 0.5? To check with DS
-  GateVImageVolume * gate_image_volume = dynamic_cast<GateVImageVolume*>(mVolume);
-  GateImage * gate_image = gate_image_volume->GetImage();
-  InputImageType::Pointer input = ConvertGateImageToITKImage(gate_image);
 
-  // Create projection image
+  // Search for voxelized volume. If more than one, crash (yet).
+  GateVImageVolume* gate_image_volume = NULL;
+  for(std::map<G4String, GateVVolume*>::const_iterator it  = GateObjectStore::GetInstance()->begin();
+                                                       it != GateObjectStore::GetInstance()->end();
+                                                       it++)
+    {
+    if(dynamic_cast<GateVImageVolume*>(it->second))
+    {
+      if(gate_image_volume != NULL)
+        GateError("There is more than one voxelized volume and don't know yet how to cope with this.");
+      else
+        gate_image_volume = dynamic_cast<GateVImageVolume*>(it->second);
+    }
+  }
+  if(!gate_image_volume)
+    GateError("You need a voxelized volume in your scene.");
+
+  // TODO: loop on volumes to check that they contain world material only
+
+  // Conversion of CT to ITK and to int values
+  mGateVolumeImage = ConvertGateImageToITKImage(gate_image_volume);
+
+  // Create projection images
   mPrimaryImage = CreateVoidProjectionImage();
-  InputImageType::Pointer mPrimaryImage2 = CreateVoidProjectionImage();
+  mComptonImage = CreateVoidProjectionImage();
+  mRayleighImage = CreateVoidProjectionImage();
+
+  mComptonPerOrderImages.clear();
+  mRayleighPerOrderImages.clear();
 
   // Create geometry and param of output image
   PointType primarySourcePosition;
@@ -265,37 +178,28 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                       mDetectorRowVector,
                                       mDetectorColVector);
 
-  // Create conversion label to mu
-  itk::TimeProbe muProbe;
-  muProbe.Start();
-  CreateLabelToMuConversion(energyList, gate_image_volume);
-  muProbe.Stop();
-  G4cout << "Computation of the mu lookup table took "
-         << muProbe.GetTotal()
-         << ' '
-         << muProbe.GetUnit()
-         << G4endl;
-
   // Create primary projector and compute primary
-  itk::TimeProbe primaryProbe;
-  primaryProbe.Start();
-  typedef rtk::JosephForwardProjectionImageFilter< InputImageType,
-                                                   InputImageType,
-                                                   PrimaryInterpolationWeightMultiplication,
-                                                   PrimaryValueAccumulation> JFPType;
-    JFPType::Pointer jfp = JFPType::New();
-    jfp->InPlaceOn();
-    jfp->SetInput(mPrimaryImage);
-    jfp->SetInput(1, input );
-    jfp->SetGeometry( oneProjGeometry.GetPointer() );
-    jfp->GetProjectedValueAccumulation().SetSpacing( input->GetSpacing() );
-    jfp->GetProjectedValueAccumulation().SetInterpolationWeights( jfp->GetInterpolationWeightMultiplication().GetInterpolationWeights() );
-    jfp->GetProjectedValueAccumulation().SetEnergyWeightList( &energyWeightList );
-    jfp->GetProjectedValueAccumulation().SetMaterialMu( mMaterialMu );
-    jfp->GetProjectedValueAccumulation().Init( jfp->GetNumberOfThreads() );
-    TRY_AND_EXIT_ON_ITK_EXCEPTION(jfp->Update());
-    mPrimaryImage = jfp->GetOutput();
+  mPrimaryProbe.Start();
+  PrimaryProjectionType::Pointer primaryProjector = PrimaryProjectionType::New();
+  primaryProjector->InPlaceOn();
+  primaryProjector->SetInput(mPrimaryImage);
+  primaryProjector->SetInput(1, mGateVolumeImage );
+  primaryProjector->SetGeometry( oneProjGeometry.GetPointer() );
+  primaryProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mPrimaryImage,
+                                                                            mDetectorRowVector,
+                                                                            mDetectorColVector);
+  primaryProjector->GetProjectedValueAccumulation().SetVolumeSpacing( mGateVolumeImage->GetSpacing() );
+  primaryProjector->GetProjectedValueAccumulation().SetInterpolationWeights( primaryProjector->GetInterpolationWeightMultiplication().GetInterpolationWeights() );
+  primaryProjector->GetProjectedValueAccumulation().SetEnergyWeightList( &energyWeightList );
+  primaryProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
+                                                                        energyList,
+                                                                        gate_image_volume);
+  primaryProjector->GetProjectedValueAccumulation().Init( primaryProjector->GetNumberOfThreads() );
+  TRY_AND_EXIT_ON_ITK_EXCEPTION(primaryProjector->Update());
+  mPrimaryImage = primaryProjector->GetOutput();
+  mPrimaryImage->DisconnectPipeline();
 
+  // Compute flat field if required
   if(mAttenuationFilename != "")
   {
     // Constant image source of 1x1x1
@@ -316,35 +220,59 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     flatFieldSource->SetOrigin( origin );
     flatFieldSource->SetSpacing( spacing );
     flatFieldSource->SetSize( dim );
-    flatFieldSource->SetConstant( mMaterialMu->GetLargestPossibleRegion().GetSize(0)-1 );
-    // Joseph Forward projector
-    JFPType::Pointer jfpFlat = JFPType::New();
-    jfpFlat->InPlaceOn();
-    jfpFlat->SetInput(mPrimaryImage2);
-    jfpFlat->SetInput(1, flatFieldSource->GetOutput() );
-    jfpFlat->SetGeometry( oneProjGeometry.GetPointer() );
-    jfpFlat->GetProjectedValueAccumulation().SetSpacing( flatFieldSource->GetSpacing() );
-    jfpFlat->GetProjectedValueAccumulation().SetInterpolationWeights( jfpFlat->GetInterpolationWeightMultiplication().GetInterpolationWeights() );
-    jfpFlat->GetProjectedValueAccumulation().SetEnergyWeightList( &energyWeightList );
-    jfpFlat->GetProjectedValueAccumulation().SetMaterialMu( mMaterialMu );
-    jfpFlat->GetProjectedValueAccumulation().Init( jfpFlat->GetNumberOfThreads() );
-    TRY_AND_EXIT_ON_ITK_EXCEPTION(jfpFlat->Update());
-    mFlatFieldImage = jfpFlat->GetOutput();
+    flatFieldSource->SetConstant( energyList.size()-1 );
+
+    mFlatFieldImage = CreateVoidProjectionImage();
+    primaryProjector->SetInput(mFlatFieldImage);
+    primaryProjector->SetInput(1, flatFieldSource->GetOutput() );
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(primaryProjector->Update());
+    mFlatFieldImage = primaryProjector->GetOutput();
   }
-  primaryProbe.Stop();
-  G4cout << "Computation of the primary took "
-         << primaryProbe.GetTotal()
-         << ' '
-         << primaryProbe.GetUnit()
-         << G4endl;
+  mPrimaryProbe.Stop();
+
+  // Prepare Compton
+  mComptonProjector = ComptonProjectionType::New();
+  mComptonProjector->InPlaceOn();
+  mComptonProjector->SetInput(mComptonImage);
+  mComptonProjector->SetInput(1, mGateVolumeImage );
+  mComptonProjector->SetGeometry( oneProjGeometry.GetPointer() );
+  mComptonProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mComptonImage,
+                                                                             mDetectorRowVector,
+                                                                             mDetectorColVector);
+  mComptonProjector->GetProjectedValueAccumulation().SetVolumeSpacing( mGateVolumeImage->GetSpacing() );
+  mComptonProjector->GetProjectedValueAccumulation().SetInterpolationWeights( mComptonProjector->GetInterpolationWeightMultiplication().GetInterpolationWeights() );
+  mComptonProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
+                                                                         1.*keV,
+                                                                         energyMax,
+                                                                         gate_image_volume);
+  mComptonProjector->GetProjectedValueAccumulation().Init( mComptonProjector->GetNumberOfThreads() );
+
+  // Prepare Rayleigh
+  mRayleighProjector = RayleighProjectionType::New();
+  mRayleighProjector->InPlaceOn();
+  mRayleighProjector->SetInput(mRayleighImage);
+  mRayleighProjector->SetInput(1, mGateVolumeImage );
+  mRayleighProjector->SetGeometry( oneProjGeometry.GetPointer() );
+  mRayleighProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mRayleighImage,
+                                                                              mDetectorRowVector,
+                                                                              mDetectorColVector);
+  mRayleighProjector->GetProjectedValueAccumulation().SetVolumeSpacing( mGateVolumeImage->GetSpacing() );
+  mRayleighProjector->GetProjectedValueAccumulation().SetInterpolationWeights( mRayleighProjector->GetInterpolationWeightMultiplication().GetInterpolationWeights() );
+  mRayleighProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
+                                                                         1.*keV,
+                                                                         energyMax,
+                                                                         gate_image_volume);
+  mRayleighProjector->GetProjectedValueAccumulation().Init( mRayleighProjector->GetNumberOfThreads() );
+
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // Callback Begin Event
-/*void GateHybridForcedDetectionActor::BeginOfEventAction(const G4Event*e)
+void GateHybridForcedDetectionActor::BeginOfEventAction(const G4Event*e)
 {
-}*/
+  mNumberOfEventsInRun++;
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -356,10 +284,9 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 
 //-----------------------------------------------------------------------------
 // Callbacks
-void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v, 
+void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
                                                         const G4Step * step)
 {
-  //DD("GateHybridForcedDetectionActor UserSteppingAction");
   GateVActor::UserSteppingAction(v, step);
 
   /* Get interaction point from step
@@ -370,6 +297,102 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
      - Get Energy
      - -> generate adequate forward projections towards detector
   */
+
+  // We are only interested in EM processes. One should check post-step to know
+  // what is going to happen, but pre-step is used afterward to get direction
+  // and position.
+  const G4VProcess *pr = step->GetPostStepPoint()->GetProcessDefinedStep();
+  const G4VEmProcess *process = dynamic_cast<const G4VEmProcess*>(pr);
+  if(!process) return;
+
+  // We need the position, direction and energy at point where Compton and Rayleigh occur.
+  G4ThreeVector p = step->GetPostStepPoint()->GetPosition();
+  G4ThreeVector d = step->GetPreStepPoint()->GetMomentumDirection();
+  double energy = step->GetPreStepPoint()->GetKineticEnergy();
+  //FIXME: check what to do from this w = stepPoint->GetWeight(); ???
+
+  GateScatterOrderTrackInformation * info = dynamic_cast<GateScatterOrderTrackInformation *>(step->GetTrack()->GetUserInformation());
+
+  // d and p are in World coordinates and they must be in CT coordinates
+  d = m_WorldToCT.TransformAxis(d);
+  p = m_WorldToCT.TransformPoint(p);
+
+  //Convert to ITK
+  PointType point;
+  VectorType direction;
+  for(unsigned int i=0; i<3; i++) {
+    point[i] = p[i];
+    direction[i] = d[i];
+  }
+
+  //FIXME: do we prefer this solution or computing the scattering function for the material?
+  const G4MaterialCutsCouple *couple = step->GetPreStepPoint()->GetMaterialCutsCouple();
+  const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
+  G4VEmModel* model = const_cast<G4VEmProcess*>(process)->Model();
+  const G4Element* elm = model->SelectRandomAtom(couple,particle,energy);
+  G4int Z = elm->GetZ();
+
+  if(process->GetProcessName() == G4String("Compton")) {
+    mComptonProbe.Start();
+    GeometryType::Pointer oneProjGeometry = GeometryType::New();
+    oneProjGeometry->AddReg23Projection(point,
+                                        mDetectorPosition,
+                                        mDetectorRowVector,
+                                        mDetectorColVector);
+    mComptonProjector->SetInput(mComptonImage);
+    mComptonProjector->SetGeometry( oneProjGeometry.GetPointer() );
+    mComptonProjector->GetProjectedValueAccumulation().SetEnergyAndZ( energy, Z );
+    mComptonProjector->GetProjectedValueAccumulation().SetDirection( direction );
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(mComptonProjector->Update());
+    mComptonImage = mComptonProjector->GetOutput();
+    mComptonImage->DisconnectPipeline();
+    mComptonProbe.Stop();
+
+    // Scatter order
+    if(info)
+    {
+      unsigned int order = info->GetScatterOrder();
+      while(order>=mComptonPerOrderImages.size())
+        mComptonPerOrderImages.push_back( CreateVoidProjectionImage() );
+      mComptonProjector->SetInput(mComptonPerOrderImages[order]);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(mComptonProjector->Update());
+      mComptonPerOrderImages[order] = mComptonProjector->GetOutput();
+      mComptonPerOrderImages[order]->DisconnectPipeline();
+    }
+
+
+  }
+  else if(process->GetProcessName() == G4String("RayleighScattering")) {
+    mRayleighProbe.Start();
+    GeometryType::Pointer oneProjGeometry = GeometryType::New();
+    oneProjGeometry->AddReg23Projection(point,
+                                        mDetectorPosition,
+                                        mDetectorRowVector,
+                                        mDetectorColVector);
+    mRayleighProjector->SetInput(mRayleighImage);
+    mRayleighProjector->SetGeometry( oneProjGeometry.GetPointer() );
+    mRayleighProjector->GetProjectedValueAccumulation().SetEnergyAndZ( energy, Z );
+    mRayleighProjector->GetProjectedValueAccumulation().SetDirection( direction );
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(mRayleighProjector->Update());
+    mRayleighImage = mRayleighProjector->GetOutput();
+    mRayleighImage->DisconnectPipeline();
+    mRayleighProbe.Stop();
+
+    // Scatter order
+    if(info)
+    {
+      unsigned int order = info->GetScatterOrder();
+        while(order>=mRayleighPerOrderImages.size())
+          mRayleighPerOrderImages.push_back( CreateVoidProjectionImage() );
+        mRayleighProjector->SetInput(mRayleighPerOrderImages[order]);
+        TRY_AND_EXIT_ON_ITK_EXCEPTION(mRayleighProjector->Update());
+        mRayleighPerOrderImages[order] = mRayleighProjector->GetOutput();
+        mRayleighPerOrderImages[order]->DisconnectPipeline();
+    }
+  }
+  else if(process->GetProcessName() == G4String("PhotoElectric")) {
+
+  }
 
 }
 //-----------------------------------------------------------------------------
@@ -386,52 +409,125 @@ void GateHybridForcedDetectionActor::SaveData()
   geoWriter->SetFilename(mGeometryFilename);
   geoWriter->WriteFile();
 
-  // Write the image of primary radiation
   itk::ImageFileWriter<InputImageType>::Pointer imgWriter;
   imgWriter = itk::ImageFileWriter<InputImageType>::New();
   char filename[1024];
   G4int rID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
-  sprintf(filename, mPrimaryFilename.c_str(), rID);
-  imgWriter->SetFileName(filename);
-  imgWriter->SetInput(mPrimaryImage);
-  TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+
+  if(mPrimaryFilename != "") {
+    // Normalize by the number of particles
+    // FIXME: it assumes here that all particles hit the detector and every point
+    // of the detector has the same probability to be hit.
+    typedef itk::MultiplyImageFilter<InputImageType, InputImageType> MultiplyType;
+    MultiplyType::Pointer mult = MultiplyType::New();
+    mult->SetInput(mPrimaryImage);
+    InputImageType::SizeType size = mPrimaryImage->GetLargestPossibleRegion().GetSize();
+    mult->SetConstant(mNumberOfEventsInRun / double(size[0] * size[1]));
+    mult->InPlaceOff();
+
+    // Write the image of primary radiation
+    sprintf(filename, mPrimaryFilename.c_str(), rID);
+    imgWriter->SetFileName(filename);
+    imgWriter->SetInput(mult->GetOutput());
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+  }
 
   if(mMaterialMuFilename != "") {
-    typedef itk::ImageFileWriter< itk::Image<double, 2> > TwoDWriter;
+    VAccumulation::MaterialMuImageType *map;
+    map = mComptonProjector->GetProjectedValueAccumulation().GetMaterialMu();
+
+    // Change spacing to keV
+    VAccumulation::MaterialMuImageType::SpacingType spacing = map->GetSpacing();
+    spacing[1] /= keV;
+
+    typedef itk::ChangeInformationImageFilter<VAccumulation::MaterialMuImageType> CIType;
+    CIType::Pointer ci = CIType::New();
+    ci->SetInput(map);
+    ci->SetOutputSpacing(spacing);
+    ci->ChangeSpacingOn();
+    ci->Update();
+
+    typedef itk::ImageFileWriter<VAccumulation::MaterialMuImageType> TwoDWriter;
     TwoDWriter::Pointer w = TwoDWriter::New();
-    w->SetInput(mMaterialMu);
+    w->SetInput( ci->GetOutput() );
     w->SetFileName(mMaterialMuFilename);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(w->Update());
   }
 
   if(mAttenuationFilename != "") {
-    //Writing attenuation image (-log(primaryImage/flatFieldImage))
-    itk::DivideImageFilter<InputImageType,InputImageType,InputImageType>::Pointer      divFilter;
-    itk::LogImageFilter<InputImageType, InputImageType>::Pointer                       logFilter;
-    itk::MultiplyImageFilter< InputImageType, InputImageType, InputImageType>::Pointer mulFilter;
+    //Attenuation Functor -> atten
+    typedef itk::BinaryFunctorImageFilter< InputImageType, InputImageType, InputImageType,
+                                           Functor::Attenuation<InputImageType::PixelType> > attenFunctor;
+    attenFunctor::Pointer atten = attenFunctor::New();
+    atten->SetInput1(mPrimaryImage);
+    atten->SetInput2(mFlatFieldImage);
+    atten->InPlaceOff();
 
-    divFilter  = itk::DivideImageFilter<InputImageType,InputImageType,InputImageType>::New();
-    logFilter  = itk::LogImageFilter<InputImageType,InputImageType>::New();
-    mulFilter  = itk::MultiplyImageFilter<InputImageType,InputImageType>::New();
-
-    divFilter->SetInput1(mPrimaryImage);
-    divFilter->SetInput2(mFlatFieldImage);
-    logFilter->SetInput(divFilter->GetOutput());
-    mulFilter->SetInput(logFilter->GetOutput());
-    mulFilter->SetConstant(-1.0);
-    mulFilter->InPlaceOn();
-
-    //Writing flat field image SR: Do we set an option for this image in main.mac?
-    imgWriter->SetFileName("output/flatFieldImage.mha");
-    imgWriter->SetInput(mFlatFieldImage);
-    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-
-    //Writing attenuation image
     sprintf(filename, mAttenuationFilename.c_str(), rID);
     imgWriter->SetFileName(filename);
-    imgWriter->SetInput(mulFilter->GetOutput());
+    imgWriter->SetInput(atten->GetOutput());
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
   }
+
+  if(mFlatFieldFilename != "")
+  {
+    sprintf(filename, mFlatFieldFilename.c_str(), rID);
+    imgWriter->SetFileName(filename);
+    imgWriter->SetInput(mFlatFieldImage);
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+  }
+
+  if(mComptonFilename != "")
+  {
+
+    sprintf(filename, mComptonFilename.c_str(), rID);
+    imgWriter->SetFileName(filename);
+    imgWriter->SetInput(mComptonImage);
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+
+    for(unsigned int k = 0; k<mComptonPerOrderImages.size(); k++)
+    {
+      sprintf(filename, "output/compton%04d_%04d.mha", rID, k+1);
+      imgWriter->SetFileName(filename);
+      imgWriter->SetInput(mComptonPerOrderImages[k]);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
+  }
+
+
+  if(mRayleighFilename != "")
+  {
+    sprintf(filename, mRayleighFilename.c_str(), rID);
+    imgWriter->SetFileName(filename);
+    imgWriter->SetInput(mRayleighImage);
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+
+    for(unsigned int k = 0; k<mRayleighPerOrderImages.size(); k++)
+    {
+      sprintf(filename, "output/rayleigh%04d_%04d.mha", rID, k+1);
+      imgWriter->SetFileName(filename);
+      imgWriter->SetInput(mRayleighPerOrderImages[k]);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
+  }
+
+//  G4cout << "Computation of the primary took "
+//         << mPrimaryProbe.GetTotal()
+//         << ' '
+//         << mPrimaryProbe.GetUnit()
+//         << G4endl;
+
+//  G4cout << "Computation of Compton took "
+//         << mComptonProbe.GetTotal()
+//         << ' '
+//         << mComptonProbe.GetUnit()
+//         << G4endl;
+
+//  G4cout << "Computation of Rayleigh took "
+//         << mRayleighProbe.GetTotal()
+//         << ' '
+//         << mRayleighProbe.GetUnit()
+//         << G4endl;
 }
 //-----------------------------------------------------------------------------
 
@@ -469,7 +565,7 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
     v = v->GetParentVolume();
     phys = v->GetPhysicalVolume();
     G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
-    detectorToWorld = x * detectorToWorld;
+    detectorToWorld = detectorToWorld * x;
   }
 
   // CT to world
@@ -480,8 +576,9 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
     v = v->GetParentVolume();
     phys = v->GetPhysicalVolume();
     G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
-    ctToWorld = x * ctToWorld;
+    ctToWorld = ctToWorld * x;
   }
+  m_WorldToCT = ctToWorld.Inverse();
 
   // Source to world
   G4String volname = src->GetRelativePlacementVolume();
@@ -492,11 +589,11 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
     v = v->GetParentVolume();
     phys = v->GetPhysicalVolume();
     G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
-    sourceToWorld = x * sourceToWorld;
+    sourceToWorld = sourceToWorld * x;
   }
 
   // Detector parameters
-  G4AffineTransform detectorToCT(detectorToWorld * ctToWorld.Inverse());
+  G4AffineTransform detectorToCT(detectorToWorld *  m_WorldToCT);
 
   // TODO: check where to get the two directions of the detector.
   // Probably the dimension that has lowest size in one of the three directions. 
@@ -508,7 +605,7 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
   G4ThreeVector s = src->GetPosDist()->GetCentreCoords(); // point 
   if(src->GetPosDist()->GetPosDisType()!=G4String("Point")) // Focus
     s = src->GetAngDist()->GetFocusPointCopy();
-  G4AffineTransform sourceToCT( sourceToWorld * ctToWorld.Inverse());
+  G4AffineTransform sourceToCT( sourceToWorld *  m_WorldToCT);
   s = sourceToCT.TransformPoint(s);
 
   // Copy in ITK vectors
@@ -518,65 +615,17 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
     detectorPosition[i] = dp[i];
     primarySourcePosition[i] = s[i];
   }
-}
-//-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-void GateHybridForcedDetectionActor::CreateLabelToMuConversion(const std::vector<double> &Elist,
-                                                               GateVImageVolume * gate_image_volume)
-{
-  // Get image materials + world
-  G4EmCalculator * emcalc = new G4EmCalculator;
-  std::vector<G4Material*> m;
-  gate_image_volume->BuildLabelToG4MaterialVector(m);
-  GateVVolume *v = gate_image_volume;
-  while (v->GetLogicalVolumeName() != "world_log")
-    v = v->GetParentVolume();
-  m.push_back(const_cast<G4Material*>(v->GetMaterial()));
 
-  // Get the list of involved processes (Rayleigh, Compton, PhotoElectric)
-  G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
-  G4ProcessVector* plist = particle->GetProcessManager()->GetProcessList();
-  std::vector<G4String> processNameVector;
-  for (G4int j = 0; j < plist->size(); j++) {
-    G4ProcessType type = (*plist)[j]->GetProcessType();
-    std::string name = (*plist)[j]->GetProcessName();
-    if ((type == fElectromagnetic) && (name != "msc")) {
-      processNameVector.push_back(name);
-    }
-  }
-
-  itk::Image<double, 2>::RegionType region;
-  region.SetSize(0, m.size());
-  region.SetSize(1, Elist.size());
-  mMaterialMu = itk::Image<double, 2>::New();
-  mMaterialMu->SetRegions(region);
-  mMaterialMu->Allocate();
-  itk::ImageRegionIterator< itk::Image<double, 2> > it(mMaterialMu, region);
-  for(unsigned int e=0; e<Elist.size(); e++)
-    for(unsigned int i=0; i<m.size(); i++) {
-      G4Material * mat = m[i];
-      //double d = mat->GetDensity(); // not needed
-      double mu = 0;
-      for (unsigned int j = 0; j < processNameVector.size(); j++) {
-        // Note: the G4EmCalculator retrive the correct G4VProcess
-        // (standard, Penelope, Livermore) from the processName.
-        double xs =
-            emcalc->ComputeCrossSectionPerVolume(Elist[e], "gamma", processNameVector[j], mat->GetName());
-        // In (length unit)^{-1} according to
-        // http://www.lcsim.org/software/geant4/doxygen/html/classG4EmCalculator.html#a870d5fffaca35f6e2946da432034bd4c
-        mu += xs;
-      }
-      it.Set(mu);
-      ++it;
-    }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 GateHybridForcedDetectionActor::InputImageType::Pointer
-GateHybridForcedDetectionActor::ConvertGateImageToITKImage(GateImage * gateImg)
+GateHybridForcedDetectionActor::ConvertGateImageToITKImage(GateVImageVolume * gateImgVol)
 {
+  GateImage *gateImg = gateImgVol->GetImage();
+
   // The direction is not accounted for in Gate.
   InputImageType::SizeType size;
   InputImageType::PointType origin;
@@ -597,7 +646,24 @@ GateHybridForcedDetectionActor::ConvertGateImageToITKImage(GateImage * gateImg)
   import->SetOrigin(origin);
   TRY_AND_EXIT_ON_ITK_EXCEPTION(import->Update());
 
-  return import->GetOutput();
+  // Get world material
+  std::vector<G4Material*> mat;
+  gateImgVol->BuildLabelToG4MaterialVector( mat );
+  InputPixelType worldMat = mat.size();
+
+  // Pad 1 pixel with world material because interpolation will cut out half a voxel around
+  itk::ConstantPadImageFilter<InputImageType, InputImageType>::Pointer pad;
+  pad = itk::ConstantPadImageFilter<InputImageType, InputImageType>::New();
+  InputImageType::SizeType border;
+  border.Fill(1);
+  pad->SetPadBound(border);
+  pad->SetConstant(worldMat);
+  pad->SetInput(import->GetOutput());
+  TRY_AND_EXIT_ON_ITK_EXCEPTION(pad->Update());
+
+  InputImageType::Pointer output = pad->GetOutput();
+  output->DisconnectPipeline();
+  return output;
 }
 //-----------------------------------------------------------------------------
 
@@ -629,7 +695,11 @@ GateHybridForcedDetectionActor::CreateVoidProjectionImage()
   source->SetSize(size);
   TRY_AND_EXIT_ON_ITK_EXCEPTION(source->Update());
 
-  return source->GetOutput();
+  GateHybridForcedDetectionActor::InputImageType::Pointer output;
+  output = source->GetOutput();
+  output->DisconnectPipeline();
+
+  return output;
 }
 //-----------------------------------------------------------------------------
 

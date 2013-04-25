@@ -68,8 +68,23 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
 
   bb = base+"/attenuationFilename";
   pSetAttenuationFilenameCmd = new G4UIcmdWithAString(bb,this);
-  guidance = "Set the file name for writing the image that provides the flat field image.";
+  guidance = "Set the file name for writing the image that provides the attenuation image.";
   pSetAttenuationFilenameCmd->SetGuidance(guidance);
+
+  bb = base+"/flatFieldFilename";
+  pSetFlatFieldFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for writing the image that provides the flat field image.";
+  pSetFlatFieldFilenameCmd->SetGuidance(guidance);
+
+  bb = base+"/comptonFilename";
+  pSetComptonFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for writing the image that provides the Compton image.";
+  pSetComptonFilenameCmd->SetGuidance(guidance);
+
+  bb = base+"/rayleighFilename";
+  pSetRayleighFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for writing the image that provides the rayleigh image.";
+  pSetRayleighFilenameCmd->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -83,8 +98,12 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetPrimaryFilenameCmd) pHybridActor->SetPrimaryFilename(param);
   if(command == pSetMaterialMuFilenameCmd) pHybridActor->SetMaterialMuFilename(param);
   if(command == pSetAttenuationFilenameCmd) pHybridActor->SetAttenuationFilename(param);
+  if(command == pSetFlatFieldFilenameCmd) pHybridActor->SetFlatFieldFilename(param);
+  if(command == pSetComptonFilenameCmd) pHybridActor->SetComptonFilename(param);
+  if(command == pSetRayleighFilenameCmd) pHybridActor->SetRayleighFilename(param);
 
-  GateActorMessenger::SetNewValue(command ,param );}
+  GateActorMessenger::SetNewValue(command ,param );
+}
 //-----------------------------------------------------------------------------
 
 #endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_CC */

@@ -77,39 +77,63 @@
 /gate/actor/statt/enableDetailedStats false
 /gate/actor/statt/save output/time.txt
 
+# Scatter Order Track Information (soti)
+/gate/actor/addActor                   ScatterOrderTrackInformationActor soti
+/gate/actor/soti/attachTo              patient
+
 # -----------------------------------------------------
 # Hybrid ForcedDetection Actor (hfda)
 /gate/actor/addActor                   HybridForcedDetectionActor hfda
-/gate/actor/hfda/attachTo              patient
+/gate/actor/hfda/attachTo              world
 /gate/actor/hfda/setDetector           DetectorPlane
-/gate/actor/hfda/setDetectorResolution 512 512
+/gate/actor/hfda/setDetectorResolution 256 256
 /gate/actor/hfda/geometryFilename      output/geometry.xml
 /gate/actor/hfda/primaryFilename       output/primary%.04d.mha
+/gate/actor/hfda/rayleighFilename      output/rayleigh%.04d.mha
+/gate/actor/hfda/comptonFilename       output/compton%.04d.mha
 /gate/actor/hfda/materialMuFilename    output/materialMu.mha
-#/gate/actor/hfda/attenuationFilename   output/attenuation%.04d.mha
-#/gate/actor/hfda/flatFieldFilename     output/flatField%.04d.mha
+/gate/actor/hfda/attenuationFilename   output/attenuation%.04d.mha
+/gate/actor/hfda/flatFieldFilename     output/flatField%.04d.mha
+/gate/actor/hfda/saveEveryNSeconds     120
+
+# Also record the interactions for statistics
+/gate/actor/addActor                        PhaseSpaceActor phsp
+/gate/actor/phsp/attachTo                   world
+/gate/actor/phsp/save                       output/interactions.root
+/gate/actor/phsp/addFilter                  particleFilter
+/gate/actor/phsp/particleFilter/addParticle gamma
+/gate/actor/phsp/enableEkine                true
+/gate/actor/phsp/enableXPosition            true
+/gate/actor/phsp/enableXDirection           true
+/gate/actor/phsp/enableYPosition            true
+/gate/actor/phsp/enableYDirection           true
+/gate/actor/phsp/enableZPosition            true
+/gate/actor/phsp/enableZDirection           true
+/gate/actor/phsp/enableProductionProcess    true
+/gate/actor/phsp/enableWeight               true
+/gate/actor/phsp/enableTime                 true
+/gate/actor/phsp/storeAllStep               true
+/gate/actor/phsp/storeSecondaries           true
 
 # find source if gps. --> keep the first one.
 # assumption : ponctuel (focuspoint ou centre)
 
-# Origin = centre du detecteur dans le world
-/gate/actor/hfda/save         output/hfda.mhd
-
 # -----------------------------------------------------
 # Complete fluence of gamma
-/gate/actor/addActor FluenceActor           DetectorActor
-/gate/actor/DetectorActor/save              output/fluence.mhd
-/gate/actor/DetectorActor/attachTo          DetectorPlane
-/gate/actor/DetectorActor/stepHitType       pre
-/gate/actor/DetectorActor/setResolution     512 512 1
-/gate/actor/DetectorActor/enableScatter     true
-/gate/actor/DetectorActor/saveEveryNSeconds  30
+/gate/actor/addActor FluenceActor              DetectorActor
+/gate/actor/DetectorActor/save                 output/fluence%04d.mha
+/gate/actor/DetectorActor/scatterOrderFilename output/fluence%04d_%04d.mha
+/gate/actor/DetectorActor/attachTo             DetectorPlane
+/gate/actor/DetectorActor/stepHitType          pre
+/gate/actor/DetectorActor/setResolution        256 256 1
+/gate/actor/DetectorActor/enableScatter        true
+/gate/actor/DetectorActor/saveEveryNSeconds    120
 
 # -----------------------------------------------------
 # Save particles stats 
-/gate/actor/addActor  SimulationStatisticActor stat
-/gate/actor/stat/save output/stats.txt
-/gate/actor/stat/saveEveryNSeconds 20
+/gate/actor/addActor               SimulationStatisticActor stat
+/gate/actor/stat/save              output/stats.txt
+/gate/actor/stat/saveEveryNSeconds 120
 
 #=====================================================
 # BEAM
@@ -144,5 +168,5 @@
 /gate/run/enableGlobalOutput false
 
 # PARTICLE
-/gate/application/setTotalNumberOfPrimaries 360
+/gate/application/setTotalNumberOfPrimaries 100000
 /gate/application/start
