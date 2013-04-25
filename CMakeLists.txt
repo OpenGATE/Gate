@@ -60,6 +60,8 @@ OPTION(GATE_ANALYSIS_USE_FILE "Gate use G4ANALYSIS_USE_FILE (Recommanded)" ON)
 OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4 (this is REQUIRED !)" ON)
 OPTION(GATE_USE_GPU "Gate use GPU (voxelized src and tracking), need CUDA " OFF)
 
+#=========================================================
+# ROOT
 IF(GATE_USE_ROOT)
    FIND_PACKAGE(ROOT REQUIRED)
    INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
