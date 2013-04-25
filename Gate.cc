@@ -139,6 +139,9 @@ void welcome()
   GateMessage( "Core", 0, "                    Reference : Phys. Med. Biol. 56 (2011) 881-901    " << G4endl );
   GateMessage( "Core", 0, "                    WWW : http://www.opengatecollaboration.org        " << G4endl );
   GateMessage( "Core", 0, "**********************************************************************" << G4endl );
+#ifdef GATE_USE_GPU
+  GateMessage( "Core", 0, "GPU support activated" << G4endl );
+#endif
   GateMessage( "Core", 0, G4endl );
 }
 
@@ -318,6 +321,13 @@ int main( int argc, char* argv[] )
 
   // Using 'session' if not Qt
   welcome();
+  
+  #ifdef Geant496_COMPATIBILITY
+    GateMessage( "Core", 0, "GATE's compatibility with Geant4.9.6 is enabled" << G4endl );
+  #else
+    GateMessage( "Core", 0, "You are using a 9.5 version of Geant4" << G4endl );
+  #endif
+
   // Launching Gate if macro file
   if( isMacroFile )
     {

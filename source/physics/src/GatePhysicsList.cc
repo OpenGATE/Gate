@@ -13,11 +13,9 @@
 #ifndef GATEPHYSICSLIST_CC
 #define GATEPHYSICSLIST_CC
 
-#include "GatePhysicsList.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleWithCuts.hh"
 #include "G4ProcessManager.hh"
-#include "GatePhysicsListMessenger.hh"
 #include "G4BosonConstructor.hh"
 #include "G4LeptonConstructor.hh"
 #include "G4MesonConstructor.hh"
@@ -25,9 +23,17 @@
 #include "G4IonConstructor.hh"
 #include "G4ShortLivedConstructor.hh"
 #include "G4UserLimits.hh"
-#include "GateUserLimits.hh"
+#include "G4Region.hh"
+#include "G4RegionStore.hh"
+#include "G4RegionStore.hh"
+#include "G4UserLimits.hh"
+#include "G4LogicalVolumeStore.hh"
+#include "G4ParticleTable.hh"
 
+#include "GatePhysicsList.hh"
+#include "GateUserLimits.hh"
 #include "GateConfiguration.h"
+#include "GatePhysicsListMessenger.hh"
 
 #ifdef GATE_USE_OPTICAL
 #include "G4OpticalPhoton.hh"
@@ -535,21 +541,11 @@ void GatePhysicsList::Write(G4String file)
 //-----------------------------------------------------------------------------------------
 
 
-//-----------------------------------------------------------------------------------------
-
+//-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 // Cuts
 //-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------------------
-
-
-#include "G4Region.hh"
-#include "G4RegionStore.hh"
-#include "G4RegionStore.hh"
-#include "G4UserLimits.hh"
-#include "G4LogicalVolumeStore.hh"
-#include "G4ParticleTable.hh"
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GatePhysicsList::SetCuts()
@@ -558,11 +554,13 @@ void GatePhysicsList::SetCuts()
      std::cout << "GatePhysicsList::SetCuts: default cut length : "
      << G4BestUnit(defaultCutValue,"Length") << std::endl;
      }  */
-
+  
   // These values are used as the default production thresholds
   // for the world volume.
   // SetCutsWithDefault();
-
+  
+  // This is needed to enable user cuts
+  opt->SetApplyCuts(true);
 }
 //-----------------------------------------------------------------------------
  

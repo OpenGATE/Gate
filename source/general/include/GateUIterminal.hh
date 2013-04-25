@@ -20,9 +20,8 @@ See GATE/LICENSE.txt for further details
 
 This software is distributed under the terms 
 of the GNU Lesser General  Public Licence (LGPL) 
-See GATE/LICENSE.txt for further details 
+See GATE/LICENSE.txt fGeant496_COMPATIBILITYor further details 
 ----------------------*/
-
 
 #ifndef GateUIterminal_h
 #define GateUIterminal_h 1
@@ -40,12 +39,14 @@ class GateUIterminal : public G4UIterminal
 
     ~GateUIterminal() {}
 
-	virtual G4int ReceiveG4cout( G4String coutString);
-	virtual G4int ReceiveG4cerr( G4String cerrString);
-	// For GEANT4 9.6
-  //virtual G4int ReceiveG4cout( const G4String& coutString);
-  //virtual G4int ReceiveG4cerr( const G4String& cerrString);
-
+  #ifdef Geant496_COMPATIBILITY
+    virtual G4int ReceiveG4cout( const G4String& coutString);
+    virtual G4int ReceiveG4cerr( const G4String& cerrString);
+  #else  
+    virtual G4int ReceiveG4cout( G4String coutString);
+    virtual G4int ReceiveG4cerr( G4String cerrString);
+  #endif
+  
 };
 
 #endif
