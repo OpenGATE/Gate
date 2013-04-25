@@ -31,7 +31,7 @@
 # WATERBOX
 /gate/world/daughters/name water_box
 /gate/world/daughters/insert box
-/gate/water_box/setMaterial G4_WATER
+/gate/water_box/setMaterial Water
 /gate/water_box/geometry/setXLength 30 cm
 /gate/water_box/geometry/setYLength 30 cm
 /gate/water_box/geometry/setZLength 30 cm
@@ -113,20 +113,20 @@
 /gate/actor/EM-properties/save                  output/EM-properties.txt
 
 #=====================================================
-# Dose actor
+# Dose actor with DoseToWater
+# *WARNING* With DoseToWater this actor is much slower than without
+# because the dedx is computed several times. 
 #=====================================================
 /gate/actor/addActor                            DoseActor   dose0
 /gate/actor/dose0/attachTo                      water_box
 /gate/actor/dose0/stepHitType                   random
 /gate/actor/dose0/setPosition                   0 0 0 cm
-#/gate/actor/dose0/setSize                      400 400 400 mm
 /gate/actor/dose0/setResolution                 1 1 300
 /gate/actor/dose0/enableDose                    true
 /gate/actor/dose0/enableDoseToWater             true
-#/gate/actor/dose0/enableUncertaintyDose        true
-#/gate/actor/dose0/enableEdep                   true
 /gate/actor/dose0/save                          output/IDD.txt
 /gate/actor/dose0/saveEveryNSeconds             120
+
 
 #=====================================
 # SOURCE
@@ -165,7 +165,7 @@
 # (without caring of the dose deposition)
 #/gate/application/setTotalNumberOfPrimaries 1
 # Otherwise
-/gate/application/setTotalNumberOfPrimaries 1000000
+/gate/application/setTotalNumberOfPrimaries 10
 
 /gate/application/start
 

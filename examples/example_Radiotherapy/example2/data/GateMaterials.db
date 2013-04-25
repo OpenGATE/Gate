@@ -428,10 +428,6 @@ Spleen: d=1.06 g/cm3 ; n=11
         +el: name=Calcium   ; f=0.0
         +el: name=Scandium  ; f=0.0
 
-G4_WATER: d=1.00 g/cm3; n=2 ; state=liquid
-	+el: name=Hydrogen ; n=2
-	+el: name=Oxygen; n=1
-
 Testis: d=1.04 g/cm3 ; n=9
         +el: name=Hydrogen   ; f=0.106000
         +el: name=Carbon     ; f=0.099000
@@ -448,7 +444,11 @@ PMMA:   d=1.195 g/cm3; n=3 ; state=Solid
         +el: name=Carbon ; f=0.599846
         +el: name=Oxygen; f=0.319613
 
-Epoxy: d=1.0 g/cm3; n=3; state=Solid
+Epoxy:  d=1.0 g/cm3; n=3; state=Solid
         +el: name=Carbon; n=1
         +el: name=Hydrogen; n=1
         +el: name=Oxygen; n=1
+
+Carbide: d=15.8 g/cm3; n=2 ; state=Solid
+        +el: name=Tungsten ; n=1
+        +el: name=Carbon ; n=1
