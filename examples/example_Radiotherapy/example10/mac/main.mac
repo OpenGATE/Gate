@@ -31,8 +31,6 @@
 
 /gate/thorax/placement/setTranslation                  0 0 0 mm
 
-/gate/random/setEngineName MersenneTwister 
-
 
 #=====================================================
 # PHYSICS
@@ -55,7 +53,7 @@
 /control/execute mac/detectors.mac
 
 # Set the names of the outputs
-/gate/actor/stat/save              output/stat-photon-thorax.txt
+/gate/actor/stat/save output/stat-photon-thorax.txt
 
 
 #=====================================================
@@ -74,4 +72,7 @@
 # START BEAMS
 #=====================================================
 
-/control/execute mac/start.mac
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed auto
+/gate/application/setTotalNumberOfPrimaries 1000000
+/gate/application/start

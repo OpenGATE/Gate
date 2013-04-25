@@ -1,7 +1,0 @@
-
-/gate/random/setEngineSeed auto
-/gate/application/noGlobalOutput
-
-/gate/application/setTotalNumberOfPrimaries 10000000
-/gate/application/start
-
