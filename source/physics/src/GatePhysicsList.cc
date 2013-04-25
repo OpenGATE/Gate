@@ -14,6 +14,7 @@
 #define GATEPHYSICSLIST_CC
 
 #include "G4ParticleDefinition.hh"
+#include "G4Hybridino.hh"
 #include "G4ParticleWithCuts.hh"
 #include "G4ProcessManager.hh"
 #include "G4BosonConstructor.hh"
@@ -263,7 +264,11 @@ void GatePhysicsList::ConstructParticle()
 
   //  Construct  resonaces and quarks
   G4ShortLivedConstructor slive;
-  slive.ConstructParticle();  
+  slive.ConstructParticle(); 
+  
+  //  Construct hybridino 
+  G4Hybridino::HybridinoDefinition();
+
 
   //#ifdef GATE_USE_OPTICAL
   //G4OpticalPhoton::OpticalPhotonDefinition();

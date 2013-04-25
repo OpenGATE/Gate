@@ -168,7 +168,6 @@ void GateHybridDoseActor::Construct() {
 /// Save data
 void GateHybridDoseActor::SaveData() {
   std::cout.precision(20);
-  GateVActor::SaveData();
   // GateMessage("Actor", 0, " output energy : " << outputEnergy << G4endl);
   // GateMessage("Actor", 0, " total energy : " << totalEnergy << G4endl);
   // GateMessage("Actor", 0, " sum : " << totalEnergy+outputEnergy << G4endl);
