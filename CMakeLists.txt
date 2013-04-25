@@ -58,7 +58,8 @@ OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
 OPTION(GATE_ANALYSIS_USE_GENERAL "Gate use  G4ANALYSIS_USE_GENERAL (Recommanded)" ON)
 OPTION(GATE_ANALYSIS_USE_FILE "Gate use G4ANALYSIS_USE_FILE (Recommanded)" ON)
 OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4 (this is REQUIRED !)" ON)
-OPTION(GATE_USE_GPU "Gate use GPU (voxelized src and tracking), need CUDA " OFF)
+OPTION(GATE_USE_GPU "Gate use GPU (voxelized src and tracking), need CUDA" OFF)
+OPTION(GATE_USE_RTK "Gate use RTK (for hybrid simulation)" OFF)
 
 #=========================================================
 # ROOT
@@ -167,6 +168,37 @@ FILE(GLOB headers
 	${PROJECT_SOURCE_DIR}/source/gpu/include/*.hh)
 
 #=========================================================
+# RTK
+IF(GATE_USE_RTK)
+
+# FIND_PACKAGE(ITK)
+# IF(ITK_FOUND)
+#   INCLUDE(${ITK_USE_FILE})
+#   if(${ITK_VERSION_MAJOR} EQUAL 3)
+#     # Check that the ITK_USE_REVIEW is ON
+#     if(NOT ITK_USE_REVIEW)
+#       message(FATAL_ERROR "Please set ITK_USE_REVIEW to ON when configuring ITK before using RTK")
+#     endif(NOT ITK_USE_REVIEW)
+#   endif(${ITK_VERSION_MAJOR} EQUAL 3)
+# ELSE(ITK_FOUND)
+#   MESSAGE(FATAL_ERROR "Cannot build without ITK. Set ITK_DIR.")
+# ENDIF(ITK_FOUND)
+
+
+   #MESSAGE("use rtk on")
+   FIND_PACKAGE(RTK REQUIRED)
+   #MESSAGE("${RTK_USE_FILE}")
+   INCLUDE(${RTK_USE_FILE})
+   #MESSAGE("lib = ${RTK_LIBRARIES}")
+   STRING(REPLACE "-pedantic" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
+ELSE()
+   SET(ITK_LIBRARIES ITKMetaIO itkzlib)
+ENDIF()
+
+#ADD_SUBDIRECTORY(source/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
+
+#=========================================================
 # Add the executable, and link it to the Geant4 libraries
 IF(GATE_USE_GPU AND CUDA_FOUND)
     SET(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20;-gencode arch=compute_30,code=sm_30;-use_fast_math;-w;--ptxas-options=-v")
@@ -175,11 +207,15 @@ ELSE(GATE_USE_GPU AND CUDA_FOUND)
     ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
 ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 
-TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ITKMetaIO itkzlib)
+TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} ${RTK_LIBRARIES})
 
 #=========================================================
-# TRIAL ITK
-ADD_SUBDIRECTORY(source/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
+# MHD management from ITK
+IF(GATE_USE_RTK)
+ #MESSAGE("no need mhd")
+ELSE(GATE_USE_RTK)
+ ADD_SUBDIRECTORY(source/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
+ENDIF(GATE_USE_RTK)
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
