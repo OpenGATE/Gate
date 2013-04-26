@@ -792,10 +792,10 @@ void GateImage::Read(G4String filename) {
   else if (extension == "hdr") ReadAnalyze(filename);
   else if (extension == "img") ReadAnalyze(filename);
   else if (extension == "img.gz") ReadAnalyze(filename);
-  else if (extension == "mhd") ReadMHD(filename);
+  else if (extension == "mhd" || extension == "mha") ReadMHD(filename);
   else {
-    // GateError( "Unknow image file extension. Knowns extensions are : "
-    //	   << G4endl << ".vox, .hdr, .img " << G4endl);
+    GateError( "Unknow image file extension. Knowns extensions are : "
+         << G4endl << ".vox, .hdr, .img, .mhd, .mha" << G4endl);
     exit(0);
   }
 }
@@ -1209,7 +1209,7 @@ void GateImage::Write(G4String filename, const G4String & comment) {
 	  WriteBin(os);
 	}
         else {
-          if (extension == "mhd") {
+          if (extension == "mhd" || extension == "mha") {
             WriteMHD(filename);
           }
           else {
@@ -1370,7 +1370,7 @@ GateImage::PixelType GateImage::GetNeighborValueFromCoordinate(const ESide & sid
   case kMZ:c.setZ(coord.z()-1); /*if (coord.z() <0) ttt=0;*/  break;
   case kPZ:c.setZ(coord.z()+1); /*if (coord.z() >= GetResolution().z()) ttt=0;*/  break;
 
-  default:;// ttt=0;
+  default: break; // ttt=0; // kUndefined
     //	GateError("I don't know side = " << side);
   }
 
