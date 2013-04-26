@@ -144,6 +144,8 @@ void ReadTimeDoubleValue(std::string filename, std::string name,
 int GetIndexFromTime(std::vector<double> & mTimeList, double aTime);
 
 //-----------------------------------------------------------------------------
+G4String GetSaveCurrentFilename(G4String & mSaveFilename);
+
 
 #include "GateMiscFunctions.icc"
 
