@@ -40,6 +40,7 @@ GateActorMessenger::~GateActorMessenger()
   delete pSaveEveryNEventsCmd; 
   delete pSaveEveryNSecondsCmd; 
   delete pAddFilterCmd;
+  delete pSetOverWriteFilesFlagCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -64,9 +65,19 @@ void GateActorMessenger::BuildCommands(G4String base)
 
   bb = base+"/saveEveryNEvents";
   pSaveEveryNEventsCmd = new G4UIcmdWithAnInteger(bb,this);
-  guidance = "Save sensor every n events.";
+  guidance = "Save sensor every n Events.";
   pSaveEveryNEventsCmd->SetGuidance(guidance);
   pSaveEveryNEventsCmd->SetParameterName("Event number",false);
+
+  bb = base+"/setOverWriteFilesFlag";
+  pSetOverWriteFilesFlagCmd = new G4UIcmdWithABool(bb, this); 
+  guidance = G4String("True by default, if false change the filename every time the outputs are written (append the current run & event ID to the filename). Do not work for root output.");
+  pSetOverWriteFilesFlagCmd->SetGuidance(guidance);
+
+  bb = base+"/setResetDataAtEachRunFlag";
+  pSetResetDataAtEachRunFlagCmd = new G4UIcmdWithABool(bb, this); 
+  guidance = G4String("Reset data values at the end of each run.");
+  pSetResetDataAtEachRunFlagCmd->SetGuidance(guidance);
 
   bb = base+"/saveEveryNSeconds";
   pSaveEveryNSecondsCmd = new G4UIcmdWithAnInteger(bb,this);
@@ -87,20 +98,27 @@ void GateActorMessenger::BuildCommands(G4String base)
 //-----------------------------------------------------------------------------
 void GateActorMessenger::SetNewValue(G4UIcommand* command, G4String param)
 {
-  if(command == pSetVolumeNameCmd)
-    {
-      pActor->SetVolumeName(param);
-      pActor->AttachToVolume(param);
-    }
+  if(command == pSetVolumeNameCmd) {
+    pActor->SetVolumeName(param);
+    pActor->AttachToVolume(param);
+  }
+  
   if(command == pSetFileNameCmd) pActor->SetSaveFilename(param);
+  
   if(command == pSaveEveryNEventsCmd)
     pActor->EnableSaveEveryNEvents(pSaveEveryNEventsCmd->GetNewIntValue(param));
+  
   if(command == pSaveEveryNSecondsCmd)
     pActor->EnableSaveEveryNSeconds(pSaveEveryNSecondsCmd->GetNewIntValue(param));
+  
+  if (command == pSetOverWriteFilesFlagCmd) 
+    pActor->SetOverWriteFilesFlag(pSetOverWriteFilesFlagCmd->GetNewBoolValue(param));
+  
+  if (command == pSetResetDataAtEachRunFlagCmd) 
+    pActor->EnableResetDataAtEachRun(pSetResetDataAtEachRunFlagCmd->GetNewBoolValue(param));
+  
   if(command == pAddFilterCmd) 
     GateActorManager::GetInstance()->AddFilter(param, pActor->GetObjectName() );
-
-
 }
 //-----------------------------------------------------------------------------
 
