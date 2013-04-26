@@ -1209,7 +1209,7 @@ void GateImage::Write(G4String filename, const G4String & comment) {
 	  WriteBin(os);
 	}
         else {
-          if (extension == "mhd" || extension == "mha") {
+          if (extension == "mhd") {
             WriteMHD(filename);
           }
           else {
@@ -1217,8 +1217,8 @@ void GateImage::Write(G4String filename, const G4String & comment) {
               WriteRoot(filename);
             }
             else {
-              //GateMessage("Image",1,"WARNING : Don't know how to write '" << extension 
-              //	   << " format... I try ASCII file" << G4endl);
+              GateMessage("Image",0,"WARNING : Don't know how to write '" << extension 
+                          << " format... I try ASCII file" << G4endl);
               // open
               OpenFileOutput(filename, os);
               WriteAscii(os, comment);
