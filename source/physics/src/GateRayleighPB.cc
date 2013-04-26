@@ -83,7 +83,10 @@ void GateRayleighPB::AddUserDataSet(G4String ){}
 
 //-----------------------------------------------------------------------------
 void GateRayleighPB::AddUserModel(GateListOfHadronicModels *model){
-
+  if(model->GetModelName() == "StandardModel")
+  {
+    // Default one
+  }
   if(model->GetModelName() == "LivermoreModel")
   {
     G4LivermoreRayleighModel* theLivermoreRayleighModel = new G4LivermoreRayleighModel();
