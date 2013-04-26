@@ -47,7 +47,6 @@ GateImage::GateImage() {
 //-----------------------------------------------------------------------------
 GateImage::~GateImage() {
    data.clear();
-
 }
 //-----------------------------------------------------------------------------
 
@@ -451,6 +450,7 @@ int GateImage::GetIndexFromPostPosition(const G4ThreeVector& pre,
 //-----------------------------------------------------------------------------
 int GateImage::GetIndexFromPrePosition(const G4ThreeVector& pre, 
 				       const G4ThreeVector& post) const{
+  GateError("BUG. Do not use GetIndexFromPrePosition");
   //std::cout.precision(20);
   // TEMP GateDebugMessage("Image",9,"GetIndex pre  : " << pre << G4endl);
   // TEMP GateDebugMessage("Image",9,"GetIndex post : " << post << G4endl);
@@ -573,6 +573,7 @@ int GateImage::GetIndexFromPrePosition(const double t,
 				       const double postt, 
 				       const double //resolutiont
 				       ) const{
+  GateError("BUG. Do not use GetIndexFromPrePosition(t, pret ...)");
   int ft = (int)floor(t);
   int ct = (int)ceil(t);
   // // TEMP GateDebugMessage("Image",9,"kCarTolerance = " << kCarTolerance
