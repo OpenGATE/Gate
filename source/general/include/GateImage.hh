@@ -81,6 +81,8 @@ public:
   inline G4ThreeVector GetOrigin()     const { return origin; }
   void SetOrigin(G4ThreeVector o) { origin = o; }
 
+  const std::vector<double> & GetTransformMatrix() const { return transformMatrix; }
+
   bool HasSameResolutionThan(const GateImage & image) const;
   bool HasSameResolutionThan(const GateImage * pImage) const;
 
@@ -190,6 +192,7 @@ protected:
   G4ThreeVector resolution;
   G4ThreeVector voxelSize;
   G4ThreeVector origin;
+  std::vector<double> transformMatrix;
   G4double      voxelVolume;
   G4double      kCarTolerance;
   G4ThreeVector halfSizeMinusVoxelCenter;

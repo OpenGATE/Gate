@@ -38,6 +38,11 @@ GateImage::GateImage() {
   resolution = G4ThreeVector(0.0, 0.0, 0.0);
   mPosition = G4ThreeVector(0.0, 0.0, 0.0);
   origin = G4ThreeVector(0.0, 0.0, 0.0);
+  transformMatrix.resize(9);
+  transformMatrix.clear();
+  transformMatrix[0] = 1;
+  transformMatrix[4] = 1;
+  transformMatrix[8] = 1; // Identity
   UpdateSizesFromResolutionAndHalfSize();
   mOutsideValue = 0;
   kCarTolerance = G4GeometryTolerance::GetInstance()->GetSurfaceTolerance();
@@ -1043,6 +1048,9 @@ void GateImage::ReadMHD(G4String filename) {
   resolution = G4ThreeVector(mhd->size[0], mhd->size[1], mhd->size[2]);
   voxelSize = G4ThreeVector(mhd->spacing[0], mhd->spacing[1], mhd->spacing[2]);
   origin = G4ThreeVector(mhd->origin[0], mhd->origin[1], mhd->origin[2]);
+  transformMatrix.resize(9);
+  for(int i=0; i<9; i++) transformMatrix[i] = mhd->transform[i];
+
   UpdateSizesFromResolutionAndVoxelSize();
   Allocate();
   

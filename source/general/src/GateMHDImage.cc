@@ -67,6 +67,11 @@ void GateMHDImage::ReadHeader(std::string & filename)
     spacing[i] = m_MetaImage.ElementSpacing(i);
     origin[i] = m_MetaImage.Position(i);
   } 
+
+  transform.resize(9);
+  for(int i=0; i<9; i++) { // 3 x 3 matrix
+    transform[i] = m_MetaImage.TransformMatrix()[i];
+  }
   //  Print();
 }
 //-----------------------------------------------------------------------------
@@ -258,6 +263,9 @@ void GateMHDImage::WriteHeader(std::string filename, GateImage * image, bool wri
   p[1] = image->GetOrigin().y();
   p[2] = image->GetOrigin().z();
   m_MetaImage.Position(p);
+  
+  // Transform
+  m_MetaImage.TransformMatrix(&image->GetTransformMatrix()[0]); // FIXME
 
   if (writeData) {
     m_MetaImage.ElementData(&(image->begin()[0]), false); // true = autofree

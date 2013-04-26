@@ -43,7 +43,7 @@ public:
   std::vector<double> size;
   std::vector<double> spacing;
   std::vector<double> origin;
-
+  std::vector<double> transform;
   //-----------------------------------------------------------------------------
 protected:
   std::vector<std::string> tags;
