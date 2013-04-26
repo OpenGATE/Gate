@@ -113,7 +113,7 @@ protected:
   bool mIsRBE1BioDoseImageEnabled;
   bool mIsRBE1Enabled;
   bool mIsRBE1Test1Enabled;
- 
+
   GateImageWithStatistic mEdepImage;
   GateImageWithStatistic mDoseImage;
   GateImageWithStatistic mDoseToWaterImage;
