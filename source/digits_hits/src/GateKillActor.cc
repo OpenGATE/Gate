@@ -68,6 +68,7 @@ G4bool GateKillActor::ProcessHits(G4Step * step , G4TouchableHistory* )
 /// Save data
 void GateKillActor::SaveData()
 {
+  GateVActor::SaveData();
   if (mSaveFilename == "FilnameNotGivenForThisActor") return;
   std::ofstream os;
   OpenFileOutput(mSaveFilename, os);

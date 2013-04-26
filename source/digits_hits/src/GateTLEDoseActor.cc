@@ -79,6 +79,7 @@ void GateTLEDoseActor::Construct() {
     mEdepImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mEdepImage.Allocate();
     mEdepImage.SetFilename(mEdepFilename);
+    mEdepImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
   }
 
   if (mIsDoseImageEnabled) {
@@ -87,8 +88,8 @@ void GateTLEDoseActor::Construct() {
     mDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mDoseImage.Allocate();
     mDoseImage.SetFilename(mDoseFilename);
-  }
- 
+    mDoseImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
+  } 
  
   ConversionFactor = 1.60217653e-19 * 1.e6 * 1.e2 * 1.e3;
   VoxelVolume = GetDoselVolume();
@@ -100,6 +101,7 @@ void GateTLEDoseActor::Construct() {
 //-----------------------------------------------------------------------------
 /// Save data
 void GateTLEDoseActor::SaveData() {
+  GateVActor::SaveData();
   if (mIsDoseImageEnabled) mDoseImage.SaveData(mCurrentEvent+1, false);
   if (mIsEdepImageEnabled) mEdepImage.SaveData(mCurrentEvent+1, false);
   if (mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1);

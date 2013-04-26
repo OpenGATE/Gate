@@ -72,6 +72,7 @@ void GateTrackLengthActor::Construct()
 /// Save data
 void GateTrackLengthActor::SaveData()
 {
+  GateVActor::SaveData();
   pTfile->Write();
 }
 //-----------------------------------------------------------------------------
