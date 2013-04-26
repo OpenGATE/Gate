@@ -58,7 +58,7 @@ void GateQvalueActor::Construct() {
   mQvalueImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mQvalueImage.Allocate();
   mQvalueImage.SetFilename(mQvalueFilename);
-
+  mQvalueImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
 }
 //-----------------------------------------------------------------------------
 
@@ -66,13 +66,11 @@ void GateQvalueActor::Construct() {
 //-----------------------------------------------------------------------------
 /// Save data
 void GateQvalueActor::SaveData() {
-  mQvalueImage.SaveData(mCurrentEvent+1);
- 
+  GateVActor::SaveData();
+  mQvalueImage.SaveData(mCurrentEvent+1); 
   G4cout<<std::endl;
-
   for (std::map<G4String,G4double>::iterator it=listOfEmiss.begin(); it!=listOfEmiss.end(); it++)
     G4cout<<(*it).first<<"  "<<(*it).second<<std::endl;
-
 }
 //-----------------------------------------------------------------------------
 
