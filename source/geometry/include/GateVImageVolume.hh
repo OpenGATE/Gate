@@ -216,6 +216,7 @@ protected:
   //G4ThreeVector mOrigin;
   G4bool        mOriginIsSetByUser;
   G4ThreeVector mInitialTranslation;
+  std::vector<double> mTransformMatrix;
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------

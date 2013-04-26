@@ -56,6 +56,7 @@ protected:
   G4UIcmdWithABool* pEnableTimeCmd;
   G4UIcmdWithABool* pEnableMassCmd;
   G4UIcmdWithABool* pEnableSecCmd;
+  G4UIcmdWithABool* pEnableStoreAllStepCmd;
   G4UIcmdWithoutParameter* pCoordinateInVolumeFrameCmd;
   G4UIcmdWithADoubleAndUnit* pMaxSizeCmd;
   G4UIcmdWithoutParameter * pInOrOutGoingParticlesCmd;

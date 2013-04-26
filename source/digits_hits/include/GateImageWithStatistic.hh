@@ -84,6 +84,10 @@ class GateImageWithStatistic
   G4String mSquaredFilename;
   G4String mUncertaintyFilename;
 
+  G4String mInitialFilename;
+  G4String mSquaredInitialFilename;
+  G4String mUncertaintyInitialFilename;
+
   int mValueFD;
   int mSquaredFD;
   int mUncertaintyFD;  

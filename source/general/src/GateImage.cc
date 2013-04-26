@@ -38,6 +38,11 @@ GateImage::GateImage() {
   resolution = G4ThreeVector(0.0, 0.0, 0.0);
   mPosition = G4ThreeVector(0.0, 0.0, 0.0);
   origin = G4ThreeVector(0.0, 0.0, 0.0);
+  transformMatrix.resize(9);
+  transformMatrix.clear();
+  transformMatrix[0] = 1;
+  transformMatrix[4] = 1;
+  transformMatrix[8] = 1; // Identity
   UpdateSizesFromResolutionAndHalfSize();
   mOutsideValue = 0;
   kCarTolerance = G4GeometryTolerance::GetInstance()->GetSurfaceTolerance();
@@ -47,7 +52,6 @@ GateImage::GateImage() {
 //-----------------------------------------------------------------------------
 GateImage::~GateImage() {
    data.clear();
-
 }
 //-----------------------------------------------------------------------------
 
@@ -451,6 +455,7 @@ int GateImage::GetIndexFromPostPosition(const G4ThreeVector& pre,
 //-----------------------------------------------------------------------------
 int GateImage::GetIndexFromPrePosition(const G4ThreeVector& pre, 
 				       const G4ThreeVector& post) const{
+  GateError("BUG. Do not use GetIndexFromPrePosition");
   //std::cout.precision(20);
   // TEMP GateDebugMessage("Image",9,"GetIndex pre  : " << pre << G4endl);
   // TEMP GateDebugMessage("Image",9,"GetIndex post : " << post << G4endl);
@@ -573,6 +578,7 @@ int GateImage::GetIndexFromPrePosition(const double t,
 				       const double postt, 
 				       const double //resolutiont
 				       ) const{
+  GateError("BUG. Do not use GetIndexFromPrePosition(t, pret ...)");
   int ft = (int)floor(t);
   int ct = (int)ceil(t);
   // // TEMP GateDebugMessage("Image",9,"kCarTolerance = " << kCarTolerance
@@ -791,10 +797,10 @@ void GateImage::Read(G4String filename) {
   else if (extension == "hdr") ReadAnalyze(filename);
   else if (extension == "img") ReadAnalyze(filename);
   else if (extension == "img.gz") ReadAnalyze(filename);
-  else if (extension == "mhd") ReadMHD(filename);
+  else if (extension == "mhd" || extension == "mha") ReadMHD(filename);
   else {
-    // GateError( "Unknow image file extension. Knowns extensions are : "
-    //	   << G4endl << ".vox, .hdr, .img " << G4endl);
+    GateError( "Unknow image file extension. Knowns extensions are : "
+         << G4endl << ".vox, .hdr, .img, .mhd, .mha" << G4endl);
     exit(0);
   }
 }
@@ -1042,6 +1048,9 @@ void GateImage::ReadMHD(G4String filename) {
   resolution = G4ThreeVector(mhd->size[0], mhd->size[1], mhd->size[2]);
   voxelSize = G4ThreeVector(mhd->spacing[0], mhd->spacing[1], mhd->spacing[2]);
   origin = G4ThreeVector(mhd->origin[0], mhd->origin[1], mhd->origin[2]);
+  transformMatrix.resize(9);
+  for(int i=0; i<9; i++) transformMatrix[i] = mhd->transform[i];
+
   UpdateSizesFromResolutionAndVoxelSize();
   Allocate();
   
@@ -1216,8 +1225,8 @@ void GateImage::Write(G4String filename, const G4String & comment) {
               WriteRoot(filename);
             }
             else {
-              //GateMessage("Image",1,"WARNING : Don't know how to write '" << extension 
-              //	   << " format... I try ASCII file" << G4endl);
+              GateMessage("Image",0,"WARNING : Don't know how to write '" << extension 
+                          << " format... I try ASCII file" << G4endl);
               // open
               OpenFileOutput(filename, os);
               WriteAscii(os, comment);
@@ -1369,7 +1378,7 @@ GateImage::PixelType GateImage::GetNeighborValueFromCoordinate(const ESide & sid
   case kMZ:c.setZ(coord.z()-1); /*if (coord.z() <0) ttt=0;*/  break;
   case kPZ:c.setZ(coord.z()+1); /*if (coord.z() >= GetResolution().z()) ttt=0;*/  break;
 
-  default:;// ttt=0;
+  default: break; // ttt=0; // kUndefined
     //	GateError("I don't know side = " << side);
   }
 

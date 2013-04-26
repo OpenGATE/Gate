@@ -444,7 +444,7 @@ void GateApplicationMgr::StartDAQ()
 
   G4int slice=0;
   while ((m_time < m_timeStop) && (!m_exitFlag) && (!m_pauseFlag)) {
-     GateMessage("Acquisition", 0, G4endl);
+    //  GateMessage("Acquisition", 0, G4endl);
 
     double time1 = GetTimeStart();
     double time2 = 0.;

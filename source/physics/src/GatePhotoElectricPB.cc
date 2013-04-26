@@ -82,7 +82,10 @@ void GatePhotoElectricPB::AddUserDataSet(G4String ){}
 
 //-----------------------------------------------------------------------------
 void GatePhotoElectricPB::AddUserModel(GateListOfHadronicModels *model){
-
+  if(model->GetModelName() == "StandardModel")
+  {
+    // default one
+  }
 
   if(model->GetModelName() == "LivermoreModel")
   {

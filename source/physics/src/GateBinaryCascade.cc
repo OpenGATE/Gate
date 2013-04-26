@@ -2281,7 +2281,7 @@ G4Fragment * GateBinaryCascade::FindFragments()
   }
 
   G4int zCaptured = 0;
-  G4LorentzVector CapturedMomentum=0;
+  G4LorentzVector CapturedMomentum(0);
   for(i = theCapturedList.begin(); i != theCapturedList.end(); ++i)
   {
       CapturedMomentum += (*i)->Get4Momentum();

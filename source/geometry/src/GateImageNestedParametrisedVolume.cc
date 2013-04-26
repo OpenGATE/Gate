@@ -76,7 +76,7 @@ G4LogicalVolume* GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalV
 
   //---------------------------
   if (mIsBoundingBoxOnlyModeEnabled) {
-    // Create on single big pixel
+    // Create few pixels
     G4ThreeVector r(1,2,3);
     G4ThreeVector s(GetImage()->GetSize().x()/1.0, 
                     GetImage()->GetSize().y()/2.0, 
@@ -273,8 +273,8 @@ void GateImageNestedParametrisedVolume::GetPhysVolForAVoxel(const G4int index,
   }
 
   G4VSolid * pSolid = 0;	
-	//G4Material * pMat = 0;
-// Get solid (no computation)
+  //G4Material * pMat = 0;
+  // Get solid (no computation)
   pSolid = mVoxelParametrisation->ComputeSolid(index, pPhysVol);
 
   if (!pSolid) {
