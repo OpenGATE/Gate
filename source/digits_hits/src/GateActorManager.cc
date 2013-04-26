@@ -193,6 +193,7 @@ void GateActorManager::EndOfRunAction(const G4Run* run)
 //-----------------------------------------------------------------------------
 void GateActorManager::BeginOfEventAction(const G4Event* evt)
 {
+  if (evt) mCurrentEventId = evt->GetEventID();
   std::vector<GateVActor*>::iterator sit;
   for(sit = theListOfActorsEnabledForBeginOfEvent.begin(); sit!=theListOfActorsEnabledForBeginOfEvent.end(); ++sit)
     (*sit)->BeginOfEventAction(evt);
