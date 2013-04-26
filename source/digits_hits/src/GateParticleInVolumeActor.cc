@@ -23,12 +23,9 @@
 GateParticleInVolumeActor::GateParticleInVolumeActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
   GateDebugMessageInc("Actor",4,"GateParticleInVolumeActor() -- begin"<<G4endl);
-
   outsideTrack = false;
-  mIsParticleInVolumeImageEnabled = true;
- 
+  mIsParticleInVolumeImageEnabled = true; 
   pMessenger = new GateImageActorMessenger(this);
-
   GateDebugMessageDec("Actor",4,"GateParticleInVolumeActor() -- end"<<G4endl);
 }
 //-----------------------------------------------------------------------------
@@ -53,10 +50,6 @@ void GateParticleInVolumeActor::Construct() {
   EnablePreUserTrackingAction(true);
   EnableUserSteppingAction(true);
 
- 
-  //mParticleInVolumeFilename = G4String(removeExtension(mSaveFilename))+"-ParticleInVolume."+G4String(getExtension(mSaveFilename));
-  mParticleInVolumeFilename = mSaveFilename;
-
   // Resize and allocate images
   mLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mLastHitEventImage.Allocate();
@@ -64,7 +57,6 @@ void GateParticleInVolumeActor::Construct() {
 
   mParticleInVolumeImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mParticleInVolumeImage.Allocate();
-  //mParticleInVolumeImage.SetFilename(mParticleInVolumeFilename);;
 
   ResetData();
   GateMessageDec("Actor", 4, "GateParticleInVolumeActor -- Construct - end" << G4endl);
@@ -75,17 +67,16 @@ void GateParticleInVolumeActor::Construct() {
 //-----------------------------------------------------------------------------
 /// Save data
 void GateParticleInVolumeActor::SaveData() {
-
-  mParticleInVolumeImage.Write(mParticleInVolumeFilename);
-  
+  GateVActor::SaveData();
+  mParticleInVolumeImage.Write(mSaveFilename);  
   mLastHitEventImage.Fill(-1); // reset
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateParticleInVolumeActor::ResetData() {
-  mLastHitEventImage.Fill(-1);
   mParticleInVolumeImage.Fill(0);
+  mLastHitEventImage.Fill(-1);
 }
 //-----------------------------------------------------------------------------
 
