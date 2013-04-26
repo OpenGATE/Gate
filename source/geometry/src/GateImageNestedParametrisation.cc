@@ -86,7 +86,7 @@ G4Material* GateImageNestedParametrisation::ComputeMaterial(G4VPhysicalVolume* /
 							    const G4int copyNo,
 							    const G4VTouchable* parentTouch)
 {
-  if ( parentTouch == NULL ) {
+   if ( parentTouch == 0 ) { // FIXME replace NULL by 0. Done
     // GateDebugMessage("Volume",6,"GateImageNestedParametrisation::ComputeMaterial parent=0" 
     // 		     << physVol->GetName() << " copy=" << copyNo
     // 		     << " mat = " << copyNo
@@ -107,9 +107,9 @@ G4Material* GateImageNestedParametrisation::ComputeMaterial(G4VPhysicalVolume* /
   GateDebugMessage("Volume",6,"GateImageNestedParametrisation::ComputeMaterial lab " 
 		   << lab << G4endl);
  
-  // assert to be removed ?
-  assert(lab>=0);
-  assert(lab<(int)mVectorLabel2Material.size());
+  // assert to be removed ? // Done.
+  // assert(lab>=0);
+  // assert(lab<(int)mVectorLabel2Material.size());
   
   // Get material from label
   G4Material* mat = mVectorLabel2Material[lab];
@@ -119,6 +119,7 @@ G4Material* GateImageNestedParametrisation::ComputeMaterial(G4VPhysicalVolume* /
   return mat;
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 G4int GateImageNestedParametrisation::GetNumberOfMaterials() const
