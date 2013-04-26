@@ -198,7 +198,7 @@ void GateDiffCrossSectionActor::Construct()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateDiffCrossSectionActor::BeginOfRunAction(const G4Run* run)
+void GateDiffCrossSectionActor::BeginOfRunAction(const G4Run*)
 {
   G4cout << "*******************************************" << G4endl;
   G4double scatteringFunction, formFactor, Theta, cosT, sinT, sinT2, E_in, Ecompton, eRadiusTerm, DCSKleinNishinaTerm1, DCSKleinNishinaTerm2, DCSKleinNishina, DCSThomsonTerm1, DCSThomson, xi, DCScompton, DCSrayleigh, e0m;
