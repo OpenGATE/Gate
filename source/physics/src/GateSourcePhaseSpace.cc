@@ -103,9 +103,6 @@ GateSourcePhaseSpace::~GateSourcePhaseSpace()
    free(pIAEARecordType);
    pIAEAheader = 0;
    pIAEARecordType = 0;
-
-   delete pParticle;
-   delete pVertex;  
 }
 // ----------------------------------------------------------------------------------
 
