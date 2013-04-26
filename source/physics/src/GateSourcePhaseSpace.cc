@@ -126,7 +126,9 @@ void GateSourcePhaseSpace::Initialize()
     mTotalNumberOfParticles = T->GetEntries();
     mNumberOfParticlesInFile = mTotalNumberOfParticles;
 
-    T->SetBranchAddress("ParticleName",&particleName);
+    if (T->GetListOfBranches()->FindObject("Particlename")) {
+      T->SetBranchAddress("ParticleName",&particleName);
+    }
     T->SetBranchAddress("Ekine",&energy);
     T->SetBranchAddress("X",&x);
     T->SetBranchAddress("Y",&y);
@@ -135,7 +137,9 @@ void GateSourcePhaseSpace::Initialize()
     T->SetBranchAddress("dY",&dy);
     T->SetBranchAddress("dZ",&dz);
     T->SetBranchAddress("Weight",&weight);
-    T->SetBranchAddress("Time",&t);
+    if (T->GetListOfBranches()->FindObject("Time")) {
+      T->SetBranchAddress("Time",&t);
+    }
 
     if(mRmax>0){
        for(int i = 0; i < mTotalNumberOfParticles;i++){
