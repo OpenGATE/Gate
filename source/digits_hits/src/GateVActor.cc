@@ -9,13 +9,16 @@
   ----------------------*/
 
 
-#include "GateVActor.hh"
 #include "G4Event.hh"
+
+#include "GateVActor.hh"
 #include "GateActorMessenger.hh"
+#include "GateActorManager.hh"
+#include "GateMiscFunctions.hh"
+
 #include <sys/time.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "GateActorManager.hh"
 
 //-----------------------------------------------------------------------------
 GateVActor::GateVActor(G4String name, G4int depth)
@@ -29,16 +32,20 @@ GateVActor::GateVActor(G4String name, G4int depth)
   EnablePreUserTrackingAction(false);
   EnablePostUserTrackingAction(false);
   EnableUserSteppingAction(false);
+  EnableResetDataAtEachRun(false);
   mSaveFilename = "FilnameNotGivenForThisActor";
+  mSaveInitialFilename = mSaveFilename;
   mVolumeName = "";
   mVolume = 0;  
   EnableSaveEveryNEvents(0);
   EnableSaveEveryNSeconds(0);
   mNumOfFilters = 0;
+  mOverWriteFilesFlag = true;
   pFilterManager = new GateFilterManager(GetObjectName()+"_filter");
   GateDebugMessageDec("Actor",4,"GateVActor() -- end"<<G4endl);
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 GateVActor::~GateVActor()
@@ -49,13 +56,18 @@ GateVActor::~GateVActor()
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 // default callback for BeginOfRunAction 
 void GateVActor::BeginOfRunAction(const G4Run*) 
 {
   gettimeofday(&mTimeOfLastSaveEvent, NULL);
+  if (mResetDataAtEachRun) {
+    ResetData();
+  }
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 // default callback for EndOfRunAction allowing to call Save
@@ -64,6 +76,7 @@ void GateVActor::EndOfRunAction(const G4Run*)
   SaveData();
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 // default callback for EndOfEventAction allowing to call
@@ -90,12 +103,15 @@ void GateVActor::EndOfEventAction(const G4Event*e)
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateVActor::SetSaveFilename(G4String  f) 
 {
   mSaveFilename = f;
+  mSaveInitialFilename = f;
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateVActor::AttachToVolume(G4String /*volumeName*/)
@@ -112,3 +128,11 @@ void GateVActor::AttachToVolume(G4String /*volumeName*/)
 //-----------------------------------------------------------------------------
 
 
+//-----------------------------------------------------------------------------
+void GateVActor::SaveData()
+{  
+  if (!this->mOverWriteFilesFlag) {
+    mSaveFilename = GetSaveCurrentFilename(mSaveInitialFilename);
+  }
+}
+//-----------------------------------------------------------------------------
