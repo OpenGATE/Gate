@@ -214,20 +214,6 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
     SetScaleFactor(factor*1.0/sum);
   }
 
-  G4String pf = mFilename;
-  G4String psf = mSquaredFilename;
-  G4String muf = mUncertaintyFilename;
-  if (!mOverWriteFilesFlag) {
-    G4String extension = "."+getExtension(mFilename);
-    G4String v = "_"+DoubletoString(numberOfEvents);
-    mFilename = G4String(removeExtension(mFilename))+v+extension;
-    mSquaredFilename = G4String(removeExtension(mSquaredFilename))+v+extension;
-    mUncertaintyFilename = G4String(removeExtension(mUncertaintyFilename))+v+extension;
-    DD(mFilename);
-    DD(mSquaredFilename);
-    DD(mUncertaintyFilename);
-  }
-
   GateMessage("Actor", 2, "Save " << mFilename << " with scaling = " 
 	      << mScaleFactor << "(" << mIsValuesMustBeScaled << ")" << G4endl);
 
@@ -257,11 +243,6 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
     mSquaredImage.Write(mSquaredFilename); // force output of squared dose for grid 
   } 
 
-  if (!mOverWriteFilesFlag) { // Reset filename
-    mFilename = pf;
-    mSquaredFilename = psf;
-    mUncertaintyFilename = muf;
-  }
 }
 //-----------------------------------------------------------------------------
 
