@@ -35,10 +35,7 @@ See GATE/LICENSE.txt for further details
 #include <G4Event.hh>
 
 #include "GateMessageManager.hh"
-
 #include "GateVFilter.hh"
-
-
 #include "GateActorManagerMessenger.hh"
 #include "GateObjectChildList.hh"
 
@@ -105,6 +102,8 @@ public:
 
   std::vector<GateVActor*> & GetTheListOfActors() { return theListOfActors; }
 
+  G4int GetCurrentEventId() const { return mCurrentEventId; }
+
 protected:
   //std::vector<GateMultiSensitiveDetector*> theListOfMultiSensitiveDetector;
   std::vector<GateVActor*> theListOfActors;
@@ -117,6 +116,7 @@ protected:
   std::vector<GateVActor*> theListOfActorsEnabledForUserSteppingAction;
 
   GateActorManagerMessenger* pActorManagerMessenger;  //pointer to the Messenger
+  G4int mCurrentEventId;
 
 private:
   int IsInitialized;
