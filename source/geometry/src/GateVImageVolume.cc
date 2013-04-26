@@ -129,7 +129,7 @@ void GateVImageVolume::UpdatePositionWithIsoCenter()
                 << mTransformMatrix[2] << " " << mTransformMatrix[3] << " " 
                 << mTransformMatrix[4] << " " << mTransformMatrix[5] << " " 
                 << mTransformMatrix[6] << " " << mTransformMatrix[7] << " " 
-                << mTransformMatrix[8] << " " << mTransformMatrix[9]<< G4endl);
+                << mTransformMatrix[8] << " " << G4endl);
 
     // Take transformationMatrix into account
     G4ThreeVector iso = mIsoCenter;
