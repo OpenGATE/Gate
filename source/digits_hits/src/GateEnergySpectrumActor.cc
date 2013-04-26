@@ -100,6 +100,7 @@ void GateEnergySpectrumActor::Construct()
 /// Save data
 void GateEnergySpectrumActor::SaveData()
 {
+  GateVActor::SaveData();
   pTfile->Write();
   //pTfile->Close();
 }

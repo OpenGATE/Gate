@@ -29,7 +29,6 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   GateDebugMessageInc("Actor",4,"GateDoseActor() -- begin"<<G4endl);
 
   mCurrentEvent=-1;
-
   mIsEdepImageEnabled = false;
   mIsLastHitEventImageEnabled = false;
   mIsEdepSquaredImageEnabled = false;
@@ -50,17 +49,12 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mIsRBE1Enabled = false;
   mIsRBE1Test1Enabled = false;
   //mIsRBE1DoseAveragedLetIsEnabled = false;
-  mOverWriteFilesFlag = true;
-
   mRBE1AlphaDataFilename = "pleaseSetAlphaDataFilename.txt";
   mRBE1AlphaDataFilename = "pleaseSetBetaDataFilename.txt";
 
   pMessenger = new GateDoseActorMessenger(this);
-
-  GateDebugMessageDec("Actor",4,"GateDoseActor() -- end"<<G4endl);
-  
+  GateDebugMessageDec("Actor",4,"GateDoseActor() -- end"<<G4endl);  
   emcalc = new G4EmCalculator;
-
 }
 //-----------------------------------------------------------------------------
 
@@ -112,6 +106,7 @@ void GateDoseActor::Construct() {
   mRBE1BioDoseFilename = G4String(removeExtension(mSaveFilename))+"-RBE1-BioDose."+G4String(getExtension(mSaveFilename));
 
   
+  /*
   // Set origin, take into account the origin of the attached volume (if exist)
   G4VoxelLimits limits;
   G4double min, max;
@@ -133,7 +128,9 @@ void GateDoseActor::Construct() {
   offset[1] = mVolume->GetOrigin().y()+offset[1];
   offset[2] = mVolume->GetOrigin().z()+offset[2];
   offset = offset + mPosition;
-
+  */
+  
+  G4ThreeVector offset = mOrigin;
   mEdepImage.SetOrigin(offset);
   mDoseImage.SetOrigin(offset);
   mNumberOfHitsImage.SetOrigin(offset);
@@ -274,7 +271,8 @@ void GateDoseActor::Construct() {
 //-----------------------------------------------------------------------------
 /// Save data
 void GateDoseActor::SaveData() {
-
+  GateVActor::SaveData(); // (not needed because done into GateImageWithStatistic)
+    
   if (mIsEdepImageEnabled) mEdepImage.SaveData(mCurrentEvent+1);
   if (mIsDoseImageEnabled) {
     if (mIsDoseNormalisationEnabled)

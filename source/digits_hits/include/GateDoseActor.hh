@@ -87,7 +87,6 @@ class GateDoseActor : public GateVImageActor
   void ReadRBE1AlphaBetaFromFile(G4String filenameAlpha, G4String filenameBeta);
   void GetRBE1AlphaBetaFromLet(G4double let, G4double & alpha, G4double & beta);
   void ComputeRBE1ImageAndSave();
-  void SetOverWriteFilesFlag(bool b) { mOverWriteFilesFlag = b; }
 
 protected:
   GateDoseActor(G4String name, G4int depth=0);
@@ -114,7 +113,6 @@ protected:
   bool mIsRBE1BioDoseImageEnabled;
   bool mIsRBE1Enabled;
   bool mIsRBE1Test1Enabled;
-  bool mOverWriteFilesFlag;
 
   GateImageWithStatistic mEdepImage;
   GateImageWithStatistic mDoseImage;
