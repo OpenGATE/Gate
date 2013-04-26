@@ -28,12 +28,19 @@ ENDIF()
 # Build variables for G4 Version
 
 #MESSAGE("G4 Version ${Geant4_VERSION}")
-#STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\1" G4VERSION_MAJOR ${Geant4_VERSION})
-#STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\2" G4VERSION_MINOR ${Geant4_VERSION})
-#STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION})
+STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\1" G4VERSION_MAJOR ${Geant4_VERSION})
+STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\2" G4VERSION_MINOR ${Geant4_VERSION})
+STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION})
 #MESSAGE(${G4VERSION_MAJOR})
 #MESSAGE(${G4VERSION_MINOR})
 #MESSAGE(${G4VERSION_PATCH})
+
+IF(${G4VERSION_MINOR} EQUAL 6)
+  OPTION(Geant496_COMPATIBILITY "Compatibility with Geant4.9.6 version" ON)
+ELSE()
+  OPTION(Geant496_COMPATIBILITY "Compatibility with Geant4.9.6 version" OFF)
+ENDIF()
+
 
 #=========================================================
 # Option for Root use

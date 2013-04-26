@@ -198,9 +198,12 @@ G4HadFinalState * GateBinaryCascade::ApplyYourself(const G4HadProjectile & aTrac
       delete products;
       products=0;
     }
+    #ifdef Geant496_COMPATIBILITY
+      the3DNucleus->Init(aNucleus.GetA_asInt(), aNucleus.GetZ_asInt());
+    #else
+      the3DNucleus->Init(aNucleus.GetN(), aNucleus.GetZ());
+    #endif
 
-    //the3DNucleus->Init(aNucleus.GetA_asInt(), aNucleus.GetZ_asInt());
-    the3DNucleus->Init(aNucleus.GetN(), aNucleus.GetZ());
     thePropagator->Init(the3DNucleus);
     
     
@@ -1147,14 +1150,14 @@ G4bool GateBinaryCascade::ApplyCollision(G4CollisionInitialState * collision)
   primary->Set4Momentum(mom4Primary);
 
 
-  //G4int lateBaryon(0), lateCharge(0);
+  G4int lateBaryon(0), lateCharge(0);
 
   if ( lateParticleCollision )
   {  // for late particles, reset charges
         //G4cout << "lateP, initial B C state " << initialBaryon << " " 
         //        << initialCharge<< " " << primary->GetState() << " "<< primary->GetDefinition()->GetParticleName()<< G4endl;
-    //  lateBaryon = initialBaryon;
-      //lateCharge = initialCharge;
+      lateBaryon = initialBaryon;
+      lateCharge = initialCharge;
       initialBaryon=initialCharge=0;
   }
   
