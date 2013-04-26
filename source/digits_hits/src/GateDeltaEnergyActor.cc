@@ -73,7 +73,6 @@ void GateStoppingPowerActor::Construct() {
   mRelStopPowerFilename = G4String(removeExtension(mSaveFilename))+"-RelStopPower."+G4String(getExtension(mSaveFilename));
   mNbOfHitsFilename = G4String(removeExtension(mSaveFilename))+"-NbOfHits."+G4String(getExtension(mSaveFilename));
 
-
   // Resize and allocate images
   if (mIsStopPowerSquaredImageEnabled || mIsStopPowerUncertaintyImageEnabled ||
       mIsRelStopPowerSquaredImageEnabled || mIsRelStopPowerUncertaintyImageEnabled) {
@@ -88,6 +87,7 @@ void GateStoppingPowerActor::Construct() {
     mStopPowerImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mStopPowerImage.Allocate();
     mStopPowerImage.SetFilename(mStopPowerFilename);
+    mStopPowerImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
   }
   if (mIsRelStopPowerImageEnabled) {
     // mRelStopPowerImage.SetLastHitEventImage(&mLastHitEventImage);
@@ -98,13 +98,12 @@ void GateStoppingPowerActor::Construct() {
     //mRelStopPowerImage.SetScaleFactor(1e12/mRelStopPowerImage.GetVoxelVolume());
     mRelStopPowerImage.Allocate();
     mRelStopPowerImage.SetFilename(mRelStopPowerFilename);
+    mRelStopPowerImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
   }
   if (mIsNumberOfHitsImageEnabled) {
     mNumberOfHitsImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mNumberOfHitsImage.Allocate();
   }
-
-
 
   // Print information
   GateMessage("Actor", 1, 
@@ -128,19 +127,19 @@ void GateStoppingPowerActor::Construct() {
 //-----------------------------------------------------------------------------
 /// Save data
 void GateStoppingPowerActor::SaveData() {
+  GateVActor::SaveData();
 
   if (mIsStopPowerImageEnabled) mStopPowerImage.SaveData(mCurrentEvent+1);
-  if (mIsRelStopPowerImageEnabled) {
-    
-      mRelStopPowerImage.SaveData(mCurrentEvent+1, false);
-  }
+
+  if (mIsRelStopPowerImageEnabled) mRelStopPowerImage.SaveData(mCurrentEvent+1, false);
   
   if (mIsLastHitEventImageEnabled) {
     mLastHitEventImage.Fill(-1); // reset
   }
 
   if (mIsNumberOfHitsImageEnabled) {
-    mNumberOfHitsImage.Write(mNbOfHitsFilename);
+    G4String a = GetSaveCurrentFilename(mNbOfHitsFilename);
+    mNumberOfHitsImage.Write(a);
   }
 }
 //-----------------------------------------------------------------------------
@@ -151,7 +150,6 @@ void GateStoppingPowerActor::ResetData() {
   if (mIsStopPowerImageEnabled) mStopPowerImage.Reset();
   if (mIsRelStopPowerImageEnabled) mRelStopPowerImage.Reset();
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.Fill(0);
-
 }
 //-----------------------------------------------------------------------------
 
