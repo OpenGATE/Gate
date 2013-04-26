@@ -127,10 +127,22 @@ void GateSimulationStatisticActor::UserSteppingAction(const GateVVolume * v, con
 /// Save data
 void GateSimulationStatisticActor::SaveData()
 {
+  GateVActor::SaveData();
   timeval end;
   gettimeofday(&end,NULL);
   std::ofstream os;
   OpenFileOutput(mSaveFilename, os);
+
+  double currentSimulationTime = GateApplicationMgr::GetInstance()->GetCurrentTime();
+
+  double virtualStartTime = GateApplicationMgr::GetInstance()->GetVirtualTimeStart();
+  double virtualStopTime  = GateApplicationMgr::GetInstance()->GetVirtualTimeStop();
+  double startTime = GateApplicationMgr::GetInstance()->GetTimeStart(); 
+  double stopTime  = GateApplicationMgr::GetInstance()->GetTimeStop(); 
+
+  double elapsedSimulationTime = currentSimulationTime - startTime;
+  if (virtualStartTime != -1) elapsedSimulationTime = currentSimulationTime - virtualStartTime;
+
   os << "# NumberOfRun    = " << mNumberOfRuns << std::endl
      << "# NumberOfEvents = " << mNumberOfEvents << std::endl
      << "# NumberOfTracks = " << mNumberOfTrack << std::endl
@@ -138,10 +150,15 @@ void GateSimulationStatisticActor::SaveData()
      << "# NumberOfGeometricalSteps  = " << mNumberOfGeometricalSteps << std::endl
      << "# NumberOfPhysicalSteps     = " << mNumberOfPhysicalSteps << std::endl
      << "# ElapsedTime           = " << get_elapsed_time(start,end) << std::endl
-     << "# ElapsedTime (wo init) = " << get_elapsed_time(start_afterinit,end) << std::endl
+     << "# ElapsedTimeWoInit     = " << get_elapsed_time(start_afterinit,end) << std::endl
      << "# StartDate             = " << startDateStr
      << "# EndDate               = " << get_date_string()
-     << "# CurrentSimulationTime = " << (GateApplicationMgr::GetInstance()->GetCurrentTime() - GateApplicationMgr::GetInstance()->GetTimeStart()) << std::endl;
+     << "# StartSimulationTime        = " << startTime/s << std::endl
+     << "# StopSimulationTime         = " << stopTime/s << std::endl
+     << "# CurrentSimulationTime      = " << currentSimulationTime/s << std::endl
+     << "# VirtualStartSimulationTime = " << virtualStartTime/s << std::endl
+     << "# VirtualStopSimulationTime  = " << virtualStopTime/s << std::endl
+     << "# ElapsedSimulationTime      = " << elapsedSimulationTime/s << std::endl;
   if (!os) {
     GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << G4endl);
   }
