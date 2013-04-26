@@ -29,9 +29,8 @@ public:
   void SetNewValue(G4UIcommand*, G4String);
 
 protected:
-  G4UIcmdWithABool * pEnableScatterCmd;
-  G4UIcmdWithABool * pEnableSourceMotionCmd;
   GateFluenceActor * pFluenceActor;
+  G4UIcmdWithABool * pEnableScatterCmd;
   G4UIcmdWithAString * pSetScatterOrderFilenameCmd;
 };
 
