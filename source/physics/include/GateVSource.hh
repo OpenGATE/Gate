@@ -94,7 +94,8 @@ public:
   virtual GateSPSEneDistribution* GetEneDist() { return m_eneSPS ; }  
   virtual GateSPSAngDistribution* GetAngDist() { return m_angSPS ; }
   
-  void SetRelativePlacementVolume(G4String volname);  
+  G4String GetRelativePlacementVolume();
+  void SetRelativePlacementVolume(G4String volname);
   void EnableRegularActivity(bool b);
   //  void SetTimeInterval(double time);
 

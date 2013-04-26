@@ -21,3 +21,13 @@ GateSPSAngDistribution::~GateSPSAngDistribution()
 {
 
 }
+
+void GateSPSAngDistribution::SetFocusPointCopy(G4ThreeVector p)
+{
+  FocusPointCopy = p;
+}
+
+G4ThreeVector GateSPSAngDistribution::GetFocusPointCopy()
+{
+  return FocusPointCopy;
+}

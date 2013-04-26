@@ -33,6 +33,8 @@
 #include "G4VisAttributes.hh"
 // Setup a static color table for source visualization
 
+//-------------------------------------------------------------------------------------------------
+// Setup a static color table for source visualization
 #define N_COLORCODES 10
 GateVSource::GateColorPair GateVSource::theColorTable[N_COLORCODES] = {
     GateColorPair ("white",      G4Colour(1.0, 1.0, 1.0)),
@@ -69,7 +71,7 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
   m_forcedUnstableFlag  = false;
   m_forcedLifeTime      = -1.*s;
   m_materialName = "Air";
-  mRelativePlacementVolumeName = "World";
+  mRelativePlacementVolumeName = "world";
   mEnableRegularActivity = false;
 
   mSourceTime = 0.*s;
@@ -154,6 +156,7 @@ void GateVSource::Visualize(G4String parmString){
 
 #endif
 }
+//-------------------------------------------------------------------------------------------------
 
 
 //----------------------------------------------------------------------------------------
@@ -195,6 +198,13 @@ mNumberOfParticlesPerSlice.push_back( nParticles);
 
 }*/
 //----------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------
+G4String GateVSource::GetRelativePlacementVolume() {
+  return mRelativePlacementVolumeName;
+}
+//-------------------------------------------------------------------------------------------------
 
 
 //-------------------------------------------------------------------------------------------------
@@ -319,6 +329,7 @@ void GateVSource::TrigMat()
   G4cout<<"------------------|||||||||||| TEST de SEBES =          "<<v->GetObjectName()<<G4endl;
  
 }
+//-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
 void GateVSource::Dump( G4int level ) 
@@ -735,7 +746,7 @@ G4String nameMaterial = material->GetName();*/
 //-------------------------------------------------------------------------------------------------
 void GateVSource::ChangeParticlePositionRelativeToAttachedVolume(G4ThreeVector & position) {
   // Do nothing if attached to world
-  if (mRelativePlacementVolumeName == "World") return;
+  if (mRelativePlacementVolumeName == "world") return;
 
   // Current position
   GateMessage("Beam", 4, "Current particle position = " << position << G4endl);
@@ -750,6 +761,7 @@ void GateVSource::ChangeParticlePositionRelativeToAttachedVolume(G4ThreeVector &
     const G4ThreeVector & t = v->GetPhysicalVolume(0)->GetObjectTranslation();
     position = r*position;
     position = position+t;    
+    GateMessage("Beam", 4, "Change current particle position = " << position << G4endl);
     // next volume
     v = v->GetParentVolume();
   }
@@ -760,7 +772,7 @@ void GateVSource::ChangeParticlePositionRelativeToAttachedVolume(G4ThreeVector &
 void GateVSource::ChangeParticleMomentumRelativeToAttachedVolume(G4ParticleMomentum & momentum) {
 
   // Do nothing if attached to world
-  if (mRelativePlacementVolumeName == "World") return;
+  if (mRelativePlacementVolumeName == "world") return;
 
   // Current position
   GateMessage("Beam", 4, "Current particle mom = " << momentum << G4endl);

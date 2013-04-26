@@ -31,6 +31,11 @@ class GateSPSAngDistribution : public G4SPSAngDistribution
   GateSPSAngDistribution () ;
   ~GateSPSAngDistribution () ; 
 
+  G4ThreeVector GetFocusPointCopy();  
+  void 	SetFocusPointCopy (G4ThreeVector);
+
+ private :
+  G4ThreeVector FocusPointCopy;
 } ;
 
 #endif
