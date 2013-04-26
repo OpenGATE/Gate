@@ -117,7 +117,8 @@ void GatePhaseSpaceActor::Construct()
     if(EnableZDirection) pListeVar->Branch("dZ", &dz,"dZ/F");
     if(EnablePartName) pListeVar->Branch("ParticleName", pname ,"ParticleName/C");
     if(EnableProdVol) pListeVar->Branch("ProductionVolume", vol,"ProductionVolume/C");
-    if(EnableProdProcess) pListeVar->Branch("ProductionProcess", pro,"ProductionProcess/C");
+    if(EnableProdProcess) pListeVar->Branch("ProductionProcessTrack", pro_track,"ProductionProcessTrack/C");
+    if(EnableProdProcess) pListeVar->Branch("ProductionProcessStep", pro_step,"ProductionProcessStep/C");
     pListeVar->Branch("TrackID",&trackid,"TrackID/I");
     pListeVar->Branch("EventID",&eventid,"EventID/I");
     pListeVar->Branch("RunID",&runid,"RunID/I");
@@ -170,11 +171,11 @@ void GatePhaseSpaceActor::PreUserTrackingAction(const GateVVolume * /*v*/, const
 // --------------------------------------------------------------------
 void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* step)
 {
-  if(!mIsFistStep) return;
+  if(!mIsFistStep && !EnableAllStep) return;
   if(mIsFistStep && step->GetTrack()->GetTrackID()==1 ) mNevent++;
 
   G4StepPoint *stepPoint;
-  if(mStoreOutPart) stepPoint = step->GetPostStepPoint();
+  if(mStoreOutPart || EnableAllStep) stepPoint = step->GetPostStepPoint();
   else stepPoint = step->GetPreStepPoint();
 
 
@@ -207,9 +208,11 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
   }
   */
 
+  //-----------Write name of the particles presents at the simulation-------------
   st = step->GetTrack()->GetDefinition()->GetParticleName();
   sscanf(st.c_str(), "%s",pname); 
 
+  //------------Write psition of the steps presents at the simulation-------------
   G4ThreeVector localPosition = stepPoint->GetPosition();
  
   if(GetUseVolumeFrame()){
@@ -229,7 +232,8 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
   // particle momentum
   // pc = sqrt(Ek^2 + 2*Ek*m_0*c^2)
   // sqrt( p*cos(Ax)^2 + p*cos(Ay)^2 + p*cos(Az)^2 ) = p
-
+  
+  //--------------Write momentum of the steps presents at the simulation----------
   G4ThreeVector localMomentum = stepPoint->GetMomentumDirection();
 
   if(GetUseVolumeFrame()){
@@ -241,6 +245,9 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
   dy = localMomentum.y();
   dz = localMomentum.z();
 
+
+
+  //-------------Write weight of the steps presents at the simulation-------------
   w = stepPoint->GetWeight();
 
   t = stepPoint->GetGlobalTime() ;
@@ -256,16 +263,23 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
   GateDebugMessage("Actor", 4, "pos = " << x << " " << y  << " " << z << G4endl);
   GateDebugMessage("Actor", 4, "E = " << G4BestUnit(stepPoint->GetKineticEnergy(), "Energy") << G4endl);
 
+  //---------Write energy of step present at the simulation-------------------------- 
   e = stepPoint->GetKineticEnergy();
 
   m = step->GetTrack()->GetDefinition()->GetAtomicMass();
   //G4cout << st << " " << step->GetTrack()->GetDefinition()->GetAtomicMass() << " " << step->GetTrack()->GetDefinition()->GetPDGMass() << G4endl;
-
+  
+  //----------Process name at origin Track--------------------
   st = "";
   if(step->GetTrack()->GetCreatorProcess() )
     st =  step->GetTrack()->GetCreatorProcess()->GetProcessName();
-  sscanf(st.c_str(), "%s",pro); 
+  sscanf(st.c_str(), "%s",pro_track); 
 
+  //----------
+  st = "";
+  if( stepPoint->GetProcessDefinedStep() )
+    st = stepPoint->GetProcessDefinedStep()->GetProcessName();
+  sscanf(st.c_str(), "%s",pro_step);
 
   if(mFileType == "rootFile"){ 
     if(GetMaxFileSize()!=0) pListeVar->SetMaxTreeSize(GetMaxFileSize());
@@ -312,8 +326,10 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
 
 // --------------------------------------------------------------------
 /// Save data
-void GatePhaseSpaceActor::SaveData()
+void GatePhaseSpaceActor::SaveData() 
 {
+  GateVActor::SaveData();
+  
   if(mFileType == "rootFile"){
     pFile = pListeVar->GetCurrentFile();
     pFile->Write();

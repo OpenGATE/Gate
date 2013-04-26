@@ -67,6 +67,7 @@ class GatePhaseSpaceActor : public GateVActor
   void SetIsTimeEnabled(bool b){EnableTime = b;}
   void SetIsMassEnabled(bool b){EnableMass = b;}
   void SetIsSecStored(bool b){EnableSec = b;}
+  void SetIsAllStep(bool b){EnableAllStep = b;}
 
   void SetUseVolumeFrame(){mUseVolFrame=true;}
   bool GetUseVolumeFrame(){return mUseVolFrame;}
@@ -101,6 +102,7 @@ protected:
   bool EnableTime;
   bool EnableMass;
   bool EnableSec;
+  bool EnableAllStep;
   bool mUseVolFrame;
   bool mStoreOutPart;
 
@@ -122,7 +124,10 @@ protected:
   float t;
   float m;
   Char_t vol[256];
-  Char_t pro[256];
+
+  Char_t pro_track[256];
+  Char_t pro_step[256];
+
   int trackid;
   int eventid;
   int runid;
