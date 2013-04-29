@@ -21,7 +21,7 @@ See GATE/LICENSE.txt for further details
 #include "GateActorManager.hh"
 #include "GateMaterialMuHandler.hh"
 #include "GateHybridDoseActor.hh"
-#include "GateHybridMultiplicityActorMessenger.hh"
+// #include "GateHybridMultiplicityActorMessenger.hh"
 #include "G4UnitsTable.hh"
 #include "G4ParticleTable.hh"
 
@@ -29,9 +29,20 @@ See GATE/LICENSE.txt for further details
 
 class GateHybridMultiplicityActor : public GateVActor
 {
- public: 
+public: 
+   
+  static GateHybridMultiplicityActor *GetInstance()
+  {   
+    if (singleton_HybridMultiplicityActor == 0)
+    {
+      //std::cout << "creating GateActorManager..." << std::endl;
+      singleton_HybridMultiplicityActor = new GateHybridMultiplicityActor("hybridMultiplicityActor",0);
+    }
+    //else std::cout << "GateActorManager already created!" << std::endl;
+    return singleton_HybridMultiplicityActor;
+  };
   
-  virtual ~GateHybridMultiplicityActor();
+  ~GateHybridMultiplicityActor();
     
   //-----------------------------------------------------------------------------
   // This macro initialize the CreatePrototype and CreateInstance
@@ -39,13 +50,15 @@ class GateHybridMultiplicityActor : public GateVActor
 
   //-----------------------------------------------------------------------------
   // Constructs the sensor
-  virtual void Construct();
-  virtual void BeginOfEventAction(const G4Event *);
-  virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
-  virtual void UserSteppingAction(const GateVVolume *, const G4Step *);  
+  void Construct();
+  void BeginOfEventAction(const G4Event *);
+  void PreUserTrackingAction(const GateVVolume *, const G4Track*);
+  void UserSteppingAction(const GateVVolume *, const G4Step *);  
   
   void SetPrimaryMultiplicity(int m) { defaultPrimaryMultiplicity = m; }
   void SetSecondaryMultiplicity(int m) { defaultSecondaryMultiplicity = m; }
+  int GetPrimaryMultiplicity() { return defaultPrimaryMultiplicity; }
+  int GetSecondaryMultiplicity() { return defaultSecondaryMultiplicity; }  
   
   G4double GetHybridTrackWeight() { return currentHybridTrackWeight; }
   void SetHybridTrackWeight(G4double w) { currentHybridTrackWeight = w; }
@@ -53,8 +66,8 @@ class GateHybridMultiplicityActor : public GateVActor
   int AddSecondaryMultiplicity(G4VPhysicalVolume *);
   
   /// Saves the data collected to the file
-  virtual void SaveData();
-  virtual void ResetData();
+  void SaveData();
+  void ResetData();
   
 protected:
 
@@ -73,7 +86,11 @@ protected:
   std::vector<G4Track *> theListOfHybridTrack;
   std::vector<G4double> theListOfHybridWeight;
   
-  GateHybridMultiplicityActorMessenger *pActor;
+//   GateHybridMultiplicityActorMessenger *pActor;
+  
+private:
+  GateHybridMultiplicityActor();
+  static GateHybridMultiplicityActor *singleton_HybridMultiplicityActor;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(HybridMultiplicityActor,GateHybridMultiplicityActor)

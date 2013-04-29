@@ -38,17 +38,6 @@ GateHybridDoseActor::GateHybridDoseActor(G4String name, G4int depth) :
   mMaterialHandler = new GateMaterialMuHandler(100);
   mIsEdepImageEnabled = false;
   mIsDoseUncertaintyImageEnabled = false;
-//   pHybridMultiplicityActor = 0;
-  
-//   GateActorManager *actorManager = GateActorManager::GetInstance();
-//   G4bool noMultiplicityActor = true;
-//   std::vector<GateVActor*> actorList = actorManager->GetTheListOfActors();
-//   for(unsigned int i=0; i<actorList.size(); i++)
-//   {
-//     if(actorList[i]->GetTypeName() == "GateHybridMultiplicityActor") { noMultiplicityActor = false; }
-//   }
-//   if(noMultiplicityActor) { actorManager->AddActor("HybridMultiplicityActor","hybridMultiplicityActor"); }
-//   pHybridMultiplicityActor = dynamic_cast<GateHybridMultiplicityActor *>(actorManager->GetActor("HybridMultiplicityActor","hybridMultiplicityActor"));
 }
 //-----------------------------------------------------------------------------
 
@@ -63,9 +52,17 @@ GateHybridDoseActor::~GateHybridDoseActor()  {
  //-----------------------------------------------------------------------------
 /// Construct
 void GateHybridDoseActor::Construct() {
-  GateVImageActor::Construct();
-
   GateMessage("Actor", 0, " HybridDoseActor construction" << G4endl);
+  GateVImageActor::Construct();
+  
+  GateActorManager *actorManager = GateActorManager::GetInstance();
+  G4bool noMultiplicityActor = true;
+  std::vector<GateVActor*> actorList = actorManager->GetTheListOfActors();
+  for(unsigned int i=0; i<actorList.size(); i++)
+  {
+    if(actorList[i]->GetTypeName() == "GateHybridMultiplicityActor") { noMultiplicityActor = false; }
+  }
+  if(noMultiplicityActor) { actorManager->AddActor("HybridMultiplicityActor","hybridMultiplicityActor"); }
   
   // Enable callbacks
   EnableBeginOfRunAction(false);
@@ -284,7 +281,9 @@ void GateHybridDoseActor::PostUserTrackingAction(const GateVVolume *, const G4Tr
 //-----------------------------------------------------------------------------
 //G4bool GateDoseActor::ProcessHits(G4Step * step , G4TouchableHistory* th)
 void GateHybridDoseActor::UserSteppingAction(const GateVVolume *v, const G4Step* step)
-{  
+{
+  DD("Dose step");
+  
   GateVImageActor::UserSteppingAction(v, step);
   
   if(step->GetTrack()->GetDefinition()->GetParticleName() == "hybridino"){  

@@ -35,11 +35,13 @@ GateHybridMultiplicityActor::GateHybridMultiplicityActor(G4String name, G4int de
 {
   GateDebugMessageInc("Actor",4,"GateHybridMultiplicityActor() -- begin"<<G4endl);
   materialHandler = new GateMaterialMuHandler(100);
-  pActor = new GateHybridMultiplicityActorMessenger(this);
+//   pActor = new GateHybridMultiplicityActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateHybridMultiplicityActor() -- end"<<G4endl);
 
-  defaultPrimaryMultiplicity = -1;
-  defaultSecondaryMultiplicity = -1;
+  defaultPrimaryMultiplicity = 2;
+  defaultSecondaryMultiplicity = 4;
+//   defaultPrimaryMultiplicity = -1;
+//   defaultSecondaryMultiplicity = -1;
   secondaryMultiplicityMap.clear();
   processListForGamma = 0;
 }
@@ -49,7 +51,7 @@ GateHybridMultiplicityActor::GateHybridMultiplicityActor(G4String name, G4int de
 /// Destructor 
 GateHybridMultiplicityActor::~GateHybridMultiplicityActor() 
 {
-  delete pActor;
+//   delete pActor;
 }
 //-----------------------------------------------------------------------------
 
@@ -57,6 +59,8 @@ GateHybridMultiplicityActor::~GateHybridMultiplicityActor()
 /// Construct
 void GateHybridMultiplicityActor::Construct()
 {
+  GateMessage("Actor", 0, " HybridMultiplicityActor auto-construction" << G4endl);
+  
   GateVActor::Construct();
   // Enable callbacks
   EnableBeginOfRunAction(false);
@@ -64,7 +68,7 @@ void GateHybridMultiplicityActor::Construct()
   EnablePreUserTrackingAction(true);
   EnablePostUserTrackingAction(false);
   EnableUserSteppingAction(true);
-  
+    
   if((defaultPrimaryMultiplicity<0) or (defaultSecondaryMultiplicity<0)) {
     GateError("Please set primary and secondary multiplicities for 'HybridMultiplicityActor'");
   }
@@ -163,6 +167,8 @@ void GateHybridMultiplicityActor::PreUserTrackingAction(const GateVVolume *, con
 // Callbacks
 void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const G4Step * step)
 {
+  DD("Multiplicity step");
+  
   G4String particleName = step->GetTrack()->GetDynamicParticle()->GetParticleDefinition()->GetParticleName();
     if(particleName == "hybridino")
   {
@@ -276,6 +282,8 @@ void GateHybridMultiplicityActor::SaveData() {}
 //-----------------------------------------------------------------------------
 void GateHybridMultiplicityActor::ResetData() {}
 //-----------------------------------------------------------------------------
+
+GateHybridMultiplicityActor *GateHybridMultiplicityActor::singleton_HybridMultiplicityActor = 0;
 
 #endif /* end #define GATESIMULATIONSTATISTICACTOR_CC */
 
