@@ -38,12 +38,12 @@ GateHybridMultiplicityActor::GateHybridMultiplicityActor(G4String name, G4int de
 //   pActor = new GateHybridMultiplicityActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateHybridMultiplicityActor() -- end"<<G4endl);
 
-  defaultPrimaryMultiplicity = 2;
-  defaultSecondaryMultiplicity = 4;
-//   defaultPrimaryMultiplicity = -1;
-//   defaultSecondaryMultiplicity = -1;
+  defaultPrimaryMultiplicity = 0;
+  defaultSecondaryMultiplicity = 0;
   secondaryMultiplicityMap.clear();
   processListForGamma = 0;
+    
+  singleton_HybridMultiplicityActor = this;
 }
 //-----------------------------------------------------------------------------
 
@@ -70,42 +70,22 @@ void GateHybridMultiplicityActor::Construct()
   EnableUserSteppingAction(true);
     
   if((defaultPrimaryMultiplicity<0) or (defaultSecondaryMultiplicity<0)) {
-    GateError("Please set primary and secondary multiplicities for 'HybridMultiplicityActor'");
+    GateError("Multiplicity cannot be inferior to 0 (Mprim = " << defaultPrimaryMultiplicity << ", Msec = " << defaultSecondaryMultiplicity << ")");
   }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 /// Destructor 
-int GateHybridMultiplicityActor::AddSecondaryMultiplicity(G4VPhysicalVolume *v) 
+void GateHybridMultiplicityActor::SetMultiplicity(int mP, int mS, G4VPhysicalVolume *v) 
 {
-  G4MultiFunctionalDetector *G4MSD = dynamic_cast<GateMultiSensitiveDetector *>(v->GetLogicalVolume()->GetSensitiveDetector())->GetMultiFunctionalDetector();
-  
-  int numberOfActor = G4MSD->GetNumberOfPrimitives();
-  int numberOfHybridDoseActor = 0;
-  GateHybridDoseActor *hybridDoseActor = 0;
-  for(int i=0; i<numberOfActor; i++)
-  {
-    GateVActor *gateActor = dynamic_cast<GateVActor *>(G4MSD->GetPrimitive(i));
-    if(gateActor->GetTypeName() == "GateHybridDoseActor")
-    {
-      hybridDoseActor = dynamic_cast<GateHybridDoseActor *>(gateActor);
-      numberOfHybridDoseActor++;
-    }
-  }
-  
-  if(numberOfHybridDoseActor == 0) {
-    secondaryMultiplicityMap.insert(make_pair(v->GetName(),defaultSecondaryMultiplicity));
-    return defaultSecondaryMultiplicity;
-  }
-  else if(numberOfHybridDoseActor == 1) {
-    secondaryMultiplicityMap.insert(make_pair(v->GetName(),hybridDoseActor->GetSecondaryMultiplicity()));
-    return hybridDoseActor->GetSecondaryMultiplicity();
-  }
-  else {
-    GateError("The number of 'hybridDoseActor' attached to '" << hybridDoseActor->GetVolumeName() << "' is too large (1 maximum)");
-    return 0;
-  }
+  // keep the highest multiplicity as default value
+  if(mP > defaultPrimaryMultiplicity) { defaultPrimaryMultiplicity = mP; }
+  if(mS > defaultSecondaryMultiplicity) { defaultSecondaryMultiplicity = mS; }
+
+  std::map<G4VPhysicalVolume *,int>::iterator it = secondaryMultiplicityMap.find(v);  
+  if(it == secondaryMultiplicityMap.end()) { secondaryMultiplicityMap.insert(make_pair(v,mS)); }
+  else { GateError("Number of 'hybridDoseActor' attached to '" << v->GetName() << "' is too large (1 maximum)"); }
 }
 //-----------------------------------------------------------------------------
 
@@ -167,8 +147,7 @@ void GateHybridMultiplicityActor::PreUserTrackingAction(const GateVVolume *, con
 // Callbacks
 void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const G4Step * step)
 {
-  DD("Multiplicity step");
-  
+//   DD("Multiplicity step");
   G4String particleName = step->GetTrack()->GetDynamicParticle()->GetParticleDefinition()->GetParticleName();
     if(particleName == "hybridino")
   {
@@ -220,10 +199,9 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
   //       GateMessage("Actor", 0, "posPos = " << myStep->GetPostStepPoint()->GetPosition() << " posDir = " << myStep->GetPostStepPoint()->GetMomentumDirection() << G4endl);
   //       GateMessage("Actor", 0, "traPos = " << myStep->GetTrack()->GetPosition() << " traDir = " << myStep->GetTrack()->GetMomentumDirection() << " trackAdress = " << myStep->GetTrack() << G4endl);
 
-	G4VPhysicalVolume *currentPhysicalVolume = step->GetTrack()->GetVolume();
 	int currentSecondaryMultiplicity;
-	std::map<G4String,int>::iterator it = secondaryMultiplicityMap.find(currentPhysicalVolume->GetName());
-	if(it == secondaryMultiplicityMap.end()) { currentSecondaryMultiplicity = AddSecondaryMultiplicity(currentPhysicalVolume); }
+	std::map<G4VPhysicalVolume *,int>::iterator it = secondaryMultiplicityMap.find(step->GetTrack()->GetVolume());
+	if(it == secondaryMultiplicityMap.end()) { currentSecondaryMultiplicity = defaultSecondaryMultiplicity; }
 	else { currentSecondaryMultiplicity = it->second; }
 
 	G4ParticleDefinition *hybridino = G4Hybridino::Hybridino();

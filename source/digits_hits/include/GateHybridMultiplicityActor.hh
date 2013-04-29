@@ -24,6 +24,7 @@ See GATE/LICENSE.txt for further details
 // #include "GateHybridMultiplicityActorMessenger.hh"
 #include "G4UnitsTable.hh"
 #include "G4ParticleTable.hh"
+#include "G4VPhysicalVolume.hh"
 
 //-----------------------------------------------------------------------------
 
@@ -63,7 +64,7 @@ public:
   G4double GetHybridTrackWeight() { return currentHybridTrackWeight; }
   void SetHybridTrackWeight(G4double w) { currentHybridTrackWeight = w; }
   
-  int AddSecondaryMultiplicity(G4VPhysicalVolume *);
+  void SetMultiplicity(int, int, G4VPhysicalVolume *);
   
   /// Saves the data collected to the file
   void SaveData();
@@ -76,7 +77,7 @@ protected:
   // secondary multiplicity can be different in each volume
   int defaultPrimaryMultiplicity;
   int defaultSecondaryMultiplicity;
-  std::map<G4String,int> secondaryMultiplicityMap;
+  std::map<G4VPhysicalVolume *,int> secondaryMultiplicityMap;
   
   G4double currentHybridTrackWeight;
   GateMaterialMuHandler* materialHandler;

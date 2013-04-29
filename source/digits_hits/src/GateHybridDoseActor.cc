@@ -38,6 +38,16 @@ GateHybridDoseActor::GateHybridDoseActor(G4String name, G4int depth) :
   mMaterialHandler = new GateMaterialMuHandler(100);
   mIsEdepImageEnabled = false;
   mIsDoseUncertaintyImageEnabled = false;
+  
+  // Create a 'MultiplicityActor' if not exist
+  GateActorManager *actorManager = GateActorManager::GetInstance();
+  G4bool noMultiplicityActor = true;
+  std::vector<GateVActor*> actorList = actorManager->GetTheListOfActors();
+  for(unsigned int i=0; i<actorList.size(); i++)
+  {
+    if(actorList[i]->GetTypeName() == "GateHybridMultiplicityActor") { noMultiplicityActor = false; }
+  }
+  if(noMultiplicityActor) { actorManager->AddActor("HybridMultiplicityActor","hybridMultiplicityActor"); }
 }
 //-----------------------------------------------------------------------------
 
@@ -54,16 +64,20 @@ GateHybridDoseActor::~GateHybridDoseActor()  {
 void GateHybridDoseActor::Construct() {
   GateMessage("Actor", 0, " HybridDoseActor construction" << G4endl);
   GateVImageActor::Construct();
-  
-  GateActorManager *actorManager = GateActorManager::GetInstance();
-  G4bool noMultiplicityActor = true;
-  std::vector<GateVActor*> actorList = actorManager->GetTheListOfActors();
-  for(unsigned int i=0; i<actorList.size(); i++)
+
+  // Multiplicity initialisation
+  // --> Find the couple ('physicalG4Volume','secondaryMultiplicity') in 'MultiplicityActor'
+  // WARNING only works with voxelized volume
+  G4VPhysicalVolume *attachedVolume = GetVolume()->GetPhysicalVolume();
+  int daughterNumber = attachedVolume->GetLogicalVolume()->GetNoDaughters();
+  while(daughterNumber)
   {
-    if(actorList[i]->GetTypeName() == "GateHybridMultiplicityActor") { noMultiplicityActor = false; }
+    attachedVolume = attachedVolume->GetLogicalVolume()->GetDaughter(0);
+    daughterNumber = attachedVolume->GetLogicalVolume()->GetNoDaughters();
   }
-  if(noMultiplicityActor) { actorManager->AddActor("HybridMultiplicityActor","hybridMultiplicityActor"); }
-  
+  // --> Set primary and secondary multiplicities in 'MultiplicityActor'
+  GateHybridMultiplicityActor::GetInstance()->SetMultiplicity(mPrimaryMultiplicity, mSecondaryMultiplicity, attachedVolume);
+    
   // Enable callbacks
   EnableBeginOfRunAction(false);
   EnableBeginOfEventAction(true);
@@ -92,30 +106,7 @@ void GateHybridDoseActor::Construct() {
   mHalfSize = dynamic_cast<GateVImageVolume*>(GetVolume())->GetImage()->GetHalfSize();
 //   WARNING : 'Hybrid Dose Actor' inherits automatically the geometric properties of the attached volume
 //   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxelSize << G4endl);
-    
-  //Transfert volume and actor information to the MultiplicityActor
-//   GateActorManager *actorManager = GateActorManager::GetInstance();
-//   G4int multiplicityActorNumber = 0;
-//   GateHybridMultiplicityActor *multiplicityActor = 0;
-//   std::vector<GateVActor*> actorList = actorManager->GetTheListOfActors();
-//   for(unsigned int i=0; i<actorList.size(); i++)
-//   {
-//     if(actorList[i]->GetTypeName() == "GateHybridMultiplicityActor")
-//     {
-//       multiplicityActorNumber++;
-//       multiplicityActor = dynamic_cast<GateHybridMultiplicityActor *>(actorList[i]);
-//     }
-//   }
-//   if(multiplicityActorNumber == 1)
-//   {
-// //     pHybridMultiplicityActor = multiplicityActor;
-//     multiplicityActor->AddHybridDoseActor(GetVolume()->GetLogicalVolumeName(),this);
-//   }
-//   else
-//   {
-//     GateError("Please verify that you define one and only one 'GateHybridMultiplicityActor'");
-//   }
-  
+      
   // Output Filename
   mDoseFilename = G4String(removeExtension(mSaveFilename))+"-Dose."+G4String(getExtension(mSaveFilename));
   mEdepFilename = G4String(removeExtension(mSaveFilename))+"-Edep."+G4String(getExtension(mSaveFilename));
@@ -282,7 +273,7 @@ void GateHybridDoseActor::PostUserTrackingAction(const GateVVolume *, const G4Tr
 //G4bool GateDoseActor::ProcessHits(G4Step * step , G4TouchableHistory* th)
 void GateHybridDoseActor::UserSteppingAction(const GateVVolume *v, const G4Step* step)
 {
-  DD("Dose step");
+//   DD("Dose step");
   
   GateVImageActor::UserSteppingAction(v, step);
   
