@@ -54,6 +54,7 @@ public:
   void Construct();
   void BeginOfEventAction(const G4Event *);
   void PreUserTrackingAction(const GateVVolume *, const G4Track*);
+  void PostUserTrackingAction(const GateVVolume *, const G4Track*);
   void UserSteppingAction(const GateVVolume *, const G4Step *);  
   
   void SetPrimaryMultiplicity(int m) { defaultPrimaryMultiplicity = m; }
@@ -79,11 +80,12 @@ protected:
   int defaultSecondaryMultiplicity;
   std::map<G4VPhysicalVolume *,int> secondaryMultiplicityMap;
   
-  G4double currentHybridTrackWeight;
   GateMaterialMuHandler* materialHandler;
   G4ProcessVector *processListForGamma;
       
   // store the track and the associated hybridWeight
+  int currentTrackIndex;
+  G4double currentHybridTrackWeight;
   std::vector<G4Track *> theListOfHybridTrack;
   std::vector<G4double> theListOfHybridWeight;
   

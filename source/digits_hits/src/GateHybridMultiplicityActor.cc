@@ -66,7 +66,7 @@ void GateHybridMultiplicityActor::Construct()
   EnableBeginOfRunAction(false);
   EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(true);
-  EnablePostUserTrackingAction(false);
+  EnablePostUserTrackingAction(true);
   EnableUserSteppingAction(true);
     
   if((defaultPrimaryMultiplicity<0) or (defaultSecondaryMultiplicity<0)) {
@@ -94,6 +94,8 @@ void GateHybridMultiplicityActor::SetMultiplicity(int mP, int mS, G4VPhysicalVol
 void GateHybridMultiplicityActor::BeginOfEventAction(const G4Event *event)
 {
   if(!processListForGamma) { processListForGamma = G4Gamma::Gamma()->GetProcessManager()->GetProcessList(); }
+  theListOfHybridTrack.clear();
+  theListOfHybridWeight.clear();
   
   GateVSource* source = GateSourceMgr::GetInstance()->GetSource(GateSourceMgr::GetInstance()->GetCurrentSourceID());
   if(source->GetParticleDefinition()->GetParticleName() == "gamma")
@@ -134,12 +136,43 @@ void GateHybridMultiplicityActor::BeginOfEventAction(const G4Event *event)
 //-----------------------------------------------------------------------------
 void GateHybridMultiplicityActor::PreUserTrackingAction(const GateVVolume *, const G4Track* t)
 {
+  currentTrackIndex = -1;
+  currentHybridTrackWeight = 1.;
   if(t->GetParticleDefinition()->GetParticleName() == "hybridino")
   {
 //     GateMessage("Actor", 0, "track = " << t << " parentID = " << t->GetParentID() << G4endl);
-    
-    currentHybridTrackWeight = 1.;
+    if(t->GetParentID() == 0)
+    {
+      currentHybridTrackWeight = t->GetWeight() / defaultPrimaryMultiplicity;
+    }
+    else
+    {
+      for(unsigned int i=0; i<theListOfHybridTrack.size(); i++)
+      {
+	if(theListOfHybridTrack[i] == t)
+	{
+	  currentTrackIndex = i;
+	  currentHybridTrackWeight = theListOfHybridWeight[i];
+	  break;
+	}
+      }
+      if(currentTrackIndex == -1) { GateError("Could not find the following hybrid track : " << t); }
+    }
   }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateHybridMultiplicityActor::PostUserTrackingAction(const GateVVolume *, const G4Track *)
+{
+  if(currentTrackIndex > -1)
+  {
+    theListOfHybridTrack.erase(theListOfHybridTrack.begin() + currentTrackIndex);
+    theListOfHybridWeight.erase(theListOfHybridWeight.begin() + currentTrackIndex);
+  }
+  
+//   for(unsigned int i=0; i<theListOfHybridTrack.size(); i++) { GateMessage("Actor", 0, "track = " << theListOfHybridTrack[i] << " weight = " << theListOfHybridWeight[i] << G4endl); }
+//   GateMessage("Actor", 0, " " << G4endl);
 }
 //-----------------------------------------------------------------------------
 
@@ -149,7 +182,7 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 {
 //   DD("Multiplicity step");
   G4String particleName = step->GetTrack()->GetDynamicParticle()->GetParticleDefinition()->GetParticleName();
-    if(particleName == "hybridino")
+  if(particleName == "hybridino")
   {
     G4double stepLength = step->GetStepLength();
     if(stepLength > 0.0)
@@ -206,13 +239,13 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 
 	G4ParticleDefinition *hybridino = G4Hybridino::Hybridino();
 	G4VParticleChange* particleChange(0);
-	std::vector<G4DynamicParticle *> secondaries;
-	secondaries.reserve(currentSecondaryMultiplicity);
+	G4TrackVector *trackVector = (const_cast<G4Step *>(step))->GetfSecondary();
 	G4Step *newStep;
 
-	// Call Ms times the PostStepDoIt function and store a list of secondary hybridinos 
+	// Main loop dedicated to secondary hybrid particle 
 	for(int i=0; i<currentSecondaryMultiplicity; i++)
 	{
+	  // Call the PostStepDoIt function related to the current process
 	  particleChange = currentProcess->PostStepDoIt((const G4Track)(*myTrack), *myStep);
 	  particleChange->SetVerboseLevel(0);
 	  newStep = particleChange->UpdateStepForPostStep(myStep);
@@ -220,26 +253,17 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
   // 	GateMessage("Actor", 0, "prePos = " << newStep->GetPreStepPoint()->GetPosition() << " preDir = " << newStep->GetPreStepPoint()->GetMomentumDirection() << G4endl);
   // 	GateMessage("Actor", 0, "posPos = " << newStep->GetPostStepPoint()->GetPosition() << " posDir = " << newStep->GetPostStepPoint()->GetMomentumDirection() << G4endl);
 	  
+	  // Create a hybrid track and attach it to the primary particle
 	  G4double energy = newStep->GetPostStepPoint()->GetKineticEnergy();
 	  G4ThreeVector momentum = newStep->GetPostStepPoint()->GetMomentumDirection();
 	  G4DynamicParticle *hybridParticle = new G4DynamicParticle(hybridino, momentum, energy);
-	  secondaries.push_back(hybridParticle);
-	}
-
-	// Attach the list of secondary hybridinos to the primary particle
-	G4TrackVector *trackVector = (const_cast<G4Step *>(step))->GetfSecondary();
-	// WARNING - G4Event cannot be modified by default because of its 'const' status.
-	// Use of the 'const_cast' function to overcome this problem.
-	std::vector<G4DynamicParticle*>::iterator iter = secondaries.begin();
-	while (iter != secondaries.end())
-	{
-	  G4DynamicParticle* particle = *iter;
-	  G4Track *newTrack = new G4Track(particle, step->GetTrack()->GetGlobalTime(), step->GetTrack()->GetPosition());
+	  G4Track *newTrack = new G4Track(hybridParticle, step->GetTrack()->GetGlobalTime(), step->GetTrack()->GetPosition());  
 	  newTrack->SetParentID(step->GetTrack()->GetTrackID());
-	  trackVector->push_back(newTrack); 
-	  iter++;
+	  trackVector->push_back(newTrack);
 	  
-  // 	GateMessage("Actor", 0, "traPos = " << newTrack->GetPosition() << " traDir = " << newTrack->GetMomentumDirection() << " trackAdress = " << newTrack << G4endl);
+	  // Store the hybrid particle weight and track for exponential attenuation step
+	  theListOfHybridTrack.push_back(newTrack);
+	  theListOfHybridWeight.push_back(step->GetTrack()->GetWeight() / currentSecondaryMultiplicity);  
 	}
 	
 	delete myTrack;
