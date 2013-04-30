@@ -10,13 +10,9 @@ See GATE/LICENSE.txt for further details
 
 
 /*!
-  \class  GateDoseActor
-  \author thibault.frisson@creatis.insa-lyon.fr
-          laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
-	  
-	  DoseToWater option added by Loïc Grevillot
-  \date	March 2011
+  \class  GateKermaAcor
+  \author Jean-Michel.Letang@creatis.insa-lyon.fr
+  \date	March 2013
  */
 
 #ifndef GATEKERMAACTOR_HH
