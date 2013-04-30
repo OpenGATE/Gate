@@ -8,8 +8,6 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-
-
 #ifndef GATEPHYSICSLIST_CC
 #define GATEPHYSICSLIST_CC
 
@@ -23,10 +21,9 @@
 #include "G4IonConstructor.hh"
 #include "G4ShortLivedConstructor.hh"
 #include "G4UserLimits.hh"
+#include "G4VPhysicsConstructor.hh"
 #include "G4Region.hh"
 #include "G4RegionStore.hh"
-#include "G4RegionStore.hh"
-#include "G4UserLimits.hh"
 #include "G4LogicalVolumeStore.hh"
 #include "G4ParticleTable.hh"
 
@@ -236,6 +233,80 @@ void GatePhysicsList::ConstructProcess()
 
 }
 //-----------------------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------------------
+#include "G4EmLivermorePhysics.hh"
+#include "G4EmLivermorePolarizedPhysics.hh"
+#include "G4EmPenelopePhysics.hh"
+#include "G4EmStandardPhysics.hh"
+#include "G4EmStandardPhysics_option1.hh"
+#include "G4EmStandardPhysics_option2.hh"
+#include "G4EmStandardPhysics_option3.hh"
+#include "G4EmDNAPhysics.hh"
+
+#include "HadronPhysicsQGSP_BERT_TRV.hh"
+#include "HadronPhysicsQGSC_BERT.hh"
+#include "HadronPhysicsQGSP_BERT_CHIPS.hh"
+#include "HadronPhysicsQGSP_BIC_HP.hh"
+#include "HadronPhysicsCHIPS.hh"
+#include "HadronPhysicsQGSP_BIC.hh"
+#include "HadronPhysicsQGSP_BERT_HP.hh"
+#include "HadronPhysicsFTFP_BERT_TRV.hh"
+#include "HadronPhysicsQGSP_BERT.hh"
+#include "HadronPhysicsQGS_BIC.hh"
+#include "HadronPhysicsQGSP.hh"
+#include "HadronPhysicsQGSC_CHIPS.hh"
+#include "HadronPhysicsFTF_BIC.hh"
+#include "HadronPhysicsQGSP_FTFP_BERT.hh"
+#include "HadronPhysicsLHEP.hh"
+#include "HadronPhysicsLHEP_EMV.hh"
+#include "HadronPhysicsFTFP_BERT.hh"
+#include "HadronPhysicsQGSP_BERT_NOLEP.hh"
+
+//-----------------------------------------------------------------------------------------
+// Construction of the physics list from a G4 builder
+void GatePhysicsList::ConstructPhysicsList(G4String name)
+{
+  G4VPhysicsConstructor* physicsList;
+  GateMessage("Physic", 0, "The following Geant4's physic-list is enabled :" << name << G4endl);
+
+  // EM Physic lists
+  if (name == "emlivermore") physicsList = new G4EmLivermorePhysics();
+  else if (name == "empenelope") physicsList = new G4EmPenelopePhysics();
+  else if (name == "emstandard") physicsList = new G4EmStandardPhysics();
+  else if (name == "emstandard_opt1") physicsList = new G4EmStandardPhysics_option1();
+  else if (name == "emstandard_opt2") physicsList = new G4EmStandardPhysics_option2();
+  else if (name == "emstandard_opt3") physicsList = new G4EmStandardPhysics_option3();
+  else if (name == "emlivermore_polar") physicsList = new G4EmLivermorePolarizedPhysics();
+  else if (name == "emDNAphysics") physicsList = new G4EmDNAPhysics();
+
+  // Hadron Physic lists
+  else if (name == "QGSP_BERT_TRV") physicsList = new HadronPhysicsQGSP_BERT_TRV();
+  else if (name == "QGSC_BERT") physicsList = new HadronPhysicsQGSC_BERT();
+  else if (name == "QGSP_BERT_CHIPS") physicsList = new HadronPhysicsQGSP_BERT_CHIPS();
+  else if (name == "QGSP_BIC_HP") physicsList = new HadronPhysicsQGSP_BIC_HP();
+  else if (name == "CHIPS") physicsList = new HadronPhysicsCHIPS();
+  else if (name == "QGSP_BIC") physicsList = new HadronPhysicsQGSP_BIC();
+  else if (name == "QGSP_BERT_HP") physicsList = new HadronPhysicsQGSP_BERT_HP();
+  else if (name == "FTFP_BERT_TRV") physicsList = new HadronPhysicsFTFP_BERT_TRV();
+  else if (name == "QGSP_BERT") physicsList = new HadronPhysicsQGSP_BERT();
+  else if (name == "QGS_BIC") physicsList = new HadronPhysicsQGS_BIC();
+  else if (name == "QGSP") physicsList = new HadronPhysicsQGSP();
+  else if (name == "QGSC_CHIPS") physicsList = new HadronPhysicsQGSC_CHIPS();
+  else if (name == "FTF_BIC") physicsList = new HadronPhysicsFTF_BIC();
+  else if (name == "QGSP_FTFP_BERT") physicsList = new HadronPhysicsQGSP_FTFP_BERT();
+  else if (name == "LHEP") physicsList = new HadronPhysicsLHEP();
+  else if (name == "LHEP_EMV") physicsList = new HadronPhysicsLHEP_EMV();
+  else if (name == "FTFP_BERT") physicsList = new HadronPhysicsFTFP_BERT();
+  else if (name == "QGSP_BERT_NOLEP") physicsList = new HadronPhysicsQGSP_BERT_NOLEP();
+
+  else GateError( "The Physics List '" << name << "' does not exist !");
+  
+  physicsList->ConstructProcess();
+}
+//-----------------------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------------------
 void GatePhysicsList::ConstructParticle()

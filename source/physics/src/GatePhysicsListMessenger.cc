@@ -56,8 +56,7 @@ GatePhysicsListMessenger::~GatePhysicsListMessenger()
   delete pSetEMin;
   delete pSetEMax;
   delete pSetSplineFlag;
-
-
+  delete pAddPhysicsList;
 }
 //----------------------------------------------------------------------------------------
 
@@ -177,7 +176,13 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   guidance = "Set SplineFlag for Standard EM Processes";
   pSetSplineFlag->SetGuidance(guidance);
 
-
+  // Command to call G4 Physics List builders
+  bb = base+"/addPhysicsList";
+  pAddPhysicsList = new G4UIcmdWithAString(bb,this);
+  guidance = "Select a Geant4 Physic List builder";
+  pAddPhysicsList->SetGuidance(guidance);
+  pAddPhysicsList->SetParameterName("Builder name",false);
+  pAddPhysicsList->SetCandidates(""); // FIXME
 }
 //----------------------------------------------------------------------------------------
 
@@ -291,8 +296,10 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
     GateMessage("Physic", 1, "(EM Options) Spline Falg set to "<<flag<<". Spline Flag defaut 1."<<G4endl);
   }
 
-
-
+  // Command to call G4 Physics List builders 
+  if(command == pAddPhysicsList){
+    pPhylist->ConstructPhysicsList(param);
+  }
 }
 //----------------------------------------------------------------------------------------
 

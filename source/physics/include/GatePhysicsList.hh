@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 
@@ -14,20 +14,17 @@ See GATE/LICENSE.txt for further details
 #define GATEPHYSICSLIST_HH
 
 #include "G4VUserPhysicsList.hh"
-
-
 #include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
 #include "G4EmCalculator.hh"
 #include "G4ProductionCutsTable.hh"
 #include "G4UnitsTable.hh"
+#include "G4ProductionCuts.hh"
+#include "G4EmProcessOptions.hh"
+
 #include "GateMessageManager.hh"
 #include "GateVProcess.hh"
 #include "GateUserLimits.hh"
-#include "G4ProductionCuts.hh"
-
-#include "G4EmProcessOptions.hh"
-
 
 //class GateVProcess;
 class GatePhysicsListMessenger;
@@ -42,6 +39,9 @@ public:
 
   void ConstructProcess();
   void ConstructParticle();
+  // CLT
+  // Declaration: construction of the physics list from a G4 builder
+  void ConstructPhysicsList(G4String name);
 
  
   void Print(G4String type, G4String particlename);
@@ -78,10 +78,10 @@ public:
   static GatePhysicsList *GetInstance()
   {   
     if (singleton == 0)
-    {
-      //std::cout << "creating PhysicscList..." << std::endl;
-      singleton = new GatePhysicsList;
-    }
+      {
+        //std::cout << "creating PhysicscList..." << std::endl;
+        singleton = new GatePhysicsList;
+      }
     //else std::cout << "PhysicscList already created!" << std::endl;
     return singleton;
   }
@@ -99,10 +99,10 @@ private:
 
 
   struct ParticleCutType {
-	G4double gammaCut;
-	G4double electronCut;
-	G4double positronCut;
-	G4double protonCut;
+    G4double gammaCut;
+    G4double electronCut;
+    G4double positronCut;
+    G4double protonCut;
   };
   typedef std::map<G4String, ParticleCutType> RegionCutMapType;
   RegionCutMapType mapOfRegionCuts;

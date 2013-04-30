@@ -69,8 +69,8 @@ protected:
   G4UIcmdWithADoubleAndUnit * pSetEMin;
   G4UIcmdWithADoubleAndUnit * pSetEMax;
   G4UIcmdWithABool * pSetSplineFlag;
-
-    
+  
+  G4UIcmdWithAString * pAddPhysicsList;
 
 private:
   int nInit;
