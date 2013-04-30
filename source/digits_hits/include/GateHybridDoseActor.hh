@@ -69,8 +69,6 @@ class GateHybridDoseActor : public GateVImageActor
   virtual void clear(){ResetData();}
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
-
-  void SetHybridWeight(int, int);
   
 protected:
   GateHybridDoseActor(G4String name, G4int depth=0);

@@ -76,7 +76,6 @@ void GateHybridMultiplicityActor::Construct()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-/// Destructor 
 void GateHybridMultiplicityActor::SetMultiplicity(int mP, int mS, G4VPhysicalVolume *v) 
 {
   // keep the highest multiplicity as default value
@@ -86,6 +85,14 @@ void GateHybridMultiplicityActor::SetMultiplicity(int mP, int mS, G4VPhysicalVol
   std::map<G4VPhysicalVolume *,int>::iterator it = secondaryMultiplicityMap.find(v);  
   if(it == secondaryMultiplicityMap.end()) { secondaryMultiplicityMap.insert(make_pair(v,mS)); }
   else { GateError("Number of 'hybridDoseActor' attached to '" << v->GetName() << "' is too large (1 maximum)"); }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateHybridMultiplicityActor::SetHybridTrackWeight(G4Track *t, G4double w) 
+{
+  theListOfHybridTrack.push_back(t);
+  theListOfHybridWeight.push_back(w);  
 }
 //-----------------------------------------------------------------------------
 
@@ -264,15 +271,12 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 	  trackVector->push_back(newTrack);
 	  
 	  // Store the hybrid particle weight and track for exponential attenuation step
-	  theListOfHybridTrack.push_back(newTrack);
-	  theListOfHybridWeight.push_back(step->GetTrack()->GetWeight() / currentSecondaryMultiplicity);  
+	  SetHybridTrackWeight(newTrack, step->GetTrack()->GetWeight() / currentSecondaryMultiplicity);
 	}
 	
 	delete myTrack;
 	delete myStep;
       }
-  //     G4TrackVector *trackVector = (const_cast<G4Step *>(step))->GetfSecondary();
-  //     GateMessage("Actor", 0, "trackNumber = " << trackVector->size() << G4endl);
     } 
   }
 }

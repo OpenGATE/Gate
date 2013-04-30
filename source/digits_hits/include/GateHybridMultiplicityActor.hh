@@ -63,7 +63,7 @@ public:
   int GetSecondaryMultiplicity() { return defaultSecondaryMultiplicity; }  
   
   G4double GetHybridTrackWeight() { return currentHybridTrackWeight; }
-  void SetHybridTrackWeight(G4double w) { currentHybridTrackWeight = w; }
+  void SetHybridTrackWeight(G4Track *,G4double);
   
   void SetMultiplicity(int, int, G4VPhysicalVolume *);
   

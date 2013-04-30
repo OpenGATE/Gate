@@ -364,7 +364,6 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
     Ltmp = (-mHalfSize.y() - position.y())/momentum.y();
   }
   else {Ry = 2*Ltot;}
-
   if (Ltmp < Ltot) {Ltot = Ltmp;}
   
   if(zincr > 0){
@@ -391,7 +390,7 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
   double L = 0.0;
   
   double hybridTrackWeight = GateHybridMultiplicityActor::GetInstance()->GetHybridTrackWeight();
-  double delta_in  = 1.0 * step->GetTrack()->GetWeight() * hybridTrackWeight;
+  double delta_in  = hybridTrackWeight;
   double delta_out(0.0);
   double mu(0.0);
   double muen(0.0);
@@ -448,21 +447,33 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
       doseValue = ConversionFactor*energy*muen*(delta_in-delta_out)/mu/VoxelVolume;
       
       if(isPrimaryParticle) {
-	mDoseImage.AddValue(voxelIndex, doseValue/mPrimaryMultiplicity);
-	mPrimaryDoseImage.AddValue(voxelIndex, doseValue/mPrimaryMultiplicity);
+	mDoseImage.AddValue(voxelIndex, doseValue);
+	mPrimaryDoseImage.AddValue(voxelIndex, doseValue);
       }
       else {
-	mDoseImage.AddValue(voxelIndex, doseValue/mSecondaryMultiplicity);
-	mSecondaryDoseImage.AddValue(voxelIndex, doseValue/mSecondaryMultiplicity);
+	mDoseImage.AddValue(voxelIndex, doseValue);
+	mSecondaryDoseImage.AddValue(voxelIndex, doseValue);
       }
       delta_in = delta_out;
     }
   }
 
-//   GateMessage("Actor", 0, "exit index  " << x << " " << y << " " << z << G4endl);
-//   GateMessage("Actor", 0, "LTot" << Ltot << G4endl); 
-
+  // current hybridino is killed ...
   step->GetTrack()->SetTrackStatus(fStopAndKill);
+
+  // ... and replace by a new one located the end of the ray path
+  G4double newEnergy = PreStep->GetKineticEnergy();
+  G4ThreeVector newMomentum = PreStep->GetMomentumDirection();
+  G4ThreeVector newPosition = PreStep->GetPosition();
+  newPosition.set(newPosition.x() + Ltot*newMomentum.x(), newPosition.y() + Ltot*newMomentum.y(), newPosition.z() + Ltot*newMomentum.z());
+  
+  G4DynamicParticle *hybridParticle = new G4DynamicParticle(G4Hybridino::Hybridino(), newMomentum, newEnergy);
+  G4Track *newTrack = new G4Track(hybridParticle, step->GetTrack()->GetGlobalTime(), newPosition);  
+  newTrack->SetParentID(step->GetTrack()->GetParentID());
+  (const_cast<G4Step *>(step))->GetfSecondary()->push_back(newTrack);
+  
+  // register the new track and corresponding weight into the trackList (see 'HybridMultiplicityActor')
+  GateHybridMultiplicityActor::GetInstance()->SetHybridTrackWeight(newTrack, delta_in);
 }
 //-----------------------------------------------------------------------------
 
