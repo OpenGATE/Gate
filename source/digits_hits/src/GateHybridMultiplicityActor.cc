@@ -180,12 +180,14 @@ void GateHybridMultiplicityActor::PostUserTrackingAction(const GateVVolume *, co
 // Callbacks
 void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const G4Step * step)
 {
-//   DD("Multiplicity step");
   G4String particleName = step->GetTrack()->GetDynamicParticle()->GetParticleDefinition()->GetParticleName();
   if(particleName == "hybridino")
   {
+    std::map<G4VPhysicalVolume *,int>::iterator it = secondaryMultiplicityMap.find(step->GetTrack()->GetVolume());
     G4double stepLength = step->GetStepLength();
-    if(stepLength > 0.0)
+    
+    // Apply exponential attenuation if not in a voxelised volume and stepLength > 0
+    if((it == secondaryMultiplicityMap.end()) and (stepLength > 0.)) 
     {
       G4Material *material = step->GetPreStepPoint()->GetMaterial();
       G4double energy = step->GetPreStepPoint()->GetKineticEnergy();
