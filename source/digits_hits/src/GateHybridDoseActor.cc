@@ -390,8 +390,7 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
   double doseValue = 0.0;
   double L = 0.0;
   
-  double hybridTrackWeight = 1.;
-//   if(pHybridMultiplicityActor) { hybridTrackWeight = pHybridMultiplicityActor->GetHybridTrackWeight(); }
+  double hybridTrackWeight = GateHybridMultiplicityActor::GetInstance()->GetHybridTrackWeight();
   double delta_in  = 1.0 * step->GetTrack()->GetWeight() * hybridTrackWeight;
   double delta_out(0.0);
   double mu(0.0);
