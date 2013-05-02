@@ -18,7 +18,6 @@
 #define GATEHYBRIDMULTIPLICITYACTOR_CC
 
 #include "GateHybridMultiplicityActor.hh"
-#include "GateHybridDoseActor.hh"
 #include "GateMiscFunctions.hh"
 #include "GateApplicationMgr.hh"
 #include "GateSourceMgr.hh"
@@ -35,7 +34,6 @@ GateHybridMultiplicityActor::GateHybridMultiplicityActor(G4String name, G4int de
 {
   GateDebugMessageInc("Actor",4,"GateHybridMultiplicityActor() -- begin"<<G4endl);
   materialHandler = new GateMaterialMuHandler(100);
-//   pActor = new GateHybridMultiplicityActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateHybridMultiplicityActor() -- end"<<G4endl);
 
   defaultPrimaryMultiplicity = 0;
@@ -49,10 +47,7 @@ GateHybridMultiplicityActor::GateHybridMultiplicityActor(G4String name, G4int de
 
 //-----------------------------------------------------------------------------
 /// Destructor 
-GateHybridMultiplicityActor::~GateHybridMultiplicityActor() 
-{
-//   delete pActor;
-}
+GateHybridMultiplicityActor::~GateHybridMultiplicityActor() {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -85,14 +80,6 @@ void GateHybridMultiplicityActor::SetMultiplicity(int mP, int mS, G4VPhysicalVol
   std::map<G4VPhysicalVolume *,int>::iterator it = secondaryMultiplicityMap.find(v);  
   if(it == secondaryMultiplicityMap.end()) { secondaryMultiplicityMap.insert(make_pair(v,mS)); }
   else { GateError("Number of 'hybridDoseActor' attached to '" << v->GetName() << "' is too large (1 maximum)"); }
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void GateHybridMultiplicityActor::SetHybridTrackWeight(G4Track *t, G4double w) 
-{
-  theListOfHybridTrack.push_back(t);
-  theListOfHybridWeight.push_back(w);  
 }
 //-----------------------------------------------------------------------------
 
@@ -190,11 +177,10 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
   G4String particleName = step->GetTrack()->GetDynamicParticle()->GetParticleDefinition()->GetParticleName();
   if(particleName == "hybridino")
   {
-    std::map<G4VPhysicalVolume *,int>::iterator it = secondaryMultiplicityMap.find(step->GetTrack()->GetVolume());
     G4double stepLength = step->GetStepLength();
     
-    // Apply exponential attenuation if not in a voxelised volume and stepLength > 0
-    if((it == secondaryMultiplicityMap.end()) and (stepLength > 0.)) 
+    // Apply exponential attenuation if stepLength > 0
+    if(stepLength > 0.) 
     {
       G4Material *material = step->GetPreStepPoint()->GetMaterial();
       G4double energy = step->GetPreStepPoint()->GetKineticEnergy();
@@ -271,7 +257,8 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 	  trackVector->push_back(newTrack);
 	  
 	  // Store the hybrid particle weight and track for exponential attenuation step
-	  SetHybridTrackWeight(newTrack, step->GetTrack()->GetWeight() / currentSecondaryMultiplicity);
+	  theListOfHybridTrack.push_back(newTrack);
+	  theListOfHybridWeight.push_back(step->GetTrack()->GetWeight() / currentSecondaryMultiplicity);
 	}
 	
 	delete myTrack;

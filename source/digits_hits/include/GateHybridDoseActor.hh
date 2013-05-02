@@ -23,9 +23,10 @@ See GATE/LICENSE.txt for further details
 #include "GateActorManager.hh"
 #include "G4UnitsTable.hh"
 #include "GateHybridDoseActorMessenger.hh"
-// #include "GateHybridMultiplicityActor.hh"
+#include "GateHybridMultiplicityActor.hh"
 #include "GateImageWithStatistic.hh"
 #include "GateMaterialMuHandler.hh"
+#include "G4SteppingManager.hh"
 
 class GateHybridDoseActor : public GateVImageActor
 {
@@ -59,7 +60,6 @@ class GateHybridDoseActor : public GateVImageActor
   int GetSecondaryMultiplicity() { return mSecondaryMultiplicity; }
   
   void RayCast(const G4Step* step);
-//   void SetHybridMultiplicityActor(GateHybridMultiplicityActor *a) { pHybridMultiplicityActor = a; }
  /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
@@ -88,14 +88,15 @@ protected:
   G4double ConversionFactor;
   G4double VoxelVolume;
   
-//   GateHybridMultiplicityActor *pHybridMultiplicityActor;
+  GateHybridMultiplicityActor *pHybridMultiplicityActor;
   int mPrimaryMultiplicity;
   int mSecondaryMultiplicity;
 
   bool mIsEdepImageEnabled;
   bool mIsDoseUncertaintyImageEnabled;
   bool mIsLastHitEventImageEnabled;
-  int mCurrentEvent;  
+  int mCurrentEvent;
+  G4SteppingManager *mSteppingManager;
   G4RotationMatrix mRotationMatrix;
   G4AffineTransform worldToVolume;
   G4double outputEnergy;

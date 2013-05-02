@@ -48,6 +48,7 @@ GateHybridDoseActor::GateHybridDoseActor(G4String name, G4int depth) :
     if(actorList[i]->GetTypeName() == "GateHybridMultiplicityActor") { noMultiplicityActor = false; }
   }
   if(noMultiplicityActor) { actorManager->AddActor("HybridMultiplicityActor","hybridMultiplicityActor"); }
+  pHybridMultiplicityActor = GateHybridMultiplicityActor::GetInstance();
 }
 //-----------------------------------------------------------------------------
 
@@ -76,8 +77,11 @@ void GateHybridDoseActor::Construct() {
     daughterNumber = attachedVolume->GetLogicalVolume()->GetNoDaughters();
   }
   // --> Set primary and secondary multiplicities in 'MultiplicityActor'
-  GateHybridMultiplicityActor::GetInstance()->SetMultiplicity(mPrimaryMultiplicity, mSecondaryMultiplicity, attachedVolume);
-    
+  pHybridMultiplicityActor->SetMultiplicity(mPrimaryMultiplicity, mSecondaryMultiplicity, attachedVolume);
+
+  // Get the stepping manager
+  mSteppingManager = G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager();
+  
   // Enable callbacks
   EnableBeginOfRunAction(false);
   EnableBeginOfEventAction(true);
@@ -303,14 +307,14 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
 //   GateMessage("Actor", 0, "  " << G4endl;);
 //   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxelSize << G4endl);
 
-  G4StepPoint *PreStep(step->GetPreStepPoint());
-  G4ThreeVector position = PreStep->GetPosition();
-  G4ThreeVector momentum = PreStep->GetMomentumDirection();
+  G4StepPoint *preStep(step->GetPreStepPoint());
+  G4ThreeVector position = preStep->GetPosition();
+  G4ThreeVector momentum = preStep->GetMomentumDirection();
 
 //   GateMessage("Actor", 0, " before : position " << position << " momentum " << momentum << G4endl);
   position = worldToVolume.TransformPoint(position);  
   momentum.transform(mRotationMatrix);
-  G4double energy = PreStep->GetKineticEnergy();
+  G4double energy = preStep->GetKineticEnergy();
 //   GateMessage("Actor", 0, " after  : position " << position << " momentum " << momentum << G4endl);
   
   int xincr = getIncrement(momentum.x());
@@ -389,20 +393,21 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
   double doseValue = 0.0;
   double L = 0.0;
   
-  double hybridTrackWeight = GateHybridMultiplicityActor::GetInstance()->GetHybridTrackWeight();
+  double hybridTrackWeight = pHybridMultiplicityActor->GetHybridTrackWeight();
   double delta_in  = hybridTrackWeight;
   double delta_out(0.0);
   double mu(0.0);
   double muen(0.0);
 
 //   GateMessage("ActorDose", 0, "hybridWeight = " << hybridTrackWeight << " trackWeight = " << step->GetTrack()->GetWeight() << G4endl);
-  
   GateVImageVolume* volume = dynamic_cast<GateVImageVolume*>(GetVolume());
-  G4Material* material = PreStep->GetMaterial();
+  if(!volume) { GateError("Error in " << GetName() << ": GateVImageVolume doesn't exist"); }
+  G4Material* material = preStep->GetMaterial();
   G4bool isPrimaryParticle = false;
   if(step->GetTrack()->GetParentID() == 0) { isPrimaryParticle = true; }
   
-  while(L < Ltot-0.00001){
+  while(L < Ltot-0.00001)
+  {
 //     GateMessage("Actor", 0, " index " << x << " " << y << " " << z << " | Rest " << Rx << " " << Ry << " " << Rz << " | L " << L << " Ltot " << Ltot << G4endl);
 //     GateMessage("Actor", 0, " Rest  " << Rx << " " << Ry << " " << Rz << G4endl);
 //     GateMessage("Actor", 0, "L " << L << " Ltot " << Ltot << G4endl);
@@ -410,70 +415,62 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
 //     GateMessage("Actor", 0, "material 1 : " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(x,y,z)) << G4endl);    
 //     GateMessage("Actor", 0, "label : " << volume->GetImage()->GetValue(0,0,0) << " " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(0,0,0)) << G4endl);    
 
-    if(volume != NULL)
-    {
-      material = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(x,y,z)));
+    material = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(x,y,z)));
 //     GateMessage("Actor", 0, "material name : " << material->GetName() << G4endl);
-      mu = mMaterialHandler->GetMu(material, energy)*material->GetDensity()/(g/cm3);
-      muen = mMaterialHandler->GetAttenuation(material, energy);
-//       GateMessage("Actor", 0, " material " << material->GetName() << " energy " << energy << " mu " << mu << " muen " << muen << " voxVol " << VoxelVolume << G4endl);
+    mu = mMaterialHandler->GetMu(material, energy)*material->GetDensity()/(g/cm3);
+    muen = mMaterialHandler->GetAttenuation(material, energy);
+//     GateMessage("Actor", 0, " material " << material->GetName() << " energy " << energy << " mu " << mu << " muen " << muen << " voxVol " << VoxelVolume << G4endl);
 
-      voxelIndex = x+y*lineSize+z*planeSize;
-      if(Rx < Ry && Rx < Rz){
-	delta_out = delta_in*exp(-mu*Rx/10.);
-	L+=Rx;
-	Ry-=Rx;
-	Rz-=Rx;
-	Rx=Lx;
-	x+=xincr;
-      }
-      else if (Ry < Rz){
-	delta_out = delta_in*exp(-mu*Ry/10.);
-	L+=Ry;
-	Rx-=Ry;
-	Rz-=Ry;
-	Ry=Ly;
-	y+=yincr;
-      }
-      else{
-	delta_out = delta_in*exp(-mu*Rz/10.);
-	L+=Rz;
-	Rx-=Rz;
-	Ry-=Rz;
-	Rz=Lz;
-	z+=zincr;
-      }
-      
-      doseValue = ConversionFactor*energy*muen*(delta_in-delta_out)/mu/VoxelVolume;
-      
-      if(isPrimaryParticle) {
-	mDoseImage.AddValue(voxelIndex, doseValue);
-	mPrimaryDoseImage.AddValue(voxelIndex, doseValue);
-      }
-      else {
-	mDoseImage.AddValue(voxelIndex, doseValue);
-	mSecondaryDoseImage.AddValue(voxelIndex, doseValue);
-      }
-      delta_in = delta_out;
+    voxelIndex = x+y*lineSize+z*planeSize;
+    if(Rx < Ry && Rx < Rz){
+      delta_out = delta_in*exp(-mu*Rx/10.);
+      L+=Rx;
+      Ry-=Rx;
+      Rz-=Rx;
+      Rx=Lx;
+      x+=xincr;
     }
+    else if (Ry < Rz){
+      delta_out = delta_in*exp(-mu*Ry/10.);
+      L+=Ry;
+      Rx-=Ry;
+      Rz-=Ry;
+      Ry=Ly;
+      y+=yincr;
+    }
+    else{
+      delta_out = delta_in*exp(-mu*Rz/10.);
+      L+=Rz;
+      Rx-=Rz;
+      Ry-=Rz;
+      Rz=Lz;
+      z+=zincr;
+    }
+    
+    doseValue = ConversionFactor*energy*muen*(delta_in-delta_out)/mu/VoxelVolume;
+    
+    if(isPrimaryParticle) {
+      mDoseImage.AddValue(voxelIndex, doseValue);
+      mPrimaryDoseImage.AddValue(voxelIndex, doseValue);
+    }
+    else {
+      mDoseImage.AddValue(voxelIndex, doseValue);
+      mSecondaryDoseImage.AddValue(voxelIndex, doseValue);
+    }
+    delta_in = delta_out;
   }
 
-  // current hybridino is killed ...
-  step->GetTrack()->SetTrackStatus(fStopAndKill);
-
-  // ... and replace by a new one located the end of the ray path
-  G4double newEnergy = PreStep->GetKineticEnergy();
-  G4ThreeVector newMomentum = PreStep->GetMomentumDirection();
-  G4ThreeVector newPosition = PreStep->GetPosition();
-  newPosition.set(newPosition.x() + Ltot*newMomentum.x(), newPosition.y() + Ltot*newMomentum.y(), newPosition.z() + Ltot*newMomentum.z());
-  
-  G4DynamicParticle *hybridParticle = new G4DynamicParticle(G4Hybridino::Hybridino(), newMomentum, newEnergy);
-  G4Track *newTrack = new G4Track(hybridParticle, step->GetTrack()->GetGlobalTime(), newPosition);  
-  newTrack->SetParentID(step->GetTrack()->GetParentID());
-  (const_cast<G4Step *>(step))->GetfSecondary()->push_back(newTrack);
+  // New initialisation of the track to overcome the navigation process
+  G4ThreeVector newMomentum = preStep->GetMomentumDirection();
+  G4ThreeVector newPosition = preStep->GetPosition();
+  G4double newTrackLength = Ltot + 0.00001; // add a small distance to directly begin outside the voxelised volume
+  newPosition.set(newPosition.x() + newTrackLength*newMomentum.x(), newPosition.y() + newTrackLength*newMomentum.y(), newPosition.z() + newTrackLength*newMomentum.z());
+  G4Track *modifiedTrack = step->GetTrack();
+  modifiedTrack->SetPosition(newPosition);
+  mSteppingManager->SetInitialStep(modifiedTrack);
   
   // register the new track and corresponding weight into the trackList (see 'HybridMultiplicityActor')
-  GateHybridMultiplicityActor::GetInstance()->SetHybridTrackWeight(newTrack, delta_in);
+  pHybridMultiplicityActor->SetHybridTrackWeight(delta_in);
 }
 //-----------------------------------------------------------------------------
 
