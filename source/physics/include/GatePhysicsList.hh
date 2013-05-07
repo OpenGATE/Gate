@@ -60,7 +60,8 @@ public:
 
   // SetCuts() 
   void SetCuts();
-  void DefineCuts();
+  void DefineCuts(G4VUserPhysicsList * phys);
+  void DefineCuts() { DefineCuts(this); }
   void SetCutInRegion(G4String particleName, G4String regionName, G4double cutValue);
   void SetSpecialCutInRegion(G4String cutType, G4String regionName, G4double cutValue);
 
@@ -95,6 +96,8 @@ public:
   std::vector<G4String> mListOfG4UserSpecialCut;
 
 private:
+
+public: //FIXME
   static GatePhysicsList *singleton;
 
 
@@ -104,6 +107,8 @@ private:
     G4double positronCut;
     G4double protonCut;
   };
+
+public: // FIXME
   typedef std::map<G4String, ParticleCutType> RegionCutMapType;
   RegionCutMapType mapOfRegionCuts;
   
@@ -118,6 +123,17 @@ private:
   double mEmax;
   bool mSplineFlag;
   G4UserLimits * userlimits;
+  
+
+  G4VUserPhysicsList * mUserPhysicList;
+  G4String mUserPhysicListName;
+
+  void CheckPL_EM(const std::string & name);
+  void CheckPL_Had(const std::string & name);
+  bool m_PhysicList_EM_Flag;
+  bool m_PhysicList_Had_Flag;
+  std::string m_PhysicList_EM_name;
+  std::string m_PhysicList_Had_name;
 
 public:
   void SetOptDEDXBinning(G4int val);
@@ -129,7 +145,6 @@ public:
 
 private:
   G4EmProcessOptions *opt;
-
 
 };
 

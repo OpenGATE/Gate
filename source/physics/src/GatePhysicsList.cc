@@ -32,12 +32,21 @@
 #include "GateConfiguration.h"
 #include "GatePhysicsListMessenger.hh"
 
+
+
+#include "G4PhysListFactory.hh"
+#include "G4VUserPhysicsList.hh"
+#include "GateRunManager.hh"
+#include "G4ExceptionHandler.hh"
+#include "G4StateManager.hh"
+
 #ifdef GATE_USE_OPTICAL
 #include "G4OpticalPhoton.hh"
 #endif
 //-----------------------------------------------------------------------------------------
 GatePhysicsList::GatePhysicsList(): G4VUserPhysicsList() 
 {
+  DD("GatePhysicsList::Constructor");
 
   // default cut value  (1.0mm) 
   defaultCutValue = 1.0*mm;
@@ -57,9 +66,15 @@ GatePhysicsList::GatePhysicsList(): G4VUserPhysicsList()
   mEmin=-1;
   mEmax=-1;
   mSplineFlag=true;
+  m_PhysicList_EM_Flag = false;
+  m_PhysicList_Had_Flag = false;
+  m_PhysicList_EM_name = "noname";
+  m_PhysicList_Had_name = "noname";
+  mUserPhysicListName = "";
 
   userlimits=0;
 
+  // FIXME to pu in macro !
   G4double limit=250*eV; // limit for diplay production cuts table
   G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(limit, 100.*GeV);
 
@@ -67,8 +82,6 @@ GatePhysicsList::GatePhysicsList(): G4VUserPhysicsList()
   pMessenger->BuildCommands("/gate/physics");
 
   opt = new G4EmProcessOptions();
-
-
 }
 //-----------------------------------------------------------------------------------------
 
@@ -156,13 +169,21 @@ GatePhysicsList::~GatePhysicsList()
 //-----------------------------------------------------------------------------------------
 void GatePhysicsList::ConstructProcess()
 {
+  DD("GatePhysicsList::ConstructProcess");
+  DD(mLoadState);
+
   GateMessage("Physic",2,"GatePhysicsList::ConstructProcess " << G4endl);
   GateMessage("Physic",3,"mLoadState = " << mLoadState << G4endl);
   GateMessage("Physic",3,"mListOfStepLimiter.size = " << mListOfStepLimiter.size() << G4endl);
 
+  // if ((mLoadState == 0) && (mUserPhysicListName == "")) {
+  //   DD("direct return : do nothing");
+  //   return; // FIXME
+  // }
+
   if(mLoadState==0)
     {
-      AddTransportation();
+      // AddTransportation(); // FIXME
 
       for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
 	{
@@ -175,6 +196,16 @@ void GatePhysicsList::ConstructProcess()
     } 
   else if(mLoadState==1)
     {
+
+      //AddTransportation(); // FIXME
+
+
+      if (mUserPhysicListName == "") { // if a user physic list is set, transportation is already set
+        DD("AddTransportation");
+        AddTransportation();
+      }
+
+
       for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++) 
         (*GetTheListOfProcesss())[i]->ConstructProcess();
 
@@ -185,6 +216,13 @@ void GatePhysicsList::ConstructProcess()
       if(mEmax>0)          opt->SetMaxEnergy(mEmax);
       opt->SetSplineFlag(mSplineFlag);
       //opt->SetStepFunction(0.3,0.077);
+
+
+
+  
+
+
+
 
     }
   else GateMessage("Physic",1,"GatePhysicsList::Construct() -- Warning: processes already defined!" << G4endl);
@@ -228,7 +266,6 @@ void GatePhysicsList::ConstructProcess()
     }
   }
 
-
   mLoadState++;
 
 }
@@ -236,6 +273,7 @@ void GatePhysicsList::ConstructProcess()
 
 
 //-----------------------------------------------------------------------------------------
+
 #include "G4EmLivermorePhysics.hh"
 #include "G4EmLivermorePolarizedPhysics.hh"
 #include "G4EmPenelopePhysics.hh"
@@ -271,10 +309,90 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
   G4VPhysicsConstructor* physicsList;
   GateMessage("Physic", 0, "The following Geant4's physic-list is enabled :" << name << G4endl);
 
-  // EM Physic lists
-  if (name == "emlivermore") physicsList = new G4EmLivermorePhysics();
-  else if (name == "empenelope") physicsList = new G4EmPenelopePhysics();
-  else if (name == "emstandard") physicsList = new G4EmStandardPhysics();
+  /*
+  // list names
+  std::vector<std::string> listNames;
+  listNames.push_back("emlivermore");
+  listNames.push_back("empenelope");
+  listNames.push_back("emstandard");
+  listNames.push_back("emstandard_opt1");
+  listNames.push_back("emstandard_opt2");
+  listNames.push_back("emstandard_opt3");
+  listNames.push_back("emlivermore_polar");
+  listNames.push_back("emDNAphysics");
+
+  listNames.push_back("LHEP");
+  listNames.push_back("LHEP_EMV");
+
+  listNames.push_back("QGSP");
+
+  listNames.push_back("QGSP_BERT_TRV");
+  listNames.push_back("QGSC_BERT");
+  listNames.push_back("QGSP_BERT_CHIPS");
+  listNames.push_back("QGSP_BIC_HP");
+  listNames.push_back("QGSP_BIC");
+  listNames.push_back("QGS_BIC");
+  listNames.push_back("QGSP_BERT_HP");
+  listNames.push_back("QGSP_BERT");
+  listNames.push_back("QGSP_BERT_NOLEP");
+  listNames.push_back("QGSC_CHIPS");
+  listNames.push_back("QGSP_FTFP_BERT");
+  listNames.push_back("FTF_BIC");
+  listNames.push_back("FTFP_BERT_TRV");
+
+
+  // Check and display list names if not found
+  if (std::find(listNames.begin(), listNames.end(), std::string(name)) == listNames.end()) {
+    std::string s;
+    for(unsigned int i=0; i<listNames.size();i++) s+= listNames[i]+ " ";
+    GateError("The Physics List '" << name 
+              << "' does not exist ! The list of available PL is : "
+              << s << "\n See http://geant4.cern.ch/support/index.shtml (chapter 10 Physics lists)");
+  }
+  
+  // Check no double PL
+  CheckPL_EM(name);
+  CheckPL_Had(name);
+  */
+
+  DD("here");
+
+  G4PhysListFactory * l = new G4PhysListFactory(); //  instantiate PhysList by environment variable "PHYSLIST"
+  const std::vector<G4String>& list = l->AvailablePhysLists();
+  for(int i=0; i<list.size(); i++) {
+    DD(list[i]);
+  }
+  const std::vector<G4String>& list_em = l->AvailablePhysListsEM();
+  for(int i=0; i<list_em.size(); i++) {
+    DD(list_em[i]);
+  }
+
+  mUserPhysicListName = name;
+
+
+  
+  // FIXME
+  GateRunManager::GetRunManager()->SetUserPhysicListName(mUserPhysicListName);
+
+
+
+  //  GateRunManager::GetRunManager()->SetUserPhysicListName(name);
+
+
+  /*
+  G4PhysListFactory *physListFactory = new G4PhysListFactory(); 
+  DD("before GetReferencePhysList");
+  mUserPhysicList = physListFactory->GetReferencePhysList(name); 
+  DD("beofre SetUserPhysicList");
+  GateRunManager::GetRunManager()->SetUserPhysicList(mUserPhysicList);
+  */
+  //  GateRunManager::GetRunManager()->SetUserInitialization(pl);
+
+/*
+  // EM Physic Lists
+  if (name == "emlivermore")  physicsList = new G4EmLivermorePhysics(); 
+  else if (name == "empenelope") physicsList = new G4EmPenelopePhysics(); 
+  else if (name == "emstandard") physicsList = new G4EmStandardPhysics(); 
   else if (name == "emstandard_opt1") physicsList = new G4EmStandardPhysics_option1();
   else if (name == "emstandard_opt2") physicsList = new G4EmStandardPhysics_option2();
   else if (name == "emstandard_opt3") physicsList = new G4EmStandardPhysics_option3();
@@ -282,6 +400,17 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
   else if (name == "emDNAphysics") physicsList = new G4EmDNAPhysics();
 
   // Hadron Physic lists
+
+QGSP_BERT, QGSP_BERT_EMV, QGSP_BERT_HP, QGSP_BIC, 
+FTFP_BERT, LBE, LHEP 
+
+
+  else if (name == "LHEP") physicsList = new HadronPhysicsLHEP();
+  else if (name == "LHEP_EMV") physicsList = new HadronPhysicsLHEP_EMV();
+
+  else if (name == "QGSP") physicsList = new HadronPhysicsQGSP();
+  else if (name == "QGSP_EMV") physicsList = new HadronPhysicsQGSP_EMV();
+
   else if (name == "QGSP_BERT_TRV") physicsList = new HadronPhysicsQGSP_BERT_TRV();
   else if (name == "QGSC_BERT") physicsList = new HadronPhysicsQGSC_BERT();
   else if (name == "QGSP_BERT_CHIPS") physicsList = new HadronPhysicsQGSP_BERT_CHIPS();
@@ -292,18 +421,51 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
   else if (name == "FTFP_BERT_TRV") physicsList = new HadronPhysicsFTFP_BERT_TRV();
   else if (name == "QGSP_BERT") physicsList = new HadronPhysicsQGSP_BERT();
   else if (name == "QGS_BIC") physicsList = new HadronPhysicsQGS_BIC();
-  else if (name == "QGSP") physicsList = new HadronPhysicsQGSP();
   else if (name == "QGSC_CHIPS") physicsList = new HadronPhysicsQGSC_CHIPS();
   else if (name == "FTF_BIC") physicsList = new HadronPhysicsFTF_BIC();
   else if (name == "QGSP_FTFP_BERT") physicsList = new HadronPhysicsQGSP_FTFP_BERT();
-  else if (name == "LHEP") physicsList = new HadronPhysicsLHEP();
-  else if (name == "LHEP_EMV") physicsList = new HadronPhysicsLHEP_EMV();
   else if (name == "FTFP_BERT") physicsList = new HadronPhysicsFTFP_BERT();
   else if (name == "QGSP_BERT_NOLEP") physicsList = new HadronPhysicsQGSP_BERT_NOLEP();
 
-  else GateError( "The Physics List '" << name << "' does not exist !");
+  // Double check if inconsistency with list of names
+  else GateError( "The Physics List '" << name << "' does not exist.");
   
   physicsList->ConstructProcess();
+*/
+}
+//-----------------------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------------------
+void GatePhysicsList::CheckPL_EM(const std::string & name)
+{
+  if ((name[0] == 'e') && (name[1] == 'm')) { // start by em
+    if (m_PhysicList_EM_Flag == true) {
+      GateError("Attempt to set the physic list '" << name << " while there is already a em Physics List named '" 
+                << m_PhysicList_EM_name << "'.");
+    }
+    else {
+      m_PhysicList_EM_Flag = true;
+      m_PhysicList_EM_name = name;
+    }
+  }
+}
+//-----------------------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------------------
+void GatePhysicsList::CheckPL_Had(const std::string & name)
+{
+  if ((name[0] != 'e') && (name[1] != 'm')) { // do not start by em
+    if (m_PhysicList_Had_Flag == true) {
+      GateError("Attempt to set the physic list '" << name << " while there is already a hadron Physics List named '" 
+                << m_PhysicList_Had_name << "'.");
+    }
+    else {
+      m_PhysicList_Had_Flag = true;
+      m_PhysicList_Had_name = name;
+    }
+  }
 }
 //-----------------------------------------------------------------------------------------
 
@@ -631,13 +793,13 @@ void GatePhysicsList::SetCuts()
   // SetCutsWithDefault();
   
   // This is needed to enable user cuts
-  opt->SetApplyCuts(true);
+ // opt->SetApplyCuts(true); // FIXME --> only if not void !!
 }
 //-----------------------------------------------------------------------------
  
 
 //-----------------------------------------------------------------------------
-void GatePhysicsList::DefineCuts()
+void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
 {
   // GateMessage("Cuts",4,"===================================" << G4endl);
   // GateMessage("Cuts",4,"GatePhysicsList::SetCuts() -- begin" << G4endl);
@@ -657,10 +819,10 @@ void GatePhysicsList::DefineCuts()
               << worldCuts.positronCut << " " 
               << worldCuts.protonCut   << " mm" << G4endl);
   
-  SetCutValue(worldCuts.gammaCut, "gamma","DefaultRegionForTheWorld");
-  SetCutValue(worldCuts.electronCut, "e-","DefaultRegionForTheWorld");
-  SetCutValue(worldCuts.positronCut, "e+","DefaultRegionForTheWorld");
-  SetCutValue(worldCuts.protonCut, "proton","DefaultRegionForTheWorld");
+  phys->SetCutValue(worldCuts.gammaCut, "gamma","DefaultRegionForTheWorld");
+  phys->SetCutValue(worldCuts.electronCut, "e-","DefaultRegionForTheWorld");
+  phys->SetCutValue(worldCuts.positronCut, "e+","DefaultRegionForTheWorld");
+  phys->SetCutValue(worldCuts.protonCut, "proton","DefaultRegionForTheWorld");
 
   //-----------------------------------------------------------------------------
   // Set default production cut to other regions

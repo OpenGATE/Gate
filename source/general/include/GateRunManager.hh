@@ -66,6 +66,8 @@ public:
 
   bool GetGlobalOutputFlag() { return mGlobalOutputFlag; }
   void EnableGlobalOutput(bool b) { mGlobalOutputFlag = b; }
+  void SetUserPhysicList(G4VUserPhysicsList * m) { mUserPhysicList = m; }
+  void SetUserPhysicListName(G4String m) { mUserPhysicListName = m; }
 
 private :
 
@@ -75,6 +77,8 @@ private :
   bool mIsGateInitializationCalled;
   GateHounsfieldToMaterialsBuilder * mHounsfieldToMaterialsBuilder;
   bool mGlobalOutputFlag;
+  G4VUserPhysicsList * mUserPhysicList;
+  G4String mUserPhysicListName;
 };
 //----------------------------------------------------------------------------------------
 
