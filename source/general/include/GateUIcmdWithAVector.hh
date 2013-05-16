@@ -121,7 +121,7 @@ G4String GateUIcmdWithAVector<vContentType>::ConvertToString
   char st[100];
   //LF
   //std::ostrstream os(st,100);
-  std::ostringstream os(st,100);
+  std::ostringstream os(st);//,100);
   //LF
   for (G4int i=0; i<vec.size(); i++) os << vec[i] << " "; 
   os << '\0';
