@@ -97,6 +97,11 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     GateWarning("Several sources found, we consider the first one.");
   }
   mSource = sm->GetSource(0);
+    // Checks. FIXME: check on rot1 and rot2 would be required
+  if(mSource->GetAngDist()->GetDistType() != "focused")
+    GateError("Forced detection only supports point or focused sources.");
+  if(mSource->GetPosDist()->GetPosDisType() != "Plane")
+    GateError("Forced detection only supports Plane distributions.");
 
   // Create list of energies
   double energyMax = 0.;
@@ -601,10 +606,9 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
   G4ThreeVector dv = detectorToCT.TransformAxis(G4ThreeVector(0,1,0));
   G4ThreeVector dp = detectorToCT.TransformPoint(G4ThreeVector(0,0,0));
 
-  // Source (assumed point or focus)
-  G4ThreeVector s = src->GetPosDist()->GetCentreCoords(); // point 
-  if(src->GetPosDist()->GetPosDisType()!=G4String("Point")) // Focus
-    s = src->GetAngDist()->GetFocusPointCopy();
+  // Source
+  G4ThreeVector s = src->GetAngDist()->GetFocusPointCopy();
+
   G4AffineTransform sourceToCT( sourceToWorld *  m_WorldToCT);
   s = sourceToCT.TransformPoint(s);
 
