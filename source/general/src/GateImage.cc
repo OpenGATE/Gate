@@ -1217,7 +1217,7 @@ void GateImage::Write(G4String filename, const G4String & comment) {
 	  WriteBin(os);
 	}
         else {
-          if (extension == "mhd") {
+          if (extension == "mhd" || extension == "mha") {
             WriteMHD(filename);
           }
           else {
