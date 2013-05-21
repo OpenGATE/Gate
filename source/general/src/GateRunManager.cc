@@ -45,6 +45,9 @@ GateRunManager::~GateRunManager()
 //----------------------------------------------------------------------------------------
 
 
+//FIXME 
+#include "G4EmStandardPhysics.hh"
+
 //----------------------------------------------------------------------------------------
 // Initialise geometry, actors and the physics list
 // This code was derived from the code of G4RunManager::Initialise()
@@ -72,7 +75,9 @@ void GateRunManager::InitializeAll()
   GatePhysicsList::GetInstance()->PurgeIfFictitious();
   
   // Get the build-in physic list if the user ask for it
+  // Note the EM-only physic lists has already been build in GatePhysicsList
   if (mUserPhysicListName != "") {
+
     // Need to be in PreInit state (cheat)
     G4PhysListFactory *physListFactory = new G4PhysListFactory(); 
     G4ApplicationState currentState = G4StateManager::GetStateManager()->GetCurrentState();
@@ -110,6 +115,7 @@ void GateRunManager::InitializeAll()
 
     // Re set the initial state
     G4StateManager::GetStateManager()->SetNewState(currentState);
+
   } // End if (mUserPhysicListName != "")
 
   // InitializePhysics

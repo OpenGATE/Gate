@@ -31,6 +31,15 @@
 #include "G4ExceptionHandler.hh"
 #include "G4StateManager.hh"
 
+#include "G4EmStandardPhysics.hh"
+#include "G4EmStandardPhysics_option1.hh"
+#include "G4EmStandardPhysics_option2.hh"
+#include "G4EmStandardPhysics_option3.hh"
+#include "G4EmLivermorePolarizedPhysics.hh"
+#include "G4EmLivermorePhysics.hh"
+#include "G4EmPenelopePhysics.hh"
+#include "G4EmDNAPhysics.hh"
+
 #include "GatePhysicsList.hh"
 #include "GateUserLimits.hh"
 #include "GateConfiguration.h"
@@ -257,9 +266,45 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
   }
 
   mUserPhysicListName = name;
-  
-  // Set the phys list
-  GateRunManager::GetRunManager()->SetUserPhysicListName(mUserPhysicListName);
+
+  // First, try to create EM only Physic lists
+  G4VPhysicsConstructor * pl = NULL;
+  if (mUserPhysicListName == "emstandard") {
+    pl = new G4EmStandardPhysics();
+  }
+  if (mUserPhysicListName == "emstandard_opt1") {
+    pl = new G4EmStandardPhysics_option1();
+  }
+  if (mUserPhysicListName == "emstandard_opt2") {
+    pl = new G4EmStandardPhysics_option2();
+  }
+  if (mUserPhysicListName == "emstandard_opt3") {
+    pl = new G4EmStandardPhysics_option3();
+  }
+  if (mUserPhysicListName == "emlivermore") {
+    pl = new G4EmLivermorePhysics();
+  }
+  if (mUserPhysicListName == "emlivermore_polar") {
+    pl = new G4EmLivermorePolarizedPhysics();
+  }
+  if (mUserPhysicListName == "empenelope") {
+    pl = new G4EmPenelopePhysics();
+  }
+  if (mUserPhysicListName == "emDNAphysics") {
+    pl = new G4EmDNAPhysics();
+  }
+
+  if (pl != NULL) {   
+    pl->ConstructParticle();
+    pl->ConstructProcess();
+    //pl->SetVerboseLevel(2);
+    AddTransportation(); // don't forget transportation process.
+    GateRunManager::GetRunManager()->SetUserPhysicListName("");
+  }
+  else { 
+    // Set the phys list name. It will be build in GateRunManager.
+    GateRunManager::GetRunManager()->SetUserPhysicListName(mUserPhysicListName);
+  }  
 }
 //-----------------------------------------------------------------------------------------
 
