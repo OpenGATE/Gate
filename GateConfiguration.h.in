@@ -27,14 +27,6 @@
  #define  G4ANALYSIS_USE_FILE 1
 #endif
 
-#ifndef GATE_USE_GEANT4_UIVIS
- #undef G4VIS_USE
-#endif
-
-#ifdef GATE_USE_GEANT4_UIVIS
- #define G4VIS_USE
-#endif
-
 //#cmakedefine G4VERSION             @Geant4_VERSION@
 //#cmakedefine G4VERSION_MAJOR       @G4VERSION_MAJOR@
 //#cmakedefine G4VERSION_MINOR       @G4VERSION_MINOR@
