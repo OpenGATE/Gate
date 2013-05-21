@@ -186,7 +186,7 @@ void GateScintillatorResponseActor::UserSteppingActionInVoxel(const int index, c
   {
     // Photon incident energy
     double photonEnergy = (step->GetPreStepPoint()->GetKineticEnergy());
-    //G4cout << "E: " << photonEnergy << G4endl;
+
 
     // Mu Absortion Coeficient (linear interpolation to obtain the right value from the list)
     std::map< G4double, G4double >::iterator iterMuAbsortionMap = mUserMuAbsortionMap.end();
@@ -202,7 +202,7 @@ void GateScintillatorResponseActor::UserSteppingActionInVoxel(const int index, c
     double lowerEn = iterMuAbsortionMap->first;
     double lowerMu = iterMuAbsortionMap->second;
     double muAbsortionInterp = ((( upperMu - lowerMu)/( upperEn - lowerEn)) * ( photonEnergy - upperEn) + upperMu);
-    //G4cout << "Mu: " << muAbsortionInterp << G4endl;
+
 
     // cos(Theta) computation: scalar product: NormalVectorToDetectorSurface * IncidentPhotonDirection
     G4ThreeVector normalVectorDetec = mDetectorToWorld.TransformAxis(G4ThreeVector(0,0,1));
@@ -216,16 +216,14 @@ void GateScintillatorResponseActor::UserSteppingActionInVoxel(const int index, c
     const double itkVectorDetecNorm = itkVectorDetec.GetNorm();
     const double itkPhotonDirecNorm = itkPhotonDirec.GetNorm();
     double cosT = itkVectorDetec * itkPhotonDirec / ( itkVectorDetecNorm * itkPhotonDirecNorm);
-    //G4cout << "cosT: " << cosT << G4endl;
+
 
     // Pixel Area
     double pixelArea = (mVoxelSize[0]*mVoxelSize[1]);
-    //G4cout << "A: " << pixelArea << " mResolution: " << mResolution << " mHalfSize: " << mHalfSize << " mVoxelSize: " << mVoxelSize << G4endl;
 
     // Dose deposed into the pixel Detector above the Scintillator by one photon
     double doseScintillator = muAbsortionInterp * photonEnergy / ( pixelArea * cosT);
-    //G4cout << "D: " << doseScintillator << G4endl;
-    //G4cout << "------------------------------------------------- "  << G4endl;
+
 
     mImage.AddValue(index, doseScintillator);
     // Scatter order
