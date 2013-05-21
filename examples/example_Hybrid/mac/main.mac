@@ -168,5 +168,5 @@
 /gate/run/enableGlobalOutput false
 
 # PARTICLE
-/gate/application/setTotalNumberOfPrimaries 100000
+/gate/application/setTotalNumberOfPrimaries 100
 /gate/application/start

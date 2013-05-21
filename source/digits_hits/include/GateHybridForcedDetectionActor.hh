@@ -325,7 +325,7 @@ public:
     //                         Eratio * Eratio *                      // DCSKleinNishinaTerm1
     //                         (Eratio + 1./Eratio - 1. + cosT*cosT); // DCSKleinNishinaTerm2
     double DCSKleinNishina = m_eRadiusOverCrossSectionTerm*Eratio*(1.+Eratio*(Eratio-1.+cosT*cosT));
-    double DCScompton = DCSKleinNishina * scatteringFunction;
+    double DCScompton = DCSKleinNishina * scatteringFunction * m_weight;
 
     // Multiply interpolation weights by step norm in MM to convert voxel
     // intersection length to MM.
@@ -357,13 +357,14 @@ public:
 
   void SetDirection(const VectorType &_arg){ m_Direction = _arg; }
 
-  void SetEnergyAndZ(const double  &energy, const unsigned int &Z) {
+  void SetEnergyAndZ(const double  &energy, const unsigned int &Z, const double &weight) {
     m_Energy = energy;
     m_E0m = m_Energy / electron_mass_c2;
     m_InvWlPhoton = std::sqrt(0.5) * cm * m_Energy / (h_Planck * c_light); // sqrt(0.5) for trigo reasons, see comment when used
 
     G4double cs = m_CrossSectionHandler->FindValue(Z, energy);
     m_Z = Z;
+    m_weight = weight;
     m_eRadiusOverCrossSectionTerm = ( classic_electr_radius*classic_electr_radius) / (2.*cs);
   }
 
@@ -372,6 +373,7 @@ private:
   double               m_Energy;
   double               m_E0m;
   double               m_InvWlPhoton;
+  double               m_weight;
   unsigned int         m_Z;
   double               m_eRadiusOverCrossSectionTerm;
 
@@ -426,7 +428,7 @@ public:
     double DCSThomson = m_eRadiusOverCrossSectionTerm * DCSThomsonTerm1;
     double x = std::sqrt(1.-cosT) * m_InvWlPhoton;// 1-cosT=2*sin(T/2)^2
     double formFactor = m_FormFactorData->FindValue(x, m_Z-1);
-    double DCSrayleigh = DCSThomson * formFactor * formFactor;
+    double DCSrayleigh = DCSThomson * formFactor * formFactor * m_weight;
 
     // Multiply interpolation weights by step norm in MM to convert voxel
     // intersection length to MM.
@@ -452,7 +454,7 @@ public:
   }
 
   void SetDirection(const VectorType &_arg){ m_Direction = _arg; }
-  void SetEnergyAndZ(const double  &energy, const unsigned int &Z) {
+  void SetEnergyAndZ(const double  &energy, const unsigned int &Z, const double &weight) {
     m_InvWlPhoton = std::sqrt(0.5) * cm * energy / (h_Planck * c_light); // sqrt(0.5) for trigo reasons, see comment when used
 
     unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
@@ -460,6 +462,7 @@ public:
     m_MaterialMuPointer += e * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
 
     G4double cs = m_CrossSectionHandler->FindValue(Z, energy);
+    m_weight = weight;
     m_Z = Z;
     m_eRadiusOverCrossSectionTerm = ( classic_electr_radius*classic_electr_radius) / (2.*cs);
   }
@@ -468,6 +471,7 @@ private:
   VectorType           m_Direction;
   double              *m_MaterialMuPointer;
   double               m_InvWlPhoton;
+  double               m_weight;
   unsigned int         m_Z;
   double               m_eRadiusOverCrossSectionTerm;
 
