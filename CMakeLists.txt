@@ -51,6 +51,7 @@ ENDIF()
 #=========================================================
 # Option for Root use
 
+OPTION(GATE_USE_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
 OPTION(GATE_USE_ROOT "Gate use ROOT (Recommanded)" ON)
 OPTION(GATE_USE_OPTICAL "Gate use optical photon" OFF)
 OPTION(GATE_USE_LMF "Gate use LMF" OFF)
