@@ -325,7 +325,7 @@ public:
     //                         Eratio * Eratio *                      // DCSKleinNishinaTerm1
     //                         (Eratio + 1./Eratio - 1. + cosT*cosT); // DCSKleinNishinaTerm2
     double DCSKleinNishina = m_eRadiusOverCrossSectionTerm*Eratio*(1.+Eratio*(Eratio-1.+cosT*cosT));
-    double DCScompton = DCSKleinNishina * scatteringFunction * m_weight;
+    double DCScompton = DCSKleinNishina * scatteringFunction;
 
     // Multiply interpolation weights by step norm in MM to convert voxel
     // intersection length to MM.
@@ -364,8 +364,7 @@ public:
 
     G4double cs = m_CrossSectionHandler->FindValue(Z, energy);
     m_Z = Z;
-    m_weight = weight;
-    m_eRadiusOverCrossSectionTerm = ( classic_electr_radius*classic_electr_radius) / (2.*cs);
+    m_eRadiusOverCrossSectionTerm = weight * ( classic_electr_radius*classic_electr_radius) / (2.*cs);
   }
 
 private:
@@ -373,7 +372,6 @@ private:
   double               m_Energy;
   double               m_E0m;
   double               m_InvWlPhoton;
-  double               m_weight;
   unsigned int         m_Z;
   double               m_eRadiusOverCrossSectionTerm;
 
@@ -428,7 +426,7 @@ public:
     double DCSThomson = m_eRadiusOverCrossSectionTerm * DCSThomsonTerm1;
     double x = std::sqrt(1.-cosT) * m_InvWlPhoton;// 1-cosT=2*sin(T/2)^2
     double formFactor = m_FormFactorData->FindValue(x, m_Z-1);
-    double DCSrayleigh = DCSThomson * formFactor * formFactor * m_weight;
+    double DCSrayleigh = DCSThomson * formFactor * formFactor;
 
     // Multiply interpolation weights by step norm in MM to convert voxel
     // intersection length to MM.
@@ -462,16 +460,14 @@ public:
     m_MaterialMuPointer += e * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
 
     G4double cs = m_CrossSectionHandler->FindValue(Z, energy);
-    m_weight = weight;
     m_Z = Z;
-    m_eRadiusOverCrossSectionTerm = ( classic_electr_radius*classic_electr_radius) / (2.*cs);
+    m_eRadiusOverCrossSectionTerm = weight * ( classic_electr_radius*classic_electr_radius) / (2.*cs);
   }
 
 private:
   VectorType           m_Direction;
   double              *m_MaterialMuPointer;
   double               m_InvWlPhoton;
-  double               m_weight;
   unsigned int         m_Z;
   double               m_eRadiusOverCrossSectionTerm;
 
