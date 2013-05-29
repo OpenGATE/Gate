@@ -234,7 +234,7 @@ public:
                             double input,
                             const double &itkNotUsed(rayCastValue),
                             const VectorType &stepInMM,
-                            const VectorType &itkNotUsed(source),
+                            const VectorType &source,
                             const VectorType &sourceToPixel,
                             const VectorType &nearestPoint,
                             const VectorType &farthestPoint) const
@@ -250,7 +250,7 @@ public:
     // The last material is the world material. One must fill the weight with
     // the length from source to nearest point and farthest point to pixel
     // point.
-    VectorType worldVector = sourceToPixel - nearestPoint + farthestPoint;
+    VectorType worldVector = sourceToPixel + nearestPoint - farthestPoint;
     for(int i=0; i<3; i++)
       worldVector[i] *= m_VolumeSpacing[i];
     m_InterpolationWeights[threadId].back() = worldVector.GetNorm();
@@ -309,7 +309,7 @@ public:
     // Compute ray length in world material
     // This is used to compute the length in world as well as the direction
     // of the ray in mm.
-    VectorType worldVector = sourceToPixel - 2.*source + nearestPoint + farthestPoint;
+    VectorType worldVector = sourceToPixel + nearestPoint - farthestPoint;
     for(int i=0; i<3; i++)
       worldVector[i] *= m_VolumeSpacing[i];
     const double worldVectorNorm = worldVector.GetNorm();
@@ -415,7 +415,7 @@ public:
     // Compute ray length in world material
     // This is used to compute the length in world as well as the direction
     // of the ray in mm.
-    VectorType worldVector = sourceToPixel - 2.*source + nearestPoint + farthestPoint;
+    VectorType worldVector = sourceToPixel + nearestPoint - farthestPoint;
     for(int i=0; i<3; i++)
       worldVector[i] *= m_VolumeSpacing[i];
     const double worldVectorNorm = worldVector.GetNorm();
