@@ -234,7 +234,7 @@ public:
                             double input,
                             const double &itkNotUsed(rayCastValue),
                             const VectorType &stepInMM,
-                            const VectorType &source,
+                            const VectorType &itkNotUsed(source),
                             const VectorType &sourceToPixel,
                             const VectorType &nearestPoint,
                             const VectorType &farthestPoint) const
@@ -301,7 +301,7 @@ public:
                             double input,
                             const double &itkNotUsed(rayCastValue),
                             const VectorType &stepInMM,
-                            const VectorType &source,
+                            const VectorType &itkNotUsed(source),
                             const VectorType &sourceToPixel,
                             const VectorType &nearestPoint,
                             const VectorType &farthestPoint) const
@@ -407,7 +407,7 @@ public:
                             double input,
                             const double &itkNotUsed(rayCastValue),
                             const VectorType &stepInMM,
-                            const VectorType &source,
+                            const VectorType &itkNotUsed(source),
                             const VectorType &sourceToPixel,
                             const VectorType &nearestPoint,
                             const VectorType &farthestPoint) const
