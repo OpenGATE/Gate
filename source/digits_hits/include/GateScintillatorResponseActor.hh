@@ -15,6 +15,7 @@ See GATE/LICENSE.txt for further details
  */
 
 #include "GateConfiguration.h"
+#ifdef GATE_USE_RTK
 
 #ifndef GATESCINTILLATORRESPONSEACTOR_HH
 #define GATESCINTILLATORRESPONSEACTOR_HH
@@ -71,3 +72,5 @@ protected:
 MAKE_AUTO_CREATOR_ACTOR(ScintillatorResponseActor,GateScintillatorResponseActor)
 
 #endif /* end #define GATESIMULATIONSTATISTICACTOR_HH */
+
+#endif // GATE_USE_RTK

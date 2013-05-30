@@ -8,6 +8,8 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateConfiguration.h"
+#ifdef GATE_USE_RTK
 
 #include "GateScintillatorResponseActorMessenger.hh"
 #include "GateScintillatorResponseActor.hh"
@@ -67,3 +69,5 @@ void GateScintillatorResponseActorMessenger::SetNewValue(G4UIcommand* cmd, G4Str
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
 //-----------------------------------------------------------------------------
+
+#endif // GATE_USE_RTK

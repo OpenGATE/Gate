@@ -13,6 +13,9 @@ See GATE/LICENSE.txt for further details
   \author simon.rit@creatis.insa-lyon.fr
 */
 
+#include "GateConfiguration.h"
+#ifdef GATE_USE_RTK
+
 #ifndef GATESCINTILLATORRESPONSEACTORMESSENGER_HH
 #define GATESCINTILLATORRESPONSEACTORMESSENGER_HH
 
@@ -36,3 +39,5 @@ protected:
 };
 
 #endif /* end #define GATESCINTILLATORRESPONSEACTORMESSENGER_HH*/
+
+#endif // GATE_USE_RTK

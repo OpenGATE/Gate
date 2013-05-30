@@ -8,11 +8,13 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-
 /*
   \brief Class GateScintillatorResponseActor :
   \brief 
 */
+#include "GateConfiguration.h"
+#ifdef GATE_USE_RTK
+
 // Gate
 #include "GateScintillatorResponseActor.hh"
 #include "GateScatterOrderTrackInformationActor.hh"
@@ -256,3 +258,5 @@ void GateScintillatorResponseActor::UserSteppingActionInVoxel(const int index, c
   GateDebugMessageDec("Actor", 4, "GateScintillatorResponseActor -- UserSteppingActionInVoxel -- end" << G4endl);
 }
 //-----------------------------------------------------------------------------
+
+#endif // GATE_USE_RTK
