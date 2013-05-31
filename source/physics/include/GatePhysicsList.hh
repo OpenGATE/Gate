@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 
@@ -14,20 +14,17 @@ See GATE/LICENSE.txt for further details
 #define GATEPHYSICSLIST_HH
 
 #include "G4VUserPhysicsList.hh"
-
-
 #include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
 #include "G4EmCalculator.hh"
 #include "G4ProductionCutsTable.hh"
 #include "G4UnitsTable.hh"
+#include "G4ProductionCuts.hh"
+#include "G4EmProcessOptions.hh"
+
 #include "GateMessageManager.hh"
 #include "GateVProcess.hh"
 #include "GateUserLimits.hh"
-#include "G4ProductionCuts.hh"
-
-#include "G4EmProcessOptions.hh"
-
 
 //class GateVProcess;
 class GatePhysicsListMessenger;
@@ -37,13 +34,32 @@ private:
   GatePhysicsList();
 
 public:
-  //GatePhysicsList();
+  // Types
+  struct ParticleCutType {
+    G4double gammaCut;
+    G4double electronCut;
+    G4double positronCut;
+    G4double protonCut;
+  };
+  typedef std::map<G4String, ParticleCutType> RegionCutMapType;
+  typedef std::map<G4String, GateUserLimits*> VolumeUserLimitsMapType;
+
+  // Functions
+  static GatePhysicsList *GetInstance() { // static function must be here or icc, not in cc
+    if (singleton == 0)
+      {
+        //std::cout << "creating PhysicscList..." << std::endl;
+        singleton = new GatePhysicsList;
+      }
+    //else std::cout << "PhysicscList already created!" << std::endl;
+    return singleton;
+  }
   virtual ~GatePhysicsList();
 
   void ConstructProcess();
   void ConstructParticle();
+  void ConstructPhysicsList(G4String name);
 
- 
   void Print(G4String type, G4String particlename);
   void Print(G4String name);
 
@@ -55,61 +71,39 @@ public:
   void Write(G4String file);
 
   std::vector<GateVProcess*> FindProcess(G4String name);  
-
   std::vector<G4String> GetTheListOfPBName() {return theListOfPBName;}
 
-  // SetCuts() 
   void SetCuts();
-  void DefineCuts();
+  void SetEmProcessOptions();
+  void DefineCuts(G4VUserPhysicsList * phys);
+  void DefineCuts() { DefineCuts(this); }
   void SetCutInRegion(G4String particleName, G4String regionName, G4double cutValue);
   void SetSpecialCutInRegion(G4String cutType, G4String regionName, G4double cutValue);
-
+  void SetEnergyRangeMinLimit(double val);
   void GetCuts();
+  G4String GetListOfPhysicsLists() { return mListOfPhysicsLists; }
+  void SetOptDEDXBinning(G4int val);
+  void SetOptLambdaBinning(G4int val);
+  void SetOptEMin(G4double val);
+  void SetOptEMax(G4double val);
+  void SetOptSplineFlag(G4bool val);
+  RegionCutMapType & GetMapOfRegionCuts() { return mapOfRegionCuts; }
+  G4double GetLowEdgeEnergy();
 
-private:
+  std::vector<G4String> mListOfStepLimiter;
+  std::vector<G4String> mListOfG4UserSpecialCut;
+  RegionCutMapType mapOfRegionCuts;  
 
+protected:
   int mLoadState;
   GatePhysicsListMessenger * pMessenger;
   std::vector<G4String> theListOfPBName;
 
-
-public:
-
-  static GatePhysicsList *GetInstance()
-  {   
-    if (singleton == 0)
-    {
-      //std::cout << "creating PhysicscList..." << std::endl;
-      singleton = new GatePhysicsList;
-    }
-    //else std::cout << "PhysicscList already created!" << std::endl;
-    return singleton;
-  }
-
-  std::vector<GateVProcess*>* GetTheListOfProcesss()
-  {
-    return GateVProcess::GetTheListOfProcesses();
-  }
-  
-  std::vector<G4String> mListOfStepLimiter;
-  std::vector<G4String> mListOfG4UserSpecialCut;
-
-private:
   static GatePhysicsList *singleton;
 
+  std::vector<GateVProcess*>* GetTheListOfProcesss();  
 
-  struct ParticleCutType {
-	G4double gammaCut;
-	G4double electronCut;
-	G4double positronCut;
-	G4double protonCut;
-  };
-  typedef std::map<G4String, ParticleCutType> RegionCutMapType;
-  RegionCutMapType mapOfRegionCuts;
-  
-  typedef std::map<G4String, GateUserLimits*> VolumeUserLimitsMapType;
   VolumeUserLimitsMapType mapOfVolumeUserLimits;
-
   std::list<G4ProductionCuts*> theListOfCuts;
 
   int mDEDXBinning;
@@ -118,19 +112,14 @@ private:
   double mEmax;
   bool mSplineFlag;
   G4UserLimits * userlimits;
+  
+  // Physic list management 
+  G4VUserPhysicsList * mUserPhysicList;
+  G4String mUserPhysicListName;
+  G4String mListOfPhysicsLists;
+  G4double mLowEnergyRangeLimit;
 
-public:
-  void SetOptDEDXBinning(G4int val);
-  void SetOptLambdaBinning(G4int val);
-  void SetOptEMin(G4double val);
-  void SetOptEMax(G4double val);
-  void SetOptSplineFlag(G4bool val);
-  RegionCutMapType & GetMapOfRegionCuts() { return mapOfRegionCuts; }
-
-private:
   G4EmProcessOptions *opt;
-
-
 };
 
 
