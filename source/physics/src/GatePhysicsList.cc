@@ -45,6 +45,7 @@
 #include "GateConfiguration.h"
 #include "GatePhysicsListMessenger.hh"
 #include "GateRunManager.hh"
+#include "GateObjectStore.hh"
 
 #ifdef GATE_USE_OPTICAL
 #include "G4OpticalPhoton.hh"
@@ -300,6 +301,12 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
     //pl->SetVerboseLevel(2);
     AddTransportation(); // don't forget transportation process.
     GateRunManager::GetRunManager()->SetUserPhysicListName("");
+    
+    // default activation of deexcitation processes
+    G4EmProcessOptions fluoOpt;
+    fluoOpt.SetFluo(true);
+    fluoOpt.SetAuger(true);
+//     fluoOpt.SetPIXE(true);
   }
   else { 
     // Set the phys list name. It will be build in GateRunManager.
@@ -577,7 +584,7 @@ void GatePhysicsList::Write(G4String file)
 
   std::ofstream os;
   os.open(file.data());
-  if(mLoadState<2)  os<<"<!> *** Warning *** <!>  Processes not yet initialized!\n\n";
+  if(mLoadState<2)  os<<"<!> *** Warni/process/em/fluo falseng *** <!>  Processes not yet initialized!\n\n";
 
   os<<"List of particles with their associated processes\n\n";
   if(mLoadState<2)  os<<"<!> *** Warning *** <!>  Processes not yet initialized!\n\n";
@@ -633,6 +640,12 @@ void GatePhysicsList::SetEmProcessOptions()
   if(mEmax>0)          opt->SetMaxEnergy(mEmax);
   opt->SetSplineFlag(mSplineFlag);
   opt->SetApplyCuts(true);
+  
+  // register all region in deexcitation process with fluo, auger and PIXE set to "true"
+  GateObjectStore *store = GateObjectStore::GetInstance();
+  for(GateObjectStore::iterator it=store->begin() ; it!=store->end() ; ++it){
+    opt->SetDeexcitationActiveRegion(it->first,true,true,true); // G4region, fluo, auger, PIXE
+  }
 }
 //-----------------------------------------------------------------------------------------
 
