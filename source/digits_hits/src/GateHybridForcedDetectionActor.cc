@@ -271,6 +271,58 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                                                          gate_image_volume);
   mRayleighProjector->GetProjectedValueAccumulation().Init( mRayleighProjector->GetNumberOfThreads() );
 
+  // Create a single event if asked for it
+  if(mSingleInteractionFilename!="") {
+    // d and p are in World coordinates and they must be in CT coordinates
+    G4ThreeVector d = m_WorldToCT.TransformAxis(mSingleInteractionDirection);
+    G4ThreeVector p = m_WorldToCT.TransformPoint(mSingleInteractionPosition);
+
+    //Convert to ITK
+    PointType point;
+    VectorType direction;
+    for(unsigned int i=0; i<3; i++) {
+      point[i] = p[i];
+      direction[i] = d[i];
+    }
+
+    if(mSingleInteractionType == "Compton") {
+      mComptonProjector->InPlaceOff();
+      GeometryType::Pointer oneProjGeometry = GeometryType::New();
+      oneProjGeometry->AddReg23Projection(point,
+                                          mDetectorPosition,
+                                          mDetectorRowVector,
+                                          mDetectorColVector);
+      mComptonProjector->SetInput(mComptonImage);
+      mComptonProjector->SetGeometry( oneProjGeometry.GetPointer() );
+      mComptonProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mSingleInteractionEnergy,
+                                                                              mSingleInteractionZ,
+                                                                              1. );
+      mComptonProjector->GetProjectedValueAccumulation().SetDirection( direction );
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(mComptonProjector->Update());
+      mSingleInteractionImage = mComptonProjector->GetOutput();
+      mSingleInteractionImage->DisconnectPipeline();
+      mComptonProjector->InPlaceOn();
+    }
+    if(mSingleInteractionType == "Rayleigh") {
+      mRayleighProjector->InPlaceOff();
+      GeometryType::Pointer oneProjGeometry = GeometryType::New();
+      oneProjGeometry->AddReg23Projection(point,
+                                          mDetectorPosition,
+                                          mDetectorRowVector,
+                                          mDetectorColVector);
+      mRayleighProjector->SetInput(mRayleighImage);
+      mRayleighProjector->SetGeometry( oneProjGeometry.GetPointer() );
+      mRayleighProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mSingleInteractionEnergy,
+                                                                               mSingleInteractionZ,
+                                                                               1. );
+      mRayleighProjector->GetProjectedValueAccumulation().SetDirection( direction );
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(mRayleighProjector->Update());
+      mSingleInteractionImage = mRayleighProjector->GetOutput();
+      mSingleInteractionImage->DisconnectPipeline();
+      mRayleighProjector->InPlaceOff();
+    }
+  }
+
 }
 //-----------------------------------------------------------------------------
 
@@ -518,6 +570,11 @@ void GateHybridForcedDetectionActor::SaveData()
     }
   }
 
+  if(mSingleInteractionFilename!="") {
+    imgWriter->SetFileName(mSingleInteractionFilename);
+    imgWriter->SetInput(mSingleInteractionImage);
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+  }
 //  G4cout << "Computation of the primary took "
 //         << mPrimaryProbe.GetTotal()
 //         << ' '

@@ -76,6 +76,12 @@ public:
   void SetFlatFieldFilename(G4String name) { mFlatFieldFilename = name; }
   void SetComptonFilename(G4String name) { mComptonFilename = name; }
   void SetRayleighFilename(G4String name) { mRayleighFilename = name; }
+  void SetSingleInteractionFilename(G4String name) { mSingleInteractionFilename = name; }
+  void SetSingleInteractionType(G4String type) { mSingleInteractionType = type; }
+  void SetSingleInteractionPosition(G4ThreeVector pos) { mSingleInteractionPosition = pos; }
+  void SetSingleInteractionDirection(G4ThreeVector dir) { mSingleInteractionDirection = dir; }
+  void SetSingleInteractionEnergy(G4double e) { mSingleInteractionEnergy = e; }
+  void SetSingleInteractionZ(G4int z) { mSingleInteractionZ = z; }
 
   // Typedef for rtk
   static const unsigned int Dimension = 3;
@@ -164,6 +170,15 @@ protected:
                  GateHybridForcedDetectionFunctor::RayleighValueAccumulation>
                    RayleighProjectionType;
   RayleighProjectionType::Pointer mRayleighProjector;
+
+  // Parameters for single event output
+  InputImageType::Pointer mSingleInteractionImage;
+  G4String                mSingleInteractionFilename;
+  G4String                mSingleInteractionType;
+  G4ThreeVector           mSingleInteractionPosition;
+  G4ThreeVector           mSingleInteractionDirection;
+  G4double                mSingleInteractionEnergy;
+  G4int                   mSingleInteractionZ;
 };
 //-----------------------------------------------------------------------------
 
