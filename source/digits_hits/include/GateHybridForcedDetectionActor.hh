@@ -337,7 +337,35 @@ public:
     // the length from farthest point to pixel point.
     m_InterpolationWeights[threadId].back() = worldVectorNorm;
 
+ // DEFINITION for Activation/Deactivation log-log interpolation of mu value
+//#define INTERP
+#ifdef INTERP
     // Pointer to adequate mus
+    unsigned int ceil = itk::Math::Ceil<double, double>(Eratio*m_Energy / m_MaterialMu->GetSpacing()[1]);
+    unsigned int floor = itk::Math::Floor<double, double>(Eratio*m_Energy / m_MaterialMu->GetSpacing()[1]);
+    double *p1 = m_MaterialMu->GetPixelContainer()->GetBufferPointer() +
+                floor * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
+    double *p2 = m_MaterialMu->GetPixelContainer()->GetBufferPointer() +
+                ceil * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
+
+    double rayIntegral = 0.;
+    double logEnergy   = log(Eratio*m_Energy/m_MaterialMu->GetSpacing()[1]);
+    double logCeil     = log(ceil);
+    double logFloor    = log(floor);
+
+    // log-log interpolation for mu calculation
+    double interp =  exp( ((log(*p2 / *p1))/(logCeil-logFloor))*( logEnergy - logCeil ) + log(*p2) );
+
+    for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
+    {
+      // Ray integral
+      rayIntegral += m_InterpolationWeights[threadId][j] * interp;
+      p2++; p1++;
+      interp = exp( ((log(*p2 / *p1))/(logCeil-logFloor)) * (logEnergy - logCeil) + log(*p2) );
+    }
+
+#endif
+#ifndef INTERP
     unsigned int e = itk::Math::Round<double, double>(Eratio*m_Energy / m_MaterialMu->GetSpacing()[1]);
     double *p = m_MaterialMu->GetPixelContainer()->GetBufferPointer() +
                 e * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
@@ -346,7 +374,7 @@ public:
     double rayIntegral = 0.;
     for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
       rayIntegral += m_InterpolationWeights[threadId][j] * *p++;
-
+#endif
     // Final computation
     input += vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel);
 
@@ -358,6 +386,7 @@ public:
   void SetDirection(const VectorType &_arg){ m_Direction = _arg; }
 
   void SetEnergyAndZ(const double  &energy, const unsigned int &Z, const double &weight) {
+
     m_Energy = energy;
     m_E0m = m_Energy / electron_mass_c2;
     m_InvWlPhoton = std::sqrt(0.5) * cm * m_Energy / (h_Planck * c_light); // sqrt(0.5) for trigo reasons, see comment when used
@@ -438,11 +467,48 @@ public:
     // the length from farthest point to pixel point.
     m_InterpolationWeights[threadId].back() = worldVectorNorm;
 
+#ifdef INTERP
+    unsigned int floor = itk::Math::Floor<double, double>(m_Energy / m_MaterialMu->GetSpacing()[1]);
+    unsigned int ceil = itk::Math::Ceil<double, double>(m_Energy / m_MaterialMu->GetSpacing()[1]);
+
+    double *p1 = m_MaterialMu->GetPixelContainer()->GetBufferPointer()
+               + floor * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
+    double *p2 = m_MaterialMu->GetPixelContainer()->GetBufferPointer()
+               + ceil * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
+
+    double rayIntegral = 0.;
+    double logEnergy   = std::log(m_Energy/m_MaterialMu->GetSpacing()[1]);
+    double logCeil     = std::log(ceil);
+    double logFloor    = std::log(floor);
+
+    // Energy integer case, no interpolation needed
+    if(floor == ceil)
+    {
+      // Ray integral
+      for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
+        rayIntegral += m_InterpolationWeights[threadId][j] * *(m_MaterialMuPointer+j);
+    }
+    // Interpolation needed
+    else
+    {
+      // log-log interpolation for mu calculation
+      double interp = std::exp( (std::log(*p2 / *p1)/(logCeil-logFloor)) * (logEnergy - logCeil) + std::log(*p2) );
+      // Ray integral
+      for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
+      {
+        rayIntegral += m_InterpolationWeights[threadId][j] * interp;
+        p2++; p1++;
+        interp = std::exp( ((std::log(*p2 / *p1) )/(logCeil-logFloor)) * (logEnergy - logCeil) + std::log(*p2) );
+      }
+    }
+
+#endif
+#ifndef INTERP
     // Ray integral
     double rayIntegral = 0.;
     for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
       rayIntegral += m_InterpolationWeights[threadId][j] * *(m_MaterialMuPointer+j);
-
+#endif
     // Final computation
     input += vcl_exp(-rayIntegral) * DCSrayleigh * GetSolidAngle(sourceToPixel);
 
@@ -454,10 +520,9 @@ public:
   void SetDirection(const VectorType &_arg){ m_Direction = _arg; }
   void SetEnergyAndZ(const double  &energy, const unsigned int &Z, const double &weight) {
     m_InvWlPhoton = std::sqrt(0.5) * cm * energy / (h_Planck * c_light); // sqrt(0.5) for trigo reasons, see comment when used
-
-    unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
+    m_Energy = energy;
     m_MaterialMuPointer = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
-    m_MaterialMuPointer += e * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
+    m_MaterialMuPointer += (unsigned int)m_Energy * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
 
     G4double cs = m_CrossSectionHandler->FindValue(Z, energy);
     m_Z = Z;
@@ -468,6 +533,7 @@ private:
   VectorType           m_Direction;
   double              *m_MaterialMuPointer;
   double               m_InvWlPhoton;
+  double               m_Energy;
   unsigned int         m_Z;
   double               m_eRadiusOverCrossSectionTerm;
 
