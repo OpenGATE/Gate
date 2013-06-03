@@ -317,7 +317,6 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
   G4ThreeVector d = step->GetPreStepPoint()->GetMomentumDirection();
   double energy = step->GetPreStepPoint()->GetKineticEnergy();
   double weight = step->GetPostStepPoint()->GetWeight();
-  //FIXME: check what to do from this w = stepPoint->GetWeight(); ???
 
   GateScatterOrderTrackInformation * info = dynamic_cast<GateScatterOrderTrackInformation *>(step->GetTrack()->GetUserInformation());
 
@@ -349,7 +348,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
                                         mDetectorColVector);
     mComptonProjector->SetInput(mComptonImage);
     mComptonProjector->SetGeometry( oneProjGeometry.GetPointer() );
-    mComptonProjector->GetProjectedValueAccumulation().SetEnergyAndZ( energy, Z, weight );
+    mComptonProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( energy, Z, weight );
     mComptonProjector->GetProjectedValueAccumulation().SetDirection( direction );
     TRY_AND_EXIT_ON_ITK_EXCEPTION(mComptonProjector->Update());
     mComptonImage = mComptonProjector->GetOutput();
@@ -379,7 +378,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
                                         mDetectorColVector);
     mRayleighProjector->SetInput(mRayleighImage);
     mRayleighProjector->SetGeometry( oneProjGeometry.GetPointer() );
-    mRayleighProjector->GetProjectedValueAccumulation().SetEnergyAndZ( energy, Z, weight );
+    mRayleighProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( energy, Z, weight );
     mRayleighProjector->GetProjectedValueAccumulation().SetDirection( direction );
     TRY_AND_EXIT_ON_ITK_EXCEPTION(mRayleighProjector->Update());
     mRayleighImage = mRayleighProjector->GetOutput();

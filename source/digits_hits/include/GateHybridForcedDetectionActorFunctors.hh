@@ -356,7 +356,7 @@ public:
 
   void SetDirection(const VectorType &_arg){ m_Direction = _arg; }
 
-  void SetEnergyAndZ(const double  &energy, const unsigned int &Z, const double &weight) {
+  void SetEnergyZAndWeight(const double  &energy, const unsigned int &Z, const double &weight) {
 
     m_Energy = energy;
     m_E0m = m_Energy / electron_mass_c2;
@@ -489,7 +489,7 @@ public:
   }
 
   void SetDirection(const VectorType &_arg){ m_Direction = _arg; }
-  void SetEnergyAndZ(const double  &energy, const unsigned int &Z, const double &weight) {
+  void SetEnergyZAndWeight(const double  &energy, const unsigned int &Z, const double &weight) {
     m_InvWlPhoton = std::sqrt(0.5) * cm * energy / (h_Planck * c_light); // sqrt(0.5) for trigo reasons, see comment when used
     m_Energy = energy;
     m_MaterialMuPointer = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
