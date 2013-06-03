@@ -32,6 +32,8 @@
 #include <itkChangeInformationImageFilter.h>
 #include <itkMultiplyImageFilter.h>
 #include <itkConstantPadImageFilter.h>
+#include <itkImageFileWriter.h>
+#include <itkBinaryFunctorImageFilter.h>
 
 #define TRY_AND_EXIT_ON_ITK_EXCEPTION(execFunc)                         \
   try                                                                   \
@@ -274,7 +276,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 
 //-----------------------------------------------------------------------------
 // Callback Begin Event
-void GateHybridForcedDetectionActor::BeginOfEventAction(const G4Event*e)
+void GateHybridForcedDetectionActor::BeginOfEventAction(const G4Event*itkNotUsed(e))
 {
   mNumberOfEventsInRun++;
 }
@@ -439,21 +441,21 @@ void GateHybridForcedDetectionActor::SaveData()
   }
 
   if(mMaterialMuFilename != "") {
-    VAccumulation::MaterialMuImageType *map;
+    AccumulationType::MaterialMuImageType *map;
     map = mComptonProjector->GetProjectedValueAccumulation().GetMaterialMu();
 
     // Change spacing to keV
-    VAccumulation::MaterialMuImageType::SpacingType spacing = map->GetSpacing();
+    AccumulationType::MaterialMuImageType::SpacingType spacing = map->GetSpacing();
     spacing[1] /= keV;
 
-    typedef itk::ChangeInformationImageFilter<VAccumulation::MaterialMuImageType> CIType;
+    typedef itk::ChangeInformationImageFilter<AccumulationType::MaterialMuImageType> CIType;
     CIType::Pointer ci = CIType::New();
     ci->SetInput(map);
     ci->SetOutputSpacing(spacing);
     ci->ChangeSpacingOn();
     ci->Update();
 
-    typedef itk::ImageFileWriter<VAccumulation::MaterialMuImageType> TwoDWriter;
+    typedef itk::ImageFileWriter<AccumulationType::MaterialMuImageType> TwoDWriter;
     TwoDWriter::Pointer w = TwoDWriter::New();
     w->SetInput( ci->GetOutput() );
     w->SetFileName(mMaterialMuFilename);
@@ -463,7 +465,7 @@ void GateHybridForcedDetectionActor::SaveData()
   if(mAttenuationFilename != "") {
     //Attenuation Functor -> atten
     typedef itk::BinaryFunctorImageFilter< InputImageType, InputImageType, InputImageType,
-                                           Functor::Attenuation<InputImageType::PixelType> > attenFunctor;
+                                           GateHybridForcedDetectionFunctor::Attenuation<InputImageType::PixelType> > attenFunctor;
     attenFunctor::Pointer atten = attenFunctor::New();
     atten->SetInput1(mPrimaryImage);
     atten->SetInput2(mFlatFieldImage);
