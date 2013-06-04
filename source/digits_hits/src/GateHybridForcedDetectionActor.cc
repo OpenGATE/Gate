@@ -319,7 +319,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       TRY_AND_EXIT_ON_ITK_EXCEPTION(mRayleighProjector->Update());
       mSingleInteractionImage = mRayleighProjector->GetOutput();
       mSingleInteractionImage->DisconnectPipeline();
-      mRayleighProjector->InPlaceOff();
+      mRayleighProjector->InPlaceOn();
     }
   }
 
