@@ -520,21 +520,8 @@ class FluorescenceValueAccumulation:
 {
 public:
 
-  FluorescenceValueAccumulation() {
-    // G4 data
-    G4VDataSetAlgorithm* ffInterpolation = new G4LogLogInterpolation;
-    G4String formFactorFile = "rayl/re-ff-";
-    m_FormFactorData = new G4CompositeEMDataSet( ffInterpolation, 1., 1.);
-    m_FormFactorData->LoadData(formFactorFile);
-
-    m_CrossSectionHandler = new G4CrossSectionHandler;
-    G4String crossSectionFile = "rayl/re-cs-";
-    m_CrossSectionHandler->LoadData(crossSectionFile);
-  }
-  ~FluorescenceValueAccumulation() {
-    delete m_FormFactorData;
-    delete m_CrossSectionHandler;
-  }
+  FluorescenceValueAccumulation() {}
+  ~FluorescenceValueAccumulation() {}
 
   inline double operator()( const rtk::ThreadIdType threadId,
                             double input,
@@ -614,15 +601,11 @@ public:
   }
 
   void SetDirection(const VectorType &_arg){ m_Direction = _arg; }
-  void SetEnergyZAndWeight(const double  &energy, const unsigned int &Z, const double &weight) {
+  void SetEnergyZAndWeight(const double  &energy, const unsigned int &itkNotUsed(Z), const double &itkNotUsed(weight)) {
     m_InvWlPhoton = std::sqrt(0.5) * cm * energy / (h_Planck * c_light); // sqrt(0.5) for trigo reasons, see comment when used
     m_Energy = energy;
     m_MaterialMuPointer = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
     m_MaterialMuPointer += (unsigned int)m_Energy * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
-
-    G4double cs = m_CrossSectionHandler->FindValue(Z, energy);
-    m_Z = Z;
-    m_eRadiusOverCrossSectionTerm = weight * ( classic_electr_radius*classic_electr_radius) / (2.*cs);
   }
 
 private:
@@ -630,12 +613,6 @@ private:
   double              *m_MaterialMuPointer;
   double               m_InvWlPhoton;
   double               m_Energy;
-  unsigned int         m_Z;
-  double               m_eRadiusOverCrossSectionTerm;
-
-  // G4 data
-  G4VEMDataSet* m_FormFactorData;
-  G4VCrossSectionHandler* m_CrossSectionHandler;
 };
 //-----------------------------------------------------------------------------
 
