@@ -40,6 +40,7 @@ protected:
   G4UIcmdWithAString * pSetFlatFieldFilenameCmd;
   G4UIcmdWithAString * pSetComptonFilenameCmd;
   G4UIcmdWithAString * pSetRayleighFilenameCmd;
+  G4UIcmdWithAString * pSetFluorescenceFilenameCmd;
 };
 
 #endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH*/

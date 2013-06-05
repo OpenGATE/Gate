@@ -23,6 +23,7 @@
 #include <G4VEmProcess.hh>
 #include <G4TransportationManager.hh>
 #include <G4LivermoreComptonModel.hh>
+#include <G4SteppingManager.hh>
 
 // rtk
 #include <rtkThreeDCircularProjectionGeometryXMLFile.h>
@@ -156,9 +157,11 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   mPrimaryImage = CreateVoidProjectionImage();
   mComptonImage = CreateVoidProjectionImage();
   mRayleighImage = CreateVoidProjectionImage();
+  mFluorescenceImage = CreateVoidProjectionImage();
 
   mComptonPerOrderImages.clear();
   mRayleighPerOrderImages.clear();
+  mFluorescencePerOrderImages.clear();
 
   // Create geometry and param of output image
   PointType primarySourcePosition;
@@ -268,7 +271,22 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                                                          energyMax,
                                                                          gate_image_volume);
   mRayleighProjector->GetProjectedValueAccumulation().Init( mRayleighProjector->GetNumberOfThreads() );
-
+  // Prepare Fluorescence
+  mFluorescenceProjector = FluorescenceProjectionType::New();
+  mFluorescenceProjector->InPlaceOn();
+  mFluorescenceProjector->SetInput(mFluorescenceImage);
+  mFluorescenceProjector->SetInput(1, mGateVolumeImage );
+  mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
+  mFluorescenceProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mFluorescenceImage,
+                                                                              mDetectorRowVector,
+                                                                              mDetectorColVector);
+  mFluorescenceProjector->GetProjectedValueAccumulation().SetVolumeSpacing( mGateVolumeImage->GetSpacing() );
+  mFluorescenceProjector->GetProjectedValueAccumulation().SetInterpolationWeights( mFluorescenceProjector->GetInterpolationWeightMultiplication().GetInterpolationWeights() );
+  mFluorescenceProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
+                                                                         1.*keV,
+                                                                         energyMax,
+                                                                         gate_image_volume);
+  mFluorescenceProjector->GetProjectedValueAccumulation().Init( mFluorescenceProjector->GetNumberOfThreads() );
 }
 //-----------------------------------------------------------------------------
 
@@ -293,7 +311,6 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
                                                         const G4Step * step)
 {
   GateVActor::UserSteppingAction(v, step);
-
   /* Get interaction point from step
      Retrieve : 
      - type of limiting process (Compton Rayleigh Fluorescence)
@@ -338,7 +355,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
   const G4Element* elm = model->SelectRandomAtom(couple,particle,energy);
   G4int Z = elm->GetZ();
 
-  if(process->GetProcessName() == G4String("Compton")) {
+  if(process->GetProcessName() == G4String("Compton") || process->GetProcessName() == G4String("compt")) {
     mComptonProbe.Start();
     GeometryType::Pointer oneProjGeometry = GeometryType::New();
     oneProjGeometry->AddReg23Projection(point,
@@ -368,7 +385,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
 
 
   }
-  else if(process->GetProcessName() == G4String("RayleighScattering")) {
+  else if(process->GetProcessName() == G4String("RayleighScattering") || process->GetProcessName() == G4String("Rayl")) {
     mRayleighProbe.Start();
     GeometryType::Pointer oneProjGeometry = GeometryType::New();
     oneProjGeometry->AddReg23Projection(point,
@@ -396,10 +413,48 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
         mRayleighPerOrderImages[order]->DisconnectPipeline();
     }
   }
-  else if(process->GetProcessName() == G4String("PhotoElectric")) {
+  else if(process->GetProcessName() == G4String("PhotoElectric") || process->GetProcessName() == G4String("phot")) {
 
+    // List of secondary particles
+    const G4TrackVector * list = step->GetSecondary();
+    G4String nameSecondary = G4String("0");
+    for(unsigned int i = 0; i<(*list).size(); i++)
+    {
+      nameSecondary = (*list)[i]->GetDefinition()->GetParticleName();
+    }
+
+    if(nameSecondary=G4String("gamma"))
+     {
+      mFluorescenceProbe.Start();
+      GeometryType::Pointer oneProjGeometry = GeometryType::New();
+      oneProjGeometry->AddReg23Projection(point,
+                                          mDetectorPosition,
+                                          mDetectorRowVector,
+                                          mDetectorColVector);
+      mFluorescenceProjector->SetInput(mFluorescenceImage);
+      mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
+      mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndZ( energy, Z, weight );
+      mFluorescenceProjector->GetProjectedValueAccumulation().SetDirection( direction );
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
+      mFluorescenceImage = mFluorescenceProjector->GetOutput();
+      mFluorescenceImage->DisconnectPipeline();
+      mFluorescenceProbe.Stop();
+
+      // Scatter order
+      if(info)
+      {
+        unsigned int order = info->GetScatterOrder();
+        while(order>=mFluorescencePerOrderImages.size())
+          mFluorescencePerOrderImages.push_back( CreateVoidProjectionImage() );
+        mFluorescenceProjector->SetInput(mFluorescencePerOrderImages[order]);
+        TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
+        mFluorescencePerOrderImages[order] = mFluorescenceProjector->GetOutput();
+        mFluorescencePerOrderImages[order]->DisconnectPipeline();
+      }
+    }
+    // Don't do anything for electrons
+    else{}
   }
-
 }
 //-----------------------------------------------------------------------------
 
@@ -513,6 +568,22 @@ void GateHybridForcedDetectionActor::SaveData()
       sprintf(filename, "output/rayleigh%04d_%04d.mha", rID, k+1);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mRayleighPerOrderImages[k]);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
+  }
+
+  if(mFluorescenceFilename != "")
+  {
+    sprintf(filename, mFluorescenceFilename.c_str(), rID);
+    imgWriter->SetFileName(filename);
+    imgWriter->SetInput(mFluorescenceImage);
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+
+    for(unsigned int k = 0; k<mFluorescencePerOrderImages.size(); k++)
+    {
+      sprintf(filename, "output/Fluorescence%04d_%04d.mha", rID, k+1);
+      imgWriter->SetFileName(filename);
+      imgWriter->SetInput(mFluorescencePerOrderImages[k]);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
     }
   }

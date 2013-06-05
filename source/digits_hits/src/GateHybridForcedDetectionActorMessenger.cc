@@ -85,6 +85,11 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
   pSetRayleighFilenameCmd = new G4UIcmdWithAString(bb,this);
   guidance = "Set the file name for writing the image that provides the rayleigh image.";
   pSetRayleighFilenameCmd->SetGuidance(guidance);
+
+  bb = base+"/fluorescenceFilename";
+  pSetFluorescenceFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for writing the image that provides the fluorescence image.";
+  pSetFluorescenceFilenameCmd->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -101,6 +106,7 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetFlatFieldFilenameCmd) pHybridActor->SetFlatFieldFilename(param);
   if(command == pSetComptonFilenameCmd) pHybridActor->SetComptonFilename(param);
   if(command == pSetRayleighFilenameCmd) pHybridActor->SetRayleighFilename(param);
+  if(command == pSetFluorescenceFilenameCmd) pHybridActor->SetFluorescenceFilename(param);
 
   GateActorMessenger::SetNewValue(command ,param );
 }
