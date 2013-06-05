@@ -334,9 +334,7 @@ public:
       p2++; p1++;
       interp = exp( ((log(*p2 / *p1))/(logCeil-logFloor)) * (logEnergy - logCeil) + log(*p2) );
     }
-
-#endif
-#ifndef INTERP
+#else
     unsigned int e = itk::Math::Round<double, double>(Eratio*m_Energy / m_MaterialMu->GetSpacing()[1]);
     double *p = m_MaterialMu->GetPixelContainer()->GetBufferPointer() +
                 e * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
@@ -472,9 +470,7 @@ public:
         interp = std::exp( ((std::log(*p2 / *p1) )/(logCeil-logFloor)) * (logEnergy - logCeil) + std::log(*p2) );
       }
     }
-
-#endif
-#ifndef INTERP
+#else
     // Ray integral
     double rayIntegral = 0.;
     for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
@@ -584,9 +580,7 @@ public:
         interp = std::exp( ((std::log(*p2 / *p1) )/(logCeil-logFloor)) * (logEnergy - logCeil) + std::log(*p2) );
       }
     }
-
-#endif
-#ifndef INTERP
+#else
     // Ray integral
     double rayIntegral = 0.;
     for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
