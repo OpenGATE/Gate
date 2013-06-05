@@ -60,6 +60,14 @@
 #/control/execute mac/Physicslist_Penelope_no_e.mac
 /control/execute mac/Physicslist_Livermore_no_e.mac
 
+#PhysicsList to activate Fluorescence
+#/gate/physics/addPhysicsList emlivermore
+#/process/em/fluo  true
+#/process/em/auger true
+
+# NOTE: if you use heavy materials as target you should 
+# reduce the SetCutInRegion for your particle (e.g. 10nm)
+
 # Be sure there is no e- 
 /gate/physics/Gamma/SetCutInRegion      world 10 m
 /gate/physics/Electron/SetCutInRegion   world 10 m
