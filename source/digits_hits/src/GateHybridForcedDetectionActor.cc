@@ -356,7 +356,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
       mSingleInteractionImage = mFluorescenceProjector->GetOutput();
       mSingleInteractionImage->DisconnectPipeline();
-      mFluorescenceProjector->InPlaceOff();
+      mFluorescenceProjector->InPlaceOn();
     }
   }
 
@@ -486,7 +486,6 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
     }
   }
   else if(process->GetProcessName() == G4String("PhotoElectric") || process->GetProcessName() == G4String("phot")) {
-
     // List of secondary particles
     const G4TrackVector * list = step->GetSecondary();
     G4String nameSecondary = G4String("0");
