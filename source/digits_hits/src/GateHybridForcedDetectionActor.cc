@@ -33,6 +33,8 @@
 #include <itkChangeInformationImageFilter.h>
 #include <itkMultiplyImageFilter.h>
 #include <itkConstantPadImageFilter.h>
+#include <itkImageFileWriter.h>
+#include <itkBinaryFunctorImageFilter.h>
 
 #define TRY_AND_EXIT_ON_ITK_EXCEPTION(execFunc)                         \
   try                                                                   \
@@ -271,6 +273,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                                                          energyMax,
                                                                          gate_image_volume);
   mRayleighProjector->GetProjectedValueAccumulation().Init( mRayleighProjector->GetNumberOfThreads() );
+
   // Prepare Fluorescence
   mFluorescenceProjector = FluorescenceProjectionType::New();
   mFluorescenceProjector->InPlaceOn();
@@ -287,12 +290,83 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                                                          energyMax,
                                                                          gate_image_volume);
   mFluorescenceProjector->GetProjectedValueAccumulation().Init( mFluorescenceProjector->GetNumberOfThreads() );
+
+  // Create a single event if asked for it
+  if(mSingleInteractionFilename!="") {
+    // d and p are in World coordinates and they must be in CT coordinates
+    G4ThreeVector d = m_WorldToCT.TransformAxis(mSingleInteractionDirection);
+    G4ThreeVector p = m_WorldToCT.TransformPoint(mSingleInteractionPosition);
+
+    //Convert to ITK
+    PointType point;
+    VectorType direction;
+    for(unsigned int i=0; i<3; i++) {
+      point[i] = p[i];
+      direction[i] = d[i];
+    }
+
+    if(mSingleInteractionType == "Compton") {
+      mComptonProjector->InPlaceOff();
+      GeometryType::Pointer oneProjGeometry = GeometryType::New();
+      oneProjGeometry->AddReg23Projection(point,
+                                          mDetectorPosition,
+                                          mDetectorRowVector,
+                                          mDetectorColVector);
+      mComptonProjector->SetInput(mComptonImage);
+      mComptonProjector->SetGeometry( oneProjGeometry.GetPointer() );
+      mComptonProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mSingleInteractionEnergy,
+                                                                              mSingleInteractionZ,
+                                                                              1. );
+      mComptonProjector->GetProjectedValueAccumulation().SetDirection( direction );
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(mComptonProjector->Update());
+      mSingleInteractionImage = mComptonProjector->GetOutput();
+      mSingleInteractionImage->DisconnectPipeline();
+      mComptonProjector->InPlaceOn();
+    }
+    if(mSingleInteractionType == "Rayleigh") {
+      mRayleighProjector->InPlaceOff();
+      GeometryType::Pointer oneProjGeometry = GeometryType::New();
+      oneProjGeometry->AddReg23Projection(point,
+                                          mDetectorPosition,
+                                          mDetectorRowVector,
+                                          mDetectorColVector);
+      mRayleighProjector->SetInput(mRayleighImage);
+      mRayleighProjector->SetGeometry( oneProjGeometry.GetPointer() );
+      mRayleighProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mSingleInteractionEnergy,
+                                                                               mSingleInteractionZ,
+                                                                               1. );
+      mRayleighProjector->GetProjectedValueAccumulation().SetDirection( direction );
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(mRayleighProjector->Update());
+      mSingleInteractionImage = mRayleighProjector->GetOutput();
+      mSingleInteractionImage->DisconnectPipeline();
+      mRayleighProjector->InPlaceOff();
+    }
+    if(mSingleInteractionType == "Fluorescence") {
+      mFluorescenceProjector->InPlaceOff();
+      GeometryType::Pointer oneProjGeometry = GeometryType::New();
+      oneProjGeometry->AddReg23Projection(point,
+                                          mDetectorPosition,
+                                          mDetectorRowVector,
+                                          mDetectorColVector);
+      mFluorescenceProjector->SetInput(mRayleighImage);
+      mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
+      mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mSingleInteractionEnergy,
+                                                                                   mSingleInteractionZ,
+                                                                                   1. );
+      mFluorescenceProjector->GetProjectedValueAccumulation().SetDirection( direction );
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
+      mSingleInteractionImage = mFluorescenceProjector->GetOutput();
+      mSingleInteractionImage->DisconnectPipeline();
+      mFluorescenceProjector->InPlaceOff();
+    }
+  }
+
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // Callback Begin Event
-void GateHybridForcedDetectionActor::BeginOfEventAction(const G4Event*e)
+void GateHybridForcedDetectionActor::BeginOfEventAction(const G4Event*itkNotUsed(e))
 {
   mNumberOfEventsInRun++;
 }
@@ -332,7 +406,6 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
   G4ThreeVector d = step->GetPreStepPoint()->GetMomentumDirection();
   double energy = step->GetPreStepPoint()->GetKineticEnergy();
   double weight = step->GetPostStepPoint()->GetWeight();
-  //FIXME: check what to do from this w = stepPoint->GetWeight(); ???
 
   GateScatterOrderTrackInformation * info = dynamic_cast<GateScatterOrderTrackInformation *>(step->GetTrack()->GetUserInformation());
 
@@ -364,7 +437,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
                                         mDetectorColVector);
     mComptonProjector->SetInput(mComptonImage);
     mComptonProjector->SetGeometry( oneProjGeometry.GetPointer() );
-    mComptonProjector->GetProjectedValueAccumulation().SetEnergyAndZ( energy, Z, weight );
+    mComptonProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( energy, Z, weight );
     mComptonProjector->GetProjectedValueAccumulation().SetDirection( direction );
     TRY_AND_EXIT_ON_ITK_EXCEPTION(mComptonProjector->Update());
     mComptonImage = mComptonProjector->GetOutput();
@@ -394,7 +467,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
                                         mDetectorColVector);
     mRayleighProjector->SetInput(mRayleighImage);
     mRayleighProjector->SetGeometry( oneProjGeometry.GetPointer() );
-    mRayleighProjector->GetProjectedValueAccumulation().SetEnergyAndZ( energy, Z, weight );
+    mRayleighProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( energy, Z, weight );
     mRayleighProjector->GetProjectedValueAccumulation().SetDirection( direction );
     TRY_AND_EXIT_ON_ITK_EXCEPTION(mRayleighProjector->Update());
     mRayleighImage = mRayleighProjector->GetOutput();
@@ -433,7 +506,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
                                           mDetectorColVector);
       mFluorescenceProjector->SetInput(mFluorescenceImage);
       mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
-      mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndZ( energy, Z, weight );
+      mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( energy, Z, weight );
       mFluorescenceProjector->GetProjectedValueAccumulation().SetDirection( direction );
       TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
       mFluorescenceImage = mFluorescenceProjector->GetOutput();
@@ -494,21 +567,21 @@ void GateHybridForcedDetectionActor::SaveData()
   }
 
   if(mMaterialMuFilename != "") {
-    VAccumulation::MaterialMuImageType *map;
+    AccumulationType::MaterialMuImageType *map;
     map = mComptonProjector->GetProjectedValueAccumulation().GetMaterialMu();
 
     // Change spacing to keV
-    VAccumulation::MaterialMuImageType::SpacingType spacing = map->GetSpacing();
+    AccumulationType::MaterialMuImageType::SpacingType spacing = map->GetSpacing();
     spacing[1] /= keV;
 
-    typedef itk::ChangeInformationImageFilter<VAccumulation::MaterialMuImageType> CIType;
+    typedef itk::ChangeInformationImageFilter<AccumulationType::MaterialMuImageType> CIType;
     CIType::Pointer ci = CIType::New();
     ci->SetInput(map);
     ci->SetOutputSpacing(spacing);
     ci->ChangeSpacingOn();
     ci->Update();
 
-    typedef itk::ImageFileWriter<VAccumulation::MaterialMuImageType> TwoDWriter;
+    typedef itk::ImageFileWriter<AccumulationType::MaterialMuImageType> TwoDWriter;
     TwoDWriter::Pointer w = TwoDWriter::New();
     w->SetInput( ci->GetOutput() );
     w->SetFileName(mMaterialMuFilename);
@@ -518,7 +591,7 @@ void GateHybridForcedDetectionActor::SaveData()
   if(mAttenuationFilename != "") {
     //Attenuation Functor -> atten
     typedef itk::BinaryFunctorImageFilter< InputImageType, InputImageType, InputImageType,
-                                           Functor::Attenuation<InputImageType::PixelType> > attenFunctor;
+                                           GateHybridForcedDetectionFunctor::Attenuation<InputImageType::PixelType> > attenFunctor;
     attenFunctor::Pointer atten = attenFunctor::New();
     atten->SetInput1(mPrimaryImage);
     atten->SetInput2(mFlatFieldImage);
@@ -588,6 +661,11 @@ void GateHybridForcedDetectionActor::SaveData()
     }
   }
 
+  if(mSingleInteractionFilename!="") {
+    imgWriter->SetFileName(mSingleInteractionFilename);
+    imgWriter->SetInput(mSingleInteractionImage);
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+  }
 //  G4cout << "Computation of the primary took "
 //         << mPrimaryProbe.GetTotal()
 //         << ' '

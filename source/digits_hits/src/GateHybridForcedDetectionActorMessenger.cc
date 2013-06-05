@@ -90,6 +90,36 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
   pSetFluorescenceFilenameCmd = new G4UIcmdWithAString(bb,this);
   guidance = "Set the file name for writing the image that provides the fluorescence image.";
   pSetFluorescenceFilenameCmd->SetGuidance(guidance);
+  
+  bb = base+"/singleInteractionFilename";
+  pSetSingleInteractionFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for writing the result of a single interaction.";
+  pSetSingleInteractionFilenameCmd->SetGuidance(guidance);
+
+  bb = base+"/singleInteractionType";
+  pSetSingleInteractionTypeCmd = new G4UIcmdWithAString(bb, this);
+  guidance = "Set the type of the single interaction (Compton or Rayleigh).";
+  pSetSingleInteractionTypeCmd->SetGuidance(guidance);
+
+  bb = base+"/singleInteractionPosition";
+  pSetSingleInteractionPositionCmd = new G4UIcmdWith3VectorAndUnit(bb, this);
+  guidance = "Set the position of the single interaction (3D).";
+  pSetSingleInteractionPositionCmd->SetGuidance(guidance);
+
+  bb = base+"/singleInteractionDirection";
+  pSetSingleInteractionDirectionCmd = new G4UIcmdWith3Vector(bb, this);
+  guidance = "Set the direction of the single interaction (3D).";
+  pSetSingleInteractionDirectionCmd->SetGuidance(guidance);
+
+  bb = base+"/singleInteractionEnergy";
+  pSetSingleInteractionEnergyCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
+  guidance = "Set the energy of the single interaction.";
+  pSetSingleInteractionEnergyCmd->SetGuidance(guidance);
+
+  bb = base+"/singleInteractionZ";
+  pSetSingleInteractionZCmd = new G4UIcmdWithAnInteger(bb, this);
+  guidance = "Set the Z of the single interaction.";
+  pSetSingleInteractionZCmd->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -107,6 +137,12 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetComptonFilenameCmd) pHybridActor->SetComptonFilename(param);
   if(command == pSetRayleighFilenameCmd) pHybridActor->SetRayleighFilename(param);
   if(command == pSetFluorescenceFilenameCmd) pHybridActor->SetFluorescenceFilename(param);
+  if(command == pSetSingleInteractionFilenameCmd) pHybridActor->SetSingleInteractionFilename(param);
+  if(command == pSetSingleInteractionTypeCmd) pHybridActor->SetSingleInteractionType(param);
+  if(command == pSetSingleInteractionPositionCmd) pHybridActor->SetSingleInteractionPosition(pSetSingleInteractionPositionCmd->GetNew3VectorValue(param));
+  if(command == pSetSingleInteractionDirectionCmd) pHybridActor->SetSingleInteractionDirection(pSetSingleInteractionDirectionCmd->GetNew3VectorValue(param));
+  if(command == pSetSingleInteractionEnergyCmd) pHybridActor->SetSingleInteractionEnergy(pSetSingleInteractionEnergyCmd->GetNewDoubleValue(param));
+  if(command == pSetSingleInteractionZCmd) pHybridActor->SetSingleInteractionZ(pSetSingleInteractionZCmd->GetNewIntValue(param));
 
   GateActorMessenger::SetNewValue(command ,param );
 }

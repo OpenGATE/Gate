@@ -14,6 +14,10 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH
 #define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH
 
+#include "G4UIcmdWith3Vector.hh"
+#include "G4UIcmdWith3VectorAndUnit.hh"
+#include "G4UIcmdWithAnInteger.hh"
+
 #include "globals.hh"
 #include "GateHybridForcedDetectionActor.hh"
 #include "GateActorMessenger.hh"
@@ -41,6 +45,12 @@ protected:
   G4UIcmdWithAString * pSetComptonFilenameCmd;
   G4UIcmdWithAString * pSetRayleighFilenameCmd;
   G4UIcmdWithAString * pSetFluorescenceFilenameCmd;
+  G4UIcmdWithAString * pSetSingleInteractionFilenameCmd;
+  G4UIcmdWithAString * pSetSingleInteractionTypeCmd;
+  G4UIcmdWith3Vector * pSetSingleInteractionDirectionCmd;
+  G4UIcmdWith3VectorAndUnit * pSetSingleInteractionPositionCmd;
+  G4UIcmdWithADoubleAndUnit * pSetSingleInteractionEnergyCmd;
+  G4UIcmdWithAnInteger * pSetSingleInteractionZCmd;
 };
 
 #endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH*/
