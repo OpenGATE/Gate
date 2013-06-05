@@ -587,7 +587,7 @@ public:
       rayIntegral += m_InterpolationWeights[threadId][j] * *(m_MaterialMuPointer+j);
 #endif
     // Final computation
-    input += vcl_exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi);
+    input += m_Weight * vcl_exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi);
 
     // Reset weights for next ray in thread.
     std::fill(m_InterpolationWeights[threadId].begin(), m_InterpolationWeights[threadId].end(), 0.);
@@ -595,18 +595,18 @@ public:
   }
 
   void SetDirection(const VectorType &_arg){ m_Direction = _arg; }
-  void SetEnergyZAndWeight(const double  &energy, const unsigned int &itkNotUsed(Z), const double &itkNotUsed(weight)) {
-    m_InvWlPhoton = std::sqrt(0.5) * cm * energy / (h_Planck * c_light); // sqrt(0.5) for trigo reasons, see comment when used
+  void SetEnergyAndWeight(const double  &energy, const double &weight) {
+    m_Weight = weight;
     m_Energy = energy;
     m_MaterialMuPointer = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
     m_MaterialMuPointer += (unsigned int)m_Energy * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
   }
 
 private:
-  VectorType           m_Direction;
-  double              *m_MaterialMuPointer;
-  double               m_InvWlPhoton;
-  double               m_Energy;
+  VectorType m_Direction;
+  double    *m_MaterialMuPointer;
+  double     m_Weight;
+  double     m_Energy;
 };
 //-----------------------------------------------------------------------------
 
