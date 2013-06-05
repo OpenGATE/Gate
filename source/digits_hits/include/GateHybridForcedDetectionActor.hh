@@ -29,7 +29,7 @@
 #include "GateImage.hh"
 #include "GateSourceMgr.hh"
 #include "GateVImageVolume.hh"
-#include "GateHybridForcedDetectionActorFunctors.hh"
+#include "GateHybridForcedDetectionFunctors.hh"
 
 // itk
 #include <itkTimeProbe.h>
