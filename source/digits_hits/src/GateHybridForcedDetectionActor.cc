@@ -490,42 +490,36 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
     // List of secondary particles
     const G4TrackVector * list = step->GetSecondary();
     G4String nameSecondary = G4String("0");
-    for(unsigned int i = 0; i<(*list).size(); i++)
-    {
+    for(unsigned int i = 0; i<(*list).size(); i++) {
       nameSecondary = (*list)[i]->GetDefinition()->GetParticleName();
-    }
-
-    if(nameSecondary=G4String("gamma"))
-     {
-      mFluorescenceProbe.Start();
-      GeometryType::Pointer oneProjGeometry = GeometryType::New();
-      oneProjGeometry->AddReg23Projection(point,
-                                          mDetectorPosition,
-                                          mDetectorRowVector,
-                                          mDetectorColVector);
-      mFluorescenceProjector->SetInput(mFluorescenceImage);
-      mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
-      mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndWeight( energy, weight );
-      mFluorescenceProjector->GetProjectedValueAccumulation().SetDirection( direction );
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
-      mFluorescenceImage = mFluorescenceProjector->GetOutput();
-      mFluorescenceImage->DisconnectPipeline();
-      mFluorescenceProbe.Stop();
-
-      // Scatter order
-      if(info)
-      {
-        unsigned int order = info->GetScatterOrder();
-        while(order>=mFluorescencePerOrderImages.size())
-          mFluorescencePerOrderImages.push_back( CreateVoidProjectionImage() );
-        mFluorescenceProjector->SetInput(mFluorescencePerOrderImages[order]);
+      if(nameSecondary==G4String("gamma")) {
+        mFluorescenceProbe.Start();
+        GeometryType::Pointer oneProjGeometry = GeometryType::New();
+        oneProjGeometry->AddReg23Projection(point,
+                                            mDetectorPosition,
+                                            mDetectorRowVector,
+                                            mDetectorColVector);
+        mFluorescenceProjector->SetInput(mFluorescenceImage);
+        mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
+        mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndWeight( energy, weight );
+        mFluorescenceProjector->GetProjectedValueAccumulation().SetDirection( direction );
         TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
-        mFluorescencePerOrderImages[order] = mFluorescenceProjector->GetOutput();
-        mFluorescencePerOrderImages[order]->DisconnectPipeline();
+        mFluorescenceImage = mFluorescenceProjector->GetOutput();
+        mFluorescenceImage->DisconnectPipeline();
+        mFluorescenceProbe.Stop();
+
+        // Scatter order
+        if(info) {
+          unsigned int order = info->GetScatterOrder();
+          while(order>=mFluorescencePerOrderImages.size())
+            mFluorescencePerOrderImages.push_back( CreateVoidProjectionImage() );
+          mFluorescenceProjector->SetInput(mFluorescencePerOrderImages[order]);
+          TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
+          mFluorescencePerOrderImages[order] = mFluorescenceProjector->GetOutput();
+          mFluorescencePerOrderImages[order]->DisconnectPipeline();
+        }
       }
     }
-    // Don't do anything for electrons
-    else{}
   }
 }
 //-----------------------------------------------------------------------------
