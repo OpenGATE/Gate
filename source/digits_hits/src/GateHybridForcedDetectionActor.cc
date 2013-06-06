@@ -489,8 +489,10 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
     // List of secondary particles
     const G4TrackVector * list = step->GetSecondary();
     G4String nameSecondary = G4String("0");
+    G4double energySecondary = 0;
     for(unsigned int i = 0; i<(*list).size(); i++) {
       nameSecondary = (*list)[i]->GetDefinition()->GetParticleName();
+      energySecondary = (*list)[i]->GetKineticEnergy();
       if(nameSecondary==G4String("gamma")) {
         mFluorescenceProbe.Start();
         GeometryType::Pointer oneProjGeometry = GeometryType::New();
@@ -500,7 +502,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
                                             mDetectorColVector);
         mFluorescenceProjector->SetInput(mFluorescenceImage);
         mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
-        mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndWeight( energy, weight );
+        mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndWeight( energySecondary, weight );
         mFluorescenceProjector->GetProjectedValueAccumulation().SetDirection( direction );
         TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
         mFluorescenceImage = mFluorescenceProjector->GetOutput();
