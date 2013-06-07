@@ -435,10 +435,9 @@ public:
     // The last material is the world material. One must fill the weight with
     // the length from farthest point to pixel point.
     m_InterpolationWeights[threadId].back() = worldVectorNorm;
-
 #ifdef INTERP
-    unsigned int floor = itk::Math::Floor<double, double>(m_Energy / m_MaterialMu->GetSpacing()[1]);
-    unsigned int ceil = itk::Math::Ceil<double, double>(m_Energy / m_MaterialMu->GetSpacing()[1]);
+    unsigned int floor = itk::Math::Floor<double, double>(m_Energy);
+    unsigned int ceil = itk::Math::Ceil<double, double>(m_Energy);
 
     double *p1 = m_MaterialMu->GetPixelContainer()->GetBufferPointer()
                + floor * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
@@ -446,7 +445,7 @@ public:
                + ceil * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
 
     double rayIntegral = 0.;
-    double logEnergy   = std::log(m_Energy/m_MaterialMu->GetSpacing()[1]);
+    double logEnergy   = std::log(m_Energy);
     double logCeil     = std::log(ceil);
     double logFloor    = std::log(floor);
 
@@ -486,10 +485,11 @@ public:
 
   void SetDirection(const VectorType &_arg){ m_Direction = _arg; }
   void SetEnergyZAndWeight(const double  &energy, const unsigned int &Z, const double &weight) {
+    unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
     m_InvWlPhoton = std::sqrt(0.5) * cm * energy / (h_Planck * c_light); // sqrt(0.5) for trigo reasons, see comment when used
-    m_Energy = energy;
+    m_Energy = energy / m_MaterialMu->GetSpacing()[1];
     m_MaterialMuPointer = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
-    m_MaterialMuPointer += (unsigned int)m_Energy * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
+    m_MaterialMuPointer += e * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
 
     G4double cs = m_CrossSectionHandler->FindValue(Z, energy);
     m_Z = Z;
@@ -545,20 +545,21 @@ public:
     // The last material is the world material. One must fill the weight with
     // the length from farthest point to pixel point.
     m_InterpolationWeights[threadId].back() = worldVectorNorm;
-
 #ifdef INTERP
-    unsigned int floor = itk::Math::Floor<double, double>(m_Energy / m_MaterialMu->GetSpacing()[1]);
-    unsigned int ceil = itk::Math::Ceil<double, double>(m_Energy / m_MaterialMu->GetSpacing()[1]);
+    unsigned int floor = itk::Math::Floor<double, double>(m_Energy);
+    unsigned int ceil = itk::Math::Ceil<double, double>(m_Energy);
 
     double *p1 = m_MaterialMu->GetPixelContainer()->GetBufferPointer()
                + floor * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
     double *p2 = m_MaterialMu->GetPixelContainer()->GetBufferPointer()
                + ceil * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
 
+
     double rayIntegral = 0.;
-    double logEnergy   = std::log(m_Energy/m_MaterialMu->GetSpacing()[1]);
+    double logEnergy   = std::log(m_Energy);
     double logCeil     = std::log(ceil);
     double logFloor    = std::log(floor);
+    double interp      = 0.;
 
     // Energy integer case, no interpolation needed
     if(floor == ceil)
@@ -571,7 +572,7 @@ public:
     else
     {
       // log-log interpolation for mu calculation
-      double interp = std::exp( (std::log(*p2 / *p1)/(logCeil-logFloor)) * (logEnergy - logCeil) + std::log(*p2) );
+      interp = std::exp( (std::log(*p2 / *p1)/(logCeil-logFloor)) * (logEnergy - logCeil) + std::log(*p2) );
       // Ray integral
       for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
       {
@@ -596,10 +597,11 @@ public:
 
   void SetDirection(const VectorType &_arg){ m_Direction = _arg; }
   void SetEnergyAndWeight(const double  &energy, const double &weight) {
+    unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
     m_Weight = weight;
-    m_Energy = energy;
+    m_Energy = energy / m_MaterialMu->GetSpacing()[1];
     m_MaterialMuPointer = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
-    m_MaterialMuPointer += (unsigned int)m_Energy * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
+    m_MaterialMuPointer += e * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
   }
 
 private:
