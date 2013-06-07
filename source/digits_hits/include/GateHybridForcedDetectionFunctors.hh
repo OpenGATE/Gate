@@ -180,6 +180,8 @@ public:
            << G4endl;
   }
 
+  MaterialMuImageType::Pointer GetMaterialMuMap() { return m_MaterialMu; }
+
 protected:
   VectorType                                m_VolumeSpacing;
   std::vector<double>                      *m_InterpolationWeights;
