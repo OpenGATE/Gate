@@ -230,7 +230,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     flatFieldSource->SetOrigin( origin );
     flatFieldSource->SetSpacing( spacing );
     flatFieldSource->SetSize( dim );
-    flatFieldSource->SetConstant( energyList.size()-1 );
+    flatFieldSource->SetConstant( primaryProjector->GetProjectedValueAccumulation().GetMaterialMuMap()->GetLargestPossibleRegion().GetSize()[0]-1 );
 
     mFlatFieldImage = CreateVoidProjectionImage();
     primaryProjector->SetInput(mFlatFieldImage);
