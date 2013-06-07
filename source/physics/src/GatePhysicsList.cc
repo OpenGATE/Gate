@@ -637,7 +637,7 @@ void GatePhysicsList::Write(G4String file)
 //-----------------------------------------------------------------------------
 void GatePhysicsList::SetEmProcessOptions()
 {
-  DD("not opt");
+  //DD("not opt");
   opt = new G4EmProcessOptions();
   if(mDEDXBinning>0)   opt->SetDEDXBinning(mDEDXBinning);
   if(mLambdaBinning>0) opt->SetLambdaBinning(mLambdaBinning);
@@ -841,7 +841,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
  
 
   //FIXME
-  DD(mListOfStepLimiter.size());
+  //DD(mListOfStepLimiter.size());
   if (mListOfStepLimiter.size()!=0) {
     G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
     G4ParticleTable::G4PTblDicIterator * theParticleIterator = theParticleTable->GetIterator();
@@ -859,7 +859,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
     }
   }
 
-  DD(mListOfG4UserSpecialCut.size());
+  //DD(mListOfG4UserSpecialCut.size());
   if (mListOfG4UserSpecialCut.size()!=0) {
     G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
     G4ParticleTable::G4PTblDicIterator * theParticleIterator = theParticleTable->GetIterator();
