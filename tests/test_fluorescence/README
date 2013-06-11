@@ -1,0 +1,74 @@
+#  *********************************************************************
+#  * DISCLAIMER                                                        *
+#  *                                                                   *
+#  * Neither the authors of this software system, nor their employing  *
+#  * institutes, nor the agencies providing financial support for this *
+#  * work make any representation or warranty, express or implied,     *
+#  * regarding this software system or assume any liability for its    *
+#  * use.                                                              *
+#  *                                                                   *
+#  * This code implementation is the intellectual property of the      *
+#  * OpenGATE collaboration.                                           *
+#  * By copying, distributing or modifying the Program (or any work    *
+#  * based on the Program) you indicate your acceptance of this        *
+#  * statement, and all its terms.                                     *
+#  *********************************************************************
+
+
+#---------------------------------------------------------------------------------------------------------------------------------------
+
+1)   "fluorescenceTest.mac" is a macro dedicated to test the activation of the fluorescence process in function of the physicsList
+     
+- User or automatic (physicsList-builder distribution only) physicsList definition
+
+- Geometry : box (fluoBoxOption.mac)  or  voxelised phantom (fluoPhantomOption.mac)
+ 
+- Material : Iodine and Tungsten currently available in data/myGateMaterials.db
+
+- Source   : isotopic monoenergetic gamma emission centered in the sphere
+
+- Actor    : EnergySpectrumActor with a gamma filter
+
+
+#---------------------------------------------------------------------------------------------------------------------------------------
+
+2)   Simulation command :
+
+if using the voxelised phantom, apply first the following commands :
+
+    cd data
+    wget http://www.creatis.insa-lyon.fr/~smekens/voxelisedPhantom.mhd
+    wget http://www.creatis.insa-lyon.fr/~smekens/voxelisedPhantom.raw
+    cd ..
+
+then, run the simulation
+
+    Gate -a [out,"name"] mac/fluorescenceTest.mac
+
+the result is stored in output/"name".root 
+
+
+#---------------------------------------------------------------------------------------------------------------------------------------
+
+3)   Interpretation of the results contained in .root :
+
+- Energy spectrum histogram : number of gamma detected in the volume in function of the energy
+             if fluorescence is activated, the fluorescence x-ray lines as well as the incident energy pic are visible
+             line energies can be used to confirm the result
+             line intensities can be also take into account if the statistic is higher enough  
+             bin number and energy range must be set according to the expected result
+
+
+#---------------------------------------------------------------------------------------------------------------------------------------
+
+4)   Theoretical data (http://www.kayelaby.npl.co.uk/atomic_and_nuclear_physics/4_2/4_2_1.html)
+
+
+                   K    Kb2    Kb1    Kb3    Ka1    Ka1       LI    Lg3   Lb3   Lb4    LII    Lg1   Lb1   LIII   Lb2   La1   La2    Li
+Intensity (%)      -   5-15    ~20    ~10    100  53-65        -     ~5  5-20    20      -   5-25   100      -  5-20   ~90    10  20–5
+
+53 I (keV)    33.168 33.054 32.295 32.239 28.612 28.317    5.186  5.072 4.313 4.257  4.851  4.799 4.221  4.556 4.509 3.938 3.926 3.485 
+74 W (keV)    69.517 69.100 67.244 66.951 59.318 57.982   12.092 11.675 9.819 9.526 11.535 11.284 9.671 10.199 9.959 8.396 8.335 7.388 
+	
+
+          

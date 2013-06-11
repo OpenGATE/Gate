@@ -1,0 +1,35 @@
+# -----------------------------------------------------
+# Standard
+
+#/gate/physics/addProcess PhotoElectric
+#/gate/physics/processes/PhotoElectric/setModel StandardModel
+#/gate/physics/addProcess Compton
+#/gate/physics/processes/Compton/setModel StandardModel
+#/gate/physics/addProcess RayleighScattering
+#/gate/physics/processes/RayleighScattering/setModel StandardModel
+
+# -----------------------------------------------------
+# Penelope
+
+#/gate/physics/addProcess PhotoElectric
+#/gate/physics/processes/PhotoElectric/setModel PenelopeModel
+#/gate/physics/addProcess Compton
+#/gate/physics/processes/Compton/setModel PenelopeModel
+#/gate/physics/addProcess RayleighScattering
+#/gate/physics/processes/RayleighScattering/setModel PenelopeModel
+
+# -----------------------------------------------------
+# Livermore
+
+/gate/physics/addProcess PhotoElectric
+/gate/physics/processes/PhotoElectric/setModel LivermoreModel
+#/gate/physics/addProcess Compton
+#/gate/physics/processes/Compton/setModel LivermoreModel
+#/gate/physics/addProcess RayleighScattering
+#/gate/physics/processes/RayleighScattering/setModel LivermoreModel
+
+
+#/gate/physics/addAtomDeexcitation
+/process/em/fluo  true
+#/process/em/auger true
+#/process/em/deexcitation fluoBox true true true
