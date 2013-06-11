@@ -29,9 +29,9 @@
 # Fluorescent box or fluorescent voxelised phantom
 # -----------------------------------------------------
 
-#/control/execute mac/fluoBoxOption.mac
+/control/execute mac/fluoBoxOption.mac
 # or
-/control/execute mac/fluoPhantomOption.mac
+#/control/execute mac/fluoPhantomOption.mac
 
 #=====================================================
 # PHYSIC
