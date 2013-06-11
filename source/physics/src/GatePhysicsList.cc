@@ -301,12 +301,6 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
     //pl->SetVerboseLevel(2);
     AddTransportation(); // don't forget transportation process.
     GateRunManager::GetRunManager()->SetUserPhysicListName("");
-    
-    // default activation of deexcitation processes
-    G4EmProcessOptions fluoOpt;
-    fluoOpt.SetFluo(true);
-    fluoOpt.SetAuger(true);
-//     fluoOpt.SetPIXE(true);
   }
   else { 
     // Set the phys list name. It will be build in GateRunManager.
@@ -641,7 +635,12 @@ void GatePhysicsList::SetEmProcessOptions()
   opt->SetSplineFlag(mSplineFlag);
   opt->SetApplyCuts(true);
   
-  // register all region in deexcitation process with fluo, auger and PIXE set to "true"
+  // Fluorescence processes
+  // - default activation of deexcitation process
+  opt->SetFluo(true);
+  opt->SetAuger(true);
+  opt->SetPIXE(true);
+  // - register all regions in deexcitation process with fluo, auger and PIXE set to "true"
   GateObjectStore *store = GateObjectStore::GetInstance();
   for(GateObjectStore::iterator it=store->begin() ; it!=store->end() ; ++it){
     opt->SetDeexcitationActiveRegion(it->first,true,true,true); // G4region, fluo, auger, PIXE
