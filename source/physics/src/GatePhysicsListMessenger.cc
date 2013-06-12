@@ -50,6 +50,7 @@ GatePhysicsListMessenger::~GatePhysicsListMessenger()
   delete pSetEMin;
   delete pSetEMax;
   delete pSetSplineFlag;
+  delete pAddAtomDeexcitation;
   delete pAddPhysicsList;
 }
 //----------------------------------------------------------------------------------------
@@ -168,6 +169,11 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   guidance = "Set SplineFlag for Standard EM Processes";
   pSetSplineFlag->SetGuidance(guidance);
 
+  bb = base+"/addAtomDeexcitation";
+  pAddAtomDeexcitation = new G4UIcommand(bb,this);
+  guidance = "Add atom deexcitation into the energy loss table manager";
+  pAddAtomDeexcitation->SetGuidance(guidance);
+  
   // Command to call G4 Physics List builders
   bb = base+"/addPhysicsList";
   pAddPhysicsList = new G4UIcmdWithAString(bb,this);
@@ -296,6 +302,11 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
     GateMessage("Physic", 1, "(EM Options) Spline Falg set to "<<flag<<". Spline Flag defaut 1."<<G4endl);
   }
 
+  if (command == pAddAtomDeexcitation) {
+    pPhylist->AddAtomDeexcitation();
+    GateMessage("Physic", 1, "Atom Deexcitation process has been added into the energy loss table manager"<<G4endl);
+  }
+  
   // Command to call G4 Physics List builders 
   if (command == pAddPhysicsList) {
     pPhylist->ConstructPhysicsList(param);

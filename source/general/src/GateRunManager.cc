@@ -22,6 +22,8 @@
 #include "G4RegionStore.hh"
 #include "G4Region.hh"
 
+#include "G4LossTableManager.hh"
+
 //----------------------------------------------------------------------------------------
 GateRunManager::GateRunManager():G4RunManager()
 { 
@@ -200,6 +202,12 @@ void GateRunManager::RunInitialization()
   // Perform a regular initialisation
   G4RunManager::RunInitialization();
   
+  // Initialization of the atom deexcitation processes
+  // must be done after all other initialization
+  if(G4LossTableManager::Instance()->AtomDeexcitation()) {
+    G4LossTableManager::Instance()->AtomDeexcitation()->InitialiseAtomicDeexcitation();
+  }
+
   // Reset the geometry navigator
   // In G4.5, both "/geometry/navigator/reset" and the new method
   // G4RunManager::ResetNavigator() work only in the Idle state,
@@ -208,7 +216,7 @@ void GateRunManager::RunInitialization()
   G4ThreeVector center(0,0,0);
   G4TransportationManager::GetTransportationManager()
     ->GetNavigatorForTracking()
-    ->LocateGlobalPointAndSetup(center,0,false);  
+    ->LocateGlobalPointAndSetup(center,0,false); 
 }
 //----------------------------------------------------------------------------------------
 
