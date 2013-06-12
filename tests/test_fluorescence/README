@@ -19,15 +19,15 @@
 
 1)   "fluorescenceTest.mac" is a macro dedicated to test the activation of the fluorescence process in function of the physicsList
      
-- User or automatic (physicsList-builder distribution only) physicsList definition
+- Physics  : user or automatic (physicsList-builder distribution only) physicsList definition
 
-- Geometry : box (fluoBoxOption.mac)  or  voxelised phantom (fluoPhantomOption.mac)
+- Geometry : box (fluoBoxOption.mac)  or  voxelized phantom (fluoPhantomOption.mac)
  
 - Material : Iodine and Tungsten currently available in data/myGateMaterials.db
 
-- Source   : isotopic monoenergetic gamma emission centered in the sphere
+- Source   : isotropic monoenergetic gamma emission
 
-- Actor    : EnergySpectrumActor with a gamma filter
+- Actor    : EnergySpectrumActor with a gamma filter (need root)
 
 
 #---------------------------------------------------------------------------------------------------------------------------------------
@@ -43,9 +43,9 @@ if using the voxelised phantom, apply first the following commands :
 
 then, run the simulation
 
-    Gate -a [out,"name"] mac/fluorescenceTest.mac
+    Gate -a [out,yourFileName] mac/fluorescenceTest.mac
 
-the result is stored in output/"name".root 
+the result is stored in output/yourFileName.root 
 
 
 #---------------------------------------------------------------------------------------------------------------------------------------
