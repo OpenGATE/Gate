@@ -65,6 +65,7 @@ public:
 
   void RemoveProcesses(G4String process, G4String particle);
   void AddProcesses(G4String process, G4String particle);
+  void AddAtomDeexcitation();
 
   void PurgeIfFictitious();
  

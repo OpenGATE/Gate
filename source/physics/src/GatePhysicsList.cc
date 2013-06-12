@@ -40,6 +40,8 @@
 #include "G4EmLivermorePhysics.hh"
 #include "G4EmPenelopePhysics.hh"
 #include "G4EmDNAPhysics.hh"
+#include "G4LossTableManager.hh"
+#include "G4UAtomicDeexcitation.hh"
 
 #include "GatePhysicsList.hh"
 #include "GateUserLimits.hh"
@@ -306,7 +308,13 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
   else { 
     // Set the phys list name. It will be build in GateRunManager.
     GateRunManager::GetRunManager()->SetUserPhysicListName(mUserPhysicListName);
-  }  
+  }
+  
+  // Fluorescence processes
+  // - default activation of deexcitation process
+  opt->SetFluo(true);
+  opt->SetAuger(true);
+  opt->SetPIXE(true);
 }
 //-----------------------------------------------------------------------------------------
 
@@ -502,6 +510,22 @@ void GatePhysicsList::AddProcesses(G4String processname, G4String particle)
 
 
 //-----------------------------------------------------------------------------------------
+void GatePhysicsList::AddAtomDeexcitation()
+{
+  if(G4LossTableManager::Instance()->AtomDeexcitation() == NULL)
+  {
+    G4VAtomDeexcitation* de = new G4UAtomicDeexcitation();
+    G4LossTableManager::Instance()->SetAtomDeexcitation(de);
+  }
+  
+  opt->SetFluo(true);
+  opt->SetAuger(true);
+  opt->SetPIXE(true);
+}
+//-----------------------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------------------
 void GatePhysicsList::RemoveProcesses(G4String processname, G4String particle)
 {
 
@@ -583,7 +607,7 @@ void GatePhysicsList::Write(G4String file)
 
   std::ofstream os;
   os.open(file.data());
-  if(mLoadState<2)  os<<"<!> *** Warni/process/em/fluo falseng *** <!>  Processes not yet initialized!\n\n";
+  if(mLoadState<2)  os<<"<!> *** Warning *** <!>  Processes not yet initialized!\n\n";
 
   os<<"List of particles with their associated processes\n\n";
   if(mLoadState<2)  os<<"<!> *** Warning *** <!>  Processes not yet initialized!\n\n";
@@ -641,10 +665,6 @@ void GatePhysicsList::SetEmProcessOptions()
   opt->SetApplyCuts(true);
   
   // Fluorescence processes
-  // - default activation of deexcitation process
-  opt->SetFluo(true);
-  opt->SetAuger(true);
-  opt->SetPIXE(true);
   // - register all regions in deexcitation process with fluo, auger and PIXE set to "true"
   GateObjectStore *store = GateObjectStore::GetInstance();
   for(GateObjectStore::iterator it=store->begin() ; it!=store->end() ; ++it){

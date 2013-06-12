@@ -29,9 +29,9 @@
 # Fluorescent box or fluorescent voxelised phantom
 # -----------------------------------------------------
 
-#/control/execute mac/fluoBoxOption.mac
+/control/execute mac/fluoBoxOption.mac
 # or
-/control/execute mac/fluoPhantomOption.mac
+#/control/execute mac/fluoPhantomOption.mac
 
 #=====================================================
 # PHYSIC
@@ -49,17 +49,20 @@
 #              emlivermore_polar
 #              empenelope
 #              emDNAphysics
-# Builders hadronic: QGSP_BERT
-#                    FTFP_BERT
-#                    QGSP_BIC
-#                    ...
+# Builders hadron: QGSP_BERT
+#                  FTFP_BERT
+#                  QGSP_BIC
+#                  ...
+#
+# notice: fluo, auger, PIXE set to true by default
 
-/gate/physics/addPhysicsList emlivermore
+#/gate/physics/addPhysicsList emlivermore
 #/process/em/fluo  false  
 #/process/em/auger false
+#/process/em/pixe  false
 
 # or
-#/control/execute mac/userPhysics.mac
+/control/execute mac/userPhysics.mac
 
 # -----------------------------------------------------
 

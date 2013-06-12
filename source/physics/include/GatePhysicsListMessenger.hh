@@ -68,6 +68,7 @@ protected:
   G4UIcmdWithADoubleAndUnit * pSetEMin;
   G4UIcmdWithADoubleAndUnit * pSetEMax;
   G4UIcmdWithABool * pSetSplineFlag;
+  G4UIcommand * pAddAtomDeexcitation;
   
   G4UIcmdWithAString * pAddPhysicsList;
   G4UIcmdWithADoubleAndUnit * pEnergyRangeMinLimitCmd;
