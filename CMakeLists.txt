@@ -221,4 +221,10 @@ ENDIF(GATE_USE_RTK)
 INSTALL(TARGETS Gate DESTINATION bin)
 
 
+option(GATE_DOWNLOAD_EXAMPLES_DATA "Download the missing binary data to run gate examples" OFF)
+IF(GATE_DOWNLOAD_EXAMPLES_DATA)
+  INCLUDE(cmake-modules/GateExternalData.cmake)
+  ADD_SUBDIRECTORY(examples)
+  ExternalData_add_target(GateExampleData)
+ENDIF(GATE_DOWNLOAD_EXAMPLES_DATA)
 
