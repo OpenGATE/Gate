@@ -791,10 +791,10 @@ void GateImage::Read(G4String filename) {
   else if (extension == "hdr") ReadAnalyze(filename);
   else if (extension == "img") ReadAnalyze(filename);
   else if (extension == "img.gz") ReadAnalyze(filename);
-  else if (extension == "mhd") ReadMHD(filename);
+  else if (extension == "mhd" || extension == "mha") ReadMHD(filename);
   else {
-    // GateError( "Unknow image file extension. Knowns extensions are : "
-    //	   << G4endl << ".vox, .hdr, .img " << G4endl);
+    GateError( "Unknow image file extension. Knowns extensions are : "
+         << G4endl << ".vox, .hdr, .img, .mhd, .mha" << G4endl);
     exit(0);
   }
 }
@@ -1208,7 +1208,7 @@ void GateImage::Write(G4String filename, const G4String & comment) {
 	  WriteBin(os);
 	}
         else {
-          if (extension == "mhd") {
+          if (extension == "mhd" || extension == "mha") {
             WriteMHD(filename);
           }
           else {
@@ -1216,8 +1216,8 @@ void GateImage::Write(G4String filename, const G4String & comment) {
               WriteRoot(filename);
             }
             else {
-              //GateMessage("Image",1,"WARNING : Don't know how to write '" << extension 
-              //	   << " format... I try ASCII file" << G4endl);
+              GateMessage("Image",0,"WARNING : Don't know how to write '" << extension 
+                          << " format... I try ASCII file" << G4endl);
               // open
               OpenFileOutput(filename, os);
               WriteAscii(os, comment);
