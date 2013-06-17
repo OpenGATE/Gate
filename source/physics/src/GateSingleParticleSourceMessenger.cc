@@ -158,10 +158,10 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   cmdName = GetDirectoryName() + "pos/type";  
   typeCmd1 = new G4UIcmdWithAString(cmdName,this);
   typeCmd1->SetGuidance("Sets source distribution type.");
-  typeCmd1->SetGuidance("Either Point, Beam, Plane, Surface or Volume");
+  typeCmd1->SetGuidance("Either Point, Beam, Plane, Surface, Volume or UserFluenceImage");
   typeCmd1->SetParameterName("DisType",true,true);
   typeCmd1->SetDefaultValue("Point");
-  typeCmd1->SetCandidates("Point Beam Plane Surface Volume");
+  typeCmd1->SetCandidates("Point Beam Plane Surface Volume UserFluenceImage");
 
   cmdName = GetDirectoryName() + "pos/shape";
   shapeCmd1 = new G4UIcmdWithAString(cmdName,this);
@@ -266,6 +266,12 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   confineCmd1->SetGuidance("usage: confine VolName");
   confineCmd1->SetParameterName("VolName",true,true);
   confineCmd1->SetDefaultValue("NULL");
+  
+  cmdName = GetDirectoryName() + "pos/setImage";
+  setImageCmd1 = new G4UIcmdWithAString(cmdName,this);
+  setImageCmd1->SetGuidance("Biased X and Y positions according to an image (UserFluenceImage source type only)");
+  setImageCmd1->SetParameterName("Image",true,true);
+  setImageCmd1->SetDefaultValue("");
   
   // old implementations
   cmdName = GetDirectoryName() + "type";
@@ -789,7 +795,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   arbintCmd->SetParameterName("int",true,true);
   arbintCmd->SetDefaultValue("NULL");
   arbintCmd->SetCandidates("Lin Log Exp Spline");
-
+  
   // verbosity
   cmdName = GetDirectoryName() + "verbose";
   verbosityCmd = new G4UIcmdWithAnInteger(cmdName,this);
@@ -845,7 +851,7 @@ GateSingleParticleSourceMessenger::~GateSingleParticleSourceMessenger()
   delete partheCmd1;
   delete parphiCmd1;
   delete confineCmd1;
-
+  delete setImageCmd1;
   
   delete angtypeCmd;
   delete angrot1Cmd;
@@ -958,14 +964,17 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
   else if (command == centreCmd )
     {
       fParticleGun->GetPosDist()->SetCentreCoords( centreCmd->GetNew3VectorValue( newValues ) ) ;
+      fParticleGun->SetCentreCoords( centreCmd->GetNew3VectorValue( newValues ) );
     }
   else if (command == posrot1Cmd )
     {
       fParticleGun->GetPosDist()->SetPosRot1( posrot1Cmd->GetNew3VectorValue( newValues ) ) ;
+      fParticleGun->SetPosRot1(posrot1Cmd->GetNew3VectorValue( newValues ));
     }
   else if (command == posrot2Cmd )
     {
       fParticleGun->GetPosDist()->SetPosRot2(posrot2Cmd->GetNew3VectorValue(newValues));
+      fParticleGun->SetPosRot2(posrot2Cmd->GetNew3VectorValue(newValues));
     }
   else if (command == halfxCmd )
     {
@@ -1219,6 +1228,16 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
   // new implementations
   //
   //
+  else if (command == posrot1Cmd1 )
+    {
+      fParticleGun->GetPosDist()->SetPosRot1( posrot1Cmd1->GetNew3VectorValue( newValues ) ) ;
+      fParticleGun->SetPosRot1(posrot1Cmd1->GetNew3VectorValue( newValues ));
+    }
+  else if (command == posrot2Cmd1 )
+    {
+      fParticleGun->GetPosDist()->SetPosRot2(posrot2Cmd1->GetNew3VectorValue(newValues));
+      fParticleGun->SetPosRot2(posrot2Cmd1->GetNew3VectorValue(newValues));
+    }
   else if(command == typeCmd1)
     {
       fParticleGun->GetPosDist()->SetPosDisType(newValues);
@@ -1230,6 +1249,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
   else if(command == centreCmd1)
     {
       fParticleGun->GetPosDist()->SetCentreCoords(centreCmd1->GetNew3VectorValue(newValues));
+      fParticleGun->SetCentreCoords( centreCmd1->GetNew3VectorValue( newValues ) );
     }
   else if(command == posrot1Cmd1)
     {
@@ -1286,6 +1306,10 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
   else if(command == confineCmd1)
     {
       fParticleGun->GetPosDist()->ConfineSourceToVolume(newValues);
+    }
+  else if(command == setImageCmd1)
+    {
+      fParticleGun->SetUserFluenceFilename(newValues);
     }
   else if(command == angtypeCmd1)
 	{
