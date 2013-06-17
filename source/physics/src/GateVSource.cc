@@ -74,6 +74,14 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
 
   mSourceTime = 0.*s;
 
+  mIsUserFluenceActive = false;
+  mUserFluenceFilename = "";
+  mCentreCoords = G4ThreeVector(0., 0., 0.);
+  mRotX = CLHEP::HepXHat;
+  mRotY = CLHEP::HepYHat;
+  mRotZ = CLHEP::HepZHat;
+//   mUserPosRndm = NULL;
+
   m_posSPS = new GateSPSPosDistribution();
   m_posSPS->SetBiasRndm( GetBiasRndm() );
   m_eneSPS = new GateSPSEneDistribution();
@@ -413,7 +421,7 @@ void GateVSource::GeneratePrimariesForFastI124Source(G4Event* event) {
 G4int GateVSource::GeneratePrimaries( G4Event* event ) 
 {
   if (event) GateMessage("Beam", 2, "Generating particle " << event->GetEventID() << G4endl);
-
+  
   G4int numVertices = 0;
 
   GateSteppingAction* myAction = (GateSteppingAction *) ( G4RunManager::GetRunManager()->GetUserSteppingAction() );
@@ -628,7 +636,8 @@ void GateVSource::Update(double t)
 void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
 {
   if( GetParticleDefinition() == NULL ) return;
-	
+  if( GetPosDist()->GetPosDisType() == "UserFluenceImage" ) InitializeUserFluence();
+    
   if( nVerboseLevel > 1 ) {
     G4cout << " NumberOfParticlesToBeGenerated: " << GetNumberOfParticles() << G4endl ;
   }
@@ -636,11 +645,12 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
   /* PY Descourt 08/09/2009 */  
   TrackingMode theMode =( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
   if (  theMode == kBoth || theMode == kTracker ) 
-    {					 
-      G4ThreeVector particle_position = m_posSPS->GenerateOne();
+    {
+      G4ThreeVector particle_position;
+      if(mIsUserFluenceActive) { particle_position = UserFluencePosGenerateOne(); }
+      else { G4ThreeVector particle_position = m_posSPS->GenerateOne(); }
+
       // Set placement relative to attached volume
-
-
       ChangeParticlePositionRelativeToAttachedVolume(particle_position);
 
       G4PrimaryVertex* vertex = new G4PrimaryVertex(particle_position, GetParticleTime());
@@ -651,7 +661,6 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
       for( G4int i = 0 ; i != GetNumberOfParticles() ; ++i )
         {
           G4ParticleMomentum particle_momentum_direction = m_angSPS->GenerateOne();
-
           // Set placement relative to attached volume
           ChangeParticleMomentumRelativeToAttachedVolume(particle_momentum_direction);
           // DD(particle_momentum_direction);
@@ -811,3 +820,137 @@ void GateVSource::ChangeParticleMomentumRelativeToAttachedVolume(G4ParticleMomen
   }*/
 //-------------------------------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------------------
+void GateVSource::InitializeUserFluence()
+{
+  GateMessage("Beam", 0, "WARNING message :" << G4endl);
+  GateMessage("Beam", 0, "You are using a userFluenceImage source. Type, shape, size are automatically extracted from the image." << G4endl);
+  
+  if(mUserFluenceFilename == "")
+  {
+    GateError("You are using a userFluenceImage source. Please, enter a filename to be read (../gps/pos/setImage)");
+  }
+  else
+  {
+    mIsUserFluenceActive = true;
+    
+    // Define the 'official' randomPosEngine as a point type source (known in G4SPSPosDistribution)
+    // position is randomly selected using an alternative randomEngine according to the userFluenceImage 
+    // WARNING : units in userImage have to be in mm
+    m_posSPS->SetPosDisType("Point");
+    
+    GateImage userFluenceImage;
+    userFluenceImage.Read(mUserFluenceFilename);
+    
+    int resX = userFluenceImage.GetResolution().x();
+    int resY = userFluenceImage.GetResolution().y();
+    double sizeX = userFluenceImage.GetVoxelSize().x() * mm;
+    double sizeY = userFluenceImage.GetVoxelSize().y() * mm;
+    mUserFluenceVoxelSize.set(userFluenceImage.GetVoxelSize().x(),
+			      userFluenceImage.GetVoxelSize().y(),
+			      userFluenceImage.GetVoxelSize().z());
+
+
+    mUserPosX.resize(resX);
+    mUserPosY.resize(resY);
+    mUserPosGenY.resize(resX);
+    double sum;
+    
+    // Generate XBias and "YBias knowing X" according to fluence image
+    double posX,posY;
+    posX = ((0.5 * sizeX) + userFluenceImage.GetOrigin().x());
+//     posX = ((0.5 * sizeX) - userFluenceImage.GetHalfSize().x());
+    for(int i=0; i<resX;i++)
+    {
+      mUserPosX[i] = posX;
+
+      sum = 0.0;
+      posY = ((0.5 * sizeY) + userFluenceImage.GetOrigin().y());
+//       posY = ((0.5 * sizeY) - userFluenceImage.GetHalfSize().y());
+      for(int j=0; j<resY; j++)
+      {
+	sum += userFluenceImage.GetValue(i,j,0);
+	mUserPosY[j] = posY;
+
+	mUserPosGenY[i].SetYBias(G4ThreeVector(j,userFluenceImage.GetValue(i,j,0),0.));
+	posY += sizeY;
+      }
+
+      mUserPosGenX.SetXBias(G4ThreeVector(i,sum,0.));
+      posX += sizeX;
+    }
+    
+  }
+}
+//----------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------
+G4ThreeVector GateVSource::UserFluencePosGenerateOne()
+{
+  int i = floor(mUserPosGenX.GenRandX());
+  int j = floor(mUserPosGenY[i].GenRandY());
+
+  // uniform rand in pixel
+  double x = mUserPosX[i] + (G4UniformRand()-0.5)*mUserFluenceVoxelSize.x();
+  double y = mUserPosY[j] + (G4UniformRand()-0.5)*mUserFluenceVoxelSize.y();
+  double z = 0.;
+
+  // This is a partial copy of G4SPSPosDistribution::GeneratePointsInPlane(...) 
+  // - Apply Rotation Matrix
+  // - x * Rotx, y * Roty and z * Rotz
+  double tempx = (x * mRotX.x()) + (y * mRotY.x()) + (z * mRotZ.x());
+  double tempy = (x * mRotX.y()) + (y * mRotY.y()) + (z * mRotZ.y());
+  double tempz = (x * mRotX.z()) + (y * mRotY.z()) + (z * mRotZ.z());
+
+  G4ThreeVector randPos;
+  randPos.setX(tempx);
+  randPos.setY(tempy);
+  randPos.setZ(tempz);
+
+  // - Apply translation
+  randPos += mCentreCoords;
+  
+  // Moving the source (point) and call GenerateOne function
+  m_posSPS->SetCentreCoords(randPos);
+  G4ThreeVector position = m_posSPS->GenerateOne();
+
+  return position;
+}
+//----------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------
+void GateVSource::SetCentreCoords(G4ThreeVector coordsOfCentre)
+{
+  mCentreCoords = coordsOfCentre;
+}
+//----------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------
+void GateVSource::SetPosRot1(G4ThreeVector posrot1)
+{
+  mRotX = posrot1;
+
+  // This is a copy of G4SPSPosDistribution::GenerateRotationMatrices() 
+  mRotX = mRotX.unit(); // x'
+  mRotY = mRotY.unit(); // vector in x'y' plane
+  mRotZ = mRotX.cross(mRotY); // z'
+  mRotZ = mRotZ.unit();
+  mRotY = mRotZ.cross(mRotX); // y'
+  mRotY = mRotY.unit();
+}
+//----------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------
+void GateVSource::SetPosRot2(G4ThreeVector posrot2)
+{
+  mRotY = posrot2;
+  
+  // This is a copy of G4SPSPosDistribution::GenerateRotationMatrices() 
+  mRotX = mRotX.unit(); // x'
+  mRotY = mRotY.unit(); // vector in x'y' plane
+  mRotZ = mRotX.cross(mRotY); // z'
+  mRotZ = mRotZ.unit();
+  mRotY = mRotZ.cross(mRotX); // y'
+  mRotY = mRotY.unit();
+}
+//----------------------------------------------------------------------------------------

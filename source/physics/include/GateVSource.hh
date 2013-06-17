@@ -26,6 +26,7 @@
 #include "GateVSourceMessenger.hh"
 #include "GateSingleParticleSourceMessenger.hh"
 #include "GateVVolume.hh"
+#include "GateImage.hh"
 
 #include "G4Colour.hh"
 #include "GateMaps.hh"
@@ -104,9 +105,18 @@ public:
   G4double GetSourceWeight(){return m_weight;}
 
   void SetTimeActivityFilename(G4String filename);
-
   //void AddTimeSlicesFromFile(G4String filename);
-
+  
+  // Class function related to the userFluenceImage source
+  // - initialization and 2D biased random engine
+  void SetUserFluenceFilename( G4String s ) { mUserFluenceFilename = s; }
+  void InitializeUserFluence();
+  G4ThreeVector UserFluencePosGenerateOne();
+  // - copy of useful functions from G4SPSPosDistribution (unreachable G4 class)
+  void SetPosRot1(G4ThreeVector);
+  void SetPosRot2(G4ThreeVector);
+  void SetCentreCoords(G4ThreeVector);
+  
   //void AddTimeSlices(double time, int nParticles);
   //std::vector<double> GetTimePerSlice() {return mTimePerSlice;}
   //std::vector<int> GetNumberOfParticlesPerSlice() {return mNumberOfParticlesPerSlice;}
@@ -164,6 +174,21 @@ protected:
   //std::vector<double> mTimePerSlice;
   //std::vector<int> mNumberOfParticlesPerSlice;
 
+  // Class members related to the userFluenceImage source
+  // - initialization and 2D biased random engine
+  G4bool mIsUserFluenceActive;
+  G4String mUserFluenceFilename;
+  G4ThreeVector mUserFluenceVoxelSize;
+  std::vector<double> mUserPosX;
+  std::vector<double> mUserPosY;
+  G4SPSRandomGenerator mUserPosGenX;
+  std::vector<G4SPSRandomGenerator> mUserPosGenY; 
+  // - copy of useful members from G4SPSPosDistribution (unreachable G4 class)
+  G4ThreeVector mCentreCoords;
+  G4ThreeVector mRotX;
+  G4ThreeVector mRotY;
+  G4ThreeVector mRotZ;
+  
 
   std::vector<double> mTimeList;
   std::vector<double> mActivityList;
