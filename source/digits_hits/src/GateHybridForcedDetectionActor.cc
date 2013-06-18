@@ -352,7 +352,6 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
       mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndWeight( mSingleInteractionEnergy,
                                                                                    1. );
-      mFluorescenceProjector->GetProjectedValueAccumulation().SetDirection( direction );
       TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
       mSingleInteractionImage = mFluorescenceProjector->GetOutput();
       mSingleInteractionImage->DisconnectPipeline();
@@ -513,7 +512,6 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
         mFluorescenceProjector->SetInput(mFluorescenceImage);
         mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
         mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndWeight( energySecondary, weight );
-        mFluorescenceProjector->GetProjectedValueAccumulation().SetDirection( directionSecondary );
         TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
         mFluorescenceImage = mFluorescenceProjector->GetOutput();
         mFluorescenceImage->DisconnectPipeline();

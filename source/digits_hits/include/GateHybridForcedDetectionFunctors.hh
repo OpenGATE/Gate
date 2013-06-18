@@ -597,7 +597,6 @@ public:
     return input;
   }
 
-  void SetDirection(const VectorType &_arg){ m_Direction = _arg; }
   void SetEnergyAndWeight(const double  &energy, const double &weight) {
     unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
     m_Weight = weight;
@@ -607,7 +606,6 @@ public:
   }
 
 private:
-  VectorType m_Direction;
   double    *m_MaterialMuPointer;
   double     m_Weight;
   double     m_Energy;
