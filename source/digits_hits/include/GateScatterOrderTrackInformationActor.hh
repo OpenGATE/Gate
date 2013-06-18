@@ -44,21 +44,25 @@ class GateScatterOrderTrackInformation:
     public G4VUserTrackInformation
 {
 public:
-
-
   GateScatterOrderTrackInformation():order(0) {}
   ~GateScatterOrderTrackInformation() {}
 
   inline void IncrementScatterOrder(const G4Track *track)
   {
-    if(track->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()!=(const G4String)"Transportation")
+    // New particle
+    if(track->GetStep()==NULL)
+      order++;
+    // Same particle
+    else if(track->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()!=(const G4String)"Transportation")
       order++;
   }
 
   virtual inline G4int GetScatterOrder(){ return order; }
+  //virtual inline G4int SetScatterOrder(G4int _order){ return order=_order; }
 
 protected:
   G4int order;
+
 };
 
 //-----------------------------------------------------------------------------
@@ -66,7 +70,6 @@ class GateScatterOrderTrackInformationActorMessenger;
 class GateScatterOrderTrackInformationActor : public GateVActor
 {
 public:
-
   //-----------------------------------------------------------------------------
   // This macro initialize the CreatePrototype and CreateInstance
   FCT_FOR_AUTO_CREATOR_ACTOR(GateScatterOrderTrackInformationActor)
@@ -87,6 +90,5 @@ protected:
 //-----------------------------------------------------------------------------
 
 MAKE_AUTO_CREATOR_ACTOR(ScatterOrderTrackInformationActor, GateScatterOrderTrackInformationActor)
-
 
 #endif /* end #define GATESCATTERORDERTRACKINFORMATIONACTOR_HH */

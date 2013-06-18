@@ -68,10 +68,9 @@ void GateScatterOrderTrackInformationActor::Construct()
 //-----------------------------------------------------------------------------
 // Callbacks
 void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume * v,
-                                                        const G4Step * step)
+                                                               const G4Step * step)
 {
   GateVActor::UserSteppingAction(v, step);
-
   // Create a track information and attach it to the track
      if(step->GetTrack()->GetUserInformation()==0)
      {
@@ -111,7 +110,27 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
     //G4cout << ", Order of Rayleigh  " << order << G4endl;
 
   }
-  else if(process->GetProcessName() == G4String("PhotoElectric")) {}
+  else if(process->GetProcessName() == G4String("PhotoElectric")) {
+    const G4TrackVector * list = step->GetSecondary();
+
+    for(unsigned short i=0; i<(*list).size(); i++)
+    {
+      if((*list)[i]->GetUserInformation()==0 && (*list)[i]->GetDefinition()->GetParticleName()=="gamma")
+      {
+        //GateScatterOrderTrackInformation * fluoTracking = (*list)[i]->GetUserInformation()
+        // Creation of gamma
+        GateScatterOrderTrackInformation* fluoInfo = new GateScatterOrderTrackInformation;
+        (*list)[i]->SetUserInformation(fluoInfo);
+      }
+      GateScatterOrderTrackInformation * fluoTracking = dynamic_cast<GateScatterOrderTrackInformation*>((*list)[i]->GetUserInformation());
+      if(fluoTracking!=NULL)
+      {
+        fluoTracking->IncrementScatterOrder((*list)[i]);
+        order = fluoTracking->GetScatterOrder();
+//DD(order)
+      }
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
