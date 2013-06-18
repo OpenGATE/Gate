@@ -1,8 +1,3 @@
-
-
-/gate/physics/addProcess PhotoElectric
-/gate/physics/processes/PhotoElectric/setModel LivermoreModel
-
 /gate/physics/addProcess Compton
 /gate/physics/processes/Compton/setModel LivermoreModel
 
@@ -11,4 +6,13 @@
 
 /gate/physics/addProcess GammaConversion
 /gate/physics/processes/GammaConversion/setModel LivermoreModel
+
+/gate/physics/addProcess PhotoElectric
+/gate/physics/processes/PhotoElectric/setModel LivermoreModel
+
+# Fluorescence options
+/gate/physics/addAtomDeexcitation
+#/process/em/fluo  false
+#/process/em/auger false
+#/process/em/pixe  false
 
