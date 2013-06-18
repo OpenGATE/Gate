@@ -490,10 +490,20 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
     const G4TrackVector * list = step->GetSecondary();
     G4String nameSecondary = G4String("0");
     G4double energySecondary = 0;
+    VectorType directionSecondary;
+
     for(unsigned int i = 0; i<(*list).size(); i++) {
       nameSecondary = (*list)[i]->GetDefinition()->GetParticleName();
-      energySecondary = (*list)[i]->GetKineticEnergy();
+
+      // Check if photon has been emitted
       if(nameSecondary==G4String("gamma")) {
+
+        GateScatterOrderTrackInformation * infoSecondary = dynamic_cast<GateScatterOrderTrackInformation *>((*list)[i]->GetUserInformation());
+
+        // Update direction and energy for secondary photon
+        energySecondary = (*list)[i]->GetKineticEnergy();
+        for(unsigned int j=0; j<3; j++)
+          directionSecondary[j] = (*list)[i]->GetMomentumDirection()[j];
         mFluorescenceProbe.Start();
         GeometryType::Pointer oneProjGeometry = GeometryType::New();
         oneProjGeometry->AddReg23Projection(point,
@@ -503,15 +513,16 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
         mFluorescenceProjector->SetInput(mFluorescenceImage);
         mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
         mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndWeight( energySecondary, weight );
-        mFluorescenceProjector->GetProjectedValueAccumulation().SetDirection( direction );
+        mFluorescenceProjector->GetProjectedValueAccumulation().SetDirection( directionSecondary );
         TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
         mFluorescenceImage = mFluorescenceProjector->GetOutput();
         mFluorescenceImage->DisconnectPipeline();
         mFluorescenceProbe.Stop();
 
         // Scatter order
-        if(info) {
-          unsigned int order = info->GetScatterOrder();
+        if(infoSecondary)
+        {
+          unsigned int order = infoSecondary->GetScatterOrder();
           while(order>=mFluorescencePerOrderImages.size())
             mFluorescencePerOrderImages.push_back( CreateVoidProjectionImage() );
           mFluorescenceProjector->SetInput(mFluorescencePerOrderImages[order]);
@@ -648,7 +659,7 @@ void GateHybridForcedDetectionActor::SaveData()
 
     for(unsigned int k = 0; k<mFluorescencePerOrderImages.size(); k++)
     {
-      sprintf(filename, "output/Fluorescence%04d_%04d.mha", rID, k+1);
+      sprintf(filename, "output/fluorescence%04d_%04d.mha", rID, k+1);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mFluorescencePerOrderImages[k]);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
