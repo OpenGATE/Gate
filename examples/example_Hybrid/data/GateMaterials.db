@@ -63,6 +63,9 @@ Silicon: d=2.33 g/cm3 ; n=1 ; state=solid
 Germanium: d=5.32 g/cm3 ; n=1 ; state=solid
 	+el: name=auto ; n=1
 
+Iodine: d=4.93 g/cm3 ; n=1 ; state=solid
+        +el: name=auto ; n=1
+
 Yttrium: d=4.47 g/cm3 ; n=1
 	+el: name=auto ; n=1
 
