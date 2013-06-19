@@ -212,11 +212,10 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   // Compute flat field if required
   if(mAttenuationFilename != "")
   {
-    // Constant image source of 1x1x1
+    // Constant image source of 1x1x1 voxel of world material
     typedef rtk::ConstantImageSource< InputImageType > ConstantImageSourceType;
     ConstantImageSourceType::PointType origin;
     ConstantImageSourceType::SizeType dim;
-    ConstantImageSourceType::SpacingType spacing;
     ConstantImageSourceType::Pointer flatFieldSource  = ConstantImageSourceType::New();
     origin[0] = 0.;
     origin[1] = 0.;
@@ -224,11 +223,8 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     dim[0] = 1;
     dim[1] = 1;
     dim[2] = 1;
-    spacing[0] = 1.;
-    spacing[1] = 1.;
-    spacing[2] = 1.;
     flatFieldSource->SetOrigin( origin );
-    flatFieldSource->SetSpacing( spacing );
+    flatFieldSource->SetSpacing( mGateVolumeImage->GetSpacing() );
     flatFieldSource->SetSize( dim );
     flatFieldSource->SetConstant( primaryProjector->GetProjectedValueAccumulation().GetMaterialMuMap()->GetLargestPossibleRegion().GetSize()[0]-1 );
 

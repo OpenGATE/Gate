@@ -183,11 +183,11 @@ public:
   MaterialMuImageType::Pointer GetMaterialMuMap() { return m_MaterialMu; }
 
 protected:
-  VectorType                                m_VolumeSpacing;
-  std::vector<double>                      *m_InterpolationWeights;
-  std::vector<double>                      *m_EnergyWeightList;
-  MaterialMuImageType::Pointer              m_MaterialMu;
-  VectorType                                m_DetectorOrientationTimesPixelSurface;
+  VectorType                    m_VolumeSpacing;
+  std::vector<double>          *m_InterpolationWeights;
+  std::vector<double>          *m_EnergyWeightList;
+  MaterialMuImageType::Pointer  m_MaterialMu;
+  VectorType                    m_DetectorOrientationTimesPixelSurface;
 };
 //-----------------------------------------------------------------------------
 
@@ -226,7 +226,7 @@ public:
     VectorType worldVector = sourceToPixel + nearestPoint - farthestPoint;
     for(int i=0; i<3; i++)
       worldVector[i] *= m_VolumeSpacing[i];
-    m_InterpolationWeights[threadId].back() = worldVector.GetNorm();
+    m_InterpolationWeights[threadId].back() += worldVector.GetNorm();
 
     // Loops over energy, multiply weights by mu, accumulate using Beer Lambert
     for(unsigned int i=0; i<m_EnergyWeightList->size(); i++) {
@@ -236,6 +236,7 @@ public:
       }
       input += vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i];
     }
+
     // FIXME: the source is not punctual but it is homogeneous on the detection plane
     // so one should not multiply by the solid angle but by the pixel surface.
     // To be discussed...
