@@ -186,7 +186,6 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 	  photonValue = 1;
 	}
       
-      G4cout << "photonValue: " << photonValue << G4endl;
       mImage.AddValue(index, photonValue);
       // Scatter order
       if(info)
@@ -224,7 +223,6 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 //-----------------------------------------------------------------------------
 void GateFluenceActor::ReadResponseDetectorFile()
 {
-  G4cout << "NO DEBO PASAR POR AQUI" << G4endl;
   G4double energy, response;
   std::ifstream inResponseFile;
   mUserResponseMap.clear( );
