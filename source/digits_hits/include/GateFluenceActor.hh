@@ -39,7 +39,7 @@ class GateFluenceActor : public GateVImageActor
   virtual void Construct();
 
   void EnableScatterImage(bool b) { mIsScatterImageEnabled = b; }
-
+  virtual void BeginOfRunAction(const G4Run * e);
   virtual void BeginOfEventAction(const G4Event * e);
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
   virtual void UserPreTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/) {}
@@ -53,12 +53,16 @@ class GateFluenceActor : public GateVImageActor
   //virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
+
+  void ReadResponseDetectorFile();
+  void SetResponseDetectorFile(G4String name) { mResponseFileName = name; }
   void SetScatterOrderFilename(G4String name) { mScatterOrderFilename = name; }
 
 protected:
   GateFluenceActor(G4String name, G4int depth=0);
   GateFluenceActorMessenger * pMessenger;
-
+  std::map< G4double, G4double > mUserResponseMap;
+  G4String mResponseFileName;
   bool mIsScatterImageEnabled;
   GateImage mImageScatter;
   std::vector<GateImage *> mFluencePerOrderImages;
