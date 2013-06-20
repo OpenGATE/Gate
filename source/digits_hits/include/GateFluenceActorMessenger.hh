@@ -30,6 +30,7 @@ public:
 
 protected:
   GateFluenceActor * pFluenceActor;
+  G4UIcmdWithAString * pSetResponseDetectorFileCmd;
   G4UIcmdWithABool * pEnableScatterCmd;
   G4UIcmdWithAString * pSetScatterOrderFilenameCmd;
 };

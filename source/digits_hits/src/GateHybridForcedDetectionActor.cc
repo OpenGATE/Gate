@@ -212,11 +212,10 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   // Compute flat field if required
   if(mAttenuationFilename != "")
   {
-    // Constant image source of 1x1x1
+    // Constant image source of 1x1x1 voxel of world material
     typedef rtk::ConstantImageSource< InputImageType > ConstantImageSourceType;
     ConstantImageSourceType::PointType origin;
     ConstantImageSourceType::SizeType dim;
-    ConstantImageSourceType::SpacingType spacing;
     ConstantImageSourceType::Pointer flatFieldSource  = ConstantImageSourceType::New();
     origin[0] = 0.;
     origin[1] = 0.;
@@ -224,11 +223,8 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     dim[0] = 1;
     dim[1] = 1;
     dim[2] = 1;
-    spacing[0] = 1.;
-    spacing[1] = 1.;
-    spacing[2] = 1.;
     flatFieldSource->SetOrigin( origin );
-    flatFieldSource->SetSpacing( spacing );
+    flatFieldSource->SetSpacing( mGateVolumeImage->GetSpacing() );
     flatFieldSource->SetSize( dim );
     flatFieldSource->SetConstant( primaryProjector->GetProjectedValueAccumulation().GetMaterialMuMap()->GetLargestPossibleRegion().GetSize()[0]-1 );
 
@@ -352,7 +348,6 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
       mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndWeight( mSingleInteractionEnergy,
                                                                                    1. );
-      mFluorescenceProjector->GetProjectedValueAccumulation().SetDirection( direction );
       TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
       mSingleInteractionImage = mFluorescenceProjector->GetOutput();
       mSingleInteractionImage->DisconnectPipeline();
@@ -513,7 +508,6 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
         mFluorescenceProjector->SetInput(mFluorescenceImage);
         mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
         mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndWeight( energySecondary, weight );
-        mFluorescenceProjector->GetProjectedValueAccumulation().SetDirection( directionSecondary );
         TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
         mFluorescenceImage = mFluorescenceProjector->GetOutput();
         mFluorescenceImage->DisconnectPipeline();

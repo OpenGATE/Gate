@@ -10,8 +10,8 @@
 
 
 /*
-  \brief Class GateFluenceActor : 
-  \brief 
+  \brief Class GateFluenceActor :
+  \brief
 */
 // Gate
 #include "GateFluenceActor.hh"
@@ -24,13 +24,14 @@ GateFluenceActor::GateFluenceActor(G4String name, G4int depth):
   GateDebugMessageInc("Actor",4,"GateFluenceActor() -- begin"<<G4endl);
   pMessenger = new GateFluenceActorMessenger(this);
   SetStepHitType("pre");
+  mResponseFileName = "";
   GateDebugMessageDec("Actor",4,"GateFluenceActor() -- end"<<G4endl);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateFluenceActor::~GateFluenceActor()
 {
   delete pMessenger;
@@ -58,6 +59,9 @@ void GateFluenceActor::Construct()
   }
   SetStepHitType("pre");
 
+  // Read the response detector curve from an external file
+  if( !mResponseFileName) ReadResponseDetectorFile();
+
   // Allocate scatter image
   if (mIsScatterImageEnabled) {
     mImageScatter.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
@@ -66,7 +70,7 @@ void GateFluenceActor::Construct()
   }
 
   // Print information
-  GateMessage("Actor", 1, 
+  GateMessage("Actor", 1,
               "\tFluence FluenceActor    = '" << GetObjectName() << "'" << G4endl);
 
   ResetData();
@@ -108,7 +112,7 @@ void GateFluenceActor::SaveData()
 
 
 //-----------------------------------------------------------------------------
-void GateFluenceActor::ResetData() 
+void GateFluenceActor::ResetData()
 {
   mImage.Fill(0);
   if(mIsScatterImageEnabled) {
@@ -118,9 +122,19 @@ void GateFluenceActor::ResetData()
 //-----------------------------------------------------------------------------
 
 
+
+//-----------------------------------------------------------------------------
+void GateFluenceActor::BeginOfRunAction( const G4Run*r)
+{
+}
+//-----------------------------------------------------------------------------
+
+
+
+
 //-----------------------------------------------------------------------------
 void GateFluenceActor::BeginOfEventAction(const G4Event * e)
-{ 
+{
   GateVActor::BeginOfEventAction(e);
 }
 //-----------------------------------------------------------------------------
@@ -137,16 +151,39 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
     GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end" << G4endl);
     return;
   }
-  
+
   GateScatterOrderTrackInformation * info = dynamic_cast<GateScatterOrderTrackInformation *>(step->GetTrack()->GetUserInformation());
 
   /* http://geant4.org/geant4/support/faq.shtml
      To check that the particle has just entered in the current volume
      (i.e. it is at the first step in the volume; the preStepPoint is at the boundary):
   */
-  if(step->GetPreStepPoint()->GetStepStatus() == fGeomBoundary) {
-    mImage.AddValue(index, 1);
-    if(mIsScatterImageEnabled) {
+  if (step->GetPreStepPoint()->GetStepStatus() == fGeomBoundary)
+    {
+      double respValue = 1.;
+      if( !mResponseFileName)
+	{
+	  double energy = (step->GetPreStepPoint()->GetKineticEnergy());
+
+	  // Energy Response Detector (linear interpolation to obtain the right value from the list)
+	  std::map< G4double, G4double >::iterator iterResponseMap = mUserResponseMap.end();
+	  iterResponseMap =  mUserResponseMap.lower_bound( energy);
+	  if(iterResponseMap == mUserResponseMap.begin() || iterResponseMap == mUserResponseMap.end())
+	    {
+	      G4cout << "Particle Energy outside the Response Detector list" << G4endl;
+	      exit(1);
+	    }
+	  double upperEn = iterResponseMap->first;
+	  double upperMu = iterResponseMap->second;
+          iterResponseMap--;
+	  double lowerEn = iterResponseMap->first;
+	  double lowerMu = iterResponseMap->second;
+	  // Interpolation result value corresponding to the incedent photon and to count into the voxel
+	  respValue = ((( upperMu - lowerMu)/( upperEn - lowerEn)) * ( energy - upperEn) + upperMu);
+	}
+
+      mImage.AddValue(index, respValue);
+     if(mIsScatterImageEnabled) {
       unsigned int order = 0;
       // Scatter order
       if(info) {
@@ -184,3 +221,30 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
   GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end" << G4endl);
 }
 //-----------------------------------------------------------------------------
+
+
+
+//-----------------------------------------------------------------------------
+void GateFluenceActor::ReadResponseDetectorFile()
+{
+  G4double energy, response;
+  std::ifstream inResponseFile;
+  mUserResponseMap.clear( );
+
+  inResponseFile.open( mResponseFileName);
+  if( !inResponseFile )
+    {
+      // file couldn't be opened
+      G4cout << "Error: file could not be opened" << G4endl;
+      exit( 1);
+    }
+  while ( !inResponseFile.eof( ))
+    {
+      inResponseFile >> energy >> response;
+      energy = energy*MeV;
+      mUserResponseMap[ energy] = response;
+    }
+  inResponseFile.close( );
+}
+//-----------------------------------------------------------------------------
+
