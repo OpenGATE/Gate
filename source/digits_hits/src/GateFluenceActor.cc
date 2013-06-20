@@ -16,6 +16,7 @@
 // Gate
 #include "GateFluenceActor.hh"
 #include "GateScatterOrderTrackInformationActor.hh"
+#include "GateEnergyResponseFunctor.hh"
 
 //-----------------------------------------------------------------------------
 GateFluenceActor::GateFluenceActor(G4String name, G4int depth):
@@ -60,7 +61,7 @@ void GateFluenceActor::Construct()
   SetStepHitType("pre");
 
   // Read the response detector curve from an external file
-  if( !mResponseFileName) ReadResponseDetectorFile();
+  if( mResponseFileName != "") ReadResponseDetectorFile();
 
   // Allocate scatter image
   if (mIsScatterImageEnabled) {
@@ -160,29 +161,18 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
   */
   if (step->GetPreStepPoint()->GetStepStatus() == fGeomBoundary) 
     {
-      double photonValue;
-      if( !mResponseFileName)
+      double photonValue, photonValueFun;
+      if( mResponseFileName != "")
 	{ 
-	  double photonEnergy = (step->GetPreStepPoint()->GetKineticEnergy());
-	  
-	  // Energy Response Detector (linear interpolation to obtain the right value from the list)
-	  std::map< G4double, G4double >::iterator iterResponseMap = mUserResponseMap.end();
-	  iterResponseMap =  mUserResponseMap.lower_bound( photonEnergy);
-	  if( iterResponseMap == mUserResponseMap.end())
-	    {
-	      G4cout << " Photon Energy outside the Response Detector list" << G4endl;
-	      exit(1);
-	    }
-	  double upperEn = iterResponseMap->first;
-	  double upperMu = iterResponseMap->second;
-          iterResponseMap--;
-	  double lowerEn = iterResponseMap->first;
-	  double lowerMu = iterResponseMap->second;
-	  // Interpolation result value corresponding to the incedent photon and to count into the voxel
-	  photonValue = ((( upperMu - lowerMu)/( upperEn - lowerEn)) * ( photonEnergy - upperEn) + upperMu);
-	}
-      else 
+          double photonEnergy = (step->GetPreStepPoint()->GetKineticEnergy());
+          //GateEnergyResponseFunctor::InterpolationEnergyResponse * iterInterp = new GateEnergyResponseFunctor::InterpolationEnergyResponse;
+          // Energy Response Detector (linear interpolation to obtain the right value from the list)
+          GateEnergyResponseFunctor::InterpolationEnergyResponse operatorInterp;
+          photonValueFun = operatorInterp( photonEnergy, mUserResponseMap);
+        }
+      else
 	{
+          G4cout << " Aqui si " << G4endl;
 	  photonValue = 1;
 	}
       
@@ -223,6 +213,7 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 //-----------------------------------------------------------------------------
 void GateFluenceActor::ReadResponseDetectorFile()
 {
+  G4cout << "hola no deberia venir aqui" << G4endl;
   G4double energy, response;
   std::ifstream inResponseFile;
   mUserResponseMap.clear( );
