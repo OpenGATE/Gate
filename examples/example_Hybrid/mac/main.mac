@@ -104,12 +104,12 @@
 /gate/actor/hfda/flatFieldFilename     output/flatField%.04d.mha
 /gate/actor/hfda/saveEveryNSeconds     120
 #/gate/actor/hfda/singleInteractionFilename  output/single{ZDISTANCE}.mha
-#/gate/actor/hfda/singleInteractionType      Compton
-#/gate/actor/hfda/singleInteractionPosition  0 0 {ZDISTANCE} cm
-#/gate/actor/hfda/singleInteractionDirection 0 0 -1
-#/gate/actor/hfda/singleInteractionEnergy    70 keV
-#/gate/actor/hfda/singleInteractionZ         7
-#/gate/actor/hfda/phaseSpaceFilename         output/interactions.root
+/gate/actor/hfda/singleInteractionType      Compton
+/gate/actor/hfda/singleInteractionPosition  0 0 {ZDISTANCE} cm
+/gate/actor/hfda/singleInteractionDirection 0 0 -1
+/gate/actor/hfda/singleInteractionEnergy    70 keV
+/gate/actor/hfda/singleInteractionZ         7
+/gate/actor/hfda/phaseSpaceFilename         output/interactions.root
 
 
 # find source if gps. --> keep the first one.
@@ -139,10 +139,10 @@
 
 /gate/source/addSource mybeam gps
 #/control/execute mac/beam-mono.mac
-/control/execute mac/beam-iMagX-mono.mac
+#/control/execute mac/beam-iMagX-mono.mac
 #/control/execute mac/beam-iMagX120keV.mac
 #/control/execute mac/beam-iMagX80keV.mac
-#/control/execute mac/beam-with-spektrum.mac
+/control/execute mac/beam-with-spektrum.mac
 
 #=====================================================
 # MAIN
@@ -166,5 +166,5 @@
 /gate/run/enableGlobalOutput false
 
 # PARTICLE
-/gate/application/setTotalNumberOfPrimaries 110
+/gate/application/setTotalNumberOfPrimaries 100
 /gate/application/start
