@@ -81,6 +81,26 @@ void GateHybridForcedDetectionActor::Construct()
   EnableUserSteppingAction(true);
   ResetData();
   mEMCalculator = new G4EmCalculator;
+
+  mPhaseSpaceFile = NULL;
+  if(mPhaseSpaceFilename != "")
+    mPhaseSpaceFile = new TFile(mPhaseSpaceFilename,"RECREATE","ROOT file for phase space",9);
+  mPhaseSpace = new TTree("PhaseSpace","Phase space tree of hybrid forced detection actor");
+
+  mPhaseSpace->Branch("Ekine",  &mInteractionEnergy,"Ekine/F");
+  mPhaseSpace->Branch("Weight", &mInteractionWeight,"Weight/F");
+  mPhaseSpace->Branch("X", &(mInteractionPosition[0]),"X/F");
+  mPhaseSpace->Branch("Y", &(mInteractionPosition[1]),"Y/F");
+  mPhaseSpace->Branch("Z", &(mInteractionPosition[2]),"Z/F");
+  mPhaseSpace->Branch("dX", &(mInteractionDirection[0]),"dX/F");
+  mPhaseSpace->Branch("dY", &(mInteractionDirection[1]),"dY/F");
+  mPhaseSpace->Branch("dZ", &(mInteractionDirection[2]),"dZ/F");
+  mPhaseSpace->Branch("ProductionVolume", mInteractionProductionVolume,"ProductionVolume/C");
+  mPhaseSpace->Branch("TrackID",&mInteractionTrackId,"TrackID/I");
+  mPhaseSpace->Branch("EventID",&mInteractionEventId,"EventID/I");
+  mPhaseSpace->Branch("RunID",&mInteractionRunId,"RunID/I");
+  mPhaseSpace->Branch("ProductionProcessTrack", mInteractionProductionProcessTrack,"ProductionProcessTrack/C");
+  mPhaseSpace->Branch("ProductionProcessStep", mInteractionProductionProcessStep,"ProductionProcessStep/C");
 }
 //-----------------------------------------------------------------------------
 
@@ -354,7 +374,6 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       mFluorescenceProjector->InPlaceOn();
     }
   }
-
 }
 //-----------------------------------------------------------------------------
 
@@ -396,16 +415,35 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
   if(!process) return;
 
   // We need the position, direction and energy at point where Compton and Rayleigh occur.
-  G4ThreeVector p = step->GetPostStepPoint()->GetPosition();
-  G4ThreeVector d = step->GetPreStepPoint()->GetMomentumDirection();
-  double energy = step->GetPreStepPoint()->GetKineticEnergy();
-  double weight = step->GetPostStepPoint()->GetWeight();
+  mInteractionPosition = step->GetPostStepPoint()->GetPosition();
+  mInteractionDirection = step->GetPreStepPoint()->GetMomentumDirection();
+  mInteractionEnergy = step->GetPreStepPoint()->GetKineticEnergy();
+  mInteractionWeight = step->GetPostStepPoint()->GetWeight();
+
+  // Other information for phase space
+  mInteractionTrackId = step->GetTrack()->GetTrackID();
+  mInteractionEventId = GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+  mInteractionRunId   = GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+  // mInteractionProductionVolume
+  G4String st = "";
+  if(step->GetTrack()->GetLogicalVolumeAtVertex())
+    st = step->GetTrack()->GetLogicalVolumeAtVertex()->GetName();
+  sscanf(st.c_str(), "%s", mInteractionProductionVolume);
+  // mInteractionProductionProcessTrack
+  st = "";
+  if(step->GetTrack()->GetCreatorProcess() )
+    st =  step->GetTrack()->GetCreatorProcess()->GetProcessName();
+  sscanf(st.c_str(), "%s", mInteractionProductionProcessTrack);
+  // mInteractionProductionProcessStep
+  st = process->GetProcessName();
+  sscanf(st.c_str(), "%s", mInteractionProductionProcessStep);
+
 
   GateScatterOrderTrackInformation * info = dynamic_cast<GateScatterOrderTrackInformation *>(step->GetTrack()->GetUserInformation());
 
   // d and p are in World coordinates and they must be in CT coordinates
-  d = m_WorldToCT.TransformAxis(d);
-  p = m_WorldToCT.TransformPoint(p);
+  G4ThreeVector d = m_WorldToCT.TransformAxis(mInteractionDirection);
+  G4ThreeVector p = m_WorldToCT.TransformPoint(mInteractionPosition);
 
   //Convert to ITK
   PointType point;
@@ -419,8 +457,8 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
   const G4MaterialCutsCouple *couple = step->GetPreStepPoint()->GetMaterialCutsCouple();
   const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
   G4VEmModel* model = const_cast<G4VEmProcess*>(process)->Model();
-  const G4Element* elm = model->SelectRandomAtom(couple,particle,energy);
-  G4int Z = elm->GetZ();
+  const G4Element* elm = model->SelectRandomAtom(couple,particle,mInteractionEnergy);
+  G4int mInteractionZ = elm->GetZ();
 
   if(process->GetProcessName() == G4String("Compton") || process->GetProcessName() == G4String("compt")) {
     mComptonProbe.Start();
@@ -431,12 +469,13 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
                                         mDetectorColVector);
     mComptonProjector->SetInput(mComptonImage);
     mComptonProjector->SetGeometry( oneProjGeometry.GetPointer() );
-    mComptonProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( energy, Z, weight );
+    mComptonProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mInteractionEnergy, mInteractionZ, mInteractionWeight );
     mComptonProjector->GetProjectedValueAccumulation().SetDirection( direction );
     TRY_AND_EXIT_ON_ITK_EXCEPTION(mComptonProjector->Update());
     mComptonImage = mComptonProjector->GetOutput();
     mComptonImage->DisconnectPipeline();
     mComptonProbe.Stop();
+    if(mPhaseSpaceFile) mPhaseSpace->Fill();
 
     // Scatter order
     if(info)
@@ -461,12 +500,13 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
                                         mDetectorColVector);
     mRayleighProjector->SetInput(mRayleighImage);
     mRayleighProjector->SetGeometry( oneProjGeometry.GetPointer() );
-    mRayleighProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( energy, Z, weight );
+    mRayleighProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mInteractionEnergy, mInteractionZ, mInteractionWeight );
     mRayleighProjector->GetProjectedValueAccumulation().SetDirection( direction );
     TRY_AND_EXIT_ON_ITK_EXCEPTION(mRayleighProjector->Update());
     mRayleighImage = mRayleighProjector->GetOutput();
     mRayleighImage->DisconnectPipeline();
     mRayleighProbe.Stop();
+    if(mPhaseSpaceFile) mPhaseSpace->Fill();
 
     // Scatter order
     if(info)
@@ -484,7 +524,6 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
     // List of secondary particles
     const G4TrackVector * list = step->GetSecondary();
     G4String nameSecondary = G4String("0");
-    G4double energySecondary = 0;
     VectorType directionSecondary;
 
     for(unsigned int i = 0; i<(*list).size(); i++) {
@@ -496,7 +535,8 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
         GateScatterOrderTrackInformation * infoSecondary = dynamic_cast<GateScatterOrderTrackInformation *>((*list)[i]->GetUserInformation());
 
         // Update direction and energy for secondary photon
-        energySecondary = (*list)[i]->GetKineticEnergy();
+        mInteractionEnergy = (*list)[i]->GetKineticEnergy();
+        mInteractionWeight = (*list)[i]->GetWeight();
         for(unsigned int j=0; j<3; j++)
           directionSecondary[j] = (*list)[i]->GetMomentumDirection()[j];
         mFluorescenceProbe.Start();
@@ -507,11 +547,12 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
                                             mDetectorColVector);
         mFluorescenceProjector->SetInput(mFluorescenceImage);
         mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
-        mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndWeight( energySecondary, weight );
+        mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndWeight( mInteractionEnergy, mInteractionWeight );
         TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
         mFluorescenceImage = mFluorescenceProjector->GetOutput();
         mFluorescenceImage->DisconnectPipeline();
         mFluorescenceProbe.Stop();
+        if(mPhaseSpaceFile) mPhaseSpace->Fill();
 
         // Scatter order
         if(infoSecondary)
@@ -627,7 +668,6 @@ void GateHybridForcedDetectionActor::SaveData()
     }
   }
 
-
   if(mRayleighFilename != "")
   {
     sprintf(filename, mRayleighFilename.c_str(), rID);
@@ -665,23 +705,9 @@ void GateHybridForcedDetectionActor::SaveData()
     imgWriter->SetInput(mSingleInteractionImage);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
   }
-//  G4cout << "Computation of the primary took "
-//         << mPrimaryProbe.GetTotal()
-//         << ' '
-//         << mPrimaryProbe.GetUnit()
-//         << G4endl;
 
-//  G4cout << "Computation of Compton took "
-//         << mComptonProbe.GetTotal()
-//         << ' '
-//         << mComptonProbe.GetUnit()
-//         << G4endl;
-
-//  G4cout << "Computation of Rayleigh took "
-//         << mRayleighProbe.GetTotal()
-//         << ' '
-//         << mRayleighProbe.GetUnit()
-//         << G4endl;
+  if(mPhaseSpaceFile)
+    mPhaseSpace->GetCurrentFile()->Write();
 }
 //-----------------------------------------------------------------------------
 
