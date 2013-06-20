@@ -67,6 +67,8 @@ public:
   typedef itk::Image<InputPixelType, Dimension>                      InputImageType;
   typedef itk::Image<double, 2>                                      MaterialMuImageType;
 
+  VAccumulation() { for(int i=0; i<ITK_MAX_THREADS; i++) m_IntegralOverDetector[i] = 0.; }
+
   bool operator!=( const VAccumulation & ) const
   {
     return false;
@@ -182,12 +184,31 @@ public:
 
   MaterialMuImageType::Pointer GetMaterialMuMap() { return m_MaterialMu; }
 
+  double GetIntegralOverDetectorAndReset()
+  {
+    double result = 0.;
+    for(int i=0; i<ITK_MAX_THREADS; i++){
+      result += m_IntegralOverDetector[i];
+      m_IntegralOverDetector[i] = 0.;
+    }
+    return result;
+  }
+
 protected:
+  void Accumulate(const rtk::ThreadIdType threadId,
+                  double &input,
+                  const double valueToAccumulate)
+  {
+    input += valueToAccumulate;
+    m_IntegralOverDetector[threadId] += valueToAccumulate;
+  }
+
   VectorType                    m_VolumeSpacing;
   std::vector<double>          *m_InterpolationWeights;
   std::vector<double>          *m_EnergyWeightList;
   MaterialMuImageType::Pointer  m_MaterialMu;
   VectorType                    m_DetectorOrientationTimesPixelSurface;
+  double                        m_IntegralOverDetector[ITK_MAX_THREADS];
 };
 //-----------------------------------------------------------------------------
 
@@ -210,7 +231,7 @@ public:
                             const VectorType &itkNotUsed(source),
                             const VectorType &sourceToPixel,
                             const VectorType &nearestPoint,
-                            const VectorType &farthestPoint) const
+                            const VectorType &farthestPoint)
   {
     double *p = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
 
@@ -234,7 +255,7 @@ public:
       for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++){
         rayIntegral += m_InterpolationWeights[threadId][j] * *p++;
       }
-      input += vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i];
+      Accumulate(threadId, input, vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i]);
     }
 
     // FIXME: the source is not punctual but it is homogeneous on the detection plane
@@ -278,7 +299,7 @@ public:
                             const VectorType &itkNotUsed(source),
                             const VectorType &sourceToPixel,
                             const VectorType &nearestPoint,
-                            const VectorType &farthestPoint) const
+                            const VectorType &farthestPoint)
   {
     // Compute ray length in world material
     // This is used to compute the length in world as well as the direction
@@ -348,7 +369,8 @@ public:
       rayIntegral += m_InterpolationWeights[threadId][j] * *p++;
 #endif
     // Final computation
-    input += vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel);
+    Accumulate(threadId, input,
+               vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel));
 
     // Reset weights for next ray in thread.
     std::fill(m_InterpolationWeights[threadId].begin(), m_InterpolationWeights[threadId].end(), 0.);
@@ -411,7 +433,7 @@ public:
                             const VectorType &itkNotUsed(source),
                             const VectorType &sourceToPixel,
                             const VectorType &nearestPoint,
-                            const VectorType &farthestPoint) const
+                            const VectorType &farthestPoint)
   {
     // Compute ray length in world material
     // This is used to compute the length in world as well as the direction
@@ -479,7 +501,8 @@ public:
       rayIntegral += m_InterpolationWeights[threadId][j] * *(m_MaterialMuPointer+j);
 #endif
     // Final computation
-    input += vcl_exp(-rayIntegral) * DCSrayleigh * GetSolidAngle(sourceToPixel);
+    Accumulate(threadId, input,
+               vcl_exp(-rayIntegral) * DCSrayleigh * GetSolidAngle(sourceToPixel));
 
     // Reset weights for next ray in thread.
     std::fill(m_InterpolationWeights[threadId].begin(), m_InterpolationWeights[threadId].end(), 0.);
@@ -529,7 +552,7 @@ public:
                             const VectorType &itkNotUsed(source),
                             const VectorType &sourceToPixel,
                             const VectorType &nearestPoint,
-                            const VectorType &farthestPoint) const
+                            const VectorType &farthestPoint)
   {
     // Compute ray length in world material
     // This is used to compute the length in world as well as the direction
@@ -591,7 +614,8 @@ public:
       rayIntegral += m_InterpolationWeights[threadId][j] * *(m_MaterialMuPointer+j);
 #endif
     // Final computation
-    input += m_Weight * vcl_exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi);
+    Accumulate(threadId, input,
+               m_Weight * vcl_exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi));
 
     // Reset weights for next ray in thread.
     std::fill(m_InterpolationWeights[threadId].begin(), m_InterpolationWeights[threadId].end(), 0.);

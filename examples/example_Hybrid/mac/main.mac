@@ -109,26 +109,8 @@
 /gate/actor/hfda/singleInteractionDirection 0 0 -1
 /gate/actor/hfda/singleInteractionEnergy    70 keV
 /gate/actor/hfda/singleInteractionZ         7
+/gate/actor/hfda/phaseSpaceFilename         output/interactions.root
 
-
-# Also record the interactions for statistics
-/gate/actor/addActor                        PhaseSpaceActor phsp
-/gate/actor/phsp/attachTo                   world
-/gate/actor/phsp/save                       output/interactions.root
-/gate/actor/phsp/addFilter                  particleFilter
-/gate/actor/phsp/particleFilter/addParticle gamma
-/gate/actor/phsp/enableEkine                true
-/gate/actor/phsp/enableXPosition            true
-/gate/actor/phsp/enableXDirection           true
-/gate/actor/phsp/enableYPosition            true
-/gate/actor/phsp/enableYDirection           true
-/gate/actor/phsp/enableZPosition            true
-/gate/actor/phsp/enableZDirection           true
-/gate/actor/phsp/enableProductionProcess    true
-/gate/actor/phsp/enableWeight               true
-/gate/actor/phsp/enableTime                 true
-/gate/actor/phsp/storeAllStep               true
-/gate/actor/phsp/storeSecondaries           true
 
 # find source if gps. --> keep the first one.
 # assumption : ponctuel (focuspoint ou centre)

@@ -120,6 +120,11 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
   pSetSingleInteractionZCmd = new G4UIcmdWithAnInteger(bb, this);
   guidance = "Set the Z of the single interaction.";
   pSetSingleInteractionZCmd->SetGuidance(guidance);
+
+  bb = base+"/phaseSpaceFilename";
+  pSetPhaseSpaceFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for storing all interactions in a phase space file in root format.";
+  pSetPhaseSpaceFilenameCmd->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -143,6 +148,7 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetSingleInteractionDirectionCmd) pHybridActor->SetSingleInteractionDirection(pSetSingleInteractionDirectionCmd->GetNew3VectorValue(param));
   if(command == pSetSingleInteractionEnergyCmd) pHybridActor->SetSingleInteractionEnergy(pSetSingleInteractionEnergyCmd->GetNewDoubleValue(param));
   if(command == pSetSingleInteractionZCmd) pHybridActor->SetSingleInteractionZ(pSetSingleInteractionZCmd->GetNewIntValue(param));
+  if(command == pSetPhaseSpaceFilenameCmd) pHybridActor->SetPhaseSpaceFilename(param);
 
   GateActorMessenger::SetNewValue(command ,param );
 }

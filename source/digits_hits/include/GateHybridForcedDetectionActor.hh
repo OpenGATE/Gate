@@ -84,6 +84,7 @@ public:
   void SetSingleInteractionDirection(G4ThreeVector dir) { mSingleInteractionDirection = dir; }
   void SetSingleInteractionEnergy(G4double e) { mSingleInteractionEnergy = e; }
   void SetSingleInteractionZ(G4int z) { mSingleInteractionZ = z; }
+  void SetPhaseSpaceFilename(G4String name) { mPhaseSpaceFilename = name; }
 
   // Typedef for rtk
   static const unsigned int Dimension = 3;
@@ -194,6 +195,23 @@ protected:
   G4ThreeVector           mSingleInteractionDirection;
   G4double                mSingleInteractionEnergy;
   G4int                   mSingleInteractionZ;
+
+  // Phase space variables
+  G4String mPhaseSpaceFilename;
+  TFile   *mPhaseSpaceFile;
+  TTree   *mPhaseSpace;
+  G4ThreeVector mInteractionDirection;
+  G4ThreeVector mInteractionPosition;
+  double        mInteractionEnergy;
+  double        mInteractionWeight;
+  G4int         mInteractionZ;
+  Char_t        mInteractionProductionVolume[256];
+  Char_t        mInteractionProductionProcessTrack[256];
+  Char_t        mInteractionProductionProcessStep[256];
+  int           mInteractionTrackId;
+  int           mInteractionEventId;
+  int           mInteractionRunId;
+  double        mInteractionTotalContribution;
 };
 //-----------------------------------------------------------------------------
 

@@ -51,6 +51,7 @@ protected:
   G4UIcmdWith3VectorAndUnit * pSetSingleInteractionPositionCmd;
   G4UIcmdWithADoubleAndUnit * pSetSingleInteractionEnergyCmd;
   G4UIcmdWithAnInteger * pSetSingleInteractionZCmd;
+  G4UIcmdWithAString * pSetPhaseSpaceFilenameCmd;
 };
 
 #endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH*/
