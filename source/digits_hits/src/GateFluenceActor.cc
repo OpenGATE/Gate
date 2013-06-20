@@ -16,6 +16,7 @@
 // Gate
 #include "GateFluenceActor.hh"
 #include "GateScatterOrderTrackInformationActor.hh"
+#include "GateEnergyResponseFunctor.hh"
 
 //-----------------------------------------------------------------------------
 GateFluenceActor::GateFluenceActor(G4String name, G4int depth):
@@ -60,7 +61,7 @@ void GateFluenceActor::Construct()
   SetStepHitType("pre");
 
   // Read the response detector curve from an external file
-  if( !mResponseFileName) ReadResponseDetectorFile();
+  if( mResponseFileName != "") ReadResponseDetectorFile();
 
   // Allocate scatter image
   if (mIsScatterImageEnabled) {
@@ -160,28 +161,16 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
   */
   if (step->GetPreStepPoint()->GetStepStatus() == fGeomBoundary)
     {
-      double respValue = 1.;
-      if( !mResponseFileName)
-	{
-	  double energy = (step->GetPreStepPoint()->GetKineticEnergy());
-
-	  // Energy Response Detector (linear interpolation to obtain the right value from the list)
-	  std::map< G4double, G4double >::iterator iterResponseMap = mUserResponseMap.end();
-	  iterResponseMap =  mUserResponseMap.lower_bound( energy);
-	  if(iterResponseMap == mUserResponseMap.begin() || iterResponseMap == mUserResponseMap.end())
-	    {
-	      G4cout << "Particle Energy outside the Response Detector list" << G4endl;
-	      exit(1);
-	    }
-	  double upperEn = iterResponseMap->first;
-	  double upperMu = iterResponseMap->second;
-          iterResponseMap--;
-	  double lowerEn = iterResponseMap->first;
-	  double lowerMu = iterResponseMap->second;
-	  // Interpolation result value corresponding to the incedent photon and to count into the voxel
-	  respValue = ((( upperMu - lowerMu)/( upperEn - lowerEn)) * ( energy - upperEn) + upperMu);
-	}
-
+      double respValue = 1;
+      if( mResponseFileName != "")
+ 	  { 
+        double energy = (step->GetPreStepPoint()->GetKineticEnergy());
+        //GateEnergyResponseFunctor::InterpolationEnergyResponse * iterInterp = new GateEnergyResponseFunctor::InterpolationEnergyResponse;
+        // Energy Response Detector (linear interpolation to obtain the right value from the list)
+        GateEnergyResponseFunctor::InterpolationEnergyResponse operatorInterp;
+        respValue = operatorInterp( energy, mUserResponseMap);
+      }
+           
       mImage.AddValue(index, respValue);
      if(mIsScatterImageEnabled) {
       unsigned int order = 0;

@@ -211,6 +211,7 @@ protected:
   int           mInteractionTrackId;
   int           mInteractionEventId;
   int           mInteractionRunId;
+  double        mInteractionTotalContribution;
 };
 //-----------------------------------------------------------------------------
 
