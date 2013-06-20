@@ -18,8 +18,6 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAString.hh"
 
-#include "itkMacro.h"
-
 //-----------------------------------------------------------------------------
 GateScatterOrderTrackInformationActorMessenger::GateScatterOrderTrackInformationActorMessenger(GateScatterOrderTrackInformationActor* sensor):
   GateActorMessenger(sensor),pScatterOrderActor(sensor){}
@@ -31,7 +29,7 @@ GateScatterOrderTrackInformationActorMessenger::~GateScatterOrderTrackInformatio
 
 //-----------------------------------------------------------------------------
 //NOTE: We keep the Messenger structures just in case we want to add new options to the actor
-void GateScatterOrderTrackInformationActorMessenger::BuildCommands(G4String itkNotUsed(base)){}
+void GateScatterOrderTrackInformationActorMessenger::BuildCommands(G4String){}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
