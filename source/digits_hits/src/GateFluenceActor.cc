@@ -172,6 +172,7 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
       }
            
       mImage.AddValue(index, respValue);
+
      if(mIsScatterImageEnabled) {
       unsigned int order = 0;
       // Scatter order

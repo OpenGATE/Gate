@@ -39,7 +39,7 @@ void GateFluenceActorMessenger::BuildCommands(G4String base)
   G4String guid = G4String("Enable computation of scattered particles fluence");
   pEnableScatterCmd->SetGuidance(guid);
 
-  n = base+"/readResponseDetectorFile";
+  n = base+"/responseDetectorFilename";
   pSetResponseDetectorFileCmd = new G4UIcmdWithAString(n, this);
   guid = G4String( "Response detector curve (weight to each energy)");
   pSetResponseDetectorFileCmd->SetGuidance( guid);
