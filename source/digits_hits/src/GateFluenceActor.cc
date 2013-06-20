@@ -160,17 +160,17 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
   */
   if (step->GetPreStepPoint()->GetStepStatus() == fGeomBoundary)
     {
-      double photonValue;
+      double respValue = 1.;
       if( !mResponseFileName)
 	{
-	  double photonEnergy = (step->GetPreStepPoint()->GetKineticEnergy());
+	  double energy = (step->GetPreStepPoint()->GetKineticEnergy());
 
 	  // Energy Response Detector (linear interpolation to obtain the right value from the list)
 	  std::map< G4double, G4double >::iterator iterResponseMap = mUserResponseMap.end();
-	  iterResponseMap =  mUserResponseMap.lower_bound( photonEnergy);
+	  iterResponseMap =  mUserResponseMap.lower_bound( energy);
 	  if(iterResponseMap == mUserResponseMap.begin() || iterResponseMap == mUserResponseMap.end())
 	    {
-	      G4cout << " Photon Energy outside the Response Detector list" << G4endl;
+	      G4cout << "Particle Energy outside the Response Detector list" << G4endl;
 	      exit(1);
 	    }
 	  double upperEn = iterResponseMap->first;
@@ -179,14 +179,10 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 	  double lowerEn = iterResponseMap->first;
 	  double lowerMu = iterResponseMap->second;
 	  // Interpolation result value corresponding to the incedent photon and to count into the voxel
-	  photonValue = ((( upperMu - lowerMu)/( upperEn - lowerEn)) * ( photonEnergy - upperEn) + upperMu);
-	}
-      else
-	{
-	  photonValue = 1;
+	  respValue = ((( upperMu - lowerMu)/( upperEn - lowerEn)) * ( energy - upperEn) + upperMu);
 	}
 
-      mImage.AddValue(index, photonValue);
+      mImage.AddValue(index, respValue);
       // Scatter order
       if(info)
 	{
@@ -202,7 +198,7 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 		  voidImage->Fill(0);
 		  mFluencePerOrderImages.push_back( voidImage );
 		}
-	      mFluencePerOrderImages[order-1]->AddValue(index, photonValue);
+	      mFluencePerOrderImages[order-1]->AddValue(index, respValue);
 	    }
 	}
 
@@ -210,7 +206,7 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
        !step->GetTrack()->GetParentID() &&
        !step->GetTrack()->GetDynamicParticle()->GetPrimaryParticle()->GetMomentum().isNear(
                                                                                            step->GetTrack()->GetDynamicParticle()->GetMomentum())) {
-      mImageScatter.AddValue(index, photonValue);
+      mImageScatter.AddValue(index, respValue);
     }
   }
 
