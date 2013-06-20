@@ -16,7 +16,7 @@
 using std::map;
 using std::string;
 
-GateMaterialMuHandler::GateMaterialMuHandler(int nbOfElements)
+GateMaterialMuHandler::GateMaterialMuHandler(int /*nbOfElements*/)
 {
 //   mElementsTable = new GateMuTable*[nbOfElements+1];
 //   mNbOfElements = nbOfElements;
