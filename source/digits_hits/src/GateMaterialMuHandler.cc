@@ -18,16 +18,17 @@ using std::string;
 
 GateMaterialMuHandler::GateMaterialMuHandler(int nbOfElements)
 {
-  mElementsTable = new GateMuTable*[nbOfElements+1];
-  mNbOfElements = nbOfElements;
-  InitElementTable();
+//   mElementsTable = new GateMuTable*[nbOfElements+1];
+//   mNbOfElements = nbOfElements;
+  isInitialized = false;
+//   InitElementTable();
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 GateMaterialMuHandler::~GateMaterialMuHandler()
 {
-  delete[] mElementsTable;
+//   delete[] mElementsTable;
 }
 //-----------------------------------------------------------------------------
 
@@ -172,23 +173,35 @@ void GateMaterialMuHandler::InitElementTable()
 //-----------------------------------------------------------------------------
 double GateMaterialMuHandler::GetAttenuation(G4Material* material, double energy)
 {
-  map<G4String, GateMuTable*>::iterator it = mMaterialTable.find(material->GetName());
-  if(it == mMaterialTable.end()){
-    AddMaterial(material);
+  if(!isInitialized) {
+    InitMaterialTable();
   }
   
   return mMaterialTable[material->GetName()]->GetMuEn(energy);
+  
+//   map<G4String, GateMuTable*>::iterator it = mMaterialTable.find(material->GetName());
+//   if(it == mMaterialTable.end()){
+//     AddMaterial(material);
+//   }
+//   
+//   return mMaterialTable[material->GetName()]->GetMuEn(energy);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 double GateMaterialMuHandler::GetMu(G4Material* material, double energy)
 {
-  map<G4String, GateMuTable*>::iterator it = mMaterialTable.find(material->GetName());
-  if(it == mMaterialTable.end()){
-    AddMaterial(material);
+  if(!isInitialized) {
+    InitMaterialTable();
   }
+
   return mMaterialTable[material->GetName()]->GetMu(energy);
+  
+//   map<G4String, GateMuTable*>::iterator it = mMaterialTable.find(material->GetName());
+//   if(it == mMaterialTable.end()){
+//     AddMaterial(material);
+//   }
+//   return mMaterialTable[material->GetName()]->GetMu(energy);
 }
 //-----------------------------------------------------------------------------
 
@@ -208,7 +221,6 @@ void GateMaterialMuHandler::InitMaterialTable()
   for(int i=0; i<processListForGamma->size(); i++)
   {
     G4String processName = (*processListForGamma)[i]->GetProcessName();
-    DD(processName);
     if(processName == "PhotoElectric" || processName == "phot") {
       photoElectricModel = (dynamic_cast<G4VEmProcess *>((*processListForGamma)[i]))->Model(1);
     }
@@ -254,8 +266,8 @@ void GateMaterialMuHandler::InitMaterialTable()
   double muen;
   
   // - loops options
-  double energyStep = 20. * keV;
-  int energyNumber = 4;
+  double energyStep = 1. * keV;
+  int energyNumber = 100;
   int shotNumber = 10000;
   
   // Loop on material
@@ -267,14 +279,14 @@ void GateMaterialMuHandler::InitMaterialTable()
     it = mMaterialTable.find(materialName);
     if(it == mMaterialTable.end())
     {
-      GateMessage("MuHandler",0,"materialName : " << materialName << G4endl);
+      GateMessage("MuHandler",0,"Construction of material : " << materialName << G4endl);
       
-//       GateMuTable *table = new GateMuTable(materialName, 1);
+      GateMuTable *table = new GateMuTable(materialName, energyNumber);
       
       // Loop on energy
       for(int e = 1; e<(energyNumber+1); e++)
       {
-	GateMessage("MuHandler",0,"  energy = " << e*energyStep << " MeV" << G4endl);
+// 	GateMessage("MuHandler",0,"  energy = " << e*energyStep << " MeV" << G4endl);
 
 	incidentEnergy = e*energyStep;
 	primary.SetKineticEnergy(incidentEnergy);
@@ -363,30 +375,25 @@ void GateMaterialMuHandler::InitMaterialTable()
 	mu   = crossSectionPhotoElectric + crossSectionCompton + crossSectionRayleigh;
 	muen = fPhotoElectric * crossSectionPhotoElectric + fCompton * crossSectionCompton;
 
-	GateMessage("MuHandler",0,"    csPE = " << crossSectionPhotoElectric    << "   csCo = " << crossSectionCompton << " csRa = " << crossSectionRayleigh << " cm2.g-1" << G4endl);
-	GateMessage("MuHandler",0,"  fluoPE = " << totalFluoEnergyPhotoElectric << " fluoCo = " << totalFluoEnergyCompton << " scCo = " << totalScatterEnergyCompton << " MeV" << G4endl);
-	GateMessage("MuHandler",0,"     fPE = " << fPhotoElectric               << "    fCo = " << fCompton << G4endl);
-	GateMessage("MuHandler",0,"     cut = " << energyCutForGamma            << G4endl);
-	GateMessage("MuHandler",0,"      mu = " << mu << " muen = " << muen << " cm2.g-1" << G4endl);
+// 	GateMessage("MuHandler",0,"    csPE = " << crossSectionPhotoElectric    << "   csCo = " << crossSectionCompton << " csRa = " << crossSectionRayleigh << " cm2.g-1" << G4endl);
+// 	GateMessage("MuHandler",0,"  fluoPE = " << totalFluoEnergyPhotoElectric << " fluoCo = " << totalFluoEnergyCompton << " scCo = " << totalScatterEnergyCompton << " MeV" << G4endl);
+// 	GateMessage("MuHandler",0,"     fPE = " << fPhotoElectric               << "    fCo = " << fCompton << G4endl);
+// 	GateMessage("MuHandler",0,"     cut = " << energyCutForGamma            << G4endl);
+// 	GateMessage("MuHandler",0,"      mu = " << mu << " muen = " << muen << " cm2.g-1" << G4endl);
 
-// 	table->PutValue(e, e*energyStep, 1., 1.);
+	table->PutValue(e, incidentEnergy, mu, muen);
 
-	GateMessage("MuHandler",0," " << G4endl);
+// 	GateMessage("MuHandler",0," " << G4endl);
       }
 
-      GateMessage("MuHandler",0," -------------------------------------------------------- " << G4endl);
-      GateMessage("MuHandler",0," " << G4endl);
+//       GateMessage("MuHandler",0," -------------------------------------------------------- " << G4endl);
+//       GateMessage("MuHandler",0," " << G4endl);
       
-//       mMaterialTable.insert(std::pair<G4String, GateMuTable*>(materialName,table));
+      mMaterialTable.insert(std::pair<G4String, GateMuTable*>(materialName,table));
     }
   }
   
-    
-
-  
-  
-//   if(true) { GateError("break point"); }
-  
+  isInitialized = true;  
 }
 
 #endif
