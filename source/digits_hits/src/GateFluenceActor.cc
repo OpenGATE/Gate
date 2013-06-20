@@ -125,7 +125,7 @@ void GateFluenceActor::ResetData()
 
 
 //-----------------------------------------------------------------------------
-void GateFluenceActor::BeginOfRunAction( const G4Run*r)
+void GateFluenceActor::BeginOfRunAction( const G4Run *)
 {
 }
 //-----------------------------------------------------------------------------

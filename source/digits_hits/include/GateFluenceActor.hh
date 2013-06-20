@@ -39,7 +39,7 @@ class GateFluenceActor : public GateVImageActor
   virtual void Construct();
 
   void EnableScatterImage(bool b) { mIsScatterImageEnabled = b; }
-  virtual void BeginOfRunAction(const G4Run * e);
+  virtual void BeginOfRunAction(const G4Run *);
   virtual void BeginOfEventAction(const G4Event * e);
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
   virtual void UserPreTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/) {}
