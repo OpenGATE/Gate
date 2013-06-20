@@ -34,14 +34,17 @@ public:
   double GetAttenuation(G4Material* material, double energy);
   double GetMu(G4Material* material, double energy);
 
+  void InitMaterialTable();
+  
 private:
   map<G4String, GateMuTable*> mMaterialTable;
   GateMuTable** mElementsTable;
   int mNbOfElements;
+  bool isInitialized;
   
   void ReadElementFile(int z);
   void InitElementTable();
-
+  
 };
 
 
