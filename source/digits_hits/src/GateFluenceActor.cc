@@ -132,7 +132,7 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
   GateDebugMessageInc("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel - begin" << G4endl);
 
   // Is this necessary?
-  if (index <0) {
+  if(index <0) {
     GateDebugMessage("Actor", 5, "index<0 : do nothing" << G4endl);
     GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end" << G4endl);
     return;
@@ -144,32 +144,40 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
      To check that the particle has just entered in the current volume
      (i.e. it is at the first step in the volume; the preStepPoint is at the boundary):
   */
-  if (step->GetPreStepPoint()->GetStepStatus() == fGeomBoundary) {
+  if(step->GetPreStepPoint()->GetStepStatus() == fGeomBoundary) {
     mImage.AddValue(index, 1);
-    // Scatter order
-    if(info)
-    {
-      unsigned int order = info->GetScatterOrder();
-      if(order)
-      {
-        while(order>mFluencePerOrderImages.size() && order>0)
-        {
-          GateImage * voidImage = new GateImage;
-          voidImage->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-          voidImage->Allocate();
-          voidImage->SetOrigin(mOrigin);
-          voidImage->Fill(0);
-          mFluencePerOrderImages.push_back( voidImage );
+    if(mIsScatterImageEnabled) {
+      unsigned int order = 0;
+      // Scatter order
+      if(info) {
+        order = info->GetScatterOrder();
+        if(order) {
+          while(order>mFluencePerOrderImages.size() && order>0) {
+            GateImage * voidImage = new GateImage;
+            voidImage->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+            voidImage->Allocate();
+            voidImage->SetOrigin(mOrigin);
+            voidImage->Fill(0);
+            mFluencePerOrderImages.push_back( voidImage );
+          }
         }
+      }
+      // Compton and Rayleigh Case (straight rayleighs are missed)
+      if(!step->GetTrack()->GetParentID() &&
+         !step->GetTrack()->GetDynamicParticle()->GetPrimaryParticle()
+                                                ->GetMomentum().isNear(step->GetTrack()->GetDynamicParticle()->GetMomentum())) {
+        mImageScatter.AddValue(index, 1);
+        // Scatter order image
+        if(order)
           mFluencePerOrderImages[order-1]->AddValue(index, 1);
       }
-    }
-    
-    if(mIsScatterImageEnabled &&
-       !step->GetTrack()->GetParentID() &&
-       !step->GetTrack()->GetDynamicParticle()->GetPrimaryParticle()->GetMomentum().isNear(
-                                                                                           step->GetTrack()->GetDynamicParticle()->GetMomentum())) {
+      // Fluorescence case
+      if(step->GetTrack()->GetTrackID() && step->GetTrack()->GetParentID()>0 ) {
         mImageScatter.AddValue(index, 1);
+        // Scatter order image
+        if(order)
+          mFluencePerOrderImages[order-1]->AddValue(index, 1);
+      }
     }
   }
 
