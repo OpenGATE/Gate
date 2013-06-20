@@ -101,6 +101,7 @@ void GateHybridForcedDetectionActor::Construct()
   mPhaseSpace->Branch("RunID",&mInteractionRunId,"RunID/I");
   mPhaseSpace->Branch("ProductionProcessTrack", mInteractionProductionProcessTrack,"ProductionProcessTrack/C");
   mPhaseSpace->Branch("ProductionProcessStep", mInteractionProductionProcessStep,"ProductionProcessStep/C");
+  mPhaseSpace->Branch("TotalContribution", &mInteractionTotalContribution,"TotalContribution/F");
 }
 //-----------------------------------------------------------------------------
 
@@ -475,6 +476,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
     mComptonImage = mComptonProjector->GetOutput();
     mComptonImage->DisconnectPipeline();
     mComptonProbe.Stop();
+    mInteractionTotalContribution = mComptonProjector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
     if(mPhaseSpaceFile) mPhaseSpace->Fill();
 
     // Scatter order
@@ -488,8 +490,6 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
       mComptonPerOrderImages[order] = mComptonProjector->GetOutput();
       mComptonPerOrderImages[order]->DisconnectPipeline();
     }
-
-
   }
   else if(process->GetProcessName() == G4String("RayleighScattering") || process->GetProcessName() == G4String("Rayl")) {
     mRayleighProbe.Start();
@@ -506,6 +506,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
     mRayleighImage = mRayleighProjector->GetOutput();
     mRayleighImage->DisconnectPipeline();
     mRayleighProbe.Stop();
+    mInteractionTotalContribution = mRayleighProjector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
     if(mPhaseSpaceFile) mPhaseSpace->Fill();
 
     // Scatter order
@@ -552,6 +553,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
         mFluorescenceImage = mFluorescenceProjector->GetOutput();
         mFluorescenceImage->DisconnectPipeline();
         mFluorescenceProbe.Stop();
+        mInteractionTotalContribution = mFluorescenceProjector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
         if(mPhaseSpaceFile) mPhaseSpace->Fill();
 
         // Scatter order
