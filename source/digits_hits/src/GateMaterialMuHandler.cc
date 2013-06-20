@@ -9,6 +9,10 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+
+#include "G4ParticleTable.hh"
+#include "GatePhysicsList.hh"
+
 using std::map;
 using std::string;
 
@@ -18,19 +22,24 @@ GateMaterialMuHandler::GateMaterialMuHandler(int nbOfElements)
   mNbOfElements = nbOfElements;
   InitElementTable();
 }
+//-----------------------------------------------------------------------------
 
-
+//-----------------------------------------------------------------------------
 GateMaterialMuHandler::~GateMaterialMuHandler()
 {
   delete[] mElementsTable;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 inline double interpolation(double Xa,double Xb,double Ya,double Yb,double x){
   return exp(log(Ya) + log(Yb/Ya) / log(Xb/Xa)* log(x/Xa) );
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateMaterialMuHandler::AddMaterial(G4Material* material)
-{
+{  
   //const G4ElementVector* elements = material->GetElementVector();
   int nb_e = 0;
   int nb_of_elements = material->GetNumberOfElements();
@@ -123,7 +132,9 @@ void GateMaterialMuHandler::AddMaterial(G4Material* material)
   
   mMaterialTable.insert(std::pair<G4String, GateMuTable*>(material->GetName(),table));
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateMaterialMuHandler::ReadElementFile(int z)
 {
   std::ostringstream stream;
@@ -148,13 +159,17 @@ void GateMaterialMuHandler::ReadElementFile(int z)
   fileMu.close();
   fileMuEn.close();  
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateMaterialMuHandler::InitElementTable()
 {
   for(int i = 1; i <= mNbOfElements; i++)
     ReadElementFile(i);
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 double GateMaterialMuHandler::GetAttenuation(G4Material* material, double energy)
 {
   map<G4String, GateMuTable*>::iterator it = mMaterialTable.find(material->GetName());
@@ -164,7 +179,9 @@ double GateMaterialMuHandler::GetAttenuation(G4Material* material, double energy
   
   return mMaterialTable[material->GetName()]->GetMuEn(energy);
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 double GateMaterialMuHandler::GetMu(G4Material* material, double energy)
 {
   map<G4String, GateMuTable*>::iterator it = mMaterialTable.find(material->GetName());
@@ -172,6 +189,174 @@ double GateMaterialMuHandler::GetMu(G4Material* material, double energy)
     AddMaterial(material);
   }
   return mMaterialTable[material->GetName()]->GetMu(energy);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateMaterialMuHandler::InitMaterialTable()
+{
+  // Get process list for gamma
+  G4ProcessVector *processListForGamma = G4Gamma::Gamma()->GetProcessManager()->GetProcessList();
+  
+  // Find photoelectric and compton models
+  G4VEmProcess *photoElectricProcess = 0;
+  G4VEmProcess *comptonProcess = 0;
+  for(int i=0; i<processListForGamma->size(); i++)
+  {
+    if((*processListForGamma)[i]->GetProcessName() == "PhotoElectric") { photoElectricProcess = dynamic_cast<G4VEmProcess *>((*processListForGamma)[i]); }
+    else if((*processListForGamma)[i]->GetProcessName() == "Compton") { comptonProcess = dynamic_cast<G4VEmProcess *>((*processListForGamma)[i]); }
+  }
+  if(photoElectricProcess == 0) GateError("Didn't find photoElectric");
+  if(comptonProcess == 0) GateError("Didn't find compton");
+  
+  G4VEmModel *photoElectricModel = photoElectricProcess->Model(1);
+  G4VEmModel *comptonModel = comptonProcess->Model(1);
+  
+  // Get the G4VParticleChange of comptonModel by running a fictive step (no simple 'get' function available)
+  G4DynamicParticle *myIncidentPhoton = new G4DynamicParticle(G4Gamma::Gamma(),G4ThreeVector(1.,0.,0.),0.01);
+  G4Track myTrack(myIncidentPhoton,0.,G4ThreeVector(0.,0.,0.));
+  myTrack.SetMomentumDirection(G4ThreeVector(1.,0.,0.));
+  myTrack.SetTrackStatus(fStopButAlive); // to get a fast return (see G4VEmProcess::PostStepDoIt(...))
+  G4Step myStep;
+  G4ParticleChangeForGamma *particleChangeCompton = dynamic_cast<G4ParticleChangeForGamma *>(comptonProcess->PostStepDoIt((const G4Track)(myTrack), myStep));
+  
+//   DD(photoElectricModel->GetName());
+//   DD(comptonModel->GetName());
+    
+  // Get access to the G4MaterialCutsCouple list
+  G4ProductionCutsTable *productionCutList = G4ProductionCutsTable::GetProductionCutsTable();
+
+  // Useful members for the loop
+  G4DynamicParticle primary(G4Gamma::Gamma(),G4ThreeVector(1.,0.,0.));
+  std::vector<G4DynamicParticle *> secondaries; 
+  G4String materialName;
+  map<G4String, GateMuTable*>::iterator it;
+  
+  double crossSectionPhotoElectric;
+  double crossSectionCompton;
+  double fPhotoElectric;
+  double fCompton;
+  double mu;
+  double muen;
+  
+  double incidentEnergy;
+  double energyStep = 20. * keV;
+  int energyNumber = 5;
+  
+  // Loop on material
+  for(unsigned int m=0; m<productionCutList->GetTableSize(); m++)
+  {
+    const G4MaterialCutsCouple *couple = productionCutList->GetMaterialCutsCouple(m);
+    const G4Material *material = couple->GetMaterial();
+    materialName = material->GetName();
+    it = mMaterialTable.find(materialName);
+    if(it == mMaterialTable.end())
+    {
+      GateMessage("MuHandler",0,"materialName : " << materialName << G4endl);
+      
+//       GateMuTable *table = new GateMuTable(materialName, 1);
+      
+      // Loop on energy
+      for(int e = 1; e<(energyNumber+1); e++)
+      {
+	GateMessage("MuHandler",0,"  energy = " << e*energyStep << " MeV" << G4endl);
+
+	incidentEnergy = e*energyStep;
+	primary.SetKineticEnergy(incidentEnergy);
+
+	double totalFluoEnergyPhotoElectric = 0.;
+	double totalFluoEnergyCompton = 0.;
+	double totalScatterEnergyCompton = 0.;
+	int shotNumber = 0;
+	
+	// Loop on shot
+	for(int i=0; i<100000; i++)
+	{
+	  // photoElectric shots
+	  secondaries.clear(); 
+	  photoElectricModel->SampleSecondaries(&secondaries,couple,&primary,0.,0.);
+// 	  GateMessage("MuHandler",0,"    shot " << i+1 << " composed with " << secondaries.size() << " particle(s)" << G4endl);
+	  double trialFluoEnergy = 0.;
+	  int fluoGammaNumber = 0;
+	  for(unsigned s=0; s<secondaries.size(); s++)
+	  {
+// 	    GateMessage("MuHandler",0,"      " << secondaries[s]->GetParticleDefinition()->GetParticleName() << " of " << secondaries[s]->GetKineticEnergy() << " MeV" << G4endl);
+	    if(secondaries[s]->GetParticleDefinition()->GetParticleName() == "gamma")
+	    {
+	      trialFluoEnergy += secondaries[s]->GetKineticEnergy();
+	      fluoGammaNumber++;
+	    }
+	  }
+	  if(fluoGammaNumber) { totalFluoEnergyPhotoElectric += (trialFluoEnergy / (double)fluoGammaNumber); }
+// 	  GateMessage("MuHandler",0,"      meanFluoEnergy = " << (trialFluoEnergyPhotoElectric / (double)fluoGammaNumber) << " MeV" << G4endl);
+
+	  // compton shots
+	  secondaries.clear(); 
+	  comptonModel->SampleSecondaries(&secondaries,couple,&primary,0.,0.);
+// 	  GateMessage("MuHandler",0,"    shot " << i+1 << " composed with " << secondaries.size() << " particle(s)" << G4endl);
+	  trialFluoEnergy = 0.;
+	  fluoGammaNumber = 0;
+	  for(unsigned s=0; s<secondaries.size(); s++)
+	  {
+// 	    GateMessage("MuHandler",0,"      " << secondaries[s]->GetParticleDefinition()->GetParticleName() << " of " << secondaries[s]->GetKineticEnergy() << " MeV" << G4endl);
+	    if(secondaries[s]->GetParticleDefinition()->GetParticleName() == "gamma")
+	    {
+	      trialFluoEnergy += secondaries[s]->GetKineticEnergy();
+	      fluoGammaNumber++;
+	    }
+	  }
+	  if(fluoGammaNumber) { totalFluoEnergyCompton += (trialFluoEnergy / (double)fluoGammaNumber); }
+	  totalScatterEnergyCompton += particleChangeCompton->GetProposedKineticEnergy();
+	  
+// 	  GateMessage("MuHandler",0,"      incidentEnergy = " << incidentEnergy << " scatterEnergy = " << particleChangeCompton->GetProposedKineticEnergy() << G4endl);
+
+	  shotNumber++;
+	}
+	
+	// Mean energy calculation
+	totalFluoEnergyPhotoElectric = totalFluoEnergyPhotoElectric / (double)shotNumber;
+	totalFluoEnergyCompton = totalFluoEnergyCompton / (double)shotNumber;
+	totalScatterEnergyCompton = totalScatterEnergyCompton / (double)shotNumber;
+	
+	// Cross section calculation
+	double density = material->GetDensity() / (g/cm3); 
+	double energyCutForGamma = G4ProductionCutsTable::GetProductionCutsTable()->ConvertRangeToEnergy(G4Gamma::Gamma(),material,couple->GetProductionCuts()->GetProductionCut("gamma"));
+	crossSectionPhotoElectric = photoElectricModel->CrossSectionPerVolume(material,G4Gamma::Gamma(),incidentEnergy,energyCutForGamma,10.) * cm;
+	crossSectionPhotoElectric = crossSectionPhotoElectric / density;
+	crossSectionCompton = comptonModel->CrossSectionPerVolume(material,G4Gamma::Gamma(),incidentEnergy,energyCutForGamma,10.) * cm;
+	crossSectionCompton = crossSectionCompton / density;
+	
+	// average fractions of the incident energy E that is transferred to kinetic energy of charged particles
+	fPhotoElectric = 1. - (totalFluoEnergyPhotoElectric/incidentEnergy);
+	fCompton = 1. - ((totalScatterEnergyCompton + totalFluoEnergyCompton) / incidentEnergy);
+	
+	// muen calculation
+	muen = (fPhotoElectric*crossSectionPhotoElectric + fCompton*crossSectionCompton);
+
+	GateMessage("MuHandler",0,"    csPE = " << crossSectionPhotoElectric    << " csComp = " << crossSectionCompton << " cm2.g-1" << G4endl);
+	GateMessage("MuHandler",0,"  fluoPE = " << totalFluoEnergyPhotoElectric << "  SComp = " << totalScatterEnergyCompton << " FComp = " << totalFluoEnergyCompton << " MeV" << G4endl);
+	GateMessage("MuHandler",0,"    incE = " << incidentEnergy               << " MeV" << G4endl);
+	GateMessage("MuHandler",0,"     fPE = " << fPhotoElectric               << "  fComp = " << fCompton << G4endl);
+	GateMessage("MuHandler",0,"     cut = " << energyCutForGamma            << G4endl);
+	GateMessage("MuHandler",0,"    muen = " << muen << " cm2.g-1" << G4endl);
+
+	GateMessage("MuHandler",0," " << G4endl);
+// 	table->PutValue(e, e*energyStep, 1., 1.);
+      }
+
+      GateMessage("MuHandler",0," -------------------------------------------------------- " << G4endl);
+      GateMessage("MuHandler",0," " << G4endl);
+      
+//       mMaterialTable.insert(std::pair<G4String, GateMuTable*>(materialName,table));
+    }
+  }
+  
+    
+
+  
+  
+//   if(true) { GateError("break point"); }
+  
 }
 
 #endif
