@@ -13,7 +13,13 @@
 #=====================================================
 
 /control/execute mac/verbose.mac
+
+# to use the visualisation : 
+#   - uncomment the following line
+#   - use Gate --qt 
+#   - in the interface, type /control/execute mac/main.mac
 #/control/execute mac/visu.mac
+
 
 #=====================================================
 # GEOMETRY
