@@ -2,3 +2,10 @@
 /patient-2mm.mhd
 /patient-2mm.raw.md5-stamp
 /patient-2mm.raw
+/patient-2mm-dmap.mhd
+/patient-2mm-dmap.raw
+/patient-2mm-labeled-RV.mhd
+/patient-2mm-labeled-RV.raw
+/patient-HU2mat.txt
+/patient-HUmaterials.db
+
