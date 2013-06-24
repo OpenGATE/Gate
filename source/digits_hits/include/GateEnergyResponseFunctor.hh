@@ -11,65 +11,58 @@
 #include <G4CrossSectionHandler.hh>
 
 
-namespace GateEnergyResponseFunctor
-{
-
 //-----------------------------------------------------------------------------
 // Handling of the interpolation weight in primary: store the weights and
 
-class InterpolationEnergyResponse
+class GateEnergyResponseFunctor
 {
 public:
+inline G4double operator() (double photonEnergy) {
+  if(!mResponseMap.size())
+    return 1.;
 
-  inline G4double operator() (double photonEnergy,
-                              std::map<G4double,G4double> ResponseMap) {
-      // Energy Response Detector (linear interpolation to obtain the right value from the list)
-      std::map< G4double, G4double >::iterator iterResponseMap = ResponseMap.end();
-      iterResponseMap =  ResponseMap.lower_bound( photonEnergy);
-      if( iterResponseMap == ResponseMap.end()) {
-         G4cout << " Photon Energy outside the Response Detector list" << G4endl;
-         exit(1);
-      }
-      double upperEn = iterResponseMap->first;
-      double upperMu = iterResponseMap->second;
-      iterResponseMap--;
-      double lowerEn = iterResponseMap->first;
-      double lowerMu = iterResponseMap->second;
-      // Interpolation result value corresponding to the detector response
-      double responseDetector = ((( upperMu - lowerMu)/( upperEn - lowerEn)) * ( photonEnergy - upperEn) + upperMu);
-      return responseDetector;
+  // Energy Response Detector (linear interpolation to obtain the right value from the list)
+  std::map< G4double, G4double >::iterator iterResponseMap = mResponseMap.end();
+  iterResponseMap =  mResponseMap.lower_bound( photonEnergy);
+  if(iterResponseMap == mResponseMap.begin() || iterResponseMap == mResponseMap.end()) {
+     G4cout << " Photon Energy outside the Response Detector list" << G4endl;
+     exit(1);
   }
+  double upperEn = iterResponseMap->first;
+  double upperMu = iterResponseMap->second;
+  iterResponseMap--;
+  double lowerEn = iterResponseMap->first;
+  double lowerMu = iterResponseMap->second;
+  // Interpolation result value corresponding to the detector response
+  double responseDetector = ((( upperMu - lowerMu)/( upperEn - lowerEn)) * ( photonEnergy - upperEn) + upperMu);
+  return responseDetector;
+}
+
+void ReadResponseDetectorFile(std::string responseFileName) {
+  if(responseFileName == "")
+    return;
+
+  G4double energy, response;
+  std::ifstream inResponseFile;
+  mResponseMap.clear();
+
+  inResponseFile.open(responseFileName.c_str());
+  if( !inResponseFile ) {
+    // file couldn't be opened
+    G4cout << "Error: file could not be opened" << G4endl;
+    exit( 1);
+  }
+  while ( !inResponseFile.eof( )) {
+    inResponseFile >> energy >> response;
+    energy = energy*MeV;
+    mResponseMap[energy] = response;
+  }
+  inResponseFile.close( );
+}
+
+protected:
+  std::map< G4double, G4double > mResponseMap;
 };
 //-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-//template< class TInput1, class TInput2 = TInput1, class TOutput = TInput1 >
-//class Attenuation
-//{
-//  public:
-//  Attenuation() {}
-//  ~Attenuation() {}
-//  bool operator!=(const Attenuation &) const
-//  {
-//    return false;
-//  }
-
-//  bool operator==(const Attenuation & other) const
-//  {
-//    return !( *this != other );
-//  }
-
-//  inline TOutput operator()(const TInput1 A,const TInput2 B) const
-//  {
-//    //Calculating attenuation image (-log(primaryImage/flatFieldImage))
-//    return (TOutput)(-log(A/B));
-//  }
-//};
-//-----------------------------------------------------------------------------
-
-}
 
 #endif // GATEHYBRIDFORCEDDETECTIONACTORFUNCTORS_HH

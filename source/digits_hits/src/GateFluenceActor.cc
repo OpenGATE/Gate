@@ -16,7 +16,6 @@
 // Gate
 #include "GateFluenceActor.hh"
 #include "GateScatterOrderTrackInformationActor.hh"
-#include "GateEnergyResponseFunctor.hh"
 
 //-----------------------------------------------------------------------------
 GateFluenceActor::GateFluenceActor(G4String name, G4int depth):
@@ -61,7 +60,7 @@ void GateFluenceActor::Construct()
   SetStepHitType("pre");
 
   // Read the response detector curve from an external file
-  if( mResponseFileName != "") ReadResponseDetectorFile();
+  mEnergyResponse.ReadResponseDetectorFile(mResponseFileName);
 
   // Allocate scatter image
   if (mIsScatterImageEnabled) {
@@ -161,15 +160,8 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
   */
   if (step->GetPreStepPoint()->GetStepStatus() == fGeomBoundary)
     {
-      double respValue = 1;
-      if( mResponseFileName != "")
- 	  { 
-        double energy = (step->GetPreStepPoint()->GetKineticEnergy());
-        //GateEnergyResponseFunctor::InterpolationEnergyResponse * iterInterp = new GateEnergyResponseFunctor::InterpolationEnergyResponse;
-        // Energy Response Detector (linear interpolation to obtain the right value from the list)
-        GateEnergyResponseFunctor::InterpolationEnergyResponse operatorInterp;
-        respValue = operatorInterp( energy, mUserResponseMap);
-      }
+      double energy = (step->GetPreStepPoint()->GetKineticEnergy());
+      double respValue = mEnergyResponse(energy);
            
       mImage.AddValue(index, respValue);
 
@@ -211,30 +203,3 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
   GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end" << G4endl);
 }
 //-----------------------------------------------------------------------------
-
-
-
-//-----------------------------------------------------------------------------
-void GateFluenceActor::ReadResponseDetectorFile()
-{
-  G4double energy, response;
-  std::ifstream inResponseFile;
-  mUserResponseMap.clear( );
-
-  inResponseFile.open( mResponseFileName);
-  if( !inResponseFile )
-    {
-      // file couldn't be opened
-      G4cout << "Error: file could not be opened" << G4endl;
-      exit( 1);
-    }
-  while ( !inResponseFile.eof( ))
-    {
-      inResponseFile >> energy >> response;
-      energy = energy*MeV;
-      mUserResponseMap[ energy] = response;
-    }
-  inResponseFile.close( );
-}
-//-----------------------------------------------------------------------------
-

@@ -23,6 +23,7 @@ See GATE/LICENSE.txt for further details
 #include "GateActorManager.hh"
 #include "GateMiscFunctions.hh"
 #include "GateFluenceActorMessenger.hh"
+#include "GateEnergyResponseFunctor.hh"
 
 class GateFluenceActor : public GateVImageActor
 {
@@ -54,19 +55,18 @@ class GateFluenceActor : public GateVImageActor
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
 
-  void ReadResponseDetectorFile();
   void SetResponseDetectorFile(G4String name) { mResponseFileName = name; }
   void SetScatterOrderFilename(G4String name) { mScatterOrderFilename = name; }
 
 protected:
   GateFluenceActor(G4String name, G4int depth=0);
   GateFluenceActorMessenger * pMessenger;
-  std::map< G4double, G4double > mUserResponseMap;
   G4String mResponseFileName;
   bool mIsScatterImageEnabled;
   GateImage mImageScatter;
   std::vector<GateImage *> mFluencePerOrderImages;
   G4String mScatterOrderFilename;
+  GateEnergyResponseFunctor mEnergyResponse;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(FluenceActor,GateFluenceActor)
