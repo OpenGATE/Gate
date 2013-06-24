@@ -26,6 +26,7 @@ class G4UIcmdWithAString;
 class G4UIcmdWithAnInteger;
 class G4UIcmdWithADoubleAndUnit;
 class G4UIcmdWith3Vector;
+class G4UIcmdWithABool;
 
 #include "GateActorManager.hh"
 
@@ -43,14 +44,15 @@ public:
 protected:
   GateVActor * pActor;
 
-  G4UIcmdWithAString* pSetFileNameCmd;
-  G4UIcmdWithAString* pSetVolumeNameCmd;
+  G4UIcmdWithAString*   pSetFileNameCmd;
+  G4UIcmdWithAString*   pSetVolumeNameCmd;
   G4UIcmdWithAnInteger* pSaveEveryNEventsCmd; 
   G4UIcmdWithAnInteger* pSaveEveryNSecondsCmd; 
-  G4UIcmdWithAString * pAddFilterCmd;
+  G4UIcmdWithABool *    pSetOverWriteFilesFlagCmd;
+  G4UIcmdWithABool *    pSetResetDataAtEachRunFlagCmd;
+  G4UIcmdWithAString *  pAddFilterCmd;
   
   G4String baseName;
-
 };
 
 #endif /* end #define GATEACTORMESSENGER_HH*/

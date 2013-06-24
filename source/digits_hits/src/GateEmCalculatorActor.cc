@@ -19,6 +19,13 @@
 #include "G4Event.hh"
 #include "G4MaterialTable.hh"
 #include "G4ParticleTable.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4ProcessManager.hh"
+
+#include "G4UnitsTable.hh"
+#include "G4ProductionCutsTable.hh"
+
+
 
 //-----------------------------------------------------------------------------
 /// Constructors (Prototype)
@@ -95,6 +102,7 @@ void GateEmCalculatorActor::Construct()
 /// Save data
 void GateEmCalculatorActor::SaveData()
 {
+  GateVActor::SaveData();
   std::ofstream os;
   OpenFileOutput(mSaveFilename, os);
 
@@ -105,9 +113,22 @@ void GateEmCalculatorActor::SaveData()
   double I=0;
   double eDensity=0;
   double radLength=0;
+  G4double CrossSectionProcess = 0;
+  G4double MuMassCoeficient = 0;
   G4String material;
   const G4MaterialTable* matTbl = G4Material::GetMaterialTable();
-  
+
+  G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
+  G4ProcessVector* plist = particle->GetProcessManager()->GetProcessList();
+  std::vector<G4String> processNameVector;
+  for (G4int j = 0; j < plist->size(); j++)
+    {
+        if ( ( (*plist)[j]->GetProcessType() == fElectromagnetic) && ((*plist)[j]->GetProcessName() != "msc"))
+            {
+                processNameVector.push_back((*plist)[j]->GetProcessName());
+            }
+    }
+
       os << "# Output calculted for the following parameters:" << std::endl;
       os << "# Energy\t" << mEnergy << " MeV" << std::endl; 
       os << "# Particle\t" << mPartName << "\n" << std::endl; 
@@ -120,7 +141,8 @@ void GateEmCalculatorActor::SaveData()
       os << "I\t";
       os << "EM-DEDX\t\t";
       os << "Nucl-DEDX\t";
-      os << "Tot-DEDX" << std::endl;
+      os << "Tot-DEDX\t";
+      os << "Mu_mass" << std::endl;
 // units
       os << "\t\t";
       os << "(g/cm³)\t\t";
@@ -129,8 +151,9 @@ void GateEmCalculatorActor::SaveData()
       os << "(eV)\t";
       os << "(MeV.cm²/g)\t";
       os << "(MeV.cm²/g)\t";
-      os << "(MeV.cm²/g)" << std::endl;
-      
+      os << "(MeV.cm²/g)\t";
+      os << "(cm²/g)" << std::endl;
+
   for(size_t k=0;k<G4Material::GetNumberOfMaterials();k++)
     {
       material = (*matTbl)[k]->GetName();
@@ -141,6 +164,12 @@ void GateEmCalculatorActor::SaveData()
       EmDEDX = emcalc->ComputeElectronicDEDX(mEnergy, mPartName, material, cut);
       NuclearDEDX = emcalc->ComputeNuclearDEDX(mEnergy, mPartName, material);    
       TotalDEDX = emcalc->ComputeTotalDEDX(mEnergy, mPartName, material, cut);
+      for( size_t j = 0; j < processNameVector.size(); j++)
+        {
+          CrossSectionProcess = emcalc->ComputeCrossSectionPerVolume( mEnergy, mPartName, processNameVector[j], material, cut);
+          MuMassCoeficient += CrossSectionProcess / density;
+        }
+
 
 // Get methods issue
 // for instance I tried:  double CSDARange = emcalc->GetDEDX(mEnergy, mPartName, material);
@@ -155,7 +184,8 @@ void GateEmCalculatorActor::SaveData()
       os << I*1.e6 << "\t";
       os << EmDEDX*10./(e*density) << "\t\t";
       os << NuclearDEDX*10./(e*density) << "\t";
-      os << TotalDEDX*10./(e*density) << std::endl;
+      os << TotalDEDX*10./(e*density) << "\t\t";
+      os << MuMassCoeficient << std::endl;
     }
 
   if (!os) {

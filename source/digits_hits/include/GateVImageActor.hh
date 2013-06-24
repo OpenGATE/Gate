@@ -60,7 +60,6 @@ public :
 
   double GetDoselVolume(){return mVoxelSize.x()*mVoxelSize.y()*mVoxelSize.z();}
 
-
   //-----------------------------------------------------------------------------
   /// Computes the voxel in which to store the data and invokes 
   /// UserHitAction which is responsible for voxel data updating
@@ -76,6 +75,8 @@ public :
   virtual void UserPostTrackActionInVoxel(const int index, const G4Track* t) = 0;
   //-----------------------------------------------------------------------------
 
+  virtual void ResetData();
+
 protected:
 
   //-----------------------------------------------------------------------------
@@ -87,6 +88,7 @@ protected:
   G4ThreeVector  mResolution;
   G4ThreeVector  mHalfSize;
   G4ThreeVector  mPosition;
+  G4ThreeVector  mOrigin;
   StepHitType    mStepHitType;
   G4String       mStepHitTypeName;
   GateImage      mImage;

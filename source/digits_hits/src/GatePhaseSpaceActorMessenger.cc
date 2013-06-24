@@ -48,6 +48,7 @@ GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger()
   delete pMaxSizeCmd;
   delete pInOrOutGoingParticlesCmd;
   delete pEnableSecCmd;
+  delete pEnableStoreAllStepCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -147,6 +148,11 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
   guidance = "Store the outgoing particles instead of incoming particles.";
   pInOrOutGoingParticlesCmd->SetGuidance(guidance);
 
+  bb = base+"/storeAllStep";
+  pEnableStoreAllStepCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Store all step inside the attached volume";
+  pEnableStoreAllStepCmd->SetGuidance(guidance);
+  pEnableStoreAllStepCmd->SetParameterName("State",false);
 
   bb = base+"/useVolumeFrame";
   pCoordinateInVolumeFrameCmd = new G4UIcmdWithoutParameter(bb,this);
@@ -181,6 +187,7 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
   if(command == pEnableMassCmd) pActor->SetIsMassEnabled(pEnableMassCmd->GetNewBoolValue(param));
   if(command == pCoordinateInVolumeFrameCmd) pActor->SetUseVolumeFrame();
   if(command == pInOrOutGoingParticlesCmd) pActor->SetStoreOutgoingParticles();
+  if(command == pEnableStoreAllStepCmd) pActor->SetIsAllStep(pEnableStoreAllStepCmd->GetNewBoolValue(param));
   if(command == pEnableSecCmd) pActor->SetIsSecStored(pEnableSecCmd->GetNewBoolValue(param));
   if(command == pSaveEveryNEventsCmd || command == pSaveEveryNSecondsCmd)  GateError("saveEveryNEvents and saveEveryNSeconds commands are not available with phase space actor. But you can use the setMaxFileSize command.");
   if(command == pMaxSizeCmd) pActor->SetMaxFileSize(pMaxSizeCmd->GetNewDoubleValue(param)); 

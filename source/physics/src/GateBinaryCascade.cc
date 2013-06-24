@@ -1149,15 +1149,18 @@ G4bool GateBinaryCascade::ApplyCollision(G4CollisionInitialState * collision)
   // reset primary to initial state
   primary->Set4Momentum(mom4Primary);
 
-
+#ifdef debug_G4BinaryCascade
   G4int lateBaryon(0), lateCharge(0);
+#endif
 
   if ( lateParticleCollision )
   {  // for late particles, reset charges
         //G4cout << "lateP, initial B C state " << initialBaryon << " " 
         //        << initialCharge<< " " << primary->GetState() << " "<< primary->GetDefinition()->GetParticleName()<< G4endl;
+#ifdef debug_G4BinaryCascade
       lateBaryon = initialBaryon;
       lateCharge = initialCharge;
+#endif
       initialBaryon=initialCharge=0;
   }
   
@@ -2278,7 +2281,7 @@ G4Fragment * GateBinaryCascade::FindFragments()
   }
 
   G4int zCaptured = 0;
-  G4LorentzVector CapturedMomentum=0;
+  G4LorentzVector CapturedMomentum(0);
   for(i = theCapturedList.begin(); i != theCapturedList.end(); ++i)
   {
       CapturedMomentum += (*i)->Get4Momentum();
@@ -2392,7 +2395,7 @@ G4LorentzVector GateBinaryCascade::GetFinalNucleusMomentum()
 // return momentum of nucleus for use with precompound model; also keep transformation to
 //   apply to precompoud products.
 
-  G4LorentzVector CapturedMomentum=0;
+  G4LorentzVector CapturedMomentum(0);
   G4KineticTrackVector::iterator i;
 //  G4cout << "GetFinalNucleusMomentum Captured size: " <<theCapturedList.size() << G4endl;
   for(i = theCapturedList.begin(); i != theCapturedList.end(); ++i)

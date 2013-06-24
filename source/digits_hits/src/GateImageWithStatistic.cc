@@ -176,13 +176,24 @@ void GateImageWithStatistic::AddValueAndUpdate(const int index, double value) {
 void GateImageWithStatistic::SetFilename(G4String f) {
   mFilename = f;
   mSquaredFilename = G4String(removeExtension(f))+"-Squared."+G4String(getExtension(f));
-  mUncertaintyFilename = G4String(removeExtension(f))+"-Uncertainty."+G4String(getExtension(f));  
+  mUncertaintyFilename = G4String(removeExtension(f))+"-Uncertainty."+G4String(getExtension(f)); 
+
+  mInitialFilename = mFilename;
+  mSquaredInitialFilename = mSquaredFilename;
+  mUncertaintyInitialFilename = mUncertaintyFilename;
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
   
+  // Filename
+  if (!mOverWriteFilesFlag) {
+    mFilename = GetSaveCurrentFilename(mInitialFilename);
+    mSquaredFilename = GetSaveCurrentFilename(mSquaredInitialFilename);
+    mUncertaintyFilename = GetSaveCurrentFilename(mUncertaintyInitialFilename);
+  }
+
   static double factor=1.0;
   if (mIsSquaredImageEnabled || mIsUncertaintyImageEnabled) {UpdateImage();}
 
@@ -201,20 +212,6 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
       ++pi;
     }
     SetScaleFactor(factor*1.0/sum);
-  }
-
-  G4String pf = mFilename;
-  G4String psf = mSquaredFilename;
-  G4String muf = mUncertaintyFilename;
-  if (!mOverWriteFilesFlag) {
-    G4String extension = "."+getExtension(mFilename);
-    G4String v = "_"+DoubletoString(numberOfEvents);
-    mFilename = G4String(removeExtension(mFilename))+v+extension;
-    mSquaredFilename = G4String(removeExtension(mSquaredFilename))+v+extension;
-    mUncertaintyFilename = G4String(removeExtension(mUncertaintyFilename))+v+extension;
-    DD(mFilename);
-    DD(mSquaredFilename);
-    DD(mUncertaintyFilename);
   }
 
   GateMessage("Actor", 2, "Save " << mFilename << " with scaling = " 
@@ -246,11 +243,6 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
     mSquaredImage.Write(mSquaredFilename); // force output of squared dose for grid 
   } 
 
-  if (!mOverWriteFilesFlag) { // Reset filename
-    mFilename = pf;
-    mSquaredFilename = psf;
-    mUncertaintyFilename = muf;
-  }
 }
 //-----------------------------------------------------------------------------
 

@@ -7,6 +7,12 @@ PROJECT(Gate)
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake-modules ${CMAKE_MODULE_PATH})
 
 #=========================================================
+# Help function to debug CMake
+MACRO (DD in)
+  MESSAGE(${in}=[${${in}}])
+ENDMACRO(DD)
+
+#=========================================================
 # Default build type
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE Release CACHE STRING
@@ -52,9 +58,11 @@ OPTION(GATE_USE_LMF "Gate use LMF" OFF)
 OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
 OPTION(GATE_ANALYSIS_USE_GENERAL "Gate use  G4ANALYSIS_USE_GENERAL (Recommanded)" ON)
 OPTION(GATE_ANALYSIS_USE_FILE "Gate use G4ANALYSIS_USE_FILE (Recommanded)" ON)
-OPTION(GATE_USE_OWN_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4" ON)
+OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4 (this is REQUIRED !)" ON)
 OPTION(GATE_USE_GPU "Gate use GPU (voxelized src and tracking), need CUDA " OFF)
 
+#=========================================================
+# ROOT
 IF(GATE_USE_ROOT)
    FIND_PACKAGE(ROOT REQUIRED)
    INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
@@ -78,12 +86,12 @@ ENDIF(GATE_USE_OPTICAL)
 #=========================================================
 # Option for Clhep use
 
-IF(GATE_USE_OWN_CLHEP)
+IF(GATE_USE_SYSTEM_CLHEP)
    FIND_PACKAGE(CLHEP REQUIRED)
    INCLUDE_DIRECTORIES(${CLHEP_INCLUDE_DIR})
    SET(LINK_DIRECTORIES ${CLHEP_LIBRARIES})
    #MESSAGE("Found Clhep in ${CLHEP_INCLUDE_DIR} ${CLHEP_LIBRARY}")
-ENDIF(GATE_USE_OWN_CLHEP)
+ENDIF()
 
 #=========================================================
 # Option for GPU use

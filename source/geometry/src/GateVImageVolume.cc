@@ -53,6 +53,7 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
   mHLabelImageFilename = "none";
   mIsBoundingBoxOnlyModeEnabled = false;
   mImageMaterialsFromHounsfieldTableDone = false;
+  mTransformMatrix.resize(9);
   GateMessageDec("Volume",5,"End GateVImageVolume("<<name<<")"<<G4endl);
   
   // do not display all voxels, only bounding box 
@@ -69,7 +70,7 @@ GateVImageVolume::~GateVImageVolume()
   if(pImage) delete pImage;
   //if(pBoxPhys) delete pBoxPhys;
   if(pBoxLog) delete pBoxLog;
-   if(pBoxSolid) delete pBoxSolid;
+  if(pBoxSolid) delete pBoxSolid;
   GateMessageDec("Volume",5,"End ~GateVImageVolume()"<<G4endl);
 }
 //--------------------------------------------------------------------
@@ -114,17 +115,33 @@ void GateVImageVolume::UpdatePositionWithIsoCenter()
 
     const G4ThreeVector & tcurrent = mInitialTranslation;//GetVolumePlacement()->GetTranslation();
 
+    // Get the origin
     if (!mOriginIsSetByUser) {
       origin = GetImage()->GetOrigin();
     }
-    
+ 
     GateMessage("Volume",3,"Current T = " << tcurrent << G4endl);
     GateMessage("Volume",3,"Isocenter = " << GetIsoCenter() << G4endl);
     GateMessage("Volume",3,"Origin = " << GetOrigin() << G4endl);
     GateMessage("Volume",3,"Half = " << GetHalfSize() << G4endl);
+    GateMessage("Volume",3,"TransformMatrix = " 
+                << mTransformMatrix[0] << " " << mTransformMatrix[1] << " " 
+                << mTransformMatrix[2] << " " << mTransformMatrix[3] << " " 
+                << mTransformMatrix[4] << " " << mTransformMatrix[5] << " " 
+                << mTransformMatrix[6] << " " << mTransformMatrix[7] << " " 
+                << mTransformMatrix[8] << " " << G4endl);
 
+    // Take transformationMatrix into account
+    G4ThreeVector iso = mIsoCenter;
+    std::vector<double> & m = mTransformMatrix;
+    // Consider transpose (inverse of a rotation matrix)
+    iso[0] = mIsoCenter[0] * m[0] + mIsoCenter[1] * m[3] + mIsoCenter[2] * m[6];
+    iso[1] = mIsoCenter[0] * m[1] + mIsoCenter[1] * m[4] + mIsoCenter[2] * m[7];
+    iso[2] = mIsoCenter[0] * m[2] + mIsoCenter[1] * m[5] + mIsoCenter[2] * m[8];
+
+    // Compute translation
     G4ThreeVector q;
-    q = GetIsoCenter()-GetOrigin();
+    q = iso - GetOrigin();
     q = q - GetHalfSize();
     q = tcurrent - q;
     // G4ThreeVector p;
@@ -270,6 +287,11 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
 
   // Get origin from the image
   origin = pImage->GetOrigin();
+
+  // Get the transformation matrix from the image
+  for(uint i=0; i<9; i++) {
+    mTransformMatrix[i] = pImage->GetTransformMatrix()[i];
+  }
 
   GateMessage("Volume",4,"voxel size" << pImage->GetVoxelSize() << G4endl);
   GateMessageDec("Volume",4,"End GateVImageVolume::LoadImage("<<mImageFilename<<")" << G4endl);

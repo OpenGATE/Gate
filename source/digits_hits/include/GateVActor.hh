@@ -104,10 +104,12 @@ public:
 
   //-----------------------------------------------------------------------------
   void SetSaveFilename(G4String  f);
-  virtual void SaveData() = 0;
+  virtual void SaveData();
   virtual void ResetData() = 0;
   void EnableSaveEveryNEvents(int n) { mSaveEveryNEvents = n; }
   void EnableSaveEveryNSeconds(int n) { mSaveEveryNSeconds = n; }
+  void SetOverWriteFilesFlag(bool b) { mOverWriteFilesFlag = b; }
+  void EnableResetDataAtEachRun(bool b) { mResetDataAtEachRun = b; }
   //-----------------------------------------------------------------------------
 
   G4String GetVolumeName(){return mVolumeName;}
@@ -145,6 +147,9 @@ protected:
   //-----------------------------------------------------------------------------
   int  mSaveEveryNEvents;
   int  mSaveEveryNSeconds;
+  bool mOverWriteFilesFlag;
+  bool mResetDataAtEachRun;
+  G4String mSaveInitialFilename;
   G4String mSaveFilename;
   int mSaveFileDescriptor;
   struct timeval mTimeOfLastSaveEvent;

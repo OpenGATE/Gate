@@ -12,6 +12,7 @@ See GATE/LICENSE.txt for further details
 #define GATEMISCFUNCTIONS_CC
 
 #include "GateMiscFunctions.hh"
+#include "GateActorManager.hh"
 
 #include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
@@ -21,6 +22,8 @@ See GATE/LICENSE.txt for further details
 #include "G4AffineTransform.hh"
 #include "G4VSolid.hh"
 #include "G4ThreeVector.hh"
+#include "G4RunManager.hh"
+#include "G4Run.hh"
 
 #include <sys/types.h> 
 #include <sys/file.h>
@@ -650,6 +653,28 @@ int GetIndexFromTime(std::vector<double> & mTimeList, double aTime) {
               << " sec, so I cannot find the time" << aTime/s << " sec." << G4endl);
   }
   return i;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+G4String GetSaveCurrentFilename(G4String & mSaveFilename) {
+  int nr=0;
+  int ne=0;
+  const G4Run * run = G4RunManager::GetRunManager()->GetCurrentRun();
+  if (run) nr = run->GetRunID(); 
+  else {
+    nr = 0;
+  }
+  ne = GateActorManager::GetInstance()->GetCurrentEventId();
+    
+  G4String extension = "."+getExtension(mSaveFilename);
+
+  std::ostringstream oss;
+  oss << "_R" << std::setfill('0') << std::setw(4) << nr;
+  oss << "_E" << std::setfill('0') << std::setw(15) << ne;
+  G4String mSaveCurrentFilename = G4String(removeExtension(mSaveFilename))+oss.str()+extension;
+  return mSaveCurrentFilename;
 }
 //-----------------------------------------------------------------------------
 

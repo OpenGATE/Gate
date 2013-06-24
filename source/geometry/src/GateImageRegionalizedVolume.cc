@@ -104,6 +104,7 @@ G4LogicalVolume* GateImageRegionalizedVolume::ConstructOwnSolidAndLogicalVolume(
   
   //---------------------------
   if (mIsBoundingBoxOnlyModeEnabled) {
+    GateError("Sorry not possible to user BoundingBoxOnlyMode with RegionalizedVolume. Use NestedParameterised instead");
     // Create on single big pixel
     G4ThreeVector r(2,2,2);
     GetImage()->SetResolutionAndVoxelSize(r, GetImage()->GetSize()/2.0);

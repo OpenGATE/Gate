@@ -359,11 +359,14 @@ void GateSinoToEcat7::FillData(GateSinogram* setSino)
 {
 
   GateToSinogram* setMaker = m_system->GetSinogramMaker();
-  G4int  bin,seg,segment_occurance,data_size,nz,frame,plane,gate,data,bed,
-         tot_data_size,file_pos,offset,csize,ringdiff,ring_1_min,ring_1_max,
+  G4int  bin,seg,segment_occurance,data_size,nz,frame,data,
+         tot_data_size,file_pos,offset,ringdiff,ring_1_min,ring_1_max,
 	 view,ring_1,ring_2,elem,z,sinoID,bin_sdata,bin_m_data,nsino;
-  short  *sdata;
+#ifdef GATE_USE_ECAT7
+  G4int  plane,gate,bed,csize;
   char   *cdata=NULL;
+#endif
+  short  *sdata;
   G4String frameFileName;
   char             ctemp[512];
   std::ofstream    m_dataFile,m_headerFile;
@@ -376,10 +379,12 @@ void GateSinoToEcat7::FillData(GateSinogram* setSino)
   
   // Fill subheader
   frame = setSino->GetCurrentFrameID();
+#ifdef GATE_USE_ECAT7
   plane = 1;
   gate = setSino->GetCurrentGateID();
-  data = setSino->GetCurrentDataID();
   bed = setSino->GetCurrentBedID();
+#endif
+  data = setSino->GetCurrentDataID();
   seg = 0;
   if (m_ecatVersion == 7) sh->data_type = SunShort;
   sh->num_dimensions = 4;
@@ -434,7 +439,9 @@ void GateSinoToEcat7::FillData(GateSinogram* setSino)
     data_size = (m_zMaxSeg[0] - m_zMinSeg[0] + 1) * sh->num_r_elements * sh->num_angles;
   }
   sdata = (short*) calloc(sizeof(short),data_size);
+#ifdef GATE_USE_ECAT7
   if (m_ecatVersion == 7) cdata = (char*) calloc(sizeof(short),data_size);
+#endif
   tot_data_size = 0;
   seg = 0;
   while (sh->num_z_elements[seg]>0) {
@@ -545,7 +552,9 @@ void GateSinoToEcat7::FillData(GateSinogram* setSino)
     if (segment_occurance == 0) {
       sh->scan_min = sh->scan_max = sdata[0];
     }  
+#ifdef GATE_USE_ECAT7
     csize = 0;
+#endif
     for (bin=0;bin<data_size;bin++) {
       // ecat7: convert short --> SunShort
       #ifdef GATE_USE_ECAT7

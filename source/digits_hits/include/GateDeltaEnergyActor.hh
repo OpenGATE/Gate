@@ -75,28 +75,23 @@ protected:
   int mCurrentEvent;
 
   bool mIsLastHitEventImageEnabled;
-
   bool mIsStopPowerImageEnabled;
   bool mIsRelStopPowerImageEnabled;
   bool mIsNumberOfHitsImageEnabled;
-
 
   bool mIsStopPowerSquaredImageEnabled;
   bool mIsStopPowerUncertaintyImageEnabled;
   bool mIsRelStopPowerSquaredImageEnabled;
   bool mIsRelStopPowerUncertaintyImageEnabled;
 
-
   GateImageWithStatistic mStopPowerImage;
   GateImageWithStatistic mRelStopPowerImage;
   GateImage mNumberOfHitsImage;
   GateImage mLastHitEventImage;
 
-
   G4String mStopPowerFilename;
   G4String mRelStopPowerFilename;
   G4String mNbOfHitsFilename;
-
 
 };
 

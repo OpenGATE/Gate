@@ -116,8 +116,11 @@ GateVSource::~GateVSource()
 }
 //-------------------------------------------------------------------------------------------------
 
-void GateVSource::Visualize(G4String parmString){
+#ifndef G4VIS_USE
+void GateVSource::Visualize(G4String){
+#endif
 #ifdef G4VIS_USE
+void GateVSource::Visualize(G4String parmString){
   G4Tokenizer parms(parmString);
   G4String    sCount=parms();
   G4String    sColor=parms();

@@ -42,6 +42,7 @@ class GateBenchmarkActor : public GateVActor
 
 		TFile* pTfile;
 		TH2D* histoEFreePath;
+		TH2D* histoEStepLength;
 		TH2D* histoEDeltaE;
 		TH2D* histoEPrimaryDeviation;
 		TH2D* histoESecondaryDeviation;
