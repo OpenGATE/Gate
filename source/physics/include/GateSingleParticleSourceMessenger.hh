@@ -127,7 +127,7 @@ class GateSingleParticleSourceMessenger : public GateMessenger
  private:
 
   //G4ParticleTable* particleTable ;
-  G4String histtype ;    
+  G4String histtype ;
   GateVSource* fParticleGun ;
      
  private: //commands
@@ -260,7 +260,7 @@ class GateSingleParticleSourceMessenger : public GateMessenger
   G4UIcmdWithoutParameter*    listCmd ;
   
   G4UIcmdWithAString         *ForbidCmd;
-
+  G4UIcmdWithAString*         setImageCmd1;
 
  private: // for ion shooting
   
