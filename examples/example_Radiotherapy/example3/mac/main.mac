@@ -72,7 +72,7 @@
 /gate/actor/stat/saveEveryNSeconds 10
 
 /gate/actor/addActor                               DoseActor  doseDistribution
-/gate/actor/doseDistribution/save                  output/output.hdr
+/gate/actor/doseDistribution/save                  output/output.mhd
 /gate/actor/doseDistribution/attachTo    	   patient
 /gate/actor/doseDistribution/stepHitType           random
 /gate/actor/doseDistribution/setVoxelSize          3 3 3 mm
@@ -93,7 +93,7 @@
 #=====================================================
 
 /gate/source/addSource mybeam LinacBeam
-/gate/source/mybeam/setSourceFromPhaseSpaceFilename data/beam.root
+/gate/source/mybeam/setSourceFromPhaseSpaceFilename data/linac-beam.root
 /gate/source/mybeam/attachTo linacPhSPlane
 /gate/source/mybeam/setMaxLeafDistanceAccordingToTime data/precise_BeamSource.rmax
 
@@ -105,7 +105,8 @@
 /gate/random/setEngineSeed auto
 
 /gate/application/readTimeSlicesIn data/precise_BeamSource.timeslices
-/gate/application/setTotalNumberOfPrimaries 1000000
+/gate/application/setTotalNumberOfPrimaries 1000
+
 
 /gate/application/start
 /gate/application/describe
