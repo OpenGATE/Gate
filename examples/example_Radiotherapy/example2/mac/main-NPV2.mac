@@ -41,10 +41,10 @@
 
 /gate/geometry/setMaterialDatabase              data/patient-HUmaterials.db
 /gate/patient/geometry/SetHUToMaterialFile      data/patient-HU2mat.txt
-/gate/patient/geometry/SetImage                 data/patient-2mm.hdr
+/gate/patient/geometry/SetImage                 data/patient-2mm.mhd
 
 # optional : dump used image
-/gate/patient/geometry/buildAndDumpLabeledImage  data/patient-2mm-labeled-NPV.hdr
+/gate/patient/geometry/buildAndDumpLabeledImage  data/patient-2mm-labeled-NPV.mhd
 
 /gate/patient/placement/setTranslation                  0 0 0 mm
 /gate/patient/geometry/TranslateTheImageAtThisIsoCenter 109.7 99.3 146.2 mm
@@ -76,7 +76,7 @@
 
 # Set the names of the outputs
 /gate/actor/stat/save              output/stat-photon-NPV2.txt
-/gate/actor/doseDistribution/save  output/dose-photon-NPV2.hdr
+/gate/actor/doseDistribution/save  output/dose-photon-NPV2.mhd
 
 #=====================================================
 # INITIALIZATION and START
