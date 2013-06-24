@@ -51,6 +51,7 @@ ENDIF()
 #=========================================================
 # Option for Root use
 
+OPTION(GATE_USE_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
 OPTION(GATE_USE_ROOT "Gate use ROOT (Recommanded)" ON)
 OPTION(GATE_USE_OPTICAL "Gate use optical photon" OFF)
 OPTION(GATE_USE_LMF "Gate use LMF" OFF)
@@ -220,5 +221,19 @@ ENDIF(GATE_USE_RTK)
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
 
-
+#=========================================================
+option(GATE_DOWNLOAD_BENCHMARKS_DATA "Download the missing binary data to run gate benchmarks" OFF)
+option(GATE_DOWNLOAD_EXAMPLES_DATA "Download the missing binary data to run gate examples" OFF)
+IF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
+  INCLUDE(cmake-modules/GateExternalData.cmake)
+ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
+IF(GATE_DOWNLOAD_BENCHMARKS_DATA)
+  ADD_SUBDIRECTORY(benchmarks)
+  ExternalData_add_target(GateBenchmarkData)
+ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA)
+IF(GATE_DOWNLOAD_EXAMPLES_DATA)
+  ADD_SUBDIRECTORY(examples)
+  ExternalData_add_target(GateExampleData)
+ENDIF(GATE_DOWNLOAD_EXAMPLES_DATA)
+#=========================================================
 
