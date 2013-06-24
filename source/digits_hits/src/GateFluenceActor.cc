@@ -181,21 +181,22 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
           }
         }
       }
-      // Compton and Rayleigh Case (straight rayleighs are missed)
+      // Scattered primary particles, e.g., primary photons that undergo
+      // Compton and Rayleigh interactions. Straight interactions are missed.
       if(!step->GetTrack()->GetParentID() &&
          !step->GetTrack()->GetDynamicParticle()->GetPrimaryParticle()
                                                 ->GetMomentum().isNear(step->GetTrack()->GetDynamicParticle()->GetMomentum())) {
-        mImageScatter.AddValue(index, 1);
+        mImageScatter.AddValue(index, respValue);
         // Scatter order image
         if(order)
-          mFluencePerOrderImages[order-1]->AddValue(index, 1);
+          mFluencePerOrderImages[order-1]->AddValue(index, respValue);
       }
-      // Fluorescence case
+      // Secondary particles, e.g., Fluorescence gammas
       if(step->GetTrack()->GetTrackID() && step->GetTrack()->GetParentID()>0 ) {
-        mImageScatter.AddValue(index, 1);
+        mImageScatter.AddValue(index, respValue);
         // Scatter order image
         if(order)
-          mFluencePerOrderImages[order-1]->AddValue(index, 1);
+          mFluencePerOrderImages[order-1]->AddValue(index, respValue);
       }
     }
   }
