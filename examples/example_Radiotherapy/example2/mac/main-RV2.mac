@@ -44,16 +44,16 @@
 
 /gate/geometry/setMaterialDatabase              data/patient-HUmaterials.db
 /gate/patient/geometry/SetHUToMaterialFile      data/patient-HU2mat.txt
-/gate/patient/geometry/SetImage                 data/patient-2mm.hdr
+/gate/patient/geometry/SetImage                 data/patient-2mm.mhd
 
 # Generate the dmap (needed by ImageRegionalizedVolume)
-/gate/patient/geometry/buildAndDumpDistanceTransfo   data/patient-2mm-dmap.hdr
+/gate/patient/geometry/buildAndDumpDistanceTransfo   data/patient-2mm-dmap.mhd
 
 # Use it
-/gate/patient/geometry/distanceMap                   data/patient-2mm-dmap.hdr
+/gate/patient/geometry/distanceMap                   data/patient-2mm-dmap.mhd
 
 # Optional : dump used image
-/gate/patient/geometry/buildAndDumpLabeledImage  data/patient-2mm-labeled-RV.hdr
+/gate/patient/geometry/buildAndDumpLabeledImage  data/patient-2mm-labeled-RV.mhd
 
 /gate/patient/placement/setTranslation                  0 0 0 mm
 /gate/patient/geometry/TranslateTheImageAtThisIsoCenter 109.7 99.3 146.2 mm
@@ -85,7 +85,7 @@
 
 # Set the names of the outputs
 /gate/actor/stat/save              output/stat-photon-RV2.txt
-/gate/actor/doseDistribution/save  output/dose-photon-RV2.hdr
+/gate/actor/doseDistribution/save  output/dose-photon-RV2.mhd
 
 #=====================================================
 # INITIALISATION and START
