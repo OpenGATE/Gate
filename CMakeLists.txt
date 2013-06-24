@@ -185,5 +185,19 @@ ADD_SUBDIRECTORY(source/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
 
-
+#=========================================================
+option(GATE_DOWNLOAD_BENCHMARKS_DATA "Download the missing binary data to run gate benchmarks" OFF)
+option(GATE_DOWNLOAD_EXAMPLES_DATA "Download the missing binary data to run gate examples" OFF)
+IF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
+  INCLUDE(cmake-modules/GateExternalData.cmake)
+ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
+IF(GATE_DOWNLOAD_BENCHMARKS_DATA)
+  ADD_SUBDIRECTORY(benchmarks)
+  ExternalData_add_target(GateBenchmarkData)
+ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA)
+IF(GATE_DOWNLOAD_EXAMPLES_DATA)
+  ADD_SUBDIRECTORY(examples)
+  ExternalData_add_target(GateExampleData)
+ENDIF(GATE_DOWNLOAD_EXAMPLES_DATA)
+#=========================================================
 
