@@ -1,9 +1,9 @@
                                                          
 #-------------------oooooOOOOO00000OOOOOooooo---------------------#
 
-# Example of Carbon beam in water tank or in patient CT image.  Output
-# is a 3D dose distribution map (with associated uncertainty) and map
-# of producted C11. 
+# Example of Carbon beam in water tank.  Output is a 3D dose
+# distribution map (with associated uncertainty) and map of producted
+# C11.
 
 #-------------------oooooOOOOO00000OOOOOooooo---------------------#
 
@@ -38,9 +38,6 @@
 /gate/target/vis/forceSolid
 /gate/target/vis/setColor                    blue
 
-# PATIENT CT DATA (alternative to WaterBox)
-#/control/execute                             mac/Voxel_Patient.mac
-
 #=====================================================
 # PHYSICS
 #=====================================================
@@ -63,7 +60,7 @@
 /gate/physics/Electron/SetCutInRegion   target 0.1 mm
 /gate/physics/Positron/SetCutInRegion   target 0.1 mm
 
-/gate/physics/SetMaxStepSizeInRegion    target 0.01 mm
+/gate/physics/SetMaxStepSizeInRegion    target 0.05 mm
 
 /gate/physics/ActivateStepLimiter proton
 /gate/physics/ActivateStepLimiter e-
@@ -154,7 +151,7 @@
 
 /gate/random/setEngineName MersenneTwister
 /gate/random/setEngineSeed auto
-/gate/application/setTotalNumberOfPrimaries 250000
+/gate/application/setTotalNumberOfPrimaries 100
 /gate/application/start
 
 
