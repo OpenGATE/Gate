@@ -80,10 +80,10 @@
 
 # ----------------------------------------------------
 # the following actor stores 3D distributions of
-# dose/edep/uncertainty/nbHit into files (hdr image file format)
+# dose/edep/uncertainty/nbHit into files (mhd image file format)
 
 /gate/actor/addActor                               DoseActor  doseDistribution
-/gate/actor/doseDistribution/save                  output/dose.hdr
+/gate/actor/doseDistribution/save                  output/dose.mhd
 /gate/actor/doseDistribution/attachTo    	   target
 /gate/actor/doseDistribution/stepHitType           random
 /gate/actor/doseDistribution/setPosition           0 0 0 mm
@@ -97,7 +97,7 @@
 /gate/actor/doseDistribution/saveEveryNSeconds     20
 
 /gate/actor/addActor ProductionAndStoppingActor    carbonMap
-/gate/actor/carbonMap/save                         output/C11.hdr
+/gate/actor/carbonMap/save                         output/C11.mhd
 /gate/actor/carbonMap/attachTo                     target
 /gate/actor/carbonMap/stepHitType                  random
 /gate/actor/carbonMap/setVoxelSize                 2 2 2 mm
