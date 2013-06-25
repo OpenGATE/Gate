@@ -30,3 +30,4 @@ GateAddExampleData("DATA{example_PHANTOM_SOURCE/Voxelized_Phantom_Source/brain_p
 GateAddExampleData("DATA{example_ARF/ARF_doc.docx}")
 GateAddExampleData("DATA{example_ARF/HowToUse_ARF.pdf}")
 GateAddExampleData("DATA{example_CT/exampleCT.pdf}")
+GateAddExampleData("DATA{example_Radiotherapy/example8/data/EGS.root}")
