@@ -12,7 +12,7 @@
 /gate/actor/doseDistribution/setPosition           0 0 0 mm
 /gate/actor/doseDistribution/setResolution         256 256 26
 /gate/actor/doseDistribution/enableDose            true
-/gate/actor/doseDistribution/save  output/TLE-thorax.hdr
+/gate/actor/doseDistribution/save  output/TLE-thorax.mhd
 
 /gate/actor/addActor                               DoseActor  doseDistribution2
 /gate/actor/doseDistribution2/attachTo    	   thorax
@@ -20,4 +20,4 @@
 /gate/actor/doseDistribution2/setPosition           0 0 0 mm
 /gate/actor/doseDistribution2/setResolution         256 256 26
 /gate/actor/doseDistribution2/enableDose            true
-/gate/actor/doseDistribution2/save  output/Dose-thorax.hdr
+/gate/actor/doseDistribution2/save  output/Dose-thorax.mhd
