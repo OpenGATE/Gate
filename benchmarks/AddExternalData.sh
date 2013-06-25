@@ -20,5 +20,5 @@ git add $(dirname $1)/.gitignore
 
 rm $1
 
-echo "GateAddExampleData(\"DATA{${1#$(dirname $0)/}}\")" >> CMakeLists.txt
+echo "GateAddBenchmarkData(\"DATA{${1#$(dirname $0)/}}\")" >> CMakeLists.txt
 

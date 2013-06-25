@@ -13,6 +13,9 @@ list(APPEND ExternalData_URL_TEMPLATES
   "http://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=%(hash)&algorithm=%(algo)"
   )
 
+function(GateAddBenchmarkData)
+    ExternalData_expand_arguments(GateBenchmarkData dummy ${ARGN})
+endfunction()
 function(GateAddExampleData)
     ExternalData_expand_arguments(GateExampleData dummy ${ARGN})
 endfunction()
