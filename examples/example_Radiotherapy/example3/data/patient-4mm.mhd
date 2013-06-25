@@ -1,0 +1,14 @@
+ObjectType = Image
+NDims = 3
+BinaryData = True
+BinaryDataByteOrderMSB = False
+CompressedData = False
+TransformMatrix = 1 0 0 0 1 0 0 0 1
+Offset = 0 0 0
+CenterOfRotation = 0 0 0
+AnatomicalOrientation = RAI
+ElementSpacing = 4 4 4
+ITK_InputFilterName = MetaImageIO
+DimSize = 63 63 55
+ElementType = MET_SHORT
+ElementDataFile = patient-4mm.raw
