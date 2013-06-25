@@ -145,7 +145,7 @@
 /gate/actor/doseDistribution/setPosition           0 0 0 cm
 /gate/actor/doseDistribution/setSize               5 300 5 mm
 /gate/actor/doseDistribution/setVoxelSize          5 2 5 mm
-/gate/actor/doseDistribution/saveEveryNEvents      300
+/gate/actor/doseDistribution/saveEveryNSeconds     300
 /gate/actor/doseDistribution/enableEdep            true
 /gate/actor/doseDistribution/enableUncertaintyEdep true 
 /gate/actor/doseDistribution/enableDose            true
@@ -155,13 +155,13 @@
 /gate/actor/doseDistribution/enableNumberOfHits    true
 
 /gate/actor/addActor                               DoseActor  doseDistribution2
-/gate/actor/doseDistribution2/save                  output/Electron-20MeV.hdr
+/gate/actor/doseDistribution2/save                  output/Electron-20MeV.mhd
 /gate/actor/doseDistribution2/attachTo              mainbox
 /gate/actor/doseDistribution2/stepHitType           random
 /gate/actor/doseDistribution2/setPosition           0 0 0 cm
 /gate/actor/doseDistribution2/setSize               5 300 5 mm
 /gate/actor/doseDistribution2/setVoxelSize          5 2 5 mm
-/gate/actor/doseDistribution2/saveEveryNEvents      300
+/gate/actor/doseDistribution2/saveEveryNSeconds     300
 /gate/actor/doseDistribution2/enableEdep            true
 /gate/actor/doseDistribution2/enableUncertaintyEdep true 
 /gate/actor/doseDistribution2/enableDose            true
@@ -172,7 +172,7 @@
 
 /gate/actor/addActor               SimulationStatisticActor stat
 /gate/actor/stat/save              output/statElectron-20MeV.txt
-/gate/actor/stat/saveEveryNSeconds 600
+/gate/actor/stat/saveEveryNSeconds 60
 
 /gate/actor/addActor                    ParticleInVolumeActor counter
 /gate/actor/counter/save                output/counterElectron-20MeV.txt
