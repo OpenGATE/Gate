@@ -662,7 +662,7 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
     {
       G4ThreeVector particle_position;
       if(mIsUserFluenceActive) { particle_position = UserFluencePosGenerateOne(); }
-      else { G4ThreeVector particle_position = m_posSPS->GenerateOne(); }
+      else { particle_position = m_posSPS->GenerateOne(); }
 
       // Set placement relative to attached volume
       ChangeParticlePositionRelativeToAttachedVolume(particle_position);

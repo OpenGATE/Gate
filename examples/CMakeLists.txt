@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 GateAddExampleData("DATA{example_Hybrid/data/sphere.mha}")
+=======
+>>>>>>> develop
 GateAddExampleData("DATA{example_Radiotherapy/example2/data/patient-2mm.raw}")
 GateAddExampleData("DATA{example_TimeActivityCurve/TAC_Example.png}")
 GateAddExampleData("DATA{example_TimeActivityCurve/data/NCAT_act_1.bin}")
