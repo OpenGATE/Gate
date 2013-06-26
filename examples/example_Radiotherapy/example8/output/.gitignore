@@ -1,0 +1,14 @@
+/.gitignore~
+/Photon-18MeV-Dose-Squared.root
+/Photon-18MeV-Dose-Uncertainty.root
+/Photon-18MeV-Dose.root
+/Photon-18MeV-Edep-Squared.root
+/Photon-18MeV-Edep-Uncertainty.root
+/Photon-18MeV-Edep.root
+/Photon-18MeV-NbOfHits.root
+/colli1.txt
+/colli2.txt
+/colli3.txt
+/colli4.txt
+/counterPhoton-18MeV.txt
+/statPhoton-18MeV.txt

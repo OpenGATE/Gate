@@ -27,7 +27,7 @@
 
 /gate/geometry/setMaterialDatabase             data/Thorax-HUmaterials.db
 /gate/thorax/geometry/SetHUToMaterialFile      data/Thorax-HU2mat.txt
-/gate/thorax/geometry/SetImage                 data/resampledTHORAX.hdr
+/gate/thorax/geometry/SetImage                 data/resampledTHORAX.mhd
 
 /gate/thorax/placement/setTranslation                  0 0 0 mm
 
