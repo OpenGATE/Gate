@@ -9,12 +9,12 @@
 
  TChain *  T = new TChain("PhaseSpace");
  
-// select one of the four following phase spaces you wish to visualize:
+ // select one of the four following phase spaces you wish to visualize:
 
- //T->Add("output/BeamLineEntrance.root");
+ T->Add("output/BeamLineEntrance.root");
  //T->Add("output/BeamLineMiddle.root");
  //T->Add("output/BeamLineExit.root");
- T->Add("output-1/GlobalBoxEntrance.root");
+ //T->Add("output/GlobalBoxEntrance.root");
   
  T->SetBranchAddress("ParticleName",&particleName);
  T->SetBranchAddress("ProductionVolume",&volumeName);
