@@ -336,17 +336,18 @@ public:
 
  // DEFINITION for Activation/Deactivation log-log interpolation of mu value
 //#define INTERP
+    const double energy = Eratio*m_Energy;
 #ifdef INTERP
     // Pointer to adequate mus
-    unsigned int ceil = itk::Math::Ceil<double, double>(Eratio*m_Energy / m_MaterialMu->GetSpacing()[1]);
-    unsigned int floor = itk::Math::Floor<double, double>(Eratio*m_Energy / m_MaterialMu->GetSpacing()[1]);
+    unsigned int ceil = itk::Math::Ceil<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
+    unsigned int floor = itk::Math::Floor<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
     double *p1 = m_MaterialMu->GetPixelContainer()->GetBufferPointer() +
                 floor * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
     double *p2 = m_MaterialMu->GetPixelContainer()->GetBufferPointer() +
                 ceil * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
 
     double rayIntegral = 0.;
-    double logEnergy   = log(Eratio*m_Energy/m_MaterialMu->GetSpacing()[1]);
+    double logEnergy   = log(energy/m_MaterialMu->GetSpacing()[1]);
     double logCeil     = log(ceil);
     double logFloor    = log(floor);
 
@@ -361,7 +362,7 @@ public:
       interp = exp( ((log(*p2 / *p1))/(logCeil-logFloor)) * (logEnergy - logCeil) + log(*p2) );
     }
 #else
-    unsigned int e = itk::Math::Round<double, double>(Eratio*m_Energy / m_MaterialMu->GetSpacing()[1]);
+    unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
     double *p = m_MaterialMu->GetPixelContainer()->GetBufferPointer() +
                 e * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
 
@@ -372,7 +373,7 @@ public:
 #endif
     // Final computation
     Accumulate(threadId, input,
-               vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel) * (*m_ResponseDetector)(e));
+               vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel) * (*m_ResponseDetector)(energy));
 
     // Reset weights for next ray in thread.
     std::fill(m_InterpolationWeights[threadId].begin(), m_InterpolationWeights[threadId].end(), 0.);

@@ -337,6 +337,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                           mDetectorColVector);
       mComptonProjector->SetInput(mComptonImage);
       mComptonProjector->SetGeometry( oneProjGeometry.GetPointer() );
+      mComptonProjector->GetProjectedValueAccumulation().SetResponseDetector( &mEnergyResponseDetector );
       mComptonProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mSingleInteractionEnergy,
                                                                               mSingleInteractionZ,
                                                                               1. );
