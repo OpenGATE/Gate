@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-GateAddExampleData("DATA{example_Hybrid/data/sphere.mha}")
-=======
->>>>>>> develop
 GateAddExampleData("DATA{example_Radiotherapy/example2/data/patient-2mm.raw}")
 GateAddExampleData("DATA{example_TimeActivityCurve/TAC_Example.png}")
 GateAddExampleData("DATA{example_TimeActivityCurve/data/NCAT_act_1.bin}")
@@ -34,6 +30,7 @@ GateAddExampleData("DATA{example_ARF/ARF_doc.docx}")
 GateAddExampleData("DATA{example_ARF/HowToUse_ARF.pdf}")
 GateAddExampleData("DATA{example_CT/exampleCT.pdf}")
 GateAddExampleData("DATA{example_Hybrid/data/patient.raw}")
+GateAddExampleData("DATA{example_Hybrid/data/sphere.mha}")
 GateAddExampleData("DATA{example_Radiotherapy/example8/data/EGS.root}")
 GateAddExampleData("DATA{example_Radiotherapy/example9/data/EGS.root}")
 GateAddExampleData("DATA{example_Radiotherapy/example10/data/resampledTHORAX.raw}")
