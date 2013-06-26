@@ -30,6 +30,7 @@
 #include "GateSourceMgr.hh"
 #include "GateVImageVolume.hh"
 #include "GateHybridForcedDetectionFunctors.hh"
+#include "GateEnergyResponseFunctor.hh"
 
 // itk
 #include <itkTimeProbe.h>
@@ -74,6 +75,7 @@ public:
   void SetPrimaryFilename(G4String name) { mPrimaryFilename = name; }
   void SetMaterialMuFilename(G4String name) { mMaterialMuFilename = name; }
   void SetAttenuationFilename(G4String name) { mAttenuationFilename = name; }
+  void SetResponseDetectorFilename(G4String name) { mResponseFilename = name; }
   void SetFlatFieldFilename(G4String name) { mFlatFieldFilename = name; }
   void SetComptonFilename(G4String name) { mComptonFilename = name; }
   void SetRayleighFilename(G4String name) { mRayleighFilename = name; }
@@ -120,12 +122,14 @@ protected:
   G4String mPrimaryFilename;
   G4String mMaterialMuFilename;
   G4String mAttenuationFilename;
+  G4String mResponseFilename;
   G4String mFlatFieldFilename;
   G4String mComptonFilename;
   G4String mRayleighFilename;
   G4String mFluorescenceFilename;
 
   G4ThreeVector mDetectorResolution;
+  GateEnergyResponseFunctor mEnergyResponseDetector;
 
   GeometryType::Pointer mGeometry;
   InputImageType::Pointer mGateVolumeImage;

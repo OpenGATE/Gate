@@ -71,6 +71,11 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
   guidance = "Set the file name for writing the image that provides the attenuation image.";
   pSetAttenuationFilenameCmd->SetGuidance(guidance);
 
+  bb = base+"/responseDetectorFilename";
+  pSetResponseDetectorFilenameCmd = new G4UIcmdWithAString(bb, this);
+  guidance = G4String( "Response detector curve (weight to each energy)");
+  pSetResponseDetectorFilenameCmd->SetGuidance( guidance);
+
   bb = base+"/flatFieldFilename";
   pSetFlatFieldFilenameCmd = new G4UIcmdWithAString(bb,this);
   guidance = "Set the file name for writing the image that provides the flat field image.";
@@ -141,6 +146,7 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetFlatFieldFilenameCmd) pHybridActor->SetFlatFieldFilename(param);
   if(command == pSetComptonFilenameCmd) pHybridActor->SetComptonFilename(param);
   if(command == pSetRayleighFilenameCmd) pHybridActor->SetRayleighFilename(param);
+  if(command == pSetResponseDetectorFilenameCmd) pHybridActor->SetResponseDetectorFilename(param);
   if(command == pSetFluorescenceFilenameCmd) pHybridActor->SetFluorescenceFilename(param);
   if(command == pSetSingleInteractionFilenameCmd) pHybridActor->SetSingleInteractionFilename(param);
   if(command == pSetSingleInteractionTypeCmd) pHybridActor->SetSingleInteractionType(param);

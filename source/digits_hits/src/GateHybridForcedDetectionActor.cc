@@ -15,6 +15,7 @@
 #include "GateHybridForcedDetectionActor.hh"
 #include "GateMiscFunctions.hh"
 #include "GateScatterOrderTrackInformationActor.hh"
+#include "GateHybridForcedDetectionFunctors.hh"
 
 // G4
 #include <G4Event.hh>
@@ -127,6 +128,9 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   if(mSource->GetPosDist()->GetPosDisType() != "Plane")
     GateError("Forced detection only supports Plane distributions.");
 
+  // Read the response detector curve from an external file
+  mEnergyResponseDetector.ReadResponseDetectorFile(mResponseFilename);
+
   // Create list of energies
   double energyMax = 0.;
   std::vector<double> energyList;
@@ -134,7 +138,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   G4String st = mSource->GetEneDist()->GetEnergyDisType();
   if (st == "Mono") {
     energyList.push_back(mSource->GetEneDist()->GetMonoEnergy());
-    energyWeightList.push_back(1.);
+    energyWeightList.push_back(mEnergyResponseDetector(energyList.back()));
     energyMax = std::max(energyMax, energyList.back());
   }
   else if (st == "User") { // histo
@@ -145,6 +149,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       energyList.push_back(E);
       energyWeightList.push_back(h.Value(E));
       weightSum += energyWeightList.back();
+      energyWeightList.back() *= mEnergyResponseDetector(energyList.back());
       energyMax = std::max(energyMax, energyList.back());
     }
     for(unsigned int i=0; i<h.GetVectorLength(); i++)
@@ -268,6 +273,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                                                              mDetectorColVector);
   mComptonProjector->GetProjectedValueAccumulation().SetVolumeSpacing( mGateVolumeImage->GetSpacing() );
   mComptonProjector->GetProjectedValueAccumulation().SetInterpolationWeights( mComptonProjector->GetInterpolationWeightMultiplication().GetInterpolationWeights() );
+  mComptonProjector->GetProjectedValueAccumulation().SetResponseDetector( &mEnergyResponseDetector );
   mComptonProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
                                                                          1.*keV,
                                                                          energyMax,

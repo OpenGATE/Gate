@@ -9,6 +9,7 @@
 #include <G4LogLogInterpolation.hh>
 #include <G4CompositeEMDataSet.hh>
 #include <G4CrossSectionHandler.hh>
+#include "GateEnergyResponseFunctor.hh"
 
 // ITK
 #include <itkImage.h>
@@ -156,7 +157,7 @@ public:
     m_MaterialMu->SetRegions(region);
     m_MaterialMu->Allocate();
     itk::ImageRegionIterator< MaterialMuImageType > it(m_MaterialMu, region);
-    for(unsigned int e=0; e<Elist.size(); e++)
+    for(unsigned int e=0; e<Elist.size(); e++) {
       for(unsigned int i=0; i<m.size(); i++) {
         G4Material * mat = m[i];
         //double d = mat->GetDensity(); // not needed
@@ -173,6 +174,7 @@ public:
         it.Set(mu);
         ++it;
       }
+    }
 
     muProbe.Stop();
     G4cout << "Computation of the mu lookup table took "
@@ -370,7 +372,7 @@ public:
 #endif
     // Final computation
     Accumulate(threadId, input,
-               vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel));
+               vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel) * (*m_ResponseDetector)(e));
 
     // Reset weights for next ray in thread.
     std::fill(m_InterpolationWeights[threadId].begin(), m_InterpolationWeights[threadId].end(), 0.);
@@ -390,13 +392,16 @@ public:
     m_eRadiusOverCrossSectionTerm = weight * ( classic_electr_radius*classic_electr_radius) / (2.*cs);
   }
 
+  void SetResponseDetector(GateEnergyResponseFunctor *_arg){ m_ResponseDetector = _arg; }
+
 private:
-  VectorType           m_Direction;
-  double               m_Energy;
-  double               m_E0m;
-  double               m_InvWlPhoton;
-  unsigned int         m_Z;
-  double               m_eRadiusOverCrossSectionTerm;
+  VectorType                 m_Direction;
+  double                     m_Energy;
+  double                     m_E0m;
+  double                     m_InvWlPhoton;
+  unsigned int               m_Z;
+  double                     m_eRadiusOverCrossSectionTerm;
+  GateEnergyResponseFunctor *m_ResponseDetector;
 
   // Compton data
   G4VEMDataSet* m_ScatterFunctionData;

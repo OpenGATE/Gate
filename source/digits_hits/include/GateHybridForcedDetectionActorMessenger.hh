@@ -41,6 +41,7 @@ protected:
   G4UIcmdWithAString * pSetPrimaryFilenameCmd;
   G4UIcmdWithAString * pSetMaterialMuFilenameCmd;
   G4UIcmdWithAString * pSetAttenuationFilenameCmd;
+  G4UIcmdWithAString * pSetResponseDetectorFilenameCmd;
   G4UIcmdWithAString * pSetFlatFieldFilenameCmd;
   G4UIcmdWithAString * pSetComptonFilenameCmd;
   G4UIcmdWithAString * pSetRayleighFilenameCmd;
