@@ -88,21 +88,21 @@ void GateHybridForcedDetectionActor::Construct()
     mPhaseSpaceFile = new TFile(mPhaseSpaceFilename,"RECREATE","ROOT file for phase space",9);
   mPhaseSpace = new TTree("PhaseSpace","Phase space tree of hybrid forced detection actor");
 
-  mPhaseSpace->Branch("Ekine",  &mInteractionEnergy,"Ekine/F");
-  mPhaseSpace->Branch("Weight", &mInteractionWeight,"Weight/F");
-  mPhaseSpace->Branch("X", &(mInteractionPosition[0]),"X/F");
-  mPhaseSpace->Branch("Y", &(mInteractionPosition[1]),"Y/F");
-  mPhaseSpace->Branch("Z", &(mInteractionPosition[2]),"Z/F");
-  mPhaseSpace->Branch("dX", &(mInteractionDirection[0]),"dX/F");
-  mPhaseSpace->Branch("dY", &(mInteractionDirection[1]),"dY/F");
-  mPhaseSpace->Branch("dZ", &(mInteractionDirection[2]),"dZ/F");
+  mPhaseSpace->Branch("Ekine",  &mInteractionEnergy,"Ekine/D");
+  mPhaseSpace->Branch("Weight", &mInteractionWeight,"Weight/D");
+  mPhaseSpace->Branch("X", &(mInteractionPosition[0]),"X/D");
+  mPhaseSpace->Branch("Y", &(mInteractionPosition[1]),"Y/D");
+  mPhaseSpace->Branch("Z", &(mInteractionPosition[2]),"Z/D");
+  mPhaseSpace->Branch("dX", &(mInteractionDirection[0]),"dX/D");
+  mPhaseSpace->Branch("dY", &(mInteractionDirection[1]),"dY/D");
+  mPhaseSpace->Branch("dZ", &(mInteractionDirection[2]),"dZ/D");
   mPhaseSpace->Branch("ProductionVolume", mInteractionProductionVolume,"ProductionVolume/C");
   mPhaseSpace->Branch("TrackID",&mInteractionTrackId,"TrackID/I");
   mPhaseSpace->Branch("EventID",&mInteractionEventId,"EventID/I");
   mPhaseSpace->Branch("RunID",&mInteractionRunId,"RunID/I");
   mPhaseSpace->Branch("ProductionProcessTrack", mInteractionProductionProcessTrack,"ProductionProcessTrack/C");
   mPhaseSpace->Branch("ProductionProcessStep", mInteractionProductionProcessStep,"ProductionProcessStep/C");
-  mPhaseSpace->Branch("TotalContribution", &mInteractionTotalContribution,"TotalContribution/F");
+  mPhaseSpace->Branch("TotalContribution", &mInteractionTotalContribution,"TotalContribution/D");
 }
 //-----------------------------------------------------------------------------
 
