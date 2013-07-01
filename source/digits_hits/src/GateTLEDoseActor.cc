@@ -26,7 +26,7 @@ GateTLEDoseActor::GateTLEDoseActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
   mCurrentEvent=-1;
   pMessenger = new GateTLEDoseActorMessenger(this);
-  mMaterialHandler = new GateMaterialMuHandler(100);
+  mMaterialHandler = GateMaterialMuHandler::GetInstance();
   mIsEdepImageEnabled = false;
   mIsDoseUncertaintyImageEnabled = false;
   mIsLastHitEventImageEnabled = false;

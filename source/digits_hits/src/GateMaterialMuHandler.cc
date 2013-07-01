@@ -16,10 +16,15 @@
 using std::map;
 using std::string;
 
-GateMaterialMuHandler::GateMaterialMuHandler(int /*nbOfElements*/)
+//-----------------------------------------------------------------------------
+GateMaterialMuHandler *GateMaterialMuHandler::singleton_MaterialMuHandler = 0;
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+GateMaterialMuHandler::GateMaterialMuHandler()
 {
-//   mElementsTable = new GateMuTable*[nbOfElements+1];
-//   mNbOfElements = nbOfElements;
+  mNbOfElements = 100;
+  mElementsTable = new GateMuTable*[mNbOfElements+1];
   isInitialized = false;
 //   InitElementTable();
 }
@@ -28,7 +33,7 @@ GateMaterialMuHandler::GateMaterialMuHandler(int /*nbOfElements*/)
 //-----------------------------------------------------------------------------
 GateMaterialMuHandler::~GateMaterialMuHandler()
 {
-//   delete[] mElementsTable;
+  delete[] mElementsTable;
 }
 //-----------------------------------------------------------------------------
 

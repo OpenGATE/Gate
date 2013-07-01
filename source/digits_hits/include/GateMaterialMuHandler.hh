@@ -28,22 +28,35 @@ class GateMaterialMuHandler
 {
 
 public:
-  GateMaterialMuHandler(int nbOfElements);
+  
+  static GateMaterialMuHandler *GetInstance()
+  {   
+    if (singleton_MaterialMuHandler == 0)
+    {
+      singleton_MaterialMuHandler = new GateMaterialMuHandler();
+    }
+    return singleton_MaterialMuHandler;
+  };
+  
+  
   ~GateMaterialMuHandler();
-  void AddMaterial(G4Material* material);
   double GetAttenuation(G4Material* material, double energy);
   double GetMu(G4Material* material, double energy);
-
-  void InitMaterialTable();
   
 private:
+  
+  GateMaterialMuHandler();  
+  void AddMaterial(G4Material* material);
+  void ReadElementFile(int z);
+  void InitElementTable();
+  void InitMaterialTable();
+  
   map<G4String, GateMuTable*> mMaterialTable;
   GateMuTable** mElementsTable;
   int mNbOfElements;
   bool isInitialized;
   
-  void ReadElementFile(int z);
-  void InitElementTable();
+  static GateMaterialMuHandler *singleton_MaterialMuHandler;
   
 };
 
