@@ -123,6 +123,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   }
   mSource = sm->GetSource(0);
     // Checks. FIXME: check on rot1 and rot2 would be required
+  DD(mSource->GetAngDist()->GetDistType());
   if(mSource->GetAngDist()->GetDistType() != "focused")
     GateError("Forced detection only supports point or focused sources.");
   if(mSource->GetPosDist()->GetPosDisType() != "Plane")
@@ -358,7 +359,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       mRayleighProjector->SetGeometry( oneProjGeometry.GetPointer() );
       mRayleighProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mSingleInteractionEnergy,
                                                                                mSingleInteractionZ,
-                                                                               1. );
+                                                                               mEnergyResponseDetector(mSingleInteractionEnergy) );
       mRayleighProjector->GetProjectedValueAccumulation().SetDirection( direction );
       TRY_AND_EXIT_ON_ITK_EXCEPTION(mRayleighProjector->Update());
       mSingleInteractionImage = mRayleighProjector->GetOutput();
@@ -375,7 +376,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       mFluorescenceProjector->SetInput(mRayleighImage);
       mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
       mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndWeight( mSingleInteractionEnergy,
-                                                                                   1. );
+                                                                                  mEnergyResponseDetector(mSingleInteractionEnergy) );
       TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
       mSingleInteractionImage = mFluorescenceProjector->GetOutput();
       mSingleInteractionImage->DisconnectPipeline();
@@ -500,6 +501,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
   }
   else if(process->GetProcessName() == G4String("RayleighScattering") || process->GetProcessName() == G4String("Rayl")) {
     mRayleighProbe.Start();
+    mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
     GeometryType::Pointer oneProjGeometry = GeometryType::New();
     oneProjGeometry->AddReg23Projection(point,
                                         mDetectorPosition,
@@ -544,7 +546,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
 
         // Update direction and energy for secondary photon
         mInteractionEnergy = (*list)[i]->GetKineticEnergy();
-        mInteractionWeight = (*list)[i]->GetWeight();
+        mInteractionWeight = ((*list)[i]->GetWeight())*mEnergyResponseDetector(mInteractionEnergy);
         for(unsigned int j=0; j<3; j++)
           directionSecondary[j] = (*list)[i]->GetMomentumDirection()[j];
         mFluorescenceProbe.Start();
