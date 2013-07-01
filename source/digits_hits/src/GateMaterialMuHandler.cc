@@ -340,7 +340,6 @@ void GateMaterialMuHandler::InitMaterialTable()
 	for(int i=0; i<shotNumber; i++)
 	{
 	  double trialFluoEnergy;
-	  int fluoGammaNumber;
 	  
 	  // photoElectric shots to get the mean fluorescence photon energy
 	  if(photoElectricModel)
@@ -349,17 +348,11 @@ void GateMaterialMuHandler::InitMaterialTable()
 	    photoElectricModel->SampleSecondaries(&secondaries,couple,&primary,0.,0.);
 // 	    GateMessage("MuHandler",0,"    shot " << i+1 << " composed with " << secondaries.size() << " particle(s)" << G4endl);
 	    trialFluoEnergy = 0.;
-	    fluoGammaNumber = 0;
-	    for(unsigned s=0; s<secondaries.size(); s++)
-	    {
+	    for(unsigned s=0; s<secondaries.size(); s++) {
 // 	      GateMessage("MuHandler",0,"      " << secondaries[s]->GetParticleDefinition()->GetParticleName() << " of " << secondaries[s]->GetKineticEnergy() << " MeV" << G4endl);
-	      if(secondaries[s]->GetParticleDefinition()->GetParticleName() == "gamma")
-	      {
-		trialFluoEnergy += secondaries[s]->GetKineticEnergy();
-		fluoGammaNumber++;
-	      }
+	      if(secondaries[s]->GetParticleDefinition()->GetParticleName() == "gamma") { trialFluoEnergy += secondaries[s]->GetKineticEnergy(); }
 	    }
-	    if(fluoGammaNumber) { totalFluoEnergyPhotoElectric += (trialFluoEnergy / (double)fluoGammaNumber); }
+	    totalFluoEnergyPhotoElectric += trialFluoEnergy;
 // 	    GateMessage("MuHandler",0,"      meanFluoEnergy = " << (trialFluoEnergyPhotoElectric / (double)fluoGammaNumber) << " MeV" << G4endl);
 	  }
 
@@ -370,17 +363,11 @@ void GateMaterialMuHandler::InitMaterialTable()
 	    comptonModel->SampleSecondaries(&secondaries,couple,&primary,0.,0.);
 // 	    GateMessage("MuHandler",0,"    shot " << i+1 << " composed with " << secondaries.size() << " particle(s)" << G4endl);
 	    trialFluoEnergy = 0.;
-	    fluoGammaNumber = 0;
-	    for(unsigned s=0; s<secondaries.size(); s++)
-	    {
+	    for(unsigned s=0; s<secondaries.size(); s++) {
 // 	      GateMessage("MuHandler",0,"      " << secondaries[s]->GetParticleDefinition()->GetParticleName() << " of " << secondaries[s]->GetKineticEnergy() << " MeV" << G4endl);
-	      if(secondaries[s]->GetParticleDefinition()->GetParticleName() == "gamma")
-	      {
-		trialFluoEnergy += secondaries[s]->GetKineticEnergy();
-		fluoGammaNumber++;
-	      }
+	      if(secondaries[s]->GetParticleDefinition()->GetParticleName() == "gamma") { trialFluoEnergy += secondaries[s]->GetKineticEnergy(); }
 	    }
-	    if(fluoGammaNumber) { totalFluoEnergyCompton += (trialFluoEnergy / (double)fluoGammaNumber); }
+	    totalFluoEnergyCompton += trialFluoEnergy;
 	    totalScatterEnergyCompton += particleChangeCompton->GetProposedKineticEnergy();
 	    
 // 	    GateMessage("MuHandler",0,"      incidentEnergy = " << incidentEnergy << " scatterEnergy = " << particleChangeCompton->GetProposedKineticEnergy() << G4endl);
