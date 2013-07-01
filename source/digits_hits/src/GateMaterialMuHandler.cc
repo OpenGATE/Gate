@@ -251,6 +251,7 @@ void GateMaterialMuHandler::InitMaterialTable()
   G4DynamicParticle primary(gamma,G4ThreeVector(1.,0.,0.));
   std::vector<G4DynamicParticle *> secondaries; 
   double incidentEnergy;
+  double deltaEnergy = 50.0 * eV;
   
   // - (mu ; muen) calculations 
   map<G4String, GateMuTable*>::iterator it;
@@ -266,8 +267,12 @@ void GateMaterialMuHandler::InitMaterialTable()
   double muen;
   
   // - loops options
-  double energyStep = 1. * keV;
-  int energyNumber = 100;
+  double energyMin = 250. * eV;
+  double energyMax = 1. * MeV;
+  int energyNumber = 25;
+  double energyStep = exp( (log(energyMax) - log(energyMin)) / double(energyNumber) );
+  std::vector<double> energyList;
+
   int shotNumber = 10000;
   
   // Loop on material
@@ -280,15 +285,48 @@ void GateMaterialMuHandler::InitMaterialTable()
     if(it == mMaterialTable.end())
     {
       GateMessage("MuHandler",0,"Construction of material : " << materialName << G4endl);
+
+      // construct energyList
+      energyList.clear();
+
+      // - basic list
+      energyList.push_back(energyMin);
+      for(int e = 0; e<energyNumber; e++) { energyList.push_back(energyList[e] * energyStep); }
       
-      GateMuTable *table = new GateMuTable(materialName, energyNumber);
+      // - add atomic shell energies
+      int elementNumber = material->GetNumberOfElements();
+      for(int i = 0; i < elementNumber; i++)
+      {
+	const G4Element *element = material->GetElement(i);
+	for(int j=0; j<material->GetElement(i)->GetNbOfAtomicShells(); j++)
+	{
+	  double atomicShellEnergy = element->GetAtomicShell(j);
+	  if(atomicShellEnergy > energyMin)
+	  {
+	    energyList.push_back(atomicShellEnergy - deltaEnergy);
+	    energyList.push_back(atomicShellEnergy + deltaEnergy);
+	  }
+	}
+      }
+      std::sort(energyList.begin(), energyList.end());
+      
+
+//       for(unsigned int e = 0; e<energyList.size(); e++)
+//       {
+// 	DD(energyList[e]);
+//       }
+      
+      
+      GateMuTable *table = new GateMuTable(materialName, energyList.size());
+      
+      
       
       // Loop on energy
-      for(int e = 1; e<(energyNumber+1); e++)
+      for(unsigned int e=0; e<energyList.size(); e++)
       {
 // 	GateMessage("MuHandler",0,"  energy = " << e*energyStep << " MeV" << G4endl);
 
-	incidentEnergy = e*energyStep;
+	incidentEnergy = energyList[e];
 	primary.SetKineticEnergy(incidentEnergy);
 
 	crossSectionPhotoElectric = 0.;
@@ -355,7 +393,7 @@ void GateMaterialMuHandler::InitMaterialTable()
 	totalScatterEnergyCompton = totalScatterEnergyCompton / (double)shotNumber;
 	
 	// Cross section calculation
-	double density = material->GetDensity() / (g/cm3); 
+	double density = material->GetDensity() / (g/cm3);
 	double energyCutForGamma = productionCutList->ConvertRangeToEnergy(gamma,material,couple->GetProductionCuts()->GetProductionCut("gamma"));
 	if(photoElectricModel) {
 	  crossSectionPhotoElectric = photoElectricModel->CrossSectionPerVolume(material,gamma,incidentEnergy,energyCutForGamma,10.) * cm / density;
@@ -380,6 +418,7 @@ void GateMaterialMuHandler::InitMaterialTable()
 // 	GateMessage("MuHandler",0,"     fPE = " << fPhotoElectric               << "    fCo = " << fCompton << G4endl);
 // 	GateMessage("MuHandler",0,"     cut = " << energyCutForGamma            << G4endl);
 // 	GateMessage("MuHandler",0,"      mu = " << mu << " muen = " << muen << " cm2.g-1" << G4endl);
+	GateMessage("MuHandler",0," " << incidentEnergy << " " << mu << " " << muen << " " << G4endl);
 
 	table->PutValue(e, incidentEnergy, mu, muen);
 
