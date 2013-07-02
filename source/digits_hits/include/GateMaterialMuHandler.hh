@@ -43,18 +43,38 @@ public:
   double GetAttenuation(G4Material* material, double energy);
   double GetMu(G4Material* material, double energy);
   
+  void SetElementsFolderName(G4String folder) { mElementsFolderName = folder; }
+  void SetEMin(double e) { mEnergyMin = e; }
+  void SetEMax(double e) { mEnergyMax = e; }
+  void SetENumber(int n) { mEnergyNumber = n; }
+  void SetAtomicShellEMin(double e) { mAtomicShellEnergyMin = e; }
+  void SetShotNumber(int n) { mShotNumber = n; }
+  
 private:
   
-  GateMaterialMuHandler();  
-  void AddMaterial(G4Material* material);
-  void ReadElementFile(int z);
+  GateMaterialMuHandler();
+  
+  // Initialization
+  void Initialize();
+  // - Precalculated coefficients (by element)
   void InitElementTable();
-  void InitMaterialTable();
+  void ReadElementFile(int z);
+  void ConstructMaterial(const G4Material *material);
+  // - Complete simulation of coefficients
+  void SimulateMaterialTable();
   
   map<G4String, GateMuTable*> mMaterialTable;
   GateMuTable** mElementsTable;
   int mNbOfElements;
-  bool isInitialized;
+  G4String mElementsFolderName;
+
+  bool mIsInitialized;
+  double mEnergyMin;
+  double mEnergyMax;
+  int mEnergyNumber;
+  double mAtomicShellEnergyMin;
+  int mShotNumber;
+  
   
   static GateMaterialMuHandler *singleton_MaterialMuHandler;
   

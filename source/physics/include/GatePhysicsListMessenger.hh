@@ -26,6 +26,8 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 
+#include "GateMaterialMuHandler.hh"
+
 class GatePhysicsList;
 
 class GatePhysicsListMessenger:public G4UImessenger
@@ -70,11 +72,20 @@ protected:
   G4UIcmdWithADoubleAndUnit * pSetEMax;
   G4UIcmdWithABool * pSetSplineFlag;
 
-    
+  // Mu Handler tools
+  G4UIcmdWithAString * pMuHandlerUsePrecalculatedElements;
+  G4UIcmdWithADoubleAndUnit * pMuHandlerSetEMin;
+  G4UIcmdWithADoubleAndUnit * pMuHandlerSetEMax;
+  G4UIcmdWithAnInteger * pMuHandlerSetENumber;
+  G4UIcmdWithADoubleAndUnit * pMuHandlerSetAtomicShellEMin;
+  G4UIcmdWithADoubleAndUnit * pMuHandlerSetAtomicShellTolerance;
+  G4UIcmdWithAnInteger * pMuHandlerSetShotNumber;
+  
 
 private:
   int nInit;
   int nEMStdOpt;
+  GateMaterialMuHandler *nMuHandler;
 }; 
 
 #endif /* end #define GATEPHYSICSLISTMESSENGER_HH */
