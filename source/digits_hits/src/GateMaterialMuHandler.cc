@@ -133,7 +133,7 @@ void GateMaterialMuHandler::AddMaterial(G4Material* material)
   GateMuTable * table = new GateMuTable(material->GetName(), nb_e);
   
   for(int i = 0; i < nb_e; i++){
-    table->PutValue(i, energies[i], Mu[i], MuEn[i]);
+    table->PutValue(i, log(energies[i]), log(Mu[i]), log(MuEn[i]));
   }
   
   mMaterialTable.insert(std::pair<G4String, GateMuTable*>(material->GetName(),table));
@@ -412,7 +412,7 @@ void GateMaterialMuHandler::InitMaterialTable()
 // 	GateMessage("MuHandler",0,"      mu = " << mu << " muen = " << muen << " cm2.g-1" << G4endl);
 	GateMessage("MuHandler",0," " << incidentEnergy << " " << mu << " " << muen << " " << G4endl);
 
-	table->PutValue(e, incidentEnergy, mu, muen);
+	table->PutValue(e, log(incidentEnergy), log(mu), log(muen));
 
 // 	GateMessage("MuHandler",0," " << G4endl);
       }
