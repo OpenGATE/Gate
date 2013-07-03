@@ -17,10 +17,17 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEMATERIALMUHANDLER_HH
 #define GATEMATERIALMUHANDLER_HH
 
-#include "G4UnitsTable.hh"
 #include "GateMuTables.hh"
+#include "GatePhysicsList.hh"
+
+#include "G4UnitsTable.hh"
 #include "G4Material.hh"
+#include "G4ParticleTable.hh"
+#include "G4LossTableManager.hh"
+
 #include <map>
+
+
 using std::map;
 using std::string;
 
@@ -62,6 +69,8 @@ private:
   void ConstructMaterial(const G4Material *material);
   // - Complete simulation of coefficients
   void SimulateMaterialTable();
+  double ProcessOneShot(G4VEmModel *,std::vector<G4DynamicParticle*> *, const G4MaterialCutsCouple *, const G4DynamicParticle *);
+  double SquaredSigmaOnMean(double , double , double);
   
   map<G4String, GateMuTable*> mMaterialTable;
   GateMuTable** mElementsTable;

@@ -10,10 +10,6 @@
 #include <fstream>
 #include <map>
 
-#include "G4ParticleTable.hh"
-#include "G4LossTableManager.hh"
-#include "GatePhysicsList.hh"
-
 using std::map;
 using std::string;
 
@@ -308,22 +304,18 @@ void GateMaterialMuHandler::SimulateMaterialTable()
   double crossSectionRS;
   double fPE;
   double fCS;
-  double mu;
-  double muen;
+  double mu(0.);
+  double muen(0.);
   
   // - muen uncertainty
   double squaredFluoPE;    // sum of squared PE fluorescence energy measurement
   double squaredFluoCS;    // sum of squared CS fluorescence energy measurement
   double squaredScatterCS; // sum of squared CS scattered photon energy measurement
-  double meanFluoPE;       // PE mean fluorescence energy
-  double meanFluoCS;       // CS mean fluorescence energy
-  double meanScatterCS;    // CS mean scattered photon energy
-  double squaredSigmaFluoPE;    // squared mean PE fluorescence energy uncertainty
-  double squaredSigmaFluoCS;    // squared mean CS fluorescence energy uncertainty
-  double squaredSigmaScatterCS; // squared mean CS scattered photon energy uncertainty
+  int shotNumberPE;
+  int shotNumberCS;
   double squaredSigmaPE;        // squared PE uncertainty weighted by corresponding squared cross section
   double squaredSigmaCS;        // squared CS uncertainty weighted by corresponding squared cross section
-  double squaredSigmaMuen;      // squared muen uncertainty
+  double squaredSigmaMuen(0.);  // squared muen uncertainty
   
   
   // - loops options
@@ -381,120 +373,101 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 	crossSectionPE = 0.;
 	crossSectionCS = 0.;
 	crossSectionRS = 0.;
-	if(modelPE) {
-	  crossSectionPE = modelPE->CrossSectionPerVolume(material,gamma,incidentEnergy,energyCutForGamma,10.) * cm / density;
-	}
-	if(modelCS) {
-	  crossSectionCS = modelCS->CrossSectionPerVolume(material,gamma,incidentEnergy,energyCutForGamma,10.) * cm / density;
-	}
-	if(modelRS) {
-	  crossSectionRS = modelRS->CrossSectionPerVolume(material,gamma,incidentEnergy,energyCutForGamma,10.) * cm / density;
-	}
+	if(modelPE) { crossSectionPE = modelPE->CrossSectionPerVolume(material,gamma,incidentEnergy,energyCutForGamma,10.) * cm / density; }
+	if(modelCS) { crossSectionCS = modelCS->CrossSectionPerVolume(material,gamma,incidentEnergy,energyCutForGamma,10.) * cm / density; }
+	if(modelRS) { crossSectionRS = modelRS->CrossSectionPerVolume(material,gamma,incidentEnergy,energyCutForGamma,10.) * cm / density; }
 	
-	// uncertainty calculation
+	// muen and uncertainty calculation
 	squaredFluoPE = 0.;
 	squaredFluoCS = 0.;
 	squaredScatterCS = 0.;
-	meanFluoPE = 0.;
-	meanFluoCS = 0.;
-	meanScatterCS = 0.;
-
-	// muen calculation
 	totalFluoPE = 0.;
 	totalFluoCS = 0.;
 	totalScatterCS = 0.;
+	shotNumberPE = 0;
+	shotNumberCS = 0;
+	squaredSigmaPE = 0.;
+	squaredSigmaCS = 0.;
+	fPE = 0.;
+	fCS = 0.;
+	double trialFluoEnergy;
+	
+	double uncertainty = 1.0; // %
+	double tmp_uncertainty = 10e6;
+	int index = 0;
 
+	int variableShotNumberPE = 0;
+	if(modelPE and isFluoActive) { variableShotNumberPE = 50; }
+	
+	int variableShotNumberCS = 0;
+	if(modelCS) { variableShotNumberCS = 100 - variableShotNumberPE; }
+	
 	// Loop on shot
-	for(int i=0; i<mShotNumber; i++)
+	while(tmp_uncertainty > uncertainty)
+// 	for(int i=0; i<mShotNumber; i++)
 	{
-	  double trialFluoEnergy;
-	  
 	  // photoElectric shots to get the mean fluorescence photon energy
-	  if(modelPE and isFluoActive)
+	  for(int iPE = 0; iPE<variableShotNumberPE; iPE++)
 	  {
-	    secondaries.clear(); 
-	    modelPE->SampleSecondaries(&secondaries,couple,&primary,0.,0.);
-// 	    GateMessage("MuHandler",0,"    shot " << i+1 << " composed with " << secondaries.size() << " particle(s)" << G4endl);
-	    trialFluoEnergy = 0.;
-	    for(unsigned s=0; s<secondaries.size(); s++) {
-// 	      GateMessage("MuHandler",0,"      " << secondaries[s]->GetParticleDefinition()->GetParticleName() << " of " << secondaries[s]->GetKineticEnergy() << " MeV" << G4endl);
-	      if(secondaries[s]->GetParticleDefinition()->GetParticleName() == "gamma") { trialFluoEnergy += secondaries[s]->GetKineticEnergy(); }
-	    }
-	    totalFluoPE += trialFluoEnergy;
-
-	    squaredFluoPE += (trialFluoEnergy * trialFluoEnergy);
-	    meanFluoPE = totalFluoPE / double(i+1);
+	    trialFluoEnergy = ProcessOneShot(modelPE,&secondaries,couple,&primary);
+	    shotNumberPE++;
 	    
-// 	    GateMessage("MuHandler",0,"      meanFluoEnergy = " << (trialFluoEnergyPhotoElectric / (double)fluoGammaNumber) << " MeV" << G4endl);
+	    totalFluoPE += trialFluoEnergy;
+	    squaredFluoPE += (trialFluoEnergy * trialFluoEnergy);
 	  }
 
 	  // compton shots to get the mean fluorescence and scatter photon energy
-	  if(modelCS)
+	  for(int iCS = 0; iCS<variableShotNumberCS; iCS++)
 	  {
-	    secondaries.clear(); 
-	    modelCS->SampleSecondaries(&secondaries,couple,&primary,0.,0.);
-// 	    GateMessage("MuHandler",0,"    shot " << i+1 << " composed with " << secondaries.size() << " particle(s)" << G4endl);
+	    trialFluoEnergy = ProcessOneShot(modelCS,&secondaries,couple,&primary);
+	    shotNumberCS++;
 
-	    trialFluoEnergy = 0.;
-	    if(isFluoActive)
-	    {
-	      for(unsigned s=0; s<secondaries.size(); s++) {
-// 		GateMessage("MuHandler",0,"      " << secondaries[s]->GetParticleDefinition()->GetParticleName() << " of " << secondaries[s]->GetKineticEnergy() << " MeV" << G4endl);
-		if(secondaries[s]->GetParticleDefinition()->GetParticleName() == "gamma") { trialFluoEnergy += secondaries[s]->GetKineticEnergy(); }
-	      }
-	      totalFluoCS += trialFluoEnergy;
-	    }
+	    totalFluoCS += trialFluoEnergy;
+	    squaredFluoCS += (trialFluoEnergy * trialFluoEnergy);
 	    double trialScatterEnergy = particleChangeCS->GetProposedKineticEnergy();
 	    totalScatterCS += trialScatterEnergy;
-	    
-	    squaredFluoCS += (trialFluoEnergy * trialFluoEnergy);
-	    meanFluoCS = totalFluoCS / double(i+1);
 	    squaredScatterCS += (trialScatterEnergy * trialScatterEnergy);
-	    meanScatterCS = totalScatterCS / double(i+1);
+	  }
+	  
+	  // average fractions of the incident energy E that is transferred to kinetic energy of charged particles (for muen)
+	  if(shotNumberPE) {
+	    fPE = 1. - ((totalFluoPE / double(shotNumberPE)) / incidentEnergy);
+	    squaredSigmaPE = SquaredSigmaOnMean(squaredFluoPE,totalFluoPE,shotNumberPE) * crossSectionPE * crossSectionPE;
+	  }
+	  if(shotNumberCS) {
+	    fCS = 1. - (((totalScatterCS + totalFluoCS) / double(shotNumberCS)) / incidentEnergy);
+	    squaredSigmaCS = (SquaredSigmaOnMean(squaredFluoCS,totalFluoCS,shotNumberCS) + SquaredSigmaOnMean(squaredScatterCS,totalScatterCS,shotNumberCS)) * crossSectionCS * crossSectionCS;
 	  }
 
-// 	  double squaredSigmaFluoPE = (squaredFluoPE / double(i+1)) - (meanFluoPE * meanFluoPE);
-// 	  double squaredSigmaFluoCS = (squaredFluoCS / double(i+1)) - (meanFluoCS * meanFluoCS);
-// 	  double squaredSigmaScatterCS = (squaredScatterCS / double(i+1)) - (meanScatterCS * meanScatterCS);
-// 	  
-// 	  double squaredSigmaPE = squaredSigmaFluoPE * crossSectionPE * crossSectionPE;
-// 	  double squaredSigmaCS = (squaredFluoCS + squaredScatterCS) * crossSectionCS * crossSectionCS;
-// 
-// 	  if(i%100 == 0) GateMessage("MuHandler",0,"   sigPE = " << sqrt(squaredSigmaPE / double(i+1)) << "    sigCS = " << sqrt(squaredSigmaCS / double(i+1)) << G4endl);
+	  // mu/rho and muen/rho calculation
+	  mu   = crossSectionPE + crossSectionCS + crossSectionRS;
+	  muen = fPE * crossSectionPE + fCS * crossSectionCS;
+
+	  // uncertainty calculation
+	  squaredSigmaMuen = (squaredSigmaPE + squaredSigmaCS) / (incidentEnergy * incidentEnergy);
+	  tmp_uncertainty = sqrt(squaredSigmaMuen) * 100. / muen;
+
+	  if(modelPE and isFluoActive) { variableShotNumberPE = (int)floor(0.5 + 100. * sqrt(squaredSigmaPE / (squaredSigmaPE + squaredSigmaCS))); }
+	  if(modelCS) { variableShotNumberCS = 100 - variableShotNumberPE; }
+	  
+// 	  if(index%100 == 0)
+// 	  {
+// 	    GateMessage("MuHandler",0,"sigPE = " << sqrt(squaredSigmaPE) << " sigCS = " << sqrt(squaredSigmaCS) << " sigMuen = " << sqrt(squaredSigmaMuen) << " uncertainty = " << tmp_uncertainty << G4endl);
+// 	    GateMessage("MuHandler",0,"   nPE = " << variableShotNumberPE << " nCS = " << variableShotNumberCS << " nPEtot = " << shotNumberPE << " nCStot = " << shotNumberCS << G4endl);
+// 	  }
+
+	  index += 100;
 	}
 	
-	// Mean energy photon calculation
-	totalFluoPE = totalFluoPE / (double)mShotNumber;
-	totalFluoCS = totalFluoCS / (double)mShotNumber;
-	totalScatterCS = totalScatterCS / (double)mShotNumber;
 
-	// average fractions of the incident energy E that is transferred to kinetic energy of charged particles (for muen)
-	fPE = 1. - (totalFluoPE / incidentEnergy);
-	fCS = 1. - ((totalScatterCS + totalFluoCS) / incidentEnergy);
-	
-	// mu/rho and muen/rho calculation
-	mu   = crossSectionPE + crossSectionCS + crossSectionRS;
-	muen = fPE * crossSectionPE + fCS * crossSectionCS;
-
-	// uncertainty calculation
-	squaredSigmaFluoPE = ((squaredFluoPE / double(mShotNumber)) - (meanFluoPE * meanFluoPE))  / double(mShotNumber);
-	squaredSigmaFluoCS = ((squaredFluoCS / double(mShotNumber)) - (meanFluoCS * meanFluoCS))  / double(mShotNumber);
-	squaredSigmaScatterCS = ((squaredScatterCS / double(mShotNumber)) - (meanScatterCS * meanScatterCS)) / double(mShotNumber);
-	
-	squaredSigmaPE = squaredSigmaFluoPE * crossSectionPE * crossSectionPE;
-	squaredSigmaCS = (squaredSigmaFluoCS + squaredSigmaScatterCS) * crossSectionCS * crossSectionCS;
-	
-	squaredSigmaMuen = (squaredSigmaPE + squaredSigmaCS) / (incidentEnergy * incidentEnergy);
 	
 // 	GateMessage("MuHandler",0,"    csPE = " << crossSectionPE << "   csCo = " << crossSectionCS << " csRa = " << crossSectionRS << " cm2.g-1" << G4endl);
 // 	GateMessage("MuHandler",0,"  fluoPE = " << totalFluoPE    << " fluoCo = " << totalFluoCS    << " scCo = " << totalScatterCS << " MeV" << G4endl);
 // 	GateMessage("MuHandler",0,"     fPE = " << fPE            << "    fCo = " << fCS << G4endl);
-// 	GateMessage("MuHandler",0,"     cut = " << energyCutForGamma  << G4endl);
-// 	GateMessage("MuHandler",0,"  sigFPE = " << sqrt(squaredSigmaFluoPE) << "   sigFCS = " << sqrt(squaredFluoCS) << " sigSCS = " << sqrt(squaredScatterCS) << G4endl);
-// 	GateMessage("MuHandler",0,"   sigPE = " << sqrt(squaredSigmaPE) << "    sigCS = " << sqrt(squaredSigmaCS) << G4endl);
-// 	GateMessage("MuHandler",0,"    muen = " << muen << " +/- " << sqrt(squaredSigmaMuen) << " (" << sqrt(squaredSigmaMuen) * 100. / muen << " %)" << G4endl);
-// 	DD(isFluoActive);
-	GateMessage("MuHandler",0," " << incidentEnergy << " " << mu << " " << muen << " " << sqrt(squaredSigmaMuen) << " " << sqrt(squaredSigmaMuen) * 100. / muen << G4endl);
+// 	GateMessage("MuHandler",0,"     cut = " << energyCutForGamma << "    iPE = " << shotNumberPE << " iCS = " << shotNumberCS << G4endl);
+// 	GateMessage("MuHandler",0," " << incidentEnergy << " MeV - muen = " << muen << " +/- " << sqrt(squaredSigmaMuen) << " (" << tmp_uncertainty << " %)" << G4endl);
+// 	GateMessage("MuHandler",0,"   sigPE = " << sqrt(squaredSigmaPE) / incidentEnergy << "    sigCS = " << sqrt(squaredSigmaCS) / incidentEnergy << G4endl);
+		GateMessage("MuHandler",0," " << incidentEnergy << " " << mu << " " << muen << " " << sqrt(squaredSigmaMuen) << " " << tmp_uncertainty << G4endl);
 	table->PutValue(e, log(incidentEnergy), log(mu), log(muen));
 
 // 	GateMessage("MuHandler",0," " << G4endl);
@@ -507,5 +480,27 @@ void GateMaterialMuHandler::SimulateMaterialTable()
     }
   }
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+double GateMaterialMuHandler::ProcessOneShot(G4VEmModel *model,std::vector<G4DynamicParticle*> *secondaries, const G4MaterialCutsCouple *couple, const G4DynamicParticle *primary)
+{
+  secondaries->clear();
+  model->SampleSecondaries(secondaries,couple,primary,0.,0.);
+  double energy = 0.;
+  for(unsigned s=0; s<secondaries->size(); s++) {
+    if((*secondaries)[s]->GetParticleDefinition()->GetParticleName() == "gamma") { energy += (*secondaries)[s]->GetKineticEnergy(); }
+  }
+  
+  return energy;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+double GateMaterialMuHandler::SquaredSigmaOnMean(double sumOfSquaredMeasurement, double sumOfMeasurement, double numberOfMeasurement)
+{
+  sumOfMeasurement = sumOfMeasurement / numberOfMeasurement;
+  return ((sumOfSquaredMeasurement / numberOfMeasurement) - (sumOfMeasurement * sumOfMeasurement)) / numberOfMeasurement;
+}
+//-----------------------------------------------------------------------------
 #endif
