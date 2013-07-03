@@ -25,6 +25,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4UIcmdWithADouble.hh"
 
 #include "GateMaterialMuHandler.hh"
 
@@ -79,7 +80,7 @@ protected:
   G4UIcmdWithAnInteger * pMuHandlerSetENumber;
   G4UIcmdWithADoubleAndUnit * pMuHandlerSetAtomicShellEMin;
   G4UIcmdWithADoubleAndUnit * pMuHandlerSetAtomicShellTolerance;
-  G4UIcmdWithAnInteger * pMuHandlerSetShotNumber;
+  G4UIcmdWithADouble * pMuHandlerSetPrecision;
   
 
 private:

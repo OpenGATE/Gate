@@ -20,10 +20,6 @@ GateMaterialMuHandler *GateMaterialMuHandler::singleton_MaterialMuHandler = 0;
 //-----------------------------------------------------------------------------
 GateMaterialMuHandler::GateMaterialMuHandler()
 {
-  mNbOfElements = 100;
-  mElementsTable = new GateMuTable*[mNbOfElements+1];
-//   InitElementTable();
-  
   mIsInitialized = false;  
   mNbOfElements = -1;
   mElementsTable = 0;
@@ -32,7 +28,7 @@ GateMaterialMuHandler::GateMaterialMuHandler()
   mEnergyMax = 1. * MeV;
   mEnergyNumber = 25;
   mAtomicShellEnergyMin = 1. * keV;
-  mShotNumber = 10000;
+  mPrecision = 0.01;
 }
 //-----------------------------------------------------------------------------
 
@@ -391,9 +387,8 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 	fPE = 0.;
 	fCS = 0.;
 	double trialFluoEnergy;
-	
-	double uncertainty = 1.0; // %
-	double tmp_uncertainty = 10e6;
+
+	double precision = 10e6;
 	int index = 0;
 
 	int variableShotNumberPE = 0;
@@ -403,8 +398,7 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 	if(modelCS) { variableShotNumberCS = 100 - variableShotNumberPE; }
 	
 	// Loop on shot
-	while(tmp_uncertainty > uncertainty)
-// 	for(int i=0; i<mShotNumber; i++)
+	while(precision > mPrecision)
 	{
 	  // photoElectric shots to get the mean fluorescence photon energy
 	  for(int iPE = 0; iPE<variableShotNumberPE; iPE++)
@@ -445,7 +439,7 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 
 	  // uncertainty calculation
 	  squaredSigmaMuen = (squaredSigmaPE + squaredSigmaCS) / (incidentEnergy * incidentEnergy);
-	  tmp_uncertainty = sqrt(squaredSigmaMuen) * 100. / muen;
+	  precision = sqrt(squaredSigmaMuen) / muen;
 
 	  if(modelPE and isFluoActive) { variableShotNumberPE = (int)floor(0.5 + 100. * sqrt(squaredSigmaPE / (squaredSigmaPE + squaredSigmaCS))); }
 	  if(modelCS) { variableShotNumberCS = 100 - variableShotNumberPE; }
@@ -465,9 +459,9 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 // 	GateMessage("MuHandler",0,"  fluoPE = " << totalFluoPE    << " fluoCo = " << totalFluoCS    << " scCo = " << totalScatterCS << " MeV" << G4endl);
 // 	GateMessage("MuHandler",0,"     fPE = " << fPE            << "    fCo = " << fCS << G4endl);
 // 	GateMessage("MuHandler",0,"     cut = " << energyCutForGamma << "    iPE = " << shotNumberPE << " iCS = " << shotNumberCS << G4endl);
-// 	GateMessage("MuHandler",0," " << incidentEnergy << " MeV - muen = " << muen << " +/- " << sqrt(squaredSigmaMuen) << " (" << tmp_uncertainty << " %)" << G4endl);
+// 	GateMessage("MuHandler",0," " << incidentEnergy << " MeV - muen = " << muen << " +/- " << sqrt(squaredSigmaMuen) << " (" << precision * 100. << " %)" << G4endl);
 // 	GateMessage("MuHandler",0,"   sigPE = " << sqrt(squaredSigmaPE) / incidentEnergy << "    sigCS = " << sqrt(squaredSigmaCS) / incidentEnergy << G4endl);
-		GateMessage("MuHandler",0," " << incidentEnergy << " " << mu << " " << muen << " " << sqrt(squaredSigmaMuen) << " " << tmp_uncertainty << G4endl);
+		GateMessage("MuHandler",0," " << incidentEnergy << " " << mu << " " << muen << " " << sqrt(squaredSigmaMuen) << " " << precision << G4endl);
 	table->PutValue(e, log(incidentEnergy), log(mu), log(muen));
 
 // 	GateMessage("MuHandler",0," " << G4endl);

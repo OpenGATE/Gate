@@ -55,7 +55,7 @@ public:
   void SetEMax(double e) { mEnergyMax = e; }
   void SetENumber(int n) { mEnergyNumber = n; }
   void SetAtomicShellEMin(double e) { mAtomicShellEnergyMin = e; }
-  void SetShotNumber(int n) { mShotNumber = n; }
+  void SetPrecision(double p) { mPrecision = p; }
   
 private:
   
@@ -82,8 +82,7 @@ private:
   double mEnergyMax;
   int mEnergyNumber;
   double mAtomicShellEnergyMin;
-  int mShotNumber;
-  
+  double mPrecision;
   
   static GateMaterialMuHandler *singleton_MaterialMuHandler;
   

@@ -63,7 +63,7 @@ GatePhysicsListMessenger::~GatePhysicsListMessenger()
   delete pMuHandlerSetEMax;
   delete pMuHandlerSetENumber;
   delete pMuHandlerSetAtomicShellEMin;
-  delete pMuHandlerSetShotNumber;
+  delete pMuHandlerSetPrecision;
 }
 //----------------------------------------------------------------------------------------
 
@@ -211,10 +211,10 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   guidance = "Set atomic shell minimal energy";
   pMuHandlerSetAtomicShellEMin->SetGuidance(guidance);
   
-  bb = base+"/MuHandler/setShotNumber";
-  pMuHandlerSetShotNumber = new G4UIcmdWithAnInteger(bb,this);
-  guidance = "Set number of shot for each energy";
-  pMuHandlerSetShotNumber->SetGuidance(guidance);
+  bb = base+"/MuHandler/setPrecision";
+  pMuHandlerSetPrecision = new G4UIcmdWithADouble(bb,this);
+  guidance = "Set precision to be reached in %";
+  pMuHandlerSetPrecision->SetGuidance(guidance);
 }
 //----------------------------------------------------------------------------------------
 
@@ -352,10 +352,10 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
     nMuHandler->SetAtomicShellEMin(val);
     GateMessage("Physic", 1, "(MuHandler Options) Min Energy for atomic shell set to "<<G4BestUnit(val,"Energy")<<". MinEnergy defaut Value: 250 eV."<<G4endl);
   }
-  if(command == pMuHandlerSetShotNumber){
-    int nbVal = pMuHandlerSetShotNumber->GetNewIntValue(param);
-    nMuHandler->SetShotNumber(nbVal);
-    GateMessage("Physic", 1, "(MuHandler Options) ShotNumber set to "<<nbVal<<" values. ShotNumber defaut Value: 10000."<<G4endl);
+  if(command == pMuHandlerSetPrecision){
+    double val = pMuHandlerSetPrecision->GetNewDoubleValue(param);
+    nMuHandler->SetPrecision(val);
+    GateMessage("Physic", 1, "(MuHandler Options) Precision set to "<<val<<". Precision defaut Value: 0.01"<<G4endl);
   }
 }
 //----------------------------------------------------------------------------------------
