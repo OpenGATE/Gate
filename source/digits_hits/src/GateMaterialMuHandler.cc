@@ -384,8 +384,8 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 	shotNumberCS = 0;
 	squaredSigmaPE = 0.;
 	squaredSigmaCS = 0.;
-	fPE = 0.;
-	fCS = 0.;
+	fPE = 1.;
+	fCS = 1.;
 	double trialFluoEnergy;
 
 	double precision = 10e6;
@@ -393,7 +393,7 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 
 	int variableShotNumberPE = 0;
 	if(modelPE and isFluoActive) { variableShotNumberPE = 50; }
-	
+
 	int variableShotNumberCS = 0;
 	if(modelCS) { variableShotNumberCS = 100 - variableShotNumberPE; }
 	
@@ -441,12 +441,14 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 	  squaredSigmaMuen = (squaredSigmaPE + squaredSigmaCS) / (incidentEnergy * incidentEnergy);
 	  precision = sqrt(squaredSigmaMuen) / muen;
 
-	  if(modelPE and isFluoActive) { variableShotNumberPE = (int)floor(0.5 + 100. * sqrt(squaredSigmaPE / (squaredSigmaPE + squaredSigmaCS))); }
+	  if(modelPE and isFluoActive) {
+	    if(squaredSigmaPE > 0) { variableShotNumberPE = (int)floor(0.5 + 100. * sqrt(squaredSigmaPE / (squaredSigmaPE + squaredSigmaCS))); }
+	    else { variableShotNumberPE = 50.; }
+	  }
 	  if(modelCS) { variableShotNumberCS = 100 - variableShotNumberPE; }
-	  
 // 	  if(index%100 == 0)
 // 	  {
-// 	    GateMessage("MuHandler",0,"sigPE = " << sqrt(squaredSigmaPE) << " sigCS = " << sqrt(squaredSigmaCS) << " sigMuen = " << sqrt(squaredSigmaMuen) << " uncertainty = " << tmp_uncertainty << G4endl);
+// 	    GateMessage("MuHandler",0,"sigPE = " << sqrt(squaredSigmaPE) << " sigCS = " << sqrt(squaredSigmaCS) << " sigMuen = " << sqrt(squaredSigmaMuen) << " precision = " << precision << G4endl);
 // 	    GateMessage("MuHandler",0,"   nPE = " << variableShotNumberPE << " nCS = " << variableShotNumberCS << " nPEtot = " << shotNumberPE << " nCStot = " << shotNumberCS << G4endl);
 // 	  }
 
@@ -460,8 +462,9 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 // 	GateMessage("MuHandler",0,"     fPE = " << fPE            << "    fCo = " << fCS << G4endl);
 // 	GateMessage("MuHandler",0,"     cut = " << energyCutForGamma << "    iPE = " << shotNumberPE << " iCS = " << shotNumberCS << G4endl);
 // 	GateMessage("MuHandler",0," " << incidentEnergy << " MeV - muen = " << muen << " +/- " << sqrt(squaredSigmaMuen) << " (" << precision * 100. << " %)" << G4endl);
-// 	GateMessage("MuHandler",0,"   sigPE = " << sqrt(squaredSigmaPE) / incidentEnergy << "    sigCS = " << sqrt(squaredSigmaCS) / incidentEnergy << G4endl);
-		GateMessage("MuHandler",0," " << incidentEnergy << " " << mu << " " << muen << " " << sqrt(squaredSigmaMuen) << " " << precision << G4endl);
+// 	GateMessage("MuHandler",0,"   sigPE = " << sqrt(squaredSigmaPE) << "    sigCS = " << sqrt(squaredSigmaCS) << G4endl);
+	GateMessage("MuHandler",0," " << incidentEnergy << " " << mu << " " << muen << " " << sqrt(squaredSigmaMuen) << " " << precision << G4endl);
+// 	GateMessage("MuHandler",0,"   nPE = " << variableShotNumberPE << " nCS = " << variableShotNumberCS << " nPEtot = " << shotNumberPE << " nCStot = " << shotNumberCS << G4endl);
 	table->PutValue(e, log(incidentEnergy), log(mu), log(muen));
 
 // 	GateMessage("MuHandler",0," " << G4endl);
@@ -497,4 +500,5 @@ double GateMaterialMuHandler::SquaredSigmaOnMean(double sumOfSquaredMeasurement,
   return ((sumOfSquaredMeasurement / numberOfMeasurement) - (sumOfMeasurement * sumOfMeasurement)) / numberOfMeasurement;
 }
 //-----------------------------------------------------------------------------
+
 #endif
