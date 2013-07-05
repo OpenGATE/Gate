@@ -17,10 +17,17 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEMATERIALMUHANDLER_HH
 #define GATEMATERIALMUHANDLER_HH
 
-#include "G4UnitsTable.hh"
 #include "GateMuTables.hh"
+#include "GatePhysicsList.hh"
+
+#include "G4UnitsTable.hh"
 #include "G4Material.hh"
+#include "G4ParticleTable.hh"
+#include "G4LossTableManager.hh"
+
 #include <map>
+
+
 using std::map;
 using std::string;
 
@@ -43,18 +50,39 @@ public:
   double GetAttenuation(G4Material* material, double energy);
   double GetMu(G4Material* material, double energy);
   
+  void SetElementsFolderName(G4String folder) { mElementsFolderName = folder; }
+  void SetEMin(double e) { mEnergyMin = e; }
+  void SetEMax(double e) { mEnergyMax = e; }
+  void SetENumber(int n) { mEnergyNumber = n; }
+  void SetAtomicShellEMin(double e) { mAtomicShellEnergyMin = e; }
+  void SetPrecision(double p) { mPrecision = p; }
+  
 private:
   
-  GateMaterialMuHandler();  
-  void AddMaterial(G4Material* material);
-  void ReadElementFile(int z);
+  GateMaterialMuHandler();
+  
+  // Initialization
+  void Initialize();
+  // - Precalculated coefficients (by element)
   void InitElementTable();
-  void InitMaterialTable();
+  void ReadElementFile(int z);
+  void ConstructMaterial(const G4Material *material);
+  // - Complete simulation of coefficients
+  void SimulateMaterialTable();
+  double ProcessOneShot(G4VEmModel *,std::vector<G4DynamicParticle*> *, const G4MaterialCutsCouple *, const G4DynamicParticle *);
+  double SquaredSigmaOnMean(double , double , double);
   
   map<G4String, GateMuTable*> mMaterialTable;
   GateMuTable** mElementsTable;
   int mNbOfElements;
-  bool isInitialized;
+  G4String mElementsFolderName;
+
+  bool mIsInitialized;
+  double mEnergyMin;
+  double mEnergyMax;
+  int mEnergyNumber;
+  double mAtomicShellEnergyMin;
+  double mPrecision;
   
   static GateMaterialMuHandler *singleton_MaterialMuHandler;
   
