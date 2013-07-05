@@ -85,7 +85,7 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
   const G4VEmProcess *process = dynamic_cast<const G4VEmProcess*>(pr);
   if(!process) return;
 
-  unsigned int order = 0;
+  // unsigned int order = 0;
 
   if(process->GetProcessName() == G4String("Compton")) {
 
@@ -93,7 +93,7 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
     if(scatterTracking!=NULL)
     {
       scatterTracking->IncrementScatterOrder(step->GetTrack());
-      order = scatterTracking->GetScatterOrder();
+      // order = scatterTracking->GetScatterOrder();
     }
 
     //G4cout << ", Order of Compton " << order << G4endl;
@@ -105,7 +105,7 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
     if(scatterTracking!=NULL)
     {
       scatterTracking->IncrementScatterOrder(step->GetTrack());
-      order = scatterTracking->GetScatterOrder();
+      // order = scatterTracking->GetScatterOrder();
     }
 
     //G4cout << ", Order of Rayleigh  " << order << G4endl;
