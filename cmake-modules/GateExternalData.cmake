@@ -19,4 +19,3 @@ endfunction()
 function(GateAddExampleData)
     ExternalData_expand_arguments(GateExampleData dummy ${ARGN})
 endfunction()
-
