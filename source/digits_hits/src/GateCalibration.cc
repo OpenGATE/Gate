@@ -22,20 +22,20 @@ See GATE/LICENSE.txt for further details
 
 
 GateCalibration::GateCalibration(GatePulseProcessorChain* itsChain,
-				 const G4String& itsName) 
+				 const G4String& itsName)
   : GateVPulseProcessor(itsChain, itsName)
 {
   m_messenger = new GateCalibrationMessenger(this);
   m_calib = 1;
-}  
+}
 
 
 
 
-GateCalibration::~GateCalibration() 
+GateCalibration::~GateCalibration()
 {
   delete m_messenger;
-}  
+}
 
 
 
@@ -47,7 +47,7 @@ void GateCalibration::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList&
   G4double lightOutput = (GateLightYield::GetInstance(NULL,"name")) ?
     GateLightYield::GetInstance(NULL,"name")->GetLightOutput(LayerName) : 1.;
 
-  G4double TECoef = (GateTransferEfficiency::GetInstance(NULL,"name")) ? 
+  G4double TECoef = (GateTransferEfficiency::GetInstance(NULL,"name")) ?
     GateTransferEfficiency::GetInstance(NULL,"name")->GetTECrystCoeff(LayerName) : 1.;
 
   G4double QECoef;
@@ -69,7 +69,7 @@ void GateCalibration::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList&
 
 
 void GateCalibration::FindInputPulseParams(const GateVolumeID* aVolumeID)
-{    
+{
   m_depth = (size_t)(aVolumeID->GetCreatorDepth(m_volumeName));
   m_volumeIDNo = aVolumeID->GetCopyNo(m_depth);
   if (aVolumeID->GetCopyNo(m_depth-1)==-1) {

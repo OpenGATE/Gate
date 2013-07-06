@@ -37,7 +37,7 @@ See GATE/LICENSE.txt for further details
 GateToSinogramMessenger::GateToSinogramMessenger(GateToSinogram* gateToSinogram)
   : GateOutputModuleMessenger(gateToSinogram)
   , m_gateToSinogram(gateToSinogram)
-{ 
+{
   G4String cmdName;
 
   cmdName = GetDirectoryName()+"setFileName";
@@ -50,7 +50,7 @@ GateToSinogramMessenger::GateToSinogramMessenger(GateToSinogram* gateToSinogram)
   TruesOnlyCmd->SetGuidance("Record only true coincidences");
   TruesOnlyCmd->SetParameterName("flag",true);
   TruesOnlyCmd->SetDefaultValue(true);
-  
+
   cmdName = GetDirectoryName()+"RadialBins";
   SetRadialElemNbCmd = new G4UIcmdWithAnInteger(cmdName,this);
   SetRadialElemNbCmd->SetGuidance("Set the number of radial sinogram bins");
@@ -67,7 +67,7 @@ GateToSinogramMessenger::GateToSinogramMessenger(GateToSinogram* gateToSinogram)
   SetInputDataCmd = new G4UIcmdWithAString(cmdName,this);
   SetInputDataCmd->SetGuidance("Set the name of the input data to store into the sinogram");
   SetInputDataCmd->SetParameterName("Name",false);
-  
+
   cmdName = GetDirectoryName()+"setTangCrystalBlurring";
   SetTangCrystalResolCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   SetTangCrystalResolCmd->SetGuidance("Set the crystal location blurring FWHM in the tangential direction");
@@ -81,7 +81,7 @@ GateToSinogramMessenger::GateToSinogramMessenger(GateToSinogram* gateToSinogram)
   SetAxialCrystalResolCmd->SetParameterName("Number",false);
   SetAxialCrystalResolCmd->SetRange("Number>=0.");
   SetAxialCrystalResolCmd->SetUnitCategory("Length");
-  
+
 
   // 07.02.2006, C. Comtat, Store randoms and scatters sino
   cmdName = GetDirectoryName()+"StoreDelayeds";
@@ -95,7 +95,7 @@ GateToSinogramMessenger::GateToSinogramMessenger(GateToSinogram* gateToSinogram)
   StoreScattersCmd->SetParameterName("flag",true);
   StoreScattersCmd->SetDefaultValue(true);
 
-  // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals  
+  // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
   cmdName = GetDirectoryName()+"setVirtualRings";
   SetVirtualRingCmd = new G4UIcmdWithAnInteger(cmdName,this);
   SetVirtualRingCmd->SetGuidance("Set the number of virtual rings between blocks, used only for sinogram bin numbering");
@@ -121,7 +121,7 @@ GateToSinogramMessenger::~GateToSinogramMessenger()
   delete SetTangCrystalResolCmd;
   delete SetAxialCrystalResolCmd;
   delete SetInputDataCmd;
-  
+
   // 07.02.2006, C. Comtat, Store randoms and scatters sino
   delete StoreDelayedsCmd;
   delete StoreScattersCmd;
@@ -133,40 +133,40 @@ GateToSinogramMessenger::~GateToSinogramMessenger()
 
 
 void GateToSinogramMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
-  if (command == SetFileNameCmd) 
+{
+  if (command == SetFileNameCmd)
     { m_gateToSinogram->SetFileName(newValue); }
   else if ( command==TruesOnlyCmd )
     { m_gateToSinogram->TruesOnly(TruesOnlyCmd->GetNewBoolValue(newValue)) ; }
   else if ( command==SetRadialElemNbCmd )
     { m_gateToSinogram->SetRadialElemNb(SetRadialElemNbCmd->GetNewIntValue(newValue)); }
   else if ( command==RawOutputCmd )
-    { m_gateToSinogram->RawOutputEnable(RawOutputCmd->GetNewBoolValue(newValue)); }   
+    { m_gateToSinogram->RawOutputEnable(RawOutputCmd->GetNewBoolValue(newValue)); }
   else if ( command==SetTangCrystalResolCmd )
-    { m_gateToSinogram->SetTangCrystalResolution(SetTangCrystalResolCmd->GetNewDoubleValue(newValue)); }  
+    { m_gateToSinogram->SetTangCrystalResolution(SetTangCrystalResolCmd->GetNewDoubleValue(newValue)); }
   else if ( command==SetAxialCrystalResolCmd )
-    { m_gateToSinogram->SetAxialCrystalResolution(SetAxialCrystalResolCmd->GetNewDoubleValue(newValue)); }  
-  else if (command == SetInputDataCmd) 
+    { m_gateToSinogram->SetAxialCrystalResolution(SetAxialCrystalResolCmd->GetNewDoubleValue(newValue)); }
+  else if (command == SetInputDataCmd)
     { m_gateToSinogram->SetOutputDataName(newValue); }
-    
+
   // 07.02.2006, C. Comtat, Store randoms and scatters sino
   else if (command == StoreDelayedsCmd)
     { m_gateToSinogram->StoreDelayeds(StoreDelayedsCmd->GetNewBoolValue(newValue)) ; }
   else if (command == StoreScattersCmd)
     { m_gateToSinogram->StoreScatters(StoreScattersCmd->GetNewBoolValue(newValue)) ; }
-      
+
  // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
- else if (command == SetVirtualRingCmd) 
-  { 
+ else if (command == SetVirtualRingCmd)
+  {
     m_gateToSinogram->SetVirtualRingPerBlockNb(SetVirtualRingCmd->GetNewIntValue(newValue));
    G4cout << G4endl<< G4endl<< " GateToSinogramMessenger: virtual rings = " << m_gateToSinogram->GetVirtualRingPerBlockNb() << G4endl<< G4endl<< G4endl;
-     
+
   }
  // C. Comtat, February 2011: Required to simulate Biograph output sinograms with virtual crystals
  else if (command == SetVirtualCrystalCmd)
     { m_gateToSinogram->SetVirtualCrystalPerBlockNb(SetVirtualCrystalCmd->GetNewIntValue(newValue)) ; }
 
 
-  else 
-    { GateOutputModuleMessenger::SetNewValue(command,newValue); }   
+  else
+    { GateOutputModuleMessenger::SetNewValue(command,newValue); }
 }

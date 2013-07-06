@@ -10,8 +10,8 @@
 
 
 /*
-  \brief Class GateQvalueActor : 
-  \brief 
+  \brief Class GateQvalueActor :
+  \brief
 */
 
 
@@ -32,7 +32,7 @@ GateQvalueActor::GateQvalueActor(G4String name, G4int depth):
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateQvalueActor::~GateQvalueActor()  {
 
 }
@@ -50,7 +50,7 @@ void GateQvalueActor::Construct() {
   EnablePreUserTrackingAction(true);
   EnablePostUserTrackingAction(true);
   EnableUserSteppingAction(true);
- 
+
   // Output Filename
   mQvalueFilename = mSaveFilename;
   mQvalueImage.EnableSquaredImage(false);
@@ -67,7 +67,7 @@ void GateQvalueActor::Construct() {
 /// Save data
 void GateQvalueActor::SaveData() {
   GateVActor::SaveData();
-  mQvalueImage.SaveData(mCurrentEvent+1); 
+  mQvalueImage.SaveData(mCurrentEvent+1);
   G4cout<<std::endl;
   for (std::map<G4String,G4double>::iterator it=listOfEmiss.begin(); it!=listOfEmiss.end(); it++)
     G4cout<<(*it).first<<"  "<<(*it).second<<std::endl;
@@ -86,24 +86,24 @@ void GateQvalueActor::UserSteppingActionInVoxel(const int index, const G4Step* s
 {
   G4TrackVector* trackVector = const_cast<G4TrackVector*> (step->GetSecondary());
   int k = 0;
- 
+
   double energyKinPre =  step->GetPreStepPoint()->GetKineticEnergy();
   double energyKinPost = step->GetPostStepPoint()->GetKineticEnergy();
   double energyKinSec = 0.;
   // int nSec = step->GetSecondary()->size(); // unused now (keep it for debug)
 
   k = 0;
-    
+
   for(std::vector<G4Track*>::iterator it = trackVector->begin(); it != trackVector->end();it++ )
     {
-        
-      //G4cout<<"Second no = "<<k<<"   "<<(*it)->GetDefinition()->GetParticleName()<<"   "<<mNSec ; 
+
+      //G4cout<<"Second no = "<<k<<"   "<<(*it)->GetDefinition()->GetParticleName()<<"   "<<mNSec ;
       //if(k>=mNSec) G4cout<<"  OK    ";
       //else G4cout<<G4endl;
       if(k>=mNSec){
 	energyKinSec+= (*it)->GetKineticEnergy();
 	//G4cout<< (*it)->GetKineticEnergy()  <<G4endl;
-           
+
       }
       k++;
     }
@@ -120,17 +120,17 @@ void GateQvalueActor::UserSteppingActionInVoxel(const int index, const G4Step* s
 
   for(std::vector<G4Track*>::iterator it = trackVector->begin(); it != trackVector->end();it++ )
     {
-        
+
       if(k>=mNSec) mNSec++;
       k++;
 
     }
-   
+
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateQvalueActor::BeginOfRunAction(const G4Run * ) { 
+void GateQvalueActor::BeginOfRunAction(const G4Run * ) {
   GateDebugMessage("Actor", 3, "GateQvalueActor -- Begin of Run" << G4endl);
   ResetData();
 }
@@ -138,15 +138,15 @@ void GateQvalueActor::BeginOfRunAction(const G4Run * ) {
 
 //-----------------------------------------------------------------------------
 // Callback at each event
-void GateQvalueActor::BeginOfEventAction(const G4Event * ) { 
-  mCurrentEvent++;  
+void GateQvalueActor::BeginOfEventAction(const G4Event * ) {
+  mCurrentEvent++;
   GateDebugMessage("Actor", 3, "GateQvalueActor -- Begin of Event: "<<mCurrentEvent << G4endl);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // Callback at each event
-void GateQvalueActor::EndOfEventAction(const G4Event * ) { 
+void GateQvalueActor::EndOfEventAction(const G4Event * ) {
 
 }
 //-----------------------------------------------------------------------------
@@ -167,6 +167,3 @@ void GateQvalueActor::UserPostTrackActionInVoxel(const int /*index*/, const G4Tr
   //listOfPositionAndEnergy3[t->GetTrackID()] = listOfPositionAndEnergy2;
 }
 //-----------------------------------------------------------------------------
-
-
-

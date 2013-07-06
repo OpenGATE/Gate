@@ -10,8 +10,8 @@ See GATE/LICENSE.txt for further details
 
 
 /*
-  \brief Class GateStopOnScriptActor : 
-  \brief 
+  \brief Class GateStopOnScriptActor :
+  \brief
  */
 
 #ifndef GATESTOPONSCRIPTACTOR_CC
@@ -28,7 +28,7 @@ See GATE/LICENSE.txt for further details
 GateStopOnScriptActor::GateStopOnScriptActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateStopOnScriptActor() -- begin"<<G4endl);  
+  GateDebugMessageInc("Actor",4,"GateStopOnScriptActor() -- begin"<<G4endl);
   pMessenger = new GateStopOnScriptActorMessenger(this);
   mSaveAllActors = false;
   GateDebugMessageDec("Actor",4,"GateStopOnScriptActor() -- end"<<G4endl);
@@ -37,8 +37,8 @@ GateStopOnScriptActor::GateStopOnScriptActor(G4String name, G4int depth):
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
-GateStopOnScriptActor::~GateStopOnScriptActor() 
+/// Destructor
+GateStopOnScriptActor::~GateStopOnScriptActor()
 {
   GateDebugMessageInc("Actor",4,"~GateStopOnScriptActor() -- begin"<<G4endl);
   GateDebugMessageDec("Actor",4,"~GateStopOnScriptActor() -- end"<<G4endl);
@@ -78,8 +78,8 @@ void GateStopOnScriptActor::SaveData()
   GateMessage("Actor", 0, "GateStopOnScriptActor -- executing command '" << cmd << "'" << G4endl);
 
   // http://stackoverflow.com/questions/11084959/system-always-returns-non-zero-when-called-as-cgi
-  signal(SIGCHLD,SIG_DFL); 
-  
+  signal(SIGCHLD,SIG_DFL);
+
   // Count the number of time we try to "system"
   static int n = 0;
   static int max_n = 10;
@@ -105,7 +105,7 @@ void GateStopOnScriptActor::SaveData()
   DD(WIFEXITED(d));
   DD(WEXITSTATUS(d));
   */
-  
+
   {
 	  std::string s("ls ");
 	  s += mSaveFilename;
@@ -116,7 +116,7 @@ void GateStopOnScriptActor::SaveData()
 
 	  if (WIFEXITED(e) && WEXITSTATUS(e) == 2) {
 		  n++;
-		  GateMessage("Actor", 0, "GateStopOnScriptActor -- file '" << mSaveFilename << "' not found. try to continue" 
+		  GateMessage("Actor", 0, "GateStopOnScriptActor -- file '" << mSaveFilename << "' not found. try to continue"
 				  << n << " / " << max_n << G4endl);
 		  return;
 	  }
@@ -131,14 +131,14 @@ void GateStopOnScriptActor::SaveData()
   if (!WIFEXITED(r)) {
     /* the program didn't terminate normally */
     n++;
-    GateMessage("Actor", 0, "GateStopOnScriptActor -- Could not 'system'. I try to continue " 
+    GateMessage("Actor", 0, "GateStopOnScriptActor -- Could not 'system'. I try to continue "
                 << n << " / " << max_n << G4endl);
   }
   else {
     if (WEXITSTATUS(r) == 127) {
       /* command failed */
       n++;
-      GateMessage("Actor", 0, "GateStopOnScriptActor -- command fail. I try to continue " 
+      GateMessage("Actor", 0, "GateStopOnScriptActor -- command fail. I try to continue "
                   << n << " / " << max_n << G4endl);
     }
   }
@@ -152,7 +152,7 @@ void GateStopOnScriptActor::SaveData()
       if (*sit != this) (*sit)->ResetData();
     }
   }
-  
+
   if (n >= max_n) {
     GateMessage("Actor", 0, "GateStopOnScriptActor -- too much trial. I stop. " << n << " / " << max_n << G4endl);
     exit(0);
@@ -175,11 +175,10 @@ void GateStopOnScriptActor::ResetData() {}
 
 
 //-----------------------------------------------------------------------------
-void GateStopOnScriptActor::EnableSaveAllActors(bool b) 
+void GateStopOnScriptActor::EnableSaveAllActors(bool b)
 {
   mSaveAllActors = b ;
 }
 //-----------------------------------------------------------------------------
 
 #endif /* end #define GATESTOPONSCRIPTACTOR_CC */
-

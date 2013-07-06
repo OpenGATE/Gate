@@ -62,44 +62,44 @@ class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
     virtual inline G4String MakeElementName(const G4String& newBaseName)
       { return GetObjectName() + "/" + newBaseName; }
 
-    virtual inline GateVSystem* GetSystem() const //mhadi_obso Obsolete because we use now a system list for the multi-system approach 
+    virtual inline GateVSystem* GetSystem() const //mhadi_obso Obsolete because we use now a system list for the multi-system approach
     { return m_system;}
-    virtual void SetSystem(GateVSystem* aSystem);//mhadi_obso Obsolete because we use now a system list for the multi-system approach 
+    virtual void SetSystem(GateVSystem* aSystem);//mhadi_obso Obsolete because we use now a system list for the multi-system approach
 
 
   // Print-out a description of the object
   void Describe(size_t indent);
 
-  //! Store a new pulse-list into the array of pulse-list 
+  //! Store a new pulse-list into the array of pulse-list
   void StorePulseList(GatePulseList* newPulseList);
 
-  //! Store a new alias for a pulse-list 
+  //! Store a new alias for a pulse-list
   void StorePulseListAlias(const G4String& aliasName,GatePulseList* aPulseList);
 
-  //! Store a new alias for a pulse-list 
+  //! Store a new alias for a pulse-list
   void StoreCoincidencePulseAlias(const G4String& aliasName,GateCoincidencePulse* aPulse);
 
-  //! Store a new coincidence pulse into the array of coincidence pulses 
+  //! Store a new coincidence pulse into the array of coincidence pulses
   void StoreCoincidencePulse(GateCoincidencePulse* newCoincidencePulse);
 
-  //! Store a new coincidence pulse into the array of coincidence pulses 
+  //! Store a new coincidence pulse into the array of coincidence pulses
   void StoreCoincidenceChain(GateCoincidencePulseProcessorChain* newCoincidenceChain);
 
-  //! Find a pulse-list from the array of pulse-list 
+  //! Find a pulse-list from the array of pulse-list
   GatePulseList* FindPulseList(const G4String& pulseListName);
 
-  //! Find a pulse-list from the array of pulse-list 
+  //! Find a pulse-list from the array of pulse-list
   std::vector<GateCoincidencePulse*> FindCoincidencePulse(const G4String& pulseName);
 
   //! Clear the array of pulse-lists
   void ErasePulseListVector();
 
-  //! Integrates a new pulse-processor chain 
+  //! Integrates a new pulse-processor chain
   void StoreNewPulseProcessorChain(GatePulseProcessorChain* processorChain);
-  //! Integrates a new coincidence-processor chain 
+  //! Integrates a new coincidence-processor chain
   void StoreNewCoincidenceProcessorChain(GateCoincidencePulseProcessorChain* processorChain);
 
-  //! Integrates a new coincidence sorter 
+  //! Integrates a new coincidence sorter
   void StoreNewCoincidenceSorter(GateCoincidenceSorter* coincidenceSorter);
 
   void MakeCoincidencePulse(G4int i)
@@ -108,7 +108,7 @@ class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
   virtual void Digitize();
 
   //! Return the hit convertor attached to the digitizer
-  inline GateHitConvertor* GetHitConvertor() 
+  inline GateHitConvertor* GetHitConvertor()
     { return m_hitConvertor;}
 
   inline void StoreDigiCollection(G4VDigiCollection* aDC)
@@ -121,12 +121,12 @@ class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
 
   //mhadi_add[
   // Next methods were added for the multi-system approach
-  
+
   inline GateSystemList* GetSystemList() const { return m_systemList; }
-  
+
   // Add a system to the digitizer systems list
   virtual void AddSystem(GateVSystem* aSystem);
-  
+
   inline const std::vector<GatePulseProcessorChain*> GetPulseProcessorChainList()
   { return m_singleChainList;}
 
@@ -138,21 +138,21 @@ class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
 
   inline const std::vector<GateVDigiMakerModule*>  GetDigiMakerList()
   { return m_digiMakerList;}
-  
+
   // To find a system from the digitizer systems list
   GateVSystem* FindSystem(GatePulseProcessorChain* processorChain);
   GateVSystem* FindSystem(G4String& systemName);
-  
+
   inline size_t GetmCoincChainListSize()
   { return m_coincidenceChainList.size(); }
-  
+
   virtual GateCoincidencePulseProcessorChain* GetCoincChain(size_t i)
   {return (i<m_coincidenceChainList.size()) ? m_coincidenceChainList[i] : 0; }
   //mhadi_add]
 
   protected:
-  G4String 					m_elementTypeName;	 //!< Type-name for all digitizer modules 
-    
+  G4String 					m_elementTypeName;	 //!< Type-name for all digitizer modules
+
   GateVSystem*					m_system;		 //<! System to which the digitizer is attached //mhadi_obso Obsolete
   GateSystemList*                               m_systemList;            //! List of systems to which the digitizer is attached
   GateHitConvertor*    				m_hitConvertor;	      	 //!< Hit convertor
@@ -161,7 +161,7 @@ class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
   std::vector<GateCoincidenceSorter*>  		m_coincidenceSorterList; //!< Vector of coincidence sorters
 
   std::vector<GateVDigiMakerModule*>  		m_digiMakerList;       	 //!< Vector of digi-maker modules
-  
+
   GateDigitizerMessenger*    			m_messenger;
 
 
@@ -177,4 +177,3 @@ class GateDigitizer : public GateClockDependent,public G4VDigitizerModule
 };
 
 #endif
-

@@ -33,10 +33,10 @@ See GATE/LICENSE.txt for further details
 /// \brief Actor displaying nb events/tracks/step
 class GateTrackLengthActor : public GateVActor
 {
- public: 
-  
+ public:
+
   virtual ~GateTrackLengthActor();
-    
+
   //-----------------------------------------------------------------------------
   // This macro initialize the CreatePrototype and CreateInstance
   FCT_FOR_AUTO_CREATOR_ACTOR(GateTrackLengthActor)
@@ -59,7 +59,7 @@ class GateTrackLengthActor : public GateVActor
   /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
- 
+
   //virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
@@ -80,7 +80,7 @@ protected:
   G4String mHistName;
 
   TH1D * pTrackLength;
-  
+
   double mLmin;
   double mLmax;
   int mNBins;

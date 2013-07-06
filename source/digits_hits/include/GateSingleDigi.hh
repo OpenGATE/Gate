@@ -26,27 +26,27 @@ class GateSingleDigi : public G4VDigi
 {
 
 public:
-  
+
   GateSingleDigi();
   GateSingleDigi(GatePulse* pulse);
   GateSingleDigi(const GatePulse& pulse);
   virtual inline ~GateSingleDigi() {}
-  
+
   inline void* operator new(size_t);
   inline void  operator delete(void*);
-  
+
   void Draw();
   void Print();
 
   //
   //printing methods
   //
-  friend std::ostream& operator<<(std::ostream&, const GateSingleDigi& );    
+  friend std::ostream& operator<<(std::ostream&, const GateSingleDigi& );
 
   friend std::ofstream& operator<<(std::ofstream&, GateSingleDigi* );
 
 public:
-  
+
       inline void  SetRunID(G4int j)                  	      { m_pulse.SetRunID(j); }
       inline G4int GetRunID() const                        	      { return m_pulse.GetRunID(); }
 
@@ -99,11 +99,11 @@ public:
       inline G4int GetComponentID(size_t depth) const    { return m_pulse.GetComponentID(depth); }
 
       inline GatePulse& GetPulse()             { return m_pulse; }
-      
+
       // HDS : septal penetration
       inline void  SetNSeptal(G4int n)    { m_pulse.SetNSeptal(n); }
       inline G4int GetNSeptal() const     { return m_pulse.GetNSeptal(); }
-      
+
 private:
       GatePulse m_pulse;
 
@@ -147,12 +147,3 @@ inline void GateSingleDigi::operator delete(void* aDigi)
 }
 
 #endif
-
-
-
-
-
-
-
-
-

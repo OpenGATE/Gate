@@ -32,20 +32,18 @@ GatePileupMessenger::GatePileupMessenger(GatePileup* itsPileup)
 }
 
 
-GatePileupMessenger::~GatePileupMessenger() 
+GatePileupMessenger::~GatePileupMessenger()
 {
   delete SetDepthCmd;
   delete SetPileupCmd;
 }
 
 void GatePileupMessenger::SetNewValue(G4UIcommand* aCommand, G4String aString)
-{ 
+{
   if( aCommand==SetDepthCmd )
-    { GetPileup()->SetDepth(SetDepthCmd->GetNewIntValue(aString));}   
+    { GetPileup()->SetDepth(SetDepthCmd->GetNewIntValue(aString));}
   else if (aCommand==SetPileupCmd )
     { GetPileup()->SetPileup(SetPileupCmd->GetNewDoubleValue(aString));}
   else
-    GatePulseProcessorMessenger::SetNewValue(aCommand,aString); 
+    GatePulseProcessorMessenger::SetNewValue(aCommand,aString);
 }
-
-

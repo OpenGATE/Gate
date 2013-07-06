@@ -35,4 +35,3 @@ class GateDistributionManualMessenger: public GateDistributionArrayMessenger
 };
 
 #endif
-

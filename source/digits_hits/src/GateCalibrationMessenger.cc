@@ -27,11 +27,9 @@ GateCalibrationMessenger::GateCalibrationMessenger(GateCalibration* itsCalibrati
 }
 
 void GateCalibrationMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
   if ( command==calibCmd )
-    { GetCalibration()->SetCalibrationFactor(calibCmd->GetNewDoubleValue(newValue)); }   
+    { GetCalibration()->SetCalibrationFactor(calibCmd->GetNewDoubleValue(newValue)); }
   else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue); 
+    GatePulseProcessorMessenger::SetNewValue(command,newValue);
 }
-
-

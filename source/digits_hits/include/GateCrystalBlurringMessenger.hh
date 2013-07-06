@@ -31,10 +31,10 @@ class GateCrystalBlurringMessenger: public GatePulseProcessorMessenger
   public:
     GateCrystalBlurringMessenger(GateCrystalBlurring* itsCrystalresolution);
     virtual ~GateCrystalBlurringMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GateCrystalBlurring* GetCrystalBlurring() 
+    inline GateCrystalBlurring* GetCrystalBlurring()
       { return (GateCrystalBlurring*) GetPulseProcessor(); }
 
   private:
@@ -45,4 +45,3 @@ class GateCrystalBlurringMessenger: public GatePulseProcessorMessenger
 };
 
 #endif
-

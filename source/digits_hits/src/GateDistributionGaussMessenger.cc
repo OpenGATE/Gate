@@ -20,9 +20,9 @@ See GATE/LICENSE.txt for further details
 GateDistributionGaussMessenger::GateDistributionGaussMessenger(GateDistributionGauss* itsDistribution,
     			     const G4String& itsDirectoryName)
 : GateDistributionMessenger( itsDistribution,itsDirectoryName)
-{ 
+{
   G4String cmdName,guidance;
-  
+
   cmdName = GetDirectoryName()+"setMean";
   guidance = "Set the gauss mean value";
   setMeanCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
@@ -57,8 +57,8 @@ GateDistributionGaussMessenger::~GateDistributionGaussMessenger()
 
 // UI command interpreter method
 void GateDistributionGaussMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
-  if       ( command==setAmplitudeCmd ){	
+{
+  if       ( command==setAmplitudeCmd ){
     G4double x = setAmplitudeCmd->GetNewDoubleValue(newValue);
     G4Tokenizer tok(newValue);
     G4String unit = tok();
@@ -83,4 +83,3 @@ void GateDistributionGaussMessenger::SetNewValue(G4UIcommand* command,G4String n
   else
     GateDistributionMessenger::SetNewValue(command,newValue);
 }
-

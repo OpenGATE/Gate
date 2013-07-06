@@ -1,21 +1,21 @@
 /*----------------------
 
-   GATE - Geant4 Application for Tomographic Emission 
-   OpenGATE Collaboration 
-     
-   Giovanni Santin <giovanni.santin@cern.ch> 
-   Daniel Strul <daniel.strul@iphe.unil.ch> 
-     
-   Copyright (C) 2002 UNIL/IPHE, CH-1015 Lausanne 
+   GATE - Geant4 Application for Tomographic Emission
+   OpenGATE Collaboration
 
-This software is distributed under the terms 
-of the GNU Lesser General  Public Licence (LGPL) 
-See GATE/LICENSE.txt for further details 
+   Giovanni Santin <giovanni.santin@cern.ch>
+   Daniel Strul <daniel.strul@iphe.unil.ch>
+
+   Copyright (C) 2002 UNIL/IPHE, CH-1015 Lausanne
+
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See GATE/LICENSE.txt for further details
 ----------------------*/
 
 /*!
   \file GateSteppingActionMessenger.hh
-  
+
   $Log: GateSteppingActionMessenger.hh,v $
   Revision 1.2  2002/08/11 15:33:24  dstrul
   Cosmetic cleanup: standardized file comments for cleaner doxygen output
@@ -45,13 +45,13 @@ class GateSteppingActionMessenger: public G4UImessenger
   public:
     GateSteppingActionMessenger(GateSteppingAction* msa);
     ~GateSteppingActionMessenger();
-    
+
   public:
     void SetNewValue(G4UIcommand * command,G4String newValues);
 
   private:
     GateSteppingAction * myAction;
-    
+
 private: //commands
   G4UIdirectory*         GateSteppingDir;
   G4UIcmdWithAnInteger*  drawTrajectoryLevelCmd;
@@ -63,9 +63,7 @@ private: //commands
   //G4UIcmdWithAnInteger*  SetPhFilesCmd;
   //G4UIcmdWithAnInteger*  SetRSFilesCmd;
   G4UIcmdWithADoubleAndUnit* setEnergyTcmd;
-  
+
 };
 
 #endif
-
-

@@ -29,45 +29,45 @@ class GateCoincidenceDeadTime : public GateVCoincidencePulseProcessor
 public:
 
 
- 
+
   //! Destructor
-  virtual ~GateCoincidenceDeadTime() ; 
-  
-  
+  virtual ~GateCoincidenceDeadTime() ;
+
+
   //! Constructs a new dead time attached to a GateDigitizer
   GateCoincidenceDeadTime(GateCoincidencePulseProcessorChain* itsChain,
-			     const G4String& itsName);
-  
-public:  
-  
+                          const G4String& itsName);
+
+public:
+
   //! Returns the deadTime
   unsigned long long int GetDeadTime() {return m_deadTime;}
-  
+
   //! Set the deadTime
   void SetDeadTime(G4double val)   { m_deadTime = (unsigned long long int )(val/picosecond);}
-  
-  //! Set the deadTime mode ; candidates : paralysable nonparalysable
-  void SetDeadTimeMode(G4String val); 
 
-  //! Set the buffer mode ; 
+  //! Set the deadTime mode ; candidates : paralysable nonparalysable
+  void SetDeadTimeMode(G4String val);
+
+  //! Set the buffer mode ;
   void SetBufferMode(G4int val){m_bufferMode=val;}
-  //! Set the buffer mode ; 
+  //! Set the buffer mode ;
   void SetBufferSize(G4double val){m_bufferSize=val;}
-  //! Set the way to treat events ; 
+  //! Set the way to treat events ;
   void SetConserveAllEvent(G4bool val){m_conserveAllEvent=val;}
 
   //! Implementation of the pure virtual method declared by the base class GateClockDependent
   //! print-out the attributes specific of the deadTime
   virtual void DescribeMyself(size_t indent);
-  
+
 protected:
-  
+
   /*! Implementation of the pure virtual method declared by the base class GateVCoincidencePulseProcessor*/
   GateCoincidencePulse* ProcessPulse(GateCoincidencePulse* inputPulse,G4int iPulse);
-  
 
-  
-private: 
+
+
+private:
   unsigned long long int m_deadTime; //!< DeadTime value
   G4bool m_isParalysable;   //!< dead time mode : paralysable (true) nonparalysable (false) (modif. by D. Guez on 03/03/04)
   unsigned long long int m_rebirthTime;  //!< contains the rebirth time.
@@ -84,4 +84,3 @@ private:
 
 
 #endif
-

@@ -16,11 +16,11 @@ See GATE/LICENSE.txt for further details
 
 //-----------------------------------------------------------------------------
 GateDiffCrossSectionActorMessenger::GateDiffCrossSectionActorMessenger( GateDiffCrossSectionActor* sensor):GateActorMessenger( sensor), pDiffCrossSectionActor(sensor)
-{  
+{
   BuildCommands( baseName + sensor->GetObjectName( ));
 }
 //-----------------------------------------------------------------------------
- 
+
 
 //-----------------------------------------------------------------------------
 GateDiffCrossSectionActorMessenger::~GateDiffCrossSectionActorMessenger()
@@ -105,4 +105,3 @@ void GateDiffCrossSectionActorMessenger::SetNewValue( G4UIcommand* cmd, G4String
   GateActorMessenger::SetNewValue( cmd, newValue);
 }
 //-----------------------------------------------------------------------------
-

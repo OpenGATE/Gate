@@ -17,7 +17,7 @@
 
 /*!
   \file GateProjectionSet.hh
-  
+
   $Log: GateProjectionSet.hh,v $
   Revision 1.1.1.1.4.1  2011/03/10 16:32:35  henri
   Implemented multiple energy window interfile output
@@ -72,14 +72,14 @@ Modified some getters and setters to work with the new implementation :
 
 /*! \class  GateProjectionSet
     \brief  Structure to store the projection sets from a SPECT simulation
-    
+
     - GateProjectionSet - by Daniel.Strul@iphe.unil.ch (Oct. 2002)
-    
+
     - This structure is generated during a SPECT simulation by GateToProjectionSet. It can be stored
       into an output file using a set-writer such as GateToInterfile
-      
+
     \sa GateToProjectionSet, GateToInterfile
-*/      
+*/
 
 
 /* Modified by HDS on 25/11/2010 <henri.dersarkissian@gmail.com>
@@ -99,7 +99,7 @@ class GateProjectionSet
 
     //! Reset the matrix and prepare a new acquisition
     // Modified by HDS : Added size_t energyWindowNb=0 parameter
-    void Reset(size_t energyWindowNumber=0,size_t headNumber=0,size_t projectionNumber=0);    	      	  
+    void Reset(size_t energyWindowNumber=0,size_t headNumber=0,size_t projectionNumber=0);
 
     //! Clear the matrix and prepare a new run
     void ClearData(size_t projectionID);
@@ -109,15 +109,15 @@ class GateProjectionSet
     void FillARF( G4int, G4double , G4double , G4double); /*PY Descourt 08/09/2009*/
     //! \name getters and setters
     //@{
-	
-	//! Returns the number of energy windows 
+
+	//! Returns the number of energy windows
     inline size_t GetEnergyWindowNb() const
       { return m_energyWindowNb;}
     //! Set the number of energy windows
     inline void SetEnergyWindowNb(size_t aNb)
       { m_energyWindowNb = aNb;}
 
-    //! Returns the number of heads 
+    //! Returns the number of heads
     inline size_t GetHeadNb() const
       { return m_headNb;}
     //! Set the number of heads
@@ -164,7 +164,7 @@ class GateProjectionSet
       { return m_data;}
 
     //! Set the verbose level
-    virtual void SetVerboseLevel(G4int val) 
+    virtual void SetVerboseLevel(G4int val)
       { m_verboseLevel = val; };
 
     //! Returns a projection from the set
@@ -183,7 +183,7 @@ class GateProjectionSet
      //! Returns the number of bytes per head
     inline G4int BytesPerHead() const
       { return BytesPerProjection() * m_projectionNb ;}
-      
+
     //! Returns the number of bytes per energy window
     // Added by HDS : multiple energy windows
     inline G4int BytesPerEnergyWindow() const
@@ -202,7 +202,7 @@ class GateProjectionSet
       	return 0;
 	  }
 
-      
+
       // Added by HDS for multiple energy windows support
       //! Returns the max data for an energy window for one head
       inline ProjectionDataType GetMaxCounts(size_t energyWindowID, size_t headID) const
@@ -237,22 +237,22 @@ class GateProjectionSet
     inline size_t ARFBytesPerPixel() const
       { return sizeof(ARFProjectionDataType);}
 	  /*PY Descourt 08/09/2009*/
-	  
+
   //@}
 
     //! Compute the low edge of the matrix
     inline void ComputeLowEdges()
-      { 
-      	m_matrixLowEdgeX = -0.5 * m_pixelNbX * m_pixelSizeX ; 
-      	m_matrixLowEdgeY = -0.5 * m_pixelNbY * m_pixelSizeY ; 
+      {
+      	m_matrixLowEdgeX = -0.5 * m_pixelNbX * m_pixelSizeX ;
+      	m_matrixLowEdgeY = -0.5 * m_pixelNbY * m_pixelSizeY ;
       }
 
 
     /*! \brief Writes a head-projection onto an output stream
-  
+
       	\param dest:    	  the destination stream
       	\param energyWindowID:	the energy window whose projection to stream-out
-      	\param headID:    	  the head whose projection to stream-out 
+      	\param headID:    	  the head whose projection to stream-out
     */
     void StreamOut(std::ofstream& dest, size_t energyWindowID, size_t headID);
     void StreamOutARFProjection(std::ofstream&, size_t);/*PY Descourt 08/09/2009*/
@@ -269,7 +269,7 @@ class GateProjectionSet
     ProjectionDataType  **m_dataMax;       	      	      	//!< Max count for each projection
     G4int     	      	  m_currentProjectionID;	      	//!< ID of the current projection
     G4int     	      	  m_verboseLevel;
-	
+
     ARFProjectionDataType **m_ARFdata;/*PY Descourt 08/09/2009*/
     ARFProjectionDataType *m_ARFdataMax;/*PY Descourt 08/09/2009*/
 	long unsigned int     m_rec;/*PY Descourt 08/09/2009*/
@@ -293,7 +293,7 @@ inline GateProjectionSet::GateProjectionSet()
   , m_dataMax(0)
   , m_currentProjectionID(-1)
   , m_verboseLevel(0)
-{ 
+{
   m_ARFdata = 0;
   m_ARFdataMax = 0;
 }

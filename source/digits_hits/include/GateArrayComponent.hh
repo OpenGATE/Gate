@@ -20,31 +20,31 @@ class GateArrayRepeater;
     \brief  A GateArrayComponent is a subtype of GateBoxComponent
     \brief  It is meant to be connected to box inserters that are repeated
     \brief in arrays, such as crystal matrices
-    
+
     - GateArrayComponent - by Daniel.Strul@iphe.unil.ch (Oct 2002)
-    
+
     - A GateArrayComponent is derived from GateBoxComponent, and thus inherits all
       the properties of boxcreator-components. In addition, it includes some methods
-      that are specific to inserters repeated by array-repeaters: FindArrayRepeater(), 
+      that are specific to inserters repeated by array-repeaters: FindArrayRepeater(),
       GetRepeatNumber() and GetRepeatVector()
-      
+
     \sa GateSystemComponent, GateBoxComponent, GateArrayRepeater
-*/      
+*/
 class GateArrayComponent  : public GateBoxComponent
 {
   public:
     /*! \brief Constructor
 
-	\param itsName:       	  the name chosen for this system-component
-	\param itsMotherComponent:  the mother of the component (0 if top of a tree)
-	\param itsSystem:           the system to which the component belongs
-    */    
+        \param itsName:             the name chosen for this system-component
+        \param itsMotherComponent:  the mother of the component (0 if top of a tree)
+        \param itsSystem:           the system to which the component belongs
+    */
     GateArrayComponent(const G4String& itsName,
-      	      	       GateSystemComponent* itsMotherComponent,
-		       GateVSystem* itsSystem);
+                       GateSystemComponent* itsMotherComponent,
+                       GateVSystem* itsSystem);
     //! Destructor
     virtual ~GateArrayComponent();
-    
+
     //! Finds the first array-repeater in the inserter's repeater list
     GateArrayRepeater* FindArrayRepeater();
 
@@ -57,4 +57,3 @@ class GateArrayComponent  : public GateBoxComponent
 };
 
 #endif
-

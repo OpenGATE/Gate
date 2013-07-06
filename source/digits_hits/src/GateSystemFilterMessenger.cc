@@ -35,16 +35,16 @@ delete m_SetSystemNameCmd;
 //=============================================================================
 //=============================================================================
 void GateSystemFilterMessenger::SetNewValue(G4UIcommand* aCommand, G4String aString)
-{ 
+{
    if (aCommand==m_SetSystemNameCmd )
-   { 
+   {
       GetSystemFilter()->SetSystemName(aString);
       GetSystemFilter()->SetSystemToItsChain();
    }
 
    else
       GatePulseProcessorMessenger::SetNewValue(aCommand,aString);
-   
+
 }
 
 //=============================================================================
@@ -52,9 +52,9 @@ void GateSystemFilterMessenger::SetNewValue(G4UIcommand* aCommand, G4String aStr
 void GateSystemFilterMessenger::ObtainCandidates()
 {
    GateSystemListManager* systemListManager = GateSystemListManager::GetInstance();
-   
+
    size_t NISN = systemListManager->GetInsertedSystemsNames()->size();
-   
+
    for(size_t i=0; i<NISN; i++)
    {
       m_insertedSystems += systemListManager->GetInsertedSystemsNames()->at(i);

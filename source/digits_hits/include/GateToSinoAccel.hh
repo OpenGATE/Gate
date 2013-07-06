@@ -50,7 +50,7 @@ public:
     /*! \brief Overload of the base-class' virtual method to print-out a description of the module
 
 	\param indent: the print-out indentation (cosmetic parameter)
-    */    
+    */
     void Describe(size_t indent=0);
 
 
@@ -73,20 +73,20 @@ public:
           { m_flagTruesOnly = val; }
 
     //! Get the output file name
-    const  G4String& GetFileName()                
+    const  G4String& GetFileName()
           { return m_fileName;       };
     //! Set the output file name
-    void   SetFileName(const G4String& aName)     
+    void   SetFileName(const G4String& aName)
           { m_fileName = aName;      };
-	  
+
     //! Get the input data channel name
-    const  G4String& GetInputDataName()                
+    const  G4String& GetInputDataName()
           { return m_inputDataChannel;       };
     //! Set the output data channel name
-    void   SetOutputDataName(const G4String& aName)     
+    void   SetOutputDataName(const G4String& aName)
           { m_inputDataChannel = aName;      };
-	  
-	  
+
+
     //! Overload of the base-class' method: we command both our own verbosity and that of the sinogram
     inline void SetVerboseLevel(G4int val)
       { GateVOutputModule::SetVerboseLevel(val); m_sinogram->SetVerboseLevel(val); }
@@ -95,7 +95,7 @@ public:
      //! Returns the study duration
     inline G4double GetStudyDuration() const
       { return m_studyDuration;}
-      
+
     //! Returns the frame duration
     inline G4double GetFrameDuration() const
       { return m_frameDuration;}
@@ -103,7 +103,7 @@ public:
     //! Returns thr number of frames
     inline G4int GetFrameNb() const
       { return m_frameNb;}
-      
+
     //! Returns the 2D sinogram
     inline GateSinogram* GetSinogram() const
       { return m_sinogram;}
@@ -121,26 +121,26 @@ public:
     //! Set the number of crystal rings
     inline void SetRingNb(size_t aNb)
       { m_sinogram->SetRingNb(aNb);}
-      
+
      //! Returns the number of radial sinogram bins
      inline size_t GetRadialElemNb() const
        { return  m_sinogram->GetRadialElemNb();}
      //! Set the number of radial sinogram bin
      inline void SetRadialElemNb(size_t aNb)
-       { m_sinogram->SetRadialElemNb(aNb);}  
-       
+       { m_sinogram->SetRadialElemNb(aNb);}
+
      //! Returns the FWHM of crystal location resolution in tangential direction
      inline G4double GetTangCrystalResolution() const
        { return m_tangCrystalResolution;}
-     //! Set the FWHM of crystal location resolution in tangential direction  
+     //! Set the FWHM of crystal location resolution in tangential direction
      inline void SetTangCrystalResolution(G4double aNb)
-       { m_tangCrystalResolution = aNb;}   
+       { m_tangCrystalResolution = aNb;}
      //! Returns the FWHM of crystal location resolution in axtial direction
      inline G4double GetAxialCrystalResolution() const
        { return m_axialCrystalResolution;}
-     //! Set the FWHM of crystal location resolution in axtial direction  
+     //! Set the FWHM of crystal location resolution in axtial direction
      inline void SetAxialCrystalResolution(G4double aNb)
-       { m_axialCrystalResolution = aNb;}   
+       { m_axialCrystalResolution = aNb;}
 
      //! Returns the nb of bytes per pixel;
     inline size_t BytesPerPixel() const
@@ -160,12 +160,12 @@ protected:
   G4bool              m_flagTruesOnly;            //!< Defines whether randoms are recorded or not
   size_t              m_radialElemNb;             //!< Total number of radial sinogram bins
   G4bool	      m_flagIsRawOutputEnabled;	  //!< Defines whether the raw-file output is active or inactive
-  G4String            m_fileName;                 //!< raw output files name	
+  G4String            m_fileName;                 //!< raw output files name
   G4double            m_tangCrystalResolution;    //!< FWHM of crystal location resolution in tangential direction
   G4double            m_axialCrystalResolution;   //!< FWHM of crystal location resolution in axial direction
   GateToSinoAccelMessenger *m_messenger;
   G4String	      m_inputDataChannel;	  //!< Name of the coincidence-collection to store into the sinogram
-  
+
   // CC & AC: Durty work
   // G4std::ofstream     m_dataFile;   	      	  //!< Output stream for the data file
 

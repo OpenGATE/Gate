@@ -10,8 +10,8 @@
 
 
 /*
-  \brief Class GateEmCalculatorActor : 
-  \brief 
+  \brief Class GateEmCalculatorActor :
+  \brief
 */
 
 #include "GateEmCalculatorActor.hh"
@@ -32,12 +32,12 @@
 GateEmCalculatorActor::GateEmCalculatorActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateEmCalculatorActor() -- begin"<<G4endl);  
+  GateDebugMessageInc("Actor",4,"GateEmCalculatorActor() -- begin"<<G4endl);
   //SetTypeName("EmCalculatorActor");
 //  pActor = new GateActorMessenger(this);
   ResetData();
   GateDebugMessageDec("Actor",4,"GateEmCalculatorActor() -- end"<<G4endl);
-  
+
   mEnergy = 100 ;
   mPartName = "proton";
 
@@ -48,8 +48,8 @@ GateEmCalculatorActor::GateEmCalculatorActor(G4String name, G4int depth):
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
-GateEmCalculatorActor::~GateEmCalculatorActor() 
+/// Destructor
+GateEmCalculatorActor::~GateEmCalculatorActor()
 {
 //  delete pActor;
   delete pActorMessenger;
@@ -130,10 +130,10 @@ void GateEmCalculatorActor::SaveData()
     }
 
       os << "# Output calculted for the following parameters:" << std::endl;
-      os << "# Energy\t" << mEnergy << " MeV" << std::endl; 
-      os << "# Particle\t" << mPartName << "\n" << std::endl; 
-      os << "# And for the following materials" << std::endl; 
-// labels      
+      os << "# Energy\t" << mEnergy << " MeV" << std::endl;
+      os << "# Particle\t" << mPartName << "\n" << std::endl;
+      os << "# And for the following materials" << std::endl;
+// labels
       os << "Material\t";
       os << "Density\t\t";
       os << "e-density\t";
@@ -162,7 +162,7 @@ void GateEmCalculatorActor::SaveData()
       radLength = (*matTbl)[k]->GetRadlen();
       I = (*matTbl)[k]->GetIonisation()->GetMeanExcitationEnergy();
       EmDEDX = emcalc->ComputeElectronicDEDX(mEnergy, mPartName, material, cut);
-      NuclearDEDX = emcalc->ComputeNuclearDEDX(mEnergy, mPartName, material);    
+      NuclearDEDX = emcalc->ComputeNuclearDEDX(mEnergy, mPartName, material);
       TotalDEDX = emcalc->ComputeTotalDEDX(mEnergy, mPartName, material, cut);
       for( size_t j = 0; j < processNameVector.size(); j++)
         {
@@ -198,9 +198,7 @@ void GateEmCalculatorActor::SaveData()
 
 
 //-----------------------------------------------------------------------------
-void GateEmCalculatorActor::ResetData() 
+void GateEmCalculatorActor::ResetData()
 {
 }
 //-----------------------------------------------------------------------------
-
-

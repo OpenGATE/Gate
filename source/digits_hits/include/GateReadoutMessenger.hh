@@ -27,21 +27,21 @@ class G4UIcmdWith3VectorAndUnit;
 class GateReadout;
 
 /*! \class  GateReadoutMessenger
-    \brief  Messenger for the GateReadout 
+    \brief  Messenger for the GateReadout
 
     - GateReadoutMessenger - by Daniel.Strul@iphe.unil.ch
-    
+
     \sa GateReadout, GatePulseProcessorMessenger
-*/      
+*/
 class GateReadoutMessenger: public GatePulseProcessorMessenger
 {
   public:
     GateReadoutMessenger(GateReadout* itsReadout);
     ~GateReadoutMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GateReadout* GetReadout() 
+    inline GateReadout* GetReadout()
       { return (GateReadout*) GetPulseProcessor(); }
 
   private:
@@ -49,4 +49,3 @@ class GateReadoutMessenger: public GatePulseProcessorMessenger
 };
 
 #endif
-

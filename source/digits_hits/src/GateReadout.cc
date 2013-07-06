@@ -19,20 +19,20 @@ See GATE/LICENSE.txt for further details
 
 
 GateReadout::GateReadout(GatePulseProcessorChain* itsChain,
-      	      	      	 const G4String& itsName) 
+      	      	      	 const G4String& itsName)
   : GateVPulseProcessor(itsChain,itsName),
-    m_depth(1) 
+    m_depth(1)
 {
   m_messenger = new GateReadoutMessenger(this);
-}  
+}
 
 
 
 
-GateReadout::~GateReadout() 
+GateReadout::~GateReadout()
 {
   delete m_messenger;
-}  
+}
 
 
 
@@ -52,7 +52,7 @@ void GateReadout::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& out
   for (iter = outputPulseList.begin() ; iter != outputPulseList.end() ; ++iter )
     if ( (*iter)->GetOutputVolumeID().Top(m_depth) == blockID )
       break;
-  
+
   if ( iter != outputPulseList.end() )
   {
      G4double energySum = (*iter)->GetEnergy() + inputPulse->GetEnergy();
@@ -65,7 +65,7 @@ void GateReadout::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& out
 		  << **iter << G4endl << G4endl ;
   }
   else
-  {  
+  {
     GatePulse* outputPulse = new GatePulse(*inputPulse);
     if (nVerboseLevel>1)
       	G4cout << "Created new pulse for block " << blockID << ".\n"
@@ -83,7 +83,3 @@ void GateReadout::DescribeMyself(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "Readout at depth:      " << m_depth << G4endl;
 }
-
-
-
-

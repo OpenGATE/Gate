@@ -25,18 +25,17 @@ class GateCoincidenceBufferMessenger: public GateClockDependentMessenger
 public:
   GateCoincidenceBufferMessenger(GateCoincidenceBuffer* itsBuffer);
   virtual ~GateCoincidenceBufferMessenger();
-  
+
   inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
-  
+
   inline GateCoincidenceBuffer* GetBuffer(){ return (GateCoincidenceBuffer*) GetClockDependent(); }
-  
+
 private:
   G4UIcmdWithADoubleAndUnit *m_bufferSizeCmd; //!< set the dead time value
   G4UIcmdWithADoubleAndUnit *m_readFrequencyCmd;   //!< set the dead time mode
 //  G4UIcmdWithABool          *m_modifyTimeCmd;   //!< does buffer modify the time of pulses
-  G4UIcmdWithAnInteger      *m_setModeCmd;   //!<  buffer readout mode
+  G4UIcmdWithAnInteger      *m_setModeCmd;   //!<  buffer readout mode
 
 };
 
 #endif
-

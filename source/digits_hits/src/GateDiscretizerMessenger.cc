@@ -20,11 +20,11 @@ GateDiscretizerMessenger::GateDiscretizerMessenger(GateDiscretizer* itsDiscretiz
 }
 
 
-GateDiscretizerMessenger::~GateDiscretizerMessenger() 
+GateDiscretizerMessenger::~GateDiscretizerMessenger()
 {
 }
 
 void GateDiscretizerMessenger::SetNewValue(G4UIcommand* aCommand, G4String aString)
-{ 
-    GatePulseProcessorMessenger::SetNewValue(aCommand,aString); 
+{
+    GatePulseProcessorMessenger::SetNewValue(aCommand,aString);
 }

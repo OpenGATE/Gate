@@ -1,11 +1,11 @@
 /*----------------------
 
-   GATE - Geant4 Application for Tomographic Emission 
-   OpenGATE Collaboration 
-     
-   This software is distributed under the terms 
-   of the GNU Lesser General  Public Licence (LGPL) 
-   See GATE/LICENSE.txt for further details 
+   GATE - Geant4 Application for Tomographic Emission
+   OpenGATE Collaboration
+
+   This software is distributed under the terms
+   of the GNU Lesser General  Public Licence (LGPL)
+   See GATE/LICENSE.txt for further details
 ----------------------*/
 
 /*!
@@ -26,12 +26,12 @@ class GateToGPUImageSPECTMessenger : public GateOutputModuleMessenger
 	public:
 		GateToGPUImageSPECTMessenger( GateToGPUImageSPECT* );
 		~GateToGPUImageSPECTMessenger();
-		
+
 		void SetNewValue( G4UIcommand*, G4String );
-		
+
 	private:
 		GateToGPUImageSPECT* m_gateToGPUImageSPECT;
-		
+
 		G4UIcmdWithAString        *setFileNameCmd;
         G4UIcmdWithAString        *attachToCmd;
         G4UIcmdWithAnInteger      *bufferParticleEntryCmd;

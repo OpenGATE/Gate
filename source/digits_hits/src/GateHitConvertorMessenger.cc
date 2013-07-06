@@ -24,8 +24,6 @@ GateHitConvertorMessenger::GateHitConvertorMessenger(GateHitConvertor* itsHitCon
 
 
 void GateHitConvertorMessenger::SetNewValue(G4UIcommand* aCommand, G4String aString)
-{ 
-  GateClockDependentMessenger::SetNewValue(aCommand,aString); 
+{
+  GateClockDependentMessenger::SetNewValue(aCommand,aString);
 }
-
-

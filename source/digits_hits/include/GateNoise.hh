@@ -29,7 +29,7 @@ class GateNoise : public GateVPulseProcessor
 		 const G4String& itsName=theTypeName) ;
 
     //! Destructor
-    virtual ~GateNoise() ; 
+    virtual ~GateNoise() ;
 
 
     //! Implementation of the pure virtual method declared by the base class GateDigitizerComponent
@@ -50,7 +50,7 @@ class GateNoise : public GateVPulseProcessor
     virtual void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
   private:
     GateVDistribution* m_deltaTDistrib;  //! Delta arrival time distribution
-    GateVDistribution* m_energyDistrib;  //! The energy distribution 
+    GateVDistribution* m_energyDistrib;  //! The energy distribution
     GatePulseList m_createdPulses;       //! Trans. pulse list
     GateNoiseMessenger *m_messenger;     //!< Messenger
 
@@ -60,4 +60,3 @@ class GateNoise : public GateVPulseProcessor
 
 
 #endif
-

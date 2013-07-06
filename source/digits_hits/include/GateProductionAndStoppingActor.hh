@@ -14,8 +14,8 @@ See GATE/LICENSE.txt for further details
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
 	  david.sarrut@creatis.insa-lyon.fr
-	  
-          modified by I. Martinez-Rovira (immamartinez@gmail.com)       	  
+
+          modified by I. Martinez-Rovira (immamartinez@gmail.com)
  */
 
 #ifndef GATEPRODANDSTOPACTOR_HH
@@ -32,8 +32,8 @@ See GATE/LICENSE.txt for further details
 
 class GateProductionAndStoppingActor : public GateVImageActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
 

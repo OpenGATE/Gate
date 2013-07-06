@@ -13,7 +13,7 @@ See GATE/LICENSE.txt for further details
   \class  GateStoppingPowerActor
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
+          david.sarrut@creatis.insa-lyon.fr
  */
 
 #include "GateConfiguration.h"
@@ -28,8 +28,8 @@ See GATE/LICENSE.txt for further details
 
 class GateStoppingPowerActor : public GateVImageActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
   virtual ~GateStoppingPowerActor();
@@ -97,4 +97,4 @@ protected:
 
 MAKE_AUTO_CREATOR_ACTOR(StoppingPowerActor,GateStoppingPowerActor)
 
-#endif 
+#endif

@@ -22,9 +22,9 @@ class GateTriCoincidenceSorterMessenger: public GateClockDependentMessenger
 public:
   GateTriCoincidenceSorterMessenger(GateTriCoincidenceSorter* itsProcessor);
   virtual ~GateTriCoincidenceSorterMessenger();
-  
+
   inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
-    
+
 private:
    GateTriCoincidenceSorter*   m_itsProcessor;
    G4UIcmdWithAString*         m_SetInputSPLNameCmd;

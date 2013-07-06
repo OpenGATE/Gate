@@ -20,7 +20,7 @@ See GATE/LICENSE.txt for further details
 #include <math.h>
 
 GateBuffer::GateBuffer(GatePulseProcessorChain* itsChain,
-      	      	      	      	 const G4String& itsName) 
+      	      	      	      	 const G4String& itsName)
   : GateVPulseProcessor(itsChain,itsName)
   , m_bufferSize(1)
   , m_bufferPos(1)
@@ -33,7 +33,7 @@ GateBuffer::GateBuffer(GatePulseProcessorChain* itsChain,
   SetDepth(0);
 }
 
-GateBuffer::~GateBuffer() 
+GateBuffer::~GateBuffer()
 {
   delete m_messenger;
 }

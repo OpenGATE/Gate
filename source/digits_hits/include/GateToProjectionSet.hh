@@ -9,7 +9,7 @@
   ----------------------*/
 
 
-/*! 
+/*!
 
    \file GateToProjectionSet.hh
 
@@ -17,7 +17,7 @@
 
    Revision v6.2   2012/07/09  by vesna.cuplov@gmail.com
    Implemented functions that have a link with the GateToOpticalRaw class for Optical photons which is
-   used to write as an output file the result of the GateToProjectionSet module for Optical Photons. 
+   used to write as an output file the result of the GateToProjectionSet module for Optical Photons.
 
    Revision 1.1.1.1.4.1  2011/03/10 16:32:35  henri
    Implemented multiple energy window interfile output
@@ -70,8 +70,8 @@
    		*Changed some verbose text to show which digi chain is recorded (aka energy window)
    		*Loop over all energy windows in m_inputDataChannelList to store all the digis related to this event
 
-   
-   
+
+
 */
 
 #ifndef GateToProjectionSet_H
@@ -123,7 +123,7 @@ public:
     /*! \brief Overload of the base-class' virtual method to print-out a description of the module
 
 	\param indent: the print-out indentation (cosmetic parameter)
-    */    
+    */
     void Describe(size_t indent=0);
 
 
@@ -175,25 +175,25 @@ public:
 
 
 	//! Get the input data channel name for energy window
-    const G4String& GetInputDataName(size_t energyWindowID) const                
+    const G4String& GetInputDataName(size_t energyWindowID) const
           { return m_inputDataChannelList.at(energyWindowID);       };
 
     //! Get the input data channel id for energy window
-    G4int GetInputDataID(size_t energyWindowID) const       
+    G4int GetInputDataID(size_t energyWindowID) const
           { return m_inputDataChannelIDList.at(energyWindowID);       };
-          
+
     //! Add the input data channel name
-    void   AddInputDataName(const G4String& aName)     
+    void   AddInputDataName(const G4String& aName)
           { m_inputDataChannelList.push_back(aName);      };
-	 
+
     //! Get the list of input data channel name
     std::vector<G4String> GetInputDataNameList() const
           { return m_inputDataChannelList;       };
-          
+
     //! Get the list of input data channel id
-    std::vector<G4int> GetInputDataIDList() const                
-          { return m_inputDataChannelIDList;       };     
-          
+    std::vector<G4int> GetInputDataIDList() const
+          { return m_inputDataChannelIDList;       };
+
     //! Reset the list of intput data channel and add a name
     void  SetInputDataName(const G4String& aName)
           { m_inputDataChannelList.clear();
@@ -201,7 +201,7 @@ public:
 
     //! Set the output file name in the GateToInterfile class
     void   SetOutputFileName(const G4String& aName);
-	  
+
     //@}
 
     //! \name getters and setters to access the fields of the projection set

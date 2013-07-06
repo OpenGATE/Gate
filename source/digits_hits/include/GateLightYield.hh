@@ -33,25 +33,25 @@ class GateLightYieldMessenger;
     You have to give the light yield (LY) of each crystal.
 
       \sa GateVPulseProcessor
-*/      
+*/
 class GateLightYield : public GateVPulseProcessor
 {
 
   public:
     //! This function allows to retrieve the current instance of the GateLightYield singleton
-    /*! 
+    /*!
       	If the GateLightYield already exists, GetInstance only returns a pointer to this singleton.
 	If this singleton does not exist yet, GetInstance creates it by calling the private
 	GateLightYield constructor
     */
     static GateLightYield* GetInstance(GatePulseProcessorChain* itsChain,
-				       const G4String& itsName); 
+				       const G4String& itsName);
 
     //! Public Destructor
-    virtual ~GateLightYield() ; 
+    virtual ~GateLightYield() ;
 
   private:
-    //!< Private constructor which Constructs a new blurring module attached to a GateDigitizer: 
+    //!< Private constructor which Constructs a new blurring module attached to a GateDigitizer:
     //! this function should only be called from GetInstance()
   GateLightYield(GatePulseProcessorChain* itsChain,
 		 const G4String& itsName);
@@ -60,14 +60,14 @@ class GateLightYield : public GateVPulseProcessor
 
     //! Adds volume to the hashmap and returns 1 if it exists. If it does not exist, returns 0.
 
-    G4int ChooseVolume(G4String val);   
+    G4int ChooseVolume(G4String val);
 
 
     //! \name setters and getters
     //@{
 
     //! Allows to set the light output for crystal called 'name' (Nph/MeV)
-    void SetLightOutput(G4String name, G4double val)   { m_table[name] = val; }; 
+    void SetLightOutput(G4String name, G4double val)   { m_table[name] = val; };
 
     //! Allows to get the light output for crystal called 'name' (Nph/MeV)
     G4double GetLightOutput(G4String name)   { return m_table[name]; };
@@ -93,7 +93,7 @@ class GateLightYield : public GateVPulseProcessor
     //! It is is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
-    
+
   private:
     //! Static pointer to the GateLightYield singleton
     static GateLightYield* theGateLightYield;
@@ -112,4 +112,3 @@ class GateLightYield : public GateVPulseProcessor
 
 
 #endif
-

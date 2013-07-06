@@ -18,7 +18,7 @@ double GateSimplifiedDecayTransition::Pi            = 3.141592653589793 ;
 double GateSimplifiedDecayTransition::E             = 2.718281828459045 ;
 
 //----------------------------------------------------------------------------------------
-// Fermi Function: 
+// Fermi Function:
 //     given eKin, eMax and Z, it returns the normalized probability density
 //     of emitting a positron with energy eKin
 //
@@ -50,7 +50,7 @@ double GateSimplifiedDecayTransition::simpleHitAndMiss(){
     x = energy    * G4UniformRand();
     y = amplitude * G4UniformRand();
   }
-  return x; 
+  return x;
 }
 //----------------------------------------------------------------------------------------
 

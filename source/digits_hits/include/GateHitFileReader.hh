@@ -36,14 +36,14 @@ class GateHitFileReaderMessenger;
 
 /*! \class  GateHitFileReader
     \brief  Reads hits data from a ROOT simulation-output file and recreates hit-collections for digitisation
-    
+
     - GateHitFileReader - by Daniel.Strul@iphe.unil.ch (Oct. 2002)
-    
+
     - The GateHitFileReader is a singleton. It is designed to be used in the DigiGate mode.
       In this mode, the GateHitFileReader will read hits data from a ROOT simulation-output file.
       Based on these data, it will recreate hit-collections that can be fed to the digitizer to
       reprocess the hits.
-*/      
+*/
 class GateHitFileReader : public GateClockDependent
 {
 public:
@@ -56,18 +56,18 @@ public:
   static GateHitFileReader* GetInstance();
 
   ~GateHitFileReader();       //!< Public destructor
-  
+
 private:
   GateHitFileReader();        //!< Private constructor: this function should only be called from GetInstance()
 
 public:
   //! This method must be called (normally by the application manager) before starting a new DigiGate acquisition
   //! It opens the ROOT input file, sets up the hit tree, and loads the first hit
-  void PrepareAcquisition();  
+  void PrepareAcquisition();
 
   /*! \brief This method is meant to be called by the primary generator action at the beginning of each event.
       \brief It read a series of hit data from the ROOT file, and stores them into a queue of hits
-  
+
       \returns 1 -> series of hits OK for the current run, 0 -> either no hits or series of hits for the NEXT run
   */
   G4int PrepareNextEvent(G4Event* event);
@@ -89,9 +89,9 @@ public:
   /*! \brief Overload of the base-class virtual method to print-out a description of the reader
 
       \param indent: the print-out indentation (cosmetic parameter)
-  */    
+  */
   virtual void Describe(size_t indent=0);
-     
+
 
 protected:
 
@@ -101,12 +101,12 @@ protected:
 protected:
 
   G4String    	      m_fileName;     	      //!< Name of the input hit-file
-  TFile*              m_hitFile;       	      //!< the input hit file 
+  TFile*              m_hitFile;       	      //!< the input hit file
 
-  TTree*              m_hitTree;       	      //!< the input hit tree 
+  TTree*              m_hitTree;       	      //!< the input hit tree
   Stat_t       	      m_entries;      	      //!< Number of entries in the tree
   G4int       	      m_currentEntry; 	      //!< Current entry in the tree
-  
+
 
   GateRootHitBuffer        m_hitBuffer;       	      //!< Buffer to store the data read from the hit-tree
       	      	      	      	      	      //!< Each field of this structure is a buffer for one of the branches of the tree
@@ -119,7 +119,7 @@ protected:
 					      //!< a crystal-hit collection at the end of each event by PrepareEndOfEvent()
 
   GateHitFileReaderMessenger *m_messenger;    //!< Messenger;
-  
+
 private:
   static GateHitFileReader*   instance;       //!< Instance of the GateHitFielReader singleton
 };

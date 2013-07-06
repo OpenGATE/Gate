@@ -37,7 +37,7 @@ GateTimeActorMessenger::~GateTimeActorMessenger()
 void GateTimeActorMessenger::BuildCommands(G4String base)
 {
   G4String  n = base+"/enableDetailedStats";
-  pEnableDetailedStatCmd = new G4UIcmdWithABool(n, this); 
+  pEnableDetailedStatCmd = new G4UIcmdWithABool(n, this);
   G4String guid = G4String("Enable detailed stats (slower)");
   pEnableDetailedStatCmd->SetGuidance(guid);
 }
@@ -47,7 +47,7 @@ void GateTimeActorMessenger::BuildCommands(G4String base)
 //-----------------------------------------------------------------------------
 void GateTimeActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
-  if (cmd == pEnableDetailedStatCmd) 
+  if (cmd == pEnableDetailedStatCmd)
     pTimeActor->EnableDetailedStats(pEnableDetailedStatCmd->GetNewBoolValue(newValue));
   GateActorMessenger::SetNewValue(cmd, newValue);
 }

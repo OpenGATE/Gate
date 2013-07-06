@@ -36,7 +36,7 @@ GateVActor::GateVActor(G4String name, G4int depth)
   mSaveFilename = "FilnameNotGivenForThisActor";
   mSaveInitialFilename = mSaveFilename;
   mVolumeName = "";
-  mVolume = 0;  
+  mVolume = 0;
   EnableSaveEveryNEvents(0);
   EnableSaveEveryNSeconds(0);
   mNumOfFilters = 0;
@@ -58,8 +58,8 @@ GateVActor::~GateVActor()
 
 
 //-----------------------------------------------------------------------------
-// default callback for BeginOfRunAction 
-void GateVActor::BeginOfRunAction(const G4Run*) 
+// default callback for BeginOfRunAction
+void GateVActor::BeginOfRunAction(const G4Run*)
 {
   gettimeofday(&mTimeOfLastSaveEvent, NULL);
   if (mResetDataAtEachRun) {
@@ -71,7 +71,7 @@ void GateVActor::BeginOfRunAction(const G4Run*)
 
 //-----------------------------------------------------------------------------
 // default callback for EndOfRunAction allowing to call Save
-void GateVActor::EndOfRunAction(const G4Run*) 
+void GateVActor::EndOfRunAction(const G4Run*)
 {
   SaveData();
 }
@@ -81,12 +81,12 @@ void GateVActor::EndOfRunAction(const G4Run*)
 //-----------------------------------------------------------------------------
 // default callback for EndOfEventAction allowing to call
 // EndOfNEventAction (if it is enabled)
-void GateVActor::EndOfEventAction(const G4Event*e) 
+void GateVActor::EndOfEventAction(const G4Event*e)
 {
-  int ne = e->GetEventID()+1;    
- 
+  int ne = e->GetEventID()+1;
+
   // Save every n events
-  if ((ne != 0) && (mSaveEveryNEvents != 0)) 
+  if ((ne != 0) && (mSaveEveryNEvents != 0))
     if (ne % mSaveEveryNEvents == 0)  SaveData();
 
   // Save every n seconds
@@ -105,7 +105,7 @@ void GateVActor::EndOfEventAction(const G4Event*e)
 
 
 //-----------------------------------------------------------------------------
-void GateVActor::SetSaveFilename(G4String  f) 
+void GateVActor::SetSaveFilename(G4String  f)
 {
   mSaveFilename = f;
   mSaveInitialFilename = f;
@@ -130,7 +130,7 @@ void GateVActor::AttachToVolume(G4String /*volumeName*/)
 
 //-----------------------------------------------------------------------------
 void GateVActor::SaveData()
-{  
+{
   if (!this->mOverWriteFilesFlag) {
     mSaveFilename = GetSaveCurrentFilename(mSaveInitialFilename);
   }

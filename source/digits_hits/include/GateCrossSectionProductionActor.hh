@@ -28,8 +28,8 @@ See GATE/LICENSE.txt for further details
 
 class GateCrossSectionProductionActor : public GateVImageActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
   virtual ~GateCrossSectionProductionActor();
@@ -110,4 +110,4 @@ protected:
 
 MAKE_AUTO_CREATOR_ACTOR(CrossSectionProductionActor,GateCrossSectionProductionActor)
 
-#endif 
+#endif

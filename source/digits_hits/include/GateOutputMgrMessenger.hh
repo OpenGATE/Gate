@@ -32,16 +32,15 @@ class GateOutputMgrMessenger: public GateMessenger
 public:
   GateOutputMgrMessenger(GateOutputMgr* outputMgr);
   virtual ~GateOutputMgrMessenger();
-  
+
   void SetNewValue(G4UIcommand*, G4String);
-    
+
 private:
   GateOutputMgr*                       m_outputMgr;
-  G4UIdirectory*                       pGateOutputMess; 
+  G4UIdirectory*                       pGateOutputMess;
   G4UIcmdWithoutParameter*             DescribeCmd;
   G4UIcmdWithAnInteger*                VerboseCmd;
   G4UIcmdWithoutParameter*             AllowNoOutputCmd;
 };
 
 #endif
-

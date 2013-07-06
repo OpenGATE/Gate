@@ -28,34 +28,34 @@ public:
   typedef unsigned long long int  buffer_t;
 
 
- 
+
   //! Destructor
-  virtual ~GateCoincidenceBuffer() ; 
-  
-  
+  virtual ~GateCoincidenceBuffer() ;
+
+
   //! Constructs a new dead time attached to a GateDigitizer
   GateCoincidenceBuffer(GateCoincidencePulseProcessorChain* itsChain,
 			     const G4String& itsName);
-  
-public:  
-  
+
+public:
+
   void SetBufferSize(buffer_t val)   { m_bufferSize = val;}
   void SetReadFrequency(G4double val)   { m_readFrequency = val;}
 //  void SetDoModifyTime(G4bool val)   { m_doModifyTime = val;}
   void SetMode(G4int val)   { m_mode = val;}
 
-  
+
   //! Implementation of the pure virtual method declared by the base class GateClockDependent
   //! print-out the attributes specific of the deadTime
   virtual void DescribeMyself(size_t indent);
-  
+
 protected:
-  
+
   /*! Implementation of the pure virtual method declared by the base class GateVCoincidencePulseProcessor*/
   GateCoincidencePulse* ProcessPulse(GateCoincidencePulse* inputPulse,G4int iPulse);
-  
 
-private: 
+
+private:
   buffer_t m_bufferSize;
   buffer_t m_bufferPos;
   buffer_t m_oldClock;
@@ -67,4 +67,3 @@ private:
 
 
 #endif
-

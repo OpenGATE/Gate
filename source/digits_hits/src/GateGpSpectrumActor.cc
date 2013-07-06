@@ -13,7 +13,7 @@ GateGpSpectrumActor::GateGpSpectrumActor(G4String name, G4int depth):
 	pMessenger = new GateGpSpectrumActorMessenger(this);
 }
 
-GateGpSpectrumActor::~GateGpSpectrumActor() 
+GateGpSpectrumActor::~GateGpSpectrumActor()
 {
 	delete pMessenger;
 }
@@ -58,7 +58,7 @@ void GateGpSpectrumActor::SaveData()
 	pTfile->Write();
 }
 
-void GateGpSpectrumActor::ResetData() 
+void GateGpSpectrumActor::ResetData()
 {
 	pHEpEgp->Reset();
 	pHEpEgpNormalized->Reset();
@@ -78,13 +78,13 @@ void GateGpSpectrumActor::EndOfEventAction(const G4Event*)
 {
 }
 
-void GateGpSpectrumActor::PreUserTrackingAction(const GateVVolume*, const G4Track*) 
+void GateGpSpectrumActor::PreUserTrackingAction(const GateVVolume*, const G4Track*)
 {
 	last_secondaries_size = 0;
 	first_step = true;
 }
 
-void GateGpSpectrumActor::PostUserTrackingAction(const GateVVolume*, const G4Track*) 
+void GateGpSpectrumActor::PostUserTrackingAction(const GateVVolume*, const G4Track*)
 {
 }
 

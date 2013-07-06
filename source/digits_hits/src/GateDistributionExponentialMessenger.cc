@@ -20,9 +20,9 @@ See GATE/LICENSE.txt for further details
 GateDistributionExponentialMessenger::GateDistributionExponentialMessenger(GateDistributionExponential* itsDistribution,
     			     const G4String& itsDirectoryName)
 : GateDistributionMessenger( itsDistribution,itsDirectoryName)
-{ 
+{
   G4String cmdName,guidance;
-  
+
   cmdName = GetDirectoryName()+"setLambda";
   guidance = "Set the Exponential Lambda value";
   setLambdaCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
@@ -50,8 +50,8 @@ GateDistributionExponentialMessenger::~GateDistributionExponentialMessenger()
 
 // UI command interpreter method
 void GateDistributionExponentialMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
-  if       ( command==setAmplitudeCmd ){	
+{
+  if       ( command==setAmplitudeCmd ){
     G4double x = setAmplitudeCmd->GetNewDoubleValue(newValue);
     G4Tokenizer tok(newValue);
     G4String unit = tok();
@@ -69,4 +69,3 @@ void GateDistributionExponentialMessenger::SetNewValue(G4UIcommand* command,G4St
   else
     GateDistributionMessenger::SetNewValue(command,newValue);
 }
-

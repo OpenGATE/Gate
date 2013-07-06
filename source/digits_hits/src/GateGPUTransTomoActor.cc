@@ -38,7 +38,7 @@ GateGPUTransTomoActor::GateGPUTransTomoActor(G4String name, G4int depth):
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateGPUTransTomoActor::~GateGPUTransTomoActor()  {
   delete pMessenger;
   GateGPUIO_Input_delete(gpu_input);
@@ -105,7 +105,7 @@ void GateGPUTransTomoActor::ResetData() {
   gpu_input->phantom_spacing_x = spacing.x();
   gpu_input->phantom_spacing_y = spacing.y();
   gpu_input->phantom_spacing_z = spacing.z();
-  
+
   gpu_input->cudaDeviceID = mGPUDeviceID;
   DD(gpu_input->phantom_size_x);
   DD(gpu_input->phantom_size_y);
@@ -120,7 +120,7 @@ void GateGPUTransTomoActor::ResetData() {
     ++iter;
   }
   DD(gpu_input->phantom_material_data.size());
-  
+
   GateGPUIO_Output_delete(gpu_output);
   gpu_output = GateGPUIO_Output_new();
   DD("end");
@@ -150,16 +150,16 @@ void GateGPUTransTomoActor::BeginOfRunAction(const G4Run *)
 
 
 //-----------------------------------------------------------------------------
-void GateGPUTransTomoActor::UserSteppingAction(const GateVVolume * /*v*/, 
+void GateGPUTransTomoActor::UserSteppingAction(const GateVVolume * /*v*/,
                                               const G4Step * step)
 {
   GateDebugMessage("Actor", 4, "GateGPUTransTomoActor -- UserSteppingAction" << G4endl);
-  
+
   // Check if we are on the boundary
   G4StepPoint * preStep = step->GetPreStepPoint();
   //  G4StepPoint * postStep = step->GetPostStepPoint();
-  if (preStep->GetStepStatus() != fGeomBoundary) { 
-    // This is not the first step in the volume 
+  if (preStep->GetStepStatus() != fGeomBoundary) {
+    // This is not the first step in the volume
     step->GetTrack()->SetTrackStatus( fStopAndKill ); // FIXME : one step more to remove.
     return;
   }
@@ -184,12 +184,12 @@ void GateGPUTransTomoActor::UserSteppingAction(const GateVVolume * /*v*/,
 
   int h = preStep->GetTouchable()->GetHistory()->GetDepth ();
   // DD(h);
-  const G4AffineTransform transformation = 
+  const G4AffineTransform transformation =
     preStep->GetTouchable()->GetHistory()->GetTransform(h-3);
 
   //FIXME : store transformation with phantom centre and explain why -3
 
-  //  preStep->GetTouchable()->GetHistory()->GetTopTransform().Inverse();  
+  //  preStep->GetTouchable()->GetHistory()->GetTopTransform().Inverse();
   // DD(transformation.NetTranslation());
 
   G4ThreeVector zero;
@@ -198,7 +198,7 @@ void GateGPUTransTomoActor::UserSteppingAction(const GateVVolume * /*v*/,
   G4ThreeVector localPosition = transformation.TransformPoint(preStep->GetPosition());
   // DD(preStep->GetPosition());
   //  DD(localPosition);
-  
+
   p.px = localPosition.x();
   p.py = localPosition.y();
   p.pz = localPosition.z();
@@ -210,7 +210,7 @@ void GateGPUTransTomoActor::UserSteppingAction(const GateVVolume * /*v*/,
   p.dz = preStep->GetMomentumDirection().z();
   //  GateGPUIO_Particle_Print(p);
 
-  gpu_input->particles.push_back(p); // FIXME SLOW 
+  gpu_input->particles.push_back(p); // FIXME SLOW
 
   // We kill the particle without mercy
   step->GetTrack()->SetTrackStatus( fStopAndKill );
@@ -218,25 +218,25 @@ void GateGPUTransTomoActor::UserSteppingAction(const GateVVolume * /*v*/,
   // FIXME If there are less than max_buffer_size the GPU will nerver proceed particles
   // STEP2 if enough particles in the buffer, start the gpu tracking
   if (gpu_input->particles.size() == max_buffer_size) {
-    
+
     // DD(max_buffer_size);
     gpu_input->seed = static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
     DD(gpu_input->seed);
 #ifdef GATE_USE_GPU
     GPU_GateTransTomo(gpu_input, gpu_output);
-#endif    
+#endif
 
     // STEP3 get particles from gpu and create tracks
     DD(gpu_output->particles.size());
-    GateGPUIO_Output::ParticlesList::const_iterator 
+    GateGPUIO_Output::ParticlesList::const_iterator
       iter = gpu_output->particles.begin();
     while (iter != gpu_output->particles.end()) {
       CreateNewParticle(*iter);
       ++iter;
     }
-    
+
     static G4EventManager * em = G4EventManager::GetEventManager();
-    G4StackManager * sm = em->GetStackManager(); 
+    G4StackManager * sm = em->GetStackManager();
     DD(sm->GetNTotalTrack());
 
     // Free output
@@ -250,7 +250,7 @@ void GateGPUTransTomoActor::UserSteppingAction(const GateVVolume * /*v*/,
 
 
 //-----------------------------------------------------------------------------
-void GateGPUTransTomoActor::CreateNewParticle(const GateGPUIO_Particle & p) 
+void GateGPUTransTomoActor::CreateNewParticle(const GateGPUIO_Particle & p)
 {
   // DD("CreateNewParticle");
   G4ThreeVector dir(p.dx, p.dy, p.dz);
@@ -279,12 +279,12 @@ void GateGPUTransTomoActor::CreateNewParticle(const GateGPUIO_Particle & p)
   newTrack->SetTrackID(p.trackID+trackid);
   ++trackid;
   newTrack->SetParentID(666);//p.eventID);
-  // SetTrackID ; SetParentID ; 
-  
+  // SetTrackID ; SetParentID ;
+
   // Insert
   // DD("insert");
   static G4EventManager * em = G4EventManager::GetEventManager();
-  G4StackManager * sm = em->GetStackManager(); 
+  G4StackManager * sm = em->GetStackManager();
   sm->PushOneTrack(newTrack);
   // // DD("end");
 

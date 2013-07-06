@@ -29,12 +29,12 @@ class GateToSinogramMessenger: public GateOutputModuleMessenger
   public:
     GateToSinogramMessenger(GateToSinogram* gateToSinogram);
    ~GateToSinogramMessenger();
-    
+
     void SetNewValue(G4UIcommand*, G4String);
-    
+
   protected:
     GateToSinogram*             m_gateToSinogram;
-    
+
     G4UIcmdWithAString*         SetFileNameCmd;          //!< The UI command "set file name"
     G4UIcmdWithABool*           TruesOnlyCmd; 		 //!< The UI command "true coincidences only in data=0"
     G4UIcmdWithAnInteger*       SetRadialElemNbCmd;  	 //!< The UI command "Number of radial sinogram bins"
@@ -42,7 +42,7 @@ class GateToSinogramMessenger: public GateOutputModuleMessenger
     G4UIcmdWithADoubleAndUnit*  SetTangCrystalResolCmd;  //!< The UI command "set crystal location blurring FWHM in the tangential direction"
     G4UIcmdWithADoubleAndUnit*  SetAxialCrystalResolCmd; //!< The UI command "set crystal location blurring FWHM in the axial direction"
     G4UIcmdWithAString*         SetInputDataCmd;         //!< The UI command "set input data name"
-    
+
     // 07.02.2006, C. Comtat, Store randoms and scatters sino
     G4UIcmdWithABool*           StoreDelayedsCmd;        //!< The UI command "store dealayed coincidences in data=1 and prompt coincidences in data=0"
     G4UIcmdWithABool*           StoreScattersCmd;        //!< The UI command "store true scattered coincidences in data=4"

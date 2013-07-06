@@ -25,7 +25,7 @@ GateVDigiMakerModule::GateVDigiMakerModule( GateDigitizer* itsDigitizer,
    m_inputName(itsInputName)
 {
   G4String collectionName = itsInputName;
-  
+
   if ( collectionName.substr(0,10) == "digitizer/" )
     collectionName = collectionName.substr(10);
 
@@ -39,7 +39,7 @@ GateVDigiMakerModule::GateVDigiMakerModule( GateDigitizer* itsDigitizer,
         collectionName.at(pos) = toupper( collectionName.at(pos) ) ;
     }
   } while ( pos != G4String::npos);
-  
+
   m_collectionName = collectionName;
 }
 
@@ -57,5 +57,3 @@ void GateVDigiMakerModule::DescribeMyself(size_t indent)
   G4cout << GateTools::Indent(indent) << "Input pulses:       " << m_inputName << G4endl;
   G4cout << GateTools::Indent(indent) << "Output digis:       " << m_collectionName << G4endl;
 }
-
-

@@ -13,7 +13,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UnitsTable.hh"
 #include "GateCoincidenceTimeDiffSelectorMessenger.hh"
 #include "GateTools.hh"
-#include "GateVolumeID.hh" 
+#include "GateVolumeID.hh"
 #include "GateOutputVolumeID.hh"
 #include "GateDetectorConstruction.hh"
 #include "GateCrystalSD.hh"
@@ -24,22 +24,22 @@ See GATE/LICENSE.txt for further details
 
 
 GateCoincidenceTimeDiffSelector::GateCoincidenceTimeDiffSelector(GateCoincidencePulseProcessorChain* itsChain,
-			   const G4String& itsName) 
+			   const G4String& itsName)
   : GateVCoincidencePulseProcessor(itsChain,itsName)
 {
   m_minTime = -1;
   m_maxTime = -1;
-  
+
   m_messenger = new GateCoincidenceTimeDiffSelectorMessenger(this);
-}  
+}
 
 
 
 
-GateCoincidenceTimeDiffSelector::~GateCoincidenceTimeDiffSelector() 
+GateCoincidenceTimeDiffSelector::~GateCoincidenceTimeDiffSelector()
 {
   delete m_messenger;
-}  
+}
 
 
 
@@ -51,7 +51,7 @@ GateCoincidencePulse* GateCoincidenceTimeDiffSelector::ProcessPulse(GateCoincide
       	G4cout << "[GateCoincidenceTimeDiffSelector::ProcessOnePulse]: input pulse was null -> nothing to do\n\n";
       return 0;
   }
-  
+
   G4double timeDiff = inputPulse->ComputeFinishTime()-inputPulse->GetStartTime();
   if ( ((m_minTime>0)  && (timeDiff<m_minTime) )
       ||

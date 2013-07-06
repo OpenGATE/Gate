@@ -14,7 +14,7 @@
 #include "GateAugerDetectorActorMessenger.hh"
 
 //-----------------------------------------------------------------------------
-GateAugerDetectorActor::GateAugerDetectorActor(G4String name, G4int depth) 
+GateAugerDetectorActor::GateAugerDetectorActor(G4String name, G4int depth)
   : GateVActor(name,depth)
 {
   max_time_of_flight = 10*ns;
@@ -30,7 +30,7 @@ GateAugerDetectorActor::GateAugerDetectorActor(G4String name, G4int depth)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-GateAugerDetectorActor::~GateAugerDetectorActor() 
+GateAugerDetectorActor::~GateAugerDetectorActor()
 {
   delete pMessenger;
 }
@@ -121,7 +121,7 @@ void GateAugerDetectorActor::SaveData()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateAugerDetectorActor::ResetData() 
+void GateAugerDetectorActor::ResetData()
 {
   pProfileHisto->Reset();
   pEnergyDepositionHisto->Reset();
@@ -161,13 +161,13 @@ void GateAugerDetectorActor::EndOfEventAction(const G4Event*)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateAugerDetectorActor::PreUserTrackingAction(const GateVVolume*, const G4Track*) 
+void GateAugerDetectorActor::PreUserTrackingAction(const GateVVolume*, const G4Track*)
 {
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateAugerDetectorActor::PostUserTrackingAction(const GateVVolume*, const G4Track*) 
+void GateAugerDetectorActor::PostUserTrackingAction(const GateVVolume*, const G4Track*)
 {
 }
 //-----------------------------------------------------------------------------
@@ -191,7 +191,7 @@ void GateAugerDetectorActor::UserSteppingAction(const GateVVolume*, const G4Step
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-G4double GateAugerDetectorActor::GetTotalDepositedEnergy() const 
+G4double GateAugerDetectorActor::GetTotalDepositedEnergy() const
 {
   G4double total_deposited_energy = 0;
   for (std::list<AugerDeposition>::const_iterator iter=depositions.begin(); iter!=depositions.end(); iter++)
@@ -203,7 +203,7 @@ G4double GateAugerDetectorActor::GetTotalDepositedEnergy() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-G4ThreeVector GateAugerDetectorActor::GetWeighedBarycenterPosition() const 
+G4ThreeVector GateAugerDetectorActor::GetWeighedBarycenterPosition() const
 {
   G4double total_weight = 0;
   G4ThreeVector accum(0,0,0);
@@ -217,7 +217,7 @@ G4ThreeVector GateAugerDetectorActor::GetWeighedBarycenterPosition() const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-G4double GateAugerDetectorActor::GetWeighedBarycenterTime() const 
+G4double GateAugerDetectorActor::GetWeighedBarycenterTime() const
 {
   G4double total_weight = 0;
   G4double accum = 0;

@@ -13,7 +13,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UnitsTable.hh"
 #include "GateCoincidenceBufferMessenger.hh"
 #include "GateTools.hh"
-#include "GateVolumeID.hh" 
+#include "GateVolumeID.hh"
 #include "GateOutputVolumeID.hh"
 #include "GateVVolume.hh"
 #include "GateDetectorConstruction.hh"
@@ -29,7 +29,7 @@ See GATE/LICENSE.txt for further details
 
 
 GateCoincidenceBuffer::GateCoincidenceBuffer(GateCoincidencePulseProcessorChain* itsChain,
-			   const G4String& itsName) 
+			   const G4String& itsName)
   : GateVCoincidencePulseProcessor(itsChain,itsName)
   , m_bufferSize(1)
   , m_bufferPos(0)
@@ -44,10 +44,10 @@ GateCoincidenceBuffer::GateCoincidenceBuffer(GateCoincidencePulseProcessorChain*
 
 
 
-GateCoincidenceBuffer::~GateCoincidenceBuffer() 
+GateCoincidenceBuffer::~GateCoincidenceBuffer()
 {
   delete m_messenger;
-}  
+}
 
 
 

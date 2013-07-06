@@ -40,14 +40,14 @@ GateLevelsFinder::GateLevelsFinder(GateVVolume* anInserter, std::vector<size_t>&
 }
 
 
-std::vector<size_t> GateLevelsFinder::FindInputPulseParams(const GateVolumeID* aVolumeID, 
+std::vector<size_t> GateLevelsFinder::FindInputPulseParams(const GateVolumeID* aVolumeID,
 							      const size_t depth)
 {
   std::vector<size_t> pulseLevels;
   size_t temp;
   for(size_t i = 0; i < m_size; i++)
     {
-      temp = (aVolumeID->GetCopyNo(depth - i) != -1) 
+      temp = (aVolumeID->GetCopyNo(depth - i) != -1)
 	? aVolumeID->GetCopyNo(depth - i) : 0;
       pulseLevels.push_back(temp);
     }

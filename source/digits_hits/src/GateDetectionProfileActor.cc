@@ -115,7 +115,7 @@ void GateDetectionProfileActor::SaveData()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateDetectionProfileActor::ResetData() 
+void GateDetectionProfileActor::ResetData()
 {
   mImage.Fill(0);
 }
@@ -141,7 +141,7 @@ void GateDetectionProfileActor::UserPostTrackActionInVoxel(const int, const G4Tr
 
   timerActor->ReportDetectedParticle(GetName(),detectedTime,detectedEnergy,detectedDeltaEnergy,detectedWeight);
   GateMessage("Actor",4,
-    "hit finished de=" << detectedDeltaEnergy/MeV << 
+    "hit finished de=" << detectedDeltaEnergy/MeV <<
     " dethresh=" << deltaEnergyThreshold/MeV << G4endl);
 
   if (detectedDeltaEnergy<=deltaEnergyThreshold) return;
@@ -178,7 +178,7 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
   const G4StepPoint *point = step->GetPreStepPoint();
   const GateDetectionProfilePrimaryTimerActor::TriggerData &triggerData = timerActor->GetTriggerData();
 
-  // find minimum distance between two lines according to 
+  // find minimum distance between two lines according to
   // http://softsurfer.com/Archive/algorithm_0106/algorithm_0106.htm
   G4double minDistance;
   G4ThreeVector minPosition;
@@ -234,10 +234,10 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
 
   GateMessage("Actor",4,
     "detector hitted" <<
-    " name=" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << 
-    " flytime=" << (detectedTime-triggerData.time)/ns << 
-    " position=" << minPosition/mm << 
-    " distance=" << minDistance/mm << 
+    " name=" << step->GetTrack()->GetParticleDefinition()->GetParticleName() <<
+    " flytime=" << (detectedTime-triggerData.time)/ns <<
+    " position=" << minPosition/mm <<
+    " distance=" << minDistance/mm <<
     " e=" << detectedEnergy <<
     " index=" << detectedIndex << G4endl);
 
@@ -375,7 +375,7 @@ void GateDetectionProfilePrimaryTimerActor::SaveData()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateDetectionProfilePrimaryTimerActor::ResetData() 
+void GateDetectionProfilePrimaryTimerActor::ResetData()
 {
   histoTime->Reset();
   histoPosition->Reset();
@@ -437,4 +437,4 @@ void GateDetectionProfilePrimaryTimerActor::ReportDetectedParticle(const G4Strin
 }
 //-----------------------------------------------------------------------------
 
-#endif 
+#endif

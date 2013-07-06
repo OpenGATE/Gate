@@ -52,13 +52,13 @@ GateUserActions::GateUserActions(GateRunManager* m, GateRecorderBase* r)
   mIsTimeStudyActivated = false;
 
 
-  // Set fGate' user action classes to the GateRunmanager : 
-  // Run/Event/Tracking/Stepping in order to get the callbacks  
-  GateRunAction* RunAction = new GateRunAction(this, recorder); 
-  GateEventAction* EventAction = new GateEventAction(this, recorder); 
-  GateTrackingAction* TrackingAction = new GateTrackingAction(this, recorder); 
-  GateSteppingAction* SteppingAction = new GateSteppingAction(this, recorder); 
-      
+  // Set fGate' user action classes to the GateRunmanager :
+  // Run/Event/Tracking/Stepping in order to get the callbacks
+  GateRunAction* RunAction = new GateRunAction(this, recorder);
+  GateEventAction* EventAction = new GateEventAction(this, recorder);
+  GateTrackingAction* TrackingAction = new GateTrackingAction(this, recorder);
+  GateSteppingAction* SteppingAction = new GateSteppingAction(this, recorder);
+
   pRunManager->SetUserAction(RunAction);
   pRunManager->SetUserAction(EventAction);
   pRunManager->SetUserAction(TrackingAction);
@@ -77,8 +77,8 @@ GateUserActions::GateUserActions(GateRunManager* m, GateRecorderBase* r)
 
 //-----------------------------------------------------------------------------
 GateUserActions::~GateUserActions()
-{  
-  
+{
+
   delete pUserActions;
   GateDebugMessageInc("Core", 4, "GateUserActions Destructor."<<G4endl);
 }
@@ -98,15 +98,15 @@ void GateUserActions::BeginOfRunAction(const G4Run* run)
 
   // Prepare the visualization
   if (G4VVisManager::GetConcreteInstance()) {
-    G4UImanager* UI = G4UImanager::GetUIpointer(); 
+    G4UImanager* UI = G4UImanager::GetUIpointer();
     UI->ApplyCommand("/vis/scene/notifyHandlers");
-  } 
+  }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateUserActions::EndOfRunAction(const G4Run* run)
-{  
+{
   GateActorManager::GetInstance()->EndOfRunAction(run);
 
   if(mIsTimeStudyActivated){
@@ -141,7 +141,7 @@ void GateUserActions::EndOfEventAction(const G4Event* evt)
 // G4cout<<G4endl;
  // GateTrackIDInfo trInfo;
  //G4cout<<"Taille vecteur = "<<sizeof(theListOfTrackIDInfo)<<G4endl;
- //G4cout<<"Taille élément vecteur = "<<sizeof(trInfo)<<G4endl;
+ //G4cout<<"Taille Ã©lÃ©ment vecteur = "<<sizeof(trInfo)<<G4endl;
  //G4cout<<"Taille totale = "<<sizeof(theListOfTrackIDInfo)+sizeof(trInfo)*theListOfTrackIDInfo.size()<<G4endl;
  for(std::map<G4int,GateTrackIDInfo>::iterator i = theListOfTrackIDInfo.begin(); i != theListOfTrackIDInfo.begin(); /*EMPTY*/)
  {
@@ -188,7 +188,7 @@ void GateUserActions::UserSteppingAction(const G4Step* step)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-GateTrackIDInfo *GateUserActions::GetTrackIDInfo(G4int id) 
+GateTrackIDInfo *GateUserActions::GetTrackIDInfo(G4int id)
 {
   if(id>0) return (&theListOfTrackIDInfo[id]);
   else return 0;
@@ -215,6 +215,3 @@ void GateUserActions::EnableTimeStudyForSteps(G4String filename)
 
 
 #endif /* end #define GATECALLBACKMANAGER_CC */
-
-
-

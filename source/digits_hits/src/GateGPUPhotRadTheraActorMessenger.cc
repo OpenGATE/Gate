@@ -39,13 +39,13 @@ GateGPUPhotRadTheraActorMessenger::~GateGPUPhotRadTheraActorMessenger()
 //-----------------------------------------------------------------------------
 void GateGPUPhotRadTheraActorMessenger::BuildCommands(G4String base)
 {
-  G4String n = base+"/setGPUDeviceID"; 
-  pSetGPUDeviceIDCmd = new G4UIcmdWithAnInteger(n, this); 
+  G4String n = base+"/setGPUDeviceID";
+  pSetGPUDeviceIDCmd = new G4UIcmdWithAnInteger(n, this);
   G4String guid = G4String("Set the CUDA Device ID");
   pSetGPUDeviceIDCmd->SetGuidance(guid);
 
-  n = base+"/setGPUBufferSize"; 
-  pSetGPUBufferCmd = new G4UIcmdWithAnInteger(n, this); 
+  n = base+"/setGPUBufferSize";
+  pSetGPUBufferCmd = new G4UIcmdWithAnInteger(n, this);
   guid = G4String("Set the buffer size for the gpu (nb of particles)");
   pSetGPUBufferCmd->SetGuidance(guid);
 }
@@ -55,9 +55,9 @@ void GateGPUPhotRadTheraActorMessenger::BuildCommands(G4String base)
 //-----------------------------------------------------------------------------
 void GateGPUPhotRadTheraActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
-  if (cmd == pSetGPUDeviceIDCmd) 
+  if (cmd == pSetGPUDeviceIDCmd)
     pPhotRadTheraActor->SetGPUDeviceID(pSetGPUDeviceIDCmd->GetNewIntValue(newValue));
-  if (cmd == pSetGPUBufferCmd) 
+  if (cmd == pSetGPUBufferCmd)
     pPhotRadTheraActor->SetGPUBufferSize(pSetGPUBufferCmd->GetNewIntValue(newValue));
   GateActorMessenger::SetNewValue( cmd, newValue);
 }

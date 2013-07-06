@@ -1,4 +1,4 @@
-/*!	
+/*!
  *	\file GateToBinaryMessenger.cc
  *	\author Didier Benoit <benoit@imnc.in2p3.fr>
  *	\date May 2010, IMNC/CNRS, Orsay
@@ -6,7 +6,7 @@
  *	\section LICENCE
  *
  *	Copyright (C): OpenGATE Collaboration
- *	This software is distributed under the terms of the GNU Lesser General 
+ *	This software is distributed under the terms of the GNU Lesser General
  *	Public Licence (LGPL) See GATE/LICENSE.txt for further details
  */
 
@@ -71,7 +71,7 @@ GateToBinaryMessenger::GateToBinaryMessenger( GateToBinary* gateToBinary )
 
 	cmdName = GetDirectoryName()+"setOutFileSizeLimit";
 	m_setOutFileSizeLimitCmd = new G4UIcmdWithAnInteger( cmdName, this );
-	m_setOutFileSizeLimitCmd->SetGuidance( 
+	m_setOutFileSizeLimitCmd->SetGuidance(
 		"Set the limit for the size (bytes) of the output binary data files" );
 	m_setOutFileSizeLimitCmd->SetParameterName( "size", false );
 }
@@ -85,7 +85,7 @@ GateToBinaryMessenger::~GateToBinaryMessenger()
   delete m_outFileVoxelCmd;
   delete m_setFileNameCmd;
   for( size_t i = 0; i < m_outputChannelCmd.size(); ++i )
-  { 
+  {
     delete m_outputChannelCmd[ i ];
   }
 }
@@ -94,42 +94,42 @@ void GateToBinaryMessenger::SetNewValue( G4UIcommand* command,
 	G4String newValue )
 {
 	if( command == m_coincidenceMaskCmd )
-	{ 
+	{
 		std::vector< G4bool > maskVector;
 		std::string newValueString = static_cast< std::string >( newValue );
 
 		std::istringstream iss( newValueString );
-	
+
 		G4int mask( 0 );
 		maskVector.clear();
-		
-		for( G4int iMask = 0; iMask < m_coincidenceMaskLength; ++iMask) 
+
+		for( G4int iMask = 0; iMask < m_coincidenceMaskLength; ++iMask)
 		{
 			iss >> mask;
 			maskVector.push_back( mask );
 		}
 		GateCoincidenceDigi::SetCoincidenceASCIIMask( maskVector );
-	} 
+	}
 	else if( command == m_singleMaskCmd )
 	{
 		std::vector< G4bool > maskVector;
 		std::string newValueString = static_cast< std::string >( newValue );
-		
+
 		std::istringstream iss( newValueString );
-		
+
 		G4int mask( 0 );
 		maskVector.clear();
-		
+
 		for( G4int iMask = 0; iMask < m_singleMaskLength; ++iMask )
 		{
 			iss >> mask;
 			maskVector.push_back( mask );
 		}
 		GateSingleDigi::SetSingleASCIIMask( maskVector );
-	} 
+	}
 	else if( command == m_setOutFileSizeLimitCmd )
 	{
-		GateToBinary::VOutputChannel::SetOutputFileSizeLimit( 
+		GateToBinary::VOutputChannel::SetOutputFileSizeLimit(
 			m_setOutFileSizeLimitCmd->GetNewIntValue( newValue ) );
 	}
 	else if( command == m_setFileNameCmd )
@@ -138,49 +138,49 @@ void GateToBinaryMessenger::SetNewValue( G4UIcommand* command,
 	}
 	else if ( command == m_outFileHitsCmd )
 	{
-		m_gateToBinary->SetOutFileHitsFlag( 
+		m_gateToBinary->SetOutFileHitsFlag(
 			m_outFileHitsCmd->GetNewBoolValue( newValue ) );
 	}
 	else if ( command == m_outFileVoxelCmd )
 	{
-		m_gateToBinary->SetOutFileVoxelFlag( 
+		m_gateToBinary->SetOutFileVoxelFlag(
 			m_outFileVoxelCmd->GetNewBoolValue( newValue ) );
 	}
 	else if ( IsAnOutputChannelCmd( command ) )
 	{
-		ExecuteOutputChannelCmd( command, newValue ); 
+		ExecuteOutputChannelCmd( command, newValue );
 	}
 	else
 	{
 		GateOutputModuleMessenger::SetNewValue( command, newValue );
 	}
-}	
+}
 
 void GateToBinaryMessenger::CreateNewOutputChannelCommand(
 	GateToBinary::VOutputChannel* anOutputChannel )
-{ 
+{
   G4String cmdName;
-  
+
   // Add the output channel
   m_outputChannelVector.push_back( anOutputChannel );
-  
+
   G4String channelName = anOutputChannel->m_collectionName;
   cmdName = GetDirectoryName()+ "setOutFile" + channelName + "Flag";
-    
+
   G4UIcmdWithABool* newCmd = new G4UIcmdWithABool( cmdName, this );
-  G4String aGuidance = "Set the flag for Binary output of " + channelName 
+  G4String aGuidance = "Set the flag for Binary output of " + channelName
   	+ ".";
   newCmd->SetGuidance( aGuidance.c_str() );
   newCmd->SetGuidance( "1. true/false" );
-  
+
   // Add the new command
   m_outputChannelCmd.push_back( newCmd );
 }
 
 G4bool GateToBinaryMessenger::IsAnOutputChannelCmd( G4UIcommand* command )
-{ 
+{
   for( size_t i = 0; i < m_outputChannelCmd.size(); ++i )
-  { 
+  {
     if( command == m_outputChannelCmd[ i ] )
     {
       return true;
@@ -191,8 +191,8 @@ G4bool GateToBinaryMessenger::IsAnOutputChannelCmd( G4UIcommand* command )
 
 void GateToBinaryMessenger::ExecuteOutputChannelCmd( G4UIcommand* command,
 	G4String newValue)
-{ 
-  for( size_t i = 0; i < m_outputChannelCmd.size() ; ++i) 
+{
+  for( size_t i = 0; i < m_outputChannelCmd.size() ; ++i)
   {
   	if( command == m_outputChannelCmd[ i ] )
     {

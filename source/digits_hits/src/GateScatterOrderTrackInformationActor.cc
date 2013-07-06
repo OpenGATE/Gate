@@ -10,7 +10,7 @@
 
 #include "GateConfiguration.h"
 
-// Gate 
+// Gate
 #include "GateScatterOrderTrackInformationActor.hh"
 #include "GateMiscFunctions.hh"
 
@@ -48,7 +48,7 @@ GateScatterOrderTrackInformationActor::GateScatterOrderTrackInformationActor(G4S
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateScatterOrderTrackInformationActor::~GateScatterOrderTrackInformationActor()
 {
   delete pActorMessenger;

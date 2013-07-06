@@ -22,14 +22,14 @@ GateGpSpectrumActorMessenger::~GateGpSpectrumActorMessenger()
 void GateGpSpectrumActorMessenger::BuildCommands(G4String /*base*/)
 {
 	//bb = base+"/energySpectrum/setEmin";
-	//pEminCmd = new G4UIcmdWithADoubleAndUnit(bb, this); 
+	//pEminCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
 	//guidance = G4String("Set minimum energy of the energy spectrum");
 	//pEminCmd->SetGuidance(guidance);
 	//pEminCmd->SetParameterName("Emin", false);
 	//pEminCmd->SetDefaultUnit("MeV");
 
 	//bb = base+"/energyLossHisto/setNumberOfBins";
-	//pEdepNBinsCmd = new G4UIcmdWithAnInteger(bb, this); 
+	//pEdepNBinsCmd = new G4UIcmdWithAnInteger(bb, this);
 	//guidance = G4String("Set number of bins of the energy loss histogram");
 	//pEdepNBinsCmd->SetGuidance(guidance);
 	//pEdepNBinsCmd->SetParameterName("Nbins", false);

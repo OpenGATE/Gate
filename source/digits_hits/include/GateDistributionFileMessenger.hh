@@ -39,4 +39,3 @@ class GateDistributionFileMessenger: public GateDistributionArrayMessenger
 };
 
 #endif
-

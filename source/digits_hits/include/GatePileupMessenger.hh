@@ -25,10 +25,10 @@ class GatePileupMessenger: public GatePulseProcessorMessenger
   public:
     GatePileupMessenger(GatePileup* itsPileup);
     virtual~GatePileupMessenger();
-    
+
     void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GatePileup* GetPileup() 
+    inline GatePileup* GetPileup()
       { return (GatePileup*) GetPulseProcessor(); }
 
   private:
@@ -37,4 +37,3 @@ class GatePileupMessenger: public GatePulseProcessorMessenger
 };
 
 #endif
-

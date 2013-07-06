@@ -33,7 +33,7 @@ See GATE/LICENSE.txt for further details
 class GateFakePrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
   public:
-//    GateFakePrimaryGeneratorAction(GateFakeDetectorConstruction*);    
+//    GateFakePrimaryGeneratorAction(GateFakeDetectorConstruction*);
    GateFakePrimaryGeneratorAction(GateDetectorConstruction*);
    ~GateFakePrimaryGeneratorAction();
 

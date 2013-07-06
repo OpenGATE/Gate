@@ -22,20 +22,20 @@ See GATE/LICENSE.txt for further details
 
 GateSpblurring::GateSpblurring(GatePulseProcessorChain* itsChain,
 			       const G4String& itsName,
-      	      	      	       G4double itsSpresolution) 
+      	      	      	       G4double itsSpresolution)
   : GateVPulseProcessor(itsChain,itsName),
     m_spresolution(itsSpresolution)
 {
   m_messenger = new GateSpblurringMessenger(this);
-}  
+}
 
 
 
 
-GateSpblurring::~GateSpblurring() 
+GateSpblurring::~GateSpblurring()
 {
   delete m_messenger;
-}  
+}
 
 
 
@@ -54,8 +54,8 @@ void GateSpblurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& 
 	//TC G4double PzNew = Pz;
 	outputPulse->SetLocalPos(G4ThreeVector(PxNew,PyNew,PzNew)); //TC
 	outputPulse->SetGlobalPos(outputPulse->GetVolumeID().MoveToAncestorVolumeFrame(outputPulse->GetLocalPos())); //TC
-	//TC outputPulse->SetGlobalPos(G4ThreeVector(PxNew,PyNew,PzNew));	
-	outputPulseList.push_back(outputPulse);	
+	//TC outputPulse->SetGlobalPos(G4ThreeVector(PxNew,PyNew,PzNew));
+	outputPulseList.push_back(outputPulse);
 }
 
 void GateSpblurring::DescribeMyself(size_t indent)

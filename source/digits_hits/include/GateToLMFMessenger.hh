@@ -11,10 +11,10 @@ See GATE/LICENSE.txt for further details
 
 /*! \class GateToLMFMessenger
     \brief  This class is the Messenger of GateToLMF
-        
+
     - GateToLMFMessenger  - by luc.simon@iphe.unil.ch (12 Avr 2002)
-  
- 
+
+
     - It allows to script gate/output/lmf/setLMFFileName/.
    \sa GateToLMF
    \sa GateOutputModuleMessenger
@@ -50,15 +50,15 @@ If the command is not known in this class, we pass it to the "mother clas". If t
 \sa G4UImessenger
 \sa GATEToASCIIMessenger
 \sa GATEOutputModuleMessenger
- */  
+ */
   void SetNewValue(G4UIcommand*, G4String);
-  
+
 protected:
   GateToLMF*            m_gateToLMF;
   G4UIcmdWithAString*   GetFileNameCmd;
   G4UIcmdWithAString*   SetInputDataCmd;  //!< The UI command "set input data name"
- 
-  
+
+
 
 
   /*!
@@ -81,7 +81,7 @@ protected:
   G4UIcmdWithABool*     GetGlobalXYZPosBoolCmd;
   G4UIcmdWithABool*     GetEventIDBoolCmd;
   G4UIcmdWithABool*     GetRunIDBoolCmd;
- 
+
 
 
 };

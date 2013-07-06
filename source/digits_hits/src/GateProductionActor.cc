@@ -9,7 +9,7 @@
   ----------------------*/
 
 /*
-  \brief Class GateProductionActor : 
+  \brief Class GateProductionActor :
   \brief compute production count for filtered particles
 */
 
@@ -31,8 +31,8 @@ GateProductionActor::GateProductionActor(G4String name, G4int depth) :
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
-GateProductionActor::~GateProductionActor() 
+/// Destructor
+GateProductionActor::~GateProductionActor()
 {
   GateMessage("Actor",2,"GateProductionActor -- destructor"<<G4endl);
   delete pMessenger;

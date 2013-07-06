@@ -18,20 +18,20 @@ See GATE/LICENSE.txt for further details
 
 
 GateOpticalAdder::GateOpticalAdder(GatePulseProcessorChain* itsChain, const G4String& itsName)  :
-  GateVPulseProcessor(itsChain,itsName) 
-{ m_messenger = new GateOpticalAdderMessenger(this);}  
+  GateVPulseProcessor(itsChain,itsName)
+{ m_messenger = new GateOpticalAdderMessenger(this);}
 
-GateOpticalAdder::~GateOpticalAdder() 
-{ delete m_messenger;}  
+GateOpticalAdder::~GateOpticalAdder()
+{ delete m_messenger;}
 
 void GateOpticalAdder::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
 {
   if (inputPulse->IsOptical())
   {
-  
+
     GatePulseIterator iter;
     for (iter=outputPulseList.begin(); iter!= outputPulseList.end() ; ++iter)
-      if ( (*iter)->GetVolumeID()   == inputPulse->GetVolumeID() ) 
+      if ( (*iter)->GetVolumeID()   == inputPulse->GetVolumeID() )
       {
 //	G4double energy = (*iter)->GetEnergy();
 
@@ -40,15 +40,15 @@ void GateOpticalAdder::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList
 //	(*iter)->SetEnergy(energy);
 
 	if (nVerboseLevel>1)
-	  G4cout << "Merged previous pulse for volume " << inputPulse->GetVolumeID() 
+	  G4cout << "Merged previous pulse for volume " << inputPulse->GetVolumeID()
 		 << " with new pulse of energy " << G4BestUnit(inputPulse->GetEnergy(),"Energy") <<".\n"
 		 << "Resulting pulse is: " << G4endl
 		 << **iter << G4endl << G4endl ;
 	break;
       }
-    
+
     if ( iter == outputPulseList.end() )
-    {  
+    {
       GatePulse* outputPulse = new GatePulse(*inputPulse);
 //      outputPulse->SetEnergy(1);
       if (nVerboseLevel>1)

@@ -27,8 +27,8 @@ See GATE/LICENSE.txt for further details
 
 class GateParticleInVolumeActor : public GateVImageActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
   virtual ~GateParticleInVolumeActor();
@@ -41,13 +41,13 @@ class GateParticleInVolumeActor : public GateVImageActor
 
 
   void EnableParticleInVolumeImage(bool b) { mIsParticleInVolumeImageEnabled = b; }
- 
+
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
 
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
-  virtual void UserPreTrackActionInVoxel(const int index, const G4Track* t); 
+  virtual void UserPreTrackActionInVoxel(const int index, const G4Track* t);
   virtual void UserPostTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/) {}
 
  /// Saves the data collected to the file
@@ -76,4 +76,4 @@ protected:
 
 MAKE_AUTO_CREATOR_ACTOR(ParticleInVolumeActor,GateParticleInVolumeActor)
 
-#endif 
+#endif

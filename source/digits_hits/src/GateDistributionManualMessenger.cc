@@ -21,9 +21,9 @@ See GATE/LICENSE.txt for further details
 GateDistributionManualMessenger::GateDistributionManualMessenger(GateDistributionManual* itsDistribution,
     			     const G4String& itsDirectoryName)
 : GateDistributionArrayMessenger( itsDistribution,itsDirectoryName)
-{ 
+{
   G4String cmdName,guidance;
-  
+
   cmdName = GetDirectoryName()+"insertPoint";
   guidance = "Insert a point";
   insPointCmd = new GateUIcmdWithTwoDouble(cmdName,this);
@@ -48,7 +48,7 @@ GateDistributionManualMessenger::~GateDistributionManualMessenger()
 
 // UI command interpreter method
 void GateDistributionManualMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
+{
   if ( command==insPointCmd ){
     G4double x = insPointCmd->GetNewDoubleValue(0,newValue);
     G4double y = insPointCmd->GetNewDoubleValue(1,newValue);
@@ -60,4 +60,3 @@ void GateDistributionManualMessenger::SetNewValue(G4UIcommand* command,G4String 
   else
     GateDistributionArrayMessenger::SetNewValue(command,newValue);
 }
-

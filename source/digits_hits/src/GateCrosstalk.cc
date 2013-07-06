@@ -16,7 +16,7 @@ See GATE/LICENSE.txt for further details
 #include <vector>
 #include "G4ThreeVector.hh"
 
-#include "GateVolumeID.hh" 
+#include "GateVolumeID.hh"
 #include "GateOutputVolumeID.hh"
 #include "GateDetectorConstruction.hh"
 #include "GateCrystalSD.hh"
@@ -55,25 +55,25 @@ GateCrosstalk::GateCrosstalk(GatePulseProcessorChain* itsChain,
 {
   m_messenger = new GateCrosstalkMessenger(this);
   m_testVolume = 0;
-}  
+}
 
 
 
 
-GateCrosstalk::~GateCrosstalk() 
+GateCrosstalk::~GateCrosstalk()
 {
   delete m_messenger;
   delete ArrayFinder;
-}  
+}
 
-void GateCrosstalk::CheckVolumeName(G4String val) 
+void GateCrosstalk::CheckVolumeName(G4String val)
 {
   //Retrieve the inserter store to check if the volume name is valid
   GateObjectStore* m_store = GateObjectStore::GetInstance();
   if (m_store->FindCreator(val)) {
     m_volume = val;
     //Find the array params
-    ArrayFinder = new GateArrayParamsFinder(m_store->FindCreator(val), 
+    ArrayFinder = new GateArrayParamsFinder(m_store->FindCreator(val),
 						 m_nbX, m_nbY, m_nbZ);
     m_testVolume = 1;
   }
@@ -85,18 +85,18 @@ void GateCrosstalk::CheckVolumeName(G4String val)
 void GateCrosstalk::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
 {
 
-  if(!m_testVolume) 
+  if(!m_testVolume)
     {
       G4cerr << 	G4endl << "[GateCrosstalk::ProcessOnePulse]:" << G4endl
 	     <<   "Sorry, but you don't have choosen any volume !" << G4endl;
-      
+
 			G4String msg = "You must choose a volume for crosstalk, e.g. crystal:\n"
       "\t/gate/digitizer/Singles/crosstalk/chooseCrosstalkVolume VOLUME NAME\n"
       "or disable the crosstalk using:\n"
       "\t/gate/digitizer/Singles/crosstalk/disable\n";
 
 			G4Exception( "GateCrosstalk::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
-    }    
+    }
 
   //Find the pulse position in the array
   m_depth = (size_t)(inputPulse->GetVolumeID().GetCreatorDepth(m_volume));
@@ -105,7 +105,7 @@ void GateCrosstalk::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& o
   //Numbers of edge and corner neighbors for the pulses
   G4int countE = 0;
   G4int countC = 0;
-  
+
   // Find the possible neighbors
   if (m_edgesCrosstalkFraction != 0) {
     if (m_i != 0) {
@@ -114,76 +114,76 @@ void GateCrosstalk::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& o
     }
     if (m_i != m_nbX - 1) {
       outputPulseList.push_back(CreatePulse(m_edgesCrosstalkFraction, inputPulse, m_i + 1, m_j, m_k));
-      countE++;  
-    }
-    if (m_j != 0) { 
-      outputPulseList.push_back(CreatePulse(m_edgesCrosstalkFraction, inputPulse, m_i, m_j - 1, m_k)); 
       countE++;
-    } 
+    }
+    if (m_j != 0) {
+      outputPulseList.push_back(CreatePulse(m_edgesCrosstalkFraction, inputPulse, m_i, m_j - 1, m_k));
+      countE++;
+    }
     if (m_j != m_nbY - 1) {
       outputPulseList.push_back(CreatePulse(m_edgesCrosstalkFraction, inputPulse, m_i, m_j + 1, m_k));
       countE++;
-    } 
-    if (m_k != 0) {   
+    }
+    if (m_k != 0) {
       outputPulseList.push_back(CreatePulse(m_edgesCrosstalkFraction, inputPulse, m_i, m_j, m_k - 1));
       countE++;
-    }    
-    if (m_k != m_nbZ - 1) {	 
+    }
+    if (m_k != m_nbZ - 1) {
       outputPulseList.push_back(CreatePulse(m_edgesCrosstalkFraction, inputPulse, m_i, m_j, m_k + 1));
       countE++;
-    }    
+    }
   }
 
   if (m_cornersCrosstalkFraction != 0) {
-    if ((m_i != 0) & (m_j != 0)) {      
+    if ((m_i != 0) & (m_j != 0)) {
       outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i - 1, m_j - 1, m_k));
       countC++;
-    }      
-    if ((m_i != 0) & (m_j != m_nbY - 1)) {      
+    }
+    if ((m_i != 0) & (m_j != m_nbY - 1)) {
       outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i - 1, m_j + 1, m_k));
       countC++;
-    }      
-    if ((m_i != 0) & (m_k != 0)) {      
+    }
+    if ((m_i != 0) & (m_k != 0)) {
       outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i - 1, m_j, m_k - 1));
       countC++;
-    }      
-    if ((m_i != 0) & (m_k != m_nbZ - 1)) {      
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i - 1, m_j, m_k + 1)); 
+    }
+    if ((m_i != 0) & (m_k != m_nbZ - 1)) {
+      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i - 1, m_j, m_k + 1));
       countC++;
-    }  
-    if ((m_i != m_nbX - 1) & (m_j != 0)) {      
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i + 1, m_j - 1, m_k)); 
+    }
+    if ((m_i != m_nbX - 1) & (m_j != 0)) {
+      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i + 1, m_j - 1, m_k));
       countC++;
-    }      
-    if ((m_i != m_nbX - 1) & (m_j != m_nbY - 1)) {      
+    }
+    if ((m_i != m_nbX - 1) & (m_j != m_nbY - 1)) {
       outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i + 1, m_j + 1, m_k));
       countC++;
-    }      
-    if ((m_i != m_nbX - 1) & (m_k != 0)) {      
+    }
+    if ((m_i != m_nbX - 1) & (m_k != 0)) {
       outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i + 1, m_j, m_k - 1));
       countC++;
-    }      
-    if ((m_i != m_nbX - 1) & (m_k != m_nbZ - 1)) {      
+    }
+    if ((m_i != m_nbX - 1) & (m_k != m_nbZ - 1)) {
       outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i + 1, m_j, m_k + 1));
       countC++;
-    }  
-    if ((m_j != 0) & (m_k != 0)) {      
+    }
+    if ((m_j != 0) & (m_k != 0)) {
       outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i, m_j - 1, m_k - 1));
       countC++;
-    }      
-    if ((m_j != 0) & (m_k != m_nbZ - 1)) {      
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i, m_j - 1, m_k + 1)); 
+    }
+    if ((m_j != 0) & (m_k != m_nbZ - 1)) {
+      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i, m_j - 1, m_k + 1));
       countC++;
-    }    
-     
-    if ((m_j != m_nbY - 1) & (m_k != 0)) {      
-      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i, m_j + 1, m_k - 1)); 
+    }
+
+    if ((m_j != m_nbY - 1) & (m_k != 0)) {
+      outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i, m_j + 1, m_k - 1));
       countC++;
-    }      
-    if ((m_j != m_nbY - 1) & (m_k != m_nbZ - 1)) {      
+    }
+    if ((m_j != m_nbY - 1) & (m_k != m_nbZ - 1)) {
       outputPulseList.push_back(CreatePulse(m_cornersCrosstalkFraction, inputPulse, m_i, m_j + 1, m_k + 1));
       countC++;
-    }          
+    }
   }
 
   // Check if the energy of neighbors is not higher than the energy of the incident pulse
@@ -192,7 +192,7 @@ void GateCrosstalk::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& o
     {
       G4cerr << 	G4endl << "[GateCrosstalk::ProcessOnePulse]:" << G4endl
 	     <<   "Sorry, but you have too much energy !" << G4endl;
-      
+
 			G4String msg = "You must change your fractions of energy for the close crystals :\n"
       "\t/gate/digitizer/Singles/crosstalk/setSidesFraction NUMBER\n"
       "\t/gate/digitizer/Singles/crosstalk/setCornersFraction NUMBER\n"
@@ -206,7 +206,7 @@ void GateCrosstalk::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& o
   outputPulse->SetEnergy((inputPulse->GetEnergy())*m_XtalkpCent);
   outputPulseList.push_back(outputPulse);
   if (nVerboseLevel>1)
-    G4cout << "the input pulse created " << countE+countC << " pulses around it" 
+    G4cout << "the input pulse created " << countE+countC << " pulses around it"
 	   << G4endl;
 }
 
@@ -219,8 +219,8 @@ GateVolumeID GateCrosstalk::CreateVolumeID(const GateVolumeID* aVolumeID, G4int 
       aVolumeIDOut.push_back(GateVolumeSelector(aVolumeID->GetVolume(n)));
     else {
       GateVVolume* anInserter =  aVolumeID->GetCreator(m_depth);
-      G4VPhysicalVolume* aVolume = anInserter->GetPhysicalVolume(i + m_nbX * j + m_nbX * m_nbY * k);   
-      aVolumeIDOut.push_back(GateVolumeSelector(aVolume));	 
+      G4VPhysicalVolume* aVolume = anInserter->GetPhysicalVolume(i + m_nbX * j + m_nbX * m_nbY * k);
+      aVolumeIDOut.push_back(GateVolumeSelector(aVolume));
     }
   return aVolumeIDOut;
 }
@@ -239,8 +239,8 @@ GatePulse* GateCrosstalk::CreatePulse(G4double val, const GatePulse* pulse, G4in
   apulse->SetVolumeID(CreateVolumeID(&pulse->GetVolumeID(), i, j, k));
   apulse->SetGlobalPos(apulse->GetVolumeID().MoveToAncestorVolumeFrame(apulse->GetLocalPos()));
   apulse->SetOutputVolumeID(CreateOutputVolumeID(apulse->GetVolumeID()));
-  apulse->SetEnergy(pulse->GetEnergy()*val); 
-  return apulse;  
+  apulse->SetEnergy(pulse->GetEnergy()*val);
+  return apulse;
 }
 
 void GateCrosstalk::DescribeMyself(size_t indent)

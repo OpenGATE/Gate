@@ -26,7 +26,7 @@ See GATE/LICENSE.txt for further details
 
 #include "globals.hh"
 #include "G4String.hh"
-#include <iomanip>   
+#include <iomanip>
 #include <vector>
 
 //#include "G4RunManager.hh"
@@ -96,7 +96,7 @@ public:
   static GateUserActions* GetUserActions() { return pUserActions; };
 
   GateTrackIDInfo *GetTrackIDInfo(G4int id);
-  
+
   long int GetCurrentEventNumber() { return mEventNumber; }
 
   void EnableTimeStudy(G4String filename);
@@ -121,22 +121,22 @@ protected:
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
-  long int mRunNumber; 
-  long int mEventNumber; 
-  long int mTrackNumber; 
-  long long int mStepNumber; 
+  long int mRunNumber;
+  long int mEventNumber;
+  long int mTrackNumber;
+  long long int mStepNumber;
   long int mTrackNumberInCurrentEvent;
   long int mStepNumberInCurrentTrack;
   //-----------------------------------------------------------------------------
 
   static GateUserActions* pUserActions;
-  
+
   GateRecorderBase* recorder;
   GateRunAction* runAction;
   GateEventAction* eventAction;
 
-  G4bool mIsTimeStudyActivated; 
-  G4SliceTimer* mTimer; 
+  G4bool mIsTimeStudyActivated;
+  G4SliceTimer* mTimer;
 
   std::map<G4int,GateTrackIDInfo> theListOfTrackIDInfo;
 

@@ -44,8 +44,8 @@ void GateCrossSectionProductionActorMessenger::BuildCommands(G4String base)
 {
   G4String cmdName=base+"/setFilename";
 
-  pC11FilenameCmd= new G4UIcmdWithAString(cmdName , this); 
-  
+  pC11FilenameCmd= new G4UIcmdWithAString(cmdName , this);
+
   pC11FilenameCmd->SetGuidance("Set filename");
 
 cmdName=base+"/addC11";

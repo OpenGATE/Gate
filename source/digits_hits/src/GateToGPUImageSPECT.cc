@@ -1,11 +1,11 @@
 /*----------------------
 
-   GATE - Geant4 Application for Tomographic Emission 
-   OpenGATE Collaboration 
-     
-   This software is distributed under the terms 
-   of the GNU Lesser General  Public Licence (LGPL) 
-   See GATE/LICENSE.txt for further details 
+   GATE - Geant4 Application for Tomographic Emission
+   OpenGATE Collaboration
+
+   This software is distributed under the terms
+   of the GNU Lesser General  Public Licence (LGPL)
+   See GATE/LICENSE.txt for further details
 ----------------------*/
 #include <cmath>
 #include "pthread.h"
@@ -171,7 +171,7 @@ static void* cpuSPECT( void *args )
 		cpuParticle->px[ p ] = px;
 		cpuParticle->py[ p ] = py;
 		cpuParticle->pz[ p ] = pz;
-		
+
 		if( py > exit_collim_y[ 0 ] || py < exit_collim_y[ y_size - 1 ] )
 		{
 			hole[ p ] = -1.0f;
@@ -314,13 +314,13 @@ void GateToGPUImageSPECT::SetRor( G4double ror )
 void GateToGPUImageSPECT::RecordBeginOfAcquisition()
 {
 	if( nVerboseLevel > 1 )
-		G4cout << ">> entering [GateToGPUImageSPECT::RecordBeginOfAcquisition]" 
+		G4cout << ">> entering [GateToGPUImageSPECT::RecordBeginOfAcquisition]"
 			   << G4endl;
 
     // Creating ROOT file
     G4cout << "GateToGPUImageSPECT: ROOT files creating..." << G4endl;
-    m_file = new TFile( ( m_fileName + ".root" ).c_str(), "RECREATE" );	
-    
+    m_file = new TFile( ( m_fileName + ".root" ).c_str(), "RECREATE" );
+
     // Check that we succeeded in opening the file
     if( !m_file )
 	{
@@ -338,7 +338,7 @@ void GateToGPUImageSPECT::RecordBeginOfAcquisition()
 	}
 
     if( nVerboseLevel > 0 )
-        G4cout << "GateToGPUImageSPECT::RecordBeginOfAcquisition, filename: " 
+        G4cout << "GateToGPUImageSPECT::RecordBeginOfAcquisition, filename: "
             << m_fileName << ".root created" << G4endl;
 
 		if( m_cpuFlag )
@@ -449,14 +449,14 @@ void GateToGPUImageSPECT::RecordBeginOfAcquisition()
 
 
 	if( nVerboseLevel > 1 )
-		G4cout << ">> leaving [GateToGPUImageSPECT::RecordBeginOfAcquisition]" 
+		G4cout << ">> leaving [GateToGPUImageSPECT::RecordBeginOfAcquisition]"
 			<< G4endl;
 }
 
 void GateToGPUImageSPECT::RecordEndOfAcquisition()
 {
     if( nVerboseLevel > 1 )
-		G4cout << ">> entering [GateToGPUImageSPECT::RecordEndOfAcquisition]" 
+		G4cout << ">> entering [GateToGPUImageSPECT::RecordEndOfAcquisition]"
 			   << G4endl;
 
     // Freeing memory
@@ -480,7 +480,7 @@ void GateToGPUImageSPECT::RecordEndOfAcquisition()
     m_file->Write();
     G4cout << "GateToGPUImageSPECT: ROOT files closing..." << G4endl;
     if( m_file->IsOpen() )
-    { 
+    {
         m_file->Close();
     }
 
@@ -492,7 +492,7 @@ void GateToGPUImageSPECT::RecordEndOfAcquisition()
 		}
 
 	if( nVerboseLevel > 1 )
-		G4cout << ">> leaving [GateToGPUImageSPECT::RecordEndOfAcquisition]" 
+		G4cout << ">> leaving [GateToGPUImageSPECT::RecordEndOfAcquisition]"
 			<< G4endl;
 }
 
@@ -519,10 +519,10 @@ void GateToGPUImageSPECT::RecordBeginOfRun( const G4Run* aRun )
 }
 
 void GateToGPUImageSPECT::RecordEndOfRun( const G4Run* )
-{	
+{
 	if( nVerboseLevel > 1 )
 		G4cout << " >> entering [GateToGPUImageSPECT::RecordEndOfRun]" << G4endl;
-	
+
 	if( nVerboseLevel > 1 )
 		G4cout << " >> leaving [GateToGPUImageSPECT::RecordEndOfRun]" << G4endl;
 }
@@ -557,7 +557,7 @@ void GateToGPUImageSPECT::RecordEndOfEvent( const G4Event* )
 {
 	if( nVerboseLevel > 3 )
 		G4cout << " >> entering [GateToGPUImageSPECT::RecordEndOfEvent]" << G4endl;
-	
+
     // Tracking singles
     if( m_rootSingleFlag )
     {
@@ -600,7 +600,7 @@ void GateToGPUImageSPECT::RecordEndOfEvent( const G4Event* )
             if( (*CHC)[i]->GoodForAnalysis() )
             {
                 GateCrystalHit* aHit = (*CHC)[i];
-                
+
                 m_energy_Hit = (G4float)aHit->GetEdep()/keV;
                 m_posX_Hit = (G4float)aHit->GetGlobalPos().x()/mm;
                 m_posY_Hit = (G4float)aHit->GetGlobalPos().y()/mm;
@@ -750,7 +750,7 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
                     // timing - JB
 	                gettimeofday(&tv, NULL);
 	                start = tv.tv_sec + tv.tv_usec / 1000000.0;
-                                        
+
 					pthread_t *threads = new pthread_t[ m_cpuNumber ];
 					pthread_attr_t attr;
 					pthread_attr_init( &attr );
@@ -818,7 +818,7 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 	                start = tv.tv_sec + tv.tv_usec / 1000000.0;
 
 					GateGPUCollimator_process( m_gpuCollimator, m_gpuParticle );
-                    
+
                     // timing - JB
 	                gettimeofday(&tv, NULL);
 	                end = tv.tv_sec + tv.tv_usec / 1000000.0;
@@ -903,7 +903,7 @@ void GateToGPUImageSPECT::SetVolumeToAttach( G4String& volName )
 }
 
 void GateToGPUImageSPECT::CreateNewParticle( GateCPUParticle const *p,
-    unsigned int id ) 
+    unsigned int id )
 {
 		// Rotate the momentum and position
 		G4double x = p->px[ id ] * ::cos( m_angle * PI / 180.0 )
@@ -937,12 +937,12 @@ void GateToGPUImageSPECT::CreateNewParticle( GateCPUParticle const *p,
     newTrack->SetTrackID( p->trackID[ id ] );
 
     static G4EventManager *em = G4EventManager::GetEventManager();
-    G4StackManager *sm = em->GetStackManager(); 
+    G4StackManager *sm = em->GetStackManager();
     sm->PushOneTrack( newTrack );
 }
 
 void GateToGPUImageSPECT::CreateNewParticle( GateGPUParticle const *p,
-    unsigned int id ) 
+    unsigned int id )
 {
 		// Rotate the momentum and position
 		G4double x = p->px[ id ] * ::cos( m_angle * PI / 180.0 )
@@ -976,7 +976,7 @@ void GateToGPUImageSPECT::CreateNewParticle( GateGPUParticle const *p,
     newTrack->SetTrackID( p->trackID[ id ] );
 
     static G4EventManager *em = G4EventManager::GetEventManager();
-    G4StackManager *sm = em->GetStackManager(); 
+    G4StackManager *sm = em->GetStackManager();
     sm->PushOneTrack( newTrack );
 }
 

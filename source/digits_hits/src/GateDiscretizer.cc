@@ -21,19 +21,19 @@ See GATE/LICENSE.txt for further details
 
 
 GateDiscretizer::GateDiscretizer(GatePulseProcessorChain* itsChain,
-      	      	      	 const G4String& itsName) 
+      	      	      	 const G4String& itsName)
   : GateVPulseProcessor(itsChain,itsName)
 {
   m_messenger = new GateDiscretizerMessenger(this);
-}  
+}
 
 
 
 
-GateDiscretizer::~GateDiscretizer() 
+GateDiscretizer::~GateDiscretizer()
 {
   delete m_messenger;
-}  
+}
 
 
 

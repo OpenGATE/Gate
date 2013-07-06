@@ -24,15 +24,14 @@ class GateCoincidenceGeometrySelectorMessenger: public GateClockDependentMesseng
 public:
   GateCoincidenceGeometrySelectorMessenger(GateCoincidenceGeometrySelector* itsGeometrySelector);
   virtual ~GateCoincidenceGeometrySelectorMessenger();
-  
+
   inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
-  
+
   inline GateCoincidenceGeometrySelector* GetGeometrySelector(){ return (GateCoincidenceGeometrySelector*) GetClockDependent(); }
-  
+
 private:
   G4UIcmdWithADoubleAndUnit *maxSCmd; //!< set the max time window
   G4UIcmdWithADoubleAndUnit *maxDeltaZCmd; //!< set the max time window
 };
 
 #endif
-

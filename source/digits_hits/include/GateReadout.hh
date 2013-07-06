@@ -24,16 +24,16 @@ class GateOutputVolumeID;
 
 /*! \class  GateReadout
     \brief  Pulse-processor modelling a simple PMT readout (maximum energy wins) of a crystal-block
-    
+
     - GateReadout - by Daniel.Strul@iphe.unil.ch
-    
+
     - The readout is parameterised by its 'depth': pulses will be summed up if their volume IDs
       are identical up to this depth. For instance, the default depth is 1: this means that
-      pulses will be considered as taking place in a same block if the first two figures 
+      pulses will be considered as taking place in a same block if the first two figures
       of their volume IDs are identical
-    
+
       \sa GateVPulseProcessor
-*/      
+*/
 class GateReadout : public GateVPulseProcessor
 {
   public:
@@ -60,17 +60,16 @@ class GateReadout : public GateVPulseProcessor
     //! It is is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
-    
+
   private:
-    //! The default is the one parameter that defines how a readout works: 
+    //! The default is the one parameter that defines how a readout works:
     //! pulses will be summed up if their volume IDs are identical up to this depth.
-    //! For instance, the default depth is 1: this means that pulses will be considered as 
+    //! For instance, the default depth is 1: this means that pulses will be considered as
     //! taking place in a same block if the first two figures of their volume IDs are identical
-    G4int m_depth;	      
+    G4int m_depth;
 
     GateReadoutMessenger *m_messenger;	  //!< Messenger for this readout
 };
 
 
 #endif
-

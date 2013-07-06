@@ -23,14 +23,14 @@
 GateOutputMgrMessenger::GateOutputMgrMessenger(GateOutputMgr* outputMgr)
   : GateMessenger(outputMgr->GetName()),
     m_outputMgr(outputMgr)
-{ 
+{
 
   pGateOutputMess = new G4UIdirectory("/gate/output/");
   pGateOutputMess->SetGuidance("GATE output control.");
-  
+
   G4String cmdName;
   cmdName = GetDirectoryName()+"describe";
- // cmdName = baseName + outputMgr->GetObjectName() + "describe"; 
+ // cmdName = baseName + outputMgr->GetObjectName() + "describe";
   DescribeCmd = new G4UIcmdWithoutParameter(cmdName,this);
   DescribeCmd->SetGuidance("List of the output manager properties");
 
@@ -62,16 +62,14 @@ GateOutputMgrMessenger::~GateOutputMgrMessenger()
 
 //------------------------------------------------------------------------------
 void GateOutputMgrMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
   if( command == VerboseCmd ) {
     m_outputMgr->SetVerboseLevel(VerboseCmd->GetNewIntValue(newValue));
   } else if( command == DescribeCmd ) {
     m_outputMgr->Describe();
   } else if( command == AllowNoOutputCmd ) {
     m_outputMgr->AllowNoOutput();
-  } else 
+  } else
   GateMessenger::SetNewValue(command, newValue);
 }
 //------------------------------------------------------------------------------
-
-

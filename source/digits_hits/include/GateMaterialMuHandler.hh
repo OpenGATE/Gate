@@ -35,32 +35,32 @@ class GateMaterialMuHandler
 {
 
 public:
-  
+
   static GateMaterialMuHandler *GetInstance()
-  {   
+  {
     if (singleton_MaterialMuHandler == 0)
     {
       singleton_MaterialMuHandler = new GateMaterialMuHandler();
     }
     return singleton_MaterialMuHandler;
   };
-  
-  
+
+
   ~GateMaterialMuHandler();
   double GetAttenuation(G4Material* material, double energy);
   double GetMu(G4Material* material, double energy);
-  
+
   void SetElementsFolderName(G4String folder) { mElementsFolderName = folder; }
   void SetEMin(double e) { mEnergyMin = e; }
   void SetEMax(double e) { mEnergyMax = e; }
   void SetENumber(int n) { mEnergyNumber = n; }
   void SetAtomicShellEMin(double e) { mAtomicShellEnergyMin = e; }
   void SetPrecision(double p) { mPrecision = p; }
-  
+
 private:
-  
+
   GateMaterialMuHandler();
-  
+
   // Initialization
   void Initialize();
   // - Precalculated coefficients (by element)
@@ -71,7 +71,7 @@ private:
   void SimulateMaterialTable();
   double ProcessOneShot(G4VEmModel *,std::vector<G4DynamicParticle*> *, const G4MaterialCutsCouple *, const G4DynamicParticle *);
   double SquaredSigmaOnMean(double , double , double);
-  
+
   map<G4String, GateMuTable*> mMaterialTable;
   GateMuTable** mElementsTable;
   int mNbOfElements;
@@ -83,9 +83,9 @@ private:
   int mEnergyNumber;
   double mAtomicShellEnergyMin;
   double mPrecision;
-  
+
   static GateMaterialMuHandler *singleton_MaterialMuHandler;
-  
+
 };
 
 

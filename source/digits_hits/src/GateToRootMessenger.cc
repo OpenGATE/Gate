@@ -34,7 +34,7 @@ See GATE/LICENSE.txt for further details
 GateToRootMessenger::GateToRootMessenger(GateToRoot* gateToRoot)
   : GateOutputModuleMessenger(gateToRoot)
   , m_gateToRoot(gateToRoot)
-{ 
+{
 //  G4cout << " Constructor GateToRootMessenger" << G4endl;
   G4String cmdName;
 
@@ -90,7 +90,7 @@ GateToRootMessenger::~GateToRootMessenger()
   delete RootOpticalCmd;
   delete SetFileNameCmd;
   delete SaveRndmCmd;
-  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i) 
+  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
     delete OutputChannelCmdList[i];
 }
 //--------------------------------------------------------------------------
@@ -98,9 +98,9 @@ GateToRootMessenger::~GateToRootMessenger()
 
 //--------------------------------------------------------------------------
 void GateToRootMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
-  
-  if( command == ResetCmd ) { 
+{
+
+  if( command == ResetCmd ) {
     m_gateToRoot->Reset();
   } else if (command == SetFileNameCmd) {
     m_gateToRoot->SetFileName(newValue);
@@ -115,29 +115,29 @@ void GateToRootMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
   } else if (command == RootRecordCmd) {
 	  m_gateToRoot->SetRecordFlag(RootRecordCmd->GetNewBoolValue(newValue));
 	} else if ( IsAnOutputChannelCmd(command) ) {
-    
-    ExecuteOutputChannelCmd(command,newValue); 
+
+    ExecuteOutputChannelCmd(command,newValue);
   } else {
     GateOutputModuleMessenger::SetNewValue(command,newValue);
   }
-   
+
 }
 //--------------------------------------------------------------------------
 
 
 //--------------------------------------------------------------------------
 void GateToRootMessenger::CreateNewOutputChannelCommand(GateToRoot::VOutputChannel* anOutputChannel)
-{ 
+{
 
   GateMessage("OutputMgr", 5, " GateToRootMessenger::CreateNewOutputChannelCommand -- begin " << G4endl;);
-  
+
   G4String cmdName;
-  
+
   m_outputChannelList.push_back(anOutputChannel);
-  
+
   G4String channelName = anOutputChannel->m_collectionName;
   cmdName = GetDirectoryName()+"setRoot" + channelName + "Flag";
-  
+
   G4UIcmdWithABool * newCmd = new G4UIcmdWithABool(cmdName,this) ;
   G4String aGuidance = "Set the flag for ROOT output of " + channelName + ".";
   newCmd->SetGuidance(aGuidance.c_str());
@@ -149,8 +149,8 @@ void GateToRootMessenger::CreateNewOutputChannelCommand(GateToRoot::VOutputChann
 
 //--------------------------------------------------------------------------
 G4bool GateToRootMessenger::IsAnOutputChannelCmd(G4UIcommand* command)
-{ 
-  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i) 
+{
+  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
     if ( command == OutputChannelCmdList[i] )
       return true;
   return false;
@@ -160,8 +160,8 @@ G4bool GateToRootMessenger::IsAnOutputChannelCmd(G4UIcommand* command)
 
 //--------------------------------------------------------------------------
 void GateToRootMessenger::ExecuteOutputChannelCmd(G4UIcommand* command, G4String newValue)
-{ 
-  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i){ 
+{
+  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i){
     if ( command == OutputChannelCmdList[i] ) {
       m_outputChannelList[i]->SetOutputFlag( OutputChannelCmdList[i]->GetNewBoolValue(newValue) );
       break;

@@ -1,23 +1,23 @@
 /*----------------------
 
-   GATE - Geant4 Application for Tomographic Emission 
-   OpenGATE Collaboration 
-     
-   jbmichaud@videotron.ca 
-     
+   GATE - Geant4 Application for Tomographic Emission
+   OpenGATE Collaboration
+
+   jbmichaud@videotron.ca
+
    Copyright (C) 2009 Universite de Sherbrooke
 
-This software is distributed under the terms 
-of the GNU Lesser General  Public Licence (LGPL) 
-See GATE/LICENSE.txt for further details 
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See GATE/LICENSE.txt for further details
 ----------------------*/
 
 /*!
 
   \file GatePulseAdderComptonMessenger.hh
-  
+
   $Log: GatePulseAdderMessenger.hh,v $
- 
+
   Revision 1.1  2009/04/16  jbmichaud
   New class for summing pulses in an exact Compton kinetics context.
 
@@ -47,21 +47,20 @@ class GatePulseAdderCompton;
     \brief  Messenger for the GatePulseAdderCompton
 
     - GatePulseAdderComptonMessenger - by jbmichaud@videotron.ca
-    
+
     \sa GatePulseAdderCompton, GatePulseProcessorMessenger
-*/      
+*/
 class GatePulseAdderComptonMessenger: public GatePulseProcessorMessenger
 {
   public:
     GatePulseAdderComptonMessenger(GatePulseAdderCompton* itsPulseAdder);
     inline ~GatePulseAdderComptonMessenger() {}
-    
+
     void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GatePulseAdderCompton* GetPulseAdderCompton() 
+    inline GatePulseAdderCompton* GetPulseAdderCompton()
       { return (GatePulseAdderCompton*) GetPulseProcessor(); }
 
 };
 
 #endif
-

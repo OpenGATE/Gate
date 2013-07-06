@@ -18,14 +18,14 @@
 #include "GateVOutputModule.hh"
 #include "GateDetectorConstruction.hh"
 
-class GateFastAnalysisMessenger; 
+class GateFastAnalysisMessenger;
 class GateVVolume;
 
 //! Faster alternative for GateAnalysis class
 /**
   * GateFastAnalysis does the same as GateAnalysis except reconstructing the
   * event tree, which is very slow for large numbers of events. Some
-  * information is therefore missing from the resulting pulses. The 
+  * information is therefore missing from the resulting pulses. The
   * information that is missing is:
   * - source position (set to -1)
   * - NPhantomCompton (set to -1)

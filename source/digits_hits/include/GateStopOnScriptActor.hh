@@ -27,10 +27,10 @@ See GATE/LICENSE.txt for further details
 /// \brief Actor displaying nb events/tracks/step
 class GateStopOnScriptActor : public GateVActor
 {
- public: 
-  
+ public:
+
   virtual ~GateStopOnScriptActor();
-    
+
   //-----------------------------------------------------------------------------
   // This macro initialize the CreatePrototype and CreateInstance
   FCT_FOR_AUTO_CREATOR_ACTOR(GateStopOnScriptActor)
@@ -43,7 +43,7 @@ class GateStopOnScriptActor : public GateVActor
   /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
-  
+
   void EnableSaveAllActors(bool b);
 
 protected:
@@ -56,4 +56,3 @@ MAKE_AUTO_CREATOR_ACTOR(StopOnScriptActor,GateStopOnScriptActor)
 
 
 #endif /* end #define GATESTOPONSCRIPTACTOR_HH */
-

@@ -20,7 +20,7 @@ See GATE/LICENSE.txt for further details
 #include "GateHitFileReaderMessenger.hh"
 #include "GateHitConvertor.hh"
 
-GateHitFileReader* GateHitFileReader::instance = 0; 
+GateHitFileReader* GateHitFileReader::instance = 0;
 
 // Private constructor: this function should only be called from GetInstance()
 GateHitFileReader::GateHitFileReader()
@@ -47,7 +47,7 @@ GateHitFileReader::~GateHitFileReader()
 {
   // Clear the file and the queue if it was still open
   TerminateAfterAcquisition();
-  
+
   // delete the messenger
   delete m_messenger;
 }
@@ -61,7 +61,7 @@ GateHitFileReader::~GateHitFileReader()
 	If this singleton does not exist yet, GetInstance creates it by calling the private
 	GateHitFileReader constructor
 */
-GateHitFileReader* GateHitFileReader::GetInstance() 
+GateHitFileReader* GateHitFileReader::GetInstance()
 {
     if (instance == 0)
       instance = new GateHitFileReader();
@@ -98,11 +98,11 @@ void GateHitFileReader::PrepareAcquisition()
   // Reset the entry counters
   m_currentEntry=0;
   m_entries = m_hitTree->GetEntries();
-  
+
 
   // Set the addresses of the branch buffers: each buffer is a field of the root-hit structure
   GateHitTree::SetBranchAddresses(m_hitTree,m_hitBuffer);
-  
+
   //  Load the first hit into the root-hit structure
   LoadHitData();
 }
@@ -112,7 +112,7 @@ void GateHitFileReader::PrepareAcquisition()
 
 /* This method is meant to be called by the primary generator action at the beginning of each event.
    It read a series of hit data from the ROOT file, and stores them into a queue of hits/
-  
+
    It returns 1 if it managed to read a series of hits for the current run
    It can return 0 in two cases:
    - either it failed to read a series of hits (end-of-file)
@@ -126,18 +126,18 @@ G4int GateHitFileReader::PrepareNextEvent(G4Event* )
   G4int currentEventID = m_hitBuffer.eventID;
   G4int currentRunID = m_hitBuffer.runID;
 
-  // We've reached the end-of-file  
-  if ( (currentEventID==-1) && (currentRunID==-1) ) 
+  // We've reached the end-of-file
+  if ( (currentEventID==-1) && (currentRunID==-1) )
     return 0;
 
   // Load the hits for the current event
   // We loop until the data that have been read are found to be for a different event or run
   while ( (currentEventID == m_hitBuffer.eventID) && (currentRunID == m_hitBuffer.runID) ) {
-    
+
     // Create a new hit and store it into the hit-queue
     GateCrystalHit* aHit =  m_hitBuffer.CreateHit();
     m_hitQueue.push(aHit);
-    
+
     // Load the next set of hit-data into the root-hit structure
     LoadHitData();
   }
@@ -146,7 +146,7 @@ G4int GateHitFileReader::PrepareNextEvent(G4Event* )
     // We got a set of hits for the current run -> return 1
     return 1;
   }
-  else 
+  else
   {
     // We got a set of hits for a later run -> return 0
     return 0;
@@ -177,13 +177,13 @@ void GateHitFileReader::TerminateAfterAcquisition()
     delete m_hitFile;
     m_hitFile=0;
   }
-    
+
   // If the hit queue was not empty (it should be), clear it up
   while (m_hitQueue.size()) {
     delete m_hitQueue.front();
     m_hitQueue.pop();
   }
-  
+
   // Note that we don't delete the tree: it was based on the file so
   // I assume it was destroyed at the same time as the file was closed (true?)
   m_hitTree=0;
@@ -200,7 +200,7 @@ void GateHitFileReader::LoadHitData()
     m_hitBuffer.eventID=-1;
     return;
   }
-    
+
   // Read a new set of hit-data: if it failed, set indicators to tell the caller that the reading failed
   if (m_hitTree->GetEntry(m_currentEntry++)<=0) {
     G4cerr << "[GateHitFileReader::LoadHitData]:" << G4endl
@@ -217,7 +217,7 @@ void GateHitFileReader::LoadHitData()
 /* Overload of the base-class virtual method to print-out a description of the reader
 
    indent: the print-out indentation (cosmetic parameter)
-*/    
+*/
 void GateHitFileReader::Describe(size_t indent)
 {
   GateClockDependent::Describe(indent);
@@ -228,6 +228,6 @@ void GateHitFileReader::Describe(size_t indent)
     G4cout << GateTools::Indent(indent) << "Current entry:    " << m_currentEntry << G4endl;
   }
 }
-     
+
 
 #endif

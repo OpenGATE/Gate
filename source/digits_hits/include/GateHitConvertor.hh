@@ -26,7 +26,7 @@ class GateHitConvertorMessenger;
 class GateHitConvertor : public GateClockDependent
 {
   private:
-  
+
     GateHitConvertor() ;
 
   public:
@@ -36,7 +36,7 @@ class GateHitConvertor : public GateClockDependent
      virtual GatePulseList* ProcessHits(const GateCrystalHitsCollection* hitCollection);
      virtual void DescribeMyself(size_t indent);
 
-     static  const G4String& GetOutputAlias() 
+     static  const G4String& GetOutputAlias()
      {return theOutputAlias;}
 
   private:
@@ -45,9 +45,8 @@ class GateHitConvertor : public GateClockDependent
   private:
     GateHitConvertorMessenger *m_messenger;
 
-    static const G4String theOutputAlias;  
+    static const G4String theOutputAlias;
 };
 
 
 #endif
-

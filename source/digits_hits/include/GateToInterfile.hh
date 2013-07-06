@@ -55,7 +55,7 @@ public:
   /*! \brief Overload of the base-class' virtual method to print-out a description of the module
 
 	\param indent: the print-out indentation (cosmetic parameter)
-  */    
+  */
   void Describe(size_t indent=0);
 
   //! Write the general INTERFILE information into the header

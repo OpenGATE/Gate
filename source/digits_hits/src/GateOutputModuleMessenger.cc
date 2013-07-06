@@ -27,7 +27,7 @@ See GATE/LICENSE.txt for further details
 GateOutputModuleMessenger::GateOutputModuleMessenger(GateVOutputModule* outputModule)
   : GateMessenger(outputModule->GetOutputMgr()->GetName()+ G4String("/") + outputModule->GetName()),
     m_outputModule(outputModule)
-{ 
+{
 
   G4String cmdName;
 
@@ -67,7 +67,7 @@ GateOutputModuleMessenger::~GateOutputModuleMessenger()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 void GateOutputModuleMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
+{
   if( command == VerboseCmd ) {
     m_outputModule->SetVerboseLevel(VerboseCmd->GetNewIntValue(newValue));
   } else if( command == DescribeCmd ) {
@@ -75,11 +75,8 @@ void GateOutputModuleMessenger::SetNewValue(G4UIcommand* command,G4String newVal
   } else if ( command==EnableCmd ) {
     m_outputModule->Enable(true);
   } else if ( command==DisableCmd ) {
-    m_outputModule->Enable(false); 
+    m_outputModule->Enable(false);
   }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-
-

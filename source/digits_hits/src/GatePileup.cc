@@ -19,22 +19,22 @@ See GATE/LICENSE.txt for further details
 
 
 GatePileup::GatePileup(GatePulseProcessorChain* itsChain,
-      	      	      	 const G4String& itsName) 
+      	      	      	 const G4String& itsName)
   : GateVPulseProcessor(itsChain,itsName),
     m_depth(1),
     m_pileup(0),
     m_waiting("")
 {
   m_messenger = new GatePileupMessenger(this);
-}  
+}
 
 
 
 
-GatePileup::~GatePileup() 
+GatePileup::~GatePileup()
 {
   delete m_messenger;
-}  
+}
 
 
 GatePulseList* GatePileup::ProcessPulseList(const GatePulseList* inputPulseList)
@@ -52,7 +52,7 @@ GatePulseList* GatePileup::ProcessPulseList(const GatePulseList* inputPulseList)
   for (int i= (int)toDel.size()-1;i>=0;i--){
     m_waiting.erase( toDel[i] );
   }
-	
+
   GatePulseConstIterator itr;
   for (itr = inputPulseList->begin() ; itr != inputPulseList->end() ; ++itr)
       	ProcessOnePulse( *itr, m_waiting);
@@ -77,7 +77,7 @@ void GatePileup::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outp
     if ( ((*iter)->GetOutputVolumeID().Top(m_depth) == blockID )
          &&  (std::abs((*iter)->GetTime()-inputPulse->GetTime())<m_pileup) )
       break;
-  
+
   if ( iter != outputPulseList.end() ){
      G4double energySum = (*iter)->GetEnergy() + inputPulse->GetEnergy();
      if ( inputPulse->GetEnergy() > (*iter)->GetEnergy() ){
@@ -90,7 +90,7 @@ void GatePileup::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outp
       	  G4cout  << "Overwritten previous pulse for block " << blockID << " with new pulse with higer energy.\n"
       	          << "Resulting pulse is: " << G4endl
 		  << **iter << G4endl << G4endl ;
-  } else {  
+  } else {
     GatePulse* outputPulse = new GatePulse(*inputPulse);
     if (nVerboseLevel>1)
       	G4cout << "Created new pulse for block " << blockID << ".\n"
@@ -108,7 +108,3 @@ void GatePileup::DescribeMyself(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "Pileup at depth:      " << m_depth << G4endl;
 }
-
-
-
-

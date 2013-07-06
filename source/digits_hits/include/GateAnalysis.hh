@@ -18,8 +18,8 @@ See GATE/LICENSE.txt for further details
 #include "GateVOutputModule.hh"
 #include "GateDetectorConstruction.hh"
 
-class GateTrajectoryNavigator; 
-class GateAnalysisMessenger; 
+class GateTrajectoryNavigator;
+class GateAnalysisMessenger;
 class GateVVolume;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -40,7 +40,7 @@ public:
 
   //! Here we do the first analysis of the events
   /*! It reconstruct the tree of the trajectories with the GateTrajectoryNavigator
-    and completes the hits information with global event info like the ID of the photon 
+    and completes the hits information with global event info like the ID of the photon
     that generated the hit, or the number of compton diffusions of this photon.
     The source ID and source position are also retrieved and stored in the hits
     \sa GateTrajectoryNavigator
@@ -53,8 +53,8 @@ public:
   void RecordVoxels(GateVGeometryVoxelStore *) {};
 
   virtual void SetVerboseLevel(G4int val);
-  
-	// HDS : septal penetration
+
+  // HDS : septal penetration
   inline const G4String& GetSeptalPhysVolumeName() const { return m_septalPhysVolumeName; }
   inline G4bool GetRecordSeptalFlag() const { return m_recordSeptalFlag; }
   inline void SetSeptalPhysVolumeName(const G4String& name) { m_septalPhysVolumeName = name; }

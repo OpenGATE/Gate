@@ -23,7 +23,7 @@ class GateDistributionManual : public GateVDistributionArray
     //! Constructor
     GateDistributionManual(const G4String& itsName);
     //! Destructor
-    virtual ~GateDistributionManual() ; 
+    virtual ~GateDistributionManual() ;
 
     virtual void DescribeMyself(size_t indent);
     void AddPoint(G4double x,G4double y);
@@ -31,7 +31,7 @@ class GateDistributionManual : public GateVDistributionArray
 //    void RemovePoint(G4double x);
   private:
     //! private members
-    GateDistributionManualMessenger* m_messenger;    
+    GateDistributionManualMessenger* m_messenger;
 };
 
 

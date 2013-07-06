@@ -68,9 +68,9 @@ void GateCrystalHit::Print()
 
 
 //---------------------------------------------------------------------
-std::ostream& operator<<(std::ostream& flux, const GateCrystalHit& hit)    
+std::ostream& operator<<(std::ostream& flux, const GateCrystalHit& hit)
 {
-  flux   << "(" 
+  flux   << "("
 	 << "E=" << G4BestUnit(hit.m_edep,"Energy") << ", "
 	 << "proc=" << hit.m_process << ", "
 	 << "particle= " << ( (hit.m_PDGEncoding == 22) ? "gamma" : ( (hit.m_PDGEncoding == 11) ? "e-" : "?" ) ) << ", "
@@ -83,14 +83,14 @@ std::ostream& operator<<(std::ostream& flux, const GateCrystalHit& hit)
 	 << "ScannerPos= ["      << G4BestUnit(hit.m_scannerPos,"Length")         << "], "
 	 << "ScannerRotAngle= " << hit.m_scannerRotAngle/degree << " deg"
 	 << ")";
-    
+
   return flux;
 }
 //---------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------
-std::ofstream& operator<<(std::ofstream& flux, GateCrystalHit* hit)    
+std::ofstream& operator<<(std::ofstream& flux, GateCrystalHit* hit)
 {
   flux   << " " << std::setw(7) << hit->m_runID
 	 << " " << std::setw(7) << hit->m_eventID
@@ -112,8 +112,8 @@ std::ofstream& operator<<(std::ofstream& flux, GateCrystalHit* hit)
 	 << " " << hit->m_process
 	 << " " << hit->m_comptonVolumeName
 	 << " " << hit->m_RayleighVolumeName
-	 << G4endl;	
-    
+	 << G4endl;
+
   return flux;
 }
 //---------------------------------------------------------------------

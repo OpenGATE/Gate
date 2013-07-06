@@ -31,8 +31,8 @@ See GATE/LICENSE.txt for further details
 
 class GateQvalueActor : public GateVImageActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
 
@@ -69,10 +69,10 @@ protected:
   GateImageWithStatistic mQvalueImage;
 
   std::map<G4String,G4double> listOfEmiss;
- 
+
 
   int mNSec;
-  
+
   //G4int nStep;
 };
 

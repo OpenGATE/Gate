@@ -10,8 +10,8 @@ See GATE/LICENSE.txt for further details
 
 
 /*
-  \brief Class GateSecondaryProductionActor : 
-  \brief 
+  \brief Class GateSecondaryProductionActor :
+  \brief
 */
 
 
@@ -24,7 +24,7 @@ GateSecondaryProductionActor::GateSecondaryProductionActor(G4String name, G4int 
   GateVActor(name,depth) {
 
   mCurrentEvent=-1;
- 
+
   pMessenger = new GateActorMessenger(this);
 
 }
@@ -32,7 +32,7 @@ GateSecondaryProductionActor::GateSecondaryProductionActor(G4String name, G4int 
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateSecondaryProductionActor::~GateSecondaryProductionActor()  {
 
 }
@@ -50,7 +50,7 @@ void GateSecondaryProductionActor::Construct() {
   EnablePreUserTrackingAction(true);
   EnablePostUserTrackingAction(false);
   EnableUserSteppingAction(false);
- 
+
   // Output Filename
   mProdFilename = G4String(removeExtension(mSaveFilename))+"-Secondaries.root";
 
@@ -66,11 +66,11 @@ void GateSecondaryProductionActor::Construct() {
    pFrag->Fill("e- Ioni",0.);
 
    pFrag->Fill("e-",0.);
-  
+
    pFrag->Fill("e+",0.);
- 
+
    pFrag->Fill("e+ Decay",0.);
- 
+
    pFrag->Fill("gamma (EM)",0.);
 
    pFrag->Fill("gamma (HAD)",0.);
@@ -157,7 +157,7 @@ void GateSecondaryProductionActor::Construct() {
 //-----------------------------------------------------------------------------
 /// Save data
 void GateSecondaryProductionActor::SaveData() {
-  
+
   pTfile->Write();
   //pTfile->Close();
 }
@@ -170,7 +170,7 @@ void GateSecondaryProductionActor::ResetData() {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateSecondaryProductionActor::BeginOfRunAction(const G4Run * ) { 
+void GateSecondaryProductionActor::BeginOfRunAction(const G4Run * ) {
   GateDebugMessage("Actor", 3, "GateSecondaryProductionActor -- Begin of Run" << G4endl);
   ResetData();
 }
@@ -178,8 +178,8 @@ void GateSecondaryProductionActor::BeginOfRunAction(const G4Run * ) {
 
 //-----------------------------------------------------------------------------
 // Callback at each event
-void GateSecondaryProductionActor::BeginOfEventAction(const G4Event * ) { 
-  mCurrentEvent++;  
+void GateSecondaryProductionActor::BeginOfEventAction(const G4Event * ) {
+  mCurrentEvent++;
   GateDebugMessage("Actor", 3, "GateSecondaryProductionActor -- Begin of Event: "<<mCurrentEvent << G4endl);
 }
 //-----------------------------------------------------------------------------
@@ -209,4 +209,3 @@ void GateSecondaryProductionActor::PreUserTrackingAction(const GateVVolume *, co
   }
 }
 //-----------------------------------------------------------------------------
-

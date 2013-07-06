@@ -31,15 +31,14 @@ class GateCoincidenceTimeDiffSelectorMessenger: public GateClockDependentMesseng
 public:
   GateCoincidenceTimeDiffSelectorMessenger(GateCoincidenceTimeDiffSelector* itsTimeDiffSelector);
   virtual ~GateCoincidenceTimeDiffSelectorMessenger();
-  
+
   inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
-  
+
   inline GateCoincidenceTimeDiffSelector* GetTimeDiffSelector(){ return (GateCoincidenceTimeDiffSelector*) GetClockDependent(); }
-  
+
 private:
   G4UIcmdWithADoubleAndUnit *minTimeCmd; //!< set the min time window
   G4UIcmdWithADoubleAndUnit *maxTimeCmd; //!< set the max time window
 };
 
 #endif
-

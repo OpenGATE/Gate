@@ -15,7 +15,7 @@
 /// \brief Actor displaying nb events/tracks/step
 class GateProductionActor : public GateVImageActor
 {
-  public: 
+  public:
     virtual ~GateProductionActor();
 
     //-----------------------------------------------------------------------------
@@ -33,7 +33,7 @@ class GateProductionActor : public GateVImageActor
 
     //-----------------------------------------------------------------------------
     // Callbacks
-    virtual void UserPreTrackActionInVoxel(const int index, const G4Track* track); 
+    virtual void UserPreTrackActionInVoxel(const int index, const G4Track* track);
     virtual void UserSteppingActionInVoxel(int, const G4Step*) { assert(false); }
     virtual void UserPostTrackActionInVoxel(int, const G4Track*) { assert(false); }
 

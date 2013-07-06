@@ -20,7 +20,7 @@ See GATE/LICENSE.txt for further details
     itsName:       	  the name chosen for this system-component
     itsMotherComponent:   the mother of the component (0 if top of a tree)
     itsSystem:            the system to which the component belongs
-*/    
+*/
 GateArrayComponent::GateArrayComponent(const G4String& itsName,
       	      	      	      	       GateSystemComponent* itsMotherComponent,
 		      	      	       GateVSystem* itsSystem)
@@ -32,7 +32,7 @@ GateArrayComponent::GateArrayComponent(const G4String& itsName,
 
 
 // Destructor
-GateArrayComponent::~GateArrayComponent() 
+GateArrayComponent::~GateArrayComponent()
 {
 }
 
@@ -64,7 +64,7 @@ G4int GateArrayComponent::GetRepeatNumber(size_t axis)
 const G4ThreeVector& GateArrayComponent::GetRepeatVector()
 {
   static const G4ThreeVector defaultRepeatVector;
-  
+
   // Get the inserter's first array-repeater
   GateArrayRepeater* repeater = FindArrayRepeater();
   // Return the repeater's repeat-vector

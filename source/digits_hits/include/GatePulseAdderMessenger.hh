@@ -27,24 +27,23 @@ class G4UIcmdWith3VectorAndUnit;
 class GatePulseAdder;
 
 /*! \class  GatePulseAdderMessenger
-    \brief  Messenger for the GatePulseAdder 
+    \brief  Messenger for the GatePulseAdder
 
     - GatePulseAdderMessenger - by Daniel.Strul@iphe.unil.ch
-    
+
     \sa GatePulseAdder, GatePulseProcessorMessenger
-*/      
+*/
 class GatePulseAdderMessenger: public GatePulseProcessorMessenger
 {
   public:
     GatePulseAdderMessenger(GatePulseAdder* itsPulseAdder);
     inline ~GatePulseAdderMessenger() {}
-    
+
     void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GatePulseAdder* GetPulseAdder() 
+    inline GatePulseAdder* GetPulseAdder()
       { return (GatePulseAdder*) GetPulseProcessor(); }
 
 };
 
 #endif
-

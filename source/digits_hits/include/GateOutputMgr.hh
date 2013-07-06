@@ -38,7 +38,7 @@ class GateOutputMgr :  public GateRecorderBase
 public:
 
   virtual ~GateOutputMgr(); //!< Destructor
-   
+
   //! Called by GateApplicationMgr
   /*! It calls in turn the RecordBeginOfAcquisition method of the inserted modules */
   void RecordBeginOfAcquisition();
@@ -87,11 +87,11 @@ public:
       instance = new GateOutputMgr("output");}
     return instance;
   };
-  
-  
+
+
   inline void SetVerboseLevel(G4int val) { nVerboseLevel = val; };
 
-  //! Provides a description of the properties of the Mgr and of its output modules 
+  //! Provides a description of the properties of the Mgr and of its output modules
   virtual void Describe(size_t indent=0);
 
   //! Getter used by the Messenger to construct the commands directory
@@ -119,7 +119,7 @@ public:
 
   void RegisterNewSingleDigiCollection(const G4String& aCollectionName,G4bool outputFlag);
   void RegisterNewCoincidenceDigiCollection(const G4String& aCollectionName,G4bool outputFlag);
-  
+
   inline G4bool GetSaveVoxelTuple()                  { return m_saveVoxelTuple; };
   inline void   SetSaveVoxelTuple(G4bool flag)       { m_saveVoxelTuple = flag; };
 
@@ -162,10 +162,10 @@ protected :
   //! Flag to say if the user allow to launch a simulation
   //! without any output nor actor
   G4bool m_allowNoOutput;
-  
+
   G4bool   m_saveVoxelTuple;
 
-  G4Timer m_timer;      	  //!< Timer 
+  G4Timer m_timer;      	  //!< Timer
 
 };
 

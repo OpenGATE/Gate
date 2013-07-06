@@ -30,16 +30,16 @@ class GateEnergySpectrumActor;
 
 //-----------------------------------------------------------------------------
 /// \brief Messenger of GateVImageActor
-class GateEnergySpectrumActorMessenger : public GateActorMessenger 
+class GateEnergySpectrumActorMessenger : public GateActorMessenger
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   /// Constructor with pointer on the associated sensor
   GateEnergySpectrumActorMessenger(GateEnergySpectrumActor * v);
   /// Destructor
   virtual ~GateEnergySpectrumActorMessenger();
-    
+
   /// Command processing callback
   virtual void SetNewValue(G4UIcommand*, G4String);
   void BuildCommands(G4String base);
@@ -47,7 +47,7 @@ class GateEnergySpectrumActorMessenger : public GateActorMessenger
 protected:
 
   /// Associated sensor
-  GateEnergySpectrumActor * pActor; 
+  GateEnergySpectrumActor * pActor;
 
   /// Command objects
   G4UIcmdWithADoubleAndUnit * pEmaxCmd;

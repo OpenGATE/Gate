@@ -52,7 +52,7 @@ void GateSignalHandler::IgnoreSignalHandler(int sig) {
   }
 }
 
-// Handles the signal SIGQUIT (CTRL-\). 
+// Handles the signal SIGQUIT (CTRL-\).
 // When a BeamOn/StartDAQ is running, aborts the current run and stops the DAQ, returning GATE in Idle state.
 // In the other states, the signal is ignored.
 void GateSignalHandler::QuitSignalHandler(int sig)
@@ -67,7 +67,7 @@ void GateSignalHandler::QuitSignalHandler(int sig)
     default:
       G4cerr << sig << G4endl;
   }
-  
+
   // Get the current application state
   G4StateManager *stateManager = G4StateManager::GetStateManager();
   G4ApplicationState state = stateManager->GetCurrentState();
@@ -98,4 +98,3 @@ void GateSignalHandler::QuitSignalHandler(int sig)
       break;
   }
 }
-

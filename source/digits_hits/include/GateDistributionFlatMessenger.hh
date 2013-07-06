@@ -35,4 +35,3 @@ class GateDistributionFlatMessenger: public GateDistributionMessenger
 };
 
 #endif
-

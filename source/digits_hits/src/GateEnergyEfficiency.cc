@@ -25,7 +25,7 @@ See GATE/LICENSE.txt for further details
 
 
 GateEnergyEfficiency::GateEnergyEfficiency(GatePulseProcessorChain* itsChain,
-      	      	      	      	 const G4String& itsName) 
+      	      	      	      	 const G4String& itsName)
   : GateVPulseProcessor(itsChain,itsName),
     m_efficiency(0)
 {
@@ -35,10 +35,10 @@ GateEnergyEfficiency::GateEnergyEfficiency(GatePulseProcessorChain* itsChain,
 
 
 
-GateEnergyEfficiency::~GateEnergyEfficiency() 
+GateEnergyEfficiency::~GateEnergyEfficiency()
 {
   delete m_messenger;
-}  
+}
 
 void GateEnergyEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
 {
@@ -55,7 +55,7 @@ void GateEnergyEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePulse
 //   G4cout<<inputPulse->GetEnergy()<<"   "<<eff<<G4endl;
    if (G4UniformRand() < eff)
       outputPulseList.push_back(new GatePulse(*inputPulse));
-   
+
 }
 
 void GateEnergyEfficiency::DescribeMyself(size_t indent)

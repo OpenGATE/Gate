@@ -1,8 +1,8 @@
 /*----------------------
   GATE version name: gate_v6
-  
+
   Copyright (C): OpenGATE Collaboration
-  
+
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
@@ -11,7 +11,7 @@
 
 /*
   \brief Class GateMuCalculatorActor :
-  \brief 
+  \brief
 */
 
 #include "G4CompositeEMDataSet.hh"
@@ -49,8 +49,8 @@ GateDiffCrossSectionActor::GateDiffCrossSectionActor( G4String name, G4int depth
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
-GateDiffCrossSectionActor::~GateDiffCrossSectionActor()  
+/// Destructor
+GateDiffCrossSectionActor::~GateDiffCrossSectionActor()
 {
   delete pMessenger;
   delete scatterFunctionData;
@@ -59,7 +59,7 @@ GateDiffCrossSectionActor::~GateDiffCrossSectionActor()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateDiffCrossSectionActor::ReadListEnergy(G4String energylist) 
+void GateDiffCrossSectionActor::ReadListEnergy(G4String energylist)
 {
   G4double energy;
   std::ifstream inEnergyFile;
@@ -71,7 +71,7 @@ void GateDiffCrossSectionActor::ReadListEnergy(G4String energylist)
     G4cout << "Error: file could not be opened" << G4endl;
     exit( 1);
   }
-  while ( !inEnergyFile.eof( )) 
+  while ( !inEnergyFile.eof( ))
     {
       inEnergyFile >> energy;
       energy = energy*keV;
@@ -82,7 +82,7 @@ void GateDiffCrossSectionActor::ReadListEnergy(G4String energylist)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateDiffCrossSectionActor::ReadListAngle( G4String anglelist) 
+void GateDiffCrossSectionActor::ReadListAngle( G4String anglelist)
 {
   G4double angle;
   std::ifstream inAngleFile;
@@ -94,7 +94,7 @@ void GateDiffCrossSectionActor::ReadListAngle( G4String anglelist)
     G4cout << "Error: file could not be opened" << G4endl;
     exit( 1);
   }
-  while ( !inAngleFile.eof( )) 
+  while ( !inAngleFile.eof( ))
     {
       inAngleFile >> angle;
       angle = angle*radian;
@@ -127,7 +127,7 @@ void GateDiffCrossSectionActor::ReadMaterialList(G4String materiallist)
 
 
 //-----------------------------------------------------------------------------
-void GateDiffCrossSectionActor::SetEnergy( G4double energyValue) 
+void GateDiffCrossSectionActor::SetEnergy( G4double energyValue)
 {
   mUserEnergy = energyValue;
   mUserEnergyList.clear( );
@@ -137,7 +137,7 @@ void GateDiffCrossSectionActor::SetEnergy( G4double energyValue)
 
 
 //-----------------------------------------------------------------------------
-void GateDiffCrossSectionActor::SetAngle( G4double angleValue) 
+void GateDiffCrossSectionActor::SetAngle( G4double angleValue)
 {
   mUserAngle = angleValue;
   mUserAngleList.clear( );
@@ -175,11 +175,11 @@ void GateDiffCrossSectionActor::Initialise()
 
 //-----------------------------------------------------------------------------
 /// Construct
-void GateDiffCrossSectionActor::Construct() 
+void GateDiffCrossSectionActor::Construct()
 {
   GateDebugMessageInc("Actor", 4, "GateDiffCrossSectionActor -- Construct - begin" << G4endl);
   GateVActor::Construct();
-  
+
   // Enable callbacks
   EnableBeginOfRunAction(true);
   //  EnableBeginOfEventAction(true);
@@ -187,10 +187,10 @@ void GateDiffCrossSectionActor::Construct()
   //  EnableUserSteppingAction(true);
 
   // Print information
-  GateMessage("Actor", 1, 
+  GateMessage("Actor", 1,
               "\tDiffCrossSection DiffCrossSectionActor    = '" << GetObjectName() << "'" << G4endl);
-  
-  
+
+
   //  ResetData();
   GateMessageDec("Actor", 4, "GateDiffCrossSectionActor -- Construct - end" << G4endl);
 
@@ -204,8 +204,8 @@ void GateDiffCrossSectionActor::BeginOfRunAction(const G4Run*)
   G4double scatteringFunction, formFactor, Theta, cosT, sinT, sinT2, E_in, Ecompton, eRadiusTerm, DCSKleinNishinaTerm1, DCSKleinNishinaTerm2, DCSKleinNishina, DCSThomsonTerm1, DCSThomson, xi, DCScompton, DCSrayleigh, e0m;
   //****Ration energy (E / Me C^2)
   const G4MaterialTable* matTbl = G4Material::GetMaterialTable();
-  G4int Z;  
- 
+  G4int Z;
+
   std::list< std::pair< G4double, G4double > > listAngleSF, listAngleDCScompton, listAngleFF, listAngleDCSrayleigh;
   std::list< std::pair< G4double, G4double > >::iterator iListAngleSF, iListAngleDCScompton, iListAngleFF, iListAngleDCSrayleigh;
 
@@ -218,7 +218,7 @@ void GateDiffCrossSectionActor::BeginOfRunAction(const G4Run*)
   //std::vector< G4double> muvalue;
   this->Initialise();
 
-  //****Loop for the different materials presents   
+  //****Loop for the different materials presents
   for( size_t k = 0; k < G4Material::GetNumberOfMaterials(); k++)
     {
       if( ( *matTbl)[k]->GetName() == mUserMaterial.c_str() )
@@ -233,11 +233,11 @@ void GateDiffCrossSectionActor::BeginOfRunAction(const G4Run*)
 	  Z = (*matTbl)[k]->GetElement(0)->GetZ();
 	  //****Loop for the differents energies choosen
 	  for( size_t l = 0; l < mUserEnergyList.size(); l++)
-	    { 
+	    {
               //****Incident energy
 	      E_in = mUserEnergyList[l];
 	      //****Loop for scattering angle emission
-	      for( size_t j = 0; j < mUserAngleList.size(); j++) 
+	      for( size_t j = 0; j < mUserAngleList.size(); j++)
 		{
                   //****Scatter angle in polar coordinates
 		  Theta = mUserAngleList[j];
@@ -287,7 +287,7 @@ void GateDiffCrossSectionActor::BeginOfRunAction(const G4Run*)
       ////ATTENTION write map to materials(energy(DCS)))
     }
   //TableSF_co[(*matTbl)[k]->GetName()].push_back( std::make_pair( mUserEnergyList[l], Sigtot_vo/density));
-  
+
 
   //****WRITE Rayleigh process data files*********************************
   //****print Form Factor
@@ -340,15 +340,15 @@ void GateDiffCrossSectionActor::BeginOfRunAction(const G4Run*)
     }
   //DD("ici2");
   G4cout << "*******************************************" << G4endl;
-  
-  
- 
+
+
+
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 ///// Save data
-void GateDiffCrossSectionActor::SaveData() 
+void GateDiffCrossSectionActor::SaveData()
 {
   G4String directory = "/home/eromero/Documents/Synergy/output/";
   PointerToFileDataOutSF.open ( (directory + mExitFileNameSF).c_str());
@@ -374,9 +374,7 @@ void GateDiffCrossSectionActor::SaveData()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateDiffCrossSectionActor::ResetData() 
+void GateDiffCrossSectionActor::ResetData()
 {
 }
 //------------------------------------------------------------------------
-
-

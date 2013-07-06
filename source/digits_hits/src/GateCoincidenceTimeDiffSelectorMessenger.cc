@@ -26,7 +26,7 @@ GateCoincidenceTimeDiffSelectorMessenger::GateCoincidenceTimeDiffSelectorMesseng
   minTimeCmd= new G4UIcmdWithADoubleAndUnit(cmdName,this);
   minTimeCmd->SetGuidance("Set min time diff to be accepted (negative values : any is time diff is ok)");
   minTimeCmd->SetUnitCategory("Time");
-  
+
   cmdName = GetDirectoryName() + "setMax";
   maxTimeCmd= new G4UIcmdWithADoubleAndUnit(cmdName,this);
   maxTimeCmd->SetGuidance("Set max time diff to be accepted (negative values : any is time diff is ok)");
@@ -38,19 +38,17 @@ GateCoincidenceTimeDiffSelectorMessenger::GateCoincidenceTimeDiffSelectorMesseng
 
 GateCoincidenceTimeDiffSelectorMessenger::~GateCoincidenceTimeDiffSelectorMessenger()
 {
-  delete minTimeCmd; 
+  delete minTimeCmd;
   delete minTimeCmd;
 }
 
 
 void GateCoincidenceTimeDiffSelectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
   if (command==minTimeCmd)
     GetTimeDiffSelector()->SetMinTime(minTimeCmd->GetNewDoubleValue(newValue));
-  else if (command == maxTimeCmd)    
+  else if (command == maxTimeCmd)
     GetTimeDiffSelector()->SetMaxTime(maxTimeCmd->GetNewDoubleValue(newValue));
   else
-    GateClockDependentMessenger::SetNewValue(command,newValue); 
+    GateClockDependentMessenger::SetNewValue(command,newValue);
 }
-
-

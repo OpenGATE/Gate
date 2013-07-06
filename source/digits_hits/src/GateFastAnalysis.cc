@@ -27,7 +27,7 @@ See GATE/LICENSE.txt for further details
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
 
-GateFastAnalysis::GateFastAnalysis(const G4String& name, GateOutputMgr* outputMgr, DigiMode digiMode) 
+GateFastAnalysis::GateFastAnalysis(const G4String& name, GateOutputMgr* outputMgr, DigiMode digiMode)
   : GateVOutputModule(name,outputMgr,digiMode)
 {
   m_messenger = new GateFastAnalysisMessenger(this);
@@ -36,7 +36,7 @@ GateFastAnalysis::GateFastAnalysis(const G4String& name, GateOutputMgr* outputMg
   Enable(false);
 }
 
-GateFastAnalysis::~GateFastAnalysis() 
+GateFastAnalysis::~GateFastAnalysis()
 {
   delete m_messenger;
   if (nVerboseLevel > 0) G4cout << "GateFastAnalysis deleting..." << G4endl;
@@ -83,14 +83,14 @@ void GateFastAnalysis::RecordEndOfEvent(const G4Event* event)
    GateCrystalHitsCollection* CHC = GetOutputMgr()->GetCrystalHitCollection();
 
 // Looking at Crystal Hits Collection:
-  if (CHC) {    
-        G4int NbHits = CHC->entries();  
+  if (CHC) {
+        G4int NbHits = CHC->entries();
 
     G4int sourceID = (((GateSourceMgr::GetInstance())->GetSourcesForThisEvent())[0])->GetSourceID();
     G4int eventID  = event->GetEventID();
     G4int runID    = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
 
-        for (G4int iHit=0;iHit<NbHits;iHit++) 
+        for (G4int iHit=0;iHit<NbHits;iHit++)
            {
               if ((*CHC)[iHit]->GoodForAnalysis())
                {
@@ -110,7 +110,7 @@ void GateFastAnalysis::RecordEndOfEvent(const G4Event* event)
 	(*CHC)[iHit]->SetRayleighVolumeName("NULL");
 	(*CHC)[iHit]->SetPhotonID(-1);
 	(*CHC)[iHit]->SetPrimaryID(-1);
-	(*CHC)[iHit]->SetNCrystalCompton(-1); 
+	(*CHC)[iHit]->SetNCrystalCompton(-1);
 	(*CHC)[iHit]->SetNCrystalRayleigh(-1);
 
                 } // end GoodForAnalysis()
@@ -129,7 +129,7 @@ void GateFastAnalysis::RecordStepWithVolume(const GateVVolume *, const G4Step* )
     G4cout << "GateFastAnalysis::RecordStep" << G4endl;
 }
 
-void GateFastAnalysis::SetVerboseLevel(G4int val) 
+void GateFastAnalysis::SetVerboseLevel(G4int val)
 { nVerboseLevel = val;}
 
 #endif

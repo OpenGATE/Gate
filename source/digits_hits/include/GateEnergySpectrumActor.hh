@@ -34,10 +34,10 @@ See GATE/LICENSE.txt for further details
 /// \brief Actor displaying nb events/tracks/step
 class GateEnergySpectrumActor : public GateVActor
 {
- public: 
-  
+ public:
+
   virtual ~GateEnergySpectrumActor();
-    
+
   //-----------------------------------------------------------------------------
   // This macro initialize the CreatePrototype and CreateInstance
   FCT_FOR_AUTO_CREATOR_ACTOR(GateEnergySpectrumActor)
@@ -60,7 +60,7 @@ class GateEnergySpectrumActor : public GateVActor
   /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
- 
+
 //  virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
@@ -104,13 +104,13 @@ protected:
 
   double Ei,Ef;
   int nTrack;
-  bool newEvt;  
-  bool newTrack;  
+  bool newEvt;
+  bool newTrack;
   double sumNi;
   double sumM1;
   double sumM2;
   double sumM3;
-  
+
   double edep;
   double tof;
   double edepTrack;
@@ -122,4 +122,4 @@ MAKE_AUTO_CREATOR_ACTOR(EnergySpectrumActor,GateEnergySpectrumActor)
 
 
 #endif /* end #define GATEENERGYSPECTRUMACTOR_HH */
-#endif 
+#endif

@@ -34,11 +34,11 @@ class GateTransferEfficiencyMessenger: public GatePulseProcessorMessenger
   public:
     GateTransferEfficiencyMessenger(GateTransferEfficiency* itsTE);
     virtual ~GateTransferEfficiencyMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
     inline void SetNewValue2(G4UIcommand* aCommand, G4String aString);
 
-    inline GateTransferEfficiency* GetTransferEfficiency() 
+    inline GateTransferEfficiency* GetTransferEfficiency()
       { return (GateTransferEfficiency*) GetPulseProcessor(); }
 
   private:
@@ -47,8 +47,7 @@ class GateTransferEfficiencyMessenger: public GatePulseProcessorMessenger
     std::vector<G4UIcmdWithADouble*>   coeffTECmd;
     std::vector<G4String> m_name;
     G4int i;
-    G4int m_count;        
+    G4int m_count;
 };
 
 #endif
-

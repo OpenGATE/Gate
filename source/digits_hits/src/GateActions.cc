@@ -63,11 +63,11 @@ GateRunAction::GateRunAction(GateUserActions * cbm, GateRecorderBase* r)
 
 
 //-----------------------------------------------------------------------------
-void GateRunAction::BeginOfRunAction(const G4Run* aRun) 
-{  
+void GateRunAction::BeginOfRunAction(const G4Run* aRun)
+{
   GateMessage("Core", 1, "Begin Of Run " << aRun->GetRunID() << G4endl);
- 
-  //#ifdef GATE_BasicROOT_Output  
+
+  //#ifdef GATE_BasicROOT_Output
   //if(GateApplicationMgr::GetInstance()->GetOutputMode()){
     if (GetFlagBasicOutput()){
       // Basic ROOT output -------------------------------------------
@@ -76,7 +76,7 @@ void GateRunAction::BeginOfRunAction(const G4Run* aRun)
     //--------------------------------------------------------------
   //}
   //#endif
-    
+
 #ifdef G4ANALYSIS_USE_GENERAL
   // Here we fill the histograms of the Analysis manager
   if(GateApplicationMgr::GetInstance()->GetOutputMode()){
@@ -84,23 +84,23 @@ void GateRunAction::BeginOfRunAction(const G4Run* aRun)
     outputMgr->RecordBeginOfRun(aRun);
   }
 #endif
-    
-  pCallbackMan->BeginOfRunAction(aRun); 
+
+  pCallbackMan->BeginOfRunAction(aRun);
 }
 //-----------------------------------------------------------------------------
 
 
-//----------------------------------------------------------------------------- 
-inline void GateRunAction::EndOfRunAction(const G4Run* aRun) 
-{  
+//-----------------------------------------------------------------------------
+inline void GateRunAction::EndOfRunAction(const G4Run* aRun)
+{
   GateMessage("Core", 1, "End Of Run " << aRun->GetRunID() << G4endl);
-  
-  //#ifdef GATE_BasicROOT_Output 
+
+  //#ifdef GATE_BasicROOT_Output
   if (GetFlagBasicOutput()){
     // Basic ROOT output
     if (recorder != 0) recorder->RecordEndOfRun(aRun);}
   //#endif
-  
+
 #ifdef G4ANALYSIS_USE_GENERAL
   // Here we fill the histograms of the Analysis manager
   if(GateApplicationMgr::GetInstance()->GetOutputMode()){
@@ -108,10 +108,10 @@ inline void GateRunAction::EndOfRunAction(const G4Run* aRun)
     outputMgr->RecordEndOfRun(aRun);
   }
 #endif
-  
-  pCallbackMan->EndOfRunAction(aRun); 
-} 
- 
+
+  pCallbackMan->EndOfRunAction(aRun);
+}
+
 //-----------------------------------------------------------------------------
 
 
@@ -123,10 +123,10 @@ GateEventAction::GateEventAction(GateUserActions * cbm, GateRecorderBase* r)
 
 
 //-----------------------------------------------------------------------------
-inline void GateEventAction::BeginOfEventAction(const G4Event* anEvent) 
-{ 
+inline void GateEventAction::BeginOfEventAction(const G4Event* anEvent)
+{
   GateMessage("Core", 2, "Begin Of Event " << anEvent->GetEventID() << "\n");
-  
+
   TrackingMode theMode =( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
 if ( theMode != kTracker )
 {
@@ -143,20 +143,20 @@ if ( theMode != kTracker )
 #endif
  }
 
- if(anEvent->GetNumberOfPrimaryVertex() > 0) pCallbackMan->BeginOfEventAction(anEvent); 
+ if(anEvent->GetNumberOfPrimaryVertex() > 0) pCallbackMan->BeginOfEventAction(anEvent);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-inline void GateEventAction::EndOfEventAction(const G4Event* anEvent) 
-{   
+inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
+{
   GateMessage("Core", 2, "End Of Event " << anEvent->GetEventID() << "\n");
   if (GetFlagBasicOutput()){
     anEvent->GetEventID();
     if (recorder != 0) recorder->RecordEndOfEvent(anEvent);}
 
-  
+
 #ifdef G4ANALYSIS_USE_GENERAL
   // Here we fill the histograms of the OutputMgr manager
   // Pre-digitalisation outputMgr (hits)
@@ -165,7 +165,7 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
     outputMgr->RecordEndOfEvent(anEvent);
   }
 #endif
-  
+
   /* PY Descourt 08/09/2009 */
 
   GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
@@ -186,13 +186,13 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
 	      i = CHC->GetSize();
 	      size << i ;
 	      G4String message = " GateEventAction::EndOfEventAction : ERROR  Event "+ event_id.str() + " processed " + size.str() + " Crystal Hits.\n"+"Your Stepping policies may not be appropriately set. For instance You specified to stop after Phantom Boundaries and the distance between the phantom and the detectors is not sufficient so some particles reached the detectors.\n";
-	      G4Exception( "GateEventAction::EndOfEventAction", "EndOfEventAction", FatalException, message );       
+	      G4Exception( "GateEventAction::EndOfEventAction", "EndOfEventAction", FatalException, message );
 	    }
 	}
       if (  anEvent->GetNumberOfPrimaryVertex() > 0 )
 	{
 	  GateOutputMgr::GetInstance()->RecordTracks(myAction);
-	  //   RECORD THE PHANTOM HITS COLLECTION OF THE CURRENT EVENT 
+	  //   RECORD THE PHANTOM HITS COLLECTION OF THE CURRENT EVENT
 	  GateToRoot* gateToRoot = (GateToRoot*) (GateOutputMgr::GetInstance()->GetModule("root"));
 	  // STORE TO A ROOT FILE  THE DATA COLLECTED IN THE RECORDSTEP METHOD DURING STEPPING
 	  gateToRoot->RecordRecStepData( anEvent );
@@ -201,14 +201,14 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
     }//tracker mode
 
 
-  if(anEvent->GetNumberOfPrimaryVertex() > 0) pCallbackMan->EndOfEventAction(anEvent); 
+  if(anEvent->GetNumberOfPrimaryVertex() > 0) pCallbackMan->EndOfEventAction(anEvent);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 GateTrackingAction::GateTrackingAction(GateUserActions * cbm, GateRecorderBase* r)
-  : pCallbackMan(cbm), recorder(r) 
+  : pCallbackMan(cbm), recorder(r)
 {
 }
 //-----------------------------------------------------------------------------
@@ -216,11 +216,11 @@ GateTrackingAction::GateTrackingAction(GateUserActions * cbm, GateRecorderBase* 
 void GateTrackingAction::PreUserTrackingAction(const G4Track* a)
 {
   // Create trajectory only for primaries
-  if(a->GetParentID()==0) { 
-    fpTrackingManager->SetStoreTrajectory(true); 
-  } else { 
-    fpTrackingManager->SetStoreTrajectory(true); 
-    //fpTrackingManager->SetStoreTrajectory(false); 
+  if(a->GetParentID()==0) {
+    fpTrackingManager->SetStoreTrajectory(true);
+  } else {
+    fpTrackingManager->SetStoreTrajectory(true);
+    //fpTrackingManager->SetStoreTrajectory(false);
   }
 
 /* PY Descourt 08/09/2009 */
@@ -259,7 +259,7 @@ if ( theMode == kDetector )
             G4String parentparticleName = (*iter)->GetParentParticleName();
             G4ProcessManager* pM = 0;
             if ( parentparticleName != G4String( "None" ) )
-             { 
+             {
               pM = G4ParticleTable::GetParticleTable()->FindParticle( parentparticleName)->GetProcessManager();
              }
             G4VProcess* theProcess = G4ProcessTable::GetProcessTable()->FindProcess(   processName,  pM  );
@@ -281,7 +281,7 @@ if ( theMode == kDetector )
                {
                  theLogVol = (*itLog);
                  break;
-               } 
+               }
             }
            TmpTrack->SetLogicalVolumeAtVertex( theLogVol );
            delete (*iter);
@@ -301,7 +301,7 @@ if ( theMode == kDetector )
 /* PY Descourt 08/09/2009 */
 void GateTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
 {
-	
+
 	if ( !dummy_track_vector.empty() )
 	{ for ( size_t i = 0; i < dummy_track_vector.size();i++)
 	  delete dummy_track_vector[i];
@@ -312,7 +312,7 @@ void GateTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
 	  delete dummy_step_vector[i];
 	  dummy_step_vector.clear();
 	}
-	
+
 GateSteppingAction*  myAction = (GateSteppingAction *) (G4RunManager::GetRunManager()->GetUserSteppingAction()) ;
 TrackingMode theMode = myAction->GetMode();
 if ( theMode == kDetector )
@@ -336,7 +336,7 @@ if ( theMode == kDetector )
                dummy_step_vector.push_back( dummy_step );
                dummy_track->SetStep( dummy_step );
               // dummy_track_vector.push_back( dummy_track );
-               
+
                // this dummy track must have as position the vertex position
                dummy_track->SetPosition( aTrack->GetVertexPosition() );
                dummy_step->GetPostStepPoint()->SetPosition( aTrack->GetVertexPosition() );
@@ -359,8 +359,8 @@ outFile.open (outF,std::ios::app);
 
 G4int eventID = G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->GetEventID();
 
-   outFile << " Event ID is "  << eventID << G4endl; 
-   outFile << "GateTrackingAction::ShowG4TrackInfos :::: current  Track :::::::: " << G4endl; 
+   outFile << " Event ID is "  << eventID << G4endl;
+   outFile << "GateTrackingAction::ShowG4TrackInfos :::: current  Track :::::::: " << G4endl;
 
    G4String particleName = aTrack->GetDefinition()->GetParticleName();
 
@@ -369,84 +369,84 @@ G4int eventID = G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->Ge
  outFile << "      -----------------------------------------------" << G4endl;
  outFile << "        G4Track Information  " << std::setw(20) << G4endl;
  outFile << "      -----------------------------------------------" << G4endl;
- outFile << "        Step number         : " << std::setw(20) << aTrack->GetCurrentStepNumber()<< G4endl; 
+ outFile << "        Step number         : " << std::setw(20) << aTrack->GetCurrentStepNumber()<< G4endl;
 
 #ifdef G4_USE_G4BESTUNIT_FOR_VERBOSE
-  outFile << "        Position - x        : " 
+  outFile << "        Position - x        : "
        << std::setw(20) << G4BestUnit(aTrack->GetPosition().x(), "Length")
-       << G4endl; 
-  outFile << "        Position - y        : " 
+       << G4endl;
+  outFile << "        Position - y        : "
        << std::setw(20) << G4BestUnit(aTrack->GetPosition().y(), "Length")
-       << G4endl; 
-  outFile << "        Position - z        : " 
+       << G4endl;
+  outFile << "        Position - z        : "
        << std::setw(20) << G4BestUnit(aTrack->GetPosition().z(), "Length")
        << G4endl;
-  outFile << "        Global Time         : " 
+  outFile << "        Global Time         : "
        << std::setw(20) << G4BestUnit(aTrack->GetGlobalTime(), "Time")
        << G4endl;
-  outFile << "        Local Time          : " 
+  outFile << "        Local Time          : "
        << std::setw(20) << G4BestUnit(aTrack->GetLocalTime(), "Time")
        << G4endl;
 #else
-  outFile << "        Position - x (mm)   : " 
+  outFile << "        Position - x (mm)   : "
        << std::setw(20) << aTrack->GetPosition().x() /mm
-       << G4endl; 
-  outFile << "        Position - y (mm)   : " 
+       << G4endl;
+  outFile << "        Position - y (mm)   : "
        << std::setw(20) << aTrack->GetPosition().y() /mm
-       << G4endl; 
-  outFile << "        Position - z (mm)   : " 
+       << G4endl;
+  outFile << "        Position - z (mm)   : "
        << std::setw(20) << aTrack->GetPosition().z() /mm
        << G4endl;
-  outFile << "        Global Time (ns)    : " 
+  outFile << "        Global Time (ns)    : "
        << std::setw(20) << aTrack->GetGlobalTime() /ns
        << G4endl;
-  outFile << "        Local Time (ns)     : " 
+  outFile << "        Local Time (ns)     : "
        << std::setw(20) << aTrack->GetLocalTime() /ns
        << G4endl;
 #endif
-  outFile << "        Momentum Direct - x : " 
+  outFile << "        Momentum Direct - x : "
        << std::setw(20) << aTrack->GetMomentumDirection().x()
        << G4endl;
-  outFile << "        Momentum Direct - y : " 
+  outFile << "        Momentum Direct - y : "
        << std::setw(20) << aTrack->GetMomentumDirection().y()
        << G4endl;
-  outFile << "        Momentum Direct - z : " 
+  outFile << "        Momentum Direct - z : "
        << std::setw(20) << aTrack->GetMomentumDirection().z()
        << G4endl;
 #ifdef G4_USE_G4BESTUNIT_FOR_VERBOSE
-  outFile << "        Kinetic Energy      : " 
+  outFile << "        Kinetic Energy      : "
 #else
-  outFile << "        Kinetic Energy (MeV): " 
+  outFile << "        Kinetic Energy (MeV): "
 #endif
        << std::setw(20) << G4BestUnit(aTrack->GetKineticEnergy(), "Energy")
        << G4endl;
-  outFile << "        Polarization - x    : " 
+  outFile << "        Polarization - x    : "
        << std::setw(20) << aTrack->GetPolarization().x()
        << G4endl;
-  outFile << "        Polarization - y    : " 
+  outFile << "        Polarization - y    : "
        << std::setw(20) << aTrack->GetPolarization().y()
        << G4endl;
-  outFile << "        Polarization - z    : " 
+  outFile << "        Polarization - z    : "
        << std::setw(20) << aTrack->GetPolarization().z()
        << G4endl;
-  outFile << "        Track Length        : " 
+  outFile << "        Track Length        : "
        << std::setw(20) << G4BestUnit(aTrack->GetTrackLength(), "Length")
        << G4endl;
-  outFile << "        Track ID #          : " 
+  outFile << "        Track ID #          : "
        << std::setw(20) << aTrack->GetTrackID()
        << G4endl;
-  outFile << "        Parent Track ID #   : " 
+  outFile << "        Parent Track ID #   : "
        << std::setw(20) << aTrack->GetParentID()
        << G4endl;
-  outFile << "        Next Volume         : " 
+  outFile << "        Next Volume         : "
        << std::setw(20);
-       if( aTrack->GetNextVolume() != 0 ) { 
+       if( aTrack->GetNextVolume() != 0 ) {
          outFile << aTrack->GetNextVolume()->GetName() << " ";
        } else {
          outFile << "OutOfWorld" << " ";
        }
        outFile << G4endl;
-  outFile << "        Track Status        : " 
+  outFile << "        Track Status        : "
        << std::setw(20);
        if( aTrack->GetTrackStatus() == fAlive ){
          outFile << " Alive";
@@ -463,44 +463,44 @@ G4int eventID = G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->Ge
        }
        outFile << G4endl;
 #ifdef G4_USE_G4BESTUNIT_FOR_VERBOSE
-  outFile << "        Vertex - x          : " 
+  outFile << "        Vertex - x          : "
        << std::setw(20) << G4BestUnit(aTrack->GetVertexPosition().x(),"Length")
-       << G4endl; 
-  outFile << "        Vertex - y          : " 
+       << G4endl;
+  outFile << "        Vertex - y          : "
        << std::setw(20) << G4BestUnit(aTrack->GetVertexPosition().y(),"Length")
-       << G4endl; 
-  outFile << "        Vertex - z          : " 
+       << G4endl;
+  outFile << "        Vertex - z          : "
        << std::setw(20) << G4BestUnit(aTrack->GetVertexPosition().z(),"Length")
        << G4endl;
 #else
-  outFile << "        Vertex - x (mm)     : " 
+  outFile << "        Vertex - x (mm)     : "
        << std::setw(20) << aTrack->GetVertexPosition().x()/mm
-       << G4endl; 
-  outFile << "        Vertex - y (mm)     : " 
+       << G4endl;
+  outFile << "        Vertex - y (mm)     : "
        << std::setw(20) << aTrack->GetVertexPosition().y()/mm
-       << G4endl; 
-  outFile << "        Vertex - z (mm)     : " 
+       << G4endl;
+  outFile << "        Vertex - z (mm)     : "
        << std::setw(20) << aTrack->GetVertexPosition().z()/mm
        << G4endl;
 #endif
-  outFile << "        Vertex - Px (MomDir): " 
+  outFile << "        Vertex - Px (MomDir): "
        << std::setw(20) << aTrack->GetVertexMomentumDirection().x()
        << G4endl;
-  outFile << "        Vertex - Py (MomDir): " 
+  outFile << "        Vertex - Py (MomDir): "
        << std::setw(20) << aTrack->GetVertexMomentumDirection().y()
        << G4endl;
-  outFile << "        Vertex - Pz (MomDir): " 
+  outFile << "        Vertex - Pz (MomDir): "
        << std::setw(20) << aTrack->GetVertexMomentumDirection().z()
        << G4endl;
 #ifdef G4_USE_G4BESTUNIT_FOR_VERBOSE
-  outFile << "        Vertex - KineE      : " 
+  outFile << "        Vertex - KineE      : "
 #else
-  outFile << "        Vertex - KineE (MeV): " 
+  outFile << "        Vertex - KineE (MeV): "
 #endif
        << std::setw(20) << G4BestUnit(aTrack->GetVertexKineticEnergy(),"Energy")
        << G4endl;
-  
-  outFile << "        Creator Process     : " 
+
+  outFile << "        Creator Process     : "
        << std::setw(20);
   if( aTrack->GetCreatorProcess() == NULL){
     outFile << " Event Generator" << G4endl;
@@ -508,7 +508,7 @@ G4int eventID = G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->Ge
     outFile << aTrack->GetCreatorProcess()->GetProcessName() << G4endl;
   }
 
-  outFile << "      -----------------------------------------------" 
+  outFile << "      -----------------------------------------------"
        << G4endl;
 
 }
@@ -517,7 +517,7 @@ G4int eventID = G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->Ge
 //-----------------------------------------------------------------------------
 GateSteppingAction::GateSteppingAction(GateUserActions * cbm, GateRecorderBase* r)
   : pCallbackMan(cbm), recorder(r)
-{  
+{
   m_drawTrjLevel = 1;
   m_verboseLevel = 0;
   /* PY Descourt Tracker/Detector 18/12/2008 */
@@ -537,7 +537,7 @@ GateSteppingAction::GateSteppingAction(GateUserActions * cbm, GateRecorderBase* 
   m_energyThreshold = 0.;
   /* PY Descourt 18/12/2008 */
 }
-//----------------------------------------------------------------------------- 
+//-----------------------------------------------------------------------------
 void GateSteppingAction::SetEnergyThreshold(G4double aE){ m_energyThreshold = aE; }
 
 
@@ -548,7 +548,7 @@ if ( m_verboseLevel > 0 ) G4cout << " GateSteppingAction::SeekNewFile  :::: m_cu
 if ( m_currentN == m_Nfiles - 1 ) {if ( m_verboseLevel > 0 ) G4cout << " GateSteppingAction::SeekNewFile : No more Root Tracks Data File to open." << G4endl;
                                return 0;}
 
-if ( m_verboseLevel > 0 ) G4cout << " GateSteppingAction::SeekNewFile : Found one more Root Tracks Data File to open." << G4endl; 
+if ( m_verboseLevel > 0 ) G4cout << " GateSteppingAction::SeekNewFile : Found one more Root Tracks Data File to open." << G4endl;
 GateToRoot* gateToRoot = (GateToRoot* ) ( GateOutputMgr::GetInstance()->GetModule("root") );
 if ( increase == true ) { m_currentN++;}
 if ( m_verboseLevel > 0 ) G4cout << " currrent file number in GateSteppingAction::SeekNewFile " << m_currentN << G4endl;
@@ -560,9 +560,9 @@ void GateSteppingAction::SetTxtOut(G4String aString)
 {
 if ( aString == "On" ) { TxtOn = 1;return; }
 if ( aString == "Off" ) { TxtOn = 0;return; }
-G4cout << " GateSteppingAction::SetTxtOut : WARNING " << aString<< " in command SetTxtOuput is not correct. IGNORED!!!"<<G4endl; 
+G4cout << " GateSteppingAction::SetTxtOut : WARNING " << aString<< " in command SetTxtOuput is not correct. IGNORED!!!"<<G4endl;
 }
- 
+
 
 void GateSteppingAction::StopOnBoundary(G4int aI)
 { Boundary = aI;}
@@ -605,10 +605,10 @@ TrackingMode  GateSteppingAction::GetMode()
 { return TheMode;}
 
 //-----------------------------------------------------------------------------
-void GateSteppingAction::UserSteppingAction(const G4Step* theStep) 
-{ 
+void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
+{
   // GateDebugMessage("Actor", 1, "GateSteppingAction::UserSteppingAction(a)" << G4endl);
-  
+
   static G4int ARFStage = -3;
 
 if ( ARFStage == -3 )
@@ -622,7 +622,7 @@ G4Track* theTrack = static_cast<G4Track*>( theStep->GetTrack() );
 if ( ARFStage == 0 )
 {
 	//G4int eventID = G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->GetEventID();
-	
+
 static GateARFDataToRoot* ARFDataToRoot = dynamic_cast<GateARFDataToRoot*>( GateOutputMgr::GetInstance()->GetModule("arf") );
 if ( ARFDataToRoot == 0 )
 G4Exception( "GateSteppingAction::UserSteppingAction", "UserSteppingAction", FatalException, "ARF stage is 'generateARFTables' but the output module ARFDataToRoot is not enabled.just add '/gate/output/arf/enable' in your macro. Exiting");
@@ -639,7 +639,7 @@ G4bool IsGood = ( theTrack->GetDefinition()->GetPDGEncoding() == 22 ) && ( theTr
 if ( IsGood  )
 {
 G4int step_number = theTrack->GetCurrentStepNumber();
-if ( step_number == 1  ) 
+if ( step_number == 1  )
 {
         IsCountedInCrystal = 0;
         IsCountedOutCrystal = 0;
@@ -678,7 +678,7 @@ if ( NextPV != 0 ) NextLV = NextPV->GetLogicalVolume();
 
 G4VSensitiveDetector* NextSD = 0;
 if( NextLV != 0 )
- { 
+ {
    theNextLVName = NextLV->GetName();
    G4int pos = theNextLVName.length() - 2;
    theNextLVName.erase(pos,2);
@@ -691,23 +691,23 @@ if( NextLV != 0 )
       	       *newStepPoint = theStep->GetPostStepPoint();
 
   const G4VProcess*process = newStepPoint->GetProcessDefinedStep();
- 
+
    //  For all processes except transportation, we select the PostStepPoint volume
    //  For the transportation, we select the PreStepPoint volume
    const G4TouchableHistory* touchable;
    if ( process->GetProcessType() == fTransportation )
       touchable = (const G4TouchableHistory*)(oldStepPoint->GetTouchable() );
-  else 
+  else
       touchable = (const G4TouchableHistory*)(newStepPoint->GetTouchable() );
   GateVolumeID volumeID(touchable);
   isInsideCamera = ( volumeID.GetCreatorDepth("SPECThead") != -1 );
-  
-  
+
+
  //if ( isInsideCamera ) {G4cout << " inserter found " << volumeID.GetCreator( volumeID.GetCreatorDepth("SPECThead") )->GetObjectName()<<G4endl;
  //                      G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"  "<<volumeID<<G4endl;}
 
 if( ( isInsideCamera ) && ( previous_inCamera == 0 ) )
-{		
+{
      if ( head_number == 0 )
     {
      GateVVolume* theInserter = GateObjectStore::GetInstance()->FindCreator("SPECThead");
@@ -716,7 +716,7 @@ if( ( isInsideCamera ) && ( previous_inCamera == 0 ) )
     }
 
     ARFDataToRoot->IncrementInCamera();
-  
+
     previous_inCamera = 1;
 
 //G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"   going inside camera "<<volumeID<<G4endl;
@@ -746,14 +746,14 @@ if ( isInsideCrystal && track_dead && counted_dead_incrystal == 0)
            	ARFDataToRoot->IncrementKilledInsideCrystalPhotons();
            	counted_dead_incrystal = 1;
            }
-           
+
 if ( isInColli &&  track_dead && counted_dead_inphantom == 0)
            {
-           	ARFDataToRoot->IncrementKilledInsideColliPhotons(); 
+           	ARFDataToRoot->IncrementKilledInsideColliPhotons();
            	counted_dead_inphantom = 1;
            }
 
-if ( NextSD != 0 )  NextisInCrystal = (NextSD->GetName() == "crystal"); 
+if ( NextSD != 0 )  NextisInCrystal = (NextSD->GetName() == "crystal");
 
 G4bool isOutCrystal = !isInsideCrystal;
 G4bool NextisOutCrystal = !NextisInCrystal;
@@ -761,7 +761,7 @@ G4bool NextisOutCrystal = !NextisInCrystal;
 if( isInsideCamera && track_dead) {ARFDataToRoot->IncrementKilledInsideCamera();
                                    //G4cout <<"  step # "<<step_number<<"   killed inside camera "<<volumeID<<G4endl;
 							   }
-							   
+
 G4bool isGoingOutCrystal  = isInsideCrystal && NextisOutCrystal;
 G4bool isGoingInCrystal   = isOutCrystal && NextisInCrystal;
  if ( isGoingInCrystal && IsCountedInCrystal == 0)
@@ -788,9 +788,9 @@ if ( fTrack->GetDefinition() != 0 )
 particleName =  fTrack->GetDefinition()->GetParticleName();
 G4String NxtVol = G4String("OutOfWorld");
    if( fTrack->GetNextVolume() != 0 )
-    { 
+    {
      NxtVol = (G4String)  (fTrack->GetNextVolume()->GetName()) ;
-    } 
+    }
 
 
    //	G4cout<<"Event ID " << EventID<<G4endl;
@@ -798,7 +798,7 @@ G4String NxtVol = G4String("OutOfWorld");
    //G4cout<<" particle " << particleName << G4endl;
    //G4cout<<" step number = " <<fTrack->GetCurrentStepNumber()<<G4endl;
 
-        
+
 if ( fTrack->GetCurrentStepNumber() == 1 ) // initialize for current Track
 {
     fStartVolumeIsPhantomSD = false;
@@ -812,7 +812,7 @@ const    G4LogicalVolume* LVolAtVertex = fTrack->GetLogicalVolumeAtVertex();
         {
         G4VSensitiveDetector* SDetector = LVolAtVertex->GetSensitiveDetector();
         if ( SDetector != 0 )
-          { 
+          {
            //
            //// get the pointer to the Phantom SD instanciated in GateDetectorConstruction
            //
@@ -820,7 +820,7 @@ const    G4LogicalVolume* LVolAtVertex = fTrack->GetLogicalVolumeAtVertex();
            if ( SDetector == GPhantomSD ){ fStartVolumeIsPhantomSD = true; }  // the volume where the particle was created is indeed a phantom !
           }
         }
-        
+
 //
 ////// check if the mother volume is a phantom volume. this is the case for parameterized phantom
 //
@@ -833,7 +833,7 @@ const    G4LogicalVolume* LVolAtVertex = fTrack->GetLogicalVolumeAtVertex();
          {
               G4VSensitiveDetector* SDetector = Mother->GetSensitiveDetector();
              if ( SDetector != 0 )
-              { 
+              {
                //
                //// get the pointer to the Phantom SD instanciated in GateDetectorConstruction
                //
@@ -858,9 +858,9 @@ if ( fStartVolumeIsPhantomSD == true ) // the particle was created in a Phantom 
    // determine next volume and compare with the starting one to know if it is going out or not
    G4String NxtVol = G4String("OutOfWorld");
    if( fTrack->GetNextVolume() != 0 )
-    { 
+    {
      NxtVol = (G4String)  (fTrack->GetNextVolume()->GetName()) ;
-    } 
+    }
      G4bool test_ID = 1;
      G4String particleName = G4String("UnKnown");
      if( fTrack->GetDefinition() != 0 )
@@ -875,11 +875,11 @@ if ( fStartVolumeIsPhantomSD == true ) // the particle was created in a Phantom 
 
 
     if ( NxtVol  != m_StartingVolName ) // it means: At next step we go out of the phantom so we have to kill it now or next step depending on policy!
-    {    	
+    {
         if ( test_ID == 1 ) // test if current particle has required ID datas
           {
            if ( Boundary == 1) // here we kill particle at phantom boundary : so we kill it NOW !!!!!!
-             { 
+             {
               fTrack->SetTrackStatus(fStpAKill);
               GateTrack* aTrack = new GateTrack();
               aTrack->Fill_Track( fTrack  );
@@ -895,31 +895,31 @@ if ( fStartVolumeIsPhantomSD == true ) // the particle was created in a Phantom 
                    std::ofstream outFile;
                    G4String outF = "GoingOutParticles.txt";
                    outFile.open (outF ,std::ios::app);
-                   outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";   
+                   outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";
                    outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    " << G4endl;
-                   ShowG4TrackInfos(outF, fTrack);                     
+                   ShowG4TrackInfos(outF, fTrack);
                   } // verbose end block
-              } 
+              }
 
            if ( Boundary == 0) // boundary == 0 so we kill particle after they passed phantom boundary
                                // so we WAIT one more step after phantom boundary !!!!!
-               { 
+               {
                 if (   fKillNextIsSet == true  ) // the step number at which we just got out the phantom IS the current step number !!
-                  { 
+                  {
                if ( m_verboseLevel > 3 )
                  {
                    const G4Event* currentEvent = G4EventManager::GetEventManager()->GetConstCurrentEvent();
                    std::ofstream outFile;
                    G4String outF = "KilledAfterBoundaryParticles.txt";
                    outFile.open (outF ,std::ios::app);
-                   outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";   
+                   outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";
                    outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    " << G4endl;
                    ShowG4TrackInfos(outF, fTrack);
                  } // verbose end block
                    ///// We check that the next volume is not "OutOfWorld". If so NO NEED to save it !
                    G4String NxtVol = G4String("OutOfWorld");
                    if( fTrack->GetNextVolume() != 0 )
-                   { NxtVol = (G4String)  (fTrack->GetNextVolume()->GetName()) ;} 
+                   { NxtVol = (G4String)  (fTrack->GetNextVolume()->GetName()) ;}
                    if (   NxtVol != G4String( "OutOfWorld" )    )
                      {
                       fTrack->SetTrackStatus(fStpAKill);
@@ -995,25 +995,25 @@ else  // the particle was not created in a phantom so kill it to avoid it to hit
 
 
   // GateDebugMessage("Actor", 1, "GateSteppingAction::UserSteppingAction à la fin" << G4endl);
-  
+
   #ifdef G4ANALYSIS_USE_GENERAL
   	// Here we fill the histograms of the OutputMgr manager
   	// Pre-digitalisation outputMgr (hits)
   	GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
   	outputMgr->RecordStepWithVolume(0,theStep);
 	#endif
-  
-  pCallbackMan->UserSteppingAction(theStep);    
+
+  pCallbackMan->UserSteppingAction(theStep);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* theStep) 
-{ 
+void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* theStep)
+{
  // GateDebugMessage("Actor", 2 , "GateSteppingAction::UserSteppingAction(v,theStep)" << G4endl);
-  
-  
-  
+
+
+
   G4SteppingManager* SM = fpSteppingManager;
   //! visualization
 
@@ -1024,11 +1024,11 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
     outputMgr->RecordStepWithVolume(v, theStep);
   }
 #endif
-  
+
   G4bool drawTrj = false;
   if (m_drawTrjLevel == 0) {
   } else if (m_drawTrjLevel == 1) {
-    G4int currentEvent = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();    
+    G4int currentEvent = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
     if (currentEvent <= 10) {
       drawTrj = true;
     }
@@ -1051,7 +1051,7 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
       G4Colour  green   (0.0, 1.0, 0.0);   // green
       G4Colour  blue    (0.0, 0.0, 1.0);   // blue
       //       G4Colour  cyan    (0.0, 1.0, 1.0);   // cyan
-      //       G4Colour  magenta (1.0, 0.0, 1.0);   // magenta 
+      //       G4Colour  magenta (1.0, 0.0, 1.0);   // magenta
       G4Colour  yellow  (1.0, 1.0, 0.0);   // yellow
       if      (charge < 0.) colour = red;
       else if (charge > 0.) colour = blue;
@@ -1067,7 +1067,7 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
       pVVisManager -> Draw(polyline);
     }
   }
-  
+
 static G4int ARFStage = -3;
 
 if ( ARFStage == -3 )
@@ -1084,7 +1084,7 @@ G4cout << " ARFStage = " <<ARFStage << G4endl;
 if ( ARFStage == 0 )
 {
 	G4int eventID = G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->GetEventID();
-	
+
 static GateARFDataToRoot* ARFDataToRoot = dynamic_cast<GateARFDataToRoot*>( GateOutputMgr::GetInstance()->GetModule("arf") );
 if ( ARFDataToRoot == 0 )
 G4Exception( "GateSteppingAction::UserSteppingAction", "UserSteppingAction", FatalException, "ARF stage is 'generateARFTables' but the output module ARFDataToRoot is not enabled.just add '/gate/output/arf/enable' in your macro. Exiting");
@@ -1101,7 +1101,7 @@ G4bool IsGood = ( theTrack->GetDefinition()->GetPDGEncoding() == 22 ) && ( theTr
 if ( IsGood  )
 {
 G4int step_number = theTrack->GetCurrentStepNumber();
-if ( step_number == 1  ) 
+if ( step_number == 1  )
 {
         IsCountedInCrystal = 0;
         IsCountedOutCrystal = 0;
@@ -1140,7 +1140,7 @@ if ( NextPV != 0 ) NextLV = NextPV->GetLogicalVolume();
 
 G4VSensitiveDetector* NextSD = 0;
 if( NextLV != 0 )
- { 
+ {
    theNextLVName = NextLV->GetName();
    G4int pos = theNextLVName.length() - 2;
    theNextLVName.erase(pos,2);
@@ -1153,23 +1153,23 @@ if( NextLV != 0 )
       	       *newStepPoint = theStep->GetPostStepPoint();
 
   const G4VProcess*process = newStepPoint->GetProcessDefinedStep();
- 
+
    //  For all processes except transportation, we select the PostStepPoint volume
    //  For the transportation, we select the PreStepPoint volume
    const G4TouchableHistory* touchable;
    if ( process->GetProcessType() == fTransportation )
       touchable = (const G4TouchableHistory*)(oldStepPoint->GetTouchable() );
-  else 
+  else
       touchable = (const G4TouchableHistory*)(newStepPoint->GetTouchable() );
   GateVolumeID volumeID(touchable);
   isInsideCamera = ( volumeID.GetCreatorDepth("SPECThead") != -1 );
-  
+
 // if ( isInsideCamera ) G4cout << " inserter found " << volumeID.GetInserter( volumeID.GetInserterDepth("SPECThead") )->GetObjectName()<<G4endl;
 
 G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"  "<<volumeID<<G4endl;
 
 if( ( isInsideCamera ) && ( previous_inCamera == 0 ) )
-{		
+{
      if ( head_number == 0 )
     {
      GateVVolume* theInserter = GateObjectStore::GetInstance()->FindCreator("SPECThead");
@@ -1178,7 +1178,7 @@ if( ( isInsideCamera ) && ( previous_inCamera == 0 ) )
     }
 
     ARFDataToRoot->IncrementInCamera();
-  
+
     previous_inCamera = 1;
 
 //G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"   going inside camera "<<volumeID<<G4endl;
@@ -1208,14 +1208,14 @@ if ( isInsideCrystal && track_dead && counted_dead_incrystal == 0)
            	ARFDataToRoot->IncrementKilledInsideCrystalPhotons();
            	counted_dead_incrystal = 1;
            }
-           
+
 if ( isInColli &&  track_dead && counted_dead_inphantom == 0)
            {
-           	ARFDataToRoot->IncrementKilledInsideColliPhotons(); 
+           	ARFDataToRoot->IncrementKilledInsideColliPhotons();
            	counted_dead_inphantom = 1;
            }
 
-if ( NextSD != 0 )  NextisInCrystal = (NextSD->GetName() == "crystal"); 
+if ( NextSD != 0 )  NextisInCrystal = (NextSD->GetName() == "crystal");
 
 G4bool isOutCrystal = !isInsideCrystal;
 G4bool NextisOutCrystal = !NextisInCrystal;
@@ -1223,7 +1223,7 @@ G4bool NextisOutCrystal = !NextisInCrystal;
 if( isInsideCamera && track_dead) {ARFDataToRoot->IncrementKilledInsideCamera();
                                    //G4cout <<"  step # "<<step_number<<"   killed inside camera "<<volumeID<<G4endl;
 							   }
-							   
+
 G4bool isGoingOutCrystal  = isInsideCrystal && NextisOutCrystal;
 G4bool isGoingInCrystal   = isOutCrystal && NextisInCrystal;
  if ( isGoingInCrystal && IsCountedInCrystal == 0)
@@ -1250,9 +1250,9 @@ if ( fTrack->GetDefinition() != 0 )
 particleName =  fTrack->GetDefinition()->GetParticleName();
 G4String NxtVol = G4String("OutOfWorld");
    if( fTrack->GetNextVolume() != 0 )
-    { 
+    {
      NxtVol = (G4String)  (fTrack->GetNextVolume()->GetName()) ;
-    } 
+    }
 
 
 //	G4cout<<"Event ID " << EventID<<G4endl;
@@ -1260,7 +1260,7 @@ G4String NxtVol = G4String("OutOfWorld");
 //G4cout<<" particle " << particleName << G4endl;
 //G4cout<<" step number = " <<fTrack->GetCurrentStepNumber()<<G4endl;
 
-        
+
 if ( fTrack->GetCurrentStepNumber() == 1 ) // initialize for current Track
 {
     fStartVolumeIsPhantomSD = false;
@@ -1274,7 +1274,7 @@ const    G4LogicalVolume* LVolAtVertex = fTrack->GetLogicalVolumeAtVertex();
         {
         G4VSensitiveDetector* SDetector = LVolAtVertex->GetSensitiveDetector();
         if ( SDetector != 0 )
-          { 
+          {
            //
            //// get the pointer to the Phantom SD instanciated in GateDetectorConstruction
            //
@@ -1282,7 +1282,7 @@ const    G4LogicalVolume* LVolAtVertex = fTrack->GetLogicalVolumeAtVertex();
            if ( SDetector == GPhantomSD ){ fStartVolumeIsPhantomSD = true; }  // the volume where the particle was created is indeed a phantom !
           }
         }
-        
+
 //
 ////// check if the mother volume is a phantom volume. this is the case for parameterized phantom
 //
@@ -1295,7 +1295,7 @@ const    G4LogicalVolume* LVolAtVertex = fTrack->GetLogicalVolumeAtVertex();
          {
               G4VSensitiveDetector* SDetector = Mother->GetSensitiveDetector();
              if ( SDetector != 0 )
-              { 
+              {
                //
                //// get the pointer to the Phantom SD instanciated in GateDetectorConstruction
                //
@@ -1320,9 +1320,9 @@ if ( fStartVolumeIsPhantomSD == true ) // the particle was created in a Phantom 
    // determine next volume and compare with the starting one to know if it is going out or not
    G4String NxtVol = G4String("OutOfWorld");
    if( fTrack->GetNextVolume() != 0 )
-    { 
+    {
      NxtVol = (G4String)  (fTrack->GetNextVolume()->GetName()) ;
-    } 
+    }
      G4bool test_ID = 1;
      G4String particleName = G4String("UnKnown");
      if( fTrack->GetDefinition() != 0 )
@@ -1337,11 +1337,11 @@ if ( fStartVolumeIsPhantomSD == true ) // the particle was created in a Phantom 
 
 
     if ( NxtVol  != m_StartingVolName ) // it means: At next step we go out of the phantom so we have to kill it now or next step depending on policy!
-    {    	
+    {
         if ( test_ID == 1 ) // test if current particle has required ID datas
           {
            if ( Boundary == 1) // here we kill particle at phantom boundary : so we kill it NOW !!!!!!
-             { 
+             {
               fTrack->SetTrackStatus(fStpAKill);
               GateTrack* aTrack = new GateTrack();
               aTrack->Fill_Track( fTrack  );
@@ -1357,31 +1357,31 @@ if ( fStartVolumeIsPhantomSD == true ) // the particle was created in a Phantom 
                    std::ofstream outFile;
                    G4String outF = "GoingOutParticles.txt";
                    outFile.open (outF ,std::ios::app);
-                   outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";   
+                   outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";
                    outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    " << G4endl;
-                   ShowG4TrackInfos(outF, fTrack);                     
+                   ShowG4TrackInfos(outF, fTrack);
                   } // verbose end block
-              } 
+              }
 
            if ( Boundary == 0) // boundary == 0 so we kill particle after they passed phantom boundary
                                // so we WAIT one more step after phantom boundary !!!!!
-               { 
+               {
                 if (   fKillNextIsSet == true  ) // the step number at which we just got out the phantom IS the current step number !!
-                  { 
+                  {
                if ( m_verboseLevel > 3 )
                  {
                    const G4Event* currentEvent = G4EventManager::GetEventManager()->GetConstCurrentEvent();
                    std::ofstream outFile;
                    G4String outF = "KilledAfterBoundaryParticles.txt";
                    outFile.open (outF ,std::ios::app);
-                   outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";   
+                   outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";
                    outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    " << G4endl;
                    ShowG4TrackInfos(outF, fTrack);
                  } // verbose end block
                    ///// We check that the next volume is not "OutOfWorld". If so NO NEED to save it !
                    G4String NxtVol = G4String("OutOfWorld");
                    if( fTrack->GetNextVolume() != 0 )
-                   { NxtVol = (G4String)  (fTrack->GetNextVolume()->GetName()) ;} 
+                   { NxtVol = (G4String)  (fTrack->GetNextVolume()->GetName()) ;}
                    if (   NxtVol != G4String( "OutOfWorld" )    )
                      {
                       fTrack->SetTrackStatus(fStpAKill);
@@ -1458,9 +1458,9 @@ else  // the particle was not created in a phantom so kill it to avoid it to hit
 
   // GateDebugMessage("Actor", 1, "GateSteppingAction::UserSteppingAction à la fin" << G4endl);
 
-  
-  pCallbackMan->UserSteppingAction(theStep);    
-  
+
+  pCallbackMan->UserSteppingAction(theStep);
+
 }
 
 GateSteppingAction::~GateSteppingAction()
@@ -1470,7 +1470,7 @@ GateSteppingAction::~GateSteppingAction()
     delete (*it);
     it = PPTrackVector->erase(it);
   }
-  delete PPTrackVector; 
+  delete PPTrackVector;
   delete m_steppingMessenger;
 }
 
@@ -1631,7 +1631,7 @@ void GateSteppingAction::ShowG4TrackInfos( G4String outF, G4Track* fTrack)
   }
 
   outFile << "      -----------------------------------------------" << G4endl;
-}   
+}
 
 //-----------------------------------------------------------------------------
 #endif

@@ -19,5 +19,5 @@ GateVDistribution::GateVDistribution(const G4String& itsName)
 }
 
 GateVDistribution::~GateVDistribution()
-{  
+{
 }

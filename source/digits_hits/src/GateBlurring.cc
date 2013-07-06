@@ -18,19 +18,19 @@ See GATE/LICENSE.txt for further details
 
 
 GateBlurring::GateBlurring(GatePulseProcessorChain* itsChain,
-      	      	      	      	 const G4String& itsName) 
+      	      	      	      	 const G4String& itsName)
   : GateVPulseProcessor(itsChain,itsName)
 {
   m_messenger = new GateBlurringMessenger(this);
   m_blurringLaw = new GateInverseSquareBlurringLaw(GetObjectName());
-}  
+}
 
 
-GateBlurring::~GateBlurring() 
+GateBlurring::~GateBlurring()
 {
   delete m_messenger;
   delete m_blurringLaw;
-}  
+}
 
 
 

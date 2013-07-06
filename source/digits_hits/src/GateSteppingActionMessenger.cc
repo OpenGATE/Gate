@@ -8,7 +8,7 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
   ----------------------*/
- 
+
 #include "GateSteppingActionMessenger.hh"
 #include "GateActions.hh"
 #include "G4UIdirectory.hh"
@@ -37,7 +37,7 @@ GateSteppingActionMessenger::GateSteppingActionMessenger(GateSteppingAction * ms
   VerboseCmd->SetGuidance("Set GATE stepping action verbose level");
   VerboseCmd->SetParameterName("verbose",false);
   VerboseCmd->SetRange("verbose>=0");
-  
+
   SetModeCmd = new G4UIcmdWithAString("/gate/stepping/SetMode",this);
 
   PolicyCmd = new G4UIcmdWithAString("/gate/stepping/SetPolicy",this);
@@ -55,7 +55,7 @@ GateSteppingActionMessenger::GateSteppingActionMessenger(GateSteppingAction * ms
 
   GetTxtCmd = new G4UIcmdWithAString("/gate/stepping/SetTextOutput",this);
   GetTxtCmd->SetGuidance("On - Off . In detector Mode only");
-  GetTxtCmd->SetGuidance(" If On write Tracks infos to the file \"PostStepInfo.txt\".");  
+  GetTxtCmd->SetGuidance(" If On write Tracks infos to the file \"PostStepInfo.txt\".");
 
   SetFilesCmd = new G4UIcmdWithAnInteger("/gate/stepping/SetNumberOfTrackerDataFiles",this);
 }
@@ -99,7 +99,7 @@ void GateSteppingActionMessenger::SetNewValue(G4UIcommand * command,G4String new
       myAction->StopOnBoundary(1);
       return;
     }
-    if ( newValue == "StopAfterPhantomBoundary" ) { 
+    if ( newValue == "StopAfterPhantomBoundary" ) {
       myAction->StopOnBoundary(0);
       return;
     }
@@ -112,14 +112,14 @@ void GateSteppingActionMessenger::SetNewValue(G4UIcommand * command,G4String new
     if ( newValue == "Tracker"  ) { theMode = kTracker;}
     if ( newValue == "Both"   ) { theMode = kBoth;     }
     if ( newValue == "Detector" ) { theMode = kDetector;   }
-    if ( theMode  == kUnknown ) { 
+    if ( theMode  == kUnknown ) {
          G4cout << " Gate Application Manager WARNING : The Application mode " << newValue <<" is not known. Switching to Normal Mode ..." << G4endl;theMode = kBoth;
     }
     myAction->SetMode(theMode);
     return;
-  } else if( command==drawTrajectoryLevelCmd ) { 
-     myAction->SetDrawTrajectoryLevel(drawTrajectoryLevelCmd->GetNewIntValue(newValue)); 
+  } else if( command==drawTrajectoryLevelCmd ) {
+     myAction->SetDrawTrajectoryLevel(drawTrajectoryLevelCmd->GetNewIntValue(newValue));
   } else if( command == VerboseCmd ) {
      myAction->SetVerboseLevel(VerboseCmd->GetNewIntValue(newValue));
-  }   
+  }
 }

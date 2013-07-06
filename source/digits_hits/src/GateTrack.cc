@@ -23,10 +23,10 @@
 
 GateTrack::GateTrack( GateTrack& aTrack)
 {
-   m_time =  aTrack.GetTime(); 
+   m_time =  aTrack.GetTime();
    fPosition = aTrack.GetPosition();
-   fGlobalTime = aTrack.GetGlobalTime();           
-   fLocalTime = aTrack.GetLocalTime();           
+   fGlobalTime = aTrack.GetGlobalTime();
+   fLocalTime = aTrack.GetLocalTime();
    fProperTime = aTrack.GetProperTime();
    fParentID = aTrack.GetParentID();
    fTrackID = aTrack.GetTrackID();
@@ -35,12 +35,12 @@ GateTrack::GateTrack( GateTrack& aTrack)
    fMDirection = aTrack.GetMomentumDirection();
    fVelocity = aTrack.GetVelocity();
    fTotalEnergy = aTrack.GetTotalEnergy();
-   fVtxPosition = aTrack.GetVertexPosition();      
-   fVtxMomentumDirection = aTrack.GetVertexMomentumDirection(); 
+   fVtxPosition = aTrack.GetVertexPosition();
+   fVtxMomentumDirection = aTrack.GetVertexMomentumDirection();
     fPolarization = aTrack.GetPolarization();
-   fVtxKineticEnergy = aTrack.GetVertexKineticEnergy();      
+   fVtxKineticEnergy = aTrack.GetVertexKineticEnergy();
    fWeight = aTrack.GetWeight();
-// ParticleName =  aTrack.GetParticleName(); 
+// ParticleName =  aTrack.GetParticleName();
 
    m_PDGCode = aTrack.GetPDGCode();
    m_sourceID = aTrack.GetSourceID();
@@ -122,8 +122,8 @@ G4cout << " test6 = " << std::boolalpha << test6 << G4endl;
 void GateTrack::Fill_Track( G4Track * aTrack)
 {
     fPosition = aTrack->GetPosition();
-   fGlobalTime = aTrack->GetGlobalTime();           
-   fLocalTime = aTrack->GetLocalTime();           
+   fGlobalTime = aTrack->GetGlobalTime();
+   fLocalTime = aTrack->GetLocalTime();
    fProperTime = aTrack->GetProperTime();
    fParentID = aTrack->GetParentID();
    fTrackID = aTrack->GetTrackID();
@@ -132,10 +132,10 @@ void GateTrack::Fill_Track( G4Track * aTrack)
    fMDirection = aTrack->GetMomentumDirection();
    fVelocity = aTrack->GetVelocity();
    fTotalEnergy = aTrack->GetTotalEnergy();
-   fVtxPosition = aTrack->GetVertexPosition();      
-   fVtxMomentumDirection = aTrack->GetVertexMomentumDirection(); 
+   fVtxPosition = aTrack->GetVertexPosition();
+   fVtxMomentumDirection = aTrack->GetVertexMomentumDirection();
     fPolarization = aTrack->GetPolarization();
-   fVtxKineticEnergy = aTrack->GetVertexKineticEnergy();      
+   fVtxKineticEnergy = aTrack->GetVertexKineticEnergy();
    fWeight = aTrack->GetWeight();
 
 if( aTrack->GetDefinition() != 0 ) {  ParticleName =  aTrack->GetDefinition()->GetParticleName();
@@ -161,7 +161,7 @@ m_processName = processName;
 
 }
 // parent track ID
-    G4int GateTrack::GetParentID() 
+    G4int GateTrack::GetParentID()
    { return fParentID; }
 
 
@@ -182,33 +182,33 @@ void GateTrack::SetVertexVolumeName(G4String aName)
    { fParentID = aValue; }
 
 // current track ID
-    G4int GateTrack::GetTrackID() 
+    G4int GateTrack::GetTrackID()
    { return fTrackID; }
 
     void GateTrack::SetTrackID(const G4int aValue)
    { fTrackID = aValue; }
 
-    G4int GateTrack::GetEventID() 
+    G4int GateTrack::GetEventID()
    { return feventID; }
 
     void GateTrack::SetEventID(const G4int aValue)
    { feventID = aValue; }
 
-    G4int GateTrack::GetRunID() 
+    G4int GateTrack::GetRunID()
    { return fRunID; }
 
     void GateTrack::SetRunID(const G4int aValue)
    { fRunID = aValue; }
 
 // position
-    G4ThreeVector& GateTrack::GetPosition() 
+    G4ThreeVector& GateTrack::GetPosition()
    { return fPosition; }
 
     void GateTrack::SetPosition(const G4ThreeVector& aValue)
    { fPosition = aValue; }
 
 // global time
-    G4double GateTrack::GetGlobalTime() 
+    G4double GateTrack::GetGlobalTime()
    { return fGlobalTime; }
 
     void GateTrack::SetGlobalTime(const G4double aValue)
@@ -216,7 +216,7 @@ void GateTrack::SetVertexVolumeName(G4String aName)
      // Time since the event in which the track belongs is created.
 
 // local time
-    G4double GateTrack::GetLocalTime() 
+    G4double GateTrack::GetLocalTime()
    { return fLocalTime; }
 
     void GateTrack::SetLocalTime(const G4double aValue)
@@ -224,7 +224,7 @@ void GateTrack::SetVertexVolumeName(G4String aName)
       // Time since the current track is created.
 
 // proper time
-    G4double GateTrack::GetProperTime() 
+    G4double GateTrack::GetProperTime()
    { return fProperTime; }
 
     void GateTrack::SetProperTime(const G4double aValue)
@@ -233,17 +233,17 @@ void GateTrack::SetVertexVolumeName(G4String aName)
 
 
 // kinetic energy
-    G4double GateTrack::GetKineticEnergy() 
+    G4double GateTrack::GetKineticEnergy()
    { return fKineticEnergy; }
 
     void GateTrack::SetKineticEnergy(const G4double aValue)
    { fKineticEnergy = aValue; }
 
 // total energy
-    G4double GateTrack::GetTotalEnergy() 
+    G4double GateTrack::GetTotalEnergy()
    { return fTotalEnergy; }
 
-   void GateTrack::SetTotalEnergy(G4double Energy) 
+   void GateTrack::SetTotalEnergy(G4double Energy)
    { fTotalEnergy = Energy; }
 
 
@@ -255,7 +255,7 @@ void GateTrack::SetVertexVolumeName(G4String aName)
 { fMomentum = aVector; }
 
 // momentum (direction)
-   G4ThreeVector& GateTrack::GetMomentumDirection() 
+   G4ThreeVector& GateTrack::GetMomentumDirection()
    { return fMDirection ; }
 
     void GateTrack::SetMomentumDirection(const G4ThreeVector& aValue)
@@ -263,7 +263,7 @@ void GateTrack::SetVertexVolumeName(G4String aName)
 
 // polarization
 
-   G4ThreeVector& GateTrack::GetPolarization() 
+   G4ThreeVector& GateTrack::GetPolarization()
    { return fPolarization; }
 
     void GateTrack::SetPolarization(const G4ThreeVector& aValue)
@@ -275,7 +275,7 @@ void GateTrack::SetVertexVolumeName(G4String aName)
     G4ThreeVector& GateTrack::GetVertexPosition()
    { return fVtxPosition; }
 
-    G4ThreeVector& GateTrack::GetVertexMomentumDirection() 
+    G4ThreeVector& GateTrack::GetVertexMomentumDirection()
    { return fVtxMomentumDirection; }
 
    void GateTrack::SetVertexMomentumDirection(const G4ThreeVector& aValue)
@@ -310,10 +310,10 @@ void GateTrack::SetVertexVolumeName(G4String aName)
      G4cout << " Position " << fPosition << "     Track    ID " << fTrackID <<"      Parent ID " << fParentID << G4endl;
      G4cout <<"  Local Time " << fLocalTime<< "      Proper Time " << fProperTime << "          Momentum Direction "<< fMDirection <<G4endl;
      G4cout << " Momentum " << fMomentum << "           Energy " << fTotalEnergy << "              Kinetic Energy " << fKineticEnergy << "                  Velocity " << fVelocity << "\n";
-     G4cout << " Vertex Position      "<< fVtxPosition<<G4endl;      
-     G4cout << " Vertex Momentum Direction "<<fVtxMomentumDirection <<G4endl; 
+     G4cout << " Vertex Position      "<< fVtxPosition<<G4endl;
+     G4cout << " Vertex Momentum Direction "<<fVtxMomentumDirection <<G4endl;
      G4cout << " Polarization              "<<fPolarization<<G4endl;
-     G4cout << " Vertex Kinetic Energy     " << fVtxKineticEnergy <<G4endl;      
+     G4cout << " Vertex Kinetic Energy     " << fVtxKineticEnergy <<G4endl;
      G4cout << " Weight                    " << fWeight << G4endl;
      G4cout << " Volume Name at Vertex     " << VertexVolumeName << G4endl;
      G4cout << " Process Name                    " << m_processName << G4endl;

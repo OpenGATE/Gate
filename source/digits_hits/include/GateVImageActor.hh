@@ -26,7 +26,7 @@ See GATE/LICENSE.txt for further details
 
 //-----------------------------------------------------------------------------
 /// \brief Base (virtual) class for sensor storing data in a 3D matrix
-/// (GateImage) 
+/// (GateImage)
 class GateVImageActor: public GateVActor
 {
 public :
@@ -34,15 +34,15 @@ public :
   enum StepHitType {PreStepHitType, PostStepHitType, MiddleStepHitType, RandomStepHitType};
 
   //-----------------------------------------------------------------------------
-  /// Constructs the class  
+  /// Constructs the class
   GateVImageActor(G4String name, G4int depth=0);
 
-  /// Destructor 
+  /// Destructor
   virtual ~GateVImageActor();
 
   /// Type name of the sensor
 
-  /// Constructs the sensor 
+  /// Constructs the sensor
   virtual void Construct();
   //-----------------------------------------------------------------------------
 
@@ -61,13 +61,13 @@ public :
   double GetDoselVolume(){return mVoxelSize.x()*mVoxelSize.y()*mVoxelSize.z();}
 
   //-----------------------------------------------------------------------------
-  /// Computes the voxel in which to store the data and invokes 
+  /// Computes the voxel in which to store the data and invokes
   /// UserHitAction which is responsible for voxel data updating
   virtual void PreUserTrackingAction(const GateVVolume * v, const G4Track*t);
   virtual void PostUserTrackingAction(const GateVVolume * v, const G4Track*t);
   virtual void UserSteppingAction(const GateVVolume * v, const G4Step*);
   //-----------------------------------------------------------------------------
-  
+
   //-----------------------------------------------------------------------------
   /// Callbacks called when a hits should be add to the image
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step) = 0;
@@ -105,4 +105,3 @@ protected:
 //-----------------------------------------------------------------------------
 
 #endif /* end #define GATEVIMAGEACTOR_HH */
-

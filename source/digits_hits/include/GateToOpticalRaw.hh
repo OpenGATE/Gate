@@ -10,7 +10,7 @@
 
 /*! \file GateToOpticalRaw.hh
    Created on   2012/07/09  by vesna.cuplov@gmail.com
-   Implemented new class GateToOpticalRaw for Optical photons: write result of the projection. 
+   Implemented new class GateToOpticalRaw for Optical photons: write result of the projection.
 */
 
 
@@ -61,7 +61,7 @@ public:
   /*! \brief Overload of the base-class' virtual method to print-out a description of the module
 
 	\param indent: the print-out indentation (cosmetic parameter)
-  */    
+  */
   void Describe(size_t indent=0);
 
   //! Write the general RAW information into the header

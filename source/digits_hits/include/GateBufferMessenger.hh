@@ -26,7 +26,7 @@ class GateBufferMessenger: public GatePulseProcessorMessenger
   public:
     GateBufferMessenger(GateBuffer* itsPulseProcessor);
     virtual ~GateBufferMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
   private:

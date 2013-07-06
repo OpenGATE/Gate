@@ -44,41 +44,41 @@ void GateEnergySpectrumActorMessenger::BuildCommands(G4String base)
   G4String bb;
 
   bb = base+"/energySpectrum/setEmin";
-  pEminCmd = new G4UIcmdWithADoubleAndUnit(bb, this); 
+  pEminCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
   guidance = G4String("Set minimum energy of the energy spectrum");
   pEminCmd->SetGuidance(guidance);
   pEminCmd->SetParameterName("Emin", false);
   pEminCmd->SetDefaultUnit("MeV");
 
   bb = base+"/energySpectrum/setEmax";
-  pEmaxCmd = new G4UIcmdWithADoubleAndUnit(bb, this); 
+  pEmaxCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
   guidance = G4String("Set maximum energy of the energy spectrum");
   pEmaxCmd->SetGuidance(guidance);
   pEmaxCmd->SetParameterName("Emax", false);
   pEmaxCmd->SetDefaultUnit("MeV");
 
   bb = base+"/energySpectrum/setNumberOfBins";
-  pNBinsCmd = new G4UIcmdWithAnInteger(bb, this); 
+  pNBinsCmd = new G4UIcmdWithAnInteger(bb, this);
   guidance = G4String("Set number of bins of the energy spectrum");
   pNBinsCmd->SetGuidance(guidance);
   pNBinsCmd->SetParameterName("Nbins", false);
 
   bb = base+"/energyLossHisto/setEmin";
-  pEdepminCmd = new G4UIcmdWithADoubleAndUnit(bb, this); 
+  pEdepminCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
   guidance = G4String("Set minimum energy of the energy loss histogram");
   pEdepminCmd->SetGuidance(guidance);
   pEdepminCmd->SetParameterName("Emin", false);
   pEdepminCmd->SetDefaultUnit("MeV");
 
   bb = base+"/energyLossHisto/setEmax";
-  pEdepmaxCmd = new G4UIcmdWithADoubleAndUnit(bb, this); 
+  pEdepmaxCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
   guidance = G4String("Set maximum energy of the energy loss histogram");
   pEdepmaxCmd->SetGuidance(guidance);
   pEdepmaxCmd->SetParameterName("Emax", false);
   pEdepmaxCmd->SetDefaultUnit("MeV");
 
   bb = base+"/energyLossHisto/setNumberOfBins";
-  pEdepNBinsCmd = new G4UIcmdWithAnInteger(bb, this); 
+  pEdepNBinsCmd = new G4UIcmdWithAnInteger(bb, this);
   guidance = G4String("Set number of bins of the energy loss histogram");
   pEdepNBinsCmd->SetGuidance(guidance);
   pEdepNBinsCmd->SetParameterName("Nbins", false);

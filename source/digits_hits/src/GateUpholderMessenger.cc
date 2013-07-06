@@ -35,11 +35,9 @@ GateUpholderMessenger::~GateUpholderMessenger()
 
 
 void GateUpholderMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
   if ( command==upholdCmd )
-    { GetUpholder()->SetUphold(upholdCmd->GetNewDoubleValue(newValue)); }   
+    { GetUpholder()->SetUphold(upholdCmd->GetNewDoubleValue(newValue)); }
   else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue); 
+    GatePulseProcessorMessenger::SetNewValue(command,newValue);
 }
-
-

@@ -28,7 +28,7 @@ See GATE/LICENSE.txt for further details
 
 //---------------------------------------------------------------------------
 GateToDigi::GateToDigi(const G4String& name, GateOutputMgr* outputMgr,
-      	      	       DigiMode digiMode) 
+      	      	       DigiMode digiMode)
   : GateVOutputModule(name,outputMgr,digiMode)
 {
   m_isEnabled = true; // This module lead the digitizer, so let it enabled !!!
@@ -39,7 +39,7 @@ GateToDigi::GateToDigi(const G4String& name, GateOutputMgr* outputMgr,
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-GateToDigi::~GateToDigi() 
+GateToDigi::~GateToDigi()
 {
   delete m_digiMessenger;
   delete m_digitizer;
@@ -114,4 +114,3 @@ void GateToDigi::RecordStepWithVolume(const GateVVolume *, const G4Step* )
     G4cout << "GateToDigi::RecordStep" << G4endl;
 }
 //---------------------------------------------------------------------------
-

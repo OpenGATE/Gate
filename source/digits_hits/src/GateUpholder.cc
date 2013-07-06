@@ -18,20 +18,20 @@ See GATE/LICENSE.txt for further details
 
 GateUpholder::GateUpholder(GatePulseProcessorChain* itsChain,
 			       const G4String& itsName,
-      	      	      	      	 G4double itsUphold) 
+      	      	      	      	 G4double itsUphold)
   : GateVPulseProcessor(itsChain,itsName),
     m_uphold(itsUphold)
 {
   m_messenger = new GateUpholderMessenger(this);
-}  
+}
 
 
 
 
-GateUpholder::~GateUpholder() 
+GateUpholder::~GateUpholder()
 {
   delete m_messenger;
-}  
+}
 
 
 
@@ -49,7 +49,7 @@ void GateUpholder::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
   }
 
   if ( inputPulse->GetEnergy() <= m_uphold )
-  {  
+  {
     GatePulse* outputPulse = new GatePulse(*inputPulse);
     outputPulseList.push_back(outputPulse);
     if (nVerboseLevel>1)
