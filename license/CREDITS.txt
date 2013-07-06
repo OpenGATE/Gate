@@ -5,8 +5,8 @@ Institutions who contributed code:
    University of Lausanne (UNIL/EPFL)
    CH-1015 Lausanne, Switzerland
 
-2. CEA I²BM/SHFJ
-   Orsay, France 
+2. CEA IÂ²BM/SHFJ
+   Orsay, France
 
 3. ELIS, University of Ghent
    B-9000 Ghent, Belgium
@@ -21,15 +21,15 @@ Institutions who contributed code:
    Los Angeles, CA 90095-1770
 
 6. CEA IRFU
-   Saclay, France 
+   Saclay, France
 
-7. CNRS Creatis 
-   Lyon, France 
+7. CNRS Creatis
+   Lyon, France
 
 8. Delft University of Technology
    2629 JB Delft, Netherlands
 
-9. CNRS IN2P3/CPPM 
+9. CNRS IN2P3/CPPM
    Marseille, France
 
 10. CNRS IN2P3/IMNC
@@ -39,36 +39,36 @@ Programmers:
 -----------
 
    Daniel STRUL (UNIL)
-	Giovanni SANTIN (UNIL)
+   Giovanni SANTIN (UNIL)
    Luc SIMON (UNIL)
-	Martin REY (UNIL/EPFL)
-	Jean Marc VIEIRA (UNIL/EPFL)
-	Claude COMTAT (CEA Orsay)
+   Martin REY (UNIL/EPFL)
+   Jean Marc VIEIRA (UNIL/EPFL)
+   Claude COMTAT (CEA Orsay)
    Sebastien JAN (CEA Orsay)
    Vesna Cuplov (CEA Orsay)
-	Steven STAELENS (ELIS)
-	Corinne GROISELLE (UMASS)
-	David GUEZ (CEA-DAPNIA)
-	Richard TACHEREAU (UCLA)
-	David GUEZ (CEA Saclay)
-	Delphine LAZARO (INSERM Paris)
-	D.J. van der Laan (Delft University)
-	Franca Cassol-Brunner (CPPM Marseille)
-	Didier Benoit (CPPM Marseille)
-	Simon Stute (IMNC Orsay)
-	Niklas Rehfeld (IMNC Orsay)
-	David Sarrut (CNRS Creatis)
-	Thibault Frisson (CNRS Creatis)
+   Steven STAELENS (ELIS)
+   Corinne GROISELLE (UMASS)
+   David GUEZ (CEA-DAPNIA)
+   Richard TACHEREAU (UCLA)
+   David GUEZ (CEA Saclay)
+   Delphine LAZARO (INSERM Paris)
+   D.J. van der Laan (Delft University)
+   Franca Cassol-Brunner (CPPM Marseille)
+   Didier Benoit (CPPM Marseille)
+   Simon Stute (IMNC Orsay)
+   Niklas Rehfeld (IMNC Orsay)
+   David Sarrut (CNRS Creatis)
+   Thibault Frisson (CNRS Creatis)
    Pierre Gueth (CNRS Creatis)
 
 Technical Coordination:
 ----------------------
-	 
-	Daniel STRUL (UNIL) 2002-2003
-   Sébastien JAN (CEA) 2003-
-         
+
+   Daniel STRUL (UNIL) 2002-2003
+   SÃ©bastien JAN (CEA) 2003-
+
 Spokesperson:
 ------------
 
    Christian MOREL (UNIL/EPFL) 2002-2005
-	Irène Buvat (IMNC/CNRS) 2005-
+   IrÃ¨ne Buvat (IMNC/CNRS) 2005-
