@@ -81,7 +81,7 @@ std::queue < G4String > decodeParameters( G4String listOfParameters )
       G4String alias = listOfParameters.substr( foundBracket1 + 1, foundComma - foundBracket1 - 1 );
       // Getting value
       G4String value = listOfParameters.substr( foundComma + 1, foundBracket2 - foundComma - 1 );
-		
+
       // Creating alias command and store it
       G4String newAliasCommand = G4String( "/control/alias " ) + alias + G4String( " " ) + value;
       commandQueue.push( newAliasCommand );
@@ -98,24 +98,24 @@ std::queue < G4String > decodeParameters( G4String listOfParameters )
 #ifndef G4ANALYSIS_USE_ROOT
 void abortIfRootNotFound()
 {
-  G4cerr  << G4endl 
-	  << "Sorry, but it seems that GATE was compiled without the ROOT option." << G4endl
-	  << "Consequently, you can not run GATE in DigiGate mode, and the execution will abort." << G4endl
-	  << G4endl
-	  << "There maybe several reasons why GATE was compiled without the ROOT option:" << G4endl
-	  << G4endl
-	  << "1) ROOT is not installed on your system;" << G4endl
-	  << "2) You did not source a GATE configuration script before compiling GATE;" << G4endl
-	  << "3) The configuration script you used has been modified to disable the ROOT option;" << G4endl
-	  << "4) You used the configuration file 'env_gate.csh' but it did not set the ROOT option." << G4endl
-	  << G4endl
-	  << "Here is what you can do:" << G4endl
-	  << G4endl
-	  << "1) I'm sorry but you won't have access to DigiGate, as it needs ROOT to work." << G4endl 
-	  << "   We apologize for this inconvenience, but there is nothing we can do about it," << G4endl
-	  << "   because DigiGate works by re-reading a ROOT hit-file" << G4endl
-	  << G4endl;
-  G4Exception( "Gate.cc AbortIfRootNotFound", "AbortIfRootNotFound", FatalException, "Correct problem then try again... Sorry!" );	    
+  G4cerr  << G4endl
+          << "Sorry, but it seems that GATE was compiled without the ROOT option." << G4endl
+          << "Consequently, you can not run GATE in DigiGate mode, and the execution will abort." << G4endl
+          << G4endl
+          << "There maybe several reasons why GATE was compiled without the ROOT option:" << G4endl
+          << G4endl
+          << "1) ROOT is not installed on your system;" << G4endl
+          << "2) You did not source a GATE configuration script before compiling GATE;" << G4endl
+          << "3) The configuration script you used has been modified to disable the ROOT option;" << G4endl
+          << "4) You used the configuration file 'env_gate.csh' but it did not set the ROOT option." << G4endl
+          << G4endl
+          << "Here is what you can do:" << G4endl
+          << G4endl
+          << "1) I'm sorry but you won't have access to DigiGate, as it needs ROOT to work." << G4endl
+          << "   We apologize for this inconvenience, but there is nothing we can do about it," << G4endl
+          << "   because DigiGate works by re-reading a ROOT hit-file" << G4endl
+          << G4endl;
+  G4Exception( "Gate.cc AbortIfRootNotFound", "AbortIfRootNotFound", FatalException, "Correct problem then try again... Sorry!" );
 }
 #endif
 
@@ -221,7 +221,7 @@ int main( int argc, char* argv[] )
   GateSignalHandler::Install();
 
   // Construct the default run manager
-  GateRunManager* runManager = new GateRunManager;  
+  GateRunManager* runManager = new GateRunManager;
 
   // Set the Basic ROOT Output
   GateRecorderBase* myRecords = 0;
@@ -233,7 +233,7 @@ int main( int argc, char* argv[] )
   GateDetectorConstruction* gateDC = new GateDetectorConstruction();
   runManager->SetUserInitialization( gateDC );
 
-  // Set the PhysicsList  
+  // Set the PhysicsList
   runManager->SetUserInitialization( GatePhysicsList::GetInstance() );
 
   // Set the users actions to handle callback for actors - before the initialisation
@@ -251,14 +251,14 @@ int main( int argc, char* argv[] )
   runManager->InitializeAll();
 
   // Incorporate the user actions, set the particles generator
-  runManager->SetUserAction( new GatePrimaryGeneratorAction() );  
+  runManager->SetUserAction( new GatePrimaryGeneratorAction() );
 
   // Create various singleton objets
 #ifdef G4ANALYSIS_USE_GENERAL
   GateOutputMgr::SetDigiMode( aDigiMode );
   GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
   GateDigitizer* digitizer = GateDigitizer::GetInstance();
-  GatePulseProcessorChain* singleChain = new GatePulseProcessorChain( digitizer, "Singles" ); 
+  GatePulseProcessorChain* singleChain = new GatePulseProcessorChain( digitizer, "Singles" );
   digitizer->StoreNewPulseProcessorChain( singleChain );
 #endif
 
@@ -275,7 +275,7 @@ int main( int argc, char* argv[] )
   GateUIcontrolMessenger* controlMessenger = new GateUIcontrolMessenger;
 
   // Get the pointer to the User Interface manager
-  G4UImanager* UImanager = G4UImanager::GetUIpointer(); 
+  G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
   // Declaring pointers
   G4UIExecutive* ui = NULL;
@@ -286,7 +286,7 @@ int main( int argc, char* argv[] )
       ui = new G4UIExecutive( argc, argv );
 #else
 #ifdef G4UI_USE_TCSH
-      session = new G4UIterminal( new G4UItcsh );      
+      session = new G4UIterminal( new G4UItcsh );
 #else
       session = new G4UIterminal();
 #endif
@@ -295,13 +295,13 @@ int main( int argc, char* argv[] )
   else
     {
 #ifdef G4UI_USE_TCSH
-      session = new G4UIterminal( new G4UItcsh );      
+      session = new G4UIterminal( new G4UItcsh );
 #else
       session = new G4UIterminal();
 #endif
     }
 
-  // Macro file parameters	
+  // Macro file parameters
   G4int isMacroFile = 0;
   G4String macrofilename = "";
   // Checking if macro file is here
@@ -321,7 +321,7 @@ int main( int argc, char* argv[] )
 
   // Using 'session' if not Qt
   welcome();
-  
+
   #ifdef Geant496_COMPATIBILITY
     GateMessage( "Core", 0, "GATE's compatibility with Geant4.9.6 is enabled" << G4endl );
   #else
