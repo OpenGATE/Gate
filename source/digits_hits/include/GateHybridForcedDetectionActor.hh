@@ -20,10 +20,10 @@
 
 #include "globals.hh"
 #include "G4String.hh"
-#include <iomanip>   
+#include <iomanip>
 #include <vector>
 
-// Gate 
+// Gate
 #include "GateVActor.hh"
 #include "GateHybridForcedDetectionActorMessenger.hh"
 #include "GateImage.hh"
@@ -61,7 +61,7 @@ public:
   virtual void BeginOfRunAction(const G4Run*);
   virtual void BeginOfEventAction(const G4Event*);
   // virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
-  virtual void UserSteppingAction(const GateVVolume *, const G4Step*); 
+  virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
 
   /// Saves the data collected to the file
   virtual void SaveData();
@@ -100,7 +100,7 @@ public:
   typedef rtk::Reg23ProjectionGeometry::PointType     PointType;
   typedef rtk::Reg23ProjectionGeometry::VectorType    VectorType;
   typedef rtk::ConstantImageSource< OutputImageType > ConstantImageSourceType;
-  
+
   void ComputeGeometryInfoInImageCoordinateSystem(GateVImageVolume *image,
                                                   GateVVolume *detector,
                                                   GateVSource *src,
@@ -113,7 +113,7 @@ public:
 
 protected:
   GateHybridForcedDetectionActorMessenger * pActorMessenger;
-  
+
   G4String mDetectorName;
   G4EmCalculator * mEMCalculator;
   GateVVolume * mDetector;
@@ -183,11 +183,11 @@ protected:
 
   // Fluorescence stuff
   itk::TimeProbe mFluorescenceProbe;
-  typedef rtk::JosephForwardProjectionImageFilter< 
+  typedef rtk::JosephForwardProjectionImageFilter<
                  InputImageType,
                  InputImageType,
                  GateHybridForcedDetectionFunctor::InterpolationWeightMultiplication,
-                 GateHybridForcedDetectionFunctor::FluorescenceValueAccumulation> 
+                 GateHybridForcedDetectionFunctor::FluorescenceValueAccumulation>
                    FluorescenceProjectionType;
   FluorescenceProjectionType::Pointer mFluorescenceProjector;
 
@@ -208,7 +208,6 @@ protected:
   G4ThreeVector mInteractionPosition;
   double        mInteractionEnergy;
   double        mInteractionWeight;
-  G4int         mInteractionZ;
   Char_t        mInteractionProductionVolume[256];
   Char_t        mInteractionProductionProcessTrack[256];
   Char_t        mInteractionProductionProcessStep[256];
@@ -216,6 +215,9 @@ protected:
   int           mInteractionEventId;
   int           mInteractionRunId;
   double        mInteractionTotalContribution;
+  Char_t        mInteractionVolume[256];
+  Char_t        mInteractionMaterial[256];
+  int           mInteractionZ;
 };
 //-----------------------------------------------------------------------------
 
