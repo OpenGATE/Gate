@@ -50,8 +50,7 @@ void GateDoseSpectrumActor::Construct()
   EnableBeginOfEventAction(true);
   EnableUserSteppingAction(true);
   EnableEndOfEventAction(true); // for save every n
-
-  mVolumeMass = GetVolume()->GetPhysicalVolume()->GetMotherLogical()->GetMass();
+  mVolumeMass = GetVolume()->GetPhysicalVolume()->GetLogicalVolume()->GetMass();
   ResetData();
 }
 //-----------------------------------------------------------------------------
