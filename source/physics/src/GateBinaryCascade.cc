@@ -2397,7 +2397,7 @@ G4LorentzVector GateBinaryCascade::GetFinalNucleusMomentum()
 
   G4LorentzVector CapturedMomentum(0);
   G4KineticTrackVector::iterator i;
-//  G4cout << "GetFinalNucleusMomentum Captured size: " <<theCapturedList.size() << G4endl;
+  //  G4cout << "GetFinalNucleusMomentum Captured size: " <<theCapturedList.size() << G4endl;
   for(i = theCapturedList.begin(); i != theCapturedList.end(); ++i)
   {
       CapturedMomentum += (*i)->Get4Momentum();

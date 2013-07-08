@@ -29,11 +29,11 @@ GateScatterOrderTrackInformationActorMessenger::~GateScatterOrderTrackInformatio
 
 //-----------------------------------------------------------------------------
 //NOTE: We keep the Messenger structures just in case we want to add new options to the actor
-void GateScatterOrderTrackInformationActorMessenger::BuildCommands(G4String base){}
+void GateScatterOrderTrackInformationActorMessenger::BuildCommands(G4String){}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateScatterOrderTrackInformationActorMessenger::SetNewValue(G4UIcommand* command, G4String param){}
+void GateScatterOrderTrackInformationActorMessenger::SetNewValue(G4UIcommand*, G4String){}
 //-----------------------------------------------------------------------------
 
 #endif /* end #define GATESCATTERORDERTRACKINFORMATIONACTORMESSENGER_CC */
