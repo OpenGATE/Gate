@@ -9,122 +9,41 @@
 #include <iostream>
 #include <fstream>
 #include <map>
-
 using std::map;
 using std::string;
 
-//-----------------------------------------------------------------------------
-GateMaterialMuHandler *GateMaterialMuHandler::singleton_MaterialMuHandler = 0;
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-GateMaterialMuHandler::GateMaterialMuHandler()
+GateMaterialMuHandler::GateMaterialMuHandler(int nbOfElements)
 {
-  mIsInitialized = false;
-  mNbOfElements = -1;
-  mElementsTable = 0;
-  mElementsFolderName = "NULL";
-  mEnergyMin = 250. * eV;
-  mEnergyMax = 1. * MeV;
-  mEnergyNumber = 25;
-  mAtomicShellEnergyMin = 1. * keV;
-  mPrecision = 0.01;
+  mElementsTable = new GateMuTable*[nbOfElements+1];
+  mNbOfElements = nbOfElements;
+  InitElementTable();
 }
-//-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
+
 GateMaterialMuHandler::~GateMaterialMuHandler()
 {
-  if(mElementsTable) delete [] mElementsTable;
+  delete[] mElementsTable;
 }
-//-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-double GateMaterialMuHandler::GetAttenuation(G4Material* material, double energy)
-{
-  if(!mIsInitialized) { Initialize(); }
-  return mMaterialTable[material->GetName()]->GetMuEn(energy);
-
-//   map<G4String, GateMuTable*>::iterator it = mMaterialTable.find(material->GetName());
-//   if(it == mMaterialTable.end()){
-//     AddMaterial(material);
-//   }
-//
-//   return mMaterialTable[material->GetName()]->GetMuEn(energy);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-double GateMaterialMuHandler::GetMu(G4Material* material, double energy)
-{
-  if(!mIsInitialized) { Initialize(); }
-  return mMaterialTable[material->GetName()]->GetMu(energy);
-
-//   map<G4String, GateMuTable*>::iterator it = mMaterialTable.find(material->GetName());
-//   if(it == mMaterialTable.end()){
-//     AddMaterial(material);
-//   }
-//   return mMaterialTable[material->GetName()]->GetMu(energy);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
 inline double interpolation(double Xa,double Xb,double Ya,double Yb,double x){
   return exp(log(Ya) + log(Yb/Ya) / log(Xb/Xa)* log(x/Xa) );
 }
-//-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-void GateMaterialMuHandler::Initialize()
+void GateMaterialMuHandler::AddMaterial(G4Material* material)
 {
-  DD(mElementsFolderName);
-  if(mElementsFolderName == "NULL")
-  {
-    DD("Simulation");
-    SimulateMaterialTable();
-  }
-  else
-  {
-    DD("Precalculated");
-    mNbOfElements = 100;
-    mElementsTable = new GateMuTable*[mNbOfElements+1];
-    InitElementTable();
-
-    G4ProductionCutsTable *productionCutList = G4ProductionCutsTable::GetProductionCutsTable();
-    G4String materialName;
-    map<G4String, GateMuTable*>::iterator it;
-
-    for(unsigned int m=0; m<productionCutList->GetTableSize(); m++)
-    {
-      const G4Material *material = productionCutList->GetMaterialCutsCouple(m)->GetMaterial();
-      materialName = material->GetName();
-      it = mMaterialTable.find(materialName);
-      if(it == mMaterialTable.end()) { ConstructMaterial(material); }
-    }
-  }
-
-  mIsInitialized = true;
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void GateMaterialMuHandler::ConstructMaterial(const G4Material *material)
-{
-  GateMessage("MuHandler",0,"Construction of material : " << material->GetName() << G4endl);
-
   //const G4ElementVector* elements = material->GetElementVector();
   int nb_e = 0;
   int nb_of_elements = material->GetNumberOfElements();
   for(int i = 0; i < nb_of_elements; i++)
     nb_e += mElementsTable[(int) material->GetElement(i)->GetZ()]->GetSize();
-
+  
   double* energies = new double[nb_e];
   int *index = new int[nb_of_elements];
   double **e_tables = new double*[nb_of_elements];
   double **mu_tables = new double*[nb_of_elements];
   double **muen_tables = new double*[nb_of_elements];
   //  int min_index;
-
+  
   const G4double* FractionMass = material->GetFractionVector();
 
   for(int i = 0; i < nb_of_elements; i++){
@@ -141,10 +60,10 @@ void GateMaterialMuHandler::ConstructMaterial(const G4Material *material)
       if(e_tables[j][index[j]] < e_tables[min_table][index[min_table]])
   	min_table = j;
     energies[i] = e_tables[min_table][index[min_table]];
-
+    
     if(i > 0){
       if(energies[i] == energies[i-1]){
-  	if(index[min_table] > 0 && e_tables[min_table][index[min_table]] ==
+  	if(index[min_table] > 0 && e_tables[min_table][index[min_table]] == 
   	   e_tables[min_table][index[min_table]-1])
   	  ;
   	else{
@@ -155,14 +74,14 @@ void GateMaterialMuHandler::ConstructMaterial(const G4Material *material)
     }
     index[min_table]++;
   }
-
+  
   //And now computing mu_en
   double *MuEn = new double[nb_e];
   double *Mu = new double[nb_e];
   for(int i = 0; i < nb_of_elements; i++){
     index[i] = 0;
   }
-
+  
 
   //Assume that all table begin with the same energy
   for(int i = 0; i < nb_e; i++){
@@ -195,26 +114,23 @@ void GateMaterialMuHandler::ConstructMaterial(const G4Material *material)
       }
     }
   }
-
+  
   GateMuTable * table = new GateMuTable(material->GetName(), nb_e);
-
+  
   for(int i = 0; i < nb_e; i++){
-    GateMessage("MuHandler",0," " << energies[i] << " " << Mu[i] << " " << MuEn[i] << " " << G4endl);
-    table->PutValue(i, log(energies[i]), log(Mu[i]), log(MuEn[i]));
+    table->PutValue(i, energies[i], Mu[i], MuEn[i]);
   }
-
+  
   mMaterialTable.insert(std::pair<G4String, GateMuTable*>(material->GetName(),table));
 }
-//-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
 void GateMaterialMuHandler::ReadElementFile(int z)
 {
   std::ostringstream stream;
   stream << z;
-  string filenameMu = mElementsFolderName+"/Mu-"+ stream.str() +".dat";
-  string filenameMuEn = mElementsFolderName+"/Muen-"+ stream.str() +".dat";
-
+  string filenameMu = "Mu-"+ stream.str() +".dat";
+  string filenameMuEn = "Muen-"+ stream.str() +".dat";
+  
   std::ifstream fileMu, fileMuEn;
   fileMu.open(filenameMu.c_str());
   fileMuEn.open(filenameMuEn.c_str());
@@ -230,271 +146,32 @@ void GateMaterialMuHandler::ReadElementFile(int z)
     table->PutValue(j, e, mu, muen);
   }
   fileMu.close();
-  fileMuEn.close();
+  fileMuEn.close();  
 }
-//-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
 void GateMaterialMuHandler::InitElementTable()
 {
   for(int i = 1; i <= mNbOfElements; i++)
     ReadElementFile(i);
 }
-//-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-void GateMaterialMuHandler::SimulateMaterialTable()
+double GateMaterialMuHandler::GetAttenuation(G4Material* material, double energy)
 {
-  // Get process list for gamma
-  G4ProcessVector *processListForGamma = G4Gamma::Gamma()->GetProcessManager()->GetProcessList();
-  G4ParticleDefinition *gamma = G4Gamma::Gamma();
-  // Check if fluo is active
-  bool isFluoActive = false;
-  if(G4LossTableManager::Instance()->AtomDeexcitation()) { isFluoActive = G4LossTableManager::Instance()->AtomDeexcitation()->IsFluoActive();}
-
-  // Find photoelectric (PE), compton scattering (CS) (+ particleChange) and rayleigh scattering (RS) models
-  G4VEmModel *modelPE = 0;
-  G4VEmModel *modelCS = 0;
-  G4VEmModel *modelRS = 0;
-  G4ParticleChangeForGamma *particleChangeCS = 0;
-
-  for(int i=0; i<processListForGamma->size(); i++)
-  {
-    G4String processName = (*processListForGamma)[i]->GetProcessName();
-    if(processName == "PhotoElectric" || processName == "phot") {
-      modelPE = (dynamic_cast<G4VEmProcess *>((*processListForGamma)[i]))->Model(1);
-    }
-    else if(processName == "Compton" || processName == "compt") {
-      G4VEmProcess *processCS = dynamic_cast<G4VEmProcess *>((*processListForGamma)[i]);
-      modelCS = processCS->Model(1);
-
-      // Get the G4VParticleChange of compton scattering by running a fictive step (no simple 'get' function available)
-      G4Track myTrack(new G4DynamicParticle(gamma,G4ThreeVector(1.,0.,0.),0.01),0.,G4ThreeVector(0.,0.,0.));
-      myTrack.SetTrackStatus(fStopButAlive); // to get a fast return (see G4VEmProcess::PostStepDoIt(...))
-      G4Step myStep;
-      particleChangeCS = dynamic_cast<G4ParticleChangeForGamma *>(processCS->PostStepDoIt((const G4Track)(myTrack), myStep));
-    }
-    else if(processName == "RayleighScattering" || processName == "Rayl") {
-      modelRS = (dynamic_cast<G4VEmProcess *>((*processListForGamma)[i]))->Model(1);
-    }
+  map<G4String, GateMuTable*>::iterator it = mMaterialTable.find(material->GetName());
+  if(it == mMaterialTable.end()){
+    AddMaterial(material);
   }
-
-  // Useful members for the loops
-  // - cuts and materials
-  G4ProductionCutsTable *productionCutList = G4ProductionCutsTable::GetProductionCutsTable();
-  G4String materialName;
-
-  // - particles
-  G4DynamicParticle primary(gamma,G4ThreeVector(1.,0.,0.));
-  std::vector<G4DynamicParticle *> secondaries;
-  double incidentEnergy;
-  double deltaEnergy = 50.0 * eV;
-
-  // - (mu ; muen) calculations
-  map<G4String, GateMuTable*>::iterator it;
-  double totalFluoPE;
-  double totalFluoCS;
-  double totalScatterCS;
-  double crossSectionPE;
-  double crossSectionCS;
-  double crossSectionRS;
-  double fPE;
-  double fCS;
-  double mu(0.);
-  double muen(0.);
-
-  // - muen uncertainty
-  double squaredFluoPE;    // sum of squared PE fluorescence energy measurement
-  double squaredFluoCS;    // sum of squared CS fluorescence energy measurement
-  double squaredScatterCS; // sum of squared CS scattered photon energy measurement
-  int shotNumberPE;
-  int shotNumberCS;
-  double squaredSigmaPE;        // squared PE uncertainty weighted by corresponding squared cross section
-  double squaredSigmaCS;        // squared CS uncertainty weighted by corresponding squared cross section
-  double squaredSigmaMuen(0.);  // squared muen uncertainty
-
-
-  // - loops options
-  double energyStep = exp( (log(mEnergyMax) - log(mEnergyMin)) / double(mEnergyNumber) );
-  std::vector<double> energyList;
-
-  // Loop on material
-  for(unsigned int m=0; m<productionCutList->GetTableSize(); m++)
-  {
-    const G4MaterialCutsCouple *couple = productionCutList->GetMaterialCutsCouple(m);
-    const G4Material *material = couple->GetMaterial();
-    materialName = material->GetName();
-    it = mMaterialTable.find(materialName);
-    if(it == mMaterialTable.end())
-    {
-      GateMessage("MuHandler",0,"Construction of material : " << materialName << G4endl);
-
-      // construct energyList
-      energyList.clear();
-
-      // - basic list
-      energyList.push_back(mEnergyMin);
-      for(int e = 0; e<mEnergyNumber; e++) { energyList.push_back(energyList[e] * energyStep); }
-
-      // - add atomic shell energies
-      int elementNumber = material->GetNumberOfElements();
-      for(int i = 0; i < elementNumber; i++)
-      {
-	const G4Element *element = material->GetElement(i);
-	for(int j=0; j<material->GetElement(i)->GetNbOfAtomicShells(); j++)
-	{
-	  double atomicShellEnergy = element->GetAtomicShell(j);
-	  if(atomicShellEnergy > mAtomicShellEnergyMin && atomicShellEnergy > mEnergyMin)
-	  {
-	    energyList.push_back(atomicShellEnergy - deltaEnergy);
-	    energyList.push_back(atomicShellEnergy + deltaEnergy);
-	  }
-	}
-      }
-      std::sort(energyList.begin(), energyList.end());
-
-      GateMuTable *table = new GateMuTable(materialName, energyList.size());
-
-      // Loop on energy
-      for(unsigned int e=0; e<energyList.size(); e++)
-      {
-// 	GateMessage("MuHandler",0,"  energy = " << e*energyStep << " MeV" << G4endl);
-
-	incidentEnergy = energyList[e];
-	primary.SetKineticEnergy(incidentEnergy);
-
-	// Cross section calculation
-	double density = material->GetDensity() / (g/cm3);
-	double energyCutForGamma = productionCutList->ConvertRangeToEnergy(gamma,material,couple->GetProductionCuts()->GetProductionCut("gamma"));
-	crossSectionPE = 0.;
-	crossSectionCS = 0.;
-	crossSectionRS = 0.;
-	if(modelPE) { crossSectionPE = modelPE->CrossSectionPerVolume(material,gamma,incidentEnergy,energyCutForGamma,10.) * cm / density; }
-	if(modelCS) { crossSectionCS = modelCS->CrossSectionPerVolume(material,gamma,incidentEnergy,energyCutForGamma,10.) * cm / density; }
-	if(modelRS) { crossSectionRS = modelRS->CrossSectionPerVolume(material,gamma,incidentEnergy,energyCutForGamma,10.) * cm / density; }
-
-	// muen and uncertainty calculation
-	squaredFluoPE = 0.;
-	squaredFluoCS = 0.;
-	squaredScatterCS = 0.;
-	totalFluoPE = 0.;
-	totalFluoCS = 0.;
-	totalScatterCS = 0.;
-	shotNumberPE = 0;
-	shotNumberCS = 0;
-	squaredSigmaPE = 0.;
-	squaredSigmaCS = 0.;
-	fPE = 0.;
-	fCS = 0.;
-	double trialFluoEnergy;
-
-	double precision = 10e6;
-	int index = 0;
-
-	int variableShotNumberPE = 0;
-	if(modelPE and isFluoActive) { variableShotNumberPE = 50; }
-
-	int variableShotNumberCS = 0;
-	if(modelCS) { variableShotNumberCS = 100 - variableShotNumberPE; }
-
-	// Loop on shot
-	while(precision > mPrecision)
-	{
-	  // photoElectric shots to get the mean fluorescence photon energy
-	  for(int iPE = 0; iPE<variableShotNumberPE; iPE++)
-	  {
-	    trialFluoEnergy = ProcessOneShot(modelPE,&secondaries,couple,&primary);
-	    shotNumberPE++;
-
-	    totalFluoPE += trialFluoEnergy;
-	    squaredFluoPE += (trialFluoEnergy * trialFluoEnergy);
-	  }
-
-	  // compton shots to get the mean fluorescence and scatter photon energy
-	  for(int iCS = 0; iCS<variableShotNumberCS; iCS++)
-	  {
-	    trialFluoEnergy = ProcessOneShot(modelCS,&secondaries,couple,&primary);
-	    shotNumberCS++;
-
-	    totalFluoCS += trialFluoEnergy;
-	    squaredFluoCS += (trialFluoEnergy * trialFluoEnergy);
-	    double trialScatterEnergy = particleChangeCS->GetProposedKineticEnergy();
-	    totalScatterCS += trialScatterEnergy;
-	    squaredScatterCS += (trialScatterEnergy * trialScatterEnergy);
-	  }
-
-	  // average fractions of the incident energy E that is transferred to kinetic energy of charged particles (for muen)
-	  if(shotNumberPE) {
-	    fPE = 1. - ((totalFluoPE / double(shotNumberPE)) / incidentEnergy);
-	    squaredSigmaPE = SquaredSigmaOnMean(squaredFluoPE,totalFluoPE,shotNumberPE) * crossSectionPE * crossSectionPE;
-	  }
-	  if(shotNumberCS) {
-	    fCS = 1. - (((totalScatterCS + totalFluoCS) / double(shotNumberCS)) / incidentEnergy);
-	    squaredSigmaCS = (SquaredSigmaOnMean(squaredFluoCS,totalFluoCS,shotNumberCS) + SquaredSigmaOnMean(squaredScatterCS,totalScatterCS,shotNumberCS)) * crossSectionCS * crossSectionCS;
-	  }
-
-	  // mu/rho and muen/rho calculation
-	  mu   = crossSectionPE + crossSectionCS + crossSectionRS;
-	  muen = fPE * crossSectionPE + fCS * crossSectionCS;
-
-	  // uncertainty calculation
-	  squaredSigmaMuen = (squaredSigmaPE + squaredSigmaCS) / (incidentEnergy * incidentEnergy);
-	  precision = sqrt(squaredSigmaMuen) / muen;
-
-	  if(modelPE and isFluoActive) { variableShotNumberPE = (int)floor(0.5 + 100. * sqrt(squaredSigmaPE / (squaredSigmaPE + squaredSigmaCS))); }
-	  if(modelCS) { variableShotNumberCS = 100 - variableShotNumberPE; }
-
-// 	  if(index%100 == 0)
-// 	  {
-// 	    GateMessage("MuHandler",0,"sigPE = " << sqrt(squaredSigmaPE) << " sigCS = " << sqrt(squaredSigmaCS) << " sigMuen = " << sqrt(squaredSigmaMuen) << " uncertainty = " << tmp_uncertainty << G4endl);
-// 	    GateMessage("MuHandler",0,"   nPE = " << variableShotNumberPE << " nCS = " << variableShotNumberCS << " nPEtot = " << shotNumberPE << " nCStot = " << shotNumberCS << G4endl);
-// 	  }
-
-	  index += 100;
-	}
-
-
-
-// 	GateMessage("MuHandler",0,"    csPE = " << crossSectionPE << "   csCo = " << crossSectionCS << " csRa = " << crossSectionRS << " cm2.g-1" << G4endl);
-// 	GateMessage("MuHandler",0,"  fluoPE = " << totalFluoPE    << " fluoCo = " << totalFluoCS    << " scCo = " << totalScatterCS << " MeV" << G4endl);
-// 	GateMessage("MuHandler",0,"     fPE = " << fPE            << "    fCo = " << fCS << G4endl);
-// 	GateMessage("MuHandler",0,"     cut = " << energyCutForGamma << "    iPE = " << shotNumberPE << " iCS = " << shotNumberCS << G4endl);
-// 	GateMessage("MuHandler",0," " << incidentEnergy << " MeV - muen = " << muen << " +/- " << sqrt(squaredSigmaMuen) << " (" << precision * 100. << " %)" << G4endl);
-// 	GateMessage("MuHandler",0,"   sigPE = " << sqrt(squaredSigmaPE) / incidentEnergy << "    sigCS = " << sqrt(squaredSigmaCS) / incidentEnergy << G4endl);
-		GateMessage("MuHandler",0," " << incidentEnergy << " " << mu << " " << muen << " " << sqrt(squaredSigmaMuen) << " " << precision << G4endl);
-	table->PutValue(e, log(incidentEnergy), log(mu), log(muen));
-
-// 	GateMessage("MuHandler",0," " << G4endl);
-      }
-
-//       GateMessage("MuHandler",0," -------------------------------------------------------- " << G4endl);
-//       GateMessage("MuHandler",0," " << G4endl);
-
-      mMaterialTable.insert(std::pair<G4String, GateMuTable*>(materialName,table));
-    }
-  }
+  
+  return mMaterialTable[material->GetName()]->GetMuEn(energy);
 }
-//-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-double GateMaterialMuHandler::ProcessOneShot(G4VEmModel *model,std::vector<G4DynamicParticle*> *secondaries, const G4MaterialCutsCouple *couple, const G4DynamicParticle *primary)
+double GateMaterialMuHandler::GetMu(G4Material* material, double energy)
 {
-  secondaries->clear();
-  model->SampleSecondaries(secondaries,couple,primary,0.,0.);
-  double energy = 0.;
-  for(unsigned s=0; s<secondaries->size(); s++) {
-    if((*secondaries)[s]->GetParticleDefinition()->GetParticleName() == "gamma") { energy += (*secondaries)[s]->GetKineticEnergy(); }
+  map<G4String, GateMuTable*>::iterator it = mMaterialTable.find(material->GetName());
+  if(it == mMaterialTable.end()){
+    AddMaterial(material);
   }
-
-  return energy;
+  return mMaterialTable[material->GetName()]->GetMu(energy);
 }
-//-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-double GateMaterialMuHandler::SquaredSigmaOnMean(double sumOfSquaredMeasurement, double sumOfMeasurement, double numberOfMeasurement)
-{
-  sumOfMeasurement = sumOfMeasurement / numberOfMeasurement;
-  return ((sumOfSquaredMeasurement / numberOfMeasurement) - (sumOfMeasurement * sumOfMeasurement)) / numberOfMeasurement;
-}
-//-----------------------------------------------------------------------------
 #endif

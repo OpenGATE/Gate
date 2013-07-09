@@ -31,6 +31,29 @@ See GATE/LICENSE.txt for further details
 using std::map;
 using std::string;
 
+struct MuStorageStruct
+{
+    double energy;
+    int isAtomicShell;
+    double atomicShellEnergy;
+    double mu;
+    double muen;
+
+    MuStorageStruct(double e, int i, double a)
+    {
+      energy = e;
+      isAtomicShell = i;
+      atomicShellEnergy = a;
+      mu = 0.;
+      muen = 0.;
+    }
+
+    bool operator < (const MuStorageStruct& str) const
+    {
+        return (energy < str.energy);
+    }
+};
+
 class GateMaterialMuHandler
 {
 
@@ -69,6 +92,8 @@ private:
   void ConstructMaterial(const G4Material *material);
   // - Complete simulation of coefficients
   void SimulateMaterialTable();
+  void ConstructEnergyList(std::vector<MuStorageStruct> *, const G4Material *);
+  void MergeAtomicShell(std::vector<MuStorageStruct> *);
   double ProcessOneShot(G4VEmModel *,std::vector<G4DynamicParticle*> *, const G4MaterialCutsCouple *, const G4DynamicParticle *);
   double SquaredSigmaOnMean(double , double , double);
 
