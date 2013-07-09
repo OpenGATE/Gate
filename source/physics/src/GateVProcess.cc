@@ -736,9 +736,10 @@ void GateVProcess::SetModelEnergyMin(G4String model, G4double energy, G4String p
 void GateVProcess::ClearModelEnergyRange(G4String model,G4String par)
 {
 
-   if(par=="All")
+   if(par=="All") {
      for(unsigned int i=0; i<theListOfParticlesWithSelectedModels.size(); i++)
        if(theListOfSelectedModels[i]->GetModelName()==model) theListOfSelectedModels[i]->ClearERange();
+   }
    else
    {
      std::vector<G4ParticleDefinition*>  theListOfParticles = GetParticles(par);
