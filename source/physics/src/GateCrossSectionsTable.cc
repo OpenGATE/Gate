@@ -106,7 +106,7 @@ size_t GateCrossSectionsTable::AddMaterial ( const G4MaterialCutsCouple* couple 
 	G4Step step;
 	step.SetPreStepPoint ( point );
 	trackTmp.SetStep ( &step );
-	G4ProductionCuts product();
+	G4ProductionCuts product;
 	if (m_nVerbose>=3)
 	{
 		G4cout << "GateCrossSectionsTable::AddMaterial( const G4Material* mat ) : add " << couple->GetMaterial()->GetName() << G4endl;
