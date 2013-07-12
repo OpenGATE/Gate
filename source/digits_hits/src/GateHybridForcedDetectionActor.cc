@@ -123,7 +123,6 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   }
   mSource = sm->GetSource(0);
     // Checks. FIXME: check on rot1 and rot2 would be required
-  DD(mSource->GetAngDist()->GetDistType());
   if(mSource->GetAngDist()->GetDistType() != "focused")
     GateError("Forced detection only supports point or focused sources.");
   if(mSource->GetPosDist()->GetPosDisType() != "Plane")
@@ -522,12 +521,12 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
     if(info)
     {
       unsigned int order = info->GetScatterOrder();
-        while(order>=mRayleighPerOrderImages.size())
-          mRayleighPerOrderImages.push_back( CreateVoidProjectionImage() );
-        mRayleighProjector->SetInput(mRayleighPerOrderImages[order]);
-        TRY_AND_EXIT_ON_ITK_EXCEPTION(mRayleighProjector->Update());
-        mRayleighPerOrderImages[order] = mRayleighProjector->GetOutput();
-        mRayleighPerOrderImages[order]->DisconnectPipeline();
+      while(order>=mRayleighPerOrderImages.size())
+        mRayleighPerOrderImages.push_back( CreateVoidProjectionImage() );
+      mRayleighProjector->SetInput(mRayleighPerOrderImages[order]);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(mRayleighProjector->Update());
+      mRayleighPerOrderImages[order] = mRayleighProjector->GetOutput();
+      mRayleighPerOrderImages[order]->DisconnectPipeline();
     }
   }
   else if(process->GetProcessName() == G4String("PhotoElectric") || process->GetProcessName() == G4String("phot")) {
@@ -670,9 +669,9 @@ void GateHybridForcedDetectionActor::SaveData()
     imgWriter->SetInput(mComptonImage);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
 
-    for(unsigned int k = 0; k<mComptonPerOrderImages.size(); k++)
+    for(unsigned int k = 1; k<mComptonPerOrderImages.size(); k++)
     {
-      sprintf(filename, "output/compton%04d_%04d.mha", rID, k+1);
+      sprintf(filename, "output/compton%04d_order%02d.mha", rID, k);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mComptonPerOrderImages[k]);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -686,9 +685,9 @@ void GateHybridForcedDetectionActor::SaveData()
     imgWriter->SetInput(mRayleighImage);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
 
-    for(unsigned int k = 0; k<mRayleighPerOrderImages.size(); k++)
+    for(unsigned int k = 1; k<mRayleighPerOrderImages.size(); k++)
     {
-      sprintf(filename, "output/rayleigh%04d_%04d.mha", rID, k+1);
+      sprintf(filename, "output/rayleigh%04d_order%02d.mha", rID, k);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mRayleighPerOrderImages[k]);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -702,9 +701,9 @@ void GateHybridForcedDetectionActor::SaveData()
     imgWriter->SetInput(mFluorescenceImage);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
 
-    for(unsigned int k = 0; k<mFluorescencePerOrderImages.size(); k++)
+    for(unsigned int k = 1; k<mFluorescencePerOrderImages.size(); k++)
     {
-      sprintf(filename, "output/fluorescence%04d_%04d.mha", rID, k+1);
+      sprintf(filename, "output/fluorescence%04d_order%02d.mha", rID, k);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mFluorescencePerOrderImages[k]);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
