@@ -94,9 +94,6 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
       scatterTracking->IncrementScatterOrder(step->GetTrack());
       order = scatterTracking->GetScatterOrder();
     }
-
-    //G4cout << ", Order of Compton " << order << G4endl;
-
   }
   else if(process->GetProcessName() == G4String("RayleighScattering")) {
 
@@ -106,9 +103,6 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
       scatterTracking->IncrementScatterOrder(step->GetTrack());
       order = scatterTracking->GetScatterOrder();
     }
-
-    //G4cout << ", Order of Rayleigh  " << order << G4endl;
-
   }
   else if(process->GetProcessName() == G4String("PhotoElectric")) {
     const G4TrackVector * list = step->GetSecondary();
@@ -127,7 +121,6 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
       {
         fluoTracking->IncrementScatterOrder((*list)[i]);
         order = fluoTracking->GetScatterOrder();
-//DD(order)
       }
     }
   }
