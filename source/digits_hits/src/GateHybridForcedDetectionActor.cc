@@ -11,7 +11,7 @@
 #include "GateConfiguration.h"
 #ifdef GATE_USE_RTK
 
-// Gate 
+// Gate
 #include "GateHybridForcedDetectionActor.hh"
 #include "GateMiscFunctions.hh"
 #include "GateScatterOrderTrackInformationActor.hh"
@@ -54,7 +54,7 @@
 GateHybridForcedDetectionActor::GateHybridForcedDetectionActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateHybridForcedDetectionActor() -- begin"<<G4endl);  
+  GateDebugMessageInc("Actor",4,"GateHybridForcedDetectionActor() -- begin"<<G4endl);
   pActorMessenger = new GateHybridForcedDetectionActorMessenger(this);
   mDetectorResolution[0] = mDetectorResolution[1] = mDetectorResolution[2] = 1;
   GateDebugMessageDec("Actor",4,"GateHybridForcedDetectionActor() -- end"<<G4endl);
@@ -63,8 +63,8 @@ GateHybridForcedDetectionActor::GateHybridForcedDetectionActor(G4String name, G4
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
-GateHybridForcedDetectionActor::~GateHybridForcedDetectionActor() 
+/// Destructor
+GateHybridForcedDetectionActor::~GateHybridForcedDetectionActor()
 {
   delete pActorMessenger;
 }
@@ -88,21 +88,24 @@ void GateHybridForcedDetectionActor::Construct()
     mPhaseSpaceFile = new TFile(mPhaseSpaceFilename,"RECREATE","ROOT file for phase space",9);
   mPhaseSpace = new TTree("PhaseSpace","Phase space tree of hybrid forced detection actor");
 
-  mPhaseSpace->Branch("Ekine",  &mInteractionEnergy,"Ekine/F");
-  mPhaseSpace->Branch("Weight", &mInteractionWeight,"Weight/F");
-  mPhaseSpace->Branch("X", &(mInteractionPosition[0]),"X/F");
-  mPhaseSpace->Branch("Y", &(mInteractionPosition[1]),"Y/F");
-  mPhaseSpace->Branch("Z", &(mInteractionPosition[2]),"Z/F");
-  mPhaseSpace->Branch("dX", &(mInteractionDirection[0]),"dX/F");
-  mPhaseSpace->Branch("dY", &(mInteractionDirection[1]),"dY/F");
-  mPhaseSpace->Branch("dZ", &(mInteractionDirection[2]),"dZ/F");
-  mPhaseSpace->Branch("ProductionVolume", mInteractionProductionVolume,"ProductionVolume/C");
-  mPhaseSpace->Branch("TrackID",&mInteractionTrackId,"TrackID/I");
-  mPhaseSpace->Branch("EventID",&mInteractionEventId,"EventID/I");
-  mPhaseSpace->Branch("RunID",&mInteractionRunId,"RunID/I");
-  mPhaseSpace->Branch("ProductionProcessTrack", mInteractionProductionProcessTrack,"ProductionProcessTrack/C");
-  mPhaseSpace->Branch("ProductionProcessStep", mInteractionProductionProcessStep,"ProductionProcessStep/C");
-  mPhaseSpace->Branch("TotalContribution", &mInteractionTotalContribution,"TotalContribution/F");
+  mPhaseSpace->Branch("Ekine",  &mInteractionEnergy, "Ekine/D");
+  mPhaseSpace->Branch("Weight", &mInteractionWeight, "Weight/D");
+  mPhaseSpace->Branch("X", &(mInteractionPosition[0]), "X/D");
+  mPhaseSpace->Branch("Y", &(mInteractionPosition[1]), "Y/D");
+  mPhaseSpace->Branch("Z", &(mInteractionPosition[2]), "Z/D");
+  mPhaseSpace->Branch("dX", &(mInteractionDirection[0]), "dX/D");
+  mPhaseSpace->Branch("dY", &(mInteractionDirection[1]), "dY/D");
+  mPhaseSpace->Branch("dZ", &(mInteractionDirection[2]), "dZ/D");
+  mPhaseSpace->Branch("ProductionVolume", mInteractionProductionVolume, "ProductionVolume/C");
+  mPhaseSpace->Branch("TrackID",&mInteractionTrackId, "TrackID/I");
+  mPhaseSpace->Branch("EventID",&mInteractionEventId, "EventID/I");
+  mPhaseSpace->Branch("RunID",&mInteractionRunId, "RunID/I");
+  mPhaseSpace->Branch("ProductionProcessTrack", mInteractionProductionProcessTrack, "ProductionProcessTrack/C");
+  mPhaseSpace->Branch("ProductionProcessStep", mInteractionProductionProcessStep, "ProductionProcessStep/C");
+  mPhaseSpace->Branch("TotalContribution", &mInteractionTotalContribution, "TotalContribution/D");
+  mPhaseSpace->Branch("InteractionVolume", mInteractionVolume, "Volume/C");
+  mPhaseSpace->Branch("Material", mInteractionMaterial, "Material/C");
+  mPhaseSpace->Branch("MaterialZ", &mInteractionZ, "MaterialZ/I");
 }
 //-----------------------------------------------------------------------------
 
@@ -407,7 +410,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
 {
   GateVActor::UserSteppingAction(v, step);
   /* Get interaction point from step
-     Retrieve : 
+     Retrieve :
      - type of limiting process (Compton Rayleigh Fluorescence)
      - no Fluo yet, wait for bug fix in next G4 release (4.6 ?)
      - coordinate of interaction, convert if needed into world coordinate system
@@ -445,6 +448,12 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
   // mInteractionProductionProcessStep
   st = process->GetProcessName();
   sscanf(st.c_str(), "%s", mInteractionProductionProcessStep);
+  // mInteractionVolume
+  st = step->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetName();
+  sscanf(st.c_str(), "%s", mInteractionVolume);
+  // mInteractionVolume
+  st = step->GetPreStepPoint()->GetMaterial()->GetName();
+  sscanf(st.c_str(), "%s", mInteractionMaterial);
 
 
   GateScatterOrderTrackInformation * info = dynamic_cast<GateScatterOrderTrackInformation *>(step->GetTrack()->GetUserInformation());
@@ -466,7 +475,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
   const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
   G4VEmModel* model = const_cast<G4VEmProcess*>(process)->Model();
   const G4Element* elm = model->SelectRandomAtom(couple,particle,mInteractionEnergy);
-  G4int mInteractionZ = elm->GetZ();
+  mInteractionZ = elm->GetZ();
 
   if(process->GetProcessName() == G4String("Compton") || process->GetProcessName() == G4String("compt")) {
     mComptonProbe.Start();
@@ -722,7 +731,7 @@ void GateHybridForcedDetectionActor::SaveData()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridForcedDetectionActor::ResetData() 
+void GateHybridForcedDetectionActor::ResetData()
 {
   mGeometry = GeometryType::New();
 }
@@ -737,7 +746,7 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
         PointType &detectorPosition,
         VectorType &detectorRowVector,
         VectorType &detectorColVector)
-{ 
+{
   // The placement of a volume relative to its mother's coordinate system is not
   // very well explained in Geant4's doc but the code follows what's done in
   // source/geometry/volumes/src/G4PVPlacement.cc.
@@ -786,7 +795,7 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
   G4AffineTransform detectorToCT(detectorToWorld *  m_WorldToCT);
 
   // TODO: check where to get the two directions of the detector.
-  // Probably the dimension that has lowest size in one of the three directions. 
+  // Probably the dimension that has lowest size in one of the three directions.
   G4ThreeVector du = detectorToCT.TransformAxis(G4ThreeVector(1,0,0));
   G4ThreeVector dv = detectorToCT.TransformAxis(G4ThreeVector(0,1,0));
   G4ThreeVector dp = detectorToCT.TransformPoint(G4ThreeVector(0,0,0));
