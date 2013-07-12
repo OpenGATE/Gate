@@ -2281,7 +2281,7 @@ G4Fragment * GateBinaryCascade::FindFragments()
   }
 
   G4int zCaptured = 0;
-  G4LorentzVector CapturedMomentum(0);
+  G4LorentzVector CapturedMomentum(0,0,0,0);
   for(i = theCapturedList.begin(); i != theCapturedList.end(); ++i)
   {
       CapturedMomentum += (*i)->Get4Momentum();
@@ -2395,7 +2395,7 @@ G4LorentzVector GateBinaryCascade::GetFinalNucleusMomentum()
 // return momentum of nucleus for use with precompound model; also keep transformation to
 //   apply to precompoud products.
 
-  G4LorentzVector CapturedMomentum(0);
+  G4LorentzVector CapturedMomentum(0,0,0,0);
   G4KineticTrackVector::iterator i;
   //  G4cout << "GetFinalNucleusMomentum Captured size: " <<theCapturedList.size() << G4endl;
   for(i = theCapturedList.begin(); i != theCapturedList.end(); ++i)
