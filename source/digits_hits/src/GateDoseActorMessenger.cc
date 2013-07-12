@@ -77,99 +77,99 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
 {
 
   G4String  n = base+"/enableDose";
-  pEnableDoseCmd = new G4UIcmdWithABool(n, this); 
+  pEnableDoseCmd = new G4UIcmdWithABool(n, this);
   G4String guid = G4String("Enable dose computation");
   pEnableDoseCmd->SetGuidance(guid);
 
-  n = base+"/normaliseDose"; 
-  pEnableDoseNormCmd = new G4UIcmdWithABool(n, this); 
+  n = base+"/normaliseDose";
+  pEnableDoseNormCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable dose normalisation according to integral");
   pEnableDoseNormCmd->SetGuidance(guid);
 
   n = base+"/enableSquaredDose";
-  pEnableDoseSquaredCmd = new G4UIcmdWithABool(n, this); 
+  pEnableDoseSquaredCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable squared dose computation");
   pEnableDoseSquaredCmd->SetGuidance(guid);
 
   n = base+"/enableUncertaintyDose";
-  pEnableDoseUncertaintyCmd = new G4UIcmdWithABool(n, this); 
+  pEnableDoseUncertaintyCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable uncertainty dose computation");
   pEnableDoseUncertaintyCmd->SetGuidance(guid);
 
   n = base+"/enableDoseToWater";
-  pEnableDoseToWaterCmd = new G4UIcmdWithABool(n, this); 
+  pEnableDoseToWaterCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable dose to water computation");
   pEnableDoseToWaterCmd->SetGuidance(guid);
 
-  n = base+"/normaliseDoseToWater"; 
-  pEnableDoseToWaterNormCmd = new G4UIcmdWithABool(n, this); 
+  n = base+"/normaliseDoseToWater";
+  pEnableDoseToWaterNormCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable dose normalisation according to integral");
   pEnableDoseToWaterNormCmd->SetGuidance(guid);
 
   n = base+"/enableSquaredDoseToWater";
-  pEnableDoseToWaterSquaredCmd = new G4UIcmdWithABool(n, this); 
+  pEnableDoseToWaterSquaredCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable squared dose to water computation");
   pEnableDoseToWaterSquaredCmd->SetGuidance(guid);
 
   n = base+"/enableUncertaintyDoseToWater";
-  pEnableDoseToWaterUncertaintyCmd = new G4UIcmdWithABool(n, this); 
+  pEnableDoseToWaterUncertaintyCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable uncertainty dose to water computation");
   pEnableDoseToWaterUncertaintyCmd->SetGuidance(guid);
 
   n = base+"/enableEdep";
-  pEnableEdepCmd = new G4UIcmdWithABool(n, this); 
+  pEnableEdepCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable edep computation");
   pEnableEdepCmd->SetGuidance(guid);
 
   n = base+"/enableSquaredEdep";
-  pEnableEdepSquaredCmd = new G4UIcmdWithABool(n, this); 
+  pEnableEdepSquaredCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable squared edep computation");
   pEnableEdepSquaredCmd->SetGuidance(guid);
 
   n = base+"/enableUncertaintyEdep";
-  pEnableEdepUncertaintyCmd = new G4UIcmdWithABool(n, this); 
+  pEnableEdepUncertaintyCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable uncertainty edep computation");
   pEnableEdepUncertaintyCmd->SetGuidance(guid);
 
   n = base+"/enableNumberOfHits";
-  pEnableNumberOfHitsCmd = new G4UIcmdWithABool(n, this); 
+  pEnableNumberOfHitsCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable number of hits computation");
   pEnableNumberOfHitsCmd->SetGuidance(guid);
 
   // Experimental
-#ifdef GATEDEV 
+#ifdef GATEDEV
   n = base+"/enableRBE1Alpha";
-  pEnableRBE1AlphaCmd = new G4UIcmdWithABool(n, this); 
+  pEnableRBE1AlphaCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("[EXPERIMENTAL] Enable RBE1 Alpha output");
   pEnableRBE1AlphaCmd->SetGuidance(guid);
 
   n = base+"/enableRBE1Beta";
-  pEnableRBE1BetaCmd = new G4UIcmdWithABool(n, this); 
+  pEnableRBE1BetaCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("[EXPERIMENTAL] Enable RBE1 Beta output");
   pEnableRBE1BetaCmd->SetGuidance(guid);
 
   n = base+"/enableRBE1Factor";
-  pEnableRBE1FactorCmd = new G4UIcmdWithABool(n, this); 
+  pEnableRBE1FactorCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable RBE1 Factor output");
   pEnableRBE1FactorCmd->SetGuidance(guid);
 
   n = base+"/enableRBE1BioDose";
-  pEnableRBE1BioDoseCmd = new G4UIcmdWithABool(n, this); 
+  pEnableRBE1BioDoseCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("[EXPERIMENTAL] Enable RBE1 BioDose output");
   pEnableRBE1BioDoseCmd->SetGuidance(guid);
 
   n = base+"/setRBE1AlphaDataFilename";
-  pSetRBE1AlphaDataFilenameCmd = new G4UIcmdWithAString(n, this); 
+  pSetRBE1AlphaDataFilenameCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("[EXPERIMENTAL] Set filename for alpha data (RBE1)");
   pSetRBE1AlphaDataFilenameCmd->SetGuidance(guid);
 
   n = base+"/setRBE1BetaDataFilename";
-  pSetRBE1BetaDataFilenameCmd = new G4UIcmdWithAString(n, this); 
+  pSetRBE1BetaDataFilenameCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("[EXPERIMENTAL] Set filename for alpha data (RBE1)");
   pSetRBE1BetaDataFilenameCmd->SetGuidance(guid);
 
   n = base+"/enableRBE1Test1";
-  pEnableRBE1Test1Cmd = new G4UIcmdWithABool(n, this); 
+  pEnableRBE1Test1Cmd = new G4UIcmdWithABool(n, this);
   guid = G4String("[EXPERIMENTAL] Enable RBE1 Test1");
   pEnableRBE1Test1Cmd->SetGuidance(guid);
 

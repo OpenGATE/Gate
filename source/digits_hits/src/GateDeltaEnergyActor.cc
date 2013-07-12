@@ -10,8 +10,8 @@
 
 
 /*
-  \brief Class GateStoppingPowerActor : 
-  \brief 
+  \brief Class GateStoppingPowerActor :
+  \brief
 */
 
 #include "GateDeltaEnergyActor.hh"
@@ -43,7 +43,7 @@ GateStoppingPowerActor::GateStoppingPowerActor(G4String name, G4int depth):
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateStoppingPowerActor::~GateStoppingPowerActor()  {
   delete pMessenger;
 }
@@ -60,12 +60,12 @@ void GateStoppingPowerActor::Construct() {
   EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(false);
   EnableUserSteppingAction(true);
- 
+
   // Check if at least one image is enabled
-  if (!mIsStopPowerImageEnabled && 
-      !mIsRelStopPowerImageEnabled && 
+  if (!mIsStopPowerImageEnabled &&
+      !mIsRelStopPowerImageEnabled &&
       !mIsNumberOfHitsImageEnabled ){
-    GateError("The StoppingPowerActor " << GetObjectName() << " does not have any image enabled ...\n Please select at least one ('enableStopPower true' for example)"); 
+    GateError("The StoppingPowerActor " << GetObjectName() << " does not have any image enabled ...\n Please select at least one ('enableStopPower true' for example)");
   }
 
   // Output Filename
@@ -106,7 +106,7 @@ void GateStoppingPowerActor::Construct() {
   }
 
   // Print information
-  GateMessage("Actor", 1, 
+  GateMessage("Actor", 1,
               "\tRelStopPower StoppingPowerActor    = '" << GetObjectName() << "'" << G4endl <<
               "\tRelStopPower image        = " << mIsRelStopPowerImageEnabled << G4endl <<
               "\tRelStopPower squared      = " << mIsRelStopPowerSquaredImageEnabled << G4endl <<
@@ -132,7 +132,7 @@ void GateStoppingPowerActor::SaveData() {
   if (mIsStopPowerImageEnabled) mStopPowerImage.SaveData(mCurrentEvent+1);
 
   if (mIsRelStopPowerImageEnabled) mRelStopPowerImage.SaveData(mCurrentEvent+1, false);
-  
+
   if (mIsLastHitEventImageEnabled) {
     mLastHitEventImage.Fill(-1); // reset
   }
@@ -157,7 +157,7 @@ void GateStoppingPowerActor::ResetData() {
 //G4bool GateStoppingPowerActor::ProcessHits(G4Step * step , G4TouchableHistory* th)
 void GateStoppingPowerActor::UserSteppingAction(const GateVVolume *, const G4Step* step)
 {
-  int index = GetIndexFromStepPosition(GetVolume(), step); 
+  int index = GetIndexFromStepPosition(GetVolume(), step);
   UserSteppingActionInVoxel(index, step);
   //return true;
 }
@@ -173,7 +173,7 @@ void GateStoppingPowerActor::BeginOfRunAction(const G4Run * r) {
 
 //-----------------------------------------------------------------------------
 // Callback at each event
-void GateStoppingPowerActor::BeginOfEventAction(const G4Event * e) { 
+void GateStoppingPowerActor::BeginOfEventAction(const G4Event * e) {
   GateVActor::BeginOfEventAction(e);
   mCurrentEvent++;
   GateDebugMessage("Actor", 3, "GateStoppingPowerActor -- Begin of Event: "<<mCurrentEvent << G4endl);
@@ -195,7 +195,7 @@ void GateStoppingPowerActor::UserSteppingActionInVoxel(const int index, const G4
     return;
   }
 
-  bool sameEvent=true;  
+  bool sameEvent=true;
   if (mIsLastHitEventImageEnabled) {
     GateDebugMessage("Actor", 2,  "GateStoppingPowerActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
     if (mCurrentEvent != mLastHitEventImage.GetValue(index)) {
@@ -205,14 +205,14 @@ void GateStoppingPowerActor::UserSteppingActionInVoxel(const int index, const G4
   }
 
   if (mIsRelStopPowerImageEnabled) {
-   
+
     if (mIsRelStopPowerUncertaintyImageEnabled || mIsRelStopPowerSquaredImageEnabled) {
       if (sameEvent) mRelStopPowerImage.AddTempValue(index, relativeStopPower);
       else mRelStopPowerImage.AddValueAndUpdate(index, relativeStopPower);
     }
     else mRelStopPowerImage.AddValue(index, relativeStopPower);
   }
-  
+
   if (mIsStopPowerImageEnabled) {
     if (mIsStopPowerUncertaintyImageEnabled || mIsStopPowerSquaredImageEnabled) {
       if (sameEvent) mStopPowerImage.AddTempValue(index, stoppingPower);
@@ -220,7 +220,7 @@ void GateStoppingPowerActor::UserSteppingActionInVoxel(const int index, const G4
     }
     else mStopPowerImage.AddValue(index, stoppingPower);
   }
-  
+
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.AddValue(index, 1);
 
 
@@ -229,5 +229,3 @@ void GateStoppingPowerActor::UserSteppingActionInVoxel(const int index, const G4
   GateDebugMessageDec("Actor", 4, "GateStoppingPowerActor -- UserSteppingActionInVoxel -- end" << G4endl);
 }
 //-----------------------------------------------------------------------------
-
-

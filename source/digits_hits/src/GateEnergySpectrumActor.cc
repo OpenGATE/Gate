@@ -36,7 +36,7 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   nTrack=0;
   sumM1=0.;
   sumM2=0.;
-  sumM3=0.; 
+  sumM3=0.;
   edep = 0.;
 
   pMessenger = new GateEnergySpectrumActorMessenger(this);
@@ -47,11 +47,11 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
-GateEnergySpectrumActor::~GateEnergySpectrumActor() 
+/// Destructor
+GateEnergySpectrumActor::~GateEnergySpectrumActor()
 {
   GateDebugMessageInc("Actor",4,"~GateEnergySpectrumActor() -- begin"<<G4endl);
- 
+
 
 
   GateDebugMessageDec("Actor",4,"~GateEnergySpectrumActor() -- end"<<G4endl);
@@ -108,7 +108,7 @@ void GateEnergySpectrumActor::SaveData()
 
 
 //-----------------------------------------------------------------------------
-void GateEnergySpectrumActor::ResetData() 
+void GateEnergySpectrumActor::ResetData()
 {
   pEnergySpectrum->Reset();
   pEdep->Reset();
@@ -150,7 +150,7 @@ void GateEnergySpectrumActor::EndOfEventAction(const G4Event*)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateEnergySpectrumActor::PreUserTrackingAction(const GateVVolume *, const G4Track* t) 
+void GateEnergySpectrumActor::PreUserTrackingAction(const GateVVolume *, const G4Track* t)
 {
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- Begin of Track" << G4endl);
   newTrack = true; //nTrack++;
@@ -160,7 +160,7 @@ void GateEnergySpectrumActor::PreUserTrackingAction(const GateVVolume *, const G
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateEnergySpectrumActor::PostUserTrackingAction(const GateVVolume *, const G4Track* t) 
+void GateEnergySpectrumActor::PostUserTrackingAction(const GateVVolume *, const G4Track* t)
 {
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Track" << G4endl);
 
@@ -211,8 +211,8 @@ sumNi+=step->GetTotalEnergyDeposit();}
   Ef=step->GetPostStepPoint()->GetKineticEnergy();
   if(newTrack){
      Ei=step->GetPreStepPoint()->GetKineticEnergy();
-     pEnergySpectrum->Fill(Ei/MeV,step->GetTrack()->GetWeight()); 
-     newTrack=false;  
+     pEnergySpectrum->Fill(Ei/MeV,step->GetTrack()->GetWeight());
+     newTrack=false;
   }
 
 

@@ -29,18 +29,18 @@ See GATE/LICENSE.txt for further details
 
 
 class GateBlurringLawMessenger : public GateNamedObjectMessenger {
-	
+
 	public :
 		GateBlurringLawMessenger(GateVBlurringLaw* itsBlurringLaw);
 		virtual ~GateBlurringLawMessenger() {}
-		
+
 		GateVBlurringLaw* GetBlurringLaw() const;
 		void SetNewValue(G4UIcommand* cmdName, G4String val);
-		
-		
+
+
 	private :
-	
-	
+
+
 };
 
 #endif

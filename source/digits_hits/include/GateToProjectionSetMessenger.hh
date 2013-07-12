@@ -20,12 +20,12 @@ class GateToProjectionSetMessenger: public GateOutputModuleMessenger
   public:
     GateToProjectionSetMessenger(GateToProjectionSet* gateToProjectionSet);
    ~GateToProjectionSetMessenger();
-    
+
     void SetNewValue(G4UIcommand*, G4String);
-    
+
   protected:
     GateToProjectionSet*     m_gateToProjectionSet;
-    
+
     G4UIcmdWithAString*     	SetFileNameCmd;
     G4UIcmdWithADoubleAndUnit*  PixelSizeXCmd;
     G4UIcmdWithADoubleAndUnit*  PixelSizeYCmd;

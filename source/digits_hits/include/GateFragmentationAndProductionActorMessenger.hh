@@ -29,16 +29,16 @@ See GATE/LICENSE.txt for further details
 class GateFragmentationAndProductionActor;
 
 //-----------------------------------------------------------------------------
-class GateFragmentationAndProductionActorMessenger : public GateActorMessenger 
+class GateFragmentationAndProductionActorMessenger : public GateActorMessenger
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   /// Constructor with pointer on the associated sensor
   GateFragmentationAndProductionActorMessenger(GateFragmentationAndProductionActor * v);
   /// Destructor
   virtual ~GateFragmentationAndProductionActorMessenger();
-    
+
   /// Command processing callback
   virtual void SetNewValue(G4UIcommand*, G4String);
 
@@ -46,7 +46,7 @@ protected:
   void BuildCommands(G4String base);
 
   /// Associated sensor
-  GateFragmentationAndProductionActor * pActor; 
+  GateFragmentationAndProductionActor * pActor;
 
   /// Command objects
   G4UIcmdWithAnInteger * pNBinsCmd;

@@ -65,7 +65,7 @@ G4double GateDistributionExponential::ShootRandom() const
 void GateDistributionExponential::DescribeMyself(size_t indent)
 {
   G4cout << GateTools::Indent(indent)
-    	 <<"Lambda : "         << m_Lambda 
+    	 <<"Lambda : "         << m_Lambda
          <<"  -- Amplitude : "<< m_Amplitude
 	 <<G4endl;
 }

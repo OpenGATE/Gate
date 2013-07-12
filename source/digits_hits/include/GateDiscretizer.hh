@@ -24,11 +24,11 @@ class GateOutputVolumeID;
 
 /*! \class  GateDiscretizer
     \brief  Pulse-processor modelling a the lake of knowledge of "where" a hit occurs inside a crystal
-    
+
     - GateDiscretizer - by dguez@cea.fr
-        
+
       \sa GateVPulseProcessor
-*/      
+*/
 class GateDiscretizer : public GateVPulseProcessor
 {
   public:
@@ -50,7 +50,7 @@ class GateDiscretizer : public GateVPulseProcessor
     //! It is is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
-    
+
   private:
 
     GateDiscretizerMessenger *m_messenger;	  //!< Messenger for this Discretizer
@@ -58,4 +58,3 @@ class GateDiscretizer : public GateVPulseProcessor
 
 
 #endif
-

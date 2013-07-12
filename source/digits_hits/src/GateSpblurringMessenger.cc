@@ -34,11 +34,9 @@ GateSpblurringMessenger::~GateSpblurringMessenger()
 
 
 void GateSpblurringMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
   if ( command==spresolutionCmd )
-    { GetSpblurring()->SetSpresolution(spresolutionCmd->GetNewDoubleValue(newValue)); }   
+    { GetSpblurring()->SetSpresolution(spresolutionCmd->GetNewDoubleValue(newValue)); }
   else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue); 
+    GatePulseProcessorMessenger::SetNewValue(command,newValue);
 }
-
-

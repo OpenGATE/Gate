@@ -49,7 +49,7 @@ void GateCoincidenceDigiMaker::Digitize()
   }
   // Create the digi collection
   GateCoincidenceDigiCollection* CoincidenceDigiCollection = new GateCoincidenceDigiCollection(m_digitizer->GetObjectName(),m_collectionName);
-  
+
   // Create and store the digi
   for (std::vector<GateCoincidencePulse*>::const_iterator it = coincidencePulse.begin();it != coincidencePulse.end() ; ++it){
       if ((*it)->size()>2){
@@ -60,15 +60,14 @@ void GateCoincidenceDigiMaker::Digitize()
       	CoincidenceDigiCollection->insert(Digi);
       }
   }
-      
+
   if (nVerboseLevel>0) {
       	  G4cout  << "[GateCoincidenceDigiMaker::Digitize]:  created 1 coincidence digi in this event:" <<	G4endl;
 	  (*CoincidenceDigiCollection)[0]->Print();
 	  G4cout << G4endl;
   }
-  
-      
+
+
   // Store the digits into the digit collection of this event
   m_digitizer->StoreDigiCollection(CoincidenceDigiCollection);
 }
-

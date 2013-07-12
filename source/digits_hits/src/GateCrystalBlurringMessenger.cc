@@ -29,7 +29,7 @@ GateCrystalBlurringMessenger::GateCrystalBlurringMessenger(GateCrystalBlurring* 
   cmdName = GetDirectoryName() + "setCrystalResolutionMin";
   crystalresolutionminCmd = new G4UIcmdWithADouble(cmdName,this);
   crystalresolutionminCmd->SetGuidance("Set the minimum resolution in energie, crystal by crystal, for gaussian blurring");
-  
+
   cmdName1 = GetDirectoryName() + "setCrystalResolutionMax";
   crystalresolutionmaxCmd = new G4UIcmdWithADouble(cmdName1,this);
   crystalresolutionmaxCmd->SetGuidance("Set the maximum resolution in energie, crystal by crystal, for gaussian blurring");
@@ -55,17 +55,15 @@ GateCrystalBlurringMessenger::~GateCrystalBlurringMessenger()
 
 
 void GateCrystalBlurringMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
   if ( command==crystalresolutionminCmd )
-    { GetCrystalBlurring()->SetCrystalResolutionMin(crystalresolutionminCmd->GetNewDoubleValue(newValue)); }   
+    { GetCrystalBlurring()->SetCrystalResolutionMin(crystalresolutionminCmd->GetNewDoubleValue(newValue)); }
   else if ( command==crystalresolutionmaxCmd)
     { GetCrystalBlurring()->SetCrystalResolutionMax(crystalresolutionmaxCmd->GetNewDoubleValue(newValue)); }
   else if ( command==crystalQECmd)
     { GetCrystalBlurring()->SetCrystalQE(crystalQECmd->GetNewDoubleValue(newValue)); }
   else if ( command==crystalerefCmd )
-    { GetCrystalBlurring()->SetCrystalRefEnergy(crystalerefCmd->GetNewDoubleValue(newValue)); }   
+    { GetCrystalBlurring()->SetCrystalRefEnergy(crystalerefCmd->GetNewDoubleValue(newValue)); }
   else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue); 
+    GatePulseProcessorMessenger::SetNewValue(command,newValue);
 }
-
-

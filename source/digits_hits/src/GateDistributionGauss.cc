@@ -67,7 +67,7 @@ G4double GateDistributionGauss::ShootRandom() const
 void GateDistributionGauss::DescribeMyself(size_t indent)
 {
   G4cout << GateTools::Indent(indent)
-    	 <<"Mean : "         << m_Mean 
+    	 <<"Mean : "         << m_Mean
          <<"  -- Sigma : "    << m_Sigma
          <<"  -- Amplitude : "<< m_Amplitude
 	 <<G4endl;

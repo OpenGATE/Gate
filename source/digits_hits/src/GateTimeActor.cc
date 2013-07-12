@@ -27,7 +27,7 @@
 GateTimeActor::GateTimeActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateTimeActor() -- begin"<<G4endl);  
+  GateDebugMessageInc("Actor",4,"GateTimeActor() -- begin"<<G4endl);
   ResetData();
   mDetailedStatFlag = false;
   pMessenger = new GateTimeActorMessenger(this);
@@ -37,8 +37,8 @@ GateTimeActor::GateTimeActor(G4String name, G4int depth):
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
-GateTimeActor::~GateTimeActor() 
+/// Destructor
+GateTimeActor::~GateTimeActor()
 {
   delete pMessenger;
 }
@@ -48,7 +48,7 @@ GateTimeActor::~GateTimeActor()
 //-----------------------------------------------------------------------------
 void GateTimeActor::EnableDetailedStats(bool b)
 {
-  mDetailedStatFlag = b; 
+  mDetailedStatFlag = b;
 }
 //-----------------------------------------------------------------------------
 
@@ -124,7 +124,7 @@ void GateTimeActor::UpdateCurrentTextOutput()
   for(iter = mNumberOfAlongByProcess.begin(); iter != mNumberOfAlongByProcess.end(); ++iter) {
     ss << iter->first << " " << iter->second << " " << std::endl;
   }
-  
+
   mCurrentTextOutput = ss.str();
   // std::cout << mCurrentTextOutput;
 }
@@ -178,7 +178,7 @@ void GateTimeActor::PostUserTrackingAction(const GateVVolume * v, const G4Track 
 
   // DD("Stop current Track timer");
   // std::cout << mCurrentTrackTimer << std::endl;
-  
+
   // Total time
   double t = mCurrentTrackTimer.GetUserElapsed();
   mTotalTrackUserTime += t;
@@ -201,22 +201,22 @@ void GateTimeActor::UserSteppingAction(const GateVVolume * v, const G4Step * ste
   GateVActor::UserSteppingAction(v, step);
   if (mNumberOfSteps != 0) { // the first step does not count
     mCurrentStepTimer.Stop();
-    
+
     double t = mCurrentStepTimer.GetUserElapsed();
-    
+
     // Total time
     mTotalStepUserTime += t;
-    
+
     if (mDetailedStatFlag) {
       // Count according to processes
       // http://geant4.slac.stanford.edu/Tips/event/6.html
-      
+
       // Limiting step
       G4String limitingProcess = step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
       mNumberOfLimitingProcess[limitingProcess]++;
-      
+
       // Along per process
-      G4SteppingManager* fpSteppingManager = 
+      G4SteppingManager* fpSteppingManager =
         G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager();
       G4StepStatus stepStatus = fpSteppingManager->GetfStepStatus();
       if(stepStatus!=fExclusivelyForcedProc && stepStatus!=fAtRestDoItProc) {
@@ -246,7 +246,7 @@ void GateTimeActor::SaveData()
 {
   GateVActor::SaveData();
   UpdateCurrentTextOutput();
-  std::ofstream os;  
+  std::ofstream os;
   OpenFileOutput(mSaveFilename, os);
   os << mCurrentTextOutput;
   os.flush();
@@ -256,7 +256,7 @@ void GateTimeActor::SaveData()
 
 
 //-----------------------------------------------------------------------------
-void GateTimeActor::ResetData() 
+void GateTimeActor::ResetData()
 {
   mNumberOfEvents = 0;
   mNumberOfTracks = 0;

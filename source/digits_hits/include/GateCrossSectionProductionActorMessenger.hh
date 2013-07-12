@@ -31,9 +31,9 @@ public:
 
 protected:
   GateCrossSectionProductionActor * pCrossSectionProductionActor;
- G4UIcmdWithABool * pO15Cmd;
-G4UIcmdWithABool * pC11Cmd;
+  G4UIcmdWithABool * pO15Cmd;
+  G4UIcmdWithABool * pC11Cmd;
   G4UIcmdWithAString * pC11FilenameCmd;
 };
 
-#endif 
+#endif

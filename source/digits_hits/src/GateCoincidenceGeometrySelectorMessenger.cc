@@ -35,19 +35,17 @@ GateCoincidenceGeometrySelectorMessenger::GateCoincidenceGeometrySelectorMesseng
 
 GateCoincidenceGeometrySelectorMessenger::~GateCoincidenceGeometrySelectorMessenger()
 {
-  delete maxSCmd; 
-  delete maxDeltaZCmd; 
+  delete maxSCmd;
+  delete maxDeltaZCmd;
 }
 
 
 void GateCoincidenceGeometrySelectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
   if (command==maxSCmd)
     GetGeometrySelector()->SetMaxS(maxSCmd->GetNewDoubleValue(newValue));
   else if (command==maxDeltaZCmd)
     GetGeometrySelector()->SetMaxDeltaZ(maxDeltaZCmd->GetNewDoubleValue(newValue));
   else
-    GateClockDependentMessenger::SetNewValue(command,newValue); 
+    GateClockDependentMessenger::SetNewValue(command,newValue);
 }
-
-

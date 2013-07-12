@@ -22,52 +22,52 @@ class GateCoincidencePulse : public GatePulseList
 {
   public:
     inline GateCoincidencePulse(const G4String& itsName,
-    				G4double itsCoincidenceWindow,
-				G4double itsOffsetWindow) 
+                                G4double itsCoincidenceWindow,
+                                G4double itsOffsetWindow)
       : GatePulseList(itsName),
-      	m_startTime(DBL_MAX),
-//	m_Time(-1),
-	m_offsetWindow(itsOffsetWindow),
-      	m_coincidenceWindow(itsCoincidenceWindow)
+        m_startTime(DBL_MAX),
+//      m_Time(-1),
+        m_offsetWindow(itsOffsetWindow),
+        m_coincidenceWindow(itsCoincidenceWindow)
     {}
     GateCoincidencePulse(const GateCoincidencePulse& src);
     virtual ~GateCoincidencePulse(){}
 
     virtual void push_back(GatePulse* newPulse) ;
     virtual void InsertUniqueSortedCopy(GatePulse* newPulse);
-    
+
     inline G4double GetStartTime() const
       { return m_startTime; }
-    inline void SetStartTime(G4double val)	    
-      	{ m_startTime = val;}
+    inline void SetStartTime(G4double val)
+      { m_startTime = val;}
     inline G4double GetTime() const
       { /*return m_Time;*/ return m_startTime+m_offsetWindow+m_coincidenceWindow; }
-//     inline void SetTime(G4double val)	    
-//       	{ m_Time = val;}
+//     inline void SetTime(G4double val)
+//       { m_Time = val;}
     inline G4double GetOffset() const
-      	{ return m_offsetWindow;}
+      { return m_offsetWindow;}
     inline void SetOffset(G4double val)
-      	{ m_offsetWindow = val;}
-      
+      { m_offsetWindow = val;}
+
     virtual G4bool IsInCoincidence(const GatePulse* newPulse) const;
     virtual G4bool IsAfterWindow(const GatePulse* newPulse) const;
 
-    inline G4double GetWindow() const	    
-      	{ return m_coincidenceWindow;}
+    inline G4double GetWindow() const
+      { return m_coincidenceWindow;}
     inline void SetWindow(G4double val)
-      	{ m_coincidenceWindow = val;}
+      { m_coincidenceWindow = val;}
 
     //! Return the min-time of all pulses
     //virtual G4double ComputeStartTime() const ;
- 
+
     //
     //printing methods
     //
-    friend std::ostream& operator<<(std::ostream&, const GateCoincidencePulse&);    
+    friend std::ostream& operator<<(std::ostream&, const GateCoincidencePulse&);
 
   private:
     G4double m_startTime;
-//    G4double m_Time;
+//  G4double m_Time;
     G4double m_offsetWindow;
     G4double m_coincidenceWindow;
 };

@@ -23,7 +23,7 @@ class GateDistributionGauss : public GateVDistribution
     //! Constructor
     GateDistributionGauss(const G4String& itsName);
     //! Destructor
-    virtual ~GateDistributionGauss() ; 
+    virtual ~GateDistributionGauss() ;
 
     //! Setters
     inline void SetMean(G4double mean) {m_Mean=mean;}
@@ -36,7 +36,7 @@ class GateDistributionGauss : public GateVDistribution
     virtual void DescribeMyself(size_t indent);
 
 
-    
+
     virtual G4double MinX() const;
     virtual G4double MinY() const;
     virtual G4double MaxX() const;

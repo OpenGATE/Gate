@@ -17,7 +17,7 @@ GateInverseSquareBlurringLawMessenger::GateInverseSquareBlurringLawMessenger(Gat
 	GateBlurringLawMessenger(itsBlurringLaw)
 {
 
-	
+
 	G4String cmdName;
 	G4String cmdName2;
 
@@ -45,11 +45,11 @@ GateInverseSquareBlurringLaw* GateInverseSquareBlurringLawMessenger::GetInverseS
 
 
 void GateInverseSquareBlurringLawMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
   if ( command==resolutionCmd )
-    { GetInverseSquareBlurringLaw()->SetResolution(resolutionCmd->GetNewDoubleValue(newValue)); }   
+    { GetInverseSquareBlurringLaw()->SetResolution(resolutionCmd->GetNewDoubleValue(newValue)); }
   else if ( command==erefCmd )
-    { GetInverseSquareBlurringLaw()->SetEnergyRef(erefCmd->GetNewDoubleValue(newValue)); }   
+    { GetInverseSquareBlurringLaw()->SetEnergyRef(erefCmd->GetNewDoubleValue(newValue)); }
   else
-    GateBlurringLawMessenger::SetNewValue(command,newValue); 
+    GateBlurringLawMessenger::SetNewValue(command,newValue);
 }

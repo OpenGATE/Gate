@@ -31,10 +31,10 @@ class GateSpblurringMessenger: public GatePulseProcessorMessenger
   public:
     GateSpblurringMessenger(GateSpblurring* itsSpresolution);
     virtual ~GateSpblurringMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GateSpblurring* GetSpblurring() 
+    inline GateSpblurring* GetSpblurring()
       { return (GateSpblurring*) GetPulseProcessor(); }
 
   private:
@@ -42,4 +42,3 @@ class GateSpblurringMessenger: public GatePulseProcessorMessenger
 };
 
 #endif
-

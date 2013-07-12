@@ -32,13 +32,12 @@ class GatePulseAdderGPUSpectMessenger: public GatePulseProcessorMessenger
   public:
     GatePulseAdderGPUSpectMessenger(GatePulseAdderGPUSpect* itsPulseAdder);
     inline ~GatePulseAdderGPUSpectMessenger() {}
-    
+
     void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GatePulseAdderGPUSpect* GetPulseAdderGPUSpect() 
+    inline GatePulseAdderGPUSpect* GetPulseAdderGPUSpect()
       { return (GatePulseAdderGPUSpect*) GetPulseProcessor(); }
 
 };
 
 #endif
-

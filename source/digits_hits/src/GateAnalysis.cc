@@ -38,7 +38,7 @@
 #include "GateActions.hh"
 #include "GateToRoot.hh"
 //--------------------------------------------------------------------------------------------------
-GateAnalysis::GateAnalysis(const G4String& name, GateOutputMgr* outputMgr,DigiMode digiMode) 
+GateAnalysis::GateAnalysis(const G4String& name, GateOutputMgr* outputMgr,DigiMode digiMode)
   : GateVOutputModule(name,outputMgr,digiMode)
 {
   m_isEnabled = true; // This module is essential for the hit processing, so let it enabled !!!
@@ -51,12 +51,12 @@ GateAnalysis::GateAnalysis(const G4String& name, GateOutputMgr* outputMgr,DigiMo
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...
 
 //--------------------------------------------------------------------------------------------------
-GateAnalysis::~GateAnalysis() 
+GateAnalysis::~GateAnalysis()
 {
   delete m_analysisMessenger;
   //modifs seb 3/3/2009
   delete m_trajectoryNavigator;
-  if (nVerboseLevel > 0) 
+  if (nVerboseLevel > 0)
     G4cout << "GateAnalysis deleting...m_analysisMessenger - m_trajectoryNavigator" << G4endl;
 }
 //--------------------------------------------------------------------------------------------------
@@ -118,23 +118,23 @@ void GateAnalysis::RecordBeginOfEvent(const G4Event* )
 //--------------------------------------------------------------------------------------------------
 void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 {
-  if (nVerboseLevel > 2) 
+  if (nVerboseLevel > 2)
     G4cout << "GateAnalysis::RecordEndOfEvent "<< G4endl;
 
-  G4TrajectoryContainer* trajectoryContainer = event->GetTrajectoryContainer(); 
+  G4TrajectoryContainer* trajectoryContainer = event->GetTrajectoryContainer();
 
   if (trajectoryContainer)
     m_trajectoryNavigator->SetTrajectoryContainer(trajectoryContainer);
-  
+
   G4int eventID = event->GetEventID();
   G4int runID   = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
-  //G4cout << "GateAnalysis::EventID et RunID :  " <<eventID<<" - "<<runID<< G4endl; 
-  
+  //G4cout << "GateAnalysis::EventID et RunID :  " <<eventID<<" - "<<runID<< G4endl;
+
   //G4int i;
 
   if (!trajectoryContainer)
     {
-      if (nVerboseLevel > 0) 
+      if (nVerboseLevel > 0)
         G4cout << "GateAnalysis::RecordEndOfEvent : WARNING : G4TrajectoryContainer not found" << G4endl;
     }
   else
@@ -145,10 +145,10 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
       G4int NpHits = 0;
 
       if (CHC)
-        {    
+        {
           NbHits = CHC->entries();
           //G4cout << "     " << NbHits << " hits are stored in essaiCrystalHitsCollection." << G4endl;
-    
+
           //G4int ionID      = 1; // the primary vertex particle
           //G4int positronID = 0; // no more needed
           G4int photon1ID  = 0;
@@ -158,18 +158,18 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 
           G4int photon1_phantom_compton = 0;
           G4int photon2_phantom_compton = 0;
-        
+
           G4int photon1_crystal_compton = 0;
           G4int photon2_crystal_compton = 0;
 
           G4int photon1_phantom_Rayleigh = 0;
           G4int photon2_phantom_Rayleigh = 0;
-        
+
           G4int photon1_crystal_Rayleigh = 0;
-          G4int photon2_crystal_Rayleigh = 0;      
-          
+          G4int photon2_crystal_Rayleigh = 0;
+
           G4int septalNb = 0; // HDS : septal penetration
-          
+
 	  ////////////
           // search the positron
           //positronID = // No more needed
@@ -179,10 +179,10 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
             {
               if (nVerboseLevel > 0) G4cout << "GateAnalysis::RecordEndOfEvent : WARNING : positronID == 0" << G4endl;
             }
-          
+
 	  if (nVerboseLevel > 1) G4cout << "GateAnalysis::RecordEndOfEvent : positronID : " << positronID << G4endl;
           */
-          
+
 	  ////////////
 	  //search the two gammas
 
@@ -190,38 +190,38 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
           if (photonIDVec.size() == 0)
             {
               // no gamma coming from a positron or an ion, or shooted as primary
-              if (nVerboseLevel > 0) G4cout 
+              if (nVerboseLevel > 0) G4cout
                                        << "GateAnalysis::RecordEndOfEvent : WARNING : photonIDs not found" << G4endl;
             }
-          else 
+          else
             {
               //  This warning is somewhat irrelevant with 124I
               if (nVerboseLevel > 0 && photonIDVec.size() > 2)
                 G4cout << "GateAnalysis::RecordEndOfEvent : WARNING : photonID vector size > 2" << G4endl;
-	
+
               photon1ID = photonIDVec[0];
               photon2ID = (photonIDVec.size() >= 2) ? photonIDVec[1] : 0;
             }
 
           if (photon1ID == 0)
             {
-              if (nVerboseLevel > 0) G4cout 
+              if (nVerboseLevel > 0) G4cout
                                        << "GateAnalysis::RecordEndOfEvent : WARNING : photon1ID == 0" << G4endl;
             }
           if (photon2ID == 0) {
-            if (nVerboseLevel > 1) G4cout 
+            if (nVerboseLevel > 1) G4cout
                                      << "GateAnalysis::RecordEndOfEvent : WARNING : photon2ID == 0" << G4endl;
           }
-          if (nVerboseLevel > 1) G4cout 
-                                   << "GateAnalysis::RecordEndOfEvent : photon1ID : " << photon1ID 
+          if (nVerboseLevel > 1) G4cout
+                                   << "GateAnalysis::RecordEndOfEvent : photon1ID : " << photon1ID
                                    << "     photon2ID : " << photon2ID << G4endl;
-    
-      
+
+
           // analysis of the phantom hits to count the comptons, etc.
 
           GatePhantomHitsCollection* PHC = GetOutputMgr()->GetPhantomHitCollection();
-          NpHits = PHC->entries();    
-    
+          NpHits = PHC->entries();
+
           G4String theComptonVolumeName("NULL");
           G4String theComptonVolumeName1("NULL");
           G4String theComptonVolumeName2("NULL");
@@ -232,31 +232,31 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 
           for (G4int iPHit=0;iPHit<NpHits;iPHit++)
             {
-            
+
 			// HDS : septal penetration record
-			if ( m_recordSeptalFlag ) {	
+			if ( m_recordSeptalFlag ) {
 				if ((*PHC)[iPHit]->GetPhysVolName() == m_septalPhysVolumeName) {
 					++septalNb;
 				}
 			}
 			//
-            
+
               G4int    phantomTrackID = (*PHC)[iPHit]->GetTrackID();
               G4String processName    = (*PHC)[iPHit]->GetProcess();
               G4int    PDGcode        = (*PHC)[iPHit]->GetPDGEncoding();
               G4ThreeVector hitPos    = (*PHC)[iPHit]->GetPos();
 
-              if (nVerboseLevel > 2) 
-                G4cout << "GateAnalysis::RecordEndOfEvent : GatePhantomHitsCollection : trackID : " << std::setw(5) << phantomTrackID 
+              if (nVerboseLevel > 2)
+                G4cout << "GateAnalysis::RecordEndOfEvent : GatePhantomHitsCollection : trackID : " << std::setw(5) << phantomTrackID
                        << "    PDG code : " << std::setw(5) << PDGcode << "  processName : <" << processName << ">" << G4endl;
               theComptonVolumeName = G4String("NULL");
 
-              if (nVerboseLevel > 2) G4cout 
-                                       << "GateAnalysis::RecordEndOfEvent : GatePhantomHitsCollection : trackID : " << std::setw(5) << phantomTrackID 
+              if (nVerboseLevel > 2) G4cout
+                                       << "GateAnalysis::RecordEndOfEvent : GatePhantomHitsCollection : trackID : " << std::setw(5) << phantomTrackID
                                        << "    PDG code : " << std::setw(5) << PDGcode << "  processName : <" << processName << ">" << G4endl;
               theRayleighVolumeName = G4String("NULL");
 
-              // Modif by DS and LS on Oct 4, 2002: we need to be able to recognise both 'compt' 
+              // Modif by DS and LS on Oct 4, 2002: we need to be able to recognise both 'compt'
               // and 'LowEnCompt", hence the find on 'ompt'
               //	if (processName.find("ompt") != G4String::npos || processName.find("Rayleigh") != G4String::npos) {
               // modif. by CJG to separate Compton and Rayleigh photons
@@ -269,26 +269,26 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
                       G4ThreeVector *ptr;
                       ptr = &null;
                       theComptonVolumeName = gNavigator->LocateGlobalPointAndSetup(hitPos,ptr,false)->GetName();
-                      if (nVerboseLevel > 1) 
-                        G4cout << "GateAnalysis::RecordEndOfEvent :  theComptonVolumeName: " 
-                               << theComptonVolumeName << G4endl; 
+                      if (nVerboseLevel > 1)
+                        G4cout << "GateAnalysis::RecordEndOfEvent :  theComptonVolumeName: "
+                               << theComptonVolumeName << G4endl;
                     }
                   if (phantomTrackID == photon1ID)
                     {
                       photon1_phantom_compton++;
                       theComptonVolumeName1 = theComptonVolumeName;
-                      if (nVerboseLevel > 0) G4cout 
-                                               << "GateAnalysis::RecordEndOfEvent : photon1_phantom_compton : " << photon1_phantom_compton << G4endl; 
+                      if (nVerboseLevel > 0) G4cout
+                                               << "GateAnalysis::RecordEndOfEvent : photon1_phantom_compton : " << photon1_phantom_compton << G4endl;
                     }
                   if (phantomTrackID == photon2ID)
                     {
                       photon2_phantom_compton++;
                       theComptonVolumeName2 = theComptonVolumeName;
-                      if (nVerboseLevel > 0) G4cout 
-                                               << "GateAnalysis::RecordEndOfEvent : photon2_phantom_compton : " << photon2_phantom_compton << G4endl; 
+                      if (nVerboseLevel > 0) G4cout
+                                               << "GateAnalysis::RecordEndOfEvent : photon2_phantom_compton : " << photon2_phantom_compton << G4endl;
                     }
                 }
-	
+
               // Counting Rayleigh scatter in phantom
               if (processName.find("Rayleigh") != G4String::npos)
                 {
@@ -299,23 +299,23 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
                       G4ThreeVector *ptr;
                       ptr = &null;
                       theRayleighVolumeName = gNavigator->LocateGlobalPointAndSetup(hitPos,ptr,false)->GetName();
-                      if (nVerboseLevel > 1) 
-                        G4cout << "GateAnalysis::RecordEndOfEvent :  theRayleighVolumeName: " 
-                               << theRayleighVolumeName << G4endl; 
+                      if (nVerboseLevel > 1)
+                        G4cout << "GateAnalysis::RecordEndOfEvent :  theRayleighVolumeName: "
+                               << theRayleighVolumeName << G4endl;
                     }
                   if (phantomTrackID == photon1ID)
                     {
                       photon1_phantom_Rayleigh++;
                       theRayleighVolumeName1 = theRayleighVolumeName;
-                      if (nVerboseLevel > 0) G4cout 
-                                               << "GateAnalysis::RecordEndOfEvent : photon1_phantom_Rayleigh : " << photon1_phantom_Rayleigh << G4endl; 
+                      if (nVerboseLevel > 0) G4cout
+                                               << "GateAnalysis::RecordEndOfEvent : photon1_phantom_Rayleigh : " << photon1_phantom_Rayleigh << G4endl;
                     }
                   if (phantomTrackID == photon2ID)
                     {
                       photon2_phantom_Rayleigh++;
                       theRayleighVolumeName2 = theRayleighVolumeName;
-                      if (nVerboseLevel > 0) G4cout 
-                                               << "GateAnalysis::RecordEndOfEvent : photon2_phantom_Rayleigh : " << photon2_phantom_Rayleigh << G4endl; 
+                      if (nVerboseLevel > 0) G4cout
+                                               << "GateAnalysis::RecordEndOfEvent : photon2_phantom_Rayleigh : " << photon2_phantom_Rayleigh << G4endl;
                     }
                 }
             } // end loop NpHits
@@ -362,46 +362,46 @@ if (  theMode == kDetector ) // in tracker mode we store the infos about the num
     theRayleighVolumeName2   = aCRData.theRayleighVolumeName2;
 
   }
-          
-      
+
+
           /////////
-          // Source info         
+          // Source info
           // DS : if gate source is not used (with /gate/EnableGeneralParticleSource)
           // there are no GateSource, so skip
           if ((GateSourceMgr::GetInstance())->GetSourcesForThisEvent().size() == 0) return;
 
           G4int sourceID = (((GateSourceMgr::GetInstance())->GetSourcesForThisEvent())[0])->GetSourceID();
           G4ThreeVector sourceVertex = m_trajectoryNavigator->FindSourcePosition();
-  
+
           // Hits loop
           for (G4int iHit=0;iHit<NbHits;iHit++)
-            {  
+            {
               G4int    crystalTrackID = (*CHC)[iHit]->GetTrackID();
               G4String processName = (*CHC)[iHit]->GetProcess();
-              // Counting Compton in the Crystal  
-              //      if (processName.find("ompt") != G4String::npos || processName.find("Rayleigh") != G4String::npos) {  
+              // Counting Compton in the Crystal
+              //      if (processName.find("ompt") != G4String::npos || processName.find("Rayleigh") != G4String::npos) {
               if (processName.find("ompt") != G4String::npos)
                 {
-	  
+
                   if (crystalTrackID == photon1ID) photon1_crystal_compton++;
-                  if (crystalTrackID == photon2ID) photon2_crystal_compton++;	   
+                  if (crystalTrackID == photon2ID) photon2_crystal_compton++;
                 }
-	
+
               // Counting Rayleigh scatter in crystal
               if (processName.find("Rayleigh") != G4String::npos)
-                {  
-	  
+                {
+
                   if (crystalTrackID == photon1ID) photon1_crystal_Rayleigh++;
-                  if (crystalTrackID == photon2ID) photon2_crystal_Rayleigh++;	   
+                  if (crystalTrackID == photon2ID) photon2_crystal_Rayleigh++;
                 }
-	
+
               G4int PDGEncoding  = (*CHC)[iHit]->GetPDGEncoding();
-              if (nVerboseLevel > 2) 
-                G4cout << "GateAnalysis::RecordEndOfEvent : CrystalHitsCollection: processName : <" << processName 
+              if (nVerboseLevel > 2)
+                G4cout << "GateAnalysis::RecordEndOfEvent : CrystalHitsCollection: processName : <" << processName
                        << ">    Particls PDG code : " << PDGEncoding << G4endl;
               if ((*CHC)[iHit]->GoodForAnalysis())
                 {
-                  // fill in values with the branch with C struct 
+                  // fill in values with the branch with C struct
 
                   G4int trackID  = (*CHC)[iHit]->GetTrackID();
                   //G4int parentID = (*CHC)[iHit]->GetParentID();
@@ -409,19 +409,19 @@ if (  theMode == kDetector ) // in tracker mode we store the infos about the num
                   G4int photonID = 0;
                   G4int nPhantomCompton = 0;
                   G4int nCrystalCompton = 0;
-	  
+
                   G4int nPhantomRayleigh = 0;
-                  G4int nCrystalRayleigh = 0;	  
+                  G4int nCrystalRayleigh = 0;
 
                   //	  if ((photon1ID != 0) && (photon2ID != 0)) {
-                  if (photon1ID != 0) 
+                  if (photon1ID != 0)
                     { // this means that at least 1 photon has been found, requiring 2 is wrong for SPECT
                       // search the gamma from which this hit comes --> photonID
                       photonID = m_trajectoryNavigator->FindPhotonID(trackID);
                       if (photonID == rootID)
                         {
-                          if (nVerboseLevel > 2) G4cout 
-                                                   << "GateAnalysis::RecordEndOfEvent : trackID: " << trackID << " photonID = " << rootID << G4endl; 
+                          if (nVerboseLevel > 2) G4cout
+                                                   << "GateAnalysis::RecordEndOfEvent : trackID: " << trackID << " photonID = " << rootID << G4endl;
                         }
                     }
 
@@ -432,7 +432,7 @@ if (  theMode == kDetector ) // in tracker mode we store the infos about the num
                       theComptonVolumeName = theComptonVolumeName1;
                       theRayleighVolumeName = theRayleighVolumeName1;
                       nCrystalCompton = photon1_crystal_compton;
-                      nCrystalRayleigh = photon1_crystal_Rayleigh;	    
+                      nCrystalRayleigh = photon1_crystal_Rayleigh;
                     }
                   else if (photonID == 2)
                     {
@@ -441,7 +441,7 @@ if (  theMode == kDetector ) // in tracker mode we store the infos about the num
                       theComptonVolumeName = theComptonVolumeName2;
                       theRayleighVolumeName = theRayleighVolumeName2;
                       nCrystalCompton = photon2_crystal_compton;
-                      nCrystalRayleigh = photon2_crystal_Rayleigh;	    
+                      nCrystalRayleigh = photon2_crystal_Rayleigh;
                     }
 
                   // search the primary that originated the track
@@ -457,14 +457,14 @@ if (  theMode == kDetector ) // in tracker mode we store the infos about the num
                   (*CHC)[iHit]->SetPrimaryID         (primaryID);
                   (*CHC)[iHit]->SetEventID           (eventID);
                   (*CHC)[iHit]->SetRunID             (runID);
-                  (*CHC)[iHit]->SetNCrystalCompton   (nCrystalCompton); 
+                  (*CHC)[iHit]->SetNCrystalCompton   (nCrystalCompton);
                   (*CHC)[iHit]->SetNCrystalRayleigh   (nCrystalRayleigh);
                   (*CHC)[iHit]->SetNSeptal   (septalNb); // HDS : septal penetration
                 }
             }
         } // end if (CHC)
     } // end if (!trajectoryContainer)
-} // end function 
+} // end function
 //--------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------
@@ -476,13 +476,8 @@ void GateAnalysis::RecordStepWithVolume(const GateVVolume *, const G4Step* )
 //--------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------
-void GateAnalysis::SetVerboseLevel(G4int val) { 
-  nVerboseLevel = val; 
+void GateAnalysis::SetVerboseLevel(G4int val) {
+  nVerboseLevel = val;
   if (m_trajectoryNavigator) m_trajectoryNavigator->SetVerboseLevel(val);
 }
 //--------------------------------------------------------------------------------------------------
-
-
-
-
-

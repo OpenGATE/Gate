@@ -11,9 +11,9 @@
 
 class GateGpSpectrumActor;
 
-class GateGpSpectrumActorMessenger : public GateActorMessenger 
+class GateGpSpectrumActorMessenger : public GateActorMessenger
 {
-	public: 
+	public:
 
 		GateGpSpectrumActorMessenger(GateGpSpectrumActor*);
 		~GateGpSpectrumActorMessenger();
@@ -21,7 +21,7 @@ class GateGpSpectrumActorMessenger : public GateActorMessenger
 		void SetNewValue(G4UIcommand*, G4String);
 	protected:
 		void BuildCommands(G4String base);
-		GateGpSpectrumActor* pActor; 
+		GateGpSpectrumActor* pActor;
 
 		/// Command objects
 		//G4UIcmdWithAnInteger * pNBinsCmd;

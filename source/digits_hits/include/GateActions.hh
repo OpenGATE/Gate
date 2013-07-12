@@ -12,7 +12,7 @@ See GATE/LICENSE.txt for further details
   \class  GateRunAction, GateEventAction, GateTrackingAction, GateSteppingAction
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
+          david.sarrut@creatis.insa-lyon.fr
 */
 
 
@@ -45,18 +45,18 @@ class GateRunAction :  public G4UserRunAction
 public :
   GateRunAction(GateUserActions * cbm, GateRecorderBase* r);
   ~GateRunAction(){}
-  
+
  //-----------------------------------------------------------------------------
  // Action classes Callbacks
 
- void BeginOfRunAction(const G4Run* aRun); 
- inline void EndOfRunAction(const G4Run* aRun); 
+ void BeginOfRunAction(const G4Run* aRun);
+ inline void EndOfRunAction(const G4Run* aRun);
 
  inline virtual void SetFlagBasicOutput( G4bool val ) { flagBasicOutput = val;};
  inline G4bool GetFlagBasicOutput () { return flagBasicOutput; };
- 
+
  virtual inline void SetRunAction ( GateRunAction* val ) { prunAction = val; };
- static inline GateRunAction* GetRunAction() { return prunAction; }; 
+ static inline GateRunAction* GetRunAction() { return prunAction; };
 //-----------------------------------------------------------------------------
 
 private:
@@ -66,7 +66,7 @@ private:
   G4int runIDcounter;
   G4bool flagBasicOutput;
   static GateRunAction* prunAction;
-};	
+};
 //-----------------------------------------------------------------------------
 
 
@@ -76,19 +76,19 @@ class GateEventAction :  public G4UserEventAction
 {
 public :
   GateEventAction(GateUserActions * cbm, GateRecorderBase* r);
-  ~GateEventAction() 
+  ~GateEventAction()
   {}
   //-----------------------------------------------------------------------------
   // Action classes Callbacks
 
   void BeginOfEventAction(const G4Event* anEvent);
-  void EndOfEventAction(const G4Event* anEvent); 
- 
+  void EndOfEventAction(const G4Event* anEvent);
+
   virtual inline void SetFlagBasicOutput( G4bool val ) { flagBasicOutput = val; };
   virtual inline G4bool GetFlagBasicOutput () { return flagBasicOutput; };
-  
+
   virtual inline void SetEventAction ( GateEventAction* val ) { peventAction = val; };
-  static inline GateEventAction* GetEventAction() { return peventAction; };  
+  static inline GateEventAction* GetEventAction() { return peventAction; };
   //-----------------------------------------------------------------------------
 private:
   GateEventAction() {}
@@ -110,14 +110,14 @@ public :
   //-----------------------------------------------------------------------------
   // Action classes Callbacks
    void PreUserTrackingAction(const G4Track* a) ;
-   void PostUserTrackingAction(const G4Track* a); 
+   void PostUserTrackingAction(const G4Track* a);
    void ShowG4TrackInfos( G4String,G4Track* );
   //-----------------------------------------------------------------------------
 private:
   GateTrackingAction() {}
   GateUserActions* pCallbackMan;
   GateRecorderBase* recorder;
-  
+
   /* PY Descourt 08/09/2009 */
   std::vector<G4Track*> dummy_track_vector;
   std::vector<G4Step*> dummy_step_vector;
@@ -135,7 +135,7 @@ public :
   //-----------------------------------------------------------------------------
   // Action classes Callbacks
   //Modif Seb 24/02/2009 // Remis par Tibo et David (02-06-2009), non mais !
-  void UserSteppingAction(const G4Step* a); 
+  void UserSteppingAction(const G4Step* a);
   void UserSteppingAction(const GateVVolume *, const G4Step*);
   virtual void SetDrawTrajectoryLevel(G4int value) { m_drawTrjLevel = value; };
   virtual void SetVerboseLevel(G4int value)        { m_verboseLevel = value; };
@@ -174,7 +174,7 @@ protected :
 ////// PY Descourt 08/09/2009 //
 //
     GateSteppingActionMessenger* m_steppingMessenger;
-    std::vector<GateTrack*> *PPTrackVector; 
+    std::vector<GateTrack*> *PPTrackVector;
     TrackingMode TheMode;
     G4int Boundary; // if set to 1 stop track on Phantom Boundary
     G4int fKeepOnlyP;

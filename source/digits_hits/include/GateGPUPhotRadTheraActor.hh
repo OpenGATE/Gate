@@ -25,8 +25,8 @@ See GATE/LICENSE.txt for further details
 
 class GateGPUPhotRadTheraActor: public GateVActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
   virtual ~GateGPUPhotRadTheraActor();
@@ -47,7 +47,7 @@ class GateGPUPhotRadTheraActor: public GateVActor
 
   //-----------------------------------------------------------------------------
   virtual void SaveData(){};
-  virtual void ResetData();  
+  virtual void ResetData();
 
   void SetGPUDeviceID(int n);
   void SetGPUBufferSize(int n);
@@ -57,7 +57,7 @@ protected:
   GateGPUPhotRadTheraActor(G4String name, G4int depth=0);
   GateGPUPhotRadTheraActorMessenger * pMessenger;
 
-  GateGPUIO_Input * gpu_input; 
+  GateGPUIO_Input * gpu_input;
 
   // Init GPU
   Dosimetry gpu_dosemap;

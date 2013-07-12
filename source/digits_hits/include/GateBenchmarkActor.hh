@@ -14,7 +14,7 @@
 
 class GateBenchmarkActor : public GateVActor
 {
-	public: 
+	public:
 
 		virtual ~GateBenchmarkActor();
 
@@ -59,4 +59,4 @@ class GateBenchmarkActor : public GateVActor
 MAKE_AUTO_CREATOR_ACTOR(BenchmarkActor,GateBenchmarkActor)
 
 #endif
-#endif 
+#endif

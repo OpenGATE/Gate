@@ -26,7 +26,7 @@ GateFakePrimaryGeneratorAction::GateFakePrimaryGeneratorAction( GateDetectorCons
   // G4int n_particle = 1;
   particleGun  = new G4GeneralParticleSource();
  // particleGun  = new G4ParticleGun();
-  
+
 
   // default particle kinematic
 
@@ -53,10 +53,10 @@ GateFakePrimaryGeneratorAction::~GateFakePrimaryGeneratorAction()
 void GateFakePrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   //this function is called at the begining of event
-  // 
+  //
   /*G4double x0 = -100*cm;
   G4double y0 = 0.*cm, z0 = 0.*cm;
- 
+
   particleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));*/
 
   particleGun->GeneratePrimaryVertex(anEvent);

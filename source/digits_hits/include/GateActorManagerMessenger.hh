@@ -13,7 +13,7 @@ See GATE/LICENSE.txt for further details
   \class  GateActorManagerMessenger
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
+          david.sarrut@creatis.insa-lyon.fr
 */
 
 #ifndef GATEACTORMANAGERMESSENGER_HH
@@ -47,7 +47,7 @@ protected:
   G4UIcmdWithoutParameter * pInitActor;
   G4UIcmdWithABool *pResetAfterSaving;
 
-  G4UIdirectory*            pActorCommand;   
+  G4UIdirectory*            pActorCommand;
 };
 
 #endif /* end #define GATEACTORMANAGERMESSENGER_HH */

@@ -1,17 +1,17 @@
 /*----------------------
 
-GATE - Geant4 Application for Tomographic Emission 
-OpenGATE Collaboration 
+GATE - Geant4 Application for Tomographic Emission
+OpenGATE Collaboration
 
-Daniel Strul <daniel.strul@iphe.unil.ch> 
+Daniel Strul <daniel.strul@iphe.unil.ch>
 JB Michaud <jbmichaud@videotron.ca>
 
-Copyright (C) 2002,2003 UNIL/IPHE, CH-1015 Lausanne 
+Copyright (C) 2002,2003 UNIL/IPHE, CH-1015 Lausanne
 Copyright (C) 2009 Universite de Sherbrooke
 
-This software is distributed under the terms 
-of the GNU Lesser General  Public Licence (LGPL) 
-See GATE/LICENSE.txt for further details 
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #include "GatePulseAdderCompton.hh"
@@ -23,16 +23,16 @@ See GATE/LICENSE.txt for further details
 #include "GateConfiguration.h"
 
 GatePulseAdderCompton::GatePulseAdderCompton(GatePulseProcessorChain* itsChain,
-											 const G4String& itsName) 
-											 : GateVPulseProcessor(itsChain,itsName) 
+											 const G4String& itsName)
+											 : GateVPulseProcessor(itsChain,itsName)
 {
 	m_messenger = new GatePulseAdderComptonMessenger(this);
-}  
+}
 
-GatePulseAdderCompton::~GatePulseAdderCompton() 
+GatePulseAdderCompton::~GatePulseAdderCompton()
 {
 	delete m_messenger;
-}  
+}
 
 
 //rewritten for Compton
@@ -52,11 +52,11 @@ void GatePulseAdderCompton::ProcessOnePulse(const GatePulse* inputPulse,GatePuls
 				//G4cout <<  " Different Discarded" << G4endl;
 
 				if (nVerboseLevel>1)
-					G4cout << "Discarded electronic pulse for volume " << inputPulse->GetVolumeID() 
+					G4cout << "Discarded electronic pulse for volume " << inputPulse->GetVolumeID()
 					<< " with no previous photonic interaction in that Volume ID" << G4endl << G4endl ;
 			}
 			else
-			{	
+			{
 				PulsePushBack(inputPulse, outputPulseList);
 				//G4cout << " Different Push Back" << G4endl;
 			}
@@ -73,7 +73,7 @@ void GatePulseAdderCompton::ProcessOnePulse(const GatePulse* inputPulse,GatePuls
 					{
 						(*currentiter)->CentroidMergeCompton(inputPulse);
 						if (nVerboseLevel>1)
-							G4cout << "Merged past photonic pulse for volume " << inputPulse->GetVolumeID() 
+							G4cout << "Merged past photonic pulse for volume " << inputPulse->GetVolumeID()
 							<< " with new electronic pulse of energy " << G4BestUnit(inputPulse->GetEnergy(),"Energy") <<".\n"
 							<< "Resulting pulse is: " << G4endl
 							<< (*currentiter) << G4endl << G4endl ;
@@ -84,7 +84,7 @@ void GatePulseAdderCompton::ProcessOnePulse(const GatePulse* inputPulse,GatePuls
 					{
 						//G4cout <<  "Increment " ;
 						currentiter++;
-						if (currentiter == outputPulseList.rend()) 
+						if (currentiter == outputPulseList.rend())
 						{
 							//G4cout << inputPulse->GetEventID() << " " << inputPulse->GetOutputVolumeID() << " " << inputPulse->GetEnergy() << " " << inputPulse->GetPDGEncoding() << " End of list" << G4endl;
 							break;
@@ -140,7 +140,7 @@ inline void GatePulseAdderCompton::PulsePushBack(const GatePulse* inputPulse, Ga
 //can be merged
 //this could be called several times on the same last volume ID
 /*void GatePulseAdderCompton::repackLastVolumeID(GatePulseList& outputPulseList)
-{	
+{
 	const GatePulseListSizeType MinSize = 1;
 
 	//wont run if outputlist is obviously undersized
@@ -151,7 +151,7 @@ inline void GatePulseAdderCompton::PulsePushBack(const GatePulse* inputPulse, Ga
 		G4int count = 1;
 
 		//compute how many photonic interactions there were in the last volume id
-		while ( (currentiter != outputPulseList.rend()) && 
+		while ( (currentiter != outputPulseList.rend()) &&
 			( ((*currentiter)->GetVolumeID() == (*previousiter)->GetVolumeID() )) && ((*currentiter)->GetEventID() == (*previousiter)->GetEventID()) )
 		{
 			count++;
@@ -173,10 +173,10 @@ inline void GatePulseAdderCompton::PulsePushBack(const GatePulse* inputPulse, Ga
 			outputListBack = outputPulseList.back();
 			//merge pulses
 			outputListBack->CentroidMerge(tempPulse);
-			//get rid of temp 
+			//get rid of temp
 			delete tempPulse;
 			if (m_verboseLevel>1)
-				G4cout << "Merged photonic pulse for volume " << tempPulse->GetVolumeID() 
+				G4cout << "Merged photonic pulse for volume " << tempPulse->GetVolumeID()
 				<< " with other photonic pulse of energy " << G4BestUnit(tempPulse->GetEnergy(),"Energy") <<".\n"
 				<< "Resulting pulse is: " << G4endl
 				<< (*outputListBack) << G4endl << G4endl ;

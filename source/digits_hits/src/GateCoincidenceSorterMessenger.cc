@@ -87,9 +87,9 @@ GateCoincidenceSorterMessenger::~GateCoincidenceSorterMessenger()
 
 
 void GateCoincidenceSorterMessenger::SetNewValue(G4UIcommand* aCommand, G4String newValue)
-{ 
+{
   if ( aCommand==windowCmd )
-    { GetCoincidenceSorter()->SetWindow(windowCmd->GetNewDoubleValue(newValue)); }   
+    { GetCoincidenceSorter()->SetWindow(windowCmd->GetNewDoubleValue(newValue)); }
   else if( aCommand == windowJitterCmd )
     { GetCoincidenceSorter()->SetWindowJitter(windowJitterCmd->GetNewDoubleValue(newValue)); }
   else if( aCommand == offsetCmd )
@@ -100,17 +100,15 @@ void GateCoincidenceSorterMessenger::SetNewValue(G4UIcommand* aCommand, G4String
     { GetCoincidenceSorter()->SetMinSectorDifference(minSectorDiffCmd->GetNewIntValue(newValue)); }
   else if( aCommand == setDepthCmd )
     { GetCoincidenceSorter()->SetDepth(setDepthCmd->GetNewIntValue(newValue)); }
-  else if (aCommand == SetInputNameCmd) 
-    { 
+  else if (aCommand == SetInputNameCmd)
+    {
      GetCoincidenceSorter()->SetInputName(newValue);
      GetCoincidenceSorter()->SetSystem(newValue); //! Attach to the suitable system from the digitizer m_systemList (multi-system approach)
     }
-  else if (aCommand == MultiplePolicyCmd) 
+  else if (aCommand == MultiplePolicyCmd)
     { GetCoincidenceSorter()->SetMultiplesPolicy(newValue); }
-  else if (aCommand == AllPulseOpenCoincGateCmd) 
+  else if (aCommand == AllPulseOpenCoincGateCmd)
     { GetCoincidenceSorter()->SetAllPulseOpenCoincGate(AllPulseOpenCoincGateCmd->GetNewBoolValue(newValue)); }
   else
-    GateClockDependentMessenger::SetNewValue(aCommand,newValue); 
+    GateClockDependentMessenger::SetNewValue(aCommand,newValue);
 }
-
-

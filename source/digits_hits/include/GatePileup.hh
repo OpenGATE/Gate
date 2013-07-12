@@ -24,18 +24,18 @@ class GateOutputVolumeID;
 
 /*! \class  GatePileup
     \brief  Pulse-processor modelling a pileup (maximum energy wins) of a crystal-block
-      
+
     - The Pileup is parameterised by its 'depth': pulses will be summed up if their volume IDs
       are identical up to this depth. For instance, the default depth is 1: this means that
-      pulses will be considered as taking place in a same block if the first two figures 
+      pulses will be considered as taking place in a same block if the first two figures
       of their volume IDs are identical
     - A second parameter is added : the width of the pilup window
-    
+
     - The class is largely inspired from the GateReadout class,
       but is aimed to work by time and not by event.
-    
+
       \sa GateVPulseProcessor
-*/      
+*/
 class GatePileup : public GateVPulseProcessor
 {
   public:
@@ -69,19 +69,18 @@ class GatePileup : public GateVPulseProcessor
     //! The result of the pulse-processing is incorporated into the output pulse-list
     virtual GatePulseList* ProcessPulseList(const GatePulseList* inputPulseList);
     virtual void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
-    
+
   private:
-    //! The default is the one parameter that defines how a Pileup works: 
+    //! The default is the one parameter that defines how a Pileup works:
     //! pulses will be summed up if their volume IDs are identical up to this depth.
-    //! For instance, the default depth is 1: this means that pulses will be considered as 
+    //! For instance, the default depth is 1: this means that pulses will be considered as
     //! taking place in a same block if the first two figures of their volume IDs are identical
     G4int m_depth;
     G4double m_pileup;
-    GatePulseList m_waiting;	      
+    GatePulseList m_waiting;
 
     GatePileupMessenger *m_messenger;	  //!< Messenger for this Pileup
 };
 
 
 #endif
-

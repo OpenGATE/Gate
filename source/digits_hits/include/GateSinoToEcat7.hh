@@ -13,7 +13,7 @@
 
      Gate 6.2
 
-	C. Comtat, CEA/SHFJ, 10/02/2011	   Allows for an interfile-like ("ecat8") output instead of ecat7. 
+	C. Comtat, CEA/SHFJ, 10/02/2011	   Allows for an interfile-like ("ecat8") output instead of ecat7.
 					   It does not require the ecat library! (GATE_USE_ECAT7 not set)
 ----------------------*/
 
@@ -34,7 +34,7 @@
 #include "matrix.h"
 #include "machine_indep.h"
 #else
-// CC, 10.02.2011 : some structures of ECAT7 in matrix.h are included here if Gate is linked without the ecat library. 
+// CC, 10.02.2011 : some structures of ECAT7 in matrix.h are included here if Gate is linked without the ecat library.
 //                  They are required for the interfile-like output
 enum    DataSetType {
 	NoData, Sinogram, PetImage, AttenCor, Normalization,
@@ -58,7 +58,7 @@ typedef struct XMAIN_HEAD {
 	short system_type;
 	short file_type;
 	char serial_number[10];
-	short align_0;	
+	short align_0;
 	unsigned int scan_start_time;
 	char isotope_code[8];
 	float isotope_halflife;
@@ -199,7 +199,7 @@ public:
   //! Set the isotope half-life
   void SetIsotopeHalflife(const G4double aNumber) { m_isotope_halflife = aNumber; };
   //! Set the isotope branching fraction
-  void SetIsotopeBranchingFraction(const G4double aNumber) { m_isotope_branching_fraction = aNumber; }; 
+  void SetIsotopeBranchingFraction(const G4double aNumber) { m_isotope_branching_fraction = aNumber; };
   #ifdef GATE_USE_ECAT7
   //! Set ecat version
   void SetEcatVersion(const G4int aNumber) { m_ecatVersion = aNumber; } ;
@@ -207,13 +207,13 @@ public:
   /*! \brief Overload of the base-class' virtual method to print-out a description of the module
 
 	\param indent: the print-out indentation (cosmetic parameter)
-  */    
+  */
   void Describe(size_t indent=0);
 
   //! Fill the main header
   void FillMainHeader();
   //! Write the GATE specific scanner information into the main header
-  
+
   //! Fill the sub-header and data
   void FillData(GateSinogram* m_sinogram);
 
@@ -230,11 +230,11 @@ private:
   #endif
   Main_header *mh;
   Scan3D_subheader *sh;
-  
+
   G4int                 m_mashing;           //! azimutal mashing factor
   G4int                 m_span;              //! polar mashing factor
   G4int                 m_maxRingDiff;       //! maximum ring difference
-  
+
   G4int                 m_segmentNb;
   G4int                *m_delRingMinSeg;
   G4int                *m_delRingMaxSeg;
@@ -251,6 +251,6 @@ private:
   //std::ofstream     	      	m_headerFile; 	      	    //!< Output stream for the header file
   //std::ofstream     	      	m_dataFile;   	      	    //!< Output stream for the data file
 
-  
+
 };
 #endif

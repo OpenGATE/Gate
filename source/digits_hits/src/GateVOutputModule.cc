@@ -34,9 +34,8 @@ GateVOutputModule::~GateVOutputModule()
 /* Virtual method to print-out a description of the module
 
 	indent: the print-out indentation (cosmetic parameter)
-*/    
+*/
 void GateVOutputModule::Describe(size_t indent)
 {
   G4cout << G4endl << GateTools::Indent(indent) << "Output module: '" << m_name << "'" << G4endl;
 }
-

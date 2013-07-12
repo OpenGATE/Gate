@@ -35,8 +35,8 @@ See GATE/LICENSE.txt for further details
 
 class GateSecondaryProductionActor : public GateVActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
 
@@ -74,7 +74,7 @@ protected:
 
   TH1F * pFrag;
 
- 
+
 
 };
 

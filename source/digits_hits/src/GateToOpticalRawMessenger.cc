@@ -11,7 +11,7 @@
 
 /*! \file GateToOpticalRawMessenger.cc
    Created on   2012/07/09  by vesna.cuplov@gmail.com
-   Implemented new class GateToOpticalRaw for Optical photons: write result of the projection. 
+   Implemented new class GateToOpticalRaw for Optical photons: write result of the projection.
 */
 
 
@@ -31,7 +31,7 @@
 GateToOpticalRawMessenger::GateToOpticalRawMessenger(GateToOpticalRaw* gateToOpticalRaw)
   : GateOutputModuleMessenger(gateToOpticalRaw)
   , m_gateToOpticalRaw(gateToOpticalRaw)
-{ 
+{
   G4String cmdName;
 
 }
@@ -54,9 +54,7 @@ void GateToOpticalRawMessenger::SetNewValue(G4UIcommand* command,G4String /*newV
     G4cout << "GateToOpticalRaw::DisableCmd: Do nothing" << G4endl;
   }
 /* No else anymore
-  else 
+  else
     { GateOutputModuleMessenger::SetNewValue(command,newValue);  }
 */
 }
-
-

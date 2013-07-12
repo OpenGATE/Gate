@@ -28,10 +28,10 @@ See GATE/LICENSE.txt for further details
 /// \brief Actor displaying nb events/tracks/step
 class GateSimulationStatisticActor : public GateVActor
 {
- public: 
-  
+ public:
+
   virtual ~GateSimulationStatisticActor();
-    
+
   //-----------------------------------------------------------------------------
   // This macro initialize the CreatePrototype and CreateInstance
   FCT_FOR_AUTO_CREATOR_ACTOR(GateSimulationStatisticActor)
@@ -45,7 +45,7 @@ class GateSimulationStatisticActor : public GateVActor
   virtual void BeginOfRunAction(const G4Run*);
   virtual void BeginOfEventAction(const G4Event*);
   virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
-  virtual void UserSteppingAction(const GateVVolume *, const G4Step*); 
+  virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
 
   //-----------------------------------------------------------------------------
   /// Saves the data collected to the file
@@ -64,7 +64,7 @@ protected:
   timeval start;
   timeval start_afterinit;
   std::string startDateStr;
-  
+
   GateActorMessenger * pActor;
 };
 
@@ -72,4 +72,3 @@ MAKE_AUTO_CREATOR_ACTOR(SimulationStatisticActor,GateSimulationStatisticActor)
 
 
 #endif /* end #define GATESIMULATIONSTATISTICACTOR_HH */
-

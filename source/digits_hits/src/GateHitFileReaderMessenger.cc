@@ -26,7 +26,7 @@ See GATE/LICENSE.txt for further details
 
 GateHitFileReaderMessenger::GateHitFileReaderMessenger(GateHitFileReader* itsHitFileReader)
   : GateClockDependentMessenger(itsHitFileReader)
-{ 
+{
   SetDirectoryGuidance("Control the parameters of the hit-file reader used for DigiGate");
 
   G4String cmdName;
@@ -48,12 +48,12 @@ GateHitFileReaderMessenger::~GateHitFileReaderMessenger()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 void GateHitFileReaderMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
+{
   if (command == SetFileNameCmd)
     GetHitFileReader()->SetFileName(newValue);
   else
     GateClockDependentMessenger::SetNewValue(command,newValue);
-   
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....

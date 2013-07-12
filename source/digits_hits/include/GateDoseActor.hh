@@ -14,7 +14,7 @@ See GATE/LICENSE.txt for further details
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
 	  david.sarrut@creatis.insa-lyon.fr
-	  
+
 	  DoseToWater option added by Loïc Grevillot
   \date	March 2011
  */
@@ -34,8 +34,8 @@ class G4EmCalculator;
 
 class GateDoseActor : public GateVImageActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
   virtual ~GateDoseActor();
@@ -64,7 +64,7 @@ class GateDoseActor : public GateVImageActor
   void EnableRBE1FactorImage(bool b) { mIsRBE1FactorImageEnabled = b; }
   void EnableRBE1BioDoseImage(bool b) { mIsRBE1BioDoseImageEnabled = b; }
   void EnableRBE1Test1(bool b) { mIsRBE1Test1Enabled = b; }
-  
+
   void SetRBE1AlphaDataFilename(G4String f) { mRBE1AlphaDataFilename = f; }
   void SetRBE1BetaDataFilename(G4String f) { mRBE1BetaDataFilename = f; }
 

@@ -21,12 +21,12 @@ class GateToSinoAccelMessenger: public GateOutputModuleMessenger
   public:
     GateToSinoAccelMessenger(GateToSinoAccel* gateToSinoAccel);
    ~GateToSinoAccelMessenger();
-    
+
     void SetNewValue(G4UIcommand*, G4String);
-    
+
   protected:
     GateToSinoAccel*     m_gateToSinoAccel;
-    
+
     G4UIcmdWithAString*         SetFileNameCmd;          //!< The UI command "set file name"
     G4UIcmdWithABool*           TruesOnlyCmd; 		 //!< The UI command "true coincidences only"
     G4UIcmdWithAnInteger*       SetRadialElemNbCmd;  	 //!< The UI command "Number of radial sinogram bins"

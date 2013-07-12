@@ -47,7 +47,7 @@ void GatePhantomSD::Initialize(G4HCofThisEvent*HCE)
 {
   static int HCID = -1;
   phantomCollection = new GatePhantomHitsCollection
-                   (SensitiveDetectorName,thePhantomCollectionName); 
+                   (SensitiveDetectorName,thePhantomCollectionName);
   if(HCID<0)
   { HCID = GetCollectionID(0); }
   HCE->AddHitsCollection(HCID,phantomCollection);
@@ -57,9 +57,9 @@ void GatePhantomSD::Initialize(G4HCofThisEvent*HCE)
 }
 
 G4bool GatePhantomSD::ProcessHits(G4Step* aStep,G4TouchableHistory* /*ROhist*/) {
-  
+
   G4Track* aTrack       = aStep->GetTrack();
-  G4int    trackID      = aTrack->GetTrackID();  
+  G4int    trackID      = aTrack->GetTrackID();
   G4int    parentID     = aTrack->GetParentID();
 
   G4String partName     = aTrack->GetDefinition()->GetParticleName();
@@ -77,7 +77,7 @@ G4bool GatePhantomSD::ProcessHits(G4Step* aStep,G4TouchableHistory* /*ROhist*/) 
     pvName  =t->GetVolume()->GetName();
     //   G4cout << "GatePhantomSD::ProcessHits - voxelcoord is "<< voxCoord << ", pvname "<< pvName << G4endl;
   }
- 
+
 
 //    ID : crystal where the hit takes place
 //    G4TouchableHistory* theTouchable =
@@ -88,22 +88,22 @@ G4bool GatePhantomSD::ProcessHits(G4Step* aStep,G4TouchableHistory* /*ROhist*/) 
   // moduleID : module where the crystal is placed
 //    physVol = physVol->GetMother();
 //    G4int moduleID  = physVol->GetCopyNo();
-  
+
   // process in the current step
   const G4VProcess* process;
   G4String processName;
-  
+
   process = newStepPoint->GetProcessDefinedStep();
-  if (process != NULL) 
-      processName = process->GetProcessName();           
+  if (process != NULL)
+      processName = process->GetProcessName();
   else
       processName = "";
-  
+
   //Note: if the energy is deposited by an electron hit by the gamma it doesn't work...
-  	
+
   // deposit energy in the current step
-  G4double edep = aStep->GetTotalEnergyDeposit();  
-     
+  G4double edep = aStep->GetTotalEnergyDeposit();
+
   //if(edep==0.) return true;
 
   // stepLength of the current step
@@ -113,11 +113,11 @@ G4bool GatePhantomSD::ProcessHits(G4Step* aStep,G4TouchableHistory* /*ROhist*/) 
 
   // hit position
   G4ThreeVector position = newStepPoint->GetPosition();
-  
+
   GatePhantomHit* aHit = new GatePhantomHit();
-  aHit->SetPDGEncoding( PDGEncoding );  
-  aHit->SetEdep( edep );  
-  aHit->SetStepLength( stepLength );  
+  aHit->SetPDGEncoding( PDGEncoding );
+  aHit->SetEdep( edep );
+  aHit->SetStepLength( stepLength );
   aHit->SetTime( aTime );
   aHit->SetPos( position );
   aHit->SetProcess( processName );
@@ -125,20 +125,20 @@ G4bool GatePhantomSD::ProcessHits(G4Step* aStep,G4TouchableHistory* /*ROhist*/) 
   aHit->SetParentID( parentID );
   aHit->SetVoxelCoordinates( voxCoord );
   aHit->SetPhysVolName( pvName );
- 
+
   /*
-  G4cout << "PARTICLE:" << partName 
-	 << "TRACK ID:" << trackID 
-  	 << "; PARENT ID:" << parentID 
-	 << "; PROCESS:" << processName 
+  G4cout << "PARTICLE:" << partName
+	 << "TRACK ID:" << trackID
+  	 << "; PARENT ID:" << parentID
+	 << "; PROCESS:" << processName
   	 << "; EDEP:" << edep/keV
 	 << ", position " <<position
 	 << "; Coord " << voxCoord
 	 << G4endl;
   */
-  
+
   phantomCollection->insert( aHit );
-  
+
   return true;
 }
 
@@ -147,13 +147,12 @@ void GatePhantomSD::EndOfEvent(G4HCofThisEvent*)
 
 void GatePhantomSD::clear()
 {
-} 
+}
 
 void GatePhantomSD::DrawAll()
 {
-} 
+}
 
 void GatePhantomSD::PrintAll()
 {
-} 
-
+}

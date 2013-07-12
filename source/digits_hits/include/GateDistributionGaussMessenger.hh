@@ -35,4 +35,3 @@ class GateDistributionGaussMessenger: public GateDistributionMessenger
 };
 
 #endif
-

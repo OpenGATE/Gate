@@ -29,37 +29,37 @@ public:
 //  typedef unsigned long long int  buffer_t;
   GateTriCoincidenceSorter(GateCoincidencePulseProcessorChain* itsChain,
 			     const G4String& itsName);
-  
+
   virtual ~GateTriCoincidenceSorter();
 
 
-  
-public:  
+
+public:
    inline GatePulseList* FindSinglesPulseList(const G4String& pulseListName)
    {return m_digitizer->FindPulseList(pulseListName);}
-   
+
    inline void SetSinglesPulseListName(G4String& name)      {m_sPulseListName = name ;}
-   
+
    inline G4double GetTriCoincWindow()                      { return m_triCoincWindow;}
    inline void SetTriCoincWindow( G4double window)          { m_triCoincWindow = window;}
-   
+
    inline void  SetWSPulseListSize(G4int size)              { m_waitingSinglesSize = size; }
    inline G4int GetWSPulseListSize() const                  { return m_waitingSinglesSize; }
-   
+
    inline bool IsTriCoincProcessor() const { return 1; }
 
   virtual void DescribeMyself(size_t indent);
   virtual void RegisterTCSingles(GatePulseList& sPulseList);
   virtual G4String SetSinglesTreeName(const G4String& name);
   virtual void CollectSingles();
-  
+
 protected:
-  
+
   /*! Implementation of the pure virtual method declared by the base class GateVCoincidencePulseProcessor*/
   GateCoincidencePulse* ProcessPulse(GateCoincidencePulse* inputPulse,G4int iPulse);
-  
 
-private: 
+
+private:
    GateDigitizer* m_digitizer;
    G4String m_sPulseListName;
    GateTriCoincidenceSorterMessenger *m_messenger;    //!< Messenger

@@ -9,10 +9,10 @@
   ----------------------*/
 
 /*  Optical Photons: V. Cuplov -  2012
-         - New function RecordOpticalData(event). 
-         - New tree for optical photon data is defined in GateToRoot class (previously was in GateFastAnalysis)   
+         - New function RecordOpticalData(event).
+         - New tree for optical photon data is defined in GateToRoot class (previously was in GateFastAnalysis)
          - Revision v6.2   2012/07/09  by vesna.cuplov@gmail.com
-           output ROOT file is dedicated to optical photons 
+           output ROOT file is dedicated to optical photons
          - Revision v6.2   2012/07/24  by vesna.cuplov@gmail.com
            Unique output file with Gate default trees (Hits,Singles,Coincidences...) + OpticalData Tree.
          - Revision v6.2 2012/08/06  Added optical photon momentum direction (x,y,z) in tree.
@@ -132,7 +132,7 @@ GateToRoot::GateToRoot(const G4String& name, GateOutputMgr* outputMgr,DigiMode d
   // required by newer versions of Root to open a TCanvas on the screen
   //TApplication *theApp = new TApplication("App", ((int *)0), ((char **)0),0,0);
   //TApplication *theApp = new TApplication("App",0, 0,0,0);
-  
+
     /* PY Descourt Tracker/Detector 08/09/2009  */
    m_TracksFile = 0;
    m_EOF = 0;
@@ -151,7 +151,7 @@ GateToRoot::GateToRoot(const G4String& name, GateOutputMgr* outputMgr,DigiMode d
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-GateToRoot::~GateToRoot() 
+GateToRoot::~GateToRoot()
 {
   delete m_rootMessenger;
   if (nVerboseLevel > 0) G4cout << "GateToRoot deleting..." << G4endl;
@@ -176,7 +176,7 @@ const G4String& GateToRoot::GiveNameOfFile()
 //--------------------------------------------------------------------------
 void GateToRoot::Book()
 {
-  
+
   if (nVerboseLevel > 2)
     G4cout << "GateToRoot::Book" << G4endl;
 
@@ -205,10 +205,10 @@ void GateToRoot::Book()
    // hist = new TH1F(hist_name,hist_title,100,-5, 5);
 		new TH1F(hist_name,hist_title,100,-5, 5);
 
-    //! Root simple ntuple, float sequence 
+    //! Root simple ntuple, float sequence
     //TNtuple *ntuple;
     G4String ntuple_name="Gate";
-    if (nVerboseLevel > 0) G4cout 
+    if (nVerboseLevel > 0) G4cout
   			   << "GateToRoot: ROOT: Ntuple " << ntuple_name << " being Created"<<G4endl;
     //ntuple = new TNtuple(ntuple_name,"Gate","event:iontime:poskinene:posannihildist");
 		new TNtuple(ntuple_name,"Gate","event:iontime:poskinene:posannihildist");
@@ -281,7 +281,7 @@ void GateToRoot::Book()
 // Method called at the beginning of each acquisition by the application manager: opens the ROOT file and prepare the trees
 void GateToRoot::RecordBeginOfAcquisition()
 {
-  
+
   if (nVerboseLevel > 2)
     G4cout << "GateToRoot::RecordBeginOfAcquisition" << G4endl;
 
@@ -297,8 +297,8 @@ if ( ( theMode == kBoth ) || ( theMode == kDetector ) )
 //////////////////////
 //////////
 ////
-//DETECTOR MODE : open the Tracks data Root File 
-if ( theMode == kDetector ) 
+//DETECTOR MODE : open the Tracks data Root File
+if ( theMode == kDetector )
 {
 
  m_currentGTrack = new GateTrack();
@@ -316,18 +316,18 @@ if (nVerboseLevel > 1) G4cout << "GateToRoot::RecordBeginOfAcquisition  gROOT is
   case kruntimeMode:
     // In run-time mode, we open the file in RECREATE mode
 
-// v. cuplov - m_fileName from SetFileName is defined without ".root" (see changes in GateToRoot.hh) 
+// v. cuplov - m_fileName from SetFileName is defined without ".root" (see changes in GateToRoot.hh)
 // Additionnal root files names will be of the form GateOutPut_additionnalName.root.
 // In the previous version of the code, file names would appear as GateOutPut.root_additionnalName.root
-//    m_hfile = new TFile( GetFilePath() ,"RECREATE","ROOT file with histograms");  
-    m_hfile = new TFile( (m_fileName+".root").c_str() ,"RECREATE","ROOT file with histograms"); 
-// v. cuplov 
-      
+//    m_hfile = new TFile( GetFilePath() ,"RECREATE","ROOT file with histograms");
+    m_hfile = new TFile( (m_fileName+".root").c_str() ,"RECREATE","ROOT file with histograms");
+// v. cuplov
+
     break;
   case kofflineMode:
     // In DigiGate mode, we first check that the file does not exist. If it does, we abort as we want to make sure the ROOT file is not overwritten by accident
 
-// v. cuplov - m_fileName from SetFileName is defined without ".root" (see changes in GateToRoot.hh) 
+// v. cuplov - m_fileName from SetFileName is defined without ".root" (see changes in GateToRoot.hh)
 // Additionnal root files names will be of the form GateOutPut_additionnalName.root.
 // In the previous version of the code, file names would appear as GateOutPut.root_additionnalName.root
 //    FILE* rootFile = fopen ( GetFilePath() , "r");
@@ -345,7 +345,7 @@ if (nVerboseLevel > 1) G4cout << "GateToRoot::RecordBeginOfAcquisition  gROOT is
       G4Exception( "GateToRoot::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException,msg );
     }
 
-// v. cuplov - m_fileName from SetFileName is defined without ".root" (see changes in GateToRoot.hh) 
+// v. cuplov - m_fileName from SetFileName is defined without ".root" (see changes in GateToRoot.hh)
 // Additionnal root files names will be of the form GateOutPut_additionnalName.root.
 // In the previous version of the code, file names would appear as GateOutPut.root_additionnalName.root
 //    m_hfile = new TFile( GetFilePath(),"CREATE","ROOT file with histograms");
@@ -354,7 +354,7 @@ if (nVerboseLevel > 1) G4cout << "GateToRoot::RecordBeginOfAcquisition  gROOT is
 
     break;
   }
-  
+
   // Check that we succeeded in opening the file
   if (!m_hfile)
 	{
@@ -372,7 +372,7 @@ if (nVerboseLevel > 1) G4cout << "GateToRoot::RecordBeginOfAcquisition  gROOT is
 
   return;
 }
-if ( theMode == kTracker ) 
+if ( theMode == kTracker )
 {
 
  m_currentGTrack = new GateTrack();
@@ -395,7 +395,7 @@ if ( theMode == kTracker )
        G4Exception( "GateToRoot::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException,msg );
 	}
  if (nVerboseLevel > 0) G4cout << "GateToRoot: ROOT: Ntuple " << "PhTracksData" << " being Created"<<G4endl;
- 
+
  tracksTuple = new TTree(G4String("PhTracksData").c_str(),"PhantomTracksData");
 
  tracksTuple->Branch(G4String("RunID").c_str(),&RunID,"RunID/I");
@@ -478,12 +478,12 @@ void GateToRoot::RecordEndOfAcquisition()
 
   //=================  cluster  ===============================================
   //we store the latest event ID at end of time split
-  //we have to consider the case that virtualStop == end of Timeslice 
+  //we have to consider the case that virtualStop == end of Timeslice
   //in this case we leave latesteventID=0
   G4double virtualStop  = GateApplicationMgr::GetInstance()->GetVirtualTimeStop();
   G4double timeStart  = GateApplicationMgr::GetInstance()->GetTimeStart();
   G4double timeSlice  = GateApplicationMgr::GetInstance()->GetTimeSlice();
-  
+
   //! We need to fill this histogram with the latest eventID of the simulation.
   //! This will be used when merging all root output in cluster mode.
   if(virtualStop!=-1. && fmod((virtualStop-timeStart),timeSlice)>1e-10)
@@ -513,9 +513,9 @@ void GateToRoot::RecordEndOfAcquisition()
   {
     G4cerr << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'total_nb_primaries' histogram to fill it !" << G4endl;
   }
-  
+
   /* PY Descourt 08/09/2009 */
-  
+
 GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
 TrackingMode theMode = myAction->GetMode();
         if ( theMode == kTracker )
@@ -525,7 +525,7 @@ TrackingMode theMode = myAction->GetMode();
       if ( m_RecStepTree != 0 ) {m_RecStepTree->Print();}
        ///// IMPORTANT NOTE
        /////    in case we have a lot of data being written, Root automatically create new files when file size exceeds 1.9 GBytes and closes files on the fly
-       //// we need first to get the right pointer on the last file with the TTree method TTree::GetCurrentFile() which returns a pointer to the opened current Root File 
+       //// we need first to get the right pointer on the last file with the TTree method TTree::GetCurrentFile() which returns a pointer to the opened current Root File
        ///  which is not the one we intstantiated if more than one Root File has been written
        ////
       m_hfile = tracksTuple->GetCurrentFile();
@@ -537,7 +537,7 @@ TrackingMode theMode = myAction->GetMode();
       G4cout << "GateToRoot: ROOT: files closing..." << G4endl;
       if ( m_hfile->IsOpen() ){ m_hfile->Close(); }
    }
-   
+
    if ( ( theMode == kBoth ) || ( theMode == kDetector ) )
  {
   //!    IMPORTANT NOTE
@@ -547,17 +547,17 @@ TrackingMode theMode = myAction->GetMode();
   //!    TTree method TTree::GetCurrentFile() which returns a pointer to the opened
   //!    current Root File
   //!  which is not the one we intstantiated if more than one Root File has been written
-       
+
   m_hfile = m_treeHit->GetCurrentFile();
-   
+
   if (nVerboseLevel > 0)
     G4cout << "GateToRoot: ROOT: files writing..." << G4endl;
-  //GateMessage("Output", 1, " GateToRoot: ROOT: files writing..." << G4endl;); 
+  //GateMessage("Output", 1, " GateToRoot: ROOT: files writing..." << G4endl;);
   m_hfile->Write();
-   
+
   if (nVerboseLevel > 0)
     G4cout << "GateToRoot: ROOT: files closing..." << G4endl;
-  //GateMessage("Output", 1, " GateToRoot: ROOT: files closing..." << G4endl;); 
+  //GateMessage("Output", 1, " GateToRoot: ROOT: files closing..." << G4endl;);
   m_hfile->Close();
 }
   /* PY Descourt 08/09/2009 */
@@ -580,8 +580,8 @@ void GateToRoot::RecordBeginOfRun(const G4Run* )
       	fclose(rndmFile);
       	CLHEP::HepRandom::restoreEngineStatus("endOfRun.rndm");
       }
-    }*/  
-    
+    }*/
+
   if (nVerboseLevel > 2)
     G4cout << "GateToRoot::RecordBeginOfRun" << G4endl;
   //  Book();
@@ -596,7 +596,7 @@ void GateToRoot::RecordEndOfRun(const G4Run* )
 //  m_recordFlag = 0;
   // save Rndm status
  /* if (m_saveRndmFlag)
-    { 
+    {
       CLHEP::HepRandom::showEngineStatus();
       CLHEP::HepRandom::saveEngineStatus("endOfRun.rndm");
     }*/
@@ -612,9 +612,9 @@ void GateToRoot::RecordEndOfRun(const G4Run* )
 
 //--------------------------------------------------------------------------
 void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
-{ 
-//  GateMessage("Output", 5 , " GateToRoot::RecordBeginOfEvent -- begin" << G4endl;); 
-  
+{
+//  GateMessage("Output", 5 , " GateToRoot::RecordBeginOfEvent -- begin" << G4endl;);
+
   if (nVerboseLevel > 2)
     G4cout << "GateToRoot::RecordBeginOfEvent" << G4endl;
 
@@ -659,7 +659,7 @@ void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
 
                    // we read the RecStep and number of rayleigh & compton scatterings from the RecStep Data Root file
                    if ( fSkipRecStepData == 0 ) GetCurrentRecStepData( evt ) ;
-                   else 
+                   else
                           {   if (nVerboseLevel > 3) G4cout << "GateToRoot::RecordBeginOfEvent   WARNING  fSkipRecStepData = " <<fSkipRecStepData << G4endl;
                               theCRData = theCRData_copy;
                               m_positronKinEnergy = m_positronKinEnergy_copy;
@@ -676,13 +676,13 @@ void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
                               //G4cout << "GateToRoot::RecordBeginOfEvent "<<G4endl;
                              //PrintRecStep();
                           }
-						  
+
 						 // PrintRecStep();
                 }
-                 
+
  /*PY Descourt 08/09/2009 */
-    
-//  GateMessage("Output", 5, " GateToRoot::RecordBeginOfEvent -- end" << G4endl;); 
+
+//  GateMessage("Output", 5, " GateToRoot::RecordBeginOfEvent -- end" << G4endl;);
 
 }
 //--------------------------------------------------------------------------
@@ -690,9 +690,9 @@ void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
 
 //--------------------------------------------------------------------------
 void GateToRoot::RecordEndOfEvent(const G4Event* event)
-{   
+{
 
- // GateMessage("Output", 5 , " GateToRoot::RecordEndOfEvent -- begin" << G4endl;); 
+ // GateMessage("Output", 5 , " GateToRoot::RecordEndOfEvent -- begin" << G4endl;);
 
 
 GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
@@ -703,44 +703,44 @@ if ( theMode == kTracker )return;
   latestEventID+=1.;
 
   GateCrystalHitsCollection* CHC = GetOutputMgr()->GetCrystalHitCollection();
-  
-  if (CHC) {    
-      
+
+  if (CHC) {
+
     // Hits loop
 
     G4int NbHits = CHC->entries();
-      
+
     for (G4int iHit=0;iHit<NbHits;iHit++) {
-	
+
       GateCrystalHit* aHit = (*CHC)[iHit];
       G4String processName = aHit->GetProcess();
       G4int PDGEncoding  =   aHit->GetPDGEncoding();
 
-      if (nVerboseLevel > 2) 
-	 G4cout 
-			       << "GateToRoot::RecordEndOfEvent : CrystalHitsCollection: processName : <" << processName 
+      if (nVerboseLevel > 2)
+	 G4cout
+			       << "GateToRoot::RecordEndOfEvent : CrystalHitsCollection: processName : <" << processName
 			       << ">    Particls PDG code : " << PDGEncoding << G4endl;
-	
+
       if (aHit->GoodForAnalysis()) {
 	m_hitBuffer.Fill(aHit);
-	if (nVerboseLevel > 1) 
+	if (nVerboseLevel > 1)
 	  G4cout << "GateToRoot::RecordEndOfEvent : m_treeHit->Fill" << G4endl;
-	  
-	   
+
+
 	if (m_rootHitFlag) m_treeHit->Fill();
       }
     }
-       
+
     if (m_recordFlag > 0) {
       G4double eventTime = (GateSourceMgr::GetInstance())->GetTime();
       TH1F *hist;
       G4String hist_name;
       hist_name = "Positron_Kinetic_Energy_MeV";
       if ((hist=(TH1F*)gDirectory->GetList()->FindObject(hist_name))!=NULL) {
-	  
+
 	hist->Fill(m_positronKinEnergy/MeV);
       } else {
-	if (nVerboseLevel > 0) G4cout 
+	if (nVerboseLevel > 0) G4cout
 				 << "GateToRoot: ROOT: Cannot find histo"<< hist_name << G4endl;
       }
       hist_name = "Ion_decay_time_s";
@@ -748,7 +748,7 @@ if ( theMode == kTracker )return;
       if ((hist=(TH1F*)gDirectory->GetList()->FindObject(hist_name))!=NULL) {
 	hist->Fill(eventTime/s);
       } else {
-	if (nVerboseLevel > 0) G4cout 
+	if (nVerboseLevel > 0) G4cout
 				 << "GateToRoot:  ROOT: Cannot find histo"<< hist_name << G4endl;
       }
       G4ThreeVector posAnnihilDist = m_positronAnnihilPos - m_positronGenerationPos;
@@ -757,37 +757,37 @@ if ( theMode == kTracker )return;
       if ((hist=(TH1F*)gDirectory->GetList()->FindObject(hist_name))!=NULL) {
 	hist->Fill(posAnnihilDist.mag()/mm);
       } else {
-	if (nVerboseLevel > 0) G4cout 
+	if (nVerboseLevel > 0) G4cout
 				 << "GateToRoot:  ROOT: Cannot find histo"<< hist_name << G4endl;
       }
-        
+
       // Histo of acolinearity angle distribution
-	
+
       G4double dev=(dxg1*dxg2+dyg1*dyg2+dzg1*dzg2)/((sqrt(dxg1*dxg1+dyg1*dyg1+dzg1*dzg1))*(sqrt(dxg2*dxg2+dyg2*dyg2+dzg2*dzg2)));
       G4double Pi = 3.14159265;
       if (dzg1 > dzg2) {dev = acos(-dev)*180/Pi;}
       else {dev = acos(dev)*180/Pi - 180;}
-	
+
 	if (isnan(dev) ) dev = 0.;
-	
+
 	// G4cout<< " dev = " << dev << G4endl;
-	
+
       hist_name = "Acolinea_Angle_Distribution_deg";
       hist = NULL;
       if ((hist=(TH1F*)gDirectory->GetList()->FindObject(hist_name))!=NULL) {
 	hist->Fill(dev);
       } else {
-	//if (nVerboseLevel > 0) 
+	//if (nVerboseLevel > 0)
 	G4cout << "GateToRoot:  ROOT: Cannot find histo "<< hist_name << G4endl;
       }
-		    
+
       TNtuple *ntuple;
       G4String ntuple_name="Gate";
       if ((ntuple=(TNtuple *)gDirectory->GetList()->FindObject(ntuple_name))==NULL) {
-	if (nVerboseLevel > 0) G4cout 
+	if (nVerboseLevel > 0) G4cout
 				 << "GateToRoot: ROOT: Cannot find ntuple "<< ntuple_name << G4endl;
       } else {
-	//! better than the simple eventID, but still not enough: it's valid only for 
+	//! better than the simple eventID, but still not enough: it's valid only for
 	//! the single run and not for the application
 	G4int iEvent = ((GatePrimaryGeneratorAction*)G4RunManager::GetRunManager()->
 			GetUserPrimaryGeneratorAction())->GetEventNumber();
@@ -796,8 +796,8 @@ if ( theMode == kTracker )return;
 					   m_positronKinEnergy/MeV,
 					   posAnnihilDist.mag()/mm);
       }
-      
-    }   
+
+    }
 
   }
 
@@ -807,16 +807,16 @@ if ( theMode == kTracker )return;
   RecordOpticalData(event);
 // v. cuplov - optical photons
 
- // GateMessage("Output", 5, " GateToRoot::RecordEndOfEvent -- end" << G4endl;); 
+ // GateMessage("Output", 5, " GateToRoot::RecordEndOfEvent -- end" << G4endl;);
 
 }
 
 //--------------------------------------------------------------------------
 
 // v.cuplov - optical photon: Record OpticalPhoton Data
-void GateToRoot::RecordOpticalData(const G4Event * event) 
-{ 
-  G4TrajectoryContainer* trajectoryContainer = event->GetTrajectoryContainer(); 
+void GateToRoot::RecordOpticalData(const G4Event * event)
+{
+  G4TrajectoryContainer* trajectoryContainer = event->GetTrajectoryContainer();
   if (trajectoryContainer)  m_trajectoryNavigator->SetTrajectoryContainer(trajectoryContainer);
 
    GateCrystalHitsCollection* CHC = GetOutputMgr()->GetCrystalHitCollection();
@@ -839,7 +839,7 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
 // Looking at Phantom Hit Collection:
    if (PHC) {
 
-    G4int NpHits = PHC->entries();   
+    G4int NpHits = PHC->entries();
     strcpy (NameOfProcessInPhantom, "");
 
          for (G4int iPHit=0;iPHit<NpHits;iPHit++)
@@ -877,18 +877,18 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
 
 
 // Looking at Crystal Hits Collection:
-  if (CHC) {   
- 
-    G4int NbHits = CHC->entries();  
+  if (CHC) {
+
+    G4int NbHits = CHC->entries();
     strcpy (NameOfProcessInCrystal, "");
 
-        for (G4int iHit=0;iHit<NbHits;iHit++) 
+        for (G4int iHit=0;iHit<NbHits;iHit++)
            {
                GateCrystalHit* aHit = (*CHC)[iHit];
                G4String processName = aHit->GetProcess();
 
 //              if (aHit->GoodForAnalysis() && aHit-> GetPDGEncoding()==0) // looking at optical photons only
-		if (aHit->GoodForAnalysis()) 
+		if (aHit->GoodForAnalysis())
                {
                	  strcpy (NameOfProcessInCrystal, aHit->GetProcess().c_str());
 
@@ -909,7 +909,7 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
                      CrystalLastHitPos_X = (*CHC)[iHit]->GetGlobalPos().x();
                      CrystalLastHitPos_Y = (*CHC)[iHit]->GetGlobalPos().y();
                      CrystalLastHitPos_Z = (*CHC)[iHit]->GetGlobalPos().z();
-                     CrystalLastHitEnergy = (*CHC)[iHit]->GetEdep();             
+                     CrystalLastHitEnergy = (*CHC)[iHit]->GetEdep();
                   }
                 } // end GoodForAnalysis()
           } // end loop over crystal hits
@@ -926,8 +926,8 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
 
 
 //--------------------------------------------------------------------------
-void GateToRoot::RecordDigitizer(const G4Event* ) 
-{ 
+void GateToRoot::RecordDigitizer(const G4Event* )
+{
   if (nVerboseLevel > 2)
     G4cout << "GateToRoot::RecordDigitizer" << G4endl;
 
@@ -943,30 +943,30 @@ void GateToRoot::RecordDigitizer(const G4Event* )
 void GateToRoot::RecordStepWithVolume(const GateVVolume *, const G4Step* aStep)
 {
 
-// v. cuplov - optical photon momentum direction 
-  G4ParticleDefinition* partDef = aStep->GetTrack()->GetDefinition();  
+// v. cuplov - optical photon momentum direction
+  G4ParticleDefinition* partDef = aStep->GetTrack()->GetDefinition();
   if (partDef == G4OpticalPhoton::OpticalPhotonDefinition()) {
      	G4ThreeVector momentumDirection = aStep->GetTrack()->GetMomentumDirection();
      	MomentumDirectionx = momentumDirection.x();
      	MomentumDirectiony = momentumDirection.y();
      	MomentumDirectionz = momentumDirection.z();
   }
-// v. cuplov - optical photon momentum direction 
+// v. cuplov - optical photon momentum direction
 
    if (m_recordFlag > 0) {
   //GateMessage("OutputMgr", 5, " GateToRoot::RecordStep -- begin " << G4endl;);
-   
+
   if (nVerboseLevel > 2)
     G4cout << "GateToRoot::RecordStep" << G4endl;
 
   G4ParticleDefinition* partDef = aStep->GetTrack()->GetDefinition();
-	
+
   if (partDef == G4Positron::PositronDefinition()) {
     if (nVerboseLevel > 1) G4cout << "GateToRoot: Positron " << G4endl;
     G4String procName;
     const G4VProcess* process;
     process = aStep->GetPreStepPoint()->GetProcessDefinedStep();
-    if (process != NULL) { 
+    if (process != NULL) {
       procName = process->GetProcessName();
     } else {
       procName = "";
@@ -975,54 +975,54 @@ void GateToRoot::RecordStepWithVolume(const GateVVolume *, const G4Step* aStep)
     if (procName == "") {
       m_positronKinEnergy = aStep->GetPreStepPoint()->GetKineticEnergy();
       m_positronGenerationPos = aStep->GetPreStepPoint()->GetPosition();
-      if (nVerboseLevel > 1) G4cout << "GateToRoot: Process empty." 
+      if (nVerboseLevel > 1) G4cout << "GateToRoot: Process empty."
 				    << " m_positronKinEnergy " << m_positronKinEnergy << G4endl;
     }
     procName = aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
-    if (procName == "annihil") { 
+    if (procName == "annihil") {
       m_positronAnnihilPos = aStep->GetPostStepPoint()->GetPosition();
     }
   } else if (partDef != G4GenericIon::GenericIonDefinition()) {
     G4String procName;
     // could be a secondary ion in the radioactive chain
-    if (aStep->GetTrack()->GetParentID() == 0) { 
+    if (aStep->GetTrack()->GetParentID() == 0) {
       const G4VProcess* process (  aStep->GetPostStepPoint()->GetProcessDefinedStep()  ); // RTA
       if (process && process->GetProcessName() =="RadioactiveDecay" ) m_ionDecayPos = aStep->GetPostStepPoint()->GetPosition(); // RTA
     }
   }
 
-// Calcul of momentum direction for each gamma  -> To plot the angle distribution -> BenchmarkPET 
-      
+// Calcul of momentum direction for each gamma  -> To plot the angle distribution -> BenchmarkPET
+
      G4ThreeVector momentumDirection = aStep->GetTrack()->GetVertexMomentumDirection();
-     
-     if (partDef == G4Gamma::GammaDefinition()) {     
-   
+
+     if (partDef == G4Gamma::GammaDefinition()) {
+
 // We don't take into account the bremstralhung production
-    
+
     G4String procName;
     const G4VProcess* process;
     process = aStep->GetTrack()->GetCreatorProcess();
-    if (process != NULL) { 
+    if (process != NULL) {
       procName = process->GetProcessName();
     } else {
       procName = "";
-    }    
-	  if (aStep->GetTrack()->GetTrackID() == 2 && procName == "annihil") { 
-	  
+    }
+	  if (aStep->GetTrack()->GetTrackID() == 2 && procName == "annihil") {
+
 	  dxg1 = momentumDirection.x();
 	  dyg1 = momentumDirection.y() ;
 	  dzg1 = momentumDirection.z() ;
-	  
+
           }
-	
-          if (aStep->GetTrack()->GetTrackID() == 3 && procName == "annihil") { 
+
+          if (aStep->GetTrack()->GetTrackID() == 3 && procName == "annihil") {
 	  dxg2 = momentumDirection.x();
 	  dyg2 = momentumDirection.y() ;
 	  dzg2 = momentumDirection.z() ;
 	  }
-        }  
-	
-  //GateMessage("OutputMgr", 5, " GateToRoot::RecordStep -- end " << G4endl;);	
+        }
+
+  //GateMessage("OutputMgr", 5, " GateToRoot::RecordStep -- end " << G4endl;);
  }
 
 }
@@ -1120,7 +1120,7 @@ void GateToRoot::RegisterNewSingleDigiCollection(const G4String& aCollectionName
   SingleOutputChannel* singleOutputChannel =
     new SingleOutputChannel(aCollectionName,outputFlag);
   m_outputChannelList.push_back(singleOutputChannel);
-  
+
   //G4cout << " GateToRoot::RegisterNewSingleDigiCollection outputFlag = " <<outputFlag<< G4endl;
   m_rootMessenger->CreateNewOutputChannelCommand(singleOutputChannel);
 }
@@ -1139,13 +1139,13 @@ void GateToRoot::RegisterNewCoincidenceDigiCollection(const G4String& aCollectio
 
 
 //--------------------------------------------------------------------------
-void GateToRoot::SingleOutputChannel::RecordDigitizer() 
+void GateToRoot::SingleOutputChannel::RecordDigitizer()
 {
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
-  
+
   if (m_collectionID<0)
-    m_collectionID = fDM->GetDigiCollectionID(m_collectionName);      
-  const GateSingleDigiCollection * SDC = 
+    m_collectionID = fDM->GetDigiCollectionID(m_collectionName);
+  const GateSingleDigiCollection * SDC =
     (GateSingleDigiCollection*) (fDM->GetDigiCollection( m_collectionID ));
 
   if (!SDC) {
@@ -1155,17 +1155,17 @@ void GateToRoot::SingleOutputChannel::RecordDigitizer()
   } else {
     // Digi loop
     //GateMessage("OutputMgr", 5, " There is SDC collection. " << G4endl;);
-    if (nVerboseLevel>0) G4cout << "[GateToRoot::SingleOutputChannel::RecordDigitizer]: Total Digits: " 
+    if (nVerboseLevel>0) G4cout << "[GateToRoot::SingleOutputChannel::RecordDigitizer]: Total Digits: "
 				<< SDC->entries() << G4endl;
 
-  //  GateMessage("OutputMgr", 5, " Single collection m_outputFlag = " << m_outputFlag << G4endl;);			     
-    
+  //  GateMessage("OutputMgr", 5, " Single collection m_outputFlag = " << m_outputFlag << G4endl;);
+
     if (m_outputFlag) {
       G4int n_digi =  SDC->entries();
       //GateMessage("OutputMgr", 5, " Single collection m_outputFlag = " << m_outputFlag << G4endl;);
       for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
         m_buffer.Fill( (*SDC)[iDigi] );
-        m_tree->Fill(); 
+        m_tree->Fill();
       }
     }
   }
@@ -1173,13 +1173,13 @@ void GateToRoot::SingleOutputChannel::RecordDigitizer()
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-void GateToRoot::CoincidenceOutputChannel::RecordDigitizer() 
+void GateToRoot::CoincidenceOutputChannel::RecordDigitizer()
 {
   //GateMessage("OutputMgr", 5, " GateToRoot::CoincidenceOutputChannel::RecordDigitizer -- begin" << G4endl;);
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
   if (m_collectionID<0)
-    m_collectionID = fDM->GetDigiCollectionID(m_collectionName);      
-  GateCoincidenceDigiCollection * CDC = 
+    m_collectionID = fDM->GetDigiCollectionID(m_collectionName);
+  GateCoincidenceDigiCollection * CDC =
     (GateCoincidenceDigiCollection*) (fDM->GetDigiCollection( m_collectionID ));
 
   if (!CDC) {
@@ -1187,29 +1187,29 @@ void GateToRoot::CoincidenceOutputChannel::RecordDigitizer()
     if (nVerboseLevel>0) G4cout << "[GateToRoot::CoincidenceOutputChannel::RecordDigitizer]:"
 				<< " digi collection '" << m_collectionName << "' not found" << G4endl;
   } else {
-  
+
     //GateMessage("OutputMgr", 5, " There is CDC collection. " << G4endl;);
     // Digi loop
-    if (nVerboseLevel>0) G4cout << "[GateToRoot::CoincidenceOutputChannel::RecordDigitizer]: Total Digits: " 
+    if (nVerboseLevel>0) G4cout << "[GateToRoot::CoincidenceOutputChannel::RecordDigitizer]: Total Digits: "
 				<< CDC->entries() << G4endl;
-				     				     
+
     //GateMessage("OutputMgr", 5, " Coincidence collection m_outputFlag = " << m_outputFlag << G4endl;);
- 
-    if (m_outputFlag) {     
+
+    if (m_outputFlag) {
       G4int n_digi =  CDC->entries();
       for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
         m_buffer.Fill( (*CDC)[iDigi] );
-        m_tree->Fill(); 
+        m_tree->Fill();
       }
     }
   }
-  
+
   //GateMessage("OutputMgr", 5, " GateToRoot::CoincidenceOutputChannel::RecordDigitizer -- end" << G4endl;);
 }
 
 void GateToRoot::CloseTracksRootFile()
-{ 
- if ( m_TracksFile != 0 ) 
+{
+ if ( m_TracksFile != 0 )
  {
         m_RecStepTree ->GetEntry( m_currentRSData );
         last_RSEventID = m_RSEventID;
@@ -1232,7 +1232,7 @@ void GateToRoot::CloseTracksRootFile()
 //G4cout << " GateToRoot::CloseTracksRootFile()"<<G4endl;
 //PrintRecStep();
 
-   if ( m_TracksFile->IsOpen() ) 
+   if ( m_TracksFile->IsOpen() )
    { m_TracksFile->Close();}
  }
 m_EOF = 1;
@@ -1320,7 +1320,7 @@ else
   s << i ;
   aFile = m_fileName+"_TrackerData_"+s.str()+".root";
 }
-//if ( m_verboseLevel > 3 ) 
+//if ( m_verboseLevel > 3 )
 G4cout << "---- " << aFile << G4endl;
 }
 
@@ -1336,7 +1336,7 @@ if ( currentN > 0 )   { std::stringstream s; // convert currentN into string
 
   m_TracksFile = new TFile( fTracksFN.c_str() ,"READ","ROOT file with Tracker Data");
 
-//if ( m_verboseLevel > 3 ) 
+//if ( m_verboseLevel > 3 )
 G4cout << "GateToRoot::OpenTracksFile() :::: Opening Tracks Data Root File " << fTracksFN << G4endl;
 
   // Check that we succeeded in opening the file
@@ -1465,18 +1465,18 @@ void GateToRoot::GetPHData(ComptonRayleighData& aCRData)
     strcpy( aCRData.theComptonVolumeName2 , theCRData.theComptonVolumeName2 );
     strcpy( aCRData.theRayleighVolumeName1 , theCRData.theRayleighVolumeName1 );
     strcpy( aCRData.theRayleighVolumeName2 , theCRData.theRayleighVolumeName2 );
-    
+
 }
 
 void GateToRoot::GetCurrentRecStepData( const G4Event* evt )
 {
 if ( m_currentRSData ==  m_RecStepTree->GetEntries() ) return;
     m_RecStepTree->GetEntry( m_currentRSData );
-	
+
 		//G4cout << " GateToRoot::GetCurrentRecStepData " << G4endl;
 	//PrintRecStep();
-	
-if ( m_RSEventID != evt->GetEventID() ) 
+
+if ( m_RSEventID != evt->GetEventID() )
 {const G4Run* currentRun =  G4RunManager::GetRunManager()->GetCurrentRun() ;
     G4int RunID = currentRun->GetRunID();
  G4cout << " GateToRoot::GetCurrentRecStepData :::: current Run ID "<< RunID <<"    current RecStep File " <<m_RecStepTree->GetCurrentFile()->GetName()<<G4endl;
@@ -1507,7 +1507,7 @@ if (nVerboseLevel > 1)
 G4cout << "GateToRoot::GetCurrentTracksData() :::  Reading buffer of size " << nbytes<<" bytes in " << m_fileName+"_TrackerData.root" << G4endl;
 G4cout << "RunID " << RunID << "   EventID " << EventID<< "         Position " <<G4ThreeVector(posx,posy,posz) << G4endl;
 }
-if ( m_currentGTrack != 0 ) 
+if ( m_currentGTrack != 0 )
 {
 G4ThreeVector tmp;
 m_currentGTrack->SetRunID(RunID);
@@ -1546,7 +1546,7 @@ m_particleName = (G4String) ( pd->GetParticleName() );
 m_currentGTrack->SetParticleName( m_particleName );
 }
     if (nVerboseLevel > 1)
-       {  
+       {
              G4cout << " RETRIEVING Current Gate Track Informations : "<<G4endl;
              m_currentGTrack->Print();
        }
@@ -1610,11 +1610,11 @@ if (nVerboseLevel > 0)
 		Momentumx = (*iter)->GetMomentum().x();
 		Momentumy = (*iter)->GetMomentum().y();
 		Momentumz = (*iter)->GetMomentum().z();
-		Energy =  (*iter)->GetTotalEnergy() ; 
+		Energy =  (*iter)->GetTotalEnergy() ;
 
 // v. cuplov wavelength
 	if(Energy!=0.){
-//			Wavelength =  1239.61/Energy ; 
+//			Wavelength =  1239.61/Energy ;
 			Wavelength =  1.23961E-3/Energy ; //==> gives nm
 	}
 	else{    Wavelength =  -1. ; }
@@ -1638,7 +1638,7 @@ if (nVerboseLevel > 0)
                 strcpy (  m_parentparticleName  , (*iter)->GetParentParticleName().c_str()   );
                 strcpy (  m_volumeName  , (*iter)->GetVertexVolumeName().c_str()   );
 //G4cout << "GateToRoot::RecordTracks ::: process Name " << m_processName << G4endl;
- 
+
 
 //                G4String aString;
 //                aString          = (*iter)->GetVolAtVertex();
@@ -1690,10 +1690,3 @@ PPTrackVector->clear();
 
 //--------------------------------------------------------------------------
 #endif
-
-
-
-
-
-
-

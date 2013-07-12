@@ -2,7 +2,7 @@
 
 
 - create a new folder (e.g. '<superbuild>/'). In the following change
-  <superbuild> by this folder location. 
+  <superbuild> by this folder location.
 
 - put CMakeList.txt in that folder
 
@@ -16,16 +16,14 @@
     cross-sections and other data):
   source <superbuild>/install/bin/geant4.sh
 
-- setup the Gate environement variables 
-   export LD_LIBRARY_PATH=<superbuild>/install/lib:$LD_LIBRARY_PATH 
+- setup the Gate environement variables
+   export LD_LIBRARY_PATH=<superbuild>/install/lib:$LD_LIBRARY_PATH
    export PATH=<superbuild>/install/bin:PATH
 
 - then you can run Gate which is located into <superbuild>/install/bin/Gate
-    
+
 
 DETAILS:
 - All sources are in <superbuild>/src
 - All compiled source are in <superbuild>/src/XX-build
 - binaries, libraries and data (cross-section) are installed in <superbuild>/install/
-
-

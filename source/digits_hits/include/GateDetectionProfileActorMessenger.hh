@@ -26,9 +26,9 @@ See GATE/LICENSE.txt for further details
 class GateDetectionProfileActor;
 class GateDetectionProfilePrimaryTimerActor;
 
-class GateDetectionProfileActorMessenger : public GateImageActorMessenger 
+class GateDetectionProfileActorMessenger : public GateImageActorMessenger
 {
-  public: 
+  public:
     GateDetectionProfileActorMessenger(GateDetectionProfileActor * v);
     virtual ~GateDetectionProfileActorMessenger();
     virtual void SetNewValue(G4UIcommand*, G4String);
@@ -42,14 +42,14 @@ class GateDetectionProfileActorMessenger : public GateImageActorMessenger
     G4UIcmdWithABool *cmdSetUseCristalPosition;
 };
 
-class GateDetectionProfilePrimaryTimerActorMessenger : public GateActorMessenger 
+class GateDetectionProfilePrimaryTimerActorMessenger : public GateActorMessenger
 {
-  public: 
+  public:
     GateDetectionProfilePrimaryTimerActorMessenger(GateDetectionProfilePrimaryTimerActor * v);
     virtual ~GateDetectionProfilePrimaryTimerActorMessenger();
     virtual void SetNewValue(G4UIcommand*, G4String);
   protected:
-    GateDetectionProfilePrimaryTimerActor *actor; 
+    GateDetectionProfilePrimaryTimerActor *actor;
     G4UIcmdWithAString *cmdAddReportForDetector;
     G4UIcmdWithADoubleAndUnit *cmdSetDetectionSize;
 };

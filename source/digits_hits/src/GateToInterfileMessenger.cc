@@ -24,7 +24,7 @@
 GateToInterfileMessenger::GateToInterfileMessenger(GateToInterfile* gateToInterfile)
   : GateOutputModuleMessenger(gateToInterfile)
   , m_gateToInterfile(gateToInterfile)
-{ 
+{
   G4String cmdName;
 
 /*
@@ -43,7 +43,7 @@ GateToInterfileMessenger::~GateToInterfileMessenger()
 void GateToInterfileMessenger::SetNewValue(G4UIcommand* command,G4String /*newValue*/)
 {
 /*
-  if (command == SetFileNameCmd) 
+  if (command == SetFileNameCmd)
     {  m_gateToInterfile->SetFileName(newValue); }
 */
   // All mother macro commands are overloaded to do nothing
@@ -57,9 +57,7 @@ void GateToInterfileMessenger::SetNewValue(G4UIcommand* command,G4String /*newVa
     G4cout << "GateToInterfile::DisableCmd: Do nothing" << G4endl;
   }
 /* No else anymore
-  else 
+  else
     { GateOutputModuleMessenger::SetNewValue(command,newValue);  }
 */
 }
-
-

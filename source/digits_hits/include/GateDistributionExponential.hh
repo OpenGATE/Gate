@@ -23,7 +23,7 @@ class GateDistributionExponential : public GateVDistribution
     //! Constructor
     GateDistributionExponential(const G4String& itsName);
     //! Destructor
-    virtual ~GateDistributionExponential() ; 
+    virtual ~GateDistributionExponential() ;
 
     //! Setters
     inline void SetLambda(G4double Lambda) {m_Lambda=Lambda;}

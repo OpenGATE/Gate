@@ -20,8 +20,6 @@ GatePulseAdderGPUSpectMessenger::GatePulseAdderGPUSpectMessenger(GatePulseAdderG
 
 
 void GatePulseAdderGPUSpectMessenger::SetNewValue(G4UIcommand* aCommand, G4String aString)
-{ 
-  GatePulseProcessorMessenger::SetNewValue(aCommand,aString); 
+{
+  GatePulseProcessorMessenger::SetNewValue(aCommand,aString);
 }
-
-

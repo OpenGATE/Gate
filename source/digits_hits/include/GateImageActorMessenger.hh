@@ -31,16 +31,16 @@ class GateVImageActor;
 
 //-----------------------------------------------------------------------------
 /// \brief Messenger of GateVImageActor
-class GateImageActorMessenger : public GateActorMessenger 
+class GateImageActorMessenger : public GateActorMessenger
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   /// Constructor with pointer on the associated sensor
   GateImageActorMessenger(GateVImageActor * v);
   /// Destructor
   virtual ~GateImageActorMessenger();
-    
+
   /// Command processing callback
   virtual void SetNewValue(G4UIcommand*, G4String);
   void BuildCommands(G4String base);
@@ -48,7 +48,7 @@ class GateImageActorMessenger : public GateActorMessenger
 protected:
 
   /// Associated sensor
-  GateVImageActor * pImageActor; 
+  GateVImageActor * pImageActor;
 
   /// Command objects
   G4UIcmdWith3VectorAndUnit * pVoxelSizeCmd;
@@ -62,4 +62,3 @@ protected:
 //-----------------------------------------------------------------------------
 
 #endif /* end #define GATEVIMAGEACTORMESSENGER_HH */
-

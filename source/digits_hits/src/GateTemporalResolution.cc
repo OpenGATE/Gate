@@ -21,20 +21,20 @@ See GATE/LICENSE.txt for further details
 
 GateTemporalResolution::GateTemporalResolution(GatePulseProcessorChain* itsChain,
 					       const G4String& itsName,
-					       G4double itsTimeResolution) 
+					       G4double itsTimeResolution)
   : GateVPulseProcessor(itsChain, itsName),
     m_timeResolution(itsTimeResolution)
 {
-  m_messenger = new GateTemporalResolutionMessenger(this); 
-}  
+  m_messenger = new GateTemporalResolutionMessenger(this);
+}
 
 
 
 
-GateTemporalResolution::~GateTemporalResolution() 
+GateTemporalResolution::~GateTemporalResolution()
 {
   delete m_messenger;
-}  
+}
 
 
 
@@ -46,21 +46,21 @@ void GateTemporalResolution::ProcessOnePulse(const GatePulse* inputPulse,GatePul
     G4Exception( "GateTemporalResolution::ProcessOnePulse", "ProcessOnePulse", FatalException,
 			"You must choose a temporal resolution >= 0 /gate/digitizer/Singles/Singles/timeResolution/setTimeResolution TIME\n or disable the temporal resolution using:\n\t/gate/digitizer/Singles/Singles/timeResolution/disable\n");
   }
-  else {  
+  else {
     if (!inputPulse) {
       if (nVerboseLevel>1)
 	G4cout << "[GateTemporalResolution::ProcessOnePulse]: input pulse was null -> nothing to do\n\n";
       return;
     }
-    
+
     if (inputPulse)
-      {  
+      {
 	GatePulse* outputPulse = new GatePulse(*inputPulse);
 	// set the new time by a Gaussian shot of mean: old time, and of sigma: m_timeResolution/2.35
 	G4double sigma =  m_timeResolution / 2.35;
 	outputPulse->SetTime(G4RandGauss::shoot(inputPulse->GetTime(), sigma));
 	outputPulseList.push_back(outputPulse);
-	
+
 	if (nVerboseLevel>1)
 	  {
 	    G4cout << "Pulse real time: " << G4endl
@@ -70,7 +70,7 @@ void GateTemporalResolution::ProcessOnePulse(const GatePulse* inputPulse,GatePul
 		   << "Difference (real - new time): " << G4endl
 		   << G4BestUnit(inputPulse->GetTime() - outputPulse->GetTime(),"Time")
 		   << G4endl << G4endl ;
-           
+
 	  }
       }
   }

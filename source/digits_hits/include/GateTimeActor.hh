@@ -25,10 +25,10 @@ See GATE/LICENSE.txt for further details
 class GateTimeActorMessenger;
 class GateTimeActor : public GateVActor
 {
-public: 
-  
+public:
+
   virtual ~GateTimeActor();
-    
+
   //-----------------------------------------------------------------------------
   // This macro initialize the CreatePrototype and CreateInstance
   FCT_FOR_AUTO_CREATOR_ACTOR(GateTimeActor)
@@ -42,7 +42,7 @@ public:
   virtual void BeginOfRunAction(const G4Run*);
   virtual void EndOfRunAction(const G4Run*);
   virtual void BeginOfEventAction(const G4Event*);
-  virtual void EndOfEventAction(const G4Event*); 
+  virtual void EndOfEventAction(const G4Event*);
   virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
   virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*);
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
@@ -72,12 +72,12 @@ protected:
   typedef std::map<G4String, double> MapType;
   MapType mTimePerParticle;
   MapType mTrackPerParticle;
-  
+
   G4String mCurrentParticleName;
   MapType mNumberOfLimitingProcess;
   MapType mNumberOfAlongByProcess;
   //MapType mNumberOfPostByProcess;
-  
+
   void UpdateCurrentTextOutput();
   std::string mCurrentTextOutput;
 
@@ -88,4 +88,3 @@ MAKE_AUTO_CREATOR_ACTOR(TimeActor,GateTimeActor)
 
 
 #endif /* end #define GATESIMULATIONSTATISTICACTOR_HH */
-

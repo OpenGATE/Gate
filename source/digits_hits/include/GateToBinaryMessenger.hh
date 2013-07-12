@@ -5,7 +5,7 @@
 
 #ifdef G4ANALYSIS_USE_FILE
 
-/*!	
+/*!
  *	\file GateToBinaryMessenger.hh
  *	\brief Messenger of GateToBinary class
  *	\author Didier Benoit <benoit@imnc.in2p3.fr>
@@ -17,7 +17,7 @@
  *	\section LICENCE
  *
  *	Copyright (C): OpenGATE Collaboration
- *	This software is distributed under the terms of the GNU Lesser General 
+ *	This software is distributed under the terms of the GNU Lesser General
  *	Public Licence (LGPL) See GATE/LICENSE.txt for further details
  */
 
@@ -48,7 +48,7 @@ public:
 	 *
 	 */
 	GateToBinaryMessenger( GateToBinary* gateToBinary );
-	
+
 	/*!
 	 *	\brief Destructor
 	 *
@@ -56,7 +56,7 @@ public:
 	 *
 	 */
 	~GateToBinaryMessenger();
-	
+
 	/*!
 	 *	\fn void SetNewValue( G4UIcommand* command, G4String newValue )
 	 *	\brief Set the new value in the messenger
@@ -70,9 +70,9 @@ public:
 	 *	\brief Create a new output channel
 	 *	\param anOutputChannel an output channel
 	 */
-	void CreateNewOutputChannelCommand( GateToBinary::VOutputChannel* 
+	void CreateNewOutputChannelCommand( GateToBinary::VOutputChannel*
 		anOutputChannel );
-	
+
 	/*!
 	 *	\fn bool IsAnOutputChannelCmd( G4UIcommand* command )
 	 *	\brief Check if the output is an output channel
@@ -80,7 +80,7 @@ public:
 	 *	\return a boolean (true/false) if the output is an output channel or not
 	 */
 	G4bool IsAnOutputChannelCmd( G4UIcommand* command );
-	
+
 	/*!
 	 *	\fn void ExecuteOutputChannelCmd( G4UIcommand* command, G4String newValue)
 	 *	\brief Execute the output channel
@@ -89,13 +89,13 @@ public:
 	 */
 	void ExecuteOutputChannelCmd( G4UIcommand* command,
 		G4String newValue );
-	
+
 protected:
 	GateToBinary* m_gateToBinary; /*!< pointer on the GateToBinary class */
-	
+
 	G4int m_coincidenceMaskLength; /*!< Length of the coincidence mask */
 	G4int m_singleMaskLength; /*!< Length of the single mask */
-	
+
 	G4UIcmdWithAString* m_setFileNameCmd; /*!< Command to set the name of file */
 	G4UIcmdWithABool* m_outFileHitsCmd; /*!< Command for the hit output */
   G4UIcmdWithABool* m_outFileVoxelCmd; /*!< Command for the voxel output */
@@ -103,7 +103,7 @@ protected:
 	G4UIcommand* m_singleMaskCmd; /*!< Command for the single mask */
 	G4UIcmdWithAnInteger* m_setOutFileSizeLimitCmd; /*!< Limit of the binary output file (in byte) */
 	std::vector< G4UIcmdWithABool* > m_outputChannelCmd; /*!< Command for the output */
-	
+
 	std::vector< GateToBinary::VOutputChannel* >  m_outputChannelVector; /*!< vector of output channel */
 };
 

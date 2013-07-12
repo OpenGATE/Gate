@@ -108,4 +108,3 @@ void GateDetectionProfilePrimaryTimerActorMessenger::SetNewValue(G4UIcommand* cm
   if (cmd==cmdSetDetectionSize) actor->SetDetectionSize(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue));
   GateActorMessenger::SetNewValue(cmd,newValue);
 }
-

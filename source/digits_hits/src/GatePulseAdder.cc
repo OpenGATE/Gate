@@ -17,19 +17,19 @@ See GATE/LICENSE.txt for further details
 
 
 GatePulseAdder::GatePulseAdder(GatePulseProcessorChain* itsChain,
-      	      	      	       const G4String& itsName) 
-  : GateVPulseProcessor(itsChain,itsName) 
+      	      	      	       const G4String& itsName)
+  : GateVPulseProcessor(itsChain,itsName)
 {
   m_messenger = new GatePulseAdderMessenger(this);
-}  
+}
 
 
 
 
-GatePulseAdder::~GatePulseAdder() 
+GatePulseAdder::~GatePulseAdder()
 {
   delete m_messenger;
-}  
+}
 
 
 
@@ -42,17 +42,17 @@ void GatePulseAdder::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& 
   {
     GatePulseIterator iter;
     for (iter=outputPulseList.begin(); iter!= outputPulseList.end() ; ++iter)
-      if ( (*iter)->GetVolumeID()   == inputPulse->GetVolumeID() ) 
+      if ( (*iter)->GetVolumeID()   == inputPulse->GetVolumeID() )
       {
 	(*iter)->CentroidMerge( inputPulse );
 	if (nVerboseLevel>1)
-	  G4cout << "Merged previous pulse for volume " << inputPulse->GetVolumeID() 
+	  G4cout << "Merged previous pulse for volume " << inputPulse->GetVolumeID()
 		 << " with new pulse of energy " << G4BestUnit(inputPulse->GetEnergy(),"Energy") <<".\n"
 		 << "Resulting pulse is: " << G4endl
 		 << **iter << G4endl << G4endl ;
 	break;
       }
-    
+
     if ( iter == outputPulseList.end() )
     {
       GatePulse* outputPulse = new GatePulse(*inputPulse);
@@ -71,4 +71,3 @@ void GatePulseAdder::DescribeMyself(size_t )
 {
   ;
 }
-

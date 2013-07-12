@@ -34,11 +34,11 @@ GateTrackLengthActor::GateTrackLengthActor(G4String name, G4int depth):
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
-GateTrackLengthActor::~GateTrackLengthActor() 
+/// Destructor
+GateTrackLengthActor::~GateTrackLengthActor()
 {
   GateDebugMessageInc("Actor",4,"~GateTrackLengthActor() -- begin"<<G4endl);
- 
+
 
 
   GateDebugMessageDec("Actor",4,"~GateTrackLengthActor() -- end"<<G4endl);
@@ -79,7 +79,7 @@ void GateTrackLengthActor::SaveData()
 
 
 //-----------------------------------------------------------------------------
-void GateTrackLengthActor::ResetData() 
+void GateTrackLengthActor::ResetData()
 {
   pTrackLength->Reset();
 }

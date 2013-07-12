@@ -48,7 +48,7 @@ class GateROOTBasicOutputMessenger: public G4UImessenger
 
   private:
 
-   GateROOTBasicOutput*            xeHisto;   
+   GateROOTBasicOutput*            xeHisto;
    G4UIdirectory*                  plotDir;
    G4UIcmdWithAString*             setfileNameCmd;
 //   GateUserActions* userActions;

@@ -8,19 +8,19 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-/*! 
+/*!
 
    \file GateToProjectionSet.cc
 
    $Log: GateToProjectionSet.cc,v $
 
-   Bug fix v6.2: 2012/09/24   by vesna.cuplov@gmail.com 
+   Bug fix v6.2: 2012/09/24   by vesna.cuplov@gmail.com
    ProjectionSet is triggered by the name of the system: GateOpticalSystem or SPECThead and works
-   when USE_GATE_OPTICAL is ON or OFF. 
+   when USE_GATE_OPTICAL is ON or OFF.
 
    Revision v6.2   2012/07/09  by vesna.cuplov@gmail.com
    Implemented functions that have a link with the GateToOpticalRaw class for Optical photons which is
-   used to write as an output file the result of the GateToProjectionSet module for Optical Photons. 
+   used to write as an output file the result of the GateToProjectionSet module for Optical Photons.
 
    Revision 1.1.1.1.4.1  2011/03/10 16:32:35  henri
    Implemented multiple energy window interfile output
@@ -73,8 +73,8 @@
    		*Changed some verbose text to show which digi chain is recorded (aka energy window)
    		*Loop over all energy windows in m_inputDataChannelList to store all the digis related to this event
 
-   
-   
+
+
 */
 
 #include "GateToProjectionSet.hh"
@@ -108,12 +108,12 @@
 
 /*  by vesna.cuplov@gmail.com
  *  GateToOpticalRaw is used to write as a binary output file the result of the GateToProjectionSet module for
- *  optical photons. 
+ *  optical photons.
  */
 
 
 // Public constructor (creates an empty, uninitialised, project set)
-GateToProjectionSet::GateToProjectionSet(const G4String& name, GateOutputMgr* outputMgr,GateVSystem* itsSystem,DigiMode digiMode) 
+GateToProjectionSet::GateToProjectionSet(const G4String& name, GateOutputMgr* outputMgr,GateVSystem* itsSystem,DigiMode digiMode)
   : GateVOutputModule(name,outputMgr,digiMode)
   , m_projectionSet(0)
   , m_energyWindowNb(0)
@@ -132,12 +132,12 @@ GateToProjectionSet::GateToProjectionSet(const G4String& name, GateOutputMgr* ou
   m_projectionSet = new GateProjectionSet();
   m_inputDataChannelList.push_back("Singles");
   m_messenger = new GateToProjectionSetMessenger(this);
-  
+
   SetVerboseLevel(0);
 }
 
 
-GateToProjectionSet::~GateToProjectionSet() 
+GateToProjectionSet::~GateToProjectionSet()
 {
   delete m_projectionSet;
 }
@@ -200,7 +200,7 @@ else {  GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateO
 void GateToProjectionSet::SetEnableToProjectionSetAndInterfile()
 {
 // v. cuplov -- GateToOpticalRaw for optical photons
-if (m_system->GetName()=="systems/OpticalSystem") 
+if (m_system->GetName()=="systems/OpticalSystem")
 { GateToOpticalRaw* opticalrawModule = dynamic_cast<GateToOpticalRaw*>( GateOutputMgr::GetInstance()->GetModule("opticalraw") );
   if (!opticalrawModule) G4Exception( "GateToProjectionSet::SetEnableToProjectionSetAndInterfile", "SetEnableToProjectionSetAndInterfile", FatalException, "No GateToOpticalRaw module has been constructed, so no output can be possible with GateToProjectionSet");
   opticalrawModule->Enable(true); // We enable the GateToOpticalRaw module
@@ -216,7 +216,7 @@ else {  GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateO
 void GateToProjectionSet::SetDisableToProjectionSetAndInterfile()
 {
 // v. cuplov -- GateToOpticalRaw for optical photons
-if (m_system->GetName()=="systems/OpticalSystem") 
+if (m_system->GetName()=="systems/OpticalSystem")
 { GateToOpticalRaw* opticalrawModule = dynamic_cast<GateToOpticalRaw*>( GateOutputMgr::GetInstance()->GetModule("opticalraw") );
   if (!opticalrawModule) G4Exception("GateToProjectionSet::SetDisableToProjectionSetAndInterfile", "SetDisableToProjectionSetAndInterfile", FatalException,"No GateToOpticalRaw module has been constructed, so no output can be possible with GateToProjectionSet");
   opticalrawModule->Enable(false); // We disable the GateToOpticalRaw module
@@ -228,7 +228,7 @@ else {  GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateO
   Enable(false); // We disable the GateToProjectionSet module
 }
 }
-// End of functions for messenger commands that have a link with the GateToInterfile or GateToOpticalRaw class 
+// End of functions for messenger commands that have a link with the GateToInterfile or GateToOpticalRaw class
 // ======================================================================================================
 
 // Initialisation of the projection set
@@ -262,14 +262,14 @@ void GateToProjectionSet::RecordBeginOfAcquisition()
       	    <<   "Sorry, but the pixel size along Y for the projection-set (" << G4BestUnit(GetPixelSizeY(),"Length") << ") is invalid" << G4endl;
     G4Exception( "GateToProjectionSet::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "Sorry, but you have not defined the projection plane.\nYou must either define this plane with:\n\t/gate/output/projection/projectionPlane PLANE (XY or YZ or ZX )\n or disable the projection-maker using:\n\t/gate/output/projection/disable\n");
   }
-  
+
   // Added by HDS : retrieve all the input channel IDs (energy windows)
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
   for (std::vector<G4String>::iterator i_inputChannelName = m_inputDataChannelList.begin(); i_inputChannelName != m_inputDataChannelList.end(); ++i_inputChannelName) {
   	m_inputDataChannelIDList.push_back(fDM->GetDigiCollectionID(*i_inputChannelName));
   }
   m_energyWindowNb = m_inputDataChannelList.size();
- 
+
   // Retrieve the parameters of the experiment
   G4double timeStart = GateApplicationMgr::GetInstance()->GetTimeStart();
   G4double timeStop  = GateApplicationMgr::GetInstance()->GetTimeStop();
@@ -280,13 +280,13 @@ void GateToProjectionSet::RecordBeginOfAcquisition()
   G4double fstepNumber = duration / timeStep;
   if ( fabs(fstepNumber-rint(fstepNumber)) >= 1.e-5 ) {
     G4cerr  << 	G4endl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << G4endl
-      	    <<   "Sorry, but the study duration (" << G4BestUnit(duration,"Time") << ") " 
+      	    <<   "Sorry, but the study duration (" << G4BestUnit(duration,"Time") << ") "
 	    <<   " does not seem to be a multiple of the time-slice (" << G4BestUnit(timeStep,"Time") << ")." << G4endl;
     G4Exception( "GateToProjectionSet::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must change these parameters then restart the simulation\n");
   }
   m_projNb = static_cast<size_t>(rint(fstepNumber));
   if (nVerboseLevel>2) G4cout << "Number of acquisition steps: " << m_projNb << G4endl;
-  
+
 
   // Retrieve the parameters of the rotation
   GateSystemComponent* baseComponent = m_system->GetBaseComponent();
@@ -302,7 +302,7 @@ void GateToProjectionSet::RecordBeginOfAcquisition()
   if (!m_headAngularPitch) m_headAngularPitch=360.*deg;
   if (nVerboseLevel>2) G4cout << "Angular pitch between heads: " << m_headAngularPitch/degree << " deg" << G4endl;
 
-  // Prepare the projection set 
+  // Prepare the projection set
   m_projectionSet->Reset(m_energyWindowNb, m_headNb,m_projNb);
 
   if (nVerboseLevel>2) G4cout << "leaving [GateToProjectionSet::RecordBeginOfAcquisition]" << G4endl;
@@ -341,17 +341,17 @@ void GateToProjectionSet::RecordEndOfEvent(const G4Event* )
 		SDC = dynamic_cast<const GateSingleDigiCollection*>(fDM->GetDigiCollection( m_inputDataChannelIDList[energyWindowID] ));
 
 		if (!SDC) {
-			if (nVerboseLevel>2) G4cout << "No digi collection for this event" << G4endl 
+			if (nVerboseLevel>2) G4cout << "No digi collection for this event" << G4endl
 									<< "leaving [GateToProjectionSet::RecordEndOfEvent]" << G4endl;
 			continue;
 		}
-  
+
 		G4int n_digi =  SDC->entries();
 		for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
 			G4int headID = m_system->GetMainComponentID( (*SDC)[iDigi]->GetPulse() );
 			G4double xProj = (*SDC)[iDigi]->GetLocalPos()[m_coordX];
 			G4double yProj = (*SDC)[iDigi]->GetLocalPos()[m_coordY];
-			if (nVerboseLevel>=2) {	
+			if (nVerboseLevel>=2) {
 				G4cout << "[GateToProjectionSet]: Processing count on head " << headID << " for energy window " << m_inputDataChannelList[energyWindowID] << " at position " << G4BestUnit((*SDC)[iDigi]->GetLocalPos(),"Length") << G4endl;
 				G4cout << "Extracting projection coordinates: " << G4BestUnit(xProj,"Length") << " , " << G4BestUnit(yProj,"Length") << G4endl;
 			}
@@ -370,7 +370,7 @@ void GateToProjectionSet::RecordEndOfEvent(const G4Event* )
 /* Overload of the base-class' virtual method to print-out a description of the module
 
 	indent: the print-out indentation (cosmetic parameter)
-*/    
+*/
 void GateToProjectionSet::Describe(size_t indent)
 {
   GateVOutputModule::Describe(indent);

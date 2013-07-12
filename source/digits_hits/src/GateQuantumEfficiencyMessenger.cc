@@ -26,11 +26,11 @@ GateQuantumEfficiencyMessenger::GateQuantumEfficiencyMessenger(GateQuantumEffici
 
   cmdName = GetDirectoryName() + "chooseQEVolume";
   newVolCmd = new G4UIcmdWithAString(cmdName,this);
-  newVolCmd->SetGuidance("Choose a volume for quantum efficiency (e.g. crystal)");  
-  
+  newVolCmd->SetGuidance("Choose a volume for quantum efficiency (e.g. crystal)");
+
   cmdName2 = GetDirectoryName() + "useFileDataForQE";
   newFileCmd = new G4UIcmdWithAString(cmdName2,this);
-  newFileCmd->SetGuidance("Use data from a file to set your quantum efficiency inhomogeneity");   
+  newFileCmd->SetGuidance("Use data from a file to set your quantum efficiency inhomogeneity");
 
   cmdName3 = GetDirectoryName() + "setUniqueQE";
   uniqueQECmd = new G4UIcmdWithADouble(cmdName3,this);
@@ -48,13 +48,13 @@ GateQuantumEfficiencyMessenger::~GateQuantumEfficiencyMessenger()
 
 
 void GateQuantumEfficiencyMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
-  if ( command==newVolCmd )    
-    GetQE()->CheckVolumeName(newValue); 
-  else if ( command==newFileCmd )    
+{
+  if ( command==newVolCmd )
+    GetQE()->CheckVolumeName(newValue);
+  else if ( command==newFileCmd )
     GetQE()->UseFile(newValue);
   else if ( command==uniqueQECmd )
     GetQE()->SetUniqueQE(uniqueQECmd->GetNewDoubleValue(newValue));
   else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue); 
+    GatePulseProcessorMessenger::SetNewValue(command,newValue);
 }

@@ -37,7 +37,7 @@ GateGPUPhotRadTheraActor::GateGPUPhotRadTheraActor(G4String name, G4int depth):
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateGPUPhotRadTheraActor::~GateGPUPhotRadTheraActor()  {
   delete pMessenger;
 }
@@ -102,7 +102,7 @@ void GateGPUPhotRadTheraActor::ResetData() {
   gpu_input->phantom_spacing_x = spacing.x();
   gpu_input->phantom_spacing_y = spacing.y();
   gpu_input->phantom_spacing_z = spacing.z();
-  
+
   gpu_input->cudaDeviceID = mGPUDeviceID;
   DD(gpu_input->phantom_size_x);
   DD(gpu_input->phantom_size_y);
@@ -117,7 +117,7 @@ void GateGPUPhotRadTheraActor::ResetData() {
     ++iter;
   }
   DD(gpu_input->phantom_material_data.size());
-  
+
   DD("end");
 
   DD(max_buffer_size);
@@ -143,7 +143,7 @@ void GateGPUPhotRadTheraActor::BeginOfRunAction(const G4Run *)
 
     // Init PRNG
     ct_photons = 0;
-    unsigned int seed = 
+    unsigned int seed =
             static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
     DD(seed);
     srand(seed);
@@ -156,10 +156,10 @@ void GateGPUPhotRadTheraActor::BeginOfRunAction(const G4Run *)
 #ifdef GATE_USE_GPU
     // Init GPU' stuff
     GPU_GatePhotRadThera_init(gpu_input, gpu_dosemap, gpu_materials, gpu_phantom,
-                              gpu_photons, gpu_electrons, 
+                              gpu_photons, gpu_electrons,
                               cpu_photons, max_buffer_size, seed);
     DD(max_buffer_size);
-#endif    
+#endif
 }
 //-----------------------------------------------------------------------------
 
@@ -171,7 +171,7 @@ void GateGPUPhotRadTheraActor::EndOfRunAction(const G4Run *)
 #ifdef GATE_USE_GPU
         GPU_GatePhotRadThera(gpu_dosemap, gpu_materials, gpu_phantom,
                              gpu_photons, gpu_electrons, cpu_photons, ct_photons);
-#endif    
+#endif
     }
 
     // Export dosemap & shutdown the GPU
@@ -186,7 +186,7 @@ void GateGPUPhotRadTheraActor::EndOfRunAction(const G4Run *)
 
 //-----------------------------------------------------------------------------
 #define EPS 1.0e-03f
-void GateGPUPhotRadTheraActor::UserSteppingAction(const GateVVolume * /*v*/, 
+void GateGPUPhotRadTheraActor::UserSteppingAction(const GateVVolume * /*v*/,
                                                   const G4Step * step)
 {
     GateDebugMessage("Actor", 4, "GateGPUPhotRadTheraActor -- UserSteppingAction" << G4endl);
@@ -194,25 +194,25 @@ void GateGPUPhotRadTheraActor::UserSteppingAction(const GateVVolume * /*v*/,
     // Check if we are on the boundary
     G4StepPoint * preStep = step->GetPreStepPoint();
     //  G4StepPoint * postStep = step->GetPostStepPoint();
-    if (preStep->GetStepStatus() != fGeomBoundary) { 
-        // This is not the first step in the volume 
+    if (preStep->GetStepStatus() != fGeomBoundary) {
+        // This is not the first step in the volume
         step->GetTrack()->SetTrackStatus( fStopAndKill ); // FIXME : one step more to remove.
         return;
     }
 
     if (step->GetTrack()->GetDefinition() != G4Gamma::Gamma()) return;       // G4_gamma
-    
+
     //FIXME : store transformation with phantom centre and explain why -3
     int h = preStep->GetTouchable()->GetHistory()->GetDepth ();
-    const G4AffineTransform transformation = 
+    const G4AffineTransform transformation =
         preStep->GetTouchable()->GetHistory()->GetTransform(h-3);
-    
+
     G4ThreeVector localPosition = transformation.TransformPoint(preStep->GetPosition());
-    
+
     // STEP1 ---------------------------------
     // Store a photon
     cpu_photons.E[ct_photons] = preStep->GetKineticEnergy()/MeV;
-    cpu_photons.eventID[ct_photons] = 
+    cpu_photons.eventID[ct_photons] =
                           GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
     cpu_photons.trackID[ct_photons] = step->GetTrack()->GetTrackID();
     cpu_photons.t[ct_photons] = preStep->GetGlobalTime();
@@ -237,7 +237,7 @@ void GateGPUPhotRadTheraActor::UserSteppingAction(const GateVVolume * /*v*/,
     cpu_photons.endsimu[ct_photons] = 0;
     cpu_photons.active[ct_photons] = 1;
     cpu_photons.seed[ct_photons] = rand();
-    
+
     // STEP2 ---------------------------------
     // We kill the particle without mercy
     step->GetTrack()->SetTrackStatus( fStopAndKill );
@@ -249,7 +249,7 @@ void GateGPUPhotRadTheraActor::UserSteppingAction(const GateVVolume * /*v*/,
 #ifdef GATE_USE_GPU
         GPU_GatePhotRadThera(gpu_dosemap, gpu_materials, gpu_phantom,
                              gpu_photons, gpu_electrons, cpu_photons, ct_photons);
-#endif    
+#endif
         ct_photons = 0;
 
     }

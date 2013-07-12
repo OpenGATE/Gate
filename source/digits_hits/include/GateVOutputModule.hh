@@ -47,7 +47,7 @@ public:
   virtual void RecordEndOfEvent(const G4Event *) = 0;
   virtual void RecordStepWithVolume(const GateVVolume * v, const G4Step *) = 0;
   virtual void RecordVoxels(GateVGeometryVoxelStore *) = 0;
-  
+
   virtual void RecordTracks(GateSteppingAction*){} /* PY Descourt 08/09/2009 */
 
   virtual void SetVerboseLevel(G4int val) { nVerboseLevel = val; }
@@ -63,7 +63,7 @@ public:
   /*! \brief Virtual method to print-out a description of the module
 
     \param indent: the print-out indentation (cosmetic parameter)
-  */    
+  */
   virtual void Describe(size_t indent=0);
 
   inline G4String GetName()              { return m_name; }
@@ -87,9 +87,9 @@ public:
   { return m_isEnabled;}
   //! Enable the object
   inline virtual void Enable(G4bool val)
-  { m_isEnabled = val; } 
-  
-   
+  { m_isEnabled = val; }
+
+
 protected:
 
   G4int                      nVerboseLevel;
@@ -97,7 +97,7 @@ protected:
   GateOutputMgr*             m_outputMgr;
 
   G4String                   m_name;
-  
+
   DigiMode    	      	     m_digiMode;
 
   //! Flag telling whether the object is enabled (active) or disabled (off)

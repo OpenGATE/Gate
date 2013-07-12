@@ -14,7 +14,7 @@
 
 class GateGpSpectrumActor : public GateVActor
 {
-	public: 
+	public:
 		virtual ~GateGpSpectrumActor();
 
 		FCT_FOR_AUTO_CREATOR_ACTOR(GateGpSpectrumActor)
@@ -47,4 +47,4 @@ class GateGpSpectrumActor : public GateVActor
 MAKE_AUTO_CREATOR_ACTOR(GpSpectrumActor,GateGpSpectrumActor)
 
 #endif
-#endif 
+#endif

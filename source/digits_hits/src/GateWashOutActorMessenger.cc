@@ -25,7 +25,7 @@ See GATE/LICENSE.txt for further details
 
 //-----------------------------------------------------------------------------
 GateWashOutActorMessenger::GateWashOutActorMessenger(GateWashOutActor* sensor)
-  :GateActorMessenger(sensor), 
+  :GateActorMessenger(sensor),
   pWashOutActor(sensor)
 {
   BuildCommands(baseName+sensor->GetObjectName());
@@ -45,12 +45,12 @@ GateWashOutActorMessenger::~GateWashOutActorMessenger()
 void GateWashOutActorMessenger::BuildCommands(G4String base)
 {
   G4String cmdName;
- 
+
   cmdName = base+"/readTable";
   ReadWashOutTableCmd = new G4UIcmdWithAString(cmdName,this);
   ReadWashOutTableCmd->SetGuidance("Reads WashOut parameters table from a file (Ratio and Half Life with units; three components)");
   ReadWashOutTableCmd->SetGuidance("1. File name");
-  
+
 }
 //-----------------------------------------------------------------------------
 
@@ -61,7 +61,7 @@ void GateWashOutActorMessenger::SetNewValue(G4UIcommand* command,G4String newVal
 
   if( command == ReadWashOutTableCmd ) {
     pWashOutActor->ReadWashOutTable(newValue);
-  }      
+  }
 }
 //-----------------------------------------------------------------------------
 

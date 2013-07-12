@@ -25,10 +25,10 @@ See GATE/LICENSE.txt for further details
 class GateBlurringMessenger;
 
 /*! \class  GateBlurring
-    \brief  Pulse-processor for simulating a Gaussian blurring on the energy spectrum. 
+    \brief  Pulse-processor for simulating a Gaussian blurring on the energy spectrum.
 
     - GateBlurring - by Martin.Rey@epfl.ch
-    
+
       \sa GateVPulseProcessor
 */
 class GateBlurring : public GateVPulseProcessor
@@ -40,24 +40,24 @@ class GateBlurring : public GateVPulseProcessor
 
     //! Constructs a new blurring attached to a GateDigitizer
     GateBlurring(GatePulseProcessorChain* itsChain,
-		 const G4String& itsName) ;
+                 const G4String& itsName) ;
 
     //! Destructor
-    virtual ~GateBlurring() ; 
+    virtual ~GateBlurring() ;
     //@}
-    
-     //! \name getters and setters
+
+    //! \name getters and setters
     //@{
     //! This function returns the blurring law in use.
-    inline GateVBlurringLaw* GetBlurringLaw()   	       { return m_blurringLaw; }
+    inline GateVBlurringLaw* GetBlurringLaw()           { return m_blurringLaw; }
 
     //! This function sets the blurring law for the resolution.
-    /*! 
+    /*!
       Choose between "linear" and "inverseSquare" blurring law
     */
     inline void SetBlurringLaw(GateVBlurringLaw* law)   { m_blurringLaw = law; }
     //@}
-    
+
 
     //! Implementation of the pure virtual method declared by the base class GateClockDependent
     //! print-out the attributes specific of the blurring
@@ -69,15 +69,12 @@ class GateBlurring : public GateVPulseProcessor
     //! It is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
-    
+
   private:
-  	GateVBlurringLaw* m_blurringLaw;
+    GateVBlurringLaw* m_blurringLaw;
     GateBlurringMessenger *m_messenger;   //!< Messenger
-    
+
 };
 
 
 #endif
-
-
-

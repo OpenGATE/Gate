@@ -43,18 +43,18 @@ class GateROOTBasicOutputMessenger;
 class G4Run;
 
 static const int dimOfHitVector = 500 ;
- 
-class GateROOTBasicOutput: public GateRecorderBase 
+
+class GateROOTBasicOutput: public GateRecorderBase
 {
 public:
   GateROOTBasicOutput();
   ~GateROOTBasicOutput();
-  
-  void RecordBeginOfRun(const G4Run *); 
-  void RecordEndOfRun(const G4Run *); 
-  
-  void RecordBeginOfEvent(const G4Event *); 
-  void RecordEndOfEvent(const G4Event * ); 
+
+  void RecordBeginOfRun(const G4Run *);
+  void RecordEndOfRun(const G4Run *);
+
+  void RecordBeginOfEvent(const G4Event *);
+  void RecordEndOfEvent(const G4Event * );
 
   void RecordStepWithVolume(const GateVVolume * v, const G4Step *);
   void SetfileName(G4String name);
@@ -62,17 +62,17 @@ public:
 private:
   TFile * hfile;
   G4String fileName;
-  
+
   Float_t  *Edep;
-  Float_t  Etot;  
+  Float_t  Etot;
   Float_t  xpos1;
   Float_t  ypos1;
   Float_t  zpos1;
   Int_t    run;
- 
+
   TTree *tree;
   Int_t numberHits;
-    
+
   GateROOTBasicOutputMessenger* runMessenger;
   GateUserActions* userActions;
 };

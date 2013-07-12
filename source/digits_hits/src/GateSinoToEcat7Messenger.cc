@@ -15,7 +15,7 @@ See GATE/LICENSE.txt for further details
 
 	C. Comtat, CEA/SHFJ, 10/02/2011	   Allows for span 1 (means less slices per segment)
 
-                                           Allows for an interfile-like ("ecat8") output instead of ecat7. 
+                                           Allows for an interfile-like ("ecat8") output instead of ecat7.
 					   It does not require the ecat library! (GATE_USE_ECAT7 not set)
 ----------------------*/
 
@@ -41,7 +41,7 @@ See GATE/LICENSE.txt for further details
 GateSinoToEcat7Messenger::GateSinoToEcat7Messenger(GateSinoToEcat7* gateSinoToEcat7)
   : GateOutputModuleMessenger(gateSinoToEcat7)
   , m_gateSinoToEcat7(gateSinoToEcat7)
-{ 
+{
   G4String cmdName;
 
   cmdName = GetDirectoryName()+"setFileName";
@@ -54,7 +54,7 @@ GateSinoToEcat7Messenger::GateSinoToEcat7Messenger(GateSinoToEcat7* gateSinoToEc
   SetMashingCmd->SetGuidance("Set azimutal mashing factor.");
   SetMashingCmd->SetParameterName("Number",false);
   SetMashingCmd->SetRange("Number>0");
-  
+
   cmdName = GetDirectoryName()+"span";
   SetSpanCmd = new G4UIcmdWithAnInteger(cmdName,this);
   SetSpanCmd->SetGuidance("Set span (polar mashing) factor.");
@@ -72,12 +72,12 @@ GateSinoToEcat7Messenger::GateSinoToEcat7Messenger(GateSinoToEcat7* gateSinoToEc
   SetEcatCameraNumberCmd->SetGuidance("Set camera type according to ECAT numerotation.");
   SetEcatCameraNumberCmd->SetParameterName("Number",false);
   SetEcatCameraNumberCmd->SetRange("Number>0");
-  
+
   cmdName = GetDirectoryName()+"IsotopeCode";
   SetIsotopeCodeCmd = new G4UIcmdWithAString(cmdName,this);
-  SetIsotopeCodeCmd->SetGuidance("Set isotope-code for the ecat7 main header only"); 
+  SetIsotopeCodeCmd->SetGuidance("Set isotope-code for the ecat7 main header only");
   SetFileNameCmd->SetParameterName("Name",false);
-  
+
   cmdName = GetDirectoryName()+"IsotopeHalflife";
   SetIsotopeHalflifeCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   SetIsotopeHalflifeCmd->SetGuidance("Set isotope half-life for the ecat7 main header only");
@@ -123,28 +123,28 @@ GateSinoToEcat7Messenger::~GateSinoToEcat7Messenger()
 
 
 void GateSinoToEcat7Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
-  if (command == SetFileNameCmd) 
+{
+  if (command == SetFileNameCmd)
     { m_gateSinoToEcat7->SetFileName(newValue); }
   else if ( command==SetMashingCmd )
-    { m_gateSinoToEcat7->SetMashing(SetMashingCmd->GetNewIntValue(newValue)); }   
+    { m_gateSinoToEcat7->SetMashing(SetMashingCmd->GetNewIntValue(newValue)); }
   else if ( command==SetSpanCmd )
-    { m_gateSinoToEcat7->SetSpan(SetSpanCmd->GetNewIntValue(newValue)); }   
+    { m_gateSinoToEcat7->SetSpan(SetSpanCmd->GetNewIntValue(newValue)); }
   else if ( command==SetMaxRingDiffCmd )
-    { m_gateSinoToEcat7->SetMaxRingDiff(SetMaxRingDiffCmd->GetNewIntValue(newValue)); } 
+    { m_gateSinoToEcat7->SetMaxRingDiff(SetMaxRingDiffCmd->GetNewIntValue(newValue)); }
   else if ( command==SetEcatCameraNumberCmd )
-    { m_gateSinoToEcat7->SetEcatCameraNumber(SetEcatCameraNumberCmd->GetNewIntValue(newValue)); }    
+    { m_gateSinoToEcat7->SetEcatCameraNumber(SetEcatCameraNumberCmd->GetNewIntValue(newValue)); }
   else if ( command==SetIsotopeCodeCmd )
     { m_gateSinoToEcat7->SetIsotopeCode(newValue); }
   else if ( command==SetIsotopeHalflifeCmd )
-    { m_gateSinoToEcat7->SetIsotopeHalflife(SetIsotopeHalflifeCmd->GetNewDoubleValue(newValue)); }  
+    { m_gateSinoToEcat7->SetIsotopeHalflife(SetIsotopeHalflifeCmd->GetNewDoubleValue(newValue)); }
   else if ( command==SetIsotopeBranchingFractionCmd )
-    { m_gateSinoToEcat7->SetIsotopeBranchingFraction(SetIsotopeBranchingFractionCmd->GetNewDoubleValue(newValue)); }  
+    { m_gateSinoToEcat7->SetIsotopeBranchingFraction(SetIsotopeBranchingFractionCmd->GetNewDoubleValue(newValue)); }
   #ifdef GATE_USE_ECAT7
   else if ( command==SetEcatVersionCmd )
-    { m_gateSinoToEcat7->SetEcatVersion(SetEcatVersionCmd->GetNewIntValue(newValue)); }    
+    { m_gateSinoToEcat7->SetEcatVersion(SetEcatVersionCmd->GetNewIntValue(newValue)); }
   #endif
-  else 
+  else
     { GateOutputModuleMessenger::SetNewValue(command,newValue);  }
-   
+
 }

@@ -25,10 +25,10 @@ class GateCalibrationMessenger: public GatePulseProcessorMessenger
   public:
     GateCalibrationMessenger(GateCalibration* itsCalibration);
     virtual ~GateCalibrationMessenger() {};
-    
+
     void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GateCalibration* GetCalibration() 
+    inline GateCalibration* GetCalibration()
       { return (GateCalibration*) GetPulseProcessor(); }
 
 private:
@@ -37,4 +37,3 @@ private:
 };
 
 #endif
-

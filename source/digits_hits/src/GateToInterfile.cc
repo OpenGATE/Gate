@@ -60,7 +60,7 @@
     	*Wrote the number of energy windows, and for all energy windows, check the bounds and record them
     	*Call to GetMaxCounts(size_t energyWindow, size_t head) instead of GetMaxCounts(size_t head) to write the header
 
-    
+
 */
 
 
@@ -97,7 +97,7 @@
  */
 
 
-GateToInterfile::GateToInterfile(const G4String& name, GateOutputMgr* outputMgr,GateSPECTHeadSystem* itsSystem,DigiMode digiMode) 
+GateToInterfile::GateToInterfile(const G4String& name, GateOutputMgr* outputMgr,GateSPECTHeadSystem* itsSystem,DigiMode digiMode)
   : GateVOutputModule(name,outputMgr,digiMode)
   , m_system(itsSystem)
   , m_fileName(" ") // All default output file from all output modules are set to " ".
@@ -118,7 +118,7 @@ GateToInterfile::GateToInterfile(const G4String& name, GateOutputMgr* outputMgr,
 
 
 
-GateToInterfile::~GateToInterfile() 
+GateToInterfile::~GateToInterfile()
 {
   delete m_asciiMessenger;
 
@@ -171,7 +171,7 @@ void GateToInterfile::RecordEndOfAcquisition()
 
   // Fully rewrite the header, so as to store the maximum counts
   m_headerFile.seekp(0,std::ios::beg);
-  if ( m_headerFile.bad() ) G4Exception( "GateToInterfile::RecordEndOfAcquisition", "RecordEndOfAcquisition", FatalException, "Could not go to back to the beginning of the header file (file missing?)!\n"); 
+  if ( m_headerFile.bad() ) G4Exception( "GateToInterfile::RecordEndOfAcquisition", "RecordEndOfAcquisition", FatalException, "Could not go to back to the beginning of the header file (file missing?)!\n");
   WriteGeneralInfo();
   WriteGateScannerInfo();
   WriteGateRunInfo( m_system->GetProjectionSetMaker()->GetProjectionSet()->GetCurrentProjectionID()+1 );
@@ -204,23 +204,23 @@ void GateToInterfile::RecordEndOfRun(const G4Run* )
 	if (m_system->GetProjectionSetMaker()->GetProjectionSet()->GetData() != 0) {
 		for (size_t energyWindowID = 0; energyWindowID < m_system->GetProjectionSetMaker()->GetEnergyWindowNb(); energyWindowID++) {
   			for (size_t headID=0 ; headID < m_system->GetProjectionSetMaker()->GetHeadNb(); headID++) {
-				
+
 				m_system->GetProjectionSetMaker()->GetProjectionSet()->StreamOut( m_dataFile , energyWindowID, headID );
-			
-			} 
+
+			}
 		}
-	} 
-	
+	}
+
 	else if (m_system->GetProjectionSetMaker()->GetProjectionSet()->GetARFData() != 0) {
 		for (size_t headID=0 ; headID < m_system->GetProjectionSetMaker()->GetHeadNb(); headID++) {
 			m_system->GetProjectionSetMaker()->GetProjectionSet()->StreamOutARFProjection( m_dataFile , headID );
 		}
-		
+
 	} else {
 		G4cerr << "[GateToInterfile::RecordEndOfRun]:" << G4endl
 		<< "No data available to write to projection set." << G4endl;
 	}
-  		
+
 }
 
 
@@ -228,7 +228,7 @@ void GateToInterfile::RecordEndOfRun(const G4Run* )
 /* Overload of the base-class' virtual method to print-out a description of the module
 
 	indent: the print-out indentation (cosmetic parameter)
-*/    
+*/
 void GateToInterfile::Describe(size_t indent)
 {
   GateVOutputModule::Describe(indent);
@@ -253,13 +253,13 @@ void GateToInterfile::WriteGeneralInfo()
 		<< "!version of keys := "       	    << "3.3" << G4endl
 		<< "date of keys := " 	         	    << "1992:01:01" << G4endl
       	      	<< ";" << G4endl;
-		
+
   m_headerFile  << "!GENERAL DATA :=" 	      	      	    << G4endl
 		<< "data description := "     	      	    << "GATE simulation" << G4endl
 		<< "!data starting block := "         	    << 0 << G4endl
  		<< "!name of data file := "    	      	    << m_fileName+".sin" << G4endl
     	      	<< ";" << G4endl;
-		
+
   time_t aTimer;
   time(&aTimer);
   struct tm * currentTime = localtime(&aTimer);
@@ -269,12 +269,12 @@ void GateToInterfile::WriteGeneralInfo()
 		<< "!type of data := "     	      	    << "TOMOGRAPHIC" << G4endl
  		<< "!total number of images := "      	    << setMaker->GetTotalImageNb() << G4endl
  		<< "study date := "   	      	      	    << std::setfill('0')
-		      	      	      	      	      	    << std::setw(4) << 1900+currentTime->tm_year << ":" 
-		      	      	      	      	      	    << std::setw(2) << currentTime->tm_mon << ":" 
+		      	      	      	      	      	    << std::setw(4) << 1900+currentTime->tm_year << ":"
+		      	      	      	      	      	    << std::setw(2) << currentTime->tm_mon << ":"
 				      	      	      	    << std::setw(2) << currentTime->tm_mday << G4endl
- 		<< "study time := "   	      	      	    << std::setw(2) << currentTime->tm_hour << ":" 
-		      	      	      	      	      	    << std::setw(2) << currentTime->tm_min << ":" 
-				      	      	      	    << std::setw(2) << currentTime->tm_sec << G4endl 
+ 		<< "study time := "   	      	      	    << std::setw(2) << currentTime->tm_hour << ":"
+		      	      	      	      	      	    << std::setw(2) << currentTime->tm_min << ":"
+				      	      	      	    << std::setw(2) << currentTime->tm_sec << G4endl
 							    << std::setfill(' ')
   		<< "imagedata byte order := " 	      	    << ( (BYTE_ORDER == LITTLE_ENDIAN) ? "LITTLEENDIAN" : "BIGENDIAN" )  << G4endl
     		<< "number of energy windows := "    	    << setMaker->GetEnergyWindowNb() << G4endl
@@ -302,7 +302,7 @@ void GateToInterfile::WriteGeneralInfo()
 					<< "Can't find digitizer chain '" << aChainName << "', aborting" << G4endl;
 			G4Exception( "GateToInterfile::WriteGeneralInfo", "WriteGeneralInfo", FatalException, "You must change this parameter then restart the simulation\n");
 		}
-  
+
 		// Try to find a thresholder and/or a upholder into the pulse processor chain.
 		// Update the threshold or uphold value if we find them
 		aThresholder = dynamic_cast<GateThresholder*>(aPulseProcessorChain->FindProcessor("digitizer/" + aChainName + "/thresholder"));
@@ -314,7 +314,7 @@ void GateToInterfile::WriteGeneralInfo()
 		if (aUpholder) {
 			aUphold = aUpholder->GetUphold();
 		}
-		
+
 		m_headerFile  << "energy window [" << energyWindowID + 1 << "] := " << aChainName << G4endl
 			<< "energy window lower level [" << energyWindowID + 1 << "] := " << aThreshold / kiloelectronvolt << G4endl
 	 		<< "energy window upper level [" << energyWindowID + 1 << "] := " << aUphold / kiloelectronvolt << G4endl
@@ -356,9 +356,9 @@ void GateToInterfile::WriteGeneralInfo()
 		  		  << "orbit := "	      	      	      	    << "Circular" << G4endl // Modified from "circular"
 		  		  << ";" << G4endl;
 		}
-  
+
 	}
-		
+
 }
 
 
@@ -403,5 +403,3 @@ void GateToInterfile::WriteGateRunInfo(G4int runNb)
       	      	<< ";number of runs := "               	  << runNb << G4endl
 		<< ";" << G4endl;
 }
-
-

@@ -26,10 +26,10 @@ See GATE/LICENSE.txt for further details
 //-----------------------------------------------------------------------------
 class GateKillActor : public GateVActor
 {
- public: 
-  
+ public:
+
   virtual ~GateKillActor();
-    
+
   //-----------------------------------------------------------------------------
   // This macro initialize the CreatePrototype and CreateInstance
   FCT_FOR_AUTO_CREATOR_ACTOR(GateKillActor)
@@ -61,4 +61,3 @@ MAKE_AUTO_CREATOR_ACTOR(KillActor,GateKillActor)
 
 
 #endif /* end #define GATEKILLACTOR_HH */
-

@@ -1,17 +1,17 @@
 /*----------------------
 
-   GATE - Geant4 Application for Tomographic Emission 
-   OpenGATE Collaboration 
-     
-   Daniel Strul <daniel.strul@iphe.unil.ch> 
+   GATE - Geant4 Application for Tomographic Emission
+   OpenGATE Collaboration
+
+   Daniel Strul <daniel.strul@iphe.unil.ch>
    JB Michaud <jbmichaud@videotron.ca>
-     
-   Copyright (C) 2002,2003 UNIL/IPHE, CH-1015 Lausanne 
+
+   Copyright (C) 2002,2003 UNIL/IPHE, CH-1015 Lausanne
    Copyright (C) 2009 Universite de Sherbrooke
 
-This software is distributed under the terms 
-of the GNU Lesser General  Public Licence (LGPL) 
-See GATE/LICENSE.txt for further details 
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #ifndef GatePulseAdderCompton_h
@@ -28,30 +28,30 @@ See GATE/LICENSE.txt for further details
 class GatePulseAdderComptonMessenger;
 
 /*! \class  GatePulseAdder
-    \brief  Pulse-processor for adding/grouping pulses per volume. 
+    \brief  Pulse-processor for adding/grouping pulses per volume.
 
     - GatePulseAdder - by Daniel.Strul@iphe.unil.ch
 	- Exact Compton kinematics changes by jbmichaud@videotron.ca
-    
-    - For each volume where there was one or more input pulse, we get exactly 
-      one output pulse, whose energy is the sum of all the input-pulse energies, 
+
+    - For each volume where there was one or more input pulse, we get exactly
+      one output pulse, whose energy is the sum of all the input-pulse energies,
       and whose position is the centroid of the photonic input-pulse positions.
 	  Electronic pulses energy is assigned to the proper photonic pulse (the last pulse encountered).
 	  Wandering photo-electron are discarded, i.e. when no previous photonic interaction
 	  has occured inside the volume ID. This is not EXACT.
-	  The case when a photoelectron wanders and lands into a volume ID where 
-    
+	  The case when a photoelectron wanders and lands into a volume ID where
+
       \sa GateVPulseProcessor
-*/      
+*/
 class GatePulseAdderCompton : public GateVPulseProcessor
 {
   public:
 
     //! Constructs a new pulse-adder attached to a GateDigitizer
     GatePulseAdderCompton(GatePulseProcessorChain* itsChain,const G4String& itsName);
-  
+
     //! Destructor
-    virtual ~GatePulseAdderCompton();  
+    virtual ~GatePulseAdderCompton();
 
     //! Implementation of the pure virtual method declared by the base class GateClockDependent
     //! print-out the attributes specific of the pulse adder
@@ -79,4 +79,3 @@ class GatePulseAdderCompton : public GateVPulseProcessor
 
 
 #endif
-

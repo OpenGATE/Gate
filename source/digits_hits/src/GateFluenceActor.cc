@@ -10,8 +10,8 @@
 
 
 /*
-  \brief Class GateFluenceActor : 
-  \brief 
+  \brief Class GateFluenceActor :
+  \brief
 */
 // Gate
 #include "GateFluenceActor.hh"
@@ -30,7 +30,7 @@ GateFluenceActor::GateFluenceActor(G4String name, G4int depth):
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateFluenceActor::~GateFluenceActor()
 {
   delete pMessenger;
@@ -66,7 +66,7 @@ void GateFluenceActor::Construct()
   }
 
   // Print information
-  GateMessage("Actor", 1, 
+  GateMessage("Actor", 1,
               "\tFluence FluenceActor    = '" << GetObjectName() << "'" << G4endl);
 
   ResetData();
@@ -108,7 +108,7 @@ void GateFluenceActor::SaveData()
 
 
 //-----------------------------------------------------------------------------
-void GateFluenceActor::ResetData() 
+void GateFluenceActor::ResetData()
 {
   mImage.Fill(0);
   if(mIsScatterImageEnabled) {
@@ -120,7 +120,7 @@ void GateFluenceActor::ResetData()
 
 //-----------------------------------------------------------------------------
 void GateFluenceActor::BeginOfEventAction(const G4Event * e)
-{ 
+{
   GateVActor::BeginOfEventAction(e);
 }
 //-----------------------------------------------------------------------------
@@ -137,7 +137,7 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
     GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end" << G4endl);
     return;
   }
-  
+
   GateScatterOrderTrackInformation * info = dynamic_cast<GateScatterOrderTrackInformation *>(step->GetTrack()->GetUserInformation());
 
   /* http://geant4.org/geant4/support/faq.shtml
@@ -164,7 +164,7 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
           mFluencePerOrderImages[order-1]->AddValue(index, 1);
       }
     }
-    
+
     if(mIsScatterImageEnabled &&
        !step->GetTrack()->GetParentID() &&
        !step->GetTrack()->GetDynamicParticle()->GetPrimaryParticle()->GetMomentum().isNear(

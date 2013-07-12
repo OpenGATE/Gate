@@ -21,8 +21,8 @@
 #include <G4VoxelLimits.hh>
 
 //-----------------------------------------------------------------------------
-/// Constructor 
-GateVImageActor::GateVImageActor(G4String name, G4int depth): 
+/// Constructor
+GateVImageActor::GateVImageActor(G4String name, G4int depth):
   GateVActor(name,depth),
   mVoxelSize(-1.0, -1.0, -1.0),
   mResolution(-1.0,-1.0,-1.0),
@@ -31,8 +31,8 @@ GateVImageActor::GateVImageActor(G4String name, G4int depth):
   mStepHitType(MiddleStepHitType),
   mStepHitTypeName("middle"),
   mVoxelSizeIsSet(false),
-  mResolutionIsSet(false), 
-  mHalfSizeIsSet(false), 
+  mResolutionIsSet(false),
+  mHalfSizeIsSet(false),
   mPositionIsSet(false)
 {
   GateMessageInc("Actor",4, "GateVImageActor() - begin"<<G4endl);
@@ -42,7 +42,7 @@ GateVImageActor::GateVImageActor(G4String name, G4int depth):
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateVImageActor::~GateVImageActor()
 {
   GateMessageInc("Actor",4, "~GateVImageActor() - begin"<<G4endl);
@@ -53,7 +53,7 @@ GateVImageActor::~GateVImageActor()
 
 
 //-----------------------------------------------------------------------------
-void GateVImageActor::ResetData() 
+void GateVImageActor::ResetData()
 {
   mImage.Fill(0);
 }
@@ -61,18 +61,18 @@ void GateVImageActor::ResetData()
 
 
 //-----------------------------------------------------------------------------
-void GateVImageActor::SetResolution(G4ThreeVector v) 
+void GateVImageActor::SetResolution(G4ThreeVector v)
 {
-  mResolutionIsSet = true; 
-  mResolution = v; 
+  mResolutionIsSet = true;
+  mResolution = v;
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 void GateVImageActor::SetVoxelSize(G4ThreeVector v)
-{ 
-  mVoxelSizeIsSet = true; 
+{
+  mVoxelSizeIsSet = true;
   mVoxelSize = v;
 }
 //-----------------------------------------------------------------------------
@@ -80,8 +80,8 @@ void GateVImageActor::SetVoxelSize(G4ThreeVector v)
 
 //-----------------------------------------------------------------------------
 void GateVImageActor::SetHalfSize(G4ThreeVector v)
-{ 
-  mHalfSizeIsSet = true; 
+{
+  mHalfSizeIsSet = true;
   mHalfSize.setX(v.x());
   mHalfSize.setY(v.y());
   mHalfSize.setZ(v.z());
@@ -91,8 +91,8 @@ void GateVImageActor::SetHalfSize(G4ThreeVector v)
 
 //-----------------------------------------------------------------------------
 void GateVImageActor::SetSize(G4ThreeVector v)
-{ 
-  mHalfSizeIsSet = true; 
+{
+  mHalfSizeIsSet = true;
   mHalfSize.setX(v.x()/2.0);
   mHalfSize.setY(v.y()/2.0);
   mHalfSize.setZ(v.z()/2.0);
@@ -102,7 +102,7 @@ void GateVImageActor::SetSize(G4ThreeVector v)
 
 //-----------------------------------------------------------------------------
 void GateVImageActor::SetPosition(G4ThreeVector v)
-{ 
+{
   mPositionIsSet = true;
   mPosition = v;
 }
@@ -111,7 +111,7 @@ void GateVImageActor::SetPosition(G4ThreeVector v)
 
 //-----------------------------------------------------------------------------
 /*void GateVImageActor::SetPosition(GateVVolume * v)
-  { 
+  {
   G4ThreeVector vPos = v->GetPhysicalVolume()->GetObjectTranslation();
 
   if(mPositionIsSet == true)
@@ -120,11 +120,11 @@ void GateVImageActor::SetPosition(G4ThreeVector v)
   mPosition.setY( mPosition.y() +vPos.y());
   mPosition.setZ( mPosition.z() +vPos.z());
   }
-  else 
+  else
   {
   mPosition.setX(vPos.x());
   mPosition.setY(vPos.y());
-  mPosition.setZ(vPos.z()); 
+  mPosition.setZ(vPos.z());
   }
 
   mPositionIsSet = true;
@@ -133,18 +133,18 @@ void GateVImageActor::SetPosition(G4ThreeVector v)
 
 
 //-----------------------------------------------------------------------------
-/// Constructs the sensor 
-void GateVImageActor::Construct() 
-{ 
+/// Constructs the sensor
+void GateVImageActor::Construct()
+{
   GateDebugMessageInc("Actor", 4, "GateVImageActor -- Construct: begin" << G4endl);
   GateVActor::Construct();
 
   if (!mHalfSizeIsSet){
-    mHalfSize = ComputeBoundingBox(mVolume->GetLogicalVolume()->GetSolid());  
+    mHalfSize = ComputeBoundingBox(mVolume->GetLogicalVolume()->GetSolid());
   }
- 
-  //if (mPosition.x() == 0 && 
-  //	  mPosition.y() == 0 && 
+
+  //if (mPosition.x() == 0 &&
+  //	  mPosition.y() == 0 &&
   //  mPosition.z() == 0) { mPositionIsSet = false; }
 
   if (mResolutionIsSet && mVoxelSizeIsSet) {
@@ -187,7 +187,7 @@ void GateVImageActor::Construct()
   size[1] = max-min;
   mVolume->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, origin, min, max);
   size[2] = max-min;
-  
+
   mOrigin[0] = size[0]/2.0 - mHalfSize.x();
   mOrigin[1] = size[1]/2.0 - mHalfSize.y();
   mOrigin[2] = size[2]/2.0 - mHalfSize.z();
@@ -272,7 +272,7 @@ int GateVImageActor::GetIndexFromTrackPosition(const GateVVolume * v , const G4T
   G4TouchableHistory* theTouchable = (G4TouchableHistory*)(track->GetTouchable());
   int maxDepth = theTouchable->GetHistoryDepth();
   G4LogicalVolume * currentVol = theTouchable->GetVolume(0)->GetLogicalVolume();
-  
+
   GateDebugMessage("Track",3,"GateVImageActor -- GetIndexFromStepPosition: Step in "<<currentVol->GetName()<<" - Max Depth = "<<maxDepth
                                                                       <<" -> target = "<<v->GetLogicalVolume()->GetName()<<G4endl );
   int depth = 0;
@@ -287,8 +287,8 @@ int GateVImageActor::GetIndexFromTrackPosition(const GateVVolume * v , const G4T
 
   if(depth>=maxDepth) return -1;
 
-  // GateError( "currentVol : "<< currentVol->GetName()<<"    Logical Volume "<< v->GetLogicalVolume()->GetName()<<" not found!" ); 
- 
+  // GateError( "currentVol : "<< currentVol->GetName()<<"    Logical Volume "<< v->GetLogicalVolume()->GetName()<<" not found!" );
+
   GateDebugMessage("Step",3,"GateVImageActor -- GetIndexFromStepPosition: Logical volume "<<currentVol->GetName() <<" found! - Depth = "<<depth <<G4endl );
 
   G4ThreeVector position = theTouchable->GetHistory()->GetTransform(transDepth).TransformPoint(tmpPosition);
@@ -310,7 +310,7 @@ int GateVImageActor::GetIndexFromTrackPosition(const GateVVolume * v , const G4T
 
 //-----------------------------------------------------------------------------
 int GateVImageActor::GetIndexFromStepPosition(const GateVVolume * v, const G4Step * step)
-{  
+{
   if(v==0) return -1;
 
   const G4ThreeVector & worldPos = step->GetPostStepPoint()->GetPosition();
@@ -319,7 +319,7 @@ int GateVImageActor::GetIndexFromStepPosition(const GateVVolume * v, const G4Ste
   G4TouchableHistory* theTouchable = (G4TouchableHistory*)(step->GetPreStepPoint()->GetTouchable());
   int maxDepth = theTouchable->GetHistoryDepth();
   G4LogicalVolume * currentVol = theTouchable->GetVolume(0)->GetLogicalVolume();
-  
+
   GateDebugMessage("Step",3,"GateVImageActor -- GetIndexFromStepPosition: Step in "<<currentVol->GetName()<<" - Max Depth = "<<maxDepth
 		   <<" -> target = "<<v->GetLogicalVolume()->GetName()<<G4endl );
   GateDebugMessage("Step", 3, " worldPre = " << worldPre<<G4endl);
@@ -328,7 +328,7 @@ int GateVImageActor::GetIndexFromStepPosition(const GateVVolume * v, const G4Ste
   int transDepth = maxDepth;
   // DD(v->GetLogicalVolume());
 
-  while((depth<maxDepth) && 
+  while((depth<maxDepth) &&
         (currentVol->GetName() != v->GetLogicalVolume()->GetName()))
     //(currentVol != v->GetLogicalVolume())) //depth<=maxDepth or depth<maxDepth ? OK < only
     {
@@ -343,8 +343,8 @@ int GateVImageActor::GetIndexFromStepPosition(const GateVVolume * v, const G4Ste
 
   if(depth>=maxDepth) return -1;
 
-// GateError( "Logical Volume "<< v->GetLogicalVolume()->GetName()<<" not found!" ); 
-  
+// GateError( "Logical Volume "<< v->GetLogicalVolume()->GetName()<<" not found!" );
+
   GateDebugMessage("Step",3,"GateVImageActor -- GetIndexFromStepPosition: Logical volume "<<currentVol->GetName() <<" found! - Depth = "<<depth <<G4endl );
 
   G4ThreeVector postPosition = theTouchable->GetHistory()->GetTransform(transDepth).TransformPoint(worldPos);
@@ -363,9 +363,9 @@ int GateVImageActor::GetIndexFromStepPosition(const GateVVolume * v, const G4Ste
   }
 
   GateDebugMessage("Step", 2, "GateVImageActor -- GetIndexFromStepPosition:Actor  UserSteppingAction (type = " << mStepHitTypeName << ")" << G4endl
-		   << "\tPreStep     = " << prePosition << G4endl 
+		   << "\tPreStep     = " << prePosition << G4endl
 		   << "\tPostStep    = "<< postPosition << G4endl);
-  
+
   //http://geant4-hn.slac.stanford.edu:5090/HyperNews/public/get/eventtrackmanage/263/1/1.html
 
   int index=-1;
@@ -395,7 +395,7 @@ int GateVImageActor::GetIndexFromStepPosition(const GateVVolume * v, const G4Ste
     GateDebugMessage("Step", 4, "GateVImageActor -- GetIndexFromStepPosition:\tRandomStep = " << position << G4endl);
     index = mImage.GetIndexFromPosition(position);
   }
-  
+
   GateDebugMessage("Step", 4, "GateVImageActor -- GetIndexFromStepPosition:\tVoxel index = " << index << G4endl);
   return index;
 }
@@ -403,4 +403,3 @@ int GateVImageActor::GetIndexFromStepPosition(const GateVVolume * v, const G4Ste
 
 
 #endif /* end #define GATEVIMAGEACTOR_CC */
-

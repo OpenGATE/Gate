@@ -23,7 +23,7 @@ GateTriCoincidenceSorterMessenger::GateTriCoincidenceSorterMessenger(GateTriCoin
   m_SetInputSPLNameCmd = new G4UIcmdWithAString(cmdName,this);
   m_SetInputSPLNameCmd->SetGuidance("Add a name for the singles input pulse channel");
   m_SetInputSPLNameCmd->SetParameterName("Name",false);
-  
+
   cmdName = GetDirectoryName() + "setWindow";
   m_triCoincWindowCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   m_triCoincWindowCmd->SetGuidance("Set the time-window for coincidence between selected singles and the PET coincidence pulse");
@@ -48,18 +48,16 @@ GateTriCoincidenceSorterMessenger::~GateTriCoincidenceSorterMessenger()
 
 
 void GateTriCoincidenceSorterMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
    if (command == m_SetInputSPLNameCmd)
    { m_itsProcessor->SetSinglesPulseListName(newValue); }
-  
+
   else if (command == m_triCoincWindowCmd)
   {m_itsProcessor->SetTriCoincWindow(m_triCoincWindowCmd->GetNewDoubleValue(newValue));}
-  
+
   else if (command == m_SetWSPulseListSizeCmd)
   {m_itsProcessor->SetWSPulseListSize(m_SetWSPulseListSizeCmd->GetNewIntValue(newValue));}
 
   else
-    GateClockDependentMessenger::SetNewValue(command,newValue); 
+    GateClockDependentMessenger::SetNewValue(command,newValue);
 }
-
-

@@ -27,7 +27,7 @@ public:
   GateTrajectoryNavigator();
 
   virtual ~GateTrajectoryNavigator();
-  
+
 
   G4int         FindSourceIndex();
 
@@ -43,9 +43,9 @@ public:
 
   void          Initialize();
 
-  void                          SetTrajectoryContainer(G4TrajectoryContainer* trajectoryContainer);  
+  void                          SetTrajectoryContainer(G4TrajectoryContainer* trajectoryContainer);
 
-  inline G4TrajectoryContainer* GetTrajectoryContainer()   { return m_trajectoryContainer; };  
+  inline G4TrajectoryContainer* GetTrajectoryContainer()   { return m_trajectoryContainer; };
 
   inline std::vector<G4int>          GetPhotonIDVec()           { return m_photonIDVec; };
 
@@ -59,7 +59,7 @@ protected:
 
 private:
   G4TrajectoryContainer* m_trajectoryContainer;
-  
+
   std::vector<G4int>          m_photonIDVec;
   G4int                  m_positronTrackID;
   G4Trajectory*          m_positronTrj;

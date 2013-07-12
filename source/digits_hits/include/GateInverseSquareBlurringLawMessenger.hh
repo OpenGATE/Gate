@@ -18,15 +18,15 @@ See GATE/LICENSE.txt for further details
 class GateInverseSquareBlurringLaw;
 
 class GateInverseSquareBlurringLawMessenger : public GateBlurringLawMessenger {
-	
+
 	public :
 		GateInverseSquareBlurringLawMessenger(GateInverseSquareBlurringLaw* itsBlurringLaw);
 		virtual ~GateInverseSquareBlurringLawMessenger();
-		
+
 		GateInverseSquareBlurringLaw* GetInverseSquareBlurringLaw() const;
-		
+
 		void SetNewValue(G4UIcommand* aCommand, G4String aString);
-		
+
 	private :
 		G4UIcmdWithADouble   *resolutionCmd;
     	G4UIcmdWithADoubleAndUnit   *erefCmd;

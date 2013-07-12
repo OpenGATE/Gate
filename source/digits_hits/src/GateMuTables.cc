@@ -31,7 +31,7 @@ void GateMuTable::PutValue(int index, double energy, double mu, double mu_en)
 inline double interpol(double x1, double x, double x2,
 		       double y1, double y2)
 {
-  return ( y1 + ( (y2-y1) * (x-x1) / (x2-x1) ) );  // if log storage  
+  return ( y1 + ( (y2-y1) * (x-x1) / (x2-x1) ) );  // if log storage
 //   return exp( log(y1) + log(y2/y1) / log(x2/x1)* log(x/x1) ); // if no log storage
 }
 
@@ -39,7 +39,7 @@ double GateMuTable::GetMuEn(double energy)
 {
   if (energy == lastEnergy) return exp(lastMuen);
   lastEnergy = energy;
-  
+
   energy = log(energy);
 
   int inf = 0;
@@ -55,7 +55,7 @@ double GateMuTable::GetMuEn(double energy)
 
   if( energy > e_inf && energy < e_sup) { lastMuen = interpol(e_inf, energy, e_sup, mMu_en[inf], mMu_en[sup]); }
   else { lastMuen = mMu_en[inf]; }
-  
+
   return exp(lastMuen);
 }
 
@@ -63,9 +63,9 @@ double GateMuTable::GetMu(double energy)
 {
   if (energy == lastEnergy) return exp(lastMu);
   lastEnergy = energy;
-  
+
   energy = log(energy);
-  
+
   int inf = 0;
   int sup = mSize-1;
   while(sup - inf > 1)
@@ -76,10 +76,10 @@ double GateMuTable::GetMu(double energy)
   }
   double e_inf = mEnergy[inf];
   double e_sup = mEnergy[sup];
-  
+
   if( energy > e_inf && energy < e_sup) { lastMu = interpol(e_inf, energy, e_sup, mMu[inf], mMu[sup]); }
   else { lastMu = mMu[inf]; }
-  
+
   return exp(lastMu);
 }
 

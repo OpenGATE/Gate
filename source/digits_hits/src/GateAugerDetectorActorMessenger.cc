@@ -22,35 +22,35 @@ GateAugerDetectorActorMessenger::~GateAugerDetectorActorMessenger()
 
 void GateAugerDetectorActorMessenger::BuildCommands(G4String base)
 {
-	pMaxTOFCmd = new G4UIcmdWithADoubleAndUnit((base+"/setMaxTOF").c_str(),this); 
+	pMaxTOFCmd = new G4UIcmdWithADoubleAndUnit((base+"/setMaxTOF").c_str(),this);
 	pMaxTOFCmd->SetGuidance("Set maximum time of flight window");
 	pMaxTOFCmd->SetParameterName("MaxTOF",false);
 	pMaxTOFCmd->SetDefaultUnit("ns");
 
-	pMinEdepCmd = new G4UIcmdWithADoubleAndUnit((base+"/setMinEdep").c_str(),this); 
+	pMinEdepCmd = new G4UIcmdWithADoubleAndUnit((base+"/setMinEdep").c_str(),this);
 	pMinEdepCmd->SetGuidance("Set minimum energy deposition to trigger detection");
 	pMinEdepCmd->SetParameterName("MinEdep",false);
 	pMinEdepCmd->SetDefaultUnit("MeV");
 
-	pProfileDirectionCmd = new G4UIcmdWith3Vector((base+"/setProjectionDirection").c_str(),this); 
+	pProfileDirectionCmd = new G4UIcmdWith3Vector((base+"/setProjectionDirection").c_str(),this);
 	pProfileDirectionCmd->SetGuidance("Set the direction in which the profile is built");
 	pProfileDirectionCmd->SetParameterName("DirX","DirY","DirZ",false);
 
-	pMinProfileCmd = new G4UIcmdWithADoubleAndUnit((base+"/setProfileMinimum").c_str(),this); 
+	pMinProfileCmd = new G4UIcmdWithADoubleAndUnit((base+"/setProfileMinimum").c_str(),this);
 	pMinProfileCmd->SetGuidance("Set the minimum of the profile axis");
 	pMinProfileCmd->SetParameterName("ProfileMin",false);
 	pMinProfileCmd->SetDefaultUnit("mm");
 
-	pMaxProfileCmd = new G4UIcmdWithADoubleAndUnit((base+"/setProfileMaximum").c_str(),this); 
+	pMaxProfileCmd = new G4UIcmdWithADoubleAndUnit((base+"/setProfileMaximum").c_str(),this);
 	pMaxProfileCmd->SetGuidance("Set the maximum of the profile axis");
 	pMaxProfileCmd->SetParameterName("ProfileMax",false);
 	pMaxProfileCmd->SetDefaultUnit("mm");
 
-	pSizeProfileCmd = new G4UIcmdWithAnInteger((base+"/setProfileSize").c_str(),this); 
+	pSizeProfileCmd = new G4UIcmdWithAnInteger((base+"/setProfileSize").c_str(),this);
 	pSizeProfileCmd->SetGuidance("Set the number of pixel in the profile");
 	pSizeProfileCmd->SetParameterName("ProfileSize",false);
 
-	pProfileNoiseFWHMCmd = new G4UIcmdWithADoubleAndUnit((base+"/setProfileNoiseFWHM").c_str(),this); 
+	pProfileNoiseFWHMCmd = new G4UIcmdWithADoubleAndUnit((base+"/setProfileNoiseFWHM").c_str(),this);
 	pProfileNoiseFWHMCmd->SetGuidance("Set profile additive noise FWHM");
 	pProfileNoiseFWHMCmd->SetParameterName("ProfileNoiseFWHM",false);
 	pProfileNoiseFWHMCmd->SetDefaultUnit("mm");

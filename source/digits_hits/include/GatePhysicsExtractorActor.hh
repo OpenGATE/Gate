@@ -12,7 +12,7 @@
 
 class GatePhysicsExtractorActor : public GateVActor
 {
-	public: 
+	public:
 		virtual ~GatePhysicsExtractorActor();
 
 		FCT_FOR_AUTO_CREATOR_ACTOR(GatePhysicsExtractorActor)
@@ -55,4 +55,4 @@ class GatePhysicsExtractorActor : public GateVActor
 
 MAKE_AUTO_CREATOR_ACTOR(PhysicsExtractorActor,GatePhysicsExtractorActor)
 
-#endif 
+#endif

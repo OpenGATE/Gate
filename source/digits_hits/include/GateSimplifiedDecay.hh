@@ -29,11 +29,11 @@ class GateSimplifiedDecay{
 	  for( ; i != this->transitionVector->end(); ++i ) {
 		  delete *i;
 	  }
-	  transitionVector->clear();  
+	  transitionVector->clear();
 	  delete transitionVector;
   }
 
-  void print(){  
+  void print(){
     for_each(  transitionVector->begin(),  transitionVector->end(), mem_fun( &GateSimplifiedDecayTransition::print)  );
   }
 
@@ -49,7 +49,7 @@ class GateSimplifiedDecay{
 
  private:
   vector<GateSimplifiedDecayTransition*>* transitionVector;
- 
+
 };
 
 

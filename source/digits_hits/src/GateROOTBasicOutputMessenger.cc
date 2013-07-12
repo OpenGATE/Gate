@@ -34,15 +34,15 @@ GateROOTBasicOutputMessenger::GateROOTBasicOutputMessenger(GateROOTBasicOutput* 
   //  G4cout << " DEBUT Contrusteur GateROOTBasicOutputMessenger " << G4endl;
   plotDir = new G4UIdirectory("/gate/output/BasicROOT/");
   plotDir->SetGuidance("Basic ROOT output control.");
-  setfileNameCmd = new G4UIcmdWithAString("/gate/output/BasicROOT/setFileName",this);  
-  setfileNameCmd->SetGuidance("Set name for the free output file root."); 
+  setfileNameCmd = new G4UIcmdWithAString("/gate/output/BasicROOT/setFileName",this);
+  setfileNameCmd->SetGuidance("Set name for the free output file root.");
 }
 //---------------------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------------------
 GateROOTBasicOutputMessenger::~GateROOTBasicOutputMessenger()
-{ 
+{
   delete setfileNameCmd;
   delete plotDir;
 }
@@ -60,6 +60,5 @@ void GateROOTBasicOutputMessenger::SetNewValue(G4UIcommand* command, G4String ne
     }
 }
 //---------------------------------------------------------------------------------
-   
-#endif
 
+#endif

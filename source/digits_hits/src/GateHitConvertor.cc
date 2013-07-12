@@ -17,32 +17,32 @@
 #include "GateDigitizer.hh"
 #include "GateConfiguration.h"
 
-const G4String GateHitConvertor::theOutputAlias = "Hits";  
+const G4String GateHitConvertor::theOutputAlias = "Hits";
 
 
 GateHitConvertor* GateHitConvertor::GetInstance()
 {
   static GateHitConvertor* theHitConvertor = 0;
-  
+
   if (!theHitConvertor)
     theHitConvertor = new GateHitConvertor();
-    
+
   return theHitConvertor;
 }
 
-GateHitConvertor::GateHitConvertor() 
-  : GateClockDependent("digitizer/convertor",false) 
+GateHitConvertor::GateHitConvertor()
+  : GateClockDependent("digitizer/convertor",false)
 {
   m_messenger = new GateHitConvertorMessenger(this);
-}  
+}
 
 
 
 
-GateHitConvertor::~GateHitConvertor() 
+GateHitConvertor::~GateHitConvertor()
 {
   delete m_messenger;
-}  
+}
 
 
 
@@ -67,7 +67,7 @@ GatePulseList* GateHitConvertor::ProcessHits(const GateCrystalHitsCollection* hi
       		G4cout << "[GateHitConvertor::ProcessHits]: processing hit[" << i << "]\n";
       	ProcessOneHit( (*hitCollection)[i], pulseList);
   }
-  
+
   if (nVerboseLevel==1) {
       G4cout << "[GateHitConvertor::ProcessHits]: returning pulse-list with " << pulseList->size() << " entries\n";
       for (i=0; i<pulseList->size(); i++)
@@ -88,14 +88,14 @@ void GateHitConvertor::ProcessOneHit(const GateCrystalHit* hit,GatePulseList* pu
       	G4cout << "[GateHitConvertor::ProcessOneHit]: energy is null for " << *hit << " -> hit ignored\n\n";
     return;
   }
-  
+
   GatePulse* pulse = new GatePulse(hit);
-  
+
   pulse->SetRunID( hit->GetRunID() );
-  
+
   	//  G4cout << "HitConvertor : runID = " << hit->GetRunID() << G4endl;
 
-  
+
   pulse->SetEventID( hit->GetEventID() );
   pulse->SetSourceID( hit->GetSourceID() );
   pulse->SetSourcePosition( hit->GetSourcePosition() );
@@ -118,17 +118,17 @@ void GateHitConvertor::ProcessOneHit(const GateCrystalHit* hit,GatePulseList* pu
   pulse->SetOptical( hit->GetPDGEncoding() == 0 );
 #endif
   pulse->SetNSeptal( hit->GetNSeptal() );  // HDS : septal penetration
- 
+
   if (hit->GetComptonVolumeName().empty()) {
     pulse->SetComptonVolumeName( "NULL" );
     pulse->SetSourceID( -1 );
   }
- 
+
   if (hit->GetRayleighVolumeName().empty()) {
     pulse->SetRayleighVolumeName( "NULL" );
     pulse->SetSourceID( -1 );
   }
-  
+
   if (nVerboseLevel>1)
       	G4cout << "[GateHitConvertor::ProcessOneHit]: " << G4endl
 	       << "\tprocessed " << *hit << G4endl
@@ -142,4 +142,3 @@ void GateHitConvertor::DescribeMyself(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "Convert hits into pulses for '" << GateDigitizer::GetInstance()->GetObjectName() << "'" << G4endl;
 }
-

@@ -9,8 +9,8 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 /*
-  \brief Class GateFragmentationAndProductionActor : 
-  \brief 
+  \brief Class GateFragmentationAndProductionActor :
+  \brief
  */
 
 #include "GateFragmentationAndProductionActor.hh"
@@ -35,11 +35,11 @@ GateFragmentationAndProductionActor::GateFragmentationAndProductionActor(G4Strin
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
-GateFragmentationAndProductionActor::~GateFragmentationAndProductionActor() 
+/// Destructor
+GateFragmentationAndProductionActor::~GateFragmentationAndProductionActor()
 {
   GateDebugMessageInc("Actor",4,"~GateFragmentationAndProductionActor() -- begin"<<G4endl);
- 
+
   delete pMessenger;
 
 
@@ -107,7 +107,7 @@ void GateFragmentationAndProductionActor::SaveData()
 
 
 //-----------------------------------------------------------------------------
-void GateFragmentationAndProductionActor::ResetData() 
+void GateFragmentationAndProductionActor::ResetData()
 {
   pNEvent->Set(0.f,0.f);
   pGammaProduction->Reset();
@@ -139,7 +139,7 @@ void GateFragmentationAndProductionActor::EndOfEventAction(const G4Event*)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateFragmentationAndProductionActor::PreUserTrackingAction(const GateVVolume *, const G4Track* t) 
+void GateFragmentationAndProductionActor::PreUserTrackingAction(const GateVVolume *, const G4Track* t)
 {
   GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- Begin of Track" << G4endl);
   const G4String &name = t->GetDefinition()->GetParticleName();
@@ -149,7 +149,7 @@ void GateFragmentationAndProductionActor::PreUserTrackingAction(const GateVVolum
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateFragmentationAndProductionActor::PostUserTrackingAction(const GateVVolume *, const G4Track* /*t*/) 
+void GateFragmentationAndProductionActor::PostUserTrackingAction(const GateVVolume *, const G4Track* /*t*/)
 {
   GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- End of Track" << G4endl);
   //G4cout << name << " " << (t->GetCreatorProcess()? t->GetCreatorProcess()->GetProcessName():"no process") << G4endl;
@@ -159,7 +159,7 @@ void GateFragmentationAndProductionActor::PostUserTrackingAction(const GateVVolu
   //  assert(step);
   //  const G4StepPoint *point = step->GetPostStepPoint();
   //  assert(point);
-  //  const G4ThreeVector &position = point->GetPosition(); 
+  //  const G4ThreeVector &position = point->GetPosition();
   //  G4cout << "*** end track name=" << name << " pos=" << position << position[2] << G4endl;
   //}
 }

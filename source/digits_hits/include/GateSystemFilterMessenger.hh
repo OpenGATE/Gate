@@ -19,21 +19,21 @@ class GateSystemFilter;
 
 /*! \class GateSystemFilterMessenger
     \brief The messenger of GateSystemFilter class (multi-system approach)
-    
+
     - GateSystemFilterMessenger -by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr
- */      
- 
+ */
+
 class GateSystemFilterMessenger: public GatePulseProcessorMessenger
 {
-   
+
   public:
      GateSystemFilterMessenger(GateSystemFilter* itsSystemFilter);
      ~GateSystemFilterMessenger();
-    
+
     void SetNewValue(G4UIcommand* aCommand, G4String aString);
     void ObtainCandidates();
-    
-    inline GateSystemFilter* GetSystemFilter() 
+
+    inline GateSystemFilter* GetSystemFilter()
       { return (GateSystemFilter*) GetPulseProcessor(); }
 
    private:
@@ -43,4 +43,3 @@ class GateSystemFilterMessenger: public GatePulseProcessorMessenger
 };
 
 #endif
-

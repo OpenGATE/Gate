@@ -23,7 +23,7 @@ class GateDistributionFile : public GateVDistributionArray
     //! Constructor
     GateDistributionFile(const G4String& itsName);
     //! Destructor
-    virtual ~GateDistributionFile() ; 
+    virtual ~GateDistributionFile() ;
 
     //! Setters
     inline void SetFileName(const G4String& fileName) {m_FileName=fileName;}
@@ -42,7 +42,7 @@ class GateDistributionFile : public GateVDistributionArray
     G4String m_FileName;
     G4int m_column_for_X;
     G4int m_column_for_Y;
-    GateDistributionFileMessenger* m_messenger;    
+    GateDistributionFileMessenger* m_messenger;
 };
 
 

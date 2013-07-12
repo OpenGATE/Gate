@@ -68,8 +68,8 @@ IF(GATE_USE_ROOT)
    SET(LINK_DIRECTORIES ${ROOT_LIBRARY_DIR})
    #MESSAGE("Found Root in ${ROOT_INCLUDE_DIR} ${ROOT_LIBRARY_DIR} ${ROOT_LIBRARIES}")
    IF(ROOT_INCLUDE_DIR)
-   ELSE() 
-      MESSAGE("Root Not found ! Please install Root and make it available in PATH")   
+   ELSE()
+      MESSAGE("Root Not found ! Please install Root and make it available in PATH")
    ENDIF()
 ENDIF()
 
@@ -103,8 +103,8 @@ IF(GATE_USE_GPU)
     FIND_PACKAGE(CUDA)
     INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/source/gpu/include/)
     FILE(GLOB sourcesGPU
-    ${PROJECT_SOURCE_DIR}/source/gpu/src/GateGPUManager.cu 
-    )    
+    ${PROJECT_SOURCE_DIR}/source/gpu/src/GateGPUManager.cu
+    )
 ENDIF(GATE_USE_GPU)
 
 #=========================================================
@@ -203,4 +203,3 @@ IF(GATE_DOWNLOAD_EXAMPLES_DATA)
   ExternalData_add_target(GateExampleData)
 ENDIF(GATE_DOWNLOAD_EXAMPLES_DATA)
 #=========================================================
-

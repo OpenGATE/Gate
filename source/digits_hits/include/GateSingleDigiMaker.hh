@@ -22,12 +22,12 @@ class GateDigitizer;
     \brief  It processes a pulse-list, generating single digis.
 
     - GateSingleDigiMaker - by Daniel.Strul@iphe.unil.ch
-    
-*/      
+
+*/
 class GateSingleDigiMaker : public GateVDigiMakerModule
 {
 public:
-  
+
   //! Constructor
   GateSingleDigiMaker(GateDigitizer* itsDigitizer,
   		      const G4String& itsInputName,
@@ -38,18 +38,10 @@ public:
 
   //! Convert a pulse list into a single Digi collection
   void Digitize();
-  
+
  protected:
-  
-  
+
+
 };
 
 #endif
-
-
-
-
-
-
-
-

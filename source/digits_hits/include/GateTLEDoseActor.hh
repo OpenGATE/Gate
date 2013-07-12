@@ -26,8 +26,8 @@ See GATE/LICENSE.txt for further details
 
 class GateTLEDoseActor : public GateVImageActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
   virtual ~GateTLEDoseActor();
@@ -44,10 +44,10 @@ class GateTLEDoseActor : public GateVImageActor
   void EnableEdepUncertaintyImage(bool b) { mIsEdepUncertaintyImageEnabled = b; }
   void EnableDoseImage(bool b) { mIsDoseImageEnabled = b; }
   void EnableDoseSquaredImage(bool b) { mIsDoseSquaredImageEnabled = b; }
-   
+
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
-  
+
   //virtual void PostUserTrackingAction(const GateVVolume *, const G4Track* t);
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
@@ -63,11 +63,11 @@ class GateTLEDoseActor : public GateVImageActor
   virtual void clear(){ResetData();}
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
- 
+
 protected:
   GateTLEDoseActor(G4String name, G4int depth=0);
   GateTLEDoseActorMessenger * pMessenger;
-  
+
   GateImageWithStatistic mDoseImage;
   //GateImageWithStatistic mPrimaryDoseImage;
   //GateImageWithStatistic mSecondaryDoseImage;

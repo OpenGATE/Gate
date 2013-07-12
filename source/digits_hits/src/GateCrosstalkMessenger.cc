@@ -27,7 +27,7 @@ GateCrosstalkMessenger::GateCrosstalkMessenger(GateCrosstalk* itsCrosstalk)
 
   cmdName = GetDirectoryName() + "chooseCrosstalkVolume";
   newVolCmd = new G4UIcmdWithAString(cmdName,this);
-  newVolCmd->SetGuidance("Choose a volume for crosstalk (e.g. crystal)");  
+  newVolCmd->SetGuidance("Choose a volume for crosstalk (e.g. crystal)");
 
   cmdName2 = GetDirectoryName() + "setEdgesFraction";
   edgesFractionCmd = new G4UIcmdWithADouble(cmdName2,this);
@@ -49,16 +49,16 @@ GateCrosstalkMessenger::~GateCrosstalkMessenger()
 
 
 void GateCrosstalkMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
-  if ( command==newVolCmd ) {     
+{
+  if ( command==newVolCmd ) {
     GetCrosstalk()->CheckVolumeName(newValue);
-  } 
+  }
   else if ( command==edgesFractionCmd ) {
     GetCrosstalk()->SetEdgesFraction (edgesFractionCmd->GetNewDoubleValue(newValue));
   }
   else if ( command==cornersFractionCmd ) {
     GetCrosstalk()->SetCornersFraction (cornersFractionCmd->GetNewDoubleValue(newValue));
-  }   
+  }
   else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue); 
+    GatePulseProcessorMessenger::SetNewValue(command,newValue);
 }

@@ -18,20 +18,20 @@ See GATE/LICENSE.txt for further details
 
 
 GateCoincidenceMultiplesKiller::GateCoincidenceMultiplesKiller(GateCoincidencePulseProcessorChain* itsChain,
-			   const G4String& itsName) 
+			   const G4String& itsName)
   : GateVCoincidencePulseProcessor(itsChain,itsName)
 {
 
   m_messenger = new GateCoincidenceMultiplesKillerMessenger(this);
-}  
+}
 
 
 
 
-GateCoincidenceMultiplesKiller::~GateCoincidenceMultiplesKiller() 
+GateCoincidenceMultiplesKiller::~GateCoincidenceMultiplesKiller()
 {
   delete m_messenger;
-}  
+}
 
 
 

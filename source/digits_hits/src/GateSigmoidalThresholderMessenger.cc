@@ -48,7 +48,7 @@ GateSigmoidalThresholderMessenger::~GateSigmoidalThresholderMessenger()
 
 
 void GateSigmoidalThresholderMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
   if ( command==thresholdCmd )
     GetSigmoidalThresholder()->SetThreshold(thresholdCmd->GetNewDoubleValue(newValue));
   else if ( command==alphaCmd )
@@ -56,7 +56,5 @@ void GateSigmoidalThresholderMessenger::SetNewValue(G4UIcommand* command, G4Stri
   else if ( command==perCentCmd )
     GetSigmoidalThresholder()->SetThresholdPerCent(perCentCmd->GetNewDoubleValue(newValue));
   else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue); 
+    GatePulseProcessorMessenger::SetNewValue(command,newValue);
 }
-
-

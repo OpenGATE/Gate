@@ -27,22 +27,22 @@ class GateTransferEfficiencyMessenger;
     \brief  Pulse-processor for simulating the transfer efficiency on each crystal.
 
     - GateTransferEfficiency - by Martin.Rey@epfl.ch (jan 2003)
-    
+
     - Allows to specify a transfer coefficient for each type of crystals.
 
       \sa GateVPulseProcessor
-*/      
+*/
 class GateTransferEfficiency : public GateVPulseProcessor
 {
   public:
     //! This function allows to retrieve the current instance of the GateTransferEfficiency singleton
-    /*! 
+    /*!
       	If the GateTransferEfficiency already exists, GetInstance only returns a pointer to this singleton.
 	If this singleton does not exist yet, GetInstance creates it by calling the private
 	GateTransferEfficiency constructor
     */
     static GateTransferEfficiency* GetInstance(GatePulseProcessorChain* itsChain,
-			       const G4String& itsName); 
+			       const G4String& itsName);
 
         //! Public Destructor
     virtual ~GateTransferEfficiency() ;
@@ -54,8 +54,8 @@ class GateTransferEfficiency : public GateVPulseProcessor
   public:
 
     //! Adds volume to the hashmap and returns 1 if it exists. If it does not exist, returns 0.
-    G4int ChooseVolume(G4String val); 
-  
+    G4int ChooseVolume(G4String val);
+
 
     //! \name setters and getters
     //@{
@@ -69,7 +69,7 @@ class GateTransferEfficiency : public GateVPulseProcessor
     G4double GetTECoeff()   { return m_TECoef;  };
     //! Get the minimum transfer efficiency
     G4double GetTEMin();
-    //@}    
+    //@}
 
     //! Implementation of the pure virtual method declared by the base class GateDigitizerComponent
     //! print-out the attributes specific of the blurring
@@ -82,15 +82,15 @@ class GateTransferEfficiency : public GateVPulseProcessor
     //! It is is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
-    
+
   private:
     //! Static pointer to the GateTransferEfficiency singleton
     static GateTransferEfficiency* theGateTransferEfficiency;
 
-  private:  
+  private:
     G4String m_name;                               //! Name of the volume
     //! Table which contains the names of volume with their transfert efficiencies
-    GateMap<G4String,G4double> m_table ;    
+    GateMap<G4String,G4double> m_table ;
     GateMap<G4String,G4double> ::iterator im;
     G4double m_TECoef;        //! Actual transfer efficiency coefficient
     G4double m_TEMin;                  //! Minimum transfer efficiency coefficient
@@ -100,4 +100,3 @@ class GateTransferEfficiency : public GateVPulseProcessor
 
 
 #endif
-

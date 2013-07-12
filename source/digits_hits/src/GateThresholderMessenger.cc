@@ -35,11 +35,9 @@ GateThresholderMessenger::~GateThresholderMessenger()
 
 
 void GateThresholderMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
   if ( command==thresholdCmd )
-    { GetThresholder()->SetThreshold(thresholdCmd->GetNewDoubleValue(newValue)); }   
+    { GetThresholder()->SetThreshold(thresholdCmd->GetNewDoubleValue(newValue)); }
   else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue); 
+    GatePulseProcessorMessenger::SetNewValue(command,newValue);
 }
-
-

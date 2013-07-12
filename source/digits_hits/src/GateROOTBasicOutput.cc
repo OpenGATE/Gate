@@ -45,10 +45,10 @@ See GATE/LICENSE.txt for further details
 
 //----------------------------------------------------------------
 GateROOTBasicOutput::GateROOTBasicOutput()
-  : fileName("histfile")  
+  : fileName("histfile")
 {
   runMessenger = new GateROOTBasicOutputMessenger(this);
-  
+
   static TROOT rootBase("simple","Test of histogramming and I/O");
   Edep  = new Float_t[dimOfHitVector];
 }
@@ -58,17 +58,17 @@ GateROOTBasicOutput::GateROOTBasicOutput()
 GateROOTBasicOutput::~GateROOTBasicOutput()
 {
   delete[] Edep;
-  delete runMessenger;    
+  delete runMessenger;
 }
 //----------------------------------------------------------------
 
 //----------------------------------------------------------------
 void GateROOTBasicOutput::RecordBeginOfRun(const G4Run* r)
 {
-  run = 0;  
-  
+  run = 0;
+
   if ((r->GetRunID())==0){
-  
+
     hfile = new TFile (fileName, "RECREATE");
     tree = new TTree("T", "Tree de Simu");
     tree->Branch("run",&run,"run/I");
@@ -84,41 +84,41 @@ void GateROOTBasicOutput::RecordBeginOfRun(const G4Run* r)
       hfile = new TFile (fileName, "UPDATE");
       hfile->ls();
       tree = (TTree*)hfile->Get("T");
-  
-    
+
+
       TBranch* b;
       b = tree->GetBranch("run");
       b->SetAddress(&run);
-  
+
       b = tree->GetBranch("numberHits");
       b->SetAddress(&numberHits);
-  
+
       b = tree->GetBranch("Edep");
       b->SetAddress(Edep);
-  
+
       b = tree->GetBranch("Etot");
       b->SetAddress(&Etot);
-  
+
       b = tree->GetBranch("xpos1");
       b->SetAddress(&xpos1);
-  
-  
+
+
       b = tree->GetBranch("ypos1");
       b->SetAddress(&ypos1);
-  
+
       b = tree->GetBranch("zpos1");
       b->SetAddress(&zpos1);
     }
 
-  run = r->GetRunID();  
+  run = r->GetRunID();
 }
 //----------------------------------------------------------------
 
 //----------------------------------------------------------------
 void GateROOTBasicOutput::RecordEndOfRun(const G4Run*)
-{   
+{
   hfile->Write();
-  hfile->Close();  
+  hfile->Close();
   G4cout << " The hfile  " << hfile << " is closed. " << G4endl;
 }
 //----------------------------------------------------------------
@@ -130,9 +130,9 @@ void GateROOTBasicOutput::RecordBeginOfEvent(const G4Event*)
   for (G4int k = 0 ; k < dimOfHitVector ; k++)
     {
       Edep[k] = 0.;
-    
+
     }
-  
+
   xpos1 = 0.;
   ypos1 = 0.;
   zpos1 = 0.;
@@ -144,47 +144,47 @@ void GateROOTBasicOutput::RecordBeginOfEvent(const G4Event*)
 //-----------------------------------------------------------------
 void GateROOTBasicOutput::RecordEndOfEvent(const G4Event* event )
 {
-     
+
   G4SDManager* fSDM = G4SDManager::GetSDMpointer();
 
   G4int collectionID = fSDM->GetCollectionID("crystalCollection");
 
   G4HCofThisEvent* HCofEvent = event->GetHCofThisEvent();
 
-  GateCrystalHitsCollection* trackerHC = 
+  GateCrystalHitsCollection* trackerHC =
     (GateCrystalHitsCollection*) (HCofEvent->GetHC(collectionID));
-   
-   
+
+
   numberHits = trackerHC->entries();
- 
+
   //////////////////////////////////////////////////
   if ( numberHits > dimOfHitVector ) { numberHits = dimOfHitVector ; }
 
   GateCrystalHit* aHit;
   for (G4int i = 0; i < numberHits ; i++)
-    {    
+    {
       aHit = (*trackerHC)[i];
-      
+
       Edep[i] = aHit->GetEdep() / keV;
       Etot += Edep[i];
 
-      xpos1 = aHit->GetGlobalPos().x(); 
+      xpos1 = aHit->GetGlobalPos().x();
       ypos1 = aHit->GetGlobalPos().y();
       zpos1 = aHit->GetGlobalPos().z();
     }
-    
-  // ooOO0OOoo  Remplissage du Tree ooOO0OOoo     
+
+  // ooOO0OOoo  Remplissage du Tree ooOO0OOoo
   tree->Fill();
- 
+
   //  G4cout << " FIN GateROOTBasicOutput::RecordEndOfEvent" << G4endl;
 }
 //-----------------------------------------------------------------
 
 //-----------------------------------------------------------------
-void GateROOTBasicOutput::RecordStepWithVolume(const GateVVolume *, const G4Step*) 
+void GateROOTBasicOutput::RecordStepWithVolume(const GateVVolume *, const G4Step*)
 {
-} 
-//----------------------------------------------------------------- 
+}
+//-----------------------------------------------------------------
 
 //-----------------------------------------------------------------
 void GateROOTBasicOutput::SetfileName(G4String name)

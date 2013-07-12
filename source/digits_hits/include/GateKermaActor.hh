@@ -14,7 +14,7 @@ See GATE/LICENSE.txt for further details
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
 	  david.sarrut@creatis.insa-lyon.fr
-	  
+
 	  DoseToWater option added by Loïc Grevillot
   \date	March 2011
  */
@@ -34,8 +34,8 @@ class G4EmCalculator;
 
 class GateKermaActor : public GateVImageActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
   virtual ~GateKermaActor();

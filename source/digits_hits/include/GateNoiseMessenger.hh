@@ -25,7 +25,7 @@ class GateNoiseMessenger: public GatePulseProcessorMessenger
   public:
     GateNoiseMessenger(GateNoise* itsPulseProcessor);
     virtual ~GateNoiseMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
   private:

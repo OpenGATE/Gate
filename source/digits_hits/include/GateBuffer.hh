@@ -30,7 +30,7 @@ class GateBuffer : public GateVPulseProcessor
 		 const G4String& itsName=theTypeName) ;
 
     //! Destructor
-    virtual ~GateBuffer() ; 
+    virtual ~GateBuffer() ;
 
 
     //! Implementation of the pure virtual method declared by the base class GateDigitizerComponent
@@ -64,4 +64,3 @@ class GateBuffer : public GateVPulseProcessor
 
 
 #endif
-

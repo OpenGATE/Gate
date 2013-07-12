@@ -36,7 +36,7 @@ class GateToASCIIMessenger: public GateOutputModuleMessenger
   public:
     GateToASCIIMessenger(GateToASCII* gateToASCII);
    ~GateToASCIIMessenger();
-    
+
     void CreateNewOutputChannelCommand(GateToASCII::VOutputChannel* anOutputChannel);
 
     void SetNewValue(G4UIcommand*, G4String);
@@ -46,7 +46,7 @@ class GateToASCIIMessenger: public GateOutputModuleMessenger
 
   protected:
     GateToASCII*             			 m_gateToASCII;
-    
+
     G4UIcmdWithoutParameter*          		 ResetCmd;
     G4UIcmdWithABool*                 		 OutFileHitsCmd;
     G4UIcmdWithABool*                 		 OutFileVoxelCmd;

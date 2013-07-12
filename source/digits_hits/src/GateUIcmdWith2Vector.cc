@@ -80,4 +80,3 @@ void GateUIcmdWith2Vector::SetDefaultValue(G4ThreeVector vec)
   G4UIparameter * theParamY = GetParameter(1);
   theParamY->SetDefaultValue(vec.y());
 }
-

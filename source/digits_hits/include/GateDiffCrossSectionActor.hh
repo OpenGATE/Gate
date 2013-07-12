@@ -38,8 +38,8 @@ See GATE/LICENSE.txt for further details
 class G4VEMDataSet;
 class GateDiffCrossSectionActor : public GateVActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
   virtual ~GateDiffCrossSectionActor();
@@ -59,13 +59,13 @@ class GateDiffCrossSectionActor : public GateVActor
   virtual void Initialise();
   void SetEnergy( G4double value);
   void ReadListEnergy( G4String filename);
- 
+
   void SetAngle( G4double value);
   void ReadListAngle( G4String filename);
 
   void SetMaterial(G4String name);
   void ReadMaterialList(G4String filename);
-  
+
   ofstream PointerToFileDataOutSF;
   ofstream PointerToFileDataOutFF;
   ofstream PointerToFileDataOutDCScompton;
@@ -90,7 +90,7 @@ protected:
   std::vector<G4String > mUserMaterialList;
   G4VEMDataSet* scatterFunctionData;
   G4VEMDataSet* formFactorData;
-  
+
 };
 
 MAKE_AUTO_CREATOR_ACTOR(DiffCrossSectionActor,GateDiffCrossSectionActor)

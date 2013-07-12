@@ -28,16 +28,16 @@ See GATE/LICENSE.txt for further details
 // Constructor
 GateDigitizerMessenger::GateDigitizerMessenger(GateDigitizer* itsDigitizer)
 : GateClockDependentMessenger( itsDigitizer)
-{ 
+{
 //  G4cout << " DEBUT Constructor GateDigitizerMessenger " << G4endl;
-  
+
   const G4String& elementTypeName = itsDigitizer->GetElementTypeName();
 
   G4String guidance = G4String("Manages a list of ") + elementTypeName + "s.";
   GetDirectory()->SetGuidance(guidance.c_str());
 
   G4String cmdName;
-  
+
   cmdName = GetDirectoryName()+"name";
   guidance = "Sets the name given to the next " + elementTypeName + " to insert.";
   DefineNameCmd = new G4UIcmdWithAString(cmdName,this);
@@ -62,7 +62,7 @@ GateDigitizerMessenger::GateDigitizerMessenger(GateDigitizer* itsDigitizer)
   ListCmd->SetGuidance(guidance);
 
   pInsertCmd->SetCandidates(DumpMap());
-  
+
 //  G4cout << " FIN Constructor GateDigitizerMessenger " << G4endl;
 }
 
@@ -81,15 +81,15 @@ GateDigitizerMessenger::~GateDigitizerMessenger()
 
 // UI command interpreter method
 void GateDigitizerMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
+{
   if( command==DefineNameCmd )
-    { m_newInsertionBaseName = newValue; }   
+    { m_newInsertionBaseName = newValue; }
   else if( command==pInsertCmd )
-    { DoInsertion(newValue); }   
+    { DoInsertion(newValue); }
   else if( command==ListChoicesCmd )
-    { ListChoices(); }   
+    { ListChoices(); }
   else if( command==ListCmd )
-    { GetDigitizer()->ListElements(); }   
+    { GetDigitizer()->ListElements(); }
   else
     GateClockDependentMessenger::SetNewValue(command,newValue);
 }
@@ -110,12 +110,12 @@ void GateDigitizerMessenger::DoInsertion(const G4String& childTypeName)
 {
   if (GetNewInsertionBaseName().empty())
     SetNewInsertionBaseName(childTypeName);
-    
+
   AvoidNameConflicts();
 
   if (childTypeName=="singleChain") {
     GetDigitizer()->StoreNewPulseProcessorChain( new GatePulseProcessorChain(GetDigitizer(),GetNewInsertionBaseName()) );
-  } else if (childTypeName=="coincidenceSorter") { 
+  } else if (childTypeName=="coincidenceSorter") {
     GetDigitizer()->StoreNewCoincidenceSorter( new GateCoincidenceSorter(GetDigitizer(),GetNewInsertionBaseName(),10.*ns) );
   } else if (childTypeName=="coincidenceChain") {
     GetDigitizer()->StoreNewCoincidenceProcessorChain( new GateCoincidencePulseProcessorChain(GetDigitizer(),GetNewInsertionBaseName()) );
@@ -123,7 +123,7 @@ void GateDigitizerMessenger::DoInsertion(const G4String& childTypeName)
     G4cout << "Digitizer module type name '" << childTypeName << "' was not recognised --> insertion request must be ignored!\n";
     return;
   }
-  
+
   SetNewInsertionBaseName("");
 }
 
@@ -144,28 +144,26 @@ G4bool GateDigitizerMessenger::CheckNameConflict(const G4String& newBaseName)
     If such a conflict is found, a new, conflict-free, name is generated
 */
 void GateDigitizerMessenger::AvoidNameConflicts()
-{ 
+{
   // Look for a potential name-conflict
   if (!CheckNameConflict( GetNewInsertionBaseName() )) {
     // No name conflict, it's OK
     return;
   }
-  
+
 
   G4int copyNumber = 2;
   char buffer[256];
-  
+
   // Try with 'name2', 'name-3',... until the conflict is solved
   do {
     sprintf(buffer, "%s%i", GetNewInsertionBaseName().c_str(), copyNumber);
     copyNumber++;
-  } while (CheckNameConflict(buffer));  
-    
+  } while (CheckNameConflict(buffer));
+
   G4cout << "Warning: the selected insertion name ('" << GetNewInsertionBaseName() << "') was already in use.\n"
       	    "Name '" << buffer << "' will be used instead.\n";
 
   // A conflict-free name was found: store it into the insertion-name variable
   SetNewInsertionBaseName(buffer);
 }
-
-

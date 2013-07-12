@@ -22,34 +22,26 @@ class GateDigitizer;
     \brief  It processes a pulse-list, generating Coincidence digis.
 
     - GateCoincidenceDigiMaker - by Daniel.Strul@iphe.unil.ch
-    
-*/      
+
+*/
 class GateCoincidenceDigiMaker : public GateVDigiMakerModule
 {
 public:
-  
+
   //! Constructor
   GateCoincidenceDigiMaker(GateDigitizer* itsDigitizer,
-  		           const G4String& itsInputName,
-			   G4bool itsOutputFlag);
+                           const G4String& itsInputName,
+                           G4bool itsOutputFlag);
 
   //! Destructor
   ~GateCoincidenceDigiMaker();
 
   //! Convert a pulse list into a Coincidence Digi collection
   void Digitize();
-  
+
  protected:
-  
-  
+
+
 };
 
 #endif
-
-
-
-
-
-
-
-

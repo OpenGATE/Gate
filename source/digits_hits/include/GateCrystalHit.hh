@@ -27,10 +27,10 @@ See GATE/LICENSE.txt for further details
 
 /*! \class  GateCrystalHit
     \brief  Stores hit information for a hit taking place in a volume connected to a system
-    
+
     - GateCrystalHit - by Giovanni Santin
-    
-*/      
+
+*/
 //    Last modification in 12/2011 by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr, for the multi-system approach.
 
 class GateCrystalHit : public G4VHit
@@ -49,10 +49,10 @@ class GateCrystalHit : public G4VHit
 
       void Draw();
       void Print();
-      
-      friend std::ostream& operator<<(std::ostream& flux, const GateCrystalHit& hit);    
 
-      friend std::ofstream& operator<<(std::ofstream& flux, GateCrystalHit* hit);    
+      friend std::ostream& operator<<(std::ostream& flux, const GateCrystalHit& hit);
+
+      friend std::ofstream& operator<<(std::ofstream& flux, GateCrystalHit* hit);
 
 private:
   G4double m_edep;            // energy deposit for the current hit
@@ -82,15 +82,15 @@ private:
   GateVolumeID m_volumeID;    // Volume ID in the world volume tree
   G4ThreeVector m_scannerPos; // Position of the scanner
   G4double m_scannerRotAngle; // Rotation angle of the scanner
-  GateOutputVolumeID m_outputVolumeID;    
+  GateOutputVolumeID m_outputVolumeID;
   G4int m_systemID;           // system ID in for the multi-system approach
-  
+
   // To use with GateROOTBasicOutput classes
   G4ThreeVector pos;  // position
-  
-	// HDS : Added in order to record septal penetration
-	G4int m_nSeptal;
-  
+
+  // HDS : Added in order to record septal penetration
+  G4int m_nSeptal;
+
   public:
       inline void SetEdep(G4double de)          { m_edep = de; }
       inline void AddEdep(G4double de)          { m_edep += de; }
@@ -105,7 +105,7 @@ private:
       inline void  SetGlobalPos(const G4ThreeVector& xyz)    { m_pos = xyz; }
       inline const G4ThreeVector& GetGlobalPos() const            { return m_pos; }
 
-           
+
       inline void  SetLocalPos(const G4ThreeVector& xyz)     { m_localPos = xyz; }
       inline const G4ThreeVector& GetLocalPos() const             { return m_localPos; }
 
@@ -132,13 +132,13 @@ private:
 
       inline void  SetNPhantomCompton(G4int j)  { m_nPhantomCompton = j; }
       inline G4int GetNPhantomCompton() const        { return m_nPhantomCompton; }
-      
+
       inline void  SetNCrystalCompton(G4int j)  { m_nCrystalCompton = j; }
       inline G4int GetNCrystalCompton() const        { return m_nCrystalCompton; }
 
       inline void  SetNPhantomRayleigh(G4int j)  { m_nPhantomRayleigh = j; }
       inline G4int GetNPhantomRayleigh() const        { return m_nPhantomRayleigh; }
-      
+
       inline void  SetNCrystalRayleigh(G4int j)  { m_nCrystalRayleigh = j; }
       inline G4int GetNCrystalRayleigh() const        { return m_nCrystalRayleigh; }
 
@@ -172,23 +172,23 @@ private:
 
       inline void  SetSystemID(const G4int systemID) { m_systemID = systemID; }
       inline G4int GetSystemID() const { return m_systemID; }
-      
-      inline G4bool GoodForAnalysis() const 
+
+      inline G4bool GoodForAnalysis() const
       	  { return ( (m_process != "Transportation") || (m_edep!=0.) ); }
 
-	// HDS : Added in order to record septal penetration
-	inline void  SetNSeptal(G4int j)  { m_nSeptal = j; }
-	inline G4int GetNSeptal() const        { return m_nSeptal; }
-    
-      
+      // HDS : Added in order to record septal penetration
+      inline void  SetNSeptal(G4int j)  { m_nSeptal = j; }
+      inline G4int GetNSeptal() const        { return m_nSeptal; }
+
+
       // To test move part of the code ---------------------------------------------------------
       inline void  SetXPos(const G4double & x)    { m_posx = x; }
       inline const G4double& GetXPos() const      { return m_posx; }
-      
+
       inline void  SetYPos(const G4double & y)    { m_posy = y; }
       inline const G4double& GetYPos() const      { return m_posy; }
-      
-      
+
+
       inline void  SetZPos(const G4double & z)    { m_posz = z; }
       inline const G4double& GetZPos() const      { return m_posz; }
       /////--------------------------------------------------------------
@@ -212,5 +212,3 @@ inline void GateCrystalHit::operator delete(void *aHit)
 }
 
 #endif
-
-

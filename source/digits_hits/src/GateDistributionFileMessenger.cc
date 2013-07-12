@@ -22,9 +22,9 @@ See GATE/LICENSE.txt for further details
 GateDistributionFileMessenger::GateDistributionFileMessenger(GateDistributionFile* itsDistribution,
     			     const G4String& itsDirectoryName)
 : GateDistributionArrayMessenger( itsDistribution,itsDirectoryName)
-{ 
+{
   G4String cmdName,guidance;
-  
+
   cmdName = GetDirectoryName()+"setFileName";
   guidance = "Set the file name";
   setFileNameCmd = new G4UIcmdWithAString(cmdName,this);
@@ -70,8 +70,8 @@ GateDistributionFileMessenger::~GateDistributionFileMessenger()
 
 // UI command interpreter method
 void GateDistributionFileMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
-  if ( command==setFileNameCmd ){	
+{
+  if ( command==setFileNameCmd ){
     GetDistributionFile()->SetFileName(newValue);
   } else if( command==setColXCmd ) {
     G4int x = setColXCmd->GetNewIntValue(newValue);
@@ -87,4 +87,3 @@ void GateDistributionFileMessenger::SetNewValue(G4UIcommand* command,G4String ne
   else
     GateDistributionArrayMessenger::SetNewValue(command,newValue);
 }
-

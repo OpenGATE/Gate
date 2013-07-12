@@ -22,7 +22,7 @@ class GateVDistributionArray : public GateVDistribution
     //! Constructor
     GateVDistributionArray(const G4String& itsName);
     //! Destructor
-    virtual ~GateVDistributionArray() ; 
+    virtual ~GateVDistributionArray() ;
 
     //! Setters
     //! Getters

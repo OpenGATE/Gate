@@ -288,7 +288,6 @@ void GateMaterialMuHandler::SimulateMaterialTable()
   G4DynamicParticle primary(gamma,G4ThreeVector(1.,0.,0.));
   std::vector<G4DynamicParticle *> secondaries; 
   double incidentEnergy;
-  double deltaEnergy = 50.0 * eV;
   
   // - (mu ; muen) calculations 
   map<G4String, GateMuTable*>::iterator it;
@@ -313,10 +312,8 @@ void GateMaterialMuHandler::SimulateMaterialTable()
   double squaredSigmaCS;        // squared CS uncertainty weighted by corresponding squared cross section
   double squaredSigmaMuen(0.);  // squared muen uncertainty
   
-  
   // - loops options
-  double energyStep = exp( (log(mEnergyMax) - log(mEnergyMin)) / double(mEnergyNumber) );
-  std::vector<double> energyList;
+  std::vector<MuStorageStruct> muStorage;
 
   // Loop on material
   for(unsigned int m=0; m<productionCutList->GetTableSize(); m++)
@@ -329,38 +326,15 @@ void GateMaterialMuHandler::SimulateMaterialTable()
     {
       GateMessage("MuHandler",0,"Construction of material : " << materialName << G4endl);
 
-      // construct energyList
-      energyList.clear();
-
-      // - basic list
-      energyList.push_back(mEnergyMin);
-      for(int e = 0; e<mEnergyNumber; e++) { energyList.push_back(energyList[e] * energyStep); }
-      
-      // - add atomic shell energies
-      int elementNumber = material->GetNumberOfElements();
-      for(int i = 0; i < elementNumber; i++)
-      {
-	const G4Element *element = material->GetElement(i);
-	for(int j=0; j<material->GetElement(i)->GetNbOfAtomicShells(); j++)
-	{
-	  double atomicShellEnergy = element->GetAtomicShell(j);
-	  if(atomicShellEnergy > mAtomicShellEnergyMin && atomicShellEnergy > mEnergyMin)
-	  {
-	    energyList.push_back(atomicShellEnergy - deltaEnergy);
-	    energyList.push_back(atomicShellEnergy + deltaEnergy);
-	  }
-	}
-      }
-      std::sort(energyList.begin(), energyList.end());
-      
-      GateMuTable *table = new GateMuTable(materialName, energyList.size());
+      // Construc energy list (energy, atomicShellEnergy)
+      ConstructEnergyList(&muStorage,material);
             
       // Loop on energy
-      for(unsigned int e=0; e<energyList.size(); e++)
+      for(unsigned int e=0; e<muStorage.size(); e++)
       {
 // 	GateMessage("MuHandler",0,"  energy = " << e*energyStep << " MeV" << G4endl);
 
-	incidentEnergy = energyList[e];
+	incidentEnergy = muStorage[e].energy;
 	primary.SetKineticEnergy(incidentEnergy);
 
 	// Cross section calculation
@@ -384,16 +358,14 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 	shotNumberCS = 0;
 	squaredSigmaPE = 0.;
 	squaredSigmaCS = 0.;
-	fPE = 0.;
-	fCS = 0.;
+	fPE = 1.;
+	fCS = 1.;
 	double trialFluoEnergy;
-
 	double precision = 10e6;
-	int index = 0;
 
 	int variableShotNumberPE = 0;
 	if(modelPE and isFluoActive) { variableShotNumberPE = 50; }
-	
+
 	int variableShotNumberCS = 0;
 	if(modelCS) { variableShotNumberCS = 100 - variableShotNumberPE; }
 	
@@ -434,43 +406,46 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 	  }
 
 	  // mu/rho and muen/rho calculation
-	  mu   = crossSectionPE + crossSectionCS + crossSectionRS;
 	  muen = fPE * crossSectionPE + fCS * crossSectionCS;
 
 	  // uncertainty calculation
 	  squaredSigmaMuen = (squaredSigmaPE + squaredSigmaCS) / (incidentEnergy * incidentEnergy);
 	  precision = sqrt(squaredSigmaMuen) / muen;
 
-	  if(modelPE and isFluoActive) { variableShotNumberPE = (int)floor(0.5 + 100. * sqrt(squaredSigmaPE / (squaredSigmaPE + squaredSigmaCS))); }
+	  if(modelPE and isFluoActive) {
+	    if(squaredSigmaPE > 0) { variableShotNumberPE = (int)floor(0.5 + 100. * sqrt(squaredSigmaPE / (squaredSigmaPE + squaredSigmaCS))); }
+	    else { variableShotNumberPE = 50.; }
+	  }
 	  if(modelCS) { variableShotNumberCS = 100 - variableShotNumberPE; }
-	  
-// 	  if(index%100 == 0)
-// 	  {
-// 	    GateMessage("MuHandler",0,"sigPE = " << sqrt(squaredSigmaPE) << " sigCS = " << sqrt(squaredSigmaCS) << " sigMuen = " << sqrt(squaredSigmaMuen) << " uncertainty = " << tmp_uncertainty << G4endl);
-// 	    GateMessage("MuHandler",0,"   nPE = " << variableShotNumberPE << " nCS = " << variableShotNumberCS << " nPEtot = " << shotNumberPE << " nCStot = " << shotNumberCS << G4endl);
-// 	  }
-
-	  index += 100;
 	}
 	
-
+	mu = crossSectionPE + crossSectionCS + crossSectionRS;
 	
 // 	GateMessage("MuHandler",0,"    csPE = " << crossSectionPE << "   csCo = " << crossSectionCS << " csRa = " << crossSectionRS << " cm2.g-1" << G4endl);
 // 	GateMessage("MuHandler",0,"  fluoPE = " << totalFluoPE    << " fluoCo = " << totalFluoCS    << " scCo = " << totalScatterCS << " MeV" << G4endl);
 // 	GateMessage("MuHandler",0,"     fPE = " << fPE            << "    fCo = " << fCS << G4endl);
 // 	GateMessage("MuHandler",0,"     cut = " << energyCutForGamma << "    iPE = " << shotNumberPE << " iCS = " << shotNumberCS << G4endl);
 // 	GateMessage("MuHandler",0," " << incidentEnergy << " MeV - muen = " << muen << " +/- " << sqrt(squaredSigmaMuen) << " (" << precision * 100. << " %)" << G4endl);
-// 	GateMessage("MuHandler",0,"   sigPE = " << sqrt(squaredSigmaPE) / incidentEnergy << "    sigCS = " << sqrt(squaredSigmaCS) / incidentEnergy << G4endl);
-		GateMessage("MuHandler",0," " << incidentEnergy << " " << mu << " " << muen << " " << sqrt(squaredSigmaMuen) << " " << precision << G4endl);
-	table->PutValue(e, log(incidentEnergy), log(mu), log(muen));
+// 	GateMessage("MuHandler",0,"   sigPE = " << sqrt(squaredSigmaPE) << "    sigCS = " << sqrt(squaredSigmaCS) << G4endl);
+// 	GateMessage("MuHandler",0," " << incidentEnergy << " " << mu << " " << muen << " " << sqrt(squaredSigmaMuen) << " " << precision << G4endl);
+// 	GateMessage("MuHandler",0,"   nPE = " << variableShotNumberPE << " nCS = " << variableShotNumberCS << " nPEtot = " << shotNumberPE << " nCStot = " << shotNumberCS << G4endl);
 
-// 	GateMessage("MuHandler",0," " << G4endl);
+	muStorage[e].mu = mu;
+	muStorage[e].muen = muen;
       }
 
+      // Interpolation of mu,muen for energy bordering an atomic transition (see ConstructEnergyList(...))
+      MergeAtomicShell(&muStorage);
+      
+      // Fill mu,muen table for this material
+      GateMuTable *table = new GateMuTable(materialName, muStorage.size());
+      for(unsigned int e=0; e<muStorage.size(); e++) {
+	table->PutValue(e, log(muStorage[e].energy), log(muStorage[e].mu), log(muStorage[e].muen));
+      }
+      mMaterialTable.insert(std::pair<G4String, GateMuTable*>(materialName,table));      
+      
 //       GateMessage("MuHandler",0," -------------------------------------------------------- " << G4endl);
 //       GateMessage("MuHandler",0," " << G4endl);
-      
-      mMaterialTable.insert(std::pair<G4String, GateMuTable*>(materialName,table));
     }
   }
 }
@@ -497,4 +472,69 @@ double GateMaterialMuHandler::SquaredSigmaOnMean(double sumOfSquaredMeasurement,
   return ((sumOfSquaredMeasurement / numberOfMeasurement) - (sumOfMeasurement * sumOfMeasurement)) / numberOfMeasurement;
 }
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateMaterialMuHandler::ConstructEnergyList(std::vector<MuStorageStruct> *muStorage, const G4Material *material)
+{
+  muStorage->clear();
+  double energyStep = exp( (log(mEnergyMax) - log(mEnergyMin)) / double(mEnergyNumber) );
+  double deltaEnergy = 50.0 * eV;
+  
+  // - basic list
+  muStorage->push_back(MuStorageStruct(mEnergyMin,0,0.));
+  for(int e = 0; e<mEnergyNumber; e++) { muStorage->push_back(MuStorageStruct((*muStorage)[e].energy*energyStep,0,0.)); }
+
+  // - add atomic shell energies
+  int elementNumber = material->GetNumberOfElements();
+  for(int i = 0; i < elementNumber; i++)
+  {
+    const G4Element *element = material->GetElement(i);
+    for(int j=0; j<material->GetElement(i)->GetNbOfAtomicShells(); j++)
+    {
+      double atomicShellEnergy = element->GetAtomicShell(j);
+      if(atomicShellEnergy > mAtomicShellEnergyMin && atomicShellEnergy > mEnergyMin)
+      {
+	muStorage->push_back(MuStorageStruct(atomicShellEnergy-deltaEnergy,-1,atomicShellEnergy)); // inf
+	muStorage->push_back(MuStorageStruct(atomicShellEnergy+deltaEnergy,+1,atomicShellEnergy)); // sup
+      }
+    }
+  }
+  std::sort(muStorage->begin(), muStorage->end());
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateMaterialMuHandler::MergeAtomicShell(std::vector<MuStorageStruct> *muStorage)
+{
+  for(unsigned int e=0; e<muStorage->size(); e++)
+  {
+    int isAtomicShell = (*muStorage)[e].isAtomicShell;    
+    if(isAtomicShell != 0)
+    {
+      int neighbourIndex = e + isAtomicShell;
+      if((neighbourIndex > -1) and (neighbourIndex < muStorage->size()))
+      {
+	double mu = interpolation((*muStorage)[neighbourIndex].energy,
+				  (*muStorage)[e].energy,
+				  (*muStorage)[neighbourIndex].mu,
+				  (*muStorage)[e].mu,
+				  (*muStorage)[e].atomicShellEnergy);
+
+	double muen = interpolation((*muStorage)[neighbourIndex].energy,
+				    (*muStorage)[e].energy,
+				    (*muStorage)[neighbourIndex].muen,
+				    (*muStorage)[e].muen,
+				    (*muStorage)[e].atomicShellEnergy);
+
+	(*muStorage)[e].mu = mu;
+	(*muStorage)[e].muen = muen;
+      }
+      (*muStorage)[e].energy = (*muStorage)[e].atomicShellEnergy;
+    }
+    
+//     GateMessage("MuHandler",0," " << (*muStorage)[e].energy << " " << (*muStorage)[e].mu << " " << (*muStorage)[e].muen << G4endl);
+  }
+}
+//-----------------------------------------------------------------------------
+
 #endif

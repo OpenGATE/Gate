@@ -36,12 +36,12 @@ class GateDistributionListManager : public GateListManager
     //@{
     virtual void RegisterDistribution(GateVDistribution* newDistribution);   //!< Registers a new Distribution in the list
     //@}
-        
+
     //! \name Methods to retrieve a Distribution
     //@{
 
     //! Retrieves a Distribution from its name
-    inline GateVDistribution* FindDistribution(const G4String& name)        	      
+    inline GateVDistribution* FindDistribution(const G4String& name)
       { return (GateVDistribution*) FindElement(name); }
 
 
@@ -49,7 +49,7 @@ class GateDistributionListManager : public GateListManager
 
     //! \name Access methods
     //@{
-    GateVDistribution* GetDistribution(size_t i) 
+    GateVDistribution* GetDistribution(size_t i)
       {return (GateVDistribution*) GetElement(i);}      	     //!< Retrieves a Distribution from a store-iterator
     //@}
 
@@ -64,4 +64,3 @@ class GateDistributionListManager : public GateListManager
 
 
 #endif
-

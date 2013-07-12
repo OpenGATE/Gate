@@ -32,7 +32,7 @@ See GATE/LICENSE.txt for further details
 GateSinoAccelToEcat7Messenger::GateSinoAccelToEcat7Messenger(GateSinoAccelToEcat7* gateSinoAccelToEcat7)
   : GateOutputModuleMessenger(gateSinoAccelToEcat7)
   , m_gateSinoAccelToEcat7(gateSinoAccelToEcat7)
-{ 
+{
   G4String cmdName;
 
   cmdName = GetDirectoryName()+"setFileName";
@@ -45,7 +45,7 @@ GateSinoAccelToEcat7Messenger::GateSinoAccelToEcat7Messenger(GateSinoAccelToEcat
   SetMashingCmd->SetGuidance("Set azimutal mashing factor.");
   SetMashingCmd->SetParameterName("Number",false);
   SetMashingCmd->SetRange("Number>0");
-  
+
   cmdName = GetDirectoryName()+"span";
   SetSpanCmd = new G4UIcmdWithAnInteger(cmdName,this);
   SetSpanCmd->SetGuidance("Set span (polar mashing) factor.");
@@ -83,19 +83,19 @@ GateSinoAccelToEcat7Messenger::~GateSinoAccelToEcat7Messenger()
 
 
 void GateSinoAccelToEcat7Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
-  if (command == SetFileNameCmd) 
+{
+  if (command == SetFileNameCmd)
     { m_gateSinoAccelToEcat7->SetFileName(newValue); }
   else if ( command==SetMashingCmd )
-    { m_gateSinoAccelToEcat7->SetMashing(SetMashingCmd->GetNewIntValue(newValue)); }   
+    { m_gateSinoAccelToEcat7->SetMashing(SetMashingCmd->GetNewIntValue(newValue)); }
   else if ( command==SetSpanCmd )
-    { m_gateSinoAccelToEcat7->SetSpan(SetSpanCmd->GetNewIntValue(newValue)); }   
+    { m_gateSinoAccelToEcat7->SetSpan(SetSpanCmd->GetNewIntValue(newValue)); }
   else if ( command==SetMaxRingDiffCmd )
-    { m_gateSinoAccelToEcat7->SetMaxRingDiff(SetMaxRingDiffCmd->GetNewIntValue(newValue)); } 
+    { m_gateSinoAccelToEcat7->SetMaxRingDiff(SetMaxRingDiffCmd->GetNewIntValue(newValue)); }
   else if ( command==SetEcatAccelCameraNumberCmd )
-    { m_gateSinoAccelToEcat7->SetEcatAccelCameraNumber(SetEcatAccelCameraNumberCmd->GetNewIntValue(newValue)); }    
-  else 
+    { m_gateSinoAccelToEcat7->SetEcatAccelCameraNumber(SetEcatAccelCameraNumberCmd->GetNewIntValue(newValue)); }
+  else
     { GateOutputModuleMessenger::SetNewValue(command,newValue);  }
-   
+
 }
 #endif

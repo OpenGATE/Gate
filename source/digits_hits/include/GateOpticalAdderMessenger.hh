@@ -21,19 +21,19 @@ class G4UIdirectory;
 class GateOpticalAdder;
 
 /*! \class  GateOpticalAdderMessenger
-    \brief  Messenger for the GateOpticalAdder 
+    \brief  Messenger for the GateOpticalAdder
 
     - GateOpticalAdderMessenger - by d.j.vanderlaan@iri.tudelft.nl
-*/      
+*/
 class GateOpticalAdderMessenger: public GatePulseProcessorMessenger
 {
   public:
     GateOpticalAdderMessenger(GateOpticalAdder* itsPulseAdder);
     inline ~GateOpticalAdderMessenger() {}
-    
+
     void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GateOpticalAdder* GetPulseAdder() 
+    inline GateOpticalAdder* GetPulseAdder()
     { return (GateOpticalAdder*) GetPulseProcessor();}
 };
 

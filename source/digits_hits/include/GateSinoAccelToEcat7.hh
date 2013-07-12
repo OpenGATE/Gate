@@ -74,13 +74,13 @@ public:
   /*! \brief Overload of the base-class' virtual method to print-out a description of the module
 
 	\param indent: the print-out indentation (cosmetic parameter)
-  */    
+  */
   void Describe(size_t indent=0);
 
   //! Fill the main header
   void FillMainHeader();
   //! Write the GATE specific scanner information into the main header
-  
+
   //! Fill the sub header
   void FillData();
 
@@ -95,11 +95,11 @@ private:
   MatrixFile *m_ptr;
   Main_header *mh;
   Scan3D_subheader *sh;
-  
+
   G4int                m_mashing;           //! azimutal mashing factor
   G4int                m_span;              //! polar mashing factor
   G4int                m_maxRingDiff;       //! maximum ring difference
-  
+
   G4int                m_segmentNb;
   G4int                *m_delRingMinSeg;
   G4int                *m_delRingMaxSeg;
@@ -107,11 +107,11 @@ private:
   G4int                *m_zMaxSeg;
   G4int                *m_segment;
   G4int                 m_ecatAccelCameraNumber;
-  
+
   //G4std::ofstream     	      	m_headerFile; 	      	    //!< Output stream for the header file
   //G4std::ofstream     	      	m_dataFile;   	      	    //!< Output stream for the data file
 
-  
+
 };
 
 #endif

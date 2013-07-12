@@ -22,25 +22,25 @@ See GATE/LICENSE.txt for further details
 class GatePulseAdderMessenger;
 
 /*! \class  GatePulseAdder
-    \brief  Pulse-processor for adding/grouping pulses per volume. 
+    \brief  Pulse-processor for adding/grouping pulses per volume.
 
     - GatePulseAdder - by Daniel.Strul@iphe.unil.ch
-    
-    - For each volume where there was one or more input pulse, we get exactly 
-      one output pulse, whose energy is the sum of all the input-pulse energies, 
+
+    - For each volume where there was one or more input pulse, we get exactly
+      one output pulse, whose energy is the sum of all the input-pulse energies,
       and whose position is the centroid of the input-pulse positions.
-    
+
       \sa GateVPulseProcessor
-*/      
+*/
 class GatePulseAdder : public GateVPulseProcessor
 {
   public:
 
     //! Constructs a new pulse-adder attached to a GateDigitizer
     GatePulseAdder(GatePulseProcessorChain* itsChain,const G4String& itsName);
-  
+
     //! Destructor
-    virtual ~GatePulseAdder();  
+    virtual ~GatePulseAdder();
 
     //! Implementation of the pure virtual method declared by the base class GateClockDependent
     //! print-out the attributes specific of the pulse adder
@@ -54,9 +54,8 @@ class GatePulseAdder : public GateVPulseProcessor
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
 
   private:
-    GatePulseAdderMessenger *m_messenger;     //!< Messenger	      
+    GatePulseAdderMessenger *m_messenger;     //!< Messenger
 };
 
 
 #endif
-

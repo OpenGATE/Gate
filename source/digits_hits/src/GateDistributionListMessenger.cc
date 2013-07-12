@@ -36,14 +36,14 @@ std::map<G4String,GateDistributionListMessenger::distType_t> GateDistributionLis
 GateDistributionListMessenger::GateDistributionListMessenger(GateDistributionListManager* itsListManager)
 : GateListMessenger(itsListManager)
  ,m_distribVector()
-{ 
+{
   G4String guidance;
-  
+
   guidance = G4String("Control the GATE Distributions" );
   SetDirectoryGuidance(guidance);
 
   G4String cmdName;
-  
+
   if (fgkTypes.empty()){
    fgkTypes["File"]         =kFile;
    fgkTypes["Manual"]       =kManual;
@@ -64,7 +64,7 @@ const G4String& GateDistributionListMessenger::DumpMap()
    static G4String ans="";
    if (ans.empty())
       for (std::map<G4String,distType_t>::const_iterator it=fgkTypes.begin()
-           ; it != fgkTypes.end() 
+           ; it != fgkTypes.end()
 	   ;++it)
       	    ans += (*it).first+' ';
    return ans;
@@ -75,11 +75,11 @@ const G4String& GateDistributionListMessenger::DumpMap()
 void GateDistributionListMessenger::DoInsertion(const G4String& typeName)
 {
    G4cout << " GateDistributionListMessenger::DoInsertion " << G4endl;
-   
+
    if (fgkTypes.find(typeName) == fgkTypes.end()) return;
    if (GetNewInsertionBaseName().empty())
      SetNewInsertionBaseName(typeName);
-    
+
    AvoidNameConflicts();
    G4String name = GetListManager()->MakeElementName(GetNewInsertionBaseName());
    G4cout<<"Creating element "<<name<<G4endl;
@@ -91,4 +91,3 @@ void GateDistributionListMessenger::DoInsertion(const G4String& typeName)
       case kFlat         : m_distribVector.push_back(new GateDistributionFlat(name)) ; break;
    }
 }
-

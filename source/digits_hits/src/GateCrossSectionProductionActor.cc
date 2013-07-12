@@ -10,8 +10,8 @@
 
 
 /*
-  \brief Class GateCrossSectionProductionActor : 
-  \brief 
+  \brief Class GateCrossSectionProductionActor :
+  \brief
 */
 
 #ifndef GATECROSSSECTIONPRODUCTIONACTOR_CC
@@ -169,7 +169,7 @@ SectionTableO15_O16.insert(std::pair<float, float> (178.6,	35.66) );
 SectionTableO15_O16.insert(std::pair<float, float> (185.9,	35.16) );
 SectionTableO15_O16.insert(std::pair<float, float> (194.7,	34.91) );
 SectionTableO15_O16.insert(std::pair<float, float> (199.5,	34.91) );
-  
+
 
 GateDebugMessageDec("Actor",4,"GateCrossSectionProductionActor() -- end"<<G4endl);
 
@@ -179,7 +179,7 @@ GateDebugMessageDec("Actor",4,"GateCrossSectionProductionActor() -- end"<<G4endl
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateCrossSectionProductionActor::~GateCrossSectionProductionActor()  {
   delete pMessenger;
 }
@@ -211,13 +211,13 @@ if(m_IsC11){
 
    mEnergyImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
    mEnergyImage.Allocate();
-    
+
     mStatImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mStatImage.Allocate();
 //for secondaries particle
  mEnergyImage_secondary.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
    mEnergyImage_secondary.Allocate();
-    
+
     mStatImage_secondary.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mStatImage_secondary.Allocate();
 
@@ -261,11 +261,11 @@ if(m_IsC11){
 	//the set value is not important
 	Energy_max[max_energy_C11_C12]=0.;
 	Energy_max[max_energy_C11_O16]=0.;
-}	
+}
 if(m_IsO15){
 	//the set value is not important
 	Energy_max[max_energy_O15]=0.;
-	
+
 }
 max_energy_cross_section = Energy_max.begin()->first;
 
@@ -315,14 +315,14 @@ void GateCrossSectionProductionActor::ResetData() {
 void GateCrossSectionProductionActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
   GateDebugMessage("Actor", 3, "GateCrossSectionProductionActor -- Begin of Run" << G4endl);
- 
+
   gettimeofday(&mTimeOfLastSaveEvent, NULL);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // Callback at each event
-void GateCrossSectionProductionActor::BeginOfEventAction(const G4Event * e) { 
+void GateCrossSectionProductionActor::BeginOfEventAction(const G4Event * e) {
   GateVActor::BeginOfEventAction(e);
   mCurrentEvent++;
 
@@ -334,7 +334,7 @@ void GateCrossSectionProductionActor::BeginOfEventAction(const G4Event * e) {
 //-----------------------------------------------------------------------------
 void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
   GateDebugMessageInc("Actor", 4, "GateCrossSectionProductionActor -- UserSteppingActionInVoxel - begin" << G4endl);
-  
+
  //double edep = step->GetTotalEnergyDeposit();
  double energy=0.;
  double density=0.;
@@ -344,11 +344,11 @@ void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index,
 
 	G4Track * aTrack= step->GetTrack();
 	G4int i_find_nb_elemt =0;
-	
+
   	while((nb_elemt_C12_in_table==-1 || nb_elemt_O16_in_table==-1 )&& i_find_nb_elemt<(G4int)step->GetPreStepPoint()->GetMaterial()->GetNumberOfElements() ){
 	//G4cout << step->GetPreStepPoint()->GetMaterial()->GetNumberOfElements() << G4endl;
 	//G4cout << i_find_nb_elemt << G4endl;
-	//G4cout << step->GetPreStepPoint()->GetMaterial()->GetName()<< G4endl; 
+	//G4cout << step->GetPreStepPoint()->GetMaterial()->GetName()<< G4endl;
 	//G4cout << step->GetPreStepPoint()->GetMaterial()->GetElement(i_find_nb_elemt)->GetZ()<< G4endl;
 		if(step->GetPreStepPoint()->GetMaterial()->GetElement(i_find_nb_elemt)->GetZ()==6){nb_elemt_C12_in_table=i_find_nb_elemt;}
  		if(step->GetPreStepPoint()->GetMaterial()->GetElement(i_find_nb_elemt)->GetZ()==8){nb_elemt_O16_in_table=i_find_nb_elemt;}
@@ -367,7 +367,7 @@ void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index,
 			if(aTrack->GetTrackID()==1){
 				if(energy>max_energy_cross_section){
 				GateError("The CrossSectionActor " << GetObjectName() << " does not have this energy in data, please lower the energy or add data, the current limit is : " << max_energy_cross_section << " MeV, current energy is " << energy);
-				} 
+				}
 		  	 mEnergyImage.AddValue(index, energy);
 		  	 PixelValuePerEvent.insert(std::pair<int,int>(index,0));
 		 	 mStatImage.AddValue(index, 1);
@@ -379,7 +379,7 @@ void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index,
 			}
 	//G4cout << " & new track is adding " << energy << " in vox " << index << G4endl;
 		}
-	
+
 	newTrack=false;
 	}else{
 	energy = step->GetTrack()->GetKineticEnergy()/MeV;
@@ -393,15 +393,15 @@ void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index,
 		  	 PixelValuePerEvent_secondary.insert(std::pair<int,int>(index,0));
 		  	 mStatImage_secondary.AddValue(index, 1);
 
-			}	
+			}
 	//G4cout << "is adding " << energy << " in vox " << index << G4endl;
-	
+
 		}
-	
+
   	}
 
   	density = step->GetPreStepPoint()->GetMaterial()->GetDensity()/(gram/cm3);
-	
+
   	mDensityImage.SetValue(index_for_Gate_Image,density );
   	if(nb_elemt_C12_in_table!= -1){
   	  mfractionC12Image.SetValue(index_for_Gate_Image,step->GetPreStepPoint()->GetMaterial()->GetFractionVector()[nb_elemt_C12_in_table]);
@@ -434,14 +434,14 @@ void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
 	  G4double energy_in_vox = mEnergyImage.GetValue(vox_id);
 	  G4double mean_energy= energy_in_vox/((G4double)stat_in_vox);
 	  G4double density_in_vox = mDensityImage.GetValue(vox_id );
-	
+
 	  G4double f_C12 = mfractionC12Image.GetValue(vox_id );
 	  G4double f_O16 = mfractionO16Image.GetValue(vox_id );
-	
+
 	  if(m_IsC11 && mean_energy >=threshold_energy_C12 /*&& nb_elemt_C12_in_table !=1*/){
 	    prod= volume_vox*Na*density_in_vox*f_C12/A_12*GetSectionEfficace(mean_energy,SectionTableC11_C12)*1e-24*1e-3/beam_entrance_section;
 	  mIsotopeImage->AddValue(vox_id,prod);
-	
+
 	  }
 	  if(m_IsC11 && mean_energy >=threshold_energy_C12 /*&& nb_elemt_O16_in_table !=1*/){
 	    prod=volume_vox*Na*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableC11_O16)*1e-24*1e-3/beam_entrance_section;
@@ -459,7 +459,7 @@ void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
 	  mStatImage.SetValue(vox_id,0.);
 	}
   }
- 
+
   PixelValuePerEvent.clear();
   for(std::map<int,int>::iterator i =PixelValuePerEvent_secondary.begin() ; i!=PixelValuePerEvent_secondary.end(); ++i){
 	//in this condition either the pixel has already been treater or no detection in the voxel
@@ -485,7 +485,7 @@ void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
 	  prod=volume_vox*Na*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableO15_O16)*1e-24*1e-3/beam_entrance_section;
 	  mIsotopeImage_O15->AddValue(vox_id,prod);
 	}
-	
+
 	/*G4cout << mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getX()<< " "<< mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getY()<< " "<< mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getZ()<< " ";
 	G4cout << "vox_id : " << vox_id <<" f_C12 : "<< f_C12 <<  " mean_energy " << mean_energy <<  " section eff =  " << GetSectionEfficace(mean_energy,SectionTableC11_C12) << G4endl;*/
 
@@ -498,8 +498,8 @@ PixelValuePerEvent_secondary.clear();
 int ne =eve->GetEventID()+1;
 
 // Save every n events
-  if ((ne != 0) && (mSaveEveryNEvents != 0)) 
-    if (ne % mSaveEveryNEvents == 0){  
+  if ((ne != 0) && (mSaveEveryNEvents != 0))
+    if (ne % mSaveEveryNEvents == 0){
 	G4cout << "GateCrossSectionProductionActor::EndOfEventAction to Save " << G4endl;
 	SaveData();
 	}
@@ -518,36 +518,36 @@ int ne =eve->GetEventID()+1;
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateCrossSectionProductionActor::PreUserTrackingAction(const GateVVolume *, const G4Track*) 
+void GateCrossSectionProductionActor::PreUserTrackingAction(const GateVVolume *, const G4Track*)
 {
   GateDebugMessage("Actor", 3, "GateCrossSectionProductionActor -- Begin of Track" << G4endl);
 
   newTrack = true; //nTrack++;
-  
+
 }
 
 //-----------------------------------------------------------------------------
 double GateCrossSectionProductionActor::GetSectionEfficace(double nrj,std::map<float, float>& MapSigma){
-	
+
 	float xa = -1. , ya,  xb=-1.0,  yb;
-	
+
 	std::map<float, float>::iterator found2 = MapSigma.begin(); //lower energy
 	float dedx_sigma = found2->second;
-	for (std::map<float, float>::iterator found = MapSigma.begin(); found != MapSigma.end(); ++found) 
+	for (std::map<float, float>::iterator found = MapSigma.begin(); found != MapSigma.end(); ++found)
 	{
-		
+
 		if(nrj < found2->first){
-			
+
 			return 0.0;
-			
+
 		}else{
-			
-			
+
+
 			if (nrj < found->first ){
 				xb =found->first ;
 				yb =found->second ;
 				if (found != MapSigma.begin()){
-					
+
 					found--;
 					xa =found->first ;
 					ya =found->second ;
@@ -562,9 +562,9 @@ double GateCrossSectionProductionActor::GetSectionEfficace(double nrj,std::map<f
 				//cout << " cas degalite " << endl;
 				return (found->second);
 			}
-			
+
 		}
-		
+
 	}
 	return dedx_sigma;
 }
@@ -576,4 +576,4 @@ float GateCrossSectionProductionActor::InterpolLin (float xa , float ya, float x
 	Y= a*X + b;
 	return Y;
 }
-#endif 
+#endif

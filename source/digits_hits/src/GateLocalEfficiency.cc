@@ -25,7 +25,7 @@ See GATE/LICENSE.txt for further details
 
 
 GateLocalEfficiency::GateLocalEfficiency(GatePulseProcessorChain* itsChain,
-      	      	      	      	 const G4String& itsName) 
+      	      	      	      	 const G4String& itsName)
   : GateVPulseProcessor(itsChain,itsName),
     m_enabled(),
     m_efficiency(0)
@@ -36,10 +36,10 @@ GateLocalEfficiency::GateLocalEfficiency(GatePulseProcessorChain* itsChain,
 
 
 
-GateLocalEfficiency::~GateLocalEfficiency() 
+GateLocalEfficiency::~GateLocalEfficiency()
 {
   delete m_messenger;
-}  
+}
 
 void GateLocalEfficiency::ComputeSizes()
 {
@@ -47,7 +47,7 @@ void GateLocalEfficiency::ComputeSizes()
    static size_t depth=0;
    static size_t totSize=0;
    static GateVSystem* system;
-   
+
    if (firstPass){
       firstPass=false;
       system= GateSystemListManager::GetInstance()->GetSystem(0);
@@ -92,7 +92,7 @@ void GateLocalEfficiency::SetMode(size_t i,G4bool val)
       m_enabled.resize(depth);
       for (size_t i=0;i<m_enabled.size();i++) m_enabled[i]=false;
    }
-   
+
    if (i<m_enabled.size()){
       m_enabled[i]=val;
    } else {

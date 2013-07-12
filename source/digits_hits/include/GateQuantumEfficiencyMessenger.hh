@@ -26,10 +26,10 @@ class GateQuantumEfficiencyMessenger: public GatePulseProcessorMessenger
   public:
     GateQuantumEfficiencyMessenger(GateQuantumEfficiency* itsQE);
     virtual ~GateQuantumEfficiencyMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GateQuantumEfficiency* GetQE() 
+    inline GateQuantumEfficiency* GetQE()
       { return (GateQuantumEfficiency*) GetPulseProcessor(); }
 
   private:

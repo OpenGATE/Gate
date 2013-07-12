@@ -31,10 +31,10 @@ class GateThresholderMessenger: public GatePulseProcessorMessenger
   public:
     GateThresholderMessenger(GateThresholder* itsThresholder);
     virtual ~GateThresholderMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GateThresholder* GetThresholder() 
+    inline GateThresholder* GetThresholder()
       { return (GateThresholder*) GetPulseProcessor(); }
 
   private:
@@ -42,4 +42,3 @@ class GateThresholderMessenger: public GatePulseProcessorMessenger
 };
 
 #endif
-

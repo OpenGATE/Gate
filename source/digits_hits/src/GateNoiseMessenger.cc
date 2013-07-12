@@ -25,7 +25,7 @@ GateNoiseMessenger::GateNoiseMessenger(GateNoise* itsPulseProcessor)
   cmdName = GetDirectoryName() + "setDeltaTDistribution";
   m_deltaTDistribCmd = new G4UIcmdWithAString(cmdName,this);;
   m_deltaTDistribCmd->SetGuidance("Set the deltaT distribution");
-  
+
   cmdName = GetDirectoryName() + "setEnergyDistribution";
   m_energyDistribCmd = new G4UIcmdWithAString(cmdName,this);;
   m_energyDistribCmd->SetGuidance("Set the energy distribution");
@@ -52,5 +52,5 @@ void GateNoiseMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     if (distrib) noise->SetEnergyDistribution(distrib);
   }
   else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue); 
+    GatePulseProcessorMessenger::SetNewValue(command,newValue);
 }

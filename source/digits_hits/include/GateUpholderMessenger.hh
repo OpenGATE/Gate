@@ -31,10 +31,10 @@ class GateUpholderMessenger: public GatePulseProcessorMessenger
   public:
     GateUpholderMessenger(GateUpholder* itsUpholder);
     virtual ~GateUpholderMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GateUpholder* GetUpholder() 
+    inline GateUpholder* GetUpholder()
       { return (GateUpholder*) GetPulseProcessor(); }
 
   private:
@@ -42,4 +42,3 @@ class GateUpholderMessenger: public GatePulseProcessorMessenger
 };
 
 #endif
-

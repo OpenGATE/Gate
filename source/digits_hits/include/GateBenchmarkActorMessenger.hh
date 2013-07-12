@@ -20,9 +20,9 @@
 
 class GateBenchmarkActor;
 
-class GateBenchmarkActorMessenger : public GateActorMessenger 
+class GateBenchmarkActorMessenger : public GateActorMessenger
 {
-	public: 
+	public:
 
 		GateBenchmarkActorMessenger(GateBenchmarkActor * v);
 
@@ -32,7 +32,7 @@ class GateBenchmarkActorMessenger : public GateActorMessenger
 	protected:
 		void BuildCommands(G4String base);
 
-		GateBenchmarkActor * pActor; 
+		GateBenchmarkActor * pActor;
 
 		/// Command objects
 		//G4UIcmdWithAnInteger * pNBinsCmd;

@@ -28,10 +28,10 @@ GateLinearBlurringLaw::GateLinearBlurringLaw(const G4String& itsName, G4double i
 	 new G4UnitDefinition ( "1/megaelectronvolt", "1/MeV", "Energy Slope", 1/megaelectronvolt );
 	 new G4UnitDefinition ( "1/gigaelectronvolt", "1/GeV", "Energy Slope", 1/gigaelectronvolt );
 	 new G4UnitDefinition ( "1/joule", "1/J", "Energy Slope", 1/joule );
-	
+
 	m_messenger = new GateLinearBlurringLawMessenger(this);
-}	
-	
+}
+
 
 G4double GateLinearBlurringLaw::ComputeResolution(G4double energy) const {
 
@@ -44,7 +44,7 @@ G4double GateLinearBlurringLaw::ComputeResolution(G4double energy) const {
       "\t/gate/digitizer/blurring/disable\n";
 
 			G4Exception( "GateLinearBlurringLaw::ComputeResolution", "ComputeResolution", FatalException, msg );
-	} 
+	}
 	else if (m_eref < 0.) {
 		G4cerr <<   G4endl << "[GateLinearBlurringLaw::ComputeResolution]:" << G4endl
 			<<   "Sorry, but the energy of reference (" << G4BestUnit(GetEnergyRef(),"Energy") << ") is invalid" << G4endl;
@@ -56,7 +56,7 @@ G4double GateLinearBlurringLaw::ComputeResolution(G4double energy) const {
 
 	 	G4Exception( "GateLinearBlurringLaw::ComputeResolution", "ComputeResolution", FatalException, msg );
 	}
-	
+
 	return (m_slope * (energy - m_eref) + m_resolution) ;
 }
 

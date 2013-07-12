@@ -1,13 +1,13 @@
 /*----------------------
 
-   GATE - Geant4 Application for Tomographic Emission 
-   OpenGATE Collaboration 
-     
+   GATE - Geant4 Application for Tomographic Emission
+   OpenGATE Collaboration
+
    Copyright (C) 2009 imXgam/CNRS, CPPM Marseille
 
-   This software is distributed under the terms 
-   of the GNU Lesser General  Public Licence (LGPL) 
-   See GATE/LICENSE.txt for further details 
+   This software is distributed under the terms
+   of the GNU Lesser General  Public Licence (LGPL)
+   See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #include "GateToGPUImageSPECTMessenger.hh"
@@ -23,7 +23,7 @@ GateToGPUImageSPECTMessenger::GateToGPUImageSPECTMessenger( GateToGPUImageSPECT*
 	m_gateToGPUImageSPECT( GateToGPUImageSPECT )
 {
 	G4String cmdName;
-	
+
 	cmdName = GetDirectoryName() + "setFileName";
 	setFileNameCmd = new G4UIcmdWithAString( cmdName, this );
 	setFileNameCmd->SetGuidance( "Set the name of the output image files" );
@@ -43,7 +43,7 @@ GateToGPUImageSPECTMessenger::GateToGPUImageSPECTMessenger( GateToGPUImageSPECT*
     cudaDeviceCmd = new G4UIcmdWithAnInteger( cmdName, this );
     cudaDeviceCmd->SetGuidance( "Set the cuda device" );
 	cudaDeviceCmd->SetParameterName( "CUDA device", false );
-   
+
 		cmdName = GetDirectoryName() + "cpuNumber";
     cpuNumberCmd = new G4UIcmdWithAnInteger( cmdName, this );
     cpuNumberCmd->SetGuidance( "Set the number of thread cpus" );

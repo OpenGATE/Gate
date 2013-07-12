@@ -32,9 +32,9 @@ class GateToInterfileMessenger: public GateOutputModuleMessenger
   public:
     GateToInterfileMessenger(GateToInterfile* gateToInterfile);
    ~GateToInterfileMessenger();
-    
+
     void SetNewValue(G4UIcommand*, G4String);
-    
+
   protected:
     GateToInterfile*             m_gateToInterfile;
 

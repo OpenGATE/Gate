@@ -23,13 +23,12 @@ class GateCoincidenceMultiplesKillerMessenger: public GateClockDependentMessenge
 public:
   GateCoincidenceMultiplesKillerMessenger(GateCoincidenceMultiplesKiller* itsMultiplesKiller);
   virtual ~GateCoincidenceMultiplesKillerMessenger();
-  
+
   inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
-  
+
   inline GateCoincidenceMultiplesKiller* GetMultiplesKiller(){ return (GateCoincidenceMultiplesKiller*) GetClockDependent(); }
-  
+
 private:
 };
 
 #endif
-

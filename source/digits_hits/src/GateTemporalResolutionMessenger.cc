@@ -35,11 +35,9 @@ GateTemporalResolutionMessenger::~GateTemporalResolutionMessenger()
 
 
 void GateTemporalResolutionMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
   if ( command==timeResolutionCmd )
-    { GetTemporalResolution()->SetTimeResolution(timeResolutionCmd->GetNewDoubleValue(newValue)); }   
+    { GetTemporalResolution()->SetTimeResolution(timeResolutionCmd->GetNewDoubleValue(newValue)); }
   else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue); 
+    GatePulseProcessorMessenger::SetNewValue(command,newValue);
 }
-
-

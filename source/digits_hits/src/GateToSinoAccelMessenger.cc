@@ -29,7 +29,7 @@ See GATE/LICENSE.txt for further details
 GateToSinoAccelMessenger::GateToSinoAccelMessenger(GateToSinoAccel* gateToSinoAccel)
   : GateOutputModuleMessenger(gateToSinoAccel)
   , m_gateToSinoAccel(gateToSinoAccel)
-{ 
+{
   G4String cmdName;
 
   cmdName = GetDirectoryName()+"setFileName";
@@ -42,7 +42,7 @@ GateToSinoAccelMessenger::GateToSinoAccelMessenger(GateToSinoAccel* gateToSinoAc
   TruesOnlyCmd->SetGuidance("Record only true coincidences");
   TruesOnlyCmd->SetParameterName("flag",true);
   TruesOnlyCmd->SetDefaultValue(true);
-  
+
   cmdName = GetDirectoryName()+"RadialBins";
   SetRadialElemNbCmd = new G4UIcmdWithAnInteger(cmdName,this);
   SetRadialElemNbCmd->SetGuidance("Set the number of radial sinogram bins");
@@ -59,7 +59,7 @@ GateToSinoAccelMessenger::GateToSinoAccelMessenger(GateToSinoAccel* gateToSinoAc
   SetInputDataCmd = new G4UIcmdWithAString(cmdName,this);
   SetInputDataCmd->SetGuidance("Set the name of the input data to store into the sinogram");
   SetInputDataCmd->SetParameterName("Name",false);
-  
+
   cmdName = GetDirectoryName()+"setTangCrystalBlurring";
   SetTangCrystalResolCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   SetTangCrystalResolCmd->SetGuidance("Set the crystal location blurring FWHM in the tangential direction");
@@ -87,21 +87,21 @@ GateToSinoAccelMessenger::~GateToSinoAccelMessenger()
 }
 
 void GateToSinoAccelMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
-  if (command == SetFileNameCmd) 
+{
+  if (command == SetFileNameCmd)
     { m_gateToSinoAccel->SetFileName(newValue); }
   else if ( command==TruesOnlyCmd )
     { m_gateToSinoAccel->TruesOnly(TruesOnlyCmd->GetNewBoolValue(newValue)) ; }
   else if ( command==SetRadialElemNbCmd )
     { m_gateToSinoAccel->SetRadialElemNb(SetRadialElemNbCmd->GetNewIntValue(newValue)); }
   else if ( command==RawOutputCmd )
-    { m_gateToSinoAccel->RawOutputEnable(RawOutputCmd->GetNewBoolValue(newValue)); }   
+    { m_gateToSinoAccel->RawOutputEnable(RawOutputCmd->GetNewBoolValue(newValue)); }
   else if ( command==SetTangCrystalResolCmd )
-    { m_gateToSinoAccel->SetTangCrystalResolution(SetTangCrystalResolCmd->GetNewDoubleValue(newValue)); }  
+    { m_gateToSinoAccel->SetTangCrystalResolution(SetTangCrystalResolCmd->GetNewDoubleValue(newValue)); }
   else if ( command==SetAxialCrystalResolCmd )
-    { m_gateToSinoAccel->SetAxialCrystalResolution(SetAxialCrystalResolCmd->GetNewDoubleValue(newValue)); }  
-  else if (command == SetInputDataCmd) 
+    { m_gateToSinoAccel->SetAxialCrystalResolution(SetAxialCrystalResolCmd->GetNewDoubleValue(newValue)); }
+  else if (command == SetInputDataCmd)
     { m_gateToSinoAccel->SetOutputDataName(newValue); }
-  else 
-    { GateOutputModuleMessenger::SetNewValue(command,newValue); }   
+  else
+    { GateOutputModuleMessenger::SetNewValue(command,newValue); }
 }

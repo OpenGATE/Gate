@@ -20,9 +20,9 @@ See GATE/LICENSE.txt for further details
 GateDistributionFlatMessenger::GateDistributionFlatMessenger(GateDistributionFlat* itsDistribution,
     			     const G4String& itsDirectoryName)
 : GateDistributionMessenger( itsDistribution,itsDirectoryName)
-{ 
+{
   G4String cmdName,guidance;
-  
+
   cmdName = GetDirectoryName()+"setMin";
   guidance = "Set the Flat min value";
   setMinCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
@@ -57,8 +57,8 @@ GateDistributionFlatMessenger::~GateDistributionFlatMessenger()
 
 // UI command interpreter method
 void GateDistributionFlatMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
-  if       ( command==setAmplitudeCmd ){	
+{
+  if       ( command==setAmplitudeCmd ){
     G4double x = setAmplitudeCmd->GetNewDoubleValue(newValue);
     G4Tokenizer tok(newValue);
     G4String unit = tok();
@@ -83,4 +83,3 @@ void GateDistributionFlatMessenger::SetNewValue(G4UIcommand* command,G4String ne
   else
     GateDistributionMessenger::SetNewValue(command,newValue);
 }
-

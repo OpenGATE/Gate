@@ -42,17 +42,17 @@ GateLightYield* GateLightYield::GetInstance(GatePulseProcessorChain* itsChain,
 GateLightYield::GateLightYield(GatePulseProcessorChain* itsChain,
 					    const G4String& itsName)
   : GateVPulseProcessor(itsChain, itsName)
-{ 
+{
   m_messenger = new GateLightYieldMessenger(this);
   m_lightOutput = 1.;
-}  
+}
 
-GateLightYield::~GateLightYield() 
+GateLightYield::~GateLightYield()
 {
   delete m_messenger;
-}  
+}
 
-G4int GateLightYield::ChooseVolume(G4String val) 
+G4int GateLightYield::ChooseVolume(G4String val)
 {
   //Retrieve the inserter store to check if the volume name is valid
   GateObjectStore* m_store = GateObjectStore::GetInstance();
@@ -69,30 +69,30 @@ G4int GateLightYield::ChooseVolume(G4String val)
 void GateLightYield::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
 {
   //Set the table iterator at the one which correspond to the layer volume name of the pulse
-  im=m_table.find(((inputPulse->GetVolumeID()).GetBottomCreator())->GetObjectName()); 
+  im=m_table.find(((inputPulse->GetVolumeID()).GetBottomCreator())->GetObjectName());
   GatePulse* outputPulse = new GatePulse(*inputPulse);
   if(im != m_table.end())
-    {  
+    {
       if((*im).second < 0 ) {
 	G4cerr << 	G4endl << "[GateLightYield::ProcessOnePulse]:" << G4endl
 	       <<   "Sorry, but the light output (" << (*im).second << ") for " << (*im).first << " is invalid" << G4endl;
-	
+
 	G4String msg = "You must set the light output:\n\t/gate/digitizer/Singles/lightYield/" + (*im).first + "/setLightOutput NBphotons/ENERGY\n or disable the light yield module using:\n\t/gate/digitizer/Singles/lightYield/disable";
 	G4Exception( "GateLightYield::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
       }
       else {
-	m_lightOutput = (*im).second;  
+	m_lightOutput = (*im).second;
 	outputPulse->SetEnergy(inputPulse->GetEnergy() * m_lightOutput);
       }
-    } 
+    }
   outputPulseList.push_back(outputPulse);
 }
 
 G4double GateLightYield::GetMinLightOutput()
 {
   im=m_table.begin();
-  m_minLightOutput = (*im).second; 
-  m_minLightOutputName = (*im).first; 
+  m_minLightOutput = (*im).second;
+  m_minLightOutputName = (*im).first;
   for (im=m_table.begin(); im!=m_table.end(); im++)
     if ((*im).second <= m_minLightOutput)
       {

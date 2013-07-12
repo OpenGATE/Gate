@@ -36,12 +36,12 @@ class GateSinoAccelToEcat7Messenger: public GateOutputModuleMessenger
   public:
     GateSinoAccelToEcat7Messenger(GateSinoAccelToEcat7* gateSinoAccelToEcat7);
    ~GateSinoAccelToEcat7Messenger();
-    
+
     void SetNewValue(G4UIcommand*, G4String);
-    
+
   protected:
     GateSinoAccelToEcat7*       m_gateSinoAccelToEcat7;
-    
+
     G4UIcmdWithAString*         SetFileNameCmd;
     G4UIcmdWithAnInteger*       SetMashingCmd;
     G4UIcmdWithAnInteger*       SetSpanCmd;

@@ -17,7 +17,7 @@
 
 class GateDetectionProfileActor : public GateVImageActor
 {
-  public: 
+  public:
     enum DetectionPosition { Beam, Particle, Middle };
     void SetTimer(const G4String &timerName);
     void SetDistanceThreshold(double distance);
@@ -61,7 +61,7 @@ MAKE_AUTO_CREATOR_ACTOR(DetectionProfileActor,GateDetectionProfileActor)
 
 class GateDetectionProfilePrimaryTimerActor : public GateVActor
 {
-  public: 
+  public:
     struct TriggerData {
       G4double time;
       G4String name;
@@ -96,7 +96,7 @@ class GateDetectionProfilePrimaryTimerActor : public GateVActor
     TH1D *histoTime;
     TH1D *histoDirz;
     TH2D *histoPosition;
-    
+
     typedef std::map<G4String,TH2D*> ActorHistos;
     ActorHistos histosTimeEnergy;
     ActorHistos histosTimeDeltaEnergy;

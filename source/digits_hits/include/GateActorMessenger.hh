@@ -12,7 +12,7 @@ See GATE/LICENSE.txt for further details
   \class  GateActorMessenger
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
+          david.sarrut@creatis.insa-lyon.fr
 */
 
 
@@ -46,12 +46,12 @@ protected:
 
   G4UIcmdWithAString*   pSetFileNameCmd;
   G4UIcmdWithAString*   pSetVolumeNameCmd;
-  G4UIcmdWithAnInteger* pSaveEveryNEventsCmd; 
-  G4UIcmdWithAnInteger* pSaveEveryNSecondsCmd; 
+  G4UIcmdWithAnInteger* pSaveEveryNEventsCmd;
+  G4UIcmdWithAnInteger* pSaveEveryNSecondsCmd;
   G4UIcmdWithABool *    pSetOverWriteFilesFlagCmd;
   G4UIcmdWithABool *    pSetResetDataAtEachRunFlagCmd;
   G4UIcmdWithAString *  pAddFilterCmd;
-  
+
   G4String baseName;
 };
 

@@ -44,7 +44,7 @@ private:
   G4String m_physVolName;
 
 // v. cuplov - optical photons
-//  static const G4String theOutputAlias; 
+//  static const G4String theOutputAlias;
 // v. cuplov - optical photons
 
   public:
@@ -81,7 +81,7 @@ private:
       inline G4String GetPhysVolName()const     { return m_physVolName; }
 
 // v. cuplov - optical photons
-      inline G4bool GoodForAnalysis() const 
+      inline G4bool GoodForAnalysis() const
       	  { return ( (m_process != "Transportation") || (m_edep!=0.) ); }
 
 //     static  const G4String& GetOutputAlias() {return theOutputAlias;}
@@ -106,5 +106,3 @@ inline void GatePhantomHit::operator delete(void *aHit)
 }
 
 #endif
-
-

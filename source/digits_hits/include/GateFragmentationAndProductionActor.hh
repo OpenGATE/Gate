@@ -27,10 +27,10 @@
 /// \brief Actor displaying nb events/tracks/step
 class GateFragmentationAndProductionActor : public GateVActor
 {
- public: 
-  
+ public:
+
   virtual ~GateFragmentationAndProductionActor();
-    
+
   //-----------------------------------------------------------------------------
   // This macro initialize the CreatePrototype and CreateInstance
   FCT_FOR_AUTO_CREATOR_ACTOR(GateFragmentationAndProductionActor)
@@ -53,14 +53,14 @@ class GateFragmentationAndProductionActor : public GateVActor
   /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
- 
+
 //  virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
   //virtual void clear(){ResetData();}
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
 
   void SetNBins(unsigned int aNBins) { pNBins = aNBins; }
-  unsigned int GetNBins() const { return pNBins; } 
+  unsigned int GetNBins() const { return pNBins; }
 
 protected:
   GateFragmentationAndProductionActor(G4String name, G4int depth=0);
@@ -79,4 +79,4 @@ MAKE_AUTO_CREATOR_ACTOR(FragmentationAndProductionActor,GateFragmentationAndProd
 
 
 #endif /* end #define GATEFRAGMENTATIONANDPRODUCTIONACTOR_HH */
-#endif 
+#endif

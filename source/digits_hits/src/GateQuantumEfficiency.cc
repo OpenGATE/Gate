@@ -14,7 +14,7 @@ See GATE/LICENSE.txt for further details
 #include "GateQuantumEfficiencyMessenger.hh"
 #include "GateTools.hh"
 
-#include "GateVolumeID.hh" 
+#include "GateVolumeID.hh"
 #include "GateOutputVolumeID.hh"
 #include "GateDetectorConstruction.hh"
 #include "GateCrystalSD.hh"
@@ -62,19 +62,19 @@ GateQuantumEfficiency::GateQuantumEfficiency(GatePulseProcessorChain* itsChain,
 }
 
 // Public destructor
-GateQuantumEfficiency::~GateQuantumEfficiency() 
+GateQuantumEfficiency::~GateQuantumEfficiency()
 {
   delete m_messenger;
   delete [] m_table;
 }
 
-  
 
-void GateQuantumEfficiency::CheckVolumeName(G4String val) 
+
+void GateQuantumEfficiency::CheckVolumeName(G4String val)
 {
-  //Retrieve the inserter store to check if the volume name is valid  
+  //Retrieve the inserter store to check if the volume name is valid
   GateObjectStore* anInserterStore = GateObjectStore::GetInstance();
-   
+
 
   if (anInserterStore->FindCreator(val)) {
     m_volumeName = val;
@@ -88,7 +88,7 @@ void GateQuantumEfficiency::CheckVolumeName(G4String val)
     m_level1No = (levels.size() >= 3) ? levels[3] : 1;
 
     m_testVolume = 1;
-    
+
   }
   else {
     G4cout << "Wrong Volume Name" << G4endl;
@@ -96,10 +96,10 @@ void GateQuantumEfficiency::CheckVolumeName(G4String val)
 }
 
 void GateQuantumEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
-{ 
+{
   if(!m_count)
     {
-      if(!m_testVolume) 
+      if(!m_testVolume)
 	{
 	  G4cerr << 	G4endl << "[GateQuantumEfficiency::ProcessOnePulse]:" << G4endl
 		 <<   "Sorry, but you don't have choosen any volume !" << G4endl;
@@ -117,7 +117,7 @@ void GateQuantumEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePuls
   m_j = (pulseLevels.size() >= 2) ? pulseLevels[2] : 0;
   m_i = (pulseLevels.size() >= 3) ? pulseLevels[3] : 0;
 
-  GatePulse* outputPulse = new GatePulse(*inputPulse);  
+  GatePulse* outputPulse = new GatePulse(*inputPulse);
   m_QECoef = m_table[m_k + m_j*m_level3No + m_i*m_level3No*m_level2No][m_volumeIDNo];
   outputPulse->SetEnergy(inputPulse->GetEnergy() * m_QECoef);
   outputPulseList.push_back(outputPulse);
@@ -125,7 +125,7 @@ void GateQuantumEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePuls
 
 
 void GateQuantumEfficiency::UseFile(G4String aFile)
-{ 
+{
   std::ifstream in(aFile);
   G4double temp;
   G4int count = 0;
@@ -154,7 +154,7 @@ void GateQuantumEfficiency::CreateTable()
     G4cout << "Creation of a file called 'QETables.dat' which contains the quantum efficiencies tables" << G4endl;
 
   for (r = 0; r < m_nbTables; r++) {
-    m_table[r] = new G4double [m_nbCrystals];  
+    m_table[r] = new G4double [m_nbCrystals];
     if (m_nbFiles > 0) {
       size_t rmd=MonteCarloInt(0,m_nbFiles-1);
       in.open(m_file[rmd].c_str());
@@ -226,17 +226,17 @@ G4double GateQuantumEfficiency::GetMinQECoeff() {
       m_minQECoef = (m_table[r][n] <= m_minQECoef) ?
 	m_table[r][n] : m_minQECoef;
 
-  return m_minQECoef; 
+  return m_minQECoef;
 }
 
 void GateQuantumEfficiency::DescribeMyself(size_t indent)
-{ 
+{
   if (m_nbFiles > 0) {
     G4cout << GateTools::Indent(indent) << "Variable quantum efficiency based on the file(s): " << G4endl;
     std::vector<G4String>::iterator im;
     for (im=m_file.begin(); im!=m_file.end(); im++)
       G4cout << GateTools::Indent(indent+1) << *im << G4endl;
   }
-  else 
+  else
     G4cout << GateTools::Indent(indent) << "Fixed quantum efficiency equal to " << m_uniqueQE << G4endl;
 }
