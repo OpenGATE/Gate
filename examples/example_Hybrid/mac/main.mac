@@ -87,7 +87,7 @@
 
 # Scatter Order Track Information (soti)
 /gate/actor/addActor                   ScatterOrderTrackInformationActor soti
-/gate/actor/soti/attachTo              patient
+/gate/actor/soti/attachTo              world
 
 # -----------------------------------------------------
 # Hybrid ForcedDetection Actor (hfda)
