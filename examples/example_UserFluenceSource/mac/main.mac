@@ -1,0 +1,108 @@
+
+#=====================================================
+# VERBOSE and VISUALISATION 
+#=====================================================
+
+/gate/verbose Physic    0
+/gate/verbose Cuts      0
+/gate/verbose SD        0
+/gate/verbose Actions   0
+/gate/verbose Actor     0
+/gate/verbose Step      0
+/gate/verbose Error     0
+/gate/verbose Warning   0
+/gate/verbose Output    0
+/gate/verbose Beam      0
+/gate/verbose Volume    0
+/gate/verbose Image     0
+/gate/verbose Geometry  0
+/tracking/verbose	0
+
+#/control/execute mac/visu.mac
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+# -----------------------------------------------------
+# World
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+/gate/world/setMaterial         Vacuum
+/gate/world/geometry/setXLength 1.0 m
+/gate/world/geometry/setYLength 1.0 m
+/gate/world/geometry/setZLength 1.0 m
+
+# -----------------------------------------------------
+# Detector
+/gate/world/daughters/name                detector
+/gate/world/daughters/insert              box
+/gate/detector/setMaterial                Vacuum
+/gate/detector/geometry/setXLength        8. mm
+/gate/detector/geometry/setYLength        8. mm
+/gate/detector/geometry/setZLength        1. nm
+/gate/detector/placement/setTranslation   0. 0. -40. mm
+/gate/detector/placement/setRotationAxis  1 0 0
+/gate/detector/placement/setRotationAngle 0 deg
+#/gate/detector/vis/setVisible             1
+#/gate/detector/vis/setColor               yellow
+
+#=====================================================
+# PHYSIC : unused in this test case (Vacuum)
+#=====================================================
+
+/gate/physics/addProcess PhotoElectric
+/gate/physics/processes/PhotoElectric/setModel PenelopeModel
+
+#=====================================================
+# ACTOR
+#=====================================================
+
+/gate/actor/addActor ParticleInVolumeActor      detectorSensor
+/gate/actor/detectorSensor/attachTo             detector
+/gate/actor/detectorSensor/setResolution        200 200 1
+/gate/actor/detectorSensor/save                 output/sourceProjection.mhd
+
+#=====================================================
+# BEAM
+#=====================================================
+
+/gate/source/addSource mybeam gps
+/gate/source/mybeam/gps/particle gamma
+/gate/source/mybeam/gps/energytype Mono
+/gate/source/mybeam/gps/monoenergy 100.0 keV
+/gate/source/mybeam/gps/pos/centre 0. 0. 40. mm
+/gate/source/mybeam/gps/pos/rot1 1 0 0
+/gate/source/mybeam/gps/pos/rot2 0 1 0
+
+# Plane
+#/gate/source/mybeam/gps/pos/type Plane
+#/gate/source/mybeam/gps/pos/shape Rectangle
+#/gate/source/mybeam/gps/pos/halfx 2.5 mm
+#/gate/source/mybeam/gps/pos/halfy 2.5 mm
+
+# UserFluenceImage
+/gate/source/mybeam/gps/pos/type UserFluenceImage
+/gate/source/mybeam/gps/pos/setImage data/userFluenceImage.mhd
+
+# non-divergent source
+/gate/source/mybeam/gps/direction 0. 0. -1.
+
+# divergent source
+#/gate/source/mybeam/gps/ang/type focused
+#/gate/source/mybeam/gps/ang/focuspoint 0. 0. 0. mm
+
+#=====================================================
+# MAIN
+#=====================================================
+
+/gate/run/initialize
+
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed 10
+
+/gate/run/enableGlobalOutput true
+
+# PARTICLE
+/gate/application/setTotalNumberOfPrimaries 1000000
+/gate/application/start
+
