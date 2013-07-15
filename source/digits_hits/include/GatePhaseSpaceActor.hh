@@ -24,8 +24,8 @@
 #include "GateVActor.hh"
 #include "GatePhaseSpaceActorMessenger.hh"
 
-class iaea_header_type;
-class iaea_record_type;
+struct iaea_header_type;
+struct iaea_record_type;
 
 //====================================================================
 class GatePhaseSpaceActor : public GateVActor

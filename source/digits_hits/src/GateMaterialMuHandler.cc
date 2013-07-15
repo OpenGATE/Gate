@@ -512,7 +512,7 @@ void GateMaterialMuHandler::MergeAtomicShell(std::vector<MuStorageStruct> *muSto
     if(isAtomicShell != 0)
     {
       int neighbourIndex = e + isAtomicShell;
-      if((neighbourIndex > -1) and (neighbourIndex < muStorage->size()))
+      if((neighbourIndex > -1) and (neighbourIndex < (int)muStorage->size()))
       {
 	double mu = interpolation((*muStorage)[neighbourIndex].energy,
 				  (*muStorage)[e].energy,
