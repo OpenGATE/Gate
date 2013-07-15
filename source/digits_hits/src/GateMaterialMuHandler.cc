@@ -77,15 +77,14 @@ inline double interpolation(double Xa,double Xb,double Ya,double Yb,double x){
 //-----------------------------------------------------------------------------
 void GateMaterialMuHandler::Initialize()
 {
-  DD(mElementsFolderName);
   if(mElementsFolderName == "NULL")
   {
-    DD("Simulation");
+//     DD("Simulation");
     SimulateMaterialTable();
   }
   else
   {
-    DD("Precalculated");
+//     DD("Precalculated");
     mNbOfElements = 100;
     mElementsTable = new GateMuTable*[mNbOfElements+1];
     InitElementTable();
@@ -110,7 +109,7 @@ void GateMaterialMuHandler::Initialize()
 //-----------------------------------------------------------------------------
 void GateMaterialMuHandler::ConstructMaterial(const G4Material *material)
 {
-  GateMessage("MuHandler",0,"Construction of material : " << material->GetName() << G4endl);
+  GateMessage("Physic",1,"Construction of mu/mu_en table for material : " << material->GetName() << G4endl);
 
   //const G4ElementVector* elements = material->GetElementVector();
   int nb_e = 0;
@@ -199,7 +198,7 @@ void GateMaterialMuHandler::ConstructMaterial(const G4Material *material)
   GateMuTable * table = new GateMuTable(material->GetName(), nb_e);
   
   for(int i = 0; i < nb_e; i++){
-    GateMessage("MuHandler",0," " << energies[i] << " " << Mu[i] << " " << MuEn[i] << " " << G4endl);
+//     GateMessage("Physic",2," " << energies[i] << " " << Mu[i] << " " << MuEn[i] << " " << G4endl);
     table->PutValue(i, log(energies[i]), log(Mu[i]), log(MuEn[i]));
   }
   
@@ -324,7 +323,7 @@ void GateMaterialMuHandler::SimulateMaterialTable()
     it = mMaterialTable.find(materialName);
     if(it == mMaterialTable.end())
     {
-      GateMessage("MuHandler",0,"Construction of material : " << materialName << G4endl);
+      GateMessage("Physic",1,"Construction of mu/mu_en table for material : " << material->GetName() << G4endl);
 
       // Construc energy list (energy, atomicShellEnergy)
       ConstructEnergyList(&muStorage,material);
@@ -332,7 +331,7 @@ void GateMaterialMuHandler::SimulateMaterialTable()
       // Loop on energy
       for(unsigned int e=0; e<muStorage.size(); e++)
       {
-// 	GateMessage("MuHandler",0,"  energy = " << e*energyStep << " MeV" << G4endl);
+// 	GateMessage("Physic",2,"  energy = " << e*energyStep << " MeV" << G4endl);
 
 	incidentEnergy = muStorage[e].energy;
 	primary.SetKineticEnergy(incidentEnergy);
@@ -421,14 +420,14 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 	
 	mu = crossSectionPE + crossSectionCS + crossSectionRS;
 	
-// 	GateMessage("MuHandler",0,"    csPE = " << crossSectionPE << "   csCo = " << crossSectionCS << " csRa = " << crossSectionRS << " cm2.g-1" << G4endl);
-// 	GateMessage("MuHandler",0,"  fluoPE = " << totalFluoPE    << " fluoCo = " << totalFluoCS    << " scCo = " << totalScatterCS << " MeV" << G4endl);
-// 	GateMessage("MuHandler",0,"     fPE = " << fPE            << "    fCo = " << fCS << G4endl);
-// 	GateMessage("MuHandler",0,"     cut = " << energyCutForGamma << "    iPE = " << shotNumberPE << " iCS = " << shotNumberCS << G4endl);
-// 	GateMessage("MuHandler",0," " << incidentEnergy << " MeV - muen = " << muen << " +/- " << sqrt(squaredSigmaMuen) << " (" << precision * 100. << " %)" << G4endl);
-// 	GateMessage("MuHandler",0,"   sigPE = " << sqrt(squaredSigmaPE) << "    sigCS = " << sqrt(squaredSigmaCS) << G4endl);
-// 	GateMessage("MuHandler",0," " << incidentEnergy << " " << mu << " " << muen << " " << sqrt(squaredSigmaMuen) << " " << precision << G4endl);
-// 	GateMessage("MuHandler",0,"   nPE = " << variableShotNumberPE << " nCS = " << variableShotNumberCS << " nPEtot = " << shotNumberPE << " nCStot = " << shotNumberCS << G4endl);
+// 	GateMessage("Physic",2,"    csPE = " << crossSectionPE << "   csCo = " << crossSectionCS << " csRa = " << crossSectionRS << " cm2.g-1" << G4endl);
+// 	GateMessage("Physic",2,"  fluoPE = " << totalFluoPE    << " fluoCo = " << totalFluoCS    << " scCo = " << totalScatterCS << " MeV" << G4endl);
+// 	GateMessage("Physic",2,"     fPE = " << fPE            << "    fCo = " << fCS << G4endl);
+// 	GateMessage("Physic",2,"     cut = " << energyCutForGamma << "    iPE = " << shotNumberPE << " iCS = " << shotNumberCS << G4endl);
+// 	GateMessage("Physic",2," " << incidentEnergy << " MeV - muen = " << muen << " +/- " << sqrt(squaredSigmaMuen) << " (" << precision * 100. << " %)" << G4endl);
+// 	GateMessage("Physic",2,"   sigPE = " << sqrt(squaredSigmaPE) << "    sigCS = " << sqrt(squaredSigmaCS) << G4endl);
+// 	GateMessage("Physic",2," " << incidentEnergy << " " << mu << " " << muen << " " << sqrt(squaredSigmaMuen) << " " << precision << G4endl);
+// 	GateMessage("Physic",2,"   nPE = " << variableShotNumberPE << " nCS = " << variableShotNumberCS << " nPEtot = " << shotNumberPE << " nCStot = " << shotNumberCS << G4endl);
 
 	muStorage[e].mu = mu;
 	muStorage[e].muen = muen;
@@ -444,8 +443,8 @@ void GateMaterialMuHandler::SimulateMaterialTable()
       }
       mMaterialTable.insert(std::pair<G4String, GateMuTable*>(materialName,table));      
       
-//       GateMessage("MuHandler",0," -------------------------------------------------------- " << G4endl);
-//       GateMessage("MuHandler",0," " << G4endl);
+//       GateMessage("Physic",2," -------------------------------------------------------- " << G4endl);
+//       GateMessage("Physic",2," " << G4endl);
     }
   }
 }
@@ -532,7 +531,7 @@ void GateMaterialMuHandler::MergeAtomicShell(std::vector<MuStorageStruct> *muSto
       (*muStorage)[e].energy = (*muStorage)[e].atomicShellEnergy;
     }
     
-//     GateMessage("MuHandler",0," " << (*muStorage)[e].energy << " " << (*muStorage)[e].mu << " " << (*muStorage)[e].muen << G4endl);
+//     GateMessage("Physic",2," " << (*muStorage)[e].energy << " " << (*muStorage)[e].mu << " " << (*muStorage)[e].muen << G4endl);
   }
 }
 //-----------------------------------------------------------------------------
