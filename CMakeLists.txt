@@ -33,7 +33,6 @@ ENDIF()
 #=========================================================
 # Build variables for G4 Version
 
-#MESSAGE("G4 Version ${Geant4_VERSION}")
 STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\1" G4VERSION_MAJOR ${Geant4_VERSION})
 STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\2" G4VERSION_MINOR ${Geant4_VERSION})
 STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION})
@@ -90,6 +89,10 @@ IF(GATE_USE_SYSTEM_CLHEP)
    FIND_PACKAGE(CLHEP REQUIRED)
    INCLUDE_DIRECTORIES(${CLHEP_INCLUDE_DIR})
    SET(LINK_DIRECTORIES ${CLHEP_LIBRARIES})
+   MESSAGE("Your current Geant4 version is ${Geant4_VERSION}")
+   MESSAGE("Your current CLHEP version is ${CLHEP_VERSION}")
+   MESSAGE("Please refer to http://geant4.web.cern.ch/geant4/support/ReleaseNotes4.${G4VERSION_MAJOR}.${G4VERSION_MINOR}.html to verify that your CLHEP version is supported by Geant4.")
+
    #MESSAGE("Found Clhep in ${CLHEP_INCLUDE_DIR} ${CLHEP_LIBRARY}")
 ENDIF()
 
