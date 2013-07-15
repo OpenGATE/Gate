@@ -45,6 +45,7 @@
 #include <typeinfo>
 
 #include "GateConfiguration.h"
+#include "GateMessageManager.hh"
 
 //   turn on general debugging info, and consistency checks
 //#define debug_G4BinaryCascade 1
@@ -176,7 +177,7 @@ G4HadFinalState * GateBinaryCascade::ApplyYourself(const G4HadProjectile & aTrac
       G4cerr << "You are using G4BinaryCascade for projectiles other than nucleons or pions."<<G4endl;
       G4cerr << "If you want to continue, please switch on the developer environment: "<<G4endl;
       G4cerr << "setenv I_Am_G4BinaryCascade_Developer 1 "<<G4endl<<G4endl;
-      throw G4HadronicException(__FILE__, __LINE__, "G4BinaryCascade - used for unvalid particle type - Fatal");
+      throw G4HadronicException(__SHORT_FILE__, __LINE__, "G4BinaryCascade - used for unvalid particle type - Fatal");
     }
   }
 
@@ -926,7 +927,7 @@ void GateBinaryCascade::BuildTargetList()
   {
      G4cerr << "GateBinaryCascade::BuildTargetList(): Fatal Error - invalid nucleus (A,Z)=("
 		<< currentA << "," << currentZ << ")" << G4endl;
-     throw G4HadronicException(__FILE__, __LINE__, "G4BinaryCasacde::BuildTargetList()");
+     throw G4HadronicException(__SHORT_FILE__, __LINE__, "G4BinaryCasacde::BuildTargetList()");
   }
   currentInitialEnergy=	theInitial4Mom.e();
   G4KineticTrackVector::iterator i;
@@ -1068,7 +1069,7 @@ G4bool GateBinaryCascade::ApplyCollision(G4CollisionInitialState * collision)
      debug.push_back(primary);
      PrintKTVector(&debug,std::string("primay- ..."));
      PrintKTVector(&target_collection,std::string("... targets"));
-//*GF*     throw G4HadronicException(__FILE__, __LINE__, "G4BinaryCasacde::ApplyCollision()");
+//*GF*     throw G4HadronicException(__SHORT_FILE__, __LINE__, "G4BinaryCasacde::ApplyCollision()");
 #endif
      return false;
   }
@@ -1358,10 +1359,10 @@ G4bool GateBinaryCascade::Absorb()
   {
     G4KineticTrack * kt = *iter;
     if(!absorber.FindAbsorbers(*kt, theTargetList))
-      throw G4HadronicException(__FILE__, __LINE__, "G4BinaryCascade::Absorb(): Cannot absorb a particle.");
+      throw G4HadronicException(__SHORT_FILE__, __LINE__, "G4BinaryCascade::Absorb(): Cannot absorb a particle.");
 
     if(!absorber.FindProducts(*kt))
-      throw G4HadronicException(__FILE__, __LINE__, "G4BinaryCascade::Absorb(): Cannot absorb a particle.");
+      throw G4HadronicException(__SHORT_FILE__, __LINE__, "G4BinaryCascade::Absorb(): Cannot absorb a particle.");
 
     G4KineticTrackVector * products = absorber.GetProducts();
 // ------ debug
@@ -1374,7 +1375,7 @@ G4bool GateBinaryCascade::Absorb()
 // ------ end debug
       ClearAndDestroy(products);
       if(!absorber.FindProducts(*kt))
-	throw G4HadronicException(__FILE__, __LINE__, 
+	throw G4HadronicException(__SHORT_FILE__, __LINE__, 
 	  "G4BinaryCascade::Absorb(): Cannot absorb a particle.");
     }
 // ------ debug
@@ -1575,7 +1576,7 @@ void GateBinaryCascade::StepParticlesOut()
 	  if ( ! intersect );
 	  {
              PrintKTVector(&theSecondaryList, std::string(" state ERROR....."));
-             throw G4HadronicException(__FILE__, __LINE__, "G4BinaryCascade::StepParticlesOut() particle not in nucleus");
+             throw G4HadronicException(__SHORT_FILE__, __LINE__, "G4BinaryCascade::StepParticlesOut() particle not in nucleus");
           }
 #endif
 	  if(intersect && tStep<minTimeStep && tStep> 0 )
@@ -1584,7 +1585,7 @@ void GateBinaryCascade::StepParticlesOut()
 	  }
       } else if ( kt->GetState() != G4KineticTrack::outside ){
           PrintKTVector(&theSecondaryList, std::string(" state ERROR....."));
-          throw G4HadronicException(__FILE__, __LINE__, "G4BinaryCascade::StepParticlesOut() particle not in nucleus");
+          throw G4HadronicException(__SHORT_FILE__, __LINE__, "G4BinaryCascade::StepParticlesOut() particle not in nucleus");
       }
     }
     minTimeStep *= 1.2;
@@ -2183,7 +2184,7 @@ G4KineticTrackVector* GateBinaryCascade::CorrectBarionsOnBoundary(
 	PrintKTVector(&theCapturedList,"CorrectBarionsOnBoundary Captured");
 	PrintKTVector(&theSecondaryList,"CorrectBarionsOnBoundary Secondaries");
         G4cerr << "G4BinaryCascade - currentA, currentZ " << currentA << " " << currentZ << G4endl; 
-        throw G4HadronicException(__FILE__, __LINE__, "G4BinaryCascade::CorrectBarionsOnBoundary() - fatal error");
+        throw G4HadronicException(__SHORT_FILE__, __LINE__, "G4BinaryCascade::CorrectBarionsOnBoundary() - fatal error");
      }
      G4double mass_final=GetIonMass(currentZ,currentA);
      G4double correction= mass_initial - mass_final - secondaryMass_out;
