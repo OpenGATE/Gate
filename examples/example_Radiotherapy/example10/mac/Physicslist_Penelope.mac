@@ -7,3 +7,13 @@
 /gate/physics/addProcess RayleighScattering
 /gate/physics/processes/RayleighScattering/setModel PenelopeModel
 
+
+# mu and mu_en coefficients are automatically generated at each simulation.
+# however, it is possible to give precalculated data using the following command:
+
+#/gate/physics/MuHandler/setElementFolderName data
+
+# Note that, input data have to
+# - be defined for each element from Z=1 to Z=100
+# - be defined separately for mu and mu_en data
+# WARNING: see GateMaterialMuHandler::ReadElementFile(int z) for more details
