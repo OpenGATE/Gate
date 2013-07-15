@@ -853,7 +853,6 @@ void GateVSource::InitializeUserFluence()
 			      userFluenceImage.GetVoxelSize().y(),
 			      userFluenceImage.GetVoxelSize().z());
 
-
     mUserPosX.resize(resX);
     mUserPosY.resize(resY);
     mUserPosGenY.resize(resX);
@@ -863,6 +862,8 @@ void GateVSource::InitializeUserFluence()
     double posX,posY;
     posX = ((0.5 * sizeX) + userFluenceImage.GetOrigin().x());
 //     posX = ((0.5 * sizeX) - userFluenceImage.GetHalfSize().x());
+    
+    mUserPosGenX.SetXBias(G4ThreeVector(0.,0.,0.));
     for(int i=0; i<resX;i++)
     {
       mUserPosX[i] = posX;
@@ -870,16 +871,18 @@ void GateVSource::InitializeUserFluence()
       sum = 0.0;
       posY = ((0.5 * sizeY) + userFluenceImage.GetOrigin().y());
 //       posY = ((0.5 * sizeY) - userFluenceImage.GetHalfSize().y());
+      
+      mUserPosGenY[i].SetYBias(G4ThreeVector(0.,0.,0.));
       for(int j=0; j<resY; j++)
       {
 	sum += userFluenceImage.GetValue(i,j,0);
 	mUserPosY[j] = posY;
 
-	mUserPosGenY[i].SetYBias(G4ThreeVector(j,userFluenceImage.GetValue(i,j,0),0.));
+	mUserPosGenY[i].SetYBias(G4ThreeVector(j+1,userFluenceImage.GetValue(i,j,0),0.));
 	posY += sizeY;
       }
-
-      mUserPosGenX.SetXBias(G4ThreeVector(i,sum,0.));
+      
+      mUserPosGenX.SetXBias(G4ThreeVector(i+1,sum,0.));
       posX += sizeX;
     }
     
@@ -892,7 +895,7 @@ G4ThreeVector GateVSource::UserFluencePosGenerateOne()
 {
   int i = floor(mUserPosGenX.GenRandX());
   int j = floor(mUserPosGenY[i].GenRandY());
-
+  
   // uniform rand in pixel
   double x = mUserPosX[i] + (G4UniformRand()-0.5)*mUserFluenceVoxelSize.x();
   double y = mUserPosY[j] + (G4UniformRand()-0.5)*mUserFluenceVoxelSize.y();
