@@ -52,15 +52,6 @@ You still have the possibility to disable those processes by using one of the fo
 
 3)   Simulation command :
 
-if using the voxelised phantom, apply first the following commands to get the binary data :
-
-    cd data
-    wget http://www.creatis.insa-lyon.fr/~smekens/voxelisedPhantom.mhd
-    wget http://www.creatis.insa-lyon.fr/~smekens/voxelisedPhantom.raw
-    cd ..
-
-then, run the simulation
-
     Gate -a [out,yourFileName] mac/fluorescenceTest.mac
 
 the result is stored in output/yourFileName.root 
