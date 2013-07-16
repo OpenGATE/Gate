@@ -95,6 +95,16 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
   pSetFluorescenceFilenameCmd = new G4UIcmdWithAString(bb,this);
   guidance = "Set the file name for writing the image that provides the fluorescence image.";
   pSetFluorescenceFilenameCmd->SetGuidance(guidance);
+
+  bb = base+"/secondaryFilename";
+  pSetSecondaryFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for writing the image that provides the scattering image.";
+  pSetSecondaryFilenameCmd->SetGuidance(guidance);
+
+  bb = base+"/totalFilename";
+  pSetTotalFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for writing the image that provides the total (primary + scaterring) image.";
+  pSetTotalFilenameCmd->SetGuidance(guidance);
   
   bb = base+"/singleInteractionFilename";
   pSetSingleInteractionFilenameCmd = new G4UIcmdWithAString(bb,this);
@@ -148,6 +158,8 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetRayleighFilenameCmd) pHybridActor->SetRayleighFilename(param);
   if(command == pSetResponseDetectorFilenameCmd) pHybridActor->SetResponseDetectorFilename(param);
   if(command == pSetFluorescenceFilenameCmd) pHybridActor->SetFluorescenceFilename(param);
+  if(command == pSetSecondaryFilenameCmd) pHybridActor->SetSecondaryFilename(param);
+  if(command == pSetTotalFilenameCmd) pHybridActor->SetTotalFilename(param);
   if(command == pSetSingleInteractionFilenameCmd) pHybridActor->SetSingleInteractionFilename(param);
   if(command == pSetSingleInteractionTypeCmd) pHybridActor->SetSingleInteractionType(param);
   if(command == pSetSingleInteractionPositionCmd) pHybridActor->SetSingleInteractionPosition(pSetSingleInteractionPositionCmd->GetNew3VectorValue(param));

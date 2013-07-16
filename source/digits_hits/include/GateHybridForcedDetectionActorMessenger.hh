@@ -46,6 +46,8 @@ protected:
   G4UIcmdWithAString * pSetComptonFilenameCmd;
   G4UIcmdWithAString * pSetRayleighFilenameCmd;
   G4UIcmdWithAString * pSetFluorescenceFilenameCmd;
+  G4UIcmdWithAString * pSetSecondaryFilenameCmd;
+  G4UIcmdWithAString * pSetTotalFilenameCmd;
   G4UIcmdWithAString * pSetSingleInteractionFilenameCmd;
   G4UIcmdWithAString * pSetSingleInteractionTypeCmd;
   G4UIcmdWith3Vector * pSetSingleInteractionDirectionCmd;

@@ -80,6 +80,8 @@ public:
   void SetComptonFilename(G4String name) { mComptonFilename = name; }
   void SetRayleighFilename(G4String name) { mRayleighFilename = name; }
   void SetFluorescenceFilename(G4String name) { mFluorescenceFilename = name; }
+  void SetSecondaryFilename(G4String name) { mSecondaryFilename = name; }
+  void SetTotalFilename(G4String name) { mTotalFilename = name; }
   void SetSingleInteractionFilename(G4String name) { mSingleInteractionFilename = name; }
   void SetSingleInteractionType(G4String type) { mSingleInteractionType = type; }
   void SetSingleInteractionPosition(G4ThreeVector pos) { mSingleInteractionPosition = pos; }
@@ -127,6 +129,8 @@ protected:
   G4String mComptonFilename;
   G4String mRayleighFilename;
   G4String mFluorescenceFilename;
+  G4String mSecondaryFilename;
+  G4String mTotalFilename;
 
   G4ThreeVector mDetectorResolution;
   GateEnergyResponseFunctor mEnergyResponseDetector;
@@ -138,6 +142,8 @@ protected:
   InputImageType::Pointer mComptonImage;
   InputImageType::Pointer mRayleighImage;
   InputImageType::Pointer mFluorescenceImage;
+  InputImageType::Pointer mSecondaryImage;
+  InputImageType::Pointer mTotalImage;
   std::vector<InputImageType::Pointer> mComptonPerOrderImages;
   std::vector<InputImageType::Pointer> mRayleighPerOrderImages;
   std::vector<InputImageType::Pointer> mFluorescencePerOrderImages;

@@ -99,6 +99,9 @@
 /gate/actor/hfda/primaryFilename       output/primary%.04d.mha
 /gate/actor/hfda/rayleighFilename      output/rayleigh%.04d.mha
 /gate/actor/hfda/comptonFilename       output/compton%.04d.mha
+/gate/actor/hfda/fluorescenceFilename  output/fluorescence%.04d.mha
+/gate/actor/hfda/secondaryFilename     output/secondary%.04d.mha
+/gate/actor/hfda/totalFilename         output/total%.04d.mha
 /gate/actor/hfda/materialMuFilename    output/materialMu.mha
 /gate/actor/hfda/attenuationFilename   output/attenuation%.04d.mha
 /gate/actor/hfda/flatFieldFilename     output/flatField%.04d.mha

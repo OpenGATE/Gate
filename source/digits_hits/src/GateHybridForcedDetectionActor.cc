@@ -36,6 +36,7 @@
 #include <itkConstantPadImageFilter.h>
 #include <itkImageFileWriter.h>
 #include <itkBinaryFunctorImageFilter.h>
+#include <itkAddImageFilter.h>
 
 #define TRY_AND_EXIT_ON_ITK_EXCEPTION(execFunc)                         \
   try                                                                   \
@@ -606,6 +607,7 @@ void GateHybridForcedDetectionActor::SaveData()
   imgWriter = itk::ImageFileWriter<InputImageType>::New();
   char filename[1024];
   G4int rID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+  unsigned int secondary = 0;
 
   if(mPrimaryFilename != "") {
     // Normalize by the number of particles
@@ -662,17 +664,15 @@ void GateHybridForcedDetectionActor::SaveData()
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
   }
 
-  if(mFlatFieldFilename != "")
-  {
+  if(mFlatFieldFilename != "") {
     sprintf(filename, mFlatFieldFilename.c_str(), rID);
     imgWriter->SetFileName(filename);
     imgWriter->SetInput(mFlatFieldImage);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
   }
 
-  if(mComptonFilename != "")
-  {
-
+  if(mComptonFilename != "") {
+    secondary+=1;
     sprintf(filename, mComptonFilename.c_str(), rID);
     imgWriter->SetFileName(filename);
     imgWriter->SetInput(mComptonImage);
@@ -687,8 +687,8 @@ void GateHybridForcedDetectionActor::SaveData()
     }
   }
 
-  if(mRayleighFilename != "")
-  {
+  if(mRayleighFilename != "") {
+    secondary+=2;
     sprintf(filename, mRayleighFilename.c_str(), rID);
     imgWriter->SetFileName(filename);
     imgWriter->SetInput(mRayleighImage);
@@ -703,8 +703,8 @@ void GateHybridForcedDetectionActor::SaveData()
     }
   }
 
-  if(mFluorescenceFilename != "")
-  {
+  if(mFluorescenceFilename != "") {
+    secondary+=4;
     sprintf(filename, mFluorescenceFilename.c_str(), rID);
     imgWriter->SetFileName(filename);
     imgWriter->SetInput(mFluorescenceImage);
@@ -717,6 +717,81 @@ void GateHybridForcedDetectionActor::SaveData()
       imgWriter->SetInput(mFluorescencePerOrderImages[k]);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
     }
+  }
+
+  if(mSecondaryFilename != "") {
+    // The secondary image contains all calculated scatterings (Compton, Rayleigh and/or Fluorescence)
+    // Create projections image
+    mSecondaryImage = CreateVoidProjectionImage();
+    // Add Image Filter used to sum the different figures obtained on each process
+    typedef itk::AddImageFilter <OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
+    AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
+
+    switch (secondary) {
+    case 1: // Compton
+      mSecondaryImage = mComptonImage;
+      break;
+    case 2: // Rayleigh
+      mSecondaryImage = mRayleighImage;
+      break;
+    case 3: // Rayleigh + Compton
+      addFilter->SetInput1(mComptonImage);
+      addFilter->SetInput2(mRayleighImage);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
+      mSecondaryImage = addFilter->GetOutput();
+      break;
+    case 4: // Fluorescence
+      mSecondaryImage = mFluorescenceImage;
+      break;
+    case 5: // Fluorescence + Compton
+      addFilter->SetInput1(mComptonImage);
+      addFilter->SetInput2(mFluorescenceImage);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
+      mSecondaryImage = addFilter->GetOutput();
+      break;
+    case 6: // Fluorescence + Rayleigh
+      addFilter->SetInput1(mRayleighImage);
+      addFilter->SetInput2(mFluorescenceImage);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
+      mSecondaryImage = addFilter->GetOutput();
+      break;
+    case 7: // Fluorescence + Rayleigh + Compton
+      addFilter->SetInput1(mRayleighImage);
+      addFilter->SetInput2(mFluorescenceImage);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
+      addFilter->SetInput1(addFilter->GetOutput());
+      addFilter->SetInput2(mComptonImage);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
+      mSecondaryImage = addFilter->GetOutput();
+      break;
+    default: // error?
+      std::cerr << "ERROR : secondary type  (" << secondary << ") does not match with any known option." << std::endl;
+      exit(-1);
+    }
+
+    // Write Scattering Image
+    sprintf(filename, mSecondaryFilename.c_str(), rID);
+    imgWriter->SetFileName(filename);
+    imgWriter->SetInput(mSecondaryImage);
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+  }
+
+  if(mTotalFilename != "") {
+    // The Total image contains the Primary + Secondary images
+    // Create projections image
+    mTotalImage = CreateVoidProjectionImage();
+    // Add Image Filter used to sum the primary image + secondary image
+    typedef itk::AddImageFilter <OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
+    AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
+    addFilter->SetInput1(mSecondaryImage);
+    addFilter->SetInput2(mPrimaryImage);
+    TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
+    mTotalImage = addFilter->GetOutput();
+    // Write Total Image
+    sprintf(filename, mTotalFilename.c_str(), rID);
+    imgWriter->SetFileName(filename);
+    imgWriter->SetInput(mTotalImage);
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
   }
 
   if(mSingleInteractionFilename!="") {
