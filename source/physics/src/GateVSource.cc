@@ -872,7 +872,7 @@ void GateVSource::InitializeUserFluence()
     
     // Generate XBias and "YBias knowing X" according to fluence image
     double posX,posY;
-    posX = ((0.5 * sizeX) + userFluenceImage.GetOrigin().x());
+    posX = userFluenceImage.GetOrigin().x();
 //     posX = ((0.5 * sizeX) - userFluenceImage.GetHalfSize().x());
     
     mUserPosGenX.SetXBias(G4ThreeVector(0.,0.,0.));
@@ -881,7 +881,7 @@ void GateVSource::InitializeUserFluence()
       mUserPosX[i] = posX;
 
       sum = 0.0;
-      posY = ((0.5 * sizeY) + userFluenceImage.GetOrigin().y());
+      posY = userFluenceImage.GetOrigin().y();
 //       posY = ((0.5 * sizeY) - userFluenceImage.GetHalfSize().y());
       
       mUserPosGenY[i].SetYBias(G4ThreeVector(0.,0.,0.));
