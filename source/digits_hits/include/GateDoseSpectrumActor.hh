@@ -52,13 +52,16 @@ class GateDoseSpectrumActor : public GateVActor
   /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
-  
+  void DosePrimaryOnly(bool b){mDosePrimaryOnly = b;}
 
 protected:
   GateDoseSpectrumActor(G4String name, G4int depth=0);
 
+  bool mDosePrimaryOnly;
   double mVolumeMass;
   double mEnergyDepot;
+  double mEventEnergy;
+  double DOSIS;
   std::map< G4double, G4double> mDoseSpectrum;
   std::map< G4int, G4bool> mEnergyFlag;
   GateActorMessenger* pMessenger;
