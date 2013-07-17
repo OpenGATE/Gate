@@ -22,12 +22,12 @@ See GATE/LICENSE.txt for further details
 class GateSpblurringMessenger;
 
 /*! \class  GateSpblurring
-    \brief  Pulse-processor for simulating a Gaussian blurring on the position. 
+    \brief  Pulse-processor for simulating a Gaussian blurring on the position.
 
     - GatePulseAdder - by By Steven.Staelens@rug.ac.be
-    
+
       \sa GateVPulseProcessor
-*/      
+*/
 class GateSpblurring : public GateVPulseProcessor
 {
   public:
@@ -41,22 +41,22 @@ class GateSpblurring : public GateVPulseProcessor
 		    G4double itsSpblurring=0) ;
 
     //! Destructor
-    virtual ~GateSpblurring() ; 
+    virtual ~GateSpblurring() ;
     //@}
-    
+
      //! \name getters and setters
     //@{
     //! This function returns the resolution in use.
     G4double GetSpresolution()   	       { return m_spresolution; }
-    
+
     //! This function sets the spresolution of a gaussian spblurring.
-    /*! 
-      If you want a resolution of 10%, SetSpresolution(0.1) 
+    /*!
+      If you want a resolution of 10%, SetSpresolution(0.1)
       \param val is a real number
     */
     void SetSpresolution(G4double val)   { m_spresolution = val;  }
     //@}
-    
+
     //! Implementation of the pure virtual method declared by the base class GateClockDependent
     //! print-out the attributes specific of the blurring
     virtual void DescribeMyself(size_t indent);
@@ -67,7 +67,7 @@ class GateSpblurring : public GateVPulseProcessor
     //! It is is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
-    
+
   private:
     G4double m_spresolution;   	      	  //!< Simulated spatial resolution
 
@@ -77,4 +77,3 @@ class GateSpblurring : public GateVPulseProcessor
 
 
 #endif
-

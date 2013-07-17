@@ -21,9 +21,9 @@ See GATE/LICENSE.txt for further details
 GateDistributionArrayMessenger::GateDistributionArrayMessenger(GateVDistributionArray* itsDistribution,
     			     const G4String& itsDirectoryName)
 : GateDistributionMessenger( itsDistribution,itsDirectoryName)
-{ 
+{
   G4String cmdName,guidance;
-  
+
   cmdName = GetDirectoryName()+"setUnitX";
   guidance = "Specify the unit of X axis";
   setUnitX_Cmd = new G4UIcmdWithAString(cmdName,this);
@@ -59,7 +59,7 @@ GateDistributionArrayMessenger::~GateDistributionArrayMessenger()
 
 // UI command interpreter method
 void GateDistributionArrayMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
+{
   if( command==setUnitX_Cmd ) {
     SetUnitX(newValue);
     G4double factorX = G4UIcommand::ValueOf(newValue);
@@ -77,4 +77,3 @@ void GateDistributionArrayMessenger::SetNewValue(G4UIcommand* command,G4String n
   else
     GateDistributionMessenger::SetNewValue(command,newValue);
 }
-

@@ -25,6 +25,9 @@
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4UIcmdWithADouble.hh"
+
+#include "GateMaterialMuHandler.hh"
 
 class GatePhysicsList;
 
@@ -69,13 +72,23 @@ protected:
   G4UIcmdWithADoubleAndUnit * pSetEMax;
   G4UIcmdWithABool * pSetSplineFlag;
   G4UIcommand * pAddAtomDeexcitation;
-  
   G4UIcmdWithAString * pAddPhysicsList;
   G4UIcmdWithADoubleAndUnit * pEnergyRangeMinLimitCmd;
+
+  // Mu Handler tools
+  G4UIcmdWithAString * pMuHandlerUsePrecalculatedElements;
+  G4UIcmdWithADoubleAndUnit * pMuHandlerSetEMin;
+  G4UIcmdWithADoubleAndUnit * pMuHandlerSetEMax;
+  G4UIcmdWithAnInteger * pMuHandlerSetENumber;
+  G4UIcmdWithADoubleAndUnit * pMuHandlerSetAtomicShellEMin;
+  G4UIcmdWithADoubleAndUnit * pMuHandlerSetAtomicShellTolerance;
+  G4UIcmdWithADouble * pMuHandlerSetPrecision;
+  
 
 private:
   int nInit;
   int nEMStdOpt;
+  GateMaterialMuHandler *nMuHandler;
 }; 
 
 #endif /* end #define GATEPHYSICSLISTMESSENGER_HH */

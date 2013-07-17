@@ -26,7 +26,7 @@ See GATE/LICENSE.txt for further details
 GateToLMFMessenger::GateToLMFMessenger(GateToLMF* gateToLMF)
   : GateOutputModuleMessenger(gateToLMF)
   , m_gateToLMF(gateToLMF)
-{ 
+{
   G4String cmdName;
 
 
@@ -52,8 +52,8 @@ GateToLMFMessenger::GateToLMFMessenger(GateToLMF* gateToLMF)
 
 
 
-  
-  
+
+
   cmdCoincidenceBool = GetDirectoryName()+"setCoincidenceBool";
   cmdDetectorIDBool = GetDirectoryName()+"setDetectorIDBool";
   cmdEnergyBool = GetDirectoryName()+"setEnergyBool";
@@ -63,7 +63,7 @@ GateToLMFMessenger::GateToLMFMessenger(GateToLMF* gateToLMF)
   cmdGantryAngularPosBool = GetDirectoryName()+"setGantryAngularPosBool";
   cmdSourcePosBool = GetDirectoryName()+"setSourcePosBool";
   cmdGateDigiBool = GetDirectoryName()+"setGateDigiBool";
-  
+
   cmdComptonBool = GetDirectoryName()+"setComptonBool";
   //cmdComptonDetectorBool = GetDirectoryName()+"setComptonDetectorBool";
   cmdSourceIDBool = GetDirectoryName()+"setSourceIDBool";
@@ -71,9 +71,9 @@ GateToLMFMessenger::GateToLMFMessenger(GateToLMF* gateToLMF)
   cmdGlobalXYZPosBool = GetDirectoryName()+"setGlobalXYZPosBool";
   cmdEventIDBool = GetDirectoryName()+"setEventIDBool";
   cmdRunIDBool = GetDirectoryName()+"setRunIDBool";
-  
 
- 
+
+
   cmdName = GetDirectoryName()+"setFileName";
   GetFileNameCmd = new G4UIcmdWithAString(cmdName,this);
   cmdName = GetDirectoryName()+"setInputDataName";
@@ -95,33 +95,33 @@ GateToLMFMessenger::GateToLMFMessenger(GateToLMF* gateToLMF)
   GetGlobalXYZPosBoolCmd = new G4UIcmdWithABool(cmdGlobalXYZPosBool,this);
   GetEventIDBoolCmd = new G4UIcmdWithABool(cmdEventIDBool,this);
   GetRunIDBoolCmd = new G4UIcmdWithABool(cmdRunIDBool,this);
-  
+
 
 
 
   GetFileNameCmd->SetGuidance("Set the name of the file.ccs (LMF binary file)");
   GetFileNameCmd->SetGuidance("1.   Ex : MyCCSfile.ccs");
   SetInputDataCmd->SetGuidance("Set the name of the input data to store into the sinogram");
-  
+
 
 
   GetCoincidenceBoolCmd->SetGuidance("Singles or coincidence store in LMF");
   GetDetectorIDBoolCmd->SetGuidance("Crystal ID stored or not in LMF");
-  GetEnergyBoolCmd->SetGuidance("Energy stored or not in LMF"); 
+  GetEnergyBoolCmd->SetGuidance("Energy stored or not in LMF");
   GetNeighbourBoolCmd->SetGuidance("Energy in neighbours stored or not in LMF");
   GetNeighbourhoodOrderCmd->SetGuidance("Neighbourhood order");
   GetGantryAxialPosBoolCmd->SetGuidance("GantryAxialPos stored or not in LMF");
   GetGantryAngularPosBoolCmd->SetGuidance("GantryAngularPosBool stored or not in LMF");
-  GetSourcePosBoolCmd->SetGuidance("SourcePos stored or not in LMF"); 
+  GetSourcePosBoolCmd->SetGuidance("SourcePos stored or not in LMF");
   GetGateDigiBoolCmd->SetGuidance("Extended LMF gate digi record or not in LMF");
-  GetComptonBoolCmd->SetGuidance("Number of Compton in phantom stored or not in LMF"); 
-  //GetComptonDetectorBoolCmd->SetGuidance("Number of Compton in detector stored or not in LMF"); 
+  GetComptonBoolCmd->SetGuidance("Number of Compton in phantom stored or not in LMF");
+  //GetComptonDetectorBoolCmd->SetGuidance("Number of Compton in detector stored or not in LMF");
   GetSourceIDBoolCmd->SetGuidance("SourceID stored or not in LMF");
   GetSourceXYZPosBoolCmd->SetGuidance("SourceXYZPosBool stored or not in LMF");
   GetGlobalXYZPosBoolCmd->SetGuidance("GlobalXYZPos stored or not in LMF");
   GetEventIDBoolCmd->SetGuidance("EventID stored or not in LMF");
-  GetRunIDBoolCmd->SetGuidance("RunID stored or not in LMF"); 
- 
+  GetRunIDBoolCmd->SetGuidance("RunID stored or not in LMF");
+
   SetInputDataCmd->SetParameterName("Name",false);
 
 }
@@ -132,11 +132,11 @@ GateToLMFMessenger::~GateToLMFMessenger()
 {
   delete GetFileNameCmd;
   delete SetInputDataCmd;
- 
 
 
 
-  delete GetCoincidenceBoolCmd; 
+
+  delete GetCoincidenceBoolCmd;
   delete GetDetectorIDBoolCmd;
   delete GetEnergyBoolCmd ;
   delete GetNeighbourBoolCmd;
@@ -152,7 +152,7 @@ GateToLMFMessenger::~GateToLMFMessenger()
   delete GetGlobalXYZPosBoolCmd ;
   delete GetEventIDBoolCmd ;
   delete GetRunIDBoolCmd ;
-  
+
 }
 
 
@@ -161,39 +161,39 @@ void GateToLMFMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
   if( command == GetFileNameCmd )
     m_gateToLMF->SetOutputFileName(newValue);
-  else if (command == SetInputDataCmd) 
+  else if (command == SetInputDataCmd)
     { m_gateToLMF->SetOutputDataName(newValue); }
-  else if (command == GetCoincidenceBoolCmd) 
+  else if (command == GetCoincidenceBoolCmd)
     m_gateToLMF->SetCoincidenceBool(GetCoincidenceBoolCmd->GetNewBoolValue(newValue));
-  else if (command == GetDetectorIDBoolCmd) 
+  else if (command == GetDetectorIDBoolCmd)
     m_gateToLMF->SetDetectorIDBool(GetDetectorIDBoolCmd->GetNewBoolValue(newValue));
-  else if (command == GetEnergyBoolCmd) 
+  else if (command == GetEnergyBoolCmd)
     m_gateToLMF->SetEnergyBool(GetEnergyBoolCmd->GetNewBoolValue(newValue));
-  else if (command == GetNeighbourBoolCmd) 
+  else if (command == GetNeighbourBoolCmd)
     m_gateToLMF->SetNeighbourBool(GetNeighbourBoolCmd->GetNewBoolValue(newValue));
-  else if (command == GetNeighbourhoodOrderCmd) 
+  else if (command == GetNeighbourhoodOrderCmd)
     m_gateToLMF->SetNeighbourhoodOrder(GetNeighbourhoodOrderCmd->GetNewIntValue(newValue));
-  else if (command == GetGantryAxialPosBoolCmd ) 
+  else if (command == GetGantryAxialPosBoolCmd )
     m_gateToLMF->SetGantryAxialPosBool(GetGantryAxialPosBoolCmd->GetNewBoolValue(newValue));
-  else if (command == GetGantryAngularPosBoolCmd ) 
+  else if (command == GetGantryAngularPosBoolCmd )
     m_gateToLMF->SetGantryAngularPosBool(GetGantryAngularPosBoolCmd->GetNewBoolValue(newValue));
-  else if (command == GetSourcePosBoolCmd ) 
+  else if (command == GetSourcePosBoolCmd )
     m_gateToLMF->SetSourcePosBool(GetSourcePosBoolCmd->GetNewBoolValue(newValue));
-  else if (command == GetGateDigiBoolCmd) 
+  else if (command == GetGateDigiBoolCmd)
     m_gateToLMF->SetGateDigiBool(GetGateDigiBoolCmd->GetNewBoolValue(newValue));
   else if (command == GetComptonBoolCmd)
     m_gateToLMF->SetComptonBool(GetComptonBoolCmd->GetNewBoolValue(newValue));
   //else if (command == GetComptonDetectorBoolCmd)
     //m_gateToLMF->SetComptonDetectorBool(GetComptonDetectorBoolCmd->GetNewBoolValue(newValue));
-  else if (command == GetSourceIDBoolCmd) 
+  else if (command == GetSourceIDBoolCmd)
     m_gateToLMF->SetSourceIDBool(GetSourceIDBoolCmd->GetNewBoolValue(newValue));
   else if (command == GetSourceXYZPosBoolCmd)
     m_gateToLMF->SetSourceXYZPosBool(GetSourceXYZPosBoolCmd->GetNewBoolValue(newValue));
-  else if (command == GetGlobalXYZPosBoolCmd) 
+  else if (command == GetGlobalXYZPosBoolCmd)
     m_gateToLMF->SetGlobalXYZPosBool(GetGlobalXYZPosBoolCmd->GetNewBoolValue(newValue));
-  else if (command == GetEventIDBoolCmd) 
+  else if (command == GetEventIDBoolCmd)
     m_gateToLMF->SetEventIDBool(GetEventIDBoolCmd->GetNewBoolValue(newValue));
-  else if (command == GetRunIDBoolCmd) 
+  else if (command == GetRunIDBoolCmd)
     m_gateToLMF->SetRunIDBool(GetRunIDBoolCmd->GetNewBoolValue(newValue));
   else
     GateOutputModuleMessenger::SetNewValue(command,newValue);

@@ -10,8 +10,8 @@
 
 
 /*
-  \brief Class GateSimulationStatisticActor : 
-  \brief 
+  \brief Class GateSimulationStatisticActor :
+  \brief
 */
 
 #ifndef GATESIMULATIONSTATISTICACTOR_CC
@@ -40,7 +40,7 @@ std::string get_date_string() {
 GateSimulationStatisticActor::GateSimulationStatisticActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateSimulationStatisticActor() -- begin"<<G4endl);  
+  GateDebugMessageInc("Actor",4,"GateSimulationStatisticActor() -- begin"<<G4endl);
   //SetTypeName("SimulationStatisticActor");
   pActor = new GateActorMessenger(this);
   ResetData();
@@ -52,8 +52,8 @@ GateSimulationStatisticActor::GateSimulationStatisticActor(G4String name, G4int 
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
-GateSimulationStatisticActor::~GateSimulationStatisticActor() 
+/// Destructor
+GateSimulationStatisticActor::~GateSimulationStatisticActor()
 {
   delete pActor;
 }
@@ -111,7 +111,7 @@ void GateSimulationStatisticActor::UserSteppingAction(const GateVVolume * v, con
 {
   GateVActor::UserSteppingAction(v, step);
   mNumberOfSteps++;
- 
+
   // Get if boundary is reach
   G4StepPoint* pPostStepP = step->GetPostStepPoint();
   if (pPostStepP->GetStepStatus() == fGeomBoundary) {
@@ -137,8 +137,8 @@ void GateSimulationStatisticActor::SaveData()
 
   double virtualStartTime = GateApplicationMgr::GetInstance()->GetVirtualTimeStart();
   double virtualStopTime  = GateApplicationMgr::GetInstance()->GetVirtualTimeStop();
-  double startTime = GateApplicationMgr::GetInstance()->GetTimeStart(); 
-  double stopTime  = GateApplicationMgr::GetInstance()->GetTimeStop(); 
+  double startTime = GateApplicationMgr::GetInstance()->GetTimeStart();
+  double stopTime  = GateApplicationMgr::GetInstance()->GetTimeStop();
 
   double elapsedSimulationTime = currentSimulationTime - startTime;
   if (virtualStartTime != -1) elapsedSimulationTime = currentSimulationTime - virtualStartTime;
@@ -169,14 +169,14 @@ void GateSimulationStatisticActor::SaveData()
 
 
 //-----------------------------------------------------------------------------
-void GateSimulationStatisticActor::ResetData() 
+void GateSimulationStatisticActor::ResetData()
 {
   mNumberOfRuns = 0;
   mNumberOfEvents = 0;
   mNumberOfTrack = 0;
   mNumberOfGeometricalSteps = 0;
   mNumberOfPhysicalSteps = 0;
-  mNumberOfSteps = 0;  
+  mNumberOfSteps = 0;
   gettimeofday(&start,NULL);
   startDateStr = get_date_string();
 }
@@ -184,4 +184,3 @@ void GateSimulationStatisticActor::ResetData()
 
 
 #endif /* end #define GATESIMULATIONSTATISTICACTOR_CC */
-

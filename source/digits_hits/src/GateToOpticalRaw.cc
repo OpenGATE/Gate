@@ -10,7 +10,7 @@
 
 /*! \file GateToOpticalRaw.cc
    Created on   2012/07/09  by vesna.cuplov@gmail.com
-   Implemented new class GateToOpticalRaw for Optical photons: write result of the projection. 
+   Implemented new class GateToOpticalRaw for Optical photons: write result of the projection.
 */
 
 #include "GateToOpticalRaw.hh"
@@ -30,7 +30,7 @@
 #include "GateUpholder.hh"
 
 
-GateToOpticalRaw::GateToOpticalRaw(const G4String& name, GateOutputMgr* outputMgr,GateOpticalSystem* itsSystem,DigiMode digiMode) 
+GateToOpticalRaw::GateToOpticalRaw(const G4String& name, GateOutputMgr* outputMgr,GateOpticalSystem* itsSystem,DigiMode digiMode)
   : GateVOutputModule(name,outputMgr,digiMode)
   , m_system(itsSystem)
   , m_fileName(" ") // All default output file from all output modules are set to " ".
@@ -47,7 +47,7 @@ GateToOpticalRaw::GateToOpticalRaw(const G4String& name, GateOutputMgr* outputMg
 
 
 
-GateToOpticalRaw::~GateToOpticalRaw() 
+GateToOpticalRaw::~GateToOpticalRaw()
 {
   delete m_asciiMessenger;
 
@@ -100,7 +100,7 @@ void GateToOpticalRaw::RecordEndOfAcquisition()
 
   // Fully rewrite the header, so as to store the maximum counts
   m_headerFile.seekp(0,std::ios::beg);
-  if ( m_headerFile.bad() ) G4Exception( "GateToOpticalRaw::RecordEndOfAcquisition", "RecordEndOfAcquisition", FatalException, "Could not go to back to the beginning of the header file (file missing?)!\n"); 
+  if ( m_headerFile.bad() ) G4Exception( "GateToOpticalRaw::RecordEndOfAcquisition", "RecordEndOfAcquisition", FatalException, "Could not go to back to the beginning of the header file (file missing?)!\n");
   WriteGeneralInfo();
   m_headerFile  << "!END OF INTERFILE :="    	      	    << G4endl;
   m_headerFile.close();
@@ -126,23 +126,23 @@ void GateToOpticalRaw::RecordEndOfRun(const G4Run* )
 	if (m_system->GetProjectionSetMaker()->GetProjectionSet()->GetData() != 0) {
 		for (size_t energyWindowID = 0; energyWindowID < m_system->GetProjectionSetMaker()->GetEnergyWindowNb(); energyWindowID++) {
   			for (size_t headID=0 ; headID < m_system->GetProjectionSetMaker()->GetHeadNb(); headID++) {
-				
+
 				m_system->GetProjectionSetMaker()->GetProjectionSet()->StreamOut( m_dataFile , energyWindowID, headID );
-			
-			} 
+
+			}
 		}
-	} 
-	
+	}
+
 	else if (m_system->GetProjectionSetMaker()->GetProjectionSet()->GetARFData() != 0) {
 		for (size_t headID=0 ; headID < m_system->GetProjectionSetMaker()->GetHeadNb(); headID++) {
 			m_system->GetProjectionSetMaker()->GetProjectionSet()->StreamOutARFProjection( m_dataFile , headID );
 		}
-		
+
 	} else {
 		G4cerr << "[GateToOpticalRaw::RecordEndOfRun]:" << G4endl
 		<< "No data available to write to projection set." << G4endl;
 	}
-  		
+
 }
 
 
@@ -150,7 +150,7 @@ void GateToOpticalRaw::RecordEndOfRun(const G4Run* )
 /* Overload of the base-class' virtual method to print-out a description of the module
 
 	indent: the print-out indentation (cosmetic parameter)
-*/    
+*/
 void GateToOpticalRaw::Describe(size_t indent)
 {
   GateVOutputModule::Describe(indent);
@@ -168,7 +168,7 @@ void GateToOpticalRaw::WriteGeneralInfo()
   m_headerFile  << "!INTERFILE :="    	      	      	    << G4endl
 		<< "!imaging modality := "       	    << "optical imaging" << G4endl
       	      	<< ";" << G4endl;
-		
+
   m_headerFile  << "!GENERAL DATA :=" 	      	      	    << G4endl
 		<< "data description := "     	      	    << "GATE simulation" << G4endl
  		<< "!name of data file := "    	      	    << m_fileName+".bin" << G4endl
@@ -204,7 +204,7 @@ void GateToOpticalRaw::WriteGeneralInfo()
 					<< "Can't find digitizer chain '" << aChainName << "', aborting" << G4endl;
 			G4Exception( "GateToOpticalRaw::WriteGeneralInfo", "WriteGeneralInfo", FatalException, "You must change this parameter then restart the simulation\n");
 		}
-  
+
 		// Try to find a thresholder and/or a upholder into the pulse processor chain.
 		// Update the threshold or uphold value if we find them
 		/*aThresholder = dynamic_cast<GateThresholder*>(aPulseProcessorChain->FindProcessor("digitizer/" + aChainName + "/thresholder"));
@@ -216,7 +216,7 @@ void GateToOpticalRaw::WriteGeneralInfo()
 		if (aUpholder) {
 			aUphold = aUpholder->GetUphold();
 		}
-		
+
 		aThreshold = 0.;
 		aUphold = 0.;*/
 
@@ -237,7 +237,7 @@ void GateToOpticalRaw::WriteGeneralInfo()
 				  << "!time per projection (sec) := "         << setMaker->GetTimePerProjection() / second << G4endl
 				  << ";" << G4endl;
 		}
-  
+
 	}
 
   m_headerFile  << ";GATE GEOMETRY :="               	  << G4endl;
@@ -271,8 +271,5 @@ void GateToOpticalRaw::WriteGeneralInfo()
 
   m_headerFile  << ";" << G4endl;
 
-		
+
 }
-
-
-

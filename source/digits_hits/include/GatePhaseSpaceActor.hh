@@ -24,16 +24,16 @@
 #include "GateVActor.hh"
 #include "GatePhaseSpaceActorMessenger.hh"
 
-class iaea_header_type;
-class iaea_record_type;
+struct iaea_header_type;
+struct iaea_record_type;
 
 //====================================================================
 class GatePhaseSpaceActor : public GateVActor
 {
  public:
-  
+
   virtual ~GatePhaseSpaceActor();
-    
+
   //====================================================================
   // This macro initialize the CreatePrototype and CreateInstance
   FCT_FOR_AUTO_CREATOR_ACTOR(GatePhaseSpaceActor)
@@ -109,7 +109,7 @@ protected:
   double mFileSize;
 
   long int mNumberOfTrack;
- 
+
   bool mIsFistStep;
 
   Char_t  pname[256];
@@ -143,4 +143,3 @@ MAKE_AUTO_CREATOR_ACTOR(PhaseSpaceActor,GatePhaseSpaceActor)
 
 #endif /* end #define GATESOURCEACTOR_HH */
 #endif
-

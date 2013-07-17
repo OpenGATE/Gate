@@ -42,25 +42,25 @@ void GateTrackLengthActorMessenger::BuildCommands(G4String base)
   G4String bb;
 
   bb = base+"/setLmin";
-  pLminCmd = new G4UIcmdWithADoubleAndUnit(bb, this); 
+  pLminCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
   guidance = G4String("Set minimum length of the histogram");
   pLminCmd->SetGuidance(guidance);
   pLminCmd->SetParameterName("Lmin", false);
   pLminCmd->SetDefaultUnit("mm");
 
   bb = base+"/setLmax";
-  pLmaxCmd = new G4UIcmdWithADoubleAndUnit(bb, this); 
+  pLmaxCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
   guidance = G4String("Set maximum length of the histogram");
   pLmaxCmd->SetGuidance(guidance);
   pLmaxCmd->SetParameterName("Lmax", false);
   pLmaxCmd->SetDefaultUnit("mm");
 
   bb = base+"/setNumberOfBins";
-  pNBinsCmd = new G4UIcmdWithAnInteger(bb, this); 
+  pNBinsCmd = new G4UIcmdWithAnInteger(bb, this);
   guidance = G4String("Set number of bins of the histogram");
   pNBinsCmd->SetGuidance(guidance);
   pNBinsCmd->SetParameterName("Nbins", false);
-  
+
 }
 //-----------------------------------------------------------------------------
 

@@ -10,7 +10,7 @@
 
 /*! \file GateToOpticalRawMessenger.hh
    Created on   2012/07/09  by vesna.cuplov@gmail.com
-   Implemented new class GateToOpticalRaw for Optical photons: write result of the projection. 
+   Implemented new class GateToOpticalRaw for Optical photons: write result of the projection.
 */
 
 
@@ -38,9 +38,9 @@ class GateToOpticalRawMessenger: public GateOutputModuleMessenger
   public:
     GateToOpticalRawMessenger(GateToOpticalRaw* gateToOpticalRaw);
    ~GateToOpticalRawMessenger();
-    
+
     void SetNewValue(G4UIcommand*, G4String);
-    
+
   protected:
     GateToOpticalRaw*             m_gateToOpticalRaw;
 

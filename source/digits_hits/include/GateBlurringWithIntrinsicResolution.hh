@@ -28,16 +28,16 @@ class GateBlurringWithIntrinsicResolutionMessenger;
 
     - GateBlurringWithIntrinsicResolution - by Martin.Rey@epfl.ch (mai 2003)
 
-    - Pulse-processor for simulating a Gaussian local blurring on the energy spectrum 
-    (different for several cystals) based on model : 
-    \f[R=\sqrt{\frac{1.1}{N_{ph}\cdot QE\cdot TE}\cdot 2.35^2+R_i^2}\f] 
+    - Pulse-processor for simulating a Gaussian local blurring on the energy spectrum
+    (different for several cystals) based on model :
+    \f[R=\sqrt{\frac{1.1}{N_{ph}\cdot QE\cdot TE}\cdot 2.35^2+R_i^2}\f]
     where \f$N_{ph}=LY\cdot E_{inputPulse}\f$.
     You have to give the intrinsic resolution (Ri) of each crystal.
-    If you use also the modules for Light Yield, Transfert et Quantum Efficiencies (LY, TE and QE), 
+    If you use also the modules for Light Yield, Transfert et Quantum Efficiencies (LY, TE and QE),
     this module takes these differents values, in other case they are equal to 1.
 
       \sa GateVPulseProcessor
-*/      
+*/
 class GateBlurringWithIntrinsicResolution : public GateVPulseProcessor
 {
 
@@ -47,25 +47,25 @@ class GateBlurringWithIntrinsicResolution : public GateVPulseProcessor
 			       const G4String& itsName) ;
 
     //! Public Destructor
-    virtual ~GateBlurringWithIntrinsicResolution() ; 
+    virtual ~GateBlurringWithIntrinsicResolution() ;
 
   public:
 
     //! Adds volume to the hashmap and returns 1 if it exists. If it does not exist, returns 0.
 
-    G4int ChooseVolume(G4String val);   
+    G4int ChooseVolume(G4String val);
 
 
     //! \name setters and getters
     //@{
-    
+
     //! Allows to set the intrinsic resolution @ an energy of reference for crystal called 'name'
-    void SetIntrinsicResolution(G4String name, G4double val)   { m_table[name].resolution = val; };    
-    void SetRefEnergy(G4String name, G4double val)   {m_table[name].eref = val; };  
+    void SetIntrinsicResolution(G4String name, G4double val)   { m_table[name].resolution = val; };
+    void SetRefEnergy(G4String name, G4double val)   {m_table[name].eref = val; };
 
     //! Allows to get the intrinsic resolution @ an energy of reference for crystal called 'name'
     //@{
-    G4double GetIntrinsicResolution(G4String name)   { return m_table[name].resolution; };    
+    G4double GetIntrinsicResolution(G4String name)   { return m_table[name].resolution; };
     G4double GetRefEnergy(G4String name)   {return m_table[name].eref; };
     //@}
 
@@ -81,7 +81,7 @@ class GateBlurringWithIntrinsicResolution : public GateVPulseProcessor
     //! It is is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
-    
+
   private:
     //! Find the different parameters of the input Pulse :
     //! The depth 'm_depth in the VolumeID 'aVolumeID corresponding @ the volume named 'm_volumeName
@@ -109,4 +109,3 @@ class GateBlurringWithIntrinsicResolution : public GateVPulseProcessor
 
 
 #endif
-

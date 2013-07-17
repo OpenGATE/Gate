@@ -18,8 +18,8 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVPulseProcessor.hh"
 
-class GateEnergyEfficiencyMessenger;  
-class GateVDistribution;  
+class GateEnergyEfficiencyMessenger;
+class GateVDistribution;
 class GateEnergyEfficiency : public GateVPulseProcessor
 {
   public:
@@ -28,7 +28,7 @@ class GateEnergyEfficiency : public GateVPulseProcessor
 		 const G4String& itsName=theTypeName) ;
 
     //! Destructor
-    virtual ~GateEnergyEfficiency() ; 
+    virtual ~GateEnergyEfficiency() ;
 
     virtual void DescribeMyself(size_t indent);
     void SetEfficiency(GateVDistribution* dist) {m_efficiency = dist;}
@@ -45,9 +45,8 @@ class GateEnergyEfficiency : public GateVPulseProcessor
     GateEnergyEfficiencyMessenger *m_messenger;   //!< Messenger
 
     static const G4String& theTypeName;   //!< Default type-name for all efficiency
-    
+
 };
 
 
 #endif
-

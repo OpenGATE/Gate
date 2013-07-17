@@ -33,7 +33,7 @@ GateDistributionFile::~GateDistributionFile()
 void GateDistributionFile::DescribeMyself(size_t indent)
 {
   G4cout << GateTools::Indent(indent)
-    	 <<"File : "         << m_FileName 
+    	 <<"File : "         << m_FileName
          <<'{'    << m_column_for_X<<':'<<m_column_for_Y<<'}'
 	 <<G4endl;
 }
@@ -66,7 +66,7 @@ void GateDistributionFile::Read()
     	addrFirst  = &y;
 	addrSecond = &x;
     }
-    
+
     while (!f.eof()) {
        char line[512];
        f.getline(line,511);

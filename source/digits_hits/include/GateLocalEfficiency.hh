@@ -17,8 +17,8 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVPulseProcessor.hh"
 
-class GateLocalEfficiencyMessenger;  
-class GateVDistribution;  
+class GateLocalEfficiencyMessenger;
+class GateVDistribution;
 class GateLocalEfficiency : public GateVPulseProcessor
 {
   public:
@@ -27,7 +27,7 @@ class GateLocalEfficiency : public GateVPulseProcessor
 		 const G4String& itsName=theTypeName) ;
 
     //! Destructor
-    virtual ~GateLocalEfficiency() ; 
+    virtual ~GateLocalEfficiency() ;
 
     virtual void DescribeMyself(size_t indent);
     void SetMode(size_t i,G4bool val);
@@ -47,9 +47,8 @@ class GateLocalEfficiency : public GateVPulseProcessor
     GateLocalEfficiencyMessenger *m_messenger;   //!< Messenger
 
     static const G4String& theTypeName;   //!< Default type-name for all efficiency
-    
+
 };
 
 
 #endif
-

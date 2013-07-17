@@ -56,7 +56,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-GateToASCII::GateToASCII(const G4String& name, GateOutputMgr* outputMgr, DigiMode digiMode) 
+GateToASCII::GateToASCII(const G4String& name, GateOutputMgr* outputMgr, DigiMode digiMode)
   : GateVOutputModule(name,outputMgr,digiMode)
   ,m_outFileRunsFlag(digiMode==kruntimeMode)
   ,m_outFileHitsFlag(digiMode==kruntimeMode)
@@ -83,7 +83,7 @@ GateToASCII::GateToASCII(const G4String& name, GateOutputMgr* outputMgr, DigiMod
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...
 
-GateToASCII::~GateToASCII() 
+GateToASCII::~GateToASCII()
 {
   for (size_t i=0; i<m_outputChannelList.size() ; ++i )
     delete m_outputChannelList[i];
@@ -116,10 +116,10 @@ void GateToASCII::RecordBeginOfAcquisition()
   for (size_t i=0; i<m_outputChannelList.size() ; ++i )
     m_outputChannelList[i]->Open(m_fileName);
 
-  if (nVerboseLevel > 0) G4cout << " ... ASCII output files opened" << G4endl; 
+  if (nVerboseLevel > 0) G4cout << " ... ASCII output files opened" << G4endl;
 }
 
- 
+
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -159,7 +159,7 @@ void GateToASCII::RecordEndOfRun(const G4Run * )
   if (m_outFileRunsFlag) {
     G4int nEvent = ((GatePrimaryGeneratorAction*)G4RunManager::GetRunManager()->
 		    GetUserPrimaryGeneratorAction())->GetEventNumber();
-    if (nVerboseLevel > 0) G4cout 
+    if (nVerboseLevel > 0) G4cout
       << "GateToASCII::RecordEndOfRun: Events in the past run: " << nEvent << G4endl;
     m_outFileRun
       << " " << std::setw(9) << nEvent
@@ -189,7 +189,7 @@ void GateToASCII::RecordEndOfEvent(const G4Event* event)
 
     G4int NbHits = 0;
 
-    if (CHC) {    
+    if (CHC) {
 
       // Hits loop
 
@@ -197,18 +197,18 @@ void GateToASCII::RecordEndOfEvent(const G4Event* event)
       for (G4int iHit=0;iHit<NbHits;iHit++) {
 	G4String processName = (*CHC)[iHit]->GetProcess();
 	G4int PDGEncoding  = (*CHC)[iHit]->GetPDGEncoding();
-	if (nVerboseLevel > 2) G4cout 
-	  << "GateToASCII::RecordEndOfEvent : CrystalHitsCollection: processName : <" << processName 
+	if (nVerboseLevel > 2) G4cout
+	  << "GateToASCII::RecordEndOfEvent : CrystalHitsCollection: processName : <" << processName
 	  << ">    Particls PDG code : " << PDGEncoding << G4endl;
 	if ((*CHC)[iHit]->GoodForAnalysis()) {
 	  if (m_outFileHitsFlag) m_outFileHits << (*CHC)[iHit];
 	}
       }
-      
+
     }
     else{
       if (nVerboseLevel>0) G4cout << "GateToASCII::RecordHits : GateCrystalHitCollection not found" << G4endl;
-    } 
+    }
   }
 
 
@@ -217,7 +217,7 @@ void GateToASCII::RecordEndOfEvent(const G4Event* event)
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void GateToASCII::RecordDigitizer(const G4Event* ) 
+void GateToASCII::RecordDigitizer(const G4Event* )
 {
   if (nVerboseLevel > 2)
     G4cout << "GateToASCII::RecordDigitizer" << G4endl;
@@ -265,9 +265,9 @@ void GateToASCII::RecordVoxels(GateVGeometryVoxelStore* voxelStore)
     G4double dz = voxelSize.z();
 
     voxelFile << " " << nx << " " << ny << " " << nz << G4endl;
-    voxelFile << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setw(10) << std::setprecision(3)  << dx/mm; 
-    voxelFile << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setw(10) << std::setprecision(3)  << dy/mm; 
-    voxelFile << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setw(10) << std::setprecision(3)  << dz/mm; 
+    voxelFile << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setw(10) << std::setprecision(3)  << dx/mm;
+    voxelFile << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setw(10) << std::setprecision(3)  << dy/mm;
+    voxelFile << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setw(10) << std::setprecision(3)  << dz/mm;
     voxelFile << G4endl;
 
     // Write the content of the voxel matrix
@@ -301,10 +301,10 @@ void GateToASCII::Reset()
 
 void GateToASCII::RegisterNewSingleDigiCollection(const G4String& aCollectionName,G4bool outputFlag)
 {
-  SingleOutputChannel* singleOutputChannel = 
+  SingleOutputChannel* singleOutputChannel =
     new SingleOutputChannel(aCollectionName,outputFlag);
   m_outputChannelList.push_back(singleOutputChannel);
-  
+
 //  G4cout << " GateToASCII::RegisterNewSingleDigiCollection " << G4endl;
   m_asciiMessenger->CreateNewOutputChannelCommand(singleOutputChannel);
 }
@@ -313,11 +313,11 @@ void GateToASCII::RegisterNewSingleDigiCollection(const G4String& aCollectionNam
 
 void GateToASCII::RegisterNewCoincidenceDigiCollection(const G4String& aCollectionName,G4bool outputFlag)
 {
-  CoincidenceOutputChannel* coincOutputChannel = 
+  CoincidenceOutputChannel* coincOutputChannel =
     new CoincidenceOutputChannel(aCollectionName,outputFlag);
   m_outputChannelList.push_back(coincOutputChannel);
-  
-//  G4cout << " GateToASCII::RegisterNewCoincidenceDigiCollection " << G4endl; 
+
+//  G4cout << " GateToASCII::RegisterNewCoincidenceDigiCollection " << G4endl;
   m_asciiMessenger->CreateNewOutputChannelCommand(coincOutputChannel);
 }
 
@@ -352,14 +352,14 @@ void GateToASCII::VOutputChannel::Open(const G4String& aFileBaseName)
   m_fileBaseName = aFileBaseName;
   m_fileCounter++;
 }
-      
+
 
 void GateToASCII::VOutputChannel::Close()
 {
   if (m_outputFlag)
     m_outputFile.close();
 }
-      
+
 G4bool GateToASCII::VOutputChannel::ExceedsSize()
 {
   // from http://www.cplusplus.com/doc/tutorial/tut6-1.html
@@ -370,13 +370,13 @@ G4bool GateToASCII::VOutputChannel::ExceedsSize()
   //LF
   outputFileEnd = m_outputFile.tellp();
   long size = outputFileEnd - m_outputFileBegin; // in bytes
-//   G4cout << "[GateToASCII::VOutputChannel::ExceedsSize]" 
-// 	 << " collectionID: " << m_collectionID 
+//   G4cout << "[GateToASCII::VOutputChannel::ExceedsSize]"
+// 	 << " collectionID: " << m_collectionID
 // 	 << " file limit: " << m_outputFileSizeLimit
 // 	 << " file size: " << size << G4endl;
   return (size > m_outputFileSizeLimit);
 }
-      
+
 
 GateToASCII::SingleOutputChannel::SingleOutputChannel(  const G4String& aCollectionName,
 							G4bool outputFlag)
@@ -385,12 +385,12 @@ GateToASCII::SingleOutputChannel::SingleOutputChannel(  const G4String& aCollect
 }
 
 
-void GateToASCII::SingleOutputChannel::RecordDigitizer() 
+void GateToASCII::SingleOutputChannel::RecordDigitizer()
 {
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
   if (m_collectionID<0)
-    m_collectionID = fDM->GetDigiCollectionID(m_collectionName);      
-  const GateSingleDigiCollection * SDC = 
+    m_collectionID = fDM->GetDigiCollectionID(m_collectionName);
+  const GateSingleDigiCollection * SDC =
     (GateSingleDigiCollection*) (fDM->GetDigiCollection( m_collectionID ));
 
   if (!SDC) {
@@ -411,7 +411,7 @@ void GateToASCII::SingleOutputChannel::RecordDigitizer()
 	}
         m_outputFile << (*SDC)[iDigi];
       }
-    }    
+    }
 
   }
 
@@ -424,12 +424,12 @@ GateToASCII::CoincidenceOutputChannel::CoincidenceOutputChannel(const G4String& 
 }
 
 
-void GateToASCII::CoincidenceOutputChannel::RecordDigitizer() 
+void GateToASCII::CoincidenceOutputChannel::RecordDigitizer()
 {
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
   if (m_collectionID<0)
-    m_collectionID = fDM->GetDigiCollectionID(m_collectionName);      
-  GateCoincidenceDigiCollection * CDC = 
+    m_collectionID = fDM->GetDigiCollectionID(m_collectionName);
+  GateCoincidenceDigiCollection * CDC =
     (GateCoincidenceDigiCollection*) (fDM->GetDigiCollection( m_collectionID ));
 
   if (!CDC) {
@@ -439,7 +439,7 @@ void GateToASCII::CoincidenceOutputChannel::RecordDigitizer()
     // Digi loop
     if (nVerboseLevel>0) G4cout << "[GateToASCII::CoincidenceOutputChannel::RecordDigitizer]: Totals digits: "
 				 << CDC->entries() << G4endl;
-    
+
     if (m_outputFlag) {
       G4int n_digi =  CDC->entries();
       for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
@@ -454,14 +454,7 @@ void GateToASCII::CoincidenceOutputChannel::RecordDigitizer()
     }
   }
 
-  
+
 }
 
 #endif
-
-
-
-
-
-
-

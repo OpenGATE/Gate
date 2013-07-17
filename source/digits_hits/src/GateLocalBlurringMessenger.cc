@@ -41,17 +41,17 @@ GateLocalBlurringMessenger::~GateLocalBlurringMessenger()
 
 
 void GateLocalBlurringMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
   if ( command==newVolCmd )
-    { 
+    {
       G4String cmdName2, cmdName3;
-      
+
       if(GetLocalBlurring()->ChooseVolume(newValue) == 1) {
 	m_volDirectory.push_back(new G4UIdirectory( (GetDirectoryName() + newValue + "/").c_str() ));
 	m_volDirectory[m_count]->SetGuidance((G4String("characteristics of ") + newValue).c_str());
 
-	m_name.push_back(newValue);  
-     
+	m_name.push_back(newValue);
+
 	cmdName2 = m_volDirectory[m_count]->GetCommandPath() + "setResolution";
 	resolutionCmd.push_back(new G4UIcmdWithADouble(cmdName2,this));
 	resolutionCmd[m_count]->SetGuidance("Set the resolution in energie for gaussian blurring");
@@ -62,28 +62,28 @@ void GateLocalBlurringMessenger::SetNewValue(G4UIcommand* command, G4String newV
 	erefCmd[m_count]->SetUnitCategory("Energy");
 
 	m_count++;
-      }  
+      }
     }
   else
-    SetNewValue2(command,newValue); 
+    SetNewValue2(command,newValue);
 }
 
 void GateLocalBlurringMessenger::SetNewValue2(G4UIcommand* command, G4String newValue)
-{ 
-  G4int test=0; 
+{
+  G4int test=0;
   for (G4int i=0;i<m_count;i++)  {
     if ( command==resolutionCmd[i] ) {
-      GetLocalBlurring()->SetResolution(m_name[i], resolutionCmd[i]->GetNewDoubleValue(newValue)); 
+      GetLocalBlurring()->SetResolution(m_name[i], resolutionCmd[i]->GetNewDoubleValue(newValue));
       test=1;
     }
   }
   if(test==0)
     for (G4int i=0;i<m_count;i++)  {
       if ( command==erefCmd[i] ) {
-	GetLocalBlurring()->SetRefEnergy(m_name[i], erefCmd[i]->GetNewDoubleValue(newValue)); 
+	GetLocalBlurring()->SetRefEnergy(m_name[i], erefCmd[i]->GetNewDoubleValue(newValue));
 	test=1;
       }
-    }    
+    }
   if(test==0)
     GatePulseProcessorMessenger::SetNewValue(command,newValue);
 }

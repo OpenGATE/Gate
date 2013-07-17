@@ -23,11 +23,11 @@ See GATE/LICENSE.txt for further details
 #include "G4Allocator.hh"
 //#include <stdlib.h>
 #include "G4ThreeVector.hh"
-#include "G4ios.hh"     
+#include "G4ios.hh"
 //#include "g4std"
-#include "globals.hh" 
-#include "G4ParticleDefinition.hh" 
-#include "G4TrajectoryPoint.hh"   
+#include "globals.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4TrajectoryPoint.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
 
@@ -46,7 +46,7 @@ class GateTrajectory : public G4VTrajectory
    inline void* operator new(size_t);
    inline void  operator delete(void*);
    inline int operator == (const GateTrajectory& right) const
-   {return (this==&right);} 
+   {return (this==&right);}
 
    inline G4int GetTrackID() const
    { return fTrackID; }
@@ -66,12 +66,12 @@ class GateTrajectory : public G4VTrajectory
    { return globalTime; }
    virtual int GetPointEntries() const
    { return positionRecord->size(); }
-   virtual G4VTrajectoryPoint* GetPoint(G4int i) const 
+   virtual G4VTrajectoryPoint* GetPoint(G4int i) const
    { return (*positionRecord)[i]; }
-   
-   //virtual G4ThreeVector GetInitialMomentum() const {return 0;} 
+
+   //virtual G4ThreeVector GetInitialMomentum() const {return 0;}
    virtual G4ThreeVector GetInitialMomentum() const = 0;
-   
+
    virtual void ShowTrajectory(std::ostream&) const;
    virtual void DrawTrajectory(G4int i_mode=0) const;
    virtual void AppendStep(const G4Step* aStep);

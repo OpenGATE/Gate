@@ -44,4 +44,3 @@ class GatePhantomSD : public G4VSensitiveDetector
 
 
 #endif
-

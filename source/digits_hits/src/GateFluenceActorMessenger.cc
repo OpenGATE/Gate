@@ -35,7 +35,7 @@ GateFluenceActorMessenger::~GateFluenceActorMessenger()
 void GateFluenceActorMessenger::BuildCommands(G4String base)
 {
   G4String  n = base+"/enableScatter";
-  pEnableScatterCmd = new G4UIcmdWithABool(n, this); 
+  pEnableScatterCmd = new G4UIcmdWithABool(n, this);
   G4String guid = G4String("Enable computation of scattered particles fluence");
   pEnableScatterCmd->SetGuidance(guid);
 
@@ -55,7 +55,7 @@ void GateFluenceActorMessenger::BuildCommands(G4String base)
 //-----------------------------------------------------------------------------
 void GateFluenceActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
-  if (cmd == pEnableScatterCmd) 
+  if (cmd == pEnableScatterCmd)
     pFluenceActor->EnableScatterImage(pEnableScatterCmd->GetNewBoolValue(newValue));
 
   if( cmd == pSetResponseDetectorFileCmd)

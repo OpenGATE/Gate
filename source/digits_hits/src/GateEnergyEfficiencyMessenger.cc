@@ -43,7 +43,5 @@ void GateEnergyEfficiencyMessenger::SetNewValue(G4UIcommand* command, G4String n
     GateVDistribution* distrib = (GateVDistribution*)GateDistributionListManager::GetInstance()->FindElementByBaseName(newValue);
     if (distrib) localEff->SetEfficiency(distrib);}
   else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue); 
+    GatePulseProcessorMessenger::SetNewValue(command,newValue);
 }
-
-

@@ -17,11 +17,11 @@ See GATE/LICENSE.txt for further details
 
 /*! \class  GateMap
     \brief  A general templates for enhanced maps (i.e. maps with a few added functions)
-    
+
     - GateMap - by Daniel.Strul@iphe.unil.ch
-    
+
     - GateMaps are standard STL maps with some added functionalities for easier construction and printout
-*/      
+*/
 template <typename Tkey,typename Tvalue>
 class GateMap : public std::map<Tkey,Tvalue>
 {
@@ -69,16 +69,16 @@ public:
 // Defaut constructor -> empty GateMap
 template <typename Tkey,typename Tvalue>
 inline GateMap<Tkey,Tvalue>::GateMap()
- : std::map<Tkey,Tvalue>() 
-{}    	
+ : std::map<Tkey,Tvalue>()
+{}
 
 
 
 
 // Constructs a GateMap with one item
 template <typename Tkey,typename Tvalue>
-inline GateMap<Tkey,Tvalue>::GateMap(MapPair* first) 
- : std::map<Tkey,Tvalue>(first,first+1) 
+inline GateMap<Tkey,Tvalue>::GateMap(MapPair* first)
+ : std::map<Tkey,Tvalue>(first,first+1)
 {}
 
 
@@ -90,7 +90,7 @@ inline GateMap<Tkey,Tvalue>::GateMap(MapPair* first)
 // For instance, for an array 'array' with 3 elements, call : GateMap(array,array+3)
 template <typename Tkey,typename Tvalue>
 inline GateMap<Tkey,Tvalue>::GateMap(MapPair* first,MapPair* last)
- : std::map<Tkey,Tvalue>(first,last) 
+ : std::map<Tkey,Tvalue>(first,last)
 {}
 
 
@@ -101,7 +101,7 @@ inline GateMap<Tkey,Tvalue>::GateMap(MapPair* first,MapPair* last)
 // Pass the size of the array a pointer to and its first element
 template <typename Tkey,typename Tvalue>
 inline GateMap<Tkey,Tvalue>::GateMap(size_t n, MapPair* first)
- : std::map<Tkey,Tvalue>(first,first+n) 
+ : std::map<Tkey,Tvalue>(first,first+n)
 {}
 
 

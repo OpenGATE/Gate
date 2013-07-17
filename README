@@ -15,19 +15,19 @@
 #  *********************************************************************
 
 #  ****************************************************************************
-#  *									      *
+#  *                                                                          *
 #  * OpenGATE Collaboration are pleased to announce the release of GATE 6.1.0 *
-#  *									      *
+#  *                                                                          *
 #  ****************************************************************************
 
- 
+
                      #  *ooooOOOO0000OOOOoooo*  #
                      #  *                    *  #
                      #  *    GATE_v6.1.0     *  #
                      #  *                    *  #
                      #  *ooooOOOO0000OOOOoooo*  #
-		     
-		     
+
+
                           # *------------* #
                           # * 21/12/2010 * #
                           # *------------* #
@@ -36,19 +36,19 @@
    -----------------------
 
 - For a complete installation of GATE, user needs to read the Installation Guide
-                                                              ------------------  
-  
-- The installation of this GATE_v6.1.0 version is supported, tested 
+                                                              ------------------
+
+- The installation of this GATE_v6.1.0 version is supported, tested
   and recommanded with the following system set-up and software package :
 
 
 
                         *ooooOOOO0000OOOOoooo*
                         *    S Y S T E M     *
-                        *ooooOOOO0000OOOOoooo*    
+                        *ooooOOOO0000OOOOoooo*
 
-                 - Linux : RED HAT & Fedora & Mandrake & Mandriva & Ubuntu...
-                 - Compiler gcc 4.4 & gcc 4.2 & 4.1 & 4.0 & gcc 3.4 & gcc 3.3 & gcc 3.2
+    - Linux : RED HAT & Fedora & Mandrake & Mandriva & Ubuntu...
+    - Compiler gcc 4.4 & gcc 4.2 & 4.1 & 4.0 & gcc 3.4 & gcc 3.3 & gcc 3.2
 
 
    *oooooooooooooooooOOOOOOOOOOO0000000000OOOOOOOOOOOooooooooooooooooo*
@@ -58,34 +58,34 @@
 
 
 ### Geant4 9.3
-                                                                
-    - CLHEP 2.0.4.5                  
+
+    - CLHEP 2.0.4.5
     - ROOT 5.xx (from 20 to last version)
-    - lmf_v3.0	
+    - lmf_v3.0
     - G4VERSION 9.3
 
-### Geant4 9.4 
-                                                                
-    - CLHEP 2.1.0.1                  
+### Geant4 9.4
+
+    - CLHEP 2.1.0.1
     - ROOT 5.xx (from 20 to last version)
-    - lmf_v3.0	
+    - lmf_v3.0
     - G4VERSION 9.4
 
-		     
+
 NOTES:
 -----
 
 * These softwares are validated for 64 bits architectures
-** For GATE V6.1 : Use of a different Geant4 versions (than 9.3 or 9.4) may cause incorrect simulation results 
+** For GATE V6.1 : Use of a different Geant4 versions (than 9.3 or 9.4) may cause incorrect simulation results
 
-2/ C O M P I L A T I O N		     
+2/ C O M P I L A T I O N
    ---------------------
 
 - Configure & Source the "env_gate.sh" file
 - Launch "make" or "gmake"
 
 
-3/ C O M P I L A T I O N   W A R N I N G S	     
+3/ C O M P I L A T I O N   W A R N I N G S
    ---------------------------------------
-   
+
 There may be compilation warnings on some platforms.

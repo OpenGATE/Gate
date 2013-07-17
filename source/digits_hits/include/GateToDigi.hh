@@ -40,7 +40,7 @@ public:
 
 
   //! Get the digitizer
-  inline GateDigitizer*   GetDigitizer() 
+  inline GateDigitizer*   GetDigitizer()
       { return m_digitizer; }
 
 private:

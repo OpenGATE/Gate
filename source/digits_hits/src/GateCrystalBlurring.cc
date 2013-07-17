@@ -24,7 +24,7 @@ GateCrystalBlurring::GateCrystalBlurring(GatePulseProcessorChain* itsChain,
 				 G4double itsCrystalresolutionmin,
 				 G4double itsCrystalresolutionmax,
 			         G4double itsCrystalenergyRef,
-				 G4double itsCrystalQE) 
+				 G4double itsCrystalQE)
   : GateVPulseProcessor(itsChain,itsName),
     m_crystalresolutionmin(itsCrystalresolutionmin),
     m_crystalresolutionmax(itsCrystalresolutionmax),
@@ -32,32 +32,32 @@ GateCrystalBlurring::GateCrystalBlurring(GatePulseProcessorChain* itsChain,
     m_crystaleref(itsCrystalenergyRef)
 {
   m_messenger = new GateCrystalBlurringMessenger(this);
-}  
+}
 
 
 
 
-GateCrystalBlurring::~GateCrystalBlurring() 
+GateCrystalBlurring::~GateCrystalBlurring()
 {
   delete m_messenger;
-}  
+}
 
 
 
 void GateCrystalBlurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
 {
- 
+
          m_crystalresolution = m_crystalresolutionmin + (m_crystalresolutionmax - m_crystalresolutionmin)*G4UniformRand();
 	 m_crystalcoeff = m_crystalresolution * sqrt(m_crystaleref);
 	 GatePulse* outputPulse = new GatePulse(*inputPulse);
 	 G4double m_QE = G4UniformRand();
-	 
+
 	 if(m_QE <= m_crystalQE)
 	 {outputPulse->SetEnergy(G4RandGauss::shoot(inputPulse->GetEnergy(),m_crystalcoeff*sqrt(inputPulse->GetEnergy())/2.35));
 	 outputPulseList.push_back(outputPulse);}
 	 else {outputPulse->SetEnergy(0);
 	 outputPulseList.push_back(outputPulse);}
-       
+
 }
 
 void GateCrystalBlurring::DescribeMyself(size_t indent)

@@ -27,23 +27,23 @@ typedef GateSystemList::iterator GateSystemIterator;
 typedef GateSystemList::const_iterator GateSystemConstIterator;
 
 /*! \class  GateCrystalSD
-    \brief  The GateCrystalSD is a sensitive detector , derived from G4VSensitiveDetector, 
+    \brief  The GateCrystalSD is a sensitive detector , derived from G4VSensitiveDetector,
     \brief  to be attached to one or more volumes of a scanner
-    
+
     - GateVolumeID - by Giovanni.Santin@cern.ch
-    
+
     - A GateCrystalSD can be attached to one or more volumes of a scanner. These volumes are
       essentially meant to be scintillating elements (crystals) but the GateCrystalSD can also be
       attached to non-scintillating elements such as collimators, shields or septa.
-      
+
     - A GateCrystalSD can be attached only to those volumes that belong to a system (i.e. that
       are connected to an object derived from GateVSystem). Once a GateCrystalSD has been attached
-      to a volume that belongs to a given system, it is considered as attached to this system, and 
+      to a volume that belongs to a given system, it is considered as attached to this system, and
       can be attached only to volumes that belong to the same system.
-      
+
     - The GateCrystalSD generates hits of the class GateCrystalHit, which are stored in a regular
       hit collection.
-*/      
+*/
 //    Last modification in 12/2011 by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr, for the multi-system approach.
 
 class GateCrystalSD : public G4VSensitiveDetector
@@ -58,16 +58,16 @@ class GateCrystalSD : public G4VSensitiveDetector
 
       //! Method overloading the virtual method Initialize() of G4VSensitiveDetector
       void Initialize(G4HCofThisEvent*HCE);
-      
+
       //! Implementation of the pure virtual method ProcessHits().
       //! This methods generates a GateCrystalHit and stores it into the SD's hit collection
       G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
-					
+
       //! Tool method returning the name of the hit-collection where the crystal hits are stored
       static inline const G4String& GetCrystalCollectionName()
       	  { return theCrystalCollectionName; }
 
-      //! Returns the system to which the SD is attached   
+      //! Returns the system to which the SD is attached
       inline GateVSystem* GetSystem()
       	  { return m_system;}
       //! Set the system to which the SD is attached
@@ -78,16 +78,16 @@ class GateCrystalSD : public G4VSensitiveDetector
       void AddSystem(GateVSystem* aSystem);
       GateVSystem* FindSystem(GateVolumeID volumeID);
       GateVSystem* FindSystem(G4String& systemName);
-      
+
       G4int PrepareCreatorAttachment(GateVVolume* aCreator);
-       
-          
+
+
   protected:
-     GateVSystem* m_system;  	      	      	      //! System to which the SD is attached //mhadi_obso obsollete, because we use the multi-system approach
+     GateVSystem* m_system;                           //! System to which the SD is attached //mhadi_obso obsollete, because we use the multi-system approach
      GateSystemList* m_systemList;                    //! System list instead of one system
   private:
       GateCrystalHitsCollection * crystalCollection;  //! Hit collection
-      
+
       static const G4String theCrystalCollectionName; //! Name of the hit collection
 
 };
@@ -96,4 +96,3 @@ class GateCrystalSD : public G4VSensitiveDetector
 
 
 #endif
-

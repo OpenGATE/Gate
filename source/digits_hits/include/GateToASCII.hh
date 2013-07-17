@@ -60,19 +60,19 @@ public:
 	  m_fileCounter(0),
 	  m_collectionID(-1)
 	  //	  m_outputFileSizeLimit(2000000000),
-	{} 
+	{}
       virtual inline ~VOutputChannel() {}
-      
+
       void Open(const G4String& aFileBaseName);
       void Close();
       static void SetOutputFileSizeLimit(G4int limit) {m_outputFileSizeLimit = limit;};
       G4bool ExceedsSize();
       virtual void RecordDigitizer()=0;
-      
+
       inline void SetOutputFlag(G4bool flag) { m_outputFlag = flag; };
       inline void SetVerboseLevel(G4int val) { nVerboseLevel = val; };
 
-      
+
       G4int             nVerboseLevel;
       G4bool            m_outputFlag;
       G4String          m_fileBaseName;
@@ -84,7 +84,7 @@ public:
 
       static long       m_outputFileSizeLimit;
   };
-  
+
   class SingleOutputChannel : public VOutputChannel
   {
     public:
@@ -93,7 +93,7 @@ public:
       virtual inline ~SingleOutputChannel() {}
       virtual void RecordDigitizer();
   };
-  
+
   class CoincidenceOutputChannel : public VOutputChannel
   {
     public:
@@ -102,7 +102,7 @@ public:
       virtual inline ~CoincidenceOutputChannel() {}
       virtual void RecordDigitizer();
   };
-  
+
   //! flag to decide if it writes or not to the file
   G4bool GetOutFileRunsFlag()           { return m_outFileRunsFlag; };
   //! flag to decide if it writes or not to the file
@@ -129,8 +129,8 @@ public:
   void   RegisterNewCoincidenceDigiCollection(const G4String& aCollectionName,G4bool outputFlag);
   void   RegisterNewSingleDigiCollection(const G4String& aCollectionName,G4bool outputFlag);
 
-  void SetVerboseLevel(G4int val) 
-  { 
+  void SetVerboseLevel(G4int val)
+  {
     GateVOutputModule::SetVerboseLevel(val);
     for (size_t i=0; i<m_outputChannelList.size(); ++i)
       m_outputChannelList[i]->SetVerboseLevel(val);

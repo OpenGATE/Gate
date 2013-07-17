@@ -24,9 +24,9 @@ class GateThresholderMessenger;
 
 /*! \class  GateThresholder
     \brief  Pulse-processor modelling a simple threshold discriminator.
-    
+
     - GateThresholder - by Daniel.Strul@iphe.unil.ch
-    
+
     - The method ProcessOnePulse of this class models a simple
       threshold discriminator: any input pulse whose energy is above
       the energy threshold is copied into the output pulse-list.
@@ -34,7 +34,7 @@ class GateThresholderMessenger;
       threshold is discarded.
 
       \sa GateVPulseProcessor
-*/      
+*/
 class GateThresholder : public GateVPulseProcessor
 {
   public:
@@ -43,14 +43,14 @@ class GateThresholder : public GateVPulseProcessor
     GateThresholder(GatePulseProcessorChain* itsChain,
 			       const G4String& itsName, G4double itsThreshold=0) ;
     //! Destructor
-    virtual ~GateThresholder() ; 
+    virtual ~GateThresholder() ;
 
     //! Returns the threshold
     G4double GetThreshold()   	      { return m_threshold; }
 
     //! Set the threshold
     void SetThreshold(G4double val)   { m_threshold = val;  }
-    
+
     //! Implementation of the pure virtual method declared by the base class GateClockDependent
     //! print-out the attributes specific of the thresholder
     virtual void DescribeMyself(size_t indent);
@@ -61,7 +61,7 @@ class GateThresholder : public GateVPulseProcessor
     //! It is is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList&  outputPulseList);
-    
+
   private:
     G4double m_threshold;     	      	      //!< Threshold value
     GateThresholderMessenger *m_messenger;    //!< Messenger
@@ -69,4 +69,3 @@ class GateThresholder : public GateVPulseProcessor
 
 
 #endif
-

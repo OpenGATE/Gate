@@ -13,9 +13,9 @@
 
 class GatePhysicsExtractorActor;
 
-class GatePhysicsExtractorActorMessenger : public GateActorMessenger 
+class GatePhysicsExtractorActorMessenger : public GateActorMessenger
 {
-	public: 
+	public:
 		GatePhysicsExtractorActorMessenger(GatePhysicsExtractorActor*);
 		~GatePhysicsExtractorActorMessenger();
 
@@ -31,7 +31,7 @@ class GatePhysicsExtractorActorMessenger : public GateActorMessenger
 		G4UIcmdWithADoubleAndUnit* pEmaxCmd;
 		G4UIcmdWithADoubleAndUnit* pEnergyCutCmd;
 
-		GatePhysicsExtractorActor* pActor; 
+		GatePhysicsExtractorActor* pActor;
 };
 
 #endif

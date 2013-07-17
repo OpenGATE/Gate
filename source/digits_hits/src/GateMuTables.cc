@@ -9,6 +9,7 @@ GateMuTable::GateMuTable(G4String /*name*/, G4int size)
   mMu = new double[size];
   mMu_en = new double[size];
   mSize = size;
+  lastMu = -1.0;
   lastMuen = -1.0;
   lastEnergy = -1.0;
 }
@@ -27,49 +28,59 @@ void GateMuTable::PutValue(int index, double energy, double mu, double mu_en)
   mMu_en[index] = mu_en;
 }
 
-inline double interpol(double e_low, double e, double e_high,
-		       double mu_en_low, double mu_en_high)
+inline double interpol(double x1, double x, double x2,
+		       double y1, double y2)
 {
-  return exp( log(mu_en_low) + log(mu_en_high/mu_en_low) / log(e_high/e_low)* log(e/e_low) );
+  return ( y1 + ( (y2-y1) * (x-x1) / (x2-x1) ) );  // if log storage
+//   return exp( log(y1) + log(y2/y1) / log(x2/x1)* log(x/x1) ); // if no log storage
 }
 
 double GateMuTable::GetMuEn(double energy)
 {
-  if (energy == lastEnergy)
-    return lastMuen;
+  if (energy == lastEnergy) return exp(lastMuen);
   lastEnergy = energy;
-  int inf = 0, up = mSize-1;
-  while(up - inf > 1){
-    int tmp_bound = (inf + up)/2;
-    if(mEnergy[tmp_bound] > energy)
-      up = tmp_bound;
-    else
-      inf = tmp_bound;
+
+  energy = log(energy);
+
+  int inf = 0;
+  int sup = mSize-1;
+  while(sup - inf > 1)
+  {
+    int tmp_bound = (inf + sup)/2;
+    if(mEnergy[tmp_bound] > energy) { sup = tmp_bound; }
+    else { inf = tmp_bound; }
   }
-  double e_low = mEnergy[inf], e_high = mEnergy[up];
-  if( energy > e_low && energy < e_high)
-    lastMuen = interpol(e_low, energy, e_high, mMu_en[inf], mMu_en[up]);
-  else
-    lastMuen = mMu_en[inf];
-  
-  return lastMuen;
+  double e_inf = mEnergy[inf];
+  double e_sup = mEnergy[sup];
+
+  if( energy > e_inf && energy < e_sup) { lastMuen = interpol(e_inf, energy, e_sup, mMu_en[inf], mMu_en[sup]); }
+  else { lastMuen = mMu_en[inf]; }
+
+  return exp(lastMuen);
 }
 
 double GateMuTable::GetMu(double energy)
 {
-  int inf = 0, up = mSize-1;
-  while(up - inf > 1){
-    int tmp_bound = (inf + up)/2;
-    if(mEnergy[tmp_bound] > energy)
-      up = tmp_bound;
-    else
-      inf = tmp_bound;
+  if (energy == lastEnergy) return exp(lastMu);
+  lastEnergy = energy;
+
+  energy = log(energy);
+
+  int inf = 0;
+  int sup = mSize-1;
+  while(sup - inf > 1)
+  {
+    int tmp_bound = (inf + sup)/2;
+    if(mEnergy[tmp_bound] > energy) { sup = tmp_bound; }
+    else { inf = tmp_bound; }
   }
-  double e_low = mEnergy[inf], e_high = mEnergy[up];
-  if( energy > e_low && energy < e_high)
-    return interpol(e_low, energy, e_high, mMu[inf], mMu[up]);
-  else
-    return mMu[inf];
+  double e_inf = mEnergy[inf];
+  double e_sup = mEnergy[sup];
+
+  if( energy > e_inf && energy < e_sup) { lastMu = interpol(e_inf, energy, e_sup, mMu[inf], mMu[sup]); }
+  else { lastMu = mMu[inf]; }
+
+  return exp(lastMu);
 }
 
 

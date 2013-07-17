@@ -20,17 +20,17 @@ class GateVVolume;
 class GateVolumeID;
 
 /*! \class  GateLevelsFinder
-    \brief  
-    
+    \brief
+
     - GateLevelsFinder - by Martin.Rey@epfl.ch (sept. 2003)
-    
-    - Find the number of copies for an Inserter 
+
+    - Find the number of copies for an Inserter
       and then go up the chain to find the number of copies of the Inserters above
-      It allows also to find the levels params of a pulse 
+      It allows also to find the levels params of a pulse
       (Give the copy number of all the volume where is the pulse)
-    
+
       \sa GateVPulseProcessor
-*/      
+*/
 class GateLevelsFinder//  : public std::vector<size_t>
 {
 public:
@@ -43,11 +43,10 @@ public:
   //! Find the different parameters of the input Pulse :
   //! e.g. the position in this array of the hit
   std::vector<size_t> FindInputPulseParams(const GateVolumeID* aVolumeID, const size_t);
-    
+
 private:
   size_t m_size;
 };
 
 
 #endif
-

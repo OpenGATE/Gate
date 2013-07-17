@@ -118,14 +118,10 @@ template<typename vContentType>
 G4String GateUIcmdWithAVector<vContentType>::ConvertToString
 (std::vector<vContentType> vec)
 {
-  char st[100];
-  //LF
-  //std::ostrstream os(st,100);
-  std::ostringstream os(st);//,100);
-  //LF
+  std::ostringstream os;
   for (G4int i=0; i<vec.size(); i++) os << vec[i] << " "; 
   os << '\0';
-  G4String vl = st;
+  G4String vl = os.str();
   G4cout << "GateUIcmdWithAVector::ConvertToString : " << vl << G4endl;
   return vl;
 }

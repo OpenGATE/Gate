@@ -26,8 +26,8 @@ See GATE/LICENSE.txt for further details
 
 class GateGPUTransTomoActor: public GateVActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
   virtual ~GateGPUTransTomoActor();
@@ -47,7 +47,7 @@ class GateGPUTransTomoActor: public GateVActor
 
   //-----------------------------------------------------------------------------
   virtual void SaveData();
-  virtual void ResetData();  
+  virtual void ResetData();
 
   void SetGPUDeviceID(int n);
   void SetGPUBufferSize(int n);
@@ -62,7 +62,7 @@ protected:
   // Input and output structure for gpu.
   GateGPUIO_Input * gpu_input;
   GateGPUIO_Output * gpu_output;
-  
+
   // max buffer size
   unsigned int max_buffer_size;
   int mGPUDeviceID;

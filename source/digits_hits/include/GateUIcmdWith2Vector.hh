@@ -62,7 +62,7 @@ class GateUIcmdWith2Vector : public G4UIcommand
     static G4ThreeVector GetNew2VectorValue(const char* paramString);
     //  Convert string which represents three double values to
     // G4ThreeVector.
-  void SetParameterName(const char * theNameX,const char * theNameY, 
+  void SetParameterName(const char * theNameX,const char * theNameY,
                         G4bool omittable,G4bool currentAsDefault=false);
     //  Set the parameter names for three parameters. Names are used by
     // the range checking routine.
@@ -70,9 +70,9 @@ class GateUIcmdWith2Vector : public G4UIcommand
     // the value(s) when he/she applies the command. If "omittable" is false,
     // the user must supply all three values.
     //  "currentAsDefault" flag is valid only if "omittable" is true. If this
-    // flag is true, the current values are used as the default values when the 
+    // flag is true, the current values are used as the default values when the
     // user ommit some of the parameters. If this flag is false, the values
-    // given by the next SetDefaultValue() method are used. 
+    // given by the next SetDefaultValue() method are used.
     void SetDefaultValue(G4ThreeVector defVal);
     //  Set the default values of the parameters. These default values are used
     // when the user of this command ommits some of the parameter values, and

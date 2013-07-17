@@ -28,29 +28,29 @@ class GateQuantumEfficiencyMessenger;
     - GateQuantumEfficiency - by Martin.Rey@epfl.ch (dec 2002)
 
     - Pulse-processor for simulating the quantum efficiency on each channel of a PM or an APD.
-    There are two options: one, is to give an unique quantum efficiency for all the channels, 
+    There are two options: one, is to give an unique quantum efficiency for all the channels,
     and, the other, is to give some lookout tables which contains data and this class takes these data
-    with small variations (minus than 2%) for creating the tables before the simulation.    
+    with small variations (minus than 2%) for creating the tables before the simulation.
 
       \sa GateVPulseProcessor
-*/      
+*/
 class GateQuantumEfficiency : public GateVPulseProcessor
 {
   public:
     //! This function allows to retrieve the current instance of the GateQuantumEfficiency singleton
-    /*! 
+    /*!
       	If the GateQuantumEfficiency already exists, GetInstance only returns a pointer to this singleton.
 	If this singleton does not exist yet, GetInstance creates it by calling the private
 	GateQuantumEfficiency constructor
     */
     static GateQuantumEfficiency* GetInstance(GatePulseProcessorChain* itsChain,
-					      const G4String& itsName); 
+					      const G4String& itsName);
 
     //! Public Destructor
     virtual ~GateQuantumEfficiency() ;
 
   private:
-    //!< Private constructor which Constructs a new quantum efficiency module attached to a GateDigitizer: 
+    //!< Private constructor which Constructs a new quantum efficiency module attached to a GateDigitizer:
     //! this function should only be called from GetInstance()
     GateQuantumEfficiency(GatePulseProcessorChain* itsChain,
 			  const G4String& itsName);
@@ -59,15 +59,15 @@ class GateQuantumEfficiency : public GateVPulseProcessor
 
     //! Check the validity of the volume name where the quantum efficiency will be applied
     void CheckVolumeName(G4String val);
-  
+
     //! Allow to use file(s) as lookout table for quantum efficiency
     void UseFile(G4String aFile);
-    
+
     //! Apply an unique quantum efficiency for all the channels
     void SetUniqueQE(G4double val) { m_uniqueQE = val; };
 
     //! Create the table for the quantum efficiency inhomogeneity
-    void CreateTable();  
+    void CreateTable();
 
     //! Return the volume name where the quantum efficiency is applied
     G4String GetVolumeName() { return m_volumeName; };
@@ -77,7 +77,7 @@ class GateQuantumEfficiency : public GateVPulseProcessor
 
     //! Return the QE coef
     G4double GetQECoeff(G4int tableNB, G4int crystalNb) { return m_table[tableNB][crystalNb]; };
-  
+
     //! Return the minimum QE coef
     G4double GetMinQECoeff();
 
@@ -116,13 +116,13 @@ class GateQuantumEfficiency : public GateVPulseProcessor
 
     GateQuantumEfficiencyMessenger* m_messenger;       //!< Messenger
 
-    G4String m_volumeName;  //!< Name of the module 
+    G4String m_volumeName;  //!< Name of the module
     G4int m_testVolume;     //!< equal to 1 if the volume name is valid, 0 else
     size_t m_count;         //!< equal to 0 before first ProcessOnPulse use, then 1
   GateLevelsFinder* m_levelFinder;
-    //!< Number of PhysicalVolume copies of the Inserter corresponding @ volume name 'm_volumeName 
+    //!< Number of PhysicalVolume copies of the Inserter corresponding @ volume name 'm_volumeName
     G4int m_nbCrystals;
-    //!< Number of PhysicalVolume copies of the Inserter corresponding @ level 'm_depth-1                 
+    //!< Number of PhysicalVolume copies of the Inserter corresponding @ level 'm_depth-1
     G4int m_level3No;
     //!< Number of PhysicalVolume copies of the Inserter corresponding @ level 'm_depth-2
     G4int m_level2No;
@@ -142,4 +142,3 @@ class GateQuantumEfficiency : public GateVPulseProcessor
 
 
 #endif
-

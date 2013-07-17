@@ -31,13 +31,12 @@ class GateHitConvertorMessenger: public GateClockDependentMessenger
   public:
     GateHitConvertorMessenger(GateHitConvertor* itsHitConvertor);
     inline ~GateHitConvertorMessenger() {}
-    
+
     void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GateHitConvertor* GetHitConvertor() 
+    inline GateHitConvertor* GetHitConvertor()
       { return (GateHitConvertor*) GetClockDependent(); }
 
 };
 
 #endif
-

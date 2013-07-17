@@ -27,8 +27,8 @@ See GATE/LICENSE.txt for further details
 
 class GateFluenceActor : public GateVImageActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
   virtual ~GateFluenceActor();

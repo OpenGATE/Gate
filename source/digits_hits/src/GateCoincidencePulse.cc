@@ -21,7 +21,7 @@ GateCoincidencePulse::GateCoincidencePulse(const GateCoincidencePulse& src)
     m_offsetWindow=src.m_offsetWindow;
     m_coincidenceWindow=src.m_coincidenceWindow;
 }
-void GateCoincidencePulse::push_back(GatePulse* newPulse) 
+void GateCoincidencePulse::push_back(GatePulse* newPulse)
 {
     if ( newPulse->GetTime() < m_startTime)
       m_startTime = newPulse->GetTime();
@@ -29,9 +29,9 @@ void GateCoincidencePulse::push_back(GatePulse* newPulse)
 //       m_Time = newPulse->GetTime();
     GatePulseList::push_back(newPulse);
 }
-    
 
-std::ostream& operator<<(std::ostream& flux, const GateCoincidencePulse& pulse)    
+
+std::ostream& operator<<(std::ostream& flux, const GateCoincidencePulse& pulse)
 {
   flux    << "----GateCoincidencePulse----"   	      	      	      	       << G4endl
       	  << "\tStart  " << G4BestUnit(pulse.m_startTime,"Time") 	       << G4endl
@@ -40,7 +40,7 @@ std::ostream& operator<<(std::ostream& flux, const GateCoincidencePulse& pulse)
   for (size_t i=0; i<pulse.size(); i++)
      flux << *(pulse[i]) << "\n";
   flux    << "----------------------------"   	      	      	      	       << G4endl;
-    
+
   return flux;
 }
 
@@ -65,5 +65,3 @@ void GateCoincidencePulse::InsertUniqueSortedCopy(GatePulse* newPulse)
 //     if ( newPulse->GetTime() > m_Time)
 //       m_Time = newPulse->GetTime();
 }
-
-

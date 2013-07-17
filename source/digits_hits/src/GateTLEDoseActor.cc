@@ -10,8 +10,8 @@
 
 
 /*
-  \brief Class GateTLEDoseActor : 
-  \brief 
+  \brief Class GateTLEDoseActor :
+  \brief
 */
 
 #ifndef GATETLEDOSEACTOR_CC
@@ -26,20 +26,20 @@ GateTLEDoseActor::GateTLEDoseActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
   mCurrentEvent=-1;
   pMessenger = new GateTLEDoseActorMessenger(this);
-  mMaterialHandler = new GateMaterialMuHandler(100);
+  mMaterialHandler = GateMaterialMuHandler::GetInstance();
   mIsEdepImageEnabled = false;
   mIsDoseUncertaintyImageEnabled = false;
   mIsLastHitEventImageEnabled = false;
   mIsEdepSquaredImageEnabled = false;
   mIsEdepUncertaintyImageEnabled = false;
   mIsDoseSquaredImageEnabled = false;
-  
+
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateTLEDoseActor::~GateTLEDoseActor()  {
   delete pMessenger;
 }
@@ -57,9 +57,9 @@ void GateTLEDoseActor::Construct() {
   EnablePostUserTrackingAction(true);
   EnableUserSteppingAction(true);
 
-  if (!mIsEdepImageEnabled && 
+  if (!mIsEdepImageEnabled &&
       !mIsDoseImageEnabled) {
-    GateError("The TLEDoseActor " << GetObjectName() << " does not have any image enabled ...\n Please select at least one ('enableEdep true' for example)"); 
+    GateError("The TLEDoseActor " << GetObjectName() << " does not have any image enabled ...\n Please select at least one ('enableEdep true' for example)");
   }
 
   // Output Filename
@@ -71,7 +71,7 @@ void GateTLEDoseActor::Construct() {
     mLastHitEventImage.Allocate();
     mIsLastHitEventImageEnabled = true;
   }
-  
+
 
   if (mIsEdepImageEnabled) {
     mEdepImage.EnableSquaredImage(mIsEdepSquaredImageEnabled);
@@ -89,8 +89,8 @@ void GateTLEDoseActor::Construct() {
     mDoseImage.Allocate();
     mDoseImage.SetFilename(mDoseFilename);
     mDoseImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
-  } 
- 
+  }
+
   ConversionFactor = 1.60217653e-19 * 1.e6 * 1.e2 * 1.e3;
   VoxelVolume = GetDoselVolume();
   ResetData();
@@ -118,7 +118,7 @@ void GateTLEDoseActor::ResetData() {
 
 void GateTLEDoseActor::UserSteppingAction(const GateVVolume *, const G4Step* step)
 {
-  int index = GetIndexFromStepPosition(GetVolume(), step); 
+  int index = GetIndexFromStepPosition(GetVolume(), step);
   UserSteppingActionInVoxel(index, step);
 }
 //-----------------------------------------------------------------------------
@@ -133,7 +133,7 @@ void GateTLEDoseActor::BeginOfRunAction(const G4Run * r) {
 
 //-----------------------------------------------------------------------------
 // Callback at each event
-void GateTLEDoseActor::BeginOfEventAction(const G4Event * e) { 
+void GateTLEDoseActor::BeginOfEventAction(const G4Event * e) {
   GateVActor::BeginOfEventAction(e);
   mCurrentEvent++;
 
@@ -182,7 +182,7 @@ void GateTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* 
       else
 	mEdepImage.AddValue(index, edep);
     }
-    
+
   }
 }
 //-----------------------------------------------------------------------------

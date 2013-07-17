@@ -34,4 +34,3 @@ class GateDistributionExponentialMessenger: public GateDistributionMessenger
 };
 
 #endif
-

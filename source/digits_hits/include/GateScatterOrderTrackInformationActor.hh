@@ -19,10 +19,10 @@
 
 #include "globals.hh"
 #include "G4String.hh"
-#include <iomanip>   
+#include <iomanip>
 #include <vector>
 
-// Gate 
+// Gate
 #include "GateVActor.hh"
 #include "GateImage.hh"
 #include "GateSourceMgr.hh"

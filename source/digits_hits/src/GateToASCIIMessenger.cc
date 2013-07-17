@@ -29,7 +29,7 @@ See GATE/LICENSE.txt for further details
 GateToASCIIMessenger::GateToASCIIMessenger(GateToASCII* gateToASCII)
   : GateOutputModuleMessenger(gateToASCII)
   , m_gateToASCII(gateToASCII)
-{ 
+{
   G4String cmdName;
 
   cmdName = GetDirectoryName()+"reset";
@@ -94,7 +94,7 @@ GateToASCIIMessenger::~GateToASCIIMessenger()
   delete OutFileHitsCmd;
   delete OutFileVoxelCmd;
   delete SetFileNameCmd;
-  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i) 
+  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
     delete OutputChannelCmdList[i];
 }
 //--------------------------------------------------------------------------------------------------------
@@ -102,8 +102,8 @@ GateToASCIIMessenger::~GateToASCIIMessenger()
 
 //--------------------------------------------------------------------------------------------------------
 void GateToASCIIMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
-  if( command == CoincidenceMaskCmd ) { 
+{
+  if( command == CoincidenceMaskCmd ) {
 
     std::vector<G4bool> maskVector;
     const char* newValueChar = newValue;
@@ -152,25 +152,25 @@ void GateToASCIIMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
   } else if ( command == OutFileVoxelCmd ) {
     m_gateToASCII->SetOutFileVoxelFlag(OutFileVoxelCmd->GetNewBoolValue(newValue));
   } else if ( IsAnOutputChannelCmd(command) ) {
-    ExecuteOutputChannelCmd(command,newValue); 
+    ExecuteOutputChannelCmd(command,newValue);
   } else {
     GateOutputModuleMessenger::SetNewValue(command,newValue);
   }
-   
+
 }
 //--------------------------------------------------------------------------------------------------------
 
 
 //--------------------------------------------------------------------------------------------------------
 void GateToASCIIMessenger::CreateNewOutputChannelCommand(GateToASCII::VOutputChannel* anOutputChannel)
-{ 
+{
   G4String cmdName;
-  
+
   m_outputChannelList.push_back(anOutputChannel);
-  
+
   G4String channelName = anOutputChannel->m_collectionName;
   cmdName = GetDirectoryName()+"setOutFile" + channelName + "Flag";
-    
+
   G4UIcmdWithABool * newCmd = new G4UIcmdWithABool(cmdName,this) ;
   G4String aGuidance = "Set the flag for ASCII output of " + channelName + ".";
   newCmd->SetGuidance(aGuidance.c_str());
@@ -183,8 +183,8 @@ void GateToASCIIMessenger::CreateNewOutputChannelCommand(GateToASCII::VOutputCha
 
 //--------------------------------------------------------------------------------------------------------
 G4bool GateToASCIIMessenger::IsAnOutputChannelCmd(G4UIcommand* command)
-{ 
-  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i) 
+{
+  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
     if ( command == OutputChannelCmdList[i] )
       return true;
   return false;
@@ -194,8 +194,8 @@ G4bool GateToASCIIMessenger::IsAnOutputChannelCmd(G4UIcommand* command)
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 void GateToASCIIMessenger::ExecuteOutputChannelCmd(G4UIcommand* command,G4String newValue)
-{ 
-  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i) 
+{
+  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
     if ( command == OutputChannelCmdList[i] ) {
       m_outputChannelList[i]->SetOutputFlag( OutputChannelCmdList[i]->GetNewBoolValue(newValue) );
       break;

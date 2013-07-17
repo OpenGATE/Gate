@@ -25,7 +25,7 @@
 
 #include "globals.hh"
 #include "G4String.hh"
-#include <iomanip>   
+#include <iomanip>
 #include <vector>
 
 #include "GateActorManager.hh"
@@ -38,7 +38,7 @@
 #include "G4THitsMap.hh"
 #include "G4TouchableHistory.hh"
 
-class GateVActor : 
+class GateVActor :
   public GateNamedObject,
   public G4VPrimitiveScorer
 {
@@ -46,7 +46,7 @@ public:
   GateVActor(G4String name, G4int depth=0);
   virtual ~GateVActor();
 
-public: 
+public:
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
   virtual void clear(){}
@@ -86,10 +86,10 @@ public:
   void EnableBeginOfRunAction(bool b)       { mIsBeginOfRunActionEnabled = b; }
   void EnableEndOfRunAction(bool b)         { mIsEndOfRunActionEnabled = b; }
   void EnableBeginOfEventAction(bool b)     { mIsBeginOfEventActionEnabled = b; }
-  void EnableEndOfEventAction(bool b)       { mIsEndOfEventActionEnabled = b; }  
-  void EnablePreUserTrackingAction(bool b)  { mIsPreUserTrackingActionEnabled = b; }  
-  void EnablePostUserTrackingAction(bool b) { mIsPostUserTrackingActionEnabled = b; }  
-  void EnableUserSteppingAction(bool b)     { mIsUserSteppingActionEnabled = b; }  
+  void EnableEndOfEventAction(bool b)       { mIsEndOfEventActionEnabled = b; }
+  void EnablePreUserTrackingAction(bool b)  { mIsPreUserTrackingActionEnabled = b; }
+  void EnablePostUserTrackingAction(bool b) { mIsPostUserTrackingActionEnabled = b; }
+  void EnableUserSteppingAction(bool b)     { mIsUserSteppingActionEnabled = b; }
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
@@ -123,7 +123,7 @@ public:
   void IncNumberOfFilters() {mNumOfFilters++;}
   //void AddFilter(G4String type){GateActorManager::GetInstance()->AddFilter(type, GetObjectname() )}
 
-protected: 
+protected:
   G4String mTypeName;
   G4String mVolumeName;
   GateVVolume * mVolume;
@@ -154,7 +154,7 @@ protected:
   int mSaveFileDescriptor;
   struct timeval mTimeOfLastSaveEvent;
   //-----------------------------------------------------------------------------
-  
+
 private:
   G4int HCID;
   G4THitsMap<G4double>* EvtMap;

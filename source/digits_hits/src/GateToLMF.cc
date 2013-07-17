@@ -1,19 +1,19 @@
 /*----------------------
 
-   GATE - Geant4 Application for Tomographic Emission 
-   OpenGATE Collaboration 
-     
-   Luc Simon <luc.simon@iphe.unil.ch> 
+   GATE - Geant4 Application for Tomographic Emission
+   OpenGATE Collaboration
+
+   Luc Simon <luc.simon@iphe.unil.ch>
    Daniel Strul <daniel.strul@iphe.unil.ch>
    Claude Comtat <comtat@ieee.org>
-   Giovanni Santin <giovanni.santin@iphe.unil.ch> 
-     
-   Copyright (C) 2002,2003 UNIL/IPHE, CH-1015 Lausanne 
+   Giovanni Santin <giovanni.santin@iphe.unil.ch>
+
+   Copyright (C) 2002,2003 UNIL/IPHE, CH-1015 Lausanne
    Copyright (C) 2003 CEA/SHFJ, F-91401 Orsay
 
-This software is distributed under the terms 
-of the GNU Lesser General  Public Licence (LGPL) 
-See GATE/LICENSE.txt for further details 
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #include "GateConfiguration.h"
@@ -50,8 +50,8 @@ See GATE/LICENSE.txt for further details
   The first part is the mandatory part, because this class derivates
   from GateVOutputModule. The second is the specific part of this constructor.
 */
-GateToLMF::GateToLMF(const G4String& name,GateOutputMgr* outputMgr,GateVSystem *psystem,DigiMode digiMode)      
-  : GateVOutputModule(name,outputMgr,digiMode), 
+GateToLMF::GateToLMF(const G4String& name,GateOutputMgr* outputMgr,GateVSystem *psystem,DigiMode digiMode)
+  : GateVOutputModule(name,outputMgr,digiMode),
     m_azimuthalStep(0),m_axialStep(0),
     m_shiftX(0),m_shiftY(0),m_shiftZ(0),
     m_inputDataChannel("Singles"),
@@ -66,7 +66,7 @@ GateToLMF::GateToLMF(const G4String& name,GateOutputMgr* outputMgr,GateVSystem *
     m_LMFRsectorID[i] = 0;
 
     for (int iTime = 0;iTime<8;iTime++)
-      m_pLMFTime[iTime][i] = 0;     
+      m_pLMFTime[iTime][i] = 0;
   }
 
 
@@ -77,13 +77,13 @@ GateToLMF::GateToLMF(const G4String& name,GateOutputMgr* outputMgr,GateVSystem *
   //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...
   m_pfile = NULL;
   m_pASCIIfile = NULL;
-  m_nameOfFile = name + ".ccs";      //LMF binary file is .ccs 
+  m_nameOfFile = name + ".ccs";      //LMF binary file is .ccs
   m_nameOfASCIIfile = name + ".cch"; //LMF ascii file is .cch
   m_name = name;                     // name without extension
- 
 
 
-     
+
+
   //              dynamic allocations for LMF Record carriers structures                  //|
   //------------------------------------------------------------------------------------------
   // pEncoH                                                                                //|
@@ -91,29 +91,29 @@ GateToLMF::GateToLMF(const G4String& name,GateOutputMgr* outputMgr,GateVSystem *
   pEncoH = (ENCODING_HEADER *) malloc(sizeof(ENCODING_HEADER)); //|
   if(pEncoH == NULL)                                                                       //|
     G4cout <<  "\n*** ERROR : in GateToLMF.cc : impossible to do : malloc()" << "\n" ;     //|
-  
+
   // pcC                                                                                   //|
   // tested MALLOC for Current Content structure                                           //|
   pcC=(CURRENT_CONTENT *) malloc(sizeof(CURRENT_CONTENT));     //|
   if(pcC == NULL)                                                                          //|
     G4cout <<  "\n*** ERROR : in GateToLMF.cc : impossible to do : malloc()" << "\n";      //|
-  // pEH                                                                                   //|      
+  // pEH                                                                                   //|
   // tested MALLOC for Event Header structure                                              //|
   pEH=(EVENT_HEADER *)malloc(sizeof(EVENT_HEADER));            //|
   if(pEH == NULL)                                                                          //|
     G4cout <<  "\n***ERROR : in GateToLMF.cc : imposible to do : malloc()" << "\n";        //|
-  
+
   pEH = fillEHforGATE(pEH); // standard filling of event header structure                  //|
-  
-  // pGDH                                                                                  //|      
+
+  // pGDH                                                                                  //|
   // tested MALLOC for GateDigi Header structure                                           //|
   pGDH=(GATE_DIGI_HEADER *)malloc(sizeof(GATE_DIGI_HEADER));                                 //|
   if(pGDH == NULL)                                                                         //|
     G4cout <<  "\n***ERROR : in GateToLMF.cc : imposible to do : malloc()" << "\n";        //|
-  
+
   pGDH = fillGDHforGATE(pGDH); // standard filling of gateDigi header structure (evry bool to 0)  //|
 
-    
+
   // pER                                                                                   //|
   // tested MALLOCs for Event Record structure                                             //|
   for(int i = 0; i < 2; i++) {
@@ -126,9 +126,9 @@ GateToLMF::GateToLMF(const G4String& name,GateOutputMgr* outputMgr,GateVSystem *
     if((pER[i]->crystalIDs == NULL)||(pER[i]->energy == NULL)||(pER[i]->pGDR == NULL))                //|
       G4cout <<  "*** ERROR : in GATEToLMF.cc : impossible to do : malloc" << "\n ";         //|
   }
-  //------------------------------------------------------------------------------------------ 
-  
-} 
+  //------------------------------------------------------------------------------------------
+
+}
 
 
 //! Destructor
@@ -136,12 +136,12 @@ GateToLMF::GateToLMF(const G4String& name,GateOutputMgr* outputMgr,GateVSystem *
   The first part is the mandatory part, because this class derivates
   from GateVOutputModule. The second is the specific part of this destructor.
 */
-GateToLMF::~GateToLMF()          
+GateToLMF::~GateToLMF()
 {
   delete m_LMFMessenger;
-  
+
   if (nVerboseLevel > 0) G4cout << "GateToLMF deleting..." << G4endl;
- 
+
   if(pEncoH->scanContent.eventRecordBool == 1)
     {
       if(pGDH)
@@ -181,18 +181,18 @@ void GateToLMF::buildLMFEventRecord()
 
   // static FILE *m_pfile=NULL;
   for(k=0;k<8;k++)                //  TIME
-      pER[0]->timeStamp[k] = m_pLMFTime[k][0]; //     
+      pER[0]->timeStamp[k] = m_pLMFTime[k][0]; //
 
-  
+
   if(pEH->energyBool)
     pER[0]->energy[0]= m_LMFEnergy[0];  // ENERGY
-  
+
   if(pEH->gantryAngularPosBool)
     pER[0]->gantryAngularPos = m_LMFgantryAngularPos;    // gantry's  angular position
-  
+
   if(pEH->gantryAxialPosBool)
     pER[0]->gantryAxialPos = m_LMFgantryAxialPos;      // gantry's  axial position
-  
+
   if(pEH->detectorIDBool) {
     pER[0]->crystalIDs[0] = makeid(m_LMFRsectorID[0],
 				   m_LMFModuleID[0],
@@ -210,7 +210,7 @@ void GateToLMF::buildLMFEventRecord()
 	     m_LMFLayerID[0]);
     }
   }
-  
+
   LMFbuilder(pEncoH,pEH,pCRH,pGDH,pcC,pER[0],pCRR,&m_pfile,m_nameOfFile.c_str());   /* ...write it */
 
   nSingles++;
@@ -220,14 +220,14 @@ void GateToLMF::buildLMFEventRecord()
 }
 
 void GateToLMF::createLMF_ASCIIfile(void)
-{ 
+{
   std::ofstream asciiFile(m_nameOfASCIIfile,std::ios::out);  // open a ASCII file in writting mode
- 
+
   // Ask the system to print out its parameters into the stream
   if(!asciiFile)
     G4cerr << "GateToLMF::createLMF_ASCIIfile() : Impossible to open a new file" << G4endl;
   m_pSystem->PrintToStream(asciiFile,false); // cf. GateCylindricalPETSystem class.
- 
+
   G4double m_timeSlice = GateApplicationMgr::GetInstance()->GetTimeSlice();
 
   // OK, now we have all the system-dependant parameters
@@ -236,14 +236,14 @@ void GateToLMF::createLMF_ASCIIfile(void)
   // Get and print out the time slice ?
   // asciiFile << "time slice: " << G4BestUnit( m_timeSlice, "Time" ) << G4endl;
 
-  
+
   // Get and print out the time and energy steps
   if(pEH->coincidenceBool)
     asciiFile << "clock time step: " << GATE_LMF_TIME_STEP_COINCI << " ps" << G4endl;
   else
     asciiFile << "clock time step: " << GATE_LMF_TIME_STEP_PICOS << " ps" << G4endl;
   asciiFile << "energy step: " << GATE_LMF_ENERGY_STEP_KEV << " keV" << G4endl;
-  // GATE_LMF_TIME_STEP_PICOS and GATE_LMF_ENERGY_STEP_KEV are defined 
+  // GATE_LMF_TIME_STEP_PICOS and GATE_LMF_ENERGY_STEP_KEV are defined
   // in LMF library : lmf/includes/constantsLMF_ccs.h
 
 
@@ -278,13 +278,13 @@ void GateToLMF::createLMF_ASCIIfile(void)
       m_pZshift_vector[6] = rsectorComponent->GetAngularRepeatZShift7();
       m_pZshift_vector[7] = rsectorComponent->GetAngularRepeatZShift8();
 
-      
+
       G4int m_RingModuloNumber = rsectorComponent->GetAngularModuloNumber();
 
-      // G4cout << "2: "<< m_RingModuloNumber<<m_pZshift_vector << G4endl; 
+      // G4cout << "2: "<< m_RingModuloNumber<<m_pZshift_vector << G4endl;
       for ( int i=0 ; i < m_RingModuloNumber ; i++)
 	{
-	  if(m_pZshift_vector[i] != 0.) 
+	  if(m_pZshift_vector[i] != 0.)
 	    asciiFile << "z shift sector "<<i<<" mod "<<m_RingModuloNumber<<" : "<<m_pZshift_vector[i] / cm<<" cm"<< G4endl;
 	}
     }
@@ -305,7 +305,7 @@ void GateToLMF::createLMF_ASCIIfile(void)
 
 
 void GateToLMF::StoreTheDigiInLMF(GateSingleDigi *digi)
-{  
+{
   if(pEH->energyBool)
     {
       //    G4cout << "Energy stored into digi=" << digi->GetEnergy() << G4endl;
@@ -316,8 +316,8 @@ void GateToLMF::StoreTheDigiInLMF(GateSingleDigi *digi)
     {
       SetLayerID(0, digi->GetComponentID(LAYER_DEPTH)); // ids
       SetCrystalID(0, digi->GetComponentID(CRYSTAL_DEPTH));
-      SetSubmoduleID(0, digi->GetComponentID(SUBMODULE_DEPTH)); 
-      SetModuleID(0, digi->GetComponentID(MODULE_DEPTH)); 
+      SetSubmoduleID(0, digi->GetComponentID(SUBMODULE_DEPTH));
+      SetModuleID(0, digi->GetComponentID(MODULE_DEPTH));
       SetRsectorID(0, digi->GetComponentID(RSECTOR_DEPTH));
     }
 
@@ -329,9 +329,9 @@ void GateToLMF::StoreTheDigiInLMF(GateSingleDigi *digi)
   if(pEH->gantryAngularPosBool){
     G4int Nloop = int ((digi->GetScannerRotAngle()/rad)/twopi); // Nloop >0. or <0.
     G4double ModAngle = (digi->GetScannerRotAngle()  - Nloop * twopi);
-    SetGantryAngularPos((G4int)(ModAngle / m_azimuthalStep)) ; 
+    SetGantryAngularPos((G4int)(ModAngle / m_azimuthalStep)) ;
   }
- 
+
 
   if(pEH->sourcePosBool)
     {
@@ -344,13 +344,13 @@ void GateToLMF::StoreTheDigiInLMF(GateSingleDigi *digi)
   if(nVerboseLevel > 2)
     printf("\n************* EVENT TIME IS = %f\n",digi->GetTime());
   SetTime(0,digi->GetTime());  //!< time
-  
+
   if(pEH->gateDigiBool)   // advanced storage of digi in LMF
     StoreMoreDigiInLMF_GDR(digi);
 
   if (nVerboseLevel > 0)
     {
-      showOneLMFDigi(); 
+      showOneLMFDigi();
       if (nVerboseLevel > 2)
 	{
 	  G4cout << "One digi store in " << m_nameOfFile <<G4endl;
@@ -359,15 +359,15 @@ void GateToLMF::StoreTheDigiInLMF(GateSingleDigi *digi)
 	      G4cout << "type enter to continue" << G4endl;
 	      getchar(); // let's see this beautiful event record
 	    }
-	} 
+	}
     }
-    
+
   buildLMFEventRecord();
-  
+
 }
 
 void GateToLMF::StoreMoreDigiInLMF_GDR(GateSingleDigi *digi)
-{ 
+{
 //   if(digi->GetRunID()) {
 //     printf("digi->GetRunID = %d\n", digi->GetRunID());
 //     getchar();
@@ -386,7 +386,7 @@ void GateToLMF::StoreMoreDigiInLMF_GDR(GateSingleDigi *digi)
     }
   if(pGDH->globalXYZPosBool)
     {
-      
+
       pER[0]->pGDR->globalPos[0].X = (short)((G4int)digi->GetGlobalPos().x()/mm);
       pER[0]->pGDR->globalPos[0].Y = (short)((G4int)digi->GetGlobalPos().y()/mm);
       pER[0]->pGDR->globalPos[0].Z = (short)((G4int)digi->GetGlobalPos().z()/mm);
@@ -405,7 +405,7 @@ void GateToLMF::StoreMoreDigiInLMF_GDR(GateSingleDigi *digi)
 //    G4int block1ID = m_system->GetMainComponentID( (*CDC)[iDigi]->GetPulse(0) );
 
 void GateToLMF::StoreTheCoinciDigiInLMF(GateCoincidenceDigi *digi)
-{  
+{
   static G4int nCoinci = 0;
   u16 flag;
 
@@ -418,7 +418,7 @@ void GateToLMF::StoreTheCoinciDigiInLMF(GateCoincidenceDigi *digi)
     if(nVerboseLevel > 2)
       printf("\n************* EVENT TIME IS = %f\n",aPulse[i]->GetTime());
     SetTime(i,aPulse[i]->GetTime());
-    
+
     for(int k = 0; k<8; k++)
       pER[i]->timeStamp[k] = m_pLMFTime[k][i];
 
@@ -430,10 +430,10 @@ void GateToLMF::StoreTheCoinciDigiInLMF(GateCoincidenceDigi *digi)
     if(pEH->detectorIDBool) {
       SetLayerID(i, aPulse[i]->GetComponentID(LAYER_DEPTH));
       SetCrystalID(i, aPulse[i]->GetComponentID(CRYSTAL_DEPTH));
-      SetSubmoduleID(i, aPulse[i]->GetComponentID(SUBMODULE_DEPTH)); 
-      SetModuleID(i, aPulse[i]->GetComponentID(MODULE_DEPTH)); 
+      SetSubmoduleID(i, aPulse[i]->GetComponentID(SUBMODULE_DEPTH));
+      SetModuleID(i, aPulse[i]->GetComponentID(MODULE_DEPTH));
       SetRsectorID(i, aPulse[i]->GetComponentID(RSECTOR_DEPTH));
-      
+
       pER[i]->crystalIDs[0] = makeid(m_LMFRsectorID[i],
 				     m_LMFModuleID[i],
 				     m_LMFSubmoduleID[i],
@@ -450,13 +450,13 @@ void GateToLMF::StoreTheCoinciDigiInLMF(GateCoincidenceDigi *digi)
     if(pEH->gantryAngularPosBool){
       G4int Nloop = int ((aPulse[i]->GetScannerRotAngle()/rad)/twopi); // Nloop >0. or <0.
       G4double ModAngle = (aPulse[i]->GetScannerRotAngle()  - Nloop * twopi);
-      pER[i]->gantryAngularPos = (u16)((G4int)(ModAngle / m_azimuthalStep)) ; 
+      pER[i]->gantryAngularPos = (u16)((G4int)(ModAngle / m_azimuthalStep)) ;
   }
- 
+
 //     /*          Source Position       */
 //     if(pEH->sourcePosBool) {
 //       pER[i]->sourceAngularPos = (u16) 0;	/* external source's angular position, 16 bits */
-//       pER[i]->sourceAxialPos = (u16) 0;	
+//       pER[i]->sourceAxialPos = (u16) 0;
 //     }
 
     /*     Gate specific information    */
@@ -488,7 +488,7 @@ void GateToLMF::StoreTheCoinciDigiInLMF(GateCoincidenceDigi *digi)
     }
   }
 
-  
+
   fillCoinciRecordForGate(pEncoH, pEH, pGDH, pER[0], pER[1], nVerboseLevel, pERC);
 
   LMFCbuilder(pEncoH, pEH, pGDH, pcC, pERC, &m_pfile, m_nameOfFile.c_str());
@@ -515,7 +515,7 @@ void GateToLMF::RecordBeginOfAcquisition()
 
   m_inputDataChannelID = G4DigiManager::GetDMpointer()->GetDigiCollectionID(m_inputDataChannel);
 
-  static G4int codeForRecords = 1;//5; 
+  static G4int codeForRecords = 1;//5;
   // 0 no records
   // 1 event records
   // 2 count rate records
@@ -530,12 +530,12 @@ void GateToLMF::RecordBeginOfAcquisition()
 
   //const GateCoincidenceDigiCollection * CDC = GetOutputMgr()->GetCoincidenceDigiCollection(m_inputDataChannel);
 
-  createLMF_ASCIIfile();      
+  createLMF_ASCIIfile();
 
   G4cout << "\n\n**************" << G4endl;
   G4cout << " LMF INIT" << G4endl;
   G4cout << "**************" << G4endl;
-      
+
  G4int rsectornumber = 1;
  GateCylindricalPETSystem* m_system = dynamic_cast<GateCylindricalPETSystem*>( m_pSystem );
  if ( m_system != 0 ) rsectornumber = m_system->GetBaseComponent()->GetChildNumber();
@@ -615,7 +615,7 @@ if ( aCN > AxialCrystalsNumber ) AxialCrystalsNumber = aCN;
 
 if ( tCN > TangentialCrystalsNumber ) TangentialCrystalsNumber = tCN;
 
- 
+
 if ( (G4int)crystalComponent->GetActiveChildNumber() > rL ) rL = crystalComponent->GetActiveChildNumber();
 
 }
@@ -632,7 +632,7 @@ for (G4int k = 1;k < RingID;k++)if ( TRNumber[k] != TRNumber[k-1] ){G4cout<<"Gat
 		   1, // tangential number of layer always 1
 		   rL,
 		   pEncoH,codeForRecords);
-  
+
 
   pcC->typeOfCarrier = pEncoH->scanContent.eventRecordTag;                                 //|
 
@@ -657,7 +657,7 @@ void GateToLMF::RecordEndOfAcquisition()
     {
       CloseLMFfile(m_pfile);
     } // these lines works but just for 1 file...
-      
+
       //for( G4int i = 0;i <  pEncoH->scannerTopology.totalNumberOfRsectors;i++)G4cout <<i<<" "<<bins[i]<<G4endl;;
 }
 
@@ -686,28 +686,28 @@ void GateToLMF::RecordEndOfEvent(const G4Event*)
   if(!pEH->coincidenceBool) {
     const GateSingleDigiCollection * SDC = (GateSingleDigiCollection*) (G4DigiManager::GetDMpointer()->GetDigiCollection( m_inputDataChannelID ));
 
-    if (!SDC) 
+    if (!SDC)
       {
-	if (nVerboseLevel>0) 
+	if (nVerboseLevel>0)
 	  G4cout << "GateToLMF::RecordEndOfEvent::GateSingleDigiCollection not found" << G4endl;
 	return;
       }
     n_digi =  SDC->entries();
-    for (iDigi=0 ; iDigi < n_digi ; iDigi++) 
+    for (iDigi=0 ; iDigi < n_digi ; iDigi++)
       StoreTheDigiInLMF((*SDC)[iDigi]);
   }
   else {
     const GateCoincidenceDigiCollection * CDC = GetOutputMgr()->GetCoincidenceDigiCollection(m_inputDataChannel);
 
     if (!CDC) {
-      if (nVerboseLevel>0) 
+      if (nVerboseLevel>0)
 	G4cout << "GateToLMF::RecordEndOfEvent::GateCoincidenceDigiCollection not found" << G4endl;
       return;
     }
-  
+
 
     n_digi  =  CDC->entries();
-    for (size_t iDigi=0 ; iDigi < n_digi ; iDigi++) 
+    for (size_t iDigi=0 ; iDigi < n_digi ; iDigi++)
       StoreTheCoinciDigiInLMF((*CDC)[iDigi]);
   }
 }
@@ -717,7 +717,7 @@ void GateToLMF::RecordEndOfEvent(const G4Event*)
 
 //! Set the ouput LMF file name.
 void GateToLMF::SetOutputFileName(G4String ofname)
-{ 
+{
   m_nameOfFile = ofname + ".ccs";
   m_nameOfASCIIfile =  ofname + ".cch";
   m_name = ofname;
@@ -732,49 +732,49 @@ void GateToLMF::SetCoincidenceBool(G4bool value)
 }
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetDetectorIDBool(G4bool value)
-{ 
+{
   pEH->detectorIDBool = value;
 
 }
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetEnergyBool(G4bool value)
-{ 
+{
   pEH->energyBool = value;
 }
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetNeighbourBool(G4bool value)
-{ 
+{
   pEH->neighbourBool = value;
 }
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetNeighbourhoodOrder(G4int value)
-{ 
+{
   pEH->neighbourhoodOrder = value;
   pEH->numberOfNeighbours = findvnn((unsigned short)value);
 }
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetGantryAxialPosBool(G4bool value)
-{ 
+{
   pEH->gantryAxialPosBool = value;
 }
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetGantryAngularPosBool(G4bool value)
-{ 
+{
   pEH->gantryAngularPosBool = value;
 }
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetSourcePosBool(G4bool value)
-{ 
+{
   pEH->sourcePosBool = value;
 }
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetGateDigiBool(G4bool value)
-{ 
+{
   pEH->gateDigiBool = value;
 }
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetComptonBool(G4bool value)
-{ 
+{
   if(pEH->gateDigiBool)
     pGDH->comptonBool= value;
 }
@@ -782,55 +782,55 @@ void GateToLMF::SetComptonBool(G4bool value)
 
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetComptonDetectorBool(G4bool value)
-{ 
+{
   if(pEH->gateDigiBool)
     pGDH->comptonDetectorBool= value;
 }
 
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetSourceIDBool(G4bool value)
-{ 
+{
   if(pEH->gateDigiBool)
     pGDH->sourceIDBool= value;
 
 }
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetSourceXYZPosBool(G4bool value)
-{ 
+{
   if(pEH->gateDigiBool)
     pGDH->sourceXYZPosBool= value;
 
 }
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetGlobalXYZPosBool(G4bool value)
-{ 
+{
   if(pEH->gateDigiBool)
     pGDH->globalXYZPosBool= value;
 
 }
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetEventIDBool(G4bool value)
-{ 
+{
   if(pEH->gateDigiBool)
     pGDH->eventIDBool= value;
 
 }
 /*------------- MESSENGER FUNCTIONS -------------------------------*/
 void GateToLMF::SetRunIDBool(G4bool value)
-{ 
+{
   if(pEH->gateDigiBool)
     pGDH->runIDBool= value;
 
 }
-  
+
 // ......................SET TIME
-void GateToLMF::SetTime(u8 id, G4double value) 
+void GateToLMF::SetTime(u8 id, G4double value)
 {
-  static u8 *bufCharTime; 
+  static u8 *bufCharTime;
   static G4int allocDone = 0;
 
   static u64 timeulli;
-  
+
   //  printf("\n\n\nEVENT \n\n\n");
   //  printf("* Time Value = %f picosecond",value/picosecond);
 
@@ -838,13 +838,13 @@ void GateToLMF::SetTime(u8 id, G4double value)
     bufCharTime = (u8 *)malloc (8*sizeof(u8));
     allocDone = 1;
   }
-   
+
   G4double timeForLMF=(((value/GATE_LMF_TIME_STEP_PICOS)/picosecond)+0.5);
 
   timeulli = (u64) timeForLMF;
- 
+
   bufCharTime = u64ToU8(timeulli);
-    
+
   //  memcpy(m_pLMFTime, doubleToChar(timeForLMF) , 8 );
   for(int i =0 ; i<8 ; i++)
     m_pLMFTime[i][id] = bufCharTime[i];
@@ -876,18 +876,18 @@ void GateToLMF::showOneLMFDigi()   // Display a digi in his LMF standard
   G4cout <<  "\ntime (8 unsigned char)=" << "\n";
   int i=0;
   for(i=0;i<8;i++)
-    G4cout <<  "\t" << (G4int) m_pLMFTime[7-i][0]; 
+    G4cout <<  "\t" << (G4int) m_pLMFTime[7-i][0];
   G4cout <<  " =  in picosec. : " << (G4double) u8ToDouble(m_pLMFTime[0]) << "\n";
   // ....................SHOW ID
   G4cout << "\nCrystal ID : "
 	 << "\tRsector = " << m_LMFRsectorID[0]
-	 << "\tmodule = " <<  m_LMFModuleID[0] 
+	 << "\tmodule = " <<  m_LMFModuleID[0]
 	 << "\tsubmodule = " << m_LMFSubmoduleID[0]
 	 << "\tcrystal = " << m_LMFCrystalID[0]
 	 << "\tlayer = " << m_LMFLayerID[0] << "\n";
   // .................SHOW Energy
   G4cout <<  "\nEnergy in LMFstep = " << (G4int) m_LMFEnergy[0] << "\n";
-  
+
 }
 
 

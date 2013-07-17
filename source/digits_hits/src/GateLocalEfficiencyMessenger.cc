@@ -56,7 +56,5 @@ void GateLocalEfficiencyMessenger::SetNewValue(G4UIcommand* command, G4String ne
   else if ( command==disableCommand)
     {localEff->SetMode(disableCommand->GetNewIntValue(newValue),false);}
   else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue); 
+    GatePulseProcessorMessenger::SetNewValue(command,newValue);
 }
-
-

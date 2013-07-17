@@ -52,32 +52,32 @@ void GateTLEDoseActorMessenger::BuildCommands(G4String base)
 {
 
   G4String  n = base+"/enableDose";
-  pEnableDoseCmd = new G4UIcmdWithABool(n, this); 
+  pEnableDoseCmd = new G4UIcmdWithABool(n, this);
   G4String guid = G4String("Enable dose computation");
   pEnableDoseCmd->SetGuidance(guid);
-  
+
   n = base+"/enableEdep";
-  pEnableEdepCmd = new G4UIcmdWithABool(n, this); 
+  pEnableEdepCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable edep computation");
   pEnableEdepCmd->SetGuidance(guid);
 
   n = base+"/enableSquaredDose";
-  pEnableDoseSquaredCmd = new G4UIcmdWithABool(n, this); 
+  pEnableDoseSquaredCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable squared dose computation");
   pEnableDoseSquaredCmd->SetGuidance(guid);
 
   n = base+"/enableUncertaintyDose";
-  pEnableDoseUncertaintyCmd = new G4UIcmdWithABool(n, this); 
+  pEnableDoseUncertaintyCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable uncertainty dose computation");
   pEnableDoseUncertaintyCmd->SetGuidance(guid);
 
   n = base+"/enableSquaredEdep";
-  pEnableEdepSquaredCmd = new G4UIcmdWithABool(n, this); 
+  pEnableEdepSquaredCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable squared edep computation");
   pEnableEdepSquaredCmd->SetGuidance(guid);
 
   n = base+"/enableUncertaintyEdep";
-  pEnableEdepUncertaintyCmd = new G4UIcmdWithABool(n, this); 
+  pEnableEdepUncertaintyCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable uncertainty edep computation");
   pEnableEdepUncertaintyCmd->SetGuidance(guid);
 
@@ -94,7 +94,7 @@ void GateTLEDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
  if (cmd == pEnableDoseSquaredCmd) pDoseActor->EnableDoseSquaredImage(pEnableDoseSquaredCmd->GetNewBoolValue(newValue));
  if (cmd == pEnableEdepSquaredCmd) pDoseActor->EnableEdepSquaredImage(pEnableEdepSquaredCmd->GetNewBoolValue(newValue));
  if (cmd == pEnableEdepUncertaintyCmd) pDoseActor->EnableEdepUncertaintyImage(pEnableEdepUncertaintyCmd->GetNewBoolValue(newValue));
- 
+
  GateImageActorMessenger::SetNewValue( cmd, newValue);
 
 }

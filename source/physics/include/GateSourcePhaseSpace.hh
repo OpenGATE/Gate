@@ -40,8 +40,8 @@ See GATE/LICENSE.txt for further details
 
 #include "GateUserActions.hh"
 
-class iaea_record_type;
-class iaea_header_type;
+struct iaea_record_type;
+struct iaea_header_type;
 
 class GateSourcePhaseSpace : public GateVSource
 {

@@ -35,12 +35,12 @@ GateFragmentationAndProductionActorMessenger::~GateFragmentationAndProductionAct
 //-----------------------------------------------------------------------------
 void GateFragmentationAndProductionActorMessenger::BuildCommands(G4String base)
 {
-  pNBinsCmd = new G4UIcmdWithAnInteger((base+"/setNBins").c_str(), this); 
+  pNBinsCmd = new G4UIcmdWithAnInteger((base+"/setNBins").c_str(), this);
   pNBinsCmd->SetGuidance("set number of bins in histograms");
   pNBinsCmd->SetParameterName("nBins",false/*omittable*/);
 
   //bb = base+"/energyLossHisto/setNumberOfBins";
-  //pEdepNBinsCmd = new G4UIcmdWithAnInteger(bb, this); 
+  //pEdepNBinsCmd = new G4UIcmdWithAnInteger(bb, this);
   //guidance = G4String("Set number of bins of the energy loss histogram");
   //pEdepNBinsCmd->SetGuidance(guidance);
   //pEdepNBinsCmd->SetParameterName("Nbins", false);

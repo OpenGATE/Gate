@@ -26,10 +26,10 @@ class GateSigmoidalThresholderMessenger: public GatePulseProcessorMessenger
   public:
     GateSigmoidalThresholderMessenger(GateSigmoidalThresholder* itsSigThresholder);
     virtual ~GateSigmoidalThresholderMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GateSigmoidalThresholder* GetSigmoidalThresholder() 
+    inline GateSigmoidalThresholder* GetSigmoidalThresholder()
       { return (GateSigmoidalThresholder*) GetPulseProcessor(); }
 
   private:
@@ -39,4 +39,3 @@ class GateSigmoidalThresholderMessenger: public GatePulseProcessorMessenger
 };
 
 #endif
-

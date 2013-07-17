@@ -1,11 +1,11 @@
 /*----------------------
 
-   GATE - Geant4 Application for Tomographic Emission 
-   OpenGATE Collaboration 
-     
-   This software is distributed under the terms 
-   of the GNU Lesser General  Public Licence (LGPL) 
-   See GATE/LICENSE.txt for further details 
+   GATE - Geant4 Application for Tomographic Emission
+   OpenGATE Collaboration
+
+   This software is distributed under the terms
+   of the GNU Lesser General  Public Licence (LGPL)
+   See GATE/LICENSE.txt for further details
 ----------------------*/
 
 /*!
@@ -79,7 +79,7 @@ class GateToGPUImageSPECT : public GateVOutputModule
 		virtual void RecordEndOfEvent( const G4Event* );
 		virtual void RecordStepWithVolume( const GateVVolume*, const G4Step* );
 		virtual void RecordVoxels( GateVGeometryVoxelStore* ){};
-		
+
         virtual const G4String& GiveNameOfFile();
 
     public:
@@ -132,7 +132,7 @@ class GateToGPUImageSPECT : public GateVOutputModule
         G4int                             m_nz_pixel;
 				G4double                          m_z_pixel_size;
 				G4double                          m_y_pixel_size;
-        
+
         G4double                         *m_centerOfPxlZ;
         G4double                         *m_centerOfPxlY;
         GateGPUCollimator                *m_gpuCollimator;

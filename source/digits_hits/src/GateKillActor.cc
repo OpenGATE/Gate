@@ -10,8 +10,8 @@
 
 
 /*
-  \brief Class GateKillActor : 
-  \brief 
+  \brief Class GateKillActor :
+  \brief
 */
 
 #include "GateKillActor.hh"
@@ -30,8 +30,8 @@ GateKillActor::GateKillActor(G4String name, G4int depth):GateVActor(name,depth)
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
-GateKillActor::~GateKillActor() 
+/// Destructor
+GateKillActor::~GateKillActor()
 {
   GateDebugMessageInc("Actor",4,"~GateKillActor() -- begin"<<G4endl);
   delete pMessenger;
@@ -82,10 +82,8 @@ void GateKillActor::SaveData()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateKillActor::ResetData() 
+void GateKillActor::ResetData()
 {
   mNumberOfTrack = 0;
 }
 //-----------------------------------------------------------------------------
-
-

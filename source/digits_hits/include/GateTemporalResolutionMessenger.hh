@@ -23,10 +23,10 @@ class GateTemporalResolutionMessenger: public GatePulseProcessorMessenger
   public:
     GateTemporalResolutionMessenger(GateTemporalResolution* itsTemporalResolution);
     virtual ~GateTemporalResolutionMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GateTemporalResolution* GetTemporalResolution() 
+    inline GateTemporalResolution* GetTemporalResolution()
       { return (GateTemporalResolution*) GetPulseProcessor(); }
 
   private:
@@ -34,4 +34,3 @@ class GateTemporalResolutionMessenger: public GatePulseProcessorMessenger
 };
 
 #endif
-

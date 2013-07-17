@@ -45,13 +45,13 @@ GateOutputMgr* GateOutputMgr::instance = 0;
 DigiMode   GateOutputMgr::m_digiMode= kruntimeMode;
 
 
-/* 
-   We add in this constructor all the output modules, derivated 
-   from GateVOutputModule Class. Each activated module will be called 
-   to get the datas that it needs. We fill here an array of 
+/*
+   We add in this constructor all the output modules, derivated
+   from GateVOutputModule Class. Each activated module will be called
+   to get the datas that it needs. We fill here an array of
    GateVOutputModule pointers.
-   Each module is a different output. 
-      
+   Each module is a different output.
+
    - GateFastAnalysis (fast alternative for GateAnalysis, disabled by default)
    - GateAnalysis
    - GateToDigi
@@ -63,21 +63,21 @@ DigiMode   GateOutputMgr::m_digiMode= kruntimeMode;
 
    All of these Output modules are implemented in the same way.
    They all have a Messenger Class.
-   
+
 */
 //--------------------------------------------------------------------------------
 GateOutputMgr::GateOutputMgr(const G4String name)
   : nVerboseLevel(0),
     m_messenger(0),
-    mName(name),  
+    mName(name),
     m_acquisitionStarted(false),
     m_allowNoOutput(false)
 {
   GateMessage("Output",4,"GateOutputMgr() -- begin"<<G4endl);
-  
-    
+
+
   m_messenger = new GateOutputMgrMessenger(this);
- 
+
 #ifdef GATE_USE_OPTICAL
   // fastanalysis should come before GateAnalysis. It does not matter then that both are enabled (only a little
   // speed loss).
@@ -86,12 +86,12 @@ GateOutputMgr::GateOutputMgr(const G4String name)
     AddOutputModule((GateVOutputModule*)gateFastAnalysis);
   }
 #endif
-  
+
   if (m_digiMode==kruntimeMode) {
     GateAnalysis* gateAnalysis = new GateAnalysis("analysis", this,m_digiMode);
     AddOutputModule((GateVOutputModule*)gateAnalysis);
   }
-    
+
   GateToDigi* gateToDigi = new GateToDigi("digi", this,m_digiMode);
   AddOutputModule((GateVOutputModule*)gateToDigi);
 
@@ -103,7 +103,7 @@ GateOutputMgr::GateOutputMgr(const G4String name)
     m_digiMode );
   AddOutputModule( gateToBinary );
 #endif
-  
+
 #ifdef G4ANALYSIS_USE_ROOT
   GateToRoot* gateToRoot = new GateToRoot("root", this,m_digiMode);
   AddOutputModule((GateVOutputModule*)gateToRoot);
@@ -128,7 +128,7 @@ GateOutputMgr::~GateOutputMgr()
   delete m_messenger;
 
   if (nVerboseLevel > 0) G4cout << "GateOutputMgr deleting..." << G4endl;
-  
+
 }
 //----------------------------------------------------------------------------------
 
@@ -148,7 +148,7 @@ void GateOutputMgr::AddOutputModule(GateVOutputModule* module)
 void GateOutputMgr::RecordBeginOfEvent(const G4Event* event)
 {
   GateMessage("Output", 5, "GateOutputMgr::RecordBeginOfEvent" << G4endl;);
- 
+
 
   for (size_t iMod=0; iMod<m_outputModules.size(); iMod++) {
     if ( m_outputModules[iMod]->IsEnabled() )
@@ -180,9 +180,9 @@ void GateOutputMgr::RecordEndOfEvent(const G4Event* event)
 
 //----------------------------------------------------------------------------------
 void GateOutputMgr::RecordBeginOfRun(const G4Run* run)
-{ 
+{
   GateMessage("Output", 5, "GateOutputMgr::RecordBeginOfRun" << G4endl;);
- 
+
   // If the verbosity for the random engine is set, we call the status method
   GateRandomEngine* theRandomEngine = GateRandomEngine::GetInstance();
   if (theRandomEngine->GetVerbosity()>=2) theRandomEngine->ShowStatus();
@@ -203,9 +203,9 @@ void GateOutputMgr::RecordBeginOfRun(const G4Run* run)
 
 //----------------------------------------------------------------------------------
 void GateOutputMgr::RecordEndOfRun(const G4Run* run)
-{ 
+{
   GateMessage("Output", 5, "GateOutputMgr::RecordEndOfRun" << G4endl;);
-  
+
   if (nVerboseLevel > 2)
     G4cout << "GateOutputMgr::RecordEndOfRun" << G4endl;
 
@@ -221,7 +221,7 @@ void GateOutputMgr::RecordEndOfRun(const G4Run* run)
 void GateOutputMgr::RecordBeginOfAcquisition()
 {
   GateMessage("Output", 5, " GateOutputMgr::RecordBeginOfAcquisition " << G4endl;);
-  
+
   if (nVerboseLevel > 2)
     G4cout << "GateOutputMgr::RecordBeginOfAcquisition" << G4endl;
 
@@ -246,10 +246,10 @@ void GateOutputMgr::RecordBeginOfAcquisition()
 
 //----------------------------------------------------------------------------------
 void GateOutputMgr::RecordEndOfAcquisition()
-{ 
+{
 
   GateMessage("Output", 5, "GateOutputMgr::RecordEndOfAcquisition" << G4endl;);
-  
+
   if (nVerboseLevel > 2)
     G4cout << "GateOutputMgr::RecordEndOfAcquisition" << G4endl;
 
@@ -264,15 +264,15 @@ void GateOutputMgr::RecordEndOfAcquisition()
 #endif
 
   m_acquisitionStarted = false;
-  
+
   // Stop the time
   m_timer.Stop();
   if (nVerboseLevel > 1) {
     G4cout << "     User simulation time (sec)   := " << (m_timer.GetUserElapsed()) << G4endl;
     G4cout << "     Real simulation time (sec)   := " << (m_timer.GetRealElapsed()) << G4endl;
     G4cout << "     System simulation time (sec) := " << (m_timer.GetSystemElapsed()) << G4endl;
-  }  
-  
+  }
+
 }
 //----------------------------------------------------------------------------------
 
@@ -295,7 +295,7 @@ void GateOutputMgr::RecordStepWithVolume(const GateVVolume * v, const G4Step* st
 void GateOutputMgr::RecordVoxels(GateVGeometryVoxelStore* voxelStore)
 {
   GateMessage("Output", 5 , " GateOutputMgr::RecordVoxels " << G4endl;);
-  
+
   for (size_t iMod=0; iMod<m_outputModules.size(); iMod++) {
     if ( m_outputModules[iMod]->IsEnabled() )
       m_outputModules[iMod]->RecordVoxels(voxelStore);
@@ -319,19 +319,19 @@ void GateOutputMgr::Describe(size_t /*indent*/)
 
 //----------------------------------------------------------------------------------
 GateCrystalHitsCollection* GateOutputMgr::GetCrystalHitCollection()
-{  
+{
   GateMessage("Output", 5 , " GateOutputMgr::GetCrystalHitCollection " << G4endl;);
-  
+
   static G4int crystalCollID=-1;     	  //!< Collection ID for the crystal hits
 
   G4DigiManager* DigiMan = G4DigiManager::GetDMpointer();
   if (crystalCollID==-1)
     crystalCollID = DigiMan->GetHitsCollectionID(GateCrystalSD::GetCrystalCollectionName());
-    
+
   GateCrystalHitsCollection* CHC = (GateCrystalHitsCollection*) (DigiMan->GetHitsCollection(crystalCollID));
 
   return CHC;
-  
+
 
 }
 //----------------------------------------------------------------------------------
@@ -345,9 +345,9 @@ GatePhantomHitsCollection* GateOutputMgr::GetPhantomHitCollection()
   G4DigiManager* DigiMan = G4DigiManager::GetDMpointer();
   if (m_phantomCollID==-1)
     m_phantomCollID = DigiMan->GetHitsCollectionID(GatePhantomSD::GetPhantomCollectionName());
-    
+
   GatePhantomHitsCollection* PHC = (GatePhantomHitsCollection*) (DigiMan->GetHitsCollection(m_phantomCollID));
-  
+
   return PHC;
 }
 //----------------------------------------------------------------------------------
@@ -358,7 +358,7 @@ GateSingleDigiCollection* GateOutputMgr::GetSingleDigiCollection(const G4String&
 {
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
   G4int  collectionID
-    = fDM->GetDigiCollectionID(collectionName);      
+    = fDM->GetDigiCollectionID(collectionName);
 
   return (collectionID>=0) ? (GateSingleDigiCollection*) (fDM->GetDigiCollection( collectionID )) : 0;
 }
@@ -370,7 +370,7 @@ GateCoincidenceDigiCollection* GateOutputMgr::GetCoincidenceDigiCollection(const
 {
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
   G4int  collectionID
-    = fDM->GetDigiCollectionID(collectionName);      
+    = fDM->GetDigiCollectionID(collectionName);
   return (collectionID>=0) ? (GateCoincidenceDigiCollection*) (fDM->GetDigiCollection( collectionID ) ) : 0 ;
 }
 //----------------------------------------------------------------------------------
@@ -380,7 +380,7 @@ GateCoincidenceDigiCollection* GateOutputMgr::GetCoincidenceDigiCollection(const
 void GateOutputMgr::RegisterNewSingleDigiCollection(const G4String& aCollectionName,G4bool outputFlag)
 {
   GateMessage("Output", 5, " GateOutputMgr::RegisterNewSingleDigiCollection" << G4endl;);
-   
+
   for (size_t iMod=0; iMod<m_outputModules.size(); iMod++)
     m_outputModules[iMod]->RegisterNewSingleDigiCollection(aCollectionName,outputFlag);
 }
@@ -391,7 +391,7 @@ void GateOutputMgr::RegisterNewSingleDigiCollection(const G4String& aCollectionN
 void GateOutputMgr::RegisterNewCoincidenceDigiCollection(const G4String& aCollectionName,G4bool outputFlag)
 {
   GateMessage("Output", 5, " GateOutputMgr::RegisterNewCoincidenceDigiCollection " << G4endl;);
-  
+
   for (size_t iMod=0; iMod<m_outputModules.size(); iMod++)
     m_outputModules[iMod]->RegisterNewCoincidenceDigiCollection(aCollectionName,outputFlag);
 }
@@ -442,7 +442,7 @@ void GateOutputMgr::CheckFileNameForAllOutput()
 
 //----------------------------------------------------------------------------------
 void GateOutputMgr::BeginOfRunAction(const G4Run* /*aRun*/)
-{  
+{
   GateMessage("Output", 5, " GateOutputMgr::BeginOfRunAction" << G4endl;);
   /*
     #ifdef G4ANALYSIS_USE_GENERAL
@@ -458,13 +458,13 @@ void GateOutputMgr::BeginOfRunAction(const G4Run* /*aRun*/)
   //  outFile.open(name,ios::out);
   //  G4cout << "Opening outFile...";
   //  outFile.open("petsim.dat",ios::out);
-  //  G4cout << " ... outFile opened" << G4endl; 
+  //  G4cout << " ... outFile opened" << G4endl;
 
   // Prepare the visualization
   if (G4VVisManager::GetConcreteInstance()) {
-    G4UImanager* UI = G4UImanager::GetUIpointer(); 
+    G4UImanager* UI = G4UImanager::GetUIpointer();
     UI->ApplyCommand("/vis/scene/notifyHandlers");
-  } 
+  }
 
 }
 //----------------------------------------------------------------------------------
@@ -473,14 +473,14 @@ void GateOutputMgr::BeginOfRunAction(const G4Run* /*aRun*/)
 
 //----------------------------------------------------------------------------------
 void GateOutputMgr::EndOfRunAction(const G4Run* /*aRun*/)
-{ 
+{
 
   GateMessage("Output", 5, " GateOutputMgr::EndOfRunAction" << G4endl;);
-  /*  
+  /*
       #ifdef G4ANALYSIS_USE_GENERAL
       // Here we fill the histograms of the Analysis manager
       GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
-      outputMgr->RecordEndOfRun(aRun); 
+      outputMgr->RecordEndOfRun(aRun);
       #endif
   */
   // Run ended, update the visualization
@@ -499,11 +499,11 @@ void GateOutputMgr::EndOfRunAction(const G4Run* /*aRun*/)
 void GateOutputMgr::BeginOfEventAction(const G4Event* /*evt*/)
 {
   GateMessage("Output", 5, " GateOutputMgr::BeginOfEventAction " << G4endl;);
-  /*  
+  /*
       #ifdef G4ANALYSIS_USE_GENERAL
       // Here we fill the histograms of the OutputMgr manager
       GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
-      outputMgr->RecordBeginOfEvent(evt);  
+      outputMgr->RecordBeginOfEvent(evt);
       #endif
   */
 }
@@ -530,23 +530,23 @@ void GateOutputMgr::EndOfEventAction(const G4Event* /*evt*/)
 void GateOutputMgr::UserSteppingAction(const GateVVolume * /*v*/, const G4Step * /*theStep*/)
 {
   GateMessage("Output", 5, " GateOutputMgr::UserSteppingAction -- begin " << G4endl;);
-  
+
   /*
     #ifdef G4ANALYSIS_USE_GENERAL
     // Here we fill the histograms of the Analysis manager
     GateOutputMgr* outputMgr = GateOutputMgr::GetInstance();
     outputMgr->RecordStepWithVolume(v, theStep);
-  
+
     GateMessage("Output", 5, " GateOutputMgr  RecordStep " << G4endl;);
-    
+
     #endif
 
     // In a few random cases, a particle gets 'stuck' in an
     // an infinite loop in the geometry. It then oscillates until GATE
     // crashes on some out-of-memory error.
     // To prevent this from happening, I've added below a quick fix where
-    // particles get killed when their step number gets absurdely high 
-    if ( theStep->GetTrack()->GetCurrentStepNumber() > 10000 )  
+    // particles get killed when their step number gets absurdely high
+    if ( theStep->GetTrack()->GetCurrentStepNumber() > 10000 )
     theStep->GetTrack()->SetTrackStatus(fStopAndKill);
   */
   GateMessage("Output", 5, " GateOutputMgr::UserSteppingAction -- end" << G4endl;);
@@ -558,14 +558,12 @@ void GateOutputMgr::UserSteppingAction(const GateVVolume * /*v*/, const G4Step *
 /* PY Descourt 11/12/2008 */
 
 void GateOutputMgr::RecordTracks(GateSteppingAction* mySteppingAction){
-	
 
-	
+
+
 	for (size_t iMod=0; iMod<m_outputModules.size(); iMod++) {
 		if ( m_outputModules[iMod]->IsEnabled() )
-			m_outputModules[iMod]->RecordTracks(mySteppingAction);		
+			m_outputModules[iMod]->RecordTracks(mySteppingAction);
 	}
 	GateMessage("Output", 5, " GateOutputMgr::RecordTracks -- end" << G4endl;);
 }
-
-

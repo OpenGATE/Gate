@@ -20,7 +20,7 @@ GateBenchmarkActor::GateBenchmarkActor(G4String name, G4int depth)
   pMessenger = new GateBenchmarkActorMessenger(this);
 }
 
-GateBenchmarkActor::~GateBenchmarkActor() 
+GateBenchmarkActor::~GateBenchmarkActor()
 {
   delete pMessenger;
 }
@@ -77,7 +77,7 @@ void GateBenchmarkActor::SaveData()
   pTfile->Write();
 }
 
-void GateBenchmarkActor::ResetData() 
+void GateBenchmarkActor::ResetData()
 {
   histoEFreePath->Reset();
   histoEFreePath->Reset();
@@ -103,7 +103,7 @@ void GateBenchmarkActor::EndOfEventAction(const G4Event*)
   GateDebugMessage("Actor", 3, "GateBenchmarkActor -- End of Event" << G4endl);
 }
 
-void GateBenchmarkActor::PreUserTrackingAction(const GateVVolume*, const G4Track* track) 
+void GateBenchmarkActor::PreUserTrackingAction(const GateVVolume*, const G4Track* track)
 {
   const G4String name = track->GetDefinition()->GetParticleName();
   const G4ThreeVector position = track->GetPosition();
@@ -174,7 +174,7 @@ void GateBenchmarkActor::UserSteppingAction(const GateVVolume*, const G4Step* st
 	}
 }
 
-void GateBenchmarkActor::PostUserTrackingAction(const GateVVolume*, const G4Track* track) 
+void GateBenchmarkActor::PostUserTrackingAction(const GateVVolume*, const G4Track* track)
 {
   const G4ThreeVector position = track->GetPosition();
   const G4double fly_distance = (position-positionInitial).mag();

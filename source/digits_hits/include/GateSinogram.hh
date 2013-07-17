@@ -26,47 +26,47 @@ See GATE/LICENSE.txt for further details
 
 /*! \class  GateSinogram
     \brief  Structure to store the sinogram sets from a PET simulation
-    
+
     - GateSinogram - by By jan@shfj.cea.fr & comtat@shfj.cea.fr (december 2002)
-    
+
     - This structure is generated during a PET simulation by GateToSinogram. It can be stored
       into an output file using a set-writer such as GateSinoToEcat7
-      
+
     \sa GateToSinogram, GateSinoToEcat7
-*/      
+*/
 class GateSinogram
 {
   public:
     typedef unsigned short SinogramDataType;
-    
+
   public:
 
     inline GateSinogram();       	      	      	  //!< Public constructor
     inline virtual ~GateSinogram() {Reset();}    	  //!< Public destructor
 
     //! Reset the sinogrames and prepare a new acquisition
-    void Reset(size_t ringNumber=0, size_t crystalNumber=0, size_t radialElemNb=0, size_t virtualRingNumber=0, size_t virtualCrystalPerBlockNumber=0);    	      	  
+    void Reset(size_t ringNumber=0, size_t crystalNumber=0, size_t radialElemNb=0, size_t virtualRingNumber=0, size_t virtualCrystalPerBlockNumber=0);
 
     //! Clear the matrix and prepare a new run
     void ClearData(size_t frameID, size_t gateID, size_t dataID, size_t bedID);
 
     //! Apply spatial blurring to hited crystal
-    void CrystalBlurring( G4int *ringID, G4int *crystalID, G4double ringResolution, 
+    void CrystalBlurring( G4int *ringID, G4int *crystalID, G4double ringResolution,
                           G4double crystalResolution );
-    
+
     //! Store a digi into a projection
     G4int Fill( G4int ring1ID, G4int ring2ID, G4int crystal1ID, G4int crystal2ID, int signe);
 
     //! Store a digi into randoms array
     G4int FillRandoms( G4int ring1ID, G4int ring2ID);
-    
+
     //! Returns the 2D sino ID for a given pair of rings
     G4int GetSinoID( G4int ring1ID, G4int ring2ID);
-                   
+
     //! \name getters and setters
     //@{
 
-    //! Returns the number of crystal rings 
+    //! Returns the number of crystal rings
     inline size_t GetRingNb() const
       { return m_ringNb;}
     //! Set the number of rings
@@ -95,14 +95,14 @@ class GateSinogram
        { return  m_radialElemNb;}
      //! Set the number of radial sinogram bin
      inline void SetRadialElemNb(size_t aNb)
-       { m_radialElemNb = aNb;}  
+       { m_radialElemNb = aNb;}
 
      //! Returns the number of 2D sinograms
      inline size_t GetSinogramNb() const
        { return  m_sinogramNb;}
      //! Set the number of radial sinogram bin
      inline void SetSinogramNb(size_t aNb)
-       { m_sinogramNb = aNb;}  
+       { m_sinogramNb = aNb;}
 
     //! Returns the number of crystals per crystal ring
     inline size_t GetCrystalNb() const
@@ -118,9 +118,9 @@ class GateSinogram
     //! Returns the randoms pointer
     inline SinogramDataType* GetRandoms() const
       { return m_randomsNb;}
-      
+
     //! Set the verbose level
-    virtual void SetVerboseLevel(G4int val) 
+    virtual void SetVerboseLevel(G4int val)
       { nVerboseLevel = val; };
 
     //! Returns a 2D sinogram from the set
@@ -154,14 +154,14 @@ class GateSinogram
      //! Returns the current bed ID
     inline size_t GetCurrentBedID() const
       { return m_currentBedID;}
-      
+
 
   //@}
 
     /*! \brief Writes a 2D sinogram onto an output stream
-  
+
       	\param dest:    	  the destination stream
-      	\param sinoID:    	  the 2D sinogram to stream-out 
+      	\param sinoID:    	  the 2D sinogram to stream-out
     */
     void StreamOut(std::ofstream& dest, size_t sinoID, size_t seekID);
 

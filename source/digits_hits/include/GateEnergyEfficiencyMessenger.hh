@@ -25,7 +25,7 @@ class GateEnergyEfficiencyMessenger: public GatePulseProcessorMessenger
   public:
     GateEnergyEfficiencyMessenger(GateEnergyEfficiency* itsPulseProcessor);
     virtual ~GateEnergyEfficiencyMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
   private:
@@ -33,4 +33,3 @@ class GateEnergyEfficiencyMessenger: public GatePulseProcessorMessenger
 };
 
 #endif
-

@@ -62,12 +62,12 @@ void GateCrystalSD::Initialize(G4HCofThisEvent*HCE)
 
   // Creation of a new hit collection
   crystalCollection = new GateCrystalHitsCollection
-                   (SensitiveDetectorName,theCrystalCollectionName); 
+                   (SensitiveDetectorName,theCrystalCollectionName);
 
   // We store the hit collection ID into the static variable HCID
   if(HCID<0)
   { HCID = GetCollectionID(0); }
-  
+
   // Add the hit collection to the G4HCofThisEvent
   HCE->AddHitsCollection(HCID,crystalCollection);
 }
@@ -80,20 +80,20 @@ void GateCrystalSD::Initialize(G4HCofThisEvent*HCE)
 //G4bool GateCrystalSD::ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist)
 G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 {
-   
+
   // Get the track information
   G4Track* aTrack       = aStep->GetTrack();
-  G4int    trackID      = aTrack->GetTrackID();  
+  G4int    trackID      = aTrack->GetTrackID();
   G4int    parentID     = aTrack->GetParentID();
 
   G4String partName     = aTrack->GetDefinition()->GetParticleName();
   G4int    PDGEncoding  = aTrack->GetDefinition()->GetPDGEncoding();
-  
+
   // Get the step-points
   G4StepPoint  *oldStepPoint = aStep->GetPreStepPoint(),
       	       *newStepPoint = aStep->GetPostStepPoint();
 
-  
+
   //  Get the process name
   const G4VProcess* process = newStepPoint->GetProcessDefinedStep();
  G4String processName = ( (process != NULL) ? process->GetProcessName() : G4String() ) ;
@@ -103,26 +103,26 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   const G4TouchableHistory* touchable;
   if ( processName == "Transportation" )
       touchable = (const G4TouchableHistory*)(oldStepPoint->GetTouchable() );
-  else 
+  else
       touchable = (const G4TouchableHistory*)(newStepPoint->GetTouchable() );
 
-   
+
   GateVolumeID volumeID(touchable);
 
-     
+
   if (volumeID.IsInvalid())
     G4Exception( "GateCrystalSD::ProcessHits", "ProcessHits", FatalException, "could not get the volume ID! Aborting!\n");
 
   // Get the hit global position
   //Modifs Seb 22-06-2011
   //G4ThreeVector position = oldStepPoint->GetPosition();
-  G4ThreeVector position = newStepPoint->GetPosition();   
-  
+  G4ThreeVector position = newStepPoint->GetPosition();
+
   // Compute the hit local position
   // (It will be in the reference frame of the PreStepPoint volume for a transportation hit)
   G4ThreeVector localPosition = volumeID.MoveToBottomVolumeFrame(position);
 
-  
+
   // Get the scanner position and rotation angle
 /*  GateSystemComponent* baseComponent = GetSystem()->GetBaseComponent();*/
   GateVSystem* system = FindSystem(volumeID);
@@ -138,23 +138,23 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   else if ( baseComponent->FindEccentRotMove() )
     scannerRotAngle = baseComponent->FindEccentRotMove()->GetCurrentAngle();
 
-  
+
   // deposit energy in the current step
-  G4double edep = aStep->GetTotalEnergyDeposit();  
+  G4double edep = aStep->GetTotalEnergyDeposit();
 
  //  G4double E;
-  
+
   // stepLength of the current step
   G4double stepLength = aStep->GetStepLength();
   // time of the current step
   G4double aTime = newStepPoint->GetGlobalTime();
-  // Create a new crystal hit  
+  // Create a new crystal hit
   GateCrystalHit* aHit = new GateCrystalHit();
 
   // Store the data already obtained into the hit
-  aHit->SetPDGEncoding( PDGEncoding );  
-  aHit->SetEdep( edep );  
-  aHit->SetStepLength( stepLength );  
+  aHit->SetPDGEncoding( PDGEncoding );
+  aHit->SetEdep( edep );
+  aHit->SetStepLength( stepLength );
   aHit->SetTime( aTime );
   aHit->SetGlobalPos( position );
   aHit->SetLocalPos( localPosition );
@@ -165,7 +165,7 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   aHit->SetScannerPos( scannerPos );
   aHit->SetScannerRotAngle( scannerRotAngle );
   aHit->SetSystemID(system->GetItsNumber());
-  
+
   // Ask the system to compute the output volume ID and store it into the hit
 
 //Seb Modif 24/02/2009
@@ -175,7 +175,7 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 
   // Insert the new hit into the hit collection
   crystalCollection->insert( aHit );
-   
+
   return true;
 }
 //------------------------------------------------------------------------------
@@ -183,9 +183,9 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 
 //------------------------------------------------------------------------------
 //! Next method underwent an important modification to be compatible with the multi-system approach
-G4int GateCrystalSD::PrepareCreatorAttachment(GateVVolume* aCreator) 
-{ 
-  
+G4int GateCrystalSD::PrepareCreatorAttachment(GateVVolume* aCreator)
+{
+
    GateVSystem* creatorSystem = GateSystemListManager::GetInstance()->FindSystemOfCreator(aCreator->GetCreator());
    if (!creatorSystem) {
       G4cout  << G4endl << G4endl << "[GateCrystalSD::PrepareCreatorAttachment]:" << G4endl
@@ -194,13 +194,13 @@ G4int GateCrystalSD::PrepareCreatorAttachment(GateVVolume* aCreator)
             << "Attachment request ignored --> you won't have any hit output from this volume!!!" << G4endl << G4endl;
       return -1;
    }
-  
-   if (!m_systemList) 
+
+   if (!m_systemList)
    {
       m_systemList = new GateSystemList;
       AddSystem(creatorSystem);
    }
-   else 
+   else
    {
       if((m_systemList->back()) != creatorSystem)
          AddSystem(creatorSystem);
@@ -215,7 +215,7 @@ G4int GateCrystalSD::PrepareCreatorAttachment(GateVVolume* aCreator)
 //mhadi_obso[ //! This method is no longer used.
 // Set the system to which the SD is attached
 void GateCrystalSD::SetSystem(GateVSystem* aSystem)
-{ 
+{
   m_system=aSystem;
 //Seb Modif 24/02/2009
   GateDigitizer::GetInstance()->SetSystem(aSystem);
@@ -226,7 +226,7 @@ void GateCrystalSD::SetSystem(GateVSystem* aSystem)
 
 // Set the system to which the SD is attached
 void GateCrystalSD::AddSystem(GateVSystem* aSystem)
-{ 
+{
    m_systemList->push_back(aSystem);
    GateDigitizer::GetInstance()->AddSystem(aSystem);
 }

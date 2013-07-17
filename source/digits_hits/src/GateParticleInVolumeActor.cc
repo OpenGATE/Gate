@@ -10,8 +10,8 @@
 
 
 /*
-  \brief Class GateParticleInVolumeActor : 
-  \brief 
+  \brief Class GateParticleInVolumeActor :
+  \brief
 */
 
 
@@ -24,7 +24,7 @@ GateParticleInVolumeActor::GateParticleInVolumeActor(G4String name, G4int depth)
   GateVImageActor(name,depth) {
   GateDebugMessageInc("Actor",4,"GateParticleInVolumeActor() -- begin"<<G4endl);
   outsideTrack = false;
-  mIsParticleInVolumeImageEnabled = true; 
+  mIsParticleInVolumeImageEnabled = true;
   pMessenger = new GateImageActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateParticleInVolumeActor() -- end"<<G4endl);
 }
@@ -32,7 +32,7 @@ GateParticleInVolumeActor::GateParticleInVolumeActor(G4String name, G4int depth)
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateParticleInVolumeActor::~GateParticleInVolumeActor()  {
   delete pMessenger;
 }
@@ -68,7 +68,7 @@ void GateParticleInVolumeActor::Construct() {
 /// Save data
 void GateParticleInVolumeActor::SaveData() {
   GateVActor::SaveData();
-  mParticleInVolumeImage.Write(mSaveFilename);  
+  mParticleInVolumeImage.Write(mSaveFilename);
   mLastHitEventImage.Fill(-1); // reset
 }
 //-----------------------------------------------------------------------------
@@ -89,7 +89,7 @@ void GateParticleInVolumeActor::BeginOfRunAction(const G4Run * r) {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateParticleInVolumeActor::BeginOfEventAction(const G4Event * e) { 
+void GateParticleInVolumeActor::BeginOfEventAction(const G4Event * e) {
   GateVActor::BeginOfEventAction(e);
 
   mLastHitEventImage.Fill(-1);
@@ -99,7 +99,7 @@ void GateParticleInVolumeActor::BeginOfEventAction(const G4Event * e) {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateParticleInVolumeActor::UserPreTrackActionInVoxel(const int index, const G4Track* /*t*/){ 
+void GateParticleInVolumeActor::UserPreTrackActionInVoxel(const int index, const G4Track* /*t*/){
   if(index<0) outsideTrack=true;
   else outsideTrack=false;
 }
@@ -125,13 +125,11 @@ void GateParticleInVolumeActor::UserSteppingActionInVoxel(const int index, const
       mLastHitEventImage.SetValue(index, id);
     }
   }
-  
+
   if(!sameTrack){
     mParticleInVolumeImage.AddValue(index, 1);
   }
-  
+
   GateDebugMessageDec("Actor", 4, "GateParticleInVolumeActor -- UserSteppingActionInVoxel -- end" << G4endl);
 }
 //-----------------------------------------------------------------------------
-
-

@@ -9,8 +9,8 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 /*
-  \brief Class GateProductionAndStoppingActor : 
-  \brief 
+  \brief Class GateProductionAndStoppingActor :
+  \brief
 */
 
 #ifndef GATEPRODANDSTOPACTOR_CC
@@ -34,7 +34,7 @@ GateProductionAndStoppingActor::GateProductionAndStoppingActor(G4String name, G4
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateProductionAndStoppingActor::~GateProductionAndStoppingActor()  {
   GateDebugMessageInc("Actor",4,"~GateProductionAndStoppingActor() -- begin"<<G4endl);
   GateDebugMessageDec("Actor",4,"~GateProductionAndStoppingActor() -- end"<<G4endl);
@@ -53,7 +53,7 @@ void GateProductionAndStoppingActor::Construct() {
   EnablePreUserTrackingAction(false);
   EnablePostUserTrackingAction(true);
   EnableUserSteppingAction(true);
- 
+
   // Output Filename
   mProdFilename = G4String(removeExtension(mSaveFilename))+"-Prod."+G4String(getExtension(mSaveFilename));
   mStopFilename = G4String(removeExtension(mSaveFilename))+"-Stop."+G4String(getExtension(mSaveFilename));
@@ -69,7 +69,7 @@ void GateProductionAndStoppingActor::Construct() {
   mStopImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mStopImage.Allocate();
   mStopImage.SetFilename(mStopFilename);
- 
+
   ResetData();
   GateMessageDec("Actor", 4, "GateProductionAndStoppingActor -- Construct - end" << G4endl);
 }
@@ -93,7 +93,7 @@ void GateProductionAndStoppingActor::ResetData() {
 
 
 //-----------------------------------------------------------------------------
-void GateProductionAndStoppingActor::BeginOfRunAction(const G4Run * ) { 
+void GateProductionAndStoppingActor::BeginOfRunAction(const G4Run * ) {
   GateDebugMessage("Actor", 3, "GateProductionAndStoppingActor -- Begin of Run" << G4endl);
   ResetData();
 }
@@ -101,7 +101,7 @@ void GateProductionAndStoppingActor::BeginOfRunAction(const G4Run * ) {
 
 //-----------------------------------------------------------------------------
 // Callback at each event
-void GateProductionAndStoppingActor::BeginOfEventAction(const G4Event * ) { 
+void GateProductionAndStoppingActor::BeginOfEventAction(const G4Event * ) {
   mCurrentEvent++;
   GateDebugMessage("Actor", 3, "GateProductionAndStoppingActor -- Begin of Event: "<<mCurrentEvent << G4endl);
 }

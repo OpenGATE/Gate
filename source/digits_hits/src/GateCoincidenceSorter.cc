@@ -33,7 +33,7 @@ G4int GateCoincidenceSorter::gm_coincSectNum=0;
 GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizer* itsDigitizer,
       	      	      	      	      	     const G4String& itsOutputName,
       	      	      	      	      	     G4double itsWindow,
-      	      	      	      	      	     const G4String& itsInputName) 
+      	      	      	      	      	     const G4String& itsInputName)
   : GateClockDependent(itsDigitizer->GetObjectName()+"/"+itsOutputName),
     m_digitizer(itsDigitizer),
     m_system(0),
@@ -50,25 +50,25 @@ GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizer* itsDigitizer,
     m_isCurrentFinished (false),
     m_multiplesPolicy(kKeepIfAllAreGoods),
     m_allPulseOpenCoincGate(false)
-{  
+{
   // Create the messenger
   m_messenger = new GateCoincidenceSorterMessenger(this);
 
   itsDigitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(itsDigitizer, itsOutputName,true) );
-}  
+}
 //------------------------------------------------------------------------------------------------------
 
 
 //------------------------------------------------------------------------------------------------------
 // Destructor
-GateCoincidenceSorter::~GateCoincidenceSorter() 
+GateCoincidenceSorter::~GateCoincidenceSorter()
 {
   if (m_coincidentPulses)
     delete m_coincidentPulses;
   if (m_waitingPulses)
     delete m_waitingPulses;
   delete m_messenger;
-}  
+}
 //------------------------------------------------------------------------------------------------------
 
 
@@ -151,7 +151,7 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
     G4cout << "Coincidence window (" << m_coincidenceWindow/s << " sec) should be smaller or equal to " << MIN_COINC_OFFSET/4 << " sec" << G4endl;
     G4Exception( "GateCoincidenceSorter::ProcessSinglePulseList", "ProcessSinglePulseList", FatalException, "Goodbye\n");
   }
-  
+
   GatePulseList* inputPulseList = inp ? inp : m_digitizer->FindPulseList( m_inputName );
 
   // Input pulse-list vector is null
@@ -175,17 +175,17 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
   DispatchPulses(inputPulseList);
 
   if ( !m_isCurrentFinished ) {
-    // No pulse is after offset + window, it means that all new pulses are within the coincidence 
+    // No pulse is after offset + window, it means that all new pulses are within the coincidence
     // window of the current pulse, and it is still too early to return anything: stop there
     if (nVerboseLevel>=1)
       	G4cout << "[GateCoincidenceSorter::ProcessPulseList]: still in the coincidence window --> returning 0\n";
     return ;
   }
-  
 
-  // At least one of the new pulses is after the coincidence window of the current pulse. 
+
+  // At least one of the new pulses is after the coincidence window of the current pulse.
   // We can analyse the current coincidence pulse
-  
+
   GateCoincidencePulse* outputPulse = m_coincidentPulses;
   m_coincidentPulses = 0;
   G4double stime = outputPulse->ComputeStartTime();
@@ -195,7 +195,7 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
 	    if (!m_waitingPulses) m_waitingPulses = CreateNewCoincidencePulse();
     	    m_waitingPulses->InsertUniqueSortedCopy((*outputPulse)[k1]);
 	  //  G4cout<<outputPulse->size()<<"-----------"<<m_waitingPulses<<"----------"<<(*outputPulse)[k1]<<"------"<<(*outputPulse)[k1]->GetTime()<<"---------"<<stime<<G4endl;
-	
+
 	}
     }
   }
@@ -206,7 +206,7 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
     else
     	delete outputPulse;
   } else {
-//      GatePulse* firstOfCoinc = outputPulse->FindFirstPulse();  
+//      GatePulse* firstOfCoinc = outputPulse->FindFirstPulse();
       if (m_multiplesPolicy==kKeepIfAllAreGoods){
 	if (CoincidentPulseIsValid(outputPulse)) m_digitizer->StoreCoincidencePulse(outputPulse);
 	else delete outputPulse;
@@ -329,7 +329,7 @@ void GateCoincidenceSorter::InitCoincidencePulses(const GatePulseList* inputPuls
     // form the new current pulse list
     // and we dispatch all of the following pulses into
     // the new current pulse or a new waiting pulse list
-    
+
     startTime = std::min(m_waitingPulses->ComputeStartTime(),inputPulseList->ComputeStartTime());
     m_coincidentPulses->SetStartTime(startTime);
     GatePulseList* wasWaiting = m_waitingPulses;
@@ -341,7 +341,7 @@ void GateCoincidenceSorter::InitCoincidencePulses(const GatePulseList* inputPuls
     startTime = inputPulseList->ComputeStartTime();
     m_coincidentPulses->SetStartTime( startTime );
   }
-  
+
 
 
   if (nVerboseLevel>1)
@@ -409,7 +409,7 @@ void GateCoincidenceSorter::VerifCoincidencePulses(const GatePulseList* inputPul
 void GateCoincidenceSorter::DispatchPulses(const GatePulseList* inputPulseList)
 {
   // All incoming pulses go either into the coincident or into the waiting pulses
-  for ( GatePulseList::const_iterator iter = inputPulseList->begin(); iter < inputPulseList->end() ; ++iter) 
+  for ( GatePulseList::const_iterator iter = inputPulseList->begin(); iter < inputPulseList->end() ; ++iter)
   {
     if ( m_coincidentPulses->IsInCoincidence(*iter) ) {
       	// The incoming pulse is in coincidence with the 'current' pulse: store it there
@@ -461,9 +461,9 @@ G4bool GateCoincidenceSorter::CoincidentPulseIsValid(GateCoincidencePulse* outpu
 	       << *outputPulse << G4endl;
     return false;
   }
-  
+
   // Look for forbidden coincidences
-  for ( GateCoincidencePulse::iterator iter1 = outputPulse->begin(); iter1 < outputPulse->end() ; iter1++) 
+  for ( GateCoincidencePulse::iterator iter1 = outputPulse->begin(); iter1 < outputPulse->end() ; iter1++)
     for ( GateCoincidencePulse::iterator iter2 = (iter1+1) ; iter2 < outputPulse->end() ; iter2++) {
       if ( IsForbiddenCoincidence(*iter1,*iter2) )
       {
@@ -473,7 +473,7 @@ G4bool GateCoincidenceSorter::CoincidentPulseIsValid(GateCoincidencePulse* outpu
       	if (!any) return false;
       } else if (any) return true;
     }
-    
+
   return !any;
 }
 
@@ -558,17 +558,17 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GatePulse& pulse1,con
 {
   G4int blockID1 = m_system->GetMainComponentID(pulse1),
         blockID2 = m_system->GetMainComponentID(pulse2);
- 
+
  // Modif by D. Lazaro, February 25th, 2004
   // Computation of sectorID, sectorNumber and sectorDifference, paramaters depending on
   // the geometry construction of the scanner (spherical for system ecatAccel and cylindrical
-  // for other systems as Ecat, CPET and cylindricalPET) 
-  
+  // for other systems as Ecat, CPET and cylindricalPET)
+
   const G4String name = m_system->GetName();
   G4String nameComp = "systems/ecatAccel";
   //G4cout << "NAME OF THE SYSTEM: " << name << "; NAME TO COMPARE: " << nameComp << G4endl;
   int comp = strcmp(name,nameComp);
-  
+
   if (comp == 0) {
   // Compute the sector difference
   	G4int sectorID1 = m_system->ComputeSectorIDSphere(blockID1),
@@ -589,7 +589,7 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GatePulse& pulse1,con
   	//Compare the sector difference with the minimum differences for valid coincidences
   	if (sectorDifference<m_minSectorDifference) {
       	if (nVerboseLevel>1)
-      	    G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: coincidence between neighbour blocks --> refused\n";   
+      	    G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: coincidence between neighbour blocks --> refused\n";
 	return true;
 	}
 	return false;

@@ -11,7 +11,7 @@ See GATE/LICENSE.txt for further details
 /*!
   \class  GateWashOutActorMessenger
   \author I. Martinez-Rovira (immamartinez@gmail.com)
-          S. Jan (sebastien.jan@cea.fr) 
+          S. Jan (sebastien.jan@cea.fr)
 */
 
 #ifndef GATEWASHOUTACTORMESSENGER_HH
@@ -34,7 +34,7 @@ public:
   G4double ScaleValue(G4double value,G4String unit);
 
 protected:
-  
+
   GateWashOutActor * pWashOutActor;
 
   G4UIcmdWithAString* ReadWashOutTableCmd;
@@ -42,4 +42,3 @@ protected:
 };
 
 #endif /* end #define GATEWASHOUTACTORMESSENGER_HH*/
-

@@ -25,71 +25,71 @@ class GateDeadTimeMessenger;
 
 /*! \class  GateDeadTime
     \brief  Pulse-processor modelling a simple dead time discriminator.
-    
+
     - GateDeadTime - by Luc.Simon@iphe.unil.ch
-    
+
     - The method ProcessOnePulse of this class models a simple
-      deadTime discriminator. User chooses value of dead time, mode 
+      deadTime discriminator. User chooses value of dead time, mode
       (paralysable or not) and geometric level of application (crystal, module,...)
 
       \sa GateVPulseProcessor
       \sa GateVolumeID
       \sa GatePulseProcessorChainMessenger
-*/      
+*/
 class GateDeadTime : public GateVPulseProcessor
 {
 public:
 
 
- 
+
   //! Destructor
-  virtual ~GateDeadTime() ; 
-  
-  
-  //! Check the validity of the volume name where the dead time will be applied 
+  virtual ~GateDeadTime() ;
+
+
+  //! Check the validity of the volume name where the dead time will be applied
   void CheckVolumeName(G4String val);
-  
+
 
   //! Constructs a new dead time attached to a GateDigitizer
   GateDeadTime(GatePulseProcessorChain* itsChain,
 			     const G4String& itsName);
-  
-public:  
-  
+
+public:
+
   //! Returns the deadTime
   unsigned long long int GetDeadTime() {return m_deadTime;}
-  
+
   //! Set the deadTime
   void SetDeadTime(G4double val)   { m_deadTime = (unsigned long long int )(val/picosecond);}
-  
+
   //! Set the deadTime mode ; candidates : paralysable nonparalysable
-  void SetDeadTimeMode(G4String val); 
-  //! Set the buffer mode ; 
+  void SetDeadTimeMode(G4String val);
+  //! Set the buffer mode ;
   void SetBufferMode(G4int val){m_bufferMode=val;}
-  //! Set the buffer mode ; 
+  //! Set the buffer mode ;
   void SetBufferSize(G4double val){m_bufferSize=val;}
-  //! Set the buffer mode ; 
+  //! Set the buffer mode ;
 
   //! Implementation of the pure virtual method declared by the base class GateClockDependent
   //! print-out the attributes specific of the deadTime
   virtual void DescribeMyself(size_t indent);
-  
+
 protected:
-  
+
   /*! Implementation of the pure virtual method declared by the base class GateVPulseProcessor
     This methods processes one input-pulse
     It is is called by ProcessPulseList() for each of the input pulses
     The result of the pulse-processing is incorporated into the output pulse-list
-    This method manages the updating of the "rebirth time table", the table of times when 
+    This method manages the updating of the "rebirth time table", the table of times when
     the detector volume will be alive again.
   */
   void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList&  outputPulseList);
-  
+
 
   //! To summarize it finds the number of elements of the different scanner levels
   void FindLevelsParams(GateObjectStore* anInserterStore);
-  
-private: 
+
+private:
   G4String m_volumeName;  //!< Name of the volume where Dead time is applied
   G4int m_testVolume;     //!< equal to 1 if the volume name is valid, 0 else
   G4int *numberOfComponentForLevel; //!< Table of number of element for each geometric level
@@ -106,4 +106,3 @@ private:
 
 
 #endif
-

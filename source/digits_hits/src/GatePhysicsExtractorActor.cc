@@ -20,7 +20,7 @@ GatePhysicsExtractorActor::GatePhysicsExtractorActor(G4String name, G4int depth)
 	pMessenger = new GatePhysicsExtractorActorMessenger(this);
 }
 
-GatePhysicsExtractorActor::~GatePhysicsExtractorActor() 
+GatePhysicsExtractorActor::~GatePhysicsExtractorActor()
 {
 	delete pCalculator;
 }
@@ -79,7 +79,7 @@ void GatePhysicsExtractorActor::SaveData()
 	handle.close();
 }
 
-void GatePhysicsExtractorActor::ResetData() 
+void GatePhysicsExtractorActor::ResetData()
 {
 }
 
@@ -95,15 +95,14 @@ void GatePhysicsExtractorActor::EndOfEventAction(const G4Event*)
 {
 }
 
-void GatePhysicsExtractorActor::PreUserTrackingAction(const GateVVolume*, const G4Track*) 
+void GatePhysicsExtractorActor::PreUserTrackingAction(const GateVVolume*, const G4Track*)
 {
 }
 
-void GatePhysicsExtractorActor::PostUserTrackingAction(const GateVVolume*, const G4Track*) 
+void GatePhysicsExtractorActor::PostUserTrackingAction(const GateVVolume*, const G4Track*)
 {
 }
 
 void GatePhysicsExtractorActor::UserSteppingAction(const GateVVolume*, const G4Step*)
 {
 }
-

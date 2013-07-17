@@ -29,11 +29,11 @@ typedef pair<string,double> psd;
 
 
 class GateSimplifiedDecayTransition {
-  
+
   friend class GateSimplifiedDecay;
 
  public:
-  
+
   GateSimplifiedDecayTransition(int cs, int ns, double pr,  mem_fun_t<psd,GateSimplifiedDecayTransition> act, double en=0, double ampl=0, double norm=0, int Z=0):
     currentState(cs),
     nextState(ns),
@@ -60,14 +60,14 @@ class GateSimplifiedDecayTransition {
 
 
   void print(){
-    cout 
-	 << currentState << ", " 
-	 <<  nextState << ", " 
+    cout
+	 << currentState << ", "
+	 <<  nextState << ", "
 	 <<  probability << ", "
 	 <<  energy << ", "
 	 <<  amplitude << ", "
 	 <<  normalisationFactor << ", "
-	 <<  atomicNumber 
+	 <<  atomicNumber
 	 <<  endl;
   }
 
@@ -93,7 +93,7 @@ class GateSimplifiedDecayTransition {
     return majoringInverseCDF( energy * amplitude/Pi * (2*G4UniformRand()-1) );
   }
 
- private:  
+ private:
   int    sequenceNumber;
   int    currentState;
   int    nextState;

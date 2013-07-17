@@ -31,11 +31,11 @@ class GateDeadTimeMessenger: public GatePulseProcessorMessenger
 public:
   GateDeadTimeMessenger(GateDeadTime* itsDeadTime);
   virtual ~GateDeadTimeMessenger();
-  
+
   inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
-  
+
   inline GateDeadTime* GetDeadTime(){ return (GateDeadTime*) GetPulseProcessor(); }
-  
+
 private:
   G4UIcmdWithADoubleAndUnit *deadTimeCmd; //!< set the dead time value
   G4UIcmdWithAString   *newVolCmd;        //!< set the geometric level of application
@@ -45,4 +45,3 @@ private:
 };
 
 #endif
-

@@ -26,8 +26,6 @@ GateCoincidenceMultiplesKillerMessenger::~GateCoincidenceMultiplesKillerMessenge
 
 
 void GateCoincidenceMultiplesKillerMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
-    GateClockDependentMessenger::SetNewValue(command,newValue); 
+{
+    GateClockDependentMessenger::SetNewValue(command,newValue);
 }
-
-

@@ -21,9 +21,9 @@ See GATE/LICENSE.txt for further details
 class GateProductionActor;
 
 //-----------------------------------------------------------------------------
-class GateProductionActorMessenger : public GateImageActorMessenger 
+class GateProductionActorMessenger : public GateImageActorMessenger
 {
-  public: 
+  public:
 
     //-----------------------------------------------------------------------------
     /// Constructor with pointer on the associated sensor

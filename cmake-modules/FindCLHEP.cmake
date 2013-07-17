@@ -21,15 +21,15 @@
 # You can provide a minimum version number that should be used.
 # If you provide this version number and specify the REQUIRED attribute,
 # this module will fail if it can't find a CLHEP of the specified version
-# or higher. If you further specify the EXACT attribute, then this module 
+# or higher. If you further specify the EXACT attribute, then this module
 # will fail if it can't find a CLHEP with a version eaxctly as specified.
 #
 # ===========================================================================
 # Variables used by this module which can be used to change the default
 # behaviour, and hence need to be set before calling find_package:
 #
-#  CLHEP_ROOT_DIR        The preferred installation prefix for searching for 
-#                        CLHEP. Set this if the module has problems finding 
+#  CLHEP_ROOT_DIR        The preferred installation prefix for searching for
+#                        CLHEP. Set this if the module has problems finding
 #                        the proper CLHEP installation.
 #
 # If you don't supply CLHEP_ROOT_DIR, the module will search on the standard
@@ -37,7 +37,7 @@
 # program in the PATH, and if found will use the prefix supplied by this
 # program as a HINT on where to find the CLHEP headers and libraries.
 #
-# You can re-run CMake with a different version of CLHEP_ROOT_DIR to 
+# You can re-run CMake with a different version of CLHEP_ROOT_DIR to
 # force a new search for CLHEP using the new version of CLHEP_ROOT_DIR.
 #
 # ============================================================================
@@ -58,7 +58,7 @@
 #  CLHEP_INCLUDE_DIR    The path to the CLHEP include directory: cached
 #
 #  CLHEP_LIBRARY        The path to the CLHEP library: cached
-# 
+#
 # You should not need to set these in the vast majority of cases
 #
 
@@ -66,31 +66,31 @@
 # Copyright (C) 2010,2011 Ben Morgan <Ben.Morgan@warwick.ac.uk>
 # Copyright (C) 2010,2011 University of Warwick
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without 
+#
+# Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
-# * Redistributions of source code must retain the above copyright notice, 
+# * Redistributions of source code must retain the above copyright notice,
 #   this list of conditions and the following disclaimer.
 #
-# * Redistributions in binary form must reproduce the above copyright notice, 
-#   this list of conditions and the following disclaimer in the documentation 
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
 #
-# * Neither the name of the University of Warwick nor the names of its 
-#   contributors may be used to endorse or promote products derived from 
+# * Neither the name of the University of Warwick nor the names of its
+#   contributors may be used to endorse or promote products derived from
 #   this software without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
-# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
-# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 #============================================================================
@@ -104,7 +104,7 @@ if(NOT "${CLHEP_ROOT_DIR}" STREQUAL "${CLHEP_INTERNAL_ROOT_DIR}")
         message(STATUS "CLHEP_ROOT_DIR Changed, Rechecking for CLHEP")
     endif()
 
-    set(CLHEP_INTERNAL_ROOT_DIR ${CLHEP_ROOT_DIR} 
+    set(CLHEP_INTERNAL_ROOT_DIR ${CLHEP_ROOT_DIR}
         CACHE INTERNAL "Last value supplied for where to locate CLHEP")
     set(CLHEP_INCLUDE_DIR CLHEP_INCLUDE_DIR-NOTFOUND)
     set(CLHEP_LIBRARY CLHEP_LIBRARY-NOTFOUND)
@@ -160,7 +160,7 @@ endif()
 find_path(CLHEP_INCLUDE_DIR CLHEP/Units/defs.h
     HINTS ${_clhep_root_hints}
     PATH_SUFFIXES include
-    DOC "Path to the CLHEP headers" 
+    DOC "Path to the CLHEP headers"
 )
 
 #----------------------------------------------------------------------------
@@ -187,7 +187,7 @@ if(CLHEP_INCLUDE_DIR)
     if(NOT CLHEP_FIND_QUIETLY)
         message(STATUS "Found CLHEP Version ${CLHEP_VERSION}")
     endif()
-  
+
     if(CLHEP_FIND_VERSION)
         set(CLHEP_VERSIONING_TESTS CLHEP_VERSION_COMPATIBLE)
 
@@ -239,7 +239,7 @@ endif()
 # all listed variables are TRUE
 #
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(CLHEP 
+find_package_handle_standard_args(CLHEP
     "${CLHEP_DEFAULT_MSG}"
     CLHEP_LIBRARY
     CLHEP_INCLUDE_DIR

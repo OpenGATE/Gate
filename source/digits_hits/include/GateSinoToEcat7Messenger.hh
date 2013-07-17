@@ -13,7 +13,7 @@ See GATE/LICENSE.txt for further details
 
      Gate 6.2
 
-	C. Comtat, CEA/SHFJ, 10/02/2011	   Allows for an interfile-like ("ecat8") output instead of ecat7. 
+	C. Comtat, CEA/SHFJ, 10/02/2011	   Allows for an interfile-like ("ecat8") output instead of ecat7.
 					   It does not require the ecat library! (GATE_USE_ECAT7 not set)
 ----------------------*/
 
@@ -43,12 +43,12 @@ class GateSinoToEcat7Messenger: public GateOutputModuleMessenger
   public:
     GateSinoToEcat7Messenger(GateSinoToEcat7* gateSinoToEcat7);
    ~GateSinoToEcat7Messenger();
-    
+
     void SetNewValue(G4UIcommand*, G4String);
-    
+
   protected:
     GateSinoToEcat7*             m_gateSinoToEcat7;
-    
+
     G4UIcmdWithAString*          SetFileNameCmd;
     G4UIcmdWithAnInteger*        SetMashingCmd;
     G4UIcmdWithAnInteger*        SetSpanCmd;

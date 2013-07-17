@@ -25,20 +25,20 @@ class GateTLEDoseActorMessenger : public GateImageActorMessenger
 public:
   GateTLEDoseActorMessenger(GateTLEDoseActor* sensor);
   virtual ~GateTLEDoseActorMessenger();
-  
+
   void BuildCommands(G4String base);
   void SetNewValue(G4UIcommand*, G4String);
 
 protected:
   GateTLEDoseActor * pDoseActor;
-  
+
   G4UIcmdWithABool * pEnableDoseCmd;
   G4UIcmdWithABool * pEnableEdepCmd;
   G4UIcmdWithABool * pEnableDoseUncertaintyCmd;
   G4UIcmdWithABool * pEnableDoseSquaredCmd;
   G4UIcmdWithABool * pEnableEdepSquaredCmd;
   G4UIcmdWithABool * pEnableEdepUncertaintyCmd;
- 
+
 };
 
 #endif /* end #define GATETLEDOSEACTORMESSENGER_HH*/

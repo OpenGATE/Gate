@@ -23,7 +23,7 @@ class GateDistributionFlat : public GateVDistribution
     //! Constructor
     GateDistributionFlat(const G4String& itsName);
     //! Destructor
-    virtual ~GateDistributionFlat() ; 
+    virtual ~GateDistributionFlat() ;
 
     //! Setters
     inline void SetMin(G4double min) {m_Min=min;}
@@ -34,7 +34,7 @@ class GateDistributionFlat : public GateVDistribution
     virtual void DescribeMyself(size_t indent);
 
 
-    
+
     virtual G4double MinX() const;
     virtual G4double MinY() const;
     virtual G4double MaxX() const;

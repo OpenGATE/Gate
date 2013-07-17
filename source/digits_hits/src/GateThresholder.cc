@@ -18,20 +18,20 @@ See GATE/LICENSE.txt for further details
 
 GateThresholder::GateThresholder(GatePulseProcessorChain* itsChain,
 			       const G4String& itsName,
-      	      	      	      	 G4double itsThreshold) 
+      	      	      	      	 G4double itsThreshold)
   : GateVPulseProcessor(itsChain,itsName),
     m_threshold(itsThreshold)
 {
   m_messenger = new GateThresholderMessenger(this);
-}  
+}
 
 
 
 
-GateThresholder::~GateThresholder() 
+GateThresholder::~GateThresholder()
 {
   delete m_messenger;
-}  
+}
 
 
 
@@ -49,7 +49,7 @@ void GateThresholder::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList&
   }
 
   if ( inputPulse->GetEnergy() >= m_threshold )
-  {  
+  {
     GatePulse* outputPulse = new GatePulse(*inputPulse);
     outputPulseList.push_back(outputPulse);
     if (nVerboseLevel>1)

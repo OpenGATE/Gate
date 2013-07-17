@@ -384,13 +384,14 @@ See GATE/LICENSE.txt for further details
 //-----------------------------------------------------------
 #ifdef GATE_COMPILE_ERROR_MESSAGES
 // Macro for errors occuring within an object
+#define __SHORT_FILE__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #define GateError(MESSAGE)			\
   do						\
     {						\
       std::ostringstream s_;			\
       s_ << MESSAGE;				\
       std::ostringstream f_;			\
-      f_ << __FILE__ << " (l."<<__LINE__<<"): ";\
+      f_ << __SHORT_FILE__ << " (l."<<__LINE__<<"): ";\
       G4String str_f = f_.str();		\
       G4String str_s = s_.str();		\
       std::cout << str_f << str_s << std::endl; \
@@ -408,7 +409,7 @@ See GATE/LICENSE.txt for further details
       std::ostringstream s;			\
       s << MESSAGE;				\
       std::ostringstream f;			\
-      f << __FILE__ << " (l."<<__LINE__<<")";	\
+      f << __SHORT_FILE__ << " (l."<<__LINE__<<")";	\
       G4String str_f = f.str();			\
       G4String str_s = s.str();			\
       G4Exception(str_f,str_s,			\

@@ -9,10 +9,10 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 /*  Optical Photons: V. Cuplov -  2012
-         - New function RecordOpticalData(event). 
+         - New function RecordOpticalData(event).
          - New ntuple for optical photon data is defined in GateToRoot class (previously was in GateFastAnalysis)
          - Revision v6.2   2012/07/09  by vesna.cuplov@gmail.com
-           output ROOT file is dedicated to optical photons         
+           output ROOT file is dedicated to optical photons
          - Revision v6.2   2012/07/24  by vesna.cuplov@gmail.com
            Unique output file with Gate default trees (Hits,Singles,Coincidences...) + OpticalData Tree.
          - Revision v6.2 2012/08/06  Added optical photon momentum direction (x,y,z) in tree.
@@ -58,7 +58,7 @@ class GateToRootMessenger;
 class GateVVolume;
 
 // v. cuplov - optical photons
-class GateTrajectoryNavigator; 
+class GateTrajectoryNavigator;
 // v. cuplov - optical photons
 
  class ComptonRayleighData
@@ -105,7 +105,7 @@ public:
 
   G4int GetRecordFlag()           { return m_recordFlag; };
   void  SetRecordFlag(G4int flag) { m_recordFlag = flag; };
-  
+
   /* PY Descourt 08/09/2009 */
   void OpenTracksFile();
   //! saves the geometry voxel information
@@ -118,7 +118,7 @@ public:
   G4int GetHeadNo(){ return m_currentTracksData; };
   void ReadForward() { m_currentTracksData++;};
   void ReadBackward(){
-   if ( tracksTuple != 0 ) 
+   if ( tracksTuple != 0 )
     {
      if ( m_currentTracksData > 0 ) {m_currentTracksData--;}
     }
@@ -127,7 +127,7 @@ public:
   void RecordPHData( ComptonRayleighData aCRData );
   void GetPHData ( ComptonRayleighData& aCRData );
   /* PY Descourt 08/09/2009 */
-  
+
   //--------------------------------------------------------------------------
   class VOutputChannel
   {
@@ -139,20 +139,20 @@ public:
 	m_collectionID(-1)
     { }
     virtual inline ~VOutputChannel() {}
-      
+
     virtual void Clear() = 0;
     virtual void RecordDigitizer() = 0 ;
     virtual void Book() = 0;
-    
+
     inline void SetOutputFlag(G4bool flag) { m_outputFlag = flag; };
     inline void SetVerboseLevel(G4int val) { nVerboseLevel = val; };
-  
+
     G4int             nVerboseLevel;
     G4bool            m_outputFlag;
     G4String          m_collectionName;
     G4int	      m_collectionID;
   };
-  
+
 
   //--------------------------------------------------------------------------
   class SingleOutputChannel : public VOutputChannel
@@ -166,8 +166,8 @@ public:
 
     inline void Clear()
     {  m_buffer.Clear();}
-    inline void Book() 
-    {  
+    inline void Book()
+    {
       m_collectionID=-1;
       if (m_outputFlag) {
 	m_tree  = new GateSingleTree(m_collectionName);
@@ -177,8 +177,8 @@ public:
 
     void RecordDigitizer();
 
-    GateRootSingleBuffer         m_buffer; 
-    GateSingleTree*              m_tree; 
+    GateRootSingleBuffer         m_buffer;
+    GateSingleTree*              m_tree;
   };
 
 
@@ -195,7 +195,7 @@ public:
 
     inline void Clear()
     {  m_buffer.Clear();}
-    inline void Book() 
+    inline void Book()
     {
       m_collectionID=-1;
       if (m_outputFlag) {
@@ -206,8 +206,8 @@ public:
 
     void RecordDigitizer();
 
-    GateRootCoincBuffer         m_buffer; 
-    GateCoincTree*              m_tree; 
+    GateRootCoincBuffer         m_buffer;
+    GateCoincTree*              m_tree;
   };
 
 
@@ -243,14 +243,14 @@ public:
 
   void  SetRndmFreq(G4int val) {saveRndm = val;}
   G4int GetRndmFreq()          {return saveRndm;}
-  
+
   void   RegisterNewSingleDigiCollection(const G4String& aCollectionName,G4bool outputFlag);
   void   RegisterNewCoincidenceDigiCollection(const G4String& aCollectionName,G4bool outputFlag);
-  
+
 void  PrintRecStep();
 
-  void SetVerboseLevel(G4int val) 
-  { 
+  void SetVerboseLevel(G4int val)
+  {
     GateVOutputModule::SetVerboseLevel(val);
     for (size_t i=0; i<m_outputChannelList.size(); ++i)
       m_outputChannelList[i]->SetVerboseLevel(val);
@@ -261,14 +261,14 @@ private:
   G4ThreeVector  m_ionDecayPos;
   G4ThreeVector  m_positronGenerationPos;
   G4ThreeVector  m_positronAnnihilPos;
-  
+
   G4double dxg1,dyg1,dzg1,dxg2,dyg2,dzg2;
-  
-  G4int saveRndm;    
-  
+
+  G4int saveRndm;
+
   G4double latestEventID; // Used by the gjs an d gjm programs (cluster mode)
   G4double nbPrimaries;
-  
+
   G4double m_positronKinEnergy;
   G4int    m_recordFlag;
 
@@ -276,13 +276,13 @@ private:
 
   GateHitTree*       m_treeHit; // the tree for hit quantities
 
-  GateRootHitBuffer  m_hitBuffer; 
-  
+  GateRootHitBuffer  m_hitBuffer;
+
 // v. cuplov - optical photons
   GateTrajectoryNavigator* m_trajectoryNavigator;
   TTree *OpticalTree; // new tree
-  Char_t   NameOfProcessInCrystal[40]; 	 
-  Char_t   NameOfProcessInPhantom[40]; 
+  Char_t   NameOfProcessInCrystal[40];
+  Char_t   NameOfProcessInPhantom[40];
 //  G4int nPhantomOpticalRayleigh;
 //  G4int nPhantomOpticalMie;
 //  G4int nPhantomOpticalAbsorption;
@@ -312,17 +312,17 @@ private:
   GateToRootMessenger* m_rootMessenger;
 
   std::vector<VOutputChannel*>  m_outputChannelList;
-  
+
     /* PY Descourt 08/09/2009 */
     G4double m_positronKinEnergy_copy;
   G4ThreeVector  m_ionDecayPos_copy;
   G4ThreeVector  m_positronGenerationPos_copy;
   G4ThreeVector  m_positronAnnihilPos_copy;
   G4double dxg1_copy,dyg1_copy,dzg1_copy,dxg2_copy,dyg2_copy,dzg2_copy;
-  G4int m_RSEventID,m_RSRunID; 
+  G4int m_RSEventID,m_RSRunID;
 
   /// ROOT FILE & DATAS FOR TRACKS INFOS
- G4int  m_currentTracksData; // stores the current index of the Tracks Data when reading Root file in detector mode 
+ G4int  m_currentTracksData; // stores the current index of the Tracks Data when reading Root file in detector mode
  G4int  m_currentRSData; // stores the current index of the Record Stepping Data when reading Root file in detector mode
  GateTrack* m_currentGTrack;  // in detector mode contains all current Track Data
  G4String fTracksFN;
@@ -334,7 +334,7 @@ private:
  Long64_t last_RSEventID;
 
 //
-//// data from GateAnalysis::RecordEndOfEvent() stored in  the RecStepData Root File 
+//// data from GateAnalysis::RecordEndOfEvent() stored in  the RecStepData Root File
 //
  ComptonRayleighData theCRData;
  ComptonRayleighData theCRData_copy;

@@ -26,10 +26,10 @@ class GateCrosstalkMessenger: public GatePulseProcessorMessenger
   public:
     GateCrosstalkMessenger(GateCrosstalk* itsCrosstalk);
     virtual ~GateCrosstalkMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GateCrosstalk* GetCrosstalk() 
+    inline GateCrosstalk* GetCrosstalk()
       { return (GateCrosstalk*) GetPulseProcessor(); }
 
   private:
@@ -39,4 +39,3 @@ class GateCrosstalkMessenger: public GatePulseProcessorMessenger
 };
 
 #endif
-

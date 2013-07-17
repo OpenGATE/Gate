@@ -22,16 +22,16 @@ See GATE/LICENSE.txt for further details
 #include "GateImage.hh"
 
 //-----------------------------------------------------------------------------
-/// \brief 
-class GateImageWithStatistic 
+/// \brief
+class GateImageWithStatistic
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // constructor - destructor
   GateImageWithStatistic();
   virtual ~GateImageWithStatistic();
-  
+
   // void SetLastHitEventImage(GateImage * lastHitEventImage) { mLastHitEventImage = lastHitEventImage; }
   void SetResolutionAndHalfSize(const G4ThreeVector & resolution, const G4ThreeVector & halfSize);
   void SetResolutionAndHalfSize(const G4ThreeVector & resolution, const G4ThreeVector & halfSize, const G4ThreeVector & position);
@@ -60,7 +60,7 @@ class GateImageWithStatistic
   virtual void UpdateUncertaintyImage(int numberOfEvents);
 
   GateImage & GetValueImage() { return mValueImage; }
-  
+
   void SetOrigin(G4ThreeVector v);
   void SetOverWriteFilesFlag(bool b) { mOverWriteFilesFlag = b; }
 
@@ -70,14 +70,14 @@ class GateImageWithStatistic
   GateImage mTempImage;
   GateImage mUncertaintyImage;
   GateImage mScaledValueImage;
-  GateImage mScaledSquaredImage;   
+  GateImage mScaledSquaredImage;
  // GateImage * mLastHitEventImage;
   bool mOverWriteFilesFlag;
 
   bool mIsSquaredImageEnabled;
   bool mIsUncertaintyImageEnabled;
   bool mIsValuesMustBeScaled;
-  
+
   double mScaleFactor;
 
   G4String mFilename;
@@ -90,9 +90,8 @@ class GateImageWithStatistic
 
   int mValueFD;
   int mSquaredFD;
-  int mUncertaintyFD;  
+  int mUncertaintyFD;
 
 }; // end class GateImageWithStatistic
 
 #endif /* end #define GATEIMAGEWITHSTATISTIC_HH */
-

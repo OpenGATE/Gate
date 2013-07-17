@@ -19,7 +19,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVPulseProcessor.hh"
 
-class GateCrystalBlurringMessenger;   
+class GateCrystalBlurringMessenger;
 class GateCrystalBlurring : public GateVPulseProcessor
 {
   public:
@@ -32,13 +32,13 @@ class GateCrystalBlurring : public GateVPulseProcessor
 		 G4double itsCrystalEnergyRef=-1) ;
 
     //! Destructor
-    virtual ~GateCrystalBlurring() ; 
+    virtual ~GateCrystalBlurring() ;
 
     void SetCrystalResolutionMin(G4double val)   { m_crystalresolutionmin = val;  }
     void SetCrystalResolutionMax(G4double val)   { m_crystalresolutionmax = val;  }
     void SetCrystalQE(G4double val)              { m_crystalQE = val;  }
-    
-    
+
+
     void SetCrystalRefEnergy(G4double eval)   { m_crystaleref = eval; }
 
     //! Implementation of the pure virtual method declared by the base class GateDigitizerComponent
@@ -51,9 +51,9 @@ class GateCrystalBlurring : public GateVPulseProcessor
     //! It is is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
-    
+
   private:
-    G4double m_crystalresolution;    	  //!< Simulated energy resolution
+    G4double m_crystalresolution;         //!< Simulated energy resolution
     G4double m_crystalresolutionmin;      //!< Simulated min energy resolution
     G4double m_crystalresolutionmax;      //!< Simulated max energy resolution
     G4double m_crystalQE;                 //!< Simulated "crystal" QE
@@ -63,9 +63,8 @@ class GateCrystalBlurring : public GateVPulseProcessor
     GateCrystalBlurringMessenger *m_messenger;   //!< Messenger
 
     static const G4String& theTypeName;   //!< Default type-name for all blurrings
-    
+
 };
 
 
 #endif
-

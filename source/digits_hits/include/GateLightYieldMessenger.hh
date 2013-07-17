@@ -27,11 +27,11 @@ class GateLightYieldMessenger: public GatePulseProcessorMessenger
   public:
     GateLightYieldMessenger(GateLightYield* itsLightYield);
     virtual ~GateLightYieldMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
     inline void SetNewValue2(G4UIcommand* aCommand, G4String aString);
 
-    inline GateLightYield* GetLightYield() 
+    inline GateLightYield* GetLightYield()
       { return (GateLightYield*) GetPulseProcessor(); }
 
   private:
@@ -40,8 +40,7 @@ class GateLightYieldMessenger: public GatePulseProcessorMessenger
     std::vector<G4UIcmdWithADouble*>   lightOutputCmd;
     std::vector<G4String> m_name;
     G4int i;
-    G4int m_count;        
+    G4int m_count;
 };
 
 #endif
-

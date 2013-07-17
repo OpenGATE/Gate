@@ -58,7 +58,7 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
 {
   G4String guidance;
   G4String bb;
- 
+
   bb = base+"/enableEkine";
   pEnableEkineCmd = new G4UIcmdWithABool(bb,this);
   guidance = "Save kinetic energy of particles in the phase space file.";
@@ -160,11 +160,11 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
   pCoordinateInVolumeFrameCmd->SetGuidance(guidance);
 
   bb = base+"/setMaxFileSize";
-  pMaxSizeCmd = new G4UIcmdWithADoubleAndUnit(bb, this); 
+  pMaxSizeCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
   guidance = G4String("Set maximum size of the phase space file. When the file reaches the maximum size, a new file is automatically created.");
   pMaxSizeCmd->SetGuidance(guidance);
   pMaxSizeCmd->SetParameterName("Size", false);
-  pMaxSizeCmd->SetUnitCategory("Memory size"); 
+  pMaxSizeCmd->SetUnitCategory("Memory size");
 }
 //-----------------------------------------------------------------------------
 
@@ -190,8 +190,8 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
   if(command == pEnableStoreAllStepCmd) pActor->SetIsAllStep(pEnableStoreAllStepCmd->GetNewBoolValue(param));
   if(command == pEnableSecCmd) pActor->SetIsSecStored(pEnableSecCmd->GetNewBoolValue(param));
   if(command == pSaveEveryNEventsCmd || command == pSaveEveryNSecondsCmd)  GateError("saveEveryNEvents and saveEveryNSeconds commands are not available with phase space actor. But you can use the setMaxFileSize command.");
-  if(command == pMaxSizeCmd) pActor->SetMaxFileSize(pMaxSizeCmd->GetNewDoubleValue(param)); 
-  
+  if(command == pMaxSizeCmd) pActor->SetMaxFileSize(pMaxSizeCmd->GetNewDoubleValue(param));
+
   GateActorMessenger::SetNewValue(command ,param );
 }
 //-----------------------------------------------------------------------------

@@ -31,9 +31,9 @@ class GateOutputModuleMessenger: public GateMessenger
 public:
   GateOutputModuleMessenger(GateVOutputModule* outputModule);
   virtual ~GateOutputModuleMessenger();
-  
+
   virtual void SetNewValue(G4UIcommand*, G4String);
-    
+
 public:
   inline G4UIcmdWithoutParameter* GetDescribeCmd() {return DescribeCmd;}
   inline G4UIcmdWithAnInteger*    GetVerboseCmd()  {return VerboseCmd;}
@@ -42,7 +42,7 @@ public:
 
 private:
   GateVOutputModule*                       m_outputModule;
-    
+
   G4UIcmdWithoutParameter*                 DescribeCmd;
   G4UIcmdWithAnInteger*                    VerboseCmd;
   G4UIcmdWithoutParameter*                 EnableCmd;    //!< The UI command "enable"
@@ -50,4 +50,3 @@ private:
 };
 
 #endif
-

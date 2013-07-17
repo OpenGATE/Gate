@@ -24,9 +24,9 @@ class GateUpholderMessenger;
 
 /*! \class  GateUpholder
     \brief  Pulse-processor modelling a simple uphold limit.
-    
+
     - GateUpholder - by Steven.Staelens@rug.ac.be
-    
+
     - The method ProcessOnePulse of this class models a simple
       uphold limit: any input pulse whose energy is below
       the energy limit is copied into the output pulse-list.
@@ -34,7 +34,7 @@ class GateUpholderMessenger;
       limit is discarded.
 
       \sa GateVPulseProcessor
-*/      
+*/
 class GateUpholder : public GateVPulseProcessor
 {
   public:
@@ -43,14 +43,14 @@ class GateUpholder : public GateVPulseProcessor
     GateUpholder(GatePulseProcessorChain* itsChain,
 			       const G4String& itsName, G4double itsUphold=0) ;
     //! Destructor
-    virtual ~GateUpholder() ; 
+    virtual ~GateUpholder() ;
 
     //! Returns the uphold
     G4double GetUphold()   	      { return m_uphold; }
 
     //! Set the uphold
     void SetUphold(G4double val)   { m_uphold = val;  }
-    
+
     //! Implementation of the pure virtual method declared by the base class GateClockDependent
     //! print-out the attributes specific of the upholder
     virtual void DescribeMyself(size_t indent=0);
@@ -61,7 +61,7 @@ class GateUpholder : public GateVPulseProcessor
     //! It is is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
-    
+
   private:
     G4double m_uphold;     	      	      //!< Uphold value
     GateUpholderMessenger *m_messenger;       //!< Messenger
@@ -69,4 +69,3 @@ class GateUpholder : public GateVPulseProcessor
 
 
 #endif
-

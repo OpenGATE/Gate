@@ -28,7 +28,7 @@ See GATE/LICENSE.txt for further details
 #include "GateVolumePlacement.hh"
 
 
-GateSinoAccelToEcat7::GateSinoAccelToEcat7(const G4String& name, GateOutputMgr* outputMgr,GateEcatAccelSystem* itsSystem,DigiMode digiMode) 
+GateSinoAccelToEcat7::GateSinoAccelToEcat7(const G4String& name, GateOutputMgr* outputMgr,GateEcatAccelSystem* itsSystem,DigiMode digiMode)
   : GateVOutputModule(name,outputMgr,digiMode)
   , m_system(itsSystem)
   , m_fileName(" ") // All default output file from all output modules are set to " ".
@@ -54,7 +54,7 @@ GateSinoAccelToEcat7::GateSinoAccelToEcat7(const G4String& name, GateOutputMgr* 
    if (nVerboseLevel > 0) G4cout << " >> GateSinoAccelToEcat7 created" << G4endl;
 }
 
-GateSinoAccelToEcat7::~GateSinoAccelToEcat7() 
+GateSinoAccelToEcat7::~GateSinoAccelToEcat7()
 {
   delete m_asciiMessenger;
   if (m_ptr != NULL) {
@@ -95,9 +95,9 @@ void GateSinoAccelToEcat7::RecordBeginOfAcquisition()
   if (nVerboseLevel > 2) G4cout << "    Memory allocated for sub header " << G4endl;
   sh->frame_duration = 0;
   sh->frame_start_time = 0;
-    
+
   // Create ECAT7 file and write the main header
-  m_ptr = matrix_create((m_fileName+".S").c_str(),MAT_CREATE,mh); 
+  m_ptr = matrix_create((m_fileName+".S").c_str(),MAT_CREATE,mh);
   if (m_ptr == NULL) {
 			G4String msg = "Could not create ECAT7 file '"+m_fileName+".S' !";
      G4Exception( "GateSinoAccelToEcat7::RecordBeginOfAcquisition", "RecordBeginOfAcquisition",
@@ -105,7 +105,7 @@ void GateSinoAccelToEcat7::RecordBeginOfAcquisition()
   }
   if (nVerboseLevel > 1) G4cout << "    ECAT7 file " << m_fileName << ".S created" << G4endl;
 
-  
+
   if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoAccelToEcat7::RecordBeginOfAcquisition]" << G4endl;
 }
 
@@ -125,7 +125,7 @@ void GateSinoAccelToEcat7::RecordEndOfAcquisition()
     if (nVerboseLevel > 1) G4cout << "    ECAT7 file " << m_ptr->fname << " will be closed" << G4endl;
     matrix_close(m_ptr);
     m_ptr = NULL;
-  }  
+  }
   if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoAccelToEcat7::RecordEndOfAcquisition]" << G4endl;
 }
 
@@ -145,18 +145,18 @@ void GateSinoAccelToEcat7::RecordBeginOfRun(const G4Run * )
   if (m_maxRingDiff < 0) m_maxRingDiff = setMaker->GetRingNb()-1;
   if (m_span < 3) m_span = 3;
   if (m_maxRingDiff >= setMaker->GetRingNb()) {
-    G4cout << " !!! [GateSinoAccelToEcat7]: maximum ring difference (" << m_maxRingDiff 
+    G4cout << " !!! [GateSinoAccelToEcat7]: maximum ring difference (" << m_maxRingDiff
            << ") is too big (should be <" << setMaker->GetRingNb() << ")" << G4endl;
     G4Exception( "GateSinoAccelToEcat7::RecordBeginOfRun", "RecordBeginOfRun", FatalException, "Could not fill subheader");
   }
   if ((m_span<1)||((float)((m_span-1)/2)) != (((float)m_span-1.0)/2.0)) {
-    G4cout << " !!! [GateSinoAccelToEcat7]: span factor (" << m_maxRingDiff 
+    G4cout << " !!! [GateSinoAccelToEcat7]: span factor (" << m_maxRingDiff
            << ") should be odd" << G4endl;
     G4Exception( "GateSinoAccelToEcat7::RecordBeginOfRun", "RecordBeginOfRun", FatalException, "Could not fill subheader");
-  }		
+  }
   if ((float)((2*m_maxRingDiff+1-m_span)/(2*m_span)) != (2.0*(float)m_maxRingDiff+1.0-(float)m_span)/(2.0*(float)m_span)) {
     G4int bin,maxRingDiff;
-    G4cout << " !!! [GateSinoAccelToEcat7]: maximum ring difference (" << m_maxRingDiff 
+    G4cout << " !!! [GateSinoAccelToEcat7]: maximum ring difference (" << m_maxRingDiff
            << ") is not coherent with span factor (" << m_span << ")" << G4endl;
     G4cout << "                                       possible maximum ring differences are: " << G4endl;
     bin = 0;
@@ -210,7 +210,7 @@ void GateSinoAccelToEcat7::RecordEndOfRun(const G4Run * )
 /* Overload of the base-class' virtual method to print-out a description of the module
 
 	indent: the print-out indentation (cosmetic parameter)
-*/    
+*/
 void GateSinoAccelToEcat7::Describe(size_t indent)
 {
   GateVOutputModule::Describe(indent);
@@ -235,8 +235,8 @@ void GateSinoAccelToEcat7::FillMainHeader()
   G4ThreeVector         crystalPitchVector = crystalComponent->GetRepeatVector();
   G4int                 RingNb = blockComponent->GetSphereAxialRepeatNumber() * crystalComponent->GetRepeatNumber(2);
   if (setMaker->GetRingNb() != RingNb) {
-     G4Exception( "GateSinoAccelToEcat7::FillMainHeader", "FillMainHeader", FatalException, "Uncoherent crystal rings number");  
-  }		      
+     G4Exception( "GateSinoAccelToEcat7::FillMainHeader", "FillMainHeader", FatalException, "Uncoherent crystal rings number");
+  }
   if (nVerboseLevel > 1) {
     G4cout << "    Number of crystal rings: " << RingNb << G4endl;
     G4cout << "    crystal axial pitch: " << crystalPitchVector.z()/mm << " mm" << G4endl;
@@ -298,7 +298,7 @@ void GateSinoAccelToEcat7::FillData()
   char   *cdata;
   struct MatDir matdir, dir_entry;
   GateSinogram::SinogramDataType *m_data, *m_randoms;
-  
+
   // Fill subheader
   seg = 0;
   sh->data_type = SunShort;
@@ -327,9 +327,9 @@ void GateSinoAccelToEcat7::FillData()
     G4cout << "    Span factor:                          " << m_span << G4endl;
     G4cout << "     ==> Number of segments               " << 2*m_segmentNb+1 << G4endl;
     for (segment_occurance=0;segment_occurance<(2*m_segmentNb+1);segment_occurance++) {
-      G4cout << "              Segment " << m_segment[segment_occurance] << " is for ring difference " 
+      G4cout << "              Segment " << m_segment[segment_occurance] << " is for ring difference "
              << m_delRingMinSeg[segment_occurance] << " to " << m_delRingMaxSeg[segment_occurance] << G4endl;
-      G4cout << "                and goes from slice " << m_zMinSeg[segment_occurance] << " to slice " 
+      G4cout << "                and goes from slice " << m_zMinSeg[segment_occurance] << " to slice "
              << m_zMaxSeg[segment_occurance] << G4endl;
     }
     G4cout << "    Frame start time:                       " << sh->frame_start_time << " msec" << G4endl;
@@ -362,8 +362,8 @@ void GateSinoAccelToEcat7::FillData()
     matdir = dir_entry;
   }
   // write subheader
-  mat_write_Scan3D_subheader(m_ptr->fptr,m_ptr->mhptr,matdir.strtblk,sh); 
-  offset = 0;     
+  mat_write_Scan3D_subheader(m_ptr->fptr,m_ptr->mhptr,matdir.strtblk,sh);
+  offset = 0;
   // loop on the segments
   for (segment_occurance=0;segment_occurance<(2*m_segmentNb+1);segment_occurance++) {
     nz = m_zMaxSeg[segment_occurance] - m_zMinSeg[segment_occurance] + 1;
@@ -390,15 +390,15 @@ void GateSinoAccelToEcat7::FillData()
 	    G4Exception( "GateToSinoAccel::RecordEndOfRun", "RecordEndOfRun", FatalException, "Wrong 2D sinogram ID");
 	  }
 	  if (nVerboseLevel>2 && view==0) {
-            G4cout << " >> ring difference " << ringdiff << ", slice " << z << G4endl;       
+            G4cout << " >> ring difference " << ringdiff << ", slice " << z << G4endl;
             G4cout << "    rings " << ring_1 << "," << ring_2  << " give sino ID " << sinoID << G4endl;
 	  }
           //  m_system->GetProjectionSetMaker()->GetProjectionSet()->StreamOut( m_dataFile , headID );
           m_data = setMaker->GetSinogram()->GetSinogram(sinoID);
 	  bin_m_data = view * setMaker->GetRadialElemNb(); // sinogram ordering
 	  bin_sdata = z * sh->num_r_elements + view / m_mashing * nz * sh->num_r_elements; // view ordering
-	  for (elem=0; elem<sh->num_r_elements; elem++) sdata[bin_sdata+elem] += (short int) m_data[bin_m_data+elem];	  
-	}          
+	  for (elem=0; elem<sh->num_r_elements; elem++) sdata[bin_sdata+elem] += (short int) m_data[bin_m_data+elem];
+	}
       }
       for (ring_1 = ring_1_min; ring_1 <= ring_1_max; ++ring_1) {
         ring_2 = ring_1 + ringdiff;
@@ -415,7 +415,7 @@ void GateSinoAccelToEcat7::FillData()
     // convert short --> SunShort
     if (segment_occurance == 0) {
       sh->scan_min = sh->scan_max = sdata[0];
-    }  
+    }
     for (bin=0;bin<data_size;bin++) {
       bufWrite_s(sdata[bin],cdata,&csize);
       if (sdata[bin] < sh->scan_min) sh->scan_min = sdata[bin];
@@ -425,11 +425,11 @@ void GateSinoAccelToEcat7::FillData()
     // write data segment
     file_pos = (matdir.strtblk+1)*MatBLKSIZE+offset;
     if (fseek(m_ptr->fptr,file_pos,0) == EOF) {
-      G4cout << " !!! [GateSinoAccelToEcat7::FillData]: can not seek position " << file_pos 
+      G4cout << " !!! [GateSinoAccelToEcat7::FillData]: can not seek position " << file_pos
              << " for " << m_ptr->fname << G4endl;
       G4Exception( "GateSinoAccelToEcat7::FillData", "FillData", FatalException,  "Could not fill data");
     } else if (fwrite(cdata,sizeof(short),data_size,m_ptr->fptr) != (size_t) data_size) {
-      G4cout << " !!! [GateSinoAccelToEcat7::FillData]: can not write segment " << segment_occurance 
+      G4cout << " !!! [GateSinoAccelToEcat7::FillData]: can not write segment " << segment_occurance
              << " in " << m_ptr->fname << G4endl;
       G4Exception( "GateSinoAccelToEcat7::FillData", "FillData", FatalException, "Could not fill data");
     }
@@ -443,13 +443,13 @@ void GateSinoAccelToEcat7::FillData()
     G4cout << "    Number of net trues:                  " << sh->net_trues << G4endl;
     G4cout << "    Maximum bin content:                  " << sh->scan_max << G4endl;
   }
-  mat_write_Scan3D_subheader(m_ptr->fptr,m_ptr->mhptr,matdir.strtblk,sh); 
+  mat_write_Scan3D_subheader(m_ptr->fptr,m_ptr->mhptr,matdir.strtblk,sh);
   if (mh_update(m_ptr)) {
-       G4cout << " !!! [GateSinoAccelToEcat7::FillData]: can not update main header in  " 
+       G4cout << " !!! [GateSinoAccelToEcat7::FillData]: can not update main header in  "
               << m_ptr->fname << G4endl;
        G4Exception( "GateSinoAccelToEcat7::FillData", "FillData", FatalException, "Could not fill data");
   }
   free(cdata);
   free(sdata);
-}      
+}
 #endif

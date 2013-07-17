@@ -21,9 +21,9 @@ See GATE/LICENSE.txt for further details
 GateDistributionMessenger::GateDistributionMessenger(GateVDistribution* itsDistribution,
     			     const G4String& itsDirectoryName)
 : GateNamedObjectMessenger( itsDistribution,itsDirectoryName)
-{ 
+{
   G4String cmdName,guidance;
-  
+
   cmdName = GetDirectoryName()+"getMinX";
   guidance = "Get the definition domain's minimum value";
   getMinX_Cmd = new G4UIcmdWithoutParameter(cmdName,this);
@@ -80,8 +80,8 @@ G4String GateDistributionMessenger::withUnity(G4double value,G4String category) 
 }
 // UI command interpreter method
 void GateDistributionMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
-  if       ( command==getValueCmd ){	
+{
+  if       ( command==getValueCmd ){
     G4double x = getValueCmd->GetNewDoubleValue(newValue);
     G4double y = GetDistribution()->Value(x);
     G4cout<<GetDistribution()->GetObjectName()<<'('<<x<<")="<<withUnity(y,UnitCategoryY())<<G4endl;

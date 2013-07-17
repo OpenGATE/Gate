@@ -33,7 +33,7 @@ GateHybridMultiplicityActor::GateHybridMultiplicityActor(G4String name, G4int de
   GateVActor(name,depth)
 {
   GateDebugMessageInc("Actor",4,"GateHybridMultiplicityActor() -- begin"<<G4endl);
-  materialHandler = new GateMaterialMuHandler(100);
+  materialHandler = GateMaterialMuHandler::GetInstance();
   GateDebugMessageDec("Actor",4,"GateHybridMultiplicityActor() -- end"<<G4endl);
 
   defaultPrimaryMultiplicity = 0;

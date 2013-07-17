@@ -17,9 +17,9 @@
 
 class GateAugerDetectorActor;
 
-class GateAugerDetectorActorMessenger : public GateActorMessenger 
+class GateAugerDetectorActorMessenger : public GateActorMessenger
 {
-	public: 
+	public:
 
 		GateAugerDetectorActorMessenger(GateAugerDetectorActor * v);
 		virtual ~GateAugerDetectorActorMessenger();
@@ -29,7 +29,7 @@ class GateAugerDetectorActorMessenger : public GateActorMessenger
 		void BuildCommands(G4String base);
 
 		/// Associated sensor
-		GateAugerDetectorActor * pActor; 
+		GateAugerDetectorActor * pActor;
 
 		/// Command objects
 		//G4UIcmdWithAnInteger * pNBinsCmd;

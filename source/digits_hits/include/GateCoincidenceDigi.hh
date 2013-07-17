@@ -25,27 +25,27 @@ class GateCoincidenceDigi : public G4VDigi
 {
 
 public:
-  
+
   GateCoincidenceDigi();
   GateCoincidenceDigi(GateCoincidencePulse* coincidencePulse);
   GateCoincidenceDigi(const GateCoincidencePulse& coincidencePulse);
   virtual inline ~GateCoincidenceDigi() {}
-  
+
   inline void* operator new(size_t);
   inline void  operator delete(void*);
-  
+
   void Draw();
   void Print();
 
   //
   //printing methods
   //
-  friend std::ostream& operator<<(std::ostream&, GateCoincidenceDigi&);    
+  friend std::ostream& operator<<(std::ostream&, GateCoincidenceDigi&);
 
-  friend std::ofstream& operator<<(std::ofstream&, GateCoincidenceDigi*);    
+  friend std::ofstream& operator<<(std::ofstream&, GateCoincidenceDigi*);
 
 public:
-  
+
       inline GatePulse& GetPulse(G4int i)                     { return pulseVector[i]; }
       inline void SetPulse(G4int i, const GatePulse& value)   { pulseVector[i] = value; }
 
@@ -93,12 +93,3 @@ inline void GateCoincidenceDigi::operator delete(void* aDigi)
 }
 
 #endif
-
-
-
-
-
-
-
-
-

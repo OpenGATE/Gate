@@ -25,14 +25,14 @@ class GateCalibrationMessenger;
 
 /*! \class  GateCalibration
     \brief  Pulse-processor modelling a calibration Nphotons->Energy.
-    
+
     - GateCalibration - by Martin.Rey@epfl.ch (feb 2003)
-    
+
     - Can be usefull if you use the class(es) GateLightYield, GateTransferEfficiency or GateQuantumEfficiency.
     You can also set your own calibration factor. Allows the "recalibration" in energy.
 
       \sa GateVPulseProcessor
-*/      
+*/
 class GateCalibration : public GateVPulseProcessor
 {
   public:
@@ -41,12 +41,12 @@ class GateCalibration : public GateVPulseProcessor
     GateCalibration(GatePulseProcessorChain* itsChain,
 			       const G4String& itsName) ;
     //! Destructor
-    virtual ~GateCalibration() ; 
+    virtual ~GateCalibration() ;
 
-  G4double GetCalibrationFactor() { return m_calib; };  
+  G4double GetCalibrationFactor() { return m_calib; };
 
   void SetCalibrationFactor(G4double itsCalib) { m_calib = itsCalib; };
-    
+
     //! Implementation of the pure virtual method declared by the base class GateDigitizerComponent
     //! print-out the attributes specific of the calibration
     virtual void DescribeMyself(size_t indent);
@@ -57,7 +57,7 @@ class GateCalibration : public GateVPulseProcessor
     //! It is is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList&  outputPulseList);
-    
+
   private:
     //! Find the different parameters of the input Pulse :
     //! The depth 'm_depth in the VolumeID 'aVolumeID corresponding @ the volume named 'm_volumeName
@@ -76,4 +76,3 @@ class GateCalibration : public GateVPulseProcessor
 
 
 #endif
-

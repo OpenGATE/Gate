@@ -37,7 +37,7 @@ class GateDistributionListMessenger: public GateListMessenger
     GateDistributionListMessenger(GateDistributionListManager* itsListManager);
 
     virtual ~GateDistributionListMessenger();  //!< destructor
-    
+
 
     //! Lists all the Distribution-names into a string
     virtual const G4String& DumpMap();
@@ -46,7 +46,7 @@ class GateDistributionListMessenger: public GateListMessenger
     virtual void DoInsertion(const G4String& typeName);
 
     //! Get the store pointer
-    inline GateDistributionListManager* GetDistributionListManager() 
+    inline GateDistributionListManager* GetDistributionListManager()
       { return (GateDistributionListManager*) GetListManager(); }
 
   private:
@@ -56,4 +56,3 @@ class GateDistributionListMessenger: public GateListMessenger
 };
 
 #endif
-

@@ -32,18 +32,17 @@ class GateBlurringMessenger: public GatePulseProcessorMessenger
   public:
     GateBlurringMessenger(GateBlurring* itsResolution);
     virtual ~GateBlurringMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GateBlurring* GetBlurring() 
+    inline GateBlurring* GetBlurring()
       { return (GateBlurring*) GetPulseProcessor(); }
 
   private:
     GateVBlurringLaw* CreateBlurringLaw(const G4String& law);
-        
+
     G4UIcmdWithAString *lawCmd;
-    
+
 };
 
 #endif
-

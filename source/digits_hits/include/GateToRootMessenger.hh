@@ -40,17 +40,17 @@ class GateToRootMessenger: public GateOutputModuleMessenger
   public:
     GateToRootMessenger(GateToRoot* gateToRoot);
    ~GateToRootMessenger();
-    
+
     void CreateNewOutputChannelCommand(GateToRoot::VOutputChannel* anOutputChannel);
 
     void SetNewValue(G4UIcommand*, G4String);
-    
+
     G4bool IsAnOutputChannelCmd(G4UIcommand* command);
     void ExecuteOutputChannelCmd(G4UIcommand* command,G4String newValue);
 
   protected:
     GateToRoot*             m_gateToRoot;
-    
+
     G4UIcmdWithoutParameter* ResetCmd;
 
     G4UIcmdWithABool*        RootHitCmd;
@@ -66,4 +66,3 @@ class GateToRootMessenger: public GateOutputModuleMessenger
 
 #endif
 #endif
-

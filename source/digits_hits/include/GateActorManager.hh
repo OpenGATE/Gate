@@ -13,7 +13,7 @@ See GATE/LICENSE.txt for further details
   \class  GateActorManager
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
+          david.sarrut@creatis.insa-lyon.fr
 */
 
 //-----------------------------------------------------------------------------
@@ -24,7 +24,7 @@ See GATE/LICENSE.txt for further details
 #define GATEACTORMANAGER_HH
 
 #include "globals.hh"
-#include <iomanip>   
+#include <iomanip>
 #include <vector>
 #include <map>
 
@@ -48,7 +48,7 @@ public:
   ~GateActorManager();
 
   static GateActorManager *GetInstance()
-  {   
+  {
     if (singleton_ActorManager == 0)
     {
       //std::cout << "creating GateActorManager..." << std::endl;
@@ -66,9 +66,9 @@ public:
   void PrintListOfActors() const;
   void PrintListOfActorTypes() const;
   GateVActor*  GetActor(const G4String &actorType, const G4String &actorName);
-  
+
   std::vector<GateVActor*> ReturnListOfActors();
-  
+
   //-----------------------------------------------------------------------------
   ///
   G4bool AddFilter(G4String filterType,G4String actorName );

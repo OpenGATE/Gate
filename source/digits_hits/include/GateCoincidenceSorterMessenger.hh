@@ -30,16 +30,16 @@ class GateCoincidenceSorter;
     \brief  Messenger used for commanding a  GateCoincidenceSorter
 
     - GateCoincidenceSorterMessenger - by Daniel.Strul@iphe.unil.ch
-    
-    - This messenger inherits from the abilities and responsabilities of the 
+
+    - This messenger inherits from the abilities and responsabilities of the
       GateClockDependentMessenger base class: creation of a command directory,
       with various commands ('describe', 'verbose', 'enable', 'disable', 'setWindow')
-      
+
     - In addition, it provides commands for settings the parameters of a cylindrical
       scanner's coincidence sorter: 'setWindow', 'minSectorDifference'
-    
+
     \sa GateCoincidenceSorter
-*/      
+*/
 //    Last modification in 12/2011 by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr, for the multi-system approach.
 
 class GateCoincidenceSorterMessenger: public GateClockDependentMessenger
@@ -49,25 +49,24 @@ class GateCoincidenceSorterMessenger: public GateClockDependentMessenger
     GateCoincidenceSorterMessenger(GateCoincidenceSorter* itsCoincidenceSorter);
     //! Destructor
     ~GateCoincidenceSorterMessenger();
-    
+
     //! UI command interpreter
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
     //! Return a pointer to the coincidence-sorter
-    inline GateCoincidenceSorter* GetCoincidenceSorter() 
+    inline GateCoincidenceSorter* GetCoincidenceSorter()
       { return (GateCoincidenceSorter*) GetClockDependent(); }
 
   private:
-    G4UIcmdWithADoubleAndUnit   *windowCmd;   	     //!< the UI command 'setWindow'
-    G4UIcmdWithADoubleAndUnit   *offsetCmd;   	     //!< the UI command 'setOffset'
+    G4UIcmdWithADoubleAndUnit   *windowCmd;          //!< the UI command 'setWindow'
+    G4UIcmdWithADoubleAndUnit   *offsetCmd;          //!< the UI command 'setOffset'
     G4UIcmdWithADoubleAndUnit   *windowJitterCmd;    //!< the UI command 'setWindowJitter'
     G4UIcmdWithADoubleAndUnit   *offsetJitterCmd;    //!< the UI command 'setOffsetJitter'
-    G4UIcmdWithAnInteger      	*minSectorDiffCmd;   //!< the UI command 'minSectorDifference'
-    G4UIcmdWithAnInteger      	*setDepthCmd;        //!< the UI command 'setDepth'
+    G4UIcmdWithAnInteger        *minSectorDiffCmd;   //!< the UI command 'minSectorDifference'
+    G4UIcmdWithAnInteger        *setDepthCmd;        //!< the UI command 'setDepth'
     G4UIcmdWithAString          *SetInputNameCmd;    //!< The UI command "set input name"
     G4UIcmdWithAString          *MultiplePolicyCmd;  //!< The UI command "allowMultiples"
     G4UIcmdWithABool            *AllPulseOpenCoincGateCmd;  //!< The UI command "allowMultiples"
 };
 
 #endif
-

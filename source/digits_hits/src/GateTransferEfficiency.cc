@@ -44,23 +44,23 @@ GateTransferEfficiency* GateTransferEfficiency::GetInstance(GatePulseProcessorCh
 
 // Private constructor
 GateTransferEfficiency::GateTransferEfficiency(GatePulseProcessorChain* itsChain,
-			       const G4String& itsName) 
+			       const G4String& itsName)
   : GateVPulseProcessor(itsChain, itsName)
-{ 
+{
   m_messenger = new GateTransferEfficiencyMessenger(this);
 }
 
 // Public destructor
-GateTransferEfficiency::~GateTransferEfficiency() 
+GateTransferEfficiency::~GateTransferEfficiency()
 {
   delete m_messenger;
 }
 
-G4int GateTransferEfficiency::ChooseVolume(G4String val) 
+G4int GateTransferEfficiency::ChooseVolume(G4String val)
 {
   //Retrieve the inserter store to check if the volume name is valid
   GateObjectStore* m_store = GateObjectStore::GetInstance();
-  if (m_store->FindCreator(val)!=0) {    
+  if (m_store->FindCreator(val)!=0) {
     m_table[val]=1.;
     return 1;
   }
@@ -71,24 +71,24 @@ G4int GateTransferEfficiency::ChooseVolume(G4String val)
 }
 
 void GateTransferEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
-{  
+{
   im=m_table.find(((inputPulse->GetVolumeID()).GetBottomCreator())->GetObjectName());
   GatePulse* outputPulse = new GatePulse(*inputPulse);
   if(im != m_table.end())
-    {  
+    {
       if(((*im).second < 0) | ((*im).second > 1)) {
 	G4cerr << 	G4endl << "[GateLightYield::ProcessOnePulse]:" << G4endl
-	       <<   "Sorry, but the transfer efficiency (" << (*im).second << ") for " 
+	       <<   "Sorry, but the transfer efficiency (" << (*im).second << ") for "
 	       << (*im).first << " is invalid" << G4endl;
 	G4String msg = "It must be a number between 0 and 1 !!!\n"
         "You must set the transfer efficiency:\n"
-        "\t/gate/digitizer/Singles/transferEfficiency/" + 
+        "\t/gate/digitizer/Singles/transferEfficiency/" +
         (*im).first + "/setTECoef NUMBER\n"
         "or disable the transfer efficiency module using:\n"
         "\t/gate/digitizer/Singles/transferEfficiency/disable\n";
 	G4Exception( "GateTransferEfficiency::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
       }
-      else 
+      else
 	{
 	  m_TECoef = (*im).second;
 	  outputPulse->SetEnergy( m_TECoef * inputPulse->GetEnergy() );
@@ -100,7 +100,7 @@ void GateTransferEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePul
 G4double GateTransferEfficiency::GetTEMin()
 {
   im=m_table.begin();
-  m_TEMin = (*im).second; 
+  m_TEMin = (*im).second;
   for (im=m_table.begin(); im!=m_table.end(); im++)
     m_TEMin = ((*im).second <= m_TEMin) ?
       (*im).second : m_TEMin;
@@ -110,6 +110,6 @@ G4double GateTransferEfficiency::GetTEMin()
 void GateTransferEfficiency::DescribeMyself(size_t indent)
 {
   for (im=m_table.begin(); im!=m_table.end(); im++)
-    G4cout << GateTools::Indent(indent) << (*im).first << ":\n" 
+    G4cout << GateTools::Indent(indent) << (*im).first << ":\n"
 	   << GateTools::Indent(indent+1) << "Transfer Efficiency: " << (*im).second << G4endl;
 }

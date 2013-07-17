@@ -29,12 +29,12 @@ class GateDigitizer;
     \brief  Coincidence sorter for a  PET scanner
 
     - GateCoincidenceSorter - by Daniel.Strul@iphe.unil.ch
-    
+
     - The sorter processes a series of pulses, and stores them into a queue
       When pulses get obsolete, it tries to create coincident pulse pairs
-      It does not rejects multiple coincidences. When successful, it returns a  
+      It does not rejects multiple coincidences. When successful, it returns a
       coincident pulse
-*/      
+*/
 //    Last modification in 12/2011 by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr, for the multi-system approach.
 
 class GateCoincidenceSorter : public GateClockDependent
@@ -43,44 +43,44 @@ class GateCoincidenceSorter : public GateClockDependent
 
     //! Constructs a new coincidence sorter, attached to a GateDigitizer amd to a system
     GateCoincidenceSorter(GateDigitizer* itsDigitizer,
-      	      	      	  const G4String& itsName,
-      	      	      	  G4double itsWindow,
-			  const G4String& itsInputName="Singles");
+                          const G4String& itsName,
+                          G4double itsWindow,
+                          const G4String& itsInputName="Singles");
     //! Destructor
-    virtual ~GateCoincidenceSorter() ;  
+    virtual ~GateCoincidenceSorter() ;
 
     //! Overload of the virtual method declared by the base class GateClockDependent
     //! print-out a description of the sorter
-     virtual void Describe(size_t indent);
+    virtual void Describe(size_t indent);
 
-     //! \name getters and setters
+    //! \name getters and setters
     //@{
 
     //! Get the coincidence time-window
-    virtual inline G4double GetWindow() const	    
-      	{ return m_coincidenceWindow;}
+    virtual inline G4double GetWindow() const
+        { return m_coincidenceWindow;}
 
     //! Set the coincidence time-window
-    virtual inline void SetWindow(G4double val)	    
-      	{ 
-	  m_coincidenceWindow = val;
-	  if (m_coincidentPulses)
-      	    m_coincidentPulses->SetWindow(m_coincidenceWindow);
-	  if (m_waitingPulses)
-      	    m_waitingPulses->SetWindow(m_coincidenceWindow);
-	}
+    virtual inline void SetWindow(G4double val)
+        {
+          m_coincidenceWindow = val;
+          if (m_coincidentPulses)
+            m_coincidentPulses->SetWindow(m_coincidenceWindow);
+          if (m_waitingPulses)
+            m_waitingPulses->SetWindow(m_coincidenceWindow);
+        }
     //! Set the coincidence time-window
-    virtual inline void SetWindowJitter(G4double val)	    
+    virtual inline void SetWindowJitter(G4double val)
     {  m_coincidenceWindowJitter = val;}
     //! Set the coincidence offset window
     inline void SetOffset(G4double val)
-    { m_offset = val;}	    
+    { m_offset = val;}
     //! Set the coincidence offset window jitter
     inline void SetOffsetJitter(G4double val)
-    { m_offsetJitter = val;}	    
+    { m_offsetJitter = val;}
     //! Get the minimum sector difference for valid coincidences
     inline G4int GetMinSectorDifference() const
-      	{ return m_minSectorDifference; }
+        { return m_minSectorDifference; }
 
     //! Set the minimum sector difference for valid coincidences
     inline void SetMinSectorDifference(G4int diff)
@@ -88,13 +88,13 @@ class GateCoincidenceSorter : public GateClockDependent
 
     //! Get the depth of the system-level for coincidences
     inline G4int GetDepth() const
-      	{ return m_depth; }
+        { return m_depth; }
 
     //! Set the depth of the system-level for coincidences
     inline void SetDepth(G4int depth)
         { m_depth = depth; }
     inline G4bool GetAllPulseOpenCoincGate() const
-      	{ return m_allPulseOpenCoincGate; }
+        { return m_allPulseOpenCoincGate; }
 
     inline void SetAllPulseOpenCoincGate(G4bool b)
         { m_allPulseOpenCoincGate = b; }
@@ -114,7 +114,7 @@ class GateCoincidenceSorter : public GateClockDependent
     //! Implementation of the pure virtual method declared by our base class
     //! Processes a list of pulses and tries to compute a coincidence pulse
     virtual void ProcessSinglePulseList(GatePulseList* inp=0);
-    
+
     //! Initialise the coincident pulses as needed
     virtual void InitCoincidencePulses(const GatePulseList* inputPulseList);
     //! Verify than the new pulse list has no pulse before the current list
@@ -136,7 +136,7 @@ class GateCoincidenceSorter : public GateClockDependent
 
      virtual inline GateVSystem* GetSystem() const
        { return m_system;}
-     virtual inline void SetSystem(GateVSystem* aSystem) 
+     virtual inline void SetSystem(GateVSystem* aSystem)
        { m_system = aSystem; }
     void SetMultiplesPolicy(const G4String& policy);
     void SetSystem(G4String& inputName); //This method was added for the multi-system approach
@@ -169,13 +169,12 @@ class GateCoincidenceSorter : public GateClockDependent
     GateCoincidencePulse* m_waitingPulses;     //!< Next coincidence pulse
     G4bool                m_isCurrentFinished; //!< is the current pulse finished
     multiple_policy_t     m_multiplesPolicy;   //!< Do what if multiples?
-    G4bool  	    	  m_allPulseOpenCoincGate; //! <does a pulse can be part of two coincs?
+    G4bool                m_allPulseOpenCoincGate; //! <does a pulse can be part of two coincs?
     static G4int          gm_coincSectNum;     // internal use
     //@}
-    
+
     GateCoincidenceSorterMessenger *m_messenger;      //!< Messenger
 };
 
 
 #endif
-

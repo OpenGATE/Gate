@@ -12,7 +12,7 @@
 #include "TFile.h"
 
 GateTriCoincidenceSorter::GateTriCoincidenceSorter(GateCoincidencePulseProcessorChain* itsChain,
-			   const G4String& itsName) 
+			   const G4String& itsName)
   : GateVCoincidencePulseProcessor(itsChain,itsName),
   m_triCoincWindow(0),
   m_waitingSingles(0),
@@ -27,12 +27,12 @@ GateTriCoincidenceSorter::GateTriCoincidenceSorter(GateCoincidencePulseProcessor
 }
 
 
-GateTriCoincidenceSorter::~GateTriCoincidenceSorter() 
+GateTriCoincidenceSorter::~GateTriCoincidenceSorter()
 {
   delete m_messenger;
   if(m_waitingSingles) delete m_waitingSingles; //mhadi_note We have to empty this list.
   delete m_sTree;
-}  
+}
 
 //=============================================================================
 //=============================================================================
@@ -63,7 +63,7 @@ GateCoincidencePulse* GateTriCoincidenceSorter::ProcessPulse(GateCoincidencePuls
          toDel.push_back(itr);
       }
    }
-   
+
    for (int i= (int)toDel.size()-1;i>=0;i--){
       delete (*toDel[i]);
       m_waitingSingles->erase( toDel[i] );
@@ -85,8 +85,8 @@ void GateTriCoincidenceSorter::CollectSingles()
 {
    // This method is for stocking singles in m_waitingSingles buffer, it is called each event.
    GatePulseList* sPulseList(FindSinglesPulseList(m_sPulseListName));
-   
-   if(sPulseList) 
+
+   if(sPulseList)
    {
    if(!m_waitingSingles)
    {
@@ -108,14 +108,14 @@ void GateTriCoincidenceSorter::CollectSingles()
             delete m_waitingSingles->at(0);
             m_waitingSingles->erase(m_waitingSingles->begin());
          }
-         
+
          // 4) Refill the m_waitingSingles buffer by sPulseList elements.
          for(GatePulseIterator itr=sPulseList->begin(); itr!=sPulseList->end(); itr++)
             m_waitingSingles->push_back(new GatePulse(*itr));
       }
    }
    }
-   
+
 }
 
 //=============================================================================
@@ -130,14 +130,14 @@ void GateTriCoincidenceSorter::RegisterTCSingles(GatePulseList& sPulseList)
       // all coincident singles with the same coincidence pulse have the same triCID.
       m_triCID = m_sTree->Branch("triCID",&m_triCoincID,"m_triCoincID/Int_t");
    }
-   
+
    GatePulseConstIterator itr;
    for (itr = sPulseList.begin() ; itr != sPulseList.end() ; ++itr) {
       GateSingleDigi* Digi = new GateSingleDigi((*itr));
       m_sBuffer.Fill(Digi);
       m_sTree->Fill();
       delete Digi;
-      
+
    }
 
    m_triCoincID++;
@@ -150,7 +150,7 @@ G4String GateTriCoincidenceSorter::SetSinglesTreeName(const G4String& name)
 {
    G4String treeName = name;
    treeName = treeName.substr(10);
-   
+
    G4String::size_type pos;
       pos = treeName.find_first_of('/');
       treeName = treeName.substr(0,pos);

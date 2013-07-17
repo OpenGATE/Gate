@@ -17,22 +17,22 @@ class GateSystemFilterMessenger;
 
 /*! \class GateSystemFilter
     \brief Pulse processor module to separate between pulses arriving from systems in multi-system approach
-    
+
     - GateSystemFilter - Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr
- */      
- 
+ */
+
 class GateSystemFilter : public GateVPulseProcessor
 {
   public:
 
     GateSystemFilter(GatePulseProcessorChain* itsChain,const G4String& itsName);
 
-    virtual ~GateSystemFilter();  
+    virtual ~GateSystemFilter();
 
     inline G4String GetSystemName()                                  { return m_systemName; }
     inline void SetSystemName(G4String systemName)                   {m_systemName = systemName ;}
     void SetSystemToItsChain();
-    
+
     //! Implementation of the pure virtual method declared by the base class GateClockDependent
     //! print-out the attributes specific of the system filter
     virtual void DescribeMyself(size_t indent);
@@ -47,4 +47,3 @@ class GateSystemFilter : public GateVPulseProcessor
 };
 
 #endif
-

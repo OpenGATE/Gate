@@ -58,16 +58,16 @@ void GateSingleDigi::Print()
 
 
 
-std::ostream& operator<<(std::ostream& flux, const GateSingleDigi& digi)    
+std::ostream& operator<<(std::ostream& flux, const GateSingleDigi& digi)
 {
   flux    << "GateSingleDigi(" << G4endl
 	  << digi.m_pulse
       	  << ")" << G4endl;
-    
+
   return flux;
 }
 
-std::ofstream& operator<<(std::ofstream& flux, GateSingleDigi* digi)    
+std::ofstream& operator<<(std::ofstream& flux, GateSingleDigi* digi)
 {
   if ( GateSingleDigi::GetSingleASCIIMask(0) ) flux << " " << std::setw(7) << digi->GetRunID();
   if ( GateSingleDigi::GetSingleASCIIMask(1) ) flux << " " << std::setw(7) << digi->GetEventID();
@@ -87,8 +87,8 @@ std::ofstream& operator<<(std::ofstream& flux, GateSingleDigi* digi)
   if ( GateSingleDigi::GetSingleASCIIMask(15) ) flux << " " << std::setw(4) << digi->GetNCrystalRayleigh();
   if ( GateSingleDigi::GetSingleASCIIMask(16) ) flux << " " << digi->GetComptonVolumeName();
   if ( GateSingleDigi::GetSingleASCIIMask(17) ) flux << " " << digi->GetRayleighVolumeName();
-  flux << G4endl;	
-    
+  flux << G4endl;
+
   return flux;
 }
 
@@ -119,11 +119,3 @@ std::vector<G4bool> GateSingleDigi::GetSingleASCIIMask()
 {
   return m_singleASCIIMask;
 }
-
-
-
-
-
-
-
-

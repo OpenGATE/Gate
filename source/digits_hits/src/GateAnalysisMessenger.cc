@@ -29,7 +29,7 @@ See GATE/LICENSE.txt for further details
 GateAnalysisMessenger::GateAnalysisMessenger(GateAnalysis* gateAnalysis)
   : GateOutputModuleMessenger(gateAnalysis)
   , m_gateAnalysis(gateAnalysis)
-{ 
+{
 	// HDS : septal penetration
 	G4String cmdName;
 
@@ -37,7 +37,7 @@ GateAnalysisMessenger::GateAnalysisMessenger(GateAnalysis* gateAnalysis)
 	SetSeptalVolumeNameCmd = new G4UIcmdWithAString(cmdName,this);
 	SetSeptalVolumeNameCmd->SetGuidance("Set the name of the volume in which you want to record septal penetration");
 	SetSeptalVolumeNameCmd->SetParameterName("SeptalVolumeName",false);
-	
+
 	cmdName = GetDirectoryName()+"recordSeptalPenetration";
   	RecordSeptalCmd = new G4UIcmdWithABool(cmdName,this);
   	RecordSeptalCmd->SetGuidance("Set the flag for recording septal penetration into hits and singles trees");
@@ -65,7 +65,7 @@ void GateAnalysisMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 		GateObjectStore* theStore = GateObjectStore::GetInstance();
 		GateVVolume* volume = theStore->FindVolumeCreator(newValue) ;
 		if (volume) m_gateAnalysis->SetSeptalPhysVolumeName(volume->GetPhysicalVolumeName());
-		
+
 	} else if ( command == RecordSeptalCmd ) {
 		m_gateAnalysis->SetRecordSeptalFlag(RecordSeptalCmd->GetNewBoolValue(newValue));
 	//
@@ -75,4 +75,3 @@ void GateAnalysisMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-

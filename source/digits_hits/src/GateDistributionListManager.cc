@@ -36,7 +36,7 @@ void GateDistributionListManager::Init()
 // Private constructor
 GateDistributionListManager::GateDistributionListManager()
   : GateListManager( "distributions", "distributions", true, true )
-{  
+{
   m_messenger = new GateDistributionListMessenger(this);
 }
 
@@ -44,7 +44,7 @@ GateDistributionListManager::GateDistributionListManager()
 
 // Public destructor
 GateDistributionListManager::~GateDistributionListManager()
-{  
+{
   delete m_messenger;
 }
 
@@ -53,6 +53,6 @@ GateDistributionListManager::~GateDistributionListManager()
 
 // Registers a new object-Distribution in the Distribution list
 void GateDistributionListManager::RegisterDistribution(GateVDistribution* newDistribution)
-{   
+{
   theListOfNamedObject.push_back(newDistribution);
 }

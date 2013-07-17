@@ -23,7 +23,7 @@ See GATE/LICENSE.txt for further details
 GateBlurringMessenger::GateBlurringMessenger(GateBlurring* itsResolution)
     : GatePulseProcessorMessenger(itsResolution)
 {
-  
+
   G4String cmdName;
 
 
@@ -41,7 +41,7 @@ GateBlurringMessenger::~GateBlurringMessenger()
 
 
 GateVBlurringLaw* GateBlurringMessenger::CreateBlurringLaw(const G4String& law) {
-	
+
 	if ( law == "inverseSquare" ) {
 		return new GateInverseSquareBlurringLaw(GetBlurring()->GetObjectName() + G4String("/inverseSquare"));
 	} else if ( law == "linear" ) {
@@ -50,12 +50,12 @@ GateVBlurringLaw* GateBlurringMessenger::CreateBlurringLaw(const G4String& law) 
 		G4cerr << "No match for '" << law << "' blurring law." << G4endl;
 		G4cerr << "Candidates are: inverseSquare linear" << G4endl;
 	}
-	
+
 	return NULL;
 }
 
 void GateBlurringMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
   if ( command==lawCmd )
     {
     	GateVBlurringLaw* a_blurringLaw = CreateBlurringLaw(newValue);
@@ -64,7 +64,5 @@ void GateBlurringMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
   	  	}
   	}
   else
-    GatePulseProcessorMessenger::SetNewValue(command,newValue); 
+    GatePulseProcessorMessenger::SetNewValue(command,newValue);
 }
-
-

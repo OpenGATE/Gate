@@ -42,7 +42,7 @@ void GateEmCalculatorActorMessenger::BuildCommands(G4String base)
 {
   G4String guidance;
   G4String bb;
- 
+
   bb = base+"/setEnergy";
   pSetEnergyCmd = new G4UIcmdWithADoubleAndUnit(bb,this);
   guidance = "Set the energy for the calculation.";
@@ -62,7 +62,7 @@ void GateEmCalculatorActorMessenger::SetNewValue(G4UIcommand* command, G4String 
 {
   if(command == pSetEnergyCmd) pEmCalculatorActor->SetEnergy(pSetEnergyCmd->GetNewDoubleValue(param));
   if(command == pSetParticleNameCmd) pEmCalculatorActor->SetParticleName(param);
-  
+
   GateActorMessenger::SetNewValue(command ,param );
 }
 //-----------------------------------------------------------------------------

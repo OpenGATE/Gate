@@ -65,17 +65,17 @@ void GateCoincidenceDigi::Print()
 
 
 
-std::ostream& operator<<(std::ostream& flux, GateCoincidenceDigi& digi)    
+std::ostream& operator<<(std::ostream& flux, GateCoincidenceDigi& digi)
 {
   flux    << "GateCoincidenceDigi("
 	  << digi.pulseVector[0] << G4endl
 	  << digi.pulseVector[1] << G4endl
       	  << ")" << G4endl;
-    
+
   return flux;
 }
 
-std::ofstream& operator<<(std::ofstream& flux, GateCoincidenceDigi* digi)    
+std::ofstream& operator<<(std::ofstream& flux, GateCoincidenceDigi* digi)
 {
   GatePulse pulse;
   for (G4int iP=0; iP<2; iP++) {

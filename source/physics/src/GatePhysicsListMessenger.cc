@@ -21,6 +21,7 @@ GatePhysicsListMessenger::GatePhysicsListMessenger(GatePhysicsList * pl)
 {
   nInit = 0;
   nEMStdOpt = 0;
+  nMuHandler = GateMaterialMuHandler::GetInstance();
 }
 //----------------------------------------------------------------------------------------
 
@@ -50,8 +51,13 @@ GatePhysicsListMessenger::~GatePhysicsListMessenger()
   delete pSetEMin;
   delete pSetEMax;
   delete pSetSplineFlag;
-  delete pAddAtomDeexcitation;
-  delete pAddPhysicsList;
+
+  delete pMuHandlerUsePrecalculatedElements;
+  delete pMuHandlerSetEMin;
+  delete pMuHandlerSetEMax;
+  delete pMuHandlerSetENumber;
+  delete pMuHandlerSetAtomicShellEMin;
+  delete pMuHandlerSetPrecision;
 }
 //----------------------------------------------------------------------------------------
 
@@ -181,17 +187,37 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   pAddPhysicsList->SetGuidance(guidance);
   pAddPhysicsList->SetParameterName("Builder name",false);
 
-  // To set the low edge energy 
-  bb = base+"/SetEnergyRangeMinLimit";
-  pEnergyRangeMinLimitCmd = new G4UIcmdWithADoubleAndUnit(bb,this);  
-  double low = G4ProductionCutsTable::GetProductionCutsTable()->GetLowEdgeEnergy();
-  double high= G4ProductionCutsTable::GetProductionCutsTable()->GetHighEdgeEnergy();
-  G4String guid = "Set the minimum limit of the Energy range. Default are [";
-  guid += G4BestUnit(low,"Energy");
-  guid += " ";
-  guid += G4BestUnit(high, "Energy");
-  guid += "]";
-  pEnergyRangeMinLimitCmd->SetGuidance(guid);  
+  
+  // Mu Handler commands
+  bb = base+"/MuHandler/setElementFolderName";
+  pMuHandlerUsePrecalculatedElements = new G4UIcmdWithAString(bb,this);
+  guidance = "Point the folder where the Mu and Muen files per elements are stored";
+  pMuHandlerUsePrecalculatedElements->SetGuidance(guidance);
+  
+  bb = base+"/MuHandler/setEMin";
+  pMuHandlerSetEMin = new G4UIcmdWithADoubleAndUnit(bb,this);
+  guidance = "Set minimal energy for attenuation and energy-absorption coefficients simulation";
+  pMuHandlerSetEMin->SetGuidance(guidance);
+
+  bb = base+"/MuHandler/setEMax";
+  pMuHandlerSetEMax = new G4UIcmdWithADoubleAndUnit(bb,this);
+  guidance = "Set maximum energy for attenuation and energy-absorption coefficients simulation";
+  pMuHandlerSetEMax->SetGuidance(guidance);
+  
+  bb = base+"/MuHandler/setENumber";
+  pMuHandlerSetENumber = new G4UIcmdWithAnInteger(bb,this);
+  guidance = "Set number of energies for attenuation and energy-absorption coefficients simulation";
+  pMuHandlerSetENumber->SetGuidance(guidance);
+  
+  bb = base+"/MuHandler/setAtomicShellEMin";
+  pMuHandlerSetAtomicShellEMin = new G4UIcmdWithADoubleAndUnit(bb,this);
+  guidance = "Set atomic shell minimal energy";
+  pMuHandlerSetAtomicShellEMin->SetGuidance(guidance);
+  
+  bb = base+"/MuHandler/setPrecision";
+  pMuHandlerSetPrecision = new G4UIcmdWithADouble(bb,this);
+  guidance = "Set precision to be reached in %";
+  pMuHandlerSetPrecision->SetGuidance(guidance);
 }
 //----------------------------------------------------------------------------------------
 
@@ -302,21 +328,35 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
     GateMessage("Physic", 1, "(EM Options) Spline Falg set to "<<flag<<". Spline Flag defaut 1."<<G4endl);
   }
 
-  if (command == pAddAtomDeexcitation) {
-    pPhylist->AddAtomDeexcitation();
-    GateMessage("Physic", 1, "Atom Deexcitation process has been added into the energy loss table manager"<<G4endl);
+  // Mu Handler commands
+  if (command == pMuHandlerUsePrecalculatedElements){
+    nMuHandler->SetElementsFolderName(param);
   }
-  
-  // Command to call G4 Physics List builders 
-  if (command == pAddPhysicsList) {
-    pPhylist->ConstructPhysicsList(param);
+  if(command == pMuHandlerSetEMin){
+    double val = pMuHandlerSetEMin->GetNewDoubleValue(param);
+    nMuHandler->SetEMin(val);
+    GateMessage("Physic", 1, "(MuHandler Options) Min Energy set to "<<G4BestUnit(val,"Energy")<<". MinEnergy defaut Value: 250 eV."<<G4endl);
   }
-  if (command == pEnergyRangeMinLimitCmd) {
-    double val = pEnergyRangeMinLimitCmd->GetNewDoubleValue(param);
-    pPhylist->SetEnergyRangeMinLimit(val);
-    GateMessage("Physic", 1, "Min Energy range set to "<<G4BestUnit(val,"Energy") << G4endl);
+  if(command == pMuHandlerSetEMax){
+    double val = pMuHandlerSetEMax->GetNewDoubleValue(param);
+    nMuHandler->SetEMax(val);
+    GateMessage("Physic", 1, "(MuHandler Options) Max Energy set to "<<G4BestUnit(val,"Energy")<<". MaxEnergy defaut Value: 1 MeV."<<G4endl);
   }
-  
+  if(command == pMuHandlerSetENumber){
+    int nbVal = pMuHandlerSetENumber->GetNewIntValue(param);
+    nMuHandler->SetENumber(nbVal);
+    GateMessage("Physic", 1, "(MuHandler Options) ENumber set to "<<nbVal<<" values. ENumber defaut Value: 25 between 250 eV and 1 MeV (logscale)."<<G4endl);
+  }
+  if(command == pMuHandlerSetAtomicShellEMin){
+    double val = pMuHandlerSetAtomicShellEMin->GetNewDoubleValue(param);
+    nMuHandler->SetAtomicShellEMin(val);
+    GateMessage("Physic", 1, "(MuHandler Options) Min Energy for atomic shell set to "<<G4BestUnit(val,"Energy")<<". MinEnergy defaut Value: 250 eV."<<G4endl);
+  }
+  if(command == pMuHandlerSetPrecision){
+    double val = pMuHandlerSetPrecision->GetNewDoubleValue(param);
+    nMuHandler->SetPrecision(val);
+    GateMessage("Physic", 1, "(MuHandler Options) Precision set to "<<val<<". Precision defaut Value: 0.01"<<G4endl);
+  }
 }
 //----------------------------------------------------------------------------------------
 

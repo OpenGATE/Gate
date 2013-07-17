@@ -82,20 +82,20 @@ GateTrajectory::~GateTrajectory()
 
 void GateTrajectory::ShowTrajectory(std::ostream& os) const
 {
-   os << G4endl << "TrackID =" << fTrackID 
+   os << G4endl << "TrackID =" << fTrackID
         << " : ParentID=" << fParentID << G4endl;
-   os << "Particle name : " << ParticleName 
+   os << "Particle name : " << ParticleName
         << "  Charge : " << PDGCharge << G4endl;
    os << "Original momentum : " <<
         G4BestUnit(momentum,"Energy") << G4endl;
    os << "Vertex : " << G4BestUnit(vertexPosition,"Length")
         << "  Global time : " << G4BestUnit(globalTime,"Time") << G4endl;
-   os << "  Current trajectory has " << positionRecord->size() 
+   os << "  Current trajectory has " << positionRecord->size()
         << " points." << G4endl;
 
    for( size_t i=0 ; i < positionRecord->size() ; i++){
        G4TrajectoryPoint* aTrajectoryPoint = (G4TrajectoryPoint*)((*positionRecord)[i]);
-       os << "Point[" << i << "]" 
+       os << "Point[" << i << "]"
             << " Position= " << aTrajectoryPoint->GetPosition() << G4endl;
    }
 }
@@ -147,7 +147,7 @@ void GateTrajectory::AppendStep(const G4Step* aStep)
    positionRecord->push_back( new G4TrajectoryPoint(aStep->GetPostStepPoint()->
                                  GetPosition() ));
 }
-  
+
 G4ParticleDefinition* GateTrajectory::GetParticleDefinition()
 {
    return (G4ParticleTable::GetParticleTable()->FindParticle(ParticleName));
@@ -167,4 +167,3 @@ void GateTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
   seco->positionRecord->clear();
 
 }
-

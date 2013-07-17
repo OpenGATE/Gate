@@ -10,8 +10,8 @@
 
 
 /*
-  \brief Class GateDoseActor : 
-  \brief 
+  \brief Class GateDoseActor :
+  \brief
 */
 
 #ifndef GATEDOSEACTOR_CC
@@ -53,14 +53,14 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mRBE1AlphaDataFilename = "pleaseSetBetaDataFilename.txt";
 
   pMessenger = new GateDoseActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateDoseActor() -- end"<<G4endl);  
+  GateDebugMessageDec("Actor",4,"GateDoseActor() -- end"<<G4endl);
   emcalc = new G4EmCalculator;
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateDoseActor::~GateDoseActor()  {
   delete pMessenger;
 }
@@ -81,17 +81,17 @@ void GateDoseActor::Construct() {
   EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(false);
   EnableUserSteppingAction(true);
- 
+
   // Check if at least one image is enabled
-  if (!mIsEdepImageEnabled && 
-      !mIsDoseImageEnabled && 
-      !mIsDoseToWaterImageEnabled && 
-      !mIsNumberOfHitsImageEnabled && 
-      !mIsRBE1AlphaImageEnabled && 
-      !mIsRBE1BetaImageEnabled && 
-      !mIsRBE1FactorImageEnabled && 
+  if (!mIsEdepImageEnabled &&
+      !mIsDoseImageEnabled &&
+      !mIsDoseToWaterImageEnabled &&
+      !mIsNumberOfHitsImageEnabled &&
+      !mIsRBE1AlphaImageEnabled &&
+      !mIsRBE1BetaImageEnabled &&
+      !mIsRBE1FactorImageEnabled &&
       !mIsRBE1BioDoseImageEnabled)  {
-    GateError("The DoseActor " << GetObjectName() << " does not have any image enabled ...\n Please select at least one ('enableEdep true' for example)"); 
+    GateError("The DoseActor " << GetObjectName() << " does not have any image enabled ...\n Please select at least one ('enableEdep true' for example)");
   }
 
   // Output Filename
@@ -105,7 +105,7 @@ void GateDoseActor::Construct() {
   mRBE1FactorFilename = G4String(removeExtension(mSaveFilename))+"-RBE1-Factor."+G4String(getExtension(mSaveFilename));
   mRBE1BioDoseFilename = G4String(removeExtension(mSaveFilename))+"-RBE1-BioDose."+G4String(getExtension(mSaveFilename));
 
-  
+
   /*
   // Set origin, take into account the origin of the attached volume (if exist)
   G4VoxelLimits limits;
@@ -118,7 +118,7 @@ void GateDoseActor::Construct() {
   size[1] = max-min;
   mVolume->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, origin, min, max);
   size[2] = max-min;
-  
+
   G4ThreeVector offset;
   offset[0] = size[0]/2.0 - mHalfSize.x();
   offset[1] = size[1]/2.0 - mHalfSize.y();
@@ -129,7 +129,7 @@ void GateDoseActor::Construct() {
   offset[2] = mVolume->GetOrigin().z()+offset[2];
   offset = offset + mPosition;
   */
-  
+
   G4ThreeVector offset = mOrigin;
   mEdepImage.SetOrigin(offset);
   mDoseImage.SetOrigin(offset);
@@ -139,7 +139,7 @@ void GateDoseActor::Construct() {
   mRBE1AlphaImage.SetOrigin(offset);
   mRBE1BetaImage.SetOrigin(offset);
   mRBE1FactorImage.SetOrigin(offset);
-  mRBE1BioDoseImage.SetOrigin(offset);  
+  mRBE1BioDoseImage.SetOrigin(offset);
 
   // Set Overwrite flag
   mEdepImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
@@ -192,10 +192,10 @@ void GateDoseActor::Construct() {
   }
 
   // RBE1
-  mIsRBE1Enabled = 
-    mIsRBE1AlphaImageEnabled || 
-    mIsRBE1BetaImageEnabled || 
-    mIsRBE1FactorImageEnabled || 
+  mIsRBE1Enabled =
+    mIsRBE1AlphaImageEnabled ||
+    mIsRBE1BetaImageEnabled ||
+    mIsRBE1FactorImageEnabled ||
     mIsRBE1BioDoseImageEnabled;
 
   if (mIsRBE1Enabled || mIsRBE1Test1Enabled) {
@@ -239,7 +239,7 @@ void GateDoseActor::Construct() {
   if (mIsRBE1Test1Enabled) mIsRBE1Enabled = false;
 
   // Print information
-  GateMessage("Actor", 1, 
+  GateMessage("Actor", 1,
               "\tDose DoseActor    = '" << GetObjectName() << "'" << G4endl <<
               "\tDose image        = " << mIsDoseImageEnabled << G4endl <<
               "\tDose squared      = " << mIsDoseSquaredImageEnabled << G4endl <<
@@ -252,14 +252,14 @@ void GateDoseActor::Construct() {
               "\tEdep uncertainty  = " << mIsEdepUncertaintyImageEnabled << G4endl <<
               "\tNumber of hit     = " << mIsNumberOfHitsImageEnabled << G4endl <<
               "\t     (last hit)   = " << mIsLastHitEventImageEnabled << G4endl <<
-              "\tRBE1 alpha        = " << mIsRBE1AlphaImageEnabled << G4endl << 
-              "\tRBE1 beta         = " << mIsRBE1BetaImageEnabled << G4endl << 
-              "\tRBE1 factor       = " << mIsRBE1FactorImageEnabled << G4endl << 
-              "\tRBE1 biodose      = " << mIsRBE1BioDoseImageEnabled << G4endl << 
+              "\tRBE1 alpha        = " << mIsRBE1AlphaImageEnabled << G4endl <<
+              "\tRBE1 beta         = " << mIsRBE1BetaImageEnabled << G4endl <<
+              "\tRBE1 factor       = " << mIsRBE1FactorImageEnabled << G4endl <<
+              "\tRBE1 biodose      = " << mIsRBE1BioDoseImageEnabled << G4endl <<
               "\tedepFilename      = " << mEdepFilename << G4endl <<
               "\tdoseFilename      = " << mDoseFilename << G4endl <<
-              "\tRBE1AlphaFilename = " << mRBE1AlphaFilename << G4endl << 
-              "\tRBE1BetaFilename  = " << mRBE1BetaFilename << G4endl << 
+              "\tRBE1AlphaFilename = " << mRBE1AlphaFilename << G4endl <<
+              "\tRBE1BetaFilename  = " << mRBE1BetaFilename << G4endl <<
               "\tNb Hits filename  = " << mNbOfHitsFilename << G4endl);
 
   ResetData();
@@ -272,22 +272,22 @@ void GateDoseActor::Construct() {
 /// Save data
 void GateDoseActor::SaveData() {
   GateVActor::SaveData(); // (not needed because done into GateImageWithStatistic)
-    
+
   if (mIsEdepImageEnabled) mEdepImage.SaveData(mCurrentEvent+1);
   if (mIsDoseImageEnabled) {
     if (mIsDoseNormalisationEnabled)
       mDoseImage.SaveData(mCurrentEvent+1, true);
-    else 
+    else
       mDoseImage.SaveData(mCurrentEvent+1, false);
   }
-  
+
   if (mIsDoseToWaterImageEnabled) {
     if (mIsDoseToWaterNormalisationEnabled)
       mDoseToWaterImage.SaveData(mCurrentEvent+1, true);
-    else 
+    else
       mDoseToWaterImage.SaveData(mCurrentEvent+1, false);
   }
-  
+
   if (mIsLastHitEventImageEnabled) {
     mLastHitEventImage.Fill(-1); // reset
   }
@@ -329,7 +329,7 @@ void GateDoseActor::BeginOfRunAction(const G4Run * r) {
 
 //-----------------------------------------------------------------------------
 // Callback at each event
-void GateDoseActor::BeginOfEventAction(const G4Event * e) { 
+void GateDoseActor::BeginOfEventAction(const G4Event * e) {
   GateVActor::BeginOfEventAction(e);
   mCurrentEvent++;
   GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Event: "<<mCurrentEvent << G4endl);
@@ -358,7 +358,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
   // compute sameEvent
   // sameEvent is false the first time some energy is deposited for each primary particle
-  bool sameEvent=true;  
+  bool sameEvent=true;
   if (mIsLastHitEventImageEnabled) {
     GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
     if (mCurrentEvent != mLastHitEventImage.GetValue(index)) {
@@ -367,7 +367,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     }
   }
 
-  double dose=0.;  
+  double dose=0.;
 
   if (mIsDoseImageEnabled) {
     double density = step->GetPreStepPoint()->GetMaterial()->GetDensity();
@@ -378,24 +378,24 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     // OLD version (correct but not clear)
     // dose = edep/density*1e12/mDoseImage.GetVoxelVolume();
 
-    // NEW version (same results but more clear) 
+    // NEW version (same results but more clear)
     dose = edep/density/mDoseImage.GetVoxelVolume()/gray;
     // ------------------------------------
-    
-    GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose = " 
+
+    GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose = "
 		     << G4BestUnit(dose, "Dose")
-		     << " rho = " 
+		     << " rho = "
 		     << G4BestUnit(density, "Volumic Mass")<<G4endl );
   }
 
   double doseToWater = 0;
-  if (mIsDoseToWaterImageEnabled) {  
-  
+  if (mIsDoseToWaterImageEnabled) {
+
     // to get nuclear inelastic cross-section, see "geant4.9.4.p01/examples/extended/hadronic/Hadr00/"
     // #include "G4HadronicProcessStore.hh"
     // G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
     // store->GetInelasticCrossSectionPerAtom(particle,e,elm);
-  
+
     double cut = DBL_MAX;
     cut=1;
     double density = step->GetPreStepPoint()->GetMaterial()->GetDensity();
@@ -407,7 +407,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     double DEDX=0, DEDX_Water=0;
     //    G4cout<<PartName<<"\t";//G4endl;//"  "<<edep<<"  "<<NonIonizingEdep<<G4endl;
 
-    
+
     // Dose to water: it could be possible to make this process more
     // generic by choosing any material in place of water
 
@@ -428,9 +428,9 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
       doseToWater=edep/density*1e12/mDoseToWaterImage.GetVoxelVolume()*(DEDX_Water/1.)/(DEDX/(density*1.6e-19));
     }
 
-    GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = " 
+    GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = "
 		     << G4BestUnit(doseToWater, "Dose to water")
-		     << " rho = " 
+		     << " rho = "
 		     << G4BestUnit(density, "Volumic Mass")<<G4endl );
   }
 
@@ -442,16 +442,16 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
 
   if (mIsDoseImageEnabled) {
-   
+
     if (mIsDoseUncertaintyImageEnabled || mIsDoseSquaredImageEnabled) {
       if (sameEvent) mDoseImage.AddTempValue(index, dose);
       else mDoseImage.AddValueAndUpdate(index, dose);
     }
     else mDoseImage.AddValue(index, dose);
   }
-  
+
   if (mIsDoseToWaterImageEnabled) {
-   
+
     if (mIsDoseToWaterUncertaintyImageEnabled || mIsDoseToWaterSquaredImageEnabled) {
       if (sameEvent) mDoseToWaterImage.AddTempValue(index, doseToWater);
       else mDoseToWaterImage.AddValueAndUpdate(index, doseToWater);
@@ -466,7 +466,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     }
     else mEdepImage.AddValue(index, edep);
   }
-  
+
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.AddValue(index, weight);
 
 
@@ -500,12 +500,12 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     GetRBE1AlphaBetaFromLet(let, alpha, beta);
 
     /*
-      GateMessage("Actor", 0, "particle = " << particleName 
-      //		<< " mass = " << p->GetPDGMass() 
+      GateMessage("Actor", 0, "particle = " << particleName
+      //		<< " mass = " << p->GetPDGMass()
       //<< " PDGwidth = " << p->GetPDGWidth()
-      //<< " PDGCharge = " << p->GetPDGCharge() 
+      //<< " PDGCharge = " << p->GetPDGCharge()
       << " atom nb = " << p->GetAtomicNumber()
-      << " atom mass = " << p->GetAtomicMass() 
+      << " atom mass = " << p->GetAtomicMass()
       << " lg(um) = " << length/um
       << " edep(keV) =" << edep/keV
       << " let= " << let
@@ -546,9 +546,9 @@ void GateDoseActor::ReadRBE1AlphaBetaFromFile(G4String filenameAlpha, G4String f
   }
   is2.close();
   // Debug
-  for(unsigned int i=0; i<mAlphaLet.size(); i++) 
+  for(unsigned int i=0; i<mAlphaLet.size(); i++)
     GateDebugMessage("Event", 1, i << " = " << mAlphaLet[i] << " " << mAlphaValues[i] << G4endl);
-  for(unsigned int i=0; i<mBetaLet.size(); i++) 
+  for(unsigned int i=0; i<mBetaLet.size(); i++)
     GateDebugMessage("Event", 1, i << " = " << mBetaLet[i] << " " << mBetaValues[i] << G4endl);
 }
 //-----------------------------------------------------------------------------
@@ -617,7 +617,7 @@ void GateDoseActor::ComputeRBE1ImageAndSave() {
       ++pd;
       ++prbe;
     }
-    mRBE1BioDoseImage.SaveData(mCurrentEvent+1); 
+    mRBE1BioDoseImage.SaveData(mCurrentEvent+1);
   }
 
 }

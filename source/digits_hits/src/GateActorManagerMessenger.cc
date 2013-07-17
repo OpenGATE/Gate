@@ -45,14 +45,14 @@ GateActorManagerMessenger::~GateActorManagerMessenger()
 void GateActorManagerMessenger::BuildCommands(G4String base)
 {
   //  G4cout << " GateActorManagerMessenger::BuildCommands " << G4endl;
-  
+
   pActorCommand = new G4UIdirectory("/gate/actor/");
   pActorCommand->SetGuidance("GATE actors control.");
 
   G4String guidance;
-  G4String bb;  
+  G4String bb;
   bb = base+"/addActor";
-  
+
   //  G4cout << " base addActor " << bb << G4endl;
   pAddActor = new GateUIcmdWith2String(bb,this);
   guidance = "Add a new sensor";

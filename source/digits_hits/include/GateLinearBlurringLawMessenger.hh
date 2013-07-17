@@ -18,20 +18,20 @@ See GATE/LICENSE.txt for further details
 class GateLinearBlurringLaw;
 
 class GateLinearBlurringLawMessenger : public GateBlurringLawMessenger {
-	
+
 	public :
 		GateLinearBlurringLawMessenger(GateLinearBlurringLaw* itsBlurringLaw);
 		virtual ~GateLinearBlurringLawMessenger();
-		
+
 		GateLinearBlurringLaw* GetLinearBlurringLaw() const;
-		
+
 		void SetNewValue(G4UIcommand* aCommand, G4String aString);
-		
+
 	private :
 		G4UIcmdWithADouble   *resolutionCmd;
     	G4UIcmdWithADoubleAndUnit   *slopeCmd;
     	G4UIcmdWithADoubleAndUnit   *erefCmd;
-    	
+
 };
 
 #endif

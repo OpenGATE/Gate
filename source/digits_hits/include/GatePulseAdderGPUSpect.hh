@@ -28,9 +28,9 @@ class GatePulseAdderGPUSpect : public GateVPulseProcessor
 
     //! Constructs a new pulse-adder attached to a GateDigitizer
     GatePulseAdderGPUSpect(GatePulseProcessorChain* itsChain,const G4String& itsName);
-  
+
     //! Destructor
-    virtual ~GatePulseAdderGPUSpect();  
+    virtual ~GatePulseAdderGPUSpect();
 
     //! Implementation of the pure virtual method declared by the base class GateClockDependent
     //! print-out the attributes specific of the pulse adder
@@ -44,9 +44,8 @@ class GatePulseAdderGPUSpect : public GateVPulseProcessor
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
 
   private:
-    GatePulseAdderGPUSpectMessenger *m_messenger;     //!< Messenger	      
+    GatePulseAdderGPUSpectMessenger *m_messenger;     //!< Messenger
 };
 
 
 #endif
-

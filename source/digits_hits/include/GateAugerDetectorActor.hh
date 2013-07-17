@@ -31,7 +31,7 @@ typedef std::list<AugerDeposition> AugerDepositions;
 /// \brief Actor displaying nb events/tracks/step
 class GateAugerDetectorActor : public GateVActor
 {
-	public: 
+	public:
 
 		virtual ~GateAugerDetectorActor();
 		void setMaxTOF(G4double tof);
@@ -73,8 +73,8 @@ class GateAugerDetectorActor : public GateVActor
 		GateAugerDetectorActor(G4String name, G4int depth=0);
 
 		G4double GetTotalDepositedEnergy() const;
-		G4ThreeVector GetWeighedBarycenterPosition() const; 
-		G4double GetWeighedBarycenterTime() const; 
+		G4ThreeVector GetWeighedBarycenterPosition() const;
+		G4double GetWeighedBarycenterTime() const;
 
 		TFile* pTfile;
 		TH1D* pProfileHisto;
@@ -96,4 +96,4 @@ MAKE_AUTO_CREATOR_ACTOR(AugerDetectorActor,GateAugerDetectorActor)
 
 
 #endif /* end #define GATEAUGERDETECTORACTOR_HH */
-#endif 
+#endif

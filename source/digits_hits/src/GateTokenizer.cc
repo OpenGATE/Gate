@@ -20,14 +20,14 @@ See GATE/LICENSE.txt for further details
 void GateTokenizer::CleanUpString(G4String& stringToCleanup)
 {
   while (stringToCleanup.length()) {
-    if ( (stringToCleanup.at(0)==' ') || (stringToCleanup.at(0)=='\t') || (stringToCleanup.at(0)=='\n') ) 
+    if ( (stringToCleanup.at(0)==' ') || (stringToCleanup.at(0)=='\t') || (stringToCleanup.at(0)=='\n') )
       stringToCleanup=stringToCleanup.substr(1);
     else
       break;
   }
   while (stringToCleanup.length()) {
     G4String::size_type pos = stringToCleanup.length()-1;
-    if ( (stringToCleanup.at(pos)==' ') || (stringToCleanup.at(pos)=='\t') || (stringToCleanup.at(0)=='\n') ) 
+    if ( (stringToCleanup.at(pos)==' ') || (stringToCleanup.at(pos)=='\t') || (stringToCleanup.at(0)=='\n') )
       stringToCleanup=stringToCleanup.substr(0,pos);
     else
       break;
@@ -60,5 +60,3 @@ GateTokenizer::BrokenString GateTokenizer::BreakString(const G4String& stringToB
   return stringPair;
 }
 //---------------------------------------------------------------------------
-
-

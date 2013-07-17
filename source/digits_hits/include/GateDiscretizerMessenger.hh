@@ -27,25 +27,24 @@ class G4UIcmdWith3VectorAndUnit;
 class GateDiscretizer;
 
 /*! \class  GateDiscretizerMessenger
-    \brief  Messenger for the GateDiscretizer 
+    \brief  Messenger for the GateDiscretizer
 
     - GateDiscretizerMessenger - by dguez@cea.fr
-    
+
     \sa GateDiscretizer, GatePulseProcessorMessenger
-*/      
+*/
 class GateDiscretizerMessenger: public GatePulseProcessorMessenger
 {
   public:
     GateDiscretizerMessenger(GateDiscretizer* itsDiscretizer);
     virtual ~GateDiscretizerMessenger();
-    
+
     inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
 
-    inline GateDiscretizer* GetDiscretizer() 
+    inline GateDiscretizer* GetDiscretizer()
       { return (GateDiscretizer*) GetPulseProcessor(); }
 
   private:
 };
 
 #endif
-

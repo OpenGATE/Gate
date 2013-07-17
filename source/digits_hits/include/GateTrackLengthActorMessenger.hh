@@ -30,16 +30,16 @@ class GateTrackLengthActor;
 
 //-----------------------------------------------------------------------------
 /// \brief Messenger of GateVImageActor
-class GateTrackLengthActorMessenger : public GateActorMessenger 
+class GateTrackLengthActorMessenger : public GateActorMessenger
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   /// Constructor with pointer on the associated sensor
   GateTrackLengthActorMessenger(GateTrackLengthActor * v);
   /// Destructor
   virtual ~GateTrackLengthActorMessenger();
-    
+
   /// Command processing callback
   virtual void SetNewValue(G4UIcommand*, G4String);
   void BuildCommands(G4String base);
@@ -47,7 +47,7 @@ class GateTrackLengthActorMessenger : public GateActorMessenger
 protected:
 
   /// Associated sensor
-  GateTrackLengthActor * pActor; 
+  GateTrackLengthActor * pActor;
 
   /// Command objects
   G4UIcmdWithADoubleAndUnit * pLmaxCmd;

@@ -114,7 +114,7 @@ ENDIF()
 # RTK
 IF (BUILD_GATE_WITH_RTK)
   ExternalProject_Add(
-    rtk 
+    rtk
     STAMP_DIR ${base}/stamp
     DOWNLOAD_DIR ${base}/dl
     INSTALL_DIR ${INSTALL_PREFIX}
@@ -228,5 +228,3 @@ IF (BUILD_GATE_WITH_RTK)
     )
 ENDIF()
 #=========================================================
-
-

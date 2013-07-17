@@ -30,8 +30,8 @@ class G4EmCalculator;
 
 class GateKermaActor : public GateVImageActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
   virtual ~GateKermaActor();

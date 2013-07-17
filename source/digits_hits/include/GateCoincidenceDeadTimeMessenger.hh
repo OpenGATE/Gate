@@ -31,11 +31,11 @@ class GateCoincidenceDeadTimeMessenger: public GateClockDependentMessenger
 public:
   GateCoincidenceDeadTimeMessenger(GateCoincidenceDeadTime* itsDeadTime);
   virtual ~GateCoincidenceDeadTimeMessenger();
-  
+
   inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
-  
+
   inline GateCoincidenceDeadTime* GetDeadTime(){ return (GateCoincidenceDeadTime*) GetClockDependent(); }
-  
+
 private:
   G4UIcmdWithADoubleAndUnit *deadTimeCmd; //!< set the dead time value
   G4UIcmdWithAString   *modeCmd;          //!< set the dead time mode
@@ -45,4 +45,3 @@ private:
 };
 
 #endif
-

@@ -29,17 +29,15 @@ GateReadoutMessenger::GateReadoutMessenger(GateReadout* itsReadout)
 }
 
 
-GateReadoutMessenger::~GateReadoutMessenger() 
+GateReadoutMessenger::~GateReadoutMessenger()
 {
   delete SetDepthCmd;
 }
 
 void GateReadoutMessenger::SetNewValue(G4UIcommand* aCommand, G4String aString)
-{ 
+{
   if( aCommand==SetDepthCmd )
-    { GetReadout()->SetDepth(SetDepthCmd->GetNewIntValue(aString));}   
+    { GetReadout()->SetDepth(SetDepthCmd->GetNewIntValue(aString));}
   else
-    GatePulseProcessorMessenger::SetNewValue(aCommand,aString); 
+    GatePulseProcessorMessenger::SetNewValue(aCommand,aString);
 }
-
-

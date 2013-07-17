@@ -31,14 +31,13 @@ class GateAnalysisMessenger: public GateOutputModuleMessenger
   public:
     GateAnalysisMessenger(GateAnalysis* gateAnalysis);
    ~GateAnalysisMessenger();
-    
+
     virtual void SetNewValue(G4UIcommand*, G4String);
-    
+
   protected:
     GateAnalysis*            m_gateAnalysis;
     G4UIcmdWithAString*      SetSeptalVolumeNameCmd; // HDS : Tells in which volume to record septal penetration
-	G4UIcmdWithABool*		 RecordSeptalCmd; // HDS: Flag to activate the recording of septal penetration in root trees
+    G4UIcmdWithABool*        RecordSeptalCmd; // HDS: Flag to activate the recording of septal penetration in root trees
 };
 
 #endif
-

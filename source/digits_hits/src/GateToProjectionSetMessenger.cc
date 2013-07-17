@@ -28,7 +28,7 @@
 GateToProjectionSetMessenger::GateToProjectionSetMessenger(GateToProjectionSet* gateToProjectionSet)
   : GateOutputModuleMessenger(gateToProjectionSet)
   , m_gateToProjectionSet(gateToProjectionSet)
-{ 
+{
   G4String cmdName;
 
   cmdName = GetDirectoryName()+"setFileName";
@@ -72,12 +72,12 @@ GateToProjectionSetMessenger::GateToProjectionSetMessenger(GateToProjectionSet* 
   SetInputDataCmd = new G4UIcmdWithAString(cmdName,this);
   SetInputDataCmd->SetGuidance("Set the name of the input data to store into the sinogram");
   SetInputDataCmd->SetParameterName("Name",false);
-  
+
   cmdName = GetDirectoryName()+"addInputDataName";
   AddInputDataCmd = new G4UIcmdWithAString(cmdName,this);
   AddInputDataCmd->SetGuidance("Add the name of the input data to store into the sinogram");
   AddInputDataCmd->SetParameterName("Name",false);
-  
+
 }
 
 
@@ -102,27 +102,27 @@ GateToProjectionSetMessenger::~GateToProjectionSetMessenger()
 void GateToProjectionSetMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
   if( command==projectionPlaneCmd )
-    { m_gateToProjectionSet->SetProjectionPlane(newValue); }   
+    { m_gateToProjectionSet->SetProjectionPlane(newValue); }
 
-  else if (command == SetFileNameCmd) 
+  else if (command == SetFileNameCmd)
     { m_gateToProjectionSet->SetOutputFileName(newValue); }
 
   else if( command==PixelSizeXCmd )
-    { m_gateToProjectionSet->SetPixelSizeX(PixelSizeXCmd->GetNewDoubleValue(newValue)); }   
+    { m_gateToProjectionSet->SetPixelSizeX(PixelSizeXCmd->GetNewDoubleValue(newValue)); }
 
   else if( command==PixelSizeYCmd )
-    { m_gateToProjectionSet->SetPixelSizeY(PixelSizeYCmd->GetNewDoubleValue(newValue)); }   
+    { m_gateToProjectionSet->SetPixelSizeY(PixelSizeYCmd->GetNewDoubleValue(newValue)); }
 
   else if( command==PixelNumberXCmd )
-    { m_gateToProjectionSet->SetPixelNbX(PixelNumberXCmd->GetNewIntValue(newValue)); }   
+    { m_gateToProjectionSet->SetPixelNbX(PixelNumberXCmd->GetNewIntValue(newValue)); }
 
   else if( command==PixelNumberYCmd )
-    { m_gateToProjectionSet->SetPixelNbY(PixelNumberYCmd->GetNewIntValue(newValue)); }   
+    { m_gateToProjectionSet->SetPixelNbY(PixelNumberYCmd->GetNewIntValue(newValue)); }
 
   else if (command == SetInputDataCmd)
     { m_gateToProjectionSet->SetInputDataName(newValue); }
-    
-  else if (command == AddInputDataCmd) 
+
+  else if (command == AddInputDataCmd)
     { m_gateToProjectionSet->AddInputDataName(newValue); }
 
   /*
@@ -141,7 +141,6 @@ void GateToProjectionSetMessenger::SetNewValue(G4UIcommand* command,G4String new
     { m_gateToProjectionSet->SetDisableToProjectionSetAndInterfile(); }
 
   // Other commands are passed to the mother (but normally nothing !)
-  else 
+  else
     { GateOutputModuleMessenger::SetNewValue(command,newValue); }
 }
-

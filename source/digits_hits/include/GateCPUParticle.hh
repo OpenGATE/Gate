@@ -1,4 +1,3 @@
-
 /*----------------------
   GATE version name: gate_v6
 
@@ -26,7 +25,7 @@ struct GateCPUParticle {
     int            *eventID; // event ID of the particle
     int            *trackID; // track ID of the particle
     int            *type; // gamma = 0 ; e- = 1
-		float          *hole;
+    float          *hole;
     unsigned int    size;
 };
 

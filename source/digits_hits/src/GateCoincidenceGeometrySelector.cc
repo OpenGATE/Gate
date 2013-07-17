@@ -13,7 +13,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UnitsTable.hh"
 #include "GateCoincidenceGeometrySelectorMessenger.hh"
 #include "GateTools.hh"
-#include "GateVolumeID.hh" 
+#include "GateVolumeID.hh"
 #include "GateOutputVolumeID.hh"
 #include "GateVVolume.hh"
 #include "GateDetectorConstruction.hh"
@@ -26,22 +26,22 @@ See GATE/LICENSE.txt for further details
 
 
 GateCoincidenceGeometrySelector::GateCoincidenceGeometrySelector(GateCoincidencePulseProcessorChain* itsChain,
-			   const G4String& itsName) 
+			   const G4String& itsName)
   : GateVCoincidencePulseProcessor(itsChain,itsName)
 {
   m_maxS = -1;
   m_maxDeltaZ = -1;
 
   m_messenger = new GateCoincidenceGeometrySelectorMessenger(this);
-}  
+}
 
 
 
 
-GateCoincidenceGeometrySelector::~GateCoincidenceGeometrySelector() 
+GateCoincidenceGeometrySelector::~GateCoincidenceGeometrySelector()
 {
   delete m_messenger;
-}  
+}
 
 
 
@@ -53,7 +53,7 @@ GateCoincidencePulse* GateCoincidenceGeometrySelector::ProcessPulse(GateCoincide
       	G4cout << "[GateCoincidenceGeometrySelector::ProcessOnePulse]: input pulse was null -> nothing to do\n\n";
       return 0;
   }
-  
+
   G4double s;
   if (inputPulse->size() != 2) {
       if (nVerboseLevel>1)
@@ -69,13 +69,13 @@ GateCoincidencePulse* GateCoincidenceGeometrySelector::ProcessPulse(GateCoincide
 
   G4double denom = (globalPos1.y()-globalPos2.y()) * (globalPos1.y()-globalPos2.y()) +
                    (globalPos2.x()-globalPos1.x()) * (globalPos2.x()-globalPos1.x());
-  
+
   if (denom!=0.) {
     denom = sqrt(denom);
 
     s = ( globalPos1.x() * (globalPos2.y()-globalPos1.y()) +
-	  globalPos1.y() * (globalPos1.x()-globalPos2.x())  ) 
-      	/ denom; 
+	  globalPos1.y() * (globalPos1.x()-globalPos2.x())  )
+      	/ denom;
   } else {
     s = 0.;
   }
@@ -102,6 +102,6 @@ GateCoincidencePulse* GateCoincidenceGeometrySelector::ProcessPulse(GateCoincide
 void GateCoincidenceGeometrySelector::DescribeMyself(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "GeometrySelector: "
-      	 << "SMax      : "<<G4BestUnit(m_maxS,"Length") 
+      	 << "SMax      : "<<G4BestUnit(m_maxS,"Length")
       	 << "DeltaZMax : "<<G4BestUnit(m_maxDeltaZ,"Length") << G4endl;
 }

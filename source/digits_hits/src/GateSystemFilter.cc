@@ -14,27 +14,27 @@ See GATE/LICENSE.txt for further details
 #include "GateSystemFilterMessenger.hh"
 
 GateSystemFilter::GateSystemFilter(GatePulseProcessorChain* itsChain,
-      	      	      	       const G4String& itsName) 
+      	      	      	       const G4String& itsName)
    : GateVPulseProcessor(itsChain,itsName), m_systemName("")
 {
   m_messenger = new GateSystemFilterMessenger(this);
-}  
+}
 
 
-GateSystemFilter::~GateSystemFilter() 
+GateSystemFilter::~GateSystemFilter()
 {
   delete m_messenger;
-}  
+}
 
 //=============================================================================
 //=============================================================================
 GatePulseList* GateSystemFilter::ProcessPulseList(const GatePulseList* inputPulseList)
 {
    GatePulseList* outputPulseList = new GatePulseList(GetObjectName());
-   
+
    GatePulseConstIterator iter;
    for (iter = inputPulseList->begin() ; iter != inputPulseList->end() ; ++iter){
-      
+
       if (nVerboseLevel>1)
       {
       G4cout<<"[GateSystemFilter::ProcessPulseList]\n This pulse is from "<<m_systemName<<"' system', \n"<<"Its volumeID is : "
@@ -44,14 +44,14 @@ GatePulseList* GateSystemFilter::ProcessPulseList(const GatePulseList* inputPuls
       G4String pulseSystemName = (*iter)->GetVolumeID().GetVolume(1)->GetName();
       size_t n = pulseSystemName.size();
       pulseSystemName.erase(n-5,5);
-      
+
       if (pulseSystemName.compare(m_systemName) == 0)
       {
-	 GatePulse* outputPulse = new GatePulse(*iter); 
+	 GatePulse* outputPulse = new GatePulse(*iter);
 	 outputPulseList->push_back(outputPulse);
       }
    }
-   
+
    return outputPulseList;
 }
 
@@ -61,14 +61,14 @@ void GateSystemFilter::SetSystemToItsChain()
 {
    GateDigitizer* digitizer = GateDigitizer::GetInstance();
    GateSystemList* systemList = digitizer->GetSystemList();
-   
+
    GateSystemConstIterator iter;
    for(iter=systemList->begin(); iter!=systemList->end(); iter++)
    {
       if(m_systemName.compare((*iter)->GetOwnName()) == 0)
       {
          this->GetChain()->SetSystem(*iter);
-         
+
          if(this->GetChain()->GetOutputName() == "Singles")
             for (size_t i=0; i<digitizer->GetCoinSorterList().size() ; ++i)
          {

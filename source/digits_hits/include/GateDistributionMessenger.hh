@@ -28,7 +28,7 @@ class GateDistributionMessenger: public GateNamedObjectMessenger
     virtual ~GateDistributionMessenger();
     inline GateVDistribution* GetDistribution() const
            {return (GateVDistribution*)(GetNamedObject());}
-    
+
     void SetNewValue(G4UIcommand* aCommand, G4String aString);
     void SetUnitX(const G4String& unitX);
     void SetUnitY(const G4String& unitY);
@@ -48,4 +48,3 @@ class GateDistributionMessenger: public GateNamedObjectMessenger
 };
 
 #endif
-
