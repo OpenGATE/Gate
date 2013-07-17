@@ -185,9 +185,17 @@ int main( int argc, char* argv[] )
         { "param", required_argument, 0, 'a' }
       };
 
-      // Getting the option
-      c = getopt_long( argc, argv, "ha:", longOptions, &optionIndex );
-
+      // If the program was started by double-clicking on the application bundle on Mac OS X
+      // rather than from the command-line, enable Qt and don't try to process other options;
+      // argv[1] contains a process serial number in the form -psn_0_1234567
+      if( argc > 1 && memcmp( argv[1], "-psn_", 5 ) == 0 ) {
+        argc = 1;
+        isQt = 1;
+        break;
+      } else {
+        // Getting the option
+        c = getopt_long( argc, argv, "ha:", longOptions, &optionIndex );
+      }
       // Exit the loop if -1
       if( c == -1 ) break;
 
