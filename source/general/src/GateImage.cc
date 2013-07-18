@@ -1048,6 +1048,13 @@ void GateImage::ReadMHD(G4String filename) {
   resolution = G4ThreeVector(mhd->size[0], mhd->size[1], mhd->size[2]);
   voxelSize = G4ThreeVector(mhd->spacing[0], mhd->spacing[1], mhd->spacing[2]);
   origin = G4ThreeVector(mhd->origin[0], mhd->origin[1], mhd->origin[2]);
+
+  // We need to shift to half a pixel to be coherent with Gate
+  // coordinates system. 
+  origin[0] -= voxelSize[0]/2.0;
+  origin[1] -= voxelSize[1]/2.0;
+  origin[2] -= voxelSize[2]/2.0;
+
   transformMatrix.resize(9);
   for(int i=0; i<9; i++) transformMatrix[i] = mhd->transform[i];
 

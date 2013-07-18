@@ -94,16 +94,6 @@ void GateVImageVolume::SetIsoCenter(const G4ThreeVector & i)
 
 
 //--------------------------------------------------------------------
-void GateVImageVolume::SetOriginByUser(const G4ThreeVector & i) 
-{
-  origin = i;
-  mOriginIsSetByUser = true;
-  GateMessage("Volume",5,"Origin = " << origin << G4endl);
-}
-//--------------------------------------------------------------------
-
-
-//--------------------------------------------------------------------
 void GateVImageVolume::UpdatePositionWithIsoCenter() 
 {
   if (mIsoCenterIsSetByUser || mOriginIsSetByUser) {
@@ -115,9 +105,12 @@ void GateVImageVolume::UpdatePositionWithIsoCenter()
 
     const G4ThreeVector & tcurrent = mInitialTranslation;//GetVolumePlacement()->GetTranslation();
 
-    // Get the origin
+    // Get the origin // FIXME unuseful now (because set by LoadImage)
+    // if (!mOriginIsSetByUser) {
+    //   origin = GetImage()->GetOrigin();
+    // }
     if (!mOriginIsSetByUser) {
-      origin = GetImage()->GetOrigin();
+      GateError("mOriginIsSetByUser MUST be true here");
     }
  
     GateMessage("Volume",3,"Current T = " << tcurrent << G4endl);
@@ -286,7 +279,8 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
   }
 
   // Get origin from the image
-  origin = pImage->GetOrigin();
+  //origin = pImage->GetOrigin();
+  SetOriginByUser(pImage->GetOrigin());
 
   // Get the transformation matrix from the image
   for(uint i=0; i<9; i++) {
@@ -294,6 +288,7 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
   }
 
   GateMessage("Volume",4,"voxel size" << pImage->GetVoxelSize() << G4endl);
+  GateMessage("Volume",4,"origin" << origin << G4endl);
   GateMessageDec("Volume",4,"End GateVImageVolume::LoadImage("<<mImageFilename<<")" << G4endl);
 }
 //--------------------------------------------------------------------

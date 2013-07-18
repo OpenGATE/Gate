@@ -200,10 +200,11 @@ public :
   
   virtual G4bool CheckOutputExistence();
   
- // virtual void PropagateRegionToChild(){}
+  // virtual void PropagateRegionToChild(){}
 
-  /// Returns origin
-  inline G4ThreeVector GetOrigin()     const { return origin; }
+  // Origin (coordinate of the corner)
+  void SetOriginByUser(const G4ThreeVector & i);
+  inline G4ThreeVector GetOrigin() const { return origin; }
 
 protected :
 
@@ -281,6 +282,7 @@ protected :
 
   // Some volume can have an origin, store it.
   G4ThreeVector origin;
+  G4bool        mOriginIsSetByUser;
 
 private :
   
