@@ -126,15 +126,29 @@
 /gate/source/mybeam/gps/hist/point .129    0.330443
 /gate/source/mybeam/gps/hist/point .130   0.0986302
 /gate/source/mybeam/gps/hist/point .131           0
-/gate/source/mybeam/gps/pos/halfx 8 mm
-/gate/source/mybeam/gps/pos/halfy 8 mm
-/gate/source/mybeam/gps/pos/rot1 1 0 0
-/gate/source/mybeam/gps/pos/rot2 0 1 0
-/gate/source/mybeam/gps/pos/centre 0 0 1060 mm
-#/gate/source/mybeam/gps/pos/centre 0 0 1060 mm
-#/gate/source/mybeam/gps/pos/type Point
-/gate/source/mybeam/gps/pos/type Plane
-/gate/source/mybeam/gps/pos/shape Rectangle
-/gate/source/mybeam/gps/ang/type focused
+
+### Point source with isotropic angular distribution
+#/gate/source/mybeam/gps/pos/type   Point
+#/gate/source/mybeam/gps/pos/centre 0 0 1000 mm
+#/gate/source/mybeam/gps/ang/type   iso
+
+### Planar source with isotropic position on the plane and focused emission
+/gate/source/mybeam/gps/pos/type       Plane
+/gate/source/mybeam/gps/pos/halfx      8 mm
+/gate/source/mybeam/gps/pos/halfy      8 mm
+/gate/source/mybeam/gps/pos/shape      Rectangle
+/gate/source/mybeam/gps/ang/type       focused
 /gate/source/mybeam/gps/ang/focuspoint 0 0 1000 mm
+/gate/source/mybeam/gps/pos/rot1       1 0 0
+/gate/source/mybeam/gps/pos/rot2       0 1 0
+/gate/source/mybeam/gps/pos/centre     0 0 1060 mm
+
+### Planar source with position depending of an image and focused emission
+#/gate/source/mybeam/gps/pos/type       UserFluenceImage
+#/gate/source/mybeam/gps/pos/setImage   data/fluence.mha
+#/gate/source/mybeam/gps/ang/type       focused
+#/gate/source/mybeam/gps/ang/focuspoint 0 0 1000 mm
+#/gate/source/mybeam/gps/pos/rot1       1 0 0
+#/gate/source/mybeam/gps/pos/rot2       0 1 0
+#/gate/source/mybeam/gps/pos/centre     0 0 1060 mm
 
