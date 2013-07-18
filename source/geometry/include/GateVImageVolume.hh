@@ -94,8 +94,6 @@ public:
   //-----------------------------------------------------------------------------
   void SetIsoCenter(const G4ThreeVector & i);
   G4ThreeVector GetIsoCenter() const { return mIsoCenter; }
-  void SetOriginByUser(const G4ThreeVector & i);
-  //G4ThreeVector GetOrigin() const { return mOrigin; }
   //-----------------------------------------------------------------------------
   
   //-----------------------------------------------------------------------------
@@ -213,8 +211,6 @@ protected:
   /// IsoCenter
   G4ThreeVector mIsoCenter;
   G4bool        mIsoCenterIsSetByUser;
-  //G4ThreeVector mOrigin;
-  G4bool        mOriginIsSetByUser;
   G4ThreeVector mInitialTranslation;
   std::vector<double> mTransformMatrix;
   //-----------------------------------------------------------------------------

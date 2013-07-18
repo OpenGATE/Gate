@@ -20,6 +20,7 @@
 #include "G4RegionStore.hh"
 #include "G4VisAttributes.hh"
 #include "G4Region.hh"
+#include <G4VoxelLimits.hh>
 
 #include "GateVolumeMessenger.hh"
 #include "GateBox.hh"
@@ -154,6 +155,16 @@ GateVVolume::~GateVVolume()
 }
 //----------------------------------------------------------------------------------------
 
+
+//--------------------------------------------------------------------
+void GateVVolume::SetOriginByUser(const G4ThreeVector & i) 
+{
+  origin = i;
+  mOriginIsSetByUser = true;
+  GateMessage("Volume",5,"Origin = " << origin << G4endl);
+}
+//--------------------------------------------------------------------
+
 //----------------------------------------------------------------------------------------
 // Construct the world volume
 G4VPhysicalVolume* GateVVolume::Construct(G4bool flagUpdateOnly)
@@ -217,6 +228,23 @@ void GateVVolume::ConstructGeometry(G4LogicalVolume* mother_log, G4bool flagUpda
 
   GateMessage("Geometry", 7, " GateVVolume::ConstructGeometry -- end ; flagUpdateOnly = " << flagUpdateOnly << G4endl;);
 
+  
+  // set the 'origin'. This is useful for GateVImageActor that need
+  // the coordinate of the corner to set the correct origin of the
+  // output image.
+  if (!mOriginIsSetByUser) {
+    G4VoxelLimits limits;
+    G4double min, max;
+    G4AffineTransform at;
+    double size[3];
+    GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, min, max);
+    size[0] = max-min;
+    GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, min, max);
+    size[1] = max-min;
+    GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, min, max);
+    size[2] = max-min;
+    origin = G4ThreeVector(-size[0]/2.0, -size[1]/2.0, -size[2]/2.0); 
+  }
 }
 //----------------------------------------------------------------------------------------
 
