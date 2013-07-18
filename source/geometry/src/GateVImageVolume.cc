@@ -9,7 +9,7 @@
   ----------------------*/
 
 
-/*! \file 
+/*! \file
   \brief Implementation of GateVImageVolume
 */
 
@@ -55,15 +55,15 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
   mImageMaterialsFromHounsfieldTableDone = false;
   mTransformMatrix.resize(9);
   GateMessageDec("Volume",5,"End GateVImageVolume("<<name<<")"<<G4endl);
-  
-  // do not display all voxels, only bounding box 
+
+  // do not display all voxels, only bounding box
   pOwnVisAtt->SetDaughtersInvisible(true);
 }
 //--------------------------------------------------------------------
 
 
 //--------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateVImageVolume::~GateVImageVolume()
 {
   GateMessageInc("Volume",5,"Begin ~GateVImageVolume()"<<G4endl);
@@ -84,7 +84,7 @@ void GateVImageVolume::EnableBoundingBoxOnly(bool b) {
 
 
 //--------------------------------------------------------------------
-void GateVImageVolume::SetIsoCenter(const G4ThreeVector & i) 
+void GateVImageVolume::SetIsoCenter(const G4ThreeVector & i)
 {
   mIsoCenter = i;
   mIsoCenterIsSetByUser = true;
@@ -94,7 +94,7 @@ void GateVImageVolume::SetIsoCenter(const G4ThreeVector & i)
 
 
 //--------------------------------------------------------------------
-void GateVImageVolume::UpdatePositionWithIsoCenter() 
+void GateVImageVolume::UpdatePositionWithIsoCenter()
 {
   if (mIsoCenterIsSetByUser || mOriginIsSetByUser) {
     static int n=0;
@@ -112,16 +112,16 @@ void GateVImageVolume::UpdatePositionWithIsoCenter()
     if (!mOriginIsSetByUser) {
       GateError("mOriginIsSetByUser MUST be true here");
     }
- 
+
     GateMessage("Volume",3,"Current T = " << tcurrent << G4endl);
     GateMessage("Volume",3,"Isocenter = " << GetIsoCenter() << G4endl);
     GateMessage("Volume",3,"Origin = " << GetOrigin() << G4endl);
     GateMessage("Volume",3,"Half = " << GetHalfSize() << G4endl);
-    GateMessage("Volume",3,"TransformMatrix = " 
-                << mTransformMatrix[0] << " " << mTransformMatrix[1] << " " 
-                << mTransformMatrix[2] << " " << mTransformMatrix[3] << " " 
-                << mTransformMatrix[4] << " " << mTransformMatrix[5] << " " 
-                << mTransformMatrix[6] << " " << mTransformMatrix[7] << " " 
+    GateMessage("Volume",3,"TransformMatrix = "
+                << mTransformMatrix[0] << " " << mTransformMatrix[1] << " "
+                << mTransformMatrix[2] << " " << mTransformMatrix[3] << " "
+                << mTransformMatrix[4] << " " << mTransformMatrix[5] << " "
+                << mTransformMatrix[6] << " " << mTransformMatrix[7] << " "
                 << mTransformMatrix[8] << " " << G4endl);
 
     // Take transformationMatrix into account
@@ -159,7 +159,7 @@ void GateVImageVolume::UpdatePositionWithIsoCenter()
 G4double GateVImageVolume::GetHalfDimension(size_t axis)
 {
   if(axis==0) return mHalfSize.x();
-  else if (axis==1) return mHalfSize.y(); 
+  else if (axis==1) return mHalfSize.y();
   else if (axis==2) return mHalfSize.z();
   GateError("Volumes have 3 dimensions! (0,1,2)");
   return -1.;
@@ -169,30 +169,30 @@ G4double GateVImageVolume::GetHalfDimension(size_t axis)
 
 //--------------------------------------------------------------------
 /// Sets the name of the Image file
-void GateVImageVolume::SetImageFilename(const G4String& name) 
+void GateVImageVolume::SetImageFilename(const G4String& name)
 {
-  mImageFilename = name; 
+  mImageFilename = name;
   if (mLabelToImageMaterialTableFilename.length()>0) ImageAndTableFilenamesOK();
 }
 //--------------------------------------------------------------------
 
 
 //--------------------------------------------------------------------
-/// Sets the name of the LabelToMaterial file 
+/// Sets the name of the LabelToMaterial file
 void GateVImageVolume::SetLabelToMaterialTableFilename(const G4String& name)
-{ 
+{
   if (mHounsfieldToImageMaterialTableFilename != "none") {
     GateError("Please set SetHUToMaterialFile or SetLabelToMaterialFile, not both. Abort." << G4endl);
   }
-  mLabelToImageMaterialTableFilename = name; 
+  mLabelToImageMaterialTableFilename = name;
   if (mImageFilename.length()>0) ImageAndTableFilenamesOK();
 }
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-/// Sets the name of the LabelToMaterial file 
+/// Sets the name of the LabelToMaterial file
 void GateVImageVolume::SetHUToMaterialTableFilename(const G4String& name)
-{ 
+{
   if (mLabelToImageMaterialTableFilename != "none") {
     GateError("Please set SetHUToMaterialFile or SetLabelToMaterialFile, not both. Abort." << G4endl);
   }
@@ -217,13 +217,13 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
 				  G4ThreeVector(20*cm,20*cm,20*cm));
     tmp->Allocate();
     int i,j,k;
-    for (i=0;i<32;i++) 
-      for (j=0;j<32;j++) 
-	for (k=0;k<32;k++) 
+    for (i=0;i<32;i++)
+      for (j=0;j<32;j++)
+	for (k=0;k<32;k++)
 	  tmp->SetValue(i,j,k,0);
-    for (i=8;i<24;i++) 
-      for (j=8;j<24;j++) 
-	for (k=8;k<24;k++) 
+    for (i=8;i<24;i++)
+      for (j=8;j<24;j++)
+	for (k=8;k<24;k++)
 	  tmp->SetValue(i,j,k,1);
   }
   else if (mImageFilename == "test2" ) {
@@ -233,13 +233,13 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
 				  G4ThreeVector(20*cm,20*cm,20*cm));
     tmp->Allocate();
     int i,j,k;
-    for (i=0;i<32;i++) 
-      for (j=0;j<32;j++) 
-	for (k=0;k<32;k++) 
+    for (i=0;i<32;i++)
+      for (j=0;j<32;j++)
+	for (k=0;k<32;k++)
 	  tmp->SetValue(i,j,k,0);
-    for (i=0;i<32;i++) 
-      for (j=0;j<16;j++) 
-	for (k=0;k<32;k++) 
+    for (i=0;i<32;i++)
+      for (j=0;j<16;j++)
+	for (k=0;k<32;k++)
 	  tmp->SetValue(i,j,k,1);
   }
   else {
@@ -255,7 +255,7 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
   if (add1VoxelMargin) {
     // The image is copied with a margin of 1 voxel in all directions
     pImage = new ImageType;
-    
+
     G4ThreeVector res ( tmp->GetResolution().x() + 2,
 			tmp->GetResolution().y() + 2,
 			tmp->GetResolution().z() + 2);
@@ -266,9 +266,9 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
     pImage->SetOutsideValue(  tmp->GetMinValue() - 1 );
     pImage->Fill(pImage->GetOutsideValue() );
     int i,j,k;
-    for (k=0;k<res.z()-2;k++) 
-      for (j=0;j<res.y()-2;j++) 
-	for (i=0;i<res.x()-2;i++) 
+    for (k=0;k<res.z()-2;k++)
+      for (j=0;j<res.y()-2;j++)
+	for (i=0;i<res.x()-2;i++)
 	  pImage->SetValue(i+1,j+1,k+1,tmp->GetValue(i,j,k));
 
     delete tmp;
@@ -294,12 +294,12 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-/// Loads the LabelToMaterial file 
+/// Loads the LabelToMaterial file
 void GateVImageVolume::LoadImageMaterialsTable()
 {
   if (mLoadImageMaterialsFromHounsfieldTable) LoadImageMaterialsFromHounsfieldTable();
   else LoadImageMaterialsFromLabelTable();
-  GateMessage("Volume", 0, "Number of different materials in the image " 
+  GateMessage("Volume", 0, "Number of different materials in the image "
               << mImageFilename << " : " << mLabelToMaterialName.size() << G4endl);
 }
 //--------------------------------------------------------------------
@@ -307,8 +307,8 @@ void GateVImageVolume::LoadImageMaterialsTable()
 
 //--------------------------------------------------------------------
 void GateVImageVolume::SetLabeledImageFilename(G4String filename) {
-  mHLabelImageFilename = filename; 
-  mWriteHLabelImage = true; 
+  mHLabelImageFilename = filename;
+  mWriteHLabelImage = true;
   if (mImageMaterialsFromHounsfieldTableDone) DumpHLabelImage();
 }
 //--------------------------------------------------------------------
@@ -345,7 +345,7 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
   }
 //  if (mHounsfieldMaterialTable.GetNumberOfMaterials() == 0) {
   if (mHounsfieldMaterialTable.GetNumberOfMaterials() == 1 ) {//there is a default mat = worldDefaultAir
-    GateError("No Hounsfield material defined in the file " 
+    GateError("No Hounsfield material defined in the file "
 	      << mHounsfieldToImageMaterialTableFilename << ". Abort" << G4endl);
   }
 
@@ -358,13 +358,13 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
   while (iter != pImage->end()) {
     double label = mHounsfieldMaterialTable.GetLabelFromH(*iter);
     if (label<0) {
-      GateError(" I find H=" << *iter 
-		<< " in the image, while Hounsfield range start at " 
+      GateError(" I find H=" << *iter
+		<< " in the image, while Hounsfield range start at "
 		<< mHounsfieldMaterialTable.GetH1Vector()[0] << G4endl);
     }
     if (label>=mHounsfieldMaterialTable.GetNumberOfMaterials()) {
-      GateError(" I find H=" << *iter 
-		<< " in the image, while Hounsfield range stop at " 
+      GateError(" I find H=" << *iter
+		<< " in the image, while Hounsfield range stop at "
 		<< mHounsfieldMaterialTable.GetH2Vector()[mHounsfieldMaterialTable.GetH2Vector().size()-1]
 		<< G4endl);
     }
@@ -372,7 +372,7 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
     (*iter) = label;
     ++iter;
   }
-  
+
   // Debug
   // for(uint i=0; i<mHounsfieldMaterialTable.GetH1Vector().size(); i++) {
 //     double h = mHounsfieldMaterialTable.GetH1Vector()[i];
@@ -394,7 +394,7 @@ void GateVImageVolume::DumpHLabelImage() {
     output.SetResolutionAndVoxelSize(pImage->GetResolution(), pImage->GetVoxelSize());
     output.SetOrigin(pImage->GetOrigin());
     output.Allocate();
-   
+
    //  GateHounsfieldMaterialTable::LabelToMaterialNameType lab2mat;
 //     mHounsfieldMaterialTable.MapLabelToMaterial(lab2mat);
 
@@ -404,7 +404,7 @@ void GateVImageVolume::DumpHLabelImage() {
     po = output.begin();
     while (pi != pImage->end()) {
       if (1) { // HU mean or d mean or label
-	// G4Material * mat = 
+	// G4Material * mat =
 	// 	  GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(lab2mat[*pi]);
 	// 	GateDebugMessage("Volume", 2, "lab " << *pi << " = " << mat->GetName() << G4endl);
 	// 	po = mat->GetDensity;
@@ -415,7 +415,7 @@ void GateVImageVolume::DumpHLabelImage() {
 	++pi;
       }
     }
-    
+
     // Write image
     // DD(mHLabelImageFilename);
     output.Write(mHLabelImageFilename);
@@ -427,7 +427,7 @@ void GateVImageVolume::DumpHLabelImage() {
 //--------------------------------------------------------------------
 void GateVImageVolume::LoadImageMaterialsFromLabelTable()
 {
-  // Never call 
+  // Never call
   GateError("GateVImageVolume::LoadImageMaterialsFromLabelTable : disabled! " << G4endl);
 
   // ------------------------------------
@@ -441,16 +441,16 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable()
     skipComment(is);
     int label;
     if (is) {
-      is >> label; 
+      is >> label;
       // Verify that this label is not already mapped
-      LabelToMaterialNameType::iterator lit = mLabelToMaterialName.find(label) ;     
+      LabelToMaterialNameType::iterator lit = mLabelToMaterialName.find(label) ;
       G4String materialName;
       if (is) {
-	is >> materialName; 
-	
+	is >> materialName;
+
 	if (lit != mLabelToMaterialName.end()) {
 	  GateMessage("Volume",4,"*** WARNING *** Label already in table : Old value replaced "<<G4endl);
-	  (*lit).second = materialName; 
+	  (*lit).second = materialName;
 	  continue;
 	}
 	else {
@@ -459,14 +459,14 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable()
       }
     }
   } // end while
-  
+
   GateMessage("Volume",5,"GateVImageVolume -- Label \tMaterial" << G4endl);
   LabelToMaterialNameType::iterator lit;
   for (lit=mLabelToMaterialName.begin(); lit!=mLabelToMaterialName.end(); ++lit) {
     GateMessage("Volume",6,""<<(*lit).first << " \t" << (*lit).second << G4endl);
-    
+
   }
-  
+
   GateMessageDec("Volume",5,"End GateVImageVolume::LoadLabelToMaterialTable("
 		 <<mLabelToImageMaterialTableFilename<<")" << G4endl);
 }
@@ -480,20 +480,20 @@ void GateVImageVolume::BuildLabelsVector( std::vector<LabelType>& LabelsVector)
   std::set<LabelType> ens;
   ImageType::iterator i;
   for (i=pImage->begin(); i!=pImage->end(); ++i) {
-    if ( ((*i)!=-1) && 
-	 (ens.find(int(*i)) == ens.end()) 
+    if ( ((*i)!=-1) &&
+	 (ens.find(int(*i)) == ens.end())
 	 ) {
       ens.insert(int(*i));
       LabelsVector.push_back(int(*i));
       GateMessage("Volume",5,"New label = "<<int(*i)<<G4endl);
-    }    
+    }
   }
   GateMessage("Volume",5,"End GateVImageVolume::BuildLabelsVector()" << G4endl);
 }
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-/// Builds a label to material map 
+/// Builds a label to material map
 void GateVImageVolume::BuildLabelToG4MaterialVector( std::vector<G4Material*>& M )
 {
   GateMessage("Volume",4,"Begin GateVImageVolume::BuildLabelToG4MaterialVector" << G4endl);
@@ -505,7 +505,7 @@ void GateVImageVolume::BuildLabelToG4MaterialVector( std::vector<G4Material*>& M
       GateError("Labels should be from 0 to n continuously ..."
                 << "Current labels n " << (*lit).first  << " is number " << l );
 
-    } 
+    }
 
     GateMessage("Volume",4,((*lit).first) << " -> " << ((*lit).second) << G4endl);
 
@@ -521,10 +521,10 @@ void GateVImageVolume::BuildLabelToG4MaterialVector( std::vector<G4Material*>& M
 /// Remaps the labels form 0 to NbLabels-1. If marginAdded is true
 /// then assigns the new label 0 to the label -1 which was created for
 /// margin voxels (see LoadImage).
-void GateVImageVolume::RemapLabelsContiguously( std::vector<LabelType>& labels, bool /*marginAdded*/ ) 
+void GateVImageVolume::RemapLabelsContiguously( std::vector<LabelType>& labels, bool /*marginAdded*/ )
 {
   GateMessageInc("Volume",5,"Begin GateVImageVolume::RemapLabelsContiguously" << G4endl);
-  std::map<LabelType,LabelType> lmap; 
+  std::map<LabelType,LabelType> lmap;
 
   LabelType cur = 0;
 
@@ -545,8 +545,8 @@ void GateVImageVolume::RemapLabelsContiguously( std::vector<LabelType>& labels, 
   ImageType::iterator j;
   for (j=pImage->begin(); j!=pImage->end(); ++j) {
     *j = lmap[(LabelType)*j];
-  }  
-  
+  }
+
   // updates the material map
   LabelToMaterialNameType mmap;
   int k1 = 0; //entry in the label to material table
@@ -556,7 +556,7 @@ void GateVImageVolume::RemapLabelsContiguously( std::vector<LabelType>& labels, 
     //             << " second = " << (*k).second << G4endl);
     if(lmap[(*k).first]!=0 || ( k1==0 && lmap[(*k).first]==0) ) mmap[ lmap[(*k).first] ] = (*k).second;
     k1++;
-  }  
+  }
   mLabelToMaterialName = mmap;
 
   // Update GateHounsfieldMaterialTable if needed
@@ -568,7 +568,7 @@ void GateVImageVolume::RemapLabelsContiguously( std::vector<LabelType>& labels, 
     }
     for(uint i=0; i<h1.size(); i++) {
       //GateMessage("Core", 0, "i = " << i
-      //             << " h1 = " << h1[i] 
+      //             << " h1 = " << h1[i]
       //             << " new h1 = " << tmp[i] << G4endl);
        h1[i] = tmp[i];
     }
@@ -587,7 +587,7 @@ void GateVImageVolume::RemapLabelsContiguously( std::vector<LabelType>& labels, 
     for(uint i=0; i<d1.size(); i++) {
      d1[i] = tmp[i];
     }
-    
+
   }
 }
 //--------------------------------------------------------------------
@@ -603,7 +603,7 @@ void GateVImageVolume::PrintInfo()
 //--------------------------------------------------------------------
 int GateVImageVolume::GetNextVoxel(const G4ThreeVector& position,
 				   const G4ThreeVector& direction)
-{  
+{
   return pImage->GetIndexFromPostPositionAndDirection(position, direction);
 }
 //--------------------------------------------------------------------
@@ -612,10 +612,10 @@ int GateVImageVolume::GetNextVoxel(const G4ThreeVector& position,
 void GateVImageVolume::DestroyOwnSolidAndLogicalVolume()
 {
   if (pBoxLog) delete pBoxLog;
-  pBoxLog = 0;    
+  pBoxLog = 0;
   if (pBoxSolid) delete pBoxSolid;
-  pBoxSolid = 0;     
-}  
+  pBoxSolid = 0;
+}
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -627,16 +627,16 @@ void GateVImageVolume::SetBuildDistanceTransfoFilename(G4String filename)
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-void GateVImageVolume::BuildDistanceTransfo() 
+void GateVImageVolume::BuildDistanceTransfo()
 {
-  GateMessage("Geometry", 1, "Building distante map image (dmap) for the image '" 
+  GateMessage("Geometry", 1, "Building distante map image (dmap) for the image '"
 	      << mImageFilename << "' (it could be long for large image)."
 	      << G4endl);
-  
+
   // TEMPORARY : need isotrop !
-  if ((pImage->GetVoxelSize().x() != 
-       pImage->GetVoxelSize().y()) && 
-      (pImage->GetVoxelSize().x() != 
+  if ((pImage->GetVoxelSize().x() !=
+       pImage->GetVoxelSize().y()) &&
+      (pImage->GetVoxelSize().x() !=
        pImage->GetVoxelSize().z())) {
     GateError("Error : image spacing should be isotropic for building dmap");
     exit(0);
@@ -645,7 +645,7 @@ void GateVImageVolume::BuildDistanceTransfo()
   // Convert (copy) image into Vol structure
   const G4ThreeVector & size = pImage->GetResolution();
   GateMessage("Geometry", 1, "Image size is " << size << "." << G4endl);
-  Vol v((int)lrint(size.x()), 
+  Vol v((int)lrint(size.x()),
         (int)lrint(size.y()),
         (int)lrint(size.z()), 0);
   v.setVolumeCenter( v.sizeX()/2, v.sizeY()/2, v.sizeZ()/2 );
@@ -670,7 +670,7 @@ void GateVImageVolume::BuildDistanceTransfo()
     fprintf( stderr, "Error construction vol ?");
     exit(0);
   }
-  
+
   // Creating the longvol tmpOutput structure
   Longvol tmpOutput(v.sizeX(),v.sizeY(),v.sizeZ(),0);
   if (!tmpOutput.isOK()) {
@@ -681,7 +681,7 @@ void GateVImageVolume::BuildDistanceTransfo()
   // Each volume center is (0,0,0)x(sizeX,sizeY,sizeZ)
   tmpOutput.setVolumeCenter( tmpOutput.sizeX()/2, tmpOutput.sizeY()/2, tmpOutput.sizeZ()/2 );
 
-  GateMessage("Geometry", 4, "Input Vol size: "<< 
+  GateMessage("Geometry", 4, "Input Vol size: "<<
 	      tmpOutput.sizeX()<<"x"<<tmpOutput.sizeY()<<"x"<< tmpOutput.sizeZ()<<G4endl);
 
   // Go ?
@@ -707,10 +707,10 @@ void GateVImageVolume::BuildDistanceTransfo()
 
   // Dump final result ...
   output.Write(mDistanceTransfoOutput);
-  GateMessage("Core", 0, "Distance map write to disk in the file '" 
-	      << mDistanceTransfoOutput 
+  GateMessage("Core", 0, "Distance map write to disk in the file '"
+	      << mDistanceTransfoOutput
 	      << "' !" << G4endl
-	      << "You can now use it in the simulation (use 'distanceMap' and no more 'buildAndDumpDistanceTransfo'" 
+	      << "You can now use it in the simulation (use 'distanceMap' and no more 'buildAndDumpDistanceTransfo'"
 	      << G4endl);
   // exit(0);
 }

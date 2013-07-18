@@ -77,12 +77,12 @@ GateVVolume::GateVVolume(const G4String& itsName,
     pMotherLogicalVolume(0),
     m_creator(0),
     m_sensitiveDetector(0),
-    m_motherList(0), 
+    m_motherList(0),
     mParent(0)
 {
- 
+
   SetCreator(this);
-    
+
   // Create a new vis-attributes object
   pOwnVisAtt = new G4VisAttributes();
 
@@ -96,7 +96,7 @@ GateVVolume::GateVVolume(const G4String& itsName,
 #ifdef GATE_USE_OPTICAL
   m_surfaceList = new GateSurfaceList(this, acceptsChildren);
 #endif
- 
+
   // Attach a repeater list
   m_repeaterList = new GateObjectRepeaterList(this, GetObjectName()+"/repeaters","repeater");
 
@@ -106,7 +106,7 @@ GateVVolume::GateVVolume(const G4String& itsName,
   // Insert a GateVolumePlacement into the move-list: that's the default move used to defined
   // the position and orientation of a volume
   m_moveList->AppendObjectRepeater(new GateVolumePlacement(this,GetObjectName()+"/placement"));
-    
+
   // Attach volume creator messenger
   pMessenger = new GateVolumeMessenger(this);
 
@@ -115,14 +115,14 @@ GateVVolume::GateVVolume(const G4String& itsName,
 
   // Register with the creator-store
   GateObjectStore::GetInstance()->RegisterCreator(this);
-  
+
 }
 //----------------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------------
 // Destructeur
 GateVVolume::~GateVVolume()
-{ 
+{
 
   delete pMessenger;
   delete pOwnVisAtt;
@@ -139,7 +139,7 @@ GateVVolume::~GateVVolume()
   // Delete the surface-list object
   delete m_surfaceList;
 #endif
-    
+
   delete pChildList;
 
   // Unregister from the creator-store
@@ -148,8 +148,8 @@ GateVVolume::~GateVVolume()
   // CAUTION: Note that we don't delete the object geometry
   // (logical volume, vector of physical volumes, visualisation attributes...)
   // Normally, an object creator should never be destroyed
-  // while the volumes it handles are alive,  
-  // but if this were the case, these volumes are left to survive.    
+  // while the volumes it handles are alive,
+  // but if this were the case, these volumes are left to survive.
   // In that case, these volumes become orphans with regards to the
   // creator tree.
 }
@@ -157,7 +157,7 @@ GateVVolume::~GateVVolume()
 
 
 //--------------------------------------------------------------------
-void GateVVolume::SetOriginByUser(const G4ThreeVector & i) 
+void GateVVolume::SetOriginByUser(const G4ThreeVector & i)
 {
   origin = i;
   mOriginIsSetByUser = true;
@@ -171,7 +171,7 @@ G4VPhysicalVolume* GateVVolume::Construct(G4bool flagUpdateOnly)
 {
   GateMessage("Geometry", 4,"GateVVolume::Construct " << GetObjectName() << G4endl);
 
-  // Box volume construction  
+  // Box volume construction
   ConstructGeometry(0, flagUpdateOnly);
   return theListOfOwnPhysVolume[0];
 }
@@ -182,16 +182,16 @@ G4VPhysicalVolume* GateVVolume::Construct(G4bool flagUpdateOnly)
 void GateVVolume::ConstructGeometry(G4LogicalVolume* mother_log, G4bool flagUpdateOnly)
 {
   GateMessage("Geometry", 7, "GateVVolume::ConstructGeometry -- begin ; flagUpdateOnly = " << flagUpdateOnly << G4endl;);
-  
+
   pMotherLogicalVolume = mother_log;
 
   if (!pOwnMaterial) {
-    //GateMessage("Geometry",0," The material of the volume " << GetObjectName() << " is not defined."); 
-    GateError("The material of the volume " << GetObjectName() << " is not defined."); 
+    //GateMessage("Geometry",0," The material of the volume " << GetObjectName() << " is not defined.");
+    GateError("The material of the volume " << GetObjectName() << " is not defined.");
     //return;
   }
 
-  //  volume construction   
+  //  volume construction
   pOwnLog = ConstructOwnSolidAndLogicalVolume(pOwnMaterial, flagUpdateOnly);
 
   GateMessage("Geometry", 8, " " << GetSolidName() << " and " << GetLogicalVolumeName() << " volumes have been constructed.\n");
@@ -199,7 +199,7 @@ void GateVVolume::ConstructGeometry(G4LogicalVolume* mother_log, G4bool flagUpda
 
   if (GetLogicalVolumeName()  != "world_log" && GetLogicalVolumeName().find("Voxel_log") == G4String::npos) {
     // Construct and add the region
-    GateMessage("Cuts",9, "- Building associated region " <<GetObjectName() <<G4endl);	  
+    GateMessage("Cuts",9, "- Building associated region " <<GetObjectName() <<G4endl);
     G4Region* aRegion = G4RegionStore::GetInstance()->FindOrCreateRegion(GetObjectName());
     //G4Region* aRegion = new G4Region(GetObjectName());
     pOwnLog->SetRegion(aRegion);
@@ -210,25 +210,25 @@ void GateVVolume::ConstructGeometry(G4LogicalVolume* mother_log, G4bool flagUpda
   //----------------------------------------------------------------------------------------
 
   // Attach a sensitive detector as required
-  if (m_sensitiveDetector){ 
+  if (m_sensitiveDetector){
     pOwnLog->SetSensitiveDetector(m_sensitiveDetector);
     GateMessage("Geometry",7,"A sensitive detector has been attached to " << GetObjectName() << " volume.\n");
   }
-       
+
   // Set my visualisation attributes
   pOwnLog->SetVisAttributes(pOwnVisAtt);
-       
+
   GateMessage("Geometry", 7, " 2 : theListOfOwnPhysVolume.size =  " << theListOfOwnPhysVolume.size() << G4endl;);
   GateMessage("Geometry", 7," --> Object " << GetObjectName() << " has been created.\n");
-   
+
   // Construct all children
-  pChildList->ConstructChildGeometry(pOwnLog, flagUpdateOnly); 
-  
+  pChildList->ConstructChildGeometry(pOwnLog, flagUpdateOnly);
+
   ConstructOwnPhysicalVolume(flagUpdateOnly);
 
   GateMessage("Geometry", 7, " GateVVolume::ConstructGeometry -- end ; flagUpdateOnly = " << flagUpdateOnly << G4endl;);
 
-  
+
   // set the 'origin'. This is useful for GateVImageActor that need
   // the coordinate of the corner to set the correct origin of the
   // output image.
@@ -243,7 +243,7 @@ void GateVVolume::ConstructGeometry(G4LogicalVolume* mother_log, G4bool flagUpda
     size[1] = max-min;
     GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, min, max);
     size[2] = max-min;
-    origin = G4ThreeVector(-size[0]/2.0, -size[1]/2.0, -size[2]/2.0); 
+    origin = G4ThreeVector(-size[0]/2.0, -size[1]/2.0, -size[2]/2.0);
   }
 }
 //----------------------------------------------------------------------------------------
@@ -251,21 +251,21 @@ void GateVVolume::ConstructGeometry(G4LogicalVolume* mother_log, G4bool flagUpda
 //----------------------------------------------------------------------------------------
 // Construct physical volume
 void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
-{  
+{
   // DD(mSolidName);
   //   DD("GateVVolume::ConstructOwnPhysicalVolume");
   //   DD(flagUpdateOnly);
-  
-  // Store the volume default position into a placement queue 
+
+  // Store the volume default position into a placement queue
   GatePlacementQueue motherQueue;
   motherQueue.push_back(GatePlacement(G4RotationMatrix(),G4ThreeVector()));
-    
+
   GatePlacementQueue *pQueue = &motherQueue;
-        
-  // Have the start-up position processed by the move list 
+
+  // Have the start-up position processed by the move list
   if (m_moveList){
     GateMessage("Move", 5, "Compute placements of moveList for " << GetSolidName() << "\n");
-    pQueue = m_moveList->ComputePlacements(pQueue); 
+    pQueue = m_moveList->ComputePlacements(pQueue);
   }
   // Have the volume's current position processed by the repeater list
   if (m_repeaterList){
@@ -275,12 +275,12 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
 
   GateMessage("Geometry", 6, GetObjectName() << " theListOfOwnPhysVolume.size  = " << theListOfOwnPhysVolume.size() << G4endl;);
   GateMessage("Geometry", 6, GetObjectName() << " pQueue->size() = " << pQueue->size() << G4endl;);
-  
+
   // Do consistency checks
   if (flagUpdateOnly) {
     if (pQueue->size()!=theListOfOwnPhysVolume.size()) {
       G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolume]:" << G4endl
-      	      << "The size of the placement queue (" << pQueue->size() << ") is different from " << G4endl 
+      	      << "The size of the placement queue (" << pQueue->size() << ") is different from " << G4endl
 	      << "the number of physical volumes to update (" << theListOfOwnPhysVolume.size() << ")!!!" << G4endl;
       G4Exception( "GateVVolume::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Can not complete placement update.");
     }
@@ -292,73 +292,73 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
       G4Exception( "GateVVolume::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Can not complete placement creation.");
     }
   }
- 
+
   // We now have a queue of placements: create new volumes or update the positions of existing volumes
   // based on the content of this queue
 
   size_t QueueSize = pQueue->size();
 
   for (size_t copyNumber=0; copyNumber<QueueSize ; copyNumber++) {
-     
+
     // Extract a combination of a rotation matrix and of a translation vector from the queue
     GatePlacement placement = pQueue->pop_front();
     G4RotationMatrix rotationMatrix = placement.first;
     G4ThreeVector position = placement.second;
-     
+
 
     // If the rotation is not null, derive a dynamic rotation matrix
     G4RotationMatrix *newRotationMatrix = (rotationMatrix.isIdentity()) ? 0 : new G4RotationMatrix(rotationMatrix);
-          
-    //     GateMessage("Geometry", 5, " copyNumber = " << copyNumber << " flagUpdateOnly = " << flagUpdateOnly << " pOwnPhys exists ? = " 
-    //                 << pOwnPhys << " m_repeaterList = " <<m_repeaterList<<G4endl;);   
+
+    //     GateMessage("Geometry", 5, " copyNumber = " << copyNumber << " flagUpdateOnly = " << flagUpdateOnly << " pOwnPhys exists ? = "
+    //                 << pOwnPhys << " m_repeaterList = " <<m_repeaterList<<G4endl;);
 
     pOwnPhys = GetPhysicalVolume(copyNumber);
 
     // Check if the physical volume exist when the geometry
     // is updating
-    if (flagUpdateOnly && !pOwnPhys){ 
-      G4cout << " Physical volume " << GetPhysicalVolumeName() << " does not exist!" << G4endl; 
+    if (flagUpdateOnly && !pOwnPhys){
+      G4cout << " Physical volume " << GetPhysicalVolumeName() << " does not exist!" << G4endl;
       G4Exception( "GateVVolume::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Failed to construct the volume!");
     }
- 
+
     if (flagUpdateOnly)
       {
 	// Update physical volume
-	//----------------------------------------------------------------  
+	//----------------------------------------------------------------
 	pOwnPhys = GetPhysicalVolume(copyNumber);
-       
+
 	// Set the translation vector for this physical volume
 	pOwnPhys->SetTranslation(position);
-         
+
 	// Set the rotation matrix for this physical volume
 	if (pOwnPhys->GetRotation())
 	  delete pOwnPhys->GetRotation();
-          
+
 	pOwnPhys->SetRotation(newRotationMatrix);
-    
+
 	GateMessage("Geometry", 6, GetPhysicalVolumeName() << "[" << copyNumber << "] has been updated." << G4endl;);
 
       }
     else
       {
-            	
+
 	// Place new physical volume
 	//---------------------------------------------------------------
 	pOwnPhys = new G4PVPlacement(newRotationMatrix,        // rotation with respect to its mother volume
 				     position,            // traslation with respect to its mother volume
 				     pOwnLog,                  // the assiated logical volume
-				     GetPhysicalVolumeName(),  // physical volume name  
+				     GetPhysicalVolumeName(),  // physical volume name
 				     pMotherLogicalVolume,    // the mother logical volume
-				     false,                    // for future use,, can be set to false 
-				     copyNumber,                        // copy number    
+				     false,                    // for future use,, can be set to false
+				     copyNumber,                        // copy number
 				     false);                  // false/true = no/yes overlap check triggered
-                                                   
+
 	PushPhysicalVolume(pOwnPhys);
-  
+
 	GateMessage("Geometry", 6, GetPhysicalVolumeName() << "[" << copyNumber << "] has been constructed." << G4endl;);
 
       }
-                               
+
   }//end for
 
 }
@@ -366,17 +366,17 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
 
 //----------------------------------------------------------------------------------------
 // Tell the creator that the logical volume should be attached to the crystal-SD
-void GateVVolume::AttachCrystalSD() 
-{ 
+void GateVVolume::AttachCrystalSD()
+{
   /*
     if (!CheckOutputExistence()){
-    // Add OutputMgr output actor to theListOfActors  
+    // Add OutputMgr output actor to theListOfActors
     GateActorManager::GetInstance()->GateActorManager::AddActor("OutputMgr", "output", 0);
     AttachOutputToVolume();
     }
-    else      
-    AttachOutputToVolume(); 
-  */      
+    else
+    AttachOutputToVolume();
+  */
   // Retrieve the crystal-SD pointer from the detector-construction
   GateCrystalSD* crystalSD = GateDetectorConstruction::GetGateDetectorConstruction()->GetCrystalSD();
 
@@ -390,26 +390,26 @@ void GateVVolume::AttachCrystalSD()
 
   // If the attachement is allowed, store the crystal-SD pointer
   m_sensitiveDetector = crystalSD;
-  
+
 }
 //----------------------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------------------
 // Tell the creator that the logical volume should be attached to the phantom-SD
-void GateVVolume::AttachPhantomSD() 
-{ 
+void GateVVolume::AttachPhantomSD()
+{
   /*  if (!CheckOutputExistence()){
   // Add OutputMgr output actor to theListOfActors
   GateActorManager::GetInstance()->GateActorManager::AddActor("OutputMgr", "output", 0);
-  AttachOutputToVolume(); 
-  
+  AttachOutputToVolume();
+
   }
-  else      
-  AttachOutputToVolume(); 
-  */    
+  else
+  AttachOutputToVolume();
+  */
   // Retrieve the phantom-SD pointer from the detector-construction, and store this pointer //
-  GatePhantomSD* phantomSD = GateDetectorConstruction::GetGateDetectorConstruction()->GetPhantomSD(); 
-  
+  GatePhantomSD* phantomSD = GateDetectorConstruction::GetGateDetectorConstruction()->GetPhantomSD();
+
   // If the attachement is allowed, store the crystal-SD pointer
   m_sensitiveDetector = phantomSD;
 }
@@ -423,7 +423,7 @@ G4bool GateVVolume::CheckOutputExistence()
   theList = GateActorManager::GetInstance()->GateActorManager::ReturnListOfActors();
 
   G4bool flag = false;
-  
+
   std::vector<GateVActor*>::iterator sit;
   for(sit= theList.begin(); sit!=theList.end(); ++sit)
     {
@@ -432,15 +432,15 @@ G4bool GateVVolume::CheckOutputExistence()
 	  flag = true;
 	}
     }
-  
-  return flag;   
+
+  return flag;
 }
 //-------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------
 void GateVVolume::AttachOutputToVolume()
 {
-    
+
   // Attach volume to the actor "output"
   std::vector<GateVActor*> theList;
   theList = GateActorManager::GetInstance()->GateActorManager::ReturnListOfActors();
@@ -451,11 +451,11 @@ void GateVVolume::AttachOutputToVolume()
     {
       if ((*sit)->GetObjectName() == "output")
 	{
-	  (*sit)->GateVActor::SetVolumeName(GetObjectName()); 
+	  (*sit)->GateVActor::SetVolumeName(GetObjectName());
 	  (*sit)->GateVActor::AttachToVolume(GetObjectName());
 	}
     }
-  
+
 }
 //------------------------------------------------------------------------------------------
 
@@ -464,37 +464,37 @@ void GateVVolume::AttachOutputToVolume()
 // Destroy all geometry
 void GateVVolume::DestroyGeometry()
 {
-  GateMessage("Geometry", 5, "GateVVolume::DestroyGeometry Volume " << GetObjectName() 
+  GateMessage("Geometry", 5, "GateVVolume::DestroyGeometry Volume " << GetObjectName()
               << " is going to be destroyed.\n");
   while (!theListOfOwnPhysVolume.empty())
     {
       // Get the last physical volume
       G4VPhysicalVolume* lastVolume = theListOfOwnPhysVolume.back();
-   
+
       G4int n = 0;
       n = lastVolume->GetCopyNo();
-   
+
       if (GetMotherLogicalVolume())
 	GetMotherLogicalVolume()->RemoveDaughter(lastVolume);
-              
+
       // Destroy the volume rotation if required
-      if (lastVolume->GetRotation()) 
+      if (lastVolume->GetRotation())
 	delete lastVolume->GetRotation();
-           
+
       // Destroy the physical volume
       delete lastVolume;
- 
+
       // Remove the volume from the physical-volume vector
-      theListOfOwnPhysVolume.erase(theListOfOwnPhysVolume.end()-1); 
-      pOwnPhys = 0; 
-       
+      theListOfOwnPhysVolume.erase(theListOfOwnPhysVolume.end()-1);
+      pOwnPhys = 0;
+
       pChildList->DestroyChildGeometry();
-   
+
       // Destroy the solid and logical volumes
       DestroyOwnSolidAndLogicalVolume();
-   
+
       pOwnLog = 0;
-      
+
       GateMessage("Geometry", 5, "GateVVolume :: Destroy geometry of object " << GetObjectName() << " with copy number " << n << "." << G4endl;);
     }
 }
@@ -512,16 +512,16 @@ void GateVVolume::DestroyOwnPhysicalVolumes()
 
       if (GetMotherLogicalVolume())
 	GetMotherLogicalVolume()->RemoveDaughter(lastVolume);
-              
+
       // Destroy the volume rotation if required
-      if (lastVolume->GetRotation()) 
+      if (lastVolume->GetRotation())
 	delete lastVolume->GetRotation();
-           
+
       // Destroy the physical volume
       delete lastVolume;
- 
+
       // Remove the volume from the physical-volume vector
-      theListOfOwnPhysVolume.erase(theListOfOwnPhysVolume.end()-1); 
+      theListOfOwnPhysVolume.erase(theListOfOwnPhysVolume.end()-1);
     }
 }
 //-----------------------------------------------------------------------------------------
@@ -546,8 +546,8 @@ void GateVVolume::DefineOwnMaterials()
 //-----------------------------------------------------------------------------------------
 // Returns the inserter's placement
 GateVolumePlacement* GateVVolume::GetVolumePlacement() const
-{ 
-  return (GateVolumePlacement*) ((m_moveList) ? m_moveList->GetRepeater(0) : 0 ); 
+{
+  return (GateVolumePlacement*) ((m_moveList) ? m_moveList->GetRepeater(0) : 0 );
 }
 //-----------------------------------------------------------------------------------------
 
@@ -586,11 +586,11 @@ void GateVVolume::AutoSetColor()
       	    (mMaterialName=="Tungsten") ||
       	    (mMaterialName=="Bismuth")  )
     pOwnVisAtt->SetColor(G4Colour(0.0, 0.0, 1.0));
-  else if (mMaterialName=="Aluminium")  
+  else if (mMaterialName=="Aluminium")
     pOwnVisAtt->SetColor(G4Colour(0.0, 1.0, 0.0));
-  else if (mMaterialName=="Breast")   
+  else if (mMaterialName=="Breast")
     pOwnVisAtt->SetColor(G4Colour(1.0, 0.0, 1.0));
-  else 
+  else
     pOwnVisAtt->SetColor(G4Colour(0.5, 0.5, 0.5));
 }
 //-----------------------------------------------------------------------------------------
@@ -605,14 +605,14 @@ void GateVVolume::Describe(size_t indent)
     m_moveList->DescribeRepeaters(indent);
   if (m_repeaterList)
     m_repeaterList->DescribeRepeaters(indent);
-  G4cout << GateTools::Indent(indent) << "-----------------------------------------------"  
+  G4cout << GateTools::Indent(indent) << "-----------------------------------------------"
 	 << G4endl  << G4endl;
 }
 //------------------------------------------------------------------------------------------
 
 /* PY Descourt 08/09/2009 */
-void GateVVolume::AttachARFSD() 
-{ 
+void GateVVolume::AttachARFSD()
+{
   // Retrieve the crystal-SD pointer from the detector-construction
   GateARFSD* arfSD = GateDetectorConstruction::GetGateDetectorConstruction()->GetARFSD();
 

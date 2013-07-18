@@ -9,14 +9,14 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
-/*! \file 
-  \class GateVImageVolume : 
+/*! \file
+  \class GateVImageVolume :
   \brief Base (abstract) class for volumes which represent the data provided by a 3D image of labels and a label to material correspondence table
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
 	  david.sarrut@creatis.insa-lyon.fr
 */
- 
+
 #ifndef __GateVImageVolume__hh__
 #define __GateVImageVolume__hh__
 
@@ -52,7 +52,7 @@ public:
   virtual G4double GetHalfDimension(size_t axis);
 
   virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume(G4Material*, G4bool)=0;
-  virtual void DestroyOwnSolidAndLogicalVolume(); 
+  virtual void DestroyOwnSolidAndLogicalVolume();
 
   //-----------------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ public:
   /// Creates the messenger associated to the volume
   GateVImageVolume(const G4String& name,G4bool acceptsChildren,G4int depth);
 
-  /// Destructor 
+  /// Destructor
   virtual ~GateVImageVolume();
   //-----------------------------------------------------------------------------
 
@@ -77,11 +77,11 @@ public:
   /// If user set the IsoCenter, update the Position
   void UpdatePositionWithIsoCenter();
   //-----------------------------------------------------------------------------
-  
+
   //-----------------------------------------------------------------------------
   /// Sets the name of the Image file
   void SetImageFilename(const G4String& name);
-  /// Sets the name of the LabelToMaterial file 
+  /// Sets the name of the LabelToMaterial file
   void SetLabelToMaterialTableFilename(const G4String& name);
   void SetHUToMaterialTableFilename(const G4String& name);
   //-----------------------------------------------------------------------------
@@ -95,9 +95,9 @@ public:
   void SetIsoCenter(const G4ThreeVector & i);
   G4ThreeVector GetIsoCenter() const { return mIsoCenter; }
   //-----------------------------------------------------------------------------
-  
+
   //-----------------------------------------------------------------------------
-  /// Returns the volume's half size 
+  /// Returns the volume's half size
   inline G4ThreeVector GetHalfSize() const { return mHalfSize; }
   /// Gets the Image
   inline ImageType* GetImage() { return pImage; }
@@ -113,18 +113,18 @@ public:
 
   //-----------------------------------------------------------------------------
   /// Returns the material name corresponding to a label
-  G4String GetMaterialNameFromLabel(LabelType l) {   
-    LabelToMaterialNameType::iterator mi = mLabelToMaterialName.find(l);   
+  G4String GetMaterialNameFromLabel(LabelType l) {
+    LabelToMaterialNameType::iterator mi = mLabelToMaterialName.find(l);
     if (mi == mLabelToMaterialName.end()) {
       G4cerr << "GateVImageVolume<"<<GetObjectName()<<">::GetMaterialNameFromLabel : Could not find material of label "<<l<<" in correspondence table" << G4endl;
       exit(0);
     }
-    return (*mi).second ; 
+    return (*mi).second ;
   }
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
-  /// Builds a label to material map 
+  /// Builds a label to material map
   void BuildLabelToG4MaterialVector( std::vector<G4Material*>& );
   //-----------------------------------------------------------------------------
 
@@ -141,7 +141,7 @@ public:
   int GetNextVoxel(const G4ThreeVector& position,
 				   const G4ThreeVector& direction);
 
-  virtual void GetPhysVolForAVoxel(const G4int, const G4VTouchable &, G4VPhysicalVolume **, G4NavigationHistory &) const {}  
+  virtual void GetPhysVolForAVoxel(const G4int, const G4VTouchable &, G4VPhysicalVolume **, G4NavigationHistory &) const {}
   //-----------------------------------------------------------------------------
 
   G4VSolid * GetSolid(){return pBoxSolid; }
@@ -149,14 +149,14 @@ public:
   void SetBuildDistanceTransfoFilename(G4String filename);
   void SetLabeledImageFilename(G4String filename);
   void EnableBoundingBoxOnly(bool b);
-    
+
 protected:
 
   //-----------------------------------------------------------------------------
   /// Loads the image
   /// If add1VoxelMargin is true then a margin of one voxel in each direction is added to the image (the margin voxels have the value -1).
   void LoadImage(bool add1VoxelMargin);
-  /// Loads the LabelToMaterial file 
+  /// Loads the LabelToMaterial file
   void LoadImageMaterialsTable();
   void LoadImageMaterialsFromHounsfieldTable();
   void LoadImageMaterialsFromLabelTable();
@@ -171,22 +171,22 @@ protected:
   // Usefull :
   /// Builds a vector of the labels in the image
   void BuildLabelsVector( std::vector<LabelType>& );
-  /// Remaps the labels form 0 to NbLabels-1. The vector is the vector of labels which has been computed by BuildLabelsVector() : it is updated from 0 to NbLabels-1. If marginAdded is true then assigns the new label 0 to the label -1 which was created for margin voxels (see LoadImage()). 
+  /// Remaps the labels form 0 to NbLabels-1. The vector is the vector of labels which has been computed by BuildLabelsVector() : it is updated from 0 to NbLabels-1. If marginAdded is true then assigns the new label 0 to the label -1 which was created for margin voxels (see LoadImage()).
   void RemapLabelsContiguously( std::vector<LabelType>&, bool marginAdded );
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
-  /// Build distance map 
-  void BuildDistanceTransfo(); 
-  G4String mDistanceTransfoOutput; 
-  bool mBuildDistanceTransfo; 
+  /// Build distance map
+  void BuildDistanceTransfo();
+  G4String mDistanceTransfoOutput;
+  bool mBuildDistanceTransfo;
   //-----------------------------------------------------------------------------
 
   bool mWriteHLabelImage;
   G4String mHLabelImageFilename;
   void DumpHLabelImage();
   bool mImageMaterialsFromHounsfieldTableDone;
-  
+
   //-----------------------------------------------------------------------------
   /// The name of the Image file
   G4String mImageFilename;
@@ -200,7 +200,7 @@ protected:
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
-  /// Half size of the volume 
+  /// Half size of the volume
   /// *** BEWARE : this is less than Half Size of the image stored
   /// *** because a margin of 1 voxel in each direction is added to
   /// *** the image stored ***
@@ -218,8 +218,8 @@ protected:
   //-----------------------------------------------------------------------------
   G4Box* pBoxSolid;
   G4LogicalVolume* pBoxLog;
-  G4VPhysicalVolume* pBoxPhys; 
-  
+  G4VPhysicalVolume* pBoxPhys;
+
   //-----------------------------------------------------------------------------
   bool mIsBoundingBoxOnlyModeEnabled;
 };
