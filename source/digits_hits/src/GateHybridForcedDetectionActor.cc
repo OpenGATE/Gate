@@ -126,11 +126,21 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     GateWarning("Several sources found, we consider the first one.");
   }
   mSource = sm->GetSource(0);
-    // Checks. FIXME: check on rot1 and rot2 would be required
-  if(mSource->GetAngDist()->GetDistType() != "focused")
-    GateError("Forced detection only supports point or focused sources.");
-  if(mSource->GetPosDist()->GetPosDisType() != "Plane")
-    GateError("Forced detection only supports Plane distributions.");
+
+  // Checks. FIXME: check on rot1 and rot2 would be required
+  if(mSource->GetPosDist()->GetPosDisType() == "Point") {
+    if(mSource->GetAngDist()->GetDistType() != "iso") {
+      GateError("Forced detection only supports iso distributions with Point source.");
+    }
+  }
+  else if(mSource->GetPosDist()->GetPosDisType() == "Plane" ||
+     mSource->GetPosDist()->GetPosDisType() == "UserFluenceImage") {
+    if(mSource->GetAngDist()->GetDistType() != "focused") {
+      GateError("Forced detection only supports focused distributions for Plane and UserFluenceImage sources.");
+    }
+  }
+  else
+    GateError("Forced detection only supports Point, Plane or UserFluenceImage distributions.");
 
   // Read the response detector curve from an external file
   mEnergyResponseDetector.ReadResponseDetectorFile(mResponseFilename);
@@ -877,6 +887,8 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
 
   // Source
   G4ThreeVector s = src->GetAngDist()->GetFocusPointCopy();
+  if(src->GetPosDist()->GetPosDisType() == "Point")
+    s = src->GetPosDist()->GetCentreCoords(); // point
 
   G4AffineTransform sourceToCT( sourceToWorld *  m_WorldToCT);
   s = sourceToCT.TransformPoint(s);
