@@ -23,6 +23,9 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcmdWithoutParameter.hh"
 //#include "GateUIcmdWithADoubleWithUnitAndInteger.hh"
 
+//For new activity units
+//M Chamberland 19/07/2013
+#include "G4UnitsTable.hh"
 
 //----------------------------------------------------------------------------------------
 GateVSourceMessenger::GateVSourceMessenger(GateVSource* source)
@@ -32,6 +35,15 @@ GateVSourceMessenger::GateVSourceMessenger(GateVSource* source)
 
 //    GateSourceDir = new G4UIdirectory("/gate/source/");
 //    GateSourceDir->SetGuidance("GATE source manager control.");
+
+//Added new activity units
+//M Chamberland, 19/07/2013
+ new G4UnitDefinition("kilobecquerel","kBq","Activity",(1.e3)*becquerel);
+ new G4UnitDefinition("megabecquerel","MBq","Activity",(1.e6)*becquerel);
+ new G4UnitDefinition("gigabecquerel","GBq","Activity",(1.e9)*becquerel);
+
+ new G4UnitDefinition("millicurie","mCi","Activity",(1.e-3)*curie);
+ new G4UnitDefinition("microcurie","muCi","Activity",(1.e-6)*curie);
 
   G4String cmdName;
 
