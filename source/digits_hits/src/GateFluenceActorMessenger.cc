@@ -49,12 +49,12 @@ void GateFluenceActorMessenger::BuildCommands(G4String base)
   guid = "Set the file name for the scatter x-rays that hit the detector (printf format with runId as a single parameter).";
   pSetScatterOrderFilenameCmd->SetGuidance(guid);
 
-  n = base+"/ComptonFilename";
+  n = base+"/comptonFilename";
   pSetComptonFilenameCmd = new G4UIcmdWithAString(n,this);
   guid = "Set the file name for compton scatter that hit the detector (printf format with runId as a single parameter).";
   pSetComptonFilenameCmd->SetGuidance(guid);
 
-  n = base+"/RayleighFilename";
+  n = base+"/rayleighFilename";
   pSetRayleighFilenameCmd = new G4UIcmdWithAString(n,this);
   guid = "Set the file name for rayleigh scatter that hit the detector (printf format with runId as a single parameter).";
   pSetRayleighFilenameCmd->SetGuidance(guid);
