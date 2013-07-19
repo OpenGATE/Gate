@@ -73,9 +73,9 @@ void GateFluenceActor::Construct()
     mImageRayleigh.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mImageRayleigh.Allocate();
     mImageRayleigh.SetOrigin(mOrigin);
-    mImageFluo.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mImageFluo.Allocate();
-    mImageFluo.SetOrigin(mOrigin);
+    mImageFluorescence.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    mImageFluorescence.Allocate();
+    mImageFluorescence.SetOrigin(mOrigin);
   }
 
   // Print information
@@ -117,17 +117,21 @@ void GateFluenceActor::SaveData()
     }
   }
 
-  // Printing scatter of each order
-  if(mScatterProcessFilename != "")
+  // Printing compton or rayleigh or fluorescence scatter images
+  if(mComptonFilename != "")
   {
-      sprintf(filename, "output/fluence_compton_%04d.mha", rID);
+      sprintf(filename, mComptonFilename, rID);
       mImageCompton.Write((G4String)filename);
-
-      sprintf(filename, "output/fluence_rayleigh_%04d.mha", rID);
+  }
+  if(mRayleighFilename != "")
+  {
+      sprintf(filename, mRayleighFilename, rID);
       mImageRayleigh.Write((G4String)filename);
-
-      sprintf(filename, "output/fluence_fluo_%04d.mha", rID);
-      mImageFluo.Write((G4String)filename);
+  }
+  if(mFluorescenceFilename != "")
+  {
+      sprintf(filename, mFluorescenceFilename, rID);
+      mImageFluorescence.Write((G4String)filename);
   }
 }
 //-----------------------------------------------------------------------------
@@ -226,7 +230,7 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
         mImageScatter.AddValue(index, respValue);
         // Scatter order image
         if (process == G4String("PhotoElectric"))
-          mImageFluo.AddValue(index, respValue);
+          mImageFluorescence.AddValue(index, respValue);
         if(order)
           mFluencePerOrderImages[order-1]->AddValue(index, respValue);
       }

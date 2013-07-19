@@ -49,10 +49,22 @@ void GateFluenceActorMessenger::BuildCommands(G4String base)
   guid = "Set the file name for the scatter x-rays that hit the detector (printf format with runId as a single parameter).";
   pSetScatterOrderFilenameCmd->SetGuidance(guid);
 
-  n = base+"/scatterProcessFilename";
-  pSetScatterProcessFilenameCmd = new G4UIcmdWithAString(n,this);
-  guid = "Set the file name for each scatter process x-rays that hit the detector (printf format with runId as a single parameter).";
-  pSetScatterProcessFilenameCmd->SetGuidance(guid);
+  n = base+"/ComptonFilename";
+  pSetComptonFilenameCmd = new G4UIcmdWithAString(n,this);
+  guid = "Set the file name for compton scatter that hit the detector (printf format with runId as a single parameter).";
+  pSetComptonFilenameCmd->SetGuidance(guid);
+
+  n = base+"/RayleighFilename";
+  pSetRayleighFilenameCmd = new G4UIcmdWithAString(n,this);
+  guid = "Set the file name for rayleigh scatter that hit the detector (printf format with runId as a single parameter).";
+  pSetRayleighFilenameCmd->SetGuidance(guid);
+
+  n = base+"/fluorescenceFilename";
+  pSetFluorescenceFilenameCmd = new G4UIcmdWithAString(n,this);
+  guid = "Set the file name for fluorescence scatter that hit the detector (printf format with runId as a single parameter).";
+  pSetFluorescenceFilenameCmd->SetGuidance(guid);
+
+
 }
 //-----------------------------------------------------------------------------
 
@@ -69,8 +81,14 @@ void GateFluenceActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if(cmd == pSetScatterOrderFilenameCmd)
     pFluenceActor->SetScatterOrderFilename(newValue);
 
-  if(cmd == pSetScatterProcessFilenameCmd)
-    pFluenceActor->SetScatterProcessFilename(newValue);
+  if(cmd == pSetComptonFilenameCmd)
+    pFluenceActor->SetComptonFilename(newValue);
+
+  if(cmd == pSetRayleighFilenameCmd)
+    pFluenceActor->SetRayleighFilename(newValue);
+
+  if(cmd == pSetFluorescenceFilenameCmd)
+    pFluenceActor->SetFluorescenceFilename(newValue);
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
