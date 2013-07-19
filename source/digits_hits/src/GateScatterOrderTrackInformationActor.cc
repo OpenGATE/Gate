@@ -10,7 +10,7 @@
 
 #include "GateConfiguration.h"
 
-// Gate
+// Gate 
 #include "GateScatterOrderTrackInformationActor.hh"
 #include "GateMiscFunctions.hh"
 
@@ -48,7 +48,7 @@ GateScatterOrderTrackInformationActor::GateScatterOrderTrackInformationActor(G4S
 
 
 //-----------------------------------------------------------------------------
-/// Destructor
+/// Destructor 
 GateScatterOrderTrackInformationActor::~GateScatterOrderTrackInformationActor()
 {
   delete pActorMessenger;
@@ -84,7 +84,8 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
   const G4VEmProcess *process = dynamic_cast<const G4VEmProcess*>(pr);
   if(!process) return;
 
-  // unsigned int order = 0;
+  //unsigned int order = 0;
+  //G4String scatterProcess = "";
 
   if(process->GetProcessName() == G4String("Compton")) {
 
@@ -92,7 +93,9 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
     if(scatterTracking!=NULL)
     {
       scatterTracking->IncrementScatterOrder(step->GetTrack());
-      // order = scatterTracking->GetScatterOrder();
+      //order = scatterTracking->GetScatterOrder();
+      // Set process name
+      scatterTracking->SetScatterProcess(step->GetTrack());
     }
   }
   else if(process->GetProcessName() == G4String("RayleighScattering")) {
@@ -101,7 +104,9 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
     if(scatterTracking!=NULL)
     {
       scatterTracking->IncrementScatterOrder(step->GetTrack());
-      // order = scatterTracking->GetScatterOrder();
+      //order = scatterTracking->GetScatterOrder();
+      // Set process name
+      scatterTracking->SetScatterProcess(step->GetTrack());
     }
   }
   else if(process->GetProcessName() == G4String("PhotoElectric")) {
@@ -120,6 +125,9 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
       if(fluoTracking!=NULL)
       {
         fluoTracking->IncrementScatterOrder((*list)[i]);
+        //order = fluoTracking->GetScatterOrder();
+        // Set process name
+        fluoTracking->SetScatterProcess(step->GetTrack());
       }
     }
   }
