@@ -48,6 +48,7 @@
 #include "G4UIExecutive.hh"
 #endif
 
+//-----------------------------------------------------------------------------
 void printHelpAndQuit( G4String msg )
 {
   GateMessage( "Core", 0, msg << G4endl );
@@ -55,12 +56,16 @@ void printHelpAndQuit( G4String msg )
   GateMessage( "Core", 0, G4endl);
   GateMessage( "Core", 0, "Mandatory arguments to long options are mandatory for short options too." << G4endl );
   GateMessage( "Core", 0, "  -h, --help             print the help" << G4endl );
+  GateMessage( "Core", 0, "  -v, --version          print the version" << G4endl );
   GateMessage( "Core", 0, "  -a, --param            set alias. format is '[alias1,value1] [alias2,value2] ...'" << G4endl );
   GateMessage( "Core", 0, "  --d                    use the DigiMode" << G4endl );
   GateMessage( "Core", 0, "  --qt                   use the Qt visualization mode" << G4endl );
   exit( EXIT_FAILURE );
 }
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 std::queue < G4String > decodeParameters( G4String listOfParameters )
 {
   // Command queue storing the '/control/alias ALIAS VALUE' command line
@@ -94,7 +99,10 @@ std::queue < G4String > decodeParameters( G4String listOfParameters )
 
   return commandQueue;
 }
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 #ifndef G4ANALYSIS_USE_ROOT
 void abortIfRootNotFound()
 {
@@ -118,7 +126,10 @@ void abortIfRootNotFound()
   G4Exception( "Gate.cc AbortIfRootNotFound", "AbortIfRootNotFound", FatalException, "Correct problem then try again... Sorry!" );
 }
 #endif
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 void executeCommandQueue( std::queue< G4String > commandQueue, G4UImanager* UImanager )
 {
   while( commandQueue.size() )
@@ -128,23 +139,29 @@ void executeCommandQueue( std::queue< G4String > commandQueue, G4UImanager* UIma
       commandQueue.pop();
     }
 }
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 void welcome()
 {
-  GateMessage( "Core", 0, G4endl );
-  GateMessage( "Core", 0, "**********************************************************************" << G4endl );
-  GateMessage( "Core", 0, " GATE version name: gate_v6.2                                         " << G4endl );
-  GateMessage( "Core", 0, "                    Copyright : OpenGATE Collaboration                " << G4endl );
-  GateMessage( "Core", 0, "                    Reference : Phys. Med. Biol. 49 (2004) 4543-4561  " << G4endl );
-  GateMessage( "Core", 0, "                    Reference : Phys. Med. Biol. 56 (2011) 881-901    " << G4endl );
-  GateMessage( "Core", 0, "                    WWW : http://www.opengatecollaboration.org        " << G4endl );
-  GateMessage( "Core", 0, "**********************************************************************" << G4endl );
+  GateMessage("Core", 0, G4endl);
+  GateMessage("Core", 0, "**********************************************************************" << G4endl);
+  GateMessage("Core", 0, " GATE version name: beta_gate_v7.0                                    " << G4endl);
+  GateMessage("Core", 0, "                    Copyright : OpenGATE Collaboration                " << G4endl);
+  GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 49 (2004) 4543-4561  " << G4endl);
+  GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 56 (2011) 881-901    " << G4endl);
+  GateMessage("Core", 0, "                    WWW : http://www.opengatecollaboration.org        " << G4endl);
+  GateMessage("Core", 0, "**********************************************************************" << G4endl);
 #ifdef GATE_USE_GPU
-  GateMessage( "Core", 0, "GPU support activated" << G4endl );
+  GateMessage("Core", 0, "GPU support activated" << G4endl );
 #endif
-  GateMessage( "Core", 0, G4endl );
+  GateMessage("Core", 0, G4endl);
 }
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 int main( int argc, char* argv[] )
 {
   // First of all, set the G4cout to our message manager
@@ -180,13 +197,14 @@ int main( int argc, char* argv[] )
       G4int optionIndex = 0;
       static struct option longOptions[] = {
         { "help", no_argument, 0, 'h' },
+        { "version", no_argument, 0, 'v' },
         { "d", no_argument, &isDigiMode, 1 },
         { "qt", no_argument, &isQt, 1 },
         { "param", required_argument, 0, 'a' }
       };
 
       // Getting the option
-      c = getopt_long( argc, argv, "ha:", longOptions, &optionIndex );
+      c = getopt_long( argc, argv, "hva:", longOptions, &optionIndex );
 
       // Exit the loop if -1
       if( c == -1 ) break;
@@ -199,7 +217,11 @@ int main( int argc, char* argv[] )
           if( longOptions[ optionIndex ].flag != 0 ) break;
           break;
         case 'h':
-          printHelpAndQuit( "Printing help!!!" );
+          printHelpAndQuit("Gate command line help" );
+          break;
+        case 'v':
+          std::cout << "Gate version is pre-7.0 (beta)" << std::endl;
+          exit(0);
           break;
         case 'a':
           listOfParameters = optarg;
@@ -368,3 +390,4 @@ int main( int argc, char* argv[] )
 
   return 0;
 }
+//-----------------------------------------------------------------------------
