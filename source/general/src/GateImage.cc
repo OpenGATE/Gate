@@ -9,7 +9,7 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
-/*! \file 
+/*! \file
   \brief a 3D image
 */
 
@@ -98,16 +98,16 @@ void GateImage::Allocate() {
 
 //-----------------------------------------------------------------------------
 G4ThreeVector GateImage::GetCoordinatesFromIndex(int index) const{
-  return G4ThreeVector (index%planeSize%lineSize, 
-			index%planeSize/lineSize, 
+  return G4ThreeVector (index%planeSize%lineSize,
+			index%planeSize/lineSize,
 			index/planeSize);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 G4ThreeVector GateImage::GetVoxelCenterFromCoordinates(G4ThreeVector p) const{
-  return G4ThreeVector(p.x()*voxelSize.x()+halfSizeMinusVoxelCenter.x(), 
-		       p.y()*voxelSize.y()+halfSizeMinusVoxelCenter.y(), 
+  return G4ThreeVector(p.x()*voxelSize.x()+halfSizeMinusVoxelCenter.x(),
+		       p.y()*voxelSize.y()+halfSizeMinusVoxelCenter.y(),
 		       p.z()*voxelSize.z()+halfSizeMinusVoxelCenter.z());
 }
 //-----------------------------------------------------------------------------
@@ -132,7 +132,7 @@ int GateImage::GetIndexFromPosition(const G4ThreeVector& position) const{
   int ix = (int)floor(x);
   int iy = (int)floor(y);
   int iz = (int)floor(z);
-  //GateDebugMessage("Image",9," " << ix << " " << iy << " " << iz 
+  //GateDebugMessage("Image",9," " << ix << " " << iy << " " << iz
   //				   << " (tol/2.0= " << kCarTolerance*0.5 << ")" << G4endl);
 
   // Check boundary : I do not know what to do in this case
@@ -182,7 +182,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
 
   bool xmin=false, xmax=false;
   bool ymin=false, ymax=false;
-  bool zmin=false, zmax=false;  
+  bool zmin=false, zmax=false;
 
   //-----------------------------------------------------------------------------
   // Special case for surfaces :
@@ -206,7 +206,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
   //-----------------------------------------------------------------------------
   // Special case for corners :
   if (xmin && ymin) {
-    //GateDebugMessage("Run",9, "xmin && ymin : " << x << " " << ix << " et " 
+    //GateDebugMessage("Run",9, "xmin && ymin : " << x << " " << ix << " et "
     //				 << y << " " << iy << " d=" << direction << G4endl;);
     if (((x-ix+1)/direction.x()) < ((y-iy+1)/direction.y())) { iy++; ymin = false; }
     else { ix++; xmin = false; }
@@ -214,7 +214,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
   }
 
   if (xmin && zmin) {
-    //GateDebugMessage("Run",9, "xmin && zmin : " << x << " " << ix << " et " 
+    //GateDebugMessage("Run",9, "xmin && zmin : " << x << " " << ix << " et "
     //			 << z << " " << iz << " d=" << direction << G4endl);
     if (((x-ix+1)/direction.x()) < ((z-iz+1)/direction.z())) { iz++; zmin = false; }
     else { ix++; xmin = false; }
@@ -222,7 +222,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
   }
 
   if (ymin && zmin) {
-    //GateDebugMessage("Run",9, "ymin && zmin : " << y << " " << iy << " et " 
+    //GateDebugMessage("Run",9, "ymin && zmin : " << y << " " << iy << " et "
     //				 << z << " " << iz << " d=" << direction << G4endl);
     if (((y-iy+1)/direction.y()) < ((z-iz+1)/direction.z())) { iz++; zmin = false; }
     else { iy++; ymin = false; }
@@ -231,7 +231,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
-  // Special case for surfaces :  
+  // Special case for surfaces :
   if ((ix+1 -x < kCarTolerance*0.5/voxelSize.x())&&(direction.x()>0)) {
     ix++;
     xmin=true;
@@ -251,7 +251,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
   //-----------------------------------------------------------------------------
   // Special case for corners :
   if (xmax && ymax) {
-    //GateDebugMessage("Run",9, "xmax && ymax : " << x << " " << ix << " et " 
+    //GateDebugMessage("Run",9, "xmax && ymax : " << x << " " << ix << " et "
     //				 << y << " " << iy << " d=" << direction << G4endl;);
     if (((x-ix+1)/direction.x()) < ((y-iy+1)/direction.y())) { iy++; ymax = false; }
     else { ix++; xmax = false; }
@@ -259,7 +259,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
   }
 
   if (xmax && zmax) {
-    //GateDebugMessage("Run",9, "xmax && zmax : " << x << " " << ix << " et " 
+    //GateDebugMessage("Run",9, "xmax && zmax : " << x << " " << ix << " et "
     //					 << z << " " << iz << " d=" << direction << G4endl);
     if (((x-ix+1)/direction.x()) < ((z-iz+1)/direction.z())) { iz++; zmax = false; }
     else { ix++; xmax = false; }
@@ -267,7 +267,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
   }
 
   if (ymax && zmax) {
-    //GateDebugMessage("Run",9, "ymax && zmax : " << y << " " << iy << " et " 
+    //GateDebugMessage("Run",9, "ymax && zmax : " << y << " " << iy << " et "
     //					 << z << " " << iz << " d=" << direction << G4endl);
     if (((y-iy+1)/direction.y()) < ((z-iz+1)/direction.z())) { iz++; zmax = false; }
     else { iy++; ymax = false; }
@@ -275,7 +275,7 @@ int GateImage::GetIndexFromPositionAndDirection(const G4ThreeVector& position,
   }
   //-----------------------------------------------------------------------------
 
-  // Check if not out of the volume ... 
+  // Check if not out of the volume ...
   if (ix >= resolution.x()) return -1;
   if (iy >= resolution.y()) return -1;
   if (iz >= resolution.z()) return -1;
@@ -307,8 +307,8 @@ int GateImage::GetIndexFromPostPositionAndDirection(const G4ThreeVector& positio
 
   // TEMP GateDebugMessage("Image",9," " << ix << " " << iy << " " << iz << G4endl);
 
-  //DS WARNING : kCarTolerance sur 2 ? 
-  //DS biais possible dans les sensors ? 
+  //DS WARNING : kCarTolerance sur 2 ?
+  //DS biais possible dans les sensors ?
 
   // Special case for surfaces :
   if ((x - ix < kCarTolerance)&&(direction.x()<0)) {
@@ -366,14 +366,14 @@ int GateImage::GetIndexFromPostPositionAndDirection(const G4ThreeVector& positio
 
 
 //-----------------------------------------------------------------------------
-int GateImage::GetIndexFromPostPosition(const G4ThreeVector& pre, 
+int GateImage::GetIndexFromPostPosition(const G4ThreeVector& pre,
 					const G4ThreeVector& post) const{
   //std::cout.precision(20);
   // TEMP GateDebugMessage("Image",9,"GetIndex pre  : " << pre << G4endl);
   // TEMP GateDebugMessage("Image",9,"GetIndex post : " << post << G4endl);
 
-  //DS WARNING : kCarTolerance sur 2 ? 
-  //DS biais possible dans les sensors ? 
+  //DS WARNING : kCarTolerance sur 2 ?
+  //DS biais possible dans les sensors ?
 
   // compute post voxel coordinates
   double x = (post.x()+halfSize.x())/voxelSize.x();
@@ -389,12 +389,12 @@ int GateImage::GetIndexFromPostPosition(const G4ThreeVector& pre,
   double dy = post.y() - pre.y();
   double dz = post.z() - pre.z();
 
-  bool xm = ( (dx<0) && ((x-ix)<kCarTolerance) ); 
-  bool xp = ( (dx>0) && ((ix+1-x)<kCarTolerance) ); 
-  bool ym = ( (dy<0) && ((y-iy)<kCarTolerance) ); 
-  bool yp = ( (dy>0) && ((iy+1-y)<kCarTolerance) ); 
-  bool zm = ( (dz<0) && ((z-iz)<kCarTolerance) ); 
-  bool zp = ( (dz>0) && ((iz+1-z)<kCarTolerance) ); 
+  bool xm = ( (dx<0) && ((x-ix)<kCarTolerance) );
+  bool xp = ( (dx>0) && ((ix+1-x)<kCarTolerance) );
+  bool ym = ( (dy<0) && ((y-iy)<kCarTolerance) );
+  bool yp = ( (dy>0) && ((iy+1-y)<kCarTolerance) );
+  bool zm = ( (dz<0) && ((z-iz)<kCarTolerance) );
+  bool zp = ( (dz>0) && ((iz+1-z)<kCarTolerance) );
 
   double tx(1e30),ty(1e30),tz(1e30);
   if (xm) tx = (ix-x) / dx;
@@ -423,7 +423,7 @@ int GateImage::GetIndexFromPostPosition(const G4ThreeVector& pre,
       else {
 	if (zm) iz--;
 	else iz++;
-      }      
+      }
     }
   }
   if (ix == -1) return -1;
@@ -434,11 +434,11 @@ int GateImage::GetIndexFromPostPosition(const G4ThreeVector& pre,
 
 
   /*
-  // TEMP GateDebugMessage("Image",9,"Position (post) in voxel = " 
-  // TEMP 		   << x << " " << y << " " << z 
+  // TEMP GateDebugMessage("Image",9,"Position (post) in voxel = "
+  // TEMP 		   << x << " " << y << " " << z
   // TEMP 		   << G4endl);
 
-  // check bounds 
+  // check bounds
   int fx = GetIndexFromPostPosition(x, pre.x(), post.x(), resolution.x());
   int fy = GetIndexFromPostPosition(y, pre.y(), post.y(), resolution.y());
   int fz = GetIndexFromPostPosition(z, pre.z(), post.z(), resolution.z());
@@ -453,7 +453,7 @@ int GateImage::GetIndexFromPostPosition(const G4ThreeVector& pre,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-int GateImage::GetIndexFromPrePosition(const G4ThreeVector& pre, 
+int GateImage::GetIndexFromPrePosition(const G4ThreeVector& pre,
 				       const G4ThreeVector& post) const{
   GateError("BUG. Do not use GetIndexFromPrePosition");
   //std::cout.precision(20);
@@ -464,26 +464,26 @@ int GateImage::GetIndexFromPrePosition(const G4ThreeVector& pre,
   double x = (pre.x()+halfSize.x())/voxelSize.x();
   double y = (pre.y()+halfSize.y())/voxelSize.y();
   double z = (pre.z()+halfSize.z())/voxelSize.z();
-  // TEMP GateDebugMessage("Image",9,"Position (pre) in voxel = " 
-  // TEMP 		   << x << " " << y << " " << z 
+  // TEMP GateDebugMessage("Image",9,"Position (pre) in voxel = "
+  // TEMP 		   << x << " " << y << " " << z
   // TEMP 		   << G4endl);
-  // TEMP GateDebugMessage("Image",9,"Position (pre) in voxel = " 
-  // TEMP 		   << (int)floor(x) << " " << (int)floor(y) << " " << (int)floor(z) 
+  // TEMP GateDebugMessage("Image",9,"Position (pre) in voxel = "
+  // TEMP 		   << (int)floor(x) << " " << (int)floor(y) << " " << (int)floor(z)
   // TEMP 		   << G4endl);
 
   // DEBUG
   // TEMP double xx = (post.x()+halfSize.x())/voxelSize.x();
   // TEMP double yy = (post.y()+halfSize.y())/voxelSize.y();
   // TEMP double zz = (post.z()+halfSize.z())/voxelSize.z();
-  // TEMP GateDebugMessage("Image",9,"[Position (post) in voxel = " 
-  // TEMP 		   << xx << " " << yy << " " << zz 
+  // TEMP GateDebugMessage("Image",9,"[Position (post) in voxel = "
+  // TEMP 		   << xx << " " << yy << " " << zz
   // TEMP 		   << G4endl);
-  // TEMP GateDebugMessage("Image",9,"[Position (post) in voxel = " 
-  // TEMP 				   << (int)floor(xx) << " " << (int)floor(yy) << " " 
-  // TEMP 			   << (int)floor(zz) 
+  // TEMP GateDebugMessage("Image",9,"[Position (post) in voxel = "
+  // TEMP 				   << (int)floor(xx) << " " << (int)floor(yy) << " "
+  // TEMP 			   << (int)floor(zz)
   // TEMP 			   << G4endl);
 
-  // check bounds  
+  // check bounds
   int fx = GetIndexFromPrePosition(x, pre.x(), post.x(), resolution.x());
   int fy = GetIndexFromPrePosition(y, pre.y(), post.y(), resolution.y());
   int fz = GetIndexFromPrePosition(z, pre.z(), post.z(), resolution.z());
@@ -508,9 +508,9 @@ int GateImage::GetIndexFromPrePosition(const G4ThreeVector& pre,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-int GateImage::GetIndexFromPostPosition(const double t, 
-					const double pret, 
-					const double postt, 
+int GateImage::GetIndexFromPostPosition(const double t,
+					const double pret,
+					const double postt,
 					const double resolutiont) const{
   std::cerr << "GetIndexFromPostPosition ! non !" << std::endl;
   exit(0);
@@ -559,7 +559,7 @@ int GateImage::GetIndexFromPostPosition(const double t,
     }
   }
 
-  // check out of volume 
+  // check out of volume
   if (ft<0) {
     // TEMP GateDebugMessage("Image",9,"Outside LEFT." << G4endl);
     return -1;
@@ -573,9 +573,9 @@ int GateImage::GetIndexFromPostPosition(const double t,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-int GateImage::GetIndexFromPrePosition(const double t, 
-				       const double pret, 
-				       const double postt, 
+int GateImage::GetIndexFromPrePosition(const double t,
+				       const double pret,
+				       const double postt,
 				       const double //resolutiont
 				       ) const{
   GateError("BUG. Do not use GetIndexFromPrePosition(t, pret ...)");
@@ -703,8 +703,8 @@ G4ThreeVector GateImage::GetNonIntegerCoordinatesFromPosition(G4ThreeVector posi
 
 //-----------------------------------------------------------------------------
 G4ThreeVector GateImage::GetVoxelCornerFromCoordinates(G4ThreeVector c) const{
-  return G4ThreeVector ( c.x() * voxelSize.x() - halfSize.x(), 
-			 c.y() * voxelSize.y() - halfSize.y(), 
+  return G4ThreeVector ( c.x() * voxelSize.x() - halfSize.x(),
+			 c.y() * voxelSize.y() - halfSize.y(),
 			 c.z() * voxelSize.z() - halfSize.z() );
 }
 //-----------------------------------------------------------------------------
@@ -731,16 +731,16 @@ void GateImage::UpdateSizesFromResolutionAndHalfSize() {
   //GateMessage("Image",3,"GateImage::UpdateSizesFromResolutionAndHalfSize()"<<G4endl);
 
   nbOfValues = (int)lrint(resolution.x()*resolution.y()*resolution.z());
-  size = G4ThreeVector(halfSize.x()*2.0, 
-		       halfSize.y()*2.0, 
+  size = G4ThreeVector(halfSize.x()*2.0,
+		       halfSize.y()*2.0,
 		       halfSize.z()*2.0);
-  voxelSize = G4ThreeVector(size.x()/resolution.x(), 
+  voxelSize = G4ThreeVector(size.x()/resolution.x(),
 			    size.y()/resolution.y(),
 			    size.z()/resolution.z());
   voxelVolume = voxelSize.x()*voxelSize.y()*voxelSize.z();
-  halfSizeMinusVoxelCenter = 
-    G4ThreeVector(-halfSize.x()+voxelSize.x()/2.0, 
-		  -halfSize.y()+voxelSize.y()/2.0, 
+  halfSizeMinusVoxelCenter =
+    G4ThreeVector(-halfSize.x()+voxelSize.x()/2.0,
+		  -halfSize.y()+voxelSize.y()/2.0,
 		  -halfSize.z()+voxelSize.z()/2.0);
   lineSize = (int)lrint(resolution.x());
   planeSize = (int)lrint(resolution.x()*resolution.y());
@@ -759,17 +759,17 @@ void GateImage::UpdateSizesFromResolutionAndVoxelSize() {
 
   nbOfValues = (int)lrint(resolution.x()*resolution.y()*resolution.z());
 
-  size = G4ThreeVector ( resolution.x() * voxelSize.x(), 
-			 resolution.y() * voxelSize.y(), 
+  size = G4ThreeVector ( resolution.x() * voxelSize.x(),
+			 resolution.y() * voxelSize.y(),
 			 resolution.z() * voxelSize.z() );
-  halfSize = G4ThreeVector(size.x() / 2.0, 
-			   size.y() / 2.0, 
+  halfSize = G4ThreeVector(size.x() / 2.0,
+			   size.y() / 2.0,
 			   size.z() / 2.0);
 
   voxelVolume = voxelSize.x()*voxelSize.y()*voxelSize.z();
-  halfSizeMinusVoxelCenter = 
-    G4ThreeVector(-halfSize.x()+voxelSize.x()/2.0, 
-		  -halfSize.y()+voxelSize.y()/2.0, 
+  halfSizeMinusVoxelCenter =
+    G4ThreeVector(-halfSize.x()+voxelSize.x()/2.0,
+		  -halfSize.y()+voxelSize.y()/2.0,
 		  -halfSize.z()+voxelSize.z()/2.0);
   lineSize = (int)lrint(resolution.x());
   planeSize = (int)lrint(resolution.x()*resolution.y());
@@ -809,14 +809,14 @@ void GateImage::Read(G4String filename) {
 //-----------------------------------------------------------------------------
 void GateImage::ReadVox(G4String filename) {
   //GateMessage("Image",5,"GateImage::ReadVox " << filename << G4endl);
-  // open file  
+  // open file
   std::ifstream is;
   OpenFileInput(filename, is);
   // read header
-  std::string s; 
+  std::string s;
   is >> s;
   if (s != "VOX") {
-    // GateError( "Error while opening " << filename 
+    // GateError( "Error while opening " << filename
     //	   << " for reading a Vox : this is not a vox format ?" << G4endl);
     exit(0);
   }
@@ -825,13 +825,13 @@ void GateImage::ReadVox(G4String filename) {
   else {
     if (s == "v3") ReadVox3(is);
     else {
-      // GateError( "Error while opening " << filename 
+      // GateError( "Error while opening " << filename
       //     << " for reading a Vox : unsuported vox format." << G4endl);
       exit(0);
     }
   }
   if (!is) {
-    //GateError( "Error while reading " << filename 
+    //GateError( "Error while reading " << filename
     //	   << " header (vox format)" << G4endl);
     exit(0);
   }
@@ -878,7 +878,7 @@ void GateImage::ReadVox2(std::ifstream & is) {
   int dim;
   is >> dim;
   if (dim != 3) {
-    //GateError( "Error while reading image dim = " << dim 
+    //GateError( "Error while reading image dim = " << dim
     //	   <<  " (only dim=3 is allowed)" << G4endl);
     exit(0);
   }
@@ -905,14 +905,14 @@ void GateImage::ReadVox3(std::ifstream & is) {
   int dim;
   is >> dim;
   if (dim != 3) {
-    //GateError( "Error while reading image dim = " << dim 
+    //GateError( "Error while reading image dim = " << dim
     //	   <<  " (only dim=3 is allowed)" << G4endl);
     exit(0);
   }
   // read point dimension
   is >> dim;
   if (dim != 1) {
-    //GateError( "Error while reading point dim = " << dim 
+    //GateError( "Error while reading point dim = " << dim
     //	   <<  " (only dim=1 is allowed)" << G4endl);
     exit(0);
   }
@@ -973,7 +973,7 @@ void GateImage::ReadAnalyze(G4String filename) {
   UpdateSizesFromResolutionAndVoxelSize();
   Allocate();
 
-  // open .img file  
+  // open .img file
   int l = filename.length();
   filename.replace(l-3,3,"img");
   /*[l-1] = 'g';
@@ -988,7 +988,7 @@ void GateImage::ReadAnalyze(G4String filename) {
 
 
   // Read values ...
-  if (hdr.GetVoxelType() == GateAnalyzeHeader::SignedShortType) {	
+  if (hdr.GetVoxelType() == GateAnalyzeHeader::SignedShortType) {
     GateMessage("Image",5,"Voxel Type = SignedShortType" << G4endl);
     typedef short VoxelType;
     std::vector<VoxelType> temp(nbOfValues);
@@ -1005,12 +1005,12 @@ void GateImage::ReadAnalyze(G4String filename) {
     data.resize(nbOfValues);
     is.read((char*)(&(temp[0])), nbOfValues*sizeof(VoxelType));
     for(unsigned int i=0; i<temp.size(); i++) {
-      if(!hdr.IsRightEndian())  
+      if(!hdr.IsRightEndian())
 	GateMachine::SwapEndians(temp[i]);
       data[i] = (PixelType)temp[i];
     }
   }
-    else if (hdr.GetVoxelType() == GateAnalyzeHeader::SignedIntType) {	
+    else if (hdr.GetVoxelType() == GateAnalyzeHeader::SignedIntType) {
     GateMessage("Image",5,"Voxel Type = SignedIntType" << G4endl);
     typedef int VoxelType;
     std::vector<VoxelType> temp(nbOfValues);
@@ -1043,17 +1043,24 @@ void GateImage::ReadMHD(G4String filename) {
   // Read mhd image
   GateMHDImage * mhd = new GateMHDImage;
   mhd->ReadHeader(filename);
-  
+
   // Get image information
   resolution = G4ThreeVector(mhd->size[0], mhd->size[1], mhd->size[2]);
   voxelSize = G4ThreeVector(mhd->spacing[0], mhd->spacing[1], mhd->spacing[2]);
   origin = G4ThreeVector(mhd->origin[0], mhd->origin[1], mhd->origin[2]);
+
+  // We need to shift to half a pixel to be coherent with Gate
+  // coordinates system.
+  origin[0] -= voxelSize[0]/2.0;
+  origin[1] -= voxelSize[1]/2.0;
+  origin[2] -= voxelSize[2]/2.0;
+
   transformMatrix.resize(9);
   for(int i=0; i<9; i++) transformMatrix[i] = mhd->transform[i];
 
   UpdateSizesFromResolutionAndVoxelSize();
   Allocate();
-  
+
   // Get image data
   mhd->ReadData(filename, data);
 }
@@ -1070,7 +1077,7 @@ void GateImage::ReadAscii(G4String filename) {
   // Header
   std::string s;
   is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read ####################################
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read # 
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read #
   is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read Matrix
   is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read Size=
   is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read values ...
@@ -1078,7 +1085,7 @@ void GateImage::ReadAscii(G4String filename) {
   is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read Resol
   is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read =
   G4ThreeVector resol;
-  is >> resol; 
+  is >> resol;
   //GateDebugMessage("Image",8,"Resol = " << resol << G4endl);
   is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read #
   is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read VoxelSize
@@ -1107,8 +1114,8 @@ void GateImage::ReadAscii(G4String filename) {
   if (dim <= 1) {
     // read values in columns
     for(int i=0; i<nbOfValues; i++) {
-      is >> v; //GateDebugMessage("Image",8,"val = " << v << G4endl); 
-      data[i] = atof(v.c_str()); //GateDebugMessage("Image",8,"val = " << data[i] << G4endl); 
+      is >> v; //GateDebugMessage("Image",8,"val = " << v << G4endl);
+      data[i] = atof(v.c_str()); //GateDebugMessage("Image",8,"val = " << data[i] << G4endl);
     }
   }
   if (dim == 2) {
@@ -1122,7 +1129,7 @@ void GateImage::ReadAscii(G4String filename) {
     for(int y=0; y<height; y++) {
       for(int x=0; x<width; x++) {
 	is >> v;
-	data[i] = atof(v.c_str()); 
+	data[i] = atof(v.c_str());
 	i++;
       }
     }
@@ -1133,7 +1140,7 @@ void GateImage::ReadAscii(G4String filename) {
       for(int y=0; y<resolution.y(); y++) {
 	for(int x=0; x<resolution.x(); x++) {
 	  is >> v;
-	  data[i] = atof(v.c_str()); 
+	  data[i] = atof(v.c_str());
 	  i++;
 	}
       }
@@ -1173,7 +1180,7 @@ void GateImage::MergeDataByAddition(G4String filename) {
 
 //-----------------------------------------------------------------------------
 void GateImage::Write(G4String filename, const G4String & comment) {
-  GateMessage("Actor",5,"GateImage::write " << filename << G4endl);  
+  GateMessage("Actor",5,"GateImage::write " << filename << G4endl);
 
   G4String extension = getExtension(filename);
   GateMessage("Actor",5,"extension = " << extension << G4endl);
@@ -1225,7 +1232,7 @@ void GateImage::Write(G4String filename, const G4String & comment) {
               WriteRoot(filename);
             }
             else {
-              GateMessage("Image",0,"WARNING : Don't know how to write '" << extension 
+              GateMessage("Image",0,"WARNING : Don't know how to write '" << extension
                           << " format... I try ASCII file" << G4endl);
               // open
               OpenFileOutput(filename, os);
@@ -1267,7 +1274,7 @@ void GateImage::WriteMHD(std::string filename) {
   // Write mhd image
   GateMHDImage * mhd = new GateMHDImage;
   mhd->WriteHeader(filename, this);
-  mhd->WriteData(filename, this);  
+  mhd->WriteData(filename, this);
 }
 //-----------------------------------------------------------------------------
 
@@ -1306,7 +1313,7 @@ void GateImage::WriteAscii(std::ofstream & os, const G4String & comment) {
     int i=0;
     for(int y=0; y<height; y++) {
       for(int x=0; x<width; x++) {
-	os << data[i] << " ";	
+	os << data[i] << " ";
 	i++;
       }
       os << std::endl;
@@ -1317,7 +1324,7 @@ void GateImage::WriteAscii(std::ofstream & os, const G4String & comment) {
     for(int z=0; z<resolution.z(); z++) {
       for(int y=0; y<resolution.y(); y++) {
 	for(int x=0; x<resolution.x(); x++) {
-	  os << data[i] << " ";	
+	  os << data[i] << " ";
 	  i++;
 	}
 	os << std::endl;
@@ -1342,12 +1349,12 @@ GateImage::ESide GateImage::GetSideFromPointAndCoordinate(const G4ThreeVector & 
   GateDebugMessage("Image", 8, "Spaci = " << s << G4endl);
   GateDebugMessage("Image", 8, "kCarTolerance*0.5 = " << kCarTolerance*0.5 << G4endl);
 
-  GateDebugMessage("Image", 8, "XL  = " << p.x()-v.x() << G4endl);    
-  GateDebugMessage("Image", 8, "XR  = " << v.x()+s.x()-p.x() << G4endl);    
-  GateDebugMessage("Image", 8, "YL  = " << p.y()-v.y() << G4endl);    
-  GateDebugMessage("Image", 8, "YR  = " << v.y()+s.y()-p.y() << G4endl);    
-  GateDebugMessage("Image", 8, "ZL  = " << p.z()-v.z() << G4endl);    
-  GateDebugMessage("Image", 8, "ZR  = " << v.z()+s.z()-p.z() << G4endl);    
+  GateDebugMessage("Image", 8, "XL  = " << p.x()-v.x() << G4endl);
+  GateDebugMessage("Image", 8, "XR  = " << v.x()+s.x()-p.x() << G4endl);
+  GateDebugMessage("Image", 8, "YL  = " << p.y()-v.y() << G4endl);
+  GateDebugMessage("Image", 8, "YR  = " << v.y()+s.y()-p.y() << G4endl);
+  GateDebugMessage("Image", 8, "ZL  = " << p.z()-v.z() << G4endl);
+  GateDebugMessage("Image", 8, "ZR  = " << v.z()+s.z()-p.z() << G4endl);
 
   if (p.x()-v.x() <= kCarTolerance*0.5) return kMX; // left side
   if (v.x()+s.x()-p.x() <= kCarTolerance*0.5) return kPX; // right side
@@ -1355,7 +1362,7 @@ GateImage::ESide GateImage::GetSideFromPointAndCoordinate(const G4ThreeVector & 
   if (p.y()-v.y() <= kCarTolerance*0.5) return kMY; // up
   if (v.y()+s.y()-p.y() <= kCarTolerance*0.5) return kPY; // down
 
-  if (p.z()-v.z() <= kCarTolerance*0.5) return kMZ; // front 
+  if (p.z()-v.z() <= kCarTolerance*0.5) return kMZ; // front
   if (v.z()+s.z()-p.z() <= kCarTolerance*0.5) return kPZ; // rear
 
   return kUndefined;
@@ -1396,40 +1403,40 @@ void GateImage::UpdateDataForRootOutput() {
   if (resolution.z() != 1) mRootHistoDim++;
 
   if (mRootHistoDim == 1 || mRootHistoDim == 2 || mRootHistoDim == 3) {
-    if (resolution.x() != 1) { 
-      mRootHistoBinxNb = resolution.x(); 
-      mRootHistoBinxLow = -halfSize.x()+mPosition.x(); 
-      mRootHistoBinxUp = halfSize.x()+mPosition.x(); 
+    if (resolution.x() != 1) {
+      mRootHistoBinxNb = resolution.x();
+      mRootHistoBinxLow = -halfSize.x()+mPosition.x();
+      mRootHistoBinxUp = halfSize.x()+mPosition.x();
     }
-    else if (resolution.y() != 1) { 
-      mRootHistoBinxNb = resolution.y(); 
-      mRootHistoBinxLow = -halfSize.y()+mPosition.y(); 
-      mRootHistoBinxUp = halfSize.y()+mPosition.y(); 
+    else if (resolution.y() != 1) {
+      mRootHistoBinxNb = resolution.y();
+      mRootHistoBinxLow = -halfSize.y()+mPosition.y();
+      mRootHistoBinxUp = halfSize.y()+mPosition.y();
     }
-    else if (resolution.z() != 1) { 
-      mRootHistoBinxNb = resolution.z(); 
-      mRootHistoBinxLow = -halfSize.z()+mPosition.z(); 
-      mRootHistoBinxUp = halfSize.z()+mPosition.z(); 
+    else if (resolution.z() != 1) {
+      mRootHistoBinxNb = resolution.z();
+      mRootHistoBinxLow = -halfSize.z()+mPosition.z();
+      mRootHistoBinxUp = halfSize.z()+mPosition.z();
     }
 
     mRootHistoBinxSize = (mRootHistoBinxUp-mRootHistoBinxLow)/mRootHistoBinxNb;
 
   }
   if (mRootHistoDim == 2 || mRootHistoDim == 3) {
-    /*if (resolution.x() != 1) { 
-      mRootHistoBinxNb = resolution.x(); 
-      mRootHistoBinxLow = -halfSize.x()+mPosition.x(); 
-      mRootHistoBinxUp = halfSize.x()+mPosition.x(); 
+    /*if (resolution.x() != 1) {
+      mRootHistoBinxNb = resolution.x();
+      mRootHistoBinxLow = -halfSize.x()+mPosition.x();
+      mRootHistoBinxUp = halfSize.x()+mPosition.x();
       }*/
-    if (resolution.y() != 1) { 
-      mRootHistoBinyNb = resolution.y(); 
-      mRootHistoBinyLow = -halfSize.y()+mPosition.y(); 
-      mRootHistoBinyUp = halfSize.y()+mPosition.y(); 
+    if (resolution.y() != 1) {
+      mRootHistoBinyNb = resolution.y();
+      mRootHistoBinyLow = -halfSize.y()+mPosition.y();
+      mRootHistoBinyUp = halfSize.y()+mPosition.y();
     }
-    else if (resolution.z() != 1) { 
-      mRootHistoBinyNb = resolution.z(); 
-      mRootHistoBinyLow = -halfSize.z()+mPosition.z(); 
-      mRootHistoBinyUp = halfSize.z()+mPosition.z(); 
+    else if (resolution.z() != 1) {
+      mRootHistoBinyNb = resolution.z();
+      mRootHistoBinyLow = -halfSize.z()+mPosition.z();
+      mRootHistoBinyUp = halfSize.z()+mPosition.z();
     }
 
     mRootHistoBinySize = (mRootHistoBinyUp-mRootHistoBinyLow)/mRootHistoBinyNb;
@@ -1437,15 +1444,15 @@ void GateImage::UpdateDataForRootOutput() {
   }
     if (mRootHistoDim == 3) {
 
-      mRootHistoBinzNb = resolution.z(); 
-      mRootHistoBinzLow = -halfSize.z()+mPosition.z(); 
-      mRootHistoBinzUp = halfSize.z()+mPosition.z(); 
+      mRootHistoBinzNb = resolution.z();
+      mRootHistoBinzLow = -halfSize.z()+mPosition.z();
+      mRootHistoBinzUp = halfSize.z()+mPosition.z();
 
 
     mRootHistoBinzSize = (mRootHistoBinzUp-mRootHistoBinzLow)/mRootHistoBinzNb;
 
   }
-  
+
 }
 //-----------------------------------------------------------------------------
 
@@ -1456,10 +1463,10 @@ void GateImage::WriteRoot(G4String filename) {
 
   if (mRootHistoDim == 1) {
     TFile * f = new TFile(filename, "RECREATE");
-    TH1F * h = new TH1F("histo", 
-			std::string("1D distribution "+filename).c_str(), 
-			mRootHistoBinxNb, 
-			mRootHistoBinxLow, 
+    TH1F * h = new TH1F("histo",
+			std::string("1D distribution "+filename).c_str(),
+			mRootHistoBinxNb,
+			mRootHistoBinxLow,
 			mRootHistoBinxUp);
     double s = mRootHistoBinxSize/2.0;
     int i=0;
@@ -1472,13 +1479,13 @@ void GateImage::WriteRoot(G4String filename) {
   }
   else if (mRootHistoDim == 2) {
     TFile * f = new TFile(filename, "RECREATE");
-    TH2F * h2 = new TH2F("histo", 
-			std::string("2D distribution "+filename).c_str(), 
-			mRootHistoBinxNb, 
-			mRootHistoBinxLow, 
+    TH2F * h2 = new TH2F("histo",
+			std::string("2D distribution "+filename).c_str(),
+			mRootHistoBinxNb,
+			mRootHistoBinxLow,
 			mRootHistoBinxUp,
-			mRootHistoBinyNb, 
-			mRootHistoBinyLow, 
+			mRootHistoBinyNb,
+			mRootHistoBinyLow,
 			mRootHistoBinyUp);
     double sx = mRootHistoBinxSize/2.0;
     double sy = mRootHistoBinySize/2.0;
@@ -1498,30 +1505,30 @@ void GateImage::WriteRoot(G4String filename) {
     h2->Write();
     f->Close();
   }
-  else { 
-        TFile * f = new TFile(filename, "RECREATE"); 
-    TH3F * h3 = new TH3F("histo", 
-			std::string("3D distribution "+filename).c_str(), 
-			mRootHistoBinxNb, 
-			mRootHistoBinxLow, 
+  else {
+        TFile * f = new TFile(filename, "RECREATE");
+    TH3F * h3 = new TH3F("histo",
+			std::string("3D distribution "+filename).c_str(),
+			mRootHistoBinxNb,
+			mRootHistoBinxLow,
 			mRootHistoBinxUp,
-			mRootHistoBinyNb, 
-			mRootHistoBinyLow, 
+			mRootHistoBinyNb,
+			mRootHistoBinyLow,
 			mRootHistoBinyUp,
-			mRootHistoBinzNb, 
-			mRootHistoBinzLow, 
+			mRootHistoBinzNb,
+			mRootHistoBinzLow,
 			mRootHistoBinzUp);
-    
 
-    double sx = mRootHistoBinxSize/2.0; 
+
+    double sx = mRootHistoBinxSize/2.0;
     double sy = mRootHistoBinySize/2.0;
     double sz = mRootHistoBinzSize/2.0;
     double x=mRootHistoBinxLow+sx;
     double y=mRootHistoBinyLow+sy;
-    double z=mRootHistoBinzLow+sz;   
+    double z=mRootHistoBinzLow+sz;
     for(int i = 0;i<mRootHistoBinxNb;i++)
     {
-            y=mRootHistoBinyLow+sy; 
+            y=mRootHistoBinyLow+sy;
       for(int j = 0;j<mRootHistoBinyNb;j++)
       {
 	      z=mRootHistoBinzLow+sz;
@@ -1529,7 +1536,7 @@ void GateImage::WriteRoot(G4String filename) {
 	{
 
 	  h3->Fill(x,y,z, data[k*mRootHistoBinxNb*mRootHistoBinyNb+ j*mRootHistoBinxNb+i]);
-	  z+=mRootHistoBinzSize;	 
+	  z+=mRootHistoBinzSize;
 
 	}
       	 y+=mRootHistoBinySize;
@@ -1540,7 +1547,7 @@ void GateImage::WriteRoot(G4String filename) {
 
     }
 
-    f->Close(); 
+    f->Close();
     }
 
 #endif
@@ -1554,8 +1561,8 @@ void GateImage::WriteRoot(G4String filename) {
 
 //-----------------------------------------------------------------------------
 bool GateImage::HasSameResolutionThan(const GateImage & image) const {
-  if (GetResolution().x() == image.GetResolution().x() && 
-      GetResolution().y() == image.GetResolution().y() && 
+  if (GetResolution().x() == image.GetResolution().x() &&
+      GetResolution().y() == image.GetResolution().y() &&
       GetResolution().z() == image.GetResolution().z()) return true;
   else return false;
 }
@@ -1569,16 +1576,15 @@ bool GateImage::HasSameResolutionThan(const GateImage * pImage) const {
 
 //-----------------------------------------------------------------------------
 GateImage::PixelType GateImage::GetMinValue()
-{ 
-   PixelType minVal = GetValue(0); 
+{
+   PixelType minVal = GetValue(0);
    for(int i =1; i<GetNumberOfValues();i++)
    {
      if(GetValue(i)<minVal) minVal = GetValue(i);
    }
-   return minVal; 
-} 
+   return minVal;
+}
 //-----------------------------------------------------------------------------
 
 
-#endif 
-
+#endif

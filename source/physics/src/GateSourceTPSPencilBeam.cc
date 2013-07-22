@@ -108,7 +108,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 
 	for (int i=0;i<4;i++) inFile.getline(oneline, MAXLINE);
 	GantryAngle=atof(oneline)*TMath::Pi()/180.;
-        
+
 //MISSING COUCH ANGLE inserted
         for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
 	CouchAngle=atof(oneline)*TMath::Pi()/180.;
@@ -130,7 +130,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 	    G4cout<<"TESTREAD TotalMeterSet "<<TotalMeterSet<<G4endl;
 	    G4cout<<"TESTREAD FieldID "<<FieldID <<G4endl;
 	    G4cout<<"TESTREAD GantryAngle "<<GantryAngle <<G4endl;
-	    G4cout<<"TESTREAD CouchAngle "<<CouchAngle <<G4endl;            
+	    G4cout<<"TESTREAD CouchAngle "<<CouchAngle <<G4endl;
 	    G4cout<<"TESTREAD Layers N° "<<j<<G4endl;
 	    G4cout<<"TESTREAD NbOfSpots "<<NbOfSpots<<G4endl;
 	  }
@@ -158,8 +158,8 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 	    //if (GantryAngle!=0)//orig
 //            position.rotateY(GantryAngle);//orig
 	    //position.rotateY(GantryAngle);
-            
-            //include couch rotation            
+
+            //include couch rotation
             //if (CouchAngle!=0)
 //            position.rotateY(CouchAngle);
             //include gantry rotation
@@ -176,8 +176,8 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 	    //DIRECTION
 	    // To calculate the 3 required rotation angles to rotate the beam according to the direction set in the TPS
 	    G4ThreeVector rotation, direction, test;
-            
-            
+
+
 	    // GantryAngle at 0 (Default)
 //            //ORIGINAL BLOCK
 //            rotation[0]=TMath::Pi();
@@ -189,8 +189,8 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 //	    rotation[2]=0;
 //	    //set gantry angle rotation
 //            rotation[1]+=GantryAngle;
-            
-            
+
+
 //                        // GantryAngle at 0 (Default)
 //            //rotation[0]=TMath::Pi()+xCorrection;//270 degrees
 //            rotation[0]=-xCorrection;//270 degrees
@@ -205,8 +205,8 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 //	    rotation[2]+=GantryAngle;//+CouchAngle;
 ////            rotation[2]+=CouchAngle;
 ////            rotation[0]+=-CouchAngle;//-couchAngle
-            
-            
+
+
             // GantryAngle at 0 (Default)
             //rotation[0]=TMath::Pi()+xCorrection;//270 degrees
             rotation[0]=-xCorrection;//270 degrees
@@ -224,8 +224,8 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 	    rotation[2]+=GantryAngle;//+CouchAngle;
 //            rotation[2]+=CouchAngle;
             rotation[0]+=-CouchAngle;//-couchAngle
-            
-            
+
+
 //            rotation[0]=0;//TMath::Pi();
 //	    // deltaY in the patient plan
 //	    rotation[0]+=atan(SpotParameters[1]/mDistanceSMYToIsocenter);
@@ -237,7 +237,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 //            //rotation[1]+=GantryAngle;
 //            rotation[1]-=GantryAngle;
 //            rotation[2]+=0.;
-            
+
 //            G4cout<<"TESTREAD Spot Effective source position "<<position[0]<<" "<<position[1]<<" "<<position[2]<<G4endl;
 //            G4cout<<"TESTREAD source rotation "<<rotation[0]<<" "<<rotation[1]<<" "<<rotation[2]<<G4endl;
 //            G4cout<<"TESTREAD couch angle "<<CouchAngle<<G4endl;
@@ -247,7 +247,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 	      G4cout<<"TESTREAD source rotation "<<rotation[0]<<" "<<rotation[1]<<" "<<rotation[2]<<G4endl;
 	    }
 
-            
+
 	    bool allowedField=true;
 	    for (unsigned int i=0; i<mNotAllowedFields.size(); i++) {
 	      if (FieldID==mNotAllowedFields[i]) allowedField=false;
@@ -282,8 +282,8 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 	      Pencil->SetSigmaTheta(GetSigmaTheta(energy));
 	      Pencil->SetEllipseXThetaArea(GetEllipseXThetaArea(energy));
 	      Pencil->SetSigmaPhi(GetSigmaPhi(energy));
-	      Pencil->SetEllipseYPhiArea(GetEllipseYPhiArea(energy));  
-	      Pencil->SetRotation(rotation); 
+	      Pencil->SetEllipseYPhiArea(GetEllipseYPhiArea(energy));
+	      Pencil->SetRotation(rotation);
 
 	      //Correlation Position/Direction
 	      if (mConvergentSource){
@@ -307,7 +307,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 		cout<<"SetSigmaTheta\t"<<GetSigmaTheta(energy)<<endl;
 		cout<<"SetSigmaPhi\t"<<GetSigmaPhi(energy)<<endl;
 		cout<<"SetEllipseXThetaArea\t"<<GetEllipseXThetaArea(energy)<<endl;
-		cout<<"SetEllipseYPhiArea\t"<<GetEllipseYPhiArea(energy)<<endl; 
+		cout<<"SetEllipseYPhiArea\t"<<GetEllipseYPhiArea(energy)<<endl;
 	      }
 	    }
 	  }
@@ -324,7 +324,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
       exit (0);
     }
 
-    GateMessage("Physic", 1, "[TPSPencilBeam] Starting particle generation:  " 
+    GateMessage("Physic", 1, "[TPSPencilBeam] Starting particle generation:  "
                 << mTotalNumberOfSpots<<" spots loaded."<<G4endl);
     mPDF = new double[mTotalNumberOfSpots];
     for (int i=0; i<mTotalNumberOfSpots; i++){
@@ -411,7 +411,7 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties(){
   for (int i=0;i<=PolOrder;i++) {
     inFile.getline(oneline, MAXLINE);
     mX.push_back(atof(oneline));
-  }  
+  }
 
   for (int i=0;i<3;i++) inFile.getline(oneline, MAXLINE);
   // Theta
@@ -421,7 +421,7 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties(){
   for (int i=0;i<=PolOrder;i++) {
     inFile.getline(oneline, MAXLINE);
     mTheta.push_back(atof(oneline));
-  }  
+  }
 
   for (int i=0;i<3;i++) inFile.getline(oneline, MAXLINE);
   // Y
@@ -431,7 +431,7 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties(){
   for (int i=0;i<=PolOrder;i++) {
     inFile.getline(oneline, MAXLINE);
     mY.push_back(atof(oneline));
-  }  
+  }
 
   for (int i=0;i<3;i++) inFile.getline(oneline, MAXLINE);
   // Phi
@@ -441,7 +441,7 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties(){
   for (int i=0;i<=PolOrder;i++) {
     inFile.getline(oneline, MAXLINE);
     mPhi.push_back(atof(oneline));
-  }      
+  }
 
   for (int i=0;i<5;i++) inFile.getline(oneline, MAXLINE);
   // Emittance X Theta
@@ -451,7 +451,7 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties(){
   for (int i=0;i<=PolOrder;i++) {
     inFile.getline(oneline, MAXLINE);
     mXThetaEmittance.push_back(atof(oneline));
-  }     
+  }
 
   for (int i=0;i<3;i++) inFile.getline(oneline, MAXLINE);
   // Emittance Y Phi
@@ -461,7 +461,7 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties(){
   for (int i=0;i<=PolOrder;i++) {
     inFile.getline(oneline, MAXLINE);
     mYPhiEmittance.push_back(atof(oneline));
-  }     
+  }
 
   if (mTestFlag){
     G4cout<<"DSP "<<mDistanceSourcePatient<<G4endl;
@@ -502,7 +502,7 @@ double GateSourceTPSPencilBeam::GetSigmaX(double energy) {
   double val=0;
   for (int i=0; i<=mX[0]; i++){
     val+=mX[i+1]*pow(energy,mX[0]-i);
-  }  
+  }
   return val;
 }
 
@@ -511,7 +511,7 @@ double GateSourceTPSPencilBeam::GetSigmaY(double energy) {
   double val=0;
   for (int i=0; i<=mY[0]; i++){
     val+=mY[i+1]*pow(energy,mY[0]-i);
-  }  
+  }
   return val;
 }
 
@@ -520,7 +520,7 @@ double GateSourceTPSPencilBeam::GetSigmaTheta(double energy) {
   double val=0;
   for (int i=0; i<=mTheta[0]; i++){
     val+=mTheta[i+1]*pow(energy,mTheta[0]-i);
-  }  
+  }
   return val;
 }
 
@@ -529,7 +529,7 @@ double GateSourceTPSPencilBeam::GetSigmaPhi(double energy) {
   double val=0;
   for (int i=0; i<=mPhi[0]; i++){
     val+=mPhi[i+1]*pow(energy,mPhi[0]-i);
-  }  
+  }
   return val;
 }
 
@@ -538,21 +538,21 @@ double GateSourceTPSPencilBeam::GetEllipseXThetaArea(double energy) {
   double val=0;
   for (int i=0; i<=mXThetaEmittance[0]; i++){
     val+=mXThetaEmittance[i+1]*pow(energy,mXThetaEmittance[0]-i);
-  }  
+  }
   return val;
-} 
+}
 
 //------------------------------------------------------------------------------------------------------
 double GateSourceTPSPencilBeam::GetEllipseYPhiArea(double energy) {
   double val=0;
   for (int i=0; i<=mYPhiEmittance[0]; i++){
     val+=mYPhiEmittance[i+1]*pow(energy,mYPhiEmittance[0]-i);
-  }  
+  }
   return val;
 }
 
 //------------------------------------------------------------------------------------------------------
-G4int GateSourceTPSPencilBeam::GeneratePrimaries( G4Event* event ) 
+G4int GateSourceTPSPencilBeam::GeneratePrimaries( G4Event* event )
 {
   GateMessage("Beam", 4, "GeneratePrimaries " << event->GetEventID() << G4endl);
   G4int numVertices = 0;

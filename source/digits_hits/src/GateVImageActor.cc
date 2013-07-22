@@ -188,13 +188,17 @@ void GateVImageActor::Construct()
   mVolume->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, origin, min, max);
   size[2] = max-min;
 
+  // Translation between actor's size and mothervolume's size
   mOrigin[0] = size[0]/2.0 - mHalfSize.x();
   mOrigin[1] = size[1]/2.0 - mHalfSize.y();
   mOrigin[2] = size[2]/2.0 - mHalfSize.z();
 
-  mOrigin[0] = mVolume->GetOrigin().x()+mOrigin[0];
-  mOrigin[1] = mVolume->GetOrigin().y()+mOrigin[1];
-  mOrigin[2] = mVolume->GetOrigin().z()+mOrigin[2];
+  // Take origin into account, consider halfpixel
+  mOrigin[0] = mVolume->GetOrigin().x()+mOrigin[0]+mVoxelSize[0]/2.0;
+  mOrigin[1] = mVolume->GetOrigin().y()+mOrigin[1]+mVoxelSize[1]/2.0;
+  mOrigin[2] = mVolume->GetOrigin().z()+mOrigin[2]+mVoxelSize[2]/2.0;
+
+  // Take translation into account
   mOrigin = mOrigin + mPosition;
   mImage.SetOrigin(mOrigin);
 
