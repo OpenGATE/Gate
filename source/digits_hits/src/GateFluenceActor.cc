@@ -67,6 +67,15 @@ void GateFluenceActor::Construct()
     mImageScatter.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mImageScatter.Allocate();
     mImageScatter.SetOrigin(mOrigin);
+    mImageCompton.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    mImageCompton.Allocate();
+    mImageCompton.SetOrigin(mOrigin);
+    mImageRayleigh.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    mImageRayleigh.Allocate();
+    mImageRayleigh.SetOrigin(mOrigin);
+    mImageFluorescence.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    mImageFluorescence.Allocate();
+    mImageFluorescence.SetOrigin(mOrigin);
   }
 
   // Print information
@@ -106,6 +115,23 @@ void GateFluenceActor::SaveData()
       sprintf(filename, mScatterOrderFilename, rID, k+1);
       mFluencePerOrderImages[k]->Write((G4String)filename);
     }
+  }
+
+  // Printing compton or rayleigh or fluorescence scatter images
+  if(mComptonFilename != "")
+  {
+      sprintf(filename, mComptonFilename, rID);
+      mImageCompton.Write((G4String)filename);
+  }
+  if(mRayleighFilename != "")
+  {
+      sprintf(filename, mRayleighFilename, rID);
+      mImageRayleigh.Write((G4String)filename);
+  }
+  if(mFluorescenceFilename != "")
+  {
+      sprintf(filename, mFluorescenceFilename, rID);
+      mImageFluorescence.Write((G4String)filename);
   }
 }
 //-----------------------------------------------------------------------------
@@ -167,9 +193,11 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 
      if(mIsScatterImageEnabled) {
       unsigned int order = 0;
+      G4String process = "";
       // Scatter order
       if(info) {
-        order = info->GetScatterOrder();
+        order   = info->GetScatterOrder();
+        process = info->GetScatterProcess();
         if(order) {
           while(order>mFluencePerOrderImages.size() && order>0) {
             GateImage * voidImage = new GateImage;
@@ -187,6 +215,12 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
          !step->GetTrack()->GetDynamicParticle()->GetPrimaryParticle()
                                                 ->GetMomentum().isNear(step->GetTrack()->GetDynamicParticle()->GetMomentum())) {
         mImageScatter.AddValue(index, respValue);
+
+        if (process == G4String("Compton"))
+          mImageCompton.AddValue(index, respValue);
+        else if (process == G4String("RayleighScattering"))
+          mImageRayleigh.AddValue(index, respValue);
+
         // Scatter order image
         if(order)
           mFluencePerOrderImages[order-1]->AddValue(index, respValue);
@@ -195,6 +229,8 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
       if(step->GetTrack()->GetTrackID() && step->GetTrack()->GetParentID()>0 ) {
         mImageScatter.AddValue(index, respValue);
         // Scatter order image
+        if (process == G4String("PhotoElectric"))
+          mImageFluorescence.AddValue(index, respValue);
         if(order)
           mFluencePerOrderImages[order-1]->AddValue(index, respValue);
       }

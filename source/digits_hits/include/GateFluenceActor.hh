@@ -27,8 +27,8 @@ See GATE/LICENSE.txt for further details
 
 class GateFluenceActor : public GateVImageActor
 {
- public:
-
+ public: 
+  
   //-----------------------------------------------------------------------------
   // Actor name
   virtual ~GateFluenceActor();
@@ -57,6 +57,9 @@ class GateFluenceActor : public GateVImageActor
 
   void SetResponseDetectorFile(G4String name) { mResponseFileName = name; }
   void SetScatterOrderFilename(G4String name) { mScatterOrderFilename = name; }
+  void SetComptonFilename(G4String name) { mComptonFilename = name; }
+  void SetRayleighFilename(G4String name) { mRayleighFilename = name; }
+  void SetFluorescenceFilename(G4String name) { mFluorescenceFilename = name; }
 
 protected:
   GateFluenceActor(G4String name, G4int depth=0);
@@ -64,8 +67,14 @@ protected:
   G4String mResponseFileName;
   bool mIsScatterImageEnabled;
   GateImage mImageScatter;
+  GateImage mImageCompton;
+  GateImage mImageRayleigh;
+  GateImage mImageFluorescence;
   std::vector<GateImage *> mFluencePerOrderImages;
   G4String mScatterOrderFilename;
+  G4String mComptonFilename;
+  G4String mRayleighFilename;
+  G4String mFluorescenceFilename;
   GateEnergyResponseFunctor mEnergyResponse;
 };
 

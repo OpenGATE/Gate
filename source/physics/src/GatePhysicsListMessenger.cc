@@ -51,6 +51,8 @@ GatePhysicsListMessenger::~GatePhysicsListMessenger()
   delete pSetEMin;
   delete pSetEMax;
   delete pSetSplineFlag;
+  delete pAddAtomDeexcitation;
+  delete pAddPhysicsList;
 
   delete pMuHandlerUsePrecalculatedElements;
   delete pMuHandlerSetEMin;
@@ -187,6 +189,17 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   pAddPhysicsList->SetGuidance(guidance);
   pAddPhysicsList->SetParameterName("Builder name",false);
 
+  // To set the low edge energy 
+  bb = base+"/SetEnergyRangeMinLimit";
+  pEnergyRangeMinLimitCmd = new G4UIcmdWithADoubleAndUnit(bb,this);  
+  double low = G4ProductionCutsTable::GetProductionCutsTable()->GetLowEdgeEnergy();
+  double high= G4ProductionCutsTable::GetProductionCutsTable()->GetHighEdgeEnergy();
+  G4String guid = "Set the minimum limit of the Energy range. Default are [";
+  guid += G4BestUnit(low,"Energy");
+  guid += " ";
+  guid += G4BestUnit(high, "Energy");
+  guid += "]";
+  pEnergyRangeMinLimitCmd->SetGuidance(guid);  
   
   // Mu Handler commands
   bb = base+"/MuHandler/setElementFolderName";
@@ -326,6 +339,21 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
     G4bool flag = pSetSplineFlag->GetNewBoolValue(param);
     pPhylist->SetOptSplineFlag(flag);
     GateMessage("Physic", 1, "(EM Options) Spline Falg set to "<<flag<<". Spline Flag defaut 1."<<G4endl);
+  }
+
+  if (command == pAddAtomDeexcitation) {
+    pPhylist->AddAtomDeexcitation();
+    GateMessage("Physic", 1, "Atom Deexcitation process has been added into the energy loss table manager"<<G4endl);
+  }
+  
+  // Command to call G4 Physics List builders 
+  if (command == pAddPhysicsList) {
+    pPhylist->ConstructPhysicsList(param);
+  }
+  if (command == pEnergyRangeMinLimitCmd) {
+    double val = pEnergyRangeMinLimitCmd->GetNewDoubleValue(param);
+    pPhylist->SetEnergyRangeMinLimit(val);
+    GateMessage("Physic", 1, "Min Energy range set to "<<G4BestUnit(val,"Energy") << G4endl);
   }
 
   // Mu Handler commands
