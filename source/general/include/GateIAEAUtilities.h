@@ -3,18 +3,18 @@
 
 
    Advisory:
-1. The authors make no claim of accuracy of the information in these files or the 
+1. The authors make no claim of accuracy of the information in these files or the
    results derived from use of these files.
 2. You are not allowed to re-distribute these files or the information contained within.
-3. This methods and information contained in these files was interpreted by the authors 
-   from various sources.  It is the users sole responsibility to verify the accuracy 
-   of these files.  
-4. If you find a error within these files, we ask that you to contact the authors 
+3. This methods and information contained in these files was interpreted by the authors
+   from various sources.  It is the users sole responsibility to verify the accuracy
+   of these files.
+4. If you find a error within these files, we ask that you to contact the authors
    and the distributor of these files.
 5. We ask that you acknowledge the source of these files in publications that use results
-   derived from the input 
+   derived from the input
 
-   Please contact us if you have any questions 
+   Please contact us if you have any questions
 */
 /* Header File for General Utilities for CPP programs
 	File Created:
@@ -63,7 +63,7 @@ extern int eprintf_mode;
 #endif
 #ifndef MAIN
 extern /* create global pbuffer */
-#endif          
+#endif
 char *pbuffer;  /* pointer to buffer for output of run info for failures */
 
 #ifndef	ENDIAN_H_INCLUDED
@@ -80,9 +80,19 @@ char *pbuffer;  /* pointer to buffer for output of run info for failures */
 #define	__BIG_ENDIAN	4321
 #define	__PDP_ENDIAN	3412
 
+#ifndef LITTLE_ENDIAN
 #define LITTLE_ENDIAN	__LITTLE_ENDIAN
+#endif
+
+#ifndef BIG_ENDIAN
 #define BIG_ENDIAN	__BIG_ENDIAN
+#endif
+
+#ifndef PDP_ENDIAN
+
 #define PDP_ENDIAN	__PDP_ENDIAN
+#endif
+
 #define UNKNOWN_ENDIAN  0000
 
 #endif	/* endian.h */
@@ -123,7 +133,7 @@ int writeBinaryFile(char *doseFileName, int nDoseArray, float *doseArray, int sw
 int writeBinaryDataToFile(FILE *outputStream, int nArray, float *array, int swab_flag);
 int readBinaryDataFromFile(FILE *iStream, int nItemsToRead, float **arrayToRead, int swab_flag);
 int readBinaryDataFromFile(FILE *iStream, int nItemsToRead, float *inputArray, int swab_flag);
-// RCN added 
+// RCN added
 int fget_c_string(char *string, int Max_Str_Len, FILE *fspec);
 int get_string(FILE *fspec, char *string);
 #endif

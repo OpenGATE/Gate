@@ -34,7 +34,7 @@
  *   Iwan Kawrakow, PhD
  *   e-mail iwan@irs.phy.nrc.ca
  *   Ionizing Radiation Standards
- *   Institute for National Measurement Standards 
+ *   Institute for National Measurement Standards
  *   National Research Council of Canada Ottawa, ON, K1A 0R6 Canada
  *   Phone: +1-613-993 2197, ext.241; Fax: +1-613-952 9865
  *
@@ -59,15 +59,15 @@
 #define false 0
 #define true  1
 
-// These variables are defined globally. They contain pointers 
-// to header and record structures defined by calling iaea_new_source() 
+// These variables are defined globally. They contain pointers
+// to header and record structures defined by calling iaea_new_source()
 // routine to maintain a list of already initialized IAEA sources.
 
 static iaea_header_type *p_iaea_header[MAX_NUM_SOURCES];
 static iaea_record_type *p_iaea_record[MAX_NUM_SOURCES];
 
 /************************************************************************
-* Initialization 
+* Initialization
 *
 * Given a file name header_file of length hf_length, initialize a
 * new IAEA particle source, assign an unique Id to it and return this
@@ -92,21 +92,21 @@ static int __iaea_source_used[MAX_NUM_SOURCES];
 static int __iaea_n_source = 0;
 
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_new_source(IAEA_I32 *source_ID, char *header_file,   
-                     const IAEA_I32 *access, IAEA_I32 *result, 
+void iaea_new_source(IAEA_I32 *source_ID, char *header_file,
+                     const IAEA_I32 *access, IAEA_I32 *result,
                      int hf_length) {
 
    if( !header_file ) {
        *result = 105; *source_ID = -1; return;
    } // null header file name
-   if(*access != 1 && *access != 2 && *access != 3) { 
+   if(*access != 1 && *access != 2 && *access != 3) {
        *result = -99 ; *source_ID = -1; return;
    } // Wrong access requested
 
-   if( hf_length >= MAX_STR_LEN) { 
+   if( hf_length >= MAX_STR_LEN) {
        *result = -100 ; *source_ID = -1; return;
    } // Too long string
-   if( hf_length < 1)            { 
+   if( hf_length < 1)            {
        *result = -101 ; *source_ID = -1; return;
    } // String length < 1
 
@@ -120,17 +120,17 @@ void iaea_new_source(IAEA_I32 *source_ID, char *header_file,
        if( !__iaea_source_used[j] ) { sid = j; break; }
    }
    if( sid < 0 ) {
-       // so, we don't => increase source count and check if 
+       // so, we don't => increase source count and check if
        // space left in arrays.
        if( ++__iaea_n_source >= MAX_NUM_SOURCES ) {
-           *result = -98; *source_ID = -1; return; 
+           *result = -98; *source_ID = -1; return;
        }
        sid = __iaea_n_source-1; *source_ID = sid;
    }
    __iaea_source_used[sid] = true;
 
    //int ilen = strlen(header_file);
-   // the above requires a null-terminated string, which may not be 
+   // the above requires a null-terminated string, which may not be
    // satisfied, if we are called from a fortran progrmam.
 
    int ilen = hf_length;
@@ -141,65 +141,65 @@ void iaea_new_source(IAEA_I32 *source_ID, char *header_file,
 
    // Creating IAEA phsp header and allocating memory for it
    p_iaea_header[*source_ID] = (iaea_header_type *) calloc(1, sizeof(iaea_header_type));
-   // Opening header file 
-   if(*access == 1) p_iaea_header[*source_ID]->fheader = 
-                      open_file(header_file,(char*)".IAEAheader",(char*)"rb");   
-   if(*access == 2) p_iaea_header[*source_ID]->fheader = 
-         open_file(header_file,(char*)".IAEAheader",(char*)"wb");                
-   if(*access == 3) p_iaea_header[*source_ID]->fheader = 
-         open_file(header_file,(char*)".IAEAheader",(char*)"r+b");               
+   // Opening header file
+   if(*access == 1) p_iaea_header[*source_ID]->fheader =
+                      open_file(header_file,(char*)".IAEAheader",(char*)"rb");
+   if(*access == 2) p_iaea_header[*source_ID]->fheader =
+         open_file(header_file,(char*)".IAEAheader",(char*)"wb");
+   if(*access == 3) p_iaea_header[*source_ID]->fheader =
+         open_file(header_file,(char*)".IAEAheader",(char*)"r+b");
 
    if(p_iaea_header[*source_ID]->fheader == NULL) { *result = -96; return;} // phsp failed to open
 
    // Creating IAEA record and allocating memory for it
    p_iaea_record[*source_ID] = (iaea_record_type *) calloc(1, sizeof(iaea_record_type));
 
-   p_iaea_header[*source_ID]->initialize_counters();   
-   
-   switch( *access ) 
+   p_iaea_header[*source_ID]->initialize_counters();
+
+   switch( *access )
    {
          case 2: // writing a new phsp
 
-             strcpy(p_iaea_header[*source_ID]->title,"PHASESPACE in IAEA format");   
-             // Default IAEA index 
-             *result = p_iaea_header[*source_ID]->iaea_index = 1000; 
-    
-             p_iaea_record[*source_ID]->p_file = 
+             strcpy(p_iaea_header[*source_ID]->title,"PHASESPACE in IAEA format");
+             // Default IAEA index
+             *result = p_iaea_header[*source_ID]->iaea_index = 1000;
+
+             p_iaea_record[*source_ID]->p_file =
                  open_file(header_file, (char*)".IAEAphsp", (char*)"wb");
 
-             if(p_iaea_record[*source_ID]->p_file == NULL) { *result = -94 ; return; } 
+             if(p_iaea_record[*source_ID]->p_file == NULL) { *result = -94 ; return; }
 
-             // Setting default i/o flags 
-             if(p_iaea_record[*source_ID]->initialize() != OK) 
+             // Setting default i/o flags
+             if(p_iaea_record[*source_ID]->initialize() != OK)
                  {*result = -1; return;}
 
-             if( p_iaea_header[*source_ID]->set_record_contents(p_iaea_record[*source_ID]) 
-                 == FAIL ) { *result = -95; return;} 
+             if( p_iaea_header[*source_ID]->set_record_contents(p_iaea_record[*source_ID])
+                 == FAIL ) { *result = -95; return;}
 
              return;
 
          case 3 : // appending to the existing phsp
-           
+
              if( p_iaea_header[*source_ID]->read_header() != OK)
-                 { *result = -93; return;} 
+                 { *result = -93; return;}
 
              int i;
              // Setting up Average Kinetic Energy counters to usable values
-             for(i=0;i<MAX_NUM_PARTICLES;i++) 
-                 p_iaea_header[*source_ID]->averageKineticEnergy[i] *= 
+             for(i=0;i<MAX_NUM_PARTICLES;i++)
+                 p_iaea_header[*source_ID]->averageKineticEnergy[i] *=
                  p_iaea_header[*source_ID]->sumParticleWeight[i];
 
              // Opening phsp file to append
-             p_iaea_record[*source_ID]->p_file = 
+             p_iaea_record[*source_ID]->p_file =
                  open_file(header_file, (char*)".IAEAphsp", (char*)"a+b");
 
-             if(p_iaea_record[*source_ID]->p_file == NULL) { *result = -94 ; return; } 
+             if(p_iaea_record[*source_ID]->p_file == NULL) { *result = -94 ; return; }
 
              if(p_iaea_record[*source_ID]->initialize() != OK) {*result = -1; return;}
-   
+
              // Get read/write logical block from the header
-             if( p_iaea_header[*source_ID]->get_record_contents(p_iaea_record[*source_ID]) 
-                 == FAIL) { *result = -91; return;} 
+             if( p_iaea_header[*source_ID]->get_record_contents(p_iaea_record[*source_ID])
+                 == FAIL) { *result = -91; return;}
 
              *result = p_iaea_header[*source_ID]->iaea_index; // returning IAEA index
 
@@ -207,20 +207,20 @@ void iaea_new_source(IAEA_I32 *source_ID, char *header_file,
 
          case 1 : // reading existing phsp
 
-             if( p_iaea_header[*source_ID]->read_header() != OK) { *result = -93; return;} 
+             if( p_iaea_header[*source_ID]->read_header() != OK) { *result = -93; return;}
 
              // Opening phsp file to read
-             p_iaea_record[*source_ID]->p_file = 
+             p_iaea_record[*source_ID]->p_file =
                  open_file(header_file, (char*)".IAEAphsp", (char*)"rb");
 
              if(p_iaea_record[*source_ID]->p_file == NULL)
-                 { *result = -94 ; return; } 
-         
+                 { *result = -94 ; return; }
+
              if(p_iaea_record[*source_ID]->initialize() != OK) {*result = -1; return;}
-   
+
              // Get read/write logical block from the header
-             if( p_iaea_header[*source_ID]->get_record_contents(p_iaea_record[*source_ID]) 
-                 == FAIL) { *result = -91; return;} 
+             if( p_iaea_header[*source_ID]->get_record_contents(p_iaea_record[*source_ID])
+                 == FAIL) { *result = -91; return;}
 
              *result = p_iaea_header[*source_ID]->iaea_index; // returning IAEA index
 
@@ -231,38 +231,38 @@ void iaea_new_source(IAEA_I32 *source_ID, char *header_file,
 }
 
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_new_source_(IAEA_I32 *source_ID, char *header_file,   
+void iaea_new_source_(IAEA_I32 *source_ID, char *header_file,
                       const IAEA_I32 *access, IAEA_I32 *result,
                       int hf_length) {
     iaea_new_source(source_ID,header_file,access,result,hf_length);
 }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_new_source__(IAEA_I32 *source_ID, char *header_file,   
+void iaea_new_source__(IAEA_I32 *source_ID, char *header_file,
                       const IAEA_I32 *access, IAEA_I32 *result,
                       IAEA_I32 hf_length) {
     iaea_new_source(source_ID,header_file,access,result,hf_length);
 }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_NEW_SOURCE(IAEA_I32 *source_ID, char *header_file,   
+void IAEA_NEW_SOURCE(IAEA_I32 *source_ID, char *header_file,
                       const IAEA_I32 *access, IAEA_I32 *result,
                       IAEA_I32 hf_length) {
     iaea_new_source(source_ID,header_file,access,result,hf_length);
 }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_NEW_SOURCE_(IAEA_I32 *source_ID, char *header_file,   
+void IAEA_NEW_SOURCE_(IAEA_I32 *source_ID, char *header_file,
                       const IAEA_I32 *access, IAEA_I32 *result,
                       IAEA_I32 hf_length) {
     iaea_new_source(source_ID,header_file,access,result,hf_length);
 }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_NEW_SOURCE__(IAEA_I32 *source_ID, char *header_file,   
+void IAEA_NEW_SOURCE__(IAEA_I32 *source_ID, char *header_file,
                       const IAEA_I32 *access, IAEA_I32 *result,
                       IAEA_I32 hf_length) {
     iaea_new_source(source_ID,header_file,access,result,hf_length);
 }
 
 /************************************************************************
-* Maximum number of particles 
+* Maximum number of particles
 *
 * Set n_particle to the maximum number of particle of type type the
 * source with Id id can return. If type<0, set n_particle to the
@@ -279,54 +279,54 @@ void iaea_get_max_particles(const IAEA_I32 *id, const IAEA_I32 *type,
       if(p_iaea_header[*id]->fheader == NULL) {*n_particle = -1; return;}
 
       int file_type = p_iaea_header[*id]->file_type;
-      
+
       if(file_type == 1) // Event generator
       {
             IAEA_I64 itmp = (IAEA_I64)pow(2,32);
-            #ifdef WIN32 
-            if(itmp>0) *n_particle = 9223372036854775807LL; // 2^63 - 1   
+            #ifdef WIN32
+            if(itmp>0) *n_particle = 9223372036854775807LL; // 2^63 - 1
             #else
-            if(itmp>0) *n_particle = 9223372036854775807LL; // 2^63 - 1   
+            if(itmp>0) *n_particle = 9223372036854775807LL; // 2^63 - 1
             #endif
-            if(itmp<0) *n_particle = 2147483647;            // 2^31 - 1  
+            if(itmp<0) *n_particle = 2147483647;            // 2^31 - 1
             return;
       }
       // phsp file
       if (*type < 0) {*n_particle = p_iaea_header[*id]->nParticles; return;}
-      if ( (*type >= MAX_NUM_PARTICLES) || (*type ==0) ) {*n_particle = 0; return;} 
-      
+      if ( (*type >= MAX_NUM_PARTICLES) || (*type ==0) ) {*n_particle = 0; return;}
+
       *n_particle = p_iaea_header[*id]->particle_number[*type-1];
 
       return;
 }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_get_max_particles_(const IAEA_I32 *id, 
+void iaea_get_max_particles_(const IAEA_I32 *id,
                                            const IAEA_I32 *type,
                                                  IAEA_I64 *n_particle)
 { iaea_get_max_particles(id, type, n_particle); }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_get_max_particles__(const IAEA_I32 *id, 
+void iaea_get_max_particles__(const IAEA_I32 *id,
                                            const IAEA_I32 *type,
                                                  IAEA_I64 *n_particle)
 { iaea_get_max_particles(id, type, n_particle); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_GET_MAX_PARTICLES(const IAEA_I32 *id, 
+void IAEA_GET_MAX_PARTICLES(const IAEA_I32 *id,
                                            const IAEA_I32 *type,
                                                  IAEA_I64 *n_particle)
 { iaea_get_max_particles(id, type, n_particle); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_GET_MAX_PARTICLES_(const IAEA_I32 *id, 
+void IAEA_GET_MAX_PARTICLES_(const IAEA_I32 *id,
                                            const IAEA_I32 *type,
                                                  IAEA_I64 *n_particle)
 { iaea_get_max_particles(id, type, n_particle); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_GET_MAX_PARTICLES__(const IAEA_I32 *id, 
+void IAEA_GET_MAX_PARTICLES__(const IAEA_I32 *id,
                                            const IAEA_I32 *type,
                                                  IAEA_I64 *n_particle)
 { iaea_get_max_particles(id, type, n_particle); }
 
 /************************************************************************
-* Maximum energy 
+* Maximum energy
 *
 * Return the maximum energy of an initialized IAEA source with Id id
 * in Emax. Set Emax to negative if a source with that Id does not exist.
@@ -338,7 +338,7 @@ void iaea_get_maximum_energy(const IAEA_I32 *id, IAEA_Float *Emax)
       if(p_iaea_header[*id]->fheader == NULL) {*Emax = -1.f; return;}
 
       int file_type = p_iaea_header[*id]->file_type;
-      
+
       if(file_type == 1) {*Emax = -1.f; return;}// Event generator
 
       // phsp file
@@ -366,7 +366,7 @@ void IAEA_GET_MAXIMUM_ENERGY__(const IAEA_I32 *id, IAEA_Float *Emax)
 { iaea_get_maximum_energy(id, Emax); }
 
 /*************************************************************************
-* Number of additional floats and integers returned by the source 
+* Number of additional floats and integers returned by the source
 *
 * Return the number of additional floats in n_extra_float and the number
 * of additional integers in n_extra_integer for the source with Id id.
@@ -378,7 +378,7 @@ void iaea_get_extra_numbers(const IAEA_I32 *id, IAEA_I32 *n_extra_float,
                                           IAEA_I32 *n_extra_int)
 {
       // No header found
-      if(p_iaea_header[*id]->fheader == NULL) 
+      if(p_iaea_header[*id]->fheader == NULL)
             {*n_extra_float = *n_extra_int = -1; return;}
 
       *n_extra_float = p_iaea_header[*id]->record_contents[7];
@@ -386,33 +386,33 @@ void iaea_get_extra_numbers(const IAEA_I32 *id, IAEA_I32 *n_extra_float,
       return;
 }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_get_extra_numbers_(const IAEA_I32 *id, 
+void iaea_get_extra_numbers_(const IAEA_I32 *id,
                                                  IAEA_I32 *n_extra_float,
                                                  IAEA_I32 *n_extra_int)
 { iaea_get_extra_numbers(id, n_extra_float,n_extra_int); }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_get_extra_numbers__(const IAEA_I32 *id, 
+void iaea_get_extra_numbers__(const IAEA_I32 *id,
                                                  IAEA_I32 *n_extra_float,
                                                  IAEA_I32 *n_extra_int)
 { iaea_get_extra_numbers(id, n_extra_float,n_extra_int); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_GET_EXTRA_NUMBERS(const IAEA_I32 *id, 
+void IAEA_GET_EXTRA_NUMBERS(const IAEA_I32 *id,
                                                  IAEA_I32 *n_extra_float,
                                                  IAEA_I32 *n_extra_int)
 { iaea_get_extra_numbers(id, n_extra_float,n_extra_int); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_GET_EXTRA_NUMBERS_(const IAEA_I32 *id, 
+void IAEA_GET_EXTRA_NUMBERS_(const IAEA_I32 *id,
                                                  IAEA_I32 *n_extra_float,
                                                  IAEA_I32 *n_extra_int)
 { iaea_get_extra_numbers(id, n_extra_float,n_extra_int); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_GET_EXTRA_NUMBERS__(const IAEA_I32 *id, 
+void IAEA_GET_EXTRA_NUMBERS__(const IAEA_I32 *id,
                                                  IAEA_I32 *n_extra_float,
                                                  IAEA_I32 *n_extra_int)
 { iaea_get_extra_numbers(id, n_extra_float,n_extra_int); }
 
 /*************************************************************************
-* Number of additional floats and integers to be stored 
+* Number of additional floats and integers to be stored
 *
 * Set the number of additional floats in n_extra_float and the number
 * of additional integers in n_extra_integer for the source with Id id
@@ -429,33 +429,33 @@ void iaea_set_extra_numbers(const IAEA_I32 *id, IAEA_I32 *n_extra_float,
       p_iaea_header[*id]->record_contents[8] = *n_extra_int;
 
     // Store read/write logical block in the PHSP header
-    if( p_iaea_header[*id]->get_record_contents(p_iaea_record[*id]) 
+    if( p_iaea_header[*id]->get_record_contents(p_iaea_record[*id])
          == FAIL) return;
 
       return;
 }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_extra_numbers_(const IAEA_I32 *id, 
+void iaea_set_extra_numbers_(const IAEA_I32 *id,
                                                  IAEA_I32 *n_extra_float,
                                                  IAEA_I32 *n_extra_int)
 { iaea_set_extra_numbers(id, n_extra_float, n_extra_int); }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_extra_numbers__(const IAEA_I32 *id, 
+void iaea_set_extra_numbers__(const IAEA_I32 *id,
                                                  IAEA_I32 *n_extra_float,
                                                  IAEA_I32 *n_extra_int)
 { iaea_set_extra_numbers(id, n_extra_float, n_extra_int); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_EXTRA_NUMBERS(const IAEA_I32 *id, 
+void IAEA_SET_EXTRA_NUMBERS(const IAEA_I32 *id,
                                                  IAEA_I32 *n_extra_float,
                                                  IAEA_I32 *n_extra_int)
 { iaea_set_extra_numbers(id, n_extra_float, n_extra_int); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_EXTRA_NUMBERS_(const IAEA_I32 *id, 
+void IAEA_SET_EXTRA_NUMBERS_(const IAEA_I32 *id,
                                                  IAEA_I32 *n_extra_float,
                                                  IAEA_I32 *n_extra_int)
 { iaea_set_extra_numbers(id, n_extra_float, n_extra_int); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_EXTRA_NUMBERS__(const IAEA_I32 *id, 
+void IAEA_SET_EXTRA_NUMBERS__(const IAEA_I32 *id,
                                                  IAEA_I32 *n_extra_float,
                                                  IAEA_I32 *n_extra_int)
 { iaea_set_extra_numbers(id, n_extra_float, n_extra_int); }
@@ -465,29 +465,29 @@ void IAEA_SET_EXTRA_NUMBERS__(const IAEA_I32 *id,
 * Set a type type of the extra long variable corresponding to the "index" number
 * for a corresponding header of the phsp "id". Index is running from zero.
 *
-* The current list of types for extra long variables is:  
+* The current list of types for extra long variables is:
 *   0: User defined generic type
 *   1: Incremental history number (EGS,PENELOPE)
 *      = 0 indicates a nonprimary particle event
-*      > 0 indicates a primary particle. The value is equal to the number of 
+*      > 0 indicates a primary particle. The value is equal to the number of
 *          primaries particles employed to get to this history after the last
 *          primary event was recorded.
 *   2: LATCH (EGS)
-*   3: ILB (PENELOPE) 
+*   3: ILB (PENELOPE)
 *   more to be defined
 *
-* Usually called before writing phsp header to set the type of extra long 
+* Usually called before writing phsp header to set the type of extra long
 * variables to be stored. It must be called once for every extralong variable.
 *
 * type = -1 means the source's header file does not exist
 *           or source was not properly initialized (call iaea_new_...)
 * type = -2 means the index is out of range ( 0 <= index < NUM_EXTRA_LONG )
-* type = -3 means the type to be set is out of range 
+* type = -3 means the type to be set is out of range
 *           ( 1 <= type < MAX_NUMB_EXTRALONG_TYPES )
 *******************************************************************************/
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_type_extralong_variable(const IAEA_I32 *id, 
-                                      const IAEA_I32 *index,  
+void iaea_set_type_extralong_variable(const IAEA_I32 *id,
+                                      const IAEA_I32 *index,
                                             IAEA_I32 *type)
 {
    // No header found
@@ -498,37 +498,37 @@ void iaea_set_type_extralong_variable(const IAEA_I32 *id,
    if((*type < 0) || (*type > MAX_NUMB_EXTRALONG_TYPES) ) {*type = -3; return;}
 
    p_iaea_header[*id]->extralong_contents[*index] = *type;
-        
+
    return;
 }
 
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_type_extralong_variable_(const IAEA_I32 *id, 
-                                                     const IAEA_I32 *index,  
+void iaea_set_type_extralong_variable_(const IAEA_I32 *id,
+                                                     const IAEA_I32 *index,
                                                      IAEA_I32 *type)
 { iaea_set_type_extralong_variable(id, index, type); }
 
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_type_extralong_variable__(const IAEA_I32 *id, 
-                                                     const IAEA_I32 *index,  
+void iaea_set_type_extralong_variable__(const IAEA_I32 *id,
+                                                     const IAEA_I32 *index,
                                                      IAEA_I32 *type)
 { iaea_set_type_extralong_variable(id, index, type); }
 
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_TYPE_EXTRALONG_VARIABLE(const IAEA_I32 *id, 
-                                                     const IAEA_I32 *index,  
+void IAEA_SET_TYPE_EXTRALONG_VARIABLE(const IAEA_I32 *id,
+                                                     const IAEA_I32 *index,
                                                      IAEA_I32 *type)
 { iaea_set_type_extralong_variable(id, index, type); }
 
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_TYPE_EXTRALONG_VARIABLE_(const IAEA_I32 *id, 
-                                                     const IAEA_I32 *index,  
+void IAEA_SET_TYPE_EXTRALONG_VARIABLE_(const IAEA_I32 *id,
+                                                     const IAEA_I32 *index,
                                                      IAEA_I32 *type)
 { iaea_set_type_extralong_variable(id, index, type); }
 
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_TYPE_EXTRALONG_VARIABLE__(const IAEA_I32 *id, 
-                                                     const IAEA_I32 *index,  
+void IAEA_SET_TYPE_EXTRALONG_VARIABLE__(const IAEA_I32 *id,
+                                                     const IAEA_I32 *index,
                                                      IAEA_I32 *type)
 { iaea_set_type_extralong_variable(id, index, type); }
 
@@ -539,64 +539,64 @@ void IAEA_SET_TYPE_EXTRALONG_VARIABLE__(const IAEA_I32 *id,
 *
 * The current list of types for extra float variables is:
 *   0: User defined generic type
-*   1: XLAST (x coord. of the last interaction)  
-*   2: YLAST (y coord. of the last interaction)  
-*   3: ZLAST (z coord. of the last interaction)  
+*   1: XLAST (x coord. of the last interaction)
+*   2: YLAST (y coord. of the last interaction)
+*   3: ZLAST (z coord. of the last interaction)
 *   more to be defined
 *
-* Usually called before writing phsp header to set the type of extra float 
+* Usually called before writing phsp header to set the type of extra float
 * variables to be stored. It must be called once for every extra float variable.
 *
 * type = -1 means the source's header file does not exist
 *           or source was not properly initialized (call iaea_new_...)
 * type = -2 means the index is out of range ( 0 <= index < NUM_EXTRA_FLOAT )
-* type = -3 means the type to be set is out of range 
+* type = -3 means the type to be set is out of range
 *           ( 1 <= type < MAX_NUMB_EXTRAFLOAT_TYPES )
 *******************************************************************************/
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_type_extrafloat_variable(const IAEA_I32 *id, 
-                                       const IAEA_I32 *index,  
+void iaea_set_type_extrafloat_variable(const IAEA_I32 *id,
+                                       const IAEA_I32 *index,
                                              IAEA_I32 *type)
 {
    // No header found
    if(p_iaea_header[*id]->fheader == NULL) {*type = -1; return;}
-   
+
    if((*index < 0) || (*index >= NUM_EXTRA_FLOAT) ) {*type = -2; return;}
 
    if((*type < 0) || (*type > MAX_NUMB_EXTRAFLOAT_TYPES) ) {*type = -3; return;}
 
    p_iaea_header[*id]->extrafloat_contents[*index] = *type;
-       
+
    return;
 }
 
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_type_extrafloat_variable_(const IAEA_I32 *id, 
-                                                     const IAEA_I32 *index,  
+void iaea_set_type_extrafloat_variable_(const IAEA_I32 *id,
+                                                     const IAEA_I32 *index,
                                                      IAEA_I32 *type)
 { iaea_set_type_extrafloat_variable(id, index, type); }
 
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_type_extrafloat_variable__(const IAEA_I32 *id, 
-                                                     const IAEA_I32 *index,  
+void iaea_set_type_extrafloat_variable__(const IAEA_I32 *id,
+                                                     const IAEA_I32 *index,
                                                      IAEA_I32 *type)
 { iaea_set_type_extrafloat_variable(id, index, type); }
 
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_TYPE_EXTRAFLOAT_VARIABLE(const IAEA_I32 *id, 
-                                                     const IAEA_I32 *index,  
+void IAEA_SET_TYPE_EXTRAFLOAT_VARIABLE(const IAEA_I32 *id,
+                                                     const IAEA_I32 *index,
                                                      IAEA_I32 *type)
 { iaea_set_type_extrafloat_variable(id, index, type); }
 
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_TYPE_EXTRAFLOAT_VARIABLE_(const IAEA_I32 *id, 
-                                                     const IAEA_I32 *index,  
+void IAEA_SET_TYPE_EXTRAFLOAT_VARIABLE_(const IAEA_I32 *id,
+                                                     const IAEA_I32 *index,
                                                      IAEA_I32 *type)
 { iaea_set_type_extrafloat_variable(id, index, type); }
 
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_TYPE_EXTRAFLOAT_VARIABLE__(const IAEA_I32 *id, 
-                                                     const IAEA_I32 *index,  
+void IAEA_SET_TYPE_EXTRAFLOAT_VARIABLE__(const IAEA_I32 *id,
+                                                     const IAEA_I32 *index,
                                                      IAEA_I32 *type)
 { iaea_set_type_extrafloat_variable(id, index, type); }
 
@@ -607,31 +607,31 @@ void IAEA_SET_TYPE_EXTRAFLOAT_VARIABLE__(const IAEA_I32 *id,
 * extralong_types[] AND extrafloat_types[] must have a dimension bigger than
 * MAX_NUMB_EXTRALONG_TYPES and MAX_NUMB_EXTRAFLOAT_TYPES correspondingly
 *
-* The current list of types for extra long variables is:  
+* The current list of types for extra long variables is:
 *   0: User defined generic type
 *   1: Incremental history number (EGS,PENELOPE)
 *      = 0 indicates a nonprimary particle event
-*      > 0 indicates a primary particle. The value is equal to the number of 
+*      > 0 indicates a primary particle. The value is equal to the number of
 *          primaries particles employed to get to this history after the last
 *          primary event was recorded.
 *   2: LATCH (EGS)
-*   3: ILB (PENELOPE) 
+*   3: ILB (PENELOPE)
 *   more to be defined
 *
 * The current list of types for extra float variables is:
 *   0: User defined generic type
-*   1: XLAST (x coord. of the last interaction)  
-*   2: YLAST (y coord. of the last interaction)  
-*   3: ZLAST (z coord. of the last interaction)  
+*   1: XLAST (x coord. of the last interaction)
+*   2: YLAST (y coord. of the last interaction)
+*   3: ZLAST (z coord. of the last interaction)
 *   more to be defined
 *
-* Usually called before reading phsp header to know the type of extra long 
+* Usually called before reading phsp header to know the type of extra long
 * variables to be read. It must be called once for every extra float variable.
 *
 * result = -1 means the source's header file does not exist
 *             or source was not properly initialized (call iaea_new_...)
 *******************************************************************************/
-IAEA_EXTERN_C IAEA_EXPORT 
+IAEA_EXTERN_C IAEA_EXPORT
 void iaea_get_type_extra_variables(const IAEA_I32 *id, IAEA_I32 *result,
       IAEA_I32 extralong_types[], IAEA_I32 extrafloat_types[])
 {
@@ -643,7 +643,7 @@ void iaea_get_type_extra_variables(const IAEA_I32 *id, IAEA_I32 *result,
 
       for (int j=0;j<p_iaea_header[*id]->record_contents[7];j++ )
           extrafloat_types[j] = p_iaea_header[*id]->extrafloat_contents[j];
-  
+
       *result = +1;
       return;
 }
@@ -674,11 +674,11 @@ void IAEA_GET_TYPE_EXTRA_VARIABLES__(const IAEA_I32 *id, IAEA_I32 *result,
 
 /*************************************************************************
 * Set variable corresponding to the "index" number to a "constant" value
-* for a corresponding header of the phsp "id". Index is running from zero.            
+* for a corresponding header of the phsp "id". Index is running from zero.
 *
 *       (Usually called as needed before MC loop started)
 *
-*                index  =  0 1 2 3 4 5 6  
+*                index  =  0 1 2 3 4 5 6
 *          corresponds to  x,y,z,u,v,w,wt
 *
 * Usually called before writing phsp files to set those variables which
@@ -689,7 +689,7 @@ void IAEA_GET_TYPE_EXTRA_VARIABLES__(const IAEA_I32 *id, IAEA_I32 *result,
 * constant = -2 means the index is out of range ( 0 <= index < 7 )
 *************************************************************************/
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_constant_variable(const IAEA_I32 *id, const IAEA_I32 *index,  
+void iaea_set_constant_variable(const IAEA_I32 *id, const IAEA_I32 *index,
                                                IAEA_Float *constant)
 {
       // No header found
@@ -701,33 +701,33 @@ void iaea_set_constant_variable(const IAEA_I32 *id, const IAEA_I32 *index,
       p_iaea_header[*id]->record_constant[*index] = *constant;
 
       // Store read/write logical block changes in the PHSP header
-      p_iaea_header[*id]->get_record_contents(p_iaea_record[*id]); 
+      p_iaea_header[*id]->get_record_contents(p_iaea_record[*id]);
 
       return;
 }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_constant_variable_(const IAEA_I32 *id, 
-                                               const IAEA_I32 *index,  
+void iaea_set_constant_variable_(const IAEA_I32 *id,
+                                               const IAEA_I32 *index,
                                                      IAEA_Float *constant)
 {iaea_set_constant_variable(id, index, constant); }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_constant_variable__(const IAEA_I32 *id, 
-                                               const IAEA_I32 *index,  
+void iaea_set_constant_variable__(const IAEA_I32 *id,
+                                               const IAEA_I32 *index,
                                                      IAEA_Float *constant)
 {iaea_set_constant_variable(id, index, constant); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_CONSTANT_VARIABLE(const IAEA_I32 *id, 
-                                               const IAEA_I32 *index,  
+void IAEA_SET_CONSTANT_VARIABLE(const IAEA_I32 *id,
+                                               const IAEA_I32 *index,
                                                      IAEA_Float *constant)
 {iaea_set_constant_variable(id, index, constant); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_CONSTANT_VARIABLE_(const IAEA_I32 *id, 
-                                               const IAEA_I32 *index,  
+void IAEA_SET_CONSTANT_VARIABLE_(const IAEA_I32 *id,
+                                               const IAEA_I32 *index,
                                                      IAEA_Float *constant)
 {iaea_set_constant_variable(id, index, constant); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_CONSTANT_VARIABLE__(const IAEA_I32 *id, 
-                                               const IAEA_I32 *index,  
+void IAEA_SET_CONSTANT_VARIABLE__(const IAEA_I32 *id,
+                                               const IAEA_I32 *index,
                                                      IAEA_Float *constant)
 {iaea_set_constant_variable(id, index, constant); }
 
@@ -744,7 +744,7 @@ void IAEA_SET_CONSTANT_VARIABLE__(const IAEA_I32 *id,
 *  result = -1 means the source's header file does not exist
 *               or source was not properly initialized (call iaea_new_...)
 *  result = -2 means the index is out of range ( 0 <= index < 7 )
-*  result = -3 means that the parameter indicated by index is not a constant 
+*  result = -3 means that the parameter indicated by index is not a constant
 *************************************************************************/
 IAEA_EXTERN_C IAEA_EXPORT
 void iaea_get_constant_variable(const IAEA_I32 *id, const IAEA_I32 *index,
@@ -757,7 +757,7 @@ void iaea_get_constant_variable(const IAEA_I32 *id, const IAEA_I32 *index,
       if((*index < 0) || (*index > 6) ) {*result = -2; return;}
 
       if( p_iaea_header[*id]->record_contents[*index] == 0) {
-          *constant=p_iaea_header[*id]->record_constant[*index]; 
+          *constant=p_iaea_header[*id]->record_constant[*index];
       }
       else { *result=-3;}
 
@@ -790,8 +790,8 @@ void IAEA_GET_CONSTANT_VARIABLE__(const IAEA_I32 *id,
 {iaea_get_constant_variable(id, index, constant, result); }
 
 /*****************************************************************************
-* Get n_indep_particles number of statistically independent particles read 
-* so far from the Source with Id id.                                  
+* Get n_indep_particles number of statistically independent particles read
+* so far from the Source with Id id.
 *
 * Set n_indep_particles to negative if such source does not exist.
 ******************************************************************************/
@@ -802,109 +802,109 @@ void iaea_get_used_original_particles(const IAEA_I32 *id, IAEA_I64 *n_indep_part
       if(p_iaea_header[*id]->fheader == NULL) {*n_indep_particles = -1; return;}
 
       // (Number of electron histories for linacs)
-      *n_indep_particles = p_iaea_header[*id]->read_indep_histories; 
+      *n_indep_particles = p_iaea_header[*id]->read_indep_histories;
       return;
 }
 IAEA_EXTERN_C IAEA_EXPORT
 void iaea_get_used_original_particles_(const IAEA_I32 *id, IAEA_I64 *n_indep_particles)
 { iaea_get_used_original_particles(id, n_indep_particles); }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_get_used_original_particles__(const IAEA_I32 *id, IAEA_I64 *n_indep_particles)  
+void iaea_get_used_original_particles__(const IAEA_I32 *id, IAEA_I64 *n_indep_particles)
 { iaea_get_used_original_particles(id, n_indep_particles); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_GET_USED_ORIGINAL_PARTICLES(const IAEA_I32 *id, IAEA_I64 *n_indep_particles) 
+void IAEA_GET_USED_ORIGINAL_PARTICLES(const IAEA_I32 *id, IAEA_I64 *n_indep_particles)
 { iaea_get_used_original_particles(id, n_indep_particles); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_GET_USED_ORIGINAL_PARTICLES_(const IAEA_I32 *id, IAEA_I64 *n_indep_particles) 
+void IAEA_GET_USED_ORIGINAL_PARTICLES_(const IAEA_I32 *id, IAEA_I64 *n_indep_particles)
 { iaea_get_used_original_particles(id, n_indep_particles); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_GET_USED_ORIGINAL_PARTICLES__(const IAEA_I32 *id, IAEA_I64 *n_indep_particles) 
+void IAEA_GET_USED_ORIGINAL_PARTICLES__(const IAEA_I32 *id, IAEA_I64 *n_indep_particles)
 { iaea_get_used_original_particles(id, n_indep_particles); }
 
 /*****************************************************************************
-* Get Total Number of Original Particles from the Source with Id id. 
+* Get Total Number of Original Particles from the Source with Id id.
 *
 * For a typical linac it should be equal to the total number of electrons
-* incident on the primary target. 
+* incident on the primary target.
 *
 * Set number_of_original_particles to negative if such source does not exist.
 ******************************************************************************/
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_get_total_original_particles(const IAEA_I32 *id, 
+void iaea_get_total_original_particles(const IAEA_I32 *id,
                                        IAEA_I64 *number_of_original_particles)
 {
       // No header found
-      if(p_iaea_header[*id]->fheader == NULL) 
+      if(p_iaea_header[*id]->fheader == NULL)
           {*number_of_original_particles = -1; return;}
 
-      *number_of_original_particles = p_iaea_header[*id]->orig_histories; 
+      *number_of_original_particles = p_iaea_header[*id]->orig_histories;
 
       return;
 }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_get_total_original_particles_(const IAEA_I32 *id, 
+void iaea_get_total_original_particles_(const IAEA_I32 *id,
                                                IAEA_I64 *number_of_original_particles)
 { iaea_get_total_original_particles(id, number_of_original_particles); }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_get_total_original_particles__(const IAEA_I32 *id, 
+void iaea_get_total_original_particles__(const IAEA_I32 *id,
                                                 IAEA_I64 *number_of_original_particles)
 { iaea_get_total_original_particles(id, number_of_original_particles); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_GET_TOTAL_ORIGINAL_PARTICLES(const IAEA_I32 *id, 
+void IAEA_GET_TOTAL_ORIGINAL_PARTICLES(const IAEA_I32 *id,
                                               IAEA_I64 *number_of_original_particles)
 { iaea_get_total_original_particles(id, number_of_original_particles); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_GET_TOTAL_ORIGINAL_PARTICLES_(const IAEA_I32 *id, 
+void IAEA_GET_TOTAL_ORIGINAL_PARTICLES_(const IAEA_I32 *id,
                                                IAEA_I64 *number_of_original_particles)
 { iaea_get_total_original_particles(id, number_of_original_particles); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_GET_TOTAL_ORIGINAL_PARTICLES__(const IAEA_I32 *id, 
+void IAEA_GET_TOTAL_ORIGINAL_PARTICLES__(const IAEA_I32 *id,
                                                 IAEA_I64 *number_of_original_particles)
 { iaea_get_total_original_particles(id, number_of_original_particles); }
 
 /*****************************************************************************
-* Set Total Number of Original Particles for the Source with Id id. 
+* Set Total Number of Original Particles for the Source with Id id.
 *
 * For a typical linac it should be equal to the total number of electrons
-* incident on the primary target. 
+* incident on the primary target.
 *
 * Set number_of_original_particles to negative if such source does not exist.
 ******************************************************************************/
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_total_original_particles(const IAEA_I32 *id, 
+void iaea_set_total_original_particles(const IAEA_I32 *id,
                                        IAEA_I64 *number_of_original_particles)
 {
       // No header found
-      if(p_iaea_header[*id]->fheader == NULL) 
+      if(p_iaea_header[*id]->fheader == NULL)
             {*number_of_original_particles = -1; return;}
-      
-      // Bug corrected, RCN, dec. 2006  
-      p_iaea_header[*id]->orig_histories = *number_of_original_particles; 
+
+      // Bug corrected, RCN, dec. 2006
+      p_iaea_header[*id]->orig_histories = *number_of_original_particles;
       return;
 }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_total_original_particles_(const IAEA_I32 *id, 
+void iaea_set_total_original_particles_(const IAEA_I32 *id,
                                                IAEA_I64 *number_of_original_particles)
 { iaea_set_total_original_particles(id, number_of_original_particles); }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_total_original_particles__(const IAEA_I32 *id, 
+void iaea_set_total_original_particles__(const IAEA_I32 *id,
                                                 IAEA_I64 *number_of_original_particles)
 { iaea_set_total_original_particles(id, number_of_original_particles); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_TOTAL_ORIGINAL_PARTICLES(const IAEA_I32 *id, 
+void IAEA_SET_TOTAL_ORIGINAL_PARTICLES(const IAEA_I32 *id,
                                               IAEA_I64 *number_of_original_particles)
 { iaea_set_total_original_particles(id, number_of_original_particles); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_TOTAL_ORIGINAL_PARTICLES_(const IAEA_I32 *id, 
+void IAEA_SET_TOTAL_ORIGINAL_PARTICLES_(const IAEA_I32 *id,
                                                IAEA_I64 *number_of_original_particles)
 { iaea_set_total_original_particles(id, number_of_original_particles); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_TOTAL_ORIGINAL_PARTICLES__(const IAEA_I32 *id, 
+void IAEA_SET_TOTAL_ORIGINAL_PARTICLES__(const IAEA_I32 *id,
                                                 IAEA_I64 *number_of_original_particles)
 { iaea_set_total_original_particles(id, number_of_original_particles); }
 
 /**************************************************************************
-* Partitioning for parallel runs 
+* Partitioning for parallel runs
 *
 * i_parallel is the job number, i_chunk the calculation chunk,
 * n_chunk the total number of calculation chunks. This function
@@ -919,20 +919,20 @@ void IAEA_SET_TOTAL_ORIGINAL_PARTICLES__(const IAEA_I32 *id,
 **************************************************************************/
 IAEA_EXTERN_C IAEA_EXPORT
 void iaea_set_parallel(const IAEA_I32 *id, const IAEA_I32 * /*i_parallel*/,
-                       const IAEA_I32 *i_chunk, const IAEA_I32 *n_chunk, 
+                       const IAEA_I32 *i_chunk, const IAEA_I32 *n_chunk,
                                        IAEA_I32 *result)
 {
    if(p_iaea_header[*id]->fheader == NULL) {*result = -1; return;}
    if(*n_chunk <= 0) {*result = -2; return;}
    if( (*i_chunk < 1) || (*i_chunk > *n_chunk) ) {*result = -3; return;}
 
-   if(p_iaea_header[*id]->file_type == 1) 
+   if(p_iaea_header[*id]->file_type == 1)
    {
          // set i_parallel for event generators
-         *result = 0; 
+         *result = 0;
          return;
    }
-   
+
    IAEA_I64 nrecords =  p_iaea_header[*id]->nParticles;
    IAEA_I32 record_length =  p_iaea_header[*id]->record_length;
    IAEA_I32 number_record_per_chunk = (IAEA_I32)nrecords/(*n_chunk);
@@ -947,54 +947,54 @@ void iaea_set_parallel(const IAEA_I32 *id, const IAEA_I32 * /*i_parallel*/,
    offset   Number of bytes from origin
    origin   Initial position
    */
-   if( fseek(p_iaea_record[*id]->p_file, offset ,SEEK_SET) == 0) 
+   if( fseek(p_iaea_record[*id]->p_file, offset ,SEEK_SET) == 0)
    {
          /*IAEA_I32 pos =*/ if( ftell(p_iaea_record[*id]->p_file) == EOF ){fprintf( stderr, "Error telling position!!!\n" ); }
-         *result = 0; 
+         *result = 0;
          return;
    }
 
-   *result = -1; 
+   *result = -1;
    return;
 }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_parallel_(const IAEA_I32 *id, 
+void iaea_set_parallel_(const IAEA_I32 *id,
                                       const IAEA_I32 *i_parallel,
-                                      const IAEA_I32 *i_chunk, 
-                                      const IAEA_I32 *n_chunk, 
+                                      const IAEA_I32 *i_chunk,
+                                      const IAEA_I32 *n_chunk,
                                             IAEA_I32 *is_ok)
 { iaea_set_parallel(id, i_parallel, i_chunk, n_chunk, is_ok); }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_set_parallel__(const IAEA_I32 *id, 
+void iaea_set_parallel__(const IAEA_I32 *id,
                                       const IAEA_I32 *i_parallel,
-                                      const IAEA_I32 *i_chunk, 
-                                      const IAEA_I32 *n_chunk, 
+                                      const IAEA_I32 *i_chunk,
+                                      const IAEA_I32 *n_chunk,
                                             IAEA_I32 *is_ok)
 { iaea_set_parallel(id, i_parallel, i_chunk, n_chunk, is_ok); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_PARALLEL(const IAEA_I32 *id, 
+void IAEA_SET_PARALLEL(const IAEA_I32 *id,
                                       const IAEA_I32 *i_parallel,
-                                      const IAEA_I32 *i_chunk, 
-                                      const IAEA_I32 *n_chunk, 
+                                      const IAEA_I32 *i_chunk,
+                                      const IAEA_I32 *n_chunk,
                                             IAEA_I32 *is_ok)
 { iaea_set_parallel(id, i_parallel, i_chunk, n_chunk, is_ok); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_PARALLEL_(const IAEA_I32 *id, 
+void IAEA_SET_PARALLEL_(const IAEA_I32 *id,
                                       const IAEA_I32 *i_parallel,
-                                      const IAEA_I32 *i_chunk, 
-                                      const IAEA_I32 *n_chunk, 
+                                      const IAEA_I32 *i_chunk,
+                                      const IAEA_I32 *n_chunk,
                                             IAEA_I32 *is_ok)
 { iaea_set_parallel(id, i_parallel, i_chunk, n_chunk, is_ok); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_SET_PARALLEL__(const IAEA_I32 *id, 
+void IAEA_SET_PARALLEL__(const IAEA_I32 *id,
                                       const IAEA_I32 *i_parallel,
-                                      const IAEA_I32 *i_chunk, 
-                                      const IAEA_I32 *n_chunk, 
+                                      const IAEA_I32 *i_chunk,
+                                      const IAEA_I32 *n_chunk,
                                             IAEA_I32 *is_ok)
 { iaea_set_parallel(id, i_parallel, i_chunk, n_chunk, is_ok); }
 
 /**************************************************************************
-* check that the file size equals the value of checksum in the header 
+* check that the file size equals the value of checksum in the header
 * and that the byte order of the machine being run on matches that of
 * the file
 *
@@ -1005,7 +1005,7 @@ void IAEA_SET_PARALLEL__(const IAEA_I32 *id,
 * byte order mismatch; -5 if there is a mismatch in both
 **************************************************************************/
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_check_file_size_byte_order(const IAEA_I32 *id, 
+void iaea_check_file_size_byte_order(const IAEA_I32 *id,
                                        IAEA_I32 *result)
 {
    if(p_iaea_header[*id]->fheader == NULL) {*result = -1; return;}
@@ -1046,7 +1046,7 @@ void iaea_check_file_size_byte_order(const IAEA_I32 *id,
 }
 IAEA_EXTERN_C IAEA_EXPORT
 void iaea_check_file_size_byte_order_(const IAEA_I32 *id,
-                                       IAEA_I32 *result)   
+                                       IAEA_I32 *result)
 { iaea_check_file_size_byte_order(id, result);}
 IAEA_EXTERN_C IAEA_EXPORT
 void iaea_check_file_size_byte_order__(const IAEA_I32 *id,
@@ -1067,7 +1067,7 @@ void IAEA_CHECK_FILE_SIZE_BYTE_ORDER__(const IAEA_I32 *id,
 
 
 /**************************************************************************
-* setting the pointer to a user-specified record no. in the file 
+* setting the pointer to a user-specified record no. in the file
 *
 * record_num is the user-specified record number passed to the function.
 * id is the phase space file identifier.  If record_num = the number of
@@ -1095,15 +1095,15 @@ void iaea_set_record(const IAEA_I32 *id, const IAEA_I64 *record_num,
    offset   Number of bytes from origin
    origin   Initial position
    */
-   
-   if( fseek(p_iaea_record[*id]->p_file, offset ,SEEK_SET) == 0) 
+
+   if( fseek(p_iaea_record[*id]->p_file, offset ,SEEK_SET) == 0)
    {
          /*IAEA_I32 pos =*/ if(ftell(p_iaea_record[*id]->p_file)==EOF){ fprintf( stderr, "Error telling position!!!\n" ); }
-         *result = 0; 
+         *result = 0;
          return;
    }
 
-   *result = -1; 
+   *result = -1;
    return;
 }
 IAEA_EXTERN_C IAEA_EXPORT
@@ -1133,7 +1133,7 @@ void IAEA_SET_RECORD__(const IAEA_I32 *id,
 { iaea_set_record(id, record_num, is_ok); }
 
 /**************************************************************************
-* Get a particle 
+* Get a particle
 *
 * Return the next particle from the sequence of particles from source
 * with Id id. Set n_stat to the number of statistically independent
@@ -1161,7 +1161,7 @@ IAEA_Float *extra_floats,
 IAEA_I32 *extra_ints)
 {
       if(feof(p_iaea_record[*id]->p_file)) {
-         *n_stat = -2; 
+         *n_stat = -2;
          rewind (p_iaea_record[*id]->p_file);
          return;
       }
@@ -1170,7 +1170,7 @@ IAEA_I32 *extra_ints)
 
       iaea_record_type *p = p_iaea_record[*id];
 
-      // Corrected on Dec. 2006. Before n_stat was not assigned if 
+      // Corrected on Dec. 2006. Before n_stat was not assigned if
       // (p->iextralong > 0)  and (p_iaea_header[*id]->extralong_contents[j] != 1)
 
       if( p->IsNewHistory > 0) *n_stat=1;
@@ -1178,7 +1178,7 @@ IAEA_I32 *extra_ints)
 
       if(p->iextralong > 0) {
           for(int j=0;j<p->iextralong ;j++) {
-              // Looking for incremental number of histories  
+              // Looking for incremental number of histories
               // (Type 1 of the extralong stored variable)
               if(p_iaea_header[*id]->extralong_contents[j] == 1) {
                   *n_stat = p->extralong[j];
@@ -1189,43 +1189,43 @@ IAEA_I32 *extra_ints)
 
       *type  = p->particle; /* particle type */
       *E     = p->energy;   /* kinetic energy in MeV */
-      
+
       if(p->ix > 0) *x = p->x;
       else          *x = p_iaea_header[*id]->record_constant[0];
-     
+
       if(p->iy > 0) *y = p->y;
-      else          *y = p_iaea_header[*id]->record_constant[1];      
-      
+      else          *y = p_iaea_header[*id]->record_constant[1];
+
       if(p->iz > 0) *z = p->z; /* position in cartesian coordinates*/
       else          *z = p_iaea_header[*id]->record_constant[2];
-      
+
       if(p->iu > 0) *u = p->u;
       else          *u = p_iaea_header[*id]->record_constant[3];
-      
+
       if(p->iv > 0) *v = p->v;
       else          *v = p_iaea_header[*id]->record_constant[4];
-      
+
       if(p->iw > 0) *w = p->w; /* direction in cartesian coordinates*/
-      else          *w = p_iaea_header[*id]->record_constant[5];      
+      else          *w = p_iaea_header[*id]->record_constant[5];
 
       if(p->iweight > 0) *wt = p->weight;   /* statistical weight */
-      else               *wt = p_iaea_header[*id]->record_constant[6];      
-      
+      else               *wt = p_iaea_header[*id]->record_constant[6];
+
       for(int k=0;k<p->iextrafloat;k++) extra_floats[k] = p->extrafloat[k];
       for(int j=0;j<p->iextralong ;j++) extra_ints[j] = p->extralong[j];
-      
+
       /*
         Updating counters including:
         Min and Max Weight per particle,
         Total Weight per particle,
         Min and Max Kinetic energy per particle,
         Min and Max X,Y,Z coordinates,
-        Total number of particles, 
+        Total number of particles,
         Total number of each particle type
         Number of statistically independent histories
-      */  
+      */
       p_iaea_header[*id]->update_counters(p_iaea_record[*id]);
-      
+
       return;
 }
 IAEA_EXTERN_C IAEA_EXPORT
@@ -1241,7 +1241,7 @@ IAEA_Float *v,
 IAEA_Float *w,  /* direction in cartesian coordinates*/
 IAEA_Float *extra_floats,
 IAEA_I32 *extra_ints)
-{ iaea_get_particle(id, n_stat, type, 
+{ iaea_get_particle(id, n_stat, type,
                                 E, wt, x, y, z, u, v, w, extra_floats, extra_ints); }
 IAEA_EXTERN_C IAEA_EXPORT
 void iaea_get_particle__(const IAEA_I32 *id, IAEA_I32 *n_stat,
@@ -1256,7 +1256,7 @@ IAEA_Float *v,
 IAEA_Float *w,  /* direction in cartesian coordinates*/
 IAEA_Float *extra_floats,
 IAEA_I32 *extra_ints)
-{ iaea_get_particle(id, n_stat, type, 
+{ iaea_get_particle(id, n_stat, type,
                                 E, wt, x, y, z, u, v, w, extra_floats, extra_ints); }
 IAEA_EXTERN_C IAEA_EXPORT
 void IAEA_GET_PARTICLE(const IAEA_I32 *id, IAEA_I32 *n_stat,
@@ -1271,7 +1271,7 @@ IAEA_Float *v,
 IAEA_Float *w,  /* direction in cartesian coordinates*/
 IAEA_Float *extra_floats,
 IAEA_I32 *extra_ints)
-{ iaea_get_particle(id, n_stat, type, 
+{ iaea_get_particle(id, n_stat, type,
                                 E, wt, x, y, z, u, v, w, extra_floats, extra_ints); }
 IAEA_EXTERN_C IAEA_EXPORT
 void IAEA_GET_PARTICLE_(const IAEA_I32 *id, IAEA_I32 *n_stat,
@@ -1286,7 +1286,7 @@ IAEA_Float *v,
 IAEA_Float *w,  /* direction in cartesian coordinates*/
 IAEA_Float *extra_floats,
 IAEA_I32 *extra_ints)
-{ iaea_get_particle(id, n_stat, type, 
+{ iaea_get_particle(id, n_stat, type,
                                 E, wt, x, y, z, u, v, w, extra_floats, extra_ints); }
 IAEA_EXTERN_C IAEA_EXPORT
 void IAEA_GET_PARTICLE__(const IAEA_I32 *id, IAEA_I32 *n_stat,
@@ -1301,19 +1301,19 @@ IAEA_Float *v,
 IAEA_Float *w,  /* direction in cartesian coordinates*/
 IAEA_Float *extra_floats,
 IAEA_I32 *extra_ints)
-{ iaea_get_particle(id, n_stat, type, 
+{ iaea_get_particle(id, n_stat, type,
                                 E, wt, x, y, z, u, v, w, extra_floats, extra_ints); }
 
 /**************************************************************************
-* Write a particle 
+* Write a particle
 * n_stat = 0 for a secondary particle
-* n_stat > 0 for an independent particle 
+* n_stat > 0 for an independent particle
 *
-* Write a particle to the source with Id id. 
+* Write a particle to the source with Id id.
 * Set n_stat to -1, if ERROR (source with Id id does not exist).
 **************************************************************************/
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_write_particle(const IAEA_I32 *id, IAEA_I32 *n_stat, 
+void iaea_write_particle(const IAEA_I32 *id, IAEA_I32 *n_stat,
 const IAEA_I32 *type, /* particle type */
 const IAEA_Float *E,  /* kinetic energy in MeV */
 const IAEA_Float *wt, /* statistical weight */
@@ -1337,10 +1337,10 @@ const IAEA_I32 *extra_ints)
       if(p->iweight > 0) p->weight = *wt;   /* statistical weight */
       if(p->ix > 0) p->x = *x; /* position in cartesian coordinates*/
       if(p->iy > 0) p->y = *y;
-      if(p->iz > 0) p->z = *z; 
+      if(p->iz > 0) p->z = *z;
       if(p->iu > 0) p->u = *u; /* direction in cartesian coordinates*/
       if(p->iv > 0) p->v = *v;
-      if(p->iw > 0) p->w = *w; 
+      if(p->iw > 0) p->w = *w;
 
       for(int k=0;k<p->iextrafloat;k++) p->extrafloat[k] = extra_floats[k];
       for(int j=0;j<p->iextralong ;j++)  p->extralong[j] = extra_ints[j];
@@ -1353,16 +1353,16 @@ const IAEA_I32 *extra_ints)
         Total Weight per particle,
         Min and Max Kinetic energy per particle,
         Min and Max X,Y,Z coordinates,
-        Total number of particles, 
+        Total number of particles,
         Total number of each particle type
         Number of statistically independent histories so far
-      */  
+      */
       p_iaea_header[*id]->update_counters(p_iaea_record[*id]);
 
       return;
 }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_write_particle_(const IAEA_I32 *id, IAEA_I32 *n_stat, 
+void iaea_write_particle_(const IAEA_I32 *id, IAEA_I32 *n_stat,
 const IAEA_I32 *type, /* particle type */
 const IAEA_Float *E,  /* kinetic energy in MeV */
 const IAEA_Float *wt, /* statistical weight */
@@ -1374,10 +1374,10 @@ const IAEA_Float *v,
 const IAEA_Float *w,  /* direction in cartesian coordinates*/
 const IAEA_Float *extra_floats,
 const IAEA_I32 *extra_ints)
-{ iaea_write_particle(id, n_stat, type, 
+{ iaea_write_particle(id, n_stat, type,
                                 E, wt, x, y, z, u, v, w, extra_floats, extra_ints); }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_write_particle__(const IAEA_I32 *id, IAEA_I32 *n_stat, 
+void iaea_write_particle__(const IAEA_I32 *id, IAEA_I32 *n_stat,
 const IAEA_I32 *type, /* particle type */
 const IAEA_Float *E,  /* kinetic energy in MeV */
 const IAEA_Float *wt, /* statistical weight */
@@ -1389,10 +1389,10 @@ const IAEA_Float *v,
 const IAEA_Float *w,  /* direction in cartesian coordinates*/
 const IAEA_Float *extra_floats,
 const IAEA_I32 *extra_ints)
-{ iaea_write_particle(id, n_stat, type, 
+{ iaea_write_particle(id, n_stat, type,
                                 E, wt, x, y, z, u, v, w, extra_floats, extra_ints); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_WRITE_PARTICLE(const IAEA_I32 *id, IAEA_I32 *n_stat, 
+void IAEA_WRITE_PARTICLE(const IAEA_I32 *id, IAEA_I32 *n_stat,
 const IAEA_I32 *type, /* particle type */
 const IAEA_Float *E,  /* kinetic energy in MeV */
 const IAEA_Float *wt, /* statistical weight */
@@ -1404,10 +1404,10 @@ const IAEA_Float *v,
 const IAEA_Float *w,  /* direction in cartesian coordinates*/
 const IAEA_Float *extra_floats,
 const IAEA_I32 *extra_ints)
-{ iaea_write_particle(id, n_stat, type, 
+{ iaea_write_particle(id, n_stat, type,
                                 E, wt, x, y, z, u, v, w, extra_floats, extra_ints); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_WRITE_PARTICLE_(const IAEA_I32 *id, IAEA_I32 *n_stat, 
+void IAEA_WRITE_PARTICLE_(const IAEA_I32 *id, IAEA_I32 *n_stat,
 const IAEA_I32 *type, /* particle type */
 const IAEA_Float *E,  /* kinetic energy in MeV */
 const IAEA_Float *wt, /* statistical weight */
@@ -1419,10 +1419,10 @@ const IAEA_Float *v,
 const IAEA_Float *w,  /* direction in cartesian coordinates*/
 const IAEA_Float *extra_floats,
 const IAEA_I32 *extra_ints)
-{ iaea_write_particle(id, n_stat, type, 
+{ iaea_write_particle(id, n_stat, type,
                                 E, wt, x, y, z, u, v, w, extra_floats, extra_ints); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_WRITE_PARTICLE__(const IAEA_I32 *id, IAEA_I32 *n_stat, 
+void IAEA_WRITE_PARTICLE__(const IAEA_I32 *id, IAEA_I32 *n_stat,
 const IAEA_I32 *type, /* particle type */
 const IAEA_Float *E,  /* kinetic energy in MeV */
 const IAEA_Float *wt, /* statistical weight */
@@ -1434,11 +1434,11 @@ const IAEA_Float *v,
 const IAEA_Float *w,  /* direction in cartesian coordinates*/
 const IAEA_Float *extra_floats,
 const IAEA_I32 *extra_ints)
-{ iaea_write_particle(id, n_stat, type, 
+{ iaea_write_particle(id, n_stat, type,
                                 E, wt, x, y, z, u, v, w, extra_floats, extra_ints); }
 
 /***************************************************************************
-* Destroy a source 
+* Destroy a source
 *
 * This function de-initializes the source with Id id, closing all open
 * files, deallocating memory, etc. Nothing happens if a source with that
@@ -1457,17 +1457,17 @@ void iaea_destroy_source(const IAEA_I32 *source_ID, IAEA_I32 *result)
    p_iaea_header[*source_ID]->write_header();
 
    // Closing header file
-   fclose(p_iaea_header[*source_ID]->fheader); 
-   // Deallocating IAEA phsp header 
+   fclose(p_iaea_header[*source_ID]->fheader);
+   // Deallocating IAEA phsp header
    free(p_iaea_header[*source_ID]);
 
    // Closing phsp file
-   fclose(p_iaea_record[*source_ID]->p_file); 
-   // Deallocating IAEA record 
+   fclose(p_iaea_record[*source_ID]->p_file);
+   // Deallocating IAEA record
    free(p_iaea_record[*source_ID]);
 
    __iaea_source_used[*source_ID] = false;
-   
+
    *result = 1; // Return OK
 
    return;
@@ -1489,7 +1489,7 @@ void IAEA_DESTROY_SOURCE__(const IAEA_I32 *source_ID, IAEA_I32 *result)
 { iaea_destroy_source(source_ID, result); }
 
 /***************************************************************************
-* Print the current header associated to source id 
+* Print the current header associated to source id
 *
 * result is set to negative if phsp source does not exist.
 ****************************************************************************/
@@ -1520,15 +1520,16 @@ void IAEA_PRINT_HEADER_(const IAEA_I32 *source_ID, IAEA_I32 *result)
 IAEA_EXTERN_C IAEA_EXPORT
 void IAEA_PRINT_HEADER__(const IAEA_I32 *source_ID, IAEA_I32 *result)
 { iaea_print_header(source_ID, result); }
-IAEA_EXTERN_C IAEA_EXPORT
+
+//IAEA_EXTERN_C IAEA_EXPORT // see next line
 
 /***************************************************************************
-* Copy header of the source_id to the header of the destiny_id 
+* Copy header of the source_id to the header of the destiny_id
 *
 * result is set to negative if phsp source or destiny do not exist.
 ****************************************************************************/
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_copy_header(const IAEA_I32 *source_ID, 
+void iaea_copy_header(const IAEA_I32 *source_ID,
                                 const IAEA_I32 *destiny_ID, IAEA_I32 *result)
 {
    if(p_iaea_header[*source_ID]->fheader == NULL) {*result = -1; return;}
@@ -1536,30 +1537,30 @@ void iaea_copy_header(const IAEA_I32 *source_ID,
 
    // Selective copy of string variables
 
-      p_iaea_header[*destiny_ID]->checksum = 
+      p_iaea_header[*destiny_ID]->checksum =
             p_iaea_header[*source_ID]->checksum ;
-      p_iaea_header[*destiny_ID]->record_length = 
+      p_iaea_header[*destiny_ID]->record_length =
             p_iaea_header[*source_ID]->record_length ;
-      p_iaea_header[*destiny_ID]->byte_order = 
+      p_iaea_header[*destiny_ID]->byte_order =
             p_iaea_header[*source_ID]->byte_order ;
 
 // ******************************************************************************
 // 2. Mandatory description of the phsp
 
-      strcpy(p_iaea_header[*destiny_ID]->coordinate_system_description, 
+      strcpy(p_iaea_header[*destiny_ID]->coordinate_system_description,
             p_iaea_header[*source_ID]->coordinate_system_description) ;
 
-      int file_type = p_iaea_header[*source_ID]->file_type; 
-      if(file_type == 1) 
+      int file_type = p_iaea_header[*source_ID]->file_type;
+      if(file_type == 1)
       {
             // For event generators
-            strcpy(p_iaea_header[*destiny_ID]->input_file_for_event_generator, 
+            strcpy(p_iaea_header[*destiny_ID]->input_file_for_event_generator,
                   p_iaea_header[*source_ID]->input_file_for_event_generator) ;
             *result = 1; // Return OK
             return;
       }
 
-      p_iaea_header[*destiny_ID]->orig_histories = 
+      p_iaea_header[*destiny_ID]->orig_histories =
             p_iaea_header[*source_ID]->orig_histories ;
 
 // ******************************************************************************
@@ -1568,44 +1569,44 @@ void iaea_copy_header(const IAEA_I32 *source_ID,
       strcpy(p_iaea_header[*destiny_ID]->machine_type,
             p_iaea_header[*source_ID]->machine_type);
 
-      strcpy(p_iaea_header[*destiny_ID]->MC_code_and_version, 
+      strcpy(p_iaea_header[*destiny_ID]->MC_code_and_version,
             p_iaea_header[*source_ID]->MC_code_and_version);
 
-      p_iaea_header[*destiny_ID]->global_photon_energy_cutoff = 
+      p_iaea_header[*destiny_ID]->global_photon_energy_cutoff =
             p_iaea_header[*source_ID]->global_photon_energy_cutoff;
 
-      p_iaea_header[*destiny_ID]->global_particle_energy_cutoff = 
+      p_iaea_header[*destiny_ID]->global_particle_energy_cutoff =
             p_iaea_header[*source_ID]->global_particle_energy_cutoff;
 
-      strcpy(p_iaea_header[*destiny_ID]->transport_parameters, 
+      strcpy(p_iaea_header[*destiny_ID]->transport_parameters,
             p_iaea_header[*source_ID]->transport_parameters);
 
 // ******************************************************************************
 // 4. Optional description
-      strcpy(p_iaea_header[*destiny_ID]->beam_name, 
+      strcpy(p_iaea_header[*destiny_ID]->beam_name,
             p_iaea_header[*source_ID]->beam_name);
-      strcpy(p_iaea_header[*destiny_ID]->field_size, 
+      strcpy(p_iaea_header[*destiny_ID]->field_size,
             p_iaea_header[*source_ID]->field_size);
-      strcpy(p_iaea_header[*destiny_ID]->nominal_SSD, 
+      strcpy(p_iaea_header[*destiny_ID]->nominal_SSD,
             p_iaea_header[*source_ID]->nominal_SSD);
-      strcpy(p_iaea_header[*destiny_ID]->variance_reduction_techniques, 
+      strcpy(p_iaea_header[*destiny_ID]->variance_reduction_techniques,
             p_iaea_header[*source_ID]->variance_reduction_techniques);
-      strcpy(p_iaea_header[*destiny_ID]->initial_source_description, 
+      strcpy(p_iaea_header[*destiny_ID]->initial_source_description,
             p_iaea_header[*source_ID]->initial_source_description);
-  
+
       // Documentation sub-section
       /*********************************************/
-      strcpy(p_iaea_header[*destiny_ID]->MC_input_filename, 
+      strcpy(p_iaea_header[*destiny_ID]->MC_input_filename,
             p_iaea_header[*source_ID]->MC_input_filename);
-      strcpy(p_iaea_header[*destiny_ID]->published_reference, 
+      strcpy(p_iaea_header[*destiny_ID]->published_reference,
             p_iaea_header[*source_ID]->published_reference);
-      strcpy(p_iaea_header[*destiny_ID]->authors, 
+      strcpy(p_iaea_header[*destiny_ID]->authors,
             p_iaea_header[*source_ID]->authors);
-      strcpy(p_iaea_header[*destiny_ID]->institution, 
+      strcpy(p_iaea_header[*destiny_ID]->institution,
             p_iaea_header[*source_ID]->institution);
-      strcpy(p_iaea_header[*destiny_ID]->link_validation, 
+      strcpy(p_iaea_header[*destiny_ID]->link_validation,
             p_iaea_header[*source_ID]->link_validation);
-      strcpy(p_iaea_header[*destiny_ID]->additional_notes, 
+      strcpy(p_iaea_header[*destiny_ID]->additional_notes,
             p_iaea_header[*source_ID]->additional_notes);
 
     *result = 1; // Return OK
@@ -1614,34 +1615,34 @@ void iaea_copy_header(const IAEA_I32 *source_ID,
 
 }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_copy_header_(const IAEA_I32 *source_ID, 
-                                     const IAEA_I32 *destiny_ID, 
+void iaea_copy_header_(const IAEA_I32 *source_ID,
+                                     const IAEA_I32 *destiny_ID,
                                            IAEA_I32 *result)
 { iaea_copy_header(source_ID, destiny_ID, result); }
 IAEA_EXTERN_C IAEA_EXPORT
-void iaea_copy_header__(const IAEA_I32 *source_ID, 
-                                     const IAEA_I32 *destiny_ID, 
+void iaea_copy_header__(const IAEA_I32 *source_ID,
+                                     const IAEA_I32 *destiny_ID,
                                            IAEA_I32 *result)
 { iaea_copy_header(source_ID, destiny_ID, result); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_COPY_HEADER(const IAEA_I32 *source_ID, 
-                                     const IAEA_I32 *destiny_ID, 
+void IAEA_COPY_HEADER(const IAEA_I32 *source_ID,
+                                     const IAEA_I32 *destiny_ID,
                                            IAEA_I32 *result)
 { iaea_copy_header(source_ID, destiny_ID, result); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_COPY_HEADER_(const IAEA_I32 *source_ID, 
-                                     const IAEA_I32 *destiny_ID, 
+void IAEA_COPY_HEADER_(const IAEA_I32 *source_ID,
+                                     const IAEA_I32 *destiny_ID,
                                            IAEA_I32 *result)
 { iaea_copy_header(source_ID, destiny_ID, result); }
 IAEA_EXTERN_C IAEA_EXPORT
-void IAEA_COPY_HEADER__(const IAEA_I32 *source_ID, 
-                                     const IAEA_I32 *destiny_ID, 
+void IAEA_COPY_HEADER__(const IAEA_I32 *source_ID,
+                                     const IAEA_I32 *destiny_ID,
                                            IAEA_I32 *result)
 { iaea_copy_header(source_ID, destiny_ID, result); }
 
 
 /***************************************************************************
-* Update header of the source_id 
+* Update header of the source_id
 *
 * result is set to negative if phsp source does not exist.
 ****************************************************************************/
@@ -1653,7 +1654,7 @@ void iaea_update_header(const IAEA_I32 *source_ID, IAEA_I32 *result)
   /* Write an IAEA header */
    // For read-only files nothing happens
    p_iaea_header[*source_ID]->write_header();
-   
+
    *result = 1; // Return OK
    return;
 
