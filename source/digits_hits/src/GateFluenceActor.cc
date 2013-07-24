@@ -67,15 +67,6 @@ void GateFluenceActor::Construct()
     mImageScatter.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mImageScatter.Allocate();
     mImageScatter.SetOrigin(mOrigin);
-    mImageCompton.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mImageCompton.Allocate();
-    mImageCompton.SetOrigin(mOrigin);
-    mImageRayleigh.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mImageRayleigh.Allocate();
-    mImageRayleigh.SetOrigin(mOrigin);
-    mImageFluorescence.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mImageFluorescence.Allocate();
-    mImageFluorescence.SetOrigin(mOrigin);
   }
 
   // Print information
@@ -118,20 +109,29 @@ void GateFluenceActor::SaveData()
   }
 
   // Printing compton or rayleigh or fluorescence scatter images
-  if(mComptonFilename != "")
+  if(mSeparateScatteringFilename != "")
   {
-      sprintf(filename, mComptonFilename, rID);
-      mImageCompton.Write((G4String)filename);
-  }
-  if(mRayleighFilename != "")
-  {
-      sprintf(filename, mRayleighFilename, rID);
-      mImageRayleigh.Write((G4String)filename);
-  }
-  if(mFluorescenceFilename != "")
-  {
-      sprintf(filename, mFluorescenceFilename, rID);
-      mImageFluorescence.Write((G4String)filename);
+    std::map<G4String,GateImage*>::iterator it = mInteractions.end();
+    std::vector<G4String> interactions;
+    interactions.push_back(G4String("Compton"));
+    interactions.push_back(G4String("RayleighScattering"));
+    interactions.push_back(G4String("PhotoElectric"));
+    std::vector<G4String> interactionName;
+    interactionName.push_back(G4String("_Compton.mhd"));
+    interactionName.push_back(G4String("_Rayleigh.mhd"));
+    interactionName.push_back(G4String("_Fluorescence.mhd"));
+
+    // Saving separately scattering images (e.g. Compton, Rayleigh...)
+    for(unsigned int i = 0; i<interactions.size(); i++){
+      it = mInteractions.find(interactions[i]);
+      if(it!=mInteractions.end()){
+        stringstream filenamestream;
+        filenamestream << mSeparateScatteringFilename << interactionName[i];
+        sprintf(filename, filenamestream.str().c_str(), rID);
+        mInteractions[interactions[i]]->Write((G4String)filename);
+      }
+      it = mInteractions.end();
+    }
   }
 }
 //-----------------------------------------------------------------------------
@@ -198,6 +198,31 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
       if(info) {
         order   = info->GetScatterOrder();
         process = info->GetScatterProcess();
+        // Allocate GateImage if process occurs
+        if(process == G4String("Compton")){
+          GateImage * voidImage = new GateImage;
+          voidImage->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+          voidImage->Allocate();
+          voidImage->SetOrigin(mOrigin);
+          voidImage->Fill(0);
+          mInteractions.insert(std::pair<G4String,GateImage*>(process, voidImage));
+        }
+        else if(process == G4String("RayleighScattering")){
+          GateImage * voidImage = new GateImage;
+          voidImage->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+          voidImage->Allocate();
+          voidImage->SetOrigin(mOrigin);
+          voidImage->Fill(0);
+          mInteractions.insert(std::pair<G4String,GateImage*>(process, voidImage));
+        }
+        else if(process == G4String("PhotoElectric")){
+          GateImage * voidImage = new GateImage;
+          voidImage->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+          voidImage->Allocate();
+          voidImage->SetOrigin(mOrigin);
+          voidImage->Fill(0);
+          mInteractions.insert(std::pair<G4String,GateImage*>(process, voidImage));
+        }
         if(order) {
           while(order>mFluencePerOrderImages.size() && order>0) {
             GateImage * voidImage = new GateImage;
@@ -215,11 +240,8 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
          !step->GetTrack()->GetDynamicParticle()->GetPrimaryParticle()
                                                 ->GetMomentum().isNear(step->GetTrack()->GetDynamicParticle()->GetMomentum())) {
         mImageScatter.AddValue(index, respValue);
-
-        if (process == G4String("Compton"))
-          mImageCompton.AddValue(index, respValue);
-        else if (process == G4String("RayleighScattering"))
-          mImageRayleigh.AddValue(index, respValue);
+        if( process == G4String("Compton") || process == G4String("RayleighScattering") )
+          mInteractions[process]->AddValue(index, respValue);
 
         // Scatter order image
         if(order)
@@ -229,14 +251,13 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
       if(step->GetTrack()->GetTrackID() && step->GetTrack()->GetParentID()>0 ) {
         mImageScatter.AddValue(index, respValue);
         // Scatter order image
-        if (process == G4String("PhotoElectric"))
-          mImageFluorescence.AddValue(index, respValue);
+        if( process == G4String("PhotoElectric") )
+          mInteractions[process]->AddValue(index, respValue);
         if(order)
           mFluencePerOrderImages[order-1]->AddValue(index, respValue);
       }
     }
   }
-
   GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end" << G4endl);
 }
 //-----------------------------------------------------------------------------

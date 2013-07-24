@@ -57,9 +57,7 @@ class GateFluenceActor : public GateVImageActor
 
   void SetResponseDetectorFile(G4String name) { mResponseFileName = name; }
   void SetScatterOrderFilename(G4String name) { mScatterOrderFilename = name; }
-  void SetComptonFilename(G4String name) { mComptonFilename = name; }
-  void SetRayleighFilename(G4String name) { mRayleighFilename = name; }
-  void SetFluorescenceFilename(G4String name) { mFluorescenceFilename = name; }
+  void SetSeparateScatteringFilename(G4String name) { mSeparateScatteringFilename = name; }
 
 protected:
   GateFluenceActor(G4String name, G4int depth=0);
@@ -67,14 +65,10 @@ protected:
   G4String mResponseFileName;
   bool mIsScatterImageEnabled;
   GateImage mImageScatter;
-  GateImage mImageCompton;
-  GateImage mImageRayleigh;
-  GateImage mImageFluorescence;
-  std::vector<GateImage *> mFluencePerOrderImages;
+  std::map<G4String, GateImage*> mInteractions;
+  std::vector<GateImage*> mFluencePerOrderImages;
   G4String mScatterOrderFilename;
-  G4String mComptonFilename;
-  G4String mRayleighFilename;
-  G4String mFluorescenceFilename;
+  G4String mSeparateScatteringFilename;
   GateEnergyResponseFunctor mEnergyResponse;
 };
 
