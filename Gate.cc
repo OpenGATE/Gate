@@ -353,11 +353,9 @@ int main( int argc, char* argv[] )
   // Using 'session' if not Qt
   welcome();
 
-  #ifdef Geant496_COMPATIBILITY
-    GateMessage( "Core", 0, "GATE's compatibility with Geant4.9.6 is enabled" << G4endl );
-  #else
-    GateMessage( "Core", 0, "You are using a 9.5 version of Geant4" << G4endl );
-  #endif
+  std::ostringstream s;
+  s << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH;
+  GateMessage( "Core", 0, "You are using Geant4 version " << s.str() << G4endl );
 
   // Launching Gate if macro file
   if( isMacroFile )
