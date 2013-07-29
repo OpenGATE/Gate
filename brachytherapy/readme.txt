@@ -5,7 +5,6 @@
  - Yann Perrot
  - David Sarrut
 
-
 * Step 1: generate the phase space
 
 Run main.mac to obtain a ROOT phase space file TitaniumOuter.root in the output/ repository
@@ -26,3 +25,6 @@ In the repository output/ you can find:
 - output-Dose.mhd is the absolute dose distribution map
 - output-Dose-Squared.mhd is the squared dose map
 - output-Dose-Uncertainty.mhd is dose uncertainty map
+
+* Visualisation
+You can use vv : vv data/ct-2mm.mhd --fusion output/output-Edep.mhd
