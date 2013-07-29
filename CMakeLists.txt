@@ -34,11 +34,11 @@ GateAddExampleData("DATA{brachytherapy/data/ct-2mm.raw}")
 GateAddExampleData("DATA{external-beam-therapy-photon/data/patient-2mm.raw}")
 GateAddExampleData("DATA{molecular-therapy-I131/data/CT_128_128_250_16uint.raw}")
 GateAddExampleData("DATA{molecular-therapy-I131/data/PET_64_64_125_16uint.raw}")
+GateAddExampleData("DATA{molecular-therapy-I131/data/air-mouse.raw}")
+GateAddExampleData("DATA{protontherapy/data/patient-2mm.raw}")
 #=========================================================
-
 
 #=========================================================
 # Target to download data (must be after GateAddExampleData)
 ExternalData_add_target(GateExampleData)
 #=========================================================
-GateAddExampleData("DATA{molecular-therapy-I131/data/air-mouse.raw}")
