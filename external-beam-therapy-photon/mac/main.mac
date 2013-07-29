@@ -133,6 +133,7 @@
 /gate/run/enableGlobalOutput false
 
 /gate/random/setEngineName MersenneTwister
+/vis/disable
 /gate/random/setEngineSeed auto
 /gate/application/setTotalNumberOfPrimaries 30000
 /gate/application/start

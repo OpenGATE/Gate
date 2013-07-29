@@ -109,5 +109,6 @@
 /gate/random/setEngineSeed random
 
 /gate/application/noGlobalOutput
+/vis/disable
 /gate/application/setTotalNumberOfPrimaries 500000
 /gate/application/start
