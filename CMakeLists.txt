@@ -41,3 +41,4 @@ GateAddExampleData("DATA{molecular-therapy-I131/data/PET_64_64_125_16uint.raw}")
 # Target to download data (must be after GateAddExampleData)
 ExternalData_add_target(GateExampleData)
 #=========================================================
+GateAddExampleData("DATA{molecular-therapy-I131/data/air-mouse.raw}")
