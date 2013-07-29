@@ -32,6 +32,8 @@ INCLUDE(ExternalData)
 # List of data to download
 GateAddExampleData("DATA{brachytherapy/data/ct-2mm.raw}")
 GateAddExampleData("DATA{external-beam-therapy-photon/data/patient-2mm.raw}")
+GateAddExampleData("DATA{molecular-therapy-I131/data/CT_128_128_250_16uint.raw}")
+GateAddExampleData("DATA{molecular-therapy-I131/data/PET_64_64_125_16uint.raw}")
 #=========================================================
 
 

@@ -1,0 +1,766 @@
+# 131I
+#taken from (MIRD radionuclide data and decay schemes, 2nd edition, KF Eckerman & A Endo Eds, The Society of Nuclear Medicine, Reston, VA, SNM, 2008.)
+
+#=====================================================
+# Beta emission spectrum
+#=====================================================
+#Distrbution is automatically normalized to 1. Number of particle per nt must be adjusted post-treatment
+
+/gate/source/addSource betaminus voxel
+
+/gate/source/betaminus/reader/insert interfile
+/gate/source/betaminus/interfileReader/translator/insert linear
+/gate/source/betaminus/interfileReader/linearTranslator/setScale 1. Bq
+/gate/source/betaminus/interfileReader/readFile data/PET_64_64_125_16uint.iff
+
+/gate/source/betaminus/setPosition      -12.8 -12.8 -23.125  mm $voxel source file not located at the center of the world by default. shifted by half size. See user guide 
+
+
+/gate/source/betaminus/gps/particle e-
+/gate/source/betaminus/gps/angtype iso
+/gate/source/betaminus/gps/energytype Arb
+/gate/source/betaminus/setIntensity 1.000000275
+
+# Warning : histname must be arb and not energy
+/gate/source/betaminus/gps/histname arb
+
+# Warning : probability density (or point wise) and not bin values
+/gate/source/betaminus/gps/histpoint  0	3.503
+/gate/source/betaminus/gps/histpoint  0.0001	3.502
+/gate/source/betaminus/gps/histpoint  0.00011	3.502
+/gate/source/betaminus/gps/histpoint  0.00012	3.502
+/gate/source/betaminus/gps/histpoint  0.00013	3.502
+/gate/source/betaminus/gps/histpoint  0.00014	3.502
+/gate/source/betaminus/gps/histpoint  0.00015	3.502
+/gate/source/betaminus/gps/histpoint  0.00016	3.502
+/gate/source/betaminus/gps/histpoint  0.00018	3.501
+/gate/source/betaminus/gps/histpoint  0.00020	3.501
+/gate/source/betaminus/gps/histpoint  0.00022	3.501
+/gate/source/betaminus/gps/histpoint  0.00024	3.501
+/gate/source/betaminus/gps/histpoint  0.00026	3.501
+/gate/source/betaminus/gps/histpoint  0.00028	3.501
+/gate/source/betaminus/gps/histpoint  0.00030	3.501
+/gate/source/betaminus/gps/histpoint  0.00032	3.500
+/gate/source/betaminus/gps/histpoint  0.00036	3.500
+/gate/source/betaminus/gps/histpoint  0.00040	3.500
+/gate/source/betaminus/gps/histpoint  0.00045	3.500
+/gate/source/betaminus/gps/histpoint  0.00050	3.499
+/gate/source/betaminus/gps/histpoint  0.00055	3.499
+/gate/source/betaminus/gps/histpoint  0.00060	3.498
+/gate/source/betaminus/gps/histpoint  0.00065	3.498
+/gate/source/betaminus/gps/histpoint  0.00070	3.498
+/gate/source/betaminus/gps/histpoint  0.00075	3.497
+/gate/source/betaminus/gps/histpoint  0.00080	3.497
+/gate/source/betaminus/gps/histpoint  0.00085	3.497
+/gate/source/betaminus/gps/histpoint  0.00090	3.496
+/gate/source/betaminus/gps/histpoint  0.00100	3.496
+/gate/source/betaminus/gps/histpoint  0.00110	3.495
+/gate/source/betaminus/gps/histpoint  0.00120	3.494
+/gate/source/betaminus/gps/histpoint  0.00130	3.494
+/gate/source/betaminus/gps/histpoint  0.00140	3.493
+/gate/source/betaminus/gps/histpoint  0.00150	3.492
+/gate/source/betaminus/gps/histpoint  0.00160	3.491
+/gate/source/betaminus/gps/histpoint  0.00180	3.490
+/gate/source/betaminus/gps/histpoint  0.00200	3.489
+/gate/source/betaminus/gps/histpoint  0.00220	3.487
+/gate/source/betaminus/gps/histpoint  0.00240	3.486
+/gate/source/betaminus/gps/histpoint  0.00260	3.484
+/gate/source/betaminus/gps/histpoint  0.00280	3.483
+/gate/source/betaminus/gps/histpoint  0.00300	3.481
+/gate/source/betaminus/gps/histpoint  0.00320	3.480
+/gate/source/betaminus/gps/histpoint  0.00360	3.477
+/gate/source/betaminus/gps/histpoint  0.00400	3.474
+/gate/source/betaminus/gps/histpoint  0.00450	3.471
+/gate/source/betaminus/gps/histpoint  0.00500	3.467
+/gate/source/betaminus/gps/histpoint  0.00550	3.463
+/gate/source/betaminus/gps/histpoint  0.00600	3.460
+/gate/source/betaminus/gps/histpoint  0.00650	3.456
+/gate/source/betaminus/gps/histpoint  0.00700	3.452
+/gate/source/betaminus/gps/histpoint  0.00750	3.449
+/gate/source/betaminus/gps/histpoint  0.00800	3.445
+/gate/source/betaminus/gps/histpoint  0.00850	3.442
+/gate/source/betaminus/gps/histpoint  0.00900	3.438
+/gate/source/betaminus/gps/histpoint  0.01000	3.437
+/gate/source/betaminus/gps/histpoint  0.01100	3.434
+/gate/source/betaminus/gps/histpoint  0.01200	3.432
+/gate/source/betaminus/gps/histpoint  0.01300	3.429
+/gate/source/betaminus/gps/histpoint  0.01400	3.426
+/gate/source/betaminus/gps/histpoint  0.01500	3.423
+/gate/source/betaminus/gps/histpoint  0.01600	3.420
+/gate/source/betaminus/gps/histpoint  0.01800	3.414
+/gate/source/betaminus/gps/histpoint  0.02000	3.408
+/gate/source/betaminus/gps/histpoint  0.02200	3.402
+/gate/source/betaminus/gps/histpoint  0.02400	3.395
+/gate/source/betaminus/gps/histpoint  0.02600	3.389
+/gate/source/betaminus/gps/histpoint  0.02800	3.382
+/gate/source/betaminus/gps/histpoint  0.03000	3.375
+/gate/source/betaminus/gps/histpoint  0.03200	3.368
+/gate/source/betaminus/gps/histpoint  0.03600	3.353
+/gate/source/betaminus/gps/histpoint  0.04000	3.338
+/gate/source/betaminus/gps/histpoint  0.04500	3.318
+/gate/source/betaminus/gps/histpoint  0.05000	3.298
+/gate/source/betaminus/gps/histpoint  0.05500	3.277
+/gate/source/betaminus/gps/histpoint  0.06000	3.255
+/gate/source/betaminus/gps/histpoint  0.06500	3.233
+/gate/source/betaminus/gps/histpoint  0.07000	3.209
+/gate/source/betaminus/gps/histpoint  0.07500	3.185
+/gate/source/betaminus/gps/histpoint  0.08000	3.161
+/gate/source/betaminus/gps/histpoint  0.08500	3.136
+/gate/source/betaminus/gps/histpoint  0.09000	3.110
+/gate/source/betaminus/gps/histpoint  0.10000	3.055
+/gate/source/betaminus/gps/histpoint  0.11000	2.999
+/gate/source/betaminus/gps/histpoint  0.12000	2.939
+/gate/source/betaminus/gps/histpoint  0.13000	2.877
+/gate/source/betaminus/gps/histpoint  0.14000	2.812
+/gate/source/betaminus/gps/histpoint  0.15000	2.745
+/gate/source/betaminus/gps/histpoint  0.16000	2.676
+/gate/source/betaminus/gps/histpoint  0.18000	2.532
+/gate/source/betaminus/gps/histpoint  0.20000	2.384
+/gate/source/betaminus/gps/histpoint  0.22000	2.232
+/gate/source/betaminus/gps/histpoint  0.24000	2.079
+/gate/source/betaminus/gps/histpoint  0.26000	1.928
+/gate/source/betaminus/gps/histpoint  0.28000	1.776
+/gate/source/betaminus/gps/histpoint  0.30000	1.625
+/gate/source/betaminus/gps/histpoint  0.32000	1.478
+/gate/source/betaminus/gps/histpoint  0.36000	1.194
+/gate/source/betaminus/gps/histpoint  0.40000	0.9124
+/gate/source/betaminus/gps/histpoint  0.45000	0.5805
+/gate/source/betaminus/gps/histpoint  0.50000	0.2974
+/gate/source/betaminus/gps/histpoint  0.55000	0.0941
+/gate/source/betaminus/gps/histpoint  0.60000	0.004666
+#/gate/source/betaminus/gps/histpoint  0.65000	0.002335
+#/gate/source/betaminus/gps/histpoint  0.70000	0.001282
+#/gate/source/betaminus/gps/histpoint  0.75000	0.0004287
+#/gate/source/betaminus/gps/histpoint  0.80000	7.371E-06
+#/gate/source/betaminus/gps/histpoint  0.80687	0.000E+00
+/gate/source/betaminus/gps/arbint Spline
+
+
+
+#=====================================================
+# Monoergetic electrons 
+#=====================================================
+
+
+/gate/source/addSource mono_el voxel
+
+/gate/source/mono_el/reader/insert interfile
+/gate/source/mono_el/interfileReader/translator/insert linear
+/gate/source/mono_el/interfileReader/linearTranslator/setScale 1. Bq
+/gate/source/mono_el/interfileReader/readFile data/PET_64_64_125_16uint.iff
+
+/gate/source/mono_el/setPosition         -12.8 -12.8 -23.125  mm $voxel source file not located at the center of the world by default. shifted by half size. See user guide 
+
+/gate/source/mono_el/gps/particle e-
+/gate/source/mono_el/gps/angtype iso
+/gate/source/mono_el/setIntensity  0.7621091663
+
+/gate/source/mono_el/gps/energytype User
+/gate/source/mono_el/gps/histname energy
+
+# Warning : probability  bin values
+/gate/source/mono_el/gps/histpoint	2.61504E-05	0
+/gate/source/mono_el/gps/histpoint	2.61504E-05	1.18727E-01
+/gate/source/mono_el/gps/histpoint	2.61504E-05	0
+/gate/source/mono_el/gps/histpoint	3.62367E-05	0
+/gate/source/mono_el/gps/histpoint	3.62367E-05	3.62830E-01
+/gate/source/mono_el/gps/histpoint	3.62367E-05	0
+/gate/source/mono_el/gps/histpoint	1.23806E-04	0
+/gate/source/mono_el/gps/histpoint	1.23806E-04	4.45522E-02
+/gate/source/mono_el/gps/histpoint	1.23806E-04	0
+/gate/source/mono_el/gps/histpoint	3.17976E-04	0
+/gate/source/mono_el/gps/histpoint	3.17976E-04	8.28747E-03
+/gate/source/mono_el/gps/histpoint	3.17976E-04	0
+/gate/source/mono_el/gps/histpoint	5.05029E-04	0
+/gate/source/mono_el/gps/histpoint	5.05029E-04	9.96618E-02
+/gate/source/mono_el/gps/histpoint	5.05029E-04	0
+/gate/source/mono_el/gps/histpoint	6.17060E-04	0
+/gate/source/mono_el/gps/histpoint	6.17060E-04	5.70048E-03
+/gate/source/mono_el/gps/histpoint	6.17060E-04	0
+/gate/source/mono_el/gps/histpoint	7.66872E-04	0
+/gate/source/mono_el/gps/histpoint	7.66872E-04	3.83051E-05
+/gate/source/mono_el/gps/histpoint	7.66872E-04	0
+/gate/source/mono_el/gps/histpoint	3.32402E-03	0
+/gate/source/mono_el/gps/histpoint	3.32402E-03	3.92981E-02
+/gate/source/mono_el/gps/histpoint	3.32402E-03	0
+/gate/source/mono_el/gps/histpoint	4.00104E-03	0
+/gate/source/mono_el/gps/histpoint	4.00104E-03	1.16568E-02
+/gate/source/mono_el/gps/histpoint	4.00104E-03	0
+/gate/source/mono_el/gps/histpoint	4.70489E-03	0
+/gate/source/mono_el/gps/histpoint	4.70489E-03	8.85238E-04
+/gate/source/mono_el/gps/histpoint	4.70489E-03	0
+/gate/source/mono_el/gps/histpoint	2.44715E-02	0
+/gate/source/mono_el/gps/histpoint	2.44715E-02	3.93828E-03
+/gate/source/mono_el/gps/histpoint	2.44715E-02	0
+/gate/source/mono_el/gps/histpoint	2.86854E-02	0
+/gate/source/mono_el/gps/histpoint	2.86854E-02	1.76190E-03
+/gate/source/mono_el/gps/histpoint	2.86854E-02	0
+/gate/source/mono_el/gps/histpoint	3.29032E-02	0
+/gate/source/mono_el/gps/histpoint	3.29032E-02	1.89387E-04
+/gate/source/mono_el/gps/histpoint	3.29032E-02	0
+/gate/source/mono_el/gps/histpoint	4.56290E-02	0
+/gate/source/mono_el/gps/histpoint	4.56290E-02	3.55294E-02
+/gate/source/mono_el/gps/histpoint	4.56290E-02	0
+/gate/source/mono_el/gps/histpoint	5.13440E-02	0
+/gate/source/mono_el/gps/histpoint	5.13440E-02	1.69406E-06
+/gate/source/mono_el/gps/histpoint	5.13440E-02	0
+/gate/source/mono_el/gps/histpoint	7.47681E-02	0
+/gate/source/mono_el/gps/histpoint	7.47681E-02	4.33327E-03
+/gate/source/mono_el/gps/histpoint	7.47681E-02	0
+/gate/source/mono_el/gps/histpoint	7.50811E-02	0
+/gate/source/mono_el/gps/histpoint	7.50811E-02	3.24126E-04
+/gate/source/mono_el/gps/histpoint	7.50811E-02	0
+/gate/source/mono_el/gps/histpoint	7.54103E-02	0
+/gate/source/mono_el/gps/histpoint	7.54103E-02	8.00774E-05
+/gate/source/mono_el/gps/histpoint	7.54103E-02	0
+/gate/source/mono_el/gps/histpoint	7.92584E-02	0
+/gate/source/mono_el/gps/histpoint	7.92584E-02	9.64331E-04
+/gate/source/mono_el/gps/histpoint	7.92584E-02	0
+/gate/source/mono_el/gps/histpoint	8.01850E-02	0
+/gate/source/mono_el/gps/histpoint	8.01850E-02	2.43166E-04
+/gate/source/mono_el/gps/histpoint	8.01850E-02	0
+/gate/source/mono_el/gps/histpoint	8.04831E-02	0
+/gate/source/mono_el/gps/histpoint	8.04831E-02	2.06940E-07
+/gate/source/mono_el/gps/histpoint	8.04831E-02	0
+/gate/source/mono_el/gps/histpoint	8.07961E-02	0
+/gate/source/mono_el/gps/histpoint	8.07961E-02	1.51348E-08
+/gate/source/mono_el/gps/histpoint	8.07961E-02	0
+/gate/source/mono_el/gps/histpoint	8.11253E-02	0
+/gate/source/mono_el/gps/histpoint	8.11253E-02	3.57359E-09
+/gate/source/mono_el/gps/histpoint	8.11253E-02	0
+/gate/source/mono_el/gps/histpoint	8.49734E-02	0
+/gate/source/mono_el/gps/histpoint	8.49734E-02	4.58713E-08
+/gate/source/mono_el/gps/histpoint	8.49734E-02	0
+/gate/source/mono_el/gps/histpoint	8.59000E-02	0
+/gate/source/mono_el/gps/histpoint	8.59000E-02	1.15644E-08
+/gate/source/mono_el/gps/histpoint	8.59000E-02	0
+/gate/source/mono_el/gps/histpoint	1.42658E-01	0
+/gate/source/mono_el/gps/histpoint	1.42658E-01	5.04316E-04
+/gate/source/mono_el/gps/histpoint	1.42658E-01	0
+/gate/source/mono_el/gps/histpoint	1.71797E-01	0
+/gate/source/mono_el/gps/histpoint	1.71797E-01	5.11055E-05
+/gate/source/mono_el/gps/histpoint	1.71797E-01	0
+/gate/source/mono_el/gps/histpoint	1.72110E-01	0
+/gate/source/mono_el/gps/histpoint	1.72110E-01	3.25651E-05
+/gate/source/mono_el/gps/histpoint	1.72110E-01	0
+/gate/source/mono_el/gps/histpoint	1.72439E-01	0
+/gate/source/mono_el/gps/histpoint	1.72439E-01	3.16404E-05
+/gate/source/mono_el/gps/histpoint	1.72439E-01	0
+/gate/source/mono_el/gps/histpoint	1.76287E-01	0
+/gate/source/mono_el/gps/histpoint	1.76287E-01	2.42841E-05
+/gate/source/mono_el/gps/histpoint	1.76287E-01	0
+/gate/source/mono_el/gps/histpoint	1.77214E-01	0
+/gate/source/mono_el/gps/histpoint	1.77214E-01	5.83044E-06
+/gate/source/mono_el/gps/histpoint	1.77214E-01	0
+/gate/source/mono_el/gps/histpoint	1.97624E-01	0
+/gate/source/mono_el/gps/histpoint	1.97624E-01	2.49227E-06
+/gate/source/mono_el/gps/histpoint	1.97624E-01	0
+/gate/source/mono_el/gps/histpoint	2.26763E-01	0
+/gate/source/mono_el/gps/histpoint	2.26763E-01	2.60584E-07
+/gate/source/mono_el/gps/histpoint	2.26763E-01	0
+/gate/source/mono_el/gps/histpoint	2.27076E-01	0
+/gate/source/mono_el/gps/histpoint	2.27076E-01	1.20457E-07
+/gate/source/mono_el/gps/histpoint	2.27076E-01	0
+/gate/source/mono_el/gps/histpoint	2.27405E-01	0
+/gate/source/mono_el/gps/histpoint	2.27405E-01	1.07744E-07
+/gate/source/mono_el/gps/histpoint	2.27405E-01	0
+/gate/source/mono_el/gps/histpoint	2.31253E-01	0
+/gate/source/mono_el/gps/histpoint	2.31253E-01	1.02231E-07
+/gate/source/mono_el/gps/histpoint	2.31253E-01	0
+/gate/source/mono_el/gps/histpoint	2.32180E-01	0
+/gate/source/mono_el/gps/histpoint	2.32180E-01	2.47575E-08
+/gate/source/mono_el/gps/histpoint	2.32180E-01	0
+/gate/source/mono_el/gps/histpoint	2.37942E-01	0
+/gate/source/mono_el/gps/histpoint	2.37942E-01	2.66446E-05
+/gate/source/mono_el/gps/histpoint	2.37942E-01	0
+/gate/source/mono_el/gps/histpoint	2.49749E-01	0
+/gate/source/mono_el/gps/histpoint	2.49749E-01	2.50626E-03
+/gate/source/mono_el/gps/histpoint	2.49749E-01	0
+/gate/source/mono_el/gps/histpoint	2.61244E-01	0
+/gate/source/mono_el/gps/histpoint	2.61244E-01	1.68516E-07
+/gate/source/mono_el/gps/histpoint	2.61244E-01	0
+/gate/source/mono_el/gps/histpoint	2.67081E-01	0
+/gate/source/mono_el/gps/histpoint	2.67081E-01	3.17546E-06
+/gate/source/mono_el/gps/histpoint	2.67081E-01	0
+/gate/source/mono_el/gps/histpoint	2.67394E-01	0
+/gate/source/mono_el/gps/histpoint	2.67394E-01	2.94161E-07
+/gate/source/mono_el/gps/histpoint	2.67394E-01	0
+/gate/source/mono_el/gps/histpoint	2.67723E-01	0
+/gate/source/mono_el/gps/histpoint	2.67723E-01	1.53783E-07
+/gate/source/mono_el/gps/histpoint	2.67723E-01	0
+/gate/source/mono_el/gps/histpoint	2.67844E-01	0
+/gate/source/mono_el/gps/histpoint	2.67844E-01	4.19505E-07
+/gate/source/mono_el/gps/histpoint	2.67844E-01	0
+/gate/source/mono_el/gps/histpoint	2.71571E-01	0
+/gate/source/mono_el/gps/histpoint	2.71571E-01	7.39866E-07
+/gate/source/mono_el/gps/histpoint	2.71571E-01	0
+/gate/source/mono_el/gps/histpoint	2.72498E-01	0
+/gate/source/mono_el/gps/histpoint	2.72498E-01	1.85549E-07
+/gate/source/mono_el/gps/histpoint	2.72498E-01	0
+/gate/source/mono_el/gps/histpoint	2.78888E-01	0
+/gate/source/mono_el/gps/histpoint	2.78888E-01	2.69124E-04
+/gate/source/mono_el/gps/histpoint	2.78888E-01	0
+/gate/source/mono_el/gps/histpoint	2.79201E-01	0
+/gate/source/mono_el/gps/histpoint	2.79201E-01	9.56999E-05
+/gate/source/mono_el/gps/histpoint	2.79201E-01	0
+/gate/source/mono_el/gps/histpoint	2.79530E-01	0
+/gate/source/mono_el/gps/histpoint	2.79530E-01	8.00738E-05
+/gate/source/mono_el/gps/histpoint	2.79530E-01	0
+/gate/source/mono_el/gps/histpoint	2.83378E-01	0
+/gate/source/mono_el/gps/histpoint	2.83378E-01	9.25514E-05
+/gate/source/mono_el/gps/histpoint	2.83378E-01	0
+/gate/source/mono_el/gps/histpoint	2.83532E-01	0
+/gate/source/mono_el/gps/histpoint	2.83532E-01	2.38652E-05
+/gate/source/mono_el/gps/histpoint	2.83532E-01	0
+/gate/source/mono_el/gps/histpoint	2.84305E-01	0
+/gate/source/mono_el/gps/histpoint	2.84305E-01	2.25804E-05
+/gate/source/mono_el/gps/histpoint	2.84305E-01	0
+/gate/source/mono_el/gps/histpoint	2.90095E-01	0
+/gate/source/mono_el/gps/histpoint	2.90095E-01	6.01731E-06
+/gate/source/mono_el/gps/histpoint	2.90095E-01	0
+/gate/source/mono_el/gps/histpoint	2.90383E-01	0
+/gate/source/mono_el/gps/histpoint	2.90383E-01	1.85656E-08
+/gate/source/mono_el/gps/histpoint	2.90383E-01	0
+/gate/source/mono_el/gps/histpoint	2.90696E-01	0
+/gate/source/mono_el/gps/histpoint	2.90696E-01	1.19886E-09
+/gate/source/mono_el/gps/histpoint	2.90696E-01	0
+/gate/source/mono_el/gps/histpoint	2.91025E-01	0
+/gate/source/mono_el/gps/histpoint	2.91025E-01	1.53649E-09
+/gate/source/mono_el/gps/histpoint	2.91025E-01	0
+/gate/source/mono_el/gps/histpoint	2.91233E-01	0
+/gate/source/mono_el/gps/histpoint	2.91233E-01	7.88794E-05
+/gate/source/mono_el/gps/histpoint	2.91233E-01	0
+/gate/source/mono_el/gps/histpoint	2.94873E-01	0
+/gate/source/mono_el/gps/histpoint	2.94873E-01	4.30447E-09
+/gate/source/mono_el/gps/histpoint	2.94873E-01	0
+/gate/source/mono_el/gps/histpoint	2.95800E-01	0
+/gate/source/mono_el/gps/histpoint	2.95800E-01	1.07673E-09
+/gate/source/mono_el/gps/histpoint	2.95800E-01	0
+/gate/source/mono_el/gps/histpoint	2.96983E-01	0
+/gate/source/mono_el/gps/histpoint	2.96983E-01	4.62843E-08
+/gate/source/mono_el/gps/histpoint	2.96983E-01	0
+/gate/source/mono_el/gps/histpoint	2.97296E-01	0
+/gate/source/mono_el/gps/histpoint	2.97296E-01	2.94193E-09
+/gate/source/mono_el/gps/histpoint	2.97296E-01	0
+/gate/source/mono_el/gps/histpoint	2.97625E-01	0
+/gate/source/mono_el/gps/histpoint	2.97625E-01	3.76926E-09
+/gate/source/mono_el/gps/histpoint	2.97625E-01	0
+/gate/source/mono_el/gps/histpoint	3.01473E-01	0
+/gate/source/mono_el/gps/histpoint	3.01473E-01	1.07081E-08
+/gate/source/mono_el/gps/histpoint	3.01473E-01	0
+/gate/source/mono_el/gps/histpoint	3.02400E-01	0
+/gate/source/mono_el/gps/histpoint	3.02400E-01	2.67899E-09
+/gate/source/mono_el/gps/histpoint	3.02400E-01	0
+/gate/source/mono_el/gps/histpoint	3.12671E-01	0
+/gate/source/mono_el/gps/histpoint	3.12671E-01	2.87975E-06
+/gate/source/mono_el/gps/histpoint	3.12671E-01	0
+/gate/source/mono_el/gps/histpoint	3.12984E-01	0
+/gate/source/mono_el/gps/histpoint	3.12984E-01	1.60366E-07
+/gate/source/mono_el/gps/histpoint	3.12984E-01	0
+/gate/source/mono_el/gps/histpoint	3.13313E-01	0
+/gate/source/mono_el/gps/histpoint	3.13313E-01	4.41088E-08
+/gate/source/mono_el/gps/histpoint	3.13313E-01	0
+/gate/source/mono_el/gps/histpoint	3.17161E-01	0
+/gate/source/mono_el/gps/histpoint	3.17161E-01	6.27313E-07
+/gate/source/mono_el/gps/histpoint	3.17161E-01	0
+/gate/source/mono_el/gps/histpoint	3.18088E-01	0
+/gate/source/mono_el/gps/histpoint	3.18088E-01	1.57987E-07
+/gate/source/mono_el/gps/histpoint	3.18088E-01	0
+/gate/source/mono_el/gps/histpoint	3.19234E-01	0
+/gate/source/mono_el/gps/histpoint	3.19234E-01	7.00407E-07
+/gate/source/mono_el/gps/histpoint	3.19234E-01	0
+/gate/source/mono_el/gps/histpoint	3.19547E-01	0
+/gate/source/mono_el/gps/histpoint	3.19547E-01	9.72868E-08
+/gate/source/mono_el/gps/histpoint	3.19547E-01	0
+/gate/source/mono_el/gps/histpoint	3.19876E-01	0
+/gate/source/mono_el/gps/histpoint	3.19876E-01	6.45437E-08
+/gate/source/mono_el/gps/histpoint	3.19876E-01	0
+/gate/source/mono_el/gps/histpoint	3.20372E-01	0
+/gate/source/mono_el/gps/histpoint	3.20372E-01	9.48168E-06
+/gate/source/mono_el/gps/histpoint	3.20372E-01	0
+/gate/source/mono_el/gps/histpoint	3.20685E-01	0
+/gate/source/mono_el/gps/histpoint	3.20685E-01	5.98001E-07
+/gate/source/mono_el/gps/histpoint	3.20685E-01	0
+/gate/source/mono_el/gps/histpoint	3.21014E-01	0
+/gate/source/mono_el/gps/histpoint	3.21014E-01	2.12597E-07
+/gate/source/mono_el/gps/histpoint	3.21014E-01	0
+/gate/source/mono_el/gps/histpoint	3.23724E-01	0
+/gate/source/mono_el/gps/histpoint	3.23724E-01	1.76836E-07
+/gate/source/mono_el/gps/histpoint	3.23724E-01	0
+/gate/source/mono_el/gps/histpoint	3.23844E-01	0
+/gate/source/mono_el/gps/histpoint	3.23844E-01	3.70357E-06
+/gate/source/mono_el/gps/histpoint	3.23844E-01	0
+/gate/source/mono_el/gps/histpoint	3.24651E-01	0
+/gate/source/mono_el/gps/histpoint	3.24651E-01	4.40167E-08
+/gate/source/mono_el/gps/histpoint	3.24651E-01	0
+/gate/source/mono_el/gps/histpoint	3.24862E-01	0
+/gate/source/mono_el/gps/histpoint	3.24862E-01	2.09520E-06
+/gate/source/mono_el/gps/histpoint	3.24862E-01	0
+/gate/source/mono_el/gps/histpoint	3.25789E-01	0
+/gate/source/mono_el/gps/histpoint	3.25789E-01	5.26988E-07
+/gate/source/mono_el/gps/histpoint	3.25789E-01	0
+/gate/source/mono_el/gps/histpoint	3.29933E-01	0
+/gate/source/mono_el/gps/histpoint	3.29933E-01	1.56323E-02
+/gate/source/mono_el/gps/histpoint	3.29933E-01	0
+/gate/source/mono_el/gps/histpoint	3.52983E-01	0
+/gate/source/mono_el/gps/histpoint	3.52983E-01	4.46270E-07
+/gate/source/mono_el/gps/histpoint	3.52983E-01	0
+/gate/source/mono_el/gps/histpoint	3.53296E-01	0
+/gate/source/mono_el/gps/histpoint	3.53296E-01	2.27194E-08
+/gate/source/mono_el/gps/histpoint	3.53296E-01	0
+/gate/source/mono_el/gps/histpoint	3.53625E-01	0
+/gate/source/mono_el/gps/histpoint	3.53625E-01	5.60284E-09
+/gate/source/mono_el/gps/histpoint	3.53625E-01	0
+/gate/source/mono_el/gps/histpoint	3.57473E-01	0
+/gate/source/mono_el/gps/histpoint	3.57473E-01	9.64875E-08
+/gate/source/mono_el/gps/histpoint	3.57473E-01	0
+/gate/source/mono_el/gps/histpoint	3.58400E-01	0
+/gate/source/mono_el/gps/histpoint	3.58400E-01	2.43119E-08
+/gate/source/mono_el/gps/histpoint	3.58400E-01	0
+/gate/source/mono_el/gps/histpoint	3.59072E-01	0
+/gate/source/mono_el/gps/histpoint	3.59072E-01	1.73458E-03
+/gate/source/mono_el/gps/histpoint	3.59072E-01	0
+/gate/source/mono_el/gps/histpoint	3.59385E-01	0
+/gate/source/mono_el/gps/histpoint	3.59385E-01	4.22151E-04
+/gate/source/mono_el/gps/histpoint	3.59385E-01	0
+/gate/source/mono_el/gps/histpoint	3.59714E-01	0
+/gate/source/mono_el/gps/histpoint	3.59714E-01	3.22610E-04
+/gate/source/mono_el/gps/histpoint	3.59714E-01	0
+/gate/source/mono_el/gps/histpoint	3.63562E-01	0
+/gate/source/mono_el/gps/histpoint	3.63562E-01	5.12402E-04
+/gate/source/mono_el/gps/histpoint	3.63562E-01	0
+/gate/source/mono_el/gps/histpoint	3.64489E-01	0
+/gate/source/mono_el/gps/histpoint	3.64489E-01	1.26141E-04
+/gate/source/mono_el/gps/histpoint	3.64489E-01	0
+/gate/source/mono_el/gps/histpoint	3.70258E-01	0
+/gate/source/mono_el/gps/histpoint	3.70258E-01	8.36041E-06
+/gate/source/mono_el/gps/histpoint	3.70258E-01	0
+/gate/source/mono_el/gps/histpoint	3.99397E-01	0
+/gate/source/mono_el/gps/histpoint	3.99397E-01	9.70620E-07
+/gate/source/mono_el/gps/histpoint	3.99397E-01	0
+/gate/source/mono_el/gps/histpoint	3.99710E-01	0
+/gate/source/mono_el/gps/histpoint	3.99710E-01	1.22577E-07
+/gate/source/mono_el/gps/histpoint	3.99710E-01	0
+/gate/source/mono_el/gps/histpoint	4.00039E-01	0
+/gate/source/mono_el/gps/histpoint	4.00039E-01	7.84401E-08
+/gate/source/mono_el/gps/histpoint	4.00039E-01	0
+/gate/source/mono_el/gps/histpoint	4.03887E-01	0
+/gate/source/mono_el/gps/histpoint	4.03887E-01	2.40032E-07
+/gate/source/mono_el/gps/histpoint	4.03887E-01	0
+/gate/source/mono_el/gps/histpoint	4.04814E-01	0
+/gate/source/mono_el/gps/histpoint	4.04814E-01	5.98244E-08
+/gate/source/mono_el/gps/histpoint	4.04814E-01	0
+/gate/source/mono_el/gps/histpoint	4.68448E-01	0
+/gate/source/mono_el/gps/histpoint	4.68448E-01	2.70708E-05
+/gate/source/mono_el/gps/histpoint	4.68448E-01	0
+/gate/source/mono_el/gps/histpoint	4.97587E-01	0
+/gate/source/mono_el/gps/histpoint	4.97587E-01	3.05659E-06
+/gate/source/mono_el/gps/histpoint	4.97587E-01	0
+/gate/source/mono_el/gps/histpoint	4.97900E-01	0
+/gate/source/mono_el/gps/histpoint	4.97900E-01	5.23609E-07
+/gate/source/mono_el/gps/histpoint	4.97900E-01	0
+/gate/source/mono_el/gps/histpoint	4.98229E-01	0
+/gate/source/mono_el/gps/histpoint	4.98229E-01	3.68477E-07
+/gate/source/mono_el/gps/histpoint	4.98229E-01	0
+/gate/source/mono_el/gps/histpoint	5.02077E-01	0
+/gate/source/mono_el/gps/histpoint	5.02077E-01	8.11899E-07
+/gate/source/mono_el/gps/histpoint	5.02077E-01	0
+/gate/source/mono_el/gps/histpoint	5.03004E-01	0
+/gate/source/mono_el/gps/histpoint	5.03004E-01	2.01101E-07
+/gate/source/mono_el/gps/histpoint	5.03004E-01	0
+/gate/source/mono_el/gps/histpoint	6.02433E-01	0
+/gate/source/mono_el/gps/histpoint	6.02433E-01	2.89762E-04
+/gate/source/mono_el/gps/histpoint	6.02433E-01	0
+/gate/source/mono_el/gps/histpoint	6.08163E-01	0
+/gate/source/mono_el/gps/histpoint	6.08163E-01	8.58230E-06
+/gate/source/mono_el/gps/histpoint	6.08163E-01	0
+/gate/source/mono_el/gps/histpoint	6.31572E-01	0
+/gate/source/mono_el/gps/histpoint	6.31572E-01	3.31138E-05
+/gate/source/mono_el/gps/histpoint	6.31572E-01	0
+/gate/source/mono_el/gps/histpoint	6.31885E-01	0
+/gate/source/mono_el/gps/histpoint	6.31885E-01	4.14683E-06
+/gate/source/mono_el/gps/histpoint	6.31885E-01	0
+/gate/source/mono_el/gps/histpoint	6.32214E-01	0
+/gate/source/mono_el/gps/histpoint	6.32214E-01	2.76177E-06
+/gate/source/mono_el/gps/histpoint	6.32214E-01	0
+/gate/source/mono_el/gps/histpoint	6.36063E-01	0
+/gate/source/mono_el/gps/histpoint	6.36063E-01	8.18822E-06
+/gate/source/mono_el/gps/histpoint	6.36063E-01	0
+/gate/source/mono_el/gps/histpoint	6.36989E-01	0
+/gate/source/mono_el/gps/histpoint	6.36989E-01	2.04042E-06
+/gate/source/mono_el/gps/histpoint	6.36989E-01	0
+/gate/source/mono_el/gps/histpoint	6.37302E-01	0
+/gate/source/mono_el/gps/histpoint	6.37302E-01	9.81148E-07
+/gate/source/mono_el/gps/histpoint	6.37302E-01	0
+/gate/source/mono_el/gps/histpoint	6.37615E-01	0
+/gate/source/mono_el/gps/histpoint	6.37615E-01	1.21408E-07
+/gate/source/mono_el/gps/histpoint	6.37615E-01	0
+/gate/source/mono_el/gps/histpoint	6.37944E-01	0
+/gate/source/mono_el/gps/histpoint	6.37944E-01	8.07245E-08
+/gate/source/mono_el/gps/histpoint	6.37944E-01	0
+/gate/source/mono_el/gps/histpoint	6.41792E-01	0
+/gate/source/mono_el/gps/histpoint	6.41792E-01	2.42047E-07
+/gate/source/mono_el/gps/histpoint	6.41792E-01	0
+/gate/source/mono_el/gps/histpoint	6.42719E-01	0
+/gate/source/mono_el/gps/histpoint	6.42719E-01	6.03300E-08
+/gate/source/mono_el/gps/histpoint	6.42719E-01	0
+/gate/source/mono_el/gps/histpoint	6.88355E-01	0
+/gate/source/mono_el/gps/histpoint	6.88355E-01	7.06758E-05
+/gate/source/mono_el/gps/histpoint	6.88355E-01	0
+/gate/source/mono_el/gps/histpoint	7.17494E-01	0
+/gate/source/mono_el/gps/histpoint	7.17494E-01	8.42644E-06
+/gate/source/mono_el/gps/histpoint	7.17494E-01	0
+/gate/source/mono_el/gps/histpoint	7.17807E-01	0
+/gate/source/mono_el/gps/histpoint	7.17807E-01	3.35541E-07
+/gate/source/mono_el/gps/histpoint	7.17807E-01	0
+/gate/source/mono_el/gps/histpoint	7.18136E-01	0
+/gate/source/mono_el/gps/histpoint	7.18136E-01	1.04036E-07
+/gate/source/mono_el/gps/histpoint	7.18136E-01	0
+/gate/source/mono_el/gps/histpoint	7.21985E-01	0
+/gate/source/mono_el/gps/histpoint	7.21985E-01	1.79196E-06
+/gate/source/mono_el/gps/histpoint	7.21985E-01	0
+/gate/source/mono_el/gps/histpoint	7.22911E-01	0
+/gate/source/mono_el/gps/histpoint	7.22911E-01	4.53966E-07
+/gate/source/mono_el/gps/histpoint	7.22911E-01	0
+
+
+#=====================================================
+# Monoergetic photons 
+#=====================================================
+
+
+/gate/source/addSource mono_ph voxel
+
+/gate/source/mono_ph/reader/insert interfile
+/gate/source/mono_ph/interfileReader/translator/insert linear
+/gate/source/mono_ph/interfileReader/linearTranslator/setScale 1. Bq
+/gate/source/mono_ph/interfileReader/readFile data/PET_64_64_125_16uint.iff
+
+/gate/source/mono_ph/setPosition         -12.8 -12.8 -23.125   mm $voxel source file not located at the center of the world by default. shifted by half size. See user guide 
+
+/gate/source/mono_ph/gps/particle gamma
+/gate/source/mono_ph/gps/angtype iso
+/gate/source/mono_ph/setIntensity 1.8251883391
+
+/gate/source/mono_ph/gps/energytype User
+/gate/source/mono_ph/gps/histname energy
+
+# Warning : probability  bin values
+
+/gate/source/mono_ph/gps/histpoint	1.66175E-05	0
+/gate/source/mono_ph/gps/histpoint	1.66175E-05	7.62736E-01
+/gate/source/mono_ph/gps/histpoint	1.66175E-05	0
+/gate/source/mono_ph/gps/histpoint	9.22478E-05	0
+/gate/source/mono_ph/gps/histpoint	9.22478E-05	7.57745E-06
+/gate/source/mono_ph/gps/histpoint	9.22478E-05	0
+/gate/source/mono_ph/gps/histpoint	3.13000E-04	0
+/gate/source/mono_ph/gps/histpoint	3.13000E-04	1.81712E-07
+/gate/source/mono_ph/gps/histpoint	3.13000E-04	0
+/gate/source/mono_ph/gps/histpoint	3.29200E-04	0
+/gate/source/mono_ph/gps/histpoint	3.29200E-04	1.36135E-09
+/gate/source/mono_ph/gps/histpoint	3.29200E-04	0
+/gate/source/mono_ph/gps/histpoint	6.08259E-04	0
+/gate/source/mono_ph/gps/histpoint	6.08259E-04	3.09105E-04
+/gate/source/mono_ph/gps/histpoint	6.08259E-04	0
+/gate/source/mono_ph/gps/histpoint	3.29200E-04	0
+/gate/source/mono_ph/gps/histpoint	3.29200E-04	1.36135E-09
+/gate/source/mono_ph/gps/histpoint	3.29200E-04	0
+/gate/source/mono_ph/gps/histpoint	6.42201E-04	0
+/gate/source/mono_ph/gps/histpoint	6.42201E-04	3.41928E-06
+/gate/source/mono_ph/gps/histpoint	6.42201E-04	0
+/gate/source/mono_ph/gps/histpoint	3.65269E-03	0
+/gate/source/mono_ph/gps/histpoint	3.65269E-03	2.70989E-04
+/gate/source/mono_ph/gps/histpoint	3.65269E-03	0
+/gate/source/mono_ph/gps/histpoint	3.78523E-03	0
+/gate/source/mono_ph/gps/histpoint	3.78523E-03	1.49608E-06
+/gate/source/mono_ph/gps/histpoint	3.78523E-03	0
+/gate/source/mono_ph/gps/histpoint	3.84813E-03	0
+/gate/source/mono_ph/gps/histpoint	3.84813E-03	1.39288E-06
+/gate/source/mono_ph/gps/histpoint	3.84813E-03	0
+/gate/source/mono_ph/gps/histpoint	3.98191E-03	0
+/gate/source/mono_ph/gps/histpoint	3.98191E-03	7.78852E-05
+/gate/source/mono_ph/gps/histpoint	3.98191E-03	0
+/gate/source/mono_ph/gps/histpoint	4.08379E-03	0
+/gate/source/mono_ph/gps/histpoint	4.08379E-03	2.76832E-04
+/gate/source/mono_ph/gps/histpoint	4.08379E-03	0
+/gate/source/mono_ph/gps/histpoint	4.09719E-03	0
+/gate/source/mono_ph/gps/histpoint	4.09719E-03	2.45351E-03
+/gate/source/mono_ph/gps/histpoint	4.09719E-03	0
+/gate/source/mono_ph/gps/histpoint	4.17734E-03	0
+/gate/source/mono_ph/gps/histpoint	4.17734E-03	1.12585E-06
+/gate/source/mono_ph/gps/histpoint	4.17734E-03	0
+/gate/source/mono_ph/gps/histpoint	4.41300E-03	0
+/gate/source/mono_ph/gps/histpoint	4.41300E-03	1.44796E-03
+/gate/source/mono_ph/gps/histpoint	4.41300E-03	0
+/gate/source/mono_ph/gps/histpoint	4.42743E-03	0
+/gate/source/mono_ph/gps/histpoint	4.42743E-03	1.27153E-04
+/gate/source/mono_ph/gps/histpoint	4.42743E-03	0
+/gate/source/mono_ph/gps/histpoint	4.49034E-03	0
+/gate/source/mono_ph/gps/histpoint	4.49034E-03	2.00360E-04
+/gate/source/mono_ph/gps/histpoint	4.49034E-03	0
+/gate/source/mono_ph/gps/histpoint	4.56633E-03	0
+/gate/source/mono_ph/gps/histpoint	4.56633E-03	2.38744E-05
+/gate/source/mono_ph/gps/histpoint	4.56633E-03	0
+/gate/source/mono_ph/gps/histpoint	4.61402E-03	0
+/gate/source/mono_ph/gps/histpoint	4.61402E-03	1.31668E-07
+/gate/source/mono_ph/gps/histpoint	4.61402E-03	0
+/gate/source/mono_ph/gps/histpoint	4.62673E-03	0
+/gate/source/mono_ph/gps/histpoint	4.62673E-03	1.26338E-07
+/gate/source/mono_ph/gps/histpoint	4.62673E-03	0
+/gate/source/mono_ph/gps/histpoint	4.70486E-03	0
+/gate/source/mono_ph/gps/histpoint	4.70486E-03	4.02593E-05
+/gate/source/mono_ph/gps/histpoint	4.70486E-03	0
+/gate/source/mono_ph/gps/histpoint	4.70692E-03	0
+/gate/source/mono_ph/gps/histpoint	4.70692E-03	3.59019E-04
+/gate/source/mono_ph/gps/histpoint	4.70692E-03	0
+/gate/source/mono_ph/gps/histpoint	4.72599E-03	0
+/gate/source/mono_ph/gps/histpoint	4.72599E-03	1.89442E-06
+/gate/source/mono_ph/gps/histpoint	4.72599E-03	0
+/gate/source/mono_ph/gps/histpoint	4.73937E-03	0
+/gate/source/mono_ph/gps/histpoint	4.73937E-03	2.82808E-06
+/gate/source/mono_ph/gps/histpoint	4.73937E-03	0
+/gate/source/mono_ph/gps/histpoint	4.75109E-03	0
+/gate/source/mono_ph/gps/histpoint	4.75109E-03	3.36137E-06
+/gate/source/mono_ph/gps/histpoint	4.75109E-03	0
+/gate/source/mono_ph/gps/histpoint	4.76235E-03	0
+/gate/source/mono_ph/gps/histpoint	4.76235E-03	1.48915E-08
+/gate/source/mono_ph/gps/histpoint	4.76235E-03	0
+/gate/source/mono_ph/gps/histpoint	4.76373E-03	0
+/gate/source/mono_ph/gps/histpoint	4.76373E-03	1.37496E-08
+/gate/source/mono_ph/gps/histpoint	4.76373E-03	0
+/gate/source/mono_ph/gps/histpoint	4.89553E-03	0
+/gate/source/mono_ph/gps/histpoint	4.89553E-03	1.11120E-05
+/gate/source/mono_ph/gps/histpoint	4.89553E-03	0
+/gate/source/mono_ph/gps/histpoint	4.95593E-03	0
+/gate/source/mono_ph/gps/histpoint	4.95593E-03	1.39229E-07
+/gate/source/mono_ph/gps/histpoint	4.95593E-03	0
+/gate/source/mono_ph/gps/histpoint	5.03405E-03	0
+/gate/source/mono_ph/gps/histpoint	5.03405E-03	2.16155E-04
+/gate/source/mono_ph/gps/histpoint	5.03405E-03	0
+/gate/source/mono_ph/gps/histpoint	5.08031E-03	0
+/gate/source/mono_ph/gps/histpoint	5.08031E-03	1.33369E-06
+/gate/source/mono_ph/gps/histpoint	5.08031E-03	0
+/gate/source/mono_ph/gps/histpoint	5.09294E-03	0
+/gate/source/mono_ph/gps/histpoint	5.09294E-03	1.52095E-08
+/gate/source/mono_ph/gps/histpoint	5.09294E-03	0
+/gate/source/mono_ph/gps/histpoint	5.25621E-03	0
+/gate/source/mono_ph/gps/histpoint	5.25621E-03	2.74089E-05
+/gate/source/mono_ph/gps/histpoint	5.25621E-03	0
+/gate/source/mono_ph/gps/histpoint	5.26892E-03	0
+/gate/source/mono_ph/gps/histpoint	5.26892E-03	4.43189E-05
+/gate/source/mono_ph/gps/histpoint	5.26892E-03	0
+/gate/source/mono_ph/gps/histpoint	5.34706E-03	0
+/gate/source/mono_ph/gps/histpoint	5.34706E-03	2.30419E-07
+/gate/source/mono_ph/gps/histpoint	5.34706E-03	0
+/gate/source/mono_ph/gps/histpoint	5.34913E-03	0
+/gate/source/mono_ph/gps/histpoint	5.34913E-03	3.49998E-07
+/gate/source/mono_ph/gps/histpoint	5.34913E-03	0
+/gate/source/mono_ph/gps/histpoint	5.40454E-03	0
+/gate/source/mono_ph/gps/histpoint	5.40454E-03	3.11539E-06
+/gate/source/mono_ph/gps/histpoint	5.40454E-03	0
+/gate/source/mono_ph/gps/histpoint	5.40593E-03	0
+/gate/source/mono_ph/gps/histpoint	5.40593E-03	4.83836E-06
+/gate/source/mono_ph/gps/histpoint	5.40593E-03	0
+/gate/source/mono_ph/gps/histpoint	2.94521E-02	0
+/gate/source/mono_ph/gps/histpoint	2.94521E-02	1.40078E-02
+/gate/source/mono_ph/gps/histpoint	2.94521E-02	0
+/gate/source/mono_ph/gps/histpoint	2.97812E-02	0
+/gate/source/mono_ph/gps/histpoint	2.97812E-02	2.59418E-02
+/gate/source/mono_ph/gps/histpoint	2.97812E-02	0
+/gate/source/mono_ph/gps/histpoint	3.35665E-02	0
+/gate/source/mono_ph/gps/histpoint	3.35665E-02	2.43522E-03
+/gate/source/mono_ph/gps/histpoint	3.35665E-02	0
+/gate/source/mono_ph/gps/histpoint	3.36295E-02	0
+/gate/source/mono_ph/gps/histpoint	3.36295E-02	4.72116E-03
+/gate/source/mono_ph/gps/histpoint	3.36295E-02	0
+/gate/source/mono_ph/gps/histpoint	3.38651E-02	0
+/gate/source/mono_ph/gps/histpoint	3.38651E-02	2.40211E-05
+/gate/source/mono_ph/gps/histpoint	3.38651E-02	0
+/gate/source/mono_ph/gps/histpoint	3.38785E-02	0
+/gate/source/mono_ph/gps/histpoint	3.38785E-02	3.28048E-05
+/gate/source/mono_ph/gps/histpoint	3.38785E-02	0
+/gate/source/mono_ph/gps/histpoint	3.43952E-02	0
+/gate/source/mono_ph/gps/histpoint	3.43952E-02	5.10579E-04
+/gate/source/mono_ph/gps/histpoint	3.43952E-02	0
+/gate/source/mono_ph/gps/histpoint	3.44080E-02	0
+/gate/source/mono_ph/gps/histpoint	3.44080E-02	9.95801E-04
+/gate/source/mono_ph/gps/histpoint	3.44080E-02	0
+/gate/source/mono_ph/gps/histpoint	3.44862E-02	0
+/gate/source/mono_ph/gps/histpoint	3.44862E-02	4.47782E-06
+/gate/source/mono_ph/gps/histpoint	3.44862E-02	0
+/gate/source/mono_ph/gps/histpoint	3.44882E-02	0
+/gate/source/mono_ph/gps/histpoint	3.44882E-02	6.10349E-06
+/gate/source/mono_ph/gps/histpoint	3.44882E-02	0
+/gate/source/mono_ph/gps/histpoint	3.45436E-02	0
+/gate/source/mono_ph/gps/histpoint	3.45436E-02	5.23268E-05
+/gate/source/mono_ph/gps/histpoint	3.45436E-02	0
+/gate/source/mono_ph/gps/histpoint	3.45450E-02	0
+/gate/source/mono_ph/gps/histpoint	3.45450E-02	9.89453E-05
+/gate/source/mono_ph/gps/histpoint	3.45450E-02	0
+/gate/source/mono_ph/gps/histpoint	8.01850E-02	0
+/gate/source/mono_ph/gps/histpoint	8.01850E-02	2.62257E-02
+/gate/source/mono_ph/gps/histpoint	8.01850E-02	0
+/gate/source/mono_ph/gps/histpoint	8.59000E-02	0
+/gate/source/mono_ph/gps/histpoint	8.59000E-02	8.98700E-07
+/gate/source/mono_ph/gps/histpoint	8.59000E-02	0
+/gate/source/mono_ph/gps/histpoint	1.77214E-01	0
+/gate/source/mono_ph/gps/histpoint	1.77214E-01	2.69610E-03
+/gate/source/mono_ph/gps/histpoint	1.77214E-01	0
+/gate/source/mono_ph/gps/histpoint	2.32180E-01	0
+/gate/source/mono_ph/gps/histpoint	2.32180E-01	3.18630E-05
+/gate/source/mono_ph/gps/histpoint	2.32180E-01	0
+/gate/source/mono_ph/gps/histpoint	2.72498E-01	0
+/gate/source/mono_ph/gps/histpoint	2.72498E-01	5.77619E-04
+/gate/source/mono_ph/gps/histpoint	2.72498E-01	0
+/gate/source/mono_ph/gps/histpoint	2.84305E-01	0
+/gate/source/mono_ph/gps/histpoint	2.84305E-01	6.13567E-02
+/gate/source/mono_ph/gps/histpoint	2.84305E-01	0
+/gate/source/mono_ph/gps/histpoint	2.95800E-01	0
+/gate/source/mono_ph/gps/histpoint	2.95800E-01	1.79740E-05
+/gate/source/mono_ph/gps/histpoint	2.95800E-01	0
+/gate/source/mono_ph/gps/histpoint	3.02400E-01	0
+/gate/source/mono_ph/gps/histpoint	3.02400E-01	4.73860E-05
+/gate/source/mono_ph/gps/histpoint	3.02400E-01	0
+/gate/source/mono_ph/gps/histpoint	3.18088E-01	0
+/gate/source/mono_ph/gps/histpoint	3.18088E-01	7.76150E-04
+/gate/source/mono_ph/gps/histpoint	3.18088E-01	0
+/gate/source/mono_ph/gps/histpoint	3.24651E-01	0
+/gate/source/mono_ph/gps/histpoint	3.24651E-01	2.12420E-04
+/gate/source/mono_ph/gps/histpoint	3.24651E-01	0
+/gate/source/mono_ph/gps/histpoint	3.25789E-01	0
+/gate/source/mono_ph/gps/histpoint	3.25789E-01	2.73695E-03
+/gate/source/mono_ph/gps/histpoint	3.25789E-01	0
+/gate/source/mono_ph/gps/histpoint	3.58400E-01	0
+/gate/source/mono_ph/gps/histpoint	3.58400E-01	1.63400E-04
+/gate/source/mono_ph/gps/histpoint	3.58400E-01	0
+/gate/source/mono_ph/gps/histpoint	3.64489E-01	0
+/gate/source/mono_ph/gps/histpoint	3.64489E-01	8.17000E-01
+/gate/source/mono_ph/gps/histpoint	3.64489E-01	0
+/gate/source/mono_ph/gps/histpoint	4.04814E-01	0
+/gate/source/mono_ph/gps/histpoint	4.04814E-01	5.47390E-04
+/gate/source/mono_ph/gps/histpoint	4.04814E-01	0
+/gate/source/mono_ph/gps/histpoint	4.49600E-01	0
+/gate/source/mono_ph/gps/histpoint	4.49600E-01	7.35300E-05
+/gate/source/mono_ph/gps/histpoint	4.49600E-01	0
+/gate/source/mono_ph/gps/histpoint	5.03004E-01	0
+/gate/source/mono_ph/gps/histpoint	5.03004E-01	3.60297E-03
+/gate/source/mono_ph/gps/histpoint	5.03004E-01	0
+/gate/source/mono_ph/gps/histpoint	6.36989E-01	0
+/gate/source/mono_ph/gps/histpoint	6.36989E-01	7.17326E-02
+/gate/source/mono_ph/gps/histpoint	6.36989E-01	0
+/gate/source/mono_ph/gps/histpoint	6.42719E-01	0
+/gate/source/mono_ph/gps/histpoint	6.42719E-01	2.17322E-03
+/gate/source/mono_ph/gps/histpoint	6.42719E-01	0
+/gate/source/mono_ph/gps/histpoint	7.22911E-01	0
+/gate/source/mono_ph/gps/histpoint	7.22911E-01	1.77289E-02
+/gate/source/mono_ph/gps/histpoint	7.22911E-01	0
+
+
+/gate/source/betaminus/dump 1
+/gate/source/mono_el/dump 1
+/gate/source/mono_ph/dump 1
+
+
+/gate/source/list
+
+
