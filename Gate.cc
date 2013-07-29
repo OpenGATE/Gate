@@ -360,22 +360,22 @@ int main( int argc, char* argv[] )
   // Launching Gate if macro file
   if( isMacroFile )
     {
-      executeCommandQueue( commandQueue, UImanager );
-      GateMessage( "Core", 0, "Starting macro " << macrofilename << G4endl);
-      G4String command = "/control/execute ";
-      UImanager->ApplyCommand( command + macrofilename );
-      GateMessage( "Core", 0, "End of macro " << macrofilename << G4endl);
-    }
+  executeCommandQueue( commandQueue, UImanager );
+  GateMessage( "Core", 0, "Starting macro " << macrofilename << G4endl);
+  G4String command = "/control/execute ";
+  UImanager->ApplyCommand( command + macrofilename );
+  GateMessage( "Core", 0, "End of macro " << macrofilename << G4endl);
+}
   else if( ui ) // Launching interactive mode // Qt
     {
-      ui->SessionStart();
-      delete ui;
-    }
+  ui->SessionStart();
+  delete ui;
+}
   else if( session ) // Terminal
     {
-      session->SessionStart();
-      delete session;
-    }
+  session->SessionStart();
+  delete session;
+}
 
 #ifdef G4ANALYSIS_USE_GENERAL
   if (outputMgr) delete outputMgr;
