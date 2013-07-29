@@ -115,7 +115,6 @@
 #=====================================================
 # START BEAMS
 #=====================================================
-#/control/execute mac/visu.mac
 
 # JamesRandom Ranlux64 MersenneTwister
 /gate/random/setEngineName MersenneTwister

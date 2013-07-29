@@ -8,8 +8,6 @@
 /gate/verbose Warning   1
 /gate/verbose Output    0
 /gate/verbose Beam      0
-/gate/verbose Volume    1
-/gate/verbose Image     2
-/gate/verbose Geometry  2
-
-	      
+/gate/verbose Volume    0
+/gate/verbose Image     0
+/gate/verbose Geometry  0
