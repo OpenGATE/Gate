@@ -43,7 +43,7 @@
 /gate/CT/geometry/setZLength 1.1 m
 /gate/CT/placement/setTranslation 0.0 0.0 0.0 cm
 /gate/CT/placement/setRotationAxis 1 0 0
-/gate/CT/placement/setRotationAngle -90 deg
+/gate/CT/placement/setRotationAngle 0 deg
 
 # CT Volume
 /gate/CT/daughters/name                         patient
