@@ -56,6 +56,8 @@ class GateHybridDoseActor : public GateVImageActor
 
   void SetPrimaryMultiplicity(int m) { mPrimaryMultiplicity = m; }
   void SetSecondaryMultiplicity(int m) { mSecondaryMultiplicity = m; }
+  void SetSecondaryMultiplicity(double t, double n) { mSecondaryMultiplicity = int( ((t / n) - 26.6557E-4) / 1.26961E-4 ); }
+  
   int GetPrimaryMultiplicity() { return mPrimaryMultiplicity; }
   int GetSecondaryMultiplicity() { return mSecondaryMultiplicity; }
   
