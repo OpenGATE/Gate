@@ -187,6 +187,7 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
       G4double mu = materialHandler->GetMu(material, energy)*material->GetDensity()/(g/cm3);    
       currentHybridTrackWeight = currentHybridTrackWeight * exp(-mu*stepLength/10.);
     }
+//     GateMessage("ActorMult", 0, "hybridWeight = " << currentHybridTrackWeight << G4endl);
   }
   else if(particleName == "gamma")
   {
@@ -204,7 +205,54 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
       }
       if(currentProcess == 0) { GateError("the process doesn't exist"); }
       
-      if(processName == "PhotoElectric") {}
+      if(processName == "PhotoElectric" || processName == "phot")
+      {
+	G4TrackVector *trackVector = (const_cast<G4Step *>(step))->GetfSecondary();
+	int trackVectorLength = trackVector->size();
+	for(int t=0; t<trackVectorLength; t++)
+	{
+	  G4String secondaryName = (*trackVector)[t]->GetDynamicParticle()->GetParticleDefinition()->GetParticleName();
+
+	  // Is it a fluorescence gamma ??
+	  if(secondaryName == "gamma")
+	  {
+	    // Get the constant datas for this fluorescence gamma
+	    int currentSecondaryMultiplicity;
+	    std::map<G4VPhysicalVolume *,int>::iterator it = secondaryMultiplicityMap.find(step->GetTrack()->GetVolume());
+	    if(it == secondaryMultiplicityMap.end()) { currentSecondaryMultiplicity = defaultSecondaryMultiplicity; }
+	    else { currentSecondaryMultiplicity = it->second; }
+	    
+	    G4ParticleDefinition *hybridino = G4Hybridino::Hybridino();
+	    G4double energy = (*trackVector)[t]->GetKineticEnergy();
+	    G4ThreeVector position = step->GetTrack()->GetPosition();
+	    G4double globalTime = step->GetTrack()->GetGlobalTime();
+	    G4int parentID = step->GetTrack()->GetTrackID();
+	    G4double trackWeight = step->GetTrack()->GetWeight() / currentSecondaryMultiplicity;
+	    
+	    // Main loop dedicated to secondary hybrid particle 
+	    for(int i=0; i<currentSecondaryMultiplicity; i++)
+	    {
+	      // Random generation of the angle (no physical crossSection for fluorescence)
+	      double phi = 2.*pi*G4UniformRand();
+	      double cosTheta = 2.*(G4UniformRand()-0.5);
+	      G4ThreeVector momentum;
+	      momentum.setX(cos(phi)*sqrt(1.-(cosTheta*cosTheta)));
+	      momentum.setY(sin(phi)*sqrt(1.-(cosTheta*cosTheta)));
+	      momentum.setZ(cosTheta);
+
+	      // Create a hybrid track and attach it to the primary particle
+	      G4DynamicParticle *hybridParticle = new G4DynamicParticle(hybridino, momentum, energy);
+	      G4Track *newTrack = new G4Track(hybridParticle, globalTime, position);  
+	      newTrack->SetParentID(parentID);
+	      trackVector->push_back(newTrack);
+	      
+	      // Store the hybrid particle weight and track for exponential attenuation step
+	      theListOfHybridTrack.push_back(newTrack);
+	      theListOfHybridWeight.push_back(trackWeight);
+	    }
+	  }
+	}
+      }
       else
       {
 	// Duplication of the step, track and particle (avoid the modification of the real step)
@@ -233,6 +281,10 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 	else { currentSecondaryMultiplicity = it->second; }
 
 	G4ParticleDefinition *hybridino = G4Hybridino::Hybridino();
+	G4ThreeVector position = step->GetTrack()->GetPosition();
+	G4double globalTime = step->GetTrack()->GetGlobalTime();
+	G4int parentID = step->GetTrack()->GetTrackID();
+	G4double trackWeight = step->GetTrack()->GetWeight() / currentSecondaryMultiplicity;
 	G4VParticleChange* particleChange(0);
 	G4TrackVector *trackVector = (const_cast<G4Step *>(step))->GetfSecondary();
 	G4Step *newStep;
@@ -252,13 +304,13 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 	  G4double energy = newStep->GetPostStepPoint()->GetKineticEnergy();
 	  G4ThreeVector momentum = newStep->GetPostStepPoint()->GetMomentumDirection();
 	  G4DynamicParticle *hybridParticle = new G4DynamicParticle(hybridino, momentum, energy);
-	  G4Track *newTrack = new G4Track(hybridParticle, step->GetTrack()->GetGlobalTime(), step->GetTrack()->GetPosition());  
-	  newTrack->SetParentID(step->GetTrack()->GetTrackID());
+	  G4Track *newTrack = new G4Track(hybridParticle, globalTime, position);  
+	  newTrack->SetParentID(parentID);
 	  trackVector->push_back(newTrack);
 	  
 	  // Store the hybrid particle weight and track for exponential attenuation step
 	  theListOfHybridTrack.push_back(newTrack);
-	  theListOfHybridWeight.push_back(step->GetTrack()->GetWeight() / currentSecondaryMultiplicity);
+	  theListOfHybridWeight.push_back(trackWeight);
 	}
 	
 	delete myTrack;

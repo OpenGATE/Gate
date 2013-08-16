@@ -19,6 +19,7 @@ See GATE/LICENSE.txt for further details
 
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithAnInteger.hh"
+#include "GateUIcmdWithTwoDouble.hh"
 #include "GateImageActorMessenger.hh"
 
 class GateHybridDoseActor;
@@ -39,6 +40,7 @@ protected:
   G4UIcmdWithABool * pEnableDoseUncertaintyCmd;
   G4UIcmdWithAnInteger * pSetPrimaryMultiplicityCmd;
   G4UIcmdWithAnInteger * pSetSecondaryMultiplicityCmd;
+  GateUIcmdWithTwoDouble *pSetSecondaryMultiplicityCmd2;
 };
 
 #endif /* end #define GATEHYBRIDDOSEACTORMESSENGER_HH*/

@@ -338,9 +338,19 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
   double xtemp = (position.x()+mHalfSize.x())/dx;
   double ytemp = (position.y()+mHalfSize.y())/dy;
   double ztemp = (position.z()+mHalfSize.z())/dz;
-  x = (int) floor(xtemp + xincr * 0.00001);  // Francois : + xincr * 0,00001
-  y = (int) floor(ytemp + yincr * 0.00001);
-  z = (int) floor(ztemp + zincr * 0.00001);
+  x = (int) floor(xtemp);
+  y = (int) floor(ytemp);
+  z = (int) floor(ztemp);
+  
+  //Security on matrix boundaries
+  if(x < 0) { x = 0; }
+  else if(x >= mResolution.x()) { x = mResolution.x()-1; }
+
+  if(y < 0) { y = 0; }
+  else if(y >= mResolution.y()) { y = mResolution.y()-1; }  
+
+  if(z < 0) { z = 0; }
+  else if(z >= mResolution.z()) { z = mResolution.z()-1; }
   
   //Remaining and Total lengths
   double Rx, Ry, Rz;
