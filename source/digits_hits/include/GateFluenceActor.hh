@@ -24,6 +24,7 @@ See GATE/LICENSE.txt for further details
 #include "GateMiscFunctions.hh"
 #include "GateFluenceActorMessenger.hh"
 #include "GateEnergyResponseFunctor.hh"
+#include "GateImageWithStatistic.hh"
 
 class GateFluenceActor : public GateVImageActor
 {
@@ -39,7 +40,13 @@ class GateFluenceActor : public GateVImageActor
   // Constructs the sensor
   virtual void Construct();
 
+
+  void EnableSquaredImage(bool b) { mIsSquaredImageEnabled = b; }
+  void EnableUncertaintyImage(bool b) { mIsUncertaintyImageEnabled = b; }
+  void EnableNormalisation(bool b) { mIsNormalisationEnabled = b; mImage.SetScaleFactor(1.0); }
+  void EnableNumberOfHitsImage(bool b) { mIsNumberOfHitsImageEnabled = b; }
   void EnableScatterImage(bool b) { mIsScatterImageEnabled = b; }
+
   virtual void BeginOfRunAction(const G4Run *);
   virtual void BeginOfEventAction(const G4Event * e);
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
@@ -60,15 +67,35 @@ class GateFluenceActor : public GateVImageActor
   void SetSeparateScatteringFilename(G4String name) { mSeparateScatteringFilename = name; }
 
 protected:
+
+  GateImageWithStatistic mImage;
+  GateImageWithStatistic mImageScatter;
+  GateImage mLastHitEventImage;
+  GateImage mNumberOfHitsImage;
+
+  //GateImage mImageScatter;
   GateFluenceActor(G4String name, G4int depth=0);
   GateFluenceActorMessenger * pMessenger;
-  G4String mResponseFileName;
+
+  int mCurrentEvent;
+  bool mIsLastHitEventImageEnabled;
+  bool mIsSquaredImageEnabled;
+  bool mIsUncertaintyImageEnabled;
+  bool mIsNormalisationEnabled;
+  bool mIsNumberOfHitsImageEnabled;
   bool mIsScatterImageEnabled;
-  GateImage mImageScatter;
+
   std::map<G4String, GateImage*> mInteractions;
   std::vector<GateImage*> mFluencePerOrderImages;
+
+  G4String mImageFilename;
+  G4String mImageScatterFilename;
+  G4String mNbOfHitsFilename;
+
+  G4String mResponseFileName;
   G4String mScatterOrderFilename;
   G4String mSeparateScatteringFilename;
+
   GateEnergyResponseFunctor mEnergyResponse;
 };
 
