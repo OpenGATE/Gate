@@ -48,7 +48,7 @@ protected:
 
   /// Associated sensor
   GateDoseSpectrumActor * pDoseSpectrumActor;
-  //G4UIcmdWithAString * pWriteDoseResponseCmd;
+  G4UIcmdWithAString * pWriteDoseResponseCmd;
   G4UIcmdWithABool* pDosePrimaryOnlyCmd;
 }; // end class GateDoseSpectrumActorMessenger
 //-----------------------------------------------------------------------------
