@@ -26,8 +26,7 @@ GateDoseSpectrumActorMessenger::GateDoseSpectrumActorMessenger(GateDoseSpectrumA
 //-----------------------------------------------------------------------------
 GateDoseSpectrumActorMessenger::~GateDoseSpectrumActorMessenger()
 {
-  //delete pWriteDoseResponseCmd;
-  delete pDosePrimaryOnlyCmd;
+  if(pDosePrimaryOnlyCmd) delete pDosePrimaryOnlyCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -36,11 +35,6 @@ void GateDoseSpectrumActorMessenger::BuildCommands(G4String base)
 {
   G4String guidance;
   G4String bb;
-
-  //bb = base+"/writeDoseResponse";
-  //pDosePrimaryOnlyCmd = new G4UIcmdWithAString(bb, this);
-  //guidance = G4String( "calculate dose primary only");
-  //pDosePrimaryOnlyCmd->SetGuidance( guidance);
 
   bb = base+"/dosePrimaryOnly";
   pDosePrimaryOnlyCmd = new G4UIcmdWithABool(bb, this);
@@ -52,8 +46,6 @@ void GateDoseSpectrumActorMessenger::BuildCommands(G4String base)
 //-----------------------------------------------------------------------------
 void GateDoseSpectrumActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
-  //if( cmd == pWriteDoseResponseCmd)
-  //    pDoseSpectrumActor->WriteDoseResponse(newValue);
   if( cmd == pDosePrimaryOnlyCmd)
       pDoseSpectrumActor->DosePrimaryOnly(pDosePrimaryOnlyCmd->GetNewBoolValue(newValue));
 

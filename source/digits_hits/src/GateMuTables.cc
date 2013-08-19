@@ -11,7 +11,8 @@ GateMuTable::GateMuTable(G4String /*name*/, G4int size)
   mSize = size;
   lastMu = -1.0;
   lastMuen = -1.0;
-  lastEnergy = -1.0;
+  lastEnergyMu = -1.0;
+  lastEnergyMuen = -1.0;
 }
 
 GateMuTable::~GateMuTable()
@@ -37,8 +38,8 @@ inline double interpol(double x1, double x, double x2,
 
 double GateMuTable::GetMuEn(double energy)
 {
-  if (energy == lastEnergy) return exp(lastMuen);
-  lastEnergy = energy;
+  if (energy == lastEnergyMuen) return exp(lastMuen);
+  lastEnergyMuen = energy;
 
   energy = log(energy);
 
@@ -61,8 +62,8 @@ double GateMuTable::GetMuEn(double energy)
 
 double GateMuTable::GetMu(double energy)
 {
-  if (energy == lastEnergy) return exp(lastMu);
-  lastEnergy = energy;
+  if (energy == lastEnergyMu) return exp(lastMu);
+  lastEnergyMu = energy;
 
   energy = log(energy);
 

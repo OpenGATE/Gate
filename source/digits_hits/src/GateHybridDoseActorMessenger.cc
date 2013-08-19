@@ -25,6 +25,7 @@ GateHybridDoseActorMessenger::GateHybridDoseActorMessenger(GateHybridDoseActor* 
   pEnableDoseUncertaintyCmd= 0;
   pSetPrimaryMultiplicityCmd = 0;
   pSetSecondaryMultiplicityCmd = 0;
+  pSetSecondaryMultiplicityCmd2 = 0;
   BuildCommands(baseName+sensor->GetObjectName());
 }
 //-----------------------------------------------------------------------------
@@ -38,6 +39,7 @@ GateHybridDoseActorMessenger::~GateHybridDoseActorMessenger()
   if(pEnableDoseUncertaintyCmd) delete pEnableDoseUncertaintyCmd;
   if(pSetPrimaryMultiplicityCmd) delete pSetPrimaryMultiplicityCmd;
   if(pSetSecondaryMultiplicityCmd) delete pSetSecondaryMultiplicityCmd;
+  if(pSetSecondaryMultiplicityCmd2) delete pSetSecondaryMultiplicityCmd2;
 }
 //-----------------------------------------------------------------------------
 
@@ -71,6 +73,11 @@ void GateHybridDoseActorMessenger::BuildCommands(G4String base)
   pSetSecondaryMultiplicityCmd = new G4UIcmdWithAnInteger(n, this); 
   guid = G4String("Set the number of hybrid particle by secondary particle generated");
   pSetSecondaryMultiplicityCmd->SetGuidance(guid);
+  
+  n = base+"/setSecondaryMultiplicityUsingTime";
+  pSetSecondaryMultiplicityCmd2 = new GateUIcmdWithTwoDouble(n, this); 
+  guid = G4String("Set the number of hybrid particle by secondary particle generated using time and primary particle number");
+  pSetSecondaryMultiplicityCmd2->SetGuidance(guid);
 }
 //-----------------------------------------------------------------------------
 
@@ -85,6 +92,12 @@ void GateHybridDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newVal
   if (cmd == pEnableDoseUncertaintyCmd) pDoseActor->EnableDoseUncertaintyImage(pEnableDoseUncertaintyCmd->GetNewBoolValue(newValue));
   if (cmd == pSetPrimaryMultiplicityCmd) pDoseActor->SetPrimaryMultiplicity(pSetPrimaryMultiplicityCmd->GetNewIntValue(newValue));
   if (cmd == pSetSecondaryMultiplicityCmd) pDoseActor->SetSecondaryMultiplicity(pSetSecondaryMultiplicityCmd->GetNewIntValue(newValue));
+  if (cmd == pSetSecondaryMultiplicityCmd2)
+  {
+    G4double t = pSetSecondaryMultiplicityCmd2->GetNewDoubleValue(0,newValue);
+    G4double n = pSetSecondaryMultiplicityCmd2->GetNewDoubleValue(1,newValue);
+    pDoseActor->SetSecondaryMultiplicity(t,n);   
+  }
 }
 //-----------------------------------------------------------------------------
 

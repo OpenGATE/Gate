@@ -36,7 +36,8 @@ private:
   double *mEnergy;
   double *mMu;
   double *mMu_en;
-  double lastEnergy;
+  double lastEnergyMu;
+  double lastEnergyMuen;
   double lastMu;
   double lastMuen;
   G4int mSize;

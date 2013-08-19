@@ -19,10 +19,10 @@
 
 #include "globals.hh"
 #include "G4String.hh"
-#include <iomanip>
+#include <iomanip>   
 #include <vector>
 
-// Gate
+// Gate 
 #include "GateVActor.hh"
 #include "GateImage.hh"
 #include "GateSourceMgr.hh"
@@ -44,24 +44,31 @@ class GateScatterOrderTrackInformation:
     public G4VUserTrackInformation
 {
 public:
-  GateScatterOrderTrackInformation():order(0) {}
+  GateScatterOrderTrackInformation():mOrder(0) {}
   ~GateScatterOrderTrackInformation() {}
 
   inline void IncrementScatterOrder(const G4Track *track)
   {
     // New particle
     if(track->GetStep()==NULL)
-      order++;
+      mOrder++;
     // Same particle
     else if(track->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()!=(const G4String)"Transportation")
-      order++;
+      mOrder++;
   }
 
-  virtual inline G4int GetScatterOrder(){ return order; }
+  inline void SetScatterProcess(const G4Track *track)
+  {
+    mProcess = track->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
+  }
+
+  virtual inline G4int GetScatterOrder(){ return mOrder; }
+  virtual inline G4String GetScatterProcess(){ return mProcess; }
   //virtual inline G4int SetScatterOrder(G4int _order){ return order=_order; }
 
 protected:
-  G4int order;
+  G4int    mOrder;
+  G4String mProcess;
 
 };
 

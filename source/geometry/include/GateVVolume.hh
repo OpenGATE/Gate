@@ -43,25 +43,25 @@ class GateMultiSensitiveDetector;
 #ifdef GATE_USE_OPTICAL
 class GateSurfaceList;
 #endif
- 
+
 //-------------------------------------------------------------------------------------------------
-class GateVVolume : public GateClockDependent 
+class GateVVolume : public GateClockDependent
 {
 public :
-  
+
   GateVVolume(const G4String& itsName,
-	      G4bool acceptsChildren=true, 
+	      G4bool acceptsChildren=true,
 	      G4int depth=0);
-  
-  virtual ~GateVVolume();   
-  virtual G4VPhysicalVolume* Construct(G4bool flagUpdateOnly = false);  
-  virtual void ConstructGeometry(G4LogicalVolume*, G4bool);  
+
+  virtual ~GateVVolume();
+  virtual G4VPhysicalVolume* Construct(G4bool flagUpdateOnly = false);
+  virtual void ConstructGeometry(G4LogicalVolume*, G4bool);
   virtual void DestroyGeometry();
   virtual void  DestroyOwnPhysicalVolumes();
   //! Pure virtual method (to be implemented in sub-classes)
   //! Must return an value for the half-size of a volume along an axis (X=0, Y=1, Z=2)
   virtual G4double GetHalfDimension(size_t axis)=0;
- 
+
   //! Print to stdout a description of the inserter
   virtual void Describe(size_t indent=0);
 
@@ -73,25 +73,25 @@ public :
   virtual void PropageteSensitiveDetectorToChild(GateMultiSensitiveDetector *) {}
 
 protected :
-  //! Pure virtual mathod, will be defined in concrete 
-  //! classes GateBox, GateCylinder ...  
-  virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume(G4Material*, G4bool)=0; 
-  virtual void ConstructOwnPhysicalVolume(G4bool flagUpdateOnly); 
-  
-  inline virtual void PushPhysicalVolume(G4VPhysicalVolume* volume) 
+  //! Pure virtual mathod, will be defined in concrete
+  //! classes GateBox, GateCylinder ...
+  virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume(G4Material*, G4bool)=0;
+  virtual void ConstructOwnPhysicalVolume(G4bool flagUpdateOnly);
+
+  inline virtual void PushPhysicalVolume(G4VPhysicalVolume* volume)
   { /*GateMessage("Geometry", 5, "GateVVolume::PushPhysicalVolume  " << volume->GetName() << G4endl;);*/ theListOfOwnPhysVolume.push_back(volume);}
 
-  virtual void DestroyOwnSolidAndLogicalVolume()=0;    
-    
-public :       
+  virtual void DestroyOwnSolidAndLogicalVolume()=0;
+
+public :
   //! Attach the creator to a new inserter
   inline virtual void SetCreator(GateVVolume* anCreator)
   { m_creator = anCreator;}
 
   //! Return the inserter to which the creator is attached
   inline virtual GateVVolume* GetCreator() const
-  { return m_creator;}     
- 
+  { return m_creator;}
+
   inline virtual void SetParentVolume(GateVVolume * p) { mParent = p; }
   GateVVolume * GetParentVolume() { return mParent; }
 
@@ -111,12 +111,12 @@ public :
   virtual inline void SetMotherList(GateObjectChildList* motherList) { pMotherList = motherList;}
 
   //! Returns the inserter's mother-creator
-  virtual inline GateVVolume* GetMotherCreator() const     	
+  virtual inline GateVVolume* GetMotherCreator() const
   { return pMotherList ? pMotherList->GetCreator() : 0 ;}
 
   //! Returns the list of movements
   virtual inline GateObjectRepeaterList* GetMoveList() const { return m_moveList;}
-     
+
   //! Returns the list of repeaters
   virtual inline GateObjectRepeaterList* GetRepeaterList() const { return m_repeaterList;}
 
@@ -127,65 +127,65 @@ public :
   //! Return the name used or to be used for the solid
   inline virtual const G4String& GetSolidName() const
   { return mSolidName; }
- 
+
   //! Set the name of the material to be used for the volume
-  inline virtual void SetMaterialName(const G4String& val) 
-  { mMaterialName = val; AutoSetColor(); DefineOwnMaterials(); }  
+  inline virtual void SetMaterialName(const G4String& val)
+  { mMaterialName = val; AutoSetColor(); DefineOwnMaterials(); }
 
   //! Return the name of the material used or to be used for the volume
   inline virtual const G4String& GetMaterialName() const
   { return mMaterialName;}
-	  
+
   //! Return the name of the material used or to be used for the volume
   inline virtual const G4Material* GetMaterial() const
-  { return pOwnMaterial;}	  
-	  
+  { return pOwnMaterial;}
+
   //! Return the name used or to be used for the logical volume
   inline virtual const G4String& GetLogicalVolumeName() const
   { return mLogicalVolumeName;}
 
   //! Returns one of the physical volumes created by its copy number
-  virtual inline G4VPhysicalVolume* GetPhysicalVolume(size_t copyNumber) const 
-  { return (copyNumber<theListOfOwnPhysVolume.size()) ? theListOfOwnPhysVolume[copyNumber] : 0; }  
-    
-  //! Return a pointer to the physical volume 
+  virtual inline G4VPhysicalVolume* GetPhysicalVolume(size_t copyNumber) const
+  { return (copyNumber<theListOfOwnPhysVolume.size()) ? theListOfOwnPhysVolume[copyNumber] : 0; }
+
+  //! Return a pointer to the physical volume
   inline virtual G4VPhysicalVolume* GetPhysicalVolume() const
   { return pOwnPhys;}
-	  
-  //! Return a pointer to the logical volume 
+
+  //! Return a pointer to the logical volume
   inline virtual G4LogicalVolume* GetLogicalVolume() const
   { return pOwnLog;}
-	  
+
   //! Return the name used or to be used for the logical volume
   inline virtual const G4String& GetPhysicalVolumeName() const
   { return mPhysicalVolumeName;}
-  
+
   //! Returns the number of physical volumes created by the inserter
   virtual inline G4int GetVolumeNumber() const  	      	      	{ return theListOfOwnPhysVolume.size(); }
-  
+
   //! Returns the mother logical volume for the inserter's physical volumes
   virtual inline G4LogicalVolume* GetMotherLogicalVolume() const	{ return pMotherLogicalVolume;}
-  
+
   //! Return the name used or to be used for the mother logical volume
   inline virtual const G4String& GetLogicalMotherVolumeName() const
   { return mLogicalMotherVolumeName;}
-  
+
   //! Return a pointer to the visibility attributes used or to be used for the volume
   inline virtual G4VisAttributes* GetVisAttributes() const { return pOwnVisAtt;}
-						
+
   //! Compute the name to be used for solids based on the creator name
-  static inline G4String MakeSolidName(const G4String& name) 
+  static inline G4String MakeSolidName(const G4String& name)
   { return name + mTheSolidNameTag;}
   //! Compute the name to be used for logical volumes based on the creator name
-  static inline G4String MakeLogicalVolumeName(const G4String& name) 
+  static inline G4String MakeLogicalVolumeName(const G4String& name)
   { return name + mTheLogicalVolumeNameTag;}
-  //! Compute the name to be used for physical volumes based on the creator name	
-  static inline G4String MakePhysicalVolumeName(const G4String& name) 
-  { return name + mThePhysicalVolumeNameTag;}  
+  //! Compute the name to be used for physical volumes based on the creator name
+  static inline G4String MakePhysicalVolumeName(const G4String& name)
+  { return name + mThePhysicalVolumeNameTag;}
 
 
   //! Define the sensitive detector to which the logical volume should be attached
-  virtual inline void AttachSD(G4VSensitiveDetector* val) 
+  virtual inline void AttachSD(G4VSensitiveDetector* val)
   { m_sensitiveDetector = val; }
 
   //! Tell the creator that the logical volume should be attached to the crystal-SD
@@ -193,13 +193,13 @@ public :
 
   //! Tell the creator that the logical volume should be attached to the phantom-SD
   virtual void AttachPhantomSD() ;
-  
+
         void AttachARFSD(); /* PY Descourt 08/09/2009 */
-		
+
   virtual void AttachOutputToVolume();
-  
+
   virtual G4bool CheckOutputExistence();
-  
+
   // virtual void PropagateRegionToChild(){}
 
   // Origin (coordinate of the corner)
@@ -208,73 +208,73 @@ public :
 
 protected :
 
-  //! This method retrieves a material from its name, and stores a pointer to this 
+  //! This method retrieves a material from its name, and stores a pointer to this
   //! material into m_own_material, the method is called in GateVolumeMessenger
   virtual void DefineOwnMaterials();
- 
- 
+
+
   //! Method automatically called to color-code the object when its material changes.
   virtual void AutoSetColor();
-     
-      
-protected :        
-   
+
+
+protected :
+
   //! Name to be given to the solid
   G4String mSolidName;
-  
+
   //! Name of the material to be used to construct the volume
   G4String mMaterialName;
-  
+
   //! Material used for the volume
   G4Material* pOwnMaterial;
-  
-  //! Name given to the logical volume 
-  G4String mLogicalVolumeName;    
- 
-  //! Name given to the mother logical volume 
-  G4String mLogicalMotherVolumeName;    
-  
-  //! Physical volume name      
-  G4String mPhysicalVolumeName;  
- 
- 
+
+  //! Name given to the logical volume
+  G4String mLogicalVolumeName;
+
+  //! Name given to the mother logical volume
+  G4String mLogicalMotherVolumeName;
+
+  //! Physical volume name
+  G4String mPhysicalVolumeName;
+
+
   //! Physical volume
-  G4VPhysicalVolume* pOwnPhys; 
+  G4VPhysicalVolume* pOwnPhys;
 
   //! Logical volume
   G4LogicalVolume* pOwnLog;
-	
-	  
+
+
   //! Object visualisation attribute object.
   //! It is passed to the logical volume each time the logical volume is created
   G4VisAttributes* pOwnVisAtt;
 
-	  
+
   GateObjectChildList* pMotherList;
-   	
-  std::vector<G4VPhysicalVolume*> theListOfOwnPhysVolume; 
-     	    
+
+  std::vector<G4VPhysicalVolume*> theListOfOwnPhysVolume;
+
   //! childen-list object
-  GateObjectChildList* pChildList; 
+  GateObjectChildList* pChildList;
 
   //! surface list
 #ifdef GATE_USE_OPTICAL
   GateSurfaceList* m_surfaceList;
 #endif
 
-  //!< List of repeaters 
-  GateObjectRepeaterList*  m_repeaterList;   	
-  
+  //!< List of repeaters
+  GateObjectRepeaterList*  m_repeaterList;
+
   //!< List of movements
-  GateObjectRepeaterList*   	  m_moveList;       	
-  
+  GateObjectRepeaterList*   	  m_moveList;
+
   //! Mother logical volume
-  G4LogicalVolume* pMotherLogicalVolume;  
-    
-  //! Creators handled by the creator  
-  GateVVolume* m_creator;    	      	
-  
-   
+  G4LogicalVolume* pMotherLogicalVolume;
+
+  //! Creators handled by the creator
+  GateVVolume* m_creator;
+
+
   //! Pointer to a sensitive detector to be passed to the volume when it is constructed
   G4VSensitiveDetector* m_sensitiveDetector;
 
@@ -285,35 +285,35 @@ protected :
   G4bool        mOriginIsSetByUser;
 
 private :
-  
+
   //! Tag added to names to create solid names
   static const G4String mTheSolidNameTag;
 
   //! Tag added to names to create logical volume names
   static const G4String mTheLogicalVolumeNameTag;
-    
+
   //! Tag added to names to create physical volume names
   static const G4String mThePhysicalVolumeNameTag;
-  
-  //! Translation vector  
-  G4ThreeVector m_translation;      	  
 
-  //! Rotation matrix 
+  //! Translation vector
+  G4ThreeVector m_translation;
+
+  //! Rotation matrix
   G4RotationMatrix newRotationMatrix;
-  
-  //! Rotation angle 
-  G4double m_rotationAngle;      	  
-  
+
+  //! Rotation angle
+  G4double m_rotationAngle;
+
   //! Rotation axis (dimensionless vector)
-  G4ThreeVector m_rotationAxis;	  
-      
-  GateMaterialDatabase* pMaterial;  
+  G4ThreeVector m_rotationAxis;
+
+  GateMaterialDatabase* pMaterial;
 
   GateObjectChildList* m_motherList;
-  
+
   GateVolumeMessenger* pMessenger;
   GateVolumePlacementMessenger* pMessengerPlacement;
-  
+
   GateActorManager* m_actorManager;
 
   GateVVolume * mParent;

@@ -121,14 +121,15 @@
 
 # -----------------------------------------------------
 # Complete fluence of gamma
-/gate/actor/addActor FluenceActor                  DetectorActor
-/gate/actor/DetectorActor/save                     output/fluence%04d.mha
-/gate/actor/DetectorActor/scatterOrderFilename     output/fluence%04d_%04d.mha
-/gate/actor/DetectorActor/attachTo                 DetectorPlane
-/gate/actor/DetectorActor/stepHitType              pre
-/gate/actor/DetectorActor/setResolution            256 256 1
-/gate/actor/DetectorActor/enableScatter            true
-/gate/actor/DetectorActor/saveEveryNSeconds        120
+/gate/actor/addActor FluenceActor                    DetectorActor
+/gate/actor/DetectorActor/save                       output/fluence%04d.mha
+/gate/actor/DetectorActor/scatterOrderFilename       output/fluence%04d_%04d.mha
+/gate/actor/DetectorActor/separateScatteringFilename output/fluenceScattering
+/gate/actor/DetectorActor/attachTo                   DetectorPlane
+/gate/actor/DetectorActor/stepHitType                pre
+/gate/actor/DetectorActor/setResolution              256 256 1
+/gate/actor/DetectorActor/enableScatter              true
+/gate/actor/DetectorActor/saveEveryNSeconds          120
 #/gate/actor/DetectorActor/responseDetectorFilename data/responseDetector.txt
 
 # -----------------------------------------------------

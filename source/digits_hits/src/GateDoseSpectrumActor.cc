@@ -22,8 +22,8 @@ GateDoseSpectrumActor::GateDoseSpectrumActor(G4String name, G4int depth):
 {
   GateDebugMessageInc("Actor",4,"GateDoseSpectrumActor() -- begin"<<G4endl);
   mDosePrimaryOnly = false;
-  mEnergyDepot = 0.;
-
+  mCurrentEvent= 0;
+  mLastHitEventImage = 1;
   pMessenger = new GateDoseSpectrumActorMessenger(this);
 
   GateDebugMessageDec("Actor",4,"GateDoseSpectrumActor() -- end"<<G4endl);
@@ -51,7 +51,7 @@ void GateDoseSpectrumActor::Construct()
   EnableBeginOfEventAction(true);
   EnableUserSteppingAction(true);
   EnableEndOfEventAction(true); // for save every n
-  mVolumeMass = GetVolume()->GetPhysicalVolume()->GetLogicalVolume()->GetMass();
+  mVolumeMass = GetVolume()->GetPhysicalVolume()->GetLogicalVolume()->GetMass()/1000000;
   ResetData();
 }
 //-----------------------------------------------------------------------------
@@ -64,11 +64,19 @@ void GateDoseSpectrumActor::SaveData()
   GateVActor::SaveData();
   std::ofstream DoseResponseFile;
   OpenFileOutput(mSaveFilename, DoseResponseFile);
-
-  std::map< G4double, G4double>::iterator itermDoseSpectrum;
-  for( itermDoseSpectrum = mDoseSpectrum.begin(); itermDoseSpectrum != mDoseSpectrum.end(); itermDoseSpectrum++)
+  G4int suma = 0;
+  G4double energyDose, doseEnergy, averageDoseEnergy, averageDoseEnergySquare, errorStandardDoseEnergy;
+  std::map< G4double, G4double>::iterator itermDoseEnergy;
+  for( itermDoseEnergy = mDoseEnergy.begin(); itermDoseEnergy != mDoseEnergy.end(); itermDoseEnergy++)
   {
-    DoseResponseFile << "# energydose: " << itermDoseSpectrum->first << " " << itermDoseSpectrum->second << std::endl;
+    energyDose = itermDoseEnergy->first;
+    suma = suma + mNumParticPerEnergy[energyDose];
+    G4cout << "itermDoseEnergy: " << energyDose << " doseEnergy: " <<  mDoseEnergy[energyDose] << " mNumParticPerEnergy: " << mNumParticPerEnergy[energyDose] << " suma: " << suma << G4endl;
+    doseEnergy = mDoseEnergy[energyDose];
+    averageDoseEnergy = mDoseEnergy[energyDose] / mNumParticPerEnergy[energyDose];
+    averageDoseEnergySquare = mDoseEnergySquare[energyDose] / mNumParticPerEnergy[energyDose];
+    errorStandardDoseEnergy = sqrt( (1.0 / ( mNumParticPerEnergy[energyDose] - 1)) * ( averageDoseEnergySquare - pow( averageDoseEnergy, 2)));
+    DoseResponseFile << "# energydose: " << energyDose << " " << doseEnergy << " " << averageDoseEnergy << " " << errorStandardDoseEnergy  << std::endl;
   }
 
   if (!DoseResponseFile)
@@ -84,7 +92,7 @@ void GateDoseSpectrumActor::SaveData()
 //-----------------------------------------------------------------------------
 void GateDoseSpectrumActor::ResetData()
 {
-  mDoseSpectrum.clear();
+  mDoseEnergy.clear();
 }
 //-----------------------------------------------------------------------------
 
@@ -93,7 +101,6 @@ void GateDoseSpectrumActor::BeginOfRunAction(const G4Run *)
 {
   GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Run" << G4endl);
   ResetData();
-  DOSIS = 0.;
 }
 //-----------------------------------------------------------------------------
 
@@ -101,22 +108,14 @@ void GateDoseSpectrumActor::BeginOfRunAction(const G4Run *)
 void GateDoseSpectrumActor::BeginOfEventAction(const G4Event* event)
 {
   GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Event" << G4endl);
-  mEnergyDepot = 0.;
   mEventEnergy = event->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy();
+  mCurrentEvent = mCurrentEvent + 1;
+  G4int numEventEnergy = 1;
+  mNumParticPerEnergy[mEventEnergy] += numEventEnergy;
 }
 //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-void GateDoseSpectrumActor::EndOfEventAction(const G4Event* event)
-{
-  GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- End of Event" << G4endl);
-  if (mEnergyDepot > 0)
-  {
-    //DOSIS += mEnergyDepot/mVolumeMass;
-    //G4cout << "DOSIS[Gy]: " << DOSIS/gray << " DOSIS[G4]: " << DOSIS << G4endl;
-    mDoseSpectrum[event->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy()] += (mEnergyDepot/mVolumeMass)/gray;
-  }
-}
+
 //-----------------------------------------------------------------------------
 
 
@@ -129,7 +128,22 @@ void GateDoseSpectrumActor::UserSteppingAction(const GateVVolume *, const G4Step
   }
   else
   {
-    mEnergyDepot += step->GetTotalEnergyDeposit();
+    G4double energyDepot = step->GetTotalEnergyDeposit();
+    G4double doseEnergy = (energyDepot/mVolumeMass)/gray;
+    mEnergyEventTemp[mCurrentEvent] = mEventEnergy;
+    mDoseEnergyTemp[mCurrentEvent] += doseEnergy;
+    bool sameEvent = true;
+    if(mCurrentEvent != mLastHitEventImage)
+    {
+      sameEvent = false;
+      mLastHitEventImage = mCurrentEvent;
+    }
+    //D(mEventEnergy);
+    if(!sameEvent)
+    {
+      mDoseEnergySquare[mEnergyEventTemp[mCurrentEvent-1]] += mDoseEnergyTemp[mCurrentEvent-1]*mDoseEnergyTemp[mCurrentEvent-1];
+      mDoseEnergy[mEnergyEventTemp[mCurrentEvent-1]] += mDoseEnergyTemp[mCurrentEvent-1];
+    }
   }
 }
 
