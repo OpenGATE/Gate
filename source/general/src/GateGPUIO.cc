@@ -231,9 +231,11 @@ void GateGPUIO_Input_parse_activities(const ActivityMap& activities,
         tuple.index = index;
         tuple.activity = iter->second;
         tuples.push_back(tuple);
-        total_activity += tuple.activity; // Unit ? - JB
+        total_activity += tuple.activity; // in GBq - JB
       }
   }
+
+  input->tot_activity = total_activity;
 
   { // sort tuples by activities
     std::sort(tuples.begin(),tuples.end(),ActivityMaterialTupleStrictWeakOrdering());
@@ -261,7 +263,6 @@ GateGPUIO_Output* GateGPUIO_Output_new()
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
 void GateGPUIO_Output_delete(GateGPUIO_Output * output)
 {
@@ -271,7 +272,6 @@ void GateGPUIO_Output_delete(GateGPUIO_Output * output)
   }
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 void GateGPUIO_Particle_Print(const GateGPUIO_Particle & p)
