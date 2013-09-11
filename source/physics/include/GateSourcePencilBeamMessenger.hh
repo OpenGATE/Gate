@@ -47,6 +47,8 @@ class GateSourcePencilBeamMessenger: public GateVSourceMessenger
     GateSourcePencilBeam * pSourcePencilBeam;
     //Particle Type
     G4UIcmdWithAString * pParticleTypeCmd;
+    //Particle Properties If GenericIon
+    G4UIcommand * pIonCmd;
     //Energy
     G4UIcmdWithADoubleAndUnit * pEnergyCmd;
     G4UIcmdWithADoubleAndUnit * pSigmaEnergyCmd;

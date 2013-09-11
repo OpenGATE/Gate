@@ -33,6 +33,8 @@
 #ifdef G4ANALYSIS_USE_ROOT
 #include "GateSourcePencilBeam.hh"
 #include "G4Proton.hh"
+#include "G4Tokenizer.hh"
+#include <iostream>
 //#include "TMath.h"
 
 GateSourcePencilBeam::GateSourcePencilBeam(G4String name ):GateVSource( name ), mGaussian2DYPhi(NULL), mGaussian2DXTheta(NULL), mGaussianEnergy(NULL)
@@ -40,6 +42,11 @@ GateSourcePencilBeam::GateSourcePencilBeam(G4String name ):GateVSource( name ), 
   //Particle Type
   strcpy(mParticleType,"proton");
   mWeight=1.;
+  //Particle Properties If GenericIon [C12]
+  mAtomicNumber=6;
+  mAtomicMass=12;
+  mIonCharge=6;
+  mIonExciteEnergy=0;
   //Energy
   mEnergy=1.*MeV;
   mSigmaEnergy=0.;
@@ -86,6 +93,34 @@ GateSourcePencilBeam::~GateSourcePencilBeam()
   //  delete mEngineXTheta;
   //  delete mEngineYPhi;
 }
+
+//------------------------------------------------------------------------------------------------------
+void GateSourcePencilBeam::SetIonParameter(G4String ParticleParameters){
+  // 4 possible arguments are Z, A, Charge, Excite Energy
+    G4Tokenizer next(ParticleParameters);
+    mAtomicNumber = StoI(next());
+    mAtomicMass = StoI(next());
+    G4String sQ = next();
+    if (sQ.isNull())
+    {
+	mIonCharge = mAtomicNumber;
+    }
+    else
+    {
+	mIonCharge = StoI(sQ);
+	sQ = next();
+	if (sQ.isNull())
+      {
+	  mIonExciteEnergy = 0.0;
+      }
+      else
+      {
+	  mIonExciteEnergy = StoD(sQ) * keV;
+      }
+    }
+}
+
+
 
 //------------------------------------------------------------------------------------------------------
 void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
@@ -252,7 +287,18 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
 
   //-------- PARTICLE GENERATION - START------------------
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  G4ParticleDefinition* particle_definition = particleTable->FindParticle(mParticleType);
+  G4ParticleDefinition* particle_definition;
+
+  string parttype=mParticleType;
+  if ( parttype == "GenericIon" ){
+    particle_definition=  particleTable->GetIon( mAtomicNumber, mAtomicMass, mIonExciteEnergy);
+  //G4cout<<G4endl<<G4endl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon"<<G4endl;
+  //G4cout<<mAtomicNumber<<"  "<<mAtomicMass<<"  "<<mIonCharge<<"  "<<mIonExciteEnergy<<G4endl;
+  }
+  else{
+    particle_definition = particleTable->FindParticle(mParticleType);
+  //G4cout<<G4endl<<G4endl<<"mParticleType  "<<mParticleType<<"     selected loop  other"<<G4endl;
+  }
 
   if(particle_definition==0) return;
 
