@@ -66,14 +66,6 @@
 # FOR VALIDATIONS
 #==================================================
 
-# Phase space
-/gate/actor/addActor                        PhaseSpaceActor ps
-/gate/actor/ps/attachTo                     ncat
-/gate/actor/ps/storeOutgoingParticles
-/gate/actor/ps/addFilter                    particleFilter
-/gate/actor/ps/particleFilter/addParticle   gamma
-/gate/actor/ps/save                         output-cpu/ps.root
-
 # Global stats
 /gate/actor/addActor                        SimulationStatisticActor stat
 /gate/actor/stat/saveEveryNSeconds          20
@@ -152,12 +144,7 @@
 #==============================================
 
 /gate/application/setTimeStart     0.0 ns
-/gate/application/setTimeSlice     0.001 s
-/gate/application/setTimeStop      0.001 s
+/gate/application/setTimeSlice     0.01 s
+/gate/application/setTimeStop      0.01 s
 /gate/application/startDAQ
-
-# FOR DEBUGING
-#/gate/application/setTotalNumberOfPrimaries 10000
-#/gate/application/start
-
 
