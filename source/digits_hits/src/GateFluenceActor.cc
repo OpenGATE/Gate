@@ -70,17 +70,13 @@ void GateFluenceActor::Construct()
   // Read the response detector curve from an external file
   mEnergyResponse.ReadResponseDetectorFile(mResponseFileName);
   
-  mImageFilename = G4String(removeExtension(mSaveFilename))+"."+G4String(getExtension(mSaveFilename));
-  mImageScatterFilename = G4String(removeExtension(mSaveFilename))+"-scatter."+G4String(getExtension(mSaveFilename));
-  mNbOfHitsFilename = G4String(removeExtension(mSaveFilename))+"-NbOfHits."+G4String(getExtension(mSaveFilename));
-
   mImage.SetOrigin(mOrigin);
-  mImageScatter.SetOrigin(mOrigin);
+  mImageProcess.SetOrigin(mOrigin);
   mLastHitEventImage.SetOrigin(mOrigin);
   mNumberOfHitsImage.SetOrigin(mOrigin);
 
   mImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
-  mImageScatter.SetOverWriteFilesFlag(mOverWriteFilesFlag);
+  mImageProcess.SetOverWriteFilesFlag(mOverWriteFilesFlag);
 
   if( mIsSquaredImageEnabled || mIsUncertaintyImageEnabled)
     {
@@ -95,18 +91,17 @@ void GateFluenceActor::Construct()
   if (mIsUncertaintyImageEnabled) mImage.EnableSquaredImage(true);
   mImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mImage.Allocate();
-  mImage.SetFilename(mImageFilename);
   
   // Allocate scatter image
   if( mIsScatterImageEnabled)
     {
-      mImageScatter.EnableSquaredImage(mIsSquaredImageEnabled);
-      mImageScatter.EnableUncertaintyImage(mIsUncertaintyImageEnabled);
+      mImageProcess.EnableSquaredImage(mIsSquaredImageEnabled);
+      mImageProcess.EnableUncertaintyImage(mIsUncertaintyImageEnabled);
       // Force the computation of squared image if uncertainty is enabled
-      if (mIsUncertaintyImageEnabled) mImageScatter.EnableSquaredImage(true);
-      mImageScatter.SetResolutionAndHalfSize( mResolution, mHalfSize, mPosition);
-      mImageScatter.Allocate();
-      mImageScatter.SetFilename(mImageScatterFilename);
+      if (mIsUncertaintyImageEnabled) mImageProcess.EnableSquaredImage(true);
+      mImageProcess.SetResolutionAndHalfSize( mResolution, mHalfSize, mPosition);
+      mImageProcess.Allocate();
+      mImageProcess.SetOrigin(mOrigin);
     }
 
   if (mIsNumberOfHitsImageEnabled)
@@ -134,18 +129,25 @@ void GateFluenceActor::SaveData()
   // Printing all particles
   GateVImageActor::SaveData();
   if(mSaveFilename != "")
-    {
-
+    { 
+      sprintf(filename, mSaveFilename, rID);
+      mImage.SetFilename(G4String(filename));
       if( mIsNormalisationEnabled) mImage.SaveData(mCurrentEvent+1, true);
       else mImage.SaveData(mCurrentEvent+1, false);
 
-      if( mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.Write(mNbOfHitsFilename);
+      if( mIsNumberOfHitsImageEnabled)
+      {
+        G4String fn = G4String(removeExtension(mSaveFilename))+"-NbOfHits."+G4String(getExtension(mSaveFilename));
+        mNumberOfHitsImage.Write(fn);
+      }
 
       // Printing just scatter
       if( mIsScatterImageEnabled)
 	{
-          if( mIsNormalisationEnabled) mImageScatter.SaveData(mCurrentEvent+1, true);
-          else mImageScatter.SaveData(mCurrentEvent+1, false);
+          G4String fn = removeExtension(filename)+"-scatter."+G4String(getExtension(filename));
+          mImageProcess.SetFilename(fn);
+          if( mIsNormalisationEnabled) mImageProcess.SaveData(mCurrentEvent+1, true);
+          else mImageProcess.SaveData(mCurrentEvent+1, false);
 
           if( mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1);
 	}
@@ -164,30 +166,21 @@ void GateFluenceActor::SaveData()
     }
   
   // Printing compton or rayleigh or fluorescence scatter images
-  if(mSeparateScatteringFilename != "")
-    {
-      std::map<G4String,GateImage*>::iterator it = mInteractions.end();
-      std::vector<G4String> interactions;
-      interactions.push_back(G4String("Compton"));
-      interactions.push_back(G4String("RayleighScattering"));
-      interactions.push_back(G4String("PhotoElectric"));
-      std::vector<G4String> interactionName;
-      interactionName.push_back(G4String("_Compton.mhd"));
-      interactionName.push_back(G4String("_Rayleigh.mhd"));
-      interactionName.push_back(G4String("_Fluorescence.mhd"));
-      
-      // Saving separately scattering images (e.g. Compton, Rayleigh...)
-      for(unsigned int i = 0; i<interactions.size(); i++){
-	it = mInteractions.find(interactions[i]);
-	if(it!=mInteractions.end()){
-	  stringstream filenamestream;
-	  filenamestream << mSeparateScatteringFilename << interactionName[i];
-	  sprintf(filename, filenamestream.str().c_str(), rID);
-	  mInteractions[interactions[i]]->Write((G4String)filename);
-	}
-	it = mInteractions.end();
+  if(mSeparateProcessFilename != "")
+  {
+    // Saving separately process images (e.g. Compton, Rayleigh...)
+    std::map<G4String,GateImage*>::iterator it = mProcesses.end();
+    for(unsigned int i = 0; i<mProcessName.size(); i++){
+      it = mProcesses.find(mProcessName[i]);
+      if(it!=mProcesses.end()){
+        stringstream filenamestream;
+        filenamestream << mSeparateProcessFilename << "_" << mProcessName[i] << ".mhd";
+        sprintf(filename, filenamestream.str().c_str(), rID);
+        mProcesses[mProcessName[i]]->Write((G4String)filename);
       }
+      it = mProcesses.end();
     }
+  }
 }
 //-----------------------------------------------------------------------------
 
@@ -197,9 +190,9 @@ void GateFluenceActor::ResetData()
 {
   if( mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1);
   mImage.Reset();
-  mImageScatter.Reset();
+  mImageProcess.Reset();
   mImage.Fill(0);
-  if(mIsScatterImageEnabled) mImageScatter.Fill(0);
+  if(mIsScatterImageEnabled) mImageProcess.Fill(0);
 }
 //-----------------------------------------------------------------------------
 
@@ -277,30 +270,16 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 	  order   = info->GetScatterOrder();
 	  process = info->GetScatterProcess();
 	  // Allocate GateImage if process occurs
-          if( process == G4String("Compton")){
-	    GateImage * voidImage = new GateImage;
-	    voidImage->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-	    voidImage->Allocate();
-	    voidImage->SetOrigin(mOrigin);
-	    voidImage->Fill(0);
-	    mInteractions.insert(std::pair<G4String,GateImage*>(process, voidImage));
-	  }
-          else if( process == G4String("RayleighScattering")){
-	    GateImage * voidImage = new GateImage;
-	    voidImage->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-	    voidImage->Allocate();
-	    voidImage->SetOrigin(mOrigin);
-	    voidImage->Fill(0);
-	    mInteractions.insert(std::pair<G4String,GateImage*>(process, voidImage));
-	  }
-          else if( process == G4String("PhotoElectric")){
-	    GateImage * voidImage = new GateImage;
-	    voidImage->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-	    voidImage->Allocate();
-	    voidImage->SetOrigin(mOrigin);
-	    voidImage->Fill(0);
-	    mInteractions.insert(std::pair<G4String,GateImage*>(process, voidImage));
-	  }
+          if(mProcesses.find(process) == mProcesses.end() && process != G4String(""))
+          {
+            GateImage * voidImage = new GateImage;
+            voidImage->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+            voidImage->Allocate();
+            voidImage->SetOrigin(mOrigin);
+            voidImage->Fill(0);
+            mProcesses.insert(std::pair<G4String,GateImage*>(process, voidImage));
+            mProcessName.push_back(process);
+          }
 	  if(order) {
 	    while(order > mFluencePerOrderImages.size() && order > 0) {
 	      GateImage * voidImage = new GateImage;
@@ -321,13 +300,13 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 
             if( mIsUncertaintyImageEnabled || mIsSquaredImageEnabled)
               {
-                if( sameEvent) mImageScatter.AddTempValue( index, respValue);
-                else mImageScatter.AddValueAndUpdate( index, respValue);
+                if( sameEvent) mImageProcess.AddTempValue( index, respValue);
+                else mImageProcess.AddValueAndUpdate( index, respValue);
               }
-            else mImageScatter.AddValue( index, respValue);
+            else mImageProcess.AddValue( index, respValue);
 
-            if( process == G4String("Compton") || process == G4String("RayleighScattering") )
-              mInteractions[process]->AddValue(index, respValue);
+            if( process != G4String("") )
+              mProcesses[process]->AddValue(index, respValue);
 	  
             // Scatter order image
             if(order)
@@ -338,14 +317,14 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
           {
             if( mIsUncertaintyImageEnabled || mIsSquaredImageEnabled)
               {
-                if( sameEvent) mImageScatter.AddTempValue( index, respValue);
-                else mImageScatter.AddValueAndUpdate( index, respValue);
+                if( sameEvent) mImageProcess.AddTempValue( index, respValue);
+                else mImageProcess.AddValueAndUpdate( index, respValue);
               }
-            else mImageScatter.AddValue( index, respValue);
+            else mImageProcess.AddValue( index, respValue);
 
             // Scatter order image
-            if( process == G4String("PhotoElectric") )
-              mInteractions[process]->AddValue(index, respValue);
+            if( process != G4String("") )
+              mProcesses[process]->AddValue(index, respValue);
             if(order)
               mFluencePerOrderImages[order-1]->AddValue(index, respValue);
           }
