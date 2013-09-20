@@ -64,12 +64,12 @@ class GateFluenceActor : public GateVImageActor
 
   void SetResponseDetectorFile(G4String name) { mResponseFileName = name; }
   void SetScatterOrderFilename(G4String name) { mScatterOrderFilename = name; }
-  void SetSeparateScatteringFilename(G4String name) { mSeparateScatteringFilename = name; }
+  void SetSeparateProcessFilename(G4String name) { mSeparateProcessFilename = name; }
 
 protected:
 
   GateImageWithStatistic mImage;
-  GateImageWithStatistic mImageScatter;
+  GateImageWithStatistic mImageProcess;
   GateImage mLastHitEventImage;
   GateImage mNumberOfHitsImage;
 
@@ -85,16 +85,13 @@ protected:
   bool mIsNumberOfHitsImageEnabled;
   bool mIsScatterImageEnabled;
 
-  std::map<G4String, GateImage*> mInteractions;
+  std::map<G4String, GateImage*> mProcesses;
+  std::vector<G4String> mProcessName;
   std::vector<GateImage*> mFluencePerOrderImages;
-
-  G4String mImageFilename;
-  G4String mImageScatterFilename;
-  G4String mNbOfHitsFilename;
 
   G4String mResponseFileName;
   G4String mScatterOrderFilename;
-  G4String mSeparateScatteringFilename;
+  G4String mSeparateProcessFilename;
 
   GateEnergyResponseFunctor mEnergyResponse;
 };
