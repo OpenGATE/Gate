@@ -674,9 +674,19 @@ void GateHybridForcedDetectionActor::SaveData()
   }
 
   if(mFlatFieldFilename != "") {
+    // Normalize by the number of particles
+    // FIXME: it assumes here that all particles hit the detector and every point
+    // of the detector has the same probability to be hit.
+    typedef itk::MultiplyImageFilter<InputImageType, InputImageType> MultiplyType;
+    MultiplyType::Pointer mult = MultiplyType::New();
+    mult->SetInput(mFlatFieldImage);
+    InputImageType::SizeType size = mFlatFieldImage->GetLargestPossibleRegion().GetSize();
+    mult->SetConstant(mNumberOfEventsInRun / double(size[0] * size[1]));
+    mult->InPlaceOff();
+
     sprintf(filename, mFlatFieldFilename.c_str(), rID);
     imgWriter->SetFileName(filename);
-    imgWriter->SetInput(mFlatFieldImage);
+    imgWriter->SetInput(mult->GetOutput());
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
   }
 
