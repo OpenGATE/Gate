@@ -250,7 +250,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   mPrimaryImage->DisconnectPipeline();
 
   // Compute flat field if required
-  if(mAttenuationFilename != "")
+  if(mAttenuationFilename != "" || mFlatFieldFilename != "")
   {
     // Constant image source of 1x1x1 voxel of world material
     typedef rtk::ConstantImageSource< InputImageType > ConstantImageSourceType;
