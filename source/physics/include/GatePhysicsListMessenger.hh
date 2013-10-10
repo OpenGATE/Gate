@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 
@@ -53,7 +53,7 @@ protected:
   G4UIcmdWithAString * gammaCutCmd;
   G4UIcmdWithAString * electronCutCmd;
   G4UIcmdWithAString * positronCutCmd;
- G4UIcmdWithAString * protonCutCmd;
+  G4UIcmdWithAString * protonCutCmd;
  
   G4UIcmdWithAString * pMaxStepSizeCmd;
   G4UIcmdWithAString * pMaxTrackLengthCmd;
@@ -65,7 +65,6 @@ protected:
   G4UIcmdWithAString * pActivateSpecialCutsCmd;
 
   G4UIcmdWithoutParameter * pCutInMaterial;
-
 
   G4UIcmdWithAnInteger * pSetDEDXBinning;
   G4UIcmdWithAnInteger * pSetLambdaBinning;
@@ -82,6 +81,10 @@ protected:
   G4UIcmdWithADoubleAndUnit * pMuHandlerSetAtomicShellTolerance;
   G4UIcmdWithADouble * pMuHandlerSetPrecision;
   
+  G4UIcommand * pAddAtomDeexcitation;
+  
+  G4UIcmdWithAString * pAddPhysicsList;
+  G4UIcmdWithADoubleAndUnit * pEnergyRangeMinLimitCmd;
 
 private:
   int nInit;
