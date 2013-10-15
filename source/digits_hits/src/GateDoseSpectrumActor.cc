@@ -51,7 +51,7 @@ void GateDoseSpectrumActor::Construct()
   EnableBeginOfEventAction(true);
   EnableUserSteppingAction(true);
   EnableEndOfEventAction(true); // for save every n
-  mVolumeMass = GetVolume()->GetPhysicalVolume()->GetLogicalVolume()->GetMass()/1000000;
+  mVolumeMass = GetVolume()->GetPhysicalVolume()->GetLogicalVolume()->GetMass()/25.0;
   ResetData();
 }
 //-----------------------------------------------------------------------------
@@ -70,8 +70,8 @@ void GateDoseSpectrumActor::SaveData()
   for( itermDoseEnergy = mDoseEnergy.begin(); itermDoseEnergy != mDoseEnergy.end(); itermDoseEnergy++)
   {
     energyDose = itermDoseEnergy->first;
-    suma = suma + mNumParticPerEnergy[energyDose];
-    G4cout << "itermDoseEnergy: " << energyDose << " doseEnergy: " <<  mDoseEnergy[energyDose] << " mNumParticPerEnergy: " << mNumParticPerEnergy[energyDose] << " suma: " << suma << G4endl;
+    //suma = suma + mNumParticPerEnergy[energyDose];
+    //G4cout << "itermDoseEnergy: " << energyDose << " doseEnergy: " <<  mDoseEnergy[energyDose] << " mNumParticPerEnergy: " << mNumParticPerEnergy[energyDose] << " suma: " << suma << G4endl;
     doseEnergy = mDoseEnergy[energyDose];
     averageDoseEnergy = mDoseEnergy[energyDose] / mNumParticPerEnergy[energyDose];
     averageDoseEnergySquare = mDoseEnergySquare[energyDose] / mNumParticPerEnergy[energyDose];
