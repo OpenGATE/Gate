@@ -142,8 +142,6 @@ protected:
   InputImageType::Pointer mComptonImage;
   InputImageType::Pointer mRayleighImage;
   InputImageType::Pointer mFluorescenceImage;
-  InputImageType::Pointer mSecondaryImage;
-  InputImageType::Pointer mTotalImage;
   std::vector<InputImageType::Pointer> mComptonPerOrderImages;
   std::vector<InputImageType::Pointer> mRayleighPerOrderImages;
   std::vector<InputImageType::Pointer> mFluorescencePerOrderImages;

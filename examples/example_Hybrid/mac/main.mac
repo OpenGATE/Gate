@@ -124,7 +124,7 @@
 /gate/actor/addActor FluenceActor                    DetectorActor
 /gate/actor/DetectorActor/save                       output/fluence%04d.mha
 /gate/actor/DetectorActor/scatterOrderFilename       output/fluence%04d_%04d.mha
-/gate/actor/DetectorActor/separateScatteringFilename output/fluenceScattering
+/gate/actor/DetectorActor/separateProcessFilename    output/fluenceProcess
 /gate/actor/DetectorActor/attachTo                   DetectorPlane
 /gate/actor/DetectorActor/stepHitType                pre
 /gate/actor/DetectorActor/setResolution              256 256 1

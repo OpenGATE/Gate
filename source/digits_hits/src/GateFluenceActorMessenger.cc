@@ -83,10 +83,10 @@ void GateFluenceActorMessenger::BuildCommands(G4String base)
   guid = "Set the file name for the scatter x-rays that hit the detector (printf format with runId as a single parameter).";
   pSetScatterOrderFilenameCmd->SetGuidance(guid);
 
-  n = base+"/separateScatteringFilename";
-  pSetSeparateScatteringFilenameCmd = new G4UIcmdWithAString(n,this);
+  n = base+"/separateProcessFilename";
+  pSetSeparateProcessFilenameCmd = new G4UIcmdWithAString(n,this);
   guid = "Set the file name for the different scatter x-rays processes that hit the detector (printf format with runId as a single parameter).";
-  pSetSeparateScatteringFilenameCmd->SetGuidance(guid);
+  pSetSeparateProcessFilenameCmd->SetGuidance(guid);
 }
 //-----------------------------------------------------------------------------
 
@@ -115,8 +115,8 @@ void GateFluenceActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if(cmd == pSetScatterOrderFilenameCmd)
     pFluenceActor->SetScatterOrderFilename(newValue);
 
-  if(cmd == pSetSeparateScatteringFilenameCmd)
-    pFluenceActor->SetSeparateScatteringFilename(newValue);
+  if(cmd == pSetSeparateProcessFilenameCmd)
+    pFluenceActor->SetSeparateProcessFilename(newValue);
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }

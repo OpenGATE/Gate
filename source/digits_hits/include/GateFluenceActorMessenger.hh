@@ -38,7 +38,7 @@ protected:
   G4UIcmdWithAString * pSetResponseDetectorFileCmd;
   G4UIcmdWithABool * pEnableScatterCmd;
   G4UIcmdWithAString * pSetScatterOrderFilenameCmd;
-  G4UIcmdWithAString * pSetSeparateScatteringFilenameCmd;
+  G4UIcmdWithAString * pSetSeparateProcessFilenameCmd;
 };
 
 #endif /* end #define GATEFLUENCEACTORMESSENGER_HH*/

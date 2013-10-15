@@ -98,6 +98,7 @@ void GateHybridDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newVal
     G4double n = pSetSecondaryMultiplicityCmd2->GetNewDoubleValue(1,newValue);
     pDoseActor->SetSecondaryMultiplicity(t,n);   
   }
+  GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
 //-----------------------------------------------------------------------------
 

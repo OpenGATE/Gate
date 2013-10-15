@@ -119,12 +119,14 @@ void GateHybridDoseActor::Construct() {
     mEdepImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mEdepImage.Allocate();
     mEdepImage.SetFilename(mEdepFilename);
+    mEdepImage.SetOrigin(mOrigin);
   }
   mDoseImage.EnableUncertaintyImage(mIsDoseUncertaintyImageEnabled);
   mDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   //mDoseImage.SetScaleFactor(1e12/mDoseImage.GetVoxelVolume());
   mDoseImage.Allocate();
   mDoseImage.SetFilename(mDoseFilename);
+  mDoseImage.SetOrigin(mOrigin);
 
   mPDoseFilename = G4String(removeExtension(mSaveFilename))+"-PrimaryDose."+G4String(getExtension(mSaveFilename));
 
@@ -132,6 +134,7 @@ void GateHybridDoseActor::Construct() {
   //mDoseImage.SetScaleFactor(1e12/mDoseImage.GetVoxelVolume());
   mPrimaryDoseImage.Allocate();
   mPrimaryDoseImage.SetFilename(mPDoseFilename);
+  mPrimaryDoseImage.SetOrigin(mOrigin);
 
   mSDoseFilename = G4String(removeExtension(mSaveFilename))+"-SecondaryDose."+G4String(getExtension(mSaveFilename));
   
@@ -139,6 +142,7 @@ void GateHybridDoseActor::Construct() {
   //mDoseImage.SetScaleFactor(1e12/mDoseImage.GetVoxelVolume());
   mSecondaryDoseImage.Allocate();
   mSecondaryDoseImage.SetFilename(mSDoseFilename);
+  mSecondaryDoseImage.SetOrigin(mOrigin);
   //GateMessage("Actor", 0, " Activation image dose" << G4endl);
   if(mIsDoseUncertaintyImageEnabled){
     mLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
