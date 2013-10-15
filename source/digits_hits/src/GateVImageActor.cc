@@ -194,9 +194,9 @@ void GateVImageActor::Construct()
   mOrigin[2] = size[2]/2.0 - mHalfSize.z();
 
   // Take origin into account, consider halfpixel
-  mOrigin[0] = mVolume->GetOrigin().x()+mOrigin[0]+mVoxelSize[0]/2.0;
-  mOrigin[1] = mVolume->GetOrigin().y()+mOrigin[1]+mVoxelSize[1]/2.0;
-  mOrigin[2] = mVolume->GetOrigin().z()+mOrigin[2]+mVoxelSize[2]/2.0;
+  mOrigin[0] = mVolume->GetOrigin().x()+mOrigin[0];
+  mOrigin[1] = mVolume->GetOrigin().y()+mOrigin[1];
+  mOrigin[2] = mVolume->GetOrigin().z()+mOrigin[2];
 
   // Take translation into account
   mOrigin = mOrigin + mPosition;
