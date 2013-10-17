@@ -365,12 +365,15 @@ void dosimetry_host_reset(Dosimetry &vol) {
  * Activities structure
  ***********************************************************/
 
+#ifndef ACTIVITIES
+#define ACTIVITIES
 struct Activities {
     unsigned int nb_activities;
     float tot_activity;
     unsigned int *act_index;
     float *act_cdf;
 };
+#endif
 
 // Host allocation
 void activities_host_malloc(Activities &act, int nbact) {
@@ -603,6 +606,7 @@ __device__ float dot_vector(float3 u, float3 v) {
 }
 
 //// Return the next voxel boundary distance, it is used by the standard navigator
+/*
 __device__ float get_boundary_voxel_by_raycasting(int4 vox, float3 p, float3 d, float3 res) {
     
     
@@ -645,6 +649,75 @@ __device__ float get_boundary_voxel_by_raycasting(int4 vox, float3 p, float3 d, 
     }
     // on z
     if (d.z != 0.0f) {
+        tzmin = (zmin - p.z) * di.z;
+        tzmax = (zmax - p.z) * di.z;
+        if (tzmin > tzmax) {
+            buf = tzmin;
+            tzmin = tzmax;
+            tzmax = buf;
+        }
+        if (tzmin > tmin) {tmin = tzmin;}
+        if (tzmax < tmax) {tmax = tzmax;}
+    }
+
+    return tmax;
+}
+*/
+
+// Return the next voxel boundary distance, it is used by the standard navigator
+__device__ float get_boundary_voxel_by_raycasting(int4 vox, float3 p, float3 d, float3 res) {
+
+
+	float xmin, xmax, ymin, ymax, zmin, zmax;
+    float3 di = inverse_vector(d);
+	float tmin, tmax, tymin, tymax, tzmin, tzmax, buf;
+
+	/*
+    // Define the voxel bounding box
+    xmin = vox.x*res.x;
+    ymin = vox.y*res.y;
+    zmin = vox.z*res.z;
+    xmax = (d.x<0 && p.x==xmin) ? xmin-res.x : xmin+res.x;
+    ymax = (d.y<0 && p.y==ymin) ? ymin-res.y : ymin+res.y;
+    zmax = (d.z<0 && p.z==zmin) ? zmin-res.z : zmin+res.z;
+    */
+
+    // From Michaela
+    xmin = (d.x > 0 && p.x > (vox.x+1) * res.x - EPS) ? (vox.x+1) * res.x : vox.x*res.x;
+    ymin = (d.y > 0 && p.y > (vox.y+1) * res.y - EPS) ? (vox.y+1) * res.y : vox.y*res.y;
+    zmin = (d.z > 0 && p.z > (vox.z+1) * res.z - EPS) ? (vox.z+1) * res.z : vox.z*res.z;
+
+    xmax = (d.x < 0 && p.x < xmin + EPS) ? xmin-res.x : xmin+res.x;
+    ymax = (d.y < 0 && p.y < ymin + EPS) ? ymin-res.y : ymin+res.y;
+    zmax = (d.z < 0 && p.z < zmin + EPS) ? zmin-res.z : zmin+res.z;
+
+    tmin = -INF;
+    tmax = INF;
+
+    // on x
+    if (fabs(d.x) > EPS) {
+        tmin = (xmin - p.x) * di.x;
+        tmax = (xmax - p.x) * di.x;
+        if (tmin > tmax) {
+            buf = tmin;
+            tmin = tmax;
+            tmax = buf;
+        }
+    }
+    // on y
+    if (fabs(d.y) > EPS) {
+        tymin = (ymin - p.y) * di.y;
+        tymax = (ymax - p.y) * di.y;
+        if (tymin > tymax) {
+            buf = tymin;
+            tymin = tymax;
+            tymax = buf;
+        }
+        if (tymin > tmin) {tmin = tymin;}
+        if (tymax < tmax) {tmax = tymax;}
+    }
+    // on z
+    if (fabs(d.z) > EPS) {
         tzmin = (zmin - p.z) * di.z;
         tzmax = (zmax - p.z) * di.z;
         if (tzmin > tzmax) {
@@ -1549,8 +1622,7 @@ __global__ void kernel_NavRegularPhan_Photon_NoSec(StackParticle photons,
     position.x = photons.px[id];
     position.y = photons.py[id];
     position.z = photons.pz[id];
-    //printf("%0.2f %0.2f %0.2f\n", position.x, position.y, position.z);
-
+    
     // Defined index phantom
     int4 index_phantom;
     float3 ivoxsize = inverse_vector(phantom.voxel_size);
@@ -1560,15 +1632,6 @@ __global__ void kernel_NavRegularPhan_Photon_NoSec(StackParticle photons,
     index_phantom.w = index_phantom.z*phantom.nb_voxel_slice
                      + index_phantom.y*phantom.size_in_vox.x
                      + index_phantom.x; // linear index
-
-    /*
-    if (index_phantom.w >= phantom.nb_voxel_volume) {
-        printf("  pos %0.2f %0.2f %0.2f ispc %0.2f %0.2f %0.2f ind %i %i %i = %i max %i\n", 
-                position.x, position.y, position.z, ivoxsize.x, ivoxsize.y, ivoxsize.z,
-                index_phantom.x, index_phantom.y, index_phantom.z, 
-                index_phantom.w, phantom.nb_voxel_volume);
-    }
-    */
 
     // Read direction
     float3 direction;
@@ -1603,17 +1666,18 @@ __global__ void kernel_NavRegularPhan_Photon_NoSec(StackParticle photons,
     cross_section = Compton_CS_Standard(materials, mat, energy);
     interaction_distance = __fdividef(-__logf(Brent_real(id, photons.table_x_brent, 0)),
                                      cross_section);
+    
     if (interaction_distance < next_interaction_distance) {
         next_interaction_distance = interaction_distance;
         next_discrete_process = PHOTON_COMPTON;
     }
 
     // Distance to the next voxel boundary (raycasting)
-    interaction_distance = get_boundary_voxel_by_raycasting(index_phantom, position, 
+    float interaction_distance2 = get_boundary_voxel_by_raycasting(index_phantom, position, 
                                                             direction, phantom.voxel_size);
-    if (interaction_distance < next_interaction_distance) {
+    if (interaction_distance2 < next_interaction_distance) {
         // overshoot the distance of 1 um to be inside the next voxel
-        next_interaction_distance = interaction_distance+1.0e-03f;
+        next_interaction_distance = interaction_distance2 + 1.0e-03f;
         next_discrete_process = PHOTON_BOUNDARY_VOXEL;
     }
 

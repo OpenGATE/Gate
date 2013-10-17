@@ -47,14 +47,6 @@
 /gate/ncat/placement/setRotationAxis                    1 0 0
 /gate/ncat/placement/setRotationAngle                   0 deg
 
-/gate/world/daughters/name                              mybox
-/gate/world/daughters/insert                            box
-/gate/mybox/geometry/setXLength                         90.0 cm
-/gate/mybox/geometry/setYLength                         90.0 cm
-/gate/mybox/geometry/setZLength                         90.0 cm
-/gate/mybox/placement/setTranslation                    0.0 0.0 0.0 cm
-/gate/mybox/setMaterial                                 Vacuum
-
 #==================================================
 # PHYSICS
 #==================================================
@@ -73,14 +65,6 @@
 #==================================================
 # FOR VALIDATIONS
 #==================================================
-
-# Phase space
-/gate/actor/addActor                        PhaseSpaceActor ps
-/gate/actor/ps/attachTo                     mybox
-/gate/actor/ps/storeOutgoingParticles
-/gate/actor/ps/addFilter                    particleFilter
-/gate/actor/ps/particleFilter/addParticle   gamma
-/gate/actor/ps/save                         output-gpu/ps.root
 
 # Global stats
 /gate/actor/addActor                        SimulationStatisticActor stat
@@ -120,7 +104,7 @@
 
 /gate/source/addSource                                              srcvoxel GPUEmisTomo
 /gate/source/srcvoxel/attachPhantomTo ncat
-/gate/source/srcvoxel/setGPUBufferSize                              5000
+/gate/source/srcvoxel/setGPUBufferSize                              1000000
 /gate/source/srcvoxel/setGPUDeviceID                                1
 
 /gate/source/srcvoxel/reader/insert                                 interfile
@@ -164,12 +148,7 @@
 #==============================================
 
 /gate/application/setTimeStart     0.0 ns
-/gate/application/setTimeSlice     0.001 s
-/gate/application/setTimeStop      0.001 s
+/gate/application/setTimeSlice     0.01 s
+/gate/application/setTimeStop      0.01 s
 /gate/application/startDAQ
-
-# FOR DEBUGING
-#/gate/application/setTotalNumberOfPrimaries 10000
-#/gate/application/start
-
 

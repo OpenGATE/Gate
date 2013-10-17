@@ -17,6 +17,8 @@
 #define ELECTRON 11
 #define POSITRON 11
 
+#define EPS 1.0e-03f
+#define INF 1.0e30f
 
 // ************************************************************************
 // * PE - Standard (Sandia table)

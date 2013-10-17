@@ -111,6 +111,16 @@ struct StackParticle {
 }; //
 #endif
 
+#ifndef ACTIVITIES
+#define ACTIVITIES
+struct Activities {
+    unsigned int nb_activities;
+    float tot_activity;
+    unsigned int *act_index;
+    float *act_cdf;
+};
+#endif
+
 #ifndef PRESTEPGPU
 #define PRESTEPGPU
 // PresStep memory used by GPU module
@@ -182,7 +192,8 @@ struct GateGPUIO_Input {
 
   // When the IO is used as a SourceGPUVoxellized : 
   std::vector<float> activity_data; 
-  std::vector<unsigned int> activity_index; 
+  std::vector<unsigned int> activity_index;
+  float tot_activity;
   // The ID of each particle will start from this number : 
   int firstInitialID; 
   double E; // MeV
@@ -219,12 +230,34 @@ void GateGPUIO_Output_delete(GateGPUIO_Output* output);
 
 //----------------------------------------------------------
 // Main function that lunch GPU calculation: Transmission Tomography Application
-void GPU_GateTransTomo(const GateGPUIO_Input * input, 
-                             GateGPUIO_Output * output);
+
+void GPU_GateTransTomo_init(const GateGPUIO_Input *input,
+                            Materials &materials_d, Volume &phantom_d,
+                            StackParticle &photons_d, StackParticle &photon_h,
+                            unsigned int nb_of_particles, unsigned int seed);
+
+void GPU_GateTransTomo(Materials &materials_d, Volume &phantom_d,
+                       StackParticle &photons_d, StackParticle &photons_h,
+                       unsigned int nb_of_particles);
+
+void GPU_GateTransTomo_end(Materials &materials_d, Volume &phantom_d,
+                           StackParticle &photons_d, StackParticle &photons_h);
 
 // Main function that lunch GPU calculation: Emission Tomography Application
-void GPU_GateEmisTomo(const GateGPUIO_Input * input, 
-                            GateGPUIO_Output * output);
+void GPU_GateEmisTomo_init(const GateGPUIO_Input *input,
+                           Materials &materials_d, Volume &phantom_d, Activities &activities_d,
+                           StackParticle &gamma1_d, StackParticle &gamma2_d,
+                           StackParticle &gamma1_h, StackParticle &gamma2_h,
+                           unsigned int nb_of_particles, unsigned int seed);
+
+void GPU_GateEmisTomo(Materials &materials_d, Volume &phantom_d, Activities &activities_d,
+                      StackParticle &gamma1_d, StackParticle &gamma2_d,
+                      StackParticle &gamma1_h, StackParticle &gamma2_h,
+                      unsigned int nb_of_particles);
+
+void GPU_GateEmisTomo_end(Materials &materials_d, Volume &phantom_d, Activities &activities_d,
+                          StackParticle &gamma1_d, StackParticle &gamma2_d,
+                          StackParticle &gamma1_h, StackParticle &gamma2_h);
 
 // Main function that lunch GPU calculation: Photon Radiation Therapy
 void GPU_GatePhotRadThera_init(const GateGPUIO_Input *input, 
@@ -234,12 +267,14 @@ void GPU_GatePhotRadThera_init(const GateGPUIO_Input *input,
                                      StackParticle &photons_d, StackParticle &electrons_d,
                                      StackParticle &photons_h, 
                                      unsigned int nb_of_particles, unsigned int seed);
+
 void GPU_GatePhotRadThera(Dosimetry &dosemap_d,
                           Materials &materials_d,
                           Volume &phantom_d,
                           StackParticle &photons_d, StackParticle &electrons_d,
                           StackParticle &photons_h,
                           unsigned int nb_of_particles);
+
 void GPU_GatePhotRadThera_end(Dosimetry &dosemap_d, 
                               Materials &materials_d, 
                               Volume &phantom_d,
