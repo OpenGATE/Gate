@@ -40,7 +40,7 @@ GateGPUEmisTomo::GateGPUEmisTomo(G4String name)
   // Build IO for gpu
   m_gpu_input = GateGPUIO_Input_new();
   m_gpu_output = GateGPUIO_Output_new();
-  m_gpu_input->E = 511*keV/MeV;
+  //m_gpu_input->E = 511*keV/MeV;
   attachedVolumeName = "no_attached_volume_given";
 
   // Create particle definition 
@@ -48,9 +48,19 @@ GateGPUEmisTomo::GateGPUEmisTomo(G4String name)
   gamma_particle_definition = particleTable->FindParticle("gamma");
 
   m_sourceGPUVoxellizedMessenger = new GateGPUEmisTomoMessenger(this); 
-  mNumberOfNextTime = 1;
-  mCurrentTimeID = 0;
+  //mNumberOfNextTime = 1;
+  //mCurrentTimeID = 0;
   mCudaDeviceID = 0;
+  mBeginRunFlag = 0;
+  max_buffer_size = 0;
+  mUserCount = 0;
+     
+  //printf("\n********************************************************\n");
+  //double mytime = GateApplicationMgr::GetInstance()->GetTimeStop();
+  //printf("Stop time %f\n", mytime);
+  //GateApplicationMgr::GetInstance()->SetTimeStop(2*mytime);
+  //printf("New Stop time %f\n\n", GateApplicationMgr::GetInstance()->GetTimeStop());
+  
 }
 //----------------------------------------------------------
 
@@ -63,7 +73,7 @@ GateGPUEmisTomo::~GateGPUEmisTomo()
 }
 //----------------------------------------------------------
 
-
+/*
 //----------------------------------------------------------
 G4double GateGPUEmisTomo::GetNextTime(G4double timeNow)
 {
@@ -79,13 +89,13 @@ G4double GateGPUEmisTomo::GetNextTime(G4double timeNow)
   return t;
 }
 //----------------------------------------------------------
-
+*/
 
 //----------------------------------------------------------
 void GateGPUEmisTomo::SetGPUBufferSize(int n)
 {
-  assert(m_gpu_input);
-  m_gpu_input->nb_events = n;
+  max_buffer_size = n;
+  printf("read by the messenger max buffer size %i\n", max_buffer_size);
 }
 //----------------------------------------------------------
 
@@ -121,104 +131,151 @@ G4int GateGPUEmisTomo::GeneratePrimaries(G4Event* event)
   }
   assert(m_gpu_input);
 
-  // First time here -> phantom data are set
-  if (m_gpu_input->phantom_material_data.empty())
-    { // import phantom to gpu (fill input)
-      SetPhantomVolumeData(); 
-      m_current_particle_index_in_buffer = 0;     
-    }
-  
-  if (m_gpu_input->activity_index.empty())
-    { // import activity to gpu
-      m_gpu_input->firstInitialID = mCurrentTimeID;
-      ActivityMap activities = m_voxelReader->GetSourceActivityMap();
-      GateGPUIO_Input_parse_activities(activities,m_gpu_input);
-    }
 
-  // Main loop : if particles buffer is empty, we ask the gpu 
-  // FIXME  if (m_gpu_output->particles.empty()) {
-  if (m_current_particle_index_in_buffer >= m_gpu_output->particles.size()) {
-    GateMessage("Beam", 5, "No particles in the buffer, we ask the gpu for " 
-                << m_gpu_input->nb_events << " events" << std::endl);
+  // STEP 1 -- INIT -----------------------------------------------
+  if (!mBeginRunFlag) {
+      // First time here -> phantom data are set
+      if (m_gpu_input->phantom_material_data.empty())
+      { // import phantom to gpu (fill input)
+          SetPhantomVolumeData(); 
+          //m_current_particle_index_in_buffer = 0;     
+      }
+      
+      if (m_gpu_input->activity_index.empty())
+      { // import activity to gpu
+          //m_gpu_input->firstInitialID = mCurrentTimeID;
+          ActivityMap activities = m_voxelReader->GetSourceActivityMap();
+          GateGPUIO_Input_parse_activities(activities,m_gpu_input);
+      }
 
-    // Go GPU
-    m_gpu_input->firstInitialID = mCurrentTimeID; // fix a bug - JB
-    m_gpu_input->seed = 
-      static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
-    printf("seed from input %ld\n", m_gpu_input->seed);
+      // Init phantom size
+      half_phan_size_x = m_gpu_input->phantom_size_x * m_gpu_input->phantom_spacing_x * 0.5f;
+      half_phan_size_y = m_gpu_input->phantom_size_y * m_gpu_input->phantom_spacing_y * 0.5f;
+      half_phan_size_z = m_gpu_input->phantom_size_z * m_gpu_input->phantom_spacing_z * 0.5f;
+    
+      // Seed
+      unsigned int seed = 
+          static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
+      srand(seed);
+
+      id_event = 0;
+      nb_event_in_buffer = 0;
+      current_time = 0.0;
+      tot_p = 0;
 
 #ifdef GATE_USE_GPU
-    GPU_GateEmisTomo(m_gpu_input, m_gpu_output);
+      // Init GPU' stuff
+      GPU_GateEmisTomo_init(m_gpu_input,
+                            gpu_materials, gpu_phantom, gpu_activities,
+                            gpu_gamma1, gpu_gamma2, cpu_gamma1, cpu_gamma2,
+                            max_buffer_size, seed);
+#endif      
+
+      mBeginRunFlag = 1;
+  }
+
+  // STEP 2 -- Fill buffer if need -------------------------------------
+
+  if (nb_event_in_buffer <= 0) {
+#ifdef GATE_USE_GPU
+    GPU_GateEmisTomo(gpu_materials, gpu_phantom, gpu_activities,
+                     gpu_gamma1, gpu_gamma2, cpu_gamma1, cpu_gamma2,
+                     max_buffer_size);
+    nb_event_in_buffer = max_buffer_size;
+    id_event_in_buffer = 0;
 #endif    
+  }
+  
+  // STEP 3 -- Generate one event ------------------------------------
 
+  // Create at least one particle
+  int nb_p = 0;
+  while (!nb_p) {
+      
+      // create one particle
+      if (cpu_gamma1.active[id_event_in_buffer]) {
+          // FIXME add transformation (R+T) to the new frame
+          G4ThreeVector position1(cpu_gamma1.px[id_event_in_buffer] - half_phan_size_x,
+                                  cpu_gamma1.py[id_event_in_buffer] - half_phan_size_y,
+                                  cpu_gamma1.pz[id_event_in_buffer] - half_phan_size_z);
+      
+          G4ThreeVector direction1(cpu_gamma1.dx[id_event_in_buffer],
+                                   cpu_gamma1.dy[id_event_in_buffer],
+                                   cpu_gamma1.dz[id_event_in_buffer]);
 
-    GateMessage("Beam", 5, "Done : GPU send " << m_gpu_output->particles.size() 
-                << " events" << std::endl);
-    m_current_particle_index_in_buffer = 0;
+          double p_time1 = current_time + cpu_gamma1.t[id_event_in_buffer]*ns;  // time + TOF
+      
+          G4ThreeVector p_momentum1 = cpu_gamma1.E[id_event_in_buffer] * MeV * direction1.unit();
+
+          // Create the vertex
+          G4PrimaryVertex* vertex1;
+          vertex1 = new G4PrimaryVertex(position1, p_time1);
+        
+          // Create a G4PrimaryParticle
+          G4PrimaryParticle* g4particle1 =  new G4PrimaryParticle(gamma_particle_definition, 
+                                                                  p_momentum1.x(), 
+                                                                  p_momentum1.y(), 
+                                                                  p_momentum1.z());
+          // Add the particle
+          vertex1->SetPrimary( g4particle1 ); 
+          event->AddPrimaryVertex( vertex1 );
+          nb_p++;
+      }
+
+      if (cpu_gamma2.active[id_event_in_buffer]) {
+          // FIXME add transformation (R+T) to the new frame
+          G4ThreeVector position2(cpu_gamma2.px[id_event_in_buffer] - half_phan_size_x,
+                                  cpu_gamma2.py[id_event_in_buffer] - half_phan_size_y,
+                                  cpu_gamma2.pz[id_event_in_buffer] - half_phan_size_z);
+      
+          G4ThreeVector direction2(cpu_gamma2.dx[id_event_in_buffer],
+                                   cpu_gamma2.dy[id_event_in_buffer],
+                                   cpu_gamma2.dz[id_event_in_buffer]);
+
+          double p_time2 = current_time + cpu_gamma2.t[id_event_in_buffer]*ns;  // time + TOF
+      
+          G4ThreeVector p_momentum2 = cpu_gamma2.E[id_event_in_buffer] * MeV * direction2.unit();
+
+          // Create the vertex
+          G4PrimaryVertex* vertex2;
+          vertex2 = new G4PrimaryVertex(position2, p_time2);
+        
+          // Create a G4PrimaryParticle
+          G4PrimaryParticle* g4particle2 =  new G4PrimaryParticle(gamma_particle_definition, 
+                                                                  p_momentum2.x(), 
+                                                                  p_momentum2.y(), 
+                                                                  p_momentum2.z());
+          // Add the particle
+          vertex2->SetPrimary( g4particle2 ); 
+          event->AddPrimaryVertex( vertex2 );
+          nb_p++;
+      }
+
+      event->SetEventID(id_event);
+
+      // update event
+      id_event_in_buffer++;
+      nb_event_in_buffer--;
+      id_event++;
+
+      // update current time
+      double rnd = rand()/(double)(RAND_MAX);
+      current_time += ((-log(rnd) / gpu_activities.tot_activity) * ns);
+
   }
 
-  // Generate one particle
-  //FIXME  if (!m_gpu_output->particles.empty()) {
-  if (m_current_particle_index_in_buffer < m_gpu_output->particles.size())  {
-    
-    // Create a new particle
-    //FIXME    GeneratePrimaryEventFromGPUOutput(m_gpu_output->particles.front(), event);
-    const GateGPUIO_Particle & part = m_gpu_output->particles[m_current_particle_index_in_buffer];
-    GeneratePrimaryEventFromGPUOutput(part, event);
-    //FIXME double tof = m_gpu_output->particles.front().t;
-    double tof = part.t;
-    //printf("t %e\n", tof);
-
-    // Set the current timeID
-    //FIXME mCurrentTimeID = m_gpu_output->particles.front().initialID;
-    mCurrentTimeID = part.initialID;
-    
-    // Remove the particle from the list
-    //m_gpu_output->particles.pop_front();
-    m_current_particle_index_in_buffer++;
-
-    // Display information
-    G4PrimaryParticle  * p = event->GetPrimaryVertex(0)->GetPrimary(0);
-    event->SetEventID(mCurrentTimeID);
-    GateMessage("Beam", 3, "(" << event->GetEventID() << ") " << p->GetG4code()->GetParticleName() 
-                << " pos=" << event->GetPrimaryVertex(0)->GetPosition()
-                << " weight=" << p->GetWeight()                                
-                << " energy=" <<  G4BestUnit(mEnergy, "Energy")
-                << " mom=" << p->GetMomentum()
-                << " prop_time=" <<  G4BestUnit(p->GetProperTime(), "Time")
-                << " Gate_time=" <<  G4BestUnit(GetTime(), "Time")
-                << " TOF_time=" <<  G4BestUnit(tof, "Time")
-                << " current_timeID=" <<  mCurrentTimeID
-                << G4endl);  
-
-    // Prepare for next particle
-    if (m_current_particle_index_in_buffer < m_gpu_output->particles.size())  {
-      // FIXME if (!m_gpu_output->particles.empty()) {
-      GateMessage("Beam", 5, "The next particle will be time ID = " << part.initialID << std::endl);
-      mNumberOfNextTime = m_gpu_output->particles.front().initialID - mCurrentTimeID;
-    }  
-    else {
-      GateMessage("Beam", 5, "No more particules in gpu buffer, time stay the same." << std::endl);
-      mNumberOfNextTime = 1;
-    }
-  }
-
-  return 1; // Return a single particle at a time
+  // FIXME EndOfRunAction
+   
+  return nb_p; 
 }
 //----------------------------------------------------------
 
 
-
+/*
 //----------------------------------------------------------
 void GateGPUEmisTomo::GeneratePrimaryEventFromGPUOutput(const GateGPUIO_Particle & particle, 
                                                                 G4Event * event)
 {
-  /*
-  std::cout << "From gpu pos = " << particle.px << " " << particle.py << " " << particle.pz << std::endl
-            << "         dir = " << particle.dx << " " << particle.dy << " " << particle.dz << std::endl
-            << "         E   = " << G4BestUnit(particle.E*MeV, "Energy") << std::endl
-            << "         t   = " << G4BestUnit(particle.t*ns, "Time") << std::endl;
-  */
 
   // Position
   G4ThreeVector particle_position;
@@ -227,12 +284,6 @@ void GateGPUEmisTomo::GeneratePrimaryEventFromGPUOutput(const GateGPUIO_Particle
   particle_position.setZ(particle.pz*mm-m_gpu_input->phantom_size_z*m_gpu_input->phantom_spacing_z/2.0*mm);
 
   
-/*
-G4ThreeVector particle_position;
-particle_position.setX(particle.px*mm-256*mm); // FIXME HECTOR to replace by m_gpu_input.phantom_size ...
-particle_position.setY(particle.py*mm-126*mm);
-particle_position.setZ(particle.pz*mm-92*mm);
-*/
   // Create the vertex
   G4PrimaryVertex* vertex;
   double particle_time = particle.t*ns; // assume time is in ns
@@ -257,12 +308,6 @@ particle_position.setZ(particle.pz*mm-92*mm);
   // Compute momentum
   G4ThreeVector particle_momentum = (particle.E*MeV) * particle_direction.unit();
   
-  /*
-    std::cout << "Momentum = " << particle_momentum << std::endl;
-    std::cout << "Energy = " << particle.E << std::endl;
-    std::cout << "Energy = " << G4BestUnit(particle.E, "Energy")  << std::endl;
-  */
-  
   mEnergy = particle.E*MeV;
   // Create a G4PrimaryParticle
   G4PrimaryParticle* g4particle =  new G4PrimaryParticle(gamma_particle_definition, 
@@ -273,7 +318,7 @@ particle_position.setZ(particle.pz*mm-92*mm);
   event->AddPrimaryVertex( vertex );
 }
 //----------------------------------------------------------
-
+*/
 
 //----------------------------------------------------------
 void GateGPUEmisTomo::ReaderInsert(G4String readerType)
@@ -325,8 +370,8 @@ void GateGPUEmisTomo::SetPhantomVolumeData()
     m_gpu_input->phantom_spacing_x = reader->GetVoxelSize().x();
     m_gpu_input->phantom_spacing_y = reader->GetVoxelSize().y();
     m_gpu_input->phantom_spacing_z = reader->GetVoxelSize().z();
-
     
+    /* THIS IS ELEGANT, BUT IT DOESN'T WORK PROPERLY.... (JB)
     // Find the list of material in the image and set the pixel
     std::vector<G4Material*> materials;
     for(int k=0; k<m_gpu_input->phantom_size_z; k++)
@@ -346,9 +391,46 @@ void GateGPUEmisTomo::SetPhantomVolumeData()
           // DD(j);
           // DD(k);
           unsigned short int index = iter-materials.begin();
-          // DD(index);
+          //DD(materials.begin());
+          //DD((*iter).first);
+          DD(index);
           m_gpu_input->phantom_material_data.push_back(index);
         }
+    */
+
+    ///// This code is less fancy but is working properly - JB ////////////////////////////
+
+    // list of materials
+    std::vector<G4Material*> materials;
+
+    // set voxel accoring materials index
+    int i, j, k; unsigned int iter=0; int find=0;
+    k=0; while (k < m_gpu_input->phantom_size_z) {
+        j=0; while (j < m_gpu_input->phantom_size_y) {
+            i=0; while (i < m_gpu_input->phantom_size_x) {
+                // get materials
+                G4Material* mat = reader->GetVoxelMaterial(i, j, k);
+
+                // find the materials in the list
+                iter=0; find=0;
+                while (iter < materials.size()) {
+                    if (mat->GetName() == materials[iter]->GetName()) {find = 1; break;}
+                    ++iter;
+                }
+                
+                // set voxel index
+                m_gpu_input->phantom_material_data.push_back(iter);
+
+                // if this material is not in the list add in it?
+                if (!find) {materials.push_back(mat);}
+
+                ++i;
+            } // i
+            ++j;
+        } // j
+        ++k;
+    } // k
+
     DD(materials.size());
 
     // Init the materials
@@ -358,3 +440,337 @@ void GateGPUEmisTomo::SetPhantomVolumeData()
   }
 }
 //----------------------------------------------------------
+
+
+//----------------------------------------------------------
+/* 
+ * GeneratePrimaries Version 2 - JB
+ *
+//----------------------------------------------------------
+G4int GateGPUEmisTomo::GeneratePrimaries(G4Event* event) 
+{
+
+  // Initial checking
+  if (!m_voxelReader) return 0;
+  //  assert(GetType() == "backtoback");
+  if (GetType() != "backtoback") {
+    GateError("Error, the source GPUvoxel is only available for type 'backtoback' (PET application), but you used '" << GetType() << "'. Abort.");
+  }
+  assert(m_gpu_input);
+
+
+  // STEP 1 -- INIT -----------------------------------------------
+  if (!mBeginRunFlag) {
+      // First time here -> phantom data are set
+      if (m_gpu_input->phantom_material_data.empty())
+      { // import phantom to gpu (fill input)
+          SetPhantomVolumeData(); 
+          //m_current_particle_index_in_buffer = 0;     
+      }
+      
+      if (m_gpu_input->activity_index.empty())
+      { // import activity to gpu
+          //m_gpu_input->firstInitialID = mCurrentTimeID;
+          ActivityMap activities = m_voxelReader->GetSourceActivityMap();
+          GateGPUIO_Input_parse_activities(activities,m_gpu_input);
+      }
+
+      // Init phantom size
+      half_phan_size_x = m_gpu_input->phantom_size_x * m_gpu_input->phantom_spacing_x * 0.5f;
+      half_phan_size_y = m_gpu_input->phantom_size_y * m_gpu_input->phantom_spacing_y * 0.5f;
+      half_phan_size_z = m_gpu_input->phantom_size_z * m_gpu_input->phantom_spacing_z * 0.5f;
+    
+      // Seed
+      unsigned int seed = 
+          static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
+      srand(seed);
+
+      id_event = 0;
+      nb_event_in_buffer = 0;
+      current_time = 0.0;
+      tot_p = 0;
+
+#ifdef GATE_USE_GPU
+      // Init GPU' stuff
+      GPU_GateEmisTomo_init(m_gpu_input,
+                            gpu_materials, gpu_phantom, gpu_activities,
+                            gpu_gamma1, gpu_gamma2, cpu_gamma1, cpu_gamma2,
+                            max_buffer_size, seed);
+#endif      
+
+      mBeginRunFlag = 1;
+  }
+
+  // STEP 2 -- Fill buffer if need -------------------------------------
+
+  if (nb_event_in_buffer <= 0) {
+#ifdef GATE_USE_GPU
+    GPU_GateEmisTomo(gpu_materials, gpu_phantom, gpu_activities,
+                     gpu_gamma1, gpu_gamma2, cpu_gamma1, cpu_gamma2,
+                     max_buffer_size);
+    nb_event_in_buffer = max_buffer_size;
+    id_event_in_buffer = 0;
+#endif    
+  }
+  
+  // STEP 3 -- Generate one event ------------------------------------
+
+  // Create at least one particle
+  int nb_p = 0;
+  while (!nb_p) {
+
+      // Check alternatively each cpu buffer in order to produce one event at a time
+      
+      // cpu_gamma1
+      if (mUserCount == 0) {
+      
+          // create one particle
+          if (cpu_gamma1.active[id_event_in_buffer]) {
+              // FIXME add transformation (R+T) to the new frame
+              G4ThreeVector position(cpu_gamma1.px[id_event_in_buffer] - half_phan_size_x,
+                                     cpu_gamma1.py[id_event_in_buffer] - half_phan_size_y,
+                                     cpu_gamma1.pz[id_event_in_buffer] - half_phan_size_z);
+          
+              G4ThreeVector direction(cpu_gamma1.dx[id_event_in_buffer],
+                                      cpu_gamma1.dy[id_event_in_buffer],
+                                      cpu_gamma1.dz[id_event_in_buffer]);
+
+              double p_time = current_time + cpu_gamma1.t[id_event_in_buffer]*ns;  // time + TOF
+          
+              G4ThreeVector p_momentum = cpu_gamma1.E[id_event_in_buffer] * MeV * direction.unit();
+
+              // Create the vertex
+              G4PrimaryVertex* vertex;
+              vertex = new G4PrimaryVertex(position, p_time);
+            
+              // Create a G4PrimaryParticle
+              G4PrimaryParticle* g4particle =  new G4PrimaryParticle(gamma_particle_definition, 
+                                                                     p_momentum.x(), 
+                                                                     p_momentum.y(), 
+                                                                     p_momentum.z());
+              // Add the particle
+              vertex->SetPrimary( g4particle ); 
+              event->AddPrimaryVertex( vertex );
+              event->SetEventID(id_event);
+              nb_p++;
+              tot_p++;
+          }
+
+          // update
+          mUserCount = 1;
+          id_event++;
+
+      // cpu_gamma2
+      } else {
+
+          // create one particle
+          if (cpu_gamma2.active[id_event_in_buffer]) {
+              // FIXME add transformation (R+T) to the new frame
+              G4ThreeVector position(cpu_gamma2.px[id_event_in_buffer] - half_phan_size_x,
+                                     cpu_gamma2.py[id_event_in_buffer] - half_phan_size_y,
+                                     cpu_gamma2.pz[id_event_in_buffer] - half_phan_size_z);
+          
+              G4ThreeVector direction(cpu_gamma2.dx[id_event_in_buffer],
+                                      cpu_gamma2.dy[id_event_in_buffer],
+                                      cpu_gamma2.dz[id_event_in_buffer]);
+
+              double p_time = current_time + cpu_gamma2.t[id_event_in_buffer]*ns;  // time + TOF
+          
+              G4ThreeVector p_momentum = cpu_gamma2.E[id_event_in_buffer] * MeV * direction.unit();
+
+              // Create the vertex
+              G4PrimaryVertex* vertex;
+              vertex = new G4PrimaryVertex(position, p_time);
+            
+              // Create a G4PrimaryParticle
+              G4PrimaryParticle* g4particle =  new G4PrimaryParticle(gamma_particle_definition, 
+                                                                     p_momentum.x(), 
+                                                                     p_momentum.y(), 
+                                                                     p_momentum.z());
+              // Add the particle
+              vertex->SetPrimary( g4particle ); 
+              event->AddPrimaryVertex( vertex );
+              event->SetEventID(id_event);
+              nb_p++;
+              tot_p++;
+          }
+
+          // update
+          id_event_in_buffer++;
+          nb_event_in_buffer--;
+          id_event++;
+
+
+          // update current time
+          double rnd = rand()/(double)(RAND_MAX);
+          current_time += ((-log(rnd) / gpu_activities.tot_activity) * ns);
+          
+          mUserCount = 0;
+      }
+      
+  } // while nb_p
+
+  // FIXME EndOfRunAction
+  // Get simulation time required to define the last run
+   
+  return nb_p; // Return zero or one particle at a time
+}
+//----------------------------------------------------------
+*/
+
+
+
+//----------------------------------------------------------
+/* 
+ * GeneratePrimaries Version 1 - JB
+ *
+//----------------------------------------------------------
+G4int GateGPUEmisTomo::GeneratePrimaries(G4Event* event) 
+{
+
+  // Initial checking
+  if (!m_voxelReader) return 0;
+  //  assert(GetType() == "backtoback");
+  if (GetType() != "backtoback") {
+    GateError("Error, the source GPUvoxel is only available for type 'backtoback' (PET application), but you used '" << GetType() << "'. Abort.");
+  }
+  assert(m_gpu_input);
+
+
+  // STEP 1 -- INIT -----------------------------------------------
+  if (!mBeginRunFlag) {
+      // First time here -> phantom data are set
+      if (m_gpu_input->phantom_material_data.empty())
+      { // import phantom to gpu (fill input)
+          SetPhantomVolumeData(); 
+          //m_current_particle_index_in_buffer = 0;     
+      }
+      
+      if (m_gpu_input->activity_index.empty())
+      { // import activity to gpu
+          //m_gpu_input->firstInitialID = mCurrentTimeID;
+          ActivityMap activities = m_voxelReader->GetSourceActivityMap();
+          GateGPUIO_Input_parse_activities(activities,m_gpu_input);
+      }
+
+      // Init phantom size
+      half_phan_size_x = m_gpu_input->phantom_size_x * m_gpu_input->phantom_spacing_x * 0.5f;
+      half_phan_size_y = m_gpu_input->phantom_size_y * m_gpu_input->phantom_spacing_y * 0.5f;
+      half_phan_size_z = m_gpu_input->phantom_size_z * m_gpu_input->phantom_spacing_z * 0.5f;
+    
+      // Seed
+      unsigned int seed = 
+          static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
+      srand(seed);
+
+      id_event = 0;
+      nb_event_in_buffer = 0;
+      current_time = 0.0;
+
+#ifdef GATE_USE_GPU
+      // Init GPU' stuff
+      GPU_GateEmisTomo_init(m_gpu_input,
+                            gpu_materials, gpu_phantom, gpu_activities,
+                            gpu_gamma1, gpu_gamma2, cpu_gamma1, cpu_gamma2,
+                            max_buffer_size, seed);
+#endif      
+
+      mBeginRunFlag = 1;
+  }
+
+  // STEP 2 -- Fill buffer if need -------------------------------------
+  if (nb_event_in_buffer <= 0) {
+#ifdef GATE_USE_GPU
+    GPU_GateEmisTomo(gpu_materials, gpu_phantom, gpu_activities,
+                     gpu_gamma1, gpu_gamma2, cpu_gamma1, cpu_gamma2,
+                     max_buffer_size);
+    nb_event_in_buffer = max_buffer_size;
+    id_event_in_buffer = 0;
+#endif    
+  }
+  
+  // STEP 3 -- Generate one event ------------------------------------
+
+  // nb of particles return
+  int nb_p = 0;
+
+  // create one particle
+  if (cpu_gamma1.active[id_event_in_buffer]) {
+      // FIXME add transformation (R+T) to the new frame
+      G4ThreeVector position(cpu_gamma1.px[id_event_in_buffer] - half_phan_size_x,
+                             cpu_gamma1.py[id_event_in_buffer] - half_phan_size_y,
+                             cpu_gamma1.pz[id_event_in_buffer] - half_phan_size_z);
+  
+      G4ThreeVector direction(cpu_gamma1.dx[id_event_in_buffer],
+                              cpu_gamma1.dy[id_event_in_buffer],
+                              cpu_gamma1.dz[id_event_in_buffer]);
+
+      double p_time = current_time + cpu_gamma1.t[id_event_in_buffer]*ns;  // time + TOF
+  
+      G4ThreeVector p_momentum = cpu_gamma1.E[id_event_in_buffer] * MeV * direction.unit();
+
+      // Create the vertex
+      G4PrimaryVertex* vertex;
+      vertex = new G4PrimaryVertex(position, p_time);
+    
+      // Create a G4PrimaryParticle
+      G4PrimaryParticle* g4particle =  new G4PrimaryParticle(gamma_particle_definition, 
+                                                             p_momentum.x(), 
+                                                             p_momentum.y(), 
+                                                             p_momentum.z());
+      // Add the particle
+      vertex->SetPrimary( g4particle ); 
+      event->AddPrimaryVertex( vertex );
+      event->SetEventID(id_event);
+      nb_p++;
+      printf("     New particle cpu1\n");
+  }
+
+  // create one particle
+  if (cpu_gamma2.active[id_event_in_buffer]) {
+      // FIXME add transformation (R+T) to the new frame
+      G4ThreeVector position(cpu_gamma2.px[id_event_in_buffer] - half_phan_size_x,
+                             cpu_gamma2.py[id_event_in_buffer] - half_phan_size_y,
+                             cpu_gamma2.pz[id_event_in_buffer] - half_phan_size_z);
+  
+      G4ThreeVector direction(cpu_gamma2.dx[id_event_in_buffer],
+                              cpu_gamma2.dy[id_event_in_buffer],
+                              cpu_gamma2.dz[id_event_in_buffer]);
+
+      double p_time = current_time + cpu_gamma2.t[id_event_in_buffer]*ns;  // time + TOF
+  
+      G4ThreeVector p_momentum = cpu_gamma2.E[id_event_in_buffer] * MeV * direction.unit();
+
+      // Create the vertex
+      G4PrimaryVertex* vertex;
+      vertex = new G4PrimaryVertex(position, p_time);
+    
+      // Create a G4PrimaryParticle
+      G4PrimaryParticle* g4particle =  new G4PrimaryParticle(gamma_particle_definition, 
+                                                             p_momentum.x(), 
+                                                             p_momentum.y(), 
+                                                             p_momentum.z());
+      // Add the particle
+      //vertex->SetPrimary( g4particle ); 
+      //event->AddPrimaryVertex( vertex );
+      //event->SetEventID(id_event);
+      //nb_p++;
+      printf("     New particle cpu2\n");
+  }
+
+  // update particle ct
+  id_event_in_buffer++;
+  nb_event_in_buffer--;
+  id_event++;
+
+  // update time
+  double rnd = rand()/(double)(RAND_MAX);
+  current_time += (-log(rnd) / gpu_activities.tot_activity);
+  printf(":: Id event %i time %e\n", id_event, current_time);
+  
+  // FIXME EndOfRunAction
+  return nb_p; // Return one or two particles at a time
+}
+//----------------------------------------------------------
+*/
+

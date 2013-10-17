@@ -26,8 +26,8 @@ See GATE/LICENSE.txt for further details
 
 class GateGPUTransTomoActor: public GateVActor
 {
- public:
-
+ public: 
+  
   //-----------------------------------------------------------------------------
   // Actor name
   virtual ~GateGPUTransTomoActor();
@@ -40,6 +40,7 @@ class GateGPUTransTomoActor: public GateVActor
 
   //-----------------------------------------------------------------------------
   virtual void BeginOfRunAction(const G4Run*r);
+  virtual void EndOfRunAction(const G4Run *r);
   // virtual void BeginOfEventAction(const G4Event * event);
   // virtual void PreUserTrackingAction(const GateVVolume * v, const G4Track*t);
   // virtual void PostUserTrackingAction(const GateVVolume * v, const G4Track*t);
@@ -47,7 +48,7 @@ class GateGPUTransTomoActor: public GateVActor
 
   //-----------------------------------------------------------------------------
   virtual void SaveData();
-  virtual void ResetData();
+  virtual void ResetData();  
 
   void SetGPUDeviceID(int n);
   void SetGPUBufferSize(int n);
@@ -57,14 +58,20 @@ protected:
   GateGPUTransTomoActor(G4String name, G4int depth=0);
   GateGPUTransTomoActorMessenger * pMessenger;
 
-  void CreateNewParticle(const GateGPUIO_Particle & p);
-
-  // Input and output structure for gpu.
+  // Input structure for gpu.
   GateGPUIO_Input * gpu_input;
-  GateGPUIO_Output * gpu_output;
+ 
+  // Init GPU
+  Materials gpu_materials;
+  Volume gpu_phantom;
+  StackParticle gpu_photons, cpu_photons;
+
+  // Half phantom size
+  float half_phan_size_x, half_phan_size_y, half_phan_size_z;
 
   // max buffer size
   unsigned int max_buffer_size;
+  unsigned int ct_photons;
   int mGPUDeviceID;
 };
 
