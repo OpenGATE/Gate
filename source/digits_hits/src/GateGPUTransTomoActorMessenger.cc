@@ -39,13 +39,13 @@ GateGPUTransTomoActorMessenger::~GateGPUTransTomoActorMessenger()
 //-----------------------------------------------------------------------------
 void GateGPUTransTomoActorMessenger::BuildCommands(G4String base)
 {
-  G4String n = base+"/setGPUDeviceID";
-  pSetGPUDeviceIDCmd = new G4UIcmdWithAnInteger(n, this);
+  G4String n = base+"/setGPUDeviceID"; 
+  pSetGPUDeviceIDCmd = new G4UIcmdWithAnInteger(n, this); 
   G4String guid = G4String("Set the CUDA Device ID");
   pSetGPUDeviceIDCmd->SetGuidance(guid);
 
-  n = base+"/setGPUBufferSize";
-  pSetGPUBufferCmd = new G4UIcmdWithAnInteger(n, this);
+  n = base+"/setGPUBufferSize"; 
+  pSetGPUBufferCmd = new G4UIcmdWithAnInteger(n, this); 
   guid = G4String("Set the buffer size for the gpu (nb of particles)");
   pSetGPUBufferCmd->SetGuidance(guid);
 }
@@ -55,9 +55,9 @@ void GateGPUTransTomoActorMessenger::BuildCommands(G4String base)
 //-----------------------------------------------------------------------------
 void GateGPUTransTomoActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
-  if (cmd == pSetGPUDeviceIDCmd)
+  if (cmd == pSetGPUDeviceIDCmd) 
     pTransTomoActor->SetGPUDeviceID(pSetGPUDeviceIDCmd->GetNewIntValue(newValue));
-  if (cmd == pSetGPUBufferCmd)
+  if (cmd == pSetGPUBufferCmd) 
     pTransTomoActor->SetGPUBufferSize(pSetGPUBufferCmd->GetNewIntValue(newValue));
   GateActorMessenger::SetNewValue( cmd, newValue);
 }

@@ -21,6 +21,7 @@
 #include "G4ParticleTable.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4ParticleMomentum.hh"
+#include "G4UImessenger.hh"
 #include <iomanip>
 #include <vector>
 
@@ -35,7 +36,7 @@
 #include "TMath.h"
 
 
-class GateSourcePencilBeam : public GateVSource
+class GateSourcePencilBeam : public GateVSource, G4UImessenger
 {
   public:
 
@@ -55,6 +56,8 @@ class GateSourcePencilBeam : public GateVSource
     void SetParticleType(G4String ParticleType) {strcpy(mParticleType, ParticleType);}
     void SetWeight(double w) {mWeight=w; }
     double GetWeight() {return mWeight; }
+    //Particle Properties If GenericIon
+    void SetIonParameter(G4String ParticleParameters);
     //Energy
     void SetEnergy(double energy) {mEnergy=energy;}
     void SetSigmaEnergy(double sigmaE) {mSigmaEnergy=sigmaE;}
@@ -86,6 +89,11 @@ class GateSourcePencilBeam : public GateVSource
     //Particle Type
     char mParticleType[64];
     double mWeight;
+    //Particle Properties If GenericIon
+    G4int    mAtomicNumber;
+    G4int    mAtomicMass;
+    G4int    mIonCharge;
+    G4double mIonExciteEnergy;
     //Energy
     double mEnergy;
     double mSigmaEnergy;

@@ -20,6 +20,7 @@ See GATE/LICENSE.txt for further details
 #include "GateVSource.hh"
 #include "GateSourceVoxellized.hh"
 #include "GateGPUIO.hh"
+#include "GateApplicationMgr.hh"
 
 class GateGPUEmisTomoMessenger;
 class GateVSourceVoxelReader;
@@ -31,7 +32,7 @@ public:
   GateGPUEmisTomo(G4String name);
   virtual ~GateGPUEmisTomo();
 
-  virtual G4double GetNextTime(G4double timeNow);
+  //virtual G4double GetNextTime(G4double timeNow);
 
   virtual void Dump(G4int level);
 
@@ -55,7 +56,6 @@ protected:
 
   GateGPUIO_Input  * m_gpu_input;
   GateGPUIO_Output * m_gpu_output;
-  unsigned int m_current_particle_index_in_buffer;
 
   // Used for creating a primary
   G4ParticleDefinition* gamma_particle_definition;
@@ -63,13 +63,35 @@ protected:
   // Name of the attached volume
   G4String attachedVolumeName;
   
+  // Init GPU
+  Materials gpu_materials;
+  Volume gpu_phantom;
+  Activities gpu_activities;
+  StackParticle gpu_gamma1, gpu_gamma2, cpu_gamma1, cpu_gamma2;
+
+
+  // Half phantom size
+  float half_phan_size_x, half_phan_size_y, half_phan_size_z;
+
+  // Stack management
+  unsigned int max_buffer_size;
+  unsigned int nb_event_in_buffer;
+  unsigned int id_event_in_buffer;
+  unsigned int id_event;
+  double current_time;
+
+  int tot_p;
+
   // FIXME
-  int mNumberOfNextTime;
-  int mCurrentTimeID;
+  //int mNumberOfNextTime;
+
+  int mUserCount;
 
   int mCudaDeviceID;
 
-  void GeneratePrimaryEventFromGPUOutput(const GateGPUIO_Particle & particle, G4Event * event);  
+  int mBeginRunFlag;
+
+  //void GeneratePrimaryEventFromGPUOutput(const GateGPUIO_Particle & particle, G4Event * event);  
   void SetPhantomVolumeData();
 };
 

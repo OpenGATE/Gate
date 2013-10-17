@@ -158,8 +158,14 @@ void GateVSource::Visualize(G4String parmString){
   for (int k=0; k<iCount; ++k){
 	
     //m_sps->GeneratePositionStuff();
-    circle.SetPosition(m_posSPS->GenerateOne());
-    visman->Draw(circle);
+	
+	//Fix to update source visualization when it is attached to a volume
+	//M Chamberland, 20/09/2013 
+	G4ThreeVector position = m_posSPS->GenerateOne();
+	ChangeParticlePositionRelativeToAttachedVolume(position);
+	circle.SetPosition(position);
+	  
+	visman->Draw(circle);
   }
 
 #endif
@@ -763,9 +769,6 @@ void GateVSource::ChangeParticlePositionRelativeToAttachedVolume(G4ThreeVector &
   // Retrieve position according to world
   GateVVolume * v = mVolume;
   while (v->GetObjectName() != "world") {
-    // DD(v->GetObjectName());
-    // DD(v->GetPhysicalVolume(0)->GetObjectTranslation());
-    // DD(v->GetPhysicalVolume(0)->GetObjectRotationValue());    
     G4RotationMatrix r = v->GetPhysicalVolume(0)->GetObjectRotationValue();
     const G4ThreeVector & t = v->GetPhysicalVolume(0)->GetObjectTranslation();
     position = r*position;
