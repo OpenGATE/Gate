@@ -60,6 +60,8 @@ GatePhysicsListMessenger::~GatePhysicsListMessenger()
   delete pMuHandlerSetPrecision;
   delete pAddAtomDeexcitation;
   delete pAddPhysicsList;
+  delete pAddPhysicsListMixed;
+  delete pAddProcessMixed;
 }
 //----------------------------------------------------------------------------------------
 
@@ -74,6 +76,16 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   pAdd->SetParameterName("Process","Particle or Group of particles",false,true);
   pAdd->SetDefaultValue("","Default");
 
+
+ 
+  //Add Mixed processes (DNA)
+  bb = base+"/addProcessMixed";
+  pAddProcessMixed = new GateUIcmdWith2String(bb,this);
+  guidance = "Enable mixed processes";
+  pAddProcessMixed->SetGuidance(guidance);
+  pAddProcessMixed->SetParameterName("Process","mixed processes",false,true);
+  pAddProcessMixed->SetDefaultValue("","Default");
+  
   bb = base+"/removeProcess";
   pRemove = new GateUIcmdWith2String(bb,this);
   guidance = "Disable processes";
@@ -220,6 +232,20 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   guidance = "Select a Geant4 Physic List builder";
   pAddPhysicsList->SetGuidance(guidance);
   pAddPhysicsList->SetParameterName("Builder name",false);
+  
+  //Command to call Mixed G4 Physics List
+  bb = base+"/addPhysicsListMixed";
+  pAddPhysicsListMixed = new G4UIcmdWithAString(bb,this);
+  guidance = "Select a Geant4 Physic List builder to mix: emstandard_opt3_mixed_emdna, emlivermore_mixed_emdna";
+  pAddPhysicsListMixed->SetGuidance(guidance);
+  pAddPhysicsListMixed->SetParameterName("Mixed name",false);
+ 
+  bb = base+"/ConstructProcessMixed";
+  pConstructProcessMixed = new G4UIcmdWithABool(bb,this);
+  guidance = "Construct mixed processes for DNA";
+  pConstructProcessMixed->SetGuidance(guidance);
+  pConstructProcessMixed->SetParameterName("Mixed name",true);
+  pConstructProcessMixed->SetDefaultValue(true);
 
   // To set the low edge energy 
   bb = base+"/SetEnergyRangeMinLimit";
@@ -313,6 +339,18 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
             } 
           pPhylist->AddProcesses(par1,par2);
         }
+         // for mixed processes (DNA)
+         if (command == pAddProcessMixed)
+        {
+          if (nInit!=0)
+            {
+              GateWarning("Physic List already initialized: you can't add process\n");
+              return;
+            } 
+          pPhylist->ConstructProcessMixed();
+        }
+        
+      
     }
 
   // options for EM standard
@@ -380,6 +418,15 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
   if (command == pAddPhysicsList) {
     pPhylist->ConstructPhysicsList(param);
   }
+  //Command to call mixed physics list (DNA)
+ 
+   if (command == pAddPhysicsListMixed){
+    pPhylist->ConstructPhysicsListDNAMixed(param);
+   }      
+           
+   if (command == pConstructProcessMixed){
+    pPhylist->ConstructProcessMixed();
+   }      
   if (command == pEnergyRangeMinLimitCmd) {
     double val = pEnergyRangeMinLimitCmd->GetNewDoubleValue(param);
     pPhylist->SetEnergyRangeMinLimit(val);
