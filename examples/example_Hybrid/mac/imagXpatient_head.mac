@@ -1,0 +1,47 @@
+# -----------------------------------------------------
+# HU materials
+/gate/HounsfieldMaterialGenerator/SetMaterialTable data/Schneider2000MaterialsTable.txt 
+/gate/HounsfieldMaterialGenerator/SetDensityTable  data/Schneider2000DensitiesTable.txt
+/gate/HounsfieldMaterialGenerator/SetDensityTolerance               0.1 g/cm3
+/gate/HounsfieldMaterialGenerator/SetOutputMaterialDatabaseFilename data/HUmaterials-tol-0.1.db
+/gate/HounsfieldMaterialGenerator/SetOutputHUMaterialFilename       data/HU2mat-tol-0.1.txt
+/gate/HounsfieldMaterialGenerator/Generate
+
+
+# -----------------------------------------------------
+# Box FOV
+/gate/world/daughters/name           FOV
+/gate/world/daughters/insert         box
+/gate/FOV/geometry/setXLength        0.8 m
+/gate/FOV/geometry/setYLength        0.8 m
+/gate/FOV/geometry/setZLength        0.8 m
+/gate/FOV/setMaterial                Air
+/gate/FOV/vis/setVisible             1
+/gate/FOV/vis/setColor               green
+
+# Rotation
+# The patient is rotated instead of the linac => change rotation sign
+/gate/FOV/moves/insert               rotation
+/gate/FOV/rotation/setSpeed          1 deg/s
+/gate/FOV/rotation/setAxis           0 0 1
+#/gate/FOV/rotation/angle             90 deg
+# Starting angle
+/gate/FOV/placement/setRotationAxis  0 1 0
+/gate/FOV/placement/setRotationAngle 90 deg
+
+# -----------------------------------------------------
+# Patient
+/gate/FOV/daughters/name patient
+
+# --> Nested
+/gate/FOV/daughters/insert                              ImageNestedParametrisedVolume
+
+# --> Commmon part
+/gate/geometry/setMaterialDatabase                      data/HUmaterials-tol-0.1.db
+/gate/patient/geometry/SetHUToMaterialFile              data/HU2mat-tol-0.1.txt
+/gate/patient/geometry/SetImage                         data/103130_head__1.5mm_recon.mhd
+
+
+# For visu debug, enable the following
+#/gate/patient/geometry/enableBoundingBoxOnly            true
+
