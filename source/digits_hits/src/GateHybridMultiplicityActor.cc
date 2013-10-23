@@ -287,7 +287,6 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 	G4double trackWeight = step->GetTrack()->GetWeight() / currentSecondaryMultiplicity;
 	G4VParticleChange* particleChange(0);
 	G4TrackVector *trackVector = (const_cast<G4Step *>(step))->GetfSecondary();
-	G4Step *newStep;
 
 	// Main loop dedicated to secondary hybrid particle 
 	for(int i=0; i<currentSecondaryMultiplicity; i++)
@@ -295,14 +294,14 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 	  // Call the PostStepDoIt function related to the current process
 	  particleChange = currentProcess->PostStepDoIt((const G4Track)(*myTrack), *myStep);
 	  particleChange->SetVerboseLevel(0);
-	  newStep = particleChange->UpdateStepForPostStep(myStep);
+	  particleChange->UpdateStepForPostStep(myStep);
 
   // 	GateMessage("Actor", 0, "prePos = " << newStep->GetPreStepPoint()->GetPosition() << " preDir = " << newStep->GetPreStepPoint()->GetMomentumDirection() << G4endl);
   // 	GateMessage("Actor", 0, "posPos = " << newStep->GetPostStepPoint()->GetPosition() << " posDir = " << newStep->GetPostStepPoint()->GetMomentumDirection() << G4endl);
 	  
 	  // Create a hybrid track and attach it to the primary particle
-	  G4double energy = newStep->GetPostStepPoint()->GetKineticEnergy();
-	  G4ThreeVector momentum = newStep->GetPostStepPoint()->GetMomentumDirection();
+	  G4double energy = myStep->GetPostStepPoint()->GetKineticEnergy();
+	  G4ThreeVector momentum = myStep->GetPostStepPoint()->GetMomentumDirection();
 	  G4DynamicParticle *hybridParticle = new G4DynamicParticle(hybridino, momentum, energy);
 	  G4Track *newTrack = new G4Track(hybridParticle, globalTime, position);  
 	  newTrack->SetParentID(parentID);
