@@ -72,7 +72,9 @@ public:
   ~GateMaterialMuHandler();
   double GetAttenuation(G4Material* material, double energy);
   double GetMu(G4Material* material, double energy);
-
+  GateMuTable *GetMuTable(G4Material *);
+  
+  
   void SetElementsFolderName(G4String folder) { mElementsFolderName = folder; }
   void SetEMin(double e) { mEnergyMin = e; }
   void SetEMax(double e) { mEnergyMax = e; }
