@@ -259,9 +259,12 @@ void GateMHDImage::WriteHeader(std::string filename, GateImage * image, bool wri
   std::string dataName;
   GetRawFilename(filename, dataName, false);
   double p[3];
-  p[0] = image->GetOrigin().x();
-  p[1] = image->GetOrigin().y();
-  p[2] = image->GetOrigin().z();
+  // Gate convention: origin is the corner of the first pixel
+  // MHD / ITK convention: origin is the center of the first pixel
+  // -> Add a half pixel
+  p[0] = image->GetOrigin().x() + image->GetVoxelSize().x()/2.0;
+  p[1] = image->GetOrigin().y() + image->GetVoxelSize().y()/2.0;
+  p[2] = image->GetOrigin().z() + image->GetVoxelSize().z()/2.0;
   m_MetaImage.Position(p);
   
   // Transform
