@@ -24,9 +24,9 @@
 
 /gate/physics/addProcess PositronAnnihilation
 
-/gate/physics/addProcess MultipleScattering
-/gate/physics/processes/MultipleScattering/setGeometricalStepLimiterType e- distanceToBoundary
-/gate/physics/processes/MultipleScattering/setGeometricalStepLimiterType e+ distanceToBoundary
+/gate/physics/addProcess eMultipleScattering
+/gate/physics/processes/eMultipleScattering/setGeometricalStepLimiterType e- distanceToBoundary
+/gate/physics/processes/eMultipleScattering/setGeometricalStepLimiterType e+ distanceToBoundary
 
 /gate/physics/addProcess HadronIonisation
 /gate/physics/removeProcess HadronIonisation deuteron
