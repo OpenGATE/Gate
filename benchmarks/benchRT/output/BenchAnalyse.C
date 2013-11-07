@@ -26,15 +26,15 @@
   buffer_g = (float*) malloc (lSize);
 
 //... open the image
-  FILE* pFile;
-  FILE* gFile;
+  FILE* protonFile;
+  FILE* gammaFile;
 
-  pFile = fopen ("output/Config-proton-Edep.img" , "rb" );
-  gFile = fopen ("output/Config-gamma-Edep.img" , "rb" );
+  protonFile = fopen ("output/Config-proton-Edep.img" , "rb" );
+  gammaFile = fopen ("output/Config-gamma-Edep.img" , "rb" );
   
 //... read the image
- fread (buffer_p,1,lSize,pFile);
- fread (buffer_g,1,lSize,gFile);
+ fread (buffer_p,1,lSize,protonFile);
+ fread (buffer_g,1,lSize,gammaFile);
 
  
  for(int i = 0 ; i<nZ ; i++){
@@ -45,8 +45,8 @@
      y2[i] = buffer_g[i];
  }
 
-fclose(pFile);
-fclose(gFile);
+fclose(protonFile);
+fclose(gammaFile);
  
  
    TGraph *gr1 = new TGraph(nZ,x1,y1);
