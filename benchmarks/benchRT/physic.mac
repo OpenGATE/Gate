@@ -54,9 +54,9 @@
 /gate/physics/addProcess HadronElastic GenericIon
 /gate/physics/processes/HadronElastic/setModel G4LElastic GenericIon
 
-/gate/physics/addProcess UHadronElastic
-/gate/physics/processes/UHadronElastic/setModel G4HadronElastic
-/gate/physics/processes/UHadronElastic/setDataSet G4HadronElasticDataSet
+/gate/physics/addProcess HadronElastic
+/gate/physics/processes/HadronElastic/setModel G4HadronElastic
+/gate/physics/processes/HadronElastic/setDataSet G4HadronElasticDataSet
 
 /gate/physics/addProcess ProtonInelastic
 /gate/physics/processes/ProtonInelastic/setModel G4BinaryCascade
