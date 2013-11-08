@@ -53,7 +53,7 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
   mHLabelImageFilename = "none";
   mIsBoundingBoxOnlyModeEnabled = false;
   mImageMaterialsFromHounsfieldTableDone = false;
-  mTransformMatrix.resize(9);
+  //mTransformMatrix.resize(9);
   GateMessageDec("Volume",5,"End GateVImageVolume("<<name<<")"<<G4endl);
 
   // do not display all voxels, only bounding box
@@ -117,26 +117,37 @@ void GateVImageVolume::UpdatePositionWithIsoCenter()
     GateMessage("Volume",3,"Isocenter = " << GetIsoCenter() << G4endl);
     GateMessage("Volume",3,"Origin = " << GetOrigin() << G4endl);
     GateMessage("Volume",3,"Half = " << GetHalfSize() << G4endl);
-    GateMessage("Volume",3,"TransformMatrix = "
-                << mTransformMatrix[0] << " " << mTransformMatrix[1] << " "
-                << mTransformMatrix[2] << " " << mTransformMatrix[3] << " "
-                << mTransformMatrix[4] << " " << mTransformMatrix[5] << " "
-                << mTransformMatrix[6] << " " << mTransformMatrix[7] << " "
-                << mTransformMatrix[8] << " " << G4endl);
+    GateMessage("Volume",3,"TransformMatrix = " << mTransformMatrix << G4endl);
+ //    GateMessage("Volume",3,"TransformMatrix = "
+//                << mTransformMatrix[0] << " " << mTransformMatrix[1] << " "
+//                << mTransformMatrix[2] << " " << mTransformMatrix[3] << " "
+//                << mTransformMatrix[4] << " " << mTransformMatrix[5] << " "
+//                << mTransformMatrix[6] << " " << mTransformMatrix[7] << " "
+//                << mTransformMatrix[8] << " " << G4endl);
 
-    // Take transformationMatrix into account
-    G4ThreeVector iso = mIsoCenter;
-    std::vector<double> & m = mTransformMatrix;
-    // Consider transpose (inverse of a rotation matrix)
-    iso[0] = mIsoCenter[0] * m[0] + mIsoCenter[1] * m[3] + mIsoCenter[2] * m[6];
-    iso[1] = mIsoCenter[0] * m[1] + mIsoCenter[1] * m[4] + mIsoCenter[2] * m[7];
-    iso[2] = mIsoCenter[0] * m[2] + mIsoCenter[1] * m[5] + mIsoCenter[2] * m[8];
+//    // Take transformationMatrix into account
+//    G4ThreeVector iso = mIsoCenter;
+//    //std::vector<double> & m = mTransformMatrix;
 
-    // Compute translation
-    G4ThreeVector q;
-    q = iso - GetOrigin();
-    q = q - GetHalfSize();
-    q = tcurrent - q;
+//    // Consider transpose (inverse of a rotation matrix)
+//    iso[0] = mIsoCenter[0] * m[0] + mIsoCenter[1] * m[3] + mIsoCenter[2] * m[6];
+//    iso[1] = mIsoCenter[0] * m[1] + mIsoCenter[1] * m[4] + mIsoCenter[2] * m[7];
+//    iso[2] = mIsoCenter[0] * m[2] + mIsoCenter[1] * m[5] + mIsoCenter[2] * m[8];
+
+//    // Compute translation
+//    G4ThreeVector q;
+//    q = iso - GetOrigin();
+//    q = q - GetHalfSize();
+//    q = tcurrent - q;
+
+        // Compute translation
+        G4ThreeVector q = mIsoCenter - GetOrigin();
+        q[0] -= pImage->GetVoxelSize()[0]/2.0;
+        q[1] -= pImage->GetVoxelSize()[1]/2.0;
+        q[2] -= pImage->GetVoxelSize()[2]/2.0;
+        q -= mTransformMatrix.inverse()*GetHalfSize();
+        q = tcurrent - q;
+
     // G4ThreeVector p;
     //     p.setX(tcurrent.x()-(GetIsoCenter().x()-GetOrigin().x()-GetHalfSize().x()));
     //     p.setY(tcurrent.y()-(GetIsoCenter().y()-GetOrigin().y()-GetHalfSize().y()));
@@ -261,6 +272,7 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
 			tmp->GetResolution().z() + 2);
     pImage->SetResolutionAndVoxelSize(res,tmp->GetVoxelSize());
     pImage->SetOrigin(tmp->GetOrigin());
+    pImage->SetTransformMatrix(tmp->GetTransformMatrix());
     pImage->Allocate();
     //pImage->Fill(-1);
     pImage->SetOutsideValue(  tmp->GetMinValue() - 1 );
@@ -282,10 +294,22 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
   //origin = pImage->GetOrigin();
   SetOriginByUser(pImage->GetOrigin());
 
-  // Get the transformation matrix from the image
-  for(uint i=0; i<9; i++) {
-    mTransformMatrix[i] = pImage->GetTransformMatrix()[i];
-  }
+  G4ThreeVector row_x, row_y, row_z;
+    for(unsigned int i=0; i<3; i++)
+      row_x[i] = pImage->GetTransformMatrix()[i];
+    for(unsigned int i=0; i<3; i++)
+      row_y[i] = pImage->GetTransformMatrix()[i+3];
+    for(unsigned int i=0; i<3; i++)
+      row_z[i] = pImage->GetTransformMatrix()[i+6];
+  double delta;
+  G4ThreeVector axis;
+  mTransformMatrix.setRows(row_x, row_y, row_z);
+  mTransformMatrix.getAngleAxis(delta, axis);
+  //*** FIXME: axis-angle calculation ***
+//  G4cout << "$$$ Angle : " << delta << G4endl;
+//  G4cout << "%%% Axis : " << axis << G4endl;
+  this->GetVolumePlacement()->SetRotationAngle(delta);
+  this->GetVolumePlacement()->SetRotationAxis(axis);
 
   GateMessage("Volume",4,"voxel size" << pImage->GetVoxelSize() << G4endl);
   GateMessage("Volume",4,"origin" << origin << G4endl);

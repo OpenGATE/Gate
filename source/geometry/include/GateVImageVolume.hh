@@ -103,6 +103,9 @@ public:
   inline ImageType* GetImage() { return pImage; }
   inline const ImageType* GetImage() const { return pImage; }
 
+  /// Returns the volume's transform matrix
+  inline G4RotationMatrix GetTransformMatrix() const { return mTransformMatrix; }
+
   /// Returns the label at point p
   //  inline LabelType GetLabel( G4ThreeVector p ) { return (LabelType)pImage->GetValue(p); }
   /// Returns the label at voxel of index
@@ -212,7 +215,8 @@ protected:
   G4ThreeVector mIsoCenter;
   G4bool        mIsoCenterIsSetByUser;
   G4ThreeVector mInitialTranslation;
-  std::vector<double> mTransformMatrix;
+  //std::vector<double> mTransformMatrix;
+  G4RotationMatrix mTransformMatrix;
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------

@@ -83,6 +83,14 @@ public:
 
   const std::vector<double> & GetTransformMatrix() const { return transformMatrix; }
 
+  inline void SetTransformMatrix(std::vector<double> transMatrix)
+  {
+    transformMatrix.resize(9);
+    transformMatrix.clear();
+    for(unsigned int i = 0; i<9; i++)
+      transformMatrix[i] = transMatrix[i];
+  }
+
   bool HasSameResolutionThan(const GateImage & image) const;
   bool HasSameResolutionThan(const GateImage * pImage) const;
 
