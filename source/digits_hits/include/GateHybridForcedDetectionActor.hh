@@ -89,6 +89,7 @@ public:
   void SetSingleInteractionEnergy(G4double e) { mSingleInteractionEnergy = e; }
   void SetSingleInteractionZ(G4int z) { mSingleInteractionZ = z; }
   void SetPhaseSpaceFilename(G4String name) { mPhaseSpaceFilename = name; }
+  void SetWaterLUTFilename(G4String name) { mWaterLUTFilename = name; }
 
   // Typedef for rtk
   static const unsigned int Dimension = 3;
@@ -131,6 +132,7 @@ protected:
   G4String mFluorescenceFilename;
   G4String mSecondaryFilename;
   G4String mTotalFilename;
+  G4String mWaterLUTFilename;
 
   G4ThreeVector mDetectorResolution;
   GateEnergyResponseFunctor mEnergyResponseDetector;
@@ -222,6 +224,10 @@ protected:
   Char_t        mInteractionVolume[256];
   Char_t        mInteractionMaterial[256];
   int           mInteractionZ;
+
+  // Water equivalent conversion
+  void CreateWaterLUT(const std::vector<double> &energyList,
+                      const std::vector<double> &energyWeightList);
 };
 //-----------------------------------------------------------------------------
 

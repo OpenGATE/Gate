@@ -55,6 +55,7 @@ protected:
   G4UIcmdWithADoubleAndUnit * pSetSingleInteractionEnergyCmd;
   G4UIcmdWithAnInteger * pSetSingleInteractionZCmd;
   G4UIcmdWithAString * pSetPhaseSpaceFilenameCmd;
+  G4UIcmdWithAString * pSetWaterLUTFilenameCmd;
 };
 
 #endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH*/

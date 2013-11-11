@@ -140,6 +140,11 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
   pSetPhaseSpaceFilenameCmd = new G4UIcmdWithAString(bb,this);
   guidance = "Set the file name for storing all interactions in a phase space file in root format.";
   pSetPhaseSpaceFilenameCmd->SetGuidance(guidance);
+
+  bb = base+"/waterLUTFilename";
+  pSetWaterLUTFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for storing all interactions in a phase space file in root format.";
+  pSetWaterLUTFilenameCmd->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -167,6 +172,7 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetSingleInteractionEnergyCmd) pHybridActor->SetSingleInteractionEnergy(pSetSingleInteractionEnergyCmd->GetNewDoubleValue(param));
   if(command == pSetSingleInteractionZCmd) pHybridActor->SetSingleInteractionZ(pSetSingleInteractionZCmd->GetNewIntValue(param));
   if(command == pSetPhaseSpaceFilenameCmd) pHybridActor->SetPhaseSpaceFilename(param);
+  if(command == pSetWaterLUTFilenameCmd) pHybridActor->SetWaterLUTFilename(param);
 
   GateActorMessenger::SetNewValue(command ,param );
 }
