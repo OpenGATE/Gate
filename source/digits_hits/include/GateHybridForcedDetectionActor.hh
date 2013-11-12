@@ -150,6 +150,8 @@ protected:
 
   // Geometry information initialized at the beginning of the run
   G4AffineTransform m_WorldToCT;
+  G4AffineTransform m_SourceToCT;
+  PointType mPrimarySourcePosition;
   PointType mDetectorPosition;
   VectorType mDetectorRowVector;
   VectorType mDetectorColVector;
