@@ -249,11 +249,11 @@ void GateMHDImage::GetRawFilename(std::string filename, std::string & f, bool ke
 //-----------------------------------------------------------------------------
 void GateMHDImage::WriteHeader(std::string filename, GateImage * image, bool writeData)
 {
-  MetaImage m_MetaImage(image->GetResolution().x(), 
-                        image->GetResolution().y(), 
-                        image->GetResolution().z(), 
-                        image->GetVoxelSize().x(), 
-                        image->GetVoxelSize().y(), 
+  MetaImage m_MetaImage(image->GetResolution().x(),
+                        image->GetResolution().y(),
+                        image->GetResolution().z(),
+                        image->GetVoxelSize().x(),
+                        image->GetVoxelSize().y(),
                         image->GetVoxelSize().z(), MET_FLOAT);
   std::string headName = filename;
   std::string dataName;
@@ -266,9 +266,15 @@ void GateMHDImage::WriteHeader(std::string filename, GateImage * image, bool wri
   p[1] = image->GetOrigin().y() + image->GetVoxelSize().y()/2.0;
   p[2] = image->GetOrigin().z() + image->GetVoxelSize().z()/2.0;
   m_MetaImage.Position(p);
-  
+
   // Transform
-  m_MetaImage.TransformMatrix(&image->GetTransformMatrix()[0]); // FIXME
+  double matrix[9];
+  for(unsigned int i=0; i<3; i++) {
+    matrix[i*3  ] = image->GetTransformMatrix().row1()[i];
+    matrix[i*3+1] = image->GetTransformMatrix().row2()[i];
+    matrix[i*3+2] = image->GetTransformMatrix().row3()[i];
+  }
+  m_MetaImage.TransformMatrix(matrix);
 
   if (writeData) {
     m_MetaImage.ElementData(&(image->begin()[0]), false); // true = autofree

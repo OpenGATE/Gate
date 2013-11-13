@@ -253,19 +253,12 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
   }
 
   // Get origin from the image
-  //origin = pImage->GetOrigin();
   SetOriginByUser(pImage->GetOrigin());
 
-  G4ThreeVector row_x, row_y, row_z;
-  for(unsigned int i=0; i<3; i++) {
-    row_x[i] = pImage->GetTransformMatrix()[i*3];
-    row_y[i] = pImage->GetTransformMatrix()[i*3+1];
-    row_z[i] = pImage->GetTransformMatrix()[i*3+2];
-  }
-
+  // Account for image rotation matrix
+  mTransformMatrix = pImage->GetTransformMatrix();
   double delta;
   G4ThreeVector axis;
-  mTransformMatrix.setRows(row_x, row_y, row_z);
   mTransformMatrix.getAngleAxis(delta, axis);
   this->GetVolumePlacement()->SetRotationAngle(delta);
   this->GetVolumePlacement()->SetRotationAxis(axis);
