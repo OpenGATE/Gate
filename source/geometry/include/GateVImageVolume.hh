@@ -215,7 +215,6 @@ protected:
   G4ThreeVector mIsoCenter;
   G4bool        mIsoCenterIsSetByUser;
   G4ThreeVector mInitialTranslation;
-  //std::vector<double> mTransformMatrix;
   G4RotationMatrix mTransformMatrix;
   //-----------------------------------------------------------------------------
 
