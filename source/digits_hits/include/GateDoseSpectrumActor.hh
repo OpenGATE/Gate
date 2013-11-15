@@ -59,11 +59,11 @@ protected:
   //double mEnergyDepot;
   int mLastHitEventImage;
   int mCurrentEvent;
-  double mEventEnergy;
+  G4double mEventEnergy, mOldEventEnergy, mDoseEnergyTemp, mEnergyEventTemp;
   //double DOSIS;
   std::map< G4double, G4int > mNumParticPerEnergy;
-  std::map< G4int, G4double > mDoseEnergyTemp;
-  std::map< G4int, G4double > mEnergyEventTemp;
+  //std::map< G4int, G4double > mDoseEnergyTemp;
+  //std::map< G4int, G4double > mEnergyEventTemp;
   std::map< G4double, G4double > mDoseEnergy;
   std::map< G4double, G4double > mDoseEnergySquare;
   GateDoseSpectrumActorMessenger* pMessenger;
