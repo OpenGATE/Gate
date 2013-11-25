@@ -69,6 +69,14 @@ double GateMaterialMuHandler::GetMu(G4Material* material, double energy)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+GateMuTable *GateMaterialMuHandler::GetMuTable(G4Material *material)
+{
+  if(!mIsInitialized) { Initialize(); }
+  return mMaterialTable[material->GetName()];
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 inline double interpolation(double Xa,double Xb,double Ya,double Yb,double x){
   return exp(log(Ya) + log(Yb/Ya) / log(Xb/Xa)* log(x/Xa) );
 }
