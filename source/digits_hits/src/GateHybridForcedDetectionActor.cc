@@ -1041,13 +1041,14 @@ GateHybridForcedDetectionActor::CreateWaterLUT(const std::vector<double> &energy
   double attLeft = 0.;
   it.GoToBegin();
   ++it;
+  double attRight = it.Get();
   while(!itInv.IsAtEnd()) {
-    while(attLeft>currAtt) {
+    while(attRight<currAtt) {
       attLeft = it.Get();
       lengthLeft += spacing;
       ++it;
+      attRight = it.Get();
     }
-    double attRight = it.Get();
     itInv.Set( ((currAtt-attLeft) * (lengthLeft+spacing) + (attRight-currAtt) * (lengthLeft)) / (attRight-attLeft) );
 
     // Next
