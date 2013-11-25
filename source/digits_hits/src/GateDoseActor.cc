@@ -76,10 +76,13 @@ void GateDoseActor::Construct() {
   // material for dedx computation for DoseToWater.
   G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
 
+  // Record the stepHitType
+  mUserStepHitType = mStepHitType;
+  
   // Enable callbacks
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
-  EnablePreUserTrackingAction(false);
+  EnablePreUserTrackingAction(true);
   EnableUserSteppingAction(true);
 
   // Check if at least one image is enabled
@@ -333,6 +336,14 @@ void GateDoseActor::BeginOfEventAction(const G4Event * e) {
   GateVActor::BeginOfEventAction(e);
   mCurrentEvent++;
   GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Event: "<<mCurrentEvent << G4endl);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateDoseActor::UserPreTrackActionInVoxel(const int /*index*/, const G4Track* track)
+{
+  if(track->GetDefinition()->GetParticleName() == "gamma") { mStepHitType = PostStepHitType; }
+  else { mStepHitType = mUserStepHitType; }
 }
 //-----------------------------------------------------------------------------
 
