@@ -57,35 +57,35 @@ GateImageRegionalizedVolume::~GateImageRegionalizedVolume()
   GateMessageInc("Volume",5,"~GateImageRegionalizedVolume() - begin"<<G4endl);
 
   /* for(std::vector<GateImageRegionalizedSubVolume*>::iterator i = mSubVolume.begin(); i!=mSubVolume.end(); i++)
-  {
-    i = mSubVolume.erase(i);
-    }*/
+     {
+     i = mSubVolume.erase(i);
+     }*/
   //std::for_each(mSubVolume.begin(),mSubVolume.end(), Delete() );
 
   for(std::map<LabelType,GateImageRegionalizedSubVolume*>::iterator i = mLabelToSubVolume.begin(); i!=mLabelToSubVolume.end(); i++)
-  {
-
-    for(std::vector<GateImageRegionalizedSubVolume*>::iterator it = mSubVolume.begin(); it!=mSubVolume.end(); it++)
     {
-      if(i->second==(*it)){
+
+      for(std::vector<GateImageRegionalizedSubVolume*>::iterator it = mSubVolume.begin(); it!=mSubVolume.end(); it++)
+        {
+          if(i->second==(*it)){
+            delete (*it);
+            (*it) = NULL;
+            i->second  = NULL;
+          }
+        }
+      if(i->second) delete i->second ;
+      i->second  = NULL;
+    }
+  for(std::vector<GateImageRegionalizedSubVolume*>::iterator it = mSubVolume.begin(); it!=mSubVolume.end(); it++)
+    {
+      if((*it)){
         delete (*it);
         (*it) = NULL;
-        i->second  = NULL;
       }
     }
-    if(i->second) delete i->second ;
-    i->second  = NULL;
-  }
-  for(std::vector<GateImageRegionalizedSubVolume*>::iterator it = mSubVolume.begin(); it!=mSubVolume.end(); it++)
-  {
-    if((*it)){
-       delete (*it);
-       (*it) = NULL;
-    }
-  }
 
-    //mLabelToSubVolume.erase(i);
-     //}
+  //mLabelToSubVolume.erase(i);
+  //}
   //std::for_each(mLabelToSubVolume.begin(), mLabelToSubVolume.end(), DeleteGlob<LabelType,GateImageRegionalizedSubVolume>() );
 
   if(pDistanceMap) delete pDistanceMap;
@@ -371,126 +371,126 @@ EInside GateImageRegionalizedVolume::Inside(const G4ThreeVector& p, LabelType la
   if ((ii != i) && (jj != j) && (kk != k)) { TEST(ii, jj, kk); }
 
   /*
-     if (xsurf[0]) {
-     GateDebugMessage("Volume", 6, "\t xsurf, voisin=" << (LabelType)GetImage()->GetValue(i-1,j,k)<<G4endl);
-     if ((nl=(LabelType)GetImage()->GetValue(i-1,j,k)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     if (ysurf[0]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i-1,j-1,k)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     if (zsurf[0]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i-1,j-1,k-1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     else if (zsurf[1]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i-1,j-1,k+1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     }
-     else if (ysurf[1]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i-1,j+1,k)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     if (zsurf[0]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i-1,j+1,k-1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     else if (zsurf[1]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i-1,j+1,k+1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     }
-     else {
-     if (zsurf[0]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i-1,j,k-1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     else if (zsurf[1]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i-1,j,k+1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     }
-     }
-     else if (xsurf[1]) {
-     GateDebugMessage("Volume", 6, "\t xsurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j,k)<<G4endl);
-     if ((nl=(LabelType)GetImage()->GetValue(i+1,j,k)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     if (ysurf[0]) {
-     GateDebugMessage("Volume", 6, "\t ysurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j-1,k)<<G4endl);
-     if ((nl=(LabelType)GetImage()->GetValue(i+1,j-1,k)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     if (zsurf[0]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i+1,j-1,k-1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     else if (zsurf[1]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i+1,j-1,k+1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     }
-     else if (ysurf[1]) {
-     GateDebugMessage("Volume", 6, "\t ysurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j+1,k)<<G4endl);
-     if ((nl=(LabelType)GetImage()->GetValue(i+1,j+1,k)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     if (zsurf[0]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i+1,j+1,k-1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     else if (zsurf[1]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i+1,j+1,k+1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     }
-     else {
-     if (zsurf[0]) {
-     GateDebugMessage("Volume", 6, "\t zsurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j,k-1)<<G4endl);
-     if ((nl=(LabelType)GetImage()->GetValue(i+1,j,k-1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     else if (zsurf[1]) {
-     GateDebugMessage("Volume", 6, "\t zsurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j,k+1)<<G4endl);
-     if ((nl=(LabelType)GetImage()->GetValue(i+1,j,k+1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     }
-     }
-     else {
-     if (ysurf[0]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i,j-1,k)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     if (zsurf[0]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i,j-1,k-1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     else if (zsurf[1]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i,j-1,k+1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     }
-     else if (ysurf[1]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i,j+1,k)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     if (zsurf[0]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i,j+1,k-1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     else if (zsurf[1]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i,j+1,k+1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     }
-     else {
-     if (zsurf[0]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i,j,k-1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     else if (zsurf[1]) {
-     if ((nl=(LabelType)GetImage()->GetValue(i,j,k+1)) != cl)
-     mInside[cl] = mInside[nl] = kSurface;
-     }
-     }
-     }
-     // ok, we have parsed the complete 26-neighbourhood of the point !
-     */
+    if (xsurf[0]) {
+    GateDebugMessage("Volume", 6, "\t xsurf, voisin=" << (LabelType)GetImage()->GetValue(i-1,j,k)<<G4endl);
+    if ((nl=(LabelType)GetImage()->GetValue(i-1,j,k)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    if (ysurf[0]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i-1,j-1,k)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    if (zsurf[0]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i-1,j-1,k-1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    else if (zsurf[1]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i-1,j-1,k+1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    }
+    else if (ysurf[1]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i-1,j+1,k)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    if (zsurf[0]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i-1,j+1,k-1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    else if (zsurf[1]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i-1,j+1,k+1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    }
+    else {
+    if (zsurf[0]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i-1,j,k-1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    else if (zsurf[1]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i-1,j,k+1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    }
+    }
+    else if (xsurf[1]) {
+    GateDebugMessage("Volume", 6, "\t xsurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j,k)<<G4endl);
+    if ((nl=(LabelType)GetImage()->GetValue(i+1,j,k)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    if (ysurf[0]) {
+    GateDebugMessage("Volume", 6, "\t ysurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j-1,k)<<G4endl);
+    if ((nl=(LabelType)GetImage()->GetValue(i+1,j-1,k)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    if (zsurf[0]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i+1,j-1,k-1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    else if (zsurf[1]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i+1,j-1,k+1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    }
+    else if (ysurf[1]) {
+    GateDebugMessage("Volume", 6, "\t ysurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j+1,k)<<G4endl);
+    if ((nl=(LabelType)GetImage()->GetValue(i+1,j+1,k)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    if (zsurf[0]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i+1,j+1,k-1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    else if (zsurf[1]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i+1,j+1,k+1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    }
+    else {
+    if (zsurf[0]) {
+    GateDebugMessage("Volume", 6, "\t zsurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j,k-1)<<G4endl);
+    if ((nl=(LabelType)GetImage()->GetValue(i+1,j,k-1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    else if (zsurf[1]) {
+    GateDebugMessage("Volume", 6, "\t zsurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j,k+1)<<G4endl);
+    if ((nl=(LabelType)GetImage()->GetValue(i+1,j,k+1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    }
+    }
+    else {
+    if (ysurf[0]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i,j-1,k)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    if (zsurf[0]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i,j-1,k-1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    else if (zsurf[1]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i,j-1,k+1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    }
+    else if (ysurf[1]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i,j+1,k)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    if (zsurf[0]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i,j+1,k-1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    else if (zsurf[1]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i,j+1,k+1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    }
+    else {
+    if (zsurf[0]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i,j,k-1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    else if (zsurf[1]) {
+    if ((nl=(LabelType)GetImage()->GetValue(i,j,k+1)) != cl)
+    mInside[cl] = mInside[nl] = kSurface;
+    }
+    }
+    }
+    // ok, we have parsed the complete 26-neighbourhood of the point !
+    */
 
   GateDebugMessage("Volume", 6, "\t** Result Inside for " << label << " = " << mInside[label] << G4endl);
 
