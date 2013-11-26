@@ -87,9 +87,13 @@ public:
 				   G4NavigationHistory & history) const;
   //-----------------------------------------------------------------------------
 
-  //DS Add SD to subvolume
+  // This function add multi-SD to the sub logical-volume
   virtual void PropageteSensitiveDetectorToChild(GateMultiSensitiveDetector *);
-  // virtual void PropagateRegionToChild();
+
+  // This function add 'global' SD (Root output, PhantomSD) to the sub
+  // logical-volume (see GateVVolume.hh)
+  virtual void PropagateGlobalSensitiveDetector();
+
 
 protected:
   //-----------------------------------------------------------------------------
