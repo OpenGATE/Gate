@@ -194,6 +194,9 @@ void GateVVolume::ConstructGeometry(G4LogicalVolume* mother_log, G4bool flagUpda
   //  volume construction
   pOwnLog = ConstructOwnSolidAndLogicalVolume(pOwnMaterial, flagUpdateOnly);
 
+  // Propagate Sensitive Detector if needed (see explanation in .hh)
+  PropagateGlobalSensitiveDetector();
+
   GateMessage("Geometry", 8, " " << GetSolidName() << " and " << GetLogicalVolumeName() << " volumes have been constructed.\n");
   GateDebugMessageInc("Cuts", 9, "-- Constructing region for volume = " << GetObjectName() << G4endl);
 
@@ -398,6 +401,7 @@ void GateVVolume::AttachCrystalSD()
 // Tell the creator that the logical volume should be attached to the phantom-SD
 void GateVVolume::AttachPhantomSD()
 {
+  DD("GateVVolume::AttachPhantomSD");
   /*  if (!CheckOutputExistence()){
   // Add OutputMgr output actor to theListOfActors
   GateActorManager::GetInstance()->GateActorManager::AddActor("OutputMgr", "output", 0);

@@ -194,7 +194,7 @@ public :
   //! Tell the creator that the logical volume should be attached to the phantom-SD
   virtual void AttachPhantomSD() ;
 
-        void AttachARFSD(); /* PY Descourt 08/09/2009 */
+  void AttachARFSD(); /* PY Descourt 08/09/2009 */
 
   virtual void AttachOutputToVolume();
 
@@ -216,6 +216,11 @@ protected :
   //! Method automatically called to color-code the object when its material changes.
   virtual void AutoSetColor();
 
+  // Use to propagate global SD (such as PhantomSD) to child logical
+  // volume. Do nothing by default. Complex volume (such as voxelized)
+  // must implement this function to set the sensitive detector to
+  // their sub-logical volume.
+  virtual void PropagateGlobalSensitiveDetector() {;}
 
 protected :
 
