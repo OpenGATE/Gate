@@ -119,8 +119,6 @@ GateToRoot::GateToRoot(const G4String& name, GateOutputMgr* outputMgr,DigiMode d
     if (digiMode==kofflineMode)
     m_fileName="digigate";
   */
-  DD("GateToRoot::Constructor");
-  DD(name);
   m_isEnabled = false; // Keep this flag false: all output are disabled by default
   nVerboseLevel = 0;
 
