@@ -250,7 +250,6 @@ void GateImageNestedParametrisedVolume::GetPhysVolForAVoxel(const G4int index,
   mVoxelParametrisation->ComputeTransformation(iz, pPhysVol);
   GateDebugMessage("Volume",5,"GetPhysVolForAVoxel -- phys T = " << pPhysVol->GetTranslation() << G4endl);
 
-
   // Set index
   mPhysVolX->SetCopyNo(ix);
   mPhysVolY->SetCopyNo(iy);
@@ -290,9 +289,7 @@ void GateImageNestedParametrisedVolume::GetPhysVolForAVoxel(const G4int index,
 //---------------------------------------------------------------------------
 void GateImageNestedParametrisedVolume::PropagateGlobalSensitiveDetector()
 {
-  DD("GateImageNestedParametrisedVolume::PropagateGlobalSensitiveDetector");
   if (m_sensitiveDetector) {
-    DD("m_sensitiveDetector not null : propagate AttachPhantomSD");
     GatePhantomSD* phantomSD = GateDetectorConstruction::GetGateDetectorConstruction()->GetPhantomSD();
     logYRep->SetSensitiveDetector(phantomSD);
     logXRep->SetSensitiveDetector(phantomSD);
