@@ -313,12 +313,13 @@ void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolum
 
   // here indicate to the volume that he has to add the SD to his child ...
   // should cast the GetSensitiveDetector
-  volume->PropageteSensitiveDetectorToChild(dynamic_cast<GateMultiSensitiveDetector*>(volume->GetLogicalVolume()->GetSensitiveDetector()));
+  volume->PropagateSensitiveDetectorToChild(dynamic_cast<GateMultiSensitiveDetector*>(volume->GetLogicalVolume()->GetSensitiveDetector()));
 
   GateDebugMessageDec("Actor",4,"Actor Manager -- SetMFD -- end"<<G4endl);
 
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 G4bool GateActorManager::AddFilter(G4String filterType, G4String actorName )

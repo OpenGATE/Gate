@@ -88,7 +88,7 @@ public:
   //-----------------------------------------------------------------------------
 
   // This function add multi-SD to the sub logical-volume
-  virtual void PropageteSensitiveDetectorToChild(GateMultiSensitiveDetector *);
+  virtual void PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector *);
 
   // This function add 'global' SD (Root output, PhantomSD) to the sub
   // logical-volume (see GateVVolume.hh)

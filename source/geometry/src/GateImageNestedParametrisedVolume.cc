@@ -303,7 +303,7 @@ void GateImageNestedParametrisedVolume::PropagateGlobalSensitiveDetector()
 
 
 //---------------------------------------------------------------------------
-void GateImageNestedParametrisedVolume::PropageteSensitiveDetectorToChild(GateMultiSensitiveDetector * msd)
+void GateImageNestedParametrisedVolume::PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector * msd)
 {
   GateDebugMessage("Volume", 5, "Add SD to child" << G4endl);
   logXRep->SetSensitiveDetector(msd);

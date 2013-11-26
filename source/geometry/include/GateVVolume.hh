@@ -58,6 +58,7 @@ public :
   virtual void ConstructGeometry(G4LogicalVolume*, G4bool);
   virtual void DestroyGeometry();
   virtual void  DestroyOwnPhysicalVolumes();
+
   //! Pure virtual method (to be implemented in sub-classes)
   //! Must return an value for the half-size of a volume along an axis (X=0, Y=1, Z=2)
   virtual G4double GetHalfDimension(size_t axis)=0;
@@ -70,7 +71,13 @@ public :
   //! the volume are propagated to the sub-volumes. This is your
   //! responsability to do that (see GateImageNestedParametrisedVolume
   //! for exemple).
-  virtual void PropageteSensitiveDetectorToChild(GateMultiSensitiveDetector *) {}
+  virtual void PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector *) {}
+
+  // Use to propagate global SD (such as PhantomSD) to child logical
+  // volume. Do nothing by default. Complex volume (such as voxelized)
+  // must implement this function to set the sensitive detector to
+  // their sub-logical volume.
+  virtual void PropagateGlobalSensitiveDetector() {}
 
 protected :
   //! Pure virtual mathod, will be defined in concrete
@@ -79,7 +86,7 @@ protected :
   virtual void ConstructOwnPhysicalVolume(G4bool flagUpdateOnly);
 
   inline virtual void PushPhysicalVolume(G4VPhysicalVolume* volume)
-  { /*GateMessage("Geometry", 5, "GateVVolume::PushPhysicalVolume  " << volume->GetName() << G4endl;);*/ theListOfOwnPhysVolume.push_back(volume);}
+  { theListOfOwnPhysVolume.push_back(volume);}
 
   virtual void DestroyOwnSolidAndLogicalVolume()=0;
 
@@ -200,8 +207,6 @@ public :
 
   virtual G4bool CheckOutputExistence();
 
-  // virtual void PropagateRegionToChild(){}
-
   // Origin (coordinate of the corner)
   void SetOriginByUser(const G4ThreeVector & i);
   inline G4ThreeVector GetOrigin() const { return origin; }
@@ -215,12 +220,6 @@ protected :
 
   //! Method automatically called to color-code the object when its material changes.
   virtual void AutoSetColor();
-
-  // Use to propagate global SD (such as PhantomSD) to child logical
-  // volume. Do nothing by default. Complex volume (such as voxelized)
-  // must implement this function to set the sensitive detector to
-  // their sub-logical volume.
-  virtual void PropagateGlobalSensitiveDetector() {;}
 
 protected :
 
