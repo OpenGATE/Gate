@@ -340,14 +340,12 @@ GateCrystalHitsCollection* GateOutputMgr::GetCrystalHitCollection()
 //----------------------------------------------------------------------------------
 GatePhantomHitsCollection* GateOutputMgr::GetPhantomHitCollection()
 {
-  DD(GatePhantomSD::GetPhantomCollectionName());
   static G4int m_phantomCollID=-1;     	  //!< Collection ID for the phantom hits
 
   G4DigiManager* DigiMan = G4DigiManager::GetDMpointer();
   if (m_phantomCollID==-1)
     m_phantomCollID = DigiMan->GetHitsCollectionID(GatePhantomSD::GetPhantomCollectionName());
 
-  DD(m_phantomCollID);
   GatePhantomHitsCollection* PHC = (GatePhantomHitsCollection*) (DigiMan->GetHitsCollection(m_phantomCollID));
 
   return PHC;
