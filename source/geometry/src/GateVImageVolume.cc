@@ -172,7 +172,8 @@ G4double GateVImageVolume::GetHalfDimension(size_t axis)
 void GateVImageVolume::SetImageFilename(const G4String& name)
 {
   mImageFilename = name;
-  if (mLabelToImageMaterialTableFilename.length()>0) ImageAndTableFilenamesOK();
+  if (mLabelToImageMaterialTableFilename != "none") ImageAndTableFilenamesOK();
+  if (mHounsfieldToImageMaterialTableFilename != "none") ImageAndTableFilenamesOK();
 }
 //--------------------------------------------------------------------
 
