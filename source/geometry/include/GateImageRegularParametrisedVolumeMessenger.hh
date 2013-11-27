@@ -19,6 +19,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVImageVolumeMessenger.hh"
 #include "globals.hh"
+#include "G4UIcmdWithABool.hh"
 
 class GateImageRegularParametrisedVolume;
 
@@ -34,6 +35,7 @@ public:
 
 private:
   GateImageRegularParametrisedVolume* pVolume;
+  G4UIcmdWithABool* SkipEqualMaterialsCmd;
 };
 //-----------------------------------------------------------------------------
 

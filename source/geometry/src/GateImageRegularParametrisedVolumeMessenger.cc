@@ -22,7 +22,9 @@ See GATE/LICENSE.txt for further details
 GateImageRegularParametrisedVolumeMessenger::GateImageRegularParametrisedVolumeMessenger(GateImageRegularParametrisedVolume* volume):GateVImageVolumeMessenger(volume), pVolume(volume)
 {
   GateMessageInc("Volume",6,"Begin GateImageRegularParametrisedVolumeMessenger()"<<G4endl);
-  G4String dir = GetDirectoryName() + "geometry/";
+  G4String cmdName = GetDirectoryName()+"setSkipEqualMaterials";
+  SkipEqualMaterialsCmd = new G4UIcmdWithABool(cmdName,this);
+  SkipEqualMaterialsCmd->SetGuidance("Skip or not boundaries when neighbour voxels are made of same material (default: yes)");
   GateMessageDec("Volume",6,"End GateImageRegularParametrisedVolumeMessenger()"<<G4endl);
 }
 //-----------------------------------------------------------------------------
@@ -32,6 +34,7 @@ GateImageRegularParametrisedVolumeMessenger::GateImageRegularParametrisedVolumeM
 GateImageRegularParametrisedVolumeMessenger::~GateImageRegularParametrisedVolumeMessenger()
 {
   GateMessageInc("Volume",6,"Begin ~GateImageRegularParametrisedVolumeMessenger()"<<G4endl);
+  delete SkipEqualMaterialsCmd;
   GateMessageDec("Volume",6,"End ~GateImageRegularParametrisedVolumeMessenger()"<<G4endl);
 }
 //-----------------------------------------------------------------------------
@@ -42,7 +45,11 @@ void GateImageRegularParametrisedVolumeMessenger::SetNewValue(G4UIcommand* comma
 {
   GateMessage("Volume",6,"GateImageRegularParametrisedVolumeMessenger::SetNewValue " << command->GetCommandPath()
 	      << " newValue=" << newValue << G4endl);
-
-  GateVImageVolumeMessenger::SetNewValue(command,newValue);
+  if (command == SkipEqualMaterialsCmd) {
+    pVolume->SetSkipEqualMaterialsFlag(SkipEqualMaterialsCmd->GetNewBoolValue(newValue));
+  }
+  else {
+    GateVImageVolumeMessenger::SetNewValue(command,newValue);
+  }
 }
 //-----------------------------------------------------------------------------
