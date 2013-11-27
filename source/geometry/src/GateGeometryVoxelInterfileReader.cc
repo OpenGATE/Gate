@@ -30,7 +30,7 @@ GateGeometryVoxelInterfileReader::GateGeometryVoxelInterfileReader(GateVVolume* 
   m_name = G4String("interfileReader");
   m_fileName  = G4String("");
   m_messenger = new GateGeometryVoxelInterfileReaderMessenger(this);
-  
+
   m_dataFileName = G4String("");
   m_numPlanes=0;
   m_planeThickness=0;
@@ -40,7 +40,7 @@ GateGeometryVoxelInterfileReader::GateGeometryVoxelInterfileReader(GateVVolume* 
   m_dataTypeName="";
   m_dataByteOrder="BIGENDIAN";
 }
- 
+
 GateGeometryVoxelInterfileReader::~GateGeometryVoxelInterfileReader()
 {
   if (m_messenger) {
@@ -49,12 +49,12 @@ GateGeometryVoxelInterfileReader::~GateGeometryVoxelInterfileReader()
 }
 
 
-void GateGeometryVoxelInterfileReader::Describe(G4int level) 
+void GateGeometryVoxelInterfileReader::Describe(G4int level)
 {
   G4cout << " Voxel reader type ---> " << m_name << G4endl;
 
   GateVGeometryVoxelReader::Describe(level);
-  
+
 }
 
 void GateGeometryVoxelInterfileReader::ReadFile(G4String fileName)
@@ -74,25 +74,31 @@ m_fileName = fileName;
   for (G4int i=0; i<2; i++)
     m_matrixSize[i] = m_dim[i] * m_pixelSize[i];
 
+  // extract folder for fileName if any
+  size_t found;
+  found=fileName.find_last_of("/\\");
+  G4String folder = fileName.substr(0,found);
+  m_dataFileName = folder+"/"+m_dataFileName;
+
   G4cout << " Header read from       '" << m_fileName << "'" << G4endl;
   G4cout << " Data file name         '" << m_dataFileName << "'" << G4endl;
-  G4cout << " Nb of planes:           " << m_numPlanes << G4endl; 
-  G4cout << " Nb of pixels per plane: " << m_dim[0] << " " << m_dim[1] << G4endl; 
-  G4cout << " Pixel size:             " << m_pixelSize[0] << " " << m_pixelSize[1] << G4endl; 
+  G4cout << " Nb of planes:           " << m_numPlanes << G4endl;
+  G4cout << " Nb of pixels per plane: " << m_dim[0] << " " << m_dim[1] << G4endl;
+  G4cout << " Pixel size:             " << m_pixelSize[0] << " " << m_pixelSize[1] << G4endl;
   G4cout << " Slice thickness:        " << m_planeThickness << G4endl;
-  G4cout << " Matrix size:            " << m_matrixSize[0] << " " << m_matrixSize[1] << G4endl; 
-  G4cout << " Data type:              " << m_dataTypeName << G4endl; 
+  G4cout << " Matrix size:            " << m_matrixSize[0] << " " << m_matrixSize[1] << G4endl;
+  G4cout << " Data type:              " << m_dataTypeName << G4endl;
   G4cout << " Data byte order:	 " << m_dataByteOrder << G4endl;
   G4cout << G4endl;
 
   if ( ( m_dim[0]==0) || ( m_dim[1]==0) || ( m_numPlanes==0) ) {
     G4cerr << G4endl <<"Error: one of the matrix dimensions is zero!" << G4endl;
   return;
-  }  
+  }
 
   G4int pixelNumber = m_dim[0]*m_dim[1]*m_numPlanes ;
   /*Set ( pixelNumber );*/
-  
+
   FILE* fpp=fopen(m_dataFileName.c_str(),"r");
   if (!fpp) {
     G4cerr << G4endl << "Error: Could not open header file '" << m_dataFileName << "'!" << G4endl;
@@ -105,8 +111,8 @@ m_fileName = fileName;
     G4cerr << G4endl << "Error: Could not allocate the buffer!" << G4endl;
     return;
   }
-  
- 
+
+
   G4int NbData = fread( buffer, sizeof(G4short), pixelNumber, fpp);
   fclose(fpp);
   if ( NbData != pixelNumber ) {
@@ -134,17 +140,17 @@ m_fileName = fileName;
   dx = m_pixelSize[0];
   dy = m_pixelSize[1];
   dz = m_planeThickness;
-  
+
   G4cout << "nx ny nz: " << nx << " " << ny << " " << nz << G4endl;
-  
+
   SetVoxelNx( nx );
   SetVoxelNy( ny );
   SetVoxelNz( nz );
-  
+
   G4cout << "dx dy dz: " << dx << " " << dy << " " << dz << G4endl;
-  
+
   SetVoxelSize( G4ThreeVector(dx, dy, dz) * mm );
-  
+
 
   for (G4int iz=0; iz<nz; iz++) {
     for (G4int iy=0; iy<ny; iy++) {
@@ -172,11 +178,11 @@ m_fileName = fileName;
     EmptyStore();
     G4cout << "GateSourceVoxelInterfileReader::ReadFile: For your information, the voxel store has been emptied." << G4endl;
   }
- 
+
 }
 
 
-void GateGeometryVoxelInterfileReader::ReadKey(FILE* fp) 
+void GateGeometryVoxelInterfileReader::ReadKey(FILE* fp)
 {
   if ( (feof(fp)) && (ferror(fp)))
     return ;
@@ -228,11 +234,11 @@ void GateGeometryVoxelInterfileReader::ReadKey(FILE* fp)
     else
       G4cout << "Unrecognised type name '" << value << "'" << G4endl;
   } else if (key == "imagedata byte order") {
-  	if ( strcmp(value,"BIGENDIAN") == 0 ) 
+  	if ( strcmp(value,"BIGENDIAN") == 0 )
   		m_dataByteOrder = "BIGENDIAN";
   	else if ( strcmp(value,"LITTLEENDIAN") == 0)
   		m_dataByteOrder = "LITTLEENDIAN";
-  	else 
+  	else
   		G4cerr << "Unrecognized data byte order '" + G4String(value) + "', assuming default BIGENDIAN\n" << G4endl;
   } else {
     // G4cout << "Key not processed: '" << key << "'" << G4endl;
@@ -251,7 +257,7 @@ void GateGeometryVoxelInterfileReader::ReadRTFile(G4String Header_fileName, G4St
 
 GateRTPhantom *Ph = GateRTPhantomMgr::GetInstance()->CheckGeometryAttached( GetCreator()->GetObjectName() );
 
-if ( Ph != 0) 
+if ( Ph != 0)
 {G4cout << " The Object "<< Ph->GetName()
 <<" is attached to the "<<m_name<<" Geometry Voxel Reader."<<G4endl;
 } else { G4cout << " GateGeometryVoxelInterfileReader::ReadFile   WARNING The Object "<< Ph->GetName()
@@ -279,7 +285,7 @@ m_fileName = Header_fileName;
     fclose(fp);
 
     EmptyStore();
- 
+
   nx = m_dim[0];
   ny = m_dim[1];
   nz = m_numPlanes;
@@ -315,23 +321,23 @@ m_fileName = Header_fileName;
 
   G4cout << " Header read from       '" << m_fileName << "'" << G4endl;
   G4cout << " Data file name         '" << m_dataFileName << "'" << G4endl;
-  G4cout << " Nb of planes:           " << m_numPlanes << G4endl; 
-  G4cout << " Nb of pixels per plane: " << m_dim[0] << " " << m_dim[1] << G4endl; 
-  G4cout << " Pixel size:             " << m_pixelSize[0] << " " << m_pixelSize[1] << G4endl; 
+  G4cout << " Nb of planes:           " << m_numPlanes << G4endl;
+  G4cout << " Nb of pixels per plane: " << m_dim[0] << " " << m_dim[1] << G4endl;
+  G4cout << " Pixel size:             " << m_pixelSize[0] << " " << m_pixelSize[1] << G4endl;
   G4cout << " Slice thickness:        " << m_planeThickness << G4endl;
-  G4cout << " Matrix size:            " << m_matrixSize[0] << " " << m_matrixSize[1] << G4endl; 
-  G4cout << " Data type:              " << m_dataTypeName << G4endl; 
+  G4cout << " Matrix size:            " << m_matrixSize[0] << " " << m_matrixSize[1] << G4endl;
+  G4cout << " Data type:              " << m_dataTypeName << G4endl;
   G4cout << " Data byte order:	 " << m_dataByteOrder << G4endl;
   G4cout << G4endl;
 
   if ( ( m_dim[0]==0) || ( m_dim[1]==0) || ( m_numPlanes==0) ) {
     G4cerr << G4endl <<"Error: one of the matrix dimensions is zero!" << G4endl;
   return;
-  }  
+  }
 
   G4int pixelNumber = m_dim[0]*m_dim[1]*m_numPlanes ;
   /*Set ( pixelNumber );*/
-  
+
   FILE* fpp=fopen(m_dataFileName.c_str(),"r");
   if (!fpp) {
     G4cerr << G4endl << "Error: Could not open Voxels Data file '" << m_dataFileName << "'!" << G4endl;
@@ -350,8 +356,8 @@ memset( buffer,0,pixelNumber);
     G4cerr << G4endl << "Error: Could not allocate the buffer!" << G4endl;
     return;
   }
-  
- 
+
+
   G4int NbData = fread( buffer, sizeof(G4short), pixelNumber, fpp);
   fclose(fpp);
   if ( NbData != pixelNumber ) {
@@ -365,7 +371,7 @@ memset( buffer,0,pixelNumber);
 	if (((BYTE_ORDER == LITTLE_ENDIAN) && (m_dataByteOrder.compare("BIGENDIAN") == 0)) || ((BYTE_ORDER == BIG_ENDIAN) && (m_dataByteOrder.compare("LITTLEENDIAN") == 0))) {
 		SwapBytes(buffer, pixelNumber);
 	}
-	
+
 // End
 
 //  EmptyStore();
@@ -375,12 +381,12 @@ memset( buffer,0,pixelNumber);
 
   G4cout << "nx ny nz: " << nx << " " << ny << " " << nz << G4endl;
   G4cout << "dx dy dz: " << dx << " " << dy << " " << dz << G4endl;
-  
+
 //  SetVoxelSize( G4ThreeVector(dx, dy, dz) * mm );
- 
+
 
 // G4cout << " GateGeometryVoxelInterfileReader::ReadFile Vowel Size Vector  "<< G4ThreeVector(dx, dy, dz) * mm << G4endl;
- 
+
 
   for (G4int iz=0; iz<nz; iz++) {
     for (G4int iy=0; iy<ny; iy++) {
@@ -416,10 +422,10 @@ delete [] buffer;
 //    G4cout << "GateGeometryVoxelInterfileReader::ReadFile: For your information, the voxel store has been emptied." << G4endl;
 
   }
- 
+
 }
 
-void GateGeometryVoxelInterfileReader::ReadKeyFrame(FILE* fp) 
+void GateGeometryVoxelInterfileReader::ReadKeyFrame(FILE* fp)
 {
   if ( (feof(fp)) && (ferror(fp)))
     return ;
@@ -471,11 +477,11 @@ void GateGeometryVoxelInterfileReader::ReadKeyFrame(FILE* fp)
     else
       G4cout << "Unrecognised type name '" << value << "'" << G4endl;
   } else if (key == "imagedata byte order") {
-  	if ( strcmp(value,"BIGENDIAN") == 0 ) 
+  	if ( strcmp(value,"BIGENDIAN") == 0 )
   		m_dataByteOrder = "BIGENDIAN";
   	else if ( strcmp(value,"LITTLEENDIAN") == 0)
   		m_dataByteOrder = "LITTLEENDIAN";
-  	else 
+  	else
   		G4cerr << "Unrecognized data byte order '" + G4String(value) + "', assuming default BIGENDIAN\n" << G4endl;
   } else {
     // G4cout << "Key not processed: '" << key << "'" << G4endl;
@@ -483,29 +489,3 @@ void GateGeometryVoxelInterfileReader::ReadKeyFrame(FILE* fp)
 }
 
 /*PY Descourt 08/09/2009 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
