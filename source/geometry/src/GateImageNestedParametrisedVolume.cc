@@ -49,16 +49,13 @@ GateImageNestedParametrisedVolume::~GateImageNestedParametrisedVolume()
 {
   GateMessageInc("Volume",5,"Begin ~GateImageNestedParametrisedVolume()"<<G4endl);
   if (pMessenger) delete pMessenger;
-
   delete mVoxelParametrisation;
   delete mPhysVolX;
   delete mPhysVolY;
   delete mPhysVolZ;
-
   delete logXRep;
   delete logYRep;
   delete logZRep;
-
   GateMessageDec("Volume",5,"End ~GateImageNestedParametrisedVolume()"<<G4endl);
 }
 ///---------------------------------------------------------------------------
