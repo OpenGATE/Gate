@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "GateAnalyzeHeader.hh"
+#include "GateInterfileHeader.hh"
 #include "GateMessageManager.hh"
 
 class G4String;
@@ -148,6 +149,9 @@ public:
   /// Returns the z of the corner of the voxel given the z coordinate
   G4double GetZVoxelCornerFromZCoordinate(int k) const { return k * voxelSize.z() - halfSize.z(); }
 
+  G4int            GetVoxelNx()        { return m_voxelNx; };
+  G4int            GetVoxelNy()        { return m_voxelNy; };
+  G4int            GetVoxelNz()        { return m_voxelNz; };
 
   // Returns the index from the position : OK 
   int GetIndexFromPosition(const G4ThreeVector& position) const;  
@@ -201,6 +205,10 @@ protected:
   std::vector<PixelType> data;
   G4ThreeVector  mPosition;
 
+  G4int                          m_voxelNx;
+  G4int                          m_voxelNy;
+  G4int                          m_voxelNz;
+
   PixelType mOutsideValue;
 
   void ReadVox(G4String filename);
@@ -217,6 +225,7 @@ protected:
                                 std::vector<std::string> & values, 
                                 std::string tag, std::string value);
   void ReadMHD(G4String filename);
+  void ReadInterfile(G4String fileName);
 
   void WriteBin(std::ofstream & os);
   void WriteAscii(std::ofstream & os, const G4String & comment);

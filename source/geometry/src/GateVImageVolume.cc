@@ -46,9 +46,11 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
   mOriginIsSetByUser = false;
   pOwnMaterial = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial("Air");
   mBuildDistanceTransfo = false;
-  mLoadImageMaterialsFromHounsfieldTable = true;
+  mLoadImageMaterialsFromHounsfieldTable = false;
+  mLoadImageMaterialsFromLabelTable = false;
   mLabelToImageMaterialTableFilename = "none";
   mHounsfieldToImageMaterialTableFilename = "none";
+  mRangeToImageMaterialTableFilename = "none";
   mWriteHLabelImage = false;
   mHLabelImageFilename = "none";
   mIsBoundingBoxOnlyModeEnabled = false;
@@ -185,12 +187,13 @@ void GateVImageVolume::SetLabelToMaterialTableFilename(const G4String& name)
     GateError("Please set SetHUToMaterialFile or SetLabelToMaterialFile, not both. Abort." << G4endl);
   }
   mLabelToImageMaterialTableFilename = name;
+  mLoadImageMaterialsFromLabelTable = true;
   if (mImageFilename.length()>0) ImageAndTableFilenamesOK();
 }
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-/// Sets the name of the LabelToMaterial file
+/// Sets the name of the HUToMaterial file
 void GateVImageVolume::SetHUToMaterialTableFilename(const G4String& name)
 {
   if (mLabelToImageMaterialTableFilename != "none") {
@@ -201,6 +204,20 @@ void GateVImageVolume::SetHUToMaterialTableFilename(const G4String& name)
   if (mImageFilename.length()>0) ImageAndTableFilenamesOK();
 }
 //--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+/// Sets the name of the RangeMaterial file
+void GateVImageVolume::SetRangeMaterialTableFilename(const G4String& name)
+{
+  if (mLabelToImageMaterialTableFilename != "none") {
+    GateError("Please set SetHUToMaterialFile or SetLabelToMaterialFile, not both. Abort." << G4endl);
+  }
+  mRangeToImageMaterialTableFilename = name;
+  if (mImageFilename.length()>0) ImageAndTableFilenamesOK();
+}
+//--------------------------------------------------------------------
+
+
 
 //--------------------------------------------------------------------
 /// Loads the image
@@ -243,7 +260,10 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
 	  tmp->SetValue(i,j,k,1);
   }
   else {
-    tmp->Read(mImageFilename);
+    G4cout << "je lis" << G4endl;
+    tmp->Read(mImageFilename); 
+    G4cout << "j'ai lu" << G4endl;
+    G4cout << mImageFilename << G4endl;
   }
   //tmp->PrintInfo();
 
@@ -298,7 +318,8 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
 void GateVImageVolume::LoadImageMaterialsTable()
 {
   if (mLoadImageMaterialsFromHounsfieldTable) LoadImageMaterialsFromHounsfieldTable();
-  else LoadImageMaterialsFromLabelTable();
+  else if (mLoadImageMaterialsFromLabelTable) LoadImageMaterialsFromLabelTable();
+  else LoadImageMaterialsFromRangeTable();
   GateMessage("Volume", 0, "Number of different materials in the image "
               << mImageFilename << " : " << mLabelToMaterialName.size() << G4endl);
 }
@@ -428,11 +449,12 @@ void GateVImageVolume::DumpHLabelImage() {
 void GateVImageVolume::LoadImageMaterialsFromLabelTable()
 {
   // Never call
-  GateError("GateVImageVolume::LoadImageMaterialsFromLabelTable : disabled! " << G4endl);
+  //GateError("GateVImageVolume::LoadImageMaterialsFromLabelTable : disabled! " << G4endl);
 
   // ------------------------------------
   GateMessageInc("Volume",5,"Begin GateVImageVolume::LoadImageMaterialsFromLabelTable("
 		 <<mLabelToImageMaterialTableFilename<<")" << G4endl);
+  
   // open file
   std::ifstream is;
   OpenFileInput(mLabelToImageMaterialTableFilename, is);
@@ -442,12 +464,12 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable()
     int label;
     if (is) {
       is >> label;
+      G4cout << "label=" << label << G4endl;
       // Verify that this label is not already mapped
       LabelToMaterialNameType::iterator lit = mLabelToMaterialName.find(label) ;
       G4String materialName;
       if (is) {
 	is >> materialName;
-
 	if (lit != mLabelToMaterialName.end()) {
 	  GateMessage("Volume",4,"*** WARNING *** Label already in table : Old value replaced "<<G4endl);
 	  (*lit).second = materialName;
@@ -460,6 +482,7 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable()
     }
   } // end while
 
+  
   GateMessage("Volume",5,"GateVImageVolume -- Label \tMaterial" << G4endl);
   LabelToMaterialNameType::iterator lit;
   for (lit=mLabelToMaterialName.begin(); lit!=mLabelToMaterialName.end(); ++lit) {
@@ -472,10 +495,102 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable()
 }
 //--------------------------------------------------------------------
 
+
+//--------------------------------------------------------------------
+void GateVImageVolume::LoadImageMaterialsFromRangeTable()
+{
+  G4cout << "on est dans le range" << G4endl;
+
+  m_voxelMaterialTranslation.clear();
+  
+  std::ifstream inFile;
+  
+  inFile.open(mRangeToImageMaterialTableFilename.c_str(),std::ios::in);
+  mRangeMaterialTable.Reset();
+  // mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(), pImage->GetOutsideValue()+1,"worldDefaultAir");
+  G4String parentMat = GetParentVolume()->GetMaterialName();
+  mRangeMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue()+1,parentMat);
+
+  if (inFile.is_open()){
+  G4String material;
+  G4double xmin;
+  G4double xmax;
+  G4int nTotCol;
+
+  G4double red, green, blue, alpha;
+  G4bool visible;
+  char buffer [200];
+
+  inFile.getline(buffer,200);
+  std::istringstream is(buffer);
+
+  is >> nTotCol;
+  G4cout << "nTotCol: " << nTotCol << G4endl;
+  
+  for (G4int iCol=0; iCol<nTotCol; iCol++) {
+    inFile.getline(buffer,200);
+    is.clear();
+    is.str(buffer);
+
+    is >> xmin >> xmax;
+    is >> material;
+
+    if (is.eof()){
+      visible=true;
+      red=0.5;
+      green=blue=0.0;
+      alpha=1;
+    }else{
+      is >> std::boolalpha >> visible >> red >> green >> blue >> alpha;
+    }
+
+    G4cout << " min max " << xmin << " " << xmax << "  material: " << material 
+    << std::boolalpha << ", visible " << visible << ", rgba(" << red<<',' << green << ',' << blue << ')' << G4endl;
+    
+    if(xmax> pImage->GetOutsideValue()+1){
+      if(xmin<pImage->GetOutsideValue()+1) xmin=pImage->GetOutsideValue()+1;
+        mRangeMaterialTable.AddMaterial(xmin,xmax,material);
+    }
+
+    mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
+    
+
+    m_voxelAttributesTranslation[GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(material) ] =
+      new G4VisAttributes(visible, G4Colour(red, green, blue, alpha));
+  }
+
+  }
+  else {G4cout << "Error opening file." << G4endl;}
+  
+  //inFile.close();
+  
+  ImageType::iterator iter;
+  iter = pImage->begin();
+  while (iter != pImage->end()) {
+    double label = mRangeMaterialTable.GetLabelFromR(*iter);
+    if (label<0) {
+      GateError(" I find R=" << *iter
+		<< " in the image, while range start at "
+		<< mRangeMaterialTable.GetR1Vector()[0] << G4endl);
+    }
+    if (label>=mRangeMaterialTable.GetNumberOfMaterials()) {
+      GateError(" I find R=" << *iter
+		<< " in the image, while range stop at "
+		<< mRangeMaterialTable.GetR2Vector()[mRangeMaterialTable.GetR2Vector().size()-1]
+		<< G4endl);
+    }
+    //GateMessage("Core", 0, " pix = " << (*iter) << " lab = " << label << G4endl);
+    (*iter) = label;
+    ++iter;
+  }
+}
+//--------------------------------------------------------------------
+
 //--------------------------------------------------------------------
 /// Builds a vector of the labels in the image
 void GateVImageVolume::BuildLabelsVector( std::vector<LabelType>& LabelsVector)
 {
+  //G4cout << "ok" << G4endl;
   GateMessage("Volume",5,"Begin GateVImageVolume::BuildLabelsVector()" << G4endl);
   std::set<LabelType> ens;
   ImageType::iterator i;
@@ -496,6 +611,7 @@ void GateVImageVolume::BuildLabelsVector( std::vector<LabelType>& LabelsVector)
 /// Builds a label to material map
 void GateVImageVolume::BuildLabelToG4MaterialVector( std::vector<G4Material*>& M )
 {
+  //G4cout << "ok2" << G4endl;
   GateMessage("Volume",4,"Begin GateVImageVolume::BuildLabelToG4MaterialVector" << G4endl);
   LabelToMaterialNameType::iterator lit;
   int l = 0;
