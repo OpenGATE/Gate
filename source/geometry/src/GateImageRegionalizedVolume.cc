@@ -25,7 +25,8 @@
 #include "GateMultiSensitiveDetector.hh"
 #include "GateUserActions.hh"
 #include "GateImage.hh"
-
+#include "GatePhantomSD.hh"
+#include "GateDetectorConstruction.hh"
 
 //-----------------------------------------------------------------------------
 /// Constructor with :
@@ -105,10 +106,6 @@ G4LogicalVolume* GateImageRegionalizedVolume::ConstructOwnSolidAndLogicalVolume(
   //---------------------------
   if (mIsBoundingBoxOnlyModeEnabled) {
     GateError("Sorry not possible to user BoundingBoxOnlyMode with RegionalizedVolume. Use NestedParameterised instead");
-    // Create on single big pixel
-    G4ThreeVector r(2,2,2);
-    GetImage()->SetResolutionAndVoxelSize(r, GetImage()->GetSize()/2.0);
-    // GetImage()->PrintInfo();
   }
 
   // If needed, compute the distance map
@@ -120,7 +117,7 @@ G4LogicalVolume* GateImageRegionalizedVolume::ConstructOwnSolidAndLogicalVolume(
   pBoxSolid = new GateImageRegionalizedVolumeSolid(boxname,this);
   pBoxLog = new G4LogicalVolume(pBoxSolid, mater, GetLogicalVolumeName());
 
-  //---------------------------
+  // ---------------------------
   LoadDistanceMap();
 
   // Set position if IsoCenter is Set
@@ -184,6 +181,9 @@ void  GateImageRegionalizedVolume::CreateSubVolumes()
     // subvolume->SetPosition(GetPosition());
 
     //	AddPhysVolToOptimizedNavigator(subvolume->GetPhysicalVolume());
+
+    DD(subvolume->GetLogicalVolumeName());
+    DD(subvolume->GetLogicalVolume());
 
   }
   // Resize the vectors (+1 because label 0 = outside)
@@ -549,6 +549,7 @@ G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p, Label
   return d;
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p,
@@ -1337,3 +1338,17 @@ void GateImageRegionalizedVolume::PropagateSensitiveDetectorToChild(GateMultiSen
   // logZRep->SetSensitiveDetector(msd);
 }
 //---------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------------------
+// We reimplement this function to set the SD to the sub volumes
+void GateImageRegionalizedVolume::AttachPhantomSD()
+{
+  GateVVolume::AttachPhantomSD();
+  DD("GateImageRegionalizedVolume::AttachPhantomSD -> to the sub volumes");
+  for(unsigned int i=0; i< mSubVolume.size(); i++) {
+    DD(i);
+    mSubVolume[i]->AttachPhantomSD();
+  }
+}
+//------------------------------------------------------------------------------------------

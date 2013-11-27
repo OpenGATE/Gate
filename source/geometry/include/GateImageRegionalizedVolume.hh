@@ -134,8 +134,9 @@ public:
 					       const G4ThreeVector* globalDirection );
 
   //====================================================================
+  // See GateVVolume for explanation
   virtual void PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector *);
-
+  virtual void AttachPhantomSD();
 
   //====================================================================
   /// Sets the name of the distance map file
