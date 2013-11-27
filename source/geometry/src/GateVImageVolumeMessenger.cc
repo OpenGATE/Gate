@@ -37,14 +37,19 @@ GateVImageVolumeMessenger::GateVImageVolumeMessenger(GateVImageVolume* volume)
   pImageFileNameCmd->SetGuidance("Sets the name of the image file");
 
   // Disable this macro for the moment
-  // n = dir +"/SetLabelToMaterialFile";
-  //   pLabelToMaterialFileNameCmd = new G4UIcmdWithAString(n,this);  
-  //   pLabelToMaterialFileNameCmd->SetGuidance("Sets the name of the file containing the label to material correspondence");
+  n = dir +"/SetLabelToMaterialFile";
+  pLabelToMaterialFileNameCmd = new G4UIcmdWithAString(n,this);  
+  pLabelToMaterialFileNameCmd->SetGuidance("Sets the name of the file containing the label to material correspondence");
 
   n = dir +"/SetHUToMaterialFile";
   pHUToMaterialFileNameCmd = 0;
   pHUToMaterialFileNameCmd = new G4UIcmdWithAString(n,this);  
   pHUToMaterialFileNameCmd->SetGuidance("Sets the name of the file containing the HU intervals to material correspondence");
+
+  n = dir +"/SetRangeMaterialFile";
+  pRangeMaterialFileNameCmd = 0;
+  pRangeMaterialFileNameCmd = new G4UIcmdWithAString(n,this);  
+  pRangeMaterialFileNameCmd->SetGuidance("Sets the name of the file containing the intervals to material correspondence");
 
   n = dir +"/TranslateTheImageAtThisIsoCenter";
   pIsoCenterCmd = 0;
@@ -79,8 +84,9 @@ GateVImageVolumeMessenger::~GateVImageVolumeMessenger()
   GateMessage("Volume",5,"~GateVImageVolumeMessenger("<<G4endl);
 
   delete pImageFileNameCmd;
-  //delete pLabelToMaterialFileNameCmd;
+  delete pLabelToMaterialFileNameCmd;
   delete pHUToMaterialFileNameCmd;
+  delete pRangeMaterialFileNameCmd;
   delete pBuildDistanceTransfoCmd;
   delete pIsoCenterCmd;
   delete pSetOriginCmd;
@@ -100,11 +106,14 @@ void GateVImageVolumeMessenger::SetNewValue(G4UIcommand* command,
   if (command == pImageFileNameCmd) {
     pVImageVolume->SetImageFilename(newValue);
   }
- // else if (command == pLabelToMaterialFileNameCmd) {
- //   pVImageVolume->SetLabelToMaterialTableFilename(newValue);
- // }
+  else if (command == pLabelToMaterialFileNameCmd) {
+    pVImageVolume->SetLabelToMaterialTableFilename(newValue);
+  }
   else if (command == pHUToMaterialFileNameCmd) {
     pVImageVolume->SetHUToMaterialTableFilename(newValue);
+  }
+  else if (command == pRangeMaterialFileNameCmd) {
+    pVImageVolume->SetRangeMaterialTableFilename(newValue);
   }
   else if (command == pIsoCenterCmd) {
     pVImageVolume->SetIsoCenter(pIsoCenterCmd->GetNew3VectorValue(newValue));
