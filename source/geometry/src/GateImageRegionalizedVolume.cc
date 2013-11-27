@@ -8,7 +8,6 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-
 /*! /file
   /brief Implementation of GateImageRegionalizedVolume
 */
@@ -57,37 +56,26 @@ GateImageRegionalizedVolume::~GateImageRegionalizedVolume()
 {
   GateMessageInc("Volume",5,"~GateImageRegionalizedVolume() - begin"<<G4endl);
 
-  /* for(std::vector<GateImageRegionalizedSubVolume*>::iterator i = mSubVolume.begin(); i!=mSubVolume.end(); i++)
-     {
-     i = mSubVolume.erase(i);
-     }*/
-  //std::for_each(mSubVolume.begin(),mSubVolume.end(), Delete() );
-
-  for(std::map<LabelType,GateImageRegionalizedSubVolume*>::iterator i = mLabelToSubVolume.begin(); i!=mLabelToSubVolume.end(); i++)
-    {
-
-      for(std::vector<GateImageRegionalizedSubVolume*>::iterator it = mSubVolume.begin(); it!=mSubVolume.end(); it++)
-        {
-          if(i->second==(*it)){
-            delete (*it);
-            (*it) = NULL;
-            i->second  = NULL;
-          }
-        }
-      if(i->second) delete i->second ;
-      i->second  = NULL;
-    }
-  for(std::vector<GateImageRegionalizedSubVolume*>::iterator it = mSubVolume.begin(); it!=mSubVolume.end(); it++)
-    {
-      if((*it)){
+  for(std::map<LabelType,GateImageRegionalizedSubVolume*>::iterator i = mLabelToSubVolume.begin();
+      i!=mLabelToSubVolume.end(); i++) {
+    for(std::vector<GateImageRegionalizedSubVolume*>::iterator it = mSubVolume.begin();
+        it!=mSubVolume.end(); it++)  {
+      if(i->second==(*it)){
         delete (*it);
         (*it) = NULL;
+        i->second  = NULL;
       }
     }
-
-  //mLabelToSubVolume.erase(i);
-  //}
-  //std::for_each(mLabelToSubVolume.begin(), mLabelToSubVolume.end(), DeleteGlob<LabelType,GateImageRegionalizedSubVolume>() );
+    if(i->second) delete i->second ;
+    i->second  = NULL;
+  }
+  for(std::vector<GateImageRegionalizedSubVolume*>::iterator it = mSubVolume.begin();
+      it!=mSubVolume.end(); it++) {
+    if((*it)) {
+      delete (*it);
+      (*it) = NULL;
+    }
+  }
 
   if(pDistanceMap) delete pDistanceMap;
   if(pMessenger) delete pMessenger;
@@ -179,12 +167,6 @@ void  GateImageRegionalizedVolume::CreateSubVolumes()
     //   subvolume->SetHalfSize(GetHalfSize());
     subvolume->SetMaterialName(matName);
     // subvolume->SetPosition(GetPosition());
-
-    //	AddPhysVolToOptimizedNavigator(subvolume->GetPhysicalVolume());
-
-    DD(subvolume->GetLogicalVolumeName());
-    DD(subvolume->GetLogicalVolume());
-
   }
   // Resize the vectors (+1 because label 0 = outside)
   mInside.resize(labels.size()+1);
@@ -209,9 +191,9 @@ void GateImageRegionalizedVolume::LoadDistanceMap()
     GateError("ImageRegionalized Volume <" << GetObjectName()
 	      << "> : No distance map provided, the navigation could not be optimized."
 	      << G4endl
-	      << "Please use /gate/" << GetObjectName() << "/geometry/buildAndDumpDistanceTransfo dmap.hdr"
+	      << "Please use /gate/" << GetObjectName() << "/geometry/buildAndDumpDistanceTransfo dmap.mhd"
 	      << G4endl
-	      << "to generate the dmap and then, /gate/patient/geometry/distanceMap dmap.hdr to use it."
+	      << "to generate the dmap and then, /gate/patient/geometry/distanceMap dmap.mhd to use it."
 	      << G4endl);
     pDistanceMap = new DistanceMapType;
     pDistanceMap->SetResolutionAndHalfSize(GetImage()->GetResolution(), GetImage()->GetHalfSize());
@@ -1345,9 +1327,7 @@ void GateImageRegionalizedVolume::PropagateSensitiveDetectorToChild(GateMultiSen
 void GateImageRegionalizedVolume::AttachPhantomSD()
 {
   GateVVolume::AttachPhantomSD();
-  DD("GateImageRegionalizedVolume::AttachPhantomSD -> to the sub volumes");
   for(unsigned int i=0; i< mSubVolume.size(); i++) {
-    DD(i);
     mSubVolume[i]->AttachPhantomSD();
   }
 }

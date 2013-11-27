@@ -255,10 +255,6 @@ void GateVVolume::ConstructGeometry(G4LogicalVolume* mother_log, G4bool flagUpda
 // Construct physical volume
 void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
 {
-  // DD(mSolidName);
-  //   DD("GateVVolume::ConstructOwnPhysicalVolume");
-  //   DD(flagUpdateOnly);
-
   // Store the volume default position into a placement queue
   GatePlacementQueue motherQueue;
   motherQueue.push_back(GatePlacement(G4RotationMatrix(),G4ThreeVector()));
@@ -401,7 +397,6 @@ void GateVVolume::AttachCrystalSD()
 // Tell the creator that the logical volume should be attached to the phantom-SD
 void GateVVolume::AttachPhantomSD()
 {
-  DD("GateVVolume::AttachPhantomSD");
   /*  if (!CheckOutputExistence()){
   // Add OutputMgr output actor to theListOfActors
   GateActorManager::GetInstance()->GateActorManager::AddActor("OutputMgr", "output", 0);
