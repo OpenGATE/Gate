@@ -308,26 +308,3 @@ void GateImageNestedParametrisedVolume::PropagateSensitiveDetectorToChild(GateMu
   logZRep->SetSensitiveDetector(msd);
 }
 //---------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------
-/*void GateImageNestedParametrisedVolume::PropagateRegionToChild()
-  {
-  GateDebugMessage("Cuts",5, "- Building associated region (voxel Y)" << G4endl);
-  G4Region* aRegion = G4RegionStore::GetInstance()->FindOrCreateRegion(GetObjectName()+"_voxel_Y");
-  //G4Region* aRegion = new G4Region(GetObjectName());
-  logYRep->SetRegion(aRegion);
-  aRegion->AddRootLogicalVolume(logYRep);
-
-  GateDebugMessage("Cuts",5, "- Building associated region (voxel X)" << G4endl);
-  aRegion = G4RegionStore::GetInstance()->FindOrCreateRegion(GetObjectName()+"_voxel_X");
-  //G4Region* aRegion = new G4Region(GetObjectName());
-  logXRep->SetRegion(aRegion);
-  aRegion->AddRootLogicalVolume(logXRep);
-
-  GateDebugMessage("Cuts",5, "- Building associated region (voxel Z)" << G4endl);
-  aRegion = G4RegionStore::GetInstance()->FindOrCreateRegion(GetObjectName()+"_voxel_Z");
-  //G4Region* aRegion = new G4Region(GetObjectName());
-  logZRep->SetRegion(aRegion);
-  aRegion->AddRootLogicalVolume(logZRep);
-  }*/
