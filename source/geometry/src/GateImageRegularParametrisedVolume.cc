@@ -150,7 +150,6 @@ G4LogicalVolume* GateImageRegularParametrisedVolume::ConstructOwnSolidAndLogical
                     GetImage()->GetResolution().z());
   BuildLabelToG4MaterialVector(mVectorLabel2Material);
   param->SetMaterials(mVectorLabel2Material);
-  DD("here");
   size_t* index = new size_t[GetImage()->GetNumberOfValues()];
   for(unsigned int i=0; i<GetImage()->GetNumberOfValues(); i++) {
     index[i] = GetImage()->GetValue(i);
@@ -179,5 +178,25 @@ G4LogicalVolume* GateImageRegularParametrisedVolume::ConstructOwnSolidAndLogical
 void GateImageRegularParametrisedVolume::PrintInfo()
 {
   // GateVImageVolume::PrintInfo();
+}
+//---------------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------------
+void GateImageRegularParametrisedVolume::PropagateGlobalSensitiveDetector()
+{
+  if (m_sensitiveDetector) {
+    GatePhantomSD* phantomSD = GateDetectorConstruction::GetGateDetectorConstruction()->GetPhantomSD();
+    pVoxelLog->SetSensitiveDetector(phantomSD);
+  }
+}
+//---------------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------------
+void GateImageRegularParametrisedVolume::PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector * msd)
+{
+  GateDebugMessage("Volume", 5, "Add SD to child" << G4endl);
+  pVoxelLog->SetSensitiveDetector(msd);
 }
 //---------------------------------------------------------------------------

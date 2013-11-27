@@ -76,6 +76,9 @@ public:
   void PrintInfo();
   //-----------------------------------------------------------------------------
 
+  //-----------------------------------------------------------------------------
+  void PropagateGlobalSensitiveDetector();
+  void PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector * msd);
 
 protected:
   //-----------------------------------------------------------------------------
