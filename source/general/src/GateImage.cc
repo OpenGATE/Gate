@@ -701,6 +701,7 @@ G4ThreeVector GateImage::GetNonIntegerCoordinatesFromPosition(G4ThreeVector posi
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 G4ThreeVector GateImage::GetVoxelCornerFromCoordinates(G4ThreeVector c) const{
   return G4ThreeVector ( c.x() * voxelSize.x() - halfSize.x(),
@@ -709,19 +710,20 @@ G4ThreeVector GateImage::GetVoxelCornerFromCoordinates(G4ThreeVector c) const{
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateImage::PrintInfo() {
-  /*  GateMessage("Image",1,"Matrix Size=\t"      << size        << G4endl);
-      GateMessage("Image",1,"HalfSize=\t"  << halfSize    << G4endl);
-      GateMessage("Image",1,"Resol=\t"     << resolution  << G4endl);
-      GateMessage("Image",1,"VoxelSize=\t" << voxelSize   << G4endl);
-      GateMessage("Image",1,"planeSize=\t" << planeSize   << G4endl);
-      GateMessage("Image",1,"lineSize=\t"  << lineSize    << G4endl);
-      GateMessage("Image",1,"halfSizeMinusVoxelCenter=\t" << halfSizeMinusVoxelCenter << G4endl);
-      GateMessage("Image",1,"nbOfValues=\t"     << nbOfValues  << G4endl);
-      GateMessage("Image",1,"dataSize =\t"     << data.size() << G4endl);*/
+  GateMessage("Image", 1, "Matrix Size=\t" << size        << G4endl);
+  GateMessage("Image", 1, "HalfSize=\t"    << halfSize    << G4endl);
+  GateMessage("Image", 1, "Resol=\t"       << resolution  << G4endl);
+  GateMessage("Image", 1, "VoxelSize=\t"   << voxelSize   << G4endl);
+  GateMessage("Image", 1, "planeSize=\t"   << planeSize   << G4endl);
+  GateMessage("Image", 1, "lineSize=\t"    << lineSize    << G4endl);
+  GateMessage("Image", 1, "nbOfValues=\t"  << nbOfValues  << G4endl);
+  GateMessage("Image", 1, "dataSize =\t"   << data.size() << G4endl);
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateImage::UpdateSizesFromResolutionAndHalfSize() {
@@ -746,7 +748,6 @@ void GateImage::UpdateSizesFromResolutionAndHalfSize() {
   planeSize = (int)lrint(resolution.x()*resolution.y());
 
   PrintInfo();
-
 }
 //-----------------------------------------------------------------------------
 
