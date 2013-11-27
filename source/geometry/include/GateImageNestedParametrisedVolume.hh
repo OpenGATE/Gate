@@ -110,12 +110,6 @@ protected:
   G4LogicalVolume * logYRep;
   G4LogicalVolume * logZRep;
 
-private :
-  /// The default constructor is private : users cannot access it.
-  /// However it is used to create the prototype by the static method
-  /// CreatePrototype();
-  // GateImageNestedParametrisedVolume();
-  // G4double mSmartLess;
 };
 // EO class GateImageNestedParametrisedVolume
 //-----------------------------------------------------------------------------
