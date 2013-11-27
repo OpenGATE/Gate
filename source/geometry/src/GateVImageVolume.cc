@@ -300,7 +300,7 @@ void GateVImageVolume::LoadImageMaterialsTable()
 {
   if (mLoadImageMaterialsFromHounsfieldTable) LoadImageMaterialsFromHounsfieldTable();
   else LoadImageMaterialsFromLabelTable();
-  GateMessage("Volume", 0, "Number of different materials in the image "
+  GateMessage("Volume", 1, "Number of different materials in the image "
               << mImageFilename << " : " << mLabelToMaterialName.size() << G4endl);
 }
 //--------------------------------------------------------------------
@@ -593,13 +593,15 @@ void GateVImageVolume::RemapLabelsContiguously( std::vector<LabelType>& labels, 
 }
 //--------------------------------------------------------------------
 
+
 //--------------------------------------------------------------------
 void GateVImageVolume::PrintInfo()
 {
-  // GateVVolume::PrintInfo();
+  GateMessage("Actor", 1, "GateVImageVolume Actor " << G4endl);
   pImage->PrintInfo();
 }
 //--------------------------------------------------------------------
+
 
 //--------------------------------------------------------------------
 int GateVImageVolume::GetNextVoxel(const G4ThreeVector& position,
@@ -608,6 +610,7 @@ int GateVImageVolume::GetNextVoxel(const G4ThreeVector& position,
   return pImage->GetIndexFromPostPositionAndDirection(position, direction);
 }
 //--------------------------------------------------------------------
+
 
 //--------------------------------------------------------------------
 void GateVImageVolume::DestroyOwnSolidAndLogicalVolume()

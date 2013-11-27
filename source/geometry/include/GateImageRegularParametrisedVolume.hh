@@ -19,7 +19,6 @@ See GATE/LICENSE.txt for further details
 #define __GateImageRegularParametrisedVolume__hh__
 
 #include "GateVImageVolume.hh"
-#include "GateImageRegularParametrisation.hh"
 #include "G4PVParameterised.hh"
 #include "G4PhantomParameterisation.hh"
 
@@ -80,19 +79,20 @@ public:
   void PropagateGlobalSensitiveDetector();
   void PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector * msd);
 
+  //-----------------------------------------------------------------------------
+  void SetSkipEqualMaterialsFlag(bool b);
+  bool GetSkipEqualMaterialsFlag();
+
 protected:
-  //-----------------------------------------------------------------------------
-  /// its messenger
+  // The messenger
   GateImageRegularParametrisedVolumeMessenger* pMessenger;
-  //-----------------------------------------------------------------------------
 
-  G4LogicalVolume * mLogVol;
-  G4PVParameterised * mPhysVol;
-  GateImageRegularParametrisation * mRegularParam;
+  G4PVParameterised * mImagePhysVol;
+  G4Box             * mVoxelSolid;
+  G4LogicalVolume   * mVoxelLog;
   std::vector<G4Material*> mVectorLabel2Material;
-
-  G4Box * pVoxelSolid;
-  G4LogicalVolume * pVoxelLog;
+  size_t * mImageData;
+  bool mSkipEqualMaterialsFlag;
 
 };
 // EO class GateImageRegularParametrisedVolume
