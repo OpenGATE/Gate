@@ -194,6 +194,9 @@ void GateVVolume::ConstructGeometry(G4LogicalVolume* mother_log, G4bool flagUpda
   //  volume construction
   pOwnLog = ConstructOwnSolidAndLogicalVolume(pOwnMaterial, flagUpdateOnly);
 
+  // Propagate Sensitive Detector if needed (see explanation in .hh)
+  PropagateGlobalSensitiveDetector();
+
   GateMessage("Geometry", 8, " " << GetSolidName() << " and " << GetLogicalVolumeName() << " volumes have been constructed.\n");
   GateDebugMessageInc("Cuts", 9, "-- Constructing region for volume = " << GetObjectName() << G4endl);
 
@@ -252,10 +255,6 @@ void GateVVolume::ConstructGeometry(G4LogicalVolume* mother_log, G4bool flagUpda
 // Construct physical volume
 void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
 {
-  // DD(mSolidName);
-  //   DD("GateVVolume::ConstructOwnPhysicalVolume");
-  //   DD(flagUpdateOnly);
-
   // Store the volume default position into a placement queue
   GatePlacementQueue motherQueue;
   motherQueue.push_back(GatePlacement(G4RotationMatrix(),G4ThreeVector()));

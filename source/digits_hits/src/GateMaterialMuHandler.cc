@@ -69,6 +69,14 @@ double GateMaterialMuHandler::GetMu(G4Material* material, double energy)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+GateMuTable *GateMaterialMuHandler::GetMuTable(G4Material *material)
+{
+  if(!mIsInitialized) { Initialize(); }
+  return mMaterialTable[material->GetName()];
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 inline double interpolation(double Xa,double Xb,double Ya,double Yb,double x){
   return exp(log(Ya) + log(Yb/Ya) / log(Xb/Xa)* log(x/Xa) );
 }
@@ -203,6 +211,14 @@ void GateMaterialMuHandler::ConstructMaterial(const G4Material *material)
   }
   
   mMaterialTable.insert(std::pair<G4String, GateMuTable*>(material->GetName(),table));
+
+  delete [] energies;
+  delete [] index;
+  delete [] e_tables;
+  delete [] mu_tables;
+  delete [] muen_tables;
+  delete [] MuEn;
+  delete [] Mu;
 }
 //-----------------------------------------------------------------------------
 

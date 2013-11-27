@@ -174,7 +174,8 @@ G4double GateVImageVolume::GetHalfDimension(size_t axis)
 void GateVImageVolume::SetImageFilename(const G4String& name)
 {
   mImageFilename = name;
-  if (mLabelToImageMaterialTableFilename.length()>0) ImageAndTableFilenamesOK();
+  if (mLabelToImageMaterialTableFilename != "none") ImageAndTableFilenamesOK();
+  if (mHounsfieldToImageMaterialTableFilename != "none") ImageAndTableFilenamesOK();
 }
 //--------------------------------------------------------------------
 
@@ -823,11 +824,7 @@ void GateVImageVolume::BuildDistanceTransfo()
 
   // Dump final result ...
   output.Write(mDistanceTransfoOutput);
-  GateMessage("Core", 0, "Distance map write to disk in the file '"
-	      << mDistanceTransfoOutput
-	      << "' !" << G4endl
-	      << "You can now use it in the simulation (use 'distanceMap' and no more 'buildAndDumpDistanceTransfo'"
-	      << G4endl);
-  // exit(0);
+  GateMessage("Geometry", 1, "Distance map write to disk in the file '" << mDistanceTransfoOutput << "'." << G4endl);
+  GateMessage("Geometry", 1, "You can now use it in the simulation. Use the macro 'distanceMap'. The macro 'buildAndDumpDistanceTransfo' is no more needed." << G4endl);
 }
 //--------------------------------------------------------------------
