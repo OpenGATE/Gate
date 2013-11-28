@@ -10,25 +10,25 @@ See GATE/LICENSE.txt for further details
 
 
 /*!
-  \class  GateImageNestedParametrisedVolume :
-  \brief  Descendent of GateVImageVolume which represent the image using a G4VPVParametrisation (GateImageParametrisation)
-  \author thibault.frisson@creatis.insa-lyon.fr
-          laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
+  \class  GateImageRegularParametrisedVolume :
+  \brief Descendent of GateVImageVolume which represent the image
+  using a G4VPVParametrisation (GateImageParametrisation)
 */
 
-#ifndef __GateImageNestedParametrisedVolume__hh__
-#define __GateImageNestedParametrisedVolume__hh__
+#ifndef __GateImageRegularParametrisedVolume__hh__
+#define __GateImageRegularParametrisedVolume__hh__
 
 #include "GateVImageVolume.hh"
-#include "GateImageNestedParametrisation.hh"
-class GateMultiSensitiveDetector;
+#include "G4PVParameterised.hh"
+#include "G4PhantomParameterisation.hh"
 
-class GateImageNestedParametrisedVolumeMessenger;
+class GateMultiSensitiveDetector;
+class GateImageRegularParametrisedVolumeMessenger;
 
 //-----------------------------------------------------------------------------
-///  \brief Descendent of GateVImageVolume which represent the image using a G4VPVParametrisation (GateImageParametrisation)
-class GateImageNestedParametrisedVolume : public GateVImageVolume
+///  \brief Descendent of GateVImageVolume which represent the image
+///  using a G4VPVParametrisation
+class GateImageRegularParametrisedVolume : public GateVImageVolume
 {
 public:
 
@@ -44,16 +44,16 @@ public:
   /// the path to the volume to create (for commands)
   /// the name of the volume to create
   /// Creates the messenger associated to the volume
-  GateImageNestedParametrisedVolume(const G4String& name,G4bool acceptsChildren,G4int depth);
+  GateImageRegularParametrisedVolume(const G4String& name,G4bool acceptsChildren,G4int depth);
   /// Destructor
-  virtual ~GateImageNestedParametrisedVolume();
+  virtual ~GateImageRegularParametrisedVolume();
   //-----------------------------------------------------------------------------
-  FCT_FOR_AUTO_CREATOR_VOLUME(GateImageNestedParametrisedVolume)
+  FCT_FOR_AUTO_CREATOR_VOLUME(GateImageRegularParametrisedVolume)
 
   //-----------------------------------------------------------------------------
   /// Returns a string describing the type of volume and which is used
   /// for commands
-  virtual G4String GetTypeName() { return "ImageNestedParametrised"; }
+  virtual G4String GetTypeName() { return "ImageRegularParametrised"; }
 
   virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume(G4Material*, G4bool);
   //virtual void DestroyOwnSolidAndLogicalVolume(){};
@@ -76,37 +76,27 @@ public:
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
-  virtual void GetPhysVolForAVoxel(const G4int index,
-				   const G4VTouchable & pTouchable,
-				   G4VPhysicalVolume ** pPhysVol,
-				   G4NavigationHistory & history) const;
+  void PropagateGlobalSensitiveDetector();
+  void PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector * msd);
+
   //-----------------------------------------------------------------------------
-
-  // This function add multi-SD to the sub logical-volume
-  virtual void PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector *);
-
-  // This function add 'global' SD (Root output, PhantomSD) to the sub
-  // logical-volume (see GateVVolume.hh)
-  virtual void PropagateGlobalSensitiveDetector();
-
+  void SetSkipEqualMaterialsFlag(bool b);
+  bool GetSkipEqualMaterialsFlag();
 
 protected:
-  //-----------------------------------------------------------------------------
-  /// its messenger
-  GateImageNestedParametrisedVolumeMessenger* pMessenger;
-  //-----------------------------------------------------------------------------
+  // The messenger
+  GateImageRegularParametrisedVolumeMessenger* pMessenger;
 
-  GateImageNestedParametrisation * mVoxelParametrisation;
-  G4VPhysicalVolume * mPhysVolX;
-  G4VPhysicalVolume * mPhysVolY;
-  G4VPhysicalVolume * mPhysVolZ;
+  G4PVParameterised * mImagePhysVol;
+  G4Box             * mVoxelSolid;
+  G4LogicalVolume   * mVoxelLog;
+  std::vector<G4Material*> mVectorLabel2Material;
+  size_t * mImageData;
+  bool mSkipEqualMaterialsFlag;
 
-  G4LogicalVolume * logXRep;
-  G4LogicalVolume * logYRep;
-  G4LogicalVolume * logZRep;
 };
-// EO class GateImageNestedParametrisedVolume
+// EO class GateImageRegularParametrisedVolume
 //-----------------------------------------------------------------------------
-MAKE_AUTO_CREATOR_VOLUME(ImageNestedParametrisedVolume,GateImageNestedParametrisedVolume)
+MAKE_AUTO_CREATOR_VOLUME(ImageRegularParametrisedVolume,GateImageRegularParametrisedVolume)
 
 #endif

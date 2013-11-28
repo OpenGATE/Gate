@@ -262,7 +262,7 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
   }
   else {
     G4cout << "je lis" << G4endl;
-    tmp->Read(mImageFilename); 
+    tmp->Read(mImageFilename);
     G4cout << "j'ai lu" << G4endl;
     G4cout << mImageFilename << G4endl;
   }
@@ -318,10 +318,14 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
 /// Loads the LabelToMaterial file
 void GateVImageVolume::LoadImageMaterialsTable()
 {
-  if (mLoadImageMaterialsFromHounsfieldTable) LoadImageMaterialsFromHounsfieldTable();
-  else if (mLoadImageMaterialsFromLabelTable) LoadImageMaterialsFromLabelTable();
-  else LoadImageMaterialsFromRangeTable();
-  GateMessage("Volume", 0, "Number of different materials in the image "
+  if (mLoadImageMaterialsFromHounsfieldTable) {
+    LoadImageMaterialsFromHounsfieldTable();
+  }
+  else {
+    if (mLoadImageMaterialsFromLabelTable) LoadImageMaterialsFromLabelTable();
+    else LoadImageMaterialsFromRangeTable();
+  }
+  GateMessage("Volume", 1, "Number of different materials in the image "
               << mImageFilename << " : " << mLabelToMaterialName.size() << G4endl);
 }
 //--------------------------------------------------------------------
@@ -456,7 +460,7 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable()
   // ------------------------------------
   GateMessageInc("Volume",5,"Begin GateVImageVolume::LoadImageMaterialsFromLabelTable("
 		 <<mLabelToImageMaterialTableFilename<<")" << G4endl);
-  
+
   // open file
   std::ifstream is;
   OpenFileInput(mLabelToImageMaterialTableFilename, is);
@@ -484,7 +488,7 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable()
     }
   } // end while
 
-  
+
   GateMessage("Volume",5,"GateVImageVolume -- Label \tMaterial" << G4endl);
   LabelToMaterialNameType::iterator lit;
   for (lit=mLabelToMaterialName.begin(); lit!=mLabelToMaterialName.end(); ++lit) {
@@ -504,9 +508,9 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
   G4cout << "on est dans le range" << G4endl;
 
   m_voxelMaterialTranslation.clear();
-  
+
   std::ifstream inFile;
-  
+
   inFile.open(mRangeToImageMaterialTableFilename.c_str(),std::ios::in);
   mRangeMaterialTable.Reset();
   // mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(), pImage->GetOutsideValue()+1,"worldDefaultAir");
@@ -549,16 +553,16 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
       is >> std::boolalpha >> visible >> red >> green >> blue >> alpha;
     }
 
-    G4cout << " min max " << xmin << " " << xmax << "  material: " << material 
+    G4cout << " min max " << xmin << " " << xmax << "  material: " << material
     << std::boolalpha << ", visible " << visible << ", rgba(" << red<<',' << green << ',' << blue << ')' << G4endl;
-    
+
     if(xmax> pImage->GetOutsideValue()+1){
       if(xmin<pImage->GetOutsideValue()+1) xmin=pImage->GetOutsideValue()+1;
         mRangeMaterialTable.AddMaterial(xmin,xmax,material);
     }
 
   mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
-    
+   
 
   m_voxelAttributesTranslation[GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(material) ] =
       new G4VisAttributes(visible, G4Colour(red, green, blue, alpha));
@@ -621,9 +625,9 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
 
   }
   else {G4cout << "Error opening file." << G4endl;}
-  
+
   //inFile.close();
-  
+
   ImageType::iterator iter;
   iter = pImage->begin();
   while (iter != pImage->end()) {
@@ -768,13 +772,15 @@ void GateVImageVolume::RemapLabelsContiguously( std::vector<LabelType>& labels, 
 }
 //--------------------------------------------------------------------
 
+
 //--------------------------------------------------------------------
 void GateVImageVolume::PrintInfo()
 {
-  // GateVVolume::PrintInfo();
+  GateMessage("Actor", 1, "GateVImageVolume Actor " << G4endl);
   pImage->PrintInfo();
 }
 //--------------------------------------------------------------------
+
 
 //--------------------------------------------------------------------
 int GateVImageVolume::GetNextVoxel(const G4ThreeVector& position,
@@ -783,6 +789,7 @@ int GateVImageVolume::GetNextVoxel(const G4ThreeVector& position,
   return pImage->GetIndexFromPostPositionAndDirection(position, direction);
 }
 //--------------------------------------------------------------------
+
 
 //--------------------------------------------------------------------
 void GateVImageVolume::DestroyOwnSolidAndLogicalVolume()
