@@ -15,18 +15,15 @@
 
 #include "globals.hh"
 
-//#include "GateMessageManager.hh"
-
 #include "G4UImessenger.hh"
-#include "GateUIcmdWith2String.hh"
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWithAString.hh"
-#include "GateUIcmdWithAStringAndAnInteger.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithADouble.hh"
-
+#include "GateUIcmdWithAStringAndAnInteger.hh"
+#include "GateUIcmdWith2String.hh"
 #include "GateMaterialMuHandler.hh"
 
 class GatePhysicsList;
