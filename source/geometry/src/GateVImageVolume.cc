@@ -354,6 +354,7 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
   while (is) {
     skipComment(is);
     double h1,h2;
+
     is >> h1;
     is >> h2;
     G4String n;
@@ -527,6 +528,9 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
 
   is >> nTotCol;
   G4cout << "nTotCol: " << nTotCol << G4endl;
+
+  if (is.eof()){
+  G4cout << "Config PET" << G4endl;
   
   for (G4int iCol=0; iCol<nTotCol; iCol++) {
     inFile.getline(buffer,200);
@@ -553,12 +557,67 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
         mRangeMaterialTable.AddMaterial(xmin,xmax,material);
     }
 
-    mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
+  mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
     
 
-    m_voxelAttributesTranslation[GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(material) ] =
+  m_voxelAttributesTranslation[GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(material) ] =
       new G4VisAttributes(visible, G4Colour(red, green, blue, alpha));
   }
+
+  }else{
+  G4cout << "Config RT" << G4endl;
+  
+  inFile.close();
+  std::ifstream is;
+  OpenFileInput(mRangeToImageMaterialTableFilename, is);
+  //inFile.open(mRangeToImageMaterialTableFilename.c_str(),std::ios::in);
+  mRangeMaterialTable.Reset();
+//  inFile.getline(buffer,200);
+//  is.str(buffer);
+  while (is){
+  G4cout << "toto" << G4endl;
+  is >> xmin >> xmax;
+  is >> material;
+  G4cout << material << G4endl; 
+  if(xmax> pImage->GetOutsideValue()+1){
+    if(xmin<pImage->GetOutsideValue()+1) xmin=pImage->GetOutsideValue()+1;
+      mRangeMaterialTable.AddMaterial(xmin,xmax,material);
+  }
+  }
+  mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
+  }
+  
+//  for (G4int iCol=0; iCol<nTotCol; iCol++) {
+//    inFile.getline(buffer,200);
+//    is.clear();
+//    is.str(buffer);
+
+//    is >> xmin >> xmax;
+//    is >> material;
+
+//    if (is.eof()){
+//      visible=true;
+//      red=0.5;
+//      green=blue=0.0;
+//      alpha=1;
+//    }else{
+//      is >> std::boolalpha >> visible >> red >> green >> blue >> alpha;
+//    }
+
+//    G4cout << " min max " << xmin << " " << xmax << "  material: " << material 
+//    << std::boolalpha << ", visible " << visible << ", rgba(" << red<<',' << green << ',' << blue << ')' << G4endl;
+//    
+//    if(xmax> pImage->GetOutsideValue()+1){
+//      if(xmin<pImage->GetOutsideValue()+1) xmin=pImage->GetOutsideValue()+1;
+//        mRangeMaterialTable.AddMaterial(xmin,xmax,material);
+//    }
+
+//    mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
+//    
+
+//    m_voxelAttributesTranslation[GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(material) ] =
+//      new G4VisAttributes(visible, G4Colour(red, green, blue, alpha));
+//  }
 
   }
   else {G4cout << "Error opening file." << G4endl;}
