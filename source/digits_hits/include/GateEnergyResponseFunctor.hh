@@ -49,7 +49,7 @@ void ReadResponseDetectorFile(std::string responseFileName) {
   inResponseFile.open(responseFileName.c_str());
   if( !inResponseFile ) {
     // file couldn't be opened
-    G4cout << "Error: file could not be opened" << G4endl;
+    G4cout << "Error: file [" << responseFileName << "] could not be opened" << G4endl;
     exit( 1);
   }
   while ( !inResponseFile.eof( )) {
