@@ -230,6 +230,9 @@ protected:
   // Water equivalent conversion
   void CreateWaterLUT(const std::vector<double> &energyList,
                       const std::vector<double> &energyWeightList);
+
+  // Account for primary fluence weighting
+  InputImageType::Pointer PrimaryFluenceWeighting(const InputImageType::Pointer input);
 };
 //-----------------------------------------------------------------------------
 

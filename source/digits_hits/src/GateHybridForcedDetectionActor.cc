@@ -622,93 +622,12 @@ void GateHybridForcedDetectionActor::SaveData()
   G4int rID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
 
   if(mPrimaryFilename != "") {
+    // Write the image of primary radiation accounting for the fluence of the
+    // primary source.
     sprintf(filename, mPrimaryFilename.c_str(), rID);
     imgWriter->SetFileName(filename);
-    if(mSource->GetPosDist()->GetPosDisType() == "Point") {
-      GateWarning("Primary fluence is not accounted for with a Point source distribution");
-      imgWriter->SetInput(mPrimaryImage);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    }
-    else if(mSource->GetPosDist()->GetPosDisType() == "Plane") {
-      // Check plane source projection probability
-      G4ThreeVector sourceCorner1 = mSource->GetPosDist()->GetCentreCoords();
-      sourceCorner1[0] -= mSource->GetPosDist()->GetHalfX();
-      sourceCorner1[1] -= mSource->GetPosDist()->GetHalfY();
-      sourceCorner1 = m_SourceToCT.TransformPoint(sourceCorner1);
-
-      G4ThreeVector sourceCorner2 = mSource->GetPosDist()->GetCentreCoords();
-      sourceCorner2[0] += mSource->GetPosDist()->GetHalfX();
-      sourceCorner2[1] += mSource->GetPosDist()->GetHalfY();
-      sourceCorner2 = m_SourceToCT.TransformPoint(sourceCorner2);
-
-      // Compute source plane corner positions in homogeneous coordinates
-      itk::Vector<double, 4> corner1Hom, corner2Hom;
-      corner1Hom[0] = sourceCorner1[0];
-      corner1Hom[1] = sourceCorner1[1];
-      corner1Hom[2] = sourceCorner1[2];
-      corner1Hom[3] = 1.;
-      corner2Hom[0] = sourceCorner2[0];
-      corner2Hom[1] = sourceCorner2[1];
-      corner2Hom[2] = sourceCorner2[2];
-      corner2Hom[3] = 1.;
-
-      // Project onto detector
-      itk::Vector<double, 3> corner1ProjHom, corner2ProjHom;
-      corner1ProjHom.SetVnlVector(mGeometry->GetMatrices().back().GetVnlMatrix() * corner1Hom.GetVnlVector());
-      corner2ProjHom.SetVnlVector(mGeometry->GetMatrices().back().GetVnlMatrix() * corner2Hom.GetVnlVector());
-      corner1ProjHom /= corner1ProjHom[2];
-      corner2ProjHom /= corner2ProjHom[2];
-
-      // Convert to non homogeneous coordinates
-      InputImageType::PointType corner1Proj, corner2Proj;
-      corner1Proj[0] = corner1ProjHom[0];
-      corner1Proj[1] = corner1ProjHom[1];
-      corner1Proj[2] = 0.;
-      corner2Proj[0] = corner2ProjHom[0];
-      corner2Proj[1] = corner2ProjHom[1];
-      corner2Proj[2] = 0.;
-
-      // Convert to projection indices
-      itk::ContinuousIndex<double, 3> corner1Idx, corner2Idx;
-      mPrimaryImage->TransformPhysicalPointToContinuousIndex<double>(corner1Proj, corner1Idx);
-      mPrimaryImage->TransformPhysicalPointToContinuousIndex<double>(corner2Proj, corner2Idx);
-      if(corner1Idx[0]>corner2Idx[0])
-        std::swap(corner1Idx[0], corner2Idx[0]);
-      if(corner1Idx[1]>corner2Idx[1])
-        std::swap(corner1Idx[1], corner2Idx[1]);
-
-      // Create copy of image normalized by the number of particles and the ratio
-      // between source size on the detector and the detector size in pixels
-      typedef itk::MultiplyImageFilter<InputImageType, InputImageType> MultiplyType;
-      MultiplyType::Pointer mult = MultiplyType::New();
-      mult->SetInput(mPrimaryImage);
-      InputImageType::SizeType size = mPrimaryImage->GetLargestPossibleRegion().GetSize();
-      mult->SetConstant(mNumberOfEventsInRun /
-                        ((corner2Idx[1] - corner1Idx[1]) *
-                         (corner2Idx[0] - corner1Idx[0])));
-      mult->InPlaceOff();
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(mult->Update());
-
-      // Multiply by pixel fraction
-      itk::ImageRegionIterator<InputImageType> it(mult->GetOutput(),
-                                                  mult->GetOutput()->GetLargestPossibleRegion());
-      InputImageType::IndexType idx = mPrimaryImage->GetLargestPossibleRegion().GetIndex();
-      for(unsigned int j=idx[1]; j<size[1]; j++)
-        for(unsigned int i=idx[0]; i<size[0]; i++) {
-          double maxInfX = std::max<double>(i-0.5, corner1Idx[0]);
-          double maxInfY = std::max<double>(j-0.5, corner1Idx[1]);
-          double minSupX = std::min<double>(i+0.5, corner2Idx[0]);
-          double minSupY = std::min<double>(j+0.5, corner2Idx[1]);
-          it.Set(it.Get() *
-                 std::max<double>(0., minSupX-maxInfX) *
-                 std::max<double>(0., minSupY-maxInfY));
-          ++it;
-        }
-
-      // Write the image of primary radiation
-      imgWriter->SetInput(mult->GetOutput());
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    }
+    imgWriter->SetInput( PrimaryFluenceWeighting(mPrimaryImage) );
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
   }
 
   if(mMaterialMuFilename != "") {
@@ -738,6 +657,9 @@ void GateHybridForcedDetectionActor::SaveData()
     typedef itk::BinaryFunctorImageFilter< InputImageType, InputImageType, InputImageType,
                                            GateHybridForcedDetectionFunctor::Attenuation<InputImageType::PixelType> > attenFunctor;
     attenFunctor::Pointer atten = attenFunctor::New();
+
+    // In the attenuation, we assume that the whole detector is irradiated.
+    // Otherwise we would have a division by 0.
     atten->SetInput1(mPrimaryImage);
     atten->SetInput2(mFlatFieldImage);
     atten->InPlaceOff();
@@ -749,19 +671,11 @@ void GateHybridForcedDetectionActor::SaveData()
   }
 
   if(mFlatFieldFilename != "") {
-    // Normalize by the number of particles
-    // FIXME: it assumes here that all particles hit the detector and every point
-    // of the detector has the same probability to be hit.
-    typedef itk::MultiplyImageFilter<InputImageType, InputImageType> MultiplyType;
-    MultiplyType::Pointer mult = MultiplyType::New();
-    mult->SetInput(mFlatFieldImage);
-    InputImageType::SizeType size = mFlatFieldImage->GetLargestPossibleRegion().GetSize();
-    mult->SetConstant(mNumberOfEventsInRun / double(size[0] * size[1]));
-    mult->InPlaceOff();
-
+    // Write the image of the flat field accounting for the fluence of the
+    // primary source.
     sprintf(filename, mFlatFieldFilename.c_str(), rID);
     imgWriter->SetFileName(filename);
-    imgWriter->SetInput(mult->GetOutput());
+    imgWriter->SetInput( PrimaryFluenceWeighting(mFlatFieldImage) );
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
   }
 
@@ -1150,4 +1064,94 @@ GateHybridForcedDetectionActor::CreateWaterLUT(const std::vector<double> &energy
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+GateHybridForcedDetectionActor::InputImageType::Pointer
+GateHybridForcedDetectionActor::PrimaryFluenceWeighting(const InputImageType::Pointer input)
+{
+  InputImageType::Pointer output = input;
+  if(mSource->GetPosDist()->GetPosDisType() == "Point") {
+    GateWarning("Primary fluence is not accounted for with a Point source distribution");
+  }
+  else if(mSource->GetPosDist()->GetPosDisType() == "Plane") {
+
+
+    // Check plane source projection probability
+    G4ThreeVector sourceCorner1 = mSource->GetPosDist()->GetCentreCoords();
+    sourceCorner1[0] -= mSource->GetPosDist()->GetHalfX();
+    sourceCorner1[1] -= mSource->GetPosDist()->GetHalfY();
+    sourceCorner1 = m_SourceToCT.TransformPoint(sourceCorner1);
+
+    G4ThreeVector sourceCorner2 = mSource->GetPosDist()->GetCentreCoords();
+    sourceCorner2[0] += mSource->GetPosDist()->GetHalfX();
+    sourceCorner2[1] += mSource->GetPosDist()->GetHalfY();
+    sourceCorner2 = m_SourceToCT.TransformPoint(sourceCorner2);
+
+    // Compute source plane corner positions in homogeneous coordinates
+    itk::Vector<double, 4> corner1Hom, corner2Hom;
+    corner1Hom[0] = sourceCorner1[0];
+    corner1Hom[1] = sourceCorner1[1];
+    corner1Hom[2] = sourceCorner1[2];
+    corner1Hom[3] = 1.;
+    corner2Hom[0] = sourceCorner2[0];
+    corner2Hom[1] = sourceCorner2[1];
+    corner2Hom[2] = sourceCorner2[2];
+    corner2Hom[3] = 1.;
+
+    // Project onto detector
+    itk::Vector<double, 3> corner1ProjHom, corner2ProjHom;
+    corner1ProjHom.SetVnlVector(mGeometry->GetMatrices().back().GetVnlMatrix() * corner1Hom.GetVnlVector());
+    corner2ProjHom.SetVnlVector(mGeometry->GetMatrices().back().GetVnlMatrix() * corner2Hom.GetVnlVector());
+    corner1ProjHom /= corner1ProjHom[2];
+    corner2ProjHom /= corner2ProjHom[2];
+
+    // Convert to non homogeneous coordinates
+    InputImageType::PointType corner1Proj, corner2Proj;
+    corner1Proj[0] = corner1ProjHom[0];
+    corner1Proj[1] = corner1ProjHom[1];
+    corner1Proj[2] = 0.;
+    corner2Proj[0] = corner2ProjHom[0];
+    corner2Proj[1] = corner2ProjHom[1];
+    corner2Proj[2] = 0.;
+
+    // Convert to projection indices
+    itk::ContinuousIndex<double, 3> corner1Idx, corner2Idx;
+    input->TransformPhysicalPointToContinuousIndex<double>(corner1Proj, corner1Idx);
+    input->TransformPhysicalPointToContinuousIndex<double>(corner2Proj, corner2Idx);
+    if(corner1Idx[0]>corner2Idx[0])
+      std::swap(corner1Idx[0], corner2Idx[0]);
+    if(corner1Idx[1]>corner2Idx[1])
+      std::swap(corner1Idx[1], corner2Idx[1]);
+
+    // Create copy of image normalized by the number of particles and the ratio
+    // between source size on the detector and the detector size in pixels
+    typedef itk::MultiplyImageFilter<InputImageType, InputImageType> MultiplyType;
+    MultiplyType::Pointer mult = MultiplyType::New();
+    mult->SetInput(input);
+    InputImageType::SizeType size = input->GetLargestPossibleRegion().GetSize();
+    mult->SetConstant(mNumberOfEventsInRun /
+                      ((corner2Idx[1] - corner1Idx[1]) *
+                       (corner2Idx[0] - corner1Idx[0])));
+    mult->InPlaceOff();
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(mult->Update());
+
+    // Multiply by pixel fraction
+    itk::ImageRegionIterator<InputImageType> it(mult->GetOutput(),
+                                                mult->GetOutput()->GetLargestPossibleRegion());
+    InputImageType::IndexType idx = input->GetLargestPossibleRegion().GetIndex();
+    for(unsigned int j=idx[1]; j<size[1]; j++)
+      for(unsigned int i=idx[0]; i<size[0]; i++) {
+        double maxInfX = std::max<double>(i-0.5, corner1Idx[0]);
+        double maxInfY = std::max<double>(j-0.5, corner1Idx[1]);
+        double minSupX = std::min<double>(i+0.5, corner2Idx[0]);
+        double minSupY = std::min<double>(j+0.5, corner2Idx[1]);
+        it.Set(it.Get() *
+               std::max<double>(0., minSupX-maxInfX) *
+               std::max<double>(0., minSupY-maxInfY));
+        ++it;
+      }
+    output = mult->GetOutput();
+  }
+  return output;
+}
+//-----------------------------------------------------------------------------
 #endif
