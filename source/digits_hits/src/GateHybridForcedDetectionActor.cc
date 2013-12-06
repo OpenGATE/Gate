@@ -453,21 +453,21 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
   G4String st = "";
   if(step->GetTrack()->GetLogicalVolumeAtVertex())
     st = step->GetTrack()->GetLogicalVolumeAtVertex()->GetName();
-  sscanf(st.c_str(), "%s", mInteractionProductionVolume);
+  strcpy(mInteractionProductionVolume, st.c_str());
   // mInteractionProductionProcessTrack
   st = "";
   if(step->GetTrack()->GetCreatorProcess() )
     st =  step->GetTrack()->GetCreatorProcess()->GetProcessName();
-  sscanf(st.c_str(), "%s", mInteractionProductionProcessTrack);
+  strcpy(mInteractionProductionProcessTrack, st.c_str());
   // mInteractionProductionProcessStep
   st = process->GetProcessName();
-  sscanf(st.c_str(), "%s", mInteractionProductionProcessStep);
+  strcpy(mInteractionProductionProcessStep, st.c_str());
   // mInteractionVolume
   st = step->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetName();
-  sscanf(st.c_str(), "%s", mInteractionVolume);
+  strcpy(mInteractionVolume, st.c_str());
   // mInteractionVolume
   st = step->GetPreStepPoint()->GetMaterial()->GetName();
-  sscanf(st.c_str(), "%s", mInteractionMaterial);
+  strcpy(mInteractionMaterial, st.c_str());
 
 
   GateScatterOrderTrackInformation * info = dynamic_cast<GateScatterOrderTrackInformation *>(step->GetTrack()->GetUserInformation());
