@@ -15,18 +15,15 @@
 
 #include "globals.hh"
 
-//#include "GateMessageManager.hh"
-
 #include "G4UImessenger.hh"
-#include "GateUIcmdWith2String.hh"
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWithAString.hh"
-#include "GateUIcmdWithAStringAndAnInteger.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithADouble.hh"
-
+#include "GateUIcmdWithAStringAndAnInteger.hh"
+#include "GateUIcmdWith2String.hh"
 #include "GateMaterialMuHandler.hh"
 
 class GatePhysicsList;
@@ -36,7 +33,7 @@ class GatePhysicsListMessenger:public G4UImessenger
 public:
   GatePhysicsListMessenger(GatePhysicsList * pl);
   ~GatePhysicsListMessenger();
-  
+
   void BuildCommands(G4String base);
   void SetNewValue(G4UIcommand*, G4String);
 
@@ -49,12 +46,12 @@ protected:
   GateUIcmdWith2String * pList;
   G4UIcmdWithoutParameter * pInit;
   G4UIcmdWithAString * pPrint;
- 
+
   G4UIcmdWithAString * gammaCutCmd;
   G4UIcmdWithAString * electronCutCmd;
   G4UIcmdWithAString * positronCutCmd;
   G4UIcmdWithAString * protonCutCmd;
- 
+
   G4UIcmdWithAString * pMaxStepSizeCmd;
   G4UIcmdWithAString * pMaxTrackLengthCmd;
   G4UIcmdWithAString * pMaxToFCmd;
@@ -71,9 +68,6 @@ protected:
   G4UIcmdWithADoubleAndUnit * pSetEMin;
   G4UIcmdWithADoubleAndUnit * pSetEMax;
   G4UIcmdWithABool * pSetSplineFlag;
-  G4UIcommand * pAddAtomDeexcitation;
-  G4UIcmdWithAString * pAddPhysicsList;
-  G4UIcmdWithADoubleAndUnit * pEnergyRangeMinLimitCmd;
 
   // Mu Handler tools
   G4UIcmdWithAString * pMuHandlerUsePrecalculatedElements;
@@ -83,12 +77,15 @@ protected:
   G4UIcmdWithADoubleAndUnit * pMuHandlerSetAtomicShellEMin;
   G4UIcmdWithADoubleAndUnit * pMuHandlerSetAtomicShellTolerance;
   G4UIcmdWithADouble * pMuHandlerSetPrecision;
-  
+
+  G4UIcommand * pAddAtomDeexcitation;
+  G4UIcmdWithAString * pAddPhysicsList;
+  G4UIcmdWithADoubleAndUnit * pEnergyRangeMinLimitCmd;
 
 private:
   int nInit;
   int nEMStdOpt;
   GateMaterialMuHandler *nMuHandler;
-}; 
+};
 
 #endif /* end #define GATEPHYSICSLISTMESSENGER_HH */

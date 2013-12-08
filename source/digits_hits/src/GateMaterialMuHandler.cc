@@ -211,7 +211,7 @@ void GateMaterialMuHandler::ConstructMaterial(const G4Material *material)
   }
   
   mMaterialTable.insert(std::pair<G4String, GateMuTable*>(material->GetName(),table));
-  
+
   delete [] energies;
   delete [] index;
   delete [] e_tables;

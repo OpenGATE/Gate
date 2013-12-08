@@ -88,7 +88,6 @@ double GateMuTable::GetMu(double energy)
   return lastMu;
 }
 
-
 G4int GateMuTable::GetSize()
 {
   return mSize;

@@ -16,17 +16,17 @@ ENDMACRO(DD)
 # Default build type
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE Release CACHE STRING
-      "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
-      FORCE)
+    "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+    FORCE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
 #=========================================================
 # Option to use visualisation feature of G4
-OPTION(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
-IF(WITH_GEANT4_UIVIS)
-      FIND_PACKAGE(Geant4 REQUIRED ui_all vis_all)
+OPTION(GATE_USE_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
+IF(GATE_USE_GEANT4_UIVIS)
+  FIND_PACKAGE(Geant4 REQUIRED ui_all vis_all)
 ELSE()
-      FIND_PACKAGE(Geant4 REQUIRED)
+  FIND_PACKAGE(Geant4 REQUIRED)
 ENDIF()
 
 
@@ -49,8 +49,6 @@ ENDIF()
 
 #=========================================================
 # Option for Root use
-
-OPTION(GATE_USE_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
 OPTION(GATE_USE_ROOT "Gate use ROOT (Recommanded)" ON)
 OPTION(GATE_USE_OPTICAL "Gate use optical photon" OFF)
 OPTION(GATE_USE_LMF "Gate use LMF" OFF)
@@ -64,74 +62,70 @@ OPTION(GATE_USE_RTK "Gate use RTK (for hybrid simulation)" OFF)
 #=========================================================
 # ROOT
 IF(GATE_USE_ROOT)
-   FIND_PACKAGE(ROOT REQUIRED)
-   INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
-   SET(LINK_DIRECTORIES ${ROOT_LIBRARY_DIR})
-   #MESSAGE("Found Root in ${ROOT_INCLUDE_DIR} ${ROOT_LIBRARY_DIR} ${ROOT_LIBRARIES}")
-   IF(ROOT_INCLUDE_DIR)
-     MESSAGE("Your current Root version is ${ROOT_VERSION}")
-   ELSE()
-      MESSAGE("Root Not found ! Please install Root and make it available in PATH")
-   ENDIF()
+  FIND_PACKAGE(ROOT REQUIRED)
+  INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
+  SET(LINK_DIRECTORIES ${ROOT_LIBRARY_DIR})
+  #MESSAGE("Found Root in ${ROOT_INCLUDE_DIR} ${ROOT_LIBRARY_DIR} ${ROOT_LIBRARIES}")
+  IF(ROOT_INCLUDE_DIR)
+    MESSAGE("Your current Root version is ${ROOT_VERSION}")
+  ELSE()
+    MESSAGE("Root Not found ! Please install Root and make it available in PATH")
+  ENDIF()
 ENDIF()
 
 #=========================================================
 # Option for Optical Photon use
-
 IF(GATE_USE_OPTICAL)
-    FIND_PACKAGE(LIBXML2 REQUIRED)
-    INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
-    SET(LINK_DIRECTORIES ${LIBXML2_LIBRARIES})
+  FIND_PACKAGE(LIBXML2 REQUIRED)
+  INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
+  SET(LINK_DIRECTORIES ${LIBXML2_LIBRARIES})
 ENDIF(GATE_USE_OPTICAL)
 
 #=========================================================
 # Option for Clhep use
-
 IF(GATE_USE_SYSTEM_CLHEP)
-   FIND_PACKAGE(CLHEP REQUIRED)
-   INCLUDE_DIRECTORIES(${CLHEP_INCLUDE_DIR})
-   SET(LINK_DIRECTORIES ${CLHEP_LIBRARIES})
-   MESSAGE("Your current Geant4 version is ${Geant4_VERSION}")
-   MESSAGE("Your current CLHEP version is ${CLHEP_VERSION}")
-   MESSAGE("Please refer to http://geant4.web.cern.ch/geant4/support/ReleaseNotes4.${G4VERSION_MAJOR}.${G4VERSION_MINOR}.html to verify that your CLHEP version is supported by Geant4.")
+  FIND_PACKAGE(CLHEP REQUIRED)
+  INCLUDE_DIRECTORIES(${CLHEP_INCLUDE_DIR})
+  SET(LINK_DIRECTORIES ${CLHEP_LIBRARIES})
+  MESSAGE("Your current Geant4 version is ${Geant4_VERSION}")
+  MESSAGE("Your current CLHEP version is ${CLHEP_VERSION}")
+  MESSAGE("Please refer to http://geant4.web.cern.ch/geant4/support/ReleaseNotes4.${G4VERSION_MAJOR}.${G4VERSION_MINOR}.html to verify that your CLHEP version is supported by Geant4.")
 
-   #MESSAGE("Found Clhep in ${CLHEP_INCLUDE_DIR} ${CLHEP_LIBRARY}")
+  #MESSAGE("Found Clhep in ${CLHEP_INCLUDE_DIR} ${CLHEP_LIBRARY}")
 ENDIF()
 
 #=========================================================
 # Option for GPU use
-
 IF(GATE_USE_GPU)
-    FIND_PACKAGE(CUDA)
-    INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/source/gpu/include/)
-    FILE(GLOB sourcesGPU
+  FIND_PACKAGE(CUDA)
+  INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/source/gpu/include/)
+  FILE(GLOB sourcesGPU
     ${PROJECT_SOURCE_DIR}/source/gpu/src/GateGPUManager.cu
     )
 ENDIF(GATE_USE_GPU)
 
 #=========================================================
 # Option for LMF use
-
 IF(GATE_USE_LMF)
-	FIND_PATH(LMF_HOME lmf /usr /usr/local)
-	SET(LMF_INCLUDE_DIR "${LMF_HOME}/includes")
-	SET(LMF_LIBRARIES "${LMF_HOME}/lib")
-	SET(LMF_LIBRARY "-L${LMF_LIBRARIES} -lLMF")
-	INCLUDE_DIRECTORIES(${LMF_INCLUDE_DIR})
-	SET(LINK_DIRECTORIES ${LMF_LIBRARIES})
-	#MESSAGE("Found Lmf in ${LMF_INCLUDE_DIR} ${LMF_LIBRARIES} ${LMF_LIBRARY}")
+  FIND_PATH(LMF_HOME lmf /usr /usr/local)
+  SET(LMF_INCLUDE_DIR "${LMF_HOME}/includes")
+  SET(LMF_LIBRARIES "${LMF_HOME}/lib")
+  SET(LMF_LIBRARY "-L${LMF_LIBRARIES} -lLMF")
+  INCLUDE_DIRECTORIES(${LMF_INCLUDE_DIR})
+  SET(LINK_DIRECTORIES ${LMF_LIBRARIES})
+  #MESSAGE("Found Lmf in ${LMF_INCLUDE_DIR} ${LMF_LIBRARIES} ${LMF_LIBRARY}")
 ENDIF(GATE_USE_LMF)
 
 #=========================================================
 # Option for ECAT7 use
 IF(GATE_USE_ECAT7)
-	FIND_PATH(ECAT7_HOME ecat /usr /usr/local)
-	SET(ECAT7_INCLUDE_DIR "${ECAT7_HOME}/include")
-	SET(ECAT7_LIBRARIES "${ECAT7_HOME}/lib")
-	SET(ECAT7_LIBRARY "-L${ECAT7_LIBRARIES} -lecat")
-	INCLUDE_DIRECTORIES(${ECAT7_INCLUDE_DIR})
-	SET(LINK_DIRECTORIES ${ECAT7_LIBRARIES})
-	#MESSAGE("Found Ecat in ${ECAT7_INCLUDE_DIR} ${ECAT7_LIBRARIES} ${ECAT7_LIBRARY}")
+  FIND_PATH(ECAT7_HOME ecat /usr /usr/local)
+  SET(ECAT7_INCLUDE_DIR "${ECAT7_HOME}/include")
+  SET(ECAT7_LIBRARIES "${ECAT7_HOME}/lib")
+  SET(ECAT7_LIBRARY "-L${ECAT7_LIBRARIES} -lecat")
+  INCLUDE_DIRECTORIES(${ECAT7_INCLUDE_DIR})
+  SET(LINK_DIRECTORIES ${ECAT7_LIBRARIES})
+  #MESSAGE("Found Ecat in ${ECAT7_INCLUDE_DIR} ${ECAT7_LIBRARIES} ${ECAT7_LIBRARY}")
 ENDIF(GATE_USE_ECAT7)
 
 #=========================================================
@@ -144,33 +138,33 @@ INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR})
 # Setup include directory for this project
 INCLUDE(${Geant4_USE_FILE})
 INCLUDE_DIRECTORIES(
-	${PROJECT_SOURCE_DIR}/source/arf/include
-	${PROJECT_SOURCE_DIR}/source/geometry/include
-	${PROJECT_SOURCE_DIR}/source/physics/include
-	${PROJECT_SOURCE_DIR}/source/digits_hits/include
-	${PROJECT_SOURCE_DIR}/source/general/include
-	${PROJECT_SOURCE_DIR}/source/itk-mhd/
-	${PROJECT_SOURCE_DIR}/source/itk-mhd/itkzlib
-	${PROJECT_SOURCE_DIR}/source/itk-mhd/MetaIO
-        ${PROJECT_BINARY_DIR}/itk-mhd/)
+  ${PROJECT_SOURCE_DIR}/source/arf/include
+  ${PROJECT_SOURCE_DIR}/source/geometry/include
+  ${PROJECT_SOURCE_DIR}/source/physics/include
+  ${PROJECT_SOURCE_DIR}/source/digits_hits/include
+  ${PROJECT_SOURCE_DIR}/source/general/include
+  ${PROJECT_SOURCE_DIR}/source/itk-mhd/
+  ${PROJECT_SOURCE_DIR}/source/itk-mhd/itkzlib
+  ${PROJECT_SOURCE_DIR}/source/itk-mhd/MetaIO
+  ${PROJECT_BINARY_DIR}/itk-mhd/)
 
 #=========================================================
 # Locate sources and headers for this project
 FILE(GLOB sources
-	${PROJECT_SOURCE_DIR}/source/arf/src/*.cc
-	${PROJECT_SOURCE_DIR}/source/geometry/src/*.cc
-	${PROJECT_SOURCE_DIR}/source/digits_hits/src/*.cc
-	${PROJECT_SOURCE_DIR}/source/physics/src/*.cc
-	${PROJECT_SOURCE_DIR}/source/general/src/*.cc
-    ${PROJECT_SOURCE_DIR}/source/gpu/src/GateGPUManager.cu)
+  ${PROJECT_SOURCE_DIR}/source/arf/src/*.cc
+  ${PROJECT_SOURCE_DIR}/source/geometry/src/*.cc
+  ${PROJECT_SOURCE_DIR}/source/digits_hits/src/*.cc
+  ${PROJECT_SOURCE_DIR}/source/physics/src/*.cc
+  ${PROJECT_SOURCE_DIR}/source/general/src/*.cc
+  ${PROJECT_SOURCE_DIR}/source/gpu/src/GateGPUManager.cu)
 
 FILE(GLOB headers
-	${PROJECT_SOURCE_DIR}/source/arf/include/*.hh
-	${PROJECT_SOURCE_DIR}/source/geometry/include/*.hh
-	${PROJECT_SOURCE_DIR}/source/physics/include/*.hh
-	${PROJECT_SOURCE_DIR}/source/digits_hits/include/*.hh
-	${PROJECT_SOURCE_DIR}/source/general/include/*.hh
-	${PROJECT_SOURCE_DIR}/source/gpu/include/*.hh)
+  ${PROJECT_SOURCE_DIR}/source/arf/include/*.hh
+  ${PROJECT_SOURCE_DIR}/source/geometry/include/*.hh
+  ${PROJECT_SOURCE_DIR}/source/physics/include/*.hh
+  ${PROJECT_SOURCE_DIR}/source/digits_hits/include/*.hh
+  ${PROJECT_SOURCE_DIR}/source/general/include/*.hh
+  ${PROJECT_SOURCE_DIR}/source/gpu/include/*.hh)
 
 #=========================================================
 # RTK
@@ -206,10 +200,10 @@ ENDIF()
 #=========================================================
 # Add the executable, and link it to the Geant4 libraries
 IF(GATE_USE_GPU AND CUDA_FOUND)
-    SET(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20;-gencode arch=compute_30,code=sm_30;-use_fast_math;-w;--ptxas-options=-v")
-    CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
+  SET(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20;-gencode arch=compute_30,code=sm_30;-use_fast_math;-w;--ptxas-options=-v")
+  CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
 ELSE(GATE_USE_GPU AND CUDA_FOUND)
-    ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
+  ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
 ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 
 TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} ${RTK_LIBRARIES})

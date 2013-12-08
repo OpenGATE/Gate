@@ -72,7 +72,7 @@ class GateDoseActor : public GateVImageActor
   virtual void BeginOfEventAction(const G4Event * event);
 
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
-  virtual void UserPreTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/) {}
+  virtual void UserPreTrackActionInVoxel(const int /*index*/, const G4Track* track);
   virtual void UserPostTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/) {}
 
   /// Saves the data collected to the file
@@ -93,7 +93,8 @@ protected:
   GateDoseActorMessenger * pMessenger;
 
   int mCurrentEvent;
-
+  StepHitType mUserStepHitType;
+  
   bool mIsLastHitEventImageEnabled;
   bool mIsEdepImageEnabled;
   bool mIsEdepSquaredImageEnabled;

@@ -28,7 +28,7 @@ GatePhysicsListMessenger::GatePhysicsListMessenger(GatePhysicsList * pl)
 
 //----------------------------------------------------------------------------------------
 GatePhysicsListMessenger::~GatePhysicsListMessenger()
-{   
+{
   delete pList;
   delete pRemove;
   delete pAdd;
@@ -51,8 +51,6 @@ GatePhysicsListMessenger::~GatePhysicsListMessenger()
   delete pSetEMin;
   delete pSetEMax;
   delete pSetSplineFlag;
-  delete pAddAtomDeexcitation;
-  delete pAddPhysicsList;
 
   delete pMuHandlerUsePrecalculatedElements;
   delete pMuHandlerSetEMin;
@@ -60,6 +58,9 @@ GatePhysicsListMessenger::~GatePhysicsListMessenger()
   delete pMuHandlerSetENumber;
   delete pMuHandlerSetAtomicShellEMin;
   delete pMuHandlerSetPrecision;
+
+  delete pAddAtomDeexcitation;
+  delete pAddPhysicsList;
 }
 //----------------------------------------------------------------------------------------
 
@@ -99,7 +100,7 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   bb = base+"/init";
   pInit = new G4UIcmdWithoutParameter(bb,this);
   guidance = "Physics list Initialisation";
-  pInit->SetGuidance(guidance); 
+  pInit->SetGuidance(guidance);
 
   // Cuts messengers
   bb = base+"/displayCuts";
@@ -108,47 +109,47 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   pCutInMaterial->SetGuidance(guidance);
 
   bb = base+"/Gamma/SetCutInRegion";
-  gammaCutCmd = new G4UIcmdWithAString(bb,this);  
+  gammaCutCmd = new G4UIcmdWithAString(bb,this);
   gammaCutCmd->SetGuidance("Set gamma production cut for a given region (two parameters 'regionName' and 'cutValue')");
-  
+
   bb = base+"/Electron/SetCutInRegion";
-  electronCutCmd = new G4UIcmdWithAString(bb,this);  
+  electronCutCmd = new G4UIcmdWithAString(bb,this);
   electronCutCmd->SetGuidance("Set electron production cut for a given region (two parameters 'regionName' and 'cutValue')");
-  
+
   bb = base+"/Positron/SetCutInRegion";
-  positronCutCmd = new G4UIcmdWithAString(bb,this);  
+  positronCutCmd = new G4UIcmdWithAString(bb,this);
   positronCutCmd->SetGuidance("Set positron production cut for a given region (two parameters 'regionName' and 'cutValue')");
-  
+
   bb = base+"/Proton/SetCutInRegion";
-  protonCutCmd = new G4UIcmdWithAString(bb,this);  
+  protonCutCmd = new G4UIcmdWithAString(bb,this);
   protonCutCmd->SetGuidance("Set proton production cut for a given region (two parameters 'regionName' and 'cutValue')");
-  
+
   bb = base+"/SetMaxStepSizeInRegion";
-  pMaxStepSizeCmd = new G4UIcmdWithAString(bb,this);  
+  pMaxStepSizeCmd = new G4UIcmdWithAString(bb,this);
   pMaxStepSizeCmd->SetGuidance("Set the maximum step size for a given region (two parameters 'regionName' and 'cutValue') YOU ALSO NEED TO SET ActivateStepLimiter");
 
   bb = base+"/SetMaxToFInRegion";
-  pMaxToFCmd = new G4UIcmdWithAString(bb,this);  
+  pMaxToFCmd = new G4UIcmdWithAString(bb,this);
   pMaxToFCmd->SetGuidance("Set the maximum time of flight for a given region (two parameters 'regionName' and 'cutValue') YOU ALSO NEED TO SET ActivateSpecialCuts");
 
   bb = base+"/SetMinKineticEnergyInRegion";
-  pMinKineticEnergyCmd = new G4UIcmdWithAString(bb,this);  
+  pMinKineticEnergyCmd = new G4UIcmdWithAString(bb,this);
   pMinKineticEnergyCmd->SetGuidance("Set the minimum energy of the track for a given region (two parameters 'regionName' and 'cutValue') YOU ALSO NEED TO SET ActivateSpecialCuts");
 
   bb = base+"/SetMaxTrackLengthInRegion";
-  pMaxTrackLengthCmd = new G4UIcmdWithAString(bb,this);  
+  pMaxTrackLengthCmd = new G4UIcmdWithAString(bb,this);
   pMaxTrackLengthCmd->SetGuidance("Set the maximum length of the track for a given region (two parameters 'regionName' and 'cutValue') YOU ALSO NEED TO SET ActivateSpecialCuts");
 
   bb = base+"/SetMinRemainingRangeInRegion";
-  pMinRemainingRangeCmd = new G4UIcmdWithAString(bb,this);  
+  pMinRemainingRangeCmd = new G4UIcmdWithAString(bb,this);
   pMinRemainingRangeCmd->SetGuidance("Set the minimum remaining range of the track for a given region (two parameters 'regionName' and 'cutValue') YOU ALSO NEED TO SET ActivateSpecialCuts");
 
   bb = base+"/ActivateStepLimiter";
-  pActivateStepLimiterCmd = new G4UIcmdWithAString(bb,this);  
+  pActivateStepLimiterCmd = new G4UIcmdWithAString(bb,this);
   pActivateStepLimiterCmd->SetGuidance("Activate step limiter for a given particle");
 
   bb = base+"/ActivateSpecialCuts";
-  pActivateSpecialCutsCmd = new G4UIcmdWithAString(bb,this);  
+  pActivateSpecialCutsCmd = new G4UIcmdWithAString(bb,this);
   pActivateSpecialCutsCmd->SetGuidance("Activate special cuts for a given particle");
 
   // options messengers	G4ReferenceManual5.2
@@ -177,36 +178,12 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   guidance = "Set SplineFlag for Standard EM Processes";
   pSetSplineFlag->SetGuidance(guidance);
 
-  bb = base+"/addAtomDeexcitation";
-  pAddAtomDeexcitation = new G4UIcommand(bb,this);
-  guidance = "Add atom deexcitation into the energy loss table manager";
-  pAddAtomDeexcitation->SetGuidance(guidance);
-  
-  // Command to call G4 Physics List builders
-  bb = base+"/addPhysicsList";
-  pAddPhysicsList = new G4UIcmdWithAString(bb,this);
-  guidance = "Select a Geant4 Physic List builder";
-  pAddPhysicsList->SetGuidance(guidance);
-  pAddPhysicsList->SetParameterName("Builder name",false);
-
-  // To set the low edge energy 
-  bb = base+"/SetEnergyRangeMinLimit";
-  pEnergyRangeMinLimitCmd = new G4UIcmdWithADoubleAndUnit(bb,this);  
-  double low = G4ProductionCutsTable::GetProductionCutsTable()->GetLowEdgeEnergy();
-  double high= G4ProductionCutsTable::GetProductionCutsTable()->GetHighEdgeEnergy();
-  G4String guid = "Set the minimum limit of the Energy range. Default are [";
-  guid += G4BestUnit(low,"Energy");
-  guid += " ";
-  guid += G4BestUnit(high, "Energy");
-  guid += "]";
-  pEnergyRangeMinLimitCmd->SetGuidance(guid);  
-  
   // Mu Handler commands
   bb = base+"/MuHandler/setElementFolderName";
   pMuHandlerUsePrecalculatedElements = new G4UIcmdWithAString(bb,this);
   guidance = "Point the folder where the Mu and Muen files per elements are stored";
   pMuHandlerUsePrecalculatedElements->SetGuidance(guidance);
-  
+
   bb = base+"/MuHandler/setEMin";
   pMuHandlerSetEMin = new G4UIcmdWithADoubleAndUnit(bb,this);
   guidance = "Set minimal energy for attenuation and energy-absorption coefficients simulation";
@@ -216,21 +193,46 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   pMuHandlerSetEMax = new G4UIcmdWithADoubleAndUnit(bb,this);
   guidance = "Set maximum energy for attenuation and energy-absorption coefficients simulation";
   pMuHandlerSetEMax->SetGuidance(guidance);
-  
+
   bb = base+"/MuHandler/setENumber";
   pMuHandlerSetENumber = new G4UIcmdWithAnInteger(bb,this);
   guidance = "Set number of energies for attenuation and energy-absorption coefficients simulation";
   pMuHandlerSetENumber->SetGuidance(guidance);
-  
+
   bb = base+"/MuHandler/setAtomicShellEMin";
   pMuHandlerSetAtomicShellEMin = new G4UIcmdWithADoubleAndUnit(bb,this);
   guidance = "Set atomic shell minimal energy";
   pMuHandlerSetAtomicShellEMin->SetGuidance(guidance);
-  
+
   bb = base+"/MuHandler/setPrecision";
   pMuHandlerSetPrecision = new G4UIcmdWithADouble(bb,this);
   guidance = "Set precision to be reached in %";
   pMuHandlerSetPrecision->SetGuidance(guidance);
+
+  bb = base+"/addAtomDeexcitation";
+  pAddAtomDeexcitation = new G4UIcommand(bb,this);
+  guidance = "Add atom deexcitation into the energy loss table manager";
+  pAddAtomDeexcitation->SetGuidance(guidance);
+
+  // Command to call G4 Physics List builders
+  bb = base+"/addPhysicsList";
+  pAddPhysicsList = new G4UIcmdWithAString(bb,this);
+  guidance = "Select a Geant4 Physic List builder";
+  pAddPhysicsList->SetGuidance(guidance);
+  pAddPhysicsList->SetParameterName("Builder name",false);
+
+  // To set the low edge energy
+  bb = base+"/SetEnergyRangeMinLimit";
+  pEnergyRangeMinLimitCmd = new G4UIcmdWithADoubleAndUnit(bb,this);
+  double low = G4ProductionCutsTable::GetProductionCutsTable()->GetLowEdgeEnergy();
+  double high= G4ProductionCutsTable::GetProductionCutsTable()->GetHighEdgeEnergy();
+  G4String guid = "Set the minimum limit of the Energy range. Default are [";
+  guid += G4BestUnit(low,"Energy");
+  guid += " ";
+  guid += G4BestUnit(high, "Energy");
+  guid += "]";
+  pEnergyRangeMinLimitCmd->SetGuidance(guid);
+
 }
 //----------------------------------------------------------------------------------------
 
@@ -246,7 +248,7 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
     if (command == gammaCutCmd) { pPhylist->SetCutInRegion("gamma", regionName, cutValue); }
     if (command == electronCutCmd) { pPhylist->SetCutInRegion("e-", regionName, cutValue); }
     if (command == positronCutCmd) { pPhylist->SetCutInRegion("e+", regionName, cutValue); }
-    if (command == protonCutCmd) { pPhylist->SetCutInRegion("proton", regionName, cutValue);} 
+    if (command == protonCutCmd) { pPhylist->SetCutInRegion("proton", regionName, cutValue);}
 
     if (command == pMaxStepSizeCmd) pPhylist->SetSpecialCutInRegion("MaxStepSize", regionName, cutValue);
     if (command == pMaxToFCmd) pPhylist->SetSpecialCutInRegion("MaxToF", regionName, cutValue);
@@ -259,7 +261,7 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
 
   // processes
   if (command == pInit)
-    { 
+    {
       if (nInit!=0)
         {
           GateWarning("Physic List already initialized\n");
@@ -287,7 +289,7 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
   char par2[30];
   std::istringstream is(param);
   is >> par1 >> par2;
-  
+
   if (command == pList)
     {
       pPhylist->Print(par1,par2);
@@ -302,14 +304,14 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
               return;
             }
           pPhylist->RemoveProcesses(par1,par2);
-        }    
+        }
       if (command == pAdd)
         {
           if (nInit!=0)
             {
               GateWarning("Physic List already initialized: you can't add process\n");
               return;
-            } 
+            }
           pPhylist->AddProcesses(par1,par2);
         }
     }
@@ -341,21 +343,6 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
     GateMessage("Physic", 1, "(EM Options) Spline Falg set to "<<flag<<". Spline Flag defaut 1."<<G4endl);
   }
 
-  if (command == pAddAtomDeexcitation) {
-    pPhylist->AddAtomDeexcitation();
-    GateMessage("Physic", 1, "Atom Deexcitation process has been added into the energy loss table manager"<<G4endl);
-  }
-  
-  // Command to call G4 Physics List builders 
-  if (command == pAddPhysicsList) {
-    pPhylist->ConstructPhysicsList(param);
-  }
-  if (command == pEnergyRangeMinLimitCmd) {
-    double val = pEnergyRangeMinLimitCmd->GetNewDoubleValue(param);
-    pPhylist->SetEnergyRangeMinLimit(val);
-    GateMessage("Physic", 1, "Min Energy range set to "<<G4BestUnit(val,"Energy") << G4endl);
-  }
-
   // Mu Handler commands
   if (command == pMuHandlerUsePrecalculatedElements){
     nMuHandler->SetElementsFolderName(param);
@@ -385,8 +372,25 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
     nMuHandler->SetPrecision(val);
     GateMessage("Physic", 1, "(MuHandler Options) Precision set to "<<val<<". Precision defaut Value: 0.01"<<G4endl);
   }
+
+  if (command == pAddAtomDeexcitation) {
+    pPhylist->AddAtomDeexcitation();
+    GateMessage("Physic", 1, "Atom Deexcitation process has been added into the energy loss table manager"<<G4endl);
+  }
+
+  // Command to call G4 Physics List builders
+  if (command == pAddPhysicsList) {
+    pPhylist->ConstructPhysicsList(param);
+  }
+  if (command == pEnergyRangeMinLimitCmd) {
+    double val = pEnergyRangeMinLimitCmd->GetNewDoubleValue(param);
+    pPhylist->SetEnergyRangeMinLimit(val);
+    GateMessage("Physic", 1, "Min Energy range set to "<<G4BestUnit(val,"Energy") << G4endl);
+  }
+
 }
 //----------------------------------------------------------------------------------------
+
 
 //----------------------------------------------------------------------------------------
 G4double GatePhysicsListMessenger::ScaleValue(G4double value,G4String unit)
