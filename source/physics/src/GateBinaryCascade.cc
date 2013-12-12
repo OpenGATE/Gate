@@ -9,6 +9,7 @@
   ----------------------*/
 
 #include "globals.hh"
+#include "G4SystemOfUnits.hh"
 #include "G4Proton.hh"
 #include "G4Neutron.hh"
 #include "G4LorentzRotation.hh"

@@ -8,6 +8,8 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "G4SystemOfUnits.hh"
+
 #include "GateRTPhantom.hh"
 #include "GateRTPhantomMgr.hh"
 #include "GateSourceVoxelImageReader.hh"

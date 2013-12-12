@@ -12,6 +12,7 @@ See GATE/LICENSE.txt for further details
 #include "GatePositronAnnihilation.hh"
 #include "G4UnitsTable.hh"
 #include "globals.hh"
+#include "G4PhysicalConstants.hh"
 #include "Randomize.hh"
 
 /*

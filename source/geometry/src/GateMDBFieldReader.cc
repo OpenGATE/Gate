@@ -16,6 +16,8 @@ See GATE/LICENSE.txt for further details
   \brief Class GateMDBFieldReader
 */
 
+#include "G4SystemOfUnits.hh"
+
 #include "GateMDBFieldReader.hh"
 #include "GateTokenizer.hh"
 
