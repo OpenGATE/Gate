@@ -1,4 +1,6 @@
-/*!
+//toto
+
+/*
  *	\file Gate.cc
  *	\author Didier Benoit <benoit@imnc.in2p3.fr>
  *	\date May 2012, QIM IMNC-IN2P3/CNRS, Paris VII-XI Universities, Orsay
@@ -13,6 +15,7 @@
 #include <getopt.h>
 #include <cstdlib>
 #include <queue>
+#include <locale.h>
 
 #include "G4UImanager.hh"
 #include "G4UIterminal.hh"
@@ -188,6 +191,7 @@ int main( int argc, char* argv[] )
   static G4int isQt = 0; // Enable Qt or not
   G4String listOfParameters = ""; // List of parameters for parameterized macro
   DigiMode aDigiMode = kruntimeMode;
+
 
   // Loop over arguments
   G4int c = 0;
