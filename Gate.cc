@@ -1,5 +1,3 @@
-//toto
-
 /*
  *	\file Gate.cc
  *	\author Didier Benoit <benoit@imnc.in2p3.fr>
