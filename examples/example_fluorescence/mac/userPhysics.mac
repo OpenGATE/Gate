@@ -1,0 +1,19 @@
+# -----------------------------------------------------
+# UserPhysics (example: photoelectric process)
+
+/gate/physics/addProcess PhotoElectric
+
+# choose a model : StandardModel
+#                  LivermoreModel
+#                  PenelopeModel
+#                  ...
+
+/gate/physics/processes/PhotoElectric/setModel StandardModel
+
+# -----------------------------------------------------
+# Add deexcitation processes (fluo, auger and PIXE set to true by default)
+
+/gate/physics/addAtomDeexcitation
+#/process/em/fluo  false
+#/process/em/auger false
+#/process/em/pixe  false

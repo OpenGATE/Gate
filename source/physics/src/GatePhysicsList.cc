@@ -8,8 +8,6 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-
-
 #ifndef GATEPHYSICSLIST_CC
 #define GATEPHYSICSLIST_CC
 
@@ -23,55 +21,69 @@
 #include "G4IonConstructor.hh"
 #include "G4ShortLivedConstructor.hh"
 #include "G4UserLimits.hh"
+#include "G4VPhysicsConstructor.hh"
 #include "G4Region.hh"
 #include "G4RegionStore.hh"
-#include "G4RegionStore.hh"
-#include "G4UserLimits.hh"
 #include "G4LogicalVolumeStore.hh"
 #include "G4ParticleTable.hh"
+#include "G4PhysListFactory.hh"
+#include "G4VUserPhysicsList.hh"
+#include "G4ExceptionHandler.hh"
+#include "G4StateManager.hh"
+
+#include "G4EmStandardPhysics.hh"
+#include "G4EmStandardPhysics_option1.hh"
+#include "G4EmStandardPhysics_option2.hh"
+#include "G4EmStandardPhysics_option3.hh"
+#include "G4EmLivermorePolarizedPhysics.hh"
+#include "G4EmLivermorePhysics.hh"
+#include "G4EmPenelopePhysics.hh"
+#include "G4EmDNAPhysics.hh"
+#include "G4LossTableManager.hh"
+#include "G4UAtomicDeexcitation.hh"
 
 #include "GatePhysicsList.hh"
 #include "GateUserLimits.hh"
 #include "GateConfiguration.h"
 #include "GatePhysicsListMessenger.hh"
+#include "GateRunManager.hh"
+#include "GateObjectStore.hh"
 
 #ifdef GATE_USE_OPTICAL
 #include "G4OpticalPhoton.hh"
 #endif
-//-----------------------------------------------------------------------------------------
-GatePhysicsList::GatePhysicsList(): G4VUserPhysicsList() 
-{
 
-  // default cut value  (1.0mm) 
+//-----------------------------------------------------------------------------------------
+GatePhysicsList::GatePhysicsList(): G4VUserPhysicsList()
+{
+  // default cut value  (1.0mm)
   defaultCutValue = 1.0*mm;
-  // default cut value  (1.0mm) 
+
   ParticleCutType worldCuts;
   worldCuts.gammaCut = -1;
   worldCuts.electronCut = -1;
   worldCuts.positronCut = -1;
   worldCuts.protonCut = -1;
   mapOfRegionCuts["DefaultRegionForTheWorld"] = worldCuts;
-  //SetVerboseLevel(2);
-
   mLoadState=0;
-
   mDEDXBinning=-1;
   mLambdaBinning=-1;
   mEmin=-1;
   mEmax=-1;
   mSplineFlag=true;
-
+  mUserPhysicListName = "";
   userlimits=0;
 
   G4double limit=250*eV; // limit for diplay production cuts table
   G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(limit, 100.*GeV);
 
+  // Default lower value. Could be set by user.
+  mLowEnergyRangeLimit = G4ProductionCutsTable::GetProductionCutsTable()->GetLowEdgeEnergy();
+
   pMessenger = new GatePhysicsListMessenger(this);
   pMessenger->BuildCommands("/gate/physics");
 
   opt = new G4EmProcessOptions();
-
-
 }
 //-----------------------------------------------------------------------------------------
 
@@ -79,34 +91,24 @@ GatePhysicsList::GatePhysicsList(): G4VUserPhysicsList()
 //-----------------------------------------------------------------------------------------
 GatePhysicsList::~GatePhysicsList()
 {
-
   delete pMessenger;
-  
-  for(VolumeUserLimitsMapType::iterator i = mapOfVolumeUserLimits.begin(); i!=mapOfVolumeUserLimits.end(); i++) 
+  for(VolumeUserLimitsMapType::iterator i = mapOfVolumeUserLimits.begin(); i!=mapOfVolumeUserLimits.end(); i++)
     {
       delete (*i).second;
       mapOfVolumeUserLimits.erase(i);
     }
-
   delete userlimits;
-
-  for(std::list<G4ProductionCuts*>::iterator i = theListOfCuts.begin(); i!=theListOfCuts.end(); i++) 
+  for(std::list<G4ProductionCuts*>::iterator i = theListOfCuts.begin(); i!=theListOfCuts.end(); i++)
     {
       delete (*i);
       i = theListOfCuts.erase(i);
     }
-
-
   mapOfRegionCuts.clear();
   theListOfPBName.clear();
   mListOfStepLimiter.clear();
   mListOfG4UserSpecialCut.clear();
-
   GateVProcess::Delete();
-
-
   delete opt;
-
 
   // delete the transportation process (should be done in ~G4VUserPhysicsList())
   bool isTransportationDelete = false;
@@ -126,7 +128,7 @@ GatePhysicsList::~GatePhysicsList()
           }
         /*else {
           if( (*vect)[i] ){
-          if((*vect)[i]->GetProcessName()=="Decay" ){ 
+          if((*vect)[i]->GetProcessName()=="Decay" ){
           G4cout<<"test  "<<particle->GetParticleName()<<"   "<<(*vect)[i]<<G4endl;
           delete (*vect)[i];
 	  }
@@ -150,8 +152,14 @@ GatePhysicsList::~GatePhysicsList()
     if((*vect)[i]) G4cout<<"Process= "<<(*vect)[i]->GetProcessName()<<G4endl;
     }
     }*/
-  
+}
+//-----------------------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------------------
+std::vector<GateVProcess*>* GatePhysicsList::GetTheListOfProcesss()
+{
+  return GateVProcess::GetTheListOfProcesses();
 }
 //-----------------------------------------------------------------------------------------
 
@@ -163,22 +171,30 @@ void GatePhysicsList::ConstructProcess()
   GateMessage("Physic",3,"mLoadState = " << mLoadState << G4endl);
   GateMessage("Physic",3,"mListOfStepLimiter.size = " << mListOfStepLimiter.size() << G4endl);
 
+  // if ((mLoadState == 0) && (mUserPhysicListName == "")) {
+  //   DD("direct return : do nothing");
+  //   return;
+  // }
+
   if(mLoadState==0)
     {
-      AddTransportation();
-
+      // AddTransportation(); // not set here. Set only if no physics list builder is used
       for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
 	{
 	  theListOfPBName.push_back((*GetTheListOfProcesss())[i]->GetG4ProcessName());
-	  for(unsigned int j=0; j<GetTheListOfProcesss()->size(); j++)  
+	  for(unsigned int j=0; j<GetTheListOfProcesss()->size(); j++)
 	    if(i != j && (*GetTheListOfProcesss())[i]->GetG4ProcessName()==(*GetTheListOfProcesss())[j]->GetG4ProcessName() )
 	      GateWarning("Some processes have the same name: "
 			  <<(*GetTheListOfProcesss())[i]->GetG4ProcessName() );
 	}
-    } 
+    }
   else if(mLoadState==1)
     {
-      for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++) 
+      if (mUserPhysicListName == "") { // if a user physic list is set, transportation is already set
+        AddTransportation();
+      }
+
+      for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
         (*GetTheListOfProcesss())[i]->ConstructProcess();
 
       //opt->SetVerbose(2);
@@ -187,8 +203,6 @@ void GatePhysicsList::ConstructProcess()
       if(mEmin>0)          opt->SetMinEnergy(mEmin);
       if(mEmax>0)          opt->SetMaxEnergy(mEmax);
       opt->SetSplineFlag(mSplineFlag);
-      //opt->SetStepFunction(0.3,0.077);
-
     }
   else GateMessage("Physic",1,"GatePhysicsList::Construct() -- Warning: processes already defined!" << G4endl);
 
@@ -196,6 +210,7 @@ void GatePhysicsList::ConstructProcess()
 
   if(mLoadState>0) DefineCuts();
 
+  /* //to check : move in DefineCuts
   if(mLoadState==1 && mListOfStepLimiter.size()!=0){
     G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
     G4ParticleTable::G4PTblDicIterator * theParticleIterator = theParticleTable->GetIterator();
@@ -207,12 +222,11 @@ void GatePhysicsList::ConstructProcess()
       for(unsigned int i=0; i<mListOfStepLimiter.size(); i++) {
 	if(mListOfStepLimiter[i]==particleName) {
           GateMessage("Cuts", 3, "Activate G4StepLimiter for " << particleName << G4endl);
-          pmanager->AddProcess(new G4StepLimiter, -1,-1,3);  
+          pmanager->AddProcess(new G4StepLimiter, -1,-1,3);
         }
       }
     }
   }
-
 
   if(mLoadState==1 && mListOfG4UserSpecialCut.size()!=0){
     G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
@@ -221,7 +235,7 @@ void GatePhysicsList::ConstructProcess()
     while( (*theParticleIterator)() ){
       G4ParticleDefinition* particle = theParticleIterator->value();
       G4ProcessManager* pmanager = particle->GetProcessManager();
-      G4String particleName = particle->GetParticleName();      
+      G4String particleName = particle->GetParticleName();
       for(unsigned int i=0; i<mListOfG4UserSpecialCut.size(); i++) {
 	if(mListOfG4UserSpecialCut[i]==particleName) {
           GateMessage("Cuts", 3, "Activate G4UserSpecialCuts for " << particleName << G4endl);
@@ -230,12 +244,82 @@ void GatePhysicsList::ConstructProcess()
       }
     }
   }
-
+  */
 
   mLoadState++;
-
 }
 //-----------------------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------------------
+// Construction of the physics list from a G4 builder
+void GatePhysicsList::ConstructPhysicsList(G4String name)
+{
+  GateMessage("Physic", 0, "The following Geant4's physic-list is enabled :" << name << G4endl);
+
+  G4PhysListFactory * l = new G4PhysListFactory(); //  instantiate PhysList by environment variable "PHYSLIST"
+  const std::vector<G4String>& list = l->AvailablePhysLists();
+  mListOfPhysicsLists = "";
+  for(unsigned int i=0; i<list.size(); i++) {
+    mListOfPhysicsLists += list[i];
+    mListOfPhysicsLists += ", " ;
+  }
+  const std::vector<G4String>& list_em = l->AvailablePhysListsEM();
+  mListOfPhysicsLists += "with the following EM option (or nothing for default) : ";
+  for(unsigned int i=0; i<list_em.size(); i++) {
+    mListOfPhysicsLists += list_em[i];
+    mListOfPhysicsLists += " " ;
+  }
+
+  mUserPhysicListName = name;
+
+  // First, try to create EM only Physic lists
+  G4VPhysicsConstructor * pl = NULL;
+  if (mUserPhysicListName == "emstandard") {
+    pl = new G4EmStandardPhysics();
+  }
+  if (mUserPhysicListName == "emstandard_opt1") {
+    pl = new G4EmStandardPhysics_option1();
+  }
+  if (mUserPhysicListName == "emstandard_opt2") {
+    pl = new G4EmStandardPhysics_option2();
+  }
+  if (mUserPhysicListName == "emstandard_opt3") {
+    pl = new G4EmStandardPhysics_option3();
+  }
+  if (mUserPhysicListName == "emlivermore") {
+    pl = new G4EmLivermorePhysics();
+  }
+  if (mUserPhysicListName == "emlivermore_polar") {
+    pl = new G4EmLivermorePolarizedPhysics();
+  }
+  if (mUserPhysicListName == "empenelope") {
+    pl = new G4EmPenelopePhysics();
+  }
+  if (mUserPhysicListName == "emDNAphysics") {
+    pl = new G4EmDNAPhysics();
+  }
+
+  if (pl != NULL) {
+    pl->ConstructParticle();
+    pl->ConstructProcess();
+    //pl->SetVerboseLevel(2);
+    AddTransportation(); // don't forget transportation process.
+    GateRunManager::GetRunManager()->SetUserPhysicListName("");
+  }
+  else {
+    // Set the phys list name. It will be build in GateRunManager.
+    GateRunManager::GetRunManager()->SetUserPhysicListName(mUserPhysicListName);
+  }
+
+  // Fluorescence processes
+  // - default activation of deexcitation process
+  opt->SetFluo(true);
+  opt->SetAuger(true);
+  opt->SetPIXE(true);
+}
+//-----------------------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------------------
 void GatePhysicsList::ConstructParticle()
@@ -259,11 +343,11 @@ void GatePhysicsList::ConstructParticle()
 
   //  Construct light ions
   G4IonConstructor ion;
-  ion.ConstructParticle();  
+  ion.ConstructParticle();
 
   //  Construct  resonaces and quarks
   G4ShortLivedConstructor slive;
-  slive.ConstructParticle();  
+  slive.ConstructParticle();
 
   //#ifdef GATE_USE_OPTICAL
   //G4OpticalPhoton::OpticalPhotonDefinition();
@@ -341,13 +425,13 @@ void GatePhysicsList::Print(G4String type, G4String particlename)
 
 //-----------------------------------------------------------------------------------------
 void GatePhysicsList::Print(G4String name)
-{  
+{
   G4ParticleDefinition* particle=0;
   G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
   G4ProcessManager* manager = 0;
   G4ProcessVector * processvector = 0;
   G4ParticleTable::G4PTblDicIterator * theParticleIterator;
-   
+
   int iDisp = 0;
 
   if(name=="All")
@@ -395,8 +479,8 @@ void GatePhysicsList::Print(G4String name)
 std::vector<GateVProcess*> GatePhysicsList::FindProcess(G4String name)
 {
   std::vector<GateVProcess*> thelist;
-  
-  for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++) { 
+
+  for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++) {
     if((*GetTheListOfProcesss())[i]->GetG4ProcessName()==name) thelist.push_back((*GetTheListOfProcesss())[i]);
   }
   return thelist;
@@ -419,6 +503,22 @@ void GatePhysicsList::AddProcesses(G4String processname, G4String particle)
       return;
     }
 
+}
+//-----------------------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------------------
+void GatePhysicsList::AddAtomDeexcitation()
+{
+  if(G4LossTableManager::Instance()->AtomDeexcitation() == NULL)
+  {
+    G4VAtomDeexcitation* de = new G4UAtomicDeexcitation();
+    G4LossTableManager::Instance()->SetAtomDeexcitation(de);
+  }
+
+  opt->SetFluo(true);
+  opt->SetAuger(true);
+  opt->SetPIXE(true);
 }
 //-----------------------------------------------------------------------------------------
 
@@ -500,7 +600,7 @@ void GatePhysicsList::Write(G4String file)
   G4ProcessManager* manager = 0;
   G4ProcessVector * processvector = 0;
   G4ParticleTable::G4PTblDicIterator * theParticleIterator;
-   
+
   int iDisp = 0;
 
   std::ofstream os;
@@ -541,11 +641,36 @@ void GatePhysicsList::Write(G4String file)
 //-----------------------------------------------------------------------------------------
 
 
+//-----------------------------------------------------------------------------------------
+
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 // Cuts
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GatePhysicsList::SetEmProcessOptions()
+{
+  //DD("not opt");
+  opt = new G4EmProcessOptions();
+  if(mDEDXBinning>0)   opt->SetDEDXBinning(mDEDXBinning);
+  if(mLambdaBinning>0) opt->SetLambdaBinning(mLambdaBinning);
+  if(mEmin>0)          opt->SetMinEnergy(mEmin);
+  if(mEmax>0)          opt->SetMaxEnergy(mEmax);
+  opt->SetSplineFlag(mSplineFlag);
+  opt->SetApplyCuts(true);
+
+  // Fluorescence processes
+  // - register all regions in deexcitation process with fluo, auger and PIXE set to "true"
+  GateObjectStore *store = GateObjectStore::GetInstance();
+  for(GateObjectStore::iterator it=store->begin() ; it!=store->end() ; ++it){
+    opt->SetDeexcitationActiveRegion(it->first,true,true,true); // G4region, fluo, auger, PIXE
+  }
+}
+//-----------------------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GatePhysicsList::SetCuts()
@@ -554,42 +679,42 @@ void GatePhysicsList::SetCuts()
      std::cout << "GatePhysicsList::SetCuts: default cut length : "
      << G4BestUnit(defaultCutValue,"Length") << std::endl;
      }  */
-  
+
   // These values are used as the default production thresholds
   // for the world volume.
   // SetCutsWithDefault();
-  
+
   // This is needed to enable user cuts
   opt->SetApplyCuts(true);
 }
 //-----------------------------------------------------------------------------
- 
+
 
 //-----------------------------------------------------------------------------
-void GatePhysicsList::DefineCuts()
+void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
 {
   // GateMessage("Cuts",4,"===================================" << G4endl);
   // GateMessage("Cuts",4,"GatePhysicsList::SetCuts() -- begin" << G4endl);
-  
+
   //-----------------------------------------------------------------------------
   // Set defaults production cut for the world
   ParticleCutType worldCuts =  mapOfRegionCuts["DefaultRegionForTheWorld"];
- 
+
   if(worldCuts.gammaCut == -1) worldCuts.gammaCut = defaultCutValue;
   if(worldCuts.electronCut == -1) worldCuts.electronCut = defaultCutValue;
   if(worldCuts.positronCut == -1) worldCuts.positronCut = defaultCutValue;
   if(worldCuts.protonCut == -1) worldCuts.protonCut = defaultCutValue;
 
-  GateMessage("Cuts",3, "Set default production cuts (world) : " 
-              << worldCuts.gammaCut << " " 
-              << worldCuts.electronCut << " " 
-              << worldCuts.positronCut << " " 
+  GateMessage("Cuts",3, "Set default production cuts (world) : "
+              << worldCuts.gammaCut << " "
+              << worldCuts.electronCut << " "
+              << worldCuts.positronCut << " "
               << worldCuts.protonCut   << " mm" << G4endl);
-  
-  SetCutValue(worldCuts.gammaCut, "gamma","DefaultRegionForTheWorld");
-  SetCutValue(worldCuts.electronCut, "e-","DefaultRegionForTheWorld");
-  SetCutValue(worldCuts.positronCut, "e+","DefaultRegionForTheWorld");
-  SetCutValue(worldCuts.protonCut, "proton","DefaultRegionForTheWorld");
+
+  phys->SetCutValue(worldCuts.gammaCut, "gamma","DefaultRegionForTheWorld");
+  phys->SetCutValue(worldCuts.electronCut, "e-","DefaultRegionForTheWorld");
+  phys->SetCutValue(worldCuts.positronCut, "e+","DefaultRegionForTheWorld");
+  phys->SetCutValue(worldCuts.protonCut, "proton","DefaultRegionForTheWorld");
 
   //-----------------------------------------------------------------------------
   // Set default production cut to other regions
@@ -625,7 +750,7 @@ void GatePhysicsList::DefineCuts()
       }
       // set default values
       ParticleCutType regionCuts =  (*it).second;
-	  
+
       G4Region* parentRegion =  region;
 
       while(regionCuts.gammaCut == -1)
@@ -637,9 +762,9 @@ void GatePhysicsList::DefineCuts()
             regionCuts.gammaCut = parentRegionCuts.gammaCut;
           }
           else
-            regionCuts.gammaCut = worldCuts.gammaCut;     
+            regionCuts.gammaCut = worldCuts.gammaCut;
         }
- 
+
       parentRegion = region;
       while(regionCuts.electronCut == -1)
         {
@@ -650,7 +775,7 @@ void GatePhysicsList::DefineCuts()
             regionCuts.electronCut = parentRegionCuts.electronCut;
           }
           else
-            regionCuts.electronCut = worldCuts.electronCut;     
+            regionCuts.electronCut = worldCuts.electronCut;
         }
 
       parentRegion = region;
@@ -663,7 +788,7 @@ void GatePhysicsList::DefineCuts()
             regionCuts.positronCut = parentRegionCuts.positronCut;
           }
           else
-            regionCuts.positronCut = worldCuts.positronCut;     
+            regionCuts.positronCut = worldCuts.positronCut;
         }
       parentRegion = region;
       while(regionCuts.protonCut == -1)
@@ -675,18 +800,18 @@ void GatePhysicsList::DefineCuts()
             regionCuts.protonCut = parentRegionCuts.protonCut;
           }
           else
-            regionCuts.protonCut = worldCuts.protonCut;     
+            regionCuts.protonCut = worldCuts.protonCut;
         }
       parentRegion = region;
-        
- 
-      GateMessage("Cuts",3, "Set production cuts (g, e-, e+, p) for the region '" 
-                  << (*it).first << "' : " 
-                  << G4BestUnit(regionCuts.gammaCut, "Length") << " " 
-                  << G4BestUnit(regionCuts.electronCut, "Length") << " " 
-                  << G4BestUnit(regionCuts.positronCut, "Length") << " " 
+
+
+      GateMessage("Cuts",3, "Set production cuts (g, e-, e+, p) for the region '"
+                  << (*it).first << "' : "
+                  << G4BestUnit(regionCuts.gammaCut, "Length") << " "
+                  << G4BestUnit(regionCuts.electronCut, "Length") << " "
+                  << G4BestUnit(regionCuts.positronCut, "Length") << " "
                   << G4BestUnit(regionCuts.protonCut, "Length")   << G4endl);
-	  
+
       // apply the cut
       /* G4ProductionCuts* cuts = region->GetProductionCuts();
          if (!cuts) cuts = new G4ProductionCuts;
@@ -730,7 +855,45 @@ void GatePhysicsList::DefineCuts()
       if(mapOfVolumeUserLimits["DefaultRegionForTheWorld"]->GetMinRemainingRange() != -1.)
         worldUserLimit->SetMinRemainingRange(mapOfVolumeUserLimits["DefaultRegionForTheWorld"]->GetMinRemainingRange());
     }
- 
+
+
+  //FIXME
+  //DD(mListOfStepLimiter.size());
+  if (mListOfStepLimiter.size()!=0) {
+    G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
+    G4ParticleTable::G4PTblDicIterator * theParticleIterator = theParticleTable->GetIterator();
+    theParticleIterator->reset();
+    while( (*theParticleIterator)() ){
+      G4ParticleDefinition* particle = theParticleIterator->value();
+      G4ProcessManager* pmanager = particle->GetProcessManager();
+      G4String particleName = particle->GetParticleName();
+      for(unsigned int i=0; i<mListOfStepLimiter.size(); i++) {
+	if(mListOfStepLimiter[i]==particleName) {
+          GateMessage("Cuts", 3, "Activate G4StepLimiter for " << particleName << G4endl);
+          pmanager->AddProcess(new G4StepLimiter, -1,-1,3);
+        }
+      }
+    }
+  }
+
+  //DD(mListOfG4UserSpecialCut.size());
+  if (mListOfG4UserSpecialCut.size()!=0) {
+    G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
+    G4ParticleTable::G4PTblDicIterator * theParticleIterator = theParticleTable->GetIterator();
+    theParticleIterator->reset();
+    while( (*theParticleIterator)() ){
+      G4ParticleDefinition* particle = theParticleIterator->value();
+      G4ProcessManager* pmanager = particle->GetProcessManager();
+      G4String particleName = particle->GetParticleName();
+      for(unsigned int i=0; i<mListOfG4UserSpecialCut.size(); i++) {
+	if(mListOfG4UserSpecialCut[i]==particleName) {
+          GateMessage("Cuts", 3, "Activate G4UserSpecialCuts for " << particleName << G4endl);
+          pmanager-> AddProcess(new G4UserSpecialCuts,   -1,-1,4);
+        }
+      }
+    }
+  }
+
   //-----------------------------------------------------------------------------
   // Set default production cut to other regions
   pi = RegionStore->begin();
@@ -741,7 +904,7 @@ void GatePhysicsList::DefineCuts()
     if (regionName != "DefaultRegionForTheWorld" && regionName !="world") {
       VolumeUserLimitsMapType::iterator current = mapOfVolumeUserLimits.find(regionName);
       if (current == mapOfVolumeUserLimits.end()) {
-	// GateMessage("Cuts",5, " UserCuts not set for region " << regionName << " put -1" << G4endl);
+	GateMessage("Cuts",5, " UserCuts not set for region " << regionName << " put -1" << G4endl);
         mapOfVolumeUserLimits[regionName]= new GateUserLimits();
       }
     }
@@ -761,7 +924,7 @@ void GatePhysicsList::DefineCuts()
       GateUserLimits *  regionUserLimit =  (*it2).second;
       G4Region* parentRegion =  region;
       G4Region* regionTmp =  region;
-      while((regionUserLimit->GetMaxStepSize() == -1) && 
+      while((regionUserLimit->GetMaxStepSize() == -1) &&
             (regionTmp->GetName() != "DefaultRegionForTheWorld"))
         {
           G4bool unique;
@@ -769,9 +932,9 @@ void GatePhysicsList::DefineCuts()
           if(parentRegion->GetName() != "DefaultRegionForTheWorld"){
             GateUserLimits * parentRegionUserLimits = mapOfVolumeUserLimits[parentRegion->GetName()];
             regionUserLimit->SetMaxStepSize(  parentRegionUserLimits->GetMaxStepSize()) ;
-            // GateMessage("Cuts", 5, "Region " << (*it2).first << " maxStepSize " << parentRegionUserLimits->GetMaxStepSize() << G4endl);
+            GateMessage("Cuts", 5, "Region " << (*it2).first << " maxStepSize " << parentRegionUserLimits->GetMaxStepSize() << G4endl);
           }
-          else regionUserLimit->SetMaxStepSize( worldUserLimit->GetMaxStepSize());     
+          else regionUserLimit->SetMaxStepSize( worldUserLimit->GetMaxStepSize());
           regionTmp = parentRegion;
         }
 
@@ -783,9 +946,9 @@ void GatePhysicsList::DefineCuts()
           if(parentRegion->GetName() != "DefaultRegionForTheWorld"){
             GateUserLimits * parentRegionUserLimits = mapOfVolumeUserLimits[parentRegion->GetName()];
             regionUserLimit->SetMaxTrackLength(  parentRegionUserLimits->GetMaxTrackLength()) ;
-            // GateMessage("Cuts", 5, "Region " << (*it2).first << " maxTrackLength " << parentRegionUserLimits->GetMaxTrackLength() << G4endl);
+            GateMessage("Cuts", 5, "Region " << (*it2).first << " maxTrackLength " << parentRegionUserLimits->GetMaxTrackLength() << G4endl);
           }
-          else regionUserLimit->SetMaxTrackLength( worldUserLimit->GetMaxTrackLength());     
+          else regionUserLimit->SetMaxTrackLength( worldUserLimit->GetMaxTrackLength());
           regionTmp = parentRegion;
         }
 
@@ -799,7 +962,7 @@ void GatePhysicsList::DefineCuts()
             GateUserLimits * parentRegionUserLimits = mapOfVolumeUserLimits[parentRegion->GetName()];
             regionUserLimit->SetMaxToF(  parentRegionUserLimits->GetMaxToF()) ;
           }
-          else regionUserLimit->SetMaxToF( worldUserLimit->GetMaxToF());     
+          else regionUserLimit->SetMaxToF( worldUserLimit->GetMaxToF());
           regionTmp = parentRegion;
         }
 
@@ -812,7 +975,7 @@ void GatePhysicsList::DefineCuts()
             GateUserLimits * parentRegionUserLimits = mapOfVolumeUserLimits[parentRegion->GetName()];
             regionUserLimit->SetMinKineticEnergy(  parentRegionUserLimits->GetMinKineticEnergy()) ;
           }
-          else regionUserLimit->SetMinKineticEnergy( worldUserLimit->GetMinKineticEnergy());     
+          else regionUserLimit->SetMinKineticEnergy( worldUserLimit->GetMinKineticEnergy());
           regionTmp = parentRegion;
         }
 
@@ -825,7 +988,7 @@ void GatePhysicsList::DefineCuts()
             GateUserLimits * parentRegionUserLimits = mapOfVolumeUserLimits[parentRegion->GetName()];
             regionUserLimit->SetMinRemainingRange(  parentRegionUserLimits->GetMinRemainingRange()) ;
           }
-          else regionUserLimit->SetMinRemainingRange( worldUserLimit->GetMinRemainingRange());     
+          else regionUserLimit->SetMinRemainingRange( worldUserLimit->GetMinRemainingRange());
           regionTmp = parentRegion;
         }
 
@@ -834,35 +997,35 @@ void GatePhysicsList::DefineCuts()
       G4bool IsULimitDefined = false;
       userlimits = new G4UserLimits(0.1);
 
-      
+
       G4String regionName = region->GetName();
       if(regionUserLimit->GetMaxStepSize()       != -1.){
         userlimits->SetMaxAllowedStep(regionUserLimit->GetMaxStepSize());
-        GateMessage("Cuts", 3, "Region " << regionName 
+        GateMessage("Cuts", 3, "Region " << regionName
                     << " maxStepSize " << regionUserLimit->GetMaxStepSize() << G4endl);
         IsULimitDefined = true;
       }
       if(regionUserLimit->GetMaxTrackLength()    != -1.){
         userlimits->SetUserMaxTrackLength(regionUserLimit->GetMaxTrackLength());
-        GateMessage("Cuts", 3, "Region " << regionName 
+        GateMessage("Cuts", 3, "Region " << regionName
                     << " maxTrackLength " << regionUserLimit->GetMaxTrackLength() << G4endl);
         IsULimitDefined = true;
       }
       if(regionUserLimit->GetMaxToF()            != -1.){
         userlimits->SetUserMaxTime(regionUserLimit->GetMaxToF());
-        GateMessage("Cuts", 3, "Region " << regionName 
+        GateMessage("Cuts", 3, "Region " << regionName
                     << " MaxToF " << regionUserLimit->GetMaxToF() << G4endl);
         IsULimitDefined = true;
       }
       if(regionUserLimit->GetMinKineticEnergy()  != -1.){
         userlimits->SetUserMinEkine(regionUserLimit->GetMinKineticEnergy());
-        GateMessage("Cuts", 3, "Region " << regionName 
+        GateMessage("Cuts", 3, "Region " << regionName
                     << " MinEkine " << regionUserLimit->GetMinKineticEnergy() << G4endl);
         IsULimitDefined = true;
       }
       if(regionUserLimit->GetMinRemainingRange() != -1.){
         userlimits->SetUserMinRange(regionUserLimit->GetMinRemainingRange());
-        GateMessage("Cuts", 3, "Region " << regionName 
+        GateMessage("Cuts", 3, "Region " << regionName
                     << " MinRange " << regionUserLimit->GetMinRemainingRange() << G4endl);
         IsULimitDefined = true;
       }
@@ -874,8 +1037,21 @@ void GatePhysicsList::DefineCuts()
     ++it2;
   }
 
-  // DS 
+  // DS
   delete worldUserLimit;
+
+  // FIXME --> does not work
+  // DD("here");
+  // if (this != phys) {
+  //   DD("create opt");
+  //   opt = new G4EmProcessOptions();
+  //   if(mDEDXBinning>0)   opt->SetDEDXBinning(mDEDXBinning);
+  //   if(mLambdaBinning>0) opt->SetLambdaBinning(mLambdaBinning);
+  //   if(mEmin>0)          opt->SetMinEnergy(mEmin);
+  //   if(mEmax>0)          opt->SetMaxEnergy(mEmax);
+  //   opt->SetSplineFlag(mSplineFlag);
+  //   opt->SetApplyCuts(true);
+  // }
 
   GateMessageDec("Cuts",4,"GatePhysicsList::SetCuts() -- end" << G4endl);
 }
@@ -885,10 +1061,10 @@ void GatePhysicsList::DefineCuts()
 //-----------------------------------------------------------------------------
 void GatePhysicsList::SetCutInRegion(G4String particleName, G4String regionName, G4double cutValue)
 {
-  
+
   /*
-    GateMessage("Cuts",3,"SetCutInRegion '" << regionName 
-    << "' for particle '" << particleName 
+    GateMessage("Cuts",3,"SetCutInRegion '" << regionName
+    << "' for particle '" << particleName
     << "' : " << cutValue << G4endl);
   */
 
@@ -902,13 +1078,13 @@ void GatePhysicsList::SetCutInRegion(G4String particleName, G4String regionName,
     mapOfRegionCuts[regionName].positronCut = -1;
     mapOfRegionCuts[regionName].protonCut = -1;
   }
-  if (particleName == "gamma") mapOfRegionCuts[regionName].gammaCut = cutValue;  
-  if (particleName == "e-") mapOfRegionCuts[regionName].electronCut = cutValue;  
+  if (particleName == "gamma") mapOfRegionCuts[regionName].gammaCut = cutValue;
+  if (particleName == "e-") mapOfRegionCuts[regionName].electronCut = cutValue;
   if (particleName == "e+") mapOfRegionCuts[regionName].positronCut = cutValue;
   if (particleName == "proton") mapOfRegionCuts[regionName].protonCut = cutValue;
-  
+
   /*
-    GateMessage("Cuts", 3, " Current Cut is g=" << 
+    GateMessage("Cuts", 3, " Current Cut is g=" <<
     mapOfRegionCuts[regionName].gammaCut << " e-=" <<
     mapOfRegionCuts[regionName].electronCut << " e+=" <<
     mapOfRegionCuts[regionName].positronCut << G4endl);
@@ -930,12 +1106,12 @@ void GatePhysicsList::SetSpecialCutInRegion(G4String cutType, G4String regionNam
     mapOfVolumeUserLimits[regionName]= new GateUserLimits();
   }
 
-  if (cutType == "MaxStepSize") mapOfVolumeUserLimits[regionName]->SetMaxStepSize( cutValue);  
-  if (cutType == "MaxTrackLength") mapOfVolumeUserLimits[regionName]->SetMaxTrackLength( cutValue);  
-  if (cutType == "MaxToF") mapOfVolumeUserLimits[regionName]->SetMaxToF( cutValue);  
-  if (cutType == "MinKineticEnergy") mapOfVolumeUserLimits[regionName]->SetMinKineticEnergy( cutValue);  
-  if (cutType == "MinRemainingRange") mapOfVolumeUserLimits[regionName]->SetMinRemainingRange( cutValue);  
- 
+  if (cutType == "MaxStepSize") mapOfVolumeUserLimits[regionName]->SetMaxStepSize( cutValue);
+  if (cutType == "MaxTrackLength") mapOfVolumeUserLimits[regionName]->SetMaxTrackLength( cutValue);
+  if (cutType == "MaxToF") mapOfVolumeUserLimits[regionName]->SetMaxToF( cutValue);
+  if (cutType == "MinKineticEnergy") mapOfVolumeUserLimits[regionName]->SetMinKineticEnergy( cutValue);
+  if (cutType == "MinRemainingRange") mapOfVolumeUserLimits[regionName]->SetMinRemainingRange( cutValue);
+
 }
 //-----------------------------------------------------------------------------
 
@@ -968,7 +1144,7 @@ void GatePhysicsList::SetOptLambdaBinning(G4int val)
 
 //-----------------------------------------------------------------------------
 void GatePhysicsList::SetOptEMin(G4double val)
-{ 
+{
   mEmin=val;
   opt->SetMinEnergy(mEmin);
 }
@@ -977,7 +1153,7 @@ void GatePhysicsList::SetOptEMin(G4double val)
 
 //-----------------------------------------------------------------------------
 void GatePhysicsList::SetOptEMax(G4double val)
-{ 
+{
   mEmax=val;
   opt->SetMaxEnergy(mEmax);
 }
@@ -986,10 +1162,29 @@ void GatePhysicsList::SetOptEMax(G4double val)
 
 //-----------------------------------------------------------------------------
 void GatePhysicsList::SetOptSplineFlag(G4bool val)
-{ 
+{
   mSplineFlag=val;
   opt->SetSplineFlag(mSplineFlag);
 }
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GatePhysicsList::SetEnergyRangeMinLimit(double val)
+{
+  //G4double limit=250*eV; // limit for diplay production cuts table
+  mLowEnergyRangeLimit = val;
+  // G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(val, G4ProductionCutsTable::GetProductionCutsTable()->GetHighEdgeEnergy());
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+G4double GatePhysicsList::GetLowEdgeEnergy()
+{
+  return mLowEnergyRangeLimit;
+}
+//-----------------------------------------------------------------------------
 
 //#endif
 //-----------------------------------------------------------------------------

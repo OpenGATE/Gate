@@ -195,12 +195,12 @@ void GateSecondaryProductionActor::PreUserTrackingAction(const GateVVolume *, co
     const G4VProcess* process = t->GetCreatorProcess();
     if(process){
       //G4cout<<process->GetProcessName()<<"  "<<process->GetProcessName().find("Decay")<<G4endl;
-      if(name=="e-" && process->GetProcessName().find("Ionisation")<1000) {name += " Ioni";}
-      if(name=="e+" && process->GetProcessName().find("Decay")<1000) {name += " Decay";}
+      if(name=="e-" && process->GetProcessName().find("Ionisation")!=std::string::npos) {name += " Ioni";}
+      if(name=="e+" && process->GetProcessName().find("Decay")!=std::string::npos) {name += " Decay";}
       if(name=="gamma"){
-	if(process->GetProcessName().find("Decay")<1000) {name += " Decay";}
-        else if(process->GetProcessName().find("Inelastic")<1000) {name += " (HAD)";}
-        else if(process->GetProcessTypeName(process->GetProcessType()).find("Electromagnetic")<1000) {name += " (EM)";}
+	if(process->GetProcessName().find("Decay")!=std::string::npos) {name += " Decay";}
+        else if(process->GetProcessName().find("Inelastic")!=std::string::npos) {name += " (HAD)";}
+        else if(process->GetProcessTypeName(process->GetProcessType()).find("Electromagnetic")!=std::string::npos) {name += " (EM)";}
 	else {name += " (others)";}
       }
     }

@@ -11,7 +11,8 @@ GateMuTable::GateMuTable(G4String /*name*/, G4int size)
   mSize = size;
   lastMu = -1.0;
   lastMuen = -1.0;
-  lastEnergy = -1.0;
+  lastEnergyMu = -1.0;
+  lastEnergyMuen = -1.0;
 }
 
 GateMuTable::~GateMuTable()
@@ -37,52 +38,55 @@ inline double interpol(double x1, double x, double x2,
 
 double GateMuTable::GetMuEn(double energy)
 {
-  if (energy == lastEnergy) return exp(lastMuen);
-  lastEnergy = energy;
-
-  energy = log(energy);
-
-  int inf = 0;
-  int sup = mSize-1;
-  while(sup - inf > 1)
+  if (energy != lastEnergyMuen)
   {
-    int tmp_bound = (inf + sup)/2;
-    if(mEnergy[tmp_bound] > energy) { sup = tmp_bound; }
-    else { inf = tmp_bound; }
+    lastEnergyMuen = energy;
+
+    energy = log(energy);
+
+    int inf = 0;
+    int sup = mSize-1;
+    while(sup - inf > 1)
+    {
+      int tmp_bound = (inf + sup)/2;
+      if(mEnergy[tmp_bound] > energy) { sup = tmp_bound; }
+      else { inf = tmp_bound; }
+    }
+    double e_inf = mEnergy[inf];
+    double e_sup = mEnergy[sup];
+
+    if( energy > e_inf && energy < e_sup) { lastMuen = exp(interpol(e_inf, energy, e_sup, mMu_en[inf], mMu_en[sup])); }
+    else { lastMuen = exp(mMu_en[inf]); }    
   }
-  double e_inf = mEnergy[inf];
-  double e_sup = mEnergy[sup];
 
-  if( energy > e_inf && energy < e_sup) { lastMuen = interpol(e_inf, energy, e_sup, mMu_en[inf], mMu_en[sup]); }
-  else { lastMuen = mMu_en[inf]; }
-
-  return exp(lastMuen);
+  return lastMuen;
 }
 
 double GateMuTable::GetMu(double energy)
 {
-  if (energy == lastEnergy) return exp(lastMu);
-  lastEnergy = energy;
-
-  energy = log(energy);
-
-  int inf = 0;
-  int sup = mSize-1;
-  while(sup - inf > 1)
+  if (energy != lastEnergyMu)
   {
-    int tmp_bound = (inf + sup)/2;
-    if(mEnergy[tmp_bound] > energy) { sup = tmp_bound; }
-    else { inf = tmp_bound; }
+    lastEnergyMu = energy;
+
+    energy = log(energy);
+
+    int inf = 0;
+    int sup = mSize-1;
+    while(sup - inf > 1)
+    {
+      int tmp_bound = (inf + sup)/2;
+      if(mEnergy[tmp_bound] > energy) { sup = tmp_bound; }
+      else { inf = tmp_bound; }
+    }
+    double e_inf = mEnergy[inf];
+    double e_sup = mEnergy[sup];
+
+    if( energy > e_inf && energy < e_sup) { lastMu = exp(interpol(e_inf, energy, e_sup, mMu[inf], mMu[sup])); }
+    else { lastMu = exp(mMu[inf]); }
   }
-  double e_inf = mEnergy[inf];
-  double e_sup = mEnergy[sup];
-
-  if( energy > e_inf && energy < e_sup) { lastMu = interpol(e_inf, energy, e_sup, mMu[inf], mMu[sup]); }
-  else { lastMu = mMu[inf]; }
-
-  return exp(lastMu);
+    
+  return lastMu;
 }
-
 
 G4int GateMuTable::GetSize()
 {

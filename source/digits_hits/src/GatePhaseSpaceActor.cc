@@ -182,7 +182,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
   G4String st = "";
   if(step->GetTrack()->GetLogicalVolumeAtVertex())
     st = step->GetTrack()->GetLogicalVolumeAtVertex()->GetName();
-  sscanf(st.c_str(), "%s",vol);
+  strcpy(vol, st.c_str());
 
   //if(vol!=mVolume->GetLogicalVolumeName() && mStoreOutPart) return;
   if(vol==mVolume->GetLogicalVolumeName() && !EnableSec && !mStoreOutPart) return;
@@ -210,7 +210,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
 
   //-----------Write name of the particles presents at the simulation-------------
   st = step->GetTrack()->GetDefinition()->GetParticleName();
-  sscanf(st.c_str(), "%s",pname);
+  strcpy(pname, st.c_str());
 
   //------------Write psition of the steps presents at the simulation-------------
   G4ThreeVector localPosition = stepPoint->GetPosition();
@@ -273,13 +273,13 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
   st = "";
   if(step->GetTrack()->GetCreatorProcess() )
     st =  step->GetTrack()->GetCreatorProcess()->GetProcessName();
-  sscanf(st.c_str(), "%s",pro_track);
+  strcpy(pro_track, st.c_str());
 
   //----------
   st = "";
   if( stepPoint->GetProcessDefinedStep() )
     st = stepPoint->GetProcessDefinedStep()->GetProcessName();
-  sscanf(st.c_str(), "%s",pro_step);
+  strcpy(pro_step, st.c_str());
 
   if(mFileType == "rootFile"){
     if(GetMaxFileSize()!=0) pListeVar->SetMaxTreeSize(GetMaxFileSize());
