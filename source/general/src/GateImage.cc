@@ -801,9 +801,10 @@ void GateImage::Read(G4String filename) {
   else if (extension == "img.gz") ReadAnalyze(filename);
   else if (extension == "mhd" || extension == "mha") ReadMHD(filename);
   else if (extension == "h33") ReadInterfile(filename);
+  else if (extension == "i33") ReadInterfile(filename);
   else {
     GateError( "Unknow image file extension. Knowns extensions are : "
-         << G4endl << ".vox, .hdr, .img, .mhd, .mha" << G4endl);
+         << G4endl << ".vox, .hdr, .img, .mhd, .mha, .h33, .i33" << G4endl);
     exit(0);
   }
 }
@@ -1072,7 +1073,7 @@ void GateImage::ReadMHD(G4String filename) {
 //-----------------------------------------------------------------------------
 void GateImage::ReadInterfile(G4String filename) {
 
-  // Read mhd image
+  // Read interfile image
   GateInterfileHeader * h33 = new GateInterfileHeader;
   h33->ReadHeader(filename);
   
@@ -1080,21 +1081,20 @@ void GateImage::ReadInterfile(G4String filename) {
   voxelSize = G4ThreeVector(h33->m_pixelSize[0], h33->m_pixelSize[1], h33->m_planeThickness);
   resolution = G4ThreeVector(h33->m_dim[0], h33->m_dim[1], h33->m_numPlanes);
   
-// We need to shift to half a pixel to be coherent with Gate
+  // We need to shift to half a pixel to be coherent with Gate
   // coordinates system.
   origin[0] -= voxelSize[0]/2.0;
   origin[1] -= voxelSize[1]/2.0;
   origin[2] -= voxelSize[2]/2.0;
+  
   origin = G4ThreeVector(origin[0], origin[1], origin[2]);
   
   UpdateSizesFromResolutionAndVoxelSize();
   Allocate();
   
-  G4cout << h33->m_dim[0] << G4endl;
-  
   // Get image data
   h33->ReadData(filename, data);
-  G4cout << "j'ai lu l'interfile" << G4endl;
+  
 }
 //-----------------------------------------------------------------------------
 

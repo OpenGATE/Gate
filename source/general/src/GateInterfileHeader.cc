@@ -94,7 +94,7 @@ void GateInterfileHeader::ReadData(std::string filename, std::vector<float> & da
   
   int l = filename.length();
   filename.replace(l-3,3,"i33");
-  G4cout << filename << G4endl;
+  //G4cout << filename << G4endl;
   
   std::ifstream is;
   OpenFileInput(filename, is);
@@ -134,7 +134,7 @@ void GateInterfileHeader::ReadData(std::string filename, std::vector<float> & da
   
   if (m_dataTypeName == "UNSIGNED INTEGER") {
     
-    G4cout << "datatype=UNSIGNED INTEGER" << G4endl;
+    //G4cout << "datatype=UNSIGNED INTEGER" << G4endl;
     typedef unsigned short VoxelType;
     std::vector<VoxelType> temp(pixelNumber);
     data.resize(pixelNumber);
@@ -146,7 +146,7 @@ void GateInterfileHeader::ReadData(std::string filename, std::vector<float> & da
   }
   else if (m_dataTypeName == "FLOAT") {
     
-    G4cout << "datatype=FLOAT" << G4endl;
+    //G4cout << "datatype=FLOAT" << G4endl;
     typedef float VoxelType;
     std::vector<VoxelType> temp(pixelNumber);
     data.resize(pixelNumber);

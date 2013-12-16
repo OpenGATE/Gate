@@ -261,10 +261,8 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
 	  tmp->SetValue(i,j,k,1);
   }
   else {
-    G4cout << "je lis" << G4endl;
     tmp->Read(mImageFilename);
-    G4cout << "j'ai lu" << G4endl;
-    G4cout << mImageFilename << G4endl;
+    //G4cout << mImageFilename << G4endl;
   }
   //tmp->PrintInfo();
 
@@ -505,23 +503,20 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable()
 //--------------------------------------------------------------------
 void GateVImageVolume::LoadImageMaterialsFromRangeTable()
 {
-  G4cout << "on est dans le range" << G4endl;
-
   m_voxelMaterialTranslation.clear();
 
   std::ifstream inFile;
 
   inFile.open(mRangeToImageMaterialTableFilename.c_str(),std::ios::in);
   mRangeMaterialTable.Reset();
-  // mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(), pImage->GetOutsideValue()+1,"worldDefaultAir");
   G4String parentMat = GetParentVolume()->GetMaterialName();
   mRangeMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue()+1,parentMat);
 
   if (inFile.is_open()){
   G4String material;
-  G4double xmin;
-  G4double xmax;
-  G4int nTotCol;
+  G4double r1;
+  G4double r2;
+  G4int firstline;
 
   G4double red, green, blue, alpha;
   G4bool visible;
@@ -530,18 +525,16 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
   inFile.getline(buffer,200);
   std::istringstream is(buffer);
 
-  is >> nTotCol;
-  G4cout << "nTotCol: " << nTotCol << G4endl;
-
-  if (is.eof()){
-  G4cout << "Config PET" << G4endl;
+  is >> firstline;
   
-  for (G4int iCol=0; iCol<nTotCol; iCol++) {
+  if (is.eof()){
+    
+  for (G4int iCol=0; iCol<firstline; iCol++) {
     inFile.getline(buffer,200);
     is.clear();
     is.str(buffer);
 
-    is >> xmin >> xmax;
+    is >> r1 >> r2;
     is >> material;
 
     if (is.eof()){
@@ -553,12 +546,12 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
       is >> std::boolalpha >> visible >> red >> green >> blue >> alpha;
     }
 
-    G4cout << " min max " << xmin << " " << xmax << "  material: " << material
+    G4cout << " min max " << r1 << " " << r2 << "  material: " << material
     << std::boolalpha << ", visible " << visible << ", rgba(" << red<<',' << green << ',' << blue << ')' << G4endl;
 
-    if(xmax> pImage->GetOutsideValue()+1){
-      if(xmin<pImage->GetOutsideValue()+1) xmin=pImage->GetOutsideValue()+1;
-        mRangeMaterialTable.AddMaterial(xmin,xmax,material);
+    if(r2> pImage->GetOutsideValue()+1){
+      if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
+        mRangeMaterialTable.AddMaterial(r1,r2,material);
     }
 
   mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
@@ -569,64 +562,27 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
   }
 
   }else{
-  G4cout << "Config RT" << G4endl;
   
   inFile.close();
   std::ifstream is;
   OpenFileInput(mRangeToImageMaterialTableFilename, is);
-  //inFile.open(mRangeToImageMaterialTableFilename.c_str(),std::ios::in);
   mRangeMaterialTable.Reset();
-//  inFile.getline(buffer,200);
-//  is.str(buffer);
+
   while (is){
-  G4cout << "toto" << G4endl;
-  is >> xmin >> xmax;
+  
+  is >> r1 >> r2;
   is >> material;
-  G4cout << material << G4endl; 
-  if(xmax> pImage->GetOutsideValue()+1){
-    if(xmin<pImage->GetOutsideValue()+1) xmin=pImage->GetOutsideValue()+1;
-      mRangeMaterialTable.AddMaterial(xmin,xmax,material);
+  
+  if(r2> pImage->GetOutsideValue()+1){
+    if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
+      mRangeMaterialTable.AddMaterial(r1,r2,material);
   }
   }
   mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
   }
   
-//  for (G4int iCol=0; iCol<nTotCol; iCol++) {
-//    inFile.getline(buffer,200);
-//    is.clear();
-//    is.str(buffer);
-
-//    is >> xmin >> xmax;
-//    is >> material;
-
-//    if (is.eof()){
-//      visible=true;
-//      red=0.5;
-//      green=blue=0.0;
-//      alpha=1;
-//    }else{
-//      is >> std::boolalpha >> visible >> red >> green >> blue >> alpha;
-//    }
-
-//    G4cout << " min max " << xmin << " " << xmax << "  material: " << material 
-//    << std::boolalpha << ", visible " << visible << ", rgba(" << red<<',' << green << ',' << blue << ')' << G4endl;
-//    
-//    if(xmax> pImage->GetOutsideValue()+1){
-//      if(xmin<pImage->GetOutsideValue()+1) xmin=pImage->GetOutsideValue()+1;
-//        mRangeMaterialTable.AddMaterial(xmin,xmax,material);
-//    }
-
-//    mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
-//    
-
-//    m_voxelAttributesTranslation[GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(material) ] =
-//      new G4VisAttributes(visible, G4Colour(red, green, blue, alpha));
-//  }
-
   }
   else {G4cout << "Error opening file." << G4endl;}
-
-  //inFile.close();
 
   ImageType::iterator iter;
   iter = pImage->begin();
