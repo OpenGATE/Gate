@@ -13,20 +13,19 @@
   \brief Implementation of GateVImageVolume
 */
 
+
+#include <pthread.h>
+#include <set>
+
 #include "GateVImageVolume.hh"
 #include "GateMiscFunctions.hh"
 #include "GateMessageManager.hh"
 #include "GateDetectorConstruction.hh"
-
-#include <pthread.h>
 #include "GateDMapVol.h"
 #include "GateDMaplongvol.h"
-//#include "sedt.h"
 #include "GateDMapdt.h"
 #include "GateHounsfieldMaterialTable.hh"
-
-#include <set>
-#include "G4TransportationManager.hh"
+#include <G4TransportationManager.hh>
 
 typedef unsigned int uint;
 
