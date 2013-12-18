@@ -65,6 +65,7 @@ class GateImageWithStatistic
 
   void SetOrigin(G4ThreeVector v);
   void SetOverWriteFilesFlag(bool b) { mOverWriteFilesFlag = b; }
+  void SetTransformMatrix(const G4RotationMatrix & m);
 
   protected:
   GateImage mValueImage;
@@ -73,7 +74,6 @@ class GateImageWithStatistic
   GateImage mUncertaintyImage;
   GateImage mScaledValueImage;
   GateImage mScaledSquaredImage;
- // GateImage * mLastHitEventImage;
   bool mOverWriteFilesFlag;
 
   bool mIsSquaredImageEnabled;

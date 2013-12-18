@@ -47,6 +47,18 @@ void GateImageWithStatistic::SetOrigin(G4ThreeVector o) {
 
 
 //-----------------------------------------------------------------------------
+void GateImageWithStatistic::SetTransformMatrix(const G4RotationMatrix & m) {
+  mValueImage.SetTransformMatrix(m);
+  mSquaredImage.SetTransformMatrix(m);
+  mTempImage.SetTransformMatrix(m);
+  mUncertaintyImage.SetTransformMatrix(m);
+  mScaledValueImage.SetTransformMatrix(m);
+  mScaledSquaredImage.SetTransformMatrix(m);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 void GateImageWithStatistic::SetScaleFactor(double s) {
   // if (s==1.0) mIsValuesMustBeScaled = false;
 //   else {
