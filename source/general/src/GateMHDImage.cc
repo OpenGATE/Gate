@@ -9,7 +9,7 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
-/*! \file 
+/*! \file
   \brief a 3D image
 */
 
@@ -57,7 +57,7 @@ void GateMHDImage::ReadHeader(std::string & filename)
   if(!m_MetaImage.Read(filename.c_str(), false)) {
     GateError("MHD File cannot be read: " << filename << std::endl);
   }
-  
+
   if (m_MetaImage.NDims() != 3) {
     GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort." << std::endl);
   }
@@ -66,7 +66,7 @@ void GateMHDImage::ReadHeader(std::string & filename)
     size[i] = m_MetaImage.DimSize(i);
     spacing[i] = m_MetaImage.ElementSpacing(i);
     origin[i] = m_MetaImage.Position(i);
-  } 
+  }
 
   transform.resize(9);
   for(int i=0; i<9; i++) { // 3 x 3 matrix
@@ -110,7 +110,7 @@ void GateMHDImage::ReadHeader_old(std::string & filename)
   Check_tag_value("BinaryDataByteOrderMSB", "False");
   Check_tag_value("CompressedData", "False");
   Check_tag_value("TransformMatrix", "1 0 0 0 1 0 0 0 1");
- 
+
   Read_3_values("ElementSpacing", &spacing[0]);
   Read_3_values("Offset", &origin[0]);
   Read_3_values("DimSize", &size[0]);
@@ -120,7 +120,7 @@ void GateMHDImage::ReadHeader_old(std::string & filename)
 
 
 //-----------------------------------------------------------------------------
-void GateMHDImage::Print() 
+void GateMHDImage::Print()
 {
   std::cout << "Tags read = " << tags.size() << std::endl
             << "size = " << size[0] << " " << size[1] << " " << size[2] << std::endl
@@ -131,7 +131,7 @@ void GateMHDImage::Print()
 
 
 //-----------------------------------------------------------------------------
-void GateMHDImage::Read_3_values(std::string tag, double * v) 
+void GateMHDImage::Read_3_values(std::string tag, double * v)
 {
   int position = Read_tag(tag);
   std::istringstream is(values[position]);
@@ -144,7 +144,7 @@ void GateMHDImage::Read_3_values(std::string tag, double * v)
 
 
 //-----------------------------------------------------------------------------
-int GateMHDImage::Read_tag(std::string tag) 
+int GateMHDImage::Read_tag(std::string tag)
 {
   std::vector<std::string>::iterator it = std::find(tags.begin(), tags.end(), tag);
   if (it == tags.end()) {
@@ -157,14 +157,14 @@ int GateMHDImage::Read_tag(std::string tag)
 
 
 //-----------------------------------------------------------------------------
-void GateMHDImage::Check_tag_value(std::string tag, std::string value) 
+void GateMHDImage::Check_tag_value(std::string tag, std::string value)
 {
   int position = Read_tag(tag);
   EraseWhiteSpaces(value);
   std::string v = values[position];
   EraseWhiteSpaces(v);
   if (v != value) {
-    GateError("Error while reading mhd header. Tag '" << tag << "' should be '" 
+    GateError("Error while reading mhd header. Tag '" << tag << "' should be '"
               << value << "' but I read '" << v << "'");
   }
 }
@@ -186,7 +186,7 @@ void GateMHDImage::ReadData(std::string filename, std::vector<float> & data)
   if(!m_MetaImage.Read(filename.c_str(), true)) {
     GateError("MHD File cannot be read: " << filename << std::endl);
   }
-  
+
   if (m_MetaImage.NDims() != 3) {
     GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort." << std::endl);
   }
@@ -204,20 +204,20 @@ void GateMHDImage::ReadData(std::string filename, std::vector<float> & data)
 void GateMHDImage::ReadData_old(std::string filename, std::vector<float> & data)
 {
   typedef signed short int PixelType;
-  
-  // find filename 
+
+  // find filename
   int p = Read_tag("ElementDataFile");
   std::string s = values[p];
   EraseWhiteSpaces(s);
 
-  // build filename 
+  // build filename
   std::string f;
   unsigned int position = filename.find_last_of("/");
   filename = filename.substr(0,position+1);
   s = filename+s;
   std::ifstream is;
   OpenFileInput(s, is);
-  
+
   // Read data
   int nbOfValues = size[0] * size[1] * size[2];
   std::vector<PixelType> temp(nbOfValues);
@@ -307,13 +307,13 @@ void GateMHDImage::WriteHeader_old(std::string filename, GateImage * image)
      << "BinaryDataByteOrderMSB = False" << std::endl
      << "CompressedData = False" << std::endl
      << "TransformMatrix = 1 0 0 0 1 0 0 0 1" << std::endl
-     << "Offset = " << image->GetOrigin().x() << " " 
+     << "Offset = " << image->GetOrigin().x() << " "
      << image->GetOrigin().y() << " " << image->GetOrigin().z() << std::endl
      << "CenterOfRotation = 0 0 0" << std::endl
      << "AnatomicalOrientation = RAI" << std::endl
-     << "ElementSpacing = " << image->GetVoxelSize().x() << " " 
+     << "ElementSpacing = " << image->GetVoxelSize().x() << " "
      << image->GetVoxelSize().y() << " " << image->GetVoxelSize().z() << std::endl
-     << "DimSize = " << image->GetResolution().x() << " " 
+     << "DimSize = " << image->GetResolution().x() << " "
      << image->GetResolution().y() << " " << image->GetResolution().z() << std::endl
      << "ElementType = MET_FLOAT" << std::endl
      << "ElementDataFile = " << f << std::endl;
@@ -335,7 +335,7 @@ void GateMHDImage::WriteData_old(std::string filename, GateImage * image)
 {
  // Create filename for raw
   std::string f;
-  GetRawFilename(filename, f, true); 
+  GetRawFilename(filename, f, true);
   std::ofstream os;
   OpenFileOutput(f, os);
   int nbOfValues = image->GetNumberOfValues();
@@ -344,5 +344,4 @@ void GateMHDImage::WriteData_old(std::string filename, GateImage * image)
 //-----------------------------------------------------------------------------
 
 
-#endif 
-
+#endif
