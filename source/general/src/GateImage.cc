@@ -1058,6 +1058,12 @@ void GateImage::ReadMHD(G4String filename) {
     row_z[i] = mhd->transform[i*3+2];
   }
   transformMatrix.setRows(row_x, row_y, row_z);
+  if( !transformMatrix.row1().isNear(CLHEP::HepLorentzVector(row_x, 0.), 0.1) ||
+      !transformMatrix.row2().isNear(CLHEP::HepLorentzVector(row_y, 0.), 0.1) ||
+      !transformMatrix.row3().isNear(CLHEP::HepLorentzVector(row_z, 0.), 0.1) ) {
+      GateError(filename << " contains a transformation which is not a rotation. "
+                << "It is probably a flip and this is not handled.");
+  }
 
   UpdateSizesFromResolutionAndVoxelSize();
   Allocate();
