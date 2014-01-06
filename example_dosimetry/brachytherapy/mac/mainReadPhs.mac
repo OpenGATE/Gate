@@ -1,0 +1,114 @@
+
+/control/execute mac/verbose.mac
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+
+# World
+/gate/world/geometry/setXLength 5 m
+/gate/world/geometry/setYLength 5 m
+/gate/world/geometry/setZLength 5 m
+/gate/world/setMaterial Air
+/gate/world/vis/setVisible 1
+
+# insert CT
+/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt
+/gate/HounsfieldMaterialGenerator/SetDensityTable                   data/Schneider2000DensitiesTable.txt
+/gate/HounsfieldMaterialGenerator/SetDensityTolerance               0.1 g/cm3
+/gate/HounsfieldMaterialGenerator/SetOutputMaterialDatabaseFilename data/ct-2mm-HUmaterials.db
+/gate/HounsfieldMaterialGenerator/SetOutputHUMaterialFilename       data/ct-2mm-HU2mat.txt
+/gate/HounsfieldMaterialGenerator/Generate
+
+/gate/world/daughters/name                              patient
+/gate/world/daughters/insert                            ImageNestedParametrisedVolume
+/gate/geometry/setMaterialDatabase                      data/ct-2mm-HUmaterials.db
+/gate/patient/geometry/SetHUToMaterialFile              data/ct-2mm-HU2mat.txt
+/gate/patient/geometry/SetImage                         data/ct-2mm.mhd
+
+
+# For visualization only : enable the following line
+#/gate/patient/geometry/enableBoundingBoxOnly            true
+
+# Virtual volume
+/control/execute mac/virtualVolume79.mac
+
+#=====================================================
+#=====================================================
+
+/control/execute mac/StandardPhys.mac
+
+#/gate/physics/Gamma/SetCutInRegion      world 1 mm
+#/gate/physics/Electron/SetCutInRegion   world 0.1 mm
+
+# /gate/physics/Gamma/SetCutInRegion      TitaniumOuter 0.1 mm
+# /gate/physics/Electron/SetCutInRegion   TitaniumOuter 1 m
+
+# /gate/physics/Gamma/SetCutInRegion      TitaniumInner 0.1 mm
+# /gate/physics/Electron/SetCutInRegion   TitaniumInner 1 m
+
+# /gate/physics/Gamma/SetCutInRegion      CarbonCoat 0.1 mm
+# /gate/physics/Electron/SetCutInRegion   CarbonCoat 1 m
+
+# /gate/physics/Gamma/SetCutInRegion      TungstenMarker 0.1 mm
+# /gate/physics/Electron/SetCutInRegion   TungstenMarker 1 m
+
+/gate/physics/Gamma/SetCutInRegion      patient 0.1 mm
+/gate/physics/Electron/SetCutInRegion   patient 0.1 mm
+
+#/gate/physics/SetMaxStepSizeInRegion world 0.1 mm
+
+/gate/physics/displayCuts
+
+
+#=====================================================
+# DETECTORS
+#=====================================================
+
+/gate/actor/addActor               SimulationStatisticActor stat
+/gate/actor/stat/saveEveryNSeconds 60
+/gate/actor/stat/save              output/stat.txt
+
+/gate/actor/addActor                                DoseActor  doseDistribution
+/gate/actor/doseDistribution/save                   output/output.mhd
+/gate/actor/doseDistribution/attachTo    	    patient
+/gate/actor/doseDistribution/stepHitType            random
+/gate/actor/doseDistribution/setPosition            0 0 0 cm
+/gate/actor/doseDistribution/setVoxelSize           2 2 2 mm
+#/gate/actor/doseDistribution/saveEveryNSeconds     60
+/gate/actor/doseDistribution/enableEdep             true
+/gate/actor/doseDistribution/enableUncertaintyEdep  true
+/gate/actor/doseDistribution/enableDose             true
+/gate/actor/doseDistribution/enableUncertaintyDose  true
+#/gate/actor/doseDistribution/enableNumberOfHits    false
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+# Enable the following lines to display available and enabled processes
+# /gate/physics/processList Available
+# /gate/physics/processList Enabled
+
+
+#=====================================================
+# BEAMS
+#=====================================================
+
+/control/execute mac/phaseSpace79.mac
+
+#=====================================================
+# START BEAMS
+#=====================================================
+
+# JamesRandom Ranlux64 MersenneTwister
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed random
+
+/gate/application/noGlobalOutput
+/vis/disable
+/gate/application/setTotalNumberOfPrimaries 500000
+/gate/application/start
