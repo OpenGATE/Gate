@@ -1,3 +1,13 @@
+/dose-photon-NPV1-Dose.mhd
+/dose-photon-NPV1-Dose.raw
+/dose-photon-NPV1-Edep-Squared.mhd
+/dose-photon-NPV1-Edep-Squared.raw
+/dose-photon-NPV1-Edep-Uncertainty.mhd
+/dose-photon-NPV1-Edep-Uncertainty.raw
+/dose-photon-NPV1-Edep.mhd
+/dose-photon-NPV1-Edep.raw
+/dose-photon-NPV1-NbOfHits.mhd
+/dose-photon-NPV1-NbOfHits.raw
 /dose-photon-RV1-Dose.mhd
 /dose-photon-RV1-Dose.raw
 /dose-photon-RV1-Edep-Squared.mhd
@@ -9,4 +19,5 @@
 /dose-photon-RV1-NbOfHits.mhd
 /dose-photon-RV1-NbOfHits.raw
 /physics.txt
+/stat-photon-NPV1.txt
 /stat-photon-RV1.txt
