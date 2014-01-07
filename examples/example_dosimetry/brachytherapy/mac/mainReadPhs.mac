@@ -23,11 +23,16 @@
 /gate/HounsfieldMaterialGenerator/Generate
 
 /gate/world/daughters/name                              patient
-/gate/world/daughters/insert                            ImageNestedParametrisedVolume
+#/gate/world/daughters/insert                            ImageNestedParametrisedVolume
+/gate/world/daughters/insert                            ImageRegionalizedVolume
 /gate/geometry/setMaterialDatabase                      data/ct-2mm-HUmaterials.db
 /gate/patient/geometry/SetHUToMaterialFile              data/ct-2mm-HU2mat.txt
 /gate/patient/geometry/SetImage                         data/ct-2mm.mhd
 
+# Generate the dmap (needed by ImageRegionalizedVolume)
+/gate/patient/geometry/buildAndDumpDistanceTransfo   data/ct-2mm-dmap.mhd
+# Use it
+/gate/patient/geometry/distanceMap                   data/ct-2mm-dmap.mhd
 
 # For visualization only : enable the following line
 #/gate/patient/geometry/enableBoundingBoxOnly            true
@@ -40,35 +45,17 @@
 
 /control/execute mac/StandardPhys.mac
 
-#/gate/physics/Gamma/SetCutInRegion      world 1 mm
-#/gate/physics/Electron/SetCutInRegion   world 0.1 mm
-
-# /gate/physics/Gamma/SetCutInRegion      TitaniumOuter 0.1 mm
-# /gate/physics/Electron/SetCutInRegion   TitaniumOuter 1 m
-
-# /gate/physics/Gamma/SetCutInRegion      TitaniumInner 0.1 mm
-# /gate/physics/Electron/SetCutInRegion   TitaniumInner 1 m
-
-# /gate/physics/Gamma/SetCutInRegion      CarbonCoat 0.1 mm
-# /gate/physics/Electron/SetCutInRegion   CarbonCoat 1 m
-
-# /gate/physics/Gamma/SetCutInRegion      TungstenMarker 0.1 mm
-# /gate/physics/Electron/SetCutInRegion   TungstenMarker 1 m
-
-/gate/physics/Gamma/SetCutInRegion      patient 0.1 mm
-/gate/physics/Electron/SetCutInRegion   patient 0.1 mm
-
-#/gate/physics/SetMaxStepSizeInRegion world 0.1 mm
+/gate/physics/Gamma/SetCutInRegion      world 100 mm
+/gate/physics/Electron/SetCutInRegion   world 100 mm
 
 /gate/physics/displayCuts
-
 
 #=====================================================
 # DETECTORS
 #=====================================================
 
 /gate/actor/addActor               SimulationStatisticActor stat
-/gate/actor/stat/saveEveryNSeconds 60
+#/gate/actor/stat/saveEveryNSeconds 60
 /gate/actor/stat/save              output/stat.txt
 
 /gate/actor/addActor                                DoseActor  doseDistribution
@@ -81,7 +68,7 @@
 /gate/actor/doseDistribution/enableEdep             true
 /gate/actor/doseDistribution/enableUncertaintyEdep  true
 /gate/actor/doseDistribution/enableDose             true
-/gate/actor/doseDistribution/enableUncertaintyDose  true
+/gate/actor/doseDistribution/enableUncertaintyDose  false
 #/gate/actor/doseDistribution/enableNumberOfHits    false
 
 #=====================================================
@@ -98,7 +85,10 @@
 # BEAMS
 #=====================================================
 
-/control/execute mac/phaseSpace79.mac
+#/control/execute mac/phaseSpace79.mac
+/control/execute mac/phaseSpace1-26.mac
+#/control/execute mac/phaseSpace27-52.mac
+#/control/execute mac/phaseSpace53-79.mac
 
 #=====================================================
 # START BEAMS
@@ -110,5 +100,6 @@
 
 /gate/application/noGlobalOutput
 /vis/disable
-/gate/application/setTotalNumberOfPrimaries 500000
+/gate/application/setTotalNumberOfPrimaries 26000000
+#/gate/application/setTotalNumberOfPrimaries 200000
 /gate/application/start

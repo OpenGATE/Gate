@@ -23,7 +23,7 @@
 # Generate materials from Hounsfield units
 /gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt
 /gate/HounsfieldMaterialGenerator/SetDensityTable                   data/Schneider2000DensitiesTable.txt
-/gate/HounsfieldMaterialGenerator/SetDensityTolerance               0.05 g/cm3
+/gate/HounsfieldMaterialGenerator/SetDensityTolerance               0.1 g/cm3
 /gate/HounsfieldMaterialGenerator/SetOutputMaterialDatabaseFilename data/patient-HUmaterials.db
 /gate/HounsfieldMaterialGenerator/SetOutputHUMaterialFilename       data/patient-HU2mat.txt
 /gate/HounsfieldMaterialGenerator/Generate
@@ -45,10 +45,8 @@
 
 # Generate the dmap (needed by ImageRegionalizedVolume)
 /gate/patient/geometry/buildAndDumpDistanceTransfo   data/patient-2mm-dmap.mhd
-
 # Use it
 /gate/patient/geometry/distanceMap                   data/patient-2mm-dmap.mhd
-
 
 # Optional : dump used image
 #/gate/patient/geometry/buildAndDumpLabeledImage  data/patient-2mm-labeled.mhd
@@ -64,15 +62,13 @@
 
 /control/execute mac/physicslist_EM_std.mac
 
-/gate/physics/Gamma/SetCutInRegion      world 1 mm
-/gate/physics/Electron/SetCutInRegion   world 1 mm
-/gate/physics/Positron/SetCutInRegion   world 1 mm
+/gate/physics/Gamma/SetCutInRegion      world 10 mm
+/gate/physics/Electron/SetCutInRegion   world 10 mm
+/gate/physics/Positron/SetCutInRegion   world 10 mm
 
-/gate/physics/Gamma/SetCutInRegion      patient 1 mm
-/gate/physics/Electron/SetCutInRegion   patient 1 mm
-/gate/physics/Positron/SetCutInRegion   patient 1 mm
-
-#/gate/physics/SetMaxStepSizeInRegion    patient 0.1 mm
+/gate/physics/Gamma/SetCutInRegion      patient 0.5 mm
+/gate/physics/Electron/SetCutInRegion   patient 0.5 mm
+/gate/physics/Positron/SetCutInRegion   patient 0.5 mm
 
 /gate/physics/displayCuts
 /gate/physics/print output/physics.txt
@@ -135,5 +131,5 @@
 /gate/random/setEngineName MersenneTwister
 /vis/disable
 /gate/random/setEngineSeed auto
-/gate/application/setTotalNumberOfPrimaries 30000
+/gate/application/setTotalNumberOfPrimaries 10000000
 /gate/application/start

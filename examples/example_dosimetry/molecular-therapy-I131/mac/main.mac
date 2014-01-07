@@ -94,5 +94,5 @@
 
 /gate/application/noGlobalOutput
 /vis/disable
-/gate/application/setTotalNumberOfPrimaries 500000
+/gate/application/setTotalNumberOfPrimaries 40000000
 /gate/application/start

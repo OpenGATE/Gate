@@ -34,20 +34,9 @@
 /gate/HounsfieldMaterialGenerator/SetOutputHUMaterialFilename           data/patient-HU2mat.txt
 /gate/HounsfieldMaterialGenerator/Generate
 
-# CT Scan Mother Volume
-/gate/world/daughters/name CT
-/gate/world/daughters/insert box
-/gate/CT/setMaterial Air
-/gate/CT/geometry/setXLength 1.1 m
-/gate/CT/geometry/setYLength 1.1 m
-/gate/CT/geometry/setZLength 1.1 m
-/gate/CT/placement/setTranslation 0.0 0.0 0.0 cm
-/gate/CT/placement/setRotationAxis 1 0 0
-/gate/CT/placement/setRotationAngle 0 deg
-
 # CT Volume
-/gate/CT/daughters/name                         patient
-/gate/CT/daughters/insert                       ImageNestedParametrisedVolume
+/gate/world/daughters/name                      patient
+/gate/world/daughters/insert                    ImageNestedParametrisedVolume
 /gate/geometry/setMaterialDatabase              data/patient-HUmaterials.db
 /gate/patient/geometry/SetHUToMaterialFile      data/patient-HU2mat.txt
 /gate/patient/geometry/SetImage                 data/patient-2mm.mhd
@@ -69,6 +58,8 @@
 /gate/geometry/setIonisationPotential Air 85.7 eV
 
 /control/execute mac/physicslist_HAD_std_6_2_2.mac
+#/control/execute mac/physicslist_EM_std.mac
+#/control/execute mac/physicslist_HAD_std.mac
 
 /gate/physics/Gamma/SetCutInRegion      world 10 mm
 /gate/physics/Electron/SetCutInRegion   world 10 mm
@@ -82,10 +73,6 @@
 
 /gate/physics/SetMaxStepSizeInRegion patient 1 mm
 /gate/physics/ActivateStepLimiter proton
-# /gate/physics/ActivateStepLimiter deuteron
-# /gate/physics/ActivateStepLimiter triton
-# /gate/physics/ActivateStepLimiter alpha
-# /gate/physics/ActivateStepLimiter GenericIon
 
 /gate/physics/displayCuts
 /gate/physics/print output/physics.txt
@@ -97,10 +84,6 @@
 /gate/actor/addActor               SimulationStatisticActor stat
 /gate/actor/stat/save              output/stat-proton.txt
 #/gate/actor/stat/saveEveryNSeconds 20
-
-# /gate/actor/addActor  TimeActor statt
-# /gate/actor/statt/enableDetailedStats true
-# /gate/actor/statt/save             output/time.txt
 
 /gate/actor/addActor                               DoseActor  doseDistribution
 /gate/actor/doseDistribution/save                  output/output.mhd
@@ -144,5 +127,5 @@
 
 /gate/random/setEngineName MersenneTwister
 /gate/random/setEngineSeed auto
-/gate/application/setTotalNumberOfPrimaries 10000
+/gate/application/setTotalNumberOfPrimaries 1000
 /gate/application/start
