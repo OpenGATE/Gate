@@ -1,4 +1,4 @@
 
-* Authors
-  - Sara Marcatili
-  - Manuel Bardiès
+Authors:
+ - Sara Marcatili
+ - Manuel Bardies
