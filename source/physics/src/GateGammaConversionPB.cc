@@ -84,17 +84,17 @@ void GateGammaConversionPB::AddUserModel(GateListOfHadronicModels *model){
   else if(model->GetModelName() == "LivermoreModel")
   {
     G4LivermoreGammaConversionModel* theLivermoreGammaConversionModel = new G4LivermoreGammaConversionModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermoreGammaConversionModel);
+    dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theLivermoreGammaConversionModel); //change SetModel to SetEmModel for geant4.10
   }
   else if(model->GetModelName() == "LivermorePolarizedModel")
   {
     G4LivermorePolarizedGammaConversionModel* theLivermoreGammaConversionModel = new G4LivermorePolarizedGammaConversionModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermoreGammaConversionModel);
+    dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theLivermoreGammaConversionModel);  //change SetModel to SetEmModel for geant4.10
   }
   else if(model->GetModelName() == "PenelopeModel")
   {
     G4PenelopeGammaConversionModel* theGammaConversionModel = new G4PenelopeGammaConversionModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theGammaConversionModel);
+    dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theGammaConversionModel);  //change SetModel to SetEmModel for geant4.10
   }
 }
 //-----------------------------------------------------------------------------

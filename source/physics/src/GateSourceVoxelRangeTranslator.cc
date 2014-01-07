@@ -16,6 +16,10 @@ See GATE/LICENSE.txt for further details
 #include <fstream>
 #include <iomanip>
 
+//added for geant4.10 compilation
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 GateSourceVoxelRangeTranslator::GateSourceVoxelRangeTranslator(GateVSourceVoxelReader* voxelReader) 
   : GateVSourceVoxelTranslator(voxelReader)
 {

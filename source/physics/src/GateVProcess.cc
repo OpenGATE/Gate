@@ -857,8 +857,9 @@ else if(csection=="G4NeutronHPElasticData")// Cross section data set for high pr
 //-----------------------------------------------------------------------------
 void GateVProcess::AddModel(GateListOfHadronicModels *model)
 {
-
+  //remove some models for geant4.10 compilation
 // Elastic
+  /*
   if(model->GetModelName() == "G4LElastic")
   {
     theListOfG4HadronicModels.push_back(new G4LElastic);
@@ -866,7 +867,8 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
     if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
     dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
   }
-  else if(model->GetModelName() == "G4ElasticHadrNucleusHE")
+  */
+  if(model->GetModelName() == "G4ElasticHadrNucleusHE")
   {
      theListOfG4HadronicModels.push_back(new G4ElasticHadrNucleusHE);
      //G4ElasticHadrNucleusHE* g4model = new G4ElasticHadrNucleusHE;
@@ -903,13 +905,14 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
      if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
      dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
   }
+  /*
   else if(model->GetModelName() == "G4LEDeuteronInelastic")
   {
      theListOfG4HadronicModels.push_back(new G4LEDeuteronInelastic);
      //G4LEDeuteronInelastic* g4model  = new G4LEDeuteronInelastic();
      if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
      dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
-  }
+     }
   else if(model->GetModelName() == "G4LETritonInelastic")
   {
      theListOfG4HadronicModels.push_back(new G4LETritonInelastic);
@@ -924,6 +927,7 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
      if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
      dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
   }
+  */
   else if(model->GetModelName() == "G4WilsonAbrasionModel")
   {
      theListOfG4HadronicModels.push_back(new G4WilsonAbrasionModel);
@@ -942,6 +946,7 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
 */
 
 // Low energy parameterized
+  /*
   else if(model->GetModelName() == "G4LEProtonInelastic")
   {
      theListOfG4HadronicModels.push_back(new G4LEProtonInelastic);
@@ -1096,6 +1101,7 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
      if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
      dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
   }
+  */
 
 // Cascade
   else if(model->GetModelName() == "G4BinaryCascade")
@@ -1141,6 +1147,7 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
   }
 */
 // Gamma- and Lepto-Nuclear
+  /*
   else if(model->GetModelName() == "G4ElectroNuclearReaction")
   {
      theListOfG4HadronicModels.push_back(new G4ElectroNuclearReaction);
@@ -1155,8 +1162,10 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
      if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
      dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
   }
+  */
 
 // Neutron (for high precision models, user must first download high precision neutron data files from Geant4 web page)
+  /*
   else if(model->GetModelName() == "G4LCapture")
   {
      theListOfG4HadronicModels.push_back(new G4LCapture);
@@ -1164,6 +1173,7 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
      if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
      dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
   }
+  */
   else if(model->GetModelName() == "G4NeutronHPCapture")
   {
      theListOfG4HadronicModels.push_back(new G4NeutronHPCapture);
@@ -1171,6 +1181,7 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
      if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
      dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
   }
+  /*
   else if(model->GetModelName() == "G4NeutronHPorLCapture")
   {
      theListOfG4HadronicModels.push_back(new G4NeutronHPorLCapture);
@@ -1178,6 +1189,7 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
      if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
      dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
   }
+  */
   else if(model->GetModelName() == "G4LFission")
   {
      theListOfG4HadronicModels.push_back(new G4LFission);
@@ -1206,6 +1218,7 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
      if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
      dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
   }
+  /*
   else if(model->GetModelName() == "G4NeutronHPorLElastic")
   {
      theListOfG4HadronicModels.push_back(new G4NeutronHPorLElastic);
@@ -1227,6 +1240,7 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
      if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
      dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
   }
+  */
   else if(model->GetModelName() == "G4QMDReaction")
   {
      theListOfG4HadronicModels.push_back(new G4QMDReaction);

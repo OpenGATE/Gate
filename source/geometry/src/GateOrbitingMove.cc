@@ -21,6 +21,10 @@ See GATE/LICENSE.txt for further details
 
 #include "GateTools.hh"
 
+//added for geant4.10 compilation
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 //-------------------------------------------------------------------------------------------------
 GateOrbitingMove::GateOrbitingMove(GateVVolume* itsObjectInserter,
       	      	      	      	   const G4String& itsName,

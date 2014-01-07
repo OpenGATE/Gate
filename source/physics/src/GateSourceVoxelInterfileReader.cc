@@ -25,6 +25,10 @@ See GATE/LICENSE.txt for further details
 #include <stdio.h>
 #include <string.h>
 
+//added for geant4.10 compilation
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 GateSourceVoxelInterfileReader::GateSourceVoxelInterfileReader(GateVSource* source)
   : GateVSourceVoxelReader(source)
 {

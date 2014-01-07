@@ -113,7 +113,7 @@ GatePhysicsList::~GatePhysicsList()
   // delete the transportation process (should be done in ~G4VUserPhysicsList())
   bool isTransportationDelete = false;
   G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
-  G4ParticleTable::G4PTblDicIterator * theParticleIterator = theParticleTable->GetIterator();
+  G4ParticleTable::G4PTblDicIterator * _theParticleIterator = theParticleTable->GetIterator(); //change theParticle to _theParticle for geant4.10
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){//&& !isTransportationDelete){
     G4ParticleDefinition* particle = theParticleIterator->value();
@@ -430,7 +430,7 @@ void GatePhysicsList::Print(G4String name)
   G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
   G4ProcessManager* manager = 0;
   G4ProcessVector * processvector = 0;
-  G4ParticleTable::G4PTblDicIterator * theParticleIterator;
+  G4ParticleTable::G4PTblDicIterator * _theParticleIterator; //change theParticle to _theParticle for geant4.10
 
   int iDisp = 0;
 
@@ -599,7 +599,7 @@ void GatePhysicsList::Write(G4String file)
   G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
   G4ProcessManager* manager = 0;
   G4ProcessVector * processvector = 0;
-  G4ParticleTable::G4PTblDicIterator * theParticleIterator;
+  G4ParticleTable::G4PTblDicIterator * _theParticleIterator; //change theParticle to _theParticle for geant4.10
 
   int iDisp = 0;
 
@@ -861,7 +861,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
   //DD(mListOfStepLimiter.size());
   if (mListOfStepLimiter.size()!=0) {
     G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
-    G4ParticleTable::G4PTblDicIterator * theParticleIterator = theParticleTable->GetIterator();
+    G4ParticleTable::G4PTblDicIterator * _theParticleIterator = theParticleTable->GetIterator(); //change theParticle to _theParticle for geant4.10
     theParticleIterator->reset();
     while( (*theParticleIterator)() ){
       G4ParticleDefinition* particle = theParticleIterator->value();
@@ -879,7 +879,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
   //DD(mListOfG4UserSpecialCut.size());
   if (mListOfG4UserSpecialCut.size()!=0) {
     G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
-    G4ParticleTable::G4PTblDicIterator * theParticleIterator = theParticleTable->GetIterator();
+    G4ParticleTable::G4PTblDicIterator * _theParticleIterator = theParticleTable->GetIterator(); //change theParticle to _theParticle for geant4.10
     theParticleIterator->reset();
     while( (*theParticleIterator)() ){
       G4ParticleDefinition* particle = theParticleIterator->value();

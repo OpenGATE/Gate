@@ -90,17 +90,17 @@ void GateRayleighPB::AddUserModel(GateListOfHadronicModels *model){
   if(model->GetModelName() == "LivermoreModel")
   {
     G4LivermoreRayleighModel* theLivermoreRayleighModel = new G4LivermoreRayleighModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermoreRayleighModel);
+    dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theLivermoreRayleighModel); //change SetModel to SetEmModel in geant4.10
   }
   else if(model->GetModelName() == "LivermorePolarizedModel")
   {
     G4LivermorePolarizedRayleighModel* theLivermoreRayleighModel = new G4LivermorePolarizedRayleighModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermoreRayleighModel);
+    dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theLivermoreRayleighModel); //change SetModel to SetEmModel in geant4.10
   }
   else if(model->GetModelName() == "PenelopeModel")
   {
     G4PenelopeRayleighModel* theRayleighModel = new G4PenelopeRayleighModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theRayleighModel);
+    dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theRayleighModel); //change SetModel to SetEmModel in geant4.10
   }
 
 

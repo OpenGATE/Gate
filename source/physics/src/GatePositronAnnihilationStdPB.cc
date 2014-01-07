@@ -86,7 +86,7 @@ void GatePositronAnnihilationStdPB::AddUserModel(GateListOfHadronicModels *model
   else if(model->GetModelName() == "PenelopeModel")
   {
     G4PenelopeAnnihilationModel* theAnnihilationModel = new G4PenelopeAnnihilationModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theAnnihilationModel);
+    dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theAnnihilationModel); //change SetModel to SetEmModel in geant4.10
   }
 }
 //-----------------------------------------------------------------------------

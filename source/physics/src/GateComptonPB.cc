@@ -87,17 +87,17 @@ void GateComptonPB::AddUserModel(GateListOfHadronicModels * model){
   else if(model->GetModelName() == "LivermoreModel")
   {
     G4LivermoreComptonModel* theLivermoreComptonModel = new G4LivermoreComptonModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermoreComptonModel);
+    dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theLivermoreComptonModel); //change SetModel to SetEmModel for geant4.10 compilation
   }
   else if(model->GetModelName() == "LivermorePolarizedModel")
   {
     G4LivermorePolarizedComptonModel* theLivermoreComptonModel = new G4LivermorePolarizedComptonModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermoreComptonModel);
+    dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theLivermoreComptonModel); //change SetModel to SetEmModel for geant4.10 compilation
   }
   else if(model->GetModelName() == "PenelopeModel")
   {
     G4PenelopeComptonModel* theComptonModel = new G4PenelopeComptonModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theComptonModel);
+    dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theComptonModel); //change SetModel to SetEmModel for geant4.10 compilation
   }
 
 

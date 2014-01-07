@@ -18,6 +18,11 @@ See GATE/LICENSE.txt for further details
 #include "GatePETVRTManager.hh"
 #include "GatePETVRTSettings.hh"
 #include "GateMessageManager.hh"
+
+//added for geant4.10 compilation
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 using namespace std;
 
 GateTotalDiscreteProcess::GateTotalDiscreteProcess ( const G4String& name, G4ProcessType type, G4int num, const G4ParticleDefinition* p, G4double minn, G4double maxx, G4int binn )

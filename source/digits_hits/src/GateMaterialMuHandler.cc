@@ -277,11 +277,11 @@ void GateMaterialMuHandler::SimulateMaterialTable()
   {
     G4String processName = (*processListForGamma)[i]->GetProcessName();
     if(processName == "PhotoElectric" || processName == "phot") {
-      modelPE = (dynamic_cast<G4VEmProcess *>((*processListForGamma)[i]))->Model(1);
+      modelPE = (dynamic_cast<G4VEmProcess *>((*processListForGamma)[i]))->EmModel(1); //change Model to EmModel for geant4.10 compilation
     }
     else if(processName == "Compton" || processName == "compt") {
       G4VEmProcess *processCS = dynamic_cast<G4VEmProcess *>((*processListForGamma)[i]);
-      modelCS = processCS->Model(1);
+      modelCS = processCS->EmModel(1); //change Model to EmModel for geant4.10 compilation
       
       // Get the G4VParticleChange of compton scattering by running a fictive step (no simple 'get' function available)
       G4Track myTrack(new G4DynamicParticle(gamma,G4ThreeVector(1.,0.,0.),0.01),0.,G4ThreeVector(0.,0.,0.));
@@ -290,7 +290,7 @@ void GateMaterialMuHandler::SimulateMaterialTable()
       particleChangeCS = dynamic_cast<G4ParticleChangeForGamma *>(processCS->PostStepDoIt((const G4Track)(myTrack), myStep));
     }
     else if(processName == "RayleighScattering" || processName == "Rayl") {
-      modelRS = (dynamic_cast<G4VEmProcess *>((*processListForGamma)[i]))->Model(1);
+      modelRS = (dynamic_cast<G4VEmProcess *>((*processListForGamma)[i]))->EmModel(1); //change Model to EmModel for geant4.10 compilation
     } 
   }
   

@@ -10,6 +10,9 @@
  *	- 'Gate -a activity 10' using the parameterized macro creating an alias in your macro
  */
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 #include <getopt.h>
 #include <cstdlib>
 #include <queue>
@@ -356,7 +359,7 @@ int main( int argc, char* argv[] )
   welcome();
 
   std::ostringstream s;
-  s << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH;
+  s << G4VERSION_MAJOR;// << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH; //no match for geant4.10.00
   GateMessage( "Core", 0, "You are using Geant4 version " << s.str() << G4endl );
 
   // Launching Gate if macro file

@@ -33,6 +33,10 @@ See GATE/LICENSE.txt for further details
 //#include "Math/SpecFunc.h"
 #include "TMath.h"
 
+//added for geant4.10 compilation
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 GateARFTable::GateARFTable(G4String aName):m_name(aName)
 {
 m_Index = 0;         // the index of the AERF Table because many are defined for one simulation

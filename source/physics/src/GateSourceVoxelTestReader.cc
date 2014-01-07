@@ -16,6 +16,10 @@ See GATE/LICENSE.txt for further details
 #include <fstream>
 //LF
 
+//added for geant4.10 compilation
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 GateSourceVoxelTestReader::GateSourceVoxelTestReader(GateVSource* source)
   : GateVSourceVoxelReader(source)
 {
