@@ -1,0 +1,949 @@
+/gate/world/daughters/name          TitaniumOuter1
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter1/geometry/setRmin 0 nm
+/gate/TitaniumOuter1/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter1/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter1/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter1/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter1/placement/setTranslation -21.8 1.8 -40 mm
+/gate/TitaniumOuter1/setMaterial Water
+/gate/TitaniumOuter1/vis/setVisible 1
+/gate/TitaniumOuter1/vis/setColor yellow
+
+
+/gate/world/daughters/name          TitaniumOuter2
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter2/geometry/setRmin 0 nm
+/gate/TitaniumOuter2/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter2/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter2/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter2/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter2/placement/setTranslation -21.8 -3.6 -40 mm
+/gate/TitaniumOuter2/setMaterial Water
+/gate/TitaniumOuter2/vis/setVisible 1
+/gate/TitaniumOuter2/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter3
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter3/geometry/setRmin 0 nm
+/gate/TitaniumOuter3/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter3/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter3/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter3/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter3/placement/setTranslation -21.8 -8.2 -40 mm
+/gate/TitaniumOuter3/setMaterial Water
+/gate/TitaniumOuter3/vis/setVisible 1
+/gate/TitaniumOuter3/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter4
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter4/geometry/setRmin 0 nm
+/gate/TitaniumOuter4/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter4/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter4/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter4/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter4/placement/setTranslation -21.8 -13.3 -40 mm
+/gate/TitaniumOuter4/setMaterial Water
+/gate/TitaniumOuter4/vis/setVisible 1
+/gate/TitaniumOuter4/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter5
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter5/geometry/setRmin 0 nm
+/gate/TitaniumOuter5/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter5/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter5/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter5/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter5/placement/setTranslation -15.5 1.8 -40 mm
+/gate/TitaniumOuter5/setMaterial Water
+/gate/TitaniumOuter5/vis/setVisible 1
+/gate/TitaniumOuter5/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter6
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter6/geometry/setRmin 0 nm
+/gate/TitaniumOuter6/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter6/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter6/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter6/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter6/placement/setTranslation -15.5 -3.6 -40 mm
+/gate/TitaniumOuter6/setMaterial Water
+/gate/TitaniumOuter6/vis/setVisible 1
+/gate/TitaniumOuter6/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter7
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter7/geometry/setRmin 0 nm
+/gate/TitaniumOuter7/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter7/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter7/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter7/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter7/placement/setTranslation -15.5 -8.2 -40 mm
+/gate/TitaniumOuter7/setMaterial Water
+/gate/TitaniumOuter7/vis/setVisible 1
+/gate/TitaniumOuter7/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter8
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter8/geometry/setRmin 0 nm
+/gate/TitaniumOuter8/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter8/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter8/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter8/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter8/placement/setTranslation -15.5 -13.3 -40 mm
+/gate/TitaniumOuter8/setMaterial Water
+/gate/TitaniumOuter8/vis/setVisible 1
+/gate/TitaniumOuter8/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter9
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter9/geometry/setRmin 0 nm
+/gate/TitaniumOuter9/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter9/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter9/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter9/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter9/placement/setTranslation -6.6 1.8 -40 mm
+/gate/TitaniumOuter9/setMaterial Water
+/gate/TitaniumOuter9/vis/setVisible 1
+/gate/TitaniumOuter9/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter10
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter10/geometry/setRmin 0 nm
+/gate/TitaniumOuter10/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter10/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter10/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter10/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter10/placement/setTranslation -6.6 -3.6 -40 mm
+/gate/TitaniumOuter10/setMaterial Water
+/gate/TitaniumOuter10/vis/setVisible 1
+/gate/TitaniumOuter10/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter11
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter11/geometry/setRmin 0 nm
+/gate/TitaniumOuter11/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter11/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter11/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter11/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter11/placement/setTranslation -6.6 -8.2 -40 mm
+/gate/TitaniumOuter11/setMaterial Water
+/gate/TitaniumOuter11/vis/setVisible 1
+/gate/TitaniumOuter11/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter12
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter12/geometry/setRmin 0 nm
+/gate/TitaniumOuter12/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter12/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter12/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter12/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter12/placement/setTranslation -6.6 -13.3 -40 mm
+/gate/TitaniumOuter12/setMaterial Water
+/gate/TitaniumOuter12/vis/setVisible 1
+/gate/TitaniumOuter12/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter13
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter13/geometry/setRmin 0 nm
+/gate/TitaniumOuter13/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter13/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter13/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter13/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter13/placement/setTranslation -10.9 -1.3 -34 mm
+/gate/TitaniumOuter13/setMaterial Water
+/gate/TitaniumOuter13/vis/setVisible 1
+/gate/TitaniumOuter13/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter14
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter14/geometry/setRmin 0 nm
+/gate/TitaniumOuter14/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter14/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter14/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter14/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter14/placement/setTranslation -10.9 -3.6 -34 mm
+/gate/TitaniumOuter14/setMaterial Water
+/gate/TitaniumOuter14/vis/setVisible 1
+/gate/TitaniumOuter14/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter15
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter15/geometry/setRmin 0 nm
+/gate/TitaniumOuter15/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter15/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter15/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter15/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter15/placement/setTranslation -10.9 -7.8 -34 mm
+/gate/TitaniumOuter15/setMaterial Water
+/gate/TitaniumOuter15/vis/setVisible 1
+/gate/TitaniumOuter15/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter16
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter16/geometry/setRmin 0 nm
+/gate/TitaniumOuter16/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter16/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter16/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter16/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter16/placement/setTranslation -10.9 -12.1 -34 mm
+/gate/TitaniumOuter16/setMaterial Water
+/gate/TitaniumOuter16/vis/setVisible 1
+/gate/TitaniumOuter16/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter17
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter17/geometry/setRmin 0 nm
+/gate/TitaniumOuter17/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter17/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter17/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter17/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter17/placement/setTranslation -10.9 -19.2 -34 mm
+/gate/TitaniumOuter17/setMaterial Water
+/gate/TitaniumOuter17/vis/setVisible 1
+/gate/TitaniumOuter17/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter18
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter18/geometry/setRmin 0 nm
+/gate/TitaniumOuter18/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter18/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter18/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter18/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter18/placement/setTranslation -10.9 -24.6 -34 mm
+/gate/TitaniumOuter18/setMaterial Water
+/gate/TitaniumOuter18/vis/setVisible 1
+/gate/TitaniumOuter18/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter19
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter19/geometry/setRmin 0 nm
+/gate/TitaniumOuter19/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter19/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter19/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter19/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter19/placement/setTranslation -17.5 4.7 -34 mm
+/gate/TitaniumOuter19/setMaterial Water
+/gate/TitaniumOuter19/vis/setVisible 1
+/gate/TitaniumOuter19/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter20
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter20/geometry/setRmin 0 nm
+/gate/TitaniumOuter20/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter20/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter20/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter20/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter20/placement/setTranslation -17.5 -1.3 -34 mm
+/gate/TitaniumOuter20/setMaterial Water
+/gate/TitaniumOuter20/vis/setVisible 1
+/gate/TitaniumOuter20/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter21
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter21/geometry/setRmin 0 nm
+/gate/TitaniumOuter21/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter21/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter21/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter21/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter21/placement/setTranslation -17.5 -3.6 -34 mm
+/gate/TitaniumOuter21/setMaterial Water
+/gate/TitaniumOuter21/vis/setVisible 1
+/gate/TitaniumOuter21/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter22
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter22/geometry/setRmin 0 nm
+/gate/TitaniumOuter22/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter22/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter22/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter22/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter22/placement/setTranslation -17.5 -7.8 -34 mm
+/gate/TitaniumOuter22/setMaterial Water
+/gate/TitaniumOuter22/vis/setVisible 1
+/gate/TitaniumOuter22/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter23
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter23/geometry/setRmin 0 nm
+/gate/TitaniumOuter23/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter23/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter23/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter23/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter23/placement/setTranslation -17.5 -12.1 -34 mm
+/gate/TitaniumOuter23/setMaterial Water
+/gate/TitaniumOuter23/vis/setVisible 1
+/gate/TitaniumOuter23/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter24
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter24/geometry/setRmin 0 nm
+/gate/TitaniumOuter24/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter24/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter24/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter24/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter24/placement/setTranslation -17.5 -19.2 -34 mm
+/gate/TitaniumOuter24/setMaterial Water
+/gate/TitaniumOuter24/vis/setVisible 1
+/gate/TitaniumOuter24/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter25
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter25/geometry/setRmin 0 nm
+/gate/TitaniumOuter25/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter25/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter25/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter25/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter25/placement/setTranslation -17.5 -24.6 -34 mm
+/gate/TitaniumOuter25/setMaterial Water
+/gate/TitaniumOuter25/vis/setVisible 1
+/gate/TitaniumOuter25/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter26
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter26/geometry/setRmin 0 nm
+/gate/TitaniumOuter26/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter26/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter26/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter26/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter26/placement/setTranslation -25.8 4.7 -34 mm
+/gate/TitaniumOuter26/setMaterial Water
+/gate/TitaniumOuter26/vis/setVisible 1
+/gate/TitaniumOuter26/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter27
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter27/geometry/setRmin 0 nm
+/gate/TitaniumOuter27/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter27/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter27/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter27/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter27/placement/setTranslation -25.8 -1.3 -34 mm
+/gate/TitaniumOuter27/setMaterial Water
+/gate/TitaniumOuter27/vis/setVisible 1
+/gate/TitaniumOuter27/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter28
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter28/geometry/setRmin 0 nm
+/gate/TitaniumOuter28/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter28/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter28/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter28/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter28/placement/setTranslation -25.8 -3.6 -34 mm
+/gate/TitaniumOuter28/setMaterial Water
+/gate/TitaniumOuter28/vis/setVisible 1
+/gate/TitaniumOuter28/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter29
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter29/geometry/setRmin 0 nm
+/gate/TitaniumOuter29/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter29/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter29/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter29/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter29/placement/setTranslation -25.8 -7.8 -34 mm
+/gate/TitaniumOuter29/setMaterial Water
+/gate/TitaniumOuter29/vis/setVisible 1
+/gate/TitaniumOuter29/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter30
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter30/geometry/setRmin 0 nm
+/gate/TitaniumOuter30/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter30/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter30/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter30/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter30/placement/setTranslation -25.8 -15.6 -34 mm
+/gate/TitaniumOuter30/setMaterial Water
+/gate/TitaniumOuter30/vis/setVisible 1
+/gate/TitaniumOuter30/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter31
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter31/geometry/setRmin 0 nm
+/gate/TitaniumOuter31/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter31/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter31/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter31/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter31/placement/setTranslation -2.4 4.7 -34 mm
+/gate/TitaniumOuter31/setMaterial Water
+/gate/TitaniumOuter31/vis/setVisible 1
+/gate/TitaniumOuter31/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter32
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter32/geometry/setRmin 0 nm
+/gate/TitaniumOuter32/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter32/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter32/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter32/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter32/placement/setTranslation -2.4 -1.3 -34 mm
+/gate/TitaniumOuter32/setMaterial Water
+/gate/TitaniumOuter32/vis/setVisible 1
+/gate/TitaniumOuter32/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter33
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter33/geometry/setRmin 0 nm
+/gate/TitaniumOuter33/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter33/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter33/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter33/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter33/placement/setTranslation -2.4 -3.6 -34 mm
+/gate/TitaniumOuter33/setMaterial Water
+/gate/TitaniumOuter33/vis/setVisible 1
+/gate/TitaniumOuter33/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter34
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter34/geometry/setRmin 0 nm
+/gate/TitaniumOuter34/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter34/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter34/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter34/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter34/placement/setTranslation -2.4 -7.8 -34 mm
+/gate/TitaniumOuter34/setMaterial Water
+/gate/TitaniumOuter34/vis/setVisible 1
+/gate/TitaniumOuter34/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter35
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter35/geometry/setRmin 0 nm
+/gate/TitaniumOuter35/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter35/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter35/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter35/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter35/placement/setTranslation -2.4 -15.6 -34 mm
+/gate/TitaniumOuter35/setMaterial Water
+/gate/TitaniumOuter35/vis/setVisible 1
+/gate/TitaniumOuter35/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter36
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter36/geometry/setRmin 0 nm
+/gate/TitaniumOuter36/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter36/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter36/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter36/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter36/placement/setTranslation -29.9 6.8 -26 mm
+/gate/TitaniumOuter36/setMaterial Water
+/gate/TitaniumOuter36/vis/setVisible 1
+/gate/TitaniumOuter36/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter37
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter37/geometry/setRmin 0 nm
+/gate/TitaniumOuter37/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter37/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter37/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter37/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter37/placement/setTranslation -29.9 1.8 -26 mm
+/gate/TitaniumOuter37/setMaterial Water
+/gate/TitaniumOuter37/vis/setVisible 1
+/gate/TitaniumOuter37/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter38
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter38/geometry/setRmin 0 nm
+/gate/TitaniumOuter38/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter38/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter38/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter38/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter38/placement/setTranslation -29.9 -3.6 -26 mm
+/gate/TitaniumOuter38/setMaterial Water
+/gate/TitaniumOuter38/vis/setVisible 1
+/gate/TitaniumOuter38/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter39
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter39/geometry/setRmin 0 nm
+/gate/TitaniumOuter39/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter39/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter39/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter39/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter39/placement/setTranslation -29.9 -8.2 -26 mm
+/gate/TitaniumOuter39/setMaterial Water
+/gate/TitaniumOuter39/vis/setVisible 1
+/gate/TitaniumOuter39/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter40
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter40/geometry/setRmin 0 nm
+/gate/TitaniumOuter40/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter40/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter40/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter40/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter40/placement/setTranslation -29.9 -13.3 -26 mm
+/gate/TitaniumOuter40/setMaterial Water
+/gate/TitaniumOuter40/vis/setVisible 1
+/gate/TitaniumOuter40/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter41
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter41/geometry/setRmin 0 nm
+/gate/TitaniumOuter41/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter41/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter41/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter41/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter41/placement/setTranslation -29.9 -17.5 -26 mm
+/gate/TitaniumOuter41/setMaterial Water
+/gate/TitaniumOuter41/vis/setVisible 1
+/gate/TitaniumOuter41/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter42
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter42/geometry/setRmin 0 nm
+/gate/TitaniumOuter42/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter42/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter42/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter42/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter42/placement/setTranslation -22.9 6.8 -26 mm
+/gate/TitaniumOuter42/setMaterial Water
+/gate/TitaniumOuter42/vis/setVisible 1
+/gate/TitaniumOuter42/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter43
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter43/geometry/setRmin 0 nm
+/gate/TitaniumOuter43/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter43/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter43/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter43/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter43/placement/setTranslation -22.9 1.8 -26 mm
+/gate/TitaniumOuter43/setMaterial Water
+/gate/TitaniumOuter43/vis/setVisible 1
+/gate/TitaniumOuter43/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter44
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter44/geometry/setRmin 0 nm
+/gate/TitaniumOuter44/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter44/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter44/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter44/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter44/placement/setTranslation -22.9 -3.6 -26 mm
+/gate/TitaniumOuter44/setMaterial Water
+/gate/TitaniumOuter44/vis/setVisible 1
+/gate/TitaniumOuter44/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter45
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter45/geometry/setRmin 0 nm
+/gate/TitaniumOuter45/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter45/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter45/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter45/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter45/placement/setTranslation -22.9 -8.2 -26 mm
+/gate/TitaniumOuter45/setMaterial Water
+/gate/TitaniumOuter45/vis/setVisible 1
+/gate/TitaniumOuter45/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter46
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter46/geometry/setRmin 0 nm
+/gate/TitaniumOuter46/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter46/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter46/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter46/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter46/placement/setTranslation -22.9 -13.3 -26 mm
+/gate/TitaniumOuter46/setMaterial Water
+/gate/TitaniumOuter46/vis/setVisible 1
+/gate/TitaniumOuter46/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter47
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter47/geometry/setRmin 0 nm
+/gate/TitaniumOuter47/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter47/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter47/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter47/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter47/placement/setTranslation -22.9 -22.1 -26 mm
+/gate/TitaniumOuter47/setMaterial Water
+/gate/TitaniumOuter47/vis/setVisible 1
+/gate/TitaniumOuter47/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter48
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter48/geometry/setRmin 0 nm
+/gate/TitaniumOuter48/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter48/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter48/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter48/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter48/placement/setTranslation -15.5 6.8 -26 mm
+/gate/TitaniumOuter48/setMaterial Water
+/gate/TitaniumOuter48/vis/setVisible 1
+/gate/TitaniumOuter48/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter49
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter49/geometry/setRmin 0 nm
+/gate/TitaniumOuter49/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter49/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter49/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter49/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter49/placement/setTranslation -15.5 1.8 -26 mm
+/gate/TitaniumOuter49/setMaterial Water
+/gate/TitaniumOuter49/vis/setVisible 1
+/gate/TitaniumOuter49/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter50
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter50/geometry/setRmin 0 nm
+/gate/TitaniumOuter50/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter50/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter50/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter50/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter50/placement/setTranslation -15.5 -8.2 -26 mm
+/gate/TitaniumOuter50/setMaterial Water
+/gate/TitaniumOuter50/vis/setVisible 1
+/gate/TitaniumOuter50/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter51
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter51/geometry/setRmin 0 nm
+/gate/TitaniumOuter51/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter51/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter51/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter51/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter51/placement/setTranslation -15.5 -13.3 -26 mm
+/gate/TitaniumOuter51/setMaterial Water
+/gate/TitaniumOuter51/vis/setVisible 1
+/gate/TitaniumOuter51/vis/setColor yellow
+
+
+/gate/world/daughters/name          TitaniumOuter52
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter52/geometry/setRmin 0 nm
+/gate/TitaniumOuter52/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter52/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter52/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter52/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter52/placement/setTranslation -15.5 -17.5 -26 mm
+/gate/TitaniumOuter52/setMaterial Water
+/gate/TitaniumOuter52/vis/setVisible 1
+/gate/TitaniumOuter52/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter53
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter53/geometry/setRmin 0 nm
+/gate/TitaniumOuter53/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter53/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter53/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter53/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter53/placement/setTranslation -15.5 -22.1 -26 mm
+/gate/TitaniumOuter53/setMaterial Water
+/gate/TitaniumOuter53/vis/setVisible 1
+/gate/TitaniumOuter53/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter54
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter54/geometry/setRmin 0 nm
+/gate/TitaniumOuter54/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter54/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter54/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter54/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter54/placement/setTranslation -15.5 -27 -26 mm
+/gate/TitaniumOuter54/setMaterial Water
+/gate/TitaniumOuter54/vis/setVisible 1
+/gate/TitaniumOuter54/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter55
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter55/geometry/setRmin 0 nm
+/gate/TitaniumOuter55/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter55/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter55/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter55/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter55/placement/setTranslation -6.6 12.3 -26 mm
+/gate/TitaniumOuter55/setMaterial Water
+/gate/TitaniumOuter55/vis/setVisible 1
+/gate/TitaniumOuter55/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter56
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter56/geometry/setRmin 0 nm
+/gate/TitaniumOuter56/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter56/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter56/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter56/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter56/placement/setTranslation -6.6 6.8 -26 mm
+/gate/TitaniumOuter56/setMaterial Water
+/gate/TitaniumOuter56/vis/setVisible 1
+/gate/TitaniumOuter56/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter57
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter57/geometry/setRmin 0 nm
+/gate/TitaniumOuter57/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter57/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter57/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter57/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter57/placement/setTranslation -6.6 1.8 -26 mm
+/gate/TitaniumOuter57/setMaterial Water
+/gate/TitaniumOuter57/vis/setVisible 1
+/gate/TitaniumOuter57/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter58
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter58/geometry/setRmin 0 nm
+/gate/TitaniumOuter58/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter58/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter58/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter58/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter58/placement/setTranslation -6.6 -3.6 -26 mm
+/gate/TitaniumOuter58/setMaterial Water
+/gate/TitaniumOuter58/vis/setVisible 1
+/gate/TitaniumOuter58/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter59
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter59/geometry/setRmin 0 nm
+/gate/TitaniumOuter59/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter59/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter59/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter59/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter59/placement/setTranslation -6.6 -8.2 -26 mm
+/gate/TitaniumOuter59/setMaterial Water
+/gate/TitaniumOuter59/vis/setVisible 1
+/gate/TitaniumOuter59/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter60
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter60/geometry/setRmin 0 nm
+/gate/TitaniumOuter60/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter60/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter60/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter60/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter60/placement/setTranslation -6.6 -13.3 -26 mm
+/gate/TitaniumOuter60/setMaterial Water
+/gate/TitaniumOuter60/vis/setVisible 1
+/gate/TitaniumOuter60/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter61
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter61/geometry/setRmin 0 nm
+/gate/TitaniumOuter61/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter61/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter61/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter61/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter61/placement/setTranslation -6.6 -17.5 -26 mm
+/gate/TitaniumOuter61/setMaterial Water
+/gate/TitaniumOuter61/vis/setVisible 1
+/gate/TitaniumOuter61/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter62
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter62/geometry/setRmin 0 nm
+/gate/TitaniumOuter62/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter62/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter62/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter62/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter62/placement/setTranslation -6.6 -22.1 -26 mm
+/gate/TitaniumOuter62/setMaterial Water
+/gate/TitaniumOuter62/vis/setVisible 1
+/gate/TitaniumOuter62/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter63
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter63/geometry/setRmin 0 nm
+/gate/TitaniumOuter63/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter63/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter63/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter63/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter63/placement/setTranslation -6.6 -27 -26 mm
+/gate/TitaniumOuter63/setMaterial Water
+/gate/TitaniumOuter63/vis/setVisible 1
+/gate/TitaniumOuter63/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter64
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter64/geometry/setRmin 0 nm
+/gate/TitaniumOuter64/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter64/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter64/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter64/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter64/placement/setTranslation -1.9 6.8 -26 mm
+/gate/TitaniumOuter64/setMaterial Water
+/gate/TitaniumOuter64/vis/setVisible 1
+/gate/TitaniumOuter64/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter65
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter65/geometry/setRmin 0 nm
+/gate/TitaniumOuter65/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter65/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter65/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter65/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter65/placement/setTranslation -1.9 1.8 -26 mm
+/gate/TitaniumOuter65/setMaterial Water
+/gate/TitaniumOuter65/vis/setVisible 1
+/gate/TitaniumOuter65/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter66
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter66/geometry/setRmin 0 nm
+/gate/TitaniumOuter66/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter66/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter66/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter66/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter66/placement/setTranslation -1.9 -3.6 -26 mm
+/gate/TitaniumOuter66/setMaterial Water
+/gate/TitaniumOuter66/vis/setVisible 1
+/gate/TitaniumOuter66/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter67
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter67/geometry/setRmin 0 nm
+/gate/TitaniumOuter67/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter67/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter67/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter67/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter67/placement/setTranslation -1.9 -8.2 -26 mm
+/gate/TitaniumOuter67/setMaterial Water
+/gate/TitaniumOuter67/vis/setVisible 1
+/gate/TitaniumOuter67/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter68
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter68/geometry/setRmin 0 nm
+/gate/TitaniumOuter68/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter68/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter68/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter68/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter68/placement/setTranslation -1.9 -13.3 -26 mm
+/gate/TitaniumOuter68/setMaterial Water
+/gate/TitaniumOuter68/vis/setVisible 1
+/gate/TitaniumOuter68/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter69
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter69/geometry/setRmin 0 nm
+/gate/TitaniumOuter69/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter69/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter69/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter69/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter69/placement/setTranslation -1.9 -17.5 -26 mm
+/gate/TitaniumOuter69/setMaterial Water
+/gate/TitaniumOuter69/vis/setVisible 1
+/gate/TitaniumOuter69/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter70
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter70/geometry/setRmin 0 nm
+/gate/TitaniumOuter70/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter70/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter70/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter70/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter70/placement/setTranslation 4.2 6.8 -18 mm
+/gate/TitaniumOuter70/setMaterial Water
+/gate/TitaniumOuter70/vis/setVisible 1
+/gate/TitaniumOuter70/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter71
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter71/geometry/setRmin 0 nm
+/gate/TitaniumOuter71/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter71/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter71/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter71/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter71/placement/setTranslation 4.2 1.8 -18 mm
+/gate/TitaniumOuter71/setMaterial Water
+/gate/TitaniumOuter71/vis/setVisible 1
+/gate/TitaniumOuter71/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter72
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter72/geometry/setRmin 0 nm
+/gate/TitaniumOuter72/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter72/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter72/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter72/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter72/placement/setTranslation 4.2 -8.2 -18 mm
+/gate/TitaniumOuter72/setMaterial Water
+/gate/TitaniumOuter72/vis/setVisible 1
+/gate/TitaniumOuter72/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter73
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter73/geometry/setRmin 0 nm
+/gate/TitaniumOuter73/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter73/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter73/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter73/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter73/placement/setTranslation 4.2 -13.3 -18 mm
+/gate/TitaniumOuter73/setMaterial Water
+/gate/TitaniumOuter73/vis/setVisible 1
+/gate/TitaniumOuter73/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter74
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter74/geometry/setRmin 0 nm
+/gate/TitaniumOuter74/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter74/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter74/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter74/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter74/placement/setTranslation 4.2 -22.1 -18 mm
+/gate/TitaniumOuter74/setMaterial Water
+/gate/TitaniumOuter74/vis/setVisible 1
+/gate/TitaniumOuter74/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter75
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter75/geometry/setRmin 0 nm
+/gate/TitaniumOuter75/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter75/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter75/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter75/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter75/placement/setTranslation 4.2 -27 -18 mm
+/gate/TitaniumOuter75/setMaterial Water
+/gate/TitaniumOuter75/vis/setVisible 1
+/gate/TitaniumOuter75/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter76
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter76/geometry/setRmin 0 nm
+/gate/TitaniumOuter76/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter76/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter76/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter76/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter76/placement/setTranslation -6.6 10.5 -18 mm
+/gate/TitaniumOuter76/setMaterial Water
+/gate/TitaniumOuter76/vis/setVisible 1
+/gate/TitaniumOuter76/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter77
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter77/geometry/setRmin 0 nm
+/gate/TitaniumOuter77/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter77/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter77/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter77/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter77/placement/setTranslation -6.6 6.8 -18 mm
+/gate/TitaniumOuter77/setMaterial Water
+/gate/TitaniumOuter77/vis/setVisible 1
+/gate/TitaniumOuter77/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter78
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter78/geometry/setRmin 0 nm
+/gate/TitaniumOuter78/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter78/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter78/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter78/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter78/placement/setTranslation -6.6 1.8 -18 mm
+/gate/TitaniumOuter78/setMaterial Water
+/gate/TitaniumOuter78/vis/setVisible 1
+/gate/TitaniumOuter78/vis/setColor yellow
+
+/gate/world/daughters/name          TitaniumOuter79
+/gate/world/daughters/insert           cylinder
+/gate/TitaniumOuter79/geometry/setRmin 0 nm
+/gate/TitaniumOuter79/geometry/setRmax 0.5 nm
+/gate/TitaniumOuter79/geometry/setPhiStart 0 deg
+/gate/TitaniumOuter79/geometry/setDeltaPhi 360 deg
+/gate/TitaniumOuter79/geometry/setHeight 0.5 nm
+/gate/TitaniumOuter79/placement/setTranslation -6.6 -8.2 -18 mm
+/gate/TitaniumOuter79/setMaterial Water
+/gate/TitaniumOuter79/vis/setVisible 1
+/gate/TitaniumOuter79/vis/setColor yellow
