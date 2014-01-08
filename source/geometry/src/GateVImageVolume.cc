@@ -254,8 +254,12 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
   // Get origin from the image
   SetOriginByUser(pImage->GetOrigin());
 
-  // Account for image rotation matrix
+  // Account for image rotation matrix: compose image and current rotations
   mTransformMatrix = pImage->GetTransformMatrix();
+  mTransformMatrix.rotate(this->GetVolumePlacement()->GetRotationAngle(),
+                          this->GetVolumePlacement()->GetRotationAxis());
+
+  // Decompose to axis angle and set new rotation
   double delta;
   G4ThreeVector axis;
   mTransformMatrix.getAngleAxis(delta, axis);
