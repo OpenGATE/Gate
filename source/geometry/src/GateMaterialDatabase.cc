@@ -8,6 +8,7 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
+#include "G4SystemOfUnits.hh"
 #include <G4NistManager.hh>
 
 #include "GateMaterialDatabase.hh"

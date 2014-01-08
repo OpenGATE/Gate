@@ -13,6 +13,7 @@ See GATE/LICENSE.txt for further details
 #include "GateEccentRotMoveMessenger.hh"
 
 #include "GateVGlobalPlacement.hh"
+#include "G4SystemOfUnits.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 #include "G4RotationMatrix.hh"
