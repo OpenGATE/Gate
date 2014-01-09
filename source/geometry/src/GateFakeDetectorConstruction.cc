@@ -20,6 +20,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateFakeDetectorConstruction.hh"
 
+#include "G4SystemOfUnits.hh"
 #include "G4Box.hh"
 #include "G4PVPlacement.hh"
 #include "G4Material.hh"

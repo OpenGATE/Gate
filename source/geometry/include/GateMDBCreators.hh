@@ -21,6 +21,7 @@
 #define GateMDBCreators_hh
 
 #include "globals.hh"
+#include "G4PhysicalConstants.hh"
 #include <vector>
 
 #include "G4Material.hh"
