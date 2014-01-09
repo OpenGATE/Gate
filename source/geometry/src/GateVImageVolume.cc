@@ -255,16 +255,20 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
   SetOriginByUser(pImage->GetOrigin());
 
   // Account for image rotation matrix: compose image and current rotations
-  mTransformMatrix = pImage->GetTransformMatrix();
-  mTransformMatrix.rotate(this->GetVolumePlacement()->GetRotationAngle(),
-                          this->GetVolumePlacement()->GetRotationAxis());
+  static bool pImageTransformHasBeenApplied = false;
+  if(!pImageTransformHasBeenApplied) {
+    pImageTransformHasBeenApplied = true;
+    mTransformMatrix = pImage->GetTransformMatrix();
+    mTransformMatrix.rotate(this->GetVolumePlacement()->GetRotationAngle(),
+			    this->GetVolumePlacement()->GetRotationAxis());
 
-  // Decompose to axis angle and set new rotation
-  double delta;
-  G4ThreeVector axis;
-  mTransformMatrix.getAngleAxis(delta, axis);
-  this->GetVolumePlacement()->SetRotationAngle(delta);
-  this->GetVolumePlacement()->SetRotationAxis(axis);
+    // Decompose to axis angle and set new rotation
+    double delta;
+    G4ThreeVector axis;
+    mTransformMatrix.getAngleAxis(delta, axis);
+    this->GetVolumePlacement()->SetRotationAngle(delta);
+    this->GetVolumePlacement()->SetRotationAxis(axis);
+  }
 
   GateMessage("Volume",4,"voxel size" << pImage->GetVoxelSize() << G4endl);
   GateMessage("Volume",4,"origin" << origin << G4endl);
