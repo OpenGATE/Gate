@@ -14,6 +14,7 @@ See GATE/LICENSE.txt for further details
 #include "GateMiscFunctions.hh"
 #include "GateActorManager.hh"
 
+#include "G4SystemOfUnits.hh"
 #include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWith3Vector.hh"

@@ -13,6 +13,7 @@ See GATE/LICENSE.txt for further details
 #define GateAngularRepeater_h 1
 
 #include "globals.hh"
+#include "G4SystemOfUnits.hh"
 
 #include "GateVGlobalPlacement.hh"
 #include "G4Point3D.hh"

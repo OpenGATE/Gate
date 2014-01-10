@@ -23,8 +23,8 @@ See GATE/LICENSE.txt for further details
 //#include "G4VSensitiveDetector.hh"    // Include from 'hits/digi'
 //#include "G4StepStatus.hh"    // Include from 'tracking'
 
+#include "G4SystemOfUnits.hh"
 #include "G4SliceTimer.hh"
-
 #include "G4TouchableHistory.hh"
 #include "G4LogicalVolume.hh"
 #include "G4RunManagerKernel.hh"

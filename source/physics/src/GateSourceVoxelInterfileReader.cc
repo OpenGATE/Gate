@@ -8,6 +8,8 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "G4SystemOfUnits.hh"
+
 /*PY Descourt 08/09/2009*/
 #include "GateRTPhantom.hh"
 #include "GateRTPhantomMgr.hh"

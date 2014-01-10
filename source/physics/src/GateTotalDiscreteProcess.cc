@@ -9,6 +9,7 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #include "GateTotalDiscreteProcess.hh"
+#include "G4SystemOfUnits.hh"
 #include "G4ExceptionHandler.hh"
 #include <cassert>
 #include "G4Material.hh"

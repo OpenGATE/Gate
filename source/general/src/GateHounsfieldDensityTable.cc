@@ -17,9 +17,6 @@ See GATE/LICENSE.txt for further details
  
 #include "GateHounsfieldDensityTable.hh"
 #include "GateMiscFunctions.hh"
-
-//added for geant4.10 compilation
-#include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
 
 //-----------------------------------------------------------------------------

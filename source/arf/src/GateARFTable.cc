@@ -12,6 +12,8 @@ See GATE/LICENSE.txt for further details
 
 #ifdef G4ANALYSIS_USE_ROOT
 
+#include "G4SystemOfUnits.hh"
+
 #include "GateARFTable.hh"
 #include <vector>
 #include <cmath>

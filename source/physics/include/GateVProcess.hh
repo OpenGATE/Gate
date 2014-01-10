@@ -26,7 +26,7 @@ See GATE/LICENSE.txt for further details
 
 #include "globals.hh"
 #include <vector>
-#include <list> //add for geant4.10 compilation (??)
+#include <list>
 #include "G4ios.hh"
 
 #include "G4ParticleDefinition.hh"

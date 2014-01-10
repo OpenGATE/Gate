@@ -20,6 +20,7 @@ See GATE/LICENSE.txt for further details
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "globals.hh"
+#include "G4SystemOfUnits.hh"
 #include "G4ThreeVector.hh"
 
 #include "TROOT.h"
