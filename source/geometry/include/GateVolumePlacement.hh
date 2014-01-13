@@ -13,6 +13,7 @@
 #define GateVolumePlacement_h 1
 
 #include "globals.hh"
+#include "G4SystemOfUnits.hh"
 #include "G4Point3D.hh"
 #include "G4ThreeVector.hh"
 #include "G4RotationMatrix.hh"

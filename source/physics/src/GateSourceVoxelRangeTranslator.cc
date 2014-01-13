@@ -12,6 +12,7 @@ See GATE/LICENSE.txt for further details
 #include "GateSourceVoxelRangeTranslator.hh"
 #include "GateSourceVoxelRangeTranslatorMessenger.hh"
 
+#include "G4SystemOfUnits.hh"
 #include "G4ios.hh"
 #include <fstream>
 #include <iomanip>

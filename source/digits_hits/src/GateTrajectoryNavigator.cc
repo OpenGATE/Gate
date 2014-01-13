@@ -10,12 +10,12 @@
 
 #include "GateTrajectoryNavigator.hh"
 
+#include "G4SystemOfUnits.hh"
 #include "G4TrajectoryContainer.hh"
-
 #include "G4Trajectory.hh"
-
 #include "G4Navigator.hh"
 #include "G4TransportationManager.hh"
+
 #include "GateActions.hh"
 
 GateTrajectoryNavigator::GateTrajectoryNavigator()

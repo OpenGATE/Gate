@@ -1,0 +1,26 @@
+#Description of iodine 125 source
+
+/gate/source/addSource iodine gps
+/gate/source/iodine/gps/particle gamma
+/gate/source/iodine/gps/ene/type User
+/gate/source/iodine/gps/hist/type energy
+
+/gate/source/iodine/gps/hist/point 0 0.0
+/gate/source/iodine/gps/hist/point 27.202E-03 0.406 
+/gate/source/iodine/gps/hist/point 27.472E-03 0.757
+/gate/source/iodine/gps/hist/point 30.98E-03 0.202
+/gate/source/iodine/gps/hist/point 31.71E-03 0.0439
+/gate/source/iodine/gps/hist/point 35.492E-03 0.0668
+
+/gate/source/iodine/gps/position 0 0 0 cm
+#/gate/source/iodine/gps/direction 1 1 1
+/gate/source/iodine/gps/type Volume
+/gate/source/iodine/gps/shape Cylinder
+/gate/source/iodine/gps/radius0 0.125 mm
+/gate/source/iodine/gps/radius 0.225 mm
+/gate/source/iodine/gps/halfz 2 mm
+/gate/source/iodine/gps/ang/type      iso
+/gate/source/iodine/gps/ang/mintheta  0. deg
+/gate/source/iodine/gps/ang/minphi    0. deg
+/gate/source/iodine/gps/ang/maxphi    360. deg
+

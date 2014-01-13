@@ -1,0 +1,5 @@
+4
+0 	18496	Air 		        false 0. 0. 0. 1. 
+18497	27749 	AirBodyInterface 	true  0.8 0. 0. 1.
+27750	37409 	SoftTissue	        true  0. 0.8 0. 1. 
+37410	65535 	Bones 		        true  0. 0. 0.8 1.
