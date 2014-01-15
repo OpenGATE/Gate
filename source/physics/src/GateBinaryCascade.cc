@@ -207,7 +207,7 @@ G4HadFinalState * GateBinaryCascade::ApplyYourself(const G4HadProjectile & aTrac
     #ifdef Geant496_COMPATIBILITY
       the3DNucleus->Init(aNucleus.GetA_asInt(), aNucleus.GetZ_asInt());
     #else
-      the3DNucleus->Init(aNucleus.GetN_asInt(), aNucleus.GetZ_asInt()); //change GetN() by GetN_asInt() for geant4.10 compilation (idem Z)
+      the3DNucleus->Init(aNucleus.GetN_asInt(), aNucleus.GetZ_asInt()); 
     #endif
 
     thePropagator->Init(the3DNucleus);

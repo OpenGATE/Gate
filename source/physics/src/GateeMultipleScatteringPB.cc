@@ -18,9 +18,12 @@ GateeMultipleScatteringPB::GateeMultipleScatteringPB():GateVProcess("eMultipleSc
   SetDefaultParticle("e+"); 
   SetDefaultParticle("e-");
 
-  //AddToModelList("Urban95Model");
-  //AddToModelList("Urban93Model");
-  AddToModelList("UrbanModel"); //no more model 93 and 95 in geant4.10
+  #if (G4VERSION_MAJOR == 9)
+    AddToModelList("Urban95Model");
+    AddToModelList("Urban93Model");
+  #else
+    AddToModelList("UrbanModel"); 
+  #endif
 
   SetProcessInfo("Multiple Coulomb scattering of charged particles");
   pMessenger = new GateMultiScatteringMessenger(this);  
@@ -69,21 +72,23 @@ bool GateeMultipleScatteringPB::IsModelApplicable(G4String ,G4ParticleDefinition
 
 //-----------------------------------------------------------------------------
 void GateeMultipleScatteringPB::AddUserModel(GateListOfHadronicModels *model){
-  /*
-  if(model->GetModelName() == "Urban93Model")
-  {
-    dynamic_cast<G4VMultipleScattering*>(pProcess)->AddEmModel(1, new G4UrbanMscModel95());
-  }
+  
+  #if (G4VERSION_MAJOR == 9)
+    if(model->GetModelName() == "Urban93Model")
+      {
+	dynamic_cast<G4VMultipleScattering*>(pProcess)->AddEmModel(1, new G4UrbanMscModel95());
+      }
 
-  if(model->GetModelName() == "Urban95Model")
-  {
-    dynamic_cast<G4VMultipleScattering*>(pProcess)->AddEmModel(1, new G4UrbanMscModel95());
-  }
-  */
-  if(model->GetModelName() == "UrbanModel")
-  {
-    dynamic_cast<G4VMultipleScattering*>(pProcess)->AddEmModel(1, new G4UrbanMscModel());
-  }
+    if(model->GetModelName() == "Urban95Model")
+      {
+	dynamic_cast<G4VMultipleScattering*>(pProcess)->AddEmModel(1, new G4UrbanMscModel95());
+      }
+  #else
+    if(model->GetModelName() == "UrbanModel")
+      {
+	dynamic_cast<G4VMultipleScattering*>(pProcess)->AddEmModel(1, new G4UrbanMscModel());
+      }
+  #endif
 }
 //-----------------------------------------------------------------------------
 
