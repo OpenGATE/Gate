@@ -8,11 +8,11 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-
 // Elastic
 #if (G4VERSION_MAJOR == 9)
 #include "G4LElastic.hh" 
 #endif
+
 #include "G4ElasticHadrNucleusHE.hh"
 #include "G4LEpp.hh"
 #include "G4LEnp.hh"
@@ -20,11 +20,13 @@ See GATE/LICENSE.txt for further details
 
 // Nucleus-nucleus
 #include "G4BinaryLightIonReaction.hh"
+
 #if (G4VERSION_MAJOR == 9)
 #include "G4LEDeuteronInelastic.hh"
 #include "G4LETritonInelastic.hh"
 #include "G4LEAlphaInelastic.hh"
 #endif
+
 #include "G4WilsonAbrasionModel.hh"
 #include "G4EMDissociation.hh"
 #include "G4QMDReaction.hh"
@@ -67,6 +69,7 @@ See GATE/LICENSE.txt for further details
 #include "G4CascadeInterface.hh"
 #include "G4BinaryCascade.hh"
 #include "GateBinaryCascade.hh"
+
 // Gamma- and Lepto-Nuclear
 #if (G4VERSION_MAJOR == 9)
 #include "G4ElectroNuclearReaction.hh"
@@ -81,6 +84,7 @@ See GATE/LICENSE.txt for further details
 #include "G4NeutronHPorLEInelastic.hh"
 #include "G4NeutronHPorLFission.hh"
 #endif
+
 #include "G4NeutronRadCapture.hh" 
 #include "G4LFission.hh"
 #include "G4NeutronHPCapture.hh"
