@@ -8,6 +8,8 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
+#include "GateConfiguration.h"
+
 // Elastic
 #if (G4VERSION_MAJOR == 9)
 #include "G4LElastic.hh" 

@@ -4,6 +4,7 @@
 #include "GateMaterialMuHandler.hh"
 #include "GateMuTables.hh"
 #include "GateMiscFunctions.hh"
+#include "GateConfiguration.h"
 #include <string>
 #include <sstream>
 #include <iostream>

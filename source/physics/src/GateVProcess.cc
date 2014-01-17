@@ -14,12 +14,12 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVProcess.hh"
 #include "GateVProcessMessenger.hh"
+#include "GateConfiguration.h"
 
 #include "G4Material.hh"
 #include "G4Element.hh"
 #include "G4VEnergyLossProcess.hh"
 #include "G4VMultipleScattering.hh"
-
 
 
 //-----------------------------------------------------------------------------
