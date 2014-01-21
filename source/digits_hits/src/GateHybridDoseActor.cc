@@ -39,6 +39,8 @@ GateHybridDoseActor::GateHybridDoseActor(G4String name, G4int depth) :
   mIsEdepImageEnabled = false;
   mIsDoseUncertaintyImageEnabled = false;
   
+  mIsMaterialAndMuTableInitialized = false;
+
   // Create a 'MultiplicityActor' if not exist
   GateActorManager *actorManager = GateActorManager::GetInstance();
   G4bool noMultiplicityActor = true;
@@ -159,6 +161,38 @@ void GateHybridDoseActor::Construct() {
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+void GateHybridDoseActor::InitializeMaterialAndMuTable()
+{
+  if(!mIsMaterialAndMuTableInitialized)
+  {
+    int lineSize = (int)lrint(mResolution.x());
+    int planeSize = (int)lrint(mResolution.x()*mResolution.y());
+    int voxelIndex = -1;
+    
+    theListOfMaterial.resize(mResolution.x()*mResolution.y()*mResolution.z());
+    theListOfMuTable.resize(mResolution.x()*mResolution.y()*mResolution.z());
+
+    GateVImageVolume* volume = dynamic_cast<GateVImageVolume*>(GetVolume());
+    GateDetectorConstruction *detectorConstruction = GateDetectorConstruction::GetGateDetectorConstruction();
+    for(int x=0; x<mResolution.x(); x++)
+    {
+      for(int y=0; y<mResolution.y(); y++)
+      {
+	for(int z=0; z<mResolution.z(); z++)
+	{
+	  voxelIndex = x+y*lineSize+z*planeSize;
+	  theListOfMaterial[voxelIndex] = detectorConstruction->mMaterialDatabase.GetMaterial(volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(x,y,z)));
+	  theListOfMuTable[voxelIndex] = mMaterialHandler->GetMuTable(theListOfMaterial[voxelIndex]);
+	}
+      }
+    }
+    
+    mIsMaterialAndMuTableInitialized = true;
+  }
+}
+
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 /// Save data
@@ -199,6 +233,8 @@ void GateHybridDoseActor::BeginOfEventAction(const G4Event *) {
   {
     GateMessage("Actor", 0, " BeginOfEventAction - " << mCurrentEvent << " - primary weight = " << 1./mPrimaryMultiplicity << " - secondary weight = " << 1./mSecondaryMultiplicity << G4endl);
   }
+  
+  if(!mIsMaterialAndMuTableInitialized) { InitializeMaterialAndMuTable(); }
 }
 //-----------------------------------------------------------------------------
 
@@ -342,6 +378,7 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
   int lineSize = (int)lrint(mResolution.x());
   int planeSize = (int)lrint(mResolution.x()*mResolution.y());
   int voxelIndex = 0;
+  G4Material *material;
   double doseValue = 0.0;
   double L = 0.0;
   
@@ -354,7 +391,6 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
 //   GateMessage("ActorDose", 0, "hybridWeight = " << hybridTrackWeight << " trackWeight = " << step->GetTrack()->GetWeight() << G4endl);
   GateVImageVolume* volume = dynamic_cast<GateVImageVolume*>(GetVolume());
   if(!volume) { GateError("Error in " << GetName() << ": GateVImageVolume doesn't exist"); }
-  G4Material* material = preStep->GetMaterial();
   G4bool isPrimaryParticle = false;
   if(step->GetTrack()->GetParentID() == 0) { isPrimaryParticle = true; }
   
@@ -367,13 +403,11 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
 //     GateMessage("Actor", 0, "material 1 : " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(x,y,z)) << G4endl);    
 //     GateMessage("Actor", 0, "label : " << volume->GetImage()->GetValue(0,0,0) << " " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(0,0,0)) << G4endl);    
 
-    material = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(x,y,z)));
-//     GateMessage("Actor", 0, "material name : " << material->GetName() << G4endl);
-    mu = mMaterialHandler->GetMu(material, energy)*material->GetDensity()/(g/cm3);
-    muen = mMaterialHandler->GetAttenuation(material, energy);
-//     GateMessage("Actor", 0, " material " << material->GetName() << " energy " << energy << " mu " << mu << " muen " << muen << " voxVol " << VoxelVolume << G4endl);
-
     voxelIndex = x+y*lineSize+z*planeSize;
+    material = theListOfMaterial[voxelIndex];
+    mu = theListOfMuTable[voxelIndex]->GetMu(energy)*material->GetDensity()/(g/cm3);
+    muen = theListOfMuTable[voxelIndex]->GetMuEn(energy);
+
     if(Rx < Ry && Rx < Rz){
       delta_out = delta_in*exp(-mu*Rx/10.);
       L+=Rx;

@@ -60,7 +60,8 @@ class GateHybridDoseActor : public GateVImageActor
   
   int GetPrimaryMultiplicity() { return mPrimaryMultiplicity; }
   int GetSecondaryMultiplicity() { return mSecondaryMultiplicity; }
-  
+
+  void InitializeMaterialAndMuTable();
   void RayCast(const G4Step* step);
  /// Saves the data collected to the file
   virtual void SaveData();
@@ -94,6 +95,10 @@ protected:
   int mPrimaryMultiplicity;
   int mSecondaryMultiplicity;
 
+  bool mIsMaterialAndMuTableInitialized;
+  std::vector<G4Material *> theListOfMaterial;
+  std::vector<GateMuTable *> theListOfMuTable;
+  
   bool mIsEdepImageEnabled;
   bool mIsDoseUncertaintyImageEnabled;
   bool mIsLastHitEventImageEnabled;
