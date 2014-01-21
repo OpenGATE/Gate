@@ -199,68 +199,6 @@ void GateHybridDoseActor::BeginOfEventAction(const G4Event *) {
   {
     GateMessage("Actor", 0, " BeginOfEventAction - " << mCurrentEvent << " - primary weight = " << 1./mPrimaryMultiplicity << " - secondary weight = " << 1./mSecondaryMultiplicity << G4endl);
   }
-
-  // Francois : general method (slow but generic)
-//   G4ParticleDefinition *hybridino = G4Hybridino::Hybridino();
-//   GateVSource* source = GateSourceMgr::GetInstance()->GetSource(GateSourceMgr::GetInstance()->GetCurrentSourceID());
-//   G4Event *modifiedEvent = const_cast<G4Event *>(event);
-//   int initialVertexNumber = event->GetNumberOfPrimaryVertex();
-//   int vertexNumber = initialVertexNumber;
-// 
-//   for(int i=0; i<mPrimaryMultiplicity; i++)
-//   {
-//     vertexNumber += source->GeneratePrimaries(modifiedEvent);    
-//   }
-// 
-// //   GateMessage("Actor", 0, " initVertexNumber " << initialVertexNumber << " newVertexNumber " << event->GetNumberOfPrimaryVertex() << G4endl);
-// //   GateMessage("Actor", 0, " particle " << source->GetParticleDefinition()->GetParticleName() << G4endl);  
-//   G4PrimaryVertex *hybridVertex = modifiedEvent->GetPrimaryVertex(initialVertexNumber);
-// 
-//   while(hybridVertex != 0)
-//   {
-//     G4PrimaryParticle *hybridParticle = hybridVertex->GetPrimary();
-//     while(hybridParticle != 0)
-//     {
-// //       GateMessage("Actor", 0, " vertex " << hybridVertex << " particle " << hybridParticle << " momentum " << hybridParticle->GetMomentumDirection() << G4endl);
-//       hybridParticle->SetParticleDefinition(hybridino);
-//       hybridParticle = hybridParticle->GetNext();
-// 
-//     }
-//     hybridVertex = hybridVertex->GetNext();
-//   }
-  
-  
-    // Francois : particular method (fast but only for single particle sources)
-//   G4ParticleDefinition *hybridino = G4Hybridino::Hybridino();
-//   G4ParticleDefinition *gamma = G4Gamma::Gamma();
-// 
-//   GateVSource* source = GateSourceMgr::GetInstance()->GetSource(GateSourceMgr::GetInstance()->GetCurrentSourceID());
-//   GateSPSEneDistribution* enedist = source->GetEneDist();
-//   GateSPSPosDistribution* posdist = source->GetPosDist();
-//   GateSPSAngDistribution* angdist = source->GetAngDist();
-// 
-//   G4Event *modifiedEvent = const_cast<G4Event *>(event);
-//   // WARNING - G4Event cannot be modified by default because of its 'const' status.
-//   // Use of the 'const_cast' function to overcome this problem.
-// 
-//   G4ThreeVector position;
-//   G4ThreeVector momentum;
-//   G4double energy;
-//   for(int i=0; i<mPrimaryMultiplicity; i++)
-//   {
-//     position = posdist->GenerateOne();
-//     momentum = angdist->GenerateOne();
-//     energy = enedist->GenerateOne(gamma);
-// 
-//     G4PrimaryParticle *hybridParticle = new G4PrimaryParticle(hybridino,momentum.x(),momentum.y(),momentum.z(),energy);
-//     hybridParticle->SetKineticEnergy(energy*MeV);
-// 
-//     G4PrimaryVertex *hybridVertex = new G4PrimaryVertex();
-//     hybridVertex->SetPosition(position.x(),position.y(),position.z());
-//     hybridVertex->SetPrimary(hybridParticle);
-// 
-//     modifiedEvent->AddPrimaryVertex(hybridVertex); 
-//   }
 }
 //-----------------------------------------------------------------------------
 

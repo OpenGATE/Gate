@@ -90,38 +90,30 @@ void GateHybridMultiplicityActor::BeginOfEventAction(const G4Event *event)
   if(!processListForGamma) { processListForGamma = G4Gamma::Gamma()->GetProcessManager()->GetProcessList(); }
   theListOfHybridTrack.clear();
   theListOfHybridWeight.clear();
-  
+
   GateVSource* source = GateSourceMgr::GetInstance()->GetSource(GateSourceMgr::GetInstance()->GetCurrentSourceID());
   if(source->GetParticleDefinition()->GetParticleName() == "gamma")
   {
     G4ParticleDefinition *hybridino = G4Hybridino::Hybridino();
-    G4ParticleDefinition *gamma = G4Gamma::Gamma();
-
-    GateSPSEneDistribution* enedist = source->GetEneDist();
-    GateSPSPosDistribution* posdist = source->GetPosDist();
-    GateSPSAngDistribution* angdist = source->GetAngDist();
-
     G4Event *modifiedEvent = const_cast<G4Event *>(event);
-    // WARNING - G4Event cannot be modified by default because of its 'const' status.
-    // Use of the 'const_cast' function to overcome this problem.
+    int initialVertexNumber = event->GetNumberOfPrimaryVertex();
+    int vertexNumber = initialVertexNumber;
 
-    G4ThreeVector position;
-    G4ThreeVector momentum;
-    G4double energy;
     for(int i=0; i<defaultPrimaryMultiplicity; i++)
     {
-      position = posdist->GenerateOne();
-      momentum = angdist->GenerateOne();
-      energy = enedist->GenerateOne(gamma);
+      vertexNumber += source->GeneratePrimaries(modifiedEvent);    
+    }
 
-      G4PrimaryParticle *hybridParticle = new G4PrimaryParticle(hybridino,momentum.x(),momentum.y(),momentum.z(),energy);
-      hybridParticle->SetKineticEnergy(energy*MeV);
-
-      G4PrimaryVertex *hybridVertex = new G4PrimaryVertex();
-      hybridVertex->SetPosition(position.x(),position.y(),position.z());
-      hybridVertex->SetPrimary(hybridParticle);
-
-      modifiedEvent->AddPrimaryVertex(hybridVertex); 
+    G4PrimaryVertex *hybridVertex = modifiedEvent->GetPrimaryVertex(initialVertexNumber);
+    while(hybridVertex != 0)
+    {
+      G4PrimaryParticle *hybridParticle = hybridVertex->GetPrimary();
+      while(hybridParticle != 0)
+      {
+	hybridParticle->SetParticleDefinition(hybridino);
+	hybridParticle = hybridParticle->GetNext();
+      }
+      hybridVertex = hybridVertex->GetNext();
     }
   }
 }
