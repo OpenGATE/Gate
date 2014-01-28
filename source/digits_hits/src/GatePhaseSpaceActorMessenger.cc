@@ -185,8 +185,8 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
   if(command == pEnableWeightCmd) pActor->SetIsWeightEnabled(pEnableWeightCmd->GetNewBoolValue(param));
   if(command == pEnableTimeCmd) pActor->SetIsTimeEnabled(pEnableTimeCmd->GetNewBoolValue(param));
   if(command == pEnableMassCmd) pActor->SetIsMassEnabled(pEnableMassCmd->GetNewBoolValue(param));
-  if(command == pCoordinateInVolumeFrameCmd) pActor->SetUseVolumeFrame();
-  if(command == pInOrOutGoingParticlesCmd) pActor->SetStoreOutgoingParticles();
+  if(command == pCoordinateInVolumeFrameCmd) pActor->SetUseVolumeFrame(pCoordinateInVolumeFrameCmd->GetNewBoolValue(param));
+  if(command == pInOrOutGoingParticlesCmd) pActor->SetStoreOutgoingParticles(pInOrOutGoingParticlesCmd->GetNewBoolValue(param));
   if(command == pEnableStoreAllStepCmd) pActor->SetIsAllStep(pEnableStoreAllStepCmd->GetNewBoolValue(param));
   if(command == pEnableSecCmd) pActor->SetIsSecStored(pEnableSecCmd->GetNewBoolValue(param));
   if(command == pSaveEveryNEventsCmd || command == pSaveEveryNSecondsCmd)  GateError("saveEveryNEvents and saveEveryNSeconds commands are not available with phase space actor. But you can use the setMaxFileSize command.");
