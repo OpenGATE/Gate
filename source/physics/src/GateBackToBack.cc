@@ -10,6 +10,8 @@
 
 #include "GateBackToBack.hh"
 
+#include "G4PhysicalConstants.hh"
+
 //-------------------------------------------------------------------------------------------------
 GateBackToBack::GateBackToBack( GateVSource* source )
 {

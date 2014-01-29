@@ -1,0 +1,123 @@
+[Elements]
+Hydrogen:   S= H   ; Z=  1. ; A=   1.01  g/mole  
+Helium:     S= He  ; Z=  2. ; A=   4.003 g/mole
+Lithium:    S= Li  ; Z=  3. ; A=   6.941 g/mole
+Beryllium:  S= Be  ; Z=  4. ; A=   9.012 g/mole
+Boron:      S= B   ; Z=  5. ; A=  10.811 g/mole
+Carbon:     S= C   ; Z=  6. ; A=  12.01  g/mole
+Nitrogen:   S= N   ; Z=  7. ; A=  14.01  g/mole
+Oxygen:     S= O   ; Z=  8. ; A=  16.00  g/mole
+Fluorine:   S= F   ; Z=  9. ; A=  18.998 g/mole
+Neon:       S= Ne  ; Z= 10. ; A=  20.180 g/mole
+Sodium:     S= Na  ; Z= 11. ; A=  22.99  g/mole
+Magnesium:  S= Mg  ; Z= 12. ; A=  24.305 g/mole
+Aluminium:  S= Al  ; Z= 13. ; A=  26.98  g/mole
+Silicon:    S= Si  ; Z= 14. ; A=  28.09  g/mole
+Phosphor:   S= P   ; Z= 15. ; A=  30.97  g/mole
+Sulfur:     S= S   ; Z= 16. ; A=  32.066 g/mole
+Chlorine:   S= Cl  ; Z= 17. ; A=  35.45  g/mole
+Argon:	    S= Ar  ; Z= 18. ; A=  39.95  g/mole
+Potassium:  S= K   ; Z= 19. ; A=  39.098 g/mole
+Calcium:    S= Ca  ; Z= 20. ; A=  40.08	 g/mole
+Scandium:   S= Sc  ; Z= 21. ; A=  44.956 g/mole
+Titanium:   S= Ti  ; Z= 22. ; A=  47.867 g/mole
+Vandium:    S= V   ; Z= 23. ; A=  50.942 g/mole
+Chromium:   S= Cr  ; Z= 24. ; A=  51.996 g/mole
+Manganese:  S= Mn  ; Z= 25. ; A=  54.938 g/mole
+Iron:       S= Fe  ; Z= 26. ; A=  55.845 g/mole
+Cobalt:     S= Co  ; Z= 27. ; A=  58.933 g/mole
+Nickel:     S= Ni  ; Z= 28. ; A=  58.693 g/mole
+Copper:     S= Cu  ; Z= 29. ; A=  63.39  g/mole
+Zinc:       S= Zn  ; Z= 30. ; A=  65.39  g/mole
+Gallium:    S= Ga  ; Z= 31. ; A=  69.723 g/mole
+Germanium:  S= Ge  ; Z= 32. ; A=  72.61  g/mole
+Yttrium:    S= Y   ; Z= 39. ; A=  88.91  g/mole
+Cadmium:    S= Cd  ; Z= 48. ; A= 112.41  g/mole
+Tellurium:  S= Te  ; Z= 52. ; A= 127.6   g/mole
+Iodine:	    S= I   ; Z= 53. ; A= 126.90  g/mole
+Cesium:     S= Cs  ; Z= 55. ; A= 132.905 g/mole
+Gadolinium: S= Gd  ; Z= 64. ; A= 157.25  g/mole
+Lutetium:   S= Lu  ; Z= 71. ; A= 174.97  g/mole
+Tungsten:   S= W   ; Z= 74. ; A= 183.84  g/mole
+Thallium:   S= Tl  ; Z= 81. ; A= 204.37  g/mole
+Lead: 	    S= Pb  ; Z= 82. ; A= 207.20  g/mole
+Bismuth:    S= Bi  ; Z= 83. ; A= 208.98  g/mole
+Uranium:    S= U   ; Z= 92. ; A= 238.03  g/mole
+Silver:     S= Ag  ; Z= 47. ; A= 107.87  g/mole 
+Tin:        S= Sn  ; Z= 50. ; A= 118.69  g/mole
+Rubidium:   S= Rb  ; Z= 37. ; A= 85.4678 g/mole
+Strontium:  S= Sr  ; Z= 38. ; A= 87.62   g/mole
+Zirconium:  S=Zr   ; Z=40.  ; A= 91.224  g/mole
+[Materials]
+	
+Vacuum: d=0.000001 mg/cm3 ; n=1 
+	+el: name=Hydrogen ; n=1
+
+
+SoftTissue: d=1.04 g/cm3 ; n=16
+	+el: name=Hydrogen ;  f=0.10450
+	+el: name=Carbon;     f=0.22660
+	+el: name=Nitrogen;   f=0.02490
+	+el: name=Oxygen    ; f=0.63520
+	+el: name=Sodium;     f=0.00112
+	+el: name=Magnesium;  f=0.00013
+	+el: name=Silicon;    f=0.00030
+	+el: name=Phosphor;   f=0.00134
+	+el: name=Sulfur;     f=0.00204
+	+el: name=Chlorine;   f=0.00133
+	+el: name=Potassium;  f=0.00208
+	+el: name=Calcium;    f=0.00024
+	+el: name=Iron;       f=0.00005
+	+el: name=Zinc	;     f=0.00003
+	+el: name=Rubidium;   f=0.00001
+	+el: name=Zirconium;  f=0.00001
+
+
+AirBodyInterface:  d=0.296 g/cm3 ; n=15
+        +el: name=Hydrogen ;f=0.10134
+	+el: name=Carbon;     f=0.10238
+	+el: name=Nitrogen;   f=0.02866
+	+el: name=Oxygen    ; f=0.75752
+	+el: name=Sodium;     f=0.00184
+	+el: name=Magnesium;  f=0.00007
+	+el: name=Silicon;    f=0.00006
+	+el: name=Phosphor;   f=0.00080
+	+el: name=Sulfur;     f=0.00225
+	+el: name=Chlorine;   f=0.00266
+	+el: name=Potassium;  f=0.00194
+	+el: name=Calcium;    f=0.00009
+	+el: name=Iron;       f=0.00037
+	+el: name=Zinc	;   f=0.00001
+	+el: name=Rubidium;   f=0.00001
+
+
+Air: d=1.29 mg/cm3 ; n=4 ; state=gas 
+	+el: name=Carbon;     f=0.000124
+	+el: name=Nitrogen;   f=0.755268
+	+el: name=Oxygen;     f=0.231781
+	+el: name=Argon;      f=0.012827
+
+Bones: d=1.4 g/cm3 ; n=18
+        +el: name=Hydrogen ;f=0.07337
+	+el: name=Carbon;     f=0.25475
+	+el: name=Nitrogen;   f=0.03057
+	+el: name=Oxygen    ; f=0.47893
+	+el: name=Fluorine;   f=0.00025
+	+el: name=Sodium;     f=0.00326
+	+el: name=Magnesium;  f=0.00112
+	+el: name=Silicon;    f=0.00002
+	+el: name=Phosphor;   f=0.05095
+	+el: name=Sulfur;     f=0.00173
+	+el: name=Chlorine;   f=0.00143
+	+el: name=Potassium;  f=0.00153
+	+el: name=Calcium;    f=0.10190
+	+el: name=Iron;       f=0.00008
+	+el: name=Zinc	;   f=0.00005
+	+el: name=Rubidium;   f=0.00002
+	+el: name=Strontium;  f=0.00003
+	+el: name=Lead;       f=0.00001
+
+
+
+
+

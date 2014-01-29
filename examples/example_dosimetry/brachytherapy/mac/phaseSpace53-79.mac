@@ -1,0 +1,134 @@
+/gate/source/addSource                       seed53 phaseSpace
+/gate/source/seed53/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed53/setParticleType            gamma
+/gate/source/seed53/attachTo                   TitaniumOuter53
+
+/gate/source/addSource                       seed54 phaseSpace
+/gate/source/seed54/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed54/setParticleType            gamma
+/gate/source/seed54/attachTo                   TitaniumOuter54
+
+/gate/source/addSource                       seed55 phaseSpace
+/gate/source/seed55/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed55/setParticleType            gamma
+/gate/source/seed55/attachTo                   TitaniumOuter55
+
+/gate/source/addSource                       seed56 phaseSpace
+/gate/source/seed56/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed56/setParticleType            gamma
+/gate/source/seed56/attachTo                   TitaniumOuter56
+
+/gate/source/addSource                       seed57 phaseSpace
+/gate/source/seed57/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed57/setParticleType            gamma
+/gate/source/seed57/attachTo                   TitaniumOuter57
+
+/gate/source/addSource                       seed58 phaseSpace
+/gate/source/seed58/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed58/setParticleType            gamma
+/gate/source/seed58/attachTo                   TitaniumOuter58
+
+/gate/source/addSource                       seed59 phaseSpace
+/gate/source/seed59/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed59/setParticleType            gamma
+/gate/source/seed59/attachTo                   TitaniumOuter59
+
+/gate/source/addSource                       seed60 phaseSpace
+/gate/source/seed60/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed60/setParticleType            gamma
+/gate/source/seed60/attachTo                   TitaniumOuter60
+
+/gate/source/addSource                       seed61 phaseSpace
+/gate/source/seed61/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed61/setParticleType            gamma
+/gate/source/seed61/attachTo                   TitaniumOuter61
+
+/gate/source/addSource                       seed62 phaseSpace
+/gate/source/seed62/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed62/setParticleType            gamma
+/gate/source/seed62/attachTo                   TitaniumOuter62
+
+/gate/source/addSource                       seed63 phaseSpace
+/gate/source/seed63/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed63/setParticleType            gamma
+/gate/source/seed63/attachTo                   TitaniumOuter63
+
+/gate/source/addSource                       seed64 phaseSpace
+/gate/source/seed64/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed64/setParticleType            gamma
+/gate/source/seed64/attachTo                   TitaniumOuter64
+
+/gate/source/addSource                       seed65 phaseSpace
+/gate/source/seed65/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed65/setParticleType            gamma
+/gate/source/seed65/attachTo                   TitaniumOuter65
+
+/gate/source/addSource                       seed66 phaseSpace
+/gate/source/seed66/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed66/setParticleType            gamma
+/gate/source/seed66/attachTo                   TitaniumOuter66
+
+/gate/source/addSource                       seed67 phaseSpace
+/gate/source/seed67/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed67/setParticleType            gamma
+/gate/source/seed67/attachTo                   TitaniumOuter67
+
+/gate/source/addSource                       seed68 phaseSpace
+/gate/source/seed68/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed68/setParticleType            gamma
+/gate/source/seed68/attachTo                   TitaniumOuter68
+
+/gate/source/addSource                       seed69 phaseSpace
+/gate/source/seed69/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed69/setParticleType            gamma
+/gate/source/seed69/attachTo                   TitaniumOuter69
+
+/gate/source/addSource                       seed70 phaseSpace
+/gate/source/seed70/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed70/setParticleType            gamma
+/gate/source/seed70/attachTo                   TitaniumOuter70
+
+/gate/source/addSource                       seed71 phaseSpace
+/gate/source/seed71/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed71/setParticleType            gamma
+/gate/source/seed71/attachTo                   TitaniumOuter71
+
+/gate/source/addSource                       seed72 phaseSpace
+/gate/source/seed72/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed72/setParticleType            gamma
+/gate/source/seed72/attachTo                   TitaniumOuter72
+
+/gate/source/addSource                       seed73 phaseSpace
+/gate/source/seed73/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed73/setParticleType            gamma
+/gate/source/seed73/attachTo                   TitaniumOuter73
+
+/gate/source/addSource                       seed74 phaseSpace
+/gate/source/seed74/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed74/setParticleType            gamma
+/gate/source/seed74/attachTo                   TitaniumOuter74
+
+/gate/source/addSource                       seed75 phaseSpace
+/gate/source/seed75/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed75/setParticleType            gamma
+/gate/source/seed75/attachTo                   TitaniumOuter75
+
+/gate/source/addSource                       seed76 phaseSpace
+/gate/source/seed76/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed76/setParticleType            gamma
+/gate/source/seed76/attachTo                   TitaniumOuter76
+
+/gate/source/addSource                       seed77 phaseSpace
+/gate/source/seed77/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed77/setParticleType            gamma
+/gate/source/seed77/attachTo                   TitaniumOuter77
+
+/gate/source/addSource                       seed78 phaseSpace
+/gate/source/seed78/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed78/setParticleType            gamma
+/gate/source/seed78/attachTo                   TitaniumOuter78
+
+/gate/source/addSource                       seed79 phaseSpace
+/gate/source/seed79/addPhaseSpaceFile          data/TitaniumOuter.root
+/gate/source/seed79/setParticleType            gamma
+/gate/source/seed79/attachTo                   TitaniumOuter79

@@ -14,6 +14,7 @@
   \brief
 */
 
+#include "G4PhysicalConstants.hh"
 #include "G4CompositeEMDataSet.hh"
 #include "G4UnitsTable.hh"
 #include "GateDiffCrossSectionActor.hh"
