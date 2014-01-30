@@ -144,7 +144,7 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
   pEnableSecCmd->SetParameterName("State",false);
 
   bb = base+"/storeOutgoingParticles";
-  pInOrOutGoingParticlesCmd = new G4UIcmdWithoutParameter(bb,this);
+  pInOrOutGoingParticlesCmd = new G4UIcmdWithABool(bb,this);
   guidance = "Store the outgoing particles instead of incoming particles.";
   pInOrOutGoingParticlesCmd->SetGuidance(guidance);
 
@@ -155,7 +155,7 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
   pEnableStoreAllStepCmd->SetParameterName("State",false);
 
   bb = base+"/useVolumeFrame";
-  pCoordinateInVolumeFrameCmd = new G4UIcmdWithoutParameter(bb,this);
+  pCoordinateInVolumeFrameCmd = new G4UIcmdWithABool(bb,this);
   guidance = "Record coordinate in the actor volume frame.";
   pCoordinateInVolumeFrameCmd->SetGuidance(guidance);
 

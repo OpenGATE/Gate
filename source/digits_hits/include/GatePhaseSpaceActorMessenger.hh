@@ -57,9 +57,9 @@ protected:
   G4UIcmdWithABool* pEnableMassCmd;
   G4UIcmdWithABool* pEnableSecCmd;
   G4UIcmdWithABool* pEnableStoreAllStepCmd;
-  G4UIcmdWithoutParameter* pCoordinateInVolumeFrameCmd;
+  G4UIcmdWithABool* pCoordinateInVolumeFrameCmd;
   G4UIcmdWithADoubleAndUnit* pMaxSizeCmd;
-  G4UIcmdWithoutParameter * pInOrOutGoingParticlesCmd;
+  G4UIcmdWithABool * pInOrOutGoingParticlesCmd;
 
 };
 
