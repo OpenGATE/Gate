@@ -1,0 +1,287 @@
+  #################
+ # Virtual Box   #
+#################
+
+# this box is created to facilate the gantry rotation
+
+/gate/world/daughters/name v_box
+/gate/world/daughters/insert box
+/gate/v_box/geometry/setXLength 50 cm
+/gate/v_box/geometry/setYLength 95 cm
+/gate/v_box/geometry/setZLength 50 cm
+/gate/v_box/placement/setRotationAxis 0 0 1
+/gate/v_box/placement/setRotationAngle -60 deg
+/gate/v_box/placement/setTranslation 45.466 26.25 0 cm
+#/gate/v_box/placement/setTranslation 0 52.5 0 cm 
+/gate/v_box/setMaterial Air
+/gate/v_box/vis/setVisible 0
+  
+  
+  #################
+ # Vacuum Window #
+#################
+
+/gate/v_box/daughters/name vac_window
+/gate/v_box/daughters/insert cylinder
+/gate/vac_window/geometry/setRmin 0 mm 
+/gate/vac_window/geometry/setRmax 10 mm
+/gate/vac_window/geometry/setHeight 100 mm
+/gate/vac_window/geometry/setPhiStart 0 deg
+/gate/vac_window/geometry/setDeltaPhi 360 deg
+/gate/vac_window/placement/setRotationAxis 1 0 0
+/gate/vac_window/placement/setRotationAngle 90 deg
+/gate/vac_window/placement/setTranslation 0 42.5 0 cm 
+/gate/vac_window/setMaterial Vacuum
+/gate/vac_window/vis/setColor magenta
+/gate/vac_window/vis/forceWireframe
+
+  ###############
+ # Exit Window #
+###############
+
+/gate/vac_window/daughters/name exit_window
+/gate/vac_window/daughters/insert cylinder
+/gate/exit_window/geometry/setRmin 0 mm 
+/gate/exit_window/geometry/setRmax 10 mm
+/gate/exit_window/geometry/setHeight 0.03 mm
+/gate/exit_window/geometry/setPhiStart 0 deg
+/gate/exit_window/geometry/setDeltaPhi 360 deg
+/gate/exit_window/placement/setTranslation 0 0 49.7 mm 
+/gate/exit_window/setMaterial Beryllium
+/gate/exit_window/vis/setColor magenta
+
+
+  ########################
+ # 6MeV Scattering Foil #
+########################
+
+
+# Scattering Foil
+
+/gate/v_box/daughters/name scatfoil_6Mev
+/gate/v_box/daughters/insert cylinder
+/gate/scatfoil_6Mev/geometry/setRmin 0 mm 
+/gate/scatfoil_6Mev/geometry/setRmax 40 mm
+/gate/scatfoil_6Mev/geometry/setHeight 40 mm
+/gate/scatfoil_6Mev/geometry/setPhiStart 0 deg
+/gate/scatfoil_6Mev/geometry/setDeltaPhi 360 deg
+/gate/scatfoil_6Mev/placement/setRotationAxis 1 0 0
+/gate/scatfoil_6Mev/placement/setRotationAngle 90 deg
+/gate/scatfoil_6Mev/placement/setTranslation 0 37.5 0 cm 
+/gate/scatfoil_6Mev/setMaterial Air
+/gate/scatfoil_6Mev/vis/setColor red
+/gate/scatfoil_6Mev/vis/forceWireframe
+/gate/scatfoil_6Mev/vis/setVisible 1
+
+# Upper Foil
+
+/gate/scatfoil_6Mev/daughters/name upperfoil
+/gate/scatfoil_6Mev/daughters/insert cylinder
+/gate/upperfoil/geometry/setRmin 0 mm 
+/gate/upperfoil/geometry/setRmax 30 mm
+/gate/upperfoil/geometry/setHeight 0.04 mm
+/gate/upperfoil/geometry/setPhiStart 0 deg
+/gate/upperfoil/geometry/setDeltaPhi 360 deg
+/gate/upperfoil/placement/setTranslation 0 0 -19.98 mm 
+/gate/upperfoil/setMaterial Tantalum
+/gate/upperfoil/vis/setColor yellow
+
+# Lower Foil
+
+/gate/scatfoil_6Mev/daughters/name lowerfoil
+/gate/scatfoil_6Mev/daughters/insert cylinder
+/gate/lowerfoil/geometry/setRmin 0 mm 
+/gate/lowerfoil/geometry/setRmax 10 mm
+/gate/lowerfoil/geometry/setHeight 1 mm
+/gate/lowerfoil/geometry/setPhiStart 0 deg
+/gate/lowerfoil/geometry/setDeltaPhi 360 deg
+/gate/lowerfoil/placement/setTranslation 0 0 19.5 mm 
+/gate/lowerfoil/setMaterial Aluminium
+/gate/lowerfoil/vis/setColor yellow
+
+  ######################
+ # Ionization Chamber #
+###################### 
+
+/gate/v_box/daughters/name chamber
+/gate/v_box/daughters/insert cylinder
+/gate/chamber/geometry/setRmin 0 mm 
+/gate/chamber/geometry/setRmax 5.2 cm
+/gate/chamber/geometry/setHeight 1.6 cm
+/gate/chamber/geometry/setPhiStart 0 deg
+/gate/chamber/geometry/setDeltaPhi 360 deg
+/gate/chamber/placement/setRotationAxis 1 0 0
+/gate/chamber/placement/setRotationAngle 90 deg
+/gate/chamber/placement/setTranslation 0 30.5 0 cm 
+/gate/chamber/setMaterial Air2
+/gate/chamber/vis/setColor magenta
+/gate/chamber/vis/forceWireframe
+
+/gate/chamber/daughters/name chamberKapton
+/gate/chamber/daughters/insert cylinder
+/gate/chamberKapton/geometry/setRmin 0 mm 
+/gate/chamberKapton/geometry/setRmax 5.2 cm
+/gate/chamberKapton/geometry/setHeight 0.04 cm
+/gate/chamberKapton/geometry/setPhiStart 0 deg
+/gate/chamberKapton/geometry/setDeltaPhi 360 deg
+/gate/chamberKapton/placement/setTranslation 0 0 -0.78 cm 
+/gate/chamberKapton/setMaterial Kapton
+/gate/chamberKapton/vis/setColor magenta
+
+/gate/chamber/daughters/name chamberCu
+/gate/chamber/daughters/insert cylinder
+/gate/chamberCu/geometry/setRmin 0 mm 
+/gate/chamberCu/geometry/setRmax 5.2 cm
+/gate/chamberCu/geometry/setHeight 0.001 cm
+/gate/chamberCu/geometry/setPhiStart 0 deg
+/gate/chamberCu/geometry/setDeltaPhi 360 deg
+/gate/chamberCu/placement/setTranslation 0 0 0.7995 cm 
+/gate/chamberCu/setMaterial Copper
+/gate/chamberCu/vis/setColor red
+
+  ########
+ # Jaws #
+########
+
+# Lower Jaw
+/gate/v_box/daughters/name jaw_x
+/gate/v_box/daughters/insert wedge
+/gate/jaw_x/geometry/setXLength 15.9 cm
+/gate/jaw_x/geometry/setNarrowerXLength 14.9 cm
+/gate/jaw_x/geometry/setYLength 10.0 cm
+/gate/jaw_x/geometry/setZLength 50 cm
+/gate/jaw_x/placement/setRotationAxis 1 0 0
+/gate/jaw_x/placement/setRotationAngle 180 deg
+/gate/jaw_x/placement/setTranslation -12.3 1.5 0. cm
+/gate/jaw_x/setMaterial Tungsten
+/gate/jaw_x/vis/setColor green
+
+# Upper Jaw
+/gate/v_box/daughters/name jaw_z
+/gate/v_box/daughters/insert box
+/gate/jaw_z/geometry/setXLength 17.0 cm
+/gate/jaw_z/geometry/setYLength 10.0 cm
+/gate/jaw_z/geometry/setZLength 50 cm
+/gate/jaw_z/placement/setTranslation 0 12.5 12.0 cm
+/gate/jaw_z/placement/setRotationAxis 0 1 0
+/gate/jaw_z/placement/setRotationAngle 90 deg
+/gate/jaw_z/setMaterial Air
+/gate/jaw_z/vis/setVisible 1
+
+/gate/jaw_z/daughters/name jawbis
+/gate/jaw_z/daughters/insert wedge
+/gate/jawbis/geometry/setXLength 17.0 cm
+/gate/jawbis/geometry/setNarrowerXLength 16.0 cm
+/gate/jawbis/geometry/setYLength 10.0 cm
+/gate/jawbis/geometry/setZLength 50 cm
+/gate/jawbis/placement/setRotationAxis 1 0 0
+/gate/jawbis/placement/setRotationAngle 180 deg
+/gate/jawbis/setMaterial Tungsten
+/gate/jawbis/vis/setColor yellow
+
+# Repeat the jaws
+
+/gate/jaw_x/repeaters/insert ring
+/gate/jaw_x/ring/setRepeatNumber 2
+/gate/jaw_x/ring/setPoint1 0 1 0
+/gate/jaw_x/ring/setPoint2 0 0 0
+/gate/jaw_x/ring/enableAutoRotation
+
+/gate/jaw_z/repeaters/insert ring
+/gate/jaw_z/ring/setRepeatNumber 2
+/gate/jaw_z/ring/setPoint1 0 1 0
+/gate/jaw_z/ring/setPoint2 0 0 0
+/gate/jaw_z/ring/enableAutoRotation
+
+  ####################
+ # 10x10 Applicator #
+####################
+
+# Applicator Part 1
+
+/gate/v_box/daughters/name appli1
+/gate/v_box/daughters/insert box
+/gate/appli1/geometry/setXLength 300 mm
+/gate/appli1/geometry/setYLength 20 mm
+/gate/appli1/geometry/setZLength 300 mm
+/gate/appli1/setMaterial Zinc
+/gate/appli1/placement/setTranslation 0 -18.5 0 cm
+/gate/appli1/vis/setColor grey
+
+/gate/appli1/daughters/name air1
+/gate/appli1/daughters/insert trpd
+/gate/air1/geometry/setX1Length 95 mm
+/gate/air1/geometry/setY1Length 95 mm
+/gate/air1/geometry/setX2Length 98 mm
+/gate/air1/geometry/setY2Length 98 mm
+/gate/air1/geometry/setZLength 20 mm
+/gate/air1/geometry/setXBoxPos 0 mm
+/gate/air1/geometry/setYBoxPos 0 mm
+/gate/air1/geometry/setZBoxPos 0 mm
+/gate/air1/geometry/setXBoxLength 0.00000001 mm
+/gate/air1/geometry/setYBoxLength 0.00000001 mm
+/gate/air1/geometry/setZBoxLength 0.00000001 mm
+/gate/air1/placement/setRotationAxis 1 0 0
+/gate/air1/placement/setRotationAngle 90 deg
+/gate/air1/setMaterial Air
+/gate/air1/vis/setVisible 1
+
+# Applicator Part 2
+
+/gate/v_box/daughters/name appli2
+/gate/v_box/daughters/insert box
+/gate/appli2/geometry/setXLength 300 mm
+/gate/appli2/geometry/setYLength 20 mm
+/gate/appli2/geometry/setZLength 300 mm
+/gate/appli2/setMaterial Zinc
+/gate/appli2/placement/setTranslation 0 -32.75 0 cm
+/gate/appli2/vis/setColor grey
+
+/gate/appli2/daughters/name air2
+/gate/appli2/daughters/insert trpd
+/gate/air2/geometry/setX1Length 95 mm
+/gate/air2/geometry/setY1Length 95 mm
+/gate/air2/geometry/setX2Length 98 mm
+/gate/air2/geometry/setY2Length 98 mm
+/gate/air2/geometry/setZLength 20 mm
+/gate/air2/geometry/setXBoxPos 0 mm
+/gate/air2/geometry/setYBoxPos 0 mm
+/gate/air2/geometry/setZBoxPos 0 mm
+/gate/air2/geometry/setXBoxLength 0.00000001 mm
+/gate/air2/geometry/setYBoxLength 0.00000001 mm
+/gate/air2/geometry/setZBoxLength 0.00000001 mm
+/gate/air2/placement/setRotationAxis 1 0 0
+/gate/air2/placement/setRotationAngle 90 deg
+/gate/air2/setMaterial Air
+/gate/air2/vis/setVisible 1
+
+# 10x10 cutout
+
+/gate/v_box/daughters/name cutout
+/gate/v_box/daughters/insert box
+/gate/cutout/geometry/setXLength 200 mm
+/gate/cutout/geometry/setYLength 15 mm
+/gate/cutout/geometry/setZLength 200 mm
+/gate/cutout/setMaterial Cerrotru
+/gate/cutout/placement/setTranslation 0 -46.75 0 cm
+/gate/cutout/vis/setColor grey
+
+/gate/cutout/daughters/name air3
+/gate/cutout/daughters/insert trpd
+/gate/air3/geometry/setX1Length 94 mm
+/gate/air3/geometry/setY1Length 94 mm
+/gate/air3/geometry/setX2Length 95 mm
+/gate/air3/geometry/setY2Length 95 mm
+/gate/air3/geometry/setZLength 15 mm
+/gate/air3/geometry/setXBoxPos 0 mm
+/gate/air3/geometry/setYBoxPos 0 mm
+/gate/air3/geometry/setZBoxPos 0 mm
+/gate/air3/geometry/setXBoxLength 0.00000001 mm
+/gate/air3/geometry/setYBoxLength 0.00000001 mm
+/gate/air3/geometry/setZBoxLength 0.00000001 mm
+/gate/air3/placement/setRotationAxis 1 0 0
+/gate/air3/placement/setRotationAngle 90 deg
+/gate/air3/setMaterial Air
+/gate/air3/vis/setVisible 1
+
+
