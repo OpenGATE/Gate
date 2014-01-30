@@ -66,6 +66,24 @@ GateDoseActor::~GateDoseActor()  {
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
+void GateDoseActor::EnableDoseNormalisationToMax(bool b) {
+  mIsDoseNormalisationEnabled = b;
+  mDoseImage.SetNormalizeToMax(b);
+  mDoseImage.SetScaleFactor(1.0);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDoseActor::EnableDoseNormalisationToIntegral(bool b) {
+  mIsDoseNormalisationEnabled = b;
+  mDoseImage.SetNormalizeToIntegral(b);
+  mDoseImage.SetScaleFactor(1.0);
+}
+//-----------------------------------------------------------------------------
+
 //-----------------------------------------------------------------------------
 /// Construct
 void GateDoseActor::Construct() {
