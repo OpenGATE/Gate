@@ -1,0 +1,48 @@
+--------------------------
+ELECTRON BEAM RADIOTHERAPY
+     Clinac 2100C
+--------------------------
+
+!! WARNING : 
+!! This example should only be used for illustration purpose.
+!! Due to NDA with manufacturer, the geometry of the devices provided in the 
+!! macros have been modified and are not the real ones.
+
+
+--------------------------
+This example illustrates the simulation of a Clinac 2100C linear accelerator operating in 6MeV electron mode
+for a thoracic irradiation of a RANDO phantom
+
+
+--------------------------
+The linac head described in the macro linac_6MeV.mac consists in :
+
+   + a vacuum window : exit window in beryllium
+   + a 6MeV scattering foil : in tantalum
+   + an ionization chamber : kapton-air-copper slabs
+   + X and Y Jaws : defining a 20x20cm² aperture adapted to the 10x10cm² applicator
+   + a 10x10cm² applicator
+   + a 10x10cm² cerrobend cut-out
+   
+   
+--------------------------
+The phantom :
+
+   + a RANDO phantom
+   + SSD set to 100 cm, gantry 60 deg
+  
+
+--------------------------
+The source is described in the macro beam_6MeV.mac.
+
+It consists in a circular surface source.
+The electron spectrum is assumed to be gaussian with a mean energy of 7.2 MeV and a standard deviation of 3%.
+
+--------------------------
+The physics is described in the macro StandardPhys.mac
+
+Physics List Standard option 3
+
+
+
+--------------------------

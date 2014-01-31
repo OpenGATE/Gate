@@ -39,11 +39,6 @@ GateImage::GateImage() {
   resolution = G4ThreeVector(0.0, 0.0, 0.0);
   mPosition = G4ThreeVector(0.0, 0.0, 0.0);
   origin = G4ThreeVector(0.0, 0.0, 0.0);
-  transformMatrix.resize(9);
-  transformMatrix.clear();
-  transformMatrix[0] = 1;
-  transformMatrix[4] = 1;
-  transformMatrix[8] = 1; // Identity
   UpdateSizesFromResolutionAndHalfSize();
   mOutsideValue = 0;
   kCarTolerance = G4GeometryTolerance::GetInstance()->GetSurfaceTolerance();
@@ -1059,8 +1054,20 @@ void GateImage::ReadMHD(G4String filename) {
   origin[1] -= voxelSize[1]/2.0;
   origin[2] -= voxelSize[2]/2.0;
 
-  transformMatrix.resize(9);
-  for(int i=0; i<9; i++) transformMatrix[i] = mhd->transform[i];
+  // Convert mhd matrix to rotation matrix
+  G4ThreeVector row_x, row_y, row_z;
+  for(unsigned int i=0; i<3; i++) {
+    row_x[i] = mhd->transform[i*3];
+    row_y[i] = mhd->transform[i*3+1];
+    row_z[i] = mhd->transform[i*3+2];
+  }
+  transformMatrix.setRows(row_x, row_y, row_z);
+  if( !transformMatrix.row1().isNear(CLHEP::HepLorentzVector(row_x, 0.), 0.1) ||
+      !transformMatrix.row2().isNear(CLHEP::HepLorentzVector(row_y, 0.), 0.1) ||
+      !transformMatrix.row3().isNear(CLHEP::HepLorentzVector(row_z, 0.), 0.1) ) {
+      GateError(filename << " contains a transformation which is not a rotation. "
+                << "It is probably a flip and this is not handled.");
+  }
 
   UpdateSizesFromResolutionAndVoxelSize();
   Allocate();

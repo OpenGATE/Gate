@@ -1,0 +1,19 @@
+!INTERFILE :=
+!GENERAL DATA :=
+!data offset in bytes := 0
+!name of data file := data/CT_128_128_250_16uint.raw
+;
+!GENERAL IMAGE DATA :=
+!total number of images := 250
+imagedata byte order := LITTLEENDIAN
+;
+!number of images/energy window := 250
+!matrix size [1] := 128
+!matrix size [2] := 128
+!number format := unsigned integer
+!number of bytes per pixel := 2
+scaling factor (mm/pixel) [1] := 0.2
+scaling factor (mm/pixel) [2] := 0.2
+!number of slices := 250
+slice thickness (pixels) := 0.2
+!END OF INTERFILE :=

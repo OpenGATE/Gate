@@ -20,8 +20,9 @@
 #ifndef __GateImage_hh__
 #define __GateImage_hh__
 
-#include "globals.hh"
-#include "G4ThreeVector.hh"
+#include <globals.hh>
+#include <G4ThreeVector.hh>
+#include <G4RotationMatrix.hh>
 #include <vector>
 
 #include "GateAnalyzeHeader.hh"
@@ -82,7 +83,8 @@ public:
   inline G4ThreeVector GetOrigin()     const { return origin; }
   void SetOrigin(G4ThreeVector o) { origin = o; }
 
-  const std::vector<double> & GetTransformMatrix() const { return transformMatrix; }
+  const G4RotationMatrix & GetTransformMatrix() const { return transformMatrix; }
+  inline void SetTransformMatrix(const G4RotationMatrix &transMatrix) { transformMatrix = transMatrix; }
 
   bool HasSameResolutionThan(const GateImage & image) const;
   bool HasSameResolutionThan(const GateImage * pImage) const;
@@ -196,7 +198,7 @@ protected:
   G4ThreeVector resolution;
   G4ThreeVector voxelSize;
   G4ThreeVector origin;
-  std::vector<double> transformMatrix;
+  G4RotationMatrix transformMatrix;
   G4double      voxelVolume;
   G4double      kCarTolerance;
   G4ThreeVector halfSizeMinusVoxelCenter;
