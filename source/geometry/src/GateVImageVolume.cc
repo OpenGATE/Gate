@@ -280,7 +280,7 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
   }
 
   GateMessage("Volume",4,"voxel size" << pImage->GetVoxelSize() << G4endl);
-  GateMessage("Volume",4,"origin" << origin << G4endl);
+  GateMessage("Volume",4,"origin" << GetOrigin() << G4endl);
   GateMessageDec("Volume",4,"End GateVImageVolume::LoadImage("<<mImageFilename<<")" << G4endl);
 }
 //--------------------------------------------------------------------
@@ -415,7 +415,6 @@ void GateVImageVolume::DumpHLabelImage() {
     }
 
     // Write image
-    // DD(mHLabelImageFilename);
     output.Write(mHLabelImageFilename);
   }
 }
@@ -808,7 +807,6 @@ void GateVImageVolume::BuildDistanceTransfo()
   output.SetOrigin(pImage->GetOrigin());
   output.Allocate();
   double spacingFactor = pImage->GetVoxelSize().x();
-  // DD(spacingFactor);
   GateImage::iterator it = output.begin();
   lvoxel * pp = tmpOutput.getDataPointer();
   while (it < output.end()) {

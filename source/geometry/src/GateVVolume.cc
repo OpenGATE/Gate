@@ -20,7 +20,7 @@
 #include "G4RegionStore.hh"
 #include "G4VisAttributes.hh"
 #include "G4Region.hh"
-#include <G4VoxelLimits.hh>
+#include "G4VoxelLimits.hh"
 
 #include "GateVolumeMessenger.hh"
 #include "GateBox.hh"
@@ -76,9 +76,9 @@ GateVVolume::GateVVolume(const G4String& itsName,
     m_moveList(0),
     pMotherLogicalVolume(0),
     m_creator(0),
-    m_sensitiveDetector(0),
-    m_motherList(0),
-    mParent(0)
+  m_sensitiveDetector(0),
+  m_motherList(0),
+  mParent(0)
 {
 
   SetCreator(this);
@@ -110,14 +110,14 @@ GateVVolume::GateVVolume(const G4String& itsName,
   // Attach volume creator messenger
   pMessenger = new GateVolumeMessenger(this);
 
-  // Init origin
-  origin = G4ThreeVector(0.0, 0.0, 0.0);
+  // Init origin to MAX DOUBLE
+  m_origin = G4ThreeVector(DBL_MAX, DBL_MAX , DBL_MAX);
 
   // Register with the creator-store
   GateObjectStore::GetInstance()->RegisterCreator(this);
-
 }
 //----------------------------------------------------------------------------------------
+
 
 //----------------------------------------------------------------------------------------
 // Destructeur
@@ -159,11 +159,12 @@ GateVVolume::~GateVVolume()
 //--------------------------------------------------------------------
 void GateVVolume::SetOrigin(const G4ThreeVector & i)
 {
-  origin = i;
-  GateMessage("Volume",5,"Origin = " << origin << G4endl);
+  m_origin = i;
+  GateMessage("Volume",5,"Origin = " << m_origin << G4endl);
 }
 
 //--------------------------------------------------------------------
+
 
 //----------------------------------------------------------------------------------------
 // Construct the world volume
@@ -176,6 +177,7 @@ G4VPhysicalVolume* GateVVolume::Construct(G4bool flagUpdateOnly)
   return theListOfOwnPhysVolume[0];
 }
 //---------------------------------------------------------------------------------------
+
 
 //---------------------------------------------------------------------------------------
 // Construction de world volume and all children
@@ -231,8 +233,27 @@ void GateVVolume::ConstructGeometry(G4LogicalVolume* mother_log, G4bool flagUpda
 
   GateMessage("Geometry", 7, " GateVVolume::ConstructGeometry -- end ; flagUpdateOnly = " << flagUpdateOnly << G4endl;);
 
+
+  // If the origin has not been set (when read image file), we set it
+  // at the center of the object. This origin is only used 1) when
+  // TranslateAtThisIsocenter is set or 2) for some image actor that
+  // copy this origin to the output file.
+  if (m_origin[0] == DBL_MAX) {
+    G4VoxelLimits limits;
+    G4double min, max;
+    G4AffineTransform at;
+    double size[3];
+    GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, at, min, max);
+    size[0] = max-min;
+    GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, at, min, max);
+    size[1] = max-min;
+    GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, at, min, max);
+    size[2] = max-min;
+    m_origin = G4ThreeVector(-size[0]/2.0, -size[1]/2.0, -size[2]/2.0);
+  }
 }
 //----------------------------------------------------------------------------------------
+
 
 //----------------------------------------------------------------------------------------
 // Construct physical volume
@@ -346,6 +367,7 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
 }
 //----------------------------------------------------------------------------------------
 
+
 //----------------------------------------------------------------------------------------
 // Tell the creator that the logical volume should be attached to the crystal-SD
 void GateVVolume::AttachCrystalSD()
@@ -375,6 +397,7 @@ void GateVVolume::AttachCrystalSD()
 
 }
 //----------------------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------------------
 // Tell the creator that the logical volume should be attached to the phantom-SD
@@ -418,6 +441,7 @@ G4bool GateVVolume::CheckOutputExistence()
   return flag;
 }
 //-------------------------------------------------------------------------------------------
+
 
 //-------------------------------------------------------------------------------------------
 void GateVVolume::AttachOutputToVolume()
@@ -482,6 +506,7 @@ void GateVVolume::DestroyGeometry()
 }
 //-----------------------------------------------------------------------------------------
 
+
 //----------------------------------------------------------------------------------------
 // Destroy all geometry
 void GateVVolume::DestroyOwnPhysicalVolumes()
@@ -508,6 +533,7 @@ void GateVVolume::DestroyOwnPhysicalVolumes()
 }
 //-----------------------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------------------
 // Method automatically called before the construction of a volume.
 // It retrieves a material from its name, and stores a pointer to this material into pOwnMaterial
@@ -519,11 +545,12 @@ void GateVVolume::DefineOwnMaterials()
   // If we could not get the material, it is unsafe to proceed: abort!
   if (!pOwnMaterial)
     G4Exception( "GateVVolume::DefineOwnMaterials", "DefineOwnMaterials", FatalException, "GateVVolume::DefineOwnMaterials: \n"
-	      	"Could not find a material needed for the construction of the scene!\n"
-		"Computation aborted!!!");
+                 "Could not find a material needed for the construction of the scene!\n"
+                 "Computation aborted!!!");
 
 }
 //-----------------------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------------------
 // Returns the inserter's placement
@@ -532,6 +559,7 @@ GateVolumePlacement* GateVVolume::GetVolumePlacement() const
   return (GateVolumePlacement*) ((m_moveList) ? m_moveList->GetRepeater(0) : 0 );
 }
 //-----------------------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------------------
 // Method automatically called to color-code the object when its material changes.
@@ -543,10 +571,10 @@ void GateVVolume::AutoSetColor()
 
   pOwnVisAtt->SetForceWireframe(false);
   if ( mMaterialName=="worldDefaultAir" )
-  {
-    pOwnVisAtt->SetColor(G4Colour(1.0, 1.0, 1.0));
-    pOwnVisAtt->SetForceWireframe(true);
-  }
+    {
+      pOwnVisAtt->SetColor(G4Colour(1.0, 1.0, 1.0));
+      pOwnVisAtt->SetForceWireframe(true);
+    }
   else if ( mMaterialName=="Air" )
     pOwnVisAtt->SetColor(G4Colour(1.0, 1.0, 1.0));
   else if ( mMaterialName=="Water" )
@@ -577,6 +605,7 @@ void GateVVolume::AutoSetColor()
 }
 //-----------------------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------------------
 // Print to stdout a description of the inserter
 void GateVVolume::Describe(size_t indent)
@@ -592,6 +621,8 @@ void GateVVolume::Describe(size_t indent)
 }
 //------------------------------------------------------------------------------------------
 
+
+//------------------------------------------------------------------------------------------
 /* PY Descourt 08/09/2009 */
 void GateVVolume::AttachARFSD()
 {
@@ -605,9 +636,10 @@ void GateVVolume::AttachARFSD()
     return;
   }
 
-G4cout << " GateVObjectCreator::AttachARFSD() :::: created an attachment to ARF Sensitive Detector " << arfSD<<G4endl;
+  G4cout << " GateVObjectCreator::AttachARFSD() :::: created an attachment to ARF Sensitive Detector " << arfSD<<G4endl;
 
   // If the attachement is allowed, store the crystal-SD pointer
   m_sensitiveDetector = arfSD;
 }
 /* PY Descourt 08/09/2009 */
+//------------------------------------------------------------------------------------------
