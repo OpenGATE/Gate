@@ -77,8 +77,10 @@ m_fileName = fileName;
   // extract folder for fileName if any
   size_t found;
   found=fileName.find_last_of("/\\");
-  G4String folder = fileName.substr(0,found);
-  m_dataFileName = folder+"/"+m_dataFileName;
+  if (found < std::string::npos) {
+    G4String folder = fileName.substr(0,found);
+    m_dataFileName = folder+"/"+m_dataFileName;
+  }
 
   G4cout << " Header read from       '" << m_fileName << "'" << G4endl;
   G4cout << " Data file name         '" << m_dataFileName << "'" << G4endl;
