@@ -42,7 +42,6 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
   pImage=0;
   mHalfSize = G4ThreeVector(0,0,0);
   mIsoCenterIsSetByUser = false;
-  mOriginIsSetByUser = false;
   pOwnMaterial = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial("Air");
   mBuildDistanceTransfo = false;
   mLoadImageMaterialsFromHounsfieldTable = false;
@@ -96,7 +95,7 @@ void GateVImageVolume::SetIsoCenter(const G4ThreeVector & i)
 //--------------------------------------------------------------------
 void GateVImageVolume::UpdatePositionWithIsoCenter()
 {
-  if (mIsoCenterIsSetByUser || mOriginIsSetByUser) {
+  if (mIsoCenterIsSetByUser) {
     static int n=0;
     if (n==0) {
       mInitialTranslation = GetVolumePlacement()->GetTranslation();
@@ -104,14 +103,6 @@ void GateVImageVolume::UpdatePositionWithIsoCenter()
     }
 
     const G4ThreeVector & tcurrent = mInitialTranslation;//GetVolumePlacement()->GetTranslation();
-
-    // Get the origin // FIXME unuseful now (because set by LoadImage)
-    // if (!mOriginIsSetByUser) {
-    //   origin = GetImage()->GetOrigin();
-    // }
-    if (!mOriginIsSetByUser) {
-      GateError("mOriginIsSetByUser MUST be true here");
-    }
 
     GateMessage("Volume",3,"Current T = " << tcurrent << G4endl);
     GateMessage("Volume",3,"Isocenter = " << GetIsoCenter() << G4endl);
@@ -123,7 +114,6 @@ void GateVImageVolume::UpdatePositionWithIsoCenter()
     G4ThreeVector q = mIsoCenter - GetOrigin();
     q -= mTransformMatrix*GetHalfSize();
     q = tcurrent - q;
-
     GetVolumePlacement()->SetTranslation(q);
   }
 }
@@ -270,8 +260,8 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
     pImage->SetOutsideValue(  pImage->GetMinValue() - 1 );
   }
 
-  // Get origin from the image
-  SetOriginByUser(pImage->GetOrigin());
+  // Set volume origin from the image origin
+  SetOrigin(pImage->GetOrigin());
 
   // Account for image rotation matrix: compose image and current rotations
   static bool pImageTransformHasBeenApplied = false;
@@ -509,9 +499,9 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
   std::istringstream is(buffer);
 
   is >> firstline;
-  
+
   if (is.eof()){
-    
+
   for (G4int iCol=0; iCol<firstline; iCol++) {
     inFile.getline(buffer,200);
     is.clear();
@@ -538,24 +528,24 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
     }
 
   mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
-   
+
 
   m_voxelAttributesTranslation[GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(material) ] =
       new G4VisAttributes(visible, G4Colour(red, green, blue, alpha));
   }
 
   }else{
-  
+
   inFile.close();
   std::ifstream is;
   OpenFileInput(mRangeToImageMaterialTableFilename, is);
   mRangeMaterialTable.Reset();
 
   while (is){
-  
+
   is >> r1 >> r2;
   is >> material;
-  
+
   if(r2> pImage->GetOutsideValue()+1){
     if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
       mRangeMaterialTable.AddMaterial(r1,r2,material);
@@ -563,7 +553,7 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
   }
   mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
   }
-  
+
   }
   else {G4cout << "Error opening file." << G4endl;}
 

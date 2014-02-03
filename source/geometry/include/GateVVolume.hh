@@ -208,7 +208,7 @@ public :
   virtual G4bool CheckOutputExistence();
 
   // Origin (coordinate of the corner)
-  void SetOriginByUser(const G4ThreeVector & i);
+  void SetOrigin(const G4ThreeVector & i);
   inline G4ThreeVector GetOrigin() const { return origin; }
 
 protected :
@@ -286,7 +286,6 @@ protected :
 
   // Some volume can have an origin, store it.
   G4ThreeVector origin;
-  G4bool        mOriginIsSetByUser;
 
 private :
 
