@@ -75,10 +75,16 @@ m_fileName = fileName;
     m_matrixSize[i] = m_dim[i] * m_pixelSize[i];
 
   // extract folder for fileName if any
-  size_t found;
-  found=fileName.find_last_of("/\\");
-  G4String folder = fileName.substr(0,found);
-  m_dataFileName = folder+"/"+m_dataFileName;
+  //size_t found;
+  //found=fileName.find_last_of("/\\");
+  //G4String folder = fileName.substr(0,found);
+  //m_dataFileName = folder+"/"+m_dataFileName;
+  
+  //int l = fileName.length();
+  //G4cout << "fileName=" << fileName << G4endl; 
+  m_dataFileName=fileName.replace(fileName.length()-3,3,"i33");
+  G4cout << "m_dataFileName=" << m_dataFileName << G4endl;
+
 
   G4cout << " Header read from       '" << m_fileName << "'" << G4endl;
   G4cout << " Data file name         '" << m_dataFileName << "'" << G4endl;
