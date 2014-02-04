@@ -36,9 +36,18 @@ GateHybridDoseActor::GateHybridDoseActor(G4String name, G4int depth) :
   mCurrentEvent=-1;
   pMessenger = new GateHybridDoseActorMessenger(this);
   mMaterialHandler = GateMaterialMuHandler::GetInstance();
-  mIsEdepImageEnabled = false;
+
+  mIsDoseImageEnabled = true;
   mIsDoseUncertaintyImageEnabled = false;
-  
+  mIsPrimaryDoseImageEnabled = false;
+  mIsPrimaryDoseUncertaintyImageEnabled = false;
+  mIsSecondaryDoseImageEnabled = false;
+  mIsSecondaryDoseUncertaintyImageEnabled = false;
+
+  mIsLastHitEventImageEnabled = false;
+  mIsPrimaryLastHitEventImageEnabled = false;
+  mIsSecondaryLastHitEventImageEnabled = false;
+
   mIsMaterialAndMuTableInitialized = false;
 
   // Create a 'MultiplicityActor' if not exist
@@ -85,10 +94,8 @@ void GateHybridDoseActor::Construct() {
   mSteppingManager = G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager();
   
   // Enable callbacks
-  EnableBeginOfRunAction(false);
+  EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
-  EnablePreUserTrackingAction(false);
-  EnablePostUserTrackingAction(false);
   EnableUserSteppingAction(true);
 
   // Affine transform and rotation matrix for Raycasting
@@ -113,50 +120,69 @@ void GateHybridDoseActor::Construct() {
 //   WARNING : 'Hybrid Dose Actor' inherits automatically the geometric properties of the attached volume
 //   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxelSize << G4endl);
       
-  // Output Filename
-  mDoseFilename = G4String(removeExtension(mSaveFilename))+"-Dose."+G4String(getExtension(mSaveFilename));
-  mEdepFilename = G4String(removeExtension(mSaveFilename))+"-Edep."+G4String(getExtension(mSaveFilename));
-//   GateMessage("Actor", 0, "taille : " << mResolution << " " << mHalfSize << " " << mPosition);
-  if (mIsEdepImageEnabled) {
-    mEdepImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mEdepImage.Allocate();
-    mEdepImage.SetFilename(mEdepFilename);
-    mEdepImage.SetOrigin(mOrigin);
+  // Total dose map initialisation
+  mDoseFilename = G4String(removeExtension(mSaveFilename))+"-totalDose."+G4String(getExtension(mSaveFilename));
+  if (mIsDoseImageEnabled)
+  {
+    mDoseImage.EnableSquaredImage(false);
+    mDoseImage.EnableUncertaintyImage(mIsDoseUncertaintyImageEnabled);
+    mDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    // Force the computation of squared image if uncertainty is enabled
+    if(mIsDoseUncertaintyImageEnabled)
+    {
+      mDoseImage.EnableSquaredImage(true);
+      mIsLastHitEventImageEnabled = true;
+      mLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+      mLastHitEventImage.Allocate();
+    }
+    mDoseImage.Allocate();
+    mDoseImage.SetFilename(mDoseFilename);
   }
-  mDoseImage.EnableUncertaintyImage(mIsDoseUncertaintyImageEnabled);
-  mDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-  //mDoseImage.SetScaleFactor(1e12/mDoseImage.GetVoxelVolume());
-  mDoseImage.Allocate();
-  mDoseImage.SetFilename(mDoseFilename);
-  mDoseImage.SetOrigin(mOrigin);
 
-  mPDoseFilename = G4String(removeExtension(mSaveFilename))+"-PrimaryDose."+G4String(getExtension(mSaveFilename));
-
-  mPrimaryDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-  //mDoseImage.SetScaleFactor(1e12/mDoseImage.GetVoxelVolume());
-  mPrimaryDoseImage.Allocate();
-  mPrimaryDoseImage.SetFilename(mPDoseFilename);
-  mPrimaryDoseImage.SetOrigin(mOrigin);
-
-  mSDoseFilename = G4String(removeExtension(mSaveFilename))+"-SecondaryDose."+G4String(getExtension(mSaveFilename));
-  
-  mSecondaryDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-  //mDoseImage.SetScaleFactor(1e12/mDoseImage.GetVoxelVolume());
-  mSecondaryDoseImage.Allocate();
-  mSecondaryDoseImage.SetFilename(mSDoseFilename);
-  mSecondaryDoseImage.SetOrigin(mOrigin);
-  //GateMessage("Actor", 0, " Activation image dose" << G4endl);
-  if(mIsDoseUncertaintyImageEnabled){
-    mLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mLastHitEventImage.Allocate();
-    mIsLastHitEventImageEnabled = true;
+  // Primary dose map initialisation
+  mPrimaryDoseFilename = G4String(removeExtension(mSaveFilename))+"-primaryDose."+G4String(getExtension(mSaveFilename));
+  if (mIsPrimaryDoseImageEnabled)
+  {
+    mPrimaryDoseImage.EnableSquaredImage(false);
+    mPrimaryDoseImage.EnableUncertaintyImage(mIsPrimaryDoseUncertaintyImageEnabled);
+    mPrimaryDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    // Force the computation of squared image if uncertainty is enabled
+    if(mIsPrimaryDoseUncertaintyImageEnabled)
+    {
+      mPrimaryDoseImage.EnableSquaredImage(true);
+      mIsPrimaryLastHitEventImageEnabled = true;
+      mPrimaryLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+      mPrimaryLastHitEventImage.Allocate();
+    }
+    mPrimaryDoseImage.Allocate();
+    mPrimaryDoseImage.SetFilename(mPrimaryDoseFilename);
   }
-  //GateMessage("Actor", 0, " Activé  " << G4endl);
+
+  // Secondary dose map initialisation
+  mSecondaryDoseFilename = G4String(removeExtension(mSaveFilename))+"-secondaryDose."+G4String(getExtension(mSaveFilename));
+  if (mIsSecondaryDoseImageEnabled)
+  {
+    mSecondaryDoseImage.EnableSquaredImage(false);
+    mSecondaryDoseImage.EnableUncertaintyImage(mIsSecondaryDoseUncertaintyImageEnabled);
+    mSecondaryDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    // Force the computation of squared image if uncertainty is enabled
+    if(mIsSecondaryDoseUncertaintyImageEnabled)
+    {
+      mSecondaryDoseImage.EnableSquaredImage(true);
+      mIsSecondaryLastHitEventImageEnabled = true;
+      mSecondaryLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+      mSecondaryLastHitEventImage.Allocate();
+    }
+    mSecondaryDoseImage.Allocate();
+    mSecondaryDoseImage.SetFilename(mSecondaryDoseFilename);
+  }
   
+//   mDoseImage.SetOrigin(mOrigin);
+//   mPrimaryDoseImage.SetOrigin(mOrigin);
+//   mSecondaryDoseImage.SetOrigin(mOrigin);
+
   ConversionFactor = 1.60217653e-19 * 1.e6 * 1.e3 * 1.e3;
   VoxelVolume = GetDoselVolume();
-  outputEnergy = 0.0;
-  totalEnergy = 0.0;
   ResetData();
 }
 //-----------------------------------------------------------------------------
@@ -191,36 +217,47 @@ void GateHybridDoseActor::InitializeMaterialAndMuTable()
     mIsMaterialAndMuTableInitialized = true;
   }
 }
-
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 /// Save data
-void GateHybridDoseActor::SaveData() {
-  std::cout.precision(20);
-  // GateMessage("Actor", 0, " output energy : " << outputEnergy << G4endl);
-  // GateMessage("Actor", 0, " total energy : " << totalEnergy << G4endl);
-  // GateMessage("Actor", 0, " sum : " << totalEnergy+outputEnergy << G4endl);
-  mDoseImage.SaveData(mCurrentEvent+1, false);
-  mPrimaryDoseImage.SaveData(mCurrentEvent+1, false);
-  mSecondaryDoseImage.SaveData(mCurrentEvent+1, false);
-//   mEdepImage.SaveData(mCurrentEvent+1, false);
+void GateHybridDoseActor::SaveData()
+{
+  if(mIsDoseImageEnabled) { mDoseImage.SaveData(mCurrentEvent+1, false); }
+  if(mIsPrimaryDoseImageEnabled) { mPrimaryDoseImage.SaveData(mCurrentEvent+1, false); }
+  if(mIsSecondaryDoseImageEnabled) { mSecondaryDoseImage.SaveData(mCurrentEvent+1, false); }
+
+  if(mIsLastHitEventImageEnabled) { mLastHitEventImage.Fill(-1); /* reset */ }
+  if(mIsPrimaryLastHitEventImageEnabled) { mPrimaryLastHitEventImage.Fill(-1); /* reset */ }
+  if(mIsSecondaryLastHitEventImageEnabled) { mSecondaryLastHitEventImage.Fill(-1); /* reset */ }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActor::ResetData() {
-  mDoseImage.Reset();
-  mPrimaryDoseImage.Reset();
-  mSecondaryDoseImage.Reset();
+void GateHybridDoseActor::ResetData()
+{
+  if(mIsLastHitEventImageEnabled) { mLastHitEventImage.Fill(-1); }
+  if(mIsPrimaryLastHitEventImageEnabled) { mPrimaryLastHitEventImage.Fill(-1); }
+  if(mIsSecondaryLastHitEventImageEnabled) { mSecondaryLastHitEventImage.Fill(-1); }
+
+  if(mIsDoseImageEnabled) { mDoseImage.Reset(); }
+  if(mIsPrimaryDoseImageEnabled) { mPrimaryDoseImage.Reset(); }
+  if(mIsSecondaryDoseImageEnabled) { mSecondaryDoseImage.Reset(); }  
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateHybridDoseActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
-  GateDebugMessage("Actor", 0, "GateDoseActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateHybridDoseActor -- Begin of Run" << G4endl);
   // ResetData(); // Do no reset here !! (when multiple run);
+
+  // security on attachedVolume
+  GateVImageVolume* volume = dynamic_cast<GateVImageVolume*>(GetVolume());
+  if(!volume) { GateError("Error in " << GetName() << ": GateVImageVolume doesn't exist"); }
+  
+  // fast material and mu access
+  if(!mIsMaterialAndMuTableInitialized) { InitializeMaterialAndMuTable(); }
 }
 //-----------------------------------------------------------------------------
 
@@ -233,22 +270,15 @@ void GateHybridDoseActor::BeginOfEventAction(const G4Event *) {
   {
     GateMessage("Actor", 0, " BeginOfEventAction - " << mCurrentEvent << " - primary weight = " << 1./mPrimaryMultiplicity << " - secondary weight = " << 1./mSecondaryMultiplicity << G4endl);
   }
-  
-  if(!mIsMaterialAndMuTableInitialized) { InitializeMaterialAndMuTable(); }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActor::PreUserTrackingAction(const GateVVolume *, const G4Track *)
-{
-//    GateMessage("Actor", 0, " TOTO "<< G4endl);
-}
+void GateHybridDoseActor::PreUserTrackingAction(const GateVVolume *, const G4Track *) {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActor::PostUserTrackingAction(const GateVVolume *, const G4Track* t){
-  outputEnergy+= t->GetKineticEnergy();
-}
+void GateHybridDoseActor::PostUserTrackingAction(const GateVVolume *, const G4Track *) {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -288,11 +318,11 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
   G4StepPoint *preStep(step->GetPreStepPoint());
   G4ThreeVector position = preStep->GetPosition();
   G4ThreeVector momentum = preStep->GetMomentumDirection();
+  G4double energy = preStep->GetKineticEnergy();
 
 //   GateMessage("Actor", 0, " before : position " << position << " momentum " << momentum << G4endl);
   position = worldToVolume.TransformPoint(position);  
   momentum.transform(mRotationMatrix);
-  G4double energy = preStep->GetKineticEnergy();
 //   GateMessage("Actor", 0, " after  : position " << position << " momentum " << momentum << G4endl);
   
   int xincr = getIncrement(momentum.x());
@@ -377,9 +407,9 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
   
   int lineSize = (int)lrint(mResolution.x());
   int planeSize = (int)lrint(mResolution.x()*mResolution.y());
-  int voxelIndex = 0;
+  int index = 0;
   G4Material *material;
-  double doseValue = 0.0;
+  double dose = 0.0;
   double L = 0.0;
   
   double hybridTrackWeight = pHybridMultiplicityActor->GetHybridTrackWeight();
@@ -388,11 +418,28 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
   double mu(0.0);
   double muen(0.0);
 
-//   GateMessage("ActorDose", 0, "hybridWeight = " << hybridTrackWeight << " trackWeight = " << step->GetTrack()->GetWeight() << G4endl);
-  GateVImageVolume* volume = dynamic_cast<GateVImageVolume*>(GetVolume());
-  if(!volume) { GateError("Error in " << GetName() << ": GateVImageVolume doesn't exist"); }
-  G4bool isPrimaryParticle = false;
-  if(step->GetTrack()->GetParentID() == 0) { isPrimaryParticle = true; }
+  // test on dose contribution: primary or secondary ?
+  GateImageWithStatistic *currentDoseImage = 0;
+  GateImage *currentLastHitImage = 0;
+  bool isCurrentLastHitImageEnabled = false;
+  bool isCurrentDoseUncertaintyEnabled = false;
+  if(step->GetTrack()->GetParentID() == 0)
+  {
+    if(mIsPrimaryDoseImageEnabled)
+    {
+      currentDoseImage = &mPrimaryDoseImage;
+      isCurrentLastHitImageEnabled = mIsPrimaryLastHitEventImageEnabled;
+      isCurrentDoseUncertaintyEnabled = mIsPrimaryDoseImageEnabled;
+      currentLastHitImage = &mPrimaryLastHitEventImage;
+    }
+  }
+  else if(mIsSecondaryDoseImageEnabled)
+  {
+    currentDoseImage = &mSecondaryDoseImage;
+    isCurrentLastHitImageEnabled = mIsSecondaryLastHitEventImageEnabled;
+    isCurrentDoseUncertaintyEnabled = mIsSecondaryDoseImageEnabled;
+    currentLastHitImage = &mSecondaryLastHitEventImage;
+  }
   
   while(L < Ltot-0.00001)
   {
@@ -403,10 +450,33 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
 //     GateMessage("Actor", 0, "material 1 : " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(x,y,z)) << G4endl);    
 //     GateMessage("Actor", 0, "label : " << volume->GetImage()->GetValue(0,0,0) << " " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(0,0,0)) << G4endl);    
 
-    voxelIndex = x+y*lineSize+z*planeSize;
-    material = theListOfMaterial[voxelIndex];
-    mu = theListOfMuTable[voxelIndex]->GetMu(energy)*material->GetDensity()/(g/cm3);
-    muen = theListOfMuTable[voxelIndex]->GetMuEn(energy);
+    index = x+y*lineSize+z*planeSize;
+
+    bool sameEvent = true;
+    if(mIsLastHitEventImageEnabled)
+    {
+      GateDebugMessage("Actor", 2,  "GateHybridDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
+      if(mCurrentEvent != mLastHitEventImage.GetValue(index))
+      {
+	sameEvent = false;
+	mLastHitEventImage.SetValue(index, mCurrentEvent);
+      }
+    }
+    
+    bool currentContributionSameEvent = true;
+    if(isCurrentLastHitImageEnabled)
+    {
+      GateDebugMessage("Actor", 2,  "GateHybridDoseActor -- UserSteppingActionInVoxel: Last event in index = " << currentLastHitImage->GetValue(index) << G4endl);
+      if(mCurrentEvent != currentLastHitImage->GetValue(index))
+      {
+	currentContributionSameEvent = false;
+	currentLastHitImage->SetValue(index, mCurrentEvent);
+      }
+    }
+    
+    material = theListOfMaterial[index];
+    mu = theListOfMuTable[index]->GetMu(energy)*material->GetDensity()/(g/cm3);
+    muen = theListOfMuTable[index]->GetMuEn(energy);
 
     if(Rx < Ry && Rx < Rz){
       delta_out = delta_in*exp(-mu*Rx/10.);
@@ -433,16 +503,31 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
       z+=zincr;
     }
     
-    doseValue = ConversionFactor*energy*muen*(delta_in-delta_out)/mu/VoxelVolume;
+    dose = ConversionFactor*energy*muen*(delta_in-delta_out)/mu/VoxelVolume;
+
+    if(mIsDoseImageEnabled)
+    {
+      if(mIsDoseUncertaintyImageEnabled)
+      {
+	if(sameEvent) { mDoseImage.AddTempValue(index, dose); }
+	else { mDoseImage.AddValueAndUpdate(index, dose); }
+      }
+      else { mDoseImage.AddValue(index, dose); }
+    }
+
+    if(currentDoseImage)
+    {
+      if(isCurrentDoseUncertaintyEnabled)
+      {
+	if(currentContributionSameEvent) { currentDoseImage->AddTempValue(index, dose); }
+	else { currentDoseImage->AddValueAndUpdate(index, dose); }
+      }
+      else { currentDoseImage->AddValue(index, dose); }
+    }
     
-    if(isPrimaryParticle) {
-      mDoseImage.AddValue(voxelIndex, doseValue);
-      mPrimaryDoseImage.AddValue(voxelIndex, doseValue);
-    }
-    else {
-      mDoseImage.AddValue(voxelIndex, doseValue);
-      mSecondaryDoseImage.AddValue(voxelIndex, doseValue);
-    }
+//     if(mIsDoseImageEnabled) { mDoseImage.AddValue(index, doseValue); }
+//     if(currentDoseImage) { currentDoseImage->AddValue(index, doseValue); }
+    
     delta_in = delta_out;
   }
 

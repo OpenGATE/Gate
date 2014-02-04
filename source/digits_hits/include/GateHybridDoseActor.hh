@@ -42,8 +42,13 @@ class GateHybridDoseActor : public GateVImageActor
   // Constructs the sensor
   virtual void Construct();
 
-  void EnableEdepImage(bool b) { mIsEdepImageEnabled = b; }
+  void EnableDoseImage(bool b) { mIsDoseImageEnabled = b; }
   void EnableDoseUncertaintyImage(bool b) { mIsDoseUncertaintyImageEnabled = b; }
+  void EnablePrimaryDoseImage(bool b) { mIsPrimaryDoseImageEnabled = b; }
+  void EnablePrimaryDoseUncertaintyImage(bool b) { mIsPrimaryDoseUncertaintyImageEnabled = b; }
+  void EnableSecondaryDoseImage(bool b) { mIsSecondaryDoseImageEnabled = b; }
+  void EnableSecondaryDoseUncertaintyImage(bool b) { mIsSecondaryDoseUncertaintyImageEnabled = b; }
+
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
   
@@ -78,16 +83,28 @@ protected:
   GateHybridDoseActorMessenger *pMessenger;
   
   GateImageWithStatistic mDoseImage;
-  GateImageWithStatistic mPrimaryDoseImage;
-  GateImageWithStatistic mSecondaryDoseImage;
-  GateImageWithStatistic mEdepImage;
   GateImage mLastHitEventImage;
-
+  bool mIsLastHitEventImageEnabled;
+  bool mIsDoseImageEnabled;
+  bool mIsDoseUncertaintyImageEnabled;
+  
+  GateImageWithStatistic mPrimaryDoseImage;
+  GateImage mPrimaryLastHitEventImage;
+  bool mIsPrimaryLastHitEventImageEnabled;
+  bool mIsPrimaryDoseImageEnabled;
+  bool mIsPrimaryDoseUncertaintyImageEnabled;
+  
+  GateImageWithStatistic mSecondaryDoseImage;
+  GateImage mSecondaryLastHitEventImage;
+  bool mIsSecondaryLastHitEventImageEnabled;
+  bool mIsSecondaryDoseImageEnabled;
+  bool mIsSecondaryDoseUncertaintyImageEnabled;
+  
   GateMaterialMuHandler* mMaterialHandler;
   G4String mDoseFilename;
-  G4String mPDoseFilename;
-  G4String mSDoseFilename;
-  G4String mEdepFilename;
+  G4String mPrimaryDoseFilename;
+  G4String mSecondaryDoseFilename;
+
   G4double ConversionFactor;
   G4double VoxelVolume;
   
@@ -99,15 +116,10 @@ protected:
   std::vector<G4Material *> theListOfMaterial;
   std::vector<GateMuTable *> theListOfMuTable;
   
-  bool mIsEdepImageEnabled;
-  bool mIsDoseUncertaintyImageEnabled;
-  bool mIsLastHitEventImageEnabled;
   int mCurrentEvent;
   G4SteppingManager *mSteppingManager;
   G4RotationMatrix mRotationMatrix;
   G4AffineTransform worldToVolume;
-  G4double outputEnergy;
-  G4double totalEnergy;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(HybridDoseActor,GateHybridDoseActor)

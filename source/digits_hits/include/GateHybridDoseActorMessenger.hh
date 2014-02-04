@@ -34,10 +34,14 @@ public:
 
 protected:
   GateHybridDoseActor * pDoseActor;
-  
+
   G4UIcmdWithABool * pEnableDoseCmd;
-  G4UIcmdWithABool * pEnableEdepCmd;
   G4UIcmdWithABool * pEnableDoseUncertaintyCmd;
+  G4UIcmdWithABool * pEnablePrimaryDoseCmd;
+  G4UIcmdWithABool * pEnablePrimaryDoseUncertaintyCmd;
+  G4UIcmdWithABool * pEnableSecondaryDoseCmd;
+  G4UIcmdWithABool * pEnableSecondaryDoseUncertaintyCmd;
+
   G4UIcmdWithAnInteger * pSetPrimaryMultiplicityCmd;
   G4UIcmdWithAnInteger * pSetSecondaryMultiplicityCmd;
   GateUIcmdWithTwoDouble *pSetSecondaryMultiplicityCmd2;
