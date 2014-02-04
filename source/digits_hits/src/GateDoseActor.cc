@@ -66,6 +66,24 @@ GateDoseActor::~GateDoseActor()  {
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
+void GateDoseActor::EnableDoseNormalisationToMax(bool b) {
+  mIsDoseNormalisationEnabled = b;
+  mDoseImage.SetNormalizeToMax(b);
+  mDoseImage.SetScaleFactor(1.0);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDoseActor::EnableDoseNormalisationToIntegral(bool b) {
+  mIsDoseNormalisationEnabled = b;
+  mDoseImage.SetNormalizeToIntegral(b);
+  mDoseImage.SetScaleFactor(1.0);
+}
+//-----------------------------------------------------------------------------
+
 //-----------------------------------------------------------------------------
 /// Construct
 void GateDoseActor::Construct() {
@@ -78,7 +96,7 @@ void GateDoseActor::Construct() {
 
   // Record the stepHitType
   mUserStepHitType = mStepHitType;
-  
+
   // Enable callbacks
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
@@ -109,30 +127,7 @@ void GateDoseActor::Construct() {
   mRBE1BioDoseFilename = G4String(removeExtension(mSaveFilename))+"-RBE1-BioDose."+G4String(getExtension(mSaveFilename));
 
 
-  /*
   // Set origin, take into account the origin of the attached volume (if exist)
-  G4VoxelLimits limits;
-  G4double min, max;
-  G4AffineTransform origin;
-  double size[3];
-  mVolume->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, origin, min, max);
-  size[0] = max-min;
-  mVolume->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, origin, min, max);
-  size[1] = max-min;
-  mVolume->GetLogicalVolume()->GetSolid()->CalculateExtent(kZAxis, limits, origin, min, max);
-  size[2] = max-min;
-
-  G4ThreeVector offset;
-  offset[0] = size[0]/2.0 - mHalfSize.x();
-  offset[1] = size[1]/2.0 - mHalfSize.y();
-  offset[2] = size[2]/2.0 - mHalfSize.z();
-
-  offset[0] = mVolume->GetOrigin().x()+offset[0];
-  offset[1] = mVolume->GetOrigin().y()+offset[1];
-  offset[2] = mVolume->GetOrigin().z()+offset[2];
-  offset = offset + mPosition;
-  */
-
   G4ThreeVector offset = mOrigin;
   mEdepImage.SetOrigin(offset);
   mDoseImage.SetOrigin(offset);
@@ -143,6 +138,18 @@ void GateDoseActor::Construct() {
   mRBE1BetaImage.SetOrigin(offset);
   mRBE1FactorImage.SetOrigin(offset);
   mRBE1BioDoseImage.SetOrigin(offset);
+
+  // Set transformMatrix
+  G4RotationMatrix m = mImage.GetTransformMatrix();
+  mEdepImage.SetTransformMatrix(m);
+  mDoseImage.SetTransformMatrix(m);
+  mNumberOfHitsImage.SetTransformMatrix(m);
+  mLastHitEventImage.SetTransformMatrix(m);
+  mDoseToWaterImage.SetTransformMatrix(m);
+  mRBE1AlphaImage.SetTransformMatrix(m);
+  mRBE1BetaImage.SetTransformMatrix(m);
+  mRBE1FactorImage.SetTransformMatrix(m);
+  mRBE1BioDoseImage.SetTransformMatrix(m);
 
   // Set Overwrite flag
   mEdepImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);

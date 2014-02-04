@@ -69,10 +69,10 @@ class GatePhaseSpaceActor : public GateVActor
   void SetIsSecStored(bool b){EnableSec = b;}
   void SetIsAllStep(bool b){EnableAllStep = b;}
 
-  void SetUseVolumeFrame(){mUseVolFrame=true;}
+  void SetUseVolumeFrame(bool b){mUseVolFrame=b;}
   bool GetUseVolumeFrame(){return mUseVolFrame;}
 
-  void SetStoreOutgoingParticles(){mStoreOutPart=true;}
+  void SetStoreOutgoingParticles(bool b){mStoreOutPart=b;}
   bool GetStoreOutgoingParticles(){return mStoreOutPart;}
 
   void SetMaxFileSize(double size){mFileSize=size;}

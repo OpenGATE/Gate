@@ -49,6 +49,8 @@ class GateImageWithStatistic
   void EnableSquaredImage(bool b)     { mIsSquaredImageEnabled = b; }
   void EnableUncertaintyImage(bool b) { mIsUncertaintyImageEnabled = b; }
   void SetScaleFactor(double s);
+  void SetNormalizeToMax(bool b)      { mNormalizedToMax = b; mNormalizedToIntegral = !b; }
+  void SetNormalizeToIntegral(bool b) { mNormalizedToMax = !b; mNormalizedToIntegral = b; }
 
   void SetFilename(G4String f);
   void SaveData(int numberOfEvents, bool normalise=false);
@@ -63,6 +65,7 @@ class GateImageWithStatistic
 
   void SetOrigin(G4ThreeVector v);
   void SetOverWriteFilesFlag(bool b) { mOverWriteFilesFlag = b; }
+  void SetTransformMatrix(const G4RotationMatrix & m);
 
   protected:
   GateImage mValueImage;
@@ -71,8 +74,9 @@ class GateImageWithStatistic
   GateImage mUncertaintyImage;
   GateImage mScaledValueImage;
   GateImage mScaledSquaredImage;
- // GateImage * mLastHitEventImage;
   bool mOverWriteFilesFlag;
+  bool mNormalizedToMax;
+  bool mNormalizedToIntegral;
 
   bool mIsSquaredImageEnabled;
   bool mIsUncertaintyImageEnabled;

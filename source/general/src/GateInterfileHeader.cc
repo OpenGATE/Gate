@@ -19,11 +19,11 @@ See GATE/LICENSE.txt for further details
 
 GateInterfileHeader::GateInterfileHeader()
 {
-  
+
   //m_name = G4String("interfileReader");
   //m_fileName  = G4String("");
   //m_messenger = new GateGeometryVoxelInterfileReaderMessenger(this);
-  
+
   m_dataFileName = G4String("");
   m_numPlanes=0;
   m_planeThickness=0;
@@ -33,19 +33,19 @@ GateInterfileHeader::GateInterfileHeader()
   m_dataTypeName="";
   m_dataByteOrder="BIGENDIAN";
 }
- 
+
 //GateInterfileHeader::~GateInterfileHeader()
 //{
 
 //}
 
 
-//void GateInterfileReader::Describe(G4int level) 
+//void GateInterfileReader::Describe(G4int level)
 //{
 //  G4cout << " Voxel reader type ---> " << m_name << G4endl;
 
 //  GateVGeometryVoxelReader::Describe(level);
-//  
+//
 //}
 
 void GateInterfileHeader::ReadHeader(std::string & filename)
@@ -67,38 +67,38 @@ void GateInterfileHeader::ReadHeader(std::string & filename)
 
   G4cout << " Header read from       '" << filename << "'" << G4endl;
   G4cout << " Data file name         '" << m_dataFileName << "'" << G4endl;
-  G4cout << " Nb of planes:           " << m_numPlanes << G4endl; 
-  G4cout << " Nb of pixels per plane: " << m_dim[0] << " " << m_dim[1] << G4endl; 
-  G4cout << " Pixel size:             " << m_pixelSize[0] << " " << m_pixelSize[1] << G4endl; 
+  G4cout << " Nb of planes:           " << m_numPlanes << G4endl;
+  G4cout << " Nb of pixels per plane: " << m_dim[0] << " " << m_dim[1] << G4endl;
+  G4cout << " Pixel size:             " << m_pixelSize[0] << " " << m_pixelSize[1] << G4endl;
   G4cout << " Slice thickness:        " << m_planeThickness << G4endl;
-  G4cout << " Matrix size:            " << m_matrixSize[0] << " " << m_matrixSize[1] << G4endl; 
-  G4cout << " Data type:              " << m_dataTypeName << G4endl; 
+  G4cout << " Matrix size:            " << m_matrixSize[0] << " " << m_matrixSize[1] << G4endl;
+  G4cout << " Data type:              " << m_dataTypeName << G4endl;
   G4cout << " Data byte order:	 " << m_dataByteOrder << G4endl;
   G4cout << G4endl;
 
   if ( ( m_dim[0]==0) || ( m_dim[1]==0) || ( m_numPlanes==0) ) {
     G4cerr << G4endl <<"Error: one of the matrix dimensions is zero!" << G4endl;
   return;
-  }  
+  }
 }
 
-void GateInterfileHeader::ReadData(std::string filename, std::vector<float> & data)  
+void GateInterfileHeader::ReadData(std::string filename, std::vector<float> & data)
 {
   G4int pixelNumber = m_dim[0]*m_dim[1]*m_numPlanes ;
   /*Set ( pixelNumber );*/
-  
+
   FILE* fp=fopen(filename.c_str(),"r");
   while ( (!feof(fp)) && (!ferror(fp)))
     ReadKey(fp);
   fclose(fp);
-  
+
   int l = filename.length();
   filename.replace(l-3,3,"i33");
   //G4cout << filename << G4endl;
-  
+
   std::ifstream is;
   OpenFileInput(filename, is);
-  
+
 //  FILE* fpp=fopen(m_dataFileName.c_str(),"r");
 //  if (!fpp) {
 //    G4cerr << G4endl << "Error: Could not open image file '" << m_dataFileName << "'!" << G4endl;
@@ -106,20 +106,20 @@ void GateInterfileHeader::ReadData(std::string filename, std::vector<float> & da
 //  }
 
 //  G4cout << m_dataTypeName << G4endl;
-//  
+//
 //  if (m_dataTypeName == "UNSIGNED INTEGER") {
 
 //    G4short  *buffer = (G4short*) malloc ( pixelNumber*sizeof(G4short) );
-//  
+//
 //    if (!buffer) {
 //      G4cerr << G4endl << "Error: Could not allocate the buffer!" << G4endl;
 //      return;
 //    }
-//  
+//
 //    G4cout << "je lis l'Interfile U16" << G4endl;
 //    G4int NbData = fread( buffer, sizeof(G4short), pixelNumber, fpp);
 //    fclose(fpp);
-//    
+//
 //    if ( NbData != pixelNumber ) {
 //      G4cerr << G4endl <<"Error: the number of pixels that were read from the data file (" << NbData << ") " << G4endl
 //      	      	   << "is inferior to the number computed from its header file (" << pixelNumber << ")!" << G4endl;
@@ -131,9 +131,9 @@ void GateInterfileHeader::ReadData(std::string filename, std::vector<float> & da
 //		SwapBytes(buffer, pixelNumber);
 //    }
 //  }
-  
+
   if (m_dataTypeName == "UNSIGNED INTEGER") {
-    
+
     //G4cout << "datatype=UNSIGNED INTEGER" << G4endl;
     typedef unsigned short VoxelType;
     std::vector<VoxelType> temp(pixelNumber);
@@ -145,7 +145,7 @@ void GateInterfileHeader::ReadData(std::string filename, std::vector<float> & da
     }
   }
   else if (m_dataTypeName == "FLOAT") {
-    
+
     //G4cout << "datatype=FLOAT" << G4endl;
     typedef float VoxelType;
     std::vector<VoxelType> temp(pixelNumber);
@@ -154,18 +154,18 @@ void GateInterfileHeader::ReadData(std::string filename, std::vector<float> & da
     for(unsigned int i=0; i<temp.size(); i++) {
       data[i] = (PixelType)temp[i];
       //G4cout << data[i] << G4endl;
-  }  
+  }
 //    G4short  *buffer = (G4short*) malloc ( pixelNumber*sizeof(float) );
-//  
+//
 //    if (!buffer) {
 //      G4cerr << G4endl << "Error: Could not allocate the buffer!" << G4endl;
 //      return;
 //    }
-//  
+//
 //    G4cout << "je lis l'Interfile FLOAT" << G4endl;
 //    G4int NbData = fread( buffer, sizeof(float), pixelNumber, fpp);
 //    fclose(fpp);
-//    
+//
 //    if ( NbData != pixelNumber ) {
 //      G4cerr << G4endl <<"Error: the number of pixels that were read from the data file (" << NbData << ") " << G4endl
 //      	      	   << "is inferior to the number computed from its header file (" << pixelNumber << ")!" << G4endl;
@@ -178,8 +178,8 @@ void GateInterfileHeader::ReadData(std::string filename, std::vector<float> & da
 //    }
   }
 }
-	
-void GateInterfileHeader::ReadKey(FILE* fp) 
+
+void GateInterfileHeader::ReadKey(FILE* fp)
 {
   if ( (feof(fp)) && (ferror(fp)))
     return ;
@@ -222,7 +222,10 @@ void GateInterfileHeader::ReadKey(FILE* fp)
   } else if ( key ==  "slice thickness (pixels)" ) {
     sscanf(value,"%f",&m_planeThickness);
   } else if ( key ==  "name of data file" ) {
+    DD("here");
+    DD(value);
     m_dataFileName = std::string(value);
+    DD(m_dataFileName);
   } else if ( key ==  "number format" ) {
     if ( (strcmp(value,"float")==0) || (strcmp(value,"FLOAT")==0) )
       m_dataTypeName = "FLOAT";
@@ -231,17 +234,14 @@ void GateInterfileHeader::ReadKey(FILE* fp)
     else
       G4cout << "Unrecognised type name '" << value << "'" << G4endl;
   } else if (key == "imagedata byte order") {
-  	if ( strcmp(value,"BIGENDIAN") == 0 ) 
+  	if ( strcmp(value,"BIGENDIAN") == 0 )
   		m_dataByteOrder = "BIGENDIAN";
   	else if ( strcmp(value,"LITTLEENDIAN") == 0)
   		m_dataByteOrder = "LITTLEENDIAN";
-  	else 
+  	else
   		G4cerr << "Unrecognized data byte order '" + G4String(value) + "', assuming default BIGENDIAN\n" << G4endl;
   } else {
     // G4cout << "Key not processed: '" << key << "'" << G4endl;
   }
 
 }
-	
-	
-	

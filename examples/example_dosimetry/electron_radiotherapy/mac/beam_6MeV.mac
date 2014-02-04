@@ -1,0 +1,33 @@
+##########
+#  BEAM  #
+##########
+
+
+/gate/source/addSource electron_beam gps
+
+/gate/source/electron_beam/gps/particle e-
+
+# Energy
+
+/gate/source/electron_beam/gps/ene/type Gauss
+/gate/source/electron_beam/gps/ene/mono 7.2 MeV
+/gate/source/electron_beam/gps/ene/sigma 0.0216 MeV
+
+# Geometry
+
+/gate/source/electron_beam/gps/angtype iso
+#/gate/source/electron_beam/gps/posrot1 1 0 0
+/gate/source/electron_beam/gps/posrot1 -0.5 0.8660254038
+/gate/source/electron_beam/gps/posrot2 0 0 1
+/gate/source/electron_beam/gps/mintheta 0 deg
+/gate/source/electron_beam/gps/maxtheta 0 deg
+/gate/source/electron_beam/gps/minphi 90 deg
+/gate/source/electron_beam/gps/maxphi 90 deg
+/gate/source/electron_beam/gps/type Plane
+/gate/source/electron_beam/gps/shape Circle
+/gate/source/electron_beam/gps/radius 1.4 mm
+
+# Placement
+
+#/gate/source/electron_beam/gps/centre 0 100 0 cm
+/gate/source/electron_beam/gps/centre 86.6025 50 0 cm

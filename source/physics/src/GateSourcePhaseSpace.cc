@@ -79,7 +79,7 @@ GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name ):GateVSource( name )
   x = y = z = dx = dy = dz = px = py = pz = energy  = 0.;
   t= -1.;
   weight = 1.;
-  sscanf("", "%s",particleName);
+  strcpy(particleName, "");
 
   mTotalSimuTime = 0.;
   mAlreadyLoad = false;

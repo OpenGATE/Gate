@@ -15,6 +15,7 @@
 #include "GateVImageActor.hh"
 #include "GateMiscFunctions.hh"
 #include "GateObjectStore.hh"
+#include "GateVImageVolume.hh"
 
 #include <G4Step.hh>
 #include <G4TouchableHistory.hh>
@@ -202,6 +203,13 @@ void GateVImageActor::Construct()
   mOrigin = mOrigin + mPosition;
   mImage.SetOrigin(mOrigin);
 
+  // Copy rotation matrix from attached image, if the attached volume
+  // is a GateVImageVolume
+  if (dynamic_cast<GateVImageVolume*>(mVolume) != 0) {
+    GateVImageVolume * volAsImage = (GateVImageVolume*)mVolume;
+    mImage.SetTransformMatrix(volAsImage->GetTransformMatrix());
+  }
+
   // DEBUG
   GateMessage("Actor", 3, "GateVImageActor -- Construct: position of parent = " <<mVolume->GetPhysicalVolume()->GetObjectTranslation()  << G4endl);
   GateMessage("Actor", 3, "GateVImageActor -- Construct: position of frame = " <<mVolume->GetPhysicalVolume()->GetFrameTranslation()  << G4endl);
@@ -330,7 +338,6 @@ int GateVImageActor::GetIndexFromStepPosition(const GateVVolume * v, const G4Ste
   GateDebugMessage("Step", 3, " worldPos = " << worldPos<<G4endl);
   int depth = 0;
   int transDepth = maxDepth;
-  // DD(v->GetLogicalVolume());
 
   while((depth<maxDepth) &&
         (currentVol->GetName() != v->GetLogicalVolume()->GetName()))
@@ -339,15 +346,9 @@ int GateVImageActor::GetIndexFromStepPosition(const GateVVolume * v, const G4Ste
       depth++;
       transDepth--;
       currentVol = theTouchable->GetVolume(depth)->GetLogicalVolume();
-      // DD(depth);
-//       DD(transDepth);
-//       DD(currentVol->GetName());
-//       DD(currentVol);
     }
 
   if(depth>=maxDepth) return -1;
-
-// GateError( "Logical Volume "<< v->GetLogicalVolume()->GetName()<<" not found!" );
 
   GateDebugMessage("Step",3,"GateVImageActor -- GetIndexFromStepPosition: Logical volume "<<currentVol->GetName() <<" found! - Depth = "<<depth <<G4endl );
 

@@ -85,7 +85,6 @@ m_fileName = fileName;
   m_dataFileName=fileName.replace(fileName.length()-3,3,"i33");
   G4cout << "m_dataFileName=" << m_dataFileName << G4endl;
 
-
   G4cout << " Header read from       '" << m_fileName << "'" << G4endl;
   G4cout << " Data file name         '" << m_dataFileName << "'" << G4endl;
   G4cout << " Nb of planes:           " << m_numPlanes << G4endl;
