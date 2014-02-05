@@ -429,7 +429,7 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
     {
       currentDoseImage = &mPrimaryDoseImage;
       isCurrentLastHitImageEnabled = mIsPrimaryLastHitEventImageEnabled;
-      isCurrentDoseUncertaintyEnabled = mIsPrimaryDoseImageEnabled;
+      isCurrentDoseUncertaintyEnabled = mIsPrimaryDoseUncertaintyImageEnabled;
       currentLastHitImage = &mPrimaryLastHitEventImage;
     }
   }
@@ -437,10 +437,18 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
   {
     currentDoseImage = &mSecondaryDoseImage;
     isCurrentLastHitImageEnabled = mIsSecondaryLastHitEventImageEnabled;
-    isCurrentDoseUncertaintyEnabled = mIsSecondaryDoseImageEnabled;
+    isCurrentDoseUncertaintyEnabled = mIsSecondaryDoseUncertaintyImageEnabled;
     currentLastHitImage = &mSecondaryLastHitEventImage;
   }
   
+  DD("test-in");
+  DD(step->GetTrack()->GetParentID());
+  DD(currentDoseImage);
+  DD(isCurrentLastHitImageEnabled);
+  DD(isCurrentDoseUncertaintyEnabled);
+  DD(currentLastHitImage);
+  DD("test-out");
+
   while(L < Ltot-0.00001)
   {
 //     GateMessage("Actor", 0, " index " << x << " " << y << " " << z << " | Rest " << Rx << " " << Ry << " " << Rz << " | L " << L << " Ltot " << Ltot << G4endl);
@@ -514,7 +522,7 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
       }
       else { mDoseImage.AddValue(index, dose); }
     }
-
+    
     if(currentDoseImage)
     {
       if(isCurrentDoseUncertaintyEnabled)
