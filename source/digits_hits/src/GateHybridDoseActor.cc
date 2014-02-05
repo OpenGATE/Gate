@@ -440,14 +440,6 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
     isCurrentDoseUncertaintyEnabled = mIsSecondaryDoseUncertaintyImageEnabled;
     currentLastHitImage = &mSecondaryLastHitEventImage;
   }
-  
-  DD("test-in");
-  DD(step->GetTrack()->GetParentID());
-  DD(currentDoseImage);
-  DD(isCurrentLastHitImageEnabled);
-  DD(isCurrentDoseUncertaintyEnabled);
-  DD(currentLastHitImage);
-  DD("test-out");
 
   while(L < Ltot-0.00001)
   {
