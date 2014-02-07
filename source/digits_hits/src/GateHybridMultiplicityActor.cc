@@ -94,26 +94,18 @@ void GateHybridMultiplicityActor::BeginOfEventAction(const G4Event *event)
   GateVSource* source = GateSourceMgr::GetInstance()->GetSource(GateSourceMgr::GetInstance()->GetCurrentSourceID());
   if(source->GetParticleDefinition()->GetParticleName() == "gamma")
   {
-    G4ParticleDefinition *hybridino = G4Hybridino::Hybridino();
     G4Event *modifiedEvent = const_cast<G4Event *>(event);
-    int initialVertexNumber = event->GetNumberOfPrimaryVertex();
-    int vertexNumber = initialVertexNumber;
+    int vertexNumber = event->GetNumberOfPrimaryVertex();
 
     for(int i=0; i<defaultPrimaryMultiplicity; i++)
     {
-      vertexNumber += source->GeneratePrimaries(modifiedEvent);    
-    }
-
-    G4PrimaryVertex *hybridVertex = modifiedEvent->GetPrimaryVertex(initialVertexNumber);
-    while(hybridVertex != 0)
-    {
-      G4PrimaryParticle *hybridParticle = hybridVertex->GetPrimary();
+      vertexNumber += source->GeneratePrimaries(modifiedEvent);
+      G4PrimaryParticle *hybridParticle = modifiedEvent->GetPrimaryVertex(vertexNumber-1)->GetPrimary();
       while(hybridParticle != 0)
       {
-	hybridParticle->SetParticleDefinition(hybridino);
+	hybridParticle->SetParticleDefinition(G4Hybridino::Hybridino());
 	hybridParticle = hybridParticle->GetNext();
-      }
-      hybridVertex = hybridVertex->GetNext();
+      }      
     }
   }
 }
