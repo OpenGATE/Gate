@@ -54,6 +54,11 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   mUseVolFrame=false;
   mStoreOutPart=false;
 
+  bEnableCoordFrame=false;
+  bEnablePrimaryEnergy=false;
+
+  bCoordFrame = " ";
+
   mFileType = " ";
   mNevent = 0;
   pIAEARecordType = 0;
@@ -122,7 +127,7 @@ void GatePhaseSpaceActor::Construct()
     pListeVar->Branch("TrackID",&trackid,"TrackID/I");
     pListeVar->Branch("EventID",&eventid,"EventID/I");
     pListeVar->Branch("RunID",&runid,"RunID/I");
-
+    if(bEnablePrimaryEnergy) pListeVar->Branch("primaryEnergy", &bPrimaryEnergy,"primaryEnergy/F");
   }
   else if(mFileType == "IAEAFile"){
     pIAEAheader = (iaea_header_type *) calloc(1, sizeof(iaea_header_type));
@@ -218,6 +223,16 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
   if(GetUseVolumeFrame()){
     const G4AffineTransform transformation = step->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform();
     localPosition = transformation.TransformPoint(localPosition);
+  } else if (GetEnableCoordFrame()) {
+    //Set the custom coordinate frame, but only if GetUseVolumeFrame==0.
+    // TODO perhaps check if the string exists; occurs in pDetectorConstruction->GetObjectStore()->ListCreators()
+    
+    //GateVVolume* volumeken = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame()); //takes G4String, possible translate.
+    // NOTE this doesnt seem to work, why?
+
+    const G4AffineTransform transformation = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame())->GetPhysicalVolume()->GetTouchable()->GetHistory()->GetTopTransform();
+    localPosition = transformation.TransformPoint(localPosition);
+
   }
 
   trackid = step->GetTrack()->GetTrackID();
@@ -238,6 +253,9 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
 
   if(GetUseVolumeFrame()){
     const G4AffineTransform transformation = step->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform();
+    localMomentum = transformation.TransformAxis(localMomentum);
+  } else if (GetEnableCoordFrame()) {
+    const G4AffineTransform transformation = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame())->GetTouchable()->GetHistory()->GetTopTransform();
     localMomentum = transformation.TransformAxis(localMomentum);
   }
 
@@ -319,6 +337,10 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
 
   }
   mIsFistStep = false;
+
+  //----------------------- Set Primary Energy ------------------------
+  primaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy();
+  //-------------------------------------------------------------------
 
 }
 // --------------------------------------------------------------------

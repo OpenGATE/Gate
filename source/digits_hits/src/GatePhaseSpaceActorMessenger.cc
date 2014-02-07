@@ -49,6 +49,8 @@ GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger()
   delete pInOrOutGoingParticlesCmd;
   delete pEnableSecCmd;
   delete pEnableStoreAllStepCmd;
+  delete bEnablePrimaryEnergyCmd;
+  delete bCoordinateFrameCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -165,6 +167,8 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
   pMaxSizeCmd->SetGuidance(guidance);
   pMaxSizeCmd->SetParameterName("Size", false);
   pMaxSizeCmd->SetUnitCategory("Memory size");
+
+  //TODO add commands for primary energy and coordinate frame.
 }
 //-----------------------------------------------------------------------------
 
@@ -191,6 +195,8 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
   if(command == pEnableSecCmd) pActor->SetIsSecStored(pEnableSecCmd->GetNewBoolValue(param));
   if(command == pSaveEveryNEventsCmd || command == pSaveEveryNSecondsCmd)  GateError("saveEveryNEvents and saveEveryNSeconds commands are not available with phase space actor. But you can use the setMaxFileSize command.");
   if(command == pMaxSizeCmd) pActor->SetMaxFileSize(pMaxSizeCmd->GetNewDoubleValue(param));
+  if(command == bEnablePrimaryEnergyCmd) pActor->SetIsPrimaryEnergyEnabled(bEnablePrimaryEnergyCmd->GetNewBoolValue(param));
+  if(command == bCoordinateFrameCmd) {pActor->SetCoordFrame(param);pActor->SetEnableCoordFrame();};
 
   GateActorMessenger::SetNewValue(command ,param );
 }
