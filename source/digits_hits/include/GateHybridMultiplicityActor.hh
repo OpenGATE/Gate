@@ -63,7 +63,7 @@ public:
   G4double GetHybridTrackWeight() { return currentHybridTrackWeight; }
   void SetHybridTrackWeight(G4double w) { currentHybridTrackWeight = w; };
   
-  void SetMultiplicity(int, int, G4VPhysicalVolume *);
+  void SetMultiplicity(bool, int, int, G4VPhysicalVolume *);
   
   /// Saves the data collected to the file
   void SaveData();
@@ -74,6 +74,7 @@ protected:
   GateHybridMultiplicityActor(G4String name, G4int depth=0);
 
   // secondary multiplicity can be different in each volume
+  bool mIsHybridinoEnabled;
   int defaultPrimaryMultiplicity;
   int defaultSecondaryMultiplicity;
   std::map<G4VPhysicalVolume *,int> secondaryMultiplicityMap;

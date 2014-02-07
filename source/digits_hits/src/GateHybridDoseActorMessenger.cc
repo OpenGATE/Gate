@@ -26,6 +26,7 @@ GateHybridDoseActorMessenger::GateHybridDoseActorMessenger(GateHybridDoseActor* 
   pEnablePrimaryDoseUncertaintyCmd= 0;
   pEnableSecondaryDoseCmd = 0;
   pEnableSecondaryDoseUncertaintyCmd= 0;
+  pEnableHybridinoCmd= 0;
   pSetPrimaryMultiplicityCmd = 0;
   pSetSecondaryMultiplicityCmd = 0;
   pSetSecondaryMultiplicityCmd2 = 0;
@@ -43,6 +44,7 @@ GateHybridDoseActorMessenger::~GateHybridDoseActorMessenger()
   if(pEnablePrimaryDoseUncertaintyCmd) delete pEnablePrimaryDoseUncertaintyCmd;
   if(pEnableSecondaryDoseCmd) delete pEnableSecondaryDoseCmd;
   if(pEnableSecondaryDoseUncertaintyCmd) delete pEnableSecondaryDoseUncertaintyCmd;  
+  if(pEnableHybridinoCmd) delete pEnableHybridinoCmd;
 
   if(pSetPrimaryMultiplicityCmd) delete pSetPrimaryMultiplicityCmd;
   if(pSetSecondaryMultiplicityCmd) delete pSetSecondaryMultiplicityCmd;
@@ -85,7 +87,12 @@ void GateHybridDoseActorMessenger::BuildCommands(G4String base)
   pEnableSecondaryDoseUncertaintyCmd = new G4UIcmdWithABool(n, this); 
   guid = G4String("Enable secondary uncertainty dose computation");
   pEnableSecondaryDoseUncertaintyCmd->SetGuidance(guid);
-  
+
+  n = base+"/enableHybridino";
+  pEnableHybridinoCmd = new G4UIcmdWithABool(n, this); 
+  guid = G4String("Enable hybrid particle navigation (raycasting otherwise)");
+  pEnableHybridinoCmd->SetGuidance(guid);
+
   n = base+"/setPrimaryMultiplicity";
   pSetPrimaryMultiplicityCmd = new G4UIcmdWithAnInteger(n, this); 
   guid = G4String("Set the number of hybrid particle by primary particle generated");
@@ -114,6 +121,7 @@ void GateHybridDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newVal
   if (cmd == pEnablePrimaryDoseCmd) pDoseActor->EnablePrimaryDoseImage(pEnablePrimaryDoseCmd->GetNewBoolValue(newValue));
   if (cmd == pEnablePrimaryDoseUncertaintyCmd) pDoseActor->EnablePrimaryDoseUncertaintyImage(pEnablePrimaryDoseUncertaintyCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableSecondaryDoseCmd) pDoseActor->EnableSecondaryDoseImage(pEnableSecondaryDoseCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableHybridinoCmd) pDoseActor->EnableHybridino(pEnableHybridinoCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableSecondaryDoseUncertaintyCmd) pDoseActor->EnableSecondaryDoseUncertaintyImage(pEnableSecondaryDoseUncertaintyCmd->GetNewBoolValue(newValue));
   if (cmd == pSetPrimaryMultiplicityCmd) pDoseActor->SetPrimaryMultiplicity(pSetPrimaryMultiplicityCmd->GetNewIntValue(newValue));
   if (cmd == pSetSecondaryMultiplicityCmd) pDoseActor->SetSecondaryMultiplicity(pSetSecondaryMultiplicityCmd->GetNewIntValue(newValue));

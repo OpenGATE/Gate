@@ -42,6 +42,7 @@ protected:
   G4UIcmdWithABool * pEnableSecondaryDoseCmd;
   G4UIcmdWithABool * pEnableSecondaryDoseUncertaintyCmd;
 
+  G4UIcmdWithABool * pEnableHybridinoCmd;
   G4UIcmdWithAnInteger * pSetPrimaryMultiplicityCmd;
   G4UIcmdWithAnInteger * pSetSecondaryMultiplicityCmd;
   GateUIcmdWithTwoDouble *pSetSecondaryMultiplicityCmd2;

@@ -48,6 +48,7 @@ GateHybridDoseActor::GateHybridDoseActor(G4String name, G4int depth) :
   mIsPrimaryLastHitEventImageEnabled = false;
   mIsSecondaryLastHitEventImageEnabled = false;
 
+  mIsHybridinoEnabled = false;
   mIsMaterialAndMuTableInitialized = false;
 
   // Create a 'MultiplicityActor' if not exist
@@ -88,7 +89,7 @@ void GateHybridDoseActor::Construct() {
     daughterNumber = attachedVolume->GetLogicalVolume()->GetNoDaughters();
   }
   // --> Set primary and secondary multiplicities in 'MultiplicityActor'
-  pHybridMultiplicityActor->SetMultiplicity(mPrimaryMultiplicity, mSecondaryMultiplicity, attachedVolume);
+  pHybridMultiplicityActor->SetMultiplicity(mIsHybridinoEnabled, mPrimaryMultiplicity, mSecondaryMultiplicity, attachedVolume);
 
   // Get the stepping manager
   mSteppingManager = G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager();

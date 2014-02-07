@@ -48,6 +48,7 @@ class GateHybridDoseActor : public GateVImageActor
   void EnablePrimaryDoseUncertaintyImage(bool b) { mIsPrimaryDoseUncertaintyImageEnabled = b; }
   void EnableSecondaryDoseImage(bool b) { mIsSecondaryDoseImageEnabled = b; }
   void EnableSecondaryDoseUncertaintyImage(bool b) { mIsSecondaryDoseUncertaintyImageEnabled = b; }
+  void EnableHybridino(bool b) { mIsHybridinoEnabled = b; }
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
@@ -112,6 +113,8 @@ protected:
   int mPrimaryMultiplicity;
   int mSecondaryMultiplicity;
 
+  bool mIsHybridinoEnabled;
+  
   bool mIsMaterialAndMuTableInitialized;
   std::vector<G4Material *> theListOfMaterial;
   std::vector<GateMuTable *> theListOfMuTable;

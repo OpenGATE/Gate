@@ -36,6 +36,7 @@ GateHybridMultiplicityActor::GateHybridMultiplicityActor(G4String name, G4int de
   materialHandler = GateMaterialMuHandler::GetInstance();
   GateDebugMessageDec("Actor",4,"GateHybridMultiplicityActor() -- end"<<G4endl);
 
+  mIsHybridinoEnabled = false;
   defaultPrimaryMultiplicity = 0;
   defaultSecondaryMultiplicity = 0;
   secondaryMultiplicityMap.clear();
@@ -71,12 +72,16 @@ void GateHybridMultiplicityActor::Construct()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridMultiplicityActor::SetMultiplicity(int mP, int mS, G4VPhysicalVolume *v) 
+void GateHybridMultiplicityActor::SetMultiplicity(bool b, int mP, int mS, G4VPhysicalVolume *v) 
 {
+  // set hybridino flag
+  mIsHybridinoEnabled = b;
+  
   // keep the highest multiplicity as default value
   if(mP > defaultPrimaryMultiplicity) { defaultPrimaryMultiplicity = mP; }
   if(mS > defaultSecondaryMultiplicity) { defaultSecondaryMultiplicity = mS; }
 
+  // register expTLEDoseActor's volume
   std::map<G4VPhysicalVolume *,int>::iterator it = secondaryMultiplicityMap.find(v);  
   if(it == secondaryMultiplicityMap.end()) { secondaryMultiplicityMap.insert(make_pair(v,mS)); }
   else { GateError("Number of 'hybridDoseActor' attached to '" << v->GetName() << "' is too large (1 maximum)"); }
