@@ -112,8 +112,9 @@ protected:
   GateHybridMultiplicityActor *pHybridMultiplicityActor;
   int mPrimaryMultiplicity;
   int mSecondaryMultiplicity;
-
   bool mIsHybridinoEnabled;
+  std::vector<RaycastingStruct> *mListOfRaycasting;
+
   
   bool mIsMaterialAndMuTableInitialized;
   std::vector<G4Material *> theListOfMaterial;

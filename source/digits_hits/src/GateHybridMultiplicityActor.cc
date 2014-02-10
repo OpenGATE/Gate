@@ -25,7 +25,6 @@
 #include "GateDetectorConstruction.hh"
 #include "GateMultiSensitiveDetector.hh"
 #include "G4Event.hh"
-#include "G4Hybridino.hh"
 
 //-----------------------------------------------------------------------------
 /// Constructors (Prototype)
@@ -41,7 +40,8 @@ GateHybridMultiplicityActor::GateHybridMultiplicityActor(G4String name, G4int de
   mDefaultSecondaryMultiplicity = 0;
   mSecondaryMultiplicityMap.clear();
   mProcessListForGamma = 0;
-
+  mHybridino = G4Hybridino::Hybridino();
+  
   singleton_HybridMultiplicityActor = this;
 }
 //-----------------------------------------------------------------------------
@@ -95,22 +95,49 @@ void GateHybridMultiplicityActor::BeginOfEventAction(const G4Event *event)
   if(!mProcessListForGamma) { mProcessListForGamma = G4Gamma::Gamma()->GetProcessManager()->GetProcessList(); }
   mListOfHybridTrack.clear();
   mListOfHybridWeight.clear();
+  mListOfRaycasting.clear();
 
   GateVSource* source = GateSourceMgr::GetInstance()->GetSource(GateSourceMgr::GetInstance()->GetCurrentSourceID());
   if(source->GetParticleDefinition()->GetParticleName() == "gamma")
   {
-    G4Event *modifiedEvent = const_cast<G4Event *>(event);
-    int vertexNumber = event->GetNumberOfPrimaryVertex();
-
-    for(int i=0; i<mDefaultPrimaryMultiplicity; i++)
+    if(mIsHybridinoEnabled)
     {
-      vertexNumber += source->GeneratePrimaries(modifiedEvent);
-      G4PrimaryParticle *hybridParticle = modifiedEvent->GetPrimaryVertex(vertexNumber-1)->GetPrimary();
-      while(hybridParticle != 0)
+      G4Event *modifiedEvent = const_cast<G4Event *>(event);
+      int vertexNumber = event->GetNumberOfPrimaryVertex();
+
+      for(int i=0; i<mDefaultPrimaryMultiplicity; i++)
       {
-	hybridParticle->SetParticleDefinition(G4Hybridino::Hybridino());
-	hybridParticle = hybridParticle->GetNext();
-      }      
+	vertexNumber += source->GeneratePrimaries(modifiedEvent);
+	G4PrimaryParticle *hybridParticle = modifiedEvent->GetPrimaryVertex(vertexNumber-1)->GetPrimary();
+	while(hybridParticle != 0)
+	{
+	  hybridParticle->SetParticleDefinition(mHybridino);
+	  hybridParticle = hybridParticle->GetNext();
+	}      
+      }
+    }
+    else
+    {
+      G4Event *modifiedEvent = new G4Event();
+      int vertexNumber = modifiedEvent->GetNumberOfPrimaryVertex();
+      double weight = 1.0 / mDefaultPrimaryMultiplicity;
+      for(int i=0; i<mDefaultPrimaryMultiplicity; i++)
+      {
+	vertexNumber += source->GeneratePrimaries(modifiedEvent);
+	G4ThreeVector position = modifiedEvent->GetPrimaryVertex(vertexNumber-1)->GetPosition();
+	G4PrimaryParticle *hybridParticle = modifiedEvent->GetPrimaryVertex(vertexNumber-1)->GetPrimary();
+	while(hybridParticle != 0)
+	{
+	  // create a hybrid struct for raycasting
+	  // primary or not - energy - weight - position - direction
+	  mListOfRaycasting.push_back(RaycastingStruct(true, hybridParticle->GetKineticEnergy(), weight,
+							  position, hybridParticle->GetMomentumDirection()));
+	  hybridParticle = hybridParticle->GetNext();
+	  
+	}
+      }
+      
+      delete modifiedEvent;
     }
   }
 }
@@ -153,7 +180,7 @@ void GateHybridMultiplicityActor::PostUserTrackingAction(const GateVVolume *, co
     mListOfHybridTrack.erase(mListOfHybridTrack.begin() + mCurrentTrackIndex);
     mListOfHybridWeight.erase(mListOfHybridWeight.begin() + mCurrentTrackIndex);
   }
-  
+
 //   for(unsigned int i=0; i<mListOfHybridTrack.size(); i++) { GateMessage("Actor", 0, "track = " << mListOfHybridTrack[i] << " weight = " << mListOfHybridWeight[i] << G4endl); }
 //   GateMessage("Actor", 0, " " << G4endl);
 }
@@ -211,7 +238,6 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 	    if(it == mSecondaryMultiplicityMap.end()) { currentSecondaryMultiplicity = mDefaultSecondaryMultiplicity; }
 	    else { currentSecondaryMultiplicity = it->second; }
 	    
-	    G4ParticleDefinition *hybridino = G4Hybridino::Hybridino();
 	    G4double energy = (*trackVector)[t]->GetKineticEnergy();
 	    G4ThreeVector position = step->GetTrack()->GetPosition();
 	    G4double globalTime = step->GetTrack()->GetGlobalTime();
@@ -229,15 +255,24 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 	      momentum.setY(sin(phi)*sqrt(1.-(cosTheta*cosTheta)));
 	      momentum.setZ(cosTheta);
 
-	      // Create a hybrid track and attach it to the primary particle
-	      G4DynamicParticle *hybridParticle = new G4DynamicParticle(hybridino, momentum, energy);
-	      G4Track *newTrack = new G4Track(hybridParticle, globalTime, position);  
-	      newTrack->SetParentID(parentID);
-	      trackVector->push_back(newTrack);
-	      
-	      // Store the hybrid particle weight and track for exponential attenuation step
-	      mListOfHybridTrack.push_back(newTrack);
-	      mListOfHybridWeight.push_back(trackWeight);
+	      if(mIsHybridinoEnabled)
+	      {
+		// Create a hybrid track and attach it to the primary particle
+		G4DynamicParticle *hybridParticle = new G4DynamicParticle(mHybridino, momentum, energy);
+		G4Track *newTrack = new G4Track(hybridParticle, globalTime, position);  
+		newTrack->SetParentID(parentID);
+		trackVector->push_back(newTrack);
+		
+		// Store the hybrid particle weight and track for exponential attenuation step
+		mListOfHybridTrack.push_back(newTrack);
+		mListOfHybridWeight.push_back(trackWeight);
+	      }
+	      else
+	      {
+		// create a hybrid struct for raycasting
+		// primary or not - energy - weight - position - direction
+		mListOfRaycasting.push_back(RaycastingStruct(false, energy, trackWeight, position, momentum));
+	      }
 	    }
 	  }
 	}
@@ -269,7 +304,6 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 	if(it == mSecondaryMultiplicityMap.end()) { currentSecondaryMultiplicity = mDefaultSecondaryMultiplicity; }
 	else { currentSecondaryMultiplicity = it->second; }
 
-	G4ParticleDefinition *hybridino = G4Hybridino::Hybridino();
 	G4ThreeVector position = step->GetTrack()->GetPosition();
 	G4double globalTime = step->GetTrack()->GetGlobalTime();
 	G4int parentID = step->GetTrack()->GetTrackID();
@@ -287,18 +321,28 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 
   // 	GateMessage("Actor", 0, "prePos = " << newStep->GetPreStepPoint()->GetPosition() << " preDir = " << newStep->GetPreStepPoint()->GetMomentumDirection() << G4endl);
   // 	GateMessage("Actor", 0, "posPos = " << newStep->GetPostStepPoint()->GetPosition() << " posDir = " << newStep->GetPostStepPoint()->GetMomentumDirection() << G4endl);
-	  
-	  // Create a hybrid track and attach it to the primary particle
+
 	  G4double energy = myStep->GetPostStepPoint()->GetKineticEnergy();
 	  G4ThreeVector momentum = myStep->GetPostStepPoint()->GetMomentumDirection();
-	  G4DynamicParticle *hybridParticle = new G4DynamicParticle(hybridino, momentum, energy);
-	  G4Track *newTrack = new G4Track(hybridParticle, globalTime, position);  
-	  newTrack->SetParentID(parentID);
-	  trackVector->push_back(newTrack);
-	  
-	  // Store the hybrid particle weight and track for exponential attenuation step
-	  mListOfHybridTrack.push_back(newTrack);
-	  mListOfHybridWeight.push_back(trackWeight);
+
+	  if(mIsHybridinoEnabled)
+	  {
+	    // Create a hybrid track and attach it to the primary particle
+	    G4DynamicParticle *hybridParticle = new G4DynamicParticle(mHybridino, momentum, energy);
+	    G4Track *newTrack = new G4Track(hybridParticle, globalTime, position);  
+	    newTrack->SetParentID(parentID);
+	    trackVector->push_back(newTrack);
+	    
+	    // Store the hybrid particle weight and track for exponential attenuation step
+	    mListOfHybridTrack.push_back(newTrack);
+	    mListOfHybridWeight.push_back(trackWeight);
+	  }
+	  else
+	  {
+	    // create a hybrid struct for raycasting
+	    // primary or not - energy - weight - position - direction
+	    mListOfRaycasting.push_back(RaycastingStruct(false, energy, trackWeight, position, momentum));
+	  }
 	}
 	
 	delete myTrack;

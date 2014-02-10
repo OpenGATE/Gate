@@ -23,6 +23,28 @@ See GATE/LICENSE.txt for further details
 #include "G4UnitsTable.hh"
 #include "G4ParticleTable.hh"
 #include "G4VPhysicalVolume.hh"
+#include "G4Hybridino.hh"
+
+//-----------------------------------------------------------------------------
+
+struct RaycastingStruct
+{
+  bool isPrimary;
+  double energy;
+  double weight;
+  
+  G4ThreeVector position;
+  G4ThreeVector momentum;
+
+  RaycastingStruct(bool b, double e, double w, G4ThreeVector p, G4ThreeVector m)
+  {
+    isPrimary = b;
+    energy = e;
+    weight = w;
+    position = p;
+    momentum = m;
+  }
+};
 
 //-----------------------------------------------------------------------------
 
@@ -63,6 +85,8 @@ public:
   G4double GetHybridTrackWeight() { return mCurrentHybridTrackWeight; }
   void SetHybridTrackWeight(G4double w) { mCurrentHybridTrackWeight = w; };
   
+  std::vector<RaycastingStruct> *GetRaycastingList() { return &mListOfRaycasting; }
+  
   void SetMultiplicity(bool, int, int, G4VPhysicalVolume *);
   
   /// Saves the data collected to the file
@@ -78,15 +102,19 @@ protected:
   int mDefaultPrimaryMultiplicity;
   int mDefaultSecondaryMultiplicity;
   std::map<G4VPhysicalVolume *,int> mSecondaryMultiplicityMap;
+  G4ParticleDefinition *mHybridino;
   
   GateMaterialMuHandler* mMaterialHandler;
   G4ProcessVector *mProcessListForGamma;
       
   // store the track and the associated hybridWeight
+  // - with hybridino
   int mCurrentTrackIndex;
   G4double mCurrentHybridTrackWeight;  
   std::vector<G4Track *> mListOfHybridTrack;
   std::vector<G4double> mListOfHybridWeight;
+  // - without hybridino
+  std::vector<RaycastingStruct> mListOfRaycasting;
 
 private:
   GateHybridMultiplicityActor();

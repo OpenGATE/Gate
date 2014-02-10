@@ -36,7 +36,8 @@ GateHybridDoseActor::GateHybridDoseActor(G4String name, G4int depth) :
   mCurrentEvent=-1;
   pMessenger = new GateHybridDoseActorMessenger(this);
   mMaterialHandler = GateMaterialMuHandler::GetInstance();
-
+  mListOfRaycasting = 0;
+  
   mIsDoseImageEnabled = true;
   mIsDoseUncertaintyImageEnabled = false;
   mIsPrimaryDoseImageEnabled = false;
@@ -90,6 +91,7 @@ void GateHybridDoseActor::Construct() {
   }
   // --> Set primary and secondary multiplicities in 'MultiplicityActor'
   pHybridMultiplicityActor->SetMultiplicity(mIsHybridinoEnabled, mPrimaryMultiplicity, mSecondaryMultiplicity, attachedVolume);
+  mListOfRaycasting = pHybridMultiplicityActor->GetRaycastingList();
 
   // Get the stepping manager
   mSteppingManager = G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager();
