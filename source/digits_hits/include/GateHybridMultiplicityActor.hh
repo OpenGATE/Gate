@@ -55,13 +55,13 @@ public:
   void PostUserTrackingAction(const GateVVolume *, const G4Track*);
   void UserSteppingAction(const GateVVolume *, const G4Step *);  
   
-  void SetPrimaryMultiplicity(int m) { defaultPrimaryMultiplicity = m; }
-  void SetSecondaryMultiplicity(int m) { defaultSecondaryMultiplicity = m; }
-  int GetPrimaryMultiplicity() { return defaultPrimaryMultiplicity; }
-  int GetSecondaryMultiplicity() { return defaultSecondaryMultiplicity; }  
+  void SetPrimaryMultiplicity(int m) { mDefaultPrimaryMultiplicity = m; }
+  void SetSecondaryMultiplicity(int m) { mDefaultSecondaryMultiplicity = m; }
+  int GetPrimaryMultiplicity() { return mDefaultPrimaryMultiplicity; }
+  int GetSecondaryMultiplicity() { return mDefaultSecondaryMultiplicity; }  
   
-  G4double GetHybridTrackWeight() { return currentHybridTrackWeight; }
-  void SetHybridTrackWeight(G4double w) { currentHybridTrackWeight = w; };
+  G4double GetHybridTrackWeight() { return mCurrentHybridTrackWeight; }
+  void SetHybridTrackWeight(G4double w) { mCurrentHybridTrackWeight = w; };
   
   void SetMultiplicity(bool, int, int, G4VPhysicalVolume *);
   
@@ -75,19 +75,19 @@ protected:
 
   // secondary multiplicity can be different in each volume
   bool mIsHybridinoEnabled;
-  int defaultPrimaryMultiplicity;
-  int defaultSecondaryMultiplicity;
-  std::map<G4VPhysicalVolume *,int> secondaryMultiplicityMap;
+  int mDefaultPrimaryMultiplicity;
+  int mDefaultSecondaryMultiplicity;
+  std::map<G4VPhysicalVolume *,int> mSecondaryMultiplicityMap;
   
-  GateMaterialMuHandler* materialHandler;
-  G4ProcessVector *processListForGamma;
+  GateMaterialMuHandler* mMaterialHandler;
+  G4ProcessVector *mProcessListForGamma;
       
   // store the track and the associated hybridWeight
-  int currentTrackIndex;
-  G4double currentHybridTrackWeight;
-  std::vector<G4Track *> theListOfHybridTrack;
-  std::vector<G4double> theListOfHybridWeight;
-  
+  int mCurrentTrackIndex;
+  G4double mCurrentHybridTrackWeight;  
+  std::vector<G4Track *> mListOfHybridTrack;
+  std::vector<G4double> mListOfHybridWeight;
+
 private:
   GateHybridMultiplicityActor();
   static GateHybridMultiplicityActor *singleton_HybridMultiplicityActor;
