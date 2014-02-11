@@ -68,7 +68,8 @@ class GateHybridDoseActor : public GateVImageActor
   int GetSecondaryMultiplicity() { return mSecondaryMultiplicity; }
 
   void InitializeMaterialAndMuTable();
-  void RayCast(const G4Step* step);
+  bool IntersectionBox(G4ThreeVector, G4ThreeVector);
+  void RayCast(bool, double, double, G4ThreeVector, G4ThreeVector);
  /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
@@ -108,6 +109,7 @@ protected:
 
   G4double ConversionFactor;
   G4double VoxelVolume;
+  G4Material *mWorldMaterial;
   
   GateHybridMultiplicityActor *pHybridMultiplicityActor;
   int mPrimaryMultiplicity;
@@ -115,7 +117,6 @@ protected:
   bool mIsHybridinoEnabled;
   std::vector<RaycastingStruct> *mListOfRaycasting;
 
-  
   bool mIsMaterialAndMuTableInitialized;
   std::vector<G4Material *> theListOfMaterial;
   std::vector<GateMuTable *> theListOfMuTable;
@@ -124,6 +125,17 @@ protected:
   G4SteppingManager *mSteppingManager;
   G4RotationMatrix mRotationMatrix;
   G4AffineTransform worldToVolume;
+
+  // raycasting members
+  double mBoxMin[3];
+  double mBoxMax[3];
+  double mRayOrigin[3];
+  double mRayDirection[3];
+  double mNearestDistance;
+  double mFarthestDistance;
+  double mTotalLength;
+  int mLineSize;
+  int mPlaneSize;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(HybridDoseActor,GateHybridDoseActor)
