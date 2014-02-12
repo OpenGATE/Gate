@@ -167,9 +167,13 @@ void GatePhaseSpaceActor::PreUserTrackingAction(const GateVVolume * /*v*/, const
 
 
 // --------------------------------------------------------------------
-//void GatePhaseSpaceActor::BeginOfEventAction(const G4Event * e) {
-//  mNevent++;
-//}
+void GatePhaseSpaceActor::BeginOfEventAction(const G4Event * e) {
+  //mNevent++;
+
+  //----------------------- Set Primary Energy ------------------------
+  primaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy();
+  //-------------------------------------------------------------------
+}
 // --------------------------------------------------------------------
 
 
@@ -224,14 +228,25 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
     const G4AffineTransform transformation = step->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform();
     localPosition = transformation.TransformPoint(localPosition);
   } else if (GetEnableCoordFrame()) {
-    //Set the custom coordinate frame, but only if GetUseVolumeFrame==0.
-    // TODO perhaps check if the string exists; occurs in pDetectorConstruction->GetObjectStore()->ListCreators()
-    
-    //GateVVolume* volumeken = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame()); //takes G4String, possible translate.
-    // NOTE this doesnt seem to work, why?
+    // Give GetUseVolumeFrame preference
 
-    const G4AffineTransform transformation = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame())->GetPhysicalVolume()->GetTouchable()->GetHistory()->GetTopTransform();
-    localPosition = transformation.TransformPoint(localPosition);
+    // Find the transform from GetCoordFrame volume to the world.
+    GateVVolume* v = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame());
+    G4VPhysicalVolume* phys = v->GetPhysicalVolume();
+    G4AffineTransform volumeToWorld = G4AffineTransform(phys->GetRotation(), phys->GetTranslation());
+    while (v->GetLogicalVolumeName() != "world_log") {
+      v = v->GetParentVolume();
+      phys = v->GetPhysicalVolume();
+      G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
+      volumeToWorld = volumeToWorld * x;
+    }
+
+    volumeToWorld = volumeToWorld.NetRotation();
+    G4AffineTransform worldToVolume = volumeToWorld.Inverse();
+
+    //old crap:
+    //const G4AffineTransform transformation = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame())->GetPhysicalVolume()->GetTouchable()->GetHistory()->GetTopTransform();
+    localPosition = worldToVolume.TransformPoint(localPosition);
 
   }
 
@@ -255,8 +270,25 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
     const G4AffineTransform transformation = step->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform();
     localMomentum = transformation.TransformAxis(localMomentum);
   } else if (GetEnableCoordFrame()) {
-    const G4AffineTransform transformation = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame())->GetTouchable()->GetHistory()->GetTopTransform();
-    localMomentum = transformation.TransformAxis(localMomentum);
+    // Give GetUseVolumeFrame preference
+
+    // Find the transform from GetCoordFrame volume to the world.
+    GateVVolume* v = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame());
+    G4VPhysicalVolume* phys = v->GetPhysicalVolume();
+    G4AffineTransform volumeToWorld = G4AffineTransform(phys->GetRotation(), phys->GetTranslation());
+    while (v->GetLogicalVolumeName() != "world_log") {
+      v = v->GetParentVolume();
+      phys = v->GetPhysicalVolume();
+      G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
+      volumeToWorld = volumeToWorld * x;
+    }
+
+    volumeToWorld = volumeToWorld.NetRotation();
+    G4AffineTransform worldToVolume = volumeToWorld.Inverse();
+
+    //old crap:
+    //const G4AffineTransform transformation = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame())->GetPhysicalVolume()->GetTouchable()->GetHistory()->GetTopTransform();
+    localMomentum = worldToVolume.TransformAxis(localMomentum);
   }
 
   dx = localMomentum.x();
@@ -337,10 +369,6 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
 
   }
   mIsFistStep = false;
-
-  //----------------------- Set Primary Energy ------------------------
-  primaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy();
-  //-------------------------------------------------------------------
 
 }
 // --------------------------------------------------------------------

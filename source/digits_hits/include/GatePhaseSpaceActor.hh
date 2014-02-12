@@ -46,7 +46,7 @@ class GatePhaseSpaceActor : public GateVActor
   // Callbacks
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
   virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
-  //virtual void BeginOfEventAction(const G4Event * e);
+  virtual void BeginOfEventAction(const G4Event * e);
 
   //=======================================================
   /// Saves the data collected to the file
@@ -83,6 +83,9 @@ class GatePhaseSpaceActor : public GateVActor
   bool GetEnableCoordFrame(){return bEnableCoordFrame;}
   void SetCoordFrame(G4String nameOfFrame){bCoordFrame=nameOfFrame;}
   G4String GetCoordFrame(){return bCoordFrame ;}
+
+  //hold the primary energy
+  float primaryEnergy;
 
 
 protected:

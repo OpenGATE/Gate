@@ -168,7 +168,18 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
   pMaxSizeCmd->SetParameterName("Size", false);
   pMaxSizeCmd->SetUnitCategory("Memory size");
 
-  //TODO add commands for primary energy and coordinate frame.
+  bb = base+"/enablePrimaryEnergy";
+  bEnablePrimaryEnergyCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Store the energy of the primary particle for every hit.";
+  bEnablePrimaryEnergyCmd->SetGuidance(guidance);
+
+  bb = base+"/setCoordinateFrame";
+  bCoordinateFrameCmd = new G4UIcmdWithAString(bb, this);
+  guidance = "Store the hit coordinates in the frame of the frame passed as an argument.";
+  bCoordinateFrameCmd->SetGuidance(guidance);
+  bCoordinateFrameCmd->SetParameterName("Coordinate Frame",false);
+
+
 }
 //-----------------------------------------------------------------------------
 
