@@ -1,0 +1,118 @@
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+# Example of CT imaging.
+
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+#=====================================================
+# VERBOSE and VISUALISATION 
+#=====================================================
+
+#/control/execute mac/verbose.mac
+#/control/execute mac/visu1.mac
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+# World
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+/gate/world/setMaterial            Vacuum
+/gate/world/geometry/setXLength    1 m
+/gate/world/geometry/setYLength    1 m
+/gate/world/geometry/setZLength    1 m
+
+
+# Detection plane
+/gate/world/daughters/name                    Pixel
+/gate/world/daughters/insert                  box
+/gate/Pixel/geometry/setZLength       0.550 mm
+/gate/Pixel/geometry/setYLength       0.74 mm
+/gate/Pixel/geometry/setXLength       0.74 mm
+/gate/Pixel/placement/setTranslation  0 0 0 mm
+/gate/Pixel/setMaterial               CsI
+/gate/Pixel/vis/setVisible            1
+/gate/Pixel/vis/setColor              yellow
+
+
+
+
+#=====================================================
+# PHYSIC
+#=====================================================
+
+#/control/execute mac/Physicslist_std_no_e.mac
+#/control/execute mac/Physicslist_Penelope_no_e.mac
+/control/execute mac/Physicslist_Livermore_no_e.mac
+
+# Be sure there is no e- 
+/gate/physics/Gamma/SetCutInRegion      world 10 nm
+/gate/physics/Electron/SetCutInRegion   world 10 mm
+/gate/physics/Positron/SetCutInRegion   world 10 m
+
+/gate/physics/displayCuts
+
+#=====================================================
+# DETECTORS
+#=====================================================
+
+
+# find source if gps. --> keep the first one.
+# assumption : ponctuel (focuspoint ou centre)
+
+# Scatter Order Track Information (soti)
+/gate/actor/addActor                   ScatterOrderTrackInformationActor soti
+/gate/actor/soti/attachTo              Pixel
+
+# -----------------------------------------------------
+# Dose energy response
+/gate/actor/addActor  DoseSpectrumActor doseSpec
+/gate/actor/doseSpec/attachTo           Pixel
+/gate/actor/doseSpec/dosePrimaryOnly    false
+/gate/actor/doseSpec/save               output/tiro204_dose_spec.txt
+/gate/actor/doseSpec/saveEveryNSeconds  20
+
+
+
+# -----------------------------------------------------
+# Save particles stats 
+/gate/actor/addActor  SimulationStatisticActor stat
+/gate/actor/stat/save output/tiro204_glab_stats.txt
+/gate/actor/stat/saveEveryNSeconds 20
+
+#=====================================================
+# BEAM
+#=====================================================
+
+#/gate/source/addSource mybeam gps
+#/control/execute mac/beam-mono-pencil.mac
+/control/execute mac/beam-pencil-mono-100source.mac
+
+
+#/vis/open HepRepXML
+
+
+#=====================================================
+# MAIN
+#=====================================================
+
+# DEBUG
+#/tracking/verbose 1
+#/tracking/verbose 1
+
+/gate/run/initialize
+
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed auto
+
+/gate/application/setTimeSlice 1 s
+/gate/application/setTimeStart 0 s
+/gate/application/setTimeStop 1 s
+#/gate/application/setTimeStop 3 s
+
+/gate/application/noGlobalOutput
+/gate/run/enableGlobalOutput false
+
+# PARTICLE
+/gate/application/setTotalNumberOfPrimaries 1200000000
+/gate/application/start
