@@ -10,6 +10,7 @@
 #include "GateEmisTomo.cu"
 #include "GateTransTomo.cu"
 #include "GatePhotRadThera.cu"
+#include "GateSPECT.cu"
 
 #include "GateOptical_cst.cu"
 #include "GateOptical_fun.cu"
