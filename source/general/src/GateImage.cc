@@ -1581,17 +1581,4 @@ bool GateImage::HasSameResolutionThan(const GateImage * pImage) const {
 }
 //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-GateImage::PixelType GateImage::GetMinValue()
-{
-   PixelType minVal = GetValue(0);
-   for(int i =1; i<GetNumberOfValues();i++)
-   {
-     if(GetValue(i)<minVal) minVal = GetValue(i);
-   }
-   return minVal;
-}
-//-----------------------------------------------------------------------------
-
-
 #endif

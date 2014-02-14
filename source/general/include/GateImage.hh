@@ -117,7 +117,8 @@ public:
   //  inline void Fill(PixelType v) { for (iterator i=begin(); i!=end(); ++i) (*i)=v; }
   inline void Fill(PixelType v) { fill(data.begin(), data.end(), v); }
 
-  PixelType GetMinValue();
+  inline PixelType GetMinValue() const{ return *std::min_element(begin(), end()); }
+  inline PixelType GetMaxValue() const{ return *std::max_element(begin(), end()); }
 
   inline PixelType GetOutsideValue()   { return mOutsideValue; } 
   inline void SetOutsideValue( PixelType v ) { mOutsideValue=v; }
