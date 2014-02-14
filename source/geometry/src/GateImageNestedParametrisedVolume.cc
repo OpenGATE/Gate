@@ -26,6 +26,7 @@
 #include "GateImageNestedParametrisation.hh"
 #include "GateMultiSensitiveDetector.hh"
 #include "GateMiscFunctions.hh"
+#include "GateImageBox.hh"
 
 ///---------------------------------------------------------------------------
 /// Constructor with :
@@ -72,7 +73,6 @@ G4LogicalVolume* GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalV
   GateMessageInc("Volume",3,"Begin GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalVolume()" << G4endl);
   //---------------------------
   LoadImage(false);
-  LoadImageMaterialsTable();
 
   //---------------------------
   if (mIsBoundingBoxOnlyModeEnabled) {
@@ -95,11 +95,13 @@ G4LogicalVolume* GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalV
   G4String boxname = GetObjectName() + "_solid";
   GateMessage("Volume",4,"GateImageNestedParametrisedVolume -- Create Box halfSize  = " << GetHalfSize() << G4endl);
 
-  pBoxSolid = new G4Box(GetSolidName(),GetHalfSize().x(), GetHalfSize().y(), GetHalfSize().z());
+  pBoxSolid = new GateImageBox(*GetImage(), GetSolidName());
   pBoxLog = new G4LogicalVolume(pBoxSolid, mater, GetLogicalVolumeName()); 
   GateMessage("Volume",4,"GateImageNestedParametrisedVolume -- Mother box created" << G4endl);
   //---------------------------
 
+  LoadImageMaterialsTable();
+  
   //---------------------------
   GateMessageDec("Volume",4,"GateImageNestedParametrisedVolume -- Voxels construction" << G4endl);  
   G4ThreeVector voxelHalfSize = GetImage()->GetVoxelSize()/2.0;
