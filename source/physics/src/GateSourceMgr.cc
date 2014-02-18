@@ -430,6 +430,7 @@ void GateSourceMgr::Initialization()//std::vector<G4double> * time, std::vector<
 //----------------------------------------------------------------------------------------
 G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
 {
+G4cout << "Entering PrepareNextRun..." << G4endl;
   //  GateMessage("Acquisition", 0, "PrepareNextRun "  << r->GetRunID() << G4endl);
   if( mVerboseLevel > 1 )
     G4cout << "GateSourceMgr::PrepareNextRun" << G4endl;
@@ -490,9 +491,33 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
 
   // Update the sources (for example for new positioning according to the geometry movements)
   for( size_t is = 0; is != mSources.size(); ++is )
+  {
     ( mSources[is] )->Update(m_time);
 
+#ifdef GATE_USE_RTK
+G4cout << " ##### S O U R C E ##### Geometry filename : " << mSources[is]->GetInputGeometryFilename() << G4endl;
+    if(mSources[is]->GetInputGeometryFilename() != "")
+    {
+      rtk::ThreeDCircularProjectionGeometryXMLFileReader::Pointer geometryReader;
+      geometryReader = rtk::ThreeDCircularProjectionGeometryXMLFileReader::New();
+      geometryReader->SetFilename(mSources[is]->GetInputGeometryFilename());
+      geometryReader->GenerateOutputInformation();
+      rtk::ThreeDCircularProjectionGeometry * geo = geometryReader->GetOutputObject();
+      double sdd = geo->GetSourceToDetectorDistances()[m_runNumber+1];
+      double sid = geo->GetSourceToIsocenterDistances()[m_runNumber+1];
+G4cout << " ##### S O U R C E ##### Centre Coord : " << ( mSources[is] )->GetPosDist()->GetCentreCoords() << G4endl;
+G4cout << " ##### S O U R C E ##### runID : " << m_runNumber << " with sdd : " << sdd << " and sid : " << sid << G4endl;
+      ( mSources[is] )->GetPosDist()->SetCentreCoords(G4ThreeVector(0,0,sdd));
+    //( mSources[is] )->GetAngDist()->SetFocusPointCopy(G4ThreeVector(0,0,sdd));
 
+//    G4RunManager::GetRunManager()->GeometryHasBeenModified();
+//    G4cout << " ##### S O U R C E ##### Focus Point : " << ( mSources[is] )->GetAngDist()->GetFocusPointCopy() << G4endl;
+    }
+G4cout << " ##### S O U R C E ##### Centre Coord after update : " << ( mSources[is] )->GetPosDist()->GetCentreCoords() << G4endl;
+#endif
+  }
+
+  G4RunManager::GetRunManager()->GeometryHasBeenModified();
   m_runNumber++;
 
   // if(m_runNumber==0)

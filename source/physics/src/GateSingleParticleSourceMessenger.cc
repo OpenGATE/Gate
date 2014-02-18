@@ -273,6 +273,10 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   setImageCmd1->SetGuidance("Biased X and Y positions according to an image (UserFluenceImage source type only)");
   setImageCmd1->SetParameterName("Image",true,true);
   setImageCmd1->SetDefaultValue("");
+
+  cmdName = GetDirectoryName()+ "pos/setInputGeometryFilename";
+  setInputGeometryFilenameCmd = new G4UIcmdWithAString(cmdName,this);
+  setInputGeometryFilenameCmd->SetGuidance("Set the file name for the RTK input geometry filename.");
   
   // old implementations
   cmdName = GetDirectoryName() + "type";
@@ -1311,6 +1315,10 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
   else if(command == setImageCmd1)
     {
       fParticleGun->SetUserFluenceFilename(newValues);
+    }
+  else if(command == setInputGeometryFilenameCmd)
+    {
+      fParticleGun->SetInputGeometryFilename(newValues);
     }
   else if(command == angtypeCmd1)
 	{
