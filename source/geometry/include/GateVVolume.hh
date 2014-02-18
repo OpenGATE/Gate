@@ -29,6 +29,13 @@ See GATE/LICENSE.txt for further details
 #include <vector>
 #include <map>
 
+#ifdef GATE_USE_RTK
+# include "rtkThreeDCircularProjectionGeometry.h"
+# include "rtkThreeDCircularProjectionGeometryXMLFile.h"
+#endif
+
+#include <GateRunManager.hh>
+
 class GateVActor;
 class G4Material;
 class G4VSensitiveDetector;
@@ -317,6 +324,8 @@ private :
   GateActorManager* m_actorManager;
 
   GateVVolume * mParent;
+
+  G4int m_runID;
 };
 //-------------------------------------------------------------------------------------------------
 

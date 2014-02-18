@@ -99,6 +99,11 @@ public:
   //! Set the mag of the translation vector while keeping theta and phi constant
   inline void SetMag(G4double val) 
   { m_translation.setMag(val);  }
+  //! Set the input geometry filename in order to take into account geometrical deformations
+  inline void SetInputGeometryFilename(G4String val)
+  { m_InputGeometryFilename = val;  }
+  inline G4String GetInputGeometryFilename()
+  { return m_InputGeometryFilename;  }
   //@}
 
 
@@ -127,6 +132,10 @@ private:
   G4ThreeVector m_translation;      	  //!< Translation vector
   G4ThreeVector m_rotationAxis;	  //!< Rotation axis (dimensionless vector)
   G4double m_rotationAngle;      	  //!< Rotation angle
+  //@}
+  //! \name geometry deformations
+  //@{
+  G4String m_InputGeometryFilename;
   //@}
     
   //! Messenger

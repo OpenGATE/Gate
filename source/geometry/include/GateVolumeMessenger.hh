@@ -15,6 +15,11 @@ See GATE/LICENSE.txt for further details
 
 #include "GateClockDependentMessenger.hh"
 
+#ifdef GATE_USE_RTK
+# include "rtkThreeDCircularProjectionGeometry.h"
+# include "rtkThreeDCircularProjectionGeometryXMLFile.h"
+#endif
+
 class GateVVolume;
 
 class GateVisAttributesMessenger;
@@ -37,6 +42,9 @@ class GateVolumeMessenger: public GateClockDependentMessenger
     G4UIcmdWithAString*             pSetMaterCmd;
     G4UIcmdWithoutParameter*        pAttachCrystalSDCmd;
     G4UIcmdWithoutParameter*        pAttachPhantomSDCmd;
+
+    G4UIcmdWithAString *            pSetInputGeometryFilenameCmd;
+
 };
 
 #endif

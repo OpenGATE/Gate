@@ -78,7 +78,8 @@ GateVVolume::GateVVolume(const G4String& itsName,
     m_creator(0),
     m_sensitiveDetector(0),
     m_motherList(0),
-    mParent(0)
+    mParent(0),
+    m_runID(0)
 {
 
   SetCreator(this);
@@ -311,7 +312,6 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
 
     //     GateMessage("Geometry", 5, " copyNumber = " << copyNumber << " flagUpdateOnly = " << flagUpdateOnly << " pOwnPhys exists ? = "
     //                 << pOwnPhys << " m_repeaterList = " <<m_repeaterList<<G4endl;);
-
     pOwnPhys = GetPhysicalVolume(copyNumber);
 
     // Check if the physical volume exist when the geometry
@@ -326,9 +326,45 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
 	// Update physical volume
 	//----------------------------------------------------------------
 	pOwnPhys = GetPhysicalVolume(copyNumber);
-
+       
 	// Set the translation vector for this physical volume
 	pOwnPhys->SetTranslation(position);
+         
+    if(GetSolidName()==G4String("DetectorPlane_solid"))
+    {
+
+ #ifdef GATE_USE_RTK
+      GateVolumePlacement * place = this->GetVolumePlacement();
+G4cout << "##### D E T E C T O R ##### Geometry filename : " << place->GetInputGeometryFilename() << G4endl;
+      if(place->GetInputGeometryFilename() !="")
+      {
+        rtk::ThreeDCircularProjectionGeometryXMLFileReader::Pointer geometryReader;
+        geometryReader = rtk::ThreeDCircularProjectionGeometryXMLFileReader::New();
+        geometryReader->SetFilename(place->GetInputGeometryFilename());
+        geometryReader->GenerateOutputInformation();
+        rtk::ThreeDCircularProjectionGeometry * geo = geometryReader->GetOutputObject();
+G4cout << " ##### D E T E C T O R ##### Volume Name : " << GetSolidName() <<" placement info : " << position[0] << ", " << position[1] << ", " << position[2] << G4endl;
+
+        double sdd = geo->GetSourceToDetectorDistances()[m_runID-1];
+        double sid = geo->GetSourceToIsocenterDistances()[m_runID-1];
+G4cout << "##### D E T E C T O R ##### runID : " << m_runID-1 << " with sdd : " << sdd << " and sid : " << sid << G4endl;
+        // Set Detector position
+        pOwnPhys->SetTranslation(G4ThreeVector(0,0,sid-sdd));
+        m_runID++;
+      }
+      else // In case somebody compiles with RTK and does not use a geometry file
+        pOwnPhys->SetTranslation(position);
+#else // Not compiled with RTK
+  pOwnPhys->SetTranslation(position);
+#endif
+      G4ThreeVector current_pos = pOwnPhys->GetTranslation();
+G4cout << "##### D E T E C T O R ##### Volume Name : " << GetSolidName() << " placement info after update : " << current_pos[0] << ", " << current_pos[1] << ", " << current_pos[2] << G4endl;
+    }
+    else
+    {
+      // Set the translation vector for this physical volume
+      pOwnPhys->SetTranslation(position);
+    }
 
 	// Set the rotation matrix for this physical volume
 	if (pOwnPhys->GetRotation())
