@@ -24,7 +24,7 @@ GateDoseSpectrumActor::GateDoseSpectrumActor(G4String name, G4int depth):
   mDosePrimaryOnly = false;
   mCurrentEvent= 0;
   mEventEnergy = -1;
-  mLastHitEventImage = 1;
+  mTotalEventEnergyDep = 0.;
   pMessenger = new GateDoseSpectrumActorMessenger(this);
 
   GateDebugMessageDec("Actor",4,"GateDoseSpectrumActor() -- end"<<G4endl);
@@ -51,8 +51,7 @@ void GateDoseSpectrumActor::Construct()
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
   EnableUserSteppingAction(true);
-  EnableEndOfEventAction(true); // for save every n
-  mVolumeMass = GetVolume()->GetPhysicalVolume()->GetLogicalVolume()->GetMass();
+  EnableEndOfEventAction(true);
   ResetData();
 }
 //-----------------------------------------------------------------------------
@@ -65,29 +64,27 @@ void GateDoseSpectrumActor::SaveData()
   GateVActor::SaveData();
   std::ofstream DoseResponseFile;
   OpenFileOutput(mSaveFilename, DoseResponseFile);
-  //G4int suma = 0;
-  G4double numPart;
-  G4double energyDose, doseEnergy, averageDoseEnergy, averageDoseEnergySquare, errorStandardDoseEnergy, averageEnergyTotal;
-  std::map< G4double, G4double>::iterator itermDoseEnergy;
-  for( itermDoseEnergy = mDoseEnergy.begin(); itermDoseEnergy != mDoseEnergy.end(); itermDoseEnergy++)
+  DoseResponseFile << "Incoming energy (keV)" << " "
+                   << "Average energy deposit (keV)" << " "
+                   << "Energy uncertainty (keV)"  << std::endl;
+  std::map< G4double, G4double>::iterator itermEnergy;
+  for( itermEnergy = mEnergy.begin(); itermEnergy != mEnergy.end(); itermEnergy++)
   {
-    energyDose = itermDoseEnergy->first;
-    //suma = suma + mNumParticPerEnergy[energyDose];
-    //G4cout << "itermDoseEnergy: " << energyDose << " doseEnergy: " <<  mDoseEnergy[energyDose] << " mNumParticPerEnergy: " << mNumParticPerEnergy[energyDose] << " suma: " << suma << G4endl;
-    doseEnergy = mDoseEnergy[energyDose];
-    numPart = mNumParticPerEnergy[energyDose];
-    averageDoseEnergy = doseEnergy / numPart;
-    averageEnergyTotal = averageDoseEnergy*mVolumeMass;
-    averageDoseEnergySquare = mDoseEnergySquare[energyDose] / numPart;
-    errorStandardDoseEnergy = sqrt( (1.0 / ( numPart - 1)) * ( averageDoseEnergySquare - pow( averageDoseEnergy/gray, 2)));
-    DoseResponseFile << "# energydose: " << energyDose/keV << " " << averageEnergyTotal/keV << " " << doseEnergy/gray << " " << averageDoseEnergy/gray << " " << errorStandardDoseEnergy  << std::endl;
+    G4double energyIn = itermEnergy->first;
+    G4double totEnergyOut = mEnergy[energyIn];
+    G4double numPart = mNumParticPerEnergy[energyIn];
+    G4double avgEnergyOut = totEnergyOut / numPart;
+    G4double avgEnergySq  = mEnergySquare[energyIn] / numPart;
+    G4double error = sqrt( (1.0 / ( numPart - 1)) * ( avgEnergySq - pow( avgEnergyOut, 2)));
+    DoseResponseFile << energyIn/keV << " "
+                     << avgEnergyOut/keV << " "
+                     << error/keV  << std::endl;
   }
 
   if (!DoseResponseFile)
   {
     GateMessage("Output",1,"Error Writing file: " << mSaveFilename << G4endl);
   }
-  DoseResponseFile.flush();
   DoseResponseFile.close();
 }
 //-----------------------------------------------------------------------------
@@ -96,7 +93,9 @@ void GateDoseSpectrumActor::SaveData()
 //-----------------------------------------------------------------------------
 void GateDoseSpectrumActor::ResetData()
 {
-  mDoseEnergy.clear();
+  mNumParticPerEnergy.clear();
+  mEnergy.clear();
+  mEnergySquare.clear();
 }
 //-----------------------------------------------------------------------------
 
@@ -113,47 +112,39 @@ void GateDoseSpectrumActor::BeginOfEventAction(const G4Event* event)
 {
   GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Event" << G4endl);
 
-  mOldEventEnergy = mEventEnergy;
-  mEventEnergy = event->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy();
+  // Process the previous event (if there was one)
+  if(mCurrentEvent) {
+    mEnergy[mEventEnergy]       += mTotalEventEnergyDep;
+    mEnergySquare[mEventEnergy] += mTotalEventEnergyDep*mTotalEventEnergyDep;
+  }
 
-  mCurrentEvent = mCurrentEvent + 1;
-  G4int numEventEnergy = 1;
-  mNumParticPerEnergy[mEventEnergy] += numEventEnergy;
+  // Prepare the new event
+  mTotalEventEnergyDep = 0.;
+  mEventEnergy = event->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy();
+  mCurrentEvent++;
+  if(mNumParticPerEnergy.find(mEventEnergy)==mNumParticPerEnergy.end()) {
+    mNumParticPerEnergy[mEventEnergy] = 1;
+    mEnergy[mEventEnergy] = 0.;
+    mEnergySquare[mEventEnergy] = 0.;
+  }
+  else
+    mNumParticPerEnergy[mEventEnergy]++;
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
-
-
 void GateDoseSpectrumActor::UserSteppingAction(const GateVVolume *, const G4Step* step)
 {
   GateScatterOrderTrackInformation * info = dynamic_cast<GateScatterOrderTrackInformation *>(step->GetTrack()->GetUserInformation());
-  if( mDosePrimaryOnly && step->GetTrack()->GetParticleDefinition()->GetParticleName() == "gamma" && info->GetScatterOrder())
-  {
+  if( mDosePrimaryOnly &&
+      step->GetTrack()->GetParticleDefinition()->GetParticleName() == "gamma" &&
+      info->GetScatterOrder() ) {
     step->GetTrack()->SetTrackStatus(fKillTrackAndSecondaries);
   }
-  else
-  {
-    bool sameEvent = true;
-    if(mCurrentEvent != mLastHitEventImage)
-    {
-      sameEvent = false;
-      mLastHitEventImage = mCurrentEvent;
-    }
-    if(!sameEvent)
-    {
-      mDoseEnergySquare[mOldEventEnergy] += (mDoseEnergyTemp/gray)*(mDoseEnergyTemp/gray);
-      mDoseEnergy[mOldEventEnergy] += mDoseEnergyTemp;
-      mDoseEnergyTemp = 0;
-    }
-
-    G4double energyDepot = step->GetTotalEnergyDeposit();
-    G4double doseEnergy = (energyDepot/mVolumeMass);
-    mDoseEnergyTemp += doseEnergy;
+  else {
+    mTotalEventEnergyDep += step->GetTotalEnergyDeposit()*step->GetTrack()->GetWeight();
   }
 }
-
 //-----------------------------------------------------------------------------
 
 

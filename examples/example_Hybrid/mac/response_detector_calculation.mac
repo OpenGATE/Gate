@@ -1,20 +1,3 @@
-#-------------------oooooOOOOO00000OOOOOooooo---------------------#
-
-# Example of CT imaging.
-
-#-------------------oooooOOOOO00000OOOOOooooo---------------------#
-
-#=====================================================
-# VERBOSE and VISUALISATION 
-#=====================================================
-
-#/control/execute mac/verbose.mac
-#/control/execute mac/visu1.mac
-
-#=====================================================
-# GEOMETRY
-#=====================================================
-
 # World
 /gate/geometry/setMaterialDatabase data/GateMaterials.db
 /gate/world/setMaterial            Vacuum
@@ -24,81 +7,122 @@
 
 
 # Detection plane
-/gate/world/daughters/name                    Pixel
+#/gate/world/daughters/name            Cover
+#/gate/world/daughters/insert          box
+#/gate/Cover/geometry/setZLength       1.5 mm 
+#/gate/Cover/geometry/setYLength       430 mm
+#/gate/Cover/geometry/setXLength       430 mm
+#/gate/Cover/placement/setTranslation  6.825 0 0 mm #0.550/2+0.5+0.3+5+1.5/2
+#/gate/Cover/setMaterial               PVC  
+#
+# Detection plane
+/gate/world/daughters/name             AirGap
+/gate/world/daughters/insert           box
+/gate/AirGap/geometry/setXLength       430 mm
+/gate/AirGap/geometry/setYLength       430 mm
+/gate/AirGap/geometry/setZLength       5 mm 
+/gate/AirGap/placement/setTranslation  0 0 3.575 mm #0.550/2+0.5+0.3+5/2
+/gate/AirGap/setMaterial               Air
+
+/gate/world/daughters/name                 GlassPlate
+/gate/world/daughters/insert               box
+/gate/GlassPlate/geometry/setXLength       430 mm
+/gate/GlassPlate/geometry/setYLength       430 mm
+/gate/GlassPlate/geometry/setZLength       0.5 mm 
+/gate/GlassPlate/placement/setTranslation  0 0 0.825 mm #0.550/2+0.3+0.5/2
+/gate/GlassPlate/setMaterial               Glass
+
+/gate/world/daughters/name                     AluminiumPlate
+/gate/world/daughters/insert                   box
+/gate/AluminiumPlate/geometry/setXLength       430 mm
+/gate/AluminiumPlate/geometry/setYLength       430 mm
+/gate/AluminiumPlate/geometry/setZLength       0.3 mm 
+/gate/AluminiumPlate/placement/setTranslation  0 0 0.425 mm #0.550/2+0.3/2
+/gate/AluminiumPlate/setMaterial               Aluminium
+
+## Detection plane
+/gate/world/daughters/name               CsIPixel
+/gate/world/daughters/insert             box
+/gate/CsIPixel/geometry/setXLength       430 mm
+/gate/CsIPixel/geometry/setYLength       430 mm
+/gate/CsIPixel/geometry/setZLength       0.550 mm
+/gate/CsIPixel/placement/setTranslation  0 0 0 mm
+/gate/CsIPixel/setMaterial               CsI
+
+/gate/world/daughters/name              SiPixel
+/gate/world/daughters/insert            box
+/gate/SiPixel/geometry/setXLength       430 mm
+/gate/SiPixel/geometry/setYLength       430 mm
+/gate/SiPixel/geometry/setZLength       0.001 mm
+/gate/SiPixel/placement/setTranslation  0 0 -0.2755 mm #-0.550/2-0.001/2
+/gate/SiPixel/setMaterial               Silicon
+
+/gate/world/daughters/name                  SiSubstrate
+/gate/world/daughters/insert                box
+/gate/SiSubstrate/geometry/setXLength       430 mm
+/gate/SiSubstrate/geometry/setYLength       430 mm
+/gate/SiSubstrate/geometry/setZLength       0.7 mm
+/gate/SiSubstrate/placement/setTranslation  0 0 -0.626 mm #-0.550/2-0.001-0.7/2
+/gate/SiSubstrate/setMaterial               Glass
+
+# Glue? 0.05 mm
+
+/gate/world/daughters/name                    MainSubstrate
 /gate/world/daughters/insert                  box
-/gate/Pixel/geometry/setZLength       0.550 mm
-/gate/Pixel/geometry/setYLength       0.74 mm
-/gate/Pixel/geometry/setXLength       0.74 mm
-/gate/Pixel/placement/setTranslation  0 0 0 mm
-/gate/Pixel/setMaterial               CsI
-/gate/Pixel/vis/setVisible            1
-/gate/Pixel/vis/setColor              yellow
+/gate/MainSubstrate/geometry/setXLength       430 mm
+/gate/MainSubstrate/geometry/setYLength       430 mm
+/gate/MainSubstrate/geometry/setZLength       3.3 mm
+/gate/MainSubstrate/placement/setTranslation  0 0 -2.676 mm #-0.550/2-0.001-0.7-0.05-3.3/2
+/gate/MainSubstrate/setMaterial               Silicon
+
+# Reset light board ? 5.9 mm
+
+/gate/world/daughters/name                LeadPlate
+/gate/world/daughters/insert              box
+/gate/LeadPlate/geometry/setXLength       430 mm
+/gate/LeadPlate/geometry/setYLength       430 mm
+/gate/LeadPlate/geometry/setZLength       2.6 mm
+/gate/LeadPlate/placement/setTranslation  0 0 -11.526 mm #-0.550/2-0.001-0.7-0.05-3.3-5.9-2.6/2
+/gate/LeadPlate/setMaterial               Lead
 
 
 
-
-#=====================================================
-# PHYSIC
-#=====================================================
-
-#/control/execute mac/Physicslist_std_no_e.mac
-#/control/execute mac/Physicslist_Penelope_no_e.mac
-/control/execute mac/Physicslist_Livermore_no_e.mac
+# Physics
+/gate/physics/addPhysicsList emlivermore
+/gate/physics/addAtomDeexcitation
 
 # Be sure there is no e- 
-/gate/physics/Gamma/SetCutInRegion      world 10 nm
-/gate/physics/Electron/SetCutInRegion   world 10 mm
-/gate/physics/Positron/SetCutInRegion   world 10 m
+/gate/physics/Gamma/SetCutInRegion      world 1 nm
+/gate/physics/Electron/SetCutInRegion   world 1 nm
+/gate/physics/Positron/SetCutInRegion   world 1 nm
 
 /gate/physics/displayCuts
 
-#=====================================================
-# DETECTORS
-#=====================================================
-
-
-# find source if gps. --> keep the first one.
-# assumption : ponctuel (focuspoint ou centre)
-
 # Scatter Order Track Information (soti)
-/gate/actor/addActor                   ScatterOrderTrackInformationActor soti
-/gate/actor/soti/attachTo              Pixel
+/gate/actor/addActor      ScatterOrderTrackInformationActor soti
+/gate/actor/soti/attachTo CsIPixel
 
 # -----------------------------------------------------
 # Dose energy response
 /gate/actor/addActor  DoseSpectrumActor doseSpec
-/gate/actor/doseSpec/attachTo           Pixel
+/gate/actor/doseSpec/attachTo           CsIPixel
 /gate/actor/doseSpec/dosePrimaryOnly    false
-/gate/actor/doseSpec/save               output/tiro204_dose_spec.txt
+/gate/actor/doseSpec/save               output/DoseInDetector.txt
 /gate/actor/doseSpec/saveEveryNSeconds  20
 
-
+/gate/actor/addActor  DoseSpectrumActor doseSpecSi
+/gate/actor/doseSpecSi/attachTo           SiPixel
+/gate/actor/doseSpecSi/dosePrimaryOnly    false
+/gate/actor/doseSpecSi/save               output/DoseInDetectorSi.txt
+/gate/actor/doseSpecSi/saveEveryNSeconds  20
 
 # -----------------------------------------------------
 # Save particles stats 
-/gate/actor/addActor  SimulationStatisticActor stat
-/gate/actor/stat/save output/tiro204_glab_stats.txt
+/gate/actor/addActor               SimulationStatisticActor stat
+/gate/actor/stat/save              output/stats.txt
 /gate/actor/stat/saveEveryNSeconds 20
 
-#=====================================================
-# BEAM
-#=====================================================
-
-#/gate/source/addSource mybeam gps
-#/control/execute mac/beam-mono-pencil.mac
 /control/execute mac/beam-pencil-mono-100source.mac
-
-
-#/vis/open HepRepXML
-
-
-#=====================================================
-# MAIN
-#=====================================================
-
-# DEBUG
-#/tracking/verbose 1
-#/tracking/verbose 1
 
 /gate/run/initialize
 
@@ -108,11 +132,10 @@
 /gate/application/setTimeSlice 1 s
 /gate/application/setTimeStart 0 s
 /gate/application/setTimeStop 1 s
-#/gate/application/setTimeStop 3 s
 
 /gate/application/noGlobalOutput
 /gate/run/enableGlobalOutput false
 
 # PARTICLE
-/gate/application/setTotalNumberOfPrimaries 1200000000
+/gate/application/setTotalNumberOfPrimaries 10000000000
 /gate/application/start

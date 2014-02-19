@@ -454,6 +454,10 @@ Carbide: d=15.8 g/cm3; n=2 ; state=Solid
         +el: name=Tungsten ; n=1
         +el: name=Carbon ; n=1
 
+CsI: d=3.38 g/cm3; n=2 ; state=Solid
+        +el: name=Cesium ; n=1
+        +el: name=Iodine ; n=1
+
 Water_Catphan_LowD: d=0.85 g/cm3; n=2 ; state=liquid
    	+el: name=Hydrogen ; n=2
 	+el: name=Oxygen; n=1

@@ -55,17 +55,12 @@ protected:
   GateDoseSpectrumActor(G4String name, G4int depth=0);
 
   bool mDosePrimaryOnly;
-  double mVolumeMass;
-  //double mEnergyDepot;
-  int mLastHitEventImage;
   int mCurrentEvent;
-  G4double mEventEnergy, mOldEventEnergy, mDoseEnergyTemp, mEnergyEventTemp;
-  //double DOSIS;
+  G4double mEventEnergy;
+  G4double mTotalEventEnergyDep;
   std::map< G4double, G4int > mNumParticPerEnergy;
-  //std::map< G4int, G4double > mDoseEnergyTemp;
-  //std::map< G4int, G4double > mEnergyEventTemp;
-  std::map< G4double, G4double > mDoseEnergy;
-  std::map< G4double, G4double > mDoseEnergySquare;
+  std::map< G4double, G4double > mEnergy;
+  std::map< G4double, G4double > mEnergySquare;
   GateDoseSpectrumActorMessenger* pMessenger;
 };
 
