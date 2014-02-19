@@ -20,6 +20,9 @@
 
 #include "GateTools.hh"
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 //-----------------------------------------------------------------------------------------------
 GateAngularRepeater::GateAngularRepeater(GateVVolume* itsObjectInserter,
 					 const G4String& itsName,

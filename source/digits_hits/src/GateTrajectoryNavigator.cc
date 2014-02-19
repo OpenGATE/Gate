@@ -18,6 +18,9 @@
 
 #include "GateActions.hh"
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 GateTrajectoryNavigator::GateTrajectoryNavigator()
 {
 }
