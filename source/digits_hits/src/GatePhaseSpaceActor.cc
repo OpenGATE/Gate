@@ -93,6 +93,7 @@ void GatePhaseSpaceActor::Construct()
   // Enable callbacks
   EnableBeginOfRunAction(false);
   EnableBeginOfEventAction(false);
+  if(bEnablePrimaryEnergy) EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(true);
   EnableUserSteppingAction(true);
 
@@ -171,7 +172,8 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event * e) {
   //mNevent++;
 
   //----------------------- Set Primary Energy ------------------------
-  primaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy();
+  bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy();
+  //G4cout << "brent: " << bPrimaryEnergy << G4endl;
   //-------------------------------------------------------------------
 }
 // --------------------------------------------------------------------

@@ -84,9 +84,6 @@ class GatePhaseSpaceActor : public GateVActor
   void SetCoordFrame(G4String nameOfFrame){bCoordFrame=nameOfFrame;}
   G4String GetCoordFrame(){return bCoordFrame ;}
 
-  //hold the primary energy
-  float primaryEnergy;
-
 
 protected:
   GatePhaseSpaceActor(G4String name, G4int depth=0);
@@ -118,9 +115,10 @@ protected:
   bool bEnableCoordFrame;
   bool bEnablePrimaryEnergy;
 
-  //Char_t bCoordFrame[256];
   G4String bCoordFrame;
+  //hold the primary energy
   float bPrimaryEnergy;
+
 
   double mFileSize;
 

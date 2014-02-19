@@ -71,6 +71,8 @@ class GateSourceTPSPencilBeam : public GateVSource
     double GetEllipseYPhiArea(double energy);
     //List of not allowed fields
     void SetNotAllowedField (int fieldID) {mNotAllowedFields.push_back(fieldID);}
+    //List of allowed fields
+    void SetAllowedField (int fieldID) {mAllowedFields.push_back(fieldID);}
     //MU to Protons conversion
     double ConvertMuToProtons(double weight, double energy);
     //select beam descriptionfile
@@ -108,8 +110,10 @@ class GateSourceTPSPencilBeam : public GateVSource
     bool mFlatGenerationFlag;
     double *mPDF;
     RandGeneral * mDistriGeneral;
-    //Not alloweed fields
+    //Not allowed fields
     vector<int> mNotAllowedFields;
+    //Allowed fields
+    vector<int> mAllowedFields;
     //clinical beam parameters (polynomial equations)
     vector<double> mEnergy, mEnergySpread, mX, mY, mTheta, mPhi, mXThetaEmittance, mYPhiEmittance;
     //Configuration of spot intensity
