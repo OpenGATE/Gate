@@ -13,6 +13,10 @@
 #define GATEIMAGEBOX_HH
 
 #ifdef G4VIS_USE_OPENGL
+
+#include "G4Version.hh"
+#if G4VERSION_NUMBER >= 960
+
 #define G4VIS_BUILD_OPENGL_DRIVER 1
 #ifdef G4VIS_USE_OPENGLX
 #define G4VIS_BUILD_OPENGLX_DRIVER 1
@@ -23,6 +27,10 @@
 #include "G4OpenGLSceneHandler.hh"
 #include "G4OpenGLStoredSceneHandler.hh"
 #include "G4OpenGL.hh"
+
+#define GATEIMAGEBOX_USE_OPENGL 1
+#endif
+
 #endif
 
 #include "G4Box.hh"
@@ -37,7 +45,7 @@ public:
     
     void DescribeYourselfTo(G4VGraphicsScene& scene) const;
 private:
-#ifdef G4VIS_USE_OPENGL
+#ifdef GATEIMAGEBOX_USE_OPENGL
     void DescribeYourselfTo(G4OpenGLSceneHandler& scene) const;
     
     std::vector<GateImage::PixelType> getXYSlice(const GateImage & image, const size_t z) const;

@@ -11,7 +11,7 @@
 
 GateImageBox::GateImageBox(const GateImage & image, const G4String & name) : G4Box(name, image.GetHalfSize().x(), image.GetHalfSize().y(), image.GetHalfSize().z()) {
 
-#ifdef G4VIS_USE_OPENGL
+#ifdef GATEIMAGEBOX_USE_OPENGL
     G4VisManager * pVisManager = dynamic_cast<G4VisManager *>(G4VVisManager::GetConcreteInstance());
     if(pVisManager) {
 
@@ -28,7 +28,7 @@ GateImageBox::GateImageBox(const GateImage & image, const G4String & name) : G4B
 GateImageBox::~GateImageBox() {}
 
 void GateImageBox::DescribeYourselfTo(G4VGraphicsScene& scene) const{
-#ifdef G4VIS_USE_OPENGL
+#ifdef GATEIMAGEBOX_USE_OPENGL
     try
     {
         G4OpenGLSceneHandler& opengl = dynamic_cast<G4OpenGLSceneHandler&>(scene);
@@ -46,7 +46,7 @@ void GateImageBox::DescribeYourselfTo(G4VGraphicsScene& scene) const{
 
 }
 
-#ifdef G4VIS_USE_OPENGL
+#ifdef GATEIMAGEBOX_USE_OPENGL
 void GateImageBox::DescribeYourselfTo(G4OpenGLSceneHandler& scene) const{
 
     scene.BeginPrimitives(scene.GetObjectTransformation());
