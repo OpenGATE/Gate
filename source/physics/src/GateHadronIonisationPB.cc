@@ -13,6 +13,9 @@ See GATE/LICENSE.txt for further details
 
 #include "GateHadronIonIonisationProcessMessenger.hh"
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 //-----------------------------------------------------------------------------
 GateHadronIonisationPB::GateHadronIonisationPB():GateVProcess("HadronIonisation")
 {  

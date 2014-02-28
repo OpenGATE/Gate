@@ -17,6 +17,9 @@ See GATE/LICENSE.txt for further details
 #include <fstream>
 //LF
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 GateSourceVoxelTestReader::GateSourceVoxelTestReader(GateVSource* source)
   : GateVSourceVoxelReader(source)
 {

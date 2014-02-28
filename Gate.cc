@@ -1,4 +1,4 @@
-/*!
+/*
  *	\file Gate.cc
  *	\author Didier Benoit <benoit@imnc.in2p3.fr>
  *	\date May 2012, QIM IMNC-IN2P3/CNRS, Paris VII-XI Universities, Orsay
@@ -10,9 +10,13 @@
  *	- 'Gate -a activity 10' using the parameterized macro creating an alias in your macro
  */
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 #include <getopt.h>
 #include <cstdlib>
 #include <queue>
+#include <locale.h>
 
 #include "G4UImanager.hh"
 #include "G4UIterminal.hh"
@@ -189,6 +193,7 @@ int main( int argc, char* argv[] )
   G4String listOfParameters = ""; // List of parameters for parameterized macro
   DigiMode aDigiMode = kruntimeMode;
 
+
   // Loop over arguments
   G4int c = 0;
   while( 1 )
@@ -354,7 +359,7 @@ int main( int argc, char* argv[] )
   welcome();
 
   std::ostringstream s;
-  s << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH;
+  s << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH; 
   GateMessage( "Core", 0, "You are using Geant4 version " << s.str() << G4endl );
 
   // Launching Gate if macro file

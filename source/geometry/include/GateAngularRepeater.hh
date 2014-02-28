@@ -17,6 +17,10 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVGlobalPlacement.hh"
 #include "G4Point3D.hh"
+
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 #define ModuloMax 8
 
 class GateVVolume;
