@@ -31,6 +31,7 @@
 #include "GateVImageVolume.hh"
 #include "GateHybridForcedDetectionFunctors.hh"
 #include "GateEnergyResponseFunctor.hh"
+#include "GateHybridForcedDetectionProjector.h"
 
 // itk
 #include <itkTimeProbe.h>
@@ -38,7 +39,6 @@
 // rtk
 #include <rtkConstantImageSource.h>
 #include <rtkReg23ProjectionGeometry.h>
-#include <rtkJosephForwardProjectionImageFilter.h>
 
 //-----------------------------------------------------------------------------
 
@@ -171,30 +171,21 @@ protected:
 
   // Compton stuff
   itk::TimeProbe mComptonProbe;
-  typedef rtk::JosephForwardProjectionImageFilter<
-                 InputImageType,
-                 InputImageType,
-                 GateHybridForcedDetectionFunctor::InterpolationWeightMultiplication,
+  typedef GateHybridForcedDetectionProjector<
                  GateHybridForcedDetectionFunctor::ComptonValueAccumulation>
                    ComptonProjectionType;
   ComptonProjectionType::Pointer mComptonProjector;
 
   // Rayleigh stuff
   itk::TimeProbe mRayleighProbe;
-  typedef rtk::JosephForwardProjectionImageFilter<
-                 InputImageType,
-                 InputImageType,
-                 GateHybridForcedDetectionFunctor::InterpolationWeightMultiplication,
+  typedef GateHybridForcedDetectionProjector<
                  GateHybridForcedDetectionFunctor::RayleighValueAccumulation>
                    RayleighProjectionType;
   RayleighProjectionType::Pointer mRayleighProjector;
 
   // Fluorescence stuff
   itk::TimeProbe mFluorescenceProbe;
-  typedef rtk::JosephForwardProjectionImageFilter<
-                 InputImageType,
-                 InputImageType,
-                 GateHybridForcedDetectionFunctor::InterpolationWeightMultiplication,
+  typedef GateHybridForcedDetectionProjector<
                  GateHybridForcedDetectionFunctor::FluorescenceValueAccumulation>
                    FluorescenceProjectionType;
   FluorescenceProjectionType::Pointer mFluorescenceProjector;
