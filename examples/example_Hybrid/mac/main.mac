@@ -91,29 +91,32 @@
 
 # -----------------------------------------------------
 # Hybrid ForcedDetection Actor (hfda)
-/gate/actor/addActor                   HybridForcedDetectionActor hfda
-/gate/actor/hfda/attachTo              world
-/gate/actor/hfda/setDetector           DetectorPlane
-/gate/actor/hfda/setDetectorResolution 256 256
-/gate/actor/hfda/geometryFilename      output/geometry.xml
-/gate/actor/hfda/primaryFilename       output/primary%.04d.mha
-/gate/actor/hfda/rayleighFilename      output/rayleigh%.04d.mha
-/gate/actor/hfda/comptonFilename       output/compton%.04d.mha
-/gate/actor/hfda/fluorescenceFilename  output/fluorescence%.04d.mha
-/gate/actor/hfda/secondaryFilename     output/secondary%.04d.mha
-/gate/actor/hfda/totalFilename         output/total%.04d.mha
-/gate/actor/hfda/materialMuFilename    output/materialMu.mha
-/gate/actor/hfda/attenuationFilename   output/attenuation%.04d.mha
-/gate/actor/hfda/flatFieldFilename     output/flatField%.04d.mha
-/gate/actor/hfda/saveEveryNSeconds     120
-#/gate/actor/hfda/singleInteractionFilename  output/single{ZDISTANCE}.mha
-#/gate/actor/hfda/singleInteractionType      Compton
-#/gate/actor/hfda/singleInteractionPosition  0 0 {ZDISTANCE} cm
-#/gate/actor/hfda/singleInteractionDirection 0 0 -1
-#/gate/actor/hfda/singleInteractionEnergy    70 keV
-#/gate/actor/hfda/singleInteractionZ         7
-/gate/actor/hfda/phaseSpaceFilename         output/interactions.root
-#/gate/actor/hfda/responseDetectorFilename data/responseDetector.txt
+/gate/actor/addActor                          HybridForcedDetectionActor hfda
+/gate/actor/hfda/attachTo                     world
+/gate/actor/hfda/setDetector                  DetectorPlane
+/gate/actor/hfda/setDetectorResolution        256 256
+/gate/actor/hfda/geometryFilename             output/geometry.xml
+/gate/actor/hfda/primaryFilename              output/primary%.04d.mha
+/gate/actor/hfda/rayleighFilename             output/rayleigh%.04d.mha
+/gate/actor/hfda/comptonFilename              output/compton%.04d.mha
+/gate/actor/hfda/fluorescenceFilename         output/fluorescence%.04d.mha
+/gate/actor/hfda/secondaryFilename            output/secondary%.04d.mha
+/gate/actor/hfda/secondarySquaredFilename     output/secondary%.04d-Squared.mha
+/gate/actor/hfda/secondaryUncertaintyFilename output/secondary%.04d-Uncertainty.mha
+/gate/actor/hfda/totalFilename                output/total%.04d.mha
+/gate/actor/hfda/materialMuFilename           output/materialMu.mha
+/gate/actor/hfda/attenuationFilename          output/attenuation%.04d.mha
+/gate/actor/hfda/flatFieldFilename            output/flatField%.04d.mha
+/gate/actor/hfda/saveEveryNSeconds            120
+#/gate/actor/hfda/singleInteractionFilename    output/single{ZDISTANCE}.mha
+#/gate/actor/hfda/singleInteractionType        Compton
+#/gate/actor/hfda/singleInteractionPosition    0 0 {ZDISTANCE} cm
+#/gate/actor/hfda/singleInteractionDirection   0 0 -1
+#/gate/actor/hfda/singleInteractionEnergy      70 keV
+#/gate/actor/hfda/singleInteractionZ           7
+#/gate/actor/hfda/phaseSpaceFilename           output/interactions.root
+#/gate/actor/hfda/waterLUTFilename             output/waterLUT.mhd
+#/gate/actor/hfda/responseDetectorFilename     data/reponseDetector.txt
 
 
 # find source if gps. --> keep the first one.
@@ -145,9 +148,9 @@
 /gate/source/addSource mybeam gps
 #/control/execute mac/beam-mono.mac
 #/control/execute mac/beam-iMagX-mono.mac
-#/control/execute mac/beam-iMagX120keV.mac
+/control/execute mac/beam-iMagX120keV.mac
 #/control/execute mac/beam-iMagX80keV.mac
-/control/execute mac/beam-with-spektrum.mac
+#/control/execute mac/SynergyBeam.mac
 
 #=====================================================
 # MAIN
@@ -171,5 +174,5 @@
 /gate/run/enableGlobalOutput false
 
 # PARTICLE
-/gate/application/setTotalNumberOfPrimaries 100
+/gate/application/setTotalNumberOfPrimaries 1
 /gate/application/start

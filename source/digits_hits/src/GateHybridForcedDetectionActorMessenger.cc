@@ -101,6 +101,16 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
   guidance = "Set the file name for writing the image that provides the scattering image.";
   pSetSecondaryFilenameCmd->SetGuidance(guidance);
 
+  bb = base+"/secondarySquaredFilename";
+  pSetSecondarySquaredFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for writing the Squared image of scatter.";
+  pSetSecondarySquaredFilenameCmd->SetGuidance(guidance);
+
+  bb = base+"/secondaryUncertaintyFilename";
+  pSetSecondaryUncertaintyFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the file name for writing the uncertainty image of scatter.";
+  pSetSecondaryUncertaintyFilenameCmd->SetGuidance(guidance);
+
   bb = base+"/totalFilename";
   pSetTotalFilenameCmd = new G4UIcmdWithAString(bb,this);
   guidance = "Set the file name for writing the image that provides the total (primary + scaterring) image.";
@@ -164,6 +174,8 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetResponseDetectorFilenameCmd) pHybridActor->SetResponseDetectorFilename(param);
   if(command == pSetFluorescenceFilenameCmd) pHybridActor->SetFluorescenceFilename(param);
   if(command == pSetSecondaryFilenameCmd) pHybridActor->SetSecondaryFilename(param);
+  if(command == pSetSecondarySquaredFilenameCmd) pHybridActor->SetSecondarySquaredFilename(param);
+  if(command == pSetSecondaryUncertaintyFilenameCmd) pHybridActor->SetSecondaryUncertaintyFilename(param);
   if(command == pSetTotalFilenameCmd) pHybridActor->SetTotalFilename(param);
   if(command == pSetSingleInteractionFilenameCmd) pHybridActor->SetSingleInteractionFilename(param);
   if(command == pSetSingleInteractionTypeCmd) pHybridActor->SetSingleInteractionType(param);
