@@ -22,7 +22,8 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
 {
 
   pEnableDoseCmd = 0;
-  pEnableDoseNormCmd= 0;
+  pEnableDoseNormToMaxCmd= 0;
+  pEnableDoseNormToIntegralCmd= 0;
   pEnableDoseSquaredCmd= 0;
   pEnableDoseUncertaintyCmd= 0;
   pEnableDoseToWaterCmd = 0;
@@ -50,7 +51,8 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
 GateDoseActorMessenger::~GateDoseActorMessenger()
 {
   if(pEnableDoseCmd) delete pEnableDoseCmd;
-  if(pEnableDoseNormCmd) delete pEnableDoseNormCmd;
+  if(pEnableDoseNormToMaxCmd) delete pEnableDoseNormToMaxCmd;
+  if(pEnableDoseNormToIntegralCmd) delete pEnableDoseNormToIntegralCmd;
   if(pEnableDoseSquaredCmd) delete pEnableDoseSquaredCmd;
   if(pEnableDoseUncertaintyCmd) delete pEnableDoseUncertaintyCmd;
   if(pEnableDoseToWaterCmd) delete pEnableDoseToWaterCmd;
@@ -81,10 +83,15 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   G4String guid = G4String("Enable dose computation");
   pEnableDoseCmd->SetGuidance(guid);
 
-  n = base+"/normaliseDose";
-  pEnableDoseNormCmd = new G4UIcmdWithABool(n, this);
+  n = base+"/normaliseDoseToMax";
+  pEnableDoseNormToMaxCmd = new G4UIcmdWithABool(n, this);
+  guid = G4String("Enable dose normalisation according to max");
+  pEnableDoseNormToMaxCmd->SetGuidance(guid);
+
+  n = base+"/normaliseDoseToIntegral";
+  pEnableDoseNormToIntegralCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable dose normalisation according to integral");
-  pEnableDoseNormCmd->SetGuidance(guid);
+  pEnableDoseNormToIntegralCmd->SetGuidance(guid);
 
   n = base+"/enableSquaredDose";
   pEnableDoseSquaredCmd = new G4UIcmdWithABool(n, this);
@@ -191,7 +198,9 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pEnableEdepSquaredCmd) pDoseActor->EnableEdepSquaredImage(pEnableEdepSquaredCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableEdepUncertaintyCmd) pDoseActor->EnableEdepUncertaintyImage(pEnableEdepUncertaintyCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableNumberOfHitsCmd) pDoseActor->EnableNumberOfHitsImage(pEnableNumberOfHitsCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableDoseNormCmd) pDoseActor->EnableDoseNormalisation(pEnableDoseNormCmd->GetNewBoolValue(newValue));
+
+  if (cmd == pEnableDoseNormToMaxCmd) pDoseActor->EnableDoseNormalisationToMax(pEnableDoseNormToMaxCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableDoseNormToIntegralCmd) pDoseActor->EnableDoseNormalisationToIntegral(pEnableDoseNormToIntegralCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseToWaterNormCmd) pDoseActor->EnableDoseToWaterNormalisation(pEnableDoseToWaterNormCmd->GetNewBoolValue(newValue));
 
   if (cmd == pEnableRBE1AlphaCmd) pDoseActor->EnableRBE1AlphaImage(pEnableRBE1AlphaCmd->GetNewBoolValue(newValue));

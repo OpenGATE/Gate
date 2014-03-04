@@ -58,3 +58,4 @@ GateAddExampleData("DATA{example_dosimetry/molecular-therapy-I131/data/air-mouse
 GateAddExampleData("DATA{example_dosimetry/protontherapy/data/patient-2mm.raw}")
 
 GateAddExampleData("DATA{example_fluorescence/data/fluorescence.pdf}")
+GateAddExampleData("DATA{example_dosimetry/electron_radiotherapy/data/Rando.raw}")
