@@ -101,8 +101,8 @@
 /gate/actor/hfda/comptonFilename              output/compton%.04d.mha
 /gate/actor/hfda/fluorescenceFilename         output/fluorescence%.04d.mha
 /gate/actor/hfda/secondaryFilename            output/secondary%.04d.mha
-/gate/actor/hfda/secondarySquaredFilename     output/secondary%.04d-Squared.mha
-/gate/actor/hfda/secondaryUncertaintyFilename output/secondary%.04d-Uncertainty.mha
+/gate/actor/hfda/enableUncertaintySecondary   true
+/gate/actor/hfda/enableSquaredSecondary       true
 /gate/actor/hfda/totalFilename                output/total%.04d.mha
 /gate/actor/hfda/materialMuFilename           output/materialMu.mha
 /gate/actor/hfda/attenuationFilename          output/attenuation%.04d.mha

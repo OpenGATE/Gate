@@ -82,8 +82,8 @@ public:
   void SetRayleighFilename(G4String name) { mRayleighFilename = name; }
   void SetFluorescenceFilename(G4String name) { mFluorescenceFilename = name; }
   void SetSecondaryFilename(G4String name) { mSecondaryFilename = name; }
-  void SetSecondarySquaredFilename(G4String name) { mSecondarySquaredFilename = name; }
-  void SetSecondaryUncertaintyFilename(G4String name) { mSecondaryUncertaintyFilename = name; }
+  void EnableSecondarySquaredImage(bool b) { mIsSecondarySquaredImageEnabled = b; }
+  void EnableSecondaryUncertaintyImage(bool b) { mIsSecondaryUncertaintyImageEnabled = b; }
   void SetTotalFilename(G4String name) { mTotalFilename = name; }
   void SetSingleInteractionFilename(G4String name) { mSingleInteractionFilename = name; }
   void SetSingleInteractionType(G4String type) { mSingleInteractionType = type; }
@@ -134,8 +134,8 @@ protected:
   G4String mRayleighFilename;
   G4String mFluorescenceFilename;
   G4String mSecondaryFilename;
-  G4String mSecondarySquaredFilename;
-  G4String mSecondaryUncertaintyFilename;
+  bool mIsSecondarySquaredImageEnabled;
+  bool mIsSecondaryUncertaintyImageEnabled;
   G4String mTotalFilename;
   G4String mWaterLUTFilename;
 

@@ -43,7 +43,9 @@
 //-----------------------------------------------------------------------------
 /// Constructors
 GateHybridForcedDetectionActor::GateHybridForcedDetectionActor(G4String name, G4int depth):
-  GateVActor(name,depth)
+  GateVActor(name,depth),
+  mIsSecondarySquaredImageEnabled(false),
+  mIsSecondaryUncertaintyImageEnabled(false)
 {
   GateDebugMessageInc("Actor",4,"GateHybridForcedDetectionActor() -- begin"<<G4endl);
   pActorMessenger = new GateHybridForcedDetectionActorMessenger(this);
@@ -391,7 +393,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   if(mWaterLUTFilename != "")
     CreateWaterLUT(energyList, energyWeightList);
 
-  if(mSecondarySquaredFilename!= "" || mSecondaryUncertaintyFilename != "") {
+  if(mIsSecondarySquaredImageEnabled || mIsSecondaryUncertaintyImageEnabled) {
     mEventComptonImage = CreateVoidProjectionImage();
     mEventRayleighImage = CreateVoidProjectionImage();
     mEventFluorescenceImage = CreateVoidProjectionImage();
@@ -404,7 +406,7 @@ void GateHybridForcedDetectionActor::BeginOfEventAction(const G4Event *itkNotUse
 {
   mNumberOfEventsInRun++;
 
-  if(mSecondarySquaredFilename!= "" || mSecondaryUncertaintyFilename != "") {
+  if(mIsSecondarySquaredImageEnabled || mIsSecondaryUncertaintyImageEnabled) {
     // The event contribution are put in new images which at this point are in the
     // mEventComptonImage / mEventRayleighImage / mEventFluorescenceImage. We therefore
     // swap the two and they will be swapped back in EndOfEventAction.
@@ -427,7 +429,7 @@ void GateHybridForcedDetectionActor::EndOfEventAction(const G4Event *e)
   typedef itk::AddImageFilter <OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
   AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
 
-  if(mSecondarySquaredFilename!= "" || mSecondaryUncertaintyFilename != "") {
+  if(mIsSecondarySquaredImageEnabled || mIsSecondaryUncertaintyImageEnabled) {
     // First: accumulate contribution to event, square and add to total squared
     InputImageType::Pointer totalContribEvent(NULL);
     if( mEventComptonImage->GetTimeStamp() < mComptonImage->GetTimeStamp() ) {
@@ -825,8 +827,8 @@ void GateHybridForcedDetectionActor::SaveData()
   }
 
   if(mSecondaryFilename != "" ||
-     mSecondarySquaredFilename != "" ||
-     mSecondaryUncertaintyFilename != "" ||
+     mIsSecondarySquaredImageEnabled ||
+     mIsSecondaryUncertaintyImageEnabled ||
      mTotalFilename != "") {
     // The secondary image contains all calculated scatterings
     // (Compton, Rayleigh and/or Fluorescence)
@@ -865,35 +867,37 @@ void GateHybridForcedDetectionActor::SaveData()
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mSecondaryImage);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    }
 
-    // Write scatter squared image
-    if(mSecondarySquaredFilename != "") {
-      sprintf(filename, mSecondarySquaredFilename.c_str(), rID);
-      imgWriter->SetFileName(filename);
-      imgWriter->SetInput(mSecondarySquared);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    }
+      // Write scatter squared image
+      if(mIsSecondarySquaredImageEnabled) {
+        imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                               "-Squared." +
+                               G4String(getExtension(filename)));
+        imgWriter->SetInput(mSecondarySquared);
+        TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+      }
 
-    // Write scatter uncertainty image
-    if(mSecondaryUncertaintyFilename != "") {
-      //Attenuation Functor -> atten
-      typedef itk::BinaryFunctorImageFilter< InputImageType, InputImageType, InputImageType,
-                                             GateHybridForcedDetectionFunctor::Chetty<InputImageType::PixelType> > ChettyType;
-      ChettyType::Pointer chetty = ChettyType::New();
-      chetty->GetFunctor().SetN(mNumberOfEventsInRun);
+      // Write scatter uncertainty image
+      if(mIsSecondaryUncertaintyImageEnabled) {
+        //Attenuation Functor -> atten
+        typedef itk::BinaryFunctorImageFilter< InputImageType, InputImageType, InputImageType,
+                                               GateHybridForcedDetectionFunctor::Chetty<InputImageType::PixelType> > ChettyType;
+        ChettyType::Pointer chetty = ChettyType::New();
+        chetty->GetFunctor().SetN(mNumberOfEventsInRun);
 
-      // In the attenuation, we assume that the whole detector is irradiated.
-      // Otherwise we would have a division by 0.
-      chetty->SetInput1(mSecondaryImage);
-      chetty->SetInput2(mSecondarySquared);
-      chetty->InPlaceOff();
+        // In the attenuation, we assume that the whole detector is irradiated.
+        // Otherwise we would have a division by 0.
+        chetty->SetInput1(mSecondaryImage);
+        chetty->SetInput2(mSecondarySquared);
+        chetty->InPlaceOff();
 
-      sprintf(filename, mSecondaryUncertaintyFilename.c_str(), rID);
-      imgWriter->SetFileName(filename);
-      imgWriter->SetInput(chetty->GetOutput());
+        imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                               "-Uncertainty." +
+                               G4String(getExtension(filename)));
+        imgWriter->SetInput(chetty->GetOutput());
 
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+        TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+      }
     }
 
     if(mTotalFilename != "") {
