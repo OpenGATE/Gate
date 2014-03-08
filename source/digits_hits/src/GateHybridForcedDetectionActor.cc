@@ -589,7 +589,11 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
   //FIXME: do we prefer this solution or computing the scattering function for the material?
   const G4MaterialCutsCouple *couple = step->GetPreStepPoint()->GetMaterialCutsCouple();
   const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
+#if G4VERSION_MAJOR<10 && G4VERSION_MINOR==5
   G4VEmModel* model = const_cast<G4VEmProcess*>(process)->Model();
+#else
+  G4VEmModel* model = const_cast<G4VEmProcess*>(process)->EmModel();
+#endif
   const G4Element* elm = model->SelectRandomAtom(couple,particle,mInteractionEnergy);
   mInteractionZ = elm->GetZ();
 
