@@ -203,14 +203,23 @@ int main( int argc, char* argv[] )
         { "param", required_argument, 0, 'a' }
       };
 
-      // If the program was started by double-clicking on the application bundle on Mac OS X
-      // rather than from the command-line, enable Qt and don't try to process other options;
-      // argv[1] contains a process serial number in the form -psn_0_1234567
-      if( argc > 1 && memcmp( argv[1], "-psn_", 5 ) == 0 ) {
+#ifdef __APPLE__
+/*
+ * If the program was started by double-clicking on the application bundle on Mac OS X
+ * rather than from the command-line, enable Qt and don't try to process other options;
+ * argv[1] contains a process serial number in the form -psn_0_1234567
+ * OS X <= 10.8 have a -psn_XXX argument given by the system
+ * OS X >= 10.9 does not have one, so we use the "TERM" environment variable
+ * to distinguish between launched by the Terminal or by the system.
+ */
+      if ( (argc>1 && strncmp( argv[1], "-psn", 4 ) == 0) || getenv("TERM") == NULL ) {
         argc = 1;
         isQt = 1;
         break;
-      } else {
+      }
+      else
+#endif
+      {
         // Getting the option
         c = getopt_long( argc, argv, "hva:", longOptions, &optionIndex );
       }
