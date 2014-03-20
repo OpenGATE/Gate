@@ -628,7 +628,8 @@ public:
     return input;
   }
 
-  void SetEnergyAndWeight(const double  &energy, const double &weight) {
+  void SetDirection(const VectorType &itkNotUsed(_arg)){}
+  void SetEnergyZAndWeight(const double &energy, const unsigned int &itkNotUsed(Z), const double &weight) {
     unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
     m_Weight = weight;
     m_Energy = energy / m_MaterialMu->GetSpacing()[1];

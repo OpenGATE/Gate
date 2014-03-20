@@ -59,12 +59,13 @@ public:
 
   // Callbacks
   virtual void BeginOfRunAction(const G4Run*);
+  virtual void EndOfRunAction(const G4Run*);
   virtual void BeginOfEventAction(const G4Event*);
   virtual void EndOfEventAction(const G4Event*);
   // virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
 
-  /// Saves the data collected to the file
+  // Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
 
@@ -116,6 +117,19 @@ public:
                                                   VectorType &detectorColVector);
   InputImageType::Pointer ConvertGateImageToITKImage(GateVImageVolume * gateImgVol);
   InputImageType::Pointer CreateVoidProjectionImage();
+
+  // The actual forced detection functions
+  void ForceDetectionOfInteraction(G4int runID, G4int eventID, G4int trackID,
+                                   G4String prodVol, G4String creatorProc,
+                                   G4String processName, G4String interVol,
+                                   G4ThreeVector pt, G4ThreeVector dir,
+                                   double energy, double weight,
+                                   G4String material, int Z, int order);
+  template <class TProjectorType>
+  void ForceDetectionOfInteraction(TProjectorType *projector,
+                                   InputImageType::Pointer &input,
+                                   std::vector<InputImageType::Pointer> &inputPerOrder,
+                                   itk::TimeProbe &probe);
 
 protected:
   GateHybridForcedDetectionActorMessenger * pActorMessenger;
@@ -180,23 +194,17 @@ protected:
 
   // Compton stuff
   itk::TimeProbe mComptonProbe;
-  typedef GateHybridForcedDetectionProjector<
-                 GateHybridForcedDetectionFunctor::ComptonValueAccumulation>
-                   ComptonProjectionType;
+  typedef GateHybridForcedDetectionProjector<GateHybridForcedDetectionFunctor::ComptonValueAccumulation> ComptonProjectionType;
   ComptonProjectionType::Pointer mComptonProjector;
 
   // Rayleigh stuff
   itk::TimeProbe mRayleighProbe;
-  typedef GateHybridForcedDetectionProjector<
-                 GateHybridForcedDetectionFunctor::RayleighValueAccumulation>
-                   RayleighProjectionType;
+  typedef GateHybridForcedDetectionProjector<GateHybridForcedDetectionFunctor::RayleighValueAccumulation> RayleighProjectionType;
   RayleighProjectionType::Pointer mRayleighProjector;
 
   // Fluorescence stuff
   itk::TimeProbe mFluorescenceProbe;
-  typedef GateHybridForcedDetectionProjector<
-                 GateHybridForcedDetectionFunctor::FluorescenceValueAccumulation>
-                   FluorescenceProjectionType;
+  typedef GateHybridForcedDetectionProjector<GateHybridForcedDetectionFunctor::FluorescenceValueAccumulation> FluorescenceProjectionType;
   FluorescenceProjectionType::Pointer mFluorescenceProjector;
 
   // Parameters for single event output
@@ -226,6 +234,7 @@ protected:
   Char_t        mInteractionVolume[256];
   Char_t        mInteractionMaterial[256];
   int           mInteractionZ;
+  int           mInteractionOrder;
 
   // Water equivalent conversion
   void CreateWaterLUT(const std::vector<double> &energyList,
