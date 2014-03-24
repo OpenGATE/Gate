@@ -871,7 +871,6 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
       G4ParticleDefinition* particle = theParticleIterator->value();
       G4ProcessManager* pmanager = particle->GetProcessManager();
       G4String particleName = particle->GetParticleName();
-      std::cout << "ITERATOR : " << particleName << std::endl;
       for(unsigned int i=0; i<mListOfStepLimiter.size(); i++) {
 	if(mListOfStepLimiter[i]==particleName) {
           GateMessage("Cuts", 3, "Activate G4StepLimiter for " << particleName << G4endl);
