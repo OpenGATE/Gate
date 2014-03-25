@@ -125,6 +125,7 @@ public:
                                                   VectorType &detectorColVector);
   InputImageType::Pointer ConvertGateImageToITKImage(GateVImageVolume * gateImgVol);
   InputImageType::Pointer CreateVoidProjectionImage();
+  void CreatePhaseSpace(const G4String phaseSpaceFilename, TFile *&phaseSpaceFile, TTree *&phaseSpace);
 
   // The actual forced detection functions
   void ForceDetectionOfInteraction(G4int runID, G4int eventID, G4int trackID,

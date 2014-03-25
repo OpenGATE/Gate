@@ -83,30 +83,11 @@ void GateHybridForcedDetectionActor::Construct()
   ResetData();
   mEMCalculator = new G4EmCalculator;
 
-  mPhaseSpaceFile = NULL;
-  if(mPhaseSpaceFilename != "")
-    mPhaseSpaceFile = new TFile(mPhaseSpaceFilename,"RECREATE","ROOT file for phase space",9);
-  mPhaseSpace = new TTree("PhaseSpace","Phase space tree of hybrid forced detection actor");
-
-  mPhaseSpace->Branch("Ekine",  &mInteractionEnergy, "Ekine/D");
-  mPhaseSpace->Branch("Weight", &mInteractionWeight, "Weight/D");
-  mPhaseSpace->Branch("X", &(mInteractionPosition[0]), "X/D");
-  mPhaseSpace->Branch("Y", &(mInteractionPosition[1]), "Y/D");
-  mPhaseSpace->Branch("Z", &(mInteractionPosition[2]), "Z/D");
-  mPhaseSpace->Branch("dX", &(mInteractionDirection[0]), "dX/D");
-  mPhaseSpace->Branch("dY", &(mInteractionDirection[1]), "dY/D");
-  mPhaseSpace->Branch("dZ", &(mInteractionDirection[2]), "dZ/D");
-//  mPhaseSpace->Branch("ProductionVolume", mInteractionProductionVolume, "ProductionVolume/C");
-//  mPhaseSpace->Branch("TrackID",&mInteractionTrackId, "TrackID/I");
-  mPhaseSpace->Branch("EventID",&mInteractionEventId, "EventID/I");
-//  mPhaseSpace->Branch("RunID",&mInteractionRunId, "RunID/I");
-//  mPhaseSpace->Branch("ProductionProcessTrack", mInteractionProductionProcessTrack, "ProductionProcessTrack/C");
-  mPhaseSpace->Branch("ProductionProcessStep", mInteractionProductionProcessStep, "ProductionProcessStep/C");
-  mPhaseSpace->Branch("TotalContribution", &mInteractionTotalContribution, "TotalContribution/D");
-//  mPhaseSpace->Branch("InteractionVolume", mInteractionVolume, "Volume/C");
-//  mPhaseSpace->Branch("Material", mInteractionMaterial, "Material/C");
-  mPhaseSpace->Branch("MaterialZ", &mInteractionZ, "MaterialZ/I");
-  mPhaseSpace->Branch("Order", &mInteractionOrder, "Order/I");
+  CreatePhaseSpace(mPhaseSpaceFilename, mPhaseSpaceFile, mPhaseSpace);
+  if(mSecondPassPrefix != "")
+    CreatePhaseSpace(AddPrefix(mSecondPassPrefix, mPhaseSpaceFilename),
+                     mSecondPassPhaseSpaceFile,
+                     mSecondPassPhaseSpace);
 }
 //-----------------------------------------------------------------------------
 
@@ -428,34 +409,35 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
         survivalProba = std::max(survivalProba, mRussianRouletteMinimumProbability);
       }
       if(G4UniformRand()>survivalProba) {
-        continue;
+        mInteractionWeight = 0.;
       }
       else {
         mInteractionWeight /= survivalProba;
-      }
 
-      // Interaction survived, let's do the job
-      if(mInteractionProductionProcessStep == G4String("Compton") ||
-         mInteractionProductionProcessStep == G4String("compt")) {
-        this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
-                                          mComptonImage,
-                                          mComptonPerOrderImages,
-                                          mComptonProbe);
+        // Interaction survived, let's do the job
+        if(mInteractionProductionProcessStep == G4String("Compton") ||
+           mInteractionProductionProcessStep == G4String("compt")) {
+          this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
+                                            mComptonImage,
+                                            mComptonPerOrderImages,
+                                            mComptonProbe);
+        }
+        else if(mInteractionProductionProcessStep == G4String("RayleighScattering") ||
+                mInteractionProductionProcessStep == G4String("Rayl")) {
+          this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
+                                            mRayleighImage,
+                                            mRayleighPerOrderImages,
+                                            mRayleighProbe);
+        }
+        else if(mInteractionProductionProcessStep == G4String("PhotoElectric") ||
+                mInteractionProductionProcessStep == G4String("phot")) {
+          this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
+                                            mFluorescenceImage,
+                                            mFluorescencePerOrderImages,
+                                            mFluorescenceProbe);
+        }
       }
-      else if(mInteractionProductionProcessStep == G4String("RayleighScattering") ||
-              mInteractionProductionProcessStep == G4String("Rayl")) {
-        this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
-                                          mRayleighImage,
-                                          mRayleighPerOrderImages,
-                                          mRayleighProbe);
-      }
-      else if(mInteractionProductionProcessStep == G4String("PhotoElectric") ||
-              mInteractionProductionProcessStep == G4String("phot")) {
-        this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
-                                          mFluorescenceImage,
-                                          mFluorescencePerOrderImages,
-                                          mFluorescenceProbe);
-      }
+      if(mSecondPassPhaseSpaceFile) mSecondPassPhaseSpace->Fill();
     }
     EndOfEventAction();
     std::swap(mNumberOfEventsInRun, backupNumberOfEventsInRun);
@@ -1429,6 +1411,39 @@ GateHybridForcedDetectionActor::CreateRussianRouletteVoidImage()
   output->DisconnectPipeline();
 
   return output;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+GateHybridForcedDetectionActor::CreatePhaseSpace(const G4String phaseSpaceFilename,
+                                                 TFile *&phaseSpaceFile,
+                                                 TTree *&phaseSpace)
+{
+  phaseSpaceFile = NULL;
+  if(phaseSpaceFilename != "")
+    phaseSpaceFile = new TFile(phaseSpaceFilename,"RECREATE","ROOT file for phase space",9);
+
+  phaseSpace = new TTree("PhaseSpace","Phase space tree of hybrid forced detection actor");
+  phaseSpace->Branch("Ekine",  &mInteractionEnergy, "Ekine/D");
+  phaseSpace->Branch("Weight", &mInteractionWeight, "Weight/D");
+  phaseSpace->Branch("X", &(mInteractionPosition[0]), "X/D");
+  phaseSpace->Branch("Y", &(mInteractionPosition[1]), "Y/D");
+  phaseSpace->Branch("Z", &(mInteractionPosition[2]), "Z/D");
+  phaseSpace->Branch("dX", &(mInteractionDirection[0]), "dX/D");
+  phaseSpace->Branch("dY", &(mInteractionDirection[1]), "dY/D");
+  phaseSpace->Branch("dZ", &(mInteractionDirection[2]), "dZ/D");
+  //  phaseSpace->Branch("ProductionVolume", mInteractionProductionVolume, "ProductionVolume/C");
+  //  phaseSpace->Branch("TrackID",&mInteractionTrackId, "TrackID/I");
+  phaseSpace->Branch("EventID",&mInteractionEventId, "EventID/I");
+  //  phaseSpace->Branch("RunID",&mInteractionRunId, "RunID/I");
+  //  phaseSpace->Branch("ProductionProcessTrack", mInteractionProductionProcessTrack, "ProductionProcessTrack/C");
+  phaseSpace->Branch("ProductionProcessStep", mInteractionProductionProcessStep, "ProductionProcessStep/C");
+  phaseSpace->Branch("TotalContribution", &mInteractionTotalContribution, "TotalContribution/D");
+  //  phaseSpace->Branch("InteractionVolume", mInteractionVolume, "Volume/C");
+  //  phaseSpace->Branch("Material", mInteractionMaterial, "Material/C");
+  phaseSpace->Branch("MaterialZ", &mInteractionZ, "MaterialZ/I");
+  phaseSpace->Branch("Order", &mInteractionOrder, "Order/I");
 }
 //-----------------------------------------------------------------------------
 #endif
