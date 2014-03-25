@@ -367,8 +367,10 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
     // Init
     OutputImageType::Pointer rrImageBackup = CreateRussianRouletteVoidImage();
     OutputImageType::Pointer rrImageCountBackup = CreateRussianRouletteVoidImage();
+    GeometryType::Pointer geoBackup = GeometryType::New();
     std::swap(mRussianRouletteImage, rrImageBackup);
     std::swap(mRussianRouletteCountImage, rrImageCountBackup);
+    std::swap(mGeometry, geoBackup);
     std::swap(mSecondPassDetectorResolution, mDetectorResolution);
     unsigned int backupNumberOfEventsInRun = mNumberOfEventsInRun;
     int currentEvent=-1;
@@ -442,6 +444,7 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
     EndOfEventAction();
     std::swap(mNumberOfEventsInRun, backupNumberOfEventsInRun);
     SaveData(mSecondPassPrefix);
+    std::swap(mGeometry, geoBackup);
     std::swap(mSecondPassDetectorResolution, mDetectorResolution);
   }
 }
@@ -776,12 +779,15 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType 
 void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
 {
   GateVActor::SaveData();
+
   // Geometry
-  rtk::ThreeDCircularProjectionGeometryXMLFileWriter::Pointer geoWriter =
-      rtk::ThreeDCircularProjectionGeometryXMLFileWriter::New();
-  geoWriter->SetObject(mGeometry);
-  geoWriter->SetFilename(AddPrefix(prefix,mGeometryFilename));
-  geoWriter->WriteFile();
+  if(mGeometryFilename != "") {
+    rtk::ThreeDCircularProjectionGeometryXMLFileWriter::Pointer geoWriter =
+        rtk::ThreeDCircularProjectionGeometryXMLFileWriter::New();
+    geoWriter->SetObject(mGeometry);
+    geoWriter->SetFilename(AddPrefix(prefix,mGeometryFilename));
+    geoWriter->WriteFile();
+  }
 
   itk::ImageFileWriter<InputImageType>::Pointer imgWriter;
   imgWriter = itk::ImageFileWriter<InputImageType>::New();
