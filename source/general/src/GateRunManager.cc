@@ -19,6 +19,8 @@
 #include "G4TransportationManager.hh"
 #include "G4PhysListFactory.hh"
 #include "G4VUserPhysicsList.hh"
+#include "G4VModularPhysicsList.hh"
+#include "G4StepLimiterPhysics.hh"
 #include "G4RegionStore.hh"
 #include "G4Region.hh"
 
@@ -114,6 +116,10 @@ void GateRunManager::InitializeAll()
 
     // Initialization
     G4RunManager::SetUserInitialization(mUserPhysicList);
+
+    // This function take into account the user cuts (steplimiter and special cuts) (based on geant4 exampleB2a.cc...not clear how it works but needed for builders with geant4.10)
+    G4VModularPhysicsList *mUserPhysicList = static_cast<G4VModularPhysicsList*>(mUserPhysicList);
+    mUserPhysicList->RegisterPhysics(new G4StepLimiterPhysics());
 
     // Re set the initial state
     G4StateManager::GetStateManager()->SetNewState(currentState);
