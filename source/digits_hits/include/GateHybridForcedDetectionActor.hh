@@ -60,13 +60,14 @@ public:
   // Callbacks
   virtual void BeginOfRunAction(const G4Run*);
   virtual void EndOfRunAction(const G4Run*);
-  virtual void BeginOfEventAction(const G4Event*);
-  virtual void EndOfEventAction(const G4Event*);
+  virtual void BeginOfEventAction(const G4Event*e=NULL);
+  virtual void EndOfEventAction(const G4Event*e=NULL);
   // virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
 
   // Saves the data collected to the file
-  virtual void SaveData();
+  virtual void SaveData() { SaveData(""); }
+  virtual void SaveData(const G4String prefix);
   virtual void ResetData();
 
   // Resolution of the detector plane (2D only, z=1);
@@ -94,6 +95,13 @@ public:
   void SetSingleInteractionZ(G4int z) { mSingleInteractionZ = z; }
   void SetPhaseSpaceFilename(G4String name) { mPhaseSpaceFilename = name; }
   void SetWaterLUTFilename(G4String name) { mWaterLUTFilename = name; }
+  void SetSecondPassPrefix(G4String name) { mSecondPassPrefix = name; }
+  void SetSecondPassDetectorResolution(int x, int y) { mSecondPassDetectorResolution[0] = x; mSecondPassDetectorResolution[1] = y; }
+  void SetRussianRouletteFilename(G4String name) { mRussianRouletteFilename = name; }
+  void SetRussianRouletteCountFilename(G4String name) { mRussianRouletteCountFilename = name; }
+  void SetRussianRouletteSpacing(G4double s) { mRussianRouletteSpacing = s; }
+  void SetRussianRouletteMinimumCountInRegion(G4double p) { mRussianRouletteMinimumCountInRegion = p; }
+  void SetRussianRouletteMinimumProbability(G4double p) { mRussianRouletteMinimumProbability = p; }
 
   // Typedef for rtk
   static const unsigned int Dimension = 3;
@@ -242,6 +250,21 @@ protected:
 
   // Account for primary fluence weighting
   InputImageType::Pointer PrimaryFluenceWeighting(const InputImageType::Pointer input);
+
+  // Second pass members
+  G4String AddPrefix(G4String prefix, G4String filename);
+  OutputImageType::Pointer CreateRussianRouletteVoidImage();
+  G4String mSecondPassPrefix;
+  G4String mRussianRouletteFilename;
+  G4String mRussianRouletteCountFilename;
+  G4ThreeVector mSecondPassDetectorResolution;
+  OutputImageType::Pointer mRussianRouletteImage;
+  OutputImageType::Pointer mRussianRouletteCountImage;
+  G4double mRussianRouletteSpacing;
+  G4int mRussianRouletteMinimumCountInRegion;
+  G4double mRussianRouletteMinimumProbability;
+  TFile   *mSecondPassPhaseSpaceFile;
+  TTree   *mSecondPassPhaseSpace;
 };
 //-----------------------------------------------------------------------------
 

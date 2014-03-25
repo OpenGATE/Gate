@@ -17,6 +17,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcmdWith3Vector.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 #include "G4UIcmdWithAnInteger.hh"
+#include "G4UIcmdWithADouble.hh"
 
 #include "globals.hh"
 #include "GateHybridForcedDetectionActor.hh"
@@ -58,6 +59,13 @@ protected:
   G4UIcmdWithAnInteger * pSetSingleInteractionZCmd;
   G4UIcmdWithAString * pSetPhaseSpaceFilenameCmd;
   G4UIcmdWithAString * pSetWaterLUTFilenameCmd;
+  G4UIcmdWithAString * pSetSecondPassPrefixCmd;
+  GateUIcmdWith2Vector * pSetSecondPassDetectorResolCmd;
+  G4UIcmdWithAString * pSetRussianRouletteFilenameCmd;
+  G4UIcmdWithAString * pSetRussianRouletteCountFilenameCmd;
+  G4UIcmdWithADoubleAndUnit * pSetRussianRouletteSpacingCmd;
+  G4UIcmdWithAnInteger * pSetRussianRouletteMinimumCountInRegionCmd;
+  G4UIcmdWithADouble * pSetRussianRouletteMinimumProbabilityCmd;
 };
 
 #endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH*/

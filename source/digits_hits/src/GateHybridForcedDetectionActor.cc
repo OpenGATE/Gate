@@ -39,13 +39,18 @@
 #include <itkImageFileWriter.h>
 #include <itkBinaryFunctorImageFilter.h>
 #include <itkAddImageFilter.h>
+#include <itksys/SystemTools.hxx>
 
 //-----------------------------------------------------------------------------
 /// Constructors
 GateHybridForcedDetectionActor::GateHybridForcedDetectionActor(G4String name, G4int depth):
   GateVActor(name,depth),
   mIsSecondarySquaredImageEnabled(false),
-  mIsSecondaryUncertaintyImageEnabled(false)
+  mIsSecondaryUncertaintyImageEnabled(false),
+  mRussianRouletteSpacing(20.),
+  mRussianRouletteMinimumCountInRegion(10),
+  mRussianRouletteMinimumProbability(0.0001),
+  mSecondPassPhaseSpace(NULL)
 {
   GateDebugMessageInc("Actor",4,"GateHybridForcedDetectionActor() -- begin"<<G4endl);
   pActorMessenger = new GateHybridForcedDetectionActorMessenger(this);
@@ -93,7 +98,7 @@ void GateHybridForcedDetectionActor::Construct()
   mPhaseSpace->Branch("dZ", &(mInteractionDirection[2]), "dZ/D");
 //  mPhaseSpace->Branch("ProductionVolume", mInteractionProductionVolume, "ProductionVolume/C");
 //  mPhaseSpace->Branch("TrackID",&mInteractionTrackId, "TrackID/I");
-//  mPhaseSpace->Branch("EventID",&mInteractionEventId, "EventID/I");
+  mPhaseSpace->Branch("EventID",&mInteractionEventId, "EventID/I");
 //  mPhaseSpace->Branch("RunID",&mInteractionRunId, "RunID/I");
 //  mPhaseSpace->Branch("ProductionProcessTrack", mInteractionProductionProcessTrack, "ProductionProcessTrack/C");
   mPhaseSpace->Branch("ProductionProcessStep", mInteractionProductionProcessStep, "ProductionProcessStep/C");
@@ -332,19 +337,22 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       if(mSingleInteractionType == G4String("Compton")) {
         this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
                                           mSingleInteractionImage,
-                                          mComptonPerOrderImages, mComptonProbe);
+                                          mComptonPerOrderImages,
+                                          mComptonProbe);
       }
       else if(mSingleInteractionType == G4String("RayleighScattering")) {
         mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
         this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
                                           mSingleInteractionImage,
-                                          mRayleighPerOrderImages, mRayleighProbe);
+                                          mRayleighPerOrderImages,
+                                          mRayleighProbe);
       }
       else if(mSingleInteractionType == G4String("PhotoElectric")) {
         mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
         this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
                                           mSingleInteractionImage,
-                                          mFluorescencePerOrderImages, mFluorescenceProbe);
+                                          mFluorescencePerOrderImages,
+                                          mFluorescenceProbe);
       }
       else {
         GateWarning("Unhandled gamma interaction in GateHybridForcedDetectionActor / single interaction. Process name is "
@@ -360,6 +368,11 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     mEventRayleighImage = CreateVoidProjectionImage();
     mEventFluorescenceImage = CreateVoidProjectionImage();
   }
+
+  if(mSecondPassPrefix != "") {
+    mRussianRouletteImage      = CreateRussianRouletteVoidImage();
+    mRussianRouletteCountImage = CreateRussianRouletteVoidImage();
+  }
 }
 //-----------------------------------------------------------------------------
 
@@ -368,6 +381,87 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
 {
   GateVActor::EndOfRunAction(r);
+
+  if(mSecondPassPrefix != "") {
+    // Init
+    OutputImageType::Pointer rrImageBackup = CreateRussianRouletteVoidImage();
+    OutputImageType::Pointer rrImageCountBackup = CreateRussianRouletteVoidImage();
+    std::swap(mRussianRouletteImage, rrImageBackup);
+    std::swap(mRussianRouletteCountImage, rrImageCountBackup);
+    std::swap(mSecondPassDetectorResolution, mDetectorResolution);
+    unsigned int backupNumberOfEventsInRun = mNumberOfEventsInRun;
+    int currentEvent=-1;
+    BeginOfRunAction(r);
+
+    // Total of russian roulette image
+    itk::ImageRegionIterator<OutputImageType> it(rrImageBackup,
+                                                 rrImageBackup->GetBufferedRegion());
+    double meanRussian = 0.;
+    float maxRussian = 0.;
+    for(it.GoToBegin(); !it.IsAtEnd(); ++it) {
+      meanRussian += it.Get();
+      maxRussian = std::max(maxRussian, it.Get());
+    }
+    meanRussian /= rrImageBackup->GetBufferedRegion().GetNumberOfPixels();
+
+    for(int i=0; i<mPhaseSpace->GetEntries(); i++, mPhaseSpace->GetEntry(i)) {
+      // Init
+      if(mInteractionEventId!=currentEvent) {
+        if(currentEvent>=0) EndOfEventAction();
+        BeginOfEventAction();
+        currentEvent = mInteractionEventId;
+      }
+
+      // Convert to ITK
+      G4ThreeVector p = m_WorldToCT.TransformPoint(mInteractionPosition);
+      PointType point;
+      for(unsigned int i=0; i<3; i++)
+        point[i] = p[i];
+      OutputImageType::IndexType idx;
+      rrImageBackup->TransformPhysicalPointToIndex(point, idx);
+
+      // Russian roulette
+      double survivalProba = 1.;
+      if(rrImageCountBackup->GetPixel(idx)>mRussianRouletteMinimumCountInRegion) {
+        survivalProba = rrImageBackup->GetPixel(idx) / maxRussian;
+        survivalProba = std::min(survivalProba, 1.);
+        survivalProba = std::max(survivalProba, mRussianRouletteMinimumProbability);
+      }
+      if(G4UniformRand()>survivalProba) {
+        continue;
+      }
+      else {
+        mInteractionWeight /= survivalProba;
+      }
+
+      // Interaction survived, let's do the job
+      if(mInteractionProductionProcessStep == G4String("Compton") ||
+         mInteractionProductionProcessStep == G4String("compt")) {
+        this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
+                                          mComptonImage,
+                                          mComptonPerOrderImages,
+                                          mComptonProbe);
+      }
+      else if(mInteractionProductionProcessStep == G4String("RayleighScattering") ||
+              mInteractionProductionProcessStep == G4String("Rayl")) {
+        this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
+                                          mRayleighImage,
+                                          mRayleighPerOrderImages,
+                                          mRayleighProbe);
+      }
+      else if(mInteractionProductionProcessStep == G4String("PhotoElectric") ||
+              mInteractionProductionProcessStep == G4String("phot")) {
+        this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
+                                          mFluorescenceImage,
+                                          mFluorescencePerOrderImages,
+                                          mFluorescenceProbe);
+      }
+    }
+    EndOfEventAction();
+    std::swap(mNumberOfEventsInRun, backupNumberOfEventsInRun);
+    SaveData(mSecondPassPrefix);
+    std::swap(mSecondPassDetectorResolution, mDetectorResolution);
+  }
 }
 //-----------------------------------------------------------------------------
 
@@ -478,8 +572,8 @@ void GateHybridForcedDetectionActor::EndOfEventAction(const G4Event *e)
     else
       std::swap(mEventFluorescenceImage, mFluorescenceImage);
   }
-
-  GateVActor::EndOfEventAction(e);
+  if(e)
+    GateVActor::EndOfEventAction(e);
 }
 //-----------------------------------------------------------------------------
 
@@ -605,21 +699,24 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(G4int runID,
      processName == G4String("compt")) {
     this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
                                       mComptonImage,
-                                      mComptonPerOrderImages, mComptonProbe);
+                                      mComptonPerOrderImages,
+                                      mComptonProbe);
   }
   else if(processName == G4String("RayleighScattering") ||
           processName == G4String("Rayl")) {
     mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
     this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
                                       mRayleighImage,
-                                      mRayleighPerOrderImages, mRayleighProbe);
+                                      mRayleighPerOrderImages,
+                                      mRayleighProbe);
   }
   else if(processName == G4String("PhotoElectric") ||
           processName == G4String("phot")) {
     mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
     this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
                                       mFluorescenceImage,
-                                      mFluorescencePerOrderImages, mFluorescenceProbe);
+                                      mFluorescencePerOrderImages,
+                                      mFluorescenceProbe);
   }
   else {
     GateWarning("Unhandled gamma interaction in GateHybridForcedDetectionActor. Process name is "
@@ -666,6 +763,18 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType 
   input->DisconnectPipeline();
   probe.Stop();
   mInteractionTotalContribution = projector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
+  if(mSecondPassPrefix != "") {
+    OutputImageType::IndexType idx;
+    mRussianRouletteImage->TransformPhysicalPointToIndex(point, idx);
+    if(mRussianRouletteImage->GetBufferedRegion().IsInside(idx)) {
+      mRussianRouletteImage->SetPixel(idx,
+                                      mRussianRouletteImage->GetPixel(idx) +
+                                      mInteractionTotalContribution);
+      mRussianRouletteCountImage->SetPixel(idx,
+                                           mRussianRouletteCountImage->GetPixel(idx) +
+                                           1.);
+    }
+  }
 
   // Scatter order
   if(mInteractionOrder>=0)
@@ -682,14 +791,14 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType 
 
 //-----------------------------------------------------------------------------
 /// Save data
-void GateHybridForcedDetectionActor::SaveData()
+void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
 {
   GateVActor::SaveData();
   // Geometry
   rtk::ThreeDCircularProjectionGeometryXMLFileWriter::Pointer geoWriter =
       rtk::ThreeDCircularProjectionGeometryXMLFileWriter::New();
   geoWriter->SetObject(mGeometry);
-  geoWriter->SetFilename(mGeometryFilename);
+  geoWriter->SetFilename(AddPrefix(prefix,mGeometryFilename));
   geoWriter->WriteFile();
 
   itk::ImageFileWriter<InputImageType>::Pointer imgWriter;
@@ -700,7 +809,7 @@ void GateHybridForcedDetectionActor::SaveData()
   if(mPrimaryFilename != "") {
     // Write the image of primary radiation accounting for the fluence of the
     // primary source.
-    sprintf(filename, mPrimaryFilename.c_str(), rID);
+    sprintf(filename, AddPrefix(prefix,mPrimaryFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
     imgWriter->SetInput( PrimaryFluenceWeighting(mPrimaryImage) );
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -724,7 +833,7 @@ void GateHybridForcedDetectionActor::SaveData()
     typedef itk::ImageFileWriter<AccumulationType::MaterialMuImageType> TwoDWriter;
     TwoDWriter::Pointer w = TwoDWriter::New();
     w->SetInput( ci->GetOutput() );
-    w->SetFileName(mMaterialMuFilename);
+    w->SetFileName(AddPrefix(prefix,mMaterialMuFilename));
     TRY_AND_EXIT_ON_ITK_EXCEPTION(w->Update());
   }
 
@@ -740,7 +849,7 @@ void GateHybridForcedDetectionActor::SaveData()
     atten->SetInput2(mFlatFieldImage);
     atten->InPlaceOff();
 
-    sprintf(filename, mAttenuationFilename.c_str(), rID);
+    sprintf(filename, AddPrefix(prefix,mAttenuationFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
     imgWriter->SetInput(atten->GetOutput());
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -749,21 +858,21 @@ void GateHybridForcedDetectionActor::SaveData()
   if(mFlatFieldFilename != "") {
     // Write the image of the flat field accounting for the fluence of the
     // primary source.
-    sprintf(filename, mFlatFieldFilename.c_str(), rID);
+    sprintf(filename, AddPrefix(prefix,mFlatFieldFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
     imgWriter->SetInput( PrimaryFluenceWeighting(mFlatFieldImage) );
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
   }
 
   if(mComptonFilename != "") {
-    sprintf(filename, mComptonFilename.c_str(), rID);
+    sprintf(filename, AddPrefix(prefix,mComptonFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
     imgWriter->SetInput(mComptonImage);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
 
     for(unsigned int k = 1; k<mComptonPerOrderImages.size(); k++)
     {
-      sprintf(filename, "output/compton%04d_order%02d.mha", rID, k);
+      sprintf(filename, AddPrefix(prefix,"output/compton%04d_order%02d.mha").c_str(), rID, k);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mComptonPerOrderImages[k]);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -771,14 +880,14 @@ void GateHybridForcedDetectionActor::SaveData()
   }
 
   if(mRayleighFilename != "") {
-    sprintf(filename, mRayleighFilename.c_str(), rID);
+    sprintf(filename, AddPrefix(prefix,mRayleighFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
     imgWriter->SetInput(mRayleighImage);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
 
     for(unsigned int k = 1; k<mRayleighPerOrderImages.size(); k++)
     {
-      sprintf(filename, "output/rayleigh%04d_order%02d.mha", rID, k);
+      sprintf(filename, AddPrefix(prefix,"output/rayleigh%04d_order%02d.mha").c_str(), rID, k);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mRayleighPerOrderImages[k]);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -786,14 +895,14 @@ void GateHybridForcedDetectionActor::SaveData()
   }
 
   if(mFluorescenceFilename != "") {
-    sprintf(filename, mFluorescenceFilename.c_str(), rID);
+    sprintf(filename, AddPrefix(prefix,mFluorescenceFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
     imgWriter->SetInput(mFluorescenceImage);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
 
     for(unsigned int k = 1; k<mFluorescencePerOrderImages.size(); k++)
     {
-      sprintf(filename, "output/fluorescence%04d_order%02d.mha", rID, k);
+      sprintf(filename, AddPrefix(prefix,"output/fluorescence%04d_order%02d.mha").c_str(), rID, k);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mFluorescencePerOrderImages[k]);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -837,7 +946,7 @@ void GateHybridForcedDetectionActor::SaveData()
 
     // Write scatter image
     if(mSecondaryFilename != "") {
-      sprintf(filename, mSecondaryFilename.c_str(), rID);
+      sprintf(filename, AddPrefix(prefix,mSecondaryFilename).c_str(), rID);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mSecondaryImage);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -883,7 +992,7 @@ void GateHybridForcedDetectionActor::SaveData()
       mSecondaryImage = addFilter->GetOutput();
 
       // Write Total Image
-      sprintf(filename, mTotalFilename.c_str(), rID);
+      sprintf(filename, AddPrefix(prefix,mTotalFilename).c_str(), rID);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mSecondaryImage);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -891,13 +1000,29 @@ void GateHybridForcedDetectionActor::SaveData()
   }
 
   if(mSingleInteractionFilename!="") {
-    imgWriter->SetFileName(mSingleInteractionFilename);
+    imgWriter->SetFileName(AddPrefix(prefix,mSingleInteractionFilename));
     imgWriter->SetInput(mSingleInteractionImage);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
   }
 
   if(mPhaseSpaceFile)
     mPhaseSpace->GetCurrentFile()->Write();
+  if(mSecondPassPhaseSpaceFile)
+    mSecondPassPhaseSpace->GetCurrentFile()->Write();
+
+  if(mSecondPassPrefix != "") {
+    if(mRussianRouletteFilename) {
+      imgWriter->SetFileName(AddPrefix(prefix, mRussianRouletteFilename));
+      imgWriter->SetInput(mRussianRouletteImage);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
+
+    if(mRussianRouletteCountFilename) {
+      imgWriter->SetFileName(AddPrefix(prefix, mRussianRouletteCountFilename));
+      imgWriter->SetInput(mRussianRouletteCountImage);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
+  }
 }
 //-----------------------------------------------------------------------------
 
@@ -1258,6 +1383,51 @@ GateHybridForcedDetectionActor::PrimaryFluenceWeighting(const InputImageType::Po
       }
     output = mult->GetOutput();
   }
+  return output;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+G4String
+GateHybridForcedDetectionActor::AddPrefix(G4String prefix, G4String filename)
+{
+  G4String path = itksys::SystemTools::GetFilenamePath(filename);
+  G4String name = itksys::SystemTools::GetFilenameName(filename);
+  if (path=="")
+    path = ".";
+  return path+'/'+prefix+name;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+GateHybridForcedDetectionActor::OutputImageType::Pointer
+GateHybridForcedDetectionActor::CreateRussianRouletteVoidImage()
+{
+  InputImageType::SpacingType spacing;
+  spacing.Fill(mRussianRouletteSpacing / CLHEP::mm);
+
+  InputImageType::PointType origin;
+  InputImageType::SizeType size;
+  for(unsigned int i=0; i<3; i++) {
+    origin[i] = mGateVolumeImage->GetOrigin()[i] -
+                mGateVolumeImage->GetSpacing()[i] * 0.5;
+    size[i] = mGateVolumeImage->GetSpacing()[i] *
+              mGateVolumeImage->GetLargestPossibleRegion().GetSize()[i] /
+              spacing[i];
+    size[i] += 1; // One voxel margin to be sure
+  }
+
+  rtk::ConstantImageSource<InputImageType>::Pointer source;
+  source = rtk::ConstantImageSource<InputImageType>::New();
+  source->SetSpacing(spacing);
+  source->SetOrigin(origin);
+  source->SetSize(size);
+  TRY_AND_EXIT_ON_ITK_EXCEPTION(source->Update());
+
+  GateHybridForcedDetectionActor::InputImageType::Pointer output;
+  output = source->GetOutput();
+  output->DisconnectPipeline();
+
   return output;
 }
 //-----------------------------------------------------------------------------
