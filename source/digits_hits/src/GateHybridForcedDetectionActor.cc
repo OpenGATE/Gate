@@ -56,6 +56,13 @@ GateHybridForcedDetectionActor::GateHybridForcedDetectionActor(G4String name, G4
   pActorMessenger = new GateHybridForcedDetectionActorMessenger(this);
   mDetectorResolution[0] = mDetectorResolution[1] = mDetectorResolution[2] = 1;
   GateDebugMessageDec("Actor",4,"GateHybridForcedDetectionActor() -- end"<<G4endl);
+
+  mMapProcessNameWithType["Compton"] = COMPTON;
+  mMapProcessNameWithType["compt"]   = COMPTON;
+  mMapProcessNameWithType["RayleighScattering"] = RAYLEIGH;
+  mMapProcessNameWithType["Rayl"]               = RAYLEIGH;
+  mMapProcessNameWithType["PhotoElectric"] = PHOTOELECTRIC;
+  mMapProcessNameWithType["phot"]          = PHOTOELECTRIC;
 }
 //-----------------------------------------------------------------------------
 
@@ -315,29 +322,33 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       mInteractionWeight = 1.;
       mInteractionZ = mSingleInteractionZ;
       mSingleInteractionImage = CreateVoidProjectionImage();
-      if(mSingleInteractionType == G4String("Compton")) {
-        this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
-                                          mSingleInteractionImage,
-                                          mComptonPerOrderImages,
-                                          mComptonProbe);
-      }
-      else if(mSingleInteractionType == G4String("RayleighScattering")) {
-        mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
-        this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
-                                          mSingleInteractionImage,
-                                          mRayleighPerOrderImages,
-                                          mRayleighProbe);
-      }
-      else if(mSingleInteractionType == G4String("PhotoElectric")) {
-        mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
-        this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
-                                          mSingleInteractionImage,
-                                          mFluorescencePerOrderImages,
-                                          mFluorescenceProbe);
-      }
-      else {
+      if(mMapProcessNameWithType.find(mSingleInteractionType) == mMapProcessNameWithType.end())  {
         GateWarning("Unhandled gamma interaction in GateHybridForcedDetectionActor / single interaction. Process name is "
                     << mSingleInteractionType << ".\n");
+      }
+      else {
+        switch(mMapProcessNameWithType[mSingleInteractionType]) {
+        case COMPTON:
+          this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
+                                            mSingleInteractionImage,
+                                            mComptonPerOrderImages,
+                                            mComptonProbe);
+          break;
+        case RAYLEIGH:
+          mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
+          this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
+                                            mSingleInteractionImage,
+                                            mRayleighPerOrderImages,
+                                            mRayleighProbe);
+          break;
+        case PHOTOELECTRIC:
+          mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
+          this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
+                                            mSingleInteractionImage,
+                                            mFluorescencePerOrderImages,
+                                            mFluorescenceProbe);
+          break;
+        }
       }
   }
 
@@ -417,26 +428,25 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
         mInteractionWeight /= survivalProba;
 
         // Interaction survived, let's do the job
-        if(mInteractionProductionProcessStep == G4String("Compton") ||
-           mInteractionProductionProcessStep == G4String("compt")) {
+        switch(mMapProcessNameWithType[mSingleInteractionType]) {
+        case COMPTON:
           this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
                                             mComptonImage,
                                             mComptonPerOrderImages,
                                             mComptonProbe);
-        }
-        else if(mInteractionProductionProcessStep == G4String("RayleighScattering") ||
-                mInteractionProductionProcessStep == G4String("Rayl")) {
+          break;
+        case RAYLEIGH:
           this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
                                             mRayleighImage,
                                             mRayleighPerOrderImages,
                                             mRayleighProbe);
-        }
-        else if(mInteractionProductionProcessStep == G4String("PhotoElectric") ||
-                mInteractionProductionProcessStep == G4String("phot")) {
+          break;
+        case PHOTOELECTRIC:
           this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
                                             mFluorescenceImage,
                                             mFluorescencePerOrderImages,
                                             mFluorescenceProbe);
+          break;
         }
       }
       if(mSecondPassPhaseSpaceFile) mSecondPassPhaseSpace->Fill();
@@ -680,33 +690,34 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(G4int runID,
   strcpy(mInteractionMaterial, material.c_str());
   mInteractionOrder = order;
 
-  if(processName == G4String("Compton") ||
-     processName == G4String("compt")) {
-    this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
-                                      mComptonImage,
-                                      mComptonPerOrderImages,
-                                      mComptonProbe);
-  }
-  else if(processName == G4String("RayleighScattering") ||
-          processName == G4String("Rayl")) {
-    mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
-    this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
-                                      mRayleighImage,
-                                      mRayleighPerOrderImages,
-                                      mRayleighProbe);
-  }
-  else if(processName == G4String("PhotoElectric") ||
-          processName == G4String("phot")) {
-    mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
-    this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
-                                      mFluorescenceImage,
-                                      mFluorescencePerOrderImages,
-                                      mFluorescenceProbe);
-  }
-  else {
+  if(mMapProcessNameWithType.find(processName) == mMapProcessNameWithType.end())  {
     GateWarning("Unhandled gamma interaction in GateHybridForcedDetectionActor. Process name is "
                 << processName << ".\n");
     return;
+  }
+  else {
+    switch(mMapProcessNameWithType[processName]) {
+    case COMPTON:
+      this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
+                                        mComptonImage,
+                                        mComptonPerOrderImages,
+                                        mComptonProbe);
+      break;
+    case RAYLEIGH:
+      mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
+      this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
+                                        mRayleighImage,
+                                        mRayleighPerOrderImages,
+                                        mRayleighProbe);
+      break;
+    case PHOTOELECTRIC:
+      mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
+      this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
+                                        mFluorescenceImage,
+                                        mFluorescencePerOrderImages,
+                                        mFluorescenceProbe);
+      break;
+    }
   }
   if(mPhaseSpaceFile) mPhaseSpace->Fill();
 }

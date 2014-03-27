@@ -104,6 +104,7 @@ public:
   void SetRussianRouletteMinimumProbability(G4double p) { mRussianRouletteMinimumProbability = p; }
 
   // Typedef for rtk
+  typedef enum {COMPTON, RAYLEIGH, PHOTOELECTRIC, PROCESSTYPEMAX} ProcessType;
   static const unsigned int Dimension = 3;
   typedef float                                       InputPixelType;
   typedef itk::Image<InputPixelType, Dimension>       InputImageType;
@@ -179,6 +180,8 @@ protected:
   std::vector<InputImageType::Pointer> mComptonPerOrderImages;
   std::vector<InputImageType::Pointer> mRayleighPerOrderImages;
   std::vector<InputImageType::Pointer> mFluorescencePerOrderImages;
+
+  std::map<G4String, ProcessType> mMapProcessNameWithType;
 
   // Geometry information initialized at the beginning of the run
   G4AffineTransform m_WorldToCT;
