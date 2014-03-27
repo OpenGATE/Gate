@@ -47,6 +47,8 @@ protected:
   G4UIcmdWithAString * pSetRayleighFilenameCmd;
   G4UIcmdWithAString * pSetFluorescenceFilenameCmd;
   G4UIcmdWithAString * pSetSecondaryFilenameCmd;
+  G4UIcmdWithABool * pEnableSecondarySquaredCmd;
+  G4UIcmdWithABool * pEnableSecondaryUncertaintyCmd;
   G4UIcmdWithAString * pSetTotalFilenameCmd;
   G4UIcmdWithAString * pSetSingleInteractionFilenameCmd;
   G4UIcmdWithAString * pSetSingleInteractionTypeCmd;

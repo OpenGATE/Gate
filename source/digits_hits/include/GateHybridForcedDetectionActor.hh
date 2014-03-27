@@ -31,6 +31,7 @@
 #include "GateVImageVolume.hh"
 #include "GateHybridForcedDetectionFunctors.hh"
 #include "GateEnergyResponseFunctor.hh"
+#include "GateHybridForcedDetectionProjector.h"
 
 // itk
 #include <itkTimeProbe.h>
@@ -38,7 +39,6 @@
 // rtk
 #include <rtkConstantImageSource.h>
 #include <rtkReg23ProjectionGeometry.h>
-#include <rtkJosephForwardProjectionImageFilter.h>
 
 //-----------------------------------------------------------------------------
 
@@ -60,6 +60,7 @@ public:
   // Callbacks
   virtual void BeginOfRunAction(const G4Run*);
   virtual void BeginOfEventAction(const G4Event*);
+  virtual void EndOfEventAction(const G4Event*);
   // virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
 
@@ -81,6 +82,8 @@ public:
   void SetRayleighFilename(G4String name) { mRayleighFilename = name; }
   void SetFluorescenceFilename(G4String name) { mFluorescenceFilename = name; }
   void SetSecondaryFilename(G4String name) { mSecondaryFilename = name; }
+  void EnableSecondarySquaredImage(bool b) { mIsSecondarySquaredImageEnabled = b; }
+  void EnableSecondaryUncertaintyImage(bool b) { mIsSecondaryUncertaintyImageEnabled = b; }
   void SetTotalFilename(G4String name) { mTotalFilename = name; }
   void SetSingleInteractionFilename(G4String name) { mSingleInteractionFilename = name; }
   void SetSingleInteractionType(G4String type) { mSingleInteractionType = type; }
@@ -131,6 +134,8 @@ protected:
   G4String mRayleighFilename;
   G4String mFluorescenceFilename;
   G4String mSecondaryFilename;
+  bool mIsSecondarySquaredImageEnabled;
+  bool mIsSecondaryUncertaintyImageEnabled;
   G4String mTotalFilename;
   G4String mWaterLUTFilename;
 
@@ -140,10 +145,14 @@ protected:
   GeometryType::Pointer mGeometry;
   InputImageType::Pointer mGateVolumeImage;
   InputImageType::Pointer mPrimaryImage;
+  InputImageType::Pointer mSecondarySquared;
   InputImageType::Pointer mFlatFieldImage;
   InputImageType::Pointer mComptonImage;
   InputImageType::Pointer mRayleighImage;
   InputImageType::Pointer mFluorescenceImage;
+  InputImageType::Pointer mEventComptonImage;
+  InputImageType::Pointer mEventRayleighImage;
+  InputImageType::Pointer mEventFluorescenceImage;
   std::vector<InputImageType::Pointer> mComptonPerOrderImages;
   std::vector<InputImageType::Pointer> mRayleighPerOrderImages;
   std::vector<InputImageType::Pointer> mFluorescencePerOrderImages;
@@ -171,30 +180,21 @@ protected:
 
   // Compton stuff
   itk::TimeProbe mComptonProbe;
-  typedef rtk::JosephForwardProjectionImageFilter<
-                 InputImageType,
-                 InputImageType,
-                 GateHybridForcedDetectionFunctor::InterpolationWeightMultiplication,
+  typedef GateHybridForcedDetectionProjector<
                  GateHybridForcedDetectionFunctor::ComptonValueAccumulation>
                    ComptonProjectionType;
   ComptonProjectionType::Pointer mComptonProjector;
 
   // Rayleigh stuff
   itk::TimeProbe mRayleighProbe;
-  typedef rtk::JosephForwardProjectionImageFilter<
-                 InputImageType,
-                 InputImageType,
-                 GateHybridForcedDetectionFunctor::InterpolationWeightMultiplication,
+  typedef GateHybridForcedDetectionProjector<
                  GateHybridForcedDetectionFunctor::RayleighValueAccumulation>
                    RayleighProjectionType;
   RayleighProjectionType::Pointer mRayleighProjector;
 
   // Fluorescence stuff
   itk::TimeProbe mFluorescenceProbe;
-  typedef rtk::JosephForwardProjectionImageFilter<
-                 InputImageType,
-                 InputImageType,
-                 GateHybridForcedDetectionFunctor::InterpolationWeightMultiplication,
+  typedef GateHybridForcedDetectionProjector<
                  GateHybridForcedDetectionFunctor::FluorescenceValueAccumulation>
                    FluorescenceProjectionType;
   FluorescenceProjectionType::Pointer mFluorescenceProjector;

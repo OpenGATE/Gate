@@ -668,6 +668,36 @@ class Attenuation
 };
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+template< class TInput1, class TInput2 = TInput1, class TOutput = TInput1 >
+class Chetty
+{
+  public:
+  Chetty() {}
+  ~Chetty() {}
+  bool operator!=(const Chetty &) const
+  {
+    return false;
+  }
+
+  bool operator==(const Chetty & other) const
+  {
+    return !( *this != other );
+  }
+
+  void SetN(double N) {m_invN = 1/N; m_invNm1 = 1/(N-1);}
+
+  inline TOutput operator()(const TInput1 sum,const TInput2 squaredSum) const
+  {
+    // Chetty, IJROBP, 2006, p1250, eq 2
+    return sqrt(m_invNm1*(squaredSum*m_invN-pow(sum * m_invN, 2.)))/(sum*m_invN);
+  }
+private:
+  double m_invN;
+  double m_invNm1;
+};
+//-----------------------------------------------------------------------------
+
 }
 
 #endif // GATEHYBRIDFORCEDDETECTIONACTORFUNCTORS_HH

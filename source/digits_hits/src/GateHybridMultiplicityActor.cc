@@ -25,7 +25,6 @@
 #include "GateDetectorConstruction.hh"
 #include "GateMultiSensitiveDetector.hh"
 #include "G4Event.hh"
-#include "G4Hybridino.hh"
 
 //-----------------------------------------------------------------------------
 /// Constructors (Prototype)
@@ -33,14 +32,16 @@ GateHybridMultiplicityActor::GateHybridMultiplicityActor(G4String name, G4int de
   GateVActor(name,depth)
 {
   GateDebugMessageInc("Actor",4,"GateHybridMultiplicityActor() -- begin"<<G4endl);
-  materialHandler = GateMaterialMuHandler::GetInstance();
+  mMaterialHandler = GateMaterialMuHandler::GetInstance();
   GateDebugMessageDec("Actor",4,"GateHybridMultiplicityActor() -- end"<<G4endl);
 
-  defaultPrimaryMultiplicity = 0;
-  defaultSecondaryMultiplicity = 0;
-  secondaryMultiplicityMap.clear();
-  processListForGamma = 0;
-    
+  mIsHybridinoEnabled = false;
+  mDefaultPrimaryMultiplicity = 0;
+  mDefaultSecondaryMultiplicity = 0;
+  mSecondaryMultiplicityMap.clear();
+  mProcessListForGamma = 0;
+  mHybridino = G4Hybridino::Hybridino();
+  
   singleton_HybridMultiplicityActor = this;
 }
 //-----------------------------------------------------------------------------
@@ -64,21 +65,25 @@ void GateHybridMultiplicityActor::Construct()
   EnablePostUserTrackingAction(true);
   EnableUserSteppingAction(true);
     
-  if((defaultPrimaryMultiplicity<0) or (defaultSecondaryMultiplicity<0)) {
-    GateError("Multiplicity cannot be inferior to 0 (Mprim = " << defaultPrimaryMultiplicity << ", Msec = " << defaultSecondaryMultiplicity << ")");
+  if((mDefaultPrimaryMultiplicity<0) or (mDefaultSecondaryMultiplicity<0)) {
+    GateError("Multiplicity cannot be inferior to 0 (Mprim = " << mDefaultPrimaryMultiplicity << ", Msec = " << mDefaultSecondaryMultiplicity << ")");
   }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridMultiplicityActor::SetMultiplicity(int mP, int mS, G4VPhysicalVolume *v) 
+void GateHybridMultiplicityActor::SetMultiplicity(bool b, int mP, int mS, G4VPhysicalVolume *v) 
 {
+  // set hybridino flag
+  mIsHybridinoEnabled = b;
+  
   // keep the highest multiplicity as default value
-  if(mP > defaultPrimaryMultiplicity) { defaultPrimaryMultiplicity = mP; }
-  if(mS > defaultSecondaryMultiplicity) { defaultSecondaryMultiplicity = mS; }
+  if(mP > mDefaultPrimaryMultiplicity) { mDefaultPrimaryMultiplicity = mP; }
+  if(mS > mDefaultSecondaryMultiplicity) { mDefaultSecondaryMultiplicity = mS; }
 
-  std::map<G4VPhysicalVolume *,int>::iterator it = secondaryMultiplicityMap.find(v);  
-  if(it == secondaryMultiplicityMap.end()) { secondaryMultiplicityMap.insert(make_pair(v,mS)); }
+  // register expTLEDoseActor's volume
+  std::map<G4VPhysicalVolume *,int>::iterator it = mSecondaryMultiplicityMap.find(v);  
+  if(it == mSecondaryMultiplicityMap.end()) { mSecondaryMultiplicityMap.insert(make_pair(v,mS)); }
   else { GateError("Number of 'hybridDoseActor' attached to '" << v->GetName() << "' is too large (1 maximum)"); }
 }
 //-----------------------------------------------------------------------------
@@ -87,41 +92,52 @@ void GateHybridMultiplicityActor::SetMultiplicity(int mP, int mS, G4VPhysicalVol
 // Callback Begin Event
 void GateHybridMultiplicityActor::BeginOfEventAction(const G4Event *event)
 {
-  if(!processListForGamma) { processListForGamma = G4Gamma::Gamma()->GetProcessManager()->GetProcessList(); }
-  theListOfHybridTrack.clear();
-  theListOfHybridWeight.clear();
-  
+  if(!mProcessListForGamma) { mProcessListForGamma = G4Gamma::Gamma()->GetProcessManager()->GetProcessList(); }
+  mListOfHybridTrack.clear();
+  mListOfHybridWeight.clear();
+  mListOfRaycasting.clear();
+
   GateVSource* source = GateSourceMgr::GetInstance()->GetSource(GateSourceMgr::GetInstance()->GetCurrentSourceID());
   if(source->GetParticleDefinition()->GetParticleName() == "gamma")
   {
-    G4ParticleDefinition *hybridino = G4Hybridino::Hybridino();
-    G4ParticleDefinition *gamma = G4Gamma::Gamma();
-
-    GateSPSEneDistribution* enedist = source->GetEneDist();
-    GateSPSPosDistribution* posdist = source->GetPosDist();
-    GateSPSAngDistribution* angdist = source->GetAngDist();
-
-    G4Event *modifiedEvent = const_cast<G4Event *>(event);
-    // WARNING - G4Event cannot be modified by default because of its 'const' status.
-    // Use of the 'const_cast' function to overcome this problem.
-
-    G4ThreeVector position;
-    G4ThreeVector momentum;
-    G4double energy;
-    for(int i=0; i<defaultPrimaryMultiplicity; i++)
+    if(mIsHybridinoEnabled)
     {
-      position = posdist->GenerateOne();
-      momentum = angdist->GenerateOne();
-      energy = enedist->GenerateOne(gamma);
+      G4Event *modifiedEvent = const_cast<G4Event *>(event);
+      int vertexNumber = event->GetNumberOfPrimaryVertex();
 
-      G4PrimaryParticle *hybridParticle = new G4PrimaryParticle(hybridino,momentum.x(),momentum.y(),momentum.z(),energy);
-      hybridParticle->SetKineticEnergy(energy*MeV);
-
-      G4PrimaryVertex *hybridVertex = new G4PrimaryVertex();
-      hybridVertex->SetPosition(position.x(),position.y(),position.z());
-      hybridVertex->SetPrimary(hybridParticle);
-
-      modifiedEvent->AddPrimaryVertex(hybridVertex); 
+      for(int i=0; i<mDefaultPrimaryMultiplicity; i++)
+      {
+	vertexNumber += source->GeneratePrimaries(modifiedEvent);
+	G4PrimaryParticle *hybridParticle = modifiedEvent->GetPrimaryVertex(vertexNumber-1)->GetPrimary();
+	while(hybridParticle != 0)
+	{
+	  hybridParticle->SetParticleDefinition(mHybridino);
+	  hybridParticle = hybridParticle->GetNext();
+	}      
+      }
+    }
+    else
+    {
+      G4Event *modifiedEvent = new G4Event();
+      int vertexNumber = modifiedEvent->GetNumberOfPrimaryVertex();
+      double weight = 1.0 / mDefaultPrimaryMultiplicity;
+      for(int i=0; i<mDefaultPrimaryMultiplicity; i++)
+      {
+	vertexNumber += source->GeneratePrimaries(modifiedEvent);
+	G4ThreeVector position = modifiedEvent->GetPrimaryVertex(vertexNumber-1)->GetPosition();
+	G4PrimaryParticle *hybridParticle = modifiedEvent->GetPrimaryVertex(vertexNumber-1)->GetPrimary();
+	while(hybridParticle != 0)
+	{
+	  // create a hybrid struct for raycasting
+	  // primary or not - energy - weight - position - direction
+	  mListOfRaycasting.push_back(RaycastingStruct(true, hybridParticle->GetKineticEnergy(), weight,
+							  position, hybridParticle->GetMomentumDirection()));
+	  hybridParticle = hybridParticle->GetNext();
+	  
+	}
+      }
+      
+      delete modifiedEvent;
     }
   }
 }
@@ -130,27 +146,27 @@ void GateHybridMultiplicityActor::BeginOfEventAction(const G4Event *event)
 //-----------------------------------------------------------------------------
 void GateHybridMultiplicityActor::PreUserTrackingAction(const GateVVolume *, const G4Track* t)
 {
-  currentTrackIndex = -1;
-  currentHybridTrackWeight = 1.;
+  mCurrentTrackIndex = -1;
+  mCurrentHybridTrackWeight = 1.;
   if(t->GetParticleDefinition()->GetParticleName() == "hybridino")
   {
 //     GateMessage("Actor", 0, "track = " << t << " parentID = " << t->GetParentID() << G4endl);
     if(t->GetParentID() == 0)
     {
-      currentHybridTrackWeight = t->GetWeight() / defaultPrimaryMultiplicity;
+      mCurrentHybridTrackWeight = t->GetWeight() / mDefaultPrimaryMultiplicity;
     }
     else
     {
-      for(unsigned int i=0; i<theListOfHybridTrack.size(); i++)
+      for(unsigned int i=0; i<mListOfHybridTrack.size(); i++)
       {
-	if(theListOfHybridTrack[i] == t)
+	if(mListOfHybridTrack[i] == t)
 	{
-	  currentTrackIndex = i;
-	  currentHybridTrackWeight = theListOfHybridWeight[i];
+	  mCurrentTrackIndex = i;
+	  mCurrentHybridTrackWeight = mListOfHybridWeight[i];
 	  break;
 	}
       }
-      if(currentTrackIndex == -1) { GateError("Could not find the following hybrid track : " << t); }
+      if(mCurrentTrackIndex == -1) { GateError("Could not find the following hybrid track : " << t); }
     }
   }
 }
@@ -159,13 +175,13 @@ void GateHybridMultiplicityActor::PreUserTrackingAction(const GateVVolume *, con
 //-----------------------------------------------------------------------------
 void GateHybridMultiplicityActor::PostUserTrackingAction(const GateVVolume *, const G4Track *)
 {
-  if(currentTrackIndex > -1)
+  if(mCurrentTrackIndex > -1)
   {
-    theListOfHybridTrack.erase(theListOfHybridTrack.begin() + currentTrackIndex);
-    theListOfHybridWeight.erase(theListOfHybridWeight.begin() + currentTrackIndex);
+    mListOfHybridTrack.erase(mListOfHybridTrack.begin() + mCurrentTrackIndex);
+    mListOfHybridWeight.erase(mListOfHybridWeight.begin() + mCurrentTrackIndex);
   }
-  
-//   for(unsigned int i=0; i<theListOfHybridTrack.size(); i++) { GateMessage("Actor", 0, "track = " << theListOfHybridTrack[i] << " weight = " << theListOfHybridWeight[i] << G4endl); }
+
+//   for(unsigned int i=0; i<mListOfHybridTrack.size(); i++) { GateMessage("Actor", 0, "track = " << mListOfHybridTrack[i] << " weight = " << mListOfHybridWeight[i] << G4endl); }
 //   GateMessage("Actor", 0, " " << G4endl);
 }
 //-----------------------------------------------------------------------------
@@ -184,8 +200,8 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
     {
       G4Material *material = step->GetPreStepPoint()->GetMaterial();
       G4double energy = step->GetPreStepPoint()->GetKineticEnergy();
-      G4double mu = materialHandler->GetMu(material, energy)*material->GetDensity()/(g/cm3);    
-      currentHybridTrackWeight = currentHybridTrackWeight * exp(-mu*stepLength/10.);
+      G4double mu = mMaterialHandler->GetMu(material, energy)*material->GetDensity()/(g/cm3);    
+      mCurrentHybridTrackWeight = mCurrentHybridTrackWeight * exp(-mu*stepLength/10.);
     }
 //     GateMessage("ActorMult", 0, "hybridWeight = " << currentHybridTrackWeight << G4endl);
   }
@@ -195,11 +211,11 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
     if(processName != "Transportation")
     {
       G4VProcess *currentProcess = 0;
-      for(int i=0; i<processListForGamma->size(); i++)
+      for(int i=0; i<mProcessListForGamma->size(); i++)
       {
-	if((*processListForGamma)[i]->GetProcessName() == processName)
+	if((*mProcessListForGamma)[i]->GetProcessName() == processName)
 	{
-	  currentProcess = (*processListForGamma)[i];
+	  currentProcess = (*mProcessListForGamma)[i];
 	  break;
 	}      
       }
@@ -218,11 +234,10 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 	  {
 	    // Get the constant datas for this fluorescence gamma
 	    int currentSecondaryMultiplicity;
-	    std::map<G4VPhysicalVolume *,int>::iterator it = secondaryMultiplicityMap.find(step->GetTrack()->GetVolume());
-	    if(it == secondaryMultiplicityMap.end()) { currentSecondaryMultiplicity = defaultSecondaryMultiplicity; }
+	    std::map<G4VPhysicalVolume *,int>::iterator it = mSecondaryMultiplicityMap.find(step->GetTrack()->GetVolume());
+	    if(it == mSecondaryMultiplicityMap.end()) { currentSecondaryMultiplicity = mDefaultSecondaryMultiplicity; }
 	    else { currentSecondaryMultiplicity = it->second; }
 	    
-	    G4ParticleDefinition *hybridino = G4Hybridino::Hybridino();
 	    G4double energy = (*trackVector)[t]->GetKineticEnergy();
 	    G4ThreeVector position = step->GetTrack()->GetPosition();
 	    G4double globalTime = step->GetTrack()->GetGlobalTime();
@@ -240,15 +255,24 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 	      momentum.setY(sin(phi)*sqrt(1.-(cosTheta*cosTheta)));
 	      momentum.setZ(cosTheta);
 
-	      // Create a hybrid track and attach it to the primary particle
-	      G4DynamicParticle *hybridParticle = new G4DynamicParticle(hybridino, momentum, energy);
-	      G4Track *newTrack = new G4Track(hybridParticle, globalTime, position);  
-	      newTrack->SetParentID(parentID);
-	      trackVector->push_back(newTrack);
-	      
-	      // Store the hybrid particle weight and track for exponential attenuation step
-	      theListOfHybridTrack.push_back(newTrack);
-	      theListOfHybridWeight.push_back(trackWeight);
+	      if(mIsHybridinoEnabled)
+	      {
+		// Create a hybrid track and attach it to the primary particle
+		G4DynamicParticle *hybridParticle = new G4DynamicParticle(mHybridino, momentum, energy);
+		G4Track *newTrack = new G4Track(hybridParticle, globalTime, position);  
+		newTrack->SetParentID(parentID);
+		trackVector->push_back(newTrack);
+		
+		// Store the hybrid particle weight and track for exponential attenuation step
+		mListOfHybridTrack.push_back(newTrack);
+		mListOfHybridWeight.push_back(trackWeight);
+	      }
+	      else
+	      {
+		// create a hybrid struct for raycasting
+		// primary or not - energy - weight - position - direction
+		mListOfRaycasting.push_back(RaycastingStruct(false, energy, trackWeight, position, momentum));
+	      }
 	    }
 	  }
 	}
@@ -276,11 +300,10 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
   //       GateMessage("Actor", 0, "traPos = " << myStep->GetTrack()->GetPosition() << " traDir = " << myStep->GetTrack()->GetMomentumDirection() << " trackAdress = " << myStep->GetTrack() << G4endl);
 
 	int currentSecondaryMultiplicity;
-	std::map<G4VPhysicalVolume *,int>::iterator it = secondaryMultiplicityMap.find(step->GetTrack()->GetVolume());
-	if(it == secondaryMultiplicityMap.end()) { currentSecondaryMultiplicity = defaultSecondaryMultiplicity; }
+	std::map<G4VPhysicalVolume *,int>::iterator it = mSecondaryMultiplicityMap.find(step->GetTrack()->GetVolume());
+	if(it == mSecondaryMultiplicityMap.end()) { currentSecondaryMultiplicity = mDefaultSecondaryMultiplicity; }
 	else { currentSecondaryMultiplicity = it->second; }
 
-	G4ParticleDefinition *hybridino = G4Hybridino::Hybridino();
 	G4ThreeVector position = step->GetTrack()->GetPosition();
 	G4double globalTime = step->GetTrack()->GetGlobalTime();
 	G4int parentID = step->GetTrack()->GetTrackID();
@@ -298,18 +321,28 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 
   // 	GateMessage("Actor", 0, "prePos = " << newStep->GetPreStepPoint()->GetPosition() << " preDir = " << newStep->GetPreStepPoint()->GetMomentumDirection() << G4endl);
   // 	GateMessage("Actor", 0, "posPos = " << newStep->GetPostStepPoint()->GetPosition() << " posDir = " << newStep->GetPostStepPoint()->GetMomentumDirection() << G4endl);
-	  
-	  // Create a hybrid track and attach it to the primary particle
+
 	  G4double energy = myStep->GetPostStepPoint()->GetKineticEnergy();
 	  G4ThreeVector momentum = myStep->GetPostStepPoint()->GetMomentumDirection();
-	  G4DynamicParticle *hybridParticle = new G4DynamicParticle(hybridino, momentum, energy);
-	  G4Track *newTrack = new G4Track(hybridParticle, globalTime, position);  
-	  newTrack->SetParentID(parentID);
-	  trackVector->push_back(newTrack);
-	  
-	  // Store the hybrid particle weight and track for exponential attenuation step
-	  theListOfHybridTrack.push_back(newTrack);
-	  theListOfHybridWeight.push_back(trackWeight);
+
+	  if(mIsHybridinoEnabled)
+	  {
+	    // Create a hybrid track and attach it to the primary particle
+	    G4DynamicParticle *hybridParticle = new G4DynamicParticle(mHybridino, momentum, energy);
+	    G4Track *newTrack = new G4Track(hybridParticle, globalTime, position);  
+	    newTrack->SetParentID(parentID);
+	    trackVector->push_back(newTrack);
+	    
+	    // Store the hybrid particle weight and track for exponential attenuation step
+	    mListOfHybridTrack.push_back(newTrack);
+	    mListOfHybridWeight.push_back(trackWeight);
+	  }
+	  else
+	  {
+	    // create a hybrid struct for raycasting
+	    // primary or not - energy - weight - position - direction
+	    mListOfRaycasting.push_back(RaycastingStruct(false, energy, trackWeight, position, momentum));
+	  }
 	}
 	
 	delete myTrack;
