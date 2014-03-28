@@ -29,6 +29,9 @@ GateProductionAndStoppingActor::GateProductionAndStoppingActor(G4String name, G4
   pMessenger = new GateImageActorMessenger(this);
 
   GateDebugMessageDec("Actor",4,"GateProductionAndStoppingActor() -- end"<<G4endl);
+
+  bEnableCoordFrame=false;
+  bCoordFrame = " ";
 }
 //-----------------------------------------------------------------------------
 
