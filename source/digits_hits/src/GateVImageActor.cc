@@ -225,6 +225,36 @@ void GateVImageActor::Construct()
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
+void GateVImageActor::SetOriginTransformAndFlagToImage(GateImageWithStatistic & image)
+{
+  // Set origin, take into account the origin of the attached volume (if exist)
+  G4ThreeVector offset = mOrigin;
+  image.SetOrigin(mOrigin);
+
+  // Set transformMatrix
+  image.SetTransformMatrix(mImage.GetTransformMatrix());
+
+  // Set Overwrite flag
+  image.SetOverWriteFilesFlag(mOverWriteFilesFlag);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateVImageActor::SetOriginTransformAndFlagToImage(GateImage & image)
+{
+  // Set origin, take into account the origin of the attached volume (if exist)
+  G4ThreeVector offset = mOrigin;
+  image.SetOrigin(mOrigin);
+
+  // Set transformMatrix
+  image.SetTransformMatrix(mImage.GetTransformMatrix());
+
+}
+//-----------------------------------------------------------------------------
+
+
 //-----------------------------------------------------------------------------
 /// Sets the type of the hit (pre / post / split)
 void GateVImageActor::SetStepHitType(G4String t)

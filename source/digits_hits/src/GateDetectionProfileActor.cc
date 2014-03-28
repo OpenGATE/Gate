@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "GateDetectionProfileActor.hh"
 
@@ -31,6 +31,7 @@ GateDetectionProfileActor::GateDetectionProfileActor(G4String name, G4int depth)
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateDetectionProfileActor::SetTimer(const G4String &timerName)
 {
@@ -43,6 +44,7 @@ void GateDetectionProfileActor::SetTimer(const G4String &timerName)
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 GateDetectionProfileActor::~GateDetectionProfileActor()
 {
@@ -50,19 +52,22 @@ GateDetectionProfileActor::~GateDetectionProfileActor()
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateDetectionProfileActor::SetUseCristalNormal(bool state)
 {
-    useCristalNormal = state;
+  useCristalNormal = state;
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateDetectionProfileActor::SetUseCristalPosition(bool state)
 {
-    useCristalPosition = state;
+  useCristalPosition = state;
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateDetectionProfileActor::SetDistanceThreshold(double distance)
@@ -71,6 +76,7 @@ void GateDetectionProfileActor::SetDistanceThreshold(double distance)
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateDetectionProfileActor::SetDeltaEnergyThreshold(double energy)
 {
@@ -78,12 +84,14 @@ void GateDetectionProfileActor::SetDeltaEnergyThreshold(double energy)
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateDetectionProfileActor::SetDetectionPosition(GateDetectionProfileActor::DetectionPosition type)
 {
   detectionPosition = type;
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateDetectionProfileActor::Construct()
@@ -141,8 +149,8 @@ void GateDetectionProfileActor::UserPostTrackActionInVoxel(const int, const G4Tr
 
   timerActor->ReportDetectedParticle(GetName(),detectedTime,detectedEnergy,detectedDeltaEnergy,detectedWeight);
   GateMessage("Actor",4,
-    "hit finished de=" << detectedDeltaEnergy/MeV <<
-    " dethresh=" << deltaEnergyThreshold/MeV << G4endl);
+              "hit finished de=" << detectedDeltaEnergy/MeV <<
+              " dethresh=" << deltaEnergyThreshold/MeV << G4endl);
 
   if (detectedDeltaEnergy<=deltaEnergyThreshold) return;
   if (detectedIndex>=0) mImage.AddValue(detectedIndex,detectedWeight);
@@ -186,9 +194,9 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
     G4ThreeVector interaction_normal = point->GetMomentumDirection();
     G4ThreeVector interaction_position = point->GetPosition();
     if (useCristalPosition || useCristalNormal) {
-		G4AffineTransform transform = point->GetTouchable()->GetHistory()->GetTopTransform().Inverse();
-		if (useCristalPosition) interaction_position = transform.TransformPoint(G4ThreeVector(0,0,0));
-		if (useCristalNormal)   interaction_normal = transform.TransformAxis(G4ThreeVector(1,0,0));
+      G4AffineTransform transform = point->GetTouchable()->GetHistory()->GetTopTransform().Inverse();
+      if (useCristalPosition) interaction_position = transform.TransformPoint(G4ThreeVector(0,0,0));
+      if (useCristalNormal)   interaction_normal = transform.TransformAxis(G4ThreeVector(1,0,0));
     }
     //G4cout << "interaction_position=" << interaction_position << " interaction_normal=" << interaction_normal << G4endl;
 
@@ -212,15 +220,15 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
     //G4cout << "minDistance=" << minDistance << " minBeam=" << minBeam << " minDetected=" << minDetected << G4endl;
 
     switch (detectionPosition) {
-      case Beam:
-	minPosition = minBeam;
-	break;
-      case Particle:
-	minPosition = minDetected;
-	break;
-      case Middle:
-	minPosition = (minDetected + minBeam)/2.;
-	break;
+    case Beam:
+      minPosition = minBeam;
+      break;
+    case Particle:
+      minPosition = minDetected;
+      break;
+    case Middle:
+      minPosition = (minDetected + minBeam)/2.;
+      break;
     }
   }
 
@@ -233,13 +241,13 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
   detectedDeltaEnergy = step->GetPreStepPoint()->GetKineticEnergy() - step->GetPostStepPoint()->GetKineticEnergy();
 
   GateMessage("Actor",4,
-    "detector hitted" <<
-    " name=" << step->GetTrack()->GetParticleDefinition()->GetParticleName() <<
-    " flytime=" << (detectedTime-triggerData.time)/ns <<
-    " position=" << minPosition/mm <<
-    " distance=" << minDistance/mm <<
-    " e=" << detectedEnergy <<
-    " index=" << detectedIndex << G4endl);
+              "detector hitted" <<
+              " name=" << step->GetTrack()->GetParticleDefinition()->GetParticleName() <<
+              " flytime=" << (detectedTime-triggerData.time)/ns <<
+              " position=" << minPosition/mm <<
+              " distance=" << minDistance/mm <<
+              " e=" << detectedEnergy <<
+              " index=" << detectedIndex << G4endl);
 
   //G4cout << "*********************" << G4endl;
   //G4cout << GetName() << G4endl;

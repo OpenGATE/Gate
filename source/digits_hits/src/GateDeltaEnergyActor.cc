@@ -49,6 +49,7 @@ GateStoppingPowerActor::~GateStoppingPowerActor()  {
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 /// Construct
 void GateStoppingPowerActor::Construct() {
@@ -67,6 +68,11 @@ void GateStoppingPowerActor::Construct() {
       !mIsNumberOfHitsImageEnabled ){
     GateError("The StoppingPowerActor " << GetObjectName() << " does not have any image enabled ...\n Please select at least one ('enableStopPower true' for example)");
   }
+
+  SetOriginTransformAndFlagToImage(mStopPowerImage);
+  SetOriginTransformAndFlagToImage(mRelStopPowerImage);
+  SetOriginTransformAndFlagToImage(mNumberOfHitsImage);
+  SetOriginTransformAndFlagToImage(mLastHitEventImage);
 
   // Output Filename
   mStopPowerFilename = G4String(removeExtension(mSaveFilename))+"-StopPower."+G4String(getExtension(mSaveFilename));
