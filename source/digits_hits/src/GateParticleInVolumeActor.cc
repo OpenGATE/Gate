@@ -15,7 +15,6 @@
 */
 
 
-
 #include "GateParticleInVolumeActor.hh"
 #include "GateMiscFunctions.hh"
 
@@ -38,6 +37,7 @@ GateParticleInVolumeActor::~GateParticleInVolumeActor()  {
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 /// Construct
 void GateParticleInVolumeActor::Construct() {
@@ -49,6 +49,9 @@ void GateParticleInVolumeActor::Construct() {
   EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(true);
   EnableUserSteppingAction(true);
+
+  SetOriginTransformAndFlagToImage(mLastHitEventImage);
+  SetOriginTransformAndFlagToImage(mParticleInVolumeImage);
 
   // Resize and allocate images
   mLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
