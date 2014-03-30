@@ -62,7 +62,6 @@ protected:
   G4UIcmdWithAString * pSetSecondPassPrefixCmd;
   GateUIcmdWith2Vector * pSetSecondPassDetectorResolCmd;
   G4UIcmdWithAString * pSetRussianRouletteFilenameCmd;
-  G4UIcmdWithAString * pSetRussianRouletteCountFilenameCmd;
   G4UIcmdWithADoubleAndUnit * pSetRussianRouletteSpacingCmd;
   G4UIcmdWithAnInteger * pSetRussianRouletteMinimumCountInRegionCmd;
   G4UIcmdWithADouble * pSetRussianRouletteMinimumProbabilityCmd;

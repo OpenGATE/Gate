@@ -63,6 +63,10 @@ GateHybridForcedDetectionActor::GateHybridForcedDetectionActor(G4String name, G4
   mMapProcessNameWithType["Rayl"]               = RAYLEIGH;
   mMapProcessNameWithType["PhotoElectric"] = PHOTOELECTRIC;
   mMapProcessNameWithType["phot"]          = PHOTOELECTRIC;
+
+  mMapTypeWithProcessName[COMPTON] = "Compton";
+  mMapTypeWithProcessName[RAYLEIGH] = "Rayleigh";
+  mMapTypeWithProcessName[PHOTOELECTRIC] = "PhotoElectric";
 }
 //-----------------------------------------------------------------------------
 
@@ -348,6 +352,8 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                             mFluorescencePerOrderImages,
                                             mFluorescenceProbe);
           break;
+        default:
+          GateError("Implementation problem, unexpected process type reached.");
         }
       }
   }
@@ -372,32 +378,45 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 // Callback Begin of Run
 void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
 {
+  // Compute survival probability image for Russian Roulette
+  if(mSecondPassPrefix != "") {
+    // Max of russian roulette image
+    itk::ImageRegionIterator<OutputImageType> iti(mRussianRouletteImage,
+                                                  mRussianRouletteImage->GetBufferedRegion());
+    float maxRussian = 0.;
+    for(iti.GoToBegin(); !iti.IsAtEnd(); ++iti) {
+      maxRussian = std::max(maxRussian, iti.Get());
+    }
+
+    itk::ImageRegionIterator<OutputImageType> itc(mRussianRouletteCountImage,
+                                                  mRussianRouletteCountImage->GetBufferedRegion());
+    mRussianRouletteImageProbability = CreateRussianRouletteVoidImage();
+    itk::ImageRegionIterator<OutputImageType> itp(mRussianRouletteImageProbability,
+                                                  mRussianRouletteImageProbability->GetBufferedRegion());
+    for(iti.GoToBegin(); !iti.IsAtEnd(); ++iti, ++itc, ++itp) {
+      double survivalProba = 1.;
+      if(itc.Get()>mRussianRouletteMinimumCountInRegion) {
+        survivalProba = iti.Get() / maxRussian;
+        survivalProba = std::min(survivalProba, 1.);
+        survivalProba = std::max(survivalProba, mRussianRouletteMinimumProbability);
+      }
+      itp.Set(survivalProba);
+    }
+  }
+
+  // Save data
   GateVActor::EndOfRunAction(r);
 
   if(mSecondPassPrefix != "") {
     // Init
-    OutputImageType::Pointer rrImageBackup = CreateRussianRouletteVoidImage();
-    OutputImageType::Pointer rrImageCountBackup = CreateRussianRouletteVoidImage();
     GeometryType::Pointer geoBackup = GeometryType::New();
-    std::swap(mRussianRouletteImage, rrImageBackup);
-    std::swap(mRussianRouletteCountImage, rrImageCountBackup);
     std::swap(mGeometry, geoBackup);
     std::swap(mSecondPassDetectorResolution, mDetectorResolution);
     unsigned int backupNumberOfEventsInRun = mNumberOfEventsInRun;
     int currentEvent=-1;
     BeginOfRunAction(r);
 
-    // Total of russian roulette image
-    itk::ImageRegionIterator<OutputImageType> it(rrImageBackup,
-                                                 rrImageBackup->GetBufferedRegion());
-    double meanRussian = 0.;
-    float maxRussian = 0.;
-    for(it.GoToBegin(); !it.IsAtEnd(); ++it) {
-      meanRussian += it.Get();
-      maxRussian = std::max(maxRussian, it.Get());
-    }
-    meanRussian /= rrImageBackup->GetBufferedRegion().GetNumberOfPixels();
-
+    // Let's kill
     for(int i=0; i<mPhaseSpace->GetEntries(); i++, mPhaseSpace->GetEntry(i)) {
       // Init
       if(mInteractionEventId!=currentEvent) {
@@ -412,23 +431,18 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
       for(unsigned int i=0; i<3; i++)
         point[i] = p[i];
       OutputImageType::IndexType idx;
-      rrImageBackup->TransformPhysicalPointToIndex(point, idx);
 
       // Russian roulette
-      double survivalProba = 1.;
-      if(rrImageCountBackup->GetPixel(idx)>mRussianRouletteMinimumCountInRegion) {
-        survivalProba = rrImageBackup->GetPixel(idx) / maxRussian;
-        survivalProba = std::min(survivalProba, 1.);
-        survivalProba = std::max(survivalProba, mRussianRouletteMinimumProbability);
-      }
+      ProcessType pt = mMapProcessNameWithType[mInteractionProductionProcessStep];
+      mRussianRouletteImageProbability->TransformPhysicalPointToIndex(point, idx);
+      double survivalProba = mRussianRouletteImageProbability->GetPixel(idx);
       if(G4UniformRand()>survivalProba) {
         mInteractionWeight = 0.;
       }
       else {
         mInteractionWeight /= survivalProba;
-
         // Interaction survived, let's do the job
-        switch(mMapProcessNameWithType[mSingleInteractionType]) {
+        switch(pt) {
         case COMPTON:
           this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
                                             mComptonImage,
@@ -447,6 +461,8 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
                                             mFluorescencePerOrderImages,
                                             mFluorescenceProbe);
           break;
+        default:
+          GateError("Implementation problem, unexpected process type reached.");
         }
       }
       if(mSecondPassPhaseSpaceFile) mSecondPassPhaseSpace->Fill();
@@ -717,6 +733,8 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(G4int runID,
                                         mFluorescencePerOrderImages,
                                         mFluorescenceProbe);
       break;
+    default:
+      GateError("Implementation problem, unexpected process type reached.");
     }
   }
   if(mPhaseSpaceFile) mPhaseSpace->Fill();
@@ -1008,17 +1026,19 @@ void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
     mPhaseSpace->GetCurrentFile()->Write();
   if(mSecondPassPhaseSpaceFile)
     mSecondPassPhaseSpace->GetCurrentFile()->Write();
-
-  if(mSecondPassPrefix != "") {
-    if(mRussianRouletteFilename) {
-      imgWriter->SetFileName(AddPrefix(prefix, mRussianRouletteFilename));
+  if(mRussianRouletteFilename) {
+    G4String f = mRussianRouletteFilename;
+    if(mSecondPassPrefix != "") {
+      imgWriter->SetFileName(AddPrefix(prefix, f));
       imgWriter->SetInput(mRussianRouletteImage);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    }
 
-    if(mRussianRouletteCountFilename) {
-      imgWriter->SetFileName(AddPrefix(prefix, mRussianRouletteCountFilename));
+      imgWriter->SetFileName(AddPrefix(prefix, G4String(removeExtension(f))+"-Count."+G4String(getExtension(f))));
       imgWriter->SetInput(mRussianRouletteCountImage);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+
+      imgWriter->SetFileName(AddPrefix(prefix, G4String(removeExtension(f))+"-Probability."+G4String(getExtension(f))));
+      imgWriter->SetInput(mRussianRouletteImageProbability);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
     }
   }

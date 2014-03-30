@@ -171,11 +171,6 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
   guidance = "Set filename for the image of the regional contribution to scatter, used by the russian roulette.";
   pSetRussianRouletteFilenameCmd->SetGuidance(guidance);
 
-  bb = base+"/setRussianRouletteCountFilename";
-  pSetRussianRouletteCountFilenameCmd = new G4UIcmdWithAString(bb,this);
-  guidance = "Set file name for the image of the count of scattering points, used by the russian roulette.";
-  pSetRussianRouletteCountFilenameCmd->SetGuidance(guidance);
-
   bb = base+"/setRussianRouletteSpacing";
   pSetRussianRouletteSpacingCmd = new G4UIcmdWithADoubleAndUnit(bb,this);
   guidance = "Set spacing for the russian roulette images.";
@@ -223,7 +218,6 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetSecondPassPrefixCmd) pHybridActor->SetSecondPassPrefix(param);
   if(command == pSetSecondPassDetectorResolCmd) pHybridActor->SetSecondPassDetectorResolution(pSetSecondPassDetectorResolCmd->GetNew2VectorValue(param)[0], pSetSecondPassDetectorResolCmd->GetNew2VectorValue(param)[1]);
   if(command == pSetRussianRouletteFilenameCmd) pHybridActor->SetRussianRouletteFilename(param);
-  if(command == pSetRussianRouletteCountFilenameCmd) pHybridActor->SetRussianRouletteCountFilename(param);
   if(command == pSetRussianRouletteSpacingCmd) pHybridActor->SetRussianRouletteSpacing (pSetRussianRouletteSpacingCmd->GetNewDoubleValue(param));
   if(command == pSetRussianRouletteMinimumCountInRegionCmd) pHybridActor->SetRussianRouletteMinimumProbability(pSetRussianRouletteMinimumCountInRegionCmd->GetNewIntValue(param));
   if(command == pSetRussianRouletteMinimumProbabilityCmd) pHybridActor->SetRussianRouletteMinimumProbability(pSetRussianRouletteMinimumProbabilityCmd->GetNewDoubleValue(param));

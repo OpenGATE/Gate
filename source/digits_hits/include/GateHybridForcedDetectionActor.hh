@@ -98,13 +98,12 @@ public:
   void SetSecondPassPrefix(G4String name) { mSecondPassPrefix = name; }
   void SetSecondPassDetectorResolution(int x, int y) { mSecondPassDetectorResolution[0] = x; mSecondPassDetectorResolution[1] = y; }
   void SetRussianRouletteFilename(G4String name) { mRussianRouletteFilename = name; }
-  void SetRussianRouletteCountFilename(G4String name) { mRussianRouletteCountFilename = name; }
   void SetRussianRouletteSpacing(G4double s) { mRussianRouletteSpacing = s; }
   void SetRussianRouletteMinimumCountInRegion(G4double p) { mRussianRouletteMinimumCountInRegion = p; }
   void SetRussianRouletteMinimumProbability(G4double p) { mRussianRouletteMinimumProbability = p; }
 
   // Typedef for rtk
-  typedef enum {COMPTON, RAYLEIGH, PHOTOELECTRIC, PROCESSTYPEMAX} ProcessType;
+  typedef enum {COMPTON=0, RAYLEIGH, PHOTOELECTRIC, PROCESSTYPEMAX} ProcessType;
   static const unsigned int Dimension = 3;
   typedef float                                       InputPixelType;
   typedef itk::Image<InputPixelType, Dimension>       InputImageType;
@@ -182,6 +181,7 @@ protected:
   std::vector<InputImageType::Pointer> mFluorescencePerOrderImages;
 
   std::map<G4String, ProcessType> mMapProcessNameWithType;
+  std::map<ProcessType, G4String> mMapTypeWithProcessName;
 
   // Geometry information initialized at the beginning of the run
   G4AffineTransform m_WorldToCT;
@@ -260,13 +260,13 @@ protected:
   OutputImageType::Pointer CreateRussianRouletteVoidImage();
   G4String mSecondPassPrefix;
   G4String mRussianRouletteFilename;
-  G4String mRussianRouletteCountFilename;
   G4ThreeVector mSecondPassDetectorResolution;
   OutputImageType::Pointer mRussianRouletteImage;
   OutputImageType::Pointer mRussianRouletteCountImage;
   G4double mRussianRouletteSpacing;
   G4int mRussianRouletteMinimumCountInRegion;
   G4double mRussianRouletteMinimumProbability;
+  OutputImageType::Pointer mRussianRouletteImageProbability;
   TFile   *mSecondPassPhaseSpaceFile;
   TTree   *mSecondPassPhaseSpace;
 };
