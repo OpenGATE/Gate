@@ -25,6 +25,7 @@
 #include "G4Region.hh"
 #include "G4RegionStore.hh"
 #include "G4LogicalVolumeStore.hh"
+#include "G4DNAGenericIonsManager.hh"
 #include "G4ParticleTable.hh"
 #include "G4PhysListFactory.hh"
 #include "G4VUserPhysicsList.hh"
@@ -48,6 +49,7 @@
 #include "GatePhysicsListMessenger.hh"
 #include "GateRunManager.hh"
 #include "GateObjectStore.hh"
+#include "GateMixedDNAPhysics.hh"
 
 #ifdef GATE_USE_OPTICAL
 #include "G4OpticalPhoton.hh"
@@ -317,6 +319,33 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
   opt->SetFluo(true);
   opt->SetAuger(true);
   opt->SetPIXE(true);
+}
+//-----------------------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------------------
+// Construction of the physics list from a G4 builder
+void GatePhysicsList::ConstructPhysicsListDNAMixed(G4String name)
+{
+  if (name == "emstandard_opt3_mixed_emdna") {
+    emPhysicsListMixed = new GateMixedDNAPhysics("emstandard_opt3_mixed_emdna");
+  }
+  else {
+    if (name== "emlivermore_mixed_emdna") {
+      emPhysicsListMixed = new GateMixedDNAPhysics("emlivermore_mixed_dna");
+    }
+    else {
+      GateError("The mixed Physics List "<<name<<" does not exist!");
+    }
+  }
+}
+//-----------------------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------------------
+void GatePhysicsList::ConstructProcessMixed()
+{
+  emPhysicsListMixed->ConstructProcess();
 }
 //-----------------------------------------------------------------------------------------
 
