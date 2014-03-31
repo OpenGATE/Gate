@@ -653,7 +653,6 @@ void GatePhysicsList::Write(G4String file)
 //-----------------------------------------------------------------------------
 void GatePhysicsList::SetEmProcessOptions()
 {
-  //DD("not opt");
   opt = new G4EmProcessOptions();
   if(mDEDXBinning>0)   opt->SetDEDXBinning(mDEDXBinning);
   if(mLambdaBinning>0) opt->SetLambdaBinning(mLambdaBinning);
