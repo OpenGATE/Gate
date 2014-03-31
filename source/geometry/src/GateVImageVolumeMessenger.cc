@@ -31,22 +31,22 @@ GateVImageVolumeMessenger::GateVImageVolumeMessenger(GateVImageVolume* volume)
   G4String dir = GetDirectoryName() + "geometry";
   //  G4cout<<dir<<G4endl;
 
-  G4String n = dir +"/SetImage";
+  G4String n = dir +"/setImage";
   pImageFileNameCmd = 0;
   pImageFileNameCmd = new G4UIcmdWithAString(n,this);
   pImageFileNameCmd->SetGuidance("Sets the name of the image file");
 
   // Disable this macro for the moment
-  n = dir +"/SetLabelToMaterialFile";
+  n = dir +"/setLabelToMaterialFile";
   pLabelToMaterialFileNameCmd = new G4UIcmdWithAString(n,this);
   pLabelToMaterialFileNameCmd->SetGuidance("Sets the name of the file containing the label to material correspondence");
 
-  n = dir +"/SetHUToMaterialFile";
+  n = dir +"/setHUToMaterialFile";
   pHUToMaterialFileNameCmd = 0;
   pHUToMaterialFileNameCmd = new G4UIcmdWithAString(n,this);
   pHUToMaterialFileNameCmd->SetGuidance("Sets the name of the file containing the HU intervals to material correspondence");
 
-  n = dir +"/SetRangeMaterialFile";
+  n = dir +"/setRangeToMaterialFile";
   pRangeMaterialFileNameCmd = 0;
   pRangeMaterialFileNameCmd = new G4UIcmdWithAString(n,this);
   pRangeMaterialFileNameCmd->SetGuidance("Sets the name of the file containing the intervals to material correspondence");
