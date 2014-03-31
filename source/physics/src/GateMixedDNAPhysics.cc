@@ -42,11 +42,11 @@ void GateMixedDNAPhysics::ConstructParticle()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 void GateMixedDNAPhysics::ConstructBosons()
-{ 
+{
   // gamma
   G4Gamma::GammaDefinition();
 }
- //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 void GateMixedDNAPhysics::ConstructLeptons()
 {
@@ -142,7 +142,7 @@ void GateMixedDNAPhysics::ConstructProcess()
 #include "G4LivermoreComptonModel.hh"
 #include "G4GammaConversion.hh"
 #include "G4LivermoreGammaConversionModel.hh"
-#include "G4RayleighScattering.hh" 
+#include "G4RayleighScattering.hh"
 #include "G4LivermoreRayleighModel.hh"
 
 #include "G4UrbanMscModel95.hh"
@@ -164,438 +164,429 @@ void GateMixedDNAPhysics::ConstructProcess()
 // ConstructEM
 void GateMixedDNAPhysics::ConstructEM()
 {
-	    setDefaultModelsInWorld(nameprocessmixed);
-	    setDNAInWorld();
-	    inactivateDefaultModelsInRegion();
-	    activateDNAInRegion();
+  setDefaultModelsInWorld(nameprocessmixed);
+  setDNAInWorld();
+  inactivateDefaultModelsInRegion();
+  activateDNAInRegion();
 }
 
 // SetDefaultModel
 void GateMixedDNAPhysics::setDefaultModelsInWorld(G4String NPM) {
-   if (NPM == "emstandard_opt3_mixed_emdna") {
+  if (NPM == "emstandard_opt3_mixed_emdna") {
 
-	theParticleIterator->reset();
-  	while( (*theParticleIterator)() )
-  	{
-	    G4ParticleDefinition* particle = theParticleIterator->value();
-	    G4ProcessManager* pmanager = particle->GetProcessManager();
-	    G4String particleName = particle->GetParticleName();
+    theParticleIterator->reset();
+    while( (*theParticleIterator)() )
+      {
+        G4ParticleDefinition* particle = theParticleIterator->value();
+        G4ProcessManager* pmanager = particle->GetProcessManager();
+        G4String particleName = particle->GetParticleName();
 
-	    // *********************************
-	    // 1) Processes for the World region
-	    // *********************************
+        // *********************************
+        // 1) Processes for the World region
+        // *********************************
 
-	    if (particleName == "e-") {
+        if (particleName == "e-") {
 
-	      // STANDARD msc is active in the world
-	      G4eMultipleScattering* msc = new G4eMultipleScattering();
-	      pmanager->AddProcess(msc, -1, 1, 1);
+          // STANDARD msc is active in the world
+          G4eMultipleScattering* msc = new G4eMultipleScattering();
+          pmanager->AddProcess(msc, -1, 1, 1);
 
-	      // STANDARD ionisation is active in the world
-	      G4eIonisation* eion = new G4eIonisation();
-	      eion->SetEmModel(new G4MollerBhabhaModel(), 1);
-	      pmanager->AddProcess(eion, -1, 2, 2);
-    
-	    } else if ( particleName == "proton" ) {
+          // STANDARD ionisation is active in the world
+          G4eIonisation* eion = new G4eIonisation();
+          eion->SetEmModel(new G4MollerBhabhaModel(), 1);
+          pmanager->AddProcess(eion, -1, 2, 2);
 
-	      // STANDARD msc is active in the world 
-	      G4hMultipleScattering* msc = new G4hMultipleScattering();
-	      pmanager->AddProcess(msc, -1, 1, 1);
+        } else if ( particleName == "proton" ) {
 
-	      // STANDARD ionisation is active in the world 
-	      G4hIonisation* hion = new G4hIonisation();
-	      hion->SetEmModel(new G4BraggIonGasModel(), 1);
-	      hion->SetEmModel(new G4BetheBlochIonGasModel(), 2);
-	      pmanager->AddProcess(hion, -1, 2, 2);
+          // STANDARD msc is active in the world
+          G4hMultipleScattering* msc = new G4hMultipleScattering();
+          pmanager->AddProcess(msc, -1, 1, 1);
 
-	    } else if (particleName == "GenericIon") { // THIS IS NEEDED FOR STANDARD ALPHA G4ionIonisation PROCESS
+          // STANDARD ionisation is active in the world
+          G4hIonisation* hion = new G4hIonisation();
+          hion->SetEmModel(new G4BraggIonGasModel(), 1);
+          hion->SetEmModel(new G4BetheBlochIonGasModel(), 2);
+          pmanager->AddProcess(hion, -1, 2, 2);
 
-	      // STANDARD msc is active in the world 
-	      pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
+        } else if (particleName == "GenericIon") { // THIS IS NEEDED FOR STANDARD ALPHA G4ionIonisation PROCESS
 
-	      // STANDARD ionisation is active in the world 
-	      G4ionIonisation* hion = new G4ionIonisation();
-	      hion->SetEmModel(new G4BraggIonGasModel(),1);
-	      hion->SetEmModel(new G4BetheBlochIonGasModel(), 2);
-	      pmanager->AddProcess(hion, -1, 2, 2);
+          // STANDARD msc is active in the world
+          pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
 
-	    } else if ( particleName == "alpha" ) {
+          // STANDARD ionisation is active in the world
+          G4ionIonisation* hion = new G4ionIonisation();
+          hion->SetEmModel(new G4BraggIonGasModel(),1);
+          hion->SetEmModel(new G4BetheBlochIonGasModel(), 2);
+          pmanager->AddProcess(hion, -1, 2, 2);
 
-	      // STANDARD msc is active in the world 
-	      G4hMultipleScattering* msc = new G4hMultipleScattering();
-	      pmanager->AddProcess(msc, -1, 1, 1);
+        } else if ( particleName == "alpha" ) {
 
-	      // STANDARD ionisation is active in the world 
-	      G4ionIonisation* hion = new G4ionIonisation();
-	      hion->SetEmModel(new G4BraggIonGasModel(),1);
-	      hion->SetEmModel(new G4BetheBlochIonGasModel(), 2);
-	      pmanager->AddProcess(hion, -1, 2, 2);
+          // STANDARD msc is active in the world
+          G4hMultipleScattering* msc = new G4hMultipleScattering();
+          pmanager->AddProcess(msc, -1, 1, 1);
 
-	    } else if (particleName == "gamma") {
-	    
-	      G4double LivermoreHighEnergyLimit = GeV;
+          // STANDARD ionisation is active in the world
+          G4ionIonisation* hion = new G4ionIonisation();
+          hion->SetEmModel(new G4BraggIonGasModel(),1);
+          hion->SetEmModel(new G4BetheBlochIonGasModel(), 2);
+          pmanager->AddProcess(hion, -1, 2, 2);
 
-	      G4PhotoElectricEffect* thePhotoElectricEffect = new G4PhotoElectricEffect();
-	      G4LivermorePhotoElectricModel* theLivermorePhotoElectricModel = new G4LivermorePhotoElectricModel();
-	      theLivermorePhotoElectricModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
-	      thePhotoElectricEffect->AddEmModel(0, theLivermorePhotoElectricModel);
-	      pmanager->AddDiscreteProcess(thePhotoElectricEffect);
+        } else if (particleName == "gamma") {
 
-	      G4ComptonScattering* theComptonScattering = new G4ComptonScattering();
-	      G4LivermoreComptonModel* theLivermoreComptonModel = new G4LivermoreComptonModel();
-	      theLivermoreComptonModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
-	      theComptonScattering->AddEmModel(0, theLivermoreComptonModel);
-	      pmanager->AddDiscreteProcess(theComptonScattering);
+          G4double LivermoreHighEnergyLimit = GeV;
 
-	      G4GammaConversion* theGammaConversion = new G4GammaConversion();
-	      G4LivermoreGammaConversionModel* theLivermoreGammaConversionModel = new G4LivermoreGammaConversionModel();
-	      theLivermoreGammaConversionModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
-	      theGammaConversion->AddEmModel(0, theLivermoreGammaConversionModel);
-	      pmanager->AddDiscreteProcess(theGammaConversion);
+          G4PhotoElectricEffect* thePhotoElectricEffect = new G4PhotoElectricEffect();
+          G4LivermorePhotoElectricModel* theLivermorePhotoElectricModel = new G4LivermorePhotoElectricModel();
+          theLivermorePhotoElectricModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
+          thePhotoElectricEffect->AddEmModel(0, theLivermorePhotoElectricModel);
+          pmanager->AddDiscreteProcess(thePhotoElectricEffect);
 
-	      G4RayleighScattering* theRayleigh = new G4RayleighScattering();
-	      G4LivermoreRayleighModel* theRayleighModel = new G4LivermoreRayleighModel();
-	      theRayleighModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
-	      theRayleigh->AddEmModel(0, theRayleighModel);
-	      pmanager->AddDiscreteProcess(theRayleigh);
-	    }
-	}
-    } else if (NPM == "emlivermore_mixed_emdna") {
-	
-	theParticleIterator->reset();
-  	while( (*theParticleIterator)() )
-  	{
-	    G4ParticleDefinition* particle = theParticleIterator->value();
-	    G4ProcessManager* pmanager = particle->GetProcessManager();
-	    G4String particleName = particle->GetParticleName();
+          G4ComptonScattering* theComptonScattering = new G4ComptonScattering();
+          G4LivermoreComptonModel* theLivermoreComptonModel = new G4LivermoreComptonModel();
+          theLivermoreComptonModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
+          theComptonScattering->AddEmModel(0, theLivermoreComptonModel);
+          pmanager->AddDiscreteProcess(theComptonScattering);
 
-	    // *********************************
-	    // 1) Processes LIVERMORE for the World region
-	    // *********************************
+          G4GammaConversion* theGammaConversion = new G4GammaConversion();
+          G4LivermoreGammaConversionModel* theLivermoreGammaConversionModel = new G4LivermoreGammaConversionModel();
+          theLivermoreGammaConversionModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
+          theGammaConversion->AddEmModel(0, theLivermoreGammaConversionModel);
+          pmanager->AddDiscreteProcess(theGammaConversion);
 
-	    if (particleName == "e-") {
+          G4RayleighScattering* theRayleigh = new G4RayleighScattering();
+          G4LivermoreRayleighModel* theRayleighModel = new G4LivermoreRayleighModel();
+          theRayleighModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
+          theRayleigh->AddEmModel(0, theRayleighModel);
+          pmanager->AddDiscreteProcess(theRayleigh);
+        }
+      }
+  } else if (NPM == "emlivermore_mixed_emdna") {
 
-	      // LIVERMORE msc is active in the world
-	      G4eMultipleScattering* msc = new G4eMultipleScattering();
-	      pmanager->AddProcess(msc, -1, 1, 1);
+    theParticleIterator->reset();
+    while( (*theParticleIterator)() )
+      {
+        G4ParticleDefinition* particle = theParticleIterator->value();
+        G4ProcessManager* pmanager = particle->GetProcessManager();
+        G4String particleName = particle->GetParticleName();
 
-	      // LIVERMORE ionisation is active in the world
-	      G4eIonisation* eion = new G4eIonisation();  
-              eion->SetEmModel(new G4LivermoreIonisationModel(),1);         //   G4LivermoreIonisationModel
-	      // eion->SetEmModel(new G4MollerBhabhaModel(), 1);
-	      pmanager->AddProcess(eion, -1, 2, 2);
+        // *********************************
+        // 1) Processes LIVERMORE for the World region
+        // *********************************
 
-	      // LIVERMORE Bremsstrahlung is active in the world
-	      G4eBremsstrahlung* eBrem = new G4eBremsstrahlung();
-	      eBrem->SetEmModel(new G4LivermoreBremsstrahlungModel(), 1);   //  G4LivermoreBremsstrahlungModel G4LivermoreIonisationModel
-	      pmanager->AddProcess(eion, -1, 2, 2);
+        if (particleName == "e-") {
 
-	     	    
-	    } else if ( particleName == "proton" ) {			//identique avec standard opt3
+          // LIVERMORE msc is active in the world
+          G4eMultipleScattering* msc = new G4eMultipleScattering();
+          pmanager->AddProcess(msc, -1, 1, 1);
 
-	      // STANDARD msc is active in the world 
-	      G4hMultipleScattering* msc = new G4hMultipleScattering();
-	      pmanager->AddProcess(msc, -1, 1, 1);
+          // LIVERMORE ionisation is active in the world
+          G4eIonisation* eion = new G4eIonisation();
+          eion->SetEmModel(new G4LivermoreIonisationModel(),1);         //   G4LivermoreIonisationModel
+          // eion->SetEmModel(new G4MollerBhabhaModel(), 1);
+          pmanager->AddProcess(eion, -1, 2, 2);
 
-	      // STANDARD ionisation is active in the world 
-	      G4hIonisation* hion = new G4hIonisation();
-	      hion->SetEmModel(new G4BraggIonGasModel(), 1);
-	      hion->SetEmModel(new G4BetheBlochIonGasModel(), 2);
-	      pmanager->AddProcess(hion, -1, 2, 2);
+          // LIVERMORE Bremsstrahlung is active in the world
+          G4eBremsstrahlung* eBrem = new G4eBremsstrahlung();
+          eBrem->SetEmModel(new G4LivermoreBremsstrahlungModel(), 1);   //  G4LivermoreBremsstrahlungModel G4LivermoreIonisationModel
+          pmanager->AddProcess(eion, -1, 2, 2);
 
-	    } else if (particleName == "GenericIon") { 				//identique avec standard opt3
-   		
-	      // THIS IS NEEDED FOR STANDARD ALPHA G4ionIonisation PROCESS 
-	      // STANDARD msc is active in the world 
-	      pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
 
-	      // STANDARD ionisation is active in the world 
-	      G4ionIonisation* hion = new G4ionIonisation();
-	      hion->SetEmModel(new G4BraggIonGasModel(),1);
-	      hion->SetEmModel(new G4BetheBlochIonGasModel(), 2);
-	      pmanager->AddProcess(hion, -1, 2, 2);
+        } else if ( particleName == "proton" ) {			//identique avec standard opt3
 
-	    } else if ( particleName == "alpha" ) {	//indentique avec standard opt3
+          // STANDARD msc is active in the world
+          G4hMultipleScattering* msc = new G4hMultipleScattering();
+          pmanager->AddProcess(msc, -1, 1, 1);
 
-	      // STANDARD msc is active in the world 
-	      G4hMultipleScattering* msc = new G4hMultipleScattering();
-	      pmanager->AddProcess(msc, -1, 1, 1);
+          // STANDARD ionisation is active in the world
+          G4hIonisation* hion = new G4hIonisation();
+          hion->SetEmModel(new G4BraggIonGasModel(), 1);
+          hion->SetEmModel(new G4BetheBlochIonGasModel(), 2);
+          pmanager->AddProcess(hion, -1, 2, 2);
 
-	      // STANDARD ionisation is active in the world 
-	      G4ionIonisation* hion = new G4ionIonisation();
-	      hion->SetEmModel(new G4BraggIonGasModel(),1);
-	      hion->SetEmModel(new G4BetheBlochIonGasModel(), 2);
-	      pmanager->AddProcess(hion, -1, 2, 2);
+        } else if (particleName == "GenericIon") { 				//identique avec standard opt3
 
-	    } else if (particleName == "gamma") {         //gamme Livermore indentique avec standard opt3
-	    
-	      G4double LivermoreHighEnergyLimit = GeV;
+          // THIS IS NEEDED FOR STANDARD ALPHA G4ionIonisation PROCESS
+          // STANDARD msc is active in the world
+          pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
 
-	      G4PhotoElectricEffect* thePhotoElectricEffect = new G4PhotoElectricEffect();
-	      G4LivermorePhotoElectricModel* theLivermorePhotoElectricModel = new G4LivermorePhotoElectricModel();
-	      theLivermorePhotoElectricModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
-	      thePhotoElectricEffect->AddEmModel(0, theLivermorePhotoElectricModel);
-	      pmanager->AddDiscreteProcess(thePhotoElectricEffect);
+          // STANDARD ionisation is active in the world
+          G4ionIonisation* hion = new G4ionIonisation();
+          hion->SetEmModel(new G4BraggIonGasModel(),1);
+          hion->SetEmModel(new G4BetheBlochIonGasModel(), 2);
+          pmanager->AddProcess(hion, -1, 2, 2);
 
-	      G4ComptonScattering* theComptonScattering = new G4ComptonScattering();
-	      G4LivermoreComptonModel* theLivermoreComptonModel = new G4LivermoreComptonModel();
-	      theLivermoreComptonModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
-	      theComptonScattering->AddEmModel(0, theLivermoreComptonModel);
-	      pmanager->AddDiscreteProcess(theComptonScattering);
+        } else if ( particleName == "alpha" ) {	//indentique avec standard opt3
 
-	      G4GammaConversion* theGammaConversion = new G4GammaConversion();
-	      G4LivermoreGammaConversionModel* theLivermoreGammaConversionModel = new G4LivermoreGammaConversionModel();
-	      theLivermoreGammaConversionModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
-	      theGammaConversion->AddEmModel(0, theLivermoreGammaConversionModel);
-	      pmanager->AddDiscreteProcess(theGammaConversion);
+          // STANDARD msc is active in the world
+          G4hMultipleScattering* msc = new G4hMultipleScattering();
+          pmanager->AddProcess(msc, -1, 1, 1);
 
-	      G4RayleighScattering* theRayleigh = new G4RayleighScattering();
-	      G4LivermoreRayleighModel* theRayleighModel = new G4LivermoreRayleighModel();
-	      theRayleighModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
-	      theRayleigh->AddEmModel(0, theRayleighModel);
-	      pmanager->AddDiscreteProcess(theRayleigh);
-	    }
-	}
+          // STANDARD ionisation is active in the world
+          G4ionIonisation* hion = new G4ionIonisation();
+          hion->SetEmModel(new G4BraggIonGasModel(),1);
+          hion->SetEmModel(new G4BetheBlochIonGasModel(), 2);
+          pmanager->AddProcess(hion, -1, 2, 2);
 
-    } else G4cout << "No processes" << G4endl;
+        } else if (particleName == "gamma") {         //gamme Livermore indentique avec standard opt3
+
+          G4double LivermoreHighEnergyLimit = GeV;
+
+          G4PhotoElectricEffect* thePhotoElectricEffect = new G4PhotoElectricEffect();
+          G4LivermorePhotoElectricModel* theLivermorePhotoElectricModel = new G4LivermorePhotoElectricModel();
+          theLivermorePhotoElectricModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
+          thePhotoElectricEffect->AddEmModel(0, theLivermorePhotoElectricModel);
+          pmanager->AddDiscreteProcess(thePhotoElectricEffect);
+
+          G4ComptonScattering* theComptonScattering = new G4ComptonScattering();
+          G4LivermoreComptonModel* theLivermoreComptonModel = new G4LivermoreComptonModel();
+          theLivermoreComptonModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
+          theComptonScattering->AddEmModel(0, theLivermoreComptonModel);
+          pmanager->AddDiscreteProcess(theComptonScattering);
+
+          G4GammaConversion* theGammaConversion = new G4GammaConversion();
+          G4LivermoreGammaConversionModel* theLivermoreGammaConversionModel = new G4LivermoreGammaConversionModel();
+          theLivermoreGammaConversionModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
+          theGammaConversion->AddEmModel(0, theLivermoreGammaConversionModel);
+          pmanager->AddDiscreteProcess(theGammaConversion);
+
+          G4RayleighScattering* theRayleigh = new G4RayleighScattering();
+          G4LivermoreRayleighModel* theRayleighModel = new G4LivermoreRayleighModel();
+          theRayleighModel->SetHighEnergyLimit(LivermoreHighEnergyLimit);
+          theRayleigh->AddEmModel(0, theRayleighModel);
+          pmanager->AddDiscreteProcess(theRayleigh);
+        }
+      }
+
+  } else G4cout << "No processes" << G4endl;
 }
 
 // Set DNA In World
 void GateMixedDNAPhysics::setDNAInWorld() {
 
-	theParticleIterator->reset();
-  	while( (*theParticleIterator)() )
-  	{
-	    G4ParticleDefinition* particle = theParticleIterator->value();
-	    G4ProcessManager* pmanager = particle->GetProcessManager();
-	    G4String particleName = particle->GetParticleName();
-	    // *********************************
-	    // 1) Processes for the World region
-	    // *********************************
+  theParticleIterator->reset();
+  while( (*theParticleIterator)() )
+    {
+      G4ParticleDefinition* particle = theParticleIterator->value();
+      G4ProcessManager* pmanager = particle->GetProcessManager();
+      G4String particleName = particle->GetParticleName();
+      // *********************************
+      // 1) Processes for the World region
+      // *********************************
 
-	    if (particleName == "e-") {
+      if (particleName == "e-") {
 
-	      // DNA elastic is not active in the world 
-	      G4DNAElastic* theDNAElasticProcess = new G4DNAElastic("e-_G4DNAElastic");
-	      theDNAElasticProcess->SetEmModel(new G4DummyModel(),1);
-	      pmanager->AddDiscreteProcess(theDNAElasticProcess);
+        // DNA elastic is not active in the world
+        G4DNAElastic* theDNAElasticProcess = new G4DNAElastic("e-_G4DNAElastic");
+        theDNAElasticProcess->SetEmModel(new G4DummyModel(),1);
+        pmanager->AddDiscreteProcess(theDNAElasticProcess);
 
-	      // DNA excitation is not active in the world 
-	      G4DNAExcitation* dnaex = new G4DNAExcitation("e-_G4DNAExcitation");
-	      dnaex->SetEmModel(new G4DummyModel(),1);
-	      pmanager->AddDiscreteProcess(dnaex);
+        // DNA excitation is not active in the world
+        G4DNAExcitation* dnaex = new G4DNAExcitation("e-_G4DNAExcitation");
+        dnaex->SetEmModel(new G4DummyModel(),1);
+        pmanager->AddDiscreteProcess(dnaex);
 
-	      // DNA ionisation is not active in the world 
-	      G4DNAIonisation* dnaioni = new G4DNAIonisation("e-_G4DNAIonisation");
-	      dnaioni->SetEmModel(new G4DummyModel(),1); 
-	      pmanager->AddDiscreteProcess(dnaioni);
+        // DNA ionisation is not active in the world
+        G4DNAIonisation* dnaioni = new G4DNAIonisation("e-_G4DNAIonisation");
+        dnaioni->SetEmModel(new G4DummyModel(),1);
+        pmanager->AddDiscreteProcess(dnaioni);
 
-	      // DNA attachment is not active in the world 
-	      G4DNAAttachment* dnaatt = new G4DNAAttachment("e-_G4DNAAttachment");
-	      dnaatt->SetEmModel(new G4DummyModel(),1); 
-	      pmanager->AddDiscreteProcess(dnaatt);
+        // DNA attachment is not active in the world
+        G4DNAAttachment* dnaatt = new G4DNAAttachment("e-_G4DNAAttachment");
+        dnaatt->SetEmModel(new G4DummyModel(),1);
+        pmanager->AddDiscreteProcess(dnaatt);
 
-	      // DNA vib. excitation is not active in the world 
-	      G4DNAVibExcitation* dnavib = new G4DNAVibExcitation("e-_G4DNAVibExcitation");
-	      dnavib->SetEmModel(new G4DummyModel(),1); 
-	      pmanager->AddDiscreteProcess(dnavib);
-	     	    
-	    } else if ( particleName == "proton" ) {
+        // DNA vib. excitation is not active in the world
+        G4DNAVibExcitation* dnavib = new G4DNAVibExcitation("e-_G4DNAVibExcitation");
+        dnavib->SetEmModel(new G4DummyModel(),1);
+        pmanager->AddDiscreteProcess(dnavib);
 
-	      // DNA excitation is not active in the world 
-	      G4DNAExcitation* dnaex = new G4DNAExcitation("proton_G4DNAExcitation");
-	      dnaex->SetEmModel(new G4DummyModel(),1);
-	      dnaex->SetEmModel(new G4DummyModel(),2);
-	      pmanager->AddDiscreteProcess(dnaex);
+      } else if ( particleName == "proton" ) {
 
-	      // DNA ionisation is not active in the world 
-	      G4DNAIonisation* dnaioni = new G4DNAIonisation("proton_G4DNAIonisation");
-	      dnaioni->SetEmModel(new G4DummyModel(),1); 
-	      dnaioni->SetEmModel(new G4DummyModel(),2); 
-	      pmanager->AddDiscreteProcess(dnaioni);
+        // DNA excitation is not active in the world
+        G4DNAExcitation* dnaex = new G4DNAExcitation("proton_G4DNAExcitation");
+        dnaex->SetEmModel(new G4DummyModel(),1);
+        dnaex->SetEmModel(new G4DummyModel(),2);
+        pmanager->AddDiscreteProcess(dnaex);
 
-	      // DNA charge decrease is ACTIVE in the world since no corresponding STANDARD process exist
-	      pmanager->AddDiscreteProcess(new G4DNAChargeDecrease("proton_G4DNAChargeDecrease"));
+        // DNA ionisation is not active in the world
+        G4DNAIonisation* dnaioni = new G4DNAIonisation("proton_G4DNAIonisation");
+        dnaioni->SetEmModel(new G4DummyModel(),1);
+        dnaioni->SetEmModel(new G4DummyModel(),2);
+        pmanager->AddDiscreteProcess(dnaioni);
 
-	    } else if ( particleName == "hydrogen" ) {
+        // DNA charge decrease is ACTIVE in the world since no corresponding STANDARD process exist
+        pmanager->AddDiscreteProcess(new G4DNAChargeDecrease("proton_G4DNAChargeDecrease"));
 
-	      // DNA processes are ACTIVE in the world since no corresponding STANDARD processes exist
-	      pmanager->AddDiscreteProcess(new G4DNAIonisation("hydrogen_G4DNAIonisation"));
-	      pmanager->AddDiscreteProcess(new G4DNAExcitation("hydrogen_G4DNAExcitation"));
-	      pmanager->AddDiscreteProcess(new G4DNAChargeIncrease("hydrogen_G4DNAChargeIncrease"));
+      } else if ( particleName == "hydrogen" ) {
 
-	    } else if ( particleName == "alpha" ) {
+        // DNA processes are ACTIVE in the world since no corresponding STANDARD processes exist
+        pmanager->AddDiscreteProcess(new G4DNAIonisation("hydrogen_G4DNAIonisation"));
+        pmanager->AddDiscreteProcess(new G4DNAExcitation("hydrogen_G4DNAExcitation"));
+        pmanager->AddDiscreteProcess(new G4DNAChargeIncrease("hydrogen_G4DNAChargeIncrease"));
 
-	      // DNA excitation is not active in the world 
-	      G4DNAExcitation* dnaex = new G4DNAExcitation("alpha_G4DNAExcitation");
-	      dnaex->SetEmModel(new G4DummyModel(),1);
-	      pmanager->AddDiscreteProcess(dnaex);
+      } else if ( particleName == "alpha" ) {
 
-	      // DNA ionisation is not active in the world 
-	      G4DNAIonisation* dnaioni = new G4DNAIonisation("alpha_G4DNAIonisation");
-	      dnaioni->SetEmModel(new G4DummyModel(),1); 
-	      pmanager->AddDiscreteProcess(dnaioni);
+        // DNA excitation is not active in the world
+        G4DNAExcitation* dnaex = new G4DNAExcitation("alpha_G4DNAExcitation");
+        dnaex->SetEmModel(new G4DummyModel(),1);
+        pmanager->AddDiscreteProcess(dnaex);
 
-	      // DNA charge decrease is ACTIVE in the world since no corresponding STANDARD process exist
-	      pmanager->AddDiscreteProcess(new G4DNAChargeDecrease("alpha_G4DNAChargeDecrease"));
+        // DNA ionisation is not active in the world
+        G4DNAIonisation* dnaioni = new G4DNAIonisation("alpha_G4DNAIonisation");
+        dnaioni->SetEmModel(new G4DummyModel(),1);
+        pmanager->AddDiscreteProcess(dnaioni);
 
-	    } else if ( particleName == "alpha+" ) {
+        // DNA charge decrease is ACTIVE in the world since no corresponding STANDARD process exist
+        pmanager->AddDiscreteProcess(new G4DNAChargeDecrease("alpha_G4DNAChargeDecrease"));
 
-	      // DNA processes are ACTIVE in the world since no corresponding STANDARD processes exist
-	      pmanager->AddDiscreteProcess(new G4DNAExcitation("alpha+_G4DNAExcitation"));
-	      pmanager->AddDiscreteProcess(new G4DNAIonisation("alpha+_G4DNAIonisation"));
-	      pmanager->AddDiscreteProcess(new G4DNAChargeDecrease("alpha+_G4DNAChargeDecrease"));
-	      pmanager->AddDiscreteProcess(new G4DNAChargeIncrease("alpha+_G4DNAChargeIncrease"));
-		    
-	    } else if ( particleName == "helium" ) {
+      } else if ( particleName == "alpha+" ) {
 
-	      // DNA processes are ACTIVE in the world since no corresponding STANDARD processes exist
-	      pmanager->AddDiscreteProcess(new G4DNAExcitation("helium_G4DNAExcitation"));
-	      pmanager->AddDiscreteProcess(new G4DNAIonisation("helium_G4DNAIonisation"));
-	      pmanager->AddDiscreteProcess(new G4DNAChargeIncrease("helium_G4DNAChargeIncrease"));
+        // DNA processes are ACTIVE in the world since no corresponding STANDARD processes exist
+        pmanager->AddDiscreteProcess(new G4DNAExcitation("alpha+_G4DNAExcitation"));
+        pmanager->AddDiscreteProcess(new G4DNAIonisation("alpha+_G4DNAIonisation"));
+        pmanager->AddDiscreteProcess(new G4DNAChargeDecrease("alpha+_G4DNAChargeDecrease"));
+        pmanager->AddDiscreteProcess(new G4DNAChargeIncrease("alpha+_G4DNAChargeIncrease"));
 
-	    } 
-	}	   
+      } else if ( particleName == "helium" ) {
+
+        // DNA processes are ACTIVE in the world since no corresponding STANDARD processes exist
+        pmanager->AddDiscreteProcess(new G4DNAExcitation("helium_G4DNAExcitation"));
+        pmanager->AddDiscreteProcess(new G4DNAIonisation("helium_G4DNAIonisation"));
+        pmanager->AddDiscreteProcess(new G4DNAChargeIncrease("helium_G4DNAChargeIncrease"));
+
+      }
+    }
 }
 
 
 // Inactivate Default Models In Region
 void GateMixedDNAPhysics::inactivateDefaultModelsInRegion() {
 
-	for (unsigned int k = 0; k < regionsWithDNA.size(); k++) {
+  for (unsigned int k = 0; k < regionsWithDNA.size(); k++) {
 
-		  // **************************************
-		  // 2) Define processes for Target region 
-		  // **************************************
+    // **************************************
+    // 2) Define processes for Target region
+    // **************************************
 
-		  // STANDARD EM processes should be inactivated when corresponding DNA processes are used
-		  // - STANDARD EM e- processes are inactivated below 1 MeV
-		  // - STANDARD EM proton & alpha processes are inactivated below standEnergyLimit
-		  G4double standEnergyLimit = 9.9*MeV;
-		  //
+    // STANDARD EM processes should be inactivated when corresponding DNA processes are used
+    // - STANDARD EM e- processes are inactivated below 1 MeV
+    // - STANDARD EM proton & alpha processes are inactivated below standEnergyLimit
+    G4double standEnergyLimit = 9.9*MeV;
+    //
 
-		  G4double massFactor = 1.0079/4.0026;
-		  G4EmConfigurator* em_config = G4LossTableManager::Instance()->EmConfigurator();
-		  G4VEmModel* mod;
+    G4double massFactor = 1.0079/4.0026;
+    G4EmConfigurator* em_config = G4LossTableManager::Instance()->EmConfigurator();
+    G4VEmModel* mod;
 
-		  // *** e-
-		  // ---> STANDARD EM processes are inactivated below 1 MeV
-		  mod =  new G4UrbanMscModel93();
-		  mod->SetActivationLowEnergyLimit(1*MeV);
-		  //em_config->SetExtraEmModel("e-","msc",mod,"Target");
-     		  em_config->SetExtraEmModel("e-","msc",mod,regionsWithDNA[k]);  
-
-		  
-		  mod = new G4MollerBhabhaModel();
-		  mod->SetActivationLowEnergyLimit(0.99*MeV);
-		  //em_config->SetExtraEmModel("e-","eIoni",mod,"Target",0.0,100*TeV, new G4UniversalFluctuation());
-		  em_config->SetExtraEmModel("e-","eIoni",mod,regionsWithDNA[k],0.0,100*TeV, new G4UniversalFluctuation());
+    // *** e-
+    // ---> STANDARD EM processes are inactivated below 1 MeV
+    mod =  new G4UrbanMscModel93();
+    mod->SetActivationLowEnergyLimit(1*MeV);
+    //em_config->SetExtraEmModel("e-","msc",mod,"Target");
+    em_config->SetExtraEmModel("e-","msc",mod,regionsWithDNA[k]);
 
 
-		  // *** proton
-		  // ---> STANDARD EM processes inactivated below standEnergyLimit
-		  // STANDARD msc is still active
-		  // Inactivate following STANDARD processes     
-		  mod = new G4BraggIonGasModel();
-		  mod->SetActivationLowEnergyLimit(standEnergyLimit);
-		  //em_config->SetExtraEmModel("proton","hIoni",mod,"Target",0.0,2*MeV, new G4IonFluctuations());
-		  em_config->SetExtraEmModel("proton","hIoni",mod,regionsWithDNA[k],0.0,2*MeV, new G4IonFluctuations());
+    mod = new G4MollerBhabhaModel();
+    mod->SetActivationLowEnergyLimit(0.99*MeV);
+    //em_config->SetExtraEmModel("e-","eIoni",mod,"Target",0.0,100*TeV, new G4UniversalFluctuation());
+    em_config->SetExtraEmModel("e-","eIoni",mod,regionsWithDNA[k],0.0,100*TeV, new G4UniversalFluctuation());
 
 
-		  mod = new G4BetheBlochIonGasModel();
-		  mod->SetActivationLowEnergyLimit(standEnergyLimit);
-		  //em_config->SetExtraEmModel("proton","hIoni",mod,"Target",2*MeV,100*TeV, new G4UniversalFluctuation());
-		  em_config->SetExtraEmModel("proton","hIoni",mod,regionsWithDNA[k],2*MeV,100*TeV, new G4UniversalFluctuation());
+    // *** proton
+    // ---> STANDARD EM processes inactivated below standEnergyLimit
+    // STANDARD msc is still active
+    // Inactivate following STANDARD processes
+    mod = new G4BraggIonGasModel();
+    mod->SetActivationLowEnergyLimit(standEnergyLimit);
+    //em_config->SetExtraEmModel("proton","hIoni",mod,"Target",0.0,2*MeV, new G4IonFluctuations());
+    em_config->SetExtraEmModel("proton","hIoni",mod,regionsWithDNA[k],0.0,2*MeV, new G4IonFluctuations());
 
 
-		  // *** alpha
-		  // ---> STANDARD EM processes inactivated below standEnergyLimit
-		  // STANDARD msc is still active
-		  // Inactivate following STANDARD processes 
-
-		  mod = new G4BraggIonGasModel();
-		  mod->SetActivationLowEnergyLimit(standEnergyLimit);
-		  //em_config->SetExtraEmModel("alpha","ionIoni",mod,"Target",0.0,2*MeV/massFactor, new G4IonFluctuations());
-		  em_config->SetExtraEmModel("alpha","ionIoni",mod,regionsWithDNA[k],0.0,2*MeV/massFactor, new G4IonFluctuations());
+    mod = new G4BetheBlochIonGasModel();
+    mod->SetActivationLowEnergyLimit(standEnergyLimit);
+    //em_config->SetExtraEmModel("proton","hIoni",mod,"Target",2*MeV,100*TeV, new G4UniversalFluctuation());
+    em_config->SetExtraEmModel("proton","hIoni",mod,regionsWithDNA[k],2*MeV,100*TeV, new G4UniversalFluctuation());
 
 
-		  mod = new G4BetheBlochIonGasModel();
-		  mod->SetActivationLowEnergyLimit(standEnergyLimit);
-		  //em_config->SetExtraEmModel("alpha","ionIoni",mod,"Target",2*MeV/massFactor,100*TeV, new G4UniversalFluctuation());
-		  em_config->SetExtraEmModel("alpha","ionIoni",mod,regionsWithDNA[k],2*MeV/massFactor,100*TeV, new G4UniversalFluctuation());
-	}
+    // *** alpha
+    // ---> STANDARD EM processes inactivated below standEnergyLimit
+    // STANDARD msc is still active
+    // Inactivate following STANDARD processes
+
+    mod = new G4BraggIonGasModel();
+    mod->SetActivationLowEnergyLimit(standEnergyLimit);
+    //em_config->SetExtraEmModel("alpha","ionIoni",mod,"Target",0.0,2*MeV/massFactor, new G4IonFluctuations());
+    em_config->SetExtraEmModel("alpha","ionIoni",mod,regionsWithDNA[k],0.0,2*MeV/massFactor, new G4IonFluctuations());
+
+
+    mod = new G4BetheBlochIonGasModel();
+    mod->SetActivationLowEnergyLimit(standEnergyLimit);
+    //em_config->SetExtraEmModel("alpha","ionIoni",mod,"Target",2*MeV/massFactor,100*TeV, new G4UniversalFluctuation());
+    em_config->SetExtraEmModel("alpha","ionIoni",mod,regionsWithDNA[k],2*MeV/massFactor,100*TeV, new G4UniversalFluctuation());
+  }
 }
 
 
 // Activate DNA In Region
 void GateMixedDNAPhysics::activateDNAInRegion() {
-  	for (unsigned int k = 0; k < regionsWithDNA.size(); k++) {
+  for (unsigned int k = 0; k < regionsWithDNA.size(); k++) {
 
-		  // **************************************
-		  // 2) Define processes for Target region 
-		  // **************************************
-		  // STANDARD EM processes should be inactivated when corresponding DNA processes are used
-		  G4EmConfigurator* em_config = G4LossTableManager::Instance()->EmConfigurator();
-		  G4VEmModel* mod;
+    // **************************************
+    // 2) Define processes for Target region
+    // **************************************
+    // STANDARD EM processes should be inactivated when corresponding DNA processes are used
+    G4EmConfigurator* em_config = G4LossTableManager::Instance()->EmConfigurator();
+    G4VEmModel* mod;
 
-		  // *** e-
-		  // ---> STANDARD EM processes are inactivated below 1 MeV
-		  // ---> DNA processes activated
-		  mod = new G4DNAChampionElasticModel();
-		  em_config->SetExtraEmModel("e-","e-_G4DNAElastic",mod,regionsWithDNA[k],0.0,1*MeV);
-
-		  
-		  mod = new G4DNABornIonisationModel();
-		  em_config->SetExtraEmModel("e-","e-_G4DNAIonisation",mod,regionsWithDNA[k],11*eV,1*MeV);
-
-		  
-		  mod = new G4DNABornExcitationModel();
-		  em_config->SetExtraEmModel("e-","e-_G4DNAExcitation",mod,regionsWithDNA[k],9*eV,1*MeV);
-
-		  
-		  mod = new G4DNAMeltonAttachmentModel();
-		  em_config->SetExtraEmModel("e-","e-_G4DNAAttachment",mod,regionsWithDNA[k],4*eV,13*eV);
-
-		  
-		  mod = new G4DNASancheExcitationModel();
-		  em_config->SetExtraEmModel("e-","e-_G4DNAVibExcitation",mod,regionsWithDNA[k],2*eV,100*eV);
+    // *** e-
+    // ---> STANDARD EM processes are inactivated below 1 MeV
+    // ---> DNA processes activated
+    mod = new G4DNAChampionElasticModel();
+    em_config->SetExtraEmModel("e-","e-_G4DNAElastic",mod,regionsWithDNA[k],0.0,1*MeV);
 
 
-
-		  // *** proton
-		  // ---> DNA processes activated  
-		  mod = new G4DNARuddIonisationModel(); 
-		  em_config->SetExtraEmModel("proton","proton_G4DNAIonisation",mod,regionsWithDNA[k],0.0,0.5*MeV);
-
-		  
-		  mod = new G4DNABornIonisationModel();
-		  em_config->SetExtraEmModel("proton","proton_G4DNAIonisation",mod,regionsWithDNA[k],0.5*MeV,10*MeV);
-
-		  
-		  mod = new G4DNAMillerGreenExcitationModel();
-		  em_config->SetExtraEmModel("proton","proton_G4DNAExcitation",mod,regionsWithDNA[k],10*eV,0.5*MeV);
-
-		  
-		  mod = new G4DNABornExcitationModel();
-		  em_config->SetExtraEmModel("proton","proton_G4DNAExcitation",mod,regionsWithDNA[k],0.5*MeV,10*MeV);
+    mod = new G4DNABornIonisationModel();
+    em_config->SetExtraEmModel("e-","e-_G4DNAIonisation",mod,regionsWithDNA[k],11*eV,1*MeV);
 
 
-		  // *** alpha
-		  // ---> DNA processes activated
-		  mod = new G4DNARuddIonisationModel(); 
-		  em_config->SetExtraEmModel("alpha","alpha_G4DNAIonisation",mod,regionsWithDNA[k],0.0,10*MeV);
+    mod = new G4DNABornExcitationModel();
+    em_config->SetExtraEmModel("e-","e-_G4DNAExcitation",mod,regionsWithDNA[k],9*eV,1*MeV);
 
-		  
-		  mod = new G4DNAMillerGreenExcitationModel();
-		  em_config->SetExtraEmModel("alpha","alpha_G4DNAExcitation",mod,regionsWithDNA[k],1*keV,10*MeV);
-	}
+
+    mod = new G4DNAMeltonAttachmentModel();
+    em_config->SetExtraEmModel("e-","e-_G4DNAAttachment",mod,regionsWithDNA[k],4*eV,13*eV);
+
+
+    mod = new G4DNASancheExcitationModel();
+    em_config->SetExtraEmModel("e-","e-_G4DNAVibExcitation",mod,regionsWithDNA[k],2*eV,100*eV);
+
+
+
+    // *** proton
+    // ---> DNA processes activated
+    mod = new G4DNARuddIonisationModel();
+    em_config->SetExtraEmModel("proton","proton_G4DNAIonisation",mod,regionsWithDNA[k],0.0,0.5*MeV);
+
+
+    mod = new G4DNABornIonisationModel();
+    em_config->SetExtraEmModel("proton","proton_G4DNAIonisation",mod,regionsWithDNA[k],0.5*MeV,10*MeV);
+
+
+    mod = new G4DNAMillerGreenExcitationModel();
+    em_config->SetExtraEmModel("proton","proton_G4DNAExcitation",mod,regionsWithDNA[k],10*eV,0.5*MeV);
+
+
+    mod = new G4DNABornExcitationModel();
+    em_config->SetExtraEmModel("proton","proton_G4DNAExcitation",mod,regionsWithDNA[k],0.5*MeV,10*MeV);
+
+
+    // *** alpha
+    // ---> DNA processes activated
+    mod = new G4DNARuddIonisationModel();
+    em_config->SetExtraEmModel("alpha","alpha_G4DNAIonisation",mod,regionsWithDNA[k],0.0,10*MeV);
+
+
+    mod = new G4DNAMillerGreenExcitationModel();
+    em_config->SetExtraEmModel("alpha","alpha_G4DNAExcitation",mod,regionsWithDNA[k],1*keV,10*MeV);
+  }
 }
-
-
-
-
-
-
-
-
-
