@@ -435,7 +435,9 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
       // Russian roulette
       ProcessType pt = mMapProcessNameWithType[mInteractionProductionProcessStep];
       mRussianRouletteImageProbability->TransformPhysicalPointToIndex(point, idx);
-      double survivalProba = mRussianRouletteImageProbability->GetPixel(idx);
+      double survivalProba = 1.;
+      if(mRussianRouletteImageProbability->GetBufferedRegion().IsInside(idx))
+        survivalProba = mRussianRouletteImageProbability->GetPixel(idx);
       if(G4UniformRand()>survivalProba) {
         mInteractionWeight = 0.;
       }
