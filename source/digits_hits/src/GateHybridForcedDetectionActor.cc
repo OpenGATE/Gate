@@ -188,10 +188,11 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 
   // Create projection images
   mPrimaryImage = CreateVoidProjectionImage();
-  mSecondarySquared = CreateVoidProjectionImage();
-  mComptonImage = CreateVoidProjectionImage();
-  mRayleighImage = CreateVoidProjectionImage();
-  mFluorescenceImage = CreateVoidProjectionImage();
+  for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+    mProcessImage[ProcessType(i)] = CreateVoidProjectionImage();
+    mSquaredImage[ProcessType(i)] = CreateVoidProjectionImage();
+  }
+  mSecondarySquaredImage = CreateVoidProjectionImage();
 
   mComptonPerOrderImages.clear();
   mRayleighPerOrderImages.clear();
@@ -269,10 +270,10 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   // Prepare Compton
   mComptonProjector = ComptonProjectionType::New();
   mComptonProjector->InPlaceOn();
-  mComptonProjector->SetInput(mComptonImage);
+  mComptonProjector->SetInput(mProcessImage[COMPTON]);
   mComptonProjector->SetInput(1, mGateVolumeImage );
   mComptonProjector->SetGeometry( oneProjGeometry.GetPointer() );
-  mComptonProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mComptonImage,
+  mComptonProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mProcessImage[COMPTON],
                                                                              mDetectorRowVector,
                                                                              mDetectorColVector);
   mComptonProjector->GetProjectedValueAccumulation().SetVolumeSpacing( mGateVolumeImage->GetSpacing() );
@@ -287,10 +288,10 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   // Prepare Rayleigh
   mRayleighProjector = RayleighProjectionType::New();
   mRayleighProjector->InPlaceOn();
-  mRayleighProjector->SetInput(mRayleighImage);
+  mRayleighProjector->SetInput(mProcessImage[RAYLEIGH]);
   mRayleighProjector->SetInput(1, mGateVolumeImage );
   mRayleighProjector->SetGeometry( oneProjGeometry.GetPointer() );
-  mRayleighProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mRayleighImage,
+  mRayleighProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mProcessImage[RAYLEIGH],
                                                                               mDetectorRowVector,
                                                                               mDetectorColVector);
   mRayleighProjector->GetProjectedValueAccumulation().SetVolumeSpacing( mGateVolumeImage->GetSpacing() );
@@ -304,12 +305,12 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   // Prepare Fluorescence
   mFluorescenceProjector = FluorescenceProjectionType::New();
   mFluorescenceProjector->InPlaceOn();
-  mFluorescenceProjector->SetInput(mFluorescenceImage);
+  mFluorescenceProjector->SetInput(mProcessImage[PHOTOELECTRIC]);
   mFluorescenceProjector->SetInput(1, mGateVolumeImage );
   mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
-  mFluorescenceProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mFluorescenceImage,
-                                                                              mDetectorRowVector,
-                                                                              mDetectorColVector);
+  mFluorescenceProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mProcessImage[PHOTOELECTRIC],
+                                                                                  mDetectorRowVector,
+                                                                                  mDetectorColVector);
   mFluorescenceProjector->GetProjectedValueAccumulation().SetVolumeSpacing( mGateVolumeImage->GetSpacing() );
   mFluorescenceProjector->GetProjectedValueAccumulation().SetInterpolationWeights( mFluorescenceProjector->GetInterpolationWeightMultiplication().GetInterpolationWeights() );
   mFluorescenceProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
@@ -362,9 +363,8 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     CreateWaterLUT(energyList, energyWeightList);
 
   if(mIsSecondarySquaredImageEnabled || mIsSecondaryUncertaintyImageEnabled) {
-    mEventComptonImage = CreateVoidProjectionImage();
-    mEventRayleighImage = CreateVoidProjectionImage();
-    mEventFluorescenceImage = CreateVoidProjectionImage();
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++)
+      mEventImage[ProcessType(i)] = CreateVoidProjectionImage();
   }
 
   if(mSecondPassPrefix != "") {
@@ -443,23 +443,24 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
       }
       else {
         mInteractionWeight /= survivalProba;
+
         // Interaction survived, let's do the job
         switch(pt) {
         case COMPTON:
           this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
-                                            mComptonImage,
+                                            mProcessImage[COMPTON],
                                             mComptonPerOrderImages,
                                             mComptonProbe);
           break;
         case RAYLEIGH:
           this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
-                                            mRayleighImage,
+                                            mProcessImage[RAYLEIGH],
                                             mRayleighPerOrderImages,
                                             mRayleighProbe);
           break;
         case PHOTOELECTRIC:
           this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
-                                            mFluorescenceImage,
+                                            mProcessImage[PHOTOELECTRIC],
                                             mFluorescencePerOrderImages,
                                             mFluorescenceProbe);
           break;
@@ -487,15 +488,12 @@ void GateHybridForcedDetectionActor::BeginOfEventAction(const G4Event *itkNotUse
     // The event contribution are put in new images which at this point are in the
     // mEventComptonImage / mEventRayleighImage / mEventFluorescenceImage. We therefore
     // swap the two and they will be swapped back in EndOfEventAction.
-    std::swap(mEventComptonImage, mComptonImage);
-    std::swap(mEventRayleighImage, mRayleighImage);
-    std::swap(mEventFluorescenceImage, mFluorescenceImage);
-
-    // Make sure the time stamps of the mEvent images are more recent to detect if one
-    // image has been modified during the event.
-    mEventComptonImage->Modified();
-    mEventRayleighImage->Modified();
-    mEventFluorescenceImage->Modified();
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+      std::swap(mEventImage[ProcessType(i)], mProcessImage[ProcessType(i)]);
+      // Make sure the time stamps of the mEvent images are more recent to detect if one
+      // image has been modified during the event.
+      mEventImage[ProcessType(i)]->Modified();
+    }
   }
 }
 //-----------------------------------------------------------------------------
@@ -503,87 +501,64 @@ void GateHybridForcedDetectionActor::BeginOfEventAction(const G4Event *itkNotUse
 //-----------------------------------------------------------------------------
 void GateHybridForcedDetectionActor::EndOfEventAction(const G4Event *e)
 {
-  typedef itk::AddImageFilter <OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
-  AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
-
   if(mIsSecondarySquaredImageEnabled || mIsSecondaryUncertaintyImageEnabled) {
+    typedef itk::AddImageFilter <OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
+    AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
+    typedef itk::MultiplyImageFilter<OutputImageType, OutputImageType, OutputImageType> MultiplyImageFilterType;
+    MultiplyImageFilterType::Pointer multFilter = MultiplyImageFilterType::New();
+
     // First: accumulate contribution to event, square and add to total squared
     InputImageType::Pointer totalContribEvent(NULL);
-    if( mEventComptonImage->GetTimeStamp() < mComptonImage->GetTimeStamp() ) {
-      totalContribEvent = mComptonImage;
-    }
-    if( mEventRayleighImage->GetTimeStamp() < mRayleighImage->GetTimeStamp() ) {
-      if(totalContribEvent.GetPointer()) {
-        addFilter->SetInput1(totalContribEvent);
-        addFilter->SetInput2(mRayleighImage);
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+      if( mEventImage[ProcessType(i)]->GetTimeStamp() < mProcessImage[ProcessType(i)]->GetTimeStamp() ) {
+        // First: accumulate contribution to event, square and add to total squared
+        multFilter->SetInput1(mProcessImage[ProcessType(i)]);
+        multFilter->SetInput2(mProcessImage[ProcessType(i)]);
+        multFilter->InPlaceOff();
+        addFilter->SetInput1(mSquaredImage[ProcessType(i)]);
+        addFilter->SetInput2(multFilter->GetOutput());
         addFilter->InPlaceOff();
         TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-        totalContribEvent = addFilter->GetOutput();
-        totalContribEvent->DisconnectPipeline();
+        mSquaredImage[ProcessType(i)] = addFilter->GetOutput();
+        mSquaredImage[ProcessType(i)]->DisconnectPipeline();
+
+        // Second: accumulate in total event for the global secondary image
+        if(totalContribEvent.GetPointer()) {
+          addFilter->SetInput1(totalContribEvent);
+          addFilter->SetInput2(mProcessImage[ProcessType(i)]);
+          TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
+          totalContribEvent = addFilter->GetOutput();
+          totalContribEvent->DisconnectPipeline();
+        }
+        else
+          totalContribEvent = mProcessImage[ProcessType(i)];
       }
-      else {
-        totalContribEvent = mRayleighImage;
-      }
-    }
-    if( mEventFluorescenceImage->GetTimeStamp() < mFluorescenceImage->GetTimeStamp() ) {
-      if(totalContribEvent.GetPointer()) {
-        addFilter->SetInput1(totalContribEvent);
-        addFilter->SetInput2(mFluorescenceImage);
-        addFilter->InPlaceOff();
-        TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-        totalContribEvent = addFilter->GetOutput();
-        totalContribEvent->DisconnectPipeline();
-      }
-      else {
-        totalContribEvent = mFluorescenceImage;
-      }
-    }
-    if(totalContribEvent.GetPointer()) {
-      typedef itk::MultiplyImageFilter<OutputImageType, OutputImageType, OutputImageType> MultiplyImageFilterType;
-      MultiplyImageFilterType::Pointer multFilter = MultiplyImageFilterType::New();
-      multFilter->InPlaceOff();
-      multFilter->SetInput1(totalContribEvent);
-      multFilter->SetInput2(totalContribEvent);
-      addFilter->SetInput1(mSecondarySquared);
-      addFilter->SetInput2(multFilter->GetOutput());
-      addFilter->InPlaceOn();
-      TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-      mSecondarySquared = addFilter->GetOutput();
-      mSecondarySquared->DisconnectPipeline();
     }
 
-    // Second: accumulate non squared images and reset mEvent images
-    if( mEventComptonImage->GetTimeStamp() < mComptonImage->GetTimeStamp() ) {
-      addFilter->SetInput1(mEventComptonImage);
-      addFilter->SetInput2(mComptonImage);
+    if(totalContribEvent.GetPointer()) {
+      multFilter->SetInput1(totalContribEvent);
+      multFilter->SetInput2(totalContribEvent);
+      multFilter->InPlaceOff();
+      addFilter->SetInput1(mSecondarySquaredImage);
+      addFilter->SetInput2(multFilter->GetOutput());
       TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-      mComptonImage = addFilter->GetOutput();
-      mComptonImage->DisconnectPipeline();
-      mEventComptonImage = CreateVoidProjectionImage();
+      mSecondarySquaredImage = addFilter->GetOutput();
+      mSecondarySquaredImage->DisconnectPipeline();
     }
-    else
-      std::swap(mEventComptonImage, mComptonImage);
-    if( mEventRayleighImage->GetTimeStamp() < mRayleighImage->GetTimeStamp() ) {
-      mRayleighImage->DisconnectPipeline();
-      addFilter->SetInput1(mEventRayleighImage);
-      addFilter->SetInput2(mRayleighImage);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-      mRayleighImage = addFilter->GetOutput();
-      mRayleighImage->DisconnectPipeline();
-      mEventRayleighImage = CreateVoidProjectionImage();
+
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+      if( mEventImage[ProcessType(i)]->GetTimeStamp() < mProcessImage[ProcessType(i)]->GetTimeStamp() ) {
+        // Accumulate non squared images and reset mEvent images
+        addFilter->SetInput1(mEventImage[ProcessType(i)]);
+        addFilter->SetInput2(mProcessImage[ProcessType(i)]);
+        TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
+        mProcessImage[ProcessType(i)] = addFilter->GetOutput();
+        mProcessImage[ProcessType(i)]->DisconnectPipeline();
+        mEventImage[ProcessType(i)] = CreateVoidProjectionImage();
+      }
+      else
+        std::swap(mEventImage[ProcessType(i)], mProcessImage[ProcessType(i)]);
     }
-    else
-      std::swap(mEventRayleighImage, mRayleighImage);
-    if( mEventFluorescenceImage->GetTimeStamp() < mFluorescenceImage->GetTimeStamp() ) {
-      addFilter->SetInput1(mEventFluorescenceImage);
-      addFilter->SetInput2(mFluorescenceImage);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-      mFluorescenceImage = addFilter->GetOutput();
-      mFluorescenceImage->DisconnectPipeline();
-      mEventFluorescenceImage = CreateVoidProjectionImage();
-    }
-    else
-      std::swap(mEventFluorescenceImage, mFluorescenceImage);
   }
   if(e)
     GateVActor::EndOfEventAction(e);
@@ -717,21 +692,21 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(G4int runID,
     switch(mMapProcessNameWithType[processName]) {
     case COMPTON:
       this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
-                                        mComptonImage,
+                                        mProcessImage[COMPTON],
                                         mComptonPerOrderImages,
                                         mComptonProbe);
       break;
     case RAYLEIGH:
       mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
       this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
-                                        mRayleighImage,
+                                        mProcessImage[RAYLEIGH],
                                         mRayleighPerOrderImages,
                                         mRayleighProbe);
       break;
     case PHOTOELECTRIC:
       mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
       this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
-                                        mFluorescenceImage,
+                                        mProcessImage[PHOTOELECTRIC],
                                         mFluorescencePerOrderImages,
                                         mFluorescenceProbe);
       break;
@@ -809,6 +784,9 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType 
 /// Save data
 void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
 {
+  typedef itk::BinaryFunctorImageFilter< InputImageType, InputImageType, InputImageType,
+                                         GateHybridForcedDetectionFunctor::Chetty<InputImageType::PixelType> > ChettyType;
+
   GateVActor::SaveData();
 
   // Geometry
@@ -886,8 +864,29 @@ void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
   if(mComptonFilename != "") {
     sprintf(filename, AddPrefix(prefix,mComptonFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
-    imgWriter->SetInput(mComptonImage);
+    imgWriter->SetInput(mProcessImage[COMPTON]);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    if(mIsSecondarySquaredImageEnabled) {
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Squared." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(mSquaredImage[COMPTON]);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
+    if(mIsSecondaryUncertaintyImageEnabled) {
+      ChettyType::Pointer chetty = ChettyType::New();
+      chetty->GetFunctor().SetN(mNumberOfEventsInRun);
+      chetty->SetInput1(mProcessImage[COMPTON]);
+      chetty->SetInput2(mSquaredImage[COMPTON]);
+      chetty->InPlaceOff();
+
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Uncertainty." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(chetty->GetOutput());
+
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
 
     for(unsigned int k = 1; k<mComptonPerOrderImages.size(); k++)
     {
@@ -901,8 +900,29 @@ void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
   if(mRayleighFilename != "") {
     sprintf(filename, AddPrefix(prefix,mRayleighFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
-    imgWriter->SetInput(mRayleighImage);
+    imgWriter->SetInput(mProcessImage[RAYLEIGH]);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    if(mIsSecondarySquaredImageEnabled) {
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Squared." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(mSquaredImage[RAYLEIGH]);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
+    if(mIsSecondaryUncertaintyImageEnabled) {
+      ChettyType::Pointer chetty = ChettyType::New();
+      chetty->GetFunctor().SetN(mNumberOfEventsInRun);
+      chetty->SetInput1(mProcessImage[RAYLEIGH]);
+      chetty->SetInput2(mSquaredImage[RAYLEIGH]);
+      chetty->InPlaceOff();
+
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Uncertainty." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(chetty->GetOutput());
+
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
 
     for(unsigned int k = 1; k<mRayleighPerOrderImages.size(); k++)
     {
@@ -916,8 +936,29 @@ void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
   if(mFluorescenceFilename != "") {
     sprintf(filename, AddPrefix(prefix,mFluorescenceFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
-    imgWriter->SetInput(mFluorescenceImage);
+    imgWriter->SetInput(mProcessImage[PHOTOELECTRIC]);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    if(mIsSecondarySquaredImageEnabled) {
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Squared." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(mSquaredImage[PHOTOELECTRIC]);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
+    if(mIsSecondaryUncertaintyImageEnabled) {
+      ChettyType::Pointer chetty = ChettyType::New();
+      chetty->GetFunctor().SetN(mNumberOfEventsInRun);
+      chetty->SetInput1(mProcessImage[PHOTOELECTRIC]);
+      chetty->SetInput2(mSquaredImage[PHOTOELECTRIC]);
+      chetty->InPlaceOff();
+
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Uncertainty." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(chetty->GetOutput());
+
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
 
     for(unsigned int k = 1; k<mFluorescencePerOrderImages.size(); k++)
     {
@@ -932,36 +973,22 @@ void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
      mIsSecondarySquaredImageEnabled ||
      mIsSecondaryUncertaintyImageEnabled ||
      mTotalFilename != "") {
+    typedef itk::AddImageFilter <OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
+    AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
+
     // The secondary image contains all calculated scatterings
     // (Compton, Rayleigh and/or Fluorescence)
     // Create projections image
-    InputImageType::Pointer mSecondaryImage;
-    mSecondaryImage = CreateVoidProjectionImage();
-
-    // Add Image Filter used to sum the different figures obtained on each process
-    typedef itk::AddImageFilter <OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
-    AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
-    addFilter->InPlaceOn();
-    addFilter->SetInput1(mSecondaryImage);
-
-    // Compton
-    addFilter->SetInput2(mComptonImage);
-    TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-    mSecondaryImage = addFilter->GetOutput();
-
-    // Rayleigh
-    mSecondaryImage->DisconnectPipeline();
-    addFilter->SetInput1(mSecondaryImage);
-    addFilter->SetInput2(mRayleighImage);
-    TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-    mSecondaryImage = addFilter->GetOutput();
-
-    // Fluorescence
-    mSecondaryImage->DisconnectPipeline();
-    addFilter->SetInput1(mSecondaryImage);
-    addFilter->SetInput2(mFluorescenceImage);
-    TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-    mSecondaryImage = addFilter->GetOutput();
+    InputImageType::Pointer mSecondaryImage = CreateVoidProjectionImage();
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+      // Add Image Filter used to sum the different figures obtained on each process
+      addFilter->InPlaceOn();
+      addFilter->SetInput1(mSecondaryImage);
+      addFilter->SetInput2(mProcessImage[ProcessType(i)]);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
+      mSecondaryImage = addFilter->GetOutput();
+      mSecondaryImage->DisconnectPipeline();
+    }
 
     // Write scatter image
     if(mSecondaryFilename != "") {
@@ -969,37 +996,30 @@ void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mSecondaryImage);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
 
-      // Write scatter squared image
-      if(mIsSecondarySquaredImageEnabled) {
-        imgWriter->SetFileName(G4String(removeExtension(filename)) +
-                               "-Squared." +
-                               G4String(getExtension(filename)));
-        imgWriter->SetInput(mSecondarySquared);
-        TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-      }
+    if(mIsSecondarySquaredImageEnabled) {
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Squared." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(mSecondarySquaredImage);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
 
-      // Write scatter uncertainty image
-      if(mIsSecondaryUncertaintyImageEnabled) {
-        //Attenuation Functor -> atten
-        typedef itk::BinaryFunctorImageFilter< InputImageType, InputImageType, InputImageType,
-                                               GateHybridForcedDetectionFunctor::Chetty<InputImageType::PixelType> > ChettyType;
-        ChettyType::Pointer chetty = ChettyType::New();
-        chetty->GetFunctor().SetN(mNumberOfEventsInRun);
+    // Write scatter uncertainty image
+    if(mIsSecondaryUncertaintyImageEnabled) {
+      ChettyType::Pointer chetty = ChettyType::New();
+      chetty->GetFunctor().SetN(mNumberOfEventsInRun);
+      chetty->SetInput1(mSecondaryImage);
+      chetty->SetInput2(mSecondarySquaredImage);
+      chetty->InPlaceOff();
 
-        // In the attenuation, we assume that the whole detector is irradiated.
-        // Otherwise we would have a division by 0.
-        chetty->SetInput1(mSecondaryImage);
-        chetty->SetInput2(mSecondarySquared);
-        chetty->InPlaceOff();
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Uncertainty." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(chetty->GetOutput());
 
-        imgWriter->SetFileName(G4String(removeExtension(filename)) +
-                               "-Uncertainty." +
-                               G4String(getExtension(filename)));
-        imgWriter->SetInput(chetty->GetOutput());
-
-        TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-      }
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
     }
 
     if(mTotalFilename != "") {

@@ -168,14 +168,11 @@ protected:
   GeometryType::Pointer mGeometry;
   InputImageType::Pointer mGateVolumeImage;
   InputImageType::Pointer mPrimaryImage;
-  InputImageType::Pointer mSecondarySquared;
   InputImageType::Pointer mFlatFieldImage;
-  InputImageType::Pointer mComptonImage;
-  InputImageType::Pointer mRayleighImage;
-  InputImageType::Pointer mFluorescenceImage;
-  InputImageType::Pointer mEventComptonImage;
-  InputImageType::Pointer mEventRayleighImage;
-  InputImageType::Pointer mEventFluorescenceImage;
+  std::map<ProcessType, InputImageType::Pointer> mProcessImage;
+  std::map<ProcessType, InputImageType::Pointer> mSquaredImage;
+  std::map<ProcessType, InputImageType::Pointer> mEventImage;
+  InputImageType::Pointer mSecondarySquaredImage;
   std::vector<InputImageType::Pointer> mComptonPerOrderImages;
   std::vector<InputImageType::Pointer> mRayleighPerOrderImages;
   std::vector<InputImageType::Pointer> mFluorescencePerOrderImages;
