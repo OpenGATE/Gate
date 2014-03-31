@@ -1,37 +1,34 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 /*!
   \class  GateSecondaryProductionActor
   \author thibault.frisson@creatis.insa-lyon.fr
-          laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
- */
+  laurent.guigues@creatis.insa-lyon.fr
+  david.sarrut@creatis.insa-lyon.fr
+*/
 
 #ifndef GATEQVALUEACTOR_HH
 #define GATEQVALUEACTOR_HH
 
 #include "GateVImageActor.hh"
 #include "GateActorManager.hh"
-
-#include "G4UnitsTable.hh"
-
 #include "GateImageActorMessenger.hh"
 #include "GateImageWithStatistic.hh"
 
-
+#include "G4UnitsTable.hh"
 
 class GateQvalueActor : public GateVImageActor
 {
- public:
+public:
 
   //-----------------------------------------------------------------------------
   // Actor name
@@ -52,7 +49,7 @@ class GateQvalueActor : public GateVImageActor
   virtual void UserPreTrackActionInVoxel(const  int index, const G4Track* t) ;
   virtual void UserPostTrackActionInVoxel(const int index, const G4Track* t) ;
 
- /// Saves the data collected to the file
+  /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
 
@@ -64,16 +61,10 @@ protected:
   GateImageActorMessenger * pMessenger;
 
   int mCurrentEvent;
-
   G4String mQvalueFilename;
   GateImageWithStatistic mQvalueImage;
-
   std::map<G4String,G4double> listOfEmiss;
-
-
   int mNSec;
-
-  //G4int nStep;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(QvalueActor,GateQvalueActor)
