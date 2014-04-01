@@ -8,12 +8,10 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-
 /*
   \brief Class GateQvalueActor :
   \brief
 */
-
 
 
 #include "GateQvalueActor.hh"
@@ -38,6 +36,7 @@ GateQvalueActor::~GateQvalueActor()  {
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 /// Construct
 void GateQvalueActor::Construct() {
@@ -52,6 +51,7 @@ void GateQvalueActor::Construct() {
   EnableUserSteppingAction(true);
 
   // Output Filename
+  SetOriginTransformAndFlagToImage(mQvalueImage);
   mQvalueFilename = mSaveFilename;
   mQvalueImage.EnableSquaredImage(false);
   mQvalueImage.EnableUncertaintyImage(false);

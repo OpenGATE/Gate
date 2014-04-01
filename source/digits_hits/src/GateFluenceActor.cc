@@ -60,9 +60,9 @@ void GateFluenceActor::Construct()
 
   // Allocate scatter image
   if (mIsScatterImageEnabled) {
+    SetOriginTransformAndFlagToImage(mImageScatter);
     mImageScatter.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mImageScatter.Allocate();
-    mImageScatter.SetOrigin(mOrigin);
   }
 
   // Print information
@@ -84,25 +84,25 @@ void GateFluenceActor::SaveData()
   // Printing all particles
   GateVImageActor::SaveData();
   if(mSaveFilename != "")
-  {
-    sprintf(filename, mSaveFilename, rID);
-    mImage.Write(filename);
-    // Printing just scatter
-    if(mIsScatterImageEnabled)
     {
-      G4String fn = removeExtension(filename)+"-scatter."+G4String(getExtension(filename));
-      mImageScatter.Write(fn);
+      sprintf(filename, mSaveFilename, rID);
+      mImage.Write(filename);
+      // Printing just scatter
+      if(mIsScatterImageEnabled)
+        {
+          G4String fn = removeExtension(filename)+"-scatter."+G4String(getExtension(filename));
+          mImageScatter.Write(fn);
+        }
     }
-  }
   // Printing scatter of each order
   if(mScatterOrderFilename != "")
-  {
-    for(unsigned int k = 0; k<mFluencePerOrderImages.size(); k++)
     {
-      sprintf(filename, mScatterOrderFilename, rID, k+1);
-      mFluencePerOrderImages[k]->Write((G4String)filename);
+      for(unsigned int k = 0; k<mFluencePerOrderImages.size(); k++)
+        {
+          sprintf(filename, mScatterOrderFilename, rID, k+1);
+          mFluencePerOrderImages[k]->Write((G4String)filename);
+        }
     }
-  }
 }
 //-----------------------------------------------------------------------------
 
@@ -148,28 +148,28 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
     mImage.AddValue(index, 1);
     // Scatter order
     if(info)
-    {
-      unsigned int order = info->GetScatterOrder();
-      if(order)
       {
-        while(order>mFluencePerOrderImages.size() && order>0)
-        {
-          GateImage * voidImage = new GateImage;
-          voidImage->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-          voidImage->Allocate();
-          voidImage->SetOrigin(mOrigin);
-          voidImage->Fill(0);
-          mFluencePerOrderImages.push_back( voidImage );
-        }
-          mFluencePerOrderImages[order-1]->AddValue(index, 1);
+        unsigned int order = info->GetScatterOrder();
+        if(order)
+          {
+            while(order>mFluencePerOrderImages.size() && order>0)
+              {
+                GateImage * voidImage = new GateImage;
+                voidImage->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+                voidImage->Allocate();
+                voidImage->SetOrigin(mOrigin);
+                voidImage->Fill(0);
+                mFluencePerOrderImages.push_back( voidImage );
+              }
+            mFluencePerOrderImages[order-1]->AddValue(index, 1);
+          }
       }
-    }
 
     if(mIsScatterImageEnabled &&
        !step->GetTrack()->GetParentID() &&
        !step->GetTrack()->GetDynamicParticle()->GetPrimaryParticle()->GetMomentum().isNear(
                                                                                            step->GetTrack()->GetDynamicParticle()->GetMomentum())) {
-        mImageScatter.AddValue(index, 1);
+      mImageScatter.AddValue(index, 1);
     }
   }
 

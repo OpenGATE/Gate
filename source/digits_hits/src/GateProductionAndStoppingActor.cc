@@ -58,6 +58,10 @@ void GateProductionAndStoppingActor::Construct() {
   mProdFilename = G4String(removeExtension(mSaveFilename))+"-Prod."+G4String(getExtension(mSaveFilename));
   mStopFilename = G4String(removeExtension(mSaveFilename))+"-Stop."+G4String(getExtension(mSaveFilename));
 
+  // Set origin, transform, flag
+  SetOriginTransformAndFlagToImage(mProdImage);
+  SetOriginTransformAndFlagToImage(mStopImage);
+
   mProdImage.EnableSquaredImage(false);
   mProdImage.EnableUncertaintyImage(false);
   mProdImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
