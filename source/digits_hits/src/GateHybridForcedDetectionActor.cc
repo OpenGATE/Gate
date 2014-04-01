@@ -378,6 +378,31 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 // Callback Begin of Run
 void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
 {
+  // Compute sum of variance per process
+  std::map<ProcessType, G4double> varPerProcess;
+  G4double maxVarPerProcess = 0.;
+  double invN = 1./mNumberOfEventsInRun;
+  for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+    ProcessType p = ProcessType(i);
+    varPerProcess[p] = 0.;
+    itk::ImageRegionIterator<OutputImageType> itp(mProcessImage[p],
+                                                  mProcessImage[p]->GetBufferedRegion());
+    itk::ImageRegionIterator<OutputImageType> its(mSquaredImage[p],
+                                                  mSquaredImage[p]->GetBufferedRegion());
+    for(; !itp.IsAtEnd(); ++itp, ++its) {
+      varPerProcess[p] += its.Get()*invN - pow(itp.Get()*invN, 2.);
+    }
+    maxVarPerProcess = std::max(maxVarPerProcess, varPerProcess[p]);
+  }
+  // Normalize by max
+  for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+    ProcessType p = ProcessType(i);
+    varPerProcess[p] /= maxVarPerProcess;
+    std::cout << "Process " << mMapTypeWithProcessName[p]
+              << " probability " << varPerProcess[p]
+              << std::endl;
+  }
+
   // Compute survival probability image for Russian Roulette
   if(mSecondPassPrefix != "") {
     // Max of russian roulette image
@@ -437,7 +462,7 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
       mRussianRouletteImageProbability->TransformPhysicalPointToIndex(point, idx);
       double survivalProba = 1.;
       if(mRussianRouletteImageProbability->GetBufferedRegion().IsInside(idx))
-        survivalProba = mRussianRouletteImageProbability->GetPixel(idx);
+        survivalProba = mRussianRouletteImageProbability->GetPixel(idx) * varPerProcess[pt];
       if(G4UniformRand()>survivalProba) {
         mInteractionWeight = 0.;
       }
