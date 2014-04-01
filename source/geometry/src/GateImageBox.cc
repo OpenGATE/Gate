@@ -62,6 +62,9 @@ void GateImageBox::DescribeYourselfTo(G4OpenGLSceneHandler& scene) const{
     glPushAttrib(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+    GLfloat * color = new GLfloat[4];
+    glGetFloatv(GL_CURRENT_COLOR, color);
+    
     glColor3f(1.f, 1.0f, 1.0f);
 
     glEnable(GL_TEXTURE_2D);
@@ -91,6 +94,32 @@ void GateImageBox::DescribeYourselfTo(G4OpenGLSceneHandler& scene) const{
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
+    
+    glColor3f(0.5f, 0.5f, 0.5f);
+    glBegin(GL_LINE_LOOP);
+    glVertex3f(-xHalfLength, -yHalfLength, z);
+    glVertex3f(-xHalfLength,  yHalfLength, z);
+    glVertex3f( xHalfLength,  yHalfLength, z);
+    glVertex3f( xHalfLength, -yHalfLength, z);
+    glEnd();
+    
+    glBegin(GL_LINE_LOOP);
+    glVertex3f(x, -yHalfLength, -zHalfLength);
+    glVertex3f(x,  yHalfLength, -zHalfLength);
+    glVertex3f(x,  yHalfLength,  zHalfLength);
+    glVertex3f(x, -yHalfLength,  zHalfLength);
+    glEnd();
+    
+    glBegin(GL_LINE_LOOP);
+    glVertex3f(-xHalfLength, y, -zHalfLength);
+    glVertex3f(-xHalfLength, y,  zHalfLength);
+    glVertex3f( xHalfLength, y,  zHalfLength);
+    glVertex3f( xHalfLength, y, -zHalfLength);
+    glEnd();
+    
+    glColor3fv(color);
+    delete color;
+    
     glPopAttrib();
 
     scene.EndPrimitives();
