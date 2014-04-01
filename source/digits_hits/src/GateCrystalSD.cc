@@ -238,9 +238,10 @@ void GateCrystalSD::AddSystem(GateVSystem* aSystem)
 GateVSystem* GateCrystalSD::FindSystem(GateVolumeID volumeID)
 {
    // MP Garcia (24/03/2014) Modif to handle imbricated boxes between the SPECThead volume and the world
-    size_t m = volumeID.size();
-    G4String hitSystemName = volumeID.GetVolume(m - 2)->GetName();
-    
+    //size_t m = volumeID.size();
+    //G4String hitSystemName = volumeID.GetVolume(m - 2)->GetName();
+    G4String hitSystemName = volumeID.GetVolume(1)->GetName();
+
    size_t n = hitSystemName.size();
    hitSystemName.erase(n-5,5);
 
