@@ -11,17 +11,17 @@
 //----------------------------------------------------------------------------------------
 /*! \class  GateRunManager
   \brief  Extension of the G4RunManager to provide new functions
-  \brief  and automated resetting of the navigator at the beginning of each run 
-    
+  \brief  and automated resetting of the navigator at the beginning of each run
+
   - GateRunManager - by Daniel.Strul@iphe.unil.ch
-	        
+
   - A GateRunManager is derived from G4RunManager, and provides the following functionalities:
   - PhysicsHasChanged(): to reset the physicsInitialised flag
   - InitGeometryOnly(): new method to initialise only the geometry, allowing us to build the
   GATE geometry
   - RunInitialisation(): overload of G4RunManager()::RunInitialisation() that resets the geometry
   navigator.
-      
+
   \sa GateSystemComponent, GateBoxCreatorComponent, GateArrayRepeater
 */
 
@@ -39,24 +39,24 @@ class GateRunManager : public G4RunManager
 {
 public:
   //! Constructor
-  GateRunManager(); 
+  GateRunManager();
 
   //! Constructor
   virtual ~GateRunManager();
 
 public:
-  //! Reset the physicsInitialised flag to zero 
-  inline void PhysicsHasChanged() 
+  //! Reset the physicsInitialised flag to zero
+  inline void PhysicsHasChanged()
   {	physicsInitialized = false; }
 
   //! Initialise the geometry, the actors and the physics list
   void InitializeAll();
-     
+
   //! Initialise only the geometry, to allow the building of the GATE geometry
   void InitGeometryOnly();
-     
+
   void InitPhysics();
-     
+
   //! Overload of G4RunManager()::RunInitialisation() that resets the geometry navigator
   void RunInitialization();
 
@@ -83,4 +83,3 @@ private :
 //----------------------------------------------------------------------------------------
 
 #endif
-

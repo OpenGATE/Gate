@@ -36,87 +36,91 @@
 #include "GateRandomEngine.hh"
 #include "TMath.h"
 
-
 void ReadLineTo3Doubles(double *toto, char *oneline);
 
-
+//------------------------------------------------------------------------------------------------------
 class GateSourceTPSPencilBeam : public GateVSource
 {
-  public:
+public:
 
-    typedef CLHEP::RandGeneral RandGeneral;
+  typedef CLHEP::RandGeneral RandGeneral;
 
-    GateSourceTPSPencilBeam( G4String name);
-    ~GateSourceTPSPencilBeam();
+  GateSourceTPSPencilBeam( G4String name);
+  ~GateSourceTPSPencilBeam();
 
-    G4int GeneratePrimaries( G4Event* event );
-    void GenerateVertex( G4Event* );
+  G4int GeneratePrimaries( G4Event* event );
+  void GenerateVertex( G4Event* );
 
-    //Particle Type
-    void SetParticleType(G4String ParticleType) {strcpy(mParticleType, ParticleType);}
-    //Test Flag
-    void SetTestFlag(bool b) {mTestFlag=b;}
-    //Treatment Plan file
-    void SetPlan(string plan) {mPlan=plan;}
-    //FlatGenerationFlag
-    void SetGeneFlatFlag(bool b) {mFlatGenerationFlag=b;}
-    //Pencil beam parameters calculation
-    double GetEnergy(double energy);
-    double GetSigmaEnergy(double energy);
-    double GetSigmaX(double energy);
-    double GetSigmaY(double energy);
-    double GetSigmaTheta(double energy);
-    double GetSigmaPhi(double energy);
-    double GetEllipseXThetaArea(double energy);
-    double GetEllipseYPhiArea(double energy);
-    //List of not allowed fields
-    void SetNotAllowedField (int fieldID) {mNotAllowedFields.push_back(fieldID);}
-    //MU to Protons conversion
-    double ConvertMuToProtons(double weight, double energy);
-    //select beam descriptionfile
-    void SetSourceDescriptionFile(G4String FileName){mSourceDescriptionFile=FileName; mIsASourceDescriptionFile=true;}
-    //load plan description file
-    void LoadClinicalBeamProperties();
-    //Configuration of spot intensity
-    void SetSpotIntensity(bool b) {mSpotIntensityAsNbProtons=b;}
-    //Convergent or divergent beam model
-    void SetBeamConvergence(bool c) {mConvergentSource=c;}
+  //Particle Type
+  void SetParticleType(G4String ParticleType) {strcpy(mParticleType, ParticleType);}
+  //Test Flag
+  void SetTestFlag(bool b) {mTestFlag=b;}
+  //Treatment Plan file
+  void SetPlan(string plan) {mPlan=plan;}
+  //FlatGenerationFlag
+  void SetGeneFlatFlag(bool b) {mFlatGenerationFlag=b;}
+  //Pencil beam parameters calculation
+  double GetEnergy(double energy);
+  double GetSigmaEnergy(double energy);
+  double GetSigmaX(double energy);
+  double GetSigmaY(double energy);
+  double GetSigmaTheta(double energy);
+  double GetSigmaPhi(double energy);
+  double GetEllipseXThetaArea(double energy);
+  double GetEllipseYPhiArea(double energy);
+  //List of not allowed fields
+  void SetNotAllowedField (int fieldID) {mNotAllowedFields.push_back(fieldID);}
+  // Select a single Layer
+  void SelectLayerID (int layerID) { mSelectedLayerID = layerID;}
+  //MU to Protons conversion
+  double ConvertMuToProtons(double weight, double energy);
+  //select beam descriptionfile
+  void SetSourceDescriptionFile(G4String FileName){mSourceDescriptionFile=FileName; mIsASourceDescriptionFile=true;}
+  //load plan description file
+  void LoadClinicalBeamProperties();
+  //Configuration of spot intensity
+  void SetSpotIntensity(bool b) {mSpotIntensityAsNbProtons=b;}
+  //Convergent or divergent beam model
+  void SetBeamConvergence(bool c) {mConvergentSource=c;}
 
-  protected:
+protected:
 
-    GateSourceTPSPencilBeamMessenger * pMessenger;
+  GateSourceTPSPencilBeamMessenger * pMessenger;
 
-    bool mIsInitialized;
-    int mCurrentSpot, mTotalNumberOfSpots;
-    bool mIsASourceDescriptionFile;
-    G4String mSourceDescriptionFile;
+  bool mIsInitialized;
+  int mCurrentSpot, mTotalNumberOfSpots;
+  bool mIsASourceDescriptionFile;
+  G4String mSourceDescriptionFile;
 
-    vector<GateSourcePencilBeam*> mPencilBeams;
-    double mDistanceSMXToIsocenter;
-    double mDistanceSMYToIsocenter;
-    double mDistanceSourcePatient;
-    //Particle Type
-    char mParticleType[64];
-    //Test flag (for verbosity)
-    bool mTestFlag;
-    //Treatment Plan file
-    G4String mPlan;
-    //Others
-    double mparticle_time ;
-    int mCurrentParticleNumber;
-    //Distribution of the spot sources
-    bool mFlatGenerationFlag;
-    double *mPDF;
-    RandGeneral * mDistriGeneral;
-    //Not alloweed fields
-    vector<int> mNotAllowedFields;
-    //clinical beam parameters (polynomial equations)
-    vector<double> mEnergy, mEnergySpread, mX, mY, mTheta, mPhi, mXThetaEmittance, mYPhiEmittance;
-    //Configuration of spot intensity
-    bool mSpotIntensityAsNbProtons;
-    //Convergent or divergent beam model
-    bool mConvergentSource;
+  vector<GateSourcePencilBeam*> mPencilBeams;
+  double mDistanceSMXToIsocenter;
+  double mDistanceSMYToIsocenter;
+  double mDistanceSourcePatient;
+  //Particle Type
+  char mParticleType[64];
+  //Test flag (for verbosity)
+  bool mTestFlag;
+  //Treatment Plan file
+  G4String mPlan;
+  //Others
+  double mparticle_time ;
+  int mCurrentParticleNumber;
+  //Distribution of the spot sources
+  bool mFlatGenerationFlag;
+  double *mPDF;
+  RandGeneral * mDistriGeneral;
+  //Not alloweed fields
+  vector<int> mNotAllowedFields;
+  //clinical beam parameters (polynomial equations)
+  vector<double> mEnergy, mEnergySpread, mX, mY, mTheta, mPhi, mXThetaEmittance, mYPhiEmittance;
+  //Configuration of spot intensity
+  bool mSpotIntensityAsNbProtons;
+  //Convergent or divergent beam model
+  bool mConvergentSource;
+  int mSelectedLayerID;
 };
+//------------------------------------------------------------------------------------------------------
+
 
 #endif
 #endif

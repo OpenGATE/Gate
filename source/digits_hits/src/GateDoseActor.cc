@@ -126,35 +126,16 @@ void GateDoseActor::Construct() {
   mRBE1FactorFilename = G4String(removeExtension(mSaveFilename))+"-RBE1-Factor."+G4String(getExtension(mSaveFilename));
   mRBE1BioDoseFilename = G4String(removeExtension(mSaveFilename))+"-RBE1-BioDose."+G4String(getExtension(mSaveFilename));
 
-
-  // Set origin, take into account the origin of the attached volume (if exist)
-  G4ThreeVector offset = mOrigin;
-  mEdepImage.SetOrigin(offset);
-  mDoseImage.SetOrigin(offset);
-  mNumberOfHitsImage.SetOrigin(offset);
-  mLastHitEventImage.SetOrigin(offset);
-  mDoseToWaterImage.SetOrigin(offset);
-  mRBE1AlphaImage.SetOrigin(offset);
-  mRBE1BetaImage.SetOrigin(offset);
-  mRBE1FactorImage.SetOrigin(offset);
-  mRBE1BioDoseImage.SetOrigin(offset);
-
-  // Set transformMatrix
-  G4RotationMatrix m = mImage.GetTransformMatrix();
-  mEdepImage.SetTransformMatrix(m);
-  mDoseImage.SetTransformMatrix(m);
-  mNumberOfHitsImage.SetTransformMatrix(m);
-  mLastHitEventImage.SetTransformMatrix(m);
-  mDoseToWaterImage.SetTransformMatrix(m);
-  mRBE1AlphaImage.SetTransformMatrix(m);
-  mRBE1BetaImage.SetTransformMatrix(m);
-  mRBE1FactorImage.SetTransformMatrix(m);
-  mRBE1BioDoseImage.SetTransformMatrix(m);
-
-  // Set Overwrite flag
-  mEdepImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
-  mDoseImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
-  mDoseToWaterImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
+  // Set origin, transform, flag
+  SetOriginTransformAndFlagToImage(mEdepImage);
+  SetOriginTransformAndFlagToImage(mDoseImage);
+  SetOriginTransformAndFlagToImage(mNumberOfHitsImage);
+  SetOriginTransformAndFlagToImage(mLastHitEventImage);
+  SetOriginTransformAndFlagToImage(mDoseToWaterImage);
+  SetOriginTransformAndFlagToImage(mRBE1AlphaImage);
+  SetOriginTransformAndFlagToImage(mRBE1AlphaImage);
+  SetOriginTransformAndFlagToImage(mRBE1FactorImage);
+  SetOriginTransformAndFlagToImage(mRBE1BioDoseImage);
 
   // Resize and allocate images
   if (mIsEdepSquaredImageEnabled || mIsEdepUncertaintyImageEnabled ||
