@@ -20,6 +20,7 @@ GateImageRegionalizedVolumeSolid::GateImageRegionalizedVolumeSolid(const G4Strin
 	  volume->GetHalfSize().x(),
 	  volume->GetHalfSize().y(),
 	  volume->GetHalfSize().z()),
+    GateImageBox(*volume->GetImage(), name),
     mVolume(volume)
 {
   ////GateMessage("Volume",5,"GateImageRegionalizedVolumeSolid()" << Gateendl);
