@@ -31,6 +31,7 @@ See GATE/LICENSE.txt for further details
 #include "G4VSolid.hh"
 #include "G4Box.hh"
 #include "GateHounsfieldMaterialTable.hh"
+#include "GateRangeMaterialTable.hh"
 
 class GateVImageVolumeMessenger;
 
@@ -84,6 +85,7 @@ public:
   /// Sets the name of the LabelToMaterial file
   void SetLabelToMaterialTableFilename(const G4String& name);
   void SetHUToMaterialTableFilename(const G4String& name);
+  void SetRangeMaterialTableFilename(const G4String& name);
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
@@ -111,7 +113,7 @@ public:
   /// Returns the label at voxel of index
   //  inline LabelType GetLabel( int index ) { return (LabelType)pImage->GetValue(index); }
   /// Returns the label at voxel of coordinates i,j,k
-  //  inline LabelType GetLabel( int i, int j, int k ) { return (LabelType)pImage->GetValue(i,j,k); }
+  //inline LabelType GetLabel( int i, int j, int k ) { return (LabelType)pImage->GetValue(i,j,k); }
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
@@ -125,7 +127,17 @@ public:
     return (*mi).second ;
   }
   //-----------------------------------------------------------------------------
+  inline G4VisAttributes* GetMaterialAttributes(G4Material* m){
+    return m_voxelAttributesTranslation[m];
+  }
 
+  typedef std::pair<std::pair<G4double,G4double>,G4String> GateVoxelMaterialTranslationRange;
+  typedef std::vector<GateVoxelMaterialTranslationRange>   GateVoxelMaterialTranslationRangeVector;
+  GateVoxelMaterialTranslationRangeVector                  m_voxelMaterialTranslation;
+
+  typedef std::map<G4Material*, G4VisAttributes*>          GateVoxelAttributesTranslationMap;
+  GateVoxelAttributesTranslationMap                        m_voxelAttributesTranslation;
+  
   //-----------------------------------------------------------------------------
   /// Builds a label to material map
   void BuildLabelToG4MaterialVector( std::vector<G4Material*>& );
@@ -137,7 +149,7 @@ public:
   //-----------------------------------------------------------------------------
 
   /// Returns the material of the voxel of coordinates i,j,k
-  ///return mLabelToG4Material[ pImage->GetValue(i,j,k) ]; }
+  //return mLabelToG4Material[ pImage->GetValue(i,j,k) ]; }
 
   //-----------------------------------------------------------------------------
   // Used by the navigator
@@ -163,11 +175,15 @@ protected:
   void LoadImageMaterialsTable();
   void LoadImageMaterialsFromHounsfieldTable();
   void LoadImageMaterialsFromLabelTable();
+  void LoadImageMaterialsFromRangeTable();
   /// The name of the LabelToMaterial file
   G4String mLabelToImageMaterialTableFilename;
   G4String mHounsfieldToImageMaterialTableFilename;
+  G4String mRangeToImageMaterialTableFilename;
   bool mLoadImageMaterialsFromHounsfieldTable;
-  GateHounsfieldMaterialTable mHounsfieldMaterialTable;
+  bool mLoadImageMaterialsFromLabelTable;
+  GateHounsfieldMaterialTable mHounsfieldMaterialTable; 
+  GateRangeMaterialTable mRangeMaterialTable; 
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------

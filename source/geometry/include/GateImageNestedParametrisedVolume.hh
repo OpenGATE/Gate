@@ -9,14 +9,14 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
-/*! 
-  \class  GateImageNestedParametrisedVolume : 
+/*!
+  \class  GateImageNestedParametrisedVolume :
   \brief  Descendent of GateVImageVolume which represent the image using a G4VPVParametrisation (GateImageParametrisation)
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
 	  david.sarrut@creatis.insa-lyon.fr
 */
- 
+
 #ifndef __GateImageNestedParametrisedVolume__hh__
 #define __GateImageNestedParametrisedVolume__hh__
 
@@ -45,14 +45,14 @@ public:
   /// the name of the volume to create
   /// Creates the messenger associated to the volume
   GateImageNestedParametrisedVolume(const G4String& name,G4bool acceptsChildren,G4int depth);
-  /// Destructor 
+  /// Destructor
   virtual ~GateImageNestedParametrisedVolume();
   //-----------------------------------------------------------------------------
   FCT_FOR_AUTO_CREATOR_VOLUME(GateImageNestedParametrisedVolume)
 
   //-----------------------------------------------------------------------------
-  /// Returns a string describing the type of volume and which is used 
-  /// for commands 
+  /// Returns a string describing the type of volume and which is used
+  /// for commands
   virtual G4String GetTypeName() { return "ImageNestedParametrised"; }
 
   virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume(G4Material*, G4bool);
@@ -71,29 +71,28 @@ public:
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
-  //void SetSmartless(G4double v) { mSmartLess = v; }
-  //G4double GetSmartless() const { return mSmartLess; }
-  //-----------------------------------------------------------------------------
-
-  //-----------------------------------------------------------------------------
   // IO
   void PrintInfo();
   //-----------------------------------------------------------------------------
-  
+
   //-----------------------------------------------------------------------------
   virtual void GetPhysVolForAVoxel(const G4int index,
-				   const G4VTouchable & pTouchable, 
-				   G4VPhysicalVolume ** pPhysVol, 
+				   const G4VTouchable & pTouchable,
+				   G4VPhysicalVolume ** pPhysVol,
 				   G4NavigationHistory & history) const;
   //-----------------------------------------------------------------------------
 
-  //DS Add SD to subvolume
-  virtual void PropageteSensitiveDetectorToChild(GateMultiSensitiveDetector *);
- // virtual void PropagateRegionToChild();
+  // This function add multi-SD to the sub logical-volume
+  virtual void PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector *);
+
+  // This function add 'global' SD (Root output, PhantomSD) to the sub
+  // logical-volume (see GateVVolume.hh)
+  virtual void PropagateGlobalSensitiveDetector();
+
 
 protected:
   //-----------------------------------------------------------------------------
-  /// its messenger  
+  /// its messenger
   GateImageNestedParametrisedVolumeMessenger* pMessenger;
   //-----------------------------------------------------------------------------
 
@@ -101,17 +100,10 @@ protected:
   G4VPhysicalVolume * mPhysVolX;
   G4VPhysicalVolume * mPhysVolY;
   G4VPhysicalVolume * mPhysVolZ;
-  
+
   G4LogicalVolume * logXRep;
   G4LogicalVolume * logYRep;
   G4LogicalVolume * logZRep;
-
-private :
-  /// The default constructor is private : users cannot access it.
-  /// However it is used to create the prototype by the static method 
-  /// CreatePrototype();
-  // GateImageNestedParametrisedVolume();
-  // G4double mSmartLess;
 };
 // EO class GateImageNestedParametrisedVolume
 //-----------------------------------------------------------------------------
