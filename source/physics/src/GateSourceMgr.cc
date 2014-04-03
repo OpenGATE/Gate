@@ -508,10 +508,14 @@ G4cout << " ##### S O U R C E ##### Geometry filename : " << mSources[is]->GetIn
 G4cout << " ##### S O U R C E ##### Centre Coord : " << ( mSources[is] )->GetPosDist()->GetCentreCoords() << G4endl;
 G4cout << " ##### S O U R C E ##### runID : " << m_runNumber << " with sdd : " << sdd << " and sid : " << sid << G4endl;
       ( mSources[is] )->GetPosDist()->SetCentreCoords(G4ThreeVector(0,0,sdd));
+    // Find a way to modify Focus Point, with the copy is not enough and SetFocusPoint does not work
     //( mSources[is] )->GetAngDist()->SetFocusPointCopy(G4ThreeVector(0,0,sdd));
+    // G4cout << " ##### S O U R C E ##### Focus Point : " << ( mSources[is] )->GetAngDist()->GetFocusPointCopy() << G4endl;
 
-//    G4RunManager::GetRunManager()->GeometryHasBeenModified();
-//    G4cout << " ##### S O U R C E ##### Focus Point : " << ( mSources[is] )->GetAngDist()->GetFocusPointCopy() << G4endl;
+//    // Set Rotation
+//      ( mSources[is] )->GetPosDist()->SetPosRot1(G4ThreeVector(0,0,1));
+//      ( mSources[is] )->GetPosDist()->SetPosRot1(G4ThreeVector(0,1,0));
+
     }
 G4cout << " ##### S O U R C E ##### Centre Coord after update : " << ( mSources[is] )->GetPosDist()->GetCentreCoords() << G4endl;
 #endif
