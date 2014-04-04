@@ -8,7 +8,6 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-
 /*
   \brief Class GateKermaActor :
   \brief
@@ -55,6 +54,7 @@ GateKermaActor::~GateKermaActor()  {
   delete pMessenger;
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 /// Construct
@@ -111,17 +111,11 @@ void GateKermaActor::Construct() {
   offset = offset + mPosition;
   */
 
-  G4ThreeVector offset = mOrigin;
-  mEdepImage.SetOrigin(offset);
-  mDoseImage.SetOrigin(offset);
-  mNumberOfHitsImage.SetOrigin(offset);
-  mLastHitEventImage.SetOrigin(offset);
-  mDoseToWaterImage.SetOrigin(offset);
-
-  // Set Overwrite flag
-  mEdepImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
-  mDoseImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
-  mDoseToWaterImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
+  SetOriginTransformAndFlagToImage(mEdepImage);
+  SetOriginTransformAndFlagToImage(mDoseImage);
+  SetOriginTransformAndFlagToImage(mDoseToWaterImage);
+  SetOriginTransformAndFlagToImage(mNumberOfHitsImage);
+  SetOriginTransformAndFlagToImage(mLastHitEventImage);
 
   // Resize and allocate images
   if (mIsEdepSquaredImageEnabled || mIsEdepUncertaintyImageEnabled ||
