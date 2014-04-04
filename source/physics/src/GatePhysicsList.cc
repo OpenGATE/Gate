@@ -11,9 +11,11 @@
 #ifndef GATEPHYSICSLIST_CC
 #define GATEPHYSICSLIST_CC
 
+#include "GatePhysicsList.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleWithCuts.hh"
 #include "G4ProcessManager.hh"
+#include "GatePhysicsListMessenger.hh"
 #include "G4BosonConstructor.hh"
 #include "G4LeptonConstructor.hh"
 #include "G4MesonConstructor.hh"
@@ -381,6 +383,18 @@ void GatePhysicsList::ConstructParticle()
   //#ifdef GATE_USE_OPTICAL
   //G4OpticalPhoton::OpticalPhotonDefinition();
   //#endif
+  
+  //Construct G4DNA particles
+  G4DNAGenericIonsManager* dnagenericIonsManager;
+  dnagenericIonsManager=G4DNAGenericIonsManager::Instance();
+  dnagenericIonsManager->GetIon("hydrogen");
+  dnagenericIonsManager->GetIon("alpha+");
+  dnagenericIonsManager->GetIon("alpha++");
+  dnagenericIonsManager->GetIon("helium");
+  dnagenericIonsManager->GetIon("carbon");
+  dnagenericIonsManager->GetIon("nitrogen");
+  dnagenericIonsManager->GetIon("iron");
+  dnagenericIonsManager->GetIon("oxygen");
 }
 //-----------------------------------------------------------------------------------------
 
