@@ -48,8 +48,6 @@ class GateStoppingPowerActor : public GateVImageActor
   void EnableRelStopPowerUncertaintyImage(bool b) { mIsRelStopPowerUncertaintyImageEnabled = b; }
   void EnableNumberOfHitsImage(bool b) { mIsNumberOfHitsImageEnabled = b; }
 
-
-
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
 
