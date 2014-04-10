@@ -9,25 +9,25 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
-/*! \file 
+/*! \file
   \brief Implementation of GateImageRegionalizedVolumeMessenger
  */
- 
+
 #include "GateImageRegionalizedVolumeMessenger.hh"
 #include "GateImageRegionalizedVolume.hh"
-
 #include "G4UIcommand.hh"
+
 //====================================================================
 GateImageRegionalizedVolumeMessenger::GateImageRegionalizedVolumeMessenger(GateImageRegionalizedVolume* volume)
-  : 
+  :
   GateVImageVolumeMessenger(volume),
   pVolume(volume)
 {
-  
+
   GateMessage("Volume",5,"GateImageRegionalizedVolumeMessenger()"<<G4endl);
 
   G4String n = GetDirectoryName() +"geometry/distanceMap";
-  pDistanceMapNameCmd = new G4UIcmdWithAString(n,this);  
+  pDistanceMapNameCmd = new G4UIcmdWithAString(n,this);
   pDistanceMapNameCmd->SetGuidance("Sets the name of the distance map file");
 }
 //====================================================================
@@ -42,8 +42,8 @@ GateImageRegionalizedVolumeMessenger::~GateImageRegionalizedVolumeMessenger()
 //====================================================================
 
 
-//====================================================================    
-void GateImageRegionalizedVolumeMessenger::SetNewValue(G4UIcommand* command, 
+//====================================================================
+void GateImageRegionalizedVolumeMessenger::SetNewValue(G4UIcommand* command,
 								   G4String newValue)
 {
   ////GateMessage("Volume",5,"GateImageRegionalizedVolumeMessenger::SetNewValue "
@@ -59,6 +59,3 @@ void GateImageRegionalizedVolumeMessenger::SetNewValue(G4UIcommand* command,
 }
 
 //====================================================================
-
-
-
