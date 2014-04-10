@@ -35,13 +35,16 @@ class GateGpSpectrumActor : public GateVActor
 		GateGpSpectrumActor(G4String name, G4int depth=0);
 
 		size_t last_secondaries_size;
-		bool first_step;
+		// bool first_step;
 		GateActorMessenger* pMessenger;
 		TFile* pTfile;
 		TH2D* pHEpEgp;
 		TH2D* pHEpEgpNormalized;
 		TH1D* pHEpInelastic;
+		TH1D* pHEp;
 		TH1D* pHEpInelasticProducedGamma;
+		TH1D* pHEpSigmaInelastic;
+		bool sigma_filled;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(GpSpectrumActor,GateGpSpectrumActor)
