@@ -64,6 +64,7 @@ GateImageRegularParametrisedVolume::~GateImageRegularParametrisedVolume()
 ///---------------------------------------------------------------------------
 void GateImageRegularParametrisedVolume::SetSkipEqualMaterialsFlag(bool b)
 {
+G4cout<<"### WARNING ### setSkipEqualMaterials at false !! The Geant4 method is not safe since the release 9.5 - Need to be fixed"<<G4endl;
   mSkipEqualMaterialsFlag = b;
 }
 ///---------------------------------------------------------------------------
