@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "GateConfiguration.h"
 
@@ -16,6 +16,7 @@ See GATE/LICENSE.txt for further details
 #include "GateClockDependent.hh"
 #include "GateObjectChildList.hh"
 #include "GateVolumePlacement.hh"
+#include "GateMessageManager.hh"
 
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -23,9 +24,8 @@ See GATE/LICENSE.txt for further details
 #include "G4RotationMatrix.hh"
 #include "G4VisAttributes.hh"
 #include "G4Box.hh"
-#include "GateMessageManager.hh"
-#include "globals.hh"
 
+#include "globals.hh"
 #include <vector>
 #include <map>
 
@@ -304,20 +304,10 @@ private :
   //! Rotation matrix
   G4RotationMatrix newRotationMatrix;
 
-  //! Rotation angle
-  G4double m_rotationAngle;
-
   //! Rotation axis (dimensionless vector)
   G4ThreeVector m_rotationAxis;
 
-  GateMaterialDatabase* pMaterial;
-
-  GateObjectChildList* m_motherList;
-
   GateVolumeMessenger* pMessenger;
-  GateVolumePlacementMessenger* pMessengerPlacement;
-
-  GateActorManager* m_actorManager;
 
   GateVVolume * mParent;
 };

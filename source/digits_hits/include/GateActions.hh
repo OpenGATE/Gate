@@ -116,7 +116,6 @@ public :
 private:
   GateTrackingAction() {}
   GateUserActions* pCallbackMan;
-  GateRecorderBase* recorder;
 
   /* PY Descourt 08/09/2009 */
   std::vector<G4Track*> dummy_track_vector;

@@ -1,23 +1,22 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #include "GateTransferEfficiencyMessenger.hh"
-
 #include "GateTransferEfficiency.hh"
 
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithADouble.hh"
 
 GateTransferEfficiencyMessenger::GateTransferEfficiencyMessenger(GateTransferEfficiency* itsTE)
-    : GatePulseProcessorMessenger(itsTE)
+  : GatePulseProcessorMessenger(itsTE)
 {
   G4String guidance;
   G4String cmdName;
