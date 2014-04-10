@@ -1,17 +1,17 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #include "GateClockMessenger.hh"
-
 #include "GateClock.hh"
+
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
@@ -22,7 +22,7 @@ See GATE/LICENSE.txt for further details
 
 //--------------------------------------------------------------------------
 GateClockMessenger::GateClockMessenger()
-{ 
+{
   pGateTimingDir = new G4UIdirectory("/gate/timing/");
   pGateTimingDir->SetGuidance("GATE timing control.");
 
@@ -51,14 +51,14 @@ GateClockMessenger::~GateClockMessenger()
 
 //--------------------------------------------------------------------------
 void GateClockMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
+{
   GateClock* theClock = GateClock::GetInstance();
-  if( command == pTimeCmd ) { 
+  if( command == pTimeCmd ) {
     theClock->SetTime(pTimeCmd->GetNewDoubleValue(newValue));
-  } 
+  }
   if( command == pVerboseCmd ) {
     theClock->SetVerboseLevel(pVerboseCmd->GetNewIntValue(newValue));
-  }   
-  
+  }
+
 }
 //--------------------------------------------------------------------------

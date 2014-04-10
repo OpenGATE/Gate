@@ -1,6 +1,6 @@
 
 #ifndef GateRTPhantomMessenger_h
-#define GateRTPhantomMessenger_h 
+#define GateRTPhantomMessenger_h
 
 #include "GateMessenger.hh"
 
@@ -20,20 +20,18 @@ class GateRTPhantomMessenger : public GateMessenger {
 public:
   GateRTPhantomMessenger(GateRTPhantom *Ph);
   ~GateRTPhantomMessenger();
-  
+
   void SetNewValue(G4UIcommand*, G4String);
-    
+
 private:
   GateRTPhantom*                       m_Ph;
-    
+
   G4UIcmdWithoutParameter*             DescribeCmd;
   G4UIcmdWithAnInteger*                VerboseCmd;
   G4UIcmdWithAString*                  attachCmd;
   G4UIcmdWithAString*                  attachSCmd;
   G4UIcmdWithoutParameter*             DisableCmd;
 
-  G4UIcmdWithAString*                  TimeActivTablesCmd; // this gets the filename of the file containing the time activity curves
 };
 
 #endif
-

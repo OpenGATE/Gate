@@ -207,8 +207,8 @@ inline void GateEventAction::EndOfEventAction(const G4Event* anEvent)
 
 
 //-----------------------------------------------------------------------------
-GateTrackingAction::GateTrackingAction(GateUserActions * cbm, GateRecorderBase* r)
-  : pCallbackMan(cbm), recorder(r)
+GateTrackingAction::GateTrackingAction(GateUserActions * cbm, GateRecorderBase*)
+  : pCallbackMan(cbm)
 {
 }
 //-----------------------------------------------------------------------------

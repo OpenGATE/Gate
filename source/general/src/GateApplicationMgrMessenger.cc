@@ -1,16 +1,14 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
-
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "GateApplicationMgrMessenger.hh"
-
 #include "GateApplicationMgr.hh"
 
 #include "G4UIdirectory.hh"
@@ -24,7 +22,7 @@ See GATE/LICENSE.txt for further details
 
 //-------------------------------------------------------------------------------------------------------------------
 GateApplicationMgrMessenger::GateApplicationMgrMessenger()
-{ 
+{
   GateApplicationDir = new G4UIdirectory("/gate/application/");
   GateApplicationDir->SetGuidance("Gate application control.");
 
@@ -65,7 +63,7 @@ GateApplicationMgrMessenger::GateApplicationMgrMessenger()
   StartDAQCompleteCmd->SetGuidance("        1. timeStart : (double) ");
   StartDAQCompleteCmd->SetGuidance("        2. timeStop  : (double) ");
   StartDAQCompleteCmd->SetGuidance("        3. timeSlice : (double) ");
-  StartDAQCompleteCmd->SetGuidance("        4. unit"); 
+  StartDAQCompleteCmd->SetGuidance("        4. unit");
   StartDAQCompleteCmd->SetUnitCategory("Time");
   StartDAQCompleteCmd->SetDefaultUnit("s");
 
@@ -75,7 +73,7 @@ GateApplicationMgrMessenger::GateApplicationMgrMessenger()
   StartDAQClusterCmd->SetGuidance("        1. virtual time Start : (double) ");
   StartDAQClusterCmd->SetGuidance("        2. virtual time Stop  : (double) ");
   StartDAQClusterCmd->SetGuidance("        3. dummy : (double) ");
-  StartDAQClusterCmd->SetGuidance("        4. unit"); 
+  StartDAQClusterCmd->SetGuidance("        4. unit");
   StartDAQClusterCmd->SetUnitCategory("Time");
   StartDAQClusterCmd->SetDefaultUnit("s");
 
@@ -102,9 +100,9 @@ GateApplicationMgrMessenger::GateApplicationMgrMessenger()
 
   NoOutputCmd = new G4UIcmdWithoutParameter("/gate/application/noGlobalOutput", this);
   NoOutputCmd->SetGuidance("Supress the global output manager (PET/SPECT), use this macro if you do not need PET/SPECT systems.");
-  
+
   //EnableSuccessiveSourceMode = new G4UIcmdWithoutParameter("/gate/application/enableSuccessiveSourceMode", this);
-  //EnableSuccessiveSourceMode->SetGuidance("Enable 'successive source' mode. Each source will be selected in a successive way (alternative default mode is 'competitive mode').");  
+  //EnableSuccessiveSourceMode->SetGuidance("Enable 'successive source' mode. Each source will be selected in a successive way (alternative default mode is 'competitive mode').");
 
   ReadTimeSlicesInAFileCmd = new G4UIcmdWithAString("/gate/application/readTimeSlicesIn", this);
   ReadTimeSlicesInAFileCmd->SetGuidance("Read the different time slices ('run') in a file.");
@@ -160,50 +158,50 @@ GateApplicationMgrMessenger::~GateApplicationMgrMessenger()
 
 //-------------------------------------------------------------------------------------------------------------------
 void GateApplicationMgrMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
-//   G4cout << " GateApplicationMgrMessenger::SetNewValue " << newValue << G4endl;
-    
+{
+  //   G4cout << " GateApplicationMgrMessenger::SetNewValue " << newValue << G4endl;
+
   GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
-  
-  if( command == TimeSliceCmd ) { 
+
+  if( command == TimeSliceCmd ) {
     appMgr->SetTimeSlice(TimeSliceCmd->GetNewDoubleValue(newValue));
-  } 
-  else   if( command == TimeStartCmd ) { 
+  }
+  else   if( command == TimeStartCmd ) {
     appMgr->SetTimeStart(TimeStartCmd->GetNewDoubleValue(newValue));
-  } 
-  else  if( command == TimeStopCmd ) { 
+  }
+  else  if( command == TimeStopCmd ) {
     appMgr->SetTimeStop(TimeStopCmd->GetNewDoubleValue(newValue));
-  } 
-  else  if( command == AddSliceCmd ) { 
+  }
+  else  if( command == AddSliceCmd ) {
     appMgr->SetTimeInterval(AddSliceCmd->GetNewDoubleValue(newValue));
-  } 
-  else  if( command == StartDAQCmd ) {  
+  }
+  else  if( command == StartDAQCmd ) {
     appMgr->StartDAQ();
-  } 
-  else  if( command == StartCmd ) {  
+  }
+  else  if( command == StartCmd ) {
     appMgr->StartDAQ();
-  } 
-  else  if( command == StartDAQCompleteCmd ) { 
+  }
+  else  if( command == StartDAQCompleteCmd ) {
     appMgr->StartDAQComplete(StartDAQCompleteCmd->GetNew3VectorValue(newValue));
-  } 
-  else  if( command == StartDAQClusterCmd ) { 
+  }
+  else  if( command == StartDAQClusterCmd ) {
     appMgr->StartDAQCluster(StartDAQClusterCmd->GetNew3VectorValue(newValue));
-  } 
-  else  if( command == StopDAQCmd ) { 
+  }
+  else  if( command == StopDAQCmd ) {
     appMgr->StopDAQ();
-  } 
-  else  if( command == PauseDAQCmd ) { 
+  }
+  else  if( command == PauseDAQCmd ) {
     appMgr->PauseDAQ();
-  } 
+  }
   else if( command == VerboseCmd ) {
     appMgr->SetVerboseLevel(VerboseCmd->GetNewIntValue(newValue));
-  } 
+  }
   else if( command == ExitFlagCmd ) {
     appMgr->SetExitFlag(ExitFlagCmd->GetNewBoolValue(newValue));
-  } 
-  else  if( command == DescribeCmd ) { 
+  }
+  else  if( command == DescribeCmd ) {
     appMgr->Describe();
-  }   
+  }
   else if (command == NoOutputCmd) {
     appMgr->SetNoOutputMode();
   }
