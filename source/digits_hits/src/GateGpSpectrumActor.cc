@@ -1,14 +1,18 @@
 #include "GateGpSpectrumActor.hh"
 
+#include "GateConfiguration.h"
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "GateGpSpectrumActorMessenger.hh"
 #include <G4VProcess.hh>
 #include <G4ProtonInelasticProcess.hh>
+#include <G4HadronElasticProcess.hh>
 #include <G4CrossSectionDataStore.hh>
+#include "G4HadronicProcessStore.hh"
+#include <G4UnitsTable.hh>
 
 GateGpSpectrumActor::GateGpSpectrumActor(G4String name, G4int depth):
-	GateVActor(name,depth)
+	GateVActor(name,depth), sigma_filled(false)
 {
 	pMessenger = new GateGpSpectrumActorMessenger(this);
 }
@@ -34,7 +38,7 @@ void GateGpSpectrumActor::Construct()
 
 	const G4double max_proton_energy = 250*MeV;
 	const G4double max_pg_energy = 10*MeV;
-	const G4int bin = 256;
+	const G4int bin = 250;
 
 	pHEpEgp = new TH2D("EpEgp","PG count",bin,0,max_proton_energy/MeV,bin,0,max_pg_energy/MeV);
 	pHEpEgp->SetXTitle("E_{proton} [MeV]");
@@ -46,6 +50,12 @@ void GateGpSpectrumActor::Construct()
 
 	pHEpInelastic = new TH1D("EpInelastic","proton energy for each inelastic interaction",bin,0,max_proton_energy/MeV);
 	pHEpInelastic->SetXTitle("E_{proton} [MeV]");
+
+	pHEp = new TH1D("Ep","proton energy",bin,0,max_proton_energy/MeV);
+	pHEp->SetXTitle("E_{proton} [MeV]");
+
+	pHEpSigmaInelastic = new TH1D("SigmaInelastic","Sigma inelastic Vs Ep",bin,0,max_proton_energy/MeV);
+	pHEpSigmaInelastic->SetXTitle("E_{proton} [MeV]");
 
 	pHEpInelasticProducedGamma = new TH1D("EpInelasticProducedGamma","proton energy for each inelastic interaction if gamma production",bin,0,max_proton_energy/MeV);
 	pHEpInelasticProducedGamma->SetXTitle("E_{proton} [MeV]");
@@ -63,6 +73,7 @@ void GateGpSpectrumActor::ResetData()
 	pHEpEgp->Reset();
 	pHEpEgpNormalized->Reset();
 	pHEpInelastic->Reset();
+	pHEp->Reset();
 	pHEpInelasticProducedGamma->Reset();
 }
 
@@ -80,66 +91,70 @@ void GateGpSpectrumActor::EndOfEventAction(const G4Event*)
 
 void GateGpSpectrumActor::PreUserTrackingAction(const GateVVolume*, const G4Track*)
 {
-	last_secondaries_size = 0;
-	first_step = true;
 }
 
 void GateGpSpectrumActor::PostUserTrackingAction(const GateVVolume*, const G4Track*)
 {
 }
 
+struct MyHack : public G4HadronicProcess
+{
+	static G4CrossSectionDataStore* hack(G4HadronicProcess* process) { return static_cast<MyHack*>(process)->GetCrossSectionDataStore(); }
+};
+
 void GateGpSpectrumActor::UserSteppingAction(const GateVVolume*, const G4Step* step)
 {
-	const G4String particle_name = step->GetTrack()->GetParticleDefinition()->GetParticleName();
+	const G4ParticleDefinition* particle = step->GetTrack()->GetParticleDefinition();
+	const G4String particle_name = particle->GetParticleName();
 	if (particle_name != "proton") return;
+        const G4double particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
+        pHEp->Fill(particle_energy/MeV);
 
-	const G4TrackVector* secondaries = step->GetSecondary();
-	if (first_step)
-	{
-		first_step = false;
-		last_secondaries_size = secondaries->size();
-	}
-	if (secondaries->size() == last_secondaries_size) return;
-	long int created_this_step = secondaries->size()-last_secondaries_size;
-	last_secondaries_size = secondaries->size();
+	G4TrackVector* fSecondary = (const_cast<G4Step *> (step))->GetfSecondary();
+
+	long int created_this_step = fSecondary->size();
+	if (created_this_step == 0) return;
 
 	const G4StepPoint* point = step->GetPostStepPoint();
 	assert(point);
 	const G4VProcess* process = point->GetProcessDefinedStep();
 	assert(process);
 	const G4String process_name = process->GetProcessName();
-	if (process_name != "ProtonInelastic") return;
+	
+        if (process_name != "ProtonInelastic") return;
 
-	G4ProtonInelasticProcess* process_casted = dynamic_cast<G4ProtonInelasticProcess*>(const_cast<G4VProcess*>(process));
-	G4CrossSectionDataStore* data_store = process_casted->GetCrossSectionDataStore();
-	const G4double particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
 	const G4Material* material = step->GetPreStepPoint()->GetMaterial();
-	const G4DynamicParticle* dynamic_particle = new G4DynamicParticle(step->GetTrack()->GetParticleDefinition(),step->GetPreStepPoint()->GetMomentum());
-	const G4double cross_section = data_store->GetCrossSection(dynamic_particle,material); // en distance^-1
+	G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();  
+	G4double cross_section = store->GetCrossSectionPerVolume(particle,particle_energy,process,material);  
+	// G4cout << process_name << " = " << cross_section * mm << " mm-1" << G4endl;
 
 	pHEpInelastic->Fill(particle_energy/MeV);
-
-	//G4cout
-	//	<< "coucou " << particle_name << " " << particle_energy/MeV << " " << process_name << " "
-	//	<< secondaries->size() << " " << created_this_step << " "
-	//	<< material->GetName() << " " << dynamic_particle->GetKineticEnergy() << " "
-	//	<< process_casted << " " << data_store << " " << 1/(cross_section*mm) << G4endl;
+	
+	if (!sigma_filled)
+	{
+	for (int bin = 1; bin < pHEpSigmaInelastic->GetNbinsX()+1; bin++)
+	{
+                G4double local_energy = pHEpSigmaInelastic->GetBinCenter(bin)*MeV;
+		const G4double cross_section_local = store->GetCrossSectionPerVolume(particle,local_energy,process,material);
+                pHEpSigmaInelastic->SetBinContent(bin,cross_section_local);
+	}
+	sigma_filled = true;
+	}
 
 	G4bool produced_any_gamma = false;
-	for (G4TrackVector::const_reverse_iterator iter=secondaries->rbegin(); iter!=secondaries->rend(); iter++)
-	{
-		if (!created_this_step) break;
-		created_this_step--;
-		if ((*iter)->GetParticleDefinition()->GetParticleName() != "gamma") continue;
-		//G4cout << "    " << (*iter)->GetParticleDefinition()->GetParticleName() << " " << (*iter)->GetKineticEnergy()/MeV << G4endl;
-		pHEpEgp->Fill(particle_energy/MeV,(*iter)->GetKineticEnergy()/MeV);
-		pHEpEgpNormalized->Fill(particle_energy/MeV,(*iter)->GetKineticEnergy()/MeV,cross_section*meter);
+	for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++)
+	  { 
+	    if ((*fSecondary)[lp1]->GetDefinition() -> GetParticleName() == "gamma")
+	      {
+		pHEpEgp->Fill(particle_energy/MeV,(*fSecondary)[lp1]->GetKineticEnergy()/MeV);
+		pHEpEgpNormalized->Fill(particle_energy/MeV,(*fSecondary)[lp1]->GetKineticEnergy()/MeV,cross_section);
 		produced_any_gamma = true;
-	}
+		// G4cout << "     E = " << (*fSecondary)[lp1] -> GetKineticEnergy() << G4endl;
+	      }
+	  }
 
 	if (produced_any_gamma) pHEpInelasticProducedGamma->Fill(particle_energy/MeV);
 
-	delete dynamic_particle;
 }
 
 #endif
