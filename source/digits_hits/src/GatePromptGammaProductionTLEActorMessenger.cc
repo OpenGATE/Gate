@@ -31,7 +31,7 @@ GatePromptGammaProductionTLEActorMessenger::~GatePromptGammaProductionTLEActorMe
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaProductionTLEActorMessenger::BuildCommands( G4String base)
+void GatePromptGammaProductionTLEActorMessenger::BuildCommands(G4String /*base*/)
 {
 
 }

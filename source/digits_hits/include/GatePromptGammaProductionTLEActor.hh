@@ -26,20 +26,15 @@ public:
 
   virtual void Construct();
 
-  virtual void BeginOfRunAction(const G4Run*);
-  virtual void BeginOfEventAction(const G4Event*) ;
-  virtual void UserSteppingAction(const GateVVolume*, const G4Step*);
-
   virtual void PreUserTrackingAction(const GateVVolume*, const G4Track*);
-  virtual void PostUserTrackingAction(const GateVVolume*, const G4Track*);
-  virtual void EndOfEventAction(const G4Event*);
+  virtual void UserSteppingAction(const GateVVolume*, const G4Step*);
 
   virtual void SaveData();
   virtual void ResetData();
 
 protected:
   GatePromptGammaProductionTLEActor(G4String name, G4int depth=0);
-
+  GatePromptGammaProductionTLEActorMessenger * pMessenger;
 };
 //-----------------------------------------------------------------------------
 

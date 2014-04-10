@@ -20,7 +20,11 @@
 #define GATEPROMPTGAMMASPATIALEMISSIONDISTRIBUTION_HH
 
 #include "G4UnitsTable.hh"
-#include "GateConfiguration.hh"
+#include "G4ParticleMomentum.hh"
+#include "G4SPSAngDistribution.hh"
+#include "G4SPSPosDistribution.hh"
+#include "G4SPSEneDistribution.hh"
+#include "GateConfiguration.h"
 
 //------------------------------------------------------------------------
 class GatePromptGammaSpatialEmissionDistribution
@@ -33,6 +37,7 @@ public:
   void SampleRandomEnergy(double & energy);
   void SampleRandomDirection(G4ParticleMomentum & direction);
 
+  void Initialize();
   /*
     mDistrib->SetRandomEngine(engine);
     mDistrib->LoadData(mFilename);

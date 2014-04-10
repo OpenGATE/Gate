@@ -9,9 +9,10 @@
   ----------------------*/
 
 #include "GatePromptGammaSpatialEmissionDistribution.hh"
+#include "GateMessageManager.hh"
 
 //------------------------------------------------------------------------
-GatePromptGammaSpatialEmissionDistribution:GatePromptGammaSpatialEmissionDistribution()
+GatePromptGammaSpatialEmissionDistribution::GatePromptGammaSpatialEmissionDistribution()
 {
   DD("GPGSED::Constructor");
 }
@@ -19,7 +20,7 @@ GatePromptGammaSpatialEmissionDistribution:GatePromptGammaSpatialEmissionDistrib
 
 
 //------------------------------------------------------------------------
-GatePromptGammaSpatialEmissionDistribution:~GatePromptGammaSpatialEmissionDistribution()
+GatePromptGammaSpatialEmissionDistribution::~GatePromptGammaSpatialEmissionDistribution()
 {
   DD("GPGSED::Destructor");
 }
@@ -27,10 +28,10 @@ GatePromptGammaSpatialEmissionDistribution:~GatePromptGammaSpatialEmissionDistri
 
 
 //------------------------------------------------------------------------
-void GatePromptGammaSpatialEmissionDistribution:SampleRandomPosition(G4ThreeVector & position)
+void GatePromptGammaSpatialEmissionDistribution::SampleRandomPosition(G4ThreeVector & position)
 {
   DD("GPGSED::SampleRandomPosition");
-
+  /*
   // Position (in pixel)
   int i = mCurrentIndex_i = floor(mPositionXGen.GenRandX());
   int j = mCurrentIndex_j = floor(mPositionYGen[i].GenRandY());
@@ -54,17 +55,18 @@ void GatePromptGammaSpatialEmissionDistribution:SampleRandomPosition(G4ThreeVect
   // Rotation and translation FIXME
   DD("TODO FIXME position Rotation translation");
   // ChangeParticleMomentumRelativeToAttachedVolume ??
+  */
 }
 //------------------------------------------------------------------------
 
 
 //------------------------------------------------------------------------
-void GatePromptGammaSpatialEmissionDistribution:SampleRandomEnergy(double & energy)
+void GatePromptGammaSpatialEmissionDistribution::SampleRandomEnergy(double & energy)
 {
   DD("GPGSED::SampleRandomEnergy");
 
   // Get energy in the bins (no interpolation, yet) FIXME
-  energy = mEnergyGen[i][j][k].GenRandEnergy();
+  //  energy = mEnergyGen[i][j][k].GenRandEnergy();
   DD(energy);
 
 }
@@ -72,11 +74,11 @@ void GatePromptGammaSpatialEmissionDistribution:SampleRandomEnergy(double & ener
 
 
 //------------------------------------------------------------------------
-void GatePromptGammaSpatialEmissionDistribution:SampleRandomDirection(G4ParticleMomentum & direction)
+void GatePromptGammaSpatialEmissionDistribution::SampleRandomDirection(G4ParticleMomentum & direction)
 {
   DD("GPGSED::SampleRandomDirection");
 
-  direction = mAngleGen->GenerateOne();
+  //  direction = mAngleGen->GenerateOne();
 
   // Rotation and translation FIXME
   DD("TODO FIXME direction Rotation translation");
@@ -86,10 +88,10 @@ void GatePromptGammaSpatialEmissionDistribution:SampleRandomDirection(G4Particle
 
 
 //------------------------------------------------------------------------
-void GatePromptGammaSpatialEmissionDistribution:Initialize()
+void GatePromptGammaSpatialEmissionDistribution::Initialize()
 {
   DD("GPGSED::Initialize");
-
+  /*
   // Random generators for position: set sizes
   mPositionYGen.resize(mSizeX);
   mPositionZGen.resize(mSizeX);
@@ -117,7 +119,7 @@ void GatePromptGammaSpatialEmissionDistribution:Initialize()
     mPositionXGen.SetXBias(G4ThreeVector(i+1,sumYZ,0.));
   }
 
-
+  */
 }
 //------------------------------------------------------------------------
 

@@ -10,6 +10,9 @@
 
 #include "GateConfiguration.h"
 #include "GateSourcePromptGammaEmission.hh"
+#include "GateRandomEngine.hh"
+#include "G4ParticleTable.hh"
+#include "G4Event.hh"
 
 //------------------------------------------------------------------------
 GateSourcePromptGammaEmission::GateSourcePromptGammaEmission(G4String name)
@@ -55,19 +58,21 @@ void GateSourcePromptGammaEmission::Initialize()
   // mDistrib->SetRandomEngine(engine); FIXME ? Necessary or not ?
 
   // Get filename, load data
-  mDistrib->LoadData(mFilename);
+  //  mDistrib->LoadData(mFilename);
 
   // Compute cmulative marginals information
   mDistrib->Initialize();
 
   // Particle type (photon)
   DD("Particle definition");
+  /*
   G4ParticleTable * particleTable = G4ParticleTable::GetParticleTable();
   particle_definition = particleTable->FindParticle("Gamma");
   if (particle_definition==0) {
     GateError("Could not find Gamma definition" << G4endl);
   }
   particle_weight = 1.0;
+  */
 
   // It is initialized
   mIsInitializedFlag = true;
@@ -94,7 +99,7 @@ void GateSourcePromptGammaEmission::GenerateVertex(G4Event* aEvent)
   double particle_energy;
   mDistrib->SampleRandomEnergy(particle_energy);
   DD(particle_energy);
-  std::cout << G4BestUnit("Energy", particle_energy) << std::endl;
+  //  std::cout << G4BestUnit("Energy", particle_energy) << std::endl;
 
   // Direction
   DD("Particle momentum direction");
@@ -104,6 +109,7 @@ void GateSourcePromptGammaEmission::GenerateVertex(G4Event* aEvent)
 
   // Momentum
   DD("Particle momentum");
+  /*
   double mass = particle_definition->GetPDGMass();
   DD(mass);
   double pmom = std::sqrt(particle_energy*particle_energy-mass*mass);
@@ -122,6 +128,8 @@ void GateSourcePromptGammaEmission::GenerateVertex(G4Event* aEvent)
   vertex->SetWeight(particle_weight);
   vertex->SetPrimary(particle);
   aEvent->AddPrimaryVertex(vertex);
+  */
+
 }
 //------------------------------------------------------------------------
 

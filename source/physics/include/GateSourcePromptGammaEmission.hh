@@ -25,6 +25,8 @@
 #include "GateVSource.hh"
 #include "GateSourcePromptGammaEmissionMessenger.hh"
 
+class GateSourcePromptGammaEmissionMessenger;
+
 //------------------------------------------------------------------------
 class GateSourcePromptGammaEmission : public GateVSource
 {

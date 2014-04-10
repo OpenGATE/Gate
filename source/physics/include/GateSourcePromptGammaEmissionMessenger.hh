@@ -15,6 +15,9 @@
 #include "G4UIcmdWithAString.hh"
 #include "GateConfiguration.h"
 #include "GateVSourceMessenger.hh"
+#include "GateSourcePromptGammaEmission.hh"
+
+class GateSourcePromptGammaEmission;
 
 //------------------------------------------------------------------------
 class GateSourcePromptGammaEmissionMessenger: public GateVSourceMessenger
