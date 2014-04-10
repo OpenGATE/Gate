@@ -54,7 +54,7 @@ GateSphere::GateSphere(const G4String& itsName,
     m_sphere_solid(0),m_sphere_log(0),
     m_Messenger(0)
 {
-    m_sphereRmin = 1. *cm;
+    m_sphereRmin = 0. *cm;
     m_sphereRmax = 1. *cm;
     m_sphereSPhi = 0.; 
     m_sphereDPhi = 2*M_PI;
