@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #ifndef GateBlurringWithIntrinsicResolutionMessenger_h
@@ -25,24 +25,23 @@ class GateBlurringWithIntrinsicResolution;
 
 class GateBlurringWithIntrinsicResolutionMessenger: public GatePulseProcessorMessenger
 {
-  public:
-    GateBlurringWithIntrinsicResolutionMessenger(GateBlurringWithIntrinsicResolution* itsIntrinsic);
-    virtual ~GateBlurringWithIntrinsicResolutionMessenger();
+public:
+  GateBlurringWithIntrinsicResolutionMessenger(GateBlurringWithIntrinsicResolution* itsIntrinsic);
+  virtual ~GateBlurringWithIntrinsicResolutionMessenger();
 
-    inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
-    inline void SetNewValue2(G4UIcommand* aCommand, G4String aString);
+  inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
+  inline void SetNewValue2(G4UIcommand* aCommand, G4String aString);
 
-    inline GateBlurringWithIntrinsicResolution* GetBlurringWithIntrinsicResolution()
-      { return (GateBlurringWithIntrinsicResolution*) GetPulseProcessor(); }
+  inline GateBlurringWithIntrinsicResolution* GetBlurringWithIntrinsicResolution()
+  { return (GateBlurringWithIntrinsicResolution*) GetPulseProcessor(); }
 
-  private:
-    G4UIcmdWithAString   *newVolCmd;
-    std::vector<G4UIdirectory*> m_volDirectory;
-    std::vector<G4UIcmdWithADouble*>   resolutionCmd;
-    std::vector<G4UIcmdWithADoubleAndUnit*>   erefCmd;
-    std::vector<G4String> m_name;
-    G4int i;
-    G4int m_count;
+private:
+  G4UIcmdWithAString   *newVolCmd;
+  std::vector<G4UIdirectory*> m_volDirectory;
+  std::vector<G4UIcmdWithADouble*>   resolutionCmd;
+  std::vector<G4UIcmdWithADoubleAndUnit*>   erefCmd;
+  std::vector<G4String> m_name;
+  G4int m_count;
 };
 
 #endif

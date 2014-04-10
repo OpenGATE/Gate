@@ -77,7 +77,6 @@ GateVVolume::GateVVolume(const G4String& itsName,
     pMotherLogicalVolume(0),
     m_creator(0),
   m_sensitiveDetector(0),
-  m_motherList(0),
   mParent(0)
 {
 

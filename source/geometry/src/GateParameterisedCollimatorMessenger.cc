@@ -1,15 +1,18 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #include "GateParameterisedCollimatorMessenger.hh"
+#include "GateVVolume.hh"
+#include "GateVisAttributesMessenger.hh"
+#include "GateParameterisedCollimator.hh"
 
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
@@ -17,10 +20,6 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 #include "G4UIcmdWithoutParameter.hh"
-
-#include "GateVVolume.hh"
-#include "GateVisAttributesMessenger.hh"
-#include "GateParameterisedCollimator.hh"
 
 GateParameterisedCollimatorMessenger::GateParameterisedCollimatorMessenger(GateParameterisedCollimator *itsInserter)
   :GateVolumeMessenger(itsInserter)
@@ -50,14 +49,14 @@ GateParameterisedCollimatorMessenger::GateParameterisedCollimatorMessenger(GateP
   CollimatorFocalDistanceXCmd = new G4UIcmdWithADoubleAndUnit(cmdName.c_str(),this);
   CollimatorFocalDistanceXCmd->SetGuidance("Set focal distance of parameterised collimator.");
   CollimatorFocalDistanceXCmd->SetParameterName("FocalDistanceX",false);
-//  CollimatorFocalDistanceXCmd->SetRange("FocalDistanceX>0.");
+  //  CollimatorFocalDistanceXCmd->SetRange("FocalDistanceX>0.");
   CollimatorFocalDistanceXCmd->SetUnitCategory("Length");
 
   cmdName = name_Geometry+"setFocalDistanceY";
   CollimatorFocalDistanceYCmd = new G4UIcmdWithADoubleAndUnit(cmdName.c_str(),this);
   CollimatorFocalDistanceYCmd->SetGuidance("Set focal distance of parameterised collimator.");
   CollimatorFocalDistanceYCmd->SetParameterName("FocalDistanceY",false);
-//  CollimatorFocalDistanceYCmd->SetRange("FocalDistanceY>0.");
+  //  CollimatorFocalDistanceYCmd->SetRange("FocalDistanceY>0.");
   CollimatorFocalDistanceYCmd->SetUnitCategory("Length");
 
   cmdName = name_Geometry+"setHeight";
@@ -80,9 +79,9 @@ GateParameterisedCollimatorMessenger::GateParameterisedCollimatorMessenger(GateP
   CollimatorInnerRadiusCmd->SetParameterName("InnerRadius",false);
   CollimatorInnerRadiusCmd->SetRange("InnerRadius>0.");
   CollimatorInnerRadiusCmd->SetUnitCategory("Length");
-  
+
   visAttributesMessenger = new GateVisAttributesMessenger(GetVolumeCreator()->GetCreator()->GetVisAttributes(),
-                           GetVolumeCreator()->GetObjectName()+"/vis");
+                                                          GetVolumeCreator()->GetObjectName()+"/vis");
 }
 
 GateParameterisedCollimatorMessenger::~GateParameterisedCollimatorMessenger()
@@ -96,7 +95,7 @@ GateParameterisedCollimatorMessenger::~GateParameterisedCollimatorMessenger()
   delete CollimatorHeightCmd;
   delete CollimatorSeptalThicknessCmd;
   delete CollimatorInnerRadiusCmd;
-  
+
   delete visAttributesMessenger;
 }
 
@@ -127,5 +126,3 @@ void GateParameterisedCollimatorMessenger::SetNewValue(G4UIcommand* command, G4S
   else
     GateVolumeMessenger::SetNewValue(command,newValue);
 }
-
-

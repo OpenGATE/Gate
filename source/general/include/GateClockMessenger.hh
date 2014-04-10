@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #ifndef GateClockMessenger_h
@@ -31,17 +31,13 @@ class GateClockMessenger: public G4UImessenger
 public:
   GateClockMessenger();
   ~GateClockMessenger();
-  
-  void SetNewValue(G4UIcommand*, G4String);
-  
-private:
-  GateClock* pGateClock;
-  
-  G4UIdirectory*             pGateTimingDir;
 
+  void SetNewValue(G4UIcommand*, G4String);
+
+private:
+  G4UIdirectory*             pGateTimingDir;
   G4UIcmdWithADoubleAndUnit* pTimeCmd;
   G4UIcmdWithAnInteger*      pVerboseCmd;
 };
 
 #endif
-

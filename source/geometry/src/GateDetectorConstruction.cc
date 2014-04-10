@@ -9,41 +9,33 @@
   ----------------------*/
 
 
+#include "GateConfiguration.h"
 #include "GateDetectorConstruction.hh"
 #include "GateDetectorMessenger.hh"
 #include "GateRunManager.hh"
-#include "G4UniformMagField.hh"
-#include "G4FieldManager.hh"
-
 #include "GateVVolume.hh"
 #include "GateBox.hh"
-
 #include "GateObjectStore.hh"
 #include "GateSystemListManager.hh"
 #include "GateMaterialDatabase.hh"
 #include "GateCrystalSD.hh"
 #include "GatePhantomSD.hh"
+#include "GateMessageManager.hh"
+#include "GateObjectMoveListMessenger.hh"
+#include "GateARFSD.hh"
 
+#include "globals.hh"
+#include "G4UniformMagField.hh"
+#include "G4FieldManager.hh"
 #include "G4TransportationManager.hh"
 #include "G4Navigator.hh"
 #include "G4SDManager.hh"
 #include "G4Material.hh"
-
-#include "GateMessageManager.hh"
-#include "GateObjectMoveListMessenger.hh"
-
-#include "globals.hh"
 #include "G4Material.hh"
-
-#include "GateConfiguration.h"
 
 #ifdef GATE_USE_OPTICAL
 #include "GateSurfaceList.hh"
 #endif
-
-
-#include "GateARFSD.hh"
-
 
 GateDetectorConstruction* GateDetectorConstruction::pTheGateDetectorConstruction=0;
 
