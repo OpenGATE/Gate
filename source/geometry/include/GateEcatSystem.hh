@@ -69,6 +69,7 @@ private:
   GateClockDependentMessenger    	*m_messenger; 	//!< Messenger
 
   GateToSinogram              *m_gateToSinogram;
+  GateSinoToEcat7             *m_gateSinoToEcat7;
 };
 
 #endif
