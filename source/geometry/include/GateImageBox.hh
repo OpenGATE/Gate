@@ -3,8 +3,7 @@
  * \brief       Displays an image with OpenGL.
  * \details     Behaves like a G4Box for tracking but displays image with three orthogonal planes in OpenGL: axial, sagittal and coronal.
  * \author      Jérôme Suhard <jerome@suhard.fr>
- * \date        02/2014
- * \warning     Makes the assumption that OpenGL headers are still accessible.
+ * \date        04/2014
  * \warning     Only works in Immediate mode ( /vis/open OGLI ).
  * \copyright   GNU Lesser General Public Licence (LGPL).
  */
@@ -14,24 +13,30 @@
 
 #ifdef G4VIS_USE_OPENGL
 
-#include "G4Version.hh"
-#if G4VERSION_NUMBER >= 960
+  #include "G4Version.hh"
+  /**
+   * Only Geant4 >= 9.6.0 had the G4OpenGLSceneHandler::GetObjectTransformation() method
+   */
+  #if G4VERSION_NUMBER >= 960
 
-#define G4VIS_BUILD_OPENGL_DRIVER 1
-#ifdef G4VIS_USE_OPENGLX
-#define G4VIS_BUILD_OPENGLX_DRIVER 1
-#endif
-#ifdef G4VIS_USE_OPENGLQT
-#define G4VIS_BUILD_OPENGLQT_DRIVER 1
-#endif
-#include "G4OpenGLSceneHandler.hh"
-#include "G4OpenGLStoredSceneHandler.hh"
-#include "G4OpenGL.hh"
+    #include "GateConfiguration.h"
 
-#define GATEIMAGEBOX_USE_OPENGL 1
-#endif
+    #ifdef GATE_USE_OPENGL
+      #ifdef __APPLE__
+        #include <OpenGL/gl.h>
+      #else
+        #include <GL/gl.h>
+      #endif
 
-#endif
+      #define G4VIS_BUILD_OPENGL_DRIVER
+      #include "G4OpenGLSceneHandler.hh"
+
+      #define GATEIMAGEBOX_USE_OPENGL 1
+    #endif /* GATE_USE_OPENGL */
+
+  #endif /* G4VERSION_NUMBER */
+
+#endif /* G4VIS_USE_OPENGL */
 
 #include "G4Box.hh"
 

@@ -46,4 +46,6 @@
    #define G4VERSION9_3 1
 #endif
 
+#cmakedefine GATE_USE_OPENGL               @GATE_USE_OPENGL@
+
 #endif // GATE_CONFIGURATION_H

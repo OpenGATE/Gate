@@ -29,6 +29,12 @@ ELSE()
   FIND_PACKAGE(Geant4 REQUIRED)
 ENDIF()
 
+# Check if OpenGL headers are still available
+IF(Geant4_qt_FOUND OR Geant4_vis_opengl_x11_FOUND)
+  FIND_PACKAGE(OpenGL QUIET)
+  INCLUDE_DIRECTORIES(${OPENGL_INCLUDE_DIR})
+  SET(GATE_USE_OPENGL ${OPENGL_FOUND})
+ENDIF()
 
 #=========================================================
 # Build variables for G4 Version
