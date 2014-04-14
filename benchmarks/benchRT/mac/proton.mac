@@ -33,7 +33,7 @@
 # PHYSICS
 #=====================================================
 
-/gate/physics/addPhysicsList QGSP_BERT_HP_EMY
+/gate/physics/addPhysicsList QGSP_BERT_EMV
 
 /gate/physics/Gamma/SetCutInRegion      world 1 mm
 /gate/physics/Electron/SetCutInRegion   world 1 mm
