@@ -27,7 +27,7 @@
 //----------------------------------------------------------------------------------------
   GateSourceTPSPencilBeamMessenger::GateSourceTPSPencilBeamMessenger(GateSourceTPSPencilBeam* source)
 : GateVSourceMessenger(source)
-{ 
+{
   pSourceTPSPencilBeam = source;
   G4String cmdName;
 
@@ -55,6 +55,9 @@
   //Convergent or divergent beam model
   cmdName = GetDirectoryName()+"setBeamConvergence";
   pDivergenceCmd = new G4UIcmdWithABool(cmdName,this);
+  //Selection of one layer
+  cmdName = GetDirectoryName()+"selectLayerID";
+  pSelectLayerIDCmd = new G4UIcmdWithAnInteger(cmdName,this);
 }
 //----------------------------------------------------------------------------------------
 
@@ -77,8 +80,10 @@ GateSourceTPSPencilBeamMessenger::~GateSourceTPSPencilBeamMessenger()
   delete pSourceFileCmd;
   //Configuration of spot intensity
   delete pSpotIntensityCmd;
-  //Convergent or divergent beam model 
+  //Convergent or divergent beam model
   delete pDivergenceCmd;
+  // Selection of one layer
+  delete pSelectLayerIDCmd;
 }
 //----------------------------------------------------------------------------------------
 
@@ -96,6 +101,8 @@ void GateSourceTPSPencilBeamMessenger::SetNewValue(G4UIcommand* command,G4String
   if (command == pFlatGeneFlagCmd) {pSourceTPSPencilBeam->SetGeneFlatFlag(pFlatGeneFlagCmd->GetNewBoolValue(newValue)); }
   //Not allowed fieldID
   if (command == pNotAllowedFieldCmd) {pSourceTPSPencilBeam->SetNotAllowedField(pNotAllowedFieldCmd->GetNewIntValue(newValue));}
+  //Select Layer ID
+  if (command == pSelectLayerIDCmd) {pSourceTPSPencilBeam->SelectLayerID(pSelectLayerIDCmd->GetNewIntValue(newValue));}
   //Source description file
   if (command == pSourceFileCmd) {pSourceTPSPencilBeam->SetSourceDescriptionFile(newValue);  }
   //Configuration of spot intensity

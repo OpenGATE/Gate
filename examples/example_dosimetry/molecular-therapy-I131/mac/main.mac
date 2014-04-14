@@ -20,22 +20,26 @@
 /gate/world/vis/forceWireframe
 
 # Voxel phantom
-/gate/world/daughters/name mouse
-/gate/world/daughters/insert regularMatrix
+#/gate/world/daughters/name mouse
+#/gate/world/daughters/insert regularMatrix
+#/gate/mouse/geometry/insertReader interfile
+#/gate/mouse/interfileReader/insertTranslator range
+#/gate/mouse/interfileReader/rangeTranslator/readTable data/range_geo.dat
+#/gate/mouse/interfileReader/readFile data/CT_128_128_250_16uint.iff
 
-/gate/mouse/geometry/insertReader interfile
-/gate/mouse/interfileReader/insertTranslator range
-/gate/mouse/interfileReader/rangeTranslator/readTable data/range_geo.dat
-/gate/mouse/interfileReader/readFile data/CT_128_128_250_16uint.iff
-
+/gate/world/daughters/name                      mouse
+/gate/world/daughters/insert                    ImageRegularParametrisedVolume
+/gate/mouse/geometry/setRangeToMaterialFile     data/range_geo.dat
+/gate/mouse/geometry/setImage                   data/CT_128_128_250_16uint.mhd
 /gate/mouse/setSkipEqualMaterials 0
+
 /gate/mouse/vis/forceWireframe
 
 #=====================================================
 # PHYSICS
 #=====================================================
 
-/control/execute mac/physic.mac
+/gate/physics/addPhysicsList emstandard_opt3
 
 #=====================================================
 # DETECTORS

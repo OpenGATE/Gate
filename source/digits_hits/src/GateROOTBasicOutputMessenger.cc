@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "GateROOTBasicOutputMessenger.hh"
 
@@ -29,7 +29,7 @@ class GateEventAction;
 
 //---------------------------------------------------------------------------------
 GateROOTBasicOutputMessenger::GateROOTBasicOutputMessenger(GateROOTBasicOutput* LH)
-:xeHisto(LH)
+  :xeHisto(LH)
 {
   //  G4cout << " DEBUT Contrusteur GateROOTBasicOutputMessenger " << G4endl;
   plotDir = new G4UIdirectory("/gate/output/BasicROOT/");
@@ -57,7 +57,7 @@ void GateROOTBasicOutputMessenger::SetNewValue(G4UIcommand* command, G4String ne
     xeHisto->SetfileName(newValues);
     GateRunAction::GetRunAction()->GateRunAction::SetFlagBasicOutput(true);
     GateEventAction::GetEventAction()->GateEventAction::SetFlagBasicOutput(true);
-    }
+  }
 }
 //---------------------------------------------------------------------------------
 

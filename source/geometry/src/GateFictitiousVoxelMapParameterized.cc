@@ -61,7 +61,7 @@ void GateFictitiousVoxelMapParameterized::Init ( const G4String& name, GateFicti
 	voxelNumber=G4ThreeVector ( 1,1,1 ) ;
 	voxelSize =G4ThreeVector ( 1,1,1 ) ;
 	verboseLevel=0; //! Default : set to quiet
-	skipEqualMaterials = 1; //! Default: for speed up
+  skipEqualMaterials = 0; //! Default: because G4 bug for speed up set at 1
         GetCreator()->GetTheChildList()->AddChild(m_voxelInserter);
 	m_nGammaCut=-1;
 	m_pProductionCuts=NULL;

@@ -40,8 +40,8 @@
 /gate/world/daughters/insert                    ImageRegionalizedVolume
 
 /gate/geometry/setMaterialDatabase              data/patient-HUmaterials.db
-/gate/patient/geometry/SetHUToMaterialFile      data/patient-HU2mat.txt
-/gate/patient/geometry/SetImage                 data/patient-2mm.mhd
+/gate/patient/geometry/setHUToMaterialFile      data/patient-HU2mat.txt
+/gate/patient/geometry/setImage                 data/patient-2mm.mhd
 
 # Generate the dmap (needed by ImageRegionalizedVolume)
 /gate/patient/geometry/buildAndDumpDistanceTransfo   data/patient-2mm-dmap.mhd
@@ -60,7 +60,7 @@
 # PHYSICS
 #=====================================================
 
-/control/execute mac/physicslist_EM_std.mac
+/gate/physics/addPhysicsList emstandard_opt3
 
 /gate/physics/Gamma/SetCutInRegion      world 10 mm
 /gate/physics/Electron/SetCutInRegion   world 10 mm

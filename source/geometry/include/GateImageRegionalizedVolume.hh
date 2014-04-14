@@ -9,13 +9,13 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
-/*! 
+/*!
    \class GateImageRegionalizedVolume
    \author thibault.frisson@creatis.insa-lyon.fr
            laurent.guigues@creatis.insa-lyon.fr
 	   david.sarrut@creatis.insa-lyon.fr
 */
- 
+
 #ifndef __GateImageRegionalizedVolume__hh__
 #define __GateImageRegionalizedVolume__hh__
 
@@ -74,19 +74,19 @@ public:
   /// the name of the volume to create
   /// Creates the messenger associated to the volume
   GateImageRegionalizedVolume(const G4String& name,G4bool acceptsChildren,G4int depth);
-  /// Destructor 
+  /// Destructor
   ~GateImageRegionalizedVolume();
   //====================================================================
   FCT_FOR_AUTO_CREATOR_VOLUME(GateImageRegionalizedVolume)
 
   //====================================================================
-  /// Returns a string describing the type of volume and which is used 
-  /// for commands 
+  /// Returns a string describing the type of volume and which is used
+  /// for commands
   virtual G4String GetTypeName() { return "ImageRegionalized"; }
 
-  /// Allocates and returns a new volume 
+  /// Allocates and returns a new volume
    virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume(G4Material*, G4bool);
-  
+
 
   //====================================================================
   /// Method which is called after the image file name and the label
@@ -101,8 +101,8 @@ public:
   EInside Inside(const G4ThreeVector& p, LabelType l);
   G4double DistanceToIn(const G4ThreeVector& p, const G4ThreeVector& v, LabelType l);
   G4double DistanceToIn(const G4ThreeVector& p, LabelType l);
-  G4double DistanceToOut(const G4ThreeVector& p, const G4ThreeVector& v, 
-						 const G4bool calcNorm, G4bool *validNorm, G4ThreeVector *n, 
+  G4double DistanceToOut(const G4ThreeVector& p, const G4ThreeVector& v,
+						 const G4bool calcNorm, G4bool *validNorm, G4ThreeVector *n,
 						 LabelType l);
   G4double DistanceToOut(const G4ThreeVector& p, LabelType l);
   G4ThreeVector SurfaceNormal(const G4ThreeVector& p, LabelType l);
@@ -124,7 +124,7 @@ public:
 		       G4VPhysicalVolume *(*pBlockedPhysical));
 
   //====================================================================
-  
+
 
 
   //====================================================================
@@ -132,27 +132,23 @@ public:
   // returns 0 if the particle exits the volume
   G4VPhysicalVolume* GetEnteredPhysicalVolume( const G4ThreeVector& globalPoint,
 					       const G4ThreeVector* globalDirection );
-                                
+
   //====================================================================
-
-  virtual void PropageteSensitiveDetectorToChild(GateMultiSensitiveDetector *);
-
+  // See GateVVolume for explanation
+  virtual void PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector *);
+  virtual void AttachPhantomSD();
 
   //====================================================================
   /// Sets the name of the distance map file
   void SetDistanceMapFilename(const G4String& name) { mDistanceMapFilename = name; }
   //====================================================================
 
-  //====================================================================
-  //====================================================================
-  //====================================================================
-private:
-  //====================================================================
-  //====================================================================
-  //====================================================================
 
   //====================================================================
-  /// its messenger  
+private:
+
+  //====================================================================
+  /// its messenger
   GateImageRegionalizedVolumeMessenger* pMessenger;
   //====================================================================
 
@@ -167,7 +163,7 @@ private:
   //====================================================================
 
   //====================================================================
-  // Data to compute efficiently Inside and DistanceToIn (SubVolumeSolid) 
+  // Data to compute efficiently Inside and DistanceToIn (SubVolumeSolid)
   /// Last point for which Inside has been computed
   G4ThreeVector mLastInsidePoint;
   /// Is mLastInsidePoint valid ?
@@ -182,12 +178,12 @@ private:
   /// Last direction for which DistanceToIn has been computed
   G4ThreeVector mLastDTIDirection;
   /// Is mLastDTIPoint valid ?
-  G4bool mLastDTIPointIsValid;  
+  G4bool mLastDTIPointIsValid;
 
-  /// Vector of "Insideness" for SubVolumes 
+  /// Vector of "Insideness" for SubVolumes
   std::vector<EInside> mInside;
   /// Vector of DistanceToIn for SubVolumes
-  std::vector<G4double> mDistanceToIn; 
+  std::vector<G4double> mDistanceToIn;
   //====================================================================
 
   //====================================================================

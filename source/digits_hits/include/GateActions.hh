@@ -1,18 +1,18 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 /*
   \class  GateRunAction, GateEventAction, GateTrackingAction, GateSteppingAction
   \author thibault.frisson@creatis.insa-lyon.fr
-          laurent.guigues@creatis.insa-lyon.fr
-          david.sarrut@creatis.insa-lyon.fr
+  laurent.guigues@creatis.insa-lyon.fr
+  david.sarrut@creatis.insa-lyon.fr
 */
 
 
@@ -34,9 +34,9 @@ See GATE/LICENSE.txt for further details
 class GateVVolume;
 
 enum TrackingMode {
-kUnknown, kBoth,  kTracker,
+  kUnknown, kBoth,  kTracker,
   kDetector
-  };
+};
 
 //-----------------------------------------------------------------------------
 /// \brief G4UserRunAction which redirects its callbacks to GateUserActions
@@ -46,18 +46,18 @@ public :
   GateRunAction(GateUserActions * cbm, GateRecorderBase* r);
   ~GateRunAction(){}
 
- //-----------------------------------------------------------------------------
- // Action classes Callbacks
+  //-----------------------------------------------------------------------------
+  // Action classes Callbacks
 
- void BeginOfRunAction(const G4Run* aRun);
- inline void EndOfRunAction(const G4Run* aRun);
+  void BeginOfRunAction(const G4Run* aRun);
+  inline void EndOfRunAction(const G4Run* aRun);
 
- inline virtual void SetFlagBasicOutput( G4bool val ) { flagBasicOutput = val;};
- inline G4bool GetFlagBasicOutput () { return flagBasicOutput; };
+  inline virtual void SetFlagBasicOutput( G4bool val ) { flagBasicOutput = val;};
+  inline G4bool GetFlagBasicOutput () { return flagBasicOutput; };
 
- virtual inline void SetRunAction ( GateRunAction* val ) { prunAction = val; };
- static inline GateRunAction* GetRunAction() { return prunAction; };
-//-----------------------------------------------------------------------------
+  virtual inline void SetRunAction ( GateRunAction* val ) { prunAction = val; };
+  static inline GateRunAction* GetRunAction() { return prunAction; };
+  //-----------------------------------------------------------------------------
 
 private:
   GateRunAction() {}
@@ -105,18 +105,17 @@ class GateTrackingAction :  public G4UserTrackingAction
 {
 public :
   GateTrackingAction(GateUserActions * cbm, GateRecorderBase* r);
-//    : pCallbackMan(cbm){}
+  //    : pCallbackMan(cbm){}
   ~GateTrackingAction() {}
   //-----------------------------------------------------------------------------
   // Action classes Callbacks
-   void PreUserTrackingAction(const G4Track* a) ;
-   void PostUserTrackingAction(const G4Track* a);
-   void ShowG4TrackInfos( G4String,G4Track* );
+  void PreUserTrackingAction(const G4Track* a) ;
+  void PostUserTrackingAction(const G4Track* a);
+  void ShowG4TrackInfos( G4String,G4Track* );
   //-----------------------------------------------------------------------------
 private:
   GateTrackingAction() {}
   GateUserActions* pCallbackMan;
-  GateRecorderBase* recorder;
 
   /* PY Descourt 08/09/2009 */
   std::vector<G4Track*> dummy_track_vector;
@@ -140,26 +139,26 @@ public :
   virtual void SetDrawTrajectoryLevel(G4int value) { m_drawTrjLevel = value; };
   virtual void SetVerboseLevel(G4int value)        { m_verboseLevel = value; };
 
-    inline  std::vector<GateTrack*> *GetPPTrackVector() { return PPTrackVector;};
+  inline  std::vector<GateTrack*> *GetPPTrackVector() { return PPTrackVector;};
 
-    void StopOnBoundary(G4int aI);
-    void StopAndKill(G4String aString);
-    void SetMode( TrackingMode aMode);
-    TrackingMode GetMode();
-    void SetTxtOut(G4String aString);
-    G4int GetTxtOn() { return TxtOn;};
-    void SetEnergyThreshold(G4double);
-    void SetFiles(G4int aN ) { m_Nfiles = aN; };
-    G4int GetNfiles() { return m_Nfiles;};
-    G4int GetcurrentN() { return m_currentN; };
-    G4int SeekNewFile( G4bool increase );
-    void SetRSFiles(G4int aN ) { m_NfilesRS = aN; };
-    G4int GetNRSfiles() { return m_NfilesRS;};
-    G4int GetcurrentNRS() { return m_currentNRS; };
-    G4int SeekNewRecStepFile( G4bool increase );
-    G4int NoMoreRecStepData() { return ( m_currentNRS == m_NfilesRS - 1 ); };
-    G4int NoMoreTracksData()  { return ( m_currentN == m_Nfiles - 1 ); };
-    void ShowG4TrackInfos( G4String  outF, G4Track* aTrack);
+  void StopOnBoundary(G4int aI);
+  void StopAndKill(G4String aString);
+  void SetMode( TrackingMode aMode);
+  TrackingMode GetMode();
+  void SetTxtOut(G4String aString);
+  G4int GetTxtOn() { return TxtOn;};
+  void SetEnergyThreshold(G4double);
+  void SetFiles(G4int aN ) { m_Nfiles = aN; };
+  G4int GetNfiles() { return m_Nfiles;};
+  G4int GetcurrentN() { return m_currentN; };
+  G4int SeekNewFile( G4bool increase );
+  void SetRSFiles(G4int aN ) { m_NfilesRS = aN; };
+  G4int GetNRSfiles() { return m_NfilesRS;};
+  G4int GetcurrentNRS() { return m_currentNRS; };
+  G4int SeekNewRecStepFile( G4bool increase );
+  G4int NoMoreRecStepData() { return ( m_currentNRS == m_NfilesRS - 1 ); };
+  G4int NoMoreTracksData()  { return ( m_currentN == m_Nfiles - 1 ); };
+  void ShowG4TrackInfos( G4String  outF, G4Track* aTrack);
 
   //-----------------------------------------------------------------------------
 private:
@@ -171,27 +170,27 @@ private:
 
 protected :
 
-////// PY Descourt 08/09/2009 //
-//
-    GateSteppingActionMessenger* m_steppingMessenger;
-    std::vector<GateTrack*> *PPTrackVector;
-    TrackingMode TheMode;
-    G4int Boundary; // if set to 1 stop track on Phantom Boundary
-    G4int fKeepOnlyP;
-    G4int fKeepOnlyPhotons;
-    G4int fKeepOnlyElectrons;
-    G4TrackStatus fStpAKill;
-    G4int TxtOn;
-    G4int m_Nfiles; // in detector mode sets the number of Tracks Root Files
-    G4int m_currentN; // current file opened
-    G4int m_NfilesRS; // in detector mode sets the number of phantom hits  Root Files
-    G4int m_currentNRS; // current phantom hits file opened
-    G4String m_StartingVolName; // In TRACKER MODE ONLY : this is the volume where the particle is created
-    G4bool fKillNextIsSet;                      //  In TRACKER MODE ONLY : a flag to be sure to kill the particle JUST after the boundary ( Boundary == 0 case )
-    G4bool fStartVolumeIsPhantomSD; // is the outgoing particle was created in a Phantom Type Sensitive Detector ?
-    G4double m_energyThreshold;
-//
-//////
+  ////// PY Descourt 08/09/2009 //
+  //
+  GateSteppingActionMessenger* m_steppingMessenger;
+  std::vector<GateTrack*> *PPTrackVector;
+  TrackingMode TheMode;
+  G4int Boundary; // if set to 1 stop track on Phantom Boundary
+  G4int fKeepOnlyP;
+  G4int fKeepOnlyPhotons;
+  G4int fKeepOnlyElectrons;
+  G4TrackStatus fStpAKill;
+  G4int TxtOn;
+  G4int m_Nfiles; // in detector mode sets the number of Tracks Root Files
+  G4int m_currentN; // current file opened
+  G4int m_NfilesRS; // in detector mode sets the number of phantom hits  Root Files
+  G4int m_currentNRS; // current phantom hits file opened
+  G4String m_StartingVolName; // In TRACKER MODE ONLY : this is the volume where the particle is created
+  G4bool fKillNextIsSet;                      //  In TRACKER MODE ONLY : a flag to be sure to kill the particle JUST after the boundary ( Boundary == 0 case )
+  G4bool fStartVolumeIsPhantomSD; // is the outgoing particle was created in a Phantom Type Sensitive Detector ?
+  G4double m_energyThreshold;
+  //
+  //////
 };
 //-----------------------------------------------------------------------------
 
