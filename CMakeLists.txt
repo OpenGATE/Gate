@@ -142,6 +142,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/source/physics/include
   ${PROJECT_SOURCE_DIR}/source/digits_hits/include
   ${PROJECT_SOURCE_DIR}/source/general/include
+  ${PROJECT_SOURCE_DIR}/source/clhep/include
   ${PROJECT_SOURCE_DIR}/source/itk-mhd/
   ${PROJECT_SOURCE_DIR}/source/itk-mhd/itkzlib
   ${PROJECT_SOURCE_DIR}/source/itk-mhd/MetaIO
@@ -155,6 +156,9 @@ FILE(GLOB sources
   ${PROJECT_SOURCE_DIR}/source/digits_hits/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/physics/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/general/src/*.cc
+  ${PROJECT_SOURCE_DIR}/source/clhep/src/*.cc
+  ${PROJECT_SOURCE_DIR}/source/clhep/src/CLHEP/Matrix/*.cc
+  ${PROJECT_SOURCE_DIR}/source/clhep/src/CLHEP/RandomObjects/*.cc
   ${PROJECT_SOURCE_DIR}/source/gpu/src/GateGPUManager.cu)
 
 FILE(GLOB headers
@@ -163,6 +167,7 @@ FILE(GLOB headers
   ${PROJECT_SOURCE_DIR}/source/physics/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/digits_hits/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/general/include/*.hh
+  ${PROJECT_SOURCE_DIR}/source/clhep/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/gpu/include/*.hh)
 
 #=========================================================
@@ -197,4 +202,11 @@ IF(GATE_DOWNLOAD_EXAMPLES_DATA)
   ADD_SUBDIRECTORY(examples)
   ExternalData_add_target(GateExampleData)
 ENDIF(GATE_DOWNLOAD_EXAMPLES_DATA)
+#=========================================================
+
+
+#=========================================================
+# We remove the warning option "shadow", because there are tons of
+# such warning related to clhep/g4 system of units.
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
 #=========================================================
