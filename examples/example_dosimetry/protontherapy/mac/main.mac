@@ -38,8 +38,8 @@
 /gate/world/daughters/name                      patient
 /gate/world/daughters/insert                    ImageNestedParametrisedVolume
 /gate/geometry/setMaterialDatabase              data/patient-HUmaterials.db
-/gate/patient/geometry/SetHUToMaterialFile      data/patient-HU2mat.txt
-/gate/patient/geometry/SetImage                 data/patient-2mm.mhd
+/gate/patient/geometry/setHUToMaterialFile      data/patient-HU2mat.txt
+/gate/patient/geometry/setImage                 data/patient-2mm.mhd
 
 # optional : dump used image
 #/gate/patient/geometry/buildAndDumpLabeledImage  output/patient-labeled.mhd
@@ -54,12 +54,7 @@
 # PHYSICS
 #=====================================================
 
-/gate/geometry/setIonisationPotential Water 75 eV
-/gate/geometry/setIonisationPotential Air 85.7 eV
-
-/control/execute mac/physicslist_HAD_std_6_2_2.mac
-#/control/execute mac/physicslist_EM_std.mac
-#/control/execute mac/physicslist_HAD_std.mac
+/gate/physics/addPhysicsList QGSP_BERT_EMV
 
 /gate/physics/Gamma/SetCutInRegion      world 10 mm
 /gate/physics/Electron/SetCutInRegion   world 10 mm

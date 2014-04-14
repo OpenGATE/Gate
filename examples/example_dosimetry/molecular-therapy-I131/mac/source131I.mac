@@ -13,7 +13,7 @@
 /gate/source/betaminus/interfileReader/linearTranslator/setScale 1. Bq
 /gate/source/betaminus/interfileReader/readFile data/PET_64_64_125_16uint.iff
 
-/gate/source/betaminus/setPosition      -12.8 -12.8 -23.125  mm $voxel source file not located at the center of the world by default. shifted by half size. See user guide 
+/gate/source/betaminus/setPosition      -12.8 -12.8 -23.125  mm $voxel source file not located at the center of the world by default. shifted by half size. See user guide
 
 
 /gate/source/betaminus/gps/particle e-
@@ -138,7 +138,7 @@
 
 
 #=====================================================
-# Monoergetic electrons 
+# Monoergetic electrons
 #=====================================================
 
 
@@ -149,7 +149,7 @@
 /gate/source/mono_el/interfileReader/linearTranslator/setScale 1. Bq
 /gate/source/mono_el/interfileReader/readFile data/PET_64_64_125_16uint.iff
 
-/gate/source/mono_el/setPosition         -12.8 -12.8 -23.125  mm $voxel source file not located at the center of the world by default. shifted by half size. See user guide 
+/gate/source/mono_el/setPosition         -12.8 -12.8 -23.125  mm $voxel source file not located at the center of the world by default. shifted by half size. See user guide
 
 /gate/source/mono_el/gps/particle e-
 /gate/source/mono_el/gps/angtype iso
@@ -525,7 +525,7 @@
 
 
 #=====================================================
-# Monoergetic photons 
+# Monoergetic photons
 #=====================================================
 
 
@@ -536,7 +536,7 @@
 /gate/source/mono_ph/interfileReader/linearTranslator/setScale 1. Bq
 /gate/source/mono_ph/interfileReader/readFile data/PET_64_64_125_16uint.iff
 
-/gate/source/mono_ph/setPosition         -12.8 -12.8 -23.125   mm $voxel source file not located at the center of the world by default. shifted by half size. See user guide 
+/gate/source/mono_ph/setPosition         -12.8 -12.8 -23.125   mm $voxel source file not located at the center of the world by default. shifted by half size. See user guide
 
 /gate/source/mono_ph/gps/particle gamma
 /gate/source/mono_ph/gps/angtype iso
@@ -762,5 +762,3 @@
 
 
 /gate/source/list
-
-

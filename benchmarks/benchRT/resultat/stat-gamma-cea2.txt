@@ -1,6 +1,0 @@
-# NumberOfRun    = 1
-# NumberOfEvents = 2000000
-# NumberOfTracks = 34166916
-# NumberOfSteps  = 127248992
-# NumberOfGeometricalSteps  = 8164726
-# NumberOfPhysicalSteps     = 119084266

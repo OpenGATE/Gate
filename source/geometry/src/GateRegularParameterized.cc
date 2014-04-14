@@ -37,7 +37,7 @@ GateRegularParameterized::GateRegularParameterized(const  G4String& name,
 {
 
   verboseLevel=0; //! Default : set to quiet
-  skipEqualMaterials = 1; //! Default: for speed up
+  skipEqualMaterials = 0; //! Default: because G4 bug for speed up set at 1
   GetCreator()->GetTheChildList()->AddChild(m_voxelInserter);
 }
 
@@ -52,7 +52,7 @@ GateBox(name,"Vacuum",1,1,1,false,false),
                                voxelSize(G4ThreeVector(1,1,1))
 {
   verboseLevel=0; //! Default : set to quiet
-  skipEqualMaterials = 1; //! Default: for speed up
+  skipEqualMaterials = 0; //! Default: because G4 bug for speed up set at 1
   GetCreator()->GetTheChildList()->AddChild(m_voxelInserter);
 }
 
