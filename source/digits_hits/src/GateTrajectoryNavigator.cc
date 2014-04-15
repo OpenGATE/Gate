@@ -18,7 +18,7 @@
 
 #include "GateActions.hh"
 
-GateTrajectoryNavigator::GateTrajectoryNavigator()
+GateTrajectoryNavigator::GateTrajectoryNavigator() : m_trajectoryContainer(NULL), m_positronTrackID(0), m_positronTrj(NULL), m_ionID(0), nVerboseLevel(0)
 {
 }
 
