@@ -27,6 +27,8 @@ GateSourceVoxelInterfileReader::GateSourceVoxelInterfileReader(GateVSource* sour
   m_name = G4String("interfileReader");
 
   m_messenger = new GateSourceVoxelInterfileReaderMessenger(this);
+  
+  m_fileName  = G4String("");
 
   m_dataFileName = G4String("");
   m_numPlanes=0;
@@ -49,11 +51,13 @@ void GateSourceVoxelInterfileReader::ReadFile(G4String fileName)
     G4cout << "GateSourceVoxelImageReader::ReadFile: ERROR : insert a translator first" << G4endl;
     return;
   }
-G4cout << "GateSourceVoxelImageReader::ReadFile : fileName: " << fileName << G4endl;
+G4cout << "GateSourceVoxelImageReader::ReadFile : fileName: " << m_fileName << G4endl;
+  
+  m_fileName = fileName;
 
-  FILE* fp=fopen(fileName.c_str(),"r");
+  FILE* fp=fopen(m_fileName.c_str(),"r");
   if (!fp) {
-    G4cerr << G4endl << "Error: Could not open header file '" << fileName << "'!" << G4endl;
+    G4cerr << G4endl << "Error: Could not open header file '" << m_fileName << "'!" << G4endl;
     return;
   }
 
@@ -64,15 +68,16 @@ G4cout << "GateSourceVoxelImageReader::ReadFile : fileName: " << fileName << G4e
   fclose(fp);
 
   // extract folder for fileName if any
-  size_t found;
-  found=fileName.find_last_of("/\\");
-  G4String folder = fileName.substr(0,found);
-  m_dataFileName = folder+"/"+m_dataFileName;
-
+  //size_t found;
+  //found=fileName.find_last_of("/\\");
+  //G4String folder = fileName.substr(0,found);
+  //m_dataFileName = folder+"/"+m_dataFileName;
+  m_dataFileName=fileName.replace(fileName.length()-3,3,"i33");
+    
   for (G4int i=0; i<2; i++)
     m_matrixSize[i] = m_dim[i] * m_pixelSize[i];
 
-  G4cout << " Header read from       '" << fileName << "'" << G4endl;
+  G4cout << " Header read from       '" << m_fileName << "'" << G4endl;
   G4cout << " Data file name         '" << m_dataFileName << "'" << G4endl;
   G4cout << " Nb of planes:           " << m_numPlanes << G4endl;
   G4cout << " Nb of pixels per plane: " << m_dim[0] << " " << m_dim[1] << G4endl;
