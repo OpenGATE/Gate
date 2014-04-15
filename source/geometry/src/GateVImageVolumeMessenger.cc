@@ -36,6 +36,11 @@ GateVImageVolumeMessenger::GateVImageVolumeMessenger(GateVImageVolume* volume)
   pImageFileNameCmd = new G4UIcmdWithAString(n,this);
   pImageFileNameCmd->SetGuidance("Sets the name of the image file");
 
+  n = dir +"/SetImage";
+  pImageFileNameCmdDeprecated = 0;
+  pImageFileNameCmdDeprecated = new G4UIcmdWithAString(n,this);
+  pImageFileNameCmdDeprecated->SetGuidance("(DEPRECATED) Sets the name of the image file");
+
   // Disable this macro for the moment
   n = dir +"/setLabelToMaterialFile";
   pLabelToMaterialFileNameCmd = new G4UIcmdWithAString(n,this);
@@ -45,6 +50,11 @@ GateVImageVolumeMessenger::GateVImageVolumeMessenger(GateVImageVolume* volume)
   pHUToMaterialFileNameCmd = 0;
   pHUToMaterialFileNameCmd = new G4UIcmdWithAString(n,this);
   pHUToMaterialFileNameCmd->SetGuidance("Sets the name of the file containing the HU intervals to material correspondence");
+
+  n = dir +"/SetHUToMaterialFile";
+  pHUToMaterialFileNameCmdDeprecated = 0;
+  pHUToMaterialFileNameCmdDeprecated = new G4UIcmdWithAString(n,this);
+  pHUToMaterialFileNameCmdDeprecated->SetGuidance("Sets the name of the file containing the HU intervals to material correspondence");
 
   n = dir +"/setRangeToMaterialFile";
   pRangeMaterialFileNameCmd = 0;
@@ -84,6 +94,7 @@ GateVImageVolumeMessenger::~GateVImageVolumeMessenger()
   GateMessage("Volume",5,"~GateVImageVolumeMessenger("<<G4endl);
 
   delete pImageFileNameCmd;
+  delete pImageFileNameCmdDeprecated;
   delete pLabelToMaterialFileNameCmd;
   delete pHUToMaterialFileNameCmd;
   delete pRangeMaterialFileNameCmd;
@@ -103,14 +114,16 @@ void GateVImageVolumeMessenger::SetNewValue(G4UIcommand* command,
 	      << command->GetCommandPath()
 	      << " newValue=" << newValue << G4endl);
 
-  if (command == pImageFileNameCmd) {
+  if (command == pImageFileNameCmd || command == pImageFileNameCmdDeprecated) {
     pVImageVolume->SetImageFilename(newValue);
+    if (command == pImageFileNameCmdDeprecated) G4cout << "### WARNING ### SetImage is obsolete and will be removed from the next release. Please use setImage" << G4endl;
   }
   else if (command == pLabelToMaterialFileNameCmd) {
     pVImageVolume->SetLabelToMaterialTableFilename(newValue);
   }
-  else if (command == pHUToMaterialFileNameCmd) {
+  else if (command == pHUToMaterialFileNameCmd || command == pHUToMaterialFileNameCmdDeprecated) {
     pVImageVolume->SetHUToMaterialTableFilename(newValue);
+    if (command == pHUToMaterialFileNameCmdDeprecated) G4cout << "### WARNING ### SetHUToMaterialFile is obsolete and will be removed from the next release. Please use setHUToMaterialFile" << G4endl;
   }
   else if (command == pRangeMaterialFileNameCmd) {
     pVImageVolume->SetRangeMaterialTableFilename(newValue);
