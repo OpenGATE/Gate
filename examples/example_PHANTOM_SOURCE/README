@@ -36,7 +36,7 @@ Some GATE Macro examples about sources and phantoms :
 
 "Voxelized_Phantom_Source/"
 
-Complete simulation description about How To Use the voxelized approach for imaging applications.
+Complete simulation description about How To Use the new voxelized approach for imaging applications. In GATE v7.0, this new approach is common for both imaging and RT applications.
 Users need to execute the mainMacro.mac file to start the complete example.
 
 The list of macro files which are involved in this example is the following:

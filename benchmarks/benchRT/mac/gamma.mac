@@ -5,7 +5,7 @@
 # GEOMETRY
 #=====================================================
 
-/gate/geometry/setMaterialDatabase GateMaterials.db
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
 
 # World
 /gate/world/geometry/setXLength 5 m
@@ -14,55 +14,41 @@
 /gate/world/setMaterial Air
 
 
-
 # Global Box
-/gate/world/daughters/name             mainbox1
-/gate/world/daughters/insert           box
-/gate/mainbox1/geometry/setXLength 40 cm
-/gate/mainbox1/geometry/setYLength 40 cm
-/gate/mainbox1/geometry/setZLength 40 cm
-/gate/mainbox1/placement/setTranslation 0.0 0.0 25 cm
-/gate/mainbox1/setMaterial Water
-/gate/mainbox1/vis/setVisible 1
-/gate/mainbox1/vis/setColor blue
-
-
-/gate/geometry/setIonisationPotential Water 75 eV
-/gate/geometry/setIonisationPotential Air 85.7 eV
-
+/gate/world/daughters/name              mainbox2
+/gate/world/daughters/insert            box
+/gate/mainbox2/geometry/setXLength      40 cm
+/gate/mainbox2/geometry/setYLength      40 cm
+/gate/mainbox2/geometry/setZLength      40 cm
+/gate/mainbox2/placement/setTranslation 0 0 25 cm
+/gate/mainbox2/setMaterial Water
+/gate/mainbox2/vis/setVisible 1
+/gate/mainbox2/vis/setColor blue
 
 #=====================================================
 # PHYSICS
 #=====================================================
 
-/gate/physics/addPhysicsList QGSP_BERT_HP_EMY
-#/control/execute physic.mac
+/gate/physics/addPhysicsList emstandard_opt3
 
-/gate/physics/Gamma/SetCutInRegion      world 1 mm
-/gate/physics/Electron/SetCutInRegion   world 1 mm
-/gate/physics/Positron/SetCutInRegion   world 1 mm
+/gate/physics/Gamma/SetCutInRegion      world 0.1 mm
+/gate/physics/Electron/SetCutInRegion   world 0.1 mm
+/gate/physics/Positron/SetCutInRegion   world 0.1 mm
 
-/gate/physics/Gamma/SetCutInRegion      mainbox1 0.1 mm
-/gate/physics/Electron/SetCutInRegion   mainbox1 0.1 mm
-/gate/physics/Positron/SetCutInRegion   mainbox1 0.1 mm
-
-/gate/physics/SetMaxStepSizeInRegion world 1 mm
-/gate/physics/ActivateStepLimiter proton
-/gate/physics/ActivateStepLimiter deuteron
-/gate/physics/ActivateStepLimiter triton
-/gate/physics/ActivateStepLimiter alpha
-/gate/physics/ActivateStepLimiter GenericIon
+/gate/physics/Gamma/SetCutInRegion      mainbox2 0.1 mm
+/gate/physics/Electron/SetCutInRegion   mainbox2 0.1 mm
+/gate/physics/Positron/SetCutInRegion   mainbox2 0.1 mm
 
 /gate/physics/displayCuts
 
 
 #=====================================================
-# MATRIX FOR DOSE MAP OUTPUT
+# DETECTORS
 #=====================================================
 
 /gate/actor/addActor                               DoseActor  doseDistribution
-/gate/actor/doseDistribution/save                  output/Config-proton.hdr
-/gate/actor/doseDistribution/attachTo    	   mainbox1
+/gate/actor/doseDistribution/save                  output/Config-gamma.hdr
+/gate/actor/doseDistribution/attachTo    	   mainbox2
 /gate/actor/doseDistribution/stepHitType           random
 /gate/actor/doseDistribution/setPosition           0 0 0 cm
 /gate/actor/doseDistribution/setResolution         1 1 400
@@ -74,7 +60,7 @@
 /gate/actor/doseDistribution/enableNumberOfHits    false
 
 /gate/actor/addActor               SimulationStatisticActor stat
-/gate/actor/stat/save              output/stat-proton.txt
+/gate/actor/stat/save              output/stat-gamma.txt
 /gate/actor/stat/saveEveryNSeconds 60
 
 
@@ -83,6 +69,7 @@
 #=====================================================
 
 /gate/run/initialize
+
 # Enable the following lines to display available and enabled processes
 # /gate/physics/processList Available
 # /gate/physics/processList Enabled
@@ -92,9 +79,10 @@
 # BEAMS
 #=====================================================
 
+
 /gate/source/addSource mybeam gps
 
-/gate/source/mybeam/gps/particle proton
+/gate/source/mybeam/gps/particle gamma
 /gate/source/mybeam/gps/pos/type Beam
 /gate/source/mybeam/gps/pos/rot1 0 1 0
 /gate/source/mybeam/gps/pos/rot2 1 0 0
@@ -102,17 +90,17 @@
 /gate/source/mybeam/gps/pos/centre 0 0 0 mm
 /gate/source/mybeam/gps/pos/sigma_x 3 mm
 /gate/source/mybeam/gps/pos/sigma_y 3 mm
-/gate/source/mybeam/gps/ene/mono 150 MeV
+/gate/source/mybeam/gps/ene/mono 18 MeV
 /gate/source/mybeam/gps/ene/type Gauss
-/gate/source/mybeam/gps/ene/sigma 2.0 MeV
+/gate/source/mybeam/gps/ene/sigma 1.0 MeV
 /gate/source/mybeam/gps/direction 0 0 1
-
 
 #=====================================================
 # VISUALISATION
 #=====================================================
 
-#/control/execute visu.mac
+
+#/control/execute mac/visu.mac
 
 #=====================================================
 # START BEAMS
@@ -126,7 +114,7 @@
 # /gate/source/verbose 0
 
 /gate/application/noGlobalOutput
-/gate/application/setTotalNumberOfPrimaries 350000
+/gate/application/setTotalNumberOfPrimaries 200000
 /gate/application/start
 
 exit

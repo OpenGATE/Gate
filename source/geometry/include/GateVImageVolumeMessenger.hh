@@ -44,8 +44,10 @@ private:
   GateVImageVolume * pVImageVolume; 
 
   G4UIcmdWithAString        * pImageFileNameCmd;
+  G4UIcmdWithAString        * pImageFileNameCmdDeprecated;
   G4UIcmdWithAString        * pLabelToMaterialFileNameCmd;
   G4UIcmdWithAString        * pHUToMaterialFileNameCmd;
+  G4UIcmdWithAString        * pHUToMaterialFileNameCmdDeprecated;
   G4UIcmdWithAString        * pRangeMaterialFileNameCmd;
   G4UIcmdWith3VectorAndUnit * pIsoCenterCmd;
   G4UIcmdWith3VectorAndUnit * pSetOriginCmd;
