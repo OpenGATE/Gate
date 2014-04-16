@@ -3,17 +3,14 @@
 
 
 /gate/world/daughters/name hof_brain
-/gate/world/daughters/insert                             regularMatrix
-#/gate/world/daughters/insert                            fictitiousVoxelMap
-/gate/hof_brain/geometry/insertReader interfile
-/gate/hof_brain/interfileReader/insertTranslator range
-/gate/hof_brain/interfileReader/rangeTranslator/readTable range_atten_brain.dat
-/gate/hof_brain/interfileReader/rangeTranslator/describe 1
-/gate/hof_brain/interfileReader/readFile brain_phantom.h33
+/gate/world/daughters/insert ImageRegularParametrisedVolume
+/gate/hof_brain/geometry/SetImage brain_phantom.h33
+/gate/hof_brain/geometry/setRangeToMaterialFile range_atten_brain.dat
+
 /gate/hof_brain/placement/setTranslation  0. 0. 0. mm
 /gate/hof_brain/placement/setRotationAxis 1 0 0
 /gate/hof_brain/placement/setRotationAngle 0 deg
-/gate/hof_brain/attachVoxelPhantomSD
+/gate/hof_brain/attachPhantomSD
 
 #/gate/phantom/setSkipEqualMaterials                      0
 #/gate/phantom/setFictitiousEnergy                       111. keV
