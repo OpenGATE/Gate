@@ -46,6 +46,7 @@ Programmers:
    Claude COMTAT (CEA Orsay)
    Sebastien JAN (CEA Orsay)
    Vesna Cuplov (CEA Orsay)
+   Imma Martinez (CEA Orsay)
    Steven STAELENS (ELIS)
    Corinne GROISELLE (UMASS)
    David GUEZ (CEA-DAPNIA)
@@ -60,6 +61,7 @@ Programmers:
    David Sarrut (CNRS Creatis)
    Thibault Frisson (CNRS Creatis)
    Pierre Gueth (CNRS Creatis)
+   Albertine Dubois (IMNC Orsay)
 
 Technical Coordination:
 ----------------------
