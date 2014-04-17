@@ -86,7 +86,6 @@ IF(GATE_USE_SYSTEM_CLHEP)
   FIND_PACKAGE(CLHEP REQUIRED)
   INCLUDE_DIRECTORIES(${CLHEP_INCLUDE_DIR})
   SET(LINK_DIRECTORIES ${CLHEP_LIBRARIES})
-  MESSAGE("Your current Geant4 version is ${Geant4_VERSION}")
   MESSAGE("Your current CLHEP version is ${CLHEP_VERSION}")
   MESSAGE("Please refer to http://geant4.web.cern.ch/geant4/support/ReleaseNotes4.${G4VERSION_MAJOR}.${G4VERSION_MINOR}.html to verify that your CLHEP version is supported by Geant4.")
 
@@ -210,3 +209,7 @@ ENDIF(GATE_DOWNLOAD_EXAMPLES_DATA)
 # such warning related to clhep/g4 system of units.
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
 #=========================================================
+
+#=========================================================
+# Display Geant4 version
+MESSAGE("Your current Geant4 version is ${Geant4_VERSION}")
