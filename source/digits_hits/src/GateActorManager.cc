@@ -67,9 +67,12 @@ bool GateActorManager::GetResetAfterSaving() const { return resetAfterSaving; }
 void GateActorManager::AddActor(G4String actorType, G4String actorName, int depth)
 {
   GateDebugMessageInc("Actor",5,"Actor Manager -- AddActor(): "<<actorName<<" -- begin"<<G4endl);
-  if(GateActorManager::theListOfActorPrototypes[actorType])
+  if(GateActorManager::theListOfActorPrototypes[actorType]) {
     theListOfActors.push_back(GateActorManager::theListOfActorPrototypes[actorType](actorName,depth));
-  else GateWarning("Actor type: "<<actorType<<" does not exist!");
+  }
+  else {
+    GateError("Actor type: " << actorType << " does not exist. Abort.");
+  }
   GateDebugMessageDec("Actor",5,"Actor Manager -- AddActor(): "<<actorName<<" -- end\n"<<G4endl);
 }
 //-----------------------------------------------------------------------------
