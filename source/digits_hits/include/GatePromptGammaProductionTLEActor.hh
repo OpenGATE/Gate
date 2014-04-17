@@ -38,6 +38,6 @@ protected:
 };
 //-----------------------------------------------------------------------------
 
-MAKE_AUTO_CREATOR_ACTOR(GpTLEActor,GatePromptGammaProductionTLEActor)
+MAKE_AUTO_CREATOR_ACTOR(PromptGammaProductionTLEActor, GatePromptGammaProductionTLEActor)
 
 #endif // end GATEPROMPTGAMMAPRODUCTIONTLEACTOR
