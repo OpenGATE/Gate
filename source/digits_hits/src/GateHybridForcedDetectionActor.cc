@@ -380,31 +380,31 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
 {
   // Compute sum of variance per process
   std::map<ProcessType, G4double> varPerProcess;
-  G4double maxVarPerProcess = 0.;
-  double invN = 1./mNumberOfEventsInRun;
-  for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
-    ProcessType p = ProcessType(i);
-    varPerProcess[p] = 0.;
-    itk::ImageRegionIterator<OutputImageType> itp(mProcessImage[p],
-                                                  mProcessImage[p]->GetBufferedRegion());
-    itk::ImageRegionIterator<OutputImageType> its(mSquaredImage[p],
-                                                  mSquaredImage[p]->GetBufferedRegion());
-    for(; !itp.IsAtEnd(); ++itp, ++its) {
-      varPerProcess[p] += its.Get()*invN - pow(itp.Get()*invN, 2.);
-    }
-    maxVarPerProcess = std::max(maxVarPerProcess, varPerProcess[p]);
-  }
-  // Normalize by max
-  for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
-    ProcessType p = ProcessType(i);
-    varPerProcess[p] /= maxVarPerProcess;
-    std::cout << "Process " << mMapTypeWithProcessName[p]
-              << " probability " << varPerProcess[p]
-              << std::endl;
-  }
-
-  // Compute survival probability image for Russian Roulette
   if(mSecondPassPrefix != "") {
+    G4double maxVarPerProcess = 0.;
+    double invN = 1./mNumberOfEventsInRun;
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+      ProcessType p = ProcessType(i);
+      varPerProcess[p] = 0.;
+      itk::ImageRegionIterator<OutputImageType> itp(mProcessImage[p],
+                                                    mProcessImage[p]->GetBufferedRegion());
+      itk::ImageRegionIterator<OutputImageType> its(mSquaredImage[p],
+                                                    mSquaredImage[p]->GetBufferedRegion());
+      for(; !itp.IsAtEnd(); ++itp, ++its) {
+        varPerProcess[p] += its.Get()*invN - pow(itp.Get()*invN, 2.);
+      }
+      maxVarPerProcess = std::max(maxVarPerProcess, varPerProcess[p]);
+    }
+    // Normalize by max
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+      ProcessType p = ProcessType(i);
+      varPerProcess[p] /= maxVarPerProcess;
+      std::cout << "Process " << mMapTypeWithProcessName[p]
+                << " probability " << varPerProcess[p]
+                << std::endl;
+    }
+
+    // Compute survival probability image for Russian Roulette
     // Max of russian roulette image
     itk::ImageRegionIterator<OutputImageType> iti(mRussianRouletteImage,
                                                   mRussianRouletteImage->GetBufferedRegion());
