@@ -38,15 +38,15 @@ GateGPUCollimIO_Input* GateGPUCollimIO_Input_new()
   input->LinRepVecX = 0.0;
   input->LinRepVecY = 0.0;
   input->LinRepVecZ = 0.0;
-  
+
   //input->collim_material_data.clear();
   /*input->phantom_material_data.clear();
-  input->phantom_size_x = -1;
-  input->phantom_size_y = -1;
-  input->phantom_size_z = -1;
-  input->phantom_spacing_x = -1*mm/mm;
-  input->phantom_spacing_y = -1*mm/mm;
-  input->phantom_spacing_z = -1*mm/mm;*/
+    input->phantom_size_x = -1;
+    input->phantom_size_y = -1;
+    input->phantom_size_z = -1;
+    input->phantom_spacing_x = -1*mm/mm;
+    input->phantom_spacing_y = -1*mm/mm;
+    input->phantom_spacing_z = -1*mm/mm;*/
   input->seed = 0;
   input->firstInitialID = 0;
   input->cudaDeviceID = 0;
@@ -70,12 +70,12 @@ void GateGPUCollimIO_Input_delete(GateGPUCollimIO_Input * input)
 
 
 //-----------------------------------------------------------------------------
-void GateGPUCollimIO_Input_Init_Materials(GateGPUCollimIO_Input * input, 
-                                    std::vector<G4Material*> & m, 
-                                    G4String & name)
+void GateGPUCollimIO_Input_Init_Materials(GateGPUCollimIO_Input * input,
+                                          std::vector<G4Material*> & m,
+                                          G4String & name)
 {
   DD("GateGPUCollimIO_Input_Init_Materials");
-  
+
   // std::vector<G4Material*> m;
   // v->BuildLabelToG4MaterialVector(m);
   DD(m.size());
@@ -83,7 +83,7 @@ void GateGPUCollimIO_Input_Init_Materials(GateGPUCollimIO_Input * input,
   input->nb_materials = n;
 
   // Number of elements per material
-  // Index to access material mixture 
+  // Index to access material mixture
   input->mat_nb_elements = new unsigned short int[n];
   input->mat_index = new unsigned short int[n];
   int k=0;
@@ -115,7 +115,7 @@ void GateGPUCollimIO_Input_Init_Materials(GateGPUCollimIO_Input * input,
       //DD(input->mat_atom_num_dens[p]);
       p++;
     }
-  }  
+  }
   //DD(p);
 
   // Total number of atoms per volume (sum{mat_atom_num_dens_i})
@@ -164,7 +164,7 @@ void GateGPUCollimIO_Input_Init_Materials(GateGPUCollimIO_Input * input,
     //DD(input->electron_max_energy[i]);
     input->electron_mean_excitation_energy[i] = m[i]->GetIonisation()->GetMeanExcitationEnergy();
     //DD(input->electron_mean_excitation_energy[i]);
-    
+
     input->rad_length[i] = m[i]->GetRadlen();
     //DD(m[i]->GetRadlen());
 
@@ -175,42 +175,42 @@ void GateGPUCollimIO_Input_Init_Materials(GateGPUCollimIO_Input * input,
     input->fA[i] = m[i]->GetIonisation()->GetAdensity();
     input->fM[i] = m[i]->GetIonisation()->GetMdensity();
     DD(input->fX0[i]);
-      DD(input->fX1[i]);
-      DD(input->fD0[i]);
-      DD(input->fC[i]);
-      DD(input->fA[i]);
-      DD(input->fM[i]);
+    DD(input->fX1[i]);
+    DD(input->fD0[i]);
+    DD(input->fC[i]);
+    DD(input->fA[i]);
+    DD(input->fM[i]);
   }
-    
+
 }
 //-----------------------------------------------------------------------------
 
 
 //----------------------------------------------------------
 /*struct ActivityMaterialTuple
-{
+  {
   unsigned int index;
   float activity;
-};
-//----------------------------------------------------------
+  };
+  //----------------------------------------------------------
 
 
-//----------------------------------------------------------
-struct ActivityMaterialTupleStrictWeakOrdering
-{
+  //----------------------------------------------------------
+  struct ActivityMaterialTupleStrictWeakOrdering
+  {
   bool operator()(const ActivityMaterialTuple& a, const ActivityMaterialTuple& b)
   {
-    return a.activity < b.activity;
+  return a.activity < b.activity;
   }
-};
-typedef std::vector<ActivityMaterialTuple> ActivityMaterialTuplesVector;
-//----------------------------------------------------------
+  };
+  typedef std::vector<ActivityMaterialTuple> ActivityMaterialTuplesVector;
+  //----------------------------------------------------------
 
 
-//----------------------------------------------------------
-void GateGPUCollimIO_Input_parse_activities(const ActivityMap& activities, 
-                                      GateGPUCollimIO_Input * input)
-{
+  //----------------------------------------------------------
+  void GateGPUCollimIO_Input_parse_activities(const ActivityMap& activities,
+  GateGPUCollimIO_Input * input)
+  {
   DD("GateGPUCollimIO_Input_parse_activities");
   assert(input);
   assert(input->activity_data.empty());
@@ -223,48 +223,48 @@ void GateGPUCollimIO_Input_parse_activities(const ActivityMap& activities,
   ActivityMaterialTuplesVector tuples;
   double total_activity = 0;
   { // fill tuples structure
-    for (ActivityMap::const_iterator iter = activities.begin(); iter != activities.end(); iter++)
-      {
-        const int ii = iter->first[0];
-        const int jj = iter->first[1];
-        const int kk = iter->first[2];
+  for (ActivityMap::const_iterator iter = activities.begin(); iter != activities.end(); iter++)
+  {
+  const int ii = iter->first[0];
+  const int jj = iter->first[1];
+  const int kk = iter->first[2];
 
-        assert(ii >= 0);
-        assert(jj >= 0);
-        assert(kk >= 0);
-        assert(ii < input->phantom_size_x);
-        assert(jj < input->phantom_size_y);
-        assert(kk < input->phantom_size_z);
+  assert(ii >= 0);
+  assert(jj >= 0);
+  assert(kk >= 0);
+  assert(ii < input->phantom_size_x);
+  assert(jj < input->phantom_size_y);
+  assert(kk < input->phantom_size_z);
 
-        const int index = ii + jj*input->phantom_size_x + kk*input->phantom_size_y*input->phantom_size_x;
-    
-        assert(index >= 0);
-        assert(index < input->phantom_size_x*input->phantom_size_y*input->phantom_size_z);
+  const int index = ii + jj*input->phantom_size_x + kk*input->phantom_size_y*input->phantom_size_x;
 
-        ActivityMaterialTuple tuple;
-        tuple.index = index;
-        tuple.activity = iter->second;
-        tuples.push_back(tuple);
-        total_activity += tuple.activity; // in GBq - JB
-      }
+  assert(index >= 0);
+  assert(index < input->phantom_size_x*input->phantom_size_y*input->phantom_size_z);
+
+  ActivityMaterialTuple tuple;
+  tuple.index = index;
+  tuple.activity = iter->second;
+  tuples.push_back(tuple);
+  total_activity += tuple.activity; // in GBq - JB
+  }
   }
 
   input->tot_activity = total_activity;
 
   { // sort tuples by activities
-    std::sort(tuples.begin(),tuples.end(),ActivityMaterialTupleStrictWeakOrdering());
+  std::sort(tuples.begin(),tuples.end(),ActivityMaterialTupleStrictWeakOrdering());
   }
 
   { // allocate and fill gpu input structure
-    double cumulated_activity = 0;
-    for (ActivityMaterialTuplesVector::const_iterator iter = tuples.begin(); iter != tuples.end(); iter++)
-      {
-        cumulated_activity += iter->activity;
-        input->activity_data.push_back(cumulated_activity/total_activity);
-        input->activity_index.push_back(iter->index);
-      }
+  double cumulated_activity = 0;
+  for (ActivityMaterialTuplesVector::const_iterator iter = tuples.begin(); iter != tuples.end(); iter++)
+  {
+  cumulated_activity += iter->activity;
+  input->activity_data.push_back(cumulated_activity/total_activity);
+  input->activity_index.push_back(iter->index);
   }
-}*/
+  }
+  }*/
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -302,24 +302,24 @@ void GateGPUCollimIO_Particle_Print(const GateGPUCollimIO_Particle & p)
 //-----------------------------------------------------------------------------
 
 /*
-#ifndef GATE_USE_GPU
-void GateGPUCollimIOTrack(const GateGPUCollimIO_Input * input, 
-                    GateGPUCollimIO_Output * output)
-{
+  #ifndef GATE_USE_GPU
+  void GateGPUCollimIOTrack(const GateGPUCollimIO_Input * input,
+  GateGPUCollimIO_Output * output)
+  {
 
   // FAKE TRACKING
-  GateGPUCollimIO_Input::ParticlesList::const_iterator 
-    iter = input->particles.begin();
+  GateGPUCollimIO_Input::ParticlesList::const_iterator
+  iter = input->particles.begin();
   while (iter != input->particles.end()) {
-    GateGPUCollimIO_Particle p = *iter;
-    p.E = p.E/2.0;
-    // p.px += 30*cm;
-    // p.py += 30*cm;
-    // p.pz += 30*cm;
-    output->particles.push_back(p);
-    ++iter;
+  GateGPUCollimIO_Particle p = *iter;
+  p.E = p.E/2.0;
+  // p.px += 30*cm;
+  // p.py += 30*cm;
+  // p.pz += 30*cm;
+  output->particles.push_back(p);
+  ++iter;
   }
   //GateError("Gate is compiled without CUDA enabled. You cannot use 'GateGPUCollimIO'.");
-}
-#endif
+  }
+  #endif
 */

@@ -1,24 +1,23 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #include "GateBlurringWithIntrinsicResolutionMessenger.hh"
-
 #include "GateBlurringWithIntrinsicResolution.hh"
 
 #include "G4UIcmdWithAString.hh"
-#include  "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithADouble.hh"
 
 GateBlurringWithIntrinsicResolutionMessenger::GateBlurringWithIntrinsicResolutionMessenger(GateBlurringWithIntrinsicResolution* itsIntrinsic)
-    : GatePulseProcessorMessenger(itsIntrinsic)
+  : GatePulseProcessorMessenger(itsIntrinsic)
 {
   G4String guidance;
   G4String cmdName;

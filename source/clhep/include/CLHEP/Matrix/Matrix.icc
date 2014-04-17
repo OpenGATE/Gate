@@ -1,0 +1,104 @@
+// -*- C++ -*-
+// ---------------------------------------------------------------------------
+//
+// This file is a part of the CLHEP - a Class Library for High Energy Physics.
+// 
+// This software written by Nobu Katayama and Mike Smyth, Cornell University.
+//
+// This is the definitions of the inline member functions of the
+// HepMatrix class
+//
+#include <stdexcept>
+namespace CLHEP {
+
+inline HepMatrix::HepMatrix()
+  : m(0), nrow(0), ncol(0), size_(0) {}
+
+inline HepMatrix::HepMatrix_row HepMatrix::operator[] (int r)
+#ifdef HEP_GNU_OPTIMIZED_RETURN
+  return b(*this,r);
+{
+#else
+{
+  HepMatrix_row b(*this,r);
+#endif
+  return b;
+}
+
+inline const HepMatrix::HepMatrix_row_const HepMatrix::operator[] (int r) const
+#ifdef HEP_GNU_OPTIMIZED_RETURN
+  return b(*this,r);
+{
+#else
+{
+  HepMatrix_row_const b(*this,r);
+#endif
+  return b;
+}
+
+inline double &HepMatrix::HepMatrix_row::operator[](int c) {
+#ifdef MATRIX_BOUND_CHECK
+  if (_r<0 || _r>=_a.num_row() || c<0 || c>=_a.num_col())
+    HepGenMatrix::error("Range error in HepMatrix::operator[][]");
+#endif
+  return *(_a.m.begin()+_r*_a.ncol+c);
+}
+
+inline const double &HepMatrix::HepMatrix_row_const::operator[](int c) const
+{
+#ifdef MATRIX_BOUND_CHECK
+  if (_r<0 || _r>=_a.num_row() || c<0 || c>=_a.num_col())
+    HepGenMatrix::error("Range error in HepMatrix::operator[][]");
+#endif
+  return *(_a.m.begin()+_r*_a.ncol+c);
+}
+
+inline HepMatrix::HepMatrix_row::HepMatrix_row(HepMatrix&a,int r) 
+: _a(a) {
+  _r = r;
+}
+
+inline HepMatrix::HepMatrix_row_const::HepMatrix_row_const 
+(const HepMatrix&a, int r) 
+   : _a(a) 
+{
+  _r = r;
+}
+
+// This function swaps two Matrices without doing a full copy.
+inline void swap(HepMatrix &hm1,HepMatrix &hm2) {
+  HepGenMatrix::swap(hm1.m,hm2.m);
+/*** commented
+  HepGenMatrix::swap(hm1.nrow,hm2.nrow);
+  HepGenMatrix::swap(hm1.ncol,hm2.ncol);
+  HepGenMatrix::swap(hm1.size_,hm2.size_);
+*/
+}
+
+  /*-ap inline */ HepMatrix HepMatrix::inverse(int &ierr) const
+#ifdef HEP_GNU_OPTIMIZED_RETURN
+  return mTmp(*this);
+{
+#else
+{
+  HepMatrix mTmp(*this);
+#endif
+  mTmp.invert(ierr);
+  return mTmp;
+}
+
+inline HepMatrix HepMatrix::inverse() const {
+  int ierr;
+  HepMatrix mt=inverse(ierr);
+  if (ierr) throw std::runtime_error("Error in HepMatrix inversion");
+  return mt;
+}
+
+inline void HepMatrix::invert() {
+  int ierr;
+  invert(ierr);
+  if (ierr) throw std::runtime_error("Error in HepMatrix inversion");
+}
+
+}  // namespace CLHEP
+

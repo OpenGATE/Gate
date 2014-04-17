@@ -17,6 +17,9 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVGlobalPlacement.hh"
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 class GateSphereRepeaterMessenger;
 
 /*! \class  GateSphereRepeater

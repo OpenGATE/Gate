@@ -30,8 +30,8 @@
 /gate/world/daughters/name                   patient
 /gate/world/daughters/insert                 ImageNestedParametrisedVolume
 
-/gate/patient/geometry/SetHUToMaterialFile      data/RANDO-HU2mat.txt
-/gate/patient/geometry/SetImage                 data/Rando.mhd
+/gate/patient/geometry/setHUToMaterialFile      data/RANDO-HU2mat.txt
+/gate/patient/geometry/setImage                 data/Rando.mhd
 
 /gate/patient/geometry/TranslateTheImageAtThisIsoCenter 0 0 0 mm
 
@@ -45,7 +45,8 @@
 # Physics List
 #----------------------
 
-/control/execute mac/StandardPhys.mac
+/gate/physics/addPhysicsList emstandard_opt3
+
 
 #----------------------
 # Cuts and Step limiters

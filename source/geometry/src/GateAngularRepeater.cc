@@ -11,14 +11,13 @@
 
 #include "GateAngularRepeater.hh"
 #include "GateAngularRepeaterMessenger.hh"
+#include "GateTools.hh"
 
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 #include "G4RotationMatrix.hh"
 #include "G4Transform3D.hh"
 #include "G4UnitsTable.hh"
-
-#include "GateTools.hh"
 
 //-----------------------------------------------------------------------------------------------
 GateAngularRepeater::GateAngularRepeater(GateVVolume* itsObjectInserter,
@@ -30,31 +29,31 @@ GateAngularRepeater::GateAngularRepeater(GateVVolume* itsObjectInserter,
 					 G4double itsFirstAngle,
 					 G4double itsAngularSpan,
 					 G4int    itsModuloNumber,
-					 G4double itsZShift1,      
-					 G4double itsZShift2,      
-					 G4double itsZShift3,      
-					 G4double itsZShift4,      
-					 G4double itsZShift5,      
-					 G4double itsZShift6,      
-					 G4double itsZShift7,      
-					 G4double itsZShift8)  
-  : GateVGlobalPlacement(itsObjectInserter,itsName),
-    m_repeatNumber(itsRepeatNumber),
-    m_point1(itsPoint1),
-    m_point2(itsPoint2),
-    m_flagAutoRotation(itsFlagAutoRotation),
-    m_firstAngle(itsFirstAngle),
-    m_angularSpan(itsAngularSpan),
-    m_moduloNumber(itsModuloNumber), 
-    m_zShift1(itsZShift1),
-    m_zShift2(itsZShift2),
-    m_zShift3(itsZShift3),
-    m_zShift4(itsZShift4),
-    m_zShift5(itsZShift5),
-    m_zShift6(itsZShift6),
-    m_zShift7(itsZShift7),
-    m_zShift8(itsZShift8),
-    m_Messenger(0)
+					 G4double itsZShift1,
+					 G4double itsZShift2,
+					 G4double itsZShift3,
+					 G4double itsZShift4,
+					 G4double itsZShift5,
+					 G4double itsZShift6,
+					 G4double itsZShift7,
+					 G4double itsZShift8)
+: GateVGlobalPlacement(itsObjectInserter,itsName),
+  m_repeatNumber(itsRepeatNumber),
+  m_point1(itsPoint1),
+  m_point2(itsPoint2),
+  m_flagAutoRotation(itsFlagAutoRotation),
+  m_firstAngle(itsFirstAngle),
+  m_angularSpan(itsAngularSpan),
+  m_moduloNumber(itsModuloNumber),
+  m_zShift1(itsZShift1),
+  m_zShift2(itsZShift2),
+  m_zShift3(itsZShift3),
+  m_zShift4(itsZShift4),
+  m_zShift5(itsZShift5),
+  m_zShift6(itsZShift6),
+  m_zShift7(itsZShift7),
+  m_zShift8(itsZShift8),
+  m_Messenger(0)
 {
   m_Messenger = new GateAngularRepeaterMessenger(this);
 }
@@ -63,13 +62,13 @@ GateAngularRepeater::GateAngularRepeater(GateVVolume* itsObjectInserter,
 
 //-----------------------------------------------------------------------------------------------
 GateAngularRepeater::~GateAngularRepeater()
-{  
+{
   delete m_Messenger;
 }
 //-----------------------------------------------------------------------------------------------
 
 
-					     
+
 //-----------------------------------------------------------------------------------------------
 void GateAngularRepeater::PushMyPlacements(const G4RotationMatrix& currentRotationMatrix,
 					   const G4ThreeVector& currentPosition,
@@ -80,7 +79,7 @@ void GateAngularRepeater::PushMyPlacements(const G4RotationMatrix& currentRotati
     dphi = GetAngularPitch_1();
   else
     dphi = GetAngularPitch_2();
-    
+
   G4ThreeVector axis = m_point2 - m_point1;
   //G4int modulo = m_moduloNumber;
   G4ThreeVector ShiftVector;
@@ -107,19 +106,19 @@ void GateAngularRepeater::PushMyPlacements(const G4RotationMatrix& currentRotati
   //      "\n for bigger values, please change #define ModuloMax [max]\n in file GateAngularRepeater.h\n";}
 
   for ( G4int i=0 ; i < GetRepeatNumber() ; i++) {
-       
+
     G4RotationMatrix newRotationMatrix = currentRotationMatrix;
     G4Point3D m_shift = G4ThreeVector(0., 0., Zshift_vector[i%m_moduloNumber]); // Pick up right value
-    
-    
+
+
     G4Point3D newPosition = currentPosition + m_shift;
-    
-    
+
+
     G4double angle = m_firstAngle + dphi*i;
-        
-    
+
+
     newPosition = HepGeom::Rotate3D(angle,m_point1,m_point2) * newPosition;
-  
+
     if (m_flagAutoRotation)
       newRotationMatrix.rotate(-angle, axis);
 

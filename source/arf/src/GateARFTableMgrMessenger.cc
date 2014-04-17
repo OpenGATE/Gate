@@ -1,20 +1,21 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "GateConfiguration.h"
 
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "GateARFTableMgrMessenger.hh"
-
 #include "GateClock.hh"
+#include "GateARFTableMgr.hh"
+
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
@@ -22,12 +23,11 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 #include "G4UIcmdWithoutParameter.hh"
-#include "GateARFTableMgr.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 GateARFTableMgrMessenger::GateARFTableMgrMessenger(G4String aName, GateARFTableMgr* ARFTableMgr)
-{ 
+{
   m_ARFTableMgr = ARFTableMgr;
 
   G4String dirName = "/gate/"+aName+"/ARFTables/";
@@ -102,7 +102,7 @@ GateARFTableMgrMessenger::~GateARFTableMgrMessenger()
   delete setEResocmd;
   delete setERefcmd;
   delete SetNBinsCmd;
-  delete cptTableEWCmd; 
+  delete cptTableEWCmd;
   delete setEThreshHoldcmd ;
   delete   setEUpHoldcmd ;
   delete SaveToBinaryFileCmd;
@@ -113,45 +113,45 @@ GateARFTableMgrMessenger::~GateARFTableMgrMessenger()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 void GateARFTableMgrMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
+{
 
 
   if ( command == setDistancecmd ) { m_ARFTableMgr->SetDistanceFromSourceToDetector( setDistancecmd->GetNewDoubleValue(newValue) );
-                                  return; }
-   if( command == SetNBinsCmd)
- {       
-         m_ARFTableMgr->SetNBins(SetNBinsCmd->GetNewIntValue(newValue));
-    return;
-  }
+    return; }
+  if( command == SetNBinsCmd)
+    {
+      m_ARFTableMgr->SetNBins(SetNBinsCmd->GetNewIntValue(newValue));
+      return;
+    }
   if ( command == LoadFromBinaryFileCmd ) { m_ARFTableMgr->LoadARFFromBinaryFile(newValue);}
 
   if ( command == SaveToBinaryFileCmd ) {
-  										 m_ARFTableMgr->SetBinaryFile(newValue);
-  										  m_ARFTableMgr->SaveARFToBinaryFile();
-  										  }
+    m_ARFTableMgr->SetBinaryFile(newValue);
+    m_ARFTableMgr->SaveARFToBinaryFile();
+  }
 
   if ( command == setERefcmd ) { m_ARFTableMgr->SetERef( setERefcmd->GetNewDoubleValue(newValue) );
-                                  return; }
+    return; }
 
   if ( command == setEResocmd ) { m_ARFTableMgr->SetEReso( setEResocmd->GetNewDoubleValue(newValue) );
-                                  return; }
+    return; }
 
   if ( command == setEThreshHoldcmd ){ m_ARFTableMgr->SetEThreshHold( setEThreshHoldcmd->GetNewDoubleValue(newValue) ) ;return;}
   if ( command ==   setEUpHoldcmd  ){ m_ARFTableMgr->SetEUpHold( setEUpHoldcmd->GetNewDoubleValue(newValue) ) ;return;}
 
-   if( command == VerboseCmd ) {
+  if( command == VerboseCmd ) {
     m_ARFTableMgr->SetVerboseLevel(VerboseCmd->GetNewIntValue(newValue));
     return;
-  } 
+  }
 
-if( command == ListARFTableCmd ) {
+  if( command == ListARFTableCmd ) {
     m_ARFTableMgr->ListTables();
     return;
   }
 
-if( command == cptTableEWCmd ) {
+  if( command == cptTableEWCmd ) {
     m_ARFTableMgr->ComputeARFTablesFromEW(newValue);return;
-  } 
+  }
 
 
 }

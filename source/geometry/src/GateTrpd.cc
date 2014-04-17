@@ -1,16 +1,18 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #include "GateTrpd.hh"
 #include "GateTrpdMessenger.hh"
+#include "GateClock.hh"
+#include "GateTools.hh"
 
 #include "G4Trd.hh"
 #include "G4Box.hh"
@@ -18,35 +20,31 @@ See GATE/LICENSE.txt for further details
 #include "G4Colour.hh"
 #include "G4UnitsTable.hh"
 #include "G4PVPlacement.hh"
-#include "GateClock.hh"
-//#include "ThISMaterialDatabase.hh"
 #include "G4ThreeVector.hh"
 #include "G4RotationMatrix.hh"
 #include "G4Transform3D.hh"
-#include "GateTools.hh"
-
 
 GateTrpd::GateTrpd(const G4String& itsName, const G4String& /*itsMaterialName*/,
-      	      	              	 G4double itsX1Length, G4double itsY1Length,
-      	      	              	 G4double itsX2Length, G4double itsY2Length,
-				 G4double itsZLength,
+                   G4double itsX1Length, G4double itsY1Length,
+                   G4double itsX2Length, G4double itsY2Length,
+                   G4double itsZLength,
 
-				 G4double itsXBxLength,
-				 G4double itsYBxLength,
-				 G4double itsZBxLength,
+                   G4double itsXBxLength,
+                   G4double itsYBxLength,
+                   G4double itsZBxLength,
 
-				 G4double itsXBxPos,
-				 G4double itsYBxPos,
-				 G4double itsZBxPos,
+                   G4double itsXBxPos,
+                   G4double itsYBxPos,
+                   G4double itsZBxPos,
 
-		      	      	 G4bool itsFlagAcceptChildren,
-				 G4int depth)
-  : GateVVolume(itsName, itsFlagAcceptChildren, depth),
-    m_trd_solid(0), m_box_solid(0), m_trpd_solid(0), m_trpd_log(0),
-    m_Messenger(0)
+                   G4bool itsFlagAcceptChildren,
+                   G4int depth)
+: GateVVolume(itsName, itsFlagAcceptChildren, depth),
+  m_trd_solid(0), m_box_solid(0), m_trpd_solid(0), m_trpd_log(0),
+  m_Messenger(0)
 {
 
-    m_Messenger = new GateTrpdMessenger(this);
+  m_Messenger = new GateTrpdMessenger(this);
   m_trpdLength[0] = itsX1Length;
   m_trpdLength[1] = itsY1Length;
 
@@ -73,28 +71,28 @@ GateTrpd::~GateTrpd()
 
 //---------------------------------------------------------------------------------------------------
 GateTrpd::GateTrpd(const G4String& itsName,
-		                 G4bool itsFlagAcceptChildren,
-			         G4int depth)
+                   G4bool itsFlagAcceptChildren,
+                   G4int depth)
   : GateVVolume(itsName, itsFlagAcceptChildren, depth),
     m_trd_solid(0), m_box_solid(0), m_trpd_solid(0), m_trpd_log(0),
     m_Messenger(0)
 {
-    m_trpdLength[0] = 1.0*cm;
-    m_trpdLength[1] = 1.0*cm;
+  m_trpdLength[0] = 1.0*cm;
+  m_trpdLength[1] = 1.0*cm;
 
-    m_trpdLength[2] = 1.0*cm;
-    m_trpdLength[3] = 1.0*cm;
-    m_trpdLength[4] = 1.0*cm;
+  m_trpdLength[2] = 1.0*cm;
+  m_trpdLength[3] = 1.0*cm;
+  m_trpdLength[4] = 1.0*cm;
 
-    m_trpdLength[5] = 1.0*cm;
-    m_trpdLength[6] = 1.0*cm;
-    m_trpdLength[7] = 1.0*cm;
+  m_trpdLength[5] = 1.0*cm;
+  m_trpdLength[6] = 1.0*cm;
+  m_trpdLength[7] = 1.0*cm;
 
-    m_trpdLength[8] = 1.0*cm;
-    m_trpdLength[9] = 1.0*cm;
-    m_trpdLength[10]= 1.0*cm;
+  m_trpdLength[8] = 1.0*cm;
+  m_trpdLength[9] = 1.0*cm;
+  m_trpdLength[10]= 1.0*cm;
 
-    m_Messenger = new GateTrpdMessenger(this);
+  m_Messenger = new GateTrpdMessenger(this);
 }
 //--------------------------------------------------------------------------------------------------
 
@@ -112,7 +110,7 @@ G4LogicalVolume* GateTrpd::ConstructOwnSolidAndLogicalVolume(G4Material* mater, 
     //G4cout << " first "  << G4endl;
     m_trd_solid
       = new G4Trd(GetSolidName(), GetTrpdX1HalfLength(), GetTrpdX2HalfLength(),
-		   GetTrpdY1HalfLength(), GetTrpdY2HalfLength(), GetTrpdZHalfLength());
+                  GetTrpdY1HalfLength(), GetTrpdY2HalfLength(), GetTrpdZHalfLength());
 
     m_box_solid
       = new G4Box(GetSolidName(),
@@ -134,23 +132,23 @@ G4LogicalVolume* GateTrpd::ConstructOwnSolidAndLogicalVolume(G4Material* mater, 
   }
   else {
 
-       G4cout << " second "  << G4endl;
+    G4cout << " second "  << G4endl;
 
-      BoxPos.setX(GetTrpdTrudXPos());
-      BoxPos.setY(GetTrpdTrudYPos());
-      BoxPos.setZ(GetTrpdTrudZPos());
-      // G4cout << " new val of BoxPos ::: <" << BoxPos << ">" << G4endl;
-      // G4Transform3D transform(rotMatrix,BoxPos);
+    BoxPos.setX(GetTrpdTrudXPos());
+    BoxPos.setY(GetTrpdTrudYPos());
+    BoxPos.setZ(GetTrpdTrudZPos());
+    // G4cout << " new val of BoxPos ::: <" << BoxPos << ">" << G4endl;
+    // G4Transform3D transform(rotMatrix,BoxPos);
 
-      m_trd_solid->SetXHalfLength1(GetTrpdX1HalfLength());
-      m_trd_solid->SetXHalfLength2(GetTrpdX2HalfLength());
-      m_trd_solid->SetYHalfLength1(GetTrpdY1HalfLength());
-      m_trd_solid->SetYHalfLength2(GetTrpdY2HalfLength());
-      m_trd_solid->SetZHalfLength( GetTrpdZHalfLength());
+    m_trd_solid->SetXHalfLength1(GetTrpdX1HalfLength());
+    m_trd_solid->SetXHalfLength2(GetTrpdX2HalfLength());
+    m_trd_solid->SetYHalfLength1(GetTrpdY1HalfLength());
+    m_trd_solid->SetYHalfLength2(GetTrpdY2HalfLength());
+    m_trd_solid->SetZHalfLength( GetTrpdZHalfLength());
 
-      m_box_solid->SetXHalfLength(GetTrpdTrudXHalfLength());
-      m_box_solid->SetYHalfLength(GetTrpdTrudYHalfLength());
-      m_box_solid->SetZHalfLength(GetTrpdTrudZHalfLength());
+    m_box_solid->SetXHalfLength(GetTrpdTrudXHalfLength());
+    m_box_solid->SetYHalfLength(GetTrpdTrudYHalfLength());
+    m_box_solid->SetZHalfLength(GetTrpdTrudZHalfLength());
 
   }
 #ifdef debugtrpd

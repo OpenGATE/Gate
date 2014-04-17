@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #ifndef GateApplicationMgrMessenger_h
@@ -29,16 +29,14 @@ class G4UIcmdWithoutParameter;
 
 class GateApplicationMgrMessenger: public G4UImessenger
 {
-  public:
-    GateApplicationMgrMessenger();
-   ~GateApplicationMgrMessenger();
-    
-    void SetNewValue(G4UIcommand*, G4String);
-    
-  private:
-    GateApplicationMgr* gateApplicationMgr;
+public:
+  GateApplicationMgrMessenger();
+  ~GateApplicationMgrMessenger();
 
-    G4UIdirectory*           GateApplicationDir;
+  void SetNewValue(G4UIcommand*, G4String);
+
+private:
+  G4UIdirectory*           GateApplicationDir;
 
   G4UIcmdWithADoubleAndUnit* TimeSliceCmd;
   G4UIcmdWithADoubleAndUnit* TimeStartCmd;
@@ -47,15 +45,15 @@ class GateApplicationMgrMessenger: public G4UImessenger
   G4UIcmdWithoutParameter*   StartDAQCmd;
   G4UIcmdWithoutParameter*   StartCmd;
   G4UIcmdWith3VectorAndUnit* StartDAQCompleteCmd;
-//dk cluster
+  //dk cluster
   G4UIcmdWith3VectorAndUnit* StartDAQClusterCmd;
-//dk cluster end
+  //dk cluster end
   G4UIcmdWithoutParameter*   StopDAQCmd;
   G4UIcmdWithoutParameter*   PauseDAQCmd;
   G4UIcmdWithAnInteger*      VerboseCmd;
   G4UIcmdWithABool*          ExitFlagCmd;
   G4UIcmdWithoutParameter*   DescribeCmd;
-  
+
   G4UIcmdWithoutParameter * NoOutputCmd;
   G4UIcmdWithAString * TimeStudyCmd;
   G4UIcmdWithAString * TimeStudyForStepsCmd;
@@ -67,4 +65,3 @@ class GateApplicationMgrMessenger: public G4UImessenger
 };
 
 #endif
-

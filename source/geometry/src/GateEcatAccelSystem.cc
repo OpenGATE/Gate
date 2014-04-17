@@ -1,19 +1,15 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "GateConfiguration.h"
-
 #include "GateEcatAccelSystem.hh"
-
-#include "G4UnitsTable.hh"
-
 #include "GateClockDependentMessenger.hh"
 #include "GateBox.hh"
 #include "GateSystemComponent.hh"
@@ -24,15 +20,17 @@ See GATE/LICENSE.txt for further details
 #include "GateDigitizer.hh"
 #include "GateOutputMgr.hh"
 
+#include "G4UnitsTable.hh"
+
 // Constructor
 GateEcatAccelSystem::GateEcatAccelSystem(const G4String& itsName)
-: GateVSystem( itsName , true ),
-  m_gateToSinoAccel(0)
+  : GateVSystem( itsName , true ),
+    m_gateToSinoAccel(0)
 {
   // Set up a messenger
   m_messenger = new GateClockDependentMessenger(this);
   m_messenger->SetDirectoryGuidance(G4String("Controls the system '") + GetObjectName() + "'" );
-  
+
   // Define the scanner components
   GateBoxComponent* blockComponent   = new GateBoxComponent("block",GetBaseComponent(),this);
   /*GateArrayComponent* arrayComponent =  */ new GateArrayComponent("crystal",blockComponent,this);
@@ -42,10 +40,10 @@ GateEcatAccelSystem::GateEcatAccelSystem(const G4String& itsName)
   GateDigitizer* digitizer = GateDigitizer::GetInstance();
   GateCoincidenceSorter* coincidenceSorter = new GateCoincidenceSorter(digitizer,"Coincidences",coincidenceWindow);
   digitizer->StoreNewCoincidenceSorter(coincidenceSorter);
-  
+
   // Insert a sinogram maker and a ECAT7 writer into the output manager
   GateOutputMgr *outputMgr = GateOutputMgr::GetInstance();
-  m_gateToSinoAccel = new GateToSinoAccel("sinoAccel", outputMgr,this,GateOutputMgr::GetDigiMode()); 
+  m_gateToSinoAccel = new GateToSinoAccel("sinoAccel", outputMgr,this,GateOutputMgr::GetDigiMode());
   outputMgr->AddOutputModule((GateVOutputModule*)m_gateToSinoAccel);
 #ifdef GATE_USE_ECAT7
   m_gateSinoAccelToEcat7 = new GateSinoAccelToEcat7("ecat7", outputMgr,this,GateOutputMgr::GetDigiMode());
@@ -61,7 +59,7 @@ GateEcatAccelSystem::GateEcatAccelSystem(const G4String& itsName)
 
 
 // Destructor
-GateEcatAccelSystem::~GateEcatAccelSystem() 
+GateEcatAccelSystem::~GateEcatAccelSystem()
 {
   delete m_messenger;
 }
@@ -72,8 +70,8 @@ GateEcatAccelSystem::~GateEcatAccelSystem()
     This methods prints-out a description of the system, which is
     optimised for creating ECAT header files
 
-	indent: the print-out indentation (cosmetic parameter)
-*/    
+    indent: the print-out indentation (cosmetic parameter)
+*/
 void GateEcatAccelSystem::Describe(size_t indent)
 {
   GateVSystem::Describe(indent);
@@ -86,9 +84,9 @@ void GateEcatAccelSystem::Describe(size_t indent)
    This methods prints out description of the system to a stream.
    It is essentially to be used by the class GateToLMF, but it may also be used by Describe()
 
-	aStream: the output stream
-	doPrintNumbers: tells whether we print-out the volume numbers in addition to their dimensions
-*/    
+   aStream: the output stream
+   doPrintNumbers: tells whether we print-out the volume numbers in addition to their dimensions
+*/
 void GateEcatAccelSystem::PrintToStream(std::ostream& aStream,G4bool doPrintNumbers)
 {
   aStream << " >> geometrical design type: " << "ECAT ACCEL" << G4endl;
@@ -99,9 +97,9 @@ void GateEcatAccelSystem::PrintToStream(std::ostream& aStream,G4bool doPrintNumb
 
   G4double blockAxialPitch = blockComponent->GetSphereAxialRepeatPitch();
   aStream << " >> block axial pitch: " << G4BestUnit( blockAxialPitch ,"Length")  	  << G4endl;
-  
+
   G4double blockAzimuthalPitch = blockComponent->GetSphereAzimuthalRepeatPitch();
-  aStream << " >> block azimuthal pitch: " << blockAzimuthalPitch/degree << " degree"  	 	  << G4endl;    
+  aStream << " >> block azimuthal pitch: " << blockAzimuthalPitch/degree << " degree"  	 	  << G4endl;
 
   G4double blockTangentialSize = blockComponent->GetBoxLength(0) ;
   G4double blockAxialSize      = blockComponent->GetBoxLength(2) ;
@@ -110,12 +108,12 @@ void GateEcatAccelSystem::PrintToStream(std::ostream& aStream,G4bool doPrintNumb
 
   GateArrayComponent* crystalComponent = FindArrayComponent("crystal");
 
-  G4double crystalTangentialSize = crystalComponent->GetBoxLength(0); 
-  G4double crystalAxialSize      = crystalComponent->GetBoxLength(2); 
+  G4double crystalTangentialSize = crystalComponent->GetBoxLength(0);
+  G4double crystalAxialSize      = crystalComponent->GetBoxLength(2);
   aStream << " >> crystal axial size: " << G4BestUnit( crystalAxialSize ,"Length")  	      	  << G4endl;
   aStream << " >> crystal tangential size: " << G4BestUnit( crystalTangentialSize ,"Length")  	  << G4endl;
 
-  G4ThreeVector crystalPitchVector = crystalComponent->GetRepeatVector(); 
+  G4ThreeVector crystalPitchVector = crystalComponent->GetRepeatVector();
   aStream << " >> crystal axial pitch: " << G4BestUnit( crystalPitchVector.z() ,"Length")    	  << G4endl;
   aStream << " >> crystal tangential pitch: " << G4BestUnit( crystalPitchVector.x() ,"Length")    	  << G4endl;
 
@@ -136,6 +134,6 @@ G4double GateEcatAccelSystem::ComputeInternalRadius()
   GateBoxComponent *block = FindBoxCreatorComponent("block");
   G4double sphereRadius = block->GetSphereRadius();
   sphereRadius -= .5*block->GetBoxLength(1);
-    
+
   return sphereRadius;
 }

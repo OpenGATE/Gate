@@ -1,0 +1,65 @@
+// -*- C++ -*-
+// ---------------------------------------------------------------------------
+//
+// This file is a part of the CLHEP - a Class Library for High Energy Physics.
+// 
+// This software written by Nobu Katayama and Mike Smyth, Cornell University.
+//
+
+namespace CLHEP {
+
+// swap
+//
+inline void HepGenMatrix::swap(int &i,int &j) {int t=i;i=j;j=t;}
+#ifdef DISABLE_ALLOC
+inline void HepGenMatrix::swap(std::vector<double >& i, std::vector<double >& j) {
+  std::vector<double > t=i;i=j;j=t;
+}
+#else
+inline void HepGenMatrix::swap(std::vector<double,Alloc<double,25> >& i, std::vector<double,Alloc<double,25> >& j) {
+  std::vector<double,Alloc<double,25> > t=i;i=j;j=t;
+}
+#endif
+
+//
+// operator [] (I cannot make it virtual because return types are different.)
+// Therefore I will have to use the virtual operator (,).
+//
+inline double &HepGenMatrix::HepGenMatrix_row::operator[](int c) {
+  return _a(_r+1,c+1);
+}
+
+inline const double &HepGenMatrix::HepGenMatrix_row_const::
+operator[](int c) const {
+  return _a(_r+1,c+1);
+}
+
+inline HepGenMatrix::HepGenMatrix_row HepGenMatrix::operator[](int r) {
+  HepGenMatrix_row b(*this,r); 
+  return b;
+}
+
+inline const HepGenMatrix::HepGenMatrix_row_const HepGenMatrix::
+operator[](int r) const{
+  HepGenMatrix_row_const b(*this,r); 
+  return b;
+}
+
+inline HepGenMatrix::HepGenMatrix_row::HepGenMatrix_row(HepGenMatrix&a,int r) 
+: _a(a) {
+  _r = r;
+}
+
+inline HepGenMatrix::HepGenMatrix_row_const::
+HepGenMatrix_row_const (const HepGenMatrix&a, int r) 
+   : _a(a) {
+  _r = r;
+}
+
+
+}  // namespace CLHEP
+
+
+// -----------------------------------------------------------------
+
+

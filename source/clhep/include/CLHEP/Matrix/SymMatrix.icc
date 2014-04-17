@@ -1,0 +1,133 @@
+// -*- C++ -*-
+// ---------------------------------------------------------------------------
+//
+// This file is a part of the CLHEP - a Class Library for High Energy Physics.
+//
+// This is the definitions of the inline member functions of the
+// HepSymMatrix class
+//
+#include <stdexcept>
+namespace CLHEP {
+
+inline HepSymMatrix::HepSymMatrix() 
+  : m(0), nrow(0), size_(0)
+{}
+
+inline int HepSymMatrix::num_row() const { return nrow;}
+inline int HepSymMatrix::num_col() const  { return nrow;}
+inline int HepSymMatrix::num_size() const  { return size_;}
+
+inline double & HepSymMatrix::fast(int row,int col)
+{
+#ifdef MATRIX_BOUND_CHECK
+  if(row<1||row>num_row() || col<1||col>num_col())
+    error("Range error in HepSymMatrix::fast()");
+#endif
+  return *(m.begin()+(row*(row-1))/2+(col-1));
+}
+inline const double & HepSymMatrix::fast(int row,int col) const
+{
+#ifdef MATRIX_BOUND_CHECK
+  if(row<1||row>num_row() || col<1||col>num_col())
+    error("Range error in HepSymMatrix::fast()");
+#endif
+  return *(m.begin()+(row*(row-1))/2+(col-1));
+}
+
+inline double & HepSymMatrix::operator()(int row, int col)
+    {return (row>=col? fast(row,col) : fast(col,row));}
+inline const double & HepSymMatrix::operator()(int row, int col) const 
+    {return (row>=col? fast(row,col) : fast(col,row));}
+
+inline void HepSymMatrix::assign(const HepSymMatrix &hm2) 
+  {(*this)=hm2;}
+
+inline HepSymMatrix HepSymMatrix::T() const {return HepSymMatrix(*this);}
+
+inline HepSymMatrix::HepSymMatrix_row HepSymMatrix::operator[] (int r)
+#ifdef HEP_GNU_OPTIMIZED_RETURN
+  return b(*this,r);
+{
+#else
+{
+  HepSymMatrix_row b(*this,r);
+#endif
+  return b;
+}
+
+inline HepSymMatrix::HepSymMatrix_row_const HepSymMatrix::operator[] (int r) const
+#ifdef HEP_GNU_OPTIMIZED_RETURN
+  return b(*this,r);
+{
+#else
+{
+  const HepSymMatrix_row_const b(*this,r);
+#endif
+  return b;
+}
+
+inline double &HepSymMatrix::HepSymMatrix_row::operator[](int c)
+{
+#ifdef MATRIX_BOUND_CHECK
+   if(_r<0||_r>=_a.nrow || c<0||c>=_a.nrow)
+      error("Range error in HepSymMatrix::operator[][]");
+#endif
+   if (_r >= c ) {
+      return *(_a.m.begin() + (_r+1)*_r/2 + c);
+   } else {
+      return *(_a.m.begin() + (c+1)*c/2 + _r);
+   }
+}
+
+inline const double &
+HepSymMatrix::HepSymMatrix_row_const::operator[](int c) const 
+{
+#ifdef MATRIX_BOUND_CHECK
+   if(_r<0||_r>=_a.nrow || c<0||c>=_a.nrow)
+      error("Range error in HepSymMatrix::operator[][]");
+#endif
+   if (_r >= c ) {
+      return *(_a.m.begin() + (_r+1)*_r/2 + c);
+   } else {
+      return *(_a.m.begin() + (c+1)*c/2 + _r);
+   }
+}
+
+inline HepSymMatrix::HepSymMatrix_row::HepSymMatrix_row(HepSymMatrix &a,
+							   int r) 
+   : _a(a), _r(r)
+{}
+
+inline HepSymMatrix::HepSymMatrix_row_const::HepSymMatrix_row_const
+(const HepSymMatrix&a,int r) 
+   : _a(a), _r(r)
+{}
+
+inline HepSymMatrix HepSymMatrix::inverse(int &ifail) const
+#ifdef HEP_GNU_OPTIMIZED_RETURN
+     return mTmp(*this);
+{
+#else
+{
+  HepSymMatrix mTmp(*this);
+#endif
+  mTmp.invert(ifail);
+  return mTmp;
+}
+
+inline HepSymMatrix HepSymMatrix::inverse() const {
+  int ierr;
+  HepSymMatrix mt=inverse(ierr);
+  if (ierr) throw std::runtime_error("Error in HepSymMatrix inversion");
+  return mt;
+}
+
+inline void HepSymMatrix::invert() {
+  int ierr;
+  invert(ierr);
+  if (ierr) throw std::runtime_error("Error in HepSymMatrix inversion");
+}
+
+}  // namespace CLHEP
+
+

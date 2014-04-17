@@ -1,0 +1,18 @@
+
+#=====================================================
+# VISUALISATION 
+
+/vis/open                             OGLIQt
+#/vis/open                             OGLSQt
+/vis/drawVolume
+/vis/viewer/flush
+/tracking/storeTrajectory             1
+/vis/scene/add/trajectories 
+/vis/scene/endOfEventAction           accumulate
+
+/vis/scene/add/axes            0 0 0 500 mm
+/vis/scene/add/text            10 0 0 cm  20 0 0   X
+/vis/scene/add/text            0 10 0 cm  20 0 0   Y
+/vis/scene/add/text            0 0 10 cm  20 0 0   Z
+/vis/viewer/set/auxiliaryEdge true
+

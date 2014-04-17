@@ -60,7 +60,7 @@ GateGPUSPECTActor::GateGPUSPECTActor(G4String name, G4int depth):
 
 
 //-----------------------------------------------------------------------------
-/// Destructor 
+/// Destructor
 GateGPUSPECTActor::~GateGPUSPECTActor()  {
   delete pMessenger;
   GateGPUCollimIO_Input_delete(gpu_input);
@@ -108,7 +108,7 @@ void GateGPUSPECTActor::SetGPUBufferSize(G4int n) {
 
 //-----------------------------------------------------------------------------
 void GateGPUSPECTActor::SetHoleHexaHeight(G4double d) {
-  mHoleHexaHeight = d;  
+  mHoleHexaHeight = d;
 }
 //-----------------------------------------------------------------------------
 
@@ -184,56 +184,56 @@ void GateGPUSPECTActor::ResetData() {
   gpu_input = GateGPUCollimIO_Input_new();
 
   GateBox * vol = dynamic_cast<GateBox*>(mVolume);
-  
+
   // Set materials
   std::vector<G4Material*> m;
   m.push_back((G4Material*)vol->GetMaterial());
-    
+
   G4Material* colli_mat = GateDetectorConstruction::GetGateDetectorConstruction()
   								->mMaterialDatabase.GetMaterial(mHoleHexaMat);
-  
+
   m.push_back((G4Material*)colli_mat);
-   
+
   G4String name = vol->GetObjectName();
   //G4String name = "SPECThead";
   GateGPUCollimIO_Input_Init_Materials(gpu_input, m, name);
-    
+
   gpu_input->size_x = vol->GetBoxXLength();
   gpu_input->size_y = vol->GetBoxYLength();
   gpu_input->size_z = vol->GetBoxZLength();
-  
+
   gpu_input->HexaRadius = mHoleHexaRadius;
   gpu_input->HexaHeight = mHoleHexaHeight;
-  
-  gpu_input->CubRepNumY = mCubArrayRepNumY; 
+
+  gpu_input->CubRepNumY = mCubArrayRepNumY;
   gpu_input->CubRepNumZ = mCubArrayRepNumZ;
-  
+
   gpu_input->CubRepVecX = mCubArrayRepVecX;
   gpu_input->CubRepVecY = mCubArrayRepVecY;
   gpu_input->CubRepVecZ = mCubArrayRepVecZ;
-  
+
   gpu_input->LinRepVecX = mLinearRepVecX;
   gpu_input->LinRepVecY = mLinearRepVecY;
   gpu_input->LinRepVecZ = mLinearRepVecZ;
-  
+
   gpu_input->cudaDeviceID = mGPUDeviceID;
-  
+
   DD(mGPUDeviceID);
-  
+
   DD(gpu_input->HexaRadius);
   DD(gpu_input->HexaHeight);
-  
-  DD(gpu_input->CubRepNumY); 
+
+  DD(gpu_input->CubRepNumY);
   DD(gpu_input->CubRepNumZ);
-  
+
   DD(gpu_input->CubRepVecX);
   DD(gpu_input->CubRepVecY);
   DD(gpu_input->CubRepVecZ);
-  
+
   DD(gpu_input->LinRepVecX);
   DD(gpu_input->LinRepVecY);
   DD(gpu_input->LinRepVecZ);
-  
+
 }
 //-----------------------------------------------------------------------------
 
@@ -242,7 +242,7 @@ void GateGPUSPECTActor::ResetData() {
 void GateGPUSPECTActor::BeginOfRunAction(const G4Run *)
 {
   DD("GateGPUSPECTActor::BeginOfRunAction");
-  
+
 
   // Get number of particles
   GateApplicationMgr * a = GateApplicationMgr::GetInstance();
@@ -251,23 +251,23 @@ void GateGPUSPECTActor::BeginOfRunAction(const G4Run *)
 
   // Init PRNG
   ct_photons = 0;
-  unsigned int seed = 
+  unsigned int seed =
     static_cast<unsigned int>(*GateRandomEngine::GetInstance()->GetRandomEngine());
-  DD(seed);
+  //DD(seed);
   srand(seed);
-  
-  int size_center = (mCubArrayRepNumY * mCubArrayRepNumZ) + ((mCubArrayRepNumY - 1) * (mCubArrayRepNumZ - 1));
-     
+
 #ifdef GATE_USE_GPU
-    // Init GPU' stuff
-    //GPU_GateTransTomo_init(gpu_input, gpu_materials, gpu_phantom,
-    //                       gpu_photons, cpu_photons, max_buffer_size, seed);
-    
-    GPU_GateSPECT_init(gpu_input, gpu_collim, cpu_centerOfHexagons, gpu_centerOfHexagons,
-    				  gpu_photons, cpu_photons, gpu_materials, max_buffer_size, size_center, seed);                       
-                           
-    DD(max_buffer_size);
-#endif    
+  int size_center = (mCubArrayRepNumY * mCubArrayRepNumZ) + ((mCubArrayRepNumY - 1) * (mCubArrayRepNumZ - 1));
+
+  // Init GPU' stuff
+  //GPU_GateTransTomo_init(gpu_input, gpu_materials, gpu_phantom,
+  //                       gpu_photons, cpu_photons, max_buffer_size, seed);
+
+  GPU_GateSPECT_init(gpu_input, gpu_collim, cpu_centerOfHexagons, gpu_centerOfHexagons,
+                     gpu_photons, cpu_photons, gpu_materials, max_buffer_size, size_center, seed);
+
+  //DD(max_buffer_size);
+#endif
 
 }
 //-----------------------------------------------------------------------------
@@ -279,27 +279,27 @@ void GateGPUSPECTActor::EndOfRunAction(const G4Run *)
     if (ct_photons != 0) {
 
 #ifdef GATE_USE_GPU
-        GPU_GateSPECT(gpu_collim, cpu_centerOfHexagons, gpu_centerOfHexagons, gpu_photons, 
+        GPU_GateSPECT(gpu_collim, cpu_centerOfHexagons, gpu_centerOfHexagons, gpu_photons,
         			   cpu_photons, gpu_materials, ct_photons);
-#endif    
+#endif
 
-        // G4    
+        // G4
         static G4EventManager * em = G4EventManager::GetEventManager();
-        G4StackManager * sm = em->GetStackManager(); 
+        G4StackManager * sm = em->GetStackManager();
 
         unsigned int ct = 0;
         while (ct < ct_photons) {
           if (cpu_photons.active[ct]) {
-            
+
             // Create new particle
-            G4ThreeVector dir(cpu_photons.dx[ct], 
+            G4ThreeVector dir(cpu_photons.dx[ct],
                               cpu_photons.dy[ct], cpu_photons.dz[ct]);
             dir /= dir.mag();
-            G4ThreeVector position(cpu_photons.px[ct]*mm, 
-                                   cpu_photons.py[ct]*mm, 
+            G4ThreeVector position(cpu_photons.px[ct]*mm,
+                                   cpu_photons.py[ct]*mm,
                                    cpu_photons.pz[ct]*mm);
 
-            G4DynamicParticle * dp = new G4DynamicParticle(G4Gamma::Gamma(), dir, 
+            G4DynamicParticle * dp = new G4DynamicParticle(G4Gamma::Gamma(), dir,
                                                            cpu_photons.E[ct]*MeV);
             double time = cpu_photons.t[ct];
             G4Track * newTrack = new G4Track(dp, time, position);
@@ -309,12 +309,12 @@ void GateGPUSPECTActor::EndOfRunAction(const G4Run *)
             newTrack->SetTrackID(cpu_photons.trackID[ct]+trackid);
             ++trackid;
             newTrack->SetParentID(666);
-            
+
             // Insert
             sm->PushOneTrack(newTrack);
           }
           ct++;
-        
+
         }
     }
 
@@ -329,21 +329,21 @@ void GateGPUSPECTActor::EndOfRunAction(const G4Run *)
 
 //-----------------------------------------------------------------------------
 #define EPS 1.0e-03f
-void GateGPUSPECTActor::UserSteppingAction(const GateVVolume * /*v*/, 
+void GateGPUSPECTActor::UserSteppingAction(const GateVVolume * /*v*/,
                                               const G4Step * step)
 {
   GateDebugMessage("Actor", 4, "GateGPUSPECTActor -- UserSteppingAction" << G4endl);
-  
+
   //DD("GateGPUSPECTActor::UserSteppingAction");
-  
+
   // Check if we are on the boundary
   G4StepPoint * preStep = step->GetPreStepPoint();
-    
+
   //DD(preStep->GetPosition());
-    
+
   //  G4StepPoint * postStep = step->GetPostStepPoint();
-  if (preStep->GetStepStatus() != fGeomBoundary) { 
-    // This is not the first step in the volume 
+  if (preStep->GetStepStatus() != fGeomBoundary) {
+    // This is not the first step in the volume
     	step->GetTrack()->SetTrackStatus( fStopAndKill ); // FIXME : one step more to remove.
     	return;
   }
@@ -354,12 +354,12 @@ void GateGPUSPECTActor::UserSteppingAction(const GateVVolume * /*v*/,
   int h = preStep->GetTouchable()->GetHistory()->GetDepth();
   G4ThreeVector localPosition = preStep->GetTouchable()->GetHistory()
   		->GetTransform(h).TransformPoint(preStep->GetPosition());
-  
+
   // STEP1 ---------------------------------
-  
+
   // Store a photon
   cpu_photons.E[ct_photons] = preStep->GetKineticEnergy()/MeV;
-  cpu_photons.eventID[ct_photons] = 
+  cpu_photons.eventID[ct_photons] =
                         GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   cpu_photons.trackID[ct_photons] = step->GetTrack()->GetTrackID();
   cpu_photons.t[ct_photons] = preStep->GetGlobalTime();
@@ -368,7 +368,7 @@ void GateGPUSPECTActor::UserSteppingAction(const GateVVolume * /*v*/,
   cpu_photons.px[ct_photons] = localPosition.x() + EPS;
   cpu_photons.py[ct_photons] = localPosition.y();
   cpu_photons.pz[ct_photons] = localPosition.z();
-  
+
   // Need to change the world frame
   /*cpu_photons.px[ct_photons] = localPosition.x() + half_phan_size_x;
   cpu_photons.py[ct_photons] = localPosition.y() + half_phan_size_y;
@@ -387,57 +387,57 @@ void GateGPUSPECTActor::UserSteppingAction(const GateVVolume * /*v*/,
   cpu_photons.dx[ct_photons] = localMomentum.x();
   cpu_photons.dy[ct_photons] = localMomentum.y();
   cpu_photons.dz[ct_photons] = localMomentum.z();
-  
+
   /*DD(cpu_photons.dx[ct_photons]);
   DD(cpu_photons.dy[ct_photons]);
   DD(cpu_photons.dz[ct_photons]);*/
-  
+
   cpu_photons.endsimu[ct_photons] = 0;
   cpu_photons.active[ct_photons] = 1;
   cpu_photons.seed[ct_photons] = rand();
-    
+
   // STEP2 ---------------------------------
-  
+
   // We kill the particle without mercy
   step->GetTrack()->SetTrackStatus( fStopAndKill );
   ct_photons++;
 
   // STEP3 ---------------------------------
-  
+
   // if enough particles in the buffer, start the gpu tracking
   if (ct_photons == max_buffer_size) {
-  	
-#ifdef GATE_USE_GPU
-        
-    GPU_GateSPECT(gpu_collim, cpu_centerOfHexagons, gpu_centerOfHexagons, gpu_photons, 
-    				cpu_photons, gpu_materials, ct_photons);
-    				
-#endif 
 
-    // G4    
+#ifdef GATE_USE_GPU
+
+    GPU_GateSPECT(gpu_collim, cpu_centerOfHexagons, gpu_centerOfHexagons, gpu_photons,
+    				cpu_photons, gpu_materials, ct_photons);
+
+#endif
+
+    // G4
     static G4EventManager * em = G4EventManager::GetEventManager();
-    G4StackManager * sm = em->GetStackManager(); 
-    
+    G4StackManager * sm = em->GetStackManager();
+
     ct_photons = 0;
     while (ct_photons < max_buffer_size) {
       if (cpu_photons.active[ct_photons]) {
-        
+
         // Create new particle
-        G4ThreeVector dir(cpu_photons.dx[ct_photons], 
+        G4ThreeVector dir(cpu_photons.dx[ct_photons],
                           cpu_photons.dy[ct_photons], cpu_photons.dz[ct_photons]);
         dir /= dir.mag();
 
-		G4ThreeVector position(cpu_photons.px[ct_photons], 
-                               cpu_photons.py[ct_photons], 
+		G4ThreeVector position(cpu_photons.px[ct_photons],
+                               cpu_photons.py[ct_photons],
                                cpu_photons.pz[ct_photons]);
 
-        // FIXME : Need a complete transformation with phantom centre 
-        //         (see below when photons are stored) 
-        /*G4ThreeVector position(cpu_photons.px[ct_photons] - half_phan_size_x, 
-                               cpu_photons.py[ct_photons] - half_phan_size_y, 
+        // FIXME : Need a complete transformation with phantom centre
+        //         (see below when photons are stored)
+        /*G4ThreeVector position(cpu_photons.px[ct_photons] - half_phan_size_x,
+                               cpu_photons.py[ct_photons] - half_phan_size_y,
                                cpu_photons.pz[ct_photons] - half_phan_size_z);*/
 
-        G4DynamicParticle * dp = new G4DynamicParticle(G4Gamma::Gamma(), dir, 
+        G4DynamicParticle * dp = new G4DynamicParticle(G4Gamma::Gamma(), dir,
                                                        cpu_photons.E[ct_photons]*MeV);
         double time = cpu_photons.t[ct_photons];
         G4Track * newTrack = new G4Track(dp, time, position);
@@ -447,12 +447,12 @@ void GateGPUSPECTActor::UserSteppingAction(const GateVVolume * /*v*/,
         newTrack->SetTrackID(cpu_photons.trackID[ct_photons]+trackid);
         ++trackid;
         newTrack->SetParentID(666);
-        
+
         // Insert
         sm->PushOneTrack(newTrack);
       }
       ct_photons++;
-    
+
     } // while
 
     ct_photons = 0;

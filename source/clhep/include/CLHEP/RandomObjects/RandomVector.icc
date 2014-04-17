@@ -1,0 +1,91 @@
+// -*- C++ -*-
+// 
+// -----------------------------------------------------------------------
+//                             HEP Random
+//                      --- HepRandomVector ---
+//                 inlined functions implementation file
+// -----------------------------------------------------------------------
+// =======================================================================
+// Mark Fischler - Created: 19th October 1998
+// =======================================================================
+
+namespace CLHEP {
+
+inline void HepRandomVector::setSeed(long seed, int lux) {
+  theEngine->setSeed(seed,lux);
+}
+
+inline void HepRandomVector::setSeeds(const long* seeds, int aux) {
+  theEngine->setSeeds(seeds,aux);
+}
+
+inline long HepRandomVector::getSeed() const {
+  return theEngine->getSeed();
+}
+
+inline const long* HepRandomVector::getSeeds() const {
+  return theEngine->getSeeds();
+}
+
+inline void HepRandomVector::saveStatus( const char filename[] ) const {
+  theEngine->saveStatus( filename );
+}
+
+inline void HepRandomVector::restoreStatus( const char filename[] ) {
+  theEngine->restoreStatus( filename );
+}
+
+inline void HepRandomVector::showStatus() const {
+  theEngine->showStatus();
+}
+
+// In analogy to the HepRandom class, we inline the following, even though now
+// they contain a loop to fill a vector and are thus more complicated.
+
+inline HepVector HepRandomVector::flat() {
+  HepVector v;
+  int i;
+  for ( i = 0; i < v.num_row(); i++ ) {
+    v[i] = theEngine->flat();
+  }
+  // Instead of this loop, the engine's flatArray routine could be
+  // used if there were a guarantee that the memory for the HepVector
+  // is merely its members in order.  But there is no such guarantee.
+  return v;
+}
+
+inline void HepRandomVector::flatArray(const int size, HepVector* vect) {
+  int n;
+  int i;
+  for ( n = 0; n < size; n++ ) {
+    for ( i = 0; i < vect[n].num_row(); i++ ) {
+      vect[n][i] = theEngine->flat();
+      // Here, the engine's flatArray routine is not good
+      // to use because each element of vect is std:vector
+    }
+  }
+}
+
+inline HepVector HepRandomVector::flat(HepRandomEngine* theNewEngine)
+{
+  HepVector v;
+  int i;
+  for ( i = 0; i < v.num_row(); i++ ) {
+    v[i] = theNewEngine->flat();
+  }
+  return v;
+}
+
+inline void HepRandomVector::flatArray(HepRandomEngine* theNewEngine, 
+                          const int size, HepVector* vect)
+{
+  int n;
+  int i;
+  for ( n = 0; n < size; n++ ) {
+    for ( i = 0; i < vect[n].num_row(); i++ ) {
+      vect[n][i] = theNewEngine->flat();
+    }
+  }
+}
+
+}  // namespace CLHEP
