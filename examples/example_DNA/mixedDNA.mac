@@ -6,7 +6,7 @@
 # VISUALISATION
 #=====================================================
 
-/control/execute visu.mac
+#/control/execute visu.mac
 
 #===================================================  
 # MATERIAL DATABASE 
