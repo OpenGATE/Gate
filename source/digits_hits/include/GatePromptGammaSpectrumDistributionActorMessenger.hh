@@ -33,6 +33,13 @@ protected:
   void BuildCommands(G4String base);
   GatePromptGammaSpectrumDistributionActor* pActor;
 
+  G4UIcmdWithADoubleAndUnit * pProtonEMinCmd;
+  G4UIcmdWithADoubleAndUnit * pProtonEMaxCmd;
+  G4UIcmdWithADoubleAndUnit * pGammaEMinCmd;
+  G4UIcmdWithADoubleAndUnit * pGammaEMaxCmd;
+  G4UIcmdWithAnInteger * pProtonNbBinsCmd;
+  G4UIcmdWithAnInteger * pGammaNbBinsCmd;
+
 };
 //-----------------------------------------------------------------------------
 
