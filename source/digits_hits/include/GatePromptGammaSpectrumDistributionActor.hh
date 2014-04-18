@@ -8,21 +8,20 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-#ifndef GATEPROMPTGAMMAPRODUCTIONTLEACTOR_HH
-#define GATEPROMPTGAMMAPRODUCTIONTLEACTOR_HH
+#ifndef GATEPROMPTGAMMASPECTRUMDISTRIBUTIONACTOR_HH
+#define GATEPROMPTGAMMASPECTRUMDISTRIBUTIONACTOR_HH
 
 #include "GateConfiguration.h"
 #include "GateVActor.hh"
-#include "GateActorMessenger.hh"
-#include "GatePromptGammaProductionTLEActorMessenger.hh"
+#include "GatePromptGammaSpectrumDistributionActorMessenger.hh"
 
 //-----------------------------------------------------------------------------
-class GatePromptGammaProductionTLEActor: public GateVActor
+class GatePromptGammaSpectrumDistributionActor : public GateVActor
 {
 public:
-  virtual ~GatePromptGammaProductionTLEActor();
+  virtual ~GatePromptGammaSpectrumDistributionActor();
 
-  FCT_FOR_AUTO_CREATOR_ACTOR(GatePromptGammaProductionTLEActor)
+  FCT_FOR_AUTO_CREATOR_ACTOR(GatePromptGammaSpectrumDistributionActor)
 
   virtual void Construct();
 
@@ -33,11 +32,12 @@ public:
   virtual void ResetData();
 
 protected:
-  GatePromptGammaProductionTLEActor(G4String name, G4int depth=0);
-  GatePromptGammaProductionTLEActorMessenger * pMessenger;
+  GatePromptGammaSpectrumDistributionActor(G4String name, G4int depth=0);
+  GatePromptGammaSpectrumDistributionActorMessenger * pMessenger;
 };
 //-----------------------------------------------------------------------------
 
-MAKE_AUTO_CREATOR_ACTOR(GpTLEActor,GatePromptGammaProductionTLEActor)
+MAKE_AUTO_CREATOR_ACTOR(PromptGammaSpectrumDistributionActor,
+                        GatePromptGammaSpectrumDistributionActor)
 
-#endif // end GATEPROMPTGAMMAPRODUCTIONTLEACTOR
+#endif // GATEPROMPTGAMMASPECTRUMDISTRIBUTIONACTOR

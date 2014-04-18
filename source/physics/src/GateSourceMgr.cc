@@ -8,20 +8,29 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
+#include <sstream>
+
 #include "GateConfiguration.h"
+
+#include "G4ParticleTable.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4Navigator.hh"
+#include "G4UImanager.hh"
+
+#include "Randomize.hh"
 #include "GateSourceMgr.hh"
 #include "GateSourceMgrMessenger.hh"
 #include "GateSourceVoxellized.hh"
 #include "GateGPUEmisTomo.hh"
 #include "GateOpticalBiolumGPU.hh"
 #include "GateSourceLinacBeam.hh"
-#include "GateSourcePromptGammaEmission.hh"
 #include "GateClock.hh"
 #include "GateApplicationMgr.hh"
-#include "GateActions.hh"
 #include "GateRTPhantomMgr.hh"
-
-#include "G4UImanager.hh"
+#include <vector>
+#include <cmath>
+#include "GateActions.hh"
+#include "G4RunManager.hh"
 
 //----------------------------------------------------------------------------------------
 GateSourceMgr* GateSourceMgr::mInstance = 0;
@@ -189,14 +198,12 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
       }
       else if (sourceGeomType == "PencilBeam") {
         source = new GateSourcePencilBeam( sourceName );
+        // source->SetType("PencilBeam");
         source->SetSourceID( m_sourceProgressiveNumber );
       }
       else if (sourceGeomType == "TPSPencilBeam") {
         source = new GateSourceTPSPencilBeam( sourceName );
-        source->SetSourceID( m_sourceProgressiveNumber );
-      }
-      else if (sourceGeomType == "PromptGammaEmission") {
-        source = new GateSourcePromptGammaEmission(sourceName);
+        // source->SetType("PencilBeam");
         source->SetSourceID( m_sourceProgressiveNumber );
       }
       else if ((sourceGeomType == "gps") ||
@@ -228,7 +235,7 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
       }
       else {
         GateError("Unknown source type '" << sourceGeomType
-                  << "'. Known types are voxel, linacbeam, gps, TPSPencilBeam, PromptGammaEmission, backtoback, fastI124.\n");
+                  << "'. Known types are voxel, linacbeam, gps.\n");
       }
 
     mSources.push_back( source );
