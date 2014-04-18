@@ -56,6 +56,7 @@ public:
   void PauseDAQ();
 
   void Describe();
+  void PrintStatus();
   void SetVerboseLevel(G4int value) { nVerboseLevel = value; }
 
   G4double GetTimeInterval(int i){return listOfTimeSlice[i];}
