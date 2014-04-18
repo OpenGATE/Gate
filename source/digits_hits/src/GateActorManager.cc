@@ -28,6 +28,7 @@ GateActorManager::GateActorManager()
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 GateActorManager::~GateActorManager()
 {
@@ -60,14 +61,21 @@ GateActorManager::~GateActorManager()
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 void GateActorManager::SetResetAfterSaving(bool reset) { resetAfterSaving = reset; }
 bool GateActorManager::GetResetAfterSaving() const { return resetAfterSaving; }
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateActorManager::AddActor(G4String actorType, G4String actorName, int depth)
 {
   GateDebugMessageInc("Actor",5,"Actor Manager -- AddActor(): "<<actorName<<" -- begin"<<G4endl);
   if(GateActorManager::theListOfActorPrototypes[actorType]) {
+    if (GetActor("Gate"+actorType, actorName) != NULL) {
+      GateError("An actor type: " << actorType << " with the same name " << actorName << " already exist. Abort.");
+    }
     theListOfActors.push_back(GateActorManager::theListOfActorPrototypes[actorType](actorName,depth));
   }
   else {
@@ -77,32 +85,27 @@ void GateActorManager::AddActor(G4String actorType, G4String actorName, int dept
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 GateVActor*  GateActorManager::GetActor(const G4String &actorType, const G4String &actorName)
 {
   for (std::vector<GateVActor*>::const_iterator iter=theListOfActors.begin(); iter!=theListOfActors.end(); iter++) {
     GateVActor *actor = *iter;
-    if (actor->GetName()==actorName and actor->GetTypeName()==actorType) return actor;
+    if (actor->GetName()==actorName and actor->GetTypeName()==actorType) {
+      return actor;
+    }
   }
   return NULL;
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateActorManager::CreateListsOfEnabledActors()
 {
-  // if(IsInitialized>1)
-  // {
-  //   GateWarning("Actor Manager -- CreateListsOfEnabledActors(): Actor Manager already initialized");
-  //  return;
-  // }
-
   std::vector<GateVActor*>::iterator sit;
   for(sit= theListOfActors.begin(); sit!=theListOfActors.end(); ++sit)
     {
-      //if ((*sit)->GetObjectName() == "output") (*sit) = GateOutputMgr::GetInstance();
-      //GateMessage("Core", 0, "Actor = " << (*sit)->GetObjectName() << G4endl);
-
       (*sit)->Construct();
       if((*sit)->IsBeginOfRunActionEnabled()       && IsInitialized<2) theListOfActorsEnabledForBeginOfRun.push_back( (*sit) );
       if((*sit)->IsEndOfRunActionEnabled()         && IsInitialized<2) theListOfActorsEnabledForEndOfRun.push_back( (*sit) );
@@ -110,8 +113,6 @@ void GateActorManager::CreateListsOfEnabledActors()
       if((*sit)->IsEndOfEventActionEnabled()       && IsInitialized<2) theListOfActorsEnabledForEndOfEvent.push_back( (*sit) );
       if((*sit)->IsPreUserTrackingActionEnabled()  && IsInitialized<2) theListOfActorsEnabledForPreUserTrackingAction.push_back( (*sit) );
       if((*sit)->IsPostUserTrackingActionEnabled() && IsInitialized<2) theListOfActorsEnabledForPostUserTrackingAction.push_back( (*sit) );
-
-      //GateMessage("Core", 0, "IsUserSteppingActionEnabled = " << (*sit)->IsUserSteppingActionEnabled() << G4endl);
 
       if((*sit)->IsUserSteppingActionEnabled())
 	{
@@ -127,20 +128,9 @@ void GateActorManager::CreateListsOfEnabledActors()
     }
 
   IsInitialized++;
-
-  /* for(sit= theListOfActors.begin(); sit!=theListOfActors.end(); ++sit)
-     {
-     if((*sit)->IsUserSteppingActionEnabled())
-     {
-     if( (*sit)->GetVolumeName()!="" )
-     {
-     // SetMultiFunctionalDetector((*sit));
-
-     }
-     }
-     }*/
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateActorManager::PrintListOfActorTypes() const
@@ -153,6 +143,7 @@ void GateActorManager::PrintListOfActorTypes() const
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateActorManager::PrintListOfActors() const
 {
@@ -164,12 +155,14 @@ void GateActorManager::PrintListOfActors() const
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 std::vector<GateVActor*> GateActorManager::ReturnListOfActors()
 {
   return theListOfActors;
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateActorManager::BeginOfRunAction(const G4Run* run)
@@ -183,6 +176,7 @@ void GateActorManager::BeginOfRunAction(const G4Run* run)
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateActorManager::EndOfRunAction(const G4Run* run)
 {
@@ -192,6 +186,7 @@ void GateActorManager::EndOfRunAction(const G4Run* run)
   //GateMessage("Core", 0, "Run " << run->GetRunID() << " is ending." << G4endl);
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateActorManager::BeginOfEventAction(const G4Event* evt)
@@ -203,6 +198,7 @@ void GateActorManager::BeginOfEventAction(const G4Event* evt)
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateActorManager::EndOfEventAction(const G4Event* evt)
 {
@@ -211,6 +207,7 @@ void GateActorManager::EndOfEventAction(const G4Event* evt)
     (*sit)->EndOfEventAction(evt);
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateActorManager::PreUserTrackingAction(const G4Track* track)
@@ -227,6 +224,7 @@ void GateActorManager::PreUserTrackingAction(const G4Track* track)
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateActorManager::PostUserTrackingAction(const G4Track* track)
 {
@@ -239,6 +237,7 @@ void GateActorManager::PostUserTrackingAction(const G4Track* track)
     }
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateActorManager::UserSteppingAction(const G4Step* step)
@@ -255,6 +254,7 @@ void GateActorManager::UserSteppingAction(const G4Step* step)
     }
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolume * volume)
