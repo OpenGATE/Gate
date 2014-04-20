@@ -127,6 +127,7 @@ public:
   void CreateMaterialMuMap(G4EmCalculator *emCalculator,
                            const std::vector<double> &Elist,
                            GateVImageVolume * gate_image_volume) {
+    m_EnergyList = Elist;
     itk::TimeProbe muProbe;
     muProbe.Start();
 
@@ -196,6 +197,8 @@ public:
     return result;
   }
 
+  void SetResponseDetector(GateEnergyResponseFunctor *_arg){ m_ResponseDetector = _arg; }
+
 protected:
   void Accumulate(const rtk::ThreadIdType threadId,
                   double &input,
@@ -211,6 +214,8 @@ protected:
   MaterialMuImageType::Pointer  m_MaterialMu;
   VectorType                    m_DetectorOrientationTimesPixelSurface;
   double                        m_IntegralOverDetector[ITK_MAX_THREADS];
+  GateEnergyResponseFunctor    *m_ResponseDetector;
+  std::vector<double>           m_EnergyList;
 };
 //-----------------------------------------------------------------------------
 
@@ -258,6 +263,10 @@ public:
         rayIntegral += m_InterpolationWeights[threadId][j] * *p++;
       }
       Accumulate(threadId, input, vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i]);
+      //SR to NA: use this if noise is activated
+      //Accumulate(threadId, input, vcl_exp(-rayIntegral)
+      //                   * (*m_EnergyWeightList)[i]
+      //                   * (*m_ResponseDetector)( m_EnergyList[i] ));
     }
 
     // FIXME: the source is not punctual but it is homogeneous on the detection plane
@@ -393,8 +402,6 @@ public:
     m_eRadiusOverCrossSectionTerm = weight * ( classic_electr_radius*classic_electr_radius) / (2.*cs);
   }
 
-  void SetResponseDetector(GateEnergyResponseFunctor *_arg){ m_ResponseDetector = _arg; }
-
 private:
   VectorType                 m_Direction;
   double                     m_Energy;
@@ -402,7 +409,6 @@ private:
   double                     m_InvWlPhoton;
   unsigned int               m_Z;
   double                     m_eRadiusOverCrossSectionTerm;
-  GateEnergyResponseFunctor *m_ResponseDetector;
 
   // Compton data
   G4VEMDataSet* m_ScatterFunctionData;

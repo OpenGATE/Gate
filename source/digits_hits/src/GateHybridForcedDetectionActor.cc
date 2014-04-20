@@ -154,6 +154,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       energyList.push_back(E);
       energyWeightList.push_back(h.Value(E));
       weightSum += energyWeightList.back();
+      //SR to NA: do this only when noise is desactivated
       energyWeightList.back() *= mEnergyResponseDetector(energyList.back());
       energyMax = std::max(energyMax, energyList.back());
     }
@@ -237,6 +238,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                                                         energyList,
                                                                         gate_image_volume);
   primaryProjector->GetProjectedValueAccumulation().Init( primaryProjector->GetNumberOfThreads() );
+  primaryProjector->GetProjectedValueAccumulation().SetResponseDetector( &mEnergyResponseDetector );
   TRY_AND_EXIT_ON_ITK_EXCEPTION(primaryProjector->Update());
   mPrimaryImage = primaryProjector->GetOutput();
   mPrimaryImage->DisconnectPipeline();
