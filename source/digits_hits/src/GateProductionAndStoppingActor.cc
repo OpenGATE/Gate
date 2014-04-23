@@ -65,6 +65,9 @@ void GateProductionAndStoppingActor::Construct() {
   SetOriginTransformAndFlagToImage(mProdImage);
   SetOriginTransformAndFlagToImage(mStopImage);
 
+/*TODO BRENT
+  if (customfr) mProdImage.SetTransformMatrix(RxM);*/
+
   mProdImage.EnableSquaredImage(false);
   mProdImage.EnableUncertaintyImage(false);
   mProdImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
