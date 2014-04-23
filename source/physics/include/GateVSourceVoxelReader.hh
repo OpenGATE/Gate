@@ -80,6 +80,7 @@ protected:
   G4int nVerboseLevel;
 
   G4String                       m_name;
+  G4String                       m_fileName;
 
   GateVSource*                    m_source;
 

@@ -21,6 +21,9 @@ See GATE/LICENSE.txt for further details
 
 #include "GateTools.hh"
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 //------------------------------------------------------------------------------------------------
 GateEccentRotMove::GateEccentRotMove(GateVVolume* itsObjectInserter,
       	      	      	      	      	 const G4String& itsName,

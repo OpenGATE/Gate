@@ -118,7 +118,6 @@ private:
    G4double fGlobalTime;           // Time since the event is created
    G4double fLocalTime;            // Time since the track is created
    G4double fProperTime;
-   G4double fTrackLength;          // Accumulated track length
    G4int fParentID;
    G4int feventID;
    G4int fRunID;

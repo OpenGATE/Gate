@@ -1,7 +1,7 @@
 !INTERFILE :=
 !GENERAL DATA :=
 !data offset in bytes := 0
-!name of data file := data/PET_64_64_125_16uint.raw
+!name of data file := PET_64_64_125_16uint.raw
 ;
 !GENERAL IMAGE DATA :=
 !total number of images := 125

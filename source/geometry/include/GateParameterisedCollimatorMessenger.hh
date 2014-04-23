@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #ifndef GateParameterisedCollimatorMessenger_h
@@ -22,32 +22,30 @@ class G4UIdirectory;
 
 class GateParameterisedCollimatorMessenger: public GateVolumeMessenger
 {
-  public:
-    GateParameterisedCollimatorMessenger(GateParameterisedCollimator* itsInserter);
-   ~GateParameterisedCollimatorMessenger();
-    
-    void SetNewValue(G4UIcommand*, G4String);
-    
-    virtual inline GateParameterisedCollimator* GetCollimatorInserter() 
-      { return (GateParameterisedCollimator*) GetVolumeCreator(); }
+public:
+  GateParameterisedCollimatorMessenger(GateParameterisedCollimator* itsInserter);
+  ~GateParameterisedCollimatorMessenger();
 
-  private:
-  
-    G4String                    name_Geometry;
-    G4UIdirectory*              dir_Geometry;
+  void SetNewValue(G4UIcommand*, G4String);
+
+  virtual inline GateParameterisedCollimator* GetCollimatorInserter()
+  { return (GateParameterisedCollimator*) GetVolumeCreator(); }
+
+private:
+
+  G4String                    name_Geometry;
+  G4UIdirectory*              dir_Geometry;
 
 
-    G4UIcmdWithADoubleAndUnit*  CollimatorDimensionXCmd;
-    G4UIcmdWithADoubleAndUnit*  CollimatorDimensionYCmd;
-    G4UIcmdWithADoubleAndUnit*  CollimatorFocalDistanceXCmd;
-    G4UIcmdWithADoubleAndUnit*  CollimatorFocalDistanceYCmd;
-    G4UIcmdWithADoubleAndUnit*  CollimatorHeightCmd;
-    G4UIcmdWithADoubleAndUnit*  CollimatorSeptalThicknessCmd;
-    G4UIcmdWithADoubleAndUnit*  CollimatorInnerRadiusCmd;
-    G4UIcmdWithAString*         CollimatorMaterialCmd;
+  G4UIcmdWithADoubleAndUnit*  CollimatorDimensionXCmd;
+  G4UIcmdWithADoubleAndUnit*  CollimatorDimensionYCmd;
+  G4UIcmdWithADoubleAndUnit*  CollimatorFocalDistanceXCmd;
+  G4UIcmdWithADoubleAndUnit*  CollimatorFocalDistanceYCmd;
+  G4UIcmdWithADoubleAndUnit*  CollimatorHeightCmd;
+  G4UIcmdWithADoubleAndUnit*  CollimatorSeptalThicknessCmd;
+  G4UIcmdWithADoubleAndUnit*  CollimatorInnerRadiusCmd;
 
-    GateVisAttributesMessenger* visAttributesMessenger;
+  GateVisAttributesMessenger* visAttributesMessenger;
 };
 
 #endif
-

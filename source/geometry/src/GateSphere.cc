@@ -1,17 +1,16 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #include "GateSphere.hh"
 #include "GateSphereMessenger.hh"
-
 #include "GateTools.hh"
 
 #include "G4Sphere.hh"
@@ -24,21 +23,20 @@ See GATE/LICENSE.txt for further details
 #include "G4VisAttributes.hh"
 
 
-
 //-----------------------------------------------------------------------------------------------
 // Constructor
 GateSphere::GateSphere(const G4String& itsName,const G4String& /*itsMaterialName */,
-      	      	              	       G4double itsRmax,
-				       G4double itsRmin,
-	              	      	       G4double itsSPhi, G4double itsDPhi,
-	              	      	       G4double itsSTheta, G4double itsDTheta,
-				       G4bool itsFlagAcceptChildren, G4int depth)
+                       G4double itsRmax,
+                       G4double itsRmin,
+                       G4double itsSPhi, G4double itsDPhi,
+                       G4double itsSTheta, G4double itsDTheta,
+                       G4bool itsFlagAcceptChildren, G4int depth)
   : GateVVolume(itsName, itsFlagAcceptChildren, depth),
-    m_sphere_solid(0),m_sphere_log(0),
-    m_sphereRmin(itsRmin),m_sphereRmax(itsRmax),
+  m_sphere_solid(0),m_sphere_log(0),
+  m_sphereRmin(itsRmin),m_sphereRmax(itsRmax),
     m_sphereSPhi(itsSPhi), m_sphereDPhi(itsDPhi),
-    m_sphereSTheta(itsSTheta), m_sphereDTheta(itsDTheta),
-    m_Messenger(0)
+  m_sphereSTheta(itsSTheta), m_sphereDTheta(itsDTheta),
+  m_Messenger(0)
 {
   m_Messenger = new GateSphereMessenger(this);
 }
@@ -48,20 +46,20 @@ GateSphere::GateSphere(const G4String& itsName,const G4String& /*itsMaterialName
 //-----------------------------------------------------------------------------------------------
 // Constructor
 GateSphere::GateSphere(const G4String& itsName,
-		                 G4bool itsFlagAcceptChildren,
-			         G4int depth)
+                       G4bool itsFlagAcceptChildren,
+                       G4int depth)
   : GateVVolume(itsName, itsFlagAcceptChildren, depth),
     m_sphere_solid(0),m_sphere_log(0),
     m_Messenger(0)
 {
-    m_sphereRmin = 1. *cm;
-    m_sphereRmax = 1. *cm;
-    m_sphereSPhi = 0.; 
-    m_sphereDPhi = 2*M_PI;
-    m_sphereSTheta = 0.;
-    m_sphereDTheta = M_PI;
-   
-    m_Messenger = new GateSphereMessenger(this);
+  m_sphereRmin = 0. *cm;
+  m_sphereRmax = 1. *cm;
+  m_sphereSPhi = 0.;
+  m_sphereDPhi = 2*M_PI;
+  m_sphereSTheta = 0.;
+  m_sphereDTheta = M_PI;
+
+  m_Messenger = new GateSphereMessenger(this);
 }
 //-----------------------------------------------------------------------------------------------
 
@@ -69,7 +67,7 @@ GateSphere::GateSphere(const G4String& itsName,
 //-----------------------------------------------------------------------------------------------
 // Destructor
 GateSphere::~GateSphere()
-{  
+{
   delete m_Messenger;
 }
 //-----------------------------------------------------------------------------------------------
@@ -82,10 +80,10 @@ GateSphere::~GateSphere()
 G4LogicalVolume* GateSphere::ConstructOwnSolidAndLogicalVolume(G4Material* mater, G4bool flagUpdateOnly)
 {
   if (!flagUpdateOnly || !m_sphere_solid) {
-  // Build mode: build the solid, then the logical volume
+    // Build mode: build the solid, then the logical volume
     m_sphere_solid
-      = new G4Sphere(GetSolidName(), 
-		     m_sphereRmin, m_sphereRmax, 
+      = new G4Sphere(GetSolidName(),
+		     m_sphereRmin, m_sphereRmax,
 		     m_sphereSPhi, m_sphereDPhi,
 		     m_sphereSTheta, m_sphereDTheta);
     m_sphere_log
@@ -93,19 +91,19 @@ G4LogicalVolume* GateSphere::ConstructOwnSolidAndLogicalVolume(G4Material* mater
   }
   else {
     // Update mode: refresh the dimensions of the solid
-	    m_sphere_solid->SetInsideRadius( m_sphereRmin);
-	    m_sphere_solid->SetOuterRadius(m_sphereRmax);
-	    m_sphere_solid->SetStartPhiAngle(m_sphereSPhi);
-	    m_sphere_solid->SetDeltaPhiAngle(m_sphereDPhi);
-	    m_sphere_solid->SetStartThetaAngle(m_sphereSTheta);
-	    m_sphere_solid->SetDeltaThetaAngle(m_sphereDTheta);
+    m_sphere_solid->SetInsideRadius( m_sphereRmin);
+    m_sphere_solid->SetOuterRadius(m_sphereRmax);
+    m_sphere_solid->SetStartPhiAngle(m_sphereSPhi);
+    m_sphere_solid->SetDeltaPhiAngle(m_sphereDPhi);
+    m_sphere_solid->SetStartThetaAngle(m_sphereSTheta);
+    m_sphere_solid->SetDeltaThetaAngle(m_sphereDTheta);
   }
-  
+
   // To visualisation of the sphere
   m_own_visAtt = new G4VisAttributes();
   m_own_visAtt->SetForceAuxEdgeVisible(true);
   m_sphere_log->SetVisAttributes(m_own_visAtt);
-  
+
   return m_sphere_log;
 }
 //-----------------------------------------------------------------------------------------------
@@ -131,8 +129,8 @@ void GateSphere::DestroyOwnSolidAndLogicalVolume()
 //-----------------------------------------------------------------------------------------------
 /* Implementation of the virtual method DescribeMyself(), to print-out a description of the creator
 
-	indent: the print-out indentation (cosmetic parameter)
-*/    
+   indent: the print-out indentation (cosmetic parameter)
+*/
 void GateSphere::DescribeMyself(size_t level)
 {
   G4cout << GateTools::Indent(level) << "Shape:              sphere\n";
@@ -157,7 +155,7 @@ G4double GateSphere::ComputeMyOwnVolume() const
   G4double Vmax = (4./3.) * M_PI * m_sphereRmax * m_sphereRmax * m_sphereRmax;
   G4double Vmin = (4./3.) * M_PI * m_sphereRmin * m_sphereRmin * m_sphereRmin;
   G4double dV = Vmax - Vmin;
-  
+
   return ( dV * ( m_sphereDPhi / (360.*deg) ) );
 }
 //-----------------------------------------------------------------------------------------------

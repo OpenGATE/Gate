@@ -12,7 +12,6 @@
 #define GateRandomEngine_h 1
 
 #include "GateRandomEngineMessenger.hh"
-#include "CLHEP/Random/defs.h"
 #include "CLHEP/Random/RandomEngine.h"
 
 class GateRandomEngineMessenger;
@@ -51,4 +50,3 @@ private:
 };
 
 #endif
-
