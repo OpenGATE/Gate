@@ -26,7 +26,7 @@ GateProductionAndStoppingActor::GateProductionAndStoppingActor(G4String name, G4
 
   mCurrentEvent=-1;
 
-  pMessenger = new GateImageActorMessenger(this);
+  pMessenger = new GateProductionAndStoppingActorMessenger(this);
 
   GateDebugMessageDec("Actor",4,"GateProductionAndStoppingActor() -- end"<<G4endl);
 

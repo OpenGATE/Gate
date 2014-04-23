@@ -43,5 +43,5 @@ protected:
 
 };
 
-#endif /* end #define GATESOURCEACTORMESSENGER_HH*/
+#endif /* end #define GateProductionAndStoppingActorMessenger_HH*/
 #endif

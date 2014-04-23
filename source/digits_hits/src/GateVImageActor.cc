@@ -413,7 +413,8 @@ int GateVImageActor::GetIndexFromStepPosition(const GateVVolume * v, const G4Ste
   if (mStepHitType == PreStepHitType) {
     //index = mImage.GetIndexFromPrePosition(prePosition, postPosition);
     G4ThreeVector direction = postPosition - prePosition;
-    index = mImage.GetIndexFromPostPositionAndDirection(R x prePosition, direction);
+    index = mImage.GetIndexFromPostPositionAndDirection(prePosition, direction);
+    //TODO Brent index = mImage.GetIndexFromPostPositionAndDirection(R x prePosition, direction);
   }
   if (mStepHitType == PostStepHitType) {
     G4ThreeVector direction = postPosition - prePosition;

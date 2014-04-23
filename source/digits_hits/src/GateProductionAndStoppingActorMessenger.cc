@@ -17,11 +17,11 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
 
-#include "GatePhaseSpaceActor.hh"
+#include "GateProductionAndStoppingActor.hh"
 
 //-----------------------------------------------------------------------------
-GateProductionAndStoppingActorMessenger::GateProductionAndStoppingActorMessenger(GatePhaseSpaceActor* sensor)
-  :GateActorMessenger(sensor),pActor(sensor)
+GateProductionAndStoppingActorMessenger::GateProductionAndStoppingActorMessenger(GateProductionAndStoppingActor* sensor)
+  :GateImageActorMessenger(sensor),pActor(sensor)
 {
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -58,7 +58,7 @@ void GateProductionAndStoppingActorMessenger::SetNewValue(G4UIcommand* command, 
 {
   if(command == bCoordinateFrameCmd) {pActor->SetCoordFrame(param);pActor->SetEnableCoordFrame();};
 
-  GateActorMessenger::SetNewValue(command ,param );
+  GateImageActorMessenger::SetNewValue(command ,param );
 }
 //-----------------------------------------------------------------------------
 
