@@ -33,6 +33,14 @@ G4int GateSignalHandler::Install()
     G4cerr << G4endl << "Warning! Could not install handler for SIGUSR1!" << G4endl << G4endl;
     return -1;
   }
+  if (signal(SIGUSR2,PrintSimulationStatus) == SIG_ERR) {
+    G4cerr << G4endl << "Warning! Could not install handler for SIGUSR2!" << G4endl << G4endl;
+    return -1;
+  }
+  if (signal(SIGINFO,PrintSimulationStatus) == SIG_ERR) {
+    G4cerr << G4endl << "Warning! Could not install handler for SIGINFO!" << G4endl << G4endl;
+    return -1;
+  }
   return 0;
 }
 
@@ -97,4 +105,9 @@ void GateSignalHandler::QuitSignalHandler(int sig)
       	     << " --> ignored!" << G4endl << G4endl;
       break;
   }
+}
+
+void GateSignalHandler::PrintSimulationStatus(int)
+{
+    GateApplicationMgr::GetInstance()->PrintStatus();
 }

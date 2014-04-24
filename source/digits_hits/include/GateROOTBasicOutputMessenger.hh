@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "GateConfiguration.h"
 
@@ -39,20 +39,18 @@ class G4UIcmdWithAString;
 //---------------------------------------------------------------------------------
 class GateROOTBasicOutputMessenger: public G4UImessenger
 {
-  public:
+public:
 
-   GateROOTBasicOutputMessenger(GateROOTBasicOutput*);
+  GateROOTBasicOutputMessenger(GateROOTBasicOutput*);
   ~GateROOTBasicOutputMessenger();
 
-   void SetNewValue(G4UIcommand* ,G4String );
+  void SetNewValue(G4UIcommand* ,G4String );
 
-  private:
+private:
 
-   GateROOTBasicOutput*            xeHisto;
-   G4UIdirectory*                  plotDir;
-   G4UIcmdWithAString*             setfileNameCmd;
-//   GateUserActions* userActions;
-   GateRunAction* runAc;
+  GateROOTBasicOutput*            xeHisto;
+  G4UIdirectory*                  plotDir;
+  G4UIcmdWithAString*             setfileNameCmd;
 };
 //---------------------------------------------------------------------------------
 #endif

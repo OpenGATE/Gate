@@ -11,9 +11,11 @@
 #ifndef GATEPHYSICSLIST_CC
 #define GATEPHYSICSLIST_CC
 
+#include "GatePhysicsList.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleWithCuts.hh"
 #include "G4ProcessManager.hh"
+#include "GatePhysicsListMessenger.hh"
 #include "G4BosonConstructor.hh"
 #include "G4LeptonConstructor.hh"
 #include "G4MesonConstructor.hh"
@@ -25,6 +27,7 @@
 #include "G4Region.hh"
 #include "G4RegionStore.hh"
 #include "G4LogicalVolumeStore.hh"
+#include "G4DNAGenericIonsManager.hh"
 #include "G4ParticleTable.hh"
 #include "G4PhysListFactory.hh"
 #include "G4VUserPhysicsList.hh"
@@ -48,6 +51,7 @@
 #include "GatePhysicsListMessenger.hh"
 #include "GateRunManager.hh"
 #include "GateObjectStore.hh"
+#include "GateMixedDNAPhysics.hh"
 
 #ifdef GATE_USE_OPTICAL
 #include "G4OpticalPhoton.hh"
@@ -322,6 +326,33 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
 
 
 //-----------------------------------------------------------------------------------------
+// Construction of the physics list from a G4 builder
+void GatePhysicsList::ConstructPhysicsListDNAMixed(G4String name)
+{
+  if (name == "emstandard_opt3_mixed_emdna") {
+    emPhysicsListMixed = new GateMixedDNAPhysics("emstandard_opt3_mixed_emdna");
+  }
+  else {
+    if (name== "emlivermore_mixed_emdna") {
+      emPhysicsListMixed = new GateMixedDNAPhysics("emlivermore_mixed_dna");
+    }
+    else {
+      GateError("The mixed Physics List "<<name<<" does not exist!");
+    }
+  }
+}
+//-----------------------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------------------
+void GatePhysicsList::ConstructProcessMixed()
+{
+  emPhysicsListMixed->ConstructProcess();
+}
+//-----------------------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------------------
 void GatePhysicsList::ConstructParticle()
 {
 
@@ -352,6 +383,19 @@ void GatePhysicsList::ConstructParticle()
   //#ifdef GATE_USE_OPTICAL
   //G4OpticalPhoton::OpticalPhotonDefinition();
   //#endif
+  
+  //Construct G4DNA particles
+
+  G4DNAGenericIonsManager* dnagenericIonsManager;
+  dnagenericIonsManager=G4DNAGenericIonsManager::Instance();
+  dnagenericIonsManager->GetIon("hydrogen");
+  dnagenericIonsManager->GetIon("alpha+");
+  dnagenericIonsManager->GetIon("alpha++");
+  dnagenericIonsManager->GetIon("helium");
+  dnagenericIonsManager->GetIon("carbon");
+  dnagenericIonsManager->GetIon("nitrogen");
+  dnagenericIonsManager->GetIon("iron");
+  dnagenericIonsManager->GetIon("oxygen");
 }
 //-----------------------------------------------------------------------------------------
 
@@ -653,7 +697,6 @@ void GatePhysicsList::Write(G4String file)
 //-----------------------------------------------------------------------------
 void GatePhysicsList::SetEmProcessOptions()
 {
-  //DD("not opt");
   opt = new G4EmProcessOptions();
   if(mDEDXBinning>0)   opt->SetDEDXBinning(mDEDXBinning);
   if(mLambdaBinning>0) opt->SetLambdaBinning(mLambdaBinning);

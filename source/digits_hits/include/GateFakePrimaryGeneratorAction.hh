@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #ifndef GATEFAKEPRIMARYGENERATORACTION_HH
@@ -32,19 +32,16 @@ See GATE/LICENSE.txt for further details
 
 class GateFakePrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
-  public:
-//    GateFakePrimaryGeneratorAction(GateFakeDetectorConstruction*);
-   GateFakePrimaryGeneratorAction(GateDetectorConstruction*);
-   ~GateFakePrimaryGeneratorAction();
+public:
+  //    GateFakePrimaryGeneratorAction(GateFakeDetectorConstruction*);
+  GateFakePrimaryGeneratorAction(GateDetectorConstruction*);
+  ~GateFakePrimaryGeneratorAction();
 
-  public:
-    void GeneratePrimaries(G4Event*);
+public:
+  void GeneratePrimaries(G4Event*);
 
-  private:
+private:
   G4GeneralParticleSource *                particleGun;	  //pointer a to G4  class
-    //G4ParticleGun *                particleGun;	  //pointer a to G4  class
-    GateDetectorConstruction*    GateDetector;   //pointer to the geometry
-    //GateFakeDetectorConstruction*    GateDetector;   //pointer to the geometry
 
 };
 

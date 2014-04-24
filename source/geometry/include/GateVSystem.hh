@@ -217,6 +217,7 @@ class GateVSystem : public GateClockDependent
     size_t m_mainComponentDepth;		//!< depth of the main component (0 or 1)
     G4String m_itsOwnName;                      //! a name of a system, may be any name (multi-system approach)
     G4int m_itsNumber;                          //! the insertion order of a system, it is too the systemID ((multi-system approach)
+    G4int m_sysNumber;
     G4int static m_insertionOrder;              //! a static member to carry the insertion number (multi-system approach)
 };
 

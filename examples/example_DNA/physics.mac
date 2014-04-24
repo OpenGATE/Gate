@@ -1,0 +1,32 @@
+#======================================================
+# PHYSICS 
+#======================================================
+
+/gate/physics/addPhysicsListMixed emstandard_opt3_mixed_emdna
+#/gate/physics/addPhysicsListMixed emlivermore_mixed_emdna
+
+/gate/physics/SetDNAInRegion Target1
+/gate/physics/SetDNAInRegion Target3
+
+/gate/physics/ConstructProcessMixed
+
+/gate/physics/Gamma/SetCutInRegion    world 4 um
+/gate/physics/Electron/SetCutInRegion   world 4 um
+/gate/physics/Positron/SetCutInRegion   world 4 um
+/gate/physics/Proton/SetCutInRegion     world 4 um
+
+#======================================================
+# ACTORS   
+#======================================================
+
+# To avoid very low energy electrons to be trapped into scattering
+/gate/actor/addActor  KillActor  killETarget1
+/gate/actor/killETarget1/attachTo Target1
+/gate/actor/killETarget1/addFilter energyFilter
+/gate/actor/killETarget1/energyFilter/setEmax 8 eV
+
+/gate/actor/addActor  KillActor  killETarget3
+/gate/actor/killETarget3/attachTo Target3
+/gate/actor/killETarget3/addFilter energyFilter
+/gate/actor/killETarget3/energyFilter/setEmax 8 eV
+

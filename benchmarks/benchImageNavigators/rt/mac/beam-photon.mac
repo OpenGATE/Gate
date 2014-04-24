@@ -1,0 +1,71 @@
+#=====================================================
+# BEAMS : SIMPLE PHOTON BEAM (6 MeV e- -> ~2.2 MeV, 20mm radius)
+#=====================================================
+
+#=====================================================
+# Type of particle & Energy spectrum
+#=====================================================
+/gate/source/addSource mybeam gps
+/gate/source/mybeam/setIntensity 10.
+/gate/source/mybeam/gps/particle gamma
+/gate/source/mybeam/gps/ene/type   User
+/gate/source/mybeam/gps/hist/type  energy
+/gate/source/mybeam/gps/hist/point   0.13 0.032047941
+/gate/source/mybeam/gps/hist/point   0.38 0.139322874
+/gate/source/mybeam/gps/hist/point   0.63 0.128271317
+/gate/source/mybeam/gps/hist/point   0.88 0.104101320
+/gate/source/mybeam/gps/hist/point   1.13 0.087722697
+/gate/source/mybeam/gps/hist/point   1.38 0.074515256
+/gate/source/mybeam/gps/hist/point   1.63 0.061865442
+/gate/source/mybeam/gps/hist/point   1.88 0.051816519
+/gate/source/mybeam/gps/hist/point   2.13 0.044850118
+/gate/source/mybeam/gps/hist/point   2.38 0.038812754
+/gate/source/mybeam/gps/hist/point   2.63 0.033491917
+/gate/source/mybeam/gps/hist/point   2.88 0.029783373
+/gate/source/mybeam/gps/hist/point   3.13 0.025720295
+/gate/source/mybeam/gps/hist/point   3.38 0.022598543
+/gate/source/mybeam/gps/hist/point   3.63 0.019733182
+/gate/source/mybeam/gps/hist/point   3.88 0.017636211
+/gate/source/mybeam/gps/hist/point   4.13 0.015519179
+/gate/source/mybeam/gps/hist/point   4.38 0.014236603
+/gate/source/mybeam/gps/hist/point   4.63 0.012188171
+/gate/source/mybeam/gps/hist/point   4.88 0.010440358
+/gate/source/mybeam/gps/hist/point   5.13 0.009278173
+/gate/source/mybeam/gps/hist/point   5.38 0.007876917
+/gate/source/mybeam/gps/hist/point   5.63 0.006674784
+/gate/source/mybeam/gps/hist/point   5.88 0.005250251
+/gate/source/mybeam/gps/hist/point   6.13 0.003518869
+/gate/source/mybeam/gps/hist/point   6.38 0.001849387
+/gate/source/mybeam/gps/hist/point   6.63 0.000746224
+/gate/source/mybeam/gps/hist/point   6.88 0.000131320
+/gate/source/mybeam/gps/hist/point   7.13 0.000000000
+/gate/source/mybeam/gps/hist/point   7.38 0.000000000
+/gate/source/mybeam/gps/hist/point   7.63 0.000000000
+/gate/source/mybeam/gps/hist/point   7.88 0.000000000
+
+#=====================================================
+# Position and shape
+#=====================================================
+/gate/source/mybeam/gps/position      0 -1000 0 mm
+/gate/source/mybeam/gps/pos/type      Point
+/gate/source/mybeam/gps/ang/type      iso
+/gate/source/mybeam/gps/ang/mintheta  0. deg
+/gate/source/mybeam/gps/ang/minphi    0. deg
+/gate/source/mybeam/gps/ang/maxphi    360. deg
+/gate/source/mybeam/gps/ang/rot1      1 0 0 
+/gate/source/mybeam/gps/ang/rot2      0 0 1 
+/gate/source/mybeam/gps/pos/rot1      1 0 0
+/gate/source/mybeam/gps/pos/rot2      0 0 1
+
+#### 10x10 square field (at isocenter)
+#/gate/source/mybeam/gps/ang/maxtheta  2.8624 deg
+
+#### 5x5 square field (at isocenter)
+/gate/source/mybeam/gps/ang/maxtheta  1.4312 deg
+
+#### 1.5x1.5 square field (at isocenter)
+#/gate/source/mybeam/gps/ang/maxtheta  0.4297223 deg
+
+#### ~ pencil
+#/gate/source/mybeam/gps/ang/maxtheta  0.5 deg
+

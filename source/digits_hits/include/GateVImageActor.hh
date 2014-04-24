@@ -8,7 +8,6 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-
 /*!
   \class GateVImageActor
   \author thibault.frisson@creatis.insa-lyon.fr
@@ -22,6 +21,7 @@ See GATE/LICENSE.txt for further details
 #include "GateVActor.hh"
 #include "GateImage.hh"
 #include "GateVVolume.hh"
+#include "GateImageWithStatistic.hh"
 #include "Randomize.hh"
 
 //-----------------------------------------------------------------------------
@@ -44,6 +44,11 @@ public :
 
   /// Constructs the sensor
   virtual void Construct();
+
+  // When a image is managed by the actor, you must initialize the
+  // coordinate system with this function
+  void SetOriginTransformAndFlagToImage(GateImageWithStatistic & image);
+  void SetOriginTransformAndFlagToImage(GateImage & image);
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------

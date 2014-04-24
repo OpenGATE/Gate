@@ -6,9 +6,11 @@
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
+
+  Modified version 11-10-13 for physics mixed with dna
+  Author: LPC Clermont-Fd
+
   ----------------------*/
-
-
 
 #ifndef GATEPHYSICSLIST_HH
 #define GATEPHYSICSLIST_HH
@@ -59,6 +61,8 @@ public:
   void ConstructProcess();
   void ConstructParticle();
   void ConstructPhysicsList(G4String name);
+  void ConstructPhysicsListDNAMixed(G4String name);
+  void ConstructProcessMixed();
 
   void Print(G4String type, G4String particlename);
   void Print(G4String name);
@@ -68,10 +72,10 @@ public:
   void AddAtomDeexcitation();
 
   void PurgeIfFictitious();
- 
+
   void Write(G4String file);
 
-  std::vector<GateVProcess*> FindProcess(G4String name);  
+  std::vector<GateVProcess*> FindProcess(G4String name);
   std::vector<G4String> GetTheListOfPBName() {return theListOfPBName;}
 
   void SetCuts();
@@ -93,7 +97,7 @@ public:
 
   std::vector<G4String> mListOfStepLimiter;
   std::vector<G4String> mListOfG4UserSpecialCut;
-  RegionCutMapType mapOfRegionCuts;  
+  RegionCutMapType mapOfRegionCuts;
 
 protected:
   int mLoadState;
@@ -102,7 +106,7 @@ protected:
 
   static GatePhysicsList *singleton;
 
-  std::vector<GateVProcess*>* GetTheListOfProcesss();  
+  std::vector<GateVProcess*>* GetTheListOfProcesss();
 
   VolumeUserLimitsMapType mapOfVolumeUserLimits;
   std::list<G4ProductionCuts*> theListOfCuts;
@@ -113,9 +117,12 @@ protected:
   double mEmax;
   bool mSplineFlag;
   G4UserLimits * userlimits;
-  
-  // Physic list management 
+
+  // Physic list management
   G4VUserPhysicsList * mUserPhysicList;
+  //Mixed EM and DNA Physics List
+  G4VUserPhysicsList* emPhysicsListMixed;
+
   G4String mUserPhysicListName;
   G4String mListOfPhysicsLists;
   G4double mLowEnergyRangeLimit;
@@ -125,6 +132,3 @@ protected:
 
 
 #endif /* end #define GATEPHYSICSLIST_HH */
-
-
-

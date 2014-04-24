@@ -823,8 +823,138 @@ __device__ float get_boundary_voxel_by_raycasting(int4 vox, float3 p, float3 d, 
     return tmax;
 }
 
-// Return the next edge distance (for SPECT simulation)
-__device__ double get_boundary_hexagon_by_raycasting(float3 p, float3 d, int size_x, double radius) {
+
+
+// Check if the point is located inside a collimator hole (SPECT simulation)
+__device__ bool IsInsideHex(float3 position, double radius, float cy, float cz)
+{
+	// Check if photon is inside an hexagon
+	double dify = fabs(position.y - cy);
+	double difz = fabs(position.z - cz);
+	
+	double horiz = radius;
+	double verti = (radius * (2.0/sqrt(3.0))) / 2.0;
+	
+	if(difz >= 2*verti || dify >= horiz || (2*verti*horiz - verti*dify - horiz*difz) <= 0.0 )
+		return false;
+	
+	return true;
+}
+
+__device__ int GetHexIndex(float3 position, Colli colli, CoordHex2 centerOfHexagons)
+{
+  	int col, raw, hex, temp, new_raw, min, max;
+  	
+	// Define hexagon index
+    
+    // Find the column in the array of hexagons
+
+  	col = round(((colli.CubRepVecY * (( colli.CubRepNumY - 1 ) / 2.0)) - position.y) 
+  						/ colli.CubRepVecY);
+  				
+  	// if the photon is too close to external frame, col value is incorrect			
+  	if (col < 0.0)
+  			col = 0.0;
+ 	else if (col > (colli.CubRepNumY - 1))
+    		col = colli.CubRepNumY - 1;
+    
+  	// Find the raw in the array of hexagons
+     
+ 	raw = round((colli.LinRepVecZ * (colli.CubRepNumZ - 1.0) - position.z) 
+  					/ colli.LinRepVecZ);
+
+  	// if the photon is too close to external frame, raw value is incorrect
+  	if (raw < 0.0)
+  			raw = 0.0;
+  	else if (raw > (colli.CubRepNumZ - 1.0) * 2.0 )
+    		raw = (colli.CubRepNumZ - 1.0) * 2.0;
+  
+  	// Find the hexagon index
+  
+  	// Even raw 
+  	if ( raw % 2 == 0.0 ) {
+			hex = (raw / 2.0) * ((2.0 * colli.CubRepNumY) - 1.0) + col;
+			// Test centered hexagon
+			if (IsInsideHex(position, colli.HexaRadius, centerOfHexagons.y[hex], centerOfHexagons.z[hex]))
+				return hex;
+			else {
+				if (raw - 1 >= 0) {
+					new_raw = raw - 1;
+					min = new_raw * colli.CubRepNumY - ((new_raw - 1)/2);
+					max = min + colli.CubRepNumY - 1;
+					temp = hex - colli.CubRepNumY - 1;
+					
+					if(temp >= min)
+						// Test top left hexagon
+						if(IsInsideHex(position, colli.HexaRadius, centerOfHexagons.y[temp], centerOfHexagons.z[temp]))
+							return temp;
+			
+					temp = hex + colli.CubRepNumY;
+				
+					if(temp < max)
+						// Test top right hexagon
+						if(IsInsideHex(position, colli.HexaRadius, centerOfHexagons.y[temp], centerOfHexagons.z[temp]))
+							return temp;
+				}
+				
+				if (raw + 1 < colli.CubRepNumY * 2 - 1) {
+					new_raw = raw + 1;
+					min = new_raw * colli.CubRepNumY - ((new_raw - 1)/2);
+					max = min + colli.CubRepNumY - 1;
+					temp = hex + colli.CubRepNumY - 1;
+					
+					if(temp >= min)
+						// Test bottom left hexagon
+						if(IsInsideHex(position, colli.HexaRadius, centerOfHexagons.y[temp], centerOfHexagons.z[temp]))
+							return temp;
+					
+					temp = hex + colli.CubRepNumY;
+				    
+					if(temp < max)
+						// Test bottom right hexagon
+						if(IsInsideHex(position, colli.HexaRadius, centerOfHexagons.y[temp], centerOfHexagons.z[temp]))
+							return temp;
+				}
+			}
+	}
+	// Odd raw
+  	else {
+  			hex = ((raw + 1.0)/ 2.0) * colli.CubRepNumY + ((raw - 1.0)/ 2.0) * (colli.CubRepNumY - 1.0) + col;
+  			
+  			min = raw * colli.CubRepNumY - ((raw - 1)/2);
+			max = min + colli.CubRepNumY - 1;
+			
+			if(hex < max)			
+				// Test right hexagon
+				if (IsInsideHex(position, colli.HexaRadius, centerOfHexagons.y[hex], centerOfHexagons.z[hex]))
+					return hex;
+				
+  			temp = hex - 1; 
+				
+			if(temp >= min)
+				// Test left hexagon
+				if(IsInsideHex(position, colli.HexaRadius, centerOfHexagons.y[temp], centerOfHexagons.z[temp]))
+						return temp;
+				
+  			temp = hex - colli.CubRepNumY;
+  			
+			// Test top hexagon
+			if(IsInsideHex(position, colli.HexaRadius, centerOfHexagons.y[temp], centerOfHexagons.z[temp]))
+				return temp;
+			
+  			temp = hex + colli.CubRepNumY - 1;
+  			
+  			// Test bottom hexagon
+			if(IsInsideHex(position, colli.HexaRadius, centerOfHexagons.y[temp], centerOfHexagons.z[temp]))
+				return temp;
+  	}
+  		
+	return -1;
+}
+
+// Return the next edge distance inside a hole (for SPECT simulation)
+__device__ double get_hexagon_boundary_by_raycasting(float3 p, float3 preel, float3 d, int size_x, 
+													double radius, Colli colli, CoordHex2 centerOfHexagons) {
 	
 	float xmin, xmax, ymin, ymax, e1min, e1max, e2min, e2max;
 	float txmin, txmax, tmin, tmax, tymin, tymax, tzmin, tzmax, te1min, te1max, te2min, te2max, buf;
@@ -943,66 +1073,23 @@ __device__ double get_boundary_hexagon_by_raycasting(float3 p, float3 d, int siz
 	//printf("final %d //// %f %f / %f %f / %f %f / %f %f //// direction %f %f %f \n", 
 		//			w, tmin, tmax, tymin, tymax, te1min, te1max, te2min, te2max, d.x, d.y, d.z);
 
+	/*
+	float3 pos_test;
+	
+	pos_test.x = preel.x + (d.x * (tmax + 1.0e-03f));
+    pos_test.y = preel.y + (d.y * (tmax + 1.0e-03f));
+    pos_test.z = preel.z + (d.z * (tmax + 1.0e-03f));
+    		 
+	int hex2 = GetHexIndex(pos_test, colli, centerOfHexagons);
+    	
+    if(hex2 >= 0) {
+    		printf("HOLE dist %f hex %d - pos %f %f - pos_test %f %f %f - center %f %f - dir %f %f %f - diff %f - r %f \n", tmax, hex2, 
+    				p.y, p.z, pos_test.x, pos_test.y, pos_test.z, centerOfHexagons.y[hex2], centerOfHexagons.z[hex2], d.x, d.y, d.z,
+    				fabs(pos_test.y - centerOfHexagons.y[hex2]), colli.HexaRadius);
+   	 } 
+   	 */
+
     return tmax;
-}
-
-
-// Check if the point is located inside a collimator hole (SPECT simulation)
-__device__ int IsInsideHex(float3 position, Colli colli, CoordHex2 centerOfHexagons)
-{
-	// Define hexagon index
-    
-    // Find the column in the array of hexagons
-		
-  	int col = round(((colli.CubRepVecY * (( colli.CubRepNumY - 1 ) / 2.0)) - position.y) 
-  						/ colli.CubRepVecY);
-  				
-  	// Check if the photon hits the external frame of the collimator				
-  	if (col < 0.0)
-  			col = 0.0;
- 	else if (col > (colli.CubRepNumY - 1))
-    		col = colli.CubRepNumY - 1;
-    
- 	//DD(col);	
- 
-  	// Find the raw in the array of hexagons
-     
- 	int raw = round((colli.LinRepVecZ * (colli.CubRepNumZ - 1.0) - position.z) 
-  					/ colli.LinRepVecZ);
-
-  	// Check if the photon hits the external frame of the collimator
-  	if (raw < 0.0)
-  			raw = 0.0;
-  	else if (raw > (colli.CubRepNumZ - 1.0))
-    		raw = colli.CubRepNumZ - 1.0;
-  
-  	// Find the hexagon index
-  
-  	int hex;
-  
-  	if ( raw % 2 == 0.0 ) {
-			hex = (raw / 2.0) * ((2.0 * colli.CubRepNumY) - 1.0) + col;
-	}
-  	else {
-  			/// 2 cases !!!!!
-  			hex = ((raw + 1.0)/ 2.0) * colli.CubRepNumY + ((raw - 1.0)/ 2.0) * (colli.CubRepNumY - 1.0) + col;
-  			if (fabs(position.y - centerOfHexagons.y[hex]) > colli.HexaRadius)
-  				hex--;
-  	}
-	
-	// Check if photon is inside an hexagon
-	float dify = fabs(position.y - centerOfHexagons.y[hex]);
-	float difz = fabs(position.z - centerOfHexagons.z[hex]);
-	
-	float horiz = colli.HexaRadius;
-	float verti = (colli.HexaRadius * (2.0/sqrt(3.0))) / 2.0;
-	
-	//printf("dify %f difz %f corner %f \n", dify, difz, 2*verti*horiz - verti*dify - horiz*difz);
-	
-	if(dify >= 2*verti || difz >= horiz || (2*verti*horiz - verti*dify - horiz*difz) <= 0.0 )
-		return -1;
-	
-	return hex;
 }
 
 // Binary search
@@ -1044,6 +1131,8 @@ void dosimetry_dump(Dosimetry dosemap) {
     fclose(pfile);
 
 }
+
+
 
 /***********************************************************
  * PRNG Brent xor256
@@ -1995,6 +2084,7 @@ __global__ void kernel_NavHexaColli_Photon_NoSec(StackParticle photons, Colli co
     if (id >= photons.size) return;
     if (photons.endsimu[id]) return;
 	if (!photons.active[id]) return;
+    
 
     //// Init ///////////////////////////////////////////////////////////////////
 
@@ -2004,6 +2094,10 @@ __global__ void kernel_NavHexaColli_Photon_NoSec(StackParticle photons, Colli co
     position.y = photons.py[id];
     position.z = photons.pz[id];
     
+    //printf("position %f %f %f \n", position.x, position.y, position.z);
+    
+    
+	
     // Read direction
     float3 direction;
     direction.x = photons.dx[id];
@@ -2019,20 +2113,25 @@ __global__ void kernel_NavHexaColli_Photon_NoSec(StackParticle photons, Colli co
     float next_interaction_distance =  FLT_MAX;
     unsigned char next_discrete_process = 0; 
     float interaction_distance;
-   	double interaction_distance2;
+   	double interaction_distance2 = 0.0;
+   	double interaction_distance3 = FLT_MAX;
     float cross_section;
       
     unsigned short int mat; 
     
-    float3 pos_test;
+    double half_colli_size_x = colli.size_x / 2.0;
+  	double half_colli_size_y = colli.size_y / 2.0;
+  	double half_colli_size_z = colli.size_z / 2.0;
     
-    int hex = IsInsideHex(position, colli, centerOfHexagons);
-
+    float3 pos_test, inv_dir, temp;
+    double dist;
+    int hex;
+    
 	// If photon is outside an hexagonal hole
-	if(hex<0)
+	if(GetHexIndex(position, colli, centerOfHexagons)<0)
     {
     	mat = 0; //lead
-
+    
     	// Photoelectric
     	cross_section = PhotoElec_CS_Standard(materials, mat, energy); 
     	interaction_distance = __fdividef(-__logf(Brent_real(id, photons.table_x_brent, 0)),
@@ -2046,7 +2145,7 @@ __global__ void kernel_NavHexaColli_Photon_NoSec(StackParticle photons, Colli co
 
     	// Compton
     	cross_section = Compton_CS_Standard(materials, mat, energy);
-        interaction_distance = __fdividef(-__logf(Brent_real(id, photons.table_x_brent, 0)),
+    	interaction_distance = __fdividef(-__logf(Brent_real(id, photons.table_x_brent, 0)),
         	                             cross_section);
     
     	if (interaction_distance < next_interaction_distance) {
@@ -2056,19 +2155,52 @@ __global__ void kernel_NavHexaColli_Photon_NoSec(StackParticle photons, Colli co
     	
     	//printf("C %f %f\n", interaction_distance, cross_section);
     	
-    	// Compute new position
-    	pos_test.x = position.x + (direction.x * next_interaction_distance);
-    	pos_test.y = position.y + (direction.y * next_interaction_distance);
-    	pos_test.z = position.z + (direction.z * next_interaction_distance);
+    	//  Hexagon edge
     	
-    	// if the new position is inside a hole -> Stop simu
-    	if(IsInsideHex(pos_test, colli, centerOfHexagons)>=0)
-    	{
-    		photons.endsimu[id] = 1;                     // stop the simulation
-        	atomicAdd(count_d, 1);                       // count simulated primaries
-        	//printf("end : effect did not occur inside a septa \n");
-        	return;
+    	pos_test = position;
+    		
+    	// Search for the next position inside an hexagon
+    	while(GetHexIndex(pos_test, colli, centerOfHexagons)<0
+    		&& fabs(pos_test.x) < half_colli_size_x
+        	&& fabs(pos_test.y) < half_colli_size_y
+        	&& fabs(pos_test.z) < half_colli_size_z) {
+        		
+        	pos_test.x += direction.x * 0.1;
+    		pos_test.y += direction.y * 0.1;
+    		pos_test.z += direction.z * 0.1;	
+        }
+    		
+    	hex = GetHexIndex(pos_test, colli, centerOfHexagons);	
+    		
+    	if (hex>=0) {
+        		
+			temp.x = pos_test.x;
+			temp.y = pos_test.y - centerOfHexagons.y[hex];
+			temp.z = pos_test.z - centerOfHexagons.z[hex];
+        	
+        	// Inverse the direction to find the septa position entrance
+        	inv_dir.x = -direction.x;
+        	inv_dir.y = -direction.y;
+        	inv_dir.z = -direction.z;
+        	
+        	interaction_distance2 = get_hexagon_boundary_by_raycasting(temp, position, inv_dir, colli.size_x, 
+																	colli.HexaRadius, colli, centerOfHexagons);
+																
+			// compute the distance from the initial position to deduce the next hole distance													
+			dist = sqrt((pos_test.x - position.x)*(pos_test.x - position.x) 
+    					+ (pos_test.y - position.y)*(pos_test.y - position.y) 
+    					+ (pos_test.z - position.z)*(pos_test.z - position.z));
+    	
+    		interaction_distance3 = dist - interaction_distance2 + 1.0e-03f;
     	}
+        
+        if (interaction_distance3 < next_interaction_distance) {
+        	// overshoot the distance of 1 um to be inside the next septa
+        	next_interaction_distance = interaction_distance2 + 1.0e-03f;
+        	next_discrete_process = PHOTON_BOUNDARY_HOLE;	
+        	//printf("boundary septa %f \n", interaction_distance3);
+    	}		
+    	
     }
     else   // photon is inside an hexagonal hole 
     {
@@ -2076,24 +2208,28 @@ __global__ void kernel_NavHexaColli_Photon_NoSec(StackParticle photons, Colli co
 		
 		// Photoelectric
     	cross_section = PhotoElec_CS_Standard(materials, mat, energy); 
-        interaction_distance = __fdividef(-__logf(Brent_real(id, photons.table_x_brent, 0)),
+    	interaction_distance = __fdividef(-__logf(Brent_real(id, photons.table_x_brent, 0)),
                                      cross_section);
     	if (interaction_distance < next_interaction_distance) {
         	next_interaction_distance = interaction_distance;
        		next_discrete_process = PHOTON_PHOTOELECTRIC;
     	}
+    	
+    	//printf("PE %f %f\n", interaction_distance, cross_section);
 
     	// Compton
     	cross_section = Compton_CS_Standard(materials, mat, energy);
-        interaction_distance = __fdividef(-__logf(Brent_real(id, photons.table_x_brent, 0)),
+    	interaction_distance = __fdividef(-__logf(Brent_real(id, photons.table_x_brent, 0)),
         	                             cross_section);
     
     	if (interaction_distance < next_interaction_distance) {
         	next_interaction_distance = interaction_distance;
         	next_discrete_process = PHOTON_COMPTON;
     	}
+    	
+    	//printf("C %f %f\n", interaction_distance, cross_section);
 		
-		
+		//  Hexagon edge
 		
 		// Mettre dans le referentiel de l'hexagone
 		float3 temp;
@@ -2101,38 +2237,16 @@ __global__ void kernel_NavHexaColli_Photon_NoSec(StackParticle photons, Colli co
 		temp.y = position.y - centerOfHexagons.y[hex];
 		temp.z = position.z - centerOfHexagons.z[hex];
 		
-		interaction_distance2 = get_boundary_hexagon_by_raycasting(temp, direction, colli.size_x, 
-																		colli.HexaRadius);
-    							
+		interaction_distance2 = get_hexagon_boundary_by_raycasting(temp, position, direction, colli.size_x, 
+																	colli.HexaRadius, colli, centerOfHexagons);														
+																				
     	if (interaction_distance2 < next_interaction_distance) {
         	// overshoot the distance of 1 um to be inside the next septa
         	next_interaction_distance = interaction_distance2 + 1.0e-03f;
-        	next_discrete_process = PHOTON_BOUNDARY_HOLE;
-    		
-    		/*
-    		if (fabs(interaction_distance2) < EPS) {	
-    			photons.endsimu[id] = 1;                     // stop the simulation
-        		atomicAdd(count_d, 1);                       // count simulated primaries
-        		printf("end : distance calculée trop faible \n");
-        		return;
-   	 		}
-    		
-    		pos_test.x = position.x + (direction.x * next_interaction_distance);
-    		pos_test.y = position.y + (direction.y * next_interaction_distance);
-    		pos_test.z = position.z + (direction.z * next_interaction_distance);
-    			
-    		if(IsInsideHex(pos_test, colli, centerOfHexagons)<0) {
-    			printf("SEPTA pos %f %f %f - center %f %f \n", pos_test.x, pos_test.y, pos_test.z,
-    					centerOfHexagons.y[hex], centerOfHexagons.z[hex]);
-    		}
-    		else {
-    			printf("HOLE pos %f %f %f - center %f %f \n", pos_test.x, pos_test.y, pos_test.z,
-    				centerOfHexagons.y[hex], centerOfHexagons.z[hex]);
-    		}
-    		*/	
-   	 	}
-    							
+        	next_discrete_process = PHOTON_BOUNDARY_HOLE;	
+    	}					
     }
+    							
     							    
     //// Move particle //////////////////////////////////////////////////////
 
@@ -2149,10 +2263,6 @@ __global__ void kernel_NavHexaColli_Photon_NoSec(StackParticle photons, Colli co
     photons.pz[id] = position.z;
     
 	// Stop simulation if out of collimator
-
-	double half_colli_size_x = colli.size_x / 2.0;
-  	double half_colli_size_y = colli.size_y / 2.0;
-  	double half_colli_size_z = colli.size_z / 2.0;
 		
 	if ( fabs(position.x) > half_colli_size_x
         || fabs(position.y) > half_colli_size_y
@@ -2162,18 +2272,22 @@ __global__ void kernel_NavHexaColli_Photon_NoSec(StackParticle photons, Colli co
         //printf("effect %d end position: %f %f %f \n", next_discrete_process, position.x, position.y, position.z);
         return;
     }
-
+   
+    
     //// Resolve discrete processe //////////////////////////////////////////
     
     // Resolve discrete processes
-    if (next_discrete_process == PHOTON_PHOTOELECTRIC) {
+
+   if (next_discrete_process == PHOTON_PHOTOELECTRIC) {
+    	//printf("photoElec \n");
         float discrete_loss = PhotoElec_Effect_Standard_NoSec(photons, id, count_d);
     }
 
     if (next_discrete_process == PHOTON_COMPTON) {
+    	//printf("Scatter \n");
         float discrete_loss = Compton_Effect_Standard_NoSec(photons, id, count_d);
     }
-
+	
 }
 
 

@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #ifndef GateARFTableMgrMessenger_h
 #define GateARFTableMgrMessenger_h 1
@@ -33,28 +33,24 @@ class GateARFTableMgrMessenger: public G4UImessenger
 public:
   GateARFTableMgrMessenger(G4String aName, GateARFTableMgr*);
   ~GateARFTableMgrMessenger();
-  
-  void SetNewValue(G4UIcommand*, G4String);
-  
-private:
-  GateARFTableMgr*                     m_ARFTableMgr;
-    
-  G4UIdirectory*                       GateARFTableDir;
-  G4UIcmdWithAString*                  cptTableCmd;
-  G4UIcmdWithAString*                  cptTableEWCmd;
-  G4UIcmdWithoutParameter*             ListARFTableCmd;
-  G4UIcmdWithAnInteger*                VerboseCmd;
 
-  G4UIcmdWithAString*        setEWfromcmd;
-  G4UIcmdWithADouble*           setEResocmd;
-  G4UIcmdWithADoubleAndUnit*           setERefcmd;
+  void SetNewValue(G4UIcommand*, G4String);
+
+private:
+  GateARFTableMgr*             m_ARFTableMgr;
+
+  G4UIdirectory*               GateARFTableDir;
+  G4UIcmdWithAString*          cptTableEWCmd;
+  G4UIcmdWithoutParameter*     ListARFTableCmd;
+  G4UIcmdWithAnInteger*        VerboseCmd;
+  G4UIcmdWithADouble*          setEResocmd;
+  G4UIcmdWithADoubleAndUnit*   setERefcmd;
   G4UIcmdWithADoubleAndUnit*   setEThreshHoldcmd ;
   G4UIcmdWithADoubleAndUnit*   setEUpHoldcmd ;
-  G4UIcmdWithAString*                  SaveToBinaryFileCmd;
-  G4UIcmdWithAnInteger*                SetNBinsCmd;
-  G4UIcmdWithAString*                  LoadFromBinaryFileCmd;
-  G4UIcmdWithADoubleAndUnit*  setDistancecmd;
+  G4UIcmdWithAString*          SaveToBinaryFileCmd;
+  G4UIcmdWithAnInteger*        SetNBinsCmd;
+  G4UIcmdWithAString*          LoadFromBinaryFileCmd;
+  G4UIcmdWithADoubleAndUnit*   setDistancecmd;
 };
 
 #endif
-

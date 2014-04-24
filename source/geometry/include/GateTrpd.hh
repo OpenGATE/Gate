@@ -1,14 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
-
-
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #ifndef GateTrpd_h
 #define GateTrpd_h 1
@@ -28,24 +26,24 @@ See GATE/LICENSE.txt for further details
 class GateTrpdMessenger;
 
 /*! \class  GateTrpd
-    \brief  GateTrpd creates a logical volume with a regular extruded Trapezoid (Trpd acronym) shape
-    based on the GEANT4 boolean "subtraction" solid an with a box shaped extrusion. See Geant4 doc for further 
-    details.
-    \brief The definition of the Trd solidis based on 5 lengths : dx1,dx2,dz1,dz2,dz defining where :
-    \brief dx1 & dy1 give the length of the first X-Y rectangle crossing Z axe at -dz position
-    \brief dy2 & dy2 give the length of the first X-Y rectangle crossing Z axe at +dz position
+  \brief  GateTrpd creates a logical volume with a regular extruded Trapezoid (Trpd acronym) shape
+  based on the GEANT4 boolean "subtraction" solid an with a box shaped extrusion. See Geant4 doc for further
+  details.
+  \brief The definition of the Trd solidis based on 5 lengths : dx1,dx2,dz1,dz2,dz defining where :
+  \brief dx1 & dy1 give the length of the first X-Y rectangle crossing Z axe at -dz position
+  \brief dy2 & dy2 give the length of the first X-Y rectangle crossing Z axe at +dz position
 
-    \brief The definition of the box shaped extruded volume is base on the 3 lengths/ the 3 coordinates 
-    of the box length/ center position.
-    By extension, this boolean volume can also be used to create any shapes defined as a instersection with a
-    "Trd" and a rectangle, like for example a simple prism.
+  \brief The definition of the box shaped extruded volume is base on the 3 lengths/ the 3 coordinates
+  of the box length/ center position.
+  By extension, this boolean volume can also be used to create any shapes defined as a instersection with a
+  "Trd" and a rectangle, like for example a simple prism.
 
-    \brief  - GateTrpd - by jean-marc.vieira@iphe.unil.ch 
+  \brief  - GateTrpd - by jean-marc.vieira@iphe.unil.ch
 */
 
-/* 22/10/2007 
-   GateTrpd create also the physical volume 
-   virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume(G4Material*); 
+/* 22/10/2007
+   GateTrpd create also the physical volume
+   virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume(G4Material*);
    virtual G4VPhysicalVolume* ConstructOwnPhysicalVolume();
    virtual void DestroyOwnSolidAndLogicalVolume();
    changes by emilia.becheva@cea.fr
@@ -58,23 +56,23 @@ public:
 
 
   //! Constructor, by defaut extruded box placed at origin
-  
+
   GateTrpd(const G4String& itsName,
-		 G4bool acceptsChildren=true, 
-		 G4int depth=0);
+           G4bool acceptsChildren=true,
+           G4int depth=0);
 
   GateTrpd(const G4String& itsName,const G4String& itsMaterialName,
-		  G4double itsX1Length, G4double itsY1Length,
-		  G4double itsX2Length, G4double itsY2Length,
-		  G4double itsZLength,
-		  G4double itsXBxLength = 1., 
-		  G4double itsYBxLength = 1., 
-		  G4double itsZBxLength = 1., 
-		  G4double itsXBxPos = 0.,    
-		  G4double itsYBxPos = 0.,    
-		  G4double itsZBxPos = 0.,    
-		  G4bool acceptsChildren=true, 
-		  G4int depth=0);
+           G4double itsX1Length, G4double itsY1Length,
+           G4double itsX2Length, G4double itsY2Length,
+           G4double itsZLength,
+           G4double itsXBxLength = 1.,
+           G4double itsYBxLength = 1.,
+           G4double itsZBxLength = 1.,
+           G4double itsXBxPos = 0.,
+           G4double itsYBxPos = 0.,
+           G4double itsZBxPos = 0.,
+           G4bool acceptsChildren=true,
+           G4int depth=0);
   //! Destructor
   virtual ~GateTrpd();
 
@@ -86,8 +84,8 @@ public:
   //! Implementation of the pure virtual method ConstructOwnSolidAndLogical() declared by the base-class.
   //! Construct a new caps shape solid ("trapezoid minus placed box") and its logical volume.
   //! If flagUpdateOnly is set to 1, the Trd is updated rather than rebuilt.
-  virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume(G4Material*, G4bool); 
-//  virtual G4VPhysicalVolume* ConstructOwnPhysicalVolume();
+  virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume(G4Material*, G4bool);
+  //  virtual G4VPhysicalVolume* ConstructOwnPhysicalVolume();
 
   //! Implementation of the pure virtual method DestroyOwnSolidAndLogicalVolume() declared by the base-class.
   //! Destroy the solid and logical volume created by ConstructOwnLogicalVolume()
@@ -97,7 +95,7 @@ public:
     \brief a description of the creator
 
     \param indent: the print-out indentation (cosmetic parameter)
-  */    
+  */
   virtual void DescribeMyself(size_t indent);
 
   //! Implementation of the pure virtual method GetHalfDimension() declared by the base-class
@@ -108,12 +106,12 @@ public:
   //! Overload of the dummy virtual method ComputeMyOwnVolume() defined by the base-class
   //! Returns the volume of the solid
   //! -WARNING- : This works only if the box is totally included in the trapezoid shape !!!
-  inline G4double ComputeMyOwnVolume()  const 
+  inline G4double ComputeMyOwnVolume()  const
   {return ( (m_trpdLength[4]/6.) *
-     (m_trpdLength[0]*m_trpdLength[1] 
-      + (m_trpdLength[0]+m_trpdLength[2])*(m_trpdLength[1]+m_trpdLength[3])
-      + m_trpdLength[2]*m_trpdLength[3] ) // trapezoid volume
-      - m_trpdLength[5]*m_trpdLength[6]*m_trpdLength[7]); } //extruded box volume
+            (m_trpdLength[0]*m_trpdLength[1]
+             + (m_trpdLength[0]+m_trpdLength[2])*(m_trpdLength[1]+m_trpdLength[3])
+             + m_trpdLength[2]*m_trpdLength[3] ) // trapezoid volume
+            - m_trpdLength[5]*m_trpdLength[6]*m_trpdLength[7]); } //extruded box volume
 
   //@}
 
@@ -124,47 +122,47 @@ public:
   //! S E T T E R S
 
   //! Set the Trd length along X
-  void SetTrpdX1Length (G4double val)   
+  void SetTrpdX1Length (G4double val)
   {  m_trpdLength[0] = val; /*ComputeParameters();*/ }
   //! Set the Trd length along Y
-  void SetTrpdY1Length (G4double val)   
+  void SetTrpdY1Length (G4double val)
   {  m_trpdLength[1] = val; /*ComputeParameters();*/ }
   //! Set the Trd length along X
-  void SetTrpdX2Length (G4double val)   
+  void SetTrpdX2Length (G4double val)
   {  m_trpdLength[2] = val; /*ComputeParameters();*/ }
   //! Set the Trd length along Y
-  void SetTrpdY2Length (G4double val)   
+  void SetTrpdY2Length (G4double val)
   {  m_trpdLength[3] = val; /*ComputeParameters();*/ }
   //! Set the Trd length along Z
-  void SetTrpdZLength (G4double val)   
+  void SetTrpdZLength (G4double val)
   {  m_trpdLength[4] = val; /*ComputeParameters();*/ }
   //! Set the extruded box X lentgh
-  void SetTrpdTrudXLength (G4double val)   
+  void SetTrpdTrudXLength (G4double val)
   {  m_trpdLength[5] = val; /*ComputeParameters();*/ }
   //! Set the extruded box Y lentgh
-  void SetTrpdTrudYLength (G4double val)   
+  void SetTrpdTrudYLength (G4double val)
   {  m_trpdLength[6] = val; /*ComputeParameters();*/ }
   //! Set the extruded box Z lentgh
-  void SetTrpdTrudZLength (G4double val)   
+  void SetTrpdTrudZLength (G4double val)
   {  m_trpdLength[7] = val; /*ComputeParameters();*/ }
   //! Set the extruded box X position
-  void SetTrpdTrudXPos (G4double val)   
+  void SetTrpdTrudXPos (G4double val)
   {  m_trpdLength[8] = val; /*ComputeParameters();*/ }
   //! Set the extruded box Y position
-  void SetTrpdTrudYPos (G4double val)   
+  void SetTrpdTrudYPos (G4double val)
   {  m_trpdLength[9] = val; /*ComputeParameters();*/ }
   //! Set the extruded box Z position
-  void SetTrpdTrudZPos (G4double val)   
+  void SetTrpdTrudZPos (G4double val)
   {  m_trpdLength[10]= val; /*ComputeParameters();*/ }
 
-// ! G E T T E R S
+  // ! G E T T E R S
 
   //! Get the Trd length along an axis  (X1=0, Y1=1, X2=2, Y2=3, Z=4)
   inline G4double GetTrpdLength(size_t axis)      {return m_trpdLength[axis];}
-  //! Get the Trd length along X1-Y1                 
+  //! Get the Trd length along X1-Y1
   inline G4double GetTrpdX1Length()               {return GetTrpdLength(0);}
   inline G4double GetTrpdY1Length()               {return GetTrpdLength(1);}
-  //! Get the Trd length along X2-Y2		     
+  //! Get the Trd length along X2-Y2
   inline G4double GetTrpdX2Length()               {return GetTrpdLength(2);}
   inline G4double GetTrpdY2Length()               {return GetTrpdLength(3);}
   //! Get the Trd length along Z
@@ -208,7 +206,6 @@ private:
 
   G4LogicalVolume*     m_trpd_log; 	      	    //!< logical volume pointer for extruded trapezoid
 
-  G4VPhysicalVolume* pTrpdPhys;
   //@}
 
   //! \name parameters
@@ -218,7 +215,7 @@ private:
   //@}
 
   //! Messenger
-  GateTrpdMessenger* m_Messenger; 
+  GateTrpdMessenger* m_Messenger;
 
 };
 

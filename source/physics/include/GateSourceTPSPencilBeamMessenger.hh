@@ -62,9 +62,10 @@ class GateSourceTPSPencilBeamMessenger: public GateVSourceMessenger
     G4UIcmdWithABool * pSpotIntensityCmd;
     //Convergent or divergent beam model
     G4UIcmdWithABool* pDivergenceCmd;
+    //Selection of one layer
+    G4UIcmdWithAnInteger * pSelectLayerIDCmd;
 };
 
 #endif
 
 #endif
-
