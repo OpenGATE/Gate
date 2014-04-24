@@ -14,6 +14,7 @@
 #include "GateConfiguration.h"
 #include "GateVActor.hh"
 #include "GatePromptGammaSpectrumDistributionActorMessenger.hh"
+#include "GatePromptGammaEnergySpectrumData.hh"
 #include <TFile.h>
 #include <TH1.h>
 #include <TH2.h>
@@ -42,22 +43,7 @@ protected:
   GatePromptGammaSpectrumDistributionActor(G4String name, G4int depth=0);
   GatePromptGammaSpectrumDistributionActorMessenger * pMessenger;
 
-  // Histograms limits
-  double min_proton_energy;
-  double min_gamma_energy;
-  double max_proton_energy;
-  double max_gamma_energy;
-  int proton_bin;
-  int gamma_bin;
-
-  // Data
-  TFile* pTfile;
-  TH2D* pHEpEpg;
-  TH2D* pHEpEpgNormalized;
-  TH1D* pHEpInelastic;
-  TH1D* pHEp;
-  TH1D* pHEpInelasticProducedGamma;
-  TH1D* pHEpSigmaInelastic;
+  GatePromptGammaEnergySpectrumData data;
 };
 //-----------------------------------------------------------------------------
 
