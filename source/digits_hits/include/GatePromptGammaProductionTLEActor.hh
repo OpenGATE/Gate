@@ -12,12 +12,18 @@
 #define GATEPROMPTGAMMAPRODUCTIONTLEACTOR_HH
 
 #include "GateConfiguration.h"
-#include "GateVActor.hh"
+#include "GateVImageActor.hh"
 #include "GateActorMessenger.hh"
 #include "GatePromptGammaProductionTLEActorMessenger.hh"
+#include "GateImageOfHistograms.hh"
+#include "GatePromptGammaEnergySpectrumData.hh"
+
+#include <TFile.h>
+#include <TH1.h>
+#include <TH2.h>
 
 //-----------------------------------------------------------------------------
-class GatePromptGammaProductionTLEActor: public GateVActor
+class GatePromptGammaProductionTLEActor: public GateVImageActor
 {
 public:
   virtual ~GatePromptGammaProductionTLEActor();
@@ -25,19 +31,25 @@ public:
   FCT_FOR_AUTO_CREATOR_ACTOR(GatePromptGammaProductionTLEActor)
 
   virtual void Construct();
+  virtual void UserPreTrackActionInVoxel(const int index, const G4Track* t);
+  virtual void UserPostTrackActionInVoxel(const int index, const G4Track* t);
+  virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
 
-  virtual void PreUserTrackingAction(const GateVVolume*, const G4Track*);
-  virtual void UserSteppingAction(const GateVVolume*, const G4Step*);
-
+  void SetInputDataFilename(std::string filename);
   virtual void SaveData();
   virtual void ResetData();
 
 protected:
   GatePromptGammaProductionTLEActor(G4String name, G4int depth=0);
   GatePromptGammaProductionTLEActorMessenger * pMessenger;
+
+  std::string mInputDataFilename;
+  GateImageOfHistograms mImageGamma;
+  GatePromptGammaEnergySpectrumData data;
+
 };
 //-----------------------------------------------------------------------------
 
-MAKE_AUTO_CREATOR_ACTOR(GpTLEActor,GatePromptGammaProductionTLEActor)
+MAKE_AUTO_CREATOR_ACTOR(PromptGammaProductionTLEActor,GatePromptGammaProductionTLEActor)
 
 #endif // end GATEPROMPTGAMMAPRODUCTIONTLEACTOR

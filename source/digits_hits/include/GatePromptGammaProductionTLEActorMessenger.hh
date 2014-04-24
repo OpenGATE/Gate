@@ -12,15 +12,12 @@
 #define GATEPROMPTGAMMAPRODUCTIONTLEACTORMESSENGER_HH
 
 #include "GateConfiguration.h"
-#include "GateActorMessenger.hh"
-
-#include <G4UIcmdWithAnInteger.hh>
-#include <G4UIcmdWithADoubleAndUnit.hh>
+#include "GateImageActorMessenger.hh"
 
 class GatePromptGammaProductionTLEActor;
 
 //-----------------------------------------------------------------------------
-class GatePromptGammaProductionTLEActorMessenger: public GateActorMessenger
+class GatePromptGammaProductionTLEActorMessenger: public GateImageActorMessenger
 {
 public:
 
@@ -32,6 +29,7 @@ protected:
   void BuildCommands(G4String base);
   GatePromptGammaProductionTLEActor* pTLEActor;
 
+  G4UIcmdWithAString * pSetInputDataFileCmd;
 };
 //-----------------------------------------------------------------------------
 
