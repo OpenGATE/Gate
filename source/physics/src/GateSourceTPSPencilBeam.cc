@@ -330,10 +330,32 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
         }
         inFile.close();
 
-        //---------GENERATION - START-----------------------
-        int bin = mTotalNumberOfSpots * mDistriGeneral->fire();
-        mPencilBeams[bin]->GenerateVertex(aEvent);
+        mTotalNumberOfSpots = mPencilBeams.size();
+        if (mTotalNumberOfSpots == 0) {
+            G4cout << "ERROR - 0 spots have been loaded from the file \"" << mPlan << "\" simulation abort!\n" << G4endl;
+            exit (0);
+        }
+
+        GateMessage("Physic", 1, "[TPSPencilBeam] Starting particle generation:  "
+                    << mTotalNumberOfSpots << " spots loaded." << G4endl);
+        mPDF = new double[mTotalNumberOfSpots];
+        for (int i = 0; i < mTotalNumberOfSpots; i++) {
+            // it is strongly adviced to set mFlatGenerationFlag=false
+            // a few test demonstrated a lot more efficiency for "real field like" simulation in patients.
+            if (mFlatGenerationFlag) {
+                mPDF[i] = 1;
+            } else {
+                mPDF[i] = mPencilBeams[i]->GetWeight();
+                mPencilBeams[i]->SetWeight(1);
+            }
+        }
+        mDistriGeneral = new RandGeneral(engine, mPDF, mTotalNumberOfSpots, 0);
+
+        //---------INITIALIZATION - END-----------------------
     }
+    //---------GENERATION - START-----------------------
+    int bin = mTotalNumberOfSpots * mDistriGeneral->fire();
+    mPencilBeams[bin]->GenerateVertex(aEvent);
 }
 //---------GENERATION - END-----------------------
 
