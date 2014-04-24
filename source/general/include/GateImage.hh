@@ -53,7 +53,7 @@ public:
   void SetResolutionAndVoxelSize(G4ThreeVector r, G4ThreeVector v, G4ThreeVector position);
 
   /// Allocates the data
-  void Allocate();
+  virtual void Allocate();
 
   /// Returns the size of the image
   inline G4ThreeVector GetSize()           const { return size; }
@@ -120,10 +120,10 @@ public:
 
   PixelType GetMinValue();
 
-  inline PixelType GetOutsideValue()   { return mOutsideValue; } 
+  inline PixelType GetOutsideValue()   { return mOutsideValue; }
   inline void SetOutsideValue( PixelType v ) { mOutsideValue=v; }
 
-  // Transformations between systems of coordinates 
+  // Transformations between systems of coordinates
 
   /// Returns the voxel's coordinates from its index : OK
   G4ThreeVector GetCoordinatesFromIndex(int index) const;
@@ -132,10 +132,10 @@ public:
   { return (int)(coords.x()+coords.y()*lineSize+coords.z()*planeSize); }
 
 
-  /// Returns the position of the center of the voxel from the coordinates : OK 
+  /// Returns the position of the center of the voxel from the coordinates : OK
   G4ThreeVector GetVoxelCenterFromCoordinates(G4ThreeVector coords) const;
-  /// Returns the position of the center of the voxel from the index : OK 
-  G4ThreeVector GetVoxelCenterFromIndex(int index) const 
+  /// Returns the position of the center of the voxel from the index : OK
+  G4ThreeVector GetVoxelCenterFromIndex(int index) const
   { return GetVoxelCenterFromCoordinates(GetCoordinatesFromIndex(index)); }
 
   /// Returns the position of the corner of the voxel from the coordinates : OK
@@ -155,12 +155,12 @@ public:
   G4int            GetVoxelNy()        { return m_voxelNy; };
   G4int            GetVoxelNz()        { return m_voxelNz; };
 
-  // Returns the index from the position : OK 
-  int GetIndexFromPosition(const G4ThreeVector& position) const;  
-  int GetIndexFromPositionAndDirection(const G4ThreeVector& position, const G4ThreeVector& direction) const;  
-  int GetIndexFromPostPositionAndDirection(const G4ThreeVector& position, const G4ThreeVector& direction) const;  
-  int GetIndexFromPostPosition(const G4ThreeVector& pre, const G4ThreeVector& post) const;  
-  int GetIndexFromPrePosition(const G4ThreeVector& pre, const G4ThreeVector& post) const;  
+  // Returns the index from the position : OK
+  int GetIndexFromPosition(const G4ThreeVector& position) const;
+  int GetIndexFromPositionAndDirection(const G4ThreeVector& position, const G4ThreeVector& direction) const;
+  int GetIndexFromPostPositionAndDirection(const G4ThreeVector& position, const G4ThreeVector& direction) const;
+  int GetIndexFromPostPosition(const G4ThreeVector& pre, const G4ThreeVector& post) const;
+  int GetIndexFromPrePosition(const G4ThreeVector& pre, const G4ThreeVector& post) const;
   int GetIndexFromPostPosition(const double t, const double pret, const double postt, const double resolutiont) const;
   int GetIndexFromPrePosition(const double t, const double pret, const double postt, const double resolutiont) const;
 
@@ -175,7 +175,7 @@ public:
   ESide GetSideFromPointAndCoordinate(const G4ThreeVector & p, const G4ThreeVector & c);
   PixelType GetNeighborValueFromCoordinate(const ESide & side, const G4ThreeVector & coord);
 
-  // iterators 
+  // iterators
   iterator begin() { return data.begin(); }
   iterator end()   { return data.end(); }
   const_iterator begin() const { return data.begin(); }
@@ -183,7 +183,7 @@ public:
 
   // IO
   /// Writes the image to a file with comment (the format is detected automatically)
-  void Write(G4String filename, const G4String & comment = "");
+  virtual void Write(G4String filename, const G4String & comment = "");
   /// Reads the image from a file (the format is detected automatically)
   void Read(G4String filename);
   void MergeDataByAddition(G4String filename);
@@ -217,14 +217,14 @@ protected:
   void ReadAscii(G4String filename);
   void ReadVox2(std::ifstream & is);
   void ReadVox3(std::ifstream & is);
-  
+
   void EraseWhiteSpaces(std::string & s);
   void ReadAnalyze(G4String filename);
   void Read_mhd_3_values(std::ifstream & is, double * values);
   void Read_mhd_tag(std::ifstream & is, std::string tag);
   void Read_mhd_tag_check_value(std::ifstream & is, std::string tag, std::string value);
-  void Read_mhd_tag_check_value(std::vector<std::string> & tags, 
-                                std::vector<std::string> & values, 
+  void Read_mhd_tag_check_value(std::vector<std::string> & tags,
+                                std::vector<std::string> & values,
                                 std::string tag, std::string value);
   void ReadMHD(G4String filename);
   void ReadInterfile(G4String fileName);
@@ -254,9 +254,7 @@ protected:
   int mRootHistoBinzNb;
   double mRootHistoBinzLow;
   double mRootHistoBinzUp;
-  double mRootHistoBinzSize;  
+  double mRootHistoBinzSize;
 };
 
-#endif 
-
-
+#endif
