@@ -26,6 +26,9 @@
 
 #include "G4Material.hh"
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 class GateMaterialDatabase;
 
 //-------------------------------------------------------------------------------------------------

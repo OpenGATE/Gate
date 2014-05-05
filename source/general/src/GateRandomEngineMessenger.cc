@@ -11,7 +11,6 @@
 #include "GateRandomEngineMessenger.hh"
 #include "GateRandomEngine.hh"
 #include "GateMessenger.hh"
-#include "CLHEP/Random/defs.h"
 #include "CLHEP/Random/RandomEngine.h"
 
 #include "G4UIdirectory.hh"
@@ -81,4 +80,3 @@ void GateRandomEngineMessenger::SetNewValue(G4UIcommand* command,G4String newVal
   else if(command == ShowEngineStatus)
     { m_gateRandomEngine->ShowStatus(); }
 }
-

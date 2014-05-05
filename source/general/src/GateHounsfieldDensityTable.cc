@@ -17,7 +17,6 @@ See GATE/LICENSE.txt for further details
  
 #include "GateHounsfieldDensityTable.hh"
 #include "GateMiscFunctions.hh"
-
 #include "G4SystemOfUnits.hh"
 
 //-----------------------------------------------------------------------------

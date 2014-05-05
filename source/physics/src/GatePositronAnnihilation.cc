@@ -15,6 +15,9 @@ See GATE/LICENSE.txt for further details
 #include "G4PhysicalConstants.hh"
 #include "Randomize.hh"
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 /*
 G4VParticleChange* GatePositronAnnihilation::AtRestDoIt(const G4Track& aTrack,
                                                   const G4Step&  aStep)

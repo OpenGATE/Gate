@@ -21,6 +21,9 @@ See GATE/LICENSE.txt for further details
 #include "GateMDBFieldReader.hh"
 #include "GateTokenizer.hh"
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 #define N_STATECODES 12
 GateCodePair GateMDBFieldReader::theStateCodeTable[N_STATECODES] = { 
     GateCodePair("kStateUndefined",kStateUndefined) , 

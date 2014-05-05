@@ -1048,12 +1048,6 @@ void GateImage::ReadMHD(G4String filename) {
   voxelSize = G4ThreeVector(mhd->spacing[0], mhd->spacing[1], mhd->spacing[2]);
   origin = G4ThreeVector(mhd->origin[0], mhd->origin[1], mhd->origin[2]);
 
-  // We need to shift to half a pixel to be coherent with Gate
-  // coordinates system.
-  origin[0] -= voxelSize[0]/2.0;
-  origin[1] -= voxelSize[1]/2.0;
-  origin[2] -= voxelSize[2]/2.0;
-
   // Convert mhd matrix to rotation matrix
   G4ThreeVector row_x, row_y, row_z;
   for(unsigned int i=0; i<3; i++) {
@@ -1068,6 +1062,11 @@ void GateImage::ReadMHD(G4String filename) {
       GateError(filename << " contains a transformation which is not a rotation. "
                 << "It is probably a flip and this is not handled.");
   }
+
+  // We need to shift to half a pixel to be coherent with Gate
+  // coordinates system. Must be transformed because voxel size is
+  // known before rotation and origin is after rotation.
+  origin -= transformMatrix*(voxelSize/2.0);
 
   UpdateSizesFromResolutionAndVoxelSize();
   Allocate();
