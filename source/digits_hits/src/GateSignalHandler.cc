@@ -37,10 +37,12 @@ G4int GateSignalHandler::Install()
     G4cerr << G4endl << "Warning! Could not install handler for SIGUSR2!" << G4endl << G4endl;
     return -1;
   }
+#ifdef __APPLE__
   if (signal(SIGINFO,PrintSimulationStatus) == SIG_ERR) {
     G4cerr << G4endl << "Warning! Could not install handler for SIGINFO!" << G4endl << G4endl;
     return -1;
   }
+#endif
   return 0;
 }
 
