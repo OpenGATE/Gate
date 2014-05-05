@@ -35,6 +35,9 @@ Institutions who contributed code:
 10. CNRS IN2P3/IMNC
     Orsay, France
 
+11. INSERM U892
+    Nantes, France
+
 Programmers:
 -----------
 
@@ -62,6 +65,7 @@ Programmers:
    Thibault Frisson (CNRS Creatis)
    Pierre Gueth (CNRS Creatis)
    Albertine Dubois (IMNC Orsay)
+   Jérôme Suhard (INSERM U892)
 
 Technical Coordination:
 ----------------------
