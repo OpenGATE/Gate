@@ -8,6 +8,9 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
+#include "G4Version.hh"
+#include "G4SystemOfUnits.hh"
+
 #include "GateMixedDNAPhysics.hh"
 #include "GateMixedDNAPhysicsMessenger.hh"
 #include <vector>
@@ -128,7 +131,11 @@ void GateMixedDNAPhysics::ConstructProcess()
 #include "G4hMultipleScattering.hh"
 #include "G4BraggIonGasModel.hh"
 #include "G4BetheBlochIonGasModel.hh"
+#if G4VERSION_NUMBER >= 1000
+#include "G4UrbanMscModel.hh"
+#else
 #include "G4UrbanMscModel93.hh"
+#endif
 #include "G4MollerBhabhaModel.hh"
 #include "G4IonFluctuations.hh"
 #include "G4UniversalFluctuation.hh"
@@ -145,7 +152,6 @@ void GateMixedDNAPhysics::ConstructProcess()
 #include "G4RayleighScattering.hh"
 #include "G4LivermoreRayleighModel.hh"
 
-#include "G4UrbanMscModel95.hh"
 
 
 // Livermore electrons
@@ -377,41 +383,71 @@ void GateMixedDNAPhysics::setDNAInWorld() {
 
         // DNA elastic is not active in the world
         G4DNAElastic* theDNAElasticProcess = new G4DNAElastic("e-_G4DNAElastic");
+#if G4VERSION_NUMBER >= 960
         theDNAElasticProcess->SetEmModel(new G4DummyModel(),1);
+#else
+        theDNAElasticProcess->SetModel(new G4DummyModel(),1);
+#endif
         pmanager->AddDiscreteProcess(theDNAElasticProcess);
 
         // DNA excitation is not active in the world
         G4DNAExcitation* dnaex = new G4DNAExcitation("e-_G4DNAExcitation");
+#if G4VERSION_NUMBER >= 960
         dnaex->SetEmModel(new G4DummyModel(),1);
+#else
+        dnaex->SetModel(new G4DummyModel(),1);
+#endif
         pmanager->AddDiscreteProcess(dnaex);
 
         // DNA ionisation is not active in the world
         G4DNAIonisation* dnaioni = new G4DNAIonisation("e-_G4DNAIonisation");
+#if G4VERSION_NUMBER >= 960
         dnaioni->SetEmModel(new G4DummyModel(),1);
+#else
+        dnaioni->SetModel(new G4DummyModel(),1);
+#endif
         pmanager->AddDiscreteProcess(dnaioni);
 
         // DNA attachment is not active in the world
         G4DNAAttachment* dnaatt = new G4DNAAttachment("e-_G4DNAAttachment");
+#if G4VERSION_NUMBER >= 960
         dnaatt->SetEmModel(new G4DummyModel(),1);
+#else
+        dnaatt->SetModel(new G4DummyModel(),1);
+#endif
         pmanager->AddDiscreteProcess(dnaatt);
 
         // DNA vib. excitation is not active in the world
         G4DNAVibExcitation* dnavib = new G4DNAVibExcitation("e-_G4DNAVibExcitation");
+#if G4VERSION_NUMBER >= 960
         dnavib->SetEmModel(new G4DummyModel(),1);
+#else
+        dnavib->SetModel(new G4DummyModel(),1);
+#endif
         pmanager->AddDiscreteProcess(dnavib);
 
       } else if ( particleName == "proton" ) {
 
         // DNA excitation is not active in the world
         G4DNAExcitation* dnaex = new G4DNAExcitation("proton_G4DNAExcitation");
+#if G4VERSION_NUMBER >= 960
         dnaex->SetEmModel(new G4DummyModel(),1);
         dnaex->SetEmModel(new G4DummyModel(),2);
+#else
+        dnaex->SetModel(new G4DummyModel(),1);
+        dnaex->SetModel(new G4DummyModel(),2);
+#endif
         pmanager->AddDiscreteProcess(dnaex);
 
         // DNA ionisation is not active in the world
         G4DNAIonisation* dnaioni = new G4DNAIonisation("proton_G4DNAIonisation");
+#if G4VERSION_NUMBER >= 960
         dnaioni->SetEmModel(new G4DummyModel(),1);
         dnaioni->SetEmModel(new G4DummyModel(),2);
+#else
+        dnaioni->SetModel(new G4DummyModel(),1);
+        dnaioni->SetModel(new G4DummyModel(),2);
+#endif
         pmanager->AddDiscreteProcess(dnaioni);
 
         // DNA charge decrease is ACTIVE in the world since no corresponding STANDARD process exist
@@ -428,12 +464,20 @@ void GateMixedDNAPhysics::setDNAInWorld() {
 
         // DNA excitation is not active in the world
         G4DNAExcitation* dnaex = new G4DNAExcitation("alpha_G4DNAExcitation");
+#if G4VERSION_NUMBER >= 960
         dnaex->SetEmModel(new G4DummyModel(),1);
+#else
+        dnaex->SetModel(new G4DummyModel(),1);
+#endif
         pmanager->AddDiscreteProcess(dnaex);
 
         // DNA ionisation is not active in the world
         G4DNAIonisation* dnaioni = new G4DNAIonisation("alpha_G4DNAIonisation");
+#if G4VERSION_NUMBER >= 960
         dnaioni->SetEmModel(new G4DummyModel(),1);
+#else
+        dnaioni->SetModel(new G4DummyModel(),1);
+#endif
         pmanager->AddDiscreteProcess(dnaioni);
 
         // DNA charge decrease is ACTIVE in the world since no corresponding STANDARD process exist
@@ -480,7 +524,11 @@ void GateMixedDNAPhysics::inactivateDefaultModelsInRegion() {
 
     // *** e-
     // ---> STANDARD EM processes are inactivated below 1 MeV
+#if G4VERSION_NUMBER >= 1000
+    mod =  new G4UrbanMscModel();
+#else
     mod =  new G4UrbanMscModel93();
+#endif
     mod->SetActivationLowEnergyLimit(1*MeV);
     //em_config->SetExtraEmModel("e-","msc",mod,"Target");
     em_config->SetExtraEmModel("e-","msc",mod,regionsWithDNA[k]);
