@@ -1,0 +1,63 @@
+// -*- C++ -*-
+// ---------------------------------------------------------------------------
+//
+// This file is a part of the CLHEP - a Class Library for High Energy Physics.
+//
+
+#include <cmath>
+#include <stdlib.h>
+
+namespace CLHEP {
+
+// Swap two vectors without doing a full copy.
+inline void swap(HepVector &v1,HepVector &v2) {
+  HepGenMatrix::swap(v1.m,v2.m);
+  HepGenMatrix::swap(v1.nrow,v2.nrow);
+}
+
+inline HepVector::HepVector()
+   : m(0), nrow(0)
+{}
+
+inline double HepVector::normsq() const {return dot((*this),(*this));}
+inline double HepVector::norm() const {return sqrt(normsq());}
+
+inline double & HepVector::operator()(int row)
+{
+#ifdef MATRIX_BOUND_CHECK
+  if(row<1 || row>nrow)
+    error("Range error in HepVector::operator()");
+#endif
+
+  return *(m.begin()+row-1);
+}
+inline const double & HepVector::operator()(int row) const 
+{
+#ifdef MATRIX_BOUND_CHECK
+  if(row<1 || row>nrow)
+    error("Range error in HepVector::operator()");
+#endif
+
+  return *(m.begin()+row-1);
+}
+inline double & HepVector::operator[](int row)
+{
+#ifdef MATRIX_BOUND_CHECK
+   if(row<0 || row>=nrow)
+    error("Range error in HepVector::operator[]");
+#endif
+
+  return *(m.begin()+row);
+}
+inline const double & HepVector::operator[](int row) const 
+{
+#ifdef MATRIX_BOUND_CHECK
+  if(row<0 || row>=nrow)
+    error("Range error in HepVector::operator[]");
+#endif
+
+  return *(m.begin()+row);
+}
+
+}  // namespace CLHEP
+
