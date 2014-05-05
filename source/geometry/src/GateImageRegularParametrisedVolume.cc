@@ -26,6 +26,7 @@
 #include "GateImageNestedParametrisation.hh"
 #include "GateMultiSensitiveDetector.hh"
 #include "GateMiscFunctions.hh"
+#include "GateImageBox.hh"
 
 ///---------------------------------------------------------------------------
 /// Constructor with :
@@ -85,7 +86,6 @@ G4LogicalVolume* GateImageRegularParametrisedVolume::ConstructOwnSolidAndLogical
   GateMessageInc("Volume",3,"Begin GateImageRegularParametrisedVolume::ConstructOwnSolidAndLogicalVolume()" << G4endl);
   // Load image and material table (false = no additional border)
   LoadImage(false);
-  LoadImageMaterialsTable();
 
   // Cheat : if needed, for visu purpose, only create 1x2x3 voxels
   if (mIsBoundingBoxOnlyModeEnabled) {
@@ -102,8 +102,11 @@ G4LogicalVolume* GateImageRegularParametrisedVolume::ConstructOwnSolidAndLogical
 
   // Create the main volume (bounding box)
   G4String boxname = GetObjectName() + "_solid";
-  pBoxSolid = new G4Box(GetSolidName(), GetHalfSize().x(), GetHalfSize().y(), GetHalfSize().z());
+  pBoxSolid = new GateImageBox(*GetImage(), GetSolidName());
   pBoxLog = new G4LogicalVolume(pBoxSolid, mater, GetLogicalVolumeName());
+
+  LoadImageMaterialsTable();
+
   //FIXME position
   G4RotationMatrix *rotm = new G4RotationMatrix;
   G4ThreeVector pos(0.,0.,0.);
