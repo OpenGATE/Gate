@@ -379,19 +379,19 @@ int main( int argc, char* argv[] )
     UImanager->ApplyCommand( command + macrofilename );
     GateMessage( "Core", 0, "End of macro " << macrofilename << G4endl);
   }
-  else {
+
     if (ui) // Launching interactive mode // Qt
       {
         ui->SessionStart();
         delete ui;
       }
     else {
-      if (session) { // Terminal
+      if (session && !isMacroFile) { // Terminal
         session->SessionStart();
         delete session;
       }
     }
-  }
+
 
 #ifdef G4ANALYSIS_USE_GENERAL
   if (outputMgr) delete outputMgr;
