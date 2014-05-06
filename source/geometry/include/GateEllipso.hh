@@ -18,27 +18,27 @@ class G4LogicalVolume;
 class G4VPhysicalVolume;
 class G4Material;
 
-class GateEllipsoMessenger; 
+class GateEllipsoMessenger;
 
 class GateEllipso : public GateVVolume
-{  
+{
 public:
 
-  GateEllipso(const G4String& itsName, 
+  GateEllipso(const G4String& itsName,
 	      G4bool acceptsChildren=true,
 	      G4int depth=0);
 
   // constructor
   GateEllipso(const G4String& itsName, const G4String& itsMaterialName,
-	      G4double itspxSemiAxis, G4double itspySemiAxis, G4double itspzSemiAxis, 
-	      G4double itspzBottomCut,  G4double itspzTopCut, 
+	      G4double itspxSemiAxis, G4double itspySemiAxis, G4double itspzSemiAxis,
+	      G4double itspzBottomCut,  G4double itspzTopCut,
 	      G4bool itsFlagAcceptChildren=true, G4int depth=0);
 
   // destructor
   virtual ~GateEllipso();
 
   FCT_FOR_AUTO_CREATOR_VOLUME(GateEllipso)
-  
+
   virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume(G4Material*, G4bool);
   virtual void DestroyOwnSolidAndLogicalVolume();
   virtual void DescribeMyself(size_t indent);
@@ -48,6 +48,10 @@ public:
     if(axis==0){return GetEllipsopxSemiAxis();}
     else if(axis==1){return GetEllipsopySemiAxis();}
     else if(axis==2){return GetEllipsopzSemiAxis();}
+    else {
+      GateError("Error axis must be 0,1 or 2");
+      return 0;
+    }
   }
 
 
@@ -60,16 +64,16 @@ public:
   inline G4double GetEllipsopzTotalHeight() {return m_ellipsopzTopCut-m_ellipsopzBottomCut;};
 
   void SetEllipsopxSemiAxis(G4double val)
-  { 
-    m_ellipsopxSemiAxis = val;  
+  {
+    m_ellipsopxSemiAxis = val;
   }
   void SetEllipsopySemiAxis(G4double val)
-  { 
-    m_ellipsopySemiAxis = val;  
+  {
+    m_ellipsopySemiAxis = val;
   }
   void SetEllipsopzSemiAxis(G4double val)
-  { 
-    m_ellipsopzSemiAxis = val;  
+  {
+    m_ellipsopzSemiAxis = val;
   }
   void SetEllipsopzBottomCut(G4double val)
   {
