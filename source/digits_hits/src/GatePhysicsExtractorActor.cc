@@ -1,6 +1,4 @@
 #include "GatePhysicsExtractorActor.hh"
-
-#include <fstream>
 #include <iostream>
 using std::endl;
 

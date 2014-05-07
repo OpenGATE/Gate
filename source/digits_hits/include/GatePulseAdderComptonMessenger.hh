@@ -1,6 +1,4 @@
 /*----------------------
-
-   GATE - Geant4 Application for Tomographic Emission
    OpenGATE Collaboration
 
    jbmichaud@videotron.ca

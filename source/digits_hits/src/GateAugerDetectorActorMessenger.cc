@@ -1,6 +1,4 @@
 #include "GateAugerDetectorActorMessenger.hh"
-#ifdef G4ANALYSIS_USE_ROOT
-
 #include "GateAugerDetectorActor.hh"
 
 GateAugerDetectorActorMessenger::GateAugerDetectorActorMessenger(GateAugerDetectorActor * v)

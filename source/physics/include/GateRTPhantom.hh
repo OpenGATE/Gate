@@ -1,6 +1,4 @@
 #ifndef GateRTPhantom_H
-#define GateRTPhantom_H
-
 //#include "GateRTPhantomMessenger.hh"
 //#include "GateVGeometryVoxelReader.hh"
 //#include "GateVSourceVoxelReader.hh"

@@ -1,6 +1,4 @@
 
-#include "GatePhysicsExtractorActorMessenger.hh"
-
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "GatePhysicsExtractorActor.hh"

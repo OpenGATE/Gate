@@ -1,6 +1,4 @@
 // -*- C++ -*-
-//
-// This file is a part of the CLHEP - a Class Library for High Energy Physics.
 // 
 // This software written by Mark Fischler and Steven Haywood
 // 

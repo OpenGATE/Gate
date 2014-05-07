@@ -1,6 +1,4 @@
 /*-----------------------------------
-Ellipsiod for Gate6.2 by Cecile Bopp
-2013-12-18
 -----------------------------------*/
 
 #include "GateEllipso.hh"  

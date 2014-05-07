@@ -1,6 +1,4 @@
 
-/*----------------------
-  GATE version name: gate_v6
 
   Copyright (C): OpenGATE Collaboration
 

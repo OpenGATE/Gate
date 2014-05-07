@@ -1,6 +1,4 @@
 /*******************************************************
- * Copyright CNRS
- * David Coeurjolly
  * david.coeurjolly@liris.cnrs.fr
  *
  *

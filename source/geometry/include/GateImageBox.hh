@@ -1,6 +1,4 @@
 /**
- * \class       GateImageBox
- * \brief       Displays an image with OpenGL.
  * \details     Behaves like a G4Box for tracking but displays image with three orthogonal planes in OpenGL: axial, sagittal and coronal.
  * \author      Jérôme Suhard <jerome@suhard.fr>
  * \date        04/2014

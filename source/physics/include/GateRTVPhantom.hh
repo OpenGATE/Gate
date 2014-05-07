@@ -1,6 +1,4 @@
 
-#ifndef GateRTVPhantom_HH
-#define GateRTVPhantom_HH 1
 
 #include <stdio.h>          
 #include <stdlib.h>

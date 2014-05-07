@@ -1,6 +1,4 @@
 
-/*!
-  \class  GateProductionActor
   \author pierre.gueth@creatis.insa-lyon.fr
 */
 

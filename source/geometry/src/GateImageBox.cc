@@ -1,6 +1,4 @@
 
-#include "G4VGraphicsScene.hh"
-#include "G4VisManager.hh"
 #include "G4Polyhedron.hh"
 
 

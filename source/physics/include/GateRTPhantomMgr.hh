@@ -1,6 +1,4 @@
 #ifndef GateRTPhantomMgr_H
-#define GateRTPhantomMgr_H
-
 #include <vector>
 #include "GateRTPhantom.hh"
 
