@@ -1,5 +1,7 @@
 #include "GateGpSpectrumActor.hh"
 
+#ifdef G4ANALYSIS_USE_ROOT
+
 #include "GateGpSpectrumActorMessenger.hh"
 #include <G4VProcess.hh>
 #include <G4ProtonInelasticProcess.hh>

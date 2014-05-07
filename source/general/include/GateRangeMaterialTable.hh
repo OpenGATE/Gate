@@ -1,4 +1,6 @@
 #include "GateMiscFunctions.hh"
+#include "G4UnitsTable.hh"
+#include "G4Material.hh"
 
 class GateRangeMaterialTable
 {

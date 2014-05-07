@@ -1,4 +1,6 @@
 #ifndef GATEPHYSICSEXTRACTORACTOR_HH
+#define GATEPHYSICSEXTRACTORACTOR_HH
+
 #include "GateConfiguration.h"
 
 #include "GateVActor.hh"

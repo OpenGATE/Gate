@@ -1,4 +1,6 @@
 #include "GateConfiguration.h"
+#ifdef G4ANALYSIS_USE_ROOT
+
 /*!
   \class  GateAugerDetectorActor
   \author pierre.gueth@creatis.insa-lyon.fr

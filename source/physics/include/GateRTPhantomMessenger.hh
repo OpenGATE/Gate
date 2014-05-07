@@ -1,4 +1,5 @@
-
+#ifndef GateRTPhantomMessenger_h
+#define GateRTPhantomMessenger_h
 
 #include "GateMessenger.hh"
 

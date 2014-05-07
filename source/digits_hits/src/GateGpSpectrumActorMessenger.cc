@@ -1,4 +1,6 @@
 
+#include "GateGpSpectrumActorMessenger.hh"
+
 #ifdef G4ANALYSIS_USE_ROOT
 
 #include "GateGpSpectrumActor.hh"

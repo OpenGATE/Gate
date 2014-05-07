@@ -1,5 +1,4 @@
-
-
+/*----------------------
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms

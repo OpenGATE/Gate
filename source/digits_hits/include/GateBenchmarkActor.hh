@@ -1,4 +1,6 @@
 #include "GateConfiguration.h"
+#ifdef G4ANALYSIS_USE_ROOT
+
 #ifndef GATEBENCHMARKACTOR_HH
 #define GATEBENCHMARKACTOR_HH
 

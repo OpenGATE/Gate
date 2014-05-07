@@ -1,4 +1,6 @@
 #ifndef GateTrack_H
+#define GateTrack_H
+
 #include "G4ThreeVector.hh"
 #include "G4ios.hh"
 #include "globals.hh"
