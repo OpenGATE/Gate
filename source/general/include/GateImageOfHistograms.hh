@@ -36,6 +36,9 @@ protected:
   double max_gamma_energy;
   int gamma_bin;
 
+  // DEBUG
+  TH1D * mTotalEnergySpectrum;
+
 };
 //-----------------------------------------------------------------------------
 

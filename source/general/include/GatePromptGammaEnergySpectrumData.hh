@@ -56,7 +56,10 @@ public:
 
   // Convenient functions
   TH1D * GetGammaEnergySpectrum(const double & energy);
-  int ComputeProtonEnergyBinIndex(const double & energy);
+  //int ComputeProtonEnergyBinIndex(const double & energy);
+
+  // FIXME
+  //  TH2D* cs;
 
 protected:
   std::string mFilename;

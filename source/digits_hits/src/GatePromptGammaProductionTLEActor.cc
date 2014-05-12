@@ -13,6 +13,9 @@
 #include "GatePromptGammaProductionTLEActorMessenger.hh"
 #include "GateImageOfHistograms.hh"
 
+#include <G4Proton.hh>
+#include <G4VProcess.hh>
+
 //-----------------------------------------------------------------------------
 GatePromptGammaProductionTLEActor::GatePromptGammaProductionTLEActor(G4String name,
                                                                      G4int depth):
@@ -54,7 +57,6 @@ void GatePromptGammaProductionTLEActor::Construct()
   EnablePostUserTrackingAction(false);
   EnableUserSteppingAction(true);
 
-
   // Input data
   data.Read(mInputDataFilename);
   DD(data.GetHEp()->GetEntries()); // FIXME
@@ -72,7 +74,12 @@ void GatePromptGammaProductionTLEActor::Construct()
   DD(mImageGamma.GetNumberOfValues());
   mImageGamma.SetHistoInfo(data.GetGammaNbBins(), data.GetGammaEMin(), data.GetGammaEMax());
   mImageGamma.Allocate();
+  mImageGamma.PrintInfo();
 
+  // Force hit type
+  DD(mStepHitType);
+  //  SetStepHitType("pre");
+  DD(mStepHitType);
 
   // Set to zero
   ResetData();
@@ -124,12 +131,13 @@ void GatePromptGammaProductionTLEActor::UserSteppingActionInVoxel(int index, con
   if (index <0) return;
 
   // Get information
-  const G4String & particle_name = step->GetTrack()->GetParticleDefinition()->GetParticleName();
+  const G4ParticleDefinition* particle = step->GetTrack()->GetParticleDefinition();
   const G4double & particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
   const G4double & distance = step->GetStepLength();
 
   // Check particle type ("proton")
-  if (particle_name != "proton") return;
+  //if (particle_name != "proton") return;
+  if (particle != G4Proton::Proton()) return;
 
   // Check material
   // FIXME
@@ -137,17 +145,19 @@ void GatePromptGammaProductionTLEActor::UserSteppingActionInVoxel(int index, con
   G4String materialName = material->GetName();
   if (materialName == "Air_0") return;
 
+  // Get value from histogram
+  TH1D * h = data.GetGammaEnergySpectrum(particle_energy);
+  h->Scale(distance);
+  mImageGamma.AddValue(index, h);
+
+  /*
   DD("---------------------");
   DD(index);
   DD(materialName);
   DD(particle_energy/MeV);
+  DD(step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
   DD(distance);
-
-  // Get value from histogram
-  TH1D * h = data.GetGammaEnergySpectrum(particle_energy);
-  //DD(h->GetEntries());
-  //  h->Print("range");
-  h->Scale(distance);
-  mImageGamma.AddValue(index, h);
+  DD(h->GetSumOfWeights());
+  */
 }
 //-----------------------------------------------------------------------------

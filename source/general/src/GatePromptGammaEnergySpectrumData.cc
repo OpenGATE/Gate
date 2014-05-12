@@ -109,6 +109,28 @@ void GatePromptGammaEnergySpectrumData::Read(std::string & filename)
   DD(max_proton_energy);
   DD(min_gamma_energy);
   DD(max_gamma_energy);
+
+  // Normalisation of 2D histo (pHEpEpgNormalized = E proton vs E gamma) according to
+  // proba of inelastic interaction by E proton (pHEpInelastic);
+  double temp=0.0;
+  for( int i=1; i <= pHEpEpgNormalized->GetNbinsX(); i++) {
+      for( int j = 1; j <= pHEpEpgNormalized->GetNbinsY(); j++) {
+        if(pHEpInelastic->GetBinContent(i) != 0) {
+          temp = pHEpEpgNormalized->GetBinContent(i,j)/pHEpInelastic->GetBinContent(i);
+        }
+        else {
+          if (pHEpEpgNormalized->GetBinContent(i,j)> 0.) {
+            DD(i);
+            DD(j);
+            DD(pHEpInelastic->GetBinContent(i));
+            DD(pHEpEpgNormalized->GetBinContent(i,j));
+            GateError("ERROR in in histograms, pHEpInelastic is zero and not pHEpEpgNormalized");
+          }
+        }
+        pHEpEpgNormalized->SetBinContent(i,j,temp);
+      }
+  }
+  DD("end normalisation");
 }
 //-----------------------------------------------------------------------------
 
@@ -118,6 +140,13 @@ void GatePromptGammaEnergySpectrumData::Initialize(std::string & filename)
 {
   DD("Initialize");
   DD(filename);
+  DD(min_proton_energy);
+  DD(max_proton_energy);
+  DD(proton_bin);
+  DD(min_gamma_energy);
+  DD(max_gamma_energy);
+  DD(gamma_bin);
+
   mFilename = filename;
   pTfile = new TFile(filename.c_str(),"RECREATE");
 
@@ -149,25 +178,33 @@ void GatePromptGammaEnergySpectrumData::Initialize(std::string & filename)
                                         proton_bin, min_proton_energy/MeV, max_proton_energy/MeV);
   pHEpInelasticProducedGamma->SetXTitle("E_{proton} [MeV]");
 
+
+  // FIXME
+  DD(pHEpEpgNormalized->GetDefaultSumw2());
+
+  // // FIXME
+  // cs = new TH2D("sigma by E","cross section by proton E",
+  //               proton_bin, min_proton_energy/MeV, max_proton_energy/MeV,
+  //               50, 0, 0.0019);
+
   ResetData();
 }
 //-----------------------------------------------------------------------------
 
 
-//-----------------------------------------------------------------------------
-int GatePromptGammaEnergySpectrumData::ComputeProtonEnergyBinIndex(const double & energy)
-{
-  int temp = pHEp->FindFixBin(energy);
-
-  return temp;
-}
-//-----------------------------------------------------------------------------
+// //-----------------------------------------------------------------------------
+// int GatePromptGammaEnergySpectrumData::ComputeProtonEnergyBinIndex(const double & energy)
+// {
+//   int temp = pHEp->FindFixBin(energy);
+//   return temp;
+// }
+// //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 TH1D * GatePromptGammaEnergySpectrumData::GetGammaEnergySpectrum(const double & energy)
 {
-  int binX = ComputeProtonEnergyBinIndex(energy);
+  int binX = pHEp->FindFixBin(energy); //ComputeProtonEnergyBinIndex(energy);
   TH1D * h = pHEpEpgNormalized->ProjectionY("PhistoEnergy", binX, binX);
   return h;
 }
