@@ -151,7 +151,7 @@ void welcome()
 {
   GateMessage("Core", 0, G4endl);
   GateMessage("Core", 0, "**********************************************************************" << G4endl);
-  GateMessage("Core", 0, " GATE version name: beta_gate_v7.0                                    " << G4endl);
+  GateMessage("Core", 0, " GATE version name: gate_v7.0                                         " << G4endl);
   GateMessage("Core", 0, "                    Copyright : OpenGATE Collaboration                " << G4endl);
   GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 49 (2004) 4543-4561  " << G4endl);
   GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 56 (2011) 881-901    " << G4endl);
@@ -379,19 +379,19 @@ int main( int argc, char* argv[] )
     UImanager->ApplyCommand( command + macrofilename );
     GateMessage( "Core", 0, "End of macro " << macrofilename << G4endl);
   }
-  else {
+
     if (ui) // Launching interactive mode // Qt
       {
         ui->SessionStart();
         delete ui;
       }
     else {
-      if (session) { // Terminal
+      if (session && !isMacroFile) { // Terminal
         session->SessionStart();
         delete session;
       }
     }
-  }
+
 
 #ifdef G4ANALYSIS_USE_GENERAL
   if (outputMgr) delete outputMgr;
