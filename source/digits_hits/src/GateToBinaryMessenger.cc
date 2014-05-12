@@ -1,6 +1,4 @@
 /*!
- *	\file GateToBinaryMessenger.cc
- *	\author Didier Benoit <benoit@imnc.in2p3.fr>
  *	\date May 2010, IMNC/CNRS, Orsay
  *
  *	\section LICENCE

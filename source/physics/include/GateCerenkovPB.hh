@@ -1,6 +1,4 @@
 /*##########################################
-#
-#Cerenkov physics process
 #developed by Hermann Fuchs
 #
 #Christian Doppler Laboratory for Medical Radiation Research for Radiation Oncology
