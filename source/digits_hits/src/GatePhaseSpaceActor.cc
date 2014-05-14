@@ -54,6 +54,11 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   mUseVolFrame=false;
   mStoreOutPart=false;
 
+  bEnableCoordFrame=false;
+  bEnablePrimaryEnergy=false;
+
+  bCoordFrame = " ";
+
   mFileType = " ";
   mNevent = 0;
   pIAEARecordType = 0;
@@ -88,6 +93,7 @@ void GatePhaseSpaceActor::Construct()
   // Enable callbacks
   EnableBeginOfRunAction(false);
   EnableBeginOfEventAction(false);
+  if(bEnablePrimaryEnergy) EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(true);
   EnableUserSteppingAction(true);
 
@@ -122,7 +128,7 @@ void GatePhaseSpaceActor::Construct()
     pListeVar->Branch("TrackID",&trackid,"TrackID/I");
     pListeVar->Branch("EventID",&eventid,"EventID/I");
     pListeVar->Branch("RunID",&runid,"RunID/I");
-
+    if(bEnablePrimaryEnergy) pListeVar->Branch("primaryEnergy", &bPrimaryEnergy,"primaryEnergy/F");
   }
   else if(mFileType == "IAEAFile"){
     pIAEAheader = (iaea_header_type *) calloc(1, sizeof(iaea_header_type));
@@ -162,9 +168,14 @@ void GatePhaseSpaceActor::PreUserTrackingAction(const GateVVolume * /*v*/, const
 
 
 // --------------------------------------------------------------------
-//void GatePhaseSpaceActor::BeginOfEventAction(const G4Event * e) {
-//  mNevent++;
-//}
+void GatePhaseSpaceActor::BeginOfEventAction(const G4Event * e) {
+  //mNevent++;
+
+  //----------------------- Set Primary Energy ------------------------
+  bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy();
+  //G4cout << "brent: " << bPrimaryEnergy << G4endl;
+  //-------------------------------------------------------------------
+}
 // --------------------------------------------------------------------
 
 
@@ -218,6 +229,27 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
   if(GetUseVolumeFrame()){
     const G4AffineTransform transformation = step->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform();
     localPosition = transformation.TransformPoint(localPosition);
+  } else if (GetEnableCoordFrame()) {
+    // Give GetUseVolumeFrame preference
+
+    // Find the transform from GetCoordFrame volume to the world.
+    GateVVolume* v = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame());
+    G4VPhysicalVolume* phys = v->GetPhysicalVolume();
+    G4AffineTransform volumeToWorld = G4AffineTransform(phys->GetRotation(), phys->GetTranslation());
+    while (v->GetLogicalVolumeName() != "world_log") {
+      v = v->GetParentVolume();
+      phys = v->GetPhysicalVolume();
+      G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
+      volumeToWorld = volumeToWorld * x;
+    }
+
+    volumeToWorld = volumeToWorld.NetRotation();
+    G4AffineTransform worldToVolume = volumeToWorld.Inverse();
+
+    //old crap:
+    //const G4AffineTransform transformation = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame())->GetPhysicalVolume()->GetTouchable()->GetHistory()->GetTopTransform();
+    localPosition = worldToVolume.TransformPoint(localPosition);
+
   }
 
   trackid = step->GetTrack()->GetTrackID();
@@ -239,6 +271,26 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step* 
   if(GetUseVolumeFrame()){
     const G4AffineTransform transformation = step->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform();
     localMomentum = transformation.TransformAxis(localMomentum);
+  } else if (GetEnableCoordFrame()) {
+    // Give GetUseVolumeFrame preference
+
+    // Find the transform from GetCoordFrame volume to the world.
+    GateVVolume* v = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame());
+    G4VPhysicalVolume* phys = v->GetPhysicalVolume();
+    G4AffineTransform volumeToWorld = G4AffineTransform(phys->GetRotation(), phys->GetTranslation());
+    while (v->GetLogicalVolumeName() != "world_log") {
+      v = v->GetParentVolume();
+      phys = v->GetPhysicalVolume();
+      G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
+      volumeToWorld = volumeToWorld * x;
+    }
+
+    volumeToWorld = volumeToWorld.NetRotation();
+    G4AffineTransform worldToVolume = volumeToWorld.Inverse();
+
+    //old crap:
+    //const G4AffineTransform transformation = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame())->GetPhysicalVolume()->GetTouchable()->GetHistory()->GetTopTransform();
+    localMomentum = worldToVolume.TransformAxis(localMomentum);
   }
 
   dx = localMomentum.x();
