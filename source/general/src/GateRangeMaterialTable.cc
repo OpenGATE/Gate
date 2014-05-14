@@ -1,6 +1,4 @@
 #include "GateRangeMaterialTable.hh"
-#include "GateMiscFunctions.hh"
-#include "G4UnitsTable.hh"
 
 //-----------------------------------------------------------------------------
 GateRangeMaterialTable::GateRangeMaterialTable()

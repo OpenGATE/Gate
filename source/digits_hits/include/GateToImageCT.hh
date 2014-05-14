@@ -1,6 +1,4 @@
 /*----------------------
-
-  GATE - Geant4 Application for Tomographic Emission
   OpenGATE Collaboration
 
   Didier Benoit <benoit@cppm.in2p3.fr>

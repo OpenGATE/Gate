@@ -1,6 +1,4 @@
 /*----------------------
-  $Log: GateOutputMgrMessenger.cc,v $
-  Revision 1.2  2002/08/11 15:33:25  dstrul
   Cosmetic cleanup: standardized file comments for cleaner doxygen output
 
 
