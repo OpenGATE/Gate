@@ -14,20 +14,20 @@
 #include "GateConfiguration.h"
 #include "GateImageActorMessenger.hh"
 
-class GatePromptGammaProductionTLEActor;
+class GatePromptGammaTLEActor;
 
 //-----------------------------------------------------------------------------
-class GatePromptGammaProductionTLEActorMessenger: public GateImageActorMessenger
+class GatePromptGammaTLEActorMessenger: public GateImageActorMessenger
 {
 public:
 
-  GatePromptGammaProductionTLEActorMessenger(GatePromptGammaProductionTLEActor*);
-  ~GatePromptGammaProductionTLEActorMessenger();
+  GatePromptGammaTLEActorMessenger(GatePromptGammaTLEActor*);
+  ~GatePromptGammaTLEActorMessenger();
   void SetNewValue(G4UIcommand*, G4String);
 
 protected:
   void BuildCommands(G4String base);
-  GatePromptGammaProductionTLEActor* pTLEActor;
+  GatePromptGammaTLEActor* pTLEActor;
 
   G4UIcmdWithAString * pSetInputDataFileCmd;
 };

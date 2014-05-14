@@ -9,35 +9,35 @@
   ----------------------*/
 
 #include "GateConfiguration.h"
-#include "GatePromptGammaProductionTLEActor.hh"
-#include "GatePromptGammaProductionTLEActorMessenger.hh"
+#include "GatePromptGammaTLEActor.hh"
+#include "GatePromptGammaTLEActorMessenger.hh"
 #include "GateImageOfHistograms.hh"
 
 #include <G4Proton.hh>
 #include <G4VProcess.hh>
 
 //-----------------------------------------------------------------------------
-GatePromptGammaProductionTLEActor::GatePromptGammaProductionTLEActor(G4String name,
+GatePromptGammaTLEActor::GatePromptGammaTLEActor(G4String name,
                                                                      G4int depth):
   GateVImageActor(name,depth)
 {
   mInputDataFilename = "noFilenameGiven";
-  pMessenger = new GatePromptGammaProductionTLEActorMessenger(this);
+  pMessenger = new GatePromptGammaTLEActorMessenger(this);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-GatePromptGammaProductionTLEActor::~GatePromptGammaProductionTLEActor()
+GatePromptGammaTLEActor::~GatePromptGammaTLEActor()
 {
-  DD("GatePromptGammaProductionTLEActor:: destructor");
+  DD("GatePromptGammaTLEActor:: destructor");
   delete pMessenger;
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaProductionTLEActor::SetInputDataFilename(std::string filename)
+void GatePromptGammaTLEActor::SetInputDataFilename(std::string filename)
 {
   mInputDataFilename = filename;
 }
@@ -45,7 +45,7 @@ void GatePromptGammaProductionTLEActor::SetInputDataFilename(std::string filenam
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaProductionTLEActor::Construct()
+void GatePromptGammaTLEActor::Construct()
 {
   DD("GPGPTLE::Construct");
   GateVImageActor::Construct();
@@ -88,7 +88,7 @@ void GatePromptGammaProductionTLEActor::Construct()
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaProductionTLEActor::ResetData()
+void GatePromptGammaTLEActor::ResetData()
 {
   DD("GPGPTLE::ResetData");
   mImageGamma.Reset();
@@ -97,7 +97,7 @@ void GatePromptGammaProductionTLEActor::ResetData()
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaProductionTLEActor::SaveData()
+void GatePromptGammaTLEActor::SaveData()
 {
   DD("GPGPTLE::SaveData");
   GateVImageActor::SaveData();
@@ -109,7 +109,7 @@ void GatePromptGammaProductionTLEActor::SaveData()
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaProductionTLEActor::UserPostTrackActionInVoxel(const int index, const G4Track* t)
+void GatePromptGammaTLEActor::UserPostTrackActionInVoxel(const int index, const G4Track* t)
 {
   //  GateVImageActor::UserPostTrackActionInVoxel(index, t);
 }
@@ -117,7 +117,7 @@ void GatePromptGammaProductionTLEActor::UserPostTrackActionInVoxel(const int ind
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaProductionTLEActor::UserPreTrackActionInVoxel(const int index, const G4Track* t)
+void GatePromptGammaTLEActor::UserPreTrackActionInVoxel(const int index, const G4Track* t)
 {
   //GateVImageActor::UserPreTrackActionInVoxel(index, t);
 }
@@ -125,7 +125,7 @@ void GatePromptGammaProductionTLEActor::UserPreTrackActionInVoxel(const int inde
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaProductionTLEActor::UserSteppingActionInVoxel(int index, const G4Step * step)
+void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step * step)
 {
   // Check index
   if (index <0) return;

@@ -9,12 +9,12 @@
   ----------------------*/
 
 #include "GateConfiguration.h"
-#include "GatePromptGammaProductionTLEActor.hh"
-#include "GatePromptGammaProductionTLEActorMessenger.hh"
+#include "GatePromptGammaTLEActor.hh"
+#include "GatePromptGammaTLEActorMessenger.hh"
 
 //-----------------------------------------------------------------------------
-GatePromptGammaProductionTLEActorMessenger::
-GatePromptGammaProductionTLEActorMessenger(GatePromptGammaProductionTLEActor* v)
+GatePromptGammaTLEActorMessenger::
+GatePromptGammaTLEActorMessenger(GatePromptGammaTLEActor* v)
 :GateImageActorMessenger(v), pTLEActor(v)
 {
   BuildCommands(baseName+pActor->GetObjectName());
@@ -23,16 +23,16 @@ GatePromptGammaProductionTLEActorMessenger(GatePromptGammaProductionTLEActor* v)
 
 
 //-----------------------------------------------------------------------------
-GatePromptGammaProductionTLEActorMessenger::~GatePromptGammaProductionTLEActorMessenger()
+GatePromptGammaTLEActorMessenger::~GatePromptGammaTLEActorMessenger()
 {
-  DD("GatePromptGammaProductionTLEActorMessenger destructor");
+  DD("GatePromptGammaTLEActorMessenger destructor");
   delete pSetInputDataFileCmd;
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaProductionTLEActorMessenger::BuildCommands(G4String base)
+void GatePromptGammaTLEActorMessenger::BuildCommands(G4String base)
 {
   G4String bb = base+"/setInputDataFile";
   pSetInputDataFileCmd = new G4UIcmdWithAString(bb, this);
@@ -43,7 +43,7 @@ void GatePromptGammaProductionTLEActorMessenger::BuildCommands(G4String base)
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaProductionTLEActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
+void GatePromptGammaTLEActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
   if (cmd == pSetInputDataFileCmd) pTLEActor->SetInputDataFilename(newValue);
   GateImageActorMessenger::SetNewValue(cmd,newValue);

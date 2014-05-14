@@ -8,11 +8,11 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-#include "GatePromptGammaEnergySpectrumData.hh"
+#include "GatePromptGammaData.hh"
 #include "G4UnitsTable.hh"
 
 //-----------------------------------------------------------------------------
-GatePromptGammaEnergySpectrumData::GatePromptGammaEnergySpectrumData()
+GatePromptGammaData::GatePromptGammaData()
 {
   SetProtonEMin(0);
   SetProtonEMax(150*MeV);
@@ -25,9 +25,9 @@ GatePromptGammaEnergySpectrumData::GatePromptGammaEnergySpectrumData()
 
 
 //-----------------------------------------------------------------------------
-GatePromptGammaEnergySpectrumData::~GatePromptGammaEnergySpectrumData()
+GatePromptGammaData::~GatePromptGammaData()
 {
-  DD("GatePromptGammaEnergySpectrumData destructor");
+  DD("GatePromptGammaData destructor");
   delete pHEpEpg;
   delete pHEpEpgNormalized;
   delete pHEpInelastic;
@@ -35,33 +35,33 @@ GatePromptGammaEnergySpectrumData::~GatePromptGammaEnergySpectrumData()
   delete pHEpInelasticProducedGamma;
   delete pHEpSigmaInelastic;
   delete pTfile;
-  DD("GatePromptGammaEnergySpectrumData END destructor");
+  DD("GatePromptGammaData END destructor");
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaEnergySpectrumData::SetProtonEMin(double x) { min_proton_energy = x; }
-void GatePromptGammaEnergySpectrumData::SetProtonEMax(double x) { max_proton_energy = x; }
-void GatePromptGammaEnergySpectrumData::SetGammaEMin(double x)  { min_gamma_energy = x; }
-void GatePromptGammaEnergySpectrumData::SetGammaEMax(double x)  { max_gamma_energy = x; }
-void GatePromptGammaEnergySpectrumData::SetProtonNbBins(int x)  { proton_bin = x; }
-void GatePromptGammaEnergySpectrumData::SetGammaNbBins(int x)   { gamma_bin = x; }
+void GatePromptGammaData::SetProtonEMin(double x) { min_proton_energy = x; }
+void GatePromptGammaData::SetProtonEMax(double x) { max_proton_energy = x; }
+void GatePromptGammaData::SetGammaEMin(double x)  { min_gamma_energy = x; }
+void GatePromptGammaData::SetGammaEMax(double x)  { max_gamma_energy = x; }
+void GatePromptGammaData::SetProtonNbBins(int x)  { proton_bin = x; }
+void GatePromptGammaData::SetGammaNbBins(int x)   { gamma_bin = x; }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-TH2D * GatePromptGammaEnergySpectrumData::GetHEpEpgNormalized()          { return pHEpEpgNormalized; }
-TH1D * GatePromptGammaEnergySpectrumData::GetHEp()                       { return pHEp; }
-TH1D * GatePromptGammaEnergySpectrumData::GetHEpInelastic()              { return pHEpInelastic; }
-TH1D * GatePromptGammaEnergySpectrumData::GetHEpSigmaInelastic()         { return pHEpSigmaInelastic; }
-TH2D * GatePromptGammaEnergySpectrumData::GetHEpEpg()                    { return pHEpEpg; }
-TH1D * GatePromptGammaEnergySpectrumData::GetHEpInelasticProducedGamma() { return pHEpInelasticProducedGamma; }
+TH2D * GatePromptGammaData::GetHEpEpgNormalized()          { return pHEpEpgNormalized; }
+TH1D * GatePromptGammaData::GetHEp()                       { return pHEp; }
+TH1D * GatePromptGammaData::GetHEpInelastic()              { return pHEpInelastic; }
+TH1D * GatePromptGammaData::GetHEpSigmaInelastic()         { return pHEpSigmaInelastic; }
+TH2D * GatePromptGammaData::GetHEpEpg()                    { return pHEpEpg; }
+TH1D * GatePromptGammaData::GetHEpInelasticProducedGamma() { return pHEpInelasticProducedGamma; }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaEnergySpectrumData::ResetData()
+void GatePromptGammaData::ResetData()
 {
   pHEpEpg->Reset();
   pHEpEpgNormalized->Reset();
@@ -73,7 +73,7 @@ void GatePromptGammaEnergySpectrumData::ResetData()
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaEnergySpectrumData::SaveData()
+void GatePromptGammaData::SaveData()
 {
   pTfile->Write();
 }
@@ -81,7 +81,7 @@ void GatePromptGammaEnergySpectrumData::SaveData()
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaEnergySpectrumData::Read(std::string & filename)
+void GatePromptGammaData::Read(std::string & filename)
 {
   DD("Read");
   mFilename = filename;
@@ -136,7 +136,7 @@ void GatePromptGammaEnergySpectrumData::Read(std::string & filename)
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaEnergySpectrumData::Initialize(std::string & filename)
+void GatePromptGammaData::Initialize(std::string & filename)
 {
   DD("Initialize");
   DD(filename);
@@ -193,7 +193,7 @@ void GatePromptGammaEnergySpectrumData::Initialize(std::string & filename)
 
 
 // //-----------------------------------------------------------------------------
-// int GatePromptGammaEnergySpectrumData::ComputeProtonEnergyBinIndex(const double & energy)
+// int GatePromptGammaData::ComputeProtonEnergyBinIndex(const double & energy)
 // {
 //   int temp = pHEp->FindFixBin(energy);
 //   return temp;
@@ -202,7 +202,7 @@ void GatePromptGammaEnergySpectrumData::Initialize(std::string & filename)
 
 
 //-----------------------------------------------------------------------------
-TH1D * GatePromptGammaEnergySpectrumData::GetGammaEnergySpectrum(const double & energy)
+TH1D * GatePromptGammaData::GetGammaEnergySpectrum(const double & energy)
 {
   int binX = pHEp->FindFixBin(energy); //ComputeProtonEnergyBinIndex(energy);
   TH1D * h = pHEpEpgNormalized->ProjectionY("PhistoEnergy", binX, binX);

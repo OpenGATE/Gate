@@ -18,12 +18,12 @@
 #include <TH2.h>
 
 //-----------------------------------------------------------------------------
-class GatePromptGammaEnergySpectrumData
+class GatePromptGammaData
 {
 public:
 
-  GatePromptGammaEnergySpectrumData();
-  ~GatePromptGammaEnergySpectrumData();
+  GatePromptGammaData();
+  ~GatePromptGammaData();
 
   void SetProtonEMin(double x);
   void SetProtonEMax(double x);

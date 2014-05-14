@@ -13,19 +13,19 @@
 
 #include "GateConfiguration.h"
 #include "GateVActor.hh"
-#include "GatePromptGammaSpectrumDistributionActorMessenger.hh"
+#include "GatePromptGammaStatisticActorMessenger.hh"
 #include "GatePromptGammaEnergySpectrumData.hh"
 #include <TFile.h>
 #include <TH1.h>
 #include <TH2.h>
 
 //-----------------------------------------------------------------------------
-class GatePromptGammaSpectrumDistributionActor : public GateVActor
+class GatePromptGammaStatisticActor : public GateVActor
 {
 public:
-  virtual ~GatePromptGammaSpectrumDistributionActor();
+  virtual ~GatePromptGammaStatisticActor();
 
-  FCT_FOR_AUTO_CREATOR_ACTOR(GatePromptGammaSpectrumDistributionActor)
+  FCT_FOR_AUTO_CREATOR_ACTOR(GatePromptGammaStatisticActor)
 
   virtual void Construct();
   virtual void UserSteppingAction(const GateVVolume*, const G4Step*);
@@ -40,14 +40,14 @@ public:
   void SetGammaNbBins(G4int x);
 
 protected:
-  GatePromptGammaSpectrumDistributionActor(G4String name, G4int depth=0);
-  GatePromptGammaSpectrumDistributionActorMessenger * pMessenger;
+  GatePromptGammaStatisticActor(G4String name, G4int depth=0);
+  GatePromptGammaStatisticActorMessenger * pMessenger;
 
   GatePromptGammaEnergySpectrumData data;
 };
 //-----------------------------------------------------------------------------
 
-MAKE_AUTO_CREATOR_ACTOR(PromptGammaSpectrumDistributionActor,
-                        GatePromptGammaSpectrumDistributionActor)
+MAKE_AUTO_CREATOR_ACTOR(PromptGammaStatisticActor,
+                        GatePromptGammaStatisticActor)
 
 #endif // GATEPROMPTGAMMASPECTRUMDISTRIBUTIONACTOR

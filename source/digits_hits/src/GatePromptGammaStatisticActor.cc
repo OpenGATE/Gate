@@ -8,8 +8,8 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-#include "GatePromptGammaSpectrumDistributionActor.hh"
-#include "GatePromptGammaSpectrumDistributionActorMessenger.hh"
+#include "GatePromptGammaStatisticActor.hh"
+#include "GatePromptGammaStatisticActorMessenger.hh"
 
 #include <G4VProcess.hh>
 #include <G4ProtonInelasticProcess.hh>
@@ -17,17 +17,17 @@
 #include <G4HadronicProcessStore.hh>
 
 //-----------------------------------------------------------------------------
-GatePromptGammaSpectrumDistributionActor::
-GatePromptGammaSpectrumDistributionActor(G4String name, G4int depth):
+GatePromptGammaStatisticActor::
+GatePromptGammaStatisticActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  pMessenger = new GatePromptGammaSpectrumDistributionActorMessenger(this);
+  pMessenger = new GatePromptGammaStatisticActorMessenger(this);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-GatePromptGammaSpectrumDistributionActor::~GatePromptGammaSpectrumDistributionActor()
+GatePromptGammaStatisticActor::~GatePromptGammaStatisticActor()
 {
   delete pMessenger;
 }
@@ -35,17 +35,17 @@ GatePromptGammaSpectrumDistributionActor::~GatePromptGammaSpectrumDistributionAc
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaSpectrumDistributionActor::SetProtonEMin(G4double x) { data.SetProtonEMin(x); }
-void GatePromptGammaSpectrumDistributionActor::SetProtonEMax(G4double x) { data.SetProtonEMax(x); }
-void GatePromptGammaSpectrumDistributionActor::SetGammaEMin(G4double x)  { data.SetGammaEMin(x); }
-void GatePromptGammaSpectrumDistributionActor::SetGammaEMax(G4double x)  { data.SetGammaEMax(x); }
-void GatePromptGammaSpectrumDistributionActor::SetProtonNbBins(G4int x)  { data.SetProtonNbBins(x); }
-void GatePromptGammaSpectrumDistributionActor::SetGammaNbBins(G4int x)   { data.SetGammaNbBins(x); }
+void GatePromptGammaStatisticActor::SetProtonEMin(G4double x) { data.SetProtonEMin(x); }
+void GatePromptGammaStatisticActor::SetProtonEMax(G4double x) { data.SetProtonEMax(x); }
+void GatePromptGammaStatisticActor::SetGammaEMin(G4double x)  { data.SetGammaEMin(x); }
+void GatePromptGammaStatisticActor::SetGammaEMax(G4double x)  { data.SetGammaEMax(x); }
+void GatePromptGammaStatisticActor::SetProtonNbBins(G4int x)  { data.SetProtonNbBins(x); }
+void GatePromptGammaStatisticActor::SetGammaNbBins(G4int x)   { data.SetGammaNbBins(x); }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaSpectrumDistributionActor::Construct()
+void GatePromptGammaStatisticActor::Construct()
 {
   DD("GPGSDA::Construct");
   GateVActor::Construct();
@@ -66,7 +66,7 @@ void GatePromptGammaSpectrumDistributionActor::Construct()
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaSpectrumDistributionActor::SaveData()
+void GatePromptGammaStatisticActor::SaveData()
 {
   DD("GPGSDA::SaveData");
   data.SaveData();
@@ -75,7 +75,7 @@ void GatePromptGammaSpectrumDistributionActor::SaveData()
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaSpectrumDistributionActor::ResetData()
+void GatePromptGammaStatisticActor::ResetData()
 {
   DD("GPGSDA::ResetData");
   data.ResetData();
@@ -84,7 +84,7 @@ void GatePromptGammaSpectrumDistributionActor::ResetData()
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaSpectrumDistributionActor::UserSteppingAction(const GateVVolume*,
+void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
                                                                   const G4Step* step)
 {
   // Get various information

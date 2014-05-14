@@ -9,11 +9,11 @@
   ----------------------*/
 
 
-#include "GatePromptGammaSpectrumDistributionActorMessenger.hh"
-#include "GatePromptGammaSpectrumDistributionActor.hh"
+#include "GatePromptGammaStatisticActorMessenger.hh"
+#include "GatePromptGammaStatisticActor.hh"
 
 //-----------------------------------------------------------------------------
-GatePromptGammaSpectrumDistributionActorMessenger::GatePromptGammaSpectrumDistributionActorMessenger(GatePromptGammaSpectrumDistributionActor* v)
+GatePromptGammaStatisticActorMessenger::GatePromptGammaStatisticActorMessenger(GatePromptGammaStatisticActor* v)
   : GateActorMessenger(v), pActor(v)
 {
   BuildCommands(baseName+pActor->GetObjectName());
@@ -22,7 +22,7 @@ GatePromptGammaSpectrumDistributionActorMessenger::GatePromptGammaSpectrumDistri
 
 
 //-----------------------------------------------------------------------------
-GatePromptGammaSpectrumDistributionActorMessenger::~GatePromptGammaSpectrumDistributionActorMessenger()
+GatePromptGammaStatisticActorMessenger::~GatePromptGammaStatisticActorMessenger()
 {
   delete pProtonEMinCmd;
   delete pProtonEMaxCmd;
@@ -35,7 +35,7 @@ GatePromptGammaSpectrumDistributionActorMessenger::~GatePromptGammaSpectrumDistr
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaSpectrumDistributionActorMessenger::BuildCommands(G4String base)
+void GatePromptGammaStatisticActorMessenger::BuildCommands(G4String base)
 {
   G4String bb = base+"/setProtonMinEnergy";
   pProtonEMinCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
@@ -78,7 +78,7 @@ void GatePromptGammaSpectrumDistributionActorMessenger::BuildCommands(G4String b
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaSpectrumDistributionActorMessenger::SetNewValue(G4UIcommand* cmd,
+void GatePromptGammaStatisticActorMessenger::SetNewValue(G4UIcommand* cmd,
                                                                     G4String newValue)
 {
 

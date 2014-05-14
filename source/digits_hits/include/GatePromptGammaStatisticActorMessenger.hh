@@ -17,21 +17,21 @@
 #include <G4UIcmdWithAnInteger.hh>
 #include <G4UIcmdWithADoubleAndUnit.hh>
 
-class GatePromptGammaSpectrumDistributionActor;
+class GatePromptGammaStatisticActor;
 
 //-----------------------------------------------------------------------------
-class GatePromptGammaSpectrumDistributionActorMessenger: public GateActorMessenger
+class GatePromptGammaStatisticActorMessenger: public GateActorMessenger
 {
 public:
 
-  GatePromptGammaSpectrumDistributionActorMessenger(GatePromptGammaSpectrumDistributionActor*);
-  ~GatePromptGammaSpectrumDistributionActorMessenger();
+  GatePromptGammaStatisticActorMessenger(GatePromptGammaStatisticActor*);
+  ~GatePromptGammaStatisticActorMessenger();
 
   void SetNewValue(G4UIcommand*, G4String);
 
 protected:
   void BuildCommands(G4String base);
-  GatePromptGammaSpectrumDistributionActor* pActor;
+  GatePromptGammaStatisticActor* pActor;
 
   G4UIcmdWithADoubleAndUnit * pProtonEMinCmd;
   G4UIcmdWithADoubleAndUnit * pProtonEMaxCmd;
