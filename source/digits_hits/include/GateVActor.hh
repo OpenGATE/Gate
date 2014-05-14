@@ -114,12 +114,9 @@ public:
   GateVVolume * GetVolume(){return mVolume;}
   void SetVolumeName(G4String name){mVolumeName = name;}
 
-  //void SetFilter(bool t){mIsFilter = t;}
-  //bool IsFilter(){return mIsFilter;}
   GateFilterManager * GetFilterManager(){return pFilterManager;}
   G4int GetNumberOfFilters() {return mNumOfFilters;}
   void IncNumberOfFilters() {mNumOfFilters++;}
-  //void AddFilter(G4String type){GateActorManager::GetInstance()->AddFilter(type, GetObjectname() )}
 
 protected:
   G4String mTypeName;
