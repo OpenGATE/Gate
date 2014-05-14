@@ -31,10 +31,11 @@ public:
   virtual void Write(G4String filename, const G4String & comment = "");
 
 protected:
-  std::vector<TH1D*> mHistoData;
+  //std::vector<TH1D*> mHistoData;
   double min_gamma_energy;
   double max_gamma_energy;
   int gamma_bin;
+  std::vector<double> dataDouble;
 
   // DEBUG
   TH1D * mTotalEnergySpectrum;

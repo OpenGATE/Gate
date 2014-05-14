@@ -143,7 +143,7 @@ void GatePromptGammaProductionTLEActor::UserSteppingActionInVoxel(int index, con
   // FIXME
   const G4Material* material = step->GetPreStepPoint()->GetMaterial();
   G4String materialName = material->GetName();
-  if (materialName == "Air_0") return;
+  if (materialName != "Water") return;
 
   // Get value from histogram
   TH1D * h = data.GetGammaEnergySpectrum(particle_energy);
