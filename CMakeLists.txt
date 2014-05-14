@@ -29,6 +29,12 @@ ELSE()
   FIND_PACKAGE(Geant4 REQUIRED)
 ENDIF()
 
+# Check if OpenGL headers are still available
+IF(Geant4_qt_FOUND OR Geant4_vis_opengl_x11_FOUND)
+  FIND_PACKAGE(OpenGL QUIET)
+  INCLUDE_DIRECTORIES(${OPENGL_INCLUDE_DIR})
+  SET(GATE_USE_OPENGL ${OPENGL_FOUND})
+ENDIF()
 
 #=========================================================
 # Build variables for G4 Version
@@ -142,10 +148,10 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/source/physics/include
   ${PROJECT_SOURCE_DIR}/source/digits_hits/include
   ${PROJECT_SOURCE_DIR}/source/general/include
-  ${PROJECT_SOURCE_DIR}/source/clhep/include
-  ${PROJECT_SOURCE_DIR}/source/itk-mhd/
-  ${PROJECT_SOURCE_DIR}/source/itk-mhd/itkzlib
-  ${PROJECT_SOURCE_DIR}/source/itk-mhd/MetaIO
+  ${PROJECT_SOURCE_DIR}/source/externals/clhep/include
+  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/
+  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/itkzlib
+  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/MetaIO
   ${PROJECT_BINARY_DIR}/itk-mhd/)
 
 #=========================================================
@@ -156,9 +162,8 @@ FILE(GLOB sources
   ${PROJECT_SOURCE_DIR}/source/digits_hits/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/physics/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/general/src/*.cc
-  ${PROJECT_SOURCE_DIR}/source/clhep/src/*.cc
-  ${PROJECT_SOURCE_DIR}/source/clhep/src/CLHEP/Matrix/*.cc
-  ${PROJECT_SOURCE_DIR}/source/clhep/src/CLHEP/RandomObjects/*.cc
+  ${PROJECT_SOURCE_DIR}/source/externals/clhep/src/CLHEP/Matrix/*.cc
+  ${PROJECT_SOURCE_DIR}/source/externals/clhep/src/CLHEP/RandomObjects/*.cc
   ${PROJECT_SOURCE_DIR}/source/gpu/src/GateGPUManager.cu)
 
 FILE(GLOB headers
@@ -167,7 +172,7 @@ FILE(GLOB headers
   ${PROJECT_SOURCE_DIR}/source/physics/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/digits_hits/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/general/include/*.hh
-  ${PROJECT_SOURCE_DIR}/source/clhep/include/*.hh
+  ${PROJECT_SOURCE_DIR}/source/externals/clhep/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/gpu/include/*.hh)
 
 #=========================================================
@@ -183,7 +188,7 @@ TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARI
 
 #=========================================================
 # included ITK to read/write mhd image file format
-ADD_SUBDIRECTORY(source/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
+ADD_SUBDIRECTORY(source/externals/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
