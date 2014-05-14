@@ -9,15 +9,15 @@
   ----------------------*/
 
 #include "GateConfiguration.h"
-#include "GateSourcePromptGammaEmissionMessenger.hh"
-#include "GateSourcePromptGammaEmission.hh"
+#include "GateSourceOfPromptGammaMessenger.hh"
+#include "GateSourceOfPromptGamma.hh"
 
 //----------------------------------------------------------------------------------------
-GateSourcePromptGammaEmissionMessenger::
-GateSourcePromptGammaEmissionMessenger(GateSourcePromptGammaEmission* source)
+GateSourceOfPromptGammaMessenger::
+GateSourceOfPromptGammaMessenger(GateSourceOfPromptGamma* source)
 :GateVSourceMessenger(source)
 {
-  pSourcePromptGammaEmission = source;
+  pSourceOfPromptGamma = source;
   G4String cmdName;
 
   // Set Filename command
@@ -30,7 +30,7 @@ GateSourcePromptGammaEmissionMessenger(GateSourcePromptGammaEmission* source)
 
 
 //----------------------------------------------------------------------------------------
-GateSourcePromptGammaEmissionMessenger::~GateSourcePromptGammaEmissionMessenger()
+GateSourceOfPromptGammaMessenger::~GateSourceOfPromptGammaMessenger()
 {
   delete pSetFilenameCmd;
 }
@@ -38,10 +38,10 @@ GateSourcePromptGammaEmissionMessenger::~GateSourcePromptGammaEmissionMessenger(
 
 
 //----------------------------------------------------------------------------------------
-void GateSourcePromptGammaEmissionMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
+void GateSourceOfPromptGammaMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
   if (command == pSetFilenameCmd) {
-    pSourcePromptGammaEmission->SetFilename(newValue);
+    pSourceOfPromptGamma->SetFilename(newValue);
   }
   // No call to superclass
   // GateVSourceMessenger::SetNewValue(command, newValue);

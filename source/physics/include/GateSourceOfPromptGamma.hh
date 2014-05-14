@@ -9,7 +9,7 @@
   ----------------------*/
 
 /*!
-  \class  GateSourcePromptGammaEmission
+  \class  GateSourceOfPromptGamma
 
   Gate Source: manage a source of Prompt Gamma.  The source is a 3D
   spatial discrete distribution. Primary particles are photon created
@@ -23,23 +23,23 @@
 #include "G4UnitsTable.hh"
 #include "GatePromptGammaSpatialEmissionDistribution.hh"
 #include "GateVSource.hh"
-#include "GateSourcePromptGammaEmissionMessenger.hh"
+#include "GateSourceOfPromptGammaMessenger.hh"
 
-class GateSourcePromptGammaEmissionMessenger;
+class GateSourceOfPromptGammaMessenger;
 
 //------------------------------------------------------------------------
-class GateSourcePromptGammaEmission : public GateVSource
+class GateSourceOfPromptGamma : public GateVSource
 {
 public:
-  GateSourcePromptGammaEmission(G4String name);
-  ~GateSourcePromptGammaEmission();
+  GateSourceOfPromptGamma(G4String name);
+  ~GateSourceOfPromptGamma();
 
   G4int GeneratePrimaries(G4Event* event);
   void GenerateVertex(G4Event* );
   void SetFilename(G4String filename);
 
 protected:
-  GateSourcePromptGammaEmissionMessenger * pMessenger;
+  GateSourceOfPromptGammaMessenger * pMessenger;
   bool mIsInitializedFlag;
   GatePromptGammaSpatialEmissionDistribution * mDistrib;
   G4String mFilename;

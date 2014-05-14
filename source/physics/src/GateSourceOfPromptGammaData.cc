@@ -8,11 +8,11 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-#include "GatePromptGammaSpatialEmissionDistribution.hh"
+#include "GateSourceOfPromptGammaData.hh"
 #include "GateMessageManager.hh"
 
 //------------------------------------------------------------------------
-GatePromptGammaSpatialEmissionDistribution::GatePromptGammaSpatialEmissionDistribution()
+GateSourceOfPromptGammaData::GateSourceOfPromptGammaData()
 {
   DD("GPGSED::Constructor");
 }
@@ -20,7 +20,7 @@ GatePromptGammaSpatialEmissionDistribution::GatePromptGammaSpatialEmissionDistri
 
 
 //------------------------------------------------------------------------
-GatePromptGammaSpatialEmissionDistribution::~GatePromptGammaSpatialEmissionDistribution()
+GateSourceOfPromptGammaData::~GateSourceOfPromptGammaData()
 {
   DD("GPGSED::Destructor");
 }
@@ -28,7 +28,7 @@ GatePromptGammaSpatialEmissionDistribution::~GatePromptGammaSpatialEmissionDistr
 
 
 //------------------------------------------------------------------------
-void GatePromptGammaSpatialEmissionDistribution::SampleRandomPosition(G4ThreeVector & position)
+void GateSourceOfPromptGammaData::SampleRandomPosition(G4ThreeVector & position)
 {
   DD("GPGSED::SampleRandomPosition");
   /*
@@ -61,7 +61,7 @@ void GatePromptGammaSpatialEmissionDistribution::SampleRandomPosition(G4ThreeVec
 
 
 //------------------------------------------------------------------------
-void GatePromptGammaSpatialEmissionDistribution::SampleRandomEnergy(double & energy)
+void GateSourceOfPromptGammaData::SampleRandomEnergy(double & energy)
 {
   DD("GPGSED::SampleRandomEnergy");
 
@@ -74,7 +74,7 @@ void GatePromptGammaSpatialEmissionDistribution::SampleRandomEnergy(double & ene
 
 
 //------------------------------------------------------------------------
-void GatePromptGammaSpatialEmissionDistribution::SampleRandomDirection(G4ParticleMomentum & direction)
+void GateSourceOfPromptGammaData::SampleRandomDirection(G4ParticleMomentum & direction)
 {
   DD("GPGSED::SampleRandomDirection");
 
@@ -88,7 +88,7 @@ void GatePromptGammaSpatialEmissionDistribution::SampleRandomDirection(G4Particl
 
 
 //------------------------------------------------------------------------
-void GatePromptGammaSpatialEmissionDistribution::Initialize()
+void GateSourceOfPromptGammaData::Initialize()
 {
   DD("GPGSED::Initialize");
   /*

@@ -9,7 +9,7 @@
   ----------------------*/
 
 /*!
-  \class  GatePromptGammaSpatialEmissionDistribution
+  \class  GateSourceOfPromptGammaData
 
   Manage a 3D distribution of prompt gamma, with 1 energy spectrum at
   each voxel.
@@ -27,11 +27,11 @@
 #include "GateConfiguration.h"
 
 //------------------------------------------------------------------------
-class GatePromptGammaSpatialEmissionDistribution
+class GateSourceOfPromptGammaData
 {
 public:
-  GatePromptGammaSpatialEmissionDistribution();
-  ~GatePromptGammaSpatialEmissionDistribution();
+  GateSourceOfPromptGammaData();
+  ~GateSourceOfPromptGammaData();
 
   void SampleRandomPosition(G4ThreeVector & position);
   void SampleRandomEnergy(double & energy);

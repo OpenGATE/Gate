@@ -15,20 +15,20 @@
 #include "G4UIcmdWithAString.hh"
 #include "GateConfiguration.h"
 #include "GateVSourceMessenger.hh"
-#include "GateSourcePromptGammaEmission.hh"
+#include "GateSourceOfPromptGamma.hh"
 
-class GateSourcePromptGammaEmission;
+class GateSourceOfPromptGamma;
 
 //------------------------------------------------------------------------
-class GateSourcePromptGammaEmissionMessenger: public GateVSourceMessenger
+class GateSourceOfPromptGammaMessenger: public GateVSourceMessenger
 {
 public:
-  GateSourcePromptGammaEmissionMessenger(GateSourcePromptGammaEmission* source);
-  ~GateSourcePromptGammaEmissionMessenger();
+  GateSourceOfPromptGammaMessenger(GateSourceOfPromptGamma* source);
+  ~GateSourceOfPromptGammaMessenger();
   void SetNewValue(G4UIcommand*, G4String);
 
 private:
-  GateSourcePromptGammaEmission * pSourcePromptGammaEmission;
+  GateSourceOfPromptGamma * pSourceOfPromptGamma;
   G4UIcmdWithAString * pSetFilenameCmd;
 };
 //------------------------------------------------------------------------

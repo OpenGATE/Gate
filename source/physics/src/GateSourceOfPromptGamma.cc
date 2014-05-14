@@ -9,17 +9,17 @@
   ----------------------*/
 
 #include "GateConfiguration.h"
-#include "GateSourcePromptGammaEmission.hh"
+#include "GateSourceOfPromptGamma.hh"
 #include "GateRandomEngine.hh"
 #include "G4ParticleTable.hh"
 #include "G4Event.hh"
 
 //------------------------------------------------------------------------
-GateSourcePromptGammaEmission::GateSourcePromptGammaEmission(G4String name)
+GateSourceOfPromptGamma::GateSourceOfPromptGamma(G4String name)
   :GateVSource( name )
 {
   DD("GSPGE::constructor");
-  pMessenger = new GateSourcePromptGammaEmissionMessenger(this);
+  pMessenger = new GateSourceOfPromptGammaMessenger(this);
   // Create distribution object (will be initialized later)
   mDistrib = new GatePromptGammaSpatialEmissionDistribution;
   mIsInitializedFlag = false;
@@ -29,7 +29,7 @@ GateSourcePromptGammaEmission::GateSourcePromptGammaEmission(G4String name)
 
 
 //------------------------------------------------------------------------
-GateSourcePromptGammaEmission::~GateSourcePromptGammaEmission()
+GateSourceOfPromptGamma::~GateSourceOfPromptGamma()
 {
   delete pMessenger;
 }
@@ -37,7 +37,7 @@ GateSourcePromptGammaEmission::~GateSourcePromptGammaEmission()
 
 
 //------------------------------------------------------------------------
-void GateSourcePromptGammaEmission::SetFilename(G4String filename)
+void GateSourceOfPromptGamma::SetFilename(G4String filename)
 {
   mFilename = filename;
 }
@@ -45,7 +45,7 @@ void GateSourcePromptGammaEmission::SetFilename(G4String filename)
 
 
 //------------------------------------------------------------------------
-void GateSourcePromptGammaEmission::Initialize()
+void GateSourceOfPromptGamma::Initialize()
 {
   // Get pointer to the random engine
   CLHEP::HepRandomEngine * engine = GateRandomEngine::GetInstance()->GetRandomEngine();
@@ -81,7 +81,7 @@ void GateSourcePromptGammaEmission::Initialize()
 
 
 //------------------------------------------------------------------------
-void GateSourcePromptGammaEmission::GenerateVertex(G4Event* aEvent)
+void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
 {
   DD("GSPGE::GenerateVertex");
 
@@ -135,7 +135,7 @@ void GateSourcePromptGammaEmission::GenerateVertex(G4Event* aEvent)
 
 
 //------------------------------------------------------------------------
-G4int GateSourcePromptGammaEmission::GeneratePrimaries(G4Event* event)
+G4int GateSourceOfPromptGamma::GeneratePrimaries(G4Event* event)
 {
   GateMessage("Beam", 4, "GeneratePrimaries " << event->GetEventID() << G4endl);
   DD("GSPGE::GeneratePrimaries");
