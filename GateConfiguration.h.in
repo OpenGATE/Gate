@@ -27,10 +27,10 @@
  #define  G4ANALYSIS_USE_FILE 1
 #endif
 
-//#cmakedefine G4VERSION             @Geant4_VERSION@
-#cmakedefine G4VERSION_MAJOR         @G4VERSION_MAJOR@
-#cmakedefine G4VERSION_MINOR         @G4VERSION_MINOR@
-#cmakedefine G4VERSION_PATCH         @G4VERSION_PATCH@
+//#define G4VERSION                  ${Geant4_VERSION}
+#define G4VERSION_MAJOR              ${G4VERSION_MAJOR}
+#define G4VERSION_MINOR              ${G4VERSION_MINOR}
+#define G4VERSION_PATCH              ${G4VERSION_PATCH}
 #cmakedefine GATE_USE_GPU            @GATE_USE_GPU@
 #cmakedefine CUDA_FOUND              @CUDA_FOUND@
 

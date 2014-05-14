@@ -39,18 +39,34 @@
 #include <itkImageFileWriter.h>
 #include <itkBinaryFunctorImageFilter.h>
 #include <itkAddImageFilter.h>
+#include <itksys/SystemTools.hxx>
 
 //-----------------------------------------------------------------------------
 /// Constructors
 GateHybridForcedDetectionActor::GateHybridForcedDetectionActor(G4String name, G4int depth):
   GateVActor(name,depth),
   mIsSecondarySquaredImageEnabled(false),
-  mIsSecondaryUncertaintyImageEnabled(false)
+  mIsSecondaryUncertaintyImageEnabled(false),
+  mRussianRouletteSpacing(20.),
+  mRussianRouletteMinimumCountInRegion(10),
+  mRussianRouletteMinimumProbability(0.0001),
+  mSecondPassPhaseSpace(NULL)
 {
   GateDebugMessageInc("Actor",4,"GateHybridForcedDetectionActor() -- begin"<<G4endl);
   pActorMessenger = new GateHybridForcedDetectionActorMessenger(this);
   mDetectorResolution[0] = mDetectorResolution[1] = mDetectorResolution[2] = 1;
   GateDebugMessageDec("Actor",4,"GateHybridForcedDetectionActor() -- end"<<G4endl);
+
+  mMapProcessNameWithType["Compton"] = COMPTON;
+  mMapProcessNameWithType["compt"]   = COMPTON;
+  mMapProcessNameWithType["RayleighScattering"] = RAYLEIGH;
+  mMapProcessNameWithType["Rayl"]               = RAYLEIGH;
+  mMapProcessNameWithType["PhotoElectric"] = PHOTOELECTRIC;
+  mMapProcessNameWithType["phot"]          = PHOTOELECTRIC;
+
+  mMapTypeWithProcessName[COMPTON] = "Compton";
+  mMapTypeWithProcessName[RAYLEIGH] = "Rayleigh";
+  mMapTypeWithProcessName[PHOTOELECTRIC] = "PhotoElectric";
 }
 //-----------------------------------------------------------------------------
 
@@ -70,6 +86,7 @@ void GateHybridForcedDetectionActor::Construct()
   GateVActor::Construct();
   //  Callbacks
   EnableBeginOfRunAction(true);
+  EnableEndOfRunAction(true);
   EnableBeginOfEventAction(true);
   EnableEndOfEventAction(true);
   //   EnablePreUserTrackingAction(true);
@@ -77,29 +94,11 @@ void GateHybridForcedDetectionActor::Construct()
   ResetData();
   mEMCalculator = new G4EmCalculator;
 
-  mPhaseSpaceFile = NULL;
-  if(mPhaseSpaceFilename != "")
-    mPhaseSpaceFile = new TFile(mPhaseSpaceFilename,"RECREATE","ROOT file for phase space",9);
-  mPhaseSpace = new TTree("PhaseSpace","Phase space tree of hybrid forced detection actor");
-
-  mPhaseSpace->Branch("Ekine",  &mInteractionEnergy, "Ekine/D");
-  mPhaseSpace->Branch("Weight", &mInteractionWeight, "Weight/D");
-  mPhaseSpace->Branch("X", &(mInteractionPosition[0]), "X/D");
-  mPhaseSpace->Branch("Y", &(mInteractionPosition[1]), "Y/D");
-  mPhaseSpace->Branch("Z", &(mInteractionPosition[2]), "Z/D");
-  mPhaseSpace->Branch("dX", &(mInteractionDirection[0]), "dX/D");
-  mPhaseSpace->Branch("dY", &(mInteractionDirection[1]), "dY/D");
-  mPhaseSpace->Branch("dZ", &(mInteractionDirection[2]), "dZ/D");
-  mPhaseSpace->Branch("ProductionVolume", mInteractionProductionVolume, "ProductionVolume/C");
-  mPhaseSpace->Branch("TrackID",&mInteractionTrackId, "TrackID/I");
-  mPhaseSpace->Branch("EventID",&mInteractionEventId, "EventID/I");
-  mPhaseSpace->Branch("RunID",&mInteractionRunId, "RunID/I");
-  mPhaseSpace->Branch("ProductionProcessTrack", mInteractionProductionProcessTrack, "ProductionProcessTrack/C");
-  mPhaseSpace->Branch("ProductionProcessStep", mInteractionProductionProcessStep, "ProductionProcessStep/C");
-  mPhaseSpace->Branch("TotalContribution", &mInteractionTotalContribution, "TotalContribution/D");
-  mPhaseSpace->Branch("InteractionVolume", mInteractionVolume, "Volume/C");
-  mPhaseSpace->Branch("Material", mInteractionMaterial, "Material/C");
-  mPhaseSpace->Branch("MaterialZ", &mInteractionZ, "MaterialZ/I");
+  CreatePhaseSpace(mPhaseSpaceFilename, mPhaseSpaceFile, mPhaseSpace);
+  if(mSecondPassPrefix != "")
+    CreatePhaseSpace(AddPrefix(mSecondPassPrefix, mPhaseSpaceFilename),
+                     mSecondPassPhaseSpaceFile,
+                     mSecondPassPhaseSpace);
 }
 //-----------------------------------------------------------------------------
 
@@ -126,14 +125,13 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       GateError("Forced detection only supports iso distributions with Point source.");
     }
   }
-  else if(mSource->GetPosDist()->GetPosDisType() == "Plane" ||
-     mSource->GetPosDist()->GetPosDisType() == "UserFluenceImage") {
+  else if(mSource->GetPosDist()->GetPosDisType() == "Plane") {
     if(mSource->GetAngDist()->GetDistType() != "focused") {
-      GateError("Forced detection only supports focused distributions for Plane and UserFluenceImage sources.");
+      GateError("Forced detection only supports focused distributions for Plane sources.");
     }
   }
   else
-    GateError("Forced detection only supports Point, Plane or UserFluenceImage distributions.");
+    GateError("Forced detection only supports Point and Plane distributions.");
 
   // Read the response detector curve from an external file
   mEnergyResponseDetector.ReadResponseDetectorFile(mResponseFilename);
@@ -156,6 +154,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       energyList.push_back(E);
       energyWeightList.push_back(h.Value(E));
       weightSum += energyWeightList.back();
+      //SR to NA: do this only when noise is desactivated
       energyWeightList.back() *= mEnergyResponseDetector(energyList.back());
       energyMax = std::max(energyMax, energyList.back());
     }
@@ -190,10 +189,11 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 
   // Create projection images
   mPrimaryImage = CreateVoidProjectionImage();
-  mSecondarySquared = CreateVoidProjectionImage();
-  mComptonImage = CreateVoidProjectionImage();
-  mRayleighImage = CreateVoidProjectionImage();
-  mFluorescenceImage = CreateVoidProjectionImage();
+  for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+    mProcessImage[ProcessType(i)] = CreateVoidProjectionImage();
+    mSquaredImage[ProcessType(i)] = CreateVoidProjectionImage();
+  }
+  mSecondarySquaredImage = CreateVoidProjectionImage();
 
   mComptonPerOrderImages.clear();
   mRayleighPerOrderImages.clear();
@@ -238,13 +238,13 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                                                         energyList,
                                                                         gate_image_volume);
   primaryProjector->GetProjectedValueAccumulation().Init( primaryProjector->GetNumberOfThreads() );
+  primaryProjector->GetProjectedValueAccumulation().SetResponseDetector( &mEnergyResponseDetector );
   TRY_AND_EXIT_ON_ITK_EXCEPTION(primaryProjector->Update());
   mPrimaryImage = primaryProjector->GetOutput();
   mPrimaryImage->DisconnectPipeline();
 
   // Compute flat field if required
-  if(mAttenuationFilename != "" || mFlatFieldFilename != "")
-  {
+  if(mAttenuationFilename != "" || mFlatFieldFilename != "") {
     // Constant image source of 1x1x1 voxel of world material
     typedef rtk::ConstantImageSource< InputImageType > ConstantImageSourceType;
     ConstantImageSourceType::PointType origin;
@@ -272,10 +272,10 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   // Prepare Compton
   mComptonProjector = ComptonProjectionType::New();
   mComptonProjector->InPlaceOn();
-  mComptonProjector->SetInput(mComptonImage);
+  mComptonProjector->SetInput(mProcessImage[COMPTON]);
   mComptonProjector->SetInput(1, mGateVolumeImage );
   mComptonProjector->SetGeometry( oneProjGeometry.GetPointer() );
-  mComptonProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mComptonImage,
+  mComptonProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mProcessImage[COMPTON],
                                                                              mDetectorRowVector,
                                                                              mDetectorColVector);
   mComptonProjector->GetProjectedValueAccumulation().SetVolumeSpacing( mGateVolumeImage->GetSpacing() );
@@ -290,10 +290,10 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   // Prepare Rayleigh
   mRayleighProjector = RayleighProjectionType::New();
   mRayleighProjector->InPlaceOn();
-  mRayleighProjector->SetInput(mRayleighImage);
+  mRayleighProjector->SetInput(mProcessImage[RAYLEIGH]);
   mRayleighProjector->SetInput(1, mGateVolumeImage );
   mRayleighProjector->SetGeometry( oneProjGeometry.GetPointer() );
-  mRayleighProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mRayleighImage,
+  mRayleighProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mProcessImage[RAYLEIGH],
                                                                               mDetectorRowVector,
                                                                               mDetectorColVector);
   mRayleighProjector->GetProjectedValueAccumulation().SetVolumeSpacing( mGateVolumeImage->GetSpacing() );
@@ -307,12 +307,12 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   // Prepare Fluorescence
   mFluorescenceProjector = FluorescenceProjectionType::New();
   mFluorescenceProjector->InPlaceOn();
-  mFluorescenceProjector->SetInput(mFluorescenceImage);
+  mFluorescenceProjector->SetInput(mProcessImage[PHOTOELECTRIC]);
   mFluorescenceProjector->SetInput(1, mGateVolumeImage );
   mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
-  mFluorescenceProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mFluorescenceImage,
-                                                                              mDetectorRowVector,
-                                                                              mDetectorColVector);
+  mFluorescenceProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mProcessImage[PHOTOELECTRIC],
+                                                                                  mDetectorRowVector,
+                                                                                  mDetectorColVector);
   mFluorescenceProjector->GetProjectedValueAccumulation().SetVolumeSpacing( mGateVolumeImage->GetSpacing() );
   mFluorescenceProjector->GetProjectedValueAccumulation().SetInterpolationWeights( mFluorescenceProjector->GetInterpolationWeightMultiplication().GetInterpolationWeights() );
   mFluorescenceProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
@@ -323,80 +323,185 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 
   // Create a single event if asked for it
   if(mSingleInteractionFilename!="") {
-    // d and p are in World coordinates and they must be in CT coordinates
-    G4ThreeVector d = m_WorldToCT.TransformAxis(mSingleInteractionDirection);
-    G4ThreeVector p = m_WorldToCT.TransformPoint(mSingleInteractionPosition);
-
-    //Convert to ITK
-    PointType point;
-    VectorType direction;
-    for(unsigned int i=0; i<3; i++) {
-      point[i] = p[i];
-      direction[i] = d[i];
-    }
-
-    if(mSingleInteractionType == "Compton") {
-      mComptonProjector->InPlaceOff();
-      GeometryType::Pointer oneProjGeometry = GeometryType::New();
-      oneProjGeometry->AddReg23Projection(point,
-                                          mDetectorPosition,
-                                          mDetectorRowVector,
-                                          mDetectorColVector);
-      mComptonProjector->SetInput(mComptonImage);
-      mComptonProjector->SetGeometry( oneProjGeometry.GetPointer() );
-      mComptonProjector->GetProjectedValueAccumulation().SetResponseDetector( &mEnergyResponseDetector );
-      mComptonProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mSingleInteractionEnergy,
-                                                                              mSingleInteractionZ,
-                                                                              1. );
-      mComptonProjector->GetProjectedValueAccumulation().SetDirection( direction );
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(mComptonProjector->Update());
-      mSingleInteractionImage = mComptonProjector->GetOutput();
-      mSingleInteractionImage->DisconnectPipeline();
-      mComptonProjector->InPlaceOn();
-    }
-    if(mSingleInteractionType == "Rayleigh") {
-      mRayleighProjector->InPlaceOff();
-      GeometryType::Pointer oneProjGeometry = GeometryType::New();
-      oneProjGeometry->AddReg23Projection(point,
-                                          mDetectorPosition,
-                                          mDetectorRowVector,
-                                          mDetectorColVector);
-      mRayleighProjector->SetInput(mRayleighImage);
-      mRayleighProjector->SetGeometry( oneProjGeometry.GetPointer() );
-      mRayleighProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mSingleInteractionEnergy,
-                                                                               mSingleInteractionZ,
-                                                                               mEnergyResponseDetector(mSingleInteractionEnergy) );
-      mRayleighProjector->GetProjectedValueAccumulation().SetDirection( direction );
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(mRayleighProjector->Update());
-      mSingleInteractionImage = mRayleighProjector->GetOutput();
-      mSingleInteractionImage->DisconnectPipeline();
-      mRayleighProjector->InPlaceOn();
-    }
-    if(mSingleInteractionType == "Fluorescence") {
-      mFluorescenceProjector->InPlaceOff();
-      GeometryType::Pointer oneProjGeometry = GeometryType::New();
-      oneProjGeometry->AddReg23Projection(point,
-                                          mDetectorPosition,
-                                          mDetectorRowVector,
-                                          mDetectorColVector);
-      mFluorescenceProjector->SetInput(mRayleighImage);
-      mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
-      mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndWeight( mSingleInteractionEnergy,
-                                                                                  mEnergyResponseDetector(mSingleInteractionEnergy) );
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
-      mSingleInteractionImage = mFluorescenceProjector->GetOutput();
-      mSingleInteractionImage->DisconnectPipeline();
-      mFluorescenceProjector->InPlaceOn();
-    }
+      mInteractionPosition = mSingleInteractionPosition;
+      mInteractionDirection = mSingleInteractionDirection;
+      mInteractionEnergy = mSingleInteractionEnergy;
+      mInteractionWeight = 1.;
+      mInteractionZ = mSingleInteractionZ;
+      mSingleInteractionImage = CreateVoidProjectionImage();
+      if(mMapProcessNameWithType.find(mSingleInteractionType) == mMapProcessNameWithType.end())  {
+        GateWarning("Unhandled gamma interaction in GateHybridForcedDetectionActor / single interaction. Process name is "
+                    << mSingleInteractionType << ".\n");
+      }
+      else {
+        switch(mMapProcessNameWithType[mSingleInteractionType]) {
+        case COMPTON:
+          this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
+                                            mSingleInteractionImage,
+                                            mComptonPerOrderImages,
+                                            mComptonProbe);
+          break;
+        case RAYLEIGH:
+          mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
+          this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
+                                            mSingleInteractionImage,
+                                            mRayleighPerOrderImages,
+                                            mRayleighProbe);
+          break;
+        case PHOTOELECTRIC:
+          mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
+          this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
+                                            mSingleInteractionImage,
+                                            mFluorescencePerOrderImages,
+                                            mFluorescenceProbe);
+          break;
+        default:
+          GateError("Implementation problem, unexpected process type reached.");
+        }
+      }
   }
 
   if(mWaterLUTFilename != "")
     CreateWaterLUT(energyList, energyWeightList);
 
   if(mIsSecondarySquaredImageEnabled || mIsSecondaryUncertaintyImageEnabled) {
-    mEventComptonImage = CreateVoidProjectionImage();
-    mEventRayleighImage = CreateVoidProjectionImage();
-    mEventFluorescenceImage = CreateVoidProjectionImage();
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++)
+      mEventImage[ProcessType(i)] = CreateVoidProjectionImage();
+  }
+
+  if(mSecondPassPrefix != "") {
+    mRussianRouletteImage      = CreateRussianRouletteVoidImage();
+    mRussianRouletteCountImage = CreateRussianRouletteVoidImage();
+  }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// Callback Begin of Run
+void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
+{
+  // Compute sum of variance per process
+  std::map<ProcessType, G4double> varPerProcess;
+  if(mSecondPassPrefix != "") {
+    G4double maxVarPerProcess = 0.;
+    double invN = 1./mNumberOfEventsInRun;
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+      ProcessType p = ProcessType(i);
+      varPerProcess[p] = 0.;
+      itk::ImageRegionIterator<OutputImageType> itp(mProcessImage[p],
+                                                    mProcessImage[p]->GetBufferedRegion());
+      itk::ImageRegionIterator<OutputImageType> its(mSquaredImage[p],
+                                                    mSquaredImage[p]->GetBufferedRegion());
+      for(; !itp.IsAtEnd(); ++itp, ++its) {
+        varPerProcess[p] += its.Get()*invN - pow(itp.Get()*invN, 2.);
+      }
+      maxVarPerProcess = std::max(maxVarPerProcess, varPerProcess[p]);
+    }
+    // Normalize by max
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+      ProcessType p = ProcessType(i);
+      varPerProcess[p] /= maxVarPerProcess;
+      std::cout << "Process " << mMapTypeWithProcessName[p]
+                << " probability " << varPerProcess[p]
+                << std::endl;
+    }
+
+    // Compute survival probability image for Russian Roulette
+    // Max of russian roulette image
+    itk::ImageRegionIterator<OutputImageType> iti(mRussianRouletteImage,
+                                                  mRussianRouletteImage->GetBufferedRegion());
+    float maxRussian = 0.;
+    for(iti.GoToBegin(); !iti.IsAtEnd(); ++iti) {
+      maxRussian = std::max(maxRussian, iti.Get());
+    }
+
+    itk::ImageRegionIterator<OutputImageType> itc(mRussianRouletteCountImage,
+                                                  mRussianRouletteCountImage->GetBufferedRegion());
+    mRussianRouletteImageProbability = CreateRussianRouletteVoidImage();
+    itk::ImageRegionIterator<OutputImageType> itp(mRussianRouletteImageProbability,
+                                                  mRussianRouletteImageProbability->GetBufferedRegion());
+    for(iti.GoToBegin(); !iti.IsAtEnd(); ++iti, ++itc, ++itp) {
+      double survivalProba = 1.;
+      if(itc.Get()>mRussianRouletteMinimumCountInRegion) {
+        survivalProba = iti.Get() / maxRussian;
+        survivalProba = std::min(survivalProba, 1.);
+        survivalProba = std::max(survivalProba, mRussianRouletteMinimumProbability);
+      }
+      itp.Set(survivalProba);
+    }
+  }
+
+  // Save data
+  GateVActor::EndOfRunAction(r);
+
+  if(mSecondPassPrefix != "") {
+    // Init
+    GeometryType::Pointer geoBackup = GeometryType::New();
+    std::swap(mGeometry, geoBackup);
+    std::swap(mSecondPassDetectorResolution, mDetectorResolution);
+    unsigned int backupNumberOfEventsInRun = mNumberOfEventsInRun;
+    int currentEvent=-1;
+    BeginOfRunAction(r);
+
+    // Let's kill
+    for(int i=0; i<mPhaseSpace->GetEntries(); i++, mPhaseSpace->GetEntry(i)) {
+      // Init
+      if(mInteractionEventId!=currentEvent) {
+        if(currentEvent>=0) EndOfEventAction();
+        BeginOfEventAction();
+        currentEvent = mInteractionEventId;
+      }
+
+      // Convert to ITK
+      G4ThreeVector p = m_WorldToCT.TransformPoint(mInteractionPosition);
+      PointType point;
+      for(unsigned int i=0; i<3; i++)
+        point[i] = p[i];
+      OutputImageType::IndexType idx;
+
+      // Russian roulette
+      ProcessType pt = mMapProcessNameWithType[mInteractionProductionProcessStep];
+      mRussianRouletteImageProbability->TransformPhysicalPointToIndex(point, idx);
+      double survivalProba = 1.;
+      if(mRussianRouletteImageProbability->GetBufferedRegion().IsInside(idx))
+        survivalProba = mRussianRouletteImageProbability->GetPixel(idx) * varPerProcess[pt];
+      if(G4UniformRand()>survivalProba) {
+        mInteractionWeight = 0.;
+      }
+      else {
+        mInteractionWeight /= survivalProba;
+
+        // Interaction survived, let's do the job
+        switch(pt) {
+        case COMPTON:
+          this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
+                                            mProcessImage[COMPTON],
+                                            mComptonPerOrderImages,
+                                            mComptonProbe);
+          break;
+        case RAYLEIGH:
+          this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
+                                            mProcessImage[RAYLEIGH],
+                                            mRayleighPerOrderImages,
+                                            mRayleighProbe);
+          break;
+        case PHOTOELECTRIC:
+          this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
+                                            mProcessImage[PHOTOELECTRIC],
+                                            mFluorescencePerOrderImages,
+                                            mFluorescenceProbe);
+          break;
+        default:
+          GateError("Implementation problem, unexpected process type reached.");
+        }
+      }
+      if(mSecondPassPhaseSpaceFile) mSecondPassPhaseSpace->Fill();
+    }
+    EndOfEventAction();
+    std::swap(mNumberOfEventsInRun, backupNumberOfEventsInRun);
+    SaveData(mSecondPassPrefix);
+    std::swap(mGeometry, geoBackup);
+    std::swap(mSecondPassDetectorResolution, mDetectorResolution);
   }
 }
 //-----------------------------------------------------------------------------
@@ -410,15 +515,12 @@ void GateHybridForcedDetectionActor::BeginOfEventAction(const G4Event *itkNotUse
     // The event contribution are put in new images which at this point are in the
     // mEventComptonImage / mEventRayleighImage / mEventFluorescenceImage. We therefore
     // swap the two and they will be swapped back in EndOfEventAction.
-    std::swap(mEventComptonImage, mComptonImage);
-    std::swap(mEventRayleighImage, mRayleighImage);
-    std::swap(mEventFluorescenceImage, mFluorescenceImage);
-
-    // Make sure the time stamps of the mEvent images are more recent to detect if one
-    // image has been modified during the event.
-    mEventComptonImage->Modified();
-    mEventRayleighImage->Modified();
-    mEventFluorescenceImage->Modified();
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+      std::swap(mEventImage[ProcessType(i)], mProcessImage[ProcessType(i)]);
+      // Make sure the time stamps of the mEvent images are more recent to detect if one
+      // image has been modified during the event.
+      mEventImage[ProcessType(i)]->Modified();
+    }
   }
 }
 //-----------------------------------------------------------------------------
@@ -426,98 +528,68 @@ void GateHybridForcedDetectionActor::BeginOfEventAction(const G4Event *itkNotUse
 //-----------------------------------------------------------------------------
 void GateHybridForcedDetectionActor::EndOfEventAction(const G4Event *e)
 {
-  typedef itk::AddImageFilter <OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
-  AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
-
   if(mIsSecondarySquaredImageEnabled || mIsSecondaryUncertaintyImageEnabled) {
+    typedef itk::AddImageFilter <OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
+    AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
+    typedef itk::MultiplyImageFilter<OutputImageType, OutputImageType, OutputImageType> MultiplyImageFilterType;
+    MultiplyImageFilterType::Pointer multFilter = MultiplyImageFilterType::New();
+
     // First: accumulate contribution to event, square and add to total squared
     InputImageType::Pointer totalContribEvent(NULL);
-    if( mEventComptonImage->GetTimeStamp() < mComptonImage->GetTimeStamp() ) {
-      totalContribEvent = mComptonImage;
-    }
-    if( mEventRayleighImage->GetTimeStamp() < mRayleighImage->GetTimeStamp() ) {
-      if(totalContribEvent.GetPointer()) {
-        addFilter->SetInput1(totalContribEvent);
-        addFilter->SetInput2(mRayleighImage);
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+      if( mEventImage[ProcessType(i)]->GetTimeStamp() < mProcessImage[ProcessType(i)]->GetTimeStamp() ) {
+        // First: accumulate contribution to event, square and add to total squared
+        multFilter->SetInput1(mProcessImage[ProcessType(i)]);
+        multFilter->SetInput2(mProcessImage[ProcessType(i)]);
+        multFilter->InPlaceOff();
+        addFilter->SetInput1(mSquaredImage[ProcessType(i)]);
+        addFilter->SetInput2(multFilter->GetOutput());
         addFilter->InPlaceOff();
         TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-        totalContribEvent = addFilter->GetOutput();
-        totalContribEvent->DisconnectPipeline();
-      }
-      else {
-        totalContribEvent = mRayleighImage;
-      }
-    }
-    if( mEventFluorescenceImage->GetTimeStamp() < mFluorescenceImage->GetTimeStamp() ) {
-      if(totalContribEvent.GetPointer()) {
-        addFilter->SetInput1(totalContribEvent);
-        addFilter->SetInput2(mFluorescenceImage);
-        addFilter->InPlaceOff();
-        TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-        totalContribEvent = addFilter->GetOutput();
-        totalContribEvent->DisconnectPipeline();
-      }
-      else {
-        totalContribEvent = mFluorescenceImage;
+        mSquaredImage[ProcessType(i)] = addFilter->GetOutput();
+        mSquaredImage[ProcessType(i)]->DisconnectPipeline();
+
+        // Second: accumulate in total event for the global secondary image
+        if(totalContribEvent.GetPointer()) {
+          addFilter->SetInput1(totalContribEvent);
+          addFilter->SetInput2(mProcessImage[ProcessType(i)]);
+          TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
+          totalContribEvent = addFilter->GetOutput();
+          totalContribEvent->DisconnectPipeline();
+        }
+        else
+          totalContribEvent = mProcessImage[ProcessType(i)];
       }
     }
+
     if(totalContribEvent.GetPointer()) {
-      typedef itk::MultiplyImageFilter<OutputImageType, OutputImageType, OutputImageType> MultiplyImageFilterType;
-      MultiplyImageFilterType::Pointer multFilter = MultiplyImageFilterType::New();
-      multFilter->InPlaceOff();
       multFilter->SetInput1(totalContribEvent);
       multFilter->SetInput2(totalContribEvent);
-      addFilter->SetInput1(mSecondarySquared);
+      multFilter->InPlaceOff();
+      addFilter->SetInput1(mSecondarySquaredImage);
       addFilter->SetInput2(multFilter->GetOutput());
-      addFilter->InPlaceOn();
       TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-      mSecondarySquared = addFilter->GetOutput();
-      mSecondarySquared->DisconnectPipeline();
+      mSecondarySquaredImage = addFilter->GetOutput();
+      mSecondarySquaredImage->DisconnectPipeline();
     }
 
-    // Second: accumulate non squared images and reset mEvent images
-    if( mEventComptonImage->GetTimeStamp() < mComptonImage->GetTimeStamp() ) {
-      addFilter->SetInput1(mEventComptonImage);
-      addFilter->SetInput2(mComptonImage);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-      mComptonImage = addFilter->GetOutput();
-      mComptonImage->DisconnectPipeline();
-      mEventComptonImage = CreateVoidProjectionImage();
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+      if( mEventImage[ProcessType(i)]->GetTimeStamp() < mProcessImage[ProcessType(i)]->GetTimeStamp() ) {
+        // Accumulate non squared images and reset mEvent images
+        addFilter->SetInput1(mEventImage[ProcessType(i)]);
+        addFilter->SetInput2(mProcessImage[ProcessType(i)]);
+        TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
+        mProcessImage[ProcessType(i)] = addFilter->GetOutput();
+        mProcessImage[ProcessType(i)]->DisconnectPipeline();
+        mEventImage[ProcessType(i)] = CreateVoidProjectionImage();
+      }
+      else
+        std::swap(mEventImage[ProcessType(i)], mProcessImage[ProcessType(i)]);
     }
-    else
-      std::swap(mEventComptonImage, mComptonImage);
-    if( mEventRayleighImage->GetTimeStamp() < mRayleighImage->GetTimeStamp() ) {
-      mRayleighImage->DisconnectPipeline();
-      addFilter->SetInput1(mEventRayleighImage);
-      addFilter->SetInput2(mRayleighImage);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-      mRayleighImage = addFilter->GetOutput();
-      mRayleighImage->DisconnectPipeline();
-      mEventRayleighImage = CreateVoidProjectionImage();
-    }
-    else
-      std::swap(mEventRayleighImage, mRayleighImage);
-    if( mEventFluorescenceImage->GetTimeStamp() < mFluorescenceImage->GetTimeStamp() ) {
-      addFilter->SetInput1(mEventFluorescenceImage);
-      addFilter->SetInput2(mFluorescenceImage);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-      mFluorescenceImage = addFilter->GetOutput();
-      mFluorescenceImage->DisconnectPipeline();
-      mEventFluorescenceImage = CreateVoidProjectionImage();
-    }
-    else
-      std::swap(mEventFluorescenceImage, mFluorescenceImage);
   }
-
-  GateVActor::EndOfEventAction(e);
+  if(e)
+    GateVActor::EndOfEventAction(e);
 }
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-// Callback Begin Track
-/*void GateHybridForcedDetectionActor::PreUserTrackingAction(const GateVVolume * v, const G4Track*t)
-{
-}*/
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -541,50 +613,8 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
   const G4VEmProcess *process = dynamic_cast<const G4VEmProcess*>(pr);
   if(!process) return;
 
-  // We need the position, direction and energy at point where Compton and Rayleigh occur.
-  mInteractionPosition = step->GetPostStepPoint()->GetPosition();
-  mInteractionDirection = step->GetPreStepPoint()->GetMomentumDirection();
-  mInteractionEnergy = step->GetPreStepPoint()->GetKineticEnergy();
-  mInteractionWeight = step->GetPostStepPoint()->GetWeight();
-
-  // Other information for phase space
-  mInteractionTrackId = step->GetTrack()->GetTrackID();
-  mInteractionEventId = GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-  mInteractionRunId   = GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
-  // mInteractionProductionVolume
-  G4String st = "";
-  if(step->GetTrack()->GetLogicalVolumeAtVertex())
-    st = step->GetTrack()->GetLogicalVolumeAtVertex()->GetName();
-  strcpy(mInteractionProductionVolume, st.c_str());
-  // mInteractionProductionProcessTrack
-  st = "";
-  if(step->GetTrack()->GetCreatorProcess() )
-    st =  step->GetTrack()->GetCreatorProcess()->GetProcessName();
-  strcpy(mInteractionProductionProcessTrack, st.c_str());
-  // mInteractionProductionProcessStep
-  st = process->GetProcessName();
-  strcpy(mInteractionProductionProcessStep, st.c_str());
-  // mInteractionVolume
-  st = step->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetName();
-  strcpy(mInteractionVolume, st.c_str());
-  // mInteractionVolume
-  st = step->GetPreStepPoint()->GetMaterial()->GetName();
-  strcpy(mInteractionMaterial, st.c_str());
-
-
   GateScatterOrderTrackInformation * info = dynamic_cast<GateScatterOrderTrackInformation *>(step->GetTrack()->GetUserInformation());
-
-  // d and p are in World coordinates and they must be in CT coordinates
-  G4ThreeVector d = m_WorldToCT.TransformAxis(mInteractionDirection);
-  G4ThreeVector p = m_WorldToCT.TransformPoint(mInteractionPosition);
-
-  //Convert to ITK
-  PointType point;
-  VectorType direction;
-  for(unsigned int i=0; i<3; i++) {
-    point[i] = p[i];
-    direction[i] = d[i];
-  }
+  int order = (info)?info->GetScatterOrder():-1;
 
   //FIXME: do we prefer this solution or computing the scattering function for the material?
   const G4MaterialCutsCouple *couple = step->GetPreStepPoint()->GetMaterialCutsCouple();
@@ -594,133 +624,206 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
 #else
   G4VEmModel* model = const_cast<G4VEmProcess*>(process)->EmModel();
 #endif
-  const G4Element* elm = model->SelectRandomAtom(couple,particle,mInteractionEnergy);
-  mInteractionZ = elm->GetZ();
+  const G4Element* elm = model->SelectRandomAtom(couple,
+                                                 particle,
+                                                 step->GetPreStepPoint()->GetKineticEnergy());
 
-  if(process->GetProcessName() == G4String("Compton") || process->GetProcessName() == G4String("compt")) {
-    mComptonProbe.Start();
-    GeometryType::Pointer oneProjGeometry = GeometryType::New();
-    oneProjGeometry->AddReg23Projection(point,
-                                        mDetectorPosition,
-                                        mDetectorRowVector,
-                                        mDetectorColVector);
-    mComptonProjector->SetInput(mComptonImage);
-    mComptonProjector->SetGeometry( oneProjGeometry.GetPointer() );
-    mComptonProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mInteractionEnergy, mInteractionZ, mInteractionWeight );
-    mComptonProjector->GetProjectedValueAccumulation().SetDirection( direction );
-    TRY_AND_EXIT_ON_ITK_EXCEPTION(mComptonProjector->Update());
-    mComptonImage = mComptonProjector->GetOutput();
-    mComptonImage->DisconnectPipeline();
-    mComptonProbe.Stop();
-    mInteractionTotalContribution = mComptonProjector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
-    if(mPhaseSpaceFile) mPhaseSpace->Fill();
+  if(process->GetProcessName() == G4String("PhotoElectric") ||
+     process->GetProcessName() == G4String("phot")) {
 
-    // Scatter order
-    if(info)
-    {
-      unsigned int order = info->GetScatterOrder();
-      while(order>=mComptonPerOrderImages.size())
-        mComptonPerOrderImages.push_back( CreateVoidProjectionImage() );
-      mComptonProjector->SetInput(mComptonPerOrderImages[order]);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(mComptonProjector->Update());
-      mComptonPerOrderImages[order] = mComptonProjector->GetOutput();
-      mComptonPerOrderImages[order]->DisconnectPipeline();
-    }
-  }
-  else if(process->GetProcessName() == G4String("RayleighScattering") || process->GetProcessName() == G4String("Rayl")) {
-    mRayleighProbe.Start();
-    mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
-    GeometryType::Pointer oneProjGeometry = GeometryType::New();
-    oneProjGeometry->AddReg23Projection(point,
-                                        mDetectorPosition,
-                                        mDetectorRowVector,
-                                        mDetectorColVector);
-    mRayleighProjector->SetInput(mRayleighImage);
-    mRayleighProjector->SetGeometry( oneProjGeometry.GetPointer() );
-    mRayleighProjector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mInteractionEnergy, mInteractionZ, mInteractionWeight );
-    mRayleighProjector->GetProjectedValueAccumulation().SetDirection( direction );
-    TRY_AND_EXIT_ON_ITK_EXCEPTION(mRayleighProjector->Update());
-    mRayleighImage = mRayleighProjector->GetOutput();
-    mRayleighImage->DisconnectPipeline();
-    mRayleighProbe.Stop();
-    mInteractionTotalContribution = mRayleighProjector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
-    if(mPhaseSpaceFile) mPhaseSpace->Fill();
-
-    // Scatter order
-    if(info)
-    {
-      unsigned int order = info->GetScatterOrder();
-      while(order>=mRayleighPerOrderImages.size())
-        mRayleighPerOrderImages.push_back( CreateVoidProjectionImage() );
-      mRayleighProjector->SetInput(mRayleighPerOrderImages[order]);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(mRayleighProjector->Update());
-      mRayleighPerOrderImages[order] = mRayleighProjector->GetOutput();
-      mRayleighPerOrderImages[order]->DisconnectPipeline();
-    }
-  }
-  else if(process->GetProcessName() == G4String("PhotoElectric") || process->GetProcessName() == G4String("phot")) {
     // List of secondary particles
     const G4TrackVector * list = step->GetSecondary();
-    G4String nameSecondary = G4String("0");
-    VectorType directionSecondary;
 
     for(unsigned int i = 0; i<(*list).size(); i++) {
-      nameSecondary = (*list)[i]->GetDefinition()->GetParticleName();
+      G4String nameSecondary = (*list)[i]->GetDefinition()->GetParticleName();
 
       // Check if photon has been emitted
       if(nameSecondary==G4String("gamma")) {
-
         GateScatterOrderTrackInformation * infoSecondary = dynamic_cast<GateScatterOrderTrackInformation *>((*list)[i]->GetUserInformation());
+        order = (info)?infoSecondary->GetScatterOrder():-1;
 
-        // Update direction and energy for secondary photon
-        mInteractionEnergy = (*list)[i]->GetKineticEnergy();
-        mInteractionWeight = ((*list)[i]->GetWeight())*mEnergyResponseDetector(mInteractionEnergy);
-        for(unsigned int j=0; j<3; j++)
-          directionSecondary[j] = (*list)[i]->GetMomentumDirection()[j];
-        mFluorescenceProbe.Start();
-        GeometryType::Pointer oneProjGeometry = GeometryType::New();
-        oneProjGeometry->AddReg23Projection(point,
-                                            mDetectorPosition,
-                                            mDetectorRowVector,
-                                            mDetectorColVector);
-        mFluorescenceProjector->SetInput(mFluorescenceImage);
-        mFluorescenceProjector->SetGeometry( oneProjGeometry.GetPointer() );
-        mFluorescenceProjector->GetProjectedValueAccumulation().SetEnergyAndWeight( mInteractionEnergy, mInteractionWeight );
-        TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
-        mFluorescenceImage = mFluorescenceProjector->GetOutput();
-        mFluorescenceImage->DisconnectPipeline();
-        mFluorescenceProbe.Stop();
-        mInteractionTotalContribution = mFluorescenceProjector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
-        if(mPhaseSpaceFile) mPhaseSpace->Fill();
-
-        // Scatter order
-        if(infoSecondary)
-        {
-          unsigned int order = infoSecondary->GetScatterOrder();
-          while(order>=mFluorescencePerOrderImages.size())
-            mFluorescencePerOrderImages.push_back( CreateVoidProjectionImage() );
-          mFluorescenceProjector->SetInput(mFluorescencePerOrderImages[order]);
-          TRY_AND_EXIT_ON_ITK_EXCEPTION(mFluorescenceProjector->Update());
-          mFluorescencePerOrderImages[order] = mFluorescenceProjector->GetOutput();
-          mFluorescencePerOrderImages[order]->DisconnectPipeline();
-        }
+        ForceDetectionOfInteraction(GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID(),
+                                    GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID(),
+                                    step->GetTrack()->GetTrackID(),
+                                    (step->GetTrack()->GetLogicalVolumeAtVertex())?step->GetTrack()->GetLogicalVolumeAtVertex()->GetName():"",
+                                    (step->GetTrack()->GetCreatorProcess())?step->GetTrack()->GetCreatorProcess()->GetProcessName():"",
+                                    process->GetProcessName(),
+                                    step->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetName(),
+                                    step->GetPostStepPoint()->GetPosition(),
+                                    (*list)[i]->GetMomentumDirection(),
+                                    (*list)[i]->GetKineticEnergy(),
+                                    (*list)[i]->GetWeight(),
+                                    step->GetPreStepPoint()->GetMaterial()->GetName(),
+                                    elm->GetZ(),
+                                    order);
       }
     }
+  }
+  else
+    ForceDetectionOfInteraction(GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID(),
+                                GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID(),
+                                step->GetTrack()->GetTrackID(),
+                                (step->GetTrack()->GetLogicalVolumeAtVertex())?step->GetTrack()->GetLogicalVolumeAtVertex()->GetName():"",
+                                (step->GetTrack()->GetCreatorProcess())?step->GetTrack()->GetCreatorProcess()->GetProcessName():"",
+                                process->GetProcessName(),
+                                step->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetName(),
+                                step->GetPostStepPoint()->GetPosition(),
+                                step->GetPreStepPoint()->GetMomentumDirection(),
+                                step->GetPreStepPoint()->GetKineticEnergy(),
+                                step->GetPostStepPoint()->GetWeight(),
+                                step->GetPreStepPoint()->GetMaterial()->GetName(),
+                                elm->GetZ(),
+                                order);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+/// Save data
+void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(G4int runID,
+                                                                 G4int eventID,
+                                                                 G4int trackID,
+                                                                 G4String prodVol,
+                                                                 G4String creatorProc,
+                                                                 G4String processName,
+                                                                 G4String interVol,
+                                                                 G4ThreeVector pt,
+                                                                 G4ThreeVector dir,
+                                                                 double energy,
+                                                                 double weight,
+                                                                 G4String material,
+                                                                 int Z,
+                                                                 int order)
+{
+  // In case a root file is created, copy values to branched variables
+  mInteractionPosition = pt;
+  mInteractionDirection = dir;
+  mInteractionEnergy = energy;
+  mInteractionWeight = weight;
+  mInteractionZ = Z;
+  mInteractionRunId   = runID;
+  mInteractionEventId = eventID;
+  mInteractionTrackId = trackID;
+  strcpy(mInteractionProductionVolume, prodVol.c_str());
+  strcpy(mInteractionProductionProcessTrack, creatorProc.c_str());
+  strcpy(mInteractionProductionProcessStep, processName.c_str());
+  strcpy(mInteractionVolume, interVol.c_str());
+  strcpy(mInteractionMaterial, material.c_str());
+  mInteractionOrder = order;
+
+  if(mMapProcessNameWithType.find(processName) == mMapProcessNameWithType.end())  {
+    GateWarning("Unhandled gamma interaction in GateHybridForcedDetectionActor. Process name is "
+                << processName << ".\n");
+    return;
+  }
+  else {
+    switch(mMapProcessNameWithType[processName]) {
+    case COMPTON:
+      this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
+                                        mProcessImage[COMPTON],
+                                        mComptonPerOrderImages,
+                                        mComptonProbe);
+      break;
+    case RAYLEIGH:
+      mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
+      this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
+                                        mProcessImage[RAYLEIGH],
+                                        mRayleighPerOrderImages,
+                                        mRayleighProbe);
+      break;
+    case PHOTOELECTRIC:
+      mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
+      this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
+                                        mProcessImage[PHOTOELECTRIC],
+                                        mFluorescencePerOrderImages,
+                                        mFluorescenceProbe);
+      break;
+    default:
+      GateError("Implementation problem, unexpected process type reached.");
+    }
+  }
+  if(mPhaseSpaceFile) mPhaseSpace->Fill();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template <class TProjectorType>
+void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType *projector,
+                                                                 InputImageType::Pointer &input,
+                                                                 std::vector<InputImageType::Pointer> &inputPerOrder,
+                                                                 itk::TimeProbe &probe)
+{
+  // d and p are in World coordinates and they must be in CT coordinates
+  G4ThreeVector p = m_WorldToCT.TransformPoint(mInteractionPosition);
+  G4ThreeVector d = m_WorldToCT.TransformAxis(mInteractionDirection);
+
+  // Convert to ITK
+  PointType point;
+  VectorType direction;
+  for(unsigned int i=0; i<3; i++) {
+    point[i] = p[i];
+    direction[i] = d[i];
+  }
+
+  // Create interaction geometry
+  GeometryType::Pointer oneProjGeometry = GeometryType::New();
+  oneProjGeometry->AddReg23Projection(point,
+                                      mDetectorPosition,
+                                      mDetectorRowVector,
+                                      mDetectorColVector);
+
+  probe.Start();
+  projector->SetInput(input);
+  projector->SetGeometry( oneProjGeometry.GetPointer() );
+  projector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mInteractionEnergy, mInteractionZ, mInteractionWeight );
+  projector->GetProjectedValueAccumulation().SetDirection( direction );
+  TRY_AND_EXIT_ON_ITK_EXCEPTION(projector->Update());
+  input = projector->GetOutput();
+  input->DisconnectPipeline();
+  probe.Stop();
+  mInteractionTotalContribution = projector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
+  if(mSecondPassPrefix != "") {
+    OutputImageType::IndexType idx;
+    mRussianRouletteImage->TransformPhysicalPointToIndex(point, idx);
+    if(mRussianRouletteImage->GetBufferedRegion().IsInside(idx)) {
+      mRussianRouletteImage->SetPixel(idx,
+                                      mRussianRouletteImage->GetPixel(idx) +
+                                      mInteractionTotalContribution);
+      mRussianRouletteCountImage->SetPixel(idx,
+                                           mRussianRouletteCountImage->GetPixel(idx) +
+                                           1.);
+    }
+  }
+
+  // Scatter order
+  if(mInteractionOrder>=0)
+  {
+    while(mInteractionOrder>=inputPerOrder.size())
+      inputPerOrder.push_back( CreateVoidProjectionImage() );
+    projector->SetInput(inputPerOrder[mInteractionOrder]);
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(projector->Update());
+    inputPerOrder[mInteractionOrder] = projector->GetOutput();
+    inputPerOrder[mInteractionOrder]->DisconnectPipeline();
   }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 /// Save data
-void GateHybridForcedDetectionActor::SaveData()
+void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
 {
+  typedef itk::BinaryFunctorImageFilter< InputImageType, InputImageType, InputImageType,
+                                         GateHybridForcedDetectionFunctor::Chetty<InputImageType::PixelType> > ChettyType;
+
   GateVActor::SaveData();
+
   // Geometry
-  rtk::ThreeDCircularProjectionGeometryXMLFileWriter::Pointer geoWriter =
-      rtk::ThreeDCircularProjectionGeometryXMLFileWriter::New();
-  geoWriter->SetObject(mGeometry);
-  geoWriter->SetFilename(mGeometryFilename);
-  geoWriter->WriteFile();
+  if(mGeometryFilename != "") {
+    rtk::ThreeDCircularProjectionGeometryXMLFileWriter::Pointer geoWriter =
+        rtk::ThreeDCircularProjectionGeometryXMLFileWriter::New();
+    geoWriter->SetObject(mGeometry);
+    geoWriter->SetFilename(AddPrefix(prefix,mGeometryFilename));
+    geoWriter->WriteFile();
+  }
 
   itk::ImageFileWriter<InputImageType>::Pointer imgWriter;
   imgWriter = itk::ImageFileWriter<InputImageType>::New();
@@ -730,7 +833,7 @@ void GateHybridForcedDetectionActor::SaveData()
   if(mPrimaryFilename != "") {
     // Write the image of primary radiation accounting for the fluence of the
     // primary source.
-    sprintf(filename, mPrimaryFilename.c_str(), rID);
+    sprintf(filename, AddPrefix(prefix,mPrimaryFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
     imgWriter->SetInput( PrimaryFluenceWeighting(mPrimaryImage) );
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -754,7 +857,7 @@ void GateHybridForcedDetectionActor::SaveData()
     typedef itk::ImageFileWriter<AccumulationType::MaterialMuImageType> TwoDWriter;
     TwoDWriter::Pointer w = TwoDWriter::New();
     w->SetInput( ci->GetOutput() );
-    w->SetFileName(mMaterialMuFilename);
+    w->SetFileName(AddPrefix(prefix,mMaterialMuFilename));
     TRY_AND_EXIT_ON_ITK_EXCEPTION(w->Update());
   }
 
@@ -770,7 +873,7 @@ void GateHybridForcedDetectionActor::SaveData()
     atten->SetInput2(mFlatFieldImage);
     atten->InPlaceOff();
 
-    sprintf(filename, mAttenuationFilename.c_str(), rID);
+    sprintf(filename, AddPrefix(prefix,mAttenuationFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
     imgWriter->SetInput(atten->GetOutput());
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -779,21 +882,42 @@ void GateHybridForcedDetectionActor::SaveData()
   if(mFlatFieldFilename != "") {
     // Write the image of the flat field accounting for the fluence of the
     // primary source.
-    sprintf(filename, mFlatFieldFilename.c_str(), rID);
+    sprintf(filename, AddPrefix(prefix,mFlatFieldFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
     imgWriter->SetInput( PrimaryFluenceWeighting(mFlatFieldImage) );
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
   }
 
   if(mComptonFilename != "") {
-    sprintf(filename, mComptonFilename.c_str(), rID);
+    sprintf(filename, AddPrefix(prefix,mComptonFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
-    imgWriter->SetInput(mComptonImage);
+    imgWriter->SetInput(mProcessImage[COMPTON]);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    if(mIsSecondarySquaredImageEnabled) {
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Squared." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(mSquaredImage[COMPTON]);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
+    if(mIsSecondaryUncertaintyImageEnabled) {
+      ChettyType::Pointer chetty = ChettyType::New();
+      chetty->GetFunctor().SetN(mNumberOfEventsInRun);
+      chetty->SetInput1(mProcessImage[COMPTON]);
+      chetty->SetInput2(mSquaredImage[COMPTON]);
+      chetty->InPlaceOff();
+
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Uncertainty." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(chetty->GetOutput());
+
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
 
     for(unsigned int k = 1; k<mComptonPerOrderImages.size(); k++)
     {
-      sprintf(filename, "output/compton%04d_order%02d.mha", rID, k);
+      sprintf(filename, AddPrefix(prefix,"output/compton%04d_order%02d.mha").c_str(), rID, k);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mComptonPerOrderImages[k]);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -801,14 +925,35 @@ void GateHybridForcedDetectionActor::SaveData()
   }
 
   if(mRayleighFilename != "") {
-    sprintf(filename, mRayleighFilename.c_str(), rID);
+    sprintf(filename, AddPrefix(prefix,mRayleighFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
-    imgWriter->SetInput(mRayleighImage);
+    imgWriter->SetInput(mProcessImage[RAYLEIGH]);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    if(mIsSecondarySquaredImageEnabled) {
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Squared." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(mSquaredImage[RAYLEIGH]);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
+    if(mIsSecondaryUncertaintyImageEnabled) {
+      ChettyType::Pointer chetty = ChettyType::New();
+      chetty->GetFunctor().SetN(mNumberOfEventsInRun);
+      chetty->SetInput1(mProcessImage[RAYLEIGH]);
+      chetty->SetInput2(mSquaredImage[RAYLEIGH]);
+      chetty->InPlaceOff();
+
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Uncertainty." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(chetty->GetOutput());
+
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
 
     for(unsigned int k = 1; k<mRayleighPerOrderImages.size(); k++)
     {
-      sprintf(filename, "output/rayleigh%04d_order%02d.mha", rID, k);
+      sprintf(filename, AddPrefix(prefix,"output/rayleigh%04d_order%02d.mha").c_str(), rID, k);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mRayleighPerOrderImages[k]);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -816,14 +961,35 @@ void GateHybridForcedDetectionActor::SaveData()
   }
 
   if(mFluorescenceFilename != "") {
-    sprintf(filename, mFluorescenceFilename.c_str(), rID);
+    sprintf(filename, AddPrefix(prefix,mFluorescenceFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
-    imgWriter->SetInput(mFluorescenceImage);
+    imgWriter->SetInput(mProcessImage[PHOTOELECTRIC]);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    if(mIsSecondarySquaredImageEnabled) {
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Squared." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(mSquaredImage[PHOTOELECTRIC]);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
+    if(mIsSecondaryUncertaintyImageEnabled) {
+      ChettyType::Pointer chetty = ChettyType::New();
+      chetty->GetFunctor().SetN(mNumberOfEventsInRun);
+      chetty->SetInput1(mProcessImage[PHOTOELECTRIC]);
+      chetty->SetInput2(mSquaredImage[PHOTOELECTRIC]);
+      chetty->InPlaceOff();
+
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Uncertainty." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(chetty->GetOutput());
+
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
 
     for(unsigned int k = 1; k<mFluorescencePerOrderImages.size(); k++)
     {
-      sprintf(filename, "output/fluorescence%04d_order%02d.mha", rID, k);
+      sprintf(filename, AddPrefix(prefix,"output/fluorescence%04d_order%02d.mha").c_str(), rID, k);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mFluorescencePerOrderImages[k]);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -834,74 +1000,53 @@ void GateHybridForcedDetectionActor::SaveData()
      mIsSecondarySquaredImageEnabled ||
      mIsSecondaryUncertaintyImageEnabled ||
      mTotalFilename != "") {
+    typedef itk::AddImageFilter <OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
+    AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
+
     // The secondary image contains all calculated scatterings
     // (Compton, Rayleigh and/or Fluorescence)
     // Create projections image
-    InputImageType::Pointer mSecondaryImage;
-    mSecondaryImage = CreateVoidProjectionImage();
-
-    // Add Image Filter used to sum the different figures obtained on each process
-    typedef itk::AddImageFilter <OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
-    AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
-    addFilter->InPlaceOn();
-    addFilter->SetInput1(mSecondaryImage);
-
-    // Compton
-    addFilter->SetInput2(mComptonImage);
-    TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-    mSecondaryImage = addFilter->GetOutput();
-
-    // Rayleigh
-    mSecondaryImage->DisconnectPipeline();
-    addFilter->SetInput1(mSecondaryImage);
-    addFilter->SetInput2(mRayleighImage);
-    TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-    mSecondaryImage = addFilter->GetOutput();
-
-    // Fluorescence
-    mSecondaryImage->DisconnectPipeline();
-    addFilter->SetInput1(mSecondaryImage);
-    addFilter->SetInput2(mFluorescenceImage);
-    TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
-    mSecondaryImage = addFilter->GetOutput();
+    InputImageType::Pointer mSecondaryImage = CreateVoidProjectionImage();
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+      // Add Image Filter used to sum the different figures obtained on each process
+      addFilter->InPlaceOn();
+      addFilter->SetInput1(mSecondaryImage);
+      addFilter->SetInput2(mProcessImage[ProcessType(i)]);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION( addFilter->Update() );
+      mSecondaryImage = addFilter->GetOutput();
+      mSecondaryImage->DisconnectPipeline();
+    }
 
     // Write scatter image
     if(mSecondaryFilename != "") {
-      sprintf(filename, mSecondaryFilename.c_str(), rID);
+      sprintf(filename, AddPrefix(prefix,mSecondaryFilename).c_str(), rID);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mSecondaryImage);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
 
-      // Write scatter squared image
-      if(mIsSecondarySquaredImageEnabled) {
-        imgWriter->SetFileName(G4String(removeExtension(filename)) +
-                               "-Squared." +
-                               G4String(getExtension(filename)));
-        imgWriter->SetInput(mSecondarySquared);
-        TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-      }
+    if(mIsSecondarySquaredImageEnabled) {
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Squared." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(mSecondarySquaredImage);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
 
-      // Write scatter uncertainty image
-      if(mIsSecondaryUncertaintyImageEnabled) {
-        //Attenuation Functor -> atten
-        typedef itk::BinaryFunctorImageFilter< InputImageType, InputImageType, InputImageType,
-                                               GateHybridForcedDetectionFunctor::Chetty<InputImageType::PixelType> > ChettyType;
-        ChettyType::Pointer chetty = ChettyType::New();
-        chetty->GetFunctor().SetN(mNumberOfEventsInRun);
+    // Write scatter uncertainty image
+    if(mIsSecondaryUncertaintyImageEnabled) {
+      ChettyType::Pointer chetty = ChettyType::New();
+      chetty->GetFunctor().SetN(mNumberOfEventsInRun);
+      chetty->SetInput1(mSecondaryImage);
+      chetty->SetInput2(mSecondarySquaredImage);
+      chetty->InPlaceOff();
 
-        // In the attenuation, we assume that the whole detector is irradiated.
-        // Otherwise we would have a division by 0.
-        chetty->SetInput1(mSecondaryImage);
-        chetty->SetInput2(mSecondarySquared);
-        chetty->InPlaceOff();
+      imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                             "-Uncertainty." +
+                             G4String(getExtension(filename)));
+      imgWriter->SetInput(chetty->GetOutput());
 
-        imgWriter->SetFileName(G4String(removeExtension(filename)) +
-                               "-Uncertainty." +
-                               G4String(getExtension(filename)));
-        imgWriter->SetInput(chetty->GetOutput());
-
-        TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-      }
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
     }
 
     if(mTotalFilename != "") {
@@ -913,7 +1058,7 @@ void GateHybridForcedDetectionActor::SaveData()
       mSecondaryImage = addFilter->GetOutput();
 
       // Write Total Image
-      sprintf(filename, mTotalFilename.c_str(), rID);
+      sprintf(filename, AddPrefix(prefix,mTotalFilename).c_str(), rID);
       imgWriter->SetFileName(filename);
       imgWriter->SetInput(mSecondaryImage);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -921,13 +1066,31 @@ void GateHybridForcedDetectionActor::SaveData()
   }
 
   if(mSingleInteractionFilename!="") {
-    imgWriter->SetFileName(mSingleInteractionFilename);
+    imgWriter->SetFileName(AddPrefix(prefix,mSingleInteractionFilename));
     imgWriter->SetInput(mSingleInteractionImage);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
   }
 
   if(mPhaseSpaceFile)
     mPhaseSpace->GetCurrentFile()->Write();
+  if(mSecondPassPhaseSpaceFile)
+    mSecondPassPhaseSpace->GetCurrentFile()->Write();
+  if(mRussianRouletteFilename) {
+    G4String f = mRussianRouletteFilename;
+    if(mSecondPassPrefix != "") {
+      imgWriter->SetFileName(AddPrefix(prefix, f));
+      imgWriter->SetInput(mRussianRouletteImage);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+
+      imgWriter->SetFileName(AddPrefix(prefix, G4String(removeExtension(f))+"-Count."+G4String(getExtension(f))));
+      imgWriter->SetInput(mRussianRouletteCountImage);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+
+      imgWriter->SetFileName(AddPrefix(prefix, G4String(removeExtension(f))+"-Probability."+G4String(getExtension(f))));
+      imgWriter->SetInput(mRussianRouletteImageProbability);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
+  }
 }
 //-----------------------------------------------------------------------------
 
@@ -1289,6 +1452,84 @@ GateHybridForcedDetectionActor::PrimaryFluenceWeighting(const InputImageType::Po
     output = mult->GetOutput();
   }
   return output;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+G4String
+GateHybridForcedDetectionActor::AddPrefix(G4String prefix, G4String filename)
+{
+  G4String path = itksys::SystemTools::GetFilenamePath(filename);
+  G4String name = itksys::SystemTools::GetFilenameName(filename);
+  if (path=="")
+    path = ".";
+  return path+'/'+prefix+name;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+GateHybridForcedDetectionActor::OutputImageType::Pointer
+GateHybridForcedDetectionActor::CreateRussianRouletteVoidImage()
+{
+  InputImageType::SpacingType spacing;
+  spacing.Fill(mRussianRouletteSpacing / CLHEP::mm);
+
+  InputImageType::PointType origin;
+  InputImageType::SizeType size;
+  for(unsigned int i=0; i<3; i++) {
+    origin[i] = mGateVolumeImage->GetOrigin()[i] -
+                mGateVolumeImage->GetSpacing()[i] * 0.5;
+    size[i] = mGateVolumeImage->GetSpacing()[i] *
+              mGateVolumeImage->GetLargestPossibleRegion().GetSize()[i] /
+              spacing[i];
+    size[i] += 1; // One voxel margin to be sure
+  }
+
+  rtk::ConstantImageSource<InputImageType>::Pointer source;
+  source = rtk::ConstantImageSource<InputImageType>::New();
+  source->SetSpacing(spacing);
+  source->SetOrigin(origin);
+  source->SetSize(size);
+  TRY_AND_EXIT_ON_ITK_EXCEPTION(source->Update());
+
+  GateHybridForcedDetectionActor::InputImageType::Pointer output;
+  output = source->GetOutput();
+  output->DisconnectPipeline();
+
+  return output;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+GateHybridForcedDetectionActor::CreatePhaseSpace(const G4String phaseSpaceFilename,
+                                                 TFile *&phaseSpaceFile,
+                                                 TTree *&phaseSpace)
+{
+  phaseSpaceFile = NULL;
+  if(phaseSpaceFilename != "")
+    phaseSpaceFile = new TFile(phaseSpaceFilename,"RECREATE","ROOT file for phase space",9);
+
+  phaseSpace = new TTree("PhaseSpace","Phase space tree of hybrid forced detection actor");
+  phaseSpace->Branch("Ekine",  &mInteractionEnergy, "Ekine/D");
+  phaseSpace->Branch("Weight", &mInteractionWeight, "Weight/D");
+  phaseSpace->Branch("X", &(mInteractionPosition[0]), "X/D");
+  phaseSpace->Branch("Y", &(mInteractionPosition[1]), "Y/D");
+  phaseSpace->Branch("Z", &(mInteractionPosition[2]), "Z/D");
+  phaseSpace->Branch("dX", &(mInteractionDirection[0]), "dX/D");
+  phaseSpace->Branch("dY", &(mInteractionDirection[1]), "dY/D");
+  phaseSpace->Branch("dZ", &(mInteractionDirection[2]), "dZ/D");
+  //  phaseSpace->Branch("ProductionVolume", mInteractionProductionVolume, "ProductionVolume/C");
+  //  phaseSpace->Branch("TrackID",&mInteractionTrackId, "TrackID/I");
+  phaseSpace->Branch("EventID",&mInteractionEventId, "EventID/I");
+  //  phaseSpace->Branch("RunID",&mInteractionRunId, "RunID/I");
+  //  phaseSpace->Branch("ProductionProcessTrack", mInteractionProductionProcessTrack, "ProductionProcessTrack/C");
+  phaseSpace->Branch("ProductionProcessStep", mInteractionProductionProcessStep, "ProductionProcessStep/C");
+  phaseSpace->Branch("TotalContribution", &mInteractionTotalContribution, "TotalContribution/D");
+  //  phaseSpace->Branch("InteractionVolume", mInteractionVolume, "Volume/C");
+  //  phaseSpace->Branch("Material", mInteractionMaterial, "Material/C");
+  phaseSpace->Branch("MaterialZ", &mInteractionZ, "MaterialZ/I");
+  phaseSpace->Branch("Order", &mInteractionOrder, "Order/I");
 }
 //-----------------------------------------------------------------------------
 #endif

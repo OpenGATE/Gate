@@ -30,8 +30,8 @@
 #ifdef G4ANALYSIS_USE_ROOT
 #include "GateSourceTPSPencilBeam.hh"
 #include "G4Proton.hh"
-//#include "TMath.h"
 
+//------------------------------------------------------------------------------------------------------
 GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( name ), mDistriGeneral(NULL)
 {
 
@@ -48,7 +48,10 @@ GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( na
   mSpotIntensityAsNbProtons=false;
   mIsInitialized=false;
   mConvergentSource=false;
+  mSelectedLayerID = -1; // all layer selected by default
 }
+//------------------------------------------------------------------------------------------------------
+
 
 //------------------------------------------------------------------------------------------------------
 GateSourceTPSPencilBeam::~GateSourceTPSPencilBeam()
@@ -58,6 +61,8 @@ GateSourceTPSPencilBeam::~GateSourceTPSPencilBeam()
   //FIXME segfault when uncommented
   //if (mDistriGeneral) delete mDistriGeneral;
 }
+//------------------------------------------------------------------------------------------------------
+
 
 //------------------------------------------------------------------------------------------------------
 void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
@@ -95,227 +100,235 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event* aEvent )
 
     // integrating the plan description file data
     while (inFile && again)
-    {
-      for (int i=0;i<9;i++) inFile.getline(oneline, MAXLINE);
-      NbFields=atoi(oneline);
-      for (int i=0;i<2*NbFields;i++) inFile.getline(oneline, MAXLINE);
-      for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
-      TotalMeterSet=atoi(oneline);
-
-      for (int f=0; f<NbFields; f++){
-	for (int i=0;i<4;i++) inFile.getline(oneline, MAXLINE);
-	FieldID=atoi(oneline);
-
-	for (int i=0;i<4;i++) inFile.getline(oneline, MAXLINE);
-	GantryAngle=atof(oneline)*TMath::Pi()/180.;
-
-//MISSING COUCH ANGLE inserted
+      {
+        for (int i=0;i<9;i++) inFile.getline(oneline, MAXLINE);
+        NbFields=atoi(oneline);
+        for (int i=0;i<2*NbFields;i++) inFile.getline(oneline, MAXLINE);
         for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
-	CouchAngle=atof(oneline)*TMath::Pi()/180.;
+        TotalMeterSet=atoi(oneline);
 
-	for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
-	ReadLineTo3Doubles(IsocenterPosition, oneline);
-	for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
-	NbOfLayers=atoi(oneline);
-	for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
+        for (int f=0; f<NbFields; f++){
+          for (int i=0;i<4;i++) inFile.getline(oneline, MAXLINE);
+          FieldID=atoi(oneline);
 
-	for (int j=0; j<NbOfLayers; j++) {
-	  for (int i=0;i<8;i++) inFile.getline(oneline, MAXLINE);
-	  double energy=atof(oneline);
-	  for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
-	  int NbOfSpots=atof(oneline);
-	  for (int i=0;i<1;i++) inFile.getline(oneline, MAXLINE);
-	  if (mTestFlag){
-	    G4cout<<"TESTREAD NbFields "<<NbFields<<G4endl;
-	    G4cout<<"TESTREAD TotalMeterSet "<<TotalMeterSet<<G4endl;
-	    G4cout<<"TESTREAD FieldID "<<FieldID <<G4endl;
-	    G4cout<<"TESTREAD GantryAngle "<<GantryAngle <<G4endl;
-	    G4cout<<"TESTREAD CouchAngle "<<CouchAngle <<G4endl;
-	    G4cout<<"TESTREAD Layers N° "<<j<<G4endl;
-	    G4cout<<"TESTREAD NbOfSpots "<<NbOfSpots<<G4endl;
-	  }
-	  for(int k=0; k<NbOfSpots; k++){
-	    inFile.getline(oneline, MAXLINE);
-	    double SpotParameters[3];
-	    ReadLineTo3Doubles(SpotParameters, oneline);
-	    if (mTestFlag){
-	      G4cout<<"TESTREAD Spot N° "<<k<<"    parameters: "<<SpotParameters[0]<<" "<<SpotParameters[1]<<" "<<SpotParameters[2]<<G4endl;
-	    }
+          for (int i=0;i<4;i++) inFile.getline(oneline, MAXLINE);
+          GantryAngle=atof(oneline)*TMath::Pi()/180.;
 
-	    //POSITION
-	    // To calculate the beam position with a gantry angle
-	    G4ThreeVector position;
-	    position[0]=SpotParameters[0]*(mDistanceSMXToIsocenter-mDistanceSourcePatient)/mDistanceSMXToIsocenter;
-	    position[1]=SpotParameters[1]*(mDistanceSMYToIsocenter-mDistanceSourcePatient)/mDistanceSMYToIsocenter;
-	    position[2]=mDistanceSourcePatient;
-//            position[0]=SpotParameters[0]*(mDistanceSMXToIsocenter-mDistanceSourcePatient)/mDistanceSMXToIsocenter;
-//	    position[1]=SpotParameters[1]*(mDistanceSMYToIsocenter-mDistanceSourcePatient)/mDistanceSMYToIsocenter;
-//	    position[2]=mDistanceSourcePatient;
-            //correct orientation problem by rotation 90 degrees around x-Axis
-            double xCorrection=90.*TMath::Pi()/180.;
-//            position.rotateX(xCorrection-CouchAngle);
-            position.rotateX(xCorrection-CouchAngle);
-	    //if (GantryAngle!=0)//orig
-//            position.rotateY(GantryAngle);//orig
-	    //position.rotateY(GantryAngle);
+          //MISSING COUCH ANGLE inserted
+          for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
+          CouchAngle=atof(oneline)*TMath::Pi()/180.;
 
-            //include couch rotation
-            //if (CouchAngle!=0)
-//            position.rotateY(CouchAngle);
-            //include gantry rotation
-            //if (GantryAngle!=0)
-            position.rotateZ(GantryAngle);
-//            position.rotateX(-CouchAngle);
+          for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
+          ReadLineTo3Doubles(IsocenterPosition, oneline);
+          for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
+          NbOfLayers=atoi(oneline);
+          for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
 
-	    if (mTestFlag){
-	      G4cout<<"TESTREAD Spot Effective source position "<<position[0]<<" "<<position[1]<<" "<<position[2]<<G4endl;
-	      G4cout<<"TESTREAD IsocenterPosition "<<IsocenterPosition[0]<<" "<<IsocenterPosition[1]<<" "<<IsocenterPosition[2]<<G4endl;
-	      G4cout<<"TESTREAD NbOfLayers "<<NbOfLayers<<G4endl;
-	    }
+          for (int j=0; j<NbOfLayers; j++) {
 
-	    //DIRECTION
-	    // To calculate the 3 required rotation angles to rotate the beam according to the direction set in the TPS
-	    G4ThreeVector rotation, direction, test;
+            for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
+            int currentLayerID=atoi(oneline); // ControlPointIndex
 
+            for (int i=0;i<6;i++) inFile.getline(oneline, MAXLINE);
+            double energy=atof(oneline);
 
-	    // GantryAngle at 0 (Default)
-//            //ORIGINAL BLOCK
-//            rotation[0]=TMath::Pi();
-//	    // deltaY in the patient plan
-//	    rotation[0]+=atan(SpotParameters[1]/mDistanceSMYToIsocenter);
-//	    // deltaX in the patient plan
-//	    rotation[1]=-atan(SpotParameters[0]/mDistanceSMXToIsocenter);
-//	    // no gantry head rotation
-//	    rotation[2]=0;
-//	    //set gantry angle rotation
-//            rotation[1]+=GantryAngle;
-
-
-//                        // GantryAngle at 0 (Default)
-//            //rotation[0]=TMath::Pi()+xCorrection;//270 degrees
-//            rotation[0]=-xCorrection;//270 degrees
-//
-//	    // deltaY in the patient plan
-//	    rotation[0]+=atan(SpotParameters[1]/mDistanceSMYToIsocenter);
-//	    // deltaX in the patient plan
-//	    rotation[2]=-atan(SpotParameters[0]/mDistanceSMXToIsocenter);
-//	    // no gantry head rotation
-//	    rotation[1]=0.;
-//	    //set gantry angle rotation
-//	    rotation[2]+=GantryAngle;//+CouchAngle;
-////            rotation[2]+=CouchAngle;
-////            rotation[0]+=-CouchAngle;//-couchAngle
-
-
-            // GantryAngle at 0 (Default)
-            //rotation[0]=TMath::Pi()+xCorrection;//270 degrees
-            rotation[0]=-xCorrection;//270 degrees
-
-	    // deltaY in the patient plan
-            double y=atan(SpotParameters[1]/mDistanceSMYToIsocenter);
-	    rotation[0]+=y;
-	    // deltaX in the patient plan
-            double x=-atan(SpotParameters[0]/mDistanceSMXToIsocenter);
-            double z=0.;
-	    rotation[1]=sin(CouchAngle)*(x) +cos(CouchAngle)*z;
-	    // no gantry head rotation
-	    rotation[2]=cos(CouchAngle)*(x) +sin(CouchAngle)*z;
-	    //set gantry angle rotation
-	    rotation[2]+=GantryAngle;//+CouchAngle;
-//            rotation[2]+=CouchAngle;
-            rotation[0]+=-CouchAngle;//-couchAngle
-
-
-//            rotation[0]=0;//TMath::Pi();
-//	    // deltaY in the patient plan
-//	    rotation[0]+=atan(SpotParameters[1]/mDistanceSMYToIsocenter);
-//	    // deltaX in the patient plan
-//	    rotation[2]=-atan(SpotParameters[0]/mDistanceSMXToIsocenter);
-//	    // no gantry head rotation
-//	    rotation[1]=0;
-//	    //set gantry angle rotation
-//            //rotation[1]+=GantryAngle;
-//            rotation[1]-=GantryAngle;
-//            rotation[2]+=0.;
-
-//            G4cout<<"TESTREAD Spot Effective source position "<<position[0]<<" "<<position[1]<<" "<<position[2]<<G4endl;
-//            G4cout<<"TESTREAD source rotation "<<rotation[0]<<" "<<rotation[1]<<" "<<rotation[2]<<G4endl;
-//            G4cout<<"TESTREAD couch angle "<<CouchAngle<<G4endl;
-//            G4cout<<"TESTREAD gantry angle "<<GantryAngle<<G4endl;
-//            G4cout<<G4endl;
+            for (int i=0;i<2;i++) inFile.getline(oneline, MAXLINE);
+            int NbOfSpots=atof(oneline);
+            for (int i=0;i<1;i++) inFile.getline(oneline, MAXLINE);
             if (mTestFlag){
-	      G4cout<<"TESTREAD source rotation "<<rotation[0]<<" "<<rotation[1]<<" "<<rotation[2]<<G4endl;
-	    }
+              G4cout<<"TESTREAD NbFields "<<NbFields<<G4endl;
+              G4cout<<"TESTREAD TotalMeterSet "<<TotalMeterSet<<G4endl;
+              G4cout<<"TESTREAD FieldID "<<FieldID <<G4endl;
+              G4cout<<"TESTREAD GantryAngle "<<GantryAngle <<G4endl;
+              G4cout<<"TESTREAD CouchAngle "<<CouchAngle <<G4endl;
+              G4cout<<"TESTREAD Layers N° "<<j<<G4endl;
+              G4cout<<"TESTREAD NbOfSpots "<<NbOfSpots<<G4endl;
+            }
+            for(int k=0; k<NbOfSpots; k++){
+              inFile.getline(oneline, MAXLINE);
+              double SpotParameters[3];
+              ReadLineTo3Doubles(SpotParameters, oneline);
+              if (mTestFlag){
+                G4cout<<"TESTREAD Spot N° "<<k<<"    parameters: "<<SpotParameters[0]<<" "<<SpotParameters[1]<<" "<<SpotParameters[2]<<G4endl;
+              }
+
+              //POSITION
+              // To calculate the beam position with a gantry angle
+              G4ThreeVector position;
+              position[0]=SpotParameters[0]*(mDistanceSMXToIsocenter-mDistanceSourcePatient)/mDistanceSMXToIsocenter;
+              position[1]=SpotParameters[1]*(mDistanceSMYToIsocenter-mDistanceSourcePatient)/mDistanceSMYToIsocenter;
+              position[2]=mDistanceSourcePatient;
+              //            position[0]=SpotParameters[0]*(mDistanceSMXToIsocenter-mDistanceSourcePatient)/mDistanceSMXToIsocenter;
+              //	    position[1]=SpotParameters[1]*(mDistanceSMYToIsocenter-mDistanceSourcePatient)/mDistanceSMYToIsocenter;
+              //	    position[2]=mDistanceSourcePatient;
+              //correct orientation problem by rotation 90 degrees around x-Axis
+              double xCorrection=90.*TMath::Pi()/180.;
+              //            position.rotateX(xCorrection-CouchAngle);
+              position.rotateX(xCorrection-CouchAngle);
+              //if (GantryAngle!=0)//orig
+              //            position.rotateY(GantryAngle);//orig
+              //position.rotateY(GantryAngle);
+
+              //include couch rotation
+              //if (CouchAngle!=0)
+              //            position.rotateY(CouchAngle);
+              //include gantry rotation
+              //if (GantryAngle!=0)
+              position.rotateZ(GantryAngle);
+              //            position.rotateX(-CouchAngle);
+
+              if (mTestFlag){
+                G4cout<<"TESTREAD Spot Effective source position "<<position[0]<<" "<<position[1]<<" "<<position[2]<<G4endl;
+                G4cout<<"TESTREAD IsocenterPosition "<<IsocenterPosition[0]<<" "<<IsocenterPosition[1]<<" "<<IsocenterPosition[2]<<G4endl;
+                G4cout<<"TESTREAD NbOfLayers "<<NbOfLayers<<G4endl;
+              }
+
+              //DIRECTION
+              // To calculate the 3 required rotation angles to rotate the beam according to the direction set in the TPS
+              G4ThreeVector rotation, direction, test;
 
 
-	    bool allowedField=true;
-	    for (unsigned int i=0; i<mNotAllowedFields.size(); i++) {
-	      if (FieldID==mNotAllowedFields[i]) allowedField=false;
-	    }
+              // GantryAngle at 0 (Default)
+              //            //ORIGINAL BLOCK
+              //            rotation[0]=TMath::Pi();
+              //	    // deltaY in the patient plan
+              //	    rotation[0]+=atan(SpotParameters[1]/mDistanceSMYToIsocenter);
+              //	    // deltaX in the patient plan
+              //	    rotation[1]=-atan(SpotParameters[0]/mDistanceSMXToIsocenter);
+              //	    // no gantry head rotation
+              //	    rotation[2]=0;
+              //	    //set gantry angle rotation
+              //            rotation[1]+=GantryAngle;
 
-	    if (allowedField)  // loading the spots only for allowed fields
-	    {
-	      GateSourcePencilBeam * Pencil = new GateSourcePencilBeam ("PencilBeam");
-	      //Particle Type
-	      Pencil->SetParticleType(mParticleType);
-	      //Energy
-	      Pencil->SetEnergy(GetEnergy(energy));
-	      Pencil->SetSigmaEnergy(GetSigmaEnergy(energy));
-	      //changed because obiously incorrect.
-	      //Pencil->SetSigmaEnergy(GetSigmaEnergy(energy)*GetEnergy(energy)/100.);
-	      //Weight
 
-	      if (mSpotIntensityAsNbProtons) {
-		NbProtons=SpotParameters[2];
-	      }
-	      else {
-		NbProtons=ConvertMuToProtons(SpotParameters[2], GetEnergy(energy));
-	      }
+              //                        // GantryAngle at 0 (Default)
+              //            //rotation[0]=TMath::Pi()+xCorrection;//270 degrees
+              //            rotation[0]=-xCorrection;//270 degrees
+              //
+              //	    // deltaY in the patient plan
+              //	    rotation[0]+=atan(SpotParameters[1]/mDistanceSMYToIsocenter);
+              //	    // deltaX in the patient plan
+              //	    rotation[2]=-atan(SpotParameters[0]/mDistanceSMXToIsocenter);
+              //	    // no gantry head rotation
+              //	    rotation[1]=0.;
+              //	    //set gantry angle rotation
+              //	    rotation[2]+=GantryAngle;//+CouchAngle;
+              ////            rotation[2]+=CouchAngle;
+              ////            rotation[0]+=-CouchAngle;//-couchAngle
 
-	      Pencil->SetWeight(NbProtons);
-	      //G4cout<<"Nb of MU = "<<SpotParameters[2]<<", beam energy = "<<energy<<" MeV, corresponding to "<<NbProtons<<" protons."<<G4endl;
-	      //Position
-	      Pencil->SetPosition(position);
-	      Pencil->SetSigmaX(GetSigmaX(energy));
-	      Pencil->SetSigmaY(GetSigmaY(energy));
-	      //Direction
-	      Pencil->SetSigmaTheta(GetSigmaTheta(energy));
-	      Pencil->SetEllipseXThetaArea(GetEllipseXThetaArea(energy));
-	      Pencil->SetSigmaPhi(GetSigmaPhi(energy));
-	      Pencil->SetEllipseYPhiArea(GetEllipseYPhiArea(energy));
-	      Pencil->SetRotation(rotation);
 
-	      //Correlation Position/Direction
-	      if (mConvergentSource){
-		Pencil->SetEllipseXThetaRotationNorm("positive");	// convergent beam
-		Pencil->SetEllipseYPhiRotationNorm("positive");	// convergent beam
-	      }
-	      else{
-		Pencil->SetEllipseXThetaRotationNorm("negative");	// divergent beam
-		Pencil->SetEllipseYPhiRotationNorm("negative");	// divergent beam
-	      }
-	      Pencil->SetTestFlag(mTestFlag);
-	      //new pencil added
-	      mPencilBeams.push_back(Pencil);
+              // GantryAngle at 0 (Default)
+              //rotation[0]=TMath::Pi()+xCorrection;//270 degrees
+              rotation[0]=-xCorrection;//270 degrees
 
-	      if (mTestFlag){
-		cout<<"Energy\t"<<energy<<endl;
-		cout<<"SetEnergy\t"<<GetEnergy(energy)<<endl;
-		cout<<"SetSigmaEnergy\t"<<GetSigmaEnergy(energy)<<endl;
-		cout<<"SetSigmaX\t"<<GetSigmaX(energy)<<endl;
-		cout<<"SetSigmaY\t"<<GetSigmaY(energy)<<endl;
-		cout<<"SetSigmaTheta\t"<<GetSigmaTheta(energy)<<endl;
-		cout<<"SetSigmaPhi\t"<<GetSigmaPhi(energy)<<endl;
-		cout<<"SetEllipseXThetaArea\t"<<GetEllipseXThetaArea(energy)<<endl;
-		cout<<"SetEllipseYPhiArea\t"<<GetEllipseYPhiArea(energy)<<endl;
-	      }
-	    }
-	  }
-	}
+              // deltaY in the patient plan
+              double y=atan(SpotParameters[1]/mDistanceSMYToIsocenter);
+              rotation[0]+=y;
+              // deltaX in the patient plan
+              double x=-atan(SpotParameters[0]/mDistanceSMXToIsocenter);
+              double z=0.;
+              rotation[1]=sin(CouchAngle)*(x) +cos(CouchAngle)*z;
+              // no gantry head rotation
+              rotation[2]=cos(CouchAngle)*(x) +sin(CouchAngle)*z;
+              //set gantry angle rotation
+              rotation[2]+=GantryAngle;//+CouchAngle;
+              //            rotation[2]+=CouchAngle;
+              rotation[0]+=-CouchAngle;//-couchAngle
+
+
+              //            rotation[0]=0;//TMath::Pi();
+              //	    // deltaY in the patient plan
+              //	    rotation[0]+=atan(SpotParameters[1]/mDistanceSMYToIsocenter);
+              //	    // deltaX in the patient plan
+              //	    rotation[2]=-atan(SpotParameters[0]/mDistanceSMXToIsocenter);
+              //	    // no gantry head rotation
+              //	    rotation[1]=0;
+              //	    //set gantry angle rotation
+              //            //rotation[1]+=GantryAngle;
+              //            rotation[1]-=GantryAngle;
+              //            rotation[2]+=0.;
+
+              //            G4cout<<"TESTREAD Spot Effective source position "<<position[0]<<" "<<position[1]<<" "<<position[2]<<G4endl;
+              //            G4cout<<"TESTREAD source rotation "<<rotation[0]<<" "<<rotation[1]<<" "<<rotation[2]<<G4endl;
+              //            G4cout<<"TESTREAD couch angle "<<CouchAngle<<G4endl;
+              //            G4cout<<"TESTREAD gantry angle "<<GantryAngle<<G4endl;
+              //            G4cout<<G4endl;
+              if (mTestFlag){
+                G4cout<<"TESTREAD source rotation "<<rotation[0]<<" "<<rotation[1]<<" "<<rotation[2]<<G4endl;
+              }
+
+
+              bool allowedField=true;
+              for (unsigned int i=0; i<mNotAllowedFields.size(); i++) {
+                if (FieldID==mNotAllowedFields[i]) allowedField=false;
+              }
+
+              bool allowedLayer=true;
+              if ((mSelectedLayerID != -1) && (currentLayerID != mSelectedLayerID)) allowedLayer = false;
+
+              if (allowedField && allowedLayer)  // loading the spots only for allowed fields
+                {
+                  GateSourcePencilBeam * Pencil = new GateSourcePencilBeam ("PencilBeam");
+                  //Particle Type
+                  Pencil->SetParticleType(mParticleType);
+                  //Energy
+                  Pencil->SetEnergy(GetEnergy(energy));
+                  Pencil->SetSigmaEnergy(GetSigmaEnergy(energy));
+                  //changed because obiously incorrect.
+                  //Pencil->SetSigmaEnergy(GetSigmaEnergy(energy)*GetEnergy(energy)/100.);
+                  //Weight
+
+                  if (mSpotIntensityAsNbProtons) {
+                    NbProtons=SpotParameters[2];
+                  }
+                  else {
+                    NbProtons=ConvertMuToProtons(SpotParameters[2], GetEnergy(energy));
+                  }
+
+                  Pencil->SetWeight(NbProtons);
+                  //G4cout<<"Nb of MU = "<<SpotParameters[2]<<", beam energy = "<<energy<<" MeV, corresponding to "<<NbProtons<<" protons."<<G4endl;
+                  //Position
+                  Pencil->SetPosition(position);
+                  Pencil->SetSigmaX(GetSigmaX(energy));
+                  Pencil->SetSigmaY(GetSigmaY(energy));
+                  //Direction
+                  Pencil->SetSigmaTheta(GetSigmaTheta(energy));
+                  Pencil->SetEllipseXThetaArea(GetEllipseXThetaArea(energy));
+                  Pencil->SetSigmaPhi(GetSigmaPhi(energy));
+                  Pencil->SetEllipseYPhiArea(GetEllipseYPhiArea(energy));
+                  Pencil->SetRotation(rotation);
+
+                  //Correlation Position/Direction
+                  if (mConvergentSource){
+                    Pencil->SetEllipseXThetaRotationNorm("positive");	// convergent beam
+                    Pencil->SetEllipseYPhiRotationNorm("positive");	// convergent beam
+                  }
+                  else{
+                    Pencil->SetEllipseXThetaRotationNorm("negative");	// divergent beam
+                    Pencil->SetEllipseYPhiRotationNorm("negative");	// divergent beam
+                  }
+                  Pencil->SetTestFlag(mTestFlag);
+                  //new pencil added
+                  mPencilBeams.push_back(Pencil);
+
+                  if (mTestFlag){
+                    cout<<"Energy\t"<<energy<<endl;
+                    cout<<"SetEnergy\t"<<GetEnergy(energy)<<endl;
+                    cout<<"SetSigmaEnergy\t"<<GetSigmaEnergy(energy)<<endl;
+                    cout<<"SetSigmaX\t"<<GetSigmaX(energy)<<endl;
+                    cout<<"SetSigmaY\t"<<GetSigmaY(energy)<<endl;
+                    cout<<"SetSigmaTheta\t"<<GetSigmaTheta(energy)<<endl;
+                    cout<<"SetSigmaPhi\t"<<GetSigmaPhi(energy)<<endl;
+                    cout<<"SetEllipseXThetaArea\t"<<GetEllipseXThetaArea(energy)<<endl;
+                    cout<<"SetEllipseYPhiArea\t"<<GetEllipseYPhiArea(energy)<<endl;
+                  }
+                }
+            }
+          }
+        }
+        again=false;
+        GateMessage("Physic", 1, "[TPSPencilBeam] Plan description file successfully loaded."<<G4endl);
       }
-      again=false;
-       GateMessage("Physic", 1, "[TPSPencilBeam] Plan description file successfully loaded."<<G4endl);
-    }
     inFile.close();
 
     mTotalNumberOfSpots=mPencilBeams.size();
@@ -358,7 +371,10 @@ double GateSourceTPSPencilBeam::ConvertMuToProtons(double weight, double energy)
   double Gain=3./(K*SP*PTP*1.602176E-10);
   return (weight*Gain);
 }
+//------------------------------------------------------------------------------------------------------
 
+
+//------------------------------------------------------------------------------------------------------
 void GateSourceTPSPencilBeam::LoadClinicalBeamProperties(){
 
   const int MAXLINE=256;
@@ -477,6 +493,8 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties(){
     for (unsigned int i=0; i<mYPhiEmittance.size(); i++) G4cout<<"mYPhiEmittance\t"<<mYPhiEmittance[i]<<G4endl;
   }
 }
+//------------------------------------------------------------------------------------------------------
+
 
 //------------------------------------------------------------------------------------------------------
 double GateSourceTPSPencilBeam::GetEnergy(double energy){
