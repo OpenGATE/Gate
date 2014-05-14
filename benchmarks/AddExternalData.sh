@@ -22,3 +22,4 @@ rm $1
 
 echo "GateAddBenchmarkData(\"DATA{${1#$(dirname $0)/}}\")" >> CMakeLists.txt
 
+echo "Don't forget to upload data in http://midas3.kitware.com/midas/community/28"

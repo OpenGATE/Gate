@@ -15,6 +15,9 @@ See GATE/LICENSE.txt for further details
 #include "globals.hh"
 #include "GateConfiguration.h"
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 /*! \namespace  GateTools
     \brief  Namespace to provide general-purpose utility functions to GATE
     

@@ -10,6 +10,7 @@
 
 #include "GateTrajectoryNavigator.hh"
 
+#include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4Trajectory.hh"
@@ -18,7 +19,7 @@
 
 #include "GateActions.hh"
 
-GateTrajectoryNavigator::GateTrajectoryNavigator()
+GateTrajectoryNavigator::GateTrajectoryNavigator() : m_trajectoryContainer(NULL), m_positronTrackID(0), m_positronTrj(NULL), m_ionID(0), nVerboseLevel(0)
 {
 }
 

@@ -13,7 +13,6 @@
 
 #include "GateMessenger.hh"
 #include "GateRandomEngine.hh"
-#include "CLHEP/Random/defs.h"
 #include "CLHEP/Random/RandomEngine.h"
 
 class G4UIdirectory;
@@ -40,4 +39,3 @@ private:
 };
 
 #endif
-

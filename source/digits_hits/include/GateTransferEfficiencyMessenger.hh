@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #ifndef GateTransferEfficiencyMessenger_h
@@ -31,23 +31,22 @@ class GateTransferEfficiency;
 
 class GateTransferEfficiencyMessenger: public GatePulseProcessorMessenger
 {
-  public:
-    GateTransferEfficiencyMessenger(GateTransferEfficiency* itsTE);
-    virtual ~GateTransferEfficiencyMessenger();
+public:
+  GateTransferEfficiencyMessenger(GateTransferEfficiency* itsTE);
+  virtual ~GateTransferEfficiencyMessenger();
 
-    inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
-    inline void SetNewValue2(G4UIcommand* aCommand, G4String aString);
+  inline void SetNewValue(G4UIcommand* aCommand, G4String aString);
+  inline void SetNewValue2(G4UIcommand* aCommand, G4String aString);
 
-    inline GateTransferEfficiency* GetTransferEfficiency()
-      { return (GateTransferEfficiency*) GetPulseProcessor(); }
+  inline GateTransferEfficiency* GetTransferEfficiency()
+  { return (GateTransferEfficiency*) GetPulseProcessor(); }
 
-  private:
-    G4UIcmdWithAString   *newVolCmd;
-    std::vector<G4UIdirectory*> m_volDirectory;
-    std::vector<G4UIcmdWithADouble*>   coeffTECmd;
-    std::vector<G4String> m_name;
-    G4int i;
-    G4int m_count;
+private:
+  G4UIcmdWithAString   *newVolCmd;
+  std::vector<G4UIdirectory*> m_volDirectory;
+  std::vector<G4UIcmdWithADouble*>   coeffTECmd;
+  std::vector<G4String> m_name;
+  G4int m_count;
 };
 
 #endif

@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+  GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "GateConfiguration.h"
 
@@ -16,6 +16,7 @@ See GATE/LICENSE.txt for further details
 #include "GateClockDependent.hh"
 #include "GateObjectChildList.hh"
 #include "GateVolumePlacement.hh"
+#include "GateMessageManager.hh"
 
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -23,9 +24,8 @@ See GATE/LICENSE.txt for further details
 #include "G4RotationMatrix.hh"
 #include "G4VisAttributes.hh"
 #include "G4Box.hh"
-#include "GateMessageManager.hh"
-#include "globals.hh"
 
+#include "globals.hh"
 #include <vector>
 #include <map>
 
@@ -58,6 +58,7 @@ public :
   virtual void ConstructGeometry(G4LogicalVolume*, G4bool);
   virtual void DestroyGeometry();
   virtual void  DestroyOwnPhysicalVolumes();
+
   //! Pure virtual method (to be implemented in sub-classes)
   //! Must return an value for the half-size of a volume along an axis (X=0, Y=1, Z=2)
   virtual G4double GetHalfDimension(size_t axis)=0;
@@ -70,7 +71,13 @@ public :
   //! the volume are propagated to the sub-volumes. This is your
   //! responsability to do that (see GateImageNestedParametrisedVolume
   //! for exemple).
-  virtual void PropageteSensitiveDetectorToChild(GateMultiSensitiveDetector *) {}
+  virtual void PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector *) {}
+
+  // Use to propagate global SD (such as PhantomSD) to child logical
+  // volume. Do nothing by default. Complex volume (such as voxelized)
+  // must implement this function to set the sensitive detector to
+  // their sub-logical volume.
+  virtual void PropagateGlobalSensitiveDetector() {}
 
 protected :
   //! Pure virtual mathod, will be defined in concrete
@@ -79,7 +86,7 @@ protected :
   virtual void ConstructOwnPhysicalVolume(G4bool flagUpdateOnly);
 
   inline virtual void PushPhysicalVolume(G4VPhysicalVolume* volume)
-  { /*GateMessage("Geometry", 5, "GateVVolume::PushPhysicalVolume  " << volume->GetName() << G4endl;);*/ theListOfOwnPhysVolume.push_back(volume);}
+  { theListOfOwnPhysVolume.push_back(volume);}
 
   virtual void DestroyOwnSolidAndLogicalVolume()=0;
 
@@ -194,17 +201,15 @@ public :
   //! Tell the creator that the logical volume should be attached to the phantom-SD
   virtual void AttachPhantomSD() ;
 
-        void AttachARFSD(); /* PY Descourt 08/09/2009 */
+  void AttachARFSD(); /* PY Descourt 08/09/2009 */
 
   virtual void AttachOutputToVolume();
 
   virtual G4bool CheckOutputExistence();
 
-  // virtual void PropagateRegionToChild(){}
-
   // Origin (coordinate of the corner)
-  void SetOriginByUser(const G4ThreeVector & i);
-  inline G4ThreeVector GetOrigin() const { return origin; }
+  void SetOrigin(const G4ThreeVector & i);
+  inline G4ThreeVector GetOrigin() const { return m_origin; }
 
 protected :
 
@@ -215,7 +220,6 @@ protected :
 
   //! Method automatically called to color-code the object when its material changes.
   virtual void AutoSetColor();
-
 
 protected :
 
@@ -281,8 +285,7 @@ protected :
   GateVActor * pActor;
 
   // Some volume can have an origin, store it.
-  G4ThreeVector origin;
-  G4bool        mOriginIsSetByUser;
+  G4ThreeVector m_origin;
 
 private :
 
@@ -301,20 +304,10 @@ private :
   //! Rotation matrix
   G4RotationMatrix newRotationMatrix;
 
-  //! Rotation angle
-  G4double m_rotationAngle;
-
   //! Rotation axis (dimensionless vector)
   G4ThreeVector m_rotationAxis;
 
-  GateMaterialDatabase* pMaterial;
-
-  GateObjectChildList* m_motherList;
-
   GateVolumeMessenger* pMessenger;
-  GateVolumePlacementMessenger* pMessengerPlacement;
-
-  GateActorManager* m_actorManager;
 
   GateVVolume * mParent;
 };

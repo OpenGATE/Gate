@@ -9,14 +9,14 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
-/*! 
-  \class  GateImageRegionalizedSubVolume : 
+/*!
+  \class  GateImageRegionalizedSubVolume :
   \brief  A volume which represents a region of a 3D image of labels (sub-volume of a GateImageRegionalizedVolume)
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
 	  david.sarrut@creatis.insa-lyon.fr
 */
- 
+
 
 #ifndef __GateImageRegionalizedSubVolume__hh__
 #define __GateImageRegionalizedSubVolume__hh__
@@ -28,7 +28,8 @@ class GateImageRegionalizedSubVolumeSolid;
 class GateImageRegionalizedSubVolumeMessenger;
 
 //====================================================================
-///  \brief A volume which represents a region of a 3D image of labels (sub-volume of a GateImageRegionalizedVolume)
+/// \brief A volume which represents a region of a 3D image of labels
+//(sub-volume of a GateImageRegionalizedVolume)
 class GateImageRegionalizedSubVolume : public GateVVolume
 {
 public:
@@ -47,21 +48,21 @@ public:
   /// the name of the volume to create
   /// Creates the messenger associated to the volume
   GateImageRegionalizedSubVolume(const G4String& name,G4bool acceptsChildren,G4int depth);
-  /// Destructor 
+  /// Destructor
   ~GateImageRegionalizedSubVolume();
   //====================================================================
 
   //====================================================================
-  /// Returns a string describing the type of volume and which is used 
-  /// for commands 
+  /// Returns a string describing the type of volume and which is used
+  /// for commands
   virtual G4double GetHalfDimension(size_t /*axis*/){return 0.;}
   virtual G4String GetTypeName() { return "ImageRegionalizedRegion"; }
 
     FCT_FOR_AUTO_CREATOR_VOLUME(GateImageRegionalizedSubVolume)
 
    virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume(G4Material*, G4bool);
-   virtual void DestroyOwnSolidAndLogicalVolume(){}   
-  /// Constructs the solid 
+   virtual void DestroyOwnSolidAndLogicalVolume(){}
+  /// Constructs the solid
   //virtual void ConstructSolid();
   //====================================================================
 
@@ -72,7 +73,7 @@ public:
   //  void SetImage(ImageType* image) { pImage = image; }
   /// Sets the label of the region it represents
   void SetLabel(LabelType label) { mLabel = label; }
-  /// Sets the half size of the volume 
+  /// Sets the half size of the volume
   //  void SetHalfSize(G4ThreeVector s) { mHalfSize = s; }
   //====================================================================
 
@@ -89,7 +90,7 @@ public:
 
 
   //====================================================================
-  // Methods used by SubVolumeSolids 
+  // Methods used by SubVolumeSolids
   inline EInside Inside(const G4ThreeVector& p) const {
     return pVolume->Inside(p,mLabel);
   }
@@ -107,24 +108,25 @@ public:
 								G4bool *validNorm=0, G4ThreeVector *n=0) const {
     return pVolume->DistanceToOut(p,v,calcNorm,validNorm,n,mLabel);
   }
-  
+
   inline G4double DistanceToOut(const G4ThreeVector& p) const {
     return pVolume->DistanceToOut(p,mLabel);
   }
-  
+
   inline G4ThreeVector SurfaceNormal(const G4ThreeVector& p) const {
 	return pVolume->SurfaceNormal(p, mLabel);
   }
-  
+
   //====================================================================
+  virtual void PropagateGlobalSensitiveDetector();
 
   //====================================================================
   // IO
  // void PrintInfo();
-  
+
 protected:
   //====================================================================
-  /// its messenger  
+  /// its messenger
   GateImageRegionalizedSubVolumeMessenger* pMessenger;
   //====================================================================
 

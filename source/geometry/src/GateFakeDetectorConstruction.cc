@@ -26,6 +26,9 @@ See GATE/LICENSE.txt for further details
 #include "G4Material.hh"
 #include "G4LogicalVolume.hh"
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 //-----------------------------------------------------------------------------
 G4VPhysicalVolume* GateFakeDetectorConstruction::Construct() {
 

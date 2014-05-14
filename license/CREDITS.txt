@@ -35,6 +35,9 @@ Institutions who contributed code:
 10. CNRS IN2P3/IMNC
     Orsay, France
 
+11. INSERM U892
+    Nantes, France
+
 Programmers:
 -----------
 
@@ -46,6 +49,7 @@ Programmers:
    Claude COMTAT (CEA Orsay)
    Sebastien JAN (CEA Orsay)
    Vesna Cuplov (CEA Orsay)
+   Imma Martinez (CEA Orsay)
    Steven STAELENS (ELIS)
    Corinne GROISELLE (UMASS)
    David GUEZ (CEA-DAPNIA)
@@ -60,6 +64,8 @@ Programmers:
    David Sarrut (CNRS Creatis)
    Thibault Frisson (CNRS Creatis)
    Pierre Gueth (CNRS Creatis)
+   Albertine Dubois (IMNC Orsay)
+   Jérôme Suhard (INSERM U892)
 
 Technical Coordination:
 ----------------------

@@ -1,4 +1,4 @@
-/*!
+/*
  *	\file Gate.cc
  *	\author Didier Benoit <benoit@imnc.in2p3.fr>
  *	\date May 2012, QIM IMNC-IN2P3/CNRS, Paris VII-XI Universities, Orsay
@@ -10,9 +10,13 @@
  *	- 'Gate -a activity 10' using the parameterized macro creating an alias in your macro
  */
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 #include <getopt.h>
 #include <cstdlib>
 #include <queue>
+#include <locale.h>
 
 #include "G4UImanager.hh"
 #include "G4UIterminal.hh"
@@ -147,7 +151,7 @@ void welcome()
 {
   GateMessage("Core", 0, G4endl);
   GateMessage("Core", 0, "**********************************************************************" << G4endl);
-  GateMessage("Core", 0, " GATE version name: beta_gate_v7.0                                    " << G4endl);
+  GateMessage("Core", 0, " GATE version name: gate_v7.0                                         " << G4endl);
   GateMessage("Core", 0, "                    Copyright : OpenGATE Collaboration                " << G4endl);
   GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 49 (2004) 4543-4561  " << G4endl);
   GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 56 (2011) 881-901    " << G4endl);
@@ -188,6 +192,7 @@ int main( int argc, char* argv[] )
   static G4int isQt = 0; // Enable Qt or not
   G4String listOfParameters = ""; // List of parameters for parameterized macro
   DigiMode aDigiMode = kruntimeMode;
+
 
   // Loop over arguments
   G4int c = 0;
@@ -363,7 +368,7 @@ int main( int argc, char* argv[] )
   welcome();
 
   std::ostringstream s;
-  s << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH;
+  s << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH; 
   GateMessage( "Core", 0, "You are using Geant4 version " << s.str() << G4endl );
 
   // Launching Gate if macro file
@@ -374,19 +379,19 @@ int main( int argc, char* argv[] )
     UImanager->ApplyCommand( command + macrofilename );
     GateMessage( "Core", 0, "End of macro " << macrofilename << G4endl);
   }
-  else {
+
     if (ui) // Launching interactive mode // Qt
       {
         ui->SessionStart();
         delete ui;
       }
     else {
-      if (session) { // Terminal
+      if (session && !isMacroFile) { // Terminal
         session->SessionStart();
         delete session;
       }
     }
-  }
+
 
 #ifdef G4ANALYSIS_USE_GENERAL
   if (outputMgr) delete outputMgr;
