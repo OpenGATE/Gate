@@ -29,8 +29,9 @@ include(ExternalProject)
 
 #=========================================================
 SET(BUILD_GATE ON)
-SET(GATE_BRANCH "develop" CACHE STRING "Branch to build (master or develop)")
-OPTION(BUILD_GATE_WITH_RTK "Build Gate with RTK (branch hybrid)" OFF)
+SET(GATE_BRANCH "master" CACHE STRING "Branch to build (master or develop)")
+SET(BUILD_GATE_WITH_RTK OFF)
+#OPTION(BUILD_GATE_WITH_RTK "Build Gate with RTK (branch hybrid)" OFF)
 #=========================================================
 
 
@@ -82,16 +83,16 @@ ENDIF()
 
 #=========================================================
 # CLHEP
-IF (BUILD_GATE)
-  ExternalProject_Add(
-    clhep
-    STAMP_DIR ${base}/stamp
-    DOWNLOAD_DIR ${base}/dl
-    INSTALL_DIR ${INSTALL_PREFIX}
-    URL http://proj-clhep.web.cern.ch/proj-clhep/DISTRIBUTION/tarFiles/clhep-2.1.1.0.tgz
-    CONFIGURE_COMMAND ${SRC_PREFIX}/clhep/CLHEP/configure --prefix=${INSTALL_PREFIX}
-    )
-ENDIF()
+# IF (BUILD_GATE)
+#   ExternalProject_Add(
+#     clhep
+#     STAMP_DIR ${base}/stamp
+#     DOWNLOAD_DIR ${base}/dl
+#     INSTALL_DIR ${INSTALL_PREFIX}
+#     URL http://proj-clhep.web.cern.ch/proj-clhep/DISTRIBUTION/tarFiles/clhep-2.1.3.1.tgz
+#     CONFIGURE_COMMAND ${SRC_PREFIX}/clhep/CLHEP/configure --prefix=${INSTALL_PREFIX}
+#     )
+# ENDIF()
 #=========================================================
 
 
@@ -142,16 +143,14 @@ IF (BUILD_GATE)
     STAMP_DIR ${base}/stamp
     DOWNLOAD_DIR ${base}/dl
     INSTALL_DIR ${INSTALL_PREFIX}
-    DEPENDS clhep #qt
-    URL http://geant4.web.cern.ch/geant4/support/source/geant4.9.5.p02.tar.gz
+    URL http://geant4.web.cern.ch/geant4/support/source/geant4.9.6.p03.tar.gz
     CMAKE_ARGS
     -DCMAKE_PREFIX_PATH:PATH=${INSTALL_PREFIX}
     -DGEANT4_INSTALL_DATA:BOOL=ON
     -DGEANT4_USE_OPENGL_X11:BOOL=ON
     -DGEANT4_USE_QT:BOOL=OFF
     -DGEANT4_USE_RAYTRACER_X11:BOOL=ON
-    -DGEANT4_USE_SYSTEM_CLHEP:BOOL=ON
-    -DCLHEP_CONFIG_EXECUTABLE:FILEPATH=${INSTALL_PREFIX}/bin/clhep-config
+    -DGEANT4_USE_SYSTEM_CLHEP:BOOL=OFF
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${qmake_executable}
     -DCMAKE_BUILD_TYPE:STRING=${build_type}
     -DBUILD_SHARED_LIBS:BOOL=ON
@@ -169,7 +168,7 @@ IF (NOT BUILD_GATE_WITH_RTK)
     STAMP_DIR ${base}/stamp
     DOWNLOAD_DIR ${base}/dl
     INSTALL_DIR ${INSTALL_PREFIX}
-    DEPENDS geant4 clhep root
+    DEPENDS geant4 root
     GIT_REPOSITORY gitopengate:opengate.git
     GIT_TAG origin/${GATE_BRANCH}
     CMAKE_ARGS
@@ -180,10 +179,8 @@ IF (NOT BUILD_GATE_WITH_RTK)
     -DGATE_USE_GEANT4_UIVIS:BOOL=ON
     -DGATE_USE_GPU:BOOL=OFF
     -DGATE_USE_LMF:BOOL=OFF
-    -DGATE_USE_OPTICAL:BOOL=OFF
-    -DGATE_USE_SYSTEM_CLHEP:BOOL=ON
-    -DCLHEP_CONFIG_EXECUTABLE:FILEPATH=${INSTALL_PREFIX}/bin/clhep-config
-    -DCLHEP_INCLUDE_DIR:PATH=${INSTALL_PREFIX}/include
+    -DGATE_USE_OPTICAL:BOOL=ON
+    -DGATE_USE_SYSTEM_CLHEP:BOOL=OFF
     -DGATE_USE_ROOT:BOOL=ON
     -DGATE_USE_RTK:BOOL=OFF
     -DGeant4_DIR:PATH=${INSTALL_PREFIX}

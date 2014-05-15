@@ -1,6 +1,4 @@
 #ifndef GATEMUTABLES_CC
-#define GATEMUTABLES_CC
-
 #include "GateMuTables.hh"
 #include "GateMiscFunctions.hh"
 GateMuTable::GateMuTable(G4String /*name*/, G4int size)

@@ -1,6 +1,4 @@
 /*----------------------
-
-GATE - Geant4 Application for Tomographic Emission
 OpenGATE Collaboration
 
 Daniel Strul <daniel.strul@iphe.unil.ch>
