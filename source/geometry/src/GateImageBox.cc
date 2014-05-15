@@ -1,8 +1,7 @@
 
+#include "G4Polyhedron.hh"
 #include "G4VGraphicsScene.hh"
 #include "G4VisManager.hh"
-#include "G4Polyhedron.hh"
-
 
 #include "GateImageBox.hh"
 #include "GateImage.hh"
