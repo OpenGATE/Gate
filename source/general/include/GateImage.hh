@@ -181,11 +181,15 @@ public:
   const_iterator end() const  { return data.end(); }
 
   // IO
+
   /// Writes the image to a file with comment (the format is detected automatically)
   virtual void Write(G4String filename, const G4String & comment = "");
+
   /// Reads the image from a file (the format is detected automatically)
-  void Read(G4String filename);
+  virtual void Read(G4String filename);
+
   void MergeDataByAddition(G4String filename);
+
   /// Displays info about the image to standard output
   void PrintInfo();
 
@@ -236,8 +240,8 @@ protected:
   void WriteMHD(std::string filename);
 
   void UpdateNumberOfValues();
-  void UpdateSizesFromResolutionAndHalfSize();
-  void UpdateSizesFromResolutionAndVoxelSize();
+  virtual void UpdateSizesFromResolutionAndHalfSize();
+  virtual void UpdateSizesFromResolutionAndVoxelSize();
 
   // data for root output
   void UpdateDataForRootOutput();

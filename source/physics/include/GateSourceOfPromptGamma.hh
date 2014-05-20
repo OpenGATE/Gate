@@ -21,7 +21,7 @@
 #define GATESOURCEPROMPTGAMMAEMISSION_HH
 
 #include "G4UnitsTable.hh"
-#include "GatePromptGammaSpatialEmissionDistribution.hh"
+#include "GateSourceOfPromptGammaData.hh"
 #include "GateVSource.hh"
 #include "GateSourceOfPromptGammaMessenger.hh"
 
@@ -41,8 +41,9 @@ public:
 protected:
   GateSourceOfPromptGammaMessenger * pMessenger;
   bool mIsInitializedFlag;
-  GatePromptGammaSpatialEmissionDistribution * mDistrib;
+  GateSourceOfPromptGammaData * mData;
   G4String mFilename;
+  G4ParticleDefinition * gamma;
 
   void Initialize();
 }; // end class

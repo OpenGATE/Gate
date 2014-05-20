@@ -25,6 +25,7 @@
 #include "G4SPSPosDistribution.hh"
 #include "G4SPSEneDistribution.hh"
 #include "GateConfiguration.h"
+#include "GateImageOfHistograms.hh"
 
 //------------------------------------------------------------------------
 class GateSourceOfPromptGammaData
@@ -37,15 +38,12 @@ public:
   void SampleRandomEnergy(double & energy);
   void SampleRandomDirection(G4ParticleMomentum & direction);
 
+  void LoadData(std::string mFilename);
   void Initialize();
-  /*
-    mDistrib->SetRandomEngine(engine);
-    mDistrib->LoadData(mFilename);
-    mDistrib->ComputeMarginalCumulativeDistribution();
-
-  */
 
 protected:
+  // The 3D prompt gamma distribution
+  GateImageOfHistograms * mImage;
 
   // Current pixel index for position in 3D space
   int mCurrentIndex_i;
@@ -59,10 +57,10 @@ protected:
 
   // The angular, position and energy generator
   G4SPSAngDistribution mAngleGen;
-  G4SPSEneDistribution mEnergyGen;
-  G4SPSPosDistribution mPositionXGen;
-  std::vector<G4SPSPosDistribution> mPositionYGen;
-  std::vector<std::vector<G4SPSPosDistribution> > mPositionZGen;
+  std::vector<G4SPSEneDistribution> mEnergyGen;
+  G4SPSRandomGenerator mPositionXGen;
+  std::vector<G4SPSRandomGenerator> mPositionYGen;
+  std::vector<std::vector<G4SPSRandomGenerator> > mPositionZGen;
 
 }; // end class
 //------------------------------------------------------------------------

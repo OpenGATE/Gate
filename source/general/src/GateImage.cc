@@ -745,6 +745,7 @@ void GateImage::UpdateSizesFromResolutionAndHalfSize() {
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateImage::UpdateSizesFromResolutionAndVoxelSize() {
   // INPUT  : resolution + VoxelSize
@@ -772,6 +773,7 @@ void GateImage::UpdateSizesFromResolutionAndVoxelSize() {
   PrintInfo();
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateImage::UpdateNumberOfValues() {

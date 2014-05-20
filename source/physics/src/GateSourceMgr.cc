@@ -29,6 +29,7 @@
 #include <cmath>
 #include "GateActions.hh"
 #include "G4RunManager.hh"
+#include "GateSourceOfPromptGamma.hh"
 
 //----------------------------------------------------------------------------------------
 GateSourceMgr* GateSourceMgr::mInstance = 0;
@@ -192,6 +193,10 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
       else if ((sourceGeomType == "linacBeam") ||
                (sourceGeomType == "LinacBeam")) {
         source = new GateSourceLinacBeam(sourceName);
+        source->SetSourceID( m_sourceProgressiveNumber );
+      }
+      else if (sourceGeomType == "SourceOfPromptGamma") {
+        source = new GateSourceOfPromptGamma(sourceName);
         source->SetSourceID( m_sourceProgressiveNumber );
       }
       else if (sourceGeomType == "PencilBeam") {

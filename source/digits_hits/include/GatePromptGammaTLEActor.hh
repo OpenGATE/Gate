@@ -16,7 +16,7 @@
 #include "GateActorMessenger.hh"
 #include "GatePromptGammaTLEActorMessenger.hh"
 #include "GateImageOfHistograms.hh"
-#include "GatePromptGammaEnergySpectrumData.hh"
+#include "GatePromptGammaData.hh"
 
 #include <TFile.h>
 #include <TH1.h>
@@ -45,8 +45,7 @@ protected:
 
   std::string mInputDataFilename;
   GateImageOfHistograms mImageGamma;
-  GatePromptGammaEnergySpectrumData data;
-
+  GatePromptGammaData data;
 };
 //-----------------------------------------------------------------------------
 

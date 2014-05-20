@@ -9,13 +9,13 @@ See GATE/LICENSE.txt for further details
 
 
 /*! \file
- 
+
   \brief Class GateMessageManager and Macros for outputing messages in Gate
 
   There are 4 kinds of messages :
   - Messages (normal messages)
   - Debug messages (not compiled in release)
-  - Warnings 
+  - Warnings
   - Errors
 
   There are also "types" of messages which are strings which identify
@@ -33,7 +33,7 @@ See GATE/LICENSE.txt for further details
   -The second string is help string
   -The integer is the initial level for the messages of this type (see
    below).
-  
+
   To generate a message of a known type then use one of the macros :
   GateMessage, GateDebugMessage, GateWarning, GateError or their variants.
 
@@ -48,14 +48,14 @@ See GATE/LICENSE.txt for further details
 
   At run time, one is able to change the level of the messages
   displayed by using a command like :
- 
-  Gate::MessageManager::SetMessageLevel("Core",5); 
-  
+
+  Gate::MessageManager::SetMessageLevel("Core",5);
+
   which tells the manager to display all Core messages of level up to 5.
 
   Variants :
   Gate*Cont : continues a previous GateMessage on the same line (without rewriting the type and level)
-  Gate*Inc / Dec : displays the message and then increments/decrement the messages tabulation 
+  Gate*Inc / Dec : displays the message and then increments/decrement the messages tabulation
   [Debug]IncTab / [Debug]DecTab : increment/decrement tabulation without dispalying message
 */
 
@@ -72,8 +72,8 @@ See GATE/LICENSE.txt for further details
 #define __GateMessageManager_h_INCLUDED__
 
 //-----------------------------------------------------------
-// Remark : 
-// The do { } while(0) statement in macros is made to "swallow the semicolon" 
+// Remark :
+// The do { } while(0) statement in macros is made to "swallow the semicolon"
 // see http://gcc.gnu.org/onlinedocs/cpp/Swallowing-the-Semicolon.html#Swallowing-the-Semicolon
 
 #include <string>
@@ -83,37 +83,37 @@ See GATE/LICENSE.txt for further details
 #include "G4ExceptionHandler.hh"
 #include "GateConfiguration.h"
 
-// Uncomment out these symbols to force messages compilation 
+// Uncomment out these symbols to force messages compilation
 #define GATE_COMPILE_MESSAGES
 //#define GATE_COMPILE_DEBUG_MESSAGES
 #define GATE_COMPILE_WARNING_MESSAGES
 #define GATE_COMPILE_ERROR_MESSAGES
 
-// Uncomment next line if you want messages to be preprended 
+// Uncomment next line if you want messages to be preprended
 // by as many spaces as the message level
 #define GATE_PREPEND_MESSAGE_WITH_SPACE
 #define GATE_PREPEND_MESSAGE_WITH_TAB
 
 ///-----------------------------------------------------------
-// Uncomment next line if you want messages to be preprended 
-// by the code of the type of message 
+// Uncomment next line if you want messages to be preprended
+// by the code of the type of message
 #define GATE_PREPEND_MESSAGE_WITH_CODE
 #define GATE_PREPEND_DEBUGMESSAGE_WITH_CODE
 
-// Uncomment next line if you want messages to be preprended 
+// Uncomment next line if you want messages to be preprended
 // by the current tabulation stored in MessageManager
-// Tabulation are increased/decreased by 
+// Tabulation are increased/decreased by
 // the macros which have 'Dec' or 'Inc' in their names
 // Example :
 // In a method X:
-// X() 
+// X()
 // {
-//   GateDebugMessageInc("Physics",3,"Begining of method X"<<G4endl); 
+//   GateDebugMessageInc("Physics",3,"Begining of method X"<<G4endl);
 //   ..
-//   // This message will be tabulated with one more space 
+//   // This message will be tabulated with one more space
 //   GateDebugMessage("Physics",5,"comment...");
 //   ..
-//   GateDebugMessageDec("Physics",3,"End of method X"<<G4endl); 
+//   GateDebugMessageDec("Physics",3,"End of method X"<<G4endl);
 // }
 // Gives :
 // Begining of method X
@@ -130,29 +130,29 @@ See GATE/LICENSE.txt for further details
     {							\
       GateWarning("message type '"<<key<<"' unknown");	\
     }							\
-  else if (value<= __GateOnMessageLevelVariable) 
+  else if (value<= __GateOnMessageLevelVariable)
 
 //-----------------------------------------------------------
 #ifdef GATE_PREPEND_MESSAGE_WITH_CODE
 #define GateMessageCode(key, value)			\
-  "[" << key << "-" << value << "] " 
-#else 
+  "[" << key << "-" << value << "] "
+#else
 #define GateMessageCode(key, value) ""
-#endif 
+#endif
 
 //-----------------------------------------------------------
 #ifdef GATE_PREPEND_DEBUGMESSAGE_WITH_CODE
 #define GateDebugMessageCode(key, value)			\
-  "[Debug-" << key << "-" << value << "] " 
-#else 
+  "[Debug-" << key << "-" << value << "] "
+#else
 #define GateDebugMessageCode(key, value) ""
-#endif 
+#endif
 
 //-----------------------------------------------------------
 #ifdef GATE_PREPEND_MESSAGE_WITH_TAB
 #define GateMessageTab				\
   GateMessageManager::GetTab()
-#else 
+#else
 #define GateMessageTab ""
 #endif
 
@@ -160,10 +160,10 @@ See GATE/LICENSE.txt for further details
 #ifdef GATE_PREPEND_MESSAGE_WITH_SPACE
 #define GateMessageSpace(value)			\
   GateMessageManager::GetSpace(value)
-#else 
+#else
 #define GateMessageSpace(value) ""
 #endif
- 
+
 //-----------------------------------------------------------
 #ifdef GATE_COMPILE_MESSAGES
 
@@ -332,7 +332,7 @@ See GATE/LICENSE.txt for further details
 	}					\
     }						\
   while (0)
-    
+
 #define GateDebugResetTab()			\
   do						\
     {						\
@@ -341,10 +341,10 @@ See GATE/LICENSE.txt for further details
   while (0)
 
 #else
-#define GateDebugMessage(key,value,MESSAGE) 
-#define GateDebugMessageCont(key,value,MESSAGE) 
+#define GateDebugMessage(key,value,MESSAGE)
+#define GateDebugMessageCont(key,value,MESSAGE)
 #define GateDebugMessageInc(key,value,MESSAGE)
-#define GateDebugMessageDec(key,value,MESSAGE) 
+#define GateDebugMessageDec(key,value,MESSAGE)
 #define GateDebugDecTab(key,value)
 #define GateDebugIncTab(key,value)
 #endif
@@ -369,14 +369,14 @@ See GATE/LICENSE.txt for further details
 	    }								\
 	}								\
     }									\
-  while (0) 
+  while (0)
 
 #else
-#define GateWarning(MESSAGE) 
+#define GateWarning(MESSAGE)
 #endif
 //-----------------------------------------------------------
 
-// LG : TO DO : DEFINE GATE_GET_CURRENT_OBJECT_NAME correctly 
+// LG : TO DO : DEFINE GATE_GET_CURRENT_OBJECT_NAME correctly
 #define GATE_GET_CURRENT_OBJECT_NAME "Gate"
 
 //-----------------------------------------------------------
@@ -397,7 +397,7 @@ See GATE/LICENSE.txt for further details
       G4Exception(str_f,str_s,			\
 		  FatalException," ");		\
     }						\
-  while (0) 
+  while (0)
 
 //-----------------------------------------------------------
 // Macro for errors occuring at global scope (or in static methods)
@@ -413,7 +413,7 @@ See GATE/LICENSE.txt for further details
       G4Exception(str_f,str_s,			\
 		  FatalException," ");		\
     }						\
-  while (0) 
+  while (0)
 
 #else
 #define GateError(MESSAGE)
@@ -426,6 +426,7 @@ See GATE/LICENSE.txt for further details
 
 //-----------------------------------------------------------
 #define DD(a) GateMessage("Core", 0 , #a " = [ " << a << " ]" << Gateendl);
+#define DDV(a,n) { GateMessage("Core", 0 , #a " = [ "; for(unsigned int _i_=0; _i_<n; _i_++) { std::cout << a[_i_] << " "; }; std::cout << " ]" << Gateendl);}
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
@@ -440,7 +441,7 @@ public:
   ~GateMessageManager(){}
 
   static GateMessageManager* GetInstance();
-  static void RegisterMessageType(std::string key, 
+  static void RegisterMessageType(std::string key,
 				  std::string help,
 				  unsigned char default_level = 9);
   static void SetMessageLevel(std::string key, unsigned char level);
@@ -451,9 +452,9 @@ public:
   static void DecTab() { GetTab() = GetTab().substr(0,GetTab().length()-3); }
   static void ResetTab() { GetTab() = std::string(""); }
   static void PrintInfo();
-    
+
   // the two follwing are overrided from G4UIsession to intercept
-  // all G4cout. In the main : 
+  // all G4cout. In the main :
   // G4UImanager::GetUIpointer()->SetCoutDestination(new GateMessageManager);
   #ifdef Geant496_COMPATIBILITY
     virtual G4int ReceiveG4cout(const G4String& s);
@@ -461,14 +462,14 @@ public:
   #else
     virtual G4int ReceiveG4cout(G4String s);
     virtual G4int ReceiveG4cerr(G4String s);
-  #endif  
+  #endif
 
   void EnableG4Messages(bool b);
-      
+
 protected:
   GateMessageMessenger *pMessenger;
   std::map<std::string,int> mMessageLevel;
-  std::map<std::string,std::string> mMessageHelp;  
+  std::map<std::string,std::string> mMessageHelp;
   unsigned int mMaxMessageLength;
   int mAllLevel;
   int mEnableG4Message;

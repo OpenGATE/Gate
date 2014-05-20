@@ -14,7 +14,7 @@
 #include "GateConfiguration.h"
 #include "GateVActor.hh"
 #include "GatePromptGammaStatisticActorMessenger.hh"
-#include "GatePromptGammaEnergySpectrumData.hh"
+#include "GatePromptGammaData.hh"
 #include <TFile.h>
 #include <TH1.h>
 #include <TH2.h>
@@ -43,7 +43,7 @@ protected:
   GatePromptGammaStatisticActor(G4String name, G4int depth=0);
   GatePromptGammaStatisticActorMessenger * pMessenger;
 
-  GatePromptGammaEnergySpectrumData data;
+  GatePromptGammaData data;
 };
 //-----------------------------------------------------------------------------
 
