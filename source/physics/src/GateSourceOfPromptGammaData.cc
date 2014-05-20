@@ -61,11 +61,10 @@ void GateSourceOfPromptGammaData::Initialize()
   }
 
   // Build the scalar image with total number of counts at each pixel
-  std::vector<double> temp;
-  mImage->ComputeTotalOfCountsImageData(temp);
+  mImage->ComputeTotalOfCountsImageData(mDataCounts);
 
   // Initialize random generator for position. Loop over the total
-  // count scalar image (temp)
+  // count scalar image (mDataCounts)
   mPositionXGen.SetXBias(G4ThreeVector(0., 0., 0.)); // important
   for(unsigned int i=0; i<sizeX; i++) {
     double sumYZ = 0.0;
@@ -74,7 +73,7 @@ void GateSourceOfPromptGammaData::Initialize()
       double sumZ = 0.0;
       mPositionZGen[i][j].SetZBias(G4ThreeVector(0., 0., 0.)); // important
       for(unsigned int k=0; k<sizeZ; k++) {
-        double val = temp[mImage->GetIndexFromPixelIndex(i, j, k)];
+        double val = mDataCounts[mImage->GetIndexFromPixelIndex(i, j, k)];
         sumZ += val;
         // Bias the Z component according to the voxel value
         mPositionZGen[i][j].SetZBias(G4ThreeVector(k+1 ,val,0.));
@@ -88,7 +87,11 @@ void GateSourceOfPromptGammaData::Initialize()
   }
 
   // Initialize energy.
+  DD("ene");
+  DD(nbOfValues);
+  /*
   mEnergyGen.resize(nbOfValues);
+  DD(nbOfValues);
   G4SPSRandomGenerator * biasRndm = new G4SPSRandomGenerator;
   for(unsigned int l=0; l<nbOfValues; l++) {
     mEnergyGen[l].SetEnergyDisType("User");
@@ -100,6 +103,7 @@ void GateSourceOfPromptGammaData::Initialize()
   long index_data = 0;
   double * data = mImage->GetDataDoublePointer();
   for(unsigned int k=0; k<sizeZ; k++) {
+    DD(k);
     for(unsigned int j=0; j<sizeY; j++) {
       for(unsigned int i=0; i<sizeX; i++) {
         energy = mImage->GetMinValue();
@@ -114,9 +118,46 @@ void GateSourceOfPromptGammaData::Initialize()
         index_image++;
       }
     }
+    }*/
+  mEnergyGen.resize(nbOfValues);
+  // DD("resized");
+  double energyStep  = (mImage->GetMaxValue()-mImage->GetMinValue())/nbOfBins;
+  double energy = 0.0;
+  long index_image = 0;
+  long index_data = 0;
+  double * data = mImage->GetDataDoublePointer();
+  DD("loop");
+  long nbNonZero = 0;
+  // We only create TH1D for non zero pixel.
+  for(unsigned int k=0; k<sizeZ; k++) {
+    for(unsigned int j=0; j<sizeY; j++) {
+      for(unsigned int i=0; i<sizeX; i++) {
+        if (mDataCounts[index_image] == 0) { // FIXME
+          index_data+=nbOfBins;
+        }
+        else {
+          energy = mImage->GetMinValue();
+          mEnergyGen[index_image] = new TH1D;
+          // This is much much faster to use the constructor without
+          // param, the SetBins than using the following line with constructor :
+          // new TH1D("", "", nbOfBins, mImage->GetMinValue(), mImage->GetMaxValue());
+          TH1D * h = mEnergyGen[index_image];
+          h->SetBins(nbOfBins, mImage->GetMinValue(), mImage->GetMaxValue());
+          for(unsigned int l=0; l<nbOfBins; l++) {
+            h->Fill(energy, data[index_data]);
+            index_data++;
+            energy += energyStep;
+          }
+          nbNonZero++;
+        }
+        index_image++;
+      }
+    }
   }
+  DD(nbNonZero);
 
   // Initialize direction sampling
+  G4SPSRandomGenerator * biasRndm = new G4SPSRandomGenerator;
   mAngleGen.SetBiasRndm(biasRndm);
   mAngleGen.SetPosDistribution(new G4SPSPosDistribution); // needed
   mAngleGen.SetAngDistType("iso");
@@ -164,7 +205,15 @@ void GateSourceOfPromptGammaData::SampleRandomEnergy(double & energy)
 {
   // Get energy spectrum in the current pixel
   long index = mImage->GetIndexFromPixelIndex(mCurrentIndex_i, mCurrentIndex_j, mCurrentIndex_k);
-  energy = mEnergyGen[index].GenerateOne(G4Gamma::Gamma());
+  //  DD(index);
+  //energy = mEnergyGen[index].GenerateOne(G4Gamma::Gamma());
+  if (mDataCounts[index] != 0) {
+    // DD(mEnergyGen[index]->GetSumOfWeights());
+    // DD(mDataCounts[index]);
+    energy = mEnergyGen[index]->GetRandom();
+  }
+  else energy = 0.0;
+  //  DD(energy/MeV);
 }
 //------------------------------------------------------------------------
 

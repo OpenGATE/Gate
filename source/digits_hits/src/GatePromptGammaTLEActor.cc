@@ -17,12 +17,12 @@
 #include <G4VProcess.hh>
 
 //-----------------------------------------------------------------------------
-GatePromptGammaTLEActor::GatePromptGammaTLEActor(G4String name,
-                                                                     G4int depth):
+GatePromptGammaTLEActor::GatePromptGammaTLEActor(G4String name, G4int depth):
   GateVImageActor(name,depth)
 {
   mInputDataFilename = "noFilenameGiven";
   pMessenger = new GatePromptGammaTLEActorMessenger(this);
+  SetStepHitType("random");
 }
 //-----------------------------------------------------------------------------
 
@@ -30,7 +30,6 @@ GatePromptGammaTLEActor::GatePromptGammaTLEActor(G4String name,
 //-----------------------------------------------------------------------------
 GatePromptGammaTLEActor::~GatePromptGammaTLEActor()
 {
-  DD("GatePromptGammaTLEActor:: destructor");
   delete pMessenger;
 }
 //-----------------------------------------------------------------------------
@@ -47,7 +46,6 @@ void GatePromptGammaTLEActor::SetInputDataFilename(std::string filename)
 //-----------------------------------------------------------------------------
 void GatePromptGammaTLEActor::Construct()
 {
-  DD("GPGPTLE::Construct");
   GateVImageActor::Construct();
 
   // Enable callbacks
@@ -59,27 +57,20 @@ void GatePromptGammaTLEActor::Construct()
 
   // Input data
   data.Read(mInputDataFilename);
-  DD(data.GetHEp()->GetEntries()); // FIXME
 
   // Set image parameters and allocate (only mImageGamma not mImage)
-  DD(mResolution);
-  DD(mHalfSize);
-  DD(mPosition);
-  DD(mOrigin);
-  DD(mImage.GetTransformMatrix());
-  DD(mOverWriteFilesFlag);
   mImageGamma.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mImageGamma.SetOrigin(mOrigin);
   mImageGamma.SetTransformMatrix(mImage.GetTransformMatrix());
-  DD(mImageGamma.GetNumberOfValues());
   mImageGamma.SetHistoInfo(data.GetGammaNbBins(), data.GetGammaEMin(), data.GetGammaEMax());
   mImageGamma.Allocate();
   mImageGamma.PrintInfo();
 
-  // Force hit type
-  DD(mStepHitType);
-  //  SetStepHitType("pre");
-  DD(mStepHitType);
+  // Force hit type to random
+  if (mStepHitType != RandomStepHitType) {
+    GateWarning("Actor '" << GetName() << "' : stepHitType forced to 'random'" << std::endl);
+  }
+  SetStepHitType("random");
 
   // Set to zero
   ResetData();
@@ -90,7 +81,6 @@ void GatePromptGammaTLEActor::Construct()
 //-----------------------------------------------------------------------------
 void GatePromptGammaTLEActor::ResetData()
 {
-  DD("GPGPTLE::ResetData");
   mImageGamma.Reset();
 }
 //-----------------------------------------------------------------------------
@@ -101,7 +91,6 @@ void GatePromptGammaTLEActor::SaveData()
 {
   DD("GPGPTLE::SaveData");
   GateVImageActor::SaveData();
-  DD(mOverWriteFilesFlag);
   DD(mSaveFilename);
   mImageGamma.Write(mSaveFilename);
 }
@@ -109,17 +98,17 @@ void GatePromptGammaTLEActor::SaveData()
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaTLEActor::UserPostTrackActionInVoxel(const int index, const G4Track* t)
+void GatePromptGammaTLEActor::UserPostTrackActionInVoxel(const int, const G4Track*)
 {
-  //  GateVImageActor::UserPostTrackActionInVoxel(index, t);
+  // Nothing (but must be implemented because virtual)
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaTLEActor::UserPreTrackActionInVoxel(const int index, const G4Track* t)
+void GatePromptGammaTLEActor::UserPreTrackActionInVoxel(const int, const G4Track*)
 {
-  //GateVImageActor::UserPreTrackActionInVoxel(index, t);
+  // Nothing (but must be implemented because virtual)
 }
 //-----------------------------------------------------------------------------
 
@@ -149,15 +138,5 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   TH1D * h = data.GetGammaEnergySpectrum(particle_energy);
   h->Scale(distance);
   mImageGamma.AddValue(index, h);
-
-  /*
-  DD("---------------------");
-  DD(index);
-  DD(materialName);
-  DD(particle_energy/MeV);
-  DD(step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
-  DD(distance);
-  DD(h->GetSumOfWeights());
-  */
 }
 //-----------------------------------------------------------------------------

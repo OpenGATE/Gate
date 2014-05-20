@@ -44,6 +44,7 @@ public:
 protected:
   // The 3D prompt gamma distribution
   GateImageOfHistograms * mImage;
+  std::vector<double> mDataCounts;
 
   // Current pixel index for position in 3D space
   int mCurrentIndex_i;
@@ -57,7 +58,8 @@ protected:
 
   // The angular, position and energy generator
   G4SPSAngDistribution mAngleGen;
-  std::vector<G4SPSEneDistribution> mEnergyGen;
+  //  std::vector<G4SPSEneDistribution> mEnergyGen;
+  std::vector<TH1D*> mEnergyGen;
   G4SPSRandomGenerator mPositionXGen;
   std::vector<G4SPSRandomGenerator> mPositionYGen;
   std::vector<std::vector<G4SPSRandomGenerator> > mPositionZGen;
