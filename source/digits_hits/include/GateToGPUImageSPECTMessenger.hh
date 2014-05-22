@@ -1,6 +1,4 @@
 /*----------------------
-
-   GATE - Geant4 Application for Tomographic Emission
    OpenGATE Collaboration
 
    This software is distributed under the terms

@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v...
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms

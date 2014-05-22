@@ -1,6 +1,4 @@
 /*----------------------
-  Writed by: Abdul Fattah MOHAMAD HADI
-  Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr
   03/2012
   ----------------------*/
 

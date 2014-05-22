@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -53,6 +51,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   mIsFistStep = true;
   mUseVolFrame=false;
   mStoreOutPart=false;
+  SetIsAllStep(false);
 
   bEnableCoordFrame=false;
   bEnablePrimaryEnergy=false;
