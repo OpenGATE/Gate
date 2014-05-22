@@ -1,6 +1,4 @@
 #include "GateRTVPhantom.hh"      
-#include "GateMaterialDatabase.hh"
-#include <cstdlib>
 #include <cstdio>
 #include <cmath>
 

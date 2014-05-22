@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -180,6 +178,9 @@ void GatePhysicsList::ConstructProcess()
   //   return;
   // }
 
+  GateMessage("Physic", 0, "WARNING: manual physic lists are being deprecated.\n"
+              << "Please, use physic list builder mechanism instead. Related documentation can be found at:\n"
+              << "http://wiki.opengatecollaboration.org/index.php/Users_Guide_V7.0:Setting_up_the_physics" << G4endl);
   if(mLoadState==0)
     {
       // AddTransportation(); // not set here. Set only if no physics list builder is used

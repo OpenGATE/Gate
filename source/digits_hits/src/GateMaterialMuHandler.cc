@@ -1,6 +1,4 @@
 #ifndef GATEMATERIALMUHANDLER_CC
-#define GATEMATERIALMUHANDLER_CC
-
 #include "GateMaterialMuHandler.hh"
 #include "GateMuTables.hh"
 #include "GateMiscFunctions.hh"
