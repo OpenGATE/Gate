@@ -60,16 +60,15 @@ class GateVolumePlacementMessenger: public GateObjectRepeaterMessenger
   private:
     //! \name command objects
     //@{
-    G4UIcmdWith3VectorAndUnit*  TranslationCmd;               //!< Command to set the translation vector
-    G4UIcmdWithADoubleAndUnit*  RotationAngleCmd;             //!< Command to set the rotation angle
-    G4UIcmdWith3Vector*         RotationAxisCmd;              //!< Command to set the rotation axis
-    G4UIcmdWithoutParameter*    AlignToXCmd;                  //!< Command to align the object with the X axis
-    G4UIcmdWithoutParameter*    AlignToYCmd;                  //!< Command to align the object with the Y axis
-    G4UIcmdWithoutParameter*    AlignToZCmd;                  //!< Command to align the object with the Z axis
-    G4UIcmdWithADoubleAndUnit*  SetPhiCmd;                    //!< Command to set the phi of translation vector
-    G4UIcmdWithADoubleAndUnit*  SetThetaCmd;                  //!< Command to set the theta of translation vector
-    G4UIcmdWithADoubleAndUnit*  SetMagCmd;                    //!< Command to set the mag of translation vector
-    G4UIcmdWithAString*         SetInputGeometryFilenameCmd;  //!< Command to set the mag of translation vector
+    G4UIcmdWith3VectorAndUnit*  TranslationCmd;   //!< Command to set the translation vector
+    G4UIcmdWithADoubleAndUnit*  RotationAngleCmd; //!< Command to set the rotation angle
+    G4UIcmdWith3Vector*         RotationAxisCmd;  //!< Command to set the rotation axis
+    G4UIcmdWithoutParameter*    AlignToXCmd;  	  //!< Command to align the object with the X axis
+    G4UIcmdWithoutParameter*    AlignToYCmd;  	  //!< Command to align the object with the Y axis
+    G4UIcmdWithoutParameter*    AlignToZCmd;  	  //!< Command to align the object with the Z axis
+    G4UIcmdWithADoubleAndUnit*  SetPhiCmd;    	  //!< Command to set the phi of translation vector
+    G4UIcmdWithADoubleAndUnit*  SetThetaCmd;      //!< Command to set the theta of translation vector
+    G4UIcmdWithADoubleAndUnit*  SetMagCmd;    	  //!< Command to set the mag of translation vector
     //@}
 
 };

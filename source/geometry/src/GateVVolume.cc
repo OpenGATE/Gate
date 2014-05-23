@@ -75,8 +75,7 @@ GateVVolume::GateVVolume(const G4String& itsName,
     pMotherLogicalVolume(0),
     m_creator(0),
     m_sensitiveDetector(0),
-    mParent(0),
-    m_runID(0)
+    mParent(0)
 {
 
   SetCreator(this);
@@ -330,59 +329,6 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
 
 	// Set the translation vector for this physical volume
 	pOwnPhys->SetTranslation(position);
-         
-    if(GetSolidName()==G4String("DetectorPlane_solid"))
-    {
-
- #ifdef GATE_USE_RTK
-      GateVolumePlacement * place = this->GetVolumePlacement();
-G4cout << " ##### D E T E C T O R ##### Geometry filename : " << place->GetInputGeometryFilename() << G4endl;
-      if(place->GetInputGeometryFilename() !="")
-      {
-        rtk::ThreeDCircularProjectionGeometryXMLFileReader::Pointer geometryReader;
-        geometryReader = rtk::ThreeDCircularProjectionGeometryXMLFileReader::New();
-        geometryReader->SetFilename(place->GetInputGeometryFilename());
-        geometryReader->GenerateOutputInformation();
-        rtk::ThreeDCircularProjectionGeometry * geo = geometryReader->GetOutputObject();
-G4cout << " ##### D E T E C T O R ##### Volume Name : " << GetSolidName() <<" placement info : " << position[0] << ", " << position[1] << ", " << position[2] << G4endl;
-
-        // Starting at -1 due to Gate initialization process
-        double sdd = geo->GetSourceToDetectorDistances()[m_runID-1];
-        double sid = geo->GetSourceToIsocenterDistances()[m_runID-1];
-G4cout << " ##### D E T E C T O R ##### runID : " << m_runID-1 << " with sdd : " << sdd << " and sid : " << sid << G4endl;
-        // Set Detector position
-        pOwnPhys->SetTranslation(G4ThreeVector(0,0,sid-sdd));
-
-
-//        // Set Rotation
-//        G4RotationMatrix rot;
-//        G4cout << "Rotation step 1 ..." << G4endl;
-//        rot.rotate(1.57,G4ThreeVector(0,1,0));
-//        G4RunManager::GetRunManager()->GeometryHasBeenModified();
-//        //rot.rotateAxes(G4ThreeVector(0,0,1),G4ThreeVector(0,1,0),G4ThreeVector(1,0,0));
-//        G4cout << "Rotation step 2 ..." << G4endl;
-//        G4ThreeVector axi = rot.getAxis();
-//        double delta = rot.getDelta();
-//        G4cout << "Rotation step 3 ..." << G4endl;
-//        G4cout << "Rotation matrix: \n [ " << axi[0] << " " << axi[1] << " " << axi[2] << " ]\n" << " with delta: " << delta << G4endl;
-
-//        //pOwnPhys->SetRotation(&rot); // NOT FOR GENERAL USE, perhaps that's the reason why is not working...keep trying!
-
-        m_runID++;
-      }
-      else // In case somebody compiles with RTK and does not use a geometry file
-        pOwnPhys->SetTranslation(position);
-#else // Not compiled with RTK
-  pOwnPhys->SetTranslation(position);
-#endif
-      G4ThreeVector current_pos = pOwnPhys->GetTranslation();
-G4cout << " ##### D E T E C T O R ##### Volume Name : " << GetSolidName() << " placement info after update : " << current_pos[0] << ", " << current_pos[1] << ", " << current_pos[2] << G4endl;
-    }
-    else
-    {
-      // Set the translation vector for this physical volume
-      pOwnPhys->SetTranslation(position);
-    }
 
 	// Set the rotation matrix for this physical volume
 	if (pOwnPhys->GetRotation())

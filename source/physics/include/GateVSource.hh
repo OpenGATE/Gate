@@ -115,9 +115,7 @@ public:
   void SetPosRot1(G4ThreeVector);
   void SetPosRot2(G4ThreeVector);
   void SetCentreCoords(G4ThreeVector);
-
-  void SetInputGeometryFilename( G4String s ) { mInputGeometryFilename = s; }
-  inline G4String GetInputGeometryFilename(){ return mInputGeometryFilename;}
+  
   //void AddTimeSlices(double time, int nParticles);
   //std::vector<double> GetTimePerSlice() {return mTimePerSlice;}
   //std::vector<int> GetNumberOfParticlesPerSlice() {return mNumberOfParticlesPerSlice;}
@@ -170,7 +168,6 @@ protected:
   G4int m_NbOfParticles;
   G4double m_intensity;
 
-  G4String mInputGeometryFilename;
 
   G4double mSourceTime;
   //std::vector<double> mTimePerSlice;

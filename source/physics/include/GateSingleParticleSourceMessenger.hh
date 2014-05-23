@@ -260,8 +260,6 @@ class GateSingleParticleSourceMessenger : public GateMessenger
   G4UIcmdWithAString         *ForbidCmd;
   G4UIcmdWithAString*         setImageCmd1;
 
-  G4UIcmdWithAString*         setInputGeometryFilenameCmd;
-
  private: // for ion shooting
   
   G4bool   fShootIon ; 

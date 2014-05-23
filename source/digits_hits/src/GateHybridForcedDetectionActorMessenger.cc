@@ -185,6 +185,11 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
   pSetRussianRouletteMinimumProbabilityCmd = new G4UIcmdWithADouble(bb,this);
   guidance = "Set minimum survival probability for the russian roulette images.";
   pSetRussianRouletteMinimumProbabilityCmd->SetGuidance(guidance);
+
+  bb = base+"/setInputRTKGeometryFilename";
+  pSetInputRTKGeometryFilenameCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set filename for using an RTK geometry file as input.";
+  pSetInputRTKGeometryFilenameCmd->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -221,6 +226,7 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetRussianRouletteSpacingCmd) pHybridActor->SetRussianRouletteSpacing (pSetRussianRouletteSpacingCmd->GetNewDoubleValue(param));
   if(command == pSetRussianRouletteMinimumCountInRegionCmd) pHybridActor->SetRussianRouletteMinimumProbability(pSetRussianRouletteMinimumCountInRegionCmd->GetNewIntValue(param));
   if(command == pSetRussianRouletteMinimumProbabilityCmd) pHybridActor->SetRussianRouletteMinimumProbability(pSetRussianRouletteMinimumProbabilityCmd->GetNewDoubleValue(param));
+  if(command == pSetInputRTKGeometryFilenameCmd) pHybridActor->SetInputRTKGeometryFilename(param);
 
   GateActorMessenger::SetNewValue(command ,param );
 }

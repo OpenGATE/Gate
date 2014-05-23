@@ -27,13 +27,6 @@
 #include <vector>
 #include <map>
 
-#ifdef GATE_USE_RTK
-# include "rtkThreeDCircularProjectionGeometry.h"
-# include "rtkThreeDCircularProjectionGeometryXMLFile.h"
-#endif
-
-#include <GateRunManager.hh>
-
 class GateVActor;
 class G4Material;
 class G4VSensitiveDetector;
@@ -315,8 +308,6 @@ private :
   GateVolumeMessenger* pMessenger;
 
   GateVVolume * mParent;
-
-  G4int m_runID;
 };
 //-------------------------------------------------------------------------------------------------
 

@@ -72,11 +72,6 @@ GateVolumePlacementMessenger::GateVolumePlacementMessenger(GateVolumePlacement* 
     SetMagCmd->SetParameterName("mag",false);
     SetMagCmd->SetUnitCategory("Length");
 
-    cmdName = GetDirectoryName()+"setInputGeometryFilename";
-    SetInputGeometryFilenameCmd = new G4UIcmdWithAString(cmdName,this);
-    SetInputGeometryFilenameCmd->SetGuidance("Set the file name for the RTK input geometry filename.");
-
-
 }
 //--------------------------------------------------------------------
 
@@ -92,7 +87,6 @@ GateVolumePlacementMessenger::~GateVolumePlacementMessenger()
     delete SetPhiCmd;
     delete SetThetaCmd;
     delete SetMagCmd;
-    delete SetInputGeometryFilenameCmd;
 }
 //--------------------------------------------------------------------
 
@@ -125,12 +119,8 @@ void GateVolumePlacementMessenger::SetNewValue(G4UIcommand* command,G4String new
   else if( command==SetThetaCmd )
     { GetVolumePlacement()->SetTheta(SetThetaCmd->GetNewDoubleValue(newValue)); /*TellGeometryToUpdate();*/}   
   
-  else if( command==SetMagCmd )
-    { GetVolumePlacement()->SetMag(SetMagCmd->GetNewDoubleValue(newValue)); /*TellGeometryToUpdate();*/}
-
-  else if( command==SetInputGeometryFilenameCmd )
-   { GetVolumePlacement()->SetInputGeometryFilename(newValue); /*TellGeometryToUpdate();*/}
-  //if(command == pSetInputGeometryFilenameCmd) pHybridActor->SetInputGeometryFilename(param);
+   else if( command==SetMagCmd )
+    { GetVolumePlacement()->SetMag(SetMagCmd->GetNewDoubleValue(newValue)); /*TellGeometryToUpdate();*/}   
   
  else 
     GateObjectRepeaterMessenger::SetNewValue(command,newValue);
