@@ -23,6 +23,7 @@ GatePromptGammaTLEActor::GatePromptGammaTLEActor(G4String name, G4int depth):
   mInputDataFilename = "noFilenameGiven";
   pMessenger = new GatePromptGammaTLEActorMessenger(this);
   SetStepHitType("random");
+  mImageGamma = new GateImageOfHistograms("double");
 }
 //-----------------------------------------------------------------------------
 
@@ -59,12 +60,12 @@ void GatePromptGammaTLEActor::Construct()
   data.Read(mInputDataFilename);
 
   // Set image parameters and allocate (only mImageGamma not mImage)
-  mImageGamma.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-  mImageGamma.SetOrigin(mOrigin);
-  mImageGamma.SetTransformMatrix(mImage.GetTransformMatrix());
-  mImageGamma.SetHistoInfo(data.GetGammaNbBins(), data.GetGammaEMin(), data.GetGammaEMax());
-  mImageGamma.Allocate();
-  mImageGamma.PrintInfo();
+  mImageGamma->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+  mImageGamma->SetOrigin(mOrigin);
+  mImageGamma->SetTransformMatrix(mImage.GetTransformMatrix());
+  mImageGamma->SetHistoInfo(data.GetGammaNbBins(), data.GetGammaEMin(), data.GetGammaEMax());
+  mImageGamma->Allocate();
+  mImageGamma->PrintInfo();
 
   // Force hit type to random
   if (mStepHitType != RandomStepHitType) {
@@ -81,7 +82,7 @@ void GatePromptGammaTLEActor::Construct()
 //-----------------------------------------------------------------------------
 void GatePromptGammaTLEActor::ResetData()
 {
-  mImageGamma.Reset();
+  mImageGamma->Reset();
 }
 //-----------------------------------------------------------------------------
 
@@ -89,10 +90,9 @@ void GatePromptGammaTLEActor::ResetData()
 //-----------------------------------------------------------------------------
 void GatePromptGammaTLEActor::SaveData()
 {
-  DD("GPGPTLE::SaveData");
   GateVImageActor::SaveData();
   DD(mSaveFilename);
-  mImageGamma.Write(mSaveFilename);
+  mImageGamma->Write(mSaveFilename);
 }
 //-----------------------------------------------------------------------------
 
@@ -137,6 +137,6 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // Get value from histogram
   TH1D * h = data.GetGammaEnergySpectrum(particle_energy);
   h->Scale(distance);
-  mImageGamma.AddValue(index, h);
+  mImageGamma->AddValueDouble(index, h);
 }
 //-----------------------------------------------------------------------------

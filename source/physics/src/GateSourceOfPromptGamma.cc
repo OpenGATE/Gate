@@ -19,13 +19,11 @@
 GateSourceOfPromptGamma::GateSourceOfPromptGamma(G4String name)
   :GateVSource( name )
 {
-  DD("GSPGE::constructor");
   pMessenger = new GateSourceOfPromptGammaMessenger(this);
-  // Create distribution object (will be initialized later)
+  // Create data object (will be initialized later)
   mData = new GateSourceOfPromptGammaData;
   mIsInitializedFlag = false;
   mFilename = "no filename given";
-  gamma = 0;
 }
 //------------------------------------------------------------------------
 
@@ -67,17 +65,10 @@ void GateSourceOfPromptGamma::Initialize()
   // Compute cmulative marginals information
   mData->Initialize();
 
-  // // Particle type (photon)
-  // DD("Particle definition");
-  // G4ParticleTable * particleTable = G4ParticleTable::GetParticleTable();
-  // SetParticleDefinition(particleTable->FindParticle("Gamma"));
-  // DD("here");
-  // if (GetParticleDefinition() == 0) {
-  //   GateError("Could not find Gamma definition" << G4endl);
-  // }
+  // Particle type is photon. Could not be initialize here.
 
-
-  //particle_weight = 1.0; // FIXME ???
+  // Weight is fixed for the moment (could change in the future)
+  //particle_weight = 1.0; // could not be initialized here
 
   // It is initialized
   mIsInitializedFlag = true;
@@ -88,59 +79,43 @@ void GateSourceOfPromptGamma::Initialize()
 //------------------------------------------------------------------------
 void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
 {
-  // DD("GSPGE::GenerateVertex");
-
-  // Initialisation of the distribution information
+  // Initialisation of the distribution information (only once)
   if (!mIsInitializedFlag) Initialize();
 
   // Position
-  // DD("Particle position");
   G4ThreeVector particle_position;
   mData->SampleRandomPosition(particle_position);
-  // DD(particle_position);
 
-  // The position coordinate is expressed in image coordinate
-  // system which was in world CS. FIXME documentation
-  // DD(mCentreCoords);
-  // particle_position.setX(particle_position.x()-mCentreCoords.x());
-  // particle_position.setY(particle_position.y()-mCentreCoords.y());
-  // particle_position.setZ(particle_position.z()-mCentreCoords.z());
-  // DD(particle_position);
+  // The position coordinate is expressed in the coordinate system
+  // (CS) of the volume it was attached to during the TLEActor
+  // simulation. Now we convert the coordinates into world
+  // coordinates.
+  ChangeParticlePositionRelativeToAttachedVolume(particle_position);
 
   // Energy
-  // DD("Particle Energy");
-  double particle_energy;
-  mData->SampleRandomEnergy(particle_energy);
-  // DD(particle_energy);
-  //  std::cout << G4BestUnit("Energy", particle_energy) << std::endl;
+  mData->SampleRandomEnergy(mEnergy);
 
   // Direction
-  // DD("Particle momentum direction");
   G4ParticleMomentum particle_direction;
   mData->SampleRandomDirection(particle_direction);
-  // DD(particle_direction);
+  ChangeParticleMomentumRelativeToAttachedVolume(particle_direction);
 
   // Momentum
-  // DD("Particle momentum");
   double mass = GetParticleDefinition()->GetPDGMass();
-  // DD(mass);
-  double pmom = std::sqrt(particle_energy*particle_energy-mass*mass);
-  // DD(pmom);
+  double pmom = std::sqrt(mEnergy*mEnergy-mass*mass);
   double d = std::sqrt(pow(particle_direction[0],2) +
                        pow(particle_direction[1],2) +
                        pow(particle_direction[2],2));
-  // DD(d);
   double px = pmom * particle_direction[0]/d;
   double py = pmom * particle_direction[1]/d;
   double pz = pmom * particle_direction[2]/d;
-  // DD(px); DD(py); DD(pz);
 
   // Create vertex
   G4PrimaryParticle* particle =
     new G4PrimaryParticle(G4Gamma::Gamma(), px, py, pz);
   G4PrimaryVertex* vertex;
   vertex = new G4PrimaryVertex(particle_position, GetParticleTime());
-  //  vertex->SetWeight(particle_weight); // FIXME
+  vertex->SetWeight(1.0); // FIXME
   vertex->SetPrimary(particle);
   aEvent->AddPrimaryVertex(vertex);
 }
@@ -150,9 +125,16 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
 //------------------------------------------------------------------------
 G4int GateSourceOfPromptGamma::GeneratePrimaries(G4Event* event)
 {
-  GateMessage("Beam", 4, "GeneratePrimaries " << event->GetEventID() << G4endl);
-  // DD("GSPGE::GeneratePrimaries");
   GenerateVertex(event);
+  G4PrimaryParticle  * p = event->GetPrimaryVertex(0)->GetPrimary(0);
+  GateMessage("Beam", 3, "(" << event->GetEventID() << ") " << p->GetG4code()->GetParticleName()
+              << " pos=" << event->GetPrimaryVertex(0)->GetPosition()
+              << " weight=" << p->GetWeight()
+              << " energy=" << G4BestUnit(mEnergy, "Energy")
+              << " mom=" << p->GetMomentum()
+              << " ptime=" <<  G4BestUnit(p->GetProperTime(), "Time")
+              << " atime=" <<  G4BestUnit(GetTime(), "Time")
+              << ")" << G4endl);
   return 1; // a single vertex
 }
 //------------------------------------------------------------------------

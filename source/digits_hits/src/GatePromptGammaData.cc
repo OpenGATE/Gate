@@ -192,15 +192,6 @@ void GatePromptGammaData::Initialize(std::string & filename)
 //-----------------------------------------------------------------------------
 
 
-// //-----------------------------------------------------------------------------
-// int GatePromptGammaData::ComputeProtonEnergyBinIndex(const double & energy)
-// {
-//   int temp = pHEp->FindFixBin(energy);
-//   return temp;
-// }
-// //-----------------------------------------------------------------------------
-
-
 //-----------------------------------------------------------------------------
 TH1D * GatePromptGammaData::GetGammaEnergySpectrum(const double & energy)
 {

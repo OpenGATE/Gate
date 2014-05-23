@@ -37,7 +37,7 @@ GateSourceOfPromptGammaData::~GateSourceOfPromptGammaData()
 void GateSourceOfPromptGammaData::LoadData(std::string mFilename)
 {
   DD("GateSourceOfPromptGammaData::LoadData");
-  mImage = new GateImageOfHistograms();
+  mImage = new GateImageOfHistograms("float");
   mImage->Read(mFilename);
 }
 //------------------------------------------------------------------------
@@ -61,7 +61,7 @@ void GateSourceOfPromptGammaData::Initialize()
   }
 
   // Build the scalar image with total number of counts at each pixel
-  mImage->ComputeTotalOfCountsImageData(mDataCounts);
+  mImage->ComputeTotalOfCountsImageDataFloat(mDataCounts);
 
   // Initialize random generator for position. Loop over the total
   // count scalar image (mDataCounts)
@@ -125,7 +125,8 @@ void GateSourceOfPromptGammaData::Initialize()
   double energy = 0.0;
   long index_image = 0;
   long index_data = 0;
-  double * data = mImage->GetDataDoublePointer();
+  //  double * data = mImage->GetDataDoublePointer();
+  float * data = mImage->GetDataFloatPointer();
   DD("loop");
   long nbNonZero = 0;
   // We only create TH1D for non zero pixel.
@@ -192,10 +193,6 @@ void GateSourceOfPromptGammaData::SampleRandomPosition(G4ThreeVector & position)
   position.setX(x);
   position.setY(y);
   position.setZ(z);
-
-  // Rotation and translation FIXME
-  // DD("TODO FIXME position Rotation translation");
-  // ChangeParticleMomentumRelativeToAttachedVolume ??
 }
 //------------------------------------------------------------------------
 

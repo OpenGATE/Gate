@@ -44,7 +44,7 @@ protected:
   GatePromptGammaTLEActorMessenger * pMessenger;
 
   std::string mInputDataFilename;
-  GateImageOfHistograms mImageGamma;
+  GateImageOfHistograms * mImageGamma;
   GatePromptGammaData data;
 };
 //-----------------------------------------------------------------------------

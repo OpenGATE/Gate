@@ -21,9 +21,10 @@
 
 
 //-----------------------------------------------------------------------------
-GateImageOfHistograms::GateImageOfHistograms():GateImage()
+GateImageOfHistograms::GateImageOfHistograms(std::string dataTypeName):GateImage()
 {
   SetHistoInfo(0,0,0);
+  mDataTypeName = dataTypeName;
 }
 //-----------------------------------------------------------------------------
 
@@ -49,7 +50,10 @@ void GateImageOfHistograms::SetHistoInfo(int n, double min, double max)
 void GateImageOfHistograms::Allocate()
 {
   // Allocate full vecteur
-  dataDouble.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
+  if (mDataTypeName == "double")
+    dataDouble.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
+  else
+    dataFloat.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
 
   // FIXME : Spare
   //  display memory size
@@ -109,8 +113,10 @@ void GateImageOfHistograms::Reset()
     ++iter;
     }
   */
-
-  fill(dataDouble.begin(), dataDouble.end(), 0.0);
+  if (mDataTypeName == "double")
+    fill(dataDouble.begin(), dataDouble.end(), 0.0);
+  else
+    fill(dataFloat.begin(), dataFloat.end(), 0.0);
 }
 //-----------------------------------------------------------------------------
 
@@ -124,7 +130,77 @@ long GateImageOfHistograms::GetIndexFromPixelIndex(int i, int j, int k)
 
 
 //-----------------------------------------------------------------------------
-void GateImageOfHistograms::AddValue(const int & index, TH1D * h)
+void GateImageOfHistograms::ComputeTotalOfCountsImageDataFloat(std::vector<float> & output)
+{
+  output.resize(nbOfValues);
+  std::fill(output.begin(), output.end(), 0.0);
+  unsigned long index_image = 0;
+  unsigned long index_data = 0;
+  for(unsigned int k=0; k<sizeZ; k++) {
+    for(unsigned int j=0; j<sizeY; j++) {
+      for(unsigned int i=0; i<sizeX; i++) {
+        for(unsigned int l=0; l<nbOfBins; l++) {
+          output[index_image] += dataFloat[index_data];
+          index_data++;
+        }
+        index_image++;
+      }
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateImageOfHistograms::ComputeTotalOfCountsImageDataDouble(std::vector<double> & output)
+{
+  output.resize(nbOfValues);
+  std::fill(output.begin(), output.end(), 0.0);
+  unsigned long index_image = 0;
+  unsigned long index_data = 0;
+  for(unsigned int k=0; k<sizeZ; k++) {
+    for(unsigned int j=0; j<sizeY; j++) {
+      for(unsigned int i=0; i<sizeX; i++) {
+        for(unsigned int l=0; l<nbOfBins; l++) {
+          output[index_image] += dataDouble[index_data];
+          index_data++;
+        }
+        index_image++;
+      }
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateImageOfHistograms::AddValueFloat(const int & index, TH1D * h)
+{
+  /* FIXME DEBUG
+  // On the fly allocation
+  if (!mHistoData[index]) {
+  // DD(index);
+  mHistoData[index] = new TH1D("","", nbOfBins, minValue, maxValue);
+  }
+  // The overhead of a TH1 is about 600 bytes + the bin contents,
+  mHistoData[index]->Add(h);
+  //DD(mHistoData[index]->GetEntries());
+  */
+
+  int index_data = index*nbOfBins;
+  for(unsigned int i=1; i<=nbOfBins; i++) {
+    dataFloat[index_data] += h->GetBinContent(i); // +1 because TH1D start at 1, and end at index=size
+    index_data++;
+  }
+
+  // TOTAL H FIXME ; debug
+  mTotalEnergySpectrum->Add(h);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateImageOfHistograms::AddValueDouble(const int & index, TH1D * h)
 {
   /* FIXME DEBUG
   // On the fly allocation
@@ -203,14 +279,25 @@ void GateImageOfHistograms::Read(G4String filename)
 
   // Set data in the correct order
   int len = resolution[0] * resolution[1] * resolution[2] * nbOfBins;
-  std::vector<double> input;
-  input.assign((double*)(m_MetaImage.ElementData()), (double*)(m_MetaImage.ElementData()) + len);
-  ConvertPixelOrderToHXYZ(input, dataDouble);
+  std::vector<float> input;
+  input.assign((float*)(m_MetaImage.ElementData()), (float*)(m_MetaImage.ElementData()) + len);
+  DD("before convert order");
+  ConvertPixelOrderToHXYZ(input, dataFloat);
+  DD("after convert order");
 
-  // Now the initial input can be deleted, only the dataDouble data
+  // Now the initial input can be deleted, only the dataDouble/dataFloat data
   // are kept.
   m_MetaImage.Clear();
   input.clear();
+
+  // Convert to double is needed
+  if (mDataTypeName == "double") {
+    DD("Convert input data from float to double");
+    dataDouble.resize(dataFloat.size());
+    for(unsigned int i=0; i<dataDouble.size(); i++)
+      dataDouble[i] = (double)dataFloat[i]; // convert float to double
+    dataFloat.clear();
+  }
 
   // FIXME
   void * r = 0;
@@ -225,75 +312,6 @@ void GateImageOfHistograms::Read(G4String filename)
   }
   maxValue = *static_cast<float*>(r);
   SetHistoInfo(nbOfBins, minValue, maxValue);
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void GateImageOfHistograms::ConvertPixelOrderToXYZH(std::vector<double> & input,
-                                                    std::vector<double> & output)
-{
-  output.resize(nbOfValues*nbOfBins);
-  std::fill(output.begin(), output.end(), 0.0);
-  unsigned long index_image = 0;
-  unsigned long index_data = 0;
-  for(unsigned int l=0; l<nbOfBins; l++) {
-    index_data = l;
-    for(unsigned int k=0; k<sizeZ; k++) {
-      for(unsigned int j=0; j<sizeY; j++) {
-        for(unsigned int i=0; i<sizeX; i++) {
-          output[index_image] = input[index_data];
-          index_image++;
-          index_data +=nbOfBins;
-        }
-      }
-    }
-  }
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void GateImageOfHistograms::ConvertPixelOrderToHXYZ(std::vector<double> & input,
-                                                    std::vector<double> & output)
-{
-  output.resize(nbOfValues*nbOfBins);
-  std::fill(output.begin(), output.end(), 0.0);
-  unsigned long index_image = 0;
-  unsigned long index_data = 0;
-  for(unsigned int k=0; k<sizeZ; k++) {
-    for(unsigned int j=0; j<sizeY; j++) {
-      for(unsigned int i=0; i<sizeX; i++) {
-        for(unsigned int l=0; l<nbOfBins; l++) {
-          output[index_data] = input[index_image+l*nbOfValues];
-          index_data++;
-        }
-        index_image++;
-      }
-    }
-  }
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void GateImageOfHistograms::ComputeTotalOfCountsImageData(std::vector<double> & output)
-{
-  output.resize(nbOfValues);
-  std::fill(output.begin(), output.end(), 0.0);
-  unsigned long index_image = 0;
-  unsigned long index_data = 0;
-  for(unsigned int k=0; k<sizeZ; k++) {
-    for(unsigned int j=0; j<sizeY; j++) {
-      for(unsigned int i=0; i<sizeX; i++) {
-        for(unsigned int l=0; l<nbOfBins; l++) {
-          output[index_image] += dataDouble[index_data];
-          index_data++;
-        }
-        index_image++;
-      }
-    }
-  }
 }
 //-----------------------------------------------------------------------------
 
@@ -322,7 +340,11 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & comment)
   spacing[1] = GetVoxelSize().x();
   spacing[2] = GetVoxelSize().x();
   spacing[3] = 1; // Dummy
-  MetaImage m_MetaImage(4, dimSize, spacing, MET_DOUBLE);
+
+  // Always write in float rather than double to preserve memory, but
+  // computation could be performed in double to prevent potential
+  // rounding error.
+  MetaImage m_MetaImage(4, dimSize, spacing, MET_FLOAT);
   m_MetaImage.AddUserField("HistoMinInMeV", MET_FLOAT_ARRAY, 1, &minValue);
   m_MetaImage.AddUserField("HistoMaxInMeV", MET_FLOAT_ARRAY, 1, &maxValue);
 
@@ -347,12 +369,28 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & comment)
   matrix[15] = 1.0;
   m_MetaImage.TransformMatrix(matrix);
 
+  /*
+    std::vector<double> t;
+    ConvertPixelOrderToXYZH(dataDouble, t);
+    m_MetaImage.ElementData(&(t.begin()[0]), false); // true = autofree
+  */
+
+  // Before writing convert from double to float
+  if (mDataTypeName == "double") {
+    DD("Convert double to float");
+    dataFloat.resize(dataDouble.size());
+    DD(dataDouble.size());
+    for(unsigned int i=0; i<dataDouble.size(); i++)
+      dataFloat[i] = (float)dataDouble[i]; // convert double to float
+    DD("done");
+  }
+
   // Change the order of the pixels : store on disk as XYZH.
-  std::vector<double> t;
-  ConvertPixelOrderToXYZH(dataDouble, t);
+  std::vector<float> t;
+  ConvertPixelOrderToXYZH(dataFloat, t);
   m_MetaImage.ElementData(&(t.begin()[0]), false); // true = autofree
   m_MetaImage.Write(headerName.c_str(), rawName.c_str());
-
+  DD("done");
 
   ///-----------------------------------------
   // Below Additional debug output : will be removed
@@ -360,8 +398,8 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & comment)
 
   // convert histo into scalar image
   //FIXME fct also used in read, so do a function
-  std::vector<double> temp;
-  ComputeTotalOfCountsImageData(temp);
+  std::vector<float> temp;
+  ComputeTotalOfCountsImageDataFloat(temp);
   headerName = baseName+"_sum.mhd";
   rawName    = baseName+"_sum.raw";
   MetaImage mm(3, dimSize, spacing, MET_DOUBLE);

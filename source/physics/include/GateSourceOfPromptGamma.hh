@@ -43,7 +43,7 @@ protected:
   bool mIsInitializedFlag;
   GateSourceOfPromptGammaData * mData;
   G4String mFilename;
-  G4ParticleDefinition * gamma;
+  double mEnergy; // because particle_energy is private (FIXME will be changed)
 
   void Initialize();
 }; // end class

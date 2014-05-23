@@ -42,31 +42,39 @@ class GateImageOfHistograms:public GateImage
 {
 public:
 
-  GateImageOfHistograms();
+  GateImageOfHistograms(std::string dataTypeName);
   ~GateImageOfHistograms();
 
   void SetHistoInfo(int n, double min, double max);
   virtual void Allocate();
   void Reset();
-  void AddValue(const int & index, TH1D * h);
+  void AddValueFloat(const int & index, TH1D * h);
+  void AddValueDouble(const int & index, TH1D * h);
   virtual void Write(G4String filename, const G4String & comment = "");
   virtual void Read(G4String filename);
   unsigned int GetNbOfBins() { return nbOfBins; }
   double GetMaxValue() { return maxValue; }
   double GetMinValue() { return minValue; }
   double * GetDataDoublePointer() { return &dataDouble[0]; }
+  float * GetDataFloatPointer() { return &dataFloat[0]; }
   long GetIndexFromPixelIndex(int i, int j, int k);
   virtual void UpdateSizesFromResolutionAndHalfSize();
   virtual void UpdateSizesFromResolutionAndVoxelSize();
 
   // Compute and image (data only) of the sum of histo by pixel (in order HXYZ)
-  void ComputeTotalOfCountsImageData(std::vector<double> & output);
+  void ComputeTotalOfCountsImageDataFloat(std::vector<float> & output);
+  void ComputeTotalOfCountsImageDataDouble(std::vector<double> & output);
 
 protected:
   double minValue;
   double maxValue;
   unsigned int nbOfBins;
+
+  // Data can be stored in double or float. Data always write/read in
+  // float.
+  std::string mDataTypeName;
   std::vector<double> dataDouble;
+  std::vector<float> dataFloat;
 
   // Store a copy of G4ThreeVector resolution in int for integer
   // computation of index
@@ -76,13 +84,19 @@ protected:
   long sizePlane;
 
   // Data pixel order
-  void ConvertPixelOrderToXYZH(std::vector<double> & input, std::vector<double> & output);
-  void ConvertPixelOrderToHXYZ(std::vector<double> & input, std::vector<double> & output);
+  template<class PT>
+  void ConvertPixelOrderToXYZH(std::vector<PT> & input, std::vector<PT> & output);
+  template<class PT>
+  void ConvertPixelOrderToHXYZ(std::vector<PT> & input, std::vector<PT> & output);
 
   // DEBUG
   std::vector<TH1D*> mHistoData; // FIXME : debug for sparse version
   TH1D * mTotalEnergySpectrum;
 };
 //-----------------------------------------------------------------------------
+
+
+// For templated functions
+#include "GateImageOfHistograms.icc"
 
 #endif // GATEIMAGEOFHISTOGRAMS

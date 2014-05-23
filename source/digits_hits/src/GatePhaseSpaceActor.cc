@@ -51,6 +51,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   mIsFistStep = true;
   mUseVolFrame=false;
   mStoreOutPart=false;
+  SetIsAllStep(false);
 
   mFileType = " ";
   mNevent = 0;

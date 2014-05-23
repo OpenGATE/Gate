@@ -44,7 +44,7 @@ public:
 protected:
   // The 3D prompt gamma distribution
   GateImageOfHistograms * mImage;
-  std::vector<double> mDataCounts;
+  std::vector<float> mDataCounts;
 
   // Current pixel index for position in 3D space
   int mCurrentIndex_i;
