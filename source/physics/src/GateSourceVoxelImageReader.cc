@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -19,6 +17,10 @@ See GATE/LICENSE.txt for further details
 //LF
 #include <fstream>
 //LF
+
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 GateSourceVoxelImageReader::GateSourceVoxelImageReader(GateVSource* source)
   : GateVSourceVoxelReader(source)
 {

@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -47,6 +45,9 @@
 
 #include "GateConfiguration.h"
 #include "GateMessageManager.hh"
+
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
 
 //   turn on general debugging info, and consistency checks
 //#define debug_G4BinaryCascade 1
@@ -203,7 +204,7 @@ G4HadFinalState * GateBinaryCascade::ApplyYourself(const G4HadProjectile & aTrac
     #ifdef Geant496_COMPATIBILITY
       the3DNucleus->Init(aNucleus.GetA_asInt(), aNucleus.GetZ_asInt());
     #else
-      the3DNucleus->Init(aNucleus.GetN(), aNucleus.GetZ());
+      the3DNucleus->Init(aNucleus.GetN_asInt(), aNucleus.GetZ_asInt()); 
     #endif
 
     thePropagator->Init(the3DNucleus);

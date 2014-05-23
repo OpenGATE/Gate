@@ -1,13 +1,10 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
   ----------------------*/
-
 
 /*
   \brief Class GateKermaActor :
@@ -55,6 +52,7 @@ GateKermaActor::~GateKermaActor()  {
   delete pMessenger;
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 /// Construct
@@ -111,17 +109,11 @@ void GateKermaActor::Construct() {
   offset = offset + mPosition;
   */
 
-  G4ThreeVector offset = mOrigin;
-  mEdepImage.SetOrigin(offset);
-  mDoseImage.SetOrigin(offset);
-  mNumberOfHitsImage.SetOrigin(offset);
-  mLastHitEventImage.SetOrigin(offset);
-  mDoseToWaterImage.SetOrigin(offset);
-
-  // Set Overwrite flag
-  mEdepImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
-  mDoseImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
-  mDoseToWaterImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
+  SetOriginTransformAndFlagToImage(mEdepImage);
+  SetOriginTransformAndFlagToImage(mDoseImage);
+  SetOriginTransformAndFlagToImage(mDoseToWaterImage);
+  SetOriginTransformAndFlagToImage(mNumberOfHitsImage);
+  SetOriginTransformAndFlagToImage(mLastHitEventImage);
 
   // Resize and allocate images
   if (mIsEdepSquaredImageEnabled || mIsEdepUncertaintyImageEnabled ||

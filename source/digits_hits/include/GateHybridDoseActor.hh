@@ -42,8 +42,14 @@ class GateHybridDoseActor : public GateVImageActor
   // Constructs the sensor
   virtual void Construct();
 
-  void EnableEdepImage(bool b) { mIsEdepImageEnabled = b; }
+  void EnableDoseImage(bool b) { mIsDoseImageEnabled = b; }
   void EnableDoseUncertaintyImage(bool b) { mIsDoseUncertaintyImageEnabled = b; }
+  void EnablePrimaryDoseImage(bool b) { mIsPrimaryDoseImageEnabled = b; }
+  void EnablePrimaryDoseUncertaintyImage(bool b) { mIsPrimaryDoseUncertaintyImageEnabled = b; }
+  void EnableSecondaryDoseImage(bool b) { mIsSecondaryDoseImageEnabled = b; }
+  void EnableSecondaryDoseUncertaintyImage(bool b) { mIsSecondaryDoseUncertaintyImageEnabled = b; }
+  void EnableHybridino(bool b) { mIsHybridinoEnabled = b; }
+
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
   
@@ -62,7 +68,8 @@ class GateHybridDoseActor : public GateVImageActor
   int GetSecondaryMultiplicity() { return mSecondaryMultiplicity; }
 
   void InitializeMaterialAndMuTable();
-  void RayCast(const G4Step* step);
+  bool IntersectionBox(G4ThreeVector, G4ThreeVector);
+  void RayCast(bool, double, double, G4ThreeVector, G4ThreeVector);
  /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
@@ -78,36 +85,57 @@ protected:
   GateHybridDoseActorMessenger *pMessenger;
   
   GateImageWithStatistic mDoseImage;
-  GateImageWithStatistic mPrimaryDoseImage;
-  GateImageWithStatistic mSecondaryDoseImage;
-  GateImageWithStatistic mEdepImage;
   GateImage mLastHitEventImage;
-
+  bool mIsLastHitEventImageEnabled;
+  bool mIsDoseImageEnabled;
+  bool mIsDoseUncertaintyImageEnabled;
+  
+  GateImageWithStatistic mPrimaryDoseImage;
+  GateImage mPrimaryLastHitEventImage;
+  bool mIsPrimaryLastHitEventImageEnabled;
+  bool mIsPrimaryDoseImageEnabled;
+  bool mIsPrimaryDoseUncertaintyImageEnabled;
+  
+  GateImageWithStatistic mSecondaryDoseImage;
+  GateImage mSecondaryLastHitEventImage;
+  bool mIsSecondaryLastHitEventImageEnabled;
+  bool mIsSecondaryDoseImageEnabled;
+  bool mIsSecondaryDoseUncertaintyImageEnabled;
+  
   GateMaterialMuHandler* mMaterialHandler;
   G4String mDoseFilename;
-  G4String mPDoseFilename;
-  G4String mSDoseFilename;
-  G4String mEdepFilename;
+  G4String mPrimaryDoseFilename;
+  G4String mSecondaryDoseFilename;
+
   G4double ConversionFactor;
   G4double VoxelVolume;
+  G4Material *mWorldMaterial;
   
   GateHybridMultiplicityActor *pHybridMultiplicityActor;
   int mPrimaryMultiplicity;
   int mSecondaryMultiplicity;
+  bool mIsHybridinoEnabled;
+  std::vector<RaycastingStruct> *mListOfRaycasting;
 
   bool mIsMaterialAndMuTableInitialized;
   std::vector<G4Material *> theListOfMaterial;
   std::vector<GateMuTable *> theListOfMuTable;
   
-  bool mIsEdepImageEnabled;
-  bool mIsDoseUncertaintyImageEnabled;
-  bool mIsLastHitEventImageEnabled;
   int mCurrentEvent;
   G4SteppingManager *mSteppingManager;
   G4RotationMatrix mRotationMatrix;
   G4AffineTransform worldToVolume;
-  G4double outputEnergy;
-  G4double totalEnergy;
+
+  // raycasting members
+  double mBoxMin[3];
+  double mBoxMax[3];
+  double mRayOrigin[3];
+  double mRayDirection[3];
+  double mNearestDistance;
+  double mFarthestDistance;
+  double mTotalLength;
+  int mLineSize;
+  int mPlaneSize;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(HybridDoseActor,GateHybridDoseActor)

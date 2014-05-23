@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -34,6 +32,9 @@ See GATE/LICENSE.txt for further details
 
 //#include "Math/SpecFunc.h"
 #include "TMath.h"
+
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
 
 GateARFTable::GateARFTable(G4String aName):m_name(aName)
 {

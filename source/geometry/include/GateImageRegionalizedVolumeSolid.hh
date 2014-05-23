@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -19,13 +17,13 @@ See GATE/LICENSE.txt for further details
 #ifndef __GateImageRegionalizedVolumeSolid__hh__
 #define __GateImageRegionalizedVolumeSolid__hh__
 
-#include "G4Box.hh"
+#include "GateImageBox.hh"
 
 class GateImageRegionalizedVolume;
 
 //====================================================================
 ///  \brief  A G4VSolid descendent of G4Box which represents the bounding box of a GateImageRegionalizedVolume.
-class GateImageRegionalizedVolumeSolid : virtual public G4Box
+class GateImageRegionalizedVolumeSolid : virtual public GateImageBox
 {
 public:
   //====================================================================

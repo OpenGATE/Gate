@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -17,7 +15,6 @@ See GATE/LICENSE.txt for further details
  
 #include "GateHounsfieldDensityTable.hh"
 #include "GateMiscFunctions.hh"
-
 #include "G4SystemOfUnits.hh"
 
 //-----------------------------------------------------------------------------

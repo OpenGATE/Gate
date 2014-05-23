@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -49,6 +47,8 @@ class GateImageWithStatistic
   void EnableSquaredImage(bool b)     { mIsSquaredImageEnabled = b; }
   void EnableUncertaintyImage(bool b) { mIsUncertaintyImageEnabled = b; }
   void SetScaleFactor(double s);
+  void SetNormalizeToMax(bool b)      { mNormalizedToMax = b; mNormalizedToIntegral = !b; }
+  void SetNormalizeToIntegral(bool b) { mNormalizedToMax = !b; mNormalizedToIntegral = b; }
 
   void SetFilename(G4String f);
   void SaveData(int numberOfEvents, bool normalise=false);
@@ -75,6 +75,8 @@ class GateImageWithStatistic
   GateImage mScaledValueImage;
   GateImage mScaledSquaredImage;
   bool mOverWriteFilesFlag;
+  bool mNormalizedToMax;
+  bool mNormalizedToIntegral;
 
   bool mIsSquaredImageEnabled;
   bool mIsUncertaintyImageEnabled;

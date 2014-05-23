@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -47,8 +45,6 @@ class GateStoppingPowerActor : public GateVImageActor
   void EnableRelStopPowerSquaredImage(bool b) { mIsRelStopPowerSquaredImageEnabled = b; }
   void EnableRelStopPowerUncertaintyImage(bool b) { mIsRelStopPowerUncertaintyImageEnabled = b; }
   void EnableNumberOfHitsImage(bool b) { mIsNumberOfHitsImageEnabled = b; }
-
-
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);

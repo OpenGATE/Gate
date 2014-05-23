@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -39,7 +37,6 @@ class GateLightYieldMessenger: public GatePulseProcessorMessenger
     std::vector<G4UIdirectory*> m_volDirectory;
     std::vector<G4UIcmdWithADouble*>   lightOutputCmd;
     std::vector<G4String> m_name;
-    G4int i;
     G4int m_count;
 };
 

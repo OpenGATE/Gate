@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -87,17 +85,29 @@ void GateComptonPB::AddUserModel(GateListOfHadronicModels * model){
   else if(model->GetModelName() == "LivermoreModel")
   {
     G4LivermoreComptonModel* theLivermoreComptonModel = new G4LivermoreComptonModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermoreComptonModel);
+    #if (G4VERSION_MAJOR > 9) || ((G4VERSION_MAJOR ==9 && G4VERSION_MINOR > 5)) 
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theLivermoreComptonModel); 
+    #else
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermoreComptonModel); 
+    #endif
   }
   else if(model->GetModelName() == "LivermorePolarizedModel")
   {
     G4LivermorePolarizedComptonModel* theLivermoreComptonModel = new G4LivermorePolarizedComptonModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermoreComptonModel);
+    #if (G4VERSION_MAJOR > 9) || ((G4VERSION_MAJOR ==9 && G4VERSION_MINOR > 5))  
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theLivermoreComptonModel); 
+    #else
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermoreComptonModel); 
+    #endif
   }
   else if(model->GetModelName() == "PenelopeModel")
   {
     G4PenelopeComptonModel* theComptonModel = new G4PenelopeComptonModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theComptonModel);
+    #if (G4VERSION_MAJOR > 9) || ((G4VERSION_MAJOR ==9 && G4VERSION_MINOR > 5))  
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theComptonModel); 
+    #else
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theComptonModel); 
+    #endif
   }
 
 

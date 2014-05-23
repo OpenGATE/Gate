@@ -76,7 +76,7 @@
 # PHYSICS
 #=====================================================
 
-/control/execute mac/StandardPhys.mac
+/gate/physics/addPhysicsList emstandard_opt3
 
 /gate/physics/Gamma/SetCutInRegion      TitaniumOuter 0.1 mm
 /gate/physics/Electron/SetCutInRegion   TitaniumOuter 1 m
@@ -93,7 +93,7 @@
 
 /gate/actor/addActor PhaseSpaceActor PHS_SOURCE
 /gate/actor/PHS_SOURCE/attachTo TitaniumOuter
-/gate/actor/PHS_SOURCE/useVolumeFrame
+/gate/actor/PHS_SOURCE/useVolumeFrame 1
 /gate/actor/PHS_SOURCE/save output/TitaniumOuter.root
 
 #=====================================================

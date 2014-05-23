@@ -1,4 +1,4 @@
-/*!
+/*
  *	\file Gate.cc
  *	\author Didier Benoit <benoit@imnc.in2p3.fr>
  *	\date May 2012, QIM IMNC-IN2P3/CNRS, Paris VII-XI Universities, Orsay
@@ -10,9 +10,13 @@
  *	- 'Gate -a activity 10' using the parameterized macro creating an alias in your macro
  */
 
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+
 #include <getopt.h>
 #include <cstdlib>
 #include <queue>
+#include <locale.h>
 
 #include "G4UImanager.hh"
 #include "G4UIterminal.hh"
@@ -147,7 +151,7 @@ void welcome()
 {
   GateMessage("Core", 0, G4endl);
   GateMessage("Core", 0, "**********************************************************************" << G4endl);
-  GateMessage("Core", 0, " GATE version name: beta_gate_v7.0                                    " << G4endl);
+  GateMessage("Core", 0, " GATE version name: gate_v7.0                                         " << G4endl);
   GateMessage("Core", 0, "                    Copyright : OpenGATE Collaboration                " << G4endl);
   GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 49 (2004) 4543-4561  " << G4endl);
   GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 56 (2011) 881-901    " << G4endl);
@@ -189,6 +193,7 @@ int main( int argc, char* argv[] )
   G4String listOfParameters = ""; // List of parameters for parameterized macro
   DigiMode aDigiMode = kruntimeMode;
 
+
   // Loop over arguments
   G4int c = 0;
   while( 1 )
@@ -203,14 +208,23 @@ int main( int argc, char* argv[] )
         { "param", required_argument, 0, 'a' }
       };
 
-      // If the program was started by double-clicking on the application bundle on Mac OS X
-      // rather than from the command-line, enable Qt and don't try to process other options;
-      // argv[1] contains a process serial number in the form -psn_0_1234567
-      if( argc > 1 && memcmp( argv[1], "-psn_", 5 ) == 0 ) {
+#ifdef __APPLE__
+/*
+ * If the program was started by double-clicking on the application bundle on Mac OS X
+ * rather than from the command-line, enable Qt and don't try to process other options;
+ * argv[1] contains a process serial number in the form -psn_0_1234567
+ * OS X <= 10.8 have a -psn_XXX argument given by the system
+ * OS X >= 10.9 does not have one, so we use the "TERM" environment variable
+ * to distinguish between launched by the Terminal or by the system.
+ */
+      if ( (argc>1 && strncmp( argv[1], "-psn", 4 ) == 0) || getenv("TERM") == NULL ) {
         argc = 1;
         isQt = 1;
         break;
-      } else {
+      }
+      else
+#endif
+      {
         // Getting the option
         c = getopt_long( argc, argv, "hva:", longOptions, &optionIndex );
       }
@@ -322,6 +336,9 @@ int main( int argc, char* argv[] )
       session = new G4UIterminal();
 #endif
 #endif
+#ifndef _WIN32
+      setlocale(LC_NUMERIC, "POSIX");
+#endif
     }
   else
     {
@@ -354,7 +371,7 @@ int main( int argc, char* argv[] )
   welcome();
 
   std::ostringstream s;
-  s << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH;
+  s << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH; 
   GateMessage( "Core", 0, "You are using Geant4 version " << s.str() << G4endl );
 
   // Launching Gate if macro file
@@ -365,19 +382,19 @@ int main( int argc, char* argv[] )
     UImanager->ApplyCommand( command + macrofilename );
     GateMessage( "Core", 0, "End of macro " << macrofilename << G4endl);
   }
-  else {
+
     if (ui) // Launching interactive mode // Qt
       {
         ui->SessionStart();
         delete ui;
       }
     else {
-      if (session) { // Terminal
+      if (session && !isMacroFile) { // Terminal
         session->SessionStart();
         delete session;
       }
     }
-  }
+
 
 #ifdef G4ANALYSIS_USE_GENERAL
   if (outputMgr) delete outputMgr;

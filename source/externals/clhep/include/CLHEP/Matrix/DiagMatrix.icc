@@ -1,0 +1,132 @@
+// -*- C++ -*-
+// ---------------------------------------------------------------------------
+//
+// This file is a part of the CLHEP - a Class Library for High Energy Physics.
+// 
+// This software written by Nobu Katayama and Mike Smyth, Cornell University.
+//
+#include <stdexcept>
+namespace CLHEP {
+
+inline HepDiagMatrix::HepDiagMatrix() 
+   : m(0), nrow(0)
+{}
+
+inline int HepDiagMatrix::num_row() const { return nrow;}
+inline int HepDiagMatrix::num_col() const  { return nrow;}
+inline int HepDiagMatrix::num_size() const  { return nrow;}
+
+inline double & HepDiagMatrix::fast(int row,int col)
+{
+#ifdef MATRIX_BOUND_CHECK
+  if (row<1 || row>nrow || col<1 || col>nrow)
+    error("Range error in HepDiagMatrix::fast()");
+#endif
+  if (row != col)
+    error("Index error in HepDiagMatrix::fast(i,j): i != j");
+
+  return *(m.begin()+(col-1));
+}
+
+inline const double & HepDiagMatrix::fast(int row,int col) const
+{
+#ifdef MATRIX_BOUND_CHECK
+  if (row<1 || row>nrow || col<1 || col>nrow)
+    error("Range error in HepDiagMatrix::fast()");
+#endif
+  if (row == col) {
+     return *(m.begin()+(col-1));
+  } else {
+#if defined(__sun) || !defined(__GNUG__)
+//
+// Sun CC 4.0.1 has this bug.
+//
+    zero = 0;
+#endif
+    return zero;
+  }
+}
+
+inline double & HepDiagMatrix::operator()(int row, int col)
+{
+   return fast(col,row);
+}
+
+inline const double & HepDiagMatrix::operator()(int row, int col) const 
+{ 
+   return fast(col,row);
+}
+
+inline void HepDiagMatrix::assign(const HepDiagMatrix &hm2) {(*this)=hm2;}
+
+inline HepDiagMatrix HepDiagMatrix::T() const {return HepDiagMatrix(*this);}
+
+inline HepDiagMatrix::HepDiagMatrix_row HepDiagMatrix::operator[] (int r)
+#ifdef HEP_GNU_OPTIMIZED_RETURN
+  return b(*this,r);
+{
+#else
+{
+  HepDiagMatrix_row b(*this,r);
+#endif
+  return b;
+}
+
+inline HepDiagMatrix::HepDiagMatrix_row_const HepDiagMatrix::operator[] (int r) const
+#ifdef HEP_GNU_OPTIMIZED_RETURN
+  return b(*this,r);
+{
+#else
+{
+  const HepDiagMatrix_row_const b(*this,r);
+#endif
+  return b;
+}
+
+inline double &HepDiagMatrix::HepDiagMatrix_row::operator[](int c) 
+{
+   return _a.fast(_r+1, c+1);
+}
+
+inline const double&
+HepDiagMatrix::HepDiagMatrix_row_const::operator[](int c) const 
+{
+   return _a.fast(_r+1,c+1);
+}
+
+inline HepDiagMatrix::HepDiagMatrix_row::HepDiagMatrix_row
+(HepDiagMatrix& a, int r) 
+   : _a(a), _r(r)
+{}
+
+inline HepDiagMatrix::HepDiagMatrix_row_const::HepDiagMatrix_row_const
+(const HepDiagMatrix& a, int r) 
+   : _a(a), _r(r)
+{}
+
+inline HepDiagMatrix HepDiagMatrix::inverse(int &ierr) const
+#ifdef HEP_GNU_OPTIMIZED_RETURN
+  return mTmp(*this);
+{
+#else
+{
+  HepDiagMatrix mTmp(*this);
+#endif
+  mTmp.invert(ierr);
+  return mTmp;
+}
+
+inline HepDiagMatrix HepDiagMatrix::inverse() const {
+  int ierr;
+  HepDiagMatrix mt=inverse(ierr);
+  if (ierr) throw std::runtime_error("Error in HepDiagMatrix inversion");
+  return mt;
+}
+
+inline void HepDiagMatrix::invert() {
+  int ierr;
+  invert(ierr);
+  if (ierr) throw std::runtime_error("Error in HepDiagMatrix inversion");
+}
+
+}  // namespace CLHEP

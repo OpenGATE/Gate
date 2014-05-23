@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -25,6 +23,9 @@
 #include <vector>
 
 #include "G4Material.hh"
+
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
 
 class GateMaterialDatabase;
 

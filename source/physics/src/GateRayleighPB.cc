@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -90,17 +88,29 @@ void GateRayleighPB::AddUserModel(GateListOfHadronicModels *model){
   if(model->GetModelName() == "LivermoreModel")
   {
     G4LivermoreRayleighModel* theLivermoreRayleighModel = new G4LivermoreRayleighModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermoreRayleighModel);
+    #if (G4VERSION_MAJOR > 9) || ((G4VERSION_MAJOR ==9 && G4VERSION_MINOR > 5)) 
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theLivermoreRayleighModel); 
+    #else
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermoreRayleighModel); 
+    #endif
   }
   else if(model->GetModelName() == "LivermorePolarizedModel")
   {
     G4LivermorePolarizedRayleighModel* theLivermoreRayleighModel = new G4LivermorePolarizedRayleighModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermoreRayleighModel);
+    #if (G4VERSION_MAJOR > 9) || ((G4VERSION_MAJOR ==9 && G4VERSION_MINOR > 5)) 
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theLivermoreRayleighModel);
+    #else
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermoreRayleighModel); 
+    #endif
   }
   else if(model->GetModelName() == "PenelopeModel")
   {
     G4PenelopeRayleighModel* theRayleighModel = new G4PenelopeRayleighModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theRayleighModel);
+    #if (G4VERSION_MAJOR > 9) || ((G4VERSION_MAJOR ==9 && G4VERSION_MINOR > 5)) 
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theRayleighModel); 
+    #else
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theRayleighModel); 
+    #endif
   }
 
 

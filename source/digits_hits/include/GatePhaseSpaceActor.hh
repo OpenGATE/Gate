@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -46,7 +44,7 @@ class GatePhaseSpaceActor : public GateVActor
   // Callbacks
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
   virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
-  //virtual void BeginOfEventAction(const G4Event * e);
+  virtual void BeginOfEventAction(const G4Event * e);
 
   //=======================================================
   /// Saves the data collected to the file
@@ -69,14 +67,20 @@ class GatePhaseSpaceActor : public GateVActor
   void SetIsSecStored(bool b){EnableSec = b;}
   void SetIsAllStep(bool b){EnableAllStep = b;}
 
-  void SetUseVolumeFrame(){mUseVolFrame=true;}
+  void SetUseVolumeFrame(bool b){mUseVolFrame=b;}
   bool GetUseVolumeFrame(){return mUseVolFrame;}
 
-  void SetStoreOutgoingParticles(){mStoreOutPart=true;}
+  void SetStoreOutgoingParticles(bool b){mStoreOutPart=b;}
   bool GetStoreOutgoingParticles(){return mStoreOutPart;}
 
   void SetMaxFileSize(double size){mFileSize=size;}
   double GetMaxFileSize(){return mFileSize ;}
+
+  void SetIsPrimaryEnergyEnabled(bool b){bEnablePrimaryEnergy = b;}
+  void SetEnableCoordFrame(){bEnableCoordFrame = true;}
+  bool GetEnableCoordFrame(){return bEnableCoordFrame;}
+  void SetCoordFrame(G4String nameOfFrame){bCoordFrame=nameOfFrame;}
+  G4String GetCoordFrame(){return bCoordFrame ;}
 
 
 protected:
@@ -105,6 +109,14 @@ protected:
   bool EnableAllStep;
   bool mUseVolFrame;
   bool mStoreOutPart;
+
+  bool bEnableCoordFrame;
+  bool bEnablePrimaryEnergy;
+
+  G4String bCoordFrame;
+  //hold the primary energy
+  float bPrimaryEnergy;
+
 
   double mFileSize;
 

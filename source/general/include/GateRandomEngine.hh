@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -12,7 +10,6 @@
 #define GateRandomEngine_h 1
 
 #include "GateRandomEngineMessenger.hh"
-#include "CLHEP/Random/defs.h"
 #include "CLHEP/Random/RandomEngine.h"
 
 class GateRandomEngineMessenger;
@@ -51,4 +48,3 @@ private:
 };
 
 #endif
-

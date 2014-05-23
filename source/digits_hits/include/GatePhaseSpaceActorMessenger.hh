@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -57,9 +55,11 @@ protected:
   G4UIcmdWithABool* pEnableMassCmd;
   G4UIcmdWithABool* pEnableSecCmd;
   G4UIcmdWithABool* pEnableStoreAllStepCmd;
-  G4UIcmdWithoutParameter* pCoordinateInVolumeFrameCmd;
+  G4UIcmdWithABool* pCoordinateInVolumeFrameCmd;
   G4UIcmdWithADoubleAndUnit* pMaxSizeCmd;
-  G4UIcmdWithoutParameter * pInOrOutGoingParticlesCmd;
+  G4UIcmdWithABool * pInOrOutGoingParticlesCmd;
+  G4UIcmdWithABool* bEnablePrimaryEnergyCmd;
+  G4UIcmdWithAString* bCoordinateFrameCmd;
 
 };
 

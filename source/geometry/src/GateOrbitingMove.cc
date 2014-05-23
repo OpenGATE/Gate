@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -21,6 +19,9 @@ See GATE/LICENSE.txt for further details
 #include "G4UnitsTable.hh"
 
 #include "GateTools.hh"
+
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
 
 //-------------------------------------------------------------------------------------------------
 GateOrbitingMove::GateOrbitingMove(GateVVolume* itsObjectInserter,

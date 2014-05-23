@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v...
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -27,7 +25,7 @@
 //----------------------------------------------------------------------------------------
   GateSourceTPSPencilBeamMessenger::GateSourceTPSPencilBeamMessenger(GateSourceTPSPencilBeam* source)
 : GateVSourceMessenger(source)
-{ 
+{
   pSourceTPSPencilBeam = source;
   G4String cmdName;
 
@@ -46,6 +44,9 @@
   //Not allowed fieldID
   cmdName = GetDirectoryName()+"setNotAllowedFieldID";
   pNotAllowedFieldCmd = new G4UIcmdWithAnInteger(cmdName,this);
+  //Allowed fieldID
+  cmdName = GetDirectoryName()+"setAllowedFieldID";
+  pAllowedFieldCmd = new G4UIcmdWithAnInteger(cmdName,this);
   //Source description file
   cmdName = GetDirectoryName()+"setSourceDescriptionFile";
   pSourceFileCmd = new G4UIcmdWithAString(cmdName,this);
@@ -55,6 +56,9 @@
   //Convergent or divergent beam model
   cmdName = GetDirectoryName()+"setBeamConvergence";
   pDivergenceCmd = new G4UIcmdWithABool(cmdName,this);
+  //Selection of one layer
+  cmdName = GetDirectoryName()+"selectLayerID";
+  pSelectLayerIDCmd = new G4UIcmdWithAnInteger(cmdName,this);
 }
 //----------------------------------------------------------------------------------------
 
@@ -73,12 +77,16 @@ GateSourceTPSPencilBeamMessenger::~GateSourceTPSPencilBeamMessenger()
   delete pFlatGeneFlagCmd;
   //Not allowed fieldID
   delete pNotAllowedFieldCmd;
+  //Allowed fieldID
+  delete pAllowedFieldCmd;
   //Source description file
   delete pSourceFileCmd;
   //Configuration of spot intensity
   delete pSpotIntensityCmd;
-  //Convergent or divergent beam model 
+  //Convergent or divergent beam model
   delete pDivergenceCmd;
+  // Selection of one layer
+  delete pSelectLayerIDCmd;
 }
 //----------------------------------------------------------------------------------------
 
@@ -96,6 +104,10 @@ void GateSourceTPSPencilBeamMessenger::SetNewValue(G4UIcommand* command,G4String
   if (command == pFlatGeneFlagCmd) {pSourceTPSPencilBeam->SetGeneFlatFlag(pFlatGeneFlagCmd->GetNewBoolValue(newValue)); }
   //Not allowed fieldID
   if (command == pNotAllowedFieldCmd) {pSourceTPSPencilBeam->SetNotAllowedField(pNotAllowedFieldCmd->GetNewIntValue(newValue));}
+  //Allowed fieldID
+  if (command == pAllowedFieldCmd) {pSourceTPSPencilBeam->SetAllowedField(pAllowedFieldCmd->GetNewIntValue(newValue));}
+  //Select Layer ID
+  if (command == pSelectLayerIDCmd) {pSourceTPSPencilBeam->SelectLayerID(pSelectLayerIDCmd->GetNewIntValue(newValue));}
   //Source description file
   if (command == pSourceFileCmd) {pSourceTPSPencilBeam->SetSourceDescriptionFile(newValue);  }
   //Configuration of spot intensity

@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -80,6 +78,7 @@ protected:
   G4int nVerboseLevel;
 
   G4String                       m_name;
+  G4String                       m_fileName;
 
   GateVSource*                    m_source;
 

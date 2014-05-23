@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -30,6 +28,9 @@ See GATE/LICENSE.txt for further details
 #include <sys/file.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
 
 //-----------------------------------------------------------------------------
 double rad2deg(const double anglerad) 

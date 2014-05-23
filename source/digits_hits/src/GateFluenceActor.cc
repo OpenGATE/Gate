@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-  
   Copyright (C): OpenGATE Collaboration
   
   This software is distributed under the terms
@@ -95,6 +93,7 @@ void GateFluenceActor::Construct()
   // Allocate scatter image
   if( mIsScatterImageEnabled)
     {
+    SetOriginTransformAndFlagToImage(mImageProcess);
       mImageProcess.EnableSquaredImage(mIsSquaredImageEnabled);
       mImageProcess.EnableUncertaintyImage(mIsUncertaintyImageEnabled);
       // Force the computation of squared image if uncertainty is enabled
@@ -106,6 +105,7 @@ void GateFluenceActor::Construct()
 
   if (mIsNumberOfHitsImageEnabled)
     {
+    SetOriginTransformAndFlagToImage(mNumberOfHitsImage);
       mNumberOfHitsImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
       mNumberOfHitsImage.Allocate();
     }

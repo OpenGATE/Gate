@@ -1,0 +1,48 @@
+# World
+/gate/world/geometry/setXLength 0.3 mm
+/gate/world/geometry/setYLength 0.3 mm
+/gate/world/geometry/setZLength  1 mm
+/gate/world/setMaterial G4_WATER
+/gate/world/vis/forceWireframe
+
+# Target1
+/gate/world/daughters/name Target1
+/gate/world/daughters/insert box
+/gate/Target1/geometry/setXLength 0.3 mm
+/gate/Target1/geometry/setYLength 0.3 mm
+/gate/Target1/geometry/setZLength 50. um
+/gate/Target1/placement/setTranslation 0. 0. 0. um
+/gate/Target1/setMaterial G4_WATER
+/gate/Target1/vis/forceWireframe
+#/gate/Target1/vis/forceSolid
+#/gate/Target1/vis/setColor blue
+/gate/Target1/vis/setColor green
+/gate/Target1/vis/setVisible 1
+
+# Target2
+/gate/world/daughters/name Target2
+/gate/world/daughters/insert box
+/gate/Target2/geometry/setXLength 0.3 mm
+/gate/Target2/geometry/setYLength 0.3 mm
+/gate/Target2/geometry/setZLength 50. um
+/gate/Target2/placement/setTranslation 0. 0. 120. um
+/gate/Target2/setMaterial G4_WATER
+/gate/Target2/vis/forceWireframe
+#/gate/Target2/vis/forceSolid
+/gate/Target2/vis/setColor blue
+#/gate/Target2/vis/setColor green
+/gate/Target2/vis/setVisible 1
+
+# Target3
+/gate/world/daughters/name Target3
+/gate/world/daughters/insert box
+/gate/Target3/geometry/setXLength 0.3 mm
+/gate/Target3/geometry/setYLength 0.3 mm
+/gate/Target3/geometry/setZLength 50. um
+/gate/Target3/placement/setTranslation 0. 0. 220. um
+/gate/Target3/setMaterial G4_WATER
+/gate/Target3/vis/forceWireframe
+#/gate/Target3/vis/forceSolid
+#/gate/Target3/vis/setColor blue
+/gate/Target3/vis/setColor green
+/gate/Target3/vis/setVisible 1

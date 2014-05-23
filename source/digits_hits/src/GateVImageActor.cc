@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -224,6 +222,36 @@ void GateVImageActor::Construct()
 
 }
 //-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateVImageActor::SetOriginTransformAndFlagToImage(GateImageWithStatistic & image)
+{
+  // Set origin, take into account the origin of the attached volume (if exist)
+  G4ThreeVector offset = mOrigin;
+  image.SetOrigin(mOrigin);
+
+  // Set transformMatrix
+  image.SetTransformMatrix(mImage.GetTransformMatrix());
+
+  // Set Overwrite flag
+  image.SetOverWriteFilesFlag(mOverWriteFilesFlag);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateVImageActor::SetOriginTransformAndFlagToImage(GateImage & image)
+{
+  // Set origin, take into account the origin of the attached volume (if exist)
+  G4ThreeVector offset = mOrigin;
+  image.SetOrigin(mOrigin);
+
+  // Set transformMatrix
+  image.SetTransformMatrix(mImage.GetTransformMatrix());
+
+}
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 /// Sets the type of the hit (pre / post / split)

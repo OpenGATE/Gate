@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -57,6 +55,10 @@ void GateProductionAndStoppingActor::Construct() {
   // Output Filename
   mProdFilename = G4String(removeExtension(mSaveFilename))+"-Prod."+G4String(getExtension(mSaveFilename));
   mStopFilename = G4String(removeExtension(mSaveFilename))+"-Stop."+G4String(getExtension(mSaveFilename));
+
+  // Set origin, transform, flag
+  SetOriginTransformAndFlagToImage(mProdImage);
+  SetOriginTransformAndFlagToImage(mStopImage);
 
   mProdImage.EnableSquaredImage(false);
   mProdImage.EnableUncertaintyImage(false);

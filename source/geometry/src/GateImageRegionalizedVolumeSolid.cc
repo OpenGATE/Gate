@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -20,6 +18,7 @@ GateImageRegionalizedVolumeSolid::GateImageRegionalizedVolumeSolid(const G4Strin
 	  volume->GetHalfSize().x(),
 	  volume->GetHalfSize().y(),
 	  volume->GetHalfSize().z()),
+    GateImageBox(*volume->GetImage(), name),
     mVolume(volume)
 {
   ////GateMessage("Volume",5,"GateImageRegionalizedVolumeSolid()" << Gateendl);

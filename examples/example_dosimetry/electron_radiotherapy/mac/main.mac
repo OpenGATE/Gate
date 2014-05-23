@@ -1,0 +1,107 @@
+#/control/execute verbose.mac
+#/control/execute mac/visu.mac
+
+#==============================
+# GEOMETRY
+#==============================
+
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+
+#----------------------
+# World
+#----------------------
+
+/gate/world/geometry/setXLength 200 cm
+/gate/world/geometry/setYLength 300 cm
+/gate/world/geometry/setZLength 200 cm
+/gate/world/setMaterial Air
+/gate/world/vis/setVisible 0
+
+#----------------------
+# Linac
+#----------------------
+
+/control/execute mac/linac_6MeV.mac
+
+#----------------------
+# Phantom
+#----------------------
+
+/gate/world/daughters/name                   patient
+/gate/world/daughters/insert                 ImageNestedParametrisedVolume
+
+/gate/patient/geometry/setHUToMaterialFile      data/RANDO-HU2mat.txt
+/gate/patient/geometry/setImage                 data/Rando.mhd
+
+/gate/patient/geometry/TranslateTheImageAtThisIsoCenter 0 0 0 mm
+
+/gate/patient/placement/setTranslation                  -31.73 -25.4 -9.875 cm
+
+#==============================
+# PHYSICS
+#==============================
+
+#----------------------
+# Physics List
+#----------------------
+
+/gate/physics/addPhysicsList emstandard_opt3
+
+
+#----------------------
+# Cuts and Step limiters
+#----------------------
+
+/gate/physics/Electron/SetCutInRegion	world 1 mm
+/gate/physics/Gamma/SetCutInRegion	world 1 mm
+
+/gate/physics/Electron/SetCutInRegion	patient 0.02 mm
+/gate/physics/Gamma/SetCutInRegion	patient 0.1 mm
+
+/gate/physics/SetMaxStepSizeInRegion patient 0.02 mm
+/gate/physics/ActivateStepLimiter e-
+
+/gate/physics/displayCuts
+
+#==============================
+# DETECTORS
+#==============================
+
+/gate/actor/addActor                               DoseActor  doseDistribution
+/gate/actor/doseDistribution/save                  output/rando.mhd
+/gate/actor/doseDistribution/attachTo    	   patient
+/gate/actor/doseDistribution/stepHitType           random
+/gate/actor/doseDistribution/setPosition           0 0 0 cm
+/gate/actor/doseDistribution/setVoxelSize          2.5 2.5 2.5 mm
+/gate/actor/doseDistribution/enableEdep            true
+/gate/actor/doseDistribution/enableUncertaintyEdep true
+/gate/actor/doseDistribution/enableDose            true
+/gate/actor/doseDistribution/enableNumberOfHits    false
+
+/gate/actor/addActor               SimulationStatisticActor stat
+/gate/actor/stat/save              output/stats.txt
+/gate/actor/stat/saveEveryNSeconds 60
+
+
+#==============================
+# INITIALISATION
+#==============================
+
+/gate/run/initialize
+
+#==============================
+# BEAM
+#==============================
+
+/control/execute mac/beam_6MeV.mac
+
+#==============================
+# START SIMULATION
+#==============================
+
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed auto
+
+
+/gate/application/setTotalNumberOfPrimaries 1000000
+/gate/application/start

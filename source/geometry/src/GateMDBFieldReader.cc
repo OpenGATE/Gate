@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -20,6 +18,9 @@ See GATE/LICENSE.txt for further details
 
 #include "GateMDBFieldReader.hh"
 #include "GateTokenizer.hh"
+
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
 
 #define N_STATECODES 12
 GateCodePair GateMDBFieldReader::theStateCodeTable[N_STATECODES] = { 

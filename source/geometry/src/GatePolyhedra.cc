@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -11,6 +9,9 @@ See GATE/LICENSE.txt for further details
 #include "G4SystemOfUnits.hh"
 
 #include "GatePolyhedra.hh"
+
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
 
 G4double GatePolyhedra::DistanceToOut( const G4ThreeVector &p, 
                                        const G4ThreeVector &v,

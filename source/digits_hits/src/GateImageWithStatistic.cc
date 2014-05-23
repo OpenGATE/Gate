@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -24,6 +22,8 @@ GateImageWithStatistic::GateImageWithStatistic()  {
   mIsUncertaintyImageEnabled = false;
   mIsValuesMustBeScaled = false;
   mOverWriteFilesFlag = true;
+  mNormalizedToMax = false;
+  mNormalizedToIntegral = false;
 }
 //-----------------------------------------------------------------------------
 
@@ -213,17 +213,20 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
     //DD(mScaleFactor);
     factor = mScaleFactor;
   }
+
   if (normalise) {
     mIsValuesMustBeScaled = true;
     double sum = 0.0;
+    double max = 0.0;
     GateImage::const_iterator pi = mValueImage.begin();
     GateImage::const_iterator pe = mValueImage.end();
     while (pi != pe) {
-      //if (*pi > max) max = *pi;
+      if (*pi > max) max = *pi;
       sum += *pi*factor;
       ++pi;
     }
-    SetScaleFactor(factor*1.0/sum);
+    if (mNormalizedToMax) SetScaleFactor(factor*1.0/max);
+    if (mNormalizedToIntegral) SetScaleFactor(factor*1.0/sum);
   }
 
   GateMessage("Actor", 2, "Save " << mFilename << " with scaling = "

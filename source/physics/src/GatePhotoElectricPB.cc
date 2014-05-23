@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -98,7 +96,11 @@ void GatePhotoElectricPB::AddUserModel(GateListOfHadronicModels *model){
     // if( lowEGamma>0 ) theLivermorePhotoElectricModel->SetCutForLowEnSecPhotons(lowEGamma);
     // if( lowEElec>0  ) theLivermorePhotoElectricModel->SetCutForLowEnSecElectrons(lowEElec);
 
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermorePhotoElectricModel);
+    #if (G4VERSION_MAJOR > 9) || ((G4VERSION_MAJOR ==9 && G4VERSION_MINOR > 5))
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theLivermorePhotoElectricModel); 
+    #else
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermorePhotoElectricModel); 
+    #endif
   }
   else if(model->GetModelName() == "LivermorePolarizedModel")
   {
@@ -111,7 +113,11 @@ void GatePhotoElectricPB::AddUserModel(GateListOfHadronicModels *model){
     // if( lowEGamma>0 ) theLivermorePhotoElectricModel->SetCutForLowEnSecPhotons(lowEGamma);
     // if( lowEElec>0  ) theLivermorePhotoElectricModel->SetCutForLowEnSecElectrons(lowEElec);
 
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermorePhotoElectricModel);
+    #if (G4VERSION_MAJOR > 9) || ((G4VERSION_MAJOR ==9 && G4VERSION_MINOR > 5))
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theLivermorePhotoElectricModel); 
+     #else
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermorePhotoElectricModel); 
+    #endif
   }
   else if(model->GetModelName() == "PenelopeModel")
   {
@@ -127,7 +133,11 @@ void GatePhotoElectricPB::AddUserModel(GateListOfHadronicModels *model){
     //if( lowEGamma>0 ) thePhotoElectricModel->SetCutForLowEnSecPhotons(lowEGamma);
     //if( lowEElec>0  ) thePhotoElectricModel->SetCutForLowEnSecElectrons(lowEElec);
 
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(thePhotoElectricModel);
+    #if (G4VERSION_MAJOR > 9) || ((G4VERSION_MAJOR ==9 && G4VERSION_MINOR > 5))
+    dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(thePhotoElectricModel); 
+    #else
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(thePhotoElectricModel); 
+    #endif
   }
 }
 //-----------------------------------------------------------------------------

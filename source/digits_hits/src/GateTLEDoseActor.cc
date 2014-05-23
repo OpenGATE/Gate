@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -45,7 +43,8 @@ GateTLEDoseActor::~GateTLEDoseActor()  {
 }
 //-----------------------------------------------------------------------------
 
- //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 /// Construct
 void GateTLEDoseActor::Construct() {
   GateVImageActor::Construct();
@@ -65,6 +64,11 @@ void GateTLEDoseActor::Construct() {
   // Output Filename
   mDoseFilename = G4String(removeExtension(mSaveFilename))+"-Dose."+G4String(getExtension(mSaveFilename));
   mEdepFilename = G4String(removeExtension(mSaveFilename))+"-Edep."+G4String(getExtension(mSaveFilename));
+
+  SetOriginTransformAndFlagToImage(mDoseImage);
+  SetOriginTransformAndFlagToImage(mEdepImage);
+  SetOriginTransformAndFlagToImage(mLastHitEventImage);
+
   if(mIsEdepSquaredImageEnabled || mIsEdepUncertaintyImageEnabled ||
      mIsDoseSquaredImageEnabled || mIsDoseUncertaintyImageEnabled){
     mLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
@@ -72,7 +76,6 @@ void GateTLEDoseActor::Construct() {
     mIsLastHitEventImageEnabled = true;
     mLastHitEventImage.SetOrigin(mOrigin);
   }
-
 
   if (mIsEdepImageEnabled) {
     mEdepImage.EnableSquaredImage(mIsEdepSquaredImageEnabled);
@@ -169,14 +172,14 @@ void GateTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* 
       step->GetTrack()->SetTrackStatus(fStopAndKill);
     }
 
-     if (mIsDoseImageEnabled) {
-       if (mIsDoseUncertaintyImageEnabled || mIsDoseSquaredImageEnabled) {
-	 if (sameEvent) mDoseImage.AddTempValue(index, dose);
-	 else mDoseImage.AddValueAndUpdate(index, dose);
-       }
-       else
-	 mDoseImage.AddValue(index, dose);
-     }
+    if (mIsDoseImageEnabled) {
+      if (mIsDoseUncertaintyImageEnabled || mIsDoseSquaredImageEnabled) {
+        if (sameEvent) mDoseImage.AddTempValue(index, dose);
+        else mDoseImage.AddValueAndUpdate(index, dose);
+      }
+      else
+        mDoseImage.AddValue(index, dose);
+    }
     if(mIsEdepImageEnabled){
       if (mIsEdepUncertaintyImageEnabled || mIsEdepSquaredImageEnabled) {
 	if (sameEvent) mEdepImage.AddTempValue(index, edep);

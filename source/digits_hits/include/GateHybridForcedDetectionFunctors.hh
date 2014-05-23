@@ -127,6 +127,7 @@ public:
   void CreateMaterialMuMap(G4EmCalculator *emCalculator,
                            const std::vector<double> &Elist,
                            GateVImageVolume * gate_image_volume) {
+    m_EnergyList = Elist;
     itk::TimeProbe muProbe;
     muProbe.Start();
 
@@ -196,6 +197,8 @@ public:
     return result;
   }
 
+  void SetResponseDetector(GateEnergyResponseFunctor *_arg){ m_ResponseDetector = _arg; }
+
 protected:
   void Accumulate(const rtk::ThreadIdType threadId,
                   double &input,
@@ -211,6 +214,8 @@ protected:
   MaterialMuImageType::Pointer  m_MaterialMu;
   VectorType                    m_DetectorOrientationTimesPixelSurface;
   double                        m_IntegralOverDetector[ITK_MAX_THREADS];
+  GateEnergyResponseFunctor    *m_ResponseDetector;
+  std::vector<double>           m_EnergyList;
 };
 //-----------------------------------------------------------------------------
 
@@ -258,6 +263,10 @@ public:
         rayIntegral += m_InterpolationWeights[threadId][j] * *p++;
       }
       Accumulate(threadId, input, vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i]);
+      //SR to NA: use this if noise is activated
+      //Accumulate(threadId, input, vcl_exp(-rayIntegral)
+      //                   * (*m_EnergyWeightList)[i]
+      //                   * (*m_ResponseDetector)( m_EnergyList[i] ));
     }
 
     // FIXME: the source is not punctual but it is homogeneous on the detection plane
@@ -393,8 +402,6 @@ public:
     m_eRadiusOverCrossSectionTerm = weight * ( classic_electr_radius*classic_electr_radius) / (2.*cs);
   }
 
-  void SetResponseDetector(GateEnergyResponseFunctor *_arg){ m_ResponseDetector = _arg; }
-
 private:
   VectorType                 m_Direction;
   double                     m_Energy;
@@ -402,7 +409,6 @@ private:
   double                     m_InvWlPhoton;
   unsigned int               m_Z;
   double                     m_eRadiusOverCrossSectionTerm;
-  GateEnergyResponseFunctor *m_ResponseDetector;
 
   // Compton data
   G4VEMDataSet* m_ScatterFunctionData;
@@ -628,7 +634,8 @@ public:
     return input;
   }
 
-  void SetEnergyAndWeight(const double  &energy, const double &weight) {
+  void SetDirection(const VectorType &itkNotUsed(_arg)){}
+  void SetEnergyZAndWeight(const double &energy, const unsigned int &itkNotUsed(Z), const double &weight) {
     unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
     m_Weight = weight;
     m_Energy = energy / m_MaterialMu->GetSpacing()[1];
@@ -665,6 +672,36 @@ class Attenuation
     //Calculating attenuation image (-log(primaryImage/flatFieldImage))
     return (TOutput)(-log(A/B));
   }
+};
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+template< class TInput1, class TInput2 = TInput1, class TOutput = TInput1 >
+class Chetty
+{
+  public:
+  Chetty() {}
+  ~Chetty() {}
+  bool operator!=(const Chetty &) const
+  {
+    return false;
+  }
+
+  bool operator==(const Chetty & other) const
+  {
+    return !( *this != other );
+  }
+
+  void SetN(double N) {m_invN = 1/N; m_invNm1 = 1/(N-1);}
+
+  inline TOutput operator()(const TInput1 sum,const TInput2 squaredSum) const
+  {
+    // Chetty, IJROBP, 2006, p1250, eq 2
+    return sqrt(m_invNm1*(squaredSum*m_invN-pow(sum * m_invN, 2.)))/(sum*m_invN);
+  }
+private:
+  double m_invN;
+  double m_invNm1;
 };
 //-----------------------------------------------------------------------------
 

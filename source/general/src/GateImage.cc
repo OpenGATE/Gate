@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -24,6 +22,7 @@ See GATE/LICENSE.txt for further details
 #include "GateMiscFunctions.hh"
 #include "GateMachine.hh"
 #include "GateMHDImage.hh"
+#include "GateInterfileHeader.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 #include "TFile.h"
@@ -696,6 +695,7 @@ G4ThreeVector GateImage::GetNonIntegerCoordinatesFromPosition(G4ThreeVector posi
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 G4ThreeVector GateImage::GetVoxelCornerFromCoordinates(G4ThreeVector c) const{
   return G4ThreeVector ( c.x() * voxelSize.x() - halfSize.x(),
@@ -704,19 +704,20 @@ G4ThreeVector GateImage::GetVoxelCornerFromCoordinates(G4ThreeVector c) const{
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateImage::PrintInfo() {
-  /*  GateMessage("Image",1,"Matrix Size=\t"      << size        << G4endl);
-      GateMessage("Image",1,"HalfSize=\t"  << halfSize    << G4endl);
-      GateMessage("Image",1,"Resol=\t"     << resolution  << G4endl);
-      GateMessage("Image",1,"VoxelSize=\t" << voxelSize   << G4endl);
-      GateMessage("Image",1,"planeSize=\t" << planeSize   << G4endl);
-      GateMessage("Image",1,"lineSize=\t"  << lineSize    << G4endl);
-      GateMessage("Image",1,"halfSizeMinusVoxelCenter=\t" << halfSizeMinusVoxelCenter << G4endl);
-      GateMessage("Image",1,"nbOfValues=\t"     << nbOfValues  << G4endl);
-      GateMessage("Image",1,"dataSize =\t"     << data.size() << G4endl);*/
+  GateMessage("Image", 1, "Matrix Size=\t" << size        << G4endl);
+  GateMessage("Image", 1, "HalfSize=\t"    << halfSize    << G4endl);
+  GateMessage("Image", 1, "Resol=\t"       << resolution  << G4endl);
+  GateMessage("Image", 1, "VoxelSize=\t"   << voxelSize   << G4endl);
+  GateMessage("Image", 1, "planeSize=\t"   << planeSize   << G4endl);
+  GateMessage("Image", 1, "lineSize=\t"    << lineSize    << G4endl);
+  GateMessage("Image", 1, "nbOfValues=\t"  << nbOfValues  << G4endl);
+  GateMessage("Image", 1, "dataSize =\t"   << data.size() << G4endl);
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateImage::UpdateSizesFromResolutionAndHalfSize() {
@@ -741,7 +742,6 @@ void GateImage::UpdateSizesFromResolutionAndHalfSize() {
   planeSize = (int)lrint(resolution.x()*resolution.y());
 
   PrintInfo();
-
 }
 //-----------------------------------------------------------------------------
 
@@ -793,9 +793,11 @@ void GateImage::Read(G4String filename) {
   else if (extension == "img") ReadAnalyze(filename);
   else if (extension == "img.gz") ReadAnalyze(filename);
   else if (extension == "mhd" || extension == "mha") ReadMHD(filename);
+  else if (extension == "h33") ReadInterfile(filename);
+  else if (extension == "i33") ReadInterfile(filename);
   else {
     GateError( "Unknow image file extension. Knowns extensions are : "
-         << G4endl << ".vox, .hdr, .img, .mhd, .mha" << G4endl);
+         << G4endl << ".vox, .hdr, .img, .mhd, .mha, .h33, .i33" << G4endl);
     exit(0);
   }
 }
@@ -1044,12 +1046,6 @@ void GateImage::ReadMHD(G4String filename) {
   voxelSize = G4ThreeVector(mhd->spacing[0], mhd->spacing[1], mhd->spacing[2]);
   origin = G4ThreeVector(mhd->origin[0], mhd->origin[1], mhd->origin[2]);
 
-  // We need to shift to half a pixel to be coherent with Gate
-  // coordinates system.
-  origin[0] -= voxelSize[0]/2.0;
-  origin[1] -= voxelSize[1]/2.0;
-  origin[2] -= voxelSize[2]/2.0;
-
   // Convert mhd matrix to rotation matrix
   G4ThreeVector row_x, row_y, row_z;
   for(unsigned int i=0; i<3; i++) {
@@ -1065,6 +1061,11 @@ void GateImage::ReadMHD(G4String filename) {
                 << "It is probably a flip and this is not handled.");
   }
 
+  // We need to shift to half a pixel to be coherent with Gate
+  // coordinates system. Must be transformed because voxel size is
+  // known before rotation and origin is after rotation.
+  origin -= transformMatrix*(voxelSize/2.0);
+
   UpdateSizesFromResolutionAndVoxelSize();
   Allocate();
 
@@ -1073,6 +1074,33 @@ void GateImage::ReadMHD(G4String filename) {
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+void GateImage::ReadInterfile(G4String filename) {
+
+  // Read interfile image
+  GateInterfileHeader * h33 = new GateInterfileHeader;
+  h33->ReadHeader(filename);
+
+  // Get image information
+  voxelSize = G4ThreeVector(h33->m_pixelSize[0], h33->m_pixelSize[1], h33->m_planeThickness);
+  resolution = G4ThreeVector(h33->m_dim[0], h33->m_dim[1], h33->m_numPlanes);
+
+  // We need to shift to half a pixel to be coherent with Gate
+  // coordinates system.
+  origin[0] -= voxelSize[0]/2.0;
+  origin[1] -= voxelSize[1]/2.0;
+  origin[2] -= voxelSize[2]/2.0;
+
+  origin = G4ThreeVector(origin[0], origin[1], origin[2]);
+
+  UpdateSizesFromResolutionAndVoxelSize();
+  Allocate();
+
+  // Get image data
+  h33->ReadData(filename, data);
+
+}
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateImage::ReadAscii(G4String filename) {
@@ -1580,18 +1608,5 @@ bool GateImage::HasSameResolutionThan(const GateImage * pImage) const {
     return HasSameResolutionThan(*pImage);
 }
 //-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-GateImage::PixelType GateImage::GetMinValue()
-{
-   PixelType minVal = GetValue(0);
-   for(int i =1; i<GetNumberOfValues();i++)
-   {
-     if(GetValue(i)<minVal) minVal = GetValue(i);
-   }
-   return minVal;
-}
-//-----------------------------------------------------------------------------
-
 
 #endif

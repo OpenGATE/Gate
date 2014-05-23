@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v...
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -56,15 +54,18 @@ class GateSourceTPSPencilBeamMessenger: public GateVSourceMessenger
     G4UIcmdWithABool * pFlatGeneFlagCmd;
     //Not allowed fieldID
     G4UIcmdWithAnInteger * pNotAllowedFieldCmd;
+    //Allowed fieldID
+    G4UIcmdWithAnInteger * pAllowedFieldCmd;
     //Source description file
     G4UIcmdWithAString * pSourceFileCmd;
     //Configuration of spot intensity
     G4UIcmdWithABool * pSpotIntensityCmd;
     //Convergent or divergent beam model
     G4UIcmdWithABool* pDivergenceCmd;
+    //Selection of one layer
+    G4UIcmdWithAnInteger * pSelectLayerIDCmd;
 };
 
 #endif
 
 #endif
-

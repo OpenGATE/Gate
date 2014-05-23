@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -13,7 +11,6 @@
   \brief Class GateParticleInVolumeActor :
   \brief
 */
-
 
 
 #include "GateParticleInVolumeActor.hh"
@@ -38,6 +35,7 @@ GateParticleInVolumeActor::~GateParticleInVolumeActor()  {
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 /// Construct
 void GateParticleInVolumeActor::Construct() {
@@ -49,6 +47,9 @@ void GateParticleInVolumeActor::Construct() {
   EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(true);
   EnableUserSteppingAction(true);
+
+  SetOriginTransformAndFlagToImage(mLastHitEventImage);
+  SetOriginTransformAndFlagToImage(mParticleInVolumeImage);
 
   // Resize and allocate images
   mLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);

@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -86,7 +84,11 @@ void GatePositronAnnihilationStdPB::AddUserModel(GateListOfHadronicModels *model
   else if(model->GetModelName() == "PenelopeModel")
   {
     G4PenelopeAnnihilationModel* theAnnihilationModel = new G4PenelopeAnnihilationModel();
-    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theAnnihilationModel);
+    #if (G4VERSION_MAJOR > 9) || ((G4VERSION_MAJOR ==9 && G4VERSION_MINOR > 5))
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theAnnihilationModel); 
+    #else
+       dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theAnnihilationModel); 
+    #endif
   }
 }
 //-----------------------------------------------------------------------------

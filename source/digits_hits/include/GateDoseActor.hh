@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -56,7 +54,8 @@ class GateDoseActor : public GateVImageActor
   void EnableDoseToWaterSquaredImage(bool b) { mIsDoseToWaterSquaredImageEnabled = b; }
   void EnableDoseToWaterUncertaintyImage(bool b) { mIsDoseToWaterUncertaintyImageEnabled = b; }
   void EnableNumberOfHitsImage(bool b) { mIsNumberOfHitsImageEnabled = b; }
-  void EnableDoseNormalisation(bool b) { mIsDoseNormalisationEnabled = b; mDoseImage.SetScaleFactor(1.0); }
+  void EnableDoseNormalisationToMax(bool b);
+  void EnableDoseNormalisationToIntegral(bool b);
   void EnableDoseToWaterNormalisation(bool b) { mIsDoseToWaterNormalisationEnabled = b; mDoseToWaterImage.SetScaleFactor(1.0); }
 
   void EnableRBE1AlphaImage(bool b) { mIsRBE1AlphaImageEnabled = b; }
@@ -94,7 +93,7 @@ protected:
 
   int mCurrentEvent;
   StepHitType mUserStepHitType;
-  
+
   bool mIsLastHitEventImageEnabled;
   bool mIsEdepImageEnabled;
   bool mIsEdepSquaredImageEnabled;

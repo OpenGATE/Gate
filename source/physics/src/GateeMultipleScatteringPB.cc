@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -18,8 +16,12 @@ GateeMultipleScatteringPB::GateeMultipleScatteringPB():GateVProcess("eMultipleSc
   SetDefaultParticle("e+"); 
   SetDefaultParticle("e-");
 
-  AddToModelList("Urban95Model");
-  AddToModelList("Urban93Model");
+  #if (G4VERSION_MAJOR == 9)
+    AddToModelList("Urban95Model");
+    AddToModelList("Urban93Model");
+  #else
+    AddToModelList("UrbanModel"); 
+  #endif
 
   SetProcessInfo("Multiple Coulomb scattering of charged particles");
   pMessenger = new GateMultiScatteringMessenger(this);  
@@ -68,16 +70,23 @@ bool GateeMultipleScatteringPB::IsModelApplicable(G4String ,G4ParticleDefinition
 
 //-----------------------------------------------------------------------------
 void GateeMultipleScatteringPB::AddUserModel(GateListOfHadronicModels *model){
-  if(model->GetModelName() == "Urban93Model")
-  {
-    dynamic_cast<G4VMultipleScattering*>(pProcess)->AddEmModel(1, new G4UrbanMscModel93());
-  }
+  
+  #if (G4VERSION_MAJOR == 9)
+    if(model->GetModelName() == "Urban93Model")
+      {
+	dynamic_cast<G4VMultipleScattering*>(pProcess)->AddEmModel(1, new G4UrbanMscModel95());
+      }
 
-  if(model->GetModelName() == "Urban95Model")
-  {
-    dynamic_cast<G4VMultipleScattering*>(pProcess)->AddEmModel(1, new G4UrbanMscModel95());
-  }
-
+    if(model->GetModelName() == "Urban95Model")
+      {
+	dynamic_cast<G4VMultipleScattering*>(pProcess)->AddEmModel(1, new G4UrbanMscModel95());
+      }
+  #else
+    if(model->GetModelName() == "UrbanModel")
+      {
+	dynamic_cast<G4VMultipleScattering*>(pProcess)->AddEmModel(1, new G4UrbanMscModel());
+      }
+  #endif
 }
 //-----------------------------------------------------------------------------
 

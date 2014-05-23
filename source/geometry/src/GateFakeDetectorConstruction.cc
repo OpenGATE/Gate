@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -25,6 +23,9 @@ See GATE/LICENSE.txt for further details
 #include "G4PVPlacement.hh"
 #include "G4Material.hh"
 #include "G4LogicalVolume.hh"
+
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
 
 //-----------------------------------------------------------------------------
 G4VPhysicalVolume* GateFakeDetectorConstruction::Construct() {

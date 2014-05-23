@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -44,8 +42,11 @@ private:
   GateVImageVolume * pVImageVolume; 
 
   G4UIcmdWithAString        * pImageFileNameCmd;
-  //G4UIcmdWithAString        * pLabelToMaterialFileNameCmd;
+  G4UIcmdWithAString        * pImageFileNameCmdDeprecated;
+  G4UIcmdWithAString        * pLabelToMaterialFileNameCmd;
   G4UIcmdWithAString        * pHUToMaterialFileNameCmd;
+  G4UIcmdWithAString        * pHUToMaterialFileNameCmdDeprecated;
+  G4UIcmdWithAString        * pRangeMaterialFileNameCmd;
   G4UIcmdWith3VectorAndUnit * pIsoCenterCmd;
   G4UIcmdWith3VectorAndUnit * pSetOriginCmd;
   G4UIcmdWithAString        * pBuildDistanceTransfoCmd;

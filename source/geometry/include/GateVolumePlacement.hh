@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -19,6 +17,9 @@
 #include "G4RotationMatrix.hh"
 
 #include "GateVGlobalPlacement.hh"
+
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
 
 //--------------------------------------------------------------------
 class GateVolumePlacementMessenger;

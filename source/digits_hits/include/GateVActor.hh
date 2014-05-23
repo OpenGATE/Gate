@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -155,9 +153,6 @@ protected:
   struct timeval mTimeOfLastSaveEvent;
   //-----------------------------------------------------------------------------
 
-private:
-  G4int HCID;
-  G4THitsMap<G4double>* EvtMap;
 };
 //-----------------------------------------------------------------------------
 

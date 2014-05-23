@@ -36,9 +36,20 @@ GateHybridDoseActor::GateHybridDoseActor(G4String name, G4int depth) :
   mCurrentEvent=-1;
   pMessenger = new GateHybridDoseActorMessenger(this);
   mMaterialHandler = GateMaterialMuHandler::GetInstance();
-  mIsEdepImageEnabled = false;
-  mIsDoseUncertaintyImageEnabled = false;
+  mListOfRaycasting = 0;
   
+  mIsDoseImageEnabled = true;
+  mIsDoseUncertaintyImageEnabled = false;
+  mIsPrimaryDoseImageEnabled = false;
+  mIsPrimaryDoseUncertaintyImageEnabled = false;
+  mIsSecondaryDoseImageEnabled = false;
+  mIsSecondaryDoseUncertaintyImageEnabled = false;
+
+  mIsLastHitEventImageEnabled = false;
+  mIsPrimaryLastHitEventImageEnabled = false;
+  mIsSecondaryLastHitEventImageEnabled = false;
+
+  mIsHybridinoEnabled = false;
   mIsMaterialAndMuTableInitialized = false;
 
   // Create a 'MultiplicityActor' if not exist
@@ -79,16 +90,15 @@ void GateHybridDoseActor::Construct() {
     daughterNumber = attachedVolume->GetLogicalVolume()->GetNoDaughters();
   }
   // --> Set primary and secondary multiplicities in 'MultiplicityActor'
-  pHybridMultiplicityActor->SetMultiplicity(mPrimaryMultiplicity, mSecondaryMultiplicity, attachedVolume);
+  pHybridMultiplicityActor->SetMultiplicity(mIsHybridinoEnabled, mPrimaryMultiplicity, mSecondaryMultiplicity, attachedVolume);
+  mListOfRaycasting = pHybridMultiplicityActor->GetRaycastingList();
 
   // Get the stepping manager
   mSteppingManager = G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager();
   
   // Enable callbacks
-  EnableBeginOfRunAction(false);
+  EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
-  EnablePreUserTrackingAction(false);
-  EnablePostUserTrackingAction(false);
   EnableUserSteppingAction(true);
 
   // Affine transform and rotation matrix for Raycasting
@@ -113,50 +123,79 @@ void GateHybridDoseActor::Construct() {
 //   WARNING : 'Hybrid Dose Actor' inherits automatically the geometric properties of the attached volume
 //   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxelSize << G4endl);
       
-  // Output Filename
-  mDoseFilename = G4String(removeExtension(mSaveFilename))+"-Dose."+G4String(getExtension(mSaveFilename));
-  mEdepFilename = G4String(removeExtension(mSaveFilename))+"-Edep."+G4String(getExtension(mSaveFilename));
-//   GateMessage("Actor", 0, "taille : " << mResolution << " " << mHalfSize << " " << mPosition);
-  if (mIsEdepImageEnabled) {
-    mEdepImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mEdepImage.Allocate();
-    mEdepImage.SetFilename(mEdepFilename);
-    mEdepImage.SetOrigin(mOrigin);
+  // Total dose map initialisation
+  mDoseFilename = G4String(removeExtension(mSaveFilename))+"-totalDose."+G4String(getExtension(mSaveFilename));
+  if (mIsDoseImageEnabled)
+  {
+    mDoseImage.EnableSquaredImage(false);
+    mDoseImage.EnableUncertaintyImage(mIsDoseUncertaintyImageEnabled);
+    mDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    // Force the computation of squared image if uncertainty is enabled
+    if(mIsDoseUncertaintyImageEnabled)
+    {
+      mDoseImage.EnableSquaredImage(true);
+      mIsLastHitEventImageEnabled = true;
+      mLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+      mLastHitEventImage.Allocate();
+    }
+    mDoseImage.Allocate();
+    mDoseImage.SetFilename(mDoseFilename);
   }
-  mDoseImage.EnableUncertaintyImage(mIsDoseUncertaintyImageEnabled);
-  mDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-  //mDoseImage.SetScaleFactor(1e12/mDoseImage.GetVoxelVolume());
-  mDoseImage.Allocate();
-  mDoseImage.SetFilename(mDoseFilename);
-  mDoseImage.SetOrigin(mOrigin);
 
-  mPDoseFilename = G4String(removeExtension(mSaveFilename))+"-PrimaryDose."+G4String(getExtension(mSaveFilename));
-
-  mPrimaryDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-  //mDoseImage.SetScaleFactor(1e12/mDoseImage.GetVoxelVolume());
-  mPrimaryDoseImage.Allocate();
-  mPrimaryDoseImage.SetFilename(mPDoseFilename);
-  mPrimaryDoseImage.SetOrigin(mOrigin);
-
-  mSDoseFilename = G4String(removeExtension(mSaveFilename))+"-SecondaryDose."+G4String(getExtension(mSaveFilename));
-  
-  mSecondaryDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-  //mDoseImage.SetScaleFactor(1e12/mDoseImage.GetVoxelVolume());
-  mSecondaryDoseImage.Allocate();
-  mSecondaryDoseImage.SetFilename(mSDoseFilename);
-  mSecondaryDoseImage.SetOrigin(mOrigin);
-  //GateMessage("Actor", 0, " Activation image dose" << G4endl);
-  if(mIsDoseUncertaintyImageEnabled){
-    mLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mLastHitEventImage.Allocate();
-    mIsLastHitEventImageEnabled = true;
+  // Primary dose map initialisation
+  mPrimaryDoseFilename = G4String(removeExtension(mSaveFilename))+"-primaryDose."+G4String(getExtension(mSaveFilename));
+  if (mIsPrimaryDoseImageEnabled)
+  {
+    mPrimaryDoseImage.EnableSquaredImage(false);
+    mPrimaryDoseImage.EnableUncertaintyImage(mIsPrimaryDoseUncertaintyImageEnabled);
+    mPrimaryDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    // Force the computation of squared image if uncertainty is enabled
+    if(mIsPrimaryDoseUncertaintyImageEnabled)
+    {
+      mPrimaryDoseImage.EnableSquaredImage(true);
+      mIsPrimaryLastHitEventImageEnabled = true;
+      mPrimaryLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+      mPrimaryLastHitEventImage.Allocate();
+    }
+    mPrimaryDoseImage.Allocate();
+    mPrimaryDoseImage.SetFilename(mPrimaryDoseFilename);
   }
-  //GateMessage("Actor", 0, " Activé  " << G4endl);
-  
+
+  // Secondary dose map initialisation
+  mSecondaryDoseFilename = G4String(removeExtension(mSaveFilename))+"-secondaryDose."+G4String(getExtension(mSaveFilename));
+  if (mIsSecondaryDoseImageEnabled)
+  {
+    mSecondaryDoseImage.EnableSquaredImage(false);
+    mSecondaryDoseImage.EnableUncertaintyImage(mIsSecondaryDoseUncertaintyImageEnabled);
+    mSecondaryDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    // Force the computation of squared image if uncertainty is enabled
+    if(mIsSecondaryDoseUncertaintyImageEnabled)
+    {
+      mSecondaryDoseImage.EnableSquaredImage(true);
+      mIsSecondaryLastHitEventImageEnabled = true;
+      mSecondaryLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+      mSecondaryLastHitEventImage.Allocate();
+    }
+    mSecondaryDoseImage.Allocate();
+    mSecondaryDoseImage.SetFilename(mSecondaryDoseFilename);
+  }
+
+//   mDoseImage.SetOrigin(mOrigin);
+//   mPrimaryDoseImage.SetOrigin(mOrigin);
+//   mSecondaryDoseImage.SetOrigin(mOrigin);
+
+  // Initialize raycasting members
+  mBoxMin[0] = -mHalfSize.x();
+  mBoxMin[1] = -mHalfSize.y();
+  mBoxMin[2] = -mHalfSize.z();
+  mBoxMax[0] = mHalfSize.x();
+  mBoxMax[1] = mHalfSize.y();
+  mBoxMax[2] = mHalfSize.z();
+  mLineSize = (int)lrint(mResolution.x());
+  mPlaneSize = (int)lrint(mResolution.x()*mResolution.y());
+
   ConversionFactor = 1.60217653e-19 * 1.e6 * 1.e3 * 1.e3;
   VoxelVolume = GetDoselVolume();
-  outputEnergy = 0.0;
-  totalEnergy = 0.0;
   ResetData();
 }
 //-----------------------------------------------------------------------------
@@ -190,37 +229,55 @@ void GateHybridDoseActor::InitializeMaterialAndMuTable()
     
     mIsMaterialAndMuTableInitialized = true;
   }
+  
+  // Get G4Material of the world for exponential attenuation
+  GateVVolume * v = GetVolume();
+  while (v->GetLogicalVolumeName() != "world_log") {
+    v = v->GetParentVolume();
+  }
+  mWorldMaterial = v->GetLogicalVolume()->GetMaterial();
 }
-
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 /// Save data
-void GateHybridDoseActor::SaveData() {
-  std::cout.precision(20);
-  // GateMessage("Actor", 0, " output energy : " << outputEnergy << G4endl);
-  // GateMessage("Actor", 0, " total energy : " << totalEnergy << G4endl);
-  // GateMessage("Actor", 0, " sum : " << totalEnergy+outputEnergy << G4endl);
-  mDoseImage.SaveData(mCurrentEvent+1, false);
-  mPrimaryDoseImage.SaveData(mCurrentEvent+1, false);
-  mSecondaryDoseImage.SaveData(mCurrentEvent+1, false);
-//   mEdepImage.SaveData(mCurrentEvent+1, false);
+void GateHybridDoseActor::SaveData()
+{
+  if(mIsDoseImageEnabled) { mDoseImage.SaveData(mCurrentEvent+1, false); }
+  if(mIsPrimaryDoseImageEnabled) { mPrimaryDoseImage.SaveData(mCurrentEvent+1, false); }
+  if(mIsSecondaryDoseImageEnabled) { mSecondaryDoseImage.SaveData(mCurrentEvent+1, false); }
+
+  if(mIsLastHitEventImageEnabled) { mLastHitEventImage.Fill(-1); /* reset */ }
+  if(mIsPrimaryLastHitEventImageEnabled) { mPrimaryLastHitEventImage.Fill(-1); /* reset */ }
+  if(mIsSecondaryLastHitEventImageEnabled) { mSecondaryLastHitEventImage.Fill(-1); /* reset */ }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActor::ResetData() {
-  mDoseImage.Reset();
-  mPrimaryDoseImage.Reset();
-  mSecondaryDoseImage.Reset();
+void GateHybridDoseActor::ResetData()
+{
+  if(mIsLastHitEventImageEnabled) { mLastHitEventImage.Fill(-1); }
+  if(mIsPrimaryLastHitEventImageEnabled) { mPrimaryLastHitEventImage.Fill(-1); }
+  if(mIsSecondaryLastHitEventImageEnabled) { mSecondaryLastHitEventImage.Fill(-1); }
+
+  if(mIsDoseImageEnabled) { mDoseImage.Reset(); }
+  if(mIsPrimaryDoseImageEnabled) { mPrimaryDoseImage.Reset(); }
+  if(mIsSecondaryDoseImageEnabled) { mSecondaryDoseImage.Reset(); }  
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateHybridDoseActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
-  GateDebugMessage("Actor", 0, "GateDoseActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateHybridDoseActor -- Begin of Run" << G4endl);
   // ResetData(); // Do no reset here !! (when multiple run);
+
+  // security on attachedVolume
+  GateVImageVolume* volume = dynamic_cast<GateVImageVolume*>(GetVolume());
+  if(!volume) { GateError("Error in " << GetName() << ": GateVImageVolume doesn't exist"); }
+  
+  // fast material and mu access
+  if(!mIsMaterialAndMuTableInitialized) { InitializeMaterialAndMuTable(); }
 }
 //-----------------------------------------------------------------------------
 
@@ -233,35 +290,85 @@ void GateHybridDoseActor::BeginOfEventAction(const G4Event *) {
   {
     GateMessage("Actor", 0, " BeginOfEventAction - " << mCurrentEvent << " - primary weight = " << 1./mPrimaryMultiplicity << " - secondary weight = " << 1./mSecondaryMultiplicity << G4endl);
   }
-  
-  if(!mIsMaterialAndMuTableInitialized) { InitializeMaterialAndMuTable(); }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActor::PreUserTrackingAction(const GateVVolume *, const G4Track *)
-{
-//    GateMessage("Actor", 0, " TOTO "<< G4endl);
-}
+void GateHybridDoseActor::PreUserTrackingAction(const GateVVolume *, const G4Track *) {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActor::PostUserTrackingAction(const GateVVolume *, const G4Track* t){
-  outputEnergy+= t->GetKineticEnergy();
-}
+void GateHybridDoseActor::PostUserTrackingAction(const GateVVolume *, const G4Track *) {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 //G4bool GateDoseActor::ProcessHits(G4Step * step , G4TouchableHistory* th)
 void GateHybridDoseActor::UserSteppingAction(const GateVVolume *v, const G4Step* step)
 {
-//   DD("Dose step");
-  
   GateVImageActor::UserSteppingAction(v, step);
   
-  if(step->GetTrack()->GetDefinition()->GetParticleName() == "hybridino"){  
-    RayCast(step);
-//     GateMessage("Actor", 0, step->GetTrack()->GetCurrentStepNumber() << " Step weight = " << step->GetTrack()->GetWeight() << G4endl);
+  if(!mIsHybridinoEnabled)
+  {
+    for(unsigned int r=0; r<mListOfRaycasting->size(); r++)
+    {
+      bool isPrimary = (*mListOfRaycasting)[r].isPrimary;
+      double energy  = (*mListOfRaycasting)[r].energy;
+      double weight  = (*mListOfRaycasting)[r].weight;
+      G4ThreeVector position = (*mListOfRaycasting)[r].position;
+      G4ThreeVector momentum = (*mListOfRaycasting)[r].momentum;
+      
+      position = worldToVolume.TransformPoint(position);  
+      momentum.transform(mRotationMatrix);
+
+      bool interceptBox = IntersectionBox(position, momentum);
+      if(interceptBox)
+      {
+	if(mNearestDistance > 0.0)
+	{
+	  double muWorld = mMaterialHandler->GetMu(mWorldMaterial, energy)*mWorldMaterial->GetDensity()/(g/cm3);
+	  weight = weight * exp(-muWorld * mNearestDistance / 10.);
+	  position = position + (mNearestDistance * momentum);
+	  mFarthestDistance = mFarthestDistance - mNearestDistance;
+	  mNearestDistance = 0.0;
+	}
+
+	RayCast(isPrimary, energy, weight, position, momentum);
+      }
+    }
+    
+    mListOfRaycasting->clear();
+  }
+  else if(step->GetTrack()->GetDefinition()->GetParticleName() == "hybridino")
+  {
+    bool isPrimary = false;
+    if(step->GetTrack()->GetParentID() == 0) { isPrimary = true; }
+
+    G4StepPoint *preStep(step->GetPreStepPoint());
+    double energy = preStep->GetKineticEnergy();
+    double weight = pHybridMultiplicityActor->GetHybridTrackWeight();
+    G4ThreeVector position = preStep->GetPosition();
+    G4ThreeVector momentum = preStep->GetMomentumDirection();
+
+    position = worldToVolume.TransformPoint(position);  
+    momentum.transform(mRotationMatrix);
+    
+    bool interceptBox = IntersectionBox(position, momentum);
+    if(!interceptBox) { GateError("Error in GateHybridDoseActor: intercept box failed"); }
+    
+    RayCast(isPrimary, energy, weight, position, momentum);
+    
+    // New initialisation of the track
+    G4ThreeVector newMomentum = preStep->GetMomentumDirection();
+    G4ThreeVector newPosition = preStep->GetPosition();
+    G4double newTrackLength = mTotalLength + 0.00001; // add a small distance to directly begin outside the voxelised volume
+    
+    newPosition = newPosition + newTrackLength * newMomentum;
+    G4Track *modifiedTrack = step->GetTrack();
+    modifiedTrack->SetPosition(newPosition);
+    mSteppingManager->SetInitialStep(modifiedTrack);
+    
+    // register the new track and corresponding weight into the trackList (see 'HybridMultiplicityActor')
+    pHybridMultiplicityActor->SetHybridTrackWeight(weight);
   }
 }
 //-----------------------------------------------------------------------------
@@ -280,42 +387,27 @@ static inline int getIncrement(double value)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActor::RayCast(const G4Step* step)
+void GateHybridDoseActor::RayCast(bool isPrimary, double energy, double weight, G4ThreeVector position, G4ThreeVector momentum)
 {
 //   GateMessage("Actor", 0, "  " << G4endl;);
-//   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxelSize << G4endl);
-
-  G4StepPoint *preStep(step->GetPreStepPoint());
-  G4ThreeVector position = preStep->GetPosition();
-  G4ThreeVector momentum = preStep->GetMomentumDirection();
-
-//   GateMessage("Actor", 0, " before : position " << position << " momentum " << momentum << G4endl);
-  position = worldToVolume.TransformPoint(position);  
-  momentum.transform(mRotationMatrix);
-  G4double energy = preStep->GetKineticEnergy();
-//   GateMessage("Actor", 0, " after  : position " << position << " momentum " << momentum << G4endl);
+//   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxSize << G4endl);
   
   int xincr = getIncrement(momentum.x());
   int yincr = getIncrement(momentum.y());
   int zincr = getIncrement(momentum.z());
   
-  //Voxels size
-  double dx = 2.0 * mHalfSize.x() / mResolution.x();
-  double dy = 2.0 * mHalfSize.y() / mResolution.y();
-  double dz = 2.0 * mHalfSize.z() / mResolution.z();
-
   //Momentum norm have to be 1
   //double norm = momentum.mag();
-  double Lx = xincr * dx / momentum.x(); //*norm
-  double Ly = yincr * dy / momentum.y(); //*norm
-  double Lz = zincr * dz / momentum.z(); //*norm
+  double Lx = xincr * mVoxelSize.x() / momentum.x(); //*norm
+  double Ly = yincr * mVoxelSize.y() / momentum.y(); //*norm
+  double Lz = zincr * mVoxelSize.z() / momentum.z(); //*norm
   //Coordinates
   int x, y, z;
   //Because GateImage is shit
   //mImage.GetCoordinatesFromPosition(position, x, y, z);
-  double xtemp = (position.x()+mHalfSize.x())/dx;
-  double ytemp = (position.y()+mHalfSize.y())/dy;
-  double ztemp = (position.z()+mHalfSize.z())/dz;
+  double xtemp = (position.x()+mHalfSize.x())/mVoxelSize.x();
+  double ytemp = (position.y()+mHalfSize.y())/mVoxelSize.y();
+  double ztemp = (position.z()+mHalfSize.z())/mVoxelSize.z();
   x = (int) floor(xtemp);
   y = (int) floor(ytemp);
   z = (int) floor(ztemp);
@@ -331,82 +423,122 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
   else if(z >= mResolution.z()) { z = mResolution.z()-1; }
   
   //Remaining and Total lengths
-  double Rx, Ry, Rz;
-  double Ltot = 2.0*mHalfSize.x()*mHalfSize.y()*mHalfSize.z();
-  double Ltmp = Ltot;
+  double Rx = 1.0e15;
+  double Ry = 1.0e15;
+  double Rz = 1.0e15;
+  
+  mTotalLength = 2.0*mHalfSize.x()*mHalfSize.y()*mHalfSize.z();
+  double Ltmp = mTotalLength;
 
 //   GateMessage("Actor", 0, "increment " << xincr << " " << yincr << " " << zincr << G4endl);
   
   if(xincr > 0){
-    Rx = xincr * (-mHalfSize.x() + (x+1)*dx - position.x())/momentum.x();
-    Ltot = (mHalfSize.x() - position.x())/momentum.x();
+    Rx = xincr * (-mHalfSize.x() + (x+1)*mVoxelSize.x() - position.x())/momentum.x();
+    mTotalLength = (mHalfSize.x() - position.x())/momentum.x();
   }
   else if (momentum.x() < 0){
-    Rx = xincr * (position.x() - (-mHalfSize.x() + x*dx))/momentum.x();
-    Ltot = (-mHalfSize.x() - position.x())/momentum.x();
+    Rx = xincr * (position.x() - (-mHalfSize.x() + x*mVoxelSize.x()))/momentum.x();
+    mTotalLength = (-mHalfSize.x() - position.x())/momentum.x();
   }
-  else {Rx = 2*Ltot;}
+  else {Rx = 2*mTotalLength;}
       
   if(yincr > 0){
-      Ry = yincr * (-mHalfSize.y() + (y+1)*dy - position.y())/momentum.y();
+      Ry = yincr * (-mHalfSize.y() + (y+1)*mVoxelSize.y() - position.y())/momentum.y();
       Ltmp = (mHalfSize.y() - position.y())/momentum.y();
   }
   else if(momentum.y() < 0){
-    Ry = yincr * (position.y() - (-mHalfSize.y() + y*dy))/momentum.y();
+    Ry = yincr * (position.y() - (-mHalfSize.y() + y*mVoxelSize.y()))/momentum.y();
     Ltmp = (-mHalfSize.y() - position.y())/momentum.y();
   }
-  else {Ry = 2*Ltot;}
-  if (Ltmp < Ltot) {Ltot = Ltmp;}
+  else {Ry = 2*mTotalLength;}
+  if (Ltmp < mTotalLength) {mTotalLength = Ltmp;}
   
   if(zincr > 0){
-    Rz = zincr * (-mHalfSize.z() + (z+1)*dz - position.z())/momentum.z();
+    Rz = zincr * (-mHalfSize.z() + (z+1)*mVoxelSize.z() - position.z())/momentum.z();
       Ltmp = (mHalfSize.z() - position.z())/momentum.z();
   }
   else if (momentum.z() < 0)  {
-      Rz = zincr * (position.z() - (-mHalfSize.z() + z*dz))/momentum.z();
+      Rz = zincr * (position.z() - (-mHalfSize.z() + z*mVoxelSize.z()))/momentum.z();
       Ltmp = (-mHalfSize.z() - position.z())/momentum.z();
   }
-  else {Rz = 2*Ltot;}
+  else {Rz = 2*mTotalLength;}
     
-  if (Ltmp < Ltot) {Ltot = Ltmp;}
+  if (Ltmp < mTotalLength) {mTotalLength = Ltmp;}
   
 //   GateMessage("Actor", 0, "Lx : " << Lx << " Ly " << Ly << " Lz " << Lz << G4endl);
 //   GateMessage("Actor", 0, "Rx : " << Rx << " Ry " << Ry << " Rz " << Rz << G4endl);
 //   GateMessage("Actor", 0, "entry index " << x << " " << y << " " << z << G4endl);
-//   GateMessage("Actor", 0, "LTot" << Ltot << G4endl); 
+//   GateMessage("Actor", 0, "LTot" << mTotalLength << G4endl); 
   
-  int lineSize = (int)lrint(mResolution.x());
-  int planeSize = (int)lrint(mResolution.x()*mResolution.y());
-  int voxelIndex = 0;
+  int index = 0;
   G4Material *material;
-  double doseValue = 0.0;
+  double dose = 0.0;
   double L = 0.0;
   
-  double hybridTrackWeight = pHybridMultiplicityActor->GetHybridTrackWeight();
-  double delta_in  = hybridTrackWeight;
+  double delta_in  = weight;
   double delta_out(0.0);
   double mu(0.0);
   double muen(0.0);
 
-//   GateMessage("ActorDose", 0, "hybridWeight = " << hybridTrackWeight << " trackWeight = " << step->GetTrack()->GetWeight() << G4endl);
-  GateVImageVolume* volume = dynamic_cast<GateVImageVolume*>(GetVolume());
-  if(!volume) { GateError("Error in " << GetName() << ": GateVImageVolume doesn't exist"); }
-  G4bool isPrimaryParticle = false;
-  if(step->GetTrack()->GetParentID() == 0) { isPrimaryParticle = true; }
-  
-  while(L < Ltot-0.00001)
+  // test on dose contribution: primary or secondary ?
+  GateImageWithStatistic *currentDoseImage = 0;
+  GateImage *currentLastHitImage = 0;
+  bool isCurrentLastHitImageEnabled = false;
+  bool isCurrentDoseUncertaintyEnabled = false;
+  if(isPrimary)
   {
-//     GateMessage("Actor", 0, " index " << x << " " << y << " " << z << " | Rest " << Rx << " " << Ry << " " << Rz << " | L " << L << " Ltot " << Ltot << G4endl);
+    if(mIsPrimaryDoseImageEnabled)
+    {
+      currentDoseImage = &mPrimaryDoseImage;
+      isCurrentLastHitImageEnabled = mIsPrimaryLastHitEventImageEnabled;
+      isCurrentDoseUncertaintyEnabled = mIsPrimaryDoseUncertaintyImageEnabled;
+      currentLastHitImage = &mPrimaryLastHitEventImage;
+    }
+  }
+  else if(mIsSecondaryDoseImageEnabled)
+  {
+    currentDoseImage = &mSecondaryDoseImage;
+    isCurrentLastHitImageEnabled = mIsSecondaryLastHitEventImageEnabled;
+    isCurrentDoseUncertaintyEnabled = mIsSecondaryDoseUncertaintyImageEnabled;
+    currentLastHitImage = &mSecondaryLastHitEventImage;
+  }
+
+  while(L < mTotalLength-0.00001)
+  {
+//     GateMessage("Actor", 0, " index " << x << " " << y << " " << z << " | Rest " << Rx << " " << Ry << " " << Rz << " | L " << L << " mTotalLength " << mTotalLength << G4endl);
 //     GateMessage("Actor", 0, " Rest  " << Rx << " " << Ry << " " << Rz << G4endl);
-//     GateMessage("Actor", 0, "L " << L << " Ltot " << Ltot << G4endl);
+//     GateMessage("Actor", 0, "L " << L << " mTotalLength " << mTotalLength << G4endl);
 //     GateMessage("Actor", 0, "Volume = " << GetVolume()->GetLogicalVolumeName() << G4endl);
 //     GateMessage("Actor", 0, "material 1 : " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(x,y,z)) << G4endl);    
 //     GateMessage("Actor", 0, "label : " << volume->GetImage()->GetValue(0,0,0) << " " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(0,0,0)) << G4endl);    
 
-    voxelIndex = x+y*lineSize+z*planeSize;
-    material = theListOfMaterial[voxelIndex];
-    mu = theListOfMuTable[voxelIndex]->GetMu(energy)*material->GetDensity()/(g/cm3);
-    muen = theListOfMuTable[voxelIndex]->GetMuEn(energy);
+    index = x+y*mLineSize+z*mPlaneSize;
+
+    bool sameEvent = true;
+    if(mIsLastHitEventImageEnabled)
+    {
+      GateDebugMessage("Actor", 2,  "GateHybridDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
+      if(mCurrentEvent != mLastHitEventImage.GetValue(index))
+      {
+	sameEvent = false;
+	mLastHitEventImage.SetValue(index, mCurrentEvent);
+      }
+    }
+    
+    bool currentContributionSameEvent = true;
+    if(isCurrentLastHitImageEnabled)
+    {
+      GateDebugMessage("Actor", 2,  "GateHybridDoseActor -- UserSteppingActionInVoxel: Last event in index = " << currentLastHitImage->GetValue(index) << G4endl);
+      if(mCurrentEvent != currentLastHitImage->GetValue(index))
+      {
+	currentContributionSameEvent = false;
+	currentLastHitImage->SetValue(index, mCurrentEvent);
+      }
+    }
+    
+    material = theListOfMaterial[index];
+    mu = theListOfMuTable[index]->GetMu(energy)*material->GetDensity()/(g/cm3);
+    muen = theListOfMuTable[index]->GetMuEn(energy);
 
     if(Rx < Ry && Rx < Rz){
       delta_out = delta_in*exp(-mu*Rx/10.);
@@ -433,31 +565,77 @@ void GateHybridDoseActor::RayCast(const G4Step* step)
       z+=zincr;
     }
     
-    doseValue = ConversionFactor*energy*muen*(delta_in-delta_out)/mu/VoxelVolume;
+    dose = ConversionFactor*energy*muen*(delta_in-delta_out)/mu/VoxelVolume;
+
+    if(mIsDoseImageEnabled)
+    {
+      if(mIsDoseUncertaintyImageEnabled)
+      {
+	if(sameEvent) { mDoseImage.AddTempValue(index, dose); }
+	else { mDoseImage.AddValueAndUpdate(index, dose); }
+      }
+      else { mDoseImage.AddValue(index, dose); }
+    }
     
-    if(isPrimaryParticle) {
-      mDoseImage.AddValue(voxelIndex, doseValue);
-      mPrimaryDoseImage.AddValue(voxelIndex, doseValue);
+    if(currentDoseImage)
+    {
+      if(isCurrentDoseUncertaintyEnabled)
+      {
+	if(currentContributionSameEvent) { currentDoseImage->AddTempValue(index, dose); }
+	else { currentDoseImage->AddValueAndUpdate(index, dose); }
+      }
+      else { currentDoseImage->AddValue(index, dose); }
     }
-    else {
-      mDoseImage.AddValue(voxelIndex, doseValue);
-      mSecondaryDoseImage.AddValue(voxelIndex, doseValue);
-    }
+    
     delta_in = delta_out;
   }
-
-  // New initialisation of the track to overcome the navigation process
-  G4ThreeVector newMomentum = preStep->GetMomentumDirection();
-  G4ThreeVector newPosition = preStep->GetPosition();
-  G4double newTrackLength = Ltot + 0.00001; // add a small distance to directly begin outside the voxelised volume
-  newPosition.set(newPosition.x() + newTrackLength*newMomentum.x(), newPosition.y() + newTrackLength*newMomentum.y(), newPosition.z() + newTrackLength*newMomentum.z());
-  G4Track *modifiedTrack = step->GetTrack();
-  modifiedTrack->SetPosition(newPosition);
-  mSteppingManager->SetInitialStep(modifiedTrack);
   
-  // register the new track and corresponding weight into the trackList (see 'HybridMultiplicityActor')
-  pHybridMultiplicityActor->SetHybridTrackWeight(delta_in);
+  weight = delta_in;
 }
+//-----------------------------------------------------------------------------
+
+bool GateHybridDoseActor::IntersectionBox(G4ThreeVector p, G4ThreeVector m)
+{
+//   double rayOrigin[3];
+  mRayOrigin[0] = p.x();
+  mRayOrigin[1] = p.y();
+  mRayOrigin[2] = p.z();
+//   double rayDirection[3];
+  mRayDirection[0] = m.x();
+  mRayDirection[1] = m.y();
+  mRayDirection[2] = m.z();  
+  
+  mNearestDistance = -1.0e15;
+  mFarthestDistance = 1.0e15;
+
+  double T1,T2,tmpT(0.0);
+  
+  for(int i=0; i<3; i++)
+  {
+    if(mRayDirection[i] == 0.0) {
+      if(mRayOrigin[i]<mBoxMin[i] or mRayOrigin[i]>mBoxMax[i]) { return false; }
+    }
+
+    T1 = (mBoxMin[i] - mRayOrigin[i]) / mRayDirection[i];
+    T2 = (mBoxMax[i] - mRayOrigin[i]) / mRayDirection[i];
+    
+    if(T1 > T2) {
+      tmpT = T1;
+      T1 = T2;
+      T2 = tmpT;
+    }
+    if(T1 > mNearestDistance) { mNearestDistance = T1; }
+    if(T2 < mFarthestDistance) { mFarthestDistance = T2; }
+    if(mNearestDistance > mFarthestDistance) { return false; }
+    if(mFarthestDistance < 0.0) { return false; }
+  }
+  
+//   G4ThreeVector nearestPoint = pos + (nearestDistance * mmt);
+//   G4ThreeVector farthestPoint = pos + (farthestDistance * mmt);  
+  
+  return true;
+}
+
 //-----------------------------------------------------------------------------
 
 #endif /* end #define GATEHYBRIDDOSEACTOR_CC */

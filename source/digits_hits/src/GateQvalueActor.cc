@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -8,12 +6,10 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-
 /*
   \brief Class GateQvalueActor :
   \brief
 */
-
 
 
 #include "GateQvalueActor.hh"
@@ -38,6 +34,7 @@ GateQvalueActor::~GateQvalueActor()  {
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 /// Construct
 void GateQvalueActor::Construct() {
@@ -52,6 +49,7 @@ void GateQvalueActor::Construct() {
   EnableUserSteppingAction(true);
 
   // Output Filename
+  SetOriginTransformAndFlagToImage(mQvalueImage);
   mQvalueFilename = mSaveFilename;
   mQvalueImage.EnableSquaredImage(false);
   mQvalueImage.EnableUncertaintyImage(false);

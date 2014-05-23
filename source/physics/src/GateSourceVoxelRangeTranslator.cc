@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -16,6 +14,9 @@ See GATE/LICENSE.txt for further details
 #include "G4ios.hh"
 #include <fstream>
 #include <iomanip>
+
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
 
 GateSourceVoxelRangeTranslator::GateSourceVoxelRangeTranslator(GateVSourceVoxelReader* voxelReader) 
   : GateVSourceVoxelTranslator(voxelReader)

@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -177,10 +175,10 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 
           /*if (positronID == 0)
             {
-              if (nVerboseLevel > 0) G4cout << "GateAnalysis::RecordEndOfEvent : WARNING : positronID == 0" << G4endl;
+            if (nVerboseLevel > 0) G4cout << "GateAnalysis::RecordEndOfEvent : WARNING : positronID == 0" << G4endl;
             }
 
-	  if (nVerboseLevel > 1) G4cout << "GateAnalysis::RecordEndOfEvent : positronID : " << positronID << G4endl;
+            if (nVerboseLevel > 1) G4cout << "GateAnalysis::RecordEndOfEvent : positronID : " << positronID << G4endl;
           */
 
 	  ////////////
@@ -233,13 +231,13 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
           for (G4int iPHit=0;iPHit<NpHits;iPHit++)
             {
 
-			// HDS : septal penetration record
-			if ( m_recordSeptalFlag ) {
-				if ((*PHC)[iPHit]->GetPhysVolName() == m_septalPhysVolumeName) {
-					++septalNb;
-				}
-			}
-			//
+              // HDS : septal penetration record
+              if ( m_recordSeptalFlag ) {
+                if ((*PHC)[iPHit]->GetPhysVolName() == m_septalPhysVolumeName) {
+                  ++septalNb;
+                }
+              }
+              //
 
               G4int    phantomTrackID = (*PHC)[iPHit]->GetTrackID();
               G4String processName    = (*PHC)[iPHit]->GetProcess();
@@ -320,48 +318,48 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
                 }
             } // end loop NpHits
 
-TrackingMode theMode =( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
+          TrackingMode theMode =( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
 
 
-if (  theMode == kTracker ) // in tracker mode we store the infos about the number of compton and rayleigh
-  { // G4cout << " GateAnalysis eventID "<<eventID<<G4endl;
-    GateToRoot* gateToRoot = (GateToRoot*) (GateOutputMgr::GetInstance()->GetModule("root"));
-    ComptonRayleighData aCRData;
-    aCRData.photon1_phantom_Rayleigh = photon1_phantom_Rayleigh;
-    aCRData.photon2_phantom_Rayleigh = photon2_phantom_Rayleigh;
-    aCRData.photon1_phantom_compton  = photon1_phantom_compton;
-    aCRData.photon2_phantom_compton  = photon2_phantom_compton;
-    strcpy(aCRData.theComptonVolumeName1 , theComptonVolumeName1.c_str() );
-    strcpy(aCRData.theComptonVolumeName2 , theComptonVolumeName2.c_str() );
-    strcpy(aCRData.theRayleighVolumeName1 , theRayleighVolumeName1.c_str() );
-    strcpy(aCRData.theRayleighVolumeName2 , theRayleighVolumeName2.c_str() );
-    gateToRoot->RecordPHData( aCRData );
-    // return;
-  }
+          if (  theMode == kTracker ) // in tracker mode we store the infos about the number of compton and rayleigh
+            { // G4cout << " GateAnalysis eventID "<<eventID<<G4endl;
+              GateToRoot* gateToRoot = (GateToRoot*) (GateOutputMgr::GetInstance()->GetModule("root"));
+              ComptonRayleighData aCRData;
+              aCRData.photon1_phantom_Rayleigh = photon1_phantom_Rayleigh;
+              aCRData.photon2_phantom_Rayleigh = photon2_phantom_Rayleigh;
+              aCRData.photon1_phantom_compton  = photon1_phantom_compton;
+              aCRData.photon2_phantom_compton  = photon2_phantom_compton;
+              strcpy(aCRData.theComptonVolumeName1 , theComptonVolumeName1.c_str() );
+              strcpy(aCRData.theComptonVolumeName2 , theComptonVolumeName2.c_str() );
+              strcpy(aCRData.theRayleighVolumeName1 , theRayleighVolumeName1.c_str() );
+              strcpy(aCRData.theRayleighVolumeName2 , theRayleighVolumeName2.c_str() );
+              gateToRoot->RecordPHData( aCRData );
+              // return;
+            }
 
-if (  theMode == kDetector ) // in tracker mode we store the infos about the number of compton and rayleigh
-  {
-   // we are in detector mode
-       GateToRoot* gateToRoot = (GateToRoot*) (GateOutputMgr::GetInstance()->GetModule("root"));
-       ComptonRayleighData aCRData;
-       gateToRoot->GetPHData( aCRData);
+          if (  theMode == kDetector ) // in tracker mode we store the infos about the number of compton and rayleigh
+            {
+              // we are in detector mode
+              GateToRoot* gateToRoot = (GateToRoot*) (GateOutputMgr::GetInstance()->GetModule("root"));
+              ComptonRayleighData aCRData;
+              gateToRoot->GetPHData( aCRData);
 
-    photon1_phantom_Rayleigh += aCRData.photon1_phantom_Rayleigh;
-    photon2_phantom_Rayleigh += aCRData.photon2_phantom_Rayleigh;
-    photon1_phantom_compton  += aCRData.photon1_phantom_compton;
-    photon2_phantom_compton  += aCRData.photon2_phantom_compton;
-/*
-    if( theComptonVolumeName1 == G4String("NULL") ) {theComptonVolumeName1    = aCRData.theComptonVolumeName1;}
-    if( theComptonVolumeName2 == G4String("NULL") ) {theComptonVolumeName2    = aCRData.theComptonVolumeName2;}
-    if( theRayleighVolumeName1 == G4String("NULL") ) {theRayleighVolumeName1   = aCRData.theRayleighVolumeName1;}
-    if( theRayleighVolumeName2 == G4String("NULL") ){theRayleighVolumeName2   = aCRData.theRayleighVolumeName2;}
-*/
-    theComptonVolumeName1    = aCRData.theComptonVolumeName1;
-    theComptonVolumeName2    = aCRData.theComptonVolumeName2;
-    theRayleighVolumeName1   = aCRData.theRayleighVolumeName1;
-    theRayleighVolumeName2   = aCRData.theRayleighVolumeName2;
+              photon1_phantom_Rayleigh += aCRData.photon1_phantom_Rayleigh;
+              photon2_phantom_Rayleigh += aCRData.photon2_phantom_Rayleigh;
+              photon1_phantom_compton  += aCRData.photon1_phantom_compton;
+              photon2_phantom_compton  += aCRData.photon2_phantom_compton;
+              /*
+                if( theComptonVolumeName1 == G4String("NULL") ) {theComptonVolumeName1    = aCRData.theComptonVolumeName1;}
+                if( theComptonVolumeName2 == G4String("NULL") ) {theComptonVolumeName2    = aCRData.theComptonVolumeName2;}
+                if( theRayleighVolumeName1 == G4String("NULL") ) {theRayleighVolumeName1   = aCRData.theRayleighVolumeName1;}
+                if( theRayleighVolumeName2 == G4String("NULL") ){theRayleighVolumeName2   = aCRData.theRayleighVolumeName2;}
+              */
+              theComptonVolumeName1    = aCRData.theComptonVolumeName1;
+              theComptonVolumeName2    = aCRData.theComptonVolumeName2;
+              theRayleighVolumeName1   = aCRData.theRayleighVolumeName1;
+              theRayleighVolumeName2   = aCRData.theRayleighVolumeName2;
 
-  }
+            }
 
 
           /////////

@@ -1,5 +1,4 @@
 
-
 #include "GateRTPhantom.hh"
 #include "GateRTPhantomMessenger.hh"
 #include "GateObjectStore.hh"

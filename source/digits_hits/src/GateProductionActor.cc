@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -38,6 +36,7 @@ GateProductionActor::~GateProductionActor()
   delete pMessenger;
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 /// Construct

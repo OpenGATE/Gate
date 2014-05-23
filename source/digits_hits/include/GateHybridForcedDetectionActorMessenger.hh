@@ -17,6 +17,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcmdWith3Vector.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 #include "G4UIcmdWithAnInteger.hh"
+#include "G4UIcmdWithADouble.hh"
 
 #include "globals.hh"
 #include "GateHybridForcedDetectionActor.hh"
@@ -47,6 +48,8 @@ protected:
   G4UIcmdWithAString * pSetRayleighFilenameCmd;
   G4UIcmdWithAString * pSetFluorescenceFilenameCmd;
   G4UIcmdWithAString * pSetSecondaryFilenameCmd;
+  G4UIcmdWithABool * pEnableSecondarySquaredCmd;
+  G4UIcmdWithABool * pEnableSecondaryUncertaintyCmd;
   G4UIcmdWithAString * pSetTotalFilenameCmd;
   G4UIcmdWithAString * pSetSingleInteractionFilenameCmd;
   G4UIcmdWithAString * pSetSingleInteractionTypeCmd;
@@ -56,6 +59,12 @@ protected:
   G4UIcmdWithAnInteger * pSetSingleInteractionZCmd;
   G4UIcmdWithAString * pSetPhaseSpaceFilenameCmd;
   G4UIcmdWithAString * pSetWaterLUTFilenameCmd;
+  G4UIcmdWithAString * pSetSecondPassPrefixCmd;
+  GateUIcmdWith2Vector * pSetSecondPassDetectorResolCmd;
+  G4UIcmdWithAString * pSetRussianRouletteFilenameCmd;
+  G4UIcmdWithADoubleAndUnit * pSetRussianRouletteSpacingCmd;
+  G4UIcmdWithAnInteger * pSetRussianRouletteMinimumCountInRegionCmd;
+  G4UIcmdWithADouble * pSetRussianRouletteMinimumProbabilityCmd;
 };
 
 #endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH*/
