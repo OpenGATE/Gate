@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -34,6 +32,7 @@ namespace GateSignalHandler
     //! When a BeamOn/StartDAQ is running, aborts the current run and stops the DAQ, returning GATE in Idle state.
     //! In the other states, the signal is ignored.
     void QuitSignalHandler(int sig);
+    void PrintSimulationStatus(int sig);
 
     //! Ignore signal
     void IgnoreSignalHandler(int sig);

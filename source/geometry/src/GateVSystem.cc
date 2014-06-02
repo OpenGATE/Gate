@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -46,6 +44,11 @@ GateVSystem::GateVSystem(const G4String& itsName,G4bool isWithGantry)
 {
    // Next lines were added for the multi-system approach
   G4String itsOwnName = GateSystemListManager::GetInstance()->GetInsertedSystemsNames()->back();
+
+  // Papa's Debugging : number of system for headID in case of multi-system
+  G4int sysNumber = GateSystemListManager::GetInstance()->GetInsertedSystemsNames()->size();
+  m_sysNumber = sysNumber;
+
   m_itsOwnName = itsOwnName;
   m_insertionOrder++;
   m_itsNumber = m_insertionOrder;
@@ -180,9 +183,12 @@ GateOutputVolumeID GateVSystem::ComputeOutputVolumeID(const GateVolumeID& aVolum
 
   // Ask the component-tree to compute the output-volume ID
   outputVolumeID[0]=ComputeSubtreeID(m_BaseComponent,aVolumeID,outputVolumeID,0);
-  // Set the first cell to the systemID
-  outputVolumeID[0]=this->GetItsNumber();
   
+  // Set the first cell to the systemID
+  //Papa's Debug
+  if (m_sysNumber > 1) outputVolumeID[0]=this->GetItsNumber();
+  /////
+
   // verbose output
   if (nVerboseLevel)
     G4cout << "[" << GetObjectName() << "::ComputeOutputVolumeID]:" << G4endl

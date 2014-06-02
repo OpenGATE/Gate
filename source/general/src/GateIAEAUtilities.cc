@@ -1,6 +1,4 @@
 /*
-   Copyright 2000-2003 Virginia Commonwealth University
-
    Advisory:
 1. The authors make no claim of accuracy of the information in these files or the 
    results derived from use of these files.

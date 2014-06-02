@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -43,6 +41,8 @@ protected:
   GatePhysicsList * pPhylist;
   GateUIcmdWith2String * pRemove;
   GateUIcmdWith2String * pAdd;
+  GateUIcmdWith2String * pAddProcessMixed;
+
   GateUIcmdWith2String * pList;
   G4UIcmdWithoutParameter * pInit;
   G4UIcmdWithAString * pPrint;
@@ -80,6 +80,9 @@ protected:
 
   G4UIcommand * pAddAtomDeexcitation;
   G4UIcmdWithAString * pAddPhysicsList;
+  G4UIcmdWithAString * pAddPhysicsListMixed;
+  G4UIcmdWithABool * pConstructProcessMixed;
+
   G4UIcmdWithADoubleAndUnit * pEnergyRangeMinLimitCmd;
 
 private:

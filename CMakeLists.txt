@@ -29,6 +29,12 @@ ELSE()
   FIND_PACKAGE(Geant4 REQUIRED)
 ENDIF()
 
+# Check if OpenGL headers are still available
+IF(Geant4_qt_FOUND OR Geant4_vis_opengl_x11_FOUND)
+  FIND_PACKAGE(OpenGL QUIET)
+  INCLUDE_DIRECTORIES(${OPENGL_INCLUDE_DIR})
+  SET(GATE_USE_OPENGL ${OPENGL_FOUND})
+ENDIF()
 
 #=========================================================
 # Build variables for G4 Version
@@ -55,7 +61,7 @@ OPTION(GATE_USE_LMF "Gate use LMF" OFF)
 OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
 OPTION(GATE_ANALYSIS_USE_GENERAL "Gate use  G4ANALYSIS_USE_GENERAL (Recommanded)" ON)
 OPTION(GATE_ANALYSIS_USE_FILE "Gate use G4ANALYSIS_USE_FILE (Recommanded)" ON)
-OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4 (this is REQUIRED !)" ON)
+OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4. Use OFF if you compile G4 with embedded CLHEP" OFF)
 OPTION(GATE_USE_GPU "Gate use GPU (voxelized src and tracking), need CUDA " OFF)
 
 #=========================================================
@@ -142,9 +148,10 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/source/physics/include
   ${PROJECT_SOURCE_DIR}/source/digits_hits/include
   ${PROJECT_SOURCE_DIR}/source/general/include
-  ${PROJECT_SOURCE_DIR}/source/itk-mhd/
-  ${PROJECT_SOURCE_DIR}/source/itk-mhd/itkzlib
-  ${PROJECT_SOURCE_DIR}/source/itk-mhd/MetaIO
+  ${PROJECT_SOURCE_DIR}/source/externals/clhep/include
+  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/
+  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/itkzlib
+  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/MetaIO
   ${PROJECT_BINARY_DIR}/itk-mhd/)
 
 #=========================================================
@@ -155,6 +162,8 @@ FILE(GLOB sources
   ${PROJECT_SOURCE_DIR}/source/digits_hits/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/physics/src/*.cc
   ${PROJECT_SOURCE_DIR}/source/general/src/*.cc
+  ${PROJECT_SOURCE_DIR}/source/externals/clhep/src/CLHEP/Matrix/*.cc
+  ${PROJECT_SOURCE_DIR}/source/externals/clhep/src/CLHEP/RandomObjects/*.cc
   ${PROJECT_SOURCE_DIR}/source/gpu/src/GateGPUManager.cu)
 
 FILE(GLOB headers
@@ -163,6 +172,7 @@ FILE(GLOB headers
   ${PROJECT_SOURCE_DIR}/source/physics/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/digits_hits/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/general/include/*.hh
+  ${PROJECT_SOURCE_DIR}/source/externals/clhep/include/*.hh
   ${PROJECT_SOURCE_DIR}/source/gpu/include/*.hh)
 
 #=========================================================
@@ -178,7 +188,7 @@ TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARI
 
 #=========================================================
 # included ITK to read/write mhd image file format
-ADD_SUBDIRECTORY(source/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
+ADD_SUBDIRECTORY(source/externals/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
@@ -197,4 +207,11 @@ IF(GATE_DOWNLOAD_EXAMPLES_DATA)
   ADD_SUBDIRECTORY(examples)
   ExternalData_add_target(GateExampleData)
 ENDIF(GATE_DOWNLOAD_EXAMPLES_DATA)
+#=========================================================
+
+
+#=========================================================
+# We remove the warning option "shadow", because there are tons of
+# such warning related to clhep/g4 system of units.
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
 #=========================================================

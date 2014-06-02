@@ -1,4 +1,3 @@
-
 #ifndef GateRTVPhantom_HH
 #define GateRTVPhantom_HH 1
 

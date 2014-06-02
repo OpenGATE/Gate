@@ -1,6 +1,4 @@
 /*----------------------
-
-   GATE - Geant4 Application for Tomographic Emission
    OpenGATE Collaboration
 
    Copyright (C) 2009 imXgam/CNRS, CPPM Marseille

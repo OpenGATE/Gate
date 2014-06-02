@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -78,7 +76,7 @@ void GateSimulationStatisticActor::Construct()
 // Callback Begin of Run
 void GateSimulationStatisticActor::BeginOfRunAction(const G4Run*r)
 {
-  gettimeofday(&start_afterinit,NULL);
+  if (mNumberOfRuns == 0) { gettimeofday(&start_afterinit,NULL); }
   GateVActor::BeginOfRunAction(r);
   mNumberOfRuns++;
 }

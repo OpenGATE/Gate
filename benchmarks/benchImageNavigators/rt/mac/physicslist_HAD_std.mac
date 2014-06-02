@@ -1,0 +1,80 @@
+#=====================================
+# EM processes for hadrons
+#=====================================
+
+/gate/physics/addProcess HadronIonisation
+/gate/physics/removeProcess HadronIonisation deuteron
+/gate/physics/removeProcess HadronIonisation triton
+/gate/physics/removeProcess HadronIonisation He3
+/gate/physics/removeProcess HadronIonisation alpha
+/gate/physics/removeProcess HadronIonisation GenericIon
+/gate/physics/processes/HadronIonisation/setStepFunction proton 0.2 0.05 mm
+/gate/physics/processes/HadronIonisation/setStepFunction pi+    0.2 0.05 mm
+/gate/physics/processes/HadronIonisation/setStepFunction pi-    0.2 0.05 mm
+/gate/physics/processes/HadronIonisation/setLinearLossLimit proton 0.01
+
+/gate/physics/addProcess IonIonisation 
+/gate/physics/processes/IonIonisation/setStepFunction GenericIon 0.1 0.02 mm
+/gate/physics/processes/IonIonisation/setStepFunction alpha      0.1 0.02 mm
+/gate/physics/processes/IonIonisation/setStepFunction deuteron   0.1 0.02 mm
+/gate/physics/processes/IonIonisation/setStepFunction triton     0.1 0.02 mm
+/gate/physics/processes/IonIonisation/setStepFunction He3        0.1 0.02 mm
+
+/gate/physics/addProcess hMultipleScattering
+
+#=====================================
+# Hadronic  processes for hadrons
+#=====================================
+
+/gate/physics/addProcess HadronElastic GenericIon
+/gate/physics/processes/HadronElastic/setModel G4LElastic GenericIon
+
+/gate/physics/addProcess HadronElastic
+/gate/physics/processes/HadronElastic/setModel G4HadronElastic
+/gate/physics/processes/HadronElastic/setDataSet G4HadronElasticDataSet
+
+/gate/physics/addProcess ProtonInelastic
+/gate/physics/processes/ProtonInelastic/setModel G4BinaryCascade
+/gate/physics/processes/ProtonInelastic/G4BinaryCascade/setEmin 170 MeV
+/gate/physics/processes/ProtonInelastic/G4BinaryCascade/setEmax 500 GeV
+/gate/physics/processes/ProtonInelastic/setModel PreCompound
+/gate/physics/processes/ProtonInelastic/PreCompound/setEmin 0 MeV
+/gate/physics/processes/ProtonInelastic/PreCompound/setEmax 170 MeV
+
+/gate/physics/addProcess IonInelastic
+/gate/physics/processes/IonInelastic/setModel G4BinaryLightIonReaction
+/gate/physics/processes/IonInelastic/setModel G4LEDeuteronInelastic deuteron
+/gate/physics/processes/IonInelastic/setModel G4LETritonInelastic triton
+/gate/physics/processes/IonInelastic/setModel G4LEAlphaInelastic alpha
+/gate/physics/processes/IonInelastic/G4BinaryLightIonReaction/setEmin 80 MeV deuteron
+/gate/physics/processes/IonInelastic/G4BinaryLightIonReaction/setEmax 20 GeV deuteron
+/gate/physics/processes/IonInelastic/G4BinaryLightIonReaction/setEmin 80 MeV triton
+/gate/physics/processes/IonInelastic/G4BinaryLightIonReaction/setEmax 20 GeV triton
+/gate/physics/processes/IonInelastic/G4BinaryLightIonReaction/setEmin 80 MeV alpha
+/gate/physics/processes/IonInelastic/G4BinaryLightIonReaction/setEmax 20 GeV alpha
+/gate/physics/processes/IonInelastic/G4LEDeuteronInelastic/setEmin 0 MeV deuteron
+/gate/physics/processes/IonInelastic/G4LEDeuteronInelastic/setEmax 80 MeV deuteron
+/gate/physics/processes/IonInelastic/G4LETritonInelastic/setEmin 0 MeV triton
+/gate/physics/processes/IonInelastic/G4LETritonInelastic/setEmax 80 MeV triton
+/gate/physics/processes/IonInelastic/G4LEAlphaInelastic/setEmin 0 MeV alpha
+/gate/physics/processes/IonInelastic/G4LEAlphaInelastic/setEmax 80 MeV alpha
+/gate/physics/processes/IonInelastic/setDataSet G4IonsShenCrossSection GenericIon
+/gate/physics/processes/IonInelastic/setDataSet G4TripathiLightCrossSection deuteron
+/gate/physics/processes/IonInelastic/setDataSet G4TripathiLightCrossSection triton
+/gate/physics/processes/IonInelastic/setDataSet G4TripathiLightCrossSection alpha
+
+/gate/physics/addProcess PionPlusInelastic
+/gate/physics/processes/PionPlusInelastic/setModel G4LEPionPlusInelastic
+
+/gate/physics/addProcess PionMinusInelastic
+/gate/physics/processes/PionMinusInelastic/setModel G4LEPionMinusInelastic
+
+/gate/physics/addProcess NeutronCapture
+/gate/physics/processes/NeutronCapture/setModel G4LCapture
+/gate/physics/addProcess Fission
+/gate/physics/processes/Fission/setModel G4LFission
+/gate/physics/addProcess NeutronInelastic
+/gate/physics/processes/NeutronInelastic/setModel PreCompound
+
+/gate/physics/addProcess Decay
+

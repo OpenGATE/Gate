@@ -1,16 +1,13 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
   ----------------------*/
-  
+
 #include "GateRandomEngineMessenger.hh"
 #include "GateRandomEngine.hh"
-#include "CLHEP/Random/defs.h"
 #include "CLHEP/Random/Random.h"
 #include "CLHEP/Random/RandomEngine.h"
 #include "CLHEP/Random/JamesRandom.h"
@@ -40,8 +37,8 @@ GateRandomEngine::GateRandomEngine()
   theSeed="default";
   theSeedFile=" ";
   // Create the messenger
-  theMessenger = new GateRandomEngineMessenger(this);  
-  
+  theMessenger = new GateRandomEngineMessenger(this);
+
 
 }
 
@@ -98,7 +95,7 @@ void GateRandomEngine::SetEngineSeed(const G4String& value) {
 //!< void resetEngineFrom
 void GateRandomEngine::resetEngineFrom(const G4String& file) { //TC
   theSeedFile = file;
-} 
+}
 
 
 //////////////////
@@ -172,4 +169,3 @@ void GateRandomEngine::Initialize() {
   // True initialization
   CLHEP::HepRandom::setTheEngine(theRandomEngine);
 }
-

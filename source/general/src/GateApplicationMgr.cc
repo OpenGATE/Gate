@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -708,3 +706,26 @@ void GateApplicationMgr::EnableTimeStudyForSteps(G4String filename)
   GateUserActions::GetUserActions()->EnableTimeStudyForSteps(filename);
 }
 //------------------------------------------------------------------------------------------
+
+void GateApplicationMgr::PrintStatus()
+{
+    const G4Run * run = G4RunManager::GetRunManager()->GetCurrentRun();
+    const int runID = run->GetRunID() + 1;
+    const int runTotal = listOfTimeSlice.size();
+
+    const int eventID = run->GetNumberOfEvent() + 1;
+    int eventTotal = 0;
+
+    if(IsTotalAmountOfPrimariesModeEnabled()) {
+        eventTotal = GetTotalNumberOfPrimaries()/runTotal;
+    }else if (IsAnAmountOfPrimariesPerRunModeEnabled()) {
+        eventTotal = GetNumberOfPrimariesPerRun();
+    }else {
+        eventTotal = run->GetNumberOfEventToBeProcessed();
+    }
+
+    std::clog << "Run ID : " << runID << " / " << runTotal
+    << " ; Event ID : " << eventID << " / " << eventTotal
+    << " ; " << GetCurrentTime()/CLHEP::s << " / " << GetTimeStop()/CLHEP::s << " s [" << floor(GetCurrentTime()*10000.0/GetTimeStop())/100 << "%]"
+    << std::endl;
+}

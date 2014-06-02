@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -8,6 +6,7 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
+#include "GateMessageManager.hh"
 #include "GatePhantomSD.hh"
 #include "GatePhantomHit.hh"
 #include "G4HCofThisEvent.hh"
@@ -57,7 +56,6 @@ void GatePhantomSD::Initialize(G4HCofThisEvent*HCE)
 }
 
 G4bool GatePhantomSD::ProcessHits(G4Step* aStep,G4TouchableHistory* /*ROhist*/) {
-
   G4Track* aTrack       = aStep->GetTrack();
   G4int    trackID      = aTrack->GetTrackID();
   G4int    parentID     = aTrack->GetParentID();

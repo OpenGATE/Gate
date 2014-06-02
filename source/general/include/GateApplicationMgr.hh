@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -56,6 +54,7 @@ public:
   void PauseDAQ();
 
   void Describe();
+  void PrintStatus();
   void SetVerboseLevel(G4int value) { nVerboseLevel = value; }
 
   G4double GetTimeInterval(int i){return listOfTimeSlice[i];}

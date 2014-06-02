@@ -1,0 +1,7 @@
+/gate/source/addSource mybeam gps
+/gate/source/mybeam/gps/particle proton
+/gate/source/mybeam/gps/energy 8 MeV
+/gate/source/mybeam/gps/energytype Mono
+/gate/source/mybeam/gps/type Point
+/gate/source/mybeam/gps/direction 0 0 1
+/gate/source/mybeam/gps/pos/centre 0. 0. -0.01 cm

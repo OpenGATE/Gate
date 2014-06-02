@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -26,6 +24,7 @@
 #include <vector>
 
 #include "GateAnalyzeHeader.hh"
+#include "GateInterfileHeader.hh"
 #include "GateMessageManager.hh"
 
 class G4String;
@@ -117,7 +116,8 @@ public:
   //  inline void Fill(PixelType v) { for (iterator i=begin(); i!=end(); ++i) (*i)=v; }
   inline void Fill(PixelType v) { fill(data.begin(), data.end(), v); }
 
-  PixelType GetMinValue();
+  inline PixelType GetMinValue() const{ return *std::min_element(begin(), end()); }
+  inline PixelType GetMaxValue() const{ return *std::max_element(begin(), end()); }
 
   inline PixelType GetOutsideValue()   { return mOutsideValue; } 
   inline void SetOutsideValue( PixelType v ) { mOutsideValue=v; }
@@ -150,6 +150,9 @@ public:
   /// Returns the z of the corner of the voxel given the z coordinate
   G4double GetZVoxelCornerFromZCoordinate(int k) const { return k * voxelSize.z() - halfSize.z(); }
 
+  G4int            GetVoxelNx()        { return m_voxelNx; };
+  G4int            GetVoxelNy()        { return m_voxelNy; };
+  G4int            GetVoxelNz()        { return m_voxelNz; };
 
   // Returns the index from the position : OK 
   int GetIndexFromPosition(const G4ThreeVector& position) const;  
@@ -203,6 +206,10 @@ protected:
   std::vector<PixelType> data;
   G4ThreeVector  mPosition;
 
+  G4int                          m_voxelNx;
+  G4int                          m_voxelNy;
+  G4int                          m_voxelNz;
+
   PixelType mOutsideValue;
 
   void ReadVox(G4String filename);
@@ -219,6 +226,7 @@ protected:
                                 std::vector<std::string> & values, 
                                 std::string tag, std::string value);
   void ReadMHD(G4String filename);
+  void ReadInterfile(G4String fileName);
 
   void WriteBin(std::ofstream & os);
   void WriteAscii(std::ofstream & os, const G4String & comment);

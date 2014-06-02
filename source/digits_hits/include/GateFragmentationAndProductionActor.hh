@@ -1,6 +1,4 @@
 /*!
-  \class  GateFragmentationAndProductionActor
-  \author pierre.gueth@creatis.insa-lyon.fr
  */
 
 #include "GateConfiguration.h"
