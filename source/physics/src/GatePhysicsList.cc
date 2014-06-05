@@ -477,7 +477,7 @@ void GatePhysicsList::Print(G4String name)
   G4ProcessManager* manager = 0;
   G4ProcessVector * processvector = 0;
   //G4ParticleTable::G4PTblDicIterator * 
-  theParticleIterator; 
+  //theParticleIterator; 
 
   int iDisp = 0;
 
@@ -647,7 +647,7 @@ void GatePhysicsList::Write(G4String file)
   G4ProcessManager* manager = 0;
   G4ProcessVector * processvector = 0;
   //G4ParticleTable::G4PTblDicIterator * 
-  theParticleIterator; 
+  //theParticleIterator; 
 
   int iDisp = 0;
 
