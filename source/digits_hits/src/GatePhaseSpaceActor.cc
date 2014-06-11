@@ -198,20 +198,23 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
     if (mStoreOutPart && step->GetTrack()->GetVolume() == step->GetTrack()->GetNextVolume())return;
     if (mStoreOutPart) {
-        DD("Start");
-        DD(step->GetTrack()->GetVolume()->GetName());
-        DD(step->GetTrack()->GetNextVolume()->GetName());
-        DD(vol);
-        DD("Stop");
-        GateVVolume *nextVol = GateObjectStore::GetInstance()->FindVolumeCreator(step->GetTrack()->GetNextVolume());
-        if (nextVol ==  mVolume)return;
+        /* 2014-06-11: Brent & David
+         * There is a rare bug when using the PhaseSpaceActor to store outgoing particles and very long cuts on particles (nongammas).
+         * When a particle crosses from a segmented_log_X volume to a segmented_log_X, Gate segfaults.
+         * Seems that checking for null on pv and nextvol allows to program to complete.
+         * Unsure if this hack is dirty and needs to be checked.
+         */
+        G4VPhysicalVolume * pv = step->GetTrack()->GetNextVolume();
+        if (pv == 0) return;
+        GateVVolume* nextVol = GateObjectStore::GetInstance()->FindVolumeCreator(pv);
+        if (nextVol == 0) return;
+        if (nextVol == mVolume)return;
         GateVVolume *parent = nextVol->GetParentVolume();
         while (parent) {
             if (parent == mVolume) return;
             parent = parent->GetParentVolume();
         }
     }
-    DD("Check");
 
     /*if(mStoreOutPart && step->GetTrack()->GetVolume()!=mVolume->GetPhysicalVolume() ){
       GateVVolume *parent = mVolume->GetParentVolume();
