@@ -39,6 +39,7 @@ void ReadLineTo3Doubles(double *toto, char *oneline);
 //------------------------------------------------------------------------------------------------------
 class GateSourceTPSPencilBeam : public GateVSource
 {
+
 public:
 
   typedef CLHEP::RandGeneral RandGeneral;
@@ -69,6 +70,8 @@ public:
   //List of not allowed fields
   void SetNotAllowedField (int fieldID) {mNotAllowedFields.push_back(fieldID);}
   // Select a single Layer
+  void SetAllowedField (int fieldID) {mAllowedFields.push_back(fieldID);}
+  //MU to Protons conversion
   void SelectLayerID (int layerID) { mSelectedLayerID = layerID;}
   //MU to Protons conversion
   double ConvertMuToProtons(double weight, double energy);
@@ -109,6 +112,8 @@ protected:
   RandGeneral * mDistriGeneral;
   //Not alloweed fields
   vector<int> mNotAllowedFields;
+  //Allowed fields
+  vector<int> mAllowedFields;
   //clinical beam parameters (polynomial equations)
   vector<double> mEnergy, mEnergySpread, mX, mY, mTheta, mPhi, mXThetaEmittance, mYPhiEmittance;
   //Configuration of spot intensity
