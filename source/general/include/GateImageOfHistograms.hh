@@ -48,8 +48,8 @@ public:
   void SetHistoInfo(int n, double min, double max);
   virtual void Allocate();
   void Reset();
-  void AddValueFloat(const int & index, TH1D * h);
-  void AddValueDouble(const int & index, TH1D * h);
+  void AddValueFloat(const int & index, TH1D * h, const double scale);
+  void AddValueDouble(const int & index, TH1D * h, const double scale);
   virtual void Write(G4String filename, const G4String & comment = "");
   virtual void Read(G4String filename);
   unsigned int GetNbOfBins() { return nbOfBins; }

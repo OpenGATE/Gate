@@ -57,7 +57,9 @@ void GatePromptGammaTLEActor::Construct()
   EnableUserSteppingAction(true);
 
   // Input data
+  DD("before read");
   data.Read(mInputDataFilename);
+  data.InitializeMaterial();
 
   // Set image parameters and allocate (only mImageGamma not mImage)
   mImageGamma->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
@@ -125,18 +127,28 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   const G4double & distance = step->GetStepLength();
 
   // Check particle type ("proton")
-  //if (particle_name != "proton") return;
   if (particle != G4Proton::Proton()) return;
 
   // Check material
-  // FIXME
   const G4Material* material = step->GetPreStepPoint()->GetMaterial();
-  G4String materialName = material->GetName();
-  if (materialName != "Water") return;
 
-  // Get value from histogram
-  TH1D * h = data.GetGammaEnergySpectrum(particle_energy);
-  h->Scale(distance);
-  mImageGamma->AddValueDouble(index, h);
+  // FIXME DEBUG
+  //G4String materialName = material->GetName();
+  //DD(materialName);
+  //DD(material->GetIndex());
+  // //if (materialName != "Water") return;
+  // if (!data.DataForMaterialExist(material->GetIndex())) {
+  //   DD(materialName);
+  //   DD(material->GetIndex());
+  //   return;
+  // }
+
+  // Get value from histogram. We do not check the material index, and
+  // assume everything exist (has been computed by InitializeMaterial)
+  TH1D * h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy);
+
+  // Do not scale h directly because it will be reused
+  // h->Scale(distance);
+  mImageGamma->AddValueDouble(index, h, distance);
 }
 //-----------------------------------------------------------------------------

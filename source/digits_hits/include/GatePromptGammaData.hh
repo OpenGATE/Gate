@@ -11,6 +11,7 @@
 #ifndef GATEPROMPTGAMMAENERGYSPECTRUMDATA_HH
 #define GATEPROMPTGAMMAENERGYSPECTRUMDATA_HH
 
+#include "G4Material.hh"
 #include "GateConfiguration.h"
 #include "GateMessageManager.hh"
 #include <TFile.h>
@@ -39,7 +40,8 @@ public:
   int GetProtonNbBins()  { return proton_bin; }
   int GetGammaNbBins()   { return gamma_bin; }
 
-  void Initialize(std::string & filename);
+  void Initialize(std::string & filename, const G4Material * m);
+  void InitializeMaterial();
   void Read(std::string & filename);
   void SaveData();
   void ResetData();
@@ -54,12 +56,12 @@ public:
   TH2D * GetHEpEpg();
   TH1D * GetHEpInelasticProducedGamma();
 
-  // Convenient functions
-  TH1D * GetGammaEnergySpectrum(const double & energy);
-  //int ComputeProtonEnergyBinIndex(const double & energy);
+  // Return the gamma energy spectrum for the proton at given energy,
+  // for the given material
+  TH1D * GetGammaEnergySpectrum(const int & matIndex, const double & energy);
+  TH1D * GetGammaEnergySpectrumOLD(const double & energy);
 
-  // FIXME
-  //  TH2D* cs;
+  bool DataForMaterialExist(const int & materialIndex);
 
 protected:
   std::string mFilename;
@@ -69,10 +71,11 @@ protected:
   double min_gamma_energy;
   double max_proton_energy;
   double max_gamma_energy;
-  int proton_bin;
-  int gamma_bin;
+  unsigned int proton_bin;
+  unsigned int gamma_bin;
 
-  // Data
+  void SetCurrentPointerForThisElement(const G4Element * elem);
+  // Data current pointer to histograms
   TFile* pTfile;
   TH2D* pHEpEpg;
   TH2D* pHEpEpgNormalized;
@@ -80,6 +83,18 @@ protected:
   TH1D* pHEp;
   TH1D* pHEpInelasticProducedGamma;
   TH1D* pHEpSigmaInelastic;
+
+  // Data : histo by elements
+  std::vector<TH2D*> pHEpEpgList;
+  std::vector<TH2D*> pHEpEpgNormalizedList;
+  std::vector<TH1D*> pHEpInelasticList;
+  std::vector<TH1D*> pHEpList;
+  std::vector<TH1D*> pHEpInelasticProducedGammaList;
+  std::vector<TH1D*> pHEpSigmaInelasticList;
+  std::vector<bool>  ElementIndexList;
+
+  // pre-computed list of gamma energy histogram
+  std::vector<std::vector<TH1D *> > mGammaEnergyHistoByMaterialByProtonEnergy;
 
 };
 //-----------------------------------------------------------------------------

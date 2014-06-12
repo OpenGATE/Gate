@@ -10,6 +10,8 @@
 
 #include "GatePromptGammaData.hh"
 #include "G4UnitsTable.hh"
+#include "G4Material.hh"
+#include "G4MaterialTable.hh"
 
 //-----------------------------------------------------------------------------
 GatePromptGammaData::GatePromptGammaData()
@@ -75,6 +77,8 @@ void GatePromptGammaData::ResetData()
 //-----------------------------------------------------------------------------
 void GatePromptGammaData::SaveData()
 {
+  pTfile->pwd();
+  // pTfile->cd("..");
   pTfile->Write();
 }
 //-----------------------------------------------------------------------------
@@ -83,37 +87,84 @@ void GatePromptGammaData::SaveData()
 //-----------------------------------------------------------------------------
 void GatePromptGammaData::Read(std::string & filename)
 {
-  DD("Read");
   mFilename = filename;
   pTfile = new TFile(filename.c_str(),"READ");
 
-  // Get pointers to histograms
-  pHEpEpg = dynamic_cast<TH2D*>(pTfile->Get("EpEpg"));
-  pHEpEpgNormalized = dynamic_cast<TH2D*>(pTfile->Get("EpEpgNorm"));
-  pHEpInelastic = dynamic_cast<TH1D*>(pTfile->Get("EpInelastic"));
-  pHEp = dynamic_cast<TH1D*>(pTfile->Get("Ep"));
-  pHEpSigmaInelastic = dynamic_cast<TH1D*>(pTfile->Get("SigmaInelastic"));
-  pHEpInelasticProducedGamma = dynamic_cast<TH1D*>(pTfile->Get("EpInelasticProducedGamma"));
+  // How many material in this file
+  TList * l = pTfile->GetListOfKeys();
+  unsigned int n = l->GetSize();
+  GateMessage("Actor", 1, "Reading " << n << " elements in " << filename << std::endl);
+  std::string s;
+  for(unsigned int i=0; i<n; i++) {
+    s += std::string(l->At(i)->GetName())+std::string(" ");
+  }
+  GateMessage("Actor", 1, "Elements are : " << s << std::endl);
 
-  SetProtonNbBins(pHEpEpgNormalized->GetXaxis()->GetNbins());
-  SetGammaNbBins(pHEpEpgNormalized->GetYaxis()->GetNbins());
-  DD(proton_bin);
-  DD(gamma_bin);
+  // Prepare vector of histo
+  const G4ElementTable & table = *G4Element::GetElementTable();
+  unsigned int m = table.size();
+  GateMessage("Actor", 1, "G4Elements table has " << m << " elements." << std::endl);
 
-  SetProtonEMin(pHEpEpgNormalized->GetXaxis()->GetXmin());
-  SetProtonEMax(pHEpEpgNormalized->GetXaxis()->GetXmax());
-  SetGammaEMin(pHEpEpgNormalized->GetYaxis()->GetXmin());
-  SetGammaEMax(pHEpEpgNormalized->GetYaxis()->GetXmax());
+  pHEpEpgList.resize(m);
+  pHEpEpgNormalizedList.resize(m);
+  pHEpInelasticList.resize(m);
+  pHEpList.resize(m);
+  pHEpInelasticProducedGammaList.resize(m);
+  pHEpSigmaInelasticList.resize(m);
+  ElementIndexList.resize(m);
+  std::fill(ElementIndexList.begin(), ElementIndexList.end(), false);
 
-  DD(min_proton_energy);
-  DD(max_proton_energy);
-  DD(min_gamma_energy);
-  DD(max_gamma_energy);
+  for(unsigned int i=0; i<n; i++) {
+    int index = -1;
+    for(unsigned int e=0; e<table.size(); e++) {
+      if (l->At(i)->GetName() == table[e]->GetName()) index = e;
+    }
+    if (index == -1) {
+      GateMessage("Actor", 1, "Skipping " << l->At(i)->GetName()
+                  << ", not used by any material (not in G4Elements table)." << std::endl);
+      continue;
+    }
 
-  // Normalisation of 2D histo (pHEpEpgNormalized = E proton vs E gamma) according to
-  // proba of inelastic interaction by E proton (pHEpInelastic);
-  double temp=0.0;
-  for( int i=1; i <= pHEpEpgNormalized->GetNbinsX(); i++) {
+    // Set current pointer
+    const G4Element * elem = table[index];
+
+    if (elem->GetZ() == 1) {
+      GateMessage("Actor", 1, "Skipping Hydrogen (no prompt gamma)." << std::endl);
+      continue; // proton (Hydrogen) skip
+    }
+
+    SetCurrentPointerForThisElement(elem);
+    ElementIndexList[elem->GetIndex()] = true;
+    std::string f = elem->GetName();
+    TDirectory * dir = pTfile->GetDirectory(f.c_str());
+    dir->cd();
+    dir->GetObject("EpEpg", pHEpEpg);
+    dir->GetObject("EpEpgNorm", pHEpEpgNormalized);
+    dir->GetObject("EpInelastic", pHEpInelastic);
+    dir->GetObject("Ep", pHEp);
+    dir->GetObject("SigmaInelastic", pHEpSigmaInelastic);
+    dir->GetObject("EpInelasticProducedGamma", pHEpInelasticProducedGamma);
+
+    // Set the pointers in the lists (have been changed by GetObject)
+    pHEpEpgNormalizedList[elem->GetIndex()] = pHEpEpgNormalized;
+    pHEpEpgList[elem->GetIndex()] = pHEpEpg;
+    pHEpInelasticList[elem->GetIndex()] = pHEpInelastic;
+    pHEpList[elem->GetIndex()] = pHEp;
+    pHEpSigmaInelasticList[elem->GetIndex()] = pHEpSigmaInelastic;
+    pHEpInelasticProducedGammaList[elem->GetIndex()] = pHEpInelasticProducedGamma;
+
+    SetProtonNbBins(pHEpEpgNormalized->GetXaxis()->GetNbins());
+    SetGammaNbBins(pHEpEpgNormalized->GetYaxis()->GetNbins());
+
+    SetProtonEMin(pHEpEpgNormalized->GetXaxis()->GetXmin());
+    SetProtonEMax(pHEpEpgNormalized->GetXaxis()->GetXmax());
+    SetGammaEMin(pHEpEpgNormalized->GetYaxis()->GetXmin());
+    SetGammaEMax(pHEpEpgNormalized->GetYaxis()->GetXmax());
+
+    // Normalisation of 2D histo (pHEpEpgNormalized = E proton vs E gamma) according to
+    // proba of inelastic interaction by E proton (pHEpInelastic);
+    double temp=0.0;
+    for( int i=1; i <= pHEpEpgNormalized->GetNbinsX(); i++) {
       for( int j = 1; j <= pHEpEpgNormalized->GetNbinsY(); j++) {
         if(pHEpInelastic->GetBinContent(i) != 0) {
           temp = pHEpEpgNormalized->GetBinContent(i,j)/pHEpInelastic->GetBinContent(i);
@@ -129,14 +180,36 @@ void GatePromptGammaData::Read(std::string & filename)
         }
         pHEpEpgNormalized->SetBinContent(i,j,temp);
       }
+    }
   }
-  DD("end normalisation");
+
+  for(unsigned int i=0; i<m; i++) {
+    if (ElementIndexList[i]) {
+      GateMessage("Actor", 1, "Element " << table[i]->GetName()
+                  << " is read (and normalized)." << std::endl);
+    }
+  }
+
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaData::Initialize(std::string & filename)
+void GatePromptGammaData::SetCurrentPointerForThisElement(const G4Element * elem)
+{
+  int i = elem->GetIndex();
+  pHEpEpg = pHEpEpgList[i];
+  pHEpEpgNormalized = pHEpEpgNormalizedList[i];
+  pHEpInelastic = pHEpInelasticList[i];
+  pHEp = pHEpList[i];
+  pHEpSigmaInelastic = pHEpSigmaInelasticList[i];
+  pHEpInelasticProducedGamma = pHEpInelasticProducedGammaList[i];
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GatePromptGammaData::Initialize(std::string & filename, const G4Material * material) // FIXME change the name of this function
 {
   DD("Initialize");
   DD(filename);
@@ -147,9 +220,35 @@ void GatePromptGammaData::Initialize(std::string & filename)
   DD(max_gamma_energy);
   DD(gamma_bin);
 
+  // Open the file in update mode, part will be overwriten, part will
+  // be keep as is.
   mFilename = filename;
-  pTfile = new TFile(filename.c_str(),"RECREATE");
+  pTfile = new TFile(filename.c_str(),"UPDATE");
 
+  // List of already existing material
+  pTfile->ls();
+
+  // Check if a directory for this material already exist
+  std::string name = material->GetName();
+  DD(name);
+  TDirectory * dir = pTfile->GetDirectory(name.c_str());
+  if (dir == 0) {
+    DD("create new dir");
+    // create a subdirectory for the material in this file.
+    dir = pTfile->mkdir(name.c_str());
+    dir->cd();
+  }
+  else {
+    DD("already exist delete");
+    // If already exist -> will be replaced.
+    dir->cd();
+    DD(dir->GetName());
+    dir->ls();
+    dir->Delete("*;*");
+    dir->ls();
+  }
+
+  pTfile->pwd();
   pHEpEpg = new TH2D("EpEpg","PG count",
                      proton_bin, min_proton_energy/MeV, max_proton_energy/MeV,
                      gamma_bin, min_gamma_energy/MeV, max_gamma_energy/MeV);
@@ -179,6 +278,7 @@ void GatePromptGammaData::Initialize(std::string & filename)
   pHEpInelasticProducedGamma->SetXTitle("E_{proton} [MeV]");
 
 
+  dir->ls();
   // FIXME
   DD(pHEpEpgNormalized->GetDefaultSumw2());
 
@@ -193,9 +293,115 @@ void GatePromptGammaData::Initialize(std::string & filename)
 
 
 //-----------------------------------------------------------------------------
-TH1D * GatePromptGammaData::GetGammaEnergySpectrum(const double & energy)
+void GatePromptGammaData::InitializeMaterial() // FIXME change the name of this function
 {
-  int binX = pHEp->FindFixBin(energy); //ComputeProtonEnergyBinIndex(energy);
+  GateMessage("Actor", 1, "Create DB for used material. " << std::endl);
+  const G4MaterialTable & matTable = *G4Material::GetMaterialTable();
+  unsigned int n = G4Material::GetNumberOfMaterials();
+  GateMessage("Actor", 1, "Number of materials : " << n << std::endl);
+
+  mGammaEnergyHistoByMaterialByProtonEnergy.resize(n);
+
+  for(unsigned int i=0; i<n; i++) {
+    bool stop = false;
+    const G4Material * m = matTable[i];
+
+    //FIXME Check here
+    for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
+      const G4Element * elem = m->GetElement(e);
+      unsigned int elementIndex = elem->GetIndex();
+      if (elem->GetZ() != 1) { // skip
+        if (ElementIndexList[elementIndex] == false) {
+          GateMessage("Actor", 1, "Skipping " << m->GetName()
+                      << " because " << elem->GetName()
+                      << " is missing in the DB." << std::endl);
+          stop = true;
+        }
+      }
+    }
+
+    if (!stop) {
+      DD("create DB for material");
+      GateMessage("Actor", 1, "Create DB for " << m->GetName() << std::endl);
+
+      mGammaEnergyHistoByMaterialByProtonEnergy[i].resize(proton_bin+1); // from [1 to n]
+
+      for(unsigned int j=1; j<proton_bin+1; j++) {
+        TH1D * h = new TH1D();
+        h->SetBins(gamma_bin, min_gamma_energy, max_gamma_energy);
+
+        // Loop over element
+        for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
+          const G4Element * elem = m->GetElement(e);
+          double f = m->GetFractionVector()[e];
+
+          if (elem->GetZ() != 1) { // if not Hydrogen. If hydrogen,
+            // probability is zero
+
+            // Get histogram for the current bin
+            //pTfile->GetKey
+            SetCurrentPointerForThisElement(elem);
+
+            TH1D * he = new TH1D(*pHEpEpgNormalized->ProjectionY("", j, j));
+
+            // Scale it according to the fraction of this element in the material
+            he->Scale(f);
+
+            // Add it to the current total histo
+            h->Add(he);
+            // Clone is needed to create a copy of the projected histogram.
+            // TH1D * h = new TH1D(*pHEpEpgNormalized->ProjectionY("", j, j));
+          }
+        }
+
+        mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
+      }
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+bool GatePromptGammaData::DataForMaterialExist(const int & materialIndex)
+{
+  if (mGammaEnergyHistoByMaterialByProtonEnergy[materialIndex].size() == 0) return false;
+  return true;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+TH1D * GatePromptGammaData::GetGammaEnergySpectrum(const int & materialIndex,
+                                                   const double & energy)
+{
+  // Check material
+  if (!DataForMaterialExist(materialIndex)) {
+    GateError("Error in GatePromptGammaData for TLE, the material " <<
+              (*G4Material::GetMaterialTable())[materialIndex]->GetName()
+              << " is not in the DB");
+  }
+
+  // Get the index of the energy bin
+  int binX = pHEp->FindFixBin(energy);
+
+  // Get the projected histogram of the material
+  TH1D * h = mGammaEnergyHistoByMaterialByProtonEnergy[materialIndex][binX];
+
+  return h;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+TH1D * GatePromptGammaData::GetGammaEnergySpectrumOLD(const double & energy)
+{
+ /* OLD VERSION : slower than precomputing ProjectionY. Keep here in
+     case precomputing lead to issue regarding memory.*/
+
+  // Get the index of the energy bin
+  int binX = pHEp->FindFixBin(energy); DD(binX);
+
+  // Get the projected histograp of the material
   TH1D * h = pHEpEpgNormalized->ProjectionY("PhistoEnergy", binX, binX);
   return h;
 }

@@ -47,7 +47,6 @@ void GatePromptGammaStatisticActor::SetGammaNbBins(G4int x)   { data.SetGammaNbB
 //-----------------------------------------------------------------------------
 void GatePromptGammaStatisticActor::Construct()
 {
-  DD("GPGSDA::Construct");
   GateVActor::Construct();
 
   // Enable callbacks
@@ -58,7 +57,8 @@ void GatePromptGammaStatisticActor::Construct()
   EnableUserSteppingAction(true);
 
   // Create histograms
-  data.Initialize(mSaveFilename);
+  const G4Material * m = mVolume->GetMaterial();
+  data.Initialize(mSaveFilename, m);
 
   ResetData();
 }
@@ -68,7 +68,6 @@ void GatePromptGammaStatisticActor::Construct()
 //-----------------------------------------------------------------------------
 void GatePromptGammaStatisticActor::SaveData()
 {
-  DD("GPGSDA::SaveData");
   data.SaveData();
 }
 //-----------------------------------------------------------------------------
@@ -77,7 +76,6 @@ void GatePromptGammaStatisticActor::SaveData()
 //-----------------------------------------------------------------------------
 void GatePromptGammaStatisticActor::ResetData()
 {
-  DD("GPGSDA::ResetData");
   data.ResetData();
 }
 //-----------------------------------------------------------------------------
@@ -85,33 +83,26 @@ void GatePromptGammaStatisticActor::ResetData()
 
 //-----------------------------------------------------------------------------
 void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
-                                                                  const G4Step* step)
+                                                       const G4Step* step)
 {
-  // Get various information
+  // Get various information on the current step
   const G4ParticleDefinition* particle = step->GetTrack()->GetParticleDefinition();
-  //const G4String particle_name = particle->GetParticleName();
   const G4double particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
   const G4Material* material = step->GetPreStepPoint()->GetMaterial();
   const G4VProcess* process = step->GetPostStepPoint()->GetProcessDefinedStep();
   static G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
   static G4VProcess * protonInelastic = store->FindProcess(G4Proton::Proton(), fHadronInelastic);
-  // const G4String process_name = step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
 
   // Check particle type ("proton")
-  //if (particle_name != "proton") return;
   if (particle != G4Proton::Proton()) return;
 
   // Incident Proton Energy spectrum
   data.GetHEp()->Fill(particle_energy/MeV);
 
   // Process type, store cross_section for ProtonInelastic process
-  //  if (process_name != "ProtonInelastic") return;
   if (process != protonInelastic) return;
   G4double cross_section = store->GetCrossSectionPerVolume(particle, particle_energy, process, material);
   data.GetHEpInelastic()->Fill(particle_energy/MeV);
-
-  // // FIXME
-  // data.cs->Fill(particle_energy/MeV, cross_section);
 
   // Only once : cross section of ProtonInelastic in that material
   static bool sigma_filled=false;
@@ -125,27 +116,16 @@ void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
   }
 
   // For all secondaries, store Energy spectrum
-  //DD("------");
-  //static double cs_max = 0.0;
-  //static double cs_min = 10000.0;
-  //if (cross_section > cs_max) { cs_max = cross_section; DD(cs_max); }
-  //if (cross_section < cs_min) { cs_min = cross_section; DD(cs_min); }
-  // DD(particle_energy/MeV);
-  //DD(cross_section);
   G4TrackVector* fSecondary = (const_cast<G4Step *> (step))->GetfSecondary();
   unsigned int produced_gamma = 0;
   for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++) {
     if ((*fSecondary)[lp1]->GetDefinition() == G4Gamma::Gamma()) {
-      //DD("no gamma");
       const double e = (*fSecondary)[lp1]->GetKineticEnergy()/MeV;
       data.GetHEpEpg()->Fill(particle_energy/MeV, e);
       data.GetHEpEpgNormalized()->Fill(particle_energy/MeV, e, cross_section);
-      //DD(e);
       produced_gamma++;
     }
   }
-  // DD(produced_gamma);
   if (produced_gamma != 0) data.GetHEpInelasticProducedGamma()->Fill(particle_energy/MeV);
-
 }
 //-----------------------------------------------------------------------------

@@ -174,7 +174,7 @@ void GateImageOfHistograms::ComputeTotalOfCountsImageDataDouble(std::vector<doub
 
 
 //-----------------------------------------------------------------------------
-void GateImageOfHistograms::AddValueFloat(const int & index, TH1D * h)
+void GateImageOfHistograms::AddValueFloat(const int & index, TH1D * h, const double scale=1.0)
 {
   /* FIXME DEBUG
   // On the fly allocation
@@ -189,7 +189,7 @@ void GateImageOfHistograms::AddValueFloat(const int & index, TH1D * h)
 
   int index_data = index*nbOfBins;
   for(unsigned int i=1; i<=nbOfBins; i++) {
-    dataFloat[index_data] += h->GetBinContent(i); // +1 because TH1D start at 1, and end at index=size
+    dataFloat[index_data] += h->GetBinContent(i)*scale; // +1 because TH1D start at 1, and end at index=size
     index_data++;
   }
 
@@ -200,7 +200,7 @@ void GateImageOfHistograms::AddValueFloat(const int & index, TH1D * h)
 
 
 //-----------------------------------------------------------------------------
-void GateImageOfHistograms::AddValueDouble(const int & index, TH1D * h)
+void GateImageOfHistograms::AddValueDouble(const int & index, TH1D * h, const double scale=1.0)
 {
   /* FIXME DEBUG
   // On the fly allocation
@@ -215,7 +215,7 @@ void GateImageOfHistograms::AddValueDouble(const int & index, TH1D * h)
 
   int index_data = index*nbOfBins;
   for(unsigned int i=1; i<=nbOfBins; i++) {
-    dataDouble[index_data] += h->GetBinContent(i); // +1 because TH1D start at 1, and end at index=size
+    dataDouble[index_data] += h->GetBinContent(i)*scale; // +1 because TH1D start at 1, and end at index=size
     index_data++;
   }
 
@@ -369,21 +369,20 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & comment)
   matrix[15] = 1.0;
   m_MetaImage.TransformMatrix(matrix);
 
-  /*
-    std::vector<double> t;
-    ConvertPixelOrderToXYZH(dataDouble, t);
-    m_MetaImage.ElementData(&(t.begin()[0]), false); // true = autofree
-  */
-
   // Before writing convert from double to float
+  double total = 0.0;
   if (mDataTypeName == "double") {
     DD("Convert double to float");
     dataFloat.resize(dataDouble.size());
     DD(dataDouble.size());
-    for(unsigned int i=0; i<dataDouble.size(); i++)
+    for(unsigned int i=0; i<dataDouble.size(); i++) {
+      total += dataDouble[i];
       dataFloat[i] = (float)dataDouble[i]; // convert double to float
+    }
     DD("done");
   }
+  DD(total);
+  m_MetaImage.AddUserField("TotalSum", MET_FLOAT_ARRAY, 1, &total);
 
   // Change the order of the pixels : store on disk as XYZH.
   std::vector<float> t;
@@ -391,6 +390,9 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & comment)
   m_MetaImage.ElementData(&(t.begin()[0]), false); // true = autofree
   m_MetaImage.Write(headerName.c_str(), rawName.c_str());
   DD("done");
+
+
+
 
   ///-----------------------------------------
   // Below Additional debug output : will be removed
@@ -402,7 +404,7 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & comment)
   ComputeTotalOfCountsImageDataFloat(temp);
   headerName = baseName+"_sum.mhd";
   rawName    = baseName+"_sum.raw";
-  MetaImage mm(3, dimSize, spacing, MET_DOUBLE);
+  MetaImage mm(3, dimSize, spacing, MET_FLOAT);
   mm.Position(p);
   double matrix2[9];
   for(unsigned int i=0; i<3; i++) {
