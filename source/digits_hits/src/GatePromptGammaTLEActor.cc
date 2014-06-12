@@ -57,7 +57,6 @@ void GatePromptGammaTLEActor::Construct()
   EnableUserSteppingAction(true);
 
   // Input data
-  DD("before read");
   data.Read(mInputDataFilename);
   data.InitializeMaterial();
 
@@ -93,7 +92,6 @@ void GatePromptGammaTLEActor::ResetData()
 void GatePromptGammaTLEActor::SaveData()
 {
   GateVImageActor::SaveData();
-  DD(mSaveFilename);
   mImageGamma->Write(mSaveFilename);
 }
 //-----------------------------------------------------------------------------
@@ -132,23 +130,11 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // Check material
   const G4Material* material = step->GetPreStepPoint()->GetMaterial();
 
-  // FIXME DEBUG
-  //G4String materialName = material->GetName();
-  //DD(materialName);
-  //DD(material->GetIndex());
-  // //if (materialName != "Water") return;
-  // if (!data.DataForMaterialExist(material->GetIndex())) {
-  //   DD(materialName);
-  //   DD(material->GetIndex());
-  //   return;
-  // }
-
   // Get value from histogram. We do not check the material index, and
   // assume everything exist (has been computed by InitializeMaterial)
   TH1D * h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy);
 
   // Do not scale h directly because it will be reused
-  // h->Scale(distance);
   mImageGamma->AddValueDouble(index, h, distance);
 }
 //-----------------------------------------------------------------------------

@@ -47,18 +47,6 @@ void GateSourceOfPromptGamma::SetFilename(G4String filename)
 //------------------------------------------------------------------------
 void GateSourceOfPromptGamma::Initialize()
 {
-  DD("GateSourceOfPromptGamma::Initialize");
-
-  // Get pointer to the random engine
-  CLHEP::HepRandomEngine * engine = GateRandomEngine::GetInstance()->GetRandomEngine();
-  DD(engine);
-  // engine->showStatus();
-
-  CLHEP::HepRandomEngine * ee = CLHEP::HepRandom::getTheEngine();
-  DD(ee);
-  // ee->showStatus();
-  // mData->SetRandomEngine(engine); FIXME ? Necessary or not ?
-
   // Get filename, load data
   mData->LoadData(mFilename);
 

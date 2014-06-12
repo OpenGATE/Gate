@@ -29,7 +29,6 @@ GatePromptGammaData::GatePromptGammaData()
 //-----------------------------------------------------------------------------
 GatePromptGammaData::~GatePromptGammaData()
 {
-  DD("GatePromptGammaData destructor");
   delete pHEpEpg;
   delete pHEpEpgNormalized;
   delete pHEpInelastic;
@@ -37,7 +36,6 @@ GatePromptGammaData::~GatePromptGammaData()
   delete pHEpInelasticProducedGamma;
   delete pHEpSigmaInelastic;
   delete pTfile;
-  DD("GatePromptGammaData END destructor");
 }
 //-----------------------------------------------------------------------------
 
@@ -77,8 +75,6 @@ void GatePromptGammaData::ResetData()
 //-----------------------------------------------------------------------------
 void GatePromptGammaData::SaveData()
 {
-  pTfile->pwd();
-  // pTfile->cd("..");
   pTfile->Write();
 }
 //-----------------------------------------------------------------------------
@@ -209,43 +205,26 @@ void GatePromptGammaData::SetCurrentPointerForThisElement(const G4Element * elem
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaData::Initialize(std::string & filename, const G4Material * material) // FIXME change the name of this function
+// FIXME change the name of this function
+void GatePromptGammaData::Initialize(std::string & filename, const G4Material * material)
 {
-  DD("Initialize");
-  DD(filename);
-  DD(min_proton_energy);
-  DD(max_proton_energy);
-  DD(proton_bin);
-  DD(min_gamma_energy);
-  DD(max_gamma_energy);
-  DD(gamma_bin);
-
   // Open the file in update mode, part will be overwriten, part will
   // be keep as is.
   mFilename = filename;
   pTfile = new TFile(filename.c_str(),"UPDATE");
 
-  // List of already existing material
-  pTfile->ls();
-
   // Check if a directory for this material already exist
   std::string name = material->GetName();
-  DD(name);
   TDirectory * dir = pTfile->GetDirectory(name.c_str());
   if (dir == 0) {
-    DD("create new dir");
     // create a subdirectory for the material in this file.
     dir = pTfile->mkdir(name.c_str());
     dir->cd();
   }
   else {
-    DD("already exist delete");
     // If already exist -> will be replaced.
     dir->cd();
-    DD(dir->GetName());
-    dir->ls();
     dir->Delete("*;*");
-    dir->ls();
   }
 
   pTfile->pwd();
@@ -277,23 +256,14 @@ void GatePromptGammaData::Initialize(std::string & filename, const G4Material * 
                                         proton_bin, min_proton_energy/MeV, max_proton_energy/MeV);
   pHEpInelasticProducedGamma->SetXTitle("E_{proton} [MeV]");
 
-
-  dir->ls();
-  // FIXME
-  DD(pHEpEpgNormalized->GetDefaultSumw2());
-
-  // // FIXME
-  // cs = new TH2D("sigma by E","cross section by proton E",
-  //               proton_bin, min_proton_energy/MeV, max_proton_energy/MeV,
-  //               50, 0, 0.0019);
-
   ResetData();
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaData::InitializeMaterial() // FIXME change the name of this function
+// FIXME change the name of this function
+void GatePromptGammaData::InitializeMaterial()
 {
   GateMessage("Actor", 1, "Create DB for used material. " << std::endl);
   const G4MaterialTable & matTable = *G4Material::GetMaterialTable();
@@ -306,7 +276,7 @@ void GatePromptGammaData::InitializeMaterial() // FIXME change the name of this 
     bool stop = false;
     const G4Material * m = matTable[i];
 
-    //FIXME Check here
+    // Check material
     for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
       const G4Element * elem = m->GetElement(e);
       unsigned int elementIndex = elem->GetIndex();
@@ -321,9 +291,7 @@ void GatePromptGammaData::InitializeMaterial() // FIXME change the name of this 
     }
 
     if (!stop) {
-      DD("create DB for material");
       GateMessage("Actor", 1, "Create DB for " << m->GetName() << std::endl);
-
       mGammaEnergyHistoByMaterialByProtonEnergy[i].resize(proton_bin+1); // from [1 to n]
 
       for(unsigned int j=1; j<proton_bin+1; j++) {
@@ -335,13 +303,10 @@ void GatePromptGammaData::InitializeMaterial() // FIXME change the name of this 
           const G4Element * elem = m->GetElement(e);
           double f = m->GetFractionVector()[e];
 
-          if (elem->GetZ() != 1) { // if not Hydrogen. If hydrogen,
-            // probability is zero
-
+          if (elem->GetZ() != 1) { // if not Hydrogen.
+            // (If hydrogen probability is zero)
             // Get histogram for the current bin
-            //pTfile->GetKey
             SetCurrentPointerForThisElement(elem);
-
             TH1D * he = new TH1D(*pHEpEpgNormalized->ProjectionY("", j, j));
 
             // Scale it according to the fraction of this element in the material
@@ -349,11 +314,8 @@ void GatePromptGammaData::InitializeMaterial() // FIXME change the name of this 
 
             // Add it to the current total histo
             h->Add(he);
-            // Clone is needed to create a copy of the projected histogram.
-            // TH1D * h = new TH1D(*pHEpEpgNormalized->ProjectionY("", j, j));
           }
         }
-
         mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
       }
     }
@@ -369,6 +331,7 @@ bool GatePromptGammaData::DataForMaterialExist(const int & materialIndex)
   return true;
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 TH1D * GatePromptGammaData::GetGammaEnergySpectrum(const int & materialIndex,
@@ -387,22 +350,6 @@ TH1D * GatePromptGammaData::GetGammaEnergySpectrum(const int & materialIndex,
   // Get the projected histogram of the material
   TH1D * h = mGammaEnergyHistoByMaterialByProtonEnergy[materialIndex][binX];
 
-  return h;
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-TH1D * GatePromptGammaData::GetGammaEnergySpectrumOLD(const double & energy)
-{
- /* OLD VERSION : slower than precomputing ProjectionY. Keep here in
-     case precomputing lead to issue regarding memory.*/
-
-  // Get the index of the energy bin
-  int binX = pHEp->FindFixBin(energy); DD(binX);
-
-  // Get the projected histograp of the material
-  TH1D * h = pHEpEpgNormalized->ProjectionY("PhistoEnergy", binX, binX);
   return h;
 }
 //-----------------------------------------------------------------------------

@@ -34,7 +34,6 @@
   FIXME:
   - manage a sparse version (not an histo at every pixel)
 
-
  */
 
 //-----------------------------------------------------------------------------
@@ -89,12 +88,8 @@ protected:
   template<class PT>
   void ConvertPixelOrderToHXYZ(std::vector<PT> & input, std::vector<PT> & output);
 
-  // DEBUG
-  std::vector<TH1D*> mHistoData; // FIXME : debug for sparse version
-  TH1D * mTotalEnergySpectrum;
 };
 //-----------------------------------------------------------------------------
-
 
 // For templated functions
 #include "GateImageOfHistograms.icc"

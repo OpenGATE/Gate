@@ -19,7 +19,6 @@
 #include "metaObject.h"
 #include "metaImage.h"
 
-
 //-----------------------------------------------------------------------------
 GateImageOfHistograms::GateImageOfHistograms(std::string dataTypeName):GateImage()
 {
@@ -55,12 +54,10 @@ void GateImageOfHistograms::Allocate()
   else
     dataFloat.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
 
-  // FIXME : Spare
-  //  display memory size
+  // FIXME : Sparse
   /*
     mHistoData.resize(nbOfValues);
-  mHistoData.resize(nbOfValues);
-  // Could not allocate this way for 3D image -> too long !!
+    // Could not allocate this way for 3D image -> too long !!
   for(int i=0; i<nbOfValues; i++) {
   // Create TH1D with no names (to save memory)
   //DD(i);
@@ -70,9 +67,6 @@ void GateImageOfHistograms::Allocate()
 
   // Set to zero
   Reset();
-
-  // FIXME DEBUG
-  mTotalEnergySpectrum = new TH1D("","", nbOfBins, minValue, maxValue);
 }
 //-----------------------------------------------------------------------------
 
@@ -104,15 +98,6 @@ void GateImageOfHistograms::UpdateSizesFromResolutionAndHalfSize() {
 //-----------------------------------------------------------------------------
 void GateImageOfHistograms::Reset()
 {
-  // FIXME : debug
-  /*
-    std::vector<TH1D*>::iterator iter = mHistoData.begin();
-    while (iter != mHistoData.end()) {
-    // Check if allocated because on the fly allocation
-    if (*iter) (*iter)->Reset();
-    ++iter;
-    }
-  */
   if (mDataTypeName == "double")
     fill(dataDouble.begin(), dataDouble.end(), 0.0);
   else
@@ -176,25 +161,12 @@ void GateImageOfHistograms::ComputeTotalOfCountsImageDataDouble(std::vector<doub
 //-----------------------------------------------------------------------------
 void GateImageOfHistograms::AddValueFloat(const int & index, TH1D * h, const double scale=1.0)
 {
-  /* FIXME DEBUG
-  // On the fly allocation
-  if (!mHistoData[index]) {
-  // DD(index);
-  mHistoData[index] = new TH1D("","", nbOfBins, minValue, maxValue);
-  }
-  // The overhead of a TH1 is about 600 bytes + the bin contents,
-  mHistoData[index]->Add(h);
-  //DD(mHistoData[index]->GetEntries());
-  */
-
   int index_data = index*nbOfBins;
   for(unsigned int i=1; i<=nbOfBins; i++) {
-    dataFloat[index_data] += h->GetBinContent(i)*scale; // +1 because TH1D start at 1, and end at index=size
+    // +1 because TH1D start at 1, and end at index=size
+    dataFloat[index_data] += h->GetBinContent(i)*scale;
     index_data++;
   }
-
-  // TOTAL H FIXME ; debug
-  mTotalEnergySpectrum->Add(h);
 }
 //-----------------------------------------------------------------------------
 
@@ -202,25 +174,12 @@ void GateImageOfHistograms::AddValueFloat(const int & index, TH1D * h, const dou
 //-----------------------------------------------------------------------------
 void GateImageOfHistograms::AddValueDouble(const int & index, TH1D * h, const double scale=1.0)
 {
-  /* FIXME DEBUG
-  // On the fly allocation
-  if (!mHistoData[index]) {
-  // DD(index);
-  mHistoData[index] = new TH1D("","", nbOfBins, minValue, maxValue);
-  }
-  // The overhead of a TH1 is about 600 bytes + the bin contents,
-  mHistoData[index]->Add(h);
-  //DD(mHistoData[index]->GetEntries());
-  */
-
   int index_data = index*nbOfBins;
   for(unsigned int i=1; i<=nbOfBins; i++) {
-    dataDouble[index_data] += h->GetBinContent(i)*scale; // +1 because TH1D start at 1, and end at index=size
+    // +1 because TH1D start at 1, and end at index=size
+    dataDouble[index_data] += h->GetBinContent(i)*scale;
     index_data++;
   }
-
-  // TOTAL H FIXME ; debug
-  mTotalEnergySpectrum->Add(h);
 }
 //-----------------------------------------------------------------------------
 
@@ -281,9 +240,7 @@ void GateImageOfHistograms::Read(G4String filename)
   int len = resolution[0] * resolution[1] * resolution[2] * nbOfBins;
   std::vector<float> input;
   input.assign((float*)(m_MetaImage.ElementData()), (float*)(m_MetaImage.ElementData()) + len);
-  DD("before convert order");
   ConvertPixelOrderToHXYZ(input, dataFloat);
-  DD("after convert order");
 
   // Now the initial input can be deleted, only the dataDouble/dataFloat data
   // are kept.
@@ -292,14 +249,13 @@ void GateImageOfHistograms::Read(G4String filename)
 
   // Convert to double is needed
   if (mDataTypeName == "double") {
-    DD("Convert input data from float to double");
     dataDouble.resize(dataFloat.size());
     for(unsigned int i=0; i<dataDouble.size(); i++)
       dataDouble[i] = (double)dataFloat[i]; // convert float to double
     dataFloat.clear();
   }
 
-  // FIXME
+  // Read info in mhd
   void * r = 0;
   r = m_MetaImage.GetUserField("HistoMinInMeV");
   if (r==0) {
@@ -372,16 +328,12 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & comment)
   // Before writing convert from double to float
   double total = 0.0;
   if (mDataTypeName == "double") {
-    DD("Convert double to float");
     dataFloat.resize(dataDouble.size());
-    DD(dataDouble.size());
     for(unsigned int i=0; i<dataDouble.size(); i++) {
       total += dataDouble[i];
       dataFloat[i] = (float)dataDouble[i]; // convert double to float
     }
-    DD("done");
   }
-  DD(total);
   m_MetaImage.AddUserField("TotalSum", MET_FLOAT_ARRAY, 1, &total);
 
   // Change the order of the pixels : store on disk as XYZH.
@@ -389,70 +341,5 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & comment)
   ConvertPixelOrderToXYZH(dataFloat, t);
   m_MetaImage.ElementData(&(t.begin()[0]), false); // true = autofree
   m_MetaImage.Write(headerName.c_str(), rawName.c_str());
-  DD("done");
-
-
-
-
-  ///-----------------------------------------
-  // Below Additional debug output : will be removed
-  ///-----------------------------------------
-
-  // convert histo into scalar image
-  //FIXME fct also used in read, so do a function
-  std::vector<float> temp;
-  ComputeTotalOfCountsImageDataFloat(temp);
-  headerName = baseName+"_sum.mhd";
-  rawName    = baseName+"_sum.raw";
-  MetaImage mm(3, dimSize, spacing, MET_FLOAT);
-  mm.Position(p);
-  double matrix2[9];
-  for(unsigned int i=0; i<3; i++) {
-    matrix2[i*3  ] = GetTransformMatrix().row1()[i];
-    matrix2[i*3+1] = GetTransformMatrix().row2()[i];
-    matrix2[i*3+2] = GetTransformMatrix().row3()[i];
-  }
-  mm.TransformMatrix(matrix2);
-  mm.ElementData(&(temp.begin()[0]), false); // true = autofree
-  mm.Write(headerName.c_str(), rawName.c_str());
-
-  ///-----------------------------------------
-  // 1D TXT
-  // DD(" write txt");
-  // headerName = baseName+"_TH1D.txt";
-  // data.resize(nbOfValues);
-  // std::fill(data.begin(), data.end(), 0.0);
-  // unsigned long index = 0;
-  // unsigned long nb_non_null = 0;
-  // for(unsigned int k=0; k<sizeZ; k++) {
-  //   for(unsigned int j=0; j<sizeY; j++) {
-  //     for(unsigned int i=0; i<sizeX; i++) {
-  //       // data[index] = mHistoData[index]->GetEntries();
-  //       //        data[index] = mHistoData[index]->GetEntries();
-  //       if (mHistoData[index]) { // because on the fly allocation
-  //         data[index] = mHistoData[index]->GetSumOfWeights();// same getsum but exclude under/overflow
-  //         /*if (k==0) {
-  //           DD(i);
-  //           DD(index);
-  //           DD(data[index]);
-  //           }*/
-
-  //         //data[index] = mHistoData[index]->GetSum();//Entries();
-  //         //data[index] = mHistoData[index]->GetEntries();
-  //         nb_non_null++;
-  //       }
-  //       //else data[index] = 0.0; // no need because filled
-  //       // DD(index);
-  //       // DD(mHistoData[index]->GetEntries());
-  //       index++;
-  //     }
-  //   }
-  // } // end loop
-  // DD(nb_non_null);
-  // GateImage::Write(headerName, comment);
-
-  ///-----------------------------------------
-  TFile * pTfile = new TFile("total.root","RECREATE");
-  mTotalEnergySpectrum->Write();
 }
 //-----------------------------------------------------------------------------

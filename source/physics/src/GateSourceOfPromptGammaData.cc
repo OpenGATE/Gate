@@ -14,11 +14,6 @@
 #include "G4Gamma.hh"
 #include "GateRandomEngine.hh"
 
-// FIXME to remove
-#include "metaObject.h"
-#include "metaImage.h"
-
-
 //------------------------------------------------------------------------
 GateSourceOfPromptGammaData::GateSourceOfPromptGammaData()
 {
@@ -36,7 +31,6 @@ GateSourceOfPromptGammaData::~GateSourceOfPromptGammaData()
 //------------------------------------------------------------------------
 void GateSourceOfPromptGammaData::LoadData(std::string mFilename)
 {
-  DD("GateSourceOfPromptGammaData::LoadData");
   mImage = new GateImageOfHistograms("float");
   mImage->Read(mFilename);
 }
@@ -46,7 +40,6 @@ void GateSourceOfPromptGammaData::LoadData(std::string mFilename)
 //------------------------------------------------------------------------
 void GateSourceOfPromptGammaData::Initialize()
 {
-  DD("GateSourceOfPromptGammaData::Initialize");
   unsigned int sizeX = mImage->GetResolution().x();
   unsigned int sizeY = mImage->GetResolution().y();
   unsigned int sizeZ = mImage->GetResolution().z();
@@ -87,48 +80,14 @@ void GateSourceOfPromptGammaData::Initialize()
   }
 
   // Initialize energy.
-  DD("ene");
-  DD(nbOfValues);
-  /*
   mEnergyGen.resize(nbOfValues);
-  DD(nbOfValues);
-  G4SPSRandomGenerator * biasRndm = new G4SPSRandomGenerator;
-  for(unsigned int l=0; l<nbOfValues; l++) {
-    mEnergyGen[l].SetEnergyDisType("User");
-    mEnergyGen[l].SetBiasRndm(biasRndm); // required
-  }
   double energyStep  = (mImage->GetMaxValue()-mImage->GetMinValue())/nbOfBins;
   double energy = 0.0;
   long index_image = 0;
   long index_data = 0;
-  double * data = mImage->GetDataDoublePointer();
-  for(unsigned int k=0; k<sizeZ; k++) {
-    DD(k);
-    for(unsigned int j=0; j<sizeY; j++) {
-      for(unsigned int i=0; i<sizeX; i++) {
-        energy = mImage->GetMinValue();
-        for(unsigned int l=0; l<nbOfBins; l++) {
-          G4ThreeVector h;
-          h.setX(energy); // energy
-          h.setY(data[index_data]); // probability value
-          mEnergyGen[index_image].UserEnergyHisto(h);
-          index_data++;
-          energy += energyStep;
-        }
-        index_image++;
-      }
-    }
-    }*/
-  mEnergyGen.resize(nbOfValues);
-  // DD("resized");
-  double energyStep  = (mImage->GetMaxValue()-mImage->GetMinValue())/nbOfBins;
-  double energy = 0.0;
-  long index_image = 0;
-  long index_data = 0;
-  //  double * data = mImage->GetDataDoublePointer();
   float * data = mImage->GetDataFloatPointer();
-  DD("loop");
   long nbNonZero = 0;
+
   // We only create TH1D for non zero pixel.
   for(unsigned int k=0; k<sizeZ; k++) {
     for(unsigned int j=0; j<sizeY; j++) {
@@ -155,7 +114,6 @@ void GateSourceOfPromptGammaData::Initialize()
       }
     }
   }
-  DD(nbNonZero);
 
   // Initialize direction sampling
   G4SPSRandomGenerator * biasRndm = new G4SPSRandomGenerator;
@@ -202,15 +160,11 @@ void GateSourceOfPromptGammaData::SampleRandomEnergy(double & energy)
 {
   // Get energy spectrum in the current pixel
   long index = mImage->GetIndexFromPixelIndex(mCurrentIndex_i, mCurrentIndex_j, mCurrentIndex_k);
-  //  DD(index);
-  //energy = mEnergyGen[index].GenerateOne(G4Gamma::Gamma());
+
   if (mDataCounts[index] != 0) {
-    // DD(mEnergyGen[index]->GetSumOfWeights());
-    // DD(mDataCounts[index]);
     energy = mEnergyGen[index]->GetRandom();
   }
   else energy = 0.0;
-  //  DD(energy/MeV);
 }
 //------------------------------------------------------------------------
 
