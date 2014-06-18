@@ -105,6 +105,7 @@ G4cout << "GateSourceVoxelImageReader::ReadFile : fileName: " << m_fileName << G
   G4short  *buffer = (G4short*) malloc ( pixelNumber*sizeof(G4short) );
   if (!buffer) {
     G4cerr << G4endl << "Error: Could not allocate the buffer!" << G4endl;
+    fclose(fpp);
     return;
   }
 
@@ -113,6 +114,7 @@ G4cout << "GateSourceVoxelImageReader::ReadFile : fileName: " << m_fileName << G
   if ( NbData != pixelNumber ) {
       G4cerr << G4endl <<"Error: the number of pixels that were read from the data file (" << NbData << ") " << G4endl
       	      	   << "is inferior to the number computed from its header file (" << pixelNumber << ")!" << G4endl;
+      free(buffer);
       return;
   }
 
@@ -295,6 +297,7 @@ if (!m_voxelTranslator) {
 
   if (!buffer) {
     G4cerr << G4endl << "Error: Could not allocate the buffer!" << G4endl;
+    fclose(fpp);
     return;
   }
 
@@ -303,6 +306,7 @@ if (!m_voxelTranslator) {
   if ( NbData != pixelNumber ) {
       G4cerr << G4endl <<"Error: the number of pixels that were read from the data file (" << NbData << ") " << G4endl
                  << "is inferior to the number computed from its header file (" << pixelNumber << ")!" << G4endl;
+      delete[] buffer;
       return;
   }
 

@@ -112,6 +112,7 @@ m_fileName = fileName;
   G4short  *buffer = (G4short*) malloc ( pixelNumber*sizeof(G4short) );
   if (!buffer) {
     G4cerr << G4endl << "Error: Could not allocate the buffer!" << G4endl;
+    fclose(fpp);
     return;
   }
 
@@ -121,6 +122,7 @@ m_fileName = fileName;
   if ( NbData != pixelNumber ) {
       G4cerr << G4endl <<"Error: the number of pixels that were read from the data file (" << NbData << ") " << G4endl
       	      	   << "is inferior to the number computed from its header file (" << pixelNumber << ")!" << G4endl;
+      free(buffer);
       return;
   }
 
@@ -352,13 +354,13 @@ m_fileName = Header_fileName;
 
 G4short  *buffer = new G4short[ pixelNumber ];
 
-memset( buffer,0,pixelNumber);
-
-
   if (!buffer) {
     G4cerr << G4endl << "Error: Could not allocate the buffer!" << G4endl;
+    fclose(fpp);
     return;
   }
+
+  memset( buffer, 0, sizeof(G4short)*pixelNumber);
 
 
   G4int NbData = fread( buffer, sizeof(G4short), pixelNumber, fpp);
@@ -366,6 +368,7 @@ memset( buffer,0,pixelNumber);
   if ( NbData != pixelNumber ) {
       G4cerr << G4endl <<"Error: the number of pixels that were read from the data file (" << NbData << ") " << G4endl
                  << "is inferior to the number computed from its header file (" << pixelNumber << ")!" << G4endl;
+      delete [] buffer;
       return;
   }
 

@@ -339,6 +339,8 @@ M_Read(void)
       METAIO_STREAM::cout << "MetaLandmark: m_Read: data not read completely" 
                 << METAIO_STREAM::endl;
       METAIO_STREAM::cout << "   ideal = " << readSize << " : actual = " << gc << METAIO_STREAM::endl;
+      delete[] posDim;
+      delete[] _data;
       return false;
     }
 
