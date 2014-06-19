@@ -1078,7 +1078,7 @@ void GateImage::ReadMHD(G4String filename) {
 void GateImage::ReadInterfile(G4String filename) {
 
   // Read interfile image
-  GateInterfileHeader * h33 = new GateInterfileHeader;
+  GateInterfileHeader * h33 = new GateInterfileHeader();
   h33->ReadHeader(filename);
 
   // Get image information
@@ -1097,7 +1097,7 @@ void GateImage::ReadInterfile(G4String filename) {
   Allocate();
 
   // Get image data
-  h33->ReadData(filename, data);
+  h33->ReadData(data);
 
 }
 //-----------------------------------------------------------------------------

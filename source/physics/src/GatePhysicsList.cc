@@ -97,14 +97,16 @@ GatePhysicsList::~GatePhysicsList()
   for(VolumeUserLimitsMapType::iterator i = mapOfVolumeUserLimits.begin(); i!=mapOfVolumeUserLimits.end(); i++)
     {
       delete (*i).second;
-      mapOfVolumeUserLimits.erase(i);
     }
+  mapOfVolumeUserLimits.clear();
+
   delete userlimits;
   for(std::list<G4ProductionCuts*>::iterator i = theListOfCuts.begin(); i!=theListOfCuts.end(); i++)
     {
       delete (*i);
-      i = theListOfCuts.erase(i);
     }
+  theListOfCuts.clear();
+
   mapOfRegionCuts.clear();
   theListOfPBName.clear();
   mListOfStepLimiter.clear();
