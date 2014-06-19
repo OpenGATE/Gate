@@ -51,9 +51,9 @@
 #include "GateObjectStore.hh"
 #include "GateMixedDNAPhysics.hh"
 
-#ifdef GATE_USE_OPTICAL
 #include "G4OpticalPhoton.hh"
-#endif
+#include "G4OpticalPhysics.hh"
+
 
 //-----------------------------------------------------------------------------------------
 GatePhysicsList::GatePhysicsList(): G4VUserPhysicsList()
@@ -304,6 +304,9 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
   if (mUserPhysicListName == "emDNAphysics") {
     pl = new G4EmDNAPhysics();
   }
+  if (mUserPhysicListName == "optical") {
+    pl = new G4OpticalPhysics();
+  }
 
   if (pl != NULL) {
     pl->ConstructParticle();
@@ -381,10 +384,7 @@ void GatePhysicsList::ConstructParticle()
   G4ShortLivedConstructor slive;
   slive.ConstructParticle();
 
-  //#ifdef GATE_USE_OPTICAL
-  //G4OpticalPhoton::OpticalPhotonDefinition();
-  //#endif
-  
+
   //Construct G4DNA particles
 
   G4DNAGenericIonsManager* dnagenericIonsManager;
