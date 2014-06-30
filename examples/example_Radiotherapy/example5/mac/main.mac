@@ -2,12 +2,12 @@
 #-------------------oooooOOOOO00000OOOOOooooo---------------------#
 
 # Example of proton beam in water box with Pencil Beam Scanning
-# source with a treatment plan obtained from a TPS. 
+# source with a treatment plan obtained from a TPS.
 
 #-------------------oooooOOOOO00000OOOOOooooo---------------------#
 
 #=====================================================
-# VERBOSE and VISUALISATION 
+# VERBOSE and VISUALISATION
 #=====================================================
 
 /control/execute mac/verbose.mac
@@ -39,11 +39,7 @@
 # PHYSICS
 #=====================================================
 
-/gate/geometry/setIonisationPotential Water 75 eV
-/gate/geometry/setIonisationPotential Air 85.7 eV
-
-/control/execute mac/physicslist_EM_std.mac
-/control/execute mac/physicslist_HAD_std.mac
+/gate/physics/addPhysicsList QGSP_BERT_HP_EMY
 
 /gate/physics/Gamma/SetCutInRegion      world 1 mm
 /gate/physics/Electron/SetCutInRegion   world 1 mm
@@ -54,14 +50,13 @@
 # /gate/physics/Positron/SetCutInRegion   mainbox 0.1 mm
 
 /gate/physics/SetMaxStepSizeInRegion world 1 mm
-/gate/physics/ActivateStepLimiter proton       
-/gate/physics/ActivateStepLimiter deuteron     
-/gate/physics/ActivateStepLimiter triton       
-/gate/physics/ActivateStepLimiter alpha        
-/gate/physics/ActivateStepLimiter GenericIon   
+/gate/physics/ActivateStepLimiter proton
+/gate/physics/ActivateStepLimiter deuteron
+/gate/physics/ActivateStepLimiter triton
+/gate/physics/ActivateStepLimiter alpha
+/gate/physics/ActivateStepLimiter GenericIon
 
 /gate/physics/displayCuts
-/gate/physics/print output/physics.txt
 
 #=====================================================
 # DETECTORS
@@ -100,5 +95,5 @@
 
 /gate/random/setEngineName MersenneTwister
 /gate/random/setEngineSeed auto
-/gate/application/setTotalNumberOfPrimaries 1000000
+/gate/application/setTotalNumberOfPrimaries 1000
 /gate/application/start
