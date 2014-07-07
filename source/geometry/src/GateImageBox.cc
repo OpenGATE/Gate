@@ -117,7 +117,7 @@ void GateImageBox::DescribeYourselfTo(G4OpenGLSceneHandler& scene) const{
     glEnd();
     
     glColor3fv(color);
-    delete color;
+    delete[] color;
     
     glPopAttrib();
 

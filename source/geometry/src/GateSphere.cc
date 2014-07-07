@@ -147,13 +147,6 @@ void GateSphere::DescribeMyself(size_t level)
 // Returns the volume of the solid
 G4double GateSphere::ComputeMyOwnVolume() const
 {
-  if (m_sphereDTheta!=(180.*deg))
-    return -1;
-
-  G4double Vmax = (4./3.) * M_PI * m_sphereRmax * m_sphereRmax * m_sphereRmax;
-  G4double Vmin = (4./3.) * M_PI * m_sphereRmin * m_sphereRmin * m_sphereRmin;
-  G4double dV = Vmax - Vmin;
-
-  return ( dV * ( m_sphereDPhi / (360.*deg) ) );
+  return m_sphere_solid->GetCubicVolume();
 }
 //-----------------------------------------------------------------------------------------------

@@ -443,6 +443,7 @@ M_Read(void)
                           << METAIO_STREAM::endl;
       METAIO_STREAM::cout << "   ideal = " << readSize 
                           << " : actual = " << gc << METAIO_STREAM::endl;
+      delete[] _data;
       return false;
     }
 
@@ -625,6 +626,7 @@ M_Read(void)
                             << METAIO_STREAM::endl;
         METAIO_STREAM::cout << "   ideal = " << readSize << " : actual = " << gc
                             << METAIO_STREAM::endl;
+        delete[] _data;
         return false;
         }
 
@@ -749,6 +751,7 @@ M_Read(void)
       METAIO_STREAM::cout << "MetaMesh: m_Read: Cell Link not read completely" 
                 << METAIO_STREAM::endl;
       METAIO_STREAM::cout << "   ideal = " << readSize << " : actual = " << gc << METAIO_STREAM::endl;
+      delete[] _data;
       return false;
       }
     int i=0;
@@ -878,6 +881,7 @@ M_Read(void)
     METAIO_STREAM::cout << "MetaMesh: m_Read: PointData not read completely" 
               << METAIO_STREAM::endl;
     METAIO_STREAM::cout << "   ideal = " << pointDataSize << " : actual = " << gc << METAIO_STREAM::endl;
+    delete[] _data;
     return false;
     }
   int i=0;
@@ -1046,6 +1050,7 @@ M_Read(void)
     METAIO_STREAM::cout << "MetaMesh: m_Read: data not read completely" 
               << METAIO_STREAM::endl;
     METAIO_STREAM::cout << "   ideal = " << cellDataSize << " : actual = " << gcCell << METAIO_STREAM::endl;
+    delete[] _celldata;
     return false;
     }
   

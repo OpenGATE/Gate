@@ -12,6 +12,7 @@ See GATE/LICENSE.txt for further details
 
 #include "globals.hh"
 #include <vector>
+#include <algorithm>
 
 #include "GateClockDependent.hh"
 
