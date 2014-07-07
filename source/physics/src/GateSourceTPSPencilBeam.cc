@@ -80,19 +80,22 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
         double IsocenterPosition[3];
         double NbProtons;
         bool again = true;
+        //again is a check to skip the second controlpoint of each controlpointindex pair.
+        //an extra check is needed when the selectLayerID switch is used.
+        if (mSelectedLayerID != -1 && mSelectedLayerID%2 == 1){
+            GateError("Invalid LayerID selected! Select the first ControlPointIndex of a pair (an even number).");
+        }
 
         if (mIsASourceDescriptionFile) {
             LoadClinicalBeamProperties();
             GateMessage("Physic", 1, "[TPSPencilBeam] Source description file successfully loaded." << G4endl);
         } else {
-            cout << "ERROR TPS PENCIL BEAM: No clinical beam loaded !\n" << endl;
-            exit (0);
+            GateError("No clinical beam loaded !");
         }
 
         ifstream inFile(mPlan);
         if (! inFile) {
-            G4cout << "ERROR TPS PENCIL BEAM:  cannot open Treatment plan file!\n" << G4endl;
-            exit (0);
+            GateError("Cannot open Treatment plan file!");
         }
 
         // integrating the plan description file data
@@ -330,8 +333,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
 
         mTotalNumberOfSpots = mPencilBeams.size();
         if (mTotalNumberOfSpots == 0) {
-            G4cout << "ERROR - 0 spots have been loaded from the file \"" << mPlan << "\" simulation abort!\n" << G4endl;
-            exit (0);
+            GateError("0 spots have been loaded from the file \"" << mPlan << "\" simulation abort!");
         }
 
         GateMessage("Physic", 1, "[TPSPencilBeam] Starting particle generation:  "
@@ -376,8 +378,7 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties() {
 
     ifstream inFile(mSourceDescriptionFile);
     if (! inFile) {
-        G4cout << "ERROR TPS PENCIL BEAM:  cannot open source description file!\n"<<G4endl;
-        exit (0);
+        GateError("Cannot open source description file!");
     }
 
     for (int i=0; i<4; i++) inFile.getline(oneline, MAXLINE);

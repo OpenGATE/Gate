@@ -336,6 +336,9 @@ int main( int argc, char* argv[] )
       session = new G4UIterminal();
 #endif
 #endif
+#ifndef _WIN32
+      setlocale(LC_NUMERIC, "POSIX");
+#endif
     }
   else
     {
