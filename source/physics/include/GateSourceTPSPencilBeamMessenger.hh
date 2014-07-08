@@ -54,6 +54,8 @@ class GateSourceTPSPencilBeamMessenger: public GateVSourceMessenger
     G4UIcmdWithABool * pFlatGeneFlagCmd;
     //Not allowed fieldID
     G4UIcmdWithAnInteger * pNotAllowedFieldCmd;
+    //Allowed fieldID
+    G4UIcmdWithAnInteger * pAllowedFieldCmd;
     //Source description file
     G4UIcmdWithAString * pSourceFileCmd;
     //Configuration of spot intensity

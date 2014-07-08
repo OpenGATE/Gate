@@ -1,5 +1,5 @@
 
-/control/execute verbose.mac
+/control/execute mac/verbose.mac
 
 #=====================================================
 # GEOMETRY
@@ -47,7 +47,7 @@
 #=====================================================
 
 /gate/actor/addActor                               DoseActor  doseDistribution
-/gate/actor/doseDistribution/save                  output/Config-gamma.hdr
+/gate/actor/doseDistribution/save                  output/gamma.mhd
 /gate/actor/doseDistribution/attachTo    	   mainbox2
 /gate/actor/doseDistribution/stepHitType           random
 /gate/actor/doseDistribution/setPosition           0 0 0 cm
@@ -99,7 +99,6 @@
 # VISUALISATION
 #=====================================================
 
-
 #/control/execute mac/visu.mac
 
 #=====================================================
@@ -108,13 +107,13 @@
 
 # JamesRandom Ranlux64 MersenneTwister
 /gate/random/setEngineName MersenneTwister
-/gate/random/setEngineSeed 1021
+/gate/random/setEngineSeed auto
 
 # /gate/random/verbose 1
 # /gate/source/verbose 0
 
 /gate/application/noGlobalOutput
-/gate/application/setTotalNumberOfPrimaries 200000
+/gate/application/setTotalNumberOfPrimaries 500000
 /gate/application/start
 
 exit
