@@ -98,7 +98,7 @@ void GateTrajectory::ShowTrajectory(std::ostream& os) const
    }
 }
 
-void GateTrajectory::DrawTrajectory(G4int /*i_mode*/) const
+void GateTrajectory::DrawTrajectory() const
 {
 
    G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();

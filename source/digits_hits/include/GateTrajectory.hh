@@ -71,7 +71,7 @@ class GateTrajectory : public G4VTrajectory
    virtual G4ThreeVector GetInitialMomentum() const = 0;
 
    virtual void ShowTrajectory(std::ostream&) const;
-   virtual void DrawTrajectory(G4int i_mode=0) const;
+   virtual void DrawTrajectory() const;
    virtual void AppendStep(const G4Step* aStep);
    virtual void MergeTrajectory(G4VTrajectory* secondTrajectory);
 
