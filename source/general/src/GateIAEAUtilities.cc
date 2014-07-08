@@ -1,6 +1,4 @@
 /*
-   Copyright 2000-2003 Virginia Commonwealth University
-
    Advisory:
 1. The authors make no claim of accuracy of the information in these files or the 
    results derived from use of these files.
@@ -232,7 +230,7 @@ FILE *open_file(char *filename,char*extension, char *access)
    {
       printf("\n ERROR OPENING FILE %s (mode %s)", filename1,access);
    }
-   delete(filename1);
+   delete[] filename1;
    return(strm);
 }
 /* *********************************************************************** */
@@ -437,7 +435,9 @@ int copy(char *SourceFile, char *DestinationFile)
   if(dStream == NULL)
   {
      perror("\n ERROR: copy:");
-     printf("\n ERROR: copy: Opening Destination File %s",DestinationFile);return(FAIL); 
+     printf("\n ERROR: copy: Opening Destination File %s",DestinationFile);
+     fclose(sStream);
+     return(FAIL); 
   }
   char buffer[1000];
   int nRead;
@@ -450,6 +450,8 @@ int copy(char *SourceFile, char *DestinationFile)
   {
      perror("ERROR: Copy: ");
      printf("\n ERROR: source %s, destination %s", SourceFile, DestinationFile); 
+     fclose(sStream);
+     fclose(dStream);
      return(FAIL);
   }
   fclose(sStream);

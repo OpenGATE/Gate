@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -46,6 +44,7 @@ class GateReadoutMessenger: public GatePulseProcessorMessenger
 
   private:
     G4UIcmdWithAnInteger*      SetDepthCmd;
+    G4UIcmdWithAString*        SetPolicyCmd;
 };
 
 #endif

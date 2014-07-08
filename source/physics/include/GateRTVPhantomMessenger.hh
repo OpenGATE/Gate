@@ -1,4 +1,3 @@
-
 #ifndef GateRTVPhantomMessenger_h
 #define GateRTVPhantomMessenger_h 1
 

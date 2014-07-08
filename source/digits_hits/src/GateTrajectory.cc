@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -100,7 +98,11 @@ void GateTrajectory::ShowTrajectory(std::ostream& os) const
    }
 }
 
-void GateTrajectory::DrawTrajectory(G4int /*i_mode*/) const
+#if (G4VERSION_MAJOR > 9)
+  void GateTrajectory::DrawTrajectory() const
+#else
+  void GateTrajectory::DrawTrajectory(G4int /*i_mode =0*/) const
+#endif
 {
 
    G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();

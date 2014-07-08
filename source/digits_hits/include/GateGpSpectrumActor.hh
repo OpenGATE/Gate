@@ -1,6 +1,4 @@
 #ifndef GATEGPSPECTRUMACTOR_HH
-#define GATEGPSPECTRUMACTOR_HH
-
 #include "GateConfiguration.h"
 #ifdef G4ANALYSIS_USE_ROOT
 

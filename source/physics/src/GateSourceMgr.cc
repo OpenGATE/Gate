@@ -1,6 +1,4 @@
 /*----------------------
-  GATE version name: gate_v6
-
   Copyright (C): OpenGATE Collaboration
 
   This software is distributed under the terms
@@ -95,7 +93,7 @@ G4int GateSourceMgr::RemoveSource( G4String name )
     }
 
   GateVSourceVector::iterator itr;
-  for( itr = mSources.begin(); itr != mSources.end() && found == 0; ++itr )
+  for( itr = mSources.begin(); itr != mSources.end(); ++itr )
     {
       if( ( *itr )->GetName() == name )
         {
@@ -105,6 +103,7 @@ G4int GateSourceMgr::RemoveSource( G4String name )
             G4cout << "GateSourceMgr::RemoveSource : source <" << name
                    << "> removed" << G4endl;
           found = 1;
+          break;
         }
     }
 

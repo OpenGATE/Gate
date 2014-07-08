@@ -1,6 +1,4 @@
 // -*- C++ -*-
-// ---------------------------------------------------------------------------
-//
 // This file is a part of the CLHEP - a Class Library for High Energy Physics.
 //
 // This is the definition of special linear algebra functions for the

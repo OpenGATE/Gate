@@ -1,6 +1,4 @@
 /*----------------------
-   GATE version name: gate_v6
-
    Copyright (C): OpenGATE Collaboration
 
 This software is distributed under the terms
@@ -25,7 +23,7 @@ GateSourceVoxelLinearTranslator::~GateSourceVoxelLinearTranslator()
   delete m_messenger;
 }
 
-G4double GateSourceVoxelLinearTranslator::TranslateToActivity(G4int voxelValue)
+G4double GateSourceVoxelLinearTranslator::TranslateToActivity(G4double voxelValue)
 {
   G4double activity = 0.;
 

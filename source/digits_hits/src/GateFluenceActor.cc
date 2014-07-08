@@ -1,8 +1,6 @@
 /*----------------------
-  GATE version name: gate_v6
-  
   Copyright (C): OpenGATE Collaboration
-  
+
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
@@ -53,23 +51,23 @@ void GateFluenceActor::Construct()
   GateDebugMessageInc("Actor", 4, "GateFluenceActor -- Construct - begin" << G4endl);
   GateVImageActor::Construct(); // mImage is not allocated here
   mImage.Allocate();
-  
+
   // Enable callbacks
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(false);
   EnableUserSteppingAction(true);
-  
+
   // the image index will be computed according to the preStep
   if (mStepHitType != PreStepHitType) {
     GateWarning("The stepHitType must be 'pre', we force it.");
     SetStepHitType("pre");
   }
   SetStepHitType("pre");
-  
+
   // Read the response detector curve from an external file
   mEnergyResponse.ReadResponseDetectorFile(mResponseFileName);
-  
+
   mImage.SetOrigin(mOrigin);
   mImageProcess.SetOrigin(mOrigin);
   mLastHitEventImage.SetOrigin(mOrigin);
@@ -91,7 +89,7 @@ void GateFluenceActor::Construct()
   if (mIsUncertaintyImageEnabled) mImage.EnableSquaredImage(true);
   mImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mImage.Allocate();
-  
+
   // Allocate scatter image
   if( mIsScatterImageEnabled)
     {
@@ -115,7 +113,7 @@ void GateFluenceActor::Construct()
   // Print information
   GateMessage("Actor", 1,
               "\tFluence FluenceActor    = '" << GetObjectName() << "'" << G4endl);
-  
+
   ResetData();
   GateMessageDec("Actor", 4, "GateFluenceActor -- Construct - end" << G4endl);
 }
@@ -131,7 +129,7 @@ void GateFluenceActor::SaveData()
   // Printing all particles
   GateVImageActor::SaveData();
   if(mSaveFilename != "")
-    { 
+    {
       sprintf(filename, mSaveFilename, rID);
       mImage.SetFilename(G4String(filename));
       if( mIsNormalisationEnabled) mImage.SaveData(mCurrentEvent+1, true);
@@ -156,7 +154,7 @@ void GateFluenceActor::SaveData()
       if( mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1); // reset
     }
 
-  
+
   // Printing scatter of each order
   if(mScatterOrderFilename != "")
     {
@@ -166,7 +164,7 @@ void GateFluenceActor::SaveData()
 	  mFluencePerOrderImages[k]->Write((G4String)filename);
 	}
     }
-  
+
   // Printing compton or rayleigh or fluorescence scatter images
   if(mSeparateProcessFilename != "")
   {
@@ -232,9 +230,9 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
       GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end" << G4endl);
       return;
     }
-  
+
   GateScatterOrderTrackInformation * info = dynamic_cast<GateScatterOrderTrackInformation *>(step->GetTrack()->GetUserInformation());
-  
+
   /* http://geant4.org/geant4/support/faq.shtml
      To check that the particle has just entered in the current volume
      (i.e. it is at the first step in the volume; the preStepPoint is at the boundary):
@@ -253,7 +251,7 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 	      mLastHitEventImage.SetValue(index, mCurrentEvent);
 	    }
 	}
-      
+
       if( mIsUncertaintyImageEnabled || mIsSquaredImageEnabled)
 	{
           if( sameEvent) mImage.AddTempValue( index, respValue);
@@ -263,7 +261,7 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 
       if( mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.AddValue( index, weight);
 
-      
+
       if( mIsScatterImageEnabled) {
 	unsigned int order = 0;
 	G4String process = "";
@@ -309,7 +307,7 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
 
             if( process != G4String("") )
               mProcesses[process]->AddValue(index, respValue);
-	  
+
             // Scatter order image
             if(order)
               mFluencePerOrderImages[order-1]->AddValue(index, respValue);
