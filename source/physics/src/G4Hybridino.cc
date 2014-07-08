@@ -49,7 +49,7 @@ G4Hybridino* G4Hybridino::Definition()
 	// use constants in CLHEP
 	
 	anInstance = new G4ParticleDefinition(
-			name,            0.0*MeV,       0.0*MeV,         0, 
+      name,            0.0,           0.0,         0,
 			0,                 0,             0,          
 			0,                 0,             0,             
 	      "hybridino",                 0,             0,          0,
