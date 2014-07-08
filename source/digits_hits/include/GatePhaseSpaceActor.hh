@@ -63,6 +63,7 @@ class GatePhaseSpaceActor : public GateVActor
   void SetIsProdProcessEnabled(bool b){EnableProdProcess = b;}
   void SetIsWeightEnabled(bool b){EnableWeight = b;}
   void SetIsTimeEnabled(bool b){EnableTime = b;}
+  void SetIsLocalTimeEnabled(bool b){EnableLocalTime = b;}
   void SetIsMassEnabled(bool b){EnableMass = b;}
   void SetIsSecStored(bool b){EnableSec = b;}
   void SetIsAllStep(bool b){EnableAllStep = b;}
@@ -77,10 +78,16 @@ class GatePhaseSpaceActor : public GateVActor
   double GetMaxFileSize(){return mFileSize ;}
 
   void SetIsPrimaryEnergyEnabled(bool b){bEnablePrimaryEnergy = b;}
+  void SetIsEmissionPointEnabled(bool b){bEnableEmissionPoint = b;}
   void SetEnableCoordFrame(){bEnableCoordFrame = true;}
   bool GetEnableCoordFrame(){return bEnableCoordFrame;}
   void SetCoordFrame(G4String nameOfFrame){bCoordFrame=nameOfFrame;}
   G4String GetCoordFrame(){return bCoordFrame ;}
+  void SetIsSpotIDEnabled(){bEnableSpotID = true;}
+  bool GetIsSpotIDEnabled(){return bEnableSpotID;}
+  void SetSpotIDFromSource(G4String nameOfSource){bSpotIDFromSource = nameOfSource;}
+  G4String GetSpotIDFromSource(){return bSpotIDFromSource;}
+  void SetIsCompactEnabled(bool b){bEnableCompact = b;}
 
 
 protected:
@@ -104,6 +111,7 @@ protected:
   bool EnableProdProcess;
   bool EnableWeight;
   bool EnableTime;
+  bool EnableLocalTime;
   bool EnableMass;
   bool EnableSec;
   bool EnableAllStep;
@@ -111,12 +119,15 @@ protected:
   bool mStoreOutPart;
 
   bool bEnableCoordFrame;
-  bool bEnablePrimaryEnergy;
-
   G4String bCoordFrame;
-  //hold the primary energy
+  bool bEnablePrimaryEnergy;
+  bool bEnableEmissionPoint;
+  float bEmissionPoint_X,bEmissionPoint_Y,bEmissionPoint_Z;
+  bool bEnableSpotID;
+  G4String bSpotIDFromSource;
+  int bSpotID;
+  bool bEnableCompact;
   float bPrimaryEnergy;
-
 
   double mFileSize;
 
@@ -133,7 +144,7 @@ protected:
   float dz;
   float e;
   float w;
-  float t;
+  float t;//t is either time or local time.
   float m;
   Char_t vol[256];
 

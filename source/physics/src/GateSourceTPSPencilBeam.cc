@@ -355,6 +355,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
     }
     //---------GENERATION - START-----------------------
     int bin = mTotalNumberOfSpots * mDistriGeneral->fire();
+    mCurrentSpot = bin;
     mPencilBeams[bin]->GenerateVertex(aEvent);
 }
 //---------GENERATION - END-----------------------

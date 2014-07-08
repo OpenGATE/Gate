@@ -49,6 +49,10 @@ GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger()
   delete pEnableStoreAllStepCmd;
   delete bEnablePrimaryEnergyCmd;
   delete bCoordinateFrameCmd;
+  delete bEnableLocalTimeCmd;
+  delete bSpotIDFromSourceCmd;
+  delete bEnableCompactCmd;
+  delete bEnableEmissionPointCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -150,7 +154,7 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
 
   bb = base+"/storeAllStep";
   pEnableStoreAllStepCmd = new G4UIcmdWithABool(bb,this);
-  guidance = "Store all step inside the attached volume";
+  guidance = "Store all steps inside the attached volume";
   pEnableStoreAllStepCmd->SetGuidance(guidance);
   pEnableStoreAllStepCmd->SetParameterName("State",false);
 
@@ -176,6 +180,26 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
   guidance = "Store the hit coordinates in the frame of the frame passed as an argument.";
   bCoordinateFrameCmd->SetGuidance(guidance);
   bCoordinateFrameCmd->SetParameterName("Coordinate Frame",false);
+
+  bb = base+"/enableLocalTime";
+  bEnableLocalTimeCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Store the local time.";
+  bEnableLocalTimeCmd->SetGuidance(guidance);
+
+  bb = base+"/enableSpotIDFromSource";
+  bSpotIDFromSourceCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Store the spotID of the primary particles from given source.";
+  bSpotIDFromSourceCmd->SetGuidance(guidance);
+
+  bb = base+"/enableCompact";
+  bEnableCompactCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Compact output by not storing trackID, runID, eventID.";
+  bEnableCompactCmd->SetGuidance(guidance);
+
+  bb = base+"/enableEmissionPoint";
+  bEnableEmissionPointCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Store the emission point of each particle stored in the phasespace.";
+  bEnableEmissionPointCmd->SetGuidance(guidance);
 
 
 }
@@ -205,7 +229,11 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
   if(command == pSaveEveryNEventsCmd || command == pSaveEveryNSecondsCmd)  GateError("saveEveryNEvents and saveEveryNSeconds commands are not available with phase space actor. But you can use the setMaxFileSize command.");
   if(command == pMaxSizeCmd) pActor->SetMaxFileSize(pMaxSizeCmd->GetNewDoubleValue(param));
   if(command == bEnablePrimaryEnergyCmd) pActor->SetIsPrimaryEnergyEnabled(bEnablePrimaryEnergyCmd->GetNewBoolValue(param));
+  if(command == bEnableEmissionPointCmd) pActor->SetIsEmissionPointEnabled(bEnableEmissionPointCmd->GetNewBoolValue(param));
   if(command == bCoordinateFrameCmd) {pActor->SetCoordFrame(param);pActor->SetEnableCoordFrame();};
+  if(command == bEnableLocalTimeCmd) pActor->SetIsLocalTimeEnabled(bEnableLocalTimeCmd->GetNewBoolValue(param));
+  if(command == bSpotIDFromSourceCmd) {pActor->SetSpotIDFromSource(param);pActor->SetIsSpotIDEnabled();};
+  if(command == bEnableCompactCmd) pActor->SetIsCompactEnabled(bEnableCompactCmd->GetNewBoolValue(param));
 
   GateActorMessenger::SetNewValue(command ,param );
 }

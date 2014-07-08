@@ -25,6 +25,7 @@
 #include "GateIAEAHeader.h"
 #include "GateIAEARecord.h"
 #include "GateIAEAUtilities.h"
+#include "GateSourceMgr.hh"
 
 // --------------------------------------------------------------------
 GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
@@ -45,6 +46,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
     EnableProdProcess = true;
     EnableWeight = true;
     EnableTime = false;
+    EnableLocalTime = false;
     EnableMass = false;
     EnableSec = false;
     mIsFistStep = true;
@@ -54,7 +56,12 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
 
     bEnableCoordFrame = false;
     bEnablePrimaryEnergy = false;
+    bEnableSpotID = false;
+    bEnableCompact = false;
+    bEnableEmissionPoint=false;
 
+    bSpotID = 0;
+    bSpotIDFromSource = " ";
     bCoordFrame = " ";
 
     mFileType = " ";
@@ -109,7 +116,7 @@ void GatePhaseSpaceActor::Construct() {
 
         if (EnableEkine) pListeVar->Branch("Ekine", &e, "Ekine/F");
         if (EnableWeight) pListeVar->Branch("Weight", &w, "Weight/F");
-        if (EnableTime) pListeVar->Branch("Time", &t, "Time/F");
+        if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/F");
         if (EnableMass) pListeVar->Branch("Mass", &m, "Mass/F"); // in MeV/c2
         if (EnableXPosition) pListeVar->Branch("X", &x, "X/F");
         if (EnableYPosition) pListeVar->Branch("Y", &y, "Y/F");
@@ -121,10 +128,16 @@ void GatePhaseSpaceActor::Construct() {
         if (EnableProdVol) pListeVar->Branch("ProductionVolume", vol, "ProductionVolume/C");
         if (EnableProdProcess) pListeVar->Branch("ProductionProcessTrack", pro_track, "ProductionProcessTrack/C");
         if (EnableProdProcess) pListeVar->Branch("ProductionProcessStep", pro_step, "ProductionProcessStep/C");
-        pListeVar->Branch("TrackID", &trackid, "TrackID/I");
-        pListeVar->Branch("EventID", &eventid, "EventID/I");
-        pListeVar->Branch("RunID", &runid, "RunID/I");
-        if (bEnablePrimaryEnergy) pListeVar->Branch("primaryEnergy", &bPrimaryEnergy, "primaryEnergy/F");
+        if (bEnableCompact==false) pListeVar->Branch("TrackID", &trackid, "TrackID/I");
+        if (bEnableCompact==false) pListeVar->Branch("EventID", &eventid, "EventID/I");
+        if (bEnableCompact==false) pListeVar->Branch("RunID", &runid, "RunID/I");
+        if (bEnablePrimaryEnergy) pListeVar->Branch("PrimaryEnergy", &bPrimaryEnergy, "primaryEnergy/F");
+        if (bEnableEmissionPoint) {
+            pListeVar->Branch("EmissionPoint_X", &bEmissionPoint_X, "EmissionPoint_X/F");
+            pListeVar->Branch("EmissionPoint_Y", &bEmissionPoint_Y, "EmissionPoint_Y/F");
+            pListeVar->Branch("EmissionPoint_Z", &bEmissionPoint_Z, "EmissionPoint_Z/F");
+        }
+        if (bEnableSpotID) pListeVar->Branch("SpotID", &bSpotID, "SpotID/I");
     } else if (mFileType == "IAEAFile") {
         pIAEAheader = (iaea_header_type *) calloc(1, sizeof(iaea_header_type));
         pIAEAheader->initialize_counters();
@@ -146,7 +159,7 @@ void GatePhaseSpaceActor::Construct() {
         if (EnableYDirection) pIAEARecordType->iv = 1;
         if (EnableZDirection) pIAEARecordType->iw = 1;
         if (EnableWeight) pIAEARecordType->iweight = 1;
-        if (EnableTime) {
+        if (EnableTime || EnableLocalTime) {
             GateWarning("'Time' is not available in IAEA phase space.");
         }
         if (EnableMass) {
@@ -171,7 +184,23 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e) {
 
     //----------------------- Set Primary Energy ------------------------
     bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy();
+    bEmissionPoint_X = e->GetPrimaryVertex()->GetPosition().x();
+    bEmissionPoint_Y = e->GetPrimaryVertex()->GetPosition().y();
+    bEmissionPoint_Z = e->GetPrimaryVertex()->GetPosition().z();
+    
+    //cout << "BRENT " << e->GetPrimaryVertex()->Print(); << endl;
     //G4cout << "brent: " << bPrimaryEnergy << G4endl;
+    //-------------------------------------------------------------------
+    
+    //----------------------- Set SourceID ------------------------
+
+    if (GetIsSpotIDEnabled()) {
+        GateSourceTPSPencilBeam * tpspencilsource = dynamic_cast<GateSourceTPSPencilBeam*>(GateSourceMgr::GetInstance()->GetSourceByName(bSpotIDFromSource));
+        //GateSourceTPSPencilBeam * tpspencilsource = dynamic_cast<GateSourceTPSPencilBeam*>(GateSourceMgr::GetInstance()->GetSource(0));
+        //if (tpspencilsource == null) GateError("Please select a TPSPencilBeamSource if you want to store SpotIDs.");
+        bSpotID = tpspencilsource->GetCurrentSpotID();
+        //G4cout << "brent: " << bSpotID << G4endl;
+    }
     //-------------------------------------------------------------------
 }
 // --------------------------------------------------------------------
@@ -227,6 +256,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
     //-----------Write name of the particles presents at the simulation-------------
     st = step->GetTrack()->GetDefinition()->GetParticleName();
+    //BRENT misschien strcpy niet netjes.
     strcpy(pname, st.c_str());
 
     //------------Write psition of the steps presents at the simulation-------------
@@ -307,8 +337,8 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
     //-------------Write weight of the steps presents at the simulation-------------
     w = stepPoint->GetWeight();
-
-    t = stepPoint->GetGlobalTime() ;
+    
+    if (EnableLocalTime) { t = stepPoint->GetLocalTime(); } else t = stepPoint->GetGlobalTime() ;
     //t = step->GetTrack()->GetProperTime() ; //tibo : which time?????
     GateDebugMessage("Actor", 4, st
                      << " stepPoint time proper=" << G4BestUnit(stepPoint->GetProperTime(), "Time")

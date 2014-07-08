@@ -83,6 +83,7 @@ public:
   void SetSpotIntensity(bool b) {mSpotIntensityAsNbProtons=b;}
   //Convergent or divergent beam model
   void SetBeamConvergence(bool c) {mConvergentSource=c;}
+  int GetCurrentSpotID() {return mCurrentSpot;}
 
 protected:
 
