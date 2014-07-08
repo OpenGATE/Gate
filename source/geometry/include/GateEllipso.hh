@@ -86,7 +86,6 @@ public:
 private:
   G4Ellipsoid* m_ellipsoid_solid;
   G4LogicalVolume* m_ellipsoid_log;
-  G4VPhysicalVolume* pEllipsoPhys;
 
   G4double m_ellipsopxSemiAxis;
   G4double m_ellipsopySemiAxis;

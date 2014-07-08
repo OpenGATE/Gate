@@ -1,7 +1,0 @@
-#=====================================
-# RUN
-#=====================================
-/gate/run/initialize
-/gate/application/setTotalNumberOfPrimaries 10000
-/gate/application/start
-/gate/application/describe

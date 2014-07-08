@@ -44,6 +44,8 @@ G4bool GateOutputVolumeID::IsValid() const
 // Returns an ID with (depth+1) elements
 GateOutputVolumeID GateOutputVolumeID::Top(size_t maxDepth) const
 {
+  // S. Stute: correction for buffer overflow .....
+  if (maxDepth>=this->size()) maxDepth = this->size()-1;
   GateOutputVolumeID topID(maxDepth+1);
   for (size_t depth=0; depth<=maxDepth; ++depth)
     topID[depth] = (*this)[depth];

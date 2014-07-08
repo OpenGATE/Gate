@@ -65,24 +65,33 @@ void GateDistributionFile::Read()
 	addrSecond = &x;
     }
 
+    char line[512];
+    bool ok;
+
     while (!f.eof()) {
-       char line[512];
        f.getline(line,511);
-       if (f.good()) { // file line can be read
+       if (!f.good())  // file line can be read
+	 continue;
 //               G4cout<<"VALUE READ IN FILE "<<m_FileName
 // 	            <<"["<<GetArrayX().size()<<"]:"<<line<<G4endl;
-          bool ok;
-    	  if (m_column_for_X<0)
+
+	  //++x;
+    	  if (m_column_for_X<0){
 	    ok = (sscanf(line,pattern.c_str(),addrSecond)==1);
-	  else
+	    if(ok)
+	      InsertPoint(y);
+	  }
+	  else {
 	    ok = (sscanf(line,pattern.c_str(),addrFirst,addrSecond)==2);
-      	  if (ok){
-    	    InsertPoint(x,y);
-	  } else { //pattern problem
-	    G4cerr<<"[GateDistributionFile::Read] WARNING : Line format unrecognised"
+	    if (ok)
+	      InsertPoint(x,y);	    
+	  }
+	  
+      	  if (!ok){
+	    G4cerr<<"[GateDistributionFile::Read] WARNING : Line format unrecognised (expected == '" << pattern << "' )"
 	          <<G4endl<<line<<G4endl;
 	  }
-       }
+	  
     }
     FillRepartition();
 }
