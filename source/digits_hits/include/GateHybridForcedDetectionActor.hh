@@ -101,6 +101,7 @@ public:
   void SetRussianRouletteSpacing(G4double s) { mRussianRouletteSpacing = s; }
   void SetRussianRouletteMinimumCountInRegion(G4double p) { mRussianRouletteMinimumCountInRegion = p; }
   void SetRussianRouletteMinimumProbability(G4double p) { mRussianRouletteMinimumProbability = p; }
+  void SetInputRTKGeometryFilename(G4String name) { mInputRTKGeometryFilename = name; }
 
   // Typedef for rtk
   typedef enum {COMPTON=0, RAYLEIGH, PHOTOELECTRIC, PROCESSTYPEMAX} ProcessType;
@@ -116,6 +117,10 @@ public:
   typedef rtk::Reg23ProjectionGeometry::VectorType    VectorType;
   typedef rtk::ConstantImageSource< OutputImageType > ConstantImageSourceType;
 
+  void SetGeometryFromInputRTKGeometryFile(GateVSource *source,
+                                           GateVVolume *detector,
+                                           GateVImageVolume *ct,
+                                           const G4Run *run);
   void ComputeGeometryInfoInImageCoordinateSystem(GateVImageVolume *image,
                                                   GateVVolume *detector,
                                                   GateVSource *src,
@@ -165,6 +170,8 @@ protected:
   G4ThreeVector mDetectorResolution;
   GateEnergyResponseFunctor mEnergyResponseDetector;
 
+  G4String mInputRTKGeometryFilename;
+  rtk::ThreeDCircularProjectionGeometry::Pointer mInputGeometry;
   GeometryType::Pointer mGeometry;
   InputImageType::Pointer mGateVolumeImage;
   InputImageType::Pointer mPrimaryImage;

@@ -74,8 +74,8 @@ GateVVolume::GateVVolume(const G4String& itsName,
     m_moveList(0),
     pMotherLogicalVolume(0),
     m_creator(0),
-  m_sensitiveDetector(0),
-  mParent(0)
+    m_sensitiveDetector(0),
+    mParent(0)
 {
 
   SetCreator(this);

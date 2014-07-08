@@ -47,6 +47,7 @@ GateHybridForcedDetectionActor::GateHybridForcedDetectionActor(G4String name, G4
   GateVActor(name,depth),
   mIsSecondarySquaredImageEnabled(false),
   mIsSecondaryUncertaintyImageEnabled(false),
+  mInputRTKGeometryFilename(""),
   mRussianRouletteSpacing(20.),
   mRussianRouletteMinimumCountInRegion(10),
   mRussianRouletteMinimumProbability(0.0001),
@@ -198,6 +199,10 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   mComptonPerOrderImages.clear();
   mRayleighPerOrderImages.clear();
   mFluorescencePerOrderImages.clear();
+
+  // Set geometry from RTK geometry file
+  if(mInputRTKGeometryFilename != "")
+    SetGeometryFromInputRTKGeometryFile(mSource, mDetector, gate_image_volume, r);
 
   // Create geometry and param of output image
   ComputeGeometryInfoInImageCoordinateSystem(gate_image_volume,
@@ -797,7 +802,7 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType 
   // Scatter order
   if(mInteractionOrder>=0)
   {
-    while(mInteractionOrder>=inputPerOrder.size())
+    while(mInteractionOrder>=(int)inputPerOrder.size())
       inputPerOrder.push_back( CreateVoidProjectionImage() );
     projector->SetInput(inputPerOrder[mInteractionOrder]);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(projector->Update());
@@ -1098,6 +1103,77 @@ void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
 void GateHybridForcedDetectionActor::ResetData()
 {
   mGeometry = GeometryType::New();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void
+GateHybridForcedDetectionActor::
+SetGeometryFromInputRTKGeometryFile(GateVSource *source,
+                                    GateVVolume *detector,
+                                    GateVImageVolume *ct,
+                                    const G4Run *run)
+{
+  if( ! mInputGeometry.GetPointer() ) {
+    rtk::ThreeDCircularProjectionGeometryXMLFileReader::Pointer geometryReader;
+    geometryReader = rtk::ThreeDCircularProjectionGeometryXMLFileReader::New();
+    geometryReader->SetFilename(mInputRTKGeometryFilename);
+    TRY_AND_EXIT_ON_ITK_EXCEPTION( geometryReader->GenerateOutputInformation() );
+    mInputGeometry = geometryReader->GetGeometry();
+  }
+
+  if( run->GetRunID() >= (int) mInputGeometry->GetGantryAngles().size() ) {
+    GateError("SetGeometryFromInputRTKGeometryFile: you have more runs than what file "
+              << mInputRTKGeometryFilename << " describes.");
+  }
+
+  // Source
+  if( source->GetRelativePlacementVolume() != "world") {
+    GateError("SetGeometryFromInputRTKGeometryFile"
+              << "expects a source attached to the world.");
+  }
+  G4ThreeVector srcTrans;
+  srcTrans[0] = mInputGeometry->GetSourceOffsetsX()[ run->GetRunID() ];
+  srcTrans[1] = mInputGeometry->GetSourceOffsetsY()[ run->GetRunID() ];
+  srcTrans[2] = mInputGeometry->GetSourceToIsocenterDistances()[ run->GetRunID() ];
+  if(source->GetPosDist()->GetPosDisType() == "Point")
+    source->GetPosDist()->SetCentreCoords(srcTrans); // point
+  else {
+    G4ThreeVector offset = source->GetPosDist()->GetCentreCoords() -
+                           source->GetAngDist()->GetFocusPointCopy();
+    source->GetAngDist()->SetFocusPoint(srcTrans);
+    source->GetAngDist()->SetFocusPointCopy(srcTrans);
+    source->GetPosDist()->SetCentreCoords(srcTrans+offset);
+  }
+
+  // Detector
+  if( detector->GetParentVolume()->GetLogicalVolume()->GetName() != "world_log" ) {
+    GateError("SetGeometryFromInputRTKGeometryFile"
+              << " expects a detector attached to the world.");
+  }
+  G4ThreeVector detTrans;
+  //FIXME: detector->GetOrigin()?
+  detTrans[0] = mInputGeometry->GetProjectionOffsetsX()[ run->GetRunID() ];
+  detTrans[1] = mInputGeometry->GetProjectionOffsetsY()[ run->GetRunID() ];
+  detTrans[2] = srcTrans[2] - mInputGeometry->GetSourceToDetectorDistances()[ run->GetRunID() ];
+  detector->GetPhysicalVolume()->SetTranslation(detTrans);
+
+  // Create rotation matrix and rotate CT
+  if( ct->GetParentVolume()->GetLogicalVolume()->GetName() != "world_log" ) {
+    GateError("SetGeometryFromInputRTKGeometryFile"
+              << " expects a voxelized volume attached to the world.");
+  }
+  CLHEP::Hep3Vector rows[3];
+  for(unsigned int j=0; j<3; j++)
+    for(unsigned int i=0; i<3; i++)
+      rows[j][i] = mInputGeometry->GetRotationMatrices()[ run->GetRunID() ](i, j);
+  if( ! ct->GetPhysicalVolume()->GetRotation() )
+    ct->GetPhysicalVolume()->SetRotation(new G4RotationMatrix);
+  ct->GetPhysicalVolume()->GetRotation()->setRows(rows[0], rows[1], rows[2]);
+
+  // According to BookForAppliDev.pdf section 3.4.4.3, we are allowed to change
+  // the geometry in BeginOfRunAction provided that we call this:
+  GateRunManager::GetRunManager()->GeometryHasBeenModified();
 }
 //-----------------------------------------------------------------------------
 

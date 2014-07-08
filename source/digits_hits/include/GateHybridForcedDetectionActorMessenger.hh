@@ -65,6 +65,7 @@ protected:
   G4UIcmdWithADoubleAndUnit * pSetRussianRouletteSpacingCmd;
   G4UIcmdWithAnInteger * pSetRussianRouletteMinimumCountInRegionCmd;
   G4UIcmdWithADouble * pSetRussianRouletteMinimumProbabilityCmd;
+  G4UIcmdWithAString * pSetInputRTKGeometryFilenameCmd;
 };
 
 #endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH*/
