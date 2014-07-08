@@ -99,7 +99,6 @@
 # VISUALISATION
 #=====================================================
 
-
 #/control/execute mac/visu.mac
 
 #=====================================================
@@ -114,7 +113,7 @@
 # /gate/source/verbose 0
 
 /gate/application/noGlobalOutput
-/gate/application/setTotalNumberOfPrimaries 2000000
+/gate/application/setTotalNumberOfPrimaries 500000
 /gate/application/start
 
 exit
