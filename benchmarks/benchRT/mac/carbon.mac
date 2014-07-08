@@ -45,14 +45,14 @@
 /gate/physics/Positron/SetCutInRegion   mainbox1 0.1 mm
 
 /gate/physics/SetMaxStepSizeInRegion world 0.1 mm
-/gate/physics/ActivateStepLimiter proton       
-/gate/physics/ActivateStepLimiter deuteron     
-/gate/physics/ActivateStepLimiter triton       
-/gate/physics/ActivateStepLimiter alpha        
-/gate/physics/ActivateStepLimiter GenericIon 
+/gate/physics/ActivateStepLimiter proton
+/gate/physics/ActivateStepLimiter deuteron
+/gate/physics/ActivateStepLimiter triton
+/gate/physics/ActivateStepLimiter alpha
+/gate/physics/ActivateStepLimiter GenericIon
 
 #/gate/physics/SetMinKineticEnergyInRegion world 10 MeV
-#/gate/physics/ActivateSpecialCuts proton  
+#/gate/physics/ActivateSpecialCuts proton
 
 /gate/physics/displayCuts
 
@@ -62,11 +62,11 @@
 #=====================================================
 
 /gate/actor/addActor                               DoseActor  doseDistribution
-/gate/actor/doseDistribution/save                  output/Config-carbon.hdr
+/gate/actor/doseDistribution/save                  output/output-carbon.mhd
 /gate/actor/doseDistribution/attachTo    	   mainbox1
 /gate/actor/doseDistribution/stepHitType           random
 /gate/actor/doseDistribution/setPosition           0 0 0 cm
-/gate/actor/doseDistribution/setResolution         1 1 400 
+/gate/actor/doseDistribution/setResolution         1 1 400
 /gate/actor/doseDistribution/saveEveryNSeconds     60
 /gate/actor/doseDistribution/enableEdep            true
 /gate/actor/doseDistribution/enableUncertaintyEdep false
@@ -96,7 +96,7 @@
 /gate/source/addSource mybeam gps
 
 /gate/source/mybeam/gps/particle ion
-/gate/source/mybeam/gps/ion 6 12 
+/gate/source/mybeam/gps/ion 6 12
 /gate/source/mybeam/gps/pos/type Beam
 /gate/source/mybeam/gps/pos/rot1 0 1 0
 /gate/source/mybeam/gps/pos/rot2 1 0 0
@@ -127,7 +127,7 @@
 /gate/random/setEngineSeed auto
 
 /gate/application/noGlobalOutput
-/gate/application/setTotalNumberOfPrimaries 20000
+/gate/application/setTotalNumberOfPrimaries 2000
 /gate/application/start
 
 exit
