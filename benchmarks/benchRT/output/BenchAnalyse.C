@@ -33,9 +33,9 @@
   FILE* gammaFile;
   FILE* carbonFile;
 
-  protonFile = fopen ("output-proton-Edep.raw" , "rb" );
-  gammaFile = fopen ("output-gamma-Edep.raw" , "rb" );
-  carbonFile = fopen ("output-carbon-Edep.raw" , "rb" );
+  protonFile = fopen ("output/output-proton-Edep.raw" , "rb" );
+  gammaFile = fopen ("output/output-gamma-Edep.raw" , "rb" );
+  carbonFile = fopen ("output/output-carbon-Edep.raw" , "rb" );
 
   //... read the image
   fread (buffer_p,1,lSize,protonFile);
