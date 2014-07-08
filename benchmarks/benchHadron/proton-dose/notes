@@ -1,5 +1,0 @@
-
-Comparison between measured dose data for proton pencil beam at various energy.
-
-We need to use 'G4_WATER' material instead of another 'Water' to obtain a good fit.
-
