@@ -26,16 +26,13 @@ public:
   GateInterfileHeader();
   ~GateInterfileHeader() {};
 
-  void ReadHeader(std::string & filename);
-  void ReadData(std::string filename, std::vector<float> & data);
+  void ReadHeader(G4String headerFileName);
+  void ReadData(std::vector<PixelType> & data);
+  void ReadData(G4String dataFileName, std::vector<PixelType> & data);
+
   void ReadKey(FILE* fp);
 
-  inline void SwapBytes(unsigned short * buffer, G4int size) {
-    for (G4int i = 0; i < size; ++i) {
-      buffer[i] = ((buffer[i]>> 8) | (buffer[i] << 8));
-    }
-  }
-
+  G4String m_headerFileName;
   G4String m_dataFileName;
   G4int m_numPlanes;
   G4float m_planeThickness;
@@ -43,8 +40,12 @@ public:
   G4float m_pixelSize[2];
   G4float m_matrixSize[2];
   G4String m_dataTypeName;
-  G4String m_dataByteOrder;
-
+  G4int m_bytePerPixel;
+  G4int m_dataByteOrder;
+  G4int m_offset;
+private:
+  template <class VoxelType> void DoDataRead(std::vector<PixelType> &data);
+  G4bool m_isHeaderInfoRead;
 };
 //-----------------------------------------------------------------------------
 

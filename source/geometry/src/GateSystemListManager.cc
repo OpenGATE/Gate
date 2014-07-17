@@ -101,9 +101,7 @@ void GateSystemListManager::RegisterSystem(GateVSystem* newSystem)
 // Removes a deleted object-system from the system-list    
 void GateSystemListManager::UnregisterSystem(GateVSystem* aSystem) 
 {
-  for (std::vector<GateNamedObject*>::iterator iter = theListOfNamedObject.begin(); iter!=theListOfNamedObject.end(); ++iter)
-    if ( (*iter) == aSystem )
-      theListOfNamedObject.erase(iter);
+  theListOfNamedObject.erase( std::remove(theListOfNamedObject.begin(), theListOfNamedObject.end(), aSystem ) );
 }
 //-----------------------------------------------------------------------------
 

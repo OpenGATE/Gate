@@ -25,8 +25,11 @@ public:
   G4double GetValueToActivityScale()               { return m_valueToActivityScale; };
   void Describe(G4int){ };
 public:
-
-  G4double TranslateToActivity(G4int voxelValue);
+  G4double TranslateToActivity(G4int voxelValue) {
+    G4double xVoxelValue = voxelValue;
+    return TranslateToActivity(xVoxelValue);
+  };
+  G4double TranslateToActivity(G4double voxelValue);
   void UpdateActivity(G4double , G4double , G4double); // PY Descourt 08/09/2009
 protected:
 

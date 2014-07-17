@@ -1,3 +1,0 @@
-Gate mac/proton.mac
-Gate mac/gamma.mac
-root -l -x output/BenchAnalyse.C
