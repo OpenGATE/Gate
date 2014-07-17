@@ -11,6 +11,9 @@
 #include "GateConfiguration.h"
 #include "GateSourceOfPromptGamma.hh"
 #include "GateRandomEngine.hh"
+#include "GateApplicationMgr.hh"
+#include "GateSourceMgr.hh"
+
 #include "G4ParticleTable.hh"
 #include "G4Event.hh"
 #include "G4Gamma.hh"
@@ -23,6 +26,7 @@ GateSourceOfPromptGamma::GateSourceOfPromptGamma(G4String name)
   // Create data object (will be initialized later)
   mData = new GateSourceOfPromptGammaData;
   mIsInitializedFlag = false;
+  mIsInitializedNumberOfPrimariesFlag = false;
   mFilename = "no filename given";
 }
 //------------------------------------------------------------------------
@@ -65,10 +69,43 @@ void GateSourceOfPromptGamma::Initialize()
 
 
 //------------------------------------------------------------------------
+void GateSourceOfPromptGamma::InitializeNumberOfPrimaries()
+{
+  // The user set the number of primaries in number of proton. To
+  // generate the corresponding number of gamma we scale according to
+  // the sum in the source. We then cheat by changing the timeStop of
+  // the application. WILL NOT WORK WITH SEVERAL SOURCES !
+
+  GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
+  GateSourceMgr * sourceMgr = GateSourceMgr::GetInstance();
+  if (sourceMgr->GetNumberOfSources() != 1) {
+    GateError("When using SourceOfPromptGamma, only use a single source. Abort.");
+  }
+
+  double np = appMgr->GetTotalNumberOfPrimaries();
+  double sum = mData->ComputeSum();
+  double ng = np*sum;
+  double timestep = appMgr->GetTimeStepInTotalAmountOfPrimariesMode();
+  double newTimeStop = timestep*ng;
+  appMgr->SetTimeStop(newTimeStop);
+
+  GateMessage("Run", 0, "Requested number of proton is " << np
+              << ". According to the data source, it corresponds to "
+              << ng << " gammas." << std::endl);
+
+  // It is initialized
+  mIsInitializedNumberOfPrimariesFlag = true;
+}
+//------------------------------------------------------------------------
+
+
+
+//------------------------------------------------------------------------
 void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
 {
   // Initialisation of the distribution information (only once)
   if (!mIsInitializedFlag) Initialize();
+  if (!mIsInitializedNumberOfPrimariesFlag) InitializeNumberOfPrimaries();
 
   // Position
   G4ThreeVector particle_position;

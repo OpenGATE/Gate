@@ -40,6 +40,7 @@ public:
 
   void LoadData(std::string mFilename);
   void Initialize();
+  double ComputeSum() { return mImage->ComputeSum(); }
 
 protected:
   // The 3D prompt gamma distribution

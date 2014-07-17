@@ -59,6 +59,8 @@ public:
   long GetIndexFromPixelIndex(int i, int j, int k);
   virtual void UpdateSizesFromResolutionAndHalfSize();
   virtual void UpdateSizesFromResolutionAndVoxelSize();
+  void Scale(double f);
+  double ComputeSum();
 
   // Compute and image (data only) of the sum of histo by pixel (in order HXYZ)
   void ComputeTotalOfCountsImageDataFloat(std::vector<float> & output);

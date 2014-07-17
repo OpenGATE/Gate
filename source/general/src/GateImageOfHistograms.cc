@@ -273,7 +273,7 @@ void GateImageOfHistograms::Read(G4String filename)
 
 
 //-----------------------------------------------------------------------------
-void GateImageOfHistograms::Write(G4String filename, const G4String & comment)
+void GateImageOfHistograms::Write(G4String filename, const G4String & )
 {
   // Filenames
   std::string extension = getExtension(filename);
@@ -341,5 +341,37 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & comment)
   ConvertPixelOrderToXYZH(dataFloat, t);
   m_MetaImage.ElementData(&(t.begin()[0]), false); // true = autofree
   m_MetaImage.Write(headerName.c_str(), rawName.c_str());
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateImageOfHistograms::Scale(double f)
+{
+  if (mDataTypeName == "double") {
+    for(unsigned int i=0; i<dataDouble.size(); i++)
+      dataDouble[i] = f * dataDouble[i];
+  }
+  else {
+    for(unsigned int i=0; i<dataFloat.size(); i++)
+      dataFloat[i] = f * dataFloat[i];
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+double GateImageOfHistograms::ComputeSum()
+{
+  double sum = 0.0;
+  if (mDataTypeName == "double") {
+    for(unsigned int i=0; i<dataDouble.size(); i++)
+      sum += dataDouble[i];
+  }
+  else {
+    for(unsigned int i=0; i<dataFloat.size(); i++)
+      sum += dataFloat[i];
+  }
+  return sum;
 }
 //-----------------------------------------------------------------------------

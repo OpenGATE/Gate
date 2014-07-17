@@ -9,9 +9,11 @@
   ----------------------*/
 
 #include "GatePromptGammaData.hh"
+#include "GateActorManager.hh"
 #include "G4UnitsTable.hh"
 #include "G4Material.hh"
 #include "G4MaterialTable.hh"
+#include "G4SystemOfUnits.hh"
 
 //-----------------------------------------------------------------------------
 GatePromptGammaData::GatePromptGammaData()
@@ -75,7 +77,23 @@ void GatePromptGammaData::ResetData()
 //-----------------------------------------------------------------------------
 void GatePromptGammaData::SaveData()
 {
+  // Normalisation by the number of primaries. This normalisation must
+  // be performed only once so we check we only go here once.
+  static bool alreadyHere = false;
+  if (alreadyHere) {
+    GateError("The PromptGammaStatisticActor has already been saved and normalized. However, it must write its results only once. Remove all 'SaveEvery' for this actor. Abort.");
+  }
+  // Normalisation
+  int n = GateActorManager::GetInstance()->GetCurrentEventId()+1; // +1 because start at zero
+  double f = 1.0/n;
+  pHEpEpg->Scale(f);
+  pHEpEpgNormalized->Scale(f);
+  pHEpInelastic->Scale(f);
+  pHEp->Scale(f);
+  pHEpInelasticProducedGamma->Scale(f);
+
   pTfile->Write();
+  alreadyHere = true;
 }
 //-----------------------------------------------------------------------------
 
@@ -227,7 +245,6 @@ void GatePromptGammaData::Initialize(std::string & filename, const G4Material * 
     dir->Delete("*;*");
   }
 
-  pTfile->pwd();
   pHEpEpg = new TH2D("EpEpg","PG count",
                      proton_bin, min_proton_energy/MeV, max_proton_energy/MeV,
                      gamma_bin, min_gamma_energy/MeV, max_gamma_energy/MeV);
@@ -291,7 +308,9 @@ void GatePromptGammaData::InitializeMaterial()
     }
 
     if (!stop) {
-      GateMessage("Actor", 1, "Create DB for " << m->GetName() << std::endl);
+      GateMessage("Actor", 1, "Create DB for " << m->GetName()
+                  << " (d = " << m->GetDensity()/(g/cm3)
+                  << ")" << std::endl);
       mGammaEnergyHistoByMaterialByProtonEnergy[i].resize(proton_bin+1); // from [1 to n]
 
       for(unsigned int j=1; j<proton_bin+1; j++) {

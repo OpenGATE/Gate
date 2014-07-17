@@ -91,8 +91,18 @@ void GatePromptGammaTLEActor::ResetData()
 //-----------------------------------------------------------------------------
 void GatePromptGammaTLEActor::SaveData()
 {
+  // Data are normalized by the number of primaries
+  static bool alreadyHere = false;
+  if (alreadyHere) {
+    GateError("The GatePromptGammaTLEActor has already been saved and normalized. However, it must write its results only once. Remove all 'SaveEvery' for this actor. Abort.");
+  }
+  // Normalisation
+  int n = GateActorManager::GetInstance()->GetCurrentEventId()+1; // +1 because start at zero
+  double f = 1.0/n;
+  mImageGamma->Scale(f);
   GateVImageActor::SaveData();
   mImageGamma->Write(mSaveFilename);
+  alreadyHere = true;
 }
 //-----------------------------------------------------------------------------
 
@@ -135,6 +145,6 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   TH1D * h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy);
 
   // Do not scale h directly because it will be reused
-  mImageGamma->AddValueDouble(index, h, distance);
+  mImageGamma->AddValueDouble(index, h, distance*material->GetDensity()/(g/cm3));
 }
 //-----------------------------------------------------------------------------

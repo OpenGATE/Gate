@@ -41,11 +41,13 @@ public:
 protected:
   GateSourceOfPromptGammaMessenger * pMessenger;
   bool mIsInitializedFlag;
+  bool mIsInitializedNumberOfPrimariesFlag;
   GateSourceOfPromptGammaData * mData;
   G4String mFilename;
   double mEnergy; // because particle_energy is private (FIXME will be changed)
 
   void Initialize();
+  void InitializeNumberOfPrimaries();
 }; // end class
 //------------------------------------------------------------------------
 

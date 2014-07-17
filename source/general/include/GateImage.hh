@@ -40,7 +40,7 @@ public:
   typedef std::vector<PixelType>::const_iterator const_iterator;
 
   GateImage();
-  ~GateImage();
+  virtual ~GateImage();
 
   /// Sets the image dimensions from resolution and half size
   void SetResolutionAndHalfSize(G4ThreeVector r, G4ThreeVector h);
