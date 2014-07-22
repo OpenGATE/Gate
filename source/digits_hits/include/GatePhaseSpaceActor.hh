@@ -87,8 +87,8 @@ class GatePhaseSpaceActor : public GateVActor
   bool GetIsSpotIDEnabled(){return bEnableSpotID;}
   void SetSpotIDFromSource(G4String nameOfSource){bSpotIDFromSource = nameOfSource;}
   G4String GetSpotIDFromSource(){return bSpotIDFromSource;}
-  void SetIsCompactEnabled(bool b){bEnableCompact = b;}
-
+  void SetEnabledCompact(bool b){bEnableCompact = b;}
+  void SetEnablePDGCode(bool b){bEnablePDGCode = b;}
 
 protected:
   GatePhaseSpaceActor(G4String name, G4int depth=0);
@@ -121,13 +121,15 @@ protected:
   bool bEnableCoordFrame;
   G4String bCoordFrame;
   bool bEnablePrimaryEnergy;
+  float bPrimaryEnergy;
   bool bEnableEmissionPoint;
-  float bEmissionPoint_X,bEmissionPoint_Y,bEmissionPoint_Z;
+  float bEmissionPointX,bEmissionPointY,bEmissionPointZ;
   bool bEnableSpotID;
   G4String bSpotIDFromSource;
   int bSpotID;
   bool bEnableCompact;
-  float bPrimaryEnergy;
+  bool bEnablePDGCode;
+  long int bPDGCode;
 
   double mFileSize;
 

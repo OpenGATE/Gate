@@ -27,6 +27,8 @@
 #include "GateIAEAUtilities.h"
 #include "GateSourceMgr.hh"
 
+#include "G4ParticleTable.hh"
+
 // --------------------------------------------------------------------
 GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
     GateVActor(name, depth) {
@@ -59,6 +61,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
     bEnableSpotID = false;
     bEnableCompact = false;
     bEnableEmissionPoint=false;
+    bEnablePDGCode = false;
 
     bSpotID = 0;
     bSpotIDFromSource = " ";
@@ -96,7 +99,8 @@ void GatePhaseSpaceActor::Construct() {
     // Enable callbacks
     EnableBeginOfRunAction(false);
     EnableBeginOfEventAction(false);
-    if (bEnablePrimaryEnergy) EnableBeginOfEventAction(true);
+    // bEnableEmissionPoint=true;
+    if (bEnablePrimaryEnergy||bEnableEmissionPoint) EnableBeginOfEventAction(true);
     EnablePreUserTrackingAction(true);
     EnableUserSteppingAction(true);
 
@@ -124,18 +128,19 @@ void GatePhaseSpaceActor::Construct() {
         if (EnableXDirection) pListeVar->Branch("dX", &dx, "dX/F");
         if (EnableYDirection) pListeVar->Branch("dY", &dy, "dY/F");
         if (EnableZDirection) pListeVar->Branch("dZ", &dz, "dZ/F");
-        if (EnablePartName) pListeVar->Branch("ParticleName", pname , "ParticleName/C");
-        if (EnableProdVol) pListeVar->Branch("ProductionVolume", vol, "ProductionVolume/C");
-        if (EnableProdProcess) pListeVar->Branch("ProductionProcessTrack", pro_track, "ProductionProcessTrack/C");
-        if (EnableProdProcess) pListeVar->Branch("ProductionProcessStep", pro_step, "ProductionProcessStep/C");
+        if (EnablePartName /*&& bEnableCompact==false*/) pListeVar->Branch("ParticleName", pname , "ParticleName/C");
+        if (EnableProdVol && bEnableCompact==false) pListeVar->Branch("ProductionVolume", vol, "ProductionVolume/C");
+        if (EnableProdProcess && bEnableCompact==false) pListeVar->Branch("ProductionProcessTrack", pro_track, "ProductionProcessTrack/C");
+        if (EnableProdProcess && bEnableCompact==false) pListeVar->Branch("ProductionProcessStep", pro_step, "ProductionProcessStep/C");
         if (bEnableCompact==false) pListeVar->Branch("TrackID", &trackid, "TrackID/I");
         if (bEnableCompact==false) pListeVar->Branch("EventID", &eventid, "EventID/I");
         if (bEnableCompact==false) pListeVar->Branch("RunID", &runid, "RunID/I");
         if (bEnablePrimaryEnergy) pListeVar->Branch("PrimaryEnergy", &bPrimaryEnergy, "primaryEnergy/F");
+        if (bEnablePDGCode || bEnableCompact) pListeVar->Branch("PDGCode", &bPDGCode, "PDGCode/I");
         if (bEnableEmissionPoint) {
-            pListeVar->Branch("EmissionPoint_X", &bEmissionPoint_X, "EmissionPoint_X/F");
-            pListeVar->Branch("EmissionPoint_Y", &bEmissionPoint_Y, "EmissionPoint_Y/F");
-            pListeVar->Branch("EmissionPoint_Z", &bEmissionPoint_Z, "EmissionPoint_Z/F");
+            pListeVar->Branch("EmissionPointX", &bEmissionPointX, "EmissionPointX/F");
+            pListeVar->Branch("EmissionPointY", &bEmissionPointY, "EmissionPointY/F");
+            pListeVar->Branch("EmissionPointZ", &bEmissionPointZ, "EmissionPointZ/F");
         }
         if (bEnableSpotID) pListeVar->Branch("SpotID", &bSpotID, "SpotID/I");
     } else if (mFileType == "IAEAFile") {
@@ -183,10 +188,10 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e) {
     //mNevent++;
 
     //----------------------- Set Primary Energy ------------------------
-    bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy();
-    bEmissionPoint_X = e->GetPrimaryVertex()->GetPosition().x();
-    bEmissionPoint_Y = e->GetPrimaryVertex()->GetPosition().y();
-    bEmissionPoint_Z = e->GetPrimaryVertex()->GetPosition().z();
+    bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy(); //GetInitialEnergy oid.
+    bEmissionPointX = e->GetPrimaryVertex()->GetPosition().x();
+    bEmissionPointY = e->GetPrimaryVertex()->GetPosition().y();
+    bEmissionPointZ = e->GetPrimaryVertex()->GetPosition().z();
     
     //cout << "BRENT " << e->GetPrimaryVertex()->Print(); << endl;
     //G4cout << "brent: " << bPrimaryEnergy << G4endl;
@@ -256,8 +261,20 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
     //-----------Write name of the particles presents at the simulation-------------
     st = step->GetTrack()->GetDefinition()->GetParticleName();
-    //BRENT misschien strcpy niet netjes.
+
+    //'st' contains some nonprinteble caracters, which are not always the same. e.g. there exist multiple kinds of gammas, oxygens, etc.
     strcpy(pname, st.c_str());
+    //cout << "Brent" << pname << endl;
+    bPDGCode = step->GetTrack()->GetDefinition()->GetPDGEncoding();
+
+    //cout << step->GetTrack()->GetDefinition()->GetPDGEncoding() << endl;
+    // TODO dit werkt helaas niet, undefined reference. Probleem met makefile?
+    // Het alternatief, G4pdgcodechecker lijkt niet te doen wat ik nodig heb....
+    cerr << "PartName " << st << " PDGCode " << bPDGCode << " PDGCode2PartName " << G4ParticleTable::GetParticleTable()->FindParticle(bPDGCode)->GetParticleName() << " endl" << endl;
+
+    
+
+    //Solution, use PDGcode instead of ParticleName. However, GatePhaseSpaceSource uses Particlename char[64] while GatePhaseSpaceActor stores Char_t[256].
 
     //------------Write psition of the steps presents at the simulation-------------
     G4ThreeVector localPosition = stepPoint->GetPosition();

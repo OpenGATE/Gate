@@ -53,6 +53,7 @@ GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger()
   delete bSpotIDFromSourceCmd;
   delete bEnableCompactCmd;
   delete bEnableEmissionPointCmd;
+  delete bEnablePDGCodeCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -193,13 +194,18 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
 
   bb = base+"/enableCompact";
   bEnableCompactCmd = new G4UIcmdWithABool(bb,this);
-  guidance = "Compact output by not storing trackID, runID, eventID.";
+  guidance = "Compact output by not storing trackID, runID, eventID, ProductionVolume, -track, -step and switching from ParticleType to PDGCode.";
   bEnableCompactCmd->SetGuidance(guidance);
 
   bb = base+"/enableEmissionPoint";
   bEnableEmissionPointCmd = new G4UIcmdWithABool(bb,this);
   guidance = "Store the emission point of each particle stored in the phasespace.";
   bEnableEmissionPointCmd->SetGuidance(guidance);
+
+  bb = base+"/enablePDGCode";
+  bEnablePDGCodeCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Output the PDGCode instead of the ParticleName.";
+  bEnablePDGCodeCmd->SetGuidance(guidance);
 
 
 }
@@ -233,7 +239,8 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
   if(command == bCoordinateFrameCmd) {pActor->SetCoordFrame(param);pActor->SetEnableCoordFrame();};
   if(command == bEnableLocalTimeCmd) pActor->SetIsLocalTimeEnabled(bEnableLocalTimeCmd->GetNewBoolValue(param));
   if(command == bSpotIDFromSourceCmd) {pActor->SetSpotIDFromSource(param);pActor->SetIsSpotIDEnabled();};
-  if(command == bEnableCompactCmd) pActor->SetIsCompactEnabled(bEnableCompactCmd->GetNewBoolValue(param));
+  if(command == bEnablePDGCodeCmd) pActor->SetEnablePDGCode(bEnablePDGCodeCmd->GetNewBoolValue(param));
+  if(command == bEnableCompactCmd) pActor->SetEnabledCompact(bEnableCompactCmd->GetNewBoolValue(param));
 
   GateActorMessenger::SetNewValue(command ,param );
 }

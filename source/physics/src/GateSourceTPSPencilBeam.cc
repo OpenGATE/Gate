@@ -134,6 +134,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                     for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
                     int NbOfSpots = atof(oneline);
                     for (int i = 0; i < 1; i++) inFile.getline(oneline, MAXLINE);
+
                     if (mTestFlag) {
                         G4cout << "TESTREAD NbFields " << NbFields << G4endl;
                         G4cout << "TESTREAD TotalMeterSet " << TotalMeterSet << G4endl;
@@ -276,6 +277,9 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                             //Energy
                             Pencil->SetEnergy(GetEnergy(energy));
                             Pencil->SetSigmaEnergy(GetSigmaEnergy(energy));
+
+                            //cerr << "Brent " << GetSigmaEnergy(energy) << " en " << GetEnergy(energy) <<endl;
+
                             //changed because obiously incorrect.
                             //Pencil->SetSigmaEnergy(GetSigmaEnergy(energy)*GetEnergy(energy)/100.);
                             //Weight

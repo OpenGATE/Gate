@@ -64,6 +64,7 @@ protected:
   G4UIcmdWithAString* bCoordinateFrameCmd;
   G4UIcmdWithABool* bEnableLocalTimeCmd;
   G4UIcmdWithAString* bSpotIDFromSourceCmd;
+  G4UIcmdWithABool* bEnablePDGCodeCmd;
   G4UIcmdWithABool* bEnableCompactCmd;
 
 };
