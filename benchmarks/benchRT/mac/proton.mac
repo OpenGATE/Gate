@@ -25,8 +25,8 @@
 /gate/mainbox1/vis/setVisible 1
 /gate/mainbox1/vis/setColor blue
 
-/gate/geometry/setIonisationPotential Water 75 eV
-/gate/geometry/setIonisationPotential Air 85.7 eV
+# /gate/geometry/setIonisationPotential Water 75 eV
+# /gate/geometry/setIonisationPotential Air 85.7 eV
 
 
 #=====================================================
@@ -58,7 +58,7 @@
 #=====================================================
 
 /gate/actor/addActor                               DoseActor  doseDistribution
-/gate/actor/doseDistribution/save                  output/Config-proton.hdr
+/gate/actor/doseDistribution/save                  output/output-proton.mhd
 /gate/actor/doseDistribution/attachTo    	   mainbox1
 /gate/actor/doseDistribution/stepHitType           random
 /gate/actor/doseDistribution/setPosition           0 0 0 cm
@@ -117,10 +117,13 @@
 
 # JamesRandom Ranlux64 MersenneTwister
 /gate/random/setEngineName MersenneTwister
-/gate/random/setEngineSeed 1021
+/gate/random/setEngineSeed auto
 
 # /gate/random/verbose 1
 # /gate/source/verbose 0
+
+# to check Steplimiter
+#/tracking/verbose 1
 
 /gate/application/noGlobalOutput
 /gate/application/setTotalNumberOfPrimaries 20000

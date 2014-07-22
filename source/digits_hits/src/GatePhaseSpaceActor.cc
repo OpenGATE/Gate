@@ -99,8 +99,10 @@ void GatePhaseSpaceActor::Construct() {
     // Enable callbacks
     EnableBeginOfRunAction(false);
     EnableBeginOfEventAction(false);
+
     // bEnableEmissionPoint=true;
     if (bEnablePrimaryEnergy||bEnableEmissionPoint) EnableBeginOfEventAction(true);
+
     EnablePreUserTrackingAction(true);
     EnableUserSteppingAction(true);
 
@@ -143,6 +145,7 @@ void GatePhaseSpaceActor::Construct() {
             pListeVar->Branch("EmissionPointZ", &bEmissionPointZ, "EmissionPointZ/F");
         }
         if (bEnableSpotID) pListeVar->Branch("SpotID", &bSpotID, "SpotID/I");
+
     } else if (mFileType == "IAEAFile") {
         pIAEAheader = (iaea_header_type *) calloc(1, sizeof(iaea_header_type));
         pIAEAheader->initialize_counters();
@@ -356,6 +359,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     w = stepPoint->GetWeight();
     
     if (EnableLocalTime) { t = stepPoint->GetLocalTime(); } else t = stepPoint->GetGlobalTime() ;
+
     //t = step->GetTrack()->GetProperTime() ; //tibo : which time?????
     GateDebugMessage("Actor", 4, st
                      << " stepPoint time proper=" << G4BestUnit(stepPoint->GetProperTime(), "Time")
