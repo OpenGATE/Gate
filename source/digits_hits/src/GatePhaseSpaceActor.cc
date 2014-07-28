@@ -273,7 +273,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     //cout << step->GetTrack()->GetDefinition()->GetPDGEncoding() << endl;
     // TODO dit werkt helaas niet, undefined reference. Probleem met makefile?
     // Het alternatief, G4pdgcodechecker lijkt niet te doen wat ik nodig heb....
-    cerr << "PartName " << st << " PDGCode " << bPDGCode << " PDGCode2PartName " << G4ParticleTable::GetParticleTable()->FindParticle(bPDGCode)->GetParticleName() << " endl" << endl;
+    //cerr << "PartName " << st << " PDGCode " << bPDGCode << " PDGCode2PartName " << G4ParticleTable::GetParticleTable()->FindParticle(bPDGCode)->GetParticleName() << " endl" << endl;
 
     
 
