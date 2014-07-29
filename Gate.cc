@@ -168,6 +168,7 @@ void welcome()
 //-----------------------------------------------------------------------------
 int main( int argc, char* argv[] )
 {
+
   // First of all, set the G4cout to our message manager
   GateMessageManager* theGateMessageManager = GateMessageManager::GetInstance();
   G4UImanager::GetUIpointer()->SetCoutDestination( theGateMessageManager );
@@ -243,7 +244,7 @@ int main( int argc, char* argv[] )
           printHelpAndQuit("Gate command line help" );
           break;
         case 'v':
-          std::cout << "Gate version is pre-7.0 (beta)" << std::endl;
+          std::cout << "Gate version is 7.0" << std::endl;
           exit(0);
           break;
         case 'a':
@@ -336,6 +337,9 @@ int main( int argc, char* argv[] )
       session = new G4UIterminal();
 #endif
 #endif
+#ifndef _WIN32
+      setlocale(LC_NUMERIC, "POSIX");
+#endif
     }
   else
     {
@@ -368,7 +372,7 @@ int main( int argc, char* argv[] )
   welcome();
 
   std::ostringstream s;
-  s << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH; 
+  s << G4VERSION_MAJOR << "." << G4VERSION_MINOR << "." << G4VERSION_PATCH;
   GateMessage( "Core", 0, "You are using Geant4 version " << s.str() << G4endl );
 
   // Launching Gate if macro file

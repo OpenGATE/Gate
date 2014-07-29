@@ -58,6 +58,8 @@ protected:
   G4UIcmdWithABool* pCoordinateInVolumeFrameCmd;
   G4UIcmdWithADoubleAndUnit* pMaxSizeCmd;
   G4UIcmdWithABool * pInOrOutGoingParticlesCmd;
+  G4UIcmdWithABool* bEnablePrimaryEnergyCmd;
+  G4UIcmdWithAString* bCoordinateFrameCmd;
 
 };
 

@@ -44,7 +44,7 @@ class GatePhaseSpaceActor : public GateVActor
   // Callbacks
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
   virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
-  //virtual void BeginOfEventAction(const G4Event * e);
+  virtual void BeginOfEventAction(const G4Event * e);
 
   //=======================================================
   /// Saves the data collected to the file
@@ -76,6 +76,12 @@ class GatePhaseSpaceActor : public GateVActor
   void SetMaxFileSize(double size){mFileSize=size;}
   double GetMaxFileSize(){return mFileSize ;}
 
+  void SetIsPrimaryEnergyEnabled(bool b){bEnablePrimaryEnergy = b;}
+  void SetEnableCoordFrame(){bEnableCoordFrame = true;}
+  bool GetEnableCoordFrame(){return bEnableCoordFrame;}
+  void SetCoordFrame(G4String nameOfFrame){bCoordFrame=nameOfFrame;}
+  G4String GetCoordFrame(){return bCoordFrame ;}
+
 
 protected:
   GatePhaseSpaceActor(G4String name, G4int depth=0);
@@ -103,6 +109,14 @@ protected:
   bool EnableAllStep;
   bool mUseVolFrame;
   bool mStoreOutPart;
+
+  bool bEnableCoordFrame;
+  bool bEnablePrimaryEnergy;
+
+  G4String bCoordFrame;
+  //hold the primary energy
+  float bPrimaryEnergy;
+
 
   double mFileSize;
 

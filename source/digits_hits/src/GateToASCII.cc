@@ -12,45 +12,37 @@
 
 #include "GateToASCIIMessenger.hh"
 #include "GateVGeometryVoxelStore.hh"
+#include "GateCrystalHit.hh"
+#include "GatePhantomHit.hh"
+#include "GateRecorderBase.hh"
+#include "GatePrimaryGeneratorAction.hh"
+#include "GateVVolume.hh"
+#include "GateDigitizer.hh"
+#include "GateSingleDigi.hh"
+#include "GateCoincidenceDigi.hh"
+#include "GateSourceMgr.hh"
+#include "GateOutputMgr.hh"
 
 #include "globals.hh"
 
 #include "G4Run.hh"
 #include "G4Step.hh"
 #include "G4Event.hh"
-#include "GateCrystalHit.hh"
-#include "GatePhantomHit.hh"
 #include "G4VHitsCollection.hh"
-
 #include "G4TrajectoryContainer.hh"
-
 #include "G4VProcess.hh"
-#include "GateRecorderBase.hh"
 #include "G4ios.hh"
-#include <iomanip>
 #include "G4UImanager.hh"
 #include "G4RunManager.hh"
-#include "GatePrimaryGeneratorAction.hh"
-
 #include "G4ParticleDefinition.hh"
 #include "G4Positron.hh"
 #include "G4GenericIon.hh"
-
-#include "GateDigitizer.hh"
-#include "GateSingleDigi.hh"
-#include "GateCoincidenceDigi.hh"
-
-#include "GateSourceMgr.hh"
-#include "GateOutputMgr.hh"
 #include "G4DigiManager.hh"
-//LF
-//#include <iostream.h>
-//#include <fstream.h>
+
+#include <iomanip>
 #include <iostream>
 #include <sstream>
-//LF
 
-#include "GateVVolume.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 

@@ -16,73 +16,87 @@
 
 #  ****************************************************************************
 #  *                                                                          *
-#  * OpenGATE Collaboration are pleased to announce the release of GATE 6.1.0 *
+#  * OpenGATE Collaboration are pleased to announce the release of GATE 7.0.0 *
 #  *                                                                          *
 #  ****************************************************************************
 
 
                      #  *ooooOOOO0000OOOOoooo*  #
                      #  *                    *  #
-                     #  *    GATE_v6.1.0     *  #
+                     #  *    GATE_v7.0.0     *  #
                      #  *                    *  #
                      #  *ooooOOOO0000OOOOoooo*  #
 
 
                           # *------------* #
-                          # * 21/12/2010 * #
+                          # * 05/12/2014 * #
                           # *------------* #
+
 
 1/ I N S T A L L A T I O N
    -----------------------
 
 - For a complete installation of GATE, user needs to read the Installation Guide
-                                                              ------------------
+  http://wiki.opengatecollaboration.org/index.php/InstallationGuideV7.0
 
-- The installation of this GATE_v6.1.0 version is supported, tested
-  and recommanded with the following system set-up and software package :
+- The installation of this GATE_v7.0.0 version is supported, tested and recommanded with the following:
 
-
-
-                        *ooooOOOO0000OOOOoooo*
-                        *    S Y S T E M     *
-                        *ooooOOOO0000OOOOoooo*
-
-    - Linux : RED HAT & Fedora & Mandrake & Mandriva & Ubuntu...
-    - Compiler gcc 4.4 & gcc 4.2 & 4.1 & 4.0 & gcc 3.4 & gcc 3.3 & gcc 3.2
-
-
-   *oooooooooooooooooOOOOOOOOOOO0000000000OOOOOOOOOOOooooooooooooooooo*
-   *    S E T  U P  &  S O F T W A R E  C O N F I G U R A T I O N     *
-   *oooooooooooooooooOOOOOOOOOOO0000000000OOOOOOOOOOOooooooooooooooooo*
-
-
-
-### Geant4 9.3
-
-    - CLHEP 2.0.4.5
-    - ROOT 5.xx (from 20 to last version)
-    - lmf_v3.0
-    - G4VERSION 9.3
-
-### Geant4 9.4
-
-    - CLHEP 2.1.0.1
-    - ROOT 5.xx (from 20 to last version)
-    - lmf_v3.0
-    - G4VERSION 9.4
+    - Linux distributions: RED HAT & Fedora & Mandrake & Mandriva & Ubuntu...
+    - Compiler: gcc 4.1 to 4.7
+    - ROOT 5.xx (from 14 to last version)
+    - Geant4 9.6p01/p02/p03 (including with embedded CLHEP)
+    - Optional dependencies: lmf_v3.0
 
 
 NOTES:
 -----
 
-* These softwares are validated for 64 bits architectures
-** For GATE V6.1 : Use of a different Geant4 versions (than 9.3 or 9.4) may cause incorrect simulation results
+- Validated for 64 bits architectures
+- The use of different Geant4 versions (other than 9.6) may cause incorrect simulation results
+- Users can also used the external CLHEP v2.1.3.1
+
 
 2/ C O M P I L A T I O N
    ---------------------
 
-- Configure & Source the "env_gate.sh" file
-- Launch "make" or "gmake"
+!!!WARNING: Since the 6.2 GATE version, the installation procedure is managed by CMAKE!!!
+
+    - Download the sources at this address: www.opengatecollaboration.org/GATE70release
+
+    - Install, unzip and untar the downloaded file: tar -xzf gate_v7.0.tar.gz
+
+    - In the same directory, create two directories to build and install GATE:
+      mkdir gate.7.0-build
+      mkdir gate.7.0-install
+
+    - Move into the GATE build directory:
+      cd gate.7.0-build
+
+    - Launch the ccmake command to the gate_v7.0 source directory:
+      ccmake ../gate_7.0
+
+      Warning : look at the information about following compilation options:
+      GATE_USE_ECAT7     OFF: by default, set to ON if you want to use this library
+      GATE_USE_LMF       OFF: by default, set to ON if you want to use this library
+      GATE_USE_OPTICAL   OFF: by default, set to ON if you want to perform simulation for optical imaging applications
+      GATE_USE_GPU       OFF: by default, set to ON if you want to use GPU modules
+
+     - Like for Geant4, press 'c' to configure and 'g' to generate the makefile.
+
+     - Compile:
+       make -jN (N is the number of processor(s) in your PC)
+       make install
+
+     - Last step, update your environment variables file with the following command lines:
+
+       • bash or zsh:
+         export PATH=$PATH:/PATH_TO/gate.7.0-install/bin
+       • [t]csh
+         setenv PATH ${PATH}:$/PATH_TO/gate.7.0-install/bin
+
+       • According to your system, you may also have to set environment variables for Root and Geant4
+         - Root : source ${ROOTSYS}/bin/thisroot.sh
+         - Geant4 : source ${YOU_GEANT4_INSTALL_FOLDER}/bin/geant4.sh
 
 
 3/ C O M P I L A T I O N   W A R N I N G S
