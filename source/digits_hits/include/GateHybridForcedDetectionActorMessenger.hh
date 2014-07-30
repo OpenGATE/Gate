@@ -59,6 +59,7 @@ protected:
   G4UIcmdWithAnInteger * pSetSingleInteractionZCmd;
   G4UIcmdWithAString * pSetPhaseSpaceFilenameCmd;
   G4UIcmdWithAString * pSetWaterLUTFilenameCmd;
+  G4UIcmdWithAString * pSetWaterLUTMaterialCmd;
   G4UIcmdWithAString * pSetSecondPassPrefixCmd;
   GateUIcmdWith2Vector * pSetSecondPassDetectorResolCmd;
   G4UIcmdWithAString * pSetRussianRouletteFilenameCmd;
