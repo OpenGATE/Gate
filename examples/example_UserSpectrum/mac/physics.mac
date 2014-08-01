@@ -1,0 +1,15 @@
+
+/gate/physics/addPhysicsList emstandard_opt3
+
+
+#=====================================================
+# CUTS
+#=====================================================
+/gate/physics/Gamma/SetCutInRegion      world  10 km
+/gate/physics/Electron/SetCutInRegion   world  10 km
+/gate/physics/Positron/SetCutInRegion   world  10 km
+
+/gate/physics/Gamma/SetCutInRegion      MainBox 10 km
+/gate/physics/Electron/SetCutInRegion   MainBox 10 km
+/gate/physics/Positron/SetCutInRegion   MainBox 10 km
+/gate/physics/SetMaxStepSizeInRegion    MainBox 10 km

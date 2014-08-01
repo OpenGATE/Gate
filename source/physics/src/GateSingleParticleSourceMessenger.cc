@@ -1,6 +1,5 @@
 /*----------------------
   Copyright (C): OpenGATE Collaboration
-
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
@@ -25,6 +24,7 @@
 #include "G4UIcmdWithABool.hh"
 #include "G4ios.hh"
 #include "G4Tokenizer.hh"
+#include "GateSPSEneDistribution.hh"
 
 #include "GateSingleParticleSourceMessenger.hh"
 #include "GateVSource.hh"
@@ -657,13 +657,20 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   diffspecCmd1->SetParameterName("diffspec",true);
   diffspecCmd1->SetDefaultValue(true);
                
-  // old implementations
+
   cmdName = GetDirectoryName() + "energytype";
   energytypeCmd = new G4UIcmdWithAString(cmdName,this);
   energytypeCmd->SetGuidance("Sets energy distribution type");
   energytypeCmd->SetParameterName("EnergyDis",true,true);
   energytypeCmd->SetDefaultValue("Mono");
-  energytypeCmd->SetCandidates("Mono Fluor18 Oxygen15 Carbon11 Lin Pow Exp Gauss Brem Bbody Cdg User Arb Epn");
+  energytypeCmd->SetCandidates("Mono Fluor18 Oxygen15 Carbon11 Lin Pow Exp Gauss Brem Bbody Cdg User Arb Epn UserSpectrum");
+
+  
+  cmdName = GetDirectoryName() + "setSpectrumFile";
+  setUserSpectrumCmd = new G4UIcmdWithAString(cmdName,this);
+  setUserSpectrumCmd->SetGuidance("Sets the file to construct UserSpectrum");
+  setUserSpectrumCmd->SetParameterName("FileName",true,true);
+
 
   cmdName = GetDirectoryName() + "emin";
   eminCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
@@ -933,6 +940,10 @@ GateSingleParticleSourceMessenger::~GateSingleParticleSourceMessenger()
   delete listCmd;
   
   delete positronRangeCmd;
+/////////////////////////////////////// Yann PERROT, Simon NICOLAS LPC Clermont-ferrand ///////////////////////////////////////////////
+  delete setUserSpectrumCmd;
+/////////////////////////////////////// Yann PERROT, Simon NICOLAS LPC Clermont-ferrand ///////////////////////////////////////////////
+
 
   //delete particleTable;
 }
@@ -1462,6 +1473,16 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
     {
       fParticleGun->GetEneDist()->ArbInterpolate(newValues);
     }
+///////////////////////////////// Yann PERROT, Simon NICOLAS LPC Clermont-ferrand ////////////////////////////////////////////////
+
+  else if (command == setUserSpectrumCmd) 
+  {
+      GateSPSEneDistribution* speEn =  fParticleGun->GetEneDist(); //->ContructUserSpectrum(newValues);
+      speEn->BuildUserSpectrum(newValues);
+      // fParticleGun->GetEneDist()->ContructUserSpectrum(newValues);
+  }
+
+///////////////////////////////// Yann PERROT, Simon NICOLAS LPC Clermont-ferrand ////////////////////////////////////////////////
   else 
     {
       G4cout << "Error entering command" << G4endl;
@@ -1544,3 +1565,5 @@ void GateSingleParticleSourceMessenger::IonCommand( G4String newValues )
     }
 }
 //-------------------------------------------------------------------------------------------------
+
+
