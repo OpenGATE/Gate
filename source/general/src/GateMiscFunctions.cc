@@ -649,7 +649,14 @@ int GetIndexFromTime(std::vector<double> & mTimeList, double aTime) {
   while ((i < (int)mTimeList.size()) && (aTime >= mTimeList[i])) {
     i++;
   }
-  i--;
+
+  // Take the closest value in the time list
+  if(i > 0) {
+    if(fabs(mTimeList[i-1]-aTime) <= fabs(mTimeList[i]-aTime)) {
+      i--;
+    }
+  }
+
   if ((i < 0) && (aTime < mTimeList[0])) {
     GateError("The time list for  begin with " << mTimeList[0]/s
               << " sec, so I cannot find the time" << aTime/s << " sec." << G4endl);
