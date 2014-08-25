@@ -47,6 +47,7 @@ GateHybridForcedDetectionActor::GateHybridForcedDetectionActor(G4String name, G4
   GateVActor(name,depth),
   mIsSecondarySquaredImageEnabled(false),
   mIsSecondaryUncertaintyImageEnabled(false),
+  mWaterLUTMaterial("G4_WATER"),
   mInputRTKGeometryFilename(""),
   mRussianRouletteSpacing(20.),
   mRussianRouletteMinimumCountInRegion(10),
@@ -1360,7 +1361,7 @@ GateHybridForcedDetectionActor::CreateWaterLUT(const std::vector<double> &energy
 
   // Create mu data
   std::vector<double> mu(energyList.size(), 0.);
-  G4Material * mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
+  G4Material * mat = G4NistManager::Instance()->FindOrBuildMaterial(mWaterLUTMaterial);
   double energyWeightDetRespSum = 0.;
   std::vector<double> energyWeightDetResp(energyList.size(), 0.);
   for(unsigned int e=0; e<energyList.size(); e++) {

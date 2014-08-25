@@ -95,6 +95,7 @@ public:
   void SetSingleInteractionZ(G4int z) { mSingleInteractionZ = z; }
   void SetPhaseSpaceFilename(G4String name) { mPhaseSpaceFilename = name; }
   void SetWaterLUTFilename(G4String name) { mWaterLUTFilename = name; }
+  void SetWaterLUTMaterial(G4String name) { mWaterLUTMaterial = name; }
   void SetSecondPassPrefix(G4String name) { mSecondPassPrefix = name; }
   void SetSecondPassDetectorResolution(int x, int y) { mSecondPassDetectorResolution[0] = x; mSecondPassDetectorResolution[1] = y; }
   void SetRussianRouletteFilename(G4String name) { mRussianRouletteFilename = name; }
@@ -166,6 +167,7 @@ protected:
   bool mIsSecondaryUncertaintyImageEnabled;
   G4String mTotalFilename;
   G4String mWaterLUTFilename;
+  G4String mWaterLUTMaterial;
 
   G4ThreeVector mDetectorResolution;
   GateEnergyResponseFunctor mEnergyResponseDetector;

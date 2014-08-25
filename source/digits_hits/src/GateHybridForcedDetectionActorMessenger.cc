@@ -156,6 +156,11 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
   guidance = "Set the file name for storing all interactions in a phase space file in root format.";
   pSetWaterLUTFilenameCmd->SetGuidance(guidance);
 
+  bb = base+"/waterLUTMaterial";
+  pSetWaterLUTMaterialCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the material name for computing the lookup table. Default is G4_WATER.";
+  pSetWaterLUTMaterialCmd->SetGuidance(guidance);
+
   bb = base+"/setSecondPassPrefix";
   pSetSecondPassPrefixCmd = new G4UIcmdWithAString(bb,this);
   guidance = "Set the prefix for file names in the second pass.";
@@ -220,6 +225,7 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetSingleInteractionZCmd) pHybridActor->SetSingleInteractionZ(pSetSingleInteractionZCmd->GetNewIntValue(param));
   if(command == pSetPhaseSpaceFilenameCmd) pHybridActor->SetPhaseSpaceFilename(param);
   if(command == pSetWaterLUTFilenameCmd) pHybridActor->SetWaterLUTFilename(param);
+  if(command == pSetWaterLUTMaterialCmd) pHybridActor->SetWaterLUTMaterial(param);
   if(command == pSetSecondPassPrefixCmd) pHybridActor->SetSecondPassPrefix(param);
   if(command == pSetSecondPassDetectorResolCmd) pHybridActor->SetSecondPassDetectorResolution(pSetSecondPassDetectorResolCmd->GetNew2VectorValue(param)[0], pSetSecondPassDetectorResolCmd->GetNew2VectorValue(param)[1]);
   if(command == pSetRussianRouletteFilenameCmd) pHybridActor->SetRussianRouletteFilename(param);
