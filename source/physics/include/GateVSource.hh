@@ -115,6 +115,12 @@ public:
   void SetPosRot2(G4ThreeVector);
   void SetCentreCoords(G4ThreeVector);
   
+    // Class function related to the userFocused angDist type
+  void InitializeUserFocalShape();
+  G4ThreeVector UserFocalShapeGenerateOne();
+  G4SPSPosDistribution *GetUserFocalShape() { return &mUserFocalShape;}
+  void SetUserFocalShapeFlag(G4bool b) { mUserFocalShapeInitialisation = b; }
+
   //void AddTimeSlices(double time, int nParticles);
   //std::vector<double> GetTimePerSlice() {return mTimePerSlice;}
   //std::vector<int> GetNumberOfParticlesPerSlice() {return mNumberOfParticlesPerSlice;}
@@ -187,6 +193,11 @@ protected:
   G4ThreeVector mRotY;
   G4ThreeVector mRotZ;
   
+    //userFocalShape
+  G4bool mIsUserFocalShapeActive;
+  G4bool mUserFocalShapeInitialisation;
+  G4double mUserFocalRadius;
+  G4SPSPosDistribution mUserFocalShape;
 
   std::vector<double> mTimeList;
   std::vector<double> mActivityList;

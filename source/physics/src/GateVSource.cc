@@ -79,6 +79,9 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
   mRotY = CLHEP::HepYHat;
   mRotZ = CLHEP::HepZHat;
 //   mUserPosRndm = NULL;
+  mIsUserFocalShapeActive = false;
+  mUserFocalShapeInitialisation = false;
+
 
   m_posSPS = new GateSPSPosDistribution();
   m_posSPS->SetBiasRndm( GetBiasRndm() );
@@ -644,6 +647,7 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
 {
   if( GetParticleDefinition() == NULL ) return;
   if( GetPosDist()->GetPosDisType() == "UserFluenceImage" ) InitializeUserFluence();
+  if( mUserFocalShapeInitialisation ) InitializeUserFocalShape();
     
   if( nVerboseLevel > 1 ) {
     G4cout << " NumberOfParticlesToBeGenerated: " << GetNumberOfParticles() << G4endl ;
@@ -667,7 +671,10 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
 
       for( G4int i = 0 ; i != GetNumberOfParticles() ; ++i )
         {
-          G4ParticleMomentum particle_momentum_direction = m_angSPS->GenerateOne();
+          G4ParticleMomentum particle_momentum_direction;
+          if(mIsUserFocalShapeActive) { particle_momentum_direction = UserFocalShapeGenerateOne(); }
+          else { particle_momentum_direction = m_angSPS->GenerateOne(); }
+
           // Set placement relative to attached volume
           ChangeParticleMomentumRelativeToAttachedVolume(particle_momentum_direction);
           // DD(particle_momentum_direction);
@@ -959,5 +966,33 @@ void GateVSource::SetPosRot2(G4ThreeVector posrot2)
   mRotZ = mRotZ.unit();
   mRotY = mRotZ.cross(mRotX); // y'
   mRotY = mRotY.unit();
+}
+//----------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------
+void GateVSource::InitializeUserFocalShape()
+{
+  mIsUserFocalShapeActive = true;
+  mUserFocalShapeInitialisation = false;
+  mUserFocalShape.SetBiasRndm( GetBiasRndm() );
+  mUserFocalShape.SetPosDisType("Plane");
+  mUserFocalShape.SetPosDisShape("Circle");
+
+  m_angSPS->SetAngDistType("focused");
+}
+//----------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------
+G4ThreeVector GateVSource::UserFocalShapeGenerateOne()
+{
+  G4ThreeVector position = mUserFocalShape.GenerateOne();
+//   DD(position);
+  m_angSPS->SetFocusPoint(position);
+  G4ThreeVector momentum = m_angSPS->GenerateOne();
+//   DD(momentum);
+//   DD(position);
+//   DD(momentum);
+  
+  return momentum;
 }
 //----------------------------------------------------------------------------------------

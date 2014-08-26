@@ -172,6 +172,8 @@ class GateSingleParticleSourceMessenger : public GateMessenger
 
   
   G4UIcmdWithAString         *angtypeCmd1;
+  G4UIcmdWithADoubleAndUnit  *angradiusCmd1;
+  G4UIcmdWith3VectorAndUnit  *angcentreCmd1;
   G4UIcmdWith3Vector         *angrot1Cmd1;
   G4UIcmdWith3Vector         *angrot2Cmd1;
   G4UIcmdWithADoubleAndUnit  *minthetaCmd1;
