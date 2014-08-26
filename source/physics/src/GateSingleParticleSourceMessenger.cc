@@ -412,10 +412,22 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   cmdName = GetDirectoryName() + "ang/type";
   angtypeCmd1 = new G4UIcmdWithAString(cmdName,this);
   angtypeCmd1->SetGuidance("Sets angular source distribution type");
-  angtypeCmd1->SetGuidance("Possible variables are: iso, cos, planar, beam1d, beam2d, focused or user");
+  angtypeCmd1->SetGuidance("Possible variables are: iso, cos, planar, beam1d, beam2d, focused, userFocused or user");
   angtypeCmd1->SetParameterName("AngDis",true,true);
   angtypeCmd1->SetDefaultValue("iso");
-  angtypeCmd1->SetCandidates("iso cos planar beam1d beam2d focused user");
+  angtypeCmd1->SetCandidates("iso cos planar beam1d beam2d focused userFocused user");
+
+  cmdName = GetDirectoryName() + "ang/radius";
+  angradiusCmd1 = new G4UIcmdWithADoubleAndUnit(cmdName,this);
+  angradiusCmd1->SetGuidance("Set radius of aperture (userFocused angle distribution type only)");
+  angradiusCmd1->SetParameterName("Radius",true,true);
+  angradiusCmd1->SetDefaultUnit("cm");
+
+  cmdName = GetDirectoryName() + "ang/centre";
+  angcentreCmd1 = new G4UIcmdWith3VectorAndUnit(cmdName,this);
+  angcentreCmd1->SetGuidance("Set centre coordinates of ang dist (userFocused angle distribution type only).");
+  angcentreCmd1->SetParameterName("X","Y","Z",true,true);
+  angcentreCmd1->SetDefaultUnit("cm");
 
   cmdName = GetDirectoryName() + "ang/rot1";
   angrot1Cmd1 = new G4UIcmdWith3Vector(cmdName,this);
@@ -865,6 +877,8 @@ GateSingleParticleSourceMessenger::~GateSingleParticleSourceMessenger()
   delete surfnormCmd;
 
   delete angtypeCmd1;
+  delete angradiusCmd1;
+  delete angcentreCmd1;
   delete angrot1Cmd1;
   delete angrot2Cmd1;
   delete minthetaCmd1;
@@ -1310,19 +1324,36 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
       fParticleGun->SetUserFluenceFilename(newValues);
     }
   else if(command == angtypeCmd1)
-	{
-	  fParticleGun->GetAngDist()->SetAngDistType(newValues);
-	}
+    {
+      if(newValues == "userFocused") {
+	fParticleGun->SetUserFocalShapeFlag(true);
+	fParticleGun->GetAngDist()->SetAngDistType("focused");
+      }
+      else {
+	fParticleGun->GetAngDist()->SetAngDistType(newValues);
+      }
+    }
+  else if(command == angradiusCmd1)
+    {
+      fParticleGun->GetUserFocalShape()->SetRadius(radiusCmd1->GetNewDoubleValue(newValues));
+    }
+  else if(command == angcentreCmd1)
+    {
+      fParticleGun->GetUserFocalShape()->SetCentreCoords(centreCmd1->GetNew3VectorValue(newValues));
+    }
   else if(command == angrot1Cmd1)
-	{
-	  G4String a = "angref1";
-	  fParticleGun->GetAngDist()->DefineAngRefAxes(a,angrot1Cmd1->GetNew3VectorValue(newValues));
-	}
+    {
+      G4String a = "angref1";
+      fParticleGun->GetAngDist()->DefineAngRefAxes(a,angrot1Cmd1->GetNew3VectorValue(newValues));
+      fParticleGun->GetUserFocalShape()->SetPosRot1(angrot1Cmd1->GetNew3VectorValue(newValues));
+    }
   else if(command == angrot2Cmd1)
-	{
-	  G4String a = "angref2";
-	  fParticleGun->GetAngDist()->DefineAngRefAxes(a,angrot2Cmd1->GetNew3VectorValue(newValues));
-	}
+    {
+      G4String a = "angref2";
+      fParticleGun->GetAngDist()->DefineAngRefAxes(a,angrot2Cmd1->GetNew3VectorValue(newValues));
+      fParticleGun->GetUserFocalShape()->SetPosRot2(angrot2Cmd1->GetNew3VectorValue(newValues));
+    }
+
   else if(command == minthetaCmd1)
 	{
 	  fParticleGun->GetAngDist()->SetMinTheta(minthetaCmd1->GetNewDoubleValue(newValues));
