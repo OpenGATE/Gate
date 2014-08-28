@@ -1,0 +1,22 @@
+#=====================================================
+#  killActor
+#=====================================================
+
+#Declaration of actor
+/gate/actor/addActor KillActor killer
+#Declaration of output
+#/gate/actor/killer/save ../output/killer.txt
+#Attachment to a volume
+/gate/actor/killer/attachTo MainBox
+
+
+#=====================================================
+#  EnergySpectrumActor
+#=====================================================
+
+/gate/actor/addActor EnergySpectrumActor save_example
+/gate/actor/save_example/attachTo MainBox
+/gate/actor/save_example/save ../output/UserSpectrumExample.root
+/gate/actor/save_example/energySpectrum/setEmin 0 eV
+/gate/actor/save_example/energySpectrum/setEmax 6 MeV
+/gate/actor/save_example/energySpectrum/setNumberOfBins 600

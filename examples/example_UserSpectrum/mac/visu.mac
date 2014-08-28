@@ -1,0 +1,7 @@
+/vis/open                             OGLSQt	
+/vis/viewer/set/viewpointThetaPhi     0 90	
+/vis/viewer/zoom                      20.0	
+/vis/drawVolume	
+/tracking/storeTrajectory             1	                                               
+/vis/scene/add/trajectories 	
+/vis/scene/endOfEventAction           accumulate

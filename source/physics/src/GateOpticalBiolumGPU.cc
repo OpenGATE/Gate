@@ -27,7 +27,8 @@
 #include "GateSourceVoxelImageReader.hh"
 #include "GateSourceVoxelInterfileReader.hh"
 #include "GateObjectStore.hh"
-#include "GateFictitiousVoxelMapParameterized.hh"
+//#include "GateFictitiousVoxelMapParameterized.hh"
+#include "GateRegularParameterized.hh"
 #include "GateApplicationMgr.hh"
 
 //----------------------------------------------------------
@@ -338,13 +339,16 @@ void GateOpticalBiolumGPU::Update(double time)
 //----------------------------------------------------------
 void GateOpticalBiolumGPU::SetPhantomVolumeData() 
 {
+
   GateVVolume* v = GateObjectStore::GetInstance()->FindVolumeCreator(attachedVolumeName);
   // FindVolumeCreator raise an error if not found
   // FIXME -> change the error message
   
-  GateFictitiousVoxelMapParameterized * m = dynamic_cast<GateFictitiousVoxelMapParameterized*>(v);
+  //GateFictitiousVoxelMapParameterized * m = dynamic_cast<GateFictitiousVoxelMapParameterized*>(v);
+  GateRegularParameterized *m = dynamic_cast<GateRegularParameterized*>(v);
   if (m == NULL) {
-    GateError(attachedVolumeName << " is not a GateFictitiousVoxelMapParameterized.");
+    //GateError(attachedVolumeName << " is not a GateFictitiousVoxelMapParameterized.");
+    GateError(attachedVolumeName << " is not a GateRegularParameterized.");
   }
   else {
 
