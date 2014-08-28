@@ -41,8 +41,10 @@ GateOpticalSystem::GateOpticalSystem(const G4String& itsName)
 
   // Insert a projection-set maker and a Interfile writer into the output manager
   GateOutputMgr *outputMgr = GateOutputMgr::GetInstance();
+  
   m_gateToProjectionSet = new GateToProjectionSet("projection", outputMgr,this,GateOutputMgr::GetDigiMode()); 
   outputMgr->AddOutputModule((GateVOutputModule*)m_gateToProjectionSet);
+  
   m_gateToOpticalRaw = new GateToOpticalRaw("opticalraw", outputMgr,this,GateOutputMgr::GetDigiMode()); 
   outputMgr->AddOutputModule((GateVOutputModule*)m_gateToOpticalRaw);
 
