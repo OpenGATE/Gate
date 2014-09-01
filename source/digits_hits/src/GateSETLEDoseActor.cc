@@ -10,15 +10,15 @@
 
 
 /*
-  \brief Class GateHybridDoseActor : 
+  \brief Class GateSETLEDoseActor : 
   \brief 
 */
 
-#ifndef GATEHYBRIDDOSEACTOR_CC
-#define GATEHYBRIDDOSEACTOR_CC
+#ifndef GATESETLEDOSEACTOR_CC
+#define GATESETLEDOSEACTOR_CC
 
-#include "GateHybridDoseActor.hh"
-#include "GateHybridMultiplicityActor.hh"
+#include "GateSETLEDoseActor.hh"
+#include "GateSETLEMultiplicityActor.hh"
 #include "GateMiscFunctions.hh"
 #include "GateMaterialMuHandler.hh"
 #include "GateVImageVolume.hh"
@@ -31,10 +31,10 @@
 
 #include <typeinfo>
 //-----------------------------------------------------------------------------
-GateHybridDoseActor::GateHybridDoseActor(G4String name, G4int depth) :
+GateSETLEDoseActor::GateSETLEDoseActor(G4String name, G4int depth) :
   GateVImageActor(name,depth) {
   mCurrentEvent=-1;
-  pMessenger = new GateHybridDoseActorMessenger(this);
+  pMessenger = new GateSETLEDoseActorMessenger(this);
   mMaterialHandler = GateMaterialMuHandler::GetInstance();
   mListOfRaycasting = 0;
   
@@ -58,25 +58,25 @@ GateHybridDoseActor::GateHybridDoseActor(G4String name, G4int depth) :
   std::vector<GateVActor*> actorList = actorManager->GetTheListOfActors();
   for(unsigned int i=0; i<actorList.size(); i++)
   {
-    if(actorList[i]->GetTypeName() == "GateHybridMultiplicityActor") { noMultiplicityActor = false; }
+    if(actorList[i]->GetTypeName() == "GateSETLEMultiplicityActor") { noMultiplicityActor = false; }
   }
-  if(noMultiplicityActor) { actorManager->AddActor("HybridMultiplicityActor","hybridMultiplicityActor"); }
-  pHybridMultiplicityActor = GateHybridMultiplicityActor::GetInstance();
+  if(noMultiplicityActor) { actorManager->AddActor("SETLEMultiplicityActor","seTLEMultiplicityActor"); }
+  pSETLEMultiplicityActor = GateSETLEMultiplicityActor::GetInstance();
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
 /// Destructor 
-GateHybridDoseActor::~GateHybridDoseActor()  {
+GateSETLEDoseActor::~GateSETLEDoseActor()  {
   delete pMessenger;
 }
 //-----------------------------------------------------------------------------
 
  //-----------------------------------------------------------------------------
 /// Construct
-void GateHybridDoseActor::Construct() {
-  GateMessage("Actor", 0, " HybridDoseActor construction" << G4endl);
+void GateSETLEDoseActor::Construct() {
+  GateMessage("Actor", 0, " SETLEDoseActor construction" << G4endl);
   GateVImageActor::Construct();
 
   // Multiplicity initialisation
@@ -90,8 +90,8 @@ void GateHybridDoseActor::Construct() {
     daughterNumber = attachedVolume->GetLogicalVolume()->GetNoDaughters();
   }
   // --> Set primary and secondary multiplicities in 'MultiplicityActor'
-  pHybridMultiplicityActor->SetMultiplicity(mIsHybridinoEnabled, mPrimaryMultiplicity, mSecondaryMultiplicity, attachedVolume);
-  mListOfRaycasting = pHybridMultiplicityActor->GetRaycastingList();
+  pSETLEMultiplicityActor->SetMultiplicity(mIsHybridinoEnabled, mPrimaryMultiplicity, mSecondaryMultiplicity, attachedVolume);
+  mListOfRaycasting = pSETLEMultiplicityActor->GetRaycastingList();
 
   // Get the stepping manager
   mSteppingManager = G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager();
@@ -120,7 +120,7 @@ void GateHybridDoseActor::Construct() {
   mResolution = dynamic_cast<GateVImageVolume*>(GetVolume())->GetImage()->GetResolution();
   mVoxelSize = dynamic_cast<GateVImageVolume*>(GetVolume())->GetImage()->GetVoxelSize();
   mHalfSize = dynamic_cast<GateVImageVolume*>(GetVolume())->GetImage()->GetHalfSize();
-//   WARNING : 'Hybrid Dose Actor' inherits automatically the geometric properties of the attached volume
+//   WARNING : 'SETLE Dose Actor' inherits automatically the geometric properties of the attached volume
 //   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxelSize << G4endl);
       
   // Total dose map initialisation
@@ -201,7 +201,7 @@ void GateHybridDoseActor::Construct() {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActor::InitializeMaterialAndMuTable()
+void GateSETLEDoseActor::InitializeMaterialAndMuTable()
 {
   if(!mIsMaterialAndMuTableInitialized)
   {
@@ -241,7 +241,7 @@ void GateHybridDoseActor::InitializeMaterialAndMuTable()
 
 //-----------------------------------------------------------------------------
 /// Save data
-void GateHybridDoseActor::SaveData()
+void GateSETLEDoseActor::SaveData()
 {
   if(mIsDoseImageEnabled) { mDoseImage.SaveData(mCurrentEvent+1, false); }
   if(mIsPrimaryDoseImageEnabled) { mPrimaryDoseImage.SaveData(mCurrentEvent+1, false); }
@@ -254,7 +254,7 @@ void GateHybridDoseActor::SaveData()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActor::ResetData()
+void GateSETLEDoseActor::ResetData()
 {
   if(mIsLastHitEventImageEnabled) { mLastHitEventImage.Fill(-1); }
   if(mIsPrimaryLastHitEventImageEnabled) { mPrimaryLastHitEventImage.Fill(-1); }
@@ -267,9 +267,9 @@ void GateHybridDoseActor::ResetData()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActor::BeginOfRunAction(const G4Run * r) {
+void GateSETLEDoseActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
-  GateDebugMessage("Actor", 3, "GateHybridDoseActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateSETLEDoseActor -- Begin of Run" << G4endl);
   // ResetData(); // Do no reset here !! (when multiple run);
 
   // security on attachedVolume
@@ -283,7 +283,7 @@ void GateHybridDoseActor::BeginOfRunAction(const G4Run * r) {
 
 //-----------------------------------------------------------------------------
 // Callback at each event
-void GateHybridDoseActor::BeginOfEventAction(const G4Event *) { 
+void GateSETLEDoseActor::BeginOfEventAction(const G4Event *) { 
 //   GateVActor::BeginOfEventAction(event);
   mCurrentEvent++;
   if(mCurrentEvent % 100 == 0)
@@ -294,16 +294,16 @@ void GateHybridDoseActor::BeginOfEventAction(const G4Event *) {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActor::PreUserTrackingAction(const GateVVolume *, const G4Track *) {}
+void GateSETLEDoseActor::PreUserTrackingAction(const GateVVolume *, const G4Track *) {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActor::PostUserTrackingAction(const GateVVolume *, const G4Track *) {}
+void GateSETLEDoseActor::PostUserTrackingAction(const GateVVolume *, const G4Track *) {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 //G4bool GateDoseActor::ProcessHits(G4Step * step , G4TouchableHistory* th)
-void GateHybridDoseActor::UserSteppingAction(const GateVVolume *v, const G4Step* step)
+void GateSETLEDoseActor::UserSteppingAction(const GateVVolume *v, const G4Step* step)
 {
   GateVImageActor::UserSteppingAction(v, step);
   
@@ -345,7 +345,7 @@ void GateHybridDoseActor::UserSteppingAction(const GateVVolume *v, const G4Step*
 
     G4StepPoint *preStep(step->GetPreStepPoint());
     double energy = preStep->GetKineticEnergy();
-    double weight = pHybridMultiplicityActor->GetHybridTrackWeight();
+    double weight = pSETLEMultiplicityActor->GetHybridTrackWeight();
     G4ThreeVector position = preStep->GetPosition();
     G4ThreeVector momentum = preStep->GetMomentumDirection();
 
@@ -353,7 +353,7 @@ void GateHybridDoseActor::UserSteppingAction(const GateVVolume *v, const G4Step*
     momentum.transform(mRotationMatrix);
     
     bool interceptBox = IntersectionBox(position, momentum);
-    if(!interceptBox) { GateError("Error in GateHybridDoseActor: intercept box failed"); }
+    if(!interceptBox) { GateError("Error in GateSETLEDoseActor: intercept box failed"); }
     
     RayCast(isPrimary, energy, weight, position, momentum);
     
@@ -367,14 +367,14 @@ void GateHybridDoseActor::UserSteppingAction(const GateVVolume *v, const G4Step*
     modifiedTrack->SetPosition(newPosition);
     mSteppingManager->SetInitialStep(modifiedTrack);
     
-    // register the new track and corresponding weight into the trackList (see 'HybridMultiplicityActor')
-    pHybridMultiplicityActor->SetHybridTrackWeight(weight);
+    // register the new track and corresponding weight into the trackList (see 'SETLEMultiplicityActor')
+    pSETLEMultiplicityActor->SetHybridTrackWeight(weight);
   }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActor::UserSteppingActionInVoxel(const int /*index*/, const G4Step *) {}
+void GateSETLEDoseActor::UserSteppingActionInVoxel(const int /*index*/, const G4Step *) {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -387,7 +387,7 @@ static inline int getIncrement(double value)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActor::RayCast(bool isPrimary, double energy, double weight, G4ThreeVector position, G4ThreeVector momentum)
+void GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight, G4ThreeVector position, G4ThreeVector momentum)
 {
 //   GateMessage("Actor", 0, "  " << G4endl;);
 //   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxSize << G4endl);
@@ -517,7 +517,7 @@ void GateHybridDoseActor::RayCast(bool isPrimary, double energy, double weight, 
     bool sameEvent = true;
     if(mIsLastHitEventImageEnabled)
     {
-      GateDebugMessage("Actor", 2,  "GateHybridDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
+      GateDebugMessage("Actor", 2,  "GateSETLEDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
       if(mCurrentEvent != mLastHitEventImage.GetValue(index))
       {
 	sameEvent = false;
@@ -528,7 +528,7 @@ void GateHybridDoseActor::RayCast(bool isPrimary, double energy, double weight, 
     bool currentContributionSameEvent = true;
     if(isCurrentLastHitImageEnabled)
     {
-      GateDebugMessage("Actor", 2,  "GateHybridDoseActor -- UserSteppingActionInVoxel: Last event in index = " << currentLastHitImage->GetValue(index) << G4endl);
+      GateDebugMessage("Actor", 2,  "GateSETLEDoseActor -- UserSteppingActionInVoxel: Last event in index = " << currentLastHitImage->GetValue(index) << G4endl);
       if(mCurrentEvent != currentLastHitImage->GetValue(index))
       {
 	currentContributionSameEvent = false;
@@ -594,7 +594,7 @@ void GateHybridDoseActor::RayCast(bool isPrimary, double energy, double weight, 
 }
 //-----------------------------------------------------------------------------
 
-bool GateHybridDoseActor::IntersectionBox(G4ThreeVector p, G4ThreeVector m)
+bool GateSETLEDoseActor::IntersectionBox(G4ThreeVector p, G4ThreeVector m)
 {
 //   double rayOrigin[3];
   mRayOrigin[0] = p.x();

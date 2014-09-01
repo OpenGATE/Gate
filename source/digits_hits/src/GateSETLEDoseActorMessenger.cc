@@ -9,14 +9,14 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
-#ifndef GATEHYBRIDDOSEACTORMESSENGER_CC
-#define GATEHYBRIDDOSEACTORMESSENGER_CC
+#ifndef GATESETLEDOSEACTORMESSENGER_CC
+#define GATESETLEDOSEACTORMESSENGER_CC
 
-#include "GateHybridDoseActorMessenger.hh"
-#include "GateHybridDoseActor.hh"
+#include "GateSETLEDoseActorMessenger.hh"
+#include "GateSETLEDoseActor.hh"
 
 //-----------------------------------------------------------------------------
-GateHybridDoseActorMessenger::GateHybridDoseActorMessenger(GateHybridDoseActor* sensor)
+GateSETLEDoseActorMessenger::GateSETLEDoseActorMessenger(GateSETLEDoseActor* sensor)
   :GateImageActorMessenger(sensor),
    pDoseActor(sensor)
 {
@@ -36,7 +36,7 @@ GateHybridDoseActorMessenger::GateHybridDoseActorMessenger(GateHybridDoseActor* 
 
 
 //-----------------------------------------------------------------------------
-GateHybridDoseActorMessenger::~GateHybridDoseActorMessenger()
+GateSETLEDoseActorMessenger::~GateSETLEDoseActorMessenger()
 {
   if(pEnableDoseCmd) delete pEnableDoseCmd;
   if(pEnableDoseUncertaintyCmd) delete pEnableDoseUncertaintyCmd;
@@ -54,7 +54,7 @@ GateHybridDoseActorMessenger::~GateHybridDoseActorMessenger()
 
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActorMessenger::BuildCommands(G4String base)
+void GateSETLEDoseActorMessenger::BuildCommands(G4String base)
 {
 //   GateImageActorMessenger::BuildCommands(base);
   
@@ -112,7 +112,7 @@ void GateHybridDoseActorMessenger::BuildCommands(G4String base)
 
 
 //-----------------------------------------------------------------------------
-void GateHybridDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
+void GateSETLEDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
   GateImageActorMessenger::SetNewValue( cmd, newValue);
   

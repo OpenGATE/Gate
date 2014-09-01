@@ -10,14 +10,14 @@
 
 
 /*
-  \brief Class GateHybridMultiplicityActor : 
+  \brief Class GateSETLEMultiplicityActor : 
   \brief 
 */
 
-#ifndef GATEHYBRIDMULTIPLICITYACTOR_CC
-#define GATEHYBRIDMULTIPLICITYACTOR_CC
+#ifndef GATESETLEMULTIPLICITYACTOR_CC
+#define GATESETLEMULTIPLICITYACTOR_CC
 
-#include "GateHybridMultiplicityActor.hh"
+#include "GateSETLEMultiplicityActor.hh"
 #include "GateMiscFunctions.hh"
 #include "GateApplicationMgr.hh"
 #include "GateSourceMgr.hh"
@@ -28,12 +28,12 @@
 
 //-----------------------------------------------------------------------------
 /// Constructors (Prototype)
-GateHybridMultiplicityActor::GateHybridMultiplicityActor(G4String name, G4int depth):
+GateSETLEMultiplicityActor::GateSETLEMultiplicityActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateHybridMultiplicityActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateSETLEMultiplicityActor() -- begin"<<G4endl);
   mMaterialHandler = GateMaterialMuHandler::GetInstance();
-  GateDebugMessageDec("Actor",4,"GateHybridMultiplicityActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateSETLEMultiplicityActor() -- end"<<G4endl);
 
   mIsHybridinoEnabled = false;
   mDefaultPrimaryMultiplicity = 0;
@@ -42,20 +42,20 @@ GateHybridMultiplicityActor::GateHybridMultiplicityActor(G4String name, G4int de
   mProcessListForGamma = 0;
   mHybridino = G4Hybridino::Hybridino();
   
-  singleton_HybridMultiplicityActor = this;
+  singleton_SETLEMultiplicityActor = this;
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 /// Destructor 
-GateHybridMultiplicityActor::~GateHybridMultiplicityActor() {}
+GateSETLEMultiplicityActor::~GateSETLEMultiplicityActor() {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 /// Construct
-void GateHybridMultiplicityActor::Construct()
+void GateSETLEMultiplicityActor::Construct()
 {
-  GateMessage("Actor", 0, " HybridMultiplicityActor auto-construction" << G4endl);
+  GateMessage("Actor", 0, " SETLEMultiplicityActor auto-construction" << G4endl);
   
   GateVActor::Construct();
   // Enable callbacks
@@ -72,7 +72,7 @@ void GateHybridMultiplicityActor::Construct()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridMultiplicityActor::SetMultiplicity(bool b, int mP, int mS, G4VPhysicalVolume *v) 
+void GateSETLEMultiplicityActor::SetMultiplicity(bool b, int mP, int mS, G4VPhysicalVolume *v) 
 {
   // set hybridino flag
   mIsHybridinoEnabled = b;
@@ -90,7 +90,7 @@ void GateHybridMultiplicityActor::SetMultiplicity(bool b, int mP, int mS, G4VPhy
 
 //-----------------------------------------------------------------------------
 // Callback Begin Event
-void GateHybridMultiplicityActor::BeginOfEventAction(const G4Event *event)
+void GateSETLEMultiplicityActor::BeginOfEventAction(const G4Event *event)
 {
   if(!mProcessListForGamma) { mProcessListForGamma = G4Gamma::Gamma()->GetProcessManager()->GetProcessList(); }
   mListOfHybridTrack.clear();
@@ -144,7 +144,7 @@ void GateHybridMultiplicityActor::BeginOfEventAction(const G4Event *event)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridMultiplicityActor::PreUserTrackingAction(const GateVVolume *, const G4Track* t)
+void GateSETLEMultiplicityActor::PreUserTrackingAction(const GateVVolume *, const G4Track* t)
 {
   mCurrentTrackIndex = -1;
   mCurrentHybridTrackWeight = 1.;
@@ -173,7 +173,7 @@ void GateHybridMultiplicityActor::PreUserTrackingAction(const GateVVolume *, con
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridMultiplicityActor::PostUserTrackingAction(const GateVVolume *, const G4Track *)
+void GateSETLEMultiplicityActor::PostUserTrackingAction(const GateVVolume *, const G4Track *)
 {
   if(mCurrentTrackIndex > -1)
   {
@@ -188,7 +188,7 @@ void GateHybridMultiplicityActor::PostUserTrackingAction(const GateVVolume *, co
 
 //-----------------------------------------------------------------------------
 // Callbacks
-void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const G4Step * step)
+void GateSETLEMultiplicityActor::UserSteppingAction(const GateVVolume *, const G4Step * step)
 {
   G4String particleName = step->GetTrack()->GetDynamicParticle()->GetParticleDefinition()->GetParticleName();
   if(particleName == "hybridino")
@@ -355,14 +355,14 @@ void GateHybridMultiplicityActor::UserSteppingAction(const GateVVolume *, const 
 
 //-----------------------------------------------------------------------------
 /// Save data
-void GateHybridMultiplicityActor::SaveData() {}
+void GateSETLEMultiplicityActor::SaveData() {}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridMultiplicityActor::ResetData() {}
+void GateSETLEMultiplicityActor::ResetData() {}
 //-----------------------------------------------------------------------------
 
-GateHybridMultiplicityActor *GateHybridMultiplicityActor::singleton_HybridMultiplicityActor = 0;
+GateSETLEMultiplicityActor *GateSETLEMultiplicityActor::singleton_SETLEMultiplicityActor = 0;
 
 #endif /* end #define GATESIMULATIONSTATISTICACTOR_CC */
 

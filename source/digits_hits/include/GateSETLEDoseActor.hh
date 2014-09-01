@@ -10,33 +10,33 @@ See GATE/LICENSE.txt for further details
 
 
 /*!
-  \class  GateHybridDoseActor
+  \class  GateSETLEDoseActor
   \author fabien.baldacci@creatis.insa-lyon.fr
 	  francois.smekens@creatis.insa-lyon.fr
   
  */
 
-#ifndef GATEHYBRIDDOSEACTOR_HH
-#define GATEHYBRIDDOSEACTOR_HH
+#ifndef GATESETLEDOSEACTOR_HH
+#define GATESETLEDOSEACTOR_HH
 
 #include "GateVImageActor.hh"
 #include "GateActorManager.hh"
 #include "G4UnitsTable.hh"
-#include "GateHybridDoseActorMessenger.hh"
-#include "GateHybridMultiplicityActor.hh"
+#include "GateSETLEDoseActorMessenger.hh"
+#include "GateSETLEMultiplicityActor.hh"
 #include "GateImageWithStatistic.hh"
 #include "GateMaterialMuHandler.hh"
 #include "G4SteppingManager.hh"
 
-class GateHybridDoseActor : public GateVImageActor
+class GateSETLEDoseActor : public GateVImageActor
 {
  public: 
   
   //-----------------------------------------------------------------------------
   // Actor name
-  virtual ~GateHybridDoseActor();
+  virtual ~GateSETLEDoseActor();
 
-  FCT_FOR_AUTO_CREATOR_ACTOR(GateHybridDoseActor)
+  FCT_FOR_AUTO_CREATOR_ACTOR(GateSETLEDoseActor)
 
   //-----------------------------------------------------------------------------
   // Constructs the sensor
@@ -81,8 +81,8 @@ class GateHybridDoseActor : public GateVImageActor
   virtual void EndOfEvent(G4HCofThisEvent*){}
   
 protected:
-  GateHybridDoseActor(G4String name, G4int depth=0);
-  GateHybridDoseActorMessenger *pMessenger;
+  GateSETLEDoseActor(G4String name, G4int depth=0);
+  GateSETLEDoseActorMessenger *pMessenger;
   
   GateImageWithStatistic mDoseImage;
   GateImage mLastHitEventImage;
@@ -111,7 +111,7 @@ protected:
   G4double VoxelVolume;
   G4Material *mWorldMaterial;
   
-  GateHybridMultiplicityActor *pHybridMultiplicityActor;
+  GateSETLEMultiplicityActor *pSETLEMultiplicityActor;
   int mPrimaryMultiplicity;
   int mSecondaryMultiplicity;
   bool mIsHybridinoEnabled;
@@ -138,6 +138,6 @@ protected:
   int mPlaneSize;
 };
 
-MAKE_AUTO_CREATOR_ACTOR(HybridDoseActor,GateHybridDoseActor)
+MAKE_AUTO_CREATOR_ACTOR(SETLEDoseActor,GateSETLEDoseActor)
 
 #endif /* end #define GATEHYBRIDDOSEACTOR_HH */

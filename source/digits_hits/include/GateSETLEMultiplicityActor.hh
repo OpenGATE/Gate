@@ -9,12 +9,12 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 /*!
-  \class GateHybridMultiplicityActor
+  \class GateSETLEMultiplicityActor
   \author francois.smekens@creatis.insa-lyon.fr
  */
 
-#ifndef GATEHYBRIDMULTIPLICITYACTOR_HH
-#define GATEHYBRIDMULTIPLICITYACTOR_HH
+#ifndef GATESETLEMULTIPLICITYACTOR_HH
+#define GATESETLEMULTIPLICITYACTOR_HH
 
 #include "GateVActor.hh"
 #include "GatePhysicsList.hh"
@@ -48,26 +48,26 @@ struct RaycastingStruct
 
 //-----------------------------------------------------------------------------
 
-class GateHybridMultiplicityActor : public GateVActor
+class GateSETLEMultiplicityActor : public GateVActor
 {
 public: 
    
-  static GateHybridMultiplicityActor *GetInstance()
+  static GateSETLEMultiplicityActor *GetInstance()
   {   
-    if (singleton_HybridMultiplicityActor == 0)
+    if (singleton_SETLEMultiplicityActor == 0)
     {
       //std::cout << "creating GateActorManager..." << std::endl;
-      singleton_HybridMultiplicityActor = new GateHybridMultiplicityActor("hybridMultiplicityActor",0);
+      singleton_SETLEMultiplicityActor = new GateSETLEMultiplicityActor("seTLEMultiplicityActor",0);
     }
     //else std::cout << "GateActorManager already created!" << std::endl;
-    return singleton_HybridMultiplicityActor;
+    return singleton_SETLEMultiplicityActor;
   };
   
-  ~GateHybridMultiplicityActor();
+  ~GateSETLEMultiplicityActor();
     
   //-----------------------------------------------------------------------------
   // This macro initialize the CreatePrototype and CreateInstance
-  FCT_FOR_AUTO_CREATOR_ACTOR(GateHybridMultiplicityActor)
+  FCT_FOR_AUTO_CREATOR_ACTOR(GateSETLEMultiplicityActor)
 
   //-----------------------------------------------------------------------------
   // Constructs the sensor
@@ -95,7 +95,7 @@ public:
   
 protected:
 
-  GateHybridMultiplicityActor(G4String name, G4int depth=0);
+  GateSETLEMultiplicityActor(G4String name, G4int depth=0);
 
   // secondary multiplicity can be different in each volume
   bool mIsHybridinoEnabled;
@@ -117,11 +117,11 @@ protected:
   std::vector<RaycastingStruct> mListOfRaycasting;
 
 private:
-  GateHybridMultiplicityActor();
-  static GateHybridMultiplicityActor *singleton_HybridMultiplicityActor;
+  GateSETLEMultiplicityActor();
+  static GateSETLEMultiplicityActor *singleton_SETLEMultiplicityActor;
 };
 
-MAKE_AUTO_CREATOR_ACTOR(HybridMultiplicityActor,GateHybridMultiplicityActor)
+MAKE_AUTO_CREATOR_ACTOR(SETLEMultiplicityActor,GateSETLEMultiplicityActor)
 
 
 #endif /* end #define GATESHYBRIDMULTIPLICITYACTOR_HH */
