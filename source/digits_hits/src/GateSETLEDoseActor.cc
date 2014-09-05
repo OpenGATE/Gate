@@ -100,21 +100,6 @@ void GateSETLEDoseActor::Construct() {
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
   EnableUserSteppingAction(true);
-
-  // Affine transform and rotation matrix for Raycasting
-  GateVVolume * v = GetVolume();
-  G4VPhysicalVolume * phys = v->GetPhysicalVolume();
-  G4AffineTransform volumeToWorld = G4AffineTransform(phys->GetRotation(), phys->GetTranslation());
-  while (v->GetLogicalVolumeName() != "world_log") {
-    v = v->GetParentVolume();
-    phys = v->GetPhysicalVolume();
-    G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
-    volumeToWorld = volumeToWorld * x;
-  }
-
-  mRotationMatrix = volumeToWorld.NetRotation();
-  worldToVolume = volumeToWorld.Inverse();
-  //   GateMessage("Actor", 0," Translation " << worldToVolume.NetTranslation() << " Rotation " << worldToVolume.NetRotation() << G4endl);
   
 //   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " placement " << mPosition << G4endl);
   mResolution = dynamic_cast<GateVImageVolume*>(GetVolume())->GetImage()->GetResolution();
@@ -180,9 +165,20 @@ void GateSETLEDoseActor::Construct() {
     mSecondaryDoseImage.SetFilename(mSecondaryDoseFilename);
   }
 
-//   mDoseImage.SetOrigin(mOrigin);
-//   mPrimaryDoseImage.SetOrigin(mOrigin);
-//   mSecondaryDoseImage.SetOrigin(mOrigin);
+  // Affine transform and rotation matrix for Raycasting
+  GateVVolume * v = GetVolume();
+  G4VPhysicalVolume * phys = v->GetPhysicalVolume();
+  G4AffineTransform volumeToWorld = G4AffineTransform(phys->GetRotation(), phys->GetTranslation());
+  while (v->GetLogicalVolumeName() != "world_log") {
+    v = v->GetParentVolume();
+    phys = v->GetPhysicalVolume();
+    G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
+    volumeToWorld = volumeToWorld * x;
+  }
+
+  mRotationMatrix = volumeToWorld.NetRotation();
+  worldToVolume = volumeToWorld.Inverse();
+  //   GateMessage("Actor", 0," Translation " << worldToVolume.NetTranslation() << " Rotation " << worldToVolume.NetRotation() << G4endl);
 
   // Initialize raycasting members
   mBoxMin[0] = -mHalfSize.x();
@@ -332,7 +328,7 @@ void GateSETLEDoseActor::UserSteppingAction(const GateVVolume *v, const G4Step* 
 	  mNearestDistance = 0.0;
 	}
 
-	RayCast(isPrimary, energy, weight, position, momentum);
+	weight = RayCast(isPrimary, energy, weight, position, momentum);
       }
     }
     
@@ -351,11 +347,11 @@ void GateSETLEDoseActor::UserSteppingAction(const GateVVolume *v, const G4Step* 
 
     position = worldToVolume.TransformPoint(position);  
     momentum.transform(mRotationMatrix);
-    
+
     bool interceptBox = IntersectionBox(position, momentum);
     if(!interceptBox) { GateError("Error in GateSETLEDoseActor: intercept box failed"); }
     
-    RayCast(isPrimary, energy, weight, position, momentum);
+    weight = RayCast(isPrimary, energy, weight, position, momentum);
     
     // New initialisation of the track
     G4ThreeVector newMomentum = preStep->GetMomentumDirection();
@@ -387,7 +383,7 @@ static inline int getIncrement(double value)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight, G4ThreeVector position, G4ThreeVector momentum)
+double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight, G4ThreeVector position, G4ThreeVector momentum)
 {
 //   GateMessage("Actor", 0, "  " << G4endl;);
 //   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxSize << G4endl);
@@ -590,7 +586,7 @@ void GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight, G
     delta_in = delta_out;
   }
   
-  weight = delta_in;
+  return delta_out;
 }
 //-----------------------------------------------------------------------------
 

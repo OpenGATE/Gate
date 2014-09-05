@@ -69,7 +69,7 @@ class GateSETLEDoseActor : public GateVImageActor
 
   void InitializeMaterialAndMuTable();
   bool IntersectionBox(G4ThreeVector, G4ThreeVector);
-  void RayCast(bool, double, double, G4ThreeVector, G4ThreeVector);
+  double RayCast(bool, double, double, G4ThreeVector, G4ThreeVector);
  /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
