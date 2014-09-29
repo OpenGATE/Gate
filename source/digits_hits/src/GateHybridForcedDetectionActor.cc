@@ -48,12 +48,12 @@ GateHybridForcedDetectionActor::GateHybridForcedDetectionActor(G4String name, G4
   mIsSecondarySquaredImageEnabled(false),
   mIsSecondaryUncertaintyImageEnabled(false),
   mWaterLUTMaterial("G4_WATER"),
+  mNoisePrimary(0),
   mInputRTKGeometryFilename(""),
   mRussianRouletteSpacing(20.),
   mRussianRouletteMinimumCountInRegion(10),
   mRussianRouletteMinimumProbability(0.0001),
-  mSecondPassPhaseSpace(NULL),
-  mNoisePrimary(0)
+  mSecondPassPhaseSpace(NULL)
 {
   GateDebugMessageInc("Actor",4,"GateHybridForcedDetectionActor() -- begin"<<G4endl);
   pActorMessenger = new GateHybridForcedDetectionActorMessenger(this);
