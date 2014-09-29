@@ -376,8 +376,11 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   }
 
   if(mSecondPassPrefix != "") {
-    mRussianRouletteImage      = CreateRussianRouletteVoidImage();
-    mRussianRouletteCountImage = CreateRussianRouletteVoidImage();
+    for(unsigned int i=0; i<PROCESSTYPEMAX; i++)
+      {
+      mRussianRouletteImages[ProcessType(i)]      = CreateRussianRouletteVoidImage();
+      mRussianRouletteCountImages[ProcessType(i)] = CreateRussianRouletteVoidImage();
+      }
   }
 }
 //-----------------------------------------------------------------------------
@@ -402,6 +405,30 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
         varPerProcess[p] += its.Get()*invN - pow(itp.Get()*invN, 2.);
       }
       maxVarPerProcess = std::max(maxVarPerProcess, varPerProcess[p]);
+
+      // Compute survival probability image for Russian Roulette
+      // Max of russian roulette image
+      itk::ImageRegionIterator<OutputImageType> iti(mRussianRouletteImages[p],
+                                                    mRussianRouletteImages[p]->GetBufferedRegion());
+      float maxRussian = 0.;
+      for(iti.GoToBegin(); !iti.IsAtEnd(); ++iti) {
+        maxRussian = std::max(maxRussian, iti.Get());
+      }
+
+      itk::ImageRegionIterator<OutputImageType> itc(mRussianRouletteCountImages[p],
+                                                    mRussianRouletteCountImages[p]->GetBufferedRegion());
+      mRussianRouletteImagesProbability[p] = CreateRussianRouletteVoidImage();
+      itk::ImageRegionIterator<OutputImageType> itr(mRussianRouletteImagesProbability[p],
+                                                    mRussianRouletteImagesProbability[p]->GetBufferedRegion());
+      for(iti.GoToBegin(); !iti.IsAtEnd(); ++iti, ++itc, ++itr) {
+        double survivalProba = 1.;
+        if(itc.Get()>mRussianRouletteMinimumCountInRegion) {
+          survivalProba = iti.Get() / maxRussian;
+          survivalProba = std::min(survivalProba, 1.);
+          survivalProba = std::max(survivalProba, mRussianRouletteMinimumProbability);
+        }
+        itr.Set(survivalProba);
+      }
     }
     // Normalize by max
     for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
@@ -410,30 +437,6 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
       std::cout << "Process " << mMapTypeWithProcessName[p]
                 << " probability " << varPerProcess[p]
                 << std::endl;
-    }
-
-    // Compute survival probability image for Russian Roulette
-    // Max of russian roulette image
-    itk::ImageRegionIterator<OutputImageType> iti(mRussianRouletteImage,
-                                                  mRussianRouletteImage->GetBufferedRegion());
-    float maxRussian = 0.;
-    for(iti.GoToBegin(); !iti.IsAtEnd(); ++iti) {
-      maxRussian = std::max(maxRussian, iti.Get());
-    }
-
-    itk::ImageRegionIterator<OutputImageType> itc(mRussianRouletteCountImage,
-                                                  mRussianRouletteCountImage->GetBufferedRegion());
-    mRussianRouletteImageProbability = CreateRussianRouletteVoidImage();
-    itk::ImageRegionIterator<OutputImageType> itp(mRussianRouletteImageProbability,
-                                                  mRussianRouletteImageProbability->GetBufferedRegion());
-    for(iti.GoToBegin(); !iti.IsAtEnd(); ++iti, ++itc, ++itp) {
-      double survivalProba = 1.;
-      if(itc.Get()>mRussianRouletteMinimumCountInRegion) {
-        survivalProba = iti.Get() / maxRussian;
-        survivalProba = std::min(survivalProba, 1.);
-        survivalProba = std::max(survivalProba, mRussianRouletteMinimumProbability);
-      }
-      itp.Set(survivalProba);
     }
   }
 
@@ -467,10 +470,10 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
 
       // Russian roulette
       ProcessType pt = mMapProcessNameWithType[mInteractionProductionProcessStep];
-      mRussianRouletteImageProbability->TransformPhysicalPointToIndex(point, idx);
+      mRussianRouletteImagesProbability[pt]->TransformPhysicalPointToIndex(point, idx);
       double survivalProba = 1.;
-      if(mRussianRouletteImageProbability->GetBufferedRegion().IsInside(idx))
-        survivalProba = mRussianRouletteImageProbability->GetPixel(idx) * varPerProcess[pt];
+      if(mRussianRouletteImagesProbability[pt]->GetBufferedRegion().IsInside(idx))
+        survivalProba = mRussianRouletteImagesProbability[pt]->GetPixel(idx) * varPerProcess[pt];
       if(G4UniformRand()>survivalProba) {
         mInteractionWeight = 0.;
       }
@@ -789,14 +792,13 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType 
   mInteractionTotalContribution = projector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
   if(mSecondPassPrefix != "") {
     OutputImageType::IndexType idx;
-    mRussianRouletteImage->TransformPhysicalPointToIndex(point, idx);
-    if(mRussianRouletteImage->GetBufferedRegion().IsInside(idx)) {
-      mRussianRouletteImage->SetPixel(idx,
-                                      mRussianRouletteImage->GetPixel(idx) +
-                                      mInteractionTotalContribution);
-      mRussianRouletteCountImage->SetPixel(idx,
-                                           mRussianRouletteCountImage->GetPixel(idx) +
-                                           1.);
+    ProcessType pt = mMapProcessNameWithType[mInteractionProductionProcessStep];
+    mRussianRouletteImages[pt]->TransformPhysicalPointToIndex(point, idx);
+    if(mRussianRouletteImages[pt]->GetBufferedRegion().IsInside(idx)) {
+      mRussianRouletteImages[pt]->SetPixel(idx,
+                                           mRussianRouletteImages[pt]->GetPixel(idx) + mInteractionTotalContribution);
+      mRussianRouletteCountImages[pt]->SetPixel(idx,
+                                                mRussianRouletteCountImages[pt]->GetPixel(idx) + 1.);
     }
   }
 
@@ -1084,17 +1086,26 @@ void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
   if(mRussianRouletteFilename) {
     G4String f = mRussianRouletteFilename;
     if(mSecondPassPrefix != "") {
-      imgWriter->SetFileName(AddPrefix(prefix, f));
-      imgWriter->SetInput(mRussianRouletteImage);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+      for(unsigned int i=0; i<PROCESSTYPEMAX; i++)
+        {
+        G4String base = G4String(removeExtension(f));
+        G4String ext = G4String(getExtension(f));
+        ProcessType pt = ProcessType(i);
+        imgWriter->SetFileName(AddPrefix(prefix,
+                               AddPrefix(mMapTypeWithProcessName[pt]+'-', f)));
+        imgWriter->SetInput(mRussianRouletteImages[pt]);
+        TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
 
-      imgWriter->SetFileName(AddPrefix(prefix, G4String(removeExtension(f))+"-Count."+G4String(getExtension(f))));
-      imgWriter->SetInput(mRussianRouletteCountImage);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+        imgWriter->SetFileName(AddPrefix(prefix,
+                               AddPrefix(mMapTypeWithProcessName[pt]+'-', base + "-Count." + ext)));
+        imgWriter->SetInput(mRussianRouletteCountImages[pt]);
+        TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
 
-      imgWriter->SetFileName(AddPrefix(prefix, G4String(removeExtension(f))+"-Probability."+G4String(getExtension(f))));
-      imgWriter->SetInput(mRussianRouletteImageProbability);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+        imgWriter->SetFileName( AddPrefix(prefix,
+                                AddPrefix(mMapTypeWithProcessName[pt]+'-', base + "-Probability." + ext)));
+        imgWriter->SetInput(mRussianRouletteImagesProbability[pt]);
+        TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+        }
     }
   }
 }

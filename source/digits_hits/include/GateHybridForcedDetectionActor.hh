@@ -267,12 +267,12 @@ protected:
   G4String mSecondPassPrefix;
   G4String mRussianRouletteFilename;
   G4ThreeVector mSecondPassDetectorResolution;
-  OutputImageType::Pointer mRussianRouletteImage;
-  OutputImageType::Pointer mRussianRouletteCountImage;
+  std::map<ProcessType, OutputImageType::Pointer> mRussianRouletteImages;
+  std::map<ProcessType, OutputImageType::Pointer> mRussianRouletteCountImages;
   G4double mRussianRouletteSpacing;
   G4int mRussianRouletteMinimumCountInRegion;
   G4double mRussianRouletteMinimumProbability;
-  OutputImageType::Pointer mRussianRouletteImageProbability;
+  std::map<ProcessType, OutputImageType::Pointer> mRussianRouletteImagesProbability;
   TFile   *mSecondPassPhaseSpaceFile;
   TTree   *mSecondPassPhaseSpace;
 };
