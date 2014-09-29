@@ -195,6 +195,11 @@ void GateHybridForcedDetectionActorMessenger::BuildCommands(G4String base)
   pSetInputRTKGeometryFilenameCmd = new G4UIcmdWithAString(bb,this);
   guidance = "Set filename for using an RTK geometry file as input.";
   pSetInputRTKGeometryFilenameCmd->SetGuidance(guidance);
+
+  bb = base+"/noisePrimaryNumber";
+  pSetNoisePrimaryCmd = new G4UIcmdWithAnInteger(bb,this);
+  guidance = "Set a number of primary for noise estimate in a phase space file in root format.";
+  pSetNoisePrimaryCmd->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -233,6 +238,7 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetRussianRouletteMinimumCountInRegionCmd) pHybridActor->SetRussianRouletteMinimumProbability(pSetRussianRouletteMinimumCountInRegionCmd->GetNewIntValue(param));
   if(command == pSetRussianRouletteMinimumProbabilityCmd) pHybridActor->SetRussianRouletteMinimumProbability(pSetRussianRouletteMinimumProbabilityCmd->GetNewDoubleValue(param));
   if(command == pSetInputRTKGeometryFilenameCmd) pHybridActor->SetInputRTKGeometryFilename(param);
+  if(command == pSetNoisePrimaryCmd) pHybridActor->SetNoisePrimary(pSetNoisePrimaryCmd->GetNewIntValue(param));
 
   GateActorMessenger::SetNewValue(command ,param );
 }

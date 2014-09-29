@@ -67,6 +67,7 @@ protected:
   G4UIcmdWithAnInteger * pSetRussianRouletteMinimumCountInRegionCmd;
   G4UIcmdWithADouble * pSetRussianRouletteMinimumProbabilityCmd;
   G4UIcmdWithAString * pSetInputRTKGeometryFilenameCmd;
+  G4UIcmdWithAnInteger * pSetNoisePrimaryCmd;
 };
 
 #endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH*/

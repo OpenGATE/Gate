@@ -52,7 +52,8 @@ GateHybridForcedDetectionActor::GateHybridForcedDetectionActor(G4String name, G4
   mRussianRouletteSpacing(20.),
   mRussianRouletteMinimumCountInRegion(10),
   mRussianRouletteMinimumProbability(0.0001),
-  mSecondPassPhaseSpace(NULL)
+  mSecondPassPhaseSpace(NULL),
+  mNoisePrimary(0)
 {
   GateDebugMessageInc("Actor",4,"GateHybridForcedDetectionActor() -- begin"<<G4endl);
   pActorMessenger = new GateHybridForcedDetectionActorMessenger(this);
@@ -156,8 +157,10 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       energyList.push_back(E);
       energyWeightList.push_back(h.Value(E));
       weightSum += energyWeightList.back();
-      //SR to NA: do this only when noise is desactivated
-      energyWeightList.back() *= mEnergyResponseDetector(energyList.back());
+      //noise is desactivated
+      if(mNoisePrimary == 0) {
+	energyWeightList.back() *= mEnergyResponseDetector(energyList.back());
+      }
       energyMax = std::max(energyMax, energyList.back());
     }
     for(unsigned int i=0; i<h.GetVectorLength(); i++)
@@ -244,6 +247,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                                                         energyList,
                                                                         gate_image_volume);
   primaryProjector->GetProjectedValueAccumulation().Init( primaryProjector->GetNumberOfThreads() );
+  primaryProjector->GetProjectedValueAccumulation().SetNumberOfPrimaries(mNoisePrimary);
   primaryProjector->GetProjectedValueAccumulation().SetResponseDetector( &mEnergyResponseDetector );
   TRY_AND_EXIT_ON_ITK_EXCEPTION(primaryProjector->Update());
   mPrimaryImage = primaryProjector->GetOutput();

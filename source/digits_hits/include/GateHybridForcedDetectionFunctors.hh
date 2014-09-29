@@ -9,6 +9,7 @@
 #include <G4LogLogInterpolation.hh>
 #include <G4CompositeEMDataSet.hh>
 #include <G4CrossSectionHandler.hh>
+#include <Randomize.hh>
 #include "GateEnergyResponseFunctor.hh"
 
 // ITK
@@ -68,7 +69,7 @@ public:
   typedef itk::Image<InputPixelType, Dimension>                      InputImageType;
   typedef itk::Image<double, 2>                                      MaterialMuImageType;
 
-  VAccumulation() { for(int i=0; i<ITK_MAX_THREADS; i++) m_IntegralOverDetector[i] = 0.; }
+  VAccumulation(): m_NumberOfPrimaries(0) { for(int i=0; i<ITK_MAX_THREADS; i++) m_IntegralOverDetector[i] = 0.; }
 
   bool operator!=( const VAccumulation & ) const
   {
@@ -197,6 +198,7 @@ public:
     return result;
   }
 
+  void SetNumberOfPrimaries(G4int i) { m_NumberOfPrimaries = i; }
   void SetResponseDetector(GateEnergyResponseFunctor *_arg){ m_ResponseDetector = _arg; }
 
 protected:
@@ -214,6 +216,7 @@ protected:
   MaterialMuImageType::Pointer  m_MaterialMu;
   VectorType                    m_DetectorOrientationTimesPixelSurface;
   double                        m_IntegralOverDetector[ITK_MAX_THREADS];
+  G4int                         m_NumberOfPrimaries;
   GateEnergyResponseFunctor    *m_ResponseDetector;
   std::vector<double>           m_EnergyList;
 };
@@ -262,11 +265,17 @@ public:
       for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++){
         rayIntegral += m_InterpolationWeights[threadId][j] * *p++;
       }
-      Accumulate(threadId, input, vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i]);
-      //SR to NA: use this if noise is activated
-      //Accumulate(threadId, input, vcl_exp(-rayIntegral)
-      //                   * (*m_EnergyWeightList)[i]
-      //                   * (*m_ResponseDetector)( m_EnergyList[i] ));
+
+      //statistical noise added
+      if(m_NumberOfPrimaries != 0)
+      	{
+        double a =vcl_exp(-rayIntegral);
+	double nprimE = m_NumberOfPrimaries * (*m_EnergyWeightList)[i];
+        double n = ((nprimE)?G4RandGauss::shoot(a,a*TMath::Sqrt(1/nprimE)):a);
+	Accumulate(threadId, input, n * (*m_EnergyWeightList)[i] * (*m_ResponseDetector)( m_EnergyList[i] ));
+	}
+      else
+        Accumulate(threadId, input, vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i]);
     }
 
     // FIXME: the source is not punctual but it is homogeneous on the detection plane
