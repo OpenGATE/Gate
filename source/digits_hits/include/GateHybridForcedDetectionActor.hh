@@ -32,6 +32,7 @@
 #include "GateHybridForcedDetectionFunctors.hh"
 #include "GateEnergyResponseFunctor.hh"
 #include "GateHybridForcedDetectionProjector.h"
+#include "GateHybridForcedDetectionProcessType.hh"
 
 // itk
 #include <itkTimeProbe.h>
@@ -106,7 +107,6 @@ public:
   void SetInputRTKGeometryFilename(G4String name) { mInputRTKGeometryFilename = name; }
 
   // Typedef for rtk
-  typedef enum {COMPTON=0, RAYLEIGH, PHOTOELECTRIC, PROCESSTYPEMAX} ProcessType;
   static const unsigned int Dimension = 3;
   typedef float                                       InputPixelType;
   typedef itk::Image<InputPixelType, Dimension>       InputImageType;

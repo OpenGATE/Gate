@@ -194,7 +194,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 
   // Create projection images
   mPrimaryImage = CreateVoidProjectionImage();
-  for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+  for(unsigned int i=0; i<PRIMARY; i++) {
     mProcessImage[ProcessType(i)] = CreateVoidProjectionImage();
     mSquaredImage[ProcessType(i)] = CreateVoidProjectionImage();
   }
@@ -375,12 +375,12 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     CreateWaterLUT(energyList, energyWeightList);
 
   if(mIsSecondarySquaredImageEnabled || mIsSecondaryUncertaintyImageEnabled) {
-    for(unsigned int i=0; i<PROCESSTYPEMAX; i++)
+    for(unsigned int i=0; i<PRIMARY; i++)
       mEventImage[ProcessType(i)] = CreateVoidProjectionImage();
   }
 
   if(mSecondPassPrefix != "") {
-    for(unsigned int i=0; i<PROCESSTYPEMAX; i++)
+    for(unsigned int i=0; i<PRIMARY; i++)
       {
       mRussianRouletteImages[ProcessType(i)]      = CreateRussianRouletteVoidImage();
       mRussianRouletteCountImages[ProcessType(i)] = CreateRussianRouletteVoidImage();
@@ -398,7 +398,7 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
   if(mSecondPassPrefix != "") {
     G4double maxVarPerProcess = 0.;
     double invN = 1./mNumberOfEventsInRun;
-    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+    for(unsigned int i=0; i<PRIMARY; i++) {
       ProcessType p = ProcessType(i);
       varPerProcess[p] = 0.;
       itk::ImageRegionIterator<OutputImageType> itp(mProcessImage[p],
@@ -435,7 +435,7 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
       }
     }
     // Normalize by max
-    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+    for(unsigned int i=0; i<PRIMARY; i++) {
       ProcessType p = ProcessType(i);
       varPerProcess[p] /= maxVarPerProcess;
       std::cout << "Process " << mMapTypeWithProcessName[p]
@@ -528,7 +528,7 @@ void GateHybridForcedDetectionActor::BeginOfEventAction(const G4Event *itkNotUse
     // The event contribution are put in new images which at this point are in the
     // mEventComptonImage / mEventRayleighImage / mEventFluorescenceImage. We therefore
     // swap the two and they will be swapped back in EndOfEventAction.
-    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+    for(unsigned int i=0; i<PRIMARY; i++) {
       std::swap(mEventImage[ProcessType(i)], mProcessImage[ProcessType(i)]);
       // Make sure the time stamps of the mEvent images are more recent to detect if one
       // image has been modified during the event.
@@ -549,7 +549,7 @@ void GateHybridForcedDetectionActor::EndOfEventAction(const G4Event *e)
 
     // First: accumulate contribution to event, square and add to total squared
     InputImageType::Pointer totalContribEvent(NULL);
-    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+    for(unsigned int i=0; i<PRIMARY; i++) {
       if( mEventImage[ProcessType(i)]->GetTimeStamp() < mProcessImage[ProcessType(i)]->GetTimeStamp() ) {
         // First: accumulate contribution to event, square and add to total squared
         multFilter->SetInput1(mProcessImage[ProcessType(i)]);
@@ -586,7 +586,7 @@ void GateHybridForcedDetectionActor::EndOfEventAction(const G4Event *e)
       mSecondarySquaredImage->DisconnectPipeline();
     }
 
-    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+    for(unsigned int i=0; i<PRIMARY; i++) {
       if( mEventImage[ProcessType(i)]->GetTimeStamp() < mProcessImage[ProcessType(i)]->GetTimeStamp() ) {
         // Accumulate non squared images and reset mEvent images
         addFilter->SetInput1(mEventImage[ProcessType(i)]);
@@ -1019,7 +1019,7 @@ void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
     // (Compton, Rayleigh and/or Fluorescence)
     // Create projections image
     InputImageType::Pointer mSecondaryImage = CreateVoidProjectionImage();
-    for(unsigned int i=0; i<PROCESSTYPEMAX; i++) {
+    for(unsigned int i=0; i<PRIMARY; i++) {
       // Add Image Filter used to sum the different figures obtained on each process
       addFilter->InPlaceOn();
       addFilter->SetInput1(mSecondaryImage);
@@ -1090,7 +1090,7 @@ void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
   if(mRussianRouletteFilename) {
     G4String f = mRussianRouletteFilename;
     if(mSecondPassPrefix != "") {
-      for(unsigned int i=0; i<PROCESSTYPEMAX; i++)
+      for(unsigned int i=0; i<PRIMARY; i++)
         {
         G4String base = G4String(removeExtension(f));
         G4String ext = G4String(getExtension(f));
