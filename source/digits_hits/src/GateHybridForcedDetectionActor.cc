@@ -421,7 +421,7 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
                                                     mRussianRouletteImagesProbability[p]->GetBufferedRegion());
       for(iti.GoToBegin(); !iti.IsAtEnd(); ++iti, ++itc, ++itr) {
         double survivalProba = 1.;
-        if(itc.Get()>mRussianRouletteMinimumCountInRegion) {
+        if(itc.Get()>=mRussianRouletteMinimumCountInRegion) {
           survivalProba = iti.Get() / maxRussian;
           survivalProba = std::min(survivalProba, 1.);
           survivalProba = std::max(survivalProba, mRussianRouletteMinimumProbability);

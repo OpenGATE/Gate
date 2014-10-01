@@ -235,7 +235,7 @@ void GateHybridForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, 
   if(command == pSetSecondPassDetectorResolCmd) pHybridActor->SetSecondPassDetectorResolution(pSetSecondPassDetectorResolCmd->GetNew2VectorValue(param)[0], pSetSecondPassDetectorResolCmd->GetNew2VectorValue(param)[1]);
   if(command == pSetRussianRouletteFilenameCmd) pHybridActor->SetRussianRouletteFilename(param);
   if(command == pSetRussianRouletteSpacingCmd) pHybridActor->SetRussianRouletteSpacing (pSetRussianRouletteSpacingCmd->GetNewDoubleValue(param));
-  if(command == pSetRussianRouletteMinimumCountInRegionCmd) pHybridActor->SetRussianRouletteMinimumProbability(pSetRussianRouletteMinimumCountInRegionCmd->GetNewIntValue(param));
+  if(command == pSetRussianRouletteMinimumCountInRegionCmd) pHybridActor->SetRussianRouletteMinimumCountInRegion(pSetRussianRouletteMinimumCountInRegionCmd->GetNewIntValue(param));
   if(command == pSetRussianRouletteMinimumProbabilityCmd) pHybridActor->SetRussianRouletteMinimumProbability(pSetRussianRouletteMinimumProbabilityCmd->GetNewDoubleValue(param));
   if(command == pSetInputRTKGeometryFilenameCmd) pHybridActor->SetInputRTKGeometryFilename(param);
   if(command == pSetNoisePrimaryCmd) pHybridActor->SetNoisePrimary(pSetNoisePrimaryCmd->GetNewIntValue(param));
