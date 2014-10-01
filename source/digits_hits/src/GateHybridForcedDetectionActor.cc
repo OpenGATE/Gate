@@ -195,14 +195,15 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   // Create projection images
   mPrimaryImage = CreateVoidProjectionImage();
   for(unsigned int i=0; i<PRIMARY; i++) {
-    mProcessImage[ProcessType(i)] = CreateVoidProjectionImage();
-    mSquaredImage[ProcessType(i)] = CreateVoidProjectionImage();
+    const ProcessType pt = ProcessType(i);
+    mDoFFDForThisProcess[pt] = (mProcessImageFilenames[pt] != "" ||
+                                mTotalFilename != "" ||
+                                mSecondaryFilename != "");
+    mProcessImage[pt] = CreateVoidProjectionImage();
+    mSquaredImage[pt] = CreateVoidProjectionImage();
+    mPerOrderImages[pt].clear();
   }
   mSecondarySquaredImage = CreateVoidProjectionImage();
-
-  mComptonPerOrderImages.clear();
-  mRayleighPerOrderImages.clear();
-  mFluorescencePerOrderImages.clear();
 
   // Set geometry from RTK geometry file
   if(mInputRTKGeometryFilename != "")
@@ -231,7 +232,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                       mDetectorColVector);
 
   // Create primary projector and compute primary
-  mPrimaryProbe.Start();
+  mProcessTimeProbe[PRIMARY].Start();
   PrimaryProjectionType::Pointer primaryProjector = PrimaryProjectionType::New();
   primaryProjector->InPlaceOn();
   primaryProjector->SetInput(mPrimaryImage);
@@ -277,7 +278,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     TRY_AND_EXIT_ON_ITK_EXCEPTION(primaryProjector->Update());
     mFlatFieldImage = primaryProjector->GetOutput();
   }
-  mPrimaryProbe.Stop();
+  mProcessTimeProbe[PRIMARY].Stop();
 
   // Prepare Compton
   mComptonProjector = ComptonProjectionType::New();
@@ -346,24 +347,18 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       else {
         switch(mMapProcessNameWithType[mSingleInteractionType]) {
         case COMPTON:
-          this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
-                                            mSingleInteractionImage,
-                                            mComptonPerOrderImages,
-                                            mComptonProbe);
+          this->ForceDetectionOfInteraction<COMPTON>(mComptonProjector.GetPointer(),
+                                                     mSingleInteractionImage);
           break;
         case RAYLEIGH:
           mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
-          this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
-                                            mSingleInteractionImage,
-                                            mRayleighPerOrderImages,
-                                            mRayleighProbe);
+          this->ForceDetectionOfInteraction<RAYLEIGH>(mRayleighProjector.GetPointer(),
+                                                      mSingleInteractionImage);
           break;
         case PHOTOELECTRIC:
           mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
-          this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
-                                            mSingleInteractionImage,
-                                            mFluorescencePerOrderImages,
-                                            mFluorescenceProbe);
+          this->ForceDetectionOfInteraction<PHOTOELECTRIC>(mFluorescenceProjector.GetPointer(),
+                                                           mSingleInteractionImage);
           break;
         default:
           GateError("Implementation problem, unexpected process type reached.");
@@ -487,22 +482,16 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
         // Interaction survived, let's do the job
         switch(pt) {
         case COMPTON:
-          this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
-                                            mProcessImage[COMPTON],
-                                            mComptonPerOrderImages,
-                                            mComptonProbe);
+          this->ForceDetectionOfInteraction<COMPTON>(mComptonProjector.GetPointer(),
+                                                     mProcessImage[COMPTON]);
           break;
         case RAYLEIGH:
-          this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
-                                            mProcessImage[RAYLEIGH],
-                                            mRayleighPerOrderImages,
-                                            mRayleighProbe);
+          this->ForceDetectionOfInteraction<RAYLEIGH>(mRayleighProjector.GetPointer(),
+                                                      mProcessImage[RAYLEIGH]);
           break;
         case PHOTOELECTRIC:
-          this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
-                                            mProcessImage[PHOTOELECTRIC],
-                                            mFluorescencePerOrderImages,
-                                            mFluorescenceProbe);
+          this->ForceDetectionOfInteraction<PHOTOELECTRIC>(mFluorescenceProjector.GetPointer(),
+                                                           mProcessImage[PHOTOELECTRIC]);
           break;
         default:
           GateError("Implementation problem, unexpected process type reached.");
@@ -731,24 +720,18 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(G4int runID,
   else {
     switch(mMapProcessNameWithType[processName]) {
     case COMPTON:
-      this->ForceDetectionOfInteraction(mComptonProjector.GetPointer(),
-                                        mProcessImage[COMPTON],
-                                        mComptonPerOrderImages,
-                                        mComptonProbe);
+      this->ForceDetectionOfInteraction<COMPTON>(mComptonProjector.GetPointer(),
+                                                 mProcessImage[COMPTON]);
       break;
     case RAYLEIGH:
       mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
-      this->ForceDetectionOfInteraction(mRayleighProjector.GetPointer(),
-                                        mProcessImage[RAYLEIGH],
-                                        mRayleighPerOrderImages,
-                                        mRayleighProbe);
+      this->ForceDetectionOfInteraction<RAYLEIGH>(mRayleighProjector.GetPointer(),
+                                                  mProcessImage[RAYLEIGH]);
       break;
     case PHOTOELECTRIC:
       mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy)*mInteractionWeight;
-      this->ForceDetectionOfInteraction(mFluorescenceProjector.GetPointer(),
-                                        mProcessImage[PHOTOELECTRIC],
-                                        mFluorescencePerOrderImages,
-                                        mFluorescenceProbe);
+      this->ForceDetectionOfInteraction<PHOTOELECTRIC>(mFluorescenceProjector.GetPointer(),
+                                                       mProcessImage[PHOTOELECTRIC]);
       break;
     default:
       GateError("Implementation problem, unexpected process type reached.");
@@ -759,12 +742,13 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(G4int runID,
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template <class TProjectorType>
+template <ProcessType VProcess, class TProjectorType>
 void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType *projector,
-                                                                 InputImageType::Pointer &input,
-                                                                 std::vector<InputImageType::Pointer> &inputPerOrder,
-                                                                 itk::TimeProbe &probe)
+                                                                 InputImageType::Pointer &input)
 {
+  if(!mDoFFDForThisProcess[VProcess])
+    return;
+
   // d and p are in World coordinates and they must be in CT coordinates
   G4ThreeVector p = m_WorldToCT.TransformPoint(mInteractionPosition);
   G4ThreeVector d = m_WorldToCT.TransformAxis(mInteractionDirection);
@@ -784,7 +768,7 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType 
                                       mDetectorRowVector,
                                       mDetectorColVector);
 
-  probe.Start();
+  mProcessTimeProbe[VProcess].Start();
   projector->SetInput(input);
   projector->SetGeometry( oneProjGeometry.GetPointer() );
   projector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mInteractionEnergy, mInteractionZ, mInteractionWeight );
@@ -792,7 +776,7 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType 
   TRY_AND_EXIT_ON_ITK_EXCEPTION(projector->Update());
   input = projector->GetOutput();
   input->DisconnectPipeline();
-  probe.Stop();
+  mProcessTimeProbe[VProcess].Stop();
   mInteractionTotalContribution = projector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
   if(mSecondPassPrefix != "") {
     OutputImageType::IndexType idx;
@@ -809,12 +793,12 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType 
   // Scatter order
   if(mInteractionOrder>=0)
   {
-    while(mInteractionOrder>=(int)inputPerOrder.size())
-      inputPerOrder.push_back( CreateVoidProjectionImage() );
-    projector->SetInput(inputPerOrder[mInteractionOrder]);
+    while(mInteractionOrder>=(int)mPerOrderImages[VProcess].size())
+      mPerOrderImages[VProcess].push_back( CreateVoidProjectionImage() );
+    projector->SetInput(mPerOrderImages[VProcess][mInteractionOrder]);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(projector->Update());
-    inputPerOrder[mInteractionOrder] = projector->GetOutput();
-    inputPerOrder[mInteractionOrder]->DisconnectPipeline();
+    mPerOrderImages[VProcess][mInteractionOrder] = projector->GetOutput();
+    mPerOrderImages[VProcess][mInteractionOrder]->DisconnectPipeline();
   }
 }
 //-----------------------------------------------------------------------------
@@ -900,111 +884,42 @@ void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
   }
 
-  if(mComptonFilename != "") {
-    sprintf(filename, AddPrefix(prefix,mComptonFilename).c_str(), rID);
-    imgWriter->SetFileName(filename);
-    imgWriter->SetInput(mProcessImage[COMPTON]);
-    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    if(mIsSecondarySquaredImageEnabled) {
-      imgWriter->SetFileName(G4String(removeExtension(filename)) +
-                             "-Squared." +
-                             G4String(getExtension(filename)));
-      imgWriter->SetInput(mSquaredImage[COMPTON]);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    }
-    if(mIsSecondaryUncertaintyImageEnabled) {
-      ChettyType::Pointer chetty = ChettyType::New();
-      chetty->GetFunctor().SetN(mNumberOfEventsInRun);
-      chetty->SetInput1(mProcessImage[COMPTON]);
-      chetty->SetInput2(mSquaredImage[COMPTON]);
-      chetty->InPlaceOff();
-
-      imgWriter->SetFileName(G4String(removeExtension(filename)) +
-                             "-Uncertainty." +
-                             G4String(getExtension(filename)));
-      imgWriter->SetInput(chetty->GetOutput());
-
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    }
-
-    for(unsigned int k = 1; k<mComptonPerOrderImages.size(); k++)
-    {
-      sprintf(filename, AddPrefix(prefix,"output/compton%04d_order%02d.mha").c_str(), rID, k);
+  for(unsigned int i=0; i<PRIMARY; i++) {
+    ProcessType pt = ProcessType(i);
+    if(mProcessImageFilenames[pt] != "") {
+      sprintf(filename, AddPrefix(prefix,mProcessImageFilenames[pt]).c_str(), rID);
       imgWriter->SetFileName(filename);
-      imgWriter->SetInput(mComptonPerOrderImages[k]);
+      imgWriter->SetInput(mProcessImage[pt]);
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    }
-  }
+      if(mIsSecondarySquaredImageEnabled) {
+        imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                               "-Squared." +
+                               G4String(getExtension(filename)));
+        imgWriter->SetInput(mSquaredImage[pt]);
+        TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+      }
+      if(mIsSecondaryUncertaintyImageEnabled) {
+        ChettyType::Pointer chetty = ChettyType::New();
+        chetty->GetFunctor().SetN(mNumberOfEventsInRun);
+        chetty->SetInput1(mProcessImage[pt]);
+        chetty->SetInput2(mSquaredImage[pt]);
+        chetty->InPlaceOff();
 
-  if(mRayleighFilename != "") {
-    sprintf(filename, AddPrefix(prefix,mRayleighFilename).c_str(), rID);
-    imgWriter->SetFileName(filename);
-    imgWriter->SetInput(mProcessImage[RAYLEIGH]);
-    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    if(mIsSecondarySquaredImageEnabled) {
-      imgWriter->SetFileName(G4String(removeExtension(filename)) +
-                             "-Squared." +
-                             G4String(getExtension(filename)));
-      imgWriter->SetInput(mSquaredImage[RAYLEIGH]);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    }
-    if(mIsSecondaryUncertaintyImageEnabled) {
-      ChettyType::Pointer chetty = ChettyType::New();
-      chetty->GetFunctor().SetN(mNumberOfEventsInRun);
-      chetty->SetInput1(mProcessImage[RAYLEIGH]);
-      chetty->SetInput2(mSquaredImage[RAYLEIGH]);
-      chetty->InPlaceOff();
+        imgWriter->SetFileName(G4String(removeExtension(filename)) +
+                               "-Uncertainty." +
+                               G4String(getExtension(filename)));
+        imgWriter->SetInput(chetty->GetOutput());
 
-      imgWriter->SetFileName(G4String(removeExtension(filename)) +
-                             "-Uncertainty." +
-                             G4String(getExtension(filename)));
-      imgWriter->SetInput(chetty->GetOutput());
+        TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+      }
 
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    }
-
-    for(unsigned int k = 1; k<mRayleighPerOrderImages.size(); k++)
-    {
-      sprintf(filename, AddPrefix(prefix,"output/rayleigh%04d_order%02d.mha").c_str(), rID, k);
-      imgWriter->SetFileName(filename);
-      imgWriter->SetInput(mRayleighPerOrderImages[k]);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    }
-  }
-
-  if(mFluorescenceFilename != "") {
-    sprintf(filename, AddPrefix(prefix,mFluorescenceFilename).c_str(), rID);
-    imgWriter->SetFileName(filename);
-    imgWriter->SetInput(mProcessImage[PHOTOELECTRIC]);
-    TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    if(mIsSecondarySquaredImageEnabled) {
-      imgWriter->SetFileName(G4String(removeExtension(filename)) +
-                             "-Squared." +
-                             G4String(getExtension(filename)));
-      imgWriter->SetInput(mSquaredImage[PHOTOELECTRIC]);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    }
-    if(mIsSecondaryUncertaintyImageEnabled) {
-      ChettyType::Pointer chetty = ChettyType::New();
-      chetty->GetFunctor().SetN(mNumberOfEventsInRun);
-      chetty->SetInput1(mProcessImage[PHOTOELECTRIC]);
-      chetty->SetInput2(mSquaredImage[PHOTOELECTRIC]);
-      chetty->InPlaceOff();
-
-      imgWriter->SetFileName(G4String(removeExtension(filename)) +
-                             "-Uncertainty." +
-                             G4String(getExtension(filename)));
-      imgWriter->SetInput(chetty->GetOutput());
-
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-    }
-
-    for(unsigned int k = 1; k<mFluorescencePerOrderImages.size(); k++)
-    {
-      sprintf(filename, AddPrefix(prefix,"output/fluorescence%04d_order%02d.mha").c_str(), rID, k);
-      imgWriter->SetFileName(filename);
-      imgWriter->SetInput(mFluorescencePerOrderImages[k]);
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+      for(unsigned int k = 1; k<mPerOrderImages[pt].size(); k++)
+      {
+        sprintf(filename, AddPrefix(prefix,"output/" + mMapTypeWithProcessName[pt] + "%04d_order%02d.mha").c_str(), rID, k);
+        imgWriter->SetFileName(filename);
+        imgWriter->SetInput(mPerOrderImages[pt][k]);
+        TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+      }
     }
   }
 
@@ -1092,9 +1007,12 @@ void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
     if(mSecondPassPrefix != "") {
       for(unsigned int i=0; i<PRIMARY; i++)
         {
+        ProcessType pt = ProcessType(i);
+        if(mProcessImageFilenames[pt] == "")
+          continue;
+
         G4String base = G4String(removeExtension(f));
         G4String ext = G4String(getExtension(f));
-        ProcessType pt = ProcessType(i);
         imgWriter->SetFileName(AddPrefix(prefix,
                                AddPrefix(mMapTypeWithProcessName[pt]+'-', f)));
         imgWriter->SetInput(mRussianRouletteImages[pt]);

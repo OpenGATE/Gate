@@ -81,9 +81,9 @@ public:
   void SetAttenuationFilename(G4String name) { mAttenuationFilename = name; }
   void SetResponseDetectorFilename(G4String name) { mResponseFilename = name; }
   void SetFlatFieldFilename(G4String name) { mFlatFieldFilename = name; }
-  void SetComptonFilename(G4String name) { mComptonFilename = name; }
-  void SetRayleighFilename(G4String name) { mRayleighFilename = name; }
-  void SetFluorescenceFilename(G4String name) { mFluorescenceFilename = name; }
+  void SetComptonFilename(G4String name) { mProcessImageFilenames[COMPTON] = name; }
+  void SetRayleighFilename(G4String name) { mProcessImageFilenames[RAYLEIGH] = name; }
+  void SetFluorescenceFilename(G4String name) { mProcessImageFilenames[PHOTOELECTRIC] = name; }
   void SetSecondaryFilename(G4String name) { mSecondaryFilename = name; }
   void EnableSecondarySquaredImage(bool b) { mIsSecondarySquaredImageEnabled = b; }
   void EnableSecondaryUncertaintyImage(bool b) { mIsSecondaryUncertaintyImageEnabled = b; }
@@ -141,11 +141,9 @@ public:
                                    G4ThreeVector pt, G4ThreeVector dir,
                                    double energy, double weight,
                                    G4String material, int Z, int order);
-  template <class TProjectorType>
+  template <ProcessType VProcess, class TProjectorType>
   void ForceDetectionOfInteraction(TProjectorType *projector,
-                                   InputImageType::Pointer &input,
-                                   std::vector<InputImageType::Pointer> &inputPerOrder,
-                                   itk::TimeProbe &probe);
+                                   InputImageType::Pointer &input);
 
 protected:
   GateHybridForcedDetectionActorMessenger * pActorMessenger;
@@ -160,9 +158,6 @@ protected:
   G4String mAttenuationFilename;
   G4String mResponseFilename;
   G4String mFlatFieldFilename;
-  G4String mComptonFilename;
-  G4String mRayleighFilename;
-  G4String mFluorescenceFilename;
   G4String mSecondaryFilename;
   bool mIsSecondarySquaredImageEnabled;
   bool mIsSecondaryUncertaintyImageEnabled;
@@ -186,9 +181,6 @@ protected:
   std::map<ProcessType, InputImageType::Pointer> mSquaredImage;
   std::map<ProcessType, InputImageType::Pointer> mEventImage;
   InputImageType::Pointer mSecondarySquaredImage;
-  std::vector<InputImageType::Pointer> mComptonPerOrderImages;
-  std::vector<InputImageType::Pointer> mRayleighPerOrderImages;
-  std::vector<InputImageType::Pointer> mFluorescencePerOrderImages;
 
   std::map<G4String, ProcessType> mMapProcessNameWithType;
   std::map<ProcessType, G4String> mMapTypeWithProcessName;
@@ -205,7 +197,6 @@ protected:
   typedef GateHybridForcedDetectionFunctor::VAccumulation AccumulationType;
 
   // Primary stuff
-  itk::TimeProbe mPrimaryProbe;
   unsigned int mNumberOfEventsInRun;
   typedef rtk::JosephForwardProjectionImageFilter<
                  InputImageType,
@@ -214,18 +205,21 @@ protected:
                  GateHybridForcedDetectionFunctor::PrimaryValueAccumulation>
                    PrimaryProjectionType;
 
+  // Per process members
+  std::map<ProcessType, bool> mDoFFDForThisProcess;
+  std::map<ProcessType, itk::TimeProbe> mProcessTimeProbe;
+  std::map<ProcessType, std::vector<InputImageType::Pointer> > mPerOrderImages;
+  std::map<ProcessType, G4String> mProcessImageFilenames;
+
   // Compton stuff
-  itk::TimeProbe mComptonProbe;
   typedef GateHybridForcedDetectionProjector<GateHybridForcedDetectionFunctor::ComptonValueAccumulation> ComptonProjectionType;
   ComptonProjectionType::Pointer mComptonProjector;
 
   // Rayleigh stuff
-  itk::TimeProbe mRayleighProbe;
   typedef GateHybridForcedDetectionProjector<GateHybridForcedDetectionFunctor::RayleighValueAccumulation> RayleighProjectionType;
   RayleighProjectionType::Pointer mRayleighProjector;
 
   // Fluorescence stuff
-  itk::TimeProbe mFluorescenceProbe;
   typedef GateHybridForcedDetectionProjector<GateHybridForcedDetectionFunctor::FluorescenceValueAccumulation> FluorescenceProjectionType;
   FluorescenceProjectionType::Pointer mFluorescenceProjector;
 
