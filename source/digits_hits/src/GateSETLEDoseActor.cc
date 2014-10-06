@@ -165,21 +165,6 @@ void GateSETLEDoseActor::Construct() {
     mSecondaryDoseImage.SetFilename(mSecondaryDoseFilename);
   }
 
-  // Affine transform and rotation matrix for Raycasting
-  GateVVolume * v = GetVolume();
-  G4VPhysicalVolume * phys = v->GetPhysicalVolume();
-  G4AffineTransform volumeToWorld = G4AffineTransform(phys->GetRotation(), phys->GetTranslation());
-  while (v->GetLogicalVolumeName() != "world_log") {
-    v = v->GetParentVolume();
-    phys = v->GetPhysicalVolume();
-    G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
-    volumeToWorld = volumeToWorld * x;
-  }
-
-  mRotationMatrix = volumeToWorld.NetRotation();
-  worldToVolume = volumeToWorld.Inverse();
-  //   GateMessage("Actor", 0," Translation " << worldToVolume.NetTranslation() << " Rotation " << worldToVolume.NetRotation() << G4endl);
-
   // Initialize raycasting members
   mBoxMin[0] = -mHalfSize.x();
   mBoxMin[1] = -mHalfSize.y();
@@ -274,6 +259,21 @@ void GateSETLEDoseActor::BeginOfRunAction(const G4Run * r) {
   
   // fast material and mu access
   if(!mIsMaterialAndMuTableInitialized) { InitializeMaterialAndMuTable(); }
+
+  // Affine transform and rotation matrix for Raycasting
+  GateVVolume * v = GetVolume();
+  G4VPhysicalVolume * phys = v->GetPhysicalVolume();
+  G4AffineTransform volumeToWorld = G4AffineTransform(phys->GetRotation(), phys->GetTranslation());
+  while (v->GetLogicalVolumeName() != "world_log") {
+    v = v->GetParentVolume();
+    phys = v->GetPhysicalVolume();
+    G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
+    volumeToWorld = volumeToWorld * x;
+  }
+
+  mRotationMatrix = volumeToWorld.NetRotation();
+  worldToVolume = volumeToWorld.Inverse();
+  //   GateMessage("Actor", 0," Translation " << worldToVolume.NetTranslation() << " Rotation " << worldToVolume.NetRotation() << G4endl);
 }
 //-----------------------------------------------------------------------------
 
