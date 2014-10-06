@@ -58,15 +58,6 @@ class GateDoseActor : public GateVImageActor
   void EnableDoseNormalisationToIntegral(bool b);
   void EnableDoseToWaterNormalisation(bool b) { mIsDoseToWaterNormalisationEnabled = b; mDoseToWaterImage.SetScaleFactor(1.0); }
 
-  void EnableRBE1AlphaImage(bool b) { mIsRBE1AlphaImageEnabled = b; }
-  void EnableRBE1BetaImage(bool b) { mIsRBE1BetaImageEnabled = b; }
-  void EnableRBE1FactorImage(bool b) { mIsRBE1FactorImageEnabled = b; }
-  void EnableRBE1BioDoseImage(bool b) { mIsRBE1BioDoseImageEnabled = b; }
-  void EnableRBE1Test1(bool b) { mIsRBE1Test1Enabled = b; }
-
-  void SetRBE1AlphaDataFilename(G4String f) { mRBE1AlphaDataFilename = f; }
-  void SetRBE1BetaDataFilename(G4String f) { mRBE1BetaDataFilename = f; }
-
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
 
@@ -74,18 +65,14 @@ class GateDoseActor : public GateVImageActor
   virtual void UserPreTrackActionInVoxel(const int /*index*/, const G4Track* track);
   virtual void UserPostTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/) {}
 
-  /// Saves the data collected to the file
+  //  Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
 
-  ///Scorer related
-  //virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
+  // Scorer related
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
 
-  void ReadRBE1AlphaBetaFromFile(G4String filenameAlpha, G4String filenameBeta);
-  void GetRBE1AlphaBetaFromLet(G4double let, G4double & alpha, G4double & beta);
-  void ComputeRBE1ImageAndSave();
 
 protected:
   GateDoseActor(G4String name, G4int depth=0);
@@ -107,38 +94,17 @@ protected:
   bool mIsNumberOfHitsImageEnabled;
   bool mIsDoseNormalisationEnabled;
   bool mIsDoseToWaterNormalisationEnabled;
-  bool mIsRBE1AlphaImageEnabled;
-  bool mIsRBE1BetaImageEnabled;
-  bool mIsRBE1FactorImageEnabled;
-  bool mIsRBE1BioDoseImageEnabled;
-  bool mIsRBE1Enabled;
-  bool mIsRBE1Test1Enabled;
 
   GateImageWithStatistic mEdepImage;
   GateImageWithStatistic mDoseImage;
   GateImageWithStatistic mDoseToWaterImage;
   GateImage mNumberOfHitsImage;
   GateImage mLastHitEventImage;
-  GateImageWithStatistic mRBE1AlphaImage;
-  GateImageWithStatistic mRBE1BetaImage;
-  GateImageWithStatistic mRBE1FactorImage;
-  GateImageWithStatistic mRBE1BioDoseImage;
 
   G4String mEdepFilename;
   G4String mDoseFilename;
   G4String mDoseToWaterFilename;
   G4String mNbOfHitsFilename;
-  G4String mRBE1AlphaFilename;
-  G4String mRBE1BetaFilename;
-  G4String mRBE1AlphaDataFilename;
-  G4String mRBE1BetaDataFilename;
-  G4String mRBE1FactorFilename;
-  G4String mRBE1BioDoseFilename;
-
-  std::vector<G4double> mAlphaLet;
-  std::vector<G4double> mAlphaValues;
-  std::vector<G4double> mBetaLet;
-  std::vector<G4double> mBetaValues;
 
   G4EmCalculator * emcalc;
 };
