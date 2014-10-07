@@ -102,7 +102,7 @@ public:
   void SetSecondPassDetectorResolution(int x, int y) { mSecondPassDetectorResolution[0] = x; mSecondPassDetectorResolution[1] = y; }
   void SetRussianRouletteFilename(G4String name) { mRussianRouletteFilename = name; }
   void SetRussianRouletteSpacing(G4double s) { mRussianRouletteSpacing = s; }
-  void SetRussianRouletteMinimumCountInRegion(G4double p) { mRussianRouletteMinimumCountInRegion = p; }
+  void SetRussianRouletteMinimumCountInRegion(G4double p) { mRussianRouletteMinimumCountInRegion = std::max(2.,p); }
   void SetRussianRouletteMinimumProbability(G4double p) { mRussianRouletteMinimumProbability = p; }
   void SetInputRTKGeometryFilename(G4String name) { mInputRTKGeometryFilename = name; }
 
@@ -247,6 +247,7 @@ protected:
   int           mInteractionEventId;
   int           mInteractionRunId;
   double        mInteractionTotalContribution;
+  double        mInteractionSquaredContribution;
   Char_t        mInteractionVolume[256];
   Char_t        mInteractionMaterial[256];
   int           mInteractionZ;
@@ -266,11 +267,12 @@ protected:
   G4String mRussianRouletteFilename;
   G4ThreeVector mSecondPassDetectorResolution;
   std::map<ProcessType, OutputImageType::Pointer> mRussianRouletteImages;
+  std::map<ProcessType, OutputImageType::Pointer> mRussianRouletteSquaredImages;
   std::map<ProcessType, OutputImageType::Pointer> mRussianRouletteCountImages;
+  std::map<ProcessType, OutputImageType::Pointer> mRussianRouletteProbabilityImages;
   G4double mRussianRouletteSpacing;
   G4int mRussianRouletteMinimumCountInRegion;
   G4double mRussianRouletteMinimumProbability;
-  std::map<ProcessType, OutputImageType::Pointer> mRussianRouletteImagesProbability;
   TFile   *mSecondPassPhaseSpaceFile;
   TTree   *mSecondPassPhaseSpace;
 };

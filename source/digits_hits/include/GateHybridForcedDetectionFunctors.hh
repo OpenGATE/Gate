@@ -69,7 +69,7 @@ public:
   typedef itk::Image<InputPixelType, Dimension>                      InputImageType;
   typedef itk::Image<double, 2>                                      MaterialMuImageType;
 
-  VAccumulation(): m_NumberOfPrimaries(0) { for(int i=0; i<ITK_MAX_THREADS; i++) m_IntegralOverDetector[i] = 0.; }
+  VAccumulation(): m_NumberOfPrimaries(0) { for(int i=0; i<ITK_MAX_THREADS; i++) {m_IntegralOverDetector[i] = 0.; m_SquaredIntegralOverDetector[i] = 0.;} }
 
   bool operator!=( const VAccumulation & ) const
   {
@@ -198,6 +198,16 @@ public:
     return result;
   }
 
+  double GetSquaredIntegralOverDetectorAndReset()
+  {
+    double result = 0.;
+    for(int i=0; i<ITK_MAX_THREADS; i++){
+      result += m_SquaredIntegralOverDetector[i];
+      m_SquaredIntegralOverDetector[i] = 0.;
+    }
+    return result;
+  }
+
   void SetNumberOfPrimaries(G4int i) { m_NumberOfPrimaries = i; }
   void SetResponseDetector(GateEnergyResponseFunctor *_arg){ m_ResponseDetector = _arg; }
 
@@ -208,6 +218,7 @@ protected:
   {
     input += valueToAccumulate;
     m_IntegralOverDetector[threadId] += valueToAccumulate;
+    m_SquaredIntegralOverDetector[threadId] += valueToAccumulate * valueToAccumulate;
   }
 
   VectorType                    m_VolumeSpacing;
@@ -216,6 +227,7 @@ protected:
   MaterialMuImageType::Pointer  m_MaterialMu;
   VectorType                    m_DetectorOrientationTimesPixelSurface;
   double                        m_IntegralOverDetector[ITK_MAX_THREADS];
+  double                        m_SquaredIntegralOverDetector[ITK_MAX_THREADS];
   G4int                         m_NumberOfPrimaries;
   GateEnergyResponseFunctor    *m_ResponseDetector;
   std::vector<double>           m_EnergyList;
