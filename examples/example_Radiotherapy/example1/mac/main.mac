@@ -49,8 +49,6 @@
 #=====================================================
 
 /gate/physics/addPhysicsList QGSP_BERT_HP_EMY
-#/control/execute mac/physicslist_EM_std.mac
-#/control/execute mac/physicslist_HAD_std.mac
 
 /gate/physics/displayCuts
 /gate/physics/print output/physics.txt
@@ -123,34 +121,34 @@
 #=====================================================
 
 # Carbon 12 beam
-/gate/source/addSource               C12     gps
-/gate/source/C12/gps/particle        ion
-/gate/source/C12/gps/ion             6 12
-/gate/source/C12/gps/ene/type        Mono
-/gate/source/C12/gps/ene/mono        2314.24 MeV
-/gate/source/C12/gps/pos/type        Beam
-/gate/source/C12/gps/pos/shape       Circle
-/gate/source/C12/gps/pos/sigma_x     2.0 mm
-/gate/source/C12/gps/pos/sigma_y     2.0 mm
-/gate/source/C12/gps/ang/type        beam2d
-/gate/source/C12/gps/ang/sigma_x     0 deg
-/gate/source/C12/gps/ang/sigma_y     0 deg
-/gate/source/C12/gps/pos/centre      0.0 0.0 30.0  cm
+#/gate/source/addSource               C12     gps
+#/gate/source/C12/gps/particle        ion
+#/gate/source/C12/gps/ion             6 12
+#/gate/source/C12/gps/ene/type        Mono
+#/gate/source/C12/gps/ene/mono        2314.24 MeV
+#/gate/source/C12/gps/pos/type        Beam
+#/gate/source/C12/gps/pos/shape       Circle
+#/gate/source/C12/gps/pos/sigma_x     2.0 mm
+#/gate/source/C12/gps/pos/sigma_y     2.0 mm
+#/gate/source/C12/gps/ang/type        beam2d
+#/gate/source/C12/gps/ang/sigma_x     0 deg
+#/gate/source/C12/gps/ang/sigma_y     0 deg
+#/gate/source/C12/gps/pos/centre      0.0 0.0 30.0  cm
 
 # Proton beam
-# /gate/source/addSource                prot     gps
-# /gate/source/prot/gps/particle        proton
-# /gate/source/prot/gps/ene/type        Gauss
-# /gate/source/prot/gps/ene/mono        150 MeV
-# /gate/source/prot/gps/ene/sigma       10. MeV
-# /gate/source/prot/gps/ang/type        cos
-# /gate/source/prot/gps/ang/type        beam1d
-# /gate/source/prot/gps/ang/sigma_r     0. deg
-# /gate/source/prot/gps/pos/type        Beam
-# /gate/source/prot/gps/pos/shape       Circle
-# /gate/source/prot/gps/pos/centre      0. 0. 30. cm
-# /gate/source/prot/gps/pos/radius      3. mm
-# /gate/source/prot/gps/pos/sigma_r     0.2 mm
+/gate/source/addSource                prot     gps
+/gate/source/prot/gps/particle        proton
+/gate/source/prot/gps/ene/type        Gauss
+/gate/source/prot/gps/ene/mono        150 MeV
+/gate/source/prot/gps/ene/sigma       10. MeV
+/gate/source/prot/gps/ang/type        cos
+/gate/source/prot/gps/ang/type        beam1d
+/gate/source/prot/gps/ang/sigma_r     0. deg
+/gate/source/prot/gps/pos/type        Beam
+/gate/source/prot/gps/pos/shape       Circle
+/gate/source/prot/gps/pos/centre      0. 0. 30. cm
+/gate/source/prot/gps/pos/radius      3. mm
+/gate/source/prot/gps/pos/sigma_r     0.2 mm
 
 #=====================================================
 # START BEAMS

@@ -1,0 +1,27 @@
+#################### Mode 1: Discrete Spectrum ####################
+/gate/source/addSource spectrumLine gps 
+/gate/source/spectrumLine/gps/particle gamma
+/gate/source/spectrumLine/gps/energytype UserSpectrum 
+/gate/source/spectrumLine/gps/setSpectrumFile ../data/DiscreteSpectrum.txt
+/gate/source/spectrumLine/setIntensity 1
+#################### Mode 1: Discrete Spectrum ####################
+
+
+
+#################### Mode 2: Histogram ####################
+/gate/source/addSource histogram gps 
+/gate/source/histogram/gps/particle e-
+/gate/source/histogram/gps/energytype UserSpectrum 
+/gate/source/histogram/gps/setSpectrumFile ../data/Histogram.txt
+/gate/source/histogram/setIntensity 10
+#################### Mode 2: Histogram ####################
+
+
+
+#################### Mode 3: Linear interpolation spectrum ####################
+/gate/source/addSource interpolationSpectrum gps 
+/gate/source/interpolationSpectrum/gps/particle e-
+/gate/source/interpolationSpectrum/gps/energytype UserSpectrum 
+/gate/source/interpolationSpectrum/gps/setSpectrumFile ../data/InterpolationSpectrum.txt
+/gate/source/interpolationSpectrum/setIntensity 10
+#################### Mode 3: Linear interpolation spectrum ####################
