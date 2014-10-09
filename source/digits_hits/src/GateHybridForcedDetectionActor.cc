@@ -14,7 +14,6 @@
 // Gate
 #include "GateHybridForcedDetectionActor.hh"
 #include "GateMiscFunctions.hh"
-#include "GateScatterOrderTrackInformationActor.hh"
 #include "GateHybridForcedDetectionFunctors.hh"
 
 // G4
@@ -50,6 +49,9 @@ GateHybridForcedDetectionActor::GateHybridForcedDetectionActor(G4String name, G4
   mWaterLUTMaterial("G4_WATER"),
   mNoisePrimary(0),
   mInputRTKGeometryFilename(""),
+  mRussianRouletteNumberOfEnergyBins(4),
+  mRussianRouletteMaxNumberOfOrders(2),
+  mRussianRouletteMaxKey(mRussianRouletteNumberOfEnergyBins*std::pow(int(PRIMARY)+1,mRussianRouletteMaxNumberOfOrders)),
   mRussianRouletteSpacing(20.),
   mRussianRouletteMinimumCountInRegion(10),
   mRussianRouletteMinimumProbability(0.0001),
@@ -140,14 +142,16 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   mEnergyResponseDetector.ReadResponseDetectorFile(mResponseFilename);
 
   // Create list of energies
-  double energyMax = 0.;
+  mMaxPrimaryEnergy = 0.;
+  mMinPrimaryEnergy = itk::NumericTraits<double>::max();
   std::vector<double> energyList;
   std::vector<double> energyWeightList;
   G4String st = mSource->GetEneDist()->GetEnergyDisType();
   if (st == "Mono") {
     energyList.push_back(mSource->GetEneDist()->GetMonoEnergy());
     energyWeightList.push_back(mEnergyResponseDetector(energyList.back()));
-    energyMax = std::max(energyMax, energyList.back());
+    mMaxPrimaryEnergy = std::max(mMaxPrimaryEnergy, energyList.back());
+    mMinPrimaryEnergy = std::min(mMinPrimaryEnergy, energyList.back());
   }
   else if (st == "User") { // histo
     G4PhysicsOrderedFreeVector h = mSource->GetEneDist()->GetUserDefinedEnergyHisto ();
@@ -159,9 +163,10 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       weightSum += energyWeightList.back();
       //noise is desactivated
       if(mNoisePrimary == 0) {
-	energyWeightList.back() *= mEnergyResponseDetector(energyList.back());
+        energyWeightList.back() *= mEnergyResponseDetector(energyList.back());
       }
-      energyMax = std::max(energyMax, energyList.back());
+      mMaxPrimaryEnergy = std::max(mMaxPrimaryEnergy, energyList.back());
+      mMinPrimaryEnergy = std::min(mMinPrimaryEnergy, energyList.back());
     }
     for(unsigned int i=0; i<h.GetVectorLength(); i++)
       energyWeightList[i] /= weightSum;
@@ -294,7 +299,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   mComptonProjector->GetProjectedValueAccumulation().SetResponseDetector( &mEnergyResponseDetector );
   mComptonProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
                                                                          1.*keV,
-                                                                         energyMax,
+                                                                         mMaxPrimaryEnergy,
                                                                          gate_image_volume);
   mComptonProjector->GetProjectedValueAccumulation().Init( mComptonProjector->GetNumberOfThreads() );
 
@@ -311,7 +316,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   mRayleighProjector->GetProjectedValueAccumulation().SetInterpolationWeights( mRayleighProjector->GetInterpolationWeightMultiplication().GetInterpolationWeights() );
   mRayleighProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
                                                                          1.*keV,
-                                                                         energyMax,
+                                                                         mMaxPrimaryEnergy,
                                                                          gate_image_volume);
   mRayleighProjector->GetProjectedValueAccumulation().Init( mRayleighProjector->GetNumberOfThreads() );
 
@@ -328,7 +333,7 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   mFluorescenceProjector->GetProjectedValueAccumulation().SetInterpolationWeights( mFluorescenceProjector->GetInterpolationWeightMultiplication().GetInterpolationWeights() );
   mFluorescenceProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
                                                                          1.*keV,
-                                                                         energyMax,
+                                                                         mMaxPrimaryEnergy,
                                                                          gate_image_volume);
   mFluorescenceProjector->GetProjectedValueAccumulation().Init( mFluorescenceProjector->GetNumberOfThreads() );
 
@@ -374,14 +379,9 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
       mEventImage[ProcessType(i)] = CreateVoidProjectionImage();
   }
 
-  if(mSecondPassPrefix != "") {
-    for(unsigned int i=0; i<PRIMARY; i++)
-      {
-      mRussianRouletteImages[ProcessType(i)]        = CreateRussianRouletteVoidImage();
-      mRussianRouletteSquaredImages[ProcessType(i)] = CreateRussianRouletteVoidImage();
-      mRussianRouletteCountImages[ProcessType(i)]   = CreateRussianRouletteVoidImage();
-      }
-  }
+  mRussianRouletteImages.clear();
+  mRussianRouletteSquaredImages.clear();
+  mRussianRouletteCountImages.clear();
 }
 //-----------------------------------------------------------------------------
 
@@ -390,39 +390,42 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
 {
   // Compute sum of variance per process
-  std::map<ProcessType, G4double> varPerProcess;
+//  std::map<ProcessType, G4double> varPerProcess;
   if(mSecondPassPrefix != "") {
-    G4double maxVarPerProcess = 0.;
-    double invN = 1./mNumberOfEventsInRun;
-    for(unsigned int i=0; i<PRIMARY; i++) {
-      ProcessType p = ProcessType(i);
-      varPerProcess[p] = 0.;
-      itk::ImageRegionIterator<OutputImageType> itp(mProcessImage[p],
-                                                    mProcessImage[p]->GetBufferedRegion());
-      itk::ImageRegionIterator<OutputImageType> its(mSquaredImage[p],
-                                                    mSquaredImage[p]->GetBufferedRegion());
-      for(; !itp.IsAtEnd(); ++itp, ++its) {
-        varPerProcess[p] += its.Get()*invN - pow(itp.Get()*invN, 2.);
-      }
-      maxVarPerProcess = std::max(maxVarPerProcess, varPerProcess[p]);
+//    G4double maxVarPerProcess = 0.;
+//    double invN = 1./mNumberOfEventsInRun;
+    std::map<RussianRouletteImageKeyType, OutputImageType::Pointer>::iterator it;
+    for(it = mRussianRouletteImages.begin(); it != mRussianRouletteImages.end(); it++) {
+      RussianRouletteImageKeyType key = it->first;
+//    for(unsigned int i=0; i<PRIMARY; i++) {
+//      ProcessType p = ProcessType(i);
+//      varPerProcess[p] = 0.;
+//      itk::ImageRegionIterator<OutputImageType> itp(mProcessImage[p],
+//                                                    mProcessImage[p]->GetBufferedRegion());
+//      itk::ImageRegionIterator<OutputImageType> its(mSquaredImage[p],
+//                                                    mSquaredImage[p]->GetBufferedRegion());
+//      for(; !itp.IsAtEnd(); ++itp, ++its) {
+//        varPerProcess[p] += its.Get()*invN - pow(itp.Get()*invN, 2.);
+//      }
+//      maxVarPerProcess = std::max(maxVarPerProcess, varPerProcess[p]);
 
       // Compute survival probability image for Russian Roulette
       // Max of russian roulette image
-      mRussianRouletteProbabilityImages[p] = CreateRussianRouletteVoidImage();
-      itk::ImageRegionIterator<OutputImageType> itrri(mRussianRouletteImages[p],
-                                                      mRussianRouletteImages[p]->GetBufferedRegion());
-      itk::ImageRegionIterator<OutputImageType> itrrs(mRussianRouletteSquaredImages[p],
-                                                      mRussianRouletteSquaredImages[p]->GetBufferedRegion());
-      itk::ImageRegionIterator<OutputImageType> itrrp(mRussianRouletteProbabilityImages[p],
-                                                      mRussianRouletteProbabilityImages[p]->GetBufferedRegion());
+      mRussianRouletteProbabilityImages[key] = CreateRussianRouletteVoidImage();
+      itk::ImageRegionIterator<OutputImageType> itrri(mRussianRouletteImages[key],
+                                                      mRussianRouletteImages[key]->GetBufferedRegion());
+      itk::ImageRegionIterator<OutputImageType> itrrs(mRussianRouletteSquaredImages[key],
+                                                      mRussianRouletteSquaredImages[key]->GetBufferedRegion());
+      itk::ImageRegionIterator<OutputImageType> itrrp(mRussianRouletteProbabilityImages[key],
+                                                      mRussianRouletteProbabilityImages[key]->GetBufferedRegion());
       float maxRussian = 0.;
       for(itrri.GoToBegin(); !itrri.IsAtEnd(); ++itrri, ++itrrs, ++itrrp) {
         itrrp.Set( itrrs.Get() - itrri.Get() * itrri.Get() );
         maxRussian = std::max(maxRussian, itrrp.Get());
       }
 
-      itk::ImageRegionIterator<OutputImageType> itrrc(mRussianRouletteCountImages[p],
-                                                      mRussianRouletteCountImages[p]->GetBufferedRegion());
+      itk::ImageRegionIterator<OutputImageType> itrrc(mRussianRouletteCountImages[key],
+                                                      mRussianRouletteCountImages[key]->GetBufferedRegion());
       for(itrrp.GoToBegin(), itrrc.GoToBegin(); !itrrp.IsAtEnd(); ++itrrp, ++itrrc) {
         double survivalProba = 1.;
         if(itrrc.Get()>=mRussianRouletteMinimumCountInRegion) {
@@ -433,14 +436,14 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
         itrrp.Set(survivalProba);
       }
     }
-    // Normalize by max
-    for(unsigned int i=0; i<PRIMARY; i++) {
-      ProcessType p = ProcessType(i);
-      varPerProcess[p] /= maxVarPerProcess;
-      std::cout << "Process " << mMapTypeWithProcessName[p]
-                << " probability " << varPerProcess[p]
-                << std::endl;
-    }
+//    // Normalize by max
+//    for(unsigned int i=0; i<PRIMARY; i++) {
+//      ProcessType p = ProcessType(i);
+//      varPerProcess[p] /= maxVarPerProcess;
+//      std::cout << "Process " << mMapTypeWithProcessName[p]
+//                << " probability " << varPerProcess[p]
+//                << std::endl;
+//    }
   }
 
   // Save data
@@ -472,11 +475,15 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
       OutputImageType::IndexType idx;
 
       // Russian roulette
-      ProcessType pt = mMapProcessNameWithType[mInteractionProductionProcessStep];
-      mRussianRouletteProbabilityImages[pt]->TransformPhysicalPointToIndex(point, idx);
+//      RussianRouletteImageKeyType key = mMapProcessNameWithType[mInteractionProductionProcessStep];
+      RussianRouletteImageKeyType key = mInteractionChainCode;
+      if(mRussianRouletteProbabilityImages.find(key) == mRussianRouletteProbabilityImages.end())
+        continue; // Occurs when all interactions are tracked
+
+      mRussianRouletteProbabilityImages[key]->TransformPhysicalPointToIndex(point, idx);
       double survivalProba = 1.;
-      if(mRussianRouletteProbabilityImages[pt]->GetBufferedRegion().IsInside(idx))
-        survivalProba = mRussianRouletteProbabilityImages[pt]->GetPixel(idx) * varPerProcess[pt];
+      if(mRussianRouletteProbabilityImages[key]->GetBufferedRegion().IsInside(idx))
+        survivalProba = mRussianRouletteProbabilityImages[key]->GetPixel(idx); // * varPerProcess[key];
       if(G4UniformRand()>survivalProba) {
         mInteractionWeight = 0.;
       }
@@ -484,7 +491,7 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
         mInteractionWeight /= survivalProba;
 
         // Interaction survived, let's do the job
-        switch(pt) {
+        switch(mMapProcessNameWithType[mInteractionProductionProcessStep]) {
         case COMPTON:
           this->ForceDetectionOfInteraction<COMPTON>(mComptonProjector.GetPointer(),
                                                      mProcessImage[COMPTON]);
@@ -504,6 +511,7 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
       if(mSecondPassPhaseSpaceFile) mSecondPassPhaseSpace->Fill();
     }
     EndOfEventAction();
+    mRussianRouletteProbabilityImages.clear();
     std::swap(mNumberOfEventsInRun, backupNumberOfEventsInRun);
     SaveData(mSecondPassPrefix);
     std::swap(mGeometry, geoBackup);
@@ -513,9 +521,16 @@ void GateHybridForcedDetectionActor::EndOfRunAction(const G4Run*r)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateHybridForcedDetectionActor::BeginOfEventAction(const G4Event *itkNotUsed(e))
+void GateHybridForcedDetectionActor::BeginOfEventAction(const G4Event *e)
 {
   mNumberOfEventsInRun++;
+  if(e) {
+    mInteractionOrder = 0;
+    const G4double energy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy();
+    mInteractionChainCode = mRussianRouletteNumberOfEnergyBins * (energy-mMinPrimaryEnergy) / (mMaxPrimaryEnergy-mMinPrimaryEnergy);
+    mInteractionChainCode = std::max(mInteractionChainCode, 0);
+    mInteractionChainCode = std::min(mInteractionChainCode, mRussianRouletteNumberOfEnergyBins-1);
+  }
 
   if(mIsSecondarySquaredImageEnabled || mIsSecondaryUncertaintyImageEnabled) {
     // The event contribution are put in new images which at this point are in the
@@ -619,9 +634,6 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
   const G4VEmProcess *process = dynamic_cast<const G4VEmProcess*>(pr);
   if(!process) return;
 
-  GateScatterOrderTrackInformation * info = dynamic_cast<GateScatterOrderTrackInformation *>(step->GetTrack()->GetUserInformation());
-  int order = (info)?info->GetScatterOrder():-1;
-
   //FIXME: do we prefer this solution or computing the scattering function for the material?
   const G4MaterialCutsCouple *couple = step->GetPreStepPoint()->GetMaterialCutsCouple();
   const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
@@ -645,9 +657,6 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
 
       // Check if photon has been emitted
       if(nameSecondary==G4String("gamma")) {
-        GateScatterOrderTrackInformation * infoSecondary = dynamic_cast<GateScatterOrderTrackInformation *>((*list)[i]->GetUserInformation());
-        order = (info)?infoSecondary->GetScatterOrder():-1;
-
         ForceDetectionOfInteraction(GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID(),
                                     GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID(),
                                     step->GetTrack()->GetTrackID(),
@@ -660,8 +669,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
                                     (*list)[i]->GetKineticEnergy(),
                                     (*list)[i]->GetWeight(),
                                     step->GetPreStepPoint()->GetMaterial()->GetName(),
-                                    elm->GetZ(),
-                                    order);
+                                    elm->GetZ());
       }
     }
   }
@@ -678,8 +686,7 @@ void GateHybridForcedDetectionActor::UserSteppingAction(const GateVVolume * v,
                                 step->GetPreStepPoint()->GetKineticEnergy(),
                                 step->GetPostStepPoint()->GetWeight(),
                                 step->GetPreStepPoint()->GetMaterial()->GetName(),
-                                elm->GetZ(),
-                                order);
+                                elm->GetZ());
 }
 //-----------------------------------------------------------------------------
 
@@ -697,8 +704,7 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(G4int runID,
                                                                  double energy,
                                                                  double weight,
                                                                  G4String material,
-                                                                 int Z,
-                                                                 int order)
+                                                                 int Z)
 {
   // In case a root file is created, copy values to branched variables
   mInteractionPosition = pt;
@@ -714,7 +720,6 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(G4int runID,
   strcpy(mInteractionProductionProcessStep, processName.c_str());
   strcpy(mInteractionVolume, interVol.c_str());
   strcpy(mInteractionMaterial, material.c_str());
-  mInteractionOrder = order;
 
   if(mMapProcessNameWithType.find(processName) == mMapProcessNameWithType.end())  {
     GateWarning("Unhandled gamma interaction in GateHybridForcedDetectionActor. Process name is "
@@ -722,6 +727,13 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(G4int runID,
     return;
   }
   else {
+    mInteractionOrder++;
+
+    // Encode interaction chain
+    mInteractionChainCode += mRussianRouletteNumberOfEnergyBins * std::pow(PRIMARY+1, mInteractionOrder-1) *
+                             (mMapProcessNameWithType[processName]+1);
+    mInteractionChainCode = std::min(mInteractionChainCode, mRussianRouletteMaxKey);
+
     switch(mMapProcessNameWithType[processName]) {
     case COMPTON:
       this->ForceDetectionOfInteraction<COMPTON>(mComptonProjector.GetPointer(),
@@ -785,27 +797,37 @@ void GateHybridForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType 
   double totSq = projector->GetProjectedValueAccumulation().GetSquaredIntegralOverDetectorAndReset();
   if(mSecondPassPrefix != "") {
     OutputImageType::IndexType idx;
-    ProcessType pt = mMapProcessNameWithType[mInteractionProductionProcessStep];
-    mRussianRouletteImages[pt]->TransformPhysicalPointToIndex(point, idx);
-    if(mRussianRouletteImages[pt]->GetBufferedRegion().IsInside(idx)) {
-      mRussianRouletteImages[pt]->SetPixel(idx,
-                                           mRussianRouletteImages[pt]->GetPixel(idx) + mInteractionTotalContribution);
-      mRussianRouletteSquaredImages[pt]->SetPixel(idx,
-                                                  mRussianRouletteSquaredImages[pt]->GetPixel(idx) + totSq);
-      mRussianRouletteCountImages[pt]->SetPixel(idx,
-                                                mRussianRouletteCountImages[pt]->GetPixel(idx) + 1.);
+    //RussianRouletteImageKeyType key = mMapProcessNameWithType[mInteractionProductionProcessStep];
+    RussianRouletteImageKeyType key = mInteractionChainCode;
+
+    // Allocate Russian Roulette images if required
+    if(mRussianRouletteImages.find(key) == mRussianRouletteImages.end())  {
+      mRussianRouletteImages[key]        = CreateRussianRouletteVoidImage();
+      mRussianRouletteSquaredImages[key] = CreateRussianRouletteVoidImage();
+      mRussianRouletteCountImages[key]   = CreateRussianRouletteVoidImage();
+    }
+
+    // Update with the interaction
+    mRussianRouletteImages[key]->TransformPhysicalPointToIndex(point, idx);
+    if(mRussianRouletteImages[key]->GetBufferedRegion().IsInside(idx)) {
+      mRussianRouletteImages[key]->SetPixel(idx,
+                                           mRussianRouletteImages[key]->GetPixel(idx) + mInteractionTotalContribution);
+      mRussianRouletteSquaredImages[key]->SetPixel(idx,
+                                                  mRussianRouletteSquaredImages[key]->GetPixel(idx) + totSq);
+      mRussianRouletteCountImages[key]->SetPixel(idx,
+                                                mRussianRouletteCountImages[key]->GetPixel(idx) + 1.);
     }
   }
 
   // Scatter order
-  if(mInteractionOrder>=0)
+  if(mPerOrderImagesBaseName != "")
   {
-    while(mInteractionOrder>=(int)mPerOrderImages[VProcess].size())
+    while(mInteractionOrder>(int)mPerOrderImages[VProcess].size())
       mPerOrderImages[VProcess].push_back( CreateVoidProjectionImage() );
-    projector->SetInput(mPerOrderImages[VProcess][mInteractionOrder]);
+    projector->SetInput(mPerOrderImages[VProcess][mInteractionOrder-1]);
     TRY_AND_EXIT_ON_ITK_EXCEPTION(projector->Update());
-    mPerOrderImages[VProcess][mInteractionOrder] = projector->GetOutput();
-    mPerOrderImages[VProcess][mInteractionOrder]->DisconnectPipeline();
+    mPerOrderImages[VProcess][mInteractionOrder-1] = projector->GetOutput();
+    mPerOrderImages[VProcess][mInteractionOrder-1]->DisconnectPipeline();
   }
 }
 //-----------------------------------------------------------------------------
@@ -920,9 +942,9 @@ void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
         TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
       }
 
-      for(unsigned int k = 1; k<mPerOrderImages[pt].size(); k++)
+      for(unsigned int k = 0; k<mPerOrderImages[pt].size(); k++)
       {
-        sprintf(filename, AddPrefix(prefix,"output/" + mMapTypeWithProcessName[pt] + "%04d_order%02d.mha").c_str(), rID, k);
+        sprintf(filename, AddPrefix(prefix, mPerOrderImagesBaseName + mMapTypeWithProcessName[pt] + "%04d_order%02d.mha").c_str(), rID, k);
         imgWriter->SetFileName(filename);
         imgWriter->SetInput(mPerOrderImages[pt][k]);
         TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
@@ -1012,34 +1034,37 @@ void GateHybridForcedDetectionActor::SaveData(const G4String prefix)
   if(mRussianRouletteFilename) {
     G4String f = mRussianRouletteFilename;
     if(mSecondPassPrefix != "") {
-      for(unsigned int i=0; i<PRIMARY; i++)
-        {
-        ProcessType pt = ProcessType(i);
-        if(mProcessImageFilenames[pt] == "")
-          continue;
+      std::map<RussianRouletteImageKeyType, OutputImageType::Pointer>::iterator it;
+      for(it = mRussianRouletteImages.begin(); it != mRussianRouletteImages.end(); it++) {
+        RussianRouletteImageKeyType key = it->first;
+        //RussianRouletteImageKeyType key = ProcessType(i);
+
+        sprintf(filename, "%08d-", key);
 
         G4String base = G4String(removeExtension(f));
         G4String ext = G4String(getExtension(f));
         imgWriter->SetFileName(AddPrefix(prefix,
-                               AddPrefix(mMapTypeWithProcessName[pt]+'-', f)));
-        imgWriter->SetInput(mRussianRouletteImages[pt]);
+                               AddPrefix(filename, f)));
+        imgWriter->SetInput(mRussianRouletteImages[key]);
         TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
 
         imgWriter->SetFileName(AddPrefix(prefix,
-                               AddPrefix(mMapTypeWithProcessName[pt]+'-', base + "-Squared." + ext)));
-        imgWriter->SetInput(mRussianRouletteSquaredImages[pt]);
+                               AddPrefix(filename, base + "-Squared." + ext)));
+        imgWriter->SetInput(mRussianRouletteSquaredImages[key]);
         TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
 
         imgWriter->SetFileName(AddPrefix(prefix,
-                               AddPrefix(mMapTypeWithProcessName[pt]+'-', base + "-Count." + ext)));
-        imgWriter->SetInput(mRussianRouletteCountImages[pt]);
+                               AddPrefix(filename, base + "-Count." + ext)));
+        imgWriter->SetInput(mRussianRouletteCountImages[key]);
         TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
 
-        imgWriter->SetFileName( AddPrefix(prefix,
-                                AddPrefix(mMapTypeWithProcessName[pt]+'-', base + "-Probability." + ext)));
-        imgWriter->SetInput(mRussianRouletteProbabilityImages[pt]);
-        TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+        if(mRussianRouletteProbabilityImages.find(key) != mRussianRouletteProbabilityImages.end())  {
+          imgWriter->SetFileName( AddPrefix(prefix,
+                                  AddPrefix(filename, base + "-Probability." + ext)));
+          imgWriter->SetInput(mRussianRouletteProbabilityImages[key]);
+          TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
         }
+      }
     }
   }
 }
@@ -1552,6 +1577,7 @@ GateHybridForcedDetectionActor::CreatePhaseSpace(const G4String phaseSpaceFilena
   //  phaseSpace->Branch("Material", mInteractionMaterial, "Material/C");
   phaseSpace->Branch("MaterialZ", &mInteractionZ, "MaterialZ/I");
   phaseSpace->Branch("Order", &mInteractionOrder, "Order/I");
+  phaseSpace->Branch("InteractionCode", &mInteractionChainCode, "InteractionCode/I");
 }
 //-----------------------------------------------------------------------------
 #endif

@@ -140,7 +140,7 @@ public:
                                    G4String processName, G4String interVol,
                                    G4ThreeVector pt, G4ThreeVector dir,
                                    double energy, double weight,
-                                   G4String material, int Z, int order);
+                                   G4String material, int Z);
   template <ProcessType VProcess, class TProjectorType>
   void ForceDetectionOfInteraction(TProjectorType *projector,
                                    InputImageType::Pointer &input);
@@ -159,6 +159,7 @@ protected:
   G4String mResponseFilename;
   G4String mFlatFieldFilename;
   G4String mSecondaryFilename;
+  G4String mPerOrderImagesBaseName;
   bool mIsSecondarySquaredImageEnabled;
   bool mIsSecondaryUncertaintyImageEnabled;
   G4String mTotalFilename;
@@ -167,6 +168,9 @@ protected:
 
   //parameter for statistical noise
   G4int   mNoisePrimary; 
+
+  G4double mMinPrimaryEnergy;
+  G4double mMaxPrimaryEnergy;
 
   G4ThreeVector mDetectorResolution;
   GateEnergyResponseFunctor mEnergyResponseDetector;
@@ -252,6 +256,7 @@ protected:
   Char_t        mInteractionMaterial[256];
   int           mInteractionZ;
   int           mInteractionOrder;
+  int           mInteractionChainCode;
 
   // Water equivalent conversion
   void CreateWaterLUT(const std::vector<double> &energyList,
@@ -266,10 +271,15 @@ protected:
   G4String mSecondPassPrefix;
   G4String mRussianRouletteFilename;
   G4ThreeVector mSecondPassDetectorResolution;
-  std::map<ProcessType, OutputImageType::Pointer> mRussianRouletteImages;
-  std::map<ProcessType, OutputImageType::Pointer> mRussianRouletteSquaredImages;
-  std::map<ProcessType, OutputImageType::Pointer> mRussianRouletteCountImages;
-  std::map<ProcessType, OutputImageType::Pointer> mRussianRouletteProbabilityImages;
+  typedef int RussianRouletteImageKeyType;
+  //typedef ProcessType RussianRouletteImageKeyType;
+  std::map<RussianRouletteImageKeyType, OutputImageType::Pointer> mRussianRouletteImages;
+  std::map<RussianRouletteImageKeyType, OutputImageType::Pointer> mRussianRouletteSquaredImages;
+  std::map<RussianRouletteImageKeyType, OutputImageType::Pointer> mRussianRouletteCountImages;
+  std::map<RussianRouletteImageKeyType, OutputImageType::Pointer> mRussianRouletteProbabilityImages;
+  G4int mRussianRouletteNumberOfEnergyBins;
+  G4int mRussianRouletteMaxNumberOfOrders;
+  RussianRouletteImageKeyType mRussianRouletteMaxKey;
   G4double mRussianRouletteSpacing;
   G4int mRussianRouletteMinimumCountInRegion;
   G4double mRussianRouletteMinimumProbability;
