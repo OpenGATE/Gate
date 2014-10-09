@@ -48,6 +48,7 @@ GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( na
   mIsInitialized=false;
   mConvergentSource=false;
   mSelectedLayerID = -1; // all layer selected by default
+  mSelectedSpot = -1; // all spots selected by default
 }
 //------------------------------------------------------------------------------------------------------
 
@@ -270,7 +271,10 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                         bool allowedLayer = true;
                         if ((mSelectedLayerID != -1) && (currentLayerID != mSelectedLayerID)) allowedLayer = false;
 
-                        if (allowedField && allowedLayer) { // loading the spots only for allowed fields
+                        bool allowedSpot = true;
+                        if ((mSelectedSpot != -1) && (k != mSelectedSpot)) allowedSpot = false;
+
+                        if (allowedField && allowedLayer && allowedSpot) { // loading the spots only for allowed fields
                             GateSourcePencilBeam *Pencil = new GateSourcePencilBeam ("PencilBeam");
                             //Particle Type
                             Pencil->SetParticleType(mParticleType);

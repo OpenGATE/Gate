@@ -64,6 +64,8 @@ class GateSourceTPSPencilBeamMessenger: public GateVSourceMessenger
     G4UIcmdWithABool* pDivergenceCmd;
     //Selection of one layer
     G4UIcmdWithAnInteger * pSelectLayerIDCmd;
+    //Selection of one spot
+    G4UIcmdWithAnInteger * pSelectSpotCmd;
 };
 
 #endif
