@@ -31,7 +31,6 @@
 #include <rtkMacro.h>
 
 // itk
-#include <itkImportImageFilter.h>
 #include <itkChangeInformationImageFilter.h>
 #include <itkMultiplyImageFilter.h>
 #include <itkConstantPadImageFilter.h>
@@ -1247,13 +1246,13 @@ GateHybridForcedDetectionActor::ConvertGateImageToITKImage(GateVImageVolume * ga
   }
   region.SetSize(size);
 
-  itk::ImportImageFilter<InputPixelType, Dimension>::Pointer import;
-  import = itk::ImportImageFilter<InputPixelType, Dimension>::New();
-  import->SetRegion(region);
-  import->SetImportPointer(&*(gateImg->begin()), gateImg->GetNumberOfValues(), false);
-  import->SetSpacing(spacing);
-  import->SetOrigin(origin);
-  TRY_AND_EXIT_ON_ITK_EXCEPTION(import->Update());
+  if(mGateToITKImageFilter.GetPointer() == NULL)
+    mGateToITKImageFilter = rtk::ImportImageFilter<InputImageType>::New();
+  mGateToITKImageFilter->SetRegion(region);
+  mGateToITKImageFilter->SetImportPointer(&*(gateImg->begin()), gateImg->GetNumberOfValues(), false);
+  mGateToITKImageFilter->SetSpacing(spacing);
+  mGateToITKImageFilter->SetOrigin(origin);
+  TRY_AND_EXIT_ON_ITK_EXCEPTION(mGateToITKImageFilter->Update());
 
   // Get world material
   std::vector<G4Material*> mat;
@@ -1267,11 +1266,10 @@ GateHybridForcedDetectionActor::ConvertGateImageToITKImage(GateVImageVolume * ga
   border.Fill(1);
   pad->SetPadBound(border);
   pad->SetConstant(worldMat);
-  pad->SetInput(import->GetOutput());
+  pad->SetInput(mGateToITKImageFilter->GetOutput());
   TRY_AND_EXIT_ON_ITK_EXCEPTION(pad->Update());
 
   InputImageType::Pointer output = pad->GetOutput();
-  output->DisconnectPipeline();
   return output;
 }
 //-----------------------------------------------------------------------------

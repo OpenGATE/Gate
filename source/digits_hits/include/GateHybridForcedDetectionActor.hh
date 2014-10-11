@@ -40,6 +40,7 @@
 // rtk
 #include <rtkConstantImageSource.h>
 #include <rtkReg23ProjectionGeometry.h>
+#include <rtkImportImageFilter.h>
 
 //-----------------------------------------------------------------------------
 
@@ -179,6 +180,7 @@ protected:
   rtk::ThreeDCircularProjectionGeometry::Pointer mInputGeometry;
   GeometryType::Pointer mGeometry;
   InputImageType::Pointer mGateVolumeImage;
+  rtk::ImportImageFilter<InputImageType>::Pointer mGateToITKImageFilter;
   InputImageType::Pointer mPrimaryImage;
   InputImageType::Pointer mFlatFieldImage;
   std::map<ProcessType, InputImageType::Pointer> mProcessImage;
