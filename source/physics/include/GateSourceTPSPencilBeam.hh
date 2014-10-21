@@ -74,6 +74,8 @@ public:
   //MU to Protons conversion
   void SelectLayerID (int layerID) { mSelectedLayerID = layerID;}
   //MU to Protons conversion
+  void SelectSpot (int spot) { mSelectedSpot = spot;}
+  //MU to Protons conversion
   double ConvertMuToProtons(double weight, double energy);
   //select beam descriptionfile
   void SetSourceDescriptionFile(G4String FileName){mSourceDescriptionFile=FileName; mIsASourceDescriptionFile=true;}
@@ -83,6 +85,7 @@ public:
   void SetSpotIntensity(bool b) {mSpotIntensityAsNbProtons=b;}
   //Convergent or divergent beam model
   void SetBeamConvergence(bool c) {mConvergentSource=c;}
+  int GetCurrentSpotID() {return mCurrentSpot;}
 
 protected:
 
@@ -121,6 +124,7 @@ protected:
   //Convergent or divergent beam model
   bool mConvergentSource;
   int mSelectedLayerID;
+  int mSelectedSpot;
 };
 //------------------------------------------------------------------------------------------------------
 

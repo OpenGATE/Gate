@@ -485,6 +485,7 @@ double GateMaterialMuHandler::ProcessOneShot(G4VEmModel *model,std::vector<G4Dyn
   double energy = 0.;
   for(unsigned s=0; s<secondaries->size(); s++) {
     if((*secondaries)[s]->GetParticleDefinition()->GetParticleName() == "gamma") { energy += (*secondaries)[s]->GetKineticEnergy(); }
+    delete (*secondaries)[s];
   }
   
   return energy;
