@@ -149,6 +149,10 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                         inFile.getline(oneline, MAXLINE);
                         double SpotParameters[3];
                         ReadLineTo3Doubles(SpotParameters, oneline);
+
+                        //If a spot has zero weight, we can drop it. This implementation doesn't assume any structure of the RTplan, so that it should cope not only with CPI pairs.
+                        if (SpotParameters[2]==0.) continue;
+
                         if (mTestFlag) {
                             G4cout << "TESTREAD Spot N° " << k << "    parameters: " << SpotParameters[0] << " " << SpotParameters[1] << " " << SpotParameters[2] << G4endl;
                         }
