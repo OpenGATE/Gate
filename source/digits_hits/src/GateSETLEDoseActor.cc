@@ -109,7 +109,7 @@ void GateSETLEDoseActor::Construct() {
 //   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxelSize << G4endl);
       
   // Total dose map initialisation
-  mDoseFilename = G4String(removeExtension(mSaveFilename))+"-totalDose."+G4String(getExtension(mSaveFilename));
+  mDoseFilename = G4String(removeExtension(mSaveFilename))+"-Dose."+G4String(getExtension(mSaveFilename));
   if (mIsDoseImageEnabled)
   {
     mDoseImage.EnableSquaredImage(false);
