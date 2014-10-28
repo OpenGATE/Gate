@@ -25,5 +25,6 @@
 typedef GateImageT<float> GateImage;
 typedef GateImageT<float> GateImageFloat;
 typedef GateImageT<double> GateImageDouble;
+typedef GateImageT<int> GateImageInt;
 
 #endif

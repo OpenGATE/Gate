@@ -49,12 +49,19 @@ void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * ima
   es[1] = image->GetVoxelSize().y();
   es[2] = image->GetVoxelSize().z();
   bool done=false;
+  bool convertDoubleFlag=false;
   if (typeid(PixelType) == typeid(float)) {
     m_MetaImage.InitializeEssential(3, ds, es, MET_FLOAT);
     done=true;
   }
   if (typeid(PixelType) == typeid(double)) {
-    m_MetaImage.InitializeEssential(3, ds, es, MET_DOUBLE);
+    //m_MetaImage.InitializeEssential(3, ds, es, MET_DOUBLE);
+    m_MetaImage.InitializeEssential(3, ds, es, MET_FLOAT);
+    convertDoubleFlag = true;
+    done=true;
+  }
+  if (typeid(PixelType) == typeid(int)) {
+    m_MetaImage.InitializeEssential(3, ds, es, MET_INT);
     done=true;
   }
   if (!done) {
@@ -82,7 +89,18 @@ void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * ima
   m_MetaImage.TransformMatrix(matrix);
 
   if (writeData) {
-    m_MetaImage.ElementData(&(image->begin()[0]), false); // true = autofree
+    if (convertDoubleFlag) {
+      std::vector<float> d(image->GetNumberOfValues());
+      PixelType * p = &(image->begin()[0]);
+      for(unsigned int i=0; i<image->GetNumberOfValues(); i++) {
+        d[i] = (float)(*p); // cast into float
+        ++p;
+      }
+      m_MetaImage.ElementData(&(d[0]), false); // true = autofree
+    }
+    else {
+      m_MetaImage.ElementData(&(image->begin()[0]), false); // true = autofree
+    }
     m_MetaImage.Write(headName.c_str(), dataName.c_str());
   }
   else {

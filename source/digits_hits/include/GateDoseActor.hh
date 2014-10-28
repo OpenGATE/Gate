@@ -98,8 +98,8 @@ protected:
   GateImageWithStatistic mEdepImage;
   GateImageWithStatistic mDoseImage;
   GateImageWithStatistic mDoseToWaterImage;
-  GateImage mNumberOfHitsImage;
-  GateImage mLastHitEventImage;
+  GateImageInt mNumberOfHitsImage;
+  GateImageInt mLastHitEventImage;
 
   G4String mEdepFilename;
   G4String mDoseFilename;
