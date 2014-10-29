@@ -29,14 +29,20 @@
 #include "GateConfiguration.h"
 
 #ifdef G4ANALYSIS_USE_ROOT
+
+// gate
 #include "GateSourcePencilBeam.hh"
+
+// g4
 #include "G4Proton.hh"
 #include "G4Tokenizer.hh"
+#include "G4UnitsTable.hh"
+
+// std
 #include <iostream>
-//#include "TMath.h"
 
 GateSourcePencilBeam::GateSourcePencilBeam(G4String name ):GateVSource( name ), mGaussian2DYPhi(NULL), mGaussian2DXTheta(NULL), mGaussianEnergy(NULL)
-{ 
+{
   //Particle Type
   strcpy(mParticleType,"proton");
   mWeight=1.;
@@ -123,6 +129,8 @@ void GateSourcePencilBeam::SetIonParameter(G4String ParticleParameters){
 //------------------------------------------------------------------------------------------------------
 void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
 {
+  static G4ParticleDefinition* particle_definition;
+
   if (!mIsInitialized){
     // get GATE (initialized) random engine
     CLHEP::HepRandomEngine *engine = GateRandomEngine::GetInstance()->GetRandomEngine();
@@ -217,6 +225,22 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     mGaussian2DYPhi = new RandMultiGauss(engine,mUYPhi,mSYPhi);
 
     //---------INITIALIZATION - END-----------------------
+
+
+    G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+
+    string parttype=mParticleType;
+    if ( parttype == "GenericIon" ){
+      particle_definition=  particleTable->GetIon( mAtomicNumber, mAtomicMass, mIonExciteEnergy);
+      //G4cout<<G4endl<<G4endl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon"<<G4endl;
+      //G4cout<<mAtomicNumber<<"  "<<mAtomicMass<<"  "<<mIonCharge<<"  "<<mIonExciteEnergy<<G4endl;
+    }
+    else{
+      particle_definition = particleTable->FindParticle(mParticleType);
+      //G4cout<<G4endl<<G4endl<<"mParticleType  "<<mParticleType<<"     selected loop  other"<<G4endl;
+    }
+
+    if(particle_definition==0) return;
   }
 
   //=======================================================
@@ -284,6 +308,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
   //=======================================================
 
   //-------- PARTICLE GENERATION - START------------------
+  /*
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   G4ParticleDefinition* particle_definition;
 
@@ -299,6 +324,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
   }
 
   if(particle_definition==0) return;
+  */
 
   G4PrimaryVertex* vertex;
   //  G4ThreeVector particle_position = G4ThreeVector(Pos[0]*mm, Pos[1]*mm, Pos[2]*mm);
@@ -317,18 +343,28 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
   double pz = pmom*Dir[2]/dtot ;
 
   G4PrimaryParticle* particle =  new G4PrimaryParticle(particle_definition,px,py,pz);
-  vertex->SetPrimary( particle ); 
+  vertex->SetPrimary( particle );
   aEvent->AddPrimaryVertex( vertex );
   mCurrentParticleNumber++;
   //-------- PARTICLE GENERATION - END------------------
 }
 
 //------------------------------------------------------------------------------------------------------
-G4int GateSourcePencilBeam::GeneratePrimaries( G4Event* event ) 
+G4int GateSourcePencilBeam::GeneratePrimaries( G4Event* event )
 {
   GateMessage("Beam", 4, "GeneratePrimaries " << event->GetEventID() << G4endl);
   G4int numVertices = 0;
   GenerateVertex( event );
+
+  G4PrimaryParticle  * p = event->GetPrimaryVertex(0)->GetPrimary(0);
+  GateMessage("Beam", 5, "(" << event->GetEventID() << ") " << p->GetG4code()->GetParticleName()
+              << " pos=" << event->GetPrimaryVertex(0)->GetPosition()
+              << " weight=" << p->GetWeight()
+              << " energy=" <<  G4BestUnit(mEnergy, "Energy")
+              << " mom=" << p->GetMomentum()
+              << " ptime=" <<  G4BestUnit(p->GetProperTime(), "Time")
+              << " atime=" <<  G4BestUnit(GetTime(), "Time")
+              << ")" << G4endl);
 
   numVertices++;
   return numVertices;
