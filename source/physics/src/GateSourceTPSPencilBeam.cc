@@ -48,6 +48,7 @@ GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( na
   mIsInitialized=false;
   mConvergentSource=false;
   mSelectedLayerID = -1; // all layer selected by default
+  mSelectedSpot = -1; // all spots selected by default
 }
 //------------------------------------------------------------------------------------------------------
 
@@ -134,6 +135,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                     for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
                     int NbOfSpots = atof(oneline);
                     for (int i = 0; i < 1; i++) inFile.getline(oneline, MAXLINE);
+
                     if (mTestFlag) {
                         G4cout << "TESTREAD NbFields " << NbFields << G4endl;
                         G4cout << "TESTREAD TotalMeterSet " << TotalMeterSet << G4endl;
@@ -147,6 +149,10 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                         inFile.getline(oneline, MAXLINE);
                         double SpotParameters[3];
                         ReadLineTo3Doubles(SpotParameters, oneline);
+
+                        //If a spot has zero weight, we can drop it. This implementation doesn't assume any structure of the RTplan, so that it should cope not only with CPI pairs.
+                        if (SpotParameters[2]==0.) continue;
+
                         if (mTestFlag) {
                             G4cout << "TESTREAD Spot N° " << k << "    parameters: " << SpotParameters[0] << " " << SpotParameters[1] << " " << SpotParameters[2] << G4endl;
                         }
@@ -269,13 +275,19 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                         bool allowedLayer = true;
                         if ((mSelectedLayerID != -1) && (currentLayerID != mSelectedLayerID)) allowedLayer = false;
 
-                        if (allowedField && allowedLayer) { // loading the spots only for allowed fields
+                        bool allowedSpot = true;
+                        if ((mSelectedSpot != -1) && (k != mSelectedSpot)) allowedSpot = false;
+
+                        if (allowedField && allowedLayer && allowedSpot) { // loading the spots only for allowed fields
                             GateSourcePencilBeam *Pencil = new GateSourcePencilBeam ("PencilBeam");
                             //Particle Type
                             Pencil->SetParticleType(mParticleType);
                             //Energy
                             Pencil->SetEnergy(GetEnergy(energy));
                             Pencil->SetSigmaEnergy(GetSigmaEnergy(energy));
+
+                            //cerr << "Brent " << GetSigmaEnergy(energy) << " en " << GetEnergy(energy) <<endl;
+
                             //changed because obiously incorrect.
                             //Pencil->SetSigmaEnergy(GetSigmaEnergy(energy)*GetEnergy(energy)/100.);
                             //Weight
@@ -355,6 +367,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
     }
     //---------GENERATION - START-----------------------
     int bin = mTotalNumberOfSpots * mDistriGeneral->fire();
+    mCurrentSpot = bin;
     mPencilBeams[bin]->GenerateVertex(aEvent);
 }
 //---------GENERATION - END-----------------------
