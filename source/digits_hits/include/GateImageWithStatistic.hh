@@ -60,6 +60,7 @@ class GateImageWithStatistic
   virtual void UpdateUncertaintyImage(int numberOfEvents);
 
   GateVImage & GetValueImage() { return mValueImage; }
+  GateVImage & GetUncertaintyImage() { return mUncertaintyImage; }
 
   void SetOrigin(G4ThreeVector v);
   void SetOverWriteFilesFlag(bool b) { mOverWriteFilesFlag = b; }
