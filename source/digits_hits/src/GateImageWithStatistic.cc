@@ -258,8 +258,10 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
 
   if (mIsSquaredImageEnabled) {
     UpdateSquaredImage();
-    if(!mIsValuesMustBeScaled)  mSquaredImage.Write(mSquaredFilename);
-    else mScaledSquaredImage.Write(mSquaredFilename);
+    if (!mIsUncertaintyImageEnabled) { // only write if square enable and no uncertainty
+      if(!mIsValuesMustBeScaled)  mSquaredImage.Write(mSquaredFilename);
+      else mScaledSquaredImage.Write(mSquaredFilename);
+    }
   }
   if (mIsUncertaintyImageEnabled) {
     if (!mIsSquaredImageEnabled) UpdateSquaredImage();
