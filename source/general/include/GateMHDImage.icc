@@ -88,9 +88,10 @@ void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * ima
   }
   m_MetaImage.TransformMatrix(matrix);
 
+  std::vector<float> d;
   if (writeData) {
     if (convertDoubleFlag) {
-      std::vector<float> d(image->GetNumberOfValues());
+      d.resize(image->GetNumberOfValues());
       PixelType * p = &(image->begin()[0]);
       for(unsigned int i=0; i<image->GetNumberOfValues(); i++) {
         d[i] = (float)(*p); // cast into float
