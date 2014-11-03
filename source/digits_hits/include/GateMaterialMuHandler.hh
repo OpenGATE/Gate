@@ -19,7 +19,7 @@ See GATE/LICENSE.txt for further details
 #include "GatePhysicsList.hh"
 
 #include "G4UnitsTable.hh"
-#include "G4Material.hh"
+#include "G4MaterialCutsCouple.hh"
 #include "G4ParticleTable.hh"
 #include "G4LossTableManager.hh"
 
@@ -68,10 +68,10 @@ public:
 
 
   ~GateMaterialMuHandler();
-  double GetAttenuation(G4Material* material, double energy);
-  double GetMu(G4Material* material, double energy);
+  double GetMuEnOverRho(const G4MaterialCutsCouple *couple, double energy);
+  double GetMuOverRho(const G4MaterialCutsCouple *couple, double energy);
   
-  GateMuTable *GetMuTable(G4Material *);
+  GateMuTable *GetMuTable(const G4MaterialCutsCouple *);
   
   void SetElementsFolderName(G4String folder) { mElementsFolderName = folder; }
   void SetEMin(double e) { mEnergyMin = e; }
@@ -89,7 +89,7 @@ private:
   // - Precalculated coefficients (by element)
   void InitElementTable();
   void ReadElementFile(int z);
-  void ConstructMaterial(const G4Material *material);
+  void ConstructMaterial(const G4MaterialCutsCouple *material);
   // - Complete simulation of coefficients
   void SimulateMaterialTable();
   void ConstructEnergyList(std::vector<MuStorageStruct> *, const G4Material *);
@@ -97,7 +97,7 @@ private:
   double ProcessOneShot(G4VEmModel *,std::vector<G4DynamicParticle*> *, const G4MaterialCutsCouple *, const G4DynamicParticle *);
   double SquaredSigmaOnMean(double , double , double);
 
-  map<G4String, GateMuTable*> mMaterialTable;
+  map<const G4MaterialCutsCouple *, GateMuTable*> mCoupleTable;
   GateMuTable** mElementsTable;
   int mNbOfElements;
   G4String mElementsFolderName;
