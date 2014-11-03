@@ -210,6 +210,7 @@ void GateMaterialMuHandler::ConstructMaterial(const G4Material *material)
     GateMessage("Physic",3," " << energies[i] << " " << Mu[i] << " " << MuEn[i] << " " << G4endl);
     table->PutValue(i, log(energies[i]), log(Mu[i]), log(MuEn[i]));
   }
+  GateMessage("Physic",3," " << G4endl);
   
   mMaterialTable.insert(std::pair<G4String, GateMuTable*>(material->GetName(),table));
 
@@ -559,6 +560,7 @@ void GateMaterialMuHandler::MergeAtomicShell(std::vector<MuStorageStruct> *muSto
   {
     GateMessage("Physic",3," " << (*muStorage)[e].energy << " " << (*muStorage)[e].mu << " " << (*muStorage)[e].muen << G4endl);
   }
+  GateMessage("Physic",3," " << G4endl);
 }
 //-----------------------------------------------------------------------------
 
