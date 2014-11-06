@@ -28,6 +28,9 @@ GateMaterialMuHandler::GateMaterialMuHandler()
   mEnergyNumber = 40;
   mAtomicShellEnergyMin = 1. * keV;
   mPrecision = 0.01;
+  
+  mLastCouple = 0;
+  mLastMuTable = 0;
 }
 //-----------------------------------------------------------------------------
 
@@ -39,26 +42,62 @@ GateMaterialMuHandler::~GateMaterialMuHandler()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+void GateMaterialMuHandler::CheckLastCall(const G4MaterialCutsCouple* couple)
+{
+  if(!mIsInitialized) { Initialize(); }
+
+  if(couple != mLastCouple) {
+    mLastCouple = couple;
+    mLastMuTable = mCoupleTable[mLastCouple];
+  }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+double GateMaterialMuHandler::GetDensity(const G4MaterialCutsCouple* couple)
+{
+  CheckLastCall(couple);
+  return mLastMuTable->GetDensity();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 double GateMaterialMuHandler::GetMuEnOverRho(const G4MaterialCutsCouple* couple, double energy)
 {
-  if(!mIsInitialized) { Initialize(); }  
-  return mCoupleTable[couple]->GetMuEn(energy);
+  CheckLastCall(couple);
+  return mLastMuTable->GetMuEnOverRho(energy);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+double GateMaterialMuHandler::GetMuEn(const G4MaterialCutsCouple* couple, double energy)
+{
+  CheckLastCall(couple);
+  return mLastMuTable->GetMuEn(energy);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 double GateMaterialMuHandler::GetMuOverRho(const G4MaterialCutsCouple* couple, double energy)
 {
-  if(!mIsInitialized) { Initialize(); }
-  return mCoupleTable[couple]->GetMu(energy);
+  CheckLastCall(couple);
+  return mLastMuTable->GetMuOverRho(energy);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+double GateMaterialMuHandler::GetMu(const G4MaterialCutsCouple* couple, double energy)
+{
+  CheckLastCall(couple);
+  return mLastMuTable->GetMu(energy);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 GateMuTable *GateMaterialMuHandler::GetMuTable(const G4MaterialCutsCouple *couple)
 {
-  if(!mIsInitialized) { Initialize(); }
-  return mCoupleTable[couple];
+  CheckLastCall(couple);
+  return mLastMuTable;
 }
 //-----------------------------------------------------------------------------
 
@@ -206,7 +245,7 @@ void GateMaterialMuHandler::ConstructMaterial(const G4MaterialCutsCouple *couple
     }
   }
   
-  GateMuTable * table = new GateMuTable(material->GetName(), nb_e);
+  GateMuTable * table = new GateMuTable(couple, nb_e);
 
   GateMessage("Physic",3," " << G4endl);
   GateMessage("Physic",3," E(MeV)  mu(cm2/g)  muen(cm2/g)" << G4endl);
@@ -242,7 +281,7 @@ void GateMaterialMuHandler::ReadElementFile(int z)
   int nblines;
   fileMu >> nblines;
   fileMuEn >> nblines;
-  GateMuTable* table = new GateMuTable(string(), nblines);
+  GateMuTable* table = new GateMuTable(0, nblines);
   mElementsTable[z] = table;
   for(int j = 0; j < nblines; j++){
     double e, mu, muen;
@@ -464,7 +503,7 @@ void GateMaterialMuHandler::SimulateMaterialTable()
       MergeAtomicShell(&muStorage);
       
       // Fill mu,muen table for this material
-      GateMuTable *table = new GateMuTable(materialName, muStorage.size());
+      GateMuTable *table = new GateMuTable(couple, muStorage.size());
       GateMessage("Physic",3," " << G4endl);
       GateMessage("Physic",3," E(MeV)  mu(cm2/g)  muen(cm2/g)" << G4endl);
       for(unsigned int e=0; e<muStorage.size(); e++)

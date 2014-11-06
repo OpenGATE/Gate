@@ -68,9 +68,12 @@ public:
 
 
   ~GateMaterialMuHandler();
-  double GetMuEnOverRho(const G4MaterialCutsCouple *couple, double energy);
-  double GetMuOverRho(const G4MaterialCutsCouple *couple, double energy);
-  
+  double GetDensity(const G4MaterialCutsCouple *);
+  double GetMuEnOverRho(const G4MaterialCutsCouple *, double);
+  double GetMuEn(const G4MaterialCutsCouple *, double);
+  double GetMuOverRho(const G4MaterialCutsCouple *, double);
+  double GetMu(const G4MaterialCutsCouple *, double);
+
   GateMuTable *GetMuTable(const G4MaterialCutsCouple *);
   
   void SetElementsFolderName(G4String folder) { mElementsFolderName = folder; }
@@ -88,8 +91,8 @@ private:
   void Initialize();
   // - Precalculated coefficients (by element)
   void InitElementTable();
-  void ReadElementFile(int z);
-  void ConstructMaterial(const G4MaterialCutsCouple *material);
+  void ReadElementFile(int);
+  void ConstructMaterial(const G4MaterialCutsCouple *);
   // - Complete simulation of coefficients
   void SimulateMaterialTable();
   void ConstructEnergyList(std::vector<MuStorageStruct> *, const G4Material *);
@@ -110,6 +113,11 @@ private:
   double mPrecision;
 
   static GateMaterialMuHandler *singleton_MaterialMuHandler;
+  
+  // - fast acces
+  void CheckLastCall(const G4MaterialCutsCouple *);
+  const G4MaterialCutsCouple *mLastCouple;
+  GateMuTable *mLastMuTable;
 
 };
 
