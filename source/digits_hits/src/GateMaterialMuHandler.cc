@@ -25,9 +25,12 @@ GateMaterialMuHandler::GateMaterialMuHandler()
   mElementsFolderName = "NULL";
   mEnergyMin = 250. * eV;
   mEnergyMax = 1. * MeV;
-  mEnergyNumber = 25;
+  mEnergyNumber = 40;
   mAtomicShellEnergyMin = 1. * keV;
   mPrecision = 0.01;
+  
+  mLastCouple = 0;
+  mLastMuTable = 0;
 }
 //-----------------------------------------------------------------------------
 
@@ -39,39 +42,62 @@ GateMaterialMuHandler::~GateMaterialMuHandler()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateMaterialMuHandler::GetAttenuation(G4Material* material, double energy)
+void GateMaterialMuHandler::CheckLastCall(const G4MaterialCutsCouple* couple)
 {
-  if(!mIsInitialized) { Initialize(); }  
-  return mMaterialTable[material->GetName()]->GetMuEn(energy);
-  
-//   map<G4String, GateMuTable*>::iterator it = mMaterialTable.find(material->GetName());
-//   if(it == mMaterialTable.end()){
-//     AddMaterial(material);
-//   }
-//   
-//   return mMaterialTable[material->GetName()]->GetMuEn(energy);
+  if(!mIsInitialized) { Initialize(); }
+
+  if(couple != mLastCouple) {
+    mLastCouple = couple;
+    mLastMuTable = mCoupleTable[mLastCouple];
+  }
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateMaterialMuHandler::GetMu(G4Material* material, double energy)
+double GateMaterialMuHandler::GetDensity(const G4MaterialCutsCouple* couple)
 {
-  if(!mIsInitialized) { Initialize(); }
-  return mMaterialTable[material->GetName()]->GetMu(energy);
-  
-//   map<G4String, GateMuTable*>::iterator it = mMaterialTable.find(material->GetName());
-//   if(it == mMaterialTable.end()){
-//     AddMaterial(material);
-//   }
-//   return mMaterialTable[material->GetName()]->GetMu(energy);
+  CheckLastCall(couple);
+  return mLastMuTable->GetDensity();
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-GateMuTable *GateMaterialMuHandler::GetMuTable(G4Material *material)
+double GateMaterialMuHandler::GetMuEnOverRho(const G4MaterialCutsCouple* couple, double energy)
 {
-  if(!mIsInitialized) { Initialize(); }
-  return mMaterialTable[material->GetName()];
+  CheckLastCall(couple);
+  return mLastMuTable->GetMuEnOverRho(energy);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+double GateMaterialMuHandler::GetMuEn(const G4MaterialCutsCouple* couple, double energy)
+{
+  CheckLastCall(couple);
+  return mLastMuTable->GetMuEn(energy);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+double GateMaterialMuHandler::GetMuOverRho(const G4MaterialCutsCouple* couple, double energy)
+{
+  CheckLastCall(couple);
+  return mLastMuTable->GetMuOverRho(energy);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+double GateMaterialMuHandler::GetMu(const G4MaterialCutsCouple* couple, double energy)
+{
+  CheckLastCall(couple);
+  return mLastMuTable->GetMu(energy);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+GateMuTable *GateMaterialMuHandler::GetMuTable(const G4MaterialCutsCouple *couple)
+{
+  CheckLastCall(couple);
+  return mLastMuTable;
 }
 //-----------------------------------------------------------------------------
 
@@ -97,15 +123,31 @@ void GateMaterialMuHandler::Initialize()
     InitElementTable();
     
     G4ProductionCutsTable *productionCutList = G4ProductionCutsTable::GetProductionCutsTable();
-    G4String materialName;
-    map<G4String, GateMuTable*>::iterator it;
+    map<const G4MaterialCutsCouple *, GateMuTable *>::iterator it;
     
     for(unsigned int m=0; m<productionCutList->GetTableSize(); m++)
     {
-      const G4Material *material = productionCutList->GetMaterialCutsCouple(m)->GetMaterial();
-      materialName = material->GetName();
-      it = mMaterialTable.find(materialName);
-      if(it == mMaterialTable.end()) { ConstructMaterial(material); }
+      const G4MaterialCutsCouple *couple = productionCutList->GetMaterialCutsCouple(m);
+      it = mCoupleTable.find(couple);
+      if(it == mCoupleTable.end())
+      {
+	const G4Material *material = couple->GetMaterial();
+	bool materialNotExist = true;
+	map<const G4MaterialCutsCouple *, GateMuTable *>::iterator it2 = mCoupleTable.begin();
+
+	while(it2 != mCoupleTable.end())
+	{
+	  if(it2->first->GetMaterial() == material)
+	  {
+	    mCoupleTable.insert(std::pair<const G4MaterialCutsCouple *, GateMuTable *>(couple,it2->second));
+	    materialNotExist = false;
+	    break;
+	  }
+	  it2++;
+	}
+	
+	if(materialNotExist) { ConstructMaterial(couple); }
+      }
     }
   }
 
@@ -114,11 +156,12 @@ void GateMaterialMuHandler::Initialize()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateMaterialMuHandler::ConstructMaterial(const G4Material *material)
+void GateMaterialMuHandler::ConstructMaterial(const G4MaterialCutsCouple *couple)
 {
-  GateMessage("Physic",1,"Construction of mu/mu_en table for material : " << material->GetName() << G4endl);
+  const G4Material *material = couple->GetMaterial();
+  
+  GateMessage("Physic",1,"Construction of mu/mu_en table for " << material->GetName() << G4endl);
 
-  //const G4ElementVector* elements = material->GetElementVector();
   int nb_e = 0;
   int nb_of_elements = material->GetNumberOfElements();
   for(int i = 0; i < nb_of_elements; i++)
@@ -202,7 +245,7 @@ void GateMaterialMuHandler::ConstructMaterial(const G4Material *material)
     }
   }
   
-  GateMuTable * table = new GateMuTable(material->GetName(), nb_e);
+  GateMuTable * table = new GateMuTable(couple, nb_e);
 
   GateMessage("Physic",3," " << G4endl);
   GateMessage("Physic",3," E(MeV)  mu(cm2/g)  muen(cm2/g)" << G4endl);
@@ -210,8 +253,9 @@ void GateMaterialMuHandler::ConstructMaterial(const G4Material *material)
     GateMessage("Physic",3," " << energies[i] << " " << Mu[i] << " " << MuEn[i] << " " << G4endl);
     table->PutValue(i, log(energies[i]), log(Mu[i]), log(MuEn[i]));
   }
+  GateMessage("Physic",3," " << G4endl);
   
-  mMaterialTable.insert(std::pair<G4String, GateMuTable*>(material->GetName(),table));
+  mCoupleTable.insert(std::pair<const G4MaterialCutsCouple *, GateMuTable *>(couple,table));
 
   delete [] energies;
   delete [] index;
@@ -237,7 +281,7 @@ void GateMaterialMuHandler::ReadElementFile(int z)
   int nblines;
   fileMu >> nblines;
   fileMuEn >> nblines;
-  GateMuTable* table = new GateMuTable(string(), nblines);
+  GateMuTable* table = new GateMuTable(0, nblines);
   mElementsTable[z] = table;
   for(int j = 0; j < nblines; j++){
     double e, mu, muen;
@@ -285,7 +329,7 @@ void GateMaterialMuHandler::SimulateMaterialTable()
   double incidentEnergy;
   
   // - (mu ; muen) calculations 
-  map<G4String, GateMuTable*>::iterator it;
+  map<const G4MaterialCutsCouple *, GateMuTable *>::iterator it;
   double totalFluoPE;
   double totalFluoCS;
   double totalScatterCS;
@@ -316,10 +360,11 @@ void GateMaterialMuHandler::SimulateMaterialTable()
     const G4MaterialCutsCouple *couple = productionCutList->GetMaterialCutsCouple(m);
     const G4Material *material = couple->GetMaterial();
     materialName = material->GetName();
-    it = mMaterialTable.find(materialName);
-    if(it == mMaterialTable.end())
+    it = mCoupleTable.find(couple);
+    if(it == mCoupleTable.end())
     {
-      GateMessage("Physic",1,"Construction of mu/mu_en table for material : " << material->GetName() << G4endl);
+      double energyCutForGamma = productionCutList->ConvertRangeToEnergy(gamma,material,couple->GetProductionCuts()->GetProductionCut("gamma"));
+      GateMessage("Physic",1,"Construction of mu/mu_en table for " << material->GetName() << " with gammaCut = " << energyCutForGamma << " MeV" << G4endl);
 
       // Construc energy list (energy, atomicShellEnergy)
       ConstructEnergyList(&muStorage,material);
@@ -355,7 +400,6 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 
 	// Cross section calculation
 	double density = material->GetDensity() / (g/cm3);
-	double energyCutForGamma = productionCutList->ConvertRangeToEnergy(gamma,material,couple->GetProductionCuts()->GetProductionCut("gamma"));
 	crossSectionPE = 0.;
 	crossSectionCS = 0.;
 	crossSectionRS = 0.;
@@ -452,18 +496,23 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 	muStorage[e].muen = muen;
       }
 
+      GateMessage("Physic",4," -------------------------------------------------------- " << G4endl);
+      GateMessage("Physic",4," " << G4endl);
+      
       // Interpolation of mu,muen for energy bordering an atomic transition (see ConstructEnergyList(...))
       MergeAtomicShell(&muStorage);
       
       // Fill mu,muen table for this material
-      GateMuTable *table = new GateMuTable(materialName, muStorage.size());
-      for(unsigned int e=0; e<muStorage.size(); e++) {
+      GateMuTable *table = new GateMuTable(couple, muStorage.size());
+      GateMessage("Physic",3," " << G4endl);
+      GateMessage("Physic",3," E(MeV)  mu(cm2/g)  muen(cm2/g)" << G4endl);
+      for(unsigned int e=0; e<muStorage.size(); e++)
+      {
 	table->PutValue(e, log(muStorage[e].energy), log(muStorage[e].mu), log(muStorage[e].muen));
+	GateMessage("Physic",3," " << muStorage[e].energy << " " << muStorage[e].mu << " " << muStorage[e].muen << G4endl);
       }
-      mMaterialTable.insert(std::pair<G4String, GateMuTable*>(materialName,table));      
-      
-      GateMessage("Physic",4," -------------------------------------------------------- " << G4endl);
-      GateMessage("Physic",4," " << G4endl);
+      GateMessage("Physic",3," " << G4endl);
+      mCoupleTable.insert(std::pair<const G4MaterialCutsCouple *, GateMuTable *>(couple,table));      
     }
   }
 }
@@ -551,13 +600,6 @@ void GateMaterialMuHandler::MergeAtomicShell(std::vector<MuStorageStruct> *muSto
       (*muStorage)[e].energy = (*muStorage)[e].atomicShellEnergy;
     }
     std::sort(muStorage->begin(), muStorage->end());
-  }
-
-  GateMessage("Physic",3," " << G4endl);
-  GateMessage("Physic",3," E(MeV)  mu(cm2/g)  muen(cm2/g)" << G4endl);
-  for(unsigned int e=0; e<muStorage->size(); e++)
-  {
-    GateMessage("Physic",3," " << (*muStorage)[e].energy << " " << (*muStorage)[e].mu << " " << (*muStorage)[e].muen << G4endl);
   }
 }
 //-----------------------------------------------------------------------------

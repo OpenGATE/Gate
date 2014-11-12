@@ -152,9 +152,9 @@ void GateTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* 
   if(step->GetTrack()->GetDefinition()->GetParticleName() == "gamma"){
     G4double distance = step->GetStepLength();
     G4double energy = PreStep->GetKineticEnergy();
-    double mu_en = mMaterialHandler->GetAttenuation(PreStep->GetMaterial(), energy);
-    G4double dose = ConversionFactor*energy*mu_en*distance/VoxelVolume;
-    G4double edep = 0.1*energy*mu_en*distance*PreStep->GetMaterial()->GetDensity()/(g/cm3);
+    double muenOverRho = mMaterialHandler->GetMuEnOverRho(PreStep->GetMaterialCutsCouple(), energy);
+    G4double dose = ConversionFactor*energy*muenOverRho*distance/VoxelVolume;
+    G4double edep = 0.1*energy*muenOverRho*distance*PreStep->GetMaterial()->GetDensity()/(g/cm3);
     bool sameEvent=true;
 
     if (mIsLastHitEventImageEnabled) {
