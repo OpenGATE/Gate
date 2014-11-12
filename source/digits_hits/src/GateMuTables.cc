@@ -14,13 +14,13 @@ GateMuTable::GateMuTable(const G4MaterialCutsCouple *couple, G4int size)
   lastMuen = -1.0;
   lastEnergyMu = -1.0;
   lastEnergyMuen = -1.0;
-  
+
   mCouple = couple;
   mDensity = -1;
   if(mCouple)
   {
     mMaterial = mCouple->GetMaterial();
-    mDensity = mMaterial->GetDensity() / (g/cm3);
+    mDensity = mMaterial->GetDensity() / (CLHEP::g/CLHEP::cm3);
   }
 }
 //-----------------------------------------------------------------------------
@@ -73,7 +73,7 @@ double GateMuTable::GetMuEnOverRho(double energy)
     double e_sup = mEnergy[sup];
 
     if( energy > e_inf && energy < e_sup) { lastMuen = exp(interpol(e_inf, energy, e_sup, mMu_en[inf], mMu_en[sup])); }
-    else { lastMuen = exp(mMu_en[inf]); }    
+    else { lastMuen = exp(mMu_en[inf]); }
   }
 
   return lastMuen;
@@ -110,7 +110,7 @@ double GateMuTable::GetMuOverRho(double energy)
     if( energy > e_inf && energy < e_sup) { lastMu = exp(interpol(e_inf, energy, e_sup, mMu[inf], mMu[sup])); }
     else { lastMu = exp(mMu[inf]); }
   }
-    
+
   return lastMu;
 }
 //-----------------------------------------------------------------------------
