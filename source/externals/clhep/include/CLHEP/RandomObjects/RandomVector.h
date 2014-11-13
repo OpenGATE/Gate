@@ -8,16 +8,16 @@
 // This file is part of CLHEP, extended to match the distributions in RPP.
 //
 // It's exactly analogous to HepRandom except that the return types for
-// the fire() and related methods are std::vector<double> instead of
-// double.
+// the fire() and related methods are std::vector<double> instead of 
+// double.  
 //
-// Distribution classes returning HepVectors of results inherit from
+// Distribution classes returning HepVectors of results inherit from 
 // HepRandomVector instead of HepRandom.
 //
-//	HepVector is used instead of the more modern looking
+//	HepVector is used instead of the more modern looking 
 //	std::vector<double> because the motivating sub-class
-//	RandMultiGauss uses HepMatrix to supply the correlation
-//	matrix S anyway.  Given that, we might as well stick to
+//	RandMultiGauss uses HepMatrix to supply the correlation 
+//	matrix S anyway.  Given that, we might as well stick to 
 //	HepVector when a vector of numbers is needed, as well.
 //
 // =======================================================================
@@ -46,15 +46,15 @@ public:
   HepRandomVector(long seed);
   // Contructors with and without a seed using a default engine
   // (JamesRandom) which is instantiated for use of this distribution
-  // instance.  If the seed is omitted, multiple instantiations will
+  // instance.  If the seed is omitted, multiple instantiations will 
   // each get unique seeds.
-
+ 
   HepRandomVector(HepRandomEngine & engine);
   HepRandomVector(HepRandomEngine * engine);
   // Constructor taking an alternative engine as argument. If a pointer is
   // given the corresponding object will be deleted by the HepRandom
   // destructor.
-
+  
   virtual ~HepRandomVector();
   // Destructor
 
