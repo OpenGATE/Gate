@@ -78,78 +78,51 @@ void GateInterfileHeader::ReadHeader(G4String headerFileName)
 
 
 //-----------------------------------------------------------------------------
-void GateInterfileHeader::ReadData(G4String dataFileName, std::vector<PixelType> & data)
-{
-  m_dataFileName = dataFileName;
-  ReadData(data);
-}
+// void GateInterfileHeader::ReadData(G4String dataFileName, std::vector<PixelType> & data)
+// {
+//   m_dataFileName = dataFileName;
+//   ReadData(data);
+// }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateInterfileHeader::ReadData(std::vector<PixelType> & data)
-{
-  if (!m_isHeaderInfoRead) {
-      G4Exception("GateInterfileHeader.cc:ReadData", "NoHeaderInformation", FatalException, "call GateInterfileHeader::ReadHeader first!");
-  }
+// void GateInterfileHeader::ReadData(std::vector<PixelType> & data)
+// {
+//   if (!m_isHeaderInfoRead) {
+//       G4Exception("GateInterfileHeader.cc:ReadData", "NoHeaderInformation", FatalException, "call GateInterfileHeader::ReadHeader first!");
+//   }
 
-  if (m_dataTypeName == "UNSIGNED INTEGER") {
-      if (m_bytePerPixel==1) {
-	  DoDataRead<unsigned char>(data);
-      } else if (m_bytePerPixel==2) {
-	  DoDataRead<unsigned short>( data);
-      } else if (m_bytePerPixel==4) {
-	  DoDataRead<unsigned int>( data);
-      } else if (m_bytePerPixel==8) {
-	  DoDataRead<unsigned long>( data);
-      }
-  } else if (m_dataTypeName == "SIGNED INTEGER") {
-      if (m_bytePerPixel==1) {
-	  DoDataRead<char>(data);
-      } else if (m_bytePerPixel==2) {
-	  DoDataRead<short>( data);
-      } else if (m_bytePerPixel==4) {
-	  DoDataRead<int>( data);
-      } else if (m_bytePerPixel==8) {
-	  DoDataRead<long>( data);
-      }
-  }
-  else if (m_dataTypeName == "FLOAT") {
-      if (m_bytePerPixel==4) {
-	  DoDataRead<float>( data);
-      } else if (m_bytePerPixel==8) {
-	  DoDataRead<double>( data);
-      }
-  }
-}
+//   if (m_dataTypeName == "UNSIGNED INTEGER") {
+//       if (m_bytePerPixel==1) {
+// 	  DoDataRead<unsigned char>(data);
+//       } else if (m_bytePerPixel==2) {
+// 	  DoDataRead<unsigned short>( data);
+//       } else if (m_bytePerPixel==4) {
+// 	  DoDataRead<unsigned int>( data);
+//       } else if (m_bytePerPixel==8) {
+// 	  DoDataRead<unsigned long>( data);
+//       }
+//   } else if (m_dataTypeName == "SIGNED INTEGER") {
+//       if (m_bytePerPixel==1) {
+// 	  DoDataRead<char>(data);
+//       } else if (m_bytePerPixel==2) {
+// 	  DoDataRead<short>( data);
+//       } else if (m_bytePerPixel==4) {
+// 	  DoDataRead<int>( data);
+//       } else if (m_bytePerPixel==8) {
+// 	  DoDataRead<long>( data);
+//       }
+//   }
+//   else if (m_dataTypeName == "FLOAT") {
+//       if (m_bytePerPixel==4) {
+// 	  DoDataRead<float>( data);
+//       } else if (m_bytePerPixel==8) {
+// 	  DoDataRead<double>( data);
+//       }
+//   }
+// }
 //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-template <class VoxelType> void GateInterfileHeader::DoDataRead(std::vector<PixelType> &data) {
-  G4int pixelNumber = m_dim[0]*m_dim[1]*m_numPlanes ;
-  std::ifstream is;
-  OpenFileInput(m_dataFileName, is);
-  std::vector<VoxelType> temp(pixelNumber);
-
-  data.resize(pixelNumber);
-  is.seekg(m_offset, std::ios::beg);
-  is.read((char*)(&(temp[0])), pixelNumber*sizeof(VoxelType));
-  if (!is) {
-      G4cerr << G4endl <<"Error: the number of pixels that were read from the data file (" << is.gcount() << ") " << G4endl
-	  << "is inferior to the number computed from its header file (" << pixelNumber << ")!" << G4endl;
-      G4Exception( "GateInterfileHeader.cc InterfileTooShort", "InterfileTooShort", FatalException, "Correct problem then try again... Sorry!" );
-  }
-  for(unsigned int i=0; i<temp.size(); i++) {
-      if ( BYTE_ORDER != m_dataByteOrder ) {
-	  VoxelType t = temp[i];
-	  GateMachine::SwapEndians( t );
-	  temp[i] = t;
-//	  GateMachine::SwapEndians( temp[i] );
-      }
-      data[i] = (PixelType)temp[i];
-  }
-  is.close();
-}
-//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateInterfileHeader::ReadKey(FILE* fp)

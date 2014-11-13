@@ -7,19 +7,21 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
+// std
 #include <fstream>
-/* PY Descourt 08/09/2009 */
+#include <stdio.h>
+#include <string.h>
+
+// gate
 #include "GateRTPhantom.hh"
 #include "GateRTPhantomMgr.hh"
-/* PY Descourt 08/09/2009 */
 #include "GateGeometryVoxelInterfileReader.hh"
 #include "GateGeometryVoxelInterfileReaderMessenger.hh"
 #include "GateVGeometryVoxelTranslator.hh"
 #include "GateMaterialDatabase.hh"
 #include "GateVVolume.hh"
 
-#include <stdio.h>
-#include <string.h>
+typedef float DefaultPixelType;
 
 GateGeometryVoxelInterfileReader::GateGeometryVoxelInterfileReader(GateVVolume* inserter)
   : GateVGeometryVoxelReader(inserter), GateInterfileHeader()
@@ -51,7 +53,7 @@ void GateGeometryVoxelInterfileReader::ReadFile(G4String headerFileName)
   m_fileName = headerFileName;
   ReadHeader(headerFileName);
 
-  std::vector<PixelType> buffer;
+  std::vector<DefaultPixelType> buffer;
 
   ReadData(buffer);
 
@@ -128,7 +130,7 @@ void GateGeometryVoxelInterfileReader::ReadRTFile(G4String headerFileName, G4Str
   // override filename from header
   m_dataFileName = dataFileName;
 
-  std::vector<PixelType> buffer;
+  std::vector<DefaultPixelType> buffer;
 
   ReadData(m_dataFileName, buffer);
 
