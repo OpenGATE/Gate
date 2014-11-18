@@ -562,6 +562,19 @@ void GateMaterialMuHandler::ConstructEnergyList(std::vector<MuStorageStruct> *mu
       double atomicShellEnergy = element->GetAtomicShell(j);
       if(atomicShellEnergy > mAtomicShellEnergyMin && atomicShellEnergy > mEnergyMin)
       {
+	double infEnergy = atomicShellEnergy - deltaEnergy;
+	double supEnergy = atomicShellEnergy + deltaEnergy;
+	unsigned int elementToErase = -1;
+	for(unsigned int e=0; e<muStorage->size(); e++)
+	{
+	  if(((*muStorage)[e].energy > infEnergy) and ((*muStorage)[e].energy < supEnergy))
+	  {
+	    elementToErase = e;
+	    break;
+	  }
+	}
+	if(elementToErase + 1) { muStorage->erase(muStorage->begin() + elementToErase); }
+
 	muStorage->push_back(MuStorageStruct(atomicShellEnergy-deltaEnergy,-1,atomicShellEnergy)); // inf
 	muStorage->push_back(MuStorageStruct(atomicShellEnergy+deltaEnergy,+1,atomicShellEnergy)); // sup
       }
@@ -599,7 +612,6 @@ void GateMaterialMuHandler::MergeAtomicShell(std::vector<MuStorageStruct> *muSto
       }
       (*muStorage)[e].energy = (*muStorage)[e].atomicShellEnergy;
     }
-    std::sort(muStorage->begin(), muStorage->end());
   }
 }
 //-----------------------------------------------------------------------------
