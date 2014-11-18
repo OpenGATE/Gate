@@ -32,13 +32,6 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
   pEnableEdepSquaredCmd= 0;
   pEnableEdepUncertaintyCmd= 0;
   pEnableNumberOfHitsCmd= 0;
-  pEnableRBE1AlphaCmd= 0;
-  pEnableRBE1BetaCmd= 0;
-  pEnableRBE1FactorCmd= 0;
-  pEnableRBE1BioDoseCmd= 0;
-  pSetRBE1AlphaDataFilenameCmd= 0;
-  pSetRBE1BetaDataFilenameCmd= 0;
-  pEnableRBE1Test1Cmd= 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -61,13 +54,6 @@ GateDoseActorMessenger::~GateDoseActorMessenger()
   if(pEnableEdepSquaredCmd) delete pEnableEdepSquaredCmd;
   if(pEnableEdepUncertaintyCmd) delete pEnableEdepUncertaintyCmd;
   if(pEnableNumberOfHitsCmd) delete pEnableNumberOfHitsCmd;
-  if(pEnableRBE1AlphaCmd) delete pEnableRBE1AlphaCmd;
-  if(pEnableRBE1BetaCmd) delete pEnableRBE1BetaCmd;
-  if(pEnableRBE1FactorCmd) delete pEnableRBE1FactorCmd;
-  if(pEnableRBE1BioDoseCmd) delete pEnableRBE1BioDoseCmd;
-  if(pSetRBE1AlphaDataFilenameCmd) delete pSetRBE1AlphaDataFilenameCmd;
-  if(pSetRBE1BetaDataFilenameCmd) delete pSetRBE1BetaDataFilenameCmd;
-  if(pEnableRBE1Test1Cmd) delete pEnableRBE1Test1Cmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -140,45 +126,6 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   pEnableNumberOfHitsCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable number of hits computation");
   pEnableNumberOfHitsCmd->SetGuidance(guid);
-
-  // Experimental
-#ifdef GATEDEV
-  n = base+"/enableRBE1Alpha";
-  pEnableRBE1AlphaCmd = new G4UIcmdWithABool(n, this);
-  guid = G4String("[EXPERIMENTAL] Enable RBE1 Alpha output");
-  pEnableRBE1AlphaCmd->SetGuidance(guid);
-
-  n = base+"/enableRBE1Beta";
-  pEnableRBE1BetaCmd = new G4UIcmdWithABool(n, this);
-  guid = G4String("[EXPERIMENTAL] Enable RBE1 Beta output");
-  pEnableRBE1BetaCmd->SetGuidance(guid);
-
-  n = base+"/enableRBE1Factor";
-  pEnableRBE1FactorCmd = new G4UIcmdWithABool(n, this);
-  guid = G4String("Enable RBE1 Factor output");
-  pEnableRBE1FactorCmd->SetGuidance(guid);
-
-  n = base+"/enableRBE1BioDose";
-  pEnableRBE1BioDoseCmd = new G4UIcmdWithABool(n, this);
-  guid = G4String("[EXPERIMENTAL] Enable RBE1 BioDose output");
-  pEnableRBE1BioDoseCmd->SetGuidance(guid);
-
-  n = base+"/setRBE1AlphaDataFilename";
-  pSetRBE1AlphaDataFilenameCmd = new G4UIcmdWithAString(n, this);
-  guid = G4String("[EXPERIMENTAL] Set filename for alpha data (RBE1)");
-  pSetRBE1AlphaDataFilenameCmd->SetGuidance(guid);
-
-  n = base+"/setRBE1BetaDataFilename";
-  pSetRBE1BetaDataFilenameCmd = new G4UIcmdWithAString(n, this);
-  guid = G4String("[EXPERIMENTAL] Set filename for alpha data (RBE1)");
-  pSetRBE1BetaDataFilenameCmd->SetGuidance(guid);
-
-  n = base+"/enableRBE1Test1";
-  pEnableRBE1Test1Cmd = new G4UIcmdWithABool(n, this);
-  guid = G4String("[EXPERIMENTAL] Enable RBE1 Test1");
-  pEnableRBE1Test1Cmd->SetGuidance(guid);
-
-#endif
 }
 //-----------------------------------------------------------------------------
 
@@ -200,14 +147,6 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pEnableDoseNormToMaxCmd) pDoseActor->EnableDoseNormalisationToMax(pEnableDoseNormToMaxCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseNormToIntegralCmd) pDoseActor->EnableDoseNormalisationToIntegral(pEnableDoseNormToIntegralCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseToWaterNormCmd) pDoseActor->EnableDoseToWaterNormalisation(pEnableDoseToWaterNormCmd->GetNewBoolValue(newValue));
-
-  if (cmd == pEnableRBE1AlphaCmd) pDoseActor->EnableRBE1AlphaImage(pEnableRBE1AlphaCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableRBE1BetaCmd) pDoseActor->EnableRBE1BetaImage(pEnableRBE1BetaCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableRBE1FactorCmd) pDoseActor->EnableRBE1FactorImage(pEnableRBE1FactorCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableRBE1BioDoseCmd) pDoseActor->EnableRBE1BioDoseImage(pEnableRBE1BioDoseCmd->GetNewBoolValue(newValue));
-  if (cmd == pSetRBE1AlphaDataFilenameCmd) pDoseActor->SetRBE1AlphaDataFilename(newValue);
-  if (cmd == pSetRBE1BetaDataFilenameCmd) pDoseActor->SetRBE1BetaDataFilename(newValue);
-  if (cmd == pEnableRBE1Test1Cmd) pDoseActor->EnableRBE1Test1(pEnableRBE1Test1Cmd->GetNewBoolValue(newValue));
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }

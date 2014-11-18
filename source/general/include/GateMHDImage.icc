@@ -1,0 +1,120 @@
+/*----------------------
+   Copyright (C): OpenGATE Collaboration
+
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See GATE/LICENSE.txt for further details
+----------------------*/
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateMHDImage::ReadData(std::string filename, std::vector<PixelType> & data)
+{
+  MetaImage m_MetaImage;
+  if(!m_MetaImage.Read(filename.c_str(), true)) {
+    GateError("MHD File cannot be read: " << filename << std::endl);
+  }
+
+  if (m_MetaImage.NDims() != 3) {
+    GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort." << std::endl);
+  }
+
+  // Convert to Float
+  if (typeid(PixelType) == typeid(float)) {
+    m_MetaImage.ConvertElementDataToIntensityData(MET_FLOAT);
+  }
+  if (typeid(PixelType) == typeid(double)) {
+    m_MetaImage.ConvertElementDataToIntensityData(MET_DOUBLE);
+  }
+
+  // Set data
+  int len = size[0] * size[1] * size[2];
+  data.assign((PixelType*)(m_MetaImage.ElementData()), (PixelType*)(m_MetaImage.ElementData()) + len);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * image, bool writeData)
+{
+  MetaImage m_MetaImage;
+  int ds[3];
+  float es[3];
+  ds[0] = image->GetResolution().x();
+  ds[1] = image->GetResolution().y();
+  ds[2] = image->GetResolution().z();
+  es[0] = image->GetVoxelSize().x();
+  es[1] = image->GetVoxelSize().y();
+  es[2] = image->GetVoxelSize().z();
+  bool done=false;
+  bool convertDoubleFlag=false;
+  if (typeid(PixelType) == typeid(float)) {
+    m_MetaImage.InitializeEssential(3, ds, es, MET_FLOAT);
+    done=true;
+  }
+  if (typeid(PixelType) == typeid(double)) {
+    //m_MetaImage.InitializeEssential(3, ds, es, MET_DOUBLE);
+    m_MetaImage.InitializeEssential(3, ds, es, MET_FLOAT);
+    convertDoubleFlag = true;
+    done=true;
+  }
+  if (typeid(PixelType) == typeid(int)) {
+    m_MetaImage.InitializeEssential(3, ds, es, MET_INT);
+    done=true;
+  }
+  if (!done) {
+    GateError("Error could not create a MHD image of pixeltype = " << typeid(PixelType).name() << std::endl);
+  }
+  std::string headName = filename;
+  std::string dataName;
+  GetRawFilename(filename, dataName, false);
+  double p[3];
+  // Gate convention: origin is the corner of the first pixel
+  // MHD / ITK convention: origin is the center of the first pixel
+  // -> Add a half pixel
+  p[0] = image->GetOrigin().x() + image->GetVoxelSize().x()/2.0;
+  p[1] = image->GetOrigin().y() + image->GetVoxelSize().y()/2.0;
+  p[2] = image->GetOrigin().z() + image->GetVoxelSize().z()/2.0;
+  m_MetaImage.Position(p);
+
+  // Transform
+  double matrix[9];
+  for(unsigned int i=0; i<3; i++) {
+    matrix[i*3  ] = image->GetTransformMatrix().row1()[i];
+    matrix[i*3+1] = image->GetTransformMatrix().row2()[i];
+    matrix[i*3+2] = image->GetTransformMatrix().row3()[i];
+  }
+  m_MetaImage.TransformMatrix(matrix);
+
+  std::vector<float> d;
+  if (writeData) {
+    if (convertDoubleFlag) {
+      d.resize(image->GetNumberOfValues());
+      PixelType * p = &(image->begin()[0]);
+      for(unsigned int i=0; i<image->GetNumberOfValues(); i++) {
+        d[i] = (float)(*p); // cast into float
+        ++p;
+      }
+      m_MetaImage.ElementData(&(d[0]), false); // true = autofree
+    }
+    else {
+      m_MetaImage.ElementData(&(image->begin()[0]), false); // true = autofree
+    }
+    m_MetaImage.Write(headName.c_str(), dataName.c_str());
+  }
+  else {
+    m_MetaImage.Write(headName.c_str(), dataName.c_str(), false);
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateMHDImage::WriteData(std::string filename, GateImageT<PixelType> * image)
+{
+  WriteHeader<PixelType>(filename, image, true);
+}
+//-----------------------------------------------------------------------------

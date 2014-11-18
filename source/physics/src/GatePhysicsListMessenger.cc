@@ -395,7 +395,7 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
   if(command == pMuHandlerSetENumber){
     int nbVal = pMuHandlerSetENumber->GetNewIntValue(param);
     nMuHandler->SetENumber(nbVal);
-    GateMessage("Physic", 1, "(MuHandler Options) ENumber set to "<<nbVal<<" values. ENumber defaut Value: 25 between 250 eV and 1 MeV (logscale)."<<G4endl);
+    GateMessage("Physic", 1, "(MuHandler Options) ENumber set to "<<nbVal<<" values. ENumber defaut Value: 40 between 250 eV and 1 MeV (logscale)."<<G4endl);
   }
   if(command == pMuHandlerSetAtomicShellEMin){
     double val = pMuHandlerSetAtomicShellEMin->GetNewDoubleValue(param);

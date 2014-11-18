@@ -59,6 +59,9 @@
   //Selection of one layer
   cmdName = GetDirectoryName()+"selectLayerID";
   pSelectLayerIDCmd = new G4UIcmdWithAnInteger(cmdName,this);
+  //Selection of one spot
+  cmdName = GetDirectoryName()+"selectSpot";
+  pSelectSpotCmd = new G4UIcmdWithAnInteger(cmdName,this);
 }
 //----------------------------------------------------------------------------------------
 
@@ -87,6 +90,8 @@ GateSourceTPSPencilBeamMessenger::~GateSourceTPSPencilBeamMessenger()
   delete pDivergenceCmd;
   // Selection of one layer
   delete pSelectLayerIDCmd;
+  // Selection of one spot
+  delete pSelectSpotCmd;
 }
 //----------------------------------------------------------------------------------------
 
@@ -108,6 +113,8 @@ void GateSourceTPSPencilBeamMessenger::SetNewValue(G4UIcommand* command,G4String
   if (command == pAllowedFieldCmd) {pSourceTPSPencilBeam->SetAllowedField(pAllowedFieldCmd->GetNewIntValue(newValue));}
   //Select Layer ID
   if (command == pSelectLayerIDCmd) {pSourceTPSPencilBeam->SelectLayerID(pSelectLayerIDCmd->GetNewIntValue(newValue));}
+  //Select Spot
+  if (command == pSelectSpotCmd) {pSourceTPSPencilBeam->SelectSpot(pSelectSpotCmd->GetNewIntValue(newValue));}
   //Source description file
   if (command == pSourceFileCmd) {pSourceTPSPencilBeam->SetSourceDescriptionFile(newValue);  }
   //Configuration of spot intensity

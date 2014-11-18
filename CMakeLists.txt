@@ -49,12 +49,13 @@ STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION
 
 #=========================================================
 # Option for Root use
-OPTION(GATE_USE_ROOT "Gate use ROOT (Recommanded)" ON)
+SET(GATE_USE_ROOT ON)
+SET(GATE_ANALYSIS_USE_GENERAL ON)
+SET(GATE_ANALYSIS_USE_FILE ON)
+
 OPTION(GATE_USE_OPTICAL "Gate use optical photon" OFF)
 OPTION(GATE_USE_LMF "Gate use LMF" OFF)
 OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
-OPTION(GATE_ANALYSIS_USE_GENERAL "Gate use  G4ANALYSIS_USE_GENERAL (Recommanded)" ON)
-OPTION(GATE_ANALYSIS_USE_FILE "Gate use G4ANALYSIS_USE_FILE (Recommanded)" ON)
 OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4. Use OFF if you compile G4 with embedded CLHEP" OFF)
 OPTION(GATE_USE_GPU "Gate use GPU (voxelized src and tracking), need CUDA " OFF)
 OPTION(GATE_USE_RTK "Gate use RTK (for hybrid simulation)" OFF)

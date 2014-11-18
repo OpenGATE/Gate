@@ -4,7 +4,7 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
   ----------------------*/
- 
+
 #include <fstream>
 #include <iomanip>
 #include <sstream>
@@ -32,8 +32,8 @@
 
 //-------------------------------------------------------------------------------------------------
 GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
-( GateVSource* fPtclGun ) 
-  : GateMessenger( G4String("source/")+(fPtclGun->GetName()) + G4String("/gps") ), 
+( GateVSource* fPtclGun )
+  : GateMessenger( G4String("source/")+(fPtclGun->GetName()) + G4String("/gps") ),
     fParticleGun(fPtclGun),fShootIon(false)
 {
   histtype = "biasx";
@@ -66,24 +66,29 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   particleCmd->SetGuidance(" (ion can be specified for shooting ions)");
   particleCmd->SetParameterName("particleName",true);
   particleCmd->SetDefaultValue("geantino");
-  G4String candidateList; 
-  G4int nPtcl = particleTable->entries();
-  for(G4int i=0;i<nPtcl;i++)
-    {
-      candidateList += particleTable->GetParticleName(i);
-      candidateList += " ";
-    }
-  candidateList += "ion ";
+  static G4String candidateList;
+  static bool initialized = false;
+  if (!initialized) {
+    G4int nPtcl = particleTable->entries();
+    for(G4int i=0;i<nPtcl;i++)
+      {
+        candidateList += particleTable->GetParticleName(i);
+        candidateList += " ";
+      }
+    candidateList += "ion ";
+    initialized = true;
+  }
   particleCmd->SetCandidates(candidateList);
+
 
 
   cmdName = GetDirectoryName() + "direction";
   directionCmd = new G4UIcmdWith3Vector(cmdName,this);
   directionCmd->SetGuidance("Set momentum direction.");
   directionCmd->SetGuidance("Direction needs not to be a unit vector.");
-  directionCmd->SetParameterName("Px","Py","Pz",true,true); 
+  directionCmd->SetParameterName("Px","Py","Pz",true,true);
   directionCmd->SetRange("Px != 0 || Py != 0 || Pz != 0");
-  
+
   cmdName = GetDirectoryName() + "energy";
   energyCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   energyCmd->SetGuidance("Set kinetic energy.");
@@ -115,7 +120,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   ionCmd->SetGuidance("        A:(int) AtomicMass");
   ionCmd->SetGuidance("        Q:(int) Charge of Ion (in unit of e)");
   ionCmd->SetGuidance("        E:(double) Excitation energy (in keV)");
-  
+
   G4UIparameter* param;
   param = new G4UIparameter("Z",'i',false);
   param->SetDefaultValue("1");
@@ -138,11 +143,11 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   timeCmd->SetDefaultUnit("ns");
   //timeCmd->SetUnitCategory("Time");
   //timeCmd->SetUnitCandidates("ns ms s");
-  
+
   cmdName = GetDirectoryName() + "polarization";
   polCmd = new G4UIcmdWith3Vector(cmdName,this);
   polCmd->SetGuidance("Set polarization.");
-  polCmd->SetParameterName("Px","Py","Pz",true,true); 
+  polCmd->SetParameterName("Px","Py","Pz",true,true);
   polCmd->SetRange("Px>=-1.&&Px<=1.&&Py>=-1.&&Py<=1.&&Pz>=-1.&&Pz<=1.");
 
   cmdName = GetDirectoryName() + "number";
@@ -153,7 +158,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
 
   // now extended commands
   // Positional ones:
-  cmdName = GetDirectoryName() + "pos/type";  
+  cmdName = GetDirectoryName() + "pos/type";
   typeCmd1 = new G4UIcmdWithAString(cmdName,this);
   typeCmd1->SetGuidance("Sets source distribution type.");
   typeCmd1->SetGuidance("Either Point, Beam, Plane, Surface, Volume or UserFluenceImage");
@@ -179,98 +184,98 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   posrot1Cmd1 = new G4UIcmdWith3Vector(cmdName,this);
   posrot1Cmd1->SetGuidance("Set the 1st vector defining the rotation matrix'.");
   posrot1Cmd1->SetGuidance("It does not need to be a unit vector.");
-  posrot1Cmd1->SetParameterName("R1x","R1y","R1z",true,true); 
+  posrot1Cmd1->SetParameterName("R1x","R1y","R1z",true,true);
   posrot1Cmd1->SetRange("R1x != 0 || R1y != 0 || R1z != 0");
-  
+
   cmdName = GetDirectoryName() + "pos/rot2";
   posrot2Cmd1 = new G4UIcmdWith3Vector(cmdName,this);
   posrot2Cmd1->SetGuidance("Set the 2nd vector defining the rotation matrix'.");
   posrot2Cmd1->SetGuidance("It does not need to be a unit vector.");
-  posrot2Cmd1->SetParameterName("R2x","R2y","R2z",true,true); 
+  posrot2Cmd1->SetParameterName("R2x","R2y","R2z",true,true);
   posrot2Cmd1->SetRange("R2x != 0 || R2y != 0 || R2z != 0");
-  
+
   cmdName = GetDirectoryName() + "pos/halfx";
   halfxCmd1 = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   halfxCmd1->SetGuidance("Set x half length of source.");
   halfxCmd1->SetParameterName("Halfx",true,true);
   halfxCmd1->SetDefaultUnit("cm");
-  
+
   cmdName = GetDirectoryName() + "pos/halfy";
   halfyCmd1 = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   halfyCmd1->SetGuidance("Set y half length of source.");
   halfyCmd1->SetParameterName("Halfy",true,true);
   halfyCmd1->SetDefaultUnit("cm");
-  
+
   cmdName = GetDirectoryName() + "pos/halfz";
   halfzCmd1 = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   halfzCmd1->SetGuidance("Set z half length of source.");
   halfzCmd1->SetParameterName("Halfz",true,true);
   halfzCmd1->SetDefaultUnit("cm");
-  
+
   cmdName = GetDirectoryName() + "pos/radius";
   radiusCmd1 = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   radiusCmd1->SetGuidance("Set radius of source.");
   radiusCmd1->SetParameterName("Radius",true,true);
   radiusCmd1->SetDefaultUnit("cm");
-  
+
   cmdName = GetDirectoryName() + "pos/inner_radius";
   radius0Cmd1 = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   radius0Cmd1->SetGuidance("Set inner radius of source when required.");
   radius0Cmd1->SetParameterName("Radius0",true,true);
   radius0Cmd1->SetDefaultUnit("cm");
-  
+
   cmdName = GetDirectoryName() + "pos/sigma_r";
   possigmarCmd1 = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   possigmarCmd1->SetGuidance("Set standard deviation in radial of the beam positional profile");
   possigmarCmd1->SetGuidance(" applicable to Beam type source only");
   possigmarCmd1->SetParameterName("Sigmar",true,true);
   possigmarCmd1->SetDefaultUnit("cm");
-  
+
   cmdName = GetDirectoryName() + "pos/sigma_x";
   possigmaxCmd1 = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   possigmaxCmd1->SetGuidance("Set standard deviation of beam positional profile in x-dir");
   possigmaxCmd1->SetGuidance(" applicable to Beam type source only");
   possigmaxCmd1->SetParameterName("Sigmax",true,true);
   possigmaxCmd1->SetDefaultUnit("cm");
-  
+
   cmdName = GetDirectoryName() + "pos/sigma_y";
   possigmayCmd1 = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   possigmayCmd1->SetGuidance("Set standard deviation of beam positional profile in y-dir");
   possigmayCmd1->SetGuidance(" applicable to Beam type source only");
   possigmayCmd1->SetParameterName("Sigmay",true,true);
   possigmayCmd1->SetDefaultUnit("cm");
-  
+
   cmdName = GetDirectoryName() + "pos/paralp";
   paralpCmd1 = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   paralpCmd1->SetGuidance("Angle from y-axis of y' in Para");
   paralpCmd1->SetParameterName("paralp",true,true);
   paralpCmd1->SetDefaultUnit("rad");
-  
+
   cmdName = GetDirectoryName() + "pos/parthe";
   partheCmd1 = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   partheCmd1->SetGuidance("Polar angle through centres of z faces");
   partheCmd1->SetParameterName("parthe",true,true);
   partheCmd1->SetDefaultUnit("rad");
-  
+
   cmdName = GetDirectoryName() + "pos/parphi";
   parphiCmd1 = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   parphiCmd1->SetGuidance("Azimuth angle through centres of z faces");
   parphiCmd1->SetParameterName("parphi",true,true);
   parphiCmd1->SetDefaultUnit("rad");
-  
+
   cmdName = GetDirectoryName() + "pos/confine";
   confineCmd1 = new G4UIcmdWithAString(cmdName,this);
   confineCmd1->SetGuidance("Confine source to volume (NULL to unset).");
   confineCmd1->SetGuidance("usage: confine VolName");
   confineCmd1->SetParameterName("VolName",true,true);
   confineCmd1->SetDefaultValue("NULL");
-  
+
   cmdName = GetDirectoryName() + "pos/setImage";
   setImageCmd1 = new G4UIcmdWithAString(cmdName,this);
   setImageCmd1->SetGuidance("Biased X and Y positions according to an image (UserFluenceImage source type only)");
   setImageCmd1->SetParameterName("Image",true,true);
   setImageCmd1->SetDefaultValue("");
-  
+
   // old implementations
   cmdName = GetDirectoryName() + "type";
   typeCmd = new G4UIcmdWithAString(cmdName,this);
@@ -294,7 +299,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   positronRangeCmd->SetDefaultValue("NULL");
   positronRangeCmd->SetCandidates("Fluor18 Carbon11 Oxygen15");
 
-  
+
   cmdName = GetDirectoryName() + "centre";
   centreCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
   centreCmd->SetGuidance("Set centre coordinates of source.");
@@ -306,14 +311,14 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   posrot1Cmd = new G4UIcmdWith3Vector(cmdName,this);
   posrot1Cmd->SetGuidance("Set rotation matrix of x'.");
   posrot1Cmd->SetGuidance("Posrot1 does not need to be a unit vector.");
-  posrot1Cmd->SetParameterName("R1x","R1y","R1z",true,true); 
+  posrot1Cmd->SetParameterName("R1x","R1y","R1z",true,true);
   posrot1Cmd->SetRange("R1x != 0 || R1y != 0 || R1z != 0");
 
   cmdName = GetDirectoryName() + "posrot2";
   posrot2Cmd = new G4UIcmdWith3Vector(cmdName,this);
   posrot2Cmd->SetGuidance("Set rotation matrix of y'.");
   posrot2Cmd->SetGuidance("Posrot2 does not need to be a unit vector.");
-  posrot2Cmd->SetParameterName("R2x","R2y","R2z",true,true); 
+  posrot2Cmd->SetParameterName("R2x","R2y","R2z",true,true);
   posrot2Cmd->SetRange("R2x != 0 || R2y != 0 || R2z != 0");
 
   cmdName = GetDirectoryName() + "halfx";
@@ -407,7 +412,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   ForbidCmd->SetParameterName("VolName",true,true);
   ForbidCmd->SetDefaultValue("NULL");
 
-  
+
   // Angular distribution commands
   cmdName = GetDirectoryName() + "ang/type";
   angtypeCmd1 = new G4UIcmdWithAString(cmdName,this);
@@ -475,7 +480,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   angsigmarCmd1->SetGuidance("Set standard deviation in direction for 1D beam.");
   angsigmarCmd1->SetParameterName("Sigmara",true,true);
   angsigmarCmd1->SetDefaultUnit("rad");
-  
+
   cmdName = GetDirectoryName() + "ang/sigma_x";
   angsigmaxCmd1 = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   angsigmaxCmd1->SetGuidance("Set standard deviation in direction in x-direc. for 2D beam");
@@ -517,7 +522,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   angtypeCmd->SetParameterName( "AngDis",true,true ) ;
   angtypeCmd->SetDefaultValue( "iso" ) ;
   angtypeCmd->SetCandidates( "iso cos planar beam1d beam2d user focused" ) ;
-  
+
   cmdName = GetDirectoryName() + "angrot1";
   angrot1Cmd = new G4UIcmdWith3Vector(cmdName,this);
   angrot1Cmd->SetGuidance("Sets the x' vector for angular distribution");
@@ -632,7 +637,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   alphaCmd1 = new G4UIcmdWithADouble(cmdName,this);
   alphaCmd1->SetGuidance("Sets Alpha (index) for power-law energy dist.");
   alphaCmd1->SetParameterName("alpha",true,true);
- 
+
   cmdName = GetDirectoryName() + "ene/temp";
   tempCmd1 = new G4UIcmdWithADouble(cmdName,this);
   tempCmd1->SetGuidance("Sets the temperature for Brem and BBody distributions (in Kelvin)");
@@ -668,7 +673,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   diffspecCmd1->SetGuidance("True for differential and flase for integral spectra");
   diffspecCmd1->SetParameterName("diffspec",true);
   diffspecCmd1->SetDefaultValue(true);
-               
+
 
   cmdName = GetDirectoryName() + "energytype";
   energytypeCmd = new G4UIcmdWithAString(cmdName,this);
@@ -677,7 +682,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   energytypeCmd->SetDefaultValue("Mono");
   energytypeCmd->SetCandidates("Mono Fluor18 Oxygen15 Carbon11 Lin Pow Exp Gauss Brem Bbody Cdg User Arb Epn UserSpectrum");
 
-  
+
   cmdName = GetDirectoryName() + "setSpectrumFile";
   setUserSpectrumCmd = new G4UIcmdWithAString(cmdName,this);
   setUserSpectrumCmd->SetGuidance("Sets the file to construct UserSpectrum");
@@ -716,7 +721,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   alphaCmd = new G4UIcmdWithADouble(cmdName,this);
   alphaCmd->SetGuidance("Sets Alpha (index) for power-law energy dist.");
   alphaCmd->SetParameterName("alpha",true,true);
-  
+
   cmdName = GetDirectoryName() + "temp";
   tempCmd = new G4UIcmdWithADouble(cmdName,this);
   tempCmd->SetGuidance("Sets the temperature for Brem and BBody (in Kelvin)");
@@ -753,7 +758,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   diffspecCmd->SetParameterName("diffspec",true);
   diffspecCmd->SetDefaultValue(true);
 
-  
+
 
  // Biasing + histograms in general
   cmdName = GetDirectoryName() + "hist/type";
@@ -783,7 +788,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   arbintCmd1->SetParameterName("int",true,true);
   arbintCmd1->SetDefaultValue("Lin");
   arbintCmd1->SetCandidates("Lin Log Exp Spline");
-  
+
   // old ones
   cmdName = GetDirectoryName() + "histname";
   histnameCmd = new G4UIcmdWithAString(cmdName,this);
@@ -791,7 +796,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   histnameCmd->SetParameterName("HistType",true,true);
   histnameCmd->SetDefaultValue("biasx");
   histnameCmd->SetCandidates("biasx biasy biasz biast biasp biase theta phi energy arb epn");
-  
+
   cmdName = GetDirectoryName() + "resethist";
   resethistCmd = new G4UIcmdWithAString(cmdName,this);
   resethistCmd->SetGuidance("Re-Set the histogram ");
@@ -812,7 +817,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   arbintCmd->SetParameterName("int",true,true);
   arbintCmd->SetDefaultValue("NULL");
   arbintCmd->SetCandidates("Lin Log Exp Spline");
-  
+
   // verbosity
   cmdName = GetDirectoryName() + "verbose";
   verbosityCmd = new G4UIcmdWithAnInteger(cmdName,this);
@@ -869,7 +874,7 @@ GateSingleParticleSourceMessenger::~GateSingleParticleSourceMessenger()
   delete parphiCmd1;
   delete confineCmd1;
   delete setImageCmd1;
-  
+
   delete angtypeCmd;
   delete angrot1Cmd;
   delete angrot2Cmd;
@@ -899,7 +904,7 @@ GateSingleParticleSourceMessenger::~GateSingleParticleSourceMessenger()
   delete useuserangaxisCmd1;
   delete surfnormCmd1;
 
-  
+
   delete energytypeCmd;
   delete eminCmd;
   delete emaxCmd;
@@ -952,7 +957,7 @@ GateSingleParticleSourceMessenger::~GateSingleParticleSourceMessenger()
   delete directionCmd;
   delete energyCmd;
   delete listCmd;
-  
+
   delete positronRangeCmd;
 /////////////////////////////////////// Yann PERROT, Simon NICOLAS LPC Clermont-ferrand ///////////////////////////////////////////////
   delete setUserSpectrumCmd;
@@ -968,7 +973,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
 {
     G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
 
-  if (command == relativePlacementCmd) 
+  if (command == relativePlacementCmd)
     {
       fParticleGun->SetRelativePlacementVolume(newValues);
     }
@@ -983,7 +988,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
   else if (command == positronRangeCmd )
     {
       fParticleGun->GetPosDist()->SetPositronRange( newValues ) ;
-    }  
+    }
   else if (command == centreCmd )
     {
       fParticleGun->GetPosDist()->SetCentreCoords( centreCmd->GetNew3VectorValue( newValues ) ) ;
@@ -1045,7 +1050,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
     }
   else if (command == confineCmd )
     {
-      // Modif DS: for all names exept NULL, we add the tag "_phys" at the end  
+      // Modif DS: for all names exept NULL, we add the tag "_phys" at the end
       // of the volume name when the user forgot to do it
       if ( newValues != "NULL" ) {
         if (newValues.substr( newValues.length()-5 ) != "_phys" )
@@ -1104,7 +1109,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
   else if (command == angsigmayCmd )
     {
       fParticleGun->GetAngDist()->SetBeamSigmaInAngY( angsigmayCmd->GetNewDoubleValue( newValues ) ) ;
-    }   
+    }
   else if (command == useuserangaxisCmd )
     {
       fParticleGun->GetAngDist()->SetUseUserAngAxis( useuserangaxisCmd->GetNewBoolValue( newValues ) ) ;
@@ -1129,7 +1134,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
     {
       fParticleGun->GetEneDist()->SetMonoEnergy( monoenergyCmd->GetNewDoubleValue( newValues ) ) ;
     }
-  else if (command == engsigmaCmd ) 
+  else if (command == engsigmaCmd )
     {
       fParticleGun->GetEneDist()->SetBeamSigmaInE( engsigmaCmd->GetNewDoubleValue( newValues ) ) ;
     }
@@ -1137,7 +1142,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
     {
       fParticleGun->GetEneDist()->SetAlpha( alphaCmd->GetNewDoubleValue( newValues ) ) ;
     }
-  else if (command == tempCmd ) 
+  else if (command == tempCmd )
     {
       fParticleGun->GetEneDist()->SetTemp( tempCmd->GetNewDoubleValue( newValues ) ) ;
     }
@@ -1233,18 +1238,18 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
   else if (command == listCmd )
     { particleTable->DumpTable() ; }
   else if (command == directionCmd )
-    { 
+    {
       fParticleGun->GetAngDist()->SetAngDistType( "planar" ) ;
       fParticleGun->GetAngDist()->SetParticleMomentumDirection( directionCmd->GetNew3VectorValue( newValues ) ) ;
     }
   else if (command == energyCmd )
-    {    
+    {
       fParticleGun->GetEneDist()->SetEnergyDisType( "Mono" ) ;
       fParticleGun->GetEneDist()->SetMonoEnergy( energyCmd->GetNewDoubleValue( newValues ) ) ;
     }
   else if (command == positionCmd )
-    { 
-      fParticleGun->GetPosDist()->SetPosDisType( "Point" ) ;    
+    {
+      fParticleGun->GetPosDist()->SetPosDisType( "Point" ) ;
       fParticleGun->GetPosDist()->SetCentreCoords( positionCmd->GetNew3VectorValue( newValues ) ) ;
     }
 	//
@@ -1507,7 +1512,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
     }
 ///////////////////////////////// Yann PERROT, Simon NICOLAS LPC Clermont-ferrand ////////////////////////////////////////////////
 
-  else if (command == setUserSpectrumCmd) 
+  else if (command == setUserSpectrumCmd)
   {
       GateSPSEneDistribution* speEn =  fParticleGun->GetEneDist(); //->ContructUserSpectrum(newValues);
       speEn->BuildUserSpectrum(newValues);
@@ -1515,7 +1520,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
   }
 
 ///////////////////////////////// Yann PERROT, Simon NICOLAS LPC Clermont-ferrand ////////////////////////////////////////////////
-  else 
+  else
     {
       G4cout << "Error entering command" << G4endl;
     }
@@ -1529,7 +1534,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
 G4String GateSingleParticleSourceMessenger::GetCurrentValue( G4UIcommand* )
 {
   G4String cv ;
-  
+
   //  if (command == directionCmd )
   //  { cv = directionCmd->ConvertToString( fParticleGun->GetParticleMomentumDirection() ) ; }
   //  else if (command == energyCmd )
@@ -1542,7 +1547,7 @@ G4String GateSingleParticleSourceMessenger::GetCurrentValue( G4UIcommand* )
   //  { cv = polCmd->ConvertToString( fParticleGun->GetParticlePolarization() ) ; }
   //  else if (command == numberCmd )
   //  { cv = numberCmd->ConvertToString( fParticleGun->GetNumberOfParticles() ) ; }
-  
+
   cv = "Not implemented yet" ;
 
   return cv ;
@@ -1582,8 +1587,8 @@ void GateSingleParticleSourceMessenger::IonCommand( G4String newValues )
       if( ion==0 )
         {
           G4cout << "Ion with Z=" << fAtomicNumber ;
-          G4cout << " A=" << fAtomicMass << "is not be defined" << G4endl ;    
-        } 
+          G4cout << " A=" << fAtomicMass << "is not be defined" << G4endl ;
+        }
       else
         {
           fParticleGun->SetParticleDefinition(ion) ;
@@ -1593,9 +1598,7 @@ void GateSingleParticleSourceMessenger::IonCommand( G4String newValues )
   else
     {
       G4cout << "Set /gps/particle to ion before using /gps/ion command" ;
-      G4cout << G4endl ; 
+      G4cout << G4endl ;
     }
 }
 //-------------------------------------------------------------------------------------------------
-
-
