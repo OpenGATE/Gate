@@ -109,7 +109,7 @@ protected:
 
   G4double ConversionFactor;
   G4double VoxelVolume;
-  G4Material *mWorldMaterial;
+  const G4MaterialCutsCouple *mWorldCouple;
   
   GateSETLEMultiplicityActor *pSETLEMultiplicityActor;
   int mPrimaryMultiplicity;
@@ -117,9 +117,8 @@ protected:
   bool mIsHybridinoEnabled;
   std::vector<RaycastingStruct> *mListOfRaycasting;
 
-  bool mIsMaterialAndMuTableInitialized;
-  std::vector<G4Material *> theListOfMaterial;
-  std::vector<GateMuTable *> theListOfMuTable;
+  bool mIsMuTableInitialized;
+  std::vector<GateMuTable *> mListOfMuTable;
   
   int mCurrentEvent;
   G4SteppingManager *mSteppingManager;

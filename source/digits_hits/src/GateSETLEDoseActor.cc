@@ -28,6 +28,7 @@
 #include "GateTrack.hh"
 #include "GateActions.hh"
 #include "G4Hybridino.hh"
+#include "G4RegionStore.hh"
 
 #include <typeinfo>
 //-----------------------------------------------------------------------------
@@ -50,7 +51,7 @@ GateSETLEDoseActor::GateSETLEDoseActor(G4String name, G4int depth) :
   mIsSecondaryLastHitEventImageEnabled = false;
 
   mIsHybridinoEnabled = false;
-  mIsMaterialAndMuTableInitialized = false;
+  mIsMuTableInitialized = false;
 
   // Create a 'MultiplicityActor' if not exist
   GateActorManager *actorManager = GateActorManager::GetInstance();
@@ -184,16 +185,16 @@ void GateSETLEDoseActor::Construct() {
 //-----------------------------------------------------------------------------
 void GateSETLEDoseActor::InitializeMaterialAndMuTable()
 {
-  if(!mIsMaterialAndMuTableInitialized)
+  if(!mIsMuTableInitialized)
   {
     int lineSize = (int)lrint(mResolution.x());
     int planeSize = (int)lrint(mResolution.x()*mResolution.y());
     int voxelIndex = -1;
     
-    theListOfMaterial.resize(mResolution.x()*mResolution.y()*mResolution.z());
-    theListOfMuTable.resize(mResolution.x()*mResolution.y()*mResolution.z());
+    mListOfMuTable.resize(mResolution.x()*mResolution.y()*mResolution.z());
 
     GateVImageVolume* volume = dynamic_cast<GateVImageVolume*>(GetVolume());
+    G4Region *region = G4RegionStore::GetInstance()->GetRegion(volume->GetObjectName());
     GateDetectorConstruction *detectorConstruction = GateDetectorConstruction::GetGateDetectorConstruction();
     for(int x=0; x<mResolution.x(); x++)
     {
@@ -202,13 +203,13 @@ void GateSETLEDoseActor::InitializeMaterialAndMuTable()
 	for(int z=0; z<mResolution.z(); z++)
 	{
 	  voxelIndex = x+y*lineSize+z*planeSize;
-	  theListOfMaterial[voxelIndex] = detectorConstruction->mMaterialDatabase.GetMaterial(volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(x,y,z)));
-	  theListOfMuTable[voxelIndex] = mMaterialHandler->GetMuTable(theListOfMaterial[voxelIndex]);
+	  G4Material *material = detectorConstruction->mMaterialDatabase.GetMaterial(volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(x,y,z)));
+	  mListOfMuTable[voxelIndex] = mMaterialHandler->GetMuTable(region->FindCouple(material));
 	}
       }
     }
     
-    mIsMaterialAndMuTableInitialized = true;
+    mIsMuTableInitialized = true;
   }
   
   // Get G4Material of the world for exponential attenuation
@@ -216,7 +217,7 @@ void GateSETLEDoseActor::InitializeMaterialAndMuTable()
   while (v->GetLogicalVolumeName() != "world_log") {
     v = v->GetParentVolume();
   }
-  mWorldMaterial = v->GetLogicalVolume()->GetMaterial();
+  mWorldCouple = v->GetLogicalVolume()->GetMaterialCutsCouple();
 }
 //-----------------------------------------------------------------------------
 
@@ -258,7 +259,7 @@ void GateSETLEDoseActor::BeginOfRunAction(const G4Run * r) {
   if(!volume) { GateError("Error in " << GetName() << ": GateVImageVolume doesn't exist"); }
   
   // fast material and mu access
-  if(!mIsMaterialAndMuTableInitialized) { InitializeMaterialAndMuTable(); }
+  if(!mIsMuTableInitialized) { InitializeMaterialAndMuTable(); }
 
   // Affine transform and rotation matrix for Raycasting
   GateVVolume * v = GetVolume();
@@ -321,7 +322,7 @@ void GateSETLEDoseActor::UserSteppingAction(const GateVVolume *v, const G4Step* 
       {
 	if(mNearestDistance > 0.0)
 	{
-	  double muWorld = mMaterialHandler->GetMu(mWorldMaterial, energy)*mWorldMaterial->GetDensity()/(g/cm3);
+	  double muWorld = mMaterialHandler->GetMu(mWorldCouple, energy);
 	  weight = weight * exp(-muWorld * mNearestDistance / 10.);
 	  position = position + (mNearestDistance * momentum);
 	  mFarthestDistance = mFarthestDistance - mNearestDistance;
@@ -467,14 +468,13 @@ double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight,
 //   GateMessage("Actor", 0, "LTot" << mTotalLength << G4endl); 
   
   int index = 0;
-  G4Material *material;
   double dose = 0.0;
   double L = 0.0;
   
   double delta_in  = weight;
   double delta_out(0.0);
   double mu(0.0);
-  double muen(0.0);
+  double muenOverRho(0.0);
 
   // test on dose contribution: primary or secondary ?
   GateImageWithStatistic *currentDoseImage = 0;
@@ -531,10 +531,9 @@ double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight,
 	currentLastHitImage->SetValue(index, mCurrentEvent);
       }
     }
-    
-    material = theListOfMaterial[index];
-    mu = theListOfMuTable[index]->GetMu(energy)*material->GetDensity()/(g/cm3);
-    muen = theListOfMuTable[index]->GetMuEn(energy);
+
+    mu = mListOfMuTable[index]->GetMu(energy);
+    muenOverRho = mListOfMuTable[index]->GetMuEnOverRho(energy);
 
     if(Rx < Ry && Rx < Rz){
       delta_out = delta_in*exp(-mu*Rx/10.);
@@ -561,7 +560,7 @@ double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight,
       z+=zincr;
     }
     
-    dose = ConversionFactor*energy*muen*(delta_in-delta_out)/mu/VoxelVolume;
+    dose = ConversionFactor*energy*muenOverRho*(delta_in-delta_out)/mu/VoxelVolume;
 
     if(mIsDoseImageEnabled)
     {

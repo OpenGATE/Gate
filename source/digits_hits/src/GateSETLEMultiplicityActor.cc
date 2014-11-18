@@ -198,9 +198,9 @@ void GateSETLEMultiplicityActor::UserSteppingAction(const GateVVolume *, const G
     // Apply exponential attenuation if stepLength > 0
     if(stepLength > 0.) 
     {
-      G4Material *material = step->GetPreStepPoint()->GetMaterial();
+      const G4MaterialCutsCouple *couple = step->GetPreStepPoint()->GetMaterialCutsCouple();
       G4double energy = step->GetPreStepPoint()->GetKineticEnergy();
-      G4double mu = mMaterialHandler->GetMu(material, energy)*material->GetDensity()/(g/cm3);    
+      G4double mu = mMaterialHandler->GetMu(couple, energy);    
       mCurrentHybridTrackWeight = mCurrentHybridTrackWeight * exp(-mu*stepLength/10.);
     }
 //     GateMessage("ActorMult", 0, "hybridWeight = " << currentHybridTrackWeight << G4endl);
