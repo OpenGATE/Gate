@@ -38,6 +38,7 @@ G4bool GateParticleFilter::Accept(const G4Track *aTrack)
   G4bool accept = false;
   G4bool acceptparent = false;
   G4bool acceptdirectparent = false;
+  GateTrackIDInfo  *trackInfo = GateUserActions::GetUserActions()->GetTrackIDInfo(aTrack->GetParentID());
 
   if (thePdef.empty()) accept = true; //if no particles given, setting to true will disable filtering on particle
   for ( size_t i = 0; i < thePdef.size(); i++) {
@@ -51,7 +52,6 @@ G4bool GateParticleFilter::Accept(const G4Track *aTrack)
   }
 
   if (theParentPdef.empty()) acceptparent = true; //if no parents given, setting to true will disable filtering on parent
-  GateTrackIDInfo  *trackInfo = GateUserActions::GetUserActions()->GetTrackIDInfo(aTrack->GetParentID());
   while (trackInfo)
   {
     for ( size_t i = 0; i < theParentPdef.size(); i++) {
@@ -62,13 +62,12 @@ G4bool GateParticleFilter::Accept(const G4Track *aTrack)
         break;
       }
     }
-    if (acceptparent == true): break;
+    if (acceptparent == true) break;
     int id = trackInfo->GetParentID();
     trackInfo = GateUserActions::GetUserActions()->GetTrackIDInfo(id);
   }
 
   if (theDirectParentPdef.empty()) acceptdirectparent = true; //if no directparents given, setting to true will disable filtering on parent
-  GateTrackIDInfo  *trackInfo = GateUserActions::GetUserActions()->GetTrackIDInfo(aTrack->GetParentID());
   for ( size_t i = 0; i < theDirectParentPdef.size(); i++) {
     if ( theDirectParentPdef[i] == trackInfo->GetParticleName())
     {
