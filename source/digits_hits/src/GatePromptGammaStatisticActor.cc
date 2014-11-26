@@ -87,6 +87,7 @@ void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
 {
   // Get various information on the current step
   const G4ParticleDefinition* particle = step->GetTrack()->GetParticleDefinition();
+  //why energy is prestep and not poststep? energy is not lost yet, compare with JM
   const G4double particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
   const G4Material* material = step->GetPreStepPoint()->GetMaterial();
   const G4VProcess* process = step->GetPostStepPoint()->GetProcessDefinedStep();

@@ -30,6 +30,7 @@ protected:
   GatePromptGammaTLEActor* pTLEActor;
 
   G4UIcmdWithAString * pSetInputDataFileCmd;
+  G4UIcmdWithABool * pEnableUncertaintyCmd;
 };
 //-----------------------------------------------------------------------------
 

@@ -39,6 +39,8 @@ public:
   virtual void SaveData();
   virtual void ResetData();
 
+  void EnableUncertaintyImage(bool b) { mIsUncertaintyImageEnabled = b; }
+
 protected:
   GatePromptGammaTLEActor(G4String name, G4int depth=0);
   GatePromptGammaTLEActorMessenger * pMessenger;
@@ -46,6 +48,8 @@ protected:
   std::string mInputDataFilename;
   GateImageOfHistograms * mImageGamma;
   GatePromptGammaData data;
+
+  bool mIsUncertaintyImageEnabled;
 };
 //-----------------------------------------------------------------------------
 
