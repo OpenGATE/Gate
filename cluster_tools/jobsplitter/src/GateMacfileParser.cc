@@ -928,7 +928,7 @@ void GateMacfileParser::FormatMacline()
 	//remove any trailing comments
 	if (macline.contains("#"))
 	{
-		G4int position=macline.find("#");
+		position=macline.find("#");
 		G4String temp=macline.substr(0,position);
 		macline=temp;
 	}

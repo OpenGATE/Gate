@@ -43,23 +43,25 @@
 #include "GateImage.hh"
 
 class GateImageBox : public virtual G4Box {
-    
+
 public:
     GateImageBox(const GateImage & image, const G4String & name);
     ~GateImageBox();
-    
+
+  typedef float PixelType; // FIXME
+
     void DescribeYourselfTo(G4VGraphicsScene& scene) const;
 private:
 #ifdef GATEIMAGEBOX_USE_OPENGL
     void DescribeYourselfTo(G4OpenGLSceneHandler& scene) const;
-    
-    std::vector<GateImage::PixelType> getXYSlice(const GateImage & image, const size_t z) const;
-    std::vector<GateImage::PixelType> getXZSlice(const GateImage & image, const size_t y) const;
-    std::vector<GateImage::PixelType> getYZSlice(const GateImage & image, const size_t x) const;
-    GLubyte * convertToRGB(std::vector<GateImage::PixelType> slice, GateImage::PixelType min, GateImage::PixelType max) const;
+
+    std::vector<PixelType> getXYSlice(const GateImage & image, const size_t z) const;
+    std::vector<PixelType> getXZSlice(const GateImage & image, const size_t y) const;
+    std::vector<PixelType> getYZSlice(const GateImage & image, const size_t x) const;
+    GLubyte * convertToRGB(std::vector<PixelType> slice, PixelType min, PixelType max) const;
     GLuint genOpenGLTexture(const GLubyte * rgb, int width, int height) const;
     void initOpenGLTextures(const GateImage & image, const size_t x, const size_t y, const size_t z);
-    
+
     size_t position_x;
     size_t position_y;
     size_t position_z;

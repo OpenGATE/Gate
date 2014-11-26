@@ -41,15 +41,15 @@
 
 /gate/physics/addPhysicsList QGSP_BERT_HP_EMY
 
-/gate/physics/Gamma/SetCutInRegion      world 1 mm
-/gate/physics/Electron/SetCutInRegion   world 1 mm
-/gate/physics/Positron/SetCutInRegion   world 1 mm
+/gate/physics/Gamma/SetCutInRegion      world 1 m
+/gate/physics/Electron/SetCutInRegion   world 1 m
+/gate/physics/Positron/SetCutInRegion   world 1 m
 
 # /gate/physics/Gamma/SetCutInRegion      mainbox 0.1 mm
 # /gate/physics/Electron/SetCutInRegion   mainbox 0.1 mm
 # /gate/physics/Positron/SetCutInRegion   mainbox 0.1 mm
 
-/gate/physics/SetMaxStepSizeInRegion world 1 mm
+/gate/physics/SetMaxStepSizeInRegion mainBoxEntrance 1 mm
 /gate/physics/ActivateStepLimiter proton
 /gate/physics/ActivateStepLimiter deuteron
 /gate/physics/ActivateStepLimiter triton

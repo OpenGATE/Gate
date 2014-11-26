@@ -7,21 +7,21 @@
 //                          class header file
 // -----------------------------------------------------------------------
 
-// Class defining methods for firing multivariate gaussian distributed
+// Class defining methods for firing multivariate gaussian distributed 
 // random values, given a vector of means and a covariance matrix
 // Definitions are those from 1998 Review of Particle Physics, section 28.3.3.
 //
-// This utilizes the following other comonents of CLHEP:
+// This utilizes the following other comonents of CLHEP:  
 //	RandGauss from the Random package to get individual deviates
 //	HepVector, HepSymMatrix and HepMatrix from the Matrix package
 //	HepSymMatrix::similarity(HepMatrix)
 //	diagonalize(HepSymMatrix *s)
 // The author of this distribution relies on diagonalize() being correct.
 //
-// Although original distribution classes in the Random package return a
-// double when fire() (or operator()) is done, RandMultiGauss returns a
+// Although original distribution classes in the Random package return a 
+// double when fire() (or operator()) is done, RandMultiGauss returns a 
 // HepVector of values.
-//
+//	  
 // =======================================================================
 // Mark Fischler  - Created: 19th September 1999
 // =======================================================================
@@ -46,14 +46,14 @@ class RandMultiGauss : public HepRandomVector {
 
 public:
 
-  RandMultiGauss ( HepRandomEngine& anEngine,
-		   const HepVector& mu,
+  RandMultiGauss ( HepRandomEngine& anEngine, 
+		   const HepVector& mu, 
                    const HepSymMatrix& S );
 		// The symmetric matrix S MUST BE POSITIVE DEFINITE
 		// and MUST MATCH THE SIZE OF MU.
 
-  RandMultiGauss ( HepRandomEngine* anEngine,
-		   const HepVector& mu,
+  RandMultiGauss ( HepRandomEngine* anEngine, 
+		   const HepVector& mu, 
                    const HepSymMatrix& S );
 		// The symmetric matrix S MUST BE POSITIVE DEFINITE
 		// and MUST MATCH THE SIZE OF MU.
@@ -69,7 +69,7 @@ public:
 
   // The following are provided for convenience in the case where each
   // random fired will have a different mu and S.  They set the default mu
-  // to the zero 2-vector, and the default S to the Unit 2x2 matrix.
+  // to the zero 2-vector, and the default S to the Unit 2x2 matrix.  
   RandMultiGauss ( HepRandomEngine& anEngine );
   RandMultiGauss ( HepRandomEngine* anEngine );
 
@@ -81,20 +81,20 @@ public:
   HepVector fire( const HepVector& mu, const HepSymMatrix& S );
 		// The symmetric matrix S MUST BE POSITIVE DEFINITE
 		// and MUST MATCH THE SIZE OF MU.
-
-  // A note on efficient usage when firing many vectors of Multivariate
+  
+  // A note on efficient usage when firing many vectors of Multivariate 
   // Gaussians:   For n > 2 the work needed to diagonalize S is significant.
   // So if you only want a collection of uncorrelated Gaussians, it will be
   // quicker to generate them one at a time.
   //
-  // The class saves the diagonalizing matrix for the default S.
-  // Thus generating vectors with that same S can be quite efficient.
-  // If you require a small number of different S's, known in
+  // The class saves the diagonalizing matrix for the default S.  
+  // Thus generating vectors with that same S can be quite efficient.  
+  // If you require a small number of different S's, known in 
   // advance, consider instantiating RandMulitGauss for each different S,
-  // sharing the same engine.
-  //
-  // If you require a random using the default S for a distribution but a
-  // different mu, it is most efficient to imply use the default fire() and
+  // sharing the same engine.  
+  // 
+  // If you require a random using the default S for a distribution but a 
+  // different mu, it is most efficient to imply use the default fire() and 
   // add the difference of the mu's to the returned HepVector.
 
   void fireArray ( const int size, HepVector* array);
@@ -124,14 +124,14 @@ private:
 		   		HepMatrix & U,
 		   		HepVector & sigmas );
 
-  static HepVector deviates ( const HepMatrix & U,
-		       	      const HepVector & sigmas,
+  static HepVector deviates ( const HepMatrix & U, 
+		       	      const HepVector & sigmas, 
 		       	      HepRandomEngine * engine,
 		       	      bool& available,
 		 	      double& next);
   // Returns vector of gaussian randoms based on sigmas, rotated by U,
   // with means of 0.
-
+		       
 };
 
 }  // namespace CLHEP
@@ -141,4 +141,4 @@ private:
 using namespace CLHEP;
 #endif
 
-#endif // RandMultiGauss_h
+#endif // RandMultiGauss_h 
