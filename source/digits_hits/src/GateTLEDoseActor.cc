@@ -21,8 +21,8 @@
 
 //-----------------------------------------------------------------------------
 GateTLEDoseActor::GateTLEDoseActor(G4String name, G4int depth):
-  GateVImageActor(name, depth) {
-  mCurrentEvent = -1;
+  GateVImageActor(name,depth) {
+  mCurrentEvent=-1;
   pMessenger = new GateTLEDoseActorMessenger(this);
   mMaterialHandler = GateMaterialMuHandler::GetInstance();
   mIsEdepImageEnabled = false;
@@ -62,15 +62,15 @@ void GateTLEDoseActor::Construct() {
   }
 
   // Output Filename
-  mDoseFilename = G4String(removeExtension(mSaveFilename)) + "-Dose." + G4String(getExtension(mSaveFilename));
-  mEdepFilename = G4String(removeExtension(mSaveFilename)) + "-Edep." + G4String(getExtension(mSaveFilename));
+  mDoseFilename = G4String(removeExtension(mSaveFilename))+"-Dose."+G4String(getExtension(mSaveFilename));
+  mEdepFilename = G4String(removeExtension(mSaveFilename))+"-Edep."+G4String(getExtension(mSaveFilename));
 
   SetOriginTransformAndFlagToImage(mDoseImage);
   SetOriginTransformAndFlagToImage(mEdepImage);
   SetOriginTransformAndFlagToImage(mLastHitEventImage);
 
-  if (mIsEdepSquaredImageEnabled || mIsEdepUncertaintyImageEnabled ||
-      mIsDoseSquaredImageEnabled || mIsDoseUncertaintyImageEnabled) {
+  if(mIsEdepSquaredImageEnabled || mIsEdepUncertaintyImageEnabled ||
+     mIsDoseSquaredImageEnabled || mIsDoseUncertaintyImageEnabled){
     mLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mLastHitEventImage.Allocate();
     mIsLastHitEventImageEnabled = true;
@@ -105,8 +105,8 @@ void GateTLEDoseActor::Construct() {
 /// Save data
 void GateTLEDoseActor::SaveData() {
   GateVActor::SaveData();
-  if (mIsDoseImageEnabled) mDoseImage.SaveData(mCurrentEvent + 1, false);
-  if (mIsEdepImageEnabled) mEdepImage.SaveData(mCurrentEvent + 1, false);
+  if (mIsDoseImageEnabled) mDoseImage.SaveData(mCurrentEvent+1, false);
+  if (mIsEdepImageEnabled) mEdepImage.SaveData(mCurrentEvent+1, false);
   if (mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1);
 }
 //-----------------------------------------------------------------------------
@@ -119,7 +119,7 @@ void GateTLEDoseActor::ResetData() {
 }
 //-----------------------------------------------------------------------------
 
-void GateTLEDoseActor::UserSteppingAction(const GateVVolume *, const G4Step *step)
+void GateTLEDoseActor::UserSteppingAction(const GateVVolume *, const G4Step* step)
 {
   int index = GetIndexFromStepPosition(GetVolume(), step);
   UserSteppingActionInVoxel(index, step);
@@ -127,7 +127,7 @@ void GateTLEDoseActor::UserSteppingAction(const GateVVolume *, const G4Step *ste
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateTLEDoseActor::BeginOfRunAction(const G4Run *r) {
+void GateTLEDoseActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
   GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Run" << G4endl);
   // ResetData(); // Do no reset here !! (when multiple run);
@@ -136,7 +136,7 @@ void GateTLEDoseActor::BeginOfRunAction(const G4Run *r) {
 
 //-----------------------------------------------------------------------------
 // Callback at each event
-void GateTLEDoseActor::BeginOfEventAction(const G4Event *e) {
+void GateTLEDoseActor::BeginOfEventAction(const G4Event * e) {
   GateVActor::BeginOfEventAction(e);
   mCurrentEvent++;
 
@@ -144,28 +144,28 @@ void GateTLEDoseActor::BeginOfEventAction(const G4Event *e) {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step *step) {
+void GateTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
   G4StepPoint *PreStep(step->GetPreStepPoint());
   G4StepPoint *PostStep(step->GetPostStepPoint());
-  G4ThreeVector prePosition = PreStep->GetPosition();
-  G4ThreeVector postPosition = PostStep->GetPosition();
-  if (step->GetTrack()->GetDefinition()->GetParticleName() == "gamma") {
+  G4ThreeVector prePosition=PreStep->GetPosition();
+  G4ThreeVector postPosition=PostStep->GetPosition();
+  if(step->GetTrack()->GetDefinition()->GetParticleName() == "gamma"){
     G4double distance = step->GetStepLength();
     G4double energy = PreStep->GetKineticEnergy();
-    double mu_en = mMaterialHandler->GetAttenuation(PreStep->GetMaterial(), energy);
-    G4double dose = ConversionFactor * energy * mu_en * distance / VoxelVolume;
-    G4double edep = 0.1 * energy * mu_en * distance * PreStep->GetMaterial()->GetDensity() / (g / cm3);
-    bool sameEvent = true;
+    double muenOverRho = mMaterialHandler->GetMuEnOverRho(PreStep->GetMaterialCutsCouple(), energy);
+    G4double dose = ConversionFactor*energy*muenOverRho*distance/VoxelVolume;
+    G4double edep = 0.1*energy*muenOverRho*distance*PreStep->GetMaterial()->GetDensity()/(g/cm3);
+    bool sameEvent=true;
 
     if (mIsLastHitEventImageEnabled) {
       if (mCurrentEvent != mLastHitEventImage.GetValue(index)) {
-        sameEvent = false;
-        mLastHitEventImage.SetValue(index, mCurrentEvent);
+	sameEvent = false;
+	mLastHitEventImage.SetValue(index, mCurrentEvent);
       }
     }
 
-    if (energy <= .001) {
-      edep = energy;
+    if(energy <= .001){
+      edep=energy;
       step->GetTrack()->SetTrackStatus(fStopAndKill);
     }
 
@@ -177,13 +177,13 @@ void GateTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step *
       else
         mDoseImage.AddValue(index, dose);
     }
-    if (mIsEdepImageEnabled) {
+    if(mIsEdepImageEnabled){
       if (mIsEdepUncertaintyImageEnabled || mIsEdepSquaredImageEnabled) {
-        if (sameEvent) mEdepImage.AddTempValue(index, edep);
-        else mEdepImage.AddValueAndUpdate(index, edep);
+	if (sameEvent) mEdepImage.AddTempValue(index, edep);
+	else mEdepImage.AddValueAndUpdate(index, edep);
       }
       else
-        mEdepImage.AddValue(index, edep);
+	mEdepImage.AddValue(index, edep);
     }
 
   }

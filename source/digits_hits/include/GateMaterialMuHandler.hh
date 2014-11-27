@@ -19,7 +19,7 @@ See GATE/LICENSE.txt for further details
 #include "GatePhysicsList.hh"
 
 #include "G4UnitsTable.hh"
-#include "G4Material.hh"
+#include "G4MaterialCutsCouple.hh"
 #include "G4ParticleTable.hh"
 #include "G4LossTableManager.hh"
 
@@ -68,10 +68,13 @@ public:
 
 
   ~GateMaterialMuHandler();
-  double GetAttenuation(G4Material* material, double energy);
-  double GetMu(G4Material* material, double energy);
-  
-  GateMuTable *GetMuTable(G4Material *);
+  double GetDensity(const G4MaterialCutsCouple *);
+  double GetMuEnOverRho(const G4MaterialCutsCouple *, double);
+  double GetMuEn(const G4MaterialCutsCouple *, double);
+  double GetMuOverRho(const G4MaterialCutsCouple *, double);
+  double GetMu(const G4MaterialCutsCouple *, double);
+
+  GateMuTable *GetMuTable(const G4MaterialCutsCouple *);
   
   void SetElementsFolderName(G4String folder) { mElementsFolderName = folder; }
   void SetEMin(double e) { mEnergyMin = e; }
@@ -88,8 +91,8 @@ private:
   void Initialize();
   // - Precalculated coefficients (by element)
   void InitElementTable();
-  void ReadElementFile(int z);
-  void ConstructMaterial(const G4Material *material);
+  void ReadElementFile(int);
+  void ConstructMaterial(const G4MaterialCutsCouple *);
   // - Complete simulation of coefficients
   void SimulateMaterialTable();
   void ConstructEnergyList(std::vector<MuStorageStruct> *, const G4Material *);
@@ -97,7 +100,7 @@ private:
   double ProcessOneShot(G4VEmModel *,std::vector<G4DynamicParticle*> *, const G4MaterialCutsCouple *, const G4DynamicParticle *);
   double SquaredSigmaOnMean(double , double , double);
 
-  map<G4String, GateMuTable*> mMaterialTable;
+  map<const G4MaterialCutsCouple *, GateMuTable*> mCoupleTable;
   GateMuTable** mElementsTable;
   int mNbOfElements;
   G4String mElementsFolderName;
@@ -110,6 +113,11 @@ private:
   double mPrecision;
 
   static GateMaterialMuHandler *singleton_MaterialMuHandler;
+  
+  // - fast acces
+  void CheckLastCall(const G4MaterialCutsCouple *);
+  const G4MaterialCutsCouple *mLastCouple;
+  GateMuTable *mLastMuTable;
 
 };
 

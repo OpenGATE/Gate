@@ -47,7 +47,7 @@ void GateSourceVoxelInterfileReader::ReadFile(G4String headerFileName)
 
   ReadHeader(headerFileName);
 
-  std::vector<PixelType> buffer;
+  std::vector<DefaultPixelType> buffer;
 
   ReadData(buffer);
 
@@ -106,7 +106,7 @@ void GateSourceVoxelInterfileReader::ReadRTFile(G4String headerFileName, G4Strin
   // override filename from header
   m_dataFileName = dataFileName;
 
-  std::vector<PixelType> buffer;
+  std::vector<DefaultPixelType> buffer;
   ReadData(m_dataFileName, buffer);
 
   G4double activity;

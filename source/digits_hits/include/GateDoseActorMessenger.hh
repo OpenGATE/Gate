@@ -45,13 +45,6 @@ protected:
   G4UIcmdWithABool * pEnableDoseNormToMaxCmd;
   G4UIcmdWithABool * pEnableDoseNormToIntegralCmd;
   G4UIcmdWithABool * pEnableDoseToWaterNormCmd;
-  G4UIcmdWithABool * pEnableRBE1AlphaCmd;
-  G4UIcmdWithABool * pEnableRBE1BetaCmd;
-  G4UIcmdWithABool * pEnableRBE1FactorCmd;
-  G4UIcmdWithABool * pEnableRBE1BioDoseCmd;
-  G4UIcmdWithAString * pSetRBE1AlphaDataFilenameCmd;
-  G4UIcmdWithAString * pSetRBE1BetaDataFilenameCmd;
-  G4UIcmdWithABool * pEnableRBE1Test1Cmd;
 };
 
 #endif /* end #define GATEDOSEACTORMESSENGER_HH*/

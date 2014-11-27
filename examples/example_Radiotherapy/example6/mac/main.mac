@@ -8,7 +8,7 @@
 #-------------------oooooOOOOO00000OOOOOooooo---------------------#
 
 #=====================================================
-# VERBOSE and VISUALISATION 
+# VERBOSE and VISUALISATION
 #=====================================================
 
 /control/execute mac/verbose.mac
@@ -78,8 +78,7 @@
 # PHYSICS
 #=====================================================
 
-/control/execute mac/physicslist_EM_std.mac
-/control/execute mac/physicslist_HAD_std.mac
+/gate/physics/addPhysicsList QGSP_BERT_HP_EMY
 
 /gate/physics/Gamma/SetCutInRegion      world 1 mm
 /gate/physics/Electron/SetCutInRegion   world 1 mm
@@ -94,8 +93,6 @@
 /gate/physics/ActivateStepLimiter proton
 /gate/physics/ActivateStepLimiter e-
 
-# Print Physics
-/gate/physics/print output/physics.txt
 
 #=====================================================
 # Statistics actor
@@ -115,7 +112,7 @@
 #=====================================================
 # Dose actor with DoseToWater
 # *WARNING* With DoseToWater this actor is much slower than without
-# because the dedx is computed several times. 
+# because the dedx is computed several times.
 #=====================================================
 /gate/actor/addActor                            DoseActor   dose0
 /gate/actor/dose0/attachTo                      water_box
@@ -168,4 +165,3 @@
 /gate/application/setTotalNumberOfPrimaries 10
 
 /gate/application/start
-

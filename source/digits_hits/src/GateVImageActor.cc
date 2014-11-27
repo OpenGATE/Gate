@@ -240,7 +240,7 @@ void GateVImageActor::SetOriginTransformAndFlagToImage(GateImageWithStatistic & 
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateVImageActor::SetOriginTransformAndFlagToImage(GateImage & image)
+void GateVImageActor::SetOriginTransformAndFlagToImage(GateVImage & image)
 {
   // Set origin, take into account the origin of the attached volume (if exist)
   G4ThreeVector offset = mOrigin;

@@ -141,14 +141,17 @@ void GateSimulationStatisticActor::SaveData()
   double elapsedSimulationTime = currentSimulationTime - startTime;
   if (virtualStartTime != -1) elapsedSimulationTime = currentSimulationTime - virtualStartTime;
 
+  double t = get_elapsed_time(start,end);
+  double twi = get_elapsed_time(start_afterinit,end);
+
   os << "# NumberOfRun    = " << mNumberOfRuns << std::endl
      << "# NumberOfEvents = " << mNumberOfEvents << std::endl
      << "# NumberOfTracks = " << mNumberOfTrack << std::endl
      << "# NumberOfSteps  = " << mNumberOfSteps << std::endl
      << "# NumberOfGeometricalSteps  = " << mNumberOfGeometricalSteps << std::endl
      << "# NumberOfPhysicalSteps     = " << mNumberOfPhysicalSteps << std::endl
-     << "# ElapsedTime           = " << get_elapsed_time(start,end) << std::endl
-     << "# ElapsedTimeWoInit     = " << get_elapsed_time(start_afterinit,end) << std::endl
+     << "# ElapsedTime           = " << t << std::endl
+     << "# ElapsedTimeWoInit     = " << twi << std::endl
      << "# StartDate             = " << startDateStr
      << "# EndDate               = " << get_date_string()
      << "# StartSimulationTime        = " << startTime/s << std::endl
@@ -156,7 +159,10 @@ void GateSimulationStatisticActor::SaveData()
      << "# CurrentSimulationTime      = " << currentSimulationTime/s << std::endl
      << "# VirtualStartSimulationTime = " << virtualStartTime/s << std::endl
      << "# VirtualStopSimulationTime  = " << virtualStopTime/s << std::endl
-     << "# ElapsedSimulationTime      = " << elapsedSimulationTime/s << std::endl;
+     << "# ElapsedSimulationTime      = " << elapsedSimulationTime/s << std::endl
+     << "# PPS (Primary per sec)      = " << mNumberOfEvents/twi << std::endl
+     << "# TPS (Track per sec)        = " << mNumberOfTrack/twi << std::endl
+     << "# SPS (Step per sec)         = " << mNumberOfSteps/twi << std::endl;
   if (!os) {
     GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << G4endl);
   }

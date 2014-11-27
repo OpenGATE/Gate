@@ -1,7 +1,10 @@
 #ifndef GATEMUTABLES_CC
+
 #include "GateMuTables.hh"
 #include "GateMiscFunctions.hh"
-GateMuTable::GateMuTable(G4String /*name*/, G4int size)
+
+//-----------------------------------------------------------------------------
+GateMuTable::GateMuTable(const G4MaterialCutsCouple *couple, G4int size)
 {
   mEnergy = new double[size];
   mMu = new double[size];
@@ -11,30 +14,46 @@ GateMuTable::GateMuTable(G4String /*name*/, G4int size)
   lastMuen = -1.0;
   lastEnergyMu = -1.0;
   lastEnergyMuen = -1.0;
-}
 
+  mCouple = couple;
+  mDensity = -1;
+  if(mCouple)
+  {
+    mMaterial = mCouple->GetMaterial();
+    mDensity = mMaterial->GetDensity() / (CLHEP::g/CLHEP::cm3);
+  }
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 GateMuTable::~GateMuTable()
 {
   delete[] mEnergy;
   delete[] mMu;
   delete[] mMu_en;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 void GateMuTable::PutValue(int index, double energy, double mu, double mu_en)
 {
   mEnergy[index] = energy;
   mMu[index] = mu;
   mMu_en[index] = mu_en;
 }
+//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 inline double interpol(double x1, double x, double x2,
 		       double y1, double y2)
 {
   return ( y1 + ( (y2-y1) * (x-x1) / (x2-x1) ) );  // if log storage
 //   return exp( log(y1) + log(y2/y1) / log(x2/x1)* log(x/x1) ); // if no log storage
 }
+//-----------------------------------------------------------------------------
 
-double GateMuTable::GetMuEn(double energy)
+//-----------------------------------------------------------------------------
+double GateMuTable::GetMuEnOverRho(double energy)
 {
   if (energy != lastEnergyMuen)
   {
@@ -54,13 +73,22 @@ double GateMuTable::GetMuEn(double energy)
     double e_sup = mEnergy[sup];
 
     if( energy > e_inf && energy < e_sup) { lastMuen = exp(interpol(e_inf, energy, e_sup, mMu_en[inf], mMu_en[sup])); }
-    else { lastMuen = exp(mMu_en[inf]); }    
+    else { lastMuen = exp(mMu_en[inf]); }
   }
 
   return lastMuen;
 }
+//-----------------------------------------------------------------------------
 
-double GateMuTable::GetMu(double energy)
+//-----------------------------------------------------------------------------
+double GateMuTable::GetMuEn(double energy)
+{
+  return (GetMuEnOverRho(energy) * mDensity);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+double GateMuTable::GetMuOverRho(double energy)
 {
   if (energy != lastEnergyMu)
   {
@@ -82,13 +110,16 @@ double GateMuTable::GetMu(double energy)
     if( energy > e_inf && energy < e_sup) { lastMu = exp(interpol(e_inf, energy, e_sup, mMu[inf], mMu[sup])); }
     else { lastMu = exp(mMu[inf]); }
   }
-    
+
   return lastMu;
 }
+//-----------------------------------------------------------------------------
 
-G4int GateMuTable::GetSize()
+//-----------------------------------------------------------------------------
+double GateMuTable::GetMu(double energy)
 {
-  return mSize;
+  return (GetMuOverRho(energy) * mDensity);
 }
+//-----------------------------------------------------------------------------
 
 #endif

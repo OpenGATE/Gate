@@ -1,4 +1,6 @@
 // -*- C++ -*-
+// ---------------------------------------------------------------------------
+//
 // This file is a part of the CLHEP - a Class Library for High Energy Physics.
 //
 
