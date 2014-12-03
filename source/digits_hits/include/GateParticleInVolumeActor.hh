@@ -63,7 +63,7 @@ protected:
   bool mIsParticleInVolumeImageEnabled;
   bool outsideTrack;
 
-  GateImage mLastHitEventImage;
+  GateImageInt mLastHitEventImage;
   GateImage mParticleInVolumeImage;
 
   G4String mParticleInVolumeFilename;
