@@ -298,6 +298,12 @@ void GateVImageActor::UserSteppingAction(const GateVVolume* , const G4Step * ste
   //int index = GetIndexFromStepPosition(v, step);
 
   //assert(foo==NULL); // Probably a problem here, foo is not useful ??? Please keep this comment
+  //GetIndexFromStepPosition goes from Geant4 Coord System to 'Gate'/physical coord system.
+
+/*TODO BRENT
+if (custmframe)
+    
+else*/
   int index = GetIndexFromStepPosition(GetVolume(), step);
   UserSteppingActionInVoxel(index, step);
 }
@@ -406,6 +412,7 @@ int GateVImageActor::GetIndexFromStepPosition(const GateVVolume * v, const G4Ste
     //index = mImage.GetIndexFromPrePosition(prePosition, postPosition);
     G4ThreeVector direction = postPosition - prePosition;
     index = mImage.GetIndexFromPostPositionAndDirection(prePosition, direction);
+    //TODO Brent index = mImage.GetIndexFromPostPositionAndDirection(R x prePosition, direction);
   }
   if (mStepHitType == PostStepHitType) {
     G4ThreeVector direction = postPosition - prePosition;
