@@ -21,7 +21,9 @@
 
 #include "GateVImageActor.hh"
 #include "GateActorManager.hh"
-#include "GateImageActorMessenger.hh"
+
+#include "GateProductionAndStoppingActorMessenger.hh"
+
 #include "GateImageWithStatistic.hh"
 
 #include "G4UnitsTable.hh"
@@ -55,10 +57,14 @@ public:
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
 
+  void SetEnableCoordFrame(){bEnableCoordFrame = true;}
+  bool GetEnableCoordFrame(){return bEnableCoordFrame;}
+  void SetCoordFrame(G4String nameOfFrame){bCoordFrame=nameOfFrame;}
+  G4String GetCoordFrame(){return bCoordFrame ;}
 
 protected:
   GateProductionAndStoppingActor(G4String name, G4int depth=0);
-  GateImageActorMessenger * pMessenger;
+  GateProductionAndStoppingActorMessenger * pMessenger;
 
   int mCurrentEvent;
 
@@ -67,6 +73,9 @@ protected:
 
   G4String mProdFilename;
   G4String mStopFilename;
+
+  bool bEnableCoordFrame;
+  G4String bCoordFrame;
 
 };
 

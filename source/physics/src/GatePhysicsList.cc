@@ -398,6 +398,7 @@ void GatePhysicsList::ConstructParticle()
 
   //Construct G4DNA particles
 
+
   G4DNAGenericIonsManager* dnagenericIonsManager;
   dnagenericIonsManager=G4DNAGenericIonsManager::Instance();
   dnagenericIonsManager->GetIon("hydrogen");
@@ -408,6 +409,7 @@ void GatePhysicsList::ConstructParticle()
   dnagenericIonsManager->GetIon("nitrogen");
   dnagenericIonsManager->GetIon("iron");
   dnagenericIonsManager->GetIon("oxygen");
+  
 }
 //-----------------------------------------------------------------------------------------
 
