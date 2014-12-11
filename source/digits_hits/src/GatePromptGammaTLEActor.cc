@@ -24,6 +24,8 @@ GatePromptGammaTLEActor::GatePromptGammaTLEActor(G4String name, G4int depth):
   pMessenger = new GatePromptGammaTLEActorMessenger(this);
   SetStepHitType("random");
   mImageGamma = new GateImageOfHistograms("double");
+  mCurrentEvent=-1;
+  mIsUncertaintyImageEnabled = false;
 }
 //-----------------------------------------------------------------------------
 
@@ -52,6 +54,7 @@ void GatePromptGammaTLEActor::Construct()
   // Enable callbacks
   EnableBeginOfRunAction(false);
   EnableBeginOfEventAction(false);
+  if(mIsUncertaintyImageEnabled) EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(false);
   EnablePostUserTrackingAction(false);
   EnableUserSteppingAction(true);
@@ -67,6 +70,20 @@ void GatePromptGammaTLEActor::Construct()
   mImageGamma->SetHistoInfo(data.GetGammaNbBins(), data.GetGammaEMin(), data.GetGammaEMax());
   mImageGamma->Allocate();
   mImageGamma->PrintInfo();
+
+  if(mIsUncertaintyImageEnabled) {
+    TLEerrFilename = G4String(removeExtension(mSaveFilename))+"-TLEerr."+G4String(getExtension(mSaveFilename));
+    SetOriginTransformAndFlagToImage(TLEerr);
+    //TODO Brent: Not sure if I should add a custom flag.
+    TLEerr.EnableSquaredImage(true);
+    TLEerr.EnableUncertaintyImage(true);
+    TLEerr.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    TLEerr.Allocate();
+    TLEerr.SetFilename(TLEerrFilename);
+    SetOriginTransformAndFlagToImage(mLastHitEventImage);
+    mLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    mLastHitEventImage.Allocate();
+  }
 
   // Force hit type to random
   if (mStepHitType != RandomStepHitType) {
@@ -84,6 +101,10 @@ void GatePromptGammaTLEActor::Construct()
 void GatePromptGammaTLEActor::ResetData()
 {
   mImageGamma->Reset();
+  if (mIsUncertaintyImageEnabled) {
+    TLEerr.Reset();
+    mLastHitEventImage.Fill(-1);
+  }
 }
 //-----------------------------------------------------------------------------
 
@@ -103,9 +124,23 @@ void GatePromptGammaTLEActor::SaveData()
   GateVImageActor::SaveData();
   mImageGamma->Write(mSaveFilename);
   alreadyHere = true;
+
+  if(mIsUncertaintyImageEnabled){
+    TLEerr.SaveData(mCurrentEvent+1, false);  //TODO Check, flag determines normalization
+
+    SetOriginTransformAndFlagToImage(mLastHitEventImage);
+    mLastHitEventImage.Fill(-1);
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+// Callback at each event
+void GateDoseActor::BeginOfEventAction(const G4Event * e) {
+  GateVActor::BeginOfEventAction(e);
+  mCurrentEvent++;
+  GateDebugMessage("Actor", 3, "GatePromptGammaTLEActor -- Begin of Event: "<<mCurrentEvent << G4endl);
+}
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GatePromptGammaTLEActor::UserPostTrackActionInVoxel(const int, const G4Track*)
@@ -144,7 +179,28 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // assume everything exist (has been computed by InitializeMaterial)
   TH1D * h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy);
 
+  // Check if proton energy within bounds.
+  double dbmax = data.GetProtonEMax();
+  if(particle_energy>dbmax){
+      GateError("Proton Energy ("<<particle_energy<<") outside range of pgTLE ("<<dbmax<<") database! Aborting...");
+  }
+
   // Do not scale h directly because it will be reused
   mImageGamma->AddValueDouble(index, h, distance*material->GetDensity()/(g/cm3));
+
+  // Error calculation
+  if(mIsUncertaintyImageEnabled){
+    bool sameEvent=true;
+    if (mIsLastHitEventImageEnabled) {
+      GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
+      if (mCurrentEvent != mLastHitEventImage.GetValue(index)) {
+        sameEvent = false;
+        mLastHitEventImage.SetValue(index, mCurrentEvent);
+      }
+    }
+    //TODO should this store distance or distance multiplied with factors, see JM formula 10?
+    if (sameEvent) TLEerr.AddTempValue(index, distance);
+    else TLEerr.AddValueAndUpdate(index, distance);
+  }
 }
 //-----------------------------------------------------------------------------

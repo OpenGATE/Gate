@@ -17,6 +17,7 @@
 #include "GatePromptGammaTLEActorMessenger.hh"
 #include "GateImageOfHistograms.hh"
 #include "GatePromptGammaData.hh"
+#include "GateImageWithStatisticTLE.hh"
 
 #include <TFile.h>
 #include <TH1.h>
@@ -50,6 +51,11 @@ protected:
   GatePromptGammaData data;
 
   bool mIsUncertaintyImageEnabled;
+  GateImageWithStatisticTLE TLEerr;    //store tracklengths and their error
+  GateImageInt mLastHitEventImage;  //store eventID when last updated
+  int mCurrentEvent;                //monitor event.
+  //GateImageDouble TrackL;     //when in new eventID, add EventL           , and reset EventL.
+  //GateImageDouble TrackLSq;   //         ''        , square and add EventL, and reset EventL.
 };
 //-----------------------------------------------------------------------------
 
