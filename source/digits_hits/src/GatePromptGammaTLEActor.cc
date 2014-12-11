@@ -130,6 +130,7 @@ void GatePromptGammaTLEActor::SaveData()
 
     SetOriginTransformAndFlagToImage(mLastHitEventImage);
     mLastHitEventImage.Fill(-1);
+  }
 }
 //-----------------------------------------------------------------------------
 

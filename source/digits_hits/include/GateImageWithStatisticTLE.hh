@@ -22,7 +22,7 @@ See GATE/LICENSE.txt for further details
 class GateImageWithStatisticTLE : GateImageWithStatistic
 {
  public:
-  virtual void UpdateUncertaintyImage(int numberOfEvents)
+  virtual void UpdateUncertaintyImage(int numberOfEvents);
 
 }; // end class GateImageWithStatisticTLE
 
@@ -35,13 +35,13 @@ void GateImageWithStatisticTLE::UpdateUncertaintyImage(int numberOfEvents)
   GateImageDouble::const_iterator pe;
 
   //if(mIsValuesMustBeScaled)  pi = mScaledValueImage.begin();
-  else pi = mValueImage.begin();
+  pi = mValueImage.begin();
 
   //if(mIsValuesMustBeScaled) pii = mScaledSquaredImage.begin();
-  else pii = mSquaredImage.begin();
+  pii = mSquaredImage.begin();
 
   //if(mIsValuesMustBeScaled)  pe = mScaledValueImage.end();
-  else pe = mValueImage.end();
+  pe = mValueImage.end();
 
   int N = numberOfEvents;   //NOTE: Not sure if I should use this?
 
