@@ -72,7 +72,7 @@ void GatePromptGammaTLEActor::Construct()
   mImageGamma->PrintInfo();
 
   if(mIsUncertaintyImageEnabled) {
-    TLEerrFilename = G4String(removeExtension(mSaveFilename))+"-TLEerr."+G4String(getExtension(mSaveFilename));
+    G4String TLEerrFilename = G4String(removeExtension(mSaveFilename))+"-TLEerr."+G4String(getExtension(mSaveFilename));
     SetOriginTransformAndFlagToImage(TLEerr);
     //TODO Brent: Not sure if I should add a custom flag.
     TLEerr.EnableSquaredImage(true);
@@ -136,7 +136,7 @@ void GatePromptGammaTLEActor::SaveData()
 
 //-----------------------------------------------------------------------------
 // Callback at each event
-void GateDoseActor::BeginOfEventAction(const G4Event * e) {
+void GatePromptGammaTLEActor::BeginOfEventAction(const G4Event * e) {
   GateVActor::BeginOfEventAction(e);
   mCurrentEvent++;
   GateDebugMessage("Actor", 3, "GatePromptGammaTLEActor -- Begin of Event: "<<mCurrentEvent << G4endl);
@@ -192,12 +192,10 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // Error calculation
   if(mIsUncertaintyImageEnabled){
     bool sameEvent=true;
-    if (mIsLastHitEventImageEnabled) {
-      GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
-      if (mCurrentEvent != mLastHitEventImage.GetValue(index)) {
-        sameEvent = false;
-        mLastHitEventImage.SetValue(index, mCurrentEvent);
-      }
+    GateDebugMessage("Actor", 2,  "GatePromptGammaTLEActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
+    if (mCurrentEvent != mLastHitEventImage.GetValue(index)) {
+      sameEvent = false;
+      mLastHitEventImage.SetValue(index, mCurrentEvent);
     }
     //TODO should this store distance or distance multiplied with factors, see JM formula 10?
     if (sameEvent) TLEerr.AddTempValue(index, distance);

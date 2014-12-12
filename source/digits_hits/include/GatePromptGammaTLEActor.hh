@@ -35,6 +35,7 @@ public:
   virtual void UserPreTrackActionInVoxel(const int index, const G4Track* t);
   virtual void UserPostTrackActionInVoxel(const int index, const G4Track* t);
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
+  virtual void BeginOfEventAction(const G4Event * e);
 
   void SetInputDataFilename(std::string filename);
   virtual void SaveData();
