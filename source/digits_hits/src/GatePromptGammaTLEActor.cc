@@ -183,7 +183,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // Check if proton energy within bounds.
   double dbmax = data.GetProtonEMax();
   if(particle_energy>dbmax){
-      GateError("Proton Energy ("<<particle_energy<<") outside range of pgTLE ("<<dbmax<<") database! Aborting...");
+      GateError("GatePromptGammaTLEActor -- Proton Energy ("<<particle_energy<<") outside range of pgTLE ("<<dbmax<<") database! Aborting...");
   }
 
   // Do not scale h directly because it will be reused

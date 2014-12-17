@@ -18,7 +18,6 @@ GatePromptGammaTLEActorMessenger(GatePromptGammaTLEActor* v)
 :GateImageActorMessenger(v), pTLEActor(v)
 {
   BuildCommands(baseName+pActor->GetObjectName());
-  pEnableUncertaintyCmd= 0;
 }
 //-----------------------------------------------------------------------------
 
@@ -28,7 +27,7 @@ GatePromptGammaTLEActorMessenger::~GatePromptGammaTLEActorMessenger()
 {
   DD("GatePromptGammaTLEActorMessenger destructor");
   delete pSetInputDataFileCmd;
-  if(pEnableUncertaintyCmd) delete pEnableUncertaintyCmd;
+  delete pEnableUncertaintyCmd;
 }
 //-----------------------------------------------------------------------------
 

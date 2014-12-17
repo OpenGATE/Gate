@@ -48,6 +48,12 @@ void GateImageOfHistograms::SetHistoInfo(int n, double min, double max)
 //-----------------------------------------------------------------------------
 void GateImageOfHistograms::Allocate()
 {
+  
+
+  sizeX = resolution.x();
+  sizeY = resolution.y();
+  sizeZ = resolution.z();
+
   // Allocate full vecteur
   if (mDataTypeName == "double")
     dataDouble.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation

@@ -43,7 +43,7 @@ void GateImageWithStatisticTLE::UpdateUncertaintyImage(int numberOfEvents)
     if (mean != 0.0 && N != 1 && squared != 0.0){
       //*po = sqrt( (1.0/(N-1))*(squared/N - pow(mean/N, 2)))/(mean/N);
       //*po = sqrt( ( 1.0 / (N-1) ) * ( squared/N - pow( mean/N , 2) ) ) / ( mean/N );
-      *po = sqrt( pow( mean , 2 ) - squared );
+      *po = sqrt( squared - pow( mean , 2 ) );
 
     }
     else *po = 1;
