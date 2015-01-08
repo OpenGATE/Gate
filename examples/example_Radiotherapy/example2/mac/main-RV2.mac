@@ -3,13 +3,13 @@
 
 # Example of photon beam in patient CT image.  Output is a 3D dose
 # distribution map (with associated uncertainty). Two different
-# navigators are tested NestedParameterized and Regionalized. 
+# navigators are tested NestedParameterized and Regionalized.
 
 #-------------------oooooOOOOO00000OOOOOooooo---------------------#
 
 
 #=====================================================
-# VERBOSE and VISUALISATION 
+# VERBOSE and VISUALISATION
 #=====================================================
 
 /control/execute mac/verbose.mac
@@ -23,8 +23,8 @@
 
 #=====================================================
 # Generate materials from Hounsfield units
-#/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/SimpleMaterialsTable.txt 
-/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt 
+#/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/SimpleMaterialsTable.txt
+/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt
 /gate/HounsfieldMaterialGenerator/SetDensityTable                   data/Schneider2000DensitiesTable.txt
 /gate/HounsfieldMaterialGenerator/SetDensityTolerance               0.5 g/cm3
 /gate/HounsfieldMaterialGenerator/SetOutputMaterialDatabaseFilename data/patient-HUmaterials.db
@@ -43,8 +43,8 @@
 /gate/world/daughters/insert                    ImageRegionalizedVolume
 
 /gate/geometry/setMaterialDatabase              data/patient-HUmaterials.db
-/gate/patient/geometry/SetHUToMaterialFile      data/patient-HU2mat.txt
-/gate/patient/geometry/SetImage                 data/patient-2mm.mhd
+/gate/patient/geometry/setHUToMaterialFile      data/patient-HU2mat.txt
+/gate/patient/geometry/setImage                 data/patient-2mm.mhd
 
 # Generate the dmap (needed by ImageRegionalizedVolume)
 /gate/patient/geometry/buildAndDumpDistanceTransfo   data/patient-2mm-dmap.mhd
@@ -62,7 +62,7 @@
 # PHYSICS
 #=====================================================
 
-/control/execute mac/physicslist_EM_std.mac
+/gate/physics/addPhysicsList emstandard_opt3
 
 /gate/physics/Gamma/SetCutInRegion      world 1 mm
 /gate/physics/Electron/SetCutInRegion   world 1 mm
