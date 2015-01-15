@@ -46,6 +46,8 @@ public:
   void SaveData();
   void ResetData();
 
+  void SaveGammaM(const std::string & filename);
+
   // Principal 2D histogram protonE / gammaE
   TH2D * GetHEpEpgNormalized();
 

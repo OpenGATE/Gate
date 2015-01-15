@@ -36,27 +36,44 @@ public:
   virtual void UserPostTrackActionInVoxel(const int index, const G4Track* t);
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
   virtual void BeginOfEventAction(const G4Event * e);
+  virtual void EndOfEventAction(const G4Event * e);
 
   void SetInputDataFilename(std::string filename);
   virtual void SaveData();
   virtual void ResetData();
 
-  void EnableUncertaintyImage(bool b) { mIsUncertaintyImageEnabled = b; }
+  void EnableUncertaintyImage(bool b) { mIsIntermediaryUncertaintyOutputEnabled = mIsUncertaintyImageEnabled = b; }  //all is needed to calc tle uncertainty
+  void EnableIntermediaryUncertaintyOutput(bool b) { mIsIntermediaryUncertaintyOutputEnabled = b; }
 
 protected:
   GatePromptGammaTLEActor(G4String name, G4int depth=0);
   GatePromptGammaTLEActorMessenger * pMessenger;
 
   std::string mInputDataFilename;
-  GateImageOfHistograms * mImageGamma;
   GatePromptGammaData data;
 
   bool mIsUncertaintyImageEnabled;
-  GateImageWithStatisticTLE TLEerr;    //store tracklengths and their error
-  GateImageInt mLastHitEventImage;  //store eventID when last updated
-  int mCurrentEvent;                //monitor event.
-  //GateImageDouble TrackL;     //when in new eventID, add EventL           , and reset EventL.
-  //GateImageDouble TrackLSq;   //         ''        , square and add EventL, and reset EventL.
+  bool mIsIntermediaryUncertaintyOutputEnabled;
+
+  //used and reset each track
+  GateImageOfHistograms * tmptrackl;    //l_i
+  int protbin(double energy);
+  TH1D * converterHist;          //sole use is to aid conversion of proton energy to bin index.
+
+  //updated at end of track:
+  GateImageOfHistograms * trackl;       //L_i. also intermediate output: track length per voxel per E_proton
+  GateImageOfHistograms * tracklsq;     //L_i^2. also intermediate output: track squared length per voxel per E_proton
+  GateImageOfHistograms * tleuncertain; //uncertainty per voxel, per E_gamma
+
+  //FIXME: allocate and calculate at end of simulation
+  GateImageOfHistograms * mImageGamma;  //main output (yield)
+
+  //written at end of simu in case of uncertainty output
+  //GateImageOfHistograms * gammam;     //intermediate output: Gamma_m database, per E_proton per E_gamma
+
+  //not sure if necesary
+  GateImageInt mLastHitEventImage;      //store eventID when last updated. TODO: not sure if necesary
+  int mCurrentEvent;                    //monitor event. TODO: not sure if necesary
 };
 //-----------------------------------------------------------------------------
 

@@ -352,6 +352,34 @@ bool GatePromptGammaData::DataForMaterialExist(const int & materialIndex)
 //-----------------------------------------------------------------------------
 
 
+
+//-----------------------------------------------------------------------------
+void GatePromptGammaData::SaveGammaM(const std::string & filename)
+{
+    mFilename = filename;
+    pTfile = new TFile(filename.c_str(),"UPDATE");
+
+    for (int i=0; i<mGammaEnergyHistoByMaterialByProtonEnergy.size(); i++){
+        //std::string name = material->GetName();   //FIXME: have material name instead of material index
+        std::stringstream ss;
+        ss << i;
+        std::string name = ss.str();
+        TDirectory * dir = pTfile->GetDirectory(name.c_str());
+        //TDirectory * dir = pTfile->mkdir(name.c_str());
+        dir->cd();
+        for (int j=0; j<mGammaEnergyHistoByMaterialByProtonEnergy[i].size(); j++){
+            //FIXME THIS DOES NOT APPEAR TO WORK!!!! SEGFAULTs....
+            mGammaEnergyHistoByMaterialByProtonEnergy[i][j]->Write();
+            //GetGammaEnergySpectrum(i,j)->Write();
+        }
+    }
+
+    pTfile->Write();
+    pTfile->Close();
+}
+//-----------------------------------------------------------------------------
+
+
 //-----------------------------------------------------------------------------
 TH1D * GatePromptGammaData::GetGammaEnergySpectrum(const int & materialIndex,
                                                    const double & energy)

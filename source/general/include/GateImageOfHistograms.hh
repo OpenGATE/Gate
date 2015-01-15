@@ -49,11 +49,14 @@ public:
   void Reset();
   void AddValueFloat(const int & index, TH1D * h, const double scale);
   void AddValueDouble(const int & index, TH1D * h, const double scale);
+  void AddValueDouble(const int & index, const int &bin, const double value);
   virtual void Write(G4String filename, const G4String & comment = "");
   virtual void Read(G4String filename);
   unsigned int GetNbOfBins() { return nbOfBins; }
   double GetMaxValue() { return maxValue; }
   double GetMinValue() { return minValue; }
+  unsigned long GetDoubleSize() { return dataDouble.size(); }
+  unsigned long GetFloatSize() { return dataFloat.size(); }
   double * GetDataDoublePointer() { return &dataDouble[0]; }
   float * GetDataFloatPointer() { return &dataFloat[0]; }
   long GetIndexFromPixelIndex(int i, int j, int k);

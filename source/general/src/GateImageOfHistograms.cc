@@ -54,7 +54,7 @@ void GateImageOfHistograms::Allocate()
   sizeY = resolution.y();
   sizeZ = resolution.z();
 
-  // Allocate full vecteur
+  // Allocate full vector
   if (mDataTypeName == "double")
     dataDouble.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
   else
@@ -186,6 +186,15 @@ void GateImageOfHistograms::AddValueDouble(const int & index, TH1D * h, const do
     dataDouble[index_data] += h->GetBinContent(i)*scale;
     index_data++;
   }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateImageOfHistograms::AddValueDouble(const int & index, const int & bin, const double value=1.0)
+{
+  int index_data = index*nbOfBins;
+  dataDouble[index_data+bin] += value;
 }
 //-----------------------------------------------------------------------------
 

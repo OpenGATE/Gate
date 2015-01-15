@@ -31,6 +31,7 @@ protected:
 
   G4UIcmdWithAString * pSetInputDataFileCmd;
   G4UIcmdWithABool * pEnableUncertaintyCmd;
+  G4UIcmdWithABool * pEnableIntermediaryUncertaintyOutputCmd;
 };
 //-----------------------------------------------------------------------------
 

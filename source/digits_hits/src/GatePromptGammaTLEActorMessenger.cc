@@ -28,6 +28,7 @@ GatePromptGammaTLEActorMessenger::~GatePromptGammaTLEActorMessenger()
   DD("GatePromptGammaTLEActorMessenger destructor");
   delete pSetInputDataFileCmd;
   delete pEnableUncertaintyCmd;
+  delete pEnableIntermediaryUncertaintyOutputCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -37,13 +38,18 @@ void GatePromptGammaTLEActorMessenger::BuildCommands(G4String base)
 {
   G4String bb = base+"/setInputDataFile";
   pSetInputDataFileCmd = new G4UIcmdWithAString(bb, this);
-  G4String guidance = G4String("Set input root filename with proton/gamma energy 2D spectrum (obtained from PromptGammaStatisticsActor)");
+  G4String guidance = G4String("Set input root filename with proton/gamma energy 2D spectrum (obtained from PromptGammaStatisticsActor).");
   pSetInputDataFileCmd->SetGuidance(guidance);
 
   bb = base+"/enableUncertainty";
   pEnableUncertaintyCmd = new G4UIcmdWithABool(bb, this);
-  guidance = G4String("Enable uncertainty computation");
+  guidance = G4String("Enable uncertainty output (per voxel per E_gamma).");
   pEnableUncertaintyCmd->SetGuidance(guidance);
+
+  bb = base+"/enableIntermediaryUncertaintyOutput";
+  pEnableIntermediaryUncertaintyOutputCmd = new G4UIcmdWithABool(bb, this);
+  guidance = G4String("Enable outputs to calculate uncertainty post process. Output is Gamma_m database, and L and L^2 per voxel per proton energy.");
+  pEnableIntermediaryUncertaintyOutputCmd->SetGuidance(guidance);
 
 }
 //-----------------------------------------------------------------------------
@@ -54,6 +60,7 @@ void GatePromptGammaTLEActorMessenger::SetNewValue(G4UIcommand* cmd, G4String ne
 {
   if (cmd == pSetInputDataFileCmd) pTLEActor->SetInputDataFilename(newValue);
   if (cmd == pEnableUncertaintyCmd) pTLEActor->EnableUncertaintyImage(pEnableUncertaintyCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableIntermediaryUncertaintyOutputCmd) pTLEActor->EnableIntermediaryUncertaintyOutput(pEnableIntermediaryUncertaintyOutputCmd->GetNewBoolValue(newValue));
   GateImageActorMessenger::SetNewValue(cmd,newValue);
 }
 //-----------------------------------------------------------------------------
