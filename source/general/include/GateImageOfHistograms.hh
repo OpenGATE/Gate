@@ -50,6 +50,7 @@ public:
   void AddValueFloat(const int & index, TH1D * h, const double scale);
   void AddValueDouble(const int & index, TH1D * h, const double scale);
   void AddValueDouble(const int & index, const int &bin, const double value);
+  void AddValueInt(const int & index, const int &bin, const unsigned int value);
   virtual void Write(G4String filename, const G4String & comment = "");
   virtual void Read(G4String filename);
   unsigned int GetNbOfBins() { return nbOfBins; }
@@ -57,8 +58,10 @@ public:
   double GetMinValue() { return minValue; }
   unsigned long GetDoubleSize() { return dataDouble.size(); }
   unsigned long GetFloatSize() { return dataFloat.size(); }
+  unsigned long GetIntSize() { return dataInt.size(); }
   double * GetDataDoublePointer() { return &dataDouble[0]; }
   float * GetDataFloatPointer() { return &dataFloat[0]; }
+  unsigned int * GetDataIntPointer() { return &dataInt[0]; }
   long GetIndexFromPixelIndex(int i, int j, int k);
   virtual void UpdateSizesFromResolutionAndHalfSize();
   virtual void UpdateSizesFromResolutionAndVoxelSize();
@@ -79,6 +82,7 @@ protected:
   std::string mDataTypeName;
   std::vector<double> dataDouble;
   std::vector<float> dataFloat;
+  std::vector<unsigned int> dataInt;
 
   // Store a copy of G4ThreeVector resolution in int for integer
   // computation of index

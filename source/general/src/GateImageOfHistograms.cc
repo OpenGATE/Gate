@@ -106,8 +106,10 @@ void GateImageOfHistograms::Reset()
 {
   if (mDataTypeName == "double")
     fill(dataDouble.begin(), dataDouble.end(), 0.0);
+  else if (mDataTypeName == "float")
+      fill(dataDouble.begin(), dataDouble.end(), 0.0);
   else
-    fill(dataFloat.begin(), dataFloat.end(), 0.0);
+    fill(dataInt.begin(), dataInt.end(), 0.0);
 }
 //-----------------------------------------------------------------------------
 
@@ -191,10 +193,18 @@ void GateImageOfHistograms::AddValueDouble(const int & index, TH1D * h, const do
 
 
 //-----------------------------------------------------------------------------
-void GateImageOfHistograms::AddValueDouble(const int & index, const int & bin, const double value=1.0)
+void GateImageOfHistograms::AddValueDouble(const int & index, const int &bin, const double value=1.0)
 {
   int index_data = index*nbOfBins;
   dataDouble[index_data+bin] += value;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateImageOfHistograms::AddValueInt(const int & index, const int &bin, const unsigned int value=1)
+{
+  int index_data = index*nbOfBins;
+  dataInt[index_data+bin] += value;
 }
 //-----------------------------------------------------------------------------
 
