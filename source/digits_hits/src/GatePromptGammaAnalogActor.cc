@@ -15,6 +15,9 @@
 
 #include <G4Proton.hh>
 #include <G4VProcess.hh>
+#include <G4ProtonInelasticProcess.hh>
+#include <G4CrossSectionDataStore.hh>
+#include <G4HadronicProcessStore.hh>
 
 //-----------------------------------------------------------------------------
 GatePromptGammaAnalogActor::GatePromptGammaAnalogActor(G4String name, G4int depth):
@@ -66,7 +69,7 @@ void GatePromptGammaAnalogActor::Construct()
   mImageGamma->SetOrigin(mOrigin);
   mImageGamma->SetTransformMatrix(mImage.GetTransformMatrix());
   mImageGamma->SetHistoInfo(data.GetGammaNbBins(), data.GetGammaEMin(), data.GetGammaEMax());
-  mImageGamma->Allocate(); //FIXME: At the end.
+  mImageGamma->Allocate();
   mImageGamma->PrintInfo();
 
   //sole use is to aid conversion of proton energy to bin index.
@@ -138,11 +141,7 @@ void GatePromptGammaAnalogActor::UserPostTrackActionInVoxel(const int, const G4T
 //-----------------------------------------------------------------------------
 void GatePromptGammaAnalogActor::UserPreTrackActionInVoxel(const int, const G4Track *)
 {
-    //mIsFistStep = true;
-
-    bEmissionPointX = t->GetVertexPosition().x();
-    bEmissionPointY = t->GetVertexPosition().y();
-    bEmissionPointZ = t->GetVertexPosition().z();
+    mIsFistStep = true;
 }
 //-----------------------------------------------------------------------------
 
@@ -151,35 +150,34 @@ void GatePromptGammaAnalogActor::UserPreTrackActionInVoxel(const int, const G4Tr
 void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4Step *step)
 {
   if (!mIsFistStep) return; //BRENT NOTE IS DIT NODIG?
-  G4StepPoint *stepPoint;
-  if (mStoreOutPart || EnableAllStep) stepPoint = step->GetPostStepPoint();//TODO CHECK BRENT!!!!
-  else stepPoint = step->GetPreStepPoint();
-
-  // BRENT NOTE: here gaan we mImageGamma vullen.
 
   // Check index
   if (index < 0) return;
 
-  // Get information
-  const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
-  const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
-  const G4double &distance = step->GetStepLength();
+  // Get various information on the current step
+  const G4ParticleDefinition* particle = step->GetTrack()->GetParticleDefinition();
+  const G4double particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
+  const G4Material* material = step->GetPreStepPoint()->GetMaterial();
+  const G4VProcess* process = step->GetPostStepPoint()->GetProcessDefinedStep();
+  static G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
+  static G4VProcess * protonInelastic = store->FindProcess(G4Proton::Proton(), fHadronInelastic);
 
-  // Check particle type ("photon")
-  //if (particle != G4Photon::Photon()) return;
-  //TODO use filters: partfilter: photon, directparent = proton, addCreatorProcess protonInelastic
+  // Check particle type ("proton")
+  if (particle != G4Proton::Proton()) return;
 
-  // Get value from histogram. We do not check the material index, and
-  h = gammabin(particle_energy);
-  energy = stepPoint->GetKineticEnergy();
+  // Process type, store cross_section for ProtonInelastic process
+  if (process != protonInelastic) return;
 
-  // Do not scale h
-  mImageGamma->AddValueInt(index, h);
-
-  // Error calculation
-  if (mIsUncertaintyImageEnabled) {
-    //tmptrackl->AddValueDouble(index, protbin(particle_energy), distance);
+  // For all secondaries, store Energy spectrum
+  G4TrackVector* fSecondary = (const_cast<G4Step *> (step))->GetfSecondary();
+  for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++) {
+    if ((*fSecondary)[lp1]->GetDefinition() == G4Gamma::Gamma()) {
+      const double e = (*fSecondary)[lp1]->GetKineticEnergy()/MeV;
+      int h = gammabin(e);
+      mImageGamma->AddValueInt(index, h, 1);
+    }
   }
+
   mIsFistStep = false;
 }
 //-----------------------------------------------------------------------------
@@ -192,14 +190,7 @@ void GatePromptGammaAnalogActor::EndOfEventAction(const G4Event *e) {
   GateDebugMessage("Actor", 3, "GatePromptGammaAnalogActor -- End of Event: " << mCurrentEvent << G4endl);
 
   if (mIsUncertaintyImageEnabled) {
-    double *itmptrackl = tmptrackl->GetDataDoublePointer();
-    double *itrackl = trackl->GetDataDoublePointer();
-    double *itracklsq = tracklsq->GetDataDoublePointer();
-    for (long i = 0; i < tmptrackl->GetDoubleSize() ; i++) {
-      itrackl[i] += itmptrackl[i];
-      itracklsq[i] += itmptrackl[i] * itmptrackl[i];
-      itmptrackl[i] = 0.; //reset for next event
-    }
+      //nothing yet
   }
 
 }

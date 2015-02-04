@@ -9,12 +9,12 @@
   ----------------------*/
 
 #include "GateConfiguration.h"
-#include "GatePromptGammaTLEActor.hh"
+#include "GatePromptGammaAnalogActorMessenger.hh"
 #include "GatePromptGammaAnalogActor.hh"
 
 //-----------------------------------------------------------------------------
-GatePromptGammaAnalogActor::
-GatePromptGammaAnalogActor(GatePromptGammaTLEActor* v)
+GatePromptGammaAnalogActorMessenger::
+GatePromptGammaAnalogActorMessenger(GatePromptGammaAnalogActor* v)
 :GateImageActorMessenger(v), pTLEActor(v)
 {
   BuildCommands(baseName+pActor->GetObjectName());
@@ -23,9 +23,9 @@ GatePromptGammaAnalogActor(GatePromptGammaTLEActor* v)
 
 
 //-----------------------------------------------------------------------------
-GatePromptGammaAnalogActor::~GatePromptGammaAnalogActor()
+GatePromptGammaAnalogActorMessenger::~GatePromptGammaAnalogActorMessenger()
 {
-  DD("GatePromptGammaAnalogActor destructor");
+  DD("GatePromptGammaAnalogActorMessenger destructor");
   delete pSetInputDataFileCmd;
   delete pEnableUncertaintyCmd;
   delete pEnableIntermediaryUncertaintyOutputCmd;
@@ -34,7 +34,7 @@ GatePromptGammaAnalogActor::~GatePromptGammaAnalogActor()
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaAnalogActor::BuildCommands(G4String base)
+void GatePromptGammaAnalogActorMessenger::BuildCommands(G4String base)
 {
   G4String bb = base+"/setInputDataFile";
   pSetInputDataFileCmd = new G4UIcmdWithAString(bb, this);
@@ -56,7 +56,7 @@ void GatePromptGammaAnalogActor::BuildCommands(G4String base)
 
 
 //-----------------------------------------------------------------------------
-void GatePromptGammaAnalogActor::SetNewValue(G4UIcommand* cmd, G4String newValue)
+void GatePromptGammaAnalogActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
   if (cmd == pSetInputDataFileCmd) pTLEActor->SetInputDataFilename(newValue);
   if (cmd == pEnableUncertaintyCmd) pTLEActor->EnableUncertaintyImage(pEnableUncertaintyCmd->GetNewBoolValue(newValue));

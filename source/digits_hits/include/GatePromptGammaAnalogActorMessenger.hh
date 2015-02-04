@@ -8,8 +8,8 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-#ifndef GATEPROMPTGAMMAPRODUCTIONTLEACTORMESSENGER_HH
-#define GATEPROMPTGAMMAPRODUCTIONTLEACTORMESSENGER_HH
+#ifndef GATEPROMPTGAMMAANALOGACTORMESSENGER_HH
+#define GATEPROMPTGAMMAANALOGACTORMESSENGER_HH
 
 #include "GateConfiguration.h"
 #include "GateImageActorMessenger.hh"
@@ -35,4 +35,4 @@ protected:
 };
 //-----------------------------------------------------------------------------
 
-#endif // End GATEPROMPTGAMMAPRODUCTIONTLEACTOR
+#endif // End GATEPROMPTGAMMAANALOGACTOR

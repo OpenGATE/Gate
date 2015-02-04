@@ -57,6 +57,8 @@ void GateImageOfHistograms::Allocate()
   // Allocate full vector
   if (mDataTypeName == "double")
     dataDouble.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
+  if (mDataTypeName == "int")
+    dataInt.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
   else
     dataFloat.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
 
@@ -107,9 +109,9 @@ void GateImageOfHistograms::Reset()
   if (mDataTypeName == "double")
     fill(dataDouble.begin(), dataDouble.end(), 0.0);
   else if (mDataTypeName == "float")
-      fill(dataDouble.begin(), dataDouble.end(), 0.0);
+      fill(dataFloat.begin(), dataFloat.end(), 0.0);
   else
-    fill(dataInt.begin(), dataInt.end(), 0.0);
+    fill(dataInt.begin(), dataInt.end(), 0);
 }
 //-----------------------------------------------------------------------------
 
@@ -351,21 +353,36 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & )
   m_MetaImage.TransformMatrix(matrix);
 
   // Before writing convert from double to float
-  double total = 0.0;
+  double totalf = 0.0;
   if (mDataTypeName == "double") {
     dataFloat.resize(dataDouble.size());
     for(unsigned int i=0; i<dataDouble.size(); i++) {
-      total += dataDouble[i];
+      totalf += dataDouble[i];
       dataFloat[i] = (float)dataDouble[i]; // convert double to float
     }
+    m_MetaImage.AddUserField("TotalSum", MET_FLOAT_ARRAY, 1, &totalf);
   }
-  m_MetaImage.AddUserField("TotalSum", MET_FLOAT_ARRAY, 1, &total);
+  if (mDataTypeName == "int") {
+    unsigned long totall = 0;
+    for(unsigned int i=0; i<dataInt.size(); i++) {
+      totall += dataInt[i];
+    }
+    m_MetaImage.AddUserField("TotalSum", MET_ULONG_ARRAY, 1, &totall);
+  }
 
   // Change the order of the pixels : store on disk as XYZH.
-  std::vector<float> t;
-  ConvertPixelOrderToXYZH(dataFloat, t);
-  m_MetaImage.ElementData(&(t.begin()[0]), false); // true = autofree
-  m_MetaImage.Write(headerName.c_str(), rawName.c_str());
+  if (mDataTypeName == "int") {
+    std::vector<unsigned int> t;
+    ConvertPixelOrderToXYZH(dataInt, t);
+    m_MetaImage.ElementData(&(t.begin()[0]), false); // true = autofree
+    m_MetaImage.Write(headerName.c_str(), rawName.c_str());
+  } else {
+    std::vector<float> t;
+    ConvertPixelOrderToXYZH(dataFloat, t);
+    m_MetaImage.ElementData(&(t.begin()[0]), false);
+    m_MetaImage.Write(headerName.c_str(), rawName.c_str());
+  }
+
 }
 //-----------------------------------------------------------------------------
 

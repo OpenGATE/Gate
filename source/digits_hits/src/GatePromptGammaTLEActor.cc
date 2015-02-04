@@ -114,7 +114,9 @@ void GatePromptGammaTLEActor::ResetData()
 {
   mImageGamma->Reset();
   if (mIsUncertaintyImageEnabled) {
-    //TLEerr.Reset();
+      tmptrackl->Reset();
+      trackl->Reset();
+      tracklsq->Reset();
     mLastHitEventImage.Fill(-1);
   }
 }
@@ -207,6 +209,10 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // Error calculation
   if (mIsUncertaintyImageEnabled) {
     //this must be moved out of this loop when it replaces recording the pg spectrum per voxel.
+    /*  DD(particle_energy/MeV);
+      DD(protbin(particle_energy));
+      DD(index);
+      DD(distance);*/
     tmptrackl->AddValueDouble(index, protbin(particle_energy), distance);
   }
 }
@@ -216,14 +222,17 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
 //-----------------------------------------------------------------------------
 // Callback at end of each event
 void GatePromptGammaTLEActor::EndOfEventAction(const G4Event *e) {
-  GateVActor::BeginOfEventAction(e);
+  GateVActor::EndOfEventAction(e);
   GateDebugMessage("Actor", 3, "GatePromptGammaTLEActor -- End of Event: " << mCurrentEvent << G4endl);
 
+    //TODO: rewrite using pattern of Doseactor to NOT use EndOfEventaction.
   if (mIsUncertaintyImageEnabled) {
     double *itmptrackl = tmptrackl->GetDataDoublePointer();
     double *itrackl = trackl->GetDataDoublePointer();
     double *itracklsq = tracklsq->GetDataDoublePointer();
-    for (long i = 0; i < tmptrackl->GetDoubleSize() ; i++) {
+    //DD(tmptrackl->GetDoubleSize() );
+    for (unsigned long i = 0; i < tmptrackl->GetDoubleSize() ; i++) {
+
       itrackl[i] += itmptrackl[i];
       itracklsq[i] += itmptrackl[i] * itmptrackl[i];
       itmptrackl[i] = 0.; //reset for next event

@@ -8,8 +8,8 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-#ifndef GATEPROMPTGAMMAPRODUCTIONTLEACTOR_HH
-#define GATEPROMPTGAMMAPRODUCTIONTLEACTOR_HH
+#ifndef GATEPROMPTGAMMAPRODUCTIONANALOGACTOR_HH
+#define GATEPROMPTGAMMAPRODUCTIONANALOGACTOR_HH
 
 #include "GateConfiguration.h"
 #include "GateVImageActor.hh"
@@ -17,7 +17,6 @@
 #include "GatePromptGammaAnalogActorMessenger.hh"
 #include "GateImageOfHistograms.hh"
 #include "GatePromptGammaData.hh"
-#include "GateImageWithStatisticTLE.hh"
 
 #include <TFile.h>
 #include <TH1.h>
@@ -68,6 +67,6 @@ protected:
 };
 //-----------------------------------------------------------------------------
 
-MAKE_AUTO_CREATOR_ACTOR(PromptGammaTLEActor,GatePromptGammaAnalogActor)
+MAKE_AUTO_CREATOR_ACTOR(PromptGammaAnalogActor,GatePromptGammaAnalogActor)
 
-#endif // end GATEPROMPTGAMMAPRODUCTIONTLEACTOR
+#endif // end GATEPROMPTGAMMAPRODUCTIONANALOGACTOR
