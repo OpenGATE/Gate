@@ -57,7 +57,7 @@ protected:
 
   int gammabin(double energy);
   bool mIsFistStep;
-  TH1D * converterHist;          //sole use is to aid conversion of proton energy to bin index.
+  TH1I * converterHist;          //sole use is to aid conversion of proton energy to bin index.
 
   GateImageOfHistograms * mImageGamma;  //main output (yield)
 

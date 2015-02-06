@@ -73,7 +73,7 @@ void GatePromptGammaAnalogActor::Construct()
   mImageGamma->PrintInfo();
 
   //sole use is to aid conversion of proton energy to bin index.
-  converterHist = new TH1D("Eg", "Gamma energy", data.GetGammaNbBins(), data.GetGammaEMin() / MeV, data.GetGammaEMax() / MeV);
+  converterHist = new TH1I("Eg", "Gamma energy", data.GetGammaNbBins(), data.GetGammaEMin() / MeV, data.GetGammaEMax() / MeV);
 
   // Force hit type to random
   if (mStepHitType != RandomStepHitType) {
@@ -104,17 +104,17 @@ void GatePromptGammaAnalogActor::SaveData()
   // Data are normalized by the number of primaries
   static bool alreadyHere = false;
   if (alreadyHere) {
-    GateError("The GatePromptGammaAnalogActor has already been saved and normalized. However, it must write its results only once. Remove all 'SaveEvery' for this actor. Abort.");
+    GateError("The GatePromptGammaTLEActor has already been saved and normalized. However, it must write its results only once. Remove all 'SaveEvery' for this actor. Abort.");
   }
+  // Normalisation
+  int n = GateActorManager::GetInstance()->GetCurrentEventId() + 1; // +1 because start at zero
+  double f = 1.0 / n;
+  mImageGamma->Scale(f);
   GateVImageActor::SaveData();
   mImageGamma->Write(mSaveFilename);
   alreadyHere = true;
 
   if (mIsUncertaintyImageEnabled) {
-
-    SetOriginTransformAndFlagToImage(mLastHitEventImage);
-    mLastHitEventImage.Fill(-1);
-
     //Export Gamma_M database
     //data.SaveGammaM(G4String(removeExtension(mSaveFilename))+"-GammaM.root");
   }
@@ -156,8 +156,6 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
 
   // Get various information on the current step
   const G4ParticleDefinition* particle = step->GetTrack()->GetParticleDefinition();
-  const G4double particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
-  const G4Material* material = step->GetPreStepPoint()->GetMaterial();
   const G4VProcess* process = step->GetPostStepPoint()->GetProcessDefinedStep();
   static G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
   static G4VProcess * protonInelastic = store->FindProcess(G4Proton::Proton(), fHadronInelastic);
@@ -174,7 +172,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
     if ((*fSecondary)[lp1]->GetDefinition() == G4Gamma::Gamma()) {
       const double e = (*fSecondary)[lp1]->GetKineticEnergy()/MeV;
       int h = gammabin(e);
-      mImageGamma->AddValueInt(index, h, 1);
+      if (h>=0) mImageGamma->AddValueInt(index, h, 1);
     }
   }
 
@@ -198,7 +196,17 @@ void GatePromptGammaAnalogActor::EndOfEventAction(const G4Event *e) {
 
 
 //-----------------------------------------------------------------------------
-// Convert Proton Energy to a bin index.
+// Convert Proton Energy to a bin index. Negative return value means outofbounds.
 int GatePromptGammaAnalogActor::gammabin(double energy) {
-  return converterHist->Fill(energy / MeV);
+  // -1 because TH1D start at 1, and end at index=size.
+  //NOTE! Undocumented, but outofbounds returns -1, NOT THE INDEX OF OVER/UNDERFLOW BIN!!!
+  //NOTE! We don't use FindBin, because it might change the TH1!
+  int bin = converterHist->Fill(energy / MeV) - 1;
+  if (bin<0 || bin>249) {
+      GateMessage("Actor", 3, "Gamma energy OutOfBounds. Energy: " << energy / MeV << G4endl);
+      GateMessage("Actor", 3, "Gamma energy OutOfBounds. Bin: " << bin << G4endl);
+      //std::cout << "BRENT Gamma energy OutOfBounds. Energy: " << energy / MeV << std::endl;
+      //std::cout << "BRENT Gamma energy OutOfBounds. Bin: " << bin+1 << std::endl;
+  }
+  return bin;
 }

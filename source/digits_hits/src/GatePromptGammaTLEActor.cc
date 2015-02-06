@@ -209,10 +209,10 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // Error calculation
   if (mIsUncertaintyImageEnabled) {
     //this must be moved out of this loop when it replaces recording the pg spectrum per voxel.
-    /*  DD(particle_energy/MeV);
-      DD(protbin(particle_energy));
-      DD(index);
-      DD(distance);*/
+    /*DD(particle_energy/MeV);
+    DD(protbin(particle_energy));
+    DD(index);
+    DD(distance);*/
     tmptrackl->AddValueDouble(index, protbin(particle_energy), distance);
   }
 }
@@ -232,7 +232,6 @@ void GatePromptGammaTLEActor::EndOfEventAction(const G4Event *e) {
     double *itracklsq = tracklsq->GetDataDoublePointer();
     //DD(tmptrackl->GetDoubleSize() );
     for (unsigned long i = 0; i < tmptrackl->GetDoubleSize() ; i++) {
-
       itrackl[i] += itmptrackl[i];
       itracklsq[i] += itmptrackl[i] * itmptrackl[i];
       itmptrackl[i] = 0.; //reset for next event

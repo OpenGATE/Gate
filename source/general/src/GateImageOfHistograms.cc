@@ -109,7 +109,7 @@ void GateImageOfHistograms::Reset()
   if (mDataTypeName == "double")
     fill(dataDouble.begin(), dataDouble.end(), 0.0);
   else if (mDataTypeName == "float")
-      fill(dataFloat.begin(), dataFloat.end(), 0.0);
+    fill(dataFloat.begin(), dataFloat.end(), 0.0);
   else
     fill(dataInt.begin(), dataInt.end(), 0);
 }
@@ -353,48 +353,40 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & )
   m_MetaImage.TransformMatrix(matrix);
 
   // Before writing convert from double to float
-  double totalf = 0.0;
+  double total = 0.0;
   if (mDataTypeName == "double") {
     dataFloat.resize(dataDouble.size());
     for(unsigned int i=0; i<dataDouble.size(); i++) {
-      totalf += dataDouble[i];
+      total += dataDouble[i];
       dataFloat[i] = (float)dataDouble[i]; // convert double to float
     }
-    m_MetaImage.AddUserField("TotalSum", MET_FLOAT_ARRAY, 1, &totalf);
   }
-  if (mDataTypeName == "int") {
-    unsigned long totall = 0;
-    for(unsigned int i=0; i<dataInt.size(); i++) {
-      totall += dataInt[i];
-    }
-    m_MetaImage.AddUserField("TotalSum", MET_ULONG_ARRAY, 1, &totall);
-  }
+  m_MetaImage.AddUserField("TotalSum", MET_FLOAT_ARRAY, 1, &total);
 
   // Change the order of the pixels : store on disk as XYZH.
-  if (mDataTypeName == "int") {
-    std::vector<unsigned int> t;
-    ConvertPixelOrderToXYZH(dataInt, t);
-    m_MetaImage.ElementData(&(t.begin()[0]), false); // true = autofree
-    m_MetaImage.Write(headerName.c_str(), rawName.c_str());
-  } else {
-    std::vector<float> t;
-    ConvertPixelOrderToXYZH(dataFloat, t);
-    m_MetaImage.ElementData(&(t.begin()[0]), false);
-    m_MetaImage.Write(headerName.c_str(), rawName.c_str());
-  }
-
+  std::vector<float> t;
+  ConvertPixelOrderToXYZH(dataFloat, t);
+  m_MetaImage.ElementData(&(t.begin()[0]), false); // true = autofree
+  m_MetaImage.Write(headerName.c_str(), rawName.c_str());
 }
 //-----------------------------------------------------------------------------
 
 
+//-----------------------------------------------------------------------------
+// This scales the Image, and it converts an Int Image into a Float Image.
 //-----------------------------------------------------------------------------
 void GateImageOfHistograms::Scale(double f)
 {
   if (mDataTypeName == "double") {
     for(unsigned int i=0; i<dataDouble.size(); i++)
       dataDouble[i] = f * dataDouble[i];
-  }
-  else {
+  } else if (mDataTypeName == "int") { //move ints to float image
+    dataFloat.resize(dataInt.size());
+    for(unsigned int i=0; i<dataInt.size(); i++) {
+      dataFloat[i] = f * (float)dataInt[i]; // convert int to float
+    }
+    mDataTypeName = "float";
+  } else {
     for(unsigned int i=0; i<dataFloat.size(); i++)
       dataFloat[i] = f * dataFloat[i];
   }
