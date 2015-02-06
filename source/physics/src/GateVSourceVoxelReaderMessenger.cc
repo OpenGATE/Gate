@@ -37,7 +37,7 @@ GateVSourceVoxelReaderMessenger::GateVSourceVoxelReaderMessenger(GateVSourceVoxe
 { 
 
   G4String cmdName;
-
+  
   cmdName = GetDirectoryName()+"setPosition";
   PositionCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
   PositionCmd->SetGuidance("Set source position");
@@ -47,7 +47,7 @@ GateVSourceVoxelReaderMessenger::GateVSourceVoxelReaderMessenger(GateVSourceVoxe
   cmdName = GetDirectoryName()+"setVoxelSize";
   VoxelSizeCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
   VoxelSizeCmd->SetGuidance("Set source voxel size");
-  PositionCmd->SetGuidance("1. 3-vector of voxel size");
+  VoxelSizeCmd->SetGuidance("1. 3-vector of voxel size");
   VoxelSizeCmd->SetUnitCategory("Length");
 
   cmdName = GetDirectoryName()+"translator/insert";
@@ -66,7 +66,7 @@ GateVSourceVoxelReaderMessenger::GateVSourceVoxelReaderMessenger(GateVSourceVoxe
   VerboseCmd->SetParameterName("verbose",false);
   VerboseCmd->SetRange("verbose>=0");
   
-      cmdName = GetDirectoryName()+"SetTimeActivityTablesFrom";
+  cmdName = GetDirectoryName()+"SetTimeActivityTablesFrom";
   TimeActivTablesCmd = new G4UIcmdWithAString(cmdName,this);
 
   cmdName = GetDirectoryName()+"SetTimeSampling";

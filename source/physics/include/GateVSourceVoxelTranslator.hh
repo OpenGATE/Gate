@@ -21,7 +21,8 @@ public:
   
 public:
 
-  virtual G4double TranslateToActivity(G4int voxelValue) = 0;
+  virtual G4double TranslateToActivity(G4int  voxelValue) = 0;
+  virtual G4double TranslateToActivity(G4double  voxelValue) = 0;
 
   virtual GateVSourceVoxelReader* GetReader() { return m_voxelReader; };
   virtual G4String                GetName()   { return m_name; };

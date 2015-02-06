@@ -42,14 +42,14 @@ GateVSourceVoxelReader::~GateVSourceVoxelReader()
 void GateVSourceVoxelReader::Dump(G4int level) 
 {
 
-  G4cout << "  Voxel reader ----------> " << m_type
+  G4cout << "  Voxel reader ----------> " << m_type << G4endl
 	 << "  number of voxels       : " << m_sourceVoxelActivities.size() << G4endl
 	 << "  total activity (Bq)    : " << GetTotalActivity()/becquerel << G4endl
 	 << "  position  (mm)         : " 
 	 << GetPosition().x()/mm << " " 
 	 << GetPosition().y()/mm << " " 
 	 << GetPosition().z()/mm << G4endl
-	 << "  voxel size  (mm)    : " 
+	 << "  voxel size  (mm)       : " 
 	 << GetVoxelSize().x()/mm << " " 
 	 << GetVoxelSize().y()/mm << " " 
 	 << GetVoxelSize().z()/mm << G4endl;

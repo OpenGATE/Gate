@@ -62,7 +62,7 @@ void GateImageT<PixelType>::Read(G4String filename) {
   else if (extension == "img") ReadAnalyze(filename);
   else if (extension == "img.gz") ReadAnalyze(filename);
   else if (extension == "mhd" || extension == "mha") ReadMHD(filename);
-  else if (extension == "h33") ReadInterfile(filename);
+  else if (extension == "h33" || extension == "iff") ReadInterfile(filename);
   else if (extension == "i33") ReadInterfile(filename);
   else {
     GateError( "Unknow image file extension. Knowns extensions are : "
@@ -85,7 +85,7 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
 
   GateAnalyzeHeader::PixelType vx,vy,vz;
   hdr.GetVoxelSize(vx,vy,vz);
-
+    
   // update sizes and allocate
   resolution = G4ThreeVector(rx,ry,rz);
   voxelSize = G4ThreeVector(vx,vy,vz);
@@ -412,7 +412,17 @@ template<class PixelType>
 void GateImageT<PixelType>::WriteBin(std::ofstream & os)
 {
   // write
-  os.write((char*)(&(data[0])), nbOfValues*sizeof(PixelType));
+  // if PixelType is not float, we copy the values in a float vector
+  if (typeid(PixelType) != typeid(float)) {
+    std::vector<float>temp(nbOfValues);
+    for(int i=0;i<nbOfValues;i++){
+      temp[i]=(float)data[i]; // cast of PixelType to float
+    }
+    os.write((char*)(&(temp[0])), nbOfValues*sizeof(float));
+  }
+  else{
+    os.write((char*)(&(data[0])), nbOfValues*sizeof(PixelType));
+  }
   if (!os) {
     // GateError( "Error while writing " << G4endl);
     exit(0);
