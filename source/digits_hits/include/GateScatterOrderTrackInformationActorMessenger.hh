@@ -24,7 +24,7 @@ public:
   virtual ~GateScatterOrderTrackInformationActorMessenger();
 
   //NOTE: we keep the messenger member functions just in case we want to add new options to the actor
-  void BuildCommands(G4String base);
+  void BuildCommands(G4String);
   void SetNewValue(G4UIcommand*, G4String);
 
 protected:

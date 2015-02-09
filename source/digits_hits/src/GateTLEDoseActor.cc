@@ -74,6 +74,7 @@ void GateTLEDoseActor::Construct() {
     mLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mLastHitEventImage.Allocate();
     mIsLastHitEventImageEnabled = true;
+    mLastHitEventImage.SetOrigin(mOrigin);
   }
 
   if (mIsEdepImageEnabled) {
@@ -83,6 +84,7 @@ void GateTLEDoseActor::Construct() {
     mEdepImage.Allocate();
     mEdepImage.SetFilename(mEdepFilename);
     mEdepImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
+    mEdepImage.SetOrigin(mOrigin);
   }
 
   if (mIsDoseImageEnabled) {
@@ -92,6 +94,7 @@ void GateTLEDoseActor::Construct() {
     mDoseImage.Allocate();
     mDoseImage.SetFilename(mDoseFilename);
     mDoseImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
+    mDoseImage.SetOrigin(mOrigin);
   }
 
   ConversionFactor = 1.60217653e-19 * 1.e6 * 1.e2 * 1.e3;
