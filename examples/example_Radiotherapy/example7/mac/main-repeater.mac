@@ -7,7 +7,7 @@
 
 
 #=====================================================
-# VERBOSE and VISUALISATION 
+# VERBOSE and VISUALISATION
 #=====================================================
 
 /control/execute mac/verbose.mac
@@ -51,7 +51,7 @@
 # PHYSICS
 #=====================================================
 
-/control/execute mac/physicslist_EM_std.mac
+/gate/physics/addPhysicsList emstandard_opt3
 
 /gate/physics/Gamma/SetCutInRegion      world 1 mm
 /gate/physics/Electron/SetCutInRegion   world 1 mm
@@ -110,8 +110,8 @@
 /gate/source/mybeam/gps/ang/mintheta  0. deg
 /gate/source/mybeam/gps/ang/minphi    0. deg
 /gate/source/mybeam/gps/ang/maxphi    360. deg
-/gate/source/mybeam/gps/ang/rot1      1 0 0 
-/gate/source/mybeam/gps/ang/rot2      0 0 1 
+/gate/source/mybeam/gps/ang/rot1      1 0 0
+/gate/source/mybeam/gps/ang/rot2      0 0 1
 /gate/source/mybeam/gps/pos/rot1      1 0 0
 /gate/source/mybeam/gps/pos/rot2      0 0 1
 /gate/source/mybeam/gps/ang/maxtheta  0.4297223 deg
@@ -127,4 +127,3 @@
 /gate/application/setTotalNumberOfPrimaries 50
 /gate/application/start
 /gate/application/describe
-
