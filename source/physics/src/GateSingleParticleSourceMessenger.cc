@@ -13,6 +13,7 @@
 #include "G4Geantino.hh"
 #include "G4ThreeVector.hh"
 #include "G4ParticleTable.hh"
+#include "G4IonTable.hh"
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWithAString.hh"
@@ -1556,7 +1557,10 @@ G4String GateSingleParticleSourceMessenger::GetCurrentValue( G4UIcommand* )
 //-------------------------------------------------------------------------------------------------
 void GateSingleParticleSourceMessenger::IonCommand( G4String newValues )
 {
-  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+
+// DEBUG SJAN G4 10.1
+  //G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+  G4IonTable* ionTable = G4IonTable::GetIonTable();
   if( fShootIon )
     {
       G4Tokenizer next( newValues ) ;
@@ -1582,7 +1586,7 @@ void GateSingleParticleSourceMessenger::IonCommand( G4String newValues )
             }
         }
       G4ParticleDefinition* ion ;
-      ion =  particleTable->GetIon( fAtomicNumber, fAtomicMass, fIonExciteEnergy ) ;
+      ion =  ionTable->GetIon( fAtomicNumber, fAtomicMass, fIonExciteEnergy ) ;
       if( ion==0 )
         {
           G4cout << "Ion with Z=" << fAtomicNumber ;

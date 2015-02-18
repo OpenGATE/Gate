@@ -228,10 +228,11 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
 
 
     G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-
-    string parttype=mParticleType;
+    G4IonTable* ionTable = G4IonTable::GetIonTable();
+    
+	 string parttype=mParticleType;
     if ( parttype == "GenericIon" ){
-      particle_definition=  particleTable->GetIon( mAtomicNumber, mAtomicMass, mIonExciteEnergy);
+      particle_definition=  ionTable->GetIon( mAtomicNumber, mAtomicMass, mIonExciteEnergy);
       //G4cout<<G4endl<<G4endl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon"<<G4endl;
       //G4cout<<mAtomicNumber<<"  "<<mAtomicMass<<"  "<<mIonCharge<<"  "<<mIonExciteEnergy<<G4endl;
     }
