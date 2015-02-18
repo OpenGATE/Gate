@@ -47,6 +47,13 @@ GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger()
   delete pInOrOutGoingParticlesCmd;
   delete pEnableSecCmd;
   delete pEnableStoreAllStepCmd;
+  delete bEnablePrimaryEnergyCmd;
+  delete bCoordinateFrameCmd;
+  delete bEnableLocalTimeCmd;
+  delete bSpotIDFromSourceCmd;
+  delete bEnableCompactCmd;
+  delete bEnableEmissionPointCmd;
+  delete bEnablePDGCodeCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -148,7 +155,7 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
 
   bb = base+"/storeAllStep";
   pEnableStoreAllStepCmd = new G4UIcmdWithABool(bb,this);
-  guidance = "Store all step inside the attached volume";
+  guidance = "Store all steps inside the attached volume";
   pEnableStoreAllStepCmd->SetGuidance(guidance);
   pEnableStoreAllStepCmd->SetParameterName("State",false);
 
@@ -163,6 +170,44 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
   pMaxSizeCmd->SetGuidance(guidance);
   pMaxSizeCmd->SetParameterName("Size", false);
   pMaxSizeCmd->SetUnitCategory("Memory size");
+
+  bb = base+"/enablePrimaryEnergy";
+  bEnablePrimaryEnergyCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Store the energy of the primary particle for every hit.";
+  bEnablePrimaryEnergyCmd->SetGuidance(guidance);
+
+  bb = base+"/setCoordinateFrame";
+  bCoordinateFrameCmd = new G4UIcmdWithAString(bb, this);
+  guidance = "Store the hit coordinates in the frame of the frame passed as an argument.";
+  bCoordinateFrameCmd->SetGuidance(guidance);
+  bCoordinateFrameCmd->SetParameterName("Coordinate Frame",false);
+
+  bb = base+"/enableLocalTime";
+  bEnableLocalTimeCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Store the local time.";
+  bEnableLocalTimeCmd->SetGuidance(guidance);
+
+  bb = base+"/enableSpotIDFromSource";
+  bSpotIDFromSourceCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Store the spotID of the primary particles from given source.";
+  bSpotIDFromSourceCmd->SetGuidance(guidance);
+
+  bb = base+"/enableCompact";
+  bEnableCompactCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Compact output by not storing trackID, runID, eventID, ProductionVolume, -track, -step and switching from ParticleType to PDGCode.";
+  bEnableCompactCmd->SetGuidance(guidance);
+
+  bb = base+"/enableEmissionPoint";
+  bEnableEmissionPointCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Store the emission point of each particle stored in the phasespace.";
+  bEnableEmissionPointCmd->SetGuidance(guidance);
+
+  bb = base+"/enablePDGCode";
+  bEnablePDGCodeCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Output the PDGCode instead of the ParticleName.";
+  bEnablePDGCodeCmd->SetGuidance(guidance);
+
+
 }
 //-----------------------------------------------------------------------------
 
@@ -189,6 +234,13 @@ void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String pa
   if(command == pEnableSecCmd) pActor->SetIsSecStored(pEnableSecCmd->GetNewBoolValue(param));
   if(command == pSaveEveryNEventsCmd || command == pSaveEveryNSecondsCmd)  GateError("saveEveryNEvents and saveEveryNSeconds commands are not available with phase space actor. But you can use the setMaxFileSize command.");
   if(command == pMaxSizeCmd) pActor->SetMaxFileSize(pMaxSizeCmd->GetNewDoubleValue(param));
+  if(command == bEnablePrimaryEnergyCmd) pActor->SetIsPrimaryEnergyEnabled(bEnablePrimaryEnergyCmd->GetNewBoolValue(param));
+  if(command == bEnableEmissionPointCmd) pActor->SetIsEmissionPointEnabled(bEnableEmissionPointCmd->GetNewBoolValue(param));
+  if(command == bCoordinateFrameCmd) {pActor->SetCoordFrame(param);pActor->SetEnableCoordFrame();};
+  if(command == bEnableLocalTimeCmd) pActor->SetIsLocalTimeEnabled(bEnableLocalTimeCmd->GetNewBoolValue(param));
+  if(command == bSpotIDFromSourceCmd) {pActor->SetSpotIDFromSource(param);pActor->SetIsSpotIDEnabled();};
+  if(command == bEnablePDGCodeCmd) pActor->SetEnablePDGCode(bEnablePDGCodeCmd->GetNewBoolValue(param));
+  if(command == bEnableCompactCmd) pActor->SetEnabledCompact(bEnableCompactCmd->GetNewBoolValue(param));
 
   GateActorMessenger::SetNewValue(command ,param );
 }

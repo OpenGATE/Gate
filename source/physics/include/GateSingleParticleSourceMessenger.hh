@@ -17,6 +17,11 @@ See GATE/LICENSE.txt for further details
  *                                                                         *
  *  \file GateGeneralParticleSourceMessenger.hh                            *
  *                                                                         *
+ *  Revision 1.5 2014/08/1 Yann PERROT and Simon NICOLAS                   *
+ *  Add command: "setUserSpectrumCmd"                                      *
+ *  This command allows to load files describing energies and probabilities*
+ *  from a user spectrum.                                                     *                                                                                                        
+ *                                                                         *
  *  $Log: GateGeneralParticleSourceMessenger.hh,v $                        *
  *  Revision 1.4  2008/03    dbenoit and fcassol                           * 
  *  Update the GateSingleParticleSourceMessenger                           *
@@ -172,6 +177,8 @@ class GateSingleParticleSourceMessenger : public GateMessenger
 
   
   G4UIcmdWithAString         *angtypeCmd1;
+  G4UIcmdWithADoubleAndUnit  *angradiusCmd1;
+  G4UIcmdWith3VectorAndUnit  *angcentreCmd1;
   G4UIcmdWith3Vector         *angrot1Cmd1;
   G4UIcmdWith3Vector         *angrot2Cmd1;
   G4UIcmdWithADoubleAndUnit  *minthetaCmd1;
@@ -230,10 +237,10 @@ class GateSingleParticleSourceMessenger : public GateMessenger
   G4UIcmdWithABool*           energyspecCmd ;
   G4UIcmdWithABool*           diffspecCmd ;
 
-  G4UIcmdWith3Vector         *histpointCmd1;
-  G4UIcmdWithAString         *histnameCmd1;
-  G4UIcmdWithAString         *arbintCmd1;
-  G4UIcmdWithAString         *resethistCmd1;
+  G4UIcmdWith3Vector*         histpointCmd1;
+  G4UIcmdWithAString*         histnameCmd1;
+  G4UIcmdWithAString*         arbintCmd1;
+  G4UIcmdWithAString*         resethistCmd1;
   
   
   G4UIcmdWith3Vector*         histpointCmd ;
@@ -257,9 +264,13 @@ class GateSingleParticleSourceMessenger : public GateMessenger
   G4UIcmdWithADoubleAndUnit*  energyCmd ;
   G4UIcmdWithoutParameter*    listCmd ;
   
-  G4UIcmdWithAString         *ForbidCmd;
+  G4UIcmdWithAString*         ForbidCmd;
   G4UIcmdWithAString*         setImageCmd1;
 
+
+  G4UIcmdWithAString*         setUserSpectrumCmd;      
+
+  
  private: // for ion shooting
   
   G4bool   fShootIon ; 

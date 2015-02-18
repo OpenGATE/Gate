@@ -59,19 +59,20 @@ class GateImageWithStatistic
   virtual void UpdateSquaredImage();
   virtual void UpdateUncertaintyImage(int numberOfEvents);
 
-  GateImage & GetValueImage() { return mValueImage; }
+  GateVImage & GetValueImage() { return mValueImage; }
+  GateVImage & GetUncertaintyImage() { return mUncertaintyImage; }
 
   void SetOrigin(G4ThreeVector v);
   void SetOverWriteFilesFlag(bool b) { mOverWriteFilesFlag = b; }
   void SetTransformMatrix(const G4RotationMatrix & m);
 
   protected:
-  GateImage mValueImage;
-  GateImage mSquaredImage;
-  GateImage mTempImage;
-  GateImage mUncertaintyImage;
-  GateImage mScaledValueImage;
-  GateImage mScaledSquaredImage;
+  GateImageDouble mValueImage;
+  GateImageDouble mSquaredImage;
+  GateImageDouble mTempImage;
+  GateImageDouble mUncertaintyImage;
+  GateImageDouble mScaledValueImage;
+  GateImageDouble mScaledSquaredImage;
   bool mOverWriteFilesFlag;
   bool mNormalizedToMax;
   bool mNormalizedToIntegral;

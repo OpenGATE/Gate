@@ -115,6 +115,7 @@ __device__ float2 RFresnel(float n_incident, /* incident refractive index.*/
     r = 0.0f;
     // printf("case (n_incident==n_transmit): reflectance= %f and c_transmission_angle= %f \n", r, c_transmission_angle);
   }
+
   else if(c_incident_angle > COSZERO) {	/** normal incident. **/
     c_transmission_angle = c_incident_angle;
     r = __fdividef(n_transmit-n_incident, n_transmit+n_incident);
@@ -126,6 +127,7 @@ __device__ float2 RFresnel(float n_incident, /* incident refractive index.*/
     r = 1.0f;
     // printf("case (very slant): reflectance= %f and c_transmission_angle= %f \n", r, c_transmission_angle);
   }
+
   else  {		/** general. **/
     float sa1, sa2;	/* sine of the incident and transmission angles. */
     float ca2;
@@ -144,18 +146,20 @@ __device__ float2 RFresnel(float n_incident, /* incident refractive index.*/
 
       c_transmission_angle = sqrtf(1.0f-sa2*sa2);
       ca2 = c_transmission_angle;
-      cap = c_incident_angle*ca2 - sa1*sa2; /* c+ = cc - ss. */
-      cam = c_incident_angle*ca2 + sa1*sa2; /* c- = cc + ss. */
+     cap = c_incident_angle*ca2 - sa1*sa2; /* c+ = cc - ss. */
+    cam = c_incident_angle*ca2 + sa1*sa2; /* c- = cc + ss. */
       sap = sa1*ca2 + c_incident_angle*sa2; /* s+ = sc + cs. */
       sam = sa1*ca2 - c_incident_angle*sa2; /* s- = sc - cs. */
       r = __fdividef(0.5f*sam*sam*(cam*cam+cap*cap), sap*sap*cam*cam); 
+
     // printf("case (general case): reflectance= %f and c_transmission_angle= %f \n", r, c_transmission_angle);
     }
   }
 
-  return make_float2(r, c_transmission_angle);
-  // printf("RFresnel result: ni= %f nt= %f r= %f c_transmission_angle= %f\n", n_incident, n_transmit, r, c_transmission_angle);
 
+   //printf("RFresnel result: ni= %f nt= %f r= %f c_transmission_angle= %f\n", n_incident, n_transmit, r, c_transmission_angle);
+  
+   return make_float2(r, c_transmission_angle);
 }
 // Fresnel Reflectance
 
@@ -166,8 +170,9 @@ __device__ float3 Fresnel_process(StackParticle photon, unsigned int id,
 
   float uy = photon.dy[id]; /* !!!! y !!!! directional cosine. */
 
-  float ni= mat_Rindex[mat_i];
-  float nt= mat_Rindex[mat_t];
+/* S.JAN - DEBUG july 2014: reverse the material Rindex value to be coherent with the Geant4 convention */
+  float ni= mat_Rindex[mat_t];
+  float nt= mat_Rindex[mat_i];
   float2 res;
 
   // printf("step1 of Fresnel_process: ni= %f nt= %f y directional cosine = %f\n", ni, nt, uy);
@@ -347,8 +352,10 @@ __global__ void kernel_optical_navigation_regular(StackParticle photons, Volume 
 
     // Overshoot the distance to the particle inside the next voxel
     if (interaction_distance < next_interaction_distance) {
-      next_interaction_distance = interaction_distance+1.0e-03f;
-      next_discrete_process = OPTICALPHOTON_BOUNDARY_VOXEL;
+      next_interaction_distance = interaction_distance+1.0e-04f;
+
+      
+next_discrete_process = OPTICALPHOTON_BOUNDARY_VOXEL;
     }
 
     int3 old_ind;
@@ -430,7 +437,7 @@ __global__ void kernel_optical_navigation_regular(StackParticle photons, Volume 
             old_mat, mat);
     */
     
-    if (next_discrete_process == OPTICALPHOTON_BOUNDARY_VOXEL) {
+ /*DEBUG SEB begin----*/   if (next_discrete_process == OPTICALPHOTON_BOUNDARY_VOXEL) {
         
         // Check the change of material for Fresnel
         index_phantom.x = int(position.x * ivoxsize.x);
@@ -452,7 +459,7 @@ __global__ void kernel_optical_navigation_regular(StackParticle photons, Volume 
   // printf("step6 of Navigator: OPTICALPHOTON_BOUNDARY_VOXEL - Fresnel_process done for id= %i : (dx,dy,dz) =  %f %f %f \n", id, photons.dx[id], photons.dy[id], photons.dz[id]);
 
         }
-    } // endif next_discrete_process == OPTICALPHOTON_BOUNDARY_VOXEL
+    }/*----end DEBUG SEB*/ // endif next_discrete_process == OPTICALPHOTON_BOUNDARY_VOXEL
 
     if (next_discrete_process == OPTICALPHOTON_MIE) {
  

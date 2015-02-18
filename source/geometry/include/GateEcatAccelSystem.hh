@@ -67,7 +67,9 @@ private:
   GateClockDependentMessenger    	*m_messenger; 	//!< Messenger
 
   GateToSinoAccel                     *m_gateToSinoAccel;
+#ifdef GATE_USE_ECAT7
   GateSinoAccelToEcat7              *m_gateSinoAccelToEcat7;
+#endif
 };
 
 #endif

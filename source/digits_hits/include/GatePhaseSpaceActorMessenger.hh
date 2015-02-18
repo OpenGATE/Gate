@@ -12,8 +12,9 @@ See GATE/LICENSE.txt for further details
   \class  GatePhaseSpaceActorMessenger
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
-	  pierre.gueth@creatis.insa-lyon.fr
+	      david.sarrut@creatis.insa-lyon.fr
+	      pierre.gueth@creatis.insa-lyon.fr
+	      brent.huisman@creatis.insa-lyon.fr
 */
 
 #ifndef GATEPHASESPACEACTORMESSENGER_HH
@@ -58,6 +59,13 @@ protected:
   G4UIcmdWithABool* pCoordinateInVolumeFrameCmd;
   G4UIcmdWithADoubleAndUnit* pMaxSizeCmd;
   G4UIcmdWithABool * pInOrOutGoingParticlesCmd;
+  G4UIcmdWithABool* bEnablePrimaryEnergyCmd;
+  G4UIcmdWithABool* bEnableEmissionPointCmd;
+  G4UIcmdWithAString* bCoordinateFrameCmd;
+  G4UIcmdWithABool* bEnableLocalTimeCmd;
+  G4UIcmdWithAString* bSpotIDFromSourceCmd;
+  G4UIcmdWithABool* bEnablePDGCodeCmd;
+  G4UIcmdWithABool* bEnableCompactCmd;
 
 };
 

@@ -16,6 +16,11 @@ See GATE/LICENSE.txt for further details
 #include "G4ThreeVector.hh"
 
 #include "GateVPulseProcessor.hh"
+#include "GateVSystem.hh"
+#include "GateArrayComponent.hh"
+
+#define READOUT_POLICY_WINNER 0
+#define READOUT_POLICY_CENTROID 1
 
 class GateReadoutMessenger;
 class GateOutputVolumeID;
@@ -52,12 +57,17 @@ class GateReadout : public GateVPulseProcessor
     //! Set the depth of the readout
     inline void  SetDepth(G4int aDepth)         { m_depth = aDepth; }
 
+    //! Set the policy of the readout
+    void SetPolicy(const G4String& aPolicy);
+
   protected:
     //! Implementation of the pure virtual method declared by the base class GateVPulseProcessor
     //! This methods processes one input-pulse
     //! It is is called by ProcessPulseList() for each of the input pulses
     //! The result of the pulse-processing is incorporated into the output pulse-list
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
+    //! Overload the virtual (not pure) method of GateVPulseProcessor
+    GatePulseList* ProcessPulseList(const GatePulseList* inputPulseList);
 
   private:
     //! The default is the one parameter that defines how a readout works:
@@ -65,6 +75,17 @@ class GateReadout : public GateVPulseProcessor
     //! For instance, the default depth is 1: this means that pulses will be considered as
     //! taking place in a same block if the first two figures of their volume IDs are identical
     G4int m_depth;
+
+    //! S. Stute: add an option to choose the policy of the readout (using two define integers; see the beginning of this file)
+    G4int m_policy;
+    GateVSystem* m_system;
+    G4int m_nbCrystalsX;
+    G4int m_nbCrystalsY;
+    G4int m_nbCrystalsZ;
+    G4int m_nbCrystalsXY;
+    G4int m_systemDepth;
+    G4int m_crystalDepth;
+    GateArrayComponent* m_crystalComponent;
 
     GateReadoutMessenger *m_messenger;	  //!< Messenger for this readout
 };

@@ -187,6 +187,8 @@ void phaseSaitoY(const Vol &V,Longvol &sdt_x, Longvol &sdt_xy)
 	      q--;
 	  }
       }
+  delete[] s;
+  delete[] t;
 }
 
 /** 
@@ -266,6 +268,8 @@ void phaseSaitoZ(const Vol &V,Longvol &sdt_xy, Longvol &sdt_xyz)
 	      q--;
 	  }
       }
+  delete[] s;
+  delete[] t;
 }
 
 
