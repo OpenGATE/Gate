@@ -38,6 +38,7 @@ GateAddExampleData("DATA{example_Radiotherapy/example8/data/EGS.root}")
 GateAddExampleData("DATA{example_Radiotherapy/example9/data/EGS.root}")
 GateAddExampleData("DATA{example_Radiotherapy/example10/data/resampledTHORAX.raw}")
 GateAddExampleData("DATA{example_Radiotherapy/example2/data/patient-2mm.raw}")
+GateAddExampleData("DATA{example_Radiotherapy/example3/data/patient-4mm.raw}")
 
 GateAddExampleData("DATA{gpumacros/ct/data/patient-2mm.raw}")
 GateAddExampleData("DATA{gpumacros/optical/optical_phantom.bin}")
