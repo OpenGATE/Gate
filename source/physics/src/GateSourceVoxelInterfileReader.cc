@@ -25,6 +25,7 @@ GateSourceVoxelInterfileReader::GateSourceVoxelInterfileReader(GateVSource* sour
 {
   nVerboseLevel = 0;
   m_name = G4String("interfileReader");
+  m_type = G4String("interfile");
   m_messenger = new GateSourceVoxelInterfileReaderMessenger(this);
   m_fileName  = G4String("");
   IsFirstFrame = true;

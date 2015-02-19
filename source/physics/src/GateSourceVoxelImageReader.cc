@@ -27,7 +27,7 @@ GateSourceVoxelImageReader::GateSourceVoxelImageReader(GateVSource* source)
   nVerboseLevel = 0;
 
   m_name = G4String("imageReader");
-
+  m_type = G4String("image");
   m_messenger = new GateSourceVoxelImageReaderMessenger(this);
 }
 
@@ -36,46 +36,87 @@ GateSourceVoxelImageReader::~GateSourceVoxelImageReader()
   delete m_messenger;
 }
 
-void GateSourceVoxelImageReader::ReadFile(G4String fileName)
-{
+//~ void GateSourceVoxelImageReader::ReadFile(G4String fileName)
+//~ {
+  //~ if (!m_voxelTranslator) {
+    //~ G4cout << "GateSourceVoxelImageReader::ReadFile: ERROR : insert a translator first" << G4endl;
+    //~ return;
+  //~ }
+//~ 
+  //~ std::ifstream inFile;
+  //~ G4cout << "GateSourceVoxelImageReader::ReadFile : fileName: " << fileName << G4endl;
+  //~ inFile.open(fileName.c_str(),std::ios::in);
+//~ 
+  //~ G4double activity;
+  //~ G4int imageValue;
+  //~ G4int nx, ny, nz;
+  //~ G4double dx, dy, dz;
+//~ 
+  //~ inFile >> nx >> ny >> nz;
+//~ 
+  //~ inFile >> dx >> dy >> dz;
+  //~ SetVoxelSize( G4ThreeVector(dx, dy, dz) * mm );
+//~ 
+  //~ for (G4int iz=0; iz<nz; iz++) {
+    //~ for (G4int iy=0; iy<ny; iy++) {
+      //~ for (G4int ix=0; ix<nx; ix++) {
+	//~ inFile >> imageValue;
+	//~ activity = m_voxelTranslator->TranslateToActivity(imageValue);
+	//~ if (activity > 0.) {
+	  //~ AddVoxel(ix, iy, iz, activity);
+	//~ }
+      //~ }
+    //~ }
+  //~ }
+//~ 
+  //~ inFile.close();
+//~ 
+  //~ PrepareIntegratedActivityMap();
+//~ 
+//~ }
+
+//template<class PixelType>
+void GateSourceVoxelImageReader::ReadFile(G4String filename)
+{ 
+  //ImageType* image = new ImageType;
+  GateImage * image = new GateImage;
+  
   if (!m_voxelTranslator) {
     G4cout << "GateSourceVoxelImageReader::ReadFile: ERROR : insert a translator first" << G4endl;
     return;
   }
-
-  std::ifstream inFile;
-  G4cout << "GateSourceVoxelImageReader::ReadFile : fileName: " << fileName << G4endl;
-  inFile.open(fileName.c_str(),std::ios::in);
-
+  
   G4double activity;
-  G4int imageValue;
   G4int nx, ny, nz;
-  G4double dx, dy, dz;
-
-  inFile >> nx >> ny >> nz;
-
-  inFile >> dx >> dy >> dz;
-  SetVoxelSize( G4ThreeVector(dx, dy, dz) * mm );
-
+  G4double vx, vy, vz;
+  G4int compteur = 0;
+  
+  image->Read(filename);
+  nx=image->GetResolution()[0];
+  ny=image->GetResolution()[1];
+  nz=image->GetResolution()[2];
+  vx=image->GetVoxelSize()[0];
+  vy=image->GetVoxelSize()[1];
+  vz=image->GetVoxelSize()[2];
+    
+  SetVoxelSize( G4ThreeVector(vx, vy, vz) * mm );
+  
   for (G4int iz=0; iz<nz; iz++) {
     for (G4int iy=0; iy<ny; iy++) {
       for (G4int ix=0; ix<nx; ix++) {
-	inFile >> imageValue;
+	PixelType imageValue = image->GetValue(ix, iy, iz);
 	activity = m_voxelTranslator->TranslateToActivity(imageValue);
-	if (activity > 0.) {
+	if (activity > 0) {
 	  AddVoxel(ix, iy, iz, activity);
 	}
-      }
+	  }
     }
   }
-
-  inFile.close();
-
   PrepareIntegratedActivityMap();
-
 }
-
-
+  
+  
+  
 /* PY Descourt 11/12/2008 */ 
 void GateSourceVoxelImageReader::ReadRTFile(G4String , G4String fileName)
 {
