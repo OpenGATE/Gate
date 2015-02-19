@@ -18,10 +18,9 @@ class GateVSourceVoxelTranslator
 public:
   GateVSourceVoxelTranslator(GateVSourceVoxelReader* voxelReader);
   virtual ~GateVSourceVoxelTranslator() {};
-  
+
 public:
 
-  virtual G4double TranslateToActivity(G4int  voxelValue) = 0;
   virtual G4double TranslateToActivity(G4double  voxelValue) = 0;
 
   virtual GateVSourceVoxelReader* GetReader() { return m_voxelReader; };
@@ -36,4 +35,3 @@ protected:
 };
 
 #endif
-
