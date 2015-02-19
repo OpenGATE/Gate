@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 //      ------------ GateVSourceVoxelReaderMessenger  ------
@@ -15,8 +15,8 @@ See GATE/LICENSE.txt for further details
 #include "GateVSourceVoxelReaderMessenger.hh"
 #include "GateVSourceVoxelReader.hh"
 #include "GateVSource.hh"
-
 #include "GateClock.hh"
+
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
@@ -26,18 +26,17 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcmdWithoutParameter.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
 GateVSourceVoxelReaderMessenger::GateVSourceVoxelReaderMessenger(GateVSourceVoxelReader* voxelReader)
-  : GateMessenger(G4String("source/") + 
-		  voxelReader->GetSource()->GetName() + 
+  : GateMessenger(G4String("source/") +
+		  voxelReader->GetSource()->GetName() +
 		  G4String("/") +
-		  voxelReader->GetName(), 
+		  voxelReader->GetName(),
 		  true),
-  m_voxelReader(voxelReader)
-{ 
+    m_voxelReader(voxelReader)
+{
 
   G4String cmdName;
-  
+
   cmdName = GetDirectoryName()+"setPosition";
   PositionCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
   PositionCmd->SetGuidance("Set source position");
@@ -65,19 +64,16 @@ GateVSourceVoxelReaderMessenger::GateVSourceVoxelReaderMessenger(GateVSourceVoxe
   VerboseCmd->SetGuidance("1. Integer verbose level");
   VerboseCmd->SetParameterName("verbose",false);
   VerboseCmd->SetRange("verbose>=0");
-  
+
   cmdName = GetDirectoryName()+"SetTimeActivityTablesFrom";
   TimeActivTablesCmd = new G4UIcmdWithAString(cmdName,this);
 
   cmdName = GetDirectoryName()+"SetTimeSampling";
   SetTimeSamplingCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-
-  
 }
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
 GateVSourceVoxelReaderMessenger::~GateVSourceVoxelReaderMessenger()
 {
   delete InsertTranslatorCmd;
@@ -90,7 +86,6 @@ GateVSourceVoxelReaderMessenger::~GateVSourceVoxelReaderMessenger()
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
 void GateVSourceVoxelReaderMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { if( command == SetTimeSamplingCmd ) {
     m_voxelReader->SetTimeSampling( SetTimeSamplingCmd->GetNewDoubleValue( newValue ) );
@@ -110,8 +105,4 @@ void GateVSourceVoxelReaderMessenger::SetNewValue(G4UIcommand* command,G4String 
     m_voxelReader->SetVerboseLevel(VerboseCmd->GetNewIntValue(newValue));
   }
 }
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-
-

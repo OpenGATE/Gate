@@ -85,7 +85,7 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
 
   GateAnalyzeHeader::PixelType vx,vy,vz;
   hdr.GetVoxelSize(vx,vy,vz);
-    
+
   // update sizes and allocate
   resolution = G4ThreeVector(rx,ry,rz);
   voxelSize = G4ThreeVector(vx,vy,vz);
@@ -95,10 +95,6 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
   // open .img file
   int l = filename.length();
   filename.replace(l-3,3,"img");
-  /*[l-1] = 'g';
-    filename[l-2] = 'm';
-    filename[l-3] = 'i';
-  */
   std::ifstream is;
   OpenFileInput(filename, is);
 
@@ -155,7 +151,6 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
 //-----------------------------------------------------------------------------
 template<class PixelType>
 void GateImageT<PixelType>::ReadMHD(G4String filename) {
-
   // Read mhd image
   GateMHDImage * mhd = new GateMHDImage;
   mhd->ReadHeader(filename);
@@ -184,7 +179,6 @@ void GateImageT<PixelType>::ReadMHD(G4String filename) {
   // coordinates system. Must be transformed because voxel size is
   // known before rotation and origin is after rotation.
   origin -= transformMatrix*(voxelSize/2.0);
-
   UpdateSizesFromResolutionAndVoxelSize();
   Allocate();
 
@@ -197,7 +191,6 @@ void GateImageT<PixelType>::ReadMHD(G4String filename) {
 //-----------------------------------------------------------------------------
 template<class PixelType>
 void GateImageT<PixelType>::ReadInterfile(G4String filename) {
-
   // Read interfile image
   GateInterfileHeader * h33 = new GateInterfileHeader();
   h33->ReadHeader(filename);
@@ -211,14 +204,12 @@ void GateImageT<PixelType>::ReadInterfile(G4String filename) {
   origin[0] -= voxelSize[0]/2.0;
   origin[1] -= voxelSize[1]/2.0;
   origin[2] -= voxelSize[2]/2.0;
-
   origin = G4ThreeVector(origin[0], origin[1], origin[2]);
-
   UpdateSizesFromResolutionAndVoxelSize();
   Allocate();
 
   // Get image data
-    h33->ReadData(data);
+  h33->ReadData(data);
 }
 //-----------------------------------------------------------------------------
 
@@ -226,8 +217,6 @@ void GateImageT<PixelType>::ReadInterfile(G4String filename) {
 //-----------------------------------------------------------------------------
 template<class PixelType>
 void GateImageT<PixelType>::ReadAscii(G4String filename) {
-  //GateMessage("Image",8,"GateImageT::::ReadAscii " << filename << G4endl);
-
   std::ifstream is;
   OpenFileInput(filename, is);
 
@@ -314,11 +303,9 @@ void GateImageT<PixelType>::ReadAscii(G4String filename) {
 //-----------------------------------------------------------------------------
 template<class PixelType>
 void GateImageT<PixelType>::MergeDataByAddition(G4String filename) {
-  //GateDebugMessage("Image", 5, "GateImageT::MergeDataByAddition in " << filename << G4endl);
   // check if it exist
   std::ifstream is(filename);
   if (!is) {
-    //	GateDebugMessage("Image", 5, "Do not exist : do nothing (already merged)" << G4endl);
     return;
   }
   is.close();
@@ -338,28 +325,19 @@ void GateImageT<PixelType>::MergeDataByAddition(G4String filename) {
 
 //-----------------------------------------------------------------------------
 template<class PixelType>
-void GateImageT<PixelType>::Write(G4String filename, const G4String & comment)
-{
+void GateImageT<PixelType>::Write(G4String filename, const G4String & comment){
   GateMessage("Actor",5,"GateImageT::write " << filename << G4endl);
-
   G4String extension = getExtension(filename);
   GateMessage("Actor",5,"extension = " << extension << G4endl);
 
   std::ofstream os;
-
   if (extension == "bin") {
     // open
     OpenFileOutput(filename, os);
     WriteBin(os);
   }
   else {
-    // if (extension == "vox") {
-    //   // open
-    //   OpenFileOutput(filename, os);
-    //   WriteVox(os);
-    // }
-    // else {
-    if (extension == "txt") {
+     if (extension == "txt") {
       // open
       GateMessage("Actor",5,"Write text file"<< G4endl);
       OpenFileOutput(filename, os);
@@ -411,6 +389,7 @@ void GateImageT<PixelType>::Write(G4String filename, const G4String & comment)
 template<class PixelType>
 void GateImageT<PixelType>::WriteBin(std::ofstream & os)
 {
+  GateMessage("Image",2,"GateImageT::WriteBin " << G4endl);
   // write
   // if PixelType is not float, we copy the values in a float vector
   if (typeid(PixelType) != typeid(float)) {
@@ -424,8 +403,7 @@ void GateImageT<PixelType>::WriteBin(std::ofstream & os)
     os.write((char*)(&(data[0])), nbOfValues*sizeof(PixelType));
   }
   if (!os) {
-    // GateError( "Error while writing " << G4endl);
-    exit(0);
+    GateError( "Error while writing image data (WriteBin)." << G4endl);
   }
 }
 //-----------------------------------------------------------------------------
@@ -435,8 +413,7 @@ void GateImageT<PixelType>::WriteBin(std::ofstream & os)
 template<class PixelType>
 void GateImageT<PixelType>::WriteMHD(std::string filename)
 {
-  GateMessage("Image",1,"GateImageT::WriteMHD " << G4endl);
-
+  GateMessage("Image",2,"GateImageT::WriteMHD " << G4endl);
   // Write mhd image
   GateMHDImage * mhd = new GateMHDImage;
   mhd->WriteHeader<PixelType>(filename, this);
@@ -449,7 +426,7 @@ void GateImageT<PixelType>::WriteMHD(std::string filename)
 template<class PixelType>
 void GateImageT<PixelType>::WriteAscii(std::ofstream & os, const G4String & comment)
 {
-  GateMessage("Actor",5,"GateImageT::WriteAscii " <<G4endl);
+  GateMessage("Image",2,"GateImageT::WriteAscii " <<G4endl);
   // write comment in header
   os  << "#################################### " << G4endl
       << "# Matrix Size= " << size        << G4endl
@@ -464,7 +441,7 @@ void GateImageT<PixelType>::WriteAscii(std::ofstream & os, const G4String & comm
   if (resolution.x() == 1) dim--;
   if (resolution.y() == 1) dim--;
   if (resolution.z() == 1) dim--;
-  GateMessage("Actor",5,"Image dimension is " << dim << G4endl);
+  GateMessage("Image",5,"Image dimension is " << dim << G4endl);
 
   if (dim <= 1) {
     // write values in columns
@@ -512,6 +489,7 @@ void GateImageT<PixelType>::WriteAscii(std::ofstream & os, const G4String & comm
 template<class PixelType>
 void GateImageT<PixelType>::WriteRoot(G4String filename)
 {
+  GateMessage("Image",2,"GateImageT::WriteRoot " <<G4endl);
 #ifdef G4ANALYSIS_USE_ROOT
   // GateMessage("Image", 0 , "Writing image root output in " << filename << G4endl);
 
@@ -619,24 +597,17 @@ template<class PixelType>
 PixelType
 GateImageT<PixelType>::GetNeighborValueFromCoordinate(const ESide & side, const G4ThreeVector & coord)
 {
-  //GateMessage("Image", 8, "GateImage::GetNeighborValueFromCoordinate(" << coord
-  //			  << ", side=" << side << G4endl);
-  //int ttt;
   G4ThreeVector c(coord);
   switch (side) {
-  case kMX:c.setX(coord.x()-1); /*if (coord.x() <0) ttt=0;*/  break;
-  case kPX:c.setX(coord.x()+1); /*if (coord.x() >= GetResolution().x()) ttt=0;*/ break;
-
-  case kMY:c.setY(coord.y()-1); /*if (coord.y() <0) ttt=0;*/ break;
-  case kPY:c.setY(coord.y()+1); /*if (coord.y() >= GetResolution().y()) ttt=0;*/ break;
-
-  case kMZ:c.setZ(coord.z()-1); /*if (coord.z() <0) ttt=0;*/  break;
-  case kPZ:c.setZ(coord.z()+1); /*if (coord.z() >= GetResolution().z()) ttt=0;*/  break;
-
-  default: break; // ttt=0; // kUndefined
+  case kMX:c.setX(coord.x()-1); break;
+  case kPX:c.setX(coord.x()+1); break;
+  case kMY:c.setY(coord.y()-1); break;
+  case kPY:c.setY(coord.y()+1); break;
+  case kMZ:c.setZ(coord.z()-1); break;
+  case kPZ:c.setZ(coord.z()+1); break;
+  default: break;
     //	GateError("I don't know side = " << side);
   }
-
   return GetValue(GetIndexFromCoordinates(c));
 }
 //-----------------------------------------------------------------------------

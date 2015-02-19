@@ -7,6 +7,8 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 #include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 #include "GateRTPhantom.hh"
 #include "GateRTPhantomMgr.hh"
 #include "GateSourceVoxelInterfileReader.hh"
@@ -16,9 +18,6 @@ See GATE/LICENSE.txt for further details
 #include <fstream>
 #include <stdio.h>
 #include <string.h>
-
-#include "G4PhysicalConstants.hh"
-#include "G4SystemOfUnits.hh"
 
 GateSourceVoxelInterfileReader::GateSourceVoxelInterfileReader(GateVSource* source)
   : GateVSourceVoxelReader(source), GateInterfileHeader()

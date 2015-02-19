@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #ifndef GateVSourceVoxelTranslator_h
@@ -20,18 +20,15 @@ public:
   virtual ~GateVSourceVoxelTranslator() {};
 
 public:
-
   virtual G4double TranslateToActivity(G4double  voxelValue) = 0;
-
   virtual GateVSourceVoxelReader* GetReader() { return m_voxelReader; };
   virtual G4String                GetName()   { return m_name; };
-
-  virtual void UpdateActivity(G4double , G4double  , G4double ) = 0; /* PY Descourt 08/09/2009 */
+  virtual void UpdateActivity(G4double , G4double  , G4double ) = 0;
   virtual void Describe(G4int) = 0;
+
 protected:
   G4String                       m_name;
   GateVSourceVoxelReader*        m_voxelReader;
-
 };
 
 #endif
