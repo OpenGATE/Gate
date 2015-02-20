@@ -20,7 +20,7 @@
 
 /* Define to the full name and version of this package. */
 #ifndef PACKAGE_STRING
-#define PACKAGE_STRING "CLHEP RandomObjects 2.1.4.1"
+#define PACKAGE_STRING "CLHEP RandomObjects 2.2.0.4"
 #endif
 
 /* Define to the one symbol short name of this package. */
@@ -30,12 +30,12 @@
 
 /* Define to the version of this package. */
 #ifndef PACKAGE_VERSION
-#define PACKAGE_VERSION "2.1.4.1"
+#define PACKAGE_VERSION "2.2.0.4"
 #endif
 
 /* Version number of package */
 #ifndef VERSION
-#define VERSION "2.1.4.1"
+#define VERSION "2.2.0.4"
 #endif
 
 #endif  // RANDOMOBJECTS_DEFS_H

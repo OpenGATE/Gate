@@ -73,6 +73,7 @@
 
 #include "CLHEP/Matrix/defs.h"
 #include "CLHEP/Matrix/GenMatrix.h"
+#include "CLHEP/Utility/thread_local.h"
 
 namespace CLHEP {
 
@@ -272,13 +273,13 @@ private:
    int nrow;
    int size_;				     // total number of elements
 
-   static double posDefFraction5x5;
-   static double adjustment5x5;
+   static CLHEP_THREAD_LOCAL double posDefFraction5x5;
+   static CLHEP_THREAD_LOCAL double adjustment5x5;
    static const  double CHOLESKY_THRESHOLD_5x5;
    static const  double CHOLESKY_CREEP_5x5;
 
-   static double posDefFraction6x6;
-   static double adjustment6x6;
+   static CLHEP_THREAD_LOCAL double posDefFraction6x6;
+   static CLHEP_THREAD_LOCAL double adjustment6x6;
    static const double CHOLESKY_THRESHOLD_6x6;
    static const double CHOLESKY_CREEP_6x6;
 

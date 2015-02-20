@@ -15,7 +15,7 @@
 
 namespace CLHEP {
 
-static inline int sign(double x) { return (x>0 ? 1: -1);}
+static int sign(double x) { return (x>0 ? 1: -1);}
 
 /* -----------------------------------------------------------------------
 
