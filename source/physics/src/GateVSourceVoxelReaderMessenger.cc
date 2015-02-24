@@ -37,11 +37,16 @@ GateVSourceVoxelReaderMessenger::GateVSourceVoxelReaderMessenger(GateVSourceVoxe
 
   G4String cmdName;
 
-  cmdName = GetDirectoryName()+"setPosition";
+  cmdName = GetDirectoryName()+"setPosition"; // FIXME to remove ???
   PositionCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
   PositionCmd->SetGuidance("Set source position");
   PositionCmd->SetGuidance("1. 3-vector of source position");
   PositionCmd->SetUnitCategory("Length");
+
+  // cmdName = GetDirectoryName()+"FALSETranslateTheSourceAtThisIsoCenter"; // FIXME
+  // translateIsoCenterCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
+  // translateIsoCenterCmd->SetGuidance("Set the source position so that the given position is at world 0,0,0");
+  // translateIsoCenterCmd->SetUnitCategory("Length");
 
   cmdName = GetDirectoryName()+"setVoxelSize";
   VoxelSizeCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
@@ -80,6 +85,7 @@ GateVSourceVoxelReaderMessenger::~GateVSourceVoxelReaderMessenger()
   delete RemoveTranslatorCmd;
   delete VoxelSizeCmd;
   delete PositionCmd;
+  //  delete translateIsoCenterCmd;
   delete VerboseCmd;
   delete TimeActivTablesCmd;
   delete SetTimeSamplingCmd;
@@ -87,22 +93,15 @@ GateVSourceVoxelReaderMessenger::~GateVSourceVoxelReaderMessenger()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 void GateVSourceVoxelReaderMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ if( command == SetTimeSamplingCmd ) {
-    m_voxelReader->SetTimeSampling( SetTimeSamplingCmd->GetNewDoubleValue( newValue ) );
-    return;}
-  else if( command == TimeActivTablesCmd ) {
-    m_voxelReader->SetTimeActivTables( newValue );
-    return;}
-  else if( command == PositionCmd ) {
-    m_voxelReader->SetPosition(PositionCmd->GetNew3VectorValue(newValue));
-  } else if( command == VoxelSizeCmd) {
-    m_voxelReader->SetVoxelSize(VoxelSizeCmd->GetNew3VectorValue(newValue));
-  } else if( command == InsertTranslatorCmd) {
-    m_voxelReader->InsertTranslator(InsertTranslatorCmd->GetNewVectorValue(newValue)[0]);
-  } else if( command == RemoveTranslatorCmd) {
-    m_voxelReader->RemoveTranslator();
-  } else if( command == VerboseCmd) {
-    m_voxelReader->SetVerboseLevel(VerboseCmd->GetNewIntValue(newValue));
-  }
+{
+  if (command == SetTimeSamplingCmd) m_voxelReader->SetTimeSampling( SetTimeSamplingCmd->GetNewDoubleValue( newValue ) );
+  if (command == TimeActivTablesCmd) m_voxelReader->SetTimeActivTables( newValue );
+  if (command == PositionCmd) m_voxelReader->SetPosition(PositionCmd->GetNew3VectorValue(newValue));
+  //  if (command == translateIsoCenterCmd) m_voxelReader->SetIsoCenterPosition(translateIsoCenterCmd->GetNew3VectorValue(newValue));
+  if (command == VoxelSizeCmd) m_voxelReader->SetVoxelSize(VoxelSizeCmd->GetNew3VectorValue(newValue));
+  if (command == InsertTranslatorCmd) m_voxelReader->InsertTranslator(InsertTranslatorCmd->GetNewVectorValue(newValue)[0]);
+  if (command == RemoveTranslatorCmd) m_voxelReader->RemoveTranslator();
+  if (command == VerboseCmd) m_voxelReader->SetVerboseLevel(VerboseCmd->GetNewIntValue(newValue));
+  GateMessenger::SetNewValue(command, newValue);
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....

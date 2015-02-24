@@ -25,6 +25,7 @@ GateVSourceVoxelReader::GateVSourceVoxelReader(GateVSource* source)
   m_position = G4ThreeVector();
   m_activityTotal = 0. * becquerel;
   m_activityMax   = 0. * becquerel;
+  m_image_origin = G4ThreeVector(0);
 
   G4double voxelSize = 1.*mm;
   m_voxelSize = G4ThreeVector(voxelSize,voxelSize,voxelSize);
@@ -416,4 +417,10 @@ void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
   inFile.close();
 
 }
-/* PY Descourt 08/09/2009 */
+
+
+G4ThreeVector GateVSourceVoxelReader::ComputeSourcePositionFromIsoCenter(G4ThreeVector p)
+{
+  G4ThreeVector t = m_image_origin - p; // FIXME half a voxel ??
+  return t;
+}

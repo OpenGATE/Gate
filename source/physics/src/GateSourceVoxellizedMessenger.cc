@@ -24,7 +24,7 @@ See GATE/LICENSE.txt for further details
 GateSourceVoxellizedMessenger::GateSourceVoxellizedMessenger(GateSourceVoxellized* source)
   : GateMessenger(G4String("source/") + source->GetName(), false),
     m_source(source)
-{ 
+{
 
   G4String cmdName;
 
@@ -42,6 +42,11 @@ GateSourceVoxellizedMessenger::GateSourceVoxellizedMessenger(GateSourceVoxellize
   PositionCmd->SetGuidance("Set the source global position");
   PositionCmd->SetGuidance("1. Position xyz and unit");
 
+  cmdName = GetDirectoryName()+"TranslateTheSourceAtThisIsoCenter";
+  translateIsoCenterCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
+  translateIsoCenterCmd->SetGuidance("Set the source position so that the given position is at world 0,0,0");
+  translateIsoCenterCmd->SetUnitCategory("Length");
+
 }
 
 
@@ -52,22 +57,18 @@ GateSourceVoxellizedMessenger::~GateSourceVoxellizedMessenger()
    delete PositionCmd;
    delete ReaderInsertCmd;
    delete ReaderRemoveCmd;
+   delete translateIsoCenterCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 void GateSourceVoxellizedMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
-  if( command == ReaderInsertCmd ) {
-    m_source->ReaderInsert(ReaderInsertCmd->GetNewVectorValue(newValue)[0]);
-  } else if( command == ReaderRemoveCmd ) {
-    m_source->ReaderRemove();
-  } else if( command == PositionCmd ) {
-    m_source->SetPosition(PositionCmd->GetNew3VectorValue(newValue));
-  }
+{
+  if (command == ReaderInsertCmd)  m_source->ReaderInsert(ReaderInsertCmd->GetNewVectorValue(newValue)[0]);
+  if (command == ReaderRemoveCmd)  m_source->ReaderRemove();
+  if (command == PositionCmd) m_source->SetPosition(PositionCmd->GetNew3VectorValue(newValue));
+  if (command == translateIsoCenterCmd) m_source->SetIsoCenterPosition(translateIsoCenterCmd->GetNew3VectorValue(newValue));
+  GateMessenger::SetNewValue(command, newValue);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-
-

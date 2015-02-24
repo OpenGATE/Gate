@@ -53,6 +53,8 @@ void GateSourceVoxelImageReader::ReadFile(G4String filename)
 
   SetVoxelSize( G4ThreeVector(vx, vy, vz) * mm );
 
+  m_image_origin = image->GetOrigin();
+
   for (G4int iz=0; iz<nz; iz++) {
     for (G4int iy=0; iy<ny; iy++) {
       for (G4int ix=0; ix<nx; ix++) {

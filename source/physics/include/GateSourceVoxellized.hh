@@ -42,12 +42,15 @@ public:
   void          SetPosition(G4ThreeVector pos) { m_sourcePosition = pos; };
   G4ThreeVector GetPosition()                  { return m_sourcePosition; };
 
+  void          SetIsoCenterPosition(G4ThreeVector pos);
+
+
 protected:
 
   GateSourceVoxellizedMessenger* m_sourceVoxellizedMessenger;
 
   // Even if for a standard source the position is completely controlled by its GPS,
-  // for Voxel sources (and maybe in the future for all sources) a position and a 
+  // for Voxel sources (and maybe in the future for all sources) a position and a
   // rotation are needed to align them to a Geometry Voxel Matrix
 
   G4ThreeVector                  m_sourcePosition;
