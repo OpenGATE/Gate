@@ -15,17 +15,13 @@
 #include "GateVSourceVoxelReaderMessenger.hh"
 #include "GateVSourceVoxelReader.hh"
 #include "GateVSource.hh"
-#include "GateClock.hh"
 
-#include "G4UIdirectory.hh"
-#include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
-#include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 #include "G4UIcmdWithoutParameter.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+//-----------------------------------------------------------------------------
 GateVSourceVoxelReaderMessenger::GateVSourceVoxelReaderMessenger(GateVSourceVoxelReader* voxelReader)
   : GateMessenger(G4String("source/") +
 		  voxelReader->GetSource()->GetName() +
@@ -34,19 +30,12 @@ GateVSourceVoxelReaderMessenger::GateVSourceVoxelReaderMessenger(GateVSourceVoxe
 		  true),
     m_voxelReader(voxelReader)
 {
-
   G4String cmdName;
-
   cmdName = GetDirectoryName()+"setPosition"; // FIXME to remove ???
   PositionCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
   PositionCmd->SetGuidance("Set source position");
   PositionCmd->SetGuidance("1. 3-vector of source position");
   PositionCmd->SetUnitCategory("Length");
-
-  // cmdName = GetDirectoryName()+"FALSETranslateTheSourceAtThisIsoCenter"; // FIXME
-  // translateIsoCenterCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
-  // translateIsoCenterCmd->SetGuidance("Set the source position so that the given position is at world 0,0,0");
-  // translateIsoCenterCmd->SetUnitCategory("Length");
 
   cmdName = GetDirectoryName()+"setVoxelSize";
   VoxelSizeCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
@@ -76,32 +65,33 @@ GateVSourceVoxelReaderMessenger::GateVSourceVoxelReaderMessenger(GateVSourceVoxe
   cmdName = GetDirectoryName()+"SetTimeSampling";
   SetTimeSamplingCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
 }
+//-----------------------------------------------------------------------------
 
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+//-----------------------------------------------------------------------------
 GateVSourceVoxelReaderMessenger::~GateVSourceVoxelReaderMessenger()
 {
   delete InsertTranslatorCmd;
   delete RemoveTranslatorCmd;
   delete VoxelSizeCmd;
   delete PositionCmd;
-  //  delete translateIsoCenterCmd;
   delete VerboseCmd;
   delete TimeActivTablesCmd;
   delete SetTimeSamplingCmd;
 }
+//-----------------------------------------------------------------------------
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+
+//-----------------------------------------------------------------------------
 void GateVSourceVoxelReaderMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
   if (command == SetTimeSamplingCmd) m_voxelReader->SetTimeSampling( SetTimeSamplingCmd->GetNewDoubleValue( newValue ) );
   if (command == TimeActivTablesCmd) m_voxelReader->SetTimeActivTables( newValue );
   if (command == PositionCmd) m_voxelReader->SetPosition(PositionCmd->GetNew3VectorValue(newValue));
-  //  if (command == translateIsoCenterCmd) m_voxelReader->SetIsoCenterPosition(translateIsoCenterCmd->GetNew3VectorValue(newValue));
   if (command == VoxelSizeCmd) m_voxelReader->SetVoxelSize(VoxelSizeCmd->GetNew3VectorValue(newValue));
   if (command == InsertTranslatorCmd) m_voxelReader->InsertTranslator(InsertTranslatorCmd->GetNewVectorValue(newValue)[0]);
   if (command == RemoveTranslatorCmd) m_voxelReader->RemoveTranslator();
   if (command == VerboseCmd) m_voxelReader->SetVerboseLevel(VerboseCmd->GetNewIntValue(newValue));
   GateMessenger::SetNewValue(command, newValue);
 }
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+//-----------------------------------------------------------------------------

@@ -7,30 +7,34 @@
   ----------------------*/
 
 #include "G4SystemOfUnits.hh"
-#include "G4PhysicalConstants.hh"
 
 #include "GateRTPhantom.hh"
 #include "GateRTPhantomMgr.hh"
 #include "GateSourceVoxelImageReader.hh"
 #include "GateSourceVoxelImageReaderMessenger.hh"
 #include "GateVSourceVoxelTranslator.hh"
-#include <fstream>
 
+//-----------------------------------------------------------------------------
 GateSourceVoxelImageReader::GateSourceVoxelImageReader(GateVSource* source)
   : GateVSourceVoxelReader(source)
 {
   nVerboseLevel = 0;
-
   m_name = G4String("imageReader");
   m_type = G4String("image");
   m_messenger = new GateSourceVoxelImageReaderMessenger(this);
 }
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 GateSourceVoxelImageReader::~GateSourceVoxelImageReader()
 {
   delete m_messenger;
 }
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 void GateSourceVoxelImageReader::ReadFile(G4String filename)
 {
   GateImage * image = new GateImage;
@@ -68,10 +72,10 @@ void GateSourceVoxelImageReader::ReadFile(G4String filename)
   }
   PrepareIntegratedActivityMap();
 }
+//-----------------------------------------------------------------------------
 
 
-
-/* PY Descourt 11/12/2008 */
+//-----------------------------------------------------------------------------
 void GateSourceVoxelImageReader::ReadRTFile(G4String , G4String fileName)
 {
 
@@ -122,4 +126,4 @@ void GateSourceVoxelImageReader::ReadRTFile(G4String , G4String fileName)
   PrepareIntegratedActivityMap();
 
 }
-/* PY Descourt 11/12/2008 */
+//-----------------------------------------------------------------------------

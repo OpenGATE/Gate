@@ -7,14 +7,15 @@
   ----------------------*/
 
 
-#ifndef GateSourceVoxelImageReader_h
-#define GateSourceVoxelImageReader_h 1
+#ifndef GATESOURCEVOXELIMAGEREADER_H
+#define GATESOURCEVOXELIMAGEREADER_H 1
 
 #include "GateVSourceVoxelReader.hh"
 #include "GateImage.hh"
 
 class GateSourceVoxelImageReaderMessenger;
 
+//-----------------------------------------------------------------------------
 class GateSourceVoxelImageReader : public GateVSourceVoxelReader
 {
 public:
@@ -27,5 +28,6 @@ public:
 protected:
   GateSourceVoxelImageReaderMessenger* m_messenger;
 };
+//-----------------------------------------------------------------------------
 
 #endif

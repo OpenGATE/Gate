@@ -8,22 +8,6 @@
 
 
 #include "GateSourceVoxellized.hh"
-#include "GateClock.hh"
-#include "Randomize.hh"
-#include "G4ParticleTable.hh"
-#include "G4ParticleDefinition.hh"
-
-#include "G4Gamma.hh"
-// vesna
-#include "G4OpticalPhoton.hh"
-// vesna
-
-#include "G4GenericIon.hh"
-#include "G4Event.hh"
-#include "G4UnitsTable.hh"
-
-#include <vector>
-#include <map>
 #include "GateSourceVoxellizedMessenger.hh"
 #include "GateVSourceVoxelReader.hh"
 #include "GateSourceVoxelTestReader.hh"
@@ -164,7 +148,6 @@ void GateSourceVoxellized::ReaderInsert(G4String readerType)
       G4cout << "GateSourceVoxellized::ReaderInsert: unknown reader type" << G4endl;
     }
   }
-
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -172,14 +155,12 @@ void GateSourceVoxellized::ReaderInsert(G4String readerType)
 //-------------------------------------------------------------------------------------------------
 void GateSourceVoxellized::ReaderRemove()
 {
-
   if (m_voxelReader) {
     delete m_voxelReader;
     m_voxelReader = 0;
   } else {
     G4cout << "GateSourceVoxellized::ReaderRemove: voxel reader not defined" << G4endl;
   }
-
 }
 //-------------------------------------------------------------------------------------------------
 

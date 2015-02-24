@@ -10,22 +10,14 @@ See GATE/LICENSE.txt for further details
 #include "GateSourceVoxellizedMessenger.hh"
 #include "GateSourceVoxellized.hh"
 
-#include "GateClock.hh"
-#include "G4UIdirectory.hh"
-#include "G4UIcmdWithAString.hh"
-#include "G4UIcmdWithAnInteger.hh"
-#include "G4UIcmdWithADouble.hh"
-#include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 #include "G4UIcmdWithoutParameter.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
+//-----------------------------------------------------------------------------
 GateSourceVoxellizedMessenger::GateSourceVoxellizedMessenger(GateSourceVoxellized* source)
   : GateMessenger(G4String("source/") + source->GetName(), false),
     m_source(source)
 {
-
   G4String cmdName;
 
   cmdName = GetDirectoryName()+"reader/insert";
@@ -48,10 +40,10 @@ GateSourceVoxellizedMessenger::GateSourceVoxellizedMessenger(GateSourceVoxellize
   translateIsoCenterCmd->SetUnitCategory("Length");
 
 }
+//-----------------------------------------------------------------------------
 
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
+//-----------------------------------------------------------------------------
 GateSourceVoxellizedMessenger::~GateSourceVoxellizedMessenger()
 {
    delete PositionCmd;
@@ -59,9 +51,10 @@ GateSourceVoxellizedMessenger::~GateSourceVoxellizedMessenger()
    delete ReaderRemoveCmd;
    delete translateIsoCenterCmd;
 }
+//-----------------------------------------------------------------------------
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
+//-----------------------------------------------------------------------------
 void GateSourceVoxellizedMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
   if (command == ReaderInsertCmd)  m_source->ReaderInsert(ReaderInsertCmd->GetNewVectorValue(newValue)[0]);
@@ -70,5 +63,4 @@ void GateSourceVoxellizedMessenger::SetNewValue(G4UIcommand* command,G4String ne
   if (command == translateIsoCenterCmd) m_source->SetIsoCenterPosition(translateIsoCenterCmd->GetNew3VectorValue(newValue));
   GateMessenger::SetNewValue(command, newValue);
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+//-----------------------------------------------------------------------------

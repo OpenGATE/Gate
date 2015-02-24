@@ -6,18 +6,13 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-#include <iostream>
-#include <fstream>
-
-#include "G4SystemOfUnits.hh"
-#include "Randomize.hh"
-
 #include "GateVSourceVoxelReader.hh"
 #include "GateVSource.hh"
 #include "GateSourceVoxelLinearTranslator.hh"
 #include "GateSourceVoxelRangeTranslator.hh"
 #include "GateSourceMgr.hh"
 
+//-------------------------------------------------------------------------------------------------
 GateVSourceVoxelReader::GateVSourceVoxelReader(GateVSource* source)
   : m_source(source)
   , m_voxelTranslator(0)
@@ -30,7 +25,10 @@ GateVSourceVoxelReader::GateVSourceVoxelReader(GateVSource* source)
   G4double voxelSize = 1.*mm;
   m_voxelSize = G4ThreeVector(voxelSize,voxelSize,voxelSize);
 }
+//-------------------------------------------------------------------------------------------------
 
+
+//-------------------------------------------------------------------------------------------------
 GateVSourceVoxelReader::~GateVSourceVoxelReader()
 {
   if (m_voxelTranslator) {
@@ -38,11 +36,12 @@ GateVSourceVoxelReader::~GateVSourceVoxelReader()
   }
   m_sourceVoxelIntegratedActivities.clear();
 }
+//-------------------------------------------------------------------------------------------------
 
 
+//-------------------------------------------------------------------------------------------------
 void GateVSourceVoxelReader::Dump(G4int level)
 {
-
   G4cout << "  Voxel reader ----------> " << m_type << G4endl
 	 << "  number of voxels       : " << m_sourceVoxelActivities.size() << G4endl
 	 << "  total activity (Bq)    : " << GetTotalActivity()/becquerel << G4endl
@@ -66,11 +65,13 @@ void GateVSourceVoxelReader::Dump(G4int level)
     }
   }
 }
+//-------------------------------------------------------------------------------------------------
 
+
+//-------------------------------------------------------------------------------------------------
 std::vector<G4int> GateVSourceVoxelReader::GetNextSource()
 {
   // the method decides which is the source that has to be used for this event
-
   std::vector<G4int> firstSource;
 
   if (m_sourceVoxelActivities.size()==0) {
@@ -95,7 +96,10 @@ std::vector<G4int> GateVSourceVoxelReader::GetNextSource()
 
   return firstSource;
 }
+//-------------------------------------------------------------------------------------------------
 
+
+//-------------------------------------------------------------------------------------------------
 void GateVSourceVoxelReader::AddVoxel(G4int ix, G4int iy, G4int iz, G4double activity)
 {
   // this method is used by the ReadFile method.
@@ -136,6 +140,10 @@ void GateVSourceVoxelReader::AddVoxel(G4int ix, G4int iy, G4int iz, G4double act
   m_sourceVoxelActivities[*index] = activity;
 
 }
+//-------------------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------
 void GateVSourceVoxelReader::AddVoxel_FAST(G4int ix, G4int iy, G4int iz, G4double activity)
 { // no check if Voxel already existed to speed-up
   //
@@ -149,6 +157,10 @@ void GateVSourceVoxelReader::AddVoxel_FAST(G4int ix, G4int iy, G4int iz, G4doubl
   m_sourceVoxelActivities[index] = activity;
 
 }
+//-------------------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------
 void GateVSourceVoxelReader::InsertTranslator(G4String translatorType)
 {
   if (m_voxelTranslator) {
@@ -164,7 +176,10 @@ void GateVSourceVoxelReader::InsertTranslator(G4String translatorType)
   }
 
 }
+//-------------------------------------------------------------------------------------------------
 
+
+//-------------------------------------------------------------------------------------------------
 void GateVSourceVoxelReader::RemoveTranslator()
 {
   if (m_voxelTranslator) {
@@ -174,7 +189,10 @@ void GateVSourceVoxelReader::RemoveTranslator()
     GateError("GateVSourceVoxelReader::RemoveTranslator: voxel translator not defined" << G4endl);
   }
 }
+//-------------------------------------------------------------------------------------------------
 
+
+//-------------------------------------------------------------------------------------------------
 void GateVSourceVoxelReader::PrepareIntegratedActivityMap()
 {
   // erase all the elements of the old integrated activity map
@@ -206,20 +224,34 @@ void GateVSourceVoxelReader::PrepareIntegratedActivityMap()
   }
   m_tactivityTotal = m_activityTotal;  // added by I. Martinez-Rovira (immamartinez@gmail.com)
 }
+//-------------------------------------------------------------------------------------------------
 
-/* PY Descourt 08/09/2009 */
+
+//-------------------------------------------------------------------------------------------------
 void GateVSourceVoxelReader::Initialize()
 {
   m_sourceVoxelActivities.clear();
 }
+//-------------------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------
 G4double GateVSourceVoxelReader::GetTimeSampling()
 {
   return m_TS;
 }
+//-------------------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------
 void GateVSourceVoxelReader::SetTimeSampling( G4double aTS )
-{ m_TS = aTS; }
+{
+  m_TS = aTS;
+}
+//-------------------------------------------------------------------------------------------------
 
 
+//-------------------------------------------------------------------------------------------------
 void GateVSourceVoxelReader::UpdateActivities(G4String  HFN, G4String FN )
 {
   static G4bool IsFirstTime = true;
@@ -283,8 +315,10 @@ void GateVSourceVoxelReader::UpdateActivities(G4String  HFN, G4String FN )
         }
     }
 }
+//-------------------------------------------------------------------------------------------------
 
 
+//-------------------------------------------------------------------------------------------------
 void GateVSourceVoxelReader::UpdateActivities()
 {
   if (m_TimeActivTables.empty() == true) {
@@ -320,9 +354,10 @@ void GateVSourceVoxelReader::UpdateActivities()
   // G4cout << "   Description of Range Translator  " << G4endl;
   m_voxelTranslator->Describe( 2 ) ;
 }
+//-------------------------------------------------------------------------------------------------
 
 
-
+//-------------------------------------------------------------------------------------------------
 void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
 {
   if ( m_voxelTranslator == 0 ) {
@@ -417,10 +452,13 @@ void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
   inFile.close();
 
 }
+//-------------------------------------------------------------------------------------------------
 
 
+//-------------------------------------------------------------------------------------------------
 G4ThreeVector GateVSourceVoxelReader::ComputeSourcePositionFromIsoCenter(G4ThreeVector p)
 {
-  G4ThreeVector t = m_image_origin - p; // FIXME half a voxel ??
+  G4ThreeVector t = m_image_origin - p;
   return t;
 }
+//-------------------------------------------------------------------------------------------------
