@@ -223,6 +223,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   if (mIsFistStep && step->GetTrack()->GetTrackID() == 1 ) mNevent++;
 
   G4StepPoint *stepPoint;
+  //prestep, NOT poststep!!!!
   if (mStoreOutPart || EnableAllStep) stepPoint = step->GetPostStepPoint();
   else stepPoint = step->GetPreStepPoint();
 
@@ -236,7 +237,8 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   if (vol == mVolume->GetLogicalVolumeName() && !EnableSec && !mStoreOutPart) return;
   //if(!( mStoreOutPart && step->IsLastStepInVolume())) return;
 
-  if (mStoreOutPart && step->GetTrack()->GetVolume() == step->GetTrack()->GetNextVolume())return;
+  //something wrong here:
+  if (mStoreOutPart && step->GetTrack()->GetVolume() == step->GetTrack()->GetNextVolume()) return;
   if (mStoreOutPart) {
     /* 2014-06-11: Brent & David
      * There is a rare bug when using the PhaseSpaceActor to store outgoing particles and very long cuts on particles (nongammas).

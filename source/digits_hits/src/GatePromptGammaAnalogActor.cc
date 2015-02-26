@@ -149,7 +149,7 @@ void GatePromptGammaAnalogActor::UserPreTrackActionInVoxel(const int, const G4Tr
 //-----------------------------------------------------------------------------
 void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4Step *step)
 {
-  if (!mIsFistStep) return; //BRENT NOTE IS DIT NODIG?
+  if (!mIsFistStep) return;
 
   // Check index
   if (index < 0) return;
