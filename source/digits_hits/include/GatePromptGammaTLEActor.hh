@@ -43,7 +43,7 @@ public:
   virtual void ResetData();
 
   void EnableUncertaintyImage(bool b) { mIsIntermediaryUncertaintyOutputEnabled = mIsUncertaintyImageEnabled = b; }  //all is needed to calc tle uncertainty
-  void EnableIntermediaryUncertaintyOutput(bool b) { mIsIntermediaryUncertaintyOutputEnabled = b; }
+  void EnableIntermediaryUncertaintyOutput(bool b) { mIsIntermediaryUncertaintyOutputEnabled = b; } //this is only used to output trackl,tracklsq, no other effects on calculation
 
 protected:
   GatePromptGammaTLEActor(G4String name, G4int depth=0);
@@ -57,7 +57,7 @@ protected:
 
   //used and reset each track
   GateImageOfHistograms * tmptrackl;    //l_i
-  int protbin(double energy);
+  int GetProtonBin(double energy);
   TH1D * converterHist;          //sole use is to aid conversion of proton energy to bin index.
 
   //updated at end of track:
@@ -65,7 +65,7 @@ protected:
   GateImageOfHistograms * tracklsq;     //L_i^2. also intermediate output: track squared length per voxel per E_proton
   GateImageOfHistograms * tleuncertain; //uncertainty per voxel, per E_gamma
 
-  //FIXME: allocate and calculate at end of simulation
+  //FIXME: (remove and) allocate and calculate at end of simulation
   GateImageOfHistograms * mImageGamma;  //main output (yield)
 
   //written at end of simu in case of uncertainty output

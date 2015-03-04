@@ -203,6 +203,22 @@ void GateImageOfHistograms::AddValueDouble(const int & index, const int &bin, co
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+void GateImageOfHistograms::SetValueDouble(const int & index, const int &bin, const double value=1.0)
+{
+  int index_data = index*nbOfBins;
+  dataDouble[index_data+bin] = value;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+double GateImageOfHistograms::GetValueDouble(const int & index, const int &bin)
+{
+  int index_data = index*nbOfBins;
+  return dataDouble[index_data+bin];
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 void GateImageOfHistograms::AddValueInt(const int & index, const int &bin, const unsigned int value=1)
 {
   int index_data = index*nbOfBins;

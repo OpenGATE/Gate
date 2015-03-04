@@ -49,7 +49,8 @@ public:
   void Reset();
   void AddValueFloat(const int & index, TH1D * h, const double scale);
   void AddValueDouble(const int & index, TH1D * h, const double scale);
-  void AddValueDouble(const int & index, const int &bin, const double value);
+  void SetValueDouble(const int & index, const int &bin, const double value);
+  void GetValueDouble(const int & index, const int &bin);
   void AddValueInt(const int & index, const int &bin, const unsigned int value);
   virtual void Write(G4String filename, const G4String & comment = "");
   virtual void Read(G4String filename);
