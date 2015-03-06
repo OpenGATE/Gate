@@ -195,7 +195,7 @@ ELSE(GATE_USE_GPU AND CUDA_FOUND)
   ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
 ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 
-TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ITKMetaIO itkzlib pthread)
+TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} MetaIO itkzlib pthread)
 
 #=========================================================
 # included ITK to read/write mhd image file format

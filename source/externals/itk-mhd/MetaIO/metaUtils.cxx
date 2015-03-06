@@ -12,6 +12,18 @@
 #ifdef _MSC_VER
 #pragma warning(disable:4702)
 #pragma warning(disable:4996)
+namespace {
+inline bool IsBlank(int c)
+{
+  return c == '\t' || c == ' ';
+}
+}
+#else
+//# ifdef isblank
+#  define IsBlank(c) isblank((c))
+//# else
+//#  define IsBlank(x) (((x)==32) || ((x)==9))
+//# endif
 #endif
 
 #include "metaUtils.h"
@@ -44,7 +56,7 @@ namespace METAIO_NAMESPACE {
 
 int META_DEBUG = 0;
 
-char MET_SeperatorChar = '=';
+static char MET_SeperatorChar = '=';
 
 MET_FieldRecordType *
 MET_GetFieldRecord(const char * _fieldName,
@@ -122,7 +134,7 @@ METAIO_STL::string MET_ReadForm(METAIO_STREAM::istream &_fp)
   METAIO_STL::streampos pos = _fp.tellg();
   METAIO_STL::vector<MET_FieldRecordType *> fields;
   MET_FieldRecordType* mF = new MET_FieldRecordType;
-  MET_InitReadField(mF, "Form", MET_STRING, false);
+  MET_InitReadField(mF, "FormTypeName", MET_STRING, false);
   mF->required = false;
   mF->terminateRead = true;
   fields.push_back(mF);
@@ -130,18 +142,15 @@ METAIO_STL::string MET_ReadForm(METAIO_STREAM::istream &_fp)
   MET_Read(_fp, &fields, '=', true);
   _fp.seekg(pos);
 
-  METAIO_STL::string value;
-
-  if(mF && mF->defined)
+  if(mF->defined)
     {
-    value = (char *)(mF->value);
+    METAIO_STL::string value = (char *)(mF->value);
     delete mF;
     return value;
     }
 
-  value[0] = '\0';
   delete mF;
-  return value;
+  return METAIO_STL::string();
   }
 
 //
@@ -160,18 +169,15 @@ METAIO_STL::string MET_ReadType(METAIO_STREAM::istream &_fp)
   MET_Read(_fp, &fields, '=', true);
   _fp.seekg(pos);
 
-  METAIO_STL::string value;
-
-  if(mF && mF->defined)
+  if(mF->defined)
     {
-    value = (char *)(mF->value);
+    METAIO_STL::string value  = (char *)(mF->value);
     delete mF;
     return value;
     }
 
-  value[0] = '\0';
   delete mF;
-  return value;
+  return METAIO_STL::string();
   }
 
 //
@@ -246,7 +252,7 @@ bool MET_TypeToString(MET_ValueEnumType _vType, char *_s)
 //
 // Value to Double
 //
-bool MET_ValueToDouble(MET_ValueEnumType _type, const void *_data, 
+bool MET_ValueToDouble(MET_ValueEnumType _type, const void *_data,
                        METAIO_STL::streamoff _index,
                        double *_value)
   {
@@ -713,14 +719,14 @@ unsigned char * MET_PerformCompression(const unsigned char * source,
         {
         // if we don't have enough allocation for the output buffer
         // when the output is bigger than the input (true for small images)
-        if(j+count>=buffer_size) 
+        if(j+count>=buffer_size)
           {
           unsigned char* compressedDataTemp = new unsigned char[j+count+1];
           memcpy(compressedDataTemp,compressedData,(size_t)buffer_size);
           delete [] compressedData;
           compressedData = compressedDataTemp;
           }
-        
+
         memcpy((char*)compressedData+j, (char *)output_buffer, (size_t)count);
         }
       break;
@@ -730,7 +736,7 @@ unsigned char * MET_PerformCompression(const unsigned char * source,
     count = buffer_size - z.avail_out;
     if ( count )
       {
-      if(j+count>=buffer_size) 
+      if(j+count>=buffer_size)
         {
         unsigned char* compressedDataTemp = new unsigned char[j+count+1];
         memcpy(compressedDataTemp,compressedData,(size_t)buffer_size);
@@ -772,13 +778,13 @@ bool MET_PerformUncompression(const unsigned char * sourceCompressed,
   inflateInit2(&d_stream,47); // allow both gzip and zlib compression headers
   d_stream.next_in  = const_cast<unsigned char *>(sourceCompressed);
   d_stream.avail_in = (uInt)sourceCompressedSize;
-  
+
   for (;;)
     {
     d_stream.next_out = (unsigned char *)uncompressedData;
     d_stream.avail_out = (uInt)uncompressedDataSize;
     int err = inflate(&d_stream, Z_NO_FLUSH);
-        
+
     if((err == Z_STREAM_END)
        || (err == Z_BUF_ERROR) // Sometimes inflate returns this non fatal.
        )
@@ -789,9 +795,9 @@ bool MET_PerformUncompression(const unsigned char * sourceCompressed,
       {
       METAIO_STREAM::cerr << "Uncompress failed" << METAIO_STREAM::endl;
       break;
-      }  
+      }
     }
-    
+
   inflateEnd(&d_stream);
 
   return true;
@@ -983,9 +989,9 @@ bool MET_InitReadField(MET_FieldRecordType * _mf,
 //
 //
 //
-bool MET_SkipToVal(METAIO_STREAM::istream &fp)
+static bool MET_SkipToVal(METAIO_STREAM::istream &fp)
   {
-  char c;
+  int c;
   if( fp.eof() )
     {
     return false;
@@ -993,12 +999,12 @@ bool MET_SkipToVal(METAIO_STREAM::istream &fp)
 
   c = fp.get();
 
-  while( c != MET_SeperatorChar && c != ':' && !fp.eof() )
+  while(  !fp.eof() && c != MET_SeperatorChar && c != ':' )
     {
     c = fp.get();
     }
 
-  while( ( c == MET_SeperatorChar || c == ':' || isspace(c) ) && !fp.eof() )
+  while( !fp.eof() && ( c == MET_SeperatorChar || c == ':' || IsBlank(c) ) )
     {
     c = fp.get();
     }
@@ -1018,7 +1024,7 @@ bool MET_SkipToVal(METAIO_STREAM::istream &fp)
 //
 //
 //
-bool MET_IsComplete(METAIO_STL::vector<MET_FieldRecordType *> * fields)
+static bool MET_IsComplete(METAIO_STL::vector<MET_FieldRecordType *> * fields)
   {
   METAIO_STL::vector<MET_FieldRecordType *>::iterator fieldIter;
   for(fieldIter=fields->begin(); fieldIter!=fields->end(); fieldIter++)
@@ -1056,10 +1062,11 @@ bool MET_Read(METAIO_STREAM::istream &fp,
     i = 0;
     c = fp.get();
     while(!fp.eof() && c != MET_SeperatorChar && c != ':'
-          && (c == '\r' || c == '\n' || isspace(c)))
+          && isspace(c))
       {
       c = fp.get();
       }
+    // save name up to separator or end of line
     while(!fp.eof() && c != MET_SeperatorChar && c != ':' && c != '\r' && c != '\n' && i<500)
       {
       s[i++] = c;
@@ -1072,8 +1079,9 @@ bool MET_Read(METAIO_STREAM::istream &fp,
     fp.putback(c);
     s[i] = '\0';
 
+    // trim white space on name
     i--;
-    while((s[i] == ' ' || s[i] == '\t') && i>0)
+    while(IsBlank(s[i]) && i>0)
       {
       s[i--] = '\0';
       }
@@ -1141,11 +1149,7 @@ bool MET_Read(METAIO_STREAM::istream &fp,
               }
             MET_CHAR_TYPE * str = (MET_CHAR_TYPE *)((*fieldIter)->value);
             fp.getline( str, 500 );
-            j = strlen(str) - 1;
-            while(!isprint(str[j]) || isspace(str[j]))
-              {
-              str[j--] = '\0';
-              }
+            MET_StringStripEnd(str);
             (*fieldIter)->length = static_cast<int>( strlen( str ) );
             break;
             }
@@ -1255,11 +1259,7 @@ bool MET_Read(METAIO_STREAM::istream &fp,
         MET_InitReadField(mF, s, MET_STRING, false);
         MET_CHAR_TYPE * str = (MET_CHAR_TYPE *)(mF->value);
         fp.getline( str, 500 );
-        j = strlen(str) - 1;
-        while(!isprint(str[j]) || isspace(str[j]))
-          {
-          str[j--] = '\0';
-          }
+        MET_StringStripEnd(str);
         mF->length = static_cast<int>( strlen( str ) );
         newFields->push_back(mF);
         }
@@ -1370,6 +1370,14 @@ bool MET_Write(METAIO_STREAM::ostream &fp,
         }
       case MET_STRING:
         {
+        if ( (*fieldIter)->length == 0 )
+          {
+          METAIO_STREAM::cerr << "Warning:";
+          METAIO_STREAM::cerr << "The field " << (*fieldIter)->name
+                              << "has zero length. "
+                              << "Refusing to write empty string value.";
+          METAIO_STREAM::cerr << METAIO_STREAM::endl;
+          }
         fp << (*fieldIter)->name << " " << MET_SeperatorChar << " ";
         if((*fieldIter)->dependsOn >= 0)
           {

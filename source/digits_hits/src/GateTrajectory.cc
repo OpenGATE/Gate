@@ -98,10 +98,10 @@ void GateTrajectory::ShowTrajectory(std::ostream& os) const
    }
 }
 
-#if (G4VERSION_MAJOR > 9)
-  void GateTrajectory::DrawTrajectory() const
-#else
+#if (G4VERSION_MAJOR == 10 and G4VERSION_MINOR == 0)
   void GateTrajectory::DrawTrajectory(G4int /*i_mode =0*/) const
+#else
+  void GateTrajectory::DrawTrajectory() const
 #endif
 {
 
