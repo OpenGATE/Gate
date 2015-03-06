@@ -1,6 +1,9 @@
 #ifndef GATEMATERIALMUHANDLER_CC
+#define GATEMATERIALMUHANDLER_CC
+
 #include "GateMaterialMuHandler.hh"
 #include "GateMuTables.hh"
+#include "GateMuDatabase.hh"
 #include "GateMiscFunctions.hh"
 #include "GateConfiguration.h"
 #include <string>
@@ -20,9 +23,9 @@ GateMaterialMuHandler *GateMaterialMuHandler::singleton_MaterialMuHandler = 0;
 GateMaterialMuHandler::GateMaterialMuHandler()
 {
   mIsInitialized = false;  
-  mNbOfElements = -1;
+  mElementNumber = -1;
   mElementsTable = 0;
-  mElementsFolderName = "NULL";
+  mDatabaseName = "EPDL";
   mEnergyMin = 250. * eV;
   mEnergyMax = 1. * MeV;
   mEnergyNumber = 40;
@@ -110,16 +113,12 @@ inline double interpolation(double Xa,double Xb,double Ya,double Yb,double x){
 //-----------------------------------------------------------------------------
 void GateMaterialMuHandler::Initialize()
 {
-  if(mElementsFolderName == "NULL")
+  if(mDatabaseName == "simulated")
   {
-//     DD("Simulation");
     SimulateMaterialTable();
   }
-  else
+  else if(mDatabaseName == "NIST" or mDatabaseName == "EPDL")
   {
-//     DD("Precalculated");
-    mNbOfElements = 100;
-    mElementsTable = new GateMuTable*[mNbOfElements+1];
     InitElementTable();
     
     G4ProductionCutsTable *productionCutList = G4ProductionCutsTable::GetProductionCutsTable();
@@ -149,6 +148,10 @@ void GateMaterialMuHandler::Initialize()
 	if(materialNotExist) { ConstructMaterial(couple); }
       }
     }
+  }
+  else
+  {
+    GateError("GateMaterialMuHandler -- mu/muen database option '" << mDatabaseName << "' doesn't exist. Available database are 'NIST', 'EPDL' and 'user'");
   }
 
   mIsInitialized = true;
@@ -268,37 +271,39 @@ void GateMaterialMuHandler::ConstructMaterial(const G4MaterialCutsCouple *couple
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateMaterialMuHandler::ReadElementFile(int z)
-{
-  std::ostringstream stream;
-  stream << z;
-  string filenameMu = mElementsFolderName+"/Mu-"+ stream.str() +".dat";
-  string filenameMuEn = mElementsFolderName+"/Muen-"+ stream.str() +".dat";
-  
-  std::ifstream fileMu, fileMuEn;
-  fileMu.open(filenameMu.c_str());
-  fileMuEn.open(filenameMuEn.c_str());
-  int nblines;
-  fileMu >> nblines;
-  fileMuEn >> nblines;
-  GateMuTable* table = new GateMuTable(0, nblines);
-  mElementsTable[z] = table;
-  for(int j = 0; j < nblines; j++){
-    double e, mu, muen;
-    fileMu >> e >> mu;
-    fileMuEn >> e >> muen;
-    table->PutValue(j, e, mu, muen);
-  }
-  fileMu.close();
-  fileMuEn.close();  
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
 void GateMaterialMuHandler::InitElementTable()
 {
-  for(int i = 1; i <= mNbOfElements; i++)
-    ReadElementFile(i);
+  const int *energyNumberList = 0;
+  const float *data = 0;
+
+  if(mDatabaseName == "NIST")
+  {
+    mElementNumber = NIST_mu_muen_data_elementNumber;
+    energyNumberList = NIST_mu_muen_data_energyNumber;
+    data = NIST_mu_muen_data;
+  }
+  else if(mDatabaseName == "EPDL")
+  {
+    mElementNumber = EPDL_mu_muen_data_elementNumber;
+    energyNumberList = EPDL_mu_muen_data_energyNumber;
+    data = EPDL_mu_muen_data;
+  }
+
+  mElementsTable = new GateMuTable *[mElementNumber+1];  
+  int index = 0;
+  
+  for(int i=0; i<mElementNumber+1; i++)
+  {
+    int energyNumber = energyNumberList[i];
+    GateMuTable* table = new GateMuTable(0, energyNumber);
+    mElementsTable[i] = table;
+    
+    for(int j=0; j<energyNumber; j++)
+    {
+      table->PutValue(j, data[index], data[index+1], data[index+2]);
+      index += 3;
+    }
+  }
 }
 //-----------------------------------------------------------------------------
 

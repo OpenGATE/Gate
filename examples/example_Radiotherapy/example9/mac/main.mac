@@ -6,7 +6,7 @@
 #-------------------oooooOOOOO00000OOOOOooooo---------------------#
 
 #=====================================================
-# VERBOSE and VISUALISATION 
+# VERBOSE and VISUALISATION
 #=====================================================
 
 /control/execute mac/verbose.mac
@@ -118,7 +118,7 @@
 # PHYSICS
 #=====================================================
 
-/control/execute mac/physicslist_EM_std.mac
+/gate/physics/addPhysicsList emstandard_opt3
 
 /gate/physics/Gamma/SetCutInRegion      world 1 mm
 /gate/physics/Electron/SetCutInRegion   world 1 mm
@@ -147,7 +147,7 @@
 /gate/actor/doseDistribution/setVoxelSize          5 2 5 mm
 /gate/actor/doseDistribution/saveEveryNSeconds     300
 /gate/actor/doseDistribution/enableEdep            true
-/gate/actor/doseDistribution/enableUncertaintyEdep true 
+/gate/actor/doseDistribution/enableUncertaintyEdep true
 /gate/actor/doseDistribution/enableDose            true
 /gate/actor/doseDistribution/enableUncertaintyDose true
 /gate/actor/doseDistribution/enableSquaredDose     true
@@ -163,7 +163,7 @@
 /gate/actor/doseDistribution2/setVoxelSize          5 2 5 mm
 /gate/actor/doseDistribution2/saveEveryNSeconds     300
 /gate/actor/doseDistribution2/enableEdep            true
-/gate/actor/doseDistribution2/enableUncertaintyEdep true 
+/gate/actor/doseDistribution2/enableUncertaintyEdep true
 /gate/actor/doseDistribution2/enableDose            true
 /gate/actor/doseDistribution2/enableUncertaintyDose true
 /gate/actor/doseDistribution2/enableSquaredDose     true
@@ -238,5 +238,6 @@
 
 /gate/random/setEngineName MersenneTwister
 /gate/random/setEngineSeed auto
-/gate/application/setTotalNumberOfPrimaries 3000
+/gate/application/setTotalNumberOfPrimaries 300
+#0
 /gate/application/start

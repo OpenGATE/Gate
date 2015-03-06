@@ -70,7 +70,7 @@ protected:
   G4UIcmdWithABool * pSetSplineFlag;
 
   // Mu Handler tools
-  G4UIcmdWithAString * pMuHandlerUsePrecalculatedElements;
+  G4UIcmdWithAString * pMuHandlerSetDatabase;
   G4UIcmdWithADoubleAndUnit * pMuHandlerSetEMin;
   G4UIcmdWithADoubleAndUnit * pMuHandlerSetEMax;
   G4UIcmdWithAnInteger * pMuHandlerSetENumber;

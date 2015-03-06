@@ -7,7 +7,7 @@
 
 
 #=====================================================
-# VERBOSE and VISUALISATION 
+# VERBOSE and VISUALISATION
 #=====================================================
 
 /control/execute mac/verbose.mac
@@ -135,7 +135,7 @@
 # PHYSICS
 #=====================================================
 
-/control/execute mac/physicslist_EM_std.mac
+/gate/physics/addPhysicsList emstandard_opt3
 
 /gate/physics/Gamma/SetCutInRegion      world 1 mm
 /gate/physics/Electron/SetCutInRegion   world 1 mm
@@ -208,7 +208,7 @@
 /gate/source/addSource mybeam gps
 /gate/source/mybeam/gps/particle gamma
 
-#NRC spectrum from BEAM for an 18 MV Varian Clinac 2100 
+#NRC spectrum from BEAM for an 18 MV Varian Clinac 2100
 /gate/source/mybeam/gps/ene/type   User
 /gate/source/mybeam/gps/hist/type  energy
 /gate/source/mybeam/gps/hist/point 0          0.0

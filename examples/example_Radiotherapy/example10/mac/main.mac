@@ -7,8 +7,8 @@
 /gate/geometry/setMaterialDatabase data/GateMaterials.db
 
 # Generate materials from Hounsfield units
-/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/SimpleMaterialsTable.txt 
-/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt 
+/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/SimpleMaterialsTable.txt
+/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt
 /gate/HounsfieldMaterialGenerator/SetDensityTable                   data/Schneider2000DensitiesTable.txt
 /gate/HounsfieldMaterialGenerator/SetDensityTolerance               0.1 g/cm3
 /gate/HounsfieldMaterialGenerator/SetOutputMaterialDatabaseFilename data/Thorax-HUmaterials.db
@@ -26,8 +26,8 @@
 
 
 /gate/geometry/setMaterialDatabase             data/Thorax-HUmaterials.db
-/gate/thorax/geometry/SetHUToMaterialFile      data/Thorax-HU2mat.txt
-/gate/thorax/geometry/SetImage                 data/resampledTHORAX.mhd
+/gate/thorax/geometry/setHUToMaterialFile      data/Thorax-HU2mat.txt
+/gate/thorax/geometry/setImage                 data/resampledTHORAX.mhd
 
 /gate/thorax/placement/setTranslation                  0 0 0 mm
 
