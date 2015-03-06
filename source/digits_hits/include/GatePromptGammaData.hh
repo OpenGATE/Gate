@@ -48,15 +48,17 @@ public:
 
   void SaveGammaM(const std::string & filename);
 
-  // Principal 2D histogram protonE / gammaE
-  TH2D * GetHEpEpgNormalized();
+  // Principal 2D histograms, GetNgamma only used for TLE uncertainty.
+  TH2D * GetGammaZ();
+  TH2D * GetNgamma();
 
-  // Optional other data
+  TH2D * GetHEpEpgNormalized();
   TH1D * GetHEp();
   TH1D * GetHEpInelastic();
   TH1D * GetHEpSigmaInelastic();
   TH2D * GetHEpEpg();
   TH1D * GetHEpInelasticProducedGamma();
+
 
   // Return the gamma energy spectrum for the proton at given energy,
   // for the given material
@@ -77,8 +79,14 @@ protected:
   unsigned int gamma_bin;
 
   void SetCurrentPointerForThisElement(const G4Element * elem);
+
+  //final outputs used to create tle source.
+  TH2D* GammaZ; // \Gamma_Z
+  TH2D* Ngamma; // \boldsymbol{N}_gamma
+
   // Data current pointer to histograms
   TFile* pTfile;
+
   TH2D* pHEpEpg;
   TH2D* pHEpEpgNormalized;
   TH1D* pHEpInelastic;
@@ -87,6 +95,9 @@ protected:
   TH1D* pHEpSigmaInelastic;
 
   // Data : histo by elements
+  std::vector<TH2D*> GammaZList;
+  std::vector<TH2D*> NgammaList;
+
   std::vector<TH2D*> pHEpEpgList;
   std::vector<TH2D*> pHEpEpgNormalizedList;
   std::vector<TH1D*> pHEpInelasticList;

@@ -23,7 +23,7 @@ GatePromptGammaTLEActor::GatePromptGammaTLEActor(G4String name, G4int depth):
   mInputDataFilename = "noFilenameGiven";
   pMessenger = new GatePromptGammaTLEActorMessenger(this);
   SetStepHitType("random");
-  mImageGamma = new GateImageOfHistograms("double");
+  //mImageGamma = new GateImageOfHistograms("double");
   mCurrentEvent = -1;
   mIsUncertaintyImageEnabled = false;
 }
@@ -73,6 +73,7 @@ void GatePromptGammaTLEActor::Construct()
   looplist.push_back(mImageGamma);
   if (mIsUncertaintyImageEnabled) looplist.push_back(tleuncertain);
   for (int i = 0; i < looplist.size(); i++) {
+    looplist[i] = new GateImageOfHistograms("double");
     looplist[i]->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     looplist[i]->SetOrigin(mOrigin);
     looplist[i]->SetTransformMatrix(mImage.GetTransformMatrix());
@@ -81,11 +82,12 @@ void GatePromptGammaTLEActor::Construct()
   }
 
   //set up and allocate runtime images.
-  looplist.reset();
+  looplist.clear();
   looplist.push_back(tmptrackl);
   looplist.push_back(trackl);
   looplist.push_back(tracklsq);
   for (int i = 0; i < looplist.size(); i++) {
+    looplist[i] = new GateImageOfHistograms("double");
     looplist[i]->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     looplist[i]->SetOrigin(mOrigin);
     looplist[i]->SetTransformMatrix(mImage.GetTransformMatrix());
@@ -133,7 +135,7 @@ void GatePromptGammaTLEActor::SaveData()
   // Update (and allocate) mImageGamma, tleuncertain
   BuildOutput();
 
-  // Normalisation
+  // Normalisation, so that we have the numebr per proton, which is easier to use.
   int n = GateActorManager::GetInstance()->GetCurrentEventId() + 1; // +1 because start at zero
   double f = 1.0 / n;
   mImageGamma->Scale(f);
@@ -184,12 +186,10 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // compute sameEvent
   // sameEvent is false the first time some energy is deposited for each primary particle
   bool sameEvent=true;
-  if (mIsLastHitEventImageEnabled) {
-    GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
-    if (mCurrentEvent != mLastHitEventImage.GetValue(index)) {
-      sameEvent = false;
-      mLastHitEventImage.SetValue(index, mCurrentEvent);
-    }
+  GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
+  if (mCurrentEvent != mLastHitEventImage.GetValue(index)) {
+    sameEvent = false;
+    mLastHitEventImage.SetValue(index, mCurrentEvent);
   }
   // Get information
   const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
@@ -220,10 +220,10 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   if (sameEvent) tmptrackl->AddValueDouble(index, protbin, distance);
   //if not, then update trackl,tracklsq from the previous event, and restart tmptrackl.
   else {
-    double tmp = tmptrackl.GetValue(index, protbin);
-    trackl.AddValueDouble(index, protbin, tmp);
-    if (mIsUncertaintyImageEnabled) tracklsq.AddValueDouble(index, protbin, tmp*tmp);
-    tmptrackl.SetValueDouble(index, protbin, distance);
+    double tmp = tmptrackl->GetValueDouble(index, protbin);
+    trackl->AddValueDouble(index, protbin, tmp);
+    if (mIsUncertaintyImageEnabled) tracklsq->AddValueDouble(index, protbin, tmp*tmp);
+    tmptrackl->SetValueDouble(index, protbin, distance);
   }
 }
 //-----------------------------------------------------------------------------
@@ -263,8 +263,10 @@ void GatePromptGammaTLEActor::BuildOutput() {
     itmptrackl[i] = 0.; //Reset
   }
 
-  //compute outputs. NOTE: this loop is over voxelindex,gammaenergy
-
+  //compute TLE output. NOTE: this loop is over voxelindex,gammaenergy
+  /*for(voxel){
+      GateVImageVolume* phantom = GetPhantom();
+    }
 
   // Check material
   //const G4Material *material = step->GetPreStepPoint()->GetMaterial();
@@ -281,6 +283,28 @@ void GatePromptGammaTLEActor::BuildOutput() {
     if (mIsUncertaintyImageEnabled) {
       itleuncertain = 0;
     }
+  }*/
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+GateVImageVolume* GatePromptGammaTLEActor::GetPhantom() {
+  // Search for voxelized volume. If more than one, crash (yet).
+  GateVImageVolume* gate_image_volume = NULL;
+  for(std::map<G4String, GateVVolume*>::const_iterator it  = GateObjectStore::GetInstance()->begin();
+                                                       it != GateObjectStore::GetInstance()->end();
+                                                       it++)
+    {
+    if(dynamic_cast<GateVImageVolume*>(it->second))
+    {
+      if(gate_image_volume != NULL)
+        GateError("There is more than one voxelized volume and don't know yet how to cope with this.");
+      else
+        gate_image_volume = dynamic_cast<GateVImageVolume*>(it->second);
+    }
+
   }
+  return gate_image_volume;
 }
 //-----------------------------------------------------------------------------

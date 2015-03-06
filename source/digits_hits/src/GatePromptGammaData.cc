@@ -31,6 +31,9 @@ GatePromptGammaData::GatePromptGammaData()
 //-----------------------------------------------------------------------------
 GatePromptGammaData::~GatePromptGammaData()
 {
+  delete GammaZ;
+  delete Ngamma;
+
   delete pHEpEpg;
   delete pHEpEpgNormalized;
   delete pHEpInelastic;
@@ -53,6 +56,9 @@ void GatePromptGammaData::SetGammaNbBins(int x)   { gamma_bin = x; }
 
 
 //-----------------------------------------------------------------------------
+TH2D * GatePromptGammaData::GetGammaZ() { return GammaZ; }
+TH2D * GatePromptGammaData::GetNgamma() { return Ngamma; }
+
 TH2D * GatePromptGammaData::GetHEpEpgNormalized()          { return pHEpEpgNormalized; }
 TH1D * GatePromptGammaData::GetHEp()                       { return pHEp; }
 TH1D * GatePromptGammaData::GetHEpInelastic()              { return pHEpInelastic; }
@@ -65,6 +71,8 @@ TH1D * GatePromptGammaData::GetHEpInelasticProducedGamma() { return pHEpInelasti
 //-----------------------------------------------------------------------------
 void GatePromptGammaData::ResetData()
 {
+  GammaZ->Reset();
+  Ngamma->Reset();
   pHEpEpg->Reset();
   pHEpEpgNormalized->Reset();
   pHEpInelastic->Reset();
@@ -77,23 +85,7 @@ void GatePromptGammaData::ResetData()
 //-----------------------------------------------------------------------------
 void GatePromptGammaData::SaveData()
 {
-  // Normalisation by the number of primaries. This normalisation must
-  // be performed only once so we check we only go here once.
-  static bool alreadyHere = false;
-  if (alreadyHere) {
-    GateError("The PromptGammaStatisticActor has already been saved and normalized. However, it must write its results only once. Remove all 'SaveEvery' for this actor. Abort.");
-  }
-  // Normalisation
-  int n = GateActorManager::GetInstance()->GetCurrentEventId()+1; // +1 because start at zero
-  double f = 1.0/n;
-  pHEpEpg->Scale(f);
-  pHEpEpgNormalized->Scale(f);
-  pHEpInelastic->Scale(f);
-  pHEp->Scale(f);
-  pHEpInelasticProducedGamma->Scale(f);
-
   pTfile->Write();
-  alreadyHere = true;
 }
 //-----------------------------------------------------------------------------
 
@@ -119,6 +111,8 @@ void GatePromptGammaData::Read(std::string & filename)
   unsigned int m = table.size();
   GateMessage("Actor", 1, "G4Elements table has " << m << " elements." << std::endl);
 
+  GammaZList.resize(m);
+  NgammaList.resize(m);
   pHEpEpgList.resize(m);
   pHEpEpgNormalizedList.resize(m);
   pHEpInelasticList.resize(m);
@@ -152,6 +146,8 @@ void GatePromptGammaData::Read(std::string & filename)
     std::string f = elem->GetName();
     TDirectory * dir = pTfile->GetDirectory(f.c_str());
     dir->cd();
+    dir->GetObject("GammaZ", GammaZ);
+    dir->GetObject("Ngamma", Ngamma);
     dir->GetObject("EpEpg", pHEpEpg);
     dir->GetObject("EpEpgNorm", pHEpEpgNormalized);
     dir->GetObject("EpInelastic", pHEpInelastic);
@@ -160,6 +156,8 @@ void GatePromptGammaData::Read(std::string & filename)
     dir->GetObject("EpInelasticProducedGamma", pHEpInelasticProducedGamma);
 
     // Set the pointers in the lists (have been changed by GetObject)
+    GammaZList[elem->GetIndex()] = GammaZ;
+    NgammaList[elem->GetIndex()] = Ngamma;
     pHEpEpgNormalizedList[elem->GetIndex()] = pHEpEpgNormalized;
     pHEpEpgList[elem->GetIndex()] = pHEpEpg;
     pHEpInelasticList[elem->GetIndex()] = pHEpInelastic;
@@ -167,40 +165,20 @@ void GatePromptGammaData::Read(std::string & filename)
     pHEpSigmaInelasticList[elem->GetIndex()] = pHEpSigmaInelastic;
     pHEpInelasticProducedGammaList[elem->GetIndex()] = pHEpInelasticProducedGamma;
 
-    SetProtonNbBins(pHEpEpgNormalized->GetXaxis()->GetNbins());
-    SetGammaNbBins(pHEpEpgNormalized->GetYaxis()->GetNbins());
+    SetProtonNbBins(GammaZ->GetXaxis()->GetNbins());
+    SetGammaNbBins(GammaZ->GetYaxis()->GetNbins());
 
-    SetProtonEMin(pHEpEpgNormalized->GetXaxis()->GetXmin());
-    SetProtonEMax(pHEpEpgNormalized->GetXaxis()->GetXmax());
-    SetGammaEMin(pHEpEpgNormalized->GetYaxis()->GetXmin());
-    SetGammaEMax(pHEpEpgNormalized->GetYaxis()->GetXmax());
+    SetProtonEMin(GammaZ->GetXaxis()->GetXmin());
+    SetProtonEMax(GammaZ->GetXaxis()->GetXmax());
+    SetGammaEMin(GammaZ->GetYaxis()->GetXmin());
+    SetGammaEMax(GammaZ->GetYaxis()->GetXmax());
 
-    // Normalisation of 2D histo (pHEpEpgNormalized = E proton vs E gamma) according to
-    // proba of inelastic interaction by E proton (pHEpInelastic);
-    double temp=0.0;
-    for( int i=1; i <= pHEpEpgNormalized->GetNbinsX(); i++) {
-      for( int j = 1; j <= pHEpEpgNormalized->GetNbinsY(); j++) {
-        if(pHEpInelastic->GetBinContent(i) != 0) {
-          temp = pHEpEpgNormalized->GetBinContent(i,j)/pHEpInelastic->GetBinContent(i);
-        }
-        else {
-          if (pHEpEpgNormalized->GetBinContent(i,j)> 0.) {
-            DD(i);
-            DD(j);
-            DD(pHEpInelastic->GetBinContent(i));
-            DD(pHEpEpgNormalized->GetBinContent(i,j));
-            GateError("ERROR in in histograms, pHEpInelastic is zero and not pHEpEpgNormalized");
-          }
-        }
-        pHEpEpgNormalized->SetBinContent(i,j,temp);
-      }
-    }
   }
 
   for(unsigned int i=0; i<m; i++) {
     if (ElementIndexList[i]) {
       GateMessage("Actor", 1, "Element " << table[i]->GetName()
-                  << " is read (and normalized)." << std::endl);
+                  << " is read." << std::endl);
     }
   }
 
@@ -212,6 +190,9 @@ void GatePromptGammaData::Read(std::string & filename)
 void GatePromptGammaData::SetCurrentPointerForThisElement(const G4Element * elem)
 {
   int i = elem->GetIndex();
+  GammaZ = GammaZList[i];
+  Ngamma = NgammaList[i];
+
   pHEpEpg = pHEpEpgList[i];
   pHEpEpgNormalized = pHEpEpgNormalizedList[i];
   pHEpInelastic = pHEpInelasticList[i];
@@ -244,6 +225,18 @@ void GatePromptGammaData::Initialize(std::string & filename, const G4Material * 
     dir->cd();
     dir->Delete("*;*");
   }
+
+  GammaZ = new TH2D("GammaZ","Gamma_Z as found in JMs paper.",
+                               proton_bin, min_proton_energy/MeV, max_proton_energy/MeV,
+                               gamma_bin, min_gamma_energy/MeV, max_gamma_energy/MeV);
+  GammaZ->SetXTitle("E_{proton} [MeV]");
+  GammaZ->SetYTitle("E_{gp} [MeV]");
+
+  Ngamma = new TH2D("Ngamma","PG count per proton energy bin",
+                     proton_bin, min_proton_energy/MeV, max_proton_energy/MeV,
+                     gamma_bin, min_gamma_energy/MeV, max_gamma_energy/MeV);
+  Ngamma->SetXTitle("E_{proton} [MeV]");
+  Ngamma->SetYTitle("E_{gp} [MeV]");
 
   pHEpEpg = new TH2D("EpEpg","PG count",
                      proton_bin, min_proton_energy/MeV, max_proton_energy/MeV,
@@ -326,7 +319,7 @@ void GatePromptGammaData::InitializeMaterial()
             // (If hydrogen probability is zero)
             // Get histogram for the current bin
             SetCurrentPointerForThisElement(elem);
-            TH1D * he = new TH1D(*pHEpEpgNormalized->ProjectionY("", j, j));
+            TH1D * he = new TH1D(*GammaZ->ProjectionY("", j, j));
 
             // Scale it according to the fraction of this element in the material
             he->Scale(f);
@@ -348,34 +341,6 @@ bool GatePromptGammaData::DataForMaterialExist(const int & materialIndex)
 {
   if (mGammaEnergyHistoByMaterialByProtonEnergy[materialIndex].size() == 0) return false;
   return true;
-}
-//-----------------------------------------------------------------------------
-
-
-
-//-----------------------------------------------------------------------------
-void GatePromptGammaData::SaveGammaM(const std::string & filename)
-{
-    mFilename = filename;
-    pTfile = new TFile(filename.c_str(),"UPDATE");
-
-    for (int i=0; i<mGammaEnergyHistoByMaterialByProtonEnergy.size(); i++){
-        //std::string name = material->GetName();   //FIXME: have material name instead of material index
-        std::stringstream ss;
-        ss << i;
-        std::string name = ss.str();
-        TDirectory * dir = pTfile->GetDirectory(name.c_str());
-        //TDirectory * dir = pTfile->mkdir(name.c_str());
-        dir->cd();
-        for (int j=0; j<mGammaEnergyHistoByMaterialByProtonEnergy[i].size(); j++){
-            //FIXME THIS DOES NOT APPEAR TO WORK!!!! SEGFAULTs....
-            mGammaEnergyHistoByMaterialByProtonEnergy[i][j]->Write();
-            //GetGammaEnergySpectrum(i,j)->Write();
-        }
-    }
-
-    pTfile->Write();
-    pTfile->Close();
 }
 //-----------------------------------------------------------------------------
 

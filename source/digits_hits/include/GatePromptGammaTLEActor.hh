@@ -18,6 +18,7 @@
 #include "GateImageOfHistograms.hh"
 #include "GatePromptGammaData.hh"
 #include "GateImageWithStatisticTLE.hh"
+#include "GateVImageVolume.hh"
 
 #include <TFile.h>
 #include <TH1.h>
@@ -36,7 +37,7 @@ public:
   virtual void UserPostTrackActionInVoxel(const int index, const G4Track* t);
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
   virtual void BeginOfEventAction(const G4Event * e);
-  virtual void EndOfEventAction(const G4Event * e);
+  //virtual void EndOfEventAction(const G4Event * e);
 
   void SetInputDataFilename(std::string filename);
   virtual void SaveData();
@@ -48,6 +49,8 @@ public:
 protected:
   GatePromptGammaTLEActor(G4String name, G4int depth=0);
   GatePromptGammaTLEActorMessenger * pMessenger;
+  GateVImageVolume* GetPhantom();
+  void BuildOutput(); //converts trackl,tracklsq into mImageGamma and tleuncertain
 
   std::string mInputDataFilename;
   GatePromptGammaData data;
@@ -60,18 +63,14 @@ protected:
   int GetProtonBin(double energy);
   TH1D * converterHist;          //sole use is to aid conversion of proton energy to bin index.
 
-  //updated at end of track:
+  //updated at end of event:
   GateImageOfHistograms * trackl;       //L_i. also intermediate output: track length per voxel per E_proton
   GateImageOfHistograms * tracklsq;     //L_i^2. also intermediate output: track squared length per voxel per E_proton
+
+  //output, calculated at end of simu
+  GateImageOfHistograms * mImageGamma;  //main output (yield)
   GateImageOfHistograms * tleuncertain; //uncertainty per voxel, per E_gamma
 
-  //FIXME: (remove and) allocate and calculate at end of simulation
-  GateImageOfHistograms * mImageGamma;  //main output (yield)
-
-  //written at end of simu in case of uncertainty output
-  //GateImageOfHistograms * gammam;     //intermediate output: Gamma_m database, per E_proton per E_gamma
-
-  //not sure if necesary
   GateImageInt mLastHitEventImage;      //store eventID when last updated. TODO: not sure if necesary
   int mCurrentEvent;                    //monitor event. TODO: not sure if necesary
 };
