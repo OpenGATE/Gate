@@ -11,6 +11,7 @@
 
 #include "GatePhysicsList.hh"
 #include "G4ParticleDefinition.hh"
+#include "G4Hybridino.hh"
 #include "G4ParticleWithCuts.hh"
 #include "G4ProcessManager.hh"
 #include "GatePhysicsListMessenger.hh"
@@ -388,7 +389,11 @@ void GatePhysicsList::ConstructParticle()
 
   //  Construct  resonaces and quarks
   G4ShortLivedConstructor slive;
-  slive.ConstructParticle();
+  slive.ConstructParticle(); 
+  
+  //  Construct hybridino 
+  G4Hybridino::HybridinoDefinition();
+
 
 
   //Construct G4DNA particles

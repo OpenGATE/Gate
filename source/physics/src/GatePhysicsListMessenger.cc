@@ -50,7 +50,7 @@ GatePhysicsListMessenger::~GatePhysicsListMessenger()
   delete pSetEMax;
   delete pSetSplineFlag;
 
-  delete pMuHandlerUsePrecalculatedElements;
+  delete pMuHandlerSetDatabase;
   delete pMuHandlerSetEMin;
   delete pMuHandlerSetEMax;
   delete pMuHandlerSetENumber;
@@ -190,10 +190,10 @@ void GatePhysicsListMessenger::BuildCommands(G4String base)
   pSetSplineFlag->SetGuidance(guidance);
 
   // Mu Handler commands
-  bb = base+"/MuHandler/setElementFolderName";
-  pMuHandlerUsePrecalculatedElements = new G4UIcmdWithAString(bb,this);
-  guidance = "Point the folder where the Mu and Muen files per elements are stored";
-  pMuHandlerUsePrecalculatedElements->SetGuidance(guidance);
+  bb = base+"/MuHandler/setDatabase";
+  pMuHandlerSetDatabase = new G4UIcmdWithAString(bb,this);
+  guidance = "Set the mu/muen database. Available databases are 'NIST', 'EPDL' and 'simulated' The two first are tabulated (GateMuDatabase.hh) and the last one is simulated using the available physical processes.";
+  pMuHandlerSetDatabase->SetGuidance(guidance);
 
   bb = base+"/MuHandler/setEMin";
   pMuHandlerSetEMin = new G4UIcmdWithADoubleAndUnit(bb,this);
@@ -379,8 +379,8 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
   }
 
   // Mu Handler commands
-  if (command == pMuHandlerUsePrecalculatedElements){
-    nMuHandler->SetElementsFolderName(param);
+  if (command == pMuHandlerSetDatabase){
+    nMuHandler->SetDatabaseName(param);
   }
   if(command == pMuHandlerSetEMin){
     double val = pMuHandlerSetEMin->GetNewDoubleValue(param);

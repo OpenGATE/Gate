@@ -73,10 +73,11 @@ public:
   double GetMuEn(const G4MaterialCutsCouple *, double);
   double GetMuOverRho(const G4MaterialCutsCouple *, double);
   double GetMu(const G4MaterialCutsCouple *, double);
+  G4String GetDatabaseName() { return mDatabaseName; }
 
   GateMuTable *GetMuTable(const G4MaterialCutsCouple *);
   
-  void SetElementsFolderName(G4String folder) { mElementsFolderName = folder; }
+  void SetDatabaseName(G4String name) { mDatabaseName = name; }
   void SetEMin(double e) { mEnergyMin = e; }
   void SetEMax(double e) { mEnergyMax = e; }
   void SetENumber(int n) { mEnergyNumber = n; }
@@ -91,7 +92,6 @@ private:
   void Initialize();
   // - Precalculated coefficients (by element)
   void InitElementTable();
-  void ReadElementFile(int);
   void ConstructMaterial(const G4MaterialCutsCouple *);
   // - Complete simulation of coefficients
   void SimulateMaterialTable();
@@ -102,8 +102,8 @@ private:
 
   map<const G4MaterialCutsCouple *, GateMuTable*> mCoupleTable;
   GateMuTable** mElementsTable;
-  int mNbOfElements;
-  G4String mElementsFolderName;
+  int mElementNumber;
+  G4String mDatabaseName;
 
   bool mIsInitialized;
   double mEnergyMin;

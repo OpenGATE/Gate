@@ -7,6 +7,18 @@ PROJECT(Gate)
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake-modules ${CMAKE_MODULE_PATH})
 
 #=========================================================
+# Configure Dart testing support.  This should be done before any
+# MESSAGE(FATAL_ERROR ...) commands are invoked.
+INCLUDE(CTest)
+
+IF(BUILD_TESTING)
+  ENABLE_TESTING()
+  SET(BUILDNAME "${BUILDNAME}" CACHE STRING "Name of build on the dashboard")
+  MARK_AS_ADVANCED(BUILDNAME)
+ENDIF(BUILD_TESTING)
+#=========================================================
+
+#=========================================================
 # Help function to debug CMake
 MACRO (DD in)
   MESSAGE(${in}=[${${in}}])

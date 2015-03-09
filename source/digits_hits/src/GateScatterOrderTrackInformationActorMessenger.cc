@@ -31,7 +31,10 @@ void GateScatterOrderTrackInformationActorMessenger::BuildCommands(G4String){}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateScatterOrderTrackInformationActorMessenger::SetNewValue(G4UIcommand*, G4String){}
+void GateScatterOrderTrackInformationActorMessenger::SetNewValue(G4UIcommand* command, G4String param)
+{
+  GateActorMessenger::SetNewValue(command, param);
+}
 //-----------------------------------------------------------------------------
 
 #endif /* end #define GATESCATTERORDERTRACKINFORMATIONACTORMESSENGER_CC */
