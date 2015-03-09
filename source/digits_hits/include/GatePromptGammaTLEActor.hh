@@ -49,8 +49,6 @@ public:
 protected:
   GatePromptGammaTLEActor(G4String name, G4int depth=0);
   GatePromptGammaTLEActorMessenger * pMessenger;
-  GateVImageVolume* GetPhantom();
-  void BuildOutput(); //converts trackl,tracklsq into mImageGamma and tleuncertain
 
   std::string mInputDataFilename;
   GatePromptGammaData data;
@@ -58,9 +56,15 @@ protected:
   bool mIsUncertaintyImageEnabled;
   bool mIsIntermediaryUncertaintyOutputEnabled;
 
+  //helper functions
+  void SetIoH(GateImageOfHistograms*&);
+  void SetAndAllocateIoH(GateImageOfHistograms*&);
+  int GetProtonBin(double);
+  GateVImageVolume* GetPhantom();
+  void BuildOutput(); //converts trackl,tracklsq into mImageGamma and tleuncertain
+
   //used and reset each track
   GateImageOfHistograms * tmptrackl;    //l_i
-  int GetProtonBin(double energy);
   TH1D * converterHist;          //sole use is to aid conversion of proton energy to bin index.
 
   //updated at end of event:

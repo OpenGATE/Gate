@@ -69,32 +69,13 @@ void GatePromptGammaTLEActor::Construct()
   mLastHitEventImage.Fill(-1); //does allocate imply Filling with zeroes?
 
   //set up output images.
-  std::vector<GateImageOfHistograms*> looplist;
-  looplist.push_back(mImageGamma);
-  if (mIsUncertaintyImageEnabled) looplist.push_back(tleuncertain);
-  for (int i = 0; i < looplist.size(); i++) {
-    looplist[i] = new GateImageOfHistograms("double");
-    looplist[i]->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    looplist[i]->SetOrigin(mOrigin);
-    looplist[i]->SetTransformMatrix(mImage.GetTransformMatrix());
-    looplist[i]->SetHistoInfo(data.GetGammaNbBins(), data.GetGammaEMin(), data.GetGammaEMax());
-    //list[i]->Allocate(); //lets save some memory!
-  }
+  SetIoH(mImageGamma);
+  if (mIsUncertaintyImageEnabled) SetIoH(tleuncertain);
 
   //set up and allocate runtime images.
-  looplist.clear();
-  looplist.push_back(tmptrackl);
-  looplist.push_back(trackl);
-  looplist.push_back(tracklsq);
-  for (int i = 0; i < looplist.size(); i++) {
-    looplist[i] = new GateImageOfHistograms("double");
-    looplist[i]->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    looplist[i]->SetOrigin(mOrigin);
-    looplist[i]->SetTransformMatrix(mImage.GetTransformMatrix());
-    looplist[i]->SetHistoInfo(data.GetProtonNbBins(), data.GetProtonEMin(), data.GetProtonEMax());
-    looplist[i]->Allocate();
-    looplist[i]->PrintInfo();
-  }
+  SetAndAllocateIoH(tmptrackl);
+  SetAndAllocateIoH(trackl);
+  SetAndAllocateIoH(tracklsq);
 
   //set converterHist. sole use is to aid conversion of proton energy to bin index.
   converterHist = new TH1D("Ep", "proton energy", data.GetProtonNbBins(), data.GetProtonEMin() / MeV, data.GetProtonEMax() / MeV);
@@ -114,7 +95,7 @@ void GatePromptGammaTLEActor::Construct()
 //-----------------------------------------------------------------------------
 void GatePromptGammaTLEActor::ResetData()
 {
-  //Does NOT reset mImageGamma, tleuncertain
+  //Does NOT reset mImageGamma, tleuncertain, it will allocate them.
   tmptrackl->Reset();
   trackl->Reset();
   tracklsq->Reset();
@@ -207,9 +188,8 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   //TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy);
 
   // Check if proton energy within bounds.
-  double dbmax = data.GetProtonEMax();
-  if (particle_energy > dbmax) {
-    GateError("GatePromptGammaTLEActor -- Proton Energy (" << particle_energy << ") outside range of pgTLE (" << dbmax << ") database! Aborting...");
+  if (particle_energy > data.GetProtonEMax()) {
+    GateError("GatePromptGammaTLEActor -- Proton Energy (" << particle_energy << ") outside range of pgTLE (" << data.GetProtonEMax() << ") database! Aborting...");
   }
 
   // Do not scale h directly because it will be reused
@@ -306,5 +286,25 @@ GateVImageVolume* GatePromptGammaTLEActor::GetPhantom() {
 
   }
   return gate_image_volume;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GatePromptGammaTLEActor::SetIoH(GateImageOfHistograms*& ioh) {
+  ioh = new GateImageOfHistograms("double");
+  ioh->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+  ioh->SetOrigin(mOrigin);
+  ioh->SetTransformMatrix(mImage.GetTransformMatrix());
+  ioh->SetHistoInfo(data.GetProtonNbBins(), data.GetProtonEMin(), data.GetProtonEMax());
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GatePromptGammaTLEActor::SetAndAllocateIoH(GateImageOfHistograms*& ioh) {
+  SetIoH(ioh);
+  ioh->Allocate();
+  ioh->PrintInfo();
 }
 //-----------------------------------------------------------------------------
