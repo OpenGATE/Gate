@@ -202,7 +202,7 @@ int GatePromptGammaAnalogActor::gammabin(double energy) {
   //NOTE! Undocumented, but outofbounds returns -1, NOT THE INDEX OF OVER/UNDERFLOW BIN!!!
   //NOTE! We don't use FindBin, because it might change the TH1!
   int bin = converterHist->Fill(energy / MeV) - 1;
-  if (bin<0 || bin>249) {
+  if (bin<0 || bin>249) { //FIXME extract bins from somewhere else, or make them settable.
       GateMessage("Actor", 3, "Gamma energy OutOfBounds. Energy: " << energy / MeV << G4endl);
       GateMessage("Actor", 3, "Gamma energy OutOfBounds. Bin: " << bin << G4endl);
       //std::cout << "BRENT Gamma energy OutOfBounds. Energy: " << energy / MeV << std::endl;

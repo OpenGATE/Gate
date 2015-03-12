@@ -79,6 +79,7 @@ void GatePromptGammaStatisticActor::SaveData()
     for( int j = 1; j <= data.GetGammaZ()->GetNbinsY(); j++) {
       if(data.GetHEpInelastic()->GetBinContent(i) != 0) {
         temp = data.GetGammaZ()->GetBinContent(i,j)/data.GetHEpInelastic()->GetBinContent(i);
+        //FIXME multiply with Ngamma and divide by elemental density to obtain actual GammaZ
       }
       else {
         if (data.GetGammaZ()->GetBinContent(i,j)> 0.) {
@@ -148,7 +149,8 @@ void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
       data.GetHEpEpg()->Fill(particle_energy/MeV, e);
       data.GetNgamma()->Fill(particle_energy/MeV, e);
       data.GetHEpEpgNormalized()->Fill(particle_energy/MeV, e, cross_section);
-      data.GetGammaZ()->Fill(particle_energy/MeV, e, cross_section); //divide at the end by EpInelastic
+      data.GetGammaZ()->Fill(particle_energy/MeV, e, cross_section);
+        //it stores Ngamma(which is 1) multiplied y crosssection. Divide at the end by EpInelastic to obtain GammaZ/rho(Z)
       produced_gamma++;
     }
   }

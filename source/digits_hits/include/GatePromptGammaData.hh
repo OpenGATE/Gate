@@ -49,7 +49,7 @@ public:
   void SaveGammaM(const std::string & filename);
 
   // Principal 2D histograms, GetNgamma only used for TLE uncertainty.
-  TH2D * GetGammaZ();
+  TH2D * GetGammaZ(); //IMPORTANT NOTE: this actually stores GammaZ/rho(Z). Then we don't have to multiply with it in the TLE.
   TH2D * GetNgamma();
 
   TH2D * GetHEpEpgNormalized();
@@ -63,8 +63,8 @@ public:
   // Return the gamma energy spectrum for the proton at given energy,
   // for the given material
   TH1D * GetGammaEnergySpectrum(const int & matIndex, const double & energy);
-  TH1D * GetGammaEnergySpectrumOLD(const double & energy);
-
+  TH1D * GetGammaMForGammaBin(const int & materialIndex, const int & energyBin);
+  TH1D * GetNgammaMForGammaBin(const int & materialIndex, const int & energyBin);
   bool DataForMaterialExist(const int & materialIndex);
 
 protected:
@@ -81,7 +81,7 @@ protected:
   void SetCurrentPointerForThisElement(const G4Element * elem);
 
   //final outputs used to create tle source.
-  TH2D* GammaZ; // \Gamma_Z
+  TH2D* GammaZ; // \Gamma_Z/rho(Z)
   TH2D* Ngamma; // \boldsymbol{N}_gamma
 
   // Data current pointer to histograms
@@ -108,6 +108,9 @@ protected:
 
   // pre-computed list of gamma energy histogram
   std::vector<std::vector<TH1D *> > mGammaEnergyHistoByMaterialByProtonEnergy;
+  // pre-computed list of histogram
+  std::vector<TH2D *> GammaM; //NOT GammaZ
+  std::vector<TH2D *> NgammaM; //NOT Ngamma(Z,E)
 
 };
 //-----------------------------------------------------------------------------

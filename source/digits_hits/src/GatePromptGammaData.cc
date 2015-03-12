@@ -281,6 +281,8 @@ void GatePromptGammaData::InitializeMaterial()
   GateMessage("Actor", 1, "Number of materials : " << n << std::endl);
 
   mGammaEnergyHistoByMaterialByProtonEnergy.resize(n);
+  GammaM.resize(n);
+  NgammaM.resize(n);
 
   for(unsigned int i=0; i<n; i++) {
     bool stop = false;
@@ -306,6 +308,7 @@ void GatePromptGammaData::InitializeMaterial()
                   << ")" << std::endl);
       mGammaEnergyHistoByMaterialByProtonEnergy[i].resize(proton_bin+1); // from [1 to n]
 
+      //set mGammaEnergyHistoByMaterialByProtonEnergy
       for(unsigned int j=1; j<proton_bin+1; j++) {
         TH1D * h = new TH1D();
         h->SetBins(gamma_bin, min_gamma_energy, max_gamma_energy);
@@ -319,7 +322,7 @@ void GatePromptGammaData::InitializeMaterial()
             // (If hydrogen probability is zero)
             // Get histogram for the current bin
             SetCurrentPointerForThisElement(elem);
-            TH1D * he = new TH1D(*GammaZ->ProjectionY("", j, j));
+            TH1D * he = new TH1D(*pHEpEpgNormalized->ProjectionY("", j, j));
 
             // Scale it according to the fraction of this element in the material
             he->Scale(f);
@@ -330,6 +333,37 @@ void GatePromptGammaData::InitializeMaterial()
         }
         mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
       }
+
+      //Build GammaZ -> GammaM, EpEpg=Ngamma(z,E) -> Ngamma(m,E)
+      TH2D * hgammam = new TH2D();
+      TH2D * hngammam = new TH2D();
+      hgammam->SetBins(proton_bin, min_proton_energy, max_proton_energy, gamma_bin, min_gamma_energy, max_gamma_energy); //same arrangement as GammaZ
+      hngammam->SetBins(proton_bin, min_proton_energy, max_proton_energy, gamma_bin, min_gamma_energy, max_gamma_energy);
+      // Loop over element
+      for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
+        const G4Element * elem = m->GetElement(e);
+        double f = m->GetFractionVector()[e];
+
+        if (elem->GetZ() != 1) { // if not Hydrogen.
+          // (If hydrogen probability is zero)
+          // Get histogram for the current bin
+          SetCurrentPointerForThisElement(elem);
+          //TH2D * hgammam2 = new TH2D *GammaZ->Clone();
+          //TH2D * hngammam2 = new TH2D *Ngamma->Clone();
+          TH2D * hngammam2 = (TH2D*) Ngamma->Clone();
+          TH2D * hgammam2 = (TH2D*) GammaZ->Clone();
+
+          // Scale it according to the fraction of this element in the material, multiplied with density ratio
+          hgammam2->Scale(f * m->GetDensity() );// GammaZ=GammaZ/rho(Z)
+          hngammam2->Scale(f * m->GetDensity() );
+
+          // Add it to the current total histo
+          hgammam->Add(hgammam2);
+          hngammam->Add(hngammam2);
+        }
+      }
+      GammaM[i] = hgammam; //Now it's no longer modulo rho(Z), or rho(M)!!!
+      NgammaM[i] = hngammam;
     }
   }
 }
@@ -365,3 +399,43 @@ TH1D * GatePromptGammaData::GetGammaEnergySpectrum(const int & materialIndex,
   return h;
 }
 //-----------------------------------------------------------------------------
+
+
+
+//-----------------------------------------------------------------------------
+TH1D* GatePromptGammaData::GetGammaMForGammaBin(const int & materialIndex,const int & energyBin)
+{
+  // Check material
+  if (!DataForMaterialExist(materialIndex)) {
+    GateError("Error in GatePromptGammaData for TLE, the material " <<
+              (*G4Material::GetMaterialTable())[materialIndex]->GetName()
+              << " is not in the DB");
+  }
+
+  // Get the projected histogram of the material
+  // projectionX: project on X, from biny to biny2. And indeed, on X-axis are protons.
+  TH1D * h = new TH1D (*GammaM[materialIndex]->ProjectionX("", energyBin, energyBin));
+
+  return h;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+TH1D* GatePromptGammaData::GetNgammaMForGammaBin(const int & materialIndex,
+                                                   const int & energyBin)
+{
+  // Check material
+  if (!DataForMaterialExist(materialIndex)) {
+    GateError("Error in GatePromptGammaData for TLE, the material " <<
+              (*G4Material::GetMaterialTable())[materialIndex]->GetName()
+              << " is not in the DB");
+  }
+
+  // Get the projected histogram of the material
+  TH1D * h = new TH1D (*NgammaM[materialIndex]->ProjectionX("", energyBin, energyBin));
+
+  return h;
+}
+//-----------------------------------------------------------------------------
+

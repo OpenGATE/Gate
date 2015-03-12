@@ -17,7 +17,6 @@
 #include "GatePromptGammaTLEActorMessenger.hh"
 #include "GateImageOfHistograms.hh"
 #include "GatePromptGammaData.hh"
-#include "GateImageWithStatisticTLE.hh"
 #include "GateVImageVolume.hh"
 
 #include <TFile.h>
@@ -57,8 +56,8 @@ protected:
   bool mIsIntermediaryUncertaintyOutputEnabled;
 
   //helper functions
-  void SetIoH(GateImageOfHistograms*&);
-  void SetAndAllocateIoH(GateImageOfHistograms*&);
+  void SetTrackIoH(GateImageOfHistograms*&);
+  void SetTLEIoH(GateImageOfHistograms*&);
   int GetProtonBin(double);
   GateVImageVolume* GetPhantom();
   void BuildOutput(); //converts trackl,tracklsq into mImageGamma and tleuncertain
@@ -72,7 +71,8 @@ protected:
   GateImageOfHistograms * tracklsq;     //L_i^2. also intermediate output: track squared length per voxel per E_proton
 
   //output, calculated at end of simu
-  GateImageOfHistograms * mImageGamma;  //main output (yield)
+  GateImageOfHistograms * mImageGamma;  //oldstyle main output,
+  GateImageOfHistograms * tle;  //main output (yield)
   GateImageOfHistograms * tleuncertain; //uncertainty per voxel, per E_gamma
 
   GateImageInt mLastHitEventImage;      //store eventID when last updated. TODO: not sure if necesary

@@ -57,7 +57,7 @@ void GateImageOfHistograms::Allocate()
   // Allocate full vector
   if (mDataTypeName == "double")
     dataDouble.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
-  if (mDataTypeName == "int")
+  else if (mDataTypeName == "int")
     dataInt.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
   else
     dataFloat.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
