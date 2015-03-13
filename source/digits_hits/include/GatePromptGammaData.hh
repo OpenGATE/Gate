@@ -46,8 +46,6 @@ public:
   void SaveData();
   void ResetData();
 
-  void SaveGammaM(const std::string & filename);
-
   // Principal 2D histograms, GetNgamma only used for TLE uncertainty.
   TH2D * GetGammaZ(); //IMPORTANT NOTE: this actually stores GammaZ/rho(Z). Then we don't have to multiply with it in the TLE.
   TH2D * GetNgamma();
@@ -59,12 +57,13 @@ public:
   TH2D * GetHEpEpg();
   TH1D * GetHEpInelasticProducedGamma();
 
-
   // Return the gamma energy spectrum for the proton at given energy,
   // for the given material
   TH1D * GetGammaEnergySpectrum(const int & matIndex, const double & energy);
   TH1D * GetGammaMForGammaBin(const int & materialIndex, const int & energyBin);
   TH1D * GetNgammaMForGammaBin(const int & materialIndex, const int & energyBin);
+  TH2D * GetGammaM(const int & materialIndex);
+  TH2D * GetNgammaM(const int & materialIndex);
   bool DataForMaterialExist(const int & materialIndex);
 
 protected:

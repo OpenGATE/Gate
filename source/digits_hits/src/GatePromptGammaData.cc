@@ -439,3 +439,19 @@ TH1D* GatePromptGammaData::GetNgammaMForGammaBin(const int & materialIndex,
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
+TH2D* GatePromptGammaData::GetNgammaM(const int & materialIndex)
+{
+  return NgammaM[materialIndex];
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+TH2D* GatePromptGammaData::GetGammaM(const int & materialIndex)
+{
+  return GammaM[materialIndex];
+}
+//-----------------------------------------------------------------------------
+

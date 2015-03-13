@@ -112,7 +112,7 @@ void GatePromptGammaTLEActor::SaveData()
   }
 
   BuildOutput();
-  GateVImageActor::SaveData();  //What does this do?
+  //GateVImageActor::SaveData();  //What does this do?
   if (mIsUncertaintyImageEnabled) {
     tle->Write(G4String(removeExtension(mSaveFilename))+"-TLE."+G4String(getExtension(mSaveFilename)));
     tleuncertain->Write(G4String(removeExtension(mSaveFilename))+"-TLEuncertainty."+G4String(getExtension(mSaveFilename)));
@@ -212,6 +212,7 @@ int GatePromptGammaTLEActor::GetProtonBin(double energy) {
 void GatePromptGammaTLEActor::BuildOutput() {
   // Number of primaries for normalisation, so that we have the number per proton, which is easier to use.
   int n = GateActorManager::GetInstance()->GetCurrentEventId() + 1; // +1 because start at zero
+  mImageGamma->Scale(1./n);
 
   if (mIsUncertaintyImageEnabled) {
     //allocate output images
@@ -238,25 +239,61 @@ void GatePromptGammaTLEActor::BuildOutput() {
       G4String materialname = phantom->GetMaterialNameFromLabel(phantomvox->GetValue(tmptrackl->GetCoordinatesFromIndex(vi)));
       G4Material* material = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(materialname);
       int materialindex = material->GetIndex();
+      TH2D* gammam = data.GetGammaM(materialindex);
+      TH2D* ngammam = data.GetNgammaM(materialindex);
 
+      //std::cout << "voxel "<< vi << std::endl;
+
+      // prep some things that are constant for all gamma bins
+      double tracklav[data.GetProtonNbBins()];
+      double tracklavsq[data.GetProtonNbBins()];
+      double tracklsqsum[data.GetProtonNbBins()];
+      double tracklvar[data.GetProtonNbBins()];
+      for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
+        //FIXME: check if tottrack is zero?
+        tracklav[pi] = trackl->GetValueDouble(vi,pi)/n; //this is the sum(L)/n
+        tracklsqsum[pi] = tracklsq->GetValueDouble(vi,pi); //this is the sum(L^2)
+
+        //TLE
+        // is calculation for tlevar correct?
+        tracklvar[pi] = sqrt( (1.0/(n-1))*(tracklsqsum[pi]/n - pow(tracklav[pi], 2)))/(tracklav[pi]);
+        tracklavsq[pi] = pow(tracklav[pi],2);
+      }
+      for(int gi=0; gi<data.GetGammaNbBins() ; gi++ ){ //per proton bin, compute the contribution to the gammabin
+        double tleval = 0.;
+        double tleuncval = 0.;
+        for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
+          double igammam = gammam->GetBinContent(pi+1,gi+1);
+          double ingammam = ngammam->GetBinContent(pi+1,gi+1);
+          //TLE, TLE uncertainty
+          tleval += igammam*tracklav[pi];
+          tleuncval += pow(igammam,2) * ( tracklvar[pi] + tracklavsq[pi]/ingammam );
+        }
+
+        tle->SetValueDouble(vi,gi,tleval); //we've now computed the sum, scale at the end with n.
+        tleuncertain->SetValueDouble(vi,gi,tleuncval); //this has already been scaled.
+      }
+      /* old slow, for reference
       for(int gi=0; gi<data.GetGammaNbBins() ; gi++ ){ //per proton bin, compute the contribution to the gammabin
         TH1D* protonhist = data.GetGammaMForGammaBin(materialindex,gi);
         TH1D* ngammahist = data.GetNgammaMForGammaBin(materialindex,gi);
         double tleval = 0;
         double tleuncval = 0;
-        for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){ //loop over gammabins to fill them up.
+        for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
 
           //TLE output
           double tracklength = trackl->GetValueDouble(vi,pi); //this is the sum.
           double tracklengthsq = tracklsq->GetValueDouble(vi,pi); //this is the sum.
-          double gammam = protonhist->GetBinContent(gi+1);
-          tleval += gammam*tracklength; //+1 for TH1 offset
+          if (tracklength <= 0.) continue;
+          //DD(tracklength);
+          double gammam = protonhist->GetBinContent(pi+1); //+1 for TH1 offset
+          tleval += gammam*tracklength;
 
           //TLE uncertainty output
-          //*po = sqrt( (1.0/(n-1))*(squared/n - pow(mean/n, 2)))/(mean/n); //from Dose Unc.
+          // *po = sqrt( (1.0/(n-1))*(squared/n - pow(mean/n, 2)))/(mean/n); //from Dose Unc.
           double tlevar = sqrt( (1.0/(n-1))*(tracklengthsq/n - pow(tracklength/n, 2)))/(tracklength/n);
-          double tleav = pow(tracklength,2)/n;
-          double ngamma = ngammahist->GetBinContent(gi+1);
+          double tleav = tracklength/n;//pow(tracklength,2)/n;
+          double ngamma = ngammahist->GetBinContent(pi+1);
           tleuncval += pow(gammam,2) *( tlevar/n + pow(tleav,2)/ngamma );
 
         }
@@ -264,10 +301,10 @@ void GatePromptGammaTLEActor::BuildOutput() {
         tle->SetValueDouble(vi,gi,tleval); //we've now computed the sum, scale at the end with n.
         tleuncertain->SetValueDouble(vi,gi,tleuncval); //this has already been scaled.
       }
+      */
     }
-    tle->Scale(1./n);
+    //tle->Scale(1./n);
   }//endif uncertainty
-  mImageGamma->Scale(1./n);
 
 }
 //-----------------------------------------------------------------------------
