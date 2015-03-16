@@ -59,9 +59,7 @@ public:
 
   // Return the gamma energy spectrum for the proton at given energy,
   // for the given material
-  TH1D * GetGammaEnergySpectrum(const int & matIndex, const double & energy);
-  TH1D * GetGammaMForGammaBin(const int & materialIndex, const int & energyBin);
-  TH1D * GetNgammaMForGammaBin(const int & materialIndex, const int & energyBin);
+  TH1D * GetGammaEnergySpectrum(const int & matIndex, const double & energy); //backward compat.
   TH2D * GetGammaM(const int & materialIndex);
   TH2D * GetNgammaM(const int & materialIndex);
   bool DataForMaterialExist(const int & materialIndex);

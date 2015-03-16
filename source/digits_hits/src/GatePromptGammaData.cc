@@ -356,7 +356,6 @@ void GatePromptGammaData::InitializeMaterial()
           // Scale it according to the fraction of this element in the material, multiplied with density ratio
           hgammam2->Scale(f * m->GetDensity() / (g / cm3) );// GammaZ=GammaZ/rho(Z), so dont need to divide by rho(Z)
           hngammam2->Scale(f * m->GetDensity() / (g / cm3) );
-          DD(m->GetDensity()/e ); //!FIXME!!!!!!!!!!!!!!!!!!!!! THIS IS RHO(Z), NOT RHO(M)!!!!
 
           // Add it to the current total histo
           hgammam->Add(hgammam2);
@@ -396,45 +395,6 @@ TH1D * GatePromptGammaData::GetGammaEnergySpectrum(const int & materialIndex,
 
   // Get the projected histogram of the material
   TH1D * h = mGammaEnergyHistoByMaterialByProtonEnergy[materialIndex][binX];
-
-  return h;
-}
-//-----------------------------------------------------------------------------
-
-
-
-//-----------------------------------------------------------------------------
-TH1D* GatePromptGammaData::GetGammaMForGammaBin(const int & materialIndex,const int & energyBin)
-{
-  // Check material
-  if (!DataForMaterialExist(materialIndex)) {
-    GateError("Error in GatePromptGammaData for TLE, the material " <<
-              (*G4Material::GetMaterialTable())[materialIndex]->GetName()
-              << " is not in the DB");
-  }
-
-  // Get the projected histogram of the material
-  // projectionX: project on X, from biny to biny2. And indeed, on X-axis are protons.
-  TH1D * h = new TH1D (*GammaM[materialIndex]->ProjectionX("", energyBin, energyBin));
-
-  return h;
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-TH1D* GatePromptGammaData::GetNgammaMForGammaBin(const int & materialIndex,
-                                                   const int & energyBin)
-{
-  // Check material
-  if (!DataForMaterialExist(materialIndex)) {
-    GateError("Error in GatePromptGammaData for TLE, the material " <<
-              (*G4Material::GetMaterialTable())[materialIndex]->GetName()
-              << " is not in the DB");
-  }
-
-  // Get the projected histogram of the material
-  TH1D * h = new TH1D (*NgammaM[materialIndex]->ProjectionX("", energyBin, energyBin));
 
   return h;
 }

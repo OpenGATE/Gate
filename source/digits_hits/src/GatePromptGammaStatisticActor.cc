@@ -75,11 +75,12 @@ void GatePromptGammaStatisticActor::SaveData()
   // Normalisation of 2D histo (pHEpEpgNormalized = E proton vs E gamma) according to
   // proba of inelastic interaction by E proton (pHEpInelastic);
   double temp=0.0;
+  double temp2=0.0;
   for( int i=1; i <= data.GetGammaZ()->GetNbinsX(); i++) {
     for( int j = 1; j <= data.GetGammaZ()->GetNbinsY(); j++) {
       if(data.GetHEpInelastic()->GetBinContent(i) != 0) {
         temp = data.GetGammaZ()->GetBinContent(i,j)/data.GetHEpInelastic()->GetBinContent(i);
-        //FIXME multiply with Ngamma and divide by elemental density to obtain actual GammaZ
+        temp2 = data.GetHEpEpgNormalized()->GetBinContent(i,j)/data.GetHEpInelastic()->GetBinContent(i); //for backwards compatibility
       }
       else {
         if (data.GetGammaZ()->GetBinContent(i,j)> 0.) {
@@ -87,10 +88,18 @@ void GatePromptGammaStatisticActor::SaveData()
           DD(j);
           DD(data.GetHEpInelastic()->GetBinContent(i));
           DD(data.GetGammaZ()->GetBinContent(i,j));
-          GateError("ERROR in in histograms, pHEpInelastic is zero and not pHEpEpgNormalized");
+          GateError("ERROR in in histograms, pHEpInelastic is zero and not pHEpEpgNormalized,GammaZ");
+        }
+        if (data.GetHEpEpgNormalized()->GetBinContent(i,j)> 0.) {
+          DD(i);
+          DD(j);
+          DD(data.GetHEpInelastic()->GetBinContent(i));
+          DD(data.GetHEpEpgNormalized()->GetBinContent(i,j));
+          GateError("ERROR in in histograms, pHEpInelastic is zero and not pHEpEpgNormalized,GammaZ");
         }
       }
       data.GetGammaZ()->SetBinContent(i,j,temp);
+      data.GetHEpEpgNormalized()->SetBinContent(i,j,temp2);
     }
   }
   data.SaveData();
