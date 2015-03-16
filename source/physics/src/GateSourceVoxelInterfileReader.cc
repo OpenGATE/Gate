@@ -40,10 +40,17 @@ GateSourceVoxelInterfileReader::~GateSourceVoxelInterfileReader()
 void GateSourceVoxelInterfileReader::ReadFile(G4String headerFileName)
 {
   if (!m_voxelTranslator) {
-      G4cout << "GateSourceVoxelImageReader::ReadFile: ERROR : insert a translator first" << G4endl;
+      G4cout << "GateSourceVoxelInterfileReader::ReadFile: ERROR : insert a translator first" << G4endl;
       return;
   }
-  G4cout << "GateSourceVoxelImageReader::ReadFile : fileName: " <<  headerFileName << G4endl;
+  G4cout << "------------------------------------------------------------------------------------------------\n"
+         << "WARNING: Macro commands related to voxelized source description have been modified in GATE V7.1.\n"
+         << "Older ones are being deprecated and will be removed from the next release.\n"
+         << "Please, have a look at the related documentation at:\n"
+         << "http://wiki.opengatecollaboration.org/index.php/Users_Guide_V7.1:Voxelized_Source_and_Phantom\n"
+          << "------------------------------------------------------------------------------------------------" << G4endl;
+
+  G4cout << "GateSourceVoxelInterfileReader::ReadFile : fileName: " <<  headerFileName << G4endl;
 
   ReadHeader(headerFileName);
 
