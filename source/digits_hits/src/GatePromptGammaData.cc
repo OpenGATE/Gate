@@ -354,8 +354,9 @@ void GatePromptGammaData::InitializeMaterial()
           TH2D * hgammam2 = (TH2D*) GammaZ->Clone();
 
           // Scale it according to the fraction of this element in the material, multiplied with density ratio
-          hgammam2->Scale(f * m->GetDensity() );// GammaZ=GammaZ/rho(Z)
-          hngammam2->Scale(f * m->GetDensity() );
+          hgammam2->Scale(f * m->GetDensity() / (g / cm3) );// GammaZ=GammaZ/rho(Z), so dont need to divide by rho(Z)
+          hngammam2->Scale(f * m->GetDensity() / (g / cm3) );
+          DD(m->GetDensity()/e ); //!FIXME!!!!!!!!!!!!!!!!!!!!! THIS IS RHO(Z), NOT RHO(M)!!!!
 
           // Add it to the current total histo
           hgammam->Add(hgammam2);

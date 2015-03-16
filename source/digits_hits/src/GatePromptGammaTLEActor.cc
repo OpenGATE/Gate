@@ -250,24 +250,44 @@ void GatePromptGammaTLEActor::BuildOutput() {
       double tracklsqsum[data.GetProtonNbBins()];
       double tracklvar[data.GetProtonNbBins()];
       for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
-        //FIXME: check if tottrack is zero?
-        tracklav[pi] = trackl->GetValueDouble(vi,pi)/n; //this is the sum(L)/n
+        double trackli = trackl->GetValueDouble(vi,pi);
+        if(trackli<=0.) { //if trackl==0, then all is zero.
+          tracklav[pi] = 0.;
+          tracklsqsum[pi] = 0.;
+          tracklvar[pi] = 0.;
+          tracklavsq[pi] = 0.;
+          continue;
+        }
+        //if not, compute trackl,tracklsq
+        tracklav[pi] = trackli/n; //this is the sum(L)/n
         tracklsqsum[pi] = tracklsq->GetValueDouble(vi,pi); //this is the sum(L^2)
 
         //TLE
         // is calculation for tlevar correct?
         tracklvar[pi] = sqrt( (1.0/(n-1))*(tracklsqsum[pi]/n - pow(tracklav[pi], 2)))/(tracklav[pi]);
+        if (tracklvar[pi]!=tracklvar[pi]) tracklvar[pi] = 0.; //check for division by zero.
         tracklavsq[pi] = pow(tracklav[pi],2);
+        /*DD(tracklav[pi]);
+        DD(tracklvar[pi]);
+        DD(tracklavsq[pi]);*/
       }
       for(int gi=0; gi<data.GetGammaNbBins() ; gi++ ){ //per proton bin, compute the contribution to the gammabin
         double tleval = 0.;
         double tleuncval = 0.;
         for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
+          if(tracklav[pi]==0.) {
+            continue; //dont need to add anything to TLE or TLEunc.
+          }
           double igammam = gammam->GetBinContent(pi+1,gi+1);
           double ingammam = ngammam->GetBinContent(pi+1,gi+1);
           //TLE, TLE uncertainty
           tleval += igammam*tracklav[pi];
           tleuncval += pow(igammam,2) * ( tracklvar[pi] + tracklavsq[pi]/ingammam );
+          if (tleuncval!=tleuncval) tleuncval = 0.; //check for division by zero.
+          /*DD(tleval);
+          DD(tleuncval);
+          DD(igammam);
+          DD(ingammam);*/
         }
 
         tle->SetValueDouble(vi,gi,tleval); //we've now computed the sum, scale at the end with n.
