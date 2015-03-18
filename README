@@ -16,20 +16,20 @@
 
 #  ****************************************************************************
 #  *                                                                          *
-#  * OpenGATE Collaboration are pleased to announce the release of GATE 7.0.0 *
+#  * OpenGATE Collaboration are pleased to announce the release of GATE 7.1.0 *
 #  *                                                                          *
 #  ****************************************************************************
 
 
                      #  *ooooOOOO0000OOOOoooo*  #
                      #  *                    *  #
-                     #  *    GATE_v7.0.0     *  #
+                     #  *    GATE_v7.1       *  #
                      #  *                    *  #
                      #  *ooooOOOO0000OOOOoooo*  #
 
 
                           # *------------* #
-                          # * 05/12/2014 * #
+                          # * 03/23/2015 * #
                           # *------------* #
 
 
@@ -37,14 +37,14 @@
    -----------------------
 
 - For a complete installation of GATE, user needs to read the Installation Guide
-  http://wiki.opengatecollaboration.org/index.php/InstallationGuideV7.0
+  http://wiki.opengatecollaboration.org/index.php/InstallationGuideV7.1
 
-- The installation of this GATE_v7.0.0 version is supported, tested and recommanded with the following:
+- The installation of this GATE V7.1 version is supported, tested and recommanded with the following:
 
     - Linux distributions: RED HAT & Fedora & Mandrake & Mandriva & Ubuntu...
     - Compiler: gcc 4.1 to 4.7
     - ROOT 5.xx (from 14 to last version)
-    - Geant4 9.6p01/p02/p03 (including with embedded CLHEP)
+    - Geant4 10.1 (including with embedded CLHEP)
     - Optional dependencies: lmf_v3.0
 
 
@@ -52,8 +52,8 @@ NOTES:
 -----
 
 - Validated for 64 bits architectures
-- The use of different Geant4 versions (other than 9.6) may cause incorrect simulation results
-- Users can also used the external CLHEP v2.1.3.1
+- The use of different Geant4 versions (other than 10.1) may cause incorrect simulation results
+- Users can also used the external CLHEP v2.2.0.4
 
 
 2/ C O M P I L A T I O N
@@ -61,26 +61,29 @@ NOTES:
 
 !!!WARNING: Since the 6.2 GATE version, the installation procedure is managed by CMAKE!!!
 
-    - Download the sources at this address: www.opengatecollaboration.org/GATE70release
+    - Download the sources at this address: www.opengatecollaboration.org/GATE71release
 
-    - Install, unzip and untar the downloaded file: tar -xzf gate_v7.0.tar.gz
+    - Install, unzip and untar the downloaded file: tar -xzf gate_v7.1.tar.gz
 
     - In the same directory, create two directories to build and install GATE:
-      mkdir gate.7.0-build
-      mkdir gate.7.0-install
+      mkdir gate_v7.1-build
+      mkdir gate_v7.1-install
 
     - Move into the GATE build directory:
-      cd gate.7.0-build
+      cd gate_v7.1-build
 
-    - Launch the ccmake command to the gate_v7.0 source directory:
-      ccmake ../gate_7.0
+    - Launch the ccmake command to the gate_v7.1 source directory:
+      ccmake ../gate_v7.1
 
       Warning : look at the information about following compilation options:
-      GATE_USE_ECAT7     OFF: by default, set to ON if you want to use this library
-      GATE_USE_LMF       OFF: by default, set to ON if you want to use this library
-      GATE_USE_OPTICAL   OFF: by default, set to ON if you want to perform simulation for optical imaging applications
-      GATE_USE_GPU       OFF: by default, set to ON if you want to use GPU modules
-
+      GATE_DOWNLOAD_BENCHMARKS_DATA      OFF: by default, set to ON if you want to download them
+      GATE_DOWNLOAD_EXAMPLES_DATA        OFF: by default, set to ON if you want to download them
+      GATE_USE_ECAT7                     OFF: by default, set to ON if you want to use this library
+      GATE_USE_GPU                       OFF: by default, set to ON if you want to use GPU modules
+      GATE_USE_LMF                       OFF: by default, set to ON if you want to use this library
+      GATE_USE_OPTICAL                   OFF: by default, set to ON if you want to perform simulation for optical imaging applications
+      GEANT4_USE_SYSTEM_CLHEP            OFF: by default, set to ON if you want to use an external CLHEP version (2.2.0.4)
+      
      - Like for Geant4, press 'c' to configure and 'g' to generate the makefile.
 
      - Compile:
@@ -90,9 +93,9 @@ NOTES:
      - Last step, update your environment variables file with the following command lines:
 
        • bash or zsh:
-         export PATH=$PATH:/PATH_TO/gate.7.0-install/bin
+         export PATH=$PATH:/PATH_TO/gate_v7.1-install/bin
        • [t]csh
-         setenv PATH ${PATH}:$/PATH_TO/gate.7.0-install/bin
+         setenv PATH ${PATH}:$/PATH_TO/gate_v7.1-install/bin
 
        • According to your system, you may also have to set environment variables for Root and Geant4
          - Root : source ${ROOTSYS}/bin/thisroot.sh
