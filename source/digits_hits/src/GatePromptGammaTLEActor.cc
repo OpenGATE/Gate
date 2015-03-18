@@ -157,7 +157,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // compute sameEvent
   // sameEvent is false the first time some energy is deposited for each primary particle
   bool sameEvent=true;
-  GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
+  GateDebugMessage("Actor", 2,  "GatePromptGammaTLEActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
   if (mCurrentEvent != mLastHitEventImage.GetValue(index)) {
     sameEvent = false;
     mLastHitEventImage.SetValue(index, mCurrentEvent);
@@ -176,7 +176,8 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   }
 
   if (mIsUncertaintyImageEnabled) {
-    int protbin = GetProtonBin(particle_energy);
+    //int protbin = GetProtonBin(particle_energy);
+    int protbin = data.GetHEp()->FindFixBin(particle_energy);
     if (sameEvent) tmptrackl->AddValueDouble(index, protbin, distance);
     //if not, then update trackl,tracklsq from the previous event, and restart tmptrackl.
     else {
@@ -235,14 +236,17 @@ void GatePromptGammaTLEActor::BuildOutput() {
 
     //compute TLE output. first, loop over voxels
     for(unsigned int vi = 0; vi < tmptrackl->GetNumberOfValues() ;vi++ ){
-      //PixelType label = phantomvox->GetValue(tmptrackl->GetCoordinatesFromIndex(vi)); //convert between voxelsizes in phantom and output
-      G4String materialname = phantom->GetMaterialNameFromLabel(phantomvox->GetValue(tmptrackl->GetCoordinatesFromIndex(vi)));
+      //PixelType label = phantomvox->GetValue(tmptrackl->GetCoordinatesFromIndex(vi));
+      //convert between voxelsizes in phantom and output, NEAREST NEIGHBOUR!
+      G4String materialname = phantom->GetMaterialNameFromLabel(phantomvox->GetValue(tmptrackl->GetVoxelCenterFromIndex(vi)));
       G4Material* material = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(materialname);
       int materialindex = material->GetIndex();
+
+      //DD(tmptrackl->GetVoxelCenterFromIndex(vi)<<" "<<material->GetName());
+
+      //int dens = material->GetDensity()/ (g / cm3);
       TH2D* gammam = data.GetGammaM(materialindex);
       TH2D* ngammam = data.GetNgammaM(materialindex);
-
-      //std::cout << "voxel "<< vi << std::endl;
 
       // prep some things that are constant for all gamma bins
       double tracklav[data.GetProtonNbBins()];
@@ -271,6 +275,7 @@ void GatePromptGammaTLEActor::BuildOutput() {
         DD(tracklvar[pi]);
         DD(tracklavsq[pi]);*/
       }
+
       for(int gi=0; gi<data.GetGammaNbBins() ; gi++ ){ //per proton bin, compute the contribution to the gammabin
         double tleval = 0.;
         double tleuncval = 0.;
@@ -290,9 +295,10 @@ void GatePromptGammaTLEActor::BuildOutput() {
           DD(ingammam);*/
         }
 
-        tle->SetValueDouble(vi,gi,tleval); //we've now computed the sum, scale at the end with n.
-        tleuncertain->SetValueDouble(vi,gi,tleuncval); //this has already been scaled.
+        tle->SetValueDouble(vi,gi,tleval);
+        tleuncertain->SetValueDouble(vi,gi,tleuncval);
       }
+
       /* old slow, for reference
       for(int gi=0; gi<data.GetGammaNbBins() ; gi++ ){ //per proton bin, compute the contribution to the gammabin
         TH1D* protonhist = data.GetGammaMForGammaBin(materialindex,gi);
@@ -322,8 +328,9 @@ void GatePromptGammaTLEActor::BuildOutput() {
         tleuncertain->SetValueDouble(vi,gi,tleuncval); //this has already been scaled.
       }
       */
-    }
-    //tle->Scale(1./n);
+
+      DD(vi);
+    }//end voxelloop
   }//endif uncertainty
 
 }

@@ -356,6 +356,8 @@ void GatePromptGammaData::InitializeMaterial()
           // Scale it according to the fraction of this element in the material, multiplied with density ratio
           hgammam2->Scale(f * m->GetDensity() / (g / cm3) );// GammaZ=GammaZ/rho(Z), so dont need to divide by rho(Z)
           hngammam2->Scale(f * m->GetDensity() / (g / cm3) );
+          //DD("promptgammadata name "<<m->GetName() );
+          //DD("promptgammadata density "<<m->GetDensity() / (g / cm3));
 
           // Add it to the current total histo
           hgammam->Add(hgammam2);
@@ -395,6 +397,16 @@ TH1D * GatePromptGammaData::GetGammaEnergySpectrum(const int & materialIndex,
 
   // Get the projected histogram of the material
   TH1D * h = mGammaEnergyHistoByMaterialByProtonEnergy[materialIndex][binX];
+
+  /* //DEBUG: verified that these two output the same (modulus density)
+  TFile f1("histos1.root","new");
+  TH1D * h = mGammaEnergyHistoByMaterialByProtonEnergy[materialIndex][binX];
+  h->Write();
+
+  TFile f2("histos2.root","new");
+  TH1D * h2 = new TH1D(*GammaM[materialIndex]->ProjectionY("", binX, binX));
+  h2->Write();
+  */
 
   return h;
 }

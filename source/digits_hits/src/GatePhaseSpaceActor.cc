@@ -276,12 +276,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   bPDGCode = step->GetTrack()->GetDefinition()->GetPDGEncoding();
 
   //cout << step->GetTrack()->GetDefinition()->GetPDGEncoding() << endl;
-  // TODO dit werkt helaas niet, undefined reference. Probleem met makefile?
-  // Het alternatief, G4pdgcodechecker lijkt niet te doen wat ik nodig heb....
-  //cerr << "PartName " << st << " PDGCode " << bPDGCode << " PDGCode2PartName " << G4ParticleTable::GetParticleTable()->FindParticle(bPDGCode)->GetParticleName() << " endl" << endl;
-
-
-
+  // TODO doesnt work, undefined reference. Problem with makefile?
   //Solution, use PDGcode instead of ParticleName. However, GatePhaseSpaceSource uses Particlename char[64] while GatePhaseSpaceActor stores Char_t[256].
 
   //------------Write psition of the steps presents at the simulation-------------
