@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 //      ------------ GateVSourceVoxelReaderMessenger  ------
@@ -16,29 +16,22 @@ See GATE/LICENSE.txt for further details
 #include "GateVSourceVoxelReader.hh"
 #include "GateVSource.hh"
 
-#include "GateClock.hh"
-#include "G4UIdirectory.hh"
-#include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
-#include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
 #include "G4UIcmdWithoutParameter.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
+//-----------------------------------------------------------------------------
 GateVSourceVoxelReaderMessenger::GateVSourceVoxelReaderMessenger(GateVSourceVoxelReader* voxelReader)
-  : GateMessenger(G4String("source/") + 
-		  voxelReader->GetSource()->GetName() + 
+  : GateMessenger(G4String("source/") +
+		  voxelReader->GetSource()->GetName() +
 		  G4String("/") +
-		  voxelReader->GetName(), 
+		  voxelReader->GetName(),
 		  true),
-  m_voxelReader(voxelReader)
-{ 
-
+    m_voxelReader(voxelReader)
+{
   G4String cmdName;
-
-  cmdName = GetDirectoryName()+"setPosition";
+  cmdName = GetDirectoryName()+"setPosition"; // FIXME to remove ???
   PositionCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
   PositionCmd->SetGuidance("Set source position");
   PositionCmd->SetGuidance("1. 3-vector of source position");
@@ -47,7 +40,7 @@ GateVSourceVoxelReaderMessenger::GateVSourceVoxelReaderMessenger(GateVSourceVoxe
   cmdName = GetDirectoryName()+"setVoxelSize";
   VoxelSizeCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
   VoxelSizeCmd->SetGuidance("Set source voxel size");
-  PositionCmd->SetGuidance("1. 3-vector of voxel size");
+  VoxelSizeCmd->SetGuidance("1. 3-vector of voxel size");
   VoxelSizeCmd->SetUnitCategory("Length");
 
   cmdName = GetDirectoryName()+"translator/insert";
@@ -65,19 +58,17 @@ GateVSourceVoxelReaderMessenger::GateVSourceVoxelReaderMessenger(GateVSourceVoxe
   VerboseCmd->SetGuidance("1. Integer verbose level");
   VerboseCmd->SetParameterName("verbose",false);
   VerboseCmd->SetRange("verbose>=0");
-  
-      cmdName = GetDirectoryName()+"SetTimeActivityTablesFrom";
+
+  cmdName = GetDirectoryName()+"SetTimeActivityTablesFrom";
   TimeActivTablesCmd = new G4UIcmdWithAString(cmdName,this);
 
   cmdName = GetDirectoryName()+"SetTimeSampling";
   SetTimeSamplingCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-
-  
 }
+//-----------------------------------------------------------------------------
 
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
+//-----------------------------------------------------------------------------
 GateVSourceVoxelReaderMessenger::~GateVSourceVoxelReaderMessenger()
 {
   delete InsertTranslatorCmd;
@@ -88,30 +79,19 @@ GateVSourceVoxelReaderMessenger::~GateVSourceVoxelReaderMessenger()
   delete TimeActivTablesCmd;
   delete SetTimeSamplingCmd;
 }
+//-----------------------------------------------------------------------------
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
+//-----------------------------------------------------------------------------
 void GateVSourceVoxelReaderMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ if( command == SetTimeSamplingCmd ) {
-    m_voxelReader->SetTimeSampling( SetTimeSamplingCmd->GetNewDoubleValue( newValue ) );
-    return;}
-  else if( command == TimeActivTablesCmd ) {
-    m_voxelReader->SetTimeActivTables( newValue );
-    return;}
-  else if( command == PositionCmd ) {
-    m_voxelReader->SetPosition(PositionCmd->GetNew3VectorValue(newValue));
-  } else if( command == VoxelSizeCmd) {
-    m_voxelReader->SetVoxelSize(VoxelSizeCmd->GetNew3VectorValue(newValue));
-  } else if( command == InsertTranslatorCmd) {
-    m_voxelReader->InsertTranslator(InsertTranslatorCmd->GetNewVectorValue(newValue)[0]);
-  } else if( command == RemoveTranslatorCmd) {
-    m_voxelReader->RemoveTranslator();
-  } else if( command == VerboseCmd) {
-    m_voxelReader->SetVerboseLevel(VerboseCmd->GetNewIntValue(newValue));
-  }
+{
+  if (command == SetTimeSamplingCmd) m_voxelReader->SetTimeSampling( SetTimeSamplingCmd->GetNewDoubleValue( newValue ) );
+  if (command == TimeActivTablesCmd) m_voxelReader->SetTimeActivTables( newValue );
+  if (command == PositionCmd) m_voxelReader->SetPosition(PositionCmd->GetNew3VectorValue(newValue));
+  if (command == VoxelSizeCmd) m_voxelReader->SetVoxelSize(VoxelSizeCmd->GetNew3VectorValue(newValue));
+  if (command == InsertTranslatorCmd) m_voxelReader->InsertTranslator(InsertTranslatorCmd->GetNewVectorValue(newValue)[0]);
+  if (command == RemoveTranslatorCmd) m_voxelReader->RemoveTranslator();
+  if (command == VerboseCmd) m_voxelReader->SetVerboseLevel(VerboseCmd->GetNewIntValue(newValue));
+  GateMessenger::SetNewValue(command, newValue);
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-
-
+//-----------------------------------------------------------------------------

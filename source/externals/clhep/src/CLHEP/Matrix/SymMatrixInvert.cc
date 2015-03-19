@@ -18,10 +18,10 @@
 
 namespace CLHEP {
 
-double HepSymMatrix::posDefFraction5x5 = 1.0;
-double HepSymMatrix::posDefFraction6x6 = 1.0;
-double HepSymMatrix::adjustment5x5 = 0.0;
-double HepSymMatrix::adjustment6x6 = 0.0;
+double CLHEP_THREAD_LOCAL HepSymMatrix::posDefFraction5x5 = 1.0;
+double CLHEP_THREAD_LOCAL HepSymMatrix::posDefFraction6x6 = 1.0;
+double CLHEP_THREAD_LOCAL HepSymMatrix::adjustment5x5 = 0.0;
+double CLHEP_THREAD_LOCAL HepSymMatrix::adjustment6x6 = 0.0;
 const double HepSymMatrix::CHOLESKY_THRESHOLD_5x5 = .5;
 const double HepSymMatrix::CHOLESKY_THRESHOLD_6x6 = .2;
 const double HepSymMatrix::CHOLESKY_CREEP_5x5 = .005;
