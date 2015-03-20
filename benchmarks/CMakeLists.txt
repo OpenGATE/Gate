@@ -22,3 +22,8 @@ GateAddBenchmarkData("DATA{benchVoxelRegular25x25x25/maps/corps_cubique.i33}")
 GateAddBenchmarkData("DATA{benchImageNavigators/pet/data/brain_phantom.i33}")
 GateAddBenchmarkData("DATA{benchImageNavigators/pet/data/brain_phantom.raw}")
 GateAddBenchmarkData("DATA{benchImageNavigators/rt/data/patient-2mm.raw}")
+
+
+if(BUILD_TESTING)
+  GateAddBenchmarkData("DATA{benchRT/reference/benchRT-reference.tgz}")
+endif(BUILD_TESTING)
