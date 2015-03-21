@@ -58,6 +58,9 @@ STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION
 #MESSAGE(${G4VERSION_MAJOR})
 #MESSAGE(${G4VERSION_MINOR})
 #MESSAGE(${G4VERSION_PATCH})
+IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.1)
+  MESSAGE("Warning! GATE version 7.1 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.1 distribution instead.")
+ENDIF()
 
 #=========================================================
 # Option for Root use
@@ -79,10 +82,11 @@ IF(GATE_USE_ROOT)
   INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIR})
   SET(LINK_DIRECTORIES ${ROOT_LIBRARY_DIR})
   #MESSAGE("Found Root in ${ROOT_INCLUDE_DIR} ${ROOT_LIBRARY_DIR} ${ROOT_LIBRARIES}")
-  IF(ROOT_INCLUDE_DIR)
-    MESSAGE("Your current Root version is ${ROOT_VERSION}")
-  ELSE()
-    MESSAGE("Root Not found ! Please install Root and make it available in PATH")
+  #IF(ROOT_INCLUDE_DIR)
+    #MESSAGE("Your current Root version is ${ROOT_VERSION}")
+  #ELSE()
+  IF(NOT ROOT_INCLUDE_DIR)
+    MESSAGE("Root not found! Please install Root and make it available in PATH")
   ENDIF()
 ENDIF()
 

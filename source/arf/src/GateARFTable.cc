@@ -79,7 +79,7 @@ dTanPhiStep1 =  1.0 / 256.0;
 dBase1 = 1. + dStep1 / 2.0;
 dBase2 = 0.990005;      /* 1024 */
 dBase3 = 0.950005;      /* 1536 */
-dBase4 = 0.750005;	/* 1792 */  
+dBase4 = 0.750005;	/* 1792 */
 
 /*----------------------------------------------------------------------
         variables for energy resolution
@@ -108,7 +108,7 @@ m_Ehigh = 0.0;
 m_ElowOut = 0.0; // window energy specified by the use
 m_EhighOut = 0.0;
 
-m_theta = 0;   
+m_theta = 0;
 cosTheta = 0;
 tanPhi = 0;
 Phi = 0;
@@ -145,15 +145,15 @@ G4cout.precision(10);
 
 // tmp = 1.;
 
- for (G4int i = 0; i < 2048; i++) 
+ for (G4int i = 0; i < 2048; i++)
 {
 
 
- // i is cos(Theta), 1.0 --> 0.20 
+ // i is cos(Theta), 1.0 --> 0.20
                        if (i<1025) { tmp -= dStep1;
                                 cosTheta[i] = tmp;
                                 m_theta[i] = acos(tmp);
-                        } 
+                        }
 	 	        if ( (i > 1024)  && (i < 1537) ) { tmp -= dStep2;
                                 cosTheta[i] = tmp;
                                 m_theta[i] = acos(tmp);
@@ -189,15 +189,15 @@ tanPhi_i = new G4double[ 256 ];
         for (G4int i = 0; i < 512; i++)
  { /* i is the value of Phi, 0 --> 180 */
 
-               
+
                 if (i<256)      tmp += dTanPhiStep1;
                 if (i == 256)  { tmp = 1.0; }
                 if ( i > 256 )  { tmp -= dTanPhiStep1;  tmpp += dTanPhiStep1;}
 
-   
+
     tanPhi[i] = tmp;
 
-    
+
     if ( i < 256 ) tanPhi_i[i] = tanPhi[i];
     if ( i < 257 ) Phi[i] = atan( tanPhi[i] ); else Phi[i] = atan( tmpp );
 
@@ -232,8 +232,8 @@ s2 << int(m_Ehigh/keV);
 }
 
 G4double GateARFTable::RetrieveProbability(G4double x , G4double y )
-{ G4int itheta, iphi;
- if ( GetIndexes( x , y , itheta, iphi ) == 1 )  return m_theTable[ itheta + iphi * m_NbOfcosTheta]; 
+{ G4int itheta=0, iphi;
+ if ( GetIndexes( x , y , itheta, iphi ) == 1 )  return m_theTable[ itheta + iphi * m_NbOfcosTheta];
  return 0.;
 }
 
@@ -273,7 +273,7 @@ if ( itheta == 0 ) { iphi = 0; return 1; }
 
 if ( fabs(x) <= 1.e-8 ) {  iphi = 511;   return 1;}
 
-G4double tanphi = y/x; 
+G4double tanphi = y/x;
 
 if (tanphi < 0.0) tanphi *= -1.0;
 
@@ -294,7 +294,7 @@ if (tanphi < 0.0) tanphi *= -1.0;
 
          }
 
- 
+
 return 1;
 
 }
@@ -309,16 +309,16 @@ G4double GateARFTable::computeARFfromDRF( G4double xi, G4double yj, G4double cos
 	G4double dSmallPixX, dSmallPixY;
 	G4double dLengthSqr, dRefRadius, dRefRadiusSqr;
 	G4int iNumSmallPixSummed = 0;
-	
+
 	dRefRadius = ((G4double) iAvgPixNum + 0.5 ) * m_drfbinsize;
 	dRefRadiusSqr = dRefRadius * dRefRadius;
 
 	G4int iCenteri = (G4int) (m_drfdimx/2);
-	G4int iCenterj = (G4int) (m_drfdimy/2);	
+	G4int iCenterj = (G4int) (m_drfdimy/2);
 	i = iCenteri + G4int ( xi / m_drfbinsize + 0.5);  /* for 1023x1023. Center is (511,511) */
 	j = iCenterj + G4int ( yj / m_drfbinsize + 0.5);
 
-	/* get totally (2iAvgPixNum+1 x 2iAvgPixNum+1) matrix */ 
+	/* get totally (2iAvgPixNum+1 x 2iAvgPixNum+1) matrix */
 	iStarti = i -  iAvgPixNum;
 	iStopi = i + iAvgPixNum;
 
@@ -328,27 +328,27 @@ G4double GateARFTable::computeARFfromDRF( G4double xi, G4double yj, G4double cos
 printf("\nnow in fCalcProb, iStarti=%d, iStartj=%d, iStopi=%d, iStopj=%d, Cos=%2.10g, iAvgPixNum=%d\n", iStarti, iStartj, iStopi, iStopj,dCosTheta, iAvgPixNum);
 printf("dRefRadius=%5.10g\n", dRefRadius);
 */
-	
+
 	for (n = iStartj; n<iStopj+1; n++)
 	{
 		for (m = iStarti; m<iStopi+1; m++)
 		{
 			index0 = m + n * m_drfdimx;
-			
+
 			/* loops k and l are used to check the 10x10 small elements in each big element (m, n). All elements with the distance
-			to the photon point (dTmpi, dTmpj) smaller than the user specified radius are used to do average */ 
+			to the photon point (dTmpi, dTmpj) smaller than the user specified radius are used to do average */
 			for (k=0; k<10; k++)
 			{
-				dSmallPixX = ( G4double (m-iCenteri) + (G4double( k ) - 4.5 ) / 10.0) * m_drfbinsize;	
+				dSmallPixX = ( G4double (m-iCenteri) + (G4double( k ) - 4.5 ) / 10.0) * m_drfbinsize;
 
 				for (l=0; l<10; l++)
 				{
 					/* dSmallPixX and dSmallPixY are the absolute values for that the small element in unit of cm */
-					dSmallPixY = ( G4double (n-iCenterj) + ( G4double( l ) - 4.5 ) / 10.0) * m_drfbinsize;	
-					
+					dSmallPixY = ( G4double (n-iCenterj) + ( G4double( l ) - 4.5 ) / 10.0) * m_drfbinsize;
+
 					/* distance in unit of cm */
 					dLengthSqr = (dSmallPixX- xi)*(dSmallPixX- xi) + (dSmallPixY- yj)*(dSmallPixY- yj);
-					
+
 					if(dLengthSqr < dRefRadiusSqr) {
 						dSum = dSum + m_theDRFTable[index0];
 						iNumSmallPixSummed++;
@@ -365,16 +365,16 @@ printf("dRefRadius=%5.10g\n", dRefRadius);
 	dSize = m_drfbinsize * m_drfbinsize * G4double( iNumSmallPixSummed )/ 100.0;
 
 
-	
+
 	dFactor = fDist_src2img * fDist_src2img / (dSize * costheta * costheta *  costheta);
-	dFactor = dFactor * 4.0 * M_PI / m_TotSimuPhotons; 
-	
-	
+	dFactor = dFactor * 4.0 * M_PI / m_TotSimuPhotons;
+
+
 	dSum *= dFactor;
-	
+
 //printf(" fSum1=%2.10g, fSum2=%2.10g, fSum=%2.10g, dFactor=%5.10g, fsize=%5.10g\n", fSum1, fSum2,fSum, dFactor, dSize);
 	return dSum;
-	
+
 }
  void  GateARFTable::convertDRF2ARF()
 {
@@ -398,15 +398,15 @@ G4int index1,index2,index3,index4;
 	dHalfTblRangeInCM_Y = (m_drfdimy/2.0-iAvgPixNum-2.0)*m_drfbinsize;
 
 	for (G4int iphi = 0; iphi < 512; iphi++)
- {	
+ {
    if ( iphi ==0 ) {
 			sinphi = 0.0;
 			cosphi = 1.0;
 		} else if (iphi <256 ) {      /* in fact, this is the real tan(PHI) */
-			
+
 			cosphi = 1.0 / sqrt(1.0 + tanPhi[iphi] * tanPhi[iphi] );
 			sinphi = cosphi * tanPhi[iphi];
-			
+
 		} else if (iphi == 256) {  /* in fact, from 256-511, the actualy PHI value is for ctg, not for tan */
 			sinphi = sqrt(2.0)/2.0;
 			cosphi = sinphi;
@@ -417,8 +417,8 @@ G4int index1,index2,index3,index4;
 
 		}
 	for (G4int itheta = 0; itheta < 2048; itheta++) { /* x is cos(Theta), 1.0 --> 0.20 */
-			
-			G4int index = itheta + iphi * 2048; 
+
+			G4int index = itheta + iphi * 2048;
 
 			if (itheta == 0 ) {
 				i = 0.0;
@@ -428,7 +428,7 @@ G4int index1,index2,index3,index4;
 				i = dR * cosphi;
 				j = dR * sinphi;
 			}
-			
+
 			if (( i >= dHalfTblRangeInCM_X) || ( j >= dHalfTblRangeInCM_Y)) {
 		   	m_theTable[index] = 0.0;
 		   } else {

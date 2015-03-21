@@ -7,12 +7,13 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 
-#ifndef GateSourceVoxelImageReaderMessenger_h
-#define GateSourceVoxelImageReaderMessenger_h 1
+#ifndef GATESOURCEVOXELIMAGEREADERMESSENGER_H
+#define GATESOURCEVOXELIMAGEREADERMESSENGER_H 1
 
 #include "GateVSourceVoxelReaderMessenger.hh"
 #include "GateSourceVoxelImageReader.hh"
 
+//-----------------------------------------------------------------------------
 class GateSourceVoxelImageReaderMessenger : public GateVSourceVoxelReaderMessenger
 {
 public:
@@ -25,6 +26,6 @@ protected:
   GateUIcmdWithAVector<G4String>*     ReadFileCmd;
 
 };
+//-----------------------------------------------------------------------------
 
 #endif
-
