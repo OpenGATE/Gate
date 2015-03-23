@@ -98,7 +98,11 @@ void GateTrajectory::ShowTrajectory(std::ostream& os) const
    }
 }
 
-void GateTrajectory::DrawTrajectory(G4int /*i_mode*/) const
+#if (G4VERSION_MAJOR == 10 and G4VERSION_MINOR == 0)
+  void GateTrajectory::DrawTrajectory(G4int /*i_mode =0*/) const
+#else
+  void GateTrajectory::DrawTrajectory() const
+#endif
 {
 
    G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();

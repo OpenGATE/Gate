@@ -1,0 +1,613 @@
+/*----------------------
+  Copyright (C): OpenGATE Collaboration
+
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+GateImageT<PixelType>::GateImageT():GateVImage() {
+  mOutsideValue = 0;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+GateImageT<PixelType>::~GateImageT() {
+  data.clear();
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::Allocate() {
+  UpdateNumberOfValues();
+  GateDebugMessage("Image",8,"GateImageT::Resize " << nbOfValues << G4endl);
+  data.resize(nbOfValues);
+  std::fill(data.begin(), data.end(), 0.0);
+  PrintInfo();
+  UpdateDataForRootOutput();
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::PrintInfo() {
+  GateMessage("Image", 1, "Matrix Size=\t" << size        << G4endl);
+  GateMessage("Image", 1, "HalfSize=\t"    << halfSize    << G4endl);
+  GateMessage("Image", 1, "Resol=\t"       << resolution  << G4endl);
+  GateMessage("Image", 1, "VoxelSize=\t"   << voxelSize   << G4endl);
+  GateMessage("Image", 1, "planeSize=\t"   << planeSize   << G4endl);
+  GateMessage("Image", 1, "lineSize=\t"    << lineSize    << G4endl);
+  GateMessage("Image", 1, "nbOfValues=\t"  << nbOfValues  << G4endl);
+  GateMessage("Image", 1, "PixelSize=\t"  << sizeof(PixelType)  << G4endl);
+  GateMessage("Image", 1, "dataSize =\t"   << data.size() << G4endl);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::Read(G4String filename) {
+  G4String extension = getExtension(filename);
+
+  if (extension == "txt") ReadAscii(filename);
+  else if (extension == "hdr") ReadAnalyze(filename);
+  else if (extension == "img") ReadAnalyze(filename);
+  else if (extension == "img.gz") ReadAnalyze(filename);
+  else if (extension == "mhd" || extension == "mha") ReadMHD(filename);
+  else if (extension == "h33" || extension == "iff") ReadInterfile(filename);
+  else if (extension == "i33") ReadInterfile(filename);
+  else {
+    GateError( "Unknow image file extension. Knowns extensions are : "
+               << G4endl << ".vox, .hdr, .img, .mhd, .mha, .h33, .i33" << G4endl);
+    exit(0);
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
+  // Read header
+  GateAnalyzeHeader hdr;
+  hdr.Read(filename);
+
+  short int rx,ry,rz,rc;
+  hdr.GetImageSize(rx,ry,rz,rc);
+
+  GateAnalyzeHeader::PixelType vx,vy,vz;
+  hdr.GetVoxelSize(vx,vy,vz);
+
+  // update sizes and allocate
+  resolution = G4ThreeVector(rx,ry,rz);
+  voxelSize = G4ThreeVector(vx,vy,vz);
+  UpdateSizesFromResolutionAndVoxelSize();
+  Allocate();
+
+  // open .img file
+  int l = filename.length();
+  filename.replace(l-3,3,"img");
+  std::ifstream is;
+  OpenFileInput(filename, is);
+
+  // Read values ...
+  if (hdr.GetVoxelType() == GateAnalyzeHeader::SignedShortType) {
+    GateMessage("Image",5,"Voxel Type = SignedShortType" << G4endl);
+    typedef short VoxelType;
+    std::vector<VoxelType> temp(nbOfValues);
+    data.resize(nbOfValues);
+    is.read((char*)(&(temp[0])), nbOfValues*sizeof(VoxelType));
+    for(unsigned int i=0; i<temp.size(); i++) {
+      data[i] = (PixelType)temp[i];
+    }
+  }
+  else if (hdr.GetVoxelType() == GateAnalyzeHeader::FloatType) {
+    GateMessage("Image",5,"Voxel Type = FloatType" << G4endl);
+    typedef float VoxelType;
+    std::vector<VoxelType> temp(nbOfValues);
+    data.resize(nbOfValues);
+    is.read((char*)(&(temp[0])), nbOfValues*sizeof(VoxelType));
+    for(unsigned int i=0; i<temp.size(); i++) {
+      if(!hdr.IsRightEndian())
+	GateMachine::SwapEndians(temp[i]);
+      data[i] = (PixelType)temp[i];
+    }
+  }
+  else if (hdr.GetVoxelType() == GateAnalyzeHeader::SignedIntType) {
+    GateMessage("Image",5,"Voxel Type = SignedIntType" << G4endl);
+    typedef int VoxelType;
+    std::vector<VoxelType> temp(nbOfValues);
+    data.resize(nbOfValues);
+    is.read((char*)(&(temp[0])), nbOfValues*sizeof(VoxelType));
+    for(unsigned int i=0; i<temp.size(); i++) {
+      data[i] = (PixelType)temp[i];
+    }
+  }
+  else if (hdr.GetVoxelType() == GateAnalyzeHeader::UnsignedCharType) {
+    GateMessage("Image",5,"Voxel Type = UnsignedCharType" << G4endl);
+    typedef unsigned char VoxelType;
+    std::vector<VoxelType> temp(nbOfValues);
+    data.resize(nbOfValues);
+    is.read((char*)(&(temp[0])), nbOfValues*sizeof(VoxelType));
+    for(unsigned int i=0; i<temp.size(); i++) {
+      data[i] = (PixelType)temp[i];
+    }
+  }
+  else {
+    GateError("I don't know (yet) this voxel type ... try float or unsigned char");
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::ReadMHD(G4String filename) {
+  // Read mhd image
+  GateMHDImage * mhd = new GateMHDImage;
+  mhd->ReadHeader(filename);
+
+  // Get image information
+  resolution = G4ThreeVector(mhd->size[0], mhd->size[1], mhd->size[2]);
+  voxelSize = G4ThreeVector(mhd->spacing[0], mhd->spacing[1], mhd->spacing[2]);
+  origin = G4ThreeVector(mhd->origin[0], mhd->origin[1], mhd->origin[2]);
+
+  // Convert mhd matrix to rotation matrix
+  G4ThreeVector row_x, row_y, row_z;
+  for(unsigned int i=0; i<3; i++) {
+    row_x[i] = mhd->transform[i*3];
+    row_y[i] = mhd->transform[i*3+1];
+    row_z[i] = mhd->transform[i*3+2];
+  }
+  transformMatrix.setRows(row_x, row_y, row_z);
+  if( !transformMatrix.row1().isNear(CLHEP::HepLorentzVector(row_x, 0.), 0.1) ||
+      !transformMatrix.row2().isNear(CLHEP::HepLorentzVector(row_y, 0.), 0.1) ||
+      !transformMatrix.row3().isNear(CLHEP::HepLorentzVector(row_z, 0.), 0.1) ) {
+    GateError(filename << " contains a transformation which is not a rotation. "
+              << "It is probably a flip and this is not handled.");
+  }
+
+  // We need to shift to half a pixel to be coherent with Gate
+  // coordinates system. Must be transformed because voxel size is
+  // known before rotation and origin is after rotation.
+  origin -= transformMatrix*(voxelSize/2.0);
+  UpdateSizesFromResolutionAndVoxelSize();
+  Allocate();
+
+  // Get image data
+  mhd->ReadData(filename, data);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::ReadInterfile(G4String filename) {
+  // Read interfile image
+  GateInterfileHeader * h33 = new GateInterfileHeader();
+  h33->ReadHeader(filename);
+
+  // Get image information
+  voxelSize = G4ThreeVector(h33->m_pixelSize[0], h33->m_pixelSize[1], h33->m_planeThickness);
+  resolution = G4ThreeVector(h33->m_dim[0], h33->m_dim[1], h33->m_numPlanes);
+
+  // We need to shift to half a pixel to be coherent with Gate
+  // coordinates system.
+  origin[0] -= voxelSize[0]/2.0;
+  origin[1] -= voxelSize[1]/2.0;
+  origin[2] -= voxelSize[2]/2.0;
+  origin = G4ThreeVector(origin[0], origin[1], origin[2]);
+  UpdateSizesFromResolutionAndVoxelSize();
+  Allocate();
+
+  // Get image data
+  h33->ReadData(data);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::ReadAscii(G4String filename) {
+  std::ifstream is;
+  OpenFileInput(filename, is);
+
+  // Header
+  std::string s;
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read ####################################
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read #
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read Matrix
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read Size=
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read values ...
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read #
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read Resol
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read =
+  G4ThreeVector resol;
+  is >> resol;
+  //GateDebugMessage("Image",8,"Resol = " << resol << G4endl);
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read #
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read VoxelSize
+  is >> s ;// GateDebugMessage("Image",8,s<< G4endl); // read =
+  G4ThreeVector voxsize;
+  is >> voxsize;
+  //GateDebugMessage("Image",8,"VoxelSize = " << voxsize << G4endl);
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read #
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read nbVal
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read =
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read value
+  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read ####################################
+
+  // set size
+  SetResolutionAndVoxelSize(resol, voxsize);
+  Allocate();
+
+  // read data
+  int dim = 3;
+  std::string v;
+  if (resolution.x() == 1) dim--;
+  if (resolution.y() == 1) dim--;
+  if (resolution.z() == 1) dim--;
+  //GateDebugMessage("Image",8,"Image dimension is " << dim << G4endl);
+
+  if (dim <= 1) {
+    // read values in columns
+    for(int i=0; i<nbOfValues; i++) {
+      is >> v; //GateDebugMessage("Image",8,"val = " << v << G4endl);
+      data[i] = atof(v.c_str()); //GateDebugMessage("Image",8,"val = " << data[i] << G4endl);
+    }
+  }
+  if (dim == 2) {
+    // write values in line/columns
+    double width=0;
+    double height=0;
+    if (resolution.x() == 1.0) { width = resolution.y(); height = resolution.z(); }
+    if (resolution.y() == 1.0) { width = resolution.x(); height = resolution.z(); }
+    if (resolution.z() == 1.0) { width = resolution.x(); height = resolution.y(); }
+    int i=0;
+    for(int y=0; y<height; y++) {
+      for(int x=0; x<width; x++) {
+	is >> v;
+	data[i] = atof(v.c_str());
+	i++;
+      }
+    }
+  }
+  if (dim == 3) {
+    int i=0;
+    for(int z=0; z<resolution.z(); z++) {
+      for(int y=0; y<resolution.y(); y++) {
+	for(int x=0; x<resolution.x(); x++) {
+	  is >> v;
+	  data[i] = atof(v.c_str());
+	  i++;
+	}
+      }
+    }
+  }
+  if (!is) {
+    //GateError( "Error while reading " << G4endl);
+    exit(0);
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::MergeDataByAddition(G4String filename) {
+  // check if it exist
+  std::ifstream is(filename);
+  if (!is) {
+    return;
+  }
+  is.close();
+  GateImageT<PixelType> temp;
+  temp.Read(filename);
+  const_iterator pi = temp.begin();
+  const_iterator pe = temp.end();
+  iterator po = begin();
+  while (pi != pe) {
+    *po = (*po)+(*pi);
+    ++po;
+    ++pi;
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::Write(G4String filename, const G4String & comment){
+  GateMessage("Actor",5,"GateImageT::write " << filename << G4endl);
+  G4String extension = getExtension(filename);
+  GateMessage("Actor",5,"extension = " << extension << G4endl);
+
+  std::ofstream os;
+  if (extension == "bin") {
+    // open
+    OpenFileOutput(filename, os);
+    WriteBin(os);
+  }
+  else {
+     if (extension == "txt") {
+      // open
+      GateMessage("Actor",5,"Write text file"<< G4endl);
+      OpenFileOutput(filename, os);
+      GateMessage("Actor",5,"Write text file"<< G4endl);
+      WriteAscii(os, comment);
+      GateMessage("Actor",5,"Write text file - end " << G4endl);
+    }
+    else {
+      if (extension == "hdr") {
+        // Header
+        GateAnalyzeHeader hdr;
+        hdr.SetVoxelType(GateAnalyzeHeader::FloatType);
+        hdr.SetImageSize((short int)resolution.x(),(short int)resolution.y(),(short int)resolution.z());
+        hdr.SetVoxelSize((GateAnalyzeHeader::PixelType)voxelSize.x(),
+                         (GateAnalyzeHeader::PixelType)voxelSize.y(),
+                         (GateAnalyzeHeader::PixelType)voxelSize.z());
+        hdr.Write(filename);
+        // Data
+        setExtension(filename,"img");
+        // open
+        OpenFileOutput(filename, os);
+        WriteBin(os);
+      }
+      else {
+        if (extension == "mhd" || extension == "mha") {
+          WriteMHD(filename);
+        }
+        else {
+          if (extension == "root") {
+            WriteRoot(filename);
+          }
+          else {
+            GateMessage("Image",0,"WARNING : Don't know how to write '" << extension
+                        << " format... I try ASCII file" << G4endl);
+            // open
+            OpenFileOutput(filename, os);
+            WriteAscii(os, comment);
+          }
+        }
+      }
+    }
+  }
+  os.close();
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::WriteBin(std::ofstream & os)
+{
+  GateMessage("Image",2,"GateImageT::WriteBin " << G4endl);
+  // write
+  // if PixelType is not float, we copy the values in a float vector
+  if (typeid(PixelType) != typeid(float)) {
+    std::vector<float>temp(nbOfValues);
+    for(int i=0;i<nbOfValues;i++){
+      temp[i]=(float)data[i]; // cast of PixelType to float
+    }
+    os.write((char*)(&(temp[0])), nbOfValues*sizeof(float));
+  }
+  else{
+    os.write((char*)(&(data[0])), nbOfValues*sizeof(PixelType));
+  }
+  if (!os) {
+    GateError( "Error while writing image data (WriteBin)." << G4endl);
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::WriteMHD(std::string filename)
+{
+  GateMessage("Image",2,"GateImageT::WriteMHD " << G4endl);
+  // Write mhd image
+  GateMHDImage * mhd = new GateMHDImage;
+  mhd->WriteHeader<PixelType>(filename, this);
+  mhd->WriteData<PixelType>(filename, this);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::WriteAscii(std::ofstream & os, const G4String & comment)
+{
+  GateMessage("Image",2,"GateImageT::WriteAscii " <<G4endl);
+  // write comment in header
+  os  << "#################################### " << G4endl
+      << "# Matrix Size= " << size        << G4endl
+      << "# Resol      = " << resolution  << G4endl
+      << "# VoxelSize  = " << voxelSize   << G4endl
+      << "# nbVal      = " << nbOfValues  << G4endl
+      << "#################################### " << G4endl;
+  if (comment != "") os << comment << G4endl;
+
+  // write data
+  int dim = 3;
+  if (resolution.x() == 1) dim--;
+  if (resolution.y() == 1) dim--;
+  if (resolution.z() == 1) dim--;
+  GateMessage("Image",5,"Image dimension is " << dim << G4endl);
+
+  if (dim <= 1) {
+    // write values in columns
+    for(int i=0; i<nbOfValues; i++)
+      os << std::setprecision(10) << data[i] << std::endl;
+  }
+  if (dim == 2) {
+    // write values in line/columns
+    double width=0;
+    double height=0;
+    if (resolution.x() == 1.0) { width = resolution.y(); height = resolution.z(); }
+    if (resolution.y() == 1.0) { width = resolution.x(); height = resolution.z(); }
+    if (resolution.z() == 1.0) { width = resolution.x(); height = resolution.y(); }
+    int i=0;
+    for(int y=0; y<height; y++) {
+      for(int x=0; x<width; x++) {
+	os << data[i] << " ";
+	i++;
+      }
+      os << std::endl;
+    }
+  }
+  if (dim == 3) {
+    int i=0;
+    for(int z=0; z<resolution.z(); z++) {
+      for(int y=0; y<resolution.y(); y++) {
+	for(int x=0; x<resolution.x(); x++) {
+	  os << data[i] << " ";
+	  i++;
+	}
+	os << std::endl;
+      }
+      os << std::endl;
+    }
+  }
+  if (!os) {
+    GateError( "WriteAscii: Error while writing ");
+    exit(0);
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::WriteRoot(G4String filename)
+{
+  GateMessage("Image",2,"GateImageT::WriteRoot " <<G4endl);
+#ifdef G4ANALYSIS_USE_ROOT
+  // GateMessage("Image", 0 , "Writing image root output in " << filename << G4endl);
+
+  if (mRootHistoDim == 1) {
+    TFile * f = new TFile(filename, "RECREATE");
+    TH1F * h = new TH1F("histo",
+			std::string("1D distribution "+filename).c_str(),
+			mRootHistoBinxNb,
+			mRootHistoBinxLow,
+			mRootHistoBinxUp);
+    double s = mRootHistoBinxSize/2.0;
+    int i=0;
+    for(double x=mRootHistoBinxLow+s; x<mRootHistoBinxUp; x+=mRootHistoBinxSize) {
+      h->Fill(x, data[i]);
+      i++;
+    }
+    h->Write();
+    f->Close();
+  }
+  else if (mRootHistoDim == 2) {
+    TFile * f = new TFile(filename, "RECREATE");
+    TH2F * h2 = new TH2F("histo",
+                         std::string("2D distribution "+filename).c_str(),
+                         mRootHistoBinxNb,
+                         mRootHistoBinxLow,
+                         mRootHistoBinxUp,
+                         mRootHistoBinyNb,
+                         mRootHistoBinyLow,
+                         mRootHistoBinyUp);
+    double sx = mRootHistoBinxSize/2.0;
+    double sy = mRootHistoBinySize/2.0;
+    double x=mRootHistoBinxLow+sx;
+    double y=mRootHistoBinyLow+sy;
+    for(int i = 0;i<mRootHistoBinxNb;i++)
+      {
+        y=mRootHistoBinyLow+sy;
+        for(int j = 0;j<mRootHistoBinyNb;j++)
+          {
+            h2->Fill(x,y, data[i*mRootHistoBinyNb+j]);
+            y+=mRootHistoBinySize;
+          }
+        x+=mRootHistoBinxSize;
+      }
+
+    h2->Write();
+    f->Close();
+  }
+  else {
+    TFile * f = new TFile(filename, "RECREATE");
+    TH3F * h3 = new TH3F("histo",
+                         std::string("3D distribution "+filename).c_str(),
+                         mRootHistoBinxNb,
+                         mRootHistoBinxLow,
+                         mRootHistoBinxUp,
+                         mRootHistoBinyNb,
+                         mRootHistoBinyLow,
+                         mRootHistoBinyUp,
+                         mRootHistoBinzNb,
+                         mRootHistoBinzLow,
+                         mRootHistoBinzUp);
+
+
+    double sx = mRootHistoBinxSize/2.0;
+    double sy = mRootHistoBinySize/2.0;
+    double sz = mRootHistoBinzSize/2.0;
+    double x=mRootHistoBinxLow+sx;
+    double y=mRootHistoBinyLow+sy;
+    double z=mRootHistoBinzLow+sz;
+    for(int i = 0;i<mRootHistoBinxNb;i++)
+      {
+        y=mRootHistoBinyLow+sy;
+        for(int j = 0;j<mRootHistoBinyNb;j++)
+          {
+            z=mRootHistoBinzLow+sz;
+            for(int k = 0;k<mRootHistoBinzNb;k++)
+              {
+
+                h3->Fill(x,y,z, data[k*mRootHistoBinxNb*mRootHistoBinyNb+ j*mRootHistoBinxNb+i]);
+                z+=mRootHistoBinzSize;
+
+              }
+            y+=mRootHistoBinySize;
+          }
+        x+=mRootHistoBinxSize;
+
+        h3->Write();
+
+      }
+
+    f->Close();
+  }
+
+#endif
+#ifndef G4ANALYSIS_USE_ROOT
+  GateError(filename<<" was not created. GATE was compiled without ROOT!");
+#endif
+
+
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+PixelType
+GateImageT<PixelType>::GetNeighborValueFromCoordinate(const ESide & side, const G4ThreeVector & coord)
+{
+  G4ThreeVector c(coord);
+  switch (side) {
+  case kMX:c.setX(coord.x()-1); break;
+  case kPX:c.setX(coord.x()+1); break;
+  case kMY:c.setY(coord.y()-1); break;
+  case kPY:c.setY(coord.y()+1); break;
+  case kMZ:c.setZ(coord.z()-1); break;
+  case kPZ:c.setZ(coord.z()+1); break;
+  default: break;
+    //	GateError("I don't know side = " << side);
+  }
+  return GetValue(GetIndexFromCoordinates(c));
+}
+//-----------------------------------------------------------------------------

@@ -1,4 +1,6 @@
 // -*- C++ -*-
+// ---------------------------------------------------------------------------
+//
 // This file is a part of the CLHEP - a Class Library for High Energy Physics.
 //
 
@@ -644,7 +646,7 @@ HepSymMatrix HepDiagMatrix::similarity(const HepMatrix &hm1) const
     HepMatrix::mcIter mc = hm1.m.begin();
     for(int c=1;c<=r;c++) {
       HepMatrix::mcIter mi = m.begin();
-      register double tmp = 0;
+      double tmp = 0;
       HepMatrix::mcIter mr = mrr;
       for(int i=0;i<hm1.num_col();i++)
 	tmp+=*(mr++) * *(mc++) * *(mi++);
@@ -656,7 +658,7 @@ HepSymMatrix HepDiagMatrix::similarity(const HepMatrix &hm1) const
 
 double HepDiagMatrix::similarity(const HepVector &hm1) const
 {
-  register double mret;
+  double mret;
   CHK_DIM_1(num_row(),hm1.num_row(),similarity);
   HepMatrix::mcIter mi = m.begin();
   HepMatrix::mcIter mv = hm1.m.begin();
@@ -685,7 +687,7 @@ HepSymMatrix HepDiagMatrix::similarityT(const HepMatrix &hm1) const
     for(int c=1;c<=r;c++)
       {
 	HepMatrix::mcIter mi = m.begin();
-	register double tmp = hm1(1,r)*hm1(1,c)* *(mi++);
+	double tmp = hm1(1,r)*hm1(1,c)* *(mi++);
 	for(int i=2;i<=hm1.num_row();i++)
 	  tmp+=hm1(i,r)*hm1(i,c)* *(mi++);
 	mret.fast(r,c) = tmp;

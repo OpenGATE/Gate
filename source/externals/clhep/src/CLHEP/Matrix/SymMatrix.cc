@@ -1,4 +1,6 @@
 // -*- C++ -*-
+// ---------------------------------------------------------------------------
+//
 // This file is a part of the CLHEP - a Class Library for High Energy Physics.
 //
 
@@ -749,7 +751,7 @@ HepSymMatrix HepSymMatrix::similarity(const HepMatrix &hm1) const
   for(int r=1;r<=mret.num_row();r++) {
     HepMatrix::mcIter hm1c1 = hm1.m.begin();
     for(int c=1;c<=r;c++) {
-      register double tmp = 0.0;
+      double tmp = 0.0;
       HepMatrix::mIter tempri = tempr1;
       HepMatrix::mcIter hm1ci = hm1c1;
       for(int i=1;i<=hm1.num_col();i++) {
@@ -779,7 +781,7 @@ HepSymMatrix HepSymMatrix::similarity(const HepSymMatrix &hm1) const
     HepMatrix::mcIter hm1c1 = hm1.m.begin();
     int c;
     for(c=1;c<=r;c++) {
-      register double tmp = 0.0;
+      double tmp = 0.0;
       HepMatrix::mIter tempri = tempr1;
       HepMatrix::mcIter hm1ci = hm1c1;
       int i;
@@ -800,7 +802,7 @@ HepSymMatrix HepSymMatrix::similarity(const HepSymMatrix &hm1) const
 
 double HepSymMatrix::similarity(const HepVector &hm1)
 const {
-  register double mret = 0.0;
+  double mret = 0.0;
   HepVector temp = (*this) *hm1;
 // If hm1*(*this) has correct dimensions, then so will the hm1.T multiplication.
 // So there is no need to check dimensions again.
@@ -826,7 +828,7 @@ HepSymMatrix HepSymMatrix::similarityT(const HepMatrix &hm1) const
   for(int r=1;r<=mret.num_row();r++) {
     HepMatrix::mcIter m11c = hm1.m.begin();
     for(int c=1;c<=r;c++) {
-      register double tmp = 0.0;
+      double tmp = 0.0;
       for(int i=1;i<=hm1.num_row();i++) {
 	HepMatrix::mIter tempir = temp1r + n*(i-1);
 	HepMatrix::mcIter hm1ic = m11c + n*(i-1);

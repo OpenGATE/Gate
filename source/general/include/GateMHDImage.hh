@@ -9,12 +9,21 @@
 #ifndef __GATEMHDIMAGE_HH__
 #define __GATEMHDIMAGE_HH__
 
+// g4
 #include "globals.hh"
 #include "G4ThreeVector.hh"
+
+// std
 #include <vector>
 
+// gate
 #include "GateMessageManager.hh"
-#include "GateImage.hh"
+
+// itk (for mhd reader)
+#include "metaObject.h"
+#include "metaImage.h"
+
+template<class PixelType> class GateImageT;
 
 //-----------------------------------------------------------------------------
 // Read an write MHD image file format. Use the metaImageIO from ITK.
@@ -27,16 +36,13 @@ public:
   ~GateMHDImage();
 
   void ReadHeader(std::string & filename);
-  void ReadData(std::string filename, std::vector<float> & data);
+  template<class PixelType>
+  void ReadData(std::string filename, std::vector<PixelType> & data);
 
-  void ReadHeader_old(std::string & filename);
-  void ReadData_old(std::string filename, std::vector<float> & data);
-
-  void WriteHeader(std::string filename, GateImage * image, bool writeData=false);
-  void WriteData(std::string filename, GateImage * image);
-
-  void WriteHeader_old(std::string filename, GateImage * image);
-  void WriteData_old(std::string filename, GateImage * image);
+  template<class PixelType>
+  void WriteHeader(std::string filename, GateImageT<PixelType> * image, bool writeData=false);
+  template<class PixelType>
+  void WriteData(std::string filename, GateImageT<PixelType> * image);
 
   std::vector<double> size;
   std::vector<double> spacing;
@@ -56,6 +62,6 @@ protected:
 
 };
 
-#endif 
+#include "GateMHDImage.icc"
 
-
+#endif

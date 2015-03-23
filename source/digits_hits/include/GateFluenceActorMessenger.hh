@@ -27,9 +27,16 @@ public:
   void SetNewValue(G4UIcommand*, G4String);
 
 protected:
+
+  G4UIcmdWithABool * pEnableSquaredCmd;
+  G4UIcmdWithABool * pEnableUncertaintyCmd;
+  G4UIcmdWithABool * pEnableNormCmd;
+  G4UIcmdWithABool * pEnableNumberOfHitsCmd;
   GateFluenceActor * pFluenceActor;
+  G4UIcmdWithAString * pSetResponseDetectorFileCmd;
   G4UIcmdWithABool * pEnableScatterCmd;
   G4UIcmdWithAString * pSetScatterOrderFilenameCmd;
+  G4UIcmdWithAString * pSetSeparateProcessFilenameCmd;
 };
 
 #endif /* end #define GATEFLUENCEACTORMESSENGER_HH*/

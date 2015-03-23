@@ -17,14 +17,18 @@
 #include "G4TransportationManager.hh"
 #include "G4PhysListFactory.hh"
 #include "G4VUserPhysicsList.hh"
+#include "G4VModularPhysicsList.hh"
 #include "G4RegionStore.hh"
 #include "G4Region.hh"
-
 #include "G4LossTableManager.hh"
+#include "G4EmStandardPhysics.hh"
+#if (G4VERSION_MAJOR > 9)
+#include "G4StepLimiterPhysics.hh"
+#endif
 
 //----------------------------------------------------------------------------------------
 GateRunManager::GateRunManager():G4RunManager()
-{ 
+{
   pMessenger = new GateRunManagerMessenger(this);
   mHounsfieldToMaterialsBuilder = new GateHounsfieldToMaterialsBuilder();
   mIsGateInitializationCalled = false;
@@ -37,7 +41,7 @@ GateRunManager::GateRunManager():G4RunManager()
 
 //----------------------------------------------------------------------------------------
 GateRunManager::~GateRunManager()
-{ 
+{
   delete GateActorManager::GetInstance();
   delete pMessenger;
   delete mHounsfieldToMaterialsBuilder;
@@ -45,14 +49,11 @@ GateRunManager::~GateRunManager()
 //----------------------------------------------------------------------------------------
 
 
-//FIXME 
-#include "G4EmStandardPhysics.hh"
-
 //----------------------------------------------------------------------------------------
 // Initialise geometry, actors and the physics list
 // This code was derived from the code of G4RunManager::Initialise()
 void GateRunManager::InitializeAll()
-{  
+{
   // Get the current application state
   G4StateManager* stateManager = G4StateManager::GetStateManager();
   G4ApplicationState currentState = stateManager->GetCurrentState();
@@ -64,54 +65,60 @@ void GateRunManager::InitializeAll()
 	     << "G4RunManager::Initialize() ignored." << G4endl;
       return;
     }
-  
+
   GateMessage("Core", 0, "Initialization of geometry" << G4endl);
   InitGeometryOnly();
-      
+
   // if(!physicsInitialized) {
   GateMessage("Core", 0, "Initialization of physics" << G4endl);
   // We call the PurgeIfFictitious method to delete the gamma related processes
   // that the user defined if the fictitiousProcess is called.
   GatePhysicsList::GetInstance()->PurgeIfFictitious();
-  
+
   // Get the build-in physic list if the user ask for it
   // Note the EM-only physic lists has already been build in GatePhysicsList
   if (mUserPhysicListName != "") {
 
     // Need to be in PreInit state (cheat)
-    G4PhysListFactory *physListFactory = new G4PhysListFactory(); 
+    G4PhysListFactory *physListFactory = new G4PhysListFactory();
     G4ApplicationState currentState = G4StateManager::GetStateManager()->GetCurrentState();
     G4StateManager::GetStateManager()->SetNewState(G4State_PreInit);
 
     // Get G4 physics list from the name
-    mUserPhysicList = physListFactory->GetReferencePhysList(mUserPhysicListName); 
-  
+    mUserPhysicList = physListFactory->GetReferencePhysList(mUserPhysicListName);
+
     // Check if it exists
     if (mUserPhysicList == NULL) {
-      GateError("Error the physic list named '" << mUserPhysicListName 
-                << "' is unknown. The set of available physic list is : " 
+      GateError("Error the physic list named '" << mUserPhysicListName
+                << "' is unknown. The set of available physic list is : "
                 << GatePhysicsList::GetInstance()->GetListOfPhysicsLists());
     }
 
-    // There are two phys list : 
+    // There are two phys list :
     // - GatePhysicsList::GetInstance() is the one of Gate
     // - mUserPhysicList : the one created by G4 if user choose a buildin PL.
-    // the Gate one is used to store/retrieve cuts parameters. 
+    // the Gate one is used to store/retrieve cuts parameters.
 
     // Consider the e- cut as default (in mm)
     double def = GatePhysicsList::GetInstance()->mapOfRegionCuts["DefaultRegionForTheWorld"].electronCut;
     mUserPhysicList->SetDefaultCutValue(def*mm);
     mUserPhysicList->SetCutsWithDefault();
-      
+
     // This function set the cuts define by the user to the phys list build by G4
     GatePhysicsList::GetInstance()->DefineCuts(mUserPhysicList);
 
     // Also set the lower edge energy
-    G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(GatePhysicsList::GetInstance()->GetLowEdgeEnergy(), 
+    G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(GatePhysicsList::GetInstance()->GetLowEdgeEnergy(),
                                                                     G4ProductionCutsTable::GetProductionCutsTable()->GetHighEdgeEnergy());
 
     // Initialization
     G4RunManager::SetUserInitialization(mUserPhysicList);
+
+    //To take into account the user cuts (steplimiter and special cuts)
+#if (G4VERSION_MAJOR > 9)
+    G4VModularPhysicsList *mUserPhysicListTemp = dynamic_cast<G4VModularPhysicsList*>(mUserPhysicList);
+    mUserPhysicListTemp->RegisterPhysics(new G4StepLimiterPhysics());
+#endif
 
     // Re set the initial state
     G4StateManager::GetStateManager()->SetNewState(currentState);
@@ -129,7 +136,7 @@ void GateRunManager::InitializeAll()
   GateActorManager::GetInstance() ->CreateListsOfEnabledActors();
 
   initializedAtLeastOnce = true;
-  
+
   // Set this flag to true (prevent in RunInitialisation to use
   // /run/initialize instead of /gate/run/initialize
   mIsGateInitializationCalled = true;
@@ -140,7 +147,7 @@ void GateRunManager::InitializeAll()
 // Initialise only the geometry, to allow the building of the GATE geometry
 // This code was derived from the code of G4RunManager::Initialise()
 void GateRunManager::InitGeometryOnly()
-{                   
+{
   // Initialise G4Regions
   GateDebugMessageInc("Core", 0, "Initialisation of G4Regions" << G4endl);
   G4RegionStore * RegionStore = G4RegionStore::GetInstance();
@@ -159,17 +166,17 @@ void GateRunManager::InitGeometryOnly()
   GateMessageDec("Cuts", 5, "G4Regions Initialized!" << G4endl);
 
   // Initialise the geometry in the main() programm
-  if (!geometryInitialized) 
+  if (!geometryInitialized)
     {
       GateMessage("Core", 1, "Initialization of geometry" << G4endl);
       G4RunManager::InitializeGeometry();
-    }  
+    }
   else
     {
       // Initialize the geometry by calling /gate/run/initialize
       det = detConstruction->GateDetectorConstruction::GetGateDetectorConstruction();
       det->GateDetectorConstruction::SetGeometryStatusFlag(GateDetectorConstruction::geometry_needs_rebuild);
-      det->GateDetectorConstruction::UpdateGeometry();	  
+      det->GateDetectorConstruction::UpdateGeometry();
       //	  nParallelWorlds = userDetector->ConstructParallelGeometries();
       //          kernel->SetNumberOfParallelWorld(nParallelWorlds);
       //	  geometryInitialized=true;
@@ -199,7 +206,7 @@ void GateRunManager::RunInitialization()
   // GateMessage("Core", 0, "Initialization of the run " << G4endl);
   // Perform a regular initialisation
   G4RunManager::RunInitialization();
-  
+
   // Initialization of the atom deexcitation processes
   // must be done after all other initialization
   if(G4LossTableManager::Instance()->AtomDeexcitation()) {
@@ -214,7 +221,6 @@ void GateRunManager::RunInitialization()
   G4ThreeVector center(0,0,0);
   G4TransportationManager::GetTransportationManager()
     ->GetNavigatorForTracking()
-    ->LocateGlobalPointAndSetup(center,0,false); 
+    ->LocateGlobalPointAndSetup(center,0,false);
 }
 //----------------------------------------------------------------------------------------
-

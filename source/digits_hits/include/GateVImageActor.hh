@@ -46,7 +46,7 @@ public :
   // When a image is managed by the actor, you must initialize the
   // coordinate system with this function
   void SetOriginTransformAndFlagToImage(GateImageWithStatistic & image);
-  void SetOriginTransformAndFlagToImage(GateImage & image);
+  void SetOriginTransformAndFlagToImage(GateVImage & image);
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------

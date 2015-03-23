@@ -14,7 +14,7 @@ uncertainty) and map of producted C11.
 Example of photon beam in patient CT image.  Output is a 3D dose
 distribution map (with associated uncertainty). Two different
 navigators are tested NestedParameterized and Regionalized, with two
-number of materials). 
+number of materials).
 
 (This example is similar to the example1 presented on the wiki web
 site of Gate V6.1)
@@ -23,7 +23,7 @@ site of Gate V6.1)
 - Example 3
 
 Example of photon beam in patient CT image with IMRT irradiation. 100
-slices with different MLC positions. 
+slices with different MLC positions.
 
 (This example is similar to the example2 presented on the wiki web
 site of Gate V6.1)
@@ -50,7 +50,7 @@ with a treatment plan obtained from a TPS.
 
 Example of proton beam in heterogeneous phantom (water, bones, Lung)
 with Pencil Beam Scanning source: comparison between dose to water and
-dose to dose to medium (conventional one). 
+dose to dose to medium (conventional one).
 
 ------------------------------------------------------------------
 - Example 7
@@ -75,5 +75,6 @@ from [Jan et al PMB 2011].
 ------------------------------------------------------------------
 - Example 10
 
-Radiography of a thorax phantom. Outputs are 3D dose
-distribution maps computed with the classical method and the accelerated (TLE) method.
+Radiography of a thorax phantom. Outputs are 3D dose distribution maps
+computed with the classical method, the TLE method or the seTLE
+method.

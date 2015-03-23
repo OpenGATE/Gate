@@ -116,7 +116,7 @@ void GateOpticalBiolum_GPU(const GateGPUIO_Input * input,
   // ROOT export
   gROOT->Reset();
   gPluginMgr->AddHandler("TVirtualStreamerInfo", "*", "TStreamerInfo","RIO", "TStreamerInfo()");
-  TFile* f = new TFile("gpu-test.root", "RECREATE", "ROOT file for phase space", 9);
+  TFile* f = new TFile("gpu-test-Boundary-ON.root", "RECREATE", "ROOT file for phase space", 9);
   TTree* tree = new TTree("PhaseSpace", "Phase space tree");
 
   float px, py, pz, dx, dy, dz, energy;

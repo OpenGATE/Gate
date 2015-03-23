@@ -31,6 +31,8 @@
 #include "G4VisAttributes.hh"
 // Setup a static color table for source visualization
 
+//-------------------------------------------------------------------------------------------------
+// Setup a static color table for source visualization
 #define N_COLORCODES 10
 GateVSource::GateColorPair GateVSource::theColorTable[N_COLORCODES] = {
     GateColorPair ("white",      G4Colour(1.0, 1.0, 1.0)),
@@ -67,7 +69,7 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
   m_forcedUnstableFlag  = false;
   m_forcedLifeTime      = -1.*s;
   m_materialName = "Air";
-  mRelativePlacementVolumeName = "World";
+  mRelativePlacementVolumeName = "world";
   mEnableRegularActivity = false;
 
   mSourceTime = 0.*s;
@@ -79,6 +81,9 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
   mRotY = CLHEP::HepYHat;
   mRotZ = CLHEP::HepZHat;
 //   mUserPosRndm = NULL;
+  mIsUserFocalShapeActive = false;
+  mUserFocalShapeInitialisation = false;
+
 
   m_posSPS = new GateSPSPosDistribution();
   m_posSPS->SetBiasRndm( GetBiasRndm() );
@@ -166,6 +171,7 @@ void GateVSource::Visualize(G4String parmString){
 
 #endif
 }
+//-------------------------------------------------------------------------------------------------
 
 
 //----------------------------------------------------------------------------------------
@@ -207,6 +213,13 @@ mNumberOfParticlesPerSlice.push_back( nParticles);
 
 }*/
 //----------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------
+G4String GateVSource::GetRelativePlacementVolume() {
+  return mRelativePlacementVolumeName;
+}
+//-------------------------------------------------------------------------------------------------
 
 
 //-------------------------------------------------------------------------------------------------
@@ -331,6 +344,7 @@ void GateVSource::TrigMat()
   G4cout<<"------------------|||||||||||| TEST de SEBES =          "<<v->GetObjectName()<<G4endl;
  
 }
+//-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
 void GateVSource::Dump( G4int level ) 
@@ -644,6 +658,7 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
 {
   if( GetParticleDefinition() == NULL ) return;
   if( GetPosDist()->GetPosDisType() == "UserFluenceImage" ) InitializeUserFluence();
+  if( mUserFocalShapeInitialisation ) InitializeUserFocalShape();
     
   if( nVerboseLevel > 1 ) {
     G4cout << " NumberOfParticlesToBeGenerated: " << GetNumberOfParticles() << G4endl ;
@@ -667,7 +682,10 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
 
       for( G4int i = 0 ; i != GetNumberOfParticles() ; ++i )
         {
-          G4ParticleMomentum particle_momentum_direction = m_angSPS->GenerateOne();
+          G4ParticleMomentum particle_momentum_direction;
+          if(mIsUserFocalShapeActive) { particle_momentum_direction = UserFocalShapeGenerateOne(); }
+          else { particle_momentum_direction = m_angSPS->GenerateOne(); }
+
           // Set placement relative to attached volume
           ChangeParticleMomentumRelativeToAttachedVolume(particle_momentum_direction);
           // DD(particle_momentum_direction);
@@ -748,7 +766,7 @@ G4String nameMaterial = material->GetName();*/
 //-------------------------------------------------------------------------------------------------
 void GateVSource::ChangeParticlePositionRelativeToAttachedVolume(G4ThreeVector & position) {
   // Do nothing if attached to world
-  if (mRelativePlacementVolumeName == "World") return;
+  if (mRelativePlacementVolumeName == "world") return;
 
   // Current position
   GateMessage("Beam", 4, "Current particle position = " << position << G4endl);
@@ -760,6 +778,7 @@ void GateVSource::ChangeParticlePositionRelativeToAttachedVolume(G4ThreeVector &
     const G4ThreeVector & t = v->GetPhysicalVolume(0)->GetObjectTranslation();
     position = r*position;
     position = position+t;    
+    GateMessage("Beam", 4, "Change current particle position = " << position << G4endl);
     // next volume
     v = v->GetParentVolume();
   }
@@ -770,7 +789,7 @@ void GateVSource::ChangeParticlePositionRelativeToAttachedVolume(G4ThreeVector &
 void GateVSource::ChangeParticleMomentumRelativeToAttachedVolume(G4ParticleMomentum & momentum) {
 
   // Do nothing if attached to world
-  if (mRelativePlacementVolumeName == "World") return;
+  if (mRelativePlacementVolumeName == "world") return;
 
   // Current position
   GateMessage("Beam", 4, "Current particle mom = " << momentum << G4endl);
@@ -861,7 +880,7 @@ void GateVSource::InitializeUserFluence()
     
     // Generate XBias and "YBias knowing X" according to fluence image
     double posX,posY;
-    posX = ((0.5 * sizeX) + userFluenceImage.GetOrigin().x());
+    posX = (0.5 * sizeX) + userFluenceImage.GetOrigin().x();
 //     posX = ((0.5 * sizeX) - userFluenceImage.GetHalfSize().x());
     
     mUserPosGenX.SetXBias(G4ThreeVector(0.,0.,0.));
@@ -870,7 +889,7 @@ void GateVSource::InitializeUserFluence()
       mUserPosX[i] = posX;
 
       sum = 0.0;
-      posY = ((0.5 * sizeY) + userFluenceImage.GetOrigin().y());
+      posY = (0.5 * sizeY) + userFluenceImage.GetOrigin().y();
 //       posY = ((0.5 * sizeY) - userFluenceImage.GetHalfSize().y());
       
       mUserPosGenY[i].SetYBias(G4ThreeVector(0.,0.,0.));
@@ -959,5 +978,33 @@ void GateVSource::SetPosRot2(G4ThreeVector posrot2)
   mRotZ = mRotZ.unit();
   mRotY = mRotZ.cross(mRotX); // y'
   mRotY = mRotY.unit();
+}
+//----------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------
+void GateVSource::InitializeUserFocalShape()
+{
+  mIsUserFocalShapeActive = true;
+  mUserFocalShapeInitialisation = false;
+  mUserFocalShape.SetBiasRndm( GetBiasRndm() );
+  mUserFocalShape.SetPosDisType("Plane");
+  mUserFocalShape.SetPosDisShape("Circle");
+
+  m_angSPS->SetAngDistType("focused");
+}
+//----------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------
+G4ThreeVector GateVSource::UserFocalShapeGenerateOne()
+{
+  G4ThreeVector position = mUserFocalShape.GenerateOne();
+//   DD(position);
+  m_angSPS->SetFocusPoint(position);
+  G4ThreeVector momentum = m_angSPS->GenerateOne();
+//   DD(momentum);
+//   DD(position);
+//   DD(momentum);
+  
+  return momentum;
 }
 //----------------------------------------------------------------------------------------

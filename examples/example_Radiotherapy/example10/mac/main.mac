@@ -1,4 +1,15 @@
+
+#=====================================================
+# VERBOSITY
+#=====================================================
+
 /control/execute mac/verbose.mac
+
+#=====================================================
+# VISUALISATION
+#=====================================================
+
+#/control/execute mac/visu.mac
 
 #=====================================================
 # GEOMETRY
@@ -6,55 +17,74 @@
 
 /gate/geometry/setMaterialDatabase data/GateMaterials.db
 
+# World
+/gate/world/setMaterial            Air
+/gate/world/geometry/setXLength    1.0 m
+/gate/world/geometry/setYLength    2.0 m
+/gate/world/geometry/setZLength    1.0 m
+
 # Generate materials from Hounsfield units
-/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/SimpleMaterialsTable.txt 
-/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt 
+/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/SimpleMaterialsTable.txt
+/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt
 /gate/HounsfieldMaterialGenerator/SetDensityTable                   data/Schneider2000DensitiesTable.txt
 /gate/HounsfieldMaterialGenerator/SetDensityTolerance               0.1 g/cm3
-/gate/HounsfieldMaterialGenerator/SetOutputMaterialDatabaseFilename data/Thorax-HUmaterials.db
-/gate/HounsfieldMaterialGenerator/SetOutputHUMaterialFilename       data/Thorax-HU2mat.txt
+/gate/HounsfieldMaterialGenerator/SetOutputMaterialDatabaseFilename data/phantom-HUmaterials.db
+/gate/HounsfieldMaterialGenerator/SetOutputHUMaterialFilename       data/phantom-HU2mat.txt
 /gate/HounsfieldMaterialGenerator/Generate
 
+/gate/world/daughters/name                     phantom
+/gate/world/daughters/insert                   ImageNestedParametrisedVolume
 
-/gate/world/setMaterial            Air
-/gate/world/geometry/setXLength    10.0 m
-/gate/world/geometry/setYLength    10.0 m
-/gate/world/geometry/setZLength    10.0 m
+/gate/geometry/setMaterialDatabase             data/phantom-HUmaterials.db
+/gate/phantom/geometry/setHUToMaterialFile     data/phantom-HU2mat.txt
+/gate/phantom/geometry/setImage                data/phantom.mhd
 
-/gate/world/daughters/name                      thorax
-/gate/world/daughters/insert                    ImageNestedParametrisedVolume
-
-
-/gate/geometry/setMaterialDatabase             data/Thorax-HUmaterials.db
-/gate/thorax/geometry/SetHUToMaterialFile      data/Thorax-HU2mat.txt
-/gate/thorax/geometry/SetImage                 data/resampledTHORAX.mhd
-
-/gate/thorax/placement/setTranslation                  0 0 0 mm
+/gate/phantom/geometry/TranslateTheImageAtThisIsoCenter  154 145 80 mm
 
 
 #=====================================================
 # PHYSICS
 #=====================================================
 
-/control/execute mac/Physicslist_Penelope.mac
+/gate/physics/addPhysicsList emlivermore
+/gate/physics/addAtomDeexcitation
 
-/gate/physics/Gamma/SetCutInRegion      thorax 0.5 mm
-/gate/physics/Electron/SetCutInRegion   thorax 2.8 m
-/gate/physics/Positron/SetCutInRegion   thorax 2.8 m
+/gate/physics/Gamma/SetCutInRegion      phantom 0.1 mm
+/gate/physics/Electron/SetCutInRegion   phantom 0.1 m
+/gate/physics/Positron/SetCutInRegion   phantom 0.1 m
 
-/gate/physics/SetMinKineticEnergyInRegion thorax 100 keV
+/gate/physics/SetMinKineticEnergyInRegion phantom 100 keV
 /gate/physics/ActivateSpecialCuts e-
-
 
 #=====================================================
 # DETECTORS
 #=====================================================
 
-/control/execute mac/detectors.mac
+# ----------------------------------------------------
+# the following actor regularly store the current number of
+# event/track/step in a file
+
+/gate/actor/addActor               SimulationStatisticActor stat
+/gate/actor/stat/saveEveryNSeconds 600
+
+/gate/actor/addActor                   DoseActor  dose
+/gate/actor/dose/attachTo    	       phantom
+/gate/actor/dose/stepHitType           random
+/gate/actor/dose/setVoxelSize          2 2 2 mm
+/gate/actor/dose/enableDose            true
+/gate/actor/dose/enableUncertaintyDose true
+/gate/actor/dose/save                  output/dose.mhd
+
+/gate/actor/addActor                  TLEDoseActor  tle
+/gate/actor/tle/attachTo    	      phantom
+/gate/actor/tle/stepHitType           random
+/gate/actor/tle/setVoxelSize          2 2 2 mm
+/gate/actor/tle/enableDose            true
+/gate/actor/tle/enableUncertaintyDose true
+/gate/actor/tle/save                  output/dose-tle.mhd
 
 # Set the names of the outputs
-/gate/actor/stat/save output/stat-photon-thorax.txt
-
+/gate/actor/stat/save output/stat.txt
 
 #=====================================================
 # INITIALISATION
@@ -74,5 +104,6 @@
 
 /gate/random/setEngineName MersenneTwister
 /gate/random/setEngineSeed auto
-/gate/application/setTotalNumberOfPrimaries 1000000
+
+/gate/application/setTotalNumberOfPrimaries 50000
 /gate/application/start

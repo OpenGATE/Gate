@@ -1,0 +1,107 @@
+
+#=====================================================
+# VERBOSITY
+#=====================================================
+
+/control/execute mac/verbose.mac
+
+#=====================================================
+# VISUALISATION
+#=====================================================
+
+#/control/execute mac/visu.mac
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+
+# World
+/gate/world/setMaterial            Air
+/gate/world/geometry/setXLength    1.0 m
+/gate/world/geometry/setYLength    2.0 m
+/gate/world/geometry/setZLength    1.0 m
+
+# Generate materials from Hounsfield units
+/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/SimpleMaterialsTable.txt
+/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt
+/gate/HounsfieldMaterialGenerator/SetDensityTable                   data/Schneider2000DensitiesTable.txt
+/gate/HounsfieldMaterialGenerator/SetDensityTolerance               0.1 g/cm3
+/gate/HounsfieldMaterialGenerator/SetOutputMaterialDatabaseFilename data/phantom-HUmaterials.db
+/gate/HounsfieldMaterialGenerator/SetOutputHUMaterialFilename       data/phantom-HU2mat.txt
+/gate/HounsfieldMaterialGenerator/Generate
+
+/gate/world/daughters/name                     phantom
+/gate/world/daughters/insert                   ImageNestedParametrisedVolume
+
+/gate/geometry/setMaterialDatabase             data/phantom-HUmaterials.db
+/gate/phantom/geometry/setHUToMaterialFile     data/phantom-HU2mat.txt
+/gate/phantom/geometry/setImage                data/phantom.mhd
+
+/gate/phantom/geometry/TranslateTheImageAtThisIsoCenter  154 145 80 mm
+
+
+#=====================================================
+# PHYSICS
+#=====================================================
+
+/gate/physics/addPhysicsList emlivermore
+/gate/physics/addAtomDeexcitation
+
+/gate/physics/Gamma/SetCutInRegion      phantom 0.1 mm
+/gate/physics/Electron/SetCutInRegion   phantom 0.1 m
+/gate/physics/Positron/SetCutInRegion   phantom 0.1 m
+
+/gate/physics/SetMinKineticEnergyInRegion phantom 100 keV
+/gate/physics/ActivateSpecialCuts e-
+
+#=====================================================
+# DETECTORS
+#=====================================================
+
+# ----------------------------------------------------
+# the following actor regularly store the current number of
+# event/track/step in a file
+
+/gate/actor/addActor               SimulationStatisticActor stat
+/gate/actor/stat/saveEveryNSeconds 600
+
+/gate/actor/addActor                             SETLEDoseActor setle
+/gate/actor/setle/attachTo                       phantom
+/gate/actor/setle/setVoxelSize                   2 2 2 mm
+/gate/actor/setle/enableHybridino                true
+/gate/actor/setle/setPrimaryMultiplicity         200
+/gate/actor/setle/setSecondaryMultiplicity       400
+/gate/actor/setle/enableDose                     true
+/gate/actor/setle/enableUncertaintyDose          true
+/gate/actor/setle/enablePrimaryDose              true
+/gate/actor/setle/enablePrimaryUncertaintyDose   false
+/gate/actor/setle/enableSecondaryDose            true
+/gate/actor/setle/enableSecondaryUncertaintyDose false
+/gate/actor/setle/save                           output/dose-setle.mhd
+
+# Set the names of the outputs
+/gate/actor/stat/save output/stat.txt
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+
+#=====================================================
+# BEAMS
+#=====================================================
+
+/control/execute mac/beam-photon.mac
+
+#=====================================================
+# START BEAMS
+#=====================================================
+
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed auto
+
+/gate/application/setTotalNumberOfPrimaries 500
+/gate/application/start

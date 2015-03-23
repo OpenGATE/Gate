@@ -39,6 +39,7 @@ void ReadLineTo3Doubles(double *toto, char *oneline);
 //------------------------------------------------------------------------------------------------------
 class GateSourceTPSPencilBeam : public GateVSource
 {
+
 public:
 
   typedef CLHEP::RandGeneral RandGeneral;
@@ -69,7 +70,11 @@ public:
   //List of not allowed fields
   void SetNotAllowedField (int fieldID) {mNotAllowedFields.push_back(fieldID);}
   // Select a single Layer
+  void SetAllowedField (int fieldID) {mAllowedFields.push_back(fieldID);}
+  //MU to Protons conversion
   void SelectLayerID (int layerID) { mSelectedLayerID = layerID;}
+  //MU to Protons conversion
+  void SelectSpot (int spot) { mSelectedSpot = spot;}
   //MU to Protons conversion
   double ConvertMuToProtons(double weight, double energy);
   //select beam descriptionfile
@@ -80,6 +85,7 @@ public:
   void SetSpotIntensity(bool b) {mSpotIntensityAsNbProtons=b;}
   //Convergent or divergent beam model
   void SetBeamConvergence(bool c) {mConvergentSource=c;}
+  int GetCurrentSpotID() {return mCurrentSpot;}
 
 protected:
 
@@ -109,6 +115,8 @@ protected:
   RandGeneral * mDistriGeneral;
   //Not alloweed fields
   vector<int> mNotAllowedFields;
+  //Allowed fields
+  vector<int> mAllowedFields;
   //clinical beam parameters (polynomial equations)
   vector<double> mEnergy, mEnergySpread, mX, mY, mTheta, mPhi, mXThetaEmittance, mYPhiEmittance;
   //Configuration of spot intensity
@@ -116,6 +124,7 @@ protected:
   //Convergent or divergent beam model
   bool mConvergentSource;
   int mSelectedLayerID;
+  int mSelectedSpot;
 };
 //------------------------------------------------------------------------------------------------------
 

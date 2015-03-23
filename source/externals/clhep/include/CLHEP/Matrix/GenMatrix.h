@@ -4,9 +4,9 @@
 // CLASSDOC ON
 //
 // This file is a part of the CLHEP - a Class Library for High Energy Physics.
-//
+// 
 // This software written by Nobu Katayama and Mike Smyth, Cornell University.
-//
+// 
 // This is the definition of the HepGenMatrix, base class for HepMatrix,
 // HepSymMatrix and HepDiagMatrix. This is an abstract cless.
 // See definitions in Matrix.h, SymMatrix.h, DiagMatrix.h and Vector.h
@@ -34,38 +34,38 @@ class HepGenMatrix;
  * @ingroup matrix
  */
 class HepGenMatrix {
-
+ 
 public:
    virtual ~HepGenMatrix() {}
 
 
 #ifdef DISABLE_ALLOC   // disable this non-compliant allocator
 #else
-   template <class T, size_t size> class Alloc
+   template <class T, size_t size> class Alloc 
    {
-
-   public:
-     typedef T value_type;
-     typedef size_t size_type;
-     typedef ptrdiff_t difference_type;
-     typedef T* pointer;
-     typedef const T* const_pointer;
-     typedef T& reference;
+ 
+   public:  
+     typedef T value_type;  
+     typedef size_t size_type;  
+     typedef ptrdiff_t difference_type;  
+     typedef T* pointer;  
+     typedef const T* const_pointer;  
+     typedef T& reference;  
      typedef const T& const_reference;
-
-     pointer address(reference r) const { return &r; }
-     const_pointer address(const_reference r) const { return &r; }
-     Alloc() throw() {}
-     Alloc(const Alloc<T,size>&) throw() {}
-     ~Alloc() throw() {}
-     pointer allocate(size_type n, const void* /*hint=0*/ ) { if( n <= size ) return pool; else return new T[n]; }
-     void deallocate(pointer p, size_type /*n*/) { if (p == pool ) return; delete [] p; }
-     void construct(pointer p, const T& val ) { new(p) T(val); }
-     void destroy(pointer p) { p->~T(); }
-     size_type max_size() const throw() { size_type c = (size_type)(-1) /sizeof(T); return (0 < c ? c : 1); }
+ 
+     pointer address(reference r) const { return &r; }  
+     const_pointer address(const_reference r) const { return &r; }  
+     Alloc() throw() {}  
+     Alloc(const Alloc<T,size>&) throw() {}   
+     ~Alloc() throw() {}  
+     pointer allocate(size_type n, const void* hint=0 ) { if( n <= size ) return pool; else return new T[n]; }  
+     void deallocate(pointer p, size_type n) { if (p == pool ) return; delete [] p; }  
+     void construct(pointer p, const T& val ) { new(p) T(val); }  
+     void destroy(pointer p) { p->~T(); }  
+     size_type max_size() const throw() { size_type c = (size_type)(-1) /sizeof(T); return (0 < c ? c : 1); }  
      template<class O> struct rebind { typedef Alloc<O,size> other; };
-
-   private:
+ 
+   private:  
      T pool[size];
    };
 #endif
@@ -83,7 +83,7 @@ public:
 
    virtual const double & operator()(int row, int col) const =0;
    virtual double & operator()(int row, int col) =0;
-   // Read or write a matrix element.
+   // Read or write a matrix element. 
    // ** Note that the indexing starts from (1,1). **
 
    virtual void invert(int&) = 0;
@@ -110,7 +110,7 @@ public:
    inline const HepGenMatrix_row_const operator[] (int) const;
    // Read or write a matrix element.
    // While it may not look like it, you simply do m[i][j] to get an
-   // element.
+   // element. 
    // ** Note that the indexing starts from [0][0]. **
 
    inline static void swap(int&,int&);
@@ -138,7 +138,7 @@ public:
    // This enum used to be private, but it then is not accessible
    // in the definition of array_pile in the .cc file for Sun CC 4.0.1.
    // efrank@upenn5.hep.upenn.edu
-
+ 
 private:
    void operator=(const HepGenMatrix &) {}
    // Remove default operator for HepGenMatrix.
@@ -147,7 +147,7 @@ private:
    friend class HepGenMatrix_row_const;
 
    //-ap: removed this as it is taken over by the std::vector<double>
-   //-ap  double data_array[size_max];
+   //-ap  double data_array[size_max];  
 };
 
 double norm(const HepGenMatrix &m);

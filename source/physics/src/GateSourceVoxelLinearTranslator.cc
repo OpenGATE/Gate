@@ -23,7 +23,7 @@ GateSourceVoxelLinearTranslator::~GateSourceVoxelLinearTranslator()
   delete m_messenger;
 }
 
-G4double GateSourceVoxelLinearTranslator::TranslateToActivity(G4int voxelValue)
+G4double GateSourceVoxelLinearTranslator::TranslateToActivity(G4double voxelValue)
 {
   G4double activity = 0.;
 

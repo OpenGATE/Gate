@@ -8,7 +8,7 @@
 
 #include "GateConfiguration.h"
 
-// Gate
+// Gate 
 #include "GateScatterOrderTrackInformationActor.hh"
 #include "GateMiscFunctions.hh"
 
@@ -46,7 +46,7 @@ GateScatterOrderTrackInformationActor::GateScatterOrderTrackInformationActor(G4S
 
 
 //-----------------------------------------------------------------------------
-/// Destructor
+/// Destructor 
 GateScatterOrderTrackInformationActor::~GateScatterOrderTrackInformationActor()
 {
   delete pActorMessenger;
@@ -66,10 +66,9 @@ void GateScatterOrderTrackInformationActor::Construct()
 //-----------------------------------------------------------------------------
 // Callbacks
 void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume * v,
-                                                        const G4Step * step)
+                                                               const G4Step * step)
 {
   GateVActor::UserSteppingAction(v, step);
-
   // Create a track information and attach it to the track
      if(step->GetTrack()->GetUserInformation()==0)
      {
@@ -83,7 +82,8 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
   const G4VEmProcess *process = dynamic_cast<const G4VEmProcess*>(pr);
   if(!process) return;
 
-  // unsigned int order = 0;
+  //unsigned int order = 0;
+  //G4String scatterProcess = "";
 
   if(process->GetProcessName() == G4String("Compton")) {
 
@@ -91,11 +91,10 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
     if(scatterTracking!=NULL)
     {
       scatterTracking->IncrementScatterOrder(step->GetTrack());
-      // order = scatterTracking->GetScatterOrder();
+      //order = scatterTracking->GetScatterOrder();
+      // Set process name
+      scatterTracking->SetScatterProcess(step->GetTrack());
     }
-
-    //G4cout << ", Order of Compton " << order << G4endl;
-
   }
   else if(process->GetProcessName() == G4String("RayleighScattering")) {
 
@@ -103,13 +102,33 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
     if(scatterTracking!=NULL)
     {
       scatterTracking->IncrementScatterOrder(step->GetTrack());
-      // order = scatterTracking->GetScatterOrder();
+      //order = scatterTracking->GetScatterOrder();
+      // Set process name
+      scatterTracking->SetScatterProcess(step->GetTrack());
     }
-
-    //G4cout << ", Order of Rayleigh  " << order << G4endl;
-
   }
-  else if(process->GetProcessName() == G4String("PhotoElectric")) {}
+  else if(process->GetProcessName() == G4String("PhotoElectric")) {
+    const G4TrackVector * list = step->GetSecondary();
+
+    for(unsigned short i=0; i<(*list).size(); i++)
+    {
+      if((*list)[i]->GetUserInformation()==0 && (*list)[i]->GetDefinition()->GetParticleName()=="gamma")
+      {
+        //GateScatterOrderTrackInformation * fluoTracking = (*list)[i]->GetUserInformation()
+        // Creation of gamma
+        GateScatterOrderTrackInformation* fluoInfo = new GateScatterOrderTrackInformation;
+        (*list)[i]->SetUserInformation(fluoInfo);
+      }
+      GateScatterOrderTrackInformation * fluoTracking = dynamic_cast<GateScatterOrderTrackInformation*>((*list)[i]->GetUserInformation());
+      if(fluoTracking!=NULL)
+      {
+        fluoTracking->IncrementScatterOrder((*list)[i]);
+        //order = fluoTracking->GetScatterOrder();
+        // Set process name
+        fluoTracking->SetScatterProcess(step->GetTrack());
+      }
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------

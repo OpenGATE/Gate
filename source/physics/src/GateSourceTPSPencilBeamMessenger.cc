@@ -44,6 +44,9 @@
   //Not allowed fieldID
   cmdName = GetDirectoryName()+"setNotAllowedFieldID";
   pNotAllowedFieldCmd = new G4UIcmdWithAnInteger(cmdName,this);
+  //Allowed fieldID
+  cmdName = GetDirectoryName()+"setAllowedFieldID";
+  pAllowedFieldCmd = new G4UIcmdWithAnInteger(cmdName,this);
   //Source description file
   cmdName = GetDirectoryName()+"setSourceDescriptionFile";
   pSourceFileCmd = new G4UIcmdWithAString(cmdName,this);
@@ -56,6 +59,9 @@
   //Selection of one layer
   cmdName = GetDirectoryName()+"selectLayerID";
   pSelectLayerIDCmd = new G4UIcmdWithAnInteger(cmdName,this);
+  //Selection of one spot
+  cmdName = GetDirectoryName()+"selectSpot";
+  pSelectSpotCmd = new G4UIcmdWithAnInteger(cmdName,this);
 }
 //----------------------------------------------------------------------------------------
 
@@ -74,6 +80,8 @@ GateSourceTPSPencilBeamMessenger::~GateSourceTPSPencilBeamMessenger()
   delete pFlatGeneFlagCmd;
   //Not allowed fieldID
   delete pNotAllowedFieldCmd;
+  //Allowed fieldID
+  delete pAllowedFieldCmd;
   //Source description file
   delete pSourceFileCmd;
   //Configuration of spot intensity
@@ -82,6 +90,8 @@ GateSourceTPSPencilBeamMessenger::~GateSourceTPSPencilBeamMessenger()
   delete pDivergenceCmd;
   // Selection of one layer
   delete pSelectLayerIDCmd;
+  // Selection of one spot
+  delete pSelectSpotCmd;
 }
 //----------------------------------------------------------------------------------------
 
@@ -99,8 +109,12 @@ void GateSourceTPSPencilBeamMessenger::SetNewValue(G4UIcommand* command,G4String
   if (command == pFlatGeneFlagCmd) {pSourceTPSPencilBeam->SetGeneFlatFlag(pFlatGeneFlagCmd->GetNewBoolValue(newValue)); }
   //Not allowed fieldID
   if (command == pNotAllowedFieldCmd) {pSourceTPSPencilBeam->SetNotAllowedField(pNotAllowedFieldCmd->GetNewIntValue(newValue));}
+  //Allowed fieldID
+  if (command == pAllowedFieldCmd) {pSourceTPSPencilBeam->SetAllowedField(pAllowedFieldCmd->GetNewIntValue(newValue));}
   //Select Layer ID
   if (command == pSelectLayerIDCmd) {pSourceTPSPencilBeam->SelectLayerID(pSelectLayerIDCmd->GetNewIntValue(newValue));}
+  //Select Spot
+  if (command == pSelectSpotCmd) {pSourceTPSPencilBeam->SelectSpot(pSelectSpotCmd->GetNewIntValue(newValue));}
   //Source description file
   if (command == pSourceFileCmd) {pSourceTPSPencilBeam->SetSourceDescriptionFile(newValue);  }
   //Configuration of spot intensity

@@ -58,9 +58,9 @@ public:
 
    inline const double & operator()(int row) const;
    inline double & operator()(int row);
-   // Read or write a matrix element.
+   // Read or write a matrix element. 
    // ** Note that the indexing starts from (1). **
-
+   
    inline const double & operator[](int row) const;
    inline double & operator[](int row);
    // Read and write an element of a Vector.
@@ -68,14 +68,14 @@ public:
 
    virtual const double & operator()(int row, int col) const;
    virtual double & operator()(int row, int col);
-   // Read or write a matrix element.
+   // Read or write a matrix element. 
    // ** Note that the indexing starts from (1,1). **
    // Allows accessing Vector using GenMatrix
 
    HepVector & operator*=(double t);
-   // Multiply a Vector by a floating number.
+   // Multiply a Vector by a floating number. 
 
-   HepVector & operator/=(double t);
+   HepVector & operator/=(double t); 
    // Divide a Vector by a floating number.
 
    HepVector & operator+=( const HepMatrix &v2);
@@ -117,7 +117,7 @@ public:
 
    virtual int num_col() const;
    // Number of columns. Always returns 1. Provided for compatibility with
-   // GenMatrix.
+   // GenMatrix. 
 
    HepMatrix T() const;
    // Returns the transpose of a Vector. Note that the returning type is

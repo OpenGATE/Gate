@@ -10,7 +10,7 @@ See GATE/LICENSE.txt for further details
 
 // Elastic
 #if (G4VERSION_MAJOR == 9)
-#include "G4LElastic.hh" 
+#include "G4LElastic.hh"
 #endif
 
 #include "G4ElasticHadrNucleusHE.hh"
@@ -68,7 +68,7 @@ See GATE/LICENSE.txt for further details
 // Cascade
 #include "G4CascadeInterface.hh"
 #include "G4BinaryCascade.hh"
-#include "GateBinaryCascade.hh"
+//#include "GateBinaryCascade.hh"
 
 // Gamma- and Lepto-Nuclear
 #if (G4VERSION_MAJOR == 9)
@@ -85,7 +85,7 @@ See GATE/LICENSE.txt for further details
 #include "G4NeutronHPorLFission.hh"
 #endif
 
-#include "G4NeutronRadCapture.hh" 
+#include "G4NeutronRadCapture.hh"
 #include "G4LFission.hh"
 #include "G4NeutronHPCapture.hh"
 

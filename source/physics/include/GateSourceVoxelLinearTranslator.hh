@@ -20,19 +20,19 @@ class GateSourceVoxelLinearTranslator : public GateVSourceVoxelTranslator
 public:
   GateSourceVoxelLinearTranslator(GateVSourceVoxelReader* voxelReader);
   virtual ~GateSourceVoxelLinearTranslator();
-  
+
   void     SetValueToActivityScale(G4double value) { m_valueToActivityScale = value; };
   G4double GetValueToActivityScale()               { return m_valueToActivityScale; };
   void Describe(G4int){ };
 public:
 
-  G4double TranslateToActivity(G4int voxelValue);
+  G4double TranslateToActivity(G4double voxelValue);
   void UpdateActivity(G4double , G4double , G4double); // PY Descourt 08/09/2009
 protected:
 
   G4double m_valueToActivityScale;
 
-  GateSourceVoxelLinearTranslatorMessenger* m_messenger; 
+  GateSourceVoxelLinearTranslatorMessenger* m_messenger;
 
 };
 

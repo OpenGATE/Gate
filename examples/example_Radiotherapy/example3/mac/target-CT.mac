@@ -3,7 +3,7 @@
 # ---------------------------------------
 
 ###  Generate materials from Hounsfield units
-/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt 
+/gate/HounsfieldMaterialGenerator/SetMaterialTable                  data/Schneider2000MaterialsTable.txt
 /gate/HounsfieldMaterialGenerator/SetDensityTable                   data/Schneider2000DensitiesTable.txt
 /gate/HounsfieldMaterialGenerator/SetDensityTolerance               0.1 g/cm3
 /gate/HounsfieldMaterialGenerator/SetOutputMaterialDatabaseFilename data/patient-HUmaterials.db
@@ -17,8 +17,8 @@
 #/gate/world/daughters/insert                    ImageRegionalizedVolume
 
 /gate/geometry/setMaterialDatabase              data/patient-HUmaterials.db
-/gate/patient/geometry/SetHUToMaterialFile      data/patient-HU2mat.txt
-/gate/patient/geometry/SetImage                 data/patient-4mm.mhd
+/gate/patient/geometry/setHUToMaterialFile      data/patient-HU2mat.txt
+/gate/patient/geometry/setImage                 data/patient-4mm.mhd
 
 # If "ImageRegionalizedVolume" is used instead of "ImageNestedParametrisedVolume"
 # You should compute (at least once the dmap image) with "buildAndDumpDistanceTransfo"

@@ -1,4 +1,6 @@
 // -*- C++ -*-
+// ---------------------------------------------------------------------------
+//
 #ifdef GNUPRAGMA
 #pragma implementation
 #endif
@@ -10,6 +12,7 @@
 #include "CLHEP/Vector/ThreeVector.h"
 #include "CLHEP/Matrix/Vector.h"
 #include "CLHEP/Matrix/Matrix.h"
+#include "CLHEP/Utility/thread_local.h"
 
 #ifdef HEP_DEBUG_INLINE
 #include "CLHEP/Matrix/Vector.icc"
@@ -112,19 +115,19 @@ HepVector::HepVector(const HepMatrix &hm1)
 
 // trivial methods
 
-inline int HepVector::num_row() const {return nrow;} 
-inline int HepVector::num_size() const {return nrow;} 
-inline int HepVector::num_col() const { return 1; }
+int HepVector::num_row() const {return nrow;} 
+int HepVector::num_size() const {return nrow;} 
+int HepVector::num_col() const { return 1; }
 
 // operator()
 
 #ifdef MATRIX_BOUND_CHECK
-inline double & HepVector::operator()(int row, int col)
+double & HepVector::operator()(int row, int col)
 {
   if( col!=1 || row<1 || row>nrow)
      error("Range error in HepVector::operator(i,j)");
 #else
-inline double & HepVector::operator()(int row, int)
+double & HepVector::operator()(int row, int)
 {
 #endif
 
@@ -132,12 +135,12 @@ inline double & HepVector::operator()(int row, int)
 }
 
 #ifdef MATRIX_BOUND_CHECK
-inline const double & HepVector::operator()(int row, int col) const 
+const double & HepVector::operator()(int row, int col) const 
 {
   if( col!=1 || row<1 || row>nrow)
      error("Range error in HepVector::operator(i,j)");
 #else
-inline const double & HepVector::operator()(int row, int) const 
+const double & HepVector::operator()(int row, int) const 
 {
 #endif
 
@@ -579,8 +582,8 @@ HepVector solve(const HepMatrix &a, const HepVector &v)
 {
   HepVector vret(v);
 #endif
-  static int max_array = 20;
-  static int *ir = new int [max_array+1];
+  static CLHEP_THREAD_LOCAL int max_array = 20;
+  static CLHEP_THREAD_LOCAL int *ir = new int [max_array+1];
 
   if(a.ncol != a.nrow)
      HepGenMatrix::error("Matrix::solve Matrix is not NxN");

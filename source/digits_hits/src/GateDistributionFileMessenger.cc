@@ -74,13 +74,14 @@ void GateDistributionFileMessenger::SetNewValue(G4UIcommand* command,G4String ne
   } else if( command==setColXCmd ) {
     G4int x = setColXCmd->GetNewIntValue(newValue);
     GetDistributionFile()->SetColumnX(x);
+  } else if( command==autoXCmd ) {
+    GetDistributionFile()->SetColumnX(-1);
+    GetDistributionFile()->SetColumnY(0);
   } else if( command==setColYCmd ) {
     G4int y = setColXCmd->GetNewIntValue(newValue);
     GetDistributionFile()->SetColumnY(y);
-  } else if( command==readCmd ) {
+  }   else if( command==readCmd ) {
     GetDistributionFile()->Read();
-  } else if( command==autoXCmd ) {
-    GetDistributionFile()->SetColumnX(-1);
   }
   else
     GateDistributionArrayMessenger::SetNewValue(command,newValue);

@@ -1,0 +1,13 @@
+#     W O R L D	
+/gate/world/geometry/setXLength 5 m	
+/gate/world/geometry/setYLength 5 m	
+/gate/world/geometry/setZLength 5 m	
+/gate/world/setMaterial Water
+
+#     MAIN BOX
+/gate/world/daughters/name MainBox	
+/gate/world/daughters/insert box
+/gate/MainBox/geometry/setXLength 4.5 m	
+/gate/MainBox/geometry/setYLength 4.5 m	
+/gate/MainBox/geometry/setZLength 4.5 m
+/gate/MainBox/setMaterial Water
