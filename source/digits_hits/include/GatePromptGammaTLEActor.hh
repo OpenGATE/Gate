@@ -58,13 +58,11 @@ protected:
   //helper functions
   void SetTrackIoH(GateImageOfHistograms*&);
   void SetTLEIoH(GateImageOfHistograms*&);
-  int GetProtonBin(double);
   GateVImageVolume* GetPhantom();
   void BuildOutput(); //converts trackl,tracklsq into mImageGamma and tleuncertain
 
   //used and reset each track
   GateImageOfHistograms * tmptrackl;    //l_i
-  TH1D * converterHist;          //sole use is to aid conversion of proton energy to bin index.
 
   //updated at end of event:
   GateImageOfHistograms * trackl;       //L_i. also intermediate output: track length per voxel per E_proton

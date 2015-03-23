@@ -75,8 +75,6 @@ void GatePromptGammaTLEActor::Construct()
     SetTrackIoH(trackl);
     SetTrackIoH(tracklsq);
   }
-  //set converterHist. sole use is to aid conversion of proton energy to bin index.
-  converterHist = new TH1D("Ep", "proton energy", data.GetProtonNbBins(), data.GetProtonEMin() / MeV, data.GetProtonEMax() / MeV);
 
   // Force hit type to random
   if (mStepHitType != RandomStepHitType) {
@@ -111,15 +109,21 @@ void GatePromptGammaTLEActor::SaveData()
     GateError("The GatePromptGammaTLEActor has already been saved and normalized. However, it must write its results only once. Remove all 'SaveEvery' for this actor. Abort.");
   }
 
-  BuildOutput();
   //GateVImageActor::SaveData();  //What does this do?
+
+  // Number of primaries for normalisation, so that we have the number per proton, which is easier to use.
+  mImageGamma->Scale(1./(GateActorManager::GetInstance()->GetCurrentEventId() + 1));// +1 because start at zero
+  mImageGamma->Write(mSaveFilename);
+
   if (mIsUncertaintyImageEnabled) {
+    BuildOutput();
     tle->Write(G4String(removeExtension(mSaveFilename))+"-TLE."+G4String(getExtension(mSaveFilename)));
     tleuncertain->Write(G4String(removeExtension(mSaveFilename))+"-TLEuncertainty."+G4String(getExtension(mSaveFilename)));
   }
-  mImageGamma->Write(mSaveFilename);
+
   //optionally TODO output tracklengths
   alreadyHere = true;
+
 }
 //-----------------------------------------------------------------------------
 
@@ -176,17 +180,16 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   }
 
   if (mIsUncertaintyImageEnabled) {
-    //int protbin = GetProtonBin(particle_energy);
-    int protbin = data.GetHEp()->FindFixBin(particle_energy);
-    if (sameEvent) tmptrackl->AddValueDouble(index, protbin, distance);
-    //if not, then update trackl,tracklsq from the previous event, and restart tmptrackl.
-    else {
+    int protbin = data.GetHEp()->FindFixBin(particle_energy)-1;
+    if (!sameEvent) {
+      //if not, then update trackl,tracklsq from the previous event, and restart tmptrackl.
       double tmp = tmptrackl->GetValueDouble(index, protbin);
       trackl->AddValueDouble(index, protbin, tmp);
       tracklsq->AddValueDouble(index, protbin, tmp*tmp);
       tmptrackl->SetValueDouble(index, protbin, distance);
-    }
+    } else tmptrackl->AddValueDouble(index, protbin, distance);
   }
+
   // Old style TLE
   // Check material
   const G4Material *material = step->GetPreStepPoint()->GetMaterial();
@@ -202,136 +205,93 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
 
 
 //-----------------------------------------------------------------------------
-// Convert Proton Energy to a bin index.
-int GatePromptGammaTLEActor::GetProtonBin(double energy) {
-  return converterHist->Fill(energy / MeV);
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
 void GatePromptGammaTLEActor::BuildOutput() {
-  // Number of primaries for normalisation, so that we have the number per proton, which is easier to use.
-  int n = GateActorManager::GetInstance()->GetCurrentEventId() + 1; // +1 because start at zero
-  mImageGamma->Scale(1./n);
+  //nr primaries, +1 because start at zero, double because we will divide by it.
+  double n = GateActorManager::GetInstance()->GetCurrentEventId() + 1;
 
-  if (mIsUncertaintyImageEnabled) {
-    //allocate output images
-    SetTLEIoH(tle);
-    SetTLEIoH(tleuncertain);
+  //allocate output images
+  SetTLEIoH(tle);
+  SetTLEIoH(tleuncertain);
 
-    //finalize trackl,tracklsq. NOTE: this loop is over voxelindex,protonenergy
-    double *itmptrackl = tmptrackl->GetDataDoublePointer();
-    double *itrackl = trackl->GetDataDoublePointer();
-    double *itracklsq = tracklsq->GetDataDoublePointer();
-    for (unsigned long i = 0; i < tmptrackl->GetDoubleSize() ; i++) {
-      itrackl[i] += itmptrackl[i];
-      itracklsq[i] += itmptrackl[i] * itmptrackl[i];
-      itmptrackl[i] = 0.; //Reset
+  //finalize trackl,tracklsq. NOTE: this loop is over voxelindex,protonenergy
+  double *itmptrackl = tmptrackl->GetDataDoublePointer();
+  double *itrackl = trackl->GetDataDoublePointer();
+  double *itracklsq = tracklsq->GetDataDoublePointer();
+  for (unsigned long i = 0; i < tmptrackl->GetDoubleSize() ; i++) {
+    itrackl[i] += itmptrackl[i];
+    itracklsq[i] += itmptrackl[i] * itmptrackl[i];
+    itmptrackl[i] = 0.; //Reset
+  }
+
+  GateVImageVolume* phantom = GetPhantom(); //this has the correct label to material database.
+  GateImage* phantomvox = phantom->GetImage(); //this has the array of voxels.
+  //FIXME: pre-build label to G4Material map to save some time.
+
+  //compute TLE output. first, loop over voxels
+  for(unsigned int vi = 0; vi < tmptrackl->GetNumberOfValues() ;vi++ ){
+    //PixelType label = phantomvox->GetValue(tmptrackl->GetCoordinatesFromIndex(vi));
+    //convert between voxelsizes in phantom and output, NEAREST NEIGHBOUR!
+    G4String materialname = phantom->GetMaterialNameFromLabel(phantomvox->GetValue(tmptrackl->GetVoxelCenterFromIndex(vi)));
+    G4Material* material = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(materialname);
+    int materialindex = material->GetIndex();
+
+    TH2D* gammam = data.GetGammaM(materialindex);
+    TH2D* ngammam = data.GetNgammaM(materialindex);
+
+    // prep some things that are constant for all gamma bins
+    double tracklav[data.GetProtonNbBins()];
+    double tracklavsq[data.GetProtonNbBins()];
+    double tracklsqsum[data.GetProtonNbBins()];
+    double tracklvar[data.GetProtonNbBins()];
+    for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
+      double trackli = trackl->GetValueDouble(vi,pi);
+      if(trackli<=0.) { //if trackl==0, then all is zero.
+        tracklav[pi] = 0.;
+        tracklsqsum[pi] = 0.;
+        tracklvar[pi] = 0.;
+        tracklavsq[pi] = 0.;
+        continue;
+      }
+      //if not, compute trackl,tracklsq
+      tracklav[pi] = trackli/n; //this is the sum(L)/n
+      tracklsqsum[pi] = tracklsq->GetValueDouble(vi,pi); //this is the sum(L^2)
+
+      //TLE
+      // is calculation for tlevar correct?
+      tracklvar[pi] = sqrt( (1.0/(n-1.))*(tracklsqsum[pi]/n - pow(tracklav[pi], 2)))/(tracklav[pi]);
+      if (tracklvar[pi]!=tracklvar[pi]) tracklvar[pi] = 0.; //check for division by zero.
+      tracklavsq[pi] = pow(tracklav[pi],2);
     }
 
-    GateVImageVolume* phantom = GetPhantom(); //this has the correct label to material database.
-    GateImage* phantomvox = phantom->GetImage(); //this has the array of voxels.
-    //FIXME: pre-build label to G4Material map to save some time.
-
-    //compute TLE output. first, loop over voxels
-    for(unsigned int vi = 0; vi < tmptrackl->GetNumberOfValues() ;vi++ ){
-      //PixelType label = phantomvox->GetValue(tmptrackl->GetCoordinatesFromIndex(vi));
-      //convert between voxelsizes in phantom and output, NEAREST NEIGHBOUR!
-      G4String materialname = phantom->GetMaterialNameFromLabel(phantomvox->GetValue(tmptrackl->GetVoxelCenterFromIndex(vi)));
-      G4Material* material = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(materialname);
-      int materialindex = material->GetIndex();
-
-      //DD(tmptrackl->GetVoxelCenterFromIndex(vi)<<" "<<material->GetName());
-
-      //int dens = material->GetDensity()/ (g / cm3);
-      TH2D* gammam = data.GetGammaM(materialindex);
-      TH2D* ngammam = data.GetNgammaM(materialindex);
-
-      // prep some things that are constant for all gamma bins
-      double tracklav[data.GetProtonNbBins()];
-      double tracklavsq[data.GetProtonNbBins()];
-      double tracklsqsum[data.GetProtonNbBins()];
-      double tracklvar[data.GetProtonNbBins()];
+    for(int gi=0; gi<data.GetGammaNbBins() ; gi++ ){ //per proton bin, compute the contribution to the gammabin
+      double tleval = 0.;
+      double tleuncval = 0.;
       for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
-        double trackli = trackl->GetValueDouble(vi,pi);
-        if(trackli<=0.) { //if trackl==0, then all is zero.
-          tracklav[pi] = 0.;
-          tracklsqsum[pi] = 0.;
-          tracklvar[pi] = 0.;
-          tracklavsq[pi] = 0.;
-          continue;
+        if(tracklav[pi]==0.) {
+          continue; //dont need to add anything to TLE or TLEunc.
         }
-        //if not, compute trackl,tracklsq
-        tracklav[pi] = trackli/n; //this is the sum(L)/n
-        tracklsqsum[pi] = tracklsq->GetValueDouble(vi,pi); //this is the sum(L^2)
-
-        //TLE
-        // is calculation for tlevar correct?
-        tracklvar[pi] = sqrt( (1.0/(n-1))*(tracklsqsum[pi]/n - pow(tracklav[pi], 2)))/(tracklav[pi]);
-        if (tracklvar[pi]!=tracklvar[pi]) tracklvar[pi] = 0.; //check for division by zero.
-        tracklavsq[pi] = pow(tracklav[pi],2);
-        /*DD(tracklav[pi]);
-        DD(tracklvar[pi]);
-        DD(tracklavsq[pi]);*/
+        double igammam = gammam->GetBinContent(pi+1,gi+1);
+        double ingammam = ngammam->GetBinContent(pi+1,gi+1);
+        //TLE, TLE uncertainty
+        tleval += igammam*tracklav[pi];
+        tleuncval += pow(igammam,2) * ( tracklvar[pi] + tracklavsq[pi]/ingammam );
+        if (tleuncval!=tleuncval) tleuncval = 0.; //check for division by zero.
       }
 
-      for(int gi=0; gi<data.GetGammaNbBins() ; gi++ ){ //per proton bin, compute the contribution to the gammabin
-        double tleval = 0.;
-        double tleuncval = 0.;
-        for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
-          if(tracklav[pi]==0.) {
-            continue; //dont need to add anything to TLE or TLEunc.
-          }
-          double igammam = gammam->GetBinContent(pi+1,gi+1);
-          double ingammam = ngammam->GetBinContent(pi+1,gi+1);
-          //TLE, TLE uncertainty
-          tleval += igammam*tracklav[pi];
-          tleuncval += pow(igammam,2) * ( tracklvar[pi] + tracklavsq[pi]/ingammam );
-          if (tleuncval!=tleuncval) tleuncval = 0.; //check for division by zero.
-          /*DD(tleval);
-          DD(tleuncval);
-          DD(igammam);
-          DD(ingammam);*/
-        }
+      tle->SetValueDouble(vi,gi,tleval);
+      tleuncertain->SetValueDouble(vi,gi,tleuncval);
+    }
 
-        tle->SetValueDouble(vi,gi,tleval);
-        tleuncertain->SetValueDouble(vi,gi,tleuncval);
-      }
+    /* testloop, in case you want to use it:
+     * disable tleuncertain->SetValueDouble(vi,gi,tleuncval)
+     * enable setting dens(ity)
+    for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
+      // assume everything exist (has been computed by InitializeMaterial)
+      TH1D *h = data.GetGammaEnergySpectrum(materialindex, (double)pi/250.*200.+0.5*200./250.);
+      tleuncertain->AddValueDouble(vi, h, tracklav[pi] * dens );
+    }*/
 
-      /* old slow, for reference
-      for(int gi=0; gi<data.GetGammaNbBins() ; gi++ ){ //per proton bin, compute the contribution to the gammabin
-        TH1D* protonhist = data.GetGammaMForGammaBin(materialindex,gi);
-        TH1D* ngammahist = data.GetNgammaMForGammaBin(materialindex,gi);
-        double tleval = 0;
-        double tleuncval = 0;
-        for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
-
-          //TLE output
-          double tracklength = trackl->GetValueDouble(vi,pi); //this is the sum.
-          double tracklengthsq = tracklsq->GetValueDouble(vi,pi); //this is the sum.
-          if (tracklength <= 0.) continue;
-          //DD(tracklength);
-          double gammam = protonhist->GetBinContent(pi+1); //+1 for TH1 offset
-          tleval += gammam*tracklength;
-
-          //TLE uncertainty output
-          // *po = sqrt( (1.0/(n-1))*(squared/n - pow(mean/n, 2)))/(mean/n); //from Dose Unc.
-          double tlevar = sqrt( (1.0/(n-1))*(tracklengthsq/n - pow(tracklength/n, 2)))/(tracklength/n);
-          double tleav = tracklength/n;//pow(tracklength,2)/n;
-          double ngamma = ngammahist->GetBinContent(pi+1);
-          tleuncval += pow(gammam,2) *( tlevar/n + pow(tleav,2)/ngamma );
-
-        }
-
-        tle->SetValueDouble(vi,gi,tleval); //we've now computed the sum, scale at the end with n.
-        tleuncertain->SetValueDouble(vi,gi,tleuncval); //this has already been scaled.
-      }
-      */
-
-      DD(vi);
-    }//end voxelloop
-  }//endif uncertainty
+  }//end voxelloop
 
 }
 //-----------------------------------------------------------------------------
