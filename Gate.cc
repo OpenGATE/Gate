@@ -244,7 +244,7 @@ int main( int argc, char* argv[] )
           printHelpAndQuit("Gate command line help" );
           break;
         case 'v':
-          std::cout << "Gate version is 7.0" << std::endl;
+          std::cout << "Gate version is 7.1" << std::endl;
           exit(0);
           break;
         case 'a':
