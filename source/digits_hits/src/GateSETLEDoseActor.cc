@@ -608,7 +608,7 @@ bool GateSETLEDoseActor::IntersectionBox(G4ThreeVector p, G4ThreeVector m)
   for(int i=0; i<3; i++)
   {
     if(mRayDirection[i] == 0.0) {
-      if(mRayOrigin[i]<mBoxMin[i] or mRayOrigin[i]>mBoxMax[i]) { return false; }
+      if(mRayOrigin[i]<mBoxMin[i] || mRayOrigin[i]>mBoxMax[i]) { return false; }
     }
 
     T1 = (mBoxMin[i] - mRayOrigin[i]) / mRayDirection[i];
