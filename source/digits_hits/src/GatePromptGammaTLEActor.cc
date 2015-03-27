@@ -256,10 +256,13 @@ void GatePromptGammaTLEActor::BuildOutput() {
       tracklav[pi] = trackli/n; //this is the sum(L)/n
       tracklsqsum[pi] = tracklsq->GetValueDouble(vi,pi); //this is the sum(L^2)
 
-      //TLE
+      //TLEunc
       // is calculation for tlevar correct?
-      tracklvar[pi] = sqrt( (1.0/(n-1.))*(tracklsqsum[pi]/n - pow(tracklav[pi], 2)))/(tracklav[pi]);
-      if (tracklvar[pi]!=tracklvar[pi]) tracklvar[pi] = 0.; //check for division by zero.
+      if (n==1.) tracklvar[pi]=trackli;
+      else tracklvar[pi] = tracklsqsum[pi]/n - pow(tracklav[pi],2);
+      //else tracklvar[pi] = ( tracklsqsum[pi] - pow(trackli, 2)/n ) / (n-1.); //same as above (for large n, n=n-1)
+
+      //if (tracklvar[pi]!=tracklvar[pi]) tracklvar[pi] = 0.; //check for division by zero.
       tracklavsq[pi] = pow(tracklav[pi],2);
     }
 
@@ -273,13 +276,16 @@ void GatePromptGammaTLEActor::BuildOutput() {
         double igammam = gammam->GetBinContent(pi+1,gi+1);
         double ingammam = ngammam->GetBinContent(pi+1,gi+1);
         //TLE, TLE uncertainty
-        tleval += igammam*tracklav[pi];
-        tleuncval += pow(igammam,2) * ( tracklvar[pi] + tracklavsq[pi]/ingammam );
-        if (tleuncval!=tleuncval) tleuncval = 0.; //check for division by zero.
+        tleval += igammam * tracklav[pi];
+
+        if (ingammam > 0.) tleuncval += ( pow(igammam,2) * ( tracklvar[pi]/n + tracklavsq[pi]/ingammam ) );
+        else tleuncval += ( pow(igammam,2) * ( tracklvar[pi]/n + tracklavsq[pi] ) );
+        //if (tleuncval!=tleuncval) tleuncval = 0.; //check for division by zero.
       }
 
       tle->SetValueDouble(vi,gi,tleval);
-      tleuncertain->SetValueDouble(vi,gi,tleuncval);
+      tleuncertain->SetValueDouble(vi,gi,tleuncval); //remember this is the SQUARE of stddev, must take root later.
+      //we do this so we can sum variances and take sqrt and get proper stddev when integrating a dimension.
     }
 
     /* testloop, in case you want to use it:
