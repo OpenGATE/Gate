@@ -64,9 +64,9 @@ inline void phaseSaitoX_1D(const Vol &V, Longvol &sdt_x, const bool isMultiregio
   //TORIC Case We look for a min index
   index = 0;
 
-  if (not(isMultiregion))
+  if (!(isMultiregion))
     {
-      while ((int)index < V.sizeX() and (V(index,y,z) != 0))
+      while ((int)index < V.sizeX() && (V(index,y,z) != 0))
         {
 	  sdt_x(index,y,z)=INFTY;
 	  index++;
@@ -88,7 +88,7 @@ inline void phaseSaitoX_1D(const Vol &V, Longvol &sdt_x, const bool isMultiregio
 
       for (unsigned int x = 1; x < bound; x++)
         {
-	  if (not (isMultiregion))
+	  if (!(isMultiregion))
             {
 	      if (V(cpt,y,z) == 0)
 		sdt_x(cpt,y,z) = 0;
@@ -114,7 +114,7 @@ inline void phaseSaitoX_1D(const Vol &V, Longvol &sdt_x, const bool isMultiregio
 	sdt_x(V.sizeX()-1,y,z) = 0;
 
       //Backward scan
-      if (not(isToric))
+      if (!(isToric))
 	cpt = V.sizeX()-2;
       else
 	cpt = (index + V.sizeX()-1) % V.sizeX();
