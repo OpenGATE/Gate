@@ -117,7 +117,7 @@ void GateMaterialMuHandler::Initialize()
   {
     SimulateMaterialTable();
   }
-  else if(mDatabaseName == "NIST" or mDatabaseName == "EPDL")
+  else if(mDatabaseName == "NIST" || mDatabaseName == "EPDL")
   {
     InitElementTable();
     
@@ -431,7 +431,7 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 	int initialShotNumberPE = int(initialShotNumber / 2);
 
 	int variableShotNumberPE = 0;
-	if(modelPE and isFluoActive) { variableShotNumberPE = initialShotNumberPE; }
+	if(modelPE && isFluoActive) { variableShotNumberPE = initialShotNumberPE; }
 
 	int variableShotNumberCS = 0;
 	if(modelCS) { variableShotNumberCS = initialShotNumber - variableShotNumberPE; }
@@ -479,7 +479,7 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 	  squaredSigmaMuen = (squaredSigmaPE + squaredSigmaCS) / (incidentEnergy * incidentEnergy);
 	  precision = sqrt(squaredSigmaMuen) / muen;
 
-	  if(modelPE and isFluoActive) {
+	  if(modelPE && isFluoActive) {
 	    if(squaredSigmaPE > 0) { variableShotNumberPE = (int)floor(0.5 + double(initialShotNumber) * sqrt(squaredSigmaPE / (squaredSigmaPE + squaredSigmaCS))); }
 	    else { variableShotNumberPE = initialShotNumberPE; }
 	  }
@@ -572,7 +572,7 @@ void GateMaterialMuHandler::ConstructEnergyList(std::vector<MuStorageStruct> *mu
 	unsigned int elementToErase = -1;
 	for(unsigned int e=0; e<muStorage->size(); e++)
 	{
-	  if(((*muStorage)[e].energy > infEnergy) and ((*muStorage)[e].energy < supEnergy))
+	  if(((*muStorage)[e].energy > infEnergy) && ((*muStorage)[e].energy < supEnergy))
 	  {
 	    elementToErase = e;
 	    break;
@@ -598,7 +598,7 @@ void GateMaterialMuHandler::MergeAtomicShell(std::vector<MuStorageStruct> *muSto
     if(isAtomicShell != 0)
     {
       int neighbourIndex = e + isAtomicShell;
-      if((neighbourIndex > -1) and (neighbourIndex < (int)muStorage->size()))
+      if((neighbourIndex > -1) && (neighbourIndex < (int)muStorage->size()))
       {
 	double mu = interpolation((*muStorage)[neighbourIndex].energy,
 				  (*muStorage)[e].energy,

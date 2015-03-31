@@ -77,7 +77,7 @@ GateVActor*  GateActorManager::GetActor(const G4String &actorType, const G4Strin
 {
   for (std::vector<GateVActor*>::const_iterator iter=theListOfActors.begin(); iter!=theListOfActors.end(); iter++) {
     GateVActor *actor = *iter;
-    if (actor->GetName()==actorName and actor->GetTypeName()==actorType) return actor;
+    if (actor->GetName()==actorName && actor->GetTypeName()==actorType) return actor;
   }
   return NULL;
 }
