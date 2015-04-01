@@ -39,8 +39,9 @@ void GateSPSEneDistribution::GenerateFluor18()
 
    do
     {
-     E = 0.511 + ( 1.144 - 0.511 ) * G4UniformRand() ; // Emin = 0.511 ; Emax = 1.144
-     u = 0.5209 * G4UniformRand() ;   // Nmin = 0 ; Nmax = 0.5209
+     // hard wired constants!
+     E = G4RandFlat::shoot(0.511, 1.144); // Emin = 0.511 ; Emax = 1.144
+     u = G4RandFlat::shoot(0.5209);  // Nmin = 0 ; Nmax = 0.5209
      energyF18 = E;
     }
    while ( u > a*E*E*E + b*E*E + c*E + d ) ;
@@ -239,8 +240,11 @@ switch(m_mode){
     break;
   case 2:
     //Histogram spectrum
-    if(i==0) pEnergy=(m_tab_energy[0]-m_Emin)*G4UniformRand()+ m_Emin;
-    else pEnergy=(m_tab_energy[i]-m_tab_energy[i-1])*G4UniformRand()+ m_tab_energy[i-1];
+    if(i==0) {
+	pEnergy = G4RandFlat::shoot(m_Emin, m_tab_energy[0]);
+    } else {
+	pEnergy = G4RandFlat::shoot(m_tab_energy[i-1], m_tab_energy[i]);
+    }
     break;
   case 3:
     //Interpolated spectrum
