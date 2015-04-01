@@ -761,9 +761,8 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
       // Histo of acolinearity angle distribution
 
       G4double dev=(dxg1*dxg2+dyg1*dyg2+dzg1*dzg2)/((sqrt(dxg1*dxg1+dyg1*dyg1+dzg1*dzg1))*(sqrt(dxg2*dxg2+dyg2*dyg2+dzg2*dzg2)));
-      G4double Pi = 3.14159265;
-      if (dzg1 > dzg2) {dev = acos(-dev)*180/Pi;}
-      else {dev = acos(dev)*180/Pi - 180;}
+      if (dzg1 > dzg2) {dev = rad2deg(acos(-dev));}
+      else {dev = rad2deg(acos(dev)) - 180;}
 
       if (std::isnan(dev) ) dev = 0.;
 
@@ -1612,7 +1611,7 @@ void GateToRoot::RecordTracks(GateSteppingAction* mySteppingAction){
       // v. cuplov wavelength
       if(Energy!=0.){
         //			Wavelength =  1239.61/Energy ;
-        Wavelength =  1.23961E-3/Energy ; //==> gives nm
+	Wavelength =  c_light*h_Planck/Energy / nanometer; //==> gives nm
       }
       else{    Wavelength =  -1. ; }
 

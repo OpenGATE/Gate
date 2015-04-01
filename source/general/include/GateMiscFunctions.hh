@@ -26,11 +26,18 @@ See GATE/LICENSE.txt for further details
 #include "G4UnitsTable.hh"
 #include "GateMessageManager.hh"
 #include "GatePlacementQueue.hh"
+#include "G4SystemOfUnits.hh"
 
 //-----------------------------------------------------------------------------
-double rad2deg(const double anglerad);
-double deg2rad(const double angledeg);
+inline double rad2deg(const double anglerad)
+{
+  return (anglerad/CLHEP::pi*180.0);
+}
 
+inline double deg2rad(const double angledeg)
+{
+  return (angledeg*(CLHEP::pi/180.0));
+}
 //-----------------------------------------------------------------------------
 void skipComment(std::istream & is);
 

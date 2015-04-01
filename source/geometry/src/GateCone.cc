@@ -53,7 +53,7 @@ GateCone::GateCone(const G4String& itsName,
   m_coneRmin2 = 1.0*cm;
   m_coneRmax2 = 1.0*cm;
   m_coneSPhi = 0.;
-  m_coneDPhi = 2*M_PI;
+  m_coneDPhi = twopi;
 
   m_Messenger = new GateConeMessenger(this);
 }

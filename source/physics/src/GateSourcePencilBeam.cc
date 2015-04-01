@@ -136,13 +136,13 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     CLHEP::HepRandomEngine *engine = GateRandomEngine::GetInstance()->GetRandomEngine();
 
     //---------SOURCE PARAMETERS - CONTROL ----------------
-    if (TMath::Pi()*mSigmaX*mSigmaTheta<mEllipseXThetaArea){
+    if (pi*mSigmaX*mSigmaTheta<mEllipseXThetaArea){
       cout<<"\n !!! ERROR !!! -> Wrong Source Parameters: EmmittanceX-Theta is lower than Pi*SigmaX*SigmaTheta! Please correct it."<<endl;
       cout<<"Please make sure that the energy used belongs to the beam model energy range."<<endl;
       cout<<"Energy "<<mEnergy<<"\tX "<<mSigmaX<<"\tTheta "<<mSigmaTheta<<"\tEmittance "<<mEllipseXThetaArea<<"\n"<<endl;
       exit(0);
     }
-    if (TMath::Pi()*mSigmaY*mSigmaPhi<mEllipseYPhiArea){
+    if (pi*mSigmaY*mSigmaPhi<mEllipseYPhiArea){
       cout<<"\n !!! ERROR !!! -> Wrong Source Parameters: EmmittanceY-Phi is lower than Pi*SigmaY*SigmaPhi! Please correct it.\n"<<endl;
       cout<<"Please make sure that the energy used belongs to the beam model energy range."<<endl;
       cout<<"Energy "<<mEnergy<<"\tY "<<mSigmaY<<"\tPhi "<<mSigmaPhi<<"\tEmittance "<<mEllipseYPhiArea<<"\n"<<endl;
@@ -177,7 +177,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     double alpha, beta, gamma, epsilon;
     //==============================================================
     // X Theta Phase Space Ellipse
-    epsilon=mEllipseXThetaArea/(TMath::Pi());
+    epsilon=mEllipseXThetaArea/pi;
     if (epsilon==0) { G4cout<<"Error Elipse area is 0 !!!"<<G4endl;}
     beta=mSigmaX*mSigmaX/epsilon;
     gamma=mSigmaTheta*mSigmaTheta/epsilon;
@@ -202,7 +202,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
 
     //==============================================================
     // Y Phi Phase Space Ellipse
-    epsilon=mEllipseYPhiArea/(TMath::Pi());
+    epsilon=mEllipseYPhiArea/pi;
     beta=mSigmaY*mSigmaY/epsilon;
     if (epsilon==0) {G4cout<<"Error Elipse area is 0 !!!"<<G4endl;}
     gamma=mSigmaPhi*mSigmaPhi/epsilon;

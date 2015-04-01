@@ -21,7 +21,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UnitsTable.hh"
 
 #include "Randomize.hh"
-
+#include "GateConstants.hh"
 // Reset the matrix and prepare a new acquisition
 void GateSinogram::Reset(size_t ringNumber, size_t crystalNumber, size_t radialElemNb, size_t virtualRingNumber, size_t virtualCrystalPerBlockNumber)
 {
@@ -150,13 +150,13 @@ G4int GateSinogram::FillRandoms( G4int ring1ID, G4int ring2ID)
 void GateSinogram::CrystalBlurring( G4int *ringID, G4int *crystalID, G4double ringResolution, G4double crystalResolution)
 {
   if (ringResolution > 0.) {
-    G4double ringNewID    = G4RandGauss::shoot((G4double) ringID[0],ringResolution/2.35);
+    G4double ringNewID    = G4RandGauss::shoot((G4double) ringID[0],ringResolution/GateConstants::fwhm_to_sigma);
     ringID[0] = (G4int) (ringNewID + 0.5);
     if (ringID[0] < 0) ringID[0] = 0;
     else if (ringID[0] >= (G4int) m_ringNb) ringID[0] = m_ringNb - 1;
   }
   if (crystalResolution > 0.) {
-    G4double crystalNewID = G4RandGauss::shoot((G4double) crystalID[0],crystalResolution/2.35);
+    G4double crystalNewID = G4RandGauss::shoot((G4double) crystalID[0],crystalResolution/GateConstants::fwhm_to_sigma);
     crystalID[0] = (G4int) (crystalNewID +  0.5);
     if (crystalID[0] < 0) crystalID[0] = m_crystalNb + crystalID[0];
     else if (crystalID[0] >= (G4int) m_crystalNb) crystalID[0] = crystalID[0] - m_crystalNb;

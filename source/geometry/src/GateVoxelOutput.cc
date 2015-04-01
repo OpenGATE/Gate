@@ -138,8 +138,7 @@ void GateVoxelOutput::RecordBeginOfAcquisition()
 // write a binary file (4 bytes floats) containing the dose in cGy
 void GateVoxelOutput::RecordEndOfAcquisition()
 {
-  static const double Gy (joule/kilogram);
-  static const double cGy(Gy/100.0);
+  static const double cGy(gray/100.0);
 
   // G4cout << "GateVoxelOutput::RecordEndOfAcquisition - Entered at " << this << " for "<< GetName()  << G4endl  << std::flush ;
   

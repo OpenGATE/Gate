@@ -32,19 +32,6 @@ See GATE/LICENSE.txt for further details
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
 
-//-----------------------------------------------------------------------------
-double rad2deg(const double anglerad) 
-{
-  return (anglerad/M_PI*180.0);
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-double deg2rad(const double angledeg) 
-{
-  return (angledeg*(M_PI/180.0));
-}
-//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void skipComment(std::istream & is) 

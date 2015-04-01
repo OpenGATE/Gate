@@ -367,7 +367,7 @@ printf("dRefRadius=%5.10g\n", dRefRadius);
 
 
 	dFactor = fDist_src2img * fDist_src2img / (dSize * costheta * costheta *  costheta);
-	dFactor = dFactor * 4.0 * M_PI / m_TotSimuPhotons;
+	dFactor = dFactor * 4.0 * pi / m_TotSimuPhotons;
 
 
 	dSum *= dFactor;
