@@ -377,13 +377,24 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & )
       dataFloat[i] = (float)dataDouble[i]; // convert double to float
     }
   }
-  m_MetaImage.AddUserField("TotalSum", MET_FLOAT_ARRAY, 1, &total);
 
-  // Change the order of the pixels : store on disk as XYZH.
-  std::vector<float> t;
-  ConvertPixelOrderToXYZH(dataFloat, t);
-  m_MetaImage.ElementData(&(t.begin()[0]), false); // true = autofree
-  m_MetaImage.Write(headerName.c_str(), rawName.c_str());
+  //output int to int
+  else if (mDataTypeName == "int") {
+    // Change the order of the pixels : store on disk as XYZH.
+    std::vector<unsigned int> t;
+    ConvertPixelOrderToXYZH(dataInt, t);
+    m_MetaImage.ElementData(&(t.begin()[0]), false); // true = autofree
+    m_MetaImage.Write(headerName.c_str(), rawName.c_str());
+  } else {
+    //if not int, then write as float.
+    m_MetaImage.AddUserField("TotalSum", MET_FLOAT_ARRAY, 1, &total);
+
+    // Change the order of the pixels : store on disk as XYZH.
+    std::vector<float> t;
+    ConvertPixelOrderToXYZH(dataFloat, t);
+    m_MetaImage.ElementData(&(t.begin()[0]), false); // true = autofree
+    m_MetaImage.Write(headerName.c_str(), rawName.c_str());
+  }
 }
 //-----------------------------------------------------------------------------
 

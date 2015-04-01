@@ -34,15 +34,12 @@ public:
   virtual void UserPreTrackActionInVoxel(const int index, const G4Track* t);
   virtual void UserPostTrackActionInVoxel(const int index, const G4Track* t);
   virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
-  virtual void BeginOfEventAction(const G4Event * e);
-  virtual void EndOfEventAction(const G4Event * e);
 
   void SetInputDataFilename(std::string filename);
   virtual void SaveData();
   virtual void ResetData();
 
-  void EnableUncertaintyImage(bool b) { mIsIntermediaryUncertaintyOutputEnabled = mIsUncertaintyImageEnabled = b; }  //all is needed to calc tle uncertainty
-  void EnableIntermediaryUncertaintyOutput(bool b) { mIsIntermediaryUncertaintyOutputEnabled = b; }
+  void SetOutputCount(bool b) { mSetOutputCount = b; }  //output counts instead of yield
 
 protected:
   GatePromptGammaAnalogActor(G4String name, G4int depth=0);
@@ -52,18 +49,10 @@ protected:
   std::string mInputDataFilename;
   GatePromptGammaData data;
 
-  bool mIsUncertaintyImageEnabled;
-  bool mIsIntermediaryUncertaintyOutputEnabled;
-
-  int gammabin(double energy);
-  bool mIsFistStep;
-  TH1I * converterHist;          //sole use is to aid conversion of proton energy to bin index.
+  bool mSetOutputCount;
 
   GateImageOfHistograms * mImageGamma;  //main output (yield)
 
-  //not sure if necesary
-  GateImageInt mLastHitEventImage;      //store eventID when last updated. TODO: not sure if necesary
-  int mCurrentEvent;                    //monitor event. TODO: not sure if necesary
 };
 //-----------------------------------------------------------------------------
 

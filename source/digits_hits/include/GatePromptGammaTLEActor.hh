@@ -42,8 +42,8 @@ public:
   virtual void SaveData();
   virtual void ResetData();
 
-  void EnableUncertaintyImage(bool b) { mIsIntermediaryUncertaintyOutputEnabled = mIsUncertaintyImageEnabled = b; }  //all is needed to calc tle uncertainty
-  void EnableIntermediaryUncertaintyOutput(bool b) { mIsIntermediaryUncertaintyOutputEnabled = b; } //this is only used to output trackl,tracklsq, no other effects on calculation
+  void EnableVarianceImage(bool b) { mIsVarianceImageEnabled = b; }  //all is needed to calc tle uncertainty
+  //void EnableIntermediaryUncertaintyOutput(bool b) { mIsIntermediaryUncertaintyOutputEnabled = b; } //this is only used to output trackl,tracklsq, no other effects on calculation
 
 protected:
   GatePromptGammaTLEActor(G4String name, G4int depth=0);
@@ -52,8 +52,8 @@ protected:
   std::string mInputDataFilename;
   GatePromptGammaData data;
 
-  bool mIsUncertaintyImageEnabled;
-  bool mIsIntermediaryUncertaintyOutputEnabled;
+  bool mIsVarianceImageEnabled;
+  //bool mIsIntermediaryUncertaintyOutputEnabled;
 
   //helper functions
   void SetTrackIoH(GateImageOfHistograms*&);
@@ -71,7 +71,7 @@ protected:
   //output, calculated at end of simu
   GateImageOfHistograms * mImageGamma;  //oldstyle main output,
   GateImageOfHistograms * tle;  //main output (yield)
-  GateImageOfHistograms * tleuncertain; //uncertainty per voxel, per E_gamma
+  GateImageOfHistograms * tlevariance; //uncertainty per voxel, per E_gamma
 
   GateImageInt mLastHitEventImage;      //store eventID when last updated. TODO: not sure if necesary
   int mCurrentEvent;                    //monitor event. TODO: not sure if necesary

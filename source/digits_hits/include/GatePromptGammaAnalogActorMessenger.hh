@@ -27,11 +27,10 @@ public:
 
 protected:
   void BuildCommands(G4String base);
-  GatePromptGammaAnalogActor* pTLEActor;
+  GatePromptGammaAnalogActor* pPGAnalogActor;
 
   G4UIcmdWithAString * pSetInputDataFileCmd;
-  G4UIcmdWithABool * pEnableUncertaintyCmd;
-  G4UIcmdWithABool * pEnableIntermediaryUncertaintyOutputCmd;
+  G4UIcmdWithABool * pSetOutputCountCmd;
 };
 //-----------------------------------------------------------------------------
 

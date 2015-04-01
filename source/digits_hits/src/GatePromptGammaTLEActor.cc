@@ -25,7 +25,7 @@ GatePromptGammaTLEActor::GatePromptGammaTLEActor(G4String name, G4int depth):
   pMessenger = new GatePromptGammaTLEActorMessenger(this);
   SetStepHitType("random");
   mCurrentEvent = -1;
-  mIsUncertaintyImageEnabled = false;
+  mIsVarianceImageEnabled = false;
 }
 //-----------------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ void GatePromptGammaTLEActor::Construct()
 
   //set up and allocate runtime images.
   SetTLEIoH(mImageGamma);
-  if (mIsUncertaintyImageEnabled){
+  if (mIsVarianceImageEnabled){
     SetTrackIoH(tmptrackl);
     SetTrackIoH(trackl);
     SetTrackIoH(tracklsq);
@@ -115,10 +115,10 @@ void GatePromptGammaTLEActor::SaveData()
   mImageGamma->Scale(1./(GateActorManager::GetInstance()->GetCurrentEventId() + 1));// +1 because start at zero
   mImageGamma->Write(mSaveFilename);
 
-  if (mIsUncertaintyImageEnabled) {
+  if (mIsVarianceImageEnabled) {
     BuildOutput();
     tle->Write(G4String(removeExtension(mSaveFilename))+"-TLE."+G4String(getExtension(mSaveFilename)));
-    tleuncertain->Write(G4String(removeExtension(mSaveFilename))+"-TLEuncertainty."+G4String(getExtension(mSaveFilename)));
+    tlevariance->Write(G4String(removeExtension(mSaveFilename))+"-TLEuncertainty."+G4String(getExtension(mSaveFilename)));
   }
 
   //optionally TODO output tracklengths
@@ -179,7 +179,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
     GateError("GatePromptGammaTLEActor -- Proton Energy (" << particle_energy << ") outside range of pgTLE (" << data.GetProtonEMax() << ") database! Aborting...");
   }
 
-  if (mIsUncertaintyImageEnabled) {
+  if (mIsVarianceImageEnabled) {
     int protbin = data.GetHEp()->FindFixBin(particle_energy)-1;
     if (!sameEvent) {
       //if not, then update trackl,tracklsq from the previous event, and restart tmptrackl.
@@ -211,7 +211,7 @@ void GatePromptGammaTLEActor::BuildOutput() {
 
   //allocate output images
   SetTLEIoH(tle);
-  SetTLEIoH(tleuncertain);
+  SetTLEIoH(tlevariance);
 
   //finalize trackl,tracklsq. NOTE: this loop is over voxelindex,protonenergy
   double *itmptrackl = tmptrackl->GetDataDoublePointer();
@@ -252,18 +252,15 @@ void GatePromptGammaTLEActor::BuildOutput() {
         tracklavsq[pi] = 0.;
         continue;
       }
-      //if not, compute trackl,tracklsq
+      //if not, compute trackl,tracklsq,tracklavsq
       tracklav[pi] = trackli/n; //this is the sum(L)/n
       tracklsqsum[pi] = tracklsq->GetValueDouble(vi,pi); //this is the sum(L^2)
+      tracklavsq[pi] = pow(tracklav[pi],2);
 
-      //TLEunc
-      // is calculation for tlevar correct?
-      if (n==1.) tracklvar[pi]=trackli;
+      //variance
+      if (n==1.) tracklvar[pi]=trackli; //TODO check with JM.
       else tracklvar[pi] = tracklsqsum[pi]/n - pow(tracklav[pi],2);
       //else tracklvar[pi] = ( tracklsqsum[pi] - pow(trackli, 2)/n ) / (n-1.); //same as above (for large n, n=n-1)
-
-      //if (tracklvar[pi]!=tracklvar[pi]) tracklvar[pi] = 0.; //check for division by zero.
-      tracklavsq[pi] = pow(tracklav[pi],2);
     }
 
     for(int gi=0; gi<data.GetGammaNbBins() ; gi++ ){ //per proton bin, compute the contribution to the gammabin
@@ -284,7 +281,7 @@ void GatePromptGammaTLEActor::BuildOutput() {
       }
 
       tle->SetValueDouble(vi,gi,tleval);
-      tleuncertain->SetValueDouble(vi,gi,tleuncval); //remember this is the SQUARE of stddev, must take root later.
+      tlevariance->SetValueDouble(vi,gi,tleuncval); //remember this is the SQUARE of stddev, must take root later.
       //we do this so we can sum variances and take sqrt and get proper stddev when integrating a dimension.
     }
 
