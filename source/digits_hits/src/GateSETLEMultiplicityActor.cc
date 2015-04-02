@@ -65,7 +65,7 @@ void GateSETLEMultiplicityActor::Construct()
   EnablePostUserTrackingAction(true);
   EnableUserSteppingAction(true);
     
-  if((mDefaultPrimaryMultiplicity<0) or (mDefaultSecondaryMultiplicity<0)) {
+  if((mDefaultPrimaryMultiplicity<0) || (mDefaultSecondaryMultiplicity<0)) {
     GateError("Multiplicity cannot be inferior to 0 (Mprim = " << mDefaultPrimaryMultiplicity << ", Msec = " << mDefaultSecondaryMultiplicity << ")");
   }
 }
