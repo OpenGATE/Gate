@@ -445,7 +445,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
   
   G4int numVertices = 0;
 
-  GateSteppingAction* myAction = (GateSteppingAction *) ( G4RunManager::GetRunManager()->GetUserSteppingAction() );
+  GateSteppingAction* myAction = (GateSteppingAction *) ( GateRunManager::GetRunManager()->GetUserSteppingAction() );
 
   TrackingMode theMode =myAction->GetMode();
 
@@ -534,7 +534,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
           numVertices = 0;
           return numVertices;
         }
-      G4Run* currentRun = const_cast<G4Run*> ( G4RunManager::GetRunManager()->GetCurrentRun() );
+      G4Run* currentRun = const_cast<G4Run*> ( GateRunManager::GetRunManager()->GetCurrentRun() );
       currentRun->SetRunID( m_currentTrack->GetRunID() );
       event->SetEventID( m_currentTrack->GetEventID() );
       G4int event_id =  m_currentTrack->GetEventID();
@@ -665,7 +665,7 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
   }
 
   /* PY Descourt 08/09/2009 */  
-  TrackingMode theMode =( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
+  TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
   if (  theMode == kBoth || theMode == kTracker ) 
     {
       G4ThreeVector particle_position;

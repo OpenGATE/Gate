@@ -21,7 +21,7 @@ See GATE/LICENSE.txt for further details
 #include "G4AffineTransform.hh"
 #include "G4VSolid.hh"
 #include "G4ThreeVector.hh"
-#include "G4RunManager.hh"
+#include "GateRunManager.hh"
 #include "G4Run.hh"
 
 #include <sys/types.h> 
@@ -670,7 +670,7 @@ int GetIndexFromTime(std::vector<double> & mTimeList, double aTime) {
 G4String GetSaveCurrentFilename(G4String & mSaveFilename) {
   int nr=0;
   int ne=0;
-  const G4Run * run = G4RunManager::GetRunManager()->GetCurrentRun();
+  const G4Run * run = GateRunManager::GetRunManager()->GetCurrentRun();
   if (run) nr = run->GetRunID(); 
   else {
     nr = 0;

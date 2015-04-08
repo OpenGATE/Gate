@@ -526,7 +526,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
   // GateDebugMessage("Acquisition", 0, "PrepareNextEvent "  << event->GetEventID()
   //                    << " at time " << m_time/s << " sec." << G4endl);
 
-  GateSteppingAction* myAction = (GateSteppingAction *) ( G4RunManager::GetRunManager()->GetUserSteppingAction() );
+  GateSteppingAction* myAction = (GateSteppingAction *) ( GateRunManager::GetRunManager()->GetUserSteppingAction() );
   TrackingMode theMode =myAction->GetMode();
   m_currentSources.clear();
 

@@ -124,7 +124,7 @@ void GateFluenceActor::Construct()
 /// Save data
 void GateFluenceActor::SaveData()
 {
-  G4int rID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+  G4int rID = GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
   char filename[1024];
   // Printing all particles
   GateVImageActor::SaveData();

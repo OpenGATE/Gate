@@ -187,7 +187,7 @@ G4GeometryManager::GetInstance()->CloseGeometry( false, true, m_inserter->GetPhy
 G4cout << " #################### REBUILT Geometry of " << m_inserter->GetPhysicalVolume(0)->GetName()<<G4endl;
 */
 
-//G4RunManager::GetRunManager()->GeometryHasBeenModified();
+//GateRunManager::GetRunManager()->GeometryHasBeenModified();
 
 }
 

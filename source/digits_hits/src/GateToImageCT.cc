@@ -15,7 +15,7 @@
 
 #include "G4VProcess.hh"
 #include "G4UnitsTable.hh"
-#include "G4RunManager.hh"
+#include "GateRunManager.hh"
 #include "G4EmCalculator.hh"
 #include "G4TouchableHistory.hh"
 #include "G4TransportationManager.hh"
@@ -386,7 +386,7 @@ void GateToImageCT::RecordBeginOfEvent( const G4Event* aEvent )
   if( fabs( newPosition.getX() ) > m_detectorInX / 2
       || fabs( newPosition.getY() )  > m_detectorInY / 2 )
     {
-      G4RunManager::GetRunManager()->AbortEvent();
+      GateRunManager::GetRunManager()->AbortEvent();
       if ( nVerboseLevel > 1 )
         G4cout << " Abort event: Out of detector section "<< G4endl;
     }

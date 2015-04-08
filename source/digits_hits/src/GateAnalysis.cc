@@ -125,7 +125,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
     m_trajectoryNavigator->SetTrajectoryContainer(trajectoryContainer);
 
   G4int eventID = event->GetEventID();
-  G4int runID   = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+  G4int runID   = GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
   //G4cout << "GateAnalysis::EventID et RunID :  " <<eventID<<" - "<<runID<< G4endl;
 
   //G4int i;
@@ -318,7 +318,7 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
                 }
             } // end loop NpHits
 
-          TrackingMode theMode =( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
+          TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
 
 
           if (  theMode == kTracker ) // in tracker mode we store the infos about the number of compton and rayleigh

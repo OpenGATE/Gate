@@ -137,7 +137,7 @@ void GateToBinary::RecordEndOfRun( G4Run const* )
 	if( m_outFileRunsFlag )
 	{
 		G4int nEvent =
-			( ( (GatePrimaryGeneratorAction*)G4RunManager::GetRunManager()->
+			( ( (GatePrimaryGeneratorAction*)GateRunManager::GetRunManager()->
 			GetUserPrimaryGeneratorAction())->GetEventNumber() );
 
 		if( nVerboseLevel > 0 )

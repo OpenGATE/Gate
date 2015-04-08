@@ -147,7 +147,7 @@ void GateToASCII::RecordEndOfRun(const G4Run * )
   if (nVerboseLevel > 2)
     G4cout << "GateToASCII::RecordEndOfRun" << G4endl;
   if (m_outFileRunsFlag) {
-    G4int nEvent = ((GatePrimaryGeneratorAction*)G4RunManager::GetRunManager()->
+    G4int nEvent = ((GatePrimaryGeneratorAction*)GateRunManager::GetRunManager()->
 		    GetUserPrimaryGeneratorAction())->GetEventNumber();
     if (nVerboseLevel > 0) G4cout
       << "GateToASCII::RecordEndOfRun: Events in the past run: " << nEvent << G4endl;

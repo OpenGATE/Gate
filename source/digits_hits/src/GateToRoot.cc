@@ -282,7 +282,7 @@ void GateToRoot::RecordBeginOfAcquisition()
   if (nVerboseLevel > 2)
     G4cout << "GateToRoot::RecordBeginOfAcquisition" << G4endl;
 
-  GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
+  GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
   TrackingMode theMode = myAction->GetMode();
   if (nVerboseLevel > 1) G4cout << " GateToRoot::RecordBeginOfAcquisition()  Tracking Mode " << theMode << G4endl;
 
@@ -513,7 +513,7 @@ void GateToRoot::RecordEndOfAcquisition()
 
   /* PY Descourt 08/09/2009 */
 
-  GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
+  GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
   TrackingMode theMode = myAction->GetMode();
   if ( theMode == kTracker )
     {
@@ -650,7 +650,7 @@ void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
   strcpy( theCRData.theRayleighVolumeName2, G4String("NULL").c_str()  );
 
 
-  TrackingMode theMode =( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
+  TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
   if ( (theMode == kDetector) &&   (evt->GetNumberOfPrimaryVertex() > 0) )
     {
 
@@ -692,7 +692,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
   // GateMessage("Output", 5 , " GateToRoot::RecordEndOfEvent -- begin" << G4endl;);
 
 
-  GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
+  GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
   TrackingMode theMode = myAction->GetMode();
   if ( theMode == kTracker )return;
 
@@ -786,7 +786,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
       } else {
 	//! better than the simple eventID, but still not enough: it's valid only for
 	//! the single run and not for the application
-	G4int iEvent = ((GatePrimaryGeneratorAction*)G4RunManager::GetRunManager()->
+	G4int iEvent = ((GatePrimaryGeneratorAction*)GateRunManager::GetRunManager()->
 			GetUserPrimaryGeneratorAction())->GetEventNumber();
 	if (m_rootNtupleFlag) ntuple->Fill(iEvent,
 					   eventTime/s,
@@ -1291,7 +1291,7 @@ void GateToRoot::OpenTracksFile()
   G4String previousFN = fTracksFN ;
 
 
-  GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
+  GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
 
   G4int currentN = myAction->GetcurrentN();
 
@@ -1474,7 +1474,7 @@ void GateToRoot::GetCurrentRecStepData( const G4Event* evt )
   //PrintRecStep();
 
   if ( m_RSEventID != evt->GetEventID() )
-    {const G4Run* currentRun =  G4RunManager::GetRunManager()->GetCurrentRun() ;
+    {const G4Run* currentRun =  GateRunManager::GetRunManager()->GetCurrentRun() ;
       G4int RunID = currentRun->GetRunID();
       G4cout << " GateToRoot::GetCurrentRecStepData :::: current Run ID "<< RunID <<"    current RecStep File " <<m_RecStepTree->GetCurrentFile()->GetName()<<G4endl;
       G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentTracksData = "<<m_currentTracksData  <<"     tracksTuple->GetEntries()   "<< tracksTuple->GetEntries() <<G4endl;
@@ -1489,7 +1489,7 @@ void GateToRoot::GetCurrentRecStepData( const G4Event* evt )
 
 GateTrack* GateToRoot::GetCurrentTracksData()
 {
-  GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
+  GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
   if ( m_currentTracksData ==  tracksTuple->GetEntries() ) // check if we are done
     {
       m_EOF = 1;
@@ -1553,7 +1553,7 @@ void GateToRoot::RecordRecStepData( const G4Event* evt )
 {
   //G4cout << " GateToRoot::RecordRecStepData : recording RecStep Data to ROOT file " << G4endl;
   m_RSEventID = evt->GetEventID();
-  m_RSRunID   = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+  m_RSRunID   = GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
   m_RecStepTree->Fill();
   //PrintRecStep();
   //G4cout << " GateToRoot::RecordRecStepData : runID " << m_RSRunID << "  eventID "<< m_RSEventID  << G4endl;
