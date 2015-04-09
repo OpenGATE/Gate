@@ -29,6 +29,7 @@
 #include "GateActions.hh"
 #include "G4Hybridino.hh"
 #include "G4RegionStore.hh"
+#include "G4PhysicalConstants.hh"
 
 #include <typeinfo>
 //-----------------------------------------------------------------------------
@@ -176,7 +177,7 @@ void GateSETLEDoseActor::Construct() {
   mLineSize = (int)lrint(mResolution.x());
   mPlaneSize = (int)lrint(mResolution.x()*mResolution.y());
 
-  ConversionFactor = 1.60217653e-19 * 1.e6 * 1.e3 * 1.e3;
+  ConversionFactor = e_SI * 1.0e12;
   VoxelVolume = GetDoselVolume();
   ResetData();
 }

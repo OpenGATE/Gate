@@ -18,6 +18,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UnitsTable.hh"
 
 #include "GateObjectStore.hh"
+#include "GateConstants.hh"
 
 
 GateLocalBlurring::GateLocalBlurring(GatePulseProcessorChain* itsChain,
@@ -69,7 +70,7 @@ void GateLocalBlurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseLis
 	}
       else {
 	G4double m_coeff = (*im).second.resolution * sqrt((*im).second.eref);
-	outputPulse->SetEnergy(G4RandGauss::shoot(inputPulse->GetEnergy(),m_coeff*sqrt(inputPulse->GetEnergy())/2.35));
+	outputPulse->SetEnergy(G4RandGauss::shoot(inputPulse->GetEnergy(),m_coeff*sqrt(inputPulse->GetEnergy())/GateConstants::fwhm_to_sigma));
       }
     }
   outputPulseList.push_back(outputPulse);

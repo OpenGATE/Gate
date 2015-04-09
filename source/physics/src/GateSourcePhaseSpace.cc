@@ -81,7 +81,6 @@ GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name ):GateVSource( name )
 
   mTotalSimuTime = 0.;
   mAlreadyLoad = false;
-  PI = 4*(atan (1.0));
   mRmax=0;
   mCurrentParticleInIAEAFiles = 0;
   mCurrentUsedParticleInIAEAFiles = 0;
@@ -303,7 +302,7 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
     }
     mLoop = int(mRequestedNumberOfParticlesPerRun/mTotalNumberOfParticles)  ;
   
-    mAngle = 2.*PI/(mLoop);
+    mAngle = twopi/(mLoop);
   }//Calculate the number of time each particle in phase space will be used
 
   
@@ -359,7 +358,7 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
      mParticleMomentum2 =  rotation*mParticleMomentum2;
   }
   if(GetUseRandomSymmetry() && mCurrentUse!=0) {
-     G4double randAngle = ((double)std::rand()/((double)RAND_MAX+1)*2.*PI);
+     G4double randAngle = G4RandFlat::shoot(twopi);
      rotation.rotateZ(randAngle);
      mParticleMomentum2 =  rotation*mParticleMomentum2;
   }

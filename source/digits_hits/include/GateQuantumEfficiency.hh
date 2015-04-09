@@ -101,14 +101,6 @@ class GateQuantumEfficiency : public GateVPulseProcessor
     void ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList);
 
   private:
-    //! Give a random number included between 0 and 1
-    G4double MonteCarloEngine();
-    //! Give a random integer included between 'a and 'b
-    size_t MonteCarloInt(size_t a,size_t b);
-    //! Give a random number included between 'a and 'b
-    G4double MonteCarloG4double(G4double a,G4double b);
-
-  private:
     //! Static pointer to the GateQuantumEfficiency singleton
     static GateQuantumEfficiency* theGateQuantumEfficiency;
 

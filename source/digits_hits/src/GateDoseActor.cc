@@ -20,6 +20,7 @@
 #include <G4EmCalculator.hh>
 #include <G4VoxelLimits.hh>
 #include <G4NistManager.hh>
+#include <G4PhysicalConstants.hh>
 
 //-----------------------------------------------------------------------------
 GateDoseActor::GateDoseActor(G4String name, G4int depth):
@@ -332,13 +333,13 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
       DEDX = emcalc->ComputeTotalDEDX(Energy, PartName, material, cut);
       DEDX_Water = emcalc->ComputeTotalDEDX(Energy, PartName, "G4_WATER", cut);
 
-      doseToWater=edep/density*1e12/mDoseToWaterImage.GetVoxelVolume()*(DEDX_Water/1.)/(DEDX/(density*1.6e-19));
+      doseToWater=edep/density*1e12/mDoseToWaterImage.GetVoxelVolume()*(DEDX_Water/1.)/(DEDX/(density*e_SI));
 
     }
     else {
       DEDX = emcalc->ComputeTotalDEDX(100, "proton", material, cut);
       DEDX_Water = emcalc->ComputeTotalDEDX(100, "proton", "G4_WATER", cut);
-      doseToWater=edep/density*1e12/mDoseToWaterImage.GetVoxelVolume()*(DEDX_Water/1.)/(DEDX/(density*1.6e-19));
+      doseToWater=edep/density*1e12/mDoseToWaterImage.GetVoxelVolume()*(DEDX_Water/1.)/(DEDX/(density*e_SI));
     }
 
     GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = "

@@ -96,7 +96,7 @@ void GateSigmoidalThresholder::ProcessOnePulse(const GatePulse* inputPulse,GateP
   }
 
   G4double sigma=SigmoideFct(m_alpha*(inputPulse->GetEnergy()-m_centSigm)/m_centSigm);
-  G4double rmd=(((G4double) rand ()) / 2147483647.0);
+  G4double rmd= G4RandFlat::shoot();
   if ( sigma >= rmd )
   {
     GatePulse* outputPulse = new GatePulse(*inputPulse);

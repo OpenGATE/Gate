@@ -556,10 +556,10 @@ void GateToSinogram::RecordEndOfEvent(const G4Event* )
 
     //  ordering between detector 1 and detector 2 : x1 >= x2 (convention)
     //  important for polar angle sign (ring2 - ring1)
-    x1 = sin((0.5+crystal1)*(2*M_PI/(double)m_crystalNb));
-    x2 = sin((0.5+crystal2)*(2*M_PI/(double)m_crystalNb));
-    y1 = cos((0.5+crystal1)*(2*M_PI/(double)m_crystalNb));
-    y2 = cos((0.5+crystal2)*(2*M_PI/(double)m_crystalNb));
+    x1 = sin((0.5+crystal1)*(twopi/(double)m_crystalNb));
+    x2 = sin((0.5+crystal2)*(twopi/(double)m_crystalNb));
+    y1 = cos((0.5+crystal1)*(twopi/(double)m_crystalNb));
+    y2 = cos((0.5+crystal2)*(twopi/(double)m_crystalNb));
 
     // 07.02.2006, C. Comtat, Store randoms and scatters sino
     if (x1 > x2) {
