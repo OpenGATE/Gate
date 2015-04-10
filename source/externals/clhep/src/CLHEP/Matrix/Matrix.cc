@@ -19,6 +19,7 @@
 #include "CLHEP/Matrix/SymMatrix.h"
 #include "CLHEP/Matrix/DiagMatrix.h"
 #include "CLHEP/Matrix/Vector.h"
+#include "CLHEP/Utility/thread_local.h"
 
 #ifdef HEP_DEBUG_INLINE
 #include "CLHEP/Matrix/Matrix.icc"
@@ -366,7 +367,7 @@ HepMatrix operator*(const HepMatrix &hm1,const HepMatrix &hm2)
   {
      for (int j=0; j<m1cols; j++) 
      {
-	register double temp = hm1.m[i*m1cols+j];
+	double temp = hm1.m[i*m1cols+j];
 	HepMatrix::mIter pt = mret.m.begin() + i*m2cols;
 	
 	// Loop over k (the column index in matrix hm2)
@@ -498,7 +499,7 @@ int HepMatrix::dfinv_matrix(int *ir) {
   if (n==1) return 0;
 
   double s31, s32;
-  register double s33, s34;
+  double s33, s34;
 
   mIter hm11 = m.begin();
   mIter hm12 = hm11 + 1;
@@ -708,8 +709,8 @@ void HepMatrix::invert(int &ierr) {
   if(ncol != nrow)
      error("HepMatrix::invert: Matrix is not NxN");
 
-  static int max_array = 20;
-  static int *ir = new int [max_array+1];
+  static CLHEP_THREAD_LOCAL int max_array = 20;
+  static CLHEP_THREAD_LOCAL int *ir = new int [max_array+1];
 
   if (ncol > max_array) {
     delete [] ir;
@@ -813,8 +814,8 @@ void HepMatrix::invert(int &ierr) {
 }
 
 double HepMatrix::determinant() const {
-  static int max_array = 20;
-  static int *ir = new int [max_array+1];
+  static CLHEP_THREAD_LOCAL int max_array = 20;
+  static CLHEP_THREAD_LOCAL int *ir = new int [max_array+1];
   if(ncol != nrow)
     error("HepMatrix::determinant: Matrix is not NxN");
   if (ncol > max_array) {

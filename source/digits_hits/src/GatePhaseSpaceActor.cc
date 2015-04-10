@@ -290,6 +290,14 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
     // Find the transform from GetCoordFrame volume to the world.
     GateVVolume *v = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame());
+    if (v == NULL) {
+      if (mFileType == "rootFile") {
+        pFile = pListeVar->GetCurrentFile();
+        pFile->Close();
+      }
+      GateError("Error, cannot find the volume '" << GetCoordFrame() << "' -> (see the setCoordinateFrame)");
+    }
+
     G4VPhysicalVolume *phys = v->GetPhysicalVolume();
     G4AffineTransform volumeToWorld = G4AffineTransform(phys->GetRotation(), phys->GetTranslation());
     while (v->GetLogicalVolumeName() != "world_log") {

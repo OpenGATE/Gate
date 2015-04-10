@@ -47,7 +47,7 @@
 #=====================================================
 
 /gate/actor/addActor                               DoseActor  doseDistribution
-/gate/actor/doseDistribution/save                  output/gamma.mhd
+/gate/actor/doseDistribution/save                  output/output-gamma.mhd
 /gate/actor/doseDistribution/attachTo    	   mainbox2
 /gate/actor/doseDistribution/stepHitType           random
 /gate/actor/doseDistribution/setPosition           0 0 0 cm

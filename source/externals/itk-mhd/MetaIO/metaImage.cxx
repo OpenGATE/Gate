@@ -83,6 +83,8 @@ void openWriteStream(METAIO_STREAM::ofstream & outputStream, const char * fname,
     }
 }
 
+const unsigned int MAXPATHLENGHT = 2048;
+
 } // end anonymous namespace
 
 #if (METAIO_USE_NAMESPACE)
@@ -310,7 +312,7 @@ PrintInfo() const
 
   MetaObject::PrintInfo();
 
-  char s[255];
+  char s[MAXPATHLENGHT];
   MET_ImageModalityToString(m_Modality, s);
   METAIO_STREAM::cout << "Modality = " << s << METAIO_STREAM::endl;
 
@@ -348,7 +350,7 @@ PrintInfo() const
     }
   METAIO_STREAM::cout << METAIO_STREAM::endl;
 
-  char str[255];
+  char str[MAXPATHLENGHT];
   MET_TypeToString(m_ElementType, str);
   METAIO_STREAM::cout << "ElementType = " << str << METAIO_STREAM::endl;
 
@@ -1201,10 +1203,6 @@ CanRead(const char *_headerName) const
     return false;
     }
 
-  //bool usePath;
-  //char pathName[255];
-  //usePath = MET_GetFilePath(_headerName, pathName);
-
   char* buf = new char[8001];
   inputStream.read(buf,8000);
   unsigned long fileSize = inputStream.gcount();
@@ -1313,8 +1311,8 @@ ReadStream(int _nDims,
     int i;
     size_t j;
     bool usePath;
-    char pathName[255];
-    char fName[255];
+    char pathName[MAXPATHLENGHT];
+    char fName[MAXPATHLENGHT];
     usePath = MET_GetFilePath(m_FileName, pathName);
 
     if(!strcmp("Local", m_ElementDataFileName) ||
@@ -1340,7 +1338,7 @@ ReadStream(int _nDims,
       delete [] wrds;
       if ( (fileImageDim == 0) || (fileImageDim > m_NDims) )
         {
-        // if optional file dimension size is not give or is larger than
+        // if optional file dimension size is not given or is larger than
         // overall dimension then default to a size of m_NDims - 1.
         fileImageDim = m_NDims-1;
         }
@@ -1400,7 +1398,7 @@ ReadStream(int _nDims,
       int minV = 1;
       int maxV = m_DimSize[m_NDims-1];
       int stepV = 1;
-      char s[255];
+      char s[MAXPATHLENGHT];
       METAIO_STREAM::ifstream* readStreamTemp = new METAIO_STREAM::ifstream;
       MET_StringToWordArray(m_ElementDataFileName, &nWrds, &wrds);
       if(nWrds >= 2)
@@ -1417,6 +1415,44 @@ ReadStream(int _nDims,
         {
         stepV = (int)atof(wrds[3]);
         }
+      if(nWrds >= 5 )
+      {
+        // In this case, the filename must have had spaces in the
+        // name.  The filename was parsed into multiple pieces by the
+        // MET_StringToWordArray, which parses based on spaces.
+        // Thus, we need to reconstruct the filename in this case.
+        // The last three wrds must be numbers.  If they are not, we give an error.
+        for( i = nWrds-3; i < nWrds; i++ )
+        {
+          for( j = 0; j < strlen(wrds[i]); j++ )
+          {
+            if( !isdigit(wrds[i][j]) )
+            {
+              METAIO_STREAM::cerr << "MetaImage: Read: Last three arguments must be numbers!"
+                  << METAIO_STREAM::endl;
+              continue;
+            }
+          }
+        }
+        stepV = (int)atof(wrds[nWrds-1]);
+        maxV =  (int)atof(wrds[nWrds-2]);
+        minV =  (int)atof(wrds[nWrds-3]);
+        for( i = 1; i < nWrds-3; i++ )
+        {
+          strcat(wrds[0]," ");
+          strcat(wrds[0],wrds[i]);
+        }
+      }
+      // If the specified size of the third dimension is less than the size
+      // specified by the regular expression, we should only read a volume with the specified
+      // size.  Otherwise, the code will crash when trying to fill m_ElementData more than it can hold.
+      // Therefore, we modify maxV to ensure that the images spanned by minV:stepV:maxV are less than or equal
+      // to the size in the last dimension.
+      int numberOfImages = 1 + (maxV - minV)/stepV;
+      if( numberOfImages > m_DimSize[m_NDims-1] )
+      {
+        maxV = (m_DimSize[m_NDims-1]-1)*stepV + minV;
+      }
       int cnt = 0;
       for(i=minV; i<=maxV; i += stepV)
         {
@@ -1564,11 +1600,11 @@ Write(const char *_headName,
       }
     }
 
-  char pathName[255];
+  char pathName[MAXPATHLENGHT];
   bool usePath = MET_GetFilePath(m_FileName, pathName);
   if(usePath)
     {
-    char elementPathName[255];
+    char elementPathName[MAXPATHLENGHT];
     MET_GetFilePath(m_ElementDataFileName, elementPathName);
     if(!strcmp(pathName, elementPathName))
       {
@@ -1777,7 +1813,7 @@ bool MetaImage::WriteROI( int * _indexMin, int * _indexMax,
     // Write the region
     if( !M_FileExists(filename.c_str()) )
       {
-      char pathName[255];
+      char pathName[MAXPATHLENGHT];
       MET_GetFilePath(_headName, pathName);
       filename = pathName+filename;
       }
@@ -1892,11 +1928,11 @@ bool MetaImage::WriteROI( int * _indexMin, int * _indexMax,
         }
       }
 
-    char pathName[255];
+    char pathName[MAXPATHLENGHT];
     bool usePath = MET_GetFilePath(m_FileName, pathName);
     if(usePath)
       {
-      char elementPathName[255];
+      char elementPathName[MAXPATHLENGHT];
       MET_GetFilePath(m_ElementDataFileName, elementPathName);
       if(!strcmp(pathName, elementPathName))
         {
@@ -1943,7 +1979,17 @@ bool MetaImage::WriteROI( int * _indexMin, int * _indexMax,
 
       dataPos = 0;
 
-      openWriteStream(*tmpWriteStream, m_ElementDataFileName, _append);
+      char dataFileName[MAXPATHLENGHT];
+      if(usePath&& !FileIsFullPath(m_ElementDataFileName))
+        {
+        sprintf(dataFileName, "%s%s", pathName, m_ElementDataFileName);
+        }
+      else
+        {
+        strcpy(dataFileName, m_ElementDataFileName);
+        }
+
+      openWriteStream(*tmpWriteStream, dataFileName, _append);
       m_WriteStream = tmpWriteStream;
       }
 
@@ -2179,7 +2225,7 @@ M_SetupWriteFields(void)
   MET_InitWriteField(mF, "DimSize", MET_INT_ARRAY, m_NDims, m_DimSize);
   m_Fields.push_back(mF);
 
-  char s[255];
+  char s[MAXPATHLENGHT];
   if(m_HeaderSize > 0 || m_HeaderSize == -1)
     {
     mF = new MET_FieldRecordType;
@@ -2525,8 +2571,8 @@ M_WriteElements(METAIO_STREAM::ofstream * _fstream,
     }
   else // write the data in a separate file
     {
-    char dataFileName[255];
-    char pathName[255];
+    char dataFileName[MAXPATHLENGHT];
+    char pathName[MAXPATHLENGHT];
     bool usePath = MET_GetFilePath(m_FileName, pathName);
     if(usePath&& !FileIsFullPath(m_ElementDataFileName))
       {
@@ -2540,7 +2586,7 @@ M_WriteElements(METAIO_STREAM::ofstream * _fstream,
     if(strstr(dataFileName, "%")) // write slice by slice
       {
       int i;
-      char fName[255];
+      char fName[MAXPATHLENGHT];
       int elementSize;
       MET_SizeOfType(m_ElementType, &elementSize);
       METAIO_STL::streamoff elementNumberOfBytes = elementSize*m_ElementNumberOfChannels;
@@ -2759,8 +2805,8 @@ bool MetaImage::ReadROIStream(int * _indexMin, int * _indexMax,
       }
 
     bool usePath;
-    char pathName[255];
-    char fName[255];
+    char pathName[MAXPATHLENGHT];
+    char fName[MAXPATHLENGHT];
     usePath = MET_GetFilePath(m_FileName, pathName);
 
     if(!strcmp("Local", m_ElementDataFileName) ||
@@ -2788,7 +2834,7 @@ bool MetaImage::ReadROIStream(int * _indexMin, int * _indexMax,
       delete [] wrds;
       if ( (fileImageDim == 0) || (fileImageDim > m_NDims) )
         {
-        // if optional file dimension size is not give or is larger than
+        // if optional file dimension size is not given or is larger than
         // overall dimension then default to a size of m_NDims - 1.
         fileImageDim = m_NDims-1;
         }
@@ -2873,7 +2919,7 @@ bool MetaImage::ReadROIStream(int * _indexMin, int * _indexMax,
       int minV = 1;
       int maxV = m_DimSize[m_NDims-1];
       int stepV = 1;
-      char s[255];
+      char s[MAXPATHLENGHT];
       METAIO_STREAM::ifstream* readStreamTemp = new METAIO_STREAM::ifstream;
       MET_StringToWordArray(m_ElementDataFileName, &nWrds, &wrds);
       if(nWrds >= 2)
@@ -2890,6 +2936,45 @@ bool MetaImage::ReadROIStream(int * _indexMin, int * _indexMax,
         {
         stepV = (int)atof(wrds[3]);
         }
+      if(nWrds >= 5 )
+      {
+        // In this case, the filename must have had spaces in the
+        // name.  The filename was parsed into multiple pieces by the
+        // MET_StringToWordArray, which parses based on spaces.
+        // Thus, we need to reconstruct the filename in this case.
+        // The last three wrds must be numbers.  If they are not, we give an error.
+        for( i = nWrds-3; i < nWrds; i++ )
+        {
+          for( j = 0; j < strlen(wrds[i]); j++ )
+          {
+            if( !isdigit(wrds[i][j]) )
+            {
+              METAIO_STREAM::cerr << "MetaImage: Read: Last three arguments must be numbers!"
+                  << METAIO_STREAM::endl;
+              continue;
+            }
+          }
+        }
+        stepV = (int)atof(wrds[nWrds-1]);
+        maxV =  (int)atof(wrds[nWrds-2]);
+        minV =  (int)atof(wrds[nWrds-3]);
+        for( i = 1; i < nWrds-3; i++ )
+        {
+          strcat(wrds[0]," ");
+          strcat(wrds[0],wrds[i]);
+        }
+      }
+      // If the specified size of the third dimension is less than the size
+      // specified by the regular expression, we should only read a volume with the specified
+      // size.  Otherwise, the code will crash when trying to fill m_ElementData more than it can hold.
+      // Therefore, we modify maxV to ensure that the images spanned by minV:stepV:maxV are less than or equal
+      // to the size in the last dimension.
+      int numberOfImages = 1 + (maxV - minV)/stepV;
+      if( numberOfImages > m_DimSize[m_NDims-1] )
+      {
+        maxV = (m_DimSize[m_NDims-1]-1)*stepV + minV;
+      }
+
       int cnt = 0;
 
       // Uses the _indexMin and _indexMax
@@ -3126,8 +3211,7 @@ M_ReadElementsROI(METAIO_STREAM::ifstream * _fstream, void * _data,
           // if there was a read error
           if(rOff == -1)
             {
-            delete[] subdata;
-            delete[] currentIndex;
+            delete [] currentIndex;
             return false;
             }
 
@@ -3152,7 +3236,7 @@ M_ReadElementsROI(METAIO_STREAM::ifstream * _fstream, void * _data,
                                  m_CompressionTable);
           if(rOff == -1)
             {
-            delete[] currentIndex;
+            delete [] currentIndex;
             return false;
             }
           data += bytesToRead;
@@ -3400,7 +3484,7 @@ M_ReadElementData(METAIO_STREAM::ifstream * _fstream,
       MET_SizeOfType(m_ElementType, &elementSize);
       METAIO_STL::streamoff elementNumberOfBytes = elementSize*m_ElementNumberOfChannels;
 
-      // the data is read with calls no bigger then MaxIOChunk
+      // the data is read with calls no bigger than MaxIOChunk
       METAIO_STL::streamoff bytesRemaining = _dataQuantity * elementNumberOfBytes;
       while ( bytesRemaining )
         {

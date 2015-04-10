@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "G4SystemOfUnits.hh"
 
@@ -13,82 +13,81 @@ See GATE/LICENSE.txt for further details
 #include "GateSourceVoxelImageReader.hh"
 #include "GateSourceVoxelImageReaderMessenger.hh"
 #include "GateVSourceVoxelTranslator.hh"
-//#include "fstream.h"
-//LF
-#include <fstream>
-//LF
 
-#include "G4PhysicalConstants.hh"
-#include "G4SystemOfUnits.hh"
-
+//-----------------------------------------------------------------------------
 GateSourceVoxelImageReader::GateSourceVoxelImageReader(GateVSource* source)
   : GateVSourceVoxelReader(source)
 {
   nVerboseLevel = 0;
-
   m_name = G4String("imageReader");
-
+  m_type = G4String("image");
   m_messenger = new GateSourceVoxelImageReaderMessenger(this);
 }
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 GateSourceVoxelImageReader::~GateSourceVoxelImageReader()
 {
   delete m_messenger;
 }
+//-----------------------------------------------------------------------------
 
-void GateSourceVoxelImageReader::ReadFile(G4String fileName)
+
+//-----------------------------------------------------------------------------
+void GateSourceVoxelImageReader::ReadFile(G4String filename)
 {
+  GateImage * image = new GateImage;
+
   if (!m_voxelTranslator) {
-    G4cout << "GateSourceVoxelImageReader::ReadFile: ERROR : insert a translator first" << G4endl;
-    return;
+    GateError("GateSourceVoxelImageReader::ReadFile: ERROR : insert a translator first" << G4endl);
   }
 
-  std::ifstream inFile;
-  G4cout << "GateSourceVoxelImageReader::ReadFile : fileName: " << fileName << G4endl;
-  inFile.open(fileName.c_str(),std::ios::in);
-
   G4double activity;
-  G4int imageValue;
   G4int nx, ny, nz;
-  G4double dx, dy, dz;
+  G4double vx, vy, vz;
 
-  inFile >> nx >> ny >> nz;
+  image->Read(filename);
+  nx=image->GetResolution()[0];
+  ny=image->GetResolution()[1];
+  nz=image->GetResolution()[2];
+  vx=image->GetVoxelSize()[0];
+  vy=image->GetVoxelSize()[1];
+  vz=image->GetVoxelSize()[2];
 
-  inFile >> dx >> dy >> dz;
-  SetVoxelSize( G4ThreeVector(dx, dy, dz) * mm );
+  SetVoxelSize( G4ThreeVector(vx, vy, vz) * mm );
+
+  m_image_origin = image->GetOrigin();
 
   for (G4int iz=0; iz<nz; iz++) {
     for (G4int iy=0; iy<ny; iy++) {
       for (G4int ix=0; ix<nx; ix++) {
-	inFile >> imageValue;
+	PixelType imageValue = image->GetValue(ix, iy, iz);
 	activity = m_voxelTranslator->TranslateToActivity(imageValue);
-	if (activity > 0.) {
+	if (activity > 0) {
 	  AddVoxel(ix, iy, iz, activity);
 	}
       }
     }
   }
-
-  inFile.close();
-
   PrepareIntegratedActivityMap();
-
 }
+//-----------------------------------------------------------------------------
 
 
-/* PY Descourt 11/12/2008 */ 
+//-----------------------------------------------------------------------------
 void GateSourceVoxelImageReader::ReadRTFile(G4String , G4String fileName)
 {
 
-// Check there is a GatePhantom attached to this source
+  // Check there is a GatePhantom attached to this source
 
-GateRTPhantom *Ph = GateRTPhantomMgr::GetInstance()->CheckSourceAttached( m_name );
+  GateRTPhantom *Ph = GateRTPhantomMgr::GetInstance()->CheckSourceAttached( m_name );
 
-if ( Ph != 0) 
-{G4cout << " The Object "<< Ph->GetName()
-<<" is attached to the "<<m_name<<" Geometry Voxel Reader"<<G4endl;
+  if ( Ph != 0)
+    {G4cout << " The Object "<< Ph->GetName()
+            <<" is attached to the "<<m_name<<" Geometry Voxel Reader"<<G4endl;
 
-} 
+    }
 
 
   if (!m_voxelTranslator) {
@@ -113,11 +112,11 @@ if ( Ph != 0)
   for (G4int iz=0; iz<nz; iz++) {
     for (G4int iy=0; iy<ny; iy++) {
       for (G4int ix=0; ix<nx; ix++) {
- inFile >> imageValue;
- activity = m_voxelTranslator->TranslateToActivity(imageValue);
- if (activity > 0.) {
-   AddVoxel(ix, iy, iz, activity);
- }
+        inFile >> imageValue;
+        activity = m_voxelTranslator->TranslateToActivity(imageValue);
+        if (activity > 0.) {
+          AddVoxel(ix, iy, iz, activity);
+        }
       }
     }
   }
@@ -127,4 +126,4 @@ if ( Ph != 0)
   PrepareIntegratedActivityMap();
 
 }
-/* PY Descourt 11/12/2008 */ 
+//-----------------------------------------------------------------------------

@@ -17,6 +17,7 @@
 #include "G4ThreeVector.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
+#include "G4IonTable.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4ParticleMomentum.hh"
 #include "G4UImessenger.hh"
