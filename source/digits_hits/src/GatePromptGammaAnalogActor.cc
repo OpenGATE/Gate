@@ -143,7 +143,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   // Process type, store cross_section for ProtonInelastic process
   if (process != protonInelastic) return;
 
-  // For all secondaries, store Energy spectrum
+  // For all secondaries, check if gamma and store pg-Energy in this voxel
   G4TrackVector* fSecondary = (const_cast<G4Step *> (step))->GetfSecondary();
   for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++) {
     if ((*fSecondary)[lp1]->GetDefinition() == G4Gamma::Gamma()) {

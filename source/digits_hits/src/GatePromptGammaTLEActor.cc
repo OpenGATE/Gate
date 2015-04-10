@@ -179,6 +179,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
     GateError("GatePromptGammaTLEActor -- Proton Energy (" << particle_energy << ") outside range of pgTLE (" << data.GetProtonEMax() << ") database! Aborting...");
   }
 
+  // New style TLE + TLE variance
   if (mIsVarianceImageEnabled) {
     int protbin = data.GetHEp()->FindFixBin(particle_energy)-1;
     if (!sameEvent) {
