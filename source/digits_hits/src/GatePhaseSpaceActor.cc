@@ -219,26 +219,38 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e) {
 
 // --------------------------------------------------------------------
 void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *step) {
+
+  //----------- ??? -------------
+  //FIXME: Document what mIsFistStep is/does.
   if (!mIsFistStep && !EnableAllStep) return;
   if (mIsFistStep && step->GetTrack()->GetTrackID() == 1 ) mNevent++;
 
+  //----------- ??? -------------
+  //FIXME: Document what this is/does.
   G4StepPoint *stepPoint;
   //prestep, NOT poststep!!!!
   if (mStoreOutPart || EnableAllStep) stepPoint = step->GetPostStepPoint();
   else stepPoint = step->GetPreStepPoint();
 
-
+  //-----------Write volumename -------------
   G4String st = "";
   if (step->GetTrack()->GetLogicalVolumeAtVertex())
     st = step->GetTrack()->GetLogicalVolumeAtVertex()->GetName();
   strcpy(vol, st.c_str());
 
+  //----------- ??? -------------
+  //FIXME: Document what this is/does.
   //if(vol!=mVolume->GetLogicalVolumeName() && mStoreOutPart) return;
   if (vol == mVolume->GetLogicalVolumeName() && !EnableSec && !mStoreOutPart) return;
   //if(!( mStoreOutPart && step->IsLastStepInVolume())) return;
 
+  //----------- ??? -------------
+  //FIXME: Document what this is/does.
   //something wrong here:
   if (mStoreOutPart && step->GetTrack()->GetVolume() == step->GetTrack()->GetNextVolume()) return;
+
+  //----------- Workaround for outgoing particles flag -------------
+  //FIXME: Document why necesary?
   if (mStoreOutPart) {
     /* 2014-06-11: Brent & David
      * There is a rare bug when using the PhaseSpaceActor to store outgoing particles and very long cuts on particles (nongammas).
@@ -258,6 +270,8 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     }
   }
 
+  //----------- ??? -------------
+  //FIXME: remove?
   /*if(mStoreOutPart && step->GetTrack()->GetVolume()!=mVolume->GetPhysicalVolume() ){
     GateVVolume *parent = mVolume->GetParentVolume();
     while(parent){
@@ -272,14 +286,13 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
   //'st' contains some nonprinteble caracters, which are not always the same. e.g. there exist multiple kinds of gammas, oxygens, etc.
   strcpy(pname, st.c_str());
-  //cout << "Brent" << pname << endl;
   bPDGCode = step->GetTrack()->GetDefinition()->GetPDGEncoding();
 
   //cout << step->GetTrack()->GetDefinition()->GetPDGEncoding() << endl;
   // TODO doesnt work, undefined reference. Problem with makefile?
   //Solution, use PDGcode instead of ParticleName. However, GatePhaseSpaceSource uses Particlename char[64] while GatePhaseSpaceActor stores Char_t[256].
 
-  //------------Write psition of the steps presents at the simulation-------------
+  //------------Write position of the steps presents at the simulation-------------
   G4ThreeVector localPosition = stepPoint->GetPosition();
 
   if (GetUseVolumeFrame()) {
