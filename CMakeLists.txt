@@ -9,6 +9,7 @@ SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake-modules ${CMAKE_MODULE_PATH})
 #=========================================================
 # Configure Dart testing support.  This should be done before any
 # MESSAGE(FATAL_ERROR ...) commands are invoked.
+OPTION(BUILD_TESTING "Build the testing tree." OFF)
 INCLUDE(CTest)
 
 IF(BUILD_TESTING)
