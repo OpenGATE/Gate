@@ -156,7 +156,7 @@ GenericWrapperProcess::PostStepDoIt(const G4Track& track, const G4Step& step)
     G4int j(0);
 
     if(mSplitting && mRR)
-      rdm =  ((double)std::rand()/((double)RAND_MAX+1)*mWeight);//CLHEP
+      rdm = G4RandFlat::shoot(mWeight);
 
     if( (rdm<1. && weight>1.) || weight<1. || mCSEnhancement) {// =?
      if(pFilterManagerSecondary->GetNumberOfFilters()>0){
@@ -169,7 +169,7 @@ GenericWrapperProcess::PostStepDoIt(const G4Track& track, const G4Step& step)
 	    secondaries.push_back(new G4Track(*(particleChange->GetSecondary(j))));
 	  }
 	else if(mkeepSec){
-	  rdm =  ((double)std::rand()/((double)RAND_MAX+1)*mWeight);//CLHEP
+	  rdm =  G4RandFlat::shoot(mWeight);
           if(rdm<1.) {
 	    for (j=0; j<particleChange->GetNumberOfSecondaries(); j++) {
 	      //filteredSecondaries.push_back(((particleChange->GetSecondary(j))));
@@ -256,7 +256,7 @@ G4String realName= proName;
     weight /= mCSEFactor;
     
     frac = 1./mCSEFactor;
-    rdm =  ((double)std::rand()/((double)RAND_MAX+1)*1.);//CLHEP
+    rdm = G4RandFlat::shoot();
     if(rdm<(1.-frac)){
       if(partName=="gamma"){
        dynamic_cast<G4ParticleChangeForGamma*>(particleChange)->ProposeMomentumDirection(dir);

@@ -20,6 +20,7 @@ See GATE/LICENSE.txt for further details
 #include "Randomize.hh"
 
 #include "G4UnitsTable.hh"
+#include "GateConstants.hh"
 
 
 // Constructor
@@ -100,9 +101,9 @@ void GateBlurringWithIntrinsicResolution::ProcessOnePulse(const GatePulse* input
 	                        * sqrt(((*im).second.eref * XtalkpCent * QECoef  * TECoef * LightOutput)
 	                        / inputPulse->GetEnergy());
 
-	G4double resol = sqrt((1.1/mu)*(2.35*2.35) + intrinsicResol*intrinsicResol);
+	G4double resol = sqrt((1.1/mu)*(GateConstants::fwhm_to_sigma*GateConstants::fwhm_to_sigma) + intrinsicResol*intrinsicResol);
 
-	outputPulse->SetEnergy(G4RandGauss::shoot(mu,(resol * mu)/2.35));
+	outputPulse->SetEnergy(G4RandGauss::shoot(mu,(resol * mu)/GateConstants::fwhm_to_sigma));
       }
     }
   outputPulseList.push_back(outputPulse);

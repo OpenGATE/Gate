@@ -334,10 +334,10 @@ void GateToSinoAccel::RecordEndOfEvent(const G4Event* )
 
     //  ordering between detector 1 and detector 2 : x1 >= x2 (convention)
     //  important for polar angle sign (ring2 - ring1)
-    y1 = sin((0.5+crystal1)*(2*M_PI/(double)m_crystalNb));
-    y2 = sin((0.5+crystal2)*(2*M_PI/(double)m_crystalNb));
-    x1 = cos((0.5+crystal1)*(2*M_PI/(double)m_crystalNb));
-    x2 = cos((0.5+crystal2)*(2*M_PI/(double)m_crystalNb));
+    y1 = sin((0.5+crystal1)*(twopi/(double)m_crystalNb));
+    y2 = sin((0.5+crystal2)*(twopi/(double)m_crystalNb));
+    x1 = cos((0.5+crystal1)*(twopi/(double)m_crystalNb));
+    x2 = cos((0.5+crystal2)*(twopi/(double)m_crystalNb));
     if (y1 > y2) {
       if ((m_sinogram->Fill( ring2, ring1, crystal1, crystal2, +1) == 0) && (eventID1 != eventID2))
         m_sinogram->FillRandoms( ring2, ring1);

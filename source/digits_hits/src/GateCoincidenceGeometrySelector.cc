@@ -71,24 +71,17 @@ GateCoincidencePulse* GateCoincidenceGeometrySelector::ProcessPulse(GateCoincide
   if (denom!=0.) {
     denom = sqrt(denom);
 
-    s = ( globalPos1.x() * (globalPos2.y()-globalPos1.y()) +
-	  globalPos1.y() * (globalPos1.x()-globalPos2.x())  )
+    s = ( globalPos1.x() * (globalPos1.y()-globalPos2.y()) +
+	  globalPos1.y() * (globalPos2.x()-globalPos1.x())  )
       	/ denom;
   } else {
     s = 0.;
   }
 
   G4double theta;
-  if ((globalPos1.x()-globalPos2.x())!=0.) {
-    theta=atan((globalPos1.x()-globalPos2.x()) /
-	       (globalPos1.y()-globalPos2.y()));
-  } else {
-    theta=3.1416/2.;
-  }
-  if ((theta > 0.) && ((globalPos1.x()-globalPos2.x()) > 0.)) s = -s;
-  if ((theta < 0.) && ((globalPos1.x()-globalPos2.x()) < 0.)) s = -s;
+  theta = atan2(globalPos1.x()-globalPos2.x(), globalPos1.y()-globalPos2.y());
   if ( theta < 0.) {
-    theta = theta+3.1416;
+    theta = theta + pi;
     s = -s;
   }
   if ((m_maxS>0)  && (fabs(s)>m_maxS) ) return 0;
