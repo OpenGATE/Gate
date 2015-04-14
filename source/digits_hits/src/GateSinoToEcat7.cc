@@ -23,7 +23,6 @@ See GATE/LICENSE.txt for further details
 #include "GateSinoToEcat7Messenger.hh"
 
 #include "globals.hh"
-#include "G4RunManager.hh"
 #include "G4Run.hh"
 
 #include "GateOutputMgr.hh"

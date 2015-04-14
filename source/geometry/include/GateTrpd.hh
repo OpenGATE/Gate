@@ -14,7 +14,6 @@
 #include "GateVVolume.hh"
 #include "GateVolumeManager.hh"
 
-#include "G4RunManager.hh"
 #include "G4VVisManager.hh"
 #include "G4Trd.hh"
 #include "G4Box.hh"

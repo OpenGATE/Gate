@@ -20,7 +20,6 @@ See GATE/LICENSE.txt for further details
 #include "G4Step.hh"
 #include "G4Event.hh"
 #include "G4HCofThisEvent.hh"
-#include "G4RunManager.hh"
 #include "GateCrystalHit.hh"
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"

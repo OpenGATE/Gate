@@ -7,7 +7,6 @@
 #include <fstream>
 
 #include "G4GeometryManager.hh"
-#include "G4RunManager.hh"
 #include "GateRTVPhantomMessenger.hh"
 #include "GateVGeometryVoxelReader.hh"
 #include "GateVSourceVoxelReader.hh"

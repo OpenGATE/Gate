@@ -11,7 +11,6 @@ See GATE/LICENSE.txt for further details
 
 #include "globals.hh"
 #include "G4UnitsTable.hh"
-#include "G4RunManager.hh"
 #include "G4Run.hh"
 
 #include "GateCoincidenceDigi.hh"

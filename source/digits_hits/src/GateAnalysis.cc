@@ -17,7 +17,6 @@
 #include "GateRecorderBase.hh"
 #include "G4ios.hh"
 #include "G4UImanager.hh"
-#include "G4RunManager.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4Positron.hh"
 #include "G4GenericIon.hh"

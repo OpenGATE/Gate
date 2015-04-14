@@ -28,7 +28,6 @@
 #include <vector>
 #include <cmath>
 #include "GateActions.hh"
-#include "G4RunManager.hh"
 
 //----------------------------------------------------------------------------------------
 GateSourceMgr* GateSourceMgr::mInstance = 0;

@@ -14,7 +14,6 @@
 #include "GateToOpticalRaw.hh"
 #include "GateToOpticalRawMessenger.hh"
 #include "globals.hh"
-#include "G4RunManager.hh"
 #include "G4Run.hh"
 
 #include "GateOutputMgr.hh"

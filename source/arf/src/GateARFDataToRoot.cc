@@ -30,7 +30,6 @@ See GATE/LICENSE.txt for further details
 #include "G4ios.hh"
 #include <iomanip>
 #include "G4UImanager.hh"
-#include "G4RunManager.hh"
 #include "GatePrimaryGeneratorAction.hh"
 #include "GateHitConvertor.hh"
 

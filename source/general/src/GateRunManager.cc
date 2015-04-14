@@ -61,8 +61,10 @@ void GateRunManager::InitializeAll()
   // Check that we're in PreInit or Idle state
   if (currentState!=G4State_PreInit && currentState!=G4State_Idle)
     {
-      G4cerr << "Illegal application state - "
-	     << "G4RunManager::Initialize() ignored." << G4endl;
+      GateError("Illegal application state - "
+	     << "GateRunManager::Initialize() failed." << G4endl);
+      /*G4cerr << "Illegal application state - "
+	     << "G4RunManager::Initialize() ignored." << G4endl;*/
       return;
     }
 
@@ -112,7 +114,7 @@ void GateRunManager::InitializeAll()
                                                                     G4ProductionCutsTable::GetProductionCutsTable()->GetHighEdgeEnergy());
 
     // Initialization
-    G4RunManager::SetUserInitialization(mUserPhysicList);
+    GateRunManager::SetUserInitialization(mUserPhysicList);//use inheritance
 
     //To take into account the user cuts (steplimiter and special cuts)
 #if (G4VERSION_MAJOR > 9)
@@ -126,7 +128,7 @@ void GateRunManager::InitializeAll()
   } // End if (mUserPhysicListName != "")
 
   // InitializePhysics
-  G4RunManager::InitializePhysics();
+  GateRunManager::InitializePhysics();//use inheritance
 
   // Take into account the em option set by the user (dedx bin etc)
   GatePhysicsList::GetInstance()->SetEmProcessOptions();
@@ -169,7 +171,7 @@ void GateRunManager::InitGeometryOnly()
   if (!geometryInitialized)
     {
       GateMessage("Core", 1, "Initialization of geometry" << G4endl);
-      G4RunManager::InitializeGeometry();
+      GateRunManager::InitializeGeometry();//use inheritance
     }
   else
     {
@@ -189,7 +191,7 @@ void GateRunManager::InitGeometryOnly()
 //----------------------------------------------------------------------------------------
 void GateRunManager::InitPhysics()
 {
-  G4RunManager::InitializePhysics();
+  GateRunManager::InitializePhysics(); //use inheritance
 }
 //----------------------------------------------------------------------------------------
 

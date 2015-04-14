@@ -28,7 +28,6 @@ See GATE/LICENSE.txt for further details
 #include "GateRecorderBase.hh"
 #include "G4ios.hh"
 #include "G4UImanager.hh"
-#include "G4RunManager.hh"
 #include "GatePrimaryGeneratorAction.hh"
 
 #include "G4ParticleDefinition.hh"
