@@ -424,18 +424,16 @@ G4bool GateVVolume::CheckOutputExistence()
   std::vector<GateVActor*> theList;
   theList = GateActorManager::GetInstance()->GateActorManager::ReturnListOfActors();
 
-  G4bool flag = false;
-
   std::vector<GateVActor*>::iterator sit;
   for(sit= theList.begin(); sit!=theList.end(); ++sit)
     {
       if ((*sit)->GetObjectName() == "output")
 	{
-	  flag = true;
+	  return true;
 	}
     }
 
-  return flag;
+  return false;
 }
 //-------------------------------------------------------------------------------------------
 
