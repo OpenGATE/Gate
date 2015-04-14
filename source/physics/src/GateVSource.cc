@@ -266,6 +266,7 @@ G4double GateVSource::GetNextTime( G4double timeStart )
         {
 	  // Force life time to 0, time is managed by GATE not G4
 	  GetParticleDefinition()->SetPDGLifeTime(0);
+	  GetParticleDefinition()->isGeneralIon=false;
 	  if( m_forcedUnstableFlag )
             {
 	      if( m_forcedLifeTime > 0. )
