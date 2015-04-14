@@ -154,10 +154,10 @@ void GateQuantumEfficiency::CreateTable()
   for (r = 0; r < m_nbTables; r++) {
     m_table[r] = new G4double [m_nbCrystals];
     if (m_nbFiles > 0) {
-      size_t rmd=MonteCarloInt(0,m_nbFiles-1);
+      size_t rmd = G4RandFlat::shootInt(m_nbFiles);
       in.open(m_file[rmd].c_str());
       for (n = 0; n < m_nbCrystals; n++){
-	G4double rmd2 = MonteCarloG4double(-0.025,0.025);
+	G4double rmd2 = G4RandFlat::shoot(-0.025, 0.025);
 	in >> m_table[r][n];
 	m_table[r][n]*=(rmd2+1);
       }
@@ -181,40 +181,6 @@ void GateQuantumEfficiency::CreateTable()
   }
   if (out.is_open())
     out.close();
-}
-
-
-G4double GateQuantumEfficiency::MonteCarloEngine()
-{
-  G4double aleac;
-  return (aleac = (((G4double) rand ()) / 2147483647.0));
-
-}
-
-size_t GateQuantumEfficiency::MonteCarloInt(size_t a,size_t b)
-{
-  size_t value;
-  static size_t A,B;
-  A = a;
-  B = b+1;
-  value =  ((size_t)(MonteCarloEngine()*(B-A))+A);
-
-
-  return (value);
-
-}
-
-G4double GateQuantumEfficiency::MonteCarloG4double(G4double a,G4double b)
-{
-  G4double value;
-  static G4double A,B;
-  A = a;
-  B = b;
-  value =  ((G4double)(MonteCarloEngine()*(B-A))+A);
-
-
-  return (value);
-
 }
 
 G4double GateQuantumEfficiency::GetMinQECoeff() {

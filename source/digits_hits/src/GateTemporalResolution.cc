@@ -15,6 +15,7 @@ See GATE/LICENSE.txt for further details
 #include "GateTools.hh"
 
 #include "Randomize.hh"
+#include "GateConstants.hh"
 
 
 GateTemporalResolution::GateTemporalResolution(GatePulseProcessorChain* itsChain,
@@ -55,7 +56,7 @@ void GateTemporalResolution::ProcessOnePulse(const GatePulse* inputPulse,GatePul
       {
 	GatePulse* outputPulse = new GatePulse(*inputPulse);
 	// set the new time by a Gaussian shot of mean: old time, and of sigma: m_timeResolution/2.35
-	G4double sigma =  m_timeResolution / 2.35;
+	G4double sigma =  m_timeResolution / GateConstants::fwhm_to_sigma;
 	outputPulse->SetTime(G4RandGauss::shoot(inputPulse->GetTime(), sigma));
 	outputPulseList.push_back(outputPulse);
 

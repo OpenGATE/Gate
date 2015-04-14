@@ -143,8 +143,6 @@ protected:
   bool mUseRegularSymmetry;
   bool mUseRandomSymmetry;
   double mAngle;
- 
-  double PI;
   
   bool mUseNbOfParticleAsIntensity;
 

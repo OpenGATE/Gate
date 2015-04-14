@@ -49,7 +49,7 @@ void GateOscTranslationMove::PushMyPlacements(const G4RotationMatrix& currentRot
 	        	        	      const G4ThreeVector& currentPosition,
 			      	      	      G4double aTime)
 {
-    m_currentTranslation =  m_amplitude * sin ( 2. * M_PI * m_frequency * aTime + m_phase);
+    m_currentTranslation =  m_amplitude * sin ( twopi * m_frequency * aTime + m_phase);
     G4ThreeVector newPosition = currentPosition + m_currentTranslation;
 
     PushBackPlacement(GatePlacement(currentRotationMatrix,newPosition)); 
