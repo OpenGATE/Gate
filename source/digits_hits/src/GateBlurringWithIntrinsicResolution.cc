@@ -47,7 +47,7 @@ G4int GateBlurringWithIntrinsicResolution::ChooseVolume(G4String val)
     return 1;
   }
   else {
-    G4cout << "Wrong Volume Name" << G4endl;
+    G4cout << "Wrong Volume Name" << Gateendl;
     return 0;
   }
 }
@@ -59,15 +59,15 @@ void GateBlurringWithIntrinsicResolution::ProcessOnePulse(const GatePulse* input
   if(im != m_table.end())
     {
       if((*im).second.resolution < 0 ) {
-	G4cerr << 	G4endl << "[GateBlurringWithIntrinsicResolution::ProcessOnePulse]:" << G4endl
-	       <<   "Sorry, but the resolution (" << (*im).second.resolution << ") for " << (*im).first << " is invalid" << G4endl;
+	G4cerr << 	Gateendl << "[GateBlurringWithIntrinsicResolution::ProcessOnePulse]:" << Gateendl
+	       <<   "Sorry, but the resolution (" << (*im).second.resolution << ") for " << (*im).first << " is invalid" << Gateendl;
 	G4String msg = "You must set the energy of reference AND the resolution:\n\t/gate/digitizer/Singles/intrinsicResolutionBlurring/" + (*im).first + "/setEnergyOfReference ENERGY\n or disable the intrinsic resolution blurring using:\n\t/gate/digitizer/Singles/intrinsicResolutionBlurring/disable";
 	G4Exception( "GateBlurringWithIntrinsicResolution::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
       }
       else if((*im).second.eref < 0) {
-	G4cerr <<   G4endl << "[GateBlurringWithIntrinsicResolution::ProcessOnePulse]:" << G4endl
+	G4cerr <<   Gateendl << "[GateBlurringWithIntrinsicResolution::ProcessOnePulse]:" << Gateendl
 	       <<   "Sorry, but the energy of reference (" << G4BestUnit((*im).second.eref,"Energy") << ") for "
-	       << (*im).first <<" is invalid" << G4endl;
+	       << (*im).first <<" is invalid" << Gateendl;
 	G4String msg = "You must set the resolution AND the energy of reference:\n\t/gate/digitizer/Singles/intrinsicResolutionBlurring/" + (*im).first + "/setEnergyOfReference ENERGY\n or disable the intrinsic resolution blurring using:\n\t/gate/digitizer/Singles/intrinsicResolutionBlurring/disable";
 	G4Exception( "GateBlurringWithIntrinsicResolution::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
 	}
@@ -139,5 +139,5 @@ void GateBlurringWithIntrinsicResolution::DescribeMyself(size_t indent)
   for (im=m_table.begin(); im!=m_table.end(); im++)
     G4cout << GateTools::Indent(indent) << (*im).first << " :\n"
 	 << GateTools::Indent(indent+1) << "Intrinsic resolution : " << (*im).second.resolution <<  "  @ "
-	 << G4BestUnit((*im).second.eref,"Energy") <<  G4endl;
+	 << G4BestUnit((*im).second.eref,"Energy") <<  Gateendl;
 }

@@ -36,10 +36,10 @@ GateImageRegularParametrisedVolume::GateImageRegularParametrisedVolume(const G4S
 								     G4int depth)
   : GateVImageVolume(name,acceptsChildren,depth)
 {
-  GateMessageInc("Volume",5,"Begin GateImageRegularParametrisedVolume("<<name<<")"<<G4endl);
+  GateMessageInc("Volume",5,"Begin GateImageRegularParametrisedVolume("<<name<<")"<<Gateendl);
   pMessenger = new GateImageRegularParametrisedVolumeMessenger(this);
   SetSkipEqualMaterialsFlag(false);
-  GateMessageDec("Volume",5,"End GateImageRegularParametrisedVolume("<<name<<")"<<G4endl);
+  GateMessageDec("Volume",5,"End GateImageRegularParametrisedVolume("<<name<<")"<<Gateendl);
 }
 ///---------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ GateImageRegularParametrisedVolume::GateImageRegularParametrisedVolume(const G4S
 /// Destructor
 GateImageRegularParametrisedVolume::~GateImageRegularParametrisedVolume()
 {
-  GateMessageInc("Volume",5,"Begin ~GateImageRegularParametrisedVolume()"<<G4endl);
+  GateMessageInc("Volume",5,"Begin ~GateImageRegularParametrisedVolume()"<<Gateendl);
   if (pMessenger) delete pMessenger;
 
   delete mImagePhysVol;
@@ -56,14 +56,14 @@ GateImageRegularParametrisedVolume::~GateImageRegularParametrisedVolume()
   delete mVoxelLog;
   delete mImageData;
 
-  GateMessageDec("Volume",5,"End ~GateImageRegularParametrisedVolume()"<<G4endl);
+  GateMessageDec("Volume",5,"End ~GateImageRegularParametrisedVolume()"<<Gateendl);
 }
 ///---------------------------------------------------------------------------
 
 ///---------------------------------------------------------------------------
 void GateImageRegularParametrisedVolume::SetSkipEqualMaterialsFlag(bool b)
 {
-G4cout<<"### WARNING ### setSkipEqualMaterials at false !! The Geant4 method is not safe since the release 9.5 - Need to be fixed"<<G4endl;
+G4cout<<"### WARNING ### setSkipEqualMaterials at false !! The Geant4 method is not safe since the release 9.5 - Need to be fixed"<<Gateendl;
   mSkipEqualMaterialsFlag = b;
 }
 ///---------------------------------------------------------------------------
@@ -81,7 +81,7 @@ bool GateImageRegularParametrisedVolume::GetSkipEqualMaterialsFlag() {
 G4LogicalVolume* GateImageRegularParametrisedVolume::ConstructOwnSolidAndLogicalVolume(G4Material* mater,
 										      G4bool /*flagUpdateOnly*/)
 {
-  GateMessageInc("Volume",3,"Begin GateImageRegularParametrisedVolume::ConstructOwnSolidAndLogicalVolume()" << G4endl);
+  GateMessageInc("Volume",3,"Begin GateImageRegularParametrisedVolume::ConstructOwnSolidAndLogicalVolume()" << Gateendl);
   // Load image and material table (false = no additional border)
   LoadImage(false);
 
@@ -139,7 +139,7 @@ G4LogicalVolume* GateImageRegularParametrisedVolume::ConstructOwnSolidAndLogical
   param->BuildContainerSolid(pBoxPhys);
 
   // Create the main Physical Volume G4PVParameterised
-  GateMessage("Volume", 4, "GateImageRegularParametrisedVolume: create Physical Volume" << G4endl);
+  GateMessage("Volume", 4, "GateImageRegularParametrisedVolume: create Physical Volume" << Gateendl);
   mImagePhysVol = new G4PVParameterised(GetObjectName() + "_physVol",
                                    mVoxelLog, // logical volume for a voxel
                                    pBoxLog, // logical volume for the whole image
@@ -157,7 +157,7 @@ G4LogicalVolume* GateImageRegularParametrisedVolume::ConstructOwnSolidAndLogical
 //---------------------------------------------------------------------------
 void GateImageRegularParametrisedVolume::PrintInfo()
 {
-  GateMessage("Actor", 1, "GateImageRegularParametrisedVolume Actor " << G4endl);
+  GateMessage("Actor", 1, "GateImageRegularParametrisedVolume Actor " << Gateendl);
   GateVImageVolume::PrintInfo();
 }
 //---------------------------------------------------------------------------
@@ -177,7 +177,7 @@ void GateImageRegularParametrisedVolume::PropagateGlobalSensitiveDetector()
 //---------------------------------------------------------------------------
 void GateImageRegularParametrisedVolume::PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector * msd)
 {
-  GateDebugMessage("Volume", 5, "Add SD to child" << G4endl);
+  GateDebugMessage("Volume", 5, "Add SD to child" << Gateendl);
   mVoxelLog->SetSensitiveDetector(msd);
 }
 //---------------------------------------------------------------------------

@@ -31,20 +31,20 @@ GateVGlobalPlacement* GateArrayParamsFinder::GetRepeater(GateVVolume* anInserter
 {
   GateVVolume *autoCrIn = dynamic_cast<GateVVolume*>(anInserter);
   if(!autoCrIn) {
-    G4cerr << 	G4endl << "[GateArrayParamsFinder::GetRepeater]:" << G4endl
-	   <<   "Sorry, but your Inserter isn't a GateVVolume" << G4endl;
+    G4cerr << 	Gateendl << "[GateArrayParamsFinder::GetRepeater]:" << Gateendl
+	   <<   "Sorry, but your Inserter isn't a GateVVolume" << Gateendl;
     return 0;
   }
   if (!autoCrIn->GetRepeaterList()) {
-    G4cerr << 	G4endl << "[GateArrayParamsFinder::GetRepeaterFindArrayParams]:" << G4endl
-	   <<   "Sorry, but you don't have a repeater list" << G4endl;
+    G4cerr << 	Gateendl << "[GateArrayParamsFinder::GetRepeaterFindArrayParams]:" << Gateendl
+	   <<   "Sorry, but you don't have a repeater list" << Gateendl;
     return 0;
   }
   if (autoCrIn->GetRepeaterList()->size()== 1)
     return autoCrIn->GetRepeaterList()->GetRepeater(0);
   else {
-    G4cerr << 	G4endl << "[GateArrayParamsFinder::GetRepeater]:" << G4endl
-	   <<   "Sorry, but you have several repeaters" << G4endl;
+    G4cerr << 	Gateendl << "[GateArrayParamsFinder::GetRepeater]:" << Gateendl
+	   <<   "Sorry, but you have several repeaters" << Gateendl;
     return 0;
   }
 }
@@ -53,8 +53,8 @@ GateArrayRepeater* GateArrayParamsFinder::GetArrayRepeater(GateVGlobalPlacement*
 {
   GateArrayRepeater* anArray = dynamic_cast<GateArrayRepeater*>(aRepeater);
   if (!anArray) {
-    G4cerr <<   G4endl << "[GateArrayParamsFinder::GetArrayRepeater]:" << G4endl
-	   <<   "Sorry, but you haven't an array repeater" << G4endl;
+    G4cerr <<   Gateendl << "[GateArrayParamsFinder::GetArrayRepeater]:" << Gateendl
+	   <<   "Sorry, but you haven't an array repeater" << Gateendl;
     return 0;
   }
   return anArray;
@@ -67,5 +67,5 @@ void GateArrayParamsFinder::FindInputPulseParams(const size_t copyNb, size_t& i,
   k = copyNb / (m_nbX * m_nbY);
 //   G4cout << "Number: " << copyNb
 // 	 << "\tm_nbX: " << m_nbX << "\tm_nbY: " << m_nbY << "\tm_nbZ: " << m_nbZ
-// 	 << "\ti: " << i << "\tj: " << j << "\tk: " << k  << G4endl;
+// 	 << "\ti: " << i << "\tj: " << j << "\tk: " << k  << Gateendl;
 }

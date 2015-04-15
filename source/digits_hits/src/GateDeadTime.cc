@@ -57,17 +57,17 @@ void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
       m_doneOnce = 1;
       if(!m_testVolume)
 	{
-	  G4cerr << 	G4endl << "[GateDeadTime::ProcessOnePulse]:" << G4endl
-		 <<   "Sorry, but you don't have chosen any volume !" << G4endl;
+	  G4cerr << 	Gateendl << "[GateDeadTime::ProcessOnePulse]:" << Gateendl
+		 <<   "Sorry, but you don't have chosen any volume !" << Gateendl;
 	}
 
 
 
       if (nVerboseLevel>1)
 	{
-	  G4cout << "first pass in dead time pulse process" << G4endl ;
-	  G4cout << "deadtime set at  " << m_deadTime << " ps"<< G4endl ;
-	  G4cout << "mode = " << (m_isParalysable ? "paralysable":"non-paralysable") << G4endl ;
+	  G4cout << "first pass in dead time pulse process" << Gateendl ;
+	  G4cout << "deadtime set at  " << m_deadTime << " ps"<< Gateendl ;
+	  G4cout << "mode = " << (m_isParalysable ? "paralysable":"non-paralysable") << Gateendl ;
 	}
 
     }
@@ -94,8 +94,8 @@ void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
   size_t m_depth = (size_t)(aVolumeID->GetCreatorDepth(m_volumeName));
 
   m_generalDetId = aVolumeID->GetCopyNo(m_depth);
-   //G4cout<<"m_generalDetId initialisation = "<<m_generalDetId<<G4endl;
-   //G4cout<<"m_depth  = "<<m_depth<<G4endl;
+   //G4cout<<"m_generalDetId initialisation = "<<m_generalDetId<<Gateendl;
+   //G4cout<<"m_depth  = "<<m_depth<<Gateendl;
 
 
 /////// Bug Report - 8/6/2006 - Spencer Bowen - S.Jan ////////
@@ -114,9 +114,9 @@ for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
           multFactor *= numberOfComponentForLevel[i-1];
           m_generalDetId += aVolumeID->GetCopyNo(m_depth-i)*multFactor;
 
-  //G4cout<<"numberOfComponentForLevel["<<i-1<<"] = "<<numberOfComponentForLevel[i-1]<<G4endl;
-  //G4cout<<"GetCopyNo(m_depth-i) = "<<aVolumeID->GetCopyNo(m_depth-i)<<G4endl;
-  //G4cout<<"multFactor"<<multFactor<<G4endl;
+  //G4cout<<"numberOfComponentForLevel["<<i-1<<"] = "<<numberOfComponentForLevel[i-1]<<Gateendl;
+  //G4cout<<"GetCopyNo(m_depth-i) = "<<aVolumeID->GetCopyNo(m_depth-i)<<Gateendl;
+  //G4cout<<"multFactor"<<multFactor<<Gateendl;
     }
 //////////////////////////////////////////////////////////////
   // FIND TIME OF PULSE
@@ -124,9 +124,9 @@ for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
   if (nVerboseLevel>5)
     {
       G4cout << "A new pulse is processed by dead time time : " << (inputPulse->GetTime())/picosecond
-	     << " =  "<< currentTime  <<G4endl  ;
-      G4cout << "ID elt = " <<  m_generalDetId << G4endl ;
-      G4cout << "Rebirth time for elt " << m_generalDetId << " = " << m_deadTimeTable[m_generalDetId]<< G4endl ;
+	     << " =  "<< currentTime  <<Gateendl  ;
+      G4cout << "ID elt = " <<  m_generalDetId << Gateendl ;
+      G4cout << "Rebirth time for elt " << m_generalDetId << " = " << m_deadTimeTable[m_generalDetId]<< Gateendl ;
 
     }
 
@@ -150,16 +150,16 @@ for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
       }
       if (nVerboseLevel>5){
 	  G4cout << "We have accept " << currentTime << " a pulse in element " << m_generalDetId <<
-	    "\trebirth time\t" << m_deadTimeTable[m_generalDetId] << G4endl;
-	  G4cout << "Copied pulse to output:" << G4endl
-		 << *outputPulse << G4endl << G4endl ;
+	    "\trebirth time\t" << m_deadTimeTable[m_generalDetId] << Gateendl;
+	  G4cout << "Copied pulse to output:" << Gateendl
+		 << *outputPulse << Gateendl << Gateendl ;
       }
     }
   else
     {
       // YES DETECTOR IS DEAD : REMOVE PULSE
       if (nVerboseLevel>5)
-	G4cout << "Removed pulse, due to dead time:" << G4endl;
+	G4cout << "Removed pulse, due to dead time:" << Gateendl;
       // AND IF "PARALYSABLE" DEAD TIME, MAKE THE DEATH OF DETECTOR LONGER
       if ((m_bufferSize>1) && (m_bufferMode==1)){
 	if (m_bufferCurrentSize[m_generalDetId]<m_bufferSize-1) {
@@ -181,7 +181,7 @@ for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
 void GateDeadTime::SetDeadTimeMode(G4String val)
 {
   if((val!="paralysable")&&(val!="nonparalysable"))
-    G4cout << "*** GateDeadTime.cc : Wrong dead time mode : candidates are : paralysable nonparalysable" << G4endl;
+    G4cout << "*** GateDeadTime.cc : Wrong dead time mode : candidates are : paralysable nonparalysable" << Gateendl;
   else
    m_isParalysable = (val=="paralysable");
 
@@ -199,7 +199,7 @@ void GateDeadTime::CheckVolumeName(G4String val)
     m_testVolume = 1;
   }
   else {
-    G4cout << "Wrong Volume Name" << G4endl;
+    G4cout << "Wrong Volume Name" << Gateendl;
   }
 }
 
@@ -216,7 +216,7 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
 
 
   if(nVerboseLevel>1)
-    G4cout << "DEAD TIME IS APPLIED ON " <<  m_volumeName << G4endl;
+    G4cout << "DEAD TIME IS APPLIED ON " <<  m_volumeName << Gateendl;
 
 
   // How many levels higher than volumeName level ?
@@ -228,7 +228,7 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
     }
   //  numberOfHigherLevels--;
   anotherInserter = anInserter;
-  G4cout<<"Nof Higher level "<<numberOfHigherLevels<<G4endl;
+  G4cout<<"Nof Higher level "<<numberOfHigherLevels<<Gateendl;
 
   // How many components for each levels ?
   //  G4int* numberOfComponentForLevel = new G4int[numberOfHigherLevels];
@@ -255,15 +255,15 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
       numberTotalOfComponentInSystem = numberTotalOfComponentInSystem * numberOfComponentForLevel[i2];
        if(nVerboseLevel>5)
 	G4cout << "Level : " << i2 << " has "
-	       << numberOfComponentForLevel[i2] << " elements" << G4endl;
+	       << numberOfComponentForLevel[i2] << " elements" << Gateendl;
     }
 
-//G4cout<<"numberOfComponentForLevel[0]"<<numberOfComponentForLevel[0]<<G4endl;
-//G4cout<<"numberOfComponentForLevel[numberOfHigherLevels-1]"<<numberOfComponentForLevel[numberOfHigherLevels-1]<<G4endl;
+//G4cout<<"numberOfComponentForLevel[0]"<<numberOfComponentForLevel[0]<<Gateendl;
+//G4cout<<"numberOfComponentForLevel[numberOfHigherLevels-1]"<<numberOfComponentForLevel[numberOfHigherLevels-1]<<Gateendl;
 
 
   if(nVerboseLevel>5)
-    G4cout << "total number of elements = " <<numberTotalOfComponentInSystem << G4endl;
+    G4cout << "total number of elements = " <<numberTotalOfComponentInSystem << Gateendl;
 
   // create the table of "rebirth time" (detector is dead than it rebirth)
   //unsigned long long int* m_deadTimeTable = new unsigned long long int[numberTotalOfComponentInSystem];
@@ -291,5 +291,5 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
 
 void GateDeadTime::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "DeadTime: " << G4BestUnit(m_deadTime,"Time") << G4endl;
+  G4cout << GateTools::Indent(indent) << "DeadTime: " << G4BestUnit(m_deadTime,"Time") << Gateendl;
 }

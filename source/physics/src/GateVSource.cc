@@ -276,7 +276,7 @@ G4double GateVSource::GetNextTime( G4double timeStart )
 	      else
 	      {
                 G4cout << "[GateVSource::GetNextTime] ERROR: Forced decay with negative lifetime: (s) "
-                       << m_forcedLifeTime/s << G4endl;
+                       << m_forcedLifeTime/s << Gateendl;
 	      }
             }
           else 
@@ -289,7 +289,7 @@ G4double GateVSource::GetNextTime( G4double timeStart )
                       if( nVerboseLevel > 0 )
 		      G4cout << "GateVSource::GetNextTime : unstable particle " 
 			  << GetParticleDefinition()->GetParticleName() 
-			  << " from source " <<  GetName() << G4endl;
+			  << " from source " <<  GetName() << Gateendl;
 		      // activity is constant
 		      activityNow = m_activity;
                     }
@@ -297,19 +297,19 @@ G4double GateVSource::GetNextTime( G4double timeStart )
                     if( nVerboseLevel > 1 ) 
                       G4cout << "GateVSource::GetNextTime : stable particle " 
                              << GetParticleDefinition()->GetParticleName() 
-                             << " from source " <<  GetName() << G4endl;
+                             << " from source " <<  GetName() << Gateendl;
                 }
               else 
                 if (nVerboseLevel>0) 
                   G4cout << "GateVSource::GetNextTime : NULL ParticleDefinition for source " 
-                         << GetName() << " assumed stable " << G4endl;
+                         << GetName() << " assumed stable " << Gateendl;
             }
         }
       if( nVerboseLevel > 0 )
         G4cout << "GateVSource::GetNextTime : Initial activity (becq) : " 
-               << m_activity/becquerel << G4endl
+               << m_activity/becquerel << Gateendl
                << "                            At time (s) " << timeStart/s 
-               << " activity (becq) " << activityNow/becquerel << G4endl;
+               << " activity (becq) " << activityNow/becquerel << Gateendl;
 
       // sampling of the interval distribution
       if (!mEnableRegularActivity) {
@@ -325,14 +325,14 @@ G4double GateVSource::GetNextTime( G4double timeStart )
     }
 
   if( nVerboseLevel > 0 )
-    G4cout << "GateVSource::GetNextTime : next time (s) " << aTime/s << G4endl;
+    G4cout << "GateVSource::GetNextTime : next time (s) " << aTime/s << Gateendl;
    
 
 //Dump(0);
 /*G4cout<< "    CentreCoords       (mm)  : " 
              << m_posSPS->GetCentreCoords().x()/mm << " " 
              << m_posSPS->GetCentreCoords().y()/mm << " " 
-             << m_posSPS->GetCentreCoords().z()/mm << G4endl;*/
+             << m_posSPS->GetCentreCoords().z()/mm << Gateendl;*/
   return aTime;
 }
 //-------------------------------------------------------------------------------------------------
@@ -341,7 +341,7 @@ void GateVSource::TrigMat()
 {
 // Retrieve position according to world
   GateVVolume * v = mVolume;
-  G4cout<<"------------------|||||||||||| TEST de SEBES =          "<<v->GetObjectName()<<G4endl;
+  G4cout<<"------------------|||||||||||| TEST de SEBES =          "<<v->GetObjectName()<<Gateendl;
  
 }
 //-------------------------------------------------------------------------------------------------
@@ -350,56 +350,56 @@ void GateVSource::TrigMat()
 void GateVSource::Dump( G4int level ) 
 {
 
- G4cout << "Source --------------> " << m_name << G4endl
-         << "  ID                 : " << m_sourceID << G4endl
-         << "  type               : " << m_type << G4endl
-         << "  activity (Bq)      : " << m_activity/becquerel << G4endl
-         << "  startTime (s)      : " << m_startTime/s << G4endl
-         << "  time (s)           : " << m_time/s << G4endl
-         << "  forcedUnstable     : " << m_forcedUnstableFlag << G4endl
-         << "  forcedHalfLife (s) : " << GetForcedHalfLife()/s << G4endl
-         << "  verboseLevel       : " << nVerboseLevel << G4endl
-         << "  relative to vol    : " << mRelativePlacementVolumeName << G4endl
-         << "---------------------- " << G4endl
-         << G4endl;
+ G4cout << "Source --------------> " << m_name << Gateendl
+         << "  ID                 : " << m_sourceID << Gateendl
+         << "  type               : " << m_type << Gateendl
+         << "  activity (Bq)      : " << m_activity/becquerel << Gateendl
+         << "  startTime (s)      : " << m_startTime/s << Gateendl
+         << "  time (s)           : " << m_time/s << Gateendl
+         << "  forcedUnstable     : " << m_forcedUnstableFlag << Gateendl
+         << "  forcedHalfLife (s) : " << GetForcedHalfLife()/s << Gateendl
+         << "  verboseLevel       : " << nVerboseLevel << Gateendl
+         << "  relative to vol    : " << mRelativePlacementVolumeName << Gateendl
+         << "---------------------- " << Gateendl
+         << Gateendl;
   if( level > 0 )
     {
-      G4cout << "    GPS info ----------------> " << G4endl;
+      G4cout << "    GPS info ----------------> " << Gateendl;
       if( GetParticleDefinition() )
         G4cout << "    particle                 : " 
                << GetParticleDefinition()->GetParticleName() 
-               << G4endl ;
+               << Gateendl ;
       else
         G4cout << "    particle                 : " 
                << "not defined" 
-               << G4endl ;
+               << Gateendl ;
 			
       G4cout << "    SourcePosType            : " 
-             << m_posSPS->GetPosDisType() << G4endl
+             << m_posSPS->GetPosDisType() << Gateendl
              << "    Shape                    : " 
-             << m_posSPS->GetPosDisShape() << G4endl
+             << m_posSPS->GetPosDisShape() << Gateendl
              << "    halfx,halfy,halfz  (mm)  : " 
              << m_posSPS->GetHalfX()/mm << " " 
              << m_posSPS->GetHalfY()/mm << " " 
-             << m_posSPS->GetHalfZ()/mm << G4endl
+             << m_posSPS->GetHalfZ()/mm << Gateendl
              << "    Radius             (mm)  : " 
-             << m_posSPS->GetRadius()/mm << G4endl
+             << m_posSPS->GetRadius()/mm << Gateendl
              << "    CentreCoords       (mm)  : " 
              << m_posSPS->GetCentreCoords().x()/mm << " " 
              << m_posSPS->GetCentreCoords().y()/mm << " " 
-             << m_posSPS->GetCentreCoords().z()/mm << G4endl
+             << m_posSPS->GetCentreCoords().z()/mm << Gateendl
              << "    EnergyDisType            : " 
-             << m_eneSPS->GetEnergyDisType() << G4endl
+             << m_eneSPS->GetEnergyDisType() << Gateendl
              << "    AngleDisType            : "
-             << m_angSPS->GetDistType() << G4endl
+             << m_angSPS->GetDistType() << Gateendl
              << "    MinTheta, MaxTheta (deg) : " 
              << m_angSPS->GetMinTheta()/deg << " " << m_angSPS->GetMaxTheta()/deg 
-             << G4endl
+             << Gateendl
              << "    MinPhi, MaxPhi     (deg) : " 
              << m_angSPS->GetMinPhi()/deg << " " << m_angSPS->GetMaxPhi()/deg 
-             << G4endl
-             << "    -------------------------- " << G4endl
-             << G4endl;
+             << Gateendl
+             << "    -------------------------- " << Gateendl
+             << Gateendl;
     }
 }
 //-------------------------------------------------------------------------------------------------
@@ -413,10 +413,10 @@ void GateVSource::GeneratePrimariesForBackToBackSource(G4Event* event) {
   backToBack->GenerateVertex( event, m_accolinearityFlag);
   if( nVerboseLevel > 1 )
     G4cout << "GetNumberOfPrimaryVertex : " 
-           << event->GetNumberOfPrimaryVertex() << G4endl;
+           << event->GetNumberOfPrimaryVertex() << Gateendl;
   if( nVerboseLevel > 1 )
     G4cout << "GetNumberOfParticle      : " 
-           << event->GetPrimaryVertex(0)->GetNumberOfParticle() << G4endl;
+           << event->GetPrimaryVertex(0)->GetNumberOfParticle() << Gateendl;
   
   delete backToBack;
 }
@@ -441,7 +441,7 @@ void GateVSource::GeneratePrimariesForFastI124Source(G4Event* event) {
 //-------------------------------------------------------------------------------------------------
 G4int GateVSource::GeneratePrimaries( G4Event* event ) 
 {
-  if (event) GateMessage("Beam", 2, "Generating particle " << event->GetEventID() << G4endl);
+  if (event) GateMessage("Beam", 2, "Generating particle " << event->GetEventID() << Gateendl);
   
   G4int numVertices = 0;
 
@@ -477,7 +477,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
                       << " mom=" << p->GetMomentum()
                       << " ptime=" <<  G4BestUnit(p->GetProperTime(), "Time")
                       << " atime=" <<  G4BestUnit(GetTime(), "Time")
-                      << ")" << G4endl);  
+                      << ")" << Gateendl);  
         }
       }
 
@@ -486,7 +486,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       //}
 
 
-      //G4cout<<"Generate primaries"<<G4endl;
+      //G4cout<<"Generate primaries"<<Gateendl;
       return numVertices;
     }// standard or tracker mode PY Descourt 08/09/2008
   
@@ -498,7 +498,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
 
       std::vector<GateTrack*>* aTrackVector = myAction->GetPPTrackVector();
 
-      //G4cout << "  GateSource::GeneratePrimaries   OK DEtector Mode   size of Tracks Vector " << aTrackVector->size()<<G4endl;
+      //G4cout << "  GateSource::GeneratePrimaries   OK DEtector Mode   size of Tracks Vector " << aTrackVector->size()<<Gateendl;
 
       // Check the current Tracks Vector is empty ! otherwise something went wrong /////////
       if ( aTrackVector->size() > 0 ) 
@@ -511,13 +511,13 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       /// READ DATA FROM ROOT FILE
       GateToRoot* gateToRoot = (GateToRoot* ) ( GateOutputMgr::GetInstance()->GetModule("root") );
       if ( gateToRoot == 0 )
-        { G4cout <<" GateSource::GeneratePrimaries ERROR : In DETECTOR MODE : NO GateToRoot Module...Cannot retrieve Tracker Data " << G4endl;
+        { G4cout <<" GateSource::GeneratePrimaries ERROR : In DETECTOR MODE : NO GateToRoot Module...Cannot retrieve Tracker Data " << Gateendl;
           exit(1);
         }
       if ( gateToRoot->CheckEOF() == 1 ) // end of File reached
         {
           // check if there is some more Tracks Root File to Read
-          G4cout << " GateSource::GeneratePrimaries   End of Tracks Root file reached ... Seeking for more files to open." << G4endl;
+          G4cout << " GateSource::GeneratePrimaries   End of Tracks Root file reached ... Seeking for more files to open." << Gateendl;
           G4int test_next = myAction->SeekNewFile(true);
           if ( test_next == 0 )
             {
@@ -580,7 +580,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
           G4int PDGCode = (*iter)->GetPDGCode();
           DirectionMomentum = (*iter)->GetMomentumDirection() ;
           eventID = (*iter)->GetEventID();
-          if ( eventID != event_id ){G4cout << " GateSource::GeneratePrimaries()   GateTrack # "<<k<<" event_ID is "<<eventID<<"   current event_ID is " << event_id<<G4endl;G4Exception( "GateVSource::GeneratePrimaries","GeneratePrimaries",FatalException,"ABORTING...");}
+          if ( eventID != event_id ){G4cout << " GateSource::GeneratePrimaries()   GateTrack # "<<k<<" event_ID is "<<eventID<<"   current event_ID is " << event_id<<Gateendl;G4Exception( "GateVSource::GeneratePrimaries","GeneratePrimaries",FatalException,"ABORTING...");}
           RunID = (*iter)->GetRunID();
           Weight = (*iter)->GetWeight();
           properTime = (*iter)->GetProperTime();
@@ -595,8 +595,8 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
           fPosition = (*iter)->GetVertexPosition();
           m_sourceID = (*iter)->GetSourceID(); // we set the source ID to the current one
           if ( m_sourceID != m_previous_SourceID )
-            { G4cout << "GateSource::GeneratePrimaries :::: ERROR "<< G4endl;
-              G4cout << "GateSource::GeneratePrimaries :::: Run ID " << RunID << " Event ID " << eventID <<" source ID " << m_sourceID << " event Time " <<  (GateSourceMgr::GetInstance())->GetTime()/s << "  track ID " << TrackID << "   parent ID " << ParentID <<    G4endl;
+            { G4cout << "GateSource::GeneratePrimaries :::: ERROR "<< Gateendl;
+              G4cout << "GateSource::GeneratePrimaries :::: Run ID " << RunID << " Event ID " << eventID <<" source ID " << m_sourceID << " event Time " <<  (GateSourceMgr::GetInstance())->GetTime()/s << "  track ID " << TrackID << "   parent ID " << ParentID <<    Gateendl;
               if ( k == aTrackVector->size() ){G4Exception( "GateSource::GeneratePrimaries", "GeneratePrimaries", FatalException, "The sources ID of primaries do not correspond");}
             }
 
@@ -637,7 +637,7 @@ void GateVSource::Update(double t)
 {
   m_time = t;
   if( nVerboseLevel > 0 ) 
-    G4cout << "[GateVSource::Update] Source name: " << m_name << G4endl;
+    G4cout << "[GateVSource::Update] Source name: " << m_name << Gateendl;
   // called by the sourceMgr at the beginning of the run.
   // when a mechanism for the attachment of a source to a geometry volume will be in place
   // if the source is "attached" to a volume here it should update its own position according 
@@ -661,7 +661,7 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
   if( mUserFocalShapeInitialisation ) InitializeUserFocalShape();
     
   if( nVerboseLevel > 1 ) {
-    G4cout << " NumberOfParticlesToBeGenerated: " << GetNumberOfParticles() << G4endl ;
+    G4cout << " NumberOfParticlesToBeGenerated: " << GetNumberOfParticles() << Gateendl ;
   }
 
   /* PY Descourt 08/09/2009 */  
@@ -716,24 +716,24 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
 		
 	  // Verbose
           if( nVerboseLevel > 1 ) {
-            G4cout << "Particle name: " << GetParticleDefinition()->GetParticleName() << G4endl;
-            G4cout << "       Energy: " << particle_energy << G4endl ;
-            G4cout << "     Position: " << particle_position << G4endl ;
-            G4cout << "    Direction: " << particle_momentum_direction << G4endl;
+            G4cout << "Particle name: " << GetParticleDefinition()->GetParticleName() << Gateendl;
+            G4cout << "       Energy: " << particle_energy << Gateendl ;
+            G4cout << "     Position: " << particle_position << Gateendl ;
+            G4cout << "    Direction: " << particle_momentum_direction << Gateendl;
           }
           if( nVerboseLevel > 2 ) {
-            G4cout << "Creating primaries and assigning to vertex" << G4endl;
+            G4cout << "Creating primaries and assigning to vertex" << Gateendl;
           }
         } // end loop on NumberOfParticles
 
 /*G4StepPoint point1;
 G4ThreeVector position(particle_position.x(),particle_position.y(),particle_position.z());
 point1.SetPosition(position);
-G4cout << particle_position.x()/mm << " " << particle_position.y()/mm << " " << particle_position.z()/mm << G4endl;
-G4cout << point1.GetPosition().x()/mm << " " << point1.GetPosition().y()/mm << " " << point1.GetPosition().z()/mm << G4endl;
+G4cout << particle_position.x()/mm << " " << particle_position.y()/mm << " " << particle_position.z()/mm << Gateendl;
+G4cout << point1.GetPosition().x()/mm << " " << point1.GetPosition().y()/mm << " " << point1.GetPosition().z()/mm << Gateendl;
 G4Material* material = point1.GetMaterial();
 G4String nameMaterial = material->GetName();*/
-//G4cout<<"####### Material Name du step : "<<point1.GetMaterial()->GetName()<<G4endl;
+//G4cout<<"####### Material Name du step : "<<point1.GetMaterial()->GetName()<<Gateendl;
 
       aEvent->AddPrimaryVertex( vertex );
     }
@@ -747,7 +747,7 @@ G4String nameMaterial = material->GetName();*/
       G4PrimaryVertex* vertex =  new G4PrimaryVertex(G4ThreeVector(0.,0.,0.),GetTime());
 
       if(GetVerboseLevel() > 0)
-        G4cout << "Creating primaries and assigning to vertex" << G4endl;
+        G4cout << "Creating primaries and assigning to vertex" << Gateendl;
 
       for( G4int i=0; i<GetNumberOfParticles(); i++ )
         {
@@ -758,7 +758,7 @@ G4String nameMaterial = material->GetName();*/
       aEvent->AddPrimaryVertex( vertex );
     }
   if( nVerboseLevel > 1 )
-    G4cout << " Primary Vertex generated !" << G4endl;
+    G4cout << " Primary Vertex generated !" << Gateendl;
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -769,7 +769,7 @@ void GateVSource::ChangeParticlePositionRelativeToAttachedVolume(G4ThreeVector &
   if (mRelativePlacementVolumeName == "world") return;
 
   // Current position
-  GateMessage("Beam", 4, "Current particle position = " << position << G4endl);
+  GateMessage("Beam", 4, "Current particle position = " << position << Gateendl);
 
   // Retrieve position according to world
   GateVVolume * v = mVolume;
@@ -778,7 +778,7 @@ void GateVSource::ChangeParticlePositionRelativeToAttachedVolume(G4ThreeVector &
     const G4ThreeVector & t = v->GetPhysicalVolume(0)->GetObjectTranslation();
     position = r*position;
     position = position+t;    
-    GateMessage("Beam", 4, "Change current particle position = " << position << G4endl);
+    GateMessage("Beam", 4, "Change current particle position = " << position << Gateendl);
     // next volume
     v = v->GetParentVolume();
   }
@@ -792,7 +792,7 @@ void GateVSource::ChangeParticleMomentumRelativeToAttachedVolume(G4ParticleMomen
   if (mRelativePlacementVolumeName == "world") return;
 
   // Current position
-  GateMessage("Beam", 4, "Current particle mom = " << momentum << G4endl);
+  GateMessage("Beam", 4, "Current particle mom = " << momentum << Gateendl);
 
   // Retrieve rotation according to world
   GateVVolume * v = mVolume;
@@ -846,8 +846,8 @@ void GateVSource::ChangeParticleMomentumRelativeToAttachedVolume(G4ParticleMomen
 //----------------------------------------------------------------------------------------
 void GateVSource::InitializeUserFluence()
 {
-  GateMessage("Beam", 0, "WARNING message :" << G4endl);
-  GateMessage("Beam", 0, "You are using a userFluenceImage source. Type, shape, size are automatically extracted from the image." << G4endl);
+  GateMessage("Beam", 0, "WARNING message :" << Gateendl);
+  GateMessage("Beam", 0, "You are using a userFluenceImage source. Type, shape, size are automatically extracted from the image." << Gateendl);
   
   if(mUserFluenceFilename == "")
   {

@@ -321,7 +321,7 @@ void GateGPUEmisTomo::GeneratePrimaryEventFromGPUOutput(const GateGPUIO_Particle
 //----------------------------------------------------------
 void GateGPUEmisTomo::ReaderInsert(G4String readerType)
 {
-  G4cout << "GateGPUEmisTomoMessenger ReaderInsert" << G4endl;
+  G4cout << "GateGPUEmisTomoMessenger ReaderInsert" << Gateendl;
   GateSourceVoxellized::ReaderInsert(readerType);
 }
 //----------------------------------------------------------
@@ -330,7 +330,7 @@ void GateGPUEmisTomo::ReaderInsert(G4String readerType)
 //----------------------------------------------------------
 void GateGPUEmisTomo::ReaderRemove()
 {
-  G4cout << "GateGPUEmisTomoMessenger ReaderRemove" << G4endl;
+  G4cout << "GateGPUEmisTomoMessenger ReaderRemove" << Gateendl;
   GateSourceVoxellized::ReaderRemove();
 }
 //----------------------------------------------------------
@@ -339,7 +339,7 @@ void GateGPUEmisTomo::ReaderRemove()
 //----------------------------------------------------------
 void GateGPUEmisTomo::Update(double time)
 {
-  G4cout << "GateGPUEmisTomoMessenger Update" << G4endl;
+  G4cout << "GateGPUEmisTomoMessenger Update" << Gateendl;
   return GateSourceVoxellized::Update(time);
 }
 //----------------------------------------------------------

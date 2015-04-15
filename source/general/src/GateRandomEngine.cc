@@ -125,8 +125,8 @@ void GateRandomEngine::Initialize() {
     // initialize seed by reading from kernel random generator /dev/random
     // FIXME may not be protable
     FILE *hrandom = fopen("/dev/random","rb");
-    if(fread(static_cast<void*>(&seed),sizeof(seed),1,hrandom) == 0 ){G4cerr<< "Problem reading data!!!" << G4endl;}
-    if(fread(static_cast<void*>(&rest),sizeof(rest),1,hrandom) == 0 ){G4cerr<< "Problem reading data!!!" << G4endl;}
+    if(fread(static_cast<void*>(&seed),sizeof(seed),1,hrandom) == 0 ){G4cerr<< "Problem reading data!!!" << Gateendl;}
+    if(fread(static_cast<void*>(&rest),sizeof(rest),1,hrandom) == 0 ){G4cerr<< "Problem reading data!!!" << Gateendl;}
     fclose(hrandom);
 
     isSeed=true;

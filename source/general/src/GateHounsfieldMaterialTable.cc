@@ -43,7 +43,7 @@ void GateHounsfieldMaterialTable::AddMaterial(double H1, double H2, double d,
     
   // Check
   if (H1>=H2) 
-    GateError("Error in GateHounsfieldMaterialProperties::AddMaterial " << H1 << " " << H2 << G4endl);
+    GateError("Error in GateHounsfieldMaterialProperties::AddMaterial " << H1 << " " << H2 << Gateendl);
     
   // Set values
   mH1.push_back(H1);
@@ -70,15 +70,15 @@ void GateHounsfieldMaterialTable::AddMaterial(double H1, double H2, double d,
 void GateHounsfieldMaterialTable::WriteMaterialDatabase(G4String filename) {
   std::ofstream os;
   OpenFileOutput(filename, os);
-  os << "[Materials]" << G4endl;
+  os << "[Materials]" << Gateendl;
   for(unsigned int i=0; i<mMaterialsVector.size(); i++) {
     os << "# Material " << i << " corresponding to H=[ " 
        << mH1[i] << ";" << mH2[i] // << "],with density=[" 
       //        << G4BestUnit(md1[i],"Volumic Mass") 
       //        << ";" << G4BestUnit(md2[i],"Volumic Mass") << "]"
-       << " ]" << G4endl;
+       << " ]" << Gateendl;
     WriteMaterial(mMaterialsVector[i], os);
-    os << G4endl;
+    os << Gateendl;
   }
   os.close();
 }
@@ -89,7 +89,7 @@ void GateHounsfieldMaterialTable::WriteMaterialtoHounsfieldLink(G4String filenam
   std::ofstream os;
   OpenFileOutput(filename, os);
   for(unsigned int i=0; i<mMaterialsVector.size(); i++) {
-    os << mH1[i] << " " << mH2[i] << " " << mMaterialsVector[i]->GetName() << G4endl;    
+    os << mH1[i] << " " << mH2[i] << " " << mMaterialsVector[i]->GetName() << Gateendl;    
   }
   os.close();
 }
@@ -118,13 +118,13 @@ void GateHounsfieldMaterialTable::AddMaterial(double H1, double H2, G4String nam
   mH2.push_back(H2);
   mName.push_back(name);
   // Check
-  if (H2 < H1) GateError("H2=" << H2 << " is lower than H1=" << H1 << ". Abort." << G4endl);
+  if (H2 < H1) GateError("H2=" << H2 << " is lower than H1=" << H1 << ". Abort." << Gateendl);
   n++;
 
   if (n != 1) {
     if (H1 != mH2[n-2]) GateError("Current H1=" << H1 
 				  << " is different from previous H2=" 
-				  << mH2[n-2] << ". Abort." << G4endl);
+				  << mH2[n-2] << ". Abort." << Gateendl);
   }
   
 }
@@ -152,7 +152,7 @@ void GateHounsfieldMaterialTable::MapLabelToMaterial(LabelToMaterialNameType & m
     // GateMessage("Core", 0, 
     //               "i= " << i << " mi = "
     //             << m[i] << " mnamei = " 
-    //              << mName[i] << G4endl);
+    //              << mName[i] << Gateendl);
     m[i] = mName[i];
   }
 }

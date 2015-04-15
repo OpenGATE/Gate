@@ -16,6 +16,7 @@ See GATE/LICENSE.txt for further details
 #include "G4Box.hh"
 #include <vector>
 #include "GateCrossSectionsTable.hh"
+#include "GateMessageManager.hh"
 
 GateVFictitiousMap::GateVFictitiousMap ( G4Envelope* env )
 {
@@ -38,7 +39,7 @@ GateVFictitiousMap::GateVFictitiousMap ( G4Envelope* env )
 	if ( !check )
 	{
 
-		G4cout << "GateVFictitiousMap used for solid that is not a G4Box." << G4endl;
+		G4cout << "GateVFictitiousMap used for solid that is not a G4Box." << Gateendl;
 		pBox=NULL;
 	}
 	else
@@ -58,7 +59,7 @@ void GateVFictitiousMap::RegisterMaxMaterial ( G4Material* m )
 {
 	if ( pMaxMaterial!=NULL )
 	{
-		G4cout << "WARNING: GateFictitiousVoxelMap::RegisterMaxMaterial ( G4Material*): Material already set!" << G4endl;
+		G4cout << "WARNING: GateFictitiousVoxelMap::RegisterMaxMaterial ( G4Material*): Material already set!" << Gateendl;
 
 	}
 	pMaxMaterial=m;

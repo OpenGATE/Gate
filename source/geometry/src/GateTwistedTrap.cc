@@ -111,7 +111,7 @@ G4LogicalVolume* GateTwistedTrap::ConstructOwnSolidAndLogicalVolume(G4Material* 
    }
    else {
      // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateTwistedTrap::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<G4endl);
+       GateMessage("Warning", 0, "GateTwistedTrap::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<Gateendl);
    }
    return m_twistedtrap_log;
 }
@@ -131,17 +131,17 @@ void GateTwistedTrap::DestroyOwnSolidAndLogicalVolume()
 void GateTwistedTrap::DescribeMyself(size_t level)
 {
   G4cout << GateTools::Indent(level) << "Shape: twisted trapezoid (twistedtrap)\n";
-  G4cout << GateTools::Indent(level) << "z length     : " << G4BestUnit(m_zLength,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "y length at -z/2   : " << G4BestUnit(m_yMinusLength,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "y length at +z/2   : " << G4BestUnit(m_yPlusLength,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "x1 length at -z/2, -y/2  : " << G4BestUnit(m_x1MinusLength,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "x2 length at -z/2, +y/2  : " << G4BestUnit(m_x2MinusLength,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "x1 length at +z/2, -y/2  : " << G4BestUnit(m_x1PlusLength,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "x2 length at +z/2, +y/2  : " << G4BestUnit(m_x2PlusLength,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "twist angle     : " << m_twistAngle/degree << " deg" << G4endl;
-  G4cout << GateTools::Indent(level) << "polar angle     : " << m_polarAngle/degree << " deg" << G4endl;
-  G4cout << GateTools::Indent(level) << "azimuthal angle     : " << m_azimuthalAngle/degree << " deg" << G4endl;
-  G4cout << GateTools::Indent(level) << "tilt angle     : " << m_tiltAngle/degree << " deg" << G4endl;
+  G4cout << GateTools::Indent(level) << "z length     : " << G4BestUnit(m_zLength,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "y length at -z/2   : " << G4BestUnit(m_yMinusLength,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "y length at +z/2   : " << G4BestUnit(m_yPlusLength,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "x1 length at -z/2, -y/2  : " << G4BestUnit(m_x1MinusLength,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "x2 length at -z/2, +y/2  : " << G4BestUnit(m_x2MinusLength,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "x1 length at +z/2, -y/2  : " << G4BestUnit(m_x1PlusLength,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "x2 length at +z/2, +y/2  : " << G4BestUnit(m_x2PlusLength,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "twist angle     : " << m_twistAngle/degree << " deg" << Gateendl;
+  G4cout << GateTools::Indent(level) << "polar angle     : " << m_polarAngle/degree << " deg" << Gateendl;
+  G4cout << GateTools::Indent(level) << "azimuthal angle     : " << m_azimuthalAngle/degree << " deg" << Gateendl;
+  G4cout << GateTools::Indent(level) << "tilt angle     : " << m_tiltAngle/degree << " deg" << Gateendl;
 }
 
 G4double GateTwistedTrap::ComputeMyOwnVolume() const

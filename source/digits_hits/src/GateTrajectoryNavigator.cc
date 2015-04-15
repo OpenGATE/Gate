@@ -28,14 +28,14 @@ GateTrajectoryNavigator::~GateTrajectoryNavigator()
 G4ThreeVector GateTrajectoryNavigator::FindSourcePosition()
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateTrajectoryNavigator::FindSourcePosition" << G4endl;
+    G4cout << "GateTrajectoryNavigator::FindSourcePosition" << Gateendl;
 
   G4ThreeVector sourcePosition = G4ThreeVector();
 
   G4int sourceIndex = FindSourceIndex();
 
   if ((sourceIndex < 0) || (sourceIndex >= m_trajectoryContainer->entries())) {
-    G4cout << "GateTrajectoryNavigator::FindSourcePosition : WARNING : sourceIndex out of range: " << sourceIndex << G4endl;
+    G4cout << "GateTrajectoryNavigator::FindSourcePosition : WARNING : sourceIndex out of range: " << sourceIndex << Gateendl;
   } else {
     G4Trajectory* trjSource = (G4Trajectory*)((*m_trajectoryContainer)[sourceIndex]);
     sourcePosition = ((G4TrajectoryPoint*)(trjSource->GetPoint(0)))->GetPosition();
@@ -47,7 +47,7 @@ G4ThreeVector GateTrajectoryNavigator::FindSourcePosition()
 G4int GateTrajectoryNavigator::FindSourceIndex()
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateTrajectoryNavigator::FindSourceIndex" << G4endl;
+    G4cout << "GateTrajectoryNavigator::FindSourceIndex" << Gateendl;
   G4int sourceIndex = -1;
   G4bool found = false;
   G4int n_trajectories = m_trajectoryContainer->entries();
@@ -74,8 +74,8 @@ void GateTrajectoryNavigator::SetIonID()
     if (trj->GetCharge() > 2) m_ionID = 1;
 
   /*  G4cout << "GateTrajectoryNavigator::SetIonID:GetTrackID  " << trj->GetTrackID()
- 	    << " Name <" << trj->GetParticleName() << ">" << G4endl;
-    G4cout << "GateTrajectoryNavigator::SetIonID:GetCharge  " <<  trj->GetCharge() << G4endl;*/
+ 	    << " Name <" << trj->GetParticleName() << ">" << Gateendl;
+    G4cout << "GateTrajectoryNavigator::SetIonID:GetCharge  " <<  trj->GetCharge() << Gateendl;*/
     }
  }
 
@@ -85,7 +85,7 @@ void GateTrajectoryNavigator::SetIonID()
 G4int GateTrajectoryNavigator::FindPositronTrackID()
 {
   if (nVerboseLevel > 2)
-  G4cout << "GateTrajectoryNavigator::FindPositronTrackID" << G4endl;
+  G4cout << "GateTrajectoryNavigator::FindPositronTrackID" << Gateendl;
 
   m_positronTrackID = 0;
 
@@ -93,7 +93,7 @@ G4int GateTrajectoryNavigator::FindPositronTrackID()
 
 
   if (!m_trajectoryContainer) {
-    G4cout << "GateTrajectoryNavigator::FindPositronTrackID : ERROR : NULL trajectoryContainer" << G4endl;
+    G4cout << "GateTrajectoryNavigator::FindPositronTrackID : ERROR : NULL trajectoryContainer" << Gateendl;
   } else {
     G4int n_trajectories = m_trajectoryContainer->entries();
     G4bool found = false;
@@ -122,7 +122,7 @@ std::vector<G4int> GateTrajectoryNavigator::FindAnnihilationGammasTrackID()
 TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
 
   if (nVerboseLevel > 2)
-    G4cout << "GateTrajectoryNavigator::FindAnnihilationGammasTrackID" << G4endl;
+    G4cout << "GateTrajectoryNavigator::FindAnnihilationGammasTrackID" << Gateendl;
 
   std::vector<G4int> photonIndices;
   photonIndices.clear();
@@ -130,7 +130,7 @@ TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->
   SetIonID();
 
   if (!m_trajectoryContainer) {
-    G4cout << "GateTrajectoryNavigator::FindAnnihilationGammasTrackID : ERROR : NULL trajectoryContainer" << G4endl;
+    G4cout << "GateTrajectoryNavigator::FindAnnihilationGammasTrackID : ERROR : NULL trajectoryContainer" << Gateendl;
   } else {
 
     // prepare the list of gammas for later analysis
@@ -204,11 +204,11 @@ TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->
 
 	    G4double dist = (vert1-vert2).mag();
 	    if (nVerboseLevel > 2)
-	    G4cout << "[GateTrajectoryNavigator::FindAnnihilationGammasTrackID] : distance between gammas vertices : dist (mm) " << dist/mm << G4endl;
+	    G4cout << "[GateTrajectoryNavigator::FindAnnihilationGammasTrackID] : distance between gammas vertices : dist (mm) " << dist/mm << Gateendl;
 	    if (dist/mm < 1E-7) {
 	     if (nVerboseLevel > 1) {
 		G4cout << "[GateTrajectoryNavigator::FindAnnihilationGammasTrackID] : Found common vertex for the two annihilation gammas :"
-		       << " tracks " << trj1->GetTrackID() << " and " << trj2->GetTrackID() << G4endl;
+		       << " tracks " << trj1->GetTrackID() << " and " << trj2->GetTrackID() << Gateendl;
 	     }
 	      // we add both photons to the vertex
 	      m_photonIDVec.push_back(trj1->GetTrackID());
@@ -226,7 +226,7 @@ TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->
     // strange case: we would expect to see a true annihilation, thus only 2 gammas backto back from the positron
     // 0 can be normal (positron escaped and didn't annihilate), 1 is strange again.
     G4cout
-      << "[GateTrajectoryNavigator::FindAnnihilationGammasTrackID]  WARNING : positron found and photonID vector size: " << m_photonIDVec.size() << G4endl;
+      << "[GateTrajectoryNavigator::FindAnnihilationGammasTrackID]  WARNING : positron found and photonID vector size: " << m_photonIDVec.size() << Gateendl;
   } */
 
   /*if ((m_positronTrackID != 0) && (m_photonIDVec.size() == 0)) {
@@ -234,7 +234,7 @@ TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->
     //    if (nVerboseLevel > 0)
     if (nVerboseLevel > 0)
       G4cout
-       << "[GateTrajectoryNavigator::FindAnnihilationGammasTrackID]  WARNING : positron found and photonID vector size: " << m_photonIDVec.size() << G4endl;
+       << "[GateTrajectoryNavigator::FindAnnihilationGammasTrackID]  WARNING : positron found and photonID vector size: " << m_photonIDVec.size() << Gateendl;
     G4Navigator *gNavigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
     G4ThreeVector null(0.,0.,0.);
     G4ThreeVector *ptr;
@@ -242,7 +242,7 @@ TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->
     G4ThreeVector lastPoint = ((G4TrajectoryPoint*)(m_positronTrj->GetPoint(m_positronTrj->GetPointEntries()-1)))->GetPosition();
     G4String theLastVolumeName = gNavigator->LocateGlobalPointAndSetup(lastPoint,ptr,false)->GetName();
     if (nVerboseLevel > 0)
-      G4cout << "GateTrajectoryNavigator::FindAnnihilationGammasTrackID: last position of the positron track has been found in volume: " << theLastVolumeName << G4endl;
+      G4cout << "GateTrajectoryNavigator::FindAnnihilationGammasTrackID: last position of the positron track has been found in volume: " << theLastVolumeName << Gateendl;
   }*/
 
 
@@ -254,15 +254,15 @@ TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->
 G4int GateTrajectoryNavigator::FindPhotonID(G4int trackID)
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateTrajectoryNavigator::FindPhotonID " << G4endl;
+    G4cout << "GateTrajectoryNavigator::FindPhotonID " << Gateendl;
   G4int photonID = 0;
 
   if (!m_trajectoryContainer) {
-    G4cout << "GateTrajectoryNavigator::FindPhotonID : ERROR : NULL trajectoryContainer" << G4endl;
+    G4cout << "GateTrajectoryNavigator::FindPhotonID : ERROR : NULL trajectoryContainer" << Gateendl;
   } else {
 
     if (m_photonIDVec.size() == 0) {
-      G4cout << "GateTrajectoryNavigator::FindPhotonID : m_photonIDVec.size() == 0" << G4endl;
+      G4cout << "GateTrajectoryNavigator::FindPhotonID : m_photonIDVec.size() == 0" << Gateendl;
     } else {
 
       G4bool found;
@@ -288,7 +288,7 @@ G4int GateTrajectoryNavigator::FindPhotonID(G4int trackID)
       }
       if (photonID == rootID) {
 	if (nVerboseLevel > 2) G4cout
-	  << "GateTrajectoryNavigator::FindPhotonID : trackID: " << trackID << " photonID = " << rootID << G4endl;
+	  << "GateTrajectoryNavigator::FindPhotonID : trackID: " << trackID << " photonID = " << rootID << Gateendl;
       }
       if (photonID == photon1ID) {
 	photonID = 1;
@@ -308,7 +308,7 @@ G4int GateTrajectoryNavigator::FindPrimaryID(G4int trackID)
   G4int primaryID = 0;
 
   if (!m_trajectoryContainer) {
-    G4cout << "GateTrajectoryNavigator::FindPrimaryID : ERROR : NULL trajectoryContainer" << G4endl;
+    G4cout << "GateTrajectoryNavigator::FindPrimaryID : ERROR : NULL trajectoryContainer" << Gateendl;
   } else {
     G4int tempParentID = trackID;
     //G4int primaryIndex = -1;
@@ -337,10 +337,10 @@ G4int GateTrajectoryNavigator::FindPrimaryID(G4int trackID)
 void GateTrajectoryNavigator::SetTrajectoryContainer(G4TrajectoryContainer* trajectoryContainer)
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateTrajectoryNavigator::SetTrajectoryContainer" << G4endl;
+    G4cout << "GateTrajectoryNavigator::SetTrajectoryContainer" << Gateendl;
 
   if (!trajectoryContainer) {
-    G4cout << "GateTrajectoryNavigator::SetTrajectoryContainer : ERROR : NULL trajectoryContainer" << G4endl;
+    G4cout << "GateTrajectoryNavigator::SetTrajectoryContainer : ERROR : NULL trajectoryContainer" << Gateendl;
   } else {
     m_trajectoryContainer = trajectoryContainer;
   }
@@ -351,7 +351,7 @@ void GateTrajectoryNavigator::SetTrajectoryContainer(G4TrajectoryContainer* traj
 void GateTrajectoryNavigator::Initialize()
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateTrajectoryNavigator::Initialize" << G4endl;
+    G4cout << "GateTrajectoryNavigator::Initialize" << Gateendl;
   m_photonIDVec.clear();
   m_positronTrackID = -1;
 }

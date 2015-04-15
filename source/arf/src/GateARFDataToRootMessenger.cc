@@ -30,7 +30,7 @@ GateARFDataToRootMessenger::GateARFDataToRootMessenger(GateARFDataToRoot* GateAR
 { 
   G4String cmdName;
 
-  //G4cout << " created directory " << GetDirectoryName()<<G4endl;
+  //G4cout << " created directory " << GetDirectoryName()<<Gateendl;
 
   cmdName = GetDirectoryName()+"setFileName";
 
@@ -67,7 +67,7 @@ void GateARFDataToRootMessenger::SetNewValue(G4UIcommand* command,G4String newVa
      {m_GateARFDataToRoot->setDRFDataprojectionmode(0);return;}
      if ( newValue == "line-projection" ){m_GateARFDataToRoot->setDRFDataprojectionmode(1);return;}
      if ( newValue == "orthogonal-projection" ){m_GateARFDataToRoot->setDRFDataprojectionmode(2);return;}
-  G4cout << " GateARFSimuSDMessenger::SetNewValue ::: UNKNOWN parameter "<<newValue<<". Ignored DRF Data projection Mode. Set To Default : smoothness "<<G4endl;
+  G4cout << " GateARFSimuSDMessenger::SetNewValue ::: UNKNOWN parameter "<<newValue<<". Ignored DRF Data projection Mode. Set To Default : smoothness "<<Gateendl;
     return;
  }
 

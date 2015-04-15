@@ -32,7 +32,7 @@ GateCoincidencePulseProcessorChain::GateCoincidencePulseProcessorChain( GateDigi
   
   m_messenger = new GateCoincidencePulseProcessorChainMessenger(this);
 
-  G4cout << " in GateCoincidencePulseProcessorChain call new GateCoincidenceDigiMaker "  << G4endl;
+  G4cout << " in GateCoincidencePulseProcessorChain call new GateCoincidenceDigiMaker "  << Gateendl;
   itsDigitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(itsDigitizer, itsOutputName,true) );
 }
 //------------------------------------------------------------------------------------------------------
@@ -58,8 +58,8 @@ void GateCoincidencePulseProcessorChain::InsertProcessor(GateVCoincidencePulsePr
 void GateCoincidencePulseProcessorChain::Describe(size_t indent)
 {
   GateModuleListManager::Describe();
-  //G4cout << GateTools::Indent(indent) << "Input:              '" << m_inputNames << "'" << G4endl;
-  G4cout << GateTools::Indent(indent) << "Output:             '" << m_outputName << "'" << G4endl;
+  //G4cout << GateTools::Indent(indent) << "Input:              '" << m_inputNames << "'" << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Output:             '" << m_outputName << "'" << Gateendl;
 }
 //------------------------------------------------------------------------------------------------------
 
@@ -67,7 +67,7 @@ void GateCoincidencePulseProcessorChain::Describe(size_t indent)
 //------------------------------------------------------------------------------------------------------
 void GateCoincidencePulseProcessorChain::DescribeProcessors(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Nb of modules:       " << theListOfNamedObject.size() << G4endl;
+  G4cout << GateTools::Indent(indent) << "Nb of modules:       " << theListOfNamedObject.size() << Gateendl;
   for (size_t i=0; i<theListOfNamedObject.size(); i++)
       GetProcessor(i)->Describe(indent+1);
 }

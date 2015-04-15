@@ -27,7 +27,7 @@ GateImageT<PixelType>::~GateImageT() {
 template<class PixelType>
 void GateImageT<PixelType>::Allocate() {
   UpdateNumberOfValues();
-  GateDebugMessage("Image",8,"GateImageT::Resize " << nbOfValues << G4endl);
+  GateDebugMessage("Image",8,"GateImageT::Resize " << nbOfValues << Gateendl);
   data.resize(nbOfValues);
   std::fill(data.begin(), data.end(), 0.0);
   PrintInfo();
@@ -39,15 +39,15 @@ void GateImageT<PixelType>::Allocate() {
 //-----------------------------------------------------------------------------
 template<class PixelType>
 void GateImageT<PixelType>::PrintInfo() {
-  GateMessage("Image", 1, "Matrix Size=\t" << size        << G4endl);
-  GateMessage("Image", 1, "HalfSize=\t"    << halfSize    << G4endl);
-  GateMessage("Image", 1, "Resol=\t"       << resolution  << G4endl);
-  GateMessage("Image", 1, "VoxelSize=\t"   << voxelSize   << G4endl);
-  GateMessage("Image", 1, "planeSize=\t"   << planeSize   << G4endl);
-  GateMessage("Image", 1, "lineSize=\t"    << lineSize    << G4endl);
-  GateMessage("Image", 1, "nbOfValues=\t"  << nbOfValues  << G4endl);
-  GateMessage("Image", 1, "PixelSize=\t"  << sizeof(PixelType)  << G4endl);
-  GateMessage("Image", 1, "dataSize =\t"   << data.size() << G4endl);
+  GateMessage("Image", 1, "Matrix Size=\t" << size        << Gateendl);
+  GateMessage("Image", 1, "HalfSize=\t"    << halfSize    << Gateendl);
+  GateMessage("Image", 1, "Resol=\t"       << resolution  << Gateendl);
+  GateMessage("Image", 1, "VoxelSize=\t"   << voxelSize   << Gateendl);
+  GateMessage("Image", 1, "planeSize=\t"   << planeSize   << Gateendl);
+  GateMessage("Image", 1, "lineSize=\t"    << lineSize    << Gateendl);
+  GateMessage("Image", 1, "nbOfValues=\t"  << nbOfValues  << Gateendl);
+  GateMessage("Image", 1, "PixelSize=\t"  << sizeof(PixelType)  << Gateendl);
+  GateMessage("Image", 1, "dataSize =\t"   << data.size() << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ void GateImageT<PixelType>::Read(G4String filename) {
   else if (extension == "i33") ReadInterfile(filename);
   else {
     GateError( "Unknow image file extension. Knowns extensions are : "
-               << G4endl << ".vox, .hdr, .img, .mhd, .mha, .h33, .i33" << G4endl);
+               << Gateendl << ".vox, .hdr, .img, .mhd, .mha, .h33, .i33" << Gateendl);
     exit(0);
   }
 }
@@ -100,7 +100,7 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
 
   // Read values ...
   if (hdr.GetVoxelType() == GateAnalyzeHeader::SignedShortType) {
-    GateMessage("Image",5,"Voxel Type = SignedShortType" << G4endl);
+    GateMessage("Image",5,"Voxel Type = SignedShortType" << Gateendl);
     typedef short VoxelType;
     std::vector<VoxelType> temp(nbOfValues);
     data.resize(nbOfValues);
@@ -110,7 +110,7 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
     }
   }
   else if (hdr.GetVoxelType() == GateAnalyzeHeader::FloatType) {
-    GateMessage("Image",5,"Voxel Type = FloatType" << G4endl);
+    GateMessage("Image",5,"Voxel Type = FloatType" << Gateendl);
     typedef float VoxelType;
     std::vector<VoxelType> temp(nbOfValues);
     data.resize(nbOfValues);
@@ -122,7 +122,7 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
     }
   }
   else if (hdr.GetVoxelType() == GateAnalyzeHeader::SignedIntType) {
-    GateMessage("Image",5,"Voxel Type = SignedIntType" << G4endl);
+    GateMessage("Image",5,"Voxel Type = SignedIntType" << Gateendl);
     typedef int VoxelType;
     std::vector<VoxelType> temp(nbOfValues);
     data.resize(nbOfValues);
@@ -132,7 +132,7 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
     }
   }
   else if (hdr.GetVoxelType() == GateAnalyzeHeader::UnsignedCharType) {
-    GateMessage("Image",5,"Voxel Type = UnsignedCharType" << G4endl);
+    GateMessage("Image",5,"Voxel Type = UnsignedCharType" << Gateendl);
     typedef unsigned char VoxelType;
     std::vector<VoxelType> temp(nbOfValues);
     data.resize(nbOfValues);
@@ -222,28 +222,28 @@ void GateImageT<PixelType>::ReadAscii(G4String filename) {
 
   // Header
   std::string s;
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read ####################################
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read #
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read Matrix
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read Size=
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read values ...
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read #
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read Resol
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read =
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read ####################################
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read #
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read Matrix
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read Size=
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read values ...
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read #
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read Resol
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read =
   G4ThreeVector resol;
   is >> resol;
-  //GateDebugMessage("Image",8,"Resol = " << resol << G4endl);
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read #
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read VoxelSize
-  is >> s ;// GateDebugMessage("Image",8,s<< G4endl); // read =
+  //GateDebugMessage("Image",8,"Resol = " << resol << Gateendl);
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read #
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read VoxelSize
+  is >> s ;// GateDebugMessage("Image",8,s<< Gateendl); // read =
   G4ThreeVector voxsize;
   is >> voxsize;
-  //GateDebugMessage("Image",8,"VoxelSize = " << voxsize << G4endl);
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read #
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read nbVal
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read =
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read value
-  is >> s ; //GateDebugMessage("Image",8,s<< G4endl); // read ####################################
+  //GateDebugMessage("Image",8,"VoxelSize = " << voxsize << Gateendl);
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read #
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read nbVal
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read =
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read value
+  is >> s ; //GateDebugMessage("Image",8,s<< Gateendl); // read ####################################
 
   // set size
   SetResolutionAndVoxelSize(resol, voxsize);
@@ -255,13 +255,13 @@ void GateImageT<PixelType>::ReadAscii(G4String filename) {
   if (resolution.x() == 1) dim--;
   if (resolution.y() == 1) dim--;
   if (resolution.z() == 1) dim--;
-  //GateDebugMessage("Image",8,"Image dimension is " << dim << G4endl);
+  //GateDebugMessage("Image",8,"Image dimension is " << dim << Gateendl);
 
   if (dim <= 1) {
     // read values in columns
     for(int i=0; i<nbOfValues; i++) {
-      is >> v; //GateDebugMessage("Image",8,"val = " << v << G4endl);
-      data[i] = atof(v.c_str()); //GateDebugMessage("Image",8,"val = " << data[i] << G4endl);
+      is >> v; //GateDebugMessage("Image",8,"val = " << v << Gateendl);
+      data[i] = atof(v.c_str()); //GateDebugMessage("Image",8,"val = " << data[i] << Gateendl);
     }
   }
   if (dim == 2) {
@@ -293,7 +293,7 @@ void GateImageT<PixelType>::ReadAscii(G4String filename) {
     }
   }
   if (!is) {
-    //GateError( "Error while reading " << G4endl);
+    //GateError( "Error while reading " << Gateendl);
     exit(0);
   }
 }
@@ -326,9 +326,9 @@ void GateImageT<PixelType>::MergeDataByAddition(G4String filename) {
 //-----------------------------------------------------------------------------
 template<class PixelType>
 void GateImageT<PixelType>::Write(G4String filename, const G4String & comment){
-  GateMessage("Actor",5,"GateImageT::write " << filename << G4endl);
+  GateMessage("Actor",5,"GateImageT::write " << filename << Gateendl);
   G4String extension = getExtension(filename);
-  GateMessage("Actor",5,"extension = " << extension << G4endl);
+  GateMessage("Actor",5,"extension = " << extension << Gateendl);
 
   std::ofstream os;
   if (extension == "bin") {
@@ -339,11 +339,11 @@ void GateImageT<PixelType>::Write(G4String filename, const G4String & comment){
   else {
      if (extension == "txt") {
       // open
-      GateMessage("Actor",5,"Write text file"<< G4endl);
+      GateMessage("Actor",5,"Write text file"<< Gateendl);
       OpenFileOutput(filename, os);
-      GateMessage("Actor",5,"Write text file"<< G4endl);
+      GateMessage("Actor",5,"Write text file"<< Gateendl);
       WriteAscii(os, comment);
-      GateMessage("Actor",5,"Write text file - end " << G4endl);
+      GateMessage("Actor",5,"Write text file - end " << Gateendl);
     }
     else {
       if (extension == "hdr") {
@@ -371,7 +371,7 @@ void GateImageT<PixelType>::Write(G4String filename, const G4String & comment){
           }
           else {
             GateMessage("Image",0,"WARNING : Don't know how to write '" << extension
-                        << " format... I try ASCII file" << G4endl);
+                        << " format... I try ASCII file" << Gateendl);
             // open
             OpenFileOutput(filename, os);
             WriteAscii(os, comment);
@@ -389,7 +389,7 @@ void GateImageT<PixelType>::Write(G4String filename, const G4String & comment){
 template<class PixelType>
 void GateImageT<PixelType>::WriteBin(std::ofstream & os)
 {
-  GateMessage("Image",2,"GateImageT::WriteBin " << G4endl);
+  GateMessage("Image",2,"GateImageT::WriteBin " << Gateendl);
   // write
   // if PixelType is not float, we copy the values in a float vector
   if (typeid(PixelType) != typeid(float)) {
@@ -403,7 +403,7 @@ void GateImageT<PixelType>::WriteBin(std::ofstream & os)
     os.write((char*)(&(data[0])), nbOfValues*sizeof(PixelType));
   }
   if (!os) {
-    GateError( "Error while writing image data (WriteBin)." << G4endl);
+    GateError( "Error while writing image data (WriteBin)." << Gateendl);
   }
 }
 //-----------------------------------------------------------------------------
@@ -413,7 +413,7 @@ void GateImageT<PixelType>::WriteBin(std::ofstream & os)
 template<class PixelType>
 void GateImageT<PixelType>::WriteMHD(std::string filename)
 {
-  GateMessage("Image",2,"GateImageT::WriteMHD " << G4endl);
+  GateMessage("Image",2,"GateImageT::WriteMHD " << Gateendl);
   // Write mhd image
   GateMHDImage * mhd = new GateMHDImage;
   mhd->WriteHeader<PixelType>(filename, this);
@@ -426,22 +426,22 @@ void GateImageT<PixelType>::WriteMHD(std::string filename)
 template<class PixelType>
 void GateImageT<PixelType>::WriteAscii(std::ofstream & os, const G4String & comment)
 {
-  GateMessage("Image",2,"GateImageT::WriteAscii " <<G4endl);
+  GateMessage("Image",2,"GateImageT::WriteAscii " <<Gateendl);
   // write comment in header
-  os  << "#################################### " << G4endl
-      << "# Matrix Size= " << size        << G4endl
-      << "# Resol      = " << resolution  << G4endl
-      << "# VoxelSize  = " << voxelSize   << G4endl
-      << "# nbVal      = " << nbOfValues  << G4endl
-      << "#################################### " << G4endl;
-  if (comment != "") os << comment << G4endl;
+  os  << "#################################### " << Gateendl
+      << "# Matrix Size= " << size        << Gateendl
+      << "# Resol      = " << resolution  << Gateendl
+      << "# VoxelSize  = " << voxelSize   << Gateendl
+      << "# nbVal      = " << nbOfValues  << Gateendl
+      << "#################################### " << Gateendl;
+  if (comment != "") os << comment << Gateendl;
 
   // write data
   int dim = 3;
   if (resolution.x() == 1) dim--;
   if (resolution.y() == 1) dim--;
   if (resolution.z() == 1) dim--;
-  GateMessage("Image",5,"Image dimension is " << dim << G4endl);
+  GateMessage("Image",5,"Image dimension is " << dim << Gateendl);
 
   if (dim <= 1) {
     // write values in columns
@@ -489,9 +489,9 @@ void GateImageT<PixelType>::WriteAscii(std::ofstream & os, const G4String & comm
 template<class PixelType>
 void GateImageT<PixelType>::WriteRoot(G4String filename)
 {
-  GateMessage("Image",2,"GateImageT::WriteRoot " <<G4endl);
+  GateMessage("Image",2,"GateImageT::WriteRoot " <<Gateendl);
 #ifdef G4ANALYSIS_USE_ROOT
-  // GateMessage("Image", 0 , "Writing image root output in " << filename << G4endl);
+  // GateMessage("Image", 0 , "Writing image root output in " << filename << Gateendl);
 
   if (mRootHistoDim == 1) {
     TFile * f = new TFile(filename, "RECREATE");

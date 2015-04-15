@@ -109,13 +109,13 @@ G4ThreeVector GateVImage::GetVoxelCenterFromCoordinates(G4ThreeVector p) const{
 //-----------------------------------------------------------------------------
 int GateVImage::GetIndexFromPosition(const G4ThreeVector& position) const{
   //std::cout.precision(20);
-  GateDebugMessage("Image",9," GetIndex for " << position << G4endl);
+  GateDebugMessage("Image",9," GetIndex for " << position << Gateendl);
 
   // compute position in voxels (non-integer)
   double x = (position.x()+halfSize.x())/voxelSize.x();
   double y = (position.y()+halfSize.y())/voxelSize.y();
   double z = (position.z()+halfSize.z())/voxelSize.z();
-  GateDebugMessage("Image",9," pos in voxel = " << x << " " << y << " " << z << G4endl);
+  GateDebugMessage("Image",9," pos in voxel = " << x << " " << y << " " << z << Gateendl);
 
   // Special case for right borders  :
   if (fabs(x - resolution.x()) <= kCarTolerance*0.5) x -= 2*kCarTolerance;
@@ -134,7 +134,7 @@ int GateVImage::GetIndexFromPosition(const G4ThreeVector& position) const{
   if (ix < 0) return -1;
   if (iy < 0) return -1;
   if (iz < 0) return -1;
-  GateDebugMessage("Image",9,ix << " " << iy << " " << iz << G4endl);
+  GateDebugMessage("Image",9,ix << " " << iy << " " << iz << Gateendl);
 
   return (ix+iy*lineSize+iz*planeSize);
 }
@@ -481,20 +481,20 @@ void GateVImage::UpdateNumberOfValues() {
 
 //-----------------------------------------------------------------------------
 GateVImage::ESide GateVImage::GetSideFromPointAndCoordinate(const G4ThreeVector & p, const G4ThreeVector & c) {
-  GateDebugMessage("Image", 8, "GateVImage::GetSideFromCoordinate(" << p << "," << c << ")" << G4endl);
+  GateDebugMessage("Image", 8, "GateVImage::GetSideFromCoordinate(" << p << "," << c << ")" << Gateendl);
   const G4ThreeVector & v = GetVoxelCornerFromCoordinates(c);
   const G4ThreeVector & s = GetVoxelSize();
 
-  GateDebugMessage("Image", 8, "Voxel = " << v << G4endl);
-  GateDebugMessage("Image", 8, "Spaci = " << s << G4endl);
-  GateDebugMessage("Image", 8, "kCarTolerance*0.5 = " << kCarTolerance*0.5 << G4endl);
+  GateDebugMessage("Image", 8, "Voxel = " << v << Gateendl);
+  GateDebugMessage("Image", 8, "Spaci = " << s << Gateendl);
+  GateDebugMessage("Image", 8, "kCarTolerance*0.5 = " << kCarTolerance*0.5 << Gateendl);
 
-  GateDebugMessage("Image", 8, "XL  = " << p.x()-v.x() << G4endl);
-  GateDebugMessage("Image", 8, "XR  = " << v.x()+s.x()-p.x() << G4endl);
-  GateDebugMessage("Image", 8, "YL  = " << p.y()-v.y() << G4endl);
-  GateDebugMessage("Image", 8, "YR  = " << v.y()+s.y()-p.y() << G4endl);
-  GateDebugMessage("Image", 8, "ZL  = " << p.z()-v.z() << G4endl);
-  GateDebugMessage("Image", 8, "ZR  = " << v.z()+s.z()-p.z() << G4endl);
+  GateDebugMessage("Image", 8, "XL  = " << p.x()-v.x() << Gateendl);
+  GateDebugMessage("Image", 8, "XR  = " << v.x()+s.x()-p.x() << Gateendl);
+  GateDebugMessage("Image", 8, "YL  = " << p.y()-v.y() << Gateendl);
+  GateDebugMessage("Image", 8, "YR  = " << v.y()+s.y()-p.y() << Gateendl);
+  GateDebugMessage("Image", 8, "ZL  = " << p.z()-v.z() << Gateendl);
+  GateDebugMessage("Image", 8, "ZR  = " << v.z()+s.z()-p.z() << Gateendl);
 
   if (p.x()-v.x() <= kCarTolerance*0.5) return kMX; // left side
   if (v.x()+s.x()-p.x() <= kCarTolerance*0.5) return kPX; // right side

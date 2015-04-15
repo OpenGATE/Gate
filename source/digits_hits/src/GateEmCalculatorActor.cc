@@ -30,11 +30,11 @@
 GateEmCalculatorActor::GateEmCalculatorActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateEmCalculatorActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateEmCalculatorActor() -- begin"<<Gateendl);
   //SetTypeName("EmCalculatorActor");
 //  pActor = new GateActorMessenger(this);
   ResetData();
-  GateDebugMessageDec("Actor",4,"GateEmCalculatorActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateEmCalculatorActor() -- end"<<Gateendl);
 
   mEnergy = 100 ;
   mPartName = "proton";
@@ -186,7 +186,7 @@ void GateEmCalculatorActor::SaveData()
     }
 
   if (!os) {
-    GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << G4endl);
+    GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << Gateendl);
   }
   os.flush();
   os.close();

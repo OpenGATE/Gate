@@ -97,10 +97,10 @@ void GateQvalueActor::UserSteppingActionInVoxel(const int index, const G4Step* s
 
       //G4cout<<"Second no = "<<k<<"   "<<(*it)->GetDefinition()->GetParticleName()<<"   "<<mNSec ;
       //if(k>=mNSec) G4cout<<"  OK    ";
-      //else G4cout<<G4endl;
+      //else G4cout<<Gateendl;
       if(k>=mNSec){
 	energyKinSec+= (*it)->GetKineticEnergy();
-	//G4cout<< (*it)->GetKineticEnergy()  <<G4endl;
+	//G4cout<< (*it)->GetKineticEnergy()  <<Gateendl;
 
       }
       k++;
@@ -129,7 +129,7 @@ void GateQvalueActor::UserSteppingActionInVoxel(const int index, const G4Step* s
 
 //-----------------------------------------------------------------------------
 void GateQvalueActor::BeginOfRunAction(const G4Run * ) {
-  GateDebugMessage("Actor", 3, "GateQvalueActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateQvalueActor -- Begin of Run" << Gateendl);
   ResetData();
 }
 //-----------------------------------------------------------------------------
@@ -138,7 +138,7 @@ void GateQvalueActor::BeginOfRunAction(const G4Run * ) {
 // Callback at each event
 void GateQvalueActor::BeginOfEventAction(const G4Event * ) {
   mCurrentEvent++;
-  GateDebugMessage("Actor", 3, "GateQvalueActor -- Begin of Event: "<<mCurrentEvent << G4endl);
+  GateDebugMessage("Actor", 3, "GateQvalueActor -- Begin of Event: "<<mCurrentEvent << Gateendl);
 }
 //-----------------------------------------------------------------------------
 

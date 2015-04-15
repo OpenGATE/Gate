@@ -90,7 +90,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
 
         if (mIsASourceDescriptionFile) {
             LoadClinicalBeamProperties();
-            GateMessage("Physic", 1, "[TPSPencilBeam] Source description file successfully loaded." << G4endl);
+            GateMessage("Physic", 1, "[TPSPencilBeam] Source description file successfully loaded." << Gateendl);
         } else {
             GateError("No clinical beam loaded !");
         }
@@ -138,20 +138,20 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                     for (int i = 0; i < 1; i++) inFile.getline(oneline, MAXLINE);
 
                     if (mTestFlag) {
-                        G4cout << "TESTREAD NbFields " << NbFields << G4endl;
-                        G4cout << "TESTREAD TotalMeterSet " << TotalMeterSet << G4endl;
-                        G4cout << "TESTREAD FieldID " << FieldID << G4endl;
-                        G4cout << "TESTREAD GantryAngle " << GantryAngle << G4endl;
-                        G4cout << "TESTREAD CouchAngle " << CouchAngle << G4endl;
-                        G4cout << "TESTREAD Layers N° " << j << G4endl;
-                        G4cout << "TESTREAD NbOfSpots " << NbOfSpots << G4endl;
+                        G4cout << "TESTREAD NbFields " << NbFields << Gateendl;
+                        G4cout << "TESTREAD TotalMeterSet " << TotalMeterSet << Gateendl;
+                        G4cout << "TESTREAD FieldID " << FieldID << Gateendl;
+                        G4cout << "TESTREAD GantryAngle " << GantryAngle << Gateendl;
+                        G4cout << "TESTREAD CouchAngle " << CouchAngle << Gateendl;
+                        G4cout << "TESTREAD Layers N° " << j << Gateendl;
+                        G4cout << "TESTREAD NbOfSpots " << NbOfSpots << Gateendl;
                     }
                     for (int k = 0; k < NbOfSpots; k++) {
                         inFile.getline(oneline, MAXLINE);
                         double SpotParameters[3];
                         ReadLineTo3Doubles(SpotParameters, oneline);
                         if (mTestFlag) {
-                            G4cout << "TESTREAD Spot N° " << k << "    parameters: " << SpotParameters[0] << " " << SpotParameters[1] << " " << SpotParameters[2] << G4endl;
+                            G4cout << "TESTREAD Spot N° " << k << "    parameters: " << SpotParameters[0] << " " << SpotParameters[1] << " " << SpotParameters[2] << Gateendl;
                         }
 
                         //POSITION
@@ -180,9 +180,9 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                         //            position.rotateX(-CouchAngle);
 
                         if (mTestFlag) {
-                            G4cout << "TESTREAD Spot Effective source position " << position[0] << " " << position[1] << " " << position[2] << G4endl;
-                            G4cout << "TESTREAD IsocenterPosition " << IsocenterPosition[0] << " " << IsocenterPosition[1] << " " << IsocenterPosition[2] << G4endl;
-                            G4cout << "TESTREAD NbOfLayers " << NbOfLayers << G4endl;
+                            G4cout << "TESTREAD Spot Effective source position " << position[0] << " " << position[1] << " " << position[2] << Gateendl;
+                            G4cout << "TESTREAD IsocenterPosition " << IsocenterPosition[0] << " " << IsocenterPosition[1] << " " << IsocenterPosition[2] << Gateendl;
+                            G4cout << "TESTREAD NbOfLayers " << NbOfLayers << Gateendl;
                         }
 
                         //DIRECTION
@@ -250,13 +250,13 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                         //            rotation[1]-=GantryAngle;
                         //            rotation[2]+=0.;
 
-                        //            G4cout<<"TESTREAD Spot Effective source position "<<position[0]<<" "<<position[1]<<" "<<position[2]<<G4endl;
-                        //            G4cout<<"TESTREAD source rotation "<<rotation[0]<<" "<<rotation[1]<<" "<<rotation[2]<<G4endl;
-                        //            G4cout<<"TESTREAD couch angle "<<CouchAngle<<G4endl;
-                        //            G4cout<<"TESTREAD gantry angle "<<GantryAngle<<G4endl;
-                        //            G4cout<<G4endl;
+                        //            G4cout<<"TESTREAD Spot Effective source position "<<position[0]<<" "<<position[1]<<" "<<position[2]<<Gateendl;
+                        //            G4cout<<"TESTREAD source rotation "<<rotation[0]<<" "<<rotation[1]<<" "<<rotation[2]<<Gateendl;
+                        //            G4cout<<"TESTREAD couch angle "<<CouchAngle<<Gateendl;
+                        //            G4cout<<"TESTREAD gantry angle "<<GantryAngle<<Gateendl;
+                        //            G4cout<<Gateendl;
                         if (mTestFlag) {
-                            G4cout << "TESTREAD source rotation " << rotation[0] << " " << rotation[1] << " " << rotation[2] << G4endl;
+                            G4cout << "TESTREAD source rotation " << rotation[0] << " " << rotation[1] << " " << rotation[2] << Gateendl;
                         }
 
 
@@ -296,7 +296,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                             }
 
                             Pencil->SetWeight(NbProtons);
-                            //G4cout<<"Nb of MU = "<<SpotParameters[2]<<", beam energy = "<<energy<<" MeV, corresponding to "<<NbProtons<<" protons."<<G4endl;
+                            //G4cout<<"Nb of MU = "<<SpotParameters[2]<<", beam energy = "<<energy<<" MeV, corresponding to "<<NbProtons<<" protons."<<Gateendl;
                             //Position
                             Pencil->SetPosition(position);
                             Pencil->SetSigmaX(GetSigmaX(energy));
@@ -336,7 +336,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                 }
             }
             again = false;
-            GateMessage("Physic", 1, "[TPSPencilBeam] Plan description file successfully loaded." << G4endl);
+            GateMessage("Physic", 1, "[TPSPencilBeam] Plan description file successfully loaded." << Gateendl);
         }
         inFile.close();
 
@@ -346,7 +346,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
         }
 
         GateMessage("Physic", 1, "[TPSPencilBeam] Starting particle generation:  "
-                    << mTotalNumberOfSpots << " spots loaded." << G4endl);
+                    << mTotalNumberOfSpots << " spots loaded." << Gateendl);
         mPDF = new double[mTotalNumberOfSpots];
         for (int i = 0; i < mTotalNumberOfSpots; i++) {
             // it is strongly adviced to set mFlatGenerationFlag=false
@@ -484,17 +484,17 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties() {
     }
 
     if (mTestFlag) {
-        G4cout<<"DSP "<<mDistanceSourcePatient<<G4endl;
-        G4cout<<"SMX "<<mDistanceSMXToIsocenter<<G4endl;
-        G4cout<<"SMY "<<mDistanceSMYToIsocenter<<G4endl;
-        for (unsigned int i=0; i<mEnergy.size(); i++) G4cout<<"mEnergy\t"<<mEnergy[i]<<G4endl;
-        for (unsigned int i=0; i<mEnergySpread.size(); i++) G4cout<<"mEnergySpread\t"<<mEnergySpread[i]<<G4endl;
-        for (unsigned int i=0; i<mX.size(); i++) G4cout<<"mX\t"<<mX[i]<<G4endl;
-        for (unsigned int i=0; i<mTheta.size(); i++) G4cout<<"mTheta\t"<<mTheta[i]<<G4endl;
-        for (unsigned int i=0; i<mY.size(); i++) G4cout<<"mY\t"<<mY[i]<<G4endl;
-        for (unsigned int i=0; i<mPhi.size(); i++) G4cout<<"mPhi\t"<<mPhi[i]<<G4endl;
-        for (unsigned int i=0; i<mXThetaEmittance.size(); i++) G4cout<<"mXThetaEmittance\t"<<mXThetaEmittance[i]<<G4endl;
-        for (unsigned int i=0; i<mYPhiEmittance.size(); i++) G4cout<<"mYPhiEmittance\t"<<mYPhiEmittance[i]<<G4endl;
+        G4cout<<"DSP "<<mDistanceSourcePatient<<Gateendl;
+        G4cout<<"SMX "<<mDistanceSMXToIsocenter<<Gateendl;
+        G4cout<<"SMY "<<mDistanceSMYToIsocenter<<Gateendl;
+        for (unsigned int i=0; i<mEnergy.size(); i++) G4cout<<"mEnergy\t"<<mEnergy[i]<<Gateendl;
+        for (unsigned int i=0; i<mEnergySpread.size(); i++) G4cout<<"mEnergySpread\t"<<mEnergySpread[i]<<Gateendl;
+        for (unsigned int i=0; i<mX.size(); i++) G4cout<<"mX\t"<<mX[i]<<Gateendl;
+        for (unsigned int i=0; i<mTheta.size(); i++) G4cout<<"mTheta\t"<<mTheta[i]<<Gateendl;
+        for (unsigned int i=0; i<mY.size(); i++) G4cout<<"mY\t"<<mY[i]<<Gateendl;
+        for (unsigned int i=0; i<mPhi.size(); i++) G4cout<<"mPhi\t"<<mPhi[i]<<Gateendl;
+        for (unsigned int i=0; i<mXThetaEmittance.size(); i++) G4cout<<"mXThetaEmittance\t"<<mXThetaEmittance[i]<<Gateendl;
+        for (unsigned int i=0; i<mYPhiEmittance.size(); i++) G4cout<<"mYPhiEmittance\t"<<mYPhiEmittance[i]<<Gateendl;
     }
 }
 //------------------------------------------------------------------------------------------------------
@@ -575,7 +575,7 @@ double GateSourceTPSPencilBeam::GetEllipseYPhiArea(double energy) {
 
 //------------------------------------------------------------------------------------------------------
 G4int GateSourceTPSPencilBeam::GeneratePrimaries( G4Event* event ) {
-    GateMessage("Beam", 4, "GeneratePrimaries " << event->GetEventID() << G4endl);
+    GateMessage("Beam", 4, "GeneratePrimaries " << event->GetEventID() << Gateendl);
     G4int numVertices = 0;
     GenerateVertex( event );
     numVertices++;
@@ -600,7 +600,7 @@ void ReadLineTo3Doubles(double *toto, char *oneline) {
     for (int j=0; j<3; j++) {
         getline(iss, token, ' ');
         toto[j]=atof(token.c_str());
-        //  G4cout<<"toto "<<toto[j]<<G4endl;
+        //  G4cout<<"toto "<<toto[j]<<Gateendl;
     }
 }
 #endif

@@ -7,6 +7,7 @@
   ----------------------*/
 
 #include "GateDetectionProfileActor.hh"
+#include "GateMessageManager.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
 
@@ -35,7 +36,7 @@ void GateDetectionProfileActor::SetTimer(const G4String &timerName)
 {
   GateVActor *abstractActor = GateActorManager::GetInstance()->GetActor("GateDetectionProfilePrimaryTimerActor",timerName);
   if (!abstractActor) {
-    GateWarning("can't find timer actor named " << timerName << G4endl);
+    GateWarning("can't find timer actor named " << timerName << Gateendl);
     return;
   }
   timerActor = dynamic_cast<GateDetectionProfilePrimaryTimerActor*>(abstractActor);
@@ -106,7 +107,7 @@ void GateDetectionProfileActor::Construct()
   EnableEndOfEventAction(true);
 
   mImage.Allocate();
-  //G4cout << "resolution=" << mImage.GetResolution() << " halfSize=" << mImage.GetHalfSize() << G4endl;
+  //G4cout << "resolution=" << mImage.GetResolution() << " halfSize=" << mImage.GetHalfSize() << Gateendl;
 
   ResetData();
 }
@@ -141,14 +142,14 @@ void GateDetectionProfileActor::UserPostTrackActionInVoxel(const int, const G4Tr
   if (!detectedSomething) return;
   assert(timerActor->IsTriggered());
 
-  //G4cout << "track e=" << track->GetKineticEnergy()/MeV << "MeV in " << track->GetVolume()->GetName() << G4endl;
-  //G4cout << "de=" << detectedDeltaEnergy/MeV << "MeV" << G4endl;
-  //G4cout << "*********************" << G4endl;
+  //G4cout << "track e=" << track->GetKineticEnergy()/MeV << "MeV in " << track->GetVolume()->GetName() << Gateendl;
+  //G4cout << "de=" << detectedDeltaEnergy/MeV << "MeV" << Gateendl;
+  //G4cout << "*********************" << Gateendl;
 
   timerActor->ReportDetectedParticle(GetName(),detectedTime,detectedEnergy,detectedDeltaEnergy,detectedWeight);
   GateMessage("Actor",4,
               "hit finished de=" << detectedDeltaEnergy/MeV <<
-              " dethresh=" << deltaEnergyThreshold/MeV << G4endl);
+              " dethresh=" << deltaEnergyThreshold/MeV << Gateendl);
 
   if (detectedDeltaEnergy<=deltaEnergyThreshold) return;
   if (detectedIndex>=0) mImage.AddValue(detectedIndex,detectedWeight);
@@ -166,15 +167,15 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
   if (!firstStepForTrack) return;
   firstStepForTrack = false;
 
-  //G4cout << G4endl;
-  //G4cout << "name " << step->GetTrack()->GetParticleDefinition()->GetParticleName() << G4endl;
-  //G4cout << "useCristalNormal = " << useCristalNormal << " useCristalPosition = " << useCristalPosition << G4endl;
-  //G4cout << "step " << step->GetTrack()->GetCurrentStepNumber() << G4endl;
-  //G4cout << "pre   e=" << step->GetPreStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << G4endl;
-  //G4cout << "post  e=" << step->GetPostStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPostStepPoint()->GetPhysicalVolume()->GetName() << G4endl;
-  //G4cout << "track e=" << step->GetTrack()->GetKineticEnergy()/MeV << "MeV in " << step->GetTrack()->GetVolume()->GetName() << " to " << step->GetTrack()->GetNextVolume()->GetName() << G4endl;
-  //G4cout << "de=" << detectedDeltaEnergy/MeV << "MeV" << G4endl;
-  //G4cout << "replica=" << point->GetTouchable()->GetHistory()->GetTopReplicaNo() << G4endl;
+  //G4cout << Gateendl;
+  //G4cout << "name " << step->GetTrack()->GetParticleDefinition()->GetParticleName() << Gateendl;
+  //G4cout << "useCristalNormal = " << useCristalNormal << " useCristalPosition = " << useCristalPosition << Gateendl;
+  //G4cout << "step " << step->GetTrack()->GetCurrentStepNumber() << Gateendl;
+  //G4cout << "pre   e=" << step->GetPreStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << Gateendl;
+  //G4cout << "post  e=" << step->GetPostStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPostStepPoint()->GetPhysicalVolume()->GetName() << Gateendl;
+  //G4cout << "track e=" << step->GetTrack()->GetKineticEnergy()/MeV << "MeV in " << step->GetTrack()->GetVolume()->GetName() << " to " << step->GetTrack()->GetNextVolume()->GetName() << Gateendl;
+  //G4cout << "de=" << detectedDeltaEnergy/MeV << "MeV" << Gateendl;
+  //G4cout << "replica=" << point->GetTouchable()->GetHistory()->GetTopReplicaNo() << Gateendl;
 
   const bool isSecondary = (step->GetTrack()->GetLogicalVolumeAtVertex()==mVolume->GetLogicalVolume()); //FIXME dirty hacked to know is the particle was created inside the volume
   if (isSecondary) return;
@@ -196,7 +197,7 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
       if (useCristalPosition) interaction_position = transform.TransformPoint(G4ThreeVector(0,0,0));
       if (useCristalNormal)   interaction_normal = transform.TransformAxis(G4ThreeVector(1,0,0));
     }
-    //G4cout << "interaction_position=" << interaction_position << " interaction_normal=" << interaction_normal << G4endl;
+    //G4cout << "interaction_position=" << interaction_position << " interaction_normal=" << interaction_normal << Gateendl;
 
     const G4double a = triggerData.direction.mag2();
     const G4double b = triggerData.direction.dot(interaction_normal);
@@ -204,18 +205,18 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
     const G4ThreeVector w0 = triggerData.position - interaction_position;
     const G4double d = w0.dot(triggerData.direction);
     const G4double e = w0.dot(interaction_normal);
-    //G4cout << "a=" << a << " b=" << b << " c=" << c << " d=" << d << " e=" << e << G4endl;
+    //G4cout << "a=" << a << " b=" << b << " c=" << c << " d=" << d << " e=" << e << Gateendl;
 
     const G4double det = a*c-b*b;
     if (det==0) return; // lines are parallel so there is no precise detection point that can be precised
     const G4double sc = (b*e - c*d)/det;
     const G4double tc = (a*e - b*d)/det;
-    //G4cout << "det=" << det << " sc=" << sc << " tc=" << tc << G4endl;
+    //G4cout << "det=" << det << " sc=" << sc << " tc=" << tc << Gateendl;
 
     const G4ThreeVector minBeam = triggerData.position + triggerData.direction*sc;
     const G4ThreeVector minDetected = interaction_position + interaction_normal*tc;
     minDistance = (minBeam-minDetected).mag();
-    //G4cout << "minDistance=" << minDistance << " minBeam=" << minBeam << " minDetected=" << minDetected << G4endl;
+    //G4cout << "minDistance=" << minDistance << " minBeam=" << minBeam << " minDetected=" << minDetected << Gateendl;
 
     switch (detectionPosition) {
     case Beam:
@@ -245,16 +246,16 @@ void GateDetectionProfileActor::UserSteppingActionInVoxel(const int, const G4Ste
               " position=" << minPosition/mm <<
               " distance=" << minDistance/mm <<
               " e=" << detectedEnergy <<
-              " index=" << detectedIndex << G4endl);
+              " index=" << detectedIndex << Gateendl);
 
-  //G4cout << "*********************" << G4endl;
-  //G4cout << GetName() << G4endl;
-  //G4cout << "step " << step->GetTrack()->GetCurrentStepNumber() << G4endl;
-  //G4cout << "pre   e=" << step->GetPreStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << G4endl;
-  //G4cout << "post  e=" << step->GetPostStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPostStepPoint()->GetPhysicalVolume()->GetName() << G4endl;
-  //G4cout << "track e=" << step->GetTrack()->GetKineticEnergy()/MeV << "MeV in " << step->GetTrack()->GetVolume()->GetName() << " to " << step->GetTrack()->GetNextVolume()->GetName() << G4endl;
-  //G4cout << "de=" << detectedDeltaEnergy/MeV << "MeV" << G4endl;
-  //G4cout << G4endl;
+  //G4cout << "*********************" << Gateendl;
+  //G4cout << GetName() << Gateendl;
+  //G4cout << "step " << step->GetTrack()->GetCurrentStepNumber() << Gateendl;
+  //G4cout << "pre   e=" << step->GetPreStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << Gateendl;
+  //G4cout << "post  e=" << step->GetPostStepPoint()->GetKineticEnergy()/MeV << "MeV in " << step->GetPostStepPoint()->GetPhysicalVolume()->GetName() << Gateendl;
+  //G4cout << "track e=" << step->GetTrack()->GetKineticEnergy()/MeV << "MeV in " << step->GetTrack()->GetVolume()->GetName() << " to " << step->GetTrack()->GetNextVolume()->GetName() << Gateendl;
+  //G4cout << "de=" << detectedDeltaEnergy/MeV << "MeV" << Gateendl;
+  //G4cout << Gateendl;
 }
 //-----------------------------------------------------------------------------
 
@@ -414,7 +415,7 @@ void GateDetectionProfilePrimaryTimerActor::UserSteppingAction(const GateVVolume
   histoPosition->Fill(data.position[0]/mm,data.position[1]/mm,weight);
   histoDirz->Fill(data.direction[2],weight);
 
-  GateMessage("Actor",4,"triggered by " << data.name << " at " << data.time/ns << "ns " << data.position/mm << "mm" << G4endl);
+  GateMessage("Actor",4,"triggered by " << data.name << " at " << data.time/ns << "ns " << data.position/mm << "mm" << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -439,7 +440,7 @@ void GateDetectionProfilePrimaryTimerActor::ReportDetectedParticle(const G4Strin
   iterede->second->Fill(energy/MeV,deltaEnergy/MeV,weight);
   iteredep->second->Fill(energy/MeV,deltaEnergy/energy,weight);
 
-  GateMessage("Actor",1,detectorName << " reports detection flytime=" << flytime/ns << "ns e=" << energy/MeV << "MeV de=" << deltaEnergy/MeV << "MeV weight=" << weight << G4endl);
+  GateMessage("Actor",1,detectorName << " reports detection flytime=" << flytime/ns << "ns e=" << energy/MeV << "MeV de=" << deltaEnergy/MeV << "MeV weight=" << weight << Gateendl);
 }
 //-----------------------------------------------------------------------------
 

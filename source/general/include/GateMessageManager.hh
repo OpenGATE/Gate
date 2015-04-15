@@ -39,7 +39,7 @@ See GATE/LICENSE.txt for further details
 
   example :
 
-  GateMessage("Core",4,"problem with "<<GetName()<<G4endl);
+  GateMessage("Core",4,"problem with "<<GetName()<<Gateendl);
 
   will push the 3rd argument in std::cout if the message level of
   "Core" messages is greater or equal to 4.  which means that it
@@ -108,12 +108,12 @@ See GATE/LICENSE.txt for further details
 // In a method X:
 // X() 
 // {
-//   GateDebugMessageInc("Physics",3,"Begining of method X"<<G4endl); 
+//   GateDebugMessageInc("Physics",3,"Begining of method X"<<Gateendl); 
 //   ..
 //   // This message will be tabulated with one more space 
 //   GateDebugMessage("Physics",5,"comment...");
 //   ..
-//   GateDebugMessageDec("Physics",3,"End of method X"<<G4endl); 
+//   GateDebugMessageDec("Physics",3,"End of method X"<<Gateendl); 
 // }
 // Gives :
 // Begining of method X

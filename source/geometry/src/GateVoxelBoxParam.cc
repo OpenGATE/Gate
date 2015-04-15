@@ -31,7 +31,7 @@ GateVoxelBoxParam::~GateVoxelBoxParam()
 
 //
 void GateVoxelBoxParam::ConstructOwnPhysicalVolume(G4bool flagUpdate){
-  // G4cout << "GateVoxelBoxParam::ConstructOwnPhysicalVolumes - Entered, name "<< mName <<", flag "<< std::boolalpha << flagUpdate <<  G4endl<<std::flush;
+  // G4cout << "GateVoxelBoxParam::ConstructOwnPhysicalVolumes - Entered, name "<< mName <<", flag "<< std::boolalpha << flagUpdate <<  Gateendl<<std::flush;
   
   // For the update case; there is nothing to do here.
   if (flagUpdate) return;
@@ -62,7 +62,7 @@ void GateVoxelBoxParam::ConstructOwnPhysicalVolume(G4bool flagUpdate){
 
 void GateVoxelBoxParam::DestroyGeometry(){
   
-  // G4cout << "GateVoxelBoxParam::DestructOwnPhysicalVolumes - Entered"<<G4endl<<std::flush;
+  // G4cout << "GateVoxelBoxParam::DestructOwnPhysicalVolumes - Entered"<<Gateendl<<std::flush;
   if (m_parameterization) {
     delete m_parameterization;
   }

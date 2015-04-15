@@ -23,11 +23,11 @@ See GATE/LICENSE.txt for further details
 GateGeometryVoxelRangeTranslator::GateGeometryVoxelRangeTranslator(GateVGeometryVoxelReader* voxelReader) 
   : GateVGeometryVoxelTranslator(voxelReader)
 {
-//  G4cout << " Constructor GateGeometryVoxelRangeTranslator" << G4endl;
+//  G4cout << " Constructor GateGeometryVoxelRangeTranslator" << Gateendl;
   m_name = G4String("rangeTranslator");
   m_messenger = new GateGeometryVoxelRangeTranslatorMessenger(this);
   
-//  G4cout << " FIN Constructor GateGeometryVoxelRangeTranslator" << G4endl;
+//  G4cout << " FIN Constructor GateGeometryVoxelRangeTranslator" << Gateendl;
 }
 
 GateGeometryVoxelRangeTranslator::~GateGeometryVoxelRangeTranslator() 
@@ -39,12 +39,12 @@ G4String GateGeometryVoxelRangeTranslator::TranslateToMaterial(G4double voxelVal
 {
   G4String material = G4String("NULL");
 
-//    G4cout << "GateGeometryVoxelRangeTranslator::TranslateToMaterial: voxelValue " << voxelValue << G4endl;
+//    G4cout << "GateGeometryVoxelRangeTranslator::TranslateToMaterial: voxelValue " << voxelValue << Gateendl;
 
   for (G4int iRange = 0; iRange< (G4int)m_voxelMaterialTranslation.size(); iRange++) {
     G4double range1 = (m_voxelMaterialTranslation[iRange].first).first;
     G4double range2 = (m_voxelMaterialTranslation[iRange].first).second;
-    //    G4cout << "iRange range1 range2 " << iRange << " " << range1 << " " << range2 << G4endl;
+    //    G4cout << "iRange range1 range2 " << iRange << " " << range1 << " " << range2 << Gateendl;
     if ((range1 <= voxelValue) && (voxelValue <= range2)) {
       material = (m_voxelMaterialTranslation[iRange].second);
       break;
@@ -57,12 +57,12 @@ G4String GateGeometryVoxelRangeTranslator::TranslateToMaterial(G4double voxelVal
 void GateGeometryVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
 {
 
-//  G4cout << " DEBUT GateGeometryVoxelRangeTranslator::ReadTranslationTable " << G4endl;
+//  G4cout << " DEBUT GateGeometryVoxelRangeTranslator::ReadTranslationTable " << Gateendl;
   m_voxelMaterialTranslation.clear();
 
   std::ifstream inFile;
   
-//  G4cout << "GateGeometryVoxelRangeTranslator::ReadFile : fileName: " << fileName << G4endl;
+//  G4cout << "GateGeometryVoxelRangeTranslator::ReadFile : fileName: " << fileName << Gateendl;
   
   inFile.open(fileName.c_str(),std::ios::in);
    
@@ -80,7 +80,7 @@ void GateGeometryVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
   std::istringstream is(buffer);
 
   is >> nTotCol;
-  //  G4cout << "nTotCol: " << nTotCol << G4endl;
+  //  G4cout << "nTotCol: " << nTotCol << Gateendl;
 
   for (G4int iCol=0; iCol<nTotCol; iCol++) {
     inFile.getline(buffer,200);
@@ -100,7 +100,7 @@ void GateGeometryVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
     }
 
     //   G4cout << " min max " << xmin << " " << xmax << "  material: " << material 
-    //   << std::boolalpha << ", visible " << visible << ", rgba(" << red<<',' << green << ',' << blue << ')' << G4endl;
+    //   << std::boolalpha << ", visible " << visible << ", rgba(" << red<<',' << green << ',' << blue << ')' << Gateendl;
 
     std::pair<G4double,G4double> minmax(xmin, xmax);
     GateVoxelMaterialTranslationRange range(minmax, material);
@@ -119,7 +119,7 @@ void GateGeometryVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
   }
 
   }
-  else {G4cout << "Error opening file." << G4endl;}
+  else {G4cout << "Error opening file." << Gateendl;}
   
   inFile.close();
 
@@ -127,7 +127,7 @@ void GateGeometryVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
 
 void GateGeometryVoxelRangeTranslator::Describe(G4int) 
 {
-  G4cout << " Range Translator" << G4endl;
+  G4cout << " Range Translator" << Gateendl;
   for (G4int iRange = 0; iRange< (G4int)m_voxelMaterialTranslation.size(); iRange++) {
     G4double    xmin      = (m_voxelMaterialTranslation[iRange].first).first;
     G4double    xmax      = (m_voxelMaterialTranslation[iRange].first).second;
@@ -144,7 +144,7 @@ void GateGeometryVoxelRangeTranslator::Describe(G4int)
 	   << " ]  ---> material " << material 
 	   << ", visibility " << GetMaterialAttributes(   GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(material)  )->IsVisible()
 	   << ", coulour "    << GetMaterialAttributes(   GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(material)  )->GetColour()
-	   << G4endl;
+	   << Gateendl;
   }
 }
 

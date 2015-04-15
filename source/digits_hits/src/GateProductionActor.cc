@@ -22,7 +22,7 @@
 GateProductionActor::GateProductionActor(G4String name, G4int depth) :
   GateVImageActor(name,depth), pMessenger(NULL)
 {
-  GateMessage("Actor",2,"GateProductionActor -- constructor"<<G4endl);
+  GateMessage("Actor",2,"GateProductionActor -- constructor"<<Gateendl);
   pMessenger = new GateProductionActorMessenger(this);
 }
 //-----------------------------------------------------------------------------
@@ -32,7 +32,7 @@ GateProductionActor::GateProductionActor(G4String name, G4int depth) :
 /// Destructor
 GateProductionActor::~GateProductionActor()
 {
-  GateMessage("Actor",2,"GateProductionActor -- destructor"<<G4endl);
+  GateMessage("Actor",2,"GateProductionActor -- destructor"<<Gateendl);
   delete pMessenger;
 }
 //-----------------------------------------------------------------------------
@@ -42,15 +42,15 @@ GateProductionActor::~GateProductionActor()
 /// Construct
 void GateProductionActor::Construct()
 {
-  GateMessage("Actor",2,"GateProductionActor -- construct"<<G4endl);
+  GateMessage("Actor",2,"GateProductionActor -- construct"<<Gateendl);
   GateVImageActor::Construct();
   mImage.Allocate(); // allocate data and reset value to 0
 
   if (mSaveFilename.isNull() || mSaveFilename=="FilnameNotGivenForThisActor") { GateError("GateProductionActor -- please give output filename"); }
   if (!mVolume) { GateError("GateProductionActor -- please attach actor to a volume"); }
 
-  GateMessage("Actor",3,"GateProductionActor -- filename=" << mSaveFilename <<G4endl);
-  GateMessage("Actor",3,"GateProductionActor -- imagesize=" << mImage.GetNumberOfValues() <<G4endl);
+  GateMessage("Actor",3,"GateProductionActor -- filename=" << mSaveFilename <<Gateendl);
+  GateMessage("Actor",3,"GateProductionActor -- imagesize=" << mImage.GetNumberOfValues() <<Gateendl);
 
   // Enable callbacks
   EnablePreUserTrackingAction(true);
@@ -62,7 +62,7 @@ void GateProductionActor::Construct()
 void GateProductionActor::SaveData()
 {
   GateVActor::SaveData();
-  GateMessage("Actor",2,"GateProductionActor -- saving filename="<< mSaveFilename <<G4endl);
+  GateMessage("Actor",2,"GateProductionActor -- saving filename="<< mSaveFilename <<Gateendl);
   mImage.Write(mSaveFilename);
 }
 //-----------------------------------------------------------------------------

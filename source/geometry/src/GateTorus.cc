@@ -84,7 +84,7 @@ G4LogicalVolume* GateTorus::ConstructOwnSolidAndLogicalVolume(G4Material* mater,
    }
    else {
      // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateTorus::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<G4endl);
+       GateMessage("Warning", 0, "GateTorus::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<Gateendl);
    }
    return m_torus_log;
 }
@@ -103,12 +103,12 @@ void GateTorus::DestroyOwnSolidAndLogicalVolume()
 
 void GateTorus::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: torus (torus)" << G4endl;
-  G4cout << GateTools::Indent(level) << "Inner radius: " << G4BestUnit(m_innerR,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Outer radius: " << G4BestUnit(m_outerR,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Toroidal radius: " << G4BestUnit(m_torusR,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Start angle of the segment: " << m_startPhi / degree << " deg" << G4endl;
-  G4cout << GateTools::Indent(level) << "Delta angle of the segment: " << m_deltaPhi / degree << " deg" << G4endl;
+  G4cout << GateTools::Indent(level) << "Shape: torus (torus)" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Inner radius: " << G4BestUnit(m_innerR,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Outer radius: " << G4BestUnit(m_outerR,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Toroidal radius: " << G4BestUnit(m_torusR,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Start angle of the segment: " << m_startPhi / degree << " deg" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Delta angle of the segment: " << m_deltaPhi / degree << " deg" << Gateendl;
 
 }
 

@@ -60,7 +60,7 @@ void GateVoxelCompressor::MakeExclusionList(G4String val){
 void GateVoxelCompressor::AddMaterial(G4String m){
     G4Material* materialPtr =  G4Material::GetMaterial( m );
     if (materialPtr) m_exclusionList->insert( materialPtr->GetIndex() );
-    else G4cout << "GateVoxelCompressor::MakeExclusionList - ERROR ! Material " << m << " not found."<< G4endl;
+    else G4cout << "GateVoxelCompressor::MakeExclusionList - ERROR ! Material " << m << " not found."<< Gateendl;
 }
 //-----------------------------------------------------------------------------
 
@@ -74,9 +74,9 @@ double GateVoxelCompressor::GetCompressionRatio() const{
 void GateVoxelCompressor::Initialize()
 {
        if ( m_voxelSet != 0 )
-          {G4cout << " %%%%%%%%%%%%%%%%   GateVoxelCompressor::Initialize() " << m_voxelSet->size() << G4endl;
+          {G4cout << " %%%%%%%%%%%%%%%%   GateVoxelCompressor::Initialize() " << m_voxelSet->size() << Gateendl;
            m_voxelSet->clear();
-           G4cout << " %%%%%%%%%%%%%%%%   GateVoxelCompressor::Initialize() NOW SIZE IS  " << m_voxelSet->size() << G4endl;
+           G4cout << " %%%%%%%%%%%%%%%%   GateVoxelCompressor::Initialize() NOW SIZE IS  " << m_voxelSet->size() << Gateendl;
            delete m_voxelSet;
            m_voxelSet = 0;
           }

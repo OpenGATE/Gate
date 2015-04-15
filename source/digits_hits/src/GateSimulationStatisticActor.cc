@@ -38,11 +38,11 @@ std::string get_date_string() {
 GateSimulationStatisticActor::GateSimulationStatisticActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateSimulationStatisticActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateSimulationStatisticActor() -- begin"<<Gateendl);
   //SetTypeName("SimulationStatisticActor");
   pActor = new GateActorMessenger(this);
   ResetData();
-  GateDebugMessageDec("Actor",4,"GateSimulationStatisticActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateSimulationStatisticActor() -- end"<<Gateendl);
   gettimeofday(&start,NULL);
   startDateStr = get_date_string();
 }
@@ -164,7 +164,7 @@ void GateSimulationStatisticActor::SaveData()
      << "# TPS (Track per sec)        = " << mNumberOfTrack/twi << std::endl
      << "# SPS (Step per sec)         = " << mNumberOfSteps/twi << std::endl;
   if (!os) {
-    GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << G4endl);
+    GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << Gateendl);
   }
   os.flush();
   os.close();

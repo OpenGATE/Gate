@@ -89,7 +89,7 @@ void GateQuantumEfficiency::CheckVolumeName(G4String val)
 
   }
   else {
-    G4cout << "Wrong Volume Name" << G4endl;
+    G4cout << "Wrong Volume Name" << Gateendl;
   }
 }
 
@@ -99,8 +99,8 @@ void GateQuantumEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePuls
     {
       if(!m_testVolume)
 	{
-	  G4cerr << 	G4endl << "[GateQuantumEfficiency::ProcessOnePulse]:" << G4endl
-		 <<   "Sorry, but you don't have choosen any volume !" << G4endl;
+	  G4cerr << 	Gateendl << "[GateQuantumEfficiency::ProcessOnePulse]:" << Gateendl
+		 <<   "Sorry, but you don't have choosen any volume !" << Gateendl;
 	  G4Exception( "GateQuantumEfficiency::ProcessOnePulse", "ProcessOnePulse", FatalException, "You must choose a volume for crosstalk, e.g. crystal:\n\t/gate/digitizer/Singles/quantumEfficiency/chooseQEVolume VOLUME NAME\n or disable the quantumEfficiency using:\n\t/gate/digitizer/Singles/quantumEfficiency/disable\n");
 	}
       //Create the table containing the quantum efficiencies
@@ -149,7 +149,7 @@ void GateQuantumEfficiency::CreateTable()
   std::ofstream out;
 
   if (nVerboseLevel > 1)
-    G4cout << "Creation of a file called 'QETables.dat' which contains the quantum efficiencies tables" << G4endl;
+    G4cout << "Creation of a file called 'QETables.dat' which contains the quantum efficiencies tables" << Gateendl;
 
   for (r = 0; r < m_nbTables; r++) {
     m_table[r] = new G4double [m_nbCrystals];
@@ -174,9 +174,9 @@ void GateQuantumEfficiency::CreateTable()
       {
 	if (! out.is_open())
 	  out.open("QETables.dat");
-	out << "#Table nb: " << r << G4endl;
+	out << "#Table nb: " << r << Gateendl;
 	for (n = 0; n < (m_nbCrystals); n++)
-	  out << m_table[r][n] << G4endl;
+	  out << m_table[r][n] << Gateendl;
       }
   }
   if (out.is_open())
@@ -196,11 +196,11 @@ G4double GateQuantumEfficiency::GetMinQECoeff() {
 void GateQuantumEfficiency::DescribeMyself(size_t indent)
 {
   if (m_nbFiles > 0) {
-    G4cout << GateTools::Indent(indent) << "Variable quantum efficiency based on the file(s): " << G4endl;
+    G4cout << GateTools::Indent(indent) << "Variable quantum efficiency based on the file(s): " << Gateendl;
     std::vector<G4String>::iterator im;
     for (im=m_file.begin(); im!=m_file.end(); im++)
-      G4cout << GateTools::Indent(indent+1) << *im << G4endl;
+      G4cout << GateTools::Indent(indent+1) << *im << Gateendl;
   }
   else
-    G4cout << GateTools::Indent(indent) << "Fixed quantum efficiency equal to " << m_uniqueQE << G4endl;
+    G4cout << GateTools::Indent(indent) << "Fixed quantum efficiency equal to " << m_uniqueQE << Gateendl;
 }

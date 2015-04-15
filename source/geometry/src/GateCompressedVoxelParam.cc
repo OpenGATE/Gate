@@ -55,7 +55,7 @@ void GateCompressedVoxelParam::ConstructOwnPhysicalVolume(G4bool flagUpdate){
 					    m_parameterization->GetNbOfCopies(),
 					    m_parameterization
 					    );
-  GateMessage("Geometry", 5,"GateCompressedVoxelParam::ConstructOwnPhysicalVolume " << GetPhysicalVolumeName() << " has been constructed." << G4endl;);
+  GateMessage("Geometry", 5,"GateCompressedVoxelParam::ConstructOwnPhysicalVolume " << GetPhysicalVolumeName() << " has been constructed." << Gateendl;);
 					        
 
   PushPhysicalVolume(m_pvParameterized);

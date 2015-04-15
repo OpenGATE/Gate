@@ -11,6 +11,7 @@ See GATE/LICENSE.txt for further details
 #define GATELISTOFHADMODEL_CC
 
 #include "GateListOfHadronicModels.hh"
+#include "GateMessageManager.hh"
 
 //-----------------------------------------------------------------------------
 GateListOfHadronicModels::GateListOfHadronicModels(G4String model)
@@ -36,7 +37,7 @@ void GateListOfHadronicModels::SetEmin(double val, G4String opt)
   {
     if(!GetMaterial(opt) && !GetElement(opt))
     {
-       G4cout<< "\n  <!> *** Warning *** <!> Unknown material or element: "<<opt<<"\n"<<G4endl;
+       G4cout<< "\n  <!> *** Warning *** <!> Unknown material or element: "<<opt<<"\n"<<Gateendl;
        return;
     }
   }
@@ -67,7 +68,7 @@ void GateListOfHadronicModels::SetEmax(double val, G4String opt)
   {
     if(!GetMaterial(opt) && !GetElement(opt))
     {
-       G4cout<< "\n  <!> *** Warning *** <!> Unknown material or element: "<<opt<<"\n"<<G4endl;
+       G4cout<< "\n  <!> *** Warning *** <!> Unknown material or element: "<<opt<<"\n"<<Gateendl;
        return;
     }
   }
@@ -191,7 +192,7 @@ void GateListOfHadronicModels::Print(G4int level, G4String symbol, G4String symb
 
       if(theListOfEmax[j]>0) std::cout<<"Emax = "<<std::setw(3)<<G4BestUnit(theListOfEmax[j],"Energy")<<std::flush;
 
-      std::cout<<" ("<<theListOfOptions[j]<<")"<<G4endl;
+      std::cout<<" ("<<theListOfOptions[j]<<")"<<Gateendl;
     }
   }     
 
@@ -210,7 +211,7 @@ void GateListOfHadronicModels::Print(G4String file,G4int level, G4String symbol,
   G4String space2 = space + "  " + symbol2 + " ";
   space += symbol + " ";
 
-  os<<space<<modelName.data() <<G4endl;
+  os<<space<<modelName.data() <<Gateendl;
 
 
   for(unsigned int j=0; j<theListOfOptions.size(); j++)
@@ -224,7 +225,7 @@ void GateListOfHadronicModels::Print(G4String file,G4int level, G4String symbol,
 
       if(theListOfEmax[j]>0) os<<"Emax = "<<std::setw(3)<<G4BestUnit(theListOfEmax[j],"Energy")<<std::flush;
 
-      os<<G4endl;
+      os<<Gateendl;
     }
   }
 
@@ -240,7 +241,7 @@ void GateListOfHadronicModels::Print(G4String file,G4int level, G4String symbol,
 
       if(theListOfEmax[j]>0) os<<"Emax = "<<std::setw(3)<<G4BestUnit(theListOfEmax[j],"Energy")<<std::flush;
 
-      os<<" ("<<theListOfOptions[j].data()<<")"<<G4endl;
+      os<<" ("<<theListOfOptions[j].data()<<")"<<Gateendl;
     }
   }     
   os.close();

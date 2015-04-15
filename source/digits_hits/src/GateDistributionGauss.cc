@@ -67,5 +67,5 @@ void GateDistributionGauss::DescribeMyself(size_t indent)
     	 <<"Mean : "         << m_Mean
          <<"  -- Sigma : "    << m_Sigma
          <<"  -- Amplitude : "<< m_Amplitude
-	 <<G4endl;
+	 <<Gateendl;
 }

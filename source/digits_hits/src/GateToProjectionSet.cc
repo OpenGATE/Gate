@@ -231,32 +231,32 @@ else {  GateToInterfile* interfileModule = dynamic_cast<GateToInterfile*>( GateO
 // Initialisation of the projection set
 void GateToProjectionSet::RecordBeginOfAcquisition()
 {
-  if (nVerboseLevel>2) G4cout << "entering [GateToProjectionSet::RecordBeginOfAcquisition]" << G4endl;
+  if (nVerboseLevel>2) G4cout << "entering [GateToProjectionSet::RecordBeginOfAcquisition]" << Gateendl;
 
   // First, we check that all the parameters are valid
   if ( GetPixelNbX() <= 0 ) {
-    G4cerr << 	G4endl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << G4endl
-      	   <<   "Sorry, but the number of pixels along X for the projection-set (" << GetPixelNbX() << ") is invalid" << G4endl;
+    G4cerr << 	Gateendl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << Gateendl
+      	   <<   "Sorry, but the number of pixels along X for the projection-set (" << GetPixelNbX() << ") is invalid" << Gateendl;
     G4Exception( "GateToProjectionSet::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must either define this number with:\n\t/gate/output/projection/pixelNumberX NUMBER\n or disable the projection-maker using:\n\t/gate/output/projection/disable\n");
   }
   if ( GetPixelNbY() <= 0 ) {
-     G4cerr << 	G4endl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << G4endl
-      	    <<   "Sorry, but the number of pixels along Y for the projection-set (" << GetPixelNbY() << ") is invalid" << G4endl;
+     G4cerr << 	Gateendl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << Gateendl
+      	    <<   "Sorry, but the number of pixels along Y for the projection-set (" << GetPixelNbY() << ") is invalid" << Gateendl;
      G4Exception( "GateToProjectionSet::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must either define this number with:\n\t/gate/output/projection/pixelNumberX NUMBER\n or disable the projection-maker using:\n\t/gate/output/projection/disable\n");
   }
   if ( GetPixelSizeX() <= 0 ) {
-    G4cerr  << 	G4endl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << G4endl
-      	    <<   "Sorry, but the pixel size along X for the projection-set (" << G4BestUnit(GetPixelSizeX(),"Length") << ") is invalid" << G4endl;
+    G4cerr  << 	Gateendl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << Gateendl
+      	    <<   "Sorry, but the pixel size along X for the projection-set (" << G4BestUnit(GetPixelSizeX(),"Length") << ") is invalid" << Gateendl;
     G4Exception( "GateToProjectionSet::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must either define this size with:\n\t/gate/output/projection/pixelSizeX SIZE UNIT\n or disable the projection-maker using:\n\t/gate/output/projection/disable\n");
   }
   if ( GetPixelSizeY() <= 0 ) {
-    G4cerr  << 	G4endl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << G4endl
-      	    <<   "Sorry, but the pixel size along Y for the projection-set (" << G4BestUnit(GetPixelSizeY(),"Length") << ") is invalid" << G4endl;
+    G4cerr  << 	Gateendl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << Gateendl
+      	    <<   "Sorry, but the pixel size along Y for the projection-set (" << G4BestUnit(GetPixelSizeY(),"Length") << ") is invalid" << Gateendl;
     G4Exception( "GateToProjectionSet::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException,  "You must either define this size with:\n\t/gate/output/projection/pixelSizeY SIZE UNIT\n or disable the projection-maker using:\n\t/gate/output/projection/disable\n");
   }
    if ( m_projectionPlane == "Unknown" ) {
-    G4cerr  << 	G4endl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << G4endl
-      	    <<   "Sorry, but the pixel size along Y for the projection-set (" << G4BestUnit(GetPixelSizeY(),"Length") << ") is invalid" << G4endl;
+    G4cerr  << 	Gateendl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << Gateendl
+      	    <<   "Sorry, but the pixel size along Y for the projection-set (" << G4BestUnit(GetPixelSizeY(),"Length") << ") is invalid" << Gateendl;
     G4Exception( "GateToProjectionSet::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "Sorry, but you have not defined the projection plane.\nYou must either define this plane with:\n\t/gate/output/projection/projectionPlane PLANE (XY or YZ or ZX )\n or disable the projection-maker using:\n\t/gate/output/projection/disable\n");
   }
 
@@ -276,13 +276,13 @@ void GateToProjectionSet::RecordBeginOfAcquisition()
 
   G4double fstepNumber = duration / timeStep;
   if ( fabs(fstepNumber-rint(fstepNumber)) >= 1.e-5 ) {
-    G4cerr  << 	G4endl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << G4endl
+    G4cerr  << 	Gateendl << "[GateToProjectionSet::RecordBeginOfAcquisition]:" << Gateendl
       	    <<   "Sorry, but the study duration (" << G4BestUnit(duration,"Time") << ") "
-	    <<   " does not seem to be a multiple of the time-slice (" << G4BestUnit(timeStep,"Time") << ")." << G4endl;
+	    <<   " does not seem to be a multiple of the time-slice (" << G4BestUnit(timeStep,"Time") << ")." << Gateendl;
     G4Exception( "GateToProjectionSet::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must change these parameters then restart the simulation\n");
   }
   m_projNb = static_cast<size_t>(rint(fstepNumber));
-  if (nVerboseLevel>2) G4cout << "Number of acquisition steps: " << m_projNb << G4endl;
+  if (nVerboseLevel>2) G4cout << "Number of acquisition steps: " << m_projNb << Gateendl;
 
 
   // Retrieve the parameters of the rotation
@@ -290,19 +290,19 @@ void GateToProjectionSet::RecordBeginOfAcquisition()
   G4double orbitingSpeed = baseComponent->GetOrbitingVelocity();
   m_orbitingStep  = orbitingSpeed * timeStep;
   if (!m_orbitingStep) m_orbitingStep=360.*deg;
-  if (nVerboseLevel>2) G4cout << "Rotation step: " << m_orbitingStep/degree << " deg" << G4endl;
+  if (nVerboseLevel>2) G4cout << "Rotation step: " << m_orbitingStep/degree << " deg" << Gateendl;
 
 
   // Retrieve the parameters of the repeater (number of heads)
   m_headNb 	      = baseComponent->GetAngularRepeatNumber();
   m_headAngularPitch = baseComponent->GetAngularRepeatPitch();
   if (!m_headAngularPitch) m_headAngularPitch=360.*deg;
-  if (nVerboseLevel>2) G4cout << "Angular pitch between heads: " << m_headAngularPitch/degree << " deg" << G4endl;
+  if (nVerboseLevel>2) G4cout << "Angular pitch between heads: " << m_headAngularPitch/degree << " deg" << Gateendl;
 
   // Prepare the projection set
   m_projectionSet->Reset(m_energyWindowNb, m_headNb,m_projNb);
 
-  if (nVerboseLevel>2) G4cout << "leaving [GateToProjectionSet::RecordBeginOfAcquisition]" << G4endl;
+  if (nVerboseLevel>2) G4cout << "leaving [GateToProjectionSet::RecordBeginOfAcquisition]" << Gateendl;
 }
 
 
@@ -329,7 +329,7 @@ void GateToProjectionSet::RecordBeginOfRun(const G4Run * r)
 void GateToProjectionSet::RecordEndOfEvent(const G4Event* )
 {
   if (nVerboseLevel>2)
-	G4cout << "entering [GateToProjectionSet::RecordEndOfEvent]" << G4endl;
+	G4cout << "entering [GateToProjectionSet::RecordEndOfEvent]" << Gateendl;
 
 	G4DigiManager * fDM = G4DigiManager::GetDMpointer();
 	const GateSingleDigiCollection * SDC;
@@ -338,8 +338,8 @@ void GateToProjectionSet::RecordEndOfEvent(const G4Event* )
 		SDC = dynamic_cast<const GateSingleDigiCollection*>(fDM->GetDigiCollection( m_inputDataChannelIDList[energyWindowID] ));
 
 		if (!SDC) {
-			if (nVerboseLevel>2) G4cout << "No digi collection for this event" << G4endl
-									<< "leaving [GateToProjectionSet::RecordEndOfEvent]" << G4endl;
+			if (nVerboseLevel>2) G4cout << "No digi collection for this event" << Gateendl
+									<< "leaving [GateToProjectionSet::RecordEndOfEvent]" << Gateendl;
 			continue;
 		}
 
@@ -349,8 +349,8 @@ void GateToProjectionSet::RecordEndOfEvent(const G4Event* )
 			G4double xProj = (*SDC)[iDigi]->GetLocalPos()[m_coordX];
 			G4double yProj = (*SDC)[iDigi]->GetLocalPos()[m_coordY];
 			if (nVerboseLevel>=2) {
-				G4cout << "[GateToProjectionSet]: Processing count on head " << headID << " for energy window " << m_inputDataChannelList[energyWindowID] << " at position " << G4BestUnit((*SDC)[iDigi]->GetLocalPos(),"Length") << G4endl;
-				G4cout << "Extracting projection coordinates: " << G4BestUnit(xProj,"Length") << " , " << G4BestUnit(yProj,"Length") << G4endl;
+				G4cout << "[GateToProjectionSet]: Processing count on head " << headID << " for energy window " << m_inputDataChannelList[energyWindowID] << " at position " << G4BestUnit((*SDC)[iDigi]->GetLocalPos(),"Length") << Gateendl;
+				G4cout << "Extracting projection coordinates: " << G4BestUnit(xProj,"Length") << " , " << G4BestUnit(yProj,"Length") << Gateendl;
 			}
 			m_projectionSet->Fill( static_cast<G4int>(energyWindowID) , headID, xProj, yProj);
 
@@ -358,7 +358,7 @@ void GateToProjectionSet::RecordEndOfEvent(const G4Event* )
 	}
 
   if (nVerboseLevel>2)
-   G4cout << "leaving [GateToProjectionSet::RecordEndOfEvent]" << G4endl;
+   G4cout << "leaving [GateToProjectionSet::RecordEndOfEvent]" << Gateendl;
 }
 
 
@@ -371,14 +371,14 @@ void GateToProjectionSet::RecordEndOfEvent(const G4Event* )
 void GateToProjectionSet::Describe(size_t indent)
 {
   GateVOutputModule::Describe(indent);
-  G4cout << GateTools::Indent(indent) << "Job:                   build a set of projections from a SPECT or OPTICAL simulation" << G4endl;
-  G4cout << GateTools::Indent(indent) << "Is enabled?            " << ( IsEnabled() ? "Yes" : "No") << G4endl;
-  G4cout << GateTools::Indent(indent) << "Projection plane       '" << m_projectionPlane << "'" << G4endl;
-  G4cout << GateTools::Indent(indent) << "Number of pixels       " << GetPixelNbX() << " x " << GetPixelNbY() << G4endl;
-  G4cout << GateTools::Indent(indent) << "Pixel size             " << G4BestUnit(GetPixelSizeX(),"Length") << " x " << G4BestUnit(GetPixelSizeY(),"Length") << G4endl;
-  G4cout << GateTools::Indent(indent) << "Filled?                " << ( m_projectionSet->GetData() ? "Yes" : "No" ) << G4endl;
-  if ( GetProjectionNb() ) G4cout << GateTools::Indent(indent) << "Number of projections: " << GetProjectionNb() << G4endl;
-  G4cout << GateTools::Indent(indent) << "Attached to system:    '" << m_system->GetObjectName() << "'" << G4endl;
+  G4cout << GateTools::Indent(indent) << "Job:                   build a set of projections from a SPECT or OPTICAL simulation" << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Is enabled?            " << ( IsEnabled() ? "Yes" : "No") << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Projection plane       '" << m_projectionPlane << "'" << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Number of pixels       " << GetPixelNbX() << " x " << GetPixelNbY() << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Pixel size             " << G4BestUnit(GetPixelSizeX(),"Length") << " x " << G4BestUnit(GetPixelSizeY(),"Length") << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Filled?                " << ( m_projectionSet->GetData() ? "Yes" : "No" ) << Gateendl;
+  if ( GetProjectionNb() ) G4cout << GateTools::Indent(indent) << "Number of projections: " << GetProjectionNb() << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Attached to system:    '" << m_system->GetObjectName() << "'" << Gateendl;
 }
 
 
@@ -401,9 +401,9 @@ void GateToProjectionSet::SetProjectionPlane(const G4String& planeName)
     m_coordX = 2;
     m_coordY = 0;
   } else {
-    G4cerr << G4endl  << "[GateToProjectionSet::SetProjectionPlane]:" << G4endl
-      	      	    << "\tI did not recognise the plane name '" << planeName << "'" << G4endl
-		    << "\tValid names are 'XY', 'YZ' and 'ZX'." << G4endl
-		    << "Setting request will be ignored!" << G4endl;
+    G4cerr << Gateendl  << "[GateToProjectionSet::SetProjectionPlane]:" << Gateendl
+      	      	    << "\tI did not recognise the plane name '" << planeName << "'" << Gateendl
+		    << "\tValid names are 'XY', 'YZ' and 'ZX'." << Gateendl
+		    << "Setting request will be ignored!" << Gateendl;
   }
 }

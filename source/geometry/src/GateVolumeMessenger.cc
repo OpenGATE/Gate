@@ -31,7 +31,7 @@ GateVolumeMessenger::GateVolumeMessenger(GateVVolume* itsCreator, const G4String
 
   GetDirectory()->SetGuidance(guidance.c_str());
 
-  //  G4cout << " before new GateVisAttributesMessenger creating GetVolumeCreator() ="  << GetVolumeCreator()->GetObjectName() << G4endl;  
+  //  G4cout << " before new GateVisAttributesMessenger creating GetVolumeCreator() ="  << GetVolumeCreator()->GetObjectName() << Gateendl;  
   pVisAttributesMessenger  = 
       	new GateVisAttributesMessenger(GetVolumeCreator()->GetVisAttributes(), GetVolumeCreator()->GetObjectName()+"/vis");
   

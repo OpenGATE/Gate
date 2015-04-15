@@ -25,7 +25,7 @@
 //-----------------------------------------------------------------------------
 GateDoseActor::GateDoseActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateDoseActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateDoseActor() -- begin"<<Gateendl);
 
   mCurrentEvent=-1;
   mIsEdepImageEnabled = false;
@@ -43,7 +43,7 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mIsDoseToWaterNormalisationEnabled = false;
 
   pMessenger = new GateDoseActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateDoseActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateDoseActor() -- end"<<Gateendl);
   emcalc = new G4EmCalculator;
 }
 //-----------------------------------------------------------------------------
@@ -78,7 +78,7 @@ void GateDoseActor::EnableDoseNormalisationToIntegral(bool b) {
 //-----------------------------------------------------------------------------
 /// Construct
 void GateDoseActor::Construct() {
-  GateDebugMessageInc("Actor", 4, "GateDoseActor -- Construct - begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "GateDoseActor -- Construct - begin" << Gateendl);
   GateVImageActor::Construct();
 
   // Find G4_WATER. This it needed here because we will used this
@@ -163,24 +163,24 @@ void GateDoseActor::Construct() {
 
   // Print information
   GateMessage("Actor", 1,
-              "\tDose DoseActor    = '" << GetObjectName() << "'" << G4endl <<
-              "\tDose image        = " << mIsDoseImageEnabled << G4endl <<
-              "\tDose squared      = " << mIsDoseSquaredImageEnabled << G4endl <<
-              "\tDose uncertainty  = " << mIsDoseUncertaintyImageEnabled << G4endl <<
-              "\tDose to water image        = " << mIsDoseToWaterImageEnabled << G4endl <<
-              "\tDose to water squared      = " << mIsDoseToWaterSquaredImageEnabled << G4endl <<
-              "\tDose to wateruncertainty  = " << mIsDoseToWaterUncertaintyImageEnabled << G4endl <<
-              "\tEdep image        = " << mIsEdepImageEnabled << G4endl <<
-              "\tEdep squared      = " << mIsEdepSquaredImageEnabled << G4endl <<
-              "\tEdep uncertainty  = " << mIsEdepUncertaintyImageEnabled << G4endl <<
-              "\tNumber of hit     = " << mIsNumberOfHitsImageEnabled << G4endl <<
-              "\t     (last hit)   = " << mIsLastHitEventImageEnabled << G4endl <<
-              "\tedepFilename      = " << mEdepFilename << G4endl <<
-              "\tdoseFilename      = " << mDoseFilename << G4endl <<
-              "\tNb Hits filename  = " << mNbOfHitsFilename << G4endl);
+              "\tDose DoseActor    = '" << GetObjectName() << "'" << Gateendl <<
+              "\tDose image        = " << mIsDoseImageEnabled << Gateendl <<
+              "\tDose squared      = " << mIsDoseSquaredImageEnabled << Gateendl <<
+              "\tDose uncertainty  = " << mIsDoseUncertaintyImageEnabled << Gateendl <<
+              "\tDose to water image        = " << mIsDoseToWaterImageEnabled << Gateendl <<
+              "\tDose to water squared      = " << mIsDoseToWaterSquaredImageEnabled << Gateendl <<
+              "\tDose to wateruncertainty  = " << mIsDoseToWaterUncertaintyImageEnabled << Gateendl <<
+              "\tEdep image        = " << mIsEdepImageEnabled << Gateendl <<
+              "\tEdep squared      = " << mIsEdepSquaredImageEnabled << Gateendl <<
+              "\tEdep uncertainty  = " << mIsEdepUncertaintyImageEnabled << Gateendl <<
+              "\tNumber of hit     = " << mIsNumberOfHitsImageEnabled << Gateendl <<
+              "\t     (last hit)   = " << mIsLastHitEventImageEnabled << Gateendl <<
+              "\tedepFilename      = " << mEdepFilename << Gateendl <<
+              "\tdoseFilename      = " << mDoseFilename << Gateendl <<
+              "\tNb Hits filename  = " << mNbOfHitsFilename << Gateendl);
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateDoseActor -- Construct - end" << G4endl);
+  GateMessageDec("Actor", 4, "GateDoseActor -- Construct - end" << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -228,7 +228,7 @@ void GateDoseActor::ResetData() {
 //-----------------------------------------------------------------------------
 void GateDoseActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
-  GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Run" << Gateendl);
   // ResetData(); // Do no reset here !! (when multiple run);
 }
 //-----------------------------------------------------------------------------
@@ -238,7 +238,7 @@ void GateDoseActor::BeginOfRunAction(const G4Run * r) {
 void GateDoseActor::BeginOfEventAction(const G4Event * e) {
   GateVActor::BeginOfEventAction(e);
   mCurrentEvent++;
-  GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Event: "<<mCurrentEvent << G4endl);
+  GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Event: "<<mCurrentEvent << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -252,21 +252,21 @@ void GateDoseActor::UserPreTrackActionInVoxel(const int /*index*/, const G4Track
 
 //-----------------------------------------------------------------------------
 void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
-  GateDebugMessageInc("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel - begin" << G4endl);
-  GateDebugMessageInc("Actor", 4, "enedepo = " << step->GetTotalEnergyDeposit() << G4endl);
-  GateDebugMessageInc("Actor", 4, "weight = " <<  step->GetTrack()->GetWeight() << G4endl);
+  GateDebugMessageInc("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel - begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "enedepo = " << step->GetTotalEnergyDeposit() << Gateendl);
+  GateDebugMessageInc("Actor", 4, "weight = " <<  step->GetTrack()->GetWeight() << Gateendl);
   const double weight = step->GetTrack()->GetWeight();
   const double edep = step->GetTotalEnergyDeposit()*weight;//*step->GetTrack()->GetWeight();
 
   // if no energy is deposited or energy is deposited outside image => do nothing
   if (step->GetTotalEnergyDeposit() == 0) {
-    GateDebugMessage("Actor", 5, "edep == 0 : do nothing" << G4endl);
-    GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end" << G4endl);
+    GateDebugMessage("Actor", 5, "edep == 0 : do nothing" << Gateendl);
+    GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end" << Gateendl);
     return;
   }
   if (index <0) {
-    GateDebugMessage("Actor", 5, "index<0 : do nothing" << G4endl);
-    GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end" << G4endl);
+    GateDebugMessage("Actor", 5, "index<0 : do nothing" << Gateendl);
+    GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end" << Gateendl);
     return;
   }
 
@@ -274,7 +274,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   // sameEvent is false the first time some energy is deposited for each primary particle
   bool sameEvent=true;
   if (mIsLastHitEventImageEnabled) {
-    GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
+    GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << Gateendl);
     if (mCurrentEvent != mLastHitEventImage.GetValue(index)) {
       sameEvent = false;
       mLastHitEventImage.SetValue(index, mCurrentEvent);
@@ -299,7 +299,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose = "
 		     << G4BestUnit(dose, "Dose")
 		     << " rho = "
-		     << G4BestUnit(density, "Volumic Mass")<<G4endl );
+		     << G4BestUnit(density, "Volumic Mass")<<Gateendl );
   }
 
   double doseToWater = 0;
@@ -319,7 +319,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     //    const G4ParticleDefinition * PartDef = step->GetTrack()->GetParticleDefinition();
     //    G4Material  * MatDef = step->GetTrack()->GetMaterial();
     double DEDX=0, DEDX_Water=0;
-    //    G4cout<<PartName<<"\t";//G4endl;//"  "<<edep<<"  "<<NonIonizingEdep<<G4endl;
+    //    G4cout<<PartName<<"\t";//Gateendl;//"  "<<edep<<"  "<<NonIonizingEdep<<Gateendl;
 
 
     // Dose to water: it could be possible to make this process more
@@ -345,12 +345,12 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = "
 		     << G4BestUnit(doseToWater, "Dose to water")
 		     << " rho = "
-		     << G4BestUnit(density, "Volumic Mass")<<G4endl );
+		     << G4BestUnit(density, "Volumic Mass")<<Gateendl );
   }
 
 
   if (mIsEdepImageEnabled) {
-    GateDebugMessage("Actor", 2, "GateDoseActor -- UserSteppingActionInVoxel:\tedep = " << G4BestUnit(edep, "Energy") << G4endl);
+    GateDebugMessage("Actor", 2, "GateDoseActor -- UserSteppingActionInVoxel:\tedep = " << G4BestUnit(edep, "Energy") << Gateendl);
   }
 
 
@@ -383,6 +383,6 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.AddValue(index, weight);
 
-  GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end" << G4endl);
+  GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end" << Gateendl);
 }
 //-----------------------------------------------------------------------------

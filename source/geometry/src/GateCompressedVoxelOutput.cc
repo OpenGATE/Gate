@@ -63,7 +63,7 @@ GateCompressedVoxelOutput::GateCompressedVoxelOutput(const G4String& name,const 
   m_trajectoryNavigator = new GateTrajectoryNavigator();
   SetVerboseLevel(0);
 
-  // G4cout << "GateCompressedVoxelOutput::GateCompressedVoxelOutput - Constructor entered. Output name " << GetName() << ", phantomName "<< m_phantomName  << G4endl  << std::flush ;
+  // G4cout << "GateCompressedVoxelOutput::GateCompressedVoxelOutput - Constructor entered. Output name " << GetName() << ", phantomName "<< m_phantomName  << Gateendl  << std::flush ;
 
 }
 //----------------------------------------------------------------------------
@@ -72,7 +72,7 @@ GateCompressedVoxelOutput::GateCompressedVoxelOutput(const G4String& name,const 
 GateCompressedVoxelOutput::~GateCompressedVoxelOutput() 
 {
   delete m_outputMessenger;
-  if (nVerboseLevel > 0) G4cout << "GateCompressedVoxelOutput deleting..." << G4endl;
+  if (nVerboseLevel > 0) G4cout << "GateCompressedVoxelOutput deleting..." << Gateendl;
   delete m_array;
 }
 //----------------------------------------------------------------------------
@@ -87,12 +87,12 @@ const G4String& GateCompressedVoxelOutput::GiveNameOfFile()
 //----------------------------------------------------------------------------
 void GateCompressedVoxelOutput::RecordBeginOfAcquisition()
 {
-  //  G4cout << "GateCompressedVoxelOutput::RecordBeginOfAcquisition - Entered at " << this << " for "<< GetName()  << G4endl  << std::flush ;
+  //  G4cout << "GateCompressedVoxelOutput::RecordBeginOfAcquisition - Entered at " << this << " for "<< GetName()  << Gateendl  << std::flush ;
 
   if (nVerboseLevel > 2)
-    G4cout << "GateCompressedVoxelOutput::RecordBeginOfAcquisition - Entered " << G4endl;
+    G4cout << "GateCompressedVoxelOutput::RecordBeginOfAcquisition - Entered " << Gateendl;
   
-  G4cout<< (*G4Material::GetMaterialTable()) << G4endl;
+  G4cout<< (*G4Material::GetMaterialTable()) << Gateendl;
 
 }
 //----------------------------------------------------------------------------
@@ -156,7 +156,7 @@ void GateCompressedVoxelOutput::RecordEndOfAcquisition()
 void GateCompressedVoxelOutput::RecordBeginOfRun(const G4Run * )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateCompressedVoxelOutput::RecordBeginOfRun" << G4endl;
+    G4cout << "GateCompressedVoxelOutput::RecordBeginOfRun" << Gateendl;
 }
 //---------------------------------------------------------------------------
 
@@ -164,7 +164,7 @@ void GateCompressedVoxelOutput::RecordBeginOfRun(const G4Run * )
 void GateCompressedVoxelOutput::RecordEndOfRun(const G4Run * )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateCompressedVoxelOutput::RecordEndOfRun" << G4endl;
+    G4cout << "GateCompressedVoxelOutput::RecordEndOfRun" << Gateendl;
 }
 //---------------------------------------------------------------------------
 
@@ -172,7 +172,7 @@ void GateCompressedVoxelOutput::RecordEndOfRun(const G4Run * )
 void GateCompressedVoxelOutput::RecordBeginOfEvent(const G4Event* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateCompressedVoxelOutput::RecordBeginOfEvent" << G4endl;
+    G4cout << "GateCompressedVoxelOutput::RecordBeginOfEvent" << Gateendl;
 }
 //---------------------------------------------------------------------------
 
@@ -194,7 +194,7 @@ void GateCompressedVoxelOutput::RecordEndOfEvent(const G4Event* )
   
 
   if (nVerboseLevel > 2)
-    G4cout << "GateCompressedVoxelOutput::RecordEndOfEvent - Entered for phantom "<< m_phantomName << G4endl;
+    G4cout << "GateCompressedVoxelOutput::RecordEndOfEvent - Entered for phantom "<< m_phantomName << Gateendl;
 
   GatePhantomHitsCollection* PHC = GetOutputMgr()->GetPhantomHitCollection();
   G4int NpHits = PHC->entries();
@@ -208,7 +208,7 @@ void GateCompressedVoxelOutput::RecordEndOfEvent(const G4Event* )
 
     if( 0 == physVolName.compare(0, m_phantomName.size(), m_phantomName) ){
 
-      //  G4cout << "GateCompressedVoxelOutput::RecordEndOfEvent - HIT at voxel "<< n  << " in "<< physVolName << G4endl;
+      //  G4cout << "GateCompressedVoxelOutput::RecordEndOfEvent - HIT at voxel "<< n  << " in "<< physVolName << Gateendl;
       
       (*m_array)[n]+=edep;
       if (m_uncertainty){
@@ -224,7 +224,7 @@ void GateCompressedVoxelOutput::RecordEndOfEvent(const G4Event* )
 	       << ", array[n] "  <<  (*m_array)[n]
 	       << ", square[n] " <<  (*m_arraySquare)[n]
 	       << ", counts[n] " <<  (*m_arrayCounts)[n]
-	       << G4endl;
+	       << Gateendl;
       
     }// end if phantom
   }//end for loop
@@ -235,7 +235,7 @@ void GateCompressedVoxelOutput::RecordEndOfEvent(const G4Event* )
 void GateCompressedVoxelOutput::RecordStepWithVolume(const GateVVolume *, const G4Step* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateCompressedVoxelOutput::RecordStep" << G4endl;
+    G4cout << "GateCompressedVoxelOutput::RecordStep" << Gateendl;
 }
 //---------------------------------------------------------------------------
 

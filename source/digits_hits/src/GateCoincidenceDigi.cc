@@ -57,7 +57,7 @@ void GateCoincidenceDigi::Draw()
 void GateCoincidenceDigi::Print()
 {
 
-  G4cout << this << G4endl;
+  G4cout << this << Gateendl;
 
 }
 
@@ -66,9 +66,9 @@ void GateCoincidenceDigi::Print()
 std::ostream& operator<<(std::ostream& flux, GateCoincidenceDigi& digi)
 {
   flux    << "GateCoincidenceDigi("
-	  << digi.pulseVector[0] << G4endl
-	  << digi.pulseVector[1] << G4endl
-      	  << ")" << G4endl;
+	  << digi.pulseVector[0] << Gateendl
+	  << digi.pulseVector[1] << Gateendl
+      	  << ")" << Gateendl;
 
   return flux;
 }
@@ -97,7 +97,7 @@ std::ofstream& operator<<(std::ofstream& flux, GateCoincidenceDigi* digi)
     if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(16) ) flux << " " << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setprecision(3)  << pulse.GetScannerPos().z()/mm;
     if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(17) ) flux << " " << std::resetiosflags(std::ios::floatfield) << std::setiosflags(std::ios::scientific) << std::setprecision(3)  << pulse.GetScannerRotAngle()/deg;;
   }
-  flux << G4endl;
+  flux << Gateendl;
 
   return flux;
 }

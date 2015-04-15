@@ -60,7 +60,7 @@ GateARFDataToRoot::GateARFDataToRoot(const G4String& name, GateOutputMgr* output
                        // Moreover this output will slow down a lot all the simulation !
   nVerboseLevel = 0;
 
-//G4cout << " GateARFDataToRoot::GateARFDataToRoot " <<G4endl;
+//G4cout << " GateARFDataToRoot::GateARFDataToRoot " <<Gateendl;
 
   m_rootMessenger = new GateARFDataToRootMessenger(this);
 
@@ -93,7 +93,7 @@ OUT_camera = 0;
 GateARFDataToRoot::~GateARFDataToRoot() 
 {
   delete m_rootMessenger;
-  if (nVerboseLevel > 0) G4cout << "GateARFDataToRoot deleting..." << G4endl;
+  if (nVerboseLevel > 0) G4cout << "GateARFDataToRoot deleting..." << Gateendl;
 
 }
 
@@ -173,7 +173,7 @@ RecordDigitizer(event);
 void GateARFDataToRoot::RecordDigitizer(const G4Event* ) 
 {
    if (nVerboseLevel > 2)
-    G4cout << "GateARFDataToRoot::RecordDigitizer -- begin " << G4endl;
+    G4cout << "GateARFDataToRoot::RecordDigitizer -- begin " << Gateendl;
 
   // Get Digitizer information
 
@@ -186,7 +186,7 @@ void GateARFDataToRoot::RecordDigitizer(const G4Event* )
   if (!SDC)
   {
     if (nVerboseLevel>0) 
-    G4cout << "[GateARFDataToRoot::SingleOutputChannel::RecordDigitizer]:"<< " digi collection '" << m_SingleDigiCollectionName << "' not found" << G4endl;
+    G4cout << "[GateARFDataToRoot::SingleOutputChannel::RecordDigitizer]:"<< " digi collection '" << m_SingleDigiCollectionName << "' not found" << Gateendl;
     
   } else
    {
@@ -194,13 +194,13 @@ void GateARFDataToRoot::RecordDigitizer(const G4Event* )
 
    if (nVerboseLevel>0)
     G4cout << "[GateARFDataToRoot::SingleOutputChannel::RecordDigitizer]: Total Digits : " 
-				     << SDC->entries() <<" in digi collection '" << m_SingleDigiCollectionName << "' " << G4endl;
+				     << SDC->entries() <<" in digi collection '" << m_SingleDigiCollectionName << "' " << Gateendl;
       G4int n_digi =  SDC->entries();
       for (G4int iDigi=0;iDigi<n_digi;iDigi++) StoreARFData( (*SDC)[iDigi] );// we store the ARF data 
 
    }
   if (nVerboseLevel > 2)
-  G4cout << "GateARFDataToRoot::RecordDigitizer -- end " << G4endl;
+  G4cout << "GateARFDataToRoot::RecordDigitizer -- end " << Gateendl;
 
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -208,7 +208,7 @@ void GateARFDataToRoot::RecordDigitizer(const G4Event* )
 void GateARFDataToRoot::RegisterNewSingleDigiCollection(const G4String& aCollectionName,G4bool)
 {
 
-  //G4cout << " GateARFDataToRoot::RegisterNewSingleDigiCollection single digi collection name " << aCollectionName<<G4endl;
+  //G4cout << " GateARFDataToRoot::RegisterNewSingleDigiCollection single digi collection name " << aCollectionName<<Gateendl;
 
 m_SingleDigiCollectionName = aCollectionName;
 
@@ -231,7 +231,7 @@ void GateARFDataToRoot::CloseARFDataRootFile()
 {
  m_ARFDatafile = m_ARFDataTree->GetCurrentFile();
 
- // G4cout << " GateARFDataToRoot::CloseARFDataRootFile : "<< m_ARFDatafile << "   "<< m_NbOfPhotonsTree->GetCurrentFile()<<G4endl;
+ // G4cout << " GateARFDataToRoot::CloseARFDataRootFile : "<< m_ARFDatafile << "   "<< m_NbOfPhotonsTree->GetCurrentFile()<<Gateendl;
 
  
 
@@ -252,8 +252,8 @@ G4ThreeVector PosAtVertex = aDigi->GetSourcePosition();
 NbofStoredPhotons++;
 
 
-G4cout <<" number of stored photons    " << NbofStoredPhotons<<G4endl;
-G4cout <<" number of NbOfSourcePhotons "<< NbOfSourcePhotons <<G4endl;
+G4cout <<" number of stored photons    " << NbofStoredPhotons<<Gateendl;
+G4cout <<" number of NbOfSourcePhotons "<< NbOfSourcePhotons <<Gateendl;
 
 // compute projection of the energy deposition location onto the projection plane as the intersection of the plane X=m_X
 // and the line passing through totalposition with unit vector director Indirection, the incident direction
@@ -290,17 +290,17 @@ return 1;
 
 void GateARFDataToRoot::DisplayARFStatistics()
 {
-G4cout << " Source Photons Statistics For ARF Data " <<  G4endl;
-G4cout << " Camera heads number                             " << NbOfHeads<<G4endl;
-G4cout << " Source Photons                                  " << NbOfSourcePhotons<<G4endl;
-G4cout << " Detected Photons                                " << NbofStoredPhotons <<G4endl;
-G4cout << " Source Photons Going Outside the Camera         " << OUT_camera<<G4endl;
-G4cout << " Source Photons Going Inside the Camera          " << IN_camera <<G4endl;
-G4cout << " Source Photons Going Outside the Crystal        " << NbofGoingOutPhotons<<G4endl;
-G4cout << " Source Photons Going Inside the Crystal         " << NbofGoingInPhotons<<G4endl;
-G4cout << " Source Photons Killed Inside the Collimator     " << NbofKilledInsideColliPhotons<<G4endl;
-G4cout << " Source Photons Killed Inside the Camera         " << NbofKilledInsideCamera<<G4endl;
-G4cout << " Source Photons Killed Inside the Crystal        " << NbofKilledInsideCrystalPhotons<<G4endl;
+G4cout << " Source Photons Statistics For ARF Data " <<  Gateendl;
+G4cout << " Camera heads number                             " << NbOfHeads<<Gateendl;
+G4cout << " Source Photons                                  " << NbOfSourcePhotons<<Gateendl;
+G4cout << " Detected Photons                                " << NbofStoredPhotons <<Gateendl;
+G4cout << " Source Photons Going Outside the Camera         " << OUT_camera<<Gateendl;
+G4cout << " Source Photons Going Inside the Camera          " << IN_camera <<Gateendl;
+G4cout << " Source Photons Going Outside the Crystal        " << NbofGoingOutPhotons<<Gateendl;
+G4cout << " Source Photons Going Inside the Crystal         " << NbofGoingInPhotons<<Gateendl;
+G4cout << " Source Photons Killed Inside the Collimator     " << NbofKilledInsideColliPhotons<<Gateendl;
+G4cout << " Source Photons Killed Inside the Camera         " << NbofKilledInsideCamera<<Gateendl;
+G4cout << " Source Photons Killed Inside the Crystal        " << NbofKilledInsideCrystalPhotons<<Gateendl;
 
 }
 

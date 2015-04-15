@@ -119,7 +119,7 @@ GateToInterfile::~GateToInterfile()
 {
   delete m_asciiMessenger;
 
-  if (nVerboseLevel > 0) G4cout << "GateToInterfile deleting..." << G4endl;
+  if (nVerboseLevel > 0) G4cout << "GateToInterfile deleting..." << Gateendl;
 
   if (m_headerFile.is_open())
     m_headerFile.close();
@@ -147,7 +147,7 @@ void GateToInterfile::RecordBeginOfAcquisition()
   // Pre-write the header file
   WriteGeneralInfo();
   WriteGateScannerInfo();
-  m_headerFile  << "!END OF INTERFILE :="    	      	    << G4endl;
+  m_headerFile  << "!END OF INTERFILE :="    	      	    << Gateendl;
 
   // Open the data file
   m_dataFile.open((m_fileName+".sin").c_str(),std::ios::out | std::ios::trunc | std::ios::binary);
@@ -173,7 +173,7 @@ void GateToInterfile::RecordEndOfAcquisition()
   WriteGateScannerInfo();
   WriteGateRunInfo( m_system->GetProjectionSetMaker()->GetProjectionSet()->GetCurrentProjectionID()+1 );
 
-  m_headerFile  << "!END OF INTERFILE :="    	      	    << G4endl;
+  m_headerFile  << "!END OF INTERFILE :="    	      	    << Gateendl;
 
   m_headerFile.close();
 
@@ -214,8 +214,8 @@ void GateToInterfile::RecordEndOfRun(const G4Run* )
 		}
 
 	} else {
-		G4cerr << "[GateToInterfile::RecordEndOfRun]:" << G4endl
-		<< "No data available to write to projection set." << G4endl;
+		G4cerr << "[GateToInterfile::RecordEndOfRun]:" << Gateendl
+		<< "No data available to write to projection set." << Gateendl;
 	}
 
 }
@@ -229,10 +229,10 @@ void GateToInterfile::RecordEndOfRun(const G4Run* )
 void GateToInterfile::Describe(size_t indent)
 {
   GateVOutputModule::Describe(indent);
-  G4cout << GateTools::Indent(indent) << "Job:                   write a set of SPECT projections into an Interfile output file" << G4endl;
-  G4cout << GateTools::Indent(indent) << "Is enabled?            " << ( IsEnabled() ? "Yes" : "No") << G4endl;
-  G4cout << GateTools::Indent(indent) << "File name:             '" << m_fileName << "'" << G4endl;
-  G4cout << GateTools::Indent(indent) << "Attached to system:    '" << m_system->GetObjectName() << "'" << G4endl;
+  G4cout << GateTools::Indent(indent) << "Job:                   write a set of SPECT projections into an Interfile output file" << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Is enabled?            " << ( IsEnabled() ? "Yes" : "No") << Gateendl;
+  G4cout << GateTools::Indent(indent) << "File name:             '" << m_fileName << "'" << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Attached to system:    '" << m_system->GetObjectName() << "'" << Gateendl;
 }
 
 
@@ -245,37 +245,37 @@ void GateToInterfile::Describe(size_t indent)
 // Write the general INTERFILE information into the header
 void GateToInterfile::WriteGeneralInfo()
 {
-  m_headerFile  << "!INTERFILE :="    	      	      	    << G4endl
-		<< "!imaging modality := "       	    << "nucmed" << G4endl
-		<< "!version of keys := "       	    << "3.3" << G4endl
-		<< "date of keys := " 	         	    << "1992:01:01" << G4endl
-      	      	<< ";" << G4endl;
+  m_headerFile  << "!INTERFILE :="    	      	      	    << Gateendl
+		<< "!imaging modality := "       	    << "nucmed" << Gateendl
+		<< "!version of keys := "       	    << "3.3" << Gateendl
+		<< "date of keys := " 	         	    << "1992:01:01" << Gateendl
+      	      	<< ";" << Gateendl;
 
-  m_headerFile  << "!GENERAL DATA :=" 	      	      	    << G4endl
-		<< "data description := "     	      	    << "GATE simulation" << G4endl
-		<< "!data starting block := "         	    << 0 << G4endl
- 		<< "!name of data file := "    	      	    << m_fileName+".sin" << G4endl
-    	      	<< ";" << G4endl;
+  m_headerFile  << "!GENERAL DATA :=" 	      	      	    << Gateendl
+		<< "data description := "     	      	    << "GATE simulation" << Gateendl
+		<< "!data starting block := "         	    << 0 << Gateendl
+ 		<< "!name of data file := "    	      	    << m_fileName+".sin" << Gateendl
+    	      	<< ";" << Gateendl;
 
   time_t aTimer;
   time(&aTimer);
   struct tm * currentTime = localtime(&aTimer);
   GateToProjectionSet* setMaker = m_system->GetProjectionSetMaker();
 
-  m_headerFile  << "!GENERAL IMAGE DATA :="   	      	    << G4endl
-		<< "!type of data := "     	      	    << "TOMOGRAPHIC" << G4endl
- 		<< "!total number of images := "      	    << setMaker->GetTotalImageNb() << G4endl
+  m_headerFile  << "!GENERAL IMAGE DATA :="   	      	    << Gateendl
+		<< "!type of data := "     	      	    << "TOMOGRAPHIC" << Gateendl
+ 		<< "!total number of images := "      	    << setMaker->GetTotalImageNb() << Gateendl
  		<< "study date := "   	      	      	    << std::setfill('0')
 		      	      	      	      	      	    << std::setw(4) << 1900+currentTime->tm_year << ":"
 		      	      	      	      	      	    << std::setw(2) << currentTime->tm_mon << ":"
-				      	      	      	    << std::setw(2) << currentTime->tm_mday << G4endl
+				      	      	      	    << std::setw(2) << currentTime->tm_mday << Gateendl
  		<< "study time := "   	      	      	    << std::setw(2) << currentTime->tm_hour << ":"
 		      	      	      	      	      	    << std::setw(2) << currentTime->tm_min << ":"
-				      	      	      	    << std::setw(2) << currentTime->tm_sec << G4endl
+				      	      	      	    << std::setw(2) << currentTime->tm_sec << Gateendl
 							    << std::setfill(' ')
-  		<< "imagedata byte order := " 	      	    << ( (BYTE_ORDER == LITTLE_ENDIAN) ? "LITTLEENDIAN" : "BIGENDIAN" )  << G4endl
-    		<< "number of energy windows := "    	    << setMaker->GetEnergyWindowNb() << G4endl
- 	      	<< ";" << G4endl;
+  		<< "imagedata byte order := " 	      	    << ( (BYTE_ORDER == LITTLE_ENDIAN) ? "LITTLEENDIAN" : "BIGENDIAN" )  << Gateendl
+    		<< "number of energy windows := "    	    << setMaker->GetEnergyWindowNb() << Gateendl
+ 	      	<< ";" << Gateendl;
 
     // Modified by HDS : multiple energy windows support
 	//------------------------------------------------------------------
@@ -295,8 +295,8 @@ void GateToInterfile::WriteGeneralInfo()
 		aChainName = setMaker->GetInputDataName(energyWindowID);
 		aPulseProcessorChain = dynamic_cast<GatePulseProcessorChain*>(theDigitizer->FindElementByBaseName( aChainName ));
 		if (!aPulseProcessorChain) {
-			G4cerr  << 	G4endl << "[GateToInterfile::WriteGeneralInfo]:" << G4endl
-					<< "Can't find digitizer chain '" << aChainName << "', aborting" << G4endl;
+			G4cerr  << 	Gateendl << "[GateToInterfile::WriteGeneralInfo]:" << Gateendl
+					<< "Can't find digitizer chain '" << aChainName << "', aborting" << Gateendl;
 			G4Exception( "GateToInterfile::WriteGeneralInfo", "WriteGeneralInfo", FatalException, "You must change this parameter then restart the simulation\n");
 		}
 
@@ -312,46 +312,46 @@ void GateToInterfile::WriteGeneralInfo()
 			aUphold = aUpholder->GetUphold();
 		}
 
-		m_headerFile  << "energy window [" << energyWindowID + 1 << "] := " << aChainName << G4endl
-			<< "energy window lower level [" << energyWindowID + 1 << "] := " << aThreshold / kiloelectronvolt << G4endl
-	 		<< "energy window upper level [" << energyWindowID + 1 << "] := " << aUphold / kiloelectronvolt << G4endl
-	 		<< ";" << G4endl;
+		m_headerFile  << "energy window [" << energyWindowID + 1 << "] := " << aChainName << Gateendl
+			<< "energy window lower level [" << energyWindowID + 1 << "] := " << aThreshold / kiloelectronvolt << Gateendl
+	 		<< "energy window upper level [" << energyWindowID + 1 << "] := " << aUphold / kiloelectronvolt << Gateendl
+	 		<< ";" << Gateendl;
 
 		aThreshold = 0.;
 		aUphold = 0.;
 
-		m_headerFile  << "!SPECT STUDY (general) :="        	    << G4endl
-      	   	<< "number of detector heads := "     	    << setMaker->GetHeadNb() << G4endl
- 	      	<< ";" << G4endl;
+		m_headerFile  << "!SPECT STUDY (general) :="        	    << Gateendl
+      	   	<< "number of detector heads := "     	    << setMaker->GetHeadNb() << Gateendl
+ 	      	<< ";" << Gateendl;
 
 		// Write description for each head
 		for (size_t headID=0; headID<setMaker->GetHeadNb() ; headID++) {
 
-			m_headerFile  << "!number of images/energy window := "    << setMaker->GetTotalImageNb()  / setMaker->GetEnergyWindowNb() << G4endl
-				  << "!process status := "     	      	      << "Acquired" << G4endl
-				  << "!matrix size [1] := "     	      << setMaker->GetPixelNbX() << G4endl
-				  << "!matrix size [2] := "     	      << setMaker->GetPixelNbY() << G4endl
-				  << "!number format := "       	      << "unsigned integer" << G4endl // Modified from "UNSIGNED INTEGER" to fit the i33 standard
-				  << "!number of bytes per pixel := "  	      << setMaker->BytesPerPixel() << G4endl
-				  << "scaling factor (mm/pixel) [1] := "     << setMaker->GetPixelSizeX()/mm << G4endl
-				  << "scaling factor (mm/pixel) [2] := "     << setMaker->GetPixelSizeY()/mm << G4endl
-				  << "!number of projections := "             << setMaker->GetProjectionNb()<< G4endl
-				  << "!extent of rotation := "       	      << setMaker->GetAngularSpan()/deg << G4endl
-				  << "!time per projection (sec) := "         << setMaker->GetTimePerProjection() / second << G4endl
-				  << "study duration (sec) := "      << setMaker->GetStudyDuration() / second << G4endl   // Modified from "study duration (acquired) sec" to fit the i33 standard
-				  << "!maximum pixel count := " 	      << setMaker->GetProjectionSet()->GetMaxCounts(energyWindowID, headID) << G4endl
-				  << ";" << G4endl;
+			m_headerFile  << "!number of images/energy window := "    << setMaker->GetTotalImageNb()  / setMaker->GetEnergyWindowNb() << Gateendl
+				  << "!process status := "     	      	      << "Acquired" << Gateendl
+				  << "!matrix size [1] := "     	      << setMaker->GetPixelNbX() << Gateendl
+				  << "!matrix size [2] := "     	      << setMaker->GetPixelNbY() << Gateendl
+				  << "!number format := "       	      << "unsigned integer" << Gateendl // Modified from "UNSIGNED INTEGER" to fit the i33 standard
+				  << "!number of bytes per pixel := "  	      << setMaker->BytesPerPixel() << Gateendl
+				  << "scaling factor (mm/pixel) [1] := "     << setMaker->GetPixelSizeX()/mm << Gateendl
+				  << "scaling factor (mm/pixel) [2] := "     << setMaker->GetPixelSizeY()/mm << Gateendl
+				  << "!number of projections := "             << setMaker->GetProjectionNb()<< Gateendl
+				  << "!extent of rotation := "       	      << setMaker->GetAngularSpan()/deg << Gateendl
+				  << "!time per projection (sec) := "         << setMaker->GetTimePerProjection() / second << Gateendl
+				  << "study duration (sec) := "      << setMaker->GetStudyDuration() / second << Gateendl   // Modified from "study duration (acquired) sec" to fit the i33 standard
+				  << "!maximum pixel count := " 	      << setMaker->GetProjectionSet()->GetMaxCounts(energyWindowID, headID) << Gateendl
+				  << ";" << Gateendl;
 
 
     		G4double rotationDirection = ( ( m_system->GetBaseComponent()->GetOrbitingVelocity()>=0) ? +1. : -1 );
 
-    		m_headerFile  << "!SPECT STUDY (acquired data) :="        << G4endl
-      	      	  << "!direction of rotation := "       	    << ( ( m_system->GetBaseComponent()->GetOrbitingVelocity()>=0) ? "CW" : "CCW" )  << G4endl
-		          << "start angle := "	      	      	      	    << (headID * setMaker->GetHeadAngularPitch() / rotationDirection) / degree << G4endl
-		  		  << "first projection angle in data set := "	    << (headID * setMaker->GetHeadAngularPitch() / rotationDirection) / degree << G4endl
-		  		  << "acquisition mode := "      	      	    << "stepped" << G4endl
-		  		  << "orbit := "	      	      	      	    << "Circular" << G4endl // Modified from "circular"
-		  		  << ";" << G4endl;
+    		m_headerFile  << "!SPECT STUDY (acquired data) :="        << Gateendl
+      	      	  << "!direction of rotation := "       	    << ( ( m_system->GetBaseComponent()->GetOrbitingVelocity()>=0) ? "CW" : "CCW" )  << Gateendl
+		          << "start angle := "	      	      	      	    << (headID * setMaker->GetHeadAngularPitch() / rotationDirection) / degree << Gateendl
+		  		  << "first projection angle in data set := "	    << (headID * setMaker->GetHeadAngularPitch() / rotationDirection) / degree << Gateendl
+		  		  << "acquisition mode := "      	      	    << "stepped" << Gateendl
+		  		  << "orbit := "	      	      	      	    << "Circular" << Gateendl // Modified from "circular"
+		  		  << ";" << Gateendl;
 		}
 
 	}
@@ -364,39 +364,39 @@ void GateToInterfile::WriteGeneralInfo()
 // Write the GATE specific scanner information into the header
 void GateToInterfile::WriteGateScannerInfo()
 {
-  m_headerFile  << ";GATE GEOMETRY :="               	  << G4endl;
+  m_headerFile  << ";GATE GEOMETRY :="               	  << Gateendl;
 
   GateVVolume *baseInserter  = m_system->GetBaseComponent()->GetCreator();
-  m_headerFile  << ";head x dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(0)/cm << G4endl
-      	      	<< ";head y dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(1)/cm << G4endl
-      	      	<< ";head z dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(2)/cm << G4endl
-      	      	<< ";head material := "                	  <<  baseInserter->GetCreator()->GetMaterialName() << G4endl
-		<< ";head x translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().x()/cm << G4endl
-		<< ";head y translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().y()/cm << G4endl
-		<< ";head z translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().z()/cm << G4endl;
+  m_headerFile  << ";head x dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(0)/cm << Gateendl
+      	      	<< ";head y dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(1)/cm << Gateendl
+      	      	<< ";head z dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(2)/cm << Gateendl
+      	      	<< ";head material := "                	  <<  baseInserter->GetCreator()->GetMaterialName() << Gateendl
+		<< ";head x translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().x()/cm << Gateendl
+		<< ";head y translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().y()/cm << Gateendl
+		<< ";head z translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().z()/cm << Gateendl;
 
   GateVVolume *crystalInserter  = m_system->GetCrystalComponent()->GetCreator();
   if ( crystalInserter )
-    m_headerFile  << ";crystal x dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(0)/cm << G4endl
-      	      	  << ";crystal y dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(1)/cm << G4endl
-      	      	  << ";crystal z dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(2)/cm << G4endl
-      	      	  << ";crystal material := "                 <<  crystalInserter->GetCreator()->GetMaterialName() << G4endl;
+    m_headerFile  << ";crystal x dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(0)/cm << Gateendl
+      	      	  << ";crystal y dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(1)/cm << Gateendl
+      	      	  << ";crystal z dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(2)/cm << Gateendl
+      	      	  << ";crystal material := "                 <<  crystalInserter->GetCreator()->GetMaterialName() << Gateendl;
 
   GateVVolume *pixelInserter  = m_system->GetPixelComponent()->GetCreator();
   if ( pixelInserter )
-    m_headerFile  << ";pixel x dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(0)/cm << G4endl
-      	      	  << ";pixel y dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(1)/cm << G4endl
-      	      	  << ";pixel z dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(2)/cm << G4endl
-      	      	  << ";pixel material := "                 <<  pixelInserter->GetCreator()->GetMaterialName() << G4endl;
+    m_headerFile  << ";pixel x dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(0)/cm << Gateendl
+      	      	  << ";pixel y dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(1)/cm << Gateendl
+      	      	  << ";pixel z dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(2)/cm << Gateendl
+      	      	  << ";pixel material := "                 <<  pixelInserter->GetCreator()->GetMaterialName() << Gateendl;
 
-  m_headerFile  << ";" << G4endl;
+  m_headerFile  << ";" << Gateendl;
 }
 
 
 // Write the GATE specific run information into the header
 void GateToInterfile::WriteGateRunInfo(G4int runNb)
 {
-  m_headerFile  << ";GATE SIMULATION :="               	  << G4endl
-      	      	<< ";number of runs := "               	  << runNb << G4endl
-		<< ";" << G4endl;
+  m_headerFile  << ";GATE SIMULATION :="               	  << Gateendl
+      	      	<< ";number of runs := "               	  << runNb << Gateendl
+		<< ";" << Gateendl;
 }

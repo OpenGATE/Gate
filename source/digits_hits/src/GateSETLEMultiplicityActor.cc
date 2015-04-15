@@ -31,9 +31,9 @@
 GateSETLEMultiplicityActor::GateSETLEMultiplicityActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateSETLEMultiplicityActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateSETLEMultiplicityActor() -- begin"<<Gateendl);
   mMaterialHandler = GateMaterialMuHandler::GetInstance();
-  GateDebugMessageDec("Actor",4,"GateSETLEMultiplicityActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateSETLEMultiplicityActor() -- end"<<Gateendl);
 
   mIsHybridinoEnabled = false;
   mDefaultPrimaryMultiplicity = 0;
@@ -55,7 +55,7 @@ GateSETLEMultiplicityActor::~GateSETLEMultiplicityActor() {}
 /// Construct
 void GateSETLEMultiplicityActor::Construct()
 {
-  GateMessage("Actor", 0, " SETLEMultiplicityActor auto-construction" << G4endl);
+  GateMessage("Actor", 0, " SETLEMultiplicityActor auto-construction" << Gateendl);
   
   GateVActor::Construct();
   // Enable callbacks
@@ -150,7 +150,7 @@ void GateSETLEMultiplicityActor::PreUserTrackingAction(const GateVVolume *, cons
   mCurrentHybridTrackWeight = 1.;
   if(t->GetParticleDefinition()->GetParticleName() == "hybridino")
   {
-//     GateMessage("Actor", 0, "track = " << t << " parentID = " << t->GetParentID() << G4endl);
+//     GateMessage("Actor", 0, "track = " << t << " parentID = " << t->GetParentID() << Gateendl);
     if(t->GetParentID() == 0)
     {
       mCurrentHybridTrackWeight = t->GetWeight() / mDefaultPrimaryMultiplicity;
@@ -181,8 +181,8 @@ void GateSETLEMultiplicityActor::PostUserTrackingAction(const GateVVolume *, con
     mListOfHybridWeight.erase(mListOfHybridWeight.begin() + mCurrentTrackIndex);
   }
 
-//   for(unsigned int i=0; i<mListOfHybridTrack.size(); i++) { GateMessage("Actor", 0, "track = " << mListOfHybridTrack[i] << " weight = " << mListOfHybridWeight[i] << G4endl); }
-//   GateMessage("Actor", 0, " " << G4endl);
+//   for(unsigned int i=0; i<mListOfHybridTrack.size(); i++) { GateMessage("Actor", 0, "track = " << mListOfHybridTrack[i] << " weight = " << mListOfHybridWeight[i] << Gateendl); }
+//   GateMessage("Actor", 0, " " << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -203,7 +203,7 @@ void GateSETLEMultiplicityActor::UserSteppingAction(const GateVVolume *, const G
       G4double mu = mMaterialHandler->GetMu(couple, energy);    
       mCurrentHybridTrackWeight = mCurrentHybridTrackWeight * exp(-mu*stepLength/10.);
     }
-//     GateMessage("ActorMult", 0, "hybridWeight = " << currentHybridTrackWeight << G4endl);
+//     GateMessage("ActorMult", 0, "hybridWeight = " << currentHybridTrackWeight << Gateendl);
   }
   else if(particleName == "gamma")
   {
@@ -295,9 +295,9 @@ void GateSETLEMultiplicityActor::UserSteppingAction(const GateVVolume *, const G
 	myStep->GetPostStepPoint()->SetMomentumDirection(incidentMomentum);
 	myStep->SetStepLength(step->GetStepLength());
 
-  //       GateMessage("Actor", 0, "prePos = " << myStep->GetPreStepPoint()->GetPosition() << " preDir = " << myStep->GetPreStepPoint()->GetMomentumDirection() << G4endl);
-  //       GateMessage("Actor", 0, "posPos = " << myStep->GetPostStepPoint()->GetPosition() << " posDir = " << myStep->GetPostStepPoint()->GetMomentumDirection() << G4endl);
-  //       GateMessage("Actor", 0, "traPos = " << myStep->GetTrack()->GetPosition() << " traDir = " << myStep->GetTrack()->GetMomentumDirection() << " trackAdress = " << myStep->GetTrack() << G4endl);
+  //       GateMessage("Actor", 0, "prePos = " << myStep->GetPreStepPoint()->GetPosition() << " preDir = " << myStep->GetPreStepPoint()->GetMomentumDirection() << Gateendl);
+  //       GateMessage("Actor", 0, "posPos = " << myStep->GetPostStepPoint()->GetPosition() << " posDir = " << myStep->GetPostStepPoint()->GetMomentumDirection() << Gateendl);
+  //       GateMessage("Actor", 0, "traPos = " << myStep->GetTrack()->GetPosition() << " traDir = " << myStep->GetTrack()->GetMomentumDirection() << " trackAdress = " << myStep->GetTrack() << Gateendl);
 
 	int currentSecondaryMultiplicity;
 	std::map<G4VPhysicalVolume *,int>::iterator it = mSecondaryMultiplicityMap.find(step->GetTrack()->GetVolume());
@@ -319,8 +319,8 @@ void GateSETLEMultiplicityActor::UserSteppingAction(const GateVVolume *, const G
 	  particleChange->SetVerboseLevel(0);
 	  particleChange->UpdateStepForPostStep(myStep);
 
-  // 	GateMessage("Actor", 0, "prePos = " << newStep->GetPreStepPoint()->GetPosition() << " preDir = " << newStep->GetPreStepPoint()->GetMomentumDirection() << G4endl);
-  // 	GateMessage("Actor", 0, "posPos = " << newStep->GetPostStepPoint()->GetPosition() << " posDir = " << newStep->GetPostStepPoint()->GetMomentumDirection() << G4endl);
+  // 	GateMessage("Actor", 0, "prePos = " << newStep->GetPreStepPoint()->GetPosition() << " preDir = " << newStep->GetPreStepPoint()->GetMomentumDirection() << Gateendl);
+  // 	GateMessage("Actor", 0, "posPos = " << newStep->GetPostStepPoint()->GetPosition() << " posDir = " << newStep->GetPostStepPoint()->GetMomentumDirection() << Gateendl);
 
 	  G4double energy = myStep->GetPostStepPoint()->GetKineticEnergy();
 	  G4ThreeVector momentum = myStep->GetPostStepPoint()->GetMomentumDirection();

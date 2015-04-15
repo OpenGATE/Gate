@@ -62,17 +62,17 @@ void GateRunManager::InitializeAll()
   if (currentState!=G4State_PreInit && currentState!=G4State_Idle)
     {
       GateError("Illegal application state - "
-	     << "GateRunManager::Initialize() failed." << G4endl);
+	     << "GateRunManager::Initialize() failed." << Gateendl);
       /*G4cerr << "Illegal application state - "
-	     << "G4RunManager::Initialize() ignored." << G4endl;*/
+	     << "G4RunManager::Initialize() ignored." << Gateendl;*/
       return;
     }
 
-  GateMessage("Core", 0, "Initialization of geometry" << G4endl);
+  GateMessage("Core", 0, "Initialization of geometry" << Gateendl);
   InitGeometryOnly();
 
   // if(!physicsInitialized) {
-  GateMessage("Core", 0, "Initialization of physics" << G4endl);
+  GateMessage("Core", 0, "Initialization of physics" << Gateendl);
   // We call the PurgeIfFictitious method to delete the gamma related processes
   // that the user defined if the fictitiousProcess is called.
   GatePhysicsList::GetInstance()->PurgeIfFictitious();
@@ -134,7 +134,7 @@ void GateRunManager::InitializeAll()
   GatePhysicsList::GetInstance()->SetEmProcessOptions();
 
   // Actors initialization
-  GateMessage("Core", 0, "Initialization of actors" << G4endl);
+  GateMessage("Core", 0, "Initialization of actors" << Gateendl);
   GateActorManager::GetInstance() ->CreateListsOfEnabledActors();
 
   initializedAtLeastOnce = true;
@@ -151,7 +151,7 @@ void GateRunManager::InitializeAll()
 void GateRunManager::InitGeometryOnly()
 {
   // Initialise G4Regions
-  GateDebugMessageInc("Core", 0, "Initialisation of G4Regions" << G4endl);
+  GateDebugMessageInc("Core", 0, "Initialisation of G4Regions" << Gateendl);
   G4RegionStore * RegionStore = G4RegionStore::GetInstance();
   // RegionStore->Clean();
   G4RegionStore::const_iterator pi = RegionStore->begin();
@@ -161,16 +161,16 @@ void GateRunManager::InitGeometryOnly()
 
     if(regionName!="DefaultRegionForTheWorld"){
       RegionStore->DeRegister((*pi));
-      GateMessage("Cuts", 5, "Region "<<regionName<<" deleted."<< G4endl);
+      GateMessage("Cuts", 5, "Region "<<regionName<<" deleted."<< Gateendl);
     }
     else  ++pi;
   }
-  GateMessageDec("Cuts", 5, "G4Regions Initialized!" << G4endl);
+  GateMessageDec("Cuts", 5, "G4Regions Initialized!" << Gateendl);
 
   // Initialise the geometry in the main() programm
   if (!geometryInitialized)
     {
-      GateMessage("Core", 1, "Initialization of geometry" << G4endl);
+      GateMessage("Core", 1, "Initialization of geometry" << Gateendl);
       GateRunManager::InitializeGeometry();//use inheritance
     }
   else
@@ -205,7 +205,7 @@ void GateRunManager::RunInitialization()
     GateError("Please, use /gate/run/initialize and not /run/initialize");
   }
 
-  // GateMessage("Core", 0, "Initialization of the run " << G4endl);
+  // GateMessage("Core", 0, "Initialization of the run " << Gateendl);
   // Perform a regular initialisation
   G4RunManager::RunInitialization();
 

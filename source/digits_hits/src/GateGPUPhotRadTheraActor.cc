@@ -24,12 +24,12 @@
 //-----------------------------------------------------------------------------
 GateGPUPhotRadTheraActor::GateGPUPhotRadTheraActor(G4String name, G4int depth):
   GateVActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateGPUPhotRadTheraActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateGPUPhotRadTheraActor() -- begin"<<Gateendl);
   mGPUDeviceID = 0;
   gpu_input = 0;
   max_buffer_size = 5;
   pMessenger = new GateGPUPhotRadTheraActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateGPUPhotRadTheraActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateGPUPhotRadTheraActor() -- end"<<Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -44,7 +44,7 @@ GateGPUPhotRadTheraActor::~GateGPUPhotRadTheraActor()  {
 //-----------------------------------------------------------------------------
 /// Construct
 void GateGPUPhotRadTheraActor::Construct() {
-  GateDebugMessageInc("Actor", 4, "GateGPUPhotRadTheraActor -- Construct - begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "GateGPUPhotRadTheraActor -- Construct - begin" << Gateendl);
   GateVActor::Construct();
 
   // Enable callbacks
@@ -55,7 +55,7 @@ void GateGPUPhotRadTheraActor::Construct() {
   EnableUserSteppingAction(true);
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateGPUPhotRadTheraActor -- Construct - end" << G4endl);
+  GateMessageDec("Actor", 4, "GateGPUPhotRadTheraActor -- Construct - end" << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -187,7 +187,7 @@ void GateGPUPhotRadTheraActor::EndOfRunAction(const G4Run *)
 void GateGPUPhotRadTheraActor::UserSteppingAction(const GateVVolume * /*v*/, 
                                                   const G4Step * step)
 {
-    GateDebugMessage("Actor", 4, "GateGPUPhotRadTheraActor -- UserSteppingAction" << G4endl);
+    GateDebugMessage("Actor", 4, "GateGPUPhotRadTheraActor -- UserSteppingAction" << Gateendl);
 
     // Check if we are on the boundary
     G4StepPoint * preStep = step->GetPreStepPoint();

@@ -94,5 +94,5 @@ void GateCalibration::FindInputPulseParams(const GateVolumeID* aVolumeID)
 
 void GateCalibration::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Calibration Nphotoelectrons->Energy " << G4endl;
+  G4cout << GateTools::Indent(indent) << "Calibration Nphotoelectrons->Energy " << Gateendl;
 }

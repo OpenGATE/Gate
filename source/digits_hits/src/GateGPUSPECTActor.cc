@@ -32,7 +32,7 @@
 //-----------------------------------------------------------------------------
 GateGPUSPECTActor::GateGPUSPECTActor(G4String name, G4int depth):
   GateVActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateGPUSPECTActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateGPUSPECTActor() -- begin"<<Gateendl);
   gpu_input = 0;
   mGPUDeviceID = 0;
   max_buffer_size = 5;
@@ -52,7 +52,7 @@ GateGPUSPECTActor::GateGPUSPECTActor(G4String name, G4int depth):
   mLinearRepVecY = 0.0;
   mLinearRepVecZ = 0.0;
   pMessenger = new GateGPUSPECTActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateGPUSPECTActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateGPUSPECTActor() -- end"<<Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ GateGPUSPECTActor::~GateGPUSPECTActor()  {
 //-----------------------------------------------------------------------------
 /// Construct
 void GateGPUSPECTActor::Construct() {
-  GateDebugMessageInc("Actor", 4, "GateGPUSPECTActor -- Construct - begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "GateGPUSPECTActor -- Construct - begin" << Gateendl);
   GateVActor::Construct();
 
   // Enable callbacks
@@ -79,7 +79,7 @@ void GateGPUSPECTActor::Construct() {
   EnableUserSteppingAction(true);
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateGPUSPECTActor -- Construct - end" << G4endl);
+  GateMessageDec("Actor", 4, "GateGPUSPECTActor -- Construct - end" << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -330,7 +330,7 @@ void GateGPUSPECTActor::EndOfRunAction(const G4Run *)
 void GateGPUSPECTActor::UserSteppingAction(const GateVVolume * /*v*/,
                                               const G4Step * step)
 {
-  GateDebugMessage("Actor", 4, "GateGPUSPECTActor -- UserSteppingAction" << G4endl);
+  GateDebugMessage("Actor", 4, "GateGPUSPECTActor -- UserSteppingAction" << Gateendl);
 
   //DD("GateGPUSPECTActor::UserSteppingAction");
 

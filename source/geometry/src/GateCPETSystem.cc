@@ -87,19 +87,19 @@ void GateCPETSystem::Describe(size_t indent)
 */    
 void GateCPETSystem::PrintToStream(std::ostream& aStream,G4bool)
 {
-  aStream << "geometrical design type: " << "CPET"     	      	      	      	  << G4endl;
+  aStream << "geometrical design type: " << "CPET"     	      	      	      	  << Gateendl;
 
   GateCylinderComponent* crystalComponent = FindCylinderCreatorComponent("crystal");
   G4double crystalHeight = crystalComponent->GetCylinderHeight();
-  aStream << "crystal height: " << G4BestUnit( crystalHeight ,"Length")  	  << G4endl;
+  aStream << "crystal height: " << G4BestUnit( crystalHeight ,"Length")  	  << Gateendl;
   G4double crystalRmin = crystalComponent->GetCylinderRmin();
-  aStream << "crystal radius min: " << G4BestUnit( crystalRmin ,"Length")  	  << G4endl;
+  aStream << "crystal radius min: " << G4BestUnit( crystalRmin ,"Length")  	  << Gateendl;
   G4double crystalRmax = crystalComponent->GetCylinderRmax();
-  aStream << "crystal radius max: " << G4BestUnit( crystalRmax ,"Length")  	  << G4endl;
+  aStream << "crystal radius max: " << G4BestUnit( crystalRmax ,"Length")  	  << Gateendl;
   G4double crystalSPhi = crystalComponent->GetCylinderSPhi();
-  aStream << "crystal start angle: " << crystalSPhi / degree << " deg" << G4endl;
+  aStream << "crystal start angle: " << crystalSPhi / degree << " deg" << Gateendl;
   G4double crystalDPhi = crystalComponent->GetCylinderDPhi();
-  aStream << "crystal angular span: " << crystalDPhi / degree << " deg" << G4endl;
+  aStream << "crystal angular span: " << crystalDPhi / degree << " deg" << Gateendl;
 }
 
 

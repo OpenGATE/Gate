@@ -166,7 +166,7 @@ void GateImageWithStatistic::SetValue(const int index, double value) {
 
 //-----------------------------------------------------------------------------
 void GateImageWithStatistic::AddValue(const int index, double value) {
-  GateDebugMessage("Actor", 2, "AddValue index=" << index << " value=" << value << G4endl);
+  GateDebugMessage("Actor", 2, "AddValue index=" << index << " value=" << value << Gateendl);
   mValueImage.AddValue(index, value);
 }
 //-----------------------------------------------------------------------------
@@ -174,7 +174,7 @@ void GateImageWithStatistic::AddValue(const int index, double value) {
 
 //-----------------------------------------------------------------------------
 void GateImageWithStatistic::AddTempValue(const int index, double value) {
-  GateDebugMessage("Actor", 2, "AddTempValue index=" << index << " value=" << value << G4endl);
+  GateDebugMessage("Actor", 2, "AddTempValue index=" << index << " value=" << value << Gateendl);
   mTempImage.AddValue(index, value);
 }
 //-----------------------------------------------------------------------------
@@ -183,12 +183,12 @@ void GateImageWithStatistic::AddTempValue(const int index, double value) {
 //-----------------------------------------------------------------------------
 void GateImageWithStatistic::AddValueAndUpdate(const int index, double value) {
 
-  GateDebugMessageInc("Actor", 2, "AddValue and update -- start: "<<mTempImage.GetSize() << G4endl);
+  GateDebugMessageInc("Actor", 2, "AddValue and update -- start: "<<mTempImage.GetSize() << Gateendl);
   double tmp = mTempImage.GetValue(index);
   mValueImage.AddValue(index, tmp);
   if (mIsSquaredImageEnabled || mIsUncertaintyImageEnabled) mSquaredImage.AddValue(index, tmp*tmp);
   mTempImage.SetValue(index, value);
-  GateDebugMessageDec("Actor", 2, "AddValue and update -- end"<< G4endl);
+  GateDebugMessageDec("Actor", 2, "AddValue and update -- end"<< Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -240,7 +240,7 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
   }
 
   GateMessage("Actor", 2, "Save " << mFilename << " with scaling = "
-	      << mScaleFactor << "(" << mIsValuesMustBeScaled << ")" << G4endl);
+	      << mScaleFactor << "(" << mIsValuesMustBeScaled << ")" << Gateendl);
 
   if (!mIsValuesMustBeScaled) mValueImage.Write(mFilename);
   else {

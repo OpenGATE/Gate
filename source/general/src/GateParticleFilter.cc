@@ -88,17 +88,17 @@ void GateParticleFilter::AddParent(const G4String& particleName)
 
 //---------------------------------------------------------------------------
 void GateParticleFilter::show(){
-  G4cout << "------ Filter: "<<GetObjectName()<<" ------"<<G4endl;
-  G4cout <<"     particle list:"<<G4endl;
+  G4cout << "------ Filter: "<<GetObjectName()<<" ------"<<Gateendl;
+  G4cout <<"     particle list:"<<Gateendl;
 
   for ( size_t i = 0; i < thePdef.size(); i++){
-    G4cout << thePdef[i] << G4endl;
+    G4cout << thePdef[i] << Gateendl;
   }
-  G4cout <<"     parent particle list:"<<G4endl;
+  G4cout <<"     parent particle list:"<<Gateendl;
   for ( size_t i = 0; i < theParentPdef.size(); i++){
-    G4cout << theParentPdef[i] << G4endl;
+    G4cout << theParentPdef[i] << Gateendl;
   }
-  G4cout << "-------------------------------------------"<<G4endl;
+  G4cout << "-------------------------------------------"<<Gateendl;
 
 }
 //---------------------------------------------------------------------------

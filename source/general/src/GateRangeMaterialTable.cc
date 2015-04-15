@@ -24,15 +24,15 @@ GateRangeMaterialTable::~GateRangeMaterialTable()
 void GateRangeMaterialTable::WriteMaterialDatabase(G4String filename) {
   std::ofstream os;
   OpenFileOutput(filename, os);
-  os << "[Materials]" << G4endl;
+  os << "[Materials]" << Gateendl;
   for(unsigned int i=0; i<mMaterialsVector.size(); i++) {
     os << "# Material " << i << " corresponding to H=[ " 
        << mR1[i] << ";" << mR2[i] // << "],with density=[" 
       //        << G4BestUnit(md1[i],"Volumic Mass") 
       //        << ";" << G4BestUnit(md2[i],"Volumic Mass") << "]"
-       << " ]" << G4endl;
+       << " ]" << Gateendl;
     WriteMaterial(mMaterialsVector[i], os);
-    os << G4endl;
+    os << Gateendl;
   }
   os.close();
 }
@@ -43,7 +43,7 @@ void GateRangeMaterialTable::WriteMaterialtoRangeLink(G4String filename) {
   std::ofstream os;
   OpenFileOutput(filename, os);
   for(unsigned int i=0; i<mMaterialsVector.size(); i++) {
-    os << mR1[i] << " " << mR2[i] << " " << mMaterialsVector[i]->GetName() << G4endl;    
+    os << mR1[i] << " " << mR2[i] << " " << mMaterialsVector[i]->GetName() << Gateendl;    
   }
   os.close();
 }
@@ -72,13 +72,13 @@ void GateRangeMaterialTable::AddMaterial(int R1, int R2, G4String name)
   mR2.push_back(R2);
   mName.push_back(name);
   // Check
-//  if (R2 < R1) GateError("R2=" << R2 << " is lower than R1=" << R1 << ". Abort." << G4endl);
+//  if (R2 < R1) GateError("R2=" << R2 << " is lower than R1=" << R1 << ". Abort." << Gateendl);
   n++;
 
 //  if (n != 1) {
 //    if (R1 != mR2[n-2]) GateError("Current R1=" << R1 
 //				  << " is different from previous R2=" 
-//				  << mR2[n-2] << ". Abort." << G4endl);
+//				  << mR2[n-2] << ". Abort." << Gateendl);
 //  }
   
 }
@@ -106,7 +106,7 @@ void GateRangeMaterialTable::MapLabelToMaterial(LabelToMaterialNameType & m)
     // GateMessage("Core", 0, 
     //               "i= " << i << " mi = "
     //             << m[i] << " mnamei = " 
-    //              << mName[i] << G4endl);
+    //              << mName[i] << Gateendl);
     m[i] = mName[i];
   }
 }

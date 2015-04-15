@@ -42,7 +42,7 @@ GateGeometryVoxelInterfileReader::~GateGeometryVoxelInterfileReader()
 
 void GateGeometryVoxelInterfileReader::Describe(G4int level)
 {
-  G4cout << " Voxel reader type ---> " << m_name << G4endl;
+  G4cout << " Voxel reader type ---> " << m_name << Gateendl;
 
   GateVGeometryVoxelReader::Describe(level);
 
@@ -71,13 +71,13 @@ void GateGeometryVoxelInterfileReader::ReadFile(G4String headerFileName)
   dy = m_pixelSize[1];
   dz = m_planeThickness;
 
-  G4cout << "nx ny nz: " << nx << " " << ny << " " << nz << G4endl;
+  G4cout << "nx ny nz: " << nx << " " << ny << " " << nz << Gateendl;
 
   SetVoxelNx( nx );
   SetVoxelNy( ny );
   SetVoxelNz( nz );
 
-  G4cout << "dx dy dz: " << dx << " " << dy << " " << dz << G4endl;
+  G4cout << "dx dy dz: " << dx << " " << dy << " " << dz << Gateendl;
 
   SetVoxelSize( G4ThreeVector(dx, dy, dz) * mm );
 
@@ -90,7 +90,7 @@ void GateGeometryVoxelInterfileReader::ReadFile(G4String headerFileName)
 	  G4Material* material = mMaterialDatabase.GetMaterial(materialName);
 	  AddVoxel(ix, iy, iz, material);
 	} else {
-	  G4cout << "GateGeometryVoxelInterfileReader::ReadFile: WARNING: voxel not added (material translation not found); value: "<< imageValue << G4endl;
+	  G4cout << "GateGeometryVoxelInterfileReader::ReadFile: WARNING: voxel not added (material translation not found); value: "<< imageValue << Gateendl;
 	}
       }
     }
@@ -104,7 +104,7 @@ void GateGeometryVoxelInterfileReader::ReadFile(G4String headerFileName)
   if (m_compressor) {
     Compress();
     EmptyStore();
-    G4cout << "GateSourceVoxelInterfileReader::ReadFile: For your information, the voxel store has been emptied." << G4endl;
+    G4cout << "GateSourceVoxelInterfileReader::ReadFile: For your information, the voxel store has been emptied." << Gateendl;
   }
 }
 
@@ -116,10 +116,10 @@ void GateGeometryVoxelInterfileReader::ReadRTFile(G4String headerFileName, G4Str
 
   if ( Ph != 0) {
       G4cout << " The Object "<< Ph->GetName()
-		<<" is attached to the "<<m_name<<" Geometry Voxel Reader."<<G4endl;
+		<<" is attached to the "<<m_name<<" Geometry Voxel Reader."<<Gateendl;
   } else {
       G4cout << " GateGeometryVoxelInterfileReader::ReadFile   WARNING The Object "<< Ph->GetName()
-	    <<" is not attached to any Geometry Voxel Reader."<<G4endl;
+	    <<" is not attached to any Geometry Voxel Reader."<<Gateendl;
   }
 
   if ( IsFirstFrame == true ) {
@@ -148,8 +148,8 @@ void GateGeometryVoxelInterfileReader::ReadRTFile(G4String headerFileName, G4Str
   dy = m_pixelSize[1];
   dz = m_planeThickness;
 
-  G4cout << "nx ny nz: " << nx << " " << ny << " " << nz << G4endl;
-  G4cout << "dx dy dz: " << dx << " " << dy << " " << dz << G4endl;
+  G4cout << "nx ny nz: " << nx << " " << ny << " " << nz << Gateendl;
+  G4cout << "dx dy dz: " << dx << " " << dy << " " << dz << Gateendl;
 
   SetVoxelNx( nx );
   SetVoxelNy( ny );
@@ -166,7 +166,7 @@ void GateGeometryVoxelInterfileReader::ReadRTFile(G4String headerFileName, G4Str
 		  G4Material* material = mMaterialDatabase.GetMaterial(materialName);
 		  AddVoxel(ix, iy, iz, material);
 	      } else {
-		  G4cout << "GateGeometryVoxelInterfileReader::ReadFile: WARNING: voxel not added (material translation not found); value: "<< imageValue << G4endl;
+		  G4cout << "GateGeometryVoxelInterfileReader::ReadFile: WARNING: voxel not added (material translation not found); value: "<< imageValue << Gateendl;
 	      }
 	  }
       }
@@ -176,10 +176,10 @@ void GateGeometryVoxelInterfileReader::ReadRTFile(G4String headerFileName, G4Str
       m_compressor->Initialize();
       Compress();
 
-      G4cout << "---------- Gate Voxels Compressor Statistics ---------"<<G4endl;
-      G4cout << "  Initial number of voxels in The Phantom      : " << GetNumberOfVoxels() << G4endl;
-      G4cout << "  number of compressed voxels                  : " << m_compressor->GetNbOfCopies() << G4endl;
-      G4cout << "  Compression achieved                                            : " << m_compressor->GetCompressionRatio() << " %"  << G4endl;
-      G4cout << "-------------------------------------------------------------------"<<G4endl;
+      G4cout << "---------- Gate Voxels Compressor Statistics ---------"<<Gateendl;
+      G4cout << "  Initial number of voxels in The Phantom      : " << GetNumberOfVoxels() << Gateendl;
+      G4cout << "  number of compressed voxels                  : " << m_compressor->GetNbOfCopies() << Gateendl;
+      G4cout << "  Compression achieved                                            : " << m_compressor->GetCompressionRatio() << " %"  << Gateendl;
+      G4cout << "-------------------------------------------------------------------"<<Gateendl;
   }
 }

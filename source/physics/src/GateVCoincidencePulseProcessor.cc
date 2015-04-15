@@ -23,7 +23,7 @@ GateVCoincidencePulseProcessor::GateVCoincidencePulseProcessor(GateCoincidencePu
 {
   GateDigitizer* digitizer = GateDigitizer::GetInstance();
 
-  G4cout << " in GateVCoincidencePulseProcessor call new GateCoincidenceDigiMaker" << G4endl;
+  G4cout << " in GateVCoincidencePulseProcessor call new GateCoincidenceDigiMaker" << Gateendl;
   digitizer->InsertDigiMakerModule( new GateCoincidenceDigiMaker(digitizer, itsName,false) );
 }
 //------------------------------------------------------------------------------------------------------
@@ -36,8 +36,8 @@ GateVCoincidencePulseProcessor::GateVCoincidencePulseProcessor(GateCoincidencePu
 void GateVCoincidencePulseProcessor::Describe(size_t indent) 
 {
   GateClockDependent::Describe(indent);
-  G4cout << GateTools::Indent(indent) << "Attached to:        '" << GetChain()->GetObjectName() << "'" << G4endl;
-  G4cout << GateTools::Indent(indent) << "Output:             '" << GetObjectName() << "'" << G4endl;
+  G4cout << GateTools::Indent(indent) << "Attached to:        '" << GetChain()->GetObjectName() << "'" << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Output:             '" << GetObjectName() << "'" << Gateendl;
   DescribeMyself(indent);
 }
 //------------------------------------------------------------------------------------------------------    

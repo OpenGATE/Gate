@@ -75,7 +75,7 @@ GateRTPhantomMgr::~GateRTPhantomMgr()
   }
   m_RTPhantom.clear();
   delete m_messenger;
- if (m_verboseLevel > 0) G4cout << "GateRTPhantomMgr deleting..." << G4endl;
+ if (m_verboseLevel > 0) G4cout << "GateRTPhantomMgr deleting..." << Gateendl;
 
 
 }
@@ -88,7 +88,7 @@ void GateRTPhantomMgr::UpdatePhantoms(G4double aTime)
 void GateRTPhantomMgr::AddPhantom(G4String aname)
 {
   if (m_verboseLevel > 2)
-    G4cout << "GateRTPhantomMgr::AddRTPhantom" << G4endl;
+    G4cout << "GateRTPhantomMgr::AddRTPhantom" << Gateendl;
 
   if ( aname == "RTVPhantom" )
   {
@@ -99,20 +99,20 @@ void GateRTPhantomMgr::AddPhantom(G4String aname)
    return;
   }
 
-  G4cout << "GateRTPhantomMgr::AddRTPhantom : ERROR : " << aname <<" is not recognized. IGNORED !!!"<< G4endl;
+  G4cout << "GateRTPhantomMgr::AddRTPhantom : ERROR : " << aname <<" is not recognized. IGNORED !!!"<< Gateendl;
 
 }
 
 
 void GateRTPhantomMgr::Describe()
 {
-  G4cout << "GateRTPhantomMgr name: " << m_name << G4endl;
-  G4cout << "Number of RTPhantoms inserted: " << m_RTPhantom.size() << G4endl;
-  G4cout << "Description of the single RTPhantoms: " << G4endl;
+  G4cout << "GateRTPhantomMgr name: " << m_name << Gateendl;
+  G4cout << "Number of RTPhantoms inserted: " << m_RTPhantom.size() << Gateendl;
+  G4cout << "Description of the single RTPhantoms: " << Gateendl;
 
   for (size_t iMod=0; iMod<m_RTPhantom.size(); iMod++) {
     m_RTPhantom[iMod]->Describe();
-    G4cout << "RTPhantom address : " << m_RTPhantom[iMod] << G4endl;
+    G4cout << "RTPhantom address : " << m_RTPhantom[iMod] << Gateendl;
 
   }
 }

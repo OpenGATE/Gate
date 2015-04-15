@@ -45,7 +45,7 @@ GateMHDImage::~GateMHDImage() {
 //-----------------------------------------------------------------------------
 void GateMHDImage::ReadHeader(std::string & filename)
 {
-  GateMessage("Image",5,"GateMHDImage::ReadMHD " << filename << G4endl);
+  GateMessage("Image",5,"GateMHDImage::ReadMHD " << filename << Gateendl);
   //std::cout << "*** WARNING *** The mhd reader is experimental... (itk version)" << std::endl;
 
   MetaImage m_MetaImage;

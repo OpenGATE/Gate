@@ -9,8 +9,9 @@ See GATE/LICENSE.txt for further details
 #include "G4ProductionCutsTable.hh"
 #include "G4Material.hh"
 #include "G4MaterialCutsCouple.hh"
-#include "GateMaterialTableToProductionCutsTable.hh"
 
+#include "GateMaterialTableToProductionCutsTable.hh"
+#include "GateMessageManager.hh"
 
 GateMaterialTableToProductionCutsTable::GateMaterialTableToProductionCutsTable()
 {
@@ -51,7 +52,7 @@ G4int GateMaterialTableToProductionCutsTable::M2P ( G4int i ) const
 {
 	if ( ( i<0 ) || ( i>=static_cast<G4int>(m_oM2PVec.size()) ) )
 	{
-		G4cout << "GateMaterialTableToProductionCutsTable::M2P(G4int i): Index out of range! Aborting." << G4endl;
+		G4cout << "GateMaterialTableToProductionCutsTable::M2P(G4int i): Index out of range! Aborting." << Gateendl;
 		exit ( EXIT_FAILURE );
 	}
 	return M2P_nocheck ( i );
@@ -60,7 +61,7 @@ G4int GateMaterialTableToProductionCutsTable::P2M ( G4int i ) const
 {
 	if ( ( i<0 ) || ( i>=static_cast<G4int>(m_oP2MVec.size() )) )
 	{
-		G4cout << "GateMaterialTableToProductionCutsTable::P2M(G4int i): Index out of range! Aborting." << G4endl;
+		G4cout << "GateMaterialTableToProductionCutsTable::P2M(G4int i): Index out of range! Aborting." << Gateendl;
 		exit ( EXIT_FAILURE );
 	}
 	return P2M_nocheck ( i );

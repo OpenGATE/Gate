@@ -51,7 +51,7 @@ void GatePhantomSD::Initialize(G4HCofThisEvent*HCE)
   { HCID = GetCollectionID(0); }
   HCE->AddHitsCollection(HCID,phantomCollection);
 
-  //G4cout << "GatePhantomSD::Initialize - Full collection name: "  << SensitiveDetectorName+"/"+collectionName[0] << G4endl << std::flush;
+  //G4cout << "GatePhantomSD::Initialize - Full collection name: "  << SensitiveDetectorName+"/"+collectionName[0] << Gateendl << std::flush;
 
 }
 
@@ -73,7 +73,7 @@ G4bool GatePhantomSD::ProcessHits(G4Step* aStep,G4TouchableHistory* /*ROhist*/) 
   if (t) {
     voxCoord=t->GetReplicaNumber(0);
     pvName  =t->GetVolume()->GetName();
-    //   G4cout << "GatePhantomSD::ProcessHits - voxelcoord is "<< voxCoord << ", pvname "<< pvName << G4endl;
+    //   G4cout << "GatePhantomSD::ProcessHits - voxelcoord is "<< voxCoord << ", pvname "<< pvName << Gateendl;
   }
 
 
@@ -132,7 +132,7 @@ G4bool GatePhantomSD::ProcessHits(G4Step* aStep,G4TouchableHistory* /*ROhist*/) 
   	 << "; EDEP:" << edep/keV
 	 << ", position " <<position
 	 << "; Coord " << voxCoord
-	 << G4endl;
+	 << Gateendl;
   */
 
   phantomCollection->insert( aHit );

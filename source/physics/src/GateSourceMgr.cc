@@ -87,7 +87,7 @@ G4int GateSourceMgr::RemoveSource( G4String name )
         delete mSources[is];
       mSources.clear();
       if( mVerboseLevel > 0 )
-        G4cout << "GateSourceMgr::RemoveSource : all sources removed " << G4endl;
+        G4cout << "GateSourceMgr::RemoveSource : all sources removed " << Gateendl;
       return 0;
     }
 
@@ -100,14 +100,14 @@ G4int GateSourceMgr::RemoveSource( G4String name )
           mSources.erase( itr );
           if( mVerboseLevel > 0 )
             G4cout << "GateSourceMgr::RemoveSource : source <" << name
-                   << "> removed" << G4endl;
+                   << "> removed" << Gateendl;
           found = 1;
           break;
         }
     }
 
   if( found == 0 )
-    G4cout << "GateSourceMgr::RemoveSource : source <" << name << "> not removed" << G4endl;
+    G4cout << "GateSourceMgr::RemoveSource : source <" << name << "> not removed" << Gateendl;
 
   return found;
 }
@@ -139,20 +139,20 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
       istrWord >> sourceName;
       if( mVerboseLevel > 0 )
         G4cout << "GateSourceMgr::AddSource : iw " << iw
-               << " sourceName " << sourceName << G4endl;
+               << " sourceName " << sourceName << Gateendl;
       break;
     case 1 :
       istrWord >> sourceGeomType;
       if( mVerboseLevel > 0 )
         G4cout << "GateSourceMgr::AddSource : iw " << iw
-               << " sourceGeomType " << sourceGeomType << G4endl;
+               << " sourceGeomType " << sourceGeomType << Gateendl;
       break;
     }
     if( mVerboseLevel > 3 )
       G4cout << " istrWord.eof() "  << istrWord.eof()
              << " istrWord.fail() " << istrWord.fail()
              << " istrWord.good() " << istrWord.good()
-             << " istrWord.bad() "  << istrWord.bad() << G4endl;
+             << " istrWord.bad() "  << istrWord.bad() << Gateendl;
 
     if( !istrWord.good() )
       isGood = false;
@@ -240,7 +240,7 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
     m_sourceProgressiveNumber++;
   }
   else
-    G4cout << "GateSourceMgr::AddSource : WARNING: Source not added " << G4endl;
+    G4cout << "GateSourceMgr::AddSource : WARNING: Source not added " << Gateendl;
 
   return 0;
 }
@@ -297,7 +297,7 @@ GateVSource* GateSourceMgr::GetNextSource()
 
   if( mSources.size() == 0 ) {
     G4cout << "GateSourceMgr::GetNextSource : WARNING: No source available"
-           << G4endl;
+           << Gateendl;
     return NULL; // GateError ???
   }
 
@@ -326,7 +326,7 @@ GateVSource* GateSourceMgr::GetNextSource()
           G4cout << "GateSourceMgr::GetNextSource : source "
                  << mSources[is]->GetName()
                  << "    Next time (s) : " << aTime/s
-                 << "   m_firstTime (s) : " << m_firstTime/s << G4endl;
+                 << "   m_firstTime (s) : " << m_firstTime/s << Gateendl;
 
         if( m_firstTime < 0. || ( aTime < m_firstTime ) )
           {
@@ -346,7 +346,7 @@ GateVSource* GateSourceMgr::GetNextSource()
 //----------------------------------------------------------------------------------------
 void GateSourceMgr::ListSources()
 {
-  G4cout << "GateSourceMgr::ListSources: List of the sources in the source manager" << G4endl;
+  G4cout << "GateSourceMgr::ListSources: List of the sources in the source manager" << Gateendl;
   for( size_t is = 0; is != mSources.size(); ++is )
     ( mSources[ is ] )->Dump( 0 );
 }
@@ -360,11 +360,11 @@ void GateSourceMgr::SelectSourceByName( G4String name )
   if( m_selectedSource ) {
     if( mVerboseLevel > 0 ) {
       G4cout << "GateSourceMgr::SelectSourceByName : source <"
-             << name << "> selected" << G4endl;
+             << name << "> selected" << Gateendl;
     }
     else {
       G4cout << "GateSourceMgr::SelectSourceByName : WARNING : source <" << name
-             << "> not selected" << G4endl;
+             << "> not selected" << Gateendl;
     }
   }
 }
@@ -410,7 +410,7 @@ void GateSourceMgr::Initialization()//std::vector<G4double> * time, std::vector<
       nSliceTot++;
       }
       }
-      G4cout<<"TEST  : Nsources = "<<nSliceTot<<G4endl;*/
+      G4cout<<"TEST  : Nsources = "<<nSliceTot<<Gateendl;*/
 
   for( size_t is = 0; is != mSources.size(); ++is )
     {
@@ -428,9 +428,9 @@ void GateSourceMgr::Initialization()//std::vector<G4double> * time, std::vector<
 //----------------------------------------------------------------------------------------
 G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
 {
-  //  GateMessage("Acquisition", 0, "PrepareNextRun "  << r->GetRunID() << G4endl);
+  //  GateMessage("Acquisition", 0, "PrepareNextRun "  << r->GetRunID() << Gateendl);
   if( mVerboseLevel > 1 )
-    G4cout << "GateSourceMgr::PrepareNextRun" << G4endl;
+    G4cout << "GateSourceMgr::PrepareNextRun" << Gateendl;
 
   // Initialize the internal time to the GATE clock time
   mNbOfParticleInTheCurrentRun = 0;
@@ -438,10 +438,10 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
   m_timeClock = theClock->GetTime();
   m_time = m_timeClock;
   m_currentSourceNumber++;
-  //G4cout<<"Time Clock = "<<m_time<<G4endl;
+  //G4cout<<"Time Clock = "<<m_time<<Gateendl;
   // Get the next time
   GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
-  //G4cout<<"test GetTimeSlice"<<G4endl;
+  //G4cout<<"test GetTimeSlice"<<Gateendl;
   G4double timeSlice = appMgr->GetTimeSlice(r->GetRunID());
   //m_timeLimit = m_time + timeSlice;
   m_timeLimit = appMgr->GetEndTimeSlice(r->GetRunID());
@@ -450,17 +450,17 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
   //mCurrentSliceStopTime = m_timeLimit;
   //   GateMessage("Acquisition", 0,
   //               "Run from t="  << mCurrentSliceStartTime/s << " sec to "
-  //               << mCurrentSliceStopTime/s << " sec." << G4endl);
+  //               << mCurrentSliceStopTime/s << " sec." << Gateendl);
 
   if( mVerboseLevel > 1 )
     G4cout << "GateSourceMgr::PrepareNextRun : m_time      (s) "
-           << m_time/s << G4endl
+           << m_time/s << Gateendl
            << "                                  m_timeClock (s) "
-           << m_timeClock/s << G4endl
+           << m_timeClock/s << Gateendl
            << "                                  timeSlice   (s) "
-           << timeSlice/s << G4endl
+           << timeSlice/s << Gateendl
            << "                                  m_timeLimit (s) "
-           << m_timeLimit/s << G4endl;
+           << m_timeLimit/s << Gateendl;
 
   //! sending commands to the GateRDM
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
@@ -475,9 +475,9 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
   command = G4String( "/gate/decay/setDecayTimeLimit " )
     + G4String( timechar ) + G4String( " s" );
   if( mVerboseLevel > 3 )
-    G4cout << "GateSourceMgr::PrepareNextEvent: command " << command << G4endl;
+    G4cout << "GateSourceMgr::PrepareNextEvent: command " << command << Gateendl;
   command = G4String( "/gate/decay/setDecayTimeLimit " ) + G4String( timechar ) + G4String( " s" );
-  if( mVerboseLevel > 3 ) G4cout << "GateSourceMgr::PrepareNextEvent: command " << command << G4endl;
+  if( mVerboseLevel > 3 ) G4cout << "GateSourceMgr::PrepareNextEvent: command " << command << Gateendl;
   UImanager->ApplyCommand( command.c_str() );
   // tell to the GateRDM to avoid the generation of the sampled decay time for the ions
   // (the time is set by the SourceMgr)
@@ -523,7 +523,7 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
 G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
 {
   // GateDebugMessage("Acquisition", 0, "PrepareNextEvent "  << event->GetEventID()
-  //                    << " at time " << m_time/s << " sec." << G4endl);
+  //                    << " at time " << m_time/s << " sec." << Gateendl);
 
   GateSteppingAction* myAction = (GateSteppingAction *) ( GateRunManager::GetRunManager()->GetUserSteppingAction() );
   TrackingMode theMode =myAction->GetMode();
@@ -536,11 +536,11 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
       GateRTPhantomMgr::GetInstance()->UpdatePhantoms(m_time); /* PY Descourt 11/12/2008 */
 
       if( mVerboseLevel > 1 )
-        G4cout << "GateSourceMgr::PrepareNextEvent" << G4endl;
+        G4cout << "GateSourceMgr::PrepareNextEvent" << Gateendl;
 
       // ask the source for this event
       if( mVerboseLevel > 1 )
-        G4cout << "GateSourceMgr::PrepareNextEvent : GetNextSource() " << G4endl;
+        G4cout << "GateSourceMgr::PrepareNextEvent : GetNextSource() " << Gateendl;
       GateVSource* source = GetNextSource();
 
       if( source )
@@ -564,7 +564,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
 
           if( mVerboseLevel > 1 )
             G4cout << "GateSourceMgr::PrepareNextEvent :  m_time (s) " << m_time/s
-                   << "  m_timeLimit (s) " << m_timeLimit/s << G4endl;
+                   << "  m_timeLimit (s) " << m_timeLimit/s << Gateendl;
 
           // Warning: the comparison  m_time <= m_timeLimit should be wrong due to decimal floating point problem
 
@@ -573,7 +573,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
               && (mNbOfParticleInTheCurrentRun < appMgr->GetNumberOfPrimariesPerRun()) ))
               && ( m_time <= timeStop ) ) */
           //      if( (  m_timeLimit - m_time >= -0.001 ) && ( m_time <= timeStop ) )
-          // G4cout << m_time - m_timeLimit<<"   "<<m_firstTime<<"    "<<m_firstTime*(1-1.E-10) <<"  "<< (m_time - m_timeLimit) - m_firstTime << G4endl;
+          // G4cout << m_time - m_timeLimit<<"   "<<m_firstTime<<"    "<<m_firstTime*(1-1.E-10) <<"  "<< (m_time - m_timeLimit) - m_firstTime << Gateendl;
 
           if( (!appMgr->IsTotalAmountOfPrimariesModeEnabled() && ( m_time <= m_timeLimit ) && ( m_time <= timeStop ) )
               || (appMgr->IsTotalAmountOfPrimariesModeEnabled() && appMgr->IsAnAmountOfPrimariesPerRunModeEnabled() && (mNbOfParticleInTheCurrentRun < appMgr->GetNumberOfPrimariesPerRun()) && ( m_time -timeStop  <= m_firstTime ))
@@ -581,7 +581,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
             {
 	      if( mVerboseLevel > 1 )
                 G4cout << "GateSourceMgr::PrepareNextEvent : source selected <"
-                       << source->GetName() << ">" << G4endl;
+                       << source->GetName() << ">" << Gateendl;
 
               // transmit the time to the source and ask it to generate the primary vertex
               source->SetTime( m_time );
@@ -593,7 +593,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
             }
           else {
             if( mVerboseLevel > 0 )
-              G4cout << "GateSourceMgr::PrepareNextEvent : m_time > m_timeLimit. No vertex generated" << G4endl;
+              G4cout << "GateSourceMgr::PrepareNextEvent : m_time > m_timeLimit. No vertex generated" << Gateendl;
 
             if(m_time <= timeStop){
               m_time-=m_firstTime;
@@ -602,7 +602,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
           }
         }
       else {
-        G4cout << "GateSourceMgr::PrepareNextEvent : WARNING : GateSourceMgr::GetNextSource gave no source" << G4endl;
+        G4cout << "GateSourceMgr::PrepareNextEvent : WARNING : GateSourceMgr::GetNextSource gave no source" << Gateendl;
       }
 
       m_needSourceInit = false;
@@ -613,11 +613,11 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
   if ( theMode == 3 ) // detector mode
     {
       m_currentSources.push_back(m_fictiveSource);
-      //G4cout << "GateSourceMgr::PrepareNextEvent :   m_fictiveSource = " << m_fictiveSource << G4endl;
+      //G4cout << "GateSourceMgr::PrepareNextEvent :   m_fictiveSource = " << m_fictiveSource << Gateendl;
       numVertices = m_fictiveSource->GeneratePrimaries(event);
       m_fictiveSource->SetTime(m_time); // time has been set in GeneratePrimaries
 
-      //	G4cout << "GateSourceMgr::PrepareNextEvent :::::::      Time " << m_time/s << " time limit " << m_timeLimit/s << G4endl;
+      //	G4cout << "GateSourceMgr::PrepareNextEvent :::::::      Time " << m_time/s << " time limit " << m_timeLimit/s << Gateendl;
 
       if (m_time > m_timeLimit) {  numVertices = 0 ;}
 
@@ -626,7 +626,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
   if( ( m_time + 5.0 * m_firstTime ) > m_timeLimit ) {  m_launchLastBuffer = true;}
 
   if (mVerboseLevel>1)
-    G4cout << "GateSourceMgr::PrepareNextEvent : numVertices : " << numVertices << G4endl;
+    G4cout << "GateSourceMgr::PrepareNextEvent : numVertices : " << numVertices << Gateendl;
   return numVertices;
 }
 //----------------------------------------------------------------------------------------

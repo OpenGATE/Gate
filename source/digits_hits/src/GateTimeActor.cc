@@ -25,11 +25,11 @@
 GateTimeActor::GateTimeActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateTimeActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateTimeActor() -- begin"<<Gateendl);
   ResetData();
   mDetailedStatFlag = false;
   pMessenger = new GateTimeActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateTimeActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateTimeActor() -- end"<<Gateendl);
 }
 //-----------------------------------------------------------------------------
 

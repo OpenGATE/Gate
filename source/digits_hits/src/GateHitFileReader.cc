@@ -119,7 +119,7 @@ void GateHitFileReader::PrepareAcquisition()
 */
 G4int GateHitFileReader::PrepareNextEvent(G4Event* )
 {
-  G4cout << " GateHitFileReader::PrepareNextEvent" << G4endl;
+  G4cout << " GateHitFileReader::PrepareNextEvent" << Gateendl;
   // Store the current runID and eventID
   G4int currentEventID = m_hitBuffer.eventID;
   G4int currentRunID = m_hitBuffer.runID;
@@ -201,8 +201,8 @@ void GateHitFileReader::LoadHitData()
 
   // Read a new set of hit-data: if it failed, set indicators to tell the caller that the reading failed
   if (m_hitTree->GetEntry(m_currentEntry++)<=0) {
-    G4cerr << "[GateHitFileReader::LoadHitData]:" << G4endl
-      	   << "\tCould not read the next hit!" << G4endl;
+    G4cerr << "[GateHitFileReader::LoadHitData]:" << Gateendl
+      	   << "\tCould not read the next hit!" << Gateendl;
     m_hitBuffer.runID=-1;
     m_hitBuffer.eventID=-1;
   }
@@ -219,11 +219,11 @@ void GateHitFileReader::LoadHitData()
 void GateHitFileReader::Describe(size_t indent)
 {
   GateClockDependent::Describe(indent);
-  G4cout << GateTools::Indent(indent) << "Hit-file name:    " << m_fileName << G4endl;
-  G4cout << GateTools::Indent(indent) << "Hit-file status:  " << (m_hitFile ? "open" : "closed" ) << G4endl;
+  G4cout << GateTools::Indent(indent) << "Hit-file name:    " << m_fileName << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Hit-file status:  " << (m_hitFile ? "open" : "closed" ) << Gateendl;
   if (m_hitTree) {
-    G4cout << GateTools::Indent(indent) << "Hit-tree entries: " << m_entries << G4endl;
-    G4cout << GateTools::Indent(indent) << "Current entry:    " << m_currentEntry << G4endl;
+    G4cout << GateTools::Indent(indent) << "Hit-tree entries: " << m_entries << Gateendl;
+    G4cout << GateTools::Indent(indent) << "Current entry:    " << m_currentEntry << Gateendl;
   }
 }
 

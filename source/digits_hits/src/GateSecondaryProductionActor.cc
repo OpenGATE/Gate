@@ -169,7 +169,7 @@ void GateSecondaryProductionActor::ResetData() {
 
 //-----------------------------------------------------------------------------
 void GateSecondaryProductionActor::BeginOfRunAction(const G4Run * ) {
-  GateDebugMessage("Actor", 3, "GateSecondaryProductionActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateSecondaryProductionActor -- Begin of Run" << Gateendl);
   ResetData();
 }
 //-----------------------------------------------------------------------------
@@ -178,7 +178,7 @@ void GateSecondaryProductionActor::BeginOfRunAction(const G4Run * ) {
 // Callback at each event
 void GateSecondaryProductionActor::BeginOfEventAction(const G4Event * ) {
   mCurrentEvent++;
-  GateDebugMessage("Actor", 3, "GateSecondaryProductionActor -- Begin of Event: "<<mCurrentEvent << G4endl);
+  GateDebugMessage("Actor", 3, "GateSecondaryProductionActor -- Begin of Event: "<<mCurrentEvent << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -192,7 +192,7 @@ void GateSecondaryProductionActor::PreUserTrackingAction(const GateVVolume *, co
 
     const G4VProcess* process = t->GetCreatorProcess();
     if(process){
-      //G4cout<<process->GetProcessName()<<"  "<<process->GetProcessName().find("Decay")<<G4endl;
+      //G4cout<<process->GetProcessName()<<"  "<<process->GetProcessName().find("Decay")<<Gateendl;
       if(name=="e-" && process->GetProcessName().find("Ionisation")!=std::string::npos) {name += " Ioni";}
       if(name=="e+" && process->GetProcessName().find("Decay")!=std::string::npos) {name += " Decay";}
       if(name=="gamma"){

@@ -72,7 +72,7 @@ void GateSigmoidalThresholder::ProcessOnePulse(const GatePulse* inputPulse,GateP
 	GateQuantumEfficiency::GetInstance(NULL,"name")->GetMinQECoeff() : 1.;
 
 //       G4cout << "crosstalk: " << crosstalk << "\tlightOutput: " << lightOutput << "\tTECoef: " << TECoef
-// 	     << "\tQECoef: " << QECoef << G4endl;
+// 	     << "\tQECoef: " << QECoef << Gateendl;
 
 
       m_centSigm = m_threshold;
@@ -80,7 +80,7 @@ void GateSigmoidalThresholder::ProcessOnePulse(const GatePulse* inputPulse,GateP
       m_centSigm /= (1-1./m_alpha * log(1./m_perCent - 1));
 //       G4cout << "\tm_centSigm: " << m_centSigm;
       m_centSigm *= crosstalk * lightOutput * TECoef * QECoef;
-//       G4cout << "\tm_centSigm: " << m_centSigm << G4endl;
+//       G4cout << "\tm_centSigm: " << m_centSigm << Gateendl;
       m_check = true;
     }
 
@@ -102,29 +102,29 @@ void GateSigmoidalThresholder::ProcessOnePulse(const GatePulse* inputPulse,GateP
     GatePulse* outputPulse = new GatePulse(*inputPulse);
     outputPulseList.push_back(outputPulse);
     if (nVerboseLevel>1)
-      	G4cout << "Copied pulse to output:" << G4endl
-      	       << *outputPulse << G4endl << G4endl ;
+      	G4cout << "Copied pulse to output:" << Gateendl
+      	       << *outputPulse << Gateendl << Gateendl ;
   }
   else {
       if (nVerboseLevel>1)
-      	G4cout << "Ignored pulse with energy below threshold:" << G4endl
-      	       << *inputPulse << G4endl << G4endl ;
+      	G4cout << "Ignored pulse with energy below threshold:" << Gateendl
+      	       << *inputPulse << Gateendl << Gateendl ;
   }
   if (nVerboseLevel>1)
     {
       GatePulseIterator iter;
-      G4cout << "----Pulse List after Thresholder--------------------------------------------------------" << G4endl;
-      G4cout << "----Threshold central: " << m_centSigm << " --------------------------------------------------------" << G4endl;
+      G4cout << "----Pulse List after Thresholder--------------------------------------------------------" << Gateendl;
+      G4cout << "----Threshold central: " << m_centSigm << " --------------------------------------------------------" << Gateendl;
       for (iter = outputPulseList.begin() ; iter != outputPulseList.end() ; ++iter )
 	G4cout << "VolumeID: " << (*iter)->GetOutputVolumeID()
-	       << "\tEnergy: " << (*iter)->GetEnergy() << G4endl;
-      G4cout << "------------------------------------------------------------------------------------" << G4endl;
+	       << "\tEnergy: " << (*iter)->GetEnergy() << Gateendl;
+      G4cout << "------------------------------------------------------------------------------------" << Gateendl;
     }
 }
 
 void GateSigmoidalThresholder::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Sigmoidal threshold: " << G4BestUnit(m_threshold,"Energy") << G4endl;
-  G4cout << GateTools::Indent(indent+1) << "with a percentage of acceptance equal to " << m_perCent << G4endl;
-  G4cout << GateTools::Indent(indent+1) << "parameter alpha of the sigmoidal function:  " << m_alpha << G4endl;
+  G4cout << GateTools::Indent(indent) << "Sigmoidal threshold: " << G4BestUnit(m_threshold,"Energy") << Gateendl;
+  G4cout << GateTools::Indent(indent+1) << "with a percentage of acceptance equal to " << m_perCent << Gateendl;
+  G4cout << GateTools::Indent(indent+1) << "parameter alpha of the sigmoidal function:  " << m_alpha << Gateendl;
 }

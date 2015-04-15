@@ -48,11 +48,11 @@ GatePulseList* GateNoise::ProcessPulseList(const GatePulseList* inputPulseList)
 
     if (inputPulseList->empty()) return 0;
     if (!m_energyDistrib){
-        G4cerr<<"GateNoise::ProcessPulseList : no energy distribution given. Nothing's done"<<G4endl;
+        G4cerr<<"GateNoise::ProcessPulseList : no energy distribution given. Nothing's done"<<Gateendl;
         return GateVPulseProcessor::ProcessPulseList(inputPulseList);
     }
     if (!m_deltaTDistrib){
-        G4cerr<<"GateNoise::ProcessPulseList : no deltaT distribution given. Nothing's done"<<G4endl;
+        G4cerr<<"GateNoise::ProcessPulseList : no deltaT distribution given. Nothing's done"<<Gateendl;
         return GateVPulseProcessor::ProcessPulseList(inputPulseList);
     }
     G4double t0;
@@ -75,7 +75,7 @@ GatePulseList* GateNoise::ProcessPulseList(const GatePulseList* inputPulseList)
             outputVol[i]=n;
 //          G4cout<<n<<' ';
         }
-//      G4cout<<G4endl;
+//      G4cout<<Gateendl;
         pulse->SetOutputVolumeID(outputVol);
         GateVolumeID* volID = system->MakeVolumeID(outputVol);
         pulse->SetVolumeID(*volID);
@@ -101,5 +101,5 @@ void GateNoise::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outpu
 
 void GateNoise::DescribeMyself(size_t indent)
 {
-    G4cout << GateTools::Indent(indent) << "Noise processor "<< G4endl;
+    G4cout << GateTools::Indent(indent) << "Noise processor "<< Gateendl;
 }

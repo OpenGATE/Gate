@@ -36,9 +36,9 @@ GateImageNestedParametrisedVolume::GateImageNestedParametrisedVolume(const G4Str
 								     G4int depth)
   : GateVImageVolume(name,acceptsChildren,depth)
 {
-  GateMessageInc("Volume",5,"Begin GateImageNestedParametrisedVolume("<<name<<")"<<G4endl);
+  GateMessageInc("Volume",5,"Begin GateImageNestedParametrisedVolume("<<name<<")"<<Gateendl);
   pMessenger = new GateImageNestedParametrisedVolumeMessenger(this);
-  GateMessageDec("Volume",5,"End GateImageNestedParametrisedVolume("<<name<<")"<<G4endl);
+  GateMessageDec("Volume",5,"End GateImageNestedParametrisedVolume("<<name<<")"<<Gateendl);
 }
 ///---------------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ GateImageNestedParametrisedVolume::GateImageNestedParametrisedVolume(const G4Str
 /// Destructor 
 GateImageNestedParametrisedVolume::~GateImageNestedParametrisedVolume()
 {
-  GateMessageInc("Volume",5,"Begin ~GateImageNestedParametrisedVolume()"<<G4endl);
+  GateMessageInc("Volume",5,"Begin ~GateImageNestedParametrisedVolume()"<<Gateendl);
   if (pMessenger) delete pMessenger;
   delete mVoxelParametrisation;
   delete mPhysVolX;
@@ -55,7 +55,7 @@ GateImageNestedParametrisedVolume::~GateImageNestedParametrisedVolume()
   delete logXRep;
   delete logYRep;
   delete logZRep;
-  GateMessageDec("Volume",5,"End ~GateImageNestedParametrisedVolume()"<<G4endl);
+  GateMessageDec("Volume",5,"End ~GateImageNestedParametrisedVolume()"<<Gateendl);
 }
 ///---------------------------------------------------------------------------
 
@@ -65,7 +65,7 @@ GateImageNestedParametrisedVolume::~GateImageNestedParametrisedVolume()
 G4LogicalVolume* GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalVolume(G4Material* mater, 
 										      G4bool /*flagUpdateOnly*/)
 {
-  GateMessageInc("Volume",3,"Begin GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalVolume()" << G4endl);
+  GateMessageInc("Volume",3,"Begin GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalVolume()" << Gateendl);
   //---------------------------
   LoadImage(false);
 
@@ -88,24 +88,24 @@ G4LogicalVolume* GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalV
   //---------------------------
   // Mother volume
   G4String boxname = GetObjectName() + "_solid";
-  GateMessage("Volume",4,"GateImageNestedParametrisedVolume -- Create Box halfSize  = " << GetHalfSize() << G4endl);
+  GateMessage("Volume",4,"GateImageNestedParametrisedVolume -- Create Box halfSize  = " << GetHalfSize() << Gateendl);
 
   pBoxSolid = new GateImageBox(*GetImage(), GetSolidName());
   pBoxLog = new G4LogicalVolume(pBoxSolid, mater, GetLogicalVolumeName()); 
-  GateMessage("Volume",4,"GateImageNestedParametrisedVolume -- Mother box created" << G4endl);
+  GateMessage("Volume",4,"GateImageNestedParametrisedVolume -- Mother box created" << Gateendl);
   //---------------------------
 
   LoadImageMaterialsTable();
   
   //---------------------------
-  GateMessageDec("Volume",4,"GateImageNestedParametrisedVolume -- Voxels construction" << G4endl);  
+  GateMessageDec("Volume",4,"GateImageNestedParametrisedVolume -- Voxels construction" << Gateendl);  
   G4ThreeVector voxelHalfSize = GetImage()->GetVoxelSize()/2.0;
   G4ThreeVector voxelSize = GetImage()->GetVoxelSize();
-  GateMessage("Volume",4,"Create Voxel halfSize  = " << voxelHalfSize << G4endl);
+  GateMessage("Volume",4,"Create Voxel halfSize  = " << voxelHalfSize << Gateendl);
 
-  GateMessage("Volume",4,"Create vox*res x = " << voxelHalfSize.x()*GetImage()->GetResolution().x() << G4endl);
-  GateMessage("Volume",4,"Create vox*res y = " << voxelHalfSize.y()*GetImage()->GetResolution().y() << G4endl);
-  GateMessage("Volume",4,"Create vox*res z = " << voxelHalfSize.z()*GetImage()->GetResolution().z() << G4endl);
+  GateMessage("Volume",4,"Create vox*res x = " << voxelHalfSize.x()*GetImage()->GetResolution().x() << Gateendl);
+  GateMessage("Volume",4,"Create vox*res y = " << voxelHalfSize.y()*GetImage()->GetResolution().y() << Gateendl);
+  GateMessage("Volume",4,"Create vox*res z = " << voxelHalfSize.z()*GetImage()->GetResolution().z() << Gateendl);
 
   //---------------------------
   // Parametrisation Y 
@@ -131,9 +131,9 @@ G4LogicalVolume* GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalV
 		    kYAxis,
 		    (int)lrint(GetImage()->GetResolution().y()),
 		    voxelSize.y());  
-  GateMessage("Volume",4,"Create Nested Y : " << G4endl);
-  GateMessage("Volume",4,"           nb Y : " << GetImage()->GetResolution().y() << G4endl);
-  GateMessage("Volume",4,"          sizeY : " << voxelHalfSize.y() << G4endl);
+  GateMessage("Volume",4,"Create Nested Y : " << Gateendl);
+  GateMessage("Volume",4,"           nb Y : " << GetImage()->GetResolution().y() << Gateendl);
+  GateMessage("Volume",4,"          sizeY : " << voxelHalfSize.y() << Gateendl);
   //---------------------------
   // Parametrisation X
   G4String voxelXSolidName(GetObjectName() + "_voxel_solid_X");
@@ -161,9 +161,9 @@ G4LogicalVolume* GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalV
 		    (int)lrint(GetImage()->GetResolution().x()),
 		    voxelSize.x()); 
 
-  GateMessage("Volume",4,"Create Nested X : " << G4endl);
-  GateMessage("Volume",4,"           nb X : " << GetImage()->GetResolution().x() << G4endl);
-  GateMessage("Volume",4,"          sizeX : " << voxelHalfSize.x() << G4endl);
+  GateMessage("Volume",4,"Create Nested X : " << Gateendl);
+  GateMessage("Volume",4,"           nb X : " << GetImage()->GetResolution().x() << Gateendl);
+  GateMessage("Volume",4,"          sizeX : " << voxelHalfSize.x() << Gateendl);
 
   //---------------------------
   // Parametrisation Z and NestedParameterisation
@@ -193,7 +193,7 @@ G4LogicalVolume* GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalV
 			  (int)lrint(GetImage()->GetResolution().z()), // Number of copies = number of voxels
 			  voxelParam);
 
-  GateMessageInc("Volume",3,"End GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalVolume()" << G4endl);
+  GateMessageInc("Volume",3,"End GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalVolume()" << Gateendl);
   return pBoxLog;
 }
 //---------------------------------------------------------------------------
@@ -216,9 +216,9 @@ void GateImageNestedParametrisedVolume::GetPhysVolForAVoxel(const G4int index,
 {
   G4VPhysicalVolume * pPhysVol = (*ppPhysVol);
   
-  GateDebugMessage("Volume",5,"GetPhysVolForAVoxel -- index = " << index << G4endl);
+  GateDebugMessage("Volume",5,"GetPhysVolForAVoxel -- index = " << index << Gateendl);
   if (pPhysVol) {
-    GateDebugMessage("Volume",5,"GetPhysVolForAVoxel -- phys  = " << pPhysVol->GetName() << G4endl);
+    GateDebugMessage("Volume",5,"GetPhysVolForAVoxel -- phys  = " << pPhysVol->GetName() << Gateendl);
   }
   else {
     GateError("pPhysVol is null ?? ");
@@ -241,9 +241,9 @@ void GateImageNestedParametrisedVolume::GetPhysVolForAVoxel(const G4int index,
   ix = (int)lrint(v[0]);
   iy = (int)lrint(v[1]);
   iz = (int)lrint(v[2]);
-  GateDebugMessage("Volume",5,"GetPhysVolForAVoxel -- voxel = " << v << G4endl);
+  GateDebugMessage("Volume",5,"GetPhysVolForAVoxel -- voxel = " << v << Gateendl);
   mVoxelParametrisation->ComputeTransformation(iz, pPhysVol);
-  GateDebugMessage("Volume",5,"GetPhysVolForAVoxel -- phys T = " << pPhysVol->GetTranslation() << G4endl);
+  GateDebugMessage("Volume",5,"GetPhysVolForAVoxel -- phys T = " << pPhysVol->GetTranslation() << Gateendl);
 
   // Set index
   mPhysVolX->SetCopyNo(ix);
@@ -251,19 +251,19 @@ void GateImageNestedParametrisedVolume::GetPhysVolForAVoxel(const G4int index,
   mPhysVolZ->SetCopyNo(iz);
 
   GateDebugMessage("Volume",6," fHistory.GetTopVolume()->GetName() "
-		   << history.GetTopVolume()->GetName() << G4endl);
+		   << history.GetTopVolume()->GetName() << Gateendl);
   
   GateDebugMessage("Volume",6," fHistory.GetTopReplicaNo() "
-		   << history.GetTopReplicaNo() << G4endl);
+		   << history.GetTopReplicaNo() << Gateendl);
   
   if (history.GetTopVolume() != mPhysVolX) {
     history.NewLevel(mPhysVolX, kReplica, ix);
     G4TouchableHistory t(history);
     GateDebugMessage("Volume",6," fHistory.GetTopVolume()->GetName() "
-		     << history.GetTopVolume()->GetName() << G4endl);
+		     << history.GetTopVolume()->GetName() << Gateendl);
     
     GateDebugMessage("Volume",6," fHistory.GetTopReplicaNo() "
-		     << history.GetTopReplicaNo() << G4endl);
+		     << history.GetTopReplicaNo() << Gateendl);
     //pMat = mVoxelParametrisation->ComputeMaterial(iz, pPhysVol, &t);
   }
   else {
@@ -273,10 +273,10 @@ void GateImageNestedParametrisedVolume::GetPhysVolForAVoxel(const G4int index,
   // Update history
   history.NewLevel(pPhysVol, kParameterised, iz);
   
-  GateDebugMessage("Volume",5,"Trans = " << mPhysVolX->GetTranslation() << G4endl);
-  GateDebugMessage("Volume",5,"Trans = " << mPhysVolY->GetTranslation() << G4endl);
-  GateDebugMessage("Volume",5,"Trans = " << mPhysVolZ->GetTranslation() << G4endl);
-  //GateDebugMessage("Volume",5,"Mat   = " << pMat->GetName() << G4endl);
+  GateDebugMessage("Volume",5,"Trans = " << mPhysVolX->GetTranslation() << Gateendl);
+  GateDebugMessage("Volume",5,"Trans = " << mPhysVolY->GetTranslation() << Gateendl);
+  GateDebugMessage("Volume",5,"Trans = " << mPhysVolZ->GetTranslation() << Gateendl);
+  //GateDebugMessage("Volume",5,"Mat   = " << pMat->GetName() << Gateendl);
 }
 //---------------------------------------------------------------------------
 
@@ -297,7 +297,7 @@ void GateImageNestedParametrisedVolume::PropagateGlobalSensitiveDetector()
 //---------------------------------------------------------------------------
 void GateImageNestedParametrisedVolume::PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector * msd)
 {
-  GateDebugMessage("Volume", 5, "Add SD to child" << G4endl);
+  GateDebugMessage("Volume", 5, "Add SD to child" << Gateendl);
   logXRep->SetSensitiveDetector(msd);
   logYRep->SetSensitiveDetector(msd);
   logZRep->SetSensitiveDetector(msd);

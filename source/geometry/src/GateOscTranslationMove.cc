@@ -61,11 +61,11 @@ void GateOscTranslationMove::PushMyPlacements(const G4RotationMatrix& currentRot
 //-------------------------------------------------------------------------------------------------
 void GateOscTranslationMove::DescribeMyself(size_t indent)
 {
-    G4cout << GateTools::Indent(indent) << "Move type:            " << "oscillating translation"   << G4endl;
-    G4cout << GateTools::Indent(indent) << "Maximum amplitude:    " << G4BestUnit(m_amplitude,"Length") << G4endl;
-    G4cout << GateTools::Indent(indent) << "Frequency:            " << G4BestUnit(m_frequency,"Frequency") << G4endl;
-    G4cout << GateTools::Indent(indent) << "Period:               " << G4BestUnit(GetPeriod(),"Time") << G4endl;
-    G4cout << GateTools::Indent(indent) << "Phase:                " << m_phase / degree << " deg" << G4endl;
-    G4cout << GateTools::Indent(indent) << "Current translation:  " << G4BestUnit(m_currentTranslation,"Length") << G4endl;
+    G4cout << GateTools::Indent(indent) << "Move type:            " << "oscillating translation"   << Gateendl;
+    G4cout << GateTools::Indent(indent) << "Maximum amplitude:    " << G4BestUnit(m_amplitude,"Length") << Gateendl;
+    G4cout << GateTools::Indent(indent) << "Frequency:            " << G4BestUnit(m_frequency,"Frequency") << Gateendl;
+    G4cout << GateTools::Indent(indent) << "Period:               " << G4BestUnit(GetPeriod(),"Time") << Gateendl;
+    G4cout << GateTools::Indent(indent) << "Phase:                " << m_phase / degree << " deg" << Gateendl;
+    G4cout << GateTools::Indent(indent) << "Current translation:  " << G4BestUnit(m_currentTranslation,"Length") << Gateendl;
 }
 //-------------------------------------------------------------------------------------------------

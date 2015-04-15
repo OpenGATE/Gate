@@ -11,6 +11,7 @@
 
 #include "GateMixedDNAPhysics.hh"
 #include "GateMixedDNAPhysicsMessenger.hh"
+#include "GateMessageManager.hh"
 #include <vector>
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -361,7 +362,7 @@ void GateMixedDNAPhysics::setDefaultModelsInWorld(G4String NPM) {
         }
       }
 
-  } else G4cout << "No processes" << G4endl;
+  } else G4cout << "No processes" << Gateendl;
 }
 
 // Set DNA In World

@@ -138,7 +138,7 @@ GateToLMF::~GateToLMF()
 {
   delete m_LMFMessenger;
 
-  if (nVerboseLevel > 0) G4cout << "GateToLMF deleting..." << G4endl;
+  if (nVerboseLevel > 0) G4cout << "GateToLMF deleting..." << Gateendl;
 
   if(pEncoH->scanContent.eventRecordBool == 1)
     {
@@ -223,7 +223,7 @@ void GateToLMF::createLMF_ASCIIfile(void)
 
   // Ask the system to print out its parameters into the stream
   if(!asciiFile)
-    G4cerr << "GateToLMF::createLMF_ASCIIfile() : Impossible to open a new file" << G4endl;
+    G4cerr << "GateToLMF::createLMF_ASCIIfile() : Impossible to open a new file" << Gateendl;
   m_pSystem->PrintToStream(asciiFile,false); // cf. GateCylindricalPETSystem class.
 
   G4double m_timeSlice = GateApplicationMgr::GetInstance()->GetTimeSlice();
@@ -232,15 +232,15 @@ void GateToLMF::createLMF_ASCIIfile(void)
   // We now need to write the paremters that are related to the simulation itself
 
   // Get and print out the time slice ?
-  // asciiFile << "time slice: " << G4BestUnit( m_timeSlice, "Time" ) << G4endl;
+  // asciiFile << "time slice: " << G4BestUnit( m_timeSlice, "Time" ) << Gateendl;
 
 
   // Get and print out the time and energy steps
   if(pEH->coincidenceBool)
-    asciiFile << "clock time step: " << GATE_LMF_TIME_STEP_COINCI << " ps" << G4endl;
+    asciiFile << "clock time step: " << GATE_LMF_TIME_STEP_COINCI << " ps" << Gateendl;
   else
-    asciiFile << "clock time step: " << GATE_LMF_TIME_STEP_PICOS << " ps" << G4endl;
-  asciiFile << "energy step: " << GATE_LMF_ENERGY_STEP_KEV << " keV" << G4endl;
+    asciiFile << "clock time step: " << GATE_LMF_TIME_STEP_PICOS << " ps" << Gateendl;
+  asciiFile << "energy step: " << GATE_LMF_ENERGY_STEP_KEV << " keV" << Gateendl;
   // GATE_LMF_TIME_STEP_PICOS and GATE_LMF_ENERGY_STEP_KEV are defined
   // in LMF library : lmf/includes/constantsLMF_ccs.h
 
@@ -256,11 +256,11 @@ void GateToLMF::createLMF_ASCIIfile(void)
     {rotationSpeed = baseComponent->GetEccentRotVelocity(); // Store the eccentric shift for EccenRotMove
     m_shiftX= baseComponent->GetEccentRotShift().x();
     m_shiftY= baseComponent->GetEccentRotShift().y();
-    asciiFile << "x shift: " << m_shiftX / cm  << " cm" << G4endl;
-    asciiFile << "y shift: " << m_shiftY / cm  << " cm" << G4endl;
+    asciiFile << "x shift: " << m_shiftX / cm  << " cm" << Gateendl;
+    asciiFile << "y shift: " << m_shiftY / cm  << " cm" << Gateendl;
     }
   m_azimuthalStep = rotationSpeed * m_timeSlice;
-  asciiFile << "azimuthal step: " << m_azimuthalStep / degree << " degree" << G4endl;
+  asciiFile << "azimuthal step: " << m_azimuthalStep / degree << " degree" << Gateendl;
 
   // Print out the axial Z shift for modulo M ring repeater
 
@@ -279,23 +279,23 @@ void GateToLMF::createLMF_ASCIIfile(void)
 
       G4int m_RingModuloNumber = rsectorComponent->GetAngularModuloNumber();
 
-      // G4cout << "2: "<< m_RingModuloNumber<<m_pZshift_vector << G4endl;
+      // G4cout << "2: "<< m_RingModuloNumber<<m_pZshift_vector << Gateendl;
       for ( int i=0 ; i < m_RingModuloNumber ; i++)
 	{
 	  if(m_pZshift_vector[i] != 0.)
-	    asciiFile << "z shift sector "<<i<<" mod "<<m_RingModuloNumber<<" : "<<m_pZshift_vector[i] / cm<<" cm"<< G4endl;
+	    asciiFile << "z shift sector "<<i<<" mod "<<m_RingModuloNumber<<" : "<<m_pZshift_vector[i] / cm<<" cm"<< Gateendl;
 	}
     }
   else
-    G4cout << "GAteToLMF WARNING : could not find AngularRepeater "<< rsectorComponent << rsectorComponent->FindAngularRepeater() << G4endl;
+    G4cout << "GAteToLMF WARNING : could not find AngularRepeater "<< rsectorComponent << rsectorComponent->FindAngularRepeater() << Gateendl;
 
   // Compute, store and print out the axial step
   G4double axialTranslationSpeed = baseComponent->GetTranslationVelocity().z();
   m_axialStep = axialTranslationSpeed * m_timeSlice;
-  asciiFile << "axial step: " << G4BestUnit( m_axialStep, "Length" ) << G4endl;
+  asciiFile << "axial step: " << G4BestUnit( m_axialStep, "Length" ) << Gateendl;
 
   // Add the scan file name
-  asciiFile << "scan file name: "<< m_name << G4endl;
+  asciiFile << "scan file name: "<< m_name << Gateendl;
   asciiFile.close();  // close ASCII file, we just have now to write the last line
 
 }
@@ -306,7 +306,7 @@ void GateToLMF::StoreTheDigiInLMF(GateSingleDigi *digi)
 {
   if(pEH->energyBool)
     {
-      //    G4cout << "Energy stored into digi=" << digi->GetEnergy() << G4endl;
+      //    G4cout << "Energy stored into digi=" << digi->GetEnergy() << Gateendl;
       SetEnergy(0,digi->GetEnergy());  // energy
     }
 
@@ -351,10 +351,10 @@ void GateToLMF::StoreTheDigiInLMF(GateSingleDigi *digi)
       showOneLMFDigi();
       if (nVerboseLevel > 2)
 	{
-	  G4cout << "One digi store in " << m_nameOfFile <<G4endl;
+	  G4cout << "One digi store in " << m_nameOfFile <<Gateendl;
 	  if (nVerboseLevel > 7)
 	    {
-	      G4cout << "type enter to continue" << G4endl;
+	      G4cout << "type enter to continue" << Gateendl;
 	      getchar(); // let's see this beautiful event record
 	    }
 	}
@@ -504,7 +504,7 @@ void GateToLMF::RecordBeginOfAcquisition()
 {
   if (!IsEnabled()) return;
   if (nVerboseLevel > 2)
-    G4cout << "GateToLMF::RecordBeginOfAcquisition" << G4endl;
+    G4cout << "GateToLMF::RecordBeginOfAcquisition" << Gateendl;
 
   if(pEH->coincidenceBool) {
     pERC = newER(pEH);
@@ -520,7 +520,7 @@ void GateToLMF::RecordBeginOfAcquisition()
   // 4 gate digi records
   // and 5 gate digi + event ...
   if (nVerboseLevel > 5)
-    G4cout << "GateToLMF::RecordBeginOfAcquisition" << G4endl;
+    G4cout << "GateToLMF::RecordBeginOfAcquisition" << Gateendl;
 
   if(pEH->gateDigiBool)
     codeForRecords = 5;
@@ -530,16 +530,16 @@ void GateToLMF::RecordBeginOfAcquisition()
 
   createLMF_ASCIIfile();
 
-  G4cout << "\n\n**************" << G4endl;
-  G4cout << " LMF INIT" << G4endl;
-  G4cout << "**************" << G4endl;
+  G4cout << "\n\n**************" << Gateendl;
+  G4cout << " LMF INIT" << Gateendl;
+  G4cout << "**************" << Gateendl;
 
  G4int rsectornumber = 1;
  GateCylindricalPETSystem* m_system = dynamic_cast<GateCylindricalPETSystem*>( m_pSystem );
  if ( m_system != 0 ) rsectornumber = m_system->GetBaseComponent()->GetChildNumber();
 
 
-G4cout << " number of rsectors " << rsectornumber<<G4endl;
+G4cout << " number of rsectors " << rsectornumber<<Gateendl;
 
   G4int AxialRsectorNumber = 0;
 
@@ -564,7 +564,7 @@ for ( G4int k = 0; k < rsectornumber ; k++ )
   size_t pos = rsectorComponent->GetObjectName().rfind( "/");
   G4String rsectorname = rsectorComponent->GetObjectName().substr( pos + 1 );
 
-G4cout << " rsector name  =" <<rsectorname<<G4endl;
+G4cout << " rsector name  =" <<rsectorname<<Gateendl;
 
 
 if ( rsectorComponent->GetRingID() != RingID ) { AxialRsectorNumber += rsectorComponent->GetLinearRepeatNumber(); RingID =  rsectorComponent->GetRingID() ; }
@@ -618,7 +618,7 @@ if ( (G4int)crystalComponent->GetActiveChildNumber() > rL ) rL = crystalComponen
 
 }
 
-for (G4int k = 1;k < RingID;k++)if ( TRNumber[k] != TRNumber[k-1] ){G4cout<<"GateToLMF::RecordBeginOfAcquisition() Ring # "<<k<<" and Ring # "<<k-1<<" do not have the same number of tangential Rsectors."<<G4endl;G4Exception("GateToLMF::RecordBeginOfAcquisition","Aborting...",FatalException,"Aborting...");}
+for (G4int k = 1;k < RingID;k++)if ( TRNumber[k] != TRNumber[k-1] ){G4cout<<"GateToLMF::RecordBeginOfAcquisition() Ring # "<<k<<" and Ring # "<<k-1<<" do not have the same number of tangential Rsectors."<<Gateendl;G4Exception("GateToLMF::RecordBeginOfAcquisition","Aborting...",FatalException,"Aborting...");}
 
   fillEncoHforGate( AxialRsectorNumber,TRNumber[0] ,
 		   AxialModulesNumber ,
@@ -637,7 +637,7 @@ for (G4int k = 1;k < RingID;k++)if ( TRNumber[k] != TRNumber[k-1] ){G4cout<<"Gat
 //bins = new G4int[AxialRsectorNumber * TRNumber[0] ];
 //for( G4int i = 0;i < AxialRsectorNumber * TRNumber[0] ;i++)bins[i]=0;
 
-  G4cout << "\n\n**************\n\n\n" << G4endl;
+  G4cout << "\n\n**************\n\n\n" << Gateendl;
 }
 
 
@@ -650,13 +650,13 @@ void GateToLMF::RecordEndOfAcquisition()
 {
   if (!IsEnabled()) return;
   if (nVerboseLevel > 2)
-    G4cout << "GateToLMF::RecordEndOfAcquisition" << G4endl;
+    G4cout << "GateToLMF::RecordEndOfAcquisition" << Gateendl;
   if((pEncoH->scanContent.nRecord != 0)&&(m_pfile != NULL))
     {
       CloseLMFfile(m_pfile);
     } // these lines works but just for 1 file...
 
-      //for( G4int i = 0;i <  pEncoH->scannerTopology.totalNumberOfRsectors;i++)G4cout <<i<<" "<<bins[i]<<G4endl;;
+      //for( G4int i = 0;i <  pEncoH->scannerTopology.totalNumberOfRsectors;i++)G4cout <<i<<" "<<bins[i]<<Gateendl;;
 }
 
 
@@ -667,7 +667,7 @@ void GateToLMF::RecordBeginOfRun(const G4Run *)
 {
   if (!IsEnabled()) return;
   if (nVerboseLevel > 5)
-    G4cout << "GateToLMF::RecordBeginOfRun" << G4endl;
+    G4cout << "GateToLMF::RecordBeginOfRun" << Gateendl;
 }
 
 
@@ -678,7 +678,7 @@ void GateToLMF::RecordEndOfEvent(const G4Event*)
 {
   if (!IsEnabled()) return;
   if (nVerboseLevel > 5)
-    G4cout << "GateToLMF::RecordEndOfEvent" << G4endl;
+    G4cout << "GateToLMF::RecordEndOfEvent" << Gateendl;
 
   size_t iDigi, n_digi;
   if(!pEH->coincidenceBool) {
@@ -687,7 +687,7 @@ void GateToLMF::RecordEndOfEvent(const G4Event*)
     if (!SDC)
       {
 	if (nVerboseLevel>0)
-	  G4cout << "GateToLMF::RecordEndOfEvent::GateSingleDigiCollection not found" << G4endl;
+	  G4cout << "GateToLMF::RecordEndOfEvent::GateSingleDigiCollection not found" << Gateendl;
 	return;
       }
     n_digi =  SDC->entries();
@@ -699,7 +699,7 @@ void GateToLMF::RecordEndOfEvent(const G4Event*)
 
     if (!CDC) {
       if (nVerboseLevel>0)
-	G4cout << "GateToLMF::RecordEndOfEvent::GateCoincidenceDigiCollection not found" << G4endl;
+	G4cout << "GateToLMF::RecordEndOfEvent::GateCoincidenceDigiCollection not found" << Gateendl;
       return;
     }
 
@@ -720,7 +720,7 @@ void GateToLMF::SetOutputFileName(G4String ofname)
   m_nameOfASCIIfile =  ofname + ".cch";
   m_name = ofname;
   if (nVerboseLevel > 0)
-    G4cout << "GateToLMF::SetOutputFileName: file name set to " << m_nameOfFile << G4endl;
+    G4cout << "GateToLMF::SetOutputFileName: file name set to " << m_nameOfFile << Gateendl;
 }
 
 /*------------- MESSENGER FUNCTIONS -------------------------------*/

@@ -84,7 +84,7 @@ G4LogicalVolume* GateHype::ConstructOwnSolidAndLogicalVolume(G4Material* mater, 
    }
    else {
      // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateHype::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<G4endl);
+       GateMessage("Warning", 0, "GateHype::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<Gateendl);
    }
    return m_hype_log;
 }
@@ -103,12 +103,12 @@ void GateHype::DestroyOwnSolidAndLogicalVolume()
 
 void GateHype::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: hyperbolic tube (hypertube)" << G4endl;
-  G4cout << GateTools::Indent(level) << "Inner radius at z=0: " << G4BestUnit(m_innerR,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Outer radius at z=0: " << G4BestUnit(m_outerR,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Inner stereo angle: " << m_innerStereo / degree << " deg" << G4endl;
-  G4cout << GateTools::Indent(level) << "Outer stereo angle:: " << m_outerStereo / degree << " deg" << G4endl;
-  G4cout << GateTools::Indent(level) << "Z length: " << G4BestUnit(m_zLength,"Length") << G4endl;
+  G4cout << GateTools::Indent(level) << "Shape: hyperbolic tube (hypertube)" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Inner radius at z=0: " << G4BestUnit(m_innerR,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Outer radius at z=0: " << G4BestUnit(m_outerR,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Inner stereo angle: " << m_innerStereo / degree << " deg" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Outer stereo angle:: " << m_outerStereo / degree << " deg" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Z length: " << G4BestUnit(m_zLength,"Length") << Gateendl;
 }
 
 G4double GateHype::ComputeMyOwnVolume() const

@@ -100,9 +100,9 @@ if ( theDC->GetARFSD() != 0  ) stage = theDC->GetARFSD()->GetStage();
 if ( stage == 2 )
 {
 
- 	G4cout << " GateProjectionSet::Reset detected ARF tables for Production Use"<<G4endl;
+ 	G4cout << " GateProjectionSet::Reset detected ARF tables for Production Use"<<Gateendl;
 
- 	G4cout << " m_ARFdata = " <<m_ARFdata<<G4endl;
+ 	G4cout << " m_ARFdata = " <<m_ARFdata<<Gateendl;
 
   if (m_ARFdata) {
     for (headID=0;headID<m_headNb;headID++) {
@@ -122,20 +122,20 @@ if ( stage == 2 )
      {
       m_ARFdata[headID] = (ARFProjectionDataType*) malloc( ARFBytesPerProjection() );
       if (!m_ARFdata[headID]) G4Exception( "GateProjectionSet::Reset", "Reset", FatalException, "Could not allocate a new projection set (out of memory?)");
-      G4cout << " ARF projection bins allocated at " << m_ARFdata[headID] << G4endl;
+      G4cout << " ARF projection bins allocated at " << m_ARFdata[headID] << Gateendl;
      }
 
   // Allocate the data-max pointer
   m_ARFdataMax = (ARFProjectionDataType*) calloc( m_headNb , ARFBytesPerPixel() );
   if (!m_ARFdataMax) G4Exception( "GateProjectionSet::Reset", "Reset", FatalException, "Could not allocate a statistics array (out of memory?)\n");
 
- G4cout << " GateProjectionSet::Reset : Estimated size for the Binary Projection Output file " <<ARFBytesPerHead() * G4double(m_headNb) / ( 1024.* 1024. )<<" Mo"<<G4endl;
-G4cout << " GateProjectionSet::Reset : Estimated size for the Binary Projection Output file " <<ARFBytesPerHead() * G4double(m_headNb) / 1024.<<" Ko"<<G4endl;
+ G4cout << " GateProjectionSet::Reset : Estimated size for the Binary Projection Output file " <<ARFBytesPerHead() * G4double(m_headNb) / ( 1024.* 1024. )<<" Mo"<<Gateendl;
+G4cout << " GateProjectionSet::Reset : Estimated size for the Binary Projection Output file " <<ARFBytesPerHead() * G4double(m_headNb) / 1024.<<" Ko"<<Gateendl;
  return;
 }
 
   if (m_verboseLevel>2)
-    G4cout << "Allocating " << m_headNb << " projection matrices " << m_pixelNbX << " x " << m_pixelNbY << G4endl;
+    G4cout << "Allocating " << m_headNb << " projection matrices " << m_pixelNbX << " x " << m_pixelNbY << Gateendl;
 
   // Allocate the data pointer
   // Modified by HDS : allocation of a 3D array
@@ -196,7 +196,7 @@ else
    		}
   	}
 
-    G4cout << " ... done "<<G4endl;
+    G4cout << " ... done "<<Gateendl;
 }
 
 }
@@ -208,26 +208,26 @@ void GateProjectionSet::Fill( G4int energyWindowID, G4int headID, G4double x, G4
 {
   // Check that energyWindowID is valid
   if (energyWindowID<0)  {
-    G4cerr << "[GateToProjectionSet::Fill]:" << G4endl
-      	   << "Received a hit with a wrong energy window (" << energyWindowID << "): ignored!" << G4endl;
+    G4cerr << "[GateToProjectionSet::Fill]:" << Gateendl
+      	   << "Received a hit with a wrong energy window (" << energyWindowID << "): ignored!" << Gateendl;
     return;
   }
   if ( static_cast<size_t>(energyWindowID) >= m_energyWindowNb) {
-    G4cerr << "[GateToProjectionSet::Fill]:" << G4endl
-      	   << "Received a hit with a wrong energy window (" << energyWindowID << "): ignored!" << G4endl;
+    G4cerr << "[GateToProjectionSet::Fill]:" << Gateendl
+      	   << "Received a hit with a wrong energy window (" << energyWindowID << "): ignored!" << Gateendl;
     return;
   }
 
 
   // Check that the headID is valid
   if (headID<0)  {
-    G4cerr << "[GateToProjectionSet::Fill]:" << G4endl
-      	   << "Received a hit with a wrong head ID (" << headID << "): ignored!" << G4endl;
+    G4cerr << "[GateToProjectionSet::Fill]:" << Gateendl
+      	   << "Received a hit with a wrong head ID (" << headID << "): ignored!" << Gateendl;
     return;
   }
   if ( (size_t)headID >=m_headNb) {
-    G4cerr << "[GateToProjectionSet::Fill]:" << G4endl
-      	   << "Received a hit with a wrong head ID (" << headID << "): ignored!" << G4endl;
+    G4cerr << "[GateToProjectionSet::Fill]:" << Gateendl
+      	   << "Received a hit with a wrong head ID (" << headID << "): ignored!" << Gateendl;
     return;
   }
 
@@ -236,7 +236,7 @@ void GateProjectionSet::Fill( G4int energyWindowID, G4int headID, G4double x, G4
   if  ( (binX<0) || (binX>=m_pixelNbX) ) {
     if (m_verboseLevel>=1)
       G4cerr << "[GateProjectionSet]: coordinate x (" << G4BestUnit(x,"Length") << ") outside the matrix boundaries ("
-	     << G4BestUnit(m_matrixLowEdgeX,"Length") << "-" << G4BestUnit(-m_matrixLowEdgeX,"Length") << "): ignored!" << G4endl;
+	     << G4BestUnit(m_matrixLowEdgeX,"Length") << "-" << G4BestUnit(-m_matrixLowEdgeX,"Length") << "): ignored!" << Gateendl;
     return;
   }
 
@@ -244,20 +244,20 @@ void GateProjectionSet::Fill( G4int energyWindowID, G4int headID, G4double x, G4
   if  ( (binY<0) || (binY>=m_pixelNbY) ) {
     if (m_verboseLevel>=1)
       G4cerr << "[GateProjectionSet]: coordinate y (" << G4BestUnit(y,"Length") << ") outside the matrix boundaries ("
-	     << G4BestUnit(m_matrixLowEdgeY,"Length") << "-" << G4BestUnit(-m_matrixLowEdgeY,"Length") << "): ignored!" << G4endl;
+	     << G4BestUnit(m_matrixLowEdgeY,"Length") << "-" << G4BestUnit(-m_matrixLowEdgeY,"Length") << "): ignored!" << Gateendl;
     return;
   }
 
   // Increment the appropriate bin (provided that we've not reached the top)
   if (m_verboseLevel>=2)
       G4cout << "[GateProjectionSet]: binning hit at (" <<  G4BestUnit(x,"Length") << "," << G4BestUnit(y,"Length") << ") "
-      << "into bin (" << binX << "," << binY << ") of head " << headID << G4endl;
+      << "into bin (" << binX << "," << binY << ") of head " << headID << Gateendl;
   ProjectionDataType& dest = m_data[energyWindowID][headID][ binX + binY * m_pixelNbX];
   if (dest<USHRT_MAX)
     dest++;
   else
       G4cerr  << "[GateProjectionSet]: bin (" << binX << "," << binY << ") of energy window " << energyWindowID << "and head " << headID <<  " has reached its maximum value (" << USHRT_MAX
-      	      << "): hit will be lost!" << G4endl;
+      	      << "): hit will be lost!" << Gateendl;
 
   // Update the maximum-counter for this energy window and this head
   if (dest>m_dataMax[energyWindowID][headID]) {
@@ -286,13 +286,13 @@ void GateProjectionSet::FillARF( G4int headID, G4double x, G4double y, G4double 
 {
   // Check that the headID is valid
   if (headID<0)  {
-    G4cerr << "[GateToProjectionSet::FillFromARF]:" << G4endl
-           << "Received a hit with a wrong head ID (" << headID << "): ignored!" << G4endl;
+    G4cerr << "[GateToProjectionSet::FillFromARF]:" << Gateendl
+           << "Received a hit with a wrong head ID (" << headID << "): ignored!" << Gateendl;
     return;
   }
   if ( (size_t)headID >= m_headNb) {
-    G4cerr << "[GateToProjectionSet::FillFromARF]:" << G4endl
-           << "Received a hit with a wrong head ID (" << headID << "): ignored!" << G4endl;
+    G4cerr << "[GateToProjectionSet::FillFromARF]:" << Gateendl
+           << "Received a hit with a wrong head ID (" << headID << "): ignored!" << Gateendl;
     return;
   }
 
@@ -303,7 +303,7 @@ m_rec++;
   if  ( (binX<0) || (binX>=m_pixelNbX) ) {
     if (m_verboseLevel>=1)
       G4cerr << "[GateProjectionSet]: coordinate x (" << G4BestUnit(x,"Length") << ") outside the matrix boundaries ("
-             << G4BestUnit(m_matrixLowEdgeX,"Length") << " , " << G4BestUnit(-m_matrixLowEdgeX,"Length") << "): ignored!" << G4endl;
+             << G4BestUnit(m_matrixLowEdgeX,"Length") << " , " << G4BestUnit(-m_matrixLowEdgeX,"Length") << "): ignored!" << Gateendl;
 
    m_rej++;
 
@@ -314,7 +314,7 @@ m_rec++;
   if  ( (binY<0) || (binY>=m_pixelNbY) ) {
     if (m_verboseLevel>=1)
       G4cerr << "[GateProjectionSet]: coordinate y (" << G4BestUnit(y,"Length") << ") outside the matrix boundaries ("
-             << G4BestUnit(m_matrixLowEdgeY,"Length") << " , " << G4BestUnit(-m_matrixLowEdgeY,"Length") << "): ignored!" << G4endl;
+             << G4BestUnit(m_matrixLowEdgeY,"Length") << " , " << G4BestUnit(-m_matrixLowEdgeY,"Length") << "): ignored!" << Gateendl;
 
    m_rej++;
 
@@ -325,8 +325,8 @@ m_rec++;
   // Increment the appropriate bin (provided that we've not reached the top)
   if (m_verboseLevel>=2)
   {
-      G4cout << "[GateProjectionSet]: binning hit at (" <<  G4BestUnit(x,"Length") << "," << G4BestUnit(y,"Length") << ") "<< "into bin (" << binX << "," << binY << ") of head " << headID << G4endl;
-      G4cout << " ARF Value " << ARFvalue << G4endl;
+      G4cout << "[GateProjectionSet]: binning hit at (" <<  G4BestUnit(x,"Length") << "," << G4BestUnit(y,"Length") << ") "<< "into bin (" << binX << "," << binY << ") of head " << headID << Gateendl;
+      G4cout << " ARF Value " << ARFvalue << Gateendl;
 
    }
   m_ARFdata[headID][ binX + binY * m_pixelNbX] += ARFvalue;
@@ -339,9 +339,9 @@ m_rec++;
   if ( max - m_ARFdataMax[headID] > 0. ) m_ARFdataMax[headID] = max;
 
 
-//G4cout << "  bin X " << binX<<"   bin Y " << binY << G4endl;
+//G4cout << "  bin X " << binX<<"   bin Y " << binY << Gateendl;
 
-//G4cout << " m_ARFdata["<<headID<<"] = "<<m_ARFdata[headID][ binX + binY * m_pixelNbX]<<G4endl;
+//G4cout << " m_ARFdata["<<headID<<"] = "<<m_ARFdata[headID][ binX + binY * m_pixelNbX]<<Gateendl;
 
 }
 void GateProjectionSet::StreamOutARFProjection(std::ofstream& dest, size_t headID)

@@ -22,7 +22,7 @@
  GateRTVPhantom::GateRTVPhantom():GateRTPhantom("RTVPhantom")
 {
 
-G4cout << " creating a RTV Phantom at Address "<< this <<G4endl;
+G4cout << " creating a RTV Phantom at Address "<< this <<Gateendl;
 
     IsVoxellized  = 1;
     IsEnabled     = 1;
@@ -85,7 +85,7 @@ void   GateRTVPhantom::SetHeaderFileName( G4String aFN )
 {
 header_FN = aFN;
 
-G4cout << " GateRTVPhantom::SetHeaderFileName ::: header file name = " <<header_FN<<G4endl;
+G4cout << " GateRTVPhantom::SetHeaderFileName ::: header file name = " <<header_FN<<Gateendl;
 }
 
 void GateRTVPhantom::Compute(G4double aTime)
@@ -116,7 +116,7 @@ if (  cK != p_cK  && cK <= GetNbOfFrames()  )
         { 
          if ( itsSReader->GetTimeSampling() < 1e-8 ) // if time sampling for time activity curves is too small
            {
-            G4cout << "GateRTVPhantom::Compute  WARNING : Time Sampling for Time Activity Curves is too small - setting default to Time Per Frame."<< G4endl;                                       
+            G4cout << "GateRTVPhantom::Compute  WARNING : Time Sampling for Time Activity Curves is too small - setting default to Time Per Frame."<< Gateendl;                                       
             itsSReader->SetTimeSampling( GetTPF() ); // set it by default to TimePerFrame 
            }
         }
@@ -128,9 +128,9 @@ itsSReader->SetFirstIndex ( newIndex );
 */
         if (GetVerboseLevel()>0)
         {
-      G4cout << " time is " << time_s << " (s)   -    interval boundaries are (s) " <<  ((cK-1) * GetTPF()/s) << "    " << (cK * GetTPF()/s ) << G4endl;
-      G4cout << " in GateSourceMgr::PrepareNextEvent - Time is in new Interval - Updating NCATPhantom Matrix ..." << G4endl;
-      G4cout << " index for computing Voxels Matrix = " << cK << G4endl;
+      G4cout << " time is " << time_s << " (s)   -    interval boundaries are (s) " <<  ((cK-1) * GetTPF()/s) << "    " << (cK * GetTPF()/s ) << Gateendl;
+      G4cout << " in GateSourceMgr::PrepareNextEvent - Time is in new Interval - Updating NCATPhantom Matrix ..." << Gateendl;
+      G4cout << " index for computing Voxels Matrix = " << cK << Gateendl;
         }
 
 // here we load the cKth phantom frame from file
@@ -147,7 +147,7 @@ YDIM = itsGReader->GetVoxelNy();
 ZDIM_OUTPUT = itsGReader->GetVoxelNz();
 pixel_width = itsGReader->GetVoxelSize();
 
-//G4cout << " GateRTVPhantom::Compute  AFTER GReader->ReadFile( header_FN, current_FN ) " << XDIM<<" "<<YDIM<<" "<<ZDIM_OUTPUT<<G4endl;
+//G4cout << " GateRTVPhantom::Compute  AFTER GReader->ReadFile( header_FN, current_FN ) " << XDIM<<" "<<YDIM<<" "<<ZDIM_OUTPUT<<Gateendl;
 
 // Destroy and reconstruct physical volumes of enclosing box
 //
@@ -156,13 +156,13 @@ pixel_width = itsGReader->GetVoxelSize();
 
 
 if ( G4GeometryManager::GetInstance()->IsGeometryClosed() == false )
- {G4cout << " Destroying Geometry of " << m_inserter->GetObjectName()<<G4endl;
+ {G4cout << " Destroying Geometry of " << m_inserter->GetObjectName()<<Gateendl;
   m_inserter->DestroyGeometry();
   //m_inserter->ConstructGeometry( m_inserter->GetMotherLogicalVolume() , false);
   m_inserter->Construct(false);
  }
  else 
-     {G4cout << " Destroying Geometry of " << m_inserter->GetObjectName()<<G4endl;
+     {G4cout << " Destroying Geometry of " << m_inserter->GetObjectName()<<Gateendl;
       G4GeometryManager::GetInstance()->OpenGeometry();
       m_inserter->DestroyGeometry();
       //m_inserter->ConstructGeometry( m_inserter->GetMotherLogicalVolume() , false);
@@ -172,18 +172,18 @@ if ( G4GeometryManager::GetInstance()->IsGeometryClosed() == false )
 
 
 /*
-G4cout << " #################### Destroying Geometry of " << GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume()->GetName()<<G4endl;
+G4cout << " #################### Destroying Geometry of " << GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume()->GetName()<<Gateendl;
 G4GeometryManager::GetInstance()->OpenGeometry(GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume() );
 GateDetectorConstruction::GetGateDetectorConstruction()->GeometryHasChanged(GateDetectorConstruction::geometry_needs_rebuild);
 G4GeometryManager::GetInstance()->CloseGeometry( true, true, GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume() );
-G4cout << " #################### Geometry of " << GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume()->GetName()<<"has been CLOSED" <<G4endl;
+G4cout << " #################### Geometry of " << GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume()->GetName()<<"has been CLOSED" <<Gateendl;
 
-G4cout << " #################### Destroying Geometry of " << m_inserter->GetPhysicalVolume(0)->GetName()<<G4endl;
+G4cout << " #################### Destroying Geometry of " << m_inserter->GetPhysicalVolume(0)->GetName()<<Gateendl;
 G4GeometryManager::GetInstance()->OpenGeometry(m_inserter->GetPhysicalVolume(0));
 m_inserter->DestroyGeometry();
 m_inserter->ConstructGeometry( m_inserter->GetMotherLogicalVolume() , false);
 G4GeometryManager::GetInstance()->CloseGeometry( false, true, m_inserter->GetPhysicalVolume(0) );
-G4cout << " #################### REBUILT Geometry of " << m_inserter->GetPhysicalVolume(0)->GetName()<<G4endl;
+G4cout << " #################### REBUILT Geometry of " << m_inserter->GetPhysicalVolume(0)->GetName()<<Gateendl;
 */
 
 //GateRunManager::GetRunManager()->GeometryHasBeenModified();
@@ -201,11 +201,11 @@ IsFirstTime = false;
 
 p_cK = cK;
 
-//G4cout << " GateRTVPhantom  :::: UPDATING ACTIVITIES " << G4endl;
+//G4cout << " GateRTVPhantom  :::: UPDATING ACTIVITIES " << Gateendl;
 //if ( fabs( GetTPF() - itsSReader->GetTimeSampling() ) > 1e-8 ) 
 itsSReader->UpdateActivities( header_FN, current_FN );
 
-//G4cout <<" GateRTVPhantom::Compute --- leaving " <<G4endl;
+//G4cout <<" GateRTVPhantom::Compute --- leaving " <<Gateendl;
 
 }
 

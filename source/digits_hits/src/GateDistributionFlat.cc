@@ -66,5 +66,5 @@ void GateDistributionFlat::DescribeMyself(size_t indent)
     	 <<"Min : "         << m_Min
          <<"  -- Max : "    << m_Max
          <<"  -- Amplitude : "<< m_Amplitude
-	 <<G4endl;
+	 <<Gateendl;
 }

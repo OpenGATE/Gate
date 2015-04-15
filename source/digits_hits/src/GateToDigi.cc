@@ -42,7 +42,7 @@ GateToDigi::~GateToDigi()
   delete m_digiMessenger;
   delete m_digitizer;
 
-  if (nVerboseLevel > 0) G4cout << "GateToDigi deleting..." << G4endl;
+  if (nVerboseLevel > 0) G4cout << "GateToDigi deleting..." << Gateendl;
 }
 //---------------------------------------------------------------------------
 
@@ -58,7 +58,7 @@ const G4String& GateToDigi::GiveNameOfFile()
 void GateToDigi::RecordBeginOfAcquisition()
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateToDigi::RecordBeginOfAcquisition" << G4endl;
+    G4cout << "GateToDigi::RecordBeginOfAcquisition" << Gateendl;
   if (G4DigiManager::GetDMpointer()->FindDigitizerModule(m_digitizer->GetObjectName())==0)
     G4DigiManager::GetDMpointer()->AddNewModule(m_digitizer);
 }
@@ -68,7 +68,7 @@ void GateToDigi::RecordBeginOfAcquisition()
 void GateToDigi::RecordEndOfAcquisition()
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateToDigi::RecordEndOfAcquisition" << G4endl;
+    G4cout << "GateToDigi::RecordEndOfAcquisition" << Gateendl;
 }
 //---------------------------------------------------------------------------
 
@@ -76,7 +76,7 @@ void GateToDigi::RecordEndOfAcquisition()
 void GateToDigi::RecordBeginOfRun(const G4Run* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateToDigi::RecordBeginOfRun" << G4endl;
+    G4cout << "GateToDigi::RecordBeginOfRun" << Gateendl;
 }
 //---------------------------------------------------------------------------
 
@@ -84,7 +84,7 @@ void GateToDigi::RecordBeginOfRun(const G4Run* )
 void GateToDigi::RecordEndOfRun(const G4Run* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateToDigi::RecordEndOfRun" << G4endl;
+    G4cout << "GateToDigi::RecordEndOfRun" << Gateendl;
 }
 //---------------------------------------------------------------------------
 
@@ -92,7 +92,7 @@ void GateToDigi::RecordEndOfRun(const G4Run* )
 void GateToDigi::RecordBeginOfEvent(const G4Event* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateToDigi::RecordBeginOfEvent" << G4endl;
+    G4cout << "GateToDigi::RecordBeginOfEvent" << Gateendl;
 }
 //---------------------------------------------------------------------------
 
@@ -100,7 +100,7 @@ void GateToDigi::RecordBeginOfEvent(const G4Event* )
 void GateToDigi::RecordEndOfEvent(const G4Event* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateToDigi::RecordEndOfEvent" << G4endl;
+    G4cout << "GateToDigi::RecordEndOfEvent" << Gateendl;
   m_digitizer->Digitize();
 }
 //---------------------------------------------------------------------------
@@ -109,6 +109,6 @@ void GateToDigi::RecordEndOfEvent(const G4Event* )
 void GateToDigi::RecordStepWithVolume(const GateVVolume *, const G4Step* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateToDigi::RecordStep" << G4endl;
+    G4cout << "GateToDigi::RecordStep" << Gateendl;
 }
 //---------------------------------------------------------------------------

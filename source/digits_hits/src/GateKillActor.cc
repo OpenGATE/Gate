@@ -20,9 +20,9 @@
 /// Constructors (Prototype)
 GateKillActor::GateKillActor(G4String name, G4int depth):GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateKillActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateKillActor() -- begin"<<Gateendl);
   pMessenger = new GateActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateKillActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateKillActor() -- end"<<Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -31,9 +31,9 @@ GateKillActor::GateKillActor(G4String name, G4int depth):GateVActor(name,depth)
 /// Destructor
 GateKillActor::~GateKillActor()
 {
-  GateDebugMessageInc("Actor",4,"~GateKillActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"~GateKillActor() -- begin"<<Gateendl);
   delete pMessenger;
-  GateDebugMessageDec("Actor",4,"~GateKillActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"~GateKillActor() -- end"<<Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -72,7 +72,7 @@ void GateKillActor::SaveData()
   OpenFileOutput(mSaveFilename, os);
   os << "# NumberOfKillTracks = " << mNumberOfTrack << std::endl;
   if (!os) {
-    GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << G4endl);
+    GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << Gateendl);
   }
   os.flush();
   os.close();

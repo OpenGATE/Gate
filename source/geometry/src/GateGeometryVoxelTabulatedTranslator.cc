@@ -49,7 +49,7 @@ G4String GateGeometryVoxelTabulatedTranslator::TranslateToMaterial(G4int voxelVa
 void GateGeometryVoxelTabulatedTranslator::ReadTranslationTable(G4String fileName)
 {
   std::ifstream inFile;
-  G4cout << "GateGeometryVoxelTabulatedTranslator::ReadFile : fileName: " << fileName << G4endl;
+  G4cout << "GateGeometryVoxelTabulatedTranslator::ReadFile : fileName: " << fileName << Gateendl;
   inFile.open(fileName.c_str(),std::ios::in);
 
   G4String material;
@@ -64,7 +64,7 @@ void GateGeometryVoxelTabulatedTranslator::ReadTranslationTable(G4String fileNam
   std::istringstream  is(buffer);
 
   is >> nTotCol;
-  G4cout << "nTotCol: " << nTotCol << G4endl;
+  G4cout << "nTotCol: " << nTotCol << Gateendl;
 
   for (G4int iCol=0; iCol<nTotCol; iCol++) {
     inFile.getline(buffer,200);
@@ -82,7 +82,7 @@ void GateGeometryVoxelTabulatedTranslator::ReadTranslationTable(G4String fileNam
     }
     
     G4cout << std::boolalpha << "  imageValue: " << imageValue << "  material: " << material 
-	   <<", visible " << visible << ", rgba(" << red << ',' << green << ',' << blue<< ',' << alpha << ')' << G4endl;
+	   <<", visible " << visible << ", rgba(" << red << ',' << green << ',' << blue<< ',' << alpha << ')' << Gateendl;
     
 
     m_voxelMaterialTranslation[imageValue] = material;

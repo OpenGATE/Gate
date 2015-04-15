@@ -19,7 +19,7 @@ GateVoxelCompressorMessenger::GateVoxelCompressorMessenger(GateVoxelCompressor *
    m_inserter(itsInserter)
 { 
  
-  // G4cout << "GateVoxelCompressorMessenger::GateVoxelCompressorMessenger - Entered " << GetDirectoryName() << G4endl; 
+  // G4cout << "GateVoxelCompressorMessenger::GateVoxelCompressorMessenger - Entered " << GetDirectoryName() << Gateendl; 
 
   GetDirectory()->SetGuidance("Controls phantom compression.");
 

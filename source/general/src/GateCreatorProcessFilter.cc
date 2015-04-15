@@ -52,8 +52,8 @@ void GateCreatorProcessFilter::AddCreatorProcess(const G4String& processName)
 void GateCreatorProcessFilter::show(){
   GateVFilter::show();
 
-  G4cout << "creatorProcesses=" << G4endl;
+  G4cout << "creatorProcesses=" << Gateendl;
   for (CreatorProcesses::const_iterator iter=creatorProcesses.begin(); iter!=creatorProcesses.end(); iter++)
-    G4cout << *iter << G4endl;
+    G4cout << *iter << Gateendl;
 }
 //---------------------------------------------------------------------------

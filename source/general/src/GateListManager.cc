@@ -52,9 +52,9 @@ GateNamedObject* GateListManager::FindElement(const G4String& name)
 //void GateListManager::ListElements(size_t indent) const
 void GateListManager::TheListElements(size_t indent) const
 {
-  G4cout << GateTools::Indent(indent) << "Nb of elements:     " << size() << G4endl;
+  G4cout << GateTools::Indent(indent) << "Nb of elements:     " << size() << Gateendl;
   for (size_t i=0; i<size() ; i++)
-    G4cout << GateTools::Indent(indent+2) << '\'' << theListOfNamedObject[i]->GetObjectName() << '\'' << G4endl;
+    G4cout << GateTools::Indent(indent+2) << '\'' << theListOfNamedObject[i]->GetObjectName() << '\'' << Gateendl;
 }
 //--------------------------------------------------------------------------------------
 

@@ -107,7 +107,7 @@ GateSourcePhaseSpace::~GateSourcePhaseSpace()
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::Initialize()
 {
-  // GateMessage("Beam", 1, "Phase Space Source - Initialisation" << G4endl);
+  // GateMessage("Beam", 1, "Phase Space Source - Initialisation" << Gateendl);
 
   InitializeTransformation();
   mTotalSimuTime = GateApplicationMgr::GetInstance()->GetTimeStop() - GateApplicationMgr::GetInstance()->GetTimeStart();
@@ -116,7 +116,7 @@ void GateSourcePhaseSpace::Initialize()
     T = new TChain("PhaseSpace");  //creates a chain to process a Tree called "T"
 
     for(unsigned int i=0;i<listOfPhaseSpaceFile.size();i++) {
-      GateMessage("Beam", 1, "Phase Space Source. Read file " << listOfPhaseSpaceFile[i] << G4endl);
+      GateMessage("Beam", 1, "Phase Space Source. Read file " << listOfPhaseSpaceFile[i] << Gateendl);
       T->Add(listOfPhaseSpaceFile[i]);
     }
 
@@ -165,7 +165,7 @@ void GateSourcePhaseSpace::Initialize()
         for(int j=0 ; j<totalEventInFile ; j++)
         {
           pIAEARecordType->read_particle();
-          if( abs(pIAEARecordType->x*cm)<mRmax && abs(pIAEARecordType->y*cm)<mRmax )  {pListOfSelectedEvents.push_back(totalEvent);G4cout<<" --> OK  "<<totalEvent<<G4endl;}
+          if( abs(pIAEARecordType->x*cm)<mRmax && abs(pIAEARecordType->y*cm)<mRmax )  {pListOfSelectedEvents.push_back(totalEvent);G4cout<<" --> OK  "<<totalEvent<<Gateendl;}
           totalEvent++;
 	}
       }
@@ -179,7 +179,7 @@ void GateSourcePhaseSpace::Initialize()
     SetIntensity(mNumberOfParticlesInFile);
 
   GateMessage("Beam", 1, "Phase Space Source. Total nb of particles in PhS " 
-              << mNumberOfParticlesInFile << G4endl);
+              << mNumberOfParticlesInFile << Gateendl);
 }
 // ----------------------------------------------------------------------------------
 
@@ -277,8 +277,8 @@ void GateSourcePhaseSpace::GenerateIAEAVertex( G4Event* /*aEvent*/ )
 // ----------------------------------------------------------------------------------
 G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event ) 
 {
-  //GateMessage("Beam", 2, "Generating particle " << event->GetEventID() << G4endl);
-  //GateMessage("Beam", 4, "GeneratePrimaries " << event->GetEventID() << G4endl);
+  //GateMessage("Beam", 2, "Generating particle " << event->GetEventID() << Gateendl);
+  //GateMessage("Beam", 4, "GeneratePrimaries " << event->GetEventID() << Gateendl);
 
   G4int numVertices = 0;
   double timeSlice = 0.;
@@ -404,7 +404,7 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
               << " momentum=" << pVertex->GetPrimary()->GetMomentum()
               << " weight=" << pVertex->GetWeight()
 	          << " time=" << pVertex->GetT0()
-              << G4endl);
+              << Gateendl);
 
   numVertices++;
   return numVertices;
@@ -421,7 +421,7 @@ void GateSourcePhaseSpace::AddFile(G4String file)
      if (extension == "root") mFileType = "rootFile";
      else if (extension == "IAEAphsp" || extension == "IAEAheader" ) mFileType = "IAEAFile";
      else GateError( "Unknow phase space file extension. Knowns extensions are : "
-    	               << G4endl << ".IAEAphsp (or IAEAheader), .root" << G4endl);
+    	               << Gateendl << ".IAEAphsp (or IAEAheader), .root" << Gateendl);
      listOfPhaseSpaceFile.push_back(file);
      return;
   }

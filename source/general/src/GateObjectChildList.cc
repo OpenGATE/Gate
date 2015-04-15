@@ -59,7 +59,7 @@ void GateObjectChildList::DestroyChildGeometry()
     for (size_t i=0; i<theListOfNamedObject.size(); i++){
       if (theListOfNamedObject[i])
         GetVolume(i)->DestroyGeometry();  
-	/*G4cout<<"GateObjectChildList :: listObject = "<<i<<G4endl;*/}
+	/*G4cout<<"GateObjectChildList :: listObject = "<<i<<Gateendl;*/}
    }
    		
 }
@@ -110,7 +110,7 @@ G4int GateObjectChildList::GetChildNo(GateVVolume* anInserter, G4int copyNo)
       return childNo+copyNo;
   }
 
-  G4cout << "[" << GetCreator()->GetObjectName() << "]: could not find any entry for inserter '" << anInserter->GetObjectName() << "'" <<  G4endl;
+  G4cout << "[" << GetCreator()->GetObjectName() << "]: could not find any entry for inserter '" << anInserter->GetObjectName() << "'" <<  Gateendl;
   return -1;
 }
 //-----------------------------------------------------------------------------------------------------------------

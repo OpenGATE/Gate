@@ -24,12 +24,12 @@
 //-----------------------------------------------------------------------------
 GateGPUTransTomoActor::GateGPUTransTomoActor(G4String name, G4int depth):
   GateVActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateGPUTransTomoActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateGPUTransTomoActor() -- begin"<<Gateendl);
   gpu_input = 0;
   mGPUDeviceID = 0;
   max_buffer_size = 5;
   pMessenger = new GateGPUTransTomoActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateGPUTransTomoActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateGPUTransTomoActor() -- end"<<Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ GateGPUTransTomoActor::~GateGPUTransTomoActor()  {
 //-----------------------------------------------------------------------------
 /// Construct
 void GateGPUTransTomoActor::Construct() {
-  GateDebugMessageInc("Actor", 4, "GateGPUTransTomoActor -- Construct - begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "GateGPUTransTomoActor -- Construct - begin" << Gateendl);
   GateVActor::Construct();
 
   // Enable callbacks
@@ -56,7 +56,7 @@ void GateGPUTransTomoActor::Construct() {
   EnableUserSteppingAction(true);
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateGPUTransTomoActor -- Construct - end" << G4endl);
+  GateMessageDec("Actor", 4, "GateGPUTransTomoActor -- Construct - end" << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -216,7 +216,7 @@ void GateGPUTransTomoActor::EndOfRunAction(const G4Run *)
 void GateGPUTransTomoActor::UserSteppingAction(const GateVVolume * /*v*/,
                                                const G4Step * step)
 {
-  GateDebugMessage("Actor", 4, "GateGPUTransTomoActor -- UserSteppingAction" << G4endl);
+  GateDebugMessage("Actor", 4, "GateGPUTransTomoActor -- UserSteppingAction" << Gateendl);
 
   // Check if we are on the boundary
   G4StepPoint * preStep = step->GetPreStepPoint();

@@ -22,7 +22,7 @@ GateSingleDigiMaker::GateSingleDigiMaker( GateDigitizer* itsDigitizer,
 					  G4bool itsOutputFlag)
   :GateVDigiMakerModule(itsDigitizer,itsInputName)
 {
-//  G4cout << " in GateSingleDigiMaker call RegisterNewSingleDigiCollection"  << G4endl;
+//  G4cout << " in GateSingleDigiMaker call RegisterNewSingleDigiCollection"  << Gateendl;
   GateOutputMgr::GetInstance()->RegisterNewSingleDigiCollection( GetCollectionName(),itsOutputFlag );
 }
 
@@ -40,7 +40,7 @@ GateSingleDigiMaker::~GateSingleDigiMaker()
 void GateSingleDigiMaker::Digitize()
 {
   if (nVerboseLevel>1)
-    G4cout  << "[GateSingleDigiMaker::Digitize]: retrieving pulse-list '" << m_inputName << "'" << G4endl;
+    G4cout  << "[GateSingleDigiMaker::Digitize]: retrieving pulse-list '" << m_inputName << "'" << Gateendl;
 
   GatePulseList* pulseList = GateDigitizer::GetInstance()->FindPulseList(m_inputName);
 
@@ -71,10 +71,10 @@ void GateSingleDigiMaker::Digitize()
 
   if (nVerboseLevel>0) {
       	G4cout  << "[GateSingleDigiMaker::ConvertSinglePulseList]: "
-	      	<< "created " << singleDigiCollection->entries() << " single digits:" << G4endl;
+	      	<< "created " << singleDigiCollection->entries() << " single digits:" << Gateendl;
       	for (i=0; i<(size_t)(singleDigiCollection->entries()); i++)
 	  (*singleDigiCollection)[i]->Print();
-	G4cout << G4endl;
+	G4cout << Gateendl;
   }
 
   // Store the digits into the digit collection of this event

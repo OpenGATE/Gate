@@ -23,7 +23,7 @@ GateImageRegionalizedSubVolumeMessenger::GateImageRegionalizedSubVolumeMessenger
   pVolume(volume)
 {
   
-  //GateMessage("Volume",5,"GateImageRegionalizedSubVolumeMessenger()"<<G4endl);
+  //GateMessage("Volume",5,"GateImageRegionalizedSubVolumeMessenger()"<<Gateendl);
 }
 //====================================================================
 
@@ -31,7 +31,7 @@ GateImageRegionalizedSubVolumeMessenger::GateImageRegionalizedSubVolumeMessenger
 //====================================================================
 GateImageRegionalizedSubVolumeMessenger::~GateImageRegionalizedSubVolumeMessenger()
 {
-  //GateMessage("Volume",5,"~GateImageRegionalizedSubVolumeMessenger()"<<G4endl);
+  //GateMessage("Volume",5,"~GateImageRegionalizedSubVolumeMessenger()"<<Gateendl);
 }
 //====================================================================
 
@@ -42,7 +42,7 @@ void GateImageRegionalizedSubVolumeMessenger::SetNewValue(G4UIcommand* command,
 {
   ////GateMessage("Volume",5,"GateImageRegionalizedSubVolumeMessenger::SetNewValue " 
 	    //  << command->GetCommandPath()
-	   //   << " newValue=" << newValue << G4endl);
+	   //   << " newValue=" << newValue << Gateendl);
   
   GateVolumeMessenger::SetNewValue(command,newValue);
   

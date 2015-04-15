@@ -98,7 +98,7 @@ void GateVGlobalPlacement::Describe(size_t indent)
   // parameters that are specific to each repeater
   DescribeMyself(indent);
     
-  G4cout << G4endl;
+  G4cout << Gateendl;
 }
 //----------------------------------------------------------------------------------------------------
 

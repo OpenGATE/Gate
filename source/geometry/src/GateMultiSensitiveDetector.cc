@@ -38,10 +38,10 @@ GateMultiSensitiveDetector::~GateMultiSensitiveDetector()
 //-----------------------------------------------------------------------------
 void GateMultiSensitiveDetector::Initialize(G4HCofThisEvent* hcte)
 {
-  GateDebugMessageInc("SD",4,"GateMultiSenstiveDetector -- Initialize() -- begin"<<G4endl);
+  GateDebugMessageInc("SD",4,"GateMultiSenstiveDetector -- Initialize() -- begin"<<Gateendl);
   if(pSensitiveDetector) pSensitiveDetector->Initialize(hcte);
   if(pMultiFunctionalDetector) pMultiFunctionalDetector->Initialize(hcte);
-  GateDebugMessageDec("SD",4,"GateMultiSenstiveDetector-- Initialize() -- end"<<G4endl);
+  GateDebugMessageDec("SD",4,"GateMultiSenstiveDetector-- Initialize() -- end"<<Gateendl);
 }
 //-----------------------------------------------------------------------------
 

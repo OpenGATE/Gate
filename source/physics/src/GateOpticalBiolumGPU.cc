@@ -216,7 +216,7 @@ G4int GateOpticalBiolumGPU::GeneratePrimaries(G4Event* event)
                 << " Gate_time=" <<  G4BestUnit(GetTime(), "Time")
                 << " TOF_time=" <<  G4BestUnit(tof, "Time")
                 << " current_timeID=" <<  mCurrentTimeID
-                << G4endl);  
+                << Gateendl);  
 
     // Prepare for next particle
     if (m_current_particle_index_in_buffer < m_gpu_output->particles.size())  {
@@ -312,7 +312,7 @@ particle_position.setZ(particle.pz*mm-92*mm);
 //----------------------------------------------------------
 void GateOpticalBiolumGPU::ReaderInsert(G4String readerType)
 {
-  G4cout << "GateOpticalBiolumGPUMessenger ReaderInsert" << G4endl;
+  G4cout << "GateOpticalBiolumGPUMessenger ReaderInsert" << Gateendl;
   GateSourceVoxellized::ReaderInsert(readerType);
 }
 //----------------------------------------------------------
@@ -321,7 +321,7 @@ void GateOpticalBiolumGPU::ReaderInsert(G4String readerType)
 //----------------------------------------------------------
 void GateOpticalBiolumGPU::ReaderRemove()
 {
-  G4cout << "GateOpticalBiolumGPUMessenger ReaderRemove" << G4endl;
+  G4cout << "GateOpticalBiolumGPUMessenger ReaderRemove" << Gateendl;
   GateSourceVoxellized::ReaderRemove();
 }
 //----------------------------------------------------------
@@ -330,7 +330,7 @@ void GateOpticalBiolumGPU::ReaderRemove()
 //----------------------------------------------------------
 void GateOpticalBiolumGPU::Update(double time)
 {
-  G4cout << "GateOpticalBiolumGPUMessenger Update" << G4endl;
+  G4cout << "GateOpticalBiolumGPUMessenger Update" << Gateendl;
   return GateSourceVoxellized::Update(time);
 }
 //----------------------------------------------------------

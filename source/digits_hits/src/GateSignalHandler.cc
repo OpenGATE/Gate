@@ -20,24 +20,24 @@ G4int GateSignalHandler::Install()
 {
   // Set the SIGQUIT signal handler to QuitSignalHandler
   if (signal(SIGQUIT,QuitSignalHandler) == SIG_ERR) {
-    G4cerr << G4endl << "Warning! Could not install handler for CTRL-\\ (SIGQUIT)!" << G4endl << G4endl;
+    G4cerr << Gateendl << "Warning! Could not install handler for CTRL-\\ (SIGQUIT)!" << Gateendl << Gateendl;
     return -1;
   }
   if (signal(SIGXCPU,QuitSignalHandler) == SIG_ERR) {
-    G4cerr << G4endl << "Warning! Could not install handler for SIGXCPU!" << G4endl << G4endl;
+    G4cerr << Gateendl << "Warning! Could not install handler for SIGXCPU!" << Gateendl << Gateendl;
     return -1;
   }
   if (signal(SIGUSR1,QuitSignalHandler) == SIG_ERR) {
-    G4cerr << G4endl << "Warning! Could not install handler for SIGUSR1!" << G4endl << G4endl;
+    G4cerr << Gateendl << "Warning! Could not install handler for SIGUSR1!" << Gateendl << Gateendl;
     return -1;
   }
   if (signal(SIGUSR2,PrintSimulationStatus) == SIG_ERR) {
-    G4cerr << G4endl << "Warning! Could not install handler for SIGUSR2!" << G4endl << G4endl;
+    G4cerr << Gateendl << "Warning! Could not install handler for SIGUSR2!" << Gateendl << Gateendl;
     return -1;
   }
 #ifdef __APPLE__
   if (signal(SIGINFO,PrintSimulationStatus) == SIG_ERR) {
-    G4cerr << G4endl << "Warning! Could not install handler for SIGINFO!" << G4endl << G4endl;
+    G4cerr << Gateendl << "Warning! Could not install handler for SIGINFO!" << Gateendl << Gateendl;
     return -1;
   }
 #endif
@@ -49,13 +49,13 @@ void GateSignalHandler::IgnoreSignalHandler(int sig) {
   G4cerr << "ignoring signal ";
   switch (sig) {
   case SIGXCPU:
-    G4cerr << "SIGXCPU" << G4endl;
+    G4cerr << "SIGXCPU" << Gateendl;
     break;
   case SIGUSR1:
-    G4cerr << "SIGUSR1" << G4endl;
+    G4cerr << "SIGUSR1" << Gateendl;
     break;
   default:
-    G4cerr << sig << G4endl;
+    G4cerr << sig << Gateendl;
     break;
   }
 }
@@ -66,14 +66,14 @@ void GateSignalHandler::IgnoreSignalHandler(int sig) {
 void GateSignalHandler::QuitSignalHandler(int sig)
 {
   // Print that we received the signal to G4cerr
-  G4cerr << G4endl << "Received signal: " ;
+  G4cerr << Gateendl << "Received signal: " ;
   switch (sig)
   {
     case SIGQUIT:
-      G4cerr << "Quit (CTRL-\\)" << G4endl;
+      G4cerr << "Quit (CTRL-\\)" << Gateendl;
       break;
     default:
-      G4cerr << sig << G4endl;
+      G4cerr << sig << Gateendl;
   }
 
   // Get the current application state
@@ -86,7 +86,7 @@ void GateSignalHandler::QuitSignalHandler(int sig)
     case G4State_EventProc:
 
       // If a beamOn/StartDAQ is running, launch abort sequence
-      G4cerr << "--- Aborting run/acquisition! ---" << G4endl << G4endl;
+      G4cerr << "--- Aborting run/acquisition! ---" << Gateendl << Gateendl;
 
       GateRunManager::GetRunManager()->AbortRun(true);
 
@@ -102,7 +102,7 @@ void GateSignalHandler::QuitSignalHandler(int sig)
     default:
       // If no beamOn/StartDAQ is running, ignore the signal
       G4cerr << "Signal received in state '" << stateManager->GetStateString(state) << "' "
-      	     << " --> ignored!" << G4endl << G4endl;
+      	     << " --> ignored!" << Gateendl << Gateendl;
       break;
   }
 }

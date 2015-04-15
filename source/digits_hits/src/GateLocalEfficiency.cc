@@ -50,13 +50,13 @@ void GateLocalEfficiency::ComputeSizes()
       firstPass=false;
       system= GateSystemListManager::GetInstance()->GetSystem(0);
       if (!system){
-      	 G4cerr<<"[GateLocalEfficiency::ComputeSizes] Problem : no system defined"<<G4endl;
+      	 G4cerr<<"[GateLocalEfficiency::ComputeSizes] Problem : no system defined"<<Gateendl;
 	 return;
       }
       depth = system->GetTreeDepth();
       if (m_enabled.size() != depth) {
 	 G4cerr<<"[GateLocalEfficiency::ProcessOnePulse]Warning : enabling vector size modified (from "<<m_enabled.size()
-	       <<" to "<<depth<<") and set all entries to 0"<<G4endl;
+	       <<" to "<<depth<<") and set all entries to 0"<<Gateendl;
 	 m_enabled.resize(depth);
 	 for (size_t i=0;i<m_enabled.size();i++) m_enabled[i]=false;
       }
@@ -64,13 +64,13 @@ void GateLocalEfficiency::ComputeSizes()
    }
    if (m_enabled.size() != depth) {
       G4cerr<<"[GateLocalEfficiency::ProcessOnePulse]Warning : enabling vector size modified (from "<<m_enabled.size()
-	    <<" to "<<depth<<") and set all entries to 0"<<G4endl;
+	    <<" to "<<depth<<") and set all entries to 0"<<Gateendl;
       m_enabled.resize(depth);
       for (size_t i=0;i<m_enabled.size();i++) m_enabled[i]=false;
    }
    if (m_efficiency->MaxX() < totSize-1){
       G4cerr<<"[GateLocalEfficiency::ProcessOnePulse]Warning : efficiency table size's wrong ("<<m_efficiency->MaxX()
-	    <<" instead of "<<totSize<<") disabling efficiency (all set to 1)"<<G4endl;
+	    <<" instead of "<<totSize<<") disabling efficiency (all set to 1)"<<Gateendl;
       m_efficiency=0;
    }
 }
@@ -80,13 +80,13 @@ void GateLocalEfficiency::SetMode(size_t i,G4bool val)
    size_t depth=0;
    system= GateSystemListManager::GetInstance()->GetSystem(0);
    if (!system){
-      G4cerr<<"[GateLocalEfficiency::ComputeSizes] Problem : no system defined"<<G4endl;
+      G4cerr<<"[GateLocalEfficiency::ComputeSizes] Problem : no system defined"<<Gateendl;
       return;
    }
    depth = system->GetTreeDepth();
    if (m_enabled.size() != depth) {
       G4cerr<<"[GateLocalEfficiency::ProcessOnePulse]Warning : enabling vector size modified (from "<<m_enabled.size()
-	    <<" to "<<depth<<") and set all entries to 0"<<G4endl;
+	    <<" to "<<depth<<") and set all entries to 0"<<Gateendl;
       m_enabled.resize(depth);
       for (size_t i=0;i<m_enabled.size();i++) m_enabled[i]=false;
    }
@@ -95,7 +95,7 @@ void GateLocalEfficiency::SetMode(size_t i,G4bool val)
       m_enabled[i]=val;
    } else {
       G4cerr<<"[GateLocalEfficiency::SetMode] WARNING : index outside limits ("
-            <<i<<">"<<m_enabled.size()<<")"<<G4endl;
+            <<i<<">"<<m_enabled.size()<<")"<<Gateendl;
    }
 }
 void GateLocalEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
@@ -106,7 +106,7 @@ void GateLocalEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePulseL
    }
    GateVSystem* system = GateSystemListManager::GetInstance()->GetSystem(0);
    if (!system){
-      G4cerr<<"[GateLocalEfficiency::ProcessOnePulse] Problem : no system defined"<<G4endl;
+      G4cerr<<"[GateLocalEfficiency::ProcessOnePulse] Problem : no system defined"<<Gateendl;
       return ;
    }
 
@@ -124,5 +124,5 @@ void GateLocalEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePulseL
 
 void GateLocalEfficiency::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Tabular Efficiency "<< G4endl;
+  G4cout << GateTools::Indent(indent) << "Tabular Efficiency "<< Gateendl;
 }

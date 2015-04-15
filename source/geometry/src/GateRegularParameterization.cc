@@ -38,7 +38,7 @@ GateRegularParameterization::GateRegularParameterization( GateRegularParameteriz
   globalFictInserter=NULL;
   if (globalInserter->GetVerbosity()>=1) {
     G4cout << "+-+- Entering GateRegularParameterization::Constructor ..."
-           << G4endl << std::flush;
+           << Gateendl << std::flush;
   }
 }
 
@@ -53,7 +53,7 @@ GateRegularParameterization::GateRegularParameterization ( GateFictitiousVoxelMa
   globalInserter=NULL;
   if ( globalFictInserter->GetVerbosity() >=1 ) {
     G4cout << "+-+- Entering GateRegularParameterization::Constructor ..."
-           << G4endl << std::flush;
+           << Gateendl << std::flush;
   }
 }
 
@@ -67,13 +67,13 @@ void GateRegularParameterization::BuildRegularParameterization()
   if (globalInserter!=NULL) {
     if (globalInserter->GetVerbosity()>=1) {
       G4cout << "++++ Entering GateRegularParameterization::BuildRegularParameterization ..."
-             << G4endl << std::flush;
+             << Gateendl << std::flush;
     }
   }
   else {
     if (globalFictInserter->GetVerbosity()>=1) {
       G4cout << "++++ Entering GateRegularParameterization::BuildRegularParameterization ..."
-             << G4endl << std::flush;
+             << Gateendl << std::flush;
     }
   }
   //---------------------------------------------------------------------------------------------//
@@ -173,13 +173,13 @@ void GateRegularParameterization::BuildRegularParameterization()
   if (globalInserter!=NULL) {
     if (globalInserter->GetVerbosity()>=1) {
       G4cout << "---- Exiting GateRegularParameterization::BuildRegularParameterization ..."
-             << G4endl << std::flush;
+             << Gateendl << std::flush;
     }
   }
   else {
     if (globalFictInserter->GetVerbosity()>=1) {
       G4cout << "---- Exiting GateRegularParameterization::BuildRegularParameterization ..."
-             << G4endl << std::flush;
+             << Gateendl << std::flush;
     }
   }
 }

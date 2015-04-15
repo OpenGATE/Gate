@@ -20,14 +20,14 @@ See GATE/LICENSE.txt for further details
 GateDoseSpectrumActor::GateDoseSpectrumActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateDoseSpectrumActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateDoseSpectrumActor() -- begin"<<Gateendl);
   mDosePrimaryOnly = false;
   mCurrentEvent= 0;
   mEventEnergy = -1;
   mTotalEventEnergyDep = 0.;
   pMessenger = new GateDoseSpectrumActorMessenger(this);
 
-  GateDebugMessageDec("Actor",4,"GateDoseSpectrumActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateDoseSpectrumActor() -- end"<<Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -36,8 +36,8 @@ GateDoseSpectrumActor::GateDoseSpectrumActor(G4String name, G4int depth):
 /// Destructor 
 GateDoseSpectrumActor::~GateDoseSpectrumActor()
 {
-  GateDebugMessageInc("Actor",4,"~GateDoseSpectrumActor() -- begin"<<G4endl);
-  GateDebugMessageDec("Actor",4,"~GateDoseSpectrumActor() -- end"<<G4endl);
+  GateDebugMessageInc("Actor",4,"~GateDoseSpectrumActor() -- begin"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"~GateDoseSpectrumActor() -- end"<<Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -83,7 +83,7 @@ void GateDoseSpectrumActor::SaveData()
 
   if (!DoseResponseFile)
   {
-    GateMessage("Output",1,"Error Writing file: " << mSaveFilename << G4endl);
+    GateMessage("Output",1,"Error Writing file: " << mSaveFilename << Gateendl);
   }
   DoseResponseFile.close();
 }
@@ -102,7 +102,7 @@ void GateDoseSpectrumActor::ResetData()
 //-----------------------------------------------------------------------------
 void GateDoseSpectrumActor::BeginOfRunAction(const G4Run *)
 {
-  GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Run" << Gateendl);
   ResetData();
 }
 //-----------------------------------------------------------------------------
@@ -110,7 +110,7 @@ void GateDoseSpectrumActor::BeginOfRunAction(const G4Run *)
 //-----------------------------------------------------------------------------
 void GateDoseSpectrumActor::BeginOfEventAction(const G4Event* event)
 {
-  GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Event" << G4endl);
+  GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Event" << Gateendl);
 
   // Process the previous event (if there was one)
   if(mCurrentEvent) {

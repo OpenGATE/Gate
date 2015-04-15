@@ -46,13 +46,13 @@ void GateToInterfileMessenger::SetNewValue(G4UIcommand* command,G4String /*newVa
 */
   // All mother macro commands are overloaded to do nothing
   if( command == GetVerboseCmd() ) {
-    G4cout << "GateToInterfile::VerboseCmd: Do nothing" << G4endl;
+    G4cout << "GateToInterfile::VerboseCmd: Do nothing" << Gateendl;
   } else if( command == GetDescribeCmd() ) {
-    G4cout << "GateToInterfile::DescribeCmd: Do nothing" << G4endl;
+    G4cout << "GateToInterfile::DescribeCmd: Do nothing" << Gateendl;
   } else if ( command == GetEnableCmd() ) {
-    G4cout << "GateToInterfile::EnableCmd: Do nothing" << G4endl;
+    G4cout << "GateToInterfile::EnableCmd: Do nothing" << Gateendl;
   } else if ( command == GetDisableCmd() ) {
-    G4cout << "GateToInterfile::DisableCmd: Do nothing" << G4endl;
+    G4cout << "GateToInterfile::DisableCmd: Do nothing" << Gateendl;
   }
 /* No else anymore
   else

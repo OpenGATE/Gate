@@ -34,8 +34,8 @@ GateVGeometryVoxelReader::~GateVGeometryVoxelReader()
 
 void GateVGeometryVoxelReader::Describe(G4int level) 
 {
-  G4cout << "  Geom. voxel reader ----> " << m_type << G4endl
-	 << "  file name              : " << m_fileName << G4endl;
+  G4cout << "  Geom. voxel reader ----> " << m_type << Gateendl
+	 << "  file name              : " << m_fileName << Gateendl;
 
   //  GateGeometryVoxelMapStore::Describe(level);
   GateGeometryVoxelArrayStore::Describe(level);
@@ -44,14 +44,14 @@ void GateVGeometryVoxelReader::Describe(G4int level)
 void GateVGeometryVoxelReader::InsertTranslator(G4String translatorType)
 {
   if (m_voxelTranslator) {
-    G4cout << "GateVGeometryVoxelReader::InsertTranslator: voxel translator already defined" << G4endl;
+    G4cout << "GateVGeometryVoxelReader::InsertTranslator: voxel translator already defined" << Gateendl;
   } else {
     if (translatorType == G4String("tabulated")) {
       m_voxelTranslator = new GateGeometryVoxelTabulatedTranslator(this);
     } else if (translatorType == G4String("range")) {
       m_voxelTranslator = new GateGeometryVoxelRangeTranslator(this);
     } else {
-      G4cout << "GateVGeometryVoxelReader::InsertTranslator: unknown translator type" << G4endl;
+      G4cout << "GateVGeometryVoxelReader::InsertTranslator: unknown translator type" << Gateendl;
     }
   }
 
@@ -63,6 +63,6 @@ void GateVGeometryVoxelReader::RemoveTranslator()
     delete m_voxelTranslator;
     m_voxelTranslator = 0;
   } else {
-    G4cout << "GateVGeometryVoxelReader::RemoveTranslator: voxel translator not defined" << G4endl;
+    G4cout << "GateVGeometryVoxelReader::RemoveTranslator: voxel translator not defined" << Gateendl;
   }
 }

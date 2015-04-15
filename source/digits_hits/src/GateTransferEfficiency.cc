@@ -63,7 +63,7 @@ G4int GateTransferEfficiency::ChooseVolume(G4String val)
     return 1;
   }
   else {
-    G4cout << "Wrong Volume Name" << G4endl;
+    G4cout << "Wrong Volume Name" << Gateendl;
     return 0;
   }
 }
@@ -75,9 +75,9 @@ void GateTransferEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePul
   if(im != m_table.end())
     {
       if(((*im).second < 0) | ((*im).second > 1)) {
-	G4cerr << 	G4endl << "[GateLightYield::ProcessOnePulse]:" << G4endl
+	G4cerr << 	Gateendl << "[GateLightYield::ProcessOnePulse]:" << Gateendl
 	       <<   "Sorry, but the transfer efficiency (" << (*im).second << ") for "
-	       << (*im).first << " is invalid" << G4endl;
+	       << (*im).first << " is invalid" << Gateendl;
 	G4String msg = "It must be a number between 0 and 1 !!!\n"
         "You must set the transfer efficiency:\n"
         "\t/gate/digitizer/Singles/transferEfficiency/" +
@@ -109,5 +109,5 @@ void GateTransferEfficiency::DescribeMyself(size_t indent)
 {
   for (im=m_table.begin(); im!=m_table.end(); im++)
     G4cout << GateTools::Indent(indent) << (*im).first << ":\n"
-	   << GateTools::Indent(indent+1) << "Transfer Efficiency: " << (*im).second << G4endl;
+	   << GateTools::Indent(indent+1) << "Transfer Efficiency: " << (*im).second << Gateendl;
 }

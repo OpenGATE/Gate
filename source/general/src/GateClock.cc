@@ -35,7 +35,7 @@ GateClock::~GateClock()
 void GateClock::SetTime(G4double aTime) 
 {
   mTime = aTime;
-  if (nVerboseLevel>0) GateMessage("Time", 1, "Time set to (s) " << mTime/s << G4endl);
+  if (nVerboseLevel>0) GateMessage("Time", 1, "Time set to (s) " << mTime/s << Gateendl);
 
   GateDetectorConstruction::GetGateDetectorConstruction()->ClockHasChanged();
 }
@@ -46,7 +46,7 @@ void GateClock::SetTime(G4double aTime)
 void GateClock::SetTimeNoGeoUpdate(G4double aTime) 
 {
   mTime = aTime;
-  if (nVerboseLevel>0) GateMessage("Time", 1, "Time set to (s) without Geometry update " << mTime/s << G4endl);
+  if (nVerboseLevel>0) GateMessage("Time", 1, "Time set to (s) without Geometry update " << mTime/s << Gateendl);
 }
 //------------------------------------------------------------------------------------
 

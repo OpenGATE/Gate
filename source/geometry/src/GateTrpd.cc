@@ -101,11 +101,11 @@ G4LogicalVolume* GateTrpd::ConstructOwnSolidAndLogicalVolume(G4Material* mater, 
   G4ThreeVector BoxPos;
   G4RotationMatrix rotMatrix; // Unit matrix created by defaut
 
-  // G4cout << " Trpd : flagUpdateOnly " << flagUpdateOnly << " m_trd_solid =   " << (!m_trpd_solid) << G4endl;
+  // G4cout << " Trpd : flagUpdateOnly " << flagUpdateOnly << " m_trd_solid =   " << (!m_trpd_solid) << Gateendl;
 
   if (!flagUpdateOnly || !m_trpd_solid) {
 
-    //G4cout << " first "  << G4endl;
+    //G4cout << " first "  << Gateendl;
     m_trd_solid
       = new G4Trd(GetSolidName(), GetTrpdX1HalfLength(), GetTrpdX2HalfLength(),
                   GetTrpdY1HalfLength(), GetTrpdY2HalfLength(), GetTrpdZHalfLength());
@@ -119,7 +119,7 @@ G4LogicalVolume* GateTrpd::ConstructOwnSolidAndLogicalVolume(G4Material* mater, 
     BoxPos.setY(GetTrpdTrudYPos());
     BoxPos.setZ(GetTrpdTrudZPos());
 
-    //    G4cout << " Create new G4SubtractionSolid  ::: <" << BoxPos << ">" << G4endl;
+    //    G4cout << " Create new G4SubtractionSolid  ::: <" << BoxPos << ">" << Gateendl;
     delete m_trpd_solid;
     m_trpd_solid
       = new G4SubtractionSolid(GetSolidName(), m_trd_solid, m_box_solid, &rotMatrix, BoxPos);
@@ -130,12 +130,12 @@ G4LogicalVolume* GateTrpd::ConstructOwnSolidAndLogicalVolume(G4Material* mater, 
   }
   else {
 
-    G4cout << " second "  << G4endl;
+    G4cout << " second "  << Gateendl;
 
     BoxPos.setX(GetTrpdTrudXPos());
     BoxPos.setY(GetTrpdTrudYPos());
     BoxPos.setZ(GetTrpdTrudZPos());
-    // G4cout << " new val of BoxPos ::: <" << BoxPos << ">" << G4endl;
+    // G4cout << " new val of BoxPos ::: <" << BoxPos << ">" << Gateendl;
     // G4Transform3D transform(rotMatrix,BoxPos);
 
     m_trd_solid->SetXHalfLength1(GetTrpdX1HalfLength());
@@ -150,7 +150,7 @@ G4LogicalVolume* GateTrpd::ConstructOwnSolidAndLogicalVolume(G4Material* mater, 
 
   }
 #ifdef debugtrpd
-  G4cout << " Returning ...    ::: <" << m_trpd_solid << m_trpd_log << BoxPos << G4endl;
+  G4cout << " Returning ...    ::: <" << m_trpd_solid << m_trpd_log << BoxPos << Gateendl;
   G4cout << "     local_values ::: <"
 	 << " X1: " << m_trpdLength[0]
 	 << " Y1: " << m_trpdLength[1]
@@ -163,7 +163,7 @@ G4LogicalVolume* GateTrpd::ConstructOwnSolidAndLogicalVolume(G4Material* mater, 
 	 << " XBxPos: " << m_trpdLength[8]
 	 << " YBxPos: " << m_trpdLength[9]
 	 << " ZBxPos: " << m_trpdLength[10]
-	 << G4endl;
+	 << Gateendl;
 #endif
   return m_trpd_log;
 }

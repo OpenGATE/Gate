@@ -107,23 +107,23 @@ void GateCylindricalPETSystem::Describe(size_t indent)
 */    
 void GateCylindricalPETSystem::PrintToStream(std::ostream& aStream,G4bool doPrintNumbers)
 {
-  aStream << "geometrical design type: " << 1   	      	      	      	      	  << G4endl;
+  aStream << "geometrical design type: " << 1   	      	      	      	      	  << Gateendl;
 
-  aStream << "ring diameter: " << G4BestUnit( 2*ComputeInternalRadius() ,"Length")   	      	      	      	      	  << G4endl;
+  aStream << "ring diameter: " << G4BestUnit( 2*ComputeInternalRadius() ,"Length")   	      	      	      	      	  << Gateendl;
 
   GateBoxComponent* rsectorComponent = FindBoxCreatorComponent("rsector");
 
   G4double rsectorAxialPitch = rsectorComponent->GetLinearRepeatVector().z();
-  aStream << "rsector axial pitch: " << G4BestUnit( rsectorAxialPitch ,"Length")  	  << G4endl;
+  aStream << "rsector axial pitch: " << G4BestUnit( rsectorAxialPitch ,"Length")  	  << Gateendl;
   
   G4double rsectorAzimuthalPitch = rsectorComponent->GetAngularRepeatPitch();
-  aStream << "rsector azimuthal pitch: " << rsectorAzimuthalPitch/degree << " degree"  	 	  << G4endl;    
+  aStream << "rsector azimuthal pitch: " << rsectorAzimuthalPitch/degree << " degree"  	 	  << Gateendl;    
 
   G4double rsectorRadialSize     = rsectorComponent->GetBoxLength(0) ;
   G4double rsectorTangentialSize = rsectorComponent->GetBoxLength(1) ;
   G4double rsectorAxialSize      = rsectorComponent->GetBoxLength(2) ;
-  aStream << "rsector tangential size: " << G4BestUnit( rsectorTangentialSize ,"Length")  	  << G4endl;
-  aStream << "rsector axial size: " << G4BestUnit( rsectorAxialSize ,"Length")  	      	  << G4endl;
+  aStream << "rsector tangential size: " << G4BestUnit( rsectorTangentialSize ,"Length")  	  << Gateendl;
+  aStream << "rsector axial size: " << G4BestUnit( rsectorAxialSize ,"Length")  	      	  << Gateendl;
 
   GateArrayComponent* moduleComponent = FindArrayComponent("module");
 
@@ -131,12 +131,12 @@ void GateCylindricalPETSystem::PrintToStream(std::ostream& aStream,G4bool doPrin
   G4double moduleRadialSize     = moduleCreator ? moduleCreator->GetBoxLength(0) : rsectorRadialSize ;
   G4double moduleTangentialSize = moduleCreator ? moduleCreator->GetBoxLength(1) : rsectorTangentialSize ;
   G4double moduleAxialSize      = moduleCreator ? moduleCreator->GetBoxLength(2) : rsectorAxialSize ;
-  aStream << "module axial size: " << G4BestUnit( moduleAxialSize ,"Length")  	      	  << G4endl;
-  aStream << "module tangential size: " << G4BestUnit( moduleTangentialSize ,"Length")  	  << G4endl;
+  aStream << "module axial size: " << G4BestUnit( moduleAxialSize ,"Length")  	      	  << Gateendl;
+  aStream << "module tangential size: " << G4BestUnit( moduleTangentialSize ,"Length")  	  << Gateendl;
 
   G4ThreeVector modulePitchVector = moduleComponent->GetRepeatVector(); 
-  aStream << "module axial pitch: " << G4BestUnit( modulePitchVector.z() ,"Length")    	  << G4endl;
-  aStream << "module tangential pitch: " << G4BestUnit( modulePitchVector.y() ,"Length")    	  << G4endl;
+  aStream << "module axial pitch: " << G4BestUnit( modulePitchVector.z() ,"Length")    	  << Gateendl;
+  aStream << "module tangential pitch: " << G4BestUnit( modulePitchVector.y() ,"Length")    	  << Gateendl;
 
   GateArrayComponent* submoduleComponent = FindArrayComponent("submodule");
 
@@ -144,12 +144,12 @@ void GateCylindricalPETSystem::PrintToStream(std::ostream& aStream,G4bool doPrin
   G4double submoduleRadialSize     = submoduleCreator ? submoduleCreator->GetBoxLength(0) : moduleRadialSize ;
   G4double submoduleTangentialSize = submoduleCreator ? submoduleCreator->GetBoxLength(1) : moduleTangentialSize ;
   G4double submoduleAxialSize      = submoduleCreator ? submoduleCreator->GetBoxLength(2) : moduleAxialSize ;
-  aStream << "submodule axial size: " << G4BestUnit( submoduleAxialSize ,"Length")  	      	  << G4endl;
-  aStream << "submodule tangential size: " << G4BestUnit( submoduleTangentialSize ,"Length")  	  << G4endl;
+  aStream << "submodule axial size: " << G4BestUnit( submoduleAxialSize ,"Length")  	      	  << Gateendl;
+  aStream << "submodule tangential size: " << G4BestUnit( submoduleTangentialSize ,"Length")  	  << Gateendl;
 
   G4ThreeVector submodulePitchVector = submoduleComponent->GetRepeatVector(); 
-  aStream << "submodule axial pitch: " << G4BestUnit( submodulePitchVector.z() ,"Length")    	  << G4endl;
-  aStream << "submodule tangential pitch: " << G4BestUnit( submodulePitchVector.y() ,"Length")     << G4endl;
+  aStream << "submodule axial pitch: " << G4BestUnit( submodulePitchVector.z() ,"Length")    	  << Gateendl;
+  aStream << "submodule tangential pitch: " << G4BestUnit( submodulePitchVector.y() ,"Length")     << Gateendl;
 
   GateArrayComponent* crystalComponent   = FindArrayComponent("crystal");
 
@@ -157,13 +157,13 @@ void GateCylindricalPETSystem::PrintToStream(std::ostream& aStream,G4bool doPrin
   G4double crystalRadialSize     = crystalCreator ? crystalCreator->GetBoxLength(0) : submoduleRadialSize ;
   G4double crystalTangentialSize = crystalCreator ? crystalCreator->GetBoxLength(1) : submoduleTangentialSize ;
   G4double crystalAxialSize      = crystalCreator ? crystalCreator->GetBoxLength(2) : submoduleAxialSize ;
-  aStream << "crystal radial size: " << G4BestUnit( crystalRadialSize ,"Length")  	      	  << G4endl;
-  aStream << "crystal axial size: " << G4BestUnit( crystalAxialSize ,"Length")  	      	  << G4endl;
-  aStream << "crystal tangential size: " << G4BestUnit( crystalTangentialSize ,"Length")  	  << G4endl;
+  aStream << "crystal radial size: " << G4BestUnit( crystalRadialSize ,"Length")  	      	  << Gateendl;
+  aStream << "crystal axial size: " << G4BestUnit( crystalAxialSize ,"Length")  	      	  << Gateendl;
+  aStream << "crystal tangential size: " << G4BestUnit( crystalTangentialSize ,"Length")  	  << Gateendl;
 
   G4ThreeVector crystalPitchVector = crystalComponent->GetRepeatVector() ; 
-  aStream << "crystal axial pitch: " << G4BestUnit( crystalPitchVector.z() ,"Length")    	  << G4endl;
-  aStream << "crystal tangential pitch: " << G4BestUnit( crystalPitchVector.y() ,"Length")    	  << G4endl;
+  aStream << "crystal axial pitch: " << G4BestUnit( crystalPitchVector.z() ,"Length")    	  << Gateendl;
+  aStream << "crystal tangential pitch: " << G4BestUnit( crystalPitchVector.y() ,"Length")    	  << Gateendl;
 
   size_t NbLayers = crystalComponent->GetActiveChildNumber();
   for (size_t i=0; i<NbLayers; i++) {
@@ -171,22 +171,22 @@ void GateCylindricalPETSystem::PrintToStream(std::ostream& aStream,G4bool doPrin
     char buffer[80];
     sprintf(buffer,"layer%u",(unsigned int)i);
     GateBoxComponent* layerComponent = FindBoxCreatorComponent(buffer);
-    aStream << buffer << " radial size: " << G4BestUnit( layerComponent->GetBoxLength(0) ,"Length") << G4endl;
-    aStream << "in " << buffer << " interaction length: " << G4BestUnit( 0.5*layerComponent->GetBoxLength(0) ,"Length") << G4endl;
+    aStream << buffer << " radial size: " << G4BestUnit( layerComponent->GetBoxLength(0) ,"Length") << Gateendl;
+    aStream << "in " << buffer << " interaction length: " << G4BestUnit( 0.5*layerComponent->GetBoxLength(0) ,"Length") << Gateendl;
   }
 
 
 
   if (doPrintNumbers) {
-    aStream << "Axial nb of rsectors: " << rsectorComponent->GetLinearRepeatNumber()     	      	      	      	      	      	      	      	  << G4endl;
-    aStream << "Azimuthal nb of rsectors: " << rsectorComponent->GetAngularRepeatNumber()   	      	      	      	      	      	      	      	  << G4endl;
-    aStream << "Axial nb of modules: " << moduleComponent->GetRepeatNumber(2) 	      	      	      	  	  << G4endl;
-    aStream << "Tangential nb of modules: " << moduleComponent->GetRepeatNumber(1) 	      	      	      	  << G4endl;
-    aStream << "Axial nb of submodules: " << submoduleComponent->GetRepeatNumber(2) 	      	      	      	  << G4endl;
-    aStream << "Tangential nb of submodules: " << submoduleComponent->GetRepeatNumber(1) 	      	      	  	  << G4endl;
-    aStream << "Axial nb of crystals: " << crystalComponent->GetRepeatNumber(2) 	      	      	      	  	  << G4endl;
-    aStream << "Tangential nb of crystals: " << crystalComponent->GetRepeatNumber(1) 	      	      	      	  << G4endl;
-    aStream << "Radial nb of layers: " << NbLayers 	      	      	      	      	      	      	      	      	      	      	  << G4endl;
+    aStream << "Axial nb of rsectors: " << rsectorComponent->GetLinearRepeatNumber()     	      	      	      	      	      	      	      	  << Gateendl;
+    aStream << "Azimuthal nb of rsectors: " << rsectorComponent->GetAngularRepeatNumber()   	      	      	      	      	      	      	      	  << Gateendl;
+    aStream << "Axial nb of modules: " << moduleComponent->GetRepeatNumber(2) 	      	      	      	  	  << Gateendl;
+    aStream << "Tangential nb of modules: " << moduleComponent->GetRepeatNumber(1) 	      	      	      	  << Gateendl;
+    aStream << "Axial nb of submodules: " << submoduleComponent->GetRepeatNumber(2) 	      	      	      	  << Gateendl;
+    aStream << "Tangential nb of submodules: " << submoduleComponent->GetRepeatNumber(1) 	      	      	  	  << Gateendl;
+    aStream << "Axial nb of crystals: " << crystalComponent->GetRepeatNumber(2) 	      	      	      	  	  << Gateendl;
+    aStream << "Tangential nb of crystals: " << crystalComponent->GetRepeatNumber(1) 	      	      	      	  << Gateendl;
+    aStream << "Radial nb of layers: " << NbLayers 	      	      	      	      	      	      	      	      	      	      	  << Gateendl;
   }
 }
 
@@ -232,6 +232,6 @@ void GateCylindricalPETSystem::AddNewRSECTOR( G4String aName )
   memset( nameID , '\0', 30 );
   G4String s = aName+"ID";
   s.copy( nameID , s.length() );
-G4cout << " m_maxindex at start " << m_maxindex <<G4endl;
-G4cout << nameID <<G4endl;
+G4cout << " m_maxindex at start " << m_maxindex <<Gateendl;
+G4cout << nameID <<Gateendl;
 }

@@ -36,7 +36,7 @@ GateFastAnalysis::GateFastAnalysis(const G4String& name, GateOutputMgr* outputMg
 GateFastAnalysis::~GateFastAnalysis()
 {
   delete m_messenger;
-  if (nVerboseLevel > 0) G4cout << "GateFastAnalysis deleting..." << G4endl;
+  if (nVerboseLevel > 0) G4cout << "GateFastAnalysis deleting..." << Gateendl;
 }
 
 const G4String& GateFastAnalysis::GiveNameOfFile()
@@ -48,31 +48,31 @@ const G4String& GateFastAnalysis::GiveNameOfFile()
 void GateFastAnalysis::RecordBeginOfAcquisition()
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordBeginOfAcquisition" << G4endl;
+    G4cout << "GateFastAnalysis::RecordBeginOfAcquisition" << Gateendl;
 }
 
 void GateFastAnalysis::RecordEndOfAcquisition()
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordEndOfAcquisition" << G4endl;
+    G4cout << "GateFastAnalysis::RecordEndOfAcquisition" << Gateendl;
 }
 
 void GateFastAnalysis::RecordBeginOfRun(const G4Run * )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordBeginOfRun" << G4endl;
+    G4cout << "GateFastAnalysis::RecordBeginOfRun" << Gateendl;
 }
 
 void GateFastAnalysis::RecordEndOfRun(const G4Run * )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordEndOfRun" << G4endl;
+    G4cout << "GateFastAnalysis::RecordEndOfRun" << Gateendl;
 }
 
 void GateFastAnalysis::RecordBeginOfEvent(const G4Event* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordBeginOfEvent" << G4endl;
+    G4cout << "GateFastAnalysis::RecordBeginOfEvent" << Gateendl;
 }
 
 void GateFastAnalysis::RecordEndOfEvent(const G4Event* event)
@@ -116,14 +116,14 @@ void GateFastAnalysis::RecordEndOfEvent(const G4Event* event)
 
 
  if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordEndOfEvent" << G4endl;
+    G4cout << "GateFastAnalysis::RecordEndOfEvent" << Gateendl;
 
 }
 
 void GateFastAnalysis::RecordStepWithVolume(const GateVVolume *, const G4Step* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordStep" << G4endl;
+    G4cout << "GateFastAnalysis::RecordStep" << Gateendl;
 }
 
 void GateFastAnalysis::SetVerboseLevel(G4int val)

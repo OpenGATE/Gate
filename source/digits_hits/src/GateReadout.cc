@@ -83,10 +83,10 @@ void GateReadout::SetPolicy(const G4String& aPolicy)
       G4Exception( "GateReadout::ProcessPulseList", "ProcessPulseList", FatalException,
                    "Crystal repeater numbers are wrong !\n");
     //G4cout << "[" << GetObjectName() << "] -> Found crystal array with associated repeater: ["
-    //       << m_nbCrystalsX << ";" << m_nbCrystalsY << ";" << m_nbCrystalsZ << "]" << G4endl;
+    //       << m_nbCrystalsX << ";" << m_nbCrystalsY << ";" << m_nbCrystalsZ << "]" << Gateendl;
     // Get tree depth of the system
     m_systemDepth = m_system->GetTreeDepth();
-    //G4cout << "  Depth of the system: " << m_systemDepth << G4endl;
+    //G4cout << "  Depth of the system: " << m_systemDepth << Gateendl;
     // Find the crystal depth in the system
     GateSystemComponent* this_component = m_system->GetBaseComponent();
     m_crystalDepth = 0;
@@ -97,7 +97,7 @@ void GateReadout::SetPolicy(const G4String& aPolicy)
     }
     if (this_component!=m_crystalComponent) G4Exception( "GateReadout::ProcessPulseList", "ProcessPulseList", FatalException,
                                                         "Failed to get the system depth corresponding to the crystal. Abort.\n");
-    //G4cout << "  Crystal depth: " << m_crystalDepth << G4endl;
+    //G4cout << "  Crystal depth: " << m_crystalDepth << Gateendl;
     // Now force m_depth to be right above the crystal depth
     m_depth = m_crystalDepth - 1;
   }
@@ -155,8 +155,8 @@ GatePulseList* GateReadout::ProcessPulseList(const GatePulseList* inputPulseList
     if (blockID.IsInvalid())
     {
       if (nVerboseLevel>1)
-        G4cout << "[GateReadout::ProcessOnePulse]: out-of-block hit for " << G4endl
-               <<  *inputPulse << G4endl
+        G4cout << "[GateReadout::ProcessOnePulse]: out-of-block hit for " << Gateendl
+               <<  *inputPulse << Gateendl
                << " -> pulse ignored\n\n";
       continue;
     }
@@ -261,8 +261,8 @@ GatePulseList* GateReadout::ProcessPulseList(const GatePulseList* inputPulseList
     }
     if (nVerboseLevel>1)
         G4cout << "Created new pulse for block " << outputPulse->GetOutputVolumeID().Top(m_depth) << ".\n"
-               << "Resulting pulse is: " << G4endl
-               << *outputPulse << G4endl << G4endl ;
+               << "Resulting pulse is: " << Gateendl
+               << *outputPulse << Gateendl << Gateendl ;
     outputPulseList->push_back(outputPulse);
   }
 
@@ -284,8 +284,8 @@ GatePulseList* GateReadout::ProcessPulseList(const GatePulseList* inputPulseList
     G4cout << "[" << GetObjectName() << "::ProcessPulseList]: returning output pulse-list with " << outputPulseList->size() << " entries\n";
     GatePulseIterator iterOut;
     for (iterOut = outputPulseList->begin() ; iterOut != outputPulseList->end() ; ++iterOut)
-      G4cout << **iterOut << G4endl;
-    G4cout << G4endl;
+      G4cout << **iterOut << Gateendl;
+    G4cout << Gateendl;
   }
 
   return outputPulseList;
@@ -298,10 +298,10 @@ void GateReadout::ProcessOnePulse(const GatePulse* ,GatePulseList& )
 
 void GateReadout::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Readout at depth:      " << m_depth << G4endl;
+  G4cout << GateTools::Indent(indent) << "Readout at depth:      " << m_depth << Gateendl;
   G4cout << GateTools::Indent(indent) << "  --> policy: ";
-  if (m_policy==READOUT_POLICY_WINNER) G4cout << "TakeEnergyWinner" << G4endl;
-  else if (m_policy==READOUT_POLICY_CENTROID) G4cout << "TakeEnergyCentroid" << G4endl;
-  else G4cout << "Unknown policy !" << G4endl;
+  if (m_policy==READOUT_POLICY_WINNER) G4cout << "TakeEnergyWinner" << Gateendl;
+  else if (m_policy==READOUT_POLICY_CENTROID) G4cout << "TakeEnergyCentroid" << Gateendl;
+  else G4cout << "Unknown policy !" << Gateendl;
 }
 

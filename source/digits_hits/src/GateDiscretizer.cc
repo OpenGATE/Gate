@@ -50,5 +50,5 @@ void GateDiscretizer::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList&
 
 void GateDiscretizer::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Discretizer"  << G4endl;
+  G4cout << GateTools::Indent(indent) << "Discretizer"  << Gateendl;
 }

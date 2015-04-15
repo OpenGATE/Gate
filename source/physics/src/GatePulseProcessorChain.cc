@@ -27,13 +27,13 @@ GatePulseProcessorChain::GatePulseProcessorChain( GateDigitizer* itsDigitizer,
     m_outputName(itsOutputName),
     m_inputName(GateHitConvertor::GetOutputAlias())
 {
-//  G4cout << " DEBUT Constructor GatePulseProcessorChain " << G4endl;
+//  G4cout << " DEBUT Constructor GatePulseProcessorChain " << Gateendl;
   m_messenger = new GatePulseProcessorChainMessenger(this);
 
-//  G4cout << " in GatePulseProcessorChain call GateSingleDigiMaker" << G4endl;
+//  G4cout << " in GatePulseProcessorChain call GateSingleDigiMaker" << Gateendl;
   itsDigitizer->InsertDigiMakerModule( new GateSingleDigiMaker(itsDigitizer, itsOutputName,true) );
   
-//  G4cout << " FIN Constructor GatePulseProcessorChain " << G4endl;
+//  G4cout << " FIN Constructor GatePulseProcessorChain " << Gateendl;
 }
 
 
@@ -57,13 +57,13 @@ void GatePulseProcessorChain::InsertProcessor(GateVPulseProcessor* newChildProce
 void GatePulseProcessorChain::Describe(size_t indent)
 {
   GateModuleListManager::Describe();
-  G4cout << GateTools::Indent(indent) << "Input:              '" << m_inputName << "'" << G4endl;
-  G4cout << GateTools::Indent(indent) << "Output:             '" << m_outputName << "'" << G4endl;
+  G4cout << GateTools::Indent(indent) << "Input:              '" << m_inputName << "'" << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Output:             '" << m_outputName << "'" << Gateendl;
 }
 
 void GatePulseProcessorChain::DescribeProcessors(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Nb of modules:       " << theListOfNamedObject.size() << G4endl;
+  G4cout << GateTools::Indent(indent) << "Nb of modules:       " << theListOfNamedObject.size() << Gateendl;
   for (size_t i=0; i<theListOfNamedObject.size(); i++)
       GetProcessor(i)->Describe(indent+1);
 }

@@ -28,9 +28,9 @@ GateParameterisedCollimator::GateParameterisedCollimator(const G4String& itsName
      m_DimensionX(41.0*cm),m_DimensionY(22.0*cm),
      mMaterialName("Vacuum")
 { 
-  G4cout << " Constructor GateParameterisedCollimator - begin " << itsName << G4endl;
+  G4cout << " Constructor GateParameterisedCollimator - begin " << itsName << Gateendl;
   
-  G4cout << " m_InnerRadius = " << m_InnerRadius << G4endl;
+  G4cout << " m_InnerRadius = " << m_InnerRadius << Gateendl;
   
   m_holeInserter = new GateParameterisedHole("hole","Air",m_FocalDistanceX,m_FocalDistanceY,m_SeptalThickness,
   		                                          m_InnerRadius,m_Height,m_DimensionX,m_DimensionY);
@@ -39,7 +39,7 @@ GateParameterisedCollimator::GateParameterisedCollimator(const G4String& itsName
 
   m_messenger = new GateParameterisedCollimatorMessenger(this);
   
-  G4cout << " Constructor GateParameterisedCollimator - end " << G4endl;
+  G4cout << " Constructor GateParameterisedCollimator - end " << Gateendl;
 }
 //-------------------------------------------------------------------------------------------------------------------
 

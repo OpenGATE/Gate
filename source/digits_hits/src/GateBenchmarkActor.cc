@@ -88,17 +88,17 @@ void GateBenchmarkActor::ResetData()
 
 void GateBenchmarkActor::BeginOfRunAction(const G4Run*)
 {
-  GateDebugMessage("Actor", 3, "GateBenchmarkActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateBenchmarkActor -- Begin of Run" << Gateendl);
 }
 
 void GateBenchmarkActor::BeginOfEventAction(const G4Event*)
 {
-  GateDebugMessage("Actor", 3, "GateBenchmarkActor -- Begin of Event" << G4endl);
+  GateDebugMessage("Actor", 3, "GateBenchmarkActor -- Begin of Event" << Gateendl);
 }
 
 void GateBenchmarkActor::EndOfEventAction(const G4Event*)
 {
-  GateDebugMessage("Actor", 3, "GateBenchmarkActor -- End of Event" << G4endl);
+  GateDebugMessage("Actor", 3, "GateBenchmarkActor -- End of Event" << Gateendl);
 }
 
 void GateBenchmarkActor::PreUserTrackingAction(const GateVVolume*, const G4Track* track)
@@ -107,7 +107,7 @@ void GateBenchmarkActor::PreUserTrackingAction(const GateVVolume*, const G4Track
   const G4ThreeVector position = track->GetPosition();
   //const G4double energy = track->GetKineticEnergy();
 
-  //G4cout << "begin track for " << name << " position = " << position/mm << " energy = " << energy/MeV << G4endl;
+  //G4cout << "begin track for " << name << " position = " << position/mm << " energy = " << energy/MeV << Gateendl;
 
   positionInitial = position;
   sumFreePath = 0;
@@ -147,24 +147,24 @@ void GateBenchmarkActor::UserSteppingAction(const GateVVolume*, const G4Step* st
 
   sumFreePath += free_path;
 
-  //G4cout << "step position_pre = " << position_pre/mm << " position_post = " << position_post/mm << " free_path = " << free_path/mm << G4endl;
-  //G4cout << "     energy_pre = " << energy_pre/MeV << " energy_post = " << energy_post/MeV << " delta = " << energy_delta/MeV << G4endl;
-  //G4cout << "     direction_pre = " << direction_pre << " direction_post = " << direction_post << " deviation = " << deviation/deg << G4endl;
-  //G4cout << "     process = " << process_name << G4endl;
+  //G4cout << "step position_pre = " << position_pre/mm << " position_post = " << position_post/mm << " free_path = " << free_path/mm << Gateendl;
+  //G4cout << "     energy_pre = " << energy_pre/MeV << " energy_post = " << energy_post/MeV << " delta = " << energy_delta/MeV << Gateendl;
+  //G4cout << "     direction_pre = " << direction_pre << " direction_post = " << direction_post << " deviation = " << deviation/deg << Gateendl;
+  //G4cout << "     process = " << process_name << Gateendl;
 
   histoEFreePath->Fill(energy/MeV,free_path/mm,weight);
   histoEStepLength->Fill(energy/MeV,step_length/mm,weight);
   histoEDeltaE->Fill(energy/MeV,energy_delta/MeV,weight);
   if (deviation) histoEPrimaryDeviation->Fill(energy/MeV,deviation/MeV,weight);
 
-  //G4cout << "     nsec = " << step->GetSecondary()->size() << G4endl;
+  //G4cout << "     nsec = " << step->GetSecondary()->size() << Gateendl;
   while (currentSecondary < step->GetSecondary()->size())
 	{
       const G4Track* track_secondary = (*step->GetSecondary())[currentSecondary];
       const G4ThreeVector direction_secondary = track_secondary->GetMomentumDirection();
       const G4double deviation_secondary = deviationAngle(direction_secondary,direction_pre);
 
-      //G4cout << "         currentSecondary = " << currentSecondary << " direction_pre = " << direction_pre << " direction_sec = " << direction_secondary << " deviation = " << deviation_secondary/deg << G4endl;
+      //G4cout << "         currentSecondary = " << currentSecondary << " direction_pre = " << direction_pre << " direction_sec = " << direction_secondary << " deviation = " << deviation_secondary/deg << Gateendl;
 
       if (deviation_secondary) histoESecondaryDeviation->Fill(energy/MeV,deviation_secondary/deg,weight);
 
@@ -178,7 +178,7 @@ void GateBenchmarkActor::PostUserTrackingAction(const GateVVolume*, const G4Trac
   const G4double fly_distance = (position-positionInitial).mag();
   const G4double weight = track->GetWeight();
 
-  //G4cout << "end track position = " << position/mm << " flyDistance = " << fly_distance/mm << " sumFreePath = " << sumFreePath/mm << G4endl;
+  //G4cout << "end track position = " << position/mm << " flyDistance = " << fly_distance/mm << " sumFreePath = " << sumFreePath/mm << Gateendl;
 
   histoFlyDistance->Fill(fly_distance/mm,weight);
   histoSumFreePath->Fill(sumFreePath/mm,weight);

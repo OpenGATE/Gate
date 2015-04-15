@@ -38,9 +38,9 @@
 GateScatterOrderTrackInformationActor::GateScatterOrderTrackInformationActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateScatterOrderTrackInformationActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateScatterOrderTrackInformationActor() -- begin"<<Gateendl);
   pActorMessenger = new GateScatterOrderTrackInformationActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateScatterOrderTrackInformationActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateScatterOrderTrackInformationActor() -- end"<<Gateendl);
 }
 //-----------------------------------------------------------------------------
 

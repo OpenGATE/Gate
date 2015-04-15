@@ -67,8 +67,8 @@ G4bool GateRootDefs::GetRecordSeptalFlag()
 	GateOutputMgr* theOutputMgr = GateOutputMgr::GetInstance();
 	GateAnalysis* analysis = dynamic_cast<GateAnalysis*>(theOutputMgr->GetModule("analysis"));
 	if ( ! analysis ) {
-		G4cout << G4endl << "!!! WARNING : No 'analysis' output module found. "
-				<< "Septal hits won't be recorded. !!!" << G4endl
+		G4cout << Gateendl << "!!! WARNING : No 'analysis' output module found. "
+				<< "Septal hits won't be recorded. !!!" << Gateendl
 				<< "!!! This is just a warning message. The simulation will continue. !!!";
 	} else {
 		ans = analysis->GetRecordSeptalFlag();
@@ -158,17 +158,17 @@ void GateRootHitBuffer::Fill(GateCrystalHit* aHit)
   strcpy (comptonVolumeName,aHit->GetComptonVolumeName().c_str());
   if (aHit->GetComptonVolumeName().length()>=40)
     G4cout << "GateToRoot::RecordEndOfEvent : length of volume name exceeding 40: " << 
-	      aHit->GetComptonVolumeName().length()+1 << G4endl;
+	      aHit->GetComptonVolumeName().length()+1 << Gateendl;
 
   strcpy (RayleighVolumeName,aHit->GetRayleighVolumeName().c_str());
   if (aHit->GetRayleighVolumeName().length()>=40)
     G4cout << "GateToRoot::RecordEndOfEvent : length of volume name exceeding 40: " << 
-	      aHit->GetRayleighVolumeName().length()+1 << G4endl;
+	      aHit->GetRayleighVolumeName().length()+1 << Gateendl;
 
   aHit->GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
 
 
-//G4cout << "RootDefs : runID = " << runID << G4endl;
+//G4cout << "RootDefs : runID = " << runID << Gateendl;
 
 
 }

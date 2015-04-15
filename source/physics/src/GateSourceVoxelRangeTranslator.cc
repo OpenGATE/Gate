@@ -9,6 +9,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateSourceVoxelRangeTranslator.hh"
 #include "GateSourceVoxelRangeTranslatorMessenger.hh"
+#include "GateMessageManager.hh"
 
 #include "G4SystemOfUnits.hh"
 #include "G4ios.hh"
@@ -37,7 +38,7 @@ G4double GateSourceVoxelRangeTranslator::TranslateToActivity(G4double voxelValue
   for (G4int iRange = 0; iRange< (G4int)m_voxelActivityTranslation.size(); iRange++) {
     G4double range1 = (m_voxelActivityTranslation[iRange].first).first;
     G4double range2 = (m_voxelActivityTranslation[iRange].first).second;
-    //    G4cout << "iRange range1 range2 " << iRange << " " << range1 << " " << range2 << G4endl;
+    //    G4cout << "iRange range1 range2 " << iRange << " " << range1 << " " << range2 << Gateendl;
     if ((range1 <= voxelValue) && (voxelValue <= range2)) {
       activity = (m_voxelActivityTranslation[iRange].second);
       break;
@@ -52,7 +53,7 @@ void GateSourceVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
   m_voxelActivityTranslation.clear();
 
   std::ifstream inFile;
-  //  G4cout << "GateSourceVoxelRangeTranslator::ReadFile : fileName: " << fileName << G4endl;
+  //  G4cout << "GateSourceVoxelRangeTranslator::ReadFile : fileName: " << fileName << Gateendl;
   inFile.open(fileName.c_str(),std::ios::in);
 
   G4double activity;
@@ -61,13 +62,13 @@ void GateSourceVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
   G4int nTotCol;
 
   inFile >> nTotCol;
-  //  G4cout << "nTotCol: " << nTotCol << G4endl;
+  //  G4cout << "nTotCol: " << nTotCol << Gateendl;
 
   for (G4int iCol=0; iCol<nTotCol; iCol++) {
 
     inFile >> xmin >> xmax;
     inFile >> activity;
-    //    G4cout << " min max " << min << " " << max << "  activity: " << activity << G4endl;
+    //    G4cout << " min max " << min << " " << max << "  activity: " << activity << Gateendl;
 
     std::pair<G4double,G4double> minmax(xmin, xmax);
     GateVoxelActivityTranslationRange range(minmax, activity * becquerel);
@@ -85,7 +86,7 @@ void GateSourceVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
 
 void GateSourceVoxelRangeTranslator::Describe(G4int) 
 {
-  G4cout << " Range Translator" << G4endl;
+  G4cout << " Range Translator" << Gateendl;
   for (G4int iRange = 0; iRange< (G4int)m_voxelActivityTranslation.size(); iRange++) {
     G4double    xmin      = (m_voxelActivityTranslation[iRange].first).first;
     G4double    xmax      = (m_voxelActivityTranslation[iRange].first).second;
@@ -100,7 +101,7 @@ void GateSourceVoxelRangeTranslator::Describe(G4int)
 	   << " , "   << xmax 
 	   << " ]  ---> activity (Bq) " 
 	   << activity/becquerel 
-	   << G4endl;
+	   << Gateendl;
   }
 }
 
@@ -111,7 +112,7 @@ void GateSourceVoxelRangeTranslator::UpdateActivity(G4double activmin , G4double
   for (G4int iRange = 0; iRange< (G4int)m_voxelActivityTranslation.size(); iRange++) {
     G4double range1 = (m_voxelActivityTranslation[iRange].first).first;
     G4double range2 = (m_voxelActivityTranslation[iRange].first).second;
-       G4cout << "activity range " << activmin<<"  "<< activmax <<"    iRange range1 range2 " << iRange << " " << range1 << " " << range2 << G4endl;
+       G4cout << "activity range " << activmin<<"  "<< activmax <<"    iRange range1 range2 " << iRange << " " << range1 << " " << range2 << Gateendl;
     if ( (  fabs(range1 - activmin) < 1e-8   ) &&(  fabs(range2 - activmax) < 1e-8   )   ) {
       m_voxelActivityTranslation[iRange].second = Updated_Activity;
       break;

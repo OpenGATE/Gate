@@ -27,7 +27,7 @@ See GATE/LICENSE.txt for further details
 GateDigitizerMessenger::GateDigitizerMessenger(GateDigitizer* itsDigitizer)
 : GateClockDependentMessenger( itsDigitizer)
 {
-//  G4cout << " DEBUT Constructor GateDigitizerMessenger " << G4endl;
+//  G4cout << " DEBUT Constructor GateDigitizerMessenger " << Gateendl;
 
   const G4String& elementTypeName = itsDigitizer->GetElementTypeName();
 
@@ -43,7 +43,7 @@ GateDigitizerMessenger::GateDigitizerMessenger(GateDigitizer* itsDigitizer)
   DefineNameCmd->SetParameterName("Name",false);
 
   cmdName = GetDirectoryName()+"insert";
-//  G4cout << " cmdName GateDigitizerMessenger : " << cmdName << G4endl;
+//  G4cout << " cmdName GateDigitizerMessenger : " << cmdName << Gateendl;
   guidance = "Inserts a new " + elementTypeName + ".";
   pInsertCmd = new G4UIcmdWithAString(cmdName,this);
   pInsertCmd->SetGuidance(guidance);
@@ -61,7 +61,7 @@ GateDigitizerMessenger::GateDigitizerMessenger(GateDigitizer* itsDigitizer)
 
   pInsertCmd->SetCandidates(DumpMap());
 
-//  G4cout << " FIN Constructor GateDigitizerMessenger " << G4endl;
+//  G4cout << " FIN Constructor GateDigitizerMessenger " << Gateendl;
 }
 
 

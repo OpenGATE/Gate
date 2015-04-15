@@ -66,7 +66,7 @@ G4LogicalVolume* GateTrap::ConstructOwnSolidAndLogicalVolume(G4Material* mater, 
 {
   if (!flagUpdateOnly)
   {
-    G4cout << " in the if condition " << " x1 = " << GetTrapDx1() << "  x2 = " << GetTrapDx2() << "   x3 = " << GetTrapDx3() << "  x4 = "  << GetTrapDx4() <<  G4endl;
+    G4cout << " in the if condition " << " x1 = " << GetTrapDx1() << "  x2 = " << GetTrapDx2() << "   x3 = " << GetTrapDx3() << "  x4 = "  << GetTrapDx4() <<  Gateendl;
 
     m_Trap_solid = new G4Trap(GetSolidName(), GetTrapDz(), GetTrapTheta(), GetTrapPhi(), GetTrapDy1(), GetTrapDx1(),
       		   GetTrapDx2(), GetTrapAlp1(), GetTrapDy2(), GetTrapDx3(), GetTrapDx4(), GetTrapAlp2());
