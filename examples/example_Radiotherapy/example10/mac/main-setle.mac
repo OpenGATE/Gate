@@ -67,21 +67,19 @@
 /gate/actor/addActor               SimulationStatisticActor stat
 /gate/actor/stat/saveEveryNSeconds 600
 
-/gate/actor/addActor                   DoseActor  dose
-/gate/actor/dose/attachTo    	       phantom
-/gate/actor/dose/stepHitType           random
-/gate/actor/dose/setVoxelSize          2 2 2 mm
-/gate/actor/dose/enableDose            true
-/gate/actor/dose/enableUncertaintyDose true
-/gate/actor/dose/save                  output/dose.mhd
-
-/gate/actor/addActor                  TLEDoseActor  tle
-/gate/actor/tle/attachTo    	      phantom
-/gate/actor/tle/stepHitType           random
-/gate/actor/tle/setVoxelSize          2 2 2 mm
-/gate/actor/tle/enableDose            true
-/gate/actor/tle/enableUncertaintyDose true
-/gate/actor/tle/save                  output/dose-tle.mhd
+/gate/actor/addActor                             SETLEDoseActor setle
+/gate/actor/setle/attachTo                       phantom
+/gate/actor/setle/setVoxelSize                   2 2 2 mm
+/gate/actor/setle/enableHybridino                true
+/gate/actor/setle/setPrimaryMultiplicity         200
+/gate/actor/setle/setSecondaryMultiplicity       400
+/gate/actor/setle/enableDose                     true
+/gate/actor/setle/enableUncertaintyDose          true
+/gate/actor/setle/enablePrimaryDose              true
+/gate/actor/setle/enablePrimaryUncertaintyDose   false
+/gate/actor/setle/enableSecondaryDose            true
+/gate/actor/setle/enableSecondaryUncertaintyDose false
+/gate/actor/setle/save                           output/dose-setle.mhd
 
 # Set the names of the outputs
 /gate/actor/stat/save output/stat.txt
@@ -105,5 +103,5 @@
 /gate/random/setEngineName MersenneTwister
 /gate/random/setEngineSeed auto
 
-/gate/application/setTotalNumberOfPrimaries 50000
+/gate/application/setTotalNumberOfPrimaries 500
 /gate/application/start

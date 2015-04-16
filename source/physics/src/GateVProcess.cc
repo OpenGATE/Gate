@@ -1107,12 +1107,12 @@ void GateVProcess::AddModel(GateListOfHadronicModels *model)
       //G4BinaryCascade* g4model = new G4BinaryCascade ;
       if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
       dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
-    }else if(model->GetModelName() == "GateBinaryCascade")
-    {
-      theListOfG4HadronicModels.push_back(new GateBinaryCascade);
-      if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
-      dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
-    }
+    }// else if(model->GetModelName() == "GateBinaryCascade")
+    // {
+    //   theListOfG4HadronicModels.push_back(new GateBinaryCascade);
+    //   if(model->IsEnergyRangeDefined()) SetEnergyRange(theListOfG4HadronicModels.back(),model);
+    //   dynamic_cast<G4HadronicProcess*>(pProcess)->RegisterMe(theListOfG4HadronicModels.back());
+    // }
   else if(model->GetModelName() == "G4BertiniCascade")
     {
       theListOfG4HadronicModels.push_back(new G4CascadeInterface);

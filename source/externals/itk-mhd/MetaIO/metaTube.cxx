@@ -106,7 +106,7 @@ MetaTube::
     TubePnt* pnt = *it;
     it++;
     delete pnt;
-  }  
+  }
   m_PointList.clear();
   M_Destroy();
 }
@@ -138,14 +138,14 @@ CopyInfo(const MetaObject * _object)
   MetaObject::CopyInfo(_object);
 }
 
-    
+
 
 void MetaTube::
 PointDim(const char* pointDim)
 {
   strcpy(m_PointDim,pointDim);
 }
-    
+
 const char* MetaTube::
 PointDim(void) const
 {
@@ -169,8 +169,8 @@ Root(bool root)
 {
   m_Root = root;
 }
-    
-bool MetaTube:: 
+
+bool MetaTube::
 Root(void) const
 {
   return m_Root;
@@ -202,7 +202,7 @@ Clear(void)
     TubePnt* pnt = *it;
     it++;
     delete pnt;
-  }  
+  }
   m_PointList.clear();
 
   m_ParentPoint= -1;
@@ -211,7 +211,7 @@ Clear(void)
   strcpy(m_PointDim, "x y z r v1x v1y v1z v2x v2y v2z tx ty tz red green blue alpha id");
   m_ElementType = MET_FLOAT;
 }
-        
+
 /** Destroy tube information */
 void MetaTube::
 M_Destroy(void)
@@ -321,9 +321,9 @@ M_Read(void)
     {
     METAIO_STREAM::cout << "MetaTube: M_Read: Parsing Header" << METAIO_STREAM::endl;
     }
- 
+
   MET_FieldRecordType * mF;
- 
+
   mF = MET_GetFieldRecord("ParentPoint", &m_Fields);
   if(mF->defined)
     {
@@ -334,7 +334,7 @@ M_Read(void)
   mF = MET_GetFieldRecord("Root", &m_Fields);
   if(mF->defined)
     {
-    if(*((char *)(mF->value)) == 'T' 
+    if(*((char *)(mF->value)) == 'T'
       || *((char*)(mF->value)) == 't'
       || *((char*)(mF->value)) == '1')
       {
@@ -383,15 +383,15 @@ M_Read(void)
 
   int pntDim;
   char** pntVal = NULL;
-  MET_StringToWordArray(m_PointDim, &pntDim, &pntVal); 
- 
+  MET_StringToWordArray(m_PointDim, &pntDim, &pntVal);
+
   if(META_DEBUG)
     {
-    METAIO_STREAM::cout << "MetaTube: Parsing point dim" << METAIO_STREAM::endl; 
+    METAIO_STREAM::cout << "MetaTube: Parsing point dim" << METAIO_STREAM::endl;
     }
 
   int j;
-  for(j = 0; j < pntDim; j++) 
+  for(j = 0; j < pntDim; j++)
     {
     if(!strcmp(pntVal[j], "x") || !strcmp(pntVal[j], "X"))
       {
@@ -460,7 +460,7 @@ M_Read(void)
       {
       posGreen = j;
       }
-    
+
     if(!strcmp(pntVal[j], "blue"))
       {
       posBlue = j;
@@ -482,7 +482,7 @@ M_Read(void)
   delete [] pntVal;
 
   float v[30];
-  
+
   if(m_Event)
     {
     m_Event->StartReading(m_NPoints);
@@ -500,116 +500,113 @@ M_Read(void)
     int gc = m_ReadStream->gcount();
     if(gc != readSize)
       {
-      METAIO_STREAM::cout << "MetaLine: m_Read: data not read completely" 
+      METAIO_STREAM::cout << "MetaLine: m_Read: data not read completely"
                 << METAIO_STREAM::endl;
-      METAIO_STREAM::cout << "   ideal = " << readSize 
+      METAIO_STREAM::cout << "   ideal = " << readSize
                 << " : actual = " << gc << METAIO_STREAM::endl;
-      delete[] posDim;
-      delete[] _data;
+      delete [] posDim;
+      delete [] _data;
       return false;
       }
 
     i=0;
     int d;
     unsigned int k;
-    for(j=0; j<(int)m_NPoints; j++) 
+    for(j=0; j<(int)m_NPoints; j++)
       {
       TubePnt* pnt = new TubePnt(m_NDims);
-      
+
       for(d=0; d<m_NDims; d++)
         {
-        char* num = new char[sizeof(float)];
+        float td;
+        char * const num = (char *)(&td);
         for(k=0;k<sizeof(float);k++)
           {
           num[k] = _data[i+k];
           }
-        float td = (float)((float*)num)[0];
         MET_SwapByteIfSystemMSB(&td,MET_FLOAT);
         i+=sizeof(float);
         pnt->m_X[d] = td;
-        delete [] num; 
         }
 
-      char* num = new char[sizeof(float)];
-      for(k=0;k<sizeof(float);k++)
         {
-        num[k] = _data[i+k];
-        }
-      float td = (float)((float*)num)[0];
-      MET_SwapByteIfSystemMSB(&td,MET_FLOAT);
-      i+=sizeof(float);
-      pnt->m_R = td;
-      delete [] num;
-
-      for(d = 0; d < m_NDims; d++)
-        {
-        num = new char[sizeof(float)];
+        float td;
+        char * const num = (char *)(&td);
         for(k=0;k<sizeof(float);k++)
           {
           num[k] = _data[i+k];
           }
-        td = (float)((float*)num)[0];
+        MET_SwapByteIfSystemMSB(&td,MET_FLOAT);
+        i+=sizeof(float);
+        pnt->m_R = td;
+        }
+
+      for(d = 0; d < m_NDims; d++)
+        {
+        float td;
+        char * const num = (char *)(&td);
+        for(k=0;k<sizeof(float);k++)
+          {
+          num[k] = _data[i+k];
+          }
         MET_SwapByteIfSystemMSB(&td,MET_FLOAT);
         i+=sizeof(float);
         pnt->m_V1[d] = (float)td;
-        delete [] num;
         }
-    
+
       if(m_NDims==3)
         {
         for(d = 0; d < m_NDims; d++)
           {
-          num = new char[sizeof(float)];
+          float td;
+          char * const num = (char *)(&td);
           for(k=0;k<sizeof(float);k++)
             {
             num[k] = _data[i+k];
             }
-          td = (float)((float*)num)[0];
           MET_SwapByteIfSystemMSB(&td,MET_FLOAT);
           i+=sizeof(float);
           pnt->m_V2[d] = (float)td;
-          delete [] num;
           }
         }
-      
+
       for(d = 0; d < m_NDims; d++)
         {
-        num = new char[sizeof(float)];
+        float td;
+        char * const num = (char *)(&td);
         for(k=0;k<sizeof(float);k++)
           {
           num[k] = _data[i+k];
           }
-        td = (float)((float*)num)[0];
         MET_SwapByteIfSystemMSB(&td,MET_FLOAT);
         i+=sizeof(float);
         pnt->m_T[d] = (float)td;
-        delete [] num;
         }
-           
+
       for(d=0; d<4; d++)
         {
-        num = new char[sizeof(float)];
+        float td;
+        char * const num = (char *)(&td);
         for(k=0;k<sizeof(float);k++)
           {
           num[k] = _data[i+k];
           }
-        td = (float)((float*)num)[0];
         MET_SwapByteIfSystemMSB(&td,MET_FLOAT);
         i+=sizeof(float);
         pnt->m_Color[d] = (float)td;
-        delete [] num;
         }
 
-      num = new char[sizeof(int)];
-      for(k=0;k<sizeof(int);k++)
         {
-        num[k] = _data[i+k];
+        int id;
+        char * const num = (char *)(&id);
+        for(k=0;k<sizeof(int);k++)
+          {
+          num[k] = _data[i+k];
+          }
+        MET_SwapByteIfSystemMSB(&id,MET_INT);
+        i+=sizeof(int);
+        pnt->m_ID = id;
         }
-      int id = (int)((int*)num)[0];
-      MET_SwapByteIfSystemMSB(&id,MET_INT);
-      i+=sizeof(int); 
-      pnt->m_ID = id;
-      delete [] num;
 
       m_PointList.push_back(pnt);
       }
@@ -617,7 +614,7 @@ M_Read(void)
     }
   else
     {
-    for(j=0; j<(int)m_NPoints; j++) 
+    for(j=0; j<(int)m_NPoints; j++)
       {
       if(m_Event)
         {
@@ -641,38 +638,38 @@ M_Read(void)
 
       if(posV1x>=0 && posV1x<pntDim)
         {
-        pnt->m_V1[0] = v[posV1x]; 
-        if(posV1y >= 0 && posV1y<pntDim) 
+        pnt->m_V1[0] = v[posV1x];
+        if(posV1y >= 0 && posV1y<pntDim)
           {
-          pnt->m_V1[1] = v[posV1y]; 
+          pnt->m_V1[1] = v[posV1y];
           }
-        if(posV1z >= 0 && m_NDims>2 && posV1z<pntDim) 
+        if(posV1z >= 0 && m_NDims>2 && posV1z<pntDim)
           {
-          pnt->m_V1[2] = v[posV1z]; 
-          }
-        }
-      if(posV2x >= 0 && posV2x<pntDim) 
-        {
-        pnt->m_V2[0] = v[posV2x]; 
-        if(posV2y >= 0 && posV2y<pntDim) 
-          {
-          pnt->m_V2[1] = v[posV2y]; 
-          }
-        if(posV2z >= 0 && m_NDims>2 && posV2z<pntDim) 
-          {
-          pnt->m_V2[2] = v[posV2z]; 
+          pnt->m_V1[2] = v[posV1z];
           }
         }
-      if(posTx >= 0 && posTx<pntDim) 
+      if(posV2x >= 0 && posV2x<pntDim)
         {
-        pnt->m_T[0] = v[posTx]; 
-        if(posTy >= 0 && posTy<pntDim) 
+        pnt->m_V2[0] = v[posV2x];
+        if(posV2y >= 0 && posV2y<pntDim)
           {
-          pnt->m_T[1] = v[posTy]; 
+          pnt->m_V2[1] = v[posV2y];
           }
-        if(posTz >= 0 && m_NDims>2 && posTz<pntDim) 
+        if(posV2z >= 0 && m_NDims>2 && posV2z<pntDim)
           {
-          pnt->m_T[2] = v[posTz]; 
+          pnt->m_V2[2] = v[posV2z];
+          }
+        }
+      if(posTx >= 0 && posTx<pntDim)
+        {
+        pnt->m_T[0] = v[posTx];
+        if(posTy >= 0 && posTy<pntDim)
+          {
+          pnt->m_T[1] = v[posTy];
+          }
+        if(posTz >= 0 && m_NDims>2 && posTz<pntDim)
+          {
+          pnt->m_T[2] = v[posTz];
           }
         }
 
@@ -685,39 +682,39 @@ M_Read(void)
         {
         pnt->m_Color[1] = v[posGreen];
         }
-    
+
       if(posBlue >= 0 && posBlue < pntDim)
         {
         pnt->m_Color[2] = v[posBlue];
         }
-    
+
       if(posAlpha >= 0 && posAlpha < pntDim)
         {
         pnt->m_Color[3] = v[posAlpha];
         }
- 
+
       if(posID >= 0 && posID < pntDim)
         {
         pnt->m_ID = (int)v[posID];
         }
- 
+
       m_PointList.push_back(pnt);
       }
 
-      
+
     char c = ' ';
     while( (c!='\n') && (!m_ReadStream->eof()))
       {
       c = m_ReadStream->get();// to avoid unrecognize charactere
       }
     }
-  
+
   if(m_Event)
     {
     m_Event->StopReading();
     }
 
-  delete []posDim;
+  delete [] posDim;
   return true;
 }
 
@@ -771,14 +768,14 @@ M_Write(void)
       float r = (*it)->m_R;
       MET_SwapByteIfSystemMSB(&r,MET_FLOAT);
       MET_DoubleToValue((double)r,m_ElementType,data,i++);
-      
+
       for(d = 0; d < m_NDims; d++)
         {
         float v = (*it)->m_V1[d];
         MET_SwapByteIfSystemMSB(&v,MET_FLOAT);
         MET_DoubleToValue((double)v,m_ElementType,data,i++);
         }
-    
+
       if(m_NDims==3)
         {
         for(d = 0; d < m_NDims; d++)
@@ -788,14 +785,14 @@ M_Write(void)
           MET_DoubleToValue((double)v2,m_ElementType,data,i++);
           }
         }
-      
+
       for(d = 0; d < m_NDims; d++)
         {
         float t = (*it)->m_T[d];
         MET_SwapByteIfSystemMSB(&t,MET_FLOAT);
         MET_DoubleToValue((double)t,m_ElementType,data,i++);
         }
-     
+
       for(d=0; d<4; d++)
         {
         float c = (*it)->m_Color[d];
@@ -817,7 +814,7 @@ M_Write(void)
     {
     PointListType::const_iterator it = m_PointList.begin();
     PointListType::const_iterator itEnd = m_PointList.end();
-  
+
     int d;
     while(it != itEnd)
       {
@@ -825,14 +822,14 @@ M_Write(void)
         {
         *m_WriteStream << (*it)->m_X[d] << " ";
         }
-      
+
       *m_WriteStream << (*it)->m_R << " ";
 
       for(d = 0; d < m_NDims; d++)
         {
         *m_WriteStream << (*it)->m_V1[d] << " ";
         }
-   
+
       if(m_NDims>=3)
         {
         for(d = 0; d < m_NDims; d++)
@@ -840,7 +837,7 @@ M_Write(void)
           *m_WriteStream << (*it)->m_V2[d] << " ";
           }
         }
-      
+
       for(d = 0; d < m_NDims; d++)
         {
         *m_WriteStream << (*it)->m_T[d] << " ";

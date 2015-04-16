@@ -93,10 +93,7 @@
 /gate/source/mybeam/gps/ang/minphi    0. deg
 #/gate/source/mybeam/gps/ang/maxphi    5.3684 deg
 /gate/source/mybeam/gps/ang/maxphi    360 deg
-/gate/source/mybeam/gps/ang/rot1      1 0 0 
-/gate/source/mybeam/gps/ang/rot2      0 0 1 
+/gate/source/mybeam/gps/ang/rot1      1 0 0
+/gate/source/mybeam/gps/ang/rot2      0 0 1
 /gate/source/mybeam/gps/pos/rot1      1 0 0
 /gate/source/mybeam/gps/pos/rot2      0 0 1
-
-
-
