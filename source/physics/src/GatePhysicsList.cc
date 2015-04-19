@@ -29,7 +29,7 @@
 #include "G4DNAGenericIonsManager.hh"
 #include "G4ParticleTable.hh"
 #include "G4PhysListFactory.hh"
-#include "G4VUserPhysicsList.hh"
+#include "G4VModularPhysicsList.hh"
 #include "G4ExceptionHandler.hh"
 #include "G4StateManager.hh"
 
@@ -57,7 +57,7 @@
 
 
 //-----------------------------------------------------------------------------------------
-GatePhysicsList::GatePhysicsList(): G4VUserPhysicsList()
+GatePhysicsList::GatePhysicsList(): G4VModularPhysicsList()
 {
   // default cut value  (1.0mm)
   defaultCutValue = 1.0*mm;

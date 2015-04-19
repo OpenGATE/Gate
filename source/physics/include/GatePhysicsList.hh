@@ -13,7 +13,7 @@
 #ifndef GATEPHYSICSLIST_HH
 #define GATEPHYSICSLIST_HH
 
-#include "G4VUserPhysicsList.hh"
+#include "G4VModularPhysicsList.hh"
 #include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
 #include "G4EmCalculator.hh"
@@ -28,7 +28,7 @@
 
 //class GateVProcess;
 class GatePhysicsListMessenger;
-class GatePhysicsList: public G4VUserPhysicsList
+class GatePhysicsList: public G4VModularPhysicsList
 {
 private:
   GatePhysicsList();
@@ -117,9 +117,9 @@ protected:
   G4UserLimits * userlimits;
 
   // Physic list management
-  G4VUserPhysicsList * mUserPhysicList;
+  G4VModularPhysicsList * mUserPhysicList;
   //Mixed EM and DNA Physics List
-  G4VUserPhysicsList* emPhysicsListMixed;
+  G4VModularPhysicsList* emPhysicsListMixed;
 
   G4String mUserPhysicListName;
   G4String mListOfPhysicsLists;
