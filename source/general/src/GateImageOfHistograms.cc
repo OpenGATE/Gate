@@ -368,6 +368,8 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & )
   matrix[15] = 1.0;
   m_MetaImage.TransformMatrix(matrix);
 
+  std::cout << mDataTypeName << std::endl;
+
   // Before writing convert from double to float
   double total = 0.0;
   if (mDataTypeName == "double") {
@@ -379,7 +381,7 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & )
   }
 
   //output int to int
-  else if (mDataTypeName == "int") {
+  if (mDataTypeName == "int") {
     // Change the order of the pixels : store on disk as XYZH.
     std::vector<unsigned int> t;
     ConvertPixelOrderToXYZH(dataInt, t);

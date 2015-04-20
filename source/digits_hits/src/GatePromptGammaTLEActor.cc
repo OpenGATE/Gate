@@ -109,7 +109,7 @@ void GatePromptGammaTLEActor::SaveData()
     GateError("The GatePromptGammaTLEActor has already been saved and normalized. However, it must write its results only once. Remove all 'SaveEvery' for this actor. Abort.");
   }
 
-  //GateVImageActor::SaveData();  //What does this do?
+  GateVImageActor::SaveData();  //What does this do?
 
   // Number of primaries for normalisation, so that we have the number per proton, which is easier to use.
   mImageGamma->Scale(1./(GateActorManager::GetInstance()->GetCurrentEventId() + 1));// +1 because start at zero
