@@ -117,8 +117,8 @@ void GatePromptGammaTLEActor::SaveData()
 
   if (mIsVarianceImageEnabled) {
     BuildOutput();
-    tle->Write(G4String(removeExtension(mSaveFilename))+"-TLE."+G4String(getExtension(mSaveFilename)));
-    tlevariance->Write(G4String(removeExtension(mSaveFilename))+"-TLEuncertainty."+G4String(getExtension(mSaveFilename)));
+    tle->Write(G4String(removeExtension(mSaveFilename))+"-tle."+G4String(getExtension(mSaveFilename)));
+    tlevariance->Write(G4String(removeExtension(mSaveFilename))+"-tlevar."+G4String(getExtension(mSaveFilename)));
   }
 
   //optionally TODO output tracklengths

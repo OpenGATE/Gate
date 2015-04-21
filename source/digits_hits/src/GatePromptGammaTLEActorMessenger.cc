@@ -41,7 +41,7 @@ void GatePromptGammaTLEActorMessenger::BuildCommands(G4String base)
   G4String guidance = G4String("Set input root filename with proton/gamma energy 2D spectrum (obtained from PromptGammaStatisticsActor).");
   pSetInputDataFileCmd->SetGuidance(guidance);
 
-  bb = base+"/enableUncertainty";
+  bb = base+"/enableVariance";
   pEnableVarianceCmd = new G4UIcmdWithABool(bb, this);
   guidance = G4String("Enable variance output (per voxel per E_gamma).");
   pEnableVarianceCmd->SetGuidance(guidance);
