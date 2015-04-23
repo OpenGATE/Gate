@@ -446,7 +446,7 @@ void GateImageT<PixelType>::WriteAscii(std::ofstream & os, const G4String & comm
   if (dim <= 1) {
     // write values in columns
     for(int i=0; i<nbOfValues; i++)
-      os << std::setprecision(10) << data[i] << std::endl;
+      os << std::setprecision(10) << data[i] << Gateendl;
   }
   if (dim == 2) {
     // write values in line/columns
@@ -461,7 +461,7 @@ void GateImageT<PixelType>::WriteAscii(std::ofstream & os, const G4String & comm
 	os << data[i] << " ";
 	i++;
       }
-      os << std::endl;
+      os << Gateendl;
     }
   }
   if (dim == 3) {
@@ -472,9 +472,9 @@ void GateImageT<PixelType>::WriteAscii(std::ofstream & os, const G4String & comm
 	  os << data[i] << " ";
 	  i++;
 	}
-	os << std::endl;
+	os << Gateendl;
       }
-      os << std::endl;
+      os << Gateendl;
     }
   }
   if (!os) {

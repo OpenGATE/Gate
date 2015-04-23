@@ -56,7 +56,7 @@ GateToBinary::~GateToBinary()
 
 	if( nVerboseLevel > 0 )
 	{
-		std::cout << "GateToBinary deleting..." << std::endl;
+		std::cout << "GateToBinary deleting..." << Gateendl;
 	}
 }
 
@@ -64,12 +64,12 @@ void GateToBinary::RecordBeginOfAcquisition()
 {
 	if( nVerboseLevel > 2 )
 	{
-		std::cout << "GateToBinary::RecordBeginOfAcquisition" << std::endl;
+		std::cout << "GateToBinary::RecordBeginOfAcquisition" << Gateendl;
 	}
 
 	if( nVerboseLevel > 0 )
 	{
-		std::cout << "Opening the binary output files..." << std::endl;
+		std::cout << "Opening the binary output files..." << Gateendl;
 	}
 
 	if( m_outFileRunsFlag )
@@ -91,7 +91,7 @@ void GateToBinary::RecordBeginOfAcquisition()
 
 	if( nVerboseLevel > 0 )
 	{
-		std::cout << " ... Binary output files opened" << std::endl;
+		std::cout << " ... Binary output files opened" << Gateendl;
 	}
 }
 
@@ -123,7 +123,7 @@ void GateToBinary::RecordBeginOfRun( G4Run const* )
 {
 	if( nVerboseLevel > 2 )
 	{
-		std::cout << "GateToBinary::RecordBeginOfRun" << std::endl;
+		std::cout << "GateToBinary::RecordBeginOfRun" << Gateendl;
 	}
 }
 
@@ -131,7 +131,7 @@ void GateToBinary::RecordEndOfRun( G4Run const* )
 {
 	if( nVerboseLevel > 2 )
 	{
-		std::cout << "GateToBinary::RecordEndOfRun" << std::endl;
+		std::cout << "GateToBinary::RecordEndOfRun" << Gateendl;
 	}
 
 	if( m_outFileRunsFlag )
@@ -155,7 +155,7 @@ void GateToBinary::RecordBeginOfEvent( G4Event const* )
 {
 	if( nVerboseLevel > 2 )
 	{
-		std::cout << "GateToBinary::RecordBeginOfEvent" << std::endl;
+		std::cout << "GateToBinary::RecordBeginOfEvent" << Gateendl;
 	}
 }
 
@@ -186,7 +186,7 @@ void GateToBinary::RecordEndOfEvent( G4Event const* event )
 					std::cout << "GateToBinary::RecordEndOfEvent : "
 						<< "CrystalHitsCollection: processName : <"
 						<< processName << ">    Particles PDG code : " << PDGEncoding
-						<< std::endl;
+						<< Gateendl;
 				}
 				if( (*CHC)[iHit]->GoodForAnalysis() )
 				{
@@ -278,7 +278,7 @@ void GateToBinary::RecordEndOfEvent( G4Event const* event )
 			{
 				std::cout <<
 					"GateToBinary::RecordHits : GateCrystalHitCollection not found"
-					<< std::endl;
+					<< Gateendl;
 			}
 		}
 	}
@@ -311,7 +311,7 @@ void GateToBinary::RecordVoxels( GateVGeometryVoxelStore* voxelStore )
 {
 	if( nVerboseLevel > 2 )
 	{
-		std::cout << "[GateToBinary::RecordVoxels]" << std::endl;
+		std::cout << "[GateToBinary::RecordVoxels]" << Gateendl;
 	}
 
 	if( m_recordFlag > 0 )
@@ -437,7 +437,7 @@ void GateToBinary::VOutputChannel::CloseFile()
 G4bool GateToBinary::VOutputChannel::ExceedsSize()
 {
 	G4int size = m_outputFile.tellp();
-	//std::cout << "size: " << size << " B" << std::endl;
+	//std::cout << "size: " << size << " B" << Gateendl;
   return size > m_outputFileSizeLimit;
 }
 
@@ -663,7 +663,7 @@ void GateToBinary::SingleOutputChannel::RecordDigitizer()
 		{
 			std::cout << "[GateToBinary::SingleOutputChannel::RecordDigitizer]: "
 				<< "digi collection '" << m_collectionName << "' not found"
-				<< std::endl;
+				<< Gateendl;
 		}
 	}
 	else
@@ -672,7 +672,7 @@ void GateToBinary::SingleOutputChannel::RecordDigitizer()
 		if( nVerboseLevel > 0 )
 		{
 			std::cout << "[GateToBinary::SingleOutputChannel::RecordDigitizer]:"
-				 "Totals digits: " << SDC->entries() << std::endl;
+				 "Totals digits: " << SDC->entries() << Gateendl;
 		}
 		if( m_outputFlag )
 		{

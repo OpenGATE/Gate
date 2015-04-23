@@ -126,10 +126,10 @@ void GateEmCalculatorActor::SaveData()
             }
     }
 
-      os << "# Output calculted for the following parameters:" << std::endl;
-      os << "# Energy\t" << mEnergy << " MeV" << std::endl;
-      os << "# Particle\t" << mPartName << "\n" << std::endl;
-      os << "# And for the following materials" << std::endl;
+      os << "# Output calculted for the following parameters:" << Gateendl;
+      os << "# Energy\t" << mEnergy << " MeV" << Gateendl;
+      os << "# Particle\t" << mPartName << "\n" << Gateendl;
+      os << "# And for the following materials" << Gateendl;
 // labels
       os << "Material\t";
       os << "Density\t\t";
@@ -139,7 +139,7 @@ void GateEmCalculatorActor::SaveData()
       os << "EM-DEDX\t\t";
       os << "Nucl-DEDX\t";
       os << "Tot-DEDX\t";
-      os << "Mu_mass" << std::endl;
+      os << "Mu_mass" << Gateendl;
 // units
       os << "\t\t";
       os << "(g/cm³)\t\t";
@@ -149,7 +149,7 @@ void GateEmCalculatorActor::SaveData()
       os << "(MeV.cm²/g)\t";
       os << "(MeV.cm²/g)\t";
       os << "(MeV.cm²/g)\t";
-      os << "(cm²/g)" << std::endl;
+      os << "(cm²/g)" << Gateendl;
 
   for(size_t k=0;k<G4Material::GetNumberOfMaterials();k++)
     {
@@ -182,7 +182,7 @@ void GateEmCalculatorActor::SaveData()
       os << EmDEDX*10./(e_SI*density) << "\t\t";
       os << NuclearDEDX*10./(e_SI*density) << "\t";
       os << TotalDEDX*10./(e_SI*density) << "\t\t";
-      os << MuMassCoeficient << std::endl;
+      os << MuMassCoeficient << Gateendl;
     }
 
   if (!os) {

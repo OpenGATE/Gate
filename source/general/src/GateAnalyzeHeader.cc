@@ -187,12 +187,12 @@ if(	  fread(&m_data.hist.smin,sizeof(int),1,fph) == 0 ){G4cerr << "Problem readi
 	  fclose(fph),fph=NULL;
 
 
-	  //std::cout << "m_data.hk.data_type=" <<m_data.hk.data_type << std::endl; 
+	  //std::cout << "m_data.hk.data_type=" <<m_data.hk.data_type << Gateendl; 
 
 	  m_rightEndian = TRUE;
 	  /// if opposite endian : reverse all data
 		// std::cout << "m_data.hk.sizeof_hdr =" << m_data.hk.sizeof_hdr
-		// 			  << " file_size=" << file_size << std::endl;
+		// 			  << " file_size=" << file_size << Gateendl;
 
 		if( m_data.hk.sizeof_hdr != file_size) {
 		  m_rightEndian = FALSE;

@@ -363,7 +363,7 @@ void GateApplicationMgr::StartDAQ()
                 << initialLastSlice/s << " sec to "
                 << listOfTimeSlice.back()/s << " sec, to reach "
                 << mTotalNbOfParticles << " primaries. TimeStop is now " << GetTimeStop()/s
-                << std::endl);
+                << Gateendl);
   }
   */
 
@@ -399,7 +399,7 @@ void GateApplicationMgr::StartDAQ()
                     << initialLastSlice/s << " sec to "
                     << listOfTimeSlice.back()/s << " sec, to reach "
                     << mTotalNbOfParticles << " primaries. TimeStop is now " << GetTimeStop()/s
-                    << std::endl);
+                    << Gateendl);
       }
     }
   }*/
@@ -727,5 +727,5 @@ void GateApplicationMgr::PrintStatus()
     std::clog << "Run ID : " << runID << " / " << runTotal
     << " ; Event ID : " << eventID << " / " << eventTotal
     << " ; " << GetCurrentTime()/CLHEP::s << " / " << GetTimeStop()/CLHEP::s << " s [" << floor(GetCurrentTime()*10000.0/GetTimeStop())/100 << "%]"
-    << std::endl;
+    << Gateendl;
 }

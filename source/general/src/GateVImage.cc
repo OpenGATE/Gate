@@ -275,15 +275,15 @@ int GateVImage::GetIndexFromPostPositionAndDirection(const G4ThreeVector& positi
   // Check boundary : I do not know what to do in this case
   // with 'middle' type : should not append ???
   // if (fabs(ix-x) < kCarTolerance) {
-  // 	std::cerr << "Surface x=" << x << " for p=" << position << std::endl;
+  // 	std::cerr << "Surface x=" << x << " for p=" << position << Gateendl;
   //   }
 
   //   if (fabs(iy-y) < kCarTolerance) {
-  // 	std::cerr << "Surface y=" << x << " for p=" << position << std::endl;
+  // 	std::cerr << "Surface y=" << x << " for p=" << position << Gateendl;
   //   }
 
   //   if (fabs(iz-z) < kCarTolerance) {
-  // 	std::cerr << "Surface z=" << x << " for p=" << position << std::endl;
+  // 	std::cerr << "Surface z=" << x << " for p=" << position << Gateendl;
   //   }
 
   // Check if not out of the volume ... (should not append with 'middle' ?)

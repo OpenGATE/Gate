@@ -27,8 +27,8 @@
     }                                                                   \
   catch( itk::ExceptionObject & err )                                   \
     {                                                                   \
-    std::cerr << "ExceptionObject caught with " #execFunc << std::endl; \
-    std::cerr << err << std::endl;                                      \
+    std::cerr << "ExceptionObject caught with " #execFunc << Gateendl; \
+    std::cerr << err << Gateendl;                                      \
     exit(EXIT_FAILURE);                                                 \
     }
 

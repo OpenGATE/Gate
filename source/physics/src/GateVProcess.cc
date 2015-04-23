@@ -84,11 +84,11 @@ GateVProcess::~GateVProcess()
       i = theListOfG4Processes.erase(i);
     }
 
-  /*std::cout<<"Process= "<<mG4ProcessName<<std::endl;
+  /*std::cout<<"Process= "<<mG4ProcessName<<Gateendl;
     if(pFinalProcess==pProcess && pProcess) {
-    std::cout<<"----> "<<pFinalProcess<<"  "<<pProcess <<std::endl;
+    std::cout<<"----> "<<pFinalProcess<<"  "<<pProcess <<Gateendl;
     delete pFinalProcess; pFinalProcess=0;pProcess=0;
-    std::cout<<"<----"<<std::endl;}
+    std::cout<<"<----"<<Gateendl;}
     else {
     if(pFinalProcess) {delete pFinalProcess; pFinalProcess=0;}
     if(pProcess)  {delete pProcess;pProcess=0;}
@@ -210,16 +210,16 @@ void GateVProcess::PrintEnabledParticles(G4String name)
         {
           if(name=="All")
             {
-              if(k==0) std::cout<<"\n   ===  Process: "<<mG4ProcessName<<"  ==="<<std::endl;
-              std::cout<<"Particle: "<<theListOfEnabledParticles[k]->GetParticleName()<<std::endl;
+              if(k==0) std::cout<<"\n   ===  Process: "<<mG4ProcessName<<"  ==="<<Gateendl;
+              std::cout<<"Particle: "<<theListOfEnabledParticles[k]->GetParticleName()<<Gateendl;
             }
-          else std::cout<<"Process: "<<mG4ProcessName<<std::endl;
+          else std::cout<<"Process: "<<mG4ProcessName<<Gateendl;
 
           if(theListOfModels.size()!=0)
             {
-              std::cout<<"    * Model(s):"<<std::endl;
+              std::cout<<"    * Model(s):"<<Gateendl;
               if(theListOfParticlesWithSelectedModels.size()==0)
-                std::cout<<"       - <!> *** Warning *** <!> No model selected!"<<std::endl;
+                std::cout<<"       - <!> *** Warning *** <!> No model selected!"<<Gateendl;
               else
                 {
                   nSelectedModel = 0;
@@ -231,20 +231,20 @@ void GateVProcess::PrintEnabledParticles(G4String name)
                           nSelectedModel++;
                         }
                     }
-                  if(nSelectedModel==0)  std::cout<<"       - <!> *** Warning *** <!> No model selected!"<<std::endl;
+                  if(nSelectedModel==0)  std::cout<<"       - <!> *** Warning *** <!> No model selected!"<<Gateendl;
                 }
             }
           if(theListOfDataSets.size()!=0)
             {
-              std::cout<<"    * DataSet(s):"<<std::endl;
+              std::cout<<"    * DataSet(s):"<<Gateendl;
               if(theListOfParticlesWithSelectedDS.size()==0)
-                std::cout<<"       - Default"<<std::endl;
+                std::cout<<"       - Default"<<Gateendl;
 
               else
                 for(unsigned int i=0; i<theListOfParticlesWithSelectedDS.size(); i++)
                   {
                     if(theListOfEnabledParticles[k]->GetParticleName()==theListOfParticlesWithSelectedDS[i]->GetParticleName())
-         	      std::cout<<"        - "<<theListOfSelectedDataSets[i] <<std::endl;
+         	      std::cout<<"        - "<<theListOfSelectedDataSets[i] <<Gateendl;
                   }
             }
         }

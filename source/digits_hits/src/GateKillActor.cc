@@ -70,7 +70,7 @@ void GateKillActor::SaveData()
   if (mSaveFilename == "FilnameNotGivenForThisActor") return;
   std::ofstream os;
   OpenFileOutput(mSaveFilename, os);
-  os << "# NumberOfKillTracks = " << mNumberOfTrack << std::endl;
+  os << "# NumberOfKillTracks = " << mNumberOfTrack << Gateendl;
   if (!os) {
     GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << Gateendl);
   }

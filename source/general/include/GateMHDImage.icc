@@ -13,11 +13,11 @@ void GateMHDImage::ReadData(std::string filename, std::vector<PixelType> & data)
 {
   MetaImage m_MetaImage;
   if(!m_MetaImage.Read(filename.c_str(), true)) {
-    GateError("MHD File cannot be read: " << filename << std::endl);
+    GateError("MHD File cannot be read: " << filename << Gateendl);
   }
 
   if (m_MetaImage.NDims() != 3) {
-    GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort." << std::endl);
+    GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort." << Gateendl);
   }
 
   // Convert to Float
@@ -65,7 +65,7 @@ void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * ima
     done=true;
   }
   if (!done) {
-    GateError("Error could not create a MHD image of pixeltype = " << typeid(PixelType).name() << std::endl);
+    GateError("Error could not create a MHD image of pixeltype = " << typeid(PixelType).name() << Gateendl);
   }
   std::string headName = filename;
   std::string dataName;

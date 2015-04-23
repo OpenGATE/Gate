@@ -82,7 +82,7 @@ G4double GateGPUEmisTomo::GetNextTime(G4double timeNow)
     t += GateSourceVoxellized::GetNextTime(a);
   }
 
-  GateMessage("Beam", 5, "Compute " << mNumberOfNextTime << " NextTime from " << G4BestUnit(timeNow, "Time") << " -> found = " << G4BestUnit(t, "Time") << "=" << G4BestUnit(timeNow+t, "Time") << std::endl);  
+  GateMessage("Beam", 5, "Compute " << mNumberOfNextTime << " NextTime from " << G4BestUnit(timeNow, "Time") << " -> found = " << G4BestUnit(t, "Time") << "=" << G4BestUnit(timeNow+t, "Time") << Gateendl);  
 
   return t;
 }
@@ -287,10 +287,10 @@ void GateGPUEmisTomo::GeneratePrimaryEventFromGPUOutput(const GateGPUIO_Particle
   double particle_time = particle.t*ns; // assume time is in ns
 
   
-  std::cout << " gpu particle time (ns)             = " << particle.t << std::endl;
-  std::cout << " gpu particle time check best unit  = " << G4BestUnit(particle_time, "Time") << std::endl;
-  std::cout << " Gettime =" << G4BestUnit(GetTime() , "Time") << std::endl;
-  std::cout << " a+b =" << G4BestUnit(GetTime()+particle_time, "Time") << std::endl;
+  std::cout << " gpu particle time (ns)             = " << particle.t << Gateendl;
+  std::cout << " gpu particle time check best unit  = " << G4BestUnit(particle_time, "Time") << Gateendl;
+  std::cout << " Gettime =" << G4BestUnit(GetTime() , "Time") << Gateendl;
+  std::cout << " a+b =" << G4BestUnit(GetTime()+particle_time, "Time") << Gateendl;
   
 
   // Set the time of this particle to the current time plus the TOF.

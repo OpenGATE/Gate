@@ -66,7 +66,7 @@ void GateDoseSpectrumActor::SaveData()
   OpenFileOutput(mSaveFilename, DoseResponseFile);
   DoseResponseFile << "Incoming energy (keV)" << " "
                    << "Average energy deposit (keV)" << " "
-                   << "Energy uncertainty (keV)"  << std::endl;
+                   << "Energy uncertainty (keV)"  << Gateendl;
   std::map< G4double, G4double>::iterator itermEnergy;
   for( itermEnergy = mEnergy.begin(); itermEnergy != mEnergy.end(); itermEnergy++)
   {
@@ -78,7 +78,7 @@ void GateDoseSpectrumActor::SaveData()
     G4double error = sqrt( (1.0 / ( numPart - 1)) * ( avgEnergySq - pow( avgEnergyOut, 2)));
     DoseResponseFile << energyIn/keV << " "
                      << avgEnergyOut/keV << " "
-                     << error/keV  << std::endl;
+                     << error/keV  << Gateendl;
   }
 
   if (!DoseResponseFile)

@@ -162,7 +162,7 @@ void GateListOfHadronicModels::Print(G4int level, G4String symbol, G4String symb
   G4String space2 = space + "  " + symbol2 + " ";
   space += symbol + " ";
 
-  std::cout<<space<<modelName <<std::endl;
+  std::cout<<space<<modelName <<Gateendl;
 
 
   for(unsigned int j=0; j<theListOfOptions.size(); j++)
@@ -176,7 +176,7 @@ void GateListOfHadronicModels::Print(G4int level, G4String symbol, G4String symb
 
       if(theListOfEmax[j]>0) std::cout<<"Emax = "<<std::setw(3)<<G4BestUnit(theListOfEmax[j],"Energy")<<std::flush;
 
-      std::cout<<std::endl;
+      std::cout<<Gateendl;
     }
   }
 

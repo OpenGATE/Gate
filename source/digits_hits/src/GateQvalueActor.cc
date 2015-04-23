@@ -66,9 +66,9 @@ void GateQvalueActor::Construct() {
 void GateQvalueActor::SaveData() {
   GateVActor::SaveData();
   mQvalueImage.SaveData(mCurrentEvent+1);
-  G4cout<<std::endl;
+  G4cout<<Gateendl;
   for (std::map<G4String,G4double>::iterator it=listOfEmiss.begin(); it!=listOfEmiss.end(); it++)
-    G4cout<<(*it).first<<"  "<<(*it).second<<std::endl;
+    G4cout<<(*it).first<<"  "<<(*it).second<<Gateendl;
 }
 //-----------------------------------------------------------------------------
 

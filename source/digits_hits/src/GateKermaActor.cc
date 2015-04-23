@@ -258,7 +258,7 @@ void GateKermaActor::UserSteppingActionInVoxel(const int index, const G4Step* st
       if ((*fSecondary)[idx]->GetDefinition()->GetParticleName() == "gamma") {
 	edep -= (*fSecondary)[idx]->GetKineticEnergy();
 	GateDebugMessageInc("Actor", 4, "enedepo fluo = " << (*fSecondary)[idx]->GetKineticEnergy() << Gateendl);
-	std::cout << "YES" << std::endl;
+	std::cout << "YES" << Gateendl;
       }
     }
   }

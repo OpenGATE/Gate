@@ -1246,7 +1246,7 @@ G4ThreeVector GateImageRegionalizedVolume::SurfaceNormal(const G4ThreeVector& p,
 G4VPhysicalVolume* GateImageRegionalizedVolume::GetEnteredPhysicalVolume( const G4ThreeVector& globalPoint,
 									  const G4ThreeVector* globalDirection )
 {
-  GateDebugMessage("Navigation", 4,"GetEnteredPhysicalVolume("<<globalPoint<<","<<globalDirection<<")"<<std::endl);
+  GateDebugMessage("Navigation", 4,"GetEnteredPhysicalVolume("<<globalPoint<<","<<globalDirection<<")"<<Gateendl);
 
   int index;
   if (globalDirection)
@@ -1260,10 +1260,10 @@ G4VPhysicalVolume* GateImageRegionalizedVolume::GetEnteredPhysicalVolume( const 
     }
   LabelType l = (LabelType)GetImage()->GetValue(index);
 
-  GateDebugMessage("Navigation",4,"label = "<<l<<std::endl);
+  GateDebugMessage("Navigation",4,"label = "<<l<<Gateendl);
   if (l==0) return 0;
 
-  GateDebugMessage("Navigation",4,"phys = "<<mLabelToSubVolume[l]->GetPhysicalVolume()->GetName()<<std::endl);
+  GateDebugMessage("Navigation",4,"phys = "<<mLabelToSubVolume[l]->GetPhysicalVolume()->GetName()<<Gateendl);
 
   return ( mLabelToSubVolume[l]->GetPhysicalVolume() );
 }

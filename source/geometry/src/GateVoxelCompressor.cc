@@ -20,7 +20,7 @@ GateVoxelCompressor::GateVoxelCompressor(GateGeometryVoxelArrayStore* s):
   m_voxelSet(0),
   m_exclusionList(  new std::set<unsigned short int> ),
   m_messenger( new GateVoxelCompressorMessenger(this) ){
-  // std::cout << "GateVoxelCompressor::GateVoxelCompressor - Entered." << std::endl;
+  // std::cout << "GateVoxelCompressor::GateVoxelCompressor - Entered." << Gateendl;
 }
 //-----------------------------------------------------------------------------
 
@@ -50,7 +50,7 @@ void GateVoxelCompressor::MakeExclusionList(G4String val){
   AddMaterial(  val.substr(lastPos,curPos-lastPos) );
 	 
   for(std::set<unsigned short int>::iterator it=m_exclusionList->begin(); it!=m_exclusionList->end(); it++) {
-    G4cout << (*it) <<  std::endl;
+    G4cout << (*it) <<  Gateendl;
   }
 
 }
@@ -95,7 +95,7 @@ void GateVoxelCompressor::Compress(){
         // Allocate a voxel set for the first pass
         voxelSet& voxelSetPass1(*new voxelSet);
 	if (!&voxelSetPass1)
-	  std::cerr << "GateVoxelCompressor::Compress - Insufficient memory for voxel set"<<std::endl<<std::flush;
+	  std::cerr << "GateVoxelCompressor::Compress - Insufficient memory for voxel set"<<Gateendl<<std::flush;
 	int voxelEstimate ( m_array->GetVoxelNx() * m_array->GetVoxelNy() * m_array->GetVoxelNz() );
 	voxelSetPass1.reserve(voxelEstimate);
 	
@@ -166,7 +166,7 @@ voxelSet& GateVoxelCompressor::runLength2nd(voxelSet& vs, const std::valarray<un
   newVoxels.reserve( vs.size() );
   
   if (!&newVoxels) {
-    std::cerr <<  "GateVoxelCompressor::runLength2nd - Insufficient memory for new voxel set"<<std::endl<<std::flush;
+    std::cerr <<  "GateVoxelCompressor::runLength2nd - Insufficient memory for new voxel set"<<Gateendl<<std::flush;
   }
   
   //  These are the indices in GateCompressedVoxel used for comparison (3:dx1, 4:dx2, 5:dx3, 6:value)

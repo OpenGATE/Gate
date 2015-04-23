@@ -2,7 +2,7 @@
 
 #include <fstream>
 #include <iostream>
-using std::endl;
+using Gateendl;
 
 GatePhysicsExtractorActor::GatePhysicsExtractorActor(G4String name, G4int depth)
 	: GateVActor(name,depth)

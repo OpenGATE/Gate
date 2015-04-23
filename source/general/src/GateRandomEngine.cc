@@ -156,14 +156,14 @@ void GateRandomEngine::Initialize() {
 #endif
 
 /*
-  std::cout << "***********************************" << std::endl;
-  std::cout << "SEED " << seed << " " << (sizeof(seed)*8) << "bits REST " << rest << " " << (sizeof(rest)*8) << "bits" << std::endl;
-  std::cout << "stdrand=" << std::rand() << " stdrandom=" << random() << std::endl;
-  std::cout << "clhep=" << theRandomEngine->name() << " seed=" << theRandomEngine->getSeed() << std::endl;
+  std::cout << "***********************************" << Gateendl;
+  std::cout << "SEED " << seed << " " << (sizeof(seed)*8) << "bits REST " << rest << " " << (sizeof(rest)*8) << "bits" << Gateendl;
+  std::cout << "stdrand=" << std::rand() << " stdrandom=" << random() << Gateendl;
+  std::cout << "clhep=" << theRandomEngine->name() << " seed=" << theRandomEngine->getSeed() << Gateendl;
 #ifdef G4ANALYSIS_USE_ROOT
-  std::cout << "root=" << gRandom->GetName() << " seed=" << gRandom->GetSeed() << std::endl;
+  std::cout << "root=" << gRandom->GetName() << " seed=" << gRandom->GetSeed() << Gateendl;
 #endif
-  std::cout << "***********************************" << std::endl;
+  std::cout << "***********************************" << Gateendl;
 */
 
   // True initialization

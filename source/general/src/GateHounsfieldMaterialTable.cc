@@ -99,10 +99,10 @@ void GateHounsfieldMaterialTable::WriteMaterialtoHounsfieldLink(G4String filenam
 void GateHounsfieldMaterialTable::WriteMaterial(G4Material * m, std::ofstream & os) {
   os << m->GetName() << ": d=" << G4BestUnit(m->GetDensity(),"Volumic Mass")
      << "; n=" << m->GetNumberOfElements() 
-     << "; " << std::endl;
+     << "; " << Gateendl;
   for(unsigned int j=0; j<m->GetNumberOfElements(); j++) {
     os << "+el: name=" << m->GetElement(j)->GetName()
-       << "; f=" << m->GetFractionVector()[j] << std::endl;
+       << "; f=" << m->GetFractionVector()[j] << Gateendl;
   }
   //os.close();
 }

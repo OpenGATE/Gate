@@ -293,7 +293,7 @@ G4int GateMessageManager::ReceiveG4cerr (const G4String& s)
   i = s.find("***** Can not open a macro file <", 0);
   isMacroError = isMacroError || (i != std::string::npos);
   if (isMacroError) { 
-    std::cerr << "[Gate] Sorry, error in a macro command : abort." << std::endl;
+    std::cerr << "[Gate] Sorry, error in a macro command : abort." << Gateendl;
     exit(-1);
   }      
   // Ciao
@@ -314,7 +314,7 @@ G4int GateMessageManager::ReceiveG4cerr (G4String s)
   i = s.find("***** Can not open a macro file <", 0);
   isMacroError = isMacroError || (i != std::string::npos);
   if (isMacroError) { 
-    std::cerr << "[Gate] Sorry, error in a macro command : abort." << std::endl;
+    std::cerr << "[Gate] Sorry, error in a macro command : abort." << Gateendl;
     exit(-1);
   }      
   // Ciao

@@ -95,32 +95,32 @@ void GateTimeActor::EndOfRunAction(const G4Run*r)
 void GateTimeActor::UpdateCurrentTextOutput()
 {
   std::ostringstream ss;
-  ss << mCurrentRunTimer << std::endl;
+  ss << mCurrentRunTimer << Gateendl;
   ss << "Mean Event time = " << mTotalEventUserTime/mNumberOfEvents
-            << " " << mNumberOfEvents << " " << mTotalEventUserTime << std::endl;
+            << " " << mNumberOfEvents << " " << mTotalEventUserTime << Gateendl;
   ss << "Mean Track time = " << mTotalTrackUserTime/mNumberOfTracks
-            << " " << mNumberOfTracks << " " << mTotalTrackUserTime << std::endl;
+            << " " << mNumberOfTracks << " " << mTotalTrackUserTime << Gateendl;
   ss << "Mean Step time = " << mTotalStepUserTime/mNumberOfSteps
-            << " " << mNumberOfSteps << " " << mTotalStepUserTime << std::endl;
-  ss << "PPS = " << mNumberOfEvents/mTotalEventUserTime << std::endl;
-  ss << "SPS = " << mNumberOfSteps/mTotalEventUserTime << std::endl;
+            << " " << mNumberOfSteps << " " << mTotalStepUserTime << Gateendl;
+  ss << "PPS = " << mNumberOfEvents/mTotalEventUserTime << Gateendl;
+  ss << "SPS = " << mNumberOfSteps/mTotalEventUserTime << Gateendl;
 
-  ss << std::endl << "Time per particle " << std::endl;
+  ss << Gateendl << "Time per particle " << Gateendl;
   MapType::iterator iter;
   MapType::iterator iterT = mTrackPerParticle.begin();
   for(iter = mTimePerParticle.begin(); iter != mTimePerParticle.end(); ++iter) {
-    ss << iter->first << " " << iter->second << " " << iterT->second << std::endl;
+    ss << iter->first << " " << iter->second << " " << iterT->second << Gateendl;
     ++iterT;
   }
 
-  ss << std::endl << "Limiting process" << std::endl;
+  ss << Gateendl << "Limiting process" << Gateendl;
   for(iter = mNumberOfLimitingProcess.begin(); iter != mNumberOfLimitingProcess.end(); ++iter) {
-    ss << iter->first << " " << iter->second << " " << std::endl;
+    ss << iter->first << " " << iter->second << " " << Gateendl;
   }
 
-  ss << std::endl << "Along process" << std::endl;
+  ss << Gateendl << "Along process" << Gateendl;
   for(iter = mNumberOfAlongByProcess.begin(); iter != mNumberOfAlongByProcess.end(); ++iter) {
-    ss << iter->first << " " << iter->second << " " << std::endl;
+    ss << iter->first << " " << iter->second << " " << Gateendl;
   }
 
   mCurrentTextOutput = ss.str();
@@ -147,7 +147,7 @@ void GateTimeActor::EndOfEventAction(const G4Event*e)
   GateVActor::EndOfEventAction(e);
   mCurrentEventTimer.Stop();
   // DD("Stop current Event timer");
-  // std::cout << mCurrentEventTimer << std::endl;
+  // std::cout << mCurrentEventTimer << Gateendl;
   mTotalEventUserTime += mCurrentEventTimer.GetUserElapsed();
   // DD(mTotalEventUserTime);
   mNumberOfEvents++;
@@ -175,7 +175,7 @@ void GateTimeActor::PostUserTrackingAction(const GateVVolume * v, const G4Track 
   mCurrentTrackTimer.Stop();
 
   // DD("Stop current Track timer");
-  // std::cout << mCurrentTrackTimer << std::endl;
+  // std::cout << mCurrentTrackTimer << Gateendl;
 
   // Total time
   double t = mCurrentTrackTimer.GetUserElapsed();

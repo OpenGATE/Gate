@@ -431,7 +431,7 @@ G4bool GateMDBFile::LookForText(const G4String& text)
     dbStream.clear();  
     dbStream.open(fileName);
     if (!dbStream) {
-      std::cerr << "ERROR Could not reopen " << fileName << std::endl;
+      std::cerr << "ERROR Could not reopen " << fileName << Gateendl;
       exit(0);
     }
   }

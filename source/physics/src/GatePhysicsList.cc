@@ -418,23 +418,23 @@ void GatePhysicsList::ConstructParticle()
 void GatePhysicsList::Print(G4String type, G4String particlename)
 {
 
-  if(type=="Initialized") std::cout<<"\n\nList of initialized processes:\n"<<std::endl;
-  else if(type=="Enabled") std::cout<<"\n\nList of Enabled processes:\n"<<std::endl;
-  else if(type=="Available") std::cout<<"\n\nList of Available processes:\n"<<std::endl;
+  if(type=="Initialized") std::cout<<"\n\nList of initialized processes:\n"<<Gateendl;
+  else if(type=="Enabled") std::cout<<"\n\nList of Enabled processes:\n"<<Gateendl;
+  else if(type=="Available") std::cout<<"\n\nList of Available processes:\n"<<Gateendl;
 
   if(type=="Enabled")
     {
-      if(particlename != "All") std::cout<<"   ***  "<<particlename<<"  ***"<<std::endl;
+      if(particlename != "All") std::cout<<"   ***  "<<particlename<<"  ***"<<Gateendl;
       for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
 	(*GetTheListOfProcesss())[i]->PrintEnabledParticles(particlename);
 
-      std::cout<<"\n"<<std::endl;
+      std::cout<<"\n"<<Gateendl;
     }
 
   if(type=="Initialized")
     {
       Print(particlename);
-      std::cout<<"\n"<<std::endl;
+      std::cout<<"\n"<<Gateendl;
     }
 
   if(type=="Available")
@@ -449,32 +449,32 @@ void GatePhysicsList::Print(G4String type, G4String particlename)
 	  DataSets = (*GetTheListOfProcesss())[i]->GetTheListOfDataSets();
 	  Models = (*GetTheListOfProcesss())[i]->GetTheListOfModels();
 	  if((*GetTheListOfProcesss())[i]->GetProcessInfo()!="")
-	    std::cout<<"  * "<<(*GetTheListOfProcesss())[i]->GetG4ProcessName()<<" ("<<(*GetTheListOfProcesss())[i]->GetProcessInfo()<<")"<<std::endl;
-	  else std::cout<<"  * "<<(*GetTheListOfProcesss())[i]->GetG4ProcessName()<<std::endl;
+	    std::cout<<"  * "<<(*GetTheListOfProcesss())[i]->GetG4ProcessName()<<" ("<<(*GetTheListOfProcesss())[i]->GetProcessInfo()<<")"<<Gateendl;
+	  else std::cout<<"  * "<<(*GetTheListOfProcesss())[i]->GetG4ProcessName()<<Gateendl;
 
-	  if(DefaultParticles.size() > 1) std::cout<<"     - Default particles: "<<std::endl;
-	  else if(DefaultParticles.size() == 1) std::cout<<"     - Default particle: "<<std::endl;
+	  if(DefaultParticles.size() > 1) std::cout<<"     - Default particles: "<<Gateendl;
+	  else if(DefaultParticles.size() == 1) std::cout<<"     - Default particle: "<<Gateendl;
 	  for(unsigned int i1=0; i1<DefaultParticles.size(); i1++)
 	    {
-	      std::cout<<"        + "<<DefaultParticles[i1]<<std::endl;
+	      std::cout<<"        + "<<DefaultParticles[i1]<<Gateendl;
 	    }
 
-	  if(Models.size() > 1) std::cout<<"     - Models: "<<std::endl;
-	  else if(Models.size() == 1) std::cout<<"     - Model: "<<std::endl;
+	  if(Models.size() > 1) std::cout<<"     - Models: "<<Gateendl;
+	  else if(Models.size() == 1) std::cout<<"     - Model: "<<Gateendl;
 	  for(unsigned int i1=0; i1<Models.size(); i1++)
 	    {
-	      std::cout<<"        + "<<Models[i1]<<std::endl;
+	      std::cout<<"        + "<<Models[i1]<<Gateendl;
 	    }
 
-	  if(DataSets.size() > 1) std::cout<<"     - DataSets: "<<std::endl;
-	  if(DataSets.size() == 1) std::cout<<"     - DataSet: "<<std::endl;
+	  if(DataSets.size() > 1) std::cout<<"     - DataSets: "<<Gateendl;
+	  if(DataSets.size() == 1) std::cout<<"     - DataSet: "<<Gateendl;
 	  for(unsigned int i1=0; i1<DataSets.size(); i1++)
 	    {
-	      std::cout<<"        + "<<DataSets[i1]<<std::endl;
+	      std::cout<<"        + "<<DataSets[i1]<<Gateendl;
 	    }
-	  std::cout<<std::endl;
+	  std::cout<<Gateendl;
 	}
-      std::cout<<"\n"<<std::endl;
+      std::cout<<"\n"<<Gateendl;
     }
 
 }
@@ -504,12 +504,12 @@ void GatePhysicsList::Print(G4String name)
 	if(manager->GetProcessListLength()==0) continue;
 	if(manager->GetProcessListLength()==1 && (*processvector)[0]->GetProcessName()== "Transportation") continue;
 	// Transportation process is ignored for display;
-	std::cout<<"  * "<<particle->GetParticleName()<<std::endl;
+	std::cout<<"  * "<<particle->GetParticleName()<<Gateendl;
 	iDisp++;
 	for(int j=0;j<manager->GetProcessListLength();j++)
 	  {
 	    if( (*processvector)[j]->GetProcessName() !=  "Transportation" )
-	      std::cout<<"    - "<<(*processvector)[j]->GetProcessName()<<std::endl;
+	      std::cout<<"    - "<<(*processvector)[j]->GetProcessName()<<Gateendl;
 	  }
       }
     }
@@ -524,10 +524,10 @@ void GatePhysicsList::Print(G4String name)
       manager  = particle->GetProcessManager();
       processvector = manager->GetProcessList();
       if(manager->GetProcessListLength()==0) return;
-      std::cout<<"Particle: "<<particle->GetParticleName()<<std::endl;
+      std::cout<<"Particle: "<<particle->GetParticleName()<<Gateendl;
       for(int j=0;j<manager->GetProcessListLength();j++)
 	if( (*processvector)[j]->GetProcessName() !=  "Transportation" )
-	  std::cout<<"   - "<<(*processvector)[j]->GetProcessName()<<std::endl;
+	  std::cout<<"   - "<<(*processvector)[j]->GetProcessName()<<Gateendl;
     }
 
 }
@@ -695,7 +695,7 @@ void GatePhysicsList::Write(G4String file)
   for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
     (*GetTheListOfProcesss())[i]->PrintEnabledParticlesToFile(file);
   os.open(file.data(), std::ios_base::app);
-  os << std::endl;
+  os << Gateendl;
   os.close();
 }
 //-----------------------------------------------------------------------------------------
@@ -736,7 +736,7 @@ void GatePhysicsList::SetCuts()
 {
   /* if (verboseLevel >0){
      std::cout << "GatePhysicsList::SetCuts: default cut length : "
-     << G4BestUnit(defaultCutValue,"Length") << std::endl;
+     << G4BestUnit(defaultCutValue,"Length") << Gateendl;
      }  */
 
   // These values are used as the default production thresholds
