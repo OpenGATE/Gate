@@ -259,13 +259,13 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   const double edep = step->GetTotalEnergyDeposit()*weight;//*step->GetTrack()->GetWeight();
 
   // if no energy is deposited or energy is deposited outside image => do nothing
-  if (step->GetTotalEnergyDeposit() == 0) {
+  if (edep == 0) {
     GateDebugMessage("Actor", 5, "edep == 0 : do nothing" << Gateendl);
     GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end" << Gateendl);
     return;
   }
-  if (index <0) {
-    GateDebugMessage("Actor", 5, "index<0 : do nothing" << Gateendl);
+  if (index < 0) {
+    GateDebugMessage("Actor", 5, "index < 0 : do nothing" << Gateendl);
     GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end" << Gateendl);
     return;
   }
@@ -282,9 +282,9 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   }
 
   double dose=0.;
+  double density = step->GetPreStepPoint()->GetMaterial()->GetDensity();
 
   if (mIsDoseImageEnabled) {
-    double density = step->GetPreStepPoint()->GetMaterial()->GetDensity();
 
     // ------------------------------------
     // Convert deposited energy into Gray
@@ -312,7 +312,6 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
     double cut = DBL_MAX;
     cut=1;
-    double density = step->GetPreStepPoint()->GetMaterial()->GetDensity();
     G4String material = step->GetPreStepPoint()->GetMaterial()->GetName();
     double Energy = step->GetPreStepPoint()->GetKineticEnergy();
     G4String PartName = step->GetTrack()->GetDefinition()->GetParticleName();
@@ -324,7 +323,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
     // Dose to water: it could be possible to make this process more
     // generic by choosing any material in place of water
-
+    double Volume = mDoseToWaterImage.GetVoxelVolume();
 
     // Other particles should be taken into account (Helium etc), but bug ? FIXME
     if (PartName== "proton" || PartName== "e-" || PartName== "e+" || PartName== "deuteron"){
@@ -333,13 +332,13 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
       DEDX = emcalc->ComputeTotalDEDX(Energy, PartName, material, cut);
       DEDX_Water = emcalc->ComputeTotalDEDX(Energy, PartName, "G4_WATER", cut);
 
-      doseToWater=edep/density*1e12/mDoseToWaterImage.GetVoxelVolume()*(DEDX_Water/1.)/(DEDX/(density*e_SI));
+      doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
 
     }
     else {
       DEDX = emcalc->ComputeTotalDEDX(100, "proton", material, cut);
       DEDX_Water = emcalc->ComputeTotalDEDX(100, "proton", "G4_WATER", cut);
-      doseToWater=edep/density*1e12/mDoseToWaterImage.GetVoxelVolume()*(DEDX_Water/1.)/(DEDX/(density*e_SI));
+      doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
     }
 
     GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = "
