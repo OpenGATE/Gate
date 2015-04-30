@@ -101,7 +101,7 @@ void GateRegularParameterization::BuildRegularParameterization()
   // Now we build the different G4Material that we put in a vector
   std::vector<G4Material*> theMaterials;
   for (size_t nbMat=0; nbMat<mat.size(); nbMat++)
-    theMaterials.push_back( GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(mat[nbMat]) );
+    theMaterials.push_back( theMaterialDatabase.GetMaterial(mat[nbMat]) );
   SetMaterials( theMaterials );
 
   // And then we search for each voxel his Material index (in the vector bellow)

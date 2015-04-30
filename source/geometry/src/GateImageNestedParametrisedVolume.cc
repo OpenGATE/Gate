@@ -119,7 +119,7 @@ G4LogicalVolume* GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalV
   // G4LogicalVolume*
   logYRep =
     new G4LogicalVolume(voxelYSolid,
-			GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial("Air"),
+			theMaterialDatabase.GetMaterial("Air"),
 			voxelYLogName);
   G4String voxelYPVname = GetObjectName() + "_voxel_phys_Y";
 
@@ -146,7 +146,7 @@ G4LogicalVolume* GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalV
   // G4LogicalVolume*
   logXRep =
     new G4LogicalVolume(voxelXSolid,
-			GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial("Air"),
+			theMaterialDatabase.GetMaterial("Air"),
 			voxelXLogName);
   G4String voxelXPVname = GetObjectName() + "_voxel_phys_X";
 
@@ -177,7 +177,7 @@ G4LogicalVolume* GateImageNestedParametrisedVolume::ConstructOwnSolidAndLogicalV
   // G4LogicalVolume*
   logZRep = 
     new G4LogicalVolume(voxelZSolid,
-                        GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial("Air"),
+                        theMaterialDatabase.GetMaterial("Air"),
 			voxelZLogName);
   
   G4VPVParameterisation * voxelParam = 

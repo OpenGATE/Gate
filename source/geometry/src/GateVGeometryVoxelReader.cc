@@ -22,7 +22,7 @@ GateVGeometryVoxelReader::GateVGeometryVoxelReader(GateVVolume* inserter)
   , m_voxelTranslator(0)
   , m_fileName(G4String("NULL"))
 {
-  mMaterialDatabase = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase;
+  mMaterialDatabase = theMaterialDatabase;
 }
 
 GateVGeometryVoxelReader::~GateVGeometryVoxelReader()

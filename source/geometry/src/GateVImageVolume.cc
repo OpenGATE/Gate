@@ -40,7 +40,7 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
   pImage=0;
   mHalfSize = G4ThreeVector(0,0,0);
   mIsoCenterIsSetByUser = false;
-  pOwnMaterial = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial("Air");
+  pOwnMaterial = theMaterialDatabase.GetMaterial("Air");
   mBuildDistanceTransfo = false;
   mLoadImageMaterialsFromHounsfieldTable = false;
   mLoadImageMaterialsFromLabelTable = false;
@@ -401,7 +401,7 @@ void GateVImageVolume::DumpHLabelImage() {
     while (pi != pImage->end()) {
       if (1) { // HU mean or d mean or label
 	// G4Material * mat =
-	// 	  GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(lab2mat[*pi]);
+	// 	  theMaterialDatabase.GetMaterial(lab2mat[*pi]);
 	// 	GateDebugMessage("Volume", 2, "lab " << *pi << " = " << mat->GetName() << Gateendl);
 	// 	po = mat->GetDensity;
 
@@ -527,7 +527,7 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
   mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
 
 
-  m_voxelAttributesTranslation[GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(material) ] =
+  m_voxelAttributesTranslation[theMaterialDatabase.GetMaterial(material) ] =
       new G4VisAttributes(visible, G4Colour(red, green, blue, alpha));
   }
 
@@ -615,7 +615,7 @@ void GateVImageVolume::BuildLabelToG4MaterialVector( std::vector<G4Material*>& M
 
     GateMessage("Volume",4,((*lit).first) << " -> " << ((*lit).second) << Gateendl);
 
-    M.push_back(GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial((*lit).second));
+    M.push_back(theMaterialDatabase.GetMaterial((*lit).second));
     l++;
   }
 

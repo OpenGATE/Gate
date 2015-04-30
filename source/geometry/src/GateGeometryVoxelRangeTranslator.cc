@@ -114,7 +114,7 @@ void GateGeometryVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
     m_voxelAttributesTranslation[  GateMaterialDatabase::GetInstance()->GetMaterial(material) ] =
       new G4VisAttributes(visible, G4Colour(red, green, blue, alpha));
 */    
-    m_voxelAttributesTranslation[GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(material) ] =
+    m_voxelAttributesTranslation[theMaterialDatabase.GetMaterial(material) ] =
       new G4VisAttributes(visible, G4Colour(red, green, blue, alpha));
   }
 
@@ -142,8 +142,8 @@ void GateGeometryVoxelRangeTranslator::Describe(G4int)
 	   << " , "   
 	   << xmax 
 	   << " ]  ---> material " << material 
-	   << ", visibility " << GetMaterialAttributes(   GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(material)  )->IsVisible()
-	   << ", coulour "    << GetMaterialAttributes(   GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(material)  )->GetColour()
+	   << ", visibility " << GetMaterialAttributes( theMaterialDatabase.GetMaterial(material) )->IsVisible()
+	   << ", coulour "    << GetMaterialAttributes( theMaterialDatabase.GetMaterial(material) )->GetColour()
 	   << Gateendl;
   }
 }

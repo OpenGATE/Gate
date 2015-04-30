@@ -86,7 +86,7 @@ void GateGeometryVoxelTabulatedTranslator::ReadTranslationTable(G4String fileNam
     
 
     m_voxelMaterialTranslation[imageValue] = material;
-    m_voxelAttributesTranslation[ GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(material) ]= new G4VisAttributes(visible,G4Colour(red,green,blue,alpha));
+    m_voxelAttributesTranslation[ theMaterialDatabase.GetMaterial(material) ]= new G4VisAttributes(visible,G4Colour(red,green,blue,alpha));
 
   }
 

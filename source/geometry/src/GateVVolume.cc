@@ -536,7 +536,7 @@ void GateVVolume::DefineOwnMaterials()
 {
 
   // Retrieve the material pointer from the material database
-  pOwnMaterial = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(mMaterialName);
+  pOwnMaterial = theMaterialDatabase.GetMaterial(mMaterialName);
   // If we could not get the material, it is unsafe to proceed: abort!
   if (!pOwnMaterial)
     G4Exception( "GateVVolume::DefineOwnMaterials", "DefineOwnMaterials", FatalException, "GateVVolume::DefineOwnMaterials: \n"
