@@ -164,7 +164,7 @@ G4String GateGeometryVoxelRangeTranslator::GetNextMaterial(G4bool doReset)
 }
 
 //! Used by GateRegularParameterization to get the different materials
-void GateVGeometryVoxelTranslator::GetCompleteListOfMaterials(std::vector<G4String>& mat)
+void GateGeometryVoxelRangeTranslator::GetCompleteListOfMaterials(std::vector<G4String>& mat)
 {
   GateVoxelMaterialTranslationRangeVector::iterator anIterator;
 
