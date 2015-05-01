@@ -58,7 +58,7 @@ GateSourceMgr::GateSourceMgr()
 GateSourceMgr::~GateSourceMgr()
 {
   // loop over the sources to delete them, then clear the pointers vector
-  for( size_t i = 0; i != mSources.size(); ++i )
+  for( size_t i = 0; i != mSources.size(); ++i )//Use an iterator??
     if( mSources[ i ] )
       delete mSources[ i ];
   mSources.clear();
@@ -83,7 +83,7 @@ G4int GateSourceMgr::RemoveSource( G4String name )
   G4int found = 0;
   if( name == G4String( "all" ) )
     {
-      for( size_t is = 0; is != mSources.size(); ++is )
+      for( size_t is = 0; is != mSources.size(); ++is )//Use an iterator??
         delete mSources[is];
       mSources.clear();
       if( mVerboseLevel > 0 )
@@ -252,8 +252,9 @@ G4int GateSourceMgr::CheckSourceName( G4String sourceName )
 {
   G4int iRet = 0;
   // check if source name already exists
-  for( size_t is = 0; is != mSources.size(); ++is )
-    if( ( mSources[ is ]->GetName() ) == sourceName)
+  GateVSourceVector::iterator itr;
+  for( itr = mSources.begin(); itr != mSources.end(); ++itr )
+    if( ( (*itr)->GetName() ) == sourceName)
       {
         GateError( "GateSourceMgr::CheckSourceName : ERROR : source name <" << sourceName << "> already exists" );
         iRet=1;
@@ -267,9 +268,12 @@ G4int GateSourceMgr::CheckSourceName( G4String sourceName )
 GateVSource* GateSourceMgr::GetSourceByName( G4String name )
 {
   GateVSource* source = 0;
-  for( size_t is = 0; is != mSources.size(); ++is )
-    if( mSources[ is ]->GetName() == name )
-      source = mSources[is];
+  GateVSourceVector::iterator itr;
+  for( itr = mSources.begin(); itr != mSources.end(); ++itr )
+    if( (*itr)->GetName() == name ){
+      source = *itr;
+      break;
+    }
 
   if( !source )
     GateError( "GateSourceMgr::GetSourceByName : ERROR : source <" << name << "> not found" );
@@ -292,6 +296,7 @@ GateVSource* GateSourceMgr::GetSource(int i) {
 GateVSource* GateSourceMgr::GetNextSource()
 {
   // the method decides which is the source that has to be used for this event
+  // static iterator??
   GateVSource* pFirstSource = 0;
   m_firstTime = -1.;
 
@@ -319,19 +324,20 @@ GateVSource* GateSourceMgr::GetNextSource()
     // if there is at least one source
     // make a competition among all the available sources
     // the source that proposes the shortest interval for the next event wins
-    for( size_t is = 0; is != mSources.size(); ++is )
+    GateVSourceVector::iterator itr;
+    for( itr = mSources.begin(); itr != mSources.end(); ++itr )
       {
-        aTime = mSources[ is ]->GetNextTime( m_time ); // compute random time for this source
+        aTime = (*itr)->GetNextTime( m_time ); // compute random time for this source
         if( mVerboseLevel > 1 )
           G4cout << "GateSourceMgr::GetNextSource : source "
-                 << mSources[is]->GetName()
+                 << (*itr)->GetName()
                  << "    Next time (s) : " << aTime/s
                  << "   m_firstTime (s) : " << m_firstTime/s << Gateendl;
 
         if( m_firstTime < 0. || ( aTime < m_firstTime ) )
           {
             m_firstTime = aTime;
-            pFirstSource = mSources[ is ];
+            pFirstSource = *itr;
           }
       }
   }
@@ -347,8 +353,9 @@ GateVSource* GateSourceMgr::GetNextSource()
 void GateSourceMgr::ListSources()
 {
   G4cout << "GateSourceMgr::ListSources: List of the sources in the source manager" << Gateendl;
-  for( size_t is = 0; is != mSources.size(); ++is )
-    ( mSources[ is ] )->Dump( 0 );
+  GateVSourceVector::iterator itr;
+  for( itr = mSources.begin(); itr != mSources.end(); ++itr )
+    ( *itr )->Dump( 0 );
 }
 //----------------------------------------------------------------------------------------
 
@@ -374,8 +381,9 @@ void GateSourceMgr::SelectSourceByName( G4String name )
 //----------------------------------------------------------------------------------------
 void GateSourceMgr::SetVerboseLevel( G4int value ) {
   mVerboseLevel = value;
-  for( size_t is = 0; is != mSources.size(); ++is )
-    mSources[is]->SetVerboseLevel( mVerboseLevel );
+  GateVSourceVector::iterator itr;
+  for( itr = mSources.begin(); itr != mSources.end(); ++itr )
+    (*itr)->SetVerboseLevel( mVerboseLevel );
 }
 //----------------------------------------------------------------------------------------
 
@@ -412,13 +420,14 @@ void GateSourceMgr::Initialization()//std::vector<G4double> * time, std::vector<
       }
       G4cout<<"TEST  : Nsources = "<<nSliceTot<<Gateendl;*/
 
-  for( size_t is = 0; is != mSources.size(); ++is )
+  GateVSourceVector::iterator itr;
+  for( itr = mSources.begin(); itr != mSources.end(); ++itr )
     {
-      mSources[ is ]->Initialize();
+      (*itr)->Initialize();
       // mNumberOfEventBySource
       // double intensity =0.;
-      if(mSources[ is ]->GetIntensity()==0) GateError("Intensity of the source should not be null");
-      mTotalIntensity += mSources[ is ]->GetIntensity();// intensity;
+      if((*itr)->GetIntensity()==0) GateError("Intensity of the source should not be null");
+      mTotalIntensity += (*itr)->GetIntensity();// intensity;
     }
 
 }

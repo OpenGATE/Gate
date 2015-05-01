@@ -124,12 +124,10 @@ G4String GateGeometryVoxelTabulatedTranslator::GetNextMaterial(G4bool doReset)
 //! Used by GateRegularParameterization to get the different materials
 void GateGeometryVoxelTabulatedTranslator::GetCompleteListOfMaterials(std::vector<G4String>& mat)
 {
-  GateVoxelMaterialTranslationMap::iterator it;
-  it = m_voxelMaterialTranslation.begin();
-
-  while(it != m_voxelMaterialTranslation.end()) {
-    mat.push_back((*it).second);
-    it++;
+  GateVoxelMaterialTranslationMap::iterator anIterator;
+  
+  for (anIterator = m_voxelMaterialTranslation.begin(); anIterator != m_voxelMaterialTranslation.end(); anIterator++) {
+    mat.push_back((*anIterator).second);
   }
 }
 //-----------------------------------------------------------------------------------------------

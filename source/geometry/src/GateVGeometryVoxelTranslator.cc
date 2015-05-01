@@ -12,4 +12,3 @@ See GATE/LICENSE.txt for further details
 GateVGeometryVoxelTranslator::GateVGeometryVoxelTranslator(GateVGeometryVoxelReader* voxelReader)
   : m_voxelReader(voxelReader)
 {}
-

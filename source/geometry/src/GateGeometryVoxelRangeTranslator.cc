@@ -40,13 +40,14 @@ G4String GateGeometryVoxelRangeTranslator::TranslateToMaterial(G4double voxelVal
   G4String material = G4String("NULL");
 
 //    G4cout << "GateGeometryVoxelRangeTranslator::TranslateToMaterial: voxelValue " << voxelValue << Gateendl;
+  GateVoxelMaterialTranslationRangeVector::iterator anIterator;
 
-  for (G4int iRange = 0; iRange< (G4int)m_voxelMaterialTranslation.size(); iRange++) {
-    G4double range1 = (m_voxelMaterialTranslation[iRange].first).first;
-    G4double range2 = (m_voxelMaterialTranslation[iRange].first).second;
+  for (anIterator = m_voxelMaterialTranslation.begin(); anIterator != m_voxelMaterialTranslation.end(); anIterator++) {
+    G4double range1 = ((*anIterator).first).first;
+    G4double range2 = ((*anIterator).first).second;
     //    G4cout << "iRange range1 range2 " << iRange << " " << range1 << " " << range2 << Gateendl;
     if ((range1 <= voxelValue) && (voxelValue <= range2)) {
-      material = (m_voxelMaterialTranslation[iRange].second);
+      material = ((*anIterator).second);
       break;
     }
   }
@@ -148,9 +149,6 @@ void GateGeometryVoxelRangeTranslator::Describe(G4int)
   }
 }
 
-
-
-
 G4String GateGeometryVoxelRangeTranslator::GetNextMaterial(G4bool doReset)
 {
   static GateVoxelMaterialTranslationRangeVector::iterator anIterator = m_voxelMaterialTranslation.begin();
@@ -166,9 +164,11 @@ G4String GateGeometryVoxelRangeTranslator::GetNextMaterial(G4bool doReset)
 }
 
 //! Used by GateRegularParameterization to get the different materials
-void GateGeometryVoxelRangeTranslator::GetCompleteListOfMaterials(std::vector<G4String>& mat)
+void GateVGeometryVoxelTranslator::GetCompleteListOfMaterials(std::vector<G4String>& mat)
 {
-  for (G4int nbMat = 0; nbMat< (G4int)m_voxelMaterialTranslation.size(); nbMat++) {
-    mat.push_back(m_voxelMaterialTranslation[nbMat].second);
+  GateVoxelMaterialTranslationRangeVector::iterator anIterator;
+
+  for (anIterator = m_voxelMaterialTranslation.begin(); anIterator != m_voxelMaterialTranslation.end(); anIterator++) {
+    mat.push_back((*anIterator).second);
   }
 }
