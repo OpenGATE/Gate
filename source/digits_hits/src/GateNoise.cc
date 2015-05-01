@@ -75,7 +75,7 @@ GatePulseList* GateNoise::ProcessPulseList(const GatePulseList* inputPulseList)
             outputVol[i]=n;
 //          G4cout<<n<<' ';
         }
-//      G4cout<<Gateendl;
+//      G4cout<< Gateendl;
         pulse->SetOutputVolumeID(outputVol);
         GateVolumeID* volID = system->MakeVolumeID(outputVol);
         pulse->SetVolumeID(*volID);

@@ -426,7 +426,7 @@ void GateImageT<PixelType>::WriteMHD(std::string filename)
 template<class PixelType>
 void GateImageT<PixelType>::WriteAscii(std::ofstream & os, const G4String & comment)
 {
-  GateMessage("Image",2,"GateImageT::WriteAscii " <<Gateendl);
+  GateMessage("Image",2,"GateImageT::WriteAscii \n");
   // write comment in header
   os  << "#################################### \n"
       << "# Matrix Size= " << size        << Gateendl
@@ -489,7 +489,7 @@ void GateImageT<PixelType>::WriteAscii(std::ofstream & os, const G4String & comm
 template<class PixelType>
 void GateImageT<PixelType>::WriteRoot(G4String filename)
 {
-  GateMessage("Image",2,"GateImageT::WriteRoot " <<Gateendl);
+  GateMessage("Image",2,"GateImageT::WriteRoot \n");
 #ifdef G4ANALYSIS_USE_ROOT
   // GateMessage("Image", 0 , "Writing image root output in " << filename << Gateendl);
 

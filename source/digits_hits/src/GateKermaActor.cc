@@ -305,7 +305,7 @@ void GateKermaActor::UserSteppingActionInVoxel(const int index, const G4Step* st
     GateDebugMessage("Actor", 2,  "GateKermaActor -- UserSteppingActionInVoxel:\tdose = "
 		     << G4BestUnit(dose, "Dose")
 		     << " rho = "
-		     << G4BestUnit(density, "Volumic Mass")<<Gateendl );
+		     << G4BestUnit(density, "Volumic Mass")<< Gateendl );
   }
 
   double doseToWater = 0;
@@ -325,7 +325,7 @@ void GateKermaActor::UserSteppingActionInVoxel(const int index, const G4Step* st
     //    const G4ParticleDefinition * PartDef = step->GetTrack()->GetParticleDefinition();
     //    G4Material  * MatDef = step->GetTrack()->GetMaterial();
     double DEDX=0, DEDX_Water=0;
-    //    G4cout<<PartName<<"\t";//Gateendl;//"  "<<edep<<"  "<<NonIonizingEdep<<Gateendl;
+    //    G4cout<<PartName<<"\t";//Gateendl;//"  "<<edep<<"  "<<NonIonizingEdep<< Gateendl;
 
 
     // Dose to water: it could be possible to make this process more
@@ -351,7 +351,7 @@ void GateKermaActor::UserSteppingActionInVoxel(const int index, const G4Step* st
     GateDebugMessage("Actor", 2,  "GateKermaActor -- UserSteppingActionInVoxel:\tdose to water = "
 		     << G4BestUnit(doseToWater, "Dose to water")
 		     << " rho = "
-		     << G4BestUnit(density, "Volumic Mass")<<Gateendl );
+		     << G4BestUnit(density, "Volumic Mass")<< Gateendl );
   }
 
 

@@ -74,7 +74,7 @@ GateCoincidencePulse* GateCoincidenceDeadTime::ProcessPulse(GateCoincidencePulse
   // FIND TIME OF PULSE
   if (nVerboseLevel>5){
       G4cout << "A new pulse is processed by dead time time : " << (inputPulse->GetTime())/picosecond
-	     << " =  "<< currentTime  <<Gateendl  ;
+	     << " =  "<< currentTime  << Gateendl  ;
       G4cout << "Rebirth time is " << m_rebirthTime << Gateendl ;
 
   }

@@ -30,7 +30,7 @@ GateARFDataToRootMessenger::GateARFDataToRootMessenger(GateARFDataToRoot* GateAR
 { 
   G4String cmdName;
 
-  //G4cout << " created directory " << GetDirectoryName()<<Gateendl;
+  //G4cout << " created directory " << GetDirectoryName()<< Gateendl;
 
   cmdName = GetDirectoryName()+"setFileName";
 

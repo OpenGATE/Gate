@@ -254,11 +254,11 @@ void GateActorManager::UserSteppingAction(const G4Step* step)
 //-----------------------------------------------------------------------------
 void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolume * volume)
 {
-  GateDebugMessageInc("Actor",4,"Actor Manager -- SetMFD -- begin "<<volume->GetLogicalVolume()<<Gateendl);
+  GateDebugMessageInc("Actor",4,"Actor Manager -- SetMFD -- begin "<<volume->GetLogicalVolume()<< Gateendl);
 
   if(!volume->GetLogicalVolume()->GetSensitiveDetector())
     {
-      GateDebugMessage("Actor",5,"SetMFD -- Add new MSD - Attach to: "<<volume->GetLogicalVolume()->GetName()<<Gateendl);
+      GateDebugMessage("Actor",5,"SetMFD -- Add new MSD - Attach to: "<<volume->GetLogicalVolume()->GetName()<< Gateendl);
 
       G4int nActor = theListOfMultiSensitiveDetector.size();
       std::ostringstream num;
@@ -278,7 +278,7 @@ void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolum
     }
   else if(volume->GetLogicalVolume()->GetSensitiveDetector()->GetName().contains("MSD") )
     {
-      GateDebugMessage("Actor",5,"SetMFD -- MSD already attached to: "<<volume->GetLogicalVolume()->GetName()<<Gateendl);
+      GateDebugMessage("Actor",5,"SetMFD -- MSD already attached to: "<<volume->GetLogicalVolume()->GetName()<< Gateendl);
       dynamic_cast<GateMultiSensitiveDetector*>(volume->GetLogicalVolume()->GetSensitiveDetector())->SetActor(actor);
     }
   else

@@ -37,7 +37,7 @@ void GateBackToBack::Initialize()
 void GateBackToBack::GenerateVertex( G4Event* aEvent, G4bool accolinearityFlag)
 {
   
-  //G4cout<<"m_accoValue  = "<< m_source->GetAccoValue() <<Gateendl;
+  //G4cout<<"m_accoValue  = "<< m_source->GetAccoValue() << Gateendl;
   
   m_source->GeneratePrimaryVertex( aEvent );
   G4PrimaryParticle* particle = aEvent->GetPrimaryVertex( 0 )->GetPrimary( 0 );
@@ -61,12 +61,12 @@ void GateBackToBack::GenerateVertex( G4Event* aEvent, G4bool accolinearityFlag)
       particle->SetMomentum( -gammaMom.x(),
                              -gammaMom.y(), -gammaMom.z() );
       
-      /*G4cout<<"gammaMom.x() = "<<gammaMom.x() <<Gateendl;
-      G4cout<<"gammaMom.y() = "<<gammaMom.y() <<Gateendl;
-      G4cout<<"gammaMom.z() = "<<gammaMom.z() <<Gateendl;
-      G4cout<<"DirectionPhoton.x() = "<<DirectionPhoton.x() <<Gateendl;
-      G4cout<<"DirectionPhoton.y() = "<<DirectionPhoton.y() <<Gateendl;
-      G4cout<<"DirectionPhoton.z() = "<<DirectionPhoton.z() <<Gateendl;
+      /*G4cout<<"gammaMom.x() = "<<gammaMom.x() << Gateendl;
+      G4cout<<"gammaMom.y() = "<<gammaMom.y() << Gateendl;
+      G4cout<<"gammaMom.z() = "<<gammaMom.z() << Gateendl;
+      G4cout<<"DirectionPhoton.x() = "<<DirectionPhoton.x() << Gateendl;
+      G4cout<<"DirectionPhoton.y() = "<<DirectionPhoton.y() << Gateendl;
+      G4cout<<"DirectionPhoton.z() = "<<DirectionPhoton.z() << Gateendl;
       */
     }
   else
@@ -78,9 +78,9 @@ void GateBackToBack::GenerateVertex( G4Event* aEvent, G4bool accolinearityFlag)
      /* G4ThreeVector gammaMom1 = particle1->GetMomentum();
 
       if(gammaMom1.x()/gammaMom.x() != -1 ||gammaMom1.y()/gammaMom.y() != -1 || gammaMom1.z()/gammaMom.z() != -1){
-      G4cout<<"gammaMom1.x() / gammaMom.x() = "<<gammaMom1.x()/gammaMom.x() <<Gateendl;
-      G4cout<<"gammaMom1.y() / gammaMom.y() = "<<gammaMom1.y()/gammaMom.y() <<Gateendl;
-      G4cout<<"gammaMom1.z() / gammaMom.z() = "<<gammaMom1.z()/gammaMom.z() <<Gateendl;
+      G4cout<<"gammaMom1.x() / gammaMom.x() = "<<gammaMom1.x()/gammaMom.x() << Gateendl;
+      G4cout<<"gammaMom1.y() / gammaMom.y() = "<<gammaMom1.y()/gammaMom.y() << Gateendl;
+      G4cout<<"gammaMom1.z() / gammaMom.z() = "<<gammaMom1.z()/gammaMom.z() << Gateendl;
       }*/
     }
 }

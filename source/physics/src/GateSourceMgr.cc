@@ -418,7 +418,7 @@ void GateSourceMgr::Initialization()//std::vector<G4double> * time, std::vector<
       nSliceTot++;
       }
       }
-      G4cout<<"TEST  : Nsources = "<<nSliceTot<<Gateendl;*/
+      G4cout<<"TEST  : Nsources = "<<nSliceTot<< Gateendl;*/
 
   GateVSourceVector::iterator itr;
   for( itr = mSources.begin(); itr != mSources.end(); ++itr )
@@ -447,7 +447,7 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
   m_timeClock = theClock->GetTime();
   m_time = m_timeClock;
   m_currentSourceNumber++;
-  //G4cout<<"Time Clock = "<<m_time<<Gateendl;
+  //G4cout<<"Time Clock = "<<m_time<< Gateendl;
   // Get the next time
   GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
   //G4cout<<"test GetTimeSlice\n";

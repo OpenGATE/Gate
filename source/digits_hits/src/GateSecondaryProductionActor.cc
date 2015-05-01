@@ -192,7 +192,7 @@ void GateSecondaryProductionActor::PreUserTrackingAction(const GateVVolume *, co
 
     const G4VProcess* process = t->GetCreatorProcess();
     if(process){
-      //G4cout<<process->GetProcessName()<<"  "<<process->GetProcessName().find("Decay")<<Gateendl;
+      //G4cout<<process->GetProcessName()<<"  "<<process->GetProcessName().find("Decay")<< Gateendl;
       if(name=="e-" && process->GetProcessName().find("Ionisation")!=std::string::npos) {name += " Ioni";}
       if(name=="e+" && process->GetProcessName().find("Decay")!=std::string::npos) {name += " Decay";}
       if(name=="gamma"){

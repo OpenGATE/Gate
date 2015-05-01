@@ -293,17 +293,17 @@ void GateVSourceVoxelReader::UpdateActivities(G4String  HFN, G4String FN )
                 {
                   Xd[i] = ActivCurve[i].first;
                   Yd[i] = ActivCurve[i].second;
-                  G4cout << i << " x " << Xd[i]<<"  y "<<Yd[i]<<Gateendl;
+                  G4cout << i << " x " << Xd[i]<<"  y "<<Yd[i]<< Gateendl;
                 }
               G4DataInterpolation AInterpolation(Xd, Yd, npoints , 0. , 0. ); // defines the interpolator
               G4double current_activity  = AInterpolation.CubicSplineInterpolation( currentTime ); // interpolates
-              G4cout <<" current time "<< currentTime << " current activity " << current_activity<<Gateendl;
+              G4cout <<" current time "<< currentTime << " current activity " << current_activity<< Gateendl;
 
               m_voxelTranslator->UpdateActivity( activmin, activmax , current_activity * becquerel ); // it associates to the translator key the new activity value
 
             }
 
-          G4cout << "   Description of Range Translator  \n";
+          G4cout << "   Description of Range Translator\n";
 
           //if (m_verboseLevel>1)
           m_voxelTranslator->Describe( 2 ) ;
@@ -384,7 +384,7 @@ void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
   is >> nTotCol;
 
   G4cout << "==== Source Voxel Reader Time Activity Translation Table ====\n";
-  G4cout << "number of couples to be read : " << nTotCol <<Gateendl;
+  G4cout << "number of couples to be read : " << nTotCol << Gateendl;
 
   std::vector< std::pair<G4double,G4double> > m_ActivCurve;
 
@@ -421,7 +421,7 @@ void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
         std::istringstream iss(buf);
         iss >> nCol;
         G4cout << "==== Source Voxel Reader Time Activity Curve Read From File "<< fname << "  ====\n";
-        G4cout << "number of couples to be read : " << nCol <<Gateendl;
+        G4cout << "number of couples to be read : " << nCol << Gateendl;
 
         for (G4int iCol=0; iCol<nCol; iCol++)
           {

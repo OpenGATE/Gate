@@ -269,15 +269,15 @@ void GateSourceLinacBeam::GeneratePrimaryVertex(G4Event* evt) {
 
   //DS TODO !!!
 
-  if (volumeNumber==0) {Phi+=14.9*r/78.5;}             // G4cout<<"  Phi+=14.9*r/78.5= "<<Phi<<Gateendl;}
-  if (volumeNumber==1) {Phi+=17.*r/80.;}               // G4cout<<"  Phi+=17.*r/80.= "<<Phi<<Gateendl;}
-  if (volumeNumber==2) {Phi+=27.5*r/80.;}              // G4cout<<"  Phi+=27.5*r/80.= "<<Phi<<Gateendl;}
+  if (volumeNumber==0) {Phi+=14.9*r/78.5;}             // G4cout<<"  Phi+=14.9*r/78.5= "<<Phi<< Gateendl;}
+  if (volumeNumber==1) {Phi+=17.*r/80.;}               // G4cout<<"  Phi+=17.*r/80.= "<<Phi<< Gateendl;}
+  if (volumeNumber==2) {Phi+=27.5*r/80.;}              // G4cout<<"  Phi+=27.5*r/80.= "<<Phi<< Gateendl;}
   //}
   //else {
   // on utilise une équation de droite représentative, qui est beaucoup plus juste (technique point source, pour chacun des 3 éléments)
-  //if (volumeNumber==0) {Phi=14.9*r/78.5;}             // G4cout<<"  Phi+=14.9*r/78.5= "<<Phi<<Gateendl;}
-  //if (volumeNumber==1) {Phi=17.*r/80.;}               // G4cout<<"  Phi+=17.*r/80.= "<<Phi<<Gateendl;}
-  //if (volumeNumber==2) {Phi=27.5*r/80.;}              // G4cout<<"  Phi+=27.5*r/80.= "<<Phi<<Gateendl;}
+  //if (volumeNumber==0) {Phi=14.9*r/78.5;}             // G4cout<<"  Phi+=14.9*r/78.5= "<<Phi<< Gateendl;}
+  //if (volumeNumber==1) {Phi=17.*r/80.;}               // G4cout<<"  Phi+=17.*r/80.= "<<Phi<< Gateendl;}
+  //if (volumeNumber==2) {Phi=27.5*r/80.;}              // G4cout<<"  Phi+=27.5*r/80.= "<<Phi<< Gateendl;}
   // }
 
 

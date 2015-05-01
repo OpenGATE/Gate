@@ -33,13 +33,13 @@ void GateDistributionFile::DescribeMyself(size_t indent)
   G4cout << GateTools::Indent(indent)
     	 <<"File : "         << m_FileName
          <<'{'    << m_column_for_X<<':'<<m_column_for_Y<<'}'
-	 <<Gateendl;
+	 << Gateendl;
 }
 //___________________________________________________________________
 void GateDistributionFile::Read()
 {
     Clear();
-    G4cout<<"OPENING FILE "<<m_FileName<<Gateendl;
+    G4cout<<"OPENING FILE "<<m_FileName<< Gateendl;
     std::ifstream f(m_FileName,std::ios::in);
     if (!f){
        G4cerr<<"[GateDistributionFile::Read] WARNING : File "<<m_FileName<<" can't be opened\n";
@@ -73,7 +73,7 @@ void GateDistributionFile::Read()
        if (!f.good())  // file line can be read
 	 continue;
 //               G4cout<<"VALUE READ IN FILE "<<m_FileName
-// 	            <<"["<<GetArrayX().size()<<"]:"<<line<<Gateendl;
+// 	            <<"["<<GetArrayX().size()<<"]:"<<line<< Gateendl;
 
 	  //++x;
     	  if (m_column_for_X<0){
@@ -89,7 +89,7 @@ void GateDistributionFile::Read()
 	  
       	  if (!ok){
 	    G4cerr<<"[GateDistributionFile::Read] WARNING : Line format unrecognised (expected == '" << pattern << "' )"
-	          <<Gateendl<<line<<Gateendl;
+	          << Gateendl<<line<< Gateendl;
 	  }
 	  
     }

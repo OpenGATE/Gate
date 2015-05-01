@@ -167,7 +167,7 @@ if (volumeID.IsInvalid()) //G4Exception("[GateARFSD]: could not get the volume I
 
 //    G4cout << " local position  " << localPosition << Gateendl;
 //    G4cout << " Vertex Position "<<VertexPosition<< Gateendl;
-//    G4cout << " direction      " << theDirection<<Gateendl;
+//    G4cout << " direction      " << theDirection<< Gateendl;
 
     ComputeProjectionSet(localPosition, theDirection , theInEnergy );
 
@@ -182,7 +182,7 @@ G4int GateARFSD::PrepareCreatorAttachment(GateVVolume* aCreator)
     G4cout  << Gateendl << Gateendl << "[GateARFSD::PrepareCreatorAttachment]:\n"
      << "Volume '" << aCreator->GetObjectName() << "' does not belong to any system.\n"
            << "Your volume must belong to a system to be used with a GeomColliSD.\n"
-     << "Attachment request ignored --> you won't have any hit output from this volume!!!\n" << Gateendl;
+     << "Attachment request ignored --> you won't have any hit output from this volume!!!\n";
     return -1;
   }
 
@@ -191,7 +191,7 @@ G4int GateARFSD::PrepareCreatorAttachment(GateVVolume* aCreator)
       G4cout  << Gateendl << Gateendl << "[GateARFSD::PrepareCreatorAttachment]:\n"
        << "Volume '" << aCreator->GetObjectName() << "' belongs to system '" << creatorSystem->GetObjectName() << "'\n"
              << "while the GeomColliSD has already been attached to a volume from another system ('" << m_system->GetObjectName()<< "').\n"
-       << "Attachment request ignored --> you won't have any hit output from this volume!!!\n" << Gateendl;
+       << "Attachment request ignored --> you won't have any hit output from this volume!!!\n";
       return -1;
     }
   }
@@ -258,7 +258,7 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
                     m_file = new TFile( cfn.c_str() ,"READ","ROOT filefor ARF purpose");
                     G4cout << "GateARFSD::computeTables():::::: Reading ROOT File  " << cfn << Gateendl;
                     m_singlesTree = (TTree* ) ( m_file->Get("theTree") );
-                    G4cout << " m_singlesTree = " << m_singlesTree<<Gateendl;
+                    G4cout << " m_singlesTree = " << m_singlesTree<< Gateendl;
                     m_singlesTree->SetBranchAddress("Edep", &theData.m_Edep);
    		            m_singlesTree->SetBranchAddress("outY", &theData.m_Y);
    		            m_singlesTree->SetBranchAddress("outX", &theData.m_X);
@@ -281,12 +281,12 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
  		    OUT_camera += OUT_camera_tmp;
  		    
                     G4cout << " In File " << cfn << Gateendl;
-                    G4cout << " Total number of Source photons Going Out Crystal  " << NbofGoingOutPhotons_tmp<<Gateendl;
-                    G4cout << " Total number of Source photons Going In Crystal   " << NbofGoingInPhotons_tmp<<Gateendl;
-                    G4cout << " Total number of Source photons                    " << NbOfSourcePhotons_tmp<<Gateendl;
-                    G4cout << " Total number of Source photons Going In Camera    " << IN_camera_tmp<<Gateendl;
-                    G4cout << " Total number of Source photons Going Out Camera   " << OUT_camera_tmp<<Gateendl;
-                    G4cout << " Total number of Stored photons                    " << NbofStoredPhotons_tmp<<Gateendl;
+                    G4cout << " Total number of Source photons Going Out Crystal  " << NbofGoingOutPhotons_tmp<< Gateendl;
+                    G4cout << " Total number of Source photons Going In Crystal   " << NbofGoingInPhotons_tmp<< Gateendl;
+                    G4cout << " Total number of Source photons                    " << NbOfSourcePhotons_tmp<< Gateendl;
+                    G4cout << " Total number of Source photons Going In Camera    " << IN_camera_tmp<< Gateendl;
+                    G4cout << " Total number of Source photons Going Out Camera   " << OUT_camera_tmp<< Gateendl;
+                    G4cout << " Total number of Stored photons                    " << NbofStoredPhotons_tmp<< Gateendl;
                     TotNbOfSingles = m_singlesTree->GetEntries();
                     G4cout << " File " << cfn << " contains " << TotNbOfSingles << " entries \n";
                     G4cout << " Tree m_NbOfPhotonsTree " << cfn << " contains " << m_NbOfPhotonsTree->GetEntries() << " entries \n";
@@ -306,7 +306,7 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
                   NSourcePhotons[iw] = NbOfSourcePhotons * NbOfHeads;
                   G4cout << " ARF Table # "<<iw<<"  Computation Time " << (theTimeAfter - theTimeBefore ) << " seconds \n";
                   //G4cout << " the Total final number of photons simulated          " << NbOfSimuPhotons << Gateendl;
-                  //G4cout << " number of Energy Windows " << m_EnWin.size() <<Gateendl;
+                  //G4cout << " number of Energy Windows " << m_EnWin.size() << Gateendl;
                   //G4cout << " Number of SOURCE photons                             " << NbOfSourcePhotons << Gateendl;
                   //G4cout << " --- Of Which : Number of Photons Going Out Crystal   " << NbofGoingOutPhotons << " = " << 100. * double(NbofGoingOutPhotons)/double(NbOfSourcePhotons) << " %\n";
                   //G4cout << " --- Of Which : Number of Photons Going IN Crystal    " << NbofGoingInPhotons << " = " << 100. * double(NbofGoingInPhotons)/double(NbOfSourcePhotons) << " %\n";
@@ -317,7 +317,7 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
 
         }   
 
-      //G4cout << " Number of Heads " << NbOfHeads<<Gateendl;
+      //G4cout << " Number of Heads " << NbOfHeads<< Gateendl;
 
    m_ARFTableMgr->SetNSimuPhotons( NSourcePhotons );
 
@@ -360,7 +360,7 @@ void GateARFSD::ComputeProjectionSet(G4ThreeVector thePosition,G4ThreeVector the
 
 G4double theARFvalue = m_ARFTableMgr->ScanTables(  theDirection.z() , theDirection.y() , theEnergy);
 
-//if (theARFvalue>0.1)G4cout << acos(costheta) << "   " << atan(tanphi) << "   "<<theARFvalue<<Gateendl;
+//if (theARFvalue>0.1)G4cout << acos(costheta) << "   " << atan(tanphi) << "   "<<theARFvalue<< Gateendl;
 
 // the coordinates of the intersection of the path of the photon with the back surface of the detector
 // is given by

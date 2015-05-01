@@ -50,7 +50,7 @@ void GateEnergyEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePulse
       return ;
    }
    G4double eff = m_efficiency->Value(inputPulse->GetEnergy());
-//   G4cout<<inputPulse->GetEnergy()<<"   "<<eff<<Gateendl;
+//   G4cout<<inputPulse->GetEnergy()<<"   "<<eff<< Gateendl;
    if (G4UniformRand() < eff)
       outputPulseList.push_back(new GatePulse(*inputPulse));
 

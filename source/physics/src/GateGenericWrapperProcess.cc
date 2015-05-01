@@ -200,14 +200,14 @@ GenericWrapperProcess::PostStepDoIt(const G4Track& track, const G4Step& step)
 
     for(int i =0;i<pList->size();i++){
       G4String proName = (*pList)[i]->GetProcessName();
-      G4cout<<proName<<"  "<<GetProcessName()<<Gateendl;
+      G4cout<<proName<<"  "<<GetProcessName()<< Gateendl;
       if(proName==GetProcessName()) 
 	sig1 = emcalc->ComputeCrossSectionPerVolume(track.GetKineticEnergy(), partName , proName, track.GetMaterial()->GetName(), 0.0000001);
       else 
 	sig2 += emcalc->ComputeCrossSectionPerVolume(track.GetKineticEnergy(), partName , proName, track.GetMaterial()->GetName(), 0.0000001);
     }
     double frac = 0.;
-    G4cout<<sig1<<"  "<<sig2<<Gateendl;
+    G4cout<<sig1<<"  "<<sig2<< Gateendl;
     if(sig1!=0 || sig2!=0) frac = (sig2 + mCSEFactor*sig1)/(mCSEFactor*(sig1+sig2));
     else frac =0.;
     */
@@ -223,7 +223,7 @@ GenericWrapperProcess::PostStepDoIt(const G4Track& track, const G4Step& step)
       double y1 = theListOfBranchRatioFactor[material][bin];
 
       frac = y2 + ( (mEneMax*(bin+1))/mNbins - track.GetKineticEnergy())/(mEneMax/mNbins)*(y1 - y2);
-      G4cout<<"frac = "<<frac<<" y1= "<<y1<<" y2= "<<y2<<Gateendl;
+      G4cout<<"frac = "<<frac<<" y1= "<<y1<<" y2= "<<y2<< Gateendl;
 
       G4ProcessManager * pMan = partDef->GetProcessManager() ;
       G4ProcessVector * pList = partDef->GetProcessManager()-> GetProcessList();
@@ -231,24 +231,24 @@ GenericWrapperProcess::PostStepDoIt(const G4Track& track, const G4Step& step)
       double sig2=0.;
       for(int i =0;i<pList->size();i++){
 	G4String proName = (*pList)[i]->GetProcessName();
-	// G4cout<<proName<<"  "<<GetProcessName()<<Gateendl;
+	// G4cout<<proName<<"  "<<GetProcessName()<< Gateendl;
 G4String realName= proName;
 	  if(proName.find("Wrapped")<10000) realName = realName.replace(0,7,"");
 
 	  if(proName==GetProcessName()) {
 	  sig1 = emcalc->ComputeCrossSectionPerVolume(track.GetKineticEnergy(), partName ,realName , track.GetMaterial()->GetName(), 0.000000);
-	  G4cout<<"proName  "<<proName<<"  "<<sig1<<"  "<<track.GetKineticEnergy()<<"  "<<realName<<"  "<< emcalc->ComputeMeanFreePath(track.GetKineticEnergy(), partName ,realName , track.GetMaterial()->GetName(), 0.000000)  <<Gateendl;
+	  G4cout<<"proName  "<<proName<<"  "<<sig1<<"  "<<track.GetKineticEnergy()<<"  "<<realName<<"  "<< emcalc->ComputeMeanFreePath(track.GetKineticEnergy(), partName ,realName , track.GetMaterial()->GetName(), 0.000000)  << Gateendl;
 	  }
 	else 
-	  G4cout<<"proName  "<<proName<<"  "<<emcalc->ComputeCrossSectionPerVolume(track.GetKineticEnergy(), partName , proName, track.GetMaterial()->GetName(), 0.000000 )<<"  "<<  emcalc->ComputeMeanFreePath(track.GetKineticEnergy(), partName , proName, track.GetMaterial()->GetName(), 0.000000) <<Gateendl;
+	  G4cout<<"proName  "<<proName<<"  "<<emcalc->ComputeCrossSectionPerVolume(track.GetKineticEnergy(), partName , proName, track.GetMaterial()->GetName(), 0.000000 )<<"  "<<  emcalc->ComputeMeanFreePath(track.GetKineticEnergy(), partName , proName, track.GetMaterial()->GetName(), 0.000000) << Gateendl;
 	  sig2 += emcalc->ComputeCrossSectionPerVolume(track.GetKineticEnergy(), partName , proName, track.GetMaterial()->GetName(), 0.000000);
       }
       frac = 0.;
-      //G4cout<<sig1<<"  "<<sig2<<Gateendl;
+      //G4cout<<sig1<<"  "<<sig2<< Gateendl;
             if(sig1!=0 || sig2!=0) frac = (sig2 + mCSEFactor*sig1)/(mCSEFactor*(sig1+sig2));
       //if(sig1!=0 || sig2!=0) frac = (mCSEFactor*sig1)/(sig2+mCSEFactor*sig1);
       else frac =0.;
-      G4cout<<"frac2 = "<<frac<<"  "<<sig1<<"  "<< sig2 <<Gateendl;
+      G4cout<<"frac2 = "<<frac<<"  "<<sig1<<"  "<< sig2 << Gateendl;
 
 
       }*/
@@ -362,7 +362,7 @@ G4int GenericWrapperProcess::GetNSecondaries()
 /*void GenericWrapperProcess::SetProcessManager(const G4ProcessManager* procMan)
 {
   //G4VProcess::SetProcessManager(procMan);
-  G4cout<<" set process manager : "<<procMan<<Gateendl;
+  G4cout<<" set process manager : "<<procMan<< Gateendl;
   // proc = new G4ProcessManager(0);
 pRegProcess->SetProcessManager(procMan);
 //proc->add(pRegProcess);
@@ -375,7 +375,7 @@ aProcessManager = procMan;
 const G4ProcessManager* GenericWrapperProcess::GetProcessManager()
 {
   //return G4VProcess::GetProcessManager();
-  G4cout<<" get process manager : "<<aProcessManager<<Gateendl;
-  G4cout<<" get process manager : "<<aProcessManager<<Gateendl;
+  G4cout<<" get process manager : "<<aProcessManager<< Gateendl;
+  G4cout<<" get process manager : "<<aProcessManager<< Gateendl;
   return aProcessManager;
   }*/

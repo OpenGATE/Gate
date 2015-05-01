@@ -94,8 +94,8 @@ void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
   size_t m_depth = (size_t)(aVolumeID->GetCreatorDepth(m_volumeName));
 
   m_generalDetId = aVolumeID->GetCopyNo(m_depth);
-   //G4cout<<"m_generalDetId initialisation = "<<m_generalDetId<<Gateendl;
-   //G4cout<<"m_depth  = "<<m_depth<<Gateendl;
+   //G4cout<<"m_generalDetId initialisation = "<<m_generalDetId<< Gateendl;
+   //G4cout<<"m_depth  = "<<m_depth<< Gateendl;
 
 
 /////// Bug Report - 8/6/2006 - Spencer Bowen - S.Jan ////////
@@ -114,9 +114,9 @@ for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
           multFactor *= numberOfComponentForLevel[i-1];
           m_generalDetId += aVolumeID->GetCopyNo(m_depth-i)*multFactor;
 
-  //G4cout<<"numberOfComponentForLevel["<<i-1<<"] = "<<numberOfComponentForLevel[i-1]<<Gateendl;
-  //G4cout<<"GetCopyNo(m_depth-i) = "<<aVolumeID->GetCopyNo(m_depth-i)<<Gateendl;
-  //G4cout<<"multFactor"<<multFactor<<Gateendl;
+  //G4cout<<"numberOfComponentForLevel["<<i-1<<"] = "<<numberOfComponentForLevel[i-1]<< Gateendl;
+  //G4cout<<"GetCopyNo(m_depth-i) = "<<aVolumeID->GetCopyNo(m_depth-i)<< Gateendl;
+  //G4cout<<"multFactor"<<multFactor<< Gateendl;
     }
 //////////////////////////////////////////////////////////////
   // FIND TIME OF PULSE
@@ -124,7 +124,7 @@ for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
   if (nVerboseLevel>5)
     {
       G4cout << "A new pulse is processed by dead time time : " << (inputPulse->GetTime())/picosecond
-	     << " =  "<< currentTime  <<Gateendl  ;
+	     << " =  "<< currentTime  << Gateendl  ;
       G4cout << "ID elt = " <<  m_generalDetId << Gateendl ;
       G4cout << "Rebirth time for elt " << m_generalDetId << " = " << m_deadTimeTable[m_generalDetId]<< Gateendl ;
 
@@ -228,7 +228,7 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
     }
   //  numberOfHigherLevels--;
   anotherInserter = anInserter;
-  G4cout<<"Nof Higher level "<<numberOfHigherLevels<<Gateendl;
+  G4cout<<"Nof Higher level "<<numberOfHigherLevels<< Gateendl;
 
   // How many components for each levels ?
   //  G4int* numberOfComponentForLevel = new G4int[numberOfHigherLevels];
@@ -258,8 +258,8 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
 	       << numberOfComponentForLevel[i2] << " elements\n";
     }
 
-//G4cout<<"numberOfComponentForLevel[0]"<<numberOfComponentForLevel[0]<<Gateendl;
-//G4cout<<"numberOfComponentForLevel[numberOfHigherLevels-1]"<<numberOfComponentForLevel[numberOfHigherLevels-1]<<Gateendl;
+//G4cout<<"numberOfComponentForLevel[0]"<<numberOfComponentForLevel[0]<< Gateendl;
+//G4cout<<"numberOfComponentForLevel[numberOfHigherLevels-1]"<<numberOfComponentForLevel[numberOfHigherLevels-1]<< Gateendl;
 
 
   if(nVerboseLevel>5)

@@ -71,7 +71,7 @@ if ( IsVoxellized == 0 ) {
 G4cout <<"GateRTPhantom::AttachToSource WARNING : The RTPhantom Object " << m_name << " is not of Voxellized Type. You cannot attach it to a Voxellized Source\n";}
 }
 
-G4cout <<"GateRTPhantom::AttachToSource : The RTPhantom Object " << m_name << " has a Source Reader " << itsSReader << " from source " << Source->GetName()<<Gateendl;
+G4cout <<"GateRTPhantom::AttachToSource : The RTPhantom Object " << m_name << " has a Source Reader " << itsSReader << " from source " << Source->GetName()<< Gateendl;
 
 }
 
@@ -81,7 +81,7 @@ void GateRTPhantom::Disable()
 void GateRTPhantom::AttachToGeometry(G4String aname)
 {
 
-if ( m_inserter !=0 ){G4cout << " GateRTPhantom::AttachToGeometry : WARNING : The RTPhantom "<<m_name<<" is already attached to Inserter Object "<<m_inserter->GetObjectName()<<Gateendl;}
+if ( m_inserter !=0 ){G4cout << " GateRTPhantom::AttachToGeometry : WARNING : The RTPhantom "<<m_name<<" is already attached to Inserter Object "<<m_inserter->GetObjectName()<< Gateendl;}
 
 
 if ( IsEnabled == 0 )
@@ -110,7 +110,7 @@ if ( VBParamIns != 0 ) GReader = VBParamIns->GetReader();
 if ( CVParamIns != 0 ) GReader = CVParamIns->GetReader();
 if ( CRParamIns != 0 ) GReader = CRParamIns->GetReader();
 itsGReader = GReader;
-if ( GReader ==0 )G4cout << " GateRTPhantom::AttachTo ERROR : No Geometry Reader is associated to parameterized Object "<< aname<<Gateendl;
+if ( GReader ==0 )G4cout << " GateRTPhantom::AttachTo ERROR : No Geometry Reader is associated to parameterized Object "<< aname<< Gateendl;
 
    }
     
@@ -129,16 +129,16 @@ void GateRTPhantom::Describe()
 G4cout << " GateRTPhantom Name is                            " << m_name << Gateendl;
 
 if( itsSReader != 0 )
-{G4cout << "             is attached to Source Reader      " << itsSReader->GetName()<<Gateendl;}
+{G4cout << "             is attached to Source Reader      " << itsSReader->GetName()<< Gateendl;}
 
 if( itsGReader != 0 )
-{G4cout << "             is attached to Geometry Reader " << itsGReader->GetName()<<Gateendl;}
+{G4cout << "             is attached to Geometry Reader " << itsGReader->GetName()<< Gateendl;}
 G4String answer = "No";
 if (IsVoxellized == 1) answer= "Yes";
-G4cout << "             is Voxellized                                 " << answer<<Gateendl;
+G4cout << "             is Voxellized                                 " << answer<< Gateendl;
 answer = "No";
 if (IsEnabled == 1) answer="Yes";
-G4cout << "             is Enabled                                    " << answer<<Gateendl;
+G4cout << "             is Enabled                                    " << answer<< Gateendl;
 }
 
 

@@ -590,7 +590,7 @@ void GateVImageVolume::BuildLabelsVector( std::vector<LabelType>& LabelsVector)
 	 ) {
       ens.insert(int(*i));
       LabelsVector.push_back(int(*i));
-      GateMessage("Volume",5,"New label = "<<int(*i)<<Gateendl);
+      GateMessage("Volume",5,"New label = "<<int(*i)<< Gateendl);
     }
   }
   GateMessage("Volume",5,"End GateVImageVolume::BuildLabelsVector()\n");
@@ -791,7 +791,7 @@ void GateVImageVolume::BuildDistanceTransfo()
   tmpOutput.setVolumeCenter( tmpOutput.sizeX()/2, tmpOutput.sizeY()/2, tmpOutput.sizeZ()/2 );
 
   GateMessage("Geometry", 4, "Input Vol size: "<<
-	      tmpOutput.sizeX()<<"x"<<tmpOutput.sizeY()<<"x"<< tmpOutput.sizeZ()<<Gateendl);
+	      tmpOutput.sizeX()<<"x"<<tmpOutput.sizeY()<<"x"<< tmpOutput.sizeZ()<< Gateendl);
 
   // Go ?
   GateMessage("Geometry", 4, "Start distance map computation ...\n");

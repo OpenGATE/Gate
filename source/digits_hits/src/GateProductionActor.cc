@@ -49,8 +49,8 @@ void GateProductionActor::Construct()
   if (mSaveFilename.isNull() || mSaveFilename=="FilnameNotGivenForThisActor") { GateError("GateProductionActor -- please give output filename"); }
   if (!mVolume) { GateError("GateProductionActor -- please attach actor to a volume"); }
 
-  GateMessage("Actor",3,"GateProductionActor -- filename=" << mSaveFilename <<Gateendl);
-  GateMessage("Actor",3,"GateProductionActor -- imagesize=" << mImage.GetNumberOfValues() <<Gateendl);
+  GateMessage("Actor",3,"GateProductionActor -- filename=" << mSaveFilename << Gateendl);
+  GateMessage("Actor",3,"GateProductionActor -- imagesize=" << mImage.GetNumberOfValues() << Gateendl);
 
   // Enable callbacks
   EnablePreUserTrackingAction(true);
@@ -62,7 +62,7 @@ void GateProductionActor::Construct()
 void GateProductionActor::SaveData()
 {
   GateVActor::SaveData();
-  GateMessage("Actor",2,"GateProductionActor -- saving filename="<< mSaveFilename <<Gateendl);
+  GateMessage("Actor",2,"GateProductionActor -- saving filename="<< mSaveFilename << Gateendl);
   mImage.Write(mSaveFilename);
 }
 //-----------------------------------------------------------------------------

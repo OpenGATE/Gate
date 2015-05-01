@@ -135,7 +135,7 @@ GatePhysicsList::~GatePhysicsList()
         /*else {
           if( (*vect)[i] ){
           if((*vect)[i]->GetProcessName()=="Decay" ){
-          G4cout<<"test  "<<particle->GetParticleName()<<"   "<<(*vect)[i]<<Gateendl;
+          G4cout<<"test  "<<particle->GetParticleName()<<"   "<<(*vect)[i]<< Gateendl;
           delete (*vect)[i];
 	  }
           }
@@ -151,11 +151,11 @@ GatePhysicsList::~GatePhysicsList()
     while( (*theParticleIterator)()){
     G4ParticleDefinition* particle = theParticleIterator->value();
     G4ProcessVector * vect = particle->GetProcessManager()->GetProcessList();
-    G4cout<<"Particle= "<< particle->GetParticleName() <<Gateendl;
+    G4cout<<"Particle= "<< particle->GetParticleName() << Gateendl;
 
     for(int i = 0; i<vect->size();i++)
     {
-    if((*vect)[i]) G4cout<<"Process= "<<(*vect)[i]->GetProcessName()<<Gateendl;
+    if((*vect)[i]) G4cout<<"Process= "<<(*vect)[i]->GetProcessName()<< Gateendl;
     }
     }*/
 }
@@ -429,13 +429,13 @@ void GatePhysicsList::Print(G4String type, G4String particlename)
       for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
 	(*GetTheListOfProcesss())[i]->PrintEnabledParticles(particlename);
 
-      std::cout<<Gateendl;
+      std::cout<< Gateendl;
     }
 
   if(type=="Initialized")
     {
       Print(particlename);
-      std::cout<<Gateendl;
+      std::cout<< Gateendl;
     }
 
   if(type=="Available")
@@ -451,31 +451,31 @@ void GatePhysicsList::Print(G4String type, G4String particlename)
 	  Models = (*GetTheListOfProcesss())[i]->GetTheListOfModels();
 	  if((*GetTheListOfProcesss())[i]->GetProcessInfo()!="")
 	    std::cout<<"  * "<<(*GetTheListOfProcesss())[i]->GetG4ProcessName()<<" ("<<(*GetTheListOfProcesss())[i]->GetProcessInfo()<<")\n";
-	  else std::cout<<"  * "<<(*GetTheListOfProcesss())[i]->GetG4ProcessName()<<Gateendl;
+	  else std::cout<<"  * "<<(*GetTheListOfProcesss())[i]->GetG4ProcessName()<< Gateendl;
 
 	  if(DefaultParticles.size() > 1) std::cout<<"     - Default particles: \n";
 	  else if(DefaultParticles.size() == 1) std::cout<<"     - Default particle: \n";
 	  for(unsigned int i1=0; i1<DefaultParticles.size(); i1++)
 	    {
-	      std::cout<<"        + "<<DefaultParticles[i1]<<Gateendl;
+	      std::cout<<"        + "<<DefaultParticles[i1]<< Gateendl;
 	    }
 
 	  if(Models.size() > 1) std::cout<<"     - Models: \n";
 	  else if(Models.size() == 1) std::cout<<"     - Model: \n";
 	  for(unsigned int i1=0; i1<Models.size(); i1++)
 	    {
-	      std::cout<<"        + "<<Models[i1]<<Gateendl;
+	      std::cout<<"        + "<<Models[i1]<< Gateendl;
 	    }
 
 	  if(DataSets.size() > 1) std::cout<<"     - DataSets: \n";
 	  if(DataSets.size() == 1) std::cout<<"     - DataSet: \n";
 	  for(unsigned int i1=0; i1<DataSets.size(); i1++)
 	    {
-	      std::cout<<"        + "<<DataSets[i1]<<Gateendl;
+	      std::cout<<"        + "<<DataSets[i1]<< Gateendl;
 	    }
-	  std::cout<<Gateendl;
+	  std::cout<< Gateendl;
 	}
-      std::cout<<Gateendl;
+      std::cout<< Gateendl;
     }
 
 }
@@ -505,12 +505,12 @@ void GatePhysicsList::Print(G4String name)
 	if(manager->GetProcessListLength()==0) continue;
 	if(manager->GetProcessListLength()==1 && (*processvector)[0]->GetProcessName()== "Transportation") continue;
 	// Transportation process is ignored for display;
-	std::cout<<"  * "<<particle->GetParticleName()<<Gateendl;
+	std::cout<<"  * "<<particle->GetParticleName()<< Gateendl;
 	iDisp++;
 	for(int j=0;j<manager->GetProcessListLength();j++)
 	  {
 	    if( (*processvector)[j]->GetProcessName() !=  "Transportation" )
-	      std::cout<<"    - "<<(*processvector)[j]->GetProcessName()<<Gateendl;
+	      std::cout<<"    - "<<(*processvector)[j]->GetProcessName()<< Gateendl;
 	  }
       }
     }
@@ -525,10 +525,10 @@ void GatePhysicsList::Print(G4String name)
       manager  = particle->GetProcessManager();
       processvector = manager->GetProcessList();
       if(manager->GetProcessListLength()==0) return;
-      std::cout<<"Particle: "<<particle->GetParticleName()<<Gateendl;
+      std::cout<<"Particle: "<<particle->GetParticleName()<< Gateendl;
       for(int j=0;j<manager->GetProcessListLength();j++)
 	if( (*processvector)[j]->GetProcessName() !=  "Transportation" )
-	  std::cout<<"   - "<<(*processvector)[j]->GetProcessName()<<Gateendl;
+	  std::cout<<"   - "<<(*processvector)[j]->GetProcessName()<< Gateendl;
     }
 
 }

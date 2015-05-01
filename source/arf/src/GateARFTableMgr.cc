@@ -310,14 +310,14 @@ void GateARFTableMgr::LoadARFFromBinaryFile(G4String theFileName)
     long pos = dest.tellg();
     //pos++;
 
-    G4cout << "Nb Of Tables "<<theNbOfTables<<Gateendl;
-    G4cout <<pos<<Gateendl;
+    G4cout << "Nb Of Tables "<<theNbOfTables<< Gateendl;
+    G4cout <<pos<< Gateendl;
 
     dest.seekg( pos, std::ios::beg);
     dest.read( (char*)(&theSize),sizeof(G4double) );
 
-    G4cout << "the size "<<theSize<<Gateendl;
-    G4cout <<pos<<Gateendl;
+    G4cout << "the size "<<theSize<< Gateendl;
+    G4cout <<pos<< Gateendl;
 
     G4int theNb = 8 + int(theSize);
     size_t theBufferSize = theNb*sizeof(G4double);
@@ -346,8 +346,8 @@ for ( size_t i =0  ; i < size_t(theNbOfTables) ; i++ )
     theTable->SetERef(theBuffer[3]);
 
 
-    G4cout <<theBuffer[0]<<"  "<<theBuffer[1]<<"  "<<theBuffer[2]<<"  "<<theBuffer[3]<<"  "<<theBuffer[4]<<Gateendl;
-    G4cout << theBuffer[5]<<Gateendl;
+    G4cout <<theBuffer[0]<<"  "<<theBuffer[1]<<"  "<<theBuffer[2]<<"  "<<theBuffer[3]<<"  "<<theBuffer[4]<< Gateendl;
+    G4cout << theBuffer[5]<< Gateendl;
 
     theTable->FillTableFromBuffer( theBuffer );
     AddaTable( theTable );

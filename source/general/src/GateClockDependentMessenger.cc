@@ -77,7 +77,7 @@ void GateClockDependentMessenger::SetARFCommands()
  cmdName = GetDirectoryName()+"arf/setARFStage";
  ARFcmd = new G4UIcmdWithAString(cmdName,this);
 
-G4cout << " created command " << cmdName <<Gateendl;
+G4cout << " created command " << cmdName << Gateendl;
 
  cmdName = GetDirectoryName() +"attachToARFSD";
  AttachARFSDcmd = new G4UIcmdWithoutParameter(cmdName,this);

@@ -299,7 +299,7 @@ void GateApplicationMgr::StartDAQ()
   // filename given. In this case we disable the output module and send a warning.
   GateOutputMgr::GetInstance()->CheckFileNameForAllOutput();
 
-  GateMessage("Acquisition", 0,"                                     \n");
+  GateMessage("Acquisition", 0,"  \n");
   GateMessage("Acquisition", 0, "============= Source initialization =============\n");
  
   // Compute timeStop according to time slices
@@ -319,7 +319,7 @@ void GateApplicationMgr::StartDAQ()
     listOfEndTimeSlice.push_back(time);
   }
 
-  GateMessage("Acquisition", 0,"                                     \n");
+  GateMessage("Acquisition", 0,"  \n");
   GateMessage("Acquisition", 0, "============= Acquisition starts! =============\n");
 
   // Check if start/stop ok
@@ -482,7 +482,7 @@ void GateApplicationMgr::StartDAQ()
 
 
   for(int nsource= 0 ; nsource<GateSourceMgr::GetInstance()->GetNumberOfSources() ; nsource++ )
-    GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgr::GetInstance()->GetNumberOfEventBySource(nsource+1)<<Gateendl);
+    GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgr::GetInstance()->GetNumberOfEventBySource(nsource+1)<< Gateendl);
 
 }
 //------------------------------------------------------------------------------------------
@@ -495,7 +495,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
   // filename given. In this case we disable the output module and send a warning.
   GateOutputMgr::GetInstance()->CheckFileNameForAllOutput();
 
-  GateMessage("Acquisition", 0,"                                     \n");
+  GateMessage("Acquisition", 0,"  \n");
   GateMessage("Acquisition", 0, "============= Source initialization =============\n");
 
   // Compute timeStop according to time slices
@@ -514,7 +514,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
     listOfEndTimeSlice.push_back(time);
   }
 
-  GateMessage("Acquisition", 0,"                                     \n");
+  GateMessage("Acquisition", 0,"  \n");
   GateMessage("Acquisition", 0, "============= Acquisition starts! =============\n");
 
   // Check if start/stop ok
@@ -554,7 +554,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
 
   m_virtualStart= param[0]; // defined from macro from splitter
   m_virtualStop = param[1]; // this one too
-  if (nVerboseLevel>0) G4cout << "Cluster: virtual time start " <<m_virtualStart/s<<", virtual time stop "<<m_virtualStop/s<<Gateendl;
+  if (nVerboseLevel>0) G4cout << "Cluster: virtual time start " <<m_virtualStart/s<<", virtual time stop "<<m_virtualStop/s<< Gateendl;
 
   G4double real_timeStop  = m_timeStop;
   m_timeStop=m_virtualStop;
@@ -572,7 +572,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
   m_time=virtualTime-listOfTimeSlice[slice-1];
   GateRunManager::GetRunManager()->SetRunIDCounter(slice-1);
   theClock->SetTime(m_time);
-  if (nVerboseLevel>0) G4cout << "Cluster: time start for geometry" <<m_time<<", runID moved to "<<slice-1<<Gateendl;
+  if (nVerboseLevel>0) G4cout << "Cluster: time start for geometry" <<m_time<<", runID moved to "<<slice-1<< Gateendl;
 
   if (mOutputMode) GateOutputMgr::GetInstance()->RecordBeginOfAcquisition();
 
@@ -612,7 +612,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
   if (mOutputMode) GateOutputMgr::GetInstance()->RecordEndOfAcquisition();
 
   for(int nsource= 0 ; nsource<GateSourceMgr::GetInstance()->GetNumberOfSources() ; nsource++ )
-    GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgr::GetInstance()->GetNumberOfEventBySource(nsource+1)<<Gateendl);
+    GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgr::GetInstance()->GetNumberOfEventBySource(nsource+1)<< Gateendl);
 
   // ========================================================================================================
 }

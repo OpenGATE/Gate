@@ -341,7 +341,7 @@ void GateVSource::TrigMat()
 {
 // Retrieve position according to world
   GateVVolume * v = mVolume;
-  G4cout<<"------------------|||||||||||| TEST de SEBES =          "<<v->GetObjectName()<<Gateendl;
+  G4cout<<"------------------|||||||||||| TEST de SEBES =          "<<v->GetObjectName()<< Gateendl;
  
 }
 //-------------------------------------------------------------------------------------------------
@@ -498,7 +498,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
 
       std::vector<GateTrack*>* aTrackVector = myAction->GetPPTrackVector();
 
-      //G4cout << "  GateSource::GeneratePrimaries   OK DEtector Mode   size of Tracks Vector " << aTrackVector->size()<<Gateendl;
+      //G4cout << "  GateSource::GeneratePrimaries   OK DEtector Mode   size of Tracks Vector " << aTrackVector->size()<< Gateendl;
 
       // Check the current Tracks Vector is empty ! otherwise something went wrong /////////
       if ( aTrackVector->size() > 0 ) 
@@ -580,7 +580,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
           G4int PDGCode = (*iter)->GetPDGCode();
           DirectionMomentum = (*iter)->GetMomentumDirection() ;
           eventID = (*iter)->GetEventID();
-          if ( eventID != event_id ){G4cout << " GateSource::GeneratePrimaries()   GateTrack # "<<k<<" event_ID is "<<eventID<<"   current event_ID is " << event_id<<Gateendl;G4Exception( "GateVSource::GeneratePrimaries","GeneratePrimaries",FatalException,"ABORTING...");}
+          if ( eventID != event_id ){G4cout << " GateSource::GeneratePrimaries()   GateTrack # "<<k<<" event_ID is "<<eventID<<"   current event_ID is " << event_id<< Gateendl;G4Exception( "GateVSource::GeneratePrimaries","GeneratePrimaries",FatalException,"ABORTING...");}
           RunID = (*iter)->GetRunID();
           Weight = (*iter)->GetWeight();
           properTime = (*iter)->GetProperTime();
@@ -733,7 +733,7 @@ G4cout << particle_position.x()/mm << " " << particle_position.y()/mm << " " << 
 G4cout << point1.GetPosition().x()/mm << " " << point1.GetPosition().y()/mm << " " << point1.GetPosition().z()/mm << Gateendl;
 G4Material* material = point1.GetMaterial();
 G4String nameMaterial = material->GetName();*/
-//G4cout<<"####### Material Name du step : "<<point1.GetMaterial()->GetName()<<Gateendl;
+//G4cout<<"####### Material Name du step : "<<point1.GetMaterial()->GetName()<< Gateendl;
 
       aEvent->AddPrimaryVertex( vertex );
     }

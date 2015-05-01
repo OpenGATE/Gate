@@ -76,10 +76,10 @@ G4bool GateTrack::Compare( G4Track* aTrack)
     G4bool test6 = test5 && ( fabs( fMomentum.z() - aTrack->GetMomentum().z() ) < .00000001 );
   */
 
-  //G4cout <<" GateTrack::Compare  position GateTrack " <<fPosition <<"    position G4Track "<<aTrack->GetPosition()<<Gateendl;
+  //G4cout <<" GateTrack::Compare  position GateTrack " <<fPosition <<"    position G4Track "<<aTrack->GetPosition()<< Gateendl;
 
 
-  //G4cout <<" GateTrack::Compare  momentum GateTrack " <<fMomentum <<"    position G4Track "<<aTrack->GetMomentum()<<Gateendl;
+  //G4cout <<" GateTrack::Compare  momentum GateTrack " <<fMomentum <<"    position G4Track "<<aTrack->GetMomentum()<< Gateendl;
   G4ThreeVector diffVect = fPosition - aTrack->GetPosition();
 
 
@@ -110,7 +110,7 @@ G4bool GateTrack::Compare( G4Track* aTrack)
 
 
   //G4cout << " position Gate Track " << fPosition << Gateendl;
-  //G4cout << " position G4   Track " << aTrack->GetPosition()<<Gateendl;
+  //G4cout << " position G4   Track " << aTrack->GetPosition()<< Gateendl;
   //G4cout << " Gate Track momentum " << fMomentum<<"      G4 Track  "<<aTrack->GetMomentum() << Gateendl;
   //G4cout << " test1 = " << std::boolalpha << test1 << Gateendl;
 
@@ -319,12 +319,12 @@ void GateTrack::Print()
   G4cout << " Primary Particle " <<  ParticleName << Gateendl;
   G4cout << " Source ID        " <<  m_sourceID << Gateendl;
   G4cout << " Position " << fPosition << "     Track    ID " << fTrackID <<"      Parent ID " << fParentID << Gateendl;
-  G4cout <<"  Local Time " << fLocalTime<< "      Proper Time " << fProperTime << "          Momentum Direction "<< fMDirection <<Gateendl;
+  G4cout <<"  Local Time " << fLocalTime<< "      Proper Time " << fProperTime << "          Momentum Direction "<< fMDirection << Gateendl;
   G4cout << " Momentum " << fMomentum << "           Energy " << fTotalEnergy << "              Kinetic Energy " << fKineticEnergy << "                  Velocity " << fVelocity << "\n";
-  G4cout << " Vertex Position      "<< fVtxPosition<<Gateendl;
-  G4cout << " Vertex Momentum Direction "<<fVtxMomentumDirection <<Gateendl;
-  G4cout << " Polarization              "<<fPolarization<<Gateendl;
-  G4cout << " Vertex Kinetic Energy     " << fVtxKineticEnergy <<Gateendl;
+  G4cout << " Vertex Position      "<< fVtxPosition<< Gateendl;
+  G4cout << " Vertex Momentum Direction "<<fVtxMomentumDirection << Gateendl;
+  G4cout << " Polarization              "<<fPolarization<< Gateendl;
+  G4cout << " Vertex Kinetic Energy     " << fVtxKineticEnergy << Gateendl;
   G4cout << " Weight                    " << fWeight << Gateendl;
   G4cout << " Volume Name at Vertex     " << VertexVolumeName << Gateendl;
   G4cout << " Process Name                    " << m_processName << Gateendl;

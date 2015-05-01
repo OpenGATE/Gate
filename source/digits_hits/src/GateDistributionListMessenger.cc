@@ -81,7 +81,7 @@ void GateDistributionListMessenger::DoInsertion(const G4String& typeName)
 
    AvoidNameConflicts();
    G4String name = GetListManager()->MakeElementName(GetNewInsertionBaseName());
-   G4cout<<"Creating element "<<name<<Gateendl;
+   G4cout<<"Creating element "<<name<< Gateendl;
    switch (fgkTypes[typeName]){
       case kFile         : m_distribVector.push_back(new GateDistributionFile(name)) ; break;
       case kManual       : m_distribVector.push_back(new GateDistributionManual(name)) ; break;

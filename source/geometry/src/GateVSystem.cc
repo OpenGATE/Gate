@@ -96,7 +96,7 @@ void GateVSystem::Describe(size_t indent)
   GateClockDependent::Describe(indent);
 
   // Print-out the min and max component
-  G4cout << GateTools::Indent(indent) << "Components:    \n";
+  G4cout << GateTools::Indent(indent) << "Components:\n";
 
   // Ask for a recursive print-out of the components
   m_BaseComponent->Describe(indent);
@@ -389,9 +389,9 @@ size_t GateVSystem::ComputeIdFromVolID(const GateOutputVolumeID& volID,std::vect
    if (isFirstPass){
       isFirstPass=false;
       for (size_t i=0;i<GetTreeDepth();i++){
-      	 G4cout<<"nofSubCrystal @ level "<<i<<Gateendl;
+      	 G4cout<<"nofSubCrystal @ level "<<i<< Gateendl;
       	 nofCrystalList.push_back(ComputeNofSubCrystalsAtLevel(i,enableList));
-	 G4cout<<"= "<<nofCrystalList[i]<<Gateendl;
+	 G4cout<<"= "<<nofCrystalList[i]<< Gateendl;
       }
    }
    size_t ans = 0;

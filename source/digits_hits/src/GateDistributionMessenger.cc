@@ -83,22 +83,22 @@ void GateDistributionMessenger::SetNewValue(G4UIcommand* command,G4String newVal
   if       ( command==getValueCmd ){
     G4double x = getValueCmd->GetNewDoubleValue(newValue);
     G4double y = GetDistribution()->Value(x);
-    G4cout<<GetDistribution()->GetObjectName()<<'('<<x<<")="<<withUnity(y,UnitCategoryY())<<Gateendl;
+    G4cout<<GetDistribution()->GetObjectName()<<'('<<x<<")="<<withUnity(y,UnitCategoryY())<< Gateendl;
   } else if( command==getMinX_Cmd ) {
     G4double x = GetDistribution()->MinX();
-    G4cout<<GetDistribution()->GetObjectName()<<" MinX "<<withUnity(x,UnitCategoryX())<<Gateendl;
+    G4cout<<GetDistribution()->GetObjectName()<<" MinX "<<withUnity(x,UnitCategoryX())<< Gateendl;
   } else if( command==getMinY_Cmd ) {
     G4double x = GetDistribution()->MinY();
-    G4cout<<GetDistribution()->GetObjectName()<<" MinY "<<withUnity(x,UnitCategoryY())<<Gateendl;
+    G4cout<<GetDistribution()->GetObjectName()<<" MinY "<<withUnity(x,UnitCategoryY())<< Gateendl;
   } else if( command==getMaxX_Cmd ) {
     G4double x = GetDistribution()->MaxX();
-    G4cout<<GetDistribution()->GetObjectName()<<" MaxX "<<withUnity(x,UnitCategoryX())<<Gateendl;
+    G4cout<<GetDistribution()->GetObjectName()<<" MaxX "<<withUnity(x,UnitCategoryX())<< Gateendl;
   } else if( command==getMaxY_Cmd ) {
     G4double x = GetDistribution()->MaxY();
-    G4cout<<GetDistribution()->GetObjectName()<<" MaxY "<<withUnity(x,UnitCategoryY())<<Gateendl;
+    G4cout<<GetDistribution()->GetObjectName()<<" MaxY "<<withUnity(x,UnitCategoryY())<< Gateendl;
   } else if( command==getRandom_Cmd ) {
     G4double x = GetDistribution()->ShootRandom();
-    G4cout<<GetDistribution()->GetObjectName()<<" Random "<<withUnity(x,UnitCategoryX())<<Gateendl;
+    G4cout<<GetDistribution()->GetObjectName()<<" Random "<<withUnity(x,UnitCategoryX())<< Gateendl;
   }
   else
     GateNamedObjectMessenger::SetNewValue(command,newValue);

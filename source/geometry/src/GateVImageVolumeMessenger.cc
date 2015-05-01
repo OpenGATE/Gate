@@ -27,7 +27,7 @@ GateVImageVolumeMessenger::GateVImageVolumeMessenger(GateVImageVolume* volume)
 
   GateMessage("Volume",5,"GateVImageVolumeMessenger()\n");
   G4String dir = GetDirectoryName() + "geometry";
-  //  G4cout<<dir<<Gateendl;
+  //  G4cout<<dir<< Gateendl;
 
   G4String n = dir +"/setImage";
   pImageFileNameCmd = 0;

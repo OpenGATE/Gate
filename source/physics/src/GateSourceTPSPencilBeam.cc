@@ -250,11 +250,11 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                         //            rotation[1]-=GantryAngle;
                         //            rotation[2]+=0.;
 
-                        //            G4cout<<"TESTREAD Spot Effective source position "<<position[0]<<" "<<position[1]<<" "<<position[2]<<Gateendl;
-                        //            G4cout<<"TESTREAD source rotation "<<rotation[0]<<" "<<rotation[1]<<" "<<rotation[2]<<Gateendl;
-                        //            G4cout<<"TESTREAD couch angle "<<CouchAngle<<Gateendl;
-                        //            G4cout<<"TESTREAD gantry angle "<<GantryAngle<<Gateendl;
-                        //            G4cout<<Gateendl;
+                        //            G4cout<<"TESTREAD Spot Effective source position "<<position[0]<<" "<<position[1]<<" "<<position[2]<< Gateendl;
+                        //            G4cout<<"TESTREAD source rotation "<<rotation[0]<<" "<<rotation[1]<<" "<<rotation[2]<< Gateendl;
+                        //            G4cout<<"TESTREAD couch angle "<<CouchAngle<< Gateendl;
+                        //            G4cout<<"TESTREAD gantry angle "<<GantryAngle<< Gateendl;
+                        //            G4cout<< Gateendl;
                         if (mTestFlag) {
                             G4cout << "TESTREAD source rotation " << rotation[0] << " " << rotation[1] << " " << rotation[2] << Gateendl;
                         }
@@ -484,17 +484,17 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties() {
     }
 
     if (mTestFlag) {
-        G4cout<<"DSP "<<mDistanceSourcePatient<<Gateendl;
-        G4cout<<"SMX "<<mDistanceSMXToIsocenter<<Gateendl;
-        G4cout<<"SMY "<<mDistanceSMYToIsocenter<<Gateendl;
-        for (unsigned int i=0; i<mEnergy.size(); i++) G4cout<<"mEnergy\t"<<mEnergy[i]<<Gateendl;
-        for (unsigned int i=0; i<mEnergySpread.size(); i++) G4cout<<"mEnergySpread\t"<<mEnergySpread[i]<<Gateendl;
-        for (unsigned int i=0; i<mX.size(); i++) G4cout<<"mX\t"<<mX[i]<<Gateendl;
-        for (unsigned int i=0; i<mTheta.size(); i++) G4cout<<"mTheta\t"<<mTheta[i]<<Gateendl;
-        for (unsigned int i=0; i<mY.size(); i++) G4cout<<"mY\t"<<mY[i]<<Gateendl;
-        for (unsigned int i=0; i<mPhi.size(); i++) G4cout<<"mPhi\t"<<mPhi[i]<<Gateendl;
-        for (unsigned int i=0; i<mXThetaEmittance.size(); i++) G4cout<<"mXThetaEmittance\t"<<mXThetaEmittance[i]<<Gateendl;
-        for (unsigned int i=0; i<mYPhiEmittance.size(); i++) G4cout<<"mYPhiEmittance\t"<<mYPhiEmittance[i]<<Gateendl;
+        G4cout<<"DSP "<<mDistanceSourcePatient<< Gateendl;
+        G4cout<<"SMX "<<mDistanceSMXToIsocenter<< Gateendl;
+        G4cout<<"SMY "<<mDistanceSMYToIsocenter<< Gateendl;
+        for (unsigned int i=0; i<mEnergy.size(); i++) G4cout<<"mEnergy\t"<<mEnergy[i]<< Gateendl;
+        for (unsigned int i=0; i<mEnergySpread.size(); i++) G4cout<<"mEnergySpread\t"<<mEnergySpread[i]<< Gateendl;
+        for (unsigned int i=0; i<mX.size(); i++) G4cout<<"mX\t"<<mX[i]<< Gateendl;
+        for (unsigned int i=0; i<mTheta.size(); i++) G4cout<<"mTheta\t"<<mTheta[i]<< Gateendl;
+        for (unsigned int i=0; i<mY.size(); i++) G4cout<<"mY\t"<<mY[i]<< Gateendl;
+        for (unsigned int i=0; i<mPhi.size(); i++) G4cout<<"mPhi\t"<<mPhi[i]<< Gateendl;
+        for (unsigned int i=0; i<mXThetaEmittance.size(); i++) G4cout<<"mXThetaEmittance\t"<<mXThetaEmittance[i]<< Gateendl;
+        for (unsigned int i=0; i<mYPhiEmittance.size(); i++) G4cout<<"mYPhiEmittance\t"<<mYPhiEmittance[i]<< Gateendl;
     }
 }
 //------------------------------------------------------------------------------------------------------
@@ -600,7 +600,7 @@ void ReadLineTo3Doubles(double *toto, char *oneline) {
     for (int j=0; j<3; j++) {
         getline(iss, token, ' ');
         toto[j]=atof(token.c_str());
-        //  G4cout<<"toto "<<toto[j]<<Gateendl;
+        //  G4cout<<"toto "<<toto[j]<< Gateendl;
     }
 }
 #endif

@@ -351,7 +351,7 @@ void GateToLMF::StoreTheDigiInLMF(GateSingleDigi *digi)
       showOneLMFDigi();
       if (nVerboseLevel > 2)
 	{
-	  G4cout << "One digi store in " << m_nameOfFile <<Gateendl;
+	  G4cout << "One digi store in " << m_nameOfFile << Gateendl;
 	  if (nVerboseLevel > 7)
 	    {
 	      G4cout << "type enter to continue\n";
@@ -539,7 +539,7 @@ void GateToLMF::RecordBeginOfAcquisition()
  if ( m_system != 0 ) rsectornumber = m_system->GetBaseComponent()->GetChildNumber();
 
 
-G4cout << " number of rsectors " << rsectornumber<<Gateendl;
+G4cout << " number of rsectors " << rsectornumber<< Gateendl;
 
   G4int AxialRsectorNumber = 0;
 
@@ -564,7 +564,7 @@ for ( G4int k = 0; k < rsectornumber ; k++ )
   size_t pos = rsectorComponent->GetObjectName().rfind( "/");
   G4String rsectorname = rsectorComponent->GetObjectName().substr( pos + 1 );
 
-G4cout << " rsector name  =" <<rsectorname<<Gateendl;
+G4cout << " rsector name  =" <<rsectorname<< Gateendl;
 
 
 if ( rsectorComponent->GetRingID() != RingID ) { AxialRsectorNumber += rsectorComponent->GetLinearRepeatNumber(); RingID =  rsectorComponent->GetRingID() ; }
@@ -656,7 +656,7 @@ void GateToLMF::RecordEndOfAcquisition()
       CloseLMFfile(m_pfile);
     } // these lines works but just for 1 file...
 
-      //for( G4int i = 0;i <  pEncoH->scannerTopology.totalNumberOfRsectors;i++)G4cout <<i<<" "<<bins[i]<<Gateendl;;
+      //for( G4int i = 0;i <  pEncoH->scannerTopology.totalNumberOfRsectors;i++)G4cout <<i<<" "<<bins[i]<< Gateendl;;
 }
 
 

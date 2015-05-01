@@ -22,7 +22,7 @@
  GateRTVPhantom::GateRTVPhantom():GateRTPhantom("RTVPhantom")
 {
 
-G4cout << " creating a RTV Phantom at Address "<< this <<Gateendl;
+G4cout << " creating a RTV Phantom at Address "<< this << Gateendl;
 
     IsVoxellized  = 1;
     IsEnabled     = 1;
@@ -85,7 +85,7 @@ void   GateRTVPhantom::SetHeaderFileName( G4String aFN )
 {
 header_FN = aFN;
 
-G4cout << " GateRTVPhantom::SetHeaderFileName ::: header file name = " <<header_FN<<Gateendl;
+G4cout << " GateRTVPhantom::SetHeaderFileName ::: header file name = " <<header_FN<< Gateendl;
 }
 
 void GateRTVPhantom::Compute(G4double aTime)
@@ -147,7 +147,7 @@ YDIM = itsGReader->GetVoxelNy();
 ZDIM_OUTPUT = itsGReader->GetVoxelNz();
 pixel_width = itsGReader->GetVoxelSize();
 
-//G4cout << " GateRTVPhantom::Compute  AFTER GReader->ReadFile( header_FN, current_FN ) " << XDIM<<" "<<YDIM<<" "<<ZDIM_OUTPUT<<Gateendl;
+//G4cout << " GateRTVPhantom::Compute  AFTER GReader->ReadFile( header_FN, current_FN ) " << XDIM<<" "<<YDIM<<" "<<ZDIM_OUTPUT<< Gateendl;
 
 // Destroy and reconstruct physical volumes of enclosing box
 //
@@ -156,13 +156,13 @@ pixel_width = itsGReader->GetVoxelSize();
 
 
 if ( G4GeometryManager::GetInstance()->IsGeometryClosed() == false )
- {G4cout << " Destroying Geometry of " << m_inserter->GetObjectName()<<Gateendl;
+ {G4cout << " Destroying Geometry of " << m_inserter->GetObjectName()<< Gateendl;
   m_inserter->DestroyGeometry();
   //m_inserter->ConstructGeometry( m_inserter->GetMotherLogicalVolume() , false);
   m_inserter->Construct(false);
  }
  else 
-     {G4cout << " Destroying Geometry of " << m_inserter->GetObjectName()<<Gateendl;
+     {G4cout << " Destroying Geometry of " << m_inserter->GetObjectName()<< Gateendl;
       G4GeometryManager::GetInstance()->OpenGeometry();
       m_inserter->DestroyGeometry();
       //m_inserter->ConstructGeometry( m_inserter->GetMotherLogicalVolume() , false);
@@ -172,18 +172,18 @@ if ( G4GeometryManager::GetInstance()->IsGeometryClosed() == false )
 
 
 /*
-G4cout << " #################### Destroying Geometry of " << GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume()->GetName()<<Gateendl;
+G4cout << " #################### Destroying Geometry of " << GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume()->GetName()<< Gateendl;
 G4GeometryManager::GetInstance()->OpenGeometry(GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume() );
 GateDetectorConstruction::GetGateDetectorConstruction()->GeometryHasChanged(GateDetectorConstruction::geometry_needs_rebuild);
 G4GeometryManager::GetInstance()->CloseGeometry( true, true, GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume() );
-G4cout << " #################### Geometry of " << GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume()->GetName()<<"has been CLOSED" <<Gateendl;
+G4cout << " #################### Geometry of " << GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume()->GetName()<<"has been CLOSED\n";
 
-G4cout << " #################### Destroying Geometry of " << m_inserter->GetPhysicalVolume(0)->GetName()<<Gateendl;
+G4cout << " #################### Destroying Geometry of " << m_inserter->GetPhysicalVolume(0)->GetName()<< Gateendl;
 G4GeometryManager::GetInstance()->OpenGeometry(m_inserter->GetPhysicalVolume(0));
 m_inserter->DestroyGeometry();
 m_inserter->ConstructGeometry( m_inserter->GetMotherLogicalVolume() , false);
 G4GeometryManager::GetInstance()->CloseGeometry( false, true, m_inserter->GetPhysicalVolume(0) );
-G4cout << " #################### REBUILT Geometry of " << m_inserter->GetPhysicalVolume(0)->GetName()<<Gateendl;
+G4cout << " #################### REBUILT Geometry of " << m_inserter->GetPhysicalVolume(0)->GetName()<< Gateendl;
 */
 
 //GateRunManager::GetRunManager()->GeometryHasBeenModified();
@@ -205,7 +205,7 @@ p_cK = cK;
 //if ( fabs( GetTPF() - itsSReader->GetTimeSampling() ) > 1e-8 ) 
 itsSReader->UpdateActivities( header_FN, current_FN );
 
-//G4cout <<" GateRTVPhantom::Compute --- leaving " <<Gateendl;
+//G4cout <<" GateRTVPhantom::Compute --- leaving \n";
 
 }
 

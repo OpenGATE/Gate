@@ -77,5 +77,5 @@ GateCoincidencePulse* GateCoincidenceBuffer::ProcessPulse(GateCoincidencePulse* 
 void GateCoincidenceBuffer::DescribeMyself(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "Buffer: " << G4BestUnit(m_bufferSize,"Memory size")
-         << "Read @ "<< G4BestUnit(m_readFrequency,"Frequency")<<Gateendl;
+         << "Read @ "<< G4BestUnit(m_readFrequency,"Frequency")<< Gateendl;
 }

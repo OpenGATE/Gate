@@ -88,7 +88,7 @@ G4double GateImageRegionalizedSubVolumeSolid::DistanceToIn(const G4ThreeVector& 
   // Distance to bbox of the image
   //  G4double dbox = G4Box::DistanceToIn(p);
   G4double dbox = pVolume->DistanceToIn(p);
-  GateDebugMessage("Volume",6," DIST = " << dbox <<Gateendl);
+  GateDebugMessage("Volume",6," DIST = " << dbox << Gateendl);
   return dbox;
 }
 //====================================================================  

@@ -153,7 +153,7 @@ void GateSystemComponent::SetCreator(GateVVolume* anCreator)
   
   if (!creatorInserter) {
        G4cerr   << "[" << GetObjectName() << "::IsValidAttachmentRequest]:\n"
-                << "\tThe creator is not a valid creator creator!\n" << Gateendl;
+                << "\tThe creator is not a valid creator creator!\n";
       return;
   }
 
@@ -167,7 +167,7 @@ void GateSystemComponent::SetCreator(GateVVolume* anCreator)
  
   if (!IsValidAttachmentRequest(creatorInserter))  {
        G4cerr   << "[" << GetObjectName() << "::SetInserter]:\n"
-                << "\tIgnoring attachment request\n" << Gateendl;
+                << "\tIgnoring attachment request\n";
       return;
   }
 
@@ -203,7 +203,7 @@ G4bool GateSystemComponent::IsValidAttachmentRequest(GateVVolume* anCreator) con
   // Check that the creator pointer is valid
   if (!anCreator) {
        G4cerr   << "[" << GetObjectName() << "::IsValidAttachmentRequest]:\n"
-                << "\tThe creator is null!\n" << Gateendl;
+                << "\tThe creator is null!\n";
       return false;
   }
 
@@ -212,7 +212,7 @@ G4bool GateSystemComponent::IsValidAttachmentRequest(GateVVolume* anCreator) con
   // Disrecard the request if an creator is already attached to us
   if (m_creator ) {
       G4cerr << "[" << GetObjectName() << "::IsValidAttachmentRequest]:\n"
-      	     << "\tA volume creator ('" << m_creator->GetObjectName() << "') is already attached to this system component\n" << Gateendl;
+      	     << "\tA volume creator ('" << m_creator->GetObjectName() << "') is already attached to this system component\n";
       return false;
   }
 
@@ -227,7 +227,7 @@ G4bool GateSystemComponent::IsValidAttachmentRequest(GateVVolume* anCreator) con
     if ( creatorSystem != GetSystem() ) {
       G4cerr  << "[" << GetObjectName() << "::IsValidAttachmentRequest]:\n"
       	      << "\tThe volume creator '" << anCreator->GetObjectName() << "' or one of its ancestors is already attached to another system ('" 
-	      << creatorSystem->GetObjectName() << "')\n" << Gateendl;
+	      << creatorSystem->GetObjectName() << "')\n";
     return false;
   }
 //G4cout << " Test3\n";
@@ -235,7 +235,7 @@ G4bool GateSystemComponent::IsValidAttachmentRequest(GateVVolume* anCreator) con
   GateObjectRepeaterList* moveList = anCreator->GetMoveList();
   if (!moveList) {
        G4cerr   << "[" << GetObjectName() << "::IsValidAttachmentRequest]:\n"
-                << "\tThe creator '" << anCreator->GetObjectName() << "' can not be displaced!\n" << Gateendl;
+                << "\tThe creator '" << anCreator->GetObjectName() << "' can not be displaced!\n";
       return false;
   }
 //G4cout << " Test4\n";
@@ -243,7 +243,7 @@ G4bool GateSystemComponent::IsValidAttachmentRequest(GateVVolume* anCreator) con
   GateObjectRepeaterList* repeaterList = anCreator->GetRepeaterList();
   if (!repeaterList) {
        G4cerr   << "[" << GetObjectName() << "::IsValidAttachmentRequest]:\n"
-                << "\tThe creator '" << anCreator->GetObjectName() << "' can not be repeated!\n" << Gateendl;
+                << "\tThe creator '" << anCreator->GetObjectName() << "' can not be repeated!\n";
       return false;
   }
   //G4cout << " FIN GateSystemComponent::IsValidAttachmentRequest\n";
@@ -658,19 +658,19 @@ void GateSystemComponent::setInCoincidenceWith(G4String aRsectorName )
 {
   size_t pos = GetObjectName().rfind( "/");
   G4String thename = GetObjectName().substr( pos + 1);
-  G4cout << " my name is  " << thename<<Gateendl;
+  G4cout << " my name is  " << thename<< Gateendl;
    if ( thename ==  aRsectorName ) return;
 
 
       G4cout << " GateSystemComponent::setInCoincidenceWith  entered  for " <<GetObjectName()<< Gateendl;
-      G4cout << " rsector name parameter " << aRsectorName<<Gateendl;
+      G4cout << " rsector name parameter " << aRsectorName<< Gateendl;
 
    if ( m_coincidence_rsector.empty() != 1 )
     {
        std::vector<G4String>::iterator it;
        G4cout << " vector is not empty  looking for " << aRsectorName<< Gateendl;
-       G4cout << " it contains " <<Gateendl;
-       for (size_t i = 0; i < m_coincidence_rsector.size(); i++ ) G4cout << m_coincidence_rsector[i]<<"  ";       G4cout<<Gateendl;
+       G4cout << " it contains \n";
+       for (size_t i = 0; i < m_coincidence_rsector.size(); i++ ) G4cout << m_coincidence_rsector[i]<<"  ";       G4cout<< Gateendl;
        it = std::find( m_coincidence_rsector.begin() , m_coincidence_rsector.end
 () , aRsectorName );
        if ( it == m_coincidence_rsector.end() )        {
@@ -682,7 +682,7 @@ aRsectorName );
            for (size_t i = 0; i < m_coincidence_rsector.size(); i++ )theComponent
 ->setInCoincidenceWith( m_coincidence_rsector[i] );
            G4cout<<"GateSystemComponent::setInCoincidenceWith() :: setting " << 
-thename<< " in coincidence with " << aRsectorName <<Gateendl;
+thename<< " in coincidence with " << aRsectorName << Gateendl;
          }         else G4cout<<"GateSystemComponent::setInCoincidenceWith() :: WARNING Component named " <<aRsectorName<<" was not found. Ignored.";
         } else { G4cout << "already found  exiting \n";return; }
     }     else
@@ -693,7 +693,7 @@ thename<< " in coincidence with " << aRsectorName <<Gateendl;
              {size_t pos = GetObjectName().rfind( "/");
               G4String thename = GetObjectName().substr( pos + 1 );
              m_coincidence_rsector.push_back( aRsectorName );
-             G4cout<<"GateSystemComponent::setInCoincidenceWith() :: setting " <<thename << " in coincidence with " << aRsectorName <<Gateendl;             theComponent->setInCoincidenceWith( thename );
+             G4cout<<"GateSystemComponent::setInCoincidenceWith() :: setting " <<thename << " in coincidence with " << aRsectorName << Gateendl;             theComponent->setInCoincidenceWith( thename );
              }
              else G4cout<<"GateSystemComponent::setInCoincidenceWith() :: WARNING Component named " <<aRsectorName<<" was not found. Ignored.\n";
            }

@@ -174,11 +174,11 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
   //sumNi+=step->fNonIonizingEnergyDeposit;//GetNonIonizingEnergyDeposit();
   /*if(step->GetPreStepPoint()->GetProcessDefinedStep() )
 if(step->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessName()!="eIonisation" )
-  { G4cout<<nTrack<<"  "<<step->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessName()<<"  "<< step->GetTotalEnergyDeposit()/ (step->GetPreStepPoint()->GetKineticEnergy()-step->GetPostStepPoint()->GetKineticEnergy())<<Gateendl;
+  { G4cout<<nTrack<<"  "<<step->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessName()<<"  "<< step->GetTotalEnergyDeposit()/ (step->GetPreStepPoint()->GetKineticEnergy()-step->GetPostStepPoint()->GetKineticEnergy())<< Gateendl;
 sumNi+=step->GetTotalEnergyDeposit();}
   if(step->GetPostStepPoint()->GetProcessDefinedStep())*/
 //if(step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()!="ElectronIonisation" )
- //   G4cout<<"post "<<step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()<<Gateendl;
+ //   G4cout<<"post "<<step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()<< Gateendl;
 
   assert(step->GetTrack()->GetWeight() == 1.); // edep doesnt handle weight
 

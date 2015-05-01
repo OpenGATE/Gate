@@ -125,16 +125,16 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
 //   if (m_coincidentPulses){
 //     	G4cout<<"ATTENTION0 "
 //     	<<m_coincidentPulses->size()<<" current initiales"
-// 	<<Gateendl;
+// 	<< Gateendl;
 // 	if (inp)
-// 	    G4cout<<"Avec inp a "<<inp->size()<<Gateendl;
+// 	    G4cout<<"Avec inp a "<<inp->size()<< Gateendl;
 // 	else
 // 	    G4cout<<"Sans inp\n";
 //   }
 //   if (m_waitingPulses){
 //     	G4cout<<"ATTENTION0' "
 //     	<<m_waitingPulses->size()<<" attente initiales"
-// 	<<Gateendl;
+// 	<< Gateendl;
 //   }
   // Check whether we're enabled
   if (!IsEnabled())
@@ -192,7 +192,7 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
     	if ((*outputPulse)[k1]->GetTime()>stime){
 	    if (!m_waitingPulses) m_waitingPulses = CreateNewCoincidencePulse();
     	    m_waitingPulses->InsertUniqueSortedCopy((*outputPulse)[k1]);
-	  //  G4cout<<outputPulse->size()<<"-----------"<<m_waitingPulses<<"----------"<<(*outputPulse)[k1]<<"------"<<(*outputPulse)[k1]->GetTime()<<"---------"<<stime<<Gateendl;
+	  //  G4cout<<outputPulse->size()<<"-----------"<<m_waitingPulses<<"----------"<<(*outputPulse)[k1]<<"------"<<(*outputPulse)[k1]->GetTime()<<"---------"<<stime<< Gateendl;
 
 	}
     }
@@ -442,7 +442,7 @@ inline GateCoincidencePulse* GateCoincidenceSorter::CreateNewCoincidencePulse() 
 {
    G4double window = G4RandGauss::shoot(m_coincidenceWindow,m_coincidenceWindowJitter);
    G4double offset = G4RandGauss::shoot(m_offset,m_offsetJitter);
-//   G4cout<<"Window "<<window<<" offset "<<offset<<Gateendl;
+//   G4cout<<"Window "<<window<<" offset "<<offset<< Gateendl;
    return new GateCoincidencePulse(m_outputName,window,offset);
 }
 

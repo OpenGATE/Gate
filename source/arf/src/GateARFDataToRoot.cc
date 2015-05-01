@@ -60,7 +60,7 @@ GateARFDataToRoot::GateARFDataToRoot(const G4String& name, GateOutputMgr* output
                        // Moreover this output will slow down a lot all the simulation !
   nVerboseLevel = 0;
 
-//G4cout << " GateARFDataToRoot::GateARFDataToRoot " <<Gateendl;
+//G4cout << " GateARFDataToRoot::GateARFDataToRoot \n";
 
   m_rootMessenger = new GateARFDataToRootMessenger(this);
 
@@ -208,7 +208,7 @@ void GateARFDataToRoot::RecordDigitizer(const G4Event* )
 void GateARFDataToRoot::RegisterNewSingleDigiCollection(const G4String& aCollectionName,G4bool)
 {
 
-  //G4cout << " GateARFDataToRoot::RegisterNewSingleDigiCollection single digi collection name " << aCollectionName<<Gateendl;
+  //G4cout << " GateARFDataToRoot::RegisterNewSingleDigiCollection single digi collection name " << aCollectionName<< Gateendl;
 
 m_SingleDigiCollectionName = aCollectionName;
 
@@ -231,7 +231,7 @@ void GateARFDataToRoot::CloseARFDataRootFile()
 {
  m_ARFDatafile = m_ARFDataTree->GetCurrentFile();
 
- // G4cout << " GateARFDataToRoot::CloseARFDataRootFile : "<< m_ARFDatafile << "   "<< m_NbOfPhotonsTree->GetCurrentFile()<<Gateendl;
+ // G4cout << " GateARFDataToRoot::CloseARFDataRootFile : "<< m_ARFDatafile << "   "<< m_NbOfPhotonsTree->GetCurrentFile()<< Gateendl;
 
  
 
@@ -252,8 +252,8 @@ G4ThreeVector PosAtVertex = aDigi->GetSourcePosition();
 NbofStoredPhotons++;
 
 
-G4cout <<" number of stored photons    " << NbofStoredPhotons<<Gateendl;
-G4cout <<" number of NbOfSourcePhotons "<< NbOfSourcePhotons <<Gateendl;
+G4cout <<" number of stored photons    " << NbofStoredPhotons<< Gateendl;
+G4cout <<" number of NbOfSourcePhotons "<< NbOfSourcePhotons << Gateendl;
 
 // compute projection of the energy deposition location onto the projection plane as the intersection of the plane X=m_X
 // and the line passing through totalposition with unit vector director Indirection, the incident direction
@@ -291,16 +291,16 @@ return 1;
 void GateARFDataToRoot::DisplayARFStatistics()
 {
 G4cout << " Source Photons Statistics For ARF Data " <<  Gateendl;
-G4cout << " Camera heads number                             " << NbOfHeads<<Gateendl;
-G4cout << " Source Photons                                  " << NbOfSourcePhotons<<Gateendl;
-G4cout << " Detected Photons                                " << NbofStoredPhotons <<Gateendl;
-G4cout << " Source Photons Going Outside the Camera         " << OUT_camera<<Gateendl;
-G4cout << " Source Photons Going Inside the Camera          " << IN_camera <<Gateendl;
-G4cout << " Source Photons Going Outside the Crystal        " << NbofGoingOutPhotons<<Gateendl;
-G4cout << " Source Photons Going Inside the Crystal         " << NbofGoingInPhotons<<Gateendl;
-G4cout << " Source Photons Killed Inside the Collimator     " << NbofKilledInsideColliPhotons<<Gateendl;
-G4cout << " Source Photons Killed Inside the Camera         " << NbofKilledInsideCamera<<Gateendl;
-G4cout << " Source Photons Killed Inside the Crystal        " << NbofKilledInsideCrystalPhotons<<Gateendl;
+G4cout << " Camera heads number                             " << NbOfHeads<< Gateendl;
+G4cout << " Source Photons                                  " << NbOfSourcePhotons<< Gateendl;
+G4cout << " Detected Photons                                " << NbofStoredPhotons << Gateendl;
+G4cout << " Source Photons Going Outside the Camera         " << OUT_camera<< Gateendl;
+G4cout << " Source Photons Going Inside the Camera          " << IN_camera << Gateendl;
+G4cout << " Source Photons Going Outside the Crystal        " << NbofGoingOutPhotons<< Gateendl;
+G4cout << " Source Photons Going Inside the Crystal         " << NbofGoingInPhotons<< Gateendl;
+G4cout << " Source Photons Killed Inside the Collimator     " << NbofKilledInsideColliPhotons<< Gateendl;
+G4cout << " Source Photons Killed Inside the Camera         " << NbofKilledInsideCamera<< Gateendl;
+G4cout << " Source Photons Killed Inside the Crystal        " << NbofKilledInsideCrystalPhotons<< Gateendl;
 
 }
 

@@ -236,7 +236,7 @@ void GateTrackingAction::PreUserTrackingAction(const G4Track* a)
           G4Track* TmpTrack = const_cast<G4Track*>(a) ;
           std::vector<GateTrack*>::iterator iter;
           for ( iter = aTrackVector->begin(); iter != aTrackVector->end(); iter++)
-            {   // G4cout << "  GateTrackingAction::PreUserTrackingAction()   Tracks Vector size  " << aTrackVector->size()<<Gateendl;
+            {   // G4cout << "  GateTrackingAction::PreUserTrackingAction()   Tracks Vector size  " << aTrackVector->size()<< Gateendl;
               G4int track_id = (*iter)->GetTrackID();
               G4int p_id   = (*iter)->GetParentID();
               test = (*iter)->Compare(TmpTrack);
@@ -362,12 +362,12 @@ void GateTrackingAction::ShowG4TrackInfos( G4String outF, G4Track* aTrack )
 
   G4String particleName = aTrack->GetDefinition()->GetParticleName();
 
-  outFile << " Particle " << particleName<<Gateendl;
-  outFile  << " Parent ID " << aTrack->GetParentID()  <<"  track ID "<< aTrack->GetTrackID() << "    \n";
+  outFile << " Particle " << particleName<< Gateendl;
+  outFile  << " Parent ID " << aTrack->GetParentID()  <<"  track ID "<< aTrack->GetTrackID() << Gateendl;
   outFile << "      -----------------------------------------------\n";
   outFile << "        G4Track Information  " << std::setw(20) << Gateendl;
   outFile << "      -----------------------------------------------\n";
-  outFile << "        Step number         : " << std::setw(20) << aTrack->GetCurrentStepNumber()<< Gateendl;
+  outFile << "        Step number         : " << std::setw(20) << aTrack->GetCurrentStepNumber() << Gateendl;
 
 #ifdef G4_USE_G4BESTUNIT_FOR_VERBOSE
   outFile << "        Position - x        : "
@@ -590,7 +590,7 @@ void GateSteppingAction::StopAndKill(G4String aString )
   }
   G4String msg("Off");
   if ( Boundary == 1 )msg = "On";
-  G4cout << " GateSteppingAction Module Message : Stop-On-Boundary policy is " <<msg<<Gateendl;
+  G4cout << " GateSteppingAction Module Message : Stop-On-Boundary policy is " <<msg<< Gateendl;
 
 
 }
@@ -701,8 +701,8 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
           isInsideCamera = ( volumeID.GetCreatorDepth("SPECThead") != -1 );
 
 
-          //if ( isInsideCamera ) {G4cout << " inserter found " << volumeID.GetCreator( volumeID.GetCreatorDepth("SPECThead") )->GetObjectName()<<Gateendl;
-          //                      G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"  "<<volumeID<<Gateendl;}
+          //if ( isInsideCamera ) {G4cout << " inserter found " << volumeID.GetCreator( volumeID.GetCreatorDepth("SPECThead") )->GetObjectName()<< Gateendl;
+          //                      G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"  "<<volumeID<< Gateendl;}
 
           if( ( isInsideCamera ) && ( previous_inCamera == 0 ) )
             {
@@ -717,18 +717,18 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
 
               previous_inCamera = 1;
 
-              //G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"   going inside camera "<<volumeID<<Gateendl;
+              //G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"   going inside camera "<<volumeID<< Gateendl;
 
             }
 
-          //if( isInsideCamera ) G4cout <<"event ID " << eventID<<"  step #  "<<step_number<<"   inside camera "<<volumeID<<Gateendl;
+          //if( isInsideCamera ) G4cout <<"event ID " << eventID<<"  step #  "<<step_number<<"   inside camera "<<volumeID<< Gateendl;
 
           G4bool isGoingOutCamera = (!isInsideCamera) && ( previous_inCamera == 1 );
 
           if ( isGoingOutCamera && (IsCountedOutCamera == 0) )
             { ARFDataToRoot->IncrementOutCamera();
               IsCountedOutCamera = 1;
-              //G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"   going outside camera "<<volumeID<<Gateendl;
+              //G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"   going outside camera "<<volumeID<< Gateendl;
               //theTrack->SetTrackStatus(fStopAndKill);
             }
 
@@ -757,7 +757,7 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
           G4bool NextisOutCrystal = !NextisInCrystal;
 
           if( isInsideCamera && track_dead) {ARFDataToRoot->IncrementKilledInsideCamera();
-            //G4cout <<"  step # "<<step_number<<"   killed inside camera "<<volumeID<<Gateendl;
+            //G4cout <<"  step # "<<step_number<<"   killed inside camera "<<volumeID<< Gateendl;
           }
 
           G4bool isGoingOutCrystal  = isInsideCrystal && NextisOutCrystal;
@@ -791,10 +791,10 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
         }
 
 
-      //	G4cout<<"Event ID " << EventID<<Gateendl;
-      //G4cout << " Track ID " << TrackID<<" Parent ID " << ParentID<<Gateendl;
+      //	G4cout<<"Event ID " << EventID<< Gateendl;
+      //G4cout << " Track ID " << TrackID<<" Parent ID " << ParentID<< Gateendl;
       //G4cout<<" particle " << particleName << Gateendl;
-      //G4cout<<" step number = " <<fTrack->GetCurrentStepNumber()<<Gateendl;
+      //G4cout<<" step number = " <<fTrack->GetCurrentStepNumber()<< Gateendl;
 
 
       if ( fTrack->GetCurrentStepNumber() == 1 ) // initialize for current Track
@@ -894,7 +894,7 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
                           G4String outF = "GoingOutParticles.txt";
                           outFile.open (outF ,std::ios::app);
                           outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";
-                          outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    \n";
+                          outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << Gateendl;
                           ShowG4TrackInfos(outF, fTrack);
                         } // verbose end block
                     }
@@ -911,7 +911,7 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
                               G4String outF = "KilledAfterBoundaryParticles.txt";
                               outFile.open (outF ,std::ios::app);
                               outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";
-                              outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    \n";
+                              outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << Gateendl;
                               ShowG4TrackInfos(outF, fTrack);
                             } // verbose end block
                           ///// We check that the next volume is not "OutOfWorld". If so NO NEED to save it !
@@ -941,7 +941,7 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
                       G4String outF = "GoingOutParticles.txt";
                       outFile.open ( outF ,std::ios::app);
                       const G4Event* currentEvent = G4EventManager::GetEventManager()->GetConstCurrentEvent();
-                      outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Particle is detected going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    \n";
+                      outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Particle is detected going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << Gateendl;
                       if ( m_verboseLevel>3 )
                         {
                           ShowG4TrackInfos(outF, fTrack);
@@ -975,7 +975,7 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
                           std::ofstream outFile;
                           G4String outF = "KilledInsideParticles.txt";
                           outFile.open ( outF ,std::ios::app);
-                          outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is killed inside the Phantom Parent ID "                                 << ParentID <<"  track ID "<< TrackID << "    \n";
+                          outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is killed inside the Phantom Parent ID "                                 << ParentID <<"  track ID "<< TrackID << Gateendl;
                           if ( m_verboseLevel > 3 )
                             {
                               ShowG4TrackInfos(outF, fTrack);
@@ -1162,9 +1162,9 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
           GateVolumeID volumeID(touchable);
           isInsideCamera = ( volumeID.GetCreatorDepth("SPECThead") != -1 );
 
-          // if ( isInsideCamera ) G4cout << " inserter found " << volumeID.GetInserter( volumeID.GetInserterDepth("SPECThead") )->GetObjectName()<<Gateendl;
+          // if ( isInsideCamera ) G4cout << " inserter found " << volumeID.GetInserter( volumeID.GetInserterDepth("SPECThead") )->GetObjectName()<< Gateendl;
 
-          G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"  "<<volumeID<<Gateendl;
+          G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"  "<<volumeID<< Gateendl;
 
           if( ( isInsideCamera ) && ( previous_inCamera == 0 ) )
             {
@@ -1179,18 +1179,18 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
 
               previous_inCamera = 1;
 
-              //G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"   going inside camera "<<volumeID<<Gateendl;
+              //G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"   going inside camera "<<volumeID<< Gateendl;
 
             }
 
-          //if( isInsideCamera ) G4cout <<"event ID " << eventID<<"  step #  "<<step_number<<"   inside camera "<<volumeID<<Gateendl;
+          //if( isInsideCamera ) G4cout <<"event ID " << eventID<<"  step #  "<<step_number<<"   inside camera "<<volumeID<< Gateendl;
 
           G4bool isGoingOutCamera = (!isInsideCamera) && ( previous_inCamera == 1 );
 
           if ( isGoingOutCamera && (IsCountedOutCamera == 0) )
             { ARFDataToRoot->IncrementOutCamera();
               IsCountedOutCamera = 1;
-              //G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"   going outside camera "<<volumeID<<Gateendl;
+              //G4cout <<"event ID " << eventID<<"  step # "<<step_number<<"   going outside camera "<<volumeID<< Gateendl;
               //theTrack->SetTrackStatus(fStopAndKill);
             }
 
@@ -1219,7 +1219,7 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
           G4bool NextisOutCrystal = !NextisInCrystal;
 
           if( isInsideCamera && track_dead) {ARFDataToRoot->IncrementKilledInsideCamera();
-            //G4cout <<"  step # "<<step_number<<"   killed inside camera "<<volumeID<<Gateendl;
+            //G4cout <<"  step # "<<step_number<<"   killed inside camera "<<volumeID<< Gateendl;
           }
 
           G4bool isGoingOutCrystal  = isInsideCrystal && NextisOutCrystal;
@@ -1253,10 +1253,10 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
         }
 
 
-      //	G4cout<<"Event ID " << EventID<<Gateendl;
-      //G4cout << " Track ID " << TrackID<<" Parent ID " << ParentID<<Gateendl;
+      //	G4cout<<"Event ID " << EventID<< Gateendl;
+      //G4cout << " Track ID " << TrackID<<" Parent ID " << ParentID<< Gateendl;
       //G4cout<<" particle " << particleName << Gateendl;
-      //G4cout<<" step number = " <<fTrack->GetCurrentStepNumber()<<Gateendl;
+      //G4cout<<" step number = " <<fTrack->GetCurrentStepNumber()<< Gateendl;
 
 
       if ( fTrack->GetCurrentStepNumber() == 1 ) // initialize for current Track
@@ -1356,7 +1356,7 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
                           G4String outF = "GoingOutParticles.txt";
                           outFile.open (outF ,std::ios::app);
                           outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";
-                          outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    \n";
+                          outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << Gateendl;
                           ShowG4TrackInfos(outF, fTrack);
                         } // verbose end block
                     }
@@ -1373,7 +1373,7 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
                               G4String outF = "KilledAfterBoundaryParticles.txt";
                               outFile.open (outF ,std::ios::app);
                               outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";
-                              outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    \n";
+                              outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << Gateendl;
                               ShowG4TrackInfos(outF, fTrack);
                             } // verbose end block
                           ///// We check that the next volume is not "OutOfWorld". If so NO NEED to save it !
@@ -1403,7 +1403,7 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
                       G4String outF = "GoingOutParticles.txt";
                       outFile.open ( outF ,std::ios::app);
                       const G4Event* currentEvent = G4EventManager::GetEventManager()->GetConstCurrentEvent();
-                      outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Particle is detected going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    \n";
+                      outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Particle is detected going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << Gateendl;
                       if ( m_verboseLevel>3 )
                         {
                           ShowG4TrackInfos(outF, fTrack);
@@ -1437,7 +1437,7 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
                           std::ofstream outFile;
                           G4String outF = "KilledInsideParticles.txt";
                           outFile.open ( outF ,std::ios::app);
-                          outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is killed inside the Phantom Parent ID "                                 << ParentID <<"  track ID "<< TrackID << "    \n";
+                          outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is killed inside the Phantom Parent ID "                                 << ParentID <<"  track ID "<< TrackID << Gateendl;
                           if ( m_verboseLevel > 3 )
                             {
                               ShowG4TrackInfos(outF, fTrack);
@@ -1480,7 +1480,7 @@ void GateSteppingAction::ShowG4TrackInfos( G4String outF, G4Track* fTrack)
   outFile << "      -----------------------------------------------\n";
   outFile << "        G4Track Information  " << std::setw(20) << Gateendl;
   outFile << "      -----------------------------------------------\n";
-  outFile << "     Particle Name          : " << fTrack->GetDefinition()->GetParticleName()<<Gateendl;
+  outFile << "     Particle Name          : " << fTrack->GetDefinition()->GetParticleName()<< Gateendl;
   outFile << "        Current Volume         : "
           << std::setw(20);
   if( fTrack->GetVolume() != 0 ) {

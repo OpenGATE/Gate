@@ -102,7 +102,7 @@ if ( stage == 2 )
 
  	G4cout << " GateProjectionSet::Reset detected ARF tables for Production Use\n";
 
- 	G4cout << " m_ARFdata = " <<m_ARFdata<<Gateendl;
+ 	G4cout << " m_ARFdata = " <<m_ARFdata<< Gateendl;
 
   if (m_ARFdata) {
     for (headID=0;headID<m_headNb;headID++) {
@@ -341,7 +341,7 @@ m_rec++;
 
 //G4cout << "  bin X " << binX<<"   bin Y " << binY << Gateendl;
 
-//G4cout << " m_ARFdata["<<headID<<"] = "<<m_ARFdata[headID][ binX + binY * m_pixelNbX]<<Gateendl;
+//G4cout << " m_ARFdata["<<headID<<"] = "<<m_ARFdata[headID][ binX + binY * m_pixelNbX]<< Gateendl;
 
 }
 void GateProjectionSet::StreamOutARFProjection(std::ofstream& dest, size_t headID)

@@ -59,7 +59,7 @@ void GateObjectChildList::DestroyChildGeometry()
     for (size_t i=0; i<theListOfNamedObject.size(); i++){
       if (theListOfNamedObject[i])
         GetVolume(i)->DestroyGeometry();  
-	/*G4cout<<"GateObjectChildList :: listObject = "<<i<<Gateendl;*/}
+	/*G4cout<<"GateObjectChildList :: listObject = "<<i<< Gateendl;*/}
    }
    		
 }

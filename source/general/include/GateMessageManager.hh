@@ -39,7 +39,7 @@ See GATE/LICENSE.txt for further details
 
   example :
 
-  GateMessage("Core",4,"problem with "<<GetName()<<Gateendl);
+  GateMessage("Core",4,"problem with "<<GetName()<< Gateendl);
 
   will push the 3rd argument in std::cout if the message level of
   "Core" messages is greater or equal to 4.  which means that it
@@ -365,7 +365,7 @@ See GATE/LICENSE.txt for further details
 	  if (lev >1)							\
 	    {								\
 	      std::cout << " <!> *** WARNING *** <!>  In file '"<<__FILE__ \
-			<<"' ; Line "<<__LINE__<<Gateendl;		\
+			<<"' ; Line "<<__LINE__<< Gateendl;		\
 	    }								\
 	}								\
     }									\

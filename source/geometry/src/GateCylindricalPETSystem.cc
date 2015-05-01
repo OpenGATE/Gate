@@ -232,6 +232,6 @@ void GateCylindricalPETSystem::AddNewRSECTOR( G4String aName )
   memset( nameID , '\0', 30 );
   G4String s = aName+"ID";
   s.copy( nameID , s.length() );
-G4cout << " m_maxindex at start " << m_maxindex <<Gateendl;
-G4cout << nameID <<Gateendl;
+G4cout << " m_maxindex at start " << m_maxindex << Gateendl;
+G4cout << nameID << Gateendl;
 }

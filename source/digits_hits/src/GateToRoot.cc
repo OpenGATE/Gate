@@ -1209,8 +1209,8 @@ void GateToRoot::CloseTracksRootFile()
       m_RecStepTree ->GetEntry( m_currentRSData );
       last_RSEventID = m_RSEventID;
       if ( nVerboseLevel > 3 ){ G4cout << "GateToRoot::CloseTracksRootFile() ::: Closing Tracks Data Root File " <<  fTracksFN << " ... ";
-        G4cout << " GateToRoot::CloseTracksRootFile() --- m_currentRSData = " << m_currentRSData<<"   m_RecStepTree->GetEntries() = "<< m_RecStepTree->GetEntries()<<Gateendl;
-        G4cout << " GateToRoot::CloseTracksRootFile() --- last_RSEventID = "<<last_RSEventID <<Gateendl;
+        G4cout << " GateToRoot::CloseTracksRootFile() --- m_currentRSData = " << m_currentRSData<<"   m_RecStepTree->GetEntries() = "<< m_RecStepTree->GetEntries()<< Gateendl;
+        G4cout << " GateToRoot::CloseTracksRootFile() --- last_RSEventID = "<<last_RSEventID << Gateendl;
       }
       dxg1_copy = dxg1;
       dyg1_copy = dyg1;
@@ -1246,39 +1246,39 @@ void GateToRoot::PrintRecStep()
   G4cout << "positron Generation Position = " << m_positronGenerationPos << Gateendl;
   G4cout << "positron Annihilation Position = " << m_positronAnnihilPos << Gateendl;
   G4cout << "positron Kinetic Energy        = " << m_positronKinEnergy << Gateendl;
-  G4cout << "dxg1 = " << dxg1 <<Gateendl;
-  G4cout << "dyg1 = " << dyg1 <<Gateendl;
-  G4cout << "dzg1 = " << dzg1 <<Gateendl;
-  G4cout << "dxg2 = " << dxg2 <<Gateendl;
-  G4cout << "dyg2 = " << dyg2 <<Gateendl;
-  G4cout << "dzg2 = " << dzg2 <<Gateendl;
-  G4cout << "photon1_phantom_Rayleigh = "<< theCRData.photon2_phantom_Rayleigh<<Gateendl;
-  G4cout << "photon2_phantom_Rayleigh = "<<    theCRData.photon2_phantom_Rayleigh <<Gateendl;
-  G4cout << "photon1_phantom_compton = "<<       theCRData.photon1_phantom_compton <<Gateendl;
-  G4cout <<"photon2_phantom_compton  = "<<       theCRData.photon2_phantom_compton <<Gateendl;
-  G4cout <<"theComptonVolumeName1   = "<<  theCRData.theComptonVolumeName1<<Gateendl;
-  G4cout <<"theComptonVolumeName2   = "<<  theCRData.theComptonVolumeName2<<Gateendl;
-  G4cout <<"theRayleighVolumeName1   = "<<  theCRData.theRayleighVolumeName1<<Gateendl;
-  G4cout <<"theRayleighVolumeName2   = "<<  theCRData.theRayleighVolumeName2<<Gateendl;
+  G4cout << "dxg1 = " << dxg1 << Gateendl;
+  G4cout << "dyg1 = " << dyg1 << Gateendl;
+  G4cout << "dzg1 = " << dzg1 << Gateendl;
+  G4cout << "dxg2 = " << dxg2 << Gateendl;
+  G4cout << "dyg2 = " << dyg2 << Gateendl;
+  G4cout << "dzg2 = " << dzg2 << Gateendl;
+  G4cout << "photon1_phantom_Rayleigh = "<< theCRData.photon2_phantom_Rayleigh<< Gateendl;
+  G4cout << "photon2_phantom_Rayleigh = "<<    theCRData.photon2_phantom_Rayleigh << Gateendl;
+  G4cout << "photon1_phantom_compton = "<<       theCRData.photon1_phantom_compton << Gateendl;
+  G4cout <<"photon2_phantom_compton  = "<<       theCRData.photon2_phantom_compton << Gateendl;
+  G4cout <<"theComptonVolumeName1   = "<<  theCRData.theComptonVolumeName1<< Gateendl;
+  G4cout <<"theComptonVolumeName2   = "<<  theCRData.theComptonVolumeName2<< Gateendl;
+  G4cout <<"theRayleighVolumeName1   = "<<  theCRData.theRayleighVolumeName1<< Gateendl;
+  G4cout <<"theRayleighVolumeName2   = "<<  theCRData.theRayleighVolumeName2<< Gateendl;
   G4cout <<"--------------------- COPY------------------------------\n";
   G4cout << "Ion Decay Position = " << m_ionDecayPos_copy << Gateendl;
   G4cout << "positron Generation Position = " << m_positronGenerationPos_copy << Gateendl;
   G4cout << "positron Annihilation Position = " << m_positronAnnihilPos_copy << Gateendl;
   G4cout << "positron Kinetic Energy        = " << m_positronKinEnergy_copy << Gateendl;
-  G4cout << "dxg1 = " << dxg1_copy <<Gateendl;
-  G4cout << "dyg1 = " << dyg1_copy <<Gateendl;
-  G4cout << "dzg1 = " << dzg1_copy <<Gateendl;
-  G4cout << "dxg2 = " << dxg2_copy <<Gateendl;
-  G4cout << "dyg2 = " << dyg2_copy <<Gateendl;
-  G4cout << "dzg2 = " << dzg2_copy <<Gateendl;
-  G4cout << "photon1_phantom_Rayleigh = "<< theCRData_copy.photon2_phantom_Rayleigh<<Gateendl;
-  G4cout << "photon2_phantom_Rayleigh = "<<    theCRData_copy.photon2_phantom_Rayleigh <<Gateendl;
-  G4cout << "photon1_phantom_compton = "<<       theCRData_copy.photon1_phantom_compton <<Gateendl;
-  G4cout <<"photon2_phantom_compton  = "<<       theCRData_copy.photon2_phantom_compton <<Gateendl;
-  G4cout <<"theComptonVolumeName1   = "<<  theCRData_copy.theComptonVolumeName1<<Gateendl;
-  G4cout <<"theComptonVolumeName2   = "<<  theCRData_copy.theComptonVolumeName2<<Gateendl;
-  G4cout <<"theRayleighVolumeName1   = "<<  theCRData_copy.theRayleighVolumeName1<<Gateendl;
-  G4cout <<"theRayleighVolumeName2   = "<<  theCRData_copy.theRayleighVolumeName2<<Gateendl;
+  G4cout << "dxg1 = " << dxg1_copy << Gateendl;
+  G4cout << "dyg1 = " << dyg1_copy << Gateendl;
+  G4cout << "dzg1 = " << dzg1_copy << Gateendl;
+  G4cout << "dxg2 = " << dxg2_copy << Gateendl;
+  G4cout << "dyg2 = " << dyg2_copy << Gateendl;
+  G4cout << "dzg2 = " << dzg2_copy << Gateendl;
+  G4cout << "photon1_phantom_Rayleigh = "<< theCRData_copy.photon2_phantom_Rayleigh<< Gateendl;
+  G4cout << "photon2_phantom_Rayleigh = "<<    theCRData_copy.photon2_phantom_Rayleigh << Gateendl;
+  G4cout << "photon1_phantom_compton = "<<       theCRData_copy.photon1_phantom_compton << Gateendl;
+  G4cout <<"photon2_phantom_compton  = "<<       theCRData_copy.photon2_phantom_compton << Gateendl;
+  G4cout <<"theComptonVolumeName1   = "<<  theCRData_copy.theComptonVolumeName1<< Gateendl;
+  G4cout <<"theComptonVolumeName2   = "<<  theCRData_copy.theComptonVolumeName2<< Gateendl;
+  G4cout <<"theRayleighVolumeName1   = "<<  theCRData_copy.theRayleighVolumeName1<< Gateendl;
+  G4cout <<"theRayleighVolumeName2   = "<<  theCRData_copy.theRayleighVolumeName2<< Gateendl;
 }
 
 /// OPEN ROOT TRACKS DATA FILE IN READ MODE
@@ -1323,7 +1323,7 @@ void GateToRoot::OpenTracksFile()
     s << currentN ;
     fTracksFN = m_fileName+"_TrackerData_"+s.str()+".root";
     lastEventID = EventID;
-    if ( nVerboseLevel > 3 ) G4cout << "  LAST EVENT ID " <<lastEventID<<Gateendl;
+    if ( nVerboseLevel > 3 ) G4cout << "  LAST EVENT ID " <<lastEventID<< Gateendl;
     CloseTracksRootFile();
   }
 
@@ -1398,7 +1398,7 @@ void GateToRoot::OpenTracksFile()
       tracksTuple->GetEntry(0);
       if ( EventID != lastEventID )
         { // if ( m_verboseLevel > 3 ) {
-          G4cout << "  GateToRoot::OpenTracksFile()  ::  last Event ID was " <<lastEventID<< "  ---  current one read from last Tracks Root File " <<fTracksFN<< " is " << EventID<<Gateendl;
+          G4cout << "  GateToRoot::OpenTracksFile()  ::  last Event ID was " <<lastEventID<< "  ---  current one read from last Tracks Root File " <<fTracksFN<< " is " << EventID<< Gateendl;
           G4cout << " SAVING RecStep Data to be used in GateToRoot::RecordBeginOfEvent \n";
           G4cout <<" GateToRoot::OpenTracksFile()  ::  LAST event ID read from RecStep Data in file " <<previousFN<< " is " << m_RSEventID << Gateendl;
           G4cout <<" GateToRoot::OpenTracksFile()  ::  LAST Event ID read from Tracks Data in previous file "<<previousFN<< " is "<<lastEventID<< Gateendl;
@@ -1474,13 +1474,13 @@ void GateToRoot::GetCurrentRecStepData( const G4Event* evt )
   if ( m_RSEventID != evt->GetEventID() )
     {const G4Run* currentRun =  GateRunManager::GetRunManager()->GetCurrentRun() ;
       G4int RunID = currentRun->GetRunID();
-      G4cout << " GateToRoot::GetCurrentRecStepData :::: current Run ID "<< RunID <<"    current RecStep File " <<m_RecStepTree->GetCurrentFile()->GetName()<<Gateendl;
-      G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentTracksData = "<<m_currentTracksData  <<"     tracksTuple->GetEntries()   "<< tracksTuple->GetEntries() <<Gateendl;
-      G4cout << " GateToRoot::GetCurrentRecStepData :::: current event ID read from RecStep File "<<m_RSEventID<<"     current event ID " << evt->GetEventID()<<Gateendl;
-      G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentRSData = "<<m_currentRSData<<"    m_RecStepTree->GetEntries()  "<<m_RecStepTree->GetEntries()<<Gateendl;
+      G4cout << " GateToRoot::GetCurrentRecStepData :::: current Run ID "<< RunID <<"    current RecStep File " <<m_RecStepTree->GetCurrentFile()->GetName()<< Gateendl;
+      G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentTracksData = "<<m_currentTracksData  <<"     tracksTuple->GetEntries()   "<< tracksTuple->GetEntries() << Gateendl;
+      G4cout << " GateToRoot::GetCurrentRecStepData :::: current event ID read from RecStep File "<<m_RSEventID<<"     current event ID " << evt->GetEventID()<< Gateendl;
+      G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentRSData = "<<m_currentRSData<<"    m_RecStepTree->GetEntries()  "<<m_RecStepTree->GetEntries()<< Gateendl;
       G4Exception( "GateToRoot::GetCurrentRecStepData", "GetCurrentRecStepData", FatalException, "Aborting ...");
     }
-  //G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentRSData = "<<m_currentRSData<<"    m_RecStepTree->GetEntries()  "<<m_RecStepTree->GetEntries()<<Gateendl;
+  //G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentRSData = "<<m_currentRSData<<"    m_RecStepTree->GetEntries()  "<<m_RecStepTree->GetEntries()<< Gateendl;
   m_currentRSData++;
 }
 

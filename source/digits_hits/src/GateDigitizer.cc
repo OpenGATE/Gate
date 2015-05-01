@@ -348,7 +348,7 @@ void GateDigitizer::Describe(size_t indent)
 {
   GateClockDependent::Describe(indent);
   ListElements(indent);
-  G4cout << GateTools::Indent(indent) << "Hit convertor:      '" << m_hitConvertor->GetObjectName() << "'" <<Gateendl;
+  G4cout << GateTools::Indent(indent) << "Hit convertor:      '" << m_hitConvertor->GetObjectName() << "'\n";
 }
 //-----------------------------------------------------------------
 

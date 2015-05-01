@@ -165,7 +165,7 @@ void GateSourcePhaseSpace::Initialize()
         for(int j=0 ; j<totalEventInFile ; j++)
         {
           pIAEARecordType->read_particle();
-          if( abs(pIAEARecordType->x*cm)<mRmax && abs(pIAEARecordType->y*cm)<mRmax )  {pListOfSelectedEvents.push_back(totalEvent);G4cout<<" --> OK  "<<totalEvent<<Gateendl;}
+          if( abs(pIAEARecordType->x*cm)<mRmax && abs(pIAEARecordType->y*cm)<mRmax )  {pListOfSelectedEvents.push_back(totalEvent);G4cout<<" --> OK  "<<totalEvent<< Gateendl;}
           totalEvent++;
 	}
       }
