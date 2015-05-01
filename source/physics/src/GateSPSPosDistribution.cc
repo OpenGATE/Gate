@@ -259,9 +259,9 @@ G4bool GateSPSPosDistribution::IsSourceForbidden()
   G4VPhysicalVolume *currentVolume = gNavigator->LocateGlobalPointAndSetup(particle_position,ptr,true);
 
   G4bool isForbidden = false;
-  for (size_t i=0; i<ForbidVector.size(); i++)
+  for (std::vector<G4VPhysicalVolume*>::iterator itr=ForbidVector.begin(); itr!=ForbidVector.end(); itr++)
   {
-    if (currentVolume==ForbidVector[i])
+    if (currentVolume==*itr)
     {
       isForbidden = true;
       break;

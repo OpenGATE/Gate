@@ -58,7 +58,7 @@ void GateLocalEfficiency::ComputeSizes()
 	 G4cerr<<"[GateLocalEfficiency::ProcessOnePulse]Warning : enabling vector size modified (from "<<m_enabled.size()
 	       <<" to "<<depth<<") and set all entries to 0\n";
 	 m_enabled.resize(depth);
-	 for (size_t i=0;i<m_enabled.size();i++) m_enabled[i]=false;
+	 for (std::vector<G4bool>::iterator itr=m_enabled.begin();itr!=m_enabled.end();itr++) *itr=false;
       }
       totSize = system->ComputeNofSubCrystalsAtLevel(0,m_enabled);
    }
@@ -66,7 +66,7 @@ void GateLocalEfficiency::ComputeSizes()
       G4cerr<<"[GateLocalEfficiency::ProcessOnePulse]Warning : enabling vector size modified (from "<<m_enabled.size()
 	    <<" to "<<depth<<") and set all entries to 0\n";
       m_enabled.resize(depth);
-      for (size_t i=0;i<m_enabled.size();i++) m_enabled[i]=false;
+      for (std::vector<G4bool>::iterator itr=m_enabled.begin();itr!=m_enabled.end();itr++) *itr=false;
    }
    if (m_efficiency->MaxX() < totSize-1){
       G4cerr<<"[GateLocalEfficiency::ProcessOnePulse]Warning : efficiency table size's wrong ("<<m_efficiency->MaxX()
@@ -88,7 +88,7 @@ void GateLocalEfficiency::SetMode(size_t i,G4bool val)
       G4cerr<<"[GateLocalEfficiency::ProcessOnePulse]Warning : enabling vector size modified (from "<<m_enabled.size()
 	    <<" to "<<depth<<") and set all entries to 0\n";
       m_enabled.resize(depth);
-      for (size_t i=0;i<m_enabled.size();i++) m_enabled[i]=false;
+      for (std::vector<G4bool>::iterator itr=m_enabled.begin();itr!=m_enabled.end();itr++) *itr=false;
    }
 
    if (i<m_enabled.size()){

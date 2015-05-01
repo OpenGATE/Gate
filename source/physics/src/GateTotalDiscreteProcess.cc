@@ -38,7 +38,7 @@ GateTotalDiscreteProcess::GateTotalDiscreteProcess ( const G4String& name, G4Pro
 
 GateTotalDiscreteProcess::~GateTotalDiscreteProcess()
 {
-	for ( size_t i=0;i<m_oProcessNameVec.size();i++ )
+	for ( size_t i=0;i<m_oProcessNameVec.size();i++ )// This procedure is unsafe!!
 	{
 		if ( m_oProcessNameVec[i]!=NULL ) delete m_oProcessNameVec[i];
 		if ( m_oCrossSectionsTableVec[i]!=NULL ) delete m_oCrossSectionsTableVec[i];

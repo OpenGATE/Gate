@@ -107,8 +107,8 @@ std::vector<vContentType> GateUIcmdWithAVectorAndUnit<vContentType>::GetNewVecto
     //    G4cout << " unts : <" << unts << ">" << Gateendl;
     G4cout << " Unit " << unt << Gateendl;
     G4double unitValue = ValueOf(unt);
-    for (size_t i=0; i<vec.size(); i++) {
-      vec[i] *= unitValue;
+    for (std::vector<vContentType>::iterator itr=vec.begin(); itr!=vec.end(); itr++) {
+      (*itr) *= unitValue;
     }
   }
 

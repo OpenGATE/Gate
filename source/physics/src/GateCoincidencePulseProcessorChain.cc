@@ -152,12 +152,13 @@ void GateCoincidencePulseProcessorChain::ProcessCoincidencePulses()
 GateVSystem* GateCoincidencePulseProcessorChain::FindSystem(G4String& inputName)
 {
    GateDigitizer* digitizer = GateDigitizer::GetInstance();
+   std::vector<GateCoincidenceSorter*> CoincidenceSorterList = digitizer->GetCoinSorterList();
 
    G4int index = -1;
 
-   for(size_t i=0; i<digitizer->GetCoinSorterList().size(); i++)
+   for(size_t i=0; i<CoincidenceSorterList.size(); i++)
    {
-      G4String coincSorterChainName = digitizer->GetCoinSorterList()[i]->GetOutputName();
+      G4String coincSorterChainName = CoincidenceSorterList[i]->GetOutputName();
       if(inputName.compare(coincSorterChainName) == 0)
       {
          index = i;
@@ -167,7 +168,7 @@ GateVSystem* GateCoincidencePulseProcessorChain::FindSystem(G4String& inputName)
 
    GateVSystem* system = 0;
    if(index != -1)
-      system = digitizer->GetCoinSorterList()[index]->GetSystem();
+      system = CoincidenceSorterList[index]->GetSystem();
    
    return system;
 }

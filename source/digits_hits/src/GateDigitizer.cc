@@ -121,8 +121,8 @@ void GateDigitizer::DescribeChains(size_t indent)
 void GateDigitizer::DescribeSorters(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "Nb of coinc. units: " << m_coincidenceSorterList.size() << "\n";
-  for (size_t i=0; i<m_coincidenceSorterList.size(); i++)
-      G4cout << GateTools::Indent(indent+1) << m_coincidenceSorterList[i]->GetObjectName() << Gateendl;
+  for (std::vector<GateCoincidenceSorter*>::iterator itr=m_coincidenceSorterList.begin(); itr!=m_coincidenceSorterList.end(); itr++)
+      G4cout << GateTools::Indent(indent+1) << (*itr)->GetObjectName() << Gateendl;
 }
 
 // Clear the array of pulse-lists
