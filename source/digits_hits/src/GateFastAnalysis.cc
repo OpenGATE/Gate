@@ -36,7 +36,7 @@ GateFastAnalysis::GateFastAnalysis(const G4String& name, GateOutputMgr* outputMg
 GateFastAnalysis::~GateFastAnalysis()
 {
   delete m_messenger;
-  if (nVerboseLevel > 0) G4cout << "GateFastAnalysis deleting..." << Gateendl;
+  if (nVerboseLevel > 0) G4cout << "GateFastAnalysis deleting...\n";
 }
 
 const G4String& GateFastAnalysis::GiveNameOfFile()
@@ -48,31 +48,31 @@ const G4String& GateFastAnalysis::GiveNameOfFile()
 void GateFastAnalysis::RecordBeginOfAcquisition()
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordBeginOfAcquisition" << Gateendl;
+    G4cout << "GateFastAnalysis::RecordBeginOfAcquisition\n";
 }
 
 void GateFastAnalysis::RecordEndOfAcquisition()
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordEndOfAcquisition" << Gateendl;
+    G4cout << "GateFastAnalysis::RecordEndOfAcquisition\n";
 }
 
 void GateFastAnalysis::RecordBeginOfRun(const G4Run * )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordBeginOfRun" << Gateendl;
+    G4cout << "GateFastAnalysis::RecordBeginOfRun\n";
 }
 
 void GateFastAnalysis::RecordEndOfRun(const G4Run * )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordEndOfRun" << Gateendl;
+    G4cout << "GateFastAnalysis::RecordEndOfRun\n";
 }
 
 void GateFastAnalysis::RecordBeginOfEvent(const G4Event* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordBeginOfEvent" << Gateendl;
+    G4cout << "GateFastAnalysis::RecordBeginOfEvent\n";
 }
 
 void GateFastAnalysis::RecordEndOfEvent(const G4Event* event)
@@ -116,14 +116,14 @@ void GateFastAnalysis::RecordEndOfEvent(const G4Event* event)
 
 
  if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordEndOfEvent" << Gateendl;
+    G4cout << "GateFastAnalysis::RecordEndOfEvent\n";
 
 }
 
 void GateFastAnalysis::RecordStepWithVolume(const GateVVolume *, const G4Step* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateFastAnalysis::RecordStep" << Gateendl;
+    G4cout << "GateFastAnalysis::RecordStep\n";
 }
 
 void GateFastAnalysis::SetVerboseLevel(G4int val)

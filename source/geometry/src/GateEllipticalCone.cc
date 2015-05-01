@@ -99,7 +99,7 @@ void GateEllipticalCone::DestroyOwnSolidAndLogicalVolume()
 
 void GateEllipticalCone::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: elliptical cone (ellipticalcone)" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Shape: elliptical cone (ellipticalcone)\n";
   G4cout << GateTools::Indent(level) << "x semiaxis at the bottom of the cone: " << G4BestUnit(m_xSemiAxis,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "y semiaxis at the bottom of the cone: " << G4BestUnit(m_ySemiAxis,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Total Z height: " << G4BestUnit(m_zLength,"Length") << Gateendl;

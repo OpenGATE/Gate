@@ -58,7 +58,7 @@ GateKermaActor::~GateKermaActor()  {
 //-----------------------------------------------------------------------------
 /// Construct
 void GateKermaActor::Construct() {
-  GateDebugMessageInc("Actor", 4, "GateKermaActor -- Construct - begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "GateKermaActor -- Construct - begin\n");
   GateVImageActor::Construct();
 
   // Find G4_WATER. This it needed here because we will used this
@@ -163,7 +163,7 @@ void GateKermaActor::Construct() {
 
   // Print information
   GateMessage("Actor", 1,
-              "\tDose KermaActor    = '" << GetObjectName() << "'" << Gateendl <<
+              "\tDose KermaActor    = '" << GetObjectName() << "'\n" <<
               "\tDose image        = " << mIsDoseImageEnabled << Gateendl <<
               "\tDose squared      = " << mIsDoseSquaredImageEnabled << Gateendl <<
               "\tDose uncertainty  = " << mIsDoseUncertaintyImageEnabled << Gateendl <<
@@ -180,7 +180,7 @@ void GateKermaActor::Construct() {
               "\tNb Hits filename  = " << mNbOfHitsFilename << Gateendl);
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateKermaActor -- Construct - end" << Gateendl);
+  GateMessageDec("Actor", 4, "GateKermaActor -- Construct - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -228,7 +228,7 @@ void GateKermaActor::ResetData() {
 //-----------------------------------------------------------------------------
 void GateKermaActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
-  GateDebugMessage("Actor", 3, "GateKermaActor -- Begin of Run" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateKermaActor -- Begin of Run\n");
   // ResetData(); // Do no reset here !! (when multiple run);
 }
 //-----------------------------------------------------------------------------
@@ -244,7 +244,7 @@ void GateKermaActor::BeginOfEventAction(const G4Event * e) {
 
 //-----------------------------------------------------------------------------
 void GateKermaActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
-  GateDebugMessageInc("Actor", 4, "GateKermaActor -- UserSteppingActionInVoxel - begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "GateKermaActor -- UserSteppingActionInVoxel - begin\n");
   GateDebugMessageInc("Actor", 4, "enedepo = " << step->GetTotalEnergyDeposit() << Gateendl);
   GateDebugMessageInc("Actor", 4, "weight = " <<  step->GetTrack()->GetWeight() << Gateendl);
   const double weight = step->GetTrack()->GetWeight();
@@ -258,7 +258,7 @@ void GateKermaActor::UserSteppingActionInVoxel(const int index, const G4Step* st
       if ((*fSecondary)[idx]->GetDefinition()->GetParticleName() == "gamma") {
 	edep -= (*fSecondary)[idx]->GetKineticEnergy();
 	GateDebugMessageInc("Actor", 4, "enedepo fluo = " << (*fSecondary)[idx]->GetKineticEnergy() << Gateendl);
-	std::cout << "YES" << Gateendl;
+	std::cout << "YES\n";
       }
     }
   }
@@ -266,13 +266,13 @@ void GateKermaActor::UserSteppingActionInVoxel(const int index, const G4Step* st
 
   // if no energy is deposited or energy is deposited outside image => do nothing
   if (edep == 0.0) {
-    GateDebugMessage("Actor", 5, "edep == 0 : do nothing" << Gateendl);
-    GateDebugMessageDec("Actor", 4, "GateKermaActor -- UserSteppingActionInVoxel -- end" << Gateendl);
+    GateDebugMessage("Actor", 5, "edep == 0 : do nothing\n");
+    GateDebugMessageDec("Actor", 4, "GateKermaActor -- UserSteppingActionInVoxel -- end\n");
     return;
   }
   if (index <0) {
-    GateDebugMessage("Actor", 5, "index<0 : do nothing" << Gateendl);
-    GateDebugMessageDec("Actor", 4, "GateKermaActor -- UserSteppingActionInVoxel -- end" << Gateendl);
+    GateDebugMessage("Actor", 5, "index<0 : do nothing\n");
+    GateDebugMessageDec("Actor", 4, "GateKermaActor -- UserSteppingActionInVoxel -- end\n");
     return;
   }
 
@@ -389,7 +389,7 @@ void GateKermaActor::UserSteppingActionInVoxel(const int index, const G4Step* st
 
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.AddValue(index, weight);
 
-  GateDebugMessageDec("Actor", 4, "GateKermaActor -- UserSteppingActionInVoxel -- end" << Gateendl);
+  GateDebugMessageDec("Actor", 4, "GateKermaActor -- UserSteppingActionInVoxel -- end\n");
 }
 //-----------------------------------------------------------------------------
 

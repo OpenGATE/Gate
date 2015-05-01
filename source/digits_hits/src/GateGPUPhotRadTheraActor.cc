@@ -44,7 +44,7 @@ GateGPUPhotRadTheraActor::~GateGPUPhotRadTheraActor()  {
 //-----------------------------------------------------------------------------
 /// Construct
 void GateGPUPhotRadTheraActor::Construct() {
-  GateDebugMessageInc("Actor", 4, "GateGPUPhotRadTheraActor -- Construct - begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "GateGPUPhotRadTheraActor -- Construct - begin\n");
   GateVActor::Construct();
 
   // Enable callbacks
@@ -55,7 +55,7 @@ void GateGPUPhotRadTheraActor::Construct() {
   EnableUserSteppingAction(true);
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateGPUPhotRadTheraActor -- Construct - end" << Gateendl);
+  GateMessageDec("Actor", 4, "GateGPUPhotRadTheraActor -- Construct - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -187,7 +187,7 @@ void GateGPUPhotRadTheraActor::EndOfRunAction(const G4Run *)
 void GateGPUPhotRadTheraActor::UserSteppingAction(const GateVVolume * /*v*/, 
                                                   const G4Step * step)
 {
-    GateDebugMessage("Actor", 4, "GateGPUPhotRadTheraActor -- UserSteppingAction" << Gateendl);
+    GateDebugMessage("Actor", 4, "GateGPUPhotRadTheraActor -- UserSteppingAction\n");
 
     // Check if we are on the boundary
     G4StepPoint * preStep = step->GetPreStepPoint();

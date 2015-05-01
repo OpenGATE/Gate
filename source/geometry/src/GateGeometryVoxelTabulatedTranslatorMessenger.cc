@@ -62,7 +62,7 @@ GateGeometryVoxelTabulatedTranslatorMessenger::~GateGeometryVoxelTabulatedTransl
 void GateGeometryVoxelTabulatedTranslatorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
   if( command == ReadTableCmd ) {
-    G4cout << " Call ReadTableCmd command" << Gateendl;
+    G4cout << " Call ReadTableCmd command\n";
     m_voxelTranslator->ReadTranslationTable(newValue);
   } else if ( command == DescribeCmd ) {
     m_voxelTranslator->Describe(DescribeCmd->GetNewIntValue(newValue));

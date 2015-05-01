@@ -86,7 +86,7 @@ void GateTrackLengthActor::ResetData()
 //-----------------------------------------------------------------------------
 void GateTrackLengthActor::BeginOfRunAction(const G4Run *)
 {
-  GateDebugMessage("Actor", 3, "GateTrackLengthActor -- Begin of Run" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateTrackLengthActor -- Begin of Run\n");
   ResetData();
 }
 //-----------------------------------------------------------------------------

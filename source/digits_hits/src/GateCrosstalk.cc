@@ -76,7 +76,7 @@ void GateCrosstalk::CheckVolumeName(G4String val)
     m_testVolume = 1;
   }
   else {
-    G4cout << "Wrong Volume Name" << Gateendl;
+    G4cout << "Wrong Volume Name\n";
   }
 }
 
@@ -85,8 +85,8 @@ void GateCrosstalk::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& o
 
   if(!m_testVolume)
     {
-      G4cerr << 	Gateendl << "[GateCrosstalk::ProcessOnePulse]:" << Gateendl
-	     <<   "Sorry, but you don't have choosen any volume !" << Gateendl;
+      G4cerr << 	Gateendl << "[GateCrosstalk::ProcessOnePulse]:\n"
+	     <<   "Sorry, but you don't have choosen any volume !\n";
 
 			G4String msg = "You must choose a volume for crosstalk, e.g. crystal:\n"
       "\t/gate/digitizer/Singles/crosstalk/chooseCrosstalkVolume VOLUME NAME\n"
@@ -188,8 +188,8 @@ void GateCrosstalk::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& o
   G4double energytot = inputPulse->GetEnergy()*((countE*m_edgesCrosstalkFraction)+(countC*m_cornersCrosstalkFraction));
   if(energytot>=inputPulse->GetEnergy())
     {
-      G4cerr << 	Gateendl << "[GateCrosstalk::ProcessOnePulse]:" << Gateendl
-	     <<   "Sorry, but you have too much energy !" << Gateendl;
+      G4cerr << 	Gateendl << "[GateCrosstalk::ProcessOnePulse]:\n"
+	     <<   "Sorry, but you have too much energy !\n";
 
 			G4String msg = "You must change your fractions of energy for the close crystals :\n"
       "\t/gate/digitizer/Singles/crosstalk/setSidesFraction NUMBER\n"

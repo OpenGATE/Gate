@@ -139,7 +139,7 @@ std::map<G4int,GateARFTable*>::iterator aIt;
 for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
 ( (*aIt).second )->Initialize(m_EThreshHold , m_EUpHold );
 
-G4cout << "GateARFTableMgr::InitializeTables() : All ARF Tables are initialized " << Gateendl;
+G4cout << "GateARFTableMgr::InitializeTables() : All ARF Tables are initialized \n";
 return 0;
 }
 void GateARFTableMgr::SetNSimuPhotons(G4double* NPhotons)

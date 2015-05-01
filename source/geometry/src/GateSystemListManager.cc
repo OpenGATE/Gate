@@ -144,8 +144,8 @@ void GateSystemListManager::CheckScannerAutoCreation(GateVVolume* newChildCreato
 
    if (DecodeTypeName(baseName)>=0) { 
     // A predefined-system name was recognised: launch the autocreation of the system
-      GateMessage("Core", 2, "[GateSystemListManager::CheckScannerAutoCreation:" << Gateendl
-            << "\tCreating new system based on volume inserter '" << baseName << "'" << Gateendl);
+      GateMessage("Core", 2, "[GateSystemListManager::CheckScannerAutoCreation:\n"
+            << "\tCreating new system based on volume inserter '" << baseName << "'\n");
 
     // Create the system
       theInsertedSystemsNames->push_back(newChildCreator->GetObjectName());

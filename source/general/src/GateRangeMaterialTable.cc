@@ -24,13 +24,13 @@ GateRangeMaterialTable::~GateRangeMaterialTable()
 void GateRangeMaterialTable::WriteMaterialDatabase(G4String filename) {
   std::ofstream os;
   OpenFileOutput(filename, os);
-  os << "[Materials]" << Gateendl;
+  os << "[Materials]\n";
   for(unsigned int i=0; i<mMaterialsVector.size(); i++) {
     os << "# Material " << i << " corresponding to H=[ " 
        << mR1[i] << ";" << mR2[i] // << "],with density=[" 
       //        << G4BestUnit(md1[i],"Volumic Mass") 
       //        << ";" << G4BestUnit(md2[i],"Volumic Mass") << "]"
-       << " ]" << Gateendl;
+       << " ]\n";
     WriteMaterial(mMaterialsVector[i], os);
     os << Gateendl;
   }
@@ -53,7 +53,7 @@ void GateRangeMaterialTable::WriteMaterialtoRangeLink(G4String filename) {
 void GateRangeMaterialTable::WriteMaterial(G4Material * m, std::ofstream & os) {
   os << m->GetName() << ": d=" << G4BestUnit(m->GetDensity(),"Volumic Mass")
      << "; n=" << m->GetNumberOfElements() 
-     << "; " << Gateendl;
+     << "; \n";
   for(unsigned int j=0; j<m->GetNumberOfElements(); j++) {
     os << "+el: name=" << m->GetElement(j)->GetName()
        << "; f=" << m->GetFractionVector()[j] << Gateendl;
@@ -72,13 +72,13 @@ void GateRangeMaterialTable::AddMaterial(int R1, int R2, G4String name)
   mR2.push_back(R2);
   mName.push_back(name);
   // Check
-//  if (R2 < R1) GateError("R2=" << R2 << " is lower than R1=" << R1 << ". Abort." << Gateendl);
+//  if (R2 < R1) GateError("R2=" << R2 << " is lower than R1=" << R1 << ". Abort.\n");
   n++;
 
 //  if (n != 1) {
 //    if (R1 != mR2[n-2]) GateError("Current R1=" << R1 
 //				  << " is different from previous R2=" 
-//				  << mR2[n-2] << ". Abort." << Gateendl);
+//				  << mR2[n-2] << ". Abort.\n");
 //  }
   
 }

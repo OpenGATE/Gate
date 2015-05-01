@@ -163,7 +163,7 @@ G4int GateOpticalBiolumGPU::GeneratePrimaries(G4Event* event)
   // FIXME  if (m_gpu_output->particles.empty()) {
   if (m_current_particle_index_in_buffer >= m_gpu_output->particles.size()) {
     //GateMessage("Beam", 5, "No particles in the buffer, we ask the gpu for " 
-    //            << m_gpu_input->nb_events << " events" << Gateendl);
+    //            << m_gpu_input->nb_events << " events\n");
 
     // Go GPU
     m_gpu_input->firstInitialID = mCurrentTimeID; // fix a bug - JB
@@ -177,7 +177,7 @@ G4int GateOpticalBiolumGPU::GeneratePrimaries(G4Event* event)
 
 
     //GateMessage("Beam", 5, "Done : GPU send " << m_gpu_output->particles.size() 
-    //            << " events" << Gateendl);
+    //            << " events\n");
     m_current_particle_index_in_buffer = 0;
     DD(m_gpu_output->particles.size());  
     DD(m_current_particle_index_in_buffer);
@@ -225,7 +225,7 @@ G4int GateOpticalBiolumGPU::GeneratePrimaries(G4Event* event)
       mNumberOfNextTime = m_gpu_output->particles.front().initialID - mCurrentTimeID;
     }  
     else {
-      GateMessage("Beam", 5, "No more particules in gpu buffer, time stay the same." << Gateendl);
+      GateMessage("Beam", 5, "No more particules in gpu buffer, time stay the same.\n");
       mNumberOfNextTime = 1;
     }
   }
@@ -312,7 +312,7 @@ particle_position.setZ(particle.pz*mm-92*mm);
 //----------------------------------------------------------
 void GateOpticalBiolumGPU::ReaderInsert(G4String readerType)
 {
-  G4cout << "GateOpticalBiolumGPUMessenger ReaderInsert" << Gateendl;
+  G4cout << "GateOpticalBiolumGPUMessenger ReaderInsert\n";
   GateSourceVoxellized::ReaderInsert(readerType);
 }
 //----------------------------------------------------------
@@ -321,7 +321,7 @@ void GateOpticalBiolumGPU::ReaderInsert(G4String readerType)
 //----------------------------------------------------------
 void GateOpticalBiolumGPU::ReaderRemove()
 {
-  G4cout << "GateOpticalBiolumGPUMessenger ReaderRemove" << Gateendl;
+  G4cout << "GateOpticalBiolumGPUMessenger ReaderRemove\n";
   GateSourceVoxellized::ReaderRemove();
 }
 //----------------------------------------------------------
@@ -330,7 +330,7 @@ void GateOpticalBiolumGPU::ReaderRemove()
 //----------------------------------------------------------
 void GateOpticalBiolumGPU::Update(double time)
 {
-  G4cout << "GateOpticalBiolumGPUMessenger Update" << Gateendl;
+  G4cout << "GateOpticalBiolumGPUMessenger Update\n";
   return GateSourceVoxellized::Update(time);
 }
 //----------------------------------------------------------

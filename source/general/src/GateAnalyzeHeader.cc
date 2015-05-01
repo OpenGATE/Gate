@@ -141,49 +141,49 @@ bool GateAnalyzeHeader::Read( const G4String& name)
 	fseek(fph,0, SEEK_SET);		
 	
 	/// reads the records
-if(	  fread(&m_data.hk.sizeof_hdr, sizeof(int), 1, fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.hk.data_type,sizeof(char),10,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.hk.db_name,sizeof(char),18,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.hk.extents,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.hk.session_error,sizeof(short int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.hk.regular,sizeof(char),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.hk.hkey_un0,sizeof(char),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.ic.dim,sizeof(short int),8,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.ic.vox_units,sizeof(char),4,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.ic.cal_units,sizeof(char),8,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.ic.unused1,sizeof(short int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.ic.datatype,sizeof(short int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.ic.bitpix,sizeof(short int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.ic.dim_un0,sizeof(short int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.ic.pixdim,sizeof(float),8,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.ic.vox_offset,sizeof(float),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.ic.funused1,sizeof(float),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.ic.funused2,sizeof(float),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.ic.funused3,sizeof(float),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.ic.cal_max,sizeof(float),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.ic.cal_min,sizeof(float),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.ic.compressed,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.ic.verified,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.ic.glmax,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.ic.glmin,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.hist.descrip,sizeof(char),80,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.hist.aux_file,sizeof(char),24,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.hist.orient,sizeof(char),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.hist.originator,sizeof(char),10,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.hist.generated,sizeof(char),10,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.hist.scannum,sizeof(char),10,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.hist.patient_id,sizeof(char),10,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.hist.exp_date,sizeof(char),10,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.hist.exp_time,sizeof(char),10,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(m_data.hist.hist_un0,sizeof(char),3,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.hist.views,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.hist.vols_added,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.hist.start_field,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.hist.field_skip,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.hist.omax,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.hist.omin,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.hist.smax,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
-if(	  fread(&m_data.hist.smin,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!" << Gateendl;}
+if(	  fread(&m_data.hk.sizeof_hdr, sizeof(int), 1, fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.hk.data_type,sizeof(char),10,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.hk.db_name,sizeof(char),18,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.hk.extents,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.hk.session_error,sizeof(short int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.hk.regular,sizeof(char),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.hk.hkey_un0,sizeof(char),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.ic.dim,sizeof(short int),8,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.ic.vox_units,sizeof(char),4,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.ic.cal_units,sizeof(char),8,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.ic.unused1,sizeof(short int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.ic.datatype,sizeof(short int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.ic.bitpix,sizeof(short int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.ic.dim_un0,sizeof(short int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.ic.pixdim,sizeof(float),8,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.ic.vox_offset,sizeof(float),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.ic.funused1,sizeof(float),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.ic.funused2,sizeof(float),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.ic.funused3,sizeof(float),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.ic.cal_max,sizeof(float),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.ic.cal_min,sizeof(float),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.ic.compressed,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.ic.verified,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.ic.glmax,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.ic.glmin,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.hist.descrip,sizeof(char),80,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.hist.aux_file,sizeof(char),24,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.hist.orient,sizeof(char),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.hist.originator,sizeof(char),10,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.hist.generated,sizeof(char),10,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.hist.scannum,sizeof(char),10,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.hist.patient_id,sizeof(char),10,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.hist.exp_date,sizeof(char),10,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.hist.exp_time,sizeof(char),10,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(m_data.hist.hist_un0,sizeof(char),3,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.hist.views,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.hist.vols_added,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.hist.start_field,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.hist.field_skip,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.hist.omax,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.hist.omin,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.hist.smax,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
+if(	  fread(&m_data.hist.smin,sizeof(int),1,fph) == 0 ){G4cerr << "Problem reading data!!!\n";}
 	  fclose(fph),fph=NULL;
 
 

@@ -150,7 +150,7 @@ GateToRoot::GateToRoot(const G4String& name, GateOutputMgr* outputMgr,DigiMode d
 GateToRoot::~GateToRoot()
 {
   delete m_rootMessenger;
-  if (nVerboseLevel > 0) G4cout << "GateToRoot deleting..." << Gateendl;
+  if (nVerboseLevel > 0) G4cout << "GateToRoot deleting...\n";
   for (size_t i=0; i<m_outputChannelList.size(); ++i)
     delete m_outputChannelList[i];
 
@@ -174,7 +174,7 @@ void GateToRoot::Book()
 {
 
   if (nVerboseLevel > 2)
-    G4cout << "GateToRoot::Book" << Gateendl;
+    G4cout << "GateToRoot::Book\n";
 
   if (m_recordFlag > 0)
     {
@@ -279,7 +279,7 @@ void GateToRoot::RecordBeginOfAcquisition()
 {
 
   if (nVerboseLevel > 2)
-    G4cout << "GateToRoot::RecordBeginOfAcquisition" << Gateendl;
+    G4cout << "GateToRoot::RecordBeginOfAcquisition\n";
 
   GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
   TrackingMode theMode = myAction->GetMode();
@@ -307,7 +307,7 @@ void GateToRoot::RecordBeginOfAcquisition()
       ////
       //////////
       // Open the output file
-      if (nVerboseLevel > 0) G4cout << "GateToRoot: ROOT: files creation..." << Gateendl;
+      if (nVerboseLevel > 0) G4cout << "GateToRoot: ROOT: files creation...\n";
       switch (m_digiMode) {
       case kruntimeMode:
         // In run-time mode, we open the file in RECREATE mode
@@ -468,7 +468,7 @@ void GateToRoot::RecordBeginOfAcquisition()
 //--------------------------------------------------------------------------
 void GateToRoot::RecordEndOfAcquisition()
 {
-  //GateMessage("Output", 5, " GateToRoot::RecordEndOfAcquisition -- begin." << Gateendl;);
+  //GateMessage("Output", 5, " GateToRoot::RecordEndOfAcquisition -- begin.\n";);
 
 
 
@@ -493,7 +493,7 @@ void GateToRoot::RecordEndOfAcquisition()
         }
       else
         {
-          G4cerr << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'latest_event_ID' histogram to fill it !" << Gateendl;
+          G4cerr << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'latest_event_ID' histogram to fill it !\n";
         }
     }
   //=============================================================================
@@ -507,7 +507,7 @@ void GateToRoot::RecordEndOfAcquisition()
     }
   else
     {
-      G4cerr << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'total_nb_primaries' histogram to fill it !" << Gateendl;
+      G4cerr << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'total_nb_primaries' histogram to fill it !\n";
     }
 
   /* PY Descourt 08/09/2009 */
@@ -516,7 +516,7 @@ void GateToRoot::RecordEndOfAcquisition()
   TrackingMode theMode = myAction->GetMode();
   if ( theMode == kTracker )
     {
-      G4cout << " ----- ROOT FILE DATA INFORMATIONS ----- " << Gateendl;
+      G4cout << " ----- ROOT FILE DATA INFORMATIONS ----- \n";
       if ( tracksTuple != 0 ) {tracksTuple->Print();}
       if ( m_RecStepTree != 0 ) {m_RecStepTree->Print();}
       ///// IMPORTANT NOTE
@@ -527,10 +527,10 @@ void GateToRoot::RecordEndOfAcquisition()
       m_hfile = tracksTuple->GetCurrentFile();
       G4cout << " GateToRoot::RecordEndOfAcquisition() : Tracker MODE  ::::::::    current Root Tracks Data File  = " << m_hfile << " named " << m_hfile->GetName() << Gateendl;
       //  if (m_verboseLevel > 0)
-      G4cout << "GateToRoot: ROOT: files writing..." << Gateendl;
+      G4cout << "GateToRoot: ROOT: files writing...\n";
       m_hfile->Write();
       //  if (m_verboseLevel > 0)
-      G4cout << "GateToRoot: ROOT: files closing..." << Gateendl;
+      G4cout << "GateToRoot: ROOT: files closing...\n";
       if ( m_hfile->IsOpen() ){ m_hfile->Close(); }
     }
 
@@ -547,13 +547,13 @@ void GateToRoot::RecordEndOfAcquisition()
       m_hfile = m_treeHit->GetCurrentFile();
 
       if (nVerboseLevel > 0)
-        G4cout << "GateToRoot: ROOT: files writing..." << Gateendl;
-      //GateMessage("Output", 1, " GateToRoot: ROOT: files writing..." << Gateendl;);
+        G4cout << "GateToRoot: ROOT: files writing...\n";
+      //GateMessage("Output", 1, " GateToRoot: ROOT: files writing...\n";);
       m_hfile->Write();
 
       if (nVerboseLevel > 0)
-        G4cout << "GateToRoot: ROOT: files closing..." << Gateendl;
-      //GateMessage("Output", 1, " GateToRoot: ROOT: files closing..." << Gateendl;);
+        G4cout << "GateToRoot: ROOT: files closing...\n";
+      //GateMessage("Output", 1, " GateToRoot: ROOT: files closing...\n";);
       m_hfile->Close();
     }
   /* PY Descourt 08/09/2009 */
@@ -579,7 +579,7 @@ void GateToRoot::RecordBeginOfRun(const G4Run* )
     }*/
 
   if (nVerboseLevel > 2)
-    G4cout << "GateToRoot::RecordBeginOfRun" << Gateendl;
+    G4cout << "GateToRoot::RecordBeginOfRun\n";
   //  Book();
 }
 //--------------------------------------------------------------------------
@@ -597,7 +597,7 @@ void GateToRoot::RecordEndOfRun(const G4Run* )
      CLHEP::HepRandom::saveEngineStatus("endOfRun.rndm");
      }*/
   if (nVerboseLevel > 2)
-    G4cout << "GateToRoot::RecordEndOfRun" << Gateendl;
+    G4cout << "GateToRoot::RecordEndOfRun\n";
 
   nbPrimaries-=1.; // Number of primaries increase too much at each end of run !
 
@@ -609,10 +609,10 @@ void GateToRoot::RecordEndOfRun(const G4Run* )
 //--------------------------------------------------------------------------
 void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
 {
-  //  GateMessage("Output", 5 , " GateToRoot::RecordBeginOfEvent -- begin" << Gateendl;);
+  //  GateMessage("Output", 5 , " GateToRoot::RecordBeginOfEvent -- begin\n";);
 
   if (nVerboseLevel > 2)
-    G4cout << "GateToRoot::RecordBeginOfEvent" << Gateendl;
+    G4cout << "GateToRoot::RecordBeginOfEvent\n";
 
   m_hitBuffer.Clear();
 
@@ -678,7 +678,7 @@ void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
 
   /*PY Descourt 08/09/2009 */
 
-  //  GateMessage("Output", 5, " GateToRoot::RecordBeginOfEvent -- end" << Gateendl;);
+  //  GateMessage("Output", 5, " GateToRoot::RecordBeginOfEvent -- end\n";);
 
 }
 //--------------------------------------------------------------------------
@@ -688,7 +688,7 @@ void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
 void GateToRoot::RecordEndOfEvent(const G4Event* event)
 {
 
-  // GateMessage("Output", 5 , " GateToRoot::RecordEndOfEvent -- begin" << Gateendl;);
+  // GateMessage("Output", 5 , " GateToRoot::RecordEndOfEvent -- begin\n";);
 
 
   GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
@@ -720,7 +720,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
       if (aHit->GoodForAnalysis()) {
 	m_hitBuffer.Fill(aHit);
 	if (nVerboseLevel > 1)
-	  G4cout << "GateToRoot::RecordEndOfEvent : m_treeHit->Fill" << Gateendl;
+	  G4cout << "GateToRoot::RecordEndOfEvent : m_treeHit->Fill\n";
 
 
 	if (m_rootHitFlag) m_treeHit->Fill();
@@ -802,7 +802,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
   RecordOpticalData(event);
   // v. cuplov - optical photons
 
-  // GateMessage("Output", 5, " GateToRoot::RecordEndOfEvent -- end" << Gateendl;);
+  // GateMessage("Output", 5, " GateToRoot::RecordEndOfEvent -- end\n";);
 
 }
 
@@ -924,7 +924,7 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
 void GateToRoot::RecordDigitizer(const G4Event* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateToRoot::RecordDigitizer" << Gateendl;
+    G4cout << "GateToRoot::RecordDigitizer\n";
 
   // Digitizer information
 
@@ -949,15 +949,15 @@ void GateToRoot::RecordStepWithVolume(const GateVVolume *, const G4Step* aStep)
   // v. cuplov - optical photon momentum direction
 
   if (m_recordFlag > 0) {
-    //GateMessage("OutputMgr", 5, " GateToRoot::RecordStep -- begin " << Gateendl;);
+    //GateMessage("OutputMgr", 5, " GateToRoot::RecordStep -- begin \n";);
 
     if (nVerboseLevel > 2)
-      G4cout << "GateToRoot::RecordStep" << Gateendl;
+      G4cout << "GateToRoot::RecordStep\n";
 
     G4ParticleDefinition* partDef = aStep->GetTrack()->GetDefinition();
 
     if (partDef == G4Positron::PositronDefinition()) {
-      if (nVerboseLevel > 1) G4cout << "GateToRoot: Positron " << Gateendl;
+      if (nVerboseLevel > 1) G4cout << "GateToRoot: Positron \n";
       G4String procName;
       const G4VProcess* process;
       process = aStep->GetPreStepPoint()->GetProcessDefinedStep();
@@ -1017,7 +1017,7 @@ void GateToRoot::RecordStepWithVolume(const GateVVolume *, const G4Step* aStep)
       }
     }
 
-    //GateMessage("OutputMgr", 5, " GateToRoot::RecordStep -- end " << Gateendl;);
+    //GateMessage("OutputMgr", 5, " GateToRoot::RecordStep -- end \n";);
   }
 
 }
@@ -1066,7 +1066,7 @@ void GateToRoot::RecordVoxels(GateVGeometryVoxelStore* voxelStore)
   if (m_recordFlag > 0) {
 
     if (nVerboseLevel > 2)
-      G4cout << "GateToRoot::RecordVoxels" << Gateendl;
+      G4cout << "GateToRoot::RecordVoxels\n";
 
     G4String voxelFileName = m_fileName + "Voxels.root";
     TFile* voxelsFile = new TFile( voxelFileName.c_str(), "RECREATE", "ROOT file with voxel info");
@@ -1144,12 +1144,12 @@ void GateToRoot::SingleOutputChannel::RecordDigitizer()
     (GateSingleDigiCollection*) (fDM->GetDigiCollection( m_collectionID ));
 
   if (!SDC) {
-    //GateMessage("OutputMgr", 5, " There is no SDC collection" << Gateendl;);
+    //GateMessage("OutputMgr", 5, " There is no SDC collection\n";);
     if (nVerboseLevel>0) G4cout << "[GateToRoot::SingleOutputChannel::RecordDigitizer]:"
-				<< " digi collection '" << m_collectionName << "' not found" << Gateendl;
+				<< " digi collection '" << m_collectionName << "' not found\n";
   } else {
     // Digi loop
-    //GateMessage("OutputMgr", 5, " There is SDC collection. " << Gateendl;);
+    //GateMessage("OutputMgr", 5, " There is SDC collection. \n";);
     if (nVerboseLevel>0) G4cout << "[GateToRoot::SingleOutputChannel::RecordDigitizer]: Total Digits: "
 				<< SDC->entries() << Gateendl;
 
@@ -1170,7 +1170,7 @@ void GateToRoot::SingleOutputChannel::RecordDigitizer()
 //--------------------------------------------------------------------------
 void GateToRoot::CoincidenceOutputChannel::RecordDigitizer()
 {
-  //GateMessage("OutputMgr", 5, " GateToRoot::CoincidenceOutputChannel::RecordDigitizer -- begin" << Gateendl;);
+  //GateMessage("OutputMgr", 5, " GateToRoot::CoincidenceOutputChannel::RecordDigitizer -- begin\n";);
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
   if (m_collectionID<0)
     m_collectionID = fDM->GetDigiCollectionID(m_collectionName);
@@ -1178,12 +1178,12 @@ void GateToRoot::CoincidenceOutputChannel::RecordDigitizer()
     (GateCoincidenceDigiCollection*) (fDM->GetDigiCollection( m_collectionID ));
 
   if (!CDC) {
-    //GateMessage("OutputMgr", 5, " There is no CDC collection." << Gateendl;);
+    //GateMessage("OutputMgr", 5, " There is no CDC collection.\n";);
     if (nVerboseLevel>0) G4cout << "[GateToRoot::CoincidenceOutputChannel::RecordDigitizer]:"
-				<< " digi collection '" << m_collectionName << "' not found" << Gateendl;
+				<< " digi collection '" << m_collectionName << "' not found\n";
   } else {
 
-    //GateMessage("OutputMgr", 5, " There is CDC collection. " << Gateendl;);
+    //GateMessage("OutputMgr", 5, " There is CDC collection. \n";);
     // Digi loop
     if (nVerboseLevel>0) G4cout << "[GateToRoot::CoincidenceOutputChannel::RecordDigitizer]: Total Digits: "
 				<< CDC->entries() << Gateendl;
@@ -1199,7 +1199,7 @@ void GateToRoot::CoincidenceOutputChannel::RecordDigitizer()
     }
   }
 
-  //GateMessage("OutputMgr", 5, " GateToRoot::CoincidenceOutputChannel::RecordDigitizer -- end" << Gateendl;);
+  //GateMessage("OutputMgr", 5, " GateToRoot::CoincidenceOutputChannel::RecordDigitizer -- end\n";);
 }
 
 void GateToRoot::CloseTracksRootFile()
@@ -1468,7 +1468,7 @@ void GateToRoot::GetCurrentRecStepData( const G4Event* evt )
   if ( m_currentRSData ==  m_RecStepTree->GetEntries() ) return;
   m_RecStepTree->GetEntry( m_currentRSData );
 
-  //G4cout << " GateToRoot::GetCurrentRecStepData " << Gateendl;
+  //G4cout << " GateToRoot::GetCurrentRecStepData \n";
   //PrintRecStep();
 
   if ( m_RSEventID != evt->GetEventID() )
@@ -1499,7 +1499,7 @@ GateTrack* GateToRoot::GetCurrentTracksData()
   G4int nbytes = tracksTuple->GetEntry(m_currentTracksData);
   if (nVerboseLevel > 1)
     {
-      G4cout << "GateToRoot::GetCurrentTracksData() :::  Reading buffer of size " << nbytes<<" bytes in " << m_fileName+"_TrackerData.root" << Gateendl;
+      G4cout << "GateToRoot::GetCurrentTracksData() :::  Reading buffer of size " << nbytes<<" bytes in " << m_fileName+"_TrackerData.root\n";
       G4cout << "RunID " << RunID << "   EventID " << EventID<< "         Position " <<G4ThreeVector(posx,posy,posz) << Gateendl;
     }
   if ( m_currentGTrack != 0 )
@@ -1549,7 +1549,7 @@ GateTrack* GateToRoot::GetCurrentTracksData()
 }
 void GateToRoot::RecordRecStepData( const G4Event* evt )
 {
-  //G4cout << " GateToRoot::RecordRecStepData : recording RecStep Data to ROOT file " << Gateendl;
+  //G4cout << " GateToRoot::RecordRecStepData : recording RecStep Data to ROOT file \n";
   m_RSEventID = evt->GetEventID();
   m_RSRunID   = GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
   m_RecStepTree->Fill();

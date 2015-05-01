@@ -107,7 +107,7 @@ GateSourcePhaseSpace::~GateSourcePhaseSpace()
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::Initialize()
 {
-  // GateMessage("Beam", 1, "Phase Space Source - Initialisation" << Gateendl);
+  // GateMessage("Beam", 1, "Phase Space Source - Initialisation\n");
 
   InitializeTransformation();
   mTotalSimuTime = GateApplicationMgr::GetInstance()->GetTimeStop() - GateApplicationMgr::GetInstance()->GetTimeStart();
@@ -421,7 +421,7 @@ void GateSourcePhaseSpace::AddFile(G4String file)
      if (extension == "root") mFileType = "rootFile";
      else if (extension == "IAEAphsp" || extension == "IAEAheader" ) mFileType = "IAEAFile";
      else GateError( "Unknow phase space file extension. Knowns extensions are : "
-    	               << Gateendl << ".IAEAphsp (or IAEAheader), .root" << Gateendl);
+    	               << Gateendl << ".IAEAphsp (or IAEAheader), .root\n");
      listOfPhaseSpaceFile.push_back(file);
      return;
   }

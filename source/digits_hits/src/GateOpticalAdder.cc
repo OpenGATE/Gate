@@ -40,7 +40,7 @@ void GateOpticalAdder::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList
 	if (nVerboseLevel>1)
 	  G4cout << "Merged previous pulse for volume " << inputPulse->GetVolumeID()
 		 << " with new pulse of energy " << G4BestUnit(inputPulse->GetEnergy(),"Energy") <<".\n"
-		 << "Resulting pulse is: " << Gateendl
+		 << "Resulting pulse is: \n"
 		 << **iter << Gateendl << Gateendl ;
 	break;
       }
@@ -51,7 +51,7 @@ void GateOpticalAdder::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList
 //      outputPulse->SetEnergy(1);
       if (nVerboseLevel>1)
 	  G4cout << "Created new pulse for volume " << inputPulse->GetVolumeID() << ".\n"
-		 << "Resulting pulse is: " << Gateendl
+		 << "Resulting pulse is: \n"
 		 << *outputPulse << Gateendl << Gateendl ;
       outputPulseList.push_back(outputPulse);
     }

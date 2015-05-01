@@ -94,7 +94,7 @@ size_t GateCrossSectionsTable::AddMaterial ( const G4MaterialCutsCouple* couple 
 
 	if ( m_pMaxCrossSection!=NULL )
 	{
-		G4cout << "GateCrossSectionsTable::AddMaterial( const G4Material* mat ) : Added material AFTER building maximal! This will most probably lead to wrong results!" << Gateendl;
+		G4cout << "GateCrossSectionsTable::AddMaterial( const G4Material* mat ) : Added material AFTER building maximal! This will most probably lead to wrong results!\n";
 	}
 
 	G4PhysicsLinearVector* a=new G4PhysicsLinearVector ( m_nMinEnergy, m_nMaxEnergy, m_nPhysicsVectorBinNumber );
@@ -209,7 +209,7 @@ size_t GateCrossSectionsTable::SetAndBuildProductionMaterialTable () // returns 
 {
 
 	if ( size() >0 )
-		G4cout << "GateCrossSectionsTable::SetAndBuildProductionMaterialTable (): Delete old materials in table!" << Gateendl;
+		G4cout << "GateCrossSectionsTable::SetAndBuildProductionMaterialTable (): Delete old materials in table!\n";
 	const G4ProductionCutsTable* table=G4ProductionCutsTable::GetProductionCutsTable ();
 	size_t	nMaterials = table->GetTableSize ();
 //	size_t nTotalMaterials=G4Material::GetNumberOfMaterials();
@@ -361,7 +361,7 @@ void GateCrossSectionsTable::RetrieveTable ( std::ifstream& in, bool ascii )
 		in >> name;
 		if ( name!=pParticleDefinition->GetParticleName() )
 		{
-			G4cout << "Try to Retrieve CrossSectionsTable for non-gamma! Particle panic!" << Gateendl;
+			G4cout << "Try to Retrieve CrossSectionsTable for non-gamma! Particle panic!\n";
 			assert ( name==pParticleDefinition->GetParticleName() );
 			exit ( EXIT_FAILURE );
 		}
@@ -379,7 +379,7 @@ void GateCrossSectionsTable::RetrieveTable ( std::ifstream& in, bool ascii )
 		in.read ( reinterpret_cast<char*> ( &name ), PARTICLE_NAME_LENGTH );
 		if ( name!=pParticleDefinition->GetParticleName() )
 		{
-			G4cout << "Try to Retrieve CrossSectionsTable for non-gamma! Particle panic!" << Gateendl;
+			G4cout << "Try to Retrieve CrossSectionsTable for non-gamma! Particle panic!\n";
 			assert ( name==pParticleDefinition->GetParticleName() );
 			exit ( EXIT_FAILURE );
 		}

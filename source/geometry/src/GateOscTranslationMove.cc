@@ -65,7 +65,7 @@ void GateOscTranslationMove::DescribeMyself(size_t indent)
     G4cout << GateTools::Indent(indent) << "Maximum amplitude:    " << G4BestUnit(m_amplitude,"Length") << Gateendl;
     G4cout << GateTools::Indent(indent) << "Frequency:            " << G4BestUnit(m_frequency,"Frequency") << Gateendl;
     G4cout << GateTools::Indent(indent) << "Period:               " << G4BestUnit(GetPeriod(),"Time") << Gateendl;
-    G4cout << GateTools::Indent(indent) << "Phase:                " << m_phase / degree << " deg" << Gateendl;
+    G4cout << GateTools::Indent(indent) << "Phase:                " << m_phase / degree << " deg\n";
     G4cout << GateTools::Indent(indent) << "Current translation:  " << G4BestUnit(m_currentTranslation,"Length") << Gateendl;
 }
 //-------------------------------------------------------------------------------------------------

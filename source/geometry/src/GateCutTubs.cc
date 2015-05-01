@@ -109,12 +109,12 @@ void GateCutTubs::DestroyOwnSolidAndLogicalVolume()
 
 void GateCutTubs::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: cutted tube (cuttube)" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Shape: cutted tube (cuttube)\n";
   G4cout << GateTools::Indent(level) << "Inner radius: " << G4BestUnit(m_innerR,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Outer radius: " << G4BestUnit(m_outerR,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Z length: " << G4BestUnit(m_zLength,"Length") << Gateendl;
-  G4cout << GateTools::Indent(level) << "Start angle of the segment: " << m_startPhi / degree << " deg" << Gateendl;
-  G4cout << GateTools::Indent(level) << "Delta angle of the segment: " << m_deltaPhi / degree << " deg" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Start angle of the segment: " << m_startPhi / degree << " deg\n";
+  G4cout << GateTools::Indent(level) << "Delta angle of the segment: " << m_deltaPhi / degree << " deg\n";
   G4cout << GateTools::Indent(level) << "Cutting plane normal at -z/2: " << m_negNorm << Gateendl;
   G4cout << GateTools::Indent(level) << "Cutting plane normal at +z/2: " << m_posNorm << Gateendl;
 }

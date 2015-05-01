@@ -90,10 +90,10 @@ G4Material* GateGeometryVoxelArrayStore::GetVoxelMaterial(G4int ix, G4int iy, G4
     if ((ix<m_voxelNx) && (iy<m_voxelNy) && (iz<m_voxelNz)) {
       material = m_geometryVoxelMaterials[RealArrayIndex(ix,iy,iz,m_voxelNx,m_voxelNy,m_voxelNz)];
     } else {
-      G4cout << "GateGeometryVoxelArrayStore::GetVoxelMaterial: WARNING: requested voxel position outside the present voxel store" << Gateendl;
+      G4cout << "GateGeometryVoxelArrayStore::GetVoxelMaterial: WARNING: requested voxel position outside the present voxel store\n";
     } 
   } else {
-    G4cout << "GateGeometryVoxelArrayStore::GetVoxelMaterial: WARNING: voxel store not yet defined " << Gateendl;
+    G4cout << "GateGeometryVoxelArrayStore::GetVoxelMaterial: WARNING: voxel store not yet defined \n";
   }
 
   return material;

@@ -21,10 +21,10 @@ See GATE/LICENSE.txt for further details
 #include "GatePlacementQueue.hh"
  
 void GateVoxelBoxParameterized::InsertReader(G4String readerType ){
-  //G4cout << "GateVoxelBoxParameterized::InsertReader - Entered" << Gateendl;
+  //G4cout << "GateVoxelBoxParameterized::InsertReader - Entered\n";
   
   if (m_voxelReader) {
-    G4cout << "GateVoxelBoxParameterized::InsertReader: voxel reader already defined" << Gateendl;
+    G4cout << "GateVoxelBoxParameterized::InsertReader: voxel reader already defined\n";
     return;
   }
 
@@ -33,7 +33,7 @@ void GateVoxelBoxParameterized::InsertReader(G4String readerType ){
   } else if (readerType == G4String("interfile")) {
     m_voxelReader = new GateGeometryVoxelInterfileReader(this);
   } else
-    G4cout << "GateVoxelBoxParameterized::InsertReader: unknown reader type" << Gateendl;
+    G4cout << "GateVoxelBoxParameterized::InsertReader: unknown reader type\n";
 	
    // initialize voxel sizes with fake values  
 
@@ -45,7 +45,7 @@ void GateVoxelBoxParameterized::InsertReader(G4String readerType ){
 }
 
 void GateVoxelBoxParameterized::RemoveReader(){
-  //  G4cout << "GateVoxelBoxParameterized::RemoveReader - Entered" << Gateendl;
+  //  G4cout << "GateVoxelBoxParameterized::RemoveReader - Entered\n";
 }
 
 void GateVoxelBoxParameterized::AttachPhantomSD(){
@@ -68,7 +68,7 @@ void GateVoxelBoxParameterized::ConstructGeometry(G4LogicalVolume* mother_log, G
     voxelNumber = G4ThreeVector(m_voxelReader->GetVoxelNx(), m_voxelReader->GetVoxelNy(), m_voxelReader->GetVoxelNz());
     voxelSize   = G4ThreeVector(m_voxelReader->GetVoxelSize());
   }else{
-    G4cout << "GateVoxelBoxParameterized::ConstructGeometry - Warning ! ConstructGeometry called without a reader" << Gateendl;
+    G4cout << "GateVoxelBoxParameterized::ConstructGeometry - Warning ! ConstructGeometry called without a reader\n";
     return;
   }
     

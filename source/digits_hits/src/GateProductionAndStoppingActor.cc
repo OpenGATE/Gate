@@ -102,7 +102,7 @@ void GateProductionAndStoppingActor::ResetData() {
 
 //-----------------------------------------------------------------------------
 void GateProductionAndStoppingActor::BeginOfRunAction(const G4Run * ) {
-  GateDebugMessage("Actor", 3, "GateProductionAndStoppingActor -- Begin of Run" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateProductionAndStoppingActor -- Begin of Run\n");
   ResetData();
 }
 //-----------------------------------------------------------------------------

@@ -88,17 +88,17 @@ void GateBenchmarkActor::ResetData()
 
 void GateBenchmarkActor::BeginOfRunAction(const G4Run*)
 {
-  GateDebugMessage("Actor", 3, "GateBenchmarkActor -- Begin of Run" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateBenchmarkActor -- Begin of Run\n");
 }
 
 void GateBenchmarkActor::BeginOfEventAction(const G4Event*)
 {
-  GateDebugMessage("Actor", 3, "GateBenchmarkActor -- Begin of Event" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateBenchmarkActor -- Begin of Event\n");
 }
 
 void GateBenchmarkActor::EndOfEventAction(const G4Event*)
 {
-  GateDebugMessage("Actor", 3, "GateBenchmarkActor -- End of Event" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateBenchmarkActor -- End of Event\n");
 }
 
 void GateBenchmarkActor::PreUserTrackingAction(const GateVVolume*, const G4Track* track)

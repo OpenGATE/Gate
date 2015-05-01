@@ -61,8 +61,8 @@ GatePulseList* GateVPulseProcessor::ProcessPulseList(const GatePulseList* inputP
 void GateVPulseProcessor::Describe(size_t indent) 
 {
   GateClockDependent::Describe(indent);
-  G4cout << GateTools::Indent(indent) << "Attached to:        '" << GetChain()->GetObjectName() << "'" << Gateendl;
-  G4cout << GateTools::Indent(indent) << "Output:             '" << GetObjectName() << "'" << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Attached to:        '" << GetChain()->GetObjectName() << "'\n";
+  G4cout << GateTools::Indent(indent) << "Output:             '" << GetObjectName() << "'\n";
   DescribeMyself(indent);
 }
      

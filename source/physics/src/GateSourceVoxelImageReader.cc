@@ -40,7 +40,7 @@ void GateSourceVoxelImageReader::ReadFile(G4String filename)
   GateImage * image = new GateImage;
 
   if (!m_voxelTranslator) {
-    GateError("GateSourceVoxelImageReader::ReadFile: ERROR : insert a translator first" << Gateendl);
+    GateError("GateSourceVoxelImageReader::ReadFile: ERROR : insert a translator first\n");
   }
 
   G4double activity;

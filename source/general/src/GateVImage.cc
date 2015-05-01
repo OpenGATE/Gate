@@ -481,7 +481,7 @@ void GateVImage::UpdateNumberOfValues() {
 
 //-----------------------------------------------------------------------------
 GateVImage::ESide GateVImage::GetSideFromPointAndCoordinate(const G4ThreeVector & p, const G4ThreeVector & c) {
-  GateDebugMessage("Image", 8, "GateVImage::GetSideFromCoordinate(" << p << "," << c << ")" << Gateendl);
+  GateDebugMessage("Image", 8, "GateVImage::GetSideFromCoordinate(" << p << "," << c << ")\n");
   const G4ThreeVector & v = GetVoxelCornerFromCoordinates(c);
   const G4ThreeVector & s = GetVoxelSize();
 

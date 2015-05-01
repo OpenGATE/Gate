@@ -362,7 +362,7 @@ void GateMixedDNAPhysics::setDefaultModelsInWorld(G4String NPM) {
         }
       }
 
-  } else G4cout << "No processes" << Gateendl;
+  } else G4cout << "No processes\n";
 }
 
 // Set DNA In World

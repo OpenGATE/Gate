@@ -56,7 +56,7 @@ void GateGenericMove::PushMyPlacements(const G4RotationMatrix& currentRotationMa
   int i = GetIndexFromTime(mTimeList, aTime);
 
   GateDebugMessage("Move", 3, "GateGenericMove " << GetObjectName() << Gateendl);
-  GateDebugMessage("Move", 3, "\t current time " << aTime/s << " sec." << Gateendl);
+  GateDebugMessage("Move", 3, "\t current time " << aTime/s << " sec.\n");
   GateDebugMessage("Move", 3, "\t current index " << i << Gateendl);
   GateDebugMessage("Move", 3, "\t pos " << currentPosition << Gateendl);
   GateDebugMessage("Move", 3, "\t plac " << mPlacementsList[i].second << Gateendl);

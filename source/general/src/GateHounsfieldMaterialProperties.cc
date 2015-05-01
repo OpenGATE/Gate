@@ -129,7 +129,7 @@ void GateHounsfieldMaterialProperties::ReadAndStoreElementFraction(std::ifstream
       mElementsFractionList.push_back(f);
     }
     else {
-      GateError("Error in reading element fraction of <" << name << ">" << Gateendl);
+      GateError("Error in reading element fraction of <" << name << ">\n");
     }
   }
 }

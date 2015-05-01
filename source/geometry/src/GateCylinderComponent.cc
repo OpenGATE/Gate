@@ -43,8 +43,8 @@ G4bool GateCylinderComponent::IsValidAttachmentRequest(GateVVolume* anCreator) c
   // Check whether the inserter is connected to a cylinder-creator
   GateCylinder* cylinderCreator = GetCylinderCreator(anCreator);
   if (!cylinderCreator) {
-       G4cerr   << "[" << anCreator->GetObjectName() << "::IsValidAttachmentRequest]:" << Gateendl
-                << "\tThe volume creator ('" << cylinderCreator->GetObjectName() << "') for this inserter does not seem to be a cylinder" << Gateendl << Gateendl;
+       G4cerr   << "[" << anCreator->GetObjectName() << "::IsValidAttachmentRequest]:\n"
+                << "\tThe volume creator ('" << cylinderCreator->GetObjectName() << "') for this inserter does not seem to be a cylinder\n" << Gateendl;
       return false;
   }
 

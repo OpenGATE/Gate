@@ -109,7 +109,7 @@ GateVoxelOutput::GateVoxelOutput(const G4String& name,const G4String& phantomNam
 GateVoxelOutput::~GateVoxelOutput() 
 {
   delete m_outputMessenger;
-  if (nVerboseLevel > 0) G4cout << "GateVoxelOutput deleting..." << Gateendl;
+  if (nVerboseLevel > 0) G4cout << "GateVoxelOutput deleting...\n";
   delete m_array;
 }
 //--------------------------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ void GateVoxelOutput::RecordBeginOfAcquisition()
   //  G4cout << "GateVoxelOutput::RecordBeginOfAcquisition - Entered at " << this << " for "<< GetName()  << Gateendl  << std::flush ;
 
   if (nVerboseLevel > 2)
-    G4cout << "GateVoxelOutput::RecordBeginOfAcquisition - Entered " << Gateendl;
+    G4cout << "GateVoxelOutput::RecordBeginOfAcquisition - Entered \n";
   
   G4cout<< (*G4Material::GetMaterialTable()) << Gateendl;
 }
@@ -235,7 +235,7 @@ void GateVoxelOutput::RecordEndOfAcquisition()
 void GateVoxelOutput::RecordBeginOfRun(const G4Run * )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateVoxelOutput::RecordBeginOfRun" << Gateendl;
+    G4cout << "GateVoxelOutput::RecordBeginOfRun\n";
 }
 //--------------------------------------------------------------------------------------------------
 
@@ -243,7 +243,7 @@ void GateVoxelOutput::RecordBeginOfRun(const G4Run * )
 void GateVoxelOutput::RecordEndOfRun(const G4Run * )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateVoxelOutput::RecordEndOfRun" << Gateendl;
+    G4cout << "GateVoxelOutput::RecordEndOfRun\n";
 }
 //--------------------------------------------------------------------------------------------------
 
@@ -251,7 +251,7 @@ void GateVoxelOutput::RecordEndOfRun(const G4Run * )
 void GateVoxelOutput::RecordBeginOfEvent(const G4Event* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateVoxelOutput::RecordBeginOfEvent" << Gateendl;
+    G4cout << "GateVoxelOutput::RecordBeginOfEvent\n";
 }
 //--------------------------------------------------------------------------------------------------
 
@@ -331,7 +331,7 @@ void GateVoxelOutput::RecordEndOfEvent(const G4Event* )
 void GateVoxelOutput::RecordStepWithVolume(const GateVVolume *, const G4Step* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateVoxelOutput::RecordStep" << Gateendl;
+    G4cout << "GateVoxelOutput::RecordStep\n";
 }
 //--------------------------------------------------------------------------------------------------
 

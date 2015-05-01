@@ -105,7 +105,7 @@ void GateTimeActor::UpdateCurrentTextOutput()
   ss << "PPS = " << mNumberOfEvents/mTotalEventUserTime << Gateendl;
   ss << "SPS = " << mNumberOfSteps/mTotalEventUserTime << Gateendl;
 
-  ss << Gateendl << "Time per particle " << Gateendl;
+  ss << Gateendl << "Time per particle \n";
   MapType::iterator iter;
   MapType::iterator iterT = mTrackPerParticle.begin();
   for(iter = mTimePerParticle.begin(); iter != mTimePerParticle.end(); ++iter) {
@@ -113,14 +113,14 @@ void GateTimeActor::UpdateCurrentTextOutput()
     ++iterT;
   }
 
-  ss << Gateendl << "Limiting process" << Gateendl;
+  ss << Gateendl << "Limiting process\n";
   for(iter = mNumberOfLimitingProcess.begin(); iter != mNumberOfLimitingProcess.end(); ++iter) {
-    ss << iter->first << " " << iter->second << " " << Gateendl;
+    ss << iter->first << " " << iter->second << " \n";
   }
 
-  ss << Gateendl << "Along process" << Gateendl;
+  ss << Gateendl << "Along process\n";
   for(iter = mNumberOfAlongByProcess.begin(); iter != mNumberOfAlongByProcess.end(); ++iter) {
-    ss << iter->first << " " << iter->second << " " << Gateendl;
+    ss << iter->first << " " << iter->second << " \n";
   }
 
   mCurrentTextOutput = ss.str();

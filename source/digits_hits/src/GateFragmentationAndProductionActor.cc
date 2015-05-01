@@ -117,14 +117,14 @@ void GateFragmentationAndProductionActor::ResetData()
 //-----------------------------------------------------------------------------
 void GateFragmentationAndProductionActor::BeginOfRunAction(const G4Run *)
 {
-  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- Begin of Run" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- Begin of Run\n");
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateFragmentationAndProductionActor::BeginOfEventAction(const G4Event*)
 {
-  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- Begin of Event" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- Begin of Event\n");
   pNEvent->Set(pNEvent->X()+1,0);
 }
 //-----------------------------------------------------------------------------
@@ -132,14 +132,14 @@ void GateFragmentationAndProductionActor::BeginOfEventAction(const G4Event*)
 //-----------------------------------------------------------------------------
 void GateFragmentationAndProductionActor::EndOfEventAction(const G4Event*)
 {
-  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- End of Event" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- End of Event\n");
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateFragmentationAndProductionActor::PreUserTrackingAction(const GateVVolume *, const G4Track* t)
 {
-  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- Begin of Track" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- Begin of Track\n");
   const G4String &name = t->GetDefinition()->GetParticleName();
   if (name=="gamma")   { pGammaProduction->Fill(t->GetPosition()[2],t->GetWeight()); }
   if (name=="neutron") { pNeutronProduction->Fill(t->GetPosition()[2],t->GetWeight()); }
@@ -149,10 +149,10 @@ void GateFragmentationAndProductionActor::PreUserTrackingAction(const GateVVolum
 //-----------------------------------------------------------------------------
 void GateFragmentationAndProductionActor::PostUserTrackingAction(const GateVVolume *, const G4Track* /*t*/)
 {
-  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- End of Track" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- End of Track\n");
   //G4cout << name << " " << (t->GetCreatorProcess()? t->GetCreatorProcess()->GetProcessName():"no process") << Gateendl;
   //if (name=="C12[0.0]") {
-  //  G4cout << "*** c12 fragment" << Gateendl;
+  //  G4cout << "*** c12 fragment\n";
   //  const G4Step *step = t->GetStep();
   //  assert(step);
   //  const G4StepPoint *point = step->GetPostStepPoint();

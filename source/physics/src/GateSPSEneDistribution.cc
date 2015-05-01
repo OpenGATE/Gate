@@ -177,7 +177,7 @@ void GateSPSEneDistribution::BuildUserSpectrum(G4String FileName)
 
     switch(m_mode){
       case 1: // probability table to create discrete spectrum
-        G4cout << "Discrete spectrum" << Gateendl;
+        G4cout << "Discrete spectrum\n";
         m_tab_sumproba=new G4double[m_dim_spectrum];
         while(nline<m_dim_spectrum){
           m_sum_proba=m_sum_proba+m_tab_proba[nline];
@@ -187,7 +187,7 @@ void GateSPSEneDistribution::BuildUserSpectrum(G4String FileName)
         PrintMessage();
         break;
       case 2: // probability table to create histogram
-        G4cout << "Histogram spectrum" << Gateendl;
+        G4cout << "Histogram spectrum\n";
         m_tab_sumproba=new G4double[m_dim_spectrum];
         m_sum_proba=m_tab_proba[0]*(m_tab_energy[0]-m_Emin);
         m_tab_sumproba[0]=m_sum_proba;
@@ -198,7 +198,7 @@ void GateSPSEneDistribution::BuildUserSpectrum(G4String FileName)
         PrintMessage();
         break;
       case 3: // probability table to create interpolated spectrum
-        G4cout << "Interpolated spectrum" << Gateendl;
+        G4cout << "Interpolated spectrum\n";
         m_tab_sumproba= new G4double[m_dim_spectrum-1];
         for(nline=1;nline<m_dim_spectrum;nline++){
           m_sum_proba=m_sum_proba+(m_tab_energy[nline]-m_tab_energy[nline-1])*m_tab_proba[nline-1]-0.5*(m_tab_energy[nline]-m_tab_energy[nline-1])*(m_tab_proba[nline-1]-m_tab_proba[nline]);
@@ -273,5 +273,5 @@ switch(m_mode){
 }
 
 void GateSPSEneDistribution::PrintMessage() {
-  G4cout << "####Energy spectrum correctly uploaded###" << Gateendl;
+  G4cout << "####Energy spectrum correctly uploaded###\n";
 }

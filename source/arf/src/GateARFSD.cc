@@ -179,19 +179,19 @@ G4int GateARFSD::PrepareCreatorAttachment(GateVVolume* aCreator)
 { 
   GateVSystem* creatorSystem = GateSystemListManager::GetInstance()->FindSystemOfCreator(aCreator);
   if (!creatorSystem) {
-    G4cout  << Gateendl << Gateendl << "[GateARFSD::PrepareCreatorAttachment]:" << Gateendl
-     << "Volume '" << aCreator->GetObjectName() << "' does not belong to any system." << Gateendl
-           << "Your volume must belong to a system to be used with a GeomColliSD." << Gateendl
-     << "Attachment request ignored --> you won't have any hit output from this volume!!!" << Gateendl << Gateendl;
+    G4cout  << Gateendl << Gateendl << "[GateARFSD::PrepareCreatorAttachment]:\n"
+     << "Volume '" << aCreator->GetObjectName() << "' does not belong to any system.\n"
+           << "Your volume must belong to a system to be used with a GeomColliSD.\n"
+     << "Attachment request ignored --> you won't have any hit output from this volume!!!\n" << Gateendl;
     return -1;
   }
 
   if (m_system) {
     if (creatorSystem!=m_system)     {
-      G4cout  << Gateendl << Gateendl << "[GateARFSD::PrepareCreatorAttachment]:" << Gateendl
-       << "Volume '" << aCreator->GetObjectName() << "' belongs to system '" << creatorSystem->GetObjectName() << "'" << Gateendl
-             << "while the GeomColliSD has already been attached to a volume from another system ('" << m_system->GetObjectName()<< "')." << Gateendl
-       << "Attachment request ignored --> you won't have any hit output from this volume!!!" << Gateendl << Gateendl;
+      G4cout  << Gateendl << Gateendl << "[GateARFSD::PrepareCreatorAttachment]:\n"
+       << "Volume '" << aCreator->GetObjectName() << "' belongs to system '" << creatorSystem->GetObjectName() << "'\n"
+             << "while the GeomColliSD has already been attached to a volume from another system ('" << m_system->GetObjectName()<< "').\n"
+       << "Attachment request ignored --> you won't have any hit output from this volume!!!\n" << Gateendl;
       return -1;
     }
   }
@@ -288,8 +288,8 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
                     G4cout << " Total number of Source photons Going Out Camera   " << OUT_camera_tmp<<Gateendl;
                     G4cout << " Total number of Stored photons                    " << NbofStoredPhotons_tmp<<Gateendl;
                     TotNbOfSingles = m_singlesTree->GetEntries();
-                    G4cout << " File " << cfn << " contains " << TotNbOfSingles << " entries " << Gateendl;
-                    G4cout << " Tree m_NbOfPhotonsTree " << cfn << " contains " << m_NbOfPhotonsTree->GetEntries() << " entries " << Gateendl;
+                    G4cout << " File " << cfn << " contains " << TotNbOfSingles << " entries \n";
+                    G4cout << " Tree m_NbOfPhotonsTree " << cfn << " contains " << m_NbOfPhotonsTree->GetEntries() << " entries \n";
                     for ( G4int j = 0 ;  j <  TotNbOfSingles ; j++ )
                     {
                      m_singlesTree->GetEntry(j);
@@ -304,7 +304,7 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
                    }
                   time_t theTimeAfter = time(NULL);
                   NSourcePhotons[iw] = NbOfSourcePhotons * NbOfHeads;
-                  G4cout << " ARF Table # "<<iw<<"  Computation Time " << (theTimeAfter - theTimeBefore ) << " seconds " << Gateendl;
+                  G4cout << " ARF Table # "<<iw<<"  Computation Time " << (theTimeAfter - theTimeBefore ) << " seconds \n";
                   //G4cout << " the Total final number of photons simulated          " << NbOfSimuPhotons << Gateendl;
                   //G4cout << " number of Energy Windows " << m_EnWin.size() <<Gateendl;
                   //G4cout << " Number of SOURCE photons                             " << NbOfSourcePhotons << Gateendl;
@@ -392,7 +392,7 @@ if ( theProjectionSet == 0 ) {GateOutputMgr* outputMgr = GateOutputMgr::GetInsta
                               theProjectionSet = PSet->GetProjectionSet();
                              }
 
-// G4cout << " BINNING PROJECTION FOR HEAD ID " << headID << " ( "<<xp<<" ; "<<yp<<") " << Gateendl;
+// G4cout << " BINNING PROJECTION FOR HEAD ID " << headID << " ( "<<xp<<" ; "<<yp<<") \n";
 
 theProjectionSet->FillARF( headID , xp , yp , theARFvalue );
 

@@ -20,7 +20,7 @@ GateVoxelCompressor::GateVoxelCompressor(GateGeometryVoxelArrayStore* s):
   m_voxelSet(0),
   m_exclusionList(  new std::set<unsigned short int> ),
   m_messenger( new GateVoxelCompressorMessenger(this) ){
-  // std::cout << "GateVoxelCompressor::GateVoxelCompressor - Entered." << Gateendl;
+  // std::cout << "GateVoxelCompressor::GateVoxelCompressor - Entered.\n";
 }
 //-----------------------------------------------------------------------------
 

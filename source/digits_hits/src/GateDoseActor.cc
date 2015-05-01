@@ -78,7 +78,7 @@ void GateDoseActor::EnableDoseNormalisationToIntegral(bool b) {
 //-----------------------------------------------------------------------------
 /// Construct
 void GateDoseActor::Construct() {
-  GateDebugMessageInc("Actor", 4, "GateDoseActor -- Construct - begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "GateDoseActor -- Construct - begin\n");
   GateVImageActor::Construct();
 
   // Find G4_WATER. This it needed here because we will used this
@@ -163,7 +163,7 @@ void GateDoseActor::Construct() {
 
   // Print information
   GateMessage("Actor", 1,
-              "\tDose DoseActor    = '" << GetObjectName() << "'" << Gateendl <<
+              "\tDose DoseActor    = '" << GetObjectName() << "'\n" <<
               "\tDose image        = " << mIsDoseImageEnabled << Gateendl <<
               "\tDose squared      = " << mIsDoseSquaredImageEnabled << Gateendl <<
               "\tDose uncertainty  = " << mIsDoseUncertaintyImageEnabled << Gateendl <<
@@ -180,7 +180,7 @@ void GateDoseActor::Construct() {
               "\tNb Hits filename  = " << mNbOfHitsFilename << Gateendl);
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateDoseActor -- Construct - end" << Gateendl);
+  GateMessageDec("Actor", 4, "GateDoseActor -- Construct - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -228,7 +228,7 @@ void GateDoseActor::ResetData() {
 //-----------------------------------------------------------------------------
 void GateDoseActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
-  GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Run" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Run\n");
   // ResetData(); // Do no reset here !! (when multiple run);
 }
 //-----------------------------------------------------------------------------
@@ -252,7 +252,7 @@ void GateDoseActor::UserPreTrackActionInVoxel(const int /*index*/, const G4Track
 
 //-----------------------------------------------------------------------------
 void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
-  GateDebugMessageInc("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel - begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel - begin\n");
   GateDebugMessageInc("Actor", 4, "enedepo = " << step->GetTotalEnergyDeposit() << Gateendl);
   GateDebugMessageInc("Actor", 4, "weight = " <<  step->GetTrack()->GetWeight() << Gateendl);
   const double weight = step->GetTrack()->GetWeight();
@@ -260,13 +260,13 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
   // if no energy is deposited or energy is deposited outside image => do nothing
   if (edep == 0) {
-    GateDebugMessage("Actor", 5, "edep == 0 : do nothing" << Gateendl);
-    GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end" << Gateendl);
+    GateDebugMessage("Actor", 5, "edep == 0 : do nothing\n");
+    GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end\n");
     return;
   }
   if (index < 0) {
-    GateDebugMessage("Actor", 5, "index < 0 : do nothing" << Gateendl);
-    GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end" << Gateendl);
+    GateDebugMessage("Actor", 5, "index < 0 : do nothing\n");
+    GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end\n");
     return;
   }
 
@@ -382,6 +382,6 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.AddValue(index, weight);
 
-  GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end" << Gateendl);
+  GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end\n");
 }
 //-----------------------------------------------------------------------------

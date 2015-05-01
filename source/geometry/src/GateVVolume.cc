@@ -208,7 +208,7 @@ void GateVVolume::ConstructGeometry(G4LogicalVolume* mother_log, G4bool flagUpda
     aRegion->AddRootLogicalVolume(pOwnLog);
   }
   //  PropagateRegionToChild();
-  GateDebugMessageDec("Cuts",9, "Region constructed" << Gateendl);
+  GateDebugMessageDec("Cuts",9, "Region constructed\n");
   //----------------------------------------------------------------------------------------
 
   // Attach a sensitive detector as required
@@ -279,16 +279,16 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
   // Do consistency checks
   if (flagUpdateOnly) {
     if (pQueue->size()!=theListOfOwnPhysVolume.size()) {
-      G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolume]:" << Gateendl
-      	      << "The size of the placement queue (" << pQueue->size() << ") is different from " << Gateendl
-	      << "the number of physical volumes to update (" << theListOfOwnPhysVolume.size() << ")!!!" << Gateendl;
+      G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolume]:\n"
+      	      << "The size of the placement queue (" << pQueue->size() << ") is different from \n"
+	      << "the number of physical volumes to update (" << theListOfOwnPhysVolume.size() << ")!!!\n";
       G4Exception( "GateVVolume::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Can not complete placement update.");
     }
   }
   else {
     if (theListOfOwnPhysVolume.size()) {
-      G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolume]:" << Gateendl
-      	      << "Attempting to create new placements without having emptied the vector of placements!!!" << Gateendl;
+      G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolume]:\n"
+      	      << "Attempting to create new placements without having emptied the vector of placements!!!\n";
       G4Exception( "GateVVolume::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Can not complete placement creation.");
     }
   }
@@ -317,7 +317,7 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
     // Check if the physical volume exist when the geometry
     // is updating
     if (flagUpdateOnly && !pOwnPhys){
-      G4cout << " Physical volume " << GetPhysicalVolumeName() << " does not exist!" << Gateendl;
+      G4cout << " Physical volume " << GetPhysicalVolumeName() << " does not exist!\n";
       G4Exception( "GateVVolume::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Failed to construct the volume!");
     }
 
@@ -336,7 +336,7 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
 
 	pOwnPhys->SetRotation(newRotationMatrix);
 
-	GateMessage("Geometry", 6, GetPhysicalVolumeName() << "[" << copyNumber << "] has been updated." << Gateendl;);
+	GateMessage("Geometry", 6, GetPhysicalVolumeName() << "[" << copyNumber << "] has been updated.\n";);
 
       }
     else
@@ -355,7 +355,7 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
 
 	PushPhysicalVolume(pOwnPhys);
 
-	GateMessage("Geometry", 6, GetPhysicalVolumeName() << "[" << copyNumber << "] has been constructed." << Gateendl;);
+	GateMessage("Geometry", 6, GetPhysicalVolumeName() << "[" << copyNumber << "] has been constructed.\n";);
 
       }
 
@@ -384,8 +384,8 @@ void GateVVolume::AttachCrystalSD()
 
   // Check whether this attachement is allowed or forbidden
   if (crystalSD->PrepareCreatorAttachment(this)) {
-    G4cout  << "[GateVVolume::AttachCrystalSD]:" << Gateendl
-	    << "Can not attach crystalSD!" << Gateendl << Gateendl;
+    G4cout  << "[GateVVolume::AttachCrystalSD]:\n"
+	    << "Can not attach crystalSD!\n" << Gateendl;
     return;
   }
 
@@ -496,7 +496,7 @@ void GateVVolume::DestroyGeometry()
 
       pOwnLog = 0;
 
-      GateMessage("Geometry", 5, "GateVVolume :: Destroy geometry of object " << GetObjectName() << " with copy number " << n << "." << Gateendl;);
+      GateMessage("Geometry", 5, "GateVVolume :: Destroy geometry of object " << GetObjectName() << " with copy number " << n << ".\n";);
     }
 }
 //-----------------------------------------------------------------------------------------
@@ -605,7 +605,7 @@ void GateVVolume::AutoSetColor()
 // Print to stdout a description of the inserter
 void GateVVolume::Describe(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "-----------------------------------------------" << Gateendl;
+  G4cout << GateTools::Indent(indent) << "-----------------------------------------------\n";
   G4cout << Gateendl;
   if (m_moveList)
     m_moveList->DescribeRepeaters(indent);
@@ -626,8 +626,8 @@ void GateVVolume::AttachARFSD()
 
   // Check whether this attachement is allowed or forbidden
   if (arfSD->PrepareCreatorAttachment(this)) {
-    G4cout  << "[GateVObjectCreator::AttachARFSD]:" << Gateendl
-	    << "Can not attach ARFSD!" << Gateendl << Gateendl;
+    G4cout  << "[GateVObjectCreator::AttachARFSD]:\n"
+	    << "Can not attach ARFSD!\n" << Gateendl;
     return;
   }
 

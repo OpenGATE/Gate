@@ -73,7 +73,7 @@ const G4String& GateDistributionListMessenger::DumpMap()
 // Pure virtual method: create and insert a new attachment
 void GateDistributionListMessenger::DoInsertion(const G4String& typeName)
 {
-   G4cout << " GateDistributionListMessenger::DoInsertion " << Gateendl;
+   G4cout << " GateDistributionListMessenger::DoInsertion \n";
 
    if (fgkTypes.find(typeName) == fgkTypes.end()) return;
    if (GetNewInsertionBaseName().empty())

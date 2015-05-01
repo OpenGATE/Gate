@@ -59,14 +59,14 @@ void GateCPUParticle_delete( GateCPUParticle *p )
 void GateCPUParticle_Print( const GateCPUParticle* p, int id )
 {
     if( p->type[ id ] == 0 )
-        std::cout << "type = gamma" << Gateendl;
+        std::cout << "type = gamma\n";
     if( p->type[ id ] == 1 )
-        std::cout << "type = e-" << Gateendl;
+        std::cout << "type = e-\n";
     std::cout << "E= " << G4BestUnit( p->E[ id ], "Energy") << Gateendl;
     std::cout << "parent id = " << p->parentID[ id ] << Gateendl;
     std::cout << "event id = " << p->eventID[ id ]  << Gateendl;
     std::cout << "track id = " << p->trackID[ id ]  << Gateendl;
     std::cout << "t = " << G4BestUnit(p->t[ id ], "Time")  << Gateendl;
-    std::cout << "position = " << p->px[ id ] << " " << p->py[ id ] << " " << p->pz[ id ] << " mm" << Gateendl;
+    std::cout << "position = " << p->px[ id ] << " " << p->py[ id ] << " " << p->pz[ id ] << " mm\n";
     std::cout << "dir = " << p->dx[ id ] << " " << p->dy[ id ] << " " << p->dz[ id ] << Gateendl;
 }

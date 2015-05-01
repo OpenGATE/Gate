@@ -51,12 +51,12 @@ void GateUpholder::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
     GatePulse* outputPulse = new GatePulse(*inputPulse);
     outputPulseList.push_back(outputPulse);
     if (nVerboseLevel>1)
-      	G4cout << "Copied pulse to output:" << Gateendl
+      	G4cout << "Copied pulse to output:\n"
       	       << *outputPulse << Gateendl << Gateendl ;
   }
   else {
       if (nVerboseLevel>1)
-      	G4cout << "Ignored pulse with energy above uphold:" << Gateendl
+      	G4cout << "Ignored pulse with energy above uphold:\n"
       	       << *inputPulse << Gateendl << Gateendl ;
   }
 }

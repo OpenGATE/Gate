@@ -48,19 +48,19 @@ GateSinoAccelToEcat7::GateSinoAccelToEcat7(const G4String& name, GateOutputMgr* 
    m_zMaxSeg = NULL;
    m_segment = NULL;
    m_ecatAccelCameraNumber = 0;
-   if (nVerboseLevel > 0) G4cout << " >> GateSinoAccelToEcat7 created" << Gateendl;
+   if (nVerboseLevel > 0) G4cout << " >> GateSinoAccelToEcat7 created\n";
 }
 
 GateSinoAccelToEcat7::~GateSinoAccelToEcat7()
 {
   delete m_asciiMessenger;
   if (m_ptr != NULL) {
-    if (nVerboseLevel > 1) G4cout << " >> ECAT7 file " << m_ptr->fname << " will be closed" << Gateendl;
+    if (nVerboseLevel > 1) G4cout << " >> ECAT7 file " << m_ptr->fname << " will be closed\n";
     matrix_close(m_ptr);
   }
   if (mh != NULL) free(mh);
   if (sh != NULL) free(sh);
-  if (nVerboseLevel > 0) G4cout << " >> GateSinoAccelToEcat7 deleted" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> GateSinoAccelToEcat7 deleted\n";
 }
 
 const G4String& GateSinoAccelToEcat7::GiveNameOfFile()
@@ -71,7 +71,7 @@ const G4String& GateSinoAccelToEcat7::GiveNameOfFile()
 void GateSinoAccelToEcat7::RecordBeginOfAcquisition()
 {
   if (!(m_system->GetSinogramMaker()->IsEnabled())) return;
-  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoAccelToEcat7::RecordBeginOfAcquisition]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoAccelToEcat7::RecordBeginOfAcquisition]\n";
 
   // Create main header
   mh = (Main_header *) calloc(1,sizeof(Main_header));
@@ -79,17 +79,17 @@ void GateSinoAccelToEcat7::RecordBeginOfAcquisition()
      G4Exception( "GateSinoAccelToEcat7::RecordBeginOfAcquisition", "Could not allocate memory for main header",
 			FatalException, "Could not allocate memory for main header" );
   }
-  if (nVerboseLevel > 2) G4cout << "    Memory allocated for main header " << Gateendl;
+  if (nVerboseLevel > 2) G4cout << "    Memory allocated for main header \n";
   // Fill main header
   FillMainHeader();
-  if (nVerboseLevel > 2) G4cout << "    Main header filled" << Gateendl;
+  if (nVerboseLevel > 2) G4cout << "    Main header filled\n";
   // Create subheader
   sh = (Scan3D_subheader *) calloc(1,sizeof(Scan3D_subheader));
   if (sh == NULL) {
      G4Exception( "GateSinoAccelToEcat7::RecordBeginOfAcquisition", "Could not allocate memory for subheader",
 				FatalException, "Could not allocate memory for subheader");
   }
-  if (nVerboseLevel > 2) G4cout << "    Memory allocated for sub header " << Gateendl;
+  if (nVerboseLevel > 2) G4cout << "    Memory allocated for sub header \n";
   sh->frame_duration = 0;
   sh->frame_start_time = 0;
 
@@ -100,16 +100,16 @@ void GateSinoAccelToEcat7::RecordBeginOfAcquisition()
      G4Exception( "GateSinoAccelToEcat7::RecordBeginOfAcquisition", "RecordBeginOfAcquisition",
 				FatalException, msg );
   }
-  if (nVerboseLevel > 1) G4cout << "    ECAT7 file " << m_fileName << ".S created" << Gateendl;
+  if (nVerboseLevel > 1) G4cout << "    ECAT7 file " << m_fileName << ".S created\n";
 
 
-  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoAccelToEcat7::RecordBeginOfAcquisition]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoAccelToEcat7::RecordBeginOfAcquisition]\n";
 }
 
 void GateSinoAccelToEcat7::RecordEndOfAcquisition()
 {
   if (!(m_system->GetSinogramMaker()->IsEnabled())) return;
-  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoAccelToEcat7::RecordEndOfAcquisition]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoAccelToEcat7::RecordEndOfAcquisition]\n";
 
   // Delete main header
   free(mh);
@@ -119,11 +119,11 @@ void GateSinoAccelToEcat7::RecordEndOfAcquisition()
   sh = NULL;
   // Close the ECAT file
   if (m_ptr != NULL) {
-    if (nVerboseLevel > 1) G4cout << "    ECAT7 file " << m_ptr->fname << " will be closed" << Gateendl;
+    if (nVerboseLevel > 1) G4cout << "    ECAT7 file " << m_ptr->fname << " will be closed\n";
     matrix_close(m_ptr);
     m_ptr = NULL;
   }
-  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoAccelToEcat7::RecordEndOfAcquisition]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoAccelToEcat7::RecordEndOfAcquisition]\n";
 }
 
 void GateSinoAccelToEcat7::RecordBeginOfRun(const G4Run * )
@@ -131,7 +131,7 @@ void GateSinoAccelToEcat7::RecordBeginOfRun(const G4Run * )
   GateToSinoAccel* setMaker = m_system->GetSinogramMaker();
   G4int  seg,segm,segment_occurance,nplane;
   if (!(m_system->GetSinogramMaker()->IsEnabled())) return;
-  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoAccelToEcat7::RecordBeginOfRun]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoAccelToEcat7::RecordBeginOfRun]\n";
   if (nVerboseLevel > 1) {
     G4cout << "    Frame ID:     " << setMaker->GetSinogram()->GetCurrentFrameID() << Gateendl;
     G4cout << "    Gate ID:      " << setMaker->GetSinogram()->GetCurrentGateID() << Gateendl;
@@ -143,19 +143,19 @@ void GateSinoAccelToEcat7::RecordBeginOfRun(const G4Run * )
   if (m_span < 3) m_span = 3;
   if (m_maxRingDiff >= setMaker->GetRingNb()) {
     G4cout << " !!! [GateSinoAccelToEcat7]: maximum ring difference (" << m_maxRingDiff
-           << ") is too big (should be <" << setMaker->GetRingNb() << ")" << Gateendl;
+           << ") is too big (should be <" << setMaker->GetRingNb() << ")\n";
     G4Exception( "GateSinoAccelToEcat7::RecordBeginOfRun", "RecordBeginOfRun", FatalException, "Could not fill subheader");
   }
   if ((m_span<1)||((float)((m_span-1)/2)) != (((float)m_span-1.0)/2.0)) {
     G4cout << " !!! [GateSinoAccelToEcat7]: span factor (" << m_maxRingDiff
-           << ") should be odd" << Gateendl;
+           << ") should be odd\n";
     G4Exception( "GateSinoAccelToEcat7::RecordBeginOfRun", "RecordBeginOfRun", FatalException, "Could not fill subheader");
   }
   if ((float)((2*m_maxRingDiff+1-m_span)/(2*m_span)) != (2.0*(float)m_maxRingDiff+1.0-(float)m_span)/(2.0*(float)m_span)) {
     G4int bin,maxRingDiff;
     G4cout << " !!! [GateSinoAccelToEcat7]: maximum ring difference (" << m_maxRingDiff
-           << ") is not coherent with span factor (" << m_span << ")" << Gateendl;
-    G4cout << "                                       possible maximum ring differences are: " << Gateendl;
+           << ") is not coherent with span factor (" << m_span << ")\n";
+    G4cout << "                                       possible maximum ring differences are: \n";
     bin = 0;
     maxRingDiff = (m_span-1)/2;
     while (maxRingDiff < setMaker->GetRingNb()) {
@@ -193,15 +193,15 @@ void GateSinoAccelToEcat7::RecordBeginOfRun(const G4Run * )
       m_zMaxSeg[segment_occurance] = m_zMaxSeg[0] - ((2*seg-1)*m_span+1)/2;
     }
   }
-  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoAccelToEcat7::RecordBeginOfRun]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoAccelToEcat7::RecordBeginOfRun]\n";
 }
 
 void GateSinoAccelToEcat7::RecordEndOfRun(const G4Run * )
 {
   if (!(m_system->GetSinogramMaker()->IsEnabled())) return;
-  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoAccelToEcat7::RecordEndOfRun]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoAccelToEcat7::RecordEndOfRun]\n";
   FillData();
-  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoAccelToEcat7::RecordEndOfRun]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoAccelToEcat7::RecordEndOfRun]\n";
 }
 
 /* Overload of the base-class' virtual method to print-out a description of the module
@@ -211,9 +211,9 @@ void GateSinoAccelToEcat7::RecordEndOfRun(const G4Run * )
 void GateSinoAccelToEcat7::Describe(size_t indent)
 {
   GateVOutputModule::Describe(indent);
-  G4cout << GateTools::Indent(indent) << " >> Job:                   write a set of 2D sinograms into an Ecat7 output file" << Gateendl;
+  G4cout << GateTools::Indent(indent) << " >> Job:                   write a set of 2D sinograms into an Ecat7 output file\n";
   G4cout << GateTools::Indent(indent) << " >> Is enabled ?           " << ( IsEnabled() ? "Yes" : "No") << Gateendl;
-  G4cout << GateTools::Indent(indent) << " >> File name:             " << m_fileName << ".S" << Gateendl;
+  G4cout << GateTools::Indent(indent) << " >> File name:             " << m_fileName << ".S\n";
   G4cout << GateTools::Indent(indent) << " >> Attached to system:    " << m_system->GetObjectName() << Gateendl;
 }
 
@@ -236,8 +236,8 @@ void GateSinoAccelToEcat7::FillMainHeader()
   }
   if (nVerboseLevel > 1) {
     G4cout << "    Number of crystal rings: " << RingNb << Gateendl;
-    G4cout << "    crystal axial pitch: " << crystalPitchVector.z()/mm << " mm" << Gateendl;
-    G4cout << "    crystal transverse pitch: " << crystalPitchVector.x()/mm << " mm" << Gateendl;
+    G4cout << "    crystal axial pitch: " << crystalPitchVector.z()/mm << " mm\n";
+    G4cout << "    crystal transverse pitch: " << crystalPitchVector.x()/mm << " mm\n";
   }
 
   strncpy(mh->original_file_name,(m_fileName+".S").c_str(),32);
@@ -329,8 +329,8 @@ void GateSinoAccelToEcat7::FillData()
       G4cout << "                and goes from slice " << m_zMinSeg[segment_occurance] << " to slice "
              << m_zMaxSeg[segment_occurance] << Gateendl;
     }
-    G4cout << "    Frame start time:                       " << sh->frame_start_time << " msec" << Gateendl;
-    G4cout << "    Frame duration:                       " << sh->frame_duration << " msec" << Gateendl;
+    G4cout << "    Frame start time:                       " << sh->frame_start_time << " msec\n";
+    G4cout << "    Frame duration:                       " << sh->frame_duration << " msec\n";
   }
   data_size = (m_zMaxSeg[0] - m_zMinSeg[0] + 1) * sh->num_r_elements * sh->num_angles;
   sdata = (short*) calloc(sizeof(short),data_size);

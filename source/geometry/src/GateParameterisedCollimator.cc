@@ -39,7 +39,7 @@ GateParameterisedCollimator::GateParameterisedCollimator(const G4String& itsName
 
   m_messenger = new GateParameterisedCollimatorMessenger(this);
   
-  G4cout << " Constructor GateParameterisedCollimator - end " << Gateendl;
+  G4cout << " Constructor GateParameterisedCollimator - end \n";
 }
 //-------------------------------------------------------------------------------------------------------------------
 

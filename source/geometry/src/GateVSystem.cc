@@ -96,7 +96,7 @@ void GateVSystem::Describe(size_t indent)
   GateClockDependent::Describe(indent);
 
   // Print-out the min and max component
-  G4cout << GateTools::Indent(indent) << "Components:    " << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Components:    \n";
 
   // Ask for a recursive print-out of the components
   m_BaseComponent->Describe(indent);
@@ -119,8 +119,8 @@ GateSystemComponent* GateVSystem::FindComponent(const G4String& componentName,G4
   // Ask the component tree to look for the component
   GateSystemComponent* aComponent = m_BaseComponent->FindSystemComponent(GetObjectName() + "/" + componentName);
   if ( (!aComponent) && (!silent) )
-    G4cerr << Gateendl << "[" << GetObjectName() << "::FindComponent]:" << Gateendl
-      	   << "\tCould not find the request system component '" << componentName << "'!" << Gateendl;
+    G4cerr << Gateendl << "[" << GetObjectName() << "::FindComponent]:\n"
+      	   << "\tCould not find the request system component '" << componentName << "'!\n";
   return aComponent;
 }
 //-----------------------------------------------------------------------------
@@ -178,7 +178,7 @@ GateOutputVolumeID GateVSystem::ComputeOutputVolumeID(const GateVolumeID& aVolum
 
   // verbose output
   if (nVerboseLevel)
-    G4cout << "[" << GetObjectName() << "::ComputeOutputVolumeID]:" << Gateendl
+    G4cout << "[" << GetObjectName() << "::ComputeOutputVolumeID]:\n"
       	   << "\tComputing the output volume ID for the hit in volume:" << aVolumeID << Gateendl; 
 
   // Ask the component-tree to compute the output-volume ID
@@ -191,7 +191,7 @@ GateOutputVolumeID GateVSystem::ComputeOutputVolumeID(const GateVolumeID& aVolum
 
   // verbose output
   if (nVerboseLevel)
-    G4cout << "[" << GetObjectName() << "::ComputeOutputVolumeID]:" << Gateendl
+    G4cout << "[" << GetObjectName() << "::ComputeOutputVolumeID]:\n"
       	   << "\tOutput volume ID is:" << outputVolumeID << Gateendl;
 
   return outputVolumeID;
@@ -303,7 +303,7 @@ G4int GateVSystem::ComputeMainComponentID(GateSystemComponent* aComponent, const
 */
 G4bool GateVSystem::CheckConnectionToCreator(GateVVolume* anCreator) const
 {
-//  G4cout << " DEBUT CheckConnectionToCreator " << Gateendl;
+//  G4cout << " DEBUT CheckConnectionToCreator \n";
   
   // Loop as long as we have a valid creator
   while (anCreator)

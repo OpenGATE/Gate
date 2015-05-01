@@ -186,10 +186,10 @@ G4int GateCrystalSD::PrepareCreatorAttachment(GateVVolume* aCreator)
 
    GateVSystem* creatorSystem = GateSystemListManager::GetInstance()->FindSystemOfCreator(aCreator->GetCreator());
    if (!creatorSystem) {
-      G4cout  << Gateendl << Gateendl << "[GateCrystalSD::PrepareCreatorAttachment]:" << Gateendl
-            << "Volume '" << aCreator->GetObjectName() << "' does not belong to any system." << Gateendl
-            << "Your volume must belong to a system to be used with a crystalSD." << Gateendl
-            << "Attachment request ignored --> you won't have any hit output from this volume!!!" << Gateendl << Gateendl;
+      G4cout  << Gateendl << Gateendl << "[GateCrystalSD::PrepareCreatorAttachment]:\n"
+            << "Volume '" << aCreator->GetObjectName() << "' does not belong to any system.\n"
+            << "Your volume must belong to a system to be used with a crystalSD.\n"
+            << "Attachment request ignored --> you won't have any hit output from this volume!!!\n" << Gateendl;
       return -1;
    }
 

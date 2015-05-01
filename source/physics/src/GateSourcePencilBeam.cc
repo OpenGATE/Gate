@@ -365,7 +365,7 @@ G4int GateSourcePencilBeam::GeneratePrimaries( G4Event* event )
               << " mom=" << p->GetMomentum()
               << " ptime=" <<  G4BestUnit(p->GetProperTime(), "Time")
               << " atime=" <<  G4BestUnit(GetTime(), "Time")
-              << ")" << Gateendl);
+              << ")\n");
 
   numVertices++;
   return numVertices;

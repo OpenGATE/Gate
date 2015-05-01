@@ -86,7 +86,7 @@ void GateSourceVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
 
 void GateSourceVoxelRangeTranslator::Describe(G4int) 
 {
-  G4cout << " Range Translator" << Gateendl;
+  G4cout << " Range Translator\n";
   for (G4int iRange = 0; iRange< (G4int)m_voxelActivityTranslation.size(); iRange++) {
     G4double    xmin      = (m_voxelActivityTranslation[iRange].first).first;
     G4double    xmax      = (m_voxelActivityTranslation[iRange].first).second;

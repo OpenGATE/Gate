@@ -75,7 +75,7 @@ void GateRegularParameterized::InsertReader(G4String readerType)
   }
 
   if (m_voxelReader) {
-    G4cout << "GateRegularParameterized::InsertReader: voxel reader already defined" << Gateendl;
+    G4cout << "GateRegularParameterized::InsertReader: voxel reader already defined\n";
     return;
   }
 
@@ -84,7 +84,7 @@ void GateRegularParameterized::InsertReader(G4String readerType)
   } else if (readerType == G4String("interfile")) {
     m_voxelReader = new GateGeometryVoxelInterfileReader(this);
   } else
-    G4cout << "GateRegularParameterized::InsertReader: unknown reader type" << Gateendl;
+    G4cout << "GateRegularParameterized::InsertReader: unknown reader type\n";
 
   if (verboseLevel>=1) {
     G4cout << "---- Exiting GateRegularParameterized::InsertReader ..."
@@ -168,7 +168,7 @@ void GateRegularParameterized::ConstructGeometry(G4LogicalVolume* mother_log, G4
   }
   else
   {
-    G4cout << "GateRegularParameterized::ConstructGeometry - Warning ! ConstructGeometry called without a reader" << Gateendl << std::flush;
+    G4cout << "GateRegularParameterized::ConstructGeometry - Warning ! ConstructGeometry called without a reader\n" << std::flush;
     return;
   }
 
@@ -209,7 +209,7 @@ void GateRegularParameterized::ConstructGeometry(G4LogicalVolume* mother_log, G4
 			region->SetProductionCuts ( m_pProductionCuts );
 		G4LogicalVolume* vol=GetCreator()->GetLogicalVolume();
                 if ( verboseLevel>=2 )
-			G4cout << "Attach " << vol->GetName() << " to regular phantom region." << Gateendl;
+			G4cout << "Attach " << vol->GetName() << " to regular phantom region.\n";
 		region->AddRootLogicalVolume ( vol ); //m_boxCreator->GetLogicalVolume() );
 
 	}
@@ -246,23 +246,23 @@ void GateRegularParameterized::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
   }
   // Have the volume's current position processed by the repeater list
   if (m_repeaterList){
-//    G4cout << " *** repeaterList exists, repeaterList->ComputePlacements(pQueue)" << Gateendl;
+//    G4cout << " *** repeaterList exists, repeaterList->ComputePlacements(pQueue)\n";
     pQueue = m_repeaterList->ComputePlacements(pQueue);}
 
 
   // Do consistency checks
   if (flagUpdateOnly && theListOfOwnPhysVolume.size()) {
     if (pQueue->size()!=theListOfOwnPhysVolume.size()) {
-      G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolumes]:" << Gateendl
-      	      << "The size of the placement queue (" << pQueue->size() << ") is different from " << Gateendl
-	      << "the number of physical volumes to update (" << theListOfOwnPhysVolume.size() << ")!!!" << Gateendl;
+      G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolumes]:\n"
+      	      << "The size of the placement queue (" << pQueue->size() << ") is different from \n"
+	      << "the number of physical volumes to update (" << theListOfOwnPhysVolume.size() << ")!!!\n";
       G4Exception( "GateRegularParameterized::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Can not complete placement update.");
     }
   }
   else {
     if (theListOfOwnPhysVolume.size()) {
-      G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolumes]:" << Gateendl
-      	      << "Attempting to create new placements without having emptied the vector of placements!!!" << Gateendl;
+      G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolumes]:\n"
+      	      << "Attempting to create new placements without having emptied the vector of placements!!!\n";
       G4Exception( "GateRegularParameterized::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Can not complete placement creation.");
     }
   }
@@ -288,7 +288,7 @@ void GateRegularParameterized::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
   // Check if the physical volume exist when the geometry
   // is updating
   if (flagUpdateOnly && !pOwnPhys){
-    G4cout << " Physical volume " << GetPhysicalVolumeName() << " does not exist!" << Gateendl;
+    G4cout << " Physical volume " << GetPhysicalVolumeName() << " does not exist!\n";
     G4Exception( "GateRegularParameterized::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException,  "Failed to construct the volume!");
   }
 
@@ -310,7 +310,7 @@ void GateRegularParameterized::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
 
     pOwnPhys->SetRotation(newRotationMatrix);
 
-    GateMessage("Geometry", 3,"@  " << GetPhysicalVolumeName() << " has been updated." << Gateendl;);
+    GateMessage("Geometry", 3,"@  " << GetPhysicalVolumeName() << " has been updated.\n";);
 
     }
     else

@@ -87,7 +87,7 @@ G4int GateSourceMgr::RemoveSource( G4String name )
         delete mSources[is];
       mSources.clear();
       if( mVerboseLevel > 0 )
-        G4cout << "GateSourceMgr::RemoveSource : all sources removed " << Gateendl;
+        G4cout << "GateSourceMgr::RemoveSource : all sources removed \n";
       return 0;
     }
 
@@ -100,14 +100,14 @@ G4int GateSourceMgr::RemoveSource( G4String name )
           mSources.erase( itr );
           if( mVerboseLevel > 0 )
             G4cout << "GateSourceMgr::RemoveSource : source <" << name
-                   << "> removed" << Gateendl;
+                   << "> removed\n";
           found = 1;
           break;
         }
     }
 
   if( found == 0 )
-    G4cout << "GateSourceMgr::RemoveSource : source <" << name << "> not removed" << Gateendl;
+    G4cout << "GateSourceMgr::RemoveSource : source <" << name << "> not removed\n";
 
   return found;
 }
@@ -240,7 +240,7 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
     m_sourceProgressiveNumber++;
   }
   else
-    G4cout << "GateSourceMgr::AddSource : WARNING: Source not added " << Gateendl;
+    G4cout << "GateSourceMgr::AddSource : WARNING: Source not added \n";
 
   return 0;
 }
@@ -352,7 +352,7 @@ GateVSource* GateSourceMgr::GetNextSource()
 //----------------------------------------------------------------------------------------
 void GateSourceMgr::ListSources()
 {
-  G4cout << "GateSourceMgr::ListSources: List of the sources in the source manager" << Gateendl;
+  G4cout << "GateSourceMgr::ListSources: List of the sources in the source manager\n";
   GateVSourceVector::iterator itr;
   for( itr = mSources.begin(); itr != mSources.end(); ++itr )
     ( *itr )->Dump( 0 );
@@ -367,11 +367,11 @@ void GateSourceMgr::SelectSourceByName( G4String name )
   if( m_selectedSource ) {
     if( mVerboseLevel > 0 ) {
       G4cout << "GateSourceMgr::SelectSourceByName : source <"
-             << name << "> selected" << Gateendl;
+             << name << "> selected\n";
     }
     else {
       G4cout << "GateSourceMgr::SelectSourceByName : WARNING : source <" << name
-             << "> not selected" << Gateendl;
+             << "> not selected\n";
     }
   }
 }
@@ -439,7 +439,7 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
 {
   //  GateMessage("Acquisition", 0, "PrepareNextRun "  << r->GetRunID() << Gateendl);
   if( mVerboseLevel > 1 )
-    G4cout << "GateSourceMgr::PrepareNextRun" << Gateendl;
+    G4cout << "GateSourceMgr::PrepareNextRun\n";
 
   // Initialize the internal time to the GATE clock time
   mNbOfParticleInTheCurrentRun = 0;
@@ -532,7 +532,7 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
 G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
 {
   // GateDebugMessage("Acquisition", 0, "PrepareNextEvent "  << event->GetEventID()
-  //                    << " at time " << m_time/s << " sec." << Gateendl);
+  //                    << " at time " << m_time/s << " sec.\n");
 
   GateSteppingAction* myAction = (GateSteppingAction *) ( GateRunManager::GetRunManager()->GetUserSteppingAction() );
   TrackingMode theMode =myAction->GetMode();
@@ -545,11 +545,11 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
       GateRTPhantomMgr::GetInstance()->UpdatePhantoms(m_time); /* PY Descourt 11/12/2008 */
 
       if( mVerboseLevel > 1 )
-        G4cout << "GateSourceMgr::PrepareNextEvent" << Gateendl;
+        G4cout << "GateSourceMgr::PrepareNextEvent\n";
 
       // ask the source for this event
       if( mVerboseLevel > 1 )
-        G4cout << "GateSourceMgr::PrepareNextEvent : GetNextSource() " << Gateendl;
+        G4cout << "GateSourceMgr::PrepareNextEvent : GetNextSource() \n";
       GateVSource* source = GetNextSource();
 
       if( source )
@@ -590,7 +590,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
             {
 	      if( mVerboseLevel > 1 )
                 G4cout << "GateSourceMgr::PrepareNextEvent : source selected <"
-                       << source->GetName() << ">" << Gateendl;
+                       << source->GetName() << ">\n";
 
               // transmit the time to the source and ask it to generate the primary vertex
               source->SetTime( m_time );
@@ -602,7 +602,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
             }
           else {
             if( mVerboseLevel > 0 )
-              G4cout << "GateSourceMgr::PrepareNextEvent : m_time > m_timeLimit. No vertex generated" << Gateendl;
+              G4cout << "GateSourceMgr::PrepareNextEvent : m_time > m_timeLimit. No vertex generated\n";
 
             if(m_time <= timeStop){
               m_time-=m_firstTime;
@@ -611,7 +611,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
           }
         }
       else {
-        G4cout << "GateSourceMgr::PrepareNextEvent : WARNING : GateSourceMgr::GetNextSource gave no source" << Gateendl;
+        G4cout << "GateSourceMgr::PrepareNextEvent : WARNING : GateSourceMgr::GetNextSource gave no source\n";
       }
 
       m_needSourceInit = false;

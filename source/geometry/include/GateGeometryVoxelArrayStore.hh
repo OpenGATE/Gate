@@ -84,7 +84,7 @@ protected:
   { 
     G4int rai =  ix + iy*nx + iz*nx*ny; 
     //    G4cout << " " << rai;
-    if (rai<0 || rai>=nx*ny*nz) G4cout << "RealArrayIndex: ERROR: index out of range!!!!" << Gateendl;
+    if (rai<0 || rai>=nx*ny*nz) G4cout << "RealArrayIndex: ERROR: index out of range!!!!\n";
     return rai;
   };
   inline G4int             RealArrayIndex_noCheck(G4int ix, G4int iy, G4int iz) const;

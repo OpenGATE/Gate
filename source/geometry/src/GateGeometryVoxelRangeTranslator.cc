@@ -23,11 +23,11 @@ See GATE/LICENSE.txt for further details
 GateGeometryVoxelRangeTranslator::GateGeometryVoxelRangeTranslator(GateVGeometryVoxelReader* voxelReader) 
   : GateVGeometryVoxelTranslator(voxelReader)
 {
-//  G4cout << " Constructor GateGeometryVoxelRangeTranslator" << Gateendl;
+//  G4cout << " Constructor GateGeometryVoxelRangeTranslator\n";
   m_name = G4String("rangeTranslator");
   m_messenger = new GateGeometryVoxelRangeTranslatorMessenger(this);
   
-//  G4cout << " FIN Constructor GateGeometryVoxelRangeTranslator" << Gateendl;
+//  G4cout << " FIN Constructor GateGeometryVoxelRangeTranslator\n";
 }
 
 GateGeometryVoxelRangeTranslator::~GateGeometryVoxelRangeTranslator() 
@@ -58,7 +58,7 @@ G4String GateGeometryVoxelRangeTranslator::TranslateToMaterial(G4double voxelVal
 void GateGeometryVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
 {
 
-//  G4cout << " DEBUT GateGeometryVoxelRangeTranslator::ReadTranslationTable " << Gateendl;
+//  G4cout << " DEBUT GateGeometryVoxelRangeTranslator::ReadTranslationTable \n";
   m_voxelMaterialTranslation.clear();
 
   std::ifstream inFile;
@@ -120,7 +120,7 @@ void GateGeometryVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
   }
 
   }
-  else {G4cout << "Error opening file." << Gateendl;}
+  else {G4cout << "Error opening file.\n";}
   
   inFile.close();
 
@@ -128,7 +128,7 @@ void GateGeometryVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
 
 void GateGeometryVoxelRangeTranslator::Describe(G4int) 
 {
-  G4cout << " Range Translator" << Gateendl;
+  G4cout << " Range Translator\n";
   for (G4int iRange = 0; iRange< (G4int)m_voxelMaterialTranslation.size(); iRange++) {
     G4double    xmin      = (m_voxelMaterialTranslation[iRange].first).first;
     G4double    xmax      = (m_voxelMaterialTranslation[iRange].first).second;

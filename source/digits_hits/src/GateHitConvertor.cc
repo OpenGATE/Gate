@@ -128,9 +128,9 @@ void GateHitConvertor::ProcessOneHit(const GateCrystalHit* hit,GatePulseList* pu
   }
 
   if (nVerboseLevel>1)
-      	G4cout << "[GateHitConvertor::ProcessOneHit]: " << Gateendl
+      	G4cout << "[GateHitConvertor::ProcessOneHit]: \n"
 	       << "\tprocessed " << *hit << Gateendl
-	       << "\tcreated new pulse:" << Gateendl
+	       << "\tcreated new pulse:\n"
 	       << *pulse << Gateendl;
 
   pulseList->push_back(pulse);
@@ -138,5 +138,5 @@ void GateHitConvertor::ProcessOneHit(const GateCrystalHit* hit,GatePulseList* pu
 
 void GateHitConvertor::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Convert hits into pulses for '" << GateDigitizer::GetInstance()->GetObjectName() << "'" << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Convert hits into pulses for '" << GateDigitizer::GetInstance()->GetObjectName() << "'\n";
 }

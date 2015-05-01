@@ -58,8 +58,8 @@ void GateCoincidencePulseProcessorChain::InsertProcessor(GateVCoincidencePulsePr
 void GateCoincidencePulseProcessorChain::Describe(size_t indent)
 {
   GateModuleListManager::Describe();
-  //G4cout << GateTools::Indent(indent) << "Input:              '" << m_inputNames << "'" << Gateendl;
-  G4cout << GateTools::Indent(indent) << "Output:             '" << m_outputName << "'" << Gateendl;
+  //G4cout << GateTools::Indent(indent) << "Input:              '" << m_inputNames << "'\n";
+  G4cout << GateTools::Indent(indent) << "Output:             '" << m_outputName << "'\n";
 }
 //------------------------------------------------------------------------------------------------------
 

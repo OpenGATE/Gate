@@ -240,7 +240,7 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
   }
 
   GateMessage("Actor", 2, "Save " << mFilename << " with scaling = "
-	      << mScaleFactor << "(" << mIsValuesMustBeScaled << ")" << Gateendl);
+	      << mScaleFactor << "(" << mIsValuesMustBeScaled << ")\n");
 
   if (!mIsValuesMustBeScaled) mValueImage.Write(mFilename);
   else {

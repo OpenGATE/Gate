@@ -67,7 +67,7 @@ GateSinoToEcat7::GateSinoToEcat7(const G4String& name, GateOutputMgr* outputMgr,
    #else
    m_ecatVersion = 8;
    #endif
-   if (nVerboseLevel > 0) G4cout << " >> GateSinoToEcat7 created" << Gateendl;
+   if (nVerboseLevel > 0) G4cout << " >> GateSinoToEcat7 created\n";
 }
 
 GateSinoToEcat7::~GateSinoToEcat7()
@@ -75,13 +75,13 @@ GateSinoToEcat7::~GateSinoToEcat7()
   delete m_asciiMessenger;
   #ifdef GATE_USE_ECAT7
   if (m_ptr != NULL) {
-    if (nVerboseLevel > 1) G4cout << " >> ECAT7 file " << m_ptr->fname << " will be closed" << Gateendl;
+    if (nVerboseLevel > 1) G4cout << " >> ECAT7 file " << m_ptr->fname << " will be closed\n";
     matrix_close(m_ptr);
   }
   #endif
   if (mh != NULL) free(mh);
   if (sh != NULL) free(sh);
-  if (nVerboseLevel > 0) G4cout << " >> GateSinoToEcat7 deleted" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> GateSinoToEcat7 deleted\n";
 }
 
 const G4String& GateSinoToEcat7::GiveNameOfFile()
@@ -96,23 +96,23 @@ void GateSinoToEcat7::RecordBeginOfAcquisition()
   GateToSinogram* setMaker = m_system->GetSinogramMaker();
 
   if (!(m_system->GetSinogramMaker()->IsEnabled())) return;
-  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoToEcat7::RecordBeginOfAcquisition]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoToEcat7::RecordBeginOfAcquisition]\n";
 
   // Create main header
   mh = (Main_header *) calloc(1,sizeof(Main_header));
   if (mh == NULL) {
      G4Exception( "GateSinoToEcat7::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "Could not allocate memory for main header");
   }
-  if (nVerboseLevel > 2) G4cout << "    Memory allocated for main header " << Gateendl;
+  if (nVerboseLevel > 2) G4cout << "    Memory allocated for main header \n";
   // Fill main header
   FillMainHeader();
-  if (nVerboseLevel > 2) G4cout << "    Main header filled" << Gateendl;
+  if (nVerboseLevel > 2) G4cout << "    Main header filled\n";
   // Create subheader
   sh = (Scan3D_subheader *) calloc(1,sizeof(Scan3D_subheader));
   if (sh == NULL) {
      G4Exception( "GateSinoToEcat7::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "Could not allocate memory for subheader");
   }
-  if (nVerboseLevel > 2) G4cout << "    Memory allocated for sub header " << Gateendl;
+  if (nVerboseLevel > 2) G4cout << "    Memory allocated for sub header \n";
   sh->frame_duration = 0;
 
   // 24.03.2006 C. Comtat, study start time
@@ -126,18 +126,18 @@ void GateSinoToEcat7::RecordBeginOfAcquisition()
 			G4String msg = "Could not create ECAT7 file '"+m_fileName+".S' !";
      G4Exception( "GateSinoToEcat7::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, msg );
     }
-    if (nVerboseLevel > 1) G4cout << "    ECAT7 file " << m_fileName << ".S created" << Gateendl;
+    if (nVerboseLevel > 1) G4cout << "    ECAT7 file " << m_fileName << ".S created\n";
   } else {
     m_ptr = NULL;
   }
   #endif
-  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoToEcat7::RecordBeginOfAcquisition]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoToEcat7::RecordBeginOfAcquisition]\n";
 }
 
 void GateSinoToEcat7::RecordEndOfAcquisition()
 {
   if (!(m_system->GetSinogramMaker()->IsEnabled())) return;
-  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoToEcat7::RecordEndOfAcquisition]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoToEcat7::RecordEndOfAcquisition]\n";
 
   // Delete main header
   free(mh);
@@ -148,12 +148,12 @@ void GateSinoToEcat7::RecordEndOfAcquisition()
   #ifdef GATE_USE_ECAT7
   // Close the ECAT file
   if (m_ptr != NULL) {
-    if (nVerboseLevel > 1) G4cout << "    ECAT7 file " << m_ptr->fname << " will be closed" << Gateendl;
+    if (nVerboseLevel > 1) G4cout << "    ECAT7 file " << m_ptr->fname << " will be closed\n";
     matrix_close(m_ptr);
     m_ptr = NULL;
   }
   #endif
-  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoToEcat7::RecordEndOfAcquisition]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoToEcat7::RecordEndOfAcquisition]\n";
 }
 
 void GateSinoToEcat7::RecordBeginOfRun(const G4Run * )
@@ -161,7 +161,7 @@ void GateSinoToEcat7::RecordBeginOfRun(const G4Run * )
   GateToSinogram* setMaker = m_system->GetSinogramMaker();
   G4int  seg,segm,segment_occurance,nplane;
   if (!(m_system->GetSinogramMaker()->IsEnabled())) return;
-  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoToEcat7::RecordBeginOfRun]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoToEcat7::RecordBeginOfRun]\n";
   if (nVerboseLevel > 1) {
     G4cout << "    Frame ID:     " << setMaker->GetSinogram()->GetCurrentFrameID() << Gateendl;
     G4cout << "    Gate ID:      " << setMaker->GetSinogram()->GetCurrentGateID() << Gateendl;
@@ -169,12 +169,12 @@ void GateSinoToEcat7::RecordBeginOfRun(const G4Run * )
 
     // 07.02.2006, C. Comtat, Store randoms and scatters sino
     if (setMaker->IsTruesOnly()) {
-      G4cout << "    Only true prompt coincidences are recorded" << Gateendl;
+      G4cout << "    Only true prompt coincidences are recorded\n";
     } else if (setMaker->IsStoreDelayeds()) {
       G4cout << "    Prompt coincidences are recorded with data = " << setMaker->GetSinogram()->GetCurrentDataID() << Gateendl;
       G4cout << "    Delayed coincidences (if simulated) are recorded with data = " << setMaker->GetSinoDelayeds()->GetCurrentDataID() << Gateendl;
     } else {
-      G4cout << "    Prompt minus delayed (if simulated) coincidences are recorded" << Gateendl;
+      G4cout << "    Prompt minus delayed (if simulated) coincidences are recorded\n";
     }
     if (setMaker->IsStoreScatters()) {
       G4cout << "    True scattered coincidences are recorded with data = " << setMaker->GetSinoScatters()->GetCurrentDataID() << Gateendl;
@@ -189,19 +189,19 @@ void GateSinoToEcat7::RecordBeginOfRun(const G4Run * )
   if (m_span < 1) m_span = 3;
   if (m_maxRingDiff >= setMaker->GetRingNb()) {
     G4cout << " !!! [GateSinoToEcat7]: maximum ring difference (" << m_maxRingDiff
-           << ") is too big (should be <" << setMaker->GetRingNb() << ")" << Gateendl;
+           << ") is too big (should be <" << setMaker->GetRingNb() << ")\n";
     G4Exception("GateSinoToEcat7::RecordBeginOfRun", "RecordBeginOfRun", FatalException,"Could not fill subheader");
   }
   if ((m_span<1)||((float)((m_span-1)/2)) != (((float)m_span-1.0)/2.0)) {
     G4cout << " !!! [GateSinoToEcat7]: span factor (" << m_maxRingDiff
-           << ") should be odd" << Gateendl;
+           << ") should be odd\n";
     G4Exception("GateSinoToEcat7::RecordBeginOfRun", "RecordBeginOfRun", FatalException,"Could not fill subheader");
   }
   if ((float)((2*m_maxRingDiff+1-m_span)/(2*m_span)) != (2.0*(float)m_maxRingDiff+1.0-(float)m_span)/(2.0*(float)m_span)) {
     G4int bin,maxRingDiff;
     G4cout << " !!! [GateSinoToEcat7]: maximum ring difference (" << m_maxRingDiff
-           << ") is not coherent with span factor (" << m_span << ")" << Gateendl;
-    G4cout << "                                       possible maximum ring differences are: " << Gateendl;
+           << ") is not coherent with span factor (" << m_span << ")\n";
+    G4cout << "                                       possible maximum ring differences are: \n";
     bin = 0;
     maxRingDiff = (m_span-1)/2;
     while (maxRingDiff < setMaker->GetRingNb()) {
@@ -239,14 +239,14 @@ void GateSinoToEcat7::RecordBeginOfRun(const G4Run * )
       m_zMaxSeg[segment_occurance] = m_zMaxSeg[0] - ((2*seg-1)*m_span+1)/2;
     }
   }
-  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoToEcat7::RecordBeginOfRun]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoToEcat7::RecordBeginOfRun]\n";
 }
 
 void GateSinoToEcat7::RecordEndOfRun(const G4Run * )
 {
   GateToSinogram* setMaker = m_system->GetSinogramMaker();
   if (!(m_system->GetSinogramMaker()->IsEnabled())) return;
-  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoToEcat7::RecordEndOfRun]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> entering [GateSinoToEcat7::RecordEndOfRun]\n";
   sh->prompts = 0;
   sh->delayed = 0;
   FillData(setMaker->GetSinogram());
@@ -255,7 +255,7 @@ void GateSinoToEcat7::RecordEndOfRun(const G4Run * )
   if (setMaker->IsStoreDelayeds()) FillData(setMaker->GetSinoDelayeds());
   if (setMaker->IsStoreScatters()) FillData(setMaker->GetSinoScatters());
 
-  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoToEcat7::RecordEndOfRun]" << Gateendl;
+  if (nVerboseLevel > 0) G4cout << " >> leaving [GateSinoToEcat7::RecordEndOfRun]\n";
 }
 
 /* Overload of the base-class' virtual method to print-out a description of the module
@@ -265,9 +265,9 @@ void GateSinoToEcat7::RecordEndOfRun(const G4Run * )
 void GateSinoToEcat7::Describe(size_t indent)
 {
   GateVOutputModule::Describe(indent);
-  G4cout << GateTools::Indent(indent) << " >> Job:                   write a set of 2D sinograms into an Ecat7 output file" << Gateendl;
+  G4cout << GateTools::Indent(indent) << " >> Job:                   write a set of 2D sinograms into an Ecat7 output file\n";
   G4cout << GateTools::Indent(indent) << " >> Is enabled ?           " << ( IsEnabled() ? "Yes" : "No") << Gateendl;
-  G4cout << GateTools::Indent(indent) << " >> File name:             " << m_fileName << ".S" << Gateendl;
+  G4cout << GateTools::Indent(indent) << " >> File name:             " << m_fileName << ".S\n";
   G4cout << GateTools::Indent(indent) << " >> Attached to system:    " << m_system->GetObjectName() << Gateendl;
 }
 
@@ -296,8 +296,8 @@ void GateSinoToEcat7::FillMainHeader()
   }
   if (nVerboseLevel > 1) {
     G4cout << "    Number of crystal rings: " << RingNb << Gateendl;
-    G4cout << "    crystal axial pitch: " << crystalPitchVector.z()/mm << " mm" << Gateendl;
-    G4cout << "    crystal transverse pitch: " << crystalPitchVector.y()/mm << " mm" << Gateendl;
+    G4cout << "    crystal axial pitch: " << crystalPitchVector.z()/mm << " mm\n";
+    G4cout << "    crystal transverse pitch: " << crystalPitchVector.y()/mm << " mm\n";
   }
 
   strncpy(mh->original_file_name,(m_fileName+".S").c_str(),32);
@@ -426,8 +426,8 @@ void GateSinoToEcat7::FillData(GateSinogram* setSino)
       G4cout << "                and goes from slice " << m_zMinSeg[segment_occurance] << " to slice "
              << m_zMaxSeg[segment_occurance] << Gateendl;
     }
-    G4cout << "    Frame start time:                       " << sh->frame_start_time << " msec" << Gateendl;
-    G4cout << "    Frame duration:                       " << sh->frame_duration << " msec" << Gateendl;
+    G4cout << "    Frame start time:                       " << sh->frame_start_time << " msec\n";
+    G4cout << "    Frame duration:                       " << sh->frame_duration << " msec\n";
   }
   // CC, 10.02.2011 : allows for span 1
   if (m_span == 1) {
@@ -473,7 +473,7 @@ void GateSinoToEcat7::FillData(GateSinogram* setSino)
       sprintf(ctemp,"%s_frame%0d",m_fileName.c_str(),(int) setSino->GetCurrentFrameID()-1);
     }
     frameFileName = ctemp;
-    G4cout << "    sinograms written to the interfile-like files " << frameFileName << ".s and " << frameFileName << ".s.hdr" << Gateendl;
+    G4cout << "    sinograms written to the interfile-like files " << frameFileName << ".s and " << frameFileName << ".s.hdr\n";
     m_dataFile.open((frameFileName+".s").c_str(),std::ios::out | std::ios::trunc | std::ios::binary);
   #ifdef GATE_USE_ECAT7
   }
@@ -615,7 +615,7 @@ void GateSinoToEcat7::FillData(GateSinogram* setSino)
     m_dataFile.close();
     // ASCII header
     m_headerFile.open((frameFileName+".s.hdr").c_str(),std::ios::out | std::ios::trunc | std::ios::binary);
-    m_headerFile << "!INTERFILE" << Gateendl;
+    m_headerFile << "!INTERFILE\n";
     m_headerFile << "%comment:=Created from " << mh->serial_number << Gateendl;
     m_headerFile << "!name of data file := "  << (frameFileName+".s").c_str() << Gateendl;
     m_headerFile << "!originating system := " << mh->system_type << Gateendl;
@@ -634,16 +634,16 @@ void GateSinoToEcat7::FillData(GateSinogram* setSino)
     date = (struct tm*) localtime(&t);
     m_headerFile << "%study date (yyyy:mm:dd):=" << 1900+date->tm_year << ":" << 1+date->tm_mon << ":" << date->tm_mday << Gateendl;
     m_headerFile << "%study time (hh:mm:ss):=" <<  date->tm_hour << ":" << date->tm_min << ":" << date->tm_sec << Gateendl;
-    m_headerFile << "!PET data type := emission" << Gateendl;
-    m_headerFile << "data format := sinogram" << Gateendl;
-    m_headerFile << "number format := signed integer" << Gateendl;
-    m_headerFile << "!number of bytes per pixel := 2" << Gateendl;
+    m_headerFile << "!PET data type := emission\n";
+    m_headerFile << "data format := sinogram\n";
+    m_headerFile << "number format := signed integer\n";
+    m_headerFile << "!number of bytes per pixel := 2\n";
     m_headerFile << "!image duration (sec) := " << sh->frame_duration/1000 << Gateendl;
     m_headerFile << "!image relative start time (sec) := " << sh->frame_start_time/1000 << Gateendl;
     m_headerFile << "isotope name := " << mh->isotope_code << Gateendl;
     m_headerFile << "isotope gamma halflife (sec) := " << mh->isotope_halflife << Gateendl;
     m_headerFile << "isotope branching factor := " << mh->branching_fraction << Gateendl;
-    m_headerFile << "number of dimensions := 3" << Gateendl;
+    m_headerFile << "number of dimensions := 3\n";
     m_headerFile << "matrix size [1] := " << sh->num_r_elements << Gateendl;
     m_headerFile << "matrix size [2] := " << sh->num_angles << Gateendl;
     nsino = 0;
@@ -662,11 +662,11 @@ void GateSinoToEcat7::FillData(GateSinogram* setSino)
       m_headerFile << "," << sh->num_z_elements[bin]/2 << "," << sh->num_z_elements[bin]/2;
       bin++;
     }
-    m_headerFile << "}" << Gateendl;
-    if (data == 0 && mh->coin_samp_mode == 0)  m_headerFile << "scan data type description[1]:=net trues" << Gateendl;
-    else if (data == 0 && mh->coin_samp_mode == 1)  m_headerFile << "scan data type description[1]:=prompts" << Gateendl;
-    else if (data == 1) m_headerFile << "scan data type description[1]:=delayed" << Gateendl;
-    else if (data == 4) m_headerFile << "scan data type description[1]:=scatters" << Gateendl;
+    m_headerFile << "}\n";
+    if (data == 0 && mh->coin_samp_mode == 0)  m_headerFile << "scan data type description[1]:=net trues\n";
+    else if (data == 0 && mh->coin_samp_mode == 1)  m_headerFile << "scan data type description[1]:=prompts\n";
+    else if (data == 1) m_headerFile << "scan data type description[1]:=delayed\n";
+    else if (data == 4) m_headerFile << "scan data type description[1]:=scatters\n";
     m_headerFile << "frame := " << frame - 1 << Gateendl;
     m_headerFile << "total prompts := " << sh->prompts << Gateendl;
     m_headerFile << "total randoms := " << sh->delayed << Gateendl;

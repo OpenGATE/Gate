@@ -75,7 +75,7 @@ std::vector<G4int> GateVSourceVoxelReader::GetNextSource()
   std::vector<G4int> firstSource;
 
   if (m_sourceVoxelActivities.size()==0) {
-    G4cout << "GateVSourceVoxelReader::GetNextSource : WARNING: No source available" << Gateendl;
+    G4cout << "GateVSourceVoxelReader::GetNextSource : WARNING: No source available\n";
     return firstSource;
   } else {
     // if there is at least one voxel
@@ -114,7 +114,7 @@ void GateVSourceVoxelReader::AddVoxel(G4int ix, G4int iy, G4int iz, G4double act
   // if a source had already been inserted with the same key (ix,iy,iz) this will substitute the previous one;
   // thus we must delete the previous from the sum of the activities and we recompute the maximum
   if (m_sourceVoxelActivities[*index] != 0) {
-    G4cout << "GateVSourceVoxelReader::AddVoxel: already existing voxel, activity replaced" << Gateendl;
+    G4cout << "GateVSourceVoxelReader::AddVoxel: already existing voxel, activity replaced\n";
     m_activityTotal -= m_sourceVoxelActivities[*index];
 
     // loop over all the voxels to recompute the maximum of the activies
@@ -164,14 +164,14 @@ void GateVSourceVoxelReader::AddVoxel_FAST(G4int ix, G4int iy, G4int iz, G4doubl
 void GateVSourceVoxelReader::InsertTranslator(G4String translatorType)
 {
   if (m_voxelTranslator) {
-    GateError("GateVSourceVoxelReader::InsertTranslator: voxel translator already defined" << Gateendl);
+    GateError("GateVSourceVoxelReader::InsertTranslator: voxel translator already defined\n");
   } else {
     if (translatorType == G4String("linear")) {
       m_voxelTranslator = new GateSourceVoxelLinearTranslator(this);
     } else if (translatorType == G4String("range")) {
       m_voxelTranslator = new GateSourceVoxelRangeTranslator(this);
     } else {
-      GateError("GateVSourceVoxelReader::InsertTranslator: unknown translator type" << Gateendl);
+      GateError("GateVSourceVoxelReader::InsertTranslator: unknown translator type\n");
     }
   }
 
@@ -186,7 +186,7 @@ void GateVSourceVoxelReader::RemoveTranslator()
     delete m_voxelTranslator;
     m_voxelTranslator = 0;
   } else {
-    GateError("GateVSourceVoxelReader::RemoveTranslator: voxel translator not defined" << Gateendl);
+    GateError("GateVSourceVoxelReader::RemoveTranslator: voxel translator not defined\n");
   }
 }
 //-------------------------------------------------------------------------------------------------
@@ -303,7 +303,7 @@ void GateVSourceVoxelReader::UpdateActivities(G4String  HFN, G4String FN )
 
             }
 
-          G4cout << "   Description of Range Translator  " << Gateendl;
+          G4cout << "   Description of Range Translator  \n";
 
           //if (m_verboseLevel>1)
           m_voxelTranslator->Describe( 2 ) ;
@@ -322,7 +322,7 @@ void GateVSourceVoxelReader::UpdateActivities(G4String  HFN, G4String FN )
 void GateVSourceVoxelReader::UpdateActivities()
 {
   if (m_TimeActivTables.empty() == true) {
-    GateError(" GateVSourceVoxelReader::UpdateActivities()  No time activity curves supplied." << Gateendl);
+    GateError(" GateVSourceVoxelReader::UpdateActivities()  No time activity curves supplied.\n");
     return;
   }
 
@@ -351,7 +351,7 @@ void GateVSourceVoxelReader::UpdateActivities()
       G4double current_activity  = AInterpolation.CubicSplineInterpolation( currentTime ); // interpolates
       m_voxelTranslator->UpdateActivity( activmin , activmax , current_activity * becquerel ); // it associates to the translator key the new activity value
     }
-  // G4cout << "   Description of Range Translator  " << Gateendl;
+  // G4cout << "   Description of Range Translator  \n";
   m_voxelTranslator->Describe( 2 ) ;
 }
 //-------------------------------------------------------------------------------------------------
@@ -369,7 +369,7 @@ void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
   inFile.open(fileName.c_str(),std::ios::in);
 
   if (!inFile.is_open())
-    {G4cout << " Source Voxel Reader Message : ERROR - Time Activities Tables  file " << fileName << " not found " << Gateendl;
+    {G4cout << " Source Voxel Reader Message : ERROR - Time Activities Tables  file " << fileName << " not found \n";
       G4Exception( "GateVSourceVoxelReader::SetTimeActivTables", "SetTimeActivTables", FatalException, "Aborting...");
     }
 
@@ -383,7 +383,7 @@ void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
 
   is >> nTotCol;
 
-  G4cout << "==== Source Voxel Reader Time Activity Translation Table ====" << Gateendl;
+  G4cout << "==== Source Voxel Reader Time Activity Translation Table ====\n";
   G4cout << "number of couples to be read : " << nTotCol <<Gateendl;
 
   std::vector< std::pair<G4double,G4double> > m_ActivCurve;
@@ -407,7 +407,7 @@ void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
       std::ifstream TimeCurveFile;
       TimeCurveFile.open(fname.c_str(),std::ios::in);
       if (  !TimeCurveFile.is_open()  )
-        {G4cout << " Source Voxel Reader Message : ERROR - Time Activities Tables  file " << fname << " not found " << Gateendl;
+        {G4cout << " Source Voxel Reader Message : ERROR - Time Activities Tables  file " << fname << " not found \n";
           G4Exception( "GateVSourceVoxelReader::SetTimeActivTables", "SetTimeActivTables", FatalException, "Aborting...");
         }
 
@@ -420,7 +420,7 @@ void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
         TimeCurveFile.getline(buf,200);
         std::istringstream iss(buf);
         iss >> nCol;
-        G4cout << "==== Source Voxel Reader Time Activity Curve Read From File "<< fname << "  ====" << Gateendl;
+        G4cout << "==== Source Voxel Reader Time Activity Curve Read From File "<< fname << "  ====\n";
         G4cout << "number of couples to be read : " << nCol <<Gateendl;
 
         for (G4int iCol=0; iCol<nCol; iCol++)
@@ -430,7 +430,7 @@ void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
             iss.str(buf);
             iss >> aTime >> anActivity;
 
-            G4cout <<"At " << aTime << " seconds corresponds an Activity of " << anActivity << " Bcq" << Gateendl;
+            G4cout <<"At " << aTime << " seconds corresponds an Activity of " << anActivity << " Bcq\n";
 
             std::pair<G4double, G4double> couple( aTime, anActivity );
             m_ActivCurve.push_back( couple );
@@ -447,7 +447,7 @@ void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
 
     }
 
-  G4cout << "========================================" << Gateendl;
+  G4cout << "========================================\n";
 
   inFile.close();
 

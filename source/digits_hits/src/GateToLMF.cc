@@ -138,7 +138,7 @@ GateToLMF::~GateToLMF()
 {
   delete m_LMFMessenger;
 
-  if (nVerboseLevel > 0) G4cout << "GateToLMF deleting..." << Gateendl;
+  if (nVerboseLevel > 0) G4cout << "GateToLMF deleting...\n";
 
   if(pEncoH->scanContent.eventRecordBool == 1)
     {
@@ -223,7 +223,7 @@ void GateToLMF::createLMF_ASCIIfile(void)
 
   // Ask the system to print out its parameters into the stream
   if(!asciiFile)
-    G4cerr << "GateToLMF::createLMF_ASCIIfile() : Impossible to open a new file" << Gateendl;
+    G4cerr << "GateToLMF::createLMF_ASCIIfile() : Impossible to open a new file\n";
   m_pSystem->PrintToStream(asciiFile,false); // cf. GateCylindricalPETSystem class.
 
   G4double m_timeSlice = GateApplicationMgr::GetInstance()->GetTimeSlice();
@@ -237,10 +237,10 @@ void GateToLMF::createLMF_ASCIIfile(void)
 
   // Get and print out the time and energy steps
   if(pEH->coincidenceBool)
-    asciiFile << "clock time step: " << GATE_LMF_TIME_STEP_COINCI << " ps" << Gateendl;
+    asciiFile << "clock time step: " << GATE_LMF_TIME_STEP_COINCI << " ps\n";
   else
-    asciiFile << "clock time step: " << GATE_LMF_TIME_STEP_PICOS << " ps" << Gateendl;
-  asciiFile << "energy step: " << GATE_LMF_ENERGY_STEP_KEV << " keV" << Gateendl;
+    asciiFile << "clock time step: " << GATE_LMF_TIME_STEP_PICOS << " ps\n";
+  asciiFile << "energy step: " << GATE_LMF_ENERGY_STEP_KEV << " keV\n";
   // GATE_LMF_TIME_STEP_PICOS and GATE_LMF_ENERGY_STEP_KEV are defined
   // in LMF library : lmf/includes/constantsLMF_ccs.h
 
@@ -256,11 +256,11 @@ void GateToLMF::createLMF_ASCIIfile(void)
     {rotationSpeed = baseComponent->GetEccentRotVelocity(); // Store the eccentric shift for EccenRotMove
     m_shiftX= baseComponent->GetEccentRotShift().x();
     m_shiftY= baseComponent->GetEccentRotShift().y();
-    asciiFile << "x shift: " << m_shiftX / cm  << " cm" << Gateendl;
-    asciiFile << "y shift: " << m_shiftY / cm  << " cm" << Gateendl;
+    asciiFile << "x shift: " << m_shiftX / cm  << " cm\n";
+    asciiFile << "y shift: " << m_shiftY / cm  << " cm\n";
     }
   m_azimuthalStep = rotationSpeed * m_timeSlice;
-  asciiFile << "azimuthal step: " << m_azimuthalStep / degree << " degree" << Gateendl;
+  asciiFile << "azimuthal step: " << m_azimuthalStep / degree << " degree\n";
 
   // Print out the axial Z shift for modulo M ring repeater
 
@@ -354,7 +354,7 @@ void GateToLMF::StoreTheDigiInLMF(GateSingleDigi *digi)
 	  G4cout << "One digi store in " << m_nameOfFile <<Gateendl;
 	  if (nVerboseLevel > 7)
 	    {
-	      G4cout << "type enter to continue" << Gateendl;
+	      G4cout << "type enter to continue\n";
 	      getchar(); // let's see this beautiful event record
 	    }
 	}
@@ -504,7 +504,7 @@ void GateToLMF::RecordBeginOfAcquisition()
 {
   if (!IsEnabled()) return;
   if (nVerboseLevel > 2)
-    G4cout << "GateToLMF::RecordBeginOfAcquisition" << Gateendl;
+    G4cout << "GateToLMF::RecordBeginOfAcquisition\n";
 
   if(pEH->coincidenceBool) {
     pERC = newER(pEH);
@@ -520,7 +520,7 @@ void GateToLMF::RecordBeginOfAcquisition()
   // 4 gate digi records
   // and 5 gate digi + event ...
   if (nVerboseLevel > 5)
-    G4cout << "GateToLMF::RecordBeginOfAcquisition" << Gateendl;
+    G4cout << "GateToLMF::RecordBeginOfAcquisition\n";
 
   if(pEH->gateDigiBool)
     codeForRecords = 5;
@@ -530,9 +530,9 @@ void GateToLMF::RecordBeginOfAcquisition()
 
   createLMF_ASCIIfile();
 
-  G4cout << "\n\n**************" << Gateendl;
-  G4cout << " LMF INIT" << Gateendl;
-  G4cout << "**************" << Gateendl;
+  G4cout << "\n\n**************\n";
+  G4cout << " LMF INIT\n";
+  G4cout << "**************\n";
 
  G4int rsectornumber = 1;
  GateCylindricalPETSystem* m_system = dynamic_cast<GateCylindricalPETSystem*>( m_pSystem );
@@ -637,7 +637,7 @@ for (G4int k = 1;k < RingID;k++)if ( TRNumber[k] != TRNumber[k-1] ){G4cout<<"Gat
 //bins = new G4int[AxialRsectorNumber * TRNumber[0] ];
 //for( G4int i = 0;i < AxialRsectorNumber * TRNumber[0] ;i++)bins[i]=0;
 
-  G4cout << "\n\n**************\n\n\n" << Gateendl;
+  G4cout << "\n\n**************\n\n\n\n";
 }
 
 
@@ -650,7 +650,7 @@ void GateToLMF::RecordEndOfAcquisition()
 {
   if (!IsEnabled()) return;
   if (nVerboseLevel > 2)
-    G4cout << "GateToLMF::RecordEndOfAcquisition" << Gateendl;
+    G4cout << "GateToLMF::RecordEndOfAcquisition\n";
   if((pEncoH->scanContent.nRecord != 0)&&(m_pfile != NULL))
     {
       CloseLMFfile(m_pfile);
@@ -667,7 +667,7 @@ void GateToLMF::RecordBeginOfRun(const G4Run *)
 {
   if (!IsEnabled()) return;
   if (nVerboseLevel > 5)
-    G4cout << "GateToLMF::RecordBeginOfRun" << Gateendl;
+    G4cout << "GateToLMF::RecordBeginOfRun\n";
 }
 
 
@@ -678,7 +678,7 @@ void GateToLMF::RecordEndOfEvent(const G4Event*)
 {
   if (!IsEnabled()) return;
   if (nVerboseLevel > 5)
-    G4cout << "GateToLMF::RecordEndOfEvent" << Gateendl;
+    G4cout << "GateToLMF::RecordEndOfEvent\n";
 
   size_t iDigi, n_digi;
   if(!pEH->coincidenceBool) {
@@ -687,7 +687,7 @@ void GateToLMF::RecordEndOfEvent(const G4Event*)
     if (!SDC)
       {
 	if (nVerboseLevel>0)
-	  G4cout << "GateToLMF::RecordEndOfEvent::GateSingleDigiCollection not found" << Gateendl;
+	  G4cout << "GateToLMF::RecordEndOfEvent::GateSingleDigiCollection not found\n";
 	return;
       }
     n_digi =  SDC->entries();
@@ -699,7 +699,7 @@ void GateToLMF::RecordEndOfEvent(const G4Event*)
 
     if (!CDC) {
       if (nVerboseLevel>0)
-	G4cout << "GateToLMF::RecordEndOfEvent::GateCoincidenceDigiCollection not found" << Gateendl;
+	G4cout << "GateToLMF::RecordEndOfEvent::GateCoincidenceDigiCollection not found\n";
       return;
     }
 

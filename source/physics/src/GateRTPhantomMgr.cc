@@ -75,7 +75,7 @@ GateRTPhantomMgr::~GateRTPhantomMgr()
   }
   m_RTPhantom.clear();
   delete m_messenger;
- if (m_verboseLevel > 0) G4cout << "GateRTPhantomMgr deleting..." << Gateendl;
+ if (m_verboseLevel > 0) G4cout << "GateRTPhantomMgr deleting...\n";
 
 
 }
@@ -88,7 +88,7 @@ void GateRTPhantomMgr::UpdatePhantoms(G4double aTime)
 void GateRTPhantomMgr::AddPhantom(G4String aname)
 {
   if (m_verboseLevel > 2)
-    G4cout << "GateRTPhantomMgr::AddRTPhantom" << Gateendl;
+    G4cout << "GateRTPhantomMgr::AddRTPhantom\n";
 
   if ( aname == "RTVPhantom" )
   {
@@ -108,7 +108,7 @@ void GateRTPhantomMgr::Describe()
 {
   G4cout << "GateRTPhantomMgr name: " << m_name << Gateendl;
   G4cout << "Number of RTPhantoms inserted: " << m_RTPhantom.size() << Gateendl;
-  G4cout << "Description of the single RTPhantoms: " << Gateendl;
+  G4cout << "Description of the single RTPhantoms: \n";
 
   for (size_t iMod=0; iMod<m_RTPhantom.size(); iMod++) {
     m_RTPhantom[iMod]->Describe();

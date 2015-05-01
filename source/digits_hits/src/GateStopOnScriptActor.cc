@@ -64,7 +64,7 @@ void GateStopOnScriptActor::SaveData()
   cmd += mSaveFilename;
   cmd += " "+DoubletoString(GateUserActions::GetUserActions()->GetCurrentEventNumber());
   if (mSaveAllActors) { // enable save of all actors (except me !!)
-    GateMessage("Actor", 0, "GateStopOnScriptActor -- saving actors" << Gateendl);
+    GateMessage("Actor", 0, "GateStopOnScriptActor -- saving actors\n");
     std::vector<GateVActor*> &l = GateActorManager::GetInstance()->GetTheListOfActors();
     std::vector<GateVActor*>::iterator sit;
     for(sit = l.begin(); sit!=l.end(); ++sit) {
@@ -73,7 +73,7 @@ void GateStopOnScriptActor::SaveData()
     }
   }
 
-  GateMessage("Actor", 0, "GateStopOnScriptActor -- executing command '" << cmd << "'" << Gateendl);
+  GateMessage("Actor", 0, "GateStopOnScriptActor -- executing command '" << cmd << "'\n");
 
   // http://stackoverflow.com/questions/11084959/system-always-returns-non-zero-when-called-as-cgi
   signal(SIGCHLD,SIG_DFL);
@@ -142,7 +142,7 @@ void GateStopOnScriptActor::SaveData()
   }
 
   if (GateActorManager::GetInstance()->GetResetAfterSaving()) {
-    GateMessage("Actor", 0, "GateStopOnScriptActor -- resetting actors" << Gateendl);
+    GateMessage("Actor", 0, "GateStopOnScriptActor -- resetting actors\n");
     std::vector<GateVActor*> &l = GateActorManager::GetInstance()->GetTheListOfActors();
     std::vector<GateVActor*>::iterator sit;
     for(sit = l.begin(); sit!=l.end(); ++sit) {
@@ -158,7 +158,7 @@ void GateStopOnScriptActor::SaveData()
 
   //if (r == 0) return;
   if (WEXITSTATUS(r) == 1) {
-    GateMessage("Actor", 0, "GateStopOnScriptActor -- return is 1 ; completed. I stop now." << Gateendl);
+    GateMessage("Actor", 0, "GateStopOnScriptActor -- return is 1 ; completed. I stop now.\n");
     exit(0);
   }
 

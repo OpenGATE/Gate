@@ -432,7 +432,7 @@ void GateApplicationMgr::StartDAQ()
   }
 
  /* if (m_timeSlice > m_timeStop - m_timeStart) {
-    if (nVerboseLevel>0) G4cout << "WARNING: Time Slice bigger than DAQ total time" << Gateendl;
+    if (nVerboseLevel>0) G4cout << "WARNING: Time Slice bigger than DAQ total time\n";
   }*/
 
   m_exitFlag = false;
@@ -474,7 +474,7 @@ void GateApplicationMgr::StartDAQ()
     slice++;
     theClock->SetTime(m_time);
 
-    //GateMessage("Geometry", 0, "Change geom status !!!" << Gateendl);
+    //GateMessage("Geometry", 0, "Change geom status !!!\n");
     //GateDetectorConstruction::GetGateDetectorConstruction()->SetGeometryStatusFlag(GateDetectorConstruction::geometry_needs_rebuild);
   }
   
@@ -638,11 +638,11 @@ void GateApplicationMgr::PauseDAQ()
 //------------------------------------------------------------------------------------------
 void GateApplicationMgr::Describe() 
 {
-  G4cout << "Data Acquisition summary" << Gateendl
+  G4cout << "Data Acquisition summary\n"
 	 << "  time slice (s) : " << m_timeSlice/s << Gateendl
 	 << "  time start (s) : " << m_timeStart/s << Gateendl
 	 << "  time stop  (s) : " << m_timeStop/s  << Gateendl
-	 << "------------------ " << Gateendl
+	 << "------------------ \n"
 	 << Gateendl;
 }
 //------------------------------------------------------------------------------------------

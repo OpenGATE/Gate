@@ -52,7 +52,7 @@ G4int GateMaterialTableToProductionCutsTable::M2P ( G4int i ) const
 {
 	if ( ( i<0 ) || ( i>=static_cast<G4int>(m_oM2PVec.size()) ) )
 	{
-		G4cout << "GateMaterialTableToProductionCutsTable::M2P(G4int i): Index out of range! Aborting." << Gateendl;
+		G4cout << "GateMaterialTableToProductionCutsTable::M2P(G4int i): Index out of range! Aborting.\n";
 		exit ( EXIT_FAILURE );
 	}
 	return M2P_nocheck ( i );
@@ -61,7 +61,7 @@ G4int GateMaterialTableToProductionCutsTable::P2M ( G4int i ) const
 {
 	if ( ( i<0 ) || ( i>=static_cast<G4int>(m_oP2MVec.size() )) )
 	{
-		G4cout << "GateMaterialTableToProductionCutsTable::P2M(G4int i): Index out of range! Aborting." << Gateendl;
+		G4cout << "GateMaterialTableToProductionCutsTable::P2M(G4int i): Index out of range! Aborting.\n";
 		exit ( EXIT_FAILURE );
 	}
 	return P2M_nocheck ( i );

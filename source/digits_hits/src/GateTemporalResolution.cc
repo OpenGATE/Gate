@@ -40,8 +40,8 @@ GateTemporalResolution::~GateTemporalResolution()
 void GateTemporalResolution::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
 {
   if(m_timeResolution < 0 ) {
-    G4cerr << 	Gateendl << "[GateTemporalResolution::ProcessOnePulse]:" << Gateendl
-      	   <<   "Sorry, but the resolution (" << GetTimeResolution() << ") is invalid" << Gateendl;
+    G4cerr << 	Gateendl << "[GateTemporalResolution::ProcessOnePulse]:\n"
+      	   <<   "Sorry, but the resolution (" << GetTimeResolution() << ") is invalid\n";
     G4Exception( "GateTemporalResolution::ProcessOnePulse", "ProcessOnePulse", FatalException,
 			"You must choose a temporal resolution >= 0 /gate/digitizer/Singles/Singles/timeResolution/setTimeResolution TIME\n or disable the temporal resolution using:\n\t/gate/digitizer/Singles/Singles/timeResolution/disable\n");
   }
@@ -62,11 +62,11 @@ void GateTemporalResolution::ProcessOnePulse(const GatePulse* inputPulse,GatePul
 
 	if (nVerboseLevel>1)
 	  {
-	    G4cout << "Pulse real time: " << Gateendl
+	    G4cout << "Pulse real time: \n"
 		   << G4BestUnit(inputPulse->GetTime(),"Time") << Gateendl
-		   << "Pulse new time: " << Gateendl
+		   << "Pulse new time: \n"
 		   << G4BestUnit(outputPulse->GetTime(),"Time") << Gateendl
-		   << "Difference (real - new time): " << Gateendl
+		   << "Difference (real - new time): \n"
 		   << G4BestUnit(inputPulse->GetTime() - outputPulse->GetTime(),"Time")
 		   << Gateendl << Gateendl ;
 

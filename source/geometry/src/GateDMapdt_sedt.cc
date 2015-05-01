@@ -356,7 +356,7 @@ void phaseSaitoY_block(const Vol &V, Longvol &sdt_x, Longvol &sdt_xy,
   unsigned int *s;
   unsigned int *t;
 
-  // std::cerr << "phaseSaitoY_block " << Gateendl;
+  // std::cerr << "phaseSaitoY_block \n";
 
   //Local Memory
   s = (unsigned int *)malloc(sizeof(unsigned int)*(sdt_x.sizeY()+1));
@@ -391,11 +391,11 @@ void phaseSaitoY(const Vol &V, Longvol &sdt_x, Longvol &sdt_xy,
 {
 
 #ifndef _MULTITHREAD
-  // std::cout << "Je *ne* suis *pas* _MULTITHREAD" << Gateendl;
+  // std::cout << "Je *ne* suis *pas* _MULTITHREAD\n";
   phaseSaitoY_block(V, sdt_x, sdt_xy, isMultiregion, isToric, 0, V.sizeZ());
   //DS : I change V.sizeY() by V.sizeZ()
 #else
-  // std::cout << "Je  suis  _MULTITHREAD" << Gateendl;
+  // std::cout << "Je  suis  _MULTITHREAD\n";
   pthread_t * threads = new pthread_t[NbThreads];
   thread_data * thread_data_array = new thread_data[NbThreads];
   int prevz = 0;
@@ -591,7 +591,7 @@ void phaseSaitoZ(const Vol &V, Longvol &sdt_xy, Longvol &sdt_xyz,
 {
 
 #ifndef _MULTITHREAD
-  // std::cout << "phaseSaitoZ no _MULTITHREAD " << Gateendl;
+  // std::cout << "phaseSaitoZ no _MULTITHREAD \n";
   phaseSaitoZ_block(V, sdt_xy, sdt_xyz, isMultiregion, isToric, 0, V.sizeY());
   //DS : I change V.sizeZ() by V.sizeY()
 #else
@@ -676,15 +676,15 @@ bool computeSEDT(const Vol &input, Longvol &output, const bool isMultiregion,
 
   //  std::cout << "Scan X..." << std::flush; 
   phaseSaitoX(input, output, isMultiregion, isToric, NbThreads);
-  // std::cout << " Ok" << Gateendl;
+  // std::cout << " Ok\n";
   
   // std::cout <<"Scan Y..." << std::flush;
   phaseSaitoY(input, output, sdt_x, isMultiregion, isToric, NbThreads);
-  // std::cout << " Ok" << Gateendl;
+  // std::cout << " Ok\n";
 
   // std::cout <<"Scan Z..." << std::flush;
   phaseSaitoZ(input, sdt_x, output, isMultiregion, isToric, NbThreads);
-  // std::cout << " Ok" << Gateendl;
+  // std::cout << " Ok\n";
 
   return true;
 }

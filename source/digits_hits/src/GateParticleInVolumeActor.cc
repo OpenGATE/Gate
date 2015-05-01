@@ -39,7 +39,7 @@ GateParticleInVolumeActor::~GateParticleInVolumeActor()  {
 //-----------------------------------------------------------------------------
 /// Construct
 void GateParticleInVolumeActor::Construct() {
-  GateDebugMessageInc("Actor", 4, "GateParticleInVolumeActor -- Construct - begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "GateParticleInVolumeActor -- Construct - begin\n");
   GateVImageActor::Construct();
 
   // Enable callbacks
@@ -60,7 +60,7 @@ void GateParticleInVolumeActor::Construct() {
   mParticleInVolumeImage.Allocate();
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateParticleInVolumeActor -- Construct - end" << Gateendl);
+  GateMessageDec("Actor", 4, "GateParticleInVolumeActor -- Construct - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -84,7 +84,7 @@ void GateParticleInVolumeActor::ResetData() {
 //-----------------------------------------------------------------------------
 void GateParticleInVolumeActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
-  GateDebugMessage("Actor", 3, "GateParticleInVolumeActor -- Begin of Run" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateParticleInVolumeActor -- Begin of Run\n");
   // ResetData(); // Do no reset here !! (when multiple run);
 }
 //-----------------------------------------------------------------------------
@@ -108,13 +108,13 @@ void GateParticleInVolumeActor::UserPreTrackActionInVoxel(const int index, const
 
 //-----------------------------------------------------------------------------
 void GateParticleInVolumeActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
-  GateDebugMessageInc("Actor", 4, "GateParticleInVolumeActor -- UserSteppingActionInVoxel - begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "GateParticleInVolumeActor -- UserSteppingActionInVoxel - begin\n");
 
   // double weight = step->GetTrack()->GetWeight(); // unused yet. Keep it for debug
 
   if (index <0) {
-    GateDebugMessage("Actor", 5, "index<0 : do nothing" << Gateendl);
-    GateDebugMessageDec("Actor", 4, "GateParticleInVolumeActor -- UserSteppingActionInVoxel -- end" << Gateendl);
+    GateDebugMessage("Actor", 5, "index<0 : do nothing\n");
+    GateDebugMessageDec("Actor", 4, "GateParticleInVolumeActor -- UserSteppingActionInVoxel -- end\n");
     return;
   }
 
@@ -131,6 +131,6 @@ void GateParticleInVolumeActor::UserSteppingActionInVoxel(const int index, const
     mParticleInVolumeImage.AddValue(index, 1);
   }
 
-  GateDebugMessageDec("Actor", 4, "GateParticleInVolumeActor -- UserSteppingActionInVoxel -- end" << Gateendl);
+  GateDebugMessageDec("Actor", 4, "GateParticleInVolumeActor -- UserSteppingActionInVoxel -- end\n");
 }
 //-----------------------------------------------------------------------------

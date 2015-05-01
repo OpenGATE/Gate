@@ -19,7 +19,7 @@ GateImageRegionalizedSubVolumeSolid::GateImageRegionalizedSubVolumeSolid(const G
 	  volume->GetHalfSize().z()),
     pVolume(volume)
 {
-  GateMessage("Volume",5,"GateImageRegionalizedSubVolumeSolid(" << ")" << Gateendl);
+  GateMessage("Volume",5,"GateImageRegionalizedSubVolumeSolid(" << ")\n");
 }
 //====================================================================
 
@@ -27,7 +27,7 @@ GateImageRegionalizedSubVolumeSolid::GateImageRegionalizedSubVolumeSolid(const G
 /// Destructor
 GateImageRegionalizedSubVolumeSolid::~GateImageRegionalizedSubVolumeSolid()
 {
-  GateMessage("Volume",5,"~GateImageRegionalizedSubVolumeSolid(" << ")" << Gateendl);
+  GateMessage("Volume",5,"~GateImageRegionalizedSubVolumeSolid(" << ")\n");
 }
 //====================================================================
 

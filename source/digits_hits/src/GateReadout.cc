@@ -83,7 +83,7 @@ void GateReadout::SetPolicy(const G4String& aPolicy)
       G4Exception( "GateReadout::ProcessPulseList", "ProcessPulseList", FatalException,
                    "Crystal repeater numbers are wrong !\n");
     //G4cout << "[" << GetObjectName() << "] -> Found crystal array with associated repeater: ["
-    //       << m_nbCrystalsX << ";" << m_nbCrystalsY << ";" << m_nbCrystalsZ << "]" << Gateendl;
+    //       << m_nbCrystalsX << ";" << m_nbCrystalsY << ";" << m_nbCrystalsZ << "]\n";
     // Get tree depth of the system
     m_systemDepth = m_system->GetTreeDepth();
     //G4cout << "  Depth of the system: " << m_systemDepth << Gateendl;
@@ -155,7 +155,7 @@ GatePulseList* GateReadout::ProcessPulseList(const GatePulseList* inputPulseList
     if (blockID.IsInvalid())
     {
       if (nVerboseLevel>1)
-        G4cout << "[GateReadout::ProcessOnePulse]: out-of-block hit for " << Gateendl
+        G4cout << "[GateReadout::ProcessOnePulse]: out-of-block hit for \n"
                <<  *inputPulse << Gateendl
                << " -> pulse ignored\n\n";
       continue;
@@ -261,7 +261,7 @@ GatePulseList* GateReadout::ProcessPulseList(const GatePulseList* inputPulseList
     }
     if (nVerboseLevel>1)
         G4cout << "Created new pulse for block " << outputPulse->GetOutputVolumeID().Top(m_depth) << ".\n"
-               << "Resulting pulse is: " << Gateendl
+               << "Resulting pulse is: \n"
                << *outputPulse << Gateendl << Gateendl ;
     outputPulseList->push_back(outputPulse);
   }
@@ -300,8 +300,8 @@ void GateReadout::DescribeMyself(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "Readout at depth:      " << m_depth << Gateendl;
   G4cout << GateTools::Indent(indent) << "  --> policy: ";
-  if (m_policy==READOUT_POLICY_WINNER) G4cout << "TakeEnergyWinner" << Gateendl;
-  else if (m_policy==READOUT_POLICY_CENTROID) G4cout << "TakeEnergyCentroid" << Gateendl;
-  else G4cout << "Unknown policy !" << Gateendl;
+  if (m_policy==READOUT_POLICY_WINNER) G4cout << "TakeEnergyWinner\n";
+  else if (m_policy==READOUT_POLICY_CENTROID) G4cout << "TakeEnergyCentroid\n";
+  else G4cout << "Unknown policy !\n";
 }
 

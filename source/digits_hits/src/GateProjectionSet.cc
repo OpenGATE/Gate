@@ -208,26 +208,26 @@ void GateProjectionSet::Fill( G4int energyWindowID, G4int headID, G4double x, G4
 {
   // Check that energyWindowID is valid
   if (energyWindowID<0)  {
-    G4cerr << "[GateToProjectionSet::Fill]:" << Gateendl
-      	   << "Received a hit with a wrong energy window (" << energyWindowID << "): ignored!" << Gateendl;
+    G4cerr << "[GateToProjectionSet::Fill]:\n"
+      	   << "Received a hit with a wrong energy window (" << energyWindowID << "): ignored!\n";
     return;
   }
   if ( static_cast<size_t>(energyWindowID) >= m_energyWindowNb) {
-    G4cerr << "[GateToProjectionSet::Fill]:" << Gateendl
-      	   << "Received a hit with a wrong energy window (" << energyWindowID << "): ignored!" << Gateendl;
+    G4cerr << "[GateToProjectionSet::Fill]:\n"
+      	   << "Received a hit with a wrong energy window (" << energyWindowID << "): ignored!\n";
     return;
   }
 
 
   // Check that the headID is valid
   if (headID<0)  {
-    G4cerr << "[GateToProjectionSet::Fill]:" << Gateendl
-      	   << "Received a hit with a wrong head ID (" << headID << "): ignored!" << Gateendl;
+    G4cerr << "[GateToProjectionSet::Fill]:\n"
+      	   << "Received a hit with a wrong head ID (" << headID << "): ignored!\n";
     return;
   }
   if ( (size_t)headID >=m_headNb) {
-    G4cerr << "[GateToProjectionSet::Fill]:" << Gateendl
-      	   << "Received a hit with a wrong head ID (" << headID << "): ignored!" << Gateendl;
+    G4cerr << "[GateToProjectionSet::Fill]:\n"
+      	   << "Received a hit with a wrong head ID (" << headID << "): ignored!\n";
     return;
   }
 
@@ -236,7 +236,7 @@ void GateProjectionSet::Fill( G4int energyWindowID, G4int headID, G4double x, G4
   if  ( (binX<0) || (binX>=m_pixelNbX) ) {
     if (m_verboseLevel>=1)
       G4cerr << "[GateProjectionSet]: coordinate x (" << G4BestUnit(x,"Length") << ") outside the matrix boundaries ("
-	     << G4BestUnit(m_matrixLowEdgeX,"Length") << "-" << G4BestUnit(-m_matrixLowEdgeX,"Length") << "): ignored!" << Gateendl;
+	     << G4BestUnit(m_matrixLowEdgeX,"Length") << "-" << G4BestUnit(-m_matrixLowEdgeX,"Length") << "): ignored!\n";
     return;
   }
 
@@ -244,7 +244,7 @@ void GateProjectionSet::Fill( G4int energyWindowID, G4int headID, G4double x, G4
   if  ( (binY<0) || (binY>=m_pixelNbY) ) {
     if (m_verboseLevel>=1)
       G4cerr << "[GateProjectionSet]: coordinate y (" << G4BestUnit(y,"Length") << ") outside the matrix boundaries ("
-	     << G4BestUnit(m_matrixLowEdgeY,"Length") << "-" << G4BestUnit(-m_matrixLowEdgeY,"Length") << "): ignored!" << Gateendl;
+	     << G4BestUnit(m_matrixLowEdgeY,"Length") << "-" << G4BestUnit(-m_matrixLowEdgeY,"Length") << "): ignored!\n";
     return;
   }
 
@@ -257,7 +257,7 @@ void GateProjectionSet::Fill( G4int energyWindowID, G4int headID, G4double x, G4
     dest++;
   else
       G4cerr  << "[GateProjectionSet]: bin (" << binX << "," << binY << ") of energy window " << energyWindowID << "and head " << headID <<  " has reached its maximum value (" << USHRT_MAX
-      	      << "): hit will be lost!" << Gateendl;
+      	      << "): hit will be lost!\n";
 
   // Update the maximum-counter for this energy window and this head
   if (dest>m_dataMax[energyWindowID][headID]) {
@@ -286,13 +286,13 @@ void GateProjectionSet::FillARF( G4int headID, G4double x, G4double y, G4double 
 {
   // Check that the headID is valid
   if (headID<0)  {
-    G4cerr << "[GateToProjectionSet::FillFromARF]:" << Gateendl
-           << "Received a hit with a wrong head ID (" << headID << "): ignored!" << Gateendl;
+    G4cerr << "[GateToProjectionSet::FillFromARF]:\n"
+           << "Received a hit with a wrong head ID (" << headID << "): ignored!\n";
     return;
   }
   if ( (size_t)headID >= m_headNb) {
-    G4cerr << "[GateToProjectionSet::FillFromARF]:" << Gateendl
-           << "Received a hit with a wrong head ID (" << headID << "): ignored!" << Gateendl;
+    G4cerr << "[GateToProjectionSet::FillFromARF]:\n"
+           << "Received a hit with a wrong head ID (" << headID << "): ignored!\n";
     return;
   }
 
@@ -303,7 +303,7 @@ m_rec++;
   if  ( (binX<0) || (binX>=m_pixelNbX) ) {
     if (m_verboseLevel>=1)
       G4cerr << "[GateProjectionSet]: coordinate x (" << G4BestUnit(x,"Length") << ") outside the matrix boundaries ("
-             << G4BestUnit(m_matrixLowEdgeX,"Length") << " , " << G4BestUnit(-m_matrixLowEdgeX,"Length") << "): ignored!" << Gateendl;
+             << G4BestUnit(m_matrixLowEdgeX,"Length") << " , " << G4BestUnit(-m_matrixLowEdgeX,"Length") << "): ignored!\n";
 
    m_rej++;
 
@@ -314,7 +314,7 @@ m_rec++;
   if  ( (binY<0) || (binY>=m_pixelNbY) ) {
     if (m_verboseLevel>=1)
       G4cerr << "[GateProjectionSet]: coordinate y (" << G4BestUnit(y,"Length") << ") outside the matrix boundaries ("
-             << G4BestUnit(m_matrixLowEdgeY,"Length") << " , " << G4BestUnit(-m_matrixLowEdgeY,"Length") << "): ignored!" << Gateendl;
+             << G4BestUnit(m_matrixLowEdgeY,"Length") << " , " << G4BestUnit(-m_matrixLowEdgeY,"Length") << "): ignored!\n";
 
    m_rej++;
 

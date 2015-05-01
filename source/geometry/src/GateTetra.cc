@@ -98,7 +98,7 @@ void GateTetra::DestroyOwnSolidAndLogicalVolume()
 
 void GateTetra::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: tetrahedron (tetra)" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Shape: tetrahedron (tetra)\n";
   G4cout << GateTools::Indent(level) << "Vertex #1: " << G4BestUnit(m_p1,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Vertex #2: " << G4BestUnit(m_p2,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Vertex #3: " << G4BestUnit(m_p3,"Length") << Gateendl;

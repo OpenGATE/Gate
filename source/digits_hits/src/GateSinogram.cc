@@ -62,7 +62,7 @@ void GateSinogram::Reset(size_t ringNumber, size_t crystalNumber, size_t radialE
 
   if (nVerboseLevel > 2) {
     G4cout << " >> Allocating " << m_sinogramNb << " 2D sinograms of " << m_radialElemNb <<
-              " radial element X " << m_crystalNb/2 << " views each" << Gateendl;
+              " radial element X " << m_crystalNb/2 << " views each\n";
   }
   // Allocate the data pointer
   m_data = (SinogramDataType**) malloc( m_sinogramNb * sizeof(SinogramDataType*) );
@@ -95,7 +95,7 @@ void GateSinogram::ClearData(size_t frameID, size_t gateID, size_t dataID, size_
 
   // Clear the data sets
   if (nVerboseLevel > 2) {
-    G4cout << " >> Reseting " << m_sinogramNb << " 2D sinograms to 0 " << Gateendl;
+    G4cout << " >> Reseting " << m_sinogramNb << " 2D sinograms to 0 \n";
     G4cout << "    for frame " << m_currentFrameID << ", gate " << m_currentGateID <<
               ", data " << m_currentDataID << ", bed " << m_currentBedID << Gateendl;
   }
@@ -109,13 +109,13 @@ G4int GateSinogram::GetSinoID( G4int ring1ID, G4int ring2ID)
   G4int  DeltaZ,ADeltaZ,sinoID,i;
   // Check that the IDs are valid
   if ( (ring1ID<0) || (ring1ID>=(G4int) m_ringNb) ) {
-    G4cerr << "[GateToSinogram::GetSinoID]:" << Gateendl
-      	   << "Received a wrong ring-1 ID (" << ring1ID << "): ignored!" << Gateendl;
+    G4cerr << "[GateToSinogram::GetSinoID]:\n"
+      	   << "Received a wrong ring-1 ID (" << ring1ID << "): ignored!\n";
     return -1;
   }
   if ( (ring2ID<0) || (ring2ID>=(G4int) m_ringNb) ) {
-    G4cerr << "[GateToSinogram::GetSinoID]:" << Gateendl
-      	   << "Received a wrong ring-2 ID (" << ring2ID << "): ignored!" << Gateendl;
+    G4cerr << "[GateToSinogram::GetSinoID]:\n"
+      	   << "Received a wrong ring-2 ID (" << ring2ID << "): ignored!\n";
     return -2;
   }
   // original: sinoID = ring1ID + ring2ID*m_ringNb;
@@ -134,8 +134,8 @@ G4int GateSinogram::FillRandoms( G4int ring1ID, G4int ring2ID)
   sinoID = GetSinoID(ring1ID,ring2ID);
   // Check that the ID is valid
   if ( (sinoID<0) || (sinoID>=(G4int) m_sinogramNb) ) {
-    G4cerr << "[GateToSinogram::FillRandoms]:" << Gateendl
-      	   << "Received a hit with wrong ring IDs (" << ring1ID << ","<< ring2ID << "): ignored!" << Gateendl;
+    G4cerr << "[GateToSinogram::FillRandoms]:\n"
+      	   << "Received a hit with wrong ring IDs (" << ring1ID << ","<< ring2ID << "): ignored!\n";
     return -2;
   }
   SinogramDataType& dest = m_randomsNb[sinoID];
@@ -143,7 +143,7 @@ G4int GateSinogram::FillRandoms( G4int ring1ID, G4int ring2ID)
     dest++;
   } else {
     G4cerr  << "[GateSinogram]: bin of 2D sinogram " << sinoID << " for randoms has reached its maximum value (" << SHRT_MAX
-            << "): hit will be lost!" << Gateendl;
+            << "): hit will be lost!\n";
     return -7;
   }
   return 0;
@@ -178,18 +178,18 @@ G4int GateSinogram::Fill( G4int ring1ID, G4int ring2ID, G4int crystal1ID, G4int 
   }
   // Check that the IDs are valid
   if ( (sinoID<0) || (sinoID>=(G4int) m_sinogramNb) ) {
-    G4cerr << "[GateSinogram::Fill]:" << Gateendl
-      	   << "Received a hit with wrong ring IDs (" << ring1ID << ","<< ring2ID << "): ignored!" << Gateendl;
+    G4cerr << "[GateSinogram::Fill]:\n"
+      	   << "Received a hit with wrong ring IDs (" << ring1ID << ","<< ring2ID << "): ignored!\n";
     return -2;
   }
   if ( (crystal1ID<0) || (crystal1ID>=(G4int) m_crystalNb) ) {
-    G4cerr << "[GateToSinogram::Fill]:" << Gateendl
-      	   << "Received a hit with a wrong crystal one ID (" << crystal1ID << "): ignored!" << Gateendl;
+    G4cerr << "[GateToSinogram::Fill]:\n"
+      	   << "Received a hit with a wrong crystal one ID (" << crystal1ID << "): ignored!\n";
     return -3;
   }
   if ( (crystal2ID<0) || (crystal2ID>=(G4int) m_crystalNb) ) {
-    G4cerr << "[GateToSinogram::Fill]:" << Gateendl
-      	   << "Received a hit with a wrong crystal two ID (" << crystal2ID << "): ignored!" << Gateendl;
+    G4cerr << "[GateToSinogram::Fill]:\n"
+      	   << "Received a hit with a wrong crystal two ID (" << crystal2ID << "): ignored!\n";
     return -4;
   }
 
@@ -198,7 +198,7 @@ G4int GateSinogram::Fill( G4int ring1ID, G4int ring2ID, G4int crystal1ID, G4int 
   if  ( (itemp<0) || (itemp>=(G4int)m_crystalNb/2) ) {
     if (nVerboseLevel > 3)
       G4cerr << "[GateSinogram]: view ID (" << itemp << ") outside the sinogram boundaries ("
-	     << "0" << "-" << m_crystalNb/2-1 << "); event ignored!" << Gateendl;
+	     << "0" << "-" << m_crystalNb/2-1 << "); event ignored!\n";
     return -5;
   }
   binViewID = itemp;
@@ -222,7 +222,7 @@ G4int GateSinogram::Fill( G4int ring1ID, G4int ring2ID, G4int crystal1ID, G4int 
   if  ( (itemp<0) || (itemp>=(G4int)m_radialElemNb) ) {
     if (nVerboseLevel > 3) {
       G4cerr << "[GateSinogram]: radial element ID (" << itemp << ") outside the sinogram boundaries ("
-	     << "0" << "-" << m_radialElemNb-1 << "); event ignored!" << Gateendl;
+	     << "0" << "-" << m_radialElemNb-1 << "); event ignored!\n";
       G4cerr << "                 crystal1 ID = " << crystal1ID << " ; crystal2 ID = " << crystal2ID << Gateendl;
       G4cerr << "                 bin view ID = " << binViewID << Gateendl;
     }
@@ -234,7 +234,7 @@ G4int GateSinogram::Fill( G4int ring1ID, G4int ring2ID, G4int crystal1ID, G4int 
   if (nVerboseLevel > 3)
       G4cout << " >> [GateSinogram::Fill]: binning LOR at (" <<  crystal1ID << "," << ring1ID << ")-(" << crystal2ID  << ","
       << ring2ID << ") into sinogram bin (" << binElemID << "," << binViewID <<
-      ") of 2D sinogram (" << ring1ID+ring2ID << "," << ring2ID-ring1ID << ")" << Gateendl;
+      ") of 2D sinogram (" << ring1ID+ring2ID << "," << ring2ID-ring1ID << ")\n";
   SinogramDataType& dest = m_data[sinoID][ binElemID + binViewID * m_radialElemNb];
 
   if (signe > 0) {
@@ -243,11 +243,11 @@ G4int GateSinogram::Fill( G4int ring1ID, G4int ring2ID, G4int crystal1ID, G4int 
     dest--;
   }
   else /*if (signe == 0)*/ {
-    G4cerr <<   "[GateSinogram::Fill]: filling signe not provided" << Gateendl;
+    G4cerr <<   "[GateSinogram::Fill]: filling signe not provided\n";
     return -8;
   }
   /*if (dest>=SHRT_MAX || dest<=SHRT_MIN) {
-    G4cerr  << "[GateSinogram]: bin (" << binElemID << "," << binViewID << ") of 2D sinogram " << sinoID << " has reached its maximum value (" << SHRT_MAX << "): hit will be lost!" << Gateendl;
+    G4cerr  << "[GateSinogram]: bin (" << binElemID << "," << binViewID << ") of 2D sinogram " << sinoID << " has reached its maximum value (" << SHRT_MAX << "): hit will be lost!\n";
     return -7;
   }*/
   return 0;

@@ -91,7 +91,7 @@ void GateFictitiousVoxelMapParameterized::InsertReader ( G4String readerType )
 
 	if ( m_voxelReader )
 	{
-		G4cout << "GateFictitiousVoxelMapParameterized::InsertReader: voxel reader already defined" << Gateendl;
+		G4cout << "GateFictitiousVoxelMapParameterized::InsertReader: voxel reader already defined\n";
 		return;
 	}
 
@@ -104,7 +104,7 @@ void GateFictitiousVoxelMapParameterized::InsertReader ( G4String readerType )
 		m_voxelReader = new GateGeometryVoxelInterfileReader ( this );
 	}
 	else
-		G4cout << "GateFictitiousVoxelMapParameterized::InsertReader: unknown reader type" << Gateendl;
+		G4cout << "GateFictitiousVoxelMapParameterized::InsertReader: unknown reader type\n";
 
 	if ( verboseLevel>=1 )
 	{
@@ -198,7 +198,7 @@ void GateFictitiousVoxelMapParameterized::ConstructGeometry ( G4LogicalVolume* m
 	}
 	else
 	{
-		G4cout << "GateFictitiousVoxelMapParameterized::ConstructGeometry - Warning ! ConstructGeometry called without a reader" << Gateendl << std::flush;
+		G4cout << "GateFictitiousVoxelMapParameterized::ConstructGeometry - Warning ! ConstructGeometry called without a reader\n" << std::flush;
 		return;
 	}
 
@@ -231,7 +231,7 @@ void GateFictitiousVoxelMapParameterized::ConstructGeometry ( G4LogicalVolume* m
 		if ( m_voxelInserter->GetParameterization()->SkipEqualMaterials() )
 		{
 
-			G4cout << "GateFictitiousVoxelMapParameterized::ConstructGeometry: SkipEqualMaterials of Parameterization set to 'false'. Value 'true' only possible for G4Box solid." << Gateendl;
+			G4cout << "GateFictitiousVoxelMapParameterized::ConstructGeometry: SkipEqualMaterials of Parameterization set to 'false'. Value 'true' only possible for G4Box solid.\n";
 			m_voxelInserter->GetParameterization()->SetSkipEqualMaterials ( false );
 		}
 	}
@@ -281,23 +281,23 @@ void GateFictitiousVoxelMapParameterized::ConstructOwnPhysicalVolume ( G4bool fl
   }
   // Have the volume's current position processed by the repeater list
   if (m_repeaterList){
-//    G4cout << " *** repeaterList exists, repeaterList->ComputePlacements(pQueue)" << Gateendl;
+//    G4cout << " *** repeaterList exists, repeaterList->ComputePlacements(pQueue)\n";
     pQueue = m_repeaterList->ComputePlacements(pQueue);}
 
   
   // Do consistency checks
   if (flagUpdateOnly && theListOfOwnPhysVolume.size()) {
     if (pQueue->size()!=theListOfOwnPhysVolume.size()) {
-      G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolume]:" << Gateendl
-      	      << "The size of the placement queue (" << pQueue->size() << ") is different from " << Gateendl 
-	      << "the number of physical volumes to update (" << theListOfOwnPhysVolume.size() << ")!!!" << Gateendl;
+      G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolume]:\n"
+      	      << "The size of the placement queue (" << pQueue->size() << ") is different from \n" 
+	      << "the number of physical volumes to update (" << theListOfOwnPhysVolume.size() << ")!!!\n";
       G4Exception( "GateFictitiousVoxelMapParameterized::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException,  "Can not complete placement update.");
     }
   }
   else {
     if (theListOfOwnPhysVolume.size()) {
-      G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolume]:" << Gateendl
-      	      << "Attempting to create new placements without having emptied the vector of placements!!!" << Gateendl;
+      G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolume]:\n"
+      	      << "Attempting to create new placements without having emptied the vector of placements!!!\n";
       G4Exception( "GateFictitiousVoxelMapParameterized::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Can not complete placement creation.");
     }
   }
@@ -323,7 +323,7 @@ void GateFictitiousVoxelMapParameterized::ConstructOwnPhysicalVolume ( G4bool fl
       // Check if the physical volume exist when the geometry
       // is updating
       if (flagUpdateOnly && !pOwnPhys){ 
-        G4cout << " Physical volume " << GetPhysicalVolumeName() << " does not exist!" << Gateendl; 
+        G4cout << " Physical volume " << GetPhysicalVolumeName() << " does not exist!\n"; 
         G4Exception( "GateFictitiousVoxelMapParameterized::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Failed to construct the volume!");
       }
 
@@ -342,7 +342,7 @@ void GateFictitiousVoxelMapParameterized::ConstructOwnPhysicalVolume ( G4bool fl
       
         pOwnPhys->SetRotation(newRotationMatrix);
     
-        GateMessage("Geometry", 3,"@  " << GetPhysicalVolumeName() << " has been updated." << Gateendl;);
+        GateMessage("Geometry", 3,"@  " << GetPhysicalVolumeName() << " has been updated.\n";);
     
       }
       else

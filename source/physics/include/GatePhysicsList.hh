@@ -48,10 +48,10 @@ public:
   static GatePhysicsList *GetInstance() { // static function must be here or icc, not in cc
     if (singleton == 0)
       {
-        //std::cout << "creating PhysicscList..." << Gateendl;
+        //std::cout << "creating PhysicscList...\n";
         singleton = new GatePhysicsList;
       }
-    //else std::cout << "PhysicscList already created!" << Gateendl;
+    //else std::cout << "PhysicscList already created!\n";
     return singleton;
   }
   virtual ~GatePhysicsList();

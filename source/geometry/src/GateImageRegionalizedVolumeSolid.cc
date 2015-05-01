@@ -21,7 +21,7 @@ GateImageRegionalizedVolumeSolid::GateImageRegionalizedVolumeSolid(const G4Strin
     GateImageBox(*volume->GetImage(), name),
     mVolume(volume)
 {
-  ////GateMessage("Volume",5,"GateImageRegionalizedVolumeSolid()" << Gateendl);
+  ////GateMessage("Volume",5,"GateImageRegionalizedVolumeSolid()\n");
 }
 //====================================================================
 
@@ -29,7 +29,7 @@ GateImageRegionalizedVolumeSolid::GateImageRegionalizedVolumeSolid(const G4Strin
 /// Destructor
 GateImageRegionalizedVolumeSolid::~GateImageRegionalizedVolumeSolid()
 {
-  ////GateMessage("Volume",5,"~GateImageRegionalizedVolumeSolid()" << Gateendl);
+  ////GateMessage("Volume",5,"~GateImageRegionalizedVolumeSolid()\n");
 }
 //====================================================================
 

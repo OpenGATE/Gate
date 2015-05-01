@@ -119,7 +119,7 @@ G4LogicalVolume* GateTrpd::ConstructOwnSolidAndLogicalVolume(G4Material* mater, 
     BoxPos.setY(GetTrpdTrudYPos());
     BoxPos.setZ(GetTrpdTrudZPos());
 
-    //    G4cout << " Create new G4SubtractionSolid  ::: <" << BoxPos << ">" << Gateendl;
+    //    G4cout << " Create new G4SubtractionSolid  ::: <" << BoxPos << ">\n";
     delete m_trpd_solid;
     m_trpd_solid
       = new G4SubtractionSolid(GetSolidName(), m_trd_solid, m_box_solid, &rotMatrix, BoxPos);
@@ -135,7 +135,7 @@ G4LogicalVolume* GateTrpd::ConstructOwnSolidAndLogicalVolume(G4Material* mater, 
     BoxPos.setX(GetTrpdTrudXPos());
     BoxPos.setY(GetTrpdTrudYPos());
     BoxPos.setZ(GetTrpdTrudZPos());
-    // G4cout << " new val of BoxPos ::: <" << BoxPos << ">" << Gateendl;
+    // G4cout << " new val of BoxPos ::: <" << BoxPos << ">\n";
     // G4Transform3D transform(rotMatrix,BoxPos);
 
     m_trd_solid->SetXHalfLength1(GetTrpdX1HalfLength());

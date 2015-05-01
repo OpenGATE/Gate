@@ -53,8 +53,8 @@ GateXMLDocument::GateXMLDocument(const G4String& filename) :
   }
   else
   {
-    std::cout << "I/O warning: Discard the previous warning if your simulation doesn't transport OPTICAL PHOTONS. " << Gateendl;
-    std::cout << "Otherwise, please copy the Materials.xml file from the gate-source directory in the directory where you run your main macro." << Gateendl;
+    std::cout << "I/O warning: Discard the previous warning if your simulation doesn't transport OPTICAL PHOTONS. \n";
+    std::cout << "Otherwise, please copy the Materials.xml file from the gate-source directory in the directory where you run your main macro.\n";
   }
 }
 

@@ -48,7 +48,7 @@ GateFluenceActor::~GateFluenceActor()
 /// Construct
 void GateFluenceActor::Construct()
 {
-  GateDebugMessageInc("Actor", 4, "GateFluenceActor -- Construct - begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "GateFluenceActor -- Construct - begin\n");
   GateVImageActor::Construct(); // mImage is not allocated here
   mImage.Allocate();
 
@@ -112,10 +112,10 @@ void GateFluenceActor::Construct()
 
   // Print information
   GateMessage("Actor", 1,
-              "\tFluence FluenceActor    = '" << GetObjectName() << "'" << Gateendl);
+              "\tFluence FluenceActor    = '" << GetObjectName() << "'\n");
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateFluenceActor -- Construct - end" << Gateendl);
+  GateMessageDec("Actor", 4, "GateFluenceActor -- Construct - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -201,7 +201,7 @@ void GateFluenceActor::ResetData()
 //-----------------------------------------------------------------------------
 void GateFluenceActor::BeginOfRunAction( const G4Run *)
 {
-  GateDebugMessage("Actor", 3, "GateFluenceActor -- Begin of Run" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateFluenceActor -- Begin of Run\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -221,13 +221,13 @@ void GateFluenceActor::BeginOfEventAction(const G4Event * e)
 //-----------------------------------------------------------------------------
 void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* step)
 {
-  GateDebugMessageInc("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel - begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel - begin\n");
   const double weight = step->GetTrack()->GetWeight();
   // Is this necessary?
   if(index <0)
     {
-      GateDebugMessage("Actor", 5, "index<0 : do nothing" << Gateendl);
-      GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end" << Gateendl);
+      GateDebugMessage("Actor", 5, "index<0 : do nothing\n");
+      GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end\n");
       return;
     }
 
@@ -330,6 +330,6 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
           }
         }
       }
-  GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end" << Gateendl);
+  GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end\n");
 }
 //-----------------------------------------------------------------------------

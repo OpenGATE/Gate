@@ -77,7 +77,7 @@ G4LogicalVolume* GateEllipso::ConstructOwnSolidAndLogicalVolume(G4Material* mate
     }
   else
     {
-      G4cout << " second " << Gateendl;
+      G4cout << " second \n";
       m_ellipsoid_solid->SetSemiAxis(GetEllipsopxSemiAxis(), GetEllipsopySemiAxis(), GetEllipsopzSemiAxis());
       m_ellipsoid_solid->SetZCuts(GetEllipsopzBottomCut(),GetEllipsopzTopCut());
 

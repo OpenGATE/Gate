@@ -137,11 +137,11 @@ void GateSourceLinacBeam::SetSourceFromPhaseSpaceFilename(G4String f) {
   // PrintHistoInfo(mHistoThetaDirection[0][0][0]);
 
   // Print
-  GateMessage("Beam", 1, "Nb of vol [" << mNumberOfVolume << "]" << Gateendl);
-  GateMessage("Beam", 1, "Radius    [" << mNumberOfVolume << "][" << mNbOfRadiusBins << "]" << Gateendl);
-  GateMessage("Beam", 1, "Energy    [" << mNumberOfVolume << "][" << mNbOfRadiusBins << "][" << mHistoEnergy[0][0]->GetNbinsX() << "]" << Gateendl);
-  GateMessage("Beam", 1, "ThetaDir  [" << mNumberOfVolume << "][" << mNbOfRadiusBinsForAngle << "][" << mNbOfEnergyBinsForAngle << "][" << mHistoThetaDirection[0][0][0]->GetNbinsX() << "]" << Gateendl);
-  GateMessage("Beam", 1, "PhiDir    [" << mNumberOfVolume << "][" << mNbOfRadiusBinsForAngle << "][" << mNbOfEnergyBinsForAngle << "][" << mHistoPhiDirection[0][0][0]->GetNbinsX() << "]" << Gateendl);
+  GateMessage("Beam", 1, "Nb of vol [" << mNumberOfVolume << "]\n");
+  GateMessage("Beam", 1, "Radius    [" << mNumberOfVolume << "][" << mNbOfRadiusBins << "]\n");
+  GateMessage("Beam", 1, "Energy    [" << mNumberOfVolume << "][" << mNbOfRadiusBins << "][" << mHistoEnergy[0][0]->GetNbinsX() << "]\n");
+  GateMessage("Beam", 1, "ThetaDir  [" << mNumberOfVolume << "][" << mNbOfRadiusBinsForAngle << "][" << mNbOfEnergyBinsForAngle << "][" << mHistoThetaDirection[0][0][0]->GetNbinsX() << "]\n");
+  GateMessage("Beam", 1, "PhiDir    [" << mNumberOfVolume << "][" << mNbOfRadiusBinsForAngle << "][" << mNbOfEnergyBinsForAngle << "][" << mHistoPhiDirection[0][0][0]->GetNbinsX() << "]\n");
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -152,8 +152,8 @@ void GateSourceLinacBeam::SetSourceFromPhaseSpaceFilename(G4String f) {
 //   }
   
 //   // Update current activity according to time
-//   GateMessage("Acquisition", 0, "TODO ********** Source <" << m_name << "> update ACTIVITY" << Gateendl);
-//   GateMessage("Acquisition", 0, "TODO ********** Source <" << m_name << "> update RMAX" << Gateendl);
+//   GateMessage("Acquisition", 0, "TODO ********** Source <" << m_name << "> update ACTIVITY\n");
+//   GateMessage("Acquisition", 0, "TODO ********** Source <" << m_name << "> update RMAX\n");
 //   GateVSource::Update();
 // }
 // //-------------------------------------------------------------------------------------------------
@@ -178,7 +178,7 @@ int GateSourceLinacBeam::GetIndexFromTime(double aTime) {
   i--;
   if ((i < 0) && (aTime < mTimeList[0])) {
     GateError("The time list for " << GetName() << " begin with " << mTimeList[0]/s
-              << " sec, so I cannot find the time" << aTime/s << " sec." << Gateendl);
+              << " sec, so I cannot find the time" << aTime/s << " sec.\n");
   }
   return i;
 }

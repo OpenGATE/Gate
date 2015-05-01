@@ -68,7 +68,7 @@ G4bool GateRootDefs::GetRecordSeptalFlag()
 	GateAnalysis* analysis = dynamic_cast<GateAnalysis*>(theOutputMgr->GetModule("analysis"));
 	if ( ! analysis ) {
 		G4cout << Gateendl << "!!! WARNING : No 'analysis' output module found. "
-				<< "Septal hits won't be recorded. !!!" << Gateendl
+				<< "Septal hits won't be recorded. !!!\n"
 				<< "!!! This is just a warning message. The simulation will continue. !!!";
 	} else {
 		ans = analysis->GetRecordSeptalFlag();

@@ -68,7 +68,7 @@ std::ostream& operator<<(std::ostream& flux, GateCoincidenceDigi& digi)
   flux    << "GateCoincidenceDigi("
 	  << digi.pulseVector[0] << Gateendl
 	  << digi.pulseVector[1] << Gateendl
-      	  << ")" << Gateendl;
+      	  << ")\n";
 
   return flux;
 }

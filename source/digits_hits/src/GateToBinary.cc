@@ -56,7 +56,7 @@ GateToBinary::~GateToBinary()
 
 	if( nVerboseLevel > 0 )
 	{
-		std::cout << "GateToBinary deleting..." << Gateendl;
+		std::cout << "GateToBinary deleting...\n";
 	}
 }
 
@@ -64,12 +64,12 @@ void GateToBinary::RecordBeginOfAcquisition()
 {
 	if( nVerboseLevel > 2 )
 	{
-		std::cout << "GateToBinary::RecordBeginOfAcquisition" << Gateendl;
+		std::cout << "GateToBinary::RecordBeginOfAcquisition\n";
 	}
 
 	if( nVerboseLevel > 0 )
 	{
-		std::cout << "Opening the binary output files..." << Gateendl;
+		std::cout << "Opening the binary output files...\n";
 	}
 
 	if( m_outFileRunsFlag )
@@ -91,7 +91,7 @@ void GateToBinary::RecordBeginOfAcquisition()
 
 	if( nVerboseLevel > 0 )
 	{
-		std::cout << " ... Binary output files opened" << Gateendl;
+		std::cout << " ... Binary output files opened\n";
 	}
 }
 
@@ -99,7 +99,7 @@ void GateToBinary::RecordEndOfAcquisition()
 {
 	if( nVerboseLevel > 2 )
 	{
-		G4cout << "GateToBinary::RecordEndOfAcquisition" << Gateendl;
+		G4cout << "GateToBinary::RecordEndOfAcquisition\n";
 	}
 
 	// Close the file with the hits information
@@ -123,7 +123,7 @@ void GateToBinary::RecordBeginOfRun( G4Run const* )
 {
 	if( nVerboseLevel > 2 )
 	{
-		std::cout << "GateToBinary::RecordBeginOfRun" << Gateendl;
+		std::cout << "GateToBinary::RecordBeginOfRun\n";
 	}
 }
 
@@ -131,7 +131,7 @@ void GateToBinary::RecordEndOfRun( G4Run const* )
 {
 	if( nVerboseLevel > 2 )
 	{
-		std::cout << "GateToBinary::RecordEndOfRun" << Gateendl;
+		std::cout << "GateToBinary::RecordEndOfRun\n";
 	}
 
 	if( m_outFileRunsFlag )
@@ -155,7 +155,7 @@ void GateToBinary::RecordBeginOfEvent( G4Event const* )
 {
 	if( nVerboseLevel > 2 )
 	{
-		std::cout << "GateToBinary::RecordBeginOfEvent" << Gateendl;
+		std::cout << "GateToBinary::RecordBeginOfEvent\n";
 	}
 }
 
@@ -163,7 +163,7 @@ void GateToBinary::RecordEndOfEvent( G4Event const* event )
 {
   if( nVerboseLevel > 2 )
   {
-		G4cout << "GateToBinary::RecordEndOfEvent" << Gateendl;
+		G4cout << "GateToBinary::RecordEndOfEvent\n";
 	}
 
 	if( m_outFileHitsFlag )
@@ -289,7 +289,7 @@ void GateToBinary::RecordDigitizer( G4Event const* )
 {
 	if( nVerboseLevel > 2 )
 	{
-		G4cout << "GateToBinary::RecordDigitizer" << Gateendl;
+		G4cout << "GateToBinary::RecordDigitizer\n";
 	}
 
 	for( size_t i = 0; i < m_outputChannelVector.size(); ++i )
@@ -303,7 +303,7 @@ void GateToBinary::RecordStepWithVolume( GateVVolume const*,
 {
 	if( nVerboseLevel > 2 )
 	{
-		G4cout << "GateToBinary::RecordStep" << Gateendl;
+		G4cout << "GateToBinary::RecordStep\n";
 	}
 }
 
@@ -311,7 +311,7 @@ void GateToBinary::RecordVoxels( GateVGeometryVoxelStore* voxelStore )
 {
 	if( nVerboseLevel > 2 )
 	{
-		std::cout << "[GateToBinary::RecordVoxels]" << Gateendl;
+		std::cout << "[GateToBinary::RecordVoxels]\n";
 	}
 
 	if( m_recordFlag > 0 )
@@ -437,7 +437,7 @@ void GateToBinary::VOutputChannel::CloseFile()
 G4bool GateToBinary::VOutputChannel::ExceedsSize()
 {
 	G4int size = m_outputFile.tellp();
-	//std::cout << "size: " << size << " B" << Gateendl;
+	//std::cout << "size: " << size << " B\n";
   return size > m_outputFileSizeLimit;
 }
 

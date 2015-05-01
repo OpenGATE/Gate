@@ -102,23 +102,23 @@ void GateSigmoidalThresholder::ProcessOnePulse(const GatePulse* inputPulse,GateP
     GatePulse* outputPulse = new GatePulse(*inputPulse);
     outputPulseList.push_back(outputPulse);
     if (nVerboseLevel>1)
-      	G4cout << "Copied pulse to output:" << Gateendl
+      	G4cout << "Copied pulse to output:\n"
       	       << *outputPulse << Gateendl << Gateendl ;
   }
   else {
       if (nVerboseLevel>1)
-      	G4cout << "Ignored pulse with energy below threshold:" << Gateendl
+      	G4cout << "Ignored pulse with energy below threshold:\n"
       	       << *inputPulse << Gateendl << Gateendl ;
   }
   if (nVerboseLevel>1)
     {
       GatePulseIterator iter;
-      G4cout << "----Pulse List after Thresholder--------------------------------------------------------" << Gateendl;
-      G4cout << "----Threshold central: " << m_centSigm << " --------------------------------------------------------" << Gateendl;
+      G4cout << "----Pulse List after Thresholder--------------------------------------------------------\n";
+      G4cout << "----Threshold central: " << m_centSigm << " --------------------------------------------------------\n";
       for (iter = outputPulseList.begin() ; iter != outputPulseList.end() ; ++iter )
 	G4cout << "VolumeID: " << (*iter)->GetOutputVolumeID()
 	       << "\tEnergy: " << (*iter)->GetEnergy() << Gateendl;
-      G4cout << "------------------------------------------------------------------------------------" << Gateendl;
+      G4cout << "------------------------------------------------------------------------------------\n";
     }
 }
 

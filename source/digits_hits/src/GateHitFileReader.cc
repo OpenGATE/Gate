@@ -119,7 +119,7 @@ void GateHitFileReader::PrepareAcquisition()
 */
 G4int GateHitFileReader::PrepareNextEvent(G4Event* )
 {
-  G4cout << " GateHitFileReader::PrepareNextEvent" << Gateendl;
+  G4cout << " GateHitFileReader::PrepareNextEvent\n";
   // Store the current runID and eventID
   G4int currentEventID = m_hitBuffer.eventID;
   G4int currentRunID = m_hitBuffer.runID;
@@ -201,8 +201,8 @@ void GateHitFileReader::LoadHitData()
 
   // Read a new set of hit-data: if it failed, set indicators to tell the caller that the reading failed
   if (m_hitTree->GetEntry(m_currentEntry++)<=0) {
-    G4cerr << "[GateHitFileReader::LoadHitData]:" << Gateendl
-      	   << "\tCould not read the next hit!" << Gateendl;
+    G4cerr << "[GateHitFileReader::LoadHitData]:\n"
+      	   << "\tCould not read the next hit!\n";
     m_hitBuffer.runID=-1;
     m_hitBuffer.eventID=-1;
   }

@@ -94,11 +94,11 @@ void GateGenericTrap::DestroyOwnSolidAndLogicalVolume()
 
 void GateGenericTrap::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: generic trapezoid (generictrapezoid)" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Shape: generic trapezoid (generictrapezoid)\n";
   G4cout << GateTools::Indent(level) << "Z length: " << G4BestUnit(m_zLength,"Length") << Gateendl;
   for (std::vector<G4TwoVector>::iterator i=m_vertices.begin(); i!=m_vertices.end(); ++i) {
       G4cout << GateTools::Indent(level) << "vertex at: (" << G4BestUnit((*i).x(),"Length") << ", "
-							   << G4BestUnit((*i).x(),"Length") << ")" << Gateendl;
+							   << G4BestUnit((*i).x(),"Length") << ")\n";
   }
 }
 

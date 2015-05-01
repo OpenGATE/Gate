@@ -129,7 +129,7 @@ itsSReader->SetFirstIndex ( newIndex );
         if (GetVerboseLevel()>0)
         {
       G4cout << " time is " << time_s << " (s)   -    interval boundaries are (s) " <<  ((cK-1) * GetTPF()/s) << "    " << (cK * GetTPF()/s ) << Gateendl;
-      G4cout << " in GateSourceMgr::PrepareNextEvent - Time is in new Interval - Updating NCATPhantom Matrix ..." << Gateendl;
+      G4cout << " in GateSourceMgr::PrepareNextEvent - Time is in new Interval - Updating NCATPhantom Matrix ...\n";
       G4cout << " index for computing Voxels Matrix = " << cK << Gateendl;
         }
 
@@ -201,7 +201,7 @@ IsFirstTime = false;
 
 p_cK = cK;
 
-//G4cout << " GateRTVPhantom  :::: UPDATING ACTIVITIES " << Gateendl;
+//G4cout << " GateRTVPhantom  :::: UPDATING ACTIVITIES \n";
 //if ( fabs( GetTPF() - itsSReader->GetTimeSampling() ) > 1e-8 ) 
 itsSReader->UpdateActivities( header_FN, current_FN );
 

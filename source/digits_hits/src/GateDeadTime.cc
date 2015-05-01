@@ -57,15 +57,15 @@ void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
       m_doneOnce = 1;
       if(!m_testVolume)
 	{
-	  G4cerr << 	Gateendl << "[GateDeadTime::ProcessOnePulse]:" << Gateendl
-		 <<   "Sorry, but you don't have chosen any volume !" << Gateendl;
+	  G4cerr << 	Gateendl << "[GateDeadTime::ProcessOnePulse]:\n"
+		 <<   "Sorry, but you don't have chosen any volume !\n";
 	}
 
 
 
       if (nVerboseLevel>1)
 	{
-	  G4cout << "first pass in dead time pulse process" << Gateendl ;
+	  G4cout << "first pass in dead time pulse process\n" ;
 	  G4cout << "deadtime set at  " << m_deadTime << " ps"<< Gateendl ;
 	  G4cout << "mode = " << (m_isParalysable ? "paralysable":"non-paralysable") << Gateendl ;
 	}
@@ -151,7 +151,7 @@ for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
       if (nVerboseLevel>5){
 	  G4cout << "We have accept " << currentTime << " a pulse in element " << m_generalDetId <<
 	    "\trebirth time\t" << m_deadTimeTable[m_generalDetId] << Gateendl;
-	  G4cout << "Copied pulse to output:" << Gateendl
+	  G4cout << "Copied pulse to output:\n"
 		 << *outputPulse << Gateendl << Gateendl ;
       }
     }
@@ -159,7 +159,7 @@ for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
     {
       // YES DETECTOR IS DEAD : REMOVE PULSE
       if (nVerboseLevel>5)
-	G4cout << "Removed pulse, due to dead time:" << Gateendl;
+	G4cout << "Removed pulse, due to dead time:\n";
       // AND IF "PARALYSABLE" DEAD TIME, MAKE THE DEATH OF DETECTOR LONGER
       if ((m_bufferSize>1) && (m_bufferMode==1)){
 	if (m_bufferCurrentSize[m_generalDetId]<m_bufferSize-1) {
@@ -181,7 +181,7 @@ for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
 void GateDeadTime::SetDeadTimeMode(G4String val)
 {
   if((val!="paralysable")&&(val!="nonparalysable"))
-    G4cout << "*** GateDeadTime.cc : Wrong dead time mode : candidates are : paralysable nonparalysable" << Gateendl;
+    G4cout << "*** GateDeadTime.cc : Wrong dead time mode : candidates are : paralysable nonparalysable\n";
   else
    m_isParalysable = (val=="paralysable");
 
@@ -199,7 +199,7 @@ void GateDeadTime::CheckVolumeName(G4String val)
     m_testVolume = 1;
   }
   else {
-    G4cout << "Wrong Volume Name" << Gateendl;
+    G4cout << "Wrong Volume Name\n";
   }
 }
 
@@ -255,7 +255,7 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
       numberTotalOfComponentInSystem = numberTotalOfComponentInSystem * numberOfComponentForLevel[i2];
        if(nVerboseLevel>5)
 	G4cout << "Level : " << i2 << " has "
-	       << numberOfComponentForLevel[i2] << " elements" << Gateendl;
+	       << numberOfComponentForLevel[i2] << " elements\n";
     }
 
 //G4cout<<"numberOfComponentForLevel[0]"<<numberOfComponentForLevel[0]<<Gateendl;

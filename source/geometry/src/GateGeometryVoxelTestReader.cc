@@ -43,8 +43,8 @@ void GateGeometryVoxelTestReader::Describe(G4int level)
 void GateGeometryVoxelTestReader::ReadFile(G4String fileName)
 {
   if (m_voxelTranslator == NULL) {
-    G4cout << "GateGeometryVoxelTestReader::ReadFile: WARNING: Insert the translator before reading the image" << Gateendl
-	   << "                                                Reading aborted." << Gateendl;
+    G4cout << "GateGeometryVoxelTestReader::ReadFile: WARNING: Insert the translator before reading the image\n"
+	   << "                                                Reading aborted.\n";
     return;
   }
 
@@ -90,7 +90,7 @@ void GateGeometryVoxelTestReader::ReadFile(G4String fileName)
       G4Material* material = mMaterialDatabase.GetMaterial(materialName);
       AddVoxel(ix, iy, iz, material);
     } else {
-      G4cout << "GateSourceVoxelTestReader::ReadFile: WARNING: voxel not added (material translation not found)" << Gateendl;
+      G4cout << "GateSourceVoxelTestReader::ReadFile: WARNING: voxel not added (material translation not found)\n";
     }
 
   }

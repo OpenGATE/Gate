@@ -91,7 +91,7 @@ void GateTrajectory::ShowTrajectory(std::ostream& os) const
    os << "Vertex : " << G4BestUnit(vertexPosition,"Length")
         << "  Global time : " << G4BestUnit(globalTime,"Time") << Gateendl;
    os << "  Current trajectory has " << positionRecord->size()
-        << " points." << Gateendl;
+        << " points.\n";
 
    for( size_t i=0 ; i < positionRecord->size() ; i++){
        G4TrajectoryPoint* aTrajectoryPoint = (G4TrajectoryPoint*)((*positionRecord)[i]);

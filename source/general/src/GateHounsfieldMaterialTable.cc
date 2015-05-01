@@ -70,13 +70,13 @@ void GateHounsfieldMaterialTable::AddMaterial(double H1, double H2, double d,
 void GateHounsfieldMaterialTable::WriteMaterialDatabase(G4String filename) {
   std::ofstream os;
   OpenFileOutput(filename, os);
-  os << "[Materials]" << Gateendl;
+  os << "[Materials]\n";
   for(unsigned int i=0; i<mMaterialsVector.size(); i++) {
     os << "# Material " << i << " corresponding to H=[ " 
        << mH1[i] << ";" << mH2[i] // << "],with density=[" 
       //        << G4BestUnit(md1[i],"Volumic Mass") 
       //        << ";" << G4BestUnit(md2[i],"Volumic Mass") << "]"
-       << " ]" << Gateendl;
+       << " ]\n";
     WriteMaterial(mMaterialsVector[i], os);
     os << Gateendl;
   }
@@ -99,7 +99,7 @@ void GateHounsfieldMaterialTable::WriteMaterialtoHounsfieldLink(G4String filenam
 void GateHounsfieldMaterialTable::WriteMaterial(G4Material * m, std::ofstream & os) {
   os << m->GetName() << ": d=" << G4BestUnit(m->GetDensity(),"Volumic Mass")
      << "; n=" << m->GetNumberOfElements() 
-     << "; " << Gateendl;
+     << "; \n";
   for(unsigned int j=0; j<m->GetNumberOfElements(); j++) {
     os << "+el: name=" << m->GetElement(j)->GetName()
        << "; f=" << m->GetFractionVector()[j] << Gateendl;
@@ -118,13 +118,13 @@ void GateHounsfieldMaterialTable::AddMaterial(double H1, double H2, G4String nam
   mH2.push_back(H2);
   mName.push_back(name);
   // Check
-  if (H2 < H1) GateError("H2=" << H2 << " is lower than H1=" << H1 << ". Abort." << Gateendl);
+  if (H2 < H1) GateError("H2=" << H2 << " is lower than H1=" << H1 << ". Abort.\n");
   n++;
 
   if (n != 1) {
     if (H1 != mH2[n-2]) GateError("Current H1=" << H1 
 				  << " is different from previous H2=" 
-				  << mH2[n-2] << ". Abort." << Gateendl);
+				  << mH2[n-2] << ". Abort.\n");
   }
   
 }

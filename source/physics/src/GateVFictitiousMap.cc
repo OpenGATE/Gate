@@ -39,7 +39,7 @@ GateVFictitiousMap::GateVFictitiousMap ( G4Envelope* env )
 	if ( !check )
 	{
 
-		G4cout << "GateVFictitiousMap used for solid that is not a G4Box." << Gateendl;
+		G4cout << "GateVFictitiousMap used for solid that is not a G4Box.\n";
 		pBox=NULL;
 	}
 	else
@@ -59,7 +59,7 @@ void GateVFictitiousMap::RegisterMaxMaterial ( G4Material* m )
 {
 	if ( pMaxMaterial!=NULL )
 	{
-		G4cout << "WARNING: GateFictitiousVoxelMap::RegisterMaxMaterial ( G4Material*): Material already set!" << Gateendl;
+		G4cout << "WARNING: GateFictitiousVoxelMap::RegisterMaxMaterial ( G4Material*): Material already set!\n";
 
 	}
 	pMaxMaterial=m;

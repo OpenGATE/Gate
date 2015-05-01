@@ -225,7 +225,7 @@ void GateMessageManager::PrintInfo()
        k++) {
     GateMessageCont("Help",1," "); 
   }
-  GateMessageCont("Help",1,"Level  Nature" << Gateendl);
+  GateMessageCont("Help",1,"Level  Nature\n");
   std::map<std::string,int>::iterator i;
   std::map<std::string,std::string>::iterator j;  
   for (i=GetInstance()->mMessageLevel.begin(),
@@ -293,7 +293,7 @@ G4int GateMessageManager::ReceiveG4cerr (const G4String& s)
   i = s.find("***** Can not open a macro file <", 0);
   isMacroError = isMacroError || (i != std::string::npos);
   if (isMacroError) { 
-    std::cerr << "[Gate] Sorry, error in a macro command : abort." << Gateendl;
+    std::cerr << "[Gate] Sorry, error in a macro command : abort.\n";
     exit(-1);
   }      
   // Ciao
@@ -314,7 +314,7 @@ G4int GateMessageManager::ReceiveG4cerr (G4String s)
   i = s.find("***** Can not open a macro file <", 0);
   isMacroError = isMacroError || (i != std::string::npos);
   if (isMacroError) { 
-    std::cerr << "[Gate] Sorry, error in a macro command : abort." << Gateendl;
+    std::cerr << "[Gate] Sorry, error in a macro command : abort.\n";
     exit(-1);
   }      
   // Ciao

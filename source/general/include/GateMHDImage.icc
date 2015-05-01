@@ -17,7 +17,7 @@ void GateMHDImage::ReadData(std::string filename, std::vector<PixelType> & data)
   }
 
   if (m_MetaImage.NDims() != 3) {
-    GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort." << Gateendl);
+    GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort.\n");
   }
 
   // Convert to Float

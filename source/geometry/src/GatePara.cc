@@ -105,13 +105,13 @@ void GatePara::DestroyOwnSolidAndLogicalVolume()
 
 void GatePara::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: parallelepiped (para)" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Shape: parallelepiped (para)\n";
   G4cout << GateTools::Indent(level) << "x length: " << G4BestUnit(m_length.x(),"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "y length: " << G4BestUnit(m_length.y(),"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "z length: " << G4BestUnit(m_length.z(),"Length") << Gateendl;
-  G4cout << GateTools::Indent(level) << "Alpha angle: " << m_alpha / degree << " deg" << Gateendl;
-  G4cout << GateTools::Indent(level) << "Polar angle: " << m_theta / degree << " deg" << Gateendl;
-  G4cout << GateTools::Indent(level) << "Azimuthal angle: " << m_phi / degree << " deg" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Alpha angle: " << m_alpha / degree << " deg\n";
+  G4cout << GateTools::Indent(level) << "Polar angle: " << m_theta / degree << " deg\n";
+  G4cout << GateTools::Indent(level) << "Azimuthal angle: " << m_phi / degree << " deg\n";
 }
 
 G4double GatePara::ComputeMyOwnVolume() const

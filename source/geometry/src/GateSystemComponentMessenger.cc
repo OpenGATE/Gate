@@ -125,9 +125,9 @@ void GateSystemComponentMessenger::AddCreator(const G4String& creatorName)
   if (anCreator) 
     {  GetSystemComponent()->SetCreator(anCreator); }
   else
-    G4cerr  << "[GateSystemComponentMessenger]: " << Gateendl
-      	    << "could not find a volume creator for the name '" << creatorName << "'" << Gateendl
-	    << "Attachment request will be ignored!" << Gateendl << Gateendl;
+    G4cerr  << "[GateSystemComponentMessenger]: \n"
+      	    << "could not find a volume creator for the name '" << creatorName << "'\n"
+	    << "Attachment request will be ignored!\n" << Gateendl;
 }
 
 // Next method was added for the multi-system approach 

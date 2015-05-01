@@ -129,7 +129,7 @@ void GateQvalueActor::UserSteppingActionInVoxel(const int index, const G4Step* s
 
 //-----------------------------------------------------------------------------
 void GateQvalueActor::BeginOfRunAction(const G4Run * ) {
-  GateDebugMessage("Actor", 3, "GateQvalueActor -- Begin of Run" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateQvalueActor -- Begin of Run\n");
   ResetData();
 }
 //-----------------------------------------------------------------------------

@@ -61,20 +61,20 @@ void GateImageCT::Reset( std::vector<size_t>& moduleByAxis,
 	m_byte = m_numberOfPixel * sizeof( float );
 
 	G4cout << Gateendl;
-	G4cout << "****" << Gateendl;
+	G4cout << "****\n";
 	G4cout << "Number of Pixels in your detector : " << m_numberOfPixel
 		   << Gateendl;
 	G4cout << "Number of bytes by projection : "
 		   << m_byte / 1024.0
-		   << " Kb " << Gateendl;
-	G4cout << "****" << Gateendl;
+		   << " Kb \n";
+	G4cout << "****\n";
 	G4cout << Gateendl;
 
 	m_data = new float[ m_numberOfPixel ];
 
 	if( !m_data )
 	{
-		G4cout << "you are in GateImageCT::Reset()" << Gateendl;
+		G4cout << "you are in GateImageCT::Reset()\n";
 		G4Exception( "GateImageCT::Reset", "reset", FatalException, "Could not allocate a new image (out of memory?)" );
 	}
 }

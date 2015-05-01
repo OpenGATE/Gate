@@ -43,13 +43,13 @@ void GateToOpticalRawMessenger::SetNewValue(G4UIcommand* command,G4String /*newV
 {
   // All mother macro commands are overloaded to do nothing
   if( command == GetVerboseCmd() ) {
-    G4cout << "GateToOpticalRaw::VerboseCmd: Do nothing" << Gateendl;
+    G4cout << "GateToOpticalRaw::VerboseCmd: Do nothing\n";
   } else if( command == GetDescribeCmd() ) {
-    G4cout << "GateToOpticalRaw::DescribeCmd: Do nothing" << Gateendl;
+    G4cout << "GateToOpticalRaw::DescribeCmd: Do nothing\n";
   } else if ( command == GetEnableCmd() ) {
-    G4cout << "GateToOpticalRaw::EnableCmd: Do nothing" << Gateendl;
+    G4cout << "GateToOpticalRaw::EnableCmd: Do nothing\n";
   } else if ( command == GetDisableCmd() ) {
-    G4cout << "GateToOpticalRaw::DisableCmd: Do nothing" << Gateendl;
+    G4cout << "GateToOpticalRaw::DisableCmd: Do nothing\n";
   }
 /* No else anymore
   else

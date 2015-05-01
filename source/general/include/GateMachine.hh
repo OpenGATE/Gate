@@ -131,7 +131,7 @@ void GateMachine::TestBusSize ()
       m_64 = true ;
     } 
   else 
-    std::cout << "lgl::GateMachine::testBusSize : neither a 32 bits nor a 64 bits machine... Is it an extraterrestrial device ?" << Gateendl ;
+    std::cout << "lgl::GateMachine::testBusSize : neither a 32 bits nor a 64 bits machine... Is it an extraterrestrial device ?\n" ;
 }
 
 

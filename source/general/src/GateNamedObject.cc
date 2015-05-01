@@ -15,7 +15,7 @@ See GATE/LICENSE.txt for further details
 // Print-out a description of the object
 void GateNamedObject::Describe(size_t indent)
 {
-  G4cout << Gateendl << GateTools::Indent(indent) << "GATE object:        '" << mName << "'" << Gateendl;
+  G4cout << Gateendl << GateTools::Indent(indent) << "GATE object:        '" << mName << "'\n";
 }
 //----------------------------------------------------------------------------------------------------
 

@@ -59,7 +59,7 @@ G4int GateLightYield::ChooseVolume(G4String val)
     return 1;
   }
   else {
-    G4cout << "Wrong Volume Name" << Gateendl;
+    G4cout << "Wrong Volume Name\n";
     return 0;
   }
 }
@@ -72,8 +72,8 @@ void GateLightYield::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& 
   if(im != m_table.end())
     {
       if((*im).second < 0 ) {
-	G4cerr << 	Gateendl << "[GateLightYield::ProcessOnePulse]:" << Gateendl
-	       <<   "Sorry, but the light output (" << (*im).second << ") for " << (*im).first << " is invalid" << Gateendl;
+	G4cerr << 	Gateendl << "[GateLightYield::ProcessOnePulse]:\n"
+	       <<   "Sorry, but the light output (" << (*im).second << ") for " << (*im).first << " is invalid\n";
 
 	G4String msg = "You must set the light output:\n\t/gate/digitizer/Singles/lightYield/" + (*im).first + "/setLightOutput NBphotons/ENERGY\n or disable the light yield module using:\n\t/gate/digitizer/Singles/lightYield/disable";
 	G4Exception( "GateLightYield::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );

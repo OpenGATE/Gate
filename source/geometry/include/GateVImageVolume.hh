@@ -119,7 +119,7 @@ public:
   G4String GetMaterialNameFromLabel(LabelType l) {
     LabelToMaterialNameType::iterator mi = mLabelToMaterialName.find(l);
     if (mi == mLabelToMaterialName.end()) {
-      G4cerr << "GateVImageVolume<"<<GetObjectName()<<">::GetMaterialNameFromLabel : Could not find material of label "<<l<<" in correspondence table" << Gateendl;
+      G4cerr << "GateVImageVolume<"<<GetObjectName()<<">::GetMaterialNameFromLabel : Could not find material of label "<<l<<" in correspondence table\n";
       exit(0);
     }
     return (*mi).second ;

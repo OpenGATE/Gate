@@ -97,7 +97,7 @@ void GateParaboloid::DestroyOwnSolidAndLogicalVolume()
 
 void GateParaboloid::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: paraboloidrbolic tube (paraboloidrtube)" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Shape: paraboloidrbolic tube (paraboloidrtube)\n";
   G4cout << GateTools::Indent(level) << "Radius at -z/2: " << G4BestUnit(m_negR,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Radius at +z/2: " << G4BestUnit(m_posR,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Z length: " << G4BestUnit(m_zLength,"Length") << Gateendl;

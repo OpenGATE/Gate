@@ -109,14 +109,14 @@ void GateTwistedTubs::DestroyOwnSolidAndLogicalVolume()
 
 void GateTwistedTubs::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: twisted tubs (twistedtubs)" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Shape: twisted tubs (twistedtubs)\n";
   G4cout << GateTools::Indent(level) << "Lower endcap z position: " << G4BestUnit(m_negZ,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Upper endcap z position: " << G4BestUnit(m_posZ,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Inner radius at z=0: " << G4BestUnit(m_innerR,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Outer radius at z=0: " << G4BestUnit(m_outerR,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Number of segments: " << m_nSegment << Gateendl;
-  G4cout << GateTools::Indent(level) << "Total phi coverage: " << m_totalPhi / degree << " deg" << Gateendl;
-  G4cout << GateTools::Indent(level) << "Twist angle: " << m_twistAngle / degree << " deg" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Total phi coverage: " << m_totalPhi / degree << " deg\n";
+  G4cout << GateTools::Indent(level) << "Twist angle: " << m_twistAngle / degree << " deg\n";
 }
 
 G4double GateTwistedTubs::ComputeMyOwnVolume() const

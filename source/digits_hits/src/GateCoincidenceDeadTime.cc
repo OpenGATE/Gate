@@ -95,7 +95,7 @@ GateCoincidencePulse* GateCoincidenceDeadTime::ProcessPulse(GateCoincidencePulse
       if (nVerboseLevel>5){
 	 G4cout << "We have accept " << currentTime << " a pulse "
 	   <<"\trebirth time\t" << m_rebirthTime << Gateendl;
-	 G4cout << "Copied pulse to output:" << Gateendl
+	 G4cout << "Copied pulse to output:\n"
 		<< *outputPulse << Gateendl << Gateendl ;
       }
   } else {
@@ -107,7 +107,7 @@ GateCoincidencePulse* GateCoincidenceDeadTime::ProcessPulse(GateCoincidencePulse
 	    if (nVerboseLevel>5){
 	       G4cout << "We have accept " << currentTime << " a pulse "
 		 <<"\trebirth time\t" << m_rebirthTime << Gateendl;
-	       G4cout << "Copied pulse to output:" << Gateendl
+	       G4cout << "Copied pulse to output:\n"
 		      << *outputPulse << Gateendl << Gateendl ;
 	    }
             if (m_isParalysable && (m_bufferCurrentSize==m_bufferSize)){
@@ -115,7 +115,7 @@ GateCoincidencePulse* GateCoincidenceDeadTime::ProcessPulse(GateCoincidencePulse
 	    }
 	} else {
       	    if (nVerboseLevel>5)
-	    	G4cout << "Removed pulse, due to dead time." << Gateendl;
+	    	G4cout << "Removed pulse, due to dead time.\n";
 	    outputPulse=0;
 	}
       } else {
@@ -124,7 +124,7 @@ GateCoincidencePulse* GateCoincidenceDeadTime::ProcessPulse(GateCoincidencePulse
 	     m_rebirthTime  = currentTime + m_deadTime;
 	 }
       	 if (nVerboseLevel>5)
-	     G4cout << "Removed pulse, due to dead time." << Gateendl;
+	     G4cout << "Removed pulse, due to dead time.\n";
 	 outputPulse=0;
       }
   }
@@ -139,7 +139,7 @@ GateCoincidencePulse* GateCoincidenceDeadTime::ProcessPulse(GateCoincidencePulse
 void GateCoincidenceDeadTime::SetDeadTimeMode(G4String val)
 {
   if((val!="paralysable")&&(val!="nonparalysable"))
-    G4cout << "*** GateCoincidenceDeadTime.cc : Wrong dead time mode : candidates are : paralysable nonparalysable" << Gateendl;
+    G4cout << "*** GateCoincidenceDeadTime.cc : Wrong dead time mode : candidates are : paralysable nonparalysable\n";
   else
    m_isParalysable = (val=="paralysable");
 

@@ -37,7 +37,7 @@ GateHounsfieldToMaterialsBuilder::~GateHounsfieldToMaterialsBuilder() {
 
 //-------------------------------------------------------------------------------------------------
 void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
-  GateMessage("Geometry", 3, "GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials" << Gateendl);
+  GateMessage("Geometry", 3, "GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials\n");
 
   // Read matTable.txt
   std::vector<GateHounsfieldMaterialProperties*> mHounsfieldMaterialPropertiesVector;
@@ -49,7 +49,7 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
     G4String e;
     is >> e; 
     if (e != "[Elements]") {
-      GateError("The file " << mMaterialTableFilename << " must begin with [Elements]" << Gateendl);
+      GateError("The file " << mMaterialTableFilename << " must begin with [Elements]\n");
     }
     while (e != "[/Elements]") {
       is >> e;
@@ -69,7 +69,7 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
   if (mHounsfieldMaterialPropertiesVector.size() < 2) {
     GateError("I manage to read " << mHounsfieldMaterialPropertiesVector.size() 
 	      << " materials in the file " << mMaterialTableFilename 
-	      << ". Please check it." << Gateendl);
+	      << ". Please check it.\n");
   }
 
   // Read densities.txt
@@ -112,7 +112,7 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
     
     if (n>1) {
       GateMessage("Geometry", 4, "Material " << mHounsfieldMaterialPropertiesVector[i]->GetName() 
-		  << " devided into " << n << " materials" << Gateendl);
+		  << " devided into " << n << " materials\n");
     }
 
     if (n<0) {
@@ -153,6 +153,6 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
 
   GateMessage("Geometry", 1, "Generation of " 
 	      << mHounsfieldMaterialTable->GetNumberOfMaterials() 
-	      << " materials." << Gateendl);
+	      << " materials.\n");
 }
 //-------------------------------------------------------------------------------------------------

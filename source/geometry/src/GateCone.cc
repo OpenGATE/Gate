@@ -85,7 +85,7 @@ G4LogicalVolume* GateCone::ConstructOwnSolidAndLogicalVolume(G4Material* mater, 
   }
   else {
 
-    G4cout << " second" << Gateendl;
+    G4cout << " second\n";
     m_cone_solid->SetZHalfLength(GetConeHalfHeight());
     m_cone_solid->SetInnerRadiusMinusZ(GetConeRmin1());
     m_cone_solid->SetOuterRadiusMinusZ(GetConeRmax1());

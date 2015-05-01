@@ -72,7 +72,7 @@ GateCompressedVoxelOutput::GateCompressedVoxelOutput(const G4String& name,const 
 GateCompressedVoxelOutput::~GateCompressedVoxelOutput() 
 {
   delete m_outputMessenger;
-  if (nVerboseLevel > 0) G4cout << "GateCompressedVoxelOutput deleting..." << Gateendl;
+  if (nVerboseLevel > 0) G4cout << "GateCompressedVoxelOutput deleting...\n";
   delete m_array;
 }
 //----------------------------------------------------------------------------
@@ -90,7 +90,7 @@ void GateCompressedVoxelOutput::RecordBeginOfAcquisition()
   //  G4cout << "GateCompressedVoxelOutput::RecordBeginOfAcquisition - Entered at " << this << " for "<< GetName()  << Gateendl  << std::flush ;
 
   if (nVerboseLevel > 2)
-    G4cout << "GateCompressedVoxelOutput::RecordBeginOfAcquisition - Entered " << Gateendl;
+    G4cout << "GateCompressedVoxelOutput::RecordBeginOfAcquisition - Entered \n";
   
   G4cout<< (*G4Material::GetMaterialTable()) << Gateendl;
 
@@ -156,7 +156,7 @@ void GateCompressedVoxelOutput::RecordEndOfAcquisition()
 void GateCompressedVoxelOutput::RecordBeginOfRun(const G4Run * )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateCompressedVoxelOutput::RecordBeginOfRun" << Gateendl;
+    G4cout << "GateCompressedVoxelOutput::RecordBeginOfRun\n";
 }
 //---------------------------------------------------------------------------
 
@@ -164,7 +164,7 @@ void GateCompressedVoxelOutput::RecordBeginOfRun(const G4Run * )
 void GateCompressedVoxelOutput::RecordEndOfRun(const G4Run * )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateCompressedVoxelOutput::RecordEndOfRun" << Gateendl;
+    G4cout << "GateCompressedVoxelOutput::RecordEndOfRun\n";
 }
 //---------------------------------------------------------------------------
 
@@ -172,7 +172,7 @@ void GateCompressedVoxelOutput::RecordEndOfRun(const G4Run * )
 void GateCompressedVoxelOutput::RecordBeginOfEvent(const G4Event* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateCompressedVoxelOutput::RecordBeginOfEvent" << Gateendl;
+    G4cout << "GateCompressedVoxelOutput::RecordBeginOfEvent\n";
 }
 //---------------------------------------------------------------------------
 
@@ -235,7 +235,7 @@ void GateCompressedVoxelOutput::RecordEndOfEvent(const G4Event* )
 void GateCompressedVoxelOutput::RecordStepWithVolume(const GateVVolume *, const G4Step* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateCompressedVoxelOutput::RecordStep" << Gateendl;
+    G4cout << "GateCompressedVoxelOutput::RecordStep\n";
 }
 //---------------------------------------------------------------------------
 

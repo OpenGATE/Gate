@@ -44,14 +44,14 @@ void GateVGeometryVoxelReader::Describe(G4int level)
 void GateVGeometryVoxelReader::InsertTranslator(G4String translatorType)
 {
   if (m_voxelTranslator) {
-    G4cout << "GateVGeometryVoxelReader::InsertTranslator: voxel translator already defined" << Gateendl;
+    G4cout << "GateVGeometryVoxelReader::InsertTranslator: voxel translator already defined\n";
   } else {
     if (translatorType == G4String("tabulated")) {
       m_voxelTranslator = new GateGeometryVoxelTabulatedTranslator(this);
     } else if (translatorType == G4String("range")) {
       m_voxelTranslator = new GateGeometryVoxelRangeTranslator(this);
     } else {
-      G4cout << "GateVGeometryVoxelReader::InsertTranslator: unknown translator type" << Gateendl;
+      G4cout << "GateVGeometryVoxelReader::InsertTranslator: unknown translator type\n";
     }
   }
 
@@ -63,6 +63,6 @@ void GateVGeometryVoxelReader::RemoveTranslator()
     delete m_voxelTranslator;
     m_voxelTranslator = 0;
   } else {
-    G4cout << "GateVGeometryVoxelReader::RemoveTranslator: voxel translator not defined" << Gateendl;
+    G4cout << "GateVGeometryVoxelReader::RemoveTranslator: voxel translator not defined\n";
   }
 }

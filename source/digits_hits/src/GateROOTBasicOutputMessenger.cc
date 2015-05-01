@@ -29,7 +29,7 @@ class GateEventAction;
 GateROOTBasicOutputMessenger::GateROOTBasicOutputMessenger(GateROOTBasicOutput* LH)
   :xeHisto(LH)
 {
-  //  G4cout << " DEBUT Contrusteur GateROOTBasicOutputMessenger " << Gateendl;
+  //  G4cout << " DEBUT Contrusteur GateROOTBasicOutputMessenger \n";
   plotDir = new G4UIdirectory("/gate/output/BasicROOT/");
   plotDir->SetGuidance("Basic ROOT output control.");
   setfileNameCmd = new G4UIcmdWithAString("/gate/output/BasicROOT/setFileName",this);

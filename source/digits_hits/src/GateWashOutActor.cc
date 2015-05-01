@@ -29,12 +29,12 @@ See GATE/LICENSE.txt for further details
 GateWashOutActor::GateWashOutActor(G4String name, G4int depth):
   GateVActor(name,depth) {
 
-  GateDebugMessage("Actor",4,"GateWashOutActor() -- begin" << Gateendl);
+  GateDebugMessage("Actor",4,"GateWashOutActor() -- begin\n");
 
   pActor = new GateActorMessenger(this);
   pWashOutActor = new GateWashOutActorMessenger(this);
 
-  GateDebugMessage("Actor",4,"GateWashOutActor() -- end" << Gateendl);
+  GateDebugMessage("Actor",4,"GateWashOutActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -42,12 +42,12 @@ GateWashOutActor::GateWashOutActor(G4String name, G4int depth):
 //-----------------------------------------------------------------------------
 GateWashOutActor::~GateWashOutActor()
 {
-  GateMessage("Actor",4,"~GateWashOutActor() -- begin" << Gateendl);
+  GateMessage("Actor",4,"~GateWashOutActor() -- begin\n");
 
   delete pActor;
   delete pWashOutActor;
 
-  GateMessage("Actor",4,"~GateWashOutActor() -- end" << Gateendl);
+  GateMessage("Actor",4,"~GateWashOutActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -80,7 +80,7 @@ void GateWashOutActor::BeginOfRunAction(const G4Run * r) {
     GateVSource * SourceIni = (GateSourceMgr::GetInstance())->GetSource(nsource);
 
     if ( SourceIni->GetType() == G4String("gps") || SourceIni->GetType() == G4String("backtoback") || SourceIni->GetType() == G4String("") );
-    else { GateError("WashOut Actor :: ERROR. Source type is not valid." << Gateendl); }
+    else { GateError("WashOut Actor :: ERROR. Source type is not valid.\n"); }
 
     if ( !(SourceIni->GetIfSourceVoxelized()) ) {
       ActWashOut = SourceIni->GetActivity(); }
@@ -98,7 +98,7 @@ void GateWashOutActor::BeginOfRunAction(const G4Run * r) {
 //-----------------------------------------------------------------------------
 void GateWashOutActor::BeginOfEventAction(const G4Event * event)
 {
-  GateMessage("Actor", 4, "GateWashOutActor -- Begin of Event" << Gateendl);
+  GateMessage("Actor", 4, "GateWashOutActor -- Begin of Event\n");
   GateVActor::BeginOfEventAction(event);
 
   mSourceID = (GateSourceMgr::GetInstance())->GetCurrentSourceID();  // Source ID
@@ -146,7 +146,7 @@ void GateWashOutActor::BeginOfEventAction(const G4Event * event)
 //-----------------------------------------------------------------------------
 void GateWashOutActor::EndOfEventAction(const G4Event * event)
 {
-  GateMessage("Actor", 4, "GateWashOutActor -- End of Event" << Gateendl);
+  GateMessage("Actor", 4, "GateWashOutActor -- End of Event\n");
   GateVActor::EndOfEventAction(event);
 }
 //-----------------------------------------------------------------------------
@@ -218,7 +218,7 @@ void GateWashOutActor::ReadWashOutTable(G4String fileName)
 
       G4double sumWashOut = parWashOut[0] + parWashOut[2] + parWashOut[4];
       if ( (sumWashOut-1.0) > diff ) {
-        GateMessage("Actor", 0, "WARNING :: Total WashOut Ratio non equal to 1." << Gateendl);
+        GateMessage("Actor", 0, "WARNING :: Total WashOut Ratio non equal to 1.\n");
       }
 
 // Print information
@@ -240,7 +240,7 @@ void GateWashOutActor::ReadWashOutTable(G4String fileName)
   }
 
   else {
-    GateError("WashOut Actor :: ERROR in opening/reading WashOut datafile." << Gateendl);
+    GateError("WashOut Actor :: ERROR in opening/reading WashOut datafile.\n");
     inFile.close();
   }
 }

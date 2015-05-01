@@ -22,7 +22,7 @@ GateActorManagerMessenger::GateActorManagerMessenger(GateActorManager* sMan)
 
   : pActorManager(sMan)
 {
-  //  G4cout << " Constructeur GateActorManagerMessenger " << Gateendl;
+  //  G4cout << " Constructeur GateActorManagerMessenger \n";
   BuildCommands("/gate/actor");
 }
 //-----------------------------------------------------------------------------
@@ -42,7 +42,7 @@ GateActorManagerMessenger::~GateActorManagerMessenger()
 //-----------------------------------------------------------------------------
 void GateActorManagerMessenger::BuildCommands(G4String base)
 {
-  //  G4cout << " GateActorManagerMessenger::BuildCommands " << Gateendl;
+  //  G4cout << " GateActorManagerMessenger::BuildCommands \n";
 
   pActorCommand = new G4UIdirectory("/gate/actor/");
   pActorCommand->SetGuidance("GATE actors control.");

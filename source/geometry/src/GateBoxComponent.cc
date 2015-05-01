@@ -47,8 +47,8 @@ G4bool GateBoxComponent::IsValidAttachmentRequest(GateVVolume* anCreator) const
   // Check whether the inserter is connected to a box-creator
   GateBox* boxCreator = GetBoxCreator(anCreator);
   if (!boxCreator) {
-       G4cerr   << "[" << anCreator->GetObjectName() << "::IsValidAttachmentRequest]:" << Gateendl
-                << "\tThe volume creator ('" << boxCreator->GetObjectName() << "') for this inserter does not seem to be a box" << Gateendl << Gateendl;
+       G4cerr   << "[" << anCreator->GetObjectName() << "::IsValidAttachmentRequest]:\n"
+                << "\tThe volume creator ('" << boxCreator->GetObjectName() << "') for this inserter does not seem to be a box\n" << Gateendl;
       return false;
   }
 

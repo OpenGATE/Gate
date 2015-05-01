@@ -104,7 +104,7 @@ void GateGeometryVoxelInterfileReader::ReadFile(G4String headerFileName)
   if (m_compressor) {
     Compress();
     EmptyStore();
-    G4cout << "GateSourceVoxelInterfileReader::ReadFile: For your information, the voxel store has been emptied." << Gateendl;
+    G4cout << "GateSourceVoxelInterfileReader::ReadFile: For your information, the voxel store has been emptied.\n";
   }
 }
 

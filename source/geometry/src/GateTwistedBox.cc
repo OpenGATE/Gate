@@ -98,11 +98,11 @@ void GateTwistedBox::DestroyOwnSolidAndLogicalVolume()
 
 void GateTwistedBox::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: twisted box (twistedbox)" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Shape: twisted box (twistedbox)\n";
   G4cout << GateTools::Indent(level) << "X length: " << G4BestUnit(m_Length.x(),"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Y length: " << G4BestUnit(m_Length.y(),"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Z length: " << G4BestUnit(m_Length.z(),"Length") << Gateendl;
-  G4cout << GateTools::Indent(level) << "Twist angle: " << m_twistAngle / degree << " deg" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Twist angle: " << m_twistAngle / degree << " deg\n";
 }
 
 G4double GateTwistedBox::ComputeMyOwnVolume() const

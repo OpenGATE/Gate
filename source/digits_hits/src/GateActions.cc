@@ -358,15 +358,15 @@ void GateTrackingAction::ShowG4TrackInfos( G4String outF, G4Track* aTrack )
   G4int eventID = G4EventManager::GetEventManager()->GetNonconstCurrentEvent()->GetEventID();
 
   outFile << " Event ID is "  << eventID << Gateendl;
-  outFile << "GateTrackingAction::ShowG4TrackInfos :::: current  Track :::::::: " << Gateendl;
+  outFile << "GateTrackingAction::ShowG4TrackInfos :::: current  Track :::::::: \n";
 
   G4String particleName = aTrack->GetDefinition()->GetParticleName();
 
   outFile << " Particle " << particleName<<Gateendl;
-  outFile  << " Parent ID " << aTrack->GetParentID()  <<"  track ID "<< aTrack->GetTrackID() << "    " << Gateendl;
-  outFile << "      -----------------------------------------------" << Gateendl;
+  outFile  << " Parent ID " << aTrack->GetParentID()  <<"  track ID "<< aTrack->GetTrackID() << "    \n";
+  outFile << "      -----------------------------------------------\n";
   outFile << "        G4Track Information  " << std::setw(20) << Gateendl;
-  outFile << "      -----------------------------------------------" << Gateendl;
+  outFile << "      -----------------------------------------------\n";
   outFile << "        Step number         : " << std::setw(20) << aTrack->GetCurrentStepNumber()<< Gateendl;
 
 #ifdef G4_USE_G4BESTUNIT_FOR_VERBOSE
@@ -501,7 +501,7 @@ void GateTrackingAction::ShowG4TrackInfos( G4String outF, G4Track* aTrack )
   outFile << "        Creator Process     : "
           << std::setw(20);
   if( aTrack->GetCreatorProcess() == NULL){
-    outFile << " Event Generator" << Gateendl;
+    outFile << " Event Generator\n";
   } else {
     outFile << aTrack->GetCreatorProcess()->GetProcessName() << Gateendl;
   }
@@ -543,10 +543,10 @@ G4int GateSteppingAction::SeekNewFile(G4bool increase)
 {
   if ( m_verboseLevel > 0 ) G4cout << " GateSteppingAction::SeekNewFile  :::: m_currentN = " << m_currentN << Gateendl;
 
-  if ( m_currentN == m_Nfiles - 1 ) {if ( m_verboseLevel > 0 ) G4cout << " GateSteppingAction::SeekNewFile : No more Root Tracks Data File to open." << Gateendl;
+  if ( m_currentN == m_Nfiles - 1 ) {if ( m_verboseLevel > 0 ) G4cout << " GateSteppingAction::SeekNewFile : No more Root Tracks Data File to open.\n";
     return 0;}
 
-  if ( m_verboseLevel > 0 ) G4cout << " GateSteppingAction::SeekNewFile : Found one more Root Tracks Data File to open." << Gateendl;
+  if ( m_verboseLevel > 0 ) G4cout << " GateSteppingAction::SeekNewFile : Found one more Root Tracks Data File to open.\n";
   GateToRoot* gateToRoot = (GateToRoot* ) ( GateOutputMgr::GetInstance()->GetModule("root") );
   if ( increase == true ) { m_currentN++;}
   if ( m_verboseLevel > 0 ) G4cout << " currrent file number in GateSteppingAction::SeekNewFile " << m_currentN << Gateendl;
@@ -605,7 +605,7 @@ TrackingMode  GateSteppingAction::GetMode()
 //-----------------------------------------------------------------------------
 void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
 {
-  // GateDebugMessage("Actor", 1, "GateSteppingAction::UserSteppingAction(a)" << Gateendl);
+  // GateDebugMessage("Actor", 1, "GateSteppingAction::UserSteppingAction(a)\n");
 
   static G4int ARFStage = -3;
 
@@ -894,7 +894,7 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
                           G4String outF = "GoingOutParticles.txt";
                           outFile.open (outF ,std::ios::app);
                           outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";
-                          outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    " << Gateendl;
+                          outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    \n";
                           ShowG4TrackInfos(outF, fTrack);
                         } // verbose end block
                     }
@@ -911,7 +911,7 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
                               G4String outF = "KilledAfterBoundaryParticles.txt";
                               outFile.open (outF ,std::ios::app);
                               outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";
-                              outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    " << Gateendl;
+                              outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    \n";
                               ShowG4TrackInfos(outF, fTrack);
                             } // verbose end block
                           ///// We check that the next volume is not "OutOfWorld". If so NO NEED to save it !
@@ -941,7 +941,7 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
                       G4String outF = "GoingOutParticles.txt";
                       outFile.open ( outF ,std::ios::app);
                       const G4Event* currentEvent = G4EventManager::GetEventManager()->GetConstCurrentEvent();
-                      outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Particle is detected going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    " << Gateendl;
+                      outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Particle is detected going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    \n";
                       if ( m_verboseLevel>3 )
                         {
                           ShowG4TrackInfos(outF, fTrack);
@@ -975,7 +975,7 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
                           std::ofstream outFile;
                           G4String outF = "KilledInsideParticles.txt";
                           outFile.open ( outF ,std::ios::app);
-                          outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is killed inside the Phantom Parent ID "                                 << ParentID <<"  track ID "<< TrackID << "    " << Gateendl;
+                          outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is killed inside the Phantom Parent ID "                                 << ParentID <<"  track ID "<< TrackID << "    \n";
                           if ( m_verboseLevel > 3 )
                             {
                               ShowG4TrackInfos(outF, fTrack);
@@ -992,7 +992,7 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
     } // Tracker Mode
 
 
-  // GateDebugMessage("Actor", 1, "GateSteppingAction::UserSteppingAction à la fin" << Gateendl);
+  // GateDebugMessage("Actor", 1, "GateSteppingAction::UserSteppingAction à la fin\n");
 
 #ifdef G4ANALYSIS_USE_GENERAL
   // Here we fill the histograms of the OutputMgr manager
@@ -1008,7 +1008,7 @@ void GateSteppingAction::UserSteppingAction(const G4Step* theStep)
 //-----------------------------------------------------------------------------
 void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* theStep)
 {
-  // GateDebugMessage("Actor", 2 , "GateSteppingAction::UserSteppingAction(v,theStep)" << Gateendl);
+  // GateDebugMessage("Actor", 2 , "GateSteppingAction::UserSteppingAction(v,theStep)\n");
 
 
 
@@ -1356,7 +1356,7 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
                           G4String outF = "GoingOutParticles.txt";
                           outFile.open (outF ,std::ios::app);
                           outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";
-                          outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    " << Gateendl;
+                          outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    \n";
                           ShowG4TrackInfos(outF, fTrack);
                         } // verbose end block
                     }
@@ -1373,7 +1373,7 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
                               G4String outF = "KilledAfterBoundaryParticles.txt";
                               outFile.open (outF ,std::ios::app);
                               outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is detected";
-                              outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    " << Gateendl;
+                              outFile << " going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    \n";
                               ShowG4TrackInfos(outF, fTrack);
                             } // verbose end block
                           ///// We check that the next volume is not "OutOfWorld". If so NO NEED to save it !
@@ -1403,7 +1403,7 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
                       G4String outF = "GoingOutParticles.txt";
                       outFile.open ( outF ,std::ios::app);
                       const G4Event* currentEvent = G4EventManager::GetEventManager()->GetConstCurrentEvent();
-                      outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Particle is detected going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    " << Gateendl;
+                      outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Particle is detected going out of the Phantom Parent ID " << ParentID <<"  track ID "<< TrackID << "    \n";
                       if ( m_verboseLevel>3 )
                         {
                           ShowG4TrackInfos(outF, fTrack);
@@ -1437,7 +1437,7 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
                           std::ofstream outFile;
                           G4String outF = "KilledInsideParticles.txt";
                           outFile.open ( outF ,std::ios::app);
-                          outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is killed inside the Phantom Parent ID "                                 << ParentID <<"  track ID "<< TrackID << "    " << Gateendl;
+                          outFile << " Event ID : " << currentEvent->GetEventID() << "         A " << particleName << " Primary Particle is killed inside the Phantom Parent ID "                                 << ParentID <<"  track ID "<< TrackID << "    \n";
                           if ( m_verboseLevel > 3 )
                             {
                               ShowG4TrackInfos(outF, fTrack);
@@ -1454,7 +1454,7 @@ void GateSteppingAction::UserSteppingAction(const GateVVolume *v, const G4Step* 
     } // Tracker Mode
 
 
-  // GateDebugMessage("Actor", 1, "GateSteppingAction::UserSteppingAction à la fin" << Gateendl);
+  // GateDebugMessage("Actor", 1, "GateSteppingAction::UserSteppingAction à la fin\n");
 
 
   pCallbackMan->UserSteppingAction(theStep);
@@ -1477,9 +1477,9 @@ void GateSteppingAction::ShowG4TrackInfos( G4String outF, G4Track* fTrack)
 {
   std::ofstream outFile;
   outFile.open ( outF ,std::ios::app);
-  outFile << "      -----------------------------------------------" << Gateendl;
+  outFile << "      -----------------------------------------------\n";
   outFile << "        G4Track Information  " << std::setw(20) << Gateendl;
-  outFile << "      -----------------------------------------------" << Gateendl;
+  outFile << "      -----------------------------------------------\n";
   outFile << "     Particle Name          : " << fTrack->GetDefinition()->GetParticleName()<<Gateendl;
   outFile << "        Current Volume         : "
           << std::setw(20);
@@ -1623,12 +1623,12 @@ void GateSteppingAction::ShowG4TrackInfos( G4String outF, G4Track* fTrack)
   outFile << "        Creator Process     : "
           << std::setw(20);
   if( fTrack->GetCreatorProcess() == NULL){
-    outFile << " Event Generator" << Gateendl;
+    outFile << " Event Generator\n";
   } else {
     outFile << fTrack->GetCreatorProcess()->GetProcessName() << Gateendl;
   }
 
-  outFile << "      -----------------------------------------------" << Gateendl;
+  outFile << "      -----------------------------------------------\n";
 }
 
 //-----------------------------------------------------------------------------

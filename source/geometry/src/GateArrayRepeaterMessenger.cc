@@ -24,7 +24,7 @@ See GATE/LICENSE.txt for further details
 GateArrayRepeaterMessenger::GateArrayRepeaterMessenger(GateArrayRepeater* itsCubicArrayRepeater)
   :GateObjectRepeaterMessenger(itsCubicArrayRepeater)
 { 
-//    G4cout << " ***** Passage dans le constructeur de GateArrayRepeaterMessenger" << Gateendl;
+//    G4cout << " ***** Passage dans le constructeur de GateArrayRepeaterMessenger\n";
     
     G4String cmdName;
 
@@ -75,7 +75,7 @@ GateArrayRepeaterMessenger::~GateArrayRepeaterMessenger()
 
 void GateArrayRepeaterMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
-//  G4cout << " Cubic array new value" << Gateendl;
+//  G4cout << " Cubic array new value\n";
   
   if( command==SetRepeatVectorCmd )
     { 

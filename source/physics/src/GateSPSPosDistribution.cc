@@ -227,19 +227,19 @@ void GateSPSPosDistribution::ForbidSourceToVolume( const G4String& Vname )
   if(found == true)
     {
       if(verbosityLevel >= 1)
-	G4cout << "Volume " << Vname << " exists" << Gateendl;
+	G4cout << "Volume " << Vname << " exists\n";
       Forbid = true;
       ForbidVector.push_back(tempPV);
       // Modif DS: we write a confirmation message 
-      G4cout << " Activity forbidden in volume '" << Vname << "' confirmed" << Gateendl;
+      G4cout << " Activity forbidden in volume '" << Vname << "' confirmed\n";
     }
   else
     {
       // Modif DS: for volume-name "NULL", we don't write the error message
       // so as not to confuse users
       if ( Vname != "NULL" )
-        G4cout << " **** Error: Volume does not exist **** " << Gateendl;
-      G4cout << " Ignoring forbid condition for volume '" << Vname << "'" << Gateendl;
+        G4cout << " **** Error: Volume does not exist **** \n";
+      G4cout << " Ignoring forbid condition for volume '" << Vname << "'\n";
     }
 }
 //-----------------------------------------------------------------------------
@@ -250,7 +250,7 @@ G4bool GateSPSPosDistribution::IsSourceForbidden()
 {
   // Method to check point is within the volume specified
   if(Forbid == false)
-    G4cout << "Error: Forbid is false" << Gateendl;
+    G4cout << "Error: Forbid is false\n";
   G4ThreeVector null(0.,0.,0.);
   G4ThreeVector *ptr = &null;
 

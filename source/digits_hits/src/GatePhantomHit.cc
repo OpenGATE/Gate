@@ -39,7 +39,7 @@ void GatePhantomHit::Draw()
 
 void GatePhantomHit::Print()
 {
-  G4cout << "PhantomHit" << Gateendl
+  G4cout << "PhantomHit\n"
 	 << " PDGEncoding " << m_PDGEncoding << Gateendl
 	 << " edep        " << m_edep        << Gateendl
 	 << " stepLength  " << m_stepLength  << Gateendl

@@ -33,7 +33,7 @@ GateToRootMessenger::GateToRootMessenger(GateToRoot* gateToRoot)
   : GateOutputModuleMessenger(gateToRoot)
   , m_gateToRoot(gateToRoot)
 {
-//  G4cout << " Constructor GateToRootMessenger" << Gateendl;
+//  G4cout << " Constructor GateToRootMessenger\n";
   G4String cmdName;
 
   cmdName = GetDirectoryName()+"reset";
@@ -127,7 +127,7 @@ void GateToRootMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 void GateToRootMessenger::CreateNewOutputChannelCommand(GateToRoot::VOutputChannel* anOutputChannel)
 {
 
-  GateMessage("OutputMgr", 5, " GateToRootMessenger::CreateNewOutputChannelCommand -- begin " << Gateendl;);
+  GateMessage("OutputMgr", 5, " GateToRootMessenger::CreateNewOutputChannelCommand -- begin \n";);
 
   G4String cmdName;
 

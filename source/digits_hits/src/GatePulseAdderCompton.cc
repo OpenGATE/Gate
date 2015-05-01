@@ -47,16 +47,16 @@ void GatePulseAdderCompton::ProcessOnePulse(const GatePulse* inputPulse,GatePuls
 			//G4cout << inputPulse->GetEventID() << " " << inputPulse->GetOutputVolumeID() << " " << inputPulse->GetEnergy() << " " << inputPulse->GetPDGEncoding() << " First" ;
 			if ( inputPulse->GetPDGEncoding() == ( G4Electron::Electron()->GetPDGEncoding() ) )
 			{
-				//G4cout <<  " Different Discarded" << Gateendl;
+				//G4cout <<  " Different Discarded\n";
 
 				if (nVerboseLevel>1)
 					G4cout << "Discarded electronic pulse for volume " << inputPulse->GetVolumeID()
-					<< " with no previous photonic interaction in that Volume ID" << Gateendl << Gateendl ;
+					<< " with no previous photonic interaction in that Volume ID\n" << Gateendl ;
 			}
 			else
 			{
 				PulsePushBack(inputPulse, outputPulseList);
-				//G4cout << " Different Push Back" << Gateendl;
+				//G4cout << " Different Push Back\n";
 			}
 		}
 		else
@@ -73,9 +73,9 @@ void GatePulseAdderCompton::ProcessOnePulse(const GatePulse* inputPulse,GatePuls
 						if (nVerboseLevel>1)
 							G4cout << "Merged past photonic pulse for volume " << inputPulse->GetVolumeID()
 							<< " with new electronic pulse of energy " << G4BestUnit(inputPulse->GetEnergy(),"Energy") <<".\n"
-							<< "Resulting pulse is: " << Gateendl
+							<< "Resulting pulse is: \n"
 							<< (*currentiter) << Gateendl << Gateendl ;
-						//G4cout << inputPulse->GetEventID() << " " << inputPulse->GetOutputVolumeID() << " " << inputPulse->GetEnergy() << " " << inputPulse->GetPDGEncoding() << " Merged" << Gateendl;
+						//G4cout << inputPulse->GetEventID() << " " << inputPulse->GetOutputVolumeID() << " " << inputPulse->GetEnergy() << " " << inputPulse->GetPDGEncoding() << " Merged\n";
 						break;
 					}
 					else
@@ -84,14 +84,14 @@ void GatePulseAdderCompton::ProcessOnePulse(const GatePulse* inputPulse,GatePuls
 						currentiter++;
 						if (currentiter == outputPulseList.rend())
 						{
-							//G4cout << inputPulse->GetEventID() << " " << inputPulse->GetOutputVolumeID() << " " << inputPulse->GetEnergy() << " " << inputPulse->GetPDGEncoding() << " End of list" << Gateendl;
+							//G4cout << inputPulse->GetEventID() << " " << inputPulse->GetOutputVolumeID() << " " << inputPulse->GetEnergy() << " " << inputPulse->GetPDGEncoding() << " End of list\n";
 							break;
 						}
 					}
 				}
 				else
 				{
-					//G4cout << inputPulse->GetEventID() << " " << inputPulse->GetOutputVolumeID() << " " << inputPulse->GetEnergy() << " " << inputPulse->GetPDGEncoding() << " Push back" << Gateendl;
+					//G4cout << inputPulse->GetEventID() << " " << inputPulse->GetOutputVolumeID() << " " << inputPulse->GetEnergy() << " " << inputPulse->GetPDGEncoding() << " Push back\n";
 					PulsePushBack(inputPulse, outputPulseList);
 					break;
 				}
@@ -115,7 +115,7 @@ inline void GatePulseAdderCompton::PulsePushBack(const GatePulse* inputPulse, Ga
 	GatePulse* outputPulse = new GatePulse(*inputPulse);
 	if (nVerboseLevel>1)
 		G4cout << "Created new pulse for volume " << inputPulse->GetVolumeID() << ".\n"
-		<< "Resulting pulse is: " << Gateendl
+		<< "Resulting pulse is: \n"
 		<< *outputPulse << Gateendl << Gateendl ;
 	outputPulseList.push_back(outputPulse);
 }
@@ -176,7 +176,7 @@ inline void GatePulseAdderCompton::PulsePushBack(const GatePulse* inputPulse, Ga
 			if (m_verboseLevel>1)
 				G4cout << "Merged photonic pulse for volume " << tempPulse->GetVolumeID()
 				<< " with other photonic pulse of energy " << G4BestUnit(tempPulse->GetEnergy(),"Energy") <<".\n"
-				<< "Resulting pulse is: " << Gateendl
+				<< "Resulting pulse is: \n"
 				<< (*outputListBack) << Gateendl << Gateendl ;
 		}
 	}

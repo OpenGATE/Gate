@@ -48,7 +48,7 @@ GateToOpticalRaw::~GateToOpticalRaw()
 {
   delete m_asciiMessenger;
 
-  if (nVerboseLevel > 0) G4cout << "GateToOpticalRaw deleting..." << Gateendl;
+  if (nVerboseLevel > 0) G4cout << "GateToOpticalRaw deleting...\n";
 
   if (m_headerFile.is_open())
     m_headerFile.close();
@@ -136,8 +136,8 @@ void GateToOpticalRaw::RecordEndOfRun(const G4Run* )
 		}
 
 	} else {
-		G4cerr << "[GateToOpticalRaw::RecordEndOfRun]:" << Gateendl
-		<< "No data available to write to projection set." << Gateendl;
+		G4cerr << "[GateToOpticalRaw::RecordEndOfRun]:\n"
+		<< "No data available to write to projection set.\n";
 	}
 
 }
@@ -151,10 +151,10 @@ void GateToOpticalRaw::RecordEndOfRun(const G4Run* )
 void GateToOpticalRaw::Describe(size_t indent)
 {
   GateVOutputModule::Describe(indent);
-  G4cout << GateTools::Indent(indent) << "Job:                   write a set of projections into an raw output file" << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Job:                   write a set of projections into an raw output file\n";
   G4cout << GateTools::Indent(indent) << "Is enabled?            " << ( IsEnabled() ? "Yes" : "No") << Gateendl;
-  G4cout << GateTools::Indent(indent) << "File name:             '" << m_fileName << "'" << Gateendl;
-  G4cout << GateTools::Indent(indent) << "Attached to system:    '" << m_system->GetObjectName() << "'" << Gateendl;
+  G4cout << GateTools::Indent(indent) << "File name:             '" << m_fileName << "'\n";
+  G4cout << GateTools::Indent(indent) << "Attached to system:    '" << m_system->GetObjectName() << "'\n";
 }
 
 
@@ -163,21 +163,21 @@ void GateToOpticalRaw::Describe(size_t indent)
 void GateToOpticalRaw::WriteGeneralInfo()
 {
   m_headerFile  << "!INTERFILE :="    	      	      	    << Gateendl
-		<< "!imaging modality := "       	    << "optical imaging" << Gateendl
-      	      	<< ";" << Gateendl;
+		<< "!imaging modality := "       	    << "optical imaging\n"
+      	      	<< ";\n";
 
   m_headerFile  << "!GENERAL DATA :=" 	      	      	    << Gateendl
-		<< "data description := "     	      	    << "GATE simulation" << Gateendl
- 		<< "!name of data file := "    	      	    << m_fileName+".bin" << Gateendl
-    	      	<< ";" << Gateendl;
+		<< "data description := "     	      	    << "GATE simulation\n"
+ 		<< "!name of data file := "    	      	    << m_fileName+".bin\n"
+    	      	<< ";\n";
 
   GateToProjectionSet* setMaker = m_system->GetProjectionSetMaker();
 
 
   m_headerFile  << "!GENERAL IMAGE DATA :="   	      	    << Gateendl
-		<< "!type of data := "     	      	    << "OPTICAL" << Gateendl
+		<< "!type of data := "     	      	    << "OPTICAL\n"
  		<< "!total number of images := "      	    << setMaker->GetTotalImageNb() << Gateendl
- 	      	<< ";" << Gateendl;
+ 	      	<< ";\n";
 
     // Modified by HDS : multiple energy windows support
 	//------------------------------------------------------------------
@@ -197,8 +197,8 @@ void GateToOpticalRaw::WriteGeneralInfo()
 		aChainName = setMaker->GetInputDataName(energyWindowID);
 		aPulseProcessorChain = dynamic_cast<GatePulseProcessorChain*>(theDigitizer->FindElementByBaseName( aChainName ));
 		if (!aPulseProcessorChain) {
-			G4cerr  << 	Gateendl << "[GateToOpticalRaw::WriteGeneralInfo]:" << Gateendl
-					<< "Can't find digitizer chain '" << aChainName << "', aborting" << Gateendl;
+			G4cerr  << 	Gateendl << "[GateToOpticalRaw::WriteGeneralInfo]:\n"
+					<< "Can't find digitizer chain '" << aChainName << "', aborting\n";
 			G4Exception( "GateToOpticalRaw::WriteGeneralInfo", "WriteGeneralInfo", FatalException, "You must change this parameter then restart the simulation\n");
 		}
 
@@ -219,7 +219,7 @@ void GateToOpticalRaw::WriteGeneralInfo()
 
 		m_headerFile  << "!OPTICAL STUDY (general) :="        	    << Gateendl
       	   	<< "number of detector heads := "     	    << setMaker->GetHeadNb() << Gateendl
- 	      	<< ";" << Gateendl;
+ 	      	<< ";\n";
 
 		// Write description for each head
 		for (size_t headID=0; headID<setMaker->GetHeadNb() ; headID++) {
@@ -232,7 +232,7 @@ void GateToOpticalRaw::WriteGeneralInfo()
 				  << "!number of projections := "             << setMaker->GetProjectionNb()<< Gateendl
 				  << "!extent of rotation := "       	      << setMaker->GetAngularSpan()/deg << Gateendl
 				  << "!time per projection (sec) := "         << setMaker->GetTimePerProjection() / second << Gateendl
-				  << ";" << Gateendl;
+				  << ";\n";
 		}
 
 	}
@@ -266,7 +266,7 @@ void GateToOpticalRaw::WriteGeneralInfo()
       	      	  << ";Optical System pixel z dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(2)/cm << Gateendl
       	      	  << ";Optical System pixel material := "                 <<  pixelInserter->GetCreator()->GetMaterialName() << Gateendl;
 
-  m_headerFile  << ";" << Gateendl;
+  m_headerFile  << ";\n";
 
 
 }

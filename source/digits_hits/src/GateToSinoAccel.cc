@@ -67,7 +67,7 @@ const G4String& GateToSinoAccel::GiveNameOfFile()
 // Initialisation of the projection set
 void GateToSinoAccel::RecordBeginOfAcquisition()
 {
-  if (nVerboseLevel>0) G4cout << " >> entering [GateToSinoAccel::RecordBeginOfAcquisition]" << Gateendl;
+  if (nVerboseLevel>0) G4cout << " >> entering [GateToSinoAccel::RecordBeginOfAcquisition]\n";
 
   // Retrieve the parameters of the experiment
   G4double timeStart = GateApplicationMgr::GetInstance()->GetTimeStart();
@@ -79,9 +79,9 @@ void GateToSinoAccel::RecordBeginOfAcquisition()
 
   G4double fstepNumber = duration / timeStep;
   if ( fabs(fstepNumber-rint(fstepNumber)) >= 1.e-5 ) {
-    G4cerr  <<  Gateendl << " !!! [GateToSinoAccel::RecordBeginOfAcquisition]:" << Gateendl
+    G4cerr  <<  Gateendl << " !!! [GateToSinoAccel::RecordBeginOfAcquisition]:\n"
 	    <<   "Sorry, but the study duration (" << G4BestUnit(duration,"Time") << ") "
-	    <<   " does not seem to be a multiple of the time-slice (" << G4BestUnit(timeStep,"Time") << ")." << Gateendl;
+	    <<   " does not seem to be a multiple of the time-slice (" << G4BestUnit(timeStep,"Time") << ").\n";
     G4Exception( "GateToSinoAccel::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must change these parameters then restart the simulation\n");
   }
   m_frameNb = static_cast<size_t>(rint(fstepNumber));
@@ -103,7 +103,7 @@ void GateToSinoAccel::RecordBeginOfAcquisition()
   if (m_radialElemNb <= 0) {
     m_radialElemNb = m_crystalNb/2;
   } else if (m_radialElemNb > m_crystalNb) {
-    G4cerr  <<  Gateendl << " !!! [GateToSinoAccel::RecordBeginOfAcquisition]:" << Gateendl
+    G4cerr  <<  Gateendl << " !!! [GateToSinoAccel::RecordBeginOfAcquisition]:\n"
 	    <<   "Sorry, but the number of radial sinogram bins (" << m_radialElemNb << ") should be smaller or equal to " << m_crystalNb << Gateendl
 	    <<   "The default is " << m_crystalNb/2 << Gateendl;
     G4Exception( "GateToSinoAccel::RecordBeginOfAcquisition" , "RecordBeginOfAcquisition", FatalException,"You must change this parameter then restart the simulation");
@@ -120,8 +120,8 @@ void GateToSinoAccel::RecordBeginOfAcquisition()
   m_axialCrystalResolution = GetAxialCrystalResolution();
   if (m_axialCrystalResolution <= 0.) m_axialCrystalResolution = 0.;
   if (nVerboseLevel > 1) {
-    G4cout << "    Crystal location blurring in tangential direction: " << m_tangCrystalResolution/mm << " mm" << Gateendl;
-    G4cout << "    Crystal location blurring in axial direction: " << m_axialCrystalResolution/mm << " mm" << Gateendl;
+    G4cout << "    Crystal location blurring in tangential direction: " << m_tangCrystalResolution/mm << " mm\n";
+    G4cout << "    Crystal location blurring in axial direction: " << m_axialCrystalResolution/mm << " mm\n";
   }
 
   // Prepare the sinogram
@@ -130,14 +130,14 @@ void GateToSinoAccel::RecordBeginOfAcquisition()
 
   if (nVerboseLevel>0) {
     if (m_flagTruesOnly) {
-      G4cout << "    Only true coincidences are recorded" << Gateendl;
+      G4cout << "    Only true coincidences are recorded\n";
     } else {
-      G4cout << "    True and random coincidences are recorded" << Gateendl;
+      G4cout << "    True and random coincidences are recorded\n";
     }
   }
 
 
-  if (nVerboseLevel>0) G4cout << " >> leaving [GateToSinoAccel::RecordBeginOfAcquisition]" << Gateendl;
+  if (nVerboseLevel>0) G4cout << " >> leaving [GateToSinoAccel::RecordBeginOfAcquisition]\n";
 }
 
 // We leave the 2D sinograms as it is (so that it can be stored afterwards)
@@ -149,12 +149,12 @@ void GateToSinoAccel::RecordEndOfAcquisition()
 // Reset the projection data
 void GateToSinoAccel::RecordBeginOfRun(const G4Run * r)
 {
-  if (nVerboseLevel>0) G4cout << " >> entering [GateToSinoAccel::RecordBeginOfRun]" << Gateendl;
+  if (nVerboseLevel>0) G4cout << " >> entering [GateToSinoAccel::RecordBeginOfRun]\n";
   G4cout << "    Frame ID = " << r->GetRunID()+1 << Gateendl;
   // One frame per RUN
   m_sinogram->ClearData(r->GetRunID()+1,1,0,0);
   // m_sinoRandoms->ClearData(r->GetRunID()+1,1,1,0);
-  if (nVerboseLevel>0) G4cout << " >> leaving [GateToSinoAccel::RecordBeginOfRun]" << Gateendl;
+  if (nVerboseLevel>0) G4cout << " >> leaving [GateToSinoAccel::RecordBeginOfRun]\n";
 
 }
 
@@ -166,13 +166,13 @@ void GateToSinoAccel::RecordEndOfRun(const G4Run * r)
   G4int            aringdiff,nseg,seg,ringdiff,ring_1_min,ring_1_max,ring_1,ring_2,sinoID;
   size_t           seekID;
 
-  if (nVerboseLevel>0) G4cout << " >> entering [GateToSinoAccel::RecordEndOfRun]" << Gateendl;
+  if (nVerboseLevel>0) G4cout << " >> entering [GateToSinoAccel::RecordEndOfRun]\n";
 
   // Write the projection sets
   if (m_flagIsRawOutputEnabled) {
     sprintf(ctemp,"%s_%0d",m_fileName.c_str(),r->GetRunID()+1);
     frameFileName = ctemp;
-    G4cout << "    sinograms written to the raw file " << frameFileName << ".ima" << Gateendl;
+    G4cout << "    sinograms written to the raw file " << frameFileName << ".ima\n";
     m_dataFile.open((frameFileName+".ima").c_str(),std::ios::out | std::ios::trunc | std::ios::binary);
     seekID = 0;
     for (aringdiff=0 ; aringdiff<(G4int)m_ringNb; aringdiff++) {
@@ -204,21 +204,21 @@ void GateToSinoAccel::RecordEndOfRun(const G4Run * r)
     }
     m_dataFile.close();
     m_infoFile.open((frameFileName+".info").c_str(),std::ios::out | std::ios::trunc | std::ios::binary);
-    m_infoFile << m_sinogram->GetSinogramNb() << " 2D sinograms" << Gateendl;
-    m_infoFile << " [RadialPosition;AzimuthalAngle;AxialPosition;RingDifference]" << Gateendl;
+    m_infoFile << m_sinogram->GetSinogramNb() << " 2D sinograms\n";
+    m_infoFile << " [RadialPosition;AzimuthalAngle;AxialPosition;RingDifference]\n";
     m_infoFile << " RingDifference varies as 0,+1,-1,+2,-2, ...,+" << m_ringNb-1 << ",-" << m_ringNb-1 << Gateendl;
-    m_infoFile << " AxialPosition varies as |RingDifference|,...," << 2*m_ringNb-2 << "-|RingDifference| per increment of 2" << Gateendl;
-    m_infoFile << " AzimuthalAngle varies as 0,...," << m_crystalNb/2-1 << " per increment of 1" << Gateendl;
-    m_infoFile << " RadialPosition varies as 0,...," << m_radialElemNb-1 << " per increment of 1" << Gateendl;
-    m_infoFile << " Date type : unsigned short integer (U" << 8*sizeof(unsigned short) << ")" << Gateendl;
+    m_infoFile << " AxialPosition varies as |RingDifference|,...," << 2*m_ringNb-2 << "-|RingDifference| per increment of 2\n";
+    m_infoFile << " AzimuthalAngle varies as 0,...," << m_crystalNb/2-1 << " per increment of 1\n";
+    m_infoFile << " RadialPosition varies as 0,...," << m_radialElemNb-1 << " per increment of 1\n";
+    m_infoFile << " Date type : unsigned short integer (U" << 8*sizeof(unsigned short) << ")\n";
     m_infoFile.close();
     m_dimFile.open((frameFileName+".dim").c_str(),std::ios::out | std::ios::trunc | std::ios::binary);
     m_dimFile << " " << m_radialElemNb << " " << m_crystalNb/2 << " " << m_ringNb*m_ringNb << Gateendl;
-    m_dimFile << "-type U" << 8*sizeof(unsigned short) << Gateendl << "-dx 1.0" << Gateendl << "-dy 1.0" << Gateendl << "-dz 1.0";
+    m_dimFile << "-type U" << 8*sizeof(unsigned short) << Gateendl << "-dx 1.0\n" << "-dy 1.0\n" << "-dz 1.0";
     m_dimFile.close();
   }
 
-  if (nVerboseLevel>0) G4cout << " >> leaving [GateToSinoAccel::RecordEndOfRun]" << Gateendl;
+  if (nVerboseLevel>0) G4cout << " >> leaving [GateToSinoAccel::RecordEndOfRun]\n";
 }
 
 
@@ -234,7 +234,7 @@ void GateToSinoAccel::RecordEndOfEvent(const G4Event* )
     return;
   }
 
-  if (nVerboseLevel>3) G4cout << " >> entering [GateToSinoAccel::RecordEndOfEvent] with a digi collection" << Gateendl;
+  if (nVerboseLevel>3) G4cout << " >> entering [GateToSinoAccel::RecordEndOfEvent] with a digi collection\n";
 
   G4int n_digi =  CDC->entries();
   // Retrieve the block and the crystal component
@@ -265,7 +265,7 @@ void GateToSinoAccel::RecordEndOfEvent(const G4Event* )
 
     if (m_flagTruesOnly && (eventID1 != eventID2)) {
       if (nVerboseLevel>3) {
-        G4cout << "    random coincidence not recorded " << Gateendl;
+        G4cout << "    random coincidence not recorded \n";
       }
       return;
     }
@@ -301,8 +301,8 @@ void GateToSinoAccel::RecordEndOfEvent(const G4Event* )
       G4cout << " >>     Crystal ring IDs are " << ring1 << " ; " << ring2 << Gateendl;
       G4cout << " >>     Ring crystal IDs are " << crystal1 << " ; " << crystal2 << Gateendl;
       G4cout << " >>     Event IDs are " << eventID1 << " ; " << eventID2 << Gateendl;
-      //G4cout << " >>     DEBUG: Gamma azimuthal angle are " << azipos1 << " ; " << azipos2 << " crystal" << Gateendl;
-      //G4cout << " >>     DEBUG: Crystal origines are " << orig1 << " ; " << orig2 << " crystal" << Gateendl;
+      //G4cout << " >>     DEBUG: Gamma azimuthal angle are " << azipos1 << " ; " << azipos2 << " crystal\n";
+      //G4cout << " >>     DEBUG: Crystal origines are " << orig1 << " ; " << orig2 << " crystal\n";
     }
 
     // change crystal origine to be compatible with ECAT systems
@@ -311,11 +311,11 @@ void GateToSinoAccel::RecordEndOfEvent(const G4Event* )
     if (crystal1 >= (G4int) m_crystalNb) crystal1 -= m_crystalNb;
     if (crystal2 >= (G4int) m_crystalNb) crystal2 -= m_crystalNb;
     if (ring1 < 0 || ring1 >= (G4int) m_ringNb || ring2 < 0 || ring2 >= (G4int) m_ringNb) {
-      G4cout << " !!! out of range crystal ring number (" << ring1 << " ; " << ring2 << ")" << Gateendl;
+      G4cout << " !!! out of range crystal ring number (" << ring1 << " ; " << ring2 << ")\n";
       return;
     }
     if (crystal1 < 0 || crystal1 >= (G4int) m_crystalNb || crystal2 < 0 || crystal2 >= (G4int) m_crystalNb) {
-      G4cout << " !!! out of range ring crystal number (" << crystal1 << " ; " << crystal2 << ")" << Gateendl;
+      G4cout << " !!! out of range ring crystal number (" << crystal1 << " ; " << crystal2 << ")\n";
       return;
     }
 
@@ -355,8 +355,8 @@ void GateToSinoAccel::RecordEndOfEvent(const G4Event* )
 	  m_sinogram->FillRandoms( ring1, ring2);
 	//alpha = atan2(x2-x1,y1-y2);
       } else {
-	G4cout << " !!! uncoherent crystal numbering (" << crystal1 << " ; " << crystal2 << ") !!!" << Gateendl;
-	G4cout << " !!! Event skiped" << Gateendl;
+	G4cout << " !!! uncoherent crystal numbering (" << crystal1 << " ; " << crystal2 << ") !!!\n";
+	G4cout << " !!! Event skiped\n";
 	return;
       }
     }
@@ -369,7 +369,7 @@ void GateToSinoAccel::RecordEndOfEvent(const G4Event* )
     //  G4cout << " >>     DEBUG: view according to crystal coordinates: " << view << Gateendl;
     //}
   }
-  if (nVerboseLevel>3) G4cout << " >> leaving [GateToSinogram::RecordEndOfEvent]" << Gateendl;
+  if (nVerboseLevel>3) G4cout << " >> leaving [GateToSinogram::RecordEndOfEvent]\n";
 }
 
 
@@ -382,7 +382,7 @@ void GateToSinoAccel::RecordEndOfEvent(const G4Event* )
 void GateToSinoAccel::Describe(size_t indent)
 {
   GateVOutputModule::Describe(indent);
-  G4cout << GateTools::Indent(indent) << " >> Job:                                build a set of 2D sinograms from a PET simulation" << Gateendl;
+  G4cout << GateTools::Indent(indent) << " >> Job:                                build a set of 2D sinograms from a PET simulation\n";
   G4cout << GateTools::Indent(indent) << " >> Is enabled?                         " << ( IsEnabled() ? "Yes" : "No") << Gateendl;
   G4cout << GateTools::Indent(indent) << " >> Number of crystals per crystal ring " << m_crystalNb << Gateendl;
   G4cout << GateTools::Indent(indent) << " >> Number of crystal rings             " << m_ringNb << Gateendl;

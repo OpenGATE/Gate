@@ -97,9 +97,9 @@ void GateCPETSystem::PrintToStream(std::ostream& aStream,G4bool)
   G4double crystalRmax = crystalComponent->GetCylinderRmax();
   aStream << "crystal radius max: " << G4BestUnit( crystalRmax ,"Length")  	  << Gateendl;
   G4double crystalSPhi = crystalComponent->GetCylinderSPhi();
-  aStream << "crystal start angle: " << crystalSPhi / degree << " deg" << Gateendl;
+  aStream << "crystal start angle: " << crystalSPhi / degree << " deg\n";
   G4double crystalDPhi = crystalComponent->GetCylinderDPhi();
-  aStream << "crystal angular span: " << crystalDPhi / degree << " deg" << Gateendl;
+  aStream << "crystal angular span: " << crystalDPhi / degree << " deg\n";
 }
 
 

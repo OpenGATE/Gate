@@ -32,7 +32,7 @@
 // --------------------------------------------------------------------
 GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   GateVActor(name, depth) {
-  GateDebugMessageInc("Actor", 4, "GatePhaseSpaceActor() -- begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "GatePhaseSpaceActor() -- begin\n");
 
   pMessenger = new GatePhaseSpaceActorMessenger(this);
 
@@ -72,7 +72,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   pIAEARecordType = 0;
   pIAEAheader = 0;
   mFileSize = 0;
-  GateDebugMessageDec("Actor", 4, "GatePhaseSpaceActor() -- end" << Gateendl);
+  GateDebugMessageDec("Actor", 4, "GatePhaseSpaceActor() -- end\n");
 }
 // --------------------------------------------------------------------
 
@@ -80,7 +80,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
 // --------------------------------------------------------------------
 /// Destructor
 GatePhaseSpaceActor::~GatePhaseSpaceActor() {
-  GateDebugMessageInc("Actor", 4, "~GatePhaseSpaceActor() -- begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "~GatePhaseSpaceActor() -- begin\n");
   // if(pIAEAFile) fclose(pIAEAFile);
   //  pIAEAFile = 0;
   free(pIAEAheader);
@@ -88,7 +88,7 @@ GatePhaseSpaceActor::~GatePhaseSpaceActor() {
   pIAEAheader = 0;
   pIAEARecordType = 0;
   delete pMessenger;
-  GateDebugMessageDec("Actor", 4, "~GatePhaseSpaceActor() -- end" << Gateendl);
+  GateDebugMessageDec("Actor", 4, "~GatePhaseSpaceActor() -- end\n");
 }
 // --------------------------------------------------------------------
 
@@ -111,7 +111,7 @@ void GatePhaseSpaceActor::Construct() {
   if (extension == "root") mFileType = "rootFile";
   else if (extension == "IAEAphsp" || extension == "IAEAheader" ) mFileType = "IAEAFile";
   else GateError( "Unknow phase space file extension. Knowns extensions are : "
-                    << Gateendl << ".IAEAphsp (or IAEAheader), .root" << Gateendl);
+                    << Gateendl << ".IAEAphsp (or IAEAheader), .root\n");
 
   if (mFileType == "rootFile") {
 

@@ -57,7 +57,7 @@ GateUIcmdWithAVector<vContentType>::GateUIcmdWithAVector
 template<typename vContentType>
 std::vector<vContentType> GateUIcmdWithAVector<vContentType>::GetNewVectorValue(G4String paramString)
 {
-//    G4cout << "GateUIcmdWithAVector::GetNewVectorValue : paramString <" << paramString << ">" << Gateendl;
+//    G4cout << "GateUIcmdWithAVector::GetNewVectorValue : paramString <" << paramString << ">\n";
 
   //const char* t = paramString;
   //LF 21/12/2005

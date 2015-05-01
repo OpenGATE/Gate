@@ -102,7 +102,7 @@ void GateDoseSpectrumActor::ResetData()
 //-----------------------------------------------------------------------------
 void GateDoseSpectrumActor::BeginOfRunAction(const G4Run *)
 {
-  GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Run" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Run\n");
   ResetData();
 }
 //-----------------------------------------------------------------------------
@@ -110,7 +110,7 @@ void GateDoseSpectrumActor::BeginOfRunAction(const G4Run *)
 //-----------------------------------------------------------------------------
 void GateDoseSpectrumActor::BeginOfEventAction(const G4Event* event)
 {
-  GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Event" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Event\n");
 
   // Process the previous event (if there was one)
   if(mCurrentEvent) {

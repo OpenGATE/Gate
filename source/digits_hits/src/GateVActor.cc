@@ -93,7 +93,7 @@ void GateVActor::EndOfEventAction(const G4Event*e)
     gettimeofday(&end, NULL);
     long seconds  = end.tv_sec  - mTimeOfLastSaveEvent.tv_sec;
     if (seconds > mSaveEveryNSeconds) {
-      //GateMessage("Core", 0, "Actor " << GetName() << " : " << mSaveEveryNSeconds << " seconds." << Gateendl);
+      //GateMessage("Core", 0, "Actor " << GetName() << " : " << mSaveEveryNSeconds << " seconds.\n");
       SaveData();
       mTimeOfLastSaveEvent = end;
     }

@@ -169,7 +169,7 @@ void GateSecondaryProductionActor::ResetData() {
 
 //-----------------------------------------------------------------------------
 void GateSecondaryProductionActor::BeginOfRunAction(const G4Run * ) {
-  GateDebugMessage("Actor", 3, "GateSecondaryProductionActor -- Begin of Run" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateSecondaryProductionActor -- Begin of Run\n");
   ResetData();
 }
 //-----------------------------------------------------------------------------

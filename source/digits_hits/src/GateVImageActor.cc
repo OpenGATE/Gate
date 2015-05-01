@@ -135,7 +135,7 @@ void GateVImageActor::SetPosition(G4ThreeVector v)
 /// Constructs the sensor
 void GateVImageActor::Construct()
 {
-  GateDebugMessageInc("Actor", 4, "GateVImageActor -- Construct: begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "GateVImageActor -- Construct: begin\n");
   GateVActor::Construct();
 
   if (!mHalfSizeIsSet){
@@ -218,7 +218,7 @@ void GateVImageActor::Construct()
   GateMessage("Actor", 3, "GateVImageActor -- Construct(): voxelsize = " << mVoxelSize << Gateendl);
   GateMessage("Actor", 3, "GateVImageActor -- Construct(): hitType   = " << mStepHitTypeName << Gateendl);
 
-  GateDebugMessageDec("Actor", 4, "GateVImageActor -- Construct: end" << Gateendl);
+  GateDebugMessageDec("Actor", 4, "GateVImageActor -- Construct: end\n");
 
 }
 //-----------------------------------------------------------------------------
@@ -401,7 +401,7 @@ int GateVImageActor::GetIndexFromStepPosition(const GateVVolume * v, const G4Ste
     postPosition.setZ( postPosition.z() - mPosition.z());
   }
 
-  GateDebugMessage("Step", 2, "GateVImageActor -- GetIndexFromStepPosition:Actor  UserSteppingAction (type = " << mStepHitTypeName << ")" << Gateendl
+  GateDebugMessage("Step", 2, "GateVImageActor -- GetIndexFromStepPosition:Actor  UserSteppingAction (type = " << mStepHitTypeName << ")\n"
 		   << "\tPreStep     = " << prePosition << Gateendl
 		   << "\tPostStep    = "<< postPosition << Gateendl);
 

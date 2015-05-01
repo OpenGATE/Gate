@@ -42,7 +42,7 @@ GateMaterialTableToProductionCutsTable* GatePETVRTManager::GetMaterialTableToPro
 void GatePETVRTManager::DeletePETVRTSettings ()
 {
 	if (m_nDeletePETVRTSettings) delete pGatePETVRTSettings;
-	else G4cout << "GatePETVRTManager::DeletePETVRTSettings: Try to delete, but GatePETVRTSettings not deletable!" << Gateendl;
+	else G4cout << "GatePETVRTManager::DeletePETVRTSettings: Try to delete, but GatePETVRTSettings not deletable!\n";
 	pGatePETVRTSettings=NULL;
 }
 
@@ -50,7 +50,7 @@ void GatePETVRTManager::RegisterPETVRTSettings ( GatePETVRTSettings* s, bool del
 {
 	if ((pGatePETVRTSettings!=NULL)&& m_nDeletePETVRTSettings )
 	{
-		G4cout << "GatePETVRTManager::SetPETVRTSettings: PETVRTSettings already registered. Delete first. Do nothing!" << Gateendl;
+		G4cout << "GatePETVRTManager::SetPETVRTSettings: PETVRTSettings already registered. Delete first. Do nothing!\n";
 	}
 	else
 	pGatePETVRTSettings=s;

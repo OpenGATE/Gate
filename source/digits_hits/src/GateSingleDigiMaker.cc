@@ -40,7 +40,7 @@ GateSingleDigiMaker::~GateSingleDigiMaker()
 void GateSingleDigiMaker::Digitize()
 {
   if (nVerboseLevel>1)
-    G4cout  << "[GateSingleDigiMaker::Digitize]: retrieving pulse-list '" << m_inputName << "'" << Gateendl;
+    G4cout  << "[GateSingleDigiMaker::Digitize]: retrieving pulse-list '" << m_inputName << "'\n";
 
   GatePulseList* pulseList = GateDigitizer::GetInstance()->FindPulseList(m_inputName);
 
@@ -71,7 +71,7 @@ void GateSingleDigiMaker::Digitize()
 
   if (nVerboseLevel>0) {
       	G4cout  << "[GateSingleDigiMaker::ConvertSinglePulseList]: "
-	      	<< "created " << singleDigiCollection->entries() << " single digits:" << Gateendl;
+	      	<< "created " << singleDigiCollection->entries() << " single digits:\n";
       	for (i=0; i<(size_t)(singleDigiCollection->entries()); i++)
 	  (*singleDigiCollection)[i]->Print();
 	G4cout << Gateendl;

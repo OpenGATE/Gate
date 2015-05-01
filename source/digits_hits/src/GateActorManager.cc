@@ -140,11 +140,11 @@ void GateActorManager::CreateListsOfEnabledActors()
 //-----------------------------------------------------------------------------
 void GateActorManager::PrintListOfActorTypes() const
 {
-  G4cout << "***********************" << Gateendl;
+  G4cout << "***********************\n";
   for (std::map<G4String,maker_actor>::const_iterator iter=theListOfActorPrototypes.begin(); iter!=theListOfActorPrototypes.end(); iter++) {
     G4cout << iter->first << Gateendl;
   }
-  G4cout << "***********************" << Gateendl;
+  G4cout << "***********************\n";
 }
 //-----------------------------------------------------------------------------
 
@@ -171,7 +171,7 @@ void GateActorManager::BeginOfRunAction(const G4Run* run)
 {
   std::vector<GateVActor*>::iterator sit;
 
-  //GateMessage("Core", 0, "Run " << run->GetRunID() << " is starting." << Gateendl);
+  //GateMessage("Core", 0, "Run " << run->GetRunID() << " is starting.\n");
   for(sit = theListOfActorsEnabledForBeginOfRun.begin(); sit!=theListOfActorsEnabledForBeginOfRun.end(); ++sit)
     (*sit)->BeginOfRunAction(run);
 
@@ -184,7 +184,7 @@ void GateActorManager::EndOfRunAction(const G4Run* run)
   std::vector<GateVActor*>::iterator sit;
   for(sit = theListOfActorsEnabledForEndOfRun.begin(); sit!=theListOfActorsEnabledForEndOfRun.end(); ++sit)
     (*sit)->EndOfRunAction(run);
-  //GateMessage("Core", 0, "Run " << run->GetRunID() << " is ending." << Gateendl);
+  //GateMessage("Core", 0, "Run " << run->GetRunID() << " is ending.\n");
 }
 //-----------------------------------------------------------------------------
 

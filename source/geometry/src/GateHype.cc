@@ -103,11 +103,11 @@ void GateHype::DestroyOwnSolidAndLogicalVolume()
 
 void GateHype::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: hyperbolic tube (hypertube)" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Shape: hyperbolic tube (hypertube)\n";
   G4cout << GateTools::Indent(level) << "Inner radius at z=0: " << G4BestUnit(m_innerR,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Outer radius at z=0: " << G4BestUnit(m_outerR,"Length") << Gateendl;
-  G4cout << GateTools::Indent(level) << "Inner stereo angle: " << m_innerStereo / degree << " deg" << Gateendl;
-  G4cout << GateTools::Indent(level) << "Outer stereo angle:: " << m_outerStereo / degree << " deg" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Inner stereo angle: " << m_innerStereo / degree << " deg\n";
+  G4cout << GateTools::Indent(level) << "Outer stereo angle:: " << m_outerStereo / degree << " deg\n";
   G4cout << GateTools::Indent(level) << "Z length: " << G4BestUnit(m_zLength,"Length") << Gateendl;
 }
 

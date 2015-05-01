@@ -40,6 +40,6 @@ GateVBlurringLaw::GateVBlurringLaw(const G4String& itsName) :
 void GateVBlurringLaw::Describe (size_t ident) {
 	GateNamedObject::Describe(ident);
 
-	G4cout << "Law giving the energy resolution functions of the energy." << Gateendl;
+	G4cout << "Law giving the energy resolution functions of the energy.\n";
 	DescribeMyself(ident);
 }

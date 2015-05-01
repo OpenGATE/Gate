@@ -288,13 +288,13 @@ void GateGPUCollimIO_Output_delete(GateGPUCollimIO_Output * output)
 //-----------------------------------------------------------------------------
 void GateGPUCollimIO_Particle_Print(const GateGPUCollimIO_Particle & p)
 {
-  if (p.type == 0) std::cout << "type = gamma" << Gateendl;
-  if (p.type == 1) std::cout << "type = e-" << Gateendl;
+  if (p.type == 0) std::cout << "type = gamma\n";
+  if (p.type == 1) std::cout << "type = e-\n";
   std::cout << "E = " << G4BestUnit(p.E, "Energy") << Gateendl;
   std::cout << "event id = " << p.eventID  << Gateendl;
   std::cout << "track id = " << p.trackID  << Gateendl;
   std::cout << "t = " << G4BestUnit(p.t, "Time")  << Gateendl;
-  std::cout << "position = " << p.px << " " << p.py << " " << p.pz << " mm" << Gateendl;
+  std::cout << "position = " << p.px << " " << p.py << " " << p.pz << " mm\n";
   std::cout << "dir = " << p.dx << " " << p.dy << " " << p.dz << Gateendl;
 }
 //-----------------------------------------------------------------------------

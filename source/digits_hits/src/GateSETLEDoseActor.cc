@@ -78,7 +78,7 @@ GateSETLEDoseActor::~GateSETLEDoseActor()  {
  //-----------------------------------------------------------------------------
 /// Construct
 void GateSETLEDoseActor::Construct() {
-  GateMessage("Actor", 0, " SETLEDoseActor construction" << Gateendl);
+  GateMessage("Actor", 0, " SETLEDoseActor construction\n");
   GateVImageActor::Construct();
 
   // Multiplicity initialisation
@@ -252,7 +252,7 @@ void GateSETLEDoseActor::ResetData()
 //-----------------------------------------------------------------------------
 void GateSETLEDoseActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
-  GateDebugMessage("Actor", 3, "GateSETLEDoseActor -- Begin of Run" << Gateendl);
+  GateDebugMessage("Actor", 3, "GateSETLEDoseActor -- Begin of Run\n");
   // ResetData(); // Do no reset here !! (when multiple run);
 
   // security on attachedVolume
@@ -387,7 +387,7 @@ static inline int getIncrement(double value)
 //-----------------------------------------------------------------------------
 double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight, G4ThreeVector position, G4ThreeVector momentum)
 {
-//   GateMessage("Actor", 0, "  " << Gateendl;);
+//   GateMessage("Actor", 0, "  \n";);
 //   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxSize << Gateendl);
 
   int xincr = getIncrement(momentum.x());

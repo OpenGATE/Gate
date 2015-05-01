@@ -90,7 +90,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
 
         if (mIsASourceDescriptionFile) {
             LoadClinicalBeamProperties();
-            GateMessage("Physic", 1, "[TPSPencilBeam] Source description file successfully loaded." << Gateendl);
+            GateMessage("Physic", 1, "[TPSPencilBeam] Source description file successfully loaded.\n");
         } else {
             GateError("No clinical beam loaded !");
         }
@@ -336,7 +336,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                 }
             }
             again = false;
-            GateMessage("Physic", 1, "[TPSPencilBeam] Plan description file successfully loaded." << Gateendl);
+            GateMessage("Physic", 1, "[TPSPencilBeam] Plan description file successfully loaded.\n");
         }
         inFile.close();
 
@@ -346,7 +346,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
         }
 
         GateMessage("Physic", 1, "[TPSPencilBeam] Starting particle generation:  "
-                    << mTotalNumberOfSpots << " spots loaded." << Gateendl);
+                    << mTotalNumberOfSpots << " spots loaded.\n");
         mPDF = new double[mTotalNumberOfSpots];
         for (int i = 0; i < mTotalNumberOfSpots; i++) {
             // it is strongly adviced to set mFlatGenerationFlag=false

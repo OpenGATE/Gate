@@ -66,7 +66,7 @@ void GateImageT<PixelType>::Read(G4String filename) {
   else if (extension == "i33") ReadInterfile(filename);
   else {
     GateError( "Unknow image file extension. Knowns extensions are : "
-               << Gateendl << ".vox, .hdr, .img, .mhd, .mha, .h33, .i33" << Gateendl);
+               << Gateendl << ".vox, .hdr, .img, .mhd, .mha, .h33, .i33\n");
     exit(0);
   }
 }
@@ -100,7 +100,7 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
 
   // Read values ...
   if (hdr.GetVoxelType() == GateAnalyzeHeader::SignedShortType) {
-    GateMessage("Image",5,"Voxel Type = SignedShortType" << Gateendl);
+    GateMessage("Image",5,"Voxel Type = SignedShortType\n");
     typedef short VoxelType;
     std::vector<VoxelType> temp(nbOfValues);
     data.resize(nbOfValues);
@@ -110,7 +110,7 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
     }
   }
   else if (hdr.GetVoxelType() == GateAnalyzeHeader::FloatType) {
-    GateMessage("Image",5,"Voxel Type = FloatType" << Gateendl);
+    GateMessage("Image",5,"Voxel Type = FloatType\n");
     typedef float VoxelType;
     std::vector<VoxelType> temp(nbOfValues);
     data.resize(nbOfValues);
@@ -122,7 +122,7 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
     }
   }
   else if (hdr.GetVoxelType() == GateAnalyzeHeader::SignedIntType) {
-    GateMessage("Image",5,"Voxel Type = SignedIntType" << Gateendl);
+    GateMessage("Image",5,"Voxel Type = SignedIntType\n");
     typedef int VoxelType;
     std::vector<VoxelType> temp(nbOfValues);
     data.resize(nbOfValues);
@@ -132,7 +132,7 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
     }
   }
   else if (hdr.GetVoxelType() == GateAnalyzeHeader::UnsignedCharType) {
-    GateMessage("Image",5,"Voxel Type = UnsignedCharType" << Gateendl);
+    GateMessage("Image",5,"Voxel Type = UnsignedCharType\n");
     typedef unsigned char VoxelType;
     std::vector<VoxelType> temp(nbOfValues);
     data.resize(nbOfValues);
@@ -293,7 +293,7 @@ void GateImageT<PixelType>::ReadAscii(G4String filename) {
     }
   }
   if (!is) {
-    //GateError( "Error while reading " << Gateendl);
+    //GateError( "Error while reading \n");
     exit(0);
   }
 }
@@ -343,7 +343,7 @@ void GateImageT<PixelType>::Write(G4String filename, const G4String & comment){
       OpenFileOutput(filename, os);
       GateMessage("Actor",5,"Write text file"<< Gateendl);
       WriteAscii(os, comment);
-      GateMessage("Actor",5,"Write text file - end " << Gateendl);
+      GateMessage("Actor",5,"Write text file - end \n");
     }
     else {
       if (extension == "hdr") {
@@ -371,7 +371,7 @@ void GateImageT<PixelType>::Write(G4String filename, const G4String & comment){
           }
           else {
             GateMessage("Image",0,"WARNING : Don't know how to write '" << extension
-                        << " format... I try ASCII file" << Gateendl);
+                        << " format... I try ASCII file\n");
             // open
             OpenFileOutput(filename, os);
             WriteAscii(os, comment);
@@ -389,7 +389,7 @@ void GateImageT<PixelType>::Write(G4String filename, const G4String & comment){
 template<class PixelType>
 void GateImageT<PixelType>::WriteBin(std::ofstream & os)
 {
-  GateMessage("Image",2,"GateImageT::WriteBin " << Gateendl);
+  GateMessage("Image",2,"GateImageT::WriteBin \n");
   // write
   // if PixelType is not float, we copy the values in a float vector
   if (typeid(PixelType) != typeid(float)) {
@@ -403,7 +403,7 @@ void GateImageT<PixelType>::WriteBin(std::ofstream & os)
     os.write((char*)(&(data[0])), nbOfValues*sizeof(PixelType));
   }
   if (!os) {
-    GateError( "Error while writing image data (WriteBin)." << Gateendl);
+    GateError( "Error while writing image data (WriteBin).\n");
   }
 }
 //-----------------------------------------------------------------------------
@@ -413,7 +413,7 @@ void GateImageT<PixelType>::WriteBin(std::ofstream & os)
 template<class PixelType>
 void GateImageT<PixelType>::WriteMHD(std::string filename)
 {
-  GateMessage("Image",2,"GateImageT::WriteMHD " << Gateendl);
+  GateMessage("Image",2,"GateImageT::WriteMHD \n");
   // Write mhd image
   GateMHDImage * mhd = new GateMHDImage;
   mhd->WriteHeader<PixelType>(filename, this);
@@ -428,12 +428,12 @@ void GateImageT<PixelType>::WriteAscii(std::ofstream & os, const G4String & comm
 {
   GateMessage("Image",2,"GateImageT::WriteAscii " <<Gateendl);
   // write comment in header
-  os  << "#################################### " << Gateendl
+  os  << "#################################### \n"
       << "# Matrix Size= " << size        << Gateendl
       << "# Resol      = " << resolution  << Gateendl
       << "# VoxelSize  = " << voxelSize   << Gateendl
       << "# nbVal      = " << nbOfValues  << Gateendl
-      << "#################################### " << Gateendl;
+      << "#################################### \n";
   if (comment != "") os << comment << Gateendl;
 
   // write data

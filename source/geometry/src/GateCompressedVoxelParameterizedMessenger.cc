@@ -65,19 +65,19 @@ GateCompressedVoxelParameterizedMessenger::~GateCompressedVoxelParameterizedMess
 void GateCompressedVoxelParameterizedMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
 
-  G4cout << "GateCompressedVoxelParameterizedMessenger SetNewValue" << Gateendl;
+  G4cout << "GateCompressedVoxelParameterizedMessenger SetNewValue\n";
 
   if( command==AttachPhantomSDCmd )
     {       
     
-      G4cout << " Call  AttachPhantomSD " << Gateendl;
+      G4cout << " Call  AttachPhantomSD \n";
       GetVoxelParameterizedInserter()->AttachPhantomSD();}   
 
   else if ( command == AddOutputCmd )
     { GetVoxelParameterizedInserter()->AddOutput(newValue); }
 
   else if ( command == InsertReaderCmd )
-    { G4cout << " Call InsertReader for compressedVoxel " << Gateendl; GetVoxelParameterizedInserter()->InsertReader(newValue); }
+    { G4cout << " Call InsertReader for compressedVoxel \n"; GetVoxelParameterizedInserter()->InsertReader(newValue); }
 
   else if ( command == RemoveReaderCmd )
     { GetVoxelParameterizedInserter()->RemoveReader(); }

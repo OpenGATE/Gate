@@ -1056,7 +1056,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
       if ( newValues != "NULL" ) {
         if (newValues.substr( newValues.length()-5 ) != "_phys" )
           newValues += "_phys";
-        G4cout << "Confirming confinement to volume '" << newValues << "'..." << Gateendl ;
+        G4cout << "Confirming confinement to volume '" << newValues << "'...\n" ;
       }
       fParticleGun->GetPosDist()->ConfineSourceToVolume( newValues ) ;
     }
@@ -1065,7 +1065,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
       if ( newValues != "NULL") {
         if (newValues.substr( newValues.length()-5 ) != "_phys" )
           newValues += "_phys";
-        G4cout << "Confirming activity forbidden in volume '" << newValues << "'..." << Gateendl;
+        G4cout << "Confirming activity forbidden in volume '" << newValues << "'...\n";
       }
       fParticleGun->GetPosDist()->ForbidSourceToVolume(newValues);
     }
@@ -1522,7 +1522,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
 ///////////////////////////////// Yann PERROT, Simon NICOLAS LPC Clermont-ferrand ////////////////////////////////////////////////
   else
     {
-      G4cout << "Error entering command" << Gateendl;
+      G4cout << "Error entering command\n";
     }
 
 
@@ -1590,7 +1590,7 @@ void GateSingleParticleSourceMessenger::IonCommand( G4String newValues )
       if( ion==0 )
         {
           G4cout << "Ion with Z=" << fAtomicNumber ;
-          G4cout << " A=" << fAtomicMass << "is not be defined" << Gateendl ;
+          G4cout << " A=" << fAtomicMass << "is not be defined\n" ;
         }
       else
         {

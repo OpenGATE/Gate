@@ -43,8 +43,8 @@ void GateGeometryVoxelImageReader::Describe(G4int level)
 void GateGeometryVoxelImageReader::ReadFile(G4String fileName)
 {
   if (m_voxelTranslator == NULL) {
-    G4cout << "GateGeometryVoxelImageReader::ReadFile: WARNING: Insert the translator before reading the image" << Gateendl
-	   << "                                                 Reading aborted." << Gateendl;
+    G4cout << "GateGeometryVoxelImageReader::ReadFile: WARNING: Insert the translator before reading the image\n"
+	   << "                                                 Reading aborted.\n";
     return;
   }
 
@@ -80,7 +80,7 @@ void GateGeometryVoxelImageReader::ReadFile(G4String fileName)
 	  G4Material* material = mMaterialDatabase.GetMaterial(materialName);
 	  AddVoxel(ix, iy, iz, material);
 	} else {
-	  G4cout << "GateSourceVoxelImageReader::ReadFile: WARNING: voxel not added (material translation not found)" << Gateendl;
+	  G4cout << "GateSourceVoxelImageReader::ReadFile: WARNING: voxel not added (material translation not found)\n";
 	}
       }
     }
@@ -96,7 +96,7 @@ void GateGeometryVoxelImageReader::ReadFile(G4String fileName)
   if (m_compressor) {
     Compress();
     EmptyStore();
-    G4cout << "GateSourceVoxelImageReader::ReadFile: For your information, the voxel store has been emptied." << Gateendl;
+    G4cout << "GateSourceVoxelImageReader::ReadFile: For your information, the voxel store has been emptied.\n";
   }
   
 
@@ -155,7 +155,7 @@ if ( Ph != 0)
    G4Material* material = mMaterialDatabase.GetMaterial(materialName);
    AddVoxel(ix, iy, iz, material);
  } else {
-   G4cout << "GateSourceVoxelImageReader::ReadFile: WARNING: voxel not added (material translation not found)" << Gateendl;
+   G4cout << "GateSourceVoxelImageReader::ReadFile: WARNING: voxel not added (material translation not found)\n";
  }
       }
     }
@@ -167,7 +167,7 @@ if ( Ph != 0)
 
   if (m_compressor) {
     Compress();
-    G4cout << "GateGeometryVoxelImageReader::ReadFile: For your information, the voxel store has been emptied." << Gateendl;
+    G4cout << "GateGeometryVoxelImageReader::ReadFile: For your information, the voxel store has been emptied.\n";
   }
  
 }

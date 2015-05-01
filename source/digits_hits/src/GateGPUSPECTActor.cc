@@ -68,7 +68,7 @@ GateGPUSPECTActor::~GateGPUSPECTActor()  {
 //-----------------------------------------------------------------------------
 /// Construct
 void GateGPUSPECTActor::Construct() {
-  GateDebugMessageInc("Actor", 4, "GateGPUSPECTActor -- Construct - begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "GateGPUSPECTActor -- Construct - begin\n");
   GateVActor::Construct();
 
   // Enable callbacks
@@ -79,7 +79,7 @@ void GateGPUSPECTActor::Construct() {
   EnableUserSteppingAction(true);
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateGPUSPECTActor -- Construct - end" << Gateendl);
+  GateMessageDec("Actor", 4, "GateGPUSPECTActor -- Construct - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -330,7 +330,7 @@ void GateGPUSPECTActor::EndOfRunAction(const G4Run *)
 void GateGPUSPECTActor::UserSteppingAction(const GateVVolume * /*v*/,
                                               const G4Step * step)
 {
-  GateDebugMessage("Actor", 4, "GateGPUSPECTActor -- UserSteppingAction" << Gateendl);
+  GateDebugMessage("Actor", 4, "GateGPUSPECTActor -- UserSteppingAction\n");
 
   //DD("GateGPUSPECTActor::UserSteppingAction");
 

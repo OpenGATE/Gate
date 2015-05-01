@@ -35,5 +35,5 @@ GateVOutputModule::~GateVOutputModule()
 */
 void GateVOutputModule::Describe(size_t indent)
 {
-  G4cout << Gateendl << GateTools::Indent(indent) << "Output module: '" << m_name << "'" << Gateendl;
+  G4cout << Gateendl << GateTools::Indent(indent) << "Output module: '" << m_name << "'\n";
 }

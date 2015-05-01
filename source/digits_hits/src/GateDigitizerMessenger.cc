@@ -27,7 +27,7 @@ See GATE/LICENSE.txt for further details
 GateDigitizerMessenger::GateDigitizerMessenger(GateDigitizer* itsDigitizer)
 : GateClockDependentMessenger( itsDigitizer)
 {
-//  G4cout << " DEBUT Constructor GateDigitizerMessenger " << Gateendl;
+//  G4cout << " DEBUT Constructor GateDigitizerMessenger \n";
 
   const G4String& elementTypeName = itsDigitizer->GetElementTypeName();
 
@@ -61,7 +61,7 @@ GateDigitizerMessenger::GateDigitizerMessenger(GateDigitizer* itsDigitizer)
 
   pInsertCmd->SetCandidates(DumpMap());
 
-//  G4cout << " FIN Constructor GateDigitizerMessenger " << Gateendl;
+//  G4cout << " FIN Constructor GateDigitizerMessenger \n";
 }
 
 

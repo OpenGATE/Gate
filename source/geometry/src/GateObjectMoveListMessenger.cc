@@ -95,7 +95,7 @@ void GateObjectMoveListMessenger::ListChoices()
 void GateObjectMoveListMessenger::DoInsertion(const G4String& moveTypeName)
 {
 
-  //   G4cout << " *** GateObjectMoveListMessenger::DoInsertion " << Gateendl;
+  //   G4cout << " *** GateObjectMoveListMessenger::DoInsertion \n";
   //   G4cout << " *** moveTypeName = " << moveTypeName << Gateendl;
       
   if (GetNewInsertionBaseName().empty())

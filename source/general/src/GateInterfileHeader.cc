@@ -40,7 +40,7 @@ void GateInterfileHeader::ReadHeader(G4String headerFileName)
   m_headerFileName = headerFileName;
   FILE* fp=fopen(m_headerFileName.c_str(),"r");
   if (!fp) {
-    G4cerr << Gateendl << "Error: Could not open header file '" << m_headerFileName << "'!" << Gateendl;
+    G4cerr << Gateendl << "Error: Could not open header file '" << m_headerFileName << "'!\n";
     return;
   }
   while ( (!feof(fp)) && (!ferror(fp)))
@@ -55,8 +55,8 @@ void GateInterfileHeader::ReadHeader(G4String headerFileName)
   for (G4int i=0; i<2; i++)
     m_matrixSize[i] = m_dim[i] * m_pixelSize[i];
 
-  G4cout << " Header read from       '" << m_headerFileName << "'" << Gateendl;
-  G4cout << " Data file name         '" << m_dataFileName << "'" << Gateendl;
+  G4cout << " Header read from       '" << m_headerFileName << "'\n";
+  G4cout << " Data file name         '" << m_dataFileName << "'\n";
   G4cout << " Nb of planes:           " << m_numPlanes << Gateendl;
   G4cout << " Nb of pixels per plane: " << m_dim[0] << " " << m_dim[1] << Gateendl;
   G4cout << " Pixel size:             " << m_pixelSize[0] << " " << m_pixelSize[1] << Gateendl;
@@ -69,7 +69,7 @@ void GateInterfileHeader::ReadHeader(G4String headerFileName)
   G4cout << Gateendl;
 
   if ( ( m_dim[0]==0) || ( m_dim[1]==0) || ( m_numPlanes==0) ) {
-    G4cerr << Gateendl <<"Error: one of the matrix dimensions is zero!" << Gateendl;
+    G4cerr << Gateendl <<"Error: one of the matrix dimensions is zero!\n";
     return;
   }
   m_isHeaderInfoRead = true;
@@ -183,20 +183,20 @@ void GateInterfileHeader::ReadKey(FILE* fp)
     else if ( (strcmp(value,"signed integer")==0) || (strcmp(value,"SIGNED INTEGER")==0) )
       m_dataTypeName = "SIGNED INTEGER";
     else
-      G4cout << "Unrecognised type name '" << value << "'" << Gateendl;
+      G4cout << "Unrecognised type name '" << value << "'\n";
   } else if (key == "imagedata byte order") {
     if ( strcmp(value,"BIGENDIAN") == 0 )
       m_dataByteOrder = BIG_ENDIAN;
     else if ( strcmp(value,"LITTLEENDIAN") == 0)
       m_dataByteOrder = LITTLE_ENDIAN;
     else
-      G4cerr << "Unrecognized data byte order '" + G4String(value) + "', assuming default BIGENDIAN\n" << Gateendl;
+      G4cerr << "Unrecognized data byte order '" + G4String(value) + "', assuming default BIGENDIAN\n\n";
   } else if ( key ==  "number of bytes per pixel" ) {
       sscanf(value,"%d",&m_bytePerPixel);
   } else if ( key ==  "data offset in bytes" ) {
       sscanf(value,"%d",&m_offset);
   } else {
-    // G4cout << "Key not processed: '" << key << "'" << Gateendl;
+    // G4cout << "Key not processed: '" << key << "'\n";
   }
 }
 //-----------------------------------------------------------------------------

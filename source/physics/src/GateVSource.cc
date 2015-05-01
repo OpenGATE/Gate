@@ -302,7 +302,7 @@ G4double GateVSource::GetNextTime( G4double timeStart )
               else 
                 if (nVerboseLevel>0) 
                   G4cout << "GateVSource::GetNextTime : NULL ParticleDefinition for source " 
-                         << GetName() << " assumed stable " << Gateendl;
+                         << GetName() << " assumed stable \n";
             }
         }
       if( nVerboseLevel > 0 )
@@ -360,11 +360,11 @@ void GateVSource::Dump( G4int level )
          << "  forcedHalfLife (s) : " << GetForcedHalfLife()/s << Gateendl
          << "  verboseLevel       : " << nVerboseLevel << Gateendl
          << "  relative to vol    : " << mRelativePlacementVolumeName << Gateendl
-         << "---------------------- " << Gateendl
+         << "---------------------- \n"
          << Gateendl;
   if( level > 0 )
     {
-      G4cout << "    GPS info ----------------> " << Gateendl;
+      G4cout << "    GPS info ----------------> \n";
       if( GetParticleDefinition() )
         G4cout << "    particle                 : " 
                << GetParticleDefinition()->GetParticleName() 
@@ -398,7 +398,7 @@ void GateVSource::Dump( G4int level )
              << "    MinPhi, MaxPhi     (deg) : " 
              << m_angSPS->GetMinPhi()/deg << " " << m_angSPS->GetMaxPhi()/deg 
              << Gateendl
-             << "    -------------------------- " << Gateendl
+             << "    -------------------------- \n"
              << Gateendl;
     }
 }
@@ -477,7 +477,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
                       << " mom=" << p->GetMomentum()
                       << " ptime=" <<  G4BestUnit(p->GetProperTime(), "Time")
                       << " atime=" <<  G4BestUnit(GetTime(), "Time")
-                      << ")" << Gateendl);  
+                      << ")\n");  
         }
       }
 
@@ -511,13 +511,13 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       /// READ DATA FROM ROOT FILE
       GateToRoot* gateToRoot = (GateToRoot* ) ( GateOutputMgr::GetInstance()->GetModule("root") );
       if ( gateToRoot == 0 )
-        { G4cout <<" GateSource::GeneratePrimaries ERROR : In DETECTOR MODE : NO GateToRoot Module...Cannot retrieve Tracker Data " << Gateendl;
+        { G4cout <<" GateSource::GeneratePrimaries ERROR : In DETECTOR MODE : NO GateToRoot Module...Cannot retrieve Tracker Data \n";
           exit(1);
         }
       if ( gateToRoot->CheckEOF() == 1 ) // end of File reached
         {
           // check if there is some more Tracks Root File to Read
-          G4cout << " GateSource::GeneratePrimaries   End of Tracks Root file reached ... Seeking for more files to open." << Gateendl;
+          G4cout << " GateSource::GeneratePrimaries   End of Tracks Root file reached ... Seeking for more files to open.\n";
           G4int test_next = myAction->SeekNewFile(true);
           if ( test_next == 0 )
             {
@@ -722,7 +722,7 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
             G4cout << "    Direction: " << particle_momentum_direction << Gateendl;
           }
           if( nVerboseLevel > 2 ) {
-            G4cout << "Creating primaries and assigning to vertex" << Gateendl;
+            G4cout << "Creating primaries and assigning to vertex\n";
           }
         } // end loop on NumberOfParticles
 
@@ -747,7 +747,7 @@ G4String nameMaterial = material->GetName();*/
       G4PrimaryVertex* vertex =  new G4PrimaryVertex(G4ThreeVector(0.,0.,0.),GetTime());
 
       if(GetVerboseLevel() > 0)
-        G4cout << "Creating primaries and assigning to vertex" << Gateendl;
+        G4cout << "Creating primaries and assigning to vertex\n";
 
       for( G4int i=0; i<GetNumberOfParticles(); i++ )
         {
@@ -758,7 +758,7 @@ G4String nameMaterial = material->GetName();*/
       aEvent->AddPrimaryVertex( vertex );
     }
   if( nVerboseLevel > 1 )
-    G4cout << " Primary Vertex generated !" << Gateendl;
+    G4cout << " Primary Vertex generated !\n";
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -846,8 +846,8 @@ void GateVSource::ChangeParticleMomentumRelativeToAttachedVolume(G4ParticleMomen
 //----------------------------------------------------------------------------------------
 void GateVSource::InitializeUserFluence()
 {
-  GateMessage("Beam", 0, "WARNING message :" << Gateendl);
-  GateMessage("Beam", 0, "You are using a userFluenceImage source. Type, shape, size are automatically extracted from the image." << Gateendl);
+  GateMessage("Beam", 0, "WARNING message :\n");
+  GateMessage("Beam", 0, "You are using a userFluenceImage source. Type, shape, size are automatically extracted from the image.\n");
   
   if(mUserFluenceFilename == "")
   {

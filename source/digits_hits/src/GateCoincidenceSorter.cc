@@ -81,8 +81,8 @@ void GateCoincidenceSorter::Describe(size_t indent)
   G4cout << GateTools::Indent(indent) << "Coincidence offset: " << G4BestUnit(m_offset,"Time") << Gateendl;
   G4cout << GateTools::Indent(indent) << "Coincidence offset jitter: " << G4BestUnit(m_offsetJitter,"Time") << Gateendl;
   G4cout << GateTools::Indent(indent) << "Min sector diff.:   " << m_minSectorDifference << Gateendl;
-  G4cout << GateTools::Indent(indent) << "Input:              '" << m_inputName << "'" << Gateendl;
-  G4cout << GateTools::Indent(indent) << "Output:             '" << m_outputName << "'" << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Input:              '" << m_inputName << "'\n";
+  G4cout << GateTools::Indent(indent) << "Output:             '" << m_outputName << "'\n";
 }
 //------------------------------------------------------------------------------------------------------
 
@@ -143,10 +143,10 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
 
   // C. Comtat, 07.02.2006
   if (m_offset > 0.0 && m_offset/s < MIN_COINC_OFFSET) {
-    G4cout << "Delayed coincidences offset (" << m_offset/s << " sec) should be bigger or equal to " << MIN_COINC_OFFSET << " sec" << Gateendl;
+    G4cout << "Delayed coincidences offset (" << m_offset/s << " sec) should be bigger or equal to " << MIN_COINC_OFFSET << " sec\n";
     G4Exception( "GateCoincidenceSorter::ProcessSinglePulseList", "ProcessSinglePulseList", FatalException, "Goodbye\n");
   } else if (m_coincidenceWindow/s > MIN_COINC_OFFSET/4) {
-    G4cout << "Coincidence window (" << m_coincidenceWindow/s << " sec) should be smaller or equal to " << MIN_COINC_OFFSET/4 << " sec" << Gateendl;
+    G4cout << "Coincidence window (" << m_coincidenceWindow/s << " sec) should be smaller or equal to " << MIN_COINC_OFFSET/4 << " sec\n";
     G4Exception( "GateCoincidenceSorter::ProcessSinglePulseList", "ProcessSinglePulseList", FatalException, "Goodbye\n");
   }
 
@@ -221,7 +221,7 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
       } else if (m_multiplesPolicy==kKeepAll){
 	if ( (outputPulse->size()>=2) ) {
 	  if (nVerboseLevel>=1)
-	    G4cout << "[GateCoincidenceSorter::ProcessPulseList]: adding coincidence pulse " << Gateendl
+	    G4cout << "[GateCoincidenceSorter::ProcessPulseList]: adding coincidence pulse \n"
 		   << *outputPulse << Gateendl;
     	    if ( (outputPulse->size()==2) && !CoincidentPulseIsValid(outputPulse))
 	    	outputPulse->push_back( new GatePulse((*outputPulse)[0])); // to ensure that the coinc is killed by multiple killer
@@ -233,7 +233,7 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
 	GateCoincidencePulse* toRegister=FindIfOnlyOneGood(outputPulse);
 	if ( toRegister) {
 	  if (nVerboseLevel>=1)
-	    G4cout << "[GateCoincidenceSorter::ProcessPulseList]: adding coincidence pulse " << Gateendl
+	    G4cout << "[GateCoincidenceSorter::ProcessPulseList]: adding coincidence pulse \n"
 		   << *toRegister << Gateendl;
 	    m_digitizer->StoreCoincidencePulse(toRegister);
 	}
@@ -413,7 +413,7 @@ void GateCoincidenceSorter::DispatchPulses(const GatePulseList* inputPulseList)
       	// The incoming pulse is in coincidence with the 'current' pulse: store it there
       	m_coincidentPulses->push_back( new GatePulse(**iter) );
       	if (nVerboseLevel>1)
-      	  G4cout << "[GateCoincidenceSorter::ProcessPulseList]: appended new pulse into current coincidence pulse: " << Gateendl
+      	  G4cout << "[GateCoincidenceSorter::ProcessPulseList]: appended new pulse into current coincidence pulse: \n"
 	      	 << **iter << Gateendl;
     } else {
        // The incoming pulse is not in coincidence with the 'current' pulse: store it in the 'next' coincident pulse
@@ -428,7 +428,7 @@ void GateCoincidenceSorter::DispatchPulses(const GatePulseList* inputPulseList)
        // start time, one can mark the current pulse list as completely filled
        if (m_coincidentPulses->IsAfterWindow(*iter) ) m_isCurrentFinished=true;
        if (nVerboseLevel>1)
-      	  G4cout << "[GateCoincidenceSorter::ProcessPulseList]: appended new pulse into waiting pulse list: " << Gateendl
+      	  G4cout << "[GateCoincidenceSorter::ProcessPulseList]: appended new pulse into waiting pulse list: \n"
 	      	 << **iter << Gateendl;
     }
   }
@@ -455,7 +455,7 @@ G4bool GateCoincidenceSorter::CoincidentPulseIsValid(GateCoincidencePulse* outpu
   if (outputPulse->size() < 2 ) {
     // Nop, we don't have a coincidence: erase and return 0
     if (nVerboseLevel>=1)
-        G4cout << "[GateCoincidenceSorter::CoincidentPulseIsValid]: deleting coincidence pulse with only 1 single " << Gateendl
+        G4cout << "[GateCoincidenceSorter::CoincidentPulseIsValid]: deleting coincidence pulse with only 1 single \n"
 	       << *outputPulse << Gateendl;
     return false;
   }
@@ -466,7 +466,7 @@ G4bool GateCoincidenceSorter::CoincidentPulseIsValid(GateCoincidencePulse* outpu
       if ( IsForbiddenCoincidence(*iter1,*iter2) )
       {
       	if (nVerboseLevel>=1)
-          G4cout << "[GateCoincidenceSorter::ProcessPulseList]: deleting coincidence pulse with forbidden coincidence " << Gateendl
+          G4cout << "[GateCoincidenceSorter::ProcessPulseList]: deleting coincidence pulse with forbidden coincidence \n"
 	      	 << *outputPulse << Gateendl;
       	if (!any) return false;
       } else if (any) return true;

@@ -259,13 +259,13 @@ void GateDetectorConstruction::DestroyGeometry()
   nGeometryStatus = changeLevel;
 
   if (nGeometryStatus == 0){
-  GateMessage("Geometry", 3, "   The geometry is uptodate." << Gateendl;);
+  GateMessage("Geometry", 3, "   The geometry is uptodate.\n";);
   }
   else if (nGeometryStatus == 1){
-  GateMessage("Geometry", 3, "   The geometry needs to be uptodated." << Gateendl;);
+  GateMessage("Geometry", 3, "   The geometry needs to be uptodated.\n";);
   }
   else if (nGeometryStatus == 2){
-  GateMessage("Geometry", 3, "   The geometry needs to be rebuilt." << Gateendl;);
+  GateMessage("Geometry", 3, "   The geometry needs to be rebuilt.\n";);
   }
 
   if (flagAutoUpdate){
@@ -298,7 +298,7 @@ void GateDetectorConstruction::ClockHasChanged()
 /*PY Descourt 08/09/2008 */
 void GateDetectorConstruction::insertARFSD( G4String aName , G4int stage )
 {
-  G4cout << " GateDetectorConstruction::insertARFSD  entered " << Gateendl;
+  G4cout << " GateDetectorConstruction::insertARFSD  entered \n";
 
   if ( m_ARFSD == 0 )
     {

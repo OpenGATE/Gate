@@ -103,12 +103,12 @@ void GateTorus::DestroyOwnSolidAndLogicalVolume()
 
 void GateTorus::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: torus (torus)" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Shape: torus (torus)\n";
   G4cout << GateTools::Indent(level) << "Inner radius: " << G4BestUnit(m_innerR,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Outer radius: " << G4BestUnit(m_outerR,"Length") << Gateendl;
   G4cout << GateTools::Indent(level) << "Toroidal radius: " << G4BestUnit(m_torusR,"Length") << Gateendl;
-  G4cout << GateTools::Indent(level) << "Start angle of the segment: " << m_startPhi / degree << " deg" << Gateendl;
-  G4cout << GateTools::Indent(level) << "Delta angle of the segment: " << m_deltaPhi / degree << " deg" << Gateendl;
+  G4cout << GateTools::Indent(level) << "Start angle of the segment: " << m_startPhi / degree << " deg\n";
+  G4cout << GateTools::Indent(level) << "Delta angle of the segment: " << m_deltaPhi / degree << " deg\n";
 
 }
 

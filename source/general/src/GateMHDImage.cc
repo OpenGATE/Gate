@@ -46,7 +46,7 @@ GateMHDImage::~GateMHDImage() {
 void GateMHDImage::ReadHeader(std::string & filename)
 {
   GateMessage("Image",5,"GateMHDImage::ReadMHD " << filename << Gateendl);
-  //std::cout << "*** WARNING *** The mhd reader is experimental... (itk version)" << Gateendl;
+  //std::cout << "*** WARNING *** The mhd reader is experimental... (itk version)\n";
 
   MetaImage m_MetaImage;
   if(!m_MetaImage.Read(filename.c_str(), false)) {
@@ -54,7 +54,7 @@ void GateMHDImage::ReadHeader(std::string & filename)
   }
 
   if (m_MetaImage.NDims() != 3) {
-    GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort." << Gateendl);
+    GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort.\n");
   }
 
   for(int i=0; i<m_MetaImage.NDims(); i++) {

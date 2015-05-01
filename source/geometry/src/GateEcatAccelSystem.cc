@@ -87,7 +87,7 @@ void GateEcatAccelSystem::Describe(size_t indent)
 */
 void GateEcatAccelSystem::PrintToStream(std::ostream& aStream,G4bool doPrintNumbers)
 {
-  aStream << " >> geometrical design type: " << "ECAT ACCEL" << Gateendl;
+  aStream << " >> geometrical design type: " << "ECAT ACCEL\n";
 
   aStream << " >> ring diameter: " << G4BestUnit( 2*ComputeInternalRadius() ,"Length")   << Gateendl;
 

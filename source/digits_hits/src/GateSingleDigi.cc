@@ -58,9 +58,9 @@ void GateSingleDigi::Print()
 
 std::ostream& operator<<(std::ostream& flux, const GateSingleDigi& digi)
 {
-  flux    << "GateSingleDigi(" << Gateendl
+  flux    << "GateSingleDigi(\n"
 	  << digi.m_pulse
-      	  << ")" << Gateendl;
+      	  << ")\n";
 
   return flux;
 }
