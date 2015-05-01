@@ -46,7 +46,7 @@ void GateEnergyEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePulse
    }
    GateVSystem* system = GateSystemListManager::GetInstance()->GetSystem(0);
    if (!system){
-      G4cerr<<"[GateEnergyEfficiency::ProcessOnePulse] Problem : no system defined"<<Gateendl;
+      G4cerr<<"[GateEnergyEfficiency::ProcessOnePulse] Problem : no system defined\n";
       return ;
    }
    G4double eff = m_efficiency->Value(inputPulse->GetEnergy());

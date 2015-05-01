@@ -19,11 +19,11 @@
 //-----------------------------------------------------------------------------
 GateParticleInVolumeActor::GateParticleInVolumeActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateParticleInVolumeActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateParticleInVolumeActor() -- begin\n");
   outsideTrack = false;
   mIsParticleInVolumeImageEnabled = true;
   pMessenger = new GateImageActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateParticleInVolumeActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateParticleInVolumeActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 

@@ -39,10 +39,10 @@ G4bool GateAngleFilter::Accept(const G4Track* aTrack)
 
 //---------------------------------------------------------------------------
 void GateAngleFilter::show(){
-  G4cout << "------Filter: "<<GetObjectName()<<" particle list------"<<Gateendl;
+  G4cout << "------Filter: "<<GetObjectName()<<" particle list------\n";
   G4cout << " Direction   "<< mDirection  <<Gateendl;
   G4cout << " Angle   "<< mAngle  <<Gateendl;
-  G4cout << "-------------------------------------------"<<Gateendl;
+  G4cout << "-------------------------------------------\n";
 }
 //---------------------------------------------------------------------------
 

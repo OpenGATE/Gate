@@ -558,7 +558,7 @@ void GateSteppingAction::SetTxtOut(G4String aString)
 {
   if ( aString == "On" ) { TxtOn = 1;return; }
   if ( aString == "Off" ) { TxtOn = 0;return; }
-  G4cout << " GateSteppingAction::SetTxtOut : WARNING " << aString<< " in command SetTxtOuput is not correct. IGNORED!!!"<<Gateendl;
+  G4cout << " GateSteppingAction::SetTxtOut : WARNING " << aString<< " in command SetTxtOuput is not correct. IGNORED!!!\n";
 }
 
 
@@ -568,25 +568,25 @@ void GateSteppingAction::StopOnBoundary(G4int aI)
 void GateSteppingAction::StopAndKill(G4String aString )
 {
   if (aString == "KeepOnlyPhotons") {fKeepOnlyPhotons = 1;
-    G4cout << " GateSteppingAction Module Message : Only Photons are stored."<<Gateendl;
+    G4cout << " GateSteppingAction Module Message : Only Photons are stored.\n";
   }
   if (aString == "KeepOnlyElectrons") {fKeepOnlyElectrons = 1;
-    G4cout << " GateSteppingAction Module Message : Only Electrons are stored."<<Gateendl;
+    G4cout << " GateSteppingAction Module Message : Only Electrons are stored.\n";
   }
   if (aString == "StopAndKill") {fStpAKill = fStopAndKill;
-    G4cout << " GateSteppingAction Module Message : Once a Particle reaches Phantom Boundaries its Secondaries are Kept Alive"<<Gateendl;
+    G4cout << " GateSteppingAction Module Message : Once a Particle reaches Phantom Boundaries its Secondaries are Kept Alive\n";
   }
 
   if (aString == "KillTrackAndSecondaries") {fStpAKill = fKillTrackAndSecondaries;
-    G4cout << " GateSteppingAction Module Message : Once a Particle reaches Phantom Boundaries its Secondaries are Killed at the same time"<<Gateendl;
+    G4cout << " GateSteppingAction Module Message : Once a Particle reaches Phantom Boundaries its Secondaries are Killed at the same time\n";
   }
 
   if ( aString == "KeepAll" ) { fKeepOnlyP = 0;
-    G4cout << " GateSteppingAction Module Message : All Particles are stored once they reached the Phantom Boundaries."<<Gateendl;
+    G4cout << " GateSteppingAction Module Message : All Particles are stored once they reached the Phantom Boundaries.\n";
   }
 
   if ( aString == "KeepOnlyPrimaries" ) { fKeepOnlyP = 1;
-    G4cout << " GateSteppingAction Module Message : Only Primary Particles are stored once they reached the Phantom Boundaries."<<Gateendl;
+    G4cout << " GateSteppingAction Module Message : Only Primary Particles are stored once they reached the Phantom Boundaries.\n";
   }
   G4String msg("Off");
   if ( Boundary == 1 )msg = "On";

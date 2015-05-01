@@ -32,7 +32,7 @@
 //-----------------------------------------------------------------------------
 GateGPUSPECTActor::GateGPUSPECTActor(G4String name, G4int depth):
   GateVActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateGPUSPECTActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateGPUSPECTActor() -- begin\n");
   gpu_input = 0;
   mGPUDeviceID = 0;
   max_buffer_size = 5;
@@ -52,7 +52,7 @@ GateGPUSPECTActor::GateGPUSPECTActor(G4String name, G4int depth):
   mLinearRepVecY = 0.0;
   mLinearRepVecZ = 0.0;
   pMessenger = new GateGPUSPECTActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateGPUSPECTActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateGPUSPECTActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 

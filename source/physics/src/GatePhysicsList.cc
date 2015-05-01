@@ -191,6 +191,7 @@ void GatePhysicsList::ConstructProcess()
   if(mLoadState==0)
     {
       // AddTransportation(); // not set here. Set only if no physics list builder is used
+      //Does GetTheListOfProcesss() needs to be called every time??
       for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
 	{
 	  theListOfPBName.push_back((*GetTheListOfProcesss())[i]->GetG4ProcessName());
@@ -418,23 +419,23 @@ void GatePhysicsList::ConstructParticle()
 void GatePhysicsList::Print(G4String type, G4String particlename)
 {
 
-  if(type=="Initialized") std::cout<<"\n\nList of initialized processes:\n"<<Gateendl;
-  else if(type=="Enabled") std::cout<<"\n\nList of Enabled processes:\n"<<Gateendl;
-  else if(type=="Available") std::cout<<"\n\nList of Available processes:\n"<<Gateendl;
+  if(type=="Initialized") std::cout<<"\n\nList of initialized processes:\n\n";
+  else if(type=="Enabled") std::cout<<"\n\nList of Enabled processes:\n\n";
+  else if(type=="Available") std::cout<<"\n\nList of Available processes:\n\n";
 
   if(type=="Enabled")
     {
-      if(particlename != "All") std::cout<<"   ***  "<<particlename<<"  ***"<<Gateendl;
+      if(particlename != "All") std::cout<<"   ***  "<<particlename<<"  ***\n";
       for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
 	(*GetTheListOfProcesss())[i]->PrintEnabledParticles(particlename);
 
-      std::cout<<"\n"<<Gateendl;
+      std::cout<<Gateendl;
     }
 
   if(type=="Initialized")
     {
       Print(particlename);
-      std::cout<<"\n"<<Gateendl;
+      std::cout<<Gateendl;
     }
 
   if(type=="Available")
@@ -449,32 +450,32 @@ void GatePhysicsList::Print(G4String type, G4String particlename)
 	  DataSets = (*GetTheListOfProcesss())[i]->GetTheListOfDataSets();
 	  Models = (*GetTheListOfProcesss())[i]->GetTheListOfModels();
 	  if((*GetTheListOfProcesss())[i]->GetProcessInfo()!="")
-	    std::cout<<"  * "<<(*GetTheListOfProcesss())[i]->GetG4ProcessName()<<" ("<<(*GetTheListOfProcesss())[i]->GetProcessInfo()<<")"<<Gateendl;
+	    std::cout<<"  * "<<(*GetTheListOfProcesss())[i]->GetG4ProcessName()<<" ("<<(*GetTheListOfProcesss())[i]->GetProcessInfo()<<")\n";
 	  else std::cout<<"  * "<<(*GetTheListOfProcesss())[i]->GetG4ProcessName()<<Gateendl;
 
-	  if(DefaultParticles.size() > 1) std::cout<<"     - Default particles: "<<Gateendl;
-	  else if(DefaultParticles.size() == 1) std::cout<<"     - Default particle: "<<Gateendl;
+	  if(DefaultParticles.size() > 1) std::cout<<"     - Default particles: \n";
+	  else if(DefaultParticles.size() == 1) std::cout<<"     - Default particle: \n";
 	  for(unsigned int i1=0; i1<DefaultParticles.size(); i1++)
 	    {
 	      std::cout<<"        + "<<DefaultParticles[i1]<<Gateendl;
 	    }
 
-	  if(Models.size() > 1) std::cout<<"     - Models: "<<Gateendl;
-	  else if(Models.size() == 1) std::cout<<"     - Model: "<<Gateendl;
+	  if(Models.size() > 1) std::cout<<"     - Models: \n";
+	  else if(Models.size() == 1) std::cout<<"     - Model: \n";
 	  for(unsigned int i1=0; i1<Models.size(); i1++)
 	    {
 	      std::cout<<"        + "<<Models[i1]<<Gateendl;
 	    }
 
-	  if(DataSets.size() > 1) std::cout<<"     - DataSets: "<<Gateendl;
-	  if(DataSets.size() == 1) std::cout<<"     - DataSet: "<<Gateendl;
+	  if(DataSets.size() > 1) std::cout<<"     - DataSets: \n";
+	  if(DataSets.size() == 1) std::cout<<"     - DataSet: \n";
 	  for(unsigned int i1=0; i1<DataSets.size(); i1++)
 	    {
 	      std::cout<<"        + "<<DataSets[i1]<<Gateendl;
 	    }
 	  std::cout<<Gateendl;
 	}
-      std::cout<<"\n"<<Gateendl;
+      std::cout<<Gateendl;
     }
 
 }

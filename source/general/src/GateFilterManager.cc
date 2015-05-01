@@ -71,13 +71,13 @@ G4bool GateFilterManager::Accept(const G4Track* aTrack) const
 
 //---------------------------------------------------------------------------
 void GateFilterManager::show(){
-  G4cout << "------Filter Manager: "<<mFilterName<<" ------"<<Gateendl;
+  G4cout << "------Filter Manager: "<<mFilterName<<" ------\n";
 
   std::vector<GateVFilter*>::iterator sit;
   for(sit= theFilters.begin(); sit!=theFilters.end(); ++sit)
      (*sit)->show();
   
-  G4cout << "-------------------------------------------"<<Gateendl;
+  G4cout << "-------------------------------------------\n";
 }
 //---------------------------------------------------------------------------
 

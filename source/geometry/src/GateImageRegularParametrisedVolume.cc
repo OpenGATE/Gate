@@ -36,10 +36,10 @@ GateImageRegularParametrisedVolume::GateImageRegularParametrisedVolume(const G4S
 								     G4int depth)
   : GateVImageVolume(name,acceptsChildren,depth)
 {
-  GateMessageInc("Volume",5,"Begin GateImageRegularParametrisedVolume("<<name<<")"<<Gateendl);
+  GateMessageInc("Volume",5,"Begin GateImageRegularParametrisedVolume("<<name<<")\n");
   pMessenger = new GateImageRegularParametrisedVolumeMessenger(this);
   SetSkipEqualMaterialsFlag(false);
-  GateMessageDec("Volume",5,"End GateImageRegularParametrisedVolume("<<name<<")"<<Gateendl);
+  GateMessageDec("Volume",5,"End GateImageRegularParametrisedVolume("<<name<<")\n");
 }
 ///---------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ GateImageRegularParametrisedVolume::GateImageRegularParametrisedVolume(const G4S
 /// Destructor
 GateImageRegularParametrisedVolume::~GateImageRegularParametrisedVolume()
 {
-  GateMessageInc("Volume",5,"Begin ~GateImageRegularParametrisedVolume()"<<Gateendl);
+  GateMessageInc("Volume",5,"Begin ~GateImageRegularParametrisedVolume()\n");
   if (pMessenger) delete pMessenger;
 
   delete mImagePhysVol;
@@ -56,14 +56,14 @@ GateImageRegularParametrisedVolume::~GateImageRegularParametrisedVolume()
   delete mVoxelLog;
   delete mImageData;
 
-  GateMessageDec("Volume",5,"End ~GateImageRegularParametrisedVolume()"<<Gateendl);
+  GateMessageDec("Volume",5,"End ~GateImageRegularParametrisedVolume()\n");
 }
 ///---------------------------------------------------------------------------
 
 ///---------------------------------------------------------------------------
 void GateImageRegularParametrisedVolume::SetSkipEqualMaterialsFlag(bool b)
 {
-G4cout<<"### WARNING ### setSkipEqualMaterials at false !! The Geant4 method is not safe since the release 9.5 - Need to be fixed"<<Gateendl;
+G4cout<<"### WARNING ### setSkipEqualMaterials at false !! The Geant4 method is not safe since the release 9.5 - Need to be fixed\n";
   mSkipEqualMaterialsFlag = b;
 }
 ///---------------------------------------------------------------------------

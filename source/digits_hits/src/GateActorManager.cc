@@ -17,19 +17,19 @@
 //-----------------------------------------------------------------------------
 GateActorManager::GateActorManager()
 {
-  GateDebugMessageInc("Actor",4,"GateActorManager() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateActorManager() -- begin\n");
 
   pActorManagerMessenger = new GateActorManagerMessenger(this);
   IsInitialized =0;
   resetAfterSaving = false;
-  GateDebugMessageDec("Actor",4,"GateActormanager() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateActormanager() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 GateActorManager::~GateActorManager()
 {
-  GateDebugMessageInc("Actor",4,"~GateActorManager() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"~GateActorManager() -- begin\n");
 
   theListOfActorsEnabledForBeginOfRun.clear();
   theListOfActorsEnabledForEndOfRun.clear();
@@ -54,7 +54,7 @@ GateActorManager::~GateActorManager()
 
   delete pActorManagerMessenger;
 
-  GateDebugMessageDec("Actor",4,"~GateActormanager() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"~GateActormanager() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -64,11 +64,11 @@ bool GateActorManager::GetResetAfterSaving() const { return resetAfterSaving; }
 //-----------------------------------------------------------------------------
 void GateActorManager::AddActor(G4String actorType, G4String actorName, int depth)
 {
-  GateDebugMessageInc("Actor",5,"Actor Manager -- AddActor(): "<<actorName<<" -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",5,"Actor Manager -- AddActor(): "<<actorName<<" -- begin\n");
   if(GateActorManager::theListOfActorPrototypes[actorType])
     theListOfActors.push_back(GateActorManager::theListOfActorPrototypes[actorType](actorName,depth));
   else GateWarning("Actor type: "<<actorType<<" does not exist!");
-  GateDebugMessageDec("Actor",5,"Actor Manager -- AddActor(): "<<actorName<<" -- end\n"<<Gateendl);
+  GateDebugMessageDec("Actor",5,"Actor Manager -- AddActor(): "<<actorName<<" -- end\n\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -284,7 +284,7 @@ void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolum
   else
     {
       GateDebugMessage("Actor",5,"SetMFD -- SD already attached to: "<<volume->GetLogicalVolume()->GetName()
-		       <<" - Reaplace it by a MSD"<<Gateendl);
+		       <<" - Reaplace it by a MSD\n");
 
       G4int nActor = theListOfMultiSensitiveDetector.size();
       std::ostringstream num;
@@ -313,7 +313,7 @@ void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolum
   // should cast the GetSensitiveDetector
   volume->PropagateSensitiveDetectorToChild(dynamic_cast<GateMultiSensitiveDetector*>(volume->GetLogicalVolume()->GetSensitiveDetector()));
 
-  GateDebugMessageDec("Actor",4,"Actor Manager -- SetMFD -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"Actor Manager -- SetMFD -- end\n");
 
 }
 //-----------------------------------------------------------------------------
@@ -322,7 +322,7 @@ void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolum
 //-----------------------------------------------------------------------------
 G4bool GateActorManager::AddFilter(G4String filterType, G4String actorName )
 {
-  GateDebugMessageDec("Actor",4,"AddFilter() -- begin"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"AddFilter() -- begin\n");
   int nActor = -1;
   for(unsigned int i = 0;i<theListOfActors.size();i++)
     if(theListOfActors[i]->GetObjectName() == actorName) nActor = i;
@@ -340,7 +340,7 @@ G4bool GateActorManager::AddFilter(G4String filterType, G4String actorName )
       return false;
     }
 
-  GateDebugMessageDec("Actor",4,"AddFilter() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"AddFilter() -- end\n");
   return true;
 }
 //-----------------------------------------------------------------------------

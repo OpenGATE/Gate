@@ -25,7 +25,7 @@
 //-----------------------------------------------------------------------------
 GateDoseActor::GateDoseActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateDoseActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateDoseActor() -- begin\n");
 
   mCurrentEvent=-1;
   mIsEdepImageEnabled = false;
@@ -43,7 +43,7 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mIsDoseToWaterNormalisationEnabled = false;
 
   pMessenger = new GateDoseActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateDoseActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateDoseActor() -- end\n");
   emcalc = new G4EmCalculator;
 }
 //-----------------------------------------------------------------------------

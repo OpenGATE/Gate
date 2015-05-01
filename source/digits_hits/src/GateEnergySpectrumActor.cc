@@ -16,7 +16,7 @@ See GATE/LICENSE.txt for further details
 GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateEnergySpectrumActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateEnergySpectrumActor() -- begin\n");
 
   mEmin = 0.;
   mEmax = 50.;
@@ -39,7 +39,7 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
 
   pMessenger = new GateEnergySpectrumActorMessenger(this);
 
-  GateDebugMessageDec("Actor",4,"GateEnergySpectrumActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateEnergySpectrumActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -48,11 +48,11 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
 /// Destructor
 GateEnergySpectrumActor::~GateEnergySpectrumActor()
 {
-  GateDebugMessageInc("Actor",4,"~GateEnergySpectrumActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"~GateEnergySpectrumActor() -- begin\n");
 
 
 
-  GateDebugMessageDec("Actor",4,"~GateEnergySpectrumActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"~GateEnergySpectrumActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 

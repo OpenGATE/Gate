@@ -341,7 +341,7 @@ void GateSourceLinacBeam::GeneratePrimaryVertex(G4Event* evt) {
                             GetParticlePolarization().z() );
   vertex->SetPrimary( particle );  
   evt->AddPrimaryVertex( vertex );
-  //G4cout<<"AddPrimaryvertex()"<<Gateendl;
+  //G4cout<<"AddPrimaryvertex()\n";
 }
 //-------------------------------------------------------------------------------------------------
 

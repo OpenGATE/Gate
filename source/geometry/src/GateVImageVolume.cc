@@ -35,7 +35,7 @@ typedef unsigned int uint;
 GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,G4int depth) :
   GateVVolume(name,acceptsChildren,depth)
 {
-  GateMessageInc("Volume",5,"Begin GateVImageVolume("<<name<<")"<<Gateendl);
+  GateMessageInc("Volume",5,"Begin GateVImageVolume("<<name<<")\n");
   mImageFilename="";
   pImage=0;
   mHalfSize = G4ThreeVector(0,0,0);
@@ -51,7 +51,7 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
   mHLabelImageFilename = "none";
   mIsBoundingBoxOnlyModeEnabled = false;
   mImageMaterialsFromHounsfieldTableDone = false;
-  GateMessageDec("Volume",5,"End GateVImageVolume("<<name<<")"<<Gateendl);
+  GateMessageDec("Volume",5,"End GateVImageVolume("<<name<<")\n");
 
   // do not display all voxels, only bounding box
   pOwnVisAtt->SetDaughtersInvisible(true);
@@ -63,12 +63,12 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
 /// Destructor
 GateVImageVolume::~GateVImageVolume()
 {
-  GateMessageInc("Volume",5,"Begin ~GateVImageVolume()"<<Gateendl);
+  GateMessageInc("Volume",5,"Begin ~GateVImageVolume()\n");
   if(pImage) delete pImage;
   //if(pBoxPhys) delete pBoxPhys;
   if(pBoxLog) delete pBoxLog;
   if(pBoxSolid) delete pBoxSolid;
-  GateMessageDec("Volume",5,"End ~GateVImageVolume()"<<Gateendl);
+  GateMessageDec("Volume",5,"End ~GateVImageVolume()\n");
 }
 //--------------------------------------------------------------------
 
@@ -445,7 +445,7 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable()
       if (is) {
 	is >> materialName;
 	if (lit != mLabelToMaterialName.end()) {
-	  GateMessage("Volume",4,"*** WARNING *** Label already in table : Old value replaced "<<Gateendl);
+	  GateMessage("Volume",4,"*** WARNING *** Label already in table : Old value replaced \n");
 	  (*lit).second = materialName;
 	  continue;
 	}

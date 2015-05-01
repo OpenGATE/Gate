@@ -78,7 +78,7 @@ G4LogicalVolume* GateParaboloid::ConstructOwnSolidAndLogicalVolume(G4Material* m
    }
    else {
      // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateParaboloid::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<Gateendl);
+       GateMessage("Warning", 0, "GateParaboloid::ConstructOwnSolidAndLogicalVolume update mode not implemented\n");
    }
    return m_paraboloid_log;
 }

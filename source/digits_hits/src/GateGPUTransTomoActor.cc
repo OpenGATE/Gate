@@ -24,12 +24,12 @@
 //-----------------------------------------------------------------------------
 GateGPUTransTomoActor::GateGPUTransTomoActor(G4String name, G4int depth):
   GateVActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateGPUTransTomoActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateGPUTransTomoActor() -- begin\n");
   gpu_input = 0;
   mGPUDeviceID = 0;
   max_buffer_size = 5;
   pMessenger = new GateGPUTransTomoActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateGPUTransTomoActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateGPUTransTomoActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 

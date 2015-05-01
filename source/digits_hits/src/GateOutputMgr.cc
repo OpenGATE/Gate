@@ -70,7 +70,7 @@ GateOutputMgr::GateOutputMgr(const G4String name)
     m_acquisitionStarted(false),
     m_allowNoOutput(false)
 {
-  GateMessage("Output",4,"GateOutputMgr() -- begin"<<Gateendl);
+  GateMessage("Output",4,"GateOutputMgr() -- begin\n");
 
 
   m_messenger = new GateOutputMgrMessenger(this);
@@ -108,7 +108,7 @@ GateOutputMgr::GateOutputMgr(const G4String name)
   AddOutputModule((GateVOutputModule*)gateARFDataToRoot);
 #endif
 
-  GateMessage("Output",4,"GateOutputMgr() -- end"<<Gateendl);
+  GateMessage("Output",4,"GateOutputMgr() -- end\n");
 }
 //--------------------------------------------------------------------------------
 

@@ -23,7 +23,7 @@ GateImageRegionalizedSubVolumeMessenger::GateImageRegionalizedSubVolumeMessenger
   pVolume(volume)
 {
   
-  //GateMessage("Volume",5,"GateImageRegionalizedSubVolumeMessenger()"<<Gateendl);
+  //GateMessage("Volume",5,"GateImageRegionalizedSubVolumeMessenger()\n");
 }
 //====================================================================
 
@@ -31,7 +31,7 @@ GateImageRegionalizedSubVolumeMessenger::GateImageRegionalizedSubVolumeMessenger
 //====================================================================
 GateImageRegionalizedSubVolumeMessenger::~GateImageRegionalizedSubVolumeMessenger()
 {
-  //GateMessage("Volume",5,"~GateImageRegionalizedSubVolumeMessenger()"<<Gateendl);
+  //GateMessage("Volume",5,"~GateImageRegionalizedSubVolumeMessenger()\n");
 }
 //====================================================================
 

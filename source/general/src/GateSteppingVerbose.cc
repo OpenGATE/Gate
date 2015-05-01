@@ -361,19 +361,19 @@ void GateSteppingVerbose::EndOfRun()
   std::ofstream os;
   OpenFileOutput(mFileName, os);
   os<<Gateendl;
-   if(mIsTrackingStep) os<<" Total time elapsed during physical part of steps = "<<pStepTime->GetUserElapsed()<<" s"<<Gateendl;
+   if(mIsTrackingStep) os<<" Total time elapsed during physical part of steps = "<<pStepTime->GetUserElapsed()<<" s\n";
 
   os<<Gateendl;
   os<<Gateendl;
-  os<<"----> Track level"<<Gateendl;
+  os<<"----> Track level\n";
   os<<Gateendl;
   for(unsigned int i = 0; i<theListOfUsedParticle.size();i++)
   {
-    os<<"------------------------------------------------------------------------"<<Gateendl;
-    os<<theListOfUsedParticle[i]<<"     "<<theListOfUsedTime[i]<<" s"<<Gateendl;
+    os<<"------------------------------------------------------------------------\n";
+    os<<theListOfUsedParticle[i]<<"     "<<theListOfUsedTime[i]<<" s\n";
     DisplayTrack(theListOfUsedParticle[i], os);
     os<<Gateendl;
-    os<<"------------------------------------------------------------------------"<<Gateendl;
+    os<<"------------------------------------------------------------------------\n";
     os<<Gateendl;
     os<<Gateendl;
  }
@@ -408,16 +408,16 @@ void GateSteppingVerbose::EndOfRun()
   os<<Gateendl;
   if(mIsTrackingStep) {
     os<<Gateendl;
-    os<<"----> Physical step level"<<Gateendl;
+    os<<"----> Physical step level\n";
     os<<Gateendl;
 
     for(unsigned int i = 0; i<theListOfUsedParticle.size();i++)
     {
-      os<<"------------------------------------------------------------------------"<<Gateendl;
-      os<<theListOfUsedParticle[i]<<"     "<<theListOfUsedTime[i]<<" s"<<Gateendl;
+      os<<"------------------------------------------------------------------------\n";
+      os<<theListOfUsedParticle[i]<<"     "<<theListOfUsedTime[i]<<" s\n";
       DisplayStep(theListOfUsedParticle[i], os);
       os<<Gateendl;
-      os<<"------------------------------------------------------------------------"<<Gateendl;
+      os<<"------------------------------------------------------------------------\n";
       os<<Gateendl;
       os<<Gateendl;
 

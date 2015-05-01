@@ -486,7 +486,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       //}
 
 
-      //G4cout<<"Generate primaries"<<Gateendl;
+      //G4cout<<"Generate primaries\n";
       return numVertices;
     }// standard or tracker mode PY Descourt 08/09/2008
   

@@ -308,11 +308,11 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
                   //G4cout << " the Total final number of photons simulated          " << NbOfSimuPhotons << Gateendl;
                   //G4cout << " number of Energy Windows " << m_EnWin.size() <<Gateendl;
                   //G4cout << " Number of SOURCE photons                             " << NbOfSourcePhotons << Gateendl;
-                  //G4cout << " --- Of Which : Number of Photons Going Out Crystal   " << NbofGoingOutPhotons << " = " << 100. * double(NbofGoingOutPhotons)/double(NbOfSourcePhotons) << " %"<<Gateendl;
-                  //G4cout << " --- Of Which : Number of Photons Going IN Crystal    " << NbofGoingInPhotons << " = " << 100. * double(NbofGoingInPhotons)/double(NbOfSourcePhotons) << " %"<<Gateendl;
-                  //G4cout << " --- Of Which : Number of Photons Going Out Camera    " << OUT_camera << " = " << 100. * double(OUT_camera)/double(NbOfSourcePhotons) << " %"<<Gateendl;
-                  //G4cout << " --- Of Which : Number of Photons Going IN Camera     " << IN_camera << " = " << 100. * double(IN_camera)/double(NbOfSourcePhotons) << " %"<<Gateendl;
-                  //G4cout << " --- Of Which : Number of Stored Photons              " << NbofStoredPhotons<< " = " << 100. * double(NbofStoredPhotons)/double(NbOfSourcePhotons) << " %"<<Gateendl;
+                  //G4cout << " --- Of Which : Number of Photons Going Out Crystal   " << NbofGoingOutPhotons << " = " << 100. * double(NbofGoingOutPhotons)/double(NbOfSourcePhotons) << " %\n";
+                  //G4cout << " --- Of Which : Number of Photons Going IN Crystal    " << NbofGoingInPhotons << " = " << 100. * double(NbofGoingInPhotons)/double(NbOfSourcePhotons) << " %\n";
+                  //G4cout << " --- Of Which : Number of Photons Going Out Camera    " << OUT_camera << " = " << 100. * double(OUT_camera)/double(NbOfSourcePhotons) << " %\n";
+                  //G4cout << " --- Of Which : Number of Photons Going IN Camera     " << IN_camera << " = " << 100. * double(IN_camera)/double(NbOfSourcePhotons) << " %\n";
+                  //G4cout << " --- Of Which : Number of Stored Photons              " << NbofStoredPhotons<< " = " << 100. * double(NbofStoredPhotons)/double(NbOfSourcePhotons) << " %\n";
                   iw++; // now for next ARF table
 
         }   

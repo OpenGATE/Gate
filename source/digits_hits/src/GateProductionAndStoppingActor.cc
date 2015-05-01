@@ -20,13 +20,13 @@ See GATE/LICENSE.txt for further details
 //-----------------------------------------------------------------------------
 GateProductionAndStoppingActor::GateProductionAndStoppingActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateProductionAndStoppingActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateProductionAndStoppingActor() -- begin\n");
 
   mCurrentEvent=-1;
 
   pMessenger = new GateProductionAndStoppingActorMessenger(this);
 
-  GateDebugMessageDec("Actor",4,"GateProductionAndStoppingActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateProductionAndStoppingActor() -- end\n");
 
   bEnableCoordFrame=false;
   bCoordFrame = " ";
@@ -37,15 +37,15 @@ GateProductionAndStoppingActor::GateProductionAndStoppingActor(G4String name, G4
 //-----------------------------------------------------------------------------
 /// Destructor
 GateProductionAndStoppingActor::~GateProductionAndStoppingActor()  {
-  GateDebugMessageInc("Actor",4,"~GateProductionAndStoppingActor() -- begin"<<Gateendl);
-  GateDebugMessageDec("Actor",4,"~GateProductionAndStoppingActor() -- end"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"~GateProductionAndStoppingActor() -- begin\n");
+  GateDebugMessageDec("Actor",4,"~GateProductionAndStoppingActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 /// Construct
 void GateProductionAndStoppingActor::Construct() {
-  GateDebugMessageInc("Actor", 4, "GateProductionAndStoppingActor -- Construct - begin" << Gateendl);
+  GateDebugMessageInc("Actor", 4, "GateProductionAndStoppingActor -- Construct - begin\n");
   GateVImageActor::Construct();
 
   // Enable callbacks
@@ -79,7 +79,7 @@ void GateProductionAndStoppingActor::Construct() {
   mStopImage.SetFilename(mStopFilename);
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateProductionAndStoppingActor -- Construct - end" << Gateendl);
+  GateMessageDec("Actor", 4, "GateProductionAndStoppingActor -- Construct - end\n");
 }
 //-----------------------------------------------------------------------------
 

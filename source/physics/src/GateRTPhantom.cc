@@ -61,14 +61,14 @@ if ( Source !=0 && IsVoxellized == 1 )
      if ( SourceVoxl  != 0 ) 
      {itsSReader = SourceVoxl->GetReader();}  
      else 
-           {G4cout << " GateRTPhantom::AttachToSource WARNING : The Source " << Source->GetName() << " is NOT Voxellized. IGNORED."<<Gateendl;}
+           {G4cout << " GateRTPhantom::AttachToSource WARNING : The Source " << Source->GetName() << " is NOT Voxellized. IGNORED.\n";}
      
    }
 else
-{  G4cout <<   " GateRTPhantom::AttachToSource WARNING : The Source " << Source->GetName() << " does NOT exist. IGNORED." << Gateendl;
+{  G4cout <<   " GateRTPhantom::AttachToSource WARNING : The Source " << Source->GetName() << " does NOT exist. IGNORED.\n";
 
 if ( IsVoxellized == 0 ) {
-G4cout <<"GateRTPhantom::AttachToSource WARNING : The RTPhantom Object " << m_name << " is not of Voxellized Type. You cannot attach it to a Voxellized Source" << Gateendl;}
+G4cout <<"GateRTPhantom::AttachToSource WARNING : The RTPhantom Object " << m_name << " is not of Voxellized Type. You cannot attach it to a Voxellized Source\n";}
 }
 
 G4cout <<"GateRTPhantom::AttachToSource : The RTPhantom Object " << m_name << " has a Source Reader " << itsSReader << " from source " << Source->GetName()<<Gateendl;

@@ -618,7 +618,7 @@ if ( (G4int)crystalComponent->GetActiveChildNumber() > rL ) rL = crystalComponen
 
 }
 
-for (G4int k = 1;k < RingID;k++)if ( TRNumber[k] != TRNumber[k-1] ){G4cout<<"GateToLMF::RecordBeginOfAcquisition() Ring # "<<k<<" and Ring # "<<k-1<<" do not have the same number of tangential Rsectors."<<Gateendl;G4Exception("GateToLMF::RecordBeginOfAcquisition","Aborting...",FatalException,"Aborting...");}
+for (G4int k = 1;k < RingID;k++)if ( TRNumber[k] != TRNumber[k-1] ){G4cout<<"GateToLMF::RecordBeginOfAcquisition() Ring # "<<k<<" and Ring # "<<k-1<<" do not have the same number of tangential Rsectors.\n";G4Exception("GateToLMF::RecordBeginOfAcquisition","Aborting...",FatalException,"Aborting...");}
 
   fillEncoHforGate( AxialRsectorNumber,TRNumber[0] ,
 		   AxialModulesNumber ,

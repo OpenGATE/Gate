@@ -44,7 +44,7 @@ GateImageRegionalizedSubVolumeSolid::~GateImageRegionalizedSubVolumeSolid()
 // kCarTolerance cannot be created)
 EInside GateImageRegionalizedSubVolumeSolid::Inside(const G4ThreeVector& p) const
 {
-  //GateDebugMessage("Volume",6,"GateImageRegionalizedSubVolumeSolid["<<GetName()<<"]::Inside("<<p<<")"<<Gateendl);
+  //GateDebugMessage("Volume",6,"GateImageRegionalizedSubVolumeSolid["<<GetName()<<"]::Inside("<<p<<")\n");
 
   return pVolume->Inside(p);
 }
@@ -56,7 +56,7 @@ EInside GateImageRegionalizedSubVolumeSolid::Inside(const G4ThreeVector& p) cons
 // surface closest to the point at offset p.
 G4ThreeVector GateImageRegionalizedSubVolumeSolid::SurfaceNormal( const G4ThreeVector& p) const
 {
-  GateDebugMessage("Volume",6,"GateImageRegionalizedSubVolumeSolid["<<GetName()<<"]::SurfaceNormal("<<p<<")"<<Gateendl);
+  GateDebugMessage("Volume",6,"GateImageRegionalizedSubVolumeSolid["<<GetName()<<"]::SurfaceNormal("<<p<<")\n");
   GateDebugMessage("Volume",6," before correction return " << G4Box::SurfaceNormal(p) << Gateendl);
   G4ThreeVector a = pVolume->SurfaceNormal(p);
   //GateError("SurfaceNormal");
@@ -73,7 +73,7 @@ G4ThreeVector GateImageRegionalizedSubVolumeSolid::SurfaceNormal( const G4ThreeV
 // the surface of the shape.
 G4double GateImageRegionalizedSubVolumeSolid::DistanceToIn(const G4ThreeVector& p, const G4ThreeVector& v) const
 {
-  GateDebugMessage("Volume",6,"GateImageRegionalizedSubVolumeSolid["<<GetName()<<"]::DistanceToIn(" <<p<<","<<v<<")"<<Gateendl);
+  GateDebugMessage("Volume",6,"GateImageRegionalizedSubVolumeSolid["<<GetName()<<"]::DistanceToIn(" <<p<<","<<v<<")\n");
   return pVolume->DistanceToIn(p,v);
 }
 //====================================================================
@@ -84,7 +84,7 @@ G4double GateImageRegionalizedSubVolumeSolid::DistanceToIn(const G4ThreeVector& 
 // outside point. The distance can be an underestimate.
 G4double GateImageRegionalizedSubVolumeSolid::DistanceToIn(const G4ThreeVector& p) const
 {
-  GateDebugMessage("Volume",6,"GateImageRegionalizedSubVolumeSolid["<<GetName()<<"]::DistanceToIn("<<p<<")"<<Gateendl);
+  GateDebugMessage("Volume",6,"GateImageRegionalizedSubVolumeSolid["<<GetName()<<"]::DistanceToIn("<<p<<")\n");
   // Distance to bbox of the image
   //  G4double dbox = G4Box::DistanceToIn(p);
   G4double dbox = pVolume->DistanceToIn(p);
@@ -118,7 +118,7 @@ G4double GateImageRegionalizedSubVolumeSolid::DistanceToOut(const G4ThreeVector&
 {
   // //GateDebugMessage("Volume",6,"GateImageRegionalizedSubVolumeSolid["
   //		   <<GetName()<<"]::DistanceToOut("
-  //		   <<p<<","<<v<<","<<calcNorm<<")"<<Gateendl);
+  //		   <<p<<","<<v<<","<<calcNorm<<")\n");
  
   return pVolume->DistanceToOut(p,v,calcNorm,validNorm,n);
 
@@ -143,7 +143,7 @@ G4double GateImageRegionalizedSubVolumeSolid::DistanceToOut(const G4ThreeVector&
 // Returns a random point located on the surface of the solid.
 G4ThreeVector GateImageRegionalizedSubVolumeSolid::GetPointOnSurface() const
 {
-  //  //GateDebugMessage("Volume",6,"GateImageRegionalizedSubVolumeSolid["<<GetName()<<"]::GetPointOnSurface()"<<Gateendl);
+  //  //GateDebugMessage("Volume",6,"GateImageRegionalizedSubVolumeSolid["<<GetName()<<"]::GetPointOnSurface()\n");
  // GateError("GetPointOnSurface");
   return G4Box::GetPointOnSurface();
 }

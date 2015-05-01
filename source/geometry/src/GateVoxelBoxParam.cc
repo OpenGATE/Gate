@@ -62,7 +62,7 @@ void GateVoxelBoxParam::ConstructOwnPhysicalVolume(G4bool flagUpdate){
 
 void GateVoxelBoxParam::DestroyGeometry(){
   
-  // G4cout << "GateVoxelBoxParam::DestructOwnPhysicalVolumes - Entered"<<Gateendl<<std::flush;
+  // G4cout << "GateVoxelBoxParam::DestructOwnPhysicalVolumes - Entered\n"<<std::flush;
   if (m_parameterization) {
     delete m_parameterization;
   }

@@ -153,15 +153,15 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     mIsInitialized=true;
 
     if (mTestFlag){
-      G4cout<<"----------------TEST CONFIG---------------------------"<<Gateendl;
-      G4cout<<"--PENCIL BEAM PARAMETERS--"<<Gateendl;
-      G4cout<<"*Energy: E0 = "<<mEnergy<<" MeV   SigmaEnergy = "<<mSigmaEnergy<<" MeV"<<Gateendl;
+      G4cout<<"----------------TEST CONFIG---------------------------\n";
+      G4cout<<"--PENCIL BEAM PARAMETERS--\n";
+      G4cout<<"*Energy: E0 = "<<mEnergy<<" MeV   SigmaEnergy = "<<mSigmaEnergy<<" MeV\n";
       //G4cout<<"*Position: X0 = "<<mX0<<"   Y0 = "<<mY0<<"   Z0 = "<<mZ0<<Gateendl;
       G4cout<<"*Position: X0 = "<<mPosition[0]<<"   Y0 = "<<mPosition[1]<<"   Z0 = "<<mPosition[2]<<Gateendl;
-      G4cout<<"*Position: sigmaX = "<<mSigmaX<<" mm   sigmaY = "<<mSigmaY<<" mm"<<Gateendl;
-      G4cout<<"*Direction: sigmaTheta = "<<mSigmaTheta<<" rad   sigmaY' = "<<mSigmaPhi<<" rad"<<Gateendl;
-      G4cout<<"*Correlation: XTheta ellipse emittance:  "<<mEllipseXThetaArea<<" mm.rad  YPhi ellipse emittance: "<<mEllipseYPhiArea<<" mm.rad"<<Gateendl;
-      G4cout<<"*Correlation: XTheta ellipse rotation DirNorm:  "<<mEllipseXThetaRotationNorm<<"   YPhi ellipse rotation DirNorm: "<<mEllipseYPhiRotationNorm<<"\n"<<Gateendl;
+      G4cout<<"*Position: sigmaX = "<<mSigmaX<<" mm   sigmaY = "<<mSigmaY<<" mm\n";
+      G4cout<<"*Direction: sigmaTheta = "<<mSigmaTheta<<" rad   sigmaY' = "<<mSigmaPhi<<" rad\n";
+      G4cout<<"*Correlation: XTheta ellipse emittance:  "<<mEllipseXThetaArea<<" mm.rad  YPhi ellipse emittance: "<<mEllipseYPhiArea<<" mm.rad\n";
+      G4cout<<"*Correlation: XTheta ellipse rotation DirNorm:  "<<mEllipseXThetaRotationNorm<<"   YPhi ellipse rotation DirNorm: "<<mEllipseYPhiRotationNorm<<Gateendl;
     }
 
     // for initialization mu=0 everywhere.
@@ -178,7 +178,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     //==============================================================
     // X Theta Phase Space Ellipse
     epsilon=mEllipseXThetaArea/pi;
-    if (epsilon==0) { G4cout<<"Error Elipse area is 0 !!!"<<Gateendl;}
+    if (epsilon==0) { G4cout<<"Error Elipse area is 0 !!!\n";}
     beta=mSigmaX*mSigmaX/epsilon;
     gamma=mSigmaTheta*mSigmaTheta/epsilon;
     alpha=sqrt(beta*gamma-1.);
@@ -191,7 +191,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     mSXTheta(2,2)=gamma*epsilon;
 
     if (mTestFlag){
-      G4cout<<"--ELIPSE X-THETA PARAMETERS--"<<Gateendl;
+      G4cout<<"--ELIPSE X-THETA PARAMETERS--\n";
       G4cout<<"Outputs - beta "<<beta<<"  gamma "<<gamma<<"   alpha" <<alpha<<"   epsilon" <<epsilon<<endl;
       G4cout<<"Outputs - Xmax² "<<mSXTheta(1,1)<<"  Ymax² "<<mSXTheta(2,2)<<endl;
       G4cout<<"Outputs - beta*gamma-1 = "<<beta*gamma-1.<<endl;
@@ -204,7 +204,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     // Y Phi Phase Space Ellipse
     epsilon=mEllipseYPhiArea/pi;
     beta=mSigmaY*mSigmaY/epsilon;
-    if (epsilon==0) {G4cout<<"Error Elipse area is 0 !!!"<<Gateendl;}
+    if (epsilon==0) {G4cout<<"Error Elipse area is 0 !!!\n";}
     gamma=mSigmaPhi*mSigmaPhi/epsilon;
     alpha=sqrt(beta*gamma-1.);
 
@@ -216,7 +216,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     mSYPhi(2,2)=gamma*epsilon;
 
     if (mTestFlag){
-      G4cout<<"--ELIPSE Y-PHI PARAMETERS--"<<Gateendl;
+      G4cout<<"--ELIPSE Y-PHI PARAMETERS--\n";
       G4cout<<"Outputs - beta "<<beta<<"  gamma "<<gamma<<"   alpha" <<alpha<<"   epsilon" <<epsilon<<endl;
       G4cout<<"Outputs - Xmax² "<<mSYPhi(1,1)<<"  Ymax² "<<mSYPhi(2,2)<<endl;
       G4cout<<"Outputs - beta*gamma-1 = "<<beta*gamma-1.<<endl;
@@ -233,12 +233,12 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
 	 string parttype=mParticleType;
     if ( parttype == "GenericIon" ){
       particle_definition=  ionTable->GetIon( mAtomicNumber, mAtomicMass, mIonExciteEnergy);
-      //G4cout<<Gateendl<<Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon"<<Gateendl;
+      //G4cout<<Gateendl<<Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon\n";
       //G4cout<<mAtomicNumber<<"  "<<mAtomicMass<<"  "<<mIonCharge<<"  "<<mIonExciteEnergy<<Gateendl;
     }
     else{
       particle_definition = particleTable->FindParticle(mParticleType);
-      //G4cout<<Gateendl<<Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  other"<<Gateendl;
+      //G4cout<<Gateendl<<Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  other\n";
     }
 
     if(particle_definition==0) return;
@@ -269,8 +269,8 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
   if (mTestFlag){
     //Pos[0]=1; Pos[1]=2; Pos[2]=1000;
     //Dir[0]=0; Dir[1]=0; Dir[2]=1;
-    G4cout<<" "<<Gateendl;
-    G4cout<<"--SPOT GENERATION--"<<Gateendl;
+    G4cout<<" \n";
+    G4cout<<"--SPOT GENERATION--\n";
     G4cout<<"°Initial Position        "<<Pos[0]<<"  "<<Pos[1]<<"  "<<Pos[2]<<Gateendl;
     G4cout<<"°Initial Direction       "<<Dir[0]<<"  "<<Dir[1]<<"  "<<Dir[2]<<Gateendl;
   }
@@ -288,7 +288,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
   Pos.rotate(mRotationAngle, mRotationAxis);
 
   if (mTestFlag){
-    G4cout<<"-AFTER ROTATION "<<Gateendl;
+    G4cout<<"-AFTER ROTATION \n";
     G4cout<<"°Intermediate Position   "<<Pos[0]<<"  "<<Pos[1]<<"  "<<Pos[2]<<Gateendl;
     G4cout<<"°Final Direction         "<<Dir[0]<<"  "<<Dir[1]<<"  "<<Dir[2]<<Gateendl;
   }
@@ -299,9 +299,9 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
 
 
   if (mTestFlag){
-    G4cout<<"-AFTER POSITION OFFSET "<<Gateendl;
+    G4cout<<"-AFTER POSITION OFFSET \n";
     G4cout<<"°Final Position   "<<Pos[0]<<"  "<<Pos[1]<<"  "<<Pos[2]<<Gateendl;
-    //G4cout<<"°Final Direction  "<<Dir[0]<<"  "<<Dir[1]<<"  "<<Dir[2]<<"\n\n"<<Gateendl;
+    //G4cout<<"°Final Direction  "<<Dir[0]<<"  "<<Dir[1]<<"  "<<Dir[2]<<Gateendl;
   }
 
   //-------- PARTICLE SAMPLING - END------------------
@@ -316,12 +316,12 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
   string parttype=mParticleType;
   if ( parttype == "GenericIon" ){
     particle_definition=  particleTable->GetIon( mAtomicNumber, mAtomicMass, mIonExciteEnergy);
-  //G4cout<<Gateendl<<Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon"<<Gateendl;
+  //G4cout<<Gateendl<<Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon\n";
   //G4cout<<mAtomicNumber<<"  "<<mAtomicMass<<"  "<<mIonCharge<<"  "<<mIonExciteEnergy<<Gateendl;
   }
   else{
     particle_definition = particleTable->FindParticle(mParticleType);
-  //G4cout<<Gateendl<<Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  other"<<Gateendl;
+  //G4cout<<Gateendl<<Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  other\n";
   }
 
   if(particle_definition==0) return;

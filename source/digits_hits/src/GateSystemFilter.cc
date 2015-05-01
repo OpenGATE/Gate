@@ -36,7 +36,7 @@ GatePulseList* GateSystemFilter::ProcessPulseList(const GatePulseList* inputPuls
       if (nVerboseLevel>1)
       {
       G4cout<<"[GateSystemFilter::ProcessPulseList]\n This pulse is from "<<m_systemName<<"' system', \n"<<"Its volumeID is : "
-            <<(*iter)->GetVolumeID()<<",\n and its its outputVoulumeID is "<<(*iter)->GetOutputVolumeID()<<"\n"<<Gateendl;
+            <<(*iter)->GetVolumeID()<<",\n and its its outputVoulumeID is "<<(*iter)->GetOutputVolumeID()<<Gateendl;
       }
 
       G4String pulseSystemName = (*iter)->GetVolumeID().GetVolume(1)->GetName();

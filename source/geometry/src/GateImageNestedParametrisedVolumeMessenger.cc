@@ -20,8 +20,8 @@
 GateImageNestedParametrisedVolumeMessenger::GateImageNestedParametrisedVolumeMessenger(GateImageNestedParametrisedVolume* volume)
   :GateVImageVolumeMessenger(volume)
 {
-  GateMessageInc("Volume",6,"Begin GateImageNestedParametrisedVolumeMessenger()"<<Gateendl);
-  GateMessageDec("Volume",6,"End GateImageNestedParametrisedVolumeMessenger()"<<Gateendl);
+  GateMessageInc("Volume",6,"Begin GateImageNestedParametrisedVolumeMessenger()\n");
+  GateMessageDec("Volume",6,"End GateImageNestedParametrisedVolumeMessenger()\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -29,8 +29,8 @@ GateImageNestedParametrisedVolumeMessenger::GateImageNestedParametrisedVolumeMes
 //-----------------------------------------------------------------------------
 GateImageNestedParametrisedVolumeMessenger::~GateImageNestedParametrisedVolumeMessenger()
 {
-  GateMessageInc("Volume",6,"Begin ~GateImageNestedParametrisedVolumeMessenger()"<<Gateendl);
-  GateMessageDec("Volume",6,"End ~GateImageNestedParametrisedVolumeMessenger()"<<Gateendl);
+  GateMessageInc("Volume",6,"Begin ~GateImageNestedParametrisedVolumeMessenger()\n");
+  GateMessageDec("Volume",6,"End ~GateImageNestedParametrisedVolumeMessenger()\n");
 }
 //-----------------------------------------------------------------------------
 

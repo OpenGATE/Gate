@@ -188,10 +188,10 @@ for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
 void GateARFTableMgr::convertDRF2ARF()
 {
 std::map<G4int,GateARFTable*>::iterator aIt;
-G4cout << " GateARFTableMgr::convertDRF2ARF()   CONVERTING DRF tables to ARF TABLES"<<Gateendl;
+G4cout << " GateARFTableMgr::convertDRF2ARF()   CONVERTING DRF tables to ARF TABLES\n";
 for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
 {
-//G4cout << " GateARFTableMgr::convertDRF2ARF()  flushing the raw DRF table to a binary file "<<Gateendl;
+//G4cout << " GateARFTableMgr::convertDRF2ARF()  flushing the raw DRF table to a binary file \n";
  ( (*aIt).second )->convertDRF2ARF();
 }
 }
@@ -202,7 +202,7 @@ void GateARFTableMgr::FillDRFTable(G4int iT, G4double Edep, G4double Xprj, G4dou
 std::map<G4int,GateARFTable*>::iterator aIt;
 aIt = m_theList.find( iT );
 if ( aIt != m_theList.end() ) ((*aIt).second )->FillDRFTable( Edep,  Xprj , Yprj );
-else G4cout << " WARNING :: GateARFTableMgr::FillTable : Table # "<<iT<<" does not exist. Ignored "<<Gateendl;
+else G4cout << " WARNING :: GateARFTableMgr::FillTable : Table # "<<iT<<" does not exist. Ignored \n";
 
 
 }
@@ -210,12 +210,12 @@ else G4cout << " WARNING :: GateARFTableMgr::FillTable : Table # "<<iT<<" does n
 void GateARFTableMgr::ListTables()
 {
 std::map<G4int,GateARFTable*>::iterator aIt;
-G4cout << " ----------------------------------------------------------------------------------------------"<<Gateendl;
+G4cout << " ----------------------------------------------------------------------------------------------\n";
 G4cout << " GateARFTableMgr::ListTables()  List of the ARF Tables for ARF Sensitive Detector " << GetName() << Gateendl;
 
 for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
 { ( (*aIt).second )->Describe(); }
-G4cout << " ----------------------------------------------------------------------------------------------"<<Gateendl;
+G4cout << " ----------------------------------------------------------------------------------------------\n";
 }
 
 // save the ARF tables to a binary file
@@ -271,7 +271,7 @@ for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
 
     dest.write((const char*)(theBuffer), theBufferSize );
 
-    G4cout << "...[OK] : "<<theBufferSize<<" bytes"<<Gateendl;
+    G4cout << "...[OK] : "<<theBufferSize<<" bytes\n";
 
     if ( dest.bad() ) //G4Exception( "\nGateARFTableMgr::SaveARFToBinaryFile() :\n" "Could not write the ARFTable onto the disk (out of disk space?)!\n");
 		{
@@ -338,7 +338,7 @@ for ( size_t i =0  ; i < size_t(theNbOfTables) ; i++ )
 
     dest.seekg( pos, std::ios::beg);
     dest.read((char*)(theBuffer), theBufferSize );
-    G4cout <<pos<< "...[OK] : "<<theBufferSize<<" bytes"<<Gateendl;
+    G4cout <<pos<< "...[OK] : "<<theBufferSize<<" bytes\n";
 
     GateARFTable* theTable = new GateARFTable(thename);
     theTable->Initialize(theBuffer[4],theBuffer[5]);

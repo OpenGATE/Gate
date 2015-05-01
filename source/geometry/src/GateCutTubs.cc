@@ -90,7 +90,7 @@ G4LogicalVolume* GateCutTubs::ConstructOwnSolidAndLogicalVolume(G4Material* mate
    }
    else {
      // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateCutTubs::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<Gateendl);
+       GateMessage("Warning", 0, "GateCutTubs::ConstructOwnSolidAndLogicalVolume update mode not implemented\n");
    }
    return m_cuttubs_log;
 }

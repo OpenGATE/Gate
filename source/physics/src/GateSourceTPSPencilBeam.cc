@@ -296,7 +296,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                             }
 
                             Pencil->SetWeight(NbProtons);
-                            //G4cout<<"Nb of MU = "<<SpotParameters[2]<<", beam energy = "<<energy<<" MeV, corresponding to "<<NbProtons<<" protons."<<Gateendl;
+                            //G4cout<<"Nb of MU = "<<SpotParameters[2]<<", beam energy = "<<energy<<" MeV, corresponding to "<<NbProtons<<" protons.\n";
                             //Position
                             Pencil->SetPosition(position);
                             Pencil->SetSigmaX(GetSigmaX(energy));

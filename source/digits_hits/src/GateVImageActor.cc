@@ -34,9 +34,9 @@ GateVImageActor::GateVImageActor(G4String name, G4int depth):
   mHalfSizeIsSet(false),
   mPositionIsSet(false)
 {
-  GateMessageInc("Actor",4, "GateVImageActor() - begin"<<Gateendl);
+  GateMessageInc("Actor",4, "GateVImageActor() - begin\n");
   //pMessenger = new GateImageActorMessenger(this);
-  GateMessageDec("Actor",4, "GateVImageActor() - end"<<Gateendl);
+  GateMessageDec("Actor",4, "GateVImageActor() - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -44,9 +44,9 @@ GateVImageActor::GateVImageActor(G4String name, G4int depth):
 /// Destructor
 GateVImageActor::~GateVImageActor()
 {
-  GateMessageInc("Actor",4, "~GateVImageActor() - begin"<<Gateendl);
+  GateMessageInc("Actor",4, "~GateVImageActor() - begin\n");
   //if (pMessenger) delete pMessenger;
-  GateMessageDec("Actor",4, "~GateVImageActor() - end"<<Gateendl);
+  GateMessageDec("Actor",4, "~GateVImageActor() - end\n");
 }
 //-----------------------------------------------------------------------------
 

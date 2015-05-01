@@ -99,7 +99,7 @@ void GateSourceVoxelInterfileReader::ReadRTFile(G4String headerFileName, G4Strin
 	       << " is attached to the "<<m_name<<" Source Voxel Reader." << Gateendl;
   }  else {
       G4cout << " GateSourceVoxelInterfileReader::ReadFile   WARNING The Object "<< Ph->GetName()
-	       << " is not attached to any Geometry Voxel Reader."<<Gateendl;
+	       << " is not attached to any Geometry Voxel Reader.\n";
   }
 
   if (!m_voxelTranslator) {

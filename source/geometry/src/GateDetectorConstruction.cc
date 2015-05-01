@@ -122,9 +122,9 @@ G4VPhysicalVolume* GateDetectorConstruction::Construct()
   pworldPhysicalVolume = pworld->GateVVolume::Construct();
   SetGeometryStatusFlag(geometry_is_uptodate);
 
-  GateMessage("Physic", 1, " "<<Gateendl);
-  GateMessage("Physic", 1, "----------------------------------------------------------"<<Gateendl);
-  GateMessage("Physic", 1, "                    Ionization potential "<<Gateendl);
+  GateMessage("Physic", 1, " \n");
+  GateMessage("Physic", 1, "----------------------------------------------------------\n");
+  GateMessage("Physic", 1, "                    Ionization potential \n");
 
   const G4MaterialTable * theTable = G4Material::GetMaterialTable();
   for(unsigned int i =0;i<(*theTable).size();i++){
@@ -140,7 +140,7 @@ G4VPhysicalVolume* GateDetectorConstruction::Construct()
                   G4BestUnit((*theTable)[i]->GetIonisation()->GetMeanExcitationEnergy(),"Energy") << Gateendl);
     }
   }
-  GateMessage("Physic", 1, "----------------------------------------------------------"<<Gateendl);
+  GateMessage("Physic", 1, "----------------------------------------------------------\n");
 
   GateMessage("Geometry", 3, "Geometry has been constructed (status = " << nGeometryStatus << ").\n");
 

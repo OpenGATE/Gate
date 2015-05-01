@@ -86,7 +86,7 @@ G4LogicalVolume* GateTwistedTrd::ConstructOwnSolidAndLogicalVolume(G4Material* m
    }
    else {
      // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateTwistedTrd::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<Gateendl);
+       GateMessage("Warning", 0, "GateTwistedTrd::ConstructOwnSolidAndLogicalVolume update mode not implemented\n");
    }
    return m_twistedtrd_log;
 }

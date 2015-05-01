@@ -123,7 +123,7 @@ G4bool GateTrack::Compare( G4Track* aTrack)
     G4cout << " test5 = " << std::boolalpha << test5 << Gateendl;
     G4cout << " test6 = " << std::boolalpha << test6 << Gateendl;
   */
-  G4cout <<" ====================== "<<Gateendl;
+  G4cout <<" ====================== \n";
 
 
   //return true;
@@ -314,7 +314,7 @@ void GateTrack::SetVelocity(G4double aVelocity)
 void GateTrack::Print()
 {
   G4cout<< " *********************************************************\n";
-  G4cout << "            GateTrack Data Informations                    "<<Gateendl;
+  G4cout << "            GateTrack Data Informations                    \n";
   G4cout << " RunID " << fRunID<< "             EventID = " << feventID << Gateendl;
   G4cout << " Primary Particle " <<  ParticleName << Gateendl;
   G4cout << " Source ID        " <<  m_sourceID << Gateendl;

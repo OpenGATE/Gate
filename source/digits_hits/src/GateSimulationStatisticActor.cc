@@ -38,11 +38,11 @@ std::string get_date_string() {
 GateSimulationStatisticActor::GateSimulationStatisticActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateSimulationStatisticActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateSimulationStatisticActor() -- begin\n");
   //SetTypeName("SimulationStatisticActor");
   pActor = new GateActorMessenger(this);
   ResetData();
-  GateDebugMessageDec("Actor",4,"GateSimulationStatisticActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateSimulationStatisticActor() -- end\n");
   gettimeofday(&start,NULL);
   startDateStr = get_date_string();
 }

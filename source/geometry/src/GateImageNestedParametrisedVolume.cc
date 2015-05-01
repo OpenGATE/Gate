@@ -36,9 +36,9 @@ GateImageNestedParametrisedVolume::GateImageNestedParametrisedVolume(const G4Str
 								     G4int depth)
   : GateVImageVolume(name,acceptsChildren,depth)
 {
-  GateMessageInc("Volume",5,"Begin GateImageNestedParametrisedVolume("<<name<<")"<<Gateendl);
+  GateMessageInc("Volume",5,"Begin GateImageNestedParametrisedVolume("<<name<<")\n");
   pMessenger = new GateImageNestedParametrisedVolumeMessenger(this);
-  GateMessageDec("Volume",5,"End GateImageNestedParametrisedVolume("<<name<<")"<<Gateendl);
+  GateMessageDec("Volume",5,"End GateImageNestedParametrisedVolume("<<name<<")\n");
 }
 ///---------------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ GateImageNestedParametrisedVolume::GateImageNestedParametrisedVolume(const G4Str
 /// Destructor 
 GateImageNestedParametrisedVolume::~GateImageNestedParametrisedVolume()
 {
-  GateMessageInc("Volume",5,"Begin ~GateImageNestedParametrisedVolume()"<<Gateendl);
+  GateMessageInc("Volume",5,"Begin ~GateImageNestedParametrisedVolume()\n");
   if (pMessenger) delete pMessenger;
   delete mVoxelParametrisation;
   delete mPhysVolX;
@@ -55,7 +55,7 @@ GateImageNestedParametrisedVolume::~GateImageNestedParametrisedVolume()
   delete logXRep;
   delete logYRep;
   delete logZRep;
-  GateMessageDec("Volume",5,"End ~GateImageNestedParametrisedVolume()"<<Gateendl);
+  GateMessageDec("Volume",5,"End ~GateImageNestedParametrisedVolume()\n");
 }
 ///---------------------------------------------------------------------------
 

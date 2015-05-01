@@ -53,7 +53,7 @@ G4bool GateEnergyFilter::Accept(const G4Track* aTrack)
 
 //---------------------------------------------------------------------------
 void GateEnergyFilter::show(){
-  G4cout << "------Filter: "<<GetObjectName()<<" particle list------"<<Gateendl;
+  G4cout << "------Filter: "<<GetObjectName()<<" particle list------\n";
 
 
 
@@ -62,7 +62,7 @@ void GateEnergyFilter::show(){
 	   << Gateendl;
  
 
-  G4cout << "-------------------------------------------"<<Gateendl;
+  G4cout << "-------------------------------------------\n";
 
 }
 //---------------------------------------------------------------------------

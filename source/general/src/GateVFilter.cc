@@ -40,11 +40,11 @@ G4bool GateVFilter::Accept(const G4Track* /*aTrack*/)
 
 //-------------------------------------------------------------
 void GateVFilter::show(){
-  G4cout << "------Filter: "<<GetObjectName()<<" particle list------"<<Gateendl;
+  G4cout << "------Filter: "<<GetObjectName()<<" particle list------\n";
 
  
 
-  G4cout << "-------------------------------------------"<<Gateendl;
+  G4cout << "-------------------------------------------\n";
 
 }
 //-------------------------------------------------------------

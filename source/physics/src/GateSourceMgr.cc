@@ -450,7 +450,7 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
   //G4cout<<"Time Clock = "<<m_time<<Gateendl;
   // Get the next time
   GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
-  //G4cout<<"test GetTimeSlice"<<Gateendl;
+  //G4cout<<"test GetTimeSlice\n";
   G4double timeSlice = appMgr->GetTimeSlice(r->GetRunID());
   //m_timeLimit = m_time + timeSlice;
   m_timeLimit = appMgr->GetEndTimeSlice(r->GetRunID());
@@ -459,7 +459,7 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
   //mCurrentSliceStopTime = m_timeLimit;
   //   GateMessage("Acquisition", 0,
   //               "Run from t="  << mCurrentSliceStartTime/s << " sec to "
-  //               << mCurrentSliceStopTime/s << " sec." << Gateendl);
+  //               << mCurrentSliceStopTime/s << " sec.\n");
 
   if( mVerboseLevel > 1 )
     G4cout << "GateSourceMgr::PrepareNextRun : m_time      (s) "

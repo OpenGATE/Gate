@@ -26,7 +26,7 @@ GateImageNestedParametrisation::GateImageNestedParametrisation(GateImageNestedPa
   : pVolume(volume)
 {
 
-  GateMessage("Volume",5,"Begin GateImageNestedParametrisation()"<<Gateendl);
+  GateMessage("Volume",5,"Begin GateImageNestedParametrisation()\n");
   pVolume->BuildLabelToG4MaterialVector(mVectorLabel2Material);
 
   mAirMaterial = 
@@ -45,15 +45,15 @@ GateImageNestedParametrisation::GateImageNestedParametrisation(GateImageNestedPa
     GateMessage("Volume",6,"GateImageNestedParametrisation() -- "<<iz << " -> " << zp << Gateendl);
   }
 
-  GateMessage("Volume",5,"End GateImageNestedParametrisation()"<<Gateendl);
+  GateMessage("Volume",5,"End GateImageNestedParametrisation()\n");
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 GateImageNestedParametrisation::~GateImageNestedParametrisation()
 {
-  GateMessageInc("Volume",5,"Begin ~GateImageNestedParametrisation()"<<Gateendl);
-  GateMessageDec("Volume",5,"End ~GateImageNestedParametrisation()"<<Gateendl);
+  GateMessageInc("Volume",5,"Begin ~GateImageNestedParametrisation()\n");
+  GateMessageDec("Volume",5,"End ~GateImageNestedParametrisation()\n");
 }
 //-----------------------------------------------------------------------------
 

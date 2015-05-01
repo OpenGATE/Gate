@@ -95,7 +95,7 @@ void GateVoxelCompressor::Compress(){
         // Allocate a voxel set for the first pass
         voxelSet& voxelSetPass1(*new voxelSet);
 	if (!&voxelSetPass1)
-	  std::cerr << "GateVoxelCompressor::Compress - Insufficient memory for voxel set"<<Gateendl<<std::flush;
+	  std::cerr << "GateVoxelCompressor::Compress - Insufficient memory for voxel set\n"<<std::flush;
 	int voxelEstimate ( m_array->GetVoxelNx() * m_array->GetVoxelNy() * m_array->GetVoxelNz() );
 	voxelSetPass1.reserve(voxelEstimate);
 	
@@ -166,7 +166,7 @@ voxelSet& GateVoxelCompressor::runLength2nd(voxelSet& vs, const std::valarray<un
   newVoxels.reserve( vs.size() );
   
   if (!&newVoxels) {
-    std::cerr <<  "GateVoxelCompressor::runLength2nd - Insufficient memory for new voxel set"<<Gateendl<<std::flush;
+    std::cerr <<  "GateVoxelCompressor::runLength2nd - Insufficient memory for new voxel set\n"<<std::flush;
   }
   
   //  These are the indices in GateCompressedVoxel used for comparison (3:dx1, 4:dx2, 5:dx3, 6:value)

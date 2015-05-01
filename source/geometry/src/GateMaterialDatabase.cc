@@ -49,7 +49,7 @@ void GateMaterialDatabase::AddMDBFile(const G4String& filename)
 //-----------------------------------------------------------------------------
 G4Element* GateMaterialDatabase::GetElement(const G4String& elementName)
 {
-  GateMessage("Materials",5,"GateMaterialDatabase::GetElement("<<elementName<<")"<<Gateendl);
+  GateMessage("Materials",5,"GateMaterialDatabase::GetElement("<<elementName<<")\n");
   G4Element* element = LookForElementInTable(elementName);
 
   if (!element) {
@@ -66,7 +66,7 @@ G4Element* GateMaterialDatabase::GetElement(const G4String& elementName)
 //-----------------------------------------------------------------------------
 G4Material* GateMaterialDatabase::GetMaterial(const G4String& materialName)
 {
-  GateMessage("Materials",3,"GateMaterialDatabase::GetMaterial("<<materialName<<")"<<Gateendl);
+  GateMessage("Materials",3,"GateMaterialDatabase::GetMaterial("<<materialName<<")\n");
   
   G4Material* material = LookForMaterialInTable(materialName);
   
@@ -83,7 +83,7 @@ G4Material* GateMaterialDatabase::GetMaterial(const G4String& materialName)
 //-----------------------------------------------------------------------------
 G4Element* GateMaterialDatabase::ReadElementFromDBFile(const G4String& elementName)
 {
-  GateMessage("Materials",5,"GateMaterialDatabase::ReadElementFromDBFile("<<elementName<<")"<<Gateendl);
+  GateMessage("Materials",5,"GateMaterialDatabase::ReadElementFromDBFile("<<elementName<<")\n");
   GateElementCreator *CreatorTemp = 0;
   GateElementCreator *Creator = 0;
   int nDef=0;
@@ -108,7 +108,7 @@ G4Element* GateMaterialDatabase::ReadElementFromDBFile(const G4String& elementNa
 //-----------------------------------------------------------------------------
 G4Material* GateMaterialDatabase::ReadMaterialFromDBFile(const G4String& materialName)
 {
-  GateMessage("Materials",3,"GateMaterialDatabase::ReadMaterialFromDBFile("<<materialName<<")"<<Gateendl);
+  GateMessage("Materials",3,"GateMaterialDatabase::ReadMaterialFromDBFile("<<materialName<<")\n");
     
   GateMaterialCreator *Creator = 0;
   GateMaterialCreator *CreatorTemp = 0;

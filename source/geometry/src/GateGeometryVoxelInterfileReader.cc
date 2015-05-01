@@ -116,10 +116,10 @@ void GateGeometryVoxelInterfileReader::ReadRTFile(G4String headerFileName, G4Str
 
   if ( Ph != 0) {
       G4cout << " The Object "<< Ph->GetName()
-		<<" is attached to the "<<m_name<<" Geometry Voxel Reader."<<Gateendl;
+		<<" is attached to the "<<m_name<<" Geometry Voxel Reader.\n";
   } else {
       G4cout << " GateGeometryVoxelInterfileReader::ReadFile   WARNING The Object "<< Ph->GetName()
-	    <<" is not attached to any Geometry Voxel Reader."<<Gateendl;
+	    <<" is not attached to any Geometry Voxel Reader.\n";
   }
 
   if ( IsFirstFrame == true ) {
@@ -176,10 +176,10 @@ void GateGeometryVoxelInterfileReader::ReadRTFile(G4String headerFileName, G4Str
       m_compressor->Initialize();
       Compress();
 
-      G4cout << "---------- Gate Voxels Compressor Statistics ---------"<<Gateendl;
+      G4cout << "---------- Gate Voxels Compressor Statistics ---------\n";
       G4cout << "  Initial number of voxels in The Phantom      : " << GetNumberOfVoxels() << Gateendl;
       G4cout << "  number of compressed voxels                  : " << m_compressor->GetNbOfCopies() << Gateendl;
       G4cout << "  Compression achieved                                            : " << m_compressor->GetCompressionRatio() << " %"  << Gateendl;
-      G4cout << "-------------------------------------------------------------------"<<Gateendl;
+      G4cout << "-------------------------------------------------------------------\n";
   }
 }

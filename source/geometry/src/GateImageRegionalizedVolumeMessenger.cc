@@ -22,7 +22,7 @@ GateImageRegionalizedVolumeMessenger::GateImageRegionalizedVolumeMessenger(GateI
   pVolume(volume)
 {
 
-  GateMessage("Volume",5,"GateImageRegionalizedVolumeMessenger()"<<Gateendl);
+  GateMessage("Volume",5,"GateImageRegionalizedVolumeMessenger()\n");
 
   G4String n = GetDirectoryName() +"geometry/distanceMap";
   pDistanceMapNameCmd = new G4UIcmdWithAString(n,this);
@@ -34,7 +34,7 @@ GateImageRegionalizedVolumeMessenger::GateImageRegionalizedVolumeMessenger(GateI
 //====================================================================
 GateImageRegionalizedVolumeMessenger::~GateImageRegionalizedVolumeMessenger()
 {
-  GateMessage("Volume",5,"~GateImageRegionalizedVolumeMessenger()"<<Gateendl);
+  GateMessage("Volume",5,"~GateImageRegionalizedVolumeMessenger()\n");
   delete  pDistanceMapNameCmd;
 }
 //====================================================================

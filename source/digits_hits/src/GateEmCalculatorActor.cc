@@ -30,11 +30,11 @@
 GateEmCalculatorActor::GateEmCalculatorActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateEmCalculatorActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateEmCalculatorActor() -- begin\n");
   //SetTypeName("EmCalculatorActor");
 //  pActor = new GateActorMessenger(this);
   ResetData();
-  GateDebugMessageDec("Actor",4,"GateEmCalculatorActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateEmCalculatorActor() -- end\n");
 
   mEnergy = 100 ;
   mPartName = "proton";

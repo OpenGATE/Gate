@@ -42,7 +42,7 @@ void GateDistributionFile::Read()
     G4cout<<"OPENING FILE "<<m_FileName<<Gateendl;
     std::ifstream f(m_FileName,std::ios::in);
     if (!f){
-       G4cerr<<"[GateDistributionFile::Read] WARNING : File "<<m_FileName<<" can't be opened"<<Gateendl;
+       G4cerr<<"[GateDistributionFile::Read] WARNING : File "<<m_FileName<<" can't be opened\n";
        return;
     }
     G4String pattern;

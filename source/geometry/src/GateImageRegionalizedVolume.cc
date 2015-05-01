@@ -35,7 +35,7 @@ GateImageRegionalizedVolume::GateImageRegionalizedVolume(const G4String& name,
 							 G4int depth)
   : GateVImageVolume(name,acceptsChildren,depth)
 {
-  GateMessageInc("Volume",5,"GateImageRegionalizedVolume() - begin"<<Gateendl);
+  GateMessageInc("Volume",5,"GateImageRegionalizedVolume() - begin\n");
 
   // messenger
   pMessenger = new GateImageRegionalizedVolumeMessenger(this);
@@ -43,7 +43,7 @@ GateImageRegionalizedVolume::GateImageRegionalizedVolume(const G4String& name,
   kCarTolerance = G4GeometryTolerance::GetInstance()->GetSurfaceTolerance();
   mDistanceMapFilename = "none";
   pDistanceMap = 0;
-  GateMessageDec("Volume",5,"GateImageRegionalizedVolume() - end"<<Gateendl);
+  GateMessageDec("Volume",5,"GateImageRegionalizedVolume() - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ GateImageRegionalizedVolume::GateImageRegionalizedVolume(const G4String& name,
 /// Destructor
 GateImageRegionalizedVolume::~GateImageRegionalizedVolume()
 {
-  GateMessageInc("Volume",5,"~GateImageRegionalizedVolume() - begin"<<Gateendl);
+  GateMessageInc("Volume",5,"~GateImageRegionalizedVolume() - begin\n");
 
   for(std::map<LabelType,GateImageRegionalizedSubVolume*>::iterator i = mLabelToSubVolume.begin();
       i!=mLabelToSubVolume.end(); i++) {
@@ -77,7 +77,7 @@ GateImageRegionalizedVolume::~GateImageRegionalizedVolume()
 
   if(pDistanceMap) delete pDistanceMap;
   if(pMessenger) delete pMessenger;
-  GateMessageInc("Volume",5,"~GateImageRegionalizedVolume() - end"<<Gateendl);
+  GateMessageInc("Volume",5,"~GateImageRegionalizedVolume() - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -146,7 +146,7 @@ void  GateImageRegionalizedVolume::CreateSubVolumes()
     GateMessage("Volume",4,"* Label "<< *i <<Gateendl);
     // Gets material
     G4String matName = GetMaterialNameFromLabel(*i);
-    GateMessage("Volume",4,"  - Material name <"<< matName<<">"<<Gateendl);
+    GateMessage("Volume",4,"  - Material name <"<< matName<<">\n");
 
     G4String name = GetObjectName()+matName;
 
@@ -565,7 +565,7 @@ G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p,
     GateDebugMessage("Volume",7,"\t** NEW TRACK : OLD="<<mLastTrackID<<" NEW="<<TrackID<<Gateendl);
   }
   else {
-    GateDebugMessage("Volume",7,"\t** NEW POINT"<<Gateendl);
+    GateDebugMessage("Volume",7,"\t** NEW POINT\n");
   }
   GateDebugMessage("Volume",7,"\t### Computing complete distance vector ###" << Gateendl);
 
@@ -774,7 +774,7 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
   // Test if outside given label (surface)
   GateDebugMessage("Volume",8,"\t\tLabel = " << GetImage()->GetValue(index) << Gateendl);
   if (GetImage()->GetValue(index) != label) {
-    GateDebugMessage("Volume",8,"\t\tInitialisation **OUTSIDE** the region -> return 0.0"<<Gateendl);
+    GateDebugMessage("Volume",8,"\t\tInitialisation **OUTSIDE** the region -> return 0.0\n");
 
     /*
     // Gate case rarely occur, but occur ... what to do ?
@@ -1246,7 +1246,7 @@ G4ThreeVector GateImageRegionalizedVolume::SurfaceNormal(const G4ThreeVector& p,
 G4VPhysicalVolume* GateImageRegionalizedVolume::GetEnteredPhysicalVolume( const G4ThreeVector& globalPoint,
 									  const G4ThreeVector* globalDirection )
 {
-  GateDebugMessage("Navigation", 4,"GetEnteredPhysicalVolume("<<globalPoint<<","<<globalDirection<<")"<<Gateendl);
+  GateDebugMessage("Navigation", 4,"GetEnteredPhysicalVolume("<<globalPoint<<","<<globalDirection<<")\n");
 
   int index;
   if (globalDirection)

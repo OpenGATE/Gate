@@ -102,7 +102,7 @@ void GateClockDependentMessenger::SetNewValue(G4UIcommand* command,G4String newV
      GateVVolume* creator = GateObjectStore::GetInstance()->FindCreator("SPECThead");
      if ( creator != 0 ) creator->AttachARFSD();
      else {
-     	   G4cout << " GateObjectCreatorStore : could not find ' "<< GetClockDependent()->GetObjectName()<<" ' "<<Gateendl;
+     	   G4cout << " GateObjectCreatorStore : could not find ' "<< GetClockDependent()->GetObjectName()<<" ' \n";
      	   G4Exception( "GateClockDependentMessenger::SetNewValue", "SetNewValue", FatalException, "Aborting...");
      	  }
      return;

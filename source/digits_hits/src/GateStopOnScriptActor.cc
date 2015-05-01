@@ -26,10 +26,10 @@ See GATE/LICENSE.txt for further details
 GateStopOnScriptActor::GateStopOnScriptActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateStopOnScriptActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateStopOnScriptActor() -- begin\n");
   pMessenger = new GateStopOnScriptActorMessenger(this);
   mSaveAllActors = false;
-  GateDebugMessageDec("Actor",4,"GateStopOnScriptActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateStopOnScriptActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -38,8 +38,8 @@ GateStopOnScriptActor::GateStopOnScriptActor(G4String name, G4int depth):
 /// Destructor
 GateStopOnScriptActor::~GateStopOnScriptActor()
 {
-  GateDebugMessageInc("Actor",4,"~GateStopOnScriptActor() -- begin"<<Gateendl);
-  GateDebugMessageDec("Actor",4,"~GateStopOnScriptActor() -- end"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"~GateStopOnScriptActor() -- begin\n");
+  GateDebugMessageDec("Actor",4,"~GateStopOnScriptActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 

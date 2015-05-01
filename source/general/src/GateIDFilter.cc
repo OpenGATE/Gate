@@ -57,12 +57,12 @@ void GateIDFilter::addID(G4int id)
 
 //---------------------------------------------------------------------------
 void GateIDFilter::show(){
-  G4cout << "------Filter: "<<GetObjectName()<<" ------"<<Gateendl;
+  G4cout << "------Filter: "<<GetObjectName()<<" ------\n";
 
   if(mID!=0) G4cout<<"Particle ID= "<<mID<<Gateendl;
   if(mParentID!=0) G4cout<<"Parent particle ID= "<<mParentID<<Gateendl;
 
-  G4cout << "-------------------------------------------"<<Gateendl;
+  G4cout << "-------------------------------------------\n";
 
 }
 //---------------------------------------------------------------------------

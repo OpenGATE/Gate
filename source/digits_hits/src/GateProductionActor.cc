@@ -22,7 +22,7 @@
 GateProductionActor::GateProductionActor(G4String name, G4int depth) :
   GateVImageActor(name,depth), pMessenger(NULL)
 {
-  GateMessage("Actor",2,"GateProductionActor -- constructor"<<Gateendl);
+  GateMessage("Actor",2,"GateProductionActor -- constructor\n");
   pMessenger = new GateProductionActorMessenger(this);
 }
 //-----------------------------------------------------------------------------
@@ -32,7 +32,7 @@ GateProductionActor::GateProductionActor(G4String name, G4int depth) :
 /// Destructor
 GateProductionActor::~GateProductionActor()
 {
-  GateMessage("Actor",2,"GateProductionActor -- destructor"<<Gateendl);
+  GateMessage("Actor",2,"GateProductionActor -- destructor\n");
   delete pMessenger;
 }
 //-----------------------------------------------------------------------------
@@ -42,7 +42,7 @@ GateProductionActor::~GateProductionActor()
 /// Construct
 void GateProductionActor::Construct()
 {
-  GateMessage("Actor",2,"GateProductionActor -- construct"<<Gateendl);
+  GateMessage("Actor",2,"GateProductionActor -- construct\n");
   GateVImageActor::Construct();
   mImage.Allocate(); // allocate data and reset value to 0
 

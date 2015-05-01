@@ -80,7 +80,7 @@ G4LogicalVolume* GateEllipticalCone::ConstructOwnSolidAndLogicalVolume(G4Materia
    }
    else {
      // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateEllipticalCone::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<Gateendl);
+       GateMessage("Warning", 0, "GateEllipticalCone::ConstructOwnSolidAndLogicalVolume update mode not implemented\n");
    }
    return m_ellipticalcone_log;
 }

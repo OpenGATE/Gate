@@ -139,10 +139,10 @@ void GateToSinogram::RecordBeginOfAcquisition()
     G4Exception( "GateToSinogram::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must change these parameters then restart the simulation\n");
     } else { // we allow for one additional frame
       fstepNumber++;
-      G4cout << " [GateToSinogram::RecordBeginOfAcquisition]: "<<Gateendl;
-      G4cout << "      Special treatment for parallel jobs! "<<Gateendl;
-      G4cout << "      We create "<<int(fstepNumber)-1<<" frames of "<<timeStep/s<<" sec"<<Gateendl;
-      G4cout << "      and 1 frame of "<<duration-timeStep*(int(fstepNumber)-1)<<" sec"<<Gateendl;
+      G4cout << " [GateToSinogram::RecordBeginOfAcquisition]: \n";
+      G4cout << "      Special treatment for parallel jobs! \n";
+      G4cout << "      We create "<<int(fstepNumber)-1<<" frames of "<<timeStep/s<<" sec\n";
+      G4cout << "      and 1 frame of "<<duration-timeStep*(int(fstepNumber)-1)<<" sec\n";
     }
   }
   m_frameNb = static_cast<size_t>(rint(fstepNumber));

@@ -18,7 +18,7 @@
 //-----------------------------------------------------------------------------
 GateStoppingPowerActor::GateStoppingPowerActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateStoppingPowerActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateStoppingPowerActor() -- begin\n");
 
   mCurrentEvent=-1;
 
@@ -35,7 +35,7 @@ GateStoppingPowerActor::GateStoppingPowerActor(G4String name, G4int depth):
 
   pMessenger = new GateImageActorMessenger(this);
 
-  GateDebugMessageDec("Actor",4,"GateStoppingPowerActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateStoppingPowerActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 

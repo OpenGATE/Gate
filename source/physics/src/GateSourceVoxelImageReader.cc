@@ -85,13 +85,13 @@ void GateSourceVoxelImageReader::ReadRTFile(G4String , G4String fileName)
 
   if ( Ph != 0)
     {G4cout << " The Object "<< Ph->GetName()
-            <<" is attached to the "<<m_name<<" Geometry Voxel Reader"<<Gateendl;
+            <<" is attached to the "<<m_name<<" Geometry Voxel Reader\n";
 
     }
 
 
   if (!m_voxelTranslator) {
-    G4cout << "GateSourceVoxelImageReader::ReadFile: ERROR : insert a translator first" << Gateendl;
+    G4cout << "GateSourceVoxelImageReader::ReadFile: ERROR : insert a translator first\n";
     return;
   }
 

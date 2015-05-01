@@ -684,7 +684,7 @@ aRsectorName );
            G4cout<<"GateSystemComponent::setInCoincidenceWith() :: setting " << 
 thename<< " in coincidence with " << aRsectorName <<Gateendl;
          }         else G4cout<<"GateSystemComponent::setInCoincidenceWith() :: WARNING Component named " <<aRsectorName<<" was not found. Ignored.";
-        } else { G4cout << "already found  exiting "<<Gateendl;return; }
+        } else { G4cout << "already found  exiting \n";return; }
     }     else
            { G4cout << " vector is empty  looking for " << aRsectorName<< Gateendl
 ;
@@ -695,7 +695,7 @@ thename<< " in coincidence with " << aRsectorName <<Gateendl;
              m_coincidence_rsector.push_back( aRsectorName );
              G4cout<<"GateSystemComponent::setInCoincidenceWith() :: setting " <<thename << " in coincidence with " << aRsectorName <<Gateendl;             theComponent->setInCoincidenceWith( thename );
              }
-             else G4cout<<"GateSystemComponent::setInCoincidenceWith() :: WARNING Component named " <<aRsectorName<<" was not found. Ignored."<<Gateendl;
+             else G4cout<<"GateSystemComponent::setInCoincidenceWith() :: WARNING Component named " <<aRsectorName<<" was not found. Ignored.\n";
            }
 	}
 

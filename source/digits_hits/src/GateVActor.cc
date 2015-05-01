@@ -22,7 +22,7 @@
 GateVActor::GateVActor(G4String name, G4int depth)
   :GateNamedObject(name), G4VPrimitiveScorer(name, depth)
 {
-  GateDebugMessageInc("Actor",4,"GateVActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateVActor() -- begin\n");
   EnableBeginOfRunAction(false);
   EnableEndOfRunAction(true); // for save
   EnableBeginOfEventAction(false);
@@ -40,7 +40,7 @@ GateVActor::GateVActor(G4String name, G4int depth)
   mNumOfFilters = 0;
   mOverWriteFilesFlag = true;
   pFilterManager = new GateFilterManager(GetObjectName()+"_filter");
-  GateDebugMessageDec("Actor",4,"GateVActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateVActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -48,9 +48,9 @@ GateVActor::GateVActor(G4String name, G4int depth)
 //-----------------------------------------------------------------------------
 GateVActor::~GateVActor()
 {
-  GateDebugMessageInc("Actor",4,"~GateVActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"~GateVActor() -- begin\n");
   delete pFilterManager;
-  GateDebugMessageDec("Actor",4,"~GateVActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"~GateVActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -115,12 +115,12 @@ void GateVActor::SetSaveFilename(G4String  f)
 void GateVActor::AttachToVolume(G4String /*volumeName*/)
 {
   if (mVolumeName != "") {
-    GateDebugMessageInc("Actor",4,"Attach "<<GetObjectName()<<" to volume -- begin"<<Gateendl);
+    GateDebugMessageInc("Actor",4,"Attach "<<GetObjectName()<<" to volume -- begin\n");
     mVolume =   GateObjectStore::GetInstance()->FindVolumeCreator(mVolumeName);
     // DD(mVolume);
     // DD(mVolume->GetLogicalVolume());
     GateDebugMessage("Actor",5,"actor attached to: "<<mVolume->GetObjectName()<<Gateendl);
-    GateDebugMessageDec("Actor",4,"Attach "<<GetObjectName()<<" to volume -- end\n"<<Gateendl);
+    GateDebugMessageDec("Actor",4,"Attach "<<GetObjectName()<<" to volume -- end\n");
   }
 }
 //-----------------------------------------------------------------------------

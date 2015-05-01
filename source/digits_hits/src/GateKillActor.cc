@@ -20,9 +20,9 @@
 /// Constructors (Prototype)
 GateKillActor::GateKillActor(G4String name, G4int depth):GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateKillActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateKillActor() -- begin\n");
   pMessenger = new GateActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateKillActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateKillActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -31,9 +31,9 @@ GateKillActor::GateKillActor(G4String name, G4int depth):GateVActor(name,depth)
 /// Destructor
 GateKillActor::~GateKillActor()
 {
-  GateDebugMessageInc("Actor",4,"~GateKillActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"~GateKillActor() -- begin\n");
   delete pMessenger;
-  GateDebugMessageDec("Actor",4,"~GateKillActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"~GateKillActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 

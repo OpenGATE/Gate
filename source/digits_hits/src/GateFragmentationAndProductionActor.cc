@@ -23,11 +23,11 @@ See GATE/LICENSE.txt for further details
 GateFragmentationAndProductionActor::GateFragmentationAndProductionActor(G4String name, G4int depth):
   GateVActor(name,depth), pNBins(100)
 {
-  GateDebugMessageInc("Actor",4,"GateFragmentationAndProductionActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateFragmentationAndProductionActor() -- begin\n");
 
   pMessenger = new GateFragmentationAndProductionActorMessenger(this);
 
-  GateDebugMessageDec("Actor",4,"GateFragmentationAndProductionActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateFragmentationAndProductionActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -36,12 +36,12 @@ GateFragmentationAndProductionActor::GateFragmentationAndProductionActor(G4Strin
 /// Destructor
 GateFragmentationAndProductionActor::~GateFragmentationAndProductionActor()
 {
-  GateDebugMessageInc("Actor",4,"~GateFragmentationAndProductionActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"~GateFragmentationAndProductionActor() -- begin\n");
 
   delete pMessenger;
 
 
-  GateDebugMessageDec("Actor",4,"~GateFragmentationAndProductionActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"~GateFragmentationAndProductionActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 

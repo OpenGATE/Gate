@@ -108,12 +108,12 @@ See GATE/LICENSE.txt for further details
 // In a method X:
 // X() 
 // {
-//   GateDebugMessageInc("Physics",3,"Begining of method X"<<Gateendl); 
+//   GateDebugMessageInc("Physics",3,"Begining of method X\n"); 
 //   ..
 //   // This message will be tabulated with one more space 
 //   GateDebugMessage("Physics",5,"comment...");
 //   ..
-//   GateDebugMessageDec("Physics",3,"End of method X"<<Gateendl); 
+//   GateDebugMessageDec("Physics",3,"End of method X\n"); 
 // }
 // Gives :
 // Begining of method X

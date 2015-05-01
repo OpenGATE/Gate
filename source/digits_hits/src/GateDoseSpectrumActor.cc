@@ -20,14 +20,14 @@ See GATE/LICENSE.txt for further details
 GateDoseSpectrumActor::GateDoseSpectrumActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateDoseSpectrumActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateDoseSpectrumActor() -- begin\n");
   mDosePrimaryOnly = false;
   mCurrentEvent= 0;
   mEventEnergy = -1;
   mTotalEventEnergyDep = 0.;
   pMessenger = new GateDoseSpectrumActorMessenger(this);
 
-  GateDebugMessageDec("Actor",4,"GateDoseSpectrumActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateDoseSpectrumActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -36,8 +36,8 @@ GateDoseSpectrumActor::GateDoseSpectrumActor(G4String name, G4int depth):
 /// Destructor 
 GateDoseSpectrumActor::~GateDoseSpectrumActor()
 {
-  GateDebugMessageInc("Actor",4,"~GateDoseSpectrumActor() -- begin"<<Gateendl);
-  GateDebugMessageDec("Actor",4,"~GateDoseSpectrumActor() -- end"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"~GateDoseSpectrumActor() -- begin\n");
+  GateDebugMessageDec("Actor",4,"~GateDoseSpectrumActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 

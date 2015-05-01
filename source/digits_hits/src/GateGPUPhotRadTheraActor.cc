@@ -24,12 +24,12 @@
 //-----------------------------------------------------------------------------
 GateGPUPhotRadTheraActor::GateGPUPhotRadTheraActor(G4String name, G4int depth):
   GateVActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateGPUPhotRadTheraActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateGPUPhotRadTheraActor() -- begin\n");
   mGPUDeviceID = 0;
   gpu_input = 0;
   max_buffer_size = 5;
   pMessenger = new GateGPUPhotRadTheraActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateGPUPhotRadTheraActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateGPUPhotRadTheraActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 

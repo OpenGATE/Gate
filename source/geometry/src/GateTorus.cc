@@ -84,7 +84,7 @@ G4LogicalVolume* GateTorus::ConstructOwnSolidAndLogicalVolume(G4Material* mater,
    }
    else {
      // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateTorus::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<Gateendl);
+       GateMessage("Warning", 0, "GateTorus::ConstructOwnSolidAndLogicalVolume update mode not implemented\n");
    }
    return m_torus_log;
 }

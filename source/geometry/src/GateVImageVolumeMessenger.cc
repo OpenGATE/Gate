@@ -25,7 +25,7 @@ GateVImageVolumeMessenger::GateVImageVolumeMessenger(GateVImageVolume* volume)
   pVImageVolume(volume)
 {
 
-  GateMessage("Volume",5,"GateVImageVolumeMessenger("<<Gateendl);
+  GateMessage("Volume",5,"GateVImageVolumeMessenger()\n");
   G4String dir = GetDirectoryName() + "geometry";
   //  G4cout<<dir<<Gateendl;
 
@@ -89,7 +89,7 @@ GateVImageVolumeMessenger::GateVImageVolumeMessenger(GateVImageVolume* volume)
 //---------------------------------------------------------------------------
 GateVImageVolumeMessenger::~GateVImageVolumeMessenger()
 {
-  GateMessage("Volume",5,"~GateVImageVolumeMessenger("<<Gateendl);
+  GateMessage("Volume",5,"~GateVImageVolumeMessenger()\n");
 
   delete pImageFileNameCmd;
   delete pImageFileNameCmdDeprecated;

@@ -48,11 +48,11 @@ GatePulseList* GateNoise::ProcessPulseList(const GatePulseList* inputPulseList)
 
     if (inputPulseList->empty()) return 0;
     if (!m_energyDistrib){
-        G4cerr<<"GateNoise::ProcessPulseList : no energy distribution given. Nothing's done"<<Gateendl;
+        G4cerr<<"GateNoise::ProcessPulseList : no energy distribution given. Nothing's done\n";
         return GateVPulseProcessor::ProcessPulseList(inputPulseList);
     }
     if (!m_deltaTDistrib){
-        G4cerr<<"GateNoise::ProcessPulseList : no deltaT distribution given. Nothing's done"<<Gateendl;
+        G4cerr<<"GateNoise::ProcessPulseList : no deltaT distribution given. Nothing's done\n";
         return GateVPulseProcessor::ProcessPulseList(inputPulseList);
     }
     G4double t0;

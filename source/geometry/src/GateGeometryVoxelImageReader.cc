@@ -113,13 +113,13 @@ GateRTPhantom *Ph = GateRTPhantomMgr::GetInstance()->CheckGeometryAttached( GetC
 
 if ( Ph != 0) 
 {G4cout << " The Object "<< Ph->GetName()
-<<" is attached to the "<<m_name<<" Geometry Voxel Reader"<<Gateendl;
+<<" is attached to the "<<m_name<<" Geometry Voxel Reader\n";
 } 
 
 
   if (m_voxelTranslator == NULL) {
-    G4cout << "GateGeometryVoxelImageReader::ReadFile: WARNING: Insert the translator before reading the image" << Gateendl
-    << "                                                 Reading aborted." << Gateendl;
+    G4cout << "GateGeometryVoxelImageReader::ReadFile: WARNING: Insert the translator before reading the image\n"
+    << "                                                 Reading aborted.\n";
     return;
   }
 

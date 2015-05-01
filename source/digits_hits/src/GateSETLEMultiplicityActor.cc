@@ -31,9 +31,9 @@
 GateSETLEMultiplicityActor::GateSETLEMultiplicityActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateSETLEMultiplicityActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateSETLEMultiplicityActor() -- begin\n");
   mMaterialHandler = GateMaterialMuHandler::GetInstance();
-  GateDebugMessageDec("Actor",4,"GateSETLEMultiplicityActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateSETLEMultiplicityActor() -- end\n");
 
   mIsHybridinoEnabled = false;
   mDefaultPrimaryMultiplicity = 0;

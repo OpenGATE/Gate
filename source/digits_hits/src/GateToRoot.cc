@@ -205,7 +205,7 @@ void GateToRoot::Book()
       //TNtuple *ntuple;
       G4String ntuple_name="Gate";
       if (nVerboseLevel > 0) G4cout
-                               << "GateToRoot: ROOT: Ntuple " << ntuple_name << " being Created"<<Gateendl;
+                               << "GateToRoot: ROOT: Ntuple " << ntuple_name << " being Created\n";
       //ntuple = new TNtuple(ntuple_name,"Gate","event:iontime:poskinene:posannihildist");
       new TNtuple(ntuple_name,"Gate","event:iontime:poskinene:posannihildist");
 
@@ -390,7 +390,7 @@ void GateToRoot::RecordBeginOfAcquisition()
           G4String msg = "Could not open the requested output ROOT file '" + m_fileName + "_TrackerData.root'!";
           G4Exception( "GateToRoot::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException,msg );
 	}
-      if (nVerboseLevel > 0) G4cout << "GateToRoot: ROOT: Ntuple " << "PhTracksData" << " being Created"<<Gateendl;
+      if (nVerboseLevel > 0) G4cout << "GateToRoot: ROOT: Ntuple " << "PhTracksData" << " being Created\n";
 
       tracksTuple = new TTree(G4String("PhTracksData").c_str(),"PhantomTracksData");
 
@@ -669,7 +669,7 @@ void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
           dyg2 = dyg2_copy;
           dzg2 = dzg2_copy;
           fSkipRecStepData = 0;
-          //G4cout << "GateToRoot::RecordBeginOfEvent "<<Gateendl;
+          //G4cout << "GateToRoot::RecordBeginOfEvent \n";
           //PrintRecStep();
         }
 
@@ -1224,7 +1224,7 @@ void GateToRoot::CloseTracksRootFile()
       m_positronGenerationPos_copy = m_positronGenerationPos;
       m_positronAnnihilPos_copy = m_positronAnnihilPos;
       theCRData_copy = theCRData ;
-      //G4cout << " GateToRoot::CloseTracksRootFile()"<<Gateendl;
+      //G4cout << " GateToRoot::CloseTracksRootFile()\n";
       //PrintRecStep();
 
       if ( m_TracksFile->IsOpen() )
@@ -1232,7 +1232,7 @@ void GateToRoot::CloseTracksRootFile()
     }
   m_EOF = 1;
   m_TracksFile = 0;
-  if ( nVerboseLevel > 3 )G4cout <<"done"<<Gateendl;
+  if ( nVerboseLevel > 3 )G4cout <<"done\n";
 }
 
 G4int GateToRoot::CheckEOF()
@@ -1260,7 +1260,7 @@ void GateToRoot::PrintRecStep()
   G4cout <<"theComptonVolumeName2   = "<<  theCRData.theComptonVolumeName2<<Gateendl;
   G4cout <<"theRayleighVolumeName1   = "<<  theCRData.theRayleighVolumeName1<<Gateendl;
   G4cout <<"theRayleighVolumeName2   = "<<  theCRData.theRayleighVolumeName2<<Gateendl;
-  G4cout <<"--------------------- COPY------------------------------"<<Gateendl;
+  G4cout <<"--------------------- COPY------------------------------\n";
   G4cout << "Ion Decay Position = " << m_ionDecayPos_copy << Gateendl;
   G4cout << "positron Generation Position = " << m_positronGenerationPos_copy << Gateendl;
   G4cout << "positron Annihilation Position = " << m_positronAnnihilPos_copy << Gateendl;
@@ -1297,7 +1297,7 @@ void GateToRoot::OpenTracksFile()
   G4int NbOfFiles = myAction->GetNfiles();
 
   //if ( m_verboseLevel > 3 )
-  G4cout << ( NbOfFiles -currentN ) << " File(s) remain to be opened in Detector Mode :"<<Gateendl;
+  G4cout << ( NbOfFiles -currentN ) << " File(s) remain to be opened in Detector Mode :\n";
 
   if ( currentN == 0 )
     {
@@ -1399,7 +1399,7 @@ void GateToRoot::OpenTracksFile()
       if ( EventID != lastEventID )
         { // if ( m_verboseLevel > 3 ) {
           G4cout << "  GateToRoot::OpenTracksFile()  ::  last Event ID was " <<lastEventID<< "  ---  current one read from last Tracks Root File " <<fTracksFN<< " is " << EventID<<Gateendl;
-          G4cout << " SAVING RecStep Data to be used in GateToRoot::RecordBeginOfEvent "<<Gateendl;
+          G4cout << " SAVING RecStep Data to be used in GateToRoot::RecordBeginOfEvent \n";
           G4cout <<" GateToRoot::OpenTracksFile()  ::  LAST event ID read from RecStep Data in file " <<previousFN<< " is " << m_RSEventID << Gateendl;
           G4cout <<" GateToRoot::OpenTracksFile()  ::  LAST Event ID read from Tracks Data in previous file "<<previousFN<< " is "<<lastEventID<< Gateendl;
           //}
@@ -1542,7 +1542,7 @@ GateTrack* GateToRoot::GetCurrentTracksData()
     }
   if (nVerboseLevel > 1)
     {
-      G4cout << " RETRIEVING Current Gate Track Informations : "<<Gateendl;
+      G4cout << " RETRIEVING Current Gate Track Informations : \n";
       m_currentGTrack->Print();
     }
   return m_currentGTrack;
@@ -1577,7 +1577,7 @@ void GateToRoot::RecordTracks(GateSteppingAction* mySteppingAction){
     {
 
       if (nVerboseLevel > 0)
-        {G4cout << " Writing to Root File "<<Gateendl;
+        {G4cout << " Writing to Root File \n";
           (*iter)->Print();
         }
 

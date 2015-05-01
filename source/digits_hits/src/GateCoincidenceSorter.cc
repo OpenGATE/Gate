@@ -110,7 +110,7 @@ void GateCoincidenceSorter::SetMultiplesPolicy(const G4String& policy)
     	m_multiplesPolicy=kKeepAll;
     else {
     	if (policy!="keepIfAllAreGoods")
-    	    G4cout<<"WARNING : policy not recognised, using default : keepMultiplesIfAllAreGoods"<<Gateendl;
+    	    G4cout<<"WARNING : policy not recognised, using default : keepMultiplesIfAllAreGoods\n";
   	m_multiplesPolicy=kKeepIfAllAreGoods;
     }
 }
@@ -129,7 +129,7 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
 // 	if (inp)
 // 	    G4cout<<"Avec inp a "<<inp->size()<<Gateendl;
 // 	else
-// 	    G4cout<<"Sans inp"<<Gateendl;
+// 	    G4cout<<"Sans inp\n";
 //   }
 //   if (m_waitingPulses){
 //     	G4cout<<"ATTENTION0' "
@@ -239,7 +239,7 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
 	}
 	delete outputPulse;
       } else {
-//          G4cout<<"creation sous coinc "<<Gateendl;
+//          G4cout<<"creation sous coinc \n";
 	  GateCoincidencePulse* toRegister=0;
 	  for (size_t k1=0;k1<outputPulse->size();k1++){
 	    for (size_t k2=k1+1;k2<outputPulse->size();k2++){
@@ -258,7 +258,7 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
 		    if (gp->IsInCoincidence((*outputPulse)[k1]))
 			gp->push_back( new GatePulse((*outputPulse)[k1]));
 		}
-//                G4cout<<"creation sous coinc termine"<<Gateendl;
+//                G4cout<<"creation sous coinc termine\n";
     		if (gp->size()==2){
 		    if (m_multiplesPolicy==kTakeAllGoods ){
 		    	if (CoincidentPulseIsValid(gp))
@@ -272,14 +272,14 @@ void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
 		    } else {
 			if ( CoincidentPulseIsValid(gp) ) {
 			  if (nVerboseLevel>=1)
-			    G4cout << "[GateCoincidenceSorter::ProcessPulseList]: adding coincidence pulse " << Gateendl
+			    G4cout << "[GateCoincidenceSorter::ProcessPulseList]: adding coincidence pulse \n"
 				   << *gp << Gateendl;
     	    		  if (m_multiplesPolicy==kTakeWinnerOfGoods){
 			      if (!toRegister || toRegister->ComputeEnergy()<gp->ComputeEnergy()){
 		    		  if (toRegister) delete toRegister;
 		    		  toRegister=gp;
 			      } else delete gp;
-			  } else G4cerr<<"[GateCoincidenceSorter::ProcessOnePulse] Unknown policy situation..."<<Gateendl;
+			  } else G4cerr<<"[GateCoincidenceSorter::ProcessOnePulse] Unknown policy situation...\n";
 			} else {
 			    delete gp;
 			}
@@ -514,7 +514,7 @@ GateCoincidencePulse* GateCoincidenceSorter::FindIfOnlyOneGood(GateCoincidencePu
 G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
 {
     if (m_depth>=(G4int)pulse.GetOutputVolumeID().size()) {
-    	G4cerr<<"[GateCoincidenceSorter::ComputeSectorID]: Requiered depth's too deep, setting it to 1"<<Gateendl;
+    	G4cerr<<"[GateCoincidenceSorter::ComputeSectorID]: Requiered depth's too deep, setting it to 1\n";
 	m_depth=1;
     }
     static std::vector<G4int> gkSectorMultiplier;

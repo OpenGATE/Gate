@@ -46,18 +46,18 @@ GateImageRegionalizedVolumeSolid::~GateImageRegionalizedVolumeSolid()
 // kCarTolerance cannot be created)
 EInside GateImageRegionalizedVolumeSolid::Inside(const G4ThreeVector& p) const
 {
-  GateDebugMessage("Volume",6,"\t\tGateImageRegionalizedVolumeSolid["<<GetName()<<"]::Inside("<<p<<")"<<Gateendl);
+  GateDebugMessage("Volume",6,"\t\tGateImageRegionalizedVolumeSolid["<<GetName()<<"]::Inside("<<p<<")\n");
 
   // If is outside of the bounding box, is outside
   EInside bi = G4Box::Inside(p);
   if (bi==kOutside) {
-    GateDebugMessage("Volume",6,"\t\t*** OUTSIDE ***"<<Gateendl);
+    GateDebugMessage("Volume",6,"\t\t*** OUTSIDE ***\n");
   }
   else if (bi==kInside) {
-    GateDebugMessage("Volume",6,"\t\t*** INSIDE ***"<<Gateendl);
+    GateDebugMessage("Volume",6,"\t\t*** INSIDE ***\n");
   }
   else if (bi==kSurface) {
-    GateDebugMessage("Volume",6,"\t\t*** SURFACE ***"<<Gateendl);
+    GateDebugMessage("Volume",6,"\t\t*** SURFACE ***\n");
   }
   return bi;
 }
@@ -75,7 +75,7 @@ G4double GateImageRegionalizedVolumeSolid::DistanceToIn(const G4ThreeVector& p,
 					    const G4ThreeVector& v) const
 {
   GateDebugMessage("Volume",7,"GateImageRegionalizedVolumeSolid["<<GetName()
-		   <<"]::DistanceToIn("<<p<<","<<v<<")"<<Gateendl);
+		   <<"]::DistanceToIn("<<p<<","<<v<<")\n");
 
   // Distance to bbox of the image
   G4double dbox = G4Box::DistanceToIn(p,v);
@@ -91,7 +91,7 @@ G4double GateImageRegionalizedVolumeSolid::DistanceToIn(const G4ThreeVector& p,
 G4double GateImageRegionalizedVolumeSolid::DistanceToIn(const G4ThreeVector& p) const
 {
   GateDebugMessage("Volume",7,"GateImageRegionalizedVolumeSolid["<<GetName()
-		   <<"]::DistanceToIn("<<p<<")"<<Gateendl);
+		   <<"]::DistanceToIn("<<p<<")\n");
   // Distance to bbox of the image
   G4double dbox = G4Box::DistanceToIn(p);
   GateDebugMessage("Volume",7," DIST(BB) = " << dbox <<Gateendl);
@@ -124,7 +124,7 @@ G4double GateImageRegionalizedVolumeSolid::DistanceToOut(const G4ThreeVector& p,
 {
   GateDebugMessage("Volume",7,"GateImageRegionalizedVolumeSolid["<<GetName()
 		   <<"]::DistanceToOut("
-		   <<p<<","<<v<<","<<calcNorm<<")"<<Gateendl);
+		   <<p<<","<<v<<","<<calcNorm<<")\n");
   // Distance to bbox of the image
   G4double dbox = G4Box::DistanceToOut(p,v,calcNorm,validNorm,n);
   GateDebugMessage("Volume",7," DIST = " << dbox <<Gateendl);
@@ -139,7 +139,7 @@ G4double GateImageRegionalizedVolumeSolid::DistanceToOut(const G4ThreeVector& p,
 // inside point. The distance can be an underestimate.
 G4double GateImageRegionalizedVolumeSolid::DistanceToOut(const G4ThreeVector& p) const
 {
-  GateDebugMessage("Volume",7,"GateImageRegionalizedVolumeSolid["<<GetName()<<"]::DistanceToOut("<<p<<")"<<Gateendl);
+  GateDebugMessage("Volume",7,"GateImageRegionalizedVolumeSolid["<<GetName()<<"]::DistanceToOut("<<p<<")\n");
   // Distance to bbox of the image
   G4double dbox = G4Box::DistanceToOut(p);
   GateDebugMessage("Volume",7," DIST = " << dbox <<Gateendl);

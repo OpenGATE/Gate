@@ -37,7 +37,7 @@ void GateListOfHadronicModels::SetEmin(double val, G4String opt)
   {
     if(!GetMaterial(opt) && !GetElement(opt))
     {
-       G4cout<< "\n  <!> *** Warning *** <!> Unknown material or element: "<<opt<<"\n"<<Gateendl;
+       G4cout<< "\n  <!> *** Warning *** <!> Unknown material or element: "<<opt<<Gateendl;
        return;
     }
   }
@@ -68,7 +68,7 @@ void GateListOfHadronicModels::SetEmax(double val, G4String opt)
   {
     if(!GetMaterial(opt) && !GetElement(opt))
     {
-       G4cout<< "\n  <!> *** Warning *** <!> Unknown material or element: "<<opt<<"\n"<<Gateendl;
+       G4cout<< "\n  <!> *** Warning *** <!> Unknown material or element: "<<opt<<Gateendl;
        return;
     }
   }
@@ -192,7 +192,7 @@ void GateListOfHadronicModels::Print(G4int level, G4String symbol, G4String symb
 
       if(theListOfEmax[j]>0) std::cout<<"Emax = "<<std::setw(3)<<G4BestUnit(theListOfEmax[j],"Energy")<<std::flush;
 
-      std::cout<<" ("<<theListOfOptions[j]<<")"<<Gateendl;
+      std::cout<<" ("<<theListOfOptions[j]<<")\n";
     }
   }     
 
@@ -241,7 +241,7 @@ void GateListOfHadronicModels::Print(G4String file,G4int level, G4String symbol,
 
       if(theListOfEmax[j]>0) os<<"Emax = "<<std::setw(3)<<G4BestUnit(theListOfEmax[j],"Energy")<<std::flush;
 
-      os<<" ("<<theListOfOptions[j].data()<<")"<<Gateendl;
+      os<<" ("<<theListOfOptions[j].data()<<")\n";
     }
   }     
   os.close();

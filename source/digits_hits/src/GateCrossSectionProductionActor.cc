@@ -22,7 +22,7 @@
 //-----------------------------------------------------------------------------
 GateCrossSectionProductionActor::GateCrossSectionProductionActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateCrossSectionProductionActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateCrossSectionProductionActor() -- begin\n");
 
   mCurrentEvent=0;
   nb_elemt_C12_in_table=-1;
@@ -170,7 +170,7 @@ GateCrossSectionProductionActor::GateCrossSectionProductionActor(G4String name, 
   SectionTableO15_O16.insert(std::pair<float, float> (199.5,	34.91) );
 
 
-  GateDebugMessageDec("Actor",4,"GateCrossSectionProductionActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateCrossSectionProductionActor() -- end\n");
 
 
 }

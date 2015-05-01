@@ -75,7 +75,7 @@ G4LogicalVolume* GateGenericTrap::ConstructOwnSolidAndLogicalVolume(G4Material* 
    }
    else {
      // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateGenericTrap::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<Gateendl);
+       GateMessage("Warning", 0, "GateGenericTrap::ConstructOwnSolidAndLogicalVolume update mode not implemented\n");
    }
    return m_generictrap_log;
 }

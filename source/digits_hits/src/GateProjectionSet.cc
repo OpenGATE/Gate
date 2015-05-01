@@ -100,7 +100,7 @@ if ( theDC->GetARFSD() != 0  ) stage = theDC->GetARFSD()->GetStage();
 if ( stage == 2 )
 {
 
- 	G4cout << " GateProjectionSet::Reset detected ARF tables for Production Use"<<Gateendl;
+ 	G4cout << " GateProjectionSet::Reset detected ARF tables for Production Use\n";
 
  	G4cout << " m_ARFdata = " <<m_ARFdata<<Gateendl;
 
@@ -129,8 +129,8 @@ if ( stage == 2 )
   m_ARFdataMax = (ARFProjectionDataType*) calloc( m_headNb , ARFBytesPerPixel() );
   if (!m_ARFdataMax) G4Exception( "GateProjectionSet::Reset", "Reset", FatalException, "Could not allocate a statistics array (out of memory?)\n");
 
- G4cout << " GateProjectionSet::Reset : Estimated size for the Binary Projection Output file " <<ARFBytesPerHead() * G4double(m_headNb) / ( 1024.* 1024. )<<" Mo"<<Gateendl;
-G4cout << " GateProjectionSet::Reset : Estimated size for the Binary Projection Output file " <<ARFBytesPerHead() * G4double(m_headNb) / 1024.<<" Ko"<<Gateendl;
+ G4cout << " GateProjectionSet::Reset : Estimated size for the Binary Projection Output file " <<ARFBytesPerHead() * G4double(m_headNb) / ( 1024.* 1024. )<<" Mo\n";
+G4cout << " GateProjectionSet::Reset : Estimated size for the Binary Projection Output file " <<ARFBytesPerHead() * G4double(m_headNb) / 1024.<<" Ko\n";
  return;
 }
 
@@ -196,7 +196,7 @@ else
    		}
   	}
 
-    G4cout << " ... done "<<Gateendl;
+    G4cout << " ... done \n";
 }
 
 }

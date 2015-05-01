@@ -19,7 +19,7 @@
 GateFluenceActor::GateFluenceActor(G4String name, G4int depth):
   GateVImageActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateFluenceActor() -- begin"<<Gateendl);
+  GateDebugMessageInc("Actor",4,"GateFluenceActor() -- begin\n");
 
   mCurrentEvent=-1;
   mIsSquaredImageEnabled = false;
@@ -31,7 +31,7 @@ GateFluenceActor::GateFluenceActor(G4String name, G4int depth):
   pMessenger = new GateFluenceActorMessenger(this);
   SetStepHitType("pre");
   mResponseFileName = "";
-  GateDebugMessageDec("Actor",4,"GateFluenceActor() -- end"<<Gateendl);
+  GateDebugMessageDec("Actor",4,"GateFluenceActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
