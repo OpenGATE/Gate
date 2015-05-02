@@ -27,8 +27,8 @@ GateRTPhantomMgr* GateRTPhantomMgr::instance = 0;
 void GateRTPhantomMgr::SetVerboseLevel(G4int val)
 { m_verboseLevel = val;
 
-for (size_t iMod = 0; iMod < m_RTPhantom.size(); iMod++)
-m_RTPhantom[iMod]->SetVerboseLevel(val);
+for (std::vector<GateRTPhantom*>::iterator itr = m_RTPhantom.begin(); itr != m_RTPhantom.end(); itr++)
+(*itr)->SetVerboseLevel(val);
 
  }
 
@@ -36,10 +36,10 @@ GateRTPhantom * GateRTPhantomMgr::CheckSourceAttached( G4String aname)
 {
 GateRTPhantom * Ph = 0;
 
-for (size_t iMod = 0; iMod < m_RTPhantom.size(); iMod++)
+for (std::vector<GateRTPhantom*>::iterator itr = m_RTPhantom.begin(); itr != m_RTPhantom.end(); itr++)
 {
-if( m_RTPhantom[iMod]->GetSReader()->GetName() == aname )
-    {Ph = m_RTPhantom[iMod];
+if( (*itr)->GetSReader()->GetName() == aname )
+    {Ph = (*itr);
      break;
     }
 }
@@ -50,10 +50,10 @@ GateRTPhantom * GateRTPhantomMgr::CheckGeometryAttached( G4String aname)
 {
 GateRTPhantom * Ph = 0;
 
-for (size_t iMod = 0; iMod < m_RTPhantom.size(); iMod++)
+for (std::vector<GateRTPhantom*>::iterator itr = m_RTPhantom.begin(); itr != m_RTPhantom.end(); itr++)
     {
-     if( m_RTPhantom[iMod]->GetInserter()->GetObjectName() == aname )
-     {Ph = m_RTPhantom[iMod];
+     if( (*itr)->GetInserter()->GetObjectName() == aname )
+     {Ph = *itr;
       break;
      }
     }
@@ -70,7 +70,7 @@ GateRTPhantomMgr::GateRTPhantomMgr(const G4String name)
 
 GateRTPhantomMgr::~GateRTPhantomMgr()
 {
-  for (size_t iMod = 0; iMod < m_RTPhantom.size(); iMod++) {
+  for (size_t iMod = 0; iMod < m_RTPhantom.size(); iMod++) {  // use iterator??
     delete m_RTPhantom[iMod];
   }
   m_RTPhantom.clear();
@@ -82,7 +82,8 @@ GateRTPhantomMgr::~GateRTPhantomMgr()
 
 void GateRTPhantomMgr::UpdatePhantoms(G4double aTime)
 {
- for (size_t i = 0 ; i < m_RTPhantom.size(); i++)m_RTPhantom[i]->Compute(aTime);
+ for (std::vector<GateRTPhantom*>::iterator itr = m_RTPhantom.begin(); itr != m_RTPhantom.end(); itr++)
+   (*itr)->Compute(aTime);
 }
 
 void GateRTPhantomMgr::AddPhantom(G4String aname)
@@ -110,9 +111,9 @@ void GateRTPhantomMgr::Describe()
   G4cout << "Number of RTPhantoms inserted: " << m_RTPhantom.size() << Gateendl;
   G4cout << "Description of the single RTPhantoms: \n";
 
-  for (size_t iMod=0; iMod<m_RTPhantom.size(); iMod++) {
-    m_RTPhantom[iMod]->Describe();
-    G4cout << "RTPhantom address : " << m_RTPhantom[iMod] << Gateendl;
+  for (std::vector<GateRTPhantom*>::iterator itr = m_RTPhantom.begin(); itr != m_RTPhantom.end(); itr++) {
+    (*itr)->Describe();
+    G4cout << "RTPhantom address : " << *itr << Gateendl;
 
   }
 }
@@ -120,11 +121,11 @@ void GateRTPhantomMgr::Describe()
 GateRTPhantom* GateRTPhantomMgr::Find( G4String aname)
 {
 GateRTPhantom* Ph = 0;
-  for (size_t iMod=0; iMod<m_RTPhantom.size(); iMod++)
+  for (std::vector<GateRTPhantom*>::iterator itr = m_RTPhantom.begin(); itr != m_RTPhantom.end(); itr++)
   {
-   G4String cname = m_RTPhantom[iMod]->GetName();
+   G4String cname = (*itr)->GetName();
    if (cname == aname) {
-                        Ph = m_RTPhantom[iMod];
+                        Ph = *itr;
                         break;    }
   }
 return Ph;

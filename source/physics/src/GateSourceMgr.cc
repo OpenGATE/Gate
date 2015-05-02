@@ -496,8 +496,8 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
   m_needSourceInit = true;
 
   // Update the sources (for example for new positioning according to the geometry movements)
-  for( size_t is = 0; is != mSources.size(); ++is )
-    ( mSources[is] )->Update(m_time);
+  for(GateVSourceVector::iterator itr = mSources.begin(); itr != mSources.end(); ++itr )
+    (*itr)->Update(m_time);
 
 
   m_runNumber++;
