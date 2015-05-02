@@ -21,6 +21,7 @@ GateGeometryVoxelTabulatedTranslator::GateGeometryVoxelTabulatedTranslator(GateV
   : GateVGeometryVoxelTranslator(voxelReader)
 {
   m_name = G4String("tabulatedTranslator");
+  anIterator = m_voxelMaterialTranslation.begin();
   m_messenger = new GateGeometryVoxelTabulatedTranslatorMessenger(this);
 }
 //-----------------------------------------------------------------------------------------------
@@ -106,7 +107,7 @@ void GateGeometryVoxelTabulatedTranslator::Describe(G4int)
 //-----------------------------------------------------------------------------------------------
 G4String GateGeometryVoxelTabulatedTranslator::GetNextMaterial(G4bool doReset)
 {
-  static GateVoxelMaterialTranslationMap::iterator anIterator = m_voxelMaterialTranslation.begin();
+  //static GateVoxelMaterialTranslationMap::iterator anIterator = m_voxelMaterialTranslation.begin();
   
   if (doReset)
     anIterator = m_voxelMaterialTranslation.begin();
@@ -124,10 +125,10 @@ G4String GateGeometryVoxelTabulatedTranslator::GetNextMaterial(G4bool doReset)
 //! Used by GateRegularParameterization to get the different materials
 void GateGeometryVoxelTabulatedTranslator::GetCompleteListOfMaterials(std::vector<G4String>& mat)
 {
-  GateVoxelMaterialTranslationMap::iterator anIterator;
+  GateVoxelMaterialTranslationMap::iterator itr;
   
-  for (anIterator = m_voxelMaterialTranslation.begin(); anIterator != m_voxelMaterialTranslation.end(); anIterator++) {
-    mat.push_back((*anIterator).second);
+  for (itr = m_voxelMaterialTranslation.begin(); itr != m_voxelMaterialTranslation.end(); itr++) {
+    mat.push_back(itr->second);
   }
 }
 //-----------------------------------------------------------------------------------------------

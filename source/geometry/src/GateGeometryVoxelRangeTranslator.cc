@@ -25,6 +25,7 @@ GateGeometryVoxelRangeTranslator::GateGeometryVoxelRangeTranslator(GateVGeometry
 {
 //  G4cout << " Constructor GateGeometryVoxelRangeTranslator\n";
   m_name = G4String("rangeTranslator");
+  anIterator = m_voxelMaterialTranslation.begin();
   m_messenger = new GateGeometryVoxelRangeTranslatorMessenger(this);
   
 //  G4cout << " FIN Constructor GateGeometryVoxelRangeTranslator\n";
@@ -40,14 +41,14 @@ G4String GateGeometryVoxelRangeTranslator::TranslateToMaterial(G4double voxelVal
   G4String material = G4String("NULL");
 
 //    G4cout << "GateGeometryVoxelRangeTranslator::TranslateToMaterial: voxelValue " << voxelValue << Gateendl;
-  GateVoxelMaterialTranslationRangeVector::iterator anIterator;
+  GateVoxelMaterialTranslationRangeVector::iterator itr;
 
-  for (anIterator = m_voxelMaterialTranslation.begin(); anIterator != m_voxelMaterialTranslation.end(); anIterator++) {
-    G4double range1 = ((*anIterator).first).first;
-    G4double range2 = ((*anIterator).first).second;
+  for (itr = m_voxelMaterialTranslation.begin(); itr != m_voxelMaterialTranslation.end(); itr++) {
+    G4double range1 = (itr->first).first;
+    G4double range2 = (itr->first).second;
     //    G4cout << "iRange range1 range2 " << iRange << " " << range1 << " " << range2 << Gateendl;
     if ((range1 <= voxelValue) && (voxelValue <= range2)) {
-      material = ((*anIterator).second);
+      material = (itr->second);
       break;
     }
   }
@@ -151,7 +152,7 @@ void GateGeometryVoxelRangeTranslator::Describe(G4int)
 
 G4String GateGeometryVoxelRangeTranslator::GetNextMaterial(G4bool doReset)
 {
-  static GateVoxelMaterialTranslationRangeVector::iterator anIterator = m_voxelMaterialTranslation.begin();
+  //static GateVoxelMaterialTranslationRangeVector::iterator anIterator = m_voxelMaterialTranslation.begin();
   
   if (doReset)
     anIterator = m_voxelMaterialTranslation.begin();
@@ -166,9 +167,9 @@ G4String GateGeometryVoxelRangeTranslator::GetNextMaterial(G4bool doReset)
 //! Used by GateRegularParameterization to get the different materials
 void GateGeometryVoxelRangeTranslator::GetCompleteListOfMaterials(std::vector<G4String>& mat)
 {
-  GateVoxelMaterialTranslationRangeVector::iterator anIterator;
+  GateVoxelMaterialTranslationRangeVector::iterator itr;
 
-  for (anIterator = m_voxelMaterialTranslation.begin(); anIterator != m_voxelMaterialTranslation.end(); anIterator++) {
-    mat.push_back((*anIterator).second);
+  for (itr = m_voxelMaterialTranslation.begin(); itr != m_voxelMaterialTranslation.end(); itr++) {
+    mat.push_back(itr->second);
   }
 }
