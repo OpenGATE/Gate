@@ -155,6 +155,15 @@ void GatePromptGammaData::Read(std::string & filename)
     dir->GetObject("SigmaInelastic", pHEpSigmaInelastic);
     dir->GetObject("EpInelasticProducedGamma", pHEpInelasticProducedGamma);
 
+    if (GammaZ == NULL) GateError("No branch 'GammaZ' in the database '" << mFilename << "'. Wrong root file ?");
+    if (Ngamma == NULL) GateError("No branch 'Ngamma' in the database '" << mFilename << "'. Wrong root file ?");
+    if (pHEpEpg == NULL) GateError("No branch 'EpEpg' in the database '" << mFilename << "'. Wrong root file ?");
+    if (pHEpEpgNormalized == NULL) GateError("No branch 'EpEpgNorm' in the database '" << mFilename << "'. Wrong root file ?");
+    if (pHEpInelastic == NULL) GateError("No branch 'EpInelastic' in the database '" << mFilename << "'. Wrong root file ?");
+    if (pHEp == NULL) GateError("No branch 'Ep' in the database '" << mFilename << "'. Wrong root file ?");
+    if (pHEpSigmaInelastic == NULL) GateError("No branch 'SigmaInelastic' in the database '" << mFilename << "'. Wrong root file ?");
+    if (pHEpInelasticProducedGamma == NULL) GateError("No branch 'EpInelasticProducedGamma' in the database '" << mFilename << "'. Wrong root file ?");
+
     // Set the pointers in the lists (have been changed by GetObject)
     GammaZList[elem->GetIndex()] = GammaZ;
     NgammaList[elem->GetIndex()] = Ngamma;
@@ -167,7 +176,6 @@ void GatePromptGammaData::Read(std::string & filename)
 
     SetProtonNbBins(GammaZ->GetXaxis()->GetNbins());
     SetGammaNbBins(GammaZ->GetYaxis()->GetNbins());
-
     SetProtonEMin(GammaZ->GetXaxis()->GetXmin());
     SetProtonEMax(GammaZ->GetXaxis()->GetXmax());
     SetGammaEMin(GammaZ->GetYaxis()->GetXmin());
@@ -356,8 +364,6 @@ void GatePromptGammaData::InitializeMaterial()
           // Scale it according to the fraction of this element in the material, multiplied with density ratio
           hgammam2->Scale(f * m->GetDensity() / (g / cm3) );// GammaZ=GammaZ/rho(Z), so dont need to divide by rho(Z)
           hngammam2->Scale(f * m->GetDensity() / (g / cm3) );
-          //DD("promptgammadata name "<<m->GetName() );
-          //DD("promptgammadata density "<<m->GetDensity() / (g / cm3));
 
           // Add it to the current total histo
           hgammam->Add(hgammam2);
@@ -427,4 +433,3 @@ TH2D* GatePromptGammaData::GetGammaM(const int & materialIndex)
   return GammaM[materialIndex];
 }
 //-----------------------------------------------------------------------------
-
