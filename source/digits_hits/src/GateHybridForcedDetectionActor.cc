@@ -54,6 +54,7 @@ GateHybridForcedDetectionActor::GateHybridForcedDetectionActor(G4String name, G4
   mRussianRouletteSpacing(20.),
   mRussianRouletteMinimumCountInRegion(10),
   mRussianRouletteMinimumProbability(0.0001),
+  mSecondPassPhaseSpaceFile(NULL),
   mSecondPassPhaseSpace(NULL)
 {
   GateDebugMessageInc("Actor",4,"GateHybridForcedDetectionActor() -- begin"<<G4endl);
