@@ -9,7 +9,7 @@
 #include <G4LogLogInterpolation.hh>
 #include <G4CompositeEMDataSet.hh>
 #include <G4CrossSectionHandler.hh>
-#include <Randomize.hh>
+#include "G4Poisson.hh"
 #include "GateEnergyResponseFunctor.hh"
 
 // ITK
@@ -282,10 +282,10 @@ public:
       if(m_NumberOfPrimaries != 0)
       	{
         double a =vcl_exp(-rayIntegral);
-	double nprimE = m_NumberOfPrimaries * (*m_EnergyWeightList)[i];
-        double n = ((nprimE)?G4RandGauss::shoot(a,a*TMath::Sqrt(1/nprimE)):a);
-	Accumulate(threadId, input, n * (*m_EnergyWeightList)[i] * (*m_ResponseDetector)( m_EnergyList[i] ));
-	}
+        double nprimE = m_NumberOfPrimaries * (*m_EnergyWeightList)[i];
+        double n = ((nprimE)?G4Poisson(nprimE*a)/nprimE:0.);
+        Accumulate(threadId, input, n * (*m_EnergyWeightList)[i] * (*m_ResponseDetector)( m_EnergyList[i] ));
+        }
       else
         Accumulate(threadId, input, vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i]);
     }
