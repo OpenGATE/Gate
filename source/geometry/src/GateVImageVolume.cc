@@ -561,12 +561,12 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
     if (label<0) {
       GateError(" I find R=" << *iter
 		<< " in the image, while range start at "
-		<< mRangeMaterialTable.GetR1Vector()[0] << Gateendl);
+		<< mRangeMaterialTable.GetMaterials()[0].mR1 << Gateendl);
     }
     if (label>=mRangeMaterialTable.GetNumberOfMaterials()) {
       GateError(" I find R=" << *iter
 		<< " in the image, while range stop at "
-		<< mRangeMaterialTable.GetR2Vector()[mRangeMaterialTable.GetR2Vector().size()-1]
+		<< mRangeMaterialTable.GetMaterials()[mRangeMaterialTable.GetNumberOfMaterials()-1].mR1
 		<< Gateendl);
     }
     //GateMessage("Core", 0, " pix = " << (*iter) << " lab = " << label << Gateendl);

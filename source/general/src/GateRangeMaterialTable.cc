@@ -1,4 +1,5 @@
 #include "GateRangeMaterialTable.hh"
+#include "GateDetectorConstruction.hh"
 
 //-----------------------------------------------------------------------------
 GateRangeMaterialTable::GateRangeMaterialTable()
@@ -9,14 +10,11 @@ GateRangeMaterialTable::GateRangeMaterialTable()
 //-----------------------------------------------------------------------------
 GateRangeMaterialTable::~GateRangeMaterialTable()
 {
-  for (std::vector<G4Material*>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); )
+  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++)
   {
     it = mMaterialsVector.erase(it);
   }
-  mR1.clear();
-  mR2.clear();
-  md1.clear();
-  mName.clear();
+  mMaterialsVector.clear();
 }
 //-----------------------------------------------------------------------------
 
@@ -25,13 +23,14 @@ void GateRangeMaterialTable::WriteMaterialDatabase(G4String filename) {
   std::ofstream os;
   OpenFileOutput(filename, os);
   os << "[Materials]\n";
-  for(unsigned int i=0; i<mMaterialsVector.size(); i++) {
-    os << "# Material " << i << " corresponding to H=[ " 
-       << mR1[i] << ";" << mR2[i] // << "],with density=[" 
+  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++) 
+  {
+    os << "# Material corresponding to H=[ " 
+       << it->mR1 << ";" << it->mR2 // << "],with density=[" 
       //        << G4BestUnit(md1[i],"Volumic Mass") 
       //        << ";" << G4BestUnit(md2[i],"Volumic Mass") << "]"
        << " ]\n";
-    WriteMaterial(mMaterialsVector[i], os);
+    WriteMaterial(it->mMaterial, os);
     os << Gateendl;
   }
   os.close();
@@ -42,8 +41,9 @@ void GateRangeMaterialTable::WriteMaterialDatabase(G4String filename) {
 void GateRangeMaterialTable::WriteMaterialtoRangeLink(G4String filename) {
   std::ofstream os;
   OpenFileOutput(filename, os);
-  for(unsigned int i=0; i<mMaterialsVector.size(); i++) {
-    os << mR1[i] << " " << mR2[i] << " " << mMaterialsVector[i]->GetName() << Gateendl;    
+  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++)
+  {
+    os << it->mR1 << " " << it->mR2 << " " << it->mMaterial->GetName() << Gateendl;    
   }
   os.close();
 }
@@ -65,15 +65,17 @@ void GateRangeMaterialTable::WriteMaterial(G4Material * m, std::ofstream & os) {
 //-----------------------------------------------------------------------------
 void GateRangeMaterialTable::AddMaterial(int R1, int R2, G4String name)
 {
-  int n = GetNumberOfMaterials(); 
+  //int n = GetNumberOfMaterials(); 
   //if(n==1) H1=mH2[n-1];
-
-  mR1.push_back(R1);
-  mR2.push_back(R2);
-  mName.push_back(name);
+  mMaterials mat;
+  mat.mR1 = R1;
+  mat.mR2 = R2;
+  mat.mName = name;
+  mat.mMaterial = theMaterialDatabase.GetMaterial(name);
+  mMaterialsVector.push_back(mat);
   // Check
 //  if (R2 < R1) GateError("R2=" << R2 << " is lower than R1=" << R1 << ". Abort.\n");
-  n++;
+  //n++;
 
 //  if (n != 1) {
 //    if (R1 != mR2[n-2]) GateError("Current R1=" << R1 
@@ -87,27 +89,28 @@ void GateRangeMaterialTable::AddMaterial(int R1, int R2, G4String name)
 //-----------------------------------------------------------------------------
 void GateRangeMaterialTable::Reset()
 {
-  for (std::vector<G4Material*>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); )
+  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++)
   {
     it = mMaterialsVector.erase(it);
   }
   mMaterialsVector.clear();
-  mR1.clear();
-  mR2.clear();
-  md1.clear();
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateRangeMaterialTable::MapLabelToMaterial(LabelToMaterialNameType & m)
 {
-  m.clear();
-  for(int i=0; i<GetNumberOfMaterials(); i++) {
+  m.clear();int i = 0;
+  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++, i++) 
+  {
     // GateMessage("Core", 0, 
     //               "i= " << i << " mi = "
     //             << m[i] << " mnamei = " 
     //              << mName[i] << Gateendl);
-    m[i] = mName[i];
+    std::pair<LabelType,G4String> lMaterial;
+    lMaterial.first = i;
+    lMaterial.second = it->mName;
+    m.insert( lMaterial );
   }
 }
 //-----------------------------------------------------------------------------
@@ -116,16 +119,16 @@ void GateRangeMaterialTable::MapLabelToMaterial(LabelToMaterialNameType & m)
 GateRangeMaterialTable::LabelType GateRangeMaterialTable::GetLabelFromR(int h)
 {
   int i=0;
-  while ((i<GetNumberOfMaterials() && h>=mR1[i])) i++;
+  while ((i<GetNumberOfMaterials() && h>=mMaterialsVector[i].mR1)) i++;
   i--;
-  if ((i==GetNumberOfMaterials()-1) && h>mR2[i]) return i+1;
+  if ((i==GetNumberOfMaterials()-1) && h>mMaterialsVector[i].mR2) return i+1;
   return i;
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 double GateRangeMaterialTable::GetRMeanFromLabel(int l) {
-  double h = (mR1[l]+mR2[l])/2.0;
+  double h = (mMaterialsVector[l].mR1+mMaterialsVector[l].mR2)/2.0;
   return h;
 }
 //-----------------------------------------------------------------------------
