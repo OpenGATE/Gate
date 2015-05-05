@@ -65,7 +65,7 @@ GateVProcess::~GateVProcess()
 
   //for(std::map<G4String,GenericWrapperProcess*>::iterator iter = theListOfWrapper.begin(); iter!=theListOfWrapper.end(); )
   //{
-  //  if((*iter).second!=0) delete (*iter).second;
+  //  if(iter->second!=0) delete iter->second;
   //  theListOfWrapper.erase(iter);
   //}
 

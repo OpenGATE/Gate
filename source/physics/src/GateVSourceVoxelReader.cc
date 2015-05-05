@@ -285,10 +285,10 @@ void GateVSourceVoxelReader::UpdateActivities(G4String  HFN, G4String FN )
           for ( iter = m_TimeActivTables.begin(); iter != m_TimeActivTables.end() ; iter++ )
             {
               ActivCurve.clear();
-              ActivCurve = (*iter).second;
+              ActivCurve = iter->second;
               npoints = ActivCurve.size();
-              G4double activmin = ((*iter).first).first;
-              G4double activmax = ((*iter).first).second;
+              G4double activmin = (iter->first).first;
+              G4double activmax = (iter->first).second;
               for ( G4int i = 0 ; i < npoints ; i++) // fill the points with the time curve activity values
                 {
                   Xd[i] = ActivCurve[i].first;
@@ -338,10 +338,10 @@ void GateVSourceVoxelReader::UpdateActivities()
   for ( iter = m_TimeActivTables.begin(); iter != m_TimeActivTables.end() ; iter++ )
     {
       ActivCurve.clear();
-      ActivCurve = (*iter).second;
+      ActivCurve = iter->second;
       npoints = ActivCurve.size();
-      G4double  activmin = ((*iter).first).first;
-      G4double  activmax = ((*iter).first).second;
+      G4double  activmin = (iter->first).first;
+      G4double  activmax = (iter->first).second;
       for ( G4int i = 0 ; i < npoints ; i++) // fill the points with the time curve activity values
         {
           Xd[i] = ActivCurve[i].first;

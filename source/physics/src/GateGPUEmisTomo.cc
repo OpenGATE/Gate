@@ -390,7 +390,7 @@ void GateGPUEmisTomo::SetPhantomVolumeData()
           // DD(k);
           unsigned short int index = iter-materials.begin();
           //DD(materials.begin());
-          //DD((*iter).first);
+          //DD(iter->first);
           DD(index);
           m_gpu_input->phantom_material_data.push_back(index);
         }
@@ -417,7 +417,7 @@ void GateGPUEmisTomo::SetPhantomVolumeData()
                 }
                 
                 // set voxel index
-                m_gpu_input->phantom_material_data.push_back(iter);
+                m_gpu_input->phantom_material_data.push_back(iter); 
 
                 // if this material is not in the list add in it?
                 if (!find) {materials.push_back(mat);}
