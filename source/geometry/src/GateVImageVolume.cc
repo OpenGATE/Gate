@@ -356,12 +356,12 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
     if (label<0) {
       GateError(" I find H=" << *iter
 		<< " in the image, while Hounsfield range start at "
-		<< mHounsfieldMaterialTable.GetMaterials()[0].mH1 << Gateendl);
+		<< mHounsfieldMaterialTable[0].mH1 << Gateendl);
     }
     if (label>=mHounsfieldMaterialTable.GetNumberOfMaterials()) {
       GateError(" I find H=" << *iter
 		<< " in the image, while Hounsfield range stop at "
-		<< mHounsfieldMaterialTable.GetMaterials()[mHounsfieldMaterialTable.GetNumberOfMaterials()-1].mH2
+		<< mHounsfieldMaterialTable[mHounsfieldMaterialTable.GetNumberOfMaterials()-1].mH2
 		<< Gateendl);
     }
     //GateMessage("Core", 0, " pix = " << (*iter) << " lab = " << label << Gateendl);
@@ -561,12 +561,12 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
     if (label<0) {
       GateError(" I find R=" << *iter
 		<< " in the image, while range start at "
-		<< mRangeMaterialTable.GetMaterials()[0].mR1 << Gateendl);
+		<< mRangeMaterialTable[0].mR1 << Gateendl);
     }
     if (label>=mRangeMaterialTable.GetNumberOfMaterials()) {
       GateError(" I find R=" << *iter
 		<< " in the image, while range stop at "
-		<< mRangeMaterialTable.GetMaterials()[mRangeMaterialTable.GetNumberOfMaterials()-1].mR1
+		<< mRangeMaterialTable[mRangeMaterialTable.GetNumberOfMaterials()-1].mR1
 		<< Gateendl);
     }
     //GateMessage("Core", 0, " pix = " << (*iter) << " lab = " << label << Gateendl);

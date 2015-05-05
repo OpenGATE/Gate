@@ -15,7 +15,7 @@ public:
     G4Material* mMaterial;
     int mR1;
     int mR2;
-    int md1;
+    double md1;
     G4String mName;
   };
   typedef std::vector<mMaterials> GateMaterialsVector;
