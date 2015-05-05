@@ -118,8 +118,12 @@ void GateCoincidencePulseProcessorChain::ProcessCoincidencePulses()
 
   //mhadi_add[
   for (size_t processorID = 0 ; processorID < GetProcessorNumber(); processorID++) 
-     if (GetProcessor(processorID)->IsEnabled() && GetProcessor(processorID)->IsTriCoincProcessor())
-        GetProcessor(processorID)->CollectSingles();
+  {
+    GateVCoincidencePulseProcessor* processor =  GetProcessor(processorID);
+    if (processor->IsEnabled() && processor->IsTriCoincProcessor())
+        processor->CollectSingles();
+    
+  }
   //mhadi_add]
         
   if (pulseList.empty())
@@ -132,10 +136,11 @@ void GateCoincidencePulseProcessorChain::ProcessCoincidencePulses()
      GateCoincidencePulse* pulse = *it;
      if (pulse->empty()) continue;
      for (size_t processorID = 0 ; processorID < GetProcessorNumber(); processorID++) {
-       if (GetProcessor(processorID)->IsEnabled()) {
-	 pulse = GetProcessor(processorID)->ProcessPulse(pulse,i);
+       GateVCoincidencePulseProcessor* processor =  GetProcessor(processorID);
+       if (processor->IsEnabled()) {
+	 pulse = processor->ProcessPulse(pulse,i);
 	 if (pulse){
-      	   pulse->SetName(GetProcessor(processorID)->GetObjectName());
+      	   pulse->SetName(processor->GetObjectName());
       	   GateDigitizer::GetInstance()->StoreCoincidencePulse(pulse);
 	 } else break;
        }

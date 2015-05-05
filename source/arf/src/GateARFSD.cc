@@ -99,6 +99,7 @@ GateARFSD::~GateARFSD()
 void GateARFSD::Initialize(G4HCofThisEvent*HCE)
 {
   static int HCID = -1; // Static variable storing the hit collection ID
+  // Not thread safe but moving to local variable doesn't work
 
   // Creation of a new hit collection
   ARFCollection = new GateCrystalHitsCollection

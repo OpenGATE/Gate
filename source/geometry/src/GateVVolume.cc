@@ -298,6 +298,7 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
 
   size_t QueueSize = pQueue->size();
 
+  //This for cycle is why we need an iterable queue.
   for (size_t copyNumber=0; copyNumber<QueueSize ; copyNumber++) {
 
     // Extract a combination of a rotation matrix and of a translation vector from the queue

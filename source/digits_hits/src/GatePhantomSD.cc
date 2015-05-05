@@ -45,6 +45,7 @@ GatePhantomSD::~GatePhantomSD(){;}
 void GatePhantomSD::Initialize(G4HCofThisEvent*HCE)
 {
   static int HCID = -1;
+  // Not thread safe but moving to local variable doesn't work
   phantomCollection = new GatePhantomHitsCollection
                    (SensitiveDetectorName,thePhantomCollectionName);
   if(HCID<0)
