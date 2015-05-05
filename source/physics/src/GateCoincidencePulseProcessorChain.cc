@@ -154,7 +154,7 @@ GateVSystem* GateCoincidencePulseProcessorChain::FindSystem(G4String& inputName)
    GateDigitizer* digitizer = GateDigitizer::GetInstance();
    std::vector<GateCoincidenceSorter*> CoincidenceSorterList = digitizer->GetCoinSorterList();
 
-   G4int index = -1;
+   /*G4int index = -1;
 
    for(size_t i=0; i<CoincidenceSorterList.size(); i++)
    {
@@ -170,6 +170,13 @@ GateVSystem* GateCoincidencePulseProcessorChain::FindSystem(G4String& inputName)
    if(index != -1)
       system = CoincidenceSorterList[index]->GetSystem();
    
-   return system;
+   return system;*/
+   
+   //faster!!
+   for (std::vector<GateCoincidenceSorter*>::iterator itr=CoincidenceSorterList.begin(); itr!=CoincidenceSorterList.end(), itr++)
+     if (inputName.compare((*itr)->GetOutputName()) == 0)
+       return (*itr)->GetSystem();
+   
+   return 0;
 }
 //mhadi_add]

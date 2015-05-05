@@ -462,14 +462,20 @@ G4int GateSystemComponent::ComputeOutputOffset()
     G4int result =0;
     
     // Loop in the mother's daughter list until we find the requested daughter
+    // dangerous!! can lead to an infinite loop
     size_t i = 0;
     while ( m_motherComponent->GetChildComponent(i) != this )
     {
       result += m_motherComponent->GetChildComponent(i)->GetVolumeNumber();
       ++i;
     }
+    //variant, Is this correct?? Is there more than one instance of children per list component??
+    //for (size_t i = 0; i<m_motherComponent->GetChildNumber(); i++)
+      //if ( m_motherComponent->GetChildComponent(i) == this )
+	//return m_motherComponent->GetChildComponent(i)->GetVolumeNumber();
 
     return result;
+    //return 0;  
 }
 //-------------------------------------------------------------------------------------------
 
