@@ -9,6 +9,7 @@ public:
   ~GateRangeMaterialTable();
   typedef int LabelType;
   typedef std::map<LabelType,G4String> LabelToMaterialNameType;
+
   struct mMaterials
   {
     G4Material* mMaterial;
@@ -17,7 +18,12 @@ public:
     int md1;
     G4String mName;
   };
-
+  typedef std::vector<mMaterials> GateMaterialsVector;
+  typedef GateMaterialsVector::iterator iterator;
+  typedef GateMaterialsVector::const_iterator const_iterator;
+  iterator begin(){ return mMaterialsVector.begin(); }
+  iterator end(){ return mMaterialsVector.end(); }
+  
   void AddMaterial(int R1, int R2, G4String name); 
   void WriteMaterialDatabase(G4String filename);
   void WriteMaterialtoRangeLink(G4String filename);
@@ -27,21 +33,12 @@ public:
   void MapLabelToMaterial(LabelToMaterialNameType & m);
   double GetRMeanFromLabel(int l);
   LabelType GetLabelFromR(int l);
-  //std::vector<int> & GetR1Vector() { return mR1; }
-  //std::vector<int> & GetR2Vector() { return mR2; }
-  //std::vector<int> & GetDVector() { return md1; }
-  std::vector<mMaterials> GetMaterials() { return mMaterialsVector; }
+
+  GateMaterialsVector GetMaterials() { return mMaterialsVector; }
+  inline mMaterials & operator[](int index){ return mMaterialsVector[index];}
 
 protected:
-  std::vector<mMaterials> mMaterialsVector;
+  GateMaterialsVector mMaterialsVector;
   
-  /*
-  std::vector<G4Material*> mMaterialsVector;
-  std::vector<int> mR1;
-  std::vector<int> mR2;
-  std::vector<int> md1;
-  // std::vector<double> md2;
-  std::vector<G4String> mName;
-  */
 };
 

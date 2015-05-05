@@ -10,7 +10,7 @@ GateRangeMaterialTable::GateRangeMaterialTable()
 //-----------------------------------------------------------------------------
 GateRangeMaterialTable::~GateRangeMaterialTable()
 {
-  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++)
+  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); )
   {
     it = mMaterialsVector.erase(it);
   }
@@ -72,6 +72,7 @@ void GateRangeMaterialTable::AddMaterial(int R1, int R2, G4String name)
   mat.mR2 = R2;
   mat.mName = name;
   mat.mMaterial = theMaterialDatabase.GetMaterial(name);
+  mat.md1=mat.mMaterial->GetDensity();
   mMaterialsVector.push_back(mat);
   // Check
 //  if (R2 < R1) GateError("R2=" << R2 << " is lower than R1=" << R1 << ". Abort.\n");
@@ -89,7 +90,7 @@ void GateRangeMaterialTable::AddMaterial(int R1, int R2, G4String name)
 //-----------------------------------------------------------------------------
 void GateRangeMaterialTable::Reset()
 {
-  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++)
+  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); )
   {
     it = mMaterialsVector.erase(it);
   }

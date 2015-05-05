@@ -356,12 +356,12 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
     if (label<0) {
       GateError(" I find H=" << *iter
 		<< " in the image, while Hounsfield range start at "
-		<< mHounsfieldMaterialTable.GetH1Vector()[0] << Gateendl);
+		<< mHounsfieldMaterialTable.GetMaterials()[0].mH1 << Gateendl);
     }
     if (label>=mHounsfieldMaterialTable.GetNumberOfMaterials()) {
       GateError(" I find H=" << *iter
 		<< " in the image, while Hounsfield range stop at "
-		<< mHounsfieldMaterialTable.GetH2Vector()[mHounsfieldMaterialTable.GetH2Vector().size()-1]
+		<< mHounsfieldMaterialTable.GetMaterials()[mHounsfieldMaterialTable.GetNumberOfMaterials()-1].mH2
 		<< Gateendl);
     }
     //GateMessage("Core", 0, " pix = " << (*iter) << " lab = " << label << Gateendl);
@@ -666,34 +666,22 @@ void GateVImageVolume::RemapLabelsContiguously( std::vector<LabelType>& labels, 
   mLabelToMaterialName = mmap;
 
   // Update GateHounsfieldMaterialTable if needed
-  if (mHounsfieldMaterialTable.GetNumberOfMaterials() != 0) {
-    std::vector<double> & h1 = mHounsfieldMaterialTable.GetH1Vector();
-    std::vector<double> tmp(h1.size());
-   for(uint i=0; i<h1.size(); i++) {
-      if(lmap[i]!=0 || ( i==0 && lmap[i]==0) )  tmp[lmap[i]] = h1[i];
+  // Is really no need to update name and material also??
+  std::vector<GateHounsfieldMaterialTable::mMaterials> tmp(mHounsfieldMaterialTable.GetNumberOfMaterials());
+  for(int i=0; i<mHounsfieldMaterialTable.GetNumberOfMaterials(); i++) 
+  {
+    if(lmap[i]!=0 || ( i==0 && lmap[i]==0) ) 
+    {
+      tmp[lmap[i]].mH1 = mHounsfieldMaterialTable[i].mH1;
+      tmp[lmap[i]].mH2 = mHounsfieldMaterialTable[i].mH2;
+      tmp[lmap[i]].md1 = mHounsfieldMaterialTable[i].md1;
     }
-    for(uint i=0; i<h1.size(); i++) {
-      //GateMessage("Core", 0, "i = " << i
-      //             << " h1 = " << h1[i]
-      //             << " new h1 = " << tmp[i] << Gateendl);
-       h1[i] = tmp[i];
-    }
-    std::vector<double> & h2 = mHounsfieldMaterialTable.GetH2Vector();
-    for(uint i=0; i<h2.size(); i++) {
-       if(lmap[i]!=0 || ( i==0 && lmap[i]==0) )  tmp[lmap[i]] = h2[i];
-    }
-    for(uint i=0; i<h2.size(); i++) {
-      h2[i] = tmp[i];
-    }
-
-    std::vector<double> & d1 = mHounsfieldMaterialTable.GetDVector();
-    for(uint i=0; i<d1.size(); i++) {
-     if(lmap[i]!=0 || ( i==0 && lmap[i]==0) )   tmp[lmap[i]] = d1[i];
-    }
-    for(uint i=0; i<d1.size(); i++) {
-     d1[i] = tmp[i];
-    }
-
+  }
+  for(int i=0; i<mHounsfieldMaterialTable.GetNumberOfMaterials(); i++) 
+  {
+    mHounsfieldMaterialTable[i].mH1 = tmp[i].mH1;
+    mHounsfieldMaterialTable[i].mH2 = tmp[i].mH2;
+    mHounsfieldMaterialTable[i].md1 = tmp[i].md1;
   }
 }
 //--------------------------------------------------------------------
