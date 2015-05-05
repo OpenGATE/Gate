@@ -173,7 +173,7 @@ GateVSystem* GateCoincidencePulseProcessorChain::FindSystem(G4String& inputName)
    return system;*/
    
    //faster!!
-   for (std::vector<GateCoincidenceSorter*>::iterator itr=CoincidenceSorterList.begin(); itr!=CoincidenceSorterList.end(), itr++)
+   for (std::vector<GateCoincidenceSorter*>::iterator itr=CoincidenceSorterList.begin(); itr!=CoincidenceSorterList.end(); itr++)
      if (inputName.compare((*itr)->GetOutputName()) == 0)
        return (*itr)->GetSystem();
    
