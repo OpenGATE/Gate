@@ -39,7 +39,7 @@ See GATE/LICENSE.txt for further details
 
   example :
 
-  GateMessage("Core",4,"problem with "<<GetName()<<G4endl);
+  GateMessage("Core",4,"problem with "<<GetName()<< Gateendl);
 
   will push the 3rd argument in std::cout if the message level of
   "Core" messages is greater or equal to 4.  which means that it
@@ -108,12 +108,12 @@ See GATE/LICENSE.txt for further details
 // In a method X:
 // X() 
 // {
-//   GateDebugMessageInc("Physics",3,"Begining of method X"<<G4endl); 
+//   GateDebugMessageInc("Physics",3,"Begining of method X\n"); 
 //   ..
 //   // This message will be tabulated with one more space 
 //   GateDebugMessage("Physics",5,"comment...");
 //   ..
-//   GateDebugMessageDec("Physics",3,"End of method X"<<G4endl); 
+//   GateDebugMessageDec("Physics",3,"End of method X\n"); 
 // }
 // Gives :
 // Begining of method X
@@ -361,11 +361,11 @@ See GATE/LICENSE.txt for further details
       int lev = GateMessageManager::GetMessageLevel("Warning");		\
       if (lev >0)							\
 	{								\
-	  std::cout << " <!> *** WARNING *** <!>  " << MESSAGE << std::endl; \
+	  std::cout << " <!> *** WARNING *** <!>  " << MESSAGE << Gateendl; \
 	  if (lev >1)							\
 	    {								\
 	      std::cout << " <!> *** WARNING *** <!>  In file '"<<__FILE__ \
-			<<"' ; Line "<<__LINE__<<std::endl;		\
+			<<"' ; Line "<<__LINE__<< Gateendl;		\
 	    }								\
 	}								\
     }									\
@@ -392,7 +392,7 @@ See GATE/LICENSE.txt for further details
       f_ << __SHORT_FILE__ << " (l."<<__LINE__<<"): ";\
       G4String str_f = f_.str();		\
       G4String str_s = s_.str();		\
-      std::cout << str_f << str_s << std::endl; \
+      std::cout << str_f << str_s << Gateendl; \
       exit(-1);					\
       G4Exception(str_f,str_s,			\
 		  FatalException," ");		\
@@ -425,7 +425,7 @@ See GATE/LICENSE.txt for further details
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
-#define DD(a) GateMessage("Core", 0 , #a " = [ " << a << " ]" << Gateendl);
+#define DD(a) GateMessage("Core", 0 , #a " = [ " << a << " ]\n");
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------

@@ -45,16 +45,16 @@ GateMHDImage::~GateMHDImage() {
 //-----------------------------------------------------------------------------
 void GateMHDImage::ReadHeader(std::string & filename)
 {
-  GateMessage("Image",5,"GateMHDImage::ReadMHD " << filename << G4endl);
-  //std::cout << "*** WARNING *** The mhd reader is experimental... (itk version)" << std::endl;
+  GateMessage("Image",5,"GateMHDImage::ReadMHD " << filename << Gateendl);
+  //std::cout << "*** WARNING *** The mhd reader is experimental... (itk version)\n";
 
   MetaImage m_MetaImage;
   if(!m_MetaImage.Read(filename.c_str(), false)) {
-    GateError("MHD File cannot be read: " << filename << std::endl);
+    GateError("MHD File cannot be read: " << filename << Gateendl);
   }
 
   if (m_MetaImage.NDims() != 3) {
-    GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort." << std::endl);
+    GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort.\n");
   }
 
   for(int i=0; i<m_MetaImage.NDims(); i++) {
@@ -75,10 +75,10 @@ void GateMHDImage::ReadHeader(std::string & filename)
 //-----------------------------------------------------------------------------
 void GateMHDImage::Print()
 {
-  std::cout << "Tags read = " << tags.size() << std::endl
-            << "size = " << size[0] << " " << size[1] << " " << size[2] << std::endl
-            << "spacing = " << spacing[0] << " " << spacing[1] << " " << spacing[2] << std::endl
-            << "origin = " << origin[0] << " " << origin[1] << " " << origin[2] << std::endl;
+  std::cout << "Tags read = " << tags.size() << Gateendl
+            << "size = " << size[0] << " " << size[1] << " " << size[2] << Gateendl
+            << "spacing = " << spacing[0] << " " << spacing[1] << " " << spacing[2] << Gateendl
+            << "origin = " << origin[0] << " " << origin[1] << " " << origin[2] << Gateendl;
 }
 //-----------------------------------------------------------------------------
 

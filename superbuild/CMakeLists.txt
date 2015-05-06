@@ -104,7 +104,7 @@ IF (BUILD_GATE)
     STAMP_DIR ${base}/stamp
     DOWNLOAD_DIR ${base}/dl
     INSTALL_DIR ${INSTALL_PREFIX}
-    URL ftp://root.cern.ch/root/root_v5.34.05.source.tar.gz
+    URL ftp://root.cern.ch/root/root_v5.34.28.source.tar.gz
     CONFIGURE_COMMAND ${SRC_PREFIX}/root/configure --prefix=${INSTALL_PREFIX}
     )
 ENDIF()
@@ -143,7 +143,7 @@ IF (BUILD_GATE)
     STAMP_DIR ${base}/stamp
     DOWNLOAD_DIR ${base}/dl
     INSTALL_DIR ${INSTALL_PREFIX}
-    URL http://geant4.web.cern.ch/geant4/support/source/geant4.9.6.p03.tar.gz
+    URL http://geant4.web.cern.ch/geant4/support/source/geant4.10.01.tar.gz
     CMAKE_ARGS
     -DCMAKE_PREFIX_PATH:PATH=${INSTALL_PREFIX}
     -DGEANT4_INSTALL_DATA:BOOL=ON
@@ -169,12 +169,15 @@ IF (NOT BUILD_GATE_WITH_RTK)
     DOWNLOAD_DIR ${base}/dl
     INSTALL_DIR ${INSTALL_PREFIX}
     DEPENDS geant4 root
-    GIT_REPOSITORY gitopengate:opengate.git
+    #GIT_REPOSITORY gitopengate:opengate.git
+    GIT_REPOSITORY http://git.opengatecollaboration.org/git/opengate-public.git
     GIT_TAG origin/${GATE_BRANCH}
     CMAKE_ARGS
     -DCMAKE_PREFIX_PATH:PATH=${INSTALL_PREFIX}
     -DGATE_ANALYSIS_USE_FILE:BOOL=ON
     -DGATE_ANALYSIS_USE_GENERAL:BOOL=ON
+    -DGATE_DOWNLOAD_BENCHMARKS_DATA:BOOL=ON
+    -DGATE_DOWNLOAD_EXAMPLES_DATA:BOOL=ON
     -DGATE_USE_ECAT7:BOOL=OFF
     -DGATE_USE_GEANT4_UIVIS:BOOL=ON
     -DGATE_USE_GPU:BOOL=OFF
@@ -194,34 +197,34 @@ ENDIF()
 
 #=========================================================
 # GATE
-IF (BUILD_GATE_WITH_RTK)
-  ExternalProject_Add(
-    opengate
-    STAMP_DIR ${base}/stamp
-    DOWNLOAD_DIR ${base}/dl
-    INSTALL_DIR ${INSTALL_PREFIX}
-    DEPENDS geant4 clhep root itk rtk
-    GIT_REPOSITORY gitopengate:opengate.git
-    GIT_TAG origin/hybrid
-    CMAKE_ARGS
-    -DCMAKE_PREFIX_PATH:PATH=${INSTALL_PREFIX}
-    -DGATE_ANALYSIS_USE_FILE:BOOL=ON
-    -DGATE_ANALYSIS_USE_GENERAL:BOOL=ON
-    -DGATE_USE_ECAT7:BOOL=OFF
-    -DGATE_USE_GEANT4_UIVIS:BOOL=ON
-    -DGATE_USE_GPU:BOOL=OFF
-    -DGATE_USE_LMF:BOOL=OFF
-    -DGATE_USE_OPTICAL:BOOL=OFF
-    -DGATE_USE_SYSTEM_CLHEP:BOOL=ON
-    -DCLHEP_CONFIG_EXECUTABLE:FILEPATH=${INSTALL_PREFIX}/bin/clhep-config
-    -DCLHEP_INCLUDE_DIR:PATH=${INSTALL_PREFIX}/include
-    -DGATE_USE_ROOT:BOOL=ON
-    -DGATE_USE_RTK:BOOL=ON
-    -DGeant4_DIR:PATH=${INSTALL_PREFIX}
-    -DROOTCINT_EXECUTABLE:FILEPATH=${INSTALL_PREFIX}/bin/rootcint
-    -DGATE_USE_GEANT4_UIVIS:BOOL=ON
-    -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_PREFIX}
-    -DRTK_DIR:PATH=${SRC_PREFIX}/rtk-build
-    )
-ENDIF()
+#IF (BUILD_GATE_WITH_RTK)
+  #ExternalProject_Add(
+    #opengate
+    #STAMP_DIR ${base}/stamp
+    #DOWNLOAD_DIR ${base}/dl
+    #INSTALL_DIR ${INSTALL_PREFIX}
+    #DEPENDS geant4 clhep root itk rtk
+    #GIT_REPOSITORY gitopengate:opengate.git
+    #GIT_TAG origin/hybrid
+    #CMAKE_ARGS
+    #-DCMAKE_PREFIX_PATH:PATH=${INSTALL_PREFIX}
+    #-DGATE_ANALYSIS_USE_FILE:BOOL=ON
+    #-DGATE_ANALYSIS_USE_GENERAL:BOOL=ON
+    #-DGATE_USE_ECAT7:BOOL=OFF
+    #-DGATE_USE_GEANT4_UIVIS:BOOL=ON
+    #-DGATE_USE_GPU:BOOL=OFF
+    #-DGATE_USE_LMF:BOOL=OFF
+    #-DGATE_USE_OPTICAL:BOOL=OFF
+    #-DGATE_USE_SYSTEM_CLHEP:BOOL=ON
+    #-DCLHEP_CONFIG_EXECUTABLE:FILEPATH=${INSTALL_PREFIX}/bin/clhep-config
+    #-DCLHEP_INCLUDE_DIR:PATH=${INSTALL_PREFIX}/include
+    #-DGATE_USE_ROOT:BOOL=ON
+    #-DGATE_USE_RTK:BOOL=ON
+    #-DGeant4_DIR:PATH=${INSTALL_PREFIX}
+    #-DROOTCINT_EXECUTABLE:FILEPATH=${INSTALL_PREFIX}/bin/rootcint
+    #-DGATE_USE_GEANT4_UIVIS:BOOL=ON
+    #-DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_PREFIX}
+    #-DRTK_DIR:PATH=${SRC_PREFIX}/rtk-build
+    #)
+#ENDIF()
 #=========================================================

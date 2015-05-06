@@ -137,11 +137,11 @@ void GateSourceLinacBeam::SetSourceFromPhaseSpaceFilename(G4String f) {
   // PrintHistoInfo(mHistoThetaDirection[0][0][0]);
 
   // Print
-  GateMessage("Beam", 1, "Nb of vol [" << mNumberOfVolume << "]" << G4endl);
-  GateMessage("Beam", 1, "Radius    [" << mNumberOfVolume << "][" << mNbOfRadiusBins << "]" << G4endl);
-  GateMessage("Beam", 1, "Energy    [" << mNumberOfVolume << "][" << mNbOfRadiusBins << "][" << mHistoEnergy[0][0]->GetNbinsX() << "]" << G4endl);
-  GateMessage("Beam", 1, "ThetaDir  [" << mNumberOfVolume << "][" << mNbOfRadiusBinsForAngle << "][" << mNbOfEnergyBinsForAngle << "][" << mHistoThetaDirection[0][0][0]->GetNbinsX() << "]" << G4endl);
-  GateMessage("Beam", 1, "PhiDir    [" << mNumberOfVolume << "][" << mNbOfRadiusBinsForAngle << "][" << mNbOfEnergyBinsForAngle << "][" << mHistoPhiDirection[0][0][0]->GetNbinsX() << "]" << G4endl);
+  GateMessage("Beam", 1, "Nb of vol [" << mNumberOfVolume << "]\n");
+  GateMessage("Beam", 1, "Radius    [" << mNumberOfVolume << "][" << mNbOfRadiusBins << "]\n");
+  GateMessage("Beam", 1, "Energy    [" << mNumberOfVolume << "][" << mNbOfRadiusBins << "][" << mHistoEnergy[0][0]->GetNbinsX() << "]\n");
+  GateMessage("Beam", 1, "ThetaDir  [" << mNumberOfVolume << "][" << mNbOfRadiusBinsForAngle << "][" << mNbOfEnergyBinsForAngle << "][" << mHistoThetaDirection[0][0][0]->GetNbinsX() << "]\n");
+  GateMessage("Beam", 1, "PhiDir    [" << mNumberOfVolume << "][" << mNbOfRadiusBinsForAngle << "][" << mNbOfEnergyBinsForAngle << "][" << mHistoPhiDirection[0][0][0]->GetNbinsX() << "]\n");
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -152,8 +152,8 @@ void GateSourceLinacBeam::SetSourceFromPhaseSpaceFilename(G4String f) {
 //   }
   
 //   // Update current activity according to time
-//   GateMessage("Acquisition", 0, "TODO ********** Source <" << m_name << "> update ACTIVITY" << G4endl);
-//   GateMessage("Acquisition", 0, "TODO ********** Source <" << m_name << "> update RMAX" << G4endl);
+//   GateMessage("Acquisition", 0, "TODO ********** Source <" << m_name << "> update ACTIVITY\n");
+//   GateMessage("Acquisition", 0, "TODO ********** Source <" << m_name << "> update RMAX\n");
 //   GateVSource::Update();
 // }
 // //-------------------------------------------------------------------------------------------------
@@ -178,7 +178,7 @@ int GateSourceLinacBeam::GetIndexFromTime(double aTime) {
   i--;
   if ((i < 0) && (aTime < mTimeList[0])) {
     GateError("The time list for " << GetName() << " begin with " << mTimeList[0]/s
-              << " sec, so I cannot find the time" << aTime/s << " sec." << G4endl);
+              << " sec, so I cannot find the time" << aTime/s << " sec.\n");
   }
   return i;
 }
@@ -269,15 +269,15 @@ void GateSourceLinacBeam::GeneratePrimaryVertex(G4Event* evt) {
 
   //DS TODO !!!
 
-  if (volumeNumber==0) {Phi+=14.9*r/78.5;}             // G4cout<<"  Phi+=14.9*r/78.5= "<<Phi<<G4endl;}
-  if (volumeNumber==1) {Phi+=17.*r/80.;}               // G4cout<<"  Phi+=17.*r/80.= "<<Phi<<G4endl;}
-  if (volumeNumber==2) {Phi+=27.5*r/80.;}              // G4cout<<"  Phi+=27.5*r/80.= "<<Phi<<G4endl;}
+  if (volumeNumber==0) {Phi+=14.9*r/78.5;}             // G4cout<<"  Phi+=14.9*r/78.5= "<<Phi<< Gateendl;}
+  if (volumeNumber==1) {Phi+=17.*r/80.;}               // G4cout<<"  Phi+=17.*r/80.= "<<Phi<< Gateendl;}
+  if (volumeNumber==2) {Phi+=27.5*r/80.;}              // G4cout<<"  Phi+=27.5*r/80.= "<<Phi<< Gateendl;}
   //}
   //else {
   // on utilise une équation de droite représentative, qui est beaucoup plus juste (technique point source, pour chacun des 3 éléments)
-  //if (volumeNumber==0) {Phi=14.9*r/78.5;}             // G4cout<<"  Phi+=14.9*r/78.5= "<<Phi<<G4endl;}
-  //if (volumeNumber==1) {Phi=17.*r/80.;}               // G4cout<<"  Phi+=17.*r/80.= "<<Phi<<G4endl;}
-  //if (volumeNumber==2) {Phi=27.5*r/80.;}              // G4cout<<"  Phi+=27.5*r/80.= "<<Phi<<G4endl;}
+  //if (volumeNumber==0) {Phi=14.9*r/78.5;}             // G4cout<<"  Phi+=14.9*r/78.5= "<<Phi<< Gateendl;}
+  //if (volumeNumber==1) {Phi=17.*r/80.;}               // G4cout<<"  Phi+=17.*r/80.= "<<Phi<< Gateendl;}
+  //if (volumeNumber==2) {Phi=27.5*r/80.;}              // G4cout<<"  Phi+=27.5*r/80.= "<<Phi<< Gateendl;}
   // }
 
 
@@ -341,7 +341,7 @@ void GateSourceLinacBeam::GeneratePrimaryVertex(G4Event* evt) {
                             GetParticlePolarization().z() );
   vertex->SetPrimary( particle );  
   evt->AddPrimaryVertex( vertex );
-  //G4cout<<"AddPrimaryvertex()"<<G4endl;
+  //G4cout<<"AddPrimaryvertex()\n";
 }
 //-------------------------------------------------------------------------------------------------
 

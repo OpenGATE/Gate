@@ -20,8 +20,8 @@
 GateImageNestedParametrisedVolumeMessenger::GateImageNestedParametrisedVolumeMessenger(GateImageNestedParametrisedVolume* volume)
   :GateVImageVolumeMessenger(volume)
 {
-  GateMessageInc("Volume",6,"Begin GateImageNestedParametrisedVolumeMessenger()"<<G4endl);
-  GateMessageDec("Volume",6,"End GateImageNestedParametrisedVolumeMessenger()"<<G4endl);
+  GateMessageInc("Volume",6,"Begin GateImageNestedParametrisedVolumeMessenger()\n");
+  GateMessageDec("Volume",6,"End GateImageNestedParametrisedVolumeMessenger()\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -29,8 +29,8 @@ GateImageNestedParametrisedVolumeMessenger::GateImageNestedParametrisedVolumeMes
 //-----------------------------------------------------------------------------
 GateImageNestedParametrisedVolumeMessenger::~GateImageNestedParametrisedVolumeMessenger()
 {
-  GateMessageInc("Volume",6,"Begin ~GateImageNestedParametrisedVolumeMessenger()"<<G4endl);
-  GateMessageDec("Volume",6,"End ~GateImageNestedParametrisedVolumeMessenger()"<<G4endl);
+  GateMessageInc("Volume",6,"Begin ~GateImageNestedParametrisedVolumeMessenger()\n");
+  GateMessageDec("Volume",6,"End ~GateImageNestedParametrisedVolumeMessenger()\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ void GateImageNestedParametrisedVolumeMessenger::SetNewValue(G4UIcommand* comman
 {
   GateMessage("Volume",6,"GateImageNestedParametrisedVolumeMessenger::SetNewValue "
               << command->GetCommandPath()
-	      << " newValue=" << newValue << G4endl);
+	      << " newValue=" << newValue << Gateendl);
   GateVImageVolumeMessenger::SetNewValue(command,newValue);
 }
 //-----------------------------------------------------------------------------

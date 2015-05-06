@@ -33,7 +33,7 @@ GateToRootMessenger::GateToRootMessenger(GateToRoot* gateToRoot)
   : GateOutputModuleMessenger(gateToRoot)
   , m_gateToRoot(gateToRoot)
 {
-//  G4cout << " Constructor GateToRootMessenger" << G4endl;
+//  G4cout << " Constructor GateToRootMessenger\n";
   G4String cmdName;
 
   cmdName = GetDirectoryName()+"reset";
@@ -41,7 +41,7 @@ GateToRootMessenger::GateToRootMessenger(GateToRoot* gateToRoot)
   ResetCmd->SetGuidance("Reset the output");
 
   cmdName = GetDirectoryName()+"setFileName";
-//  G4cout << " cmdName setFileName = " << cmdName << G4endl;
+//  G4cout << " cmdName setFileName = " << cmdName << Gateendl;
   SetFileNameCmd = new G4UIcmdWithAString(cmdName,this);
   SetFileNameCmd->SetGuidance("Set the name of the output ROOT data file");
   SetFileNameCmd->SetParameterName("Name",false);
@@ -127,7 +127,7 @@ void GateToRootMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 void GateToRootMessenger::CreateNewOutputChannelCommand(GateToRoot::VOutputChannel* anOutputChannel)
 {
 
-  GateMessage("OutputMgr", 5, " GateToRootMessenger::CreateNewOutputChannelCommand -- begin " << G4endl;);
+  GateMessage("OutputMgr", 5, " GateToRootMessenger::CreateNewOutputChannelCommand -- begin \n";);
 
   G4String cmdName;
 

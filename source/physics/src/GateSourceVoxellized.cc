@@ -30,7 +30,7 @@ GateSourceVoxellized::GateSourceVoxellized(G4String name)
 GateSourceVoxellized::~GateSourceVoxellized()
 {
   if (nVerboseLevel > 0)
-    G4cout << "GateSourceVoxellized::~GateSourceVoxellized " << G4endl;
+    G4cout << "GateSourceVoxellized::~GateSourceVoxellized \n";
   delete m_sourceVoxellizedMessenger;
   if (m_voxelReader) delete m_voxelReader;
 }
@@ -41,7 +41,7 @@ GateSourceVoxellized::~GateSourceVoxellized()
 G4double GateSourceVoxellized::GetNextTime(G4double timeNow)
 {
   if (!m_voxelReader) {
-    G4cout << "GateSourceVoxellized::GetNextTime: insert a voxel reader first" << G4endl;
+    G4cout << "GateSourceVoxellized::GetNextTime: insert a voxel reader first\n";
     return 0.;
   }
   // compute random time for this source as if it was one source with the total activity
@@ -49,7 +49,7 @@ G4double GateSourceVoxellized::GetNextTime(G4double timeNow)
   G4double firstTime = GateVSource::GetNextTime(timeNow);
 
   if (nVerboseLevel>1)
-    G4cout << "GateSourceVoxellized::GetNextSource : firstTime (s) " << firstTime/s << G4endl;
+    G4cout << "GateSourceVoxellized::GetNextSource : firstTime (s) " << firstTime/s << Gateendl;
 
   return firstTime;
 }
@@ -59,19 +59,19 @@ G4double GateSourceVoxellized::GetNextTime(G4double timeNow)
 //-------------------------------------------------------------------------------------------------
 void GateSourceVoxellized::Dump(G4int level)
 {
-  G4cout << "Source ---------------> " << m_name << G4endl
-	 << "  ID                  : " << m_sourceID << G4endl
-	 << "  type                : " << m_type << G4endl
-	 << "  startTime (s)       : " << m_startTime/s << G4endl
-	 << "  time (s)            : " << m_time/s << G4endl
-	 << "  forcedUnstable      : " << m_forcedUnstableFlag << G4endl;
+  G4cout << "Source ---------------> " << m_name << Gateendl
+	 << "  ID                  : " << m_sourceID << Gateendl
+	 << "  type                : " << m_type << Gateendl
+	 << "  startTime (s)       : " << m_startTime/s << Gateendl
+	 << "  time (s)            : " << m_time/s << Gateendl
+	 << "  forcedUnstable      : " << m_forcedUnstableFlag << Gateendl;
   if ( m_forcedUnstableFlag )
-    G4cout << "  forcedLifetime (s)  : " << m_forcedLifeTime/s << G4endl;
-  G4cout << "  verboseLevel        : " << nVerboseLevel << G4endl
- 	 << "----------------------- " << G4endl;
+    G4cout << "  forcedLifetime (s)  : " << m_forcedLifeTime/s << Gateendl;
+  G4cout << "  verboseLevel        : " << nVerboseLevel << Gateendl
+ 	 << "----------------------- \n";
 
   if (!m_voxelReader) {
-    G4cout << "GateSourceVoxellized::Dump: voxel reader not defined" << G4endl;
+    G4cout << "GateSourceVoxellized::Dump: voxel reader not defined\n";
   } else {
     if (level > 0)
       m_voxelReader->Dump(1);
@@ -88,7 +88,7 @@ void GateSourceVoxellized::Dump(G4int level)
 G4int GateSourceVoxellized::GeneratePrimaries(G4Event* event)
 {
   if (!m_voxelReader) {
-    G4cout << "GateSourceVoxellized::GeneratePrimaries: insert a voxel reader first" << G4endl;
+    G4cout << "GateSourceVoxellized::GeneratePrimaries: insert a voxel reader first\n";
     return 0;
   }
   // ask to the voxel reader to provide the active voxel for this event
@@ -113,7 +113,7 @@ G4int GateSourceVoxellized::GeneratePrimaries(G4Event* event)
   GetPosDist()->SetPosRot2(m_sourceRotation(G4ThreeVector(0.,1.,0.))); // y'
 
   if (nVerboseLevel > 1)
-    G4cout << "[GateSourceVoxellized::GeneratePrimaries] Centre: " << G4BestUnit(centre,"Length") << G4endl;
+    G4cout << "[GateSourceVoxellized::GeneratePrimaries] Centre: " << G4BestUnit(centre,"Length") << Gateendl;
 
 
   GetPosDist()->SetCentreCoords(centre);
@@ -135,7 +135,7 @@ G4int GateSourceVoxellized::GeneratePrimaries(G4Event* event)
 void GateSourceVoxellized::ReaderInsert(G4String readerType)
 {
   if (m_voxelReader) {
-    G4cout << "GateSourceVoxellized::ReaderInsert: voxel reader already defined" << G4endl;
+    G4cout << "GateSourceVoxellized::ReaderInsert: voxel reader already defined\n";
   } else {
     if (readerType == G4String("test")) {
       m_voxelReader = new GateSourceVoxelTestReader(this);
@@ -145,7 +145,7 @@ void GateSourceVoxellized::ReaderInsert(G4String readerType)
       m_voxelReader = new GateSourceVoxelInterfileReader(this);
     }
     else {
-      G4cout << "GateSourceVoxellized::ReaderInsert: unknown reader type" << G4endl;
+      G4cout << "GateSourceVoxellized::ReaderInsert: unknown reader type\n";
     }
   }
 }
@@ -159,7 +159,7 @@ void GateSourceVoxellized::ReaderRemove()
     delete m_voxelReader;
     m_voxelReader = 0;
   } else {
-    G4cout << "GateSourceVoxellized::ReaderRemove: voxel reader not defined" << G4endl;
+    G4cout << "GateSourceVoxellized::ReaderRemove: voxel reader not defined\n";
   }
 }
 //-------------------------------------------------------------------------------------------------

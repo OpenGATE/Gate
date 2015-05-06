@@ -165,7 +165,7 @@ void GateSteppingVerbose::StepInfo()
   G4String processName = "NoProcess";
   //if(fStep->GetPostStepPoint()->GetProcessDefinedStep()) processName = fStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
   if(fCurrentProcess) processName = fCurrentProcess->GetProcessName();
- //G4cout<<particleName<<"   "<<processName<<G4endl;
+ //G4cout<<particleName<<"   "<<processName<< Gateendl;
   //G4double energy = fStep->GetPreStepPoint()->GetKineticEnergy();
   G4int energyRange = GetEnergyRange(fStep->GetPreStepPoint()->GetKineticEnergy());
   bool knownState = false;
@@ -184,7 +184,7 @@ void GateSteppingVerbose::StepInfo()
 
   if(!knownState)
   {
-      //G4cout<<mTempoParticle<<"  "<<mTempoProcess<<"  "<<theListOfProcess.size()<<"  "<<theListOfParticle.size()<<G4endl;
+      //G4cout<<mTempoParticle<<"  "<<mTempoProcess<<"  "<<theListOfProcess.size()<<"  "<<theListOfParticle.size()<< Gateendl;
       theListOfProcess.push_back(processName);
       theListOfParticle.push_back(particleName); 
       theListOfTimer.push_back(pTempTime->GetUserElapsed());
@@ -203,12 +203,12 @@ void GateSteppingVerbose::StepInfo()
   infoStep->SetParticle(particleName);
   infoStep->SetTime(pStepTime->GetUserElapsed());
   theListOfStep.push_back(infoStep);*/
-//G4cout<<"Time = "<<pStepTime->IsValid()<<G4endl;
-//G4cout<<"Time1 = "<<pStepTime->GetUserElapsed()<<G4endl;
-//G4cout<<"Time2 = "<<pStepTime->GetRealElapsed()<<G4endl;
+//G4cout<<"Time = "<<pStepTime->IsValid()<< Gateendl;
+//G4cout<<"Time1 = "<<pStepTime->GetUserElapsed()<< Gateendl;
+//G4cout<<"Time2 = "<<pStepTime->GetRealElapsed()<< Gateendl;
 //  bool knownState = false;
 
-  //G4cout<<theListOfStep.size()<<G4endl;
+  //G4cout<<theListOfStep.size()<< Gateendl;
 
 
 
@@ -324,7 +324,7 @@ void GateSteppingVerbose::EndOfRun()
 
  /* for(unsigned int i = 0; i<theListOfParticle.size();i++)
   {
-    G4cout<<theListOfParticle[i]<<"     "<<theListOfTimer[i]->GetUserElapsed()<<"   "<<G4BestUnit(theListOfTimer[i]->GetRealElapsed() , "Time")<<G4endl;
+    G4cout<<theListOfParticle[i]<<"     "<<theListOfTimer[i]->GetUserElapsed()<<"   "<<G4BestUnit(theListOfTimer[i]->GetRealElapsed() , "Time")<< Gateendl;
 //G4BestUnit(theListOfUsedTime[i] , "Time");
   }*/
 
@@ -360,22 +360,22 @@ void GateSteppingVerbose::EndOfRun()
 
   std::ofstream os;
   OpenFileOutput(mFileName, os);
-  os<<G4endl;
-   if(mIsTrackingStep) os<<" Total time elapsed during physical part of steps = "<<pStepTime->GetUserElapsed()<<" s"<<G4endl;
+  os<< Gateendl;
+   if(mIsTrackingStep) os<<" Total time elapsed during physical part of steps = "<<pStepTime->GetUserElapsed()<<" s\n";
 
-  os<<G4endl;
-  os<<G4endl;
-  os<<"----> Track level"<<G4endl;
-  os<<G4endl;
+  os<< Gateendl;
+  os<< Gateendl;
+  os<<"----> Track level\n";
+  os<< Gateendl;
   for(unsigned int i = 0; i<theListOfUsedParticle.size();i++)
   {
-    os<<"------------------------------------------------------------------------"<<G4endl;
-    os<<theListOfUsedParticle[i]<<"     "<<theListOfUsedTime[i]<<" s"<<G4endl;
+    os<<"------------------------------------------------------------------------\n";
+    os<<theListOfUsedParticle[i]<<"     "<<theListOfUsedTime[i]<<" s\n";
     DisplayTrack(theListOfUsedParticle[i], os);
-    os<<G4endl;
-    os<<"------------------------------------------------------------------------"<<G4endl;
-    os<<G4endl;
-    os<<G4endl;
+    os<< Gateendl;
+    os<<"------------------------------------------------------------------------\n";
+    os<< Gateendl;
+    os<< Gateendl;
  }
 
   alreadyUsed = false;
@@ -385,7 +385,7 @@ void GateSteppingVerbose::EndOfRun()
 
   for(unsigned int i = 0; i<theListOfParticle.size();i++)
   {
-     //os<<theListOfParticle[i]<<"  "<<theListOfProcess[i]<<G4endl;
+     //os<<theListOfParticle[i]<<"  "<<theListOfProcess[i]<< Gateendl;
      alreadyUsed = false;
      for(unsigned int j = 0; j<theListOfUsedParticle.size();j++)
      {
@@ -405,28 +405,28 @@ void GateSteppingVerbose::EndOfRun()
   }
 
  
-  os<<G4endl;
+  os<< Gateendl;
   if(mIsTrackingStep) {
-    os<<G4endl;
-    os<<"----> Physical step level"<<G4endl;
-    os<<G4endl;
+    os<< Gateendl;
+    os<<"----> Physical step level\n";
+    os<< Gateendl;
 
     for(unsigned int i = 0; i<theListOfUsedParticle.size();i++)
     {
-      os<<"------------------------------------------------------------------------"<<G4endl;
-      os<<theListOfUsedParticle[i]<<"     "<<theListOfUsedTime[i]<<" s"<<G4endl;
+      os<<"------------------------------------------------------------------------\n";
+      os<<theListOfUsedParticle[i]<<"     "<<theListOfUsedTime[i]<<" s\n";
       DisplayStep(theListOfUsedParticle[i], os);
-      os<<G4endl;
-      os<<"------------------------------------------------------------------------"<<G4endl;
-      os<<G4endl;
-      os<<G4endl;
+      os<< Gateendl;
+      os<<"------------------------------------------------------------------------\n";
+      os<< Gateendl;
+      os<< Gateendl;
 
 
       //G4BestUnit(theListOfUsedTime[i] , "Time");
     }
   }
   if (!os) {
-    GateMessage("Output",1,"Error Writing file: " <<mFileName << G4endl);
+    GateMessage("Output",1,"Error Writing file: " <<mFileName << Gateendl);
   }
   os.flush();
   os.close();
@@ -476,7 +476,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
   {
     os<<"\t"<<it->first;
   }
-  os<<G4endl;
+  os<< Gateendl;
  
 
   for(int j = 3; j<=energyMax;j++)
@@ -502,7 +502,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
     {
       os<<"\t"<<it->second;
     }
-    os<<G4endl;
+    os<< Gateendl;
   }
 
   os<<"Total";
@@ -510,10 +510,10 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
   {
     os<<"\t"<<it->second;
   }
-    os<<G4endl;
+    os<< Gateendl;
 
 
-    os<<G4endl;    
+    os<< Gateendl;    
 
 //Process
   for(unsigned int i = 0; i<theListOfProcessAtTrackLevel.size();i++)
@@ -529,7 +529,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
   {
     os<<"\t"<<it->first;
   }
-  os<<G4endl;    
+  os<< Gateendl;    
  
 
   for(int j = 3; j<=energyMax;j++)
@@ -555,7 +555,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
     {
       os<<"\t"<<it->second;
     }
-    os<<G4endl;   
+    os<< Gateendl;   
   }
 
   os<<"Total";
@@ -563,7 +563,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
   {
     os<<"\t"<<it->second;
   }
-    os<<G4endl;
+    os<< Gateendl;
 
 
 }
@@ -604,7 +604,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
   {
     os<<"\t"<<it->first;
   }
-  os<<G4endl;
+  os<< Gateendl;
  
 
   for(int j = 3; j<=energyMax;j++)
@@ -631,7 +631,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
     {
       os<<"\t"<<it->second;
     }
-    os<<G4endl;    
+    os<< Gateendl;    
   }
 
   os<<"Total";
@@ -639,14 +639,14 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
   {
     os<<"\t"<<it->second;
   }
-    os<<G4endl;
+    os<< Gateendl;
 
-    os<<G4endl;    
+    os<< Gateendl;    
 
 //Process
   for(unsigned int i = 0; i<theListOfProcess.size();i++)
   {
-   // os<<theListOfParticle[i]<<"  "<<theListOfProcess[i]<<G4endl;
+   // os<<theListOfParticle[i]<<"  "<<theListOfProcess[i]<< Gateendl;
     if(theListOfParticle[i] == particle) {
       theListOfUsedProcess[theListOfProcess[i]] = 0.;
       theListOfTotalPerProcess[theListOfProcess[i]] = 0.;
@@ -658,7 +658,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
   {
     os<<"\t"<<it->first;
   }
-  os<<G4endl;    
+  os<< Gateendl;    
  
 
   for(int j = 3; j<=energyMax;j++)
@@ -685,7 +685,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
     {
       os<<"\t"<<it->second;
     }
-    os<<G4endl;   
+    os<< Gateendl;   
   }
 
   os<<"Total";
@@ -693,7 +693,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
   {
     os<<"\t"<<it->second;
   }
-    os<<G4endl;
+    os<< Gateendl;
 
 }
 //==================================================

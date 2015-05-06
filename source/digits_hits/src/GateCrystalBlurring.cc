@@ -61,5 +61,5 @@ void GateCrystalBlurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseL
 
 void GateCrystalBlurring::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Resolution of " << m_crystalresolution  << " for " <<  G4BestUnit(m_crystaleref,"Energy") << G4endl;
+  G4cout << GateTools::Indent(indent) << "Resolution of " << m_crystalresolution  << " for " <<  G4BestUnit(m_crystaleref,"Energy") << Gateendl;
 }

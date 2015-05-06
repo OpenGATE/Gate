@@ -74,8 +74,8 @@ void GateInterfileHeader::DoDataRead(std::vector<OutputPixelType> &data) {
   is.seekg(m_offset, std::ios::beg);
   is.read((char*)(&(temp[0])), pixelNumber*sizeof(ReadPixelType));
   if (!is) {
-      G4cerr << G4endl <<"Error: the number of pixels that were read from the data file (" << is.gcount() << ") " << G4endl
-	  << "is inferior to the number computed from its header file (" << pixelNumber << ")!" << G4endl;
+      G4cerr << Gateendl <<"Error: the number of pixels that were read from the data file (" << is.gcount() << ") \n"
+	  << "is inferior to the number computed from its header file (" << pixelNumber << ")!\n";
       G4Exception( "GateInterfileHeader.cc InterfileTooShort", "InterfileTooShort", FatalException, "Correct problem then try again... Sorry!" );
   }
   for(unsigned int i=0; i<temp.size(); i++) {

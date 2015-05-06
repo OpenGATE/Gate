@@ -22,7 +22,7 @@
 //-----------------------------------------------------------------------------
 GateCrossSectionProductionActor::GateCrossSectionProductionActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateCrossSectionProductionActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateCrossSectionProductionActor() -- begin\n");
 
   mCurrentEvent=0;
   nb_elemt_C12_in_table=-1;
@@ -170,7 +170,7 @@ GateCrossSectionProductionActor::GateCrossSectionProductionActor(G4String name, 
   SectionTableO15_O16.insert(std::pair<float, float> (199.5,	34.91) );
 
 
-  GateDebugMessageDec("Actor",4,"GateCrossSectionProductionActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateCrossSectionProductionActor() -- end\n");
 
 
 }
@@ -187,11 +187,11 @@ GateCrossSectionProductionActor::~GateCrossSectionProductionActor()  {
 //-----------------------------------------------------------------------------
 /// Construct
 void GateCrossSectionProductionActor::Construct() {
-  GateDebugMessageInc("Actor", 4, "GateCrossSectionProductionActor -- Construct - begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "GateCrossSectionProductionActor -- Construct - begin\n");
   GateVImageActor::Construct();
 
   // Enable callbacks
-  G4cout << "GateCrossSectionProductionActor::Construct" << G4endl;
+  G4cout << "GateCrossSectionProductionActor::Construct\n";
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(true);
@@ -239,7 +239,7 @@ void GateCrossSectionProductionActor::Construct() {
   mfractionC12Image.Allocate();
   mfractionO16Image.Allocate();
 
-  G4cout << " in GateCrossSectionProductionActor::Construct " << m_IsO15 << G4endl;
+  G4cout << " in GateCrossSectionProductionActor::Construct " << m_IsO15 << Gateendl;
   //pour O15
   if(m_IsO15){
     mIsotopeImage_O15 = new GateImageWithStatistic();
@@ -277,9 +277,9 @@ void GateCrossSectionProductionActor::Construct() {
   }
   max_energy_cross_section = Energy_max.begin()->first;
 
-  G4cout << " in GateCrossSectionProductionActor::Construct max_energy_cross_section = " << max_energy_cross_section<< G4endl;
+  G4cout << " in GateCrossSectionProductionActor::Construct max_energy_cross_section = " << max_energy_cross_section<< Gateendl;
   ResetData();
-  GateMessageDec("Actor", 4, "GateCrossSectionProductionActor -- Construct - end" << G4endl);
+  GateMessageDec("Actor", 4, "GateCrossSectionProductionActor -- Construct - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -296,11 +296,11 @@ void GateCrossSectionProductionActor::SaveData() {
       total_C11 += mIsotopeImage->GetValue(i);
     }
 
-    //G4cout << " total_C11 " << total_C11 << G4endl;
+    //G4cout << " total_C11 " << total_C11 << Gateendl;
   }
 
   if(m_IsO15){
-    //G4cout << "is saving O15" << G4endl;
+    //G4cout << "is saving O15\n";
     mIsotopeImage_O15->SaveData(mCurrentEvent+1,false);
   }
 }
@@ -322,7 +322,7 @@ void GateCrossSectionProductionActor::ResetData() {
 //-----------------------------------------------------------------------------
 void GateCrossSectionProductionActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
-  GateDebugMessage("Actor", 3, "GateCrossSectionProductionActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateCrossSectionProductionActor -- Begin of Run\n");
 
   gettimeofday(&mTimeOfLastSaveEvent, NULL);
 }
@@ -335,13 +335,13 @@ void GateCrossSectionProductionActor::BeginOfEventAction(const G4Event * e) {
   mCurrentEvent++;
 
 
-  GateDebugMessage("Actor", 3, "GateCrossSectionProductionActor -- Begin of Event: "<<mCurrentEvent << G4endl);
+  GateDebugMessage("Actor", 3, "GateCrossSectionProductionActor -- Begin of Event: "<<mCurrentEvent << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
-  GateDebugMessageInc("Actor", 4, "GateCrossSectionProductionActor -- UserSteppingActionInVoxel - begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "GateCrossSectionProductionActor -- UserSteppingActionInVoxel - begin\n");
 
   //double edep = step->GetTotalEnergyDeposit();
   double energy=0.;
@@ -354,10 +354,10 @@ void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index,
     G4int i_find_nb_elemt =0;
 
     while((nb_elemt_C12_in_table==-1 || nb_elemt_O16_in_table==-1 )&& i_find_nb_elemt<(G4int)step->GetPreStepPoint()->GetMaterial()->GetNumberOfElements() ){
-      //G4cout << step->GetPreStepPoint()->GetMaterial()->GetNumberOfElements() << G4endl;
-      //G4cout << i_find_nb_elemt << G4endl;
-      //G4cout << step->GetPreStepPoint()->GetMaterial()->GetName()<< G4endl;
-      //G4cout << step->GetPreStepPoint()->GetMaterial()->GetElement(i_find_nb_elemt)->GetZ()<< G4endl;
+      //G4cout << step->GetPreStepPoint()->GetMaterial()->GetNumberOfElements() << Gateendl;
+      //G4cout << i_find_nb_elemt << Gateendl;
+      //G4cout << step->GetPreStepPoint()->GetMaterial()->GetName()<< Gateendl;
+      //G4cout << step->GetPreStepPoint()->GetMaterial()->GetElement(i_find_nb_elemt)->GetZ()<< Gateendl;
       if(step->GetPreStepPoint()->GetMaterial()->GetElement(i_find_nb_elemt)->GetZ()==6){nb_elemt_C12_in_table=i_find_nb_elemt;}
       if(step->GetPreStepPoint()->GetMaterial()->GetElement(i_find_nb_elemt)->GetZ()==8){nb_elemt_O16_in_table=i_find_nb_elemt;}
       i_find_nb_elemt++;
@@ -367,7 +367,7 @@ void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index,
 
 
     if((nb_elemt_C12_in_table==-1 || nb_elemt_O16_in_table==-1 )==true){
-      //G4cout<< " problem to find an index or there is no C12 nor O16" << G4endl;
+      //G4cout<< " problem to find an index or there is no C12 nor O16\n";
     }
     if(newTrack){
       energy = step->GetPreStepPoint()->GetKineticEnergy()/MeV;
@@ -385,7 +385,7 @@ void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index,
           mStatImage_secondary.AddValue(index, 1);
 
         }
-	//G4cout << " & new track is adding " << energy << " in vox " << index << G4endl;
+	//G4cout << " & new track is adding " << energy << " in vox " << index << Gateendl;
       }
 
       newTrack=false;
@@ -402,7 +402,7 @@ void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index,
           mStatImage_secondary.AddValue(index, 1);
 
         }
-	//G4cout << "is adding " << energy << " in vox " << index << G4endl;
+	//G4cout << "is adding " << energy << " in vox " << index << Gateendl;
 
       }
 
@@ -421,14 +421,14 @@ void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index,
 
   }
 
-  GateDebugMessageDec("Actor", 4, "GateCrossSectionProductionActor -- UserSteppingActionInVoxel -- end" << G4endl);
+  GateDebugMessageDec("Actor", 4, "GateCrossSectionProductionActor -- UserSteppingActionInVoxel -- end\n");
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
 {
-  GateDebugMessage("Actor", 3, "GateCrossSectionProductionActor -- End of Event" << G4endl);
+  GateDebugMessage("Actor", 3, "GateCrossSectionProductionActor -- End of Event\n");
   double volume_vox=mIsotopeImage->GetValueImage().GetVoxelVolume() *millimeter3/centimeter3; //switch from mm3 to cm3
 
   G4double prod =0.;
@@ -460,7 +460,7 @@ void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
         mIsotopeImage_O15->AddValue(vox_id,prod);
       }
       /*G4cout << mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getX()<< " "<< mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getY()<< " "<< mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getZ()<< " ";
-	G4cout << "vox_id : " << vox_id <<" f_C12 : "<< f_C12 <<  " mean_energy " << mean_energy <<  " section eff =  " << GetSectionEfficace(mean_energy,SectionTableC11_C12) << G4endl;
+	G4cout << "vox_id : " << vox_id <<" f_C12 : "<< f_C12 <<  " mean_energy " << mean_energy <<  " section eff =  " << GetSectionEfficace(mean_energy,SectionTableC11_C12) << Gateendl;
       */
       //reset des images a l'index donné
       mEnergyImage.SetValue(vox_id,0.);
@@ -495,7 +495,7 @@ void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
       }
 
       /*G4cout << mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getX()<< " "<< mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getY()<< " "<< mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getZ()<< " ";
-	G4cout << "vox_id : " << vox_id <<" f_C12 : "<< f_C12 <<  " mean_energy " << mean_energy <<  " section eff =  " << GetSectionEfficace(mean_energy,SectionTableC11_C12) << G4endl;*/
+	G4cout << "vox_id : " << vox_id <<" f_C12 : "<< f_C12 <<  " mean_energy " << mean_energy <<  " section eff =  " << GetSectionEfficace(mean_energy,SectionTableC11_C12) << Gateendl;*/
 
       //reset images at a given index
       mEnergyImage_secondary.SetValue(vox_id,0.);
@@ -508,7 +508,7 @@ void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
   // Save every n events
   if ((ne != 0) && (mSaveEveryNEvents != 0))
     if (ne % mSaveEveryNEvents == 0){
-      G4cout << "GateCrossSectionProductionActor::EndOfEventAction to Save " << G4endl;
+      G4cout << "GateCrossSectionProductionActor::EndOfEventAction to Save \n";
       SaveData();
     }
   // Save every n seconds
@@ -517,7 +517,7 @@ void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
     gettimeofday(&end, NULL);
     long seconds  = end.tv_sec  - mTimeOfLastSaveEvent.tv_sec;
     if (seconds > mSaveEveryNSeconds) {
-      //GateMessage("Core", 0, "Actor " << GetName() << " : " << mSaveEveryNSeconds << " seconds." << G4endl);
+      //GateMessage("Core", 0, "Actor " << GetName() << " : " << mSaveEveryNSeconds << " seconds.\n");
       SaveData();
       mTimeOfLastSaveEvent = end;
     }
@@ -528,7 +528,7 @@ void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
 //-----------------------------------------------------------------------------
 void GateCrossSectionProductionActor::PreUserTrackingAction(const GateVVolume *, const G4Track*)
 {
-  GateDebugMessage("Actor", 3, "GateCrossSectionProductionActor -- Begin of Track" << G4endl);
+  GateDebugMessage("Actor", 3, "GateCrossSectionProductionActor -- Begin of Track\n");
 
   newTrack = true; //nTrack++;
 
