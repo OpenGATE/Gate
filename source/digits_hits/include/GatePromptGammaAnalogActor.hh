@@ -50,6 +50,7 @@ protected:
   GatePromptGammaData data;
 
   bool mSetOutputCount;
+  bool alreadyHere;
 
   GateImageOfHistograms * mImageGamma;  //main output (yield)
 

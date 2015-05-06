@@ -28,6 +28,7 @@ GatePromptGammaAnalogActor::GatePromptGammaAnalogActor(G4String name, G4int dept
   //SetStepHitType("random");
   mImageGamma = new GateImageOfHistograms("int");
   mSetOutputCount = false;
+  alreadyHere = false;
 }
 //-----------------------------------------------------------------------------
 
@@ -62,7 +63,7 @@ void GatePromptGammaAnalogActor::Construct()
 
   // Input data
   data.Read(mInputDataFilename);
-  data.InitializeMaterial();
+  //data.InitializeMaterial(); //we dont need the materials, only some metadata that is already extracted in Read()
 
   // Set image parameters and allocate (only mImageGamma not mImage)
   mImageGamma->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
@@ -96,17 +97,16 @@ void GatePromptGammaAnalogActor::ResetData()
 void GatePromptGammaAnalogActor::SaveData()
 {
   // Data are normalized by the number of primaries
-  static bool alreadyHere = false;
   if (alreadyHere) {
-    GateError("The GatePromptGammaTLEActor has already been saved and normalized. However, it must write its results only once. Remove all 'SaveEvery' for this actor. Abort.");
+    GateError("The GatePromptGammaAnalogActor has already been saved and normalized. However, it must write its results only once. Remove all 'SaveEvery' for this actor. Abort.");
   }
   // Normalisation
   if(!mSetOutputCount){
     int n = GateActorManager::GetInstance()->GetCurrentEventId() + 1; // +1 because start at zero
     double f = 1.0 / n;
-    mImageGamma->Scale(f);
+    mImageGamma->Scale(f); //converts image to float
   }
-  GateVImageActor::SaveData();
+  //GateVImageActor::SaveData();
   mImageGamma->Write(mSaveFilename);
   alreadyHere = true;
 }
@@ -152,8 +152,9 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
         //higher than we're interested in.
         continue;
       }
+      //Get thet correct gammabin
       // -1 because TH1D start at 1, and end at index=size.
-      int bin = data.GetGammaM(1)->GetYaxis()->FindFixBin(e)-1;
+      int bin = data.GetGammaZ()->GetYaxis()->FindFixBin(e)-1;
       mImageGamma->AddValueInt(index, bin, 1);
     }
   }

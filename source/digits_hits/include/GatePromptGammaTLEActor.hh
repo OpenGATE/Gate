@@ -51,6 +51,7 @@ protected:
 
   std::string mInputDataFilename;
   GatePromptGammaData data;
+  bool alreadyHere;
 
   bool mIsVarianceImageEnabled;
   //bool mIsIntermediaryUncertaintyOutputEnabled;
