@@ -36,7 +36,7 @@ GatePulseList* GateSystemFilter::ProcessPulseList(const GatePulseList* inputPuls
       if (nVerboseLevel>1)
       {
       G4cout<<"[GateSystemFilter::ProcessPulseList]\n This pulse is from "<<m_systemName<<"' system', \n"<<"Its volumeID is : "
-            <<(*iter)->GetVolumeID()<<",\n and its its outputVoulumeID is "<<(*iter)->GetOutputVolumeID()<<"\n"<<G4endl;
+            <<(*iter)->GetVolumeID()<<",\n and its its outputVoulumeID is "<<(*iter)->GetOutputVolumeID()<< Gateendl;
       }
 
       G4String pulseSystemName = (*iter)->GetVolumeID().GetVolume(1)->GetName();
@@ -58,6 +58,7 @@ GatePulseList* GateSystemFilter::ProcessPulseList(const GatePulseList* inputPuls
 void GateSystemFilter::SetSystemToItsChain()
 {
    GateDigitizer* digitizer = GateDigitizer::GetInstance();
+   std::vector<GateCoincidenceSorter*> CoincidenceSorterList = digitizer->GetCoinSorterList();
    GateSystemList* systemList = digitizer->GetSystemList();
 
    GateSystemConstIterator iter;
@@ -68,11 +69,11 @@ void GateSystemFilter::SetSystemToItsChain()
          this->GetChain()->SetSystem(*iter);
 
          if(this->GetChain()->GetOutputName() == "Singles")
-            for (size_t i=0; i<digitizer->GetCoinSorterList().size() ; ++i)
+            for (std::vector<GateCoincidenceSorter*>::iterator itr=CoincidenceSorterList.begin(); itr!=CoincidenceSorterList.end(); ++itr)
          {
-            if(digitizer->GetCoinSorterList()[i]->GetOutputName() == "Coincidences")
+            if((*itr)->GetOutputName() == "Coincidences")
             {
-               digitizer->GetCoinSorterList()[i]->SetSystem(*iter);
+               (*itr)->SetSystem(*iter);
                break;
             }
          }

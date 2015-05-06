@@ -45,8 +45,8 @@ GateVBlurringLaw* GateBlurringMessenger::CreateBlurringLaw(const G4String& law) 
 	} else if ( law == "linear" ) {
 		return new GateLinearBlurringLaw(GetBlurring()->GetObjectName() + G4String("/linear"));
 	} else {
-		G4cerr << "No match for '" << law << "' blurring law." << G4endl;
-		G4cerr << "Candidates are: inverseSquare linear" << G4endl;
+		G4cerr << "No match for '" << law << "' blurring law.\n";
+		G4cerr << "Candidates are: inverseSquare linear\n";
 	}
 
 	return NULL;

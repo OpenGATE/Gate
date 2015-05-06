@@ -30,7 +30,7 @@ GateUserActions* GateUserActions::pUserActions=0;
 GateUserActions::GateUserActions(GateRunManager* m, GateRecorderBase* r)
   : recorder(r)
 {
-  GateMessage("Core", 4,"GateUserActions Constructor start."<<G4endl);
+  GateMessage("Core", 4,"GateUserActions Constructor start.\n");
 
   pUserActions = this;
 
@@ -69,7 +69,7 @@ GateUserActions::GateUserActions(GateRunManager* m, GateRecorderBase* r)
 
   mTimer = new G4SliceTimer();
 
-  GateMessage("Core", 4,"GateUserActions Constructor end."<<G4endl);
+  GateMessage("Core", 4,"GateUserActions Constructor end.\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -78,7 +78,7 @@ GateUserActions::~GateUserActions()
 {
 
   delete pUserActions;
-  GateDebugMessageInc("Core", 4, "GateUserActions Destructor."<<G4endl);
+  GateDebugMessageInc("Core", 4, "GateUserActions Destructor.\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -117,7 +117,7 @@ void GateUserActions::EndOfRunAction(const G4Run* run)
     G4UImanager::GetUIpointer()->ApplyCommand("/vis/viewer/update");
   }
   mTimer->Stop();
-  GateMessage("Core",1,"Run "<<mRunNumber - 1<<"  ---  Elapsed time = "<<mTimer->GetUserElapsed()<<G4endl);
+  GateMessage("Core",1,"Run "<<mRunNumber - 1<<"  ---  Elapsed time = "<<mTimer->GetUserElapsed()<< Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -136,11 +136,11 @@ void GateUserActions::EndOfEventAction(const G4Event* evt)
 {
   GateActorManager::GetInstance()->EndOfEventAction(evt);
 //sizeof(v) + sizeof(T) * v.capacity();
-// G4cout<<G4endl;
+// G4cout<< Gateendl;
  // GateTrackIDInfo trInfo;
- //G4cout<<"Taille vecteur = "<<sizeof(theListOfTrackIDInfo)<<G4endl;
- //G4cout<<"Taille élément vecteur = "<<sizeof(trInfo)<<G4endl;
- //G4cout<<"Taille totale = "<<sizeof(theListOfTrackIDInfo)+sizeof(trInfo)*theListOfTrackIDInfo.size()<<G4endl;
+ //G4cout<<"Taille vecteur = "<<sizeof(theListOfTrackIDInfo)<< Gateendl;
+ //G4cout<<"Taille élément vecteur = "<<sizeof(trInfo)<< Gateendl;
+ //G4cout<<"Taille totale = "<<sizeof(theListOfTrackIDInfo)+sizeof(trInfo)*theListOfTrackIDInfo.size()<< Gateendl;
  for(std::map<G4int,GateTrackIDInfo>::iterator i = theListOfTrackIDInfo.begin(); i != theListOfTrackIDInfo.begin(); /*EMPTY*/)
  {
    theListOfTrackIDInfo.erase(i++);

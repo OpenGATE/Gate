@@ -50,7 +50,7 @@ void GateSingleDigi::Draw()
 void GateSingleDigi::Print()
 {
 
-  G4cout << this << G4endl;
+  G4cout << this << Gateendl;
 
 }
 
@@ -58,9 +58,9 @@ void GateSingleDigi::Print()
 
 std::ostream& operator<<(std::ostream& flux, const GateSingleDigi& digi)
 {
-  flux    << "GateSingleDigi(" << G4endl
+  flux    << "GateSingleDigi(\n"
 	  << digi.m_pulse
-      	  << ")" << G4endl;
+      	  << ")\n";
 
   return flux;
 }
@@ -85,7 +85,7 @@ std::ofstream& operator<<(std::ofstream& flux, GateSingleDigi* digi)
   if ( GateSingleDigi::GetSingleASCIIMask(15) ) flux << " " << std::setw(4) << digi->GetNCrystalRayleigh();
   if ( GateSingleDigi::GetSingleASCIIMask(16) ) flux << " " << digi->GetComptonVolumeName();
   if ( GateSingleDigi::GetSingleASCIIMask(17) ) flux << " " << digi->GetRayleighVolumeName();
-  flux << G4endl;
+  flux << Gateendl;
 
   return flux;
 }

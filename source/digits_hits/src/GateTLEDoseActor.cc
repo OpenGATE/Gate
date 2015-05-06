@@ -133,7 +133,7 @@ void GateTLEDoseActor::UserSteppingAction(const GateVVolume *, const G4Step* ste
 //-----------------------------------------------------------------------------
 void GateTLEDoseActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
-  GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Run\n");
   // ResetData(); // Do no reset here !! (when multiple run);
 }
 //-----------------------------------------------------------------------------

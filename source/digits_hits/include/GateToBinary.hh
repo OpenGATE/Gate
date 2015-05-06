@@ -28,7 +28,7 @@
 #include "GateCoincidenceDigi.hh"
 #include "GateSingleDigi.hh"
 #include "GatePrimaryGeneratorAction.hh"
-#include "G4RunManager.hh"
+#include "GateRunManager.hh"
 
 class GateToBinaryMessenger;
 

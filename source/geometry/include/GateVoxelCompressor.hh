@@ -15,6 +15,7 @@ See GATE/LICENSE.txt for further details
 #include "globals.hh"
 #include "GateCompressedVoxel.hh"
 #include "GateVoxelCompressorMessenger.hh"
+#include "GateMessageManager.hh"
 
 class GateGeometryVoxelArrayStore;
 
@@ -43,7 +44,7 @@ public:
   G4String GetObjectName() const;
 
   void Print(){
-    for (voxelSet::iterator it=m_voxelSet->begin(); it!=m_voxelSet->end();it++) std::cout << (*it) << std::endl;
+    for (voxelSet::iterator it=m_voxelSet->begin(); it!=m_voxelSet->end();it++) std::cout << (*it) << Gateendl;
   }
 
 private:

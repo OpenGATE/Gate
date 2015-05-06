@@ -28,7 +28,7 @@ GateObjectRepeaterList::GateObjectRepeaterList( GateVVolume* itsInserter,
     m_typeName(itsElementTypeName)
 {
   GateMessage("Repeater", 8, itsName << " GateObjectRepeaterList::GateObjectRepeaterList\n");
-  GateMessage("Repeater", 8, itsName << " itsElementTypeName = " << itsElementTypeName << G4endl;);
+  GateMessage("Repeater", 8, itsName << " itsElementTypeName = " << itsElementTypeName << Gateendl;);
      
   if (itsElementTypeName == "move" )
     {     

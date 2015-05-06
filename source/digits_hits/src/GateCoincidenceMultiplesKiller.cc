@@ -47,5 +47,5 @@ GateCoincidencePulse* GateCoincidenceMultiplesKiller::ProcessPulse(GateCoinciden
 
 void GateCoincidenceMultiplesKiller::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "MultiplesKiller "<< G4endl;
+  G4cout << GateTools::Indent(indent) << "MultiplesKiller "<< Gateendl;
 }

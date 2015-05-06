@@ -9,6 +9,7 @@
 #ifdef G4VIS_USE
 
 #include "GateVisManager.hh"
+#include "GateMessageManager.hh"
 
 // Supported drivers...
 
@@ -134,7 +135,7 @@ void GateVisManager::RegisterGraphicsSystems () {
   if (fVerbose > 0) {
     G4cout <<
       "\nYou have successfully chosen to use the following graphics systems."
-	 << G4endl;
+	 << Gateendl;
     PrintAvailableGraphicsSystems ();
   }
 }

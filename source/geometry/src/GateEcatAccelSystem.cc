@@ -87,40 +87,40 @@ void GateEcatAccelSystem::Describe(size_t indent)
 */
 void GateEcatAccelSystem::PrintToStream(std::ostream& aStream,G4bool doPrintNumbers)
 {
-  aStream << " >> geometrical design type: " << "ECAT ACCEL" << G4endl;
+  aStream << " >> geometrical design type: " << "ECAT ACCEL\n";
 
-  aStream << " >> ring diameter: " << G4BestUnit( 2*ComputeInternalRadius() ,"Length")   << G4endl;
+  aStream << " >> ring diameter: " << G4BestUnit( 2*ComputeInternalRadius() ,"Length")   << Gateendl;
 
   GateBoxComponent* blockComponent = FindBoxCreatorComponent("block");
 
   G4double blockAxialPitch = blockComponent->GetSphereAxialRepeatPitch();
-  aStream << " >> block axial pitch: " << G4BestUnit( blockAxialPitch ,"Length")  	  << G4endl;
+  aStream << " >> block axial pitch: " << G4BestUnit( blockAxialPitch ,"Length")  	  << Gateendl;
 
   G4double blockAzimuthalPitch = blockComponent->GetSphereAzimuthalRepeatPitch();
-  aStream << " >> block azimuthal pitch: " << blockAzimuthalPitch/degree << " degree"  	 	  << G4endl;
+  aStream << " >> block azimuthal pitch: " << blockAzimuthalPitch/degree << " degree"  	 	  << Gateendl;
 
   G4double blockTangentialSize = blockComponent->GetBoxLength(0) ;
   G4double blockAxialSize      = blockComponent->GetBoxLength(2) ;
-  aStream << " >> block tangential size: " << G4BestUnit( blockTangentialSize ,"Length")  	  << G4endl;
-  aStream << " >> block axial size: " << G4BestUnit( blockAxialSize ,"Length")  	      	  << G4endl;
+  aStream << " >> block tangential size: " << G4BestUnit( blockTangentialSize ,"Length")  	  << Gateendl;
+  aStream << " >> block axial size: " << G4BestUnit( blockAxialSize ,"Length")  	      	  << Gateendl;
 
   GateArrayComponent* crystalComponent = FindArrayComponent("crystal");
 
   G4double crystalTangentialSize = crystalComponent->GetBoxLength(0);
   G4double crystalAxialSize      = crystalComponent->GetBoxLength(2);
-  aStream << " >> crystal axial size: " << G4BestUnit( crystalAxialSize ,"Length")  	      	  << G4endl;
-  aStream << " >> crystal tangential size: " << G4BestUnit( crystalTangentialSize ,"Length")  	  << G4endl;
+  aStream << " >> crystal axial size: " << G4BestUnit( crystalAxialSize ,"Length")  	      	  << Gateendl;
+  aStream << " >> crystal tangential size: " << G4BestUnit( crystalTangentialSize ,"Length")  	  << Gateendl;
 
   G4ThreeVector crystalPitchVector = crystalComponent->GetRepeatVector();
-  aStream << " >> crystal axial pitch: " << G4BestUnit( crystalPitchVector.z() ,"Length")    	  << G4endl;
-  aStream << " >> crystal tangential pitch: " << G4BestUnit( crystalPitchVector.x() ,"Length")    	  << G4endl;
+  aStream << " >> crystal axial pitch: " << G4BestUnit( crystalPitchVector.z() ,"Length")    	  << Gateendl;
+  aStream << " >> crystal tangential pitch: " << G4BestUnit( crystalPitchVector.x() ,"Length")    	  << Gateendl;
 
 
   if (doPrintNumbers) {
-    aStream << " >> axial nb of blocks: " << blockComponent->GetSphereAxialRepeatNumber()   	   << G4endl;
-    aStream << " >> azimuthal nb of blocks: " << blockComponent->GetSphereAzimuthalRepeatNumber()  << G4endl;
-    aStream << " >> axial nb of crystals: " << crystalComponent->GetRepeatNumber(2) 	      	   << G4endl;
-    aStream << " >> tangential nb of crystals: " << crystalComponent->GetRepeatNumber(0) 	   << G4endl;
+    aStream << " >> axial nb of blocks: " << blockComponent->GetSphereAxialRepeatNumber()   	   << Gateendl;
+    aStream << " >> azimuthal nb of blocks: " << blockComponent->GetSphereAzimuthalRepeatNumber()  << Gateendl;
+    aStream << " >> axial nb of crystals: " << crystalComponent->GetRepeatNumber(2) 	      	   << Gateendl;
+    aStream << " >> tangential nb of crystals: " << crystalComponent->GetRepeatNumber(0) 	   << Gateendl;
   }
 }
 

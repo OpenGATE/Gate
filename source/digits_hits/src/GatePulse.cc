@@ -171,24 +171,24 @@ void GatePulse::ResetGlobalPos(GateVSystem* system)
 
 std::ostream& operator<<(std::ostream& flux, const GatePulse& pulse)
 {
-  flux    << "\t----GatePulse----"     	      	      	      	      	      	      	      	      	      	               << G4endl
-	  << "\t\t" << "Run           " << pulse.m_runID                      	         	      	      	      	       << G4endl
-	  << "\t\t" << "Event         " << pulse.m_eventID   	      	      	      	              	      	      	       << G4endl
-	  << "\t\t" << "Src           " << pulse.m_sourceID << " [ " << G4BestUnit(pulse.m_sourcePosition,"Length")     << "]" << G4endl
-      	  << "\t\t" << "Time          " << G4BestUnit(pulse.m_time,"Time")      	      	      	      	      	       << G4endl
-      	  << "\t\t" << "Energy        " << G4BestUnit(pulse.m_energy,"Energy")          	      	      	      	       << G4endl
-      	  << "\t\t" << "localPos      [ " << G4BestUnit(pulse.m_localPos,"Length")        	      	      	      	<< "]" << G4endl
-      	  << "\t\t" << "globalPos     [ " << G4BestUnit(pulse.m_globalPos,"Length")   	      	      	      	      	<< "]" << G4endl
+  flux    << "\t----GatePulse----"     	      	      	      	      	      	      	      	      	      	               << Gateendl
+	  << "\t\t" << "Run           " << pulse.m_runID                      	         	      	      	      	       << Gateendl
+	  << "\t\t" << "Event         " << pulse.m_eventID   	      	      	      	              	      	      	       << Gateendl
+	  << "\t\t" << "Src           " << pulse.m_sourceID << " [ " << G4BestUnit(pulse.m_sourcePosition,"Length")     << "]\n"
+      	  << "\t\t" << "Time          " << G4BestUnit(pulse.m_time,"Time")      	      	      	      	      	       << Gateendl
+      	  << "\t\t" << "Energy        " << G4BestUnit(pulse.m_energy,"Energy")          	      	      	      	       << Gateendl
+      	  << "\t\t" << "localPos      [ " << G4BestUnit(pulse.m_localPos,"Length")        	      	      	      	<< "]\n"
+      	  << "\t\t" << "globalPos     [ " << G4BestUnit(pulse.m_globalPos,"Length")   	      	      	      	      	<< "]\n"
        	  << "\t\t" << "           -> ( R="   << G4BestUnit(pulse.m_globalPos.perp(),"Length")     << ", "
 	      	      	      	  << "phi="   << pulse.m_globalPos.phi()/degree       	      	   << " deg,"
-				  << "z="     << G4BestUnit(pulse.m_globalPos.z(),"Length")     	     	      	<< ")" << G4endl
- 	  << "\t\t" << "VolumeID      " << pulse.m_volumeID      	      	      	      	      	      	               << G4endl
-	  << "\t\t" << "OutputID      " << pulse.m_outputVolumeID     	      	      	      	      	      	      	       << G4endl
-	  << "\t\t" << "#Compton      " << pulse.m_nPhantomCompton      	      	      	      	      	      	       << G4endl
-	  << "\t\t" << "#Rayleigh     " << pulse.m_nPhantomRayleigh      	      	      	      	      	      	       << G4endl
-      	  << "\t\t" << "scannerPos    [ " << G4BestUnit(pulse.m_scannerPos,"Length")        	      	      	      	<< "]" << G4endl
-      	  << "\t\t" << "scannerRotAngle " << pulse.m_scannerRotAngle/degree           	      	      	      	     << " deg" << G4endl
-     	  << "\t-----------------" << G4endl;
+				  << "z="     << G4BestUnit(pulse.m_globalPos.z(),"Length")     	     	      	<< ")\n"
+ 	  << "\t\t" << "VolumeID      " << pulse.m_volumeID      	      	      	      	      	      	               << Gateendl
+	  << "\t\t" << "OutputID      " << pulse.m_outputVolumeID     	      	      	      	      	      	      	       << Gateendl
+	  << "\t\t" << "#Compton      " << pulse.m_nPhantomCompton      	      	      	      	      	      	       << Gateendl
+	  << "\t\t" << "#Rayleigh     " << pulse.m_nPhantomRayleigh      	      	      	      	      	      	       << Gateendl
+      	  << "\t\t" << "scannerPos    [ " << G4BestUnit(pulse.m_scannerPos,"Length")        	      	      	      	<< "]\n"
+      	  << "\t\t" << "scannerRotAngle " << pulse.m_scannerRotAngle/degree           	      	      	      	     << " deg\n"
+     	  << "\t-----------------\n";
 
   return flux;
 }

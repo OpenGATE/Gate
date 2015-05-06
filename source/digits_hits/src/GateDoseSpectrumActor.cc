@@ -20,14 +20,14 @@ See GATE/LICENSE.txt for further details
 GateDoseSpectrumActor::GateDoseSpectrumActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateDoseSpectrumActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateDoseSpectrumActor() -- begin\n");
   mDosePrimaryOnly = false;
   mCurrentEvent= 0;
   mEventEnergy = -1;
   mTotalEventEnergyDep = 0.;
   pMessenger = new GateDoseSpectrumActorMessenger(this);
 
-  GateDebugMessageDec("Actor",4,"GateDoseSpectrumActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateDoseSpectrumActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -36,8 +36,8 @@ GateDoseSpectrumActor::GateDoseSpectrumActor(G4String name, G4int depth):
 /// Destructor 
 GateDoseSpectrumActor::~GateDoseSpectrumActor()
 {
-  GateDebugMessageInc("Actor",4,"~GateDoseSpectrumActor() -- begin"<<G4endl);
-  GateDebugMessageDec("Actor",4,"~GateDoseSpectrumActor() -- end"<<G4endl);
+  GateDebugMessageInc("Actor",4,"~GateDoseSpectrumActor() -- begin\n");
+  GateDebugMessageDec("Actor",4,"~GateDoseSpectrumActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ void GateDoseSpectrumActor::SaveData()
   OpenFileOutput(mSaveFilename, DoseResponseFile);
   DoseResponseFile << "Incoming energy (keV)" << " "
                    << "Average energy deposit (keV)" << " "
-                   << "Energy uncertainty (keV)"  << std::endl;
+                   << "Energy uncertainty (keV)"  << Gateendl;
   std::map< G4double, G4double>::iterator itermEnergy;
   for( itermEnergy = mEnergy.begin(); itermEnergy != mEnergy.end(); itermEnergy++)
   {
@@ -78,12 +78,12 @@ void GateDoseSpectrumActor::SaveData()
     G4double error = sqrt( (1.0 / ( numPart - 1)) * ( avgEnergySq - pow( avgEnergyOut, 2)));
     DoseResponseFile << energyIn/keV << " "
                      << avgEnergyOut/keV << " "
-                     << error/keV  << std::endl;
+                     << error/keV  << Gateendl;
   }
 
   if (!DoseResponseFile)
   {
-    GateMessage("Output",1,"Error Writing file: " << mSaveFilename << G4endl);
+    GateMessage("Output",1,"Error Writing file: " << mSaveFilename << Gateendl);
   }
   DoseResponseFile.close();
 }
@@ -102,7 +102,7 @@ void GateDoseSpectrumActor::ResetData()
 //-----------------------------------------------------------------------------
 void GateDoseSpectrumActor::BeginOfRunAction(const G4Run *)
 {
-  GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Run\n");
   ResetData();
 }
 //-----------------------------------------------------------------------------
@@ -110,7 +110,7 @@ void GateDoseSpectrumActor::BeginOfRunAction(const G4Run *)
 //-----------------------------------------------------------------------------
 void GateDoseSpectrumActor::BeginOfEventAction(const G4Event* event)
 {
-  GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Event" << G4endl);
+  GateDebugMessage("Actor", 3, "GateDoseSpectrumActor -- Begin of Event\n");
 
   // Process the previous event (if there was one)
   if(mCurrentEvent) {
