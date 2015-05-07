@@ -127,17 +127,18 @@ G4VPhysicalVolume* GateDetectorConstruction::Construct()
   GateMessage("Physic", 1, "                    Ionization potential \n");
 
   const G4MaterialTable * theTable = G4Material::GetMaterialTable();
-  for(unsigned int i =0;i<(*theTable).size();i++){
-    if(theListOfIonisationPotential[(*theTable)[i]->GetName()]){
-      (*theTable)[i]->GetIonisation()->SetMeanExcitationEnergy(theListOfIonisationPotential[(*theTable)[i]->GetName()]);
-      GateMessage("Physic", 1, " - " << (*theTable)[i]->GetName() << "\t defaut value: I = " <<
-                  G4BestUnit((*theTable)[i]->GetIonisation()->GetMeanExcitationEnergy(),"Energy") <<
+  for(G4MaterialTable::const_iterator it = theTable->begin(); it!=theTable->end(); it++)
+  {
+    if(theListOfIonisationPotential[(*it)->GetName()]){
+      (*it)->GetIonisation()->SetMeanExcitationEnergy(theListOfIonisationPotential[(*it)->GetName()]);
+      GateMessage("Physic", 1, " - " << (*it)->GetName() << "\t defaut value: I = " <<
+                  G4BestUnit((*it)->GetIonisation()->GetMeanExcitationEnergy(),"Energy") <<
                   "\t-->  new value: I = " <<
-                  G4BestUnit((*theTable)[i]->GetIonisation()->GetMeanExcitationEnergy(),"Energy") << Gateendl);
+                  G4BestUnit((*it)->GetIonisation()->GetMeanExcitationEnergy(),"Energy") << Gateendl);
     }
     else {
-      GateMessage("Physic", 1, " - " << (*theTable)[i]->GetName() << "\t defaut value: I = " <<
-                  G4BestUnit((*theTable)[i]->GetIonisation()->GetMeanExcitationEnergy(),"Energy") << Gateendl);
+      GateMessage("Physic", 1, " - " << (*it)->GetName() << "\t defaut value: I = " <<
+                  G4BestUnit((*it)->GetIonisation()->GetMeanExcitationEnergy(),"Energy") << Gateendl);
     }
   }
   GateMessage("Physic", 1, "----------------------------------------------------------\n");

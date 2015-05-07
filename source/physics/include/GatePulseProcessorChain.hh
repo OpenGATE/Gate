@@ -43,8 +43,6 @@ class GatePulseProcessorChain : public GateModuleListManager
      virtual GateVPulseProcessor* GetProcessor(size_t i)
       	  {return (GateVPulseProcessor*) GetElement(i);}
      GatePulseList* ProcessPulseList();
-     virtual size_t GetProcessorNumber()
-      	  { return size();}
 	  
      const G4String& GetInputName() const
        { return m_inputName; }

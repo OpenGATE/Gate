@@ -30,8 +30,8 @@ GateMaterialDatabase::~GateMaterialDatabase()
 {
   if (water_MPT != NULL) delete water_MPT;
   std::vector<GateMDBFile*>::iterator i;
-  for (i=mMDBFile.begin();i!=mMDBFile.end();++i) {
-    delete (*i);
+  for (std::vector<GateMDBFile*>::iterator it=mMDBFile.begin();it!=mMDBFile.end();) {
+    it=mMDBFile.erase(it);
   }
 }
 //-----------------------------------------------------------------------------

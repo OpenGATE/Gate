@@ -130,9 +130,9 @@ G4Material * GateListOfHadronicModels::GetMaterial(G4String materialName)
    
   const G4MaterialTable* matTbl = G4Material::GetMaterialTable();
   
-  for(size_t i=0;i<G4Material::GetNumberOfMaterials();i++)
+  for(G4MaterialTable::const_iterator it=matTbl->begin();it!=matTbl->end();it++)
   {
-    if((*matTbl)[i]->GetName() == materialName) return (*matTbl)[i];
+    if((*it)->GetName() == materialName) return (*it);
   }
   return 0;
 }
@@ -145,9 +145,9 @@ G4Element * GateListOfHadronicModels::GetElement(G4String elementName)
    
   const G4ElementTable * elemTbl  = G4Element::GetElementTable();
   
-  for(size_t i=0;i<elemTbl->size();i++)
+  for(G4ElementTable::const_iterator it=elemTbl->begin();it!=elemTbl->end();it++)
   {
-    if((*elemTbl)[i]->GetName() == elementName) return (*elemTbl)[i];
+    if((*it)->GetName() == elementName) return (*it);
   }
   return 0;
 }
