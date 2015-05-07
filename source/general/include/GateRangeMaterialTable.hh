@@ -33,6 +33,9 @@ public:
   void MapLabelToMaterial(LabelToMaterialNameType & m);
   double GetRMeanFromLabel(int l);
   LabelType GetLabelFromR(int l);
+  inline void push_back(mMaterials MM){ mMaterialsVector.push_back(MM); }
+  inline void pop_back(){ mMaterialsVector.pop_back(); }
+  inline void clear(){ mMaterialsVector.clear(); }
 
   GateMaterialsVector GetMaterials() { return mMaterialsVector; }
   inline mMaterials & operator[](int index){ return mMaterialsVector[index];}

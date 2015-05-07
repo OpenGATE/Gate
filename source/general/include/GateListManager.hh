@@ -59,7 +59,10 @@ class GateListManager : public GateClockDependent
     //! Method overloading GateNamedObject::Describe()
     //! Print-out a description of the object
     virtual void Describe(size_t indent=0);
-     
+    //implementing vector functionalities
+    inline void push_back(GateNamedObject* MM){ theListOfNamedObject.push_back(MM); }
+    inline void pop_back(){ theListOfNamedObject.pop_back(); }
+    inline void clear(){ theListOfNamedObject.clear(); }
 
   protected:
     G4String mElementTypeName;

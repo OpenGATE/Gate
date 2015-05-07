@@ -125,13 +125,8 @@ public:
     return (*mi).second ;
   }
   //-----------------------------------------------------------------------------
-  inline G4VisAttributes* GetMaterialAttributes(G4Material* m){
-    return m_voxelAttributesTranslation[m];
-  }
 
-  typedef std::pair<std::pair<G4double,G4double>,G4String> GateVoxelMaterialTranslationRange;
-  typedef std::vector<GateVoxelMaterialTranslationRange>   GateVoxelMaterialTranslationRangeVector;
-  GateVoxelMaterialTranslationRangeVector                  m_voxelMaterialTranslation;
+  //GateRangeMaterialTable                  m_voxelMaterialTranslation;
 
   typedef std::map<G4Material*, G4VisAttributes*>          GateVoxelAttributesTranslationMap;
   GateVoxelAttributesTranslationMap                        m_voxelAttributesTranslation;

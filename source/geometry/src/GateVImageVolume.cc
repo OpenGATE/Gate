@@ -473,7 +473,7 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable()
 //--------------------------------------------------------------------
 void GateVImageVolume::LoadImageMaterialsFromRangeTable()
 {
-  m_voxelMaterialTranslation.clear();
+  //m_voxelMaterialTranslation.clear();
 
   std::ifstream inFile;
 
