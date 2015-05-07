@@ -44,7 +44,7 @@ void GateSystemComponentList::InsertChildComponent(GateSystemComponent* newChild
 
 void GateSystemComponentList::DescribeChildComponents(size_t indent,G4bool recursiveDescribe)
 {
-  G4cout << GateTools::Indent(indent) << "Nb of children:       " << theListOfNamedObject.size() << "\n";
+  G4cout << GateTools::Indent(indent) << "Nb of children:       " << size() << Gateendl;
   for (iterator it=theListOfNamedObject.begin(); it!=theListOfNamedObject.end(); it++)
     if (recursiveDescribe)
       ((GateSystemComponent*)(*it))->Describe(indent+1);

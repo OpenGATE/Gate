@@ -60,7 +60,7 @@ void GateObjectRepeaterList::AppendObjectRepeater(GateVGlobalPlacement* newObjec
 //-------------------------------------------------------------------------------------
 void GateObjectRepeaterList::DescribeRepeaters(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Nb of " << m_typeName << "s:       " << theListOfNamedObject.size() << "\n";
+  G4cout << GateTools::Indent(indent) << "Nb of " << m_typeName << "s:       " << size() << Gateendl;
   for (iterator it=theListOfNamedObject.begin(); it!=theListOfNamedObject.end(); it++) 
     ((GateVGlobalPlacement*)(*it))->Describe(indent+1);
 }

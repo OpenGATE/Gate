@@ -66,26 +66,6 @@ GateCrossSectionsTable::GateCrossSectionsTable ( G4double minEnergy, G4double ma
 
 }
 
-GateCrossSectionsTable::GateCrossSectionsTable ( G4double minEnergy, G4double maxEnergy,  G4int physicsVectorBinNumber, const G4ParticleDefinition* pdef, const Gate_ProcessVec process ) :G4PhysicsTable(),m_oInvDensity(),m_oMaterialVec(), m_pMaxCrossSection ( NULL )
-{
-
-	assert ( pdef == G4Gamma::GammaDefinition() ); // perhaps it works for other particles, perhaps not... did not think about that
-	m_nMinEnergy=minEnergy;
-	m_nMaxEnergy=maxEnergy;
-	assert ( m_nMaxEnergy>m_nMinEnergy );
-
-	for(Gate_ProcessVec::const_iterator it=process.begin(); it!=process.end(); it++){
-	  m_oProcessVec.push_back(it->Process);
-	}
-
-	m_nPhysicsVectorBinNumber=physicsVectorBinNumber;
-	pParticleDefinition=pdef;
-
-	GatePETVRTManager* man=GatePETVRTManager::GetInstance();
-	pMaterialTableToProductionCutsTable=man->GetMaterialTableToProductionCutsTable();
-
-}
-
 GateCrossSectionsTable::GateCrossSectionsTable ( ifstream& in, bool ascii, const vector<G4VDiscreteProcess*>& processes ) :G4PhysicsTable(),m_oInvDensity(),m_oMaterialVec(), m_oProcessVec ( processes ),m_pMaxCrossSection ( NULL )
 {
 	GatePETVRTManager* man=GatePETVRTManager::GetInstance();
@@ -135,7 +115,7 @@ size_t GateCrossSectionsTable::AddMaterial ( const G4MaterialCutsCouple* couple 
 		G4double energy=m_nMinEnergy+delta*i;
 		G4double b=0;
 		G4double c=0.;
-		for (std::vector<G4VDiscreteProcess*>::iterator it=m_oProcessVec.begin();it!=m_oProcessVec.end();it++ )
+		for (std::vector<G4VDiscreteProcess*>::const_iterator it=m_oProcessVec.begin();it!=m_oProcessVec.end();it++ )
 		{
 			if ( dynamic_cast<G4VEmProcess*> ( *it ) )
 			{

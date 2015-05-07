@@ -34,7 +34,7 @@ void GateSurfaceList::AddSurface(GateSurface* surface)
 
 void GateSurfaceList::DescribeSurfaces(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Nb of surfaces:        " << theListOfNamedObject.size() << "\n";
+  G4cout << GateTools::Indent(indent) << "Nb of surfaces:        " << size() << Gateendl;
   for (iterator it=theListOfNamedObject.begin(); it!=theListOfNamedObject.end(); it++)
   {
     if (*it) G4cout << GateTools::Indent(indent+1) << "surface: '" << (*it)->GetObjectName() << "'\n";

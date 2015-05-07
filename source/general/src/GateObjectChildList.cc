@@ -82,7 +82,7 @@ void GateObjectChildList::AddChild(GateVVolume* pnewChildCreator)
 //-----------------------------------------------------------------------------------------------------------------
 void GateObjectChildList::DescribeChildren(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Nb of children:        " << theListOfNamedObject.size() << "\n";
+  G4cout << GateTools::Indent(indent) << "Nb of children:        " << size() << Gateendl;
   for (iterator it=theListOfNamedObject.begin(); it!=theListOfNamedObject.end(); it++)
     if (*it) 
     	  G4cout << GateTools::Indent(indent+1) << "child: '" << ((GateVVolume*)(*it))->GetObjectName() << "'\n";

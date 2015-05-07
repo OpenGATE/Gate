@@ -46,8 +46,6 @@ class GateCrossSectionsTable: public G4PhysicsTable
 
 		GateCrossSectionsTable ( std::ifstream& fin,bool ascii, const std::vector<G4VDiscreteProcess*>& processes );
 
-		GateCrossSectionsTable ( G4double minEnergy, G4double maxEnergy, G4int physicsVectorBinNumber, const G4ParticleDefinition* pdef, const Gate_ProcessVec process );
-
 		~GateCrossSectionsTable();
 
 		size_t SetAndBuildProductionMaterialTable(); // returns index of last material
@@ -82,7 +80,7 @@ class GateCrossSectionsTable: public G4PhysicsTable
 
 		std::vector<G4double> m_oInvDensity;
 		std::vector<const G4Material*> m_oMaterialVec;
-		std::vector<G4VDiscreteProcess*> m_oProcessVec;// several if cross section should be total
+		const std::vector<G4VDiscreteProcess*> m_oProcessVec;// several if cross section should be total
 		G4PhysicsVector* m_pMaxCrossSection;
 		int m_nVerbose;
 

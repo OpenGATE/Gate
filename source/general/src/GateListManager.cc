@@ -28,7 +28,7 @@ GateListManager::GateListManager(const G4String& itsName,
 //--------------------------------------------------------------------------------------
 GateListManager::~GateListManager()
 {  
-  for (GateListOfNamedObject::iterator it = theListOfNamedObject.begin(); it != theListOfNamedObject.end(); )
+  for (iterator it = theListOfNamedObject.begin(); it != theListOfNamedObject.end(); )
     {
       //delete (*it);
       it = theListOfNamedObject.erase(it);
@@ -40,7 +40,7 @@ GateListManager::~GateListManager()
 //--------------------------------------------------------------------------------------
 GateNamedObject* GateListManager::FindElement(const G4String& name)
 {
-  for (GateListOfNamedObject::iterator it = theListOfNamedObject.begin(); it != theListOfNamedObject.end(); it++)
+  for (iterator it = theListOfNamedObject.begin(); it != theListOfNamedObject.end(); it++)
     if (name.compare((*it)->GetObjectName()) == 0)
       return *it;
   return 0;
@@ -53,7 +53,7 @@ GateNamedObject* GateListManager::FindElement(const G4String& name)
 void GateListManager::TheListElements(size_t indent) const
 {
   G4cout << GateTools::Indent(indent) << "Nb of elements:     " << size() << Gateendl;
-  for (GateListOfNamedObject::const_iterator it = theListOfNamedObject.begin(); it != theListOfNamedObject.end(); it++)
+  for (const_iterator it = theListOfNamedObject.begin(); it != theListOfNamedObject.end(); it++)
     G4cout << GateTools::Indent(indent+2) << '\'' << (*it)->GetObjectName() << '\'' << Gateendl;
 }
 //--------------------------------------------------------------------------------------

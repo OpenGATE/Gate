@@ -67,7 +67,7 @@ void GateCoincidencePulseProcessorChain::Describe(size_t indent)
 //------------------------------------------------------------------------------------------------------
 void GateCoincidencePulseProcessorChain::DescribeProcessors(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Nb of modules:       " << theListOfNamedObject.size() << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Nb of modules:       " << size() << Gateendl;
   for (iterator it=theListOfNamedObject.begin(); it!=theListOfNamedObject.end(); it++)
       ((GateVCoincidencePulseProcessor*)(*it))->Describe(indent+1);
 }

@@ -107,6 +107,7 @@ void 	GateTotalDiscreteProcess::BuildPhysicsTable ( const G4ParticleDefinition &
 void GateTotalDiscreteProcess::BuildCrossSectionsTables()
 {
 	// build tables for single processes
+        std::vector<G4VDiscreteProcess*> vec;
 	for (Gate_ProcessVec::iterator it=m_oProcessVec.begin();it!=m_oProcessVec.end(); it++)
 	{
 		it->Process->PreparePhysicsTable ( *pParticleType );
@@ -119,11 +120,11 @@ void GateTotalDiscreteProcess::BuildCrossSectionsTables()
 		G4cout << "***************\n";
 #endif
 		it->CrossSectionsTable->SetAndBuildProductionMaterialTable();
-	//	vec.push_back ( m_oProcessNameVec[i] );
+		vec.push_back ( it->Process );
 	}
 
 	// build tables for total cross section
-	m_pTotalCrossSectionsTable=new GateCrossSectionsTable ( m_nTotalMinEnergy,m_nTotalMaxEnergy,m_nTotalBinNumber,pParticleType,m_oProcessVec);
+	m_pTotalCrossSectionsTable=new GateCrossSectionsTable ( m_nTotalMinEnergy,m_nTotalMaxEnergy,m_nTotalBinNumber,pParticleType,vec);
 #ifdef G4VERBOSE
 	G4cout << "*****************\n";
 	G4cout << "GATE TOTALPROCESS " << GetProcessName() <<" : Building fast linear tables for "<< pParticleType->GetParticleName() << " in the energy range [" << m_nTotalMinEnergy/keV << "," << m_nTotalMaxEnergy/keV << "] keV in " << m_nTotalBinNumber << " " << ( m_nTotalMaxEnergy-m_nTotalMinEnergy ) /m_nTotalBinNumber/keV << " keV bins\n";

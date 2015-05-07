@@ -63,9 +63,9 @@ void GatePulseProcessorChain::Describe(size_t indent)
 
 void GatePulseProcessorChain::DescribeProcessors(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Nb of modules:       " << theListOfNamedObject.size() << Gateendl;
-  for (size_t i=0; i<theListOfNamedObject.size(); i++)
-      GetProcessor(i)->Describe(indent+1);
+  G4cout << GateTools::Indent(indent) << "Nb of modules:       " << size() << Gateendl;
+  for (iterator it = theListOfNamedObject.begin(); it != theListOfNamedObject.end(); it++)
+      ((GateVPulseProcessor*)(*it))->Describe(indent+1);
 }
 
 void GatePulseProcessorChain::ListElements()
@@ -85,9 +85,9 @@ GatePulseList* GatePulseProcessorChain::ProcessPulseList()
     return 0;
 
   // Sequentially launch all pulse processors
-  for (size_t processorID = 0 ; processorID < GetProcessorNumber(); processorID++) 
-    if (GetProcessor(processorID)->IsEnabled()) {
-      pulseList = GetProcessor(processorID)->ProcessPulseList(pulseList);
+  for (iterator it = theListOfNamedObject.begin(); it != theListOfNamedObject.end(); it++)
+    if (((GateVPulseProcessor*)(*it))->IsEnabled()) {
+      pulseList = ((GateVPulseProcessor*)(*it))->ProcessPulseList(pulseList);
       if (pulseList) GateDigitizer::GetInstance()->StorePulseList(pulseList);
       else break;
     }
