@@ -27,6 +27,15 @@ class G4EmCalculator;
 #include <vector>
 #include "G4VDiscreteProcess.hh"
 class G4MaterialCutsCouple;
+class GateCrossSectionsTable;
+
+struct Gate_Process
+{
+  G4VDiscreteProcess* Process;
+  G4String* Name;
+  GateCrossSectionsTable* CrossSectionsTable;
+};
+typedef std::vector<Gate_Process> Gate_ProcessVec;
 
 class GateCrossSectionsTable: public G4PhysicsTable
 {
@@ -37,6 +46,7 @@ class GateCrossSectionsTable: public G4PhysicsTable
 
 		GateCrossSectionsTable ( std::ifstream& fin,bool ascii, const std::vector<G4VDiscreteProcess*>& processes );
 
+		GateCrossSectionsTable ( G4double minEnergy, G4double maxEnergy, G4int physicsVectorBinNumber, const G4ParticleDefinition* pdef, const Gate_ProcessVec process );
 
 		~GateCrossSectionsTable();
 
@@ -66,16 +76,13 @@ class GateCrossSectionsTable: public G4PhysicsTable
 	protected:
 		size_t AddMaterial ( const G4MaterialCutsCouple* ); // returns index for that material
 
-
-
-
 		G4double m_nMinEnergy, m_nMaxEnergy; // of G4PhysicsVectors
 		G4int m_nPhysicsVectorBinNumber;
 		const G4Material* pReplacementMaterial;
 
 		std::vector<G4double> m_oInvDensity;
 		std::vector<const G4Material*> m_oMaterialVec;
-		const std::vector<G4VDiscreteProcess*> m_oProcessVec;// several if cross section should be total
+		std::vector<G4VDiscreteProcess*> m_oProcessVec;// several if cross section should be total
 		G4PhysicsVector* m_pMaxCrossSection;
 		int m_nVerbose;
 

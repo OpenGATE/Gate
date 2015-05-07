@@ -27,13 +27,11 @@ GateHounsfieldMaterialProperties::GateHounsfieldMaterialProperties()
 //-----------------------------------------------------------------------------
 GateHounsfieldMaterialProperties::~GateHounsfieldMaterialProperties()
 {
-  for (std::vector<G4Element*>::iterator it = mElementsList.begin(); it != mElementsList.end(); )
+  for (mElementVector::iterator it = mElementsList.begin(); it != mElementsList.end(); )
   {
     //delete (*it);
     it = mElementsList.erase(it);
   }
-
-  mElementsFractionList.clear();
 }
 //-----------------------------------------------------------------------------
 
@@ -41,20 +39,6 @@ GateHounsfieldMaterialProperties::~GateHounsfieldMaterialProperties()
 int GateHounsfieldMaterialProperties::GetNumberOfElements()
 {
   return mElementsList.size();
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-G4Element * GateHounsfieldMaterialProperties::GetElements(int i) 
-{
-  return mElementsList[i];
-}
-//-----------------------------------------------------------------------------
-
-double GateHounsfieldMaterialProperties::GetElementsFraction(int i)
-//-----------------------------------------------------------------------------
-{
-  return mElementsFractionList[i];
 }
 //-----------------------------------------------------------------------------
 
@@ -107,10 +91,10 @@ void GateHounsfieldMaterialProperties::Read(std::ifstream & is, std::vector<G4St
     mName = n;
     // Normalise fraction
     double sum = 0.0;
-    for(unsigned int i=0; i<mElementsFractionList.size(); i++) 
-      sum += mElementsFractionList[i];
-    for(unsigned int i=0; i<mElementsFractionList.size(); i++) 
-      mElementsFractionList[i] /= sum;
+    for (mElementVector::iterator it = mElementsList.begin(); it != mElementsList.end(); it++)
+      sum += it->Fraction;
+    for (mElementVector::iterator it = mElementsList.begin(); it != mElementsList.end(); it++) 
+      it->Fraction /= sum;
     GateDebugMessage("Geometry", 6, "Read " << h << " " << mName << " " << sum << Gateendl);
   }
 }
@@ -124,9 +108,10 @@ void GateHounsfieldMaterialProperties::ReadAndStoreElementFraction(std::ifstream
   is >> f;
   if (f>0) {
     if (is) {
-      G4Element * e = theMaterialDatabase.GetElement(name);
-      mElementsList.push_back(e);
-      mElementsFractionList.push_back(f);
+      mElementCompound EC;
+      EC.Element = theMaterialDatabase.GetElement(name);
+      EC.Fraction = f;
+      mElementsList.push_back(EC);
     }
     else {
       GateError("Error in reading element fraction of <" << name << ">\n");

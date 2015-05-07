@@ -26,6 +26,12 @@ class GateListManager : public GateClockDependent
     		    G4bool canBeDisabled=true,
     		    G4bool acceptNewElements=true);
     virtual ~GateListManager();
+    //Making the list of objects iterable
+    typedef std::vector<GateNamedObject*> GateListOfNamedObject;
+    typedef GateListOfNamedObject::iterator iterator;
+    typedef GateListOfNamedObject::const_iterator const_iterator;
+    iterator begin(){ return theListOfNamedObject.begin(); }
+    iterator end(){ return theListOfNamedObject.end(); }
 
   public:
      virtual  void TheListElements(size_t indent=0) const;
@@ -34,6 +40,8 @@ class GateListManager : public GateClockDependent
      virtual GateNamedObject* FindElement(const G4String& name);
      virtual inline GateNamedObject* GetElement(size_t i)
       	  {return (i<theListOfNamedObject.size()) ? theListOfNamedObject[i] : 0; }
+     virtual inline GateNamedObject* operator[](size_t i)
+          {return (i<theListOfNamedObject.size()) ? theListOfNamedObject[i] : 0; }
      virtual inline size_t size() const
       	  {return theListOfNamedObject.size(); }
      virtual inline GateNamedObject* FindElementByBaseName(const G4String& baseName)
@@ -57,7 +65,6 @@ class GateListManager : public GateClockDependent
     G4String mElementTypeName;
     G4bool   bAcceptNewElements;
     
-    typedef std::vector<GateNamedObject*> GateListOfNamedObject;
     GateListOfNamedObject   theListOfNamedObject;
 };
 

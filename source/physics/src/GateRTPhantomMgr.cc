@@ -70,10 +70,8 @@ GateRTPhantomMgr::GateRTPhantomMgr(const G4String name)
 
 GateRTPhantomMgr::~GateRTPhantomMgr()
 {
-  for (size_t iMod = 0; iMod < m_RTPhantom.size(); iMod++) {  // use iterator??
-    delete m_RTPhantom[iMod];
-  }
-  m_RTPhantom.clear();
+  for (std::vector<GateRTPhantom*>::iterator it = m_RTPhantom.begin(); it!= m_RTPhantom.end(); )   
+    it = m_RTPhantom.erase(it);
   delete m_messenger;
  if (m_verboseLevel > 0) G4cout << "GateRTPhantomMgr deleting...\n";
 

@@ -31,7 +31,6 @@ GateHounsfieldMaterialTable::~GateHounsfieldMaterialTable()
   {
     it = mMaterialsVector.erase(it);
   }
-  mMaterialsVector.clear();
 }
 //-----------------------------------------------------------------------------
 

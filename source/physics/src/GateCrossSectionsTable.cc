@@ -66,6 +66,26 @@ GateCrossSectionsTable::GateCrossSectionsTable ( G4double minEnergy, G4double ma
 
 }
 
+GateCrossSectionsTable::GateCrossSectionsTable ( G4double minEnergy, G4double maxEnergy,  G4int physicsVectorBinNumber, const G4ParticleDefinition* pdef, const Gate_ProcessVec process ) :G4PhysicsTable(),m_oInvDensity(),m_oMaterialVec(), m_pMaxCrossSection ( NULL )
+{
+
+	assert ( pdef == G4Gamma::GammaDefinition() ); // perhaps it works for other particles, perhaps not... did not think about that
+	m_nMinEnergy=minEnergy;
+	m_nMaxEnergy=maxEnergy;
+	assert ( m_nMaxEnergy>m_nMinEnergy );
+
+	for(Gate_ProcessVec::const_iterator it=process.begin(); it!=process.end(); it++){
+	  m_oProcessVec.push_back(it->Process);
+	}
+
+	m_nPhysicsVectorBinNumber=physicsVectorBinNumber;
+	pParticleDefinition=pdef;
+
+	GatePETVRTManager* man=GatePETVRTManager::GetInstance();
+	pMaterialTableToProductionCutsTable=man->GetMaterialTableToProductionCutsTable();
+
+}
+
 GateCrossSectionsTable::GateCrossSectionsTable ( ifstream& in, bool ascii, const vector<G4VDiscreteProcess*>& processes ) :G4PhysicsTable(),m_oInvDensity(),m_oMaterialVec(), m_oProcessVec ( processes ),m_pMaxCrossSection ( NULL )
 {
 	GatePETVRTManager* man=GatePETVRTManager::GetInstance();
@@ -115,11 +135,11 @@ size_t GateCrossSectionsTable::AddMaterial ( const G4MaterialCutsCouple* couple 
 		G4double energy=m_nMinEnergy+delta*i;
 		G4double b=0;
 		G4double c=0.;
-		for ( size_t j=0;j<m_oProcessVec.size();j++ )
+		for (std::vector<G4VDiscreteProcess*>::iterator it=m_oProcessVec.begin();it!=m_oProcessVec.end();it++ )
 		{
-			if ( dynamic_cast<G4VEmProcess*> ( m_oProcessVec[j] ) )
+			if ( dynamic_cast<G4VEmProcess*> ( *it ) )
 			{
-				c=m_sEmCalculator.ComputeCrossSectionPerVolume ( energy, pParticleDefinition, m_oProcessVec[j]->GetProcessName(), couple->GetMaterial() );
+				c=m_sEmCalculator.ComputeCrossSectionPerVolume ( energy, pParticleDefinition, (*it)->GetProcessName(), couple->GetMaterial() );
 				assert ( c>0 );
 				b+=c;
 			}
@@ -129,7 +149,7 @@ size_t GateCrossSectionsTable::AddMaterial ( const G4MaterialCutsCouple* couple 
 				G4StepPoint* point=const_cast<G4StepPoint*> ( trackTmp.GetStep()->GetPreStepPoint() );
 				point->SetMaterialCutsCouple ( couple );
 				//G4ForceCondition forc=NotForced;
-				G4LivermoreRayleighModel* ray= dynamic_cast<G4LivermoreRayleighModel*> ( m_oProcessVec[j] );
+				G4LivermoreRayleighModel* ray= dynamic_cast<G4LivermoreRayleighModel*> ( *it );
 				if ( ray )
 				{
 					//c=ray->DumpMeanFreePath ( trackTmp,0., &forc );
@@ -139,7 +159,7 @@ size_t GateCrossSectionsTable::AddMaterial ( const G4MaterialCutsCouple* couple 
 				}
 				else
 				{
-					G4LivermorePolarizedRayleighModel* polray=dynamic_cast<G4LivermorePolarizedRayleighModel*> ( m_oProcessVec[j] );
+					G4LivermorePolarizedRayleighModel* polray=dynamic_cast<G4LivermorePolarizedRayleighModel*> ( *it );
 					if ( polray )
 
 					{
@@ -151,7 +171,7 @@ size_t GateCrossSectionsTable::AddMaterial ( const G4MaterialCutsCouple* couple 
 					else
 					{
 						G4LivermoreComptonModel*
-						lcomp=dynamic_cast<G4LivermoreComptonModel*> ( m_oProcessVec[j] );
+						lcomp=dynamic_cast<G4LivermoreComptonModel*> ( *it );
 						if ( lcomp )
 
 						{
@@ -176,7 +196,7 @@ size_t GateCrossSectionsTable::AddMaterial ( const G4MaterialCutsCouple* couple 
 														else
 														{
 							*/
-							G4Exception ( "GateCrossSectionsTable::AddMaterial(const G4MaterialCutsCouple*)", G4String ( "'" + m_oProcessVec[j]->GetProcessName() +"' is neither G4VEmProcess (='standard') nor G4LivermoreRayleighModel, G4LivermorePolarizedRayleighModel, G4LivermoreComptonModel. At present other processes cannot be used together with fictitious." ).c_str(), FatalException,"Cannot build fast tables." );
+							G4Exception ( "GateCrossSectionsTable::AddMaterial(const G4MaterialCutsCouple*)", G4String ( "'" + (*it)->GetProcessName() +"' is neither G4VEmProcess (='standard') nor G4LivermoreRayleighModel, G4LivermorePolarizedRayleighModel, G4LivermoreComptonModel. At present other processes cannot be used together with fictitious." ).c_str(), FatalException,"Cannot build fast tables." );
 
 							//						}
 						}

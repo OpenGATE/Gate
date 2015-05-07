@@ -45,11 +45,11 @@ void GateSystemComponentList::InsertChildComponent(GateSystemComponent* newChild
 void GateSystemComponentList::DescribeChildComponents(size_t indent,G4bool recursiveDescribe)
 {
   G4cout << GateTools::Indent(indent) << "Nb of children:       " << theListOfNamedObject.size() << "\n";
-  for (size_t i=0; i<theListOfNamedObject.size(); i++)
+  for (iterator it=theListOfNamedObject.begin(); it!=theListOfNamedObject.end(); it++)
     if (recursiveDescribe)
-      GetChildComponent(i)->Describe(indent+1);
+      ((GateSystemComponent*)(*it))->Describe(indent+1);
     else
-      G4cout << GateTools::Indent(indent+1) << GetChildComponent(i)->GetObjectName() << Gateendl;
+      G4cout << GateTools::Indent(indent+1) << ((GateSystemComponent*)(*it))->GetObjectName() << Gateendl;
 }
 
 void GateSystemComponentList::ListElements()
@@ -66,8 +66,8 @@ void GateSystemComponentList::ListElements()
 */
 G4bool GateSystemComponentList::CheckConnectionToCreator(GateVVolume* anCreator) 
 { 
-  for ( size_t i=0 ; i < GetChildNumber() ; ++i) 
-    if ( GetChildComponent(i)->CheckConnectionToCreator(anCreator) )
+  for (iterator it=theListOfNamedObject.begin(); it!=theListOfNamedObject.end(); it++) 
+    if ( ((GateSystemComponent*)(*it))->CheckConnectionToCreator(anCreator) )
       return true;
 
   return false;
@@ -82,8 +82,9 @@ size_t GateSystemComponentList::GetMaxChildTreeDepth()
   // Compute the maximum distance between the component and its descendants
   // We ask each child to compute its own tree-depth, and We store the maximum of the child tree depths
   size_t childTreeDepth=0;
-  for ( size_t i=0 ; i<GetChildNumber() ; ++i) {
-    size_t childResult = GetChildComponent(i)->GetTreeDepth();
+  for (iterator it=theListOfNamedObject.begin(); it!=theListOfNamedObject.end(); it++) 
+  {
+    size_t childResult = ((GateSystemComponent*)(*it))->GetTreeDepth();
     if (childResult>childTreeDepth)
       childTreeDepth=childResult;
   }
@@ -99,8 +100,8 @@ size_t GateSystemComponentList::GetActiveChildNumber()
   // We loop on the list of daughter-components
   // We increment the number of active children for each daughter-component that is active
   size_t activeChildNumber=0;
-  for ( size_t i=0 ; i<GetChildNumber() ; ++i) 
-    if ( GetChildComponent(i)->IsActive() )
+  for (iterator it=theListOfNamedObject.begin(); it!=theListOfNamedObject.end(); it++)
+    if ( ((GateSystemComponent*)(*it))->IsActive() )
       ++activeChildNumber;
   
   return activeChildNumber;
@@ -111,8 +112,9 @@ size_t GateSystemComponentList::GetActiveChildNumber()
 // Finds a child component from its name
 GateSystemComponent* GateSystemComponentList::FindSystemComponent(const G4String& componentName)
 {
-  for ( size_t i=0 ; i<GetChildNumber() ; ++i) {
-      GateSystemComponent* childResult = GetChildComponent(i)->FindSystemComponent(componentName);
+  for (iterator it=theListOfNamedObject.begin(); it!=theListOfNamedObject.end(); it++) 
+  {
+      GateSystemComponent* childResult = ((GateSystemComponent*)(*it))->FindSystemComponent(componentName);
       if (childResult)
       	return childResult;
   }

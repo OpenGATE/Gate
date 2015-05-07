@@ -57,11 +57,9 @@ GateSourceMgr::GateSourceMgr()
 //----------------------------------------------------------------------------------------
 GateSourceMgr::~GateSourceMgr()
 {
-  // loop over the sources to delete them, then clear the pointers vector
-  for( size_t i = 0; i != mSources.size(); ++i )//Use an iterator??
-    if( mSources[ i ] )
-      delete mSources[ i ];
-  mSources.clear();
+  //Erase all the sources
+  for (GateVSourceVector::iterator it=mSources.begin(); it!=mSources.end(); )
+    it=mSources.erase(it);
   delete m_sourceMgrMessenger;
   delete m_fictiveSource;
 }
@@ -83,9 +81,9 @@ G4int GateSourceMgr::RemoveSource( G4String name )
   G4int found = 0;
   if( name == G4String( "all" ) )
     {
-      for( size_t is = 0; is != mSources.size(); ++is )//Use an iterator??
-        delete mSources[is];
-      mSources.clear();
+      //Erase all the sources
+      for (GateVSourceVector::iterator it=mSources.begin(); it!=mSources.end(); )
+	it=mSources.erase(it);
       if( mVerboseLevel > 0 )
         G4cout << "GateSourceMgr::RemoveSource : all sources removed \n";
       return 0;

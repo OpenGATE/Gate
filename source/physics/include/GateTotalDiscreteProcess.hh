@@ -37,8 +37,7 @@ class GateTotalDiscreteProcess : public G4VDiscreteProcess
 		GateTotalDiscreteProcess ( const G4String& name, G4ProcessType type, G4int num_processes, const G4ParticleDefinition* particle_type, G4double minEnergy, G4double maxEnergy, G4int binNumbers );
 		virtual ~GateTotalDiscreteProcess();
 		bool AddDiscreteProcess (G4VDiscreteProcess* p );
-
-
+		
 		G4VParticleChange * 	PostStepDoIt ( const G4Track &track, const G4Step &stepData );
 
 
@@ -61,9 +60,7 @@ class GateTotalDiscreteProcess : public G4VDiscreteProcess
 		G4int m_nNumProcesses, m_nMaxNumProcesses;
 		bool m_nInitialized;
 		const G4ParticleDefinition* pParticleType;
-		std::vector<G4VDiscreteProcess*> m_oProcessVec;
-		std::vector<G4String*> m_oProcessNameVec;
-		std::vector<GateCrossSectionsTable*> m_oCrossSectionsTableVec;
+		Gate_ProcessVec m_oProcessVec;
 		GateCrossSectionsTable* m_pTotalCrossSectionsTable;
 		G4double m_nTotalMinEnergy, m_nTotalMaxEnergy;
 		G4int m_nTotalBinNumber; // binning information
@@ -87,14 +84,11 @@ inline G4double GateTotalDiscreteProcess::GetNumberOfInteractionLengthLeft () co
 
 inline G4double 	GateTotalDiscreteProcess::PostStepGetPhysicalInteractionLength ( const G4Track &track, G4double previousStepSize, G4ForceCondition *condition )
 {
-	G4double b=m_oProcessVec[0]->PostStepGetPhysicalInteractionLength ( track, previousStepSize, condition );
-	m_nProcessWithSmallestPIL=0;
-	for (size_t i=1;i<m_oProcessVec.size();i++)
-	// shouldn't it be better ??
-	// for (std::vector<G4VDiscreteProcess*>::iterator itr=m_oProcessVec.begin(); itr!= m_oProcessVec.end(); ++itr)
+	G4double b=m_oProcessVec[0].Process->PostStepGetPhysicalInteractionLength ( track, previousStepSize, condition );
+	m_nProcessWithSmallestPIL=0;int i=0;
+	for (Gate_ProcessVec::iterator itr=m_oProcessVec.begin(); itr!= m_oProcessVec.end(); ++itr, ++i)
 	{
-		
-		const G4double a=m_oProcessVec[i]->PostStepGetPhysicalInteractionLength (track, previousStepSize, condition);
+		const G4double a=itr->Process->PostStepGetPhysicalInteractionLength (track, previousStepSize, condition);
 		if (a<b)
 		{
 			b=a;
@@ -106,7 +100,7 @@ inline G4double 	GateTotalDiscreteProcess::PostStepGetPhysicalInteractionLength 
 
 inline G4VProcess* GateTotalDiscreteProcess::GetActiveProcess() const
 {
-	return m_oProcessVec[m_nProcessWithSmallestPIL];
+	return m_oProcessVec[m_nProcessWithSmallestPIL].Process;
 }
 
 inline G4VProcess* GateTotalDiscreteProcess::SampleActiveProcess(G4Material* m,G4double energy)
@@ -114,18 +108,11 @@ inline G4VProcess* GateTotalDiscreteProcess::SampleActiveProcess(G4Material* m,G
 	G4double tot=m_pTotalCrossSectionsTable->GetCrossSection(m,energy);
 	size_t i=m_nNumProcesses;
 	G4double rand=G4UniformRand()*tot;
-	G4double p=m_oCrossSectionsTableVec[--i]->GetCrossSection(m,energy);
+	G4double p=m_oProcessVec[--i].CrossSectionsTable->GetCrossSection(m,energy);
 	while (rand>p)
-	{ p+=m_oCrossSectionsTableVec[--i]->GetCrossSection(m,energy);};
+	{ p+=m_oProcessVec[--i].CrossSectionsTable->GetCrossSection(m,energy);};
 	m_nProcessWithSmallestPIL=i;
-	return m_oProcessVec[i];
+	return m_oProcessVec[i].Process;
 }
-
-
-
-
-
-
-
 
 #endif
