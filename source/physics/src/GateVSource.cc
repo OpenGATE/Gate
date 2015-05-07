@@ -83,8 +83,9 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
 //   mUserPosRndm = NULL;
   mIsUserFocalShapeActive = false;
   mUserFocalShapeInitialisation = false;
+  mUserFocalShape = new G4SPSPosDistribution();
 
-
+  mUserPosGenX = new G4SPSRandomGenerator();
   m_posSPS = new GateSPSPosDistribution();
   m_posSPS->SetBiasRndm( GetBiasRndm() );
   m_eneSPS = new GateSPSEneDistribution();
@@ -116,6 +117,11 @@ GateVSource::~GateVSource()
   delete m_posSPS;
   delete m_eneSPS;
   delete m_angSPS;
+  delete mUserFocalShape;
+  delete mUserPosGenX;
+  for (int i = 0; i<mUserPosGenY.size(); ++i) {
+    delete mUserPosGenY[i];
+  }
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -883,7 +889,7 @@ void GateVSource::InitializeUserFluence()
     posX = (0.5 * sizeX) + userFluenceImage.GetOrigin().x();
 //     posX = ((0.5 * sizeX) - userFluenceImage.GetHalfSize().x());
     
-    mUserPosGenX.SetXBias(G4ThreeVector(0.,0.,0.));
+    mUserPosGenX->SetXBias(G4ThreeVector(0.,0.,0.));
     for(int i=0; i<resX;i++)
     {
       mUserPosX[i] = posX;
@@ -891,18 +897,24 @@ void GateVSource::InitializeUserFluence()
       sum = 0.0;
       posY = (0.5 * sizeY) + userFluenceImage.GetOrigin().y();
 //       posY = ((0.5 * sizeY) - userFluenceImage.GetHalfSize().y());
-      
-      mUserPosGenY[i].SetYBias(G4ThreeVector(0.,0.,0.));
+
+      if (mUserPosGenY[i]==0) {
+        mUserPosGenY[i] = new G4SPSRandomGenerator();
+      }
+      mUserPosGenY[i]->SetYBias(G4ThreeVector(0.,0.,0.));
       for(int j=0; j<resY; j++)
       {
-	sum += userFluenceImage.GetValue(i,j,0);
-	mUserPosY[j] = posY;
+        sum += userFluenceImage.GetValue(i,j,0);
+        mUserPosY[j] = posY;
 
-	mUserPosGenY[i].SetYBias(G4ThreeVector(j+1,userFluenceImage.GetValue(i,j,0),0.));
-	posY += sizeY;
+        if (mUserPosGenY[i]==0) {
+          mUserPosGenY[i] = new G4SPSRandomGenerator();
+        }
+        mUserPosGenY[i]->SetYBias(G4ThreeVector(j+1,userFluenceImage.GetValue(i,j,0),0.));
+        posY += sizeY;
       }
       
-      mUserPosGenX.SetXBias(G4ThreeVector(i+1,sum,0.));
+      mUserPosGenX->SetXBias(G4ThreeVector(i+1,sum,0.));
       posX += sizeX;
     }
     
@@ -913,8 +925,8 @@ void GateVSource::InitializeUserFluence()
 //----------------------------------------------------------------------------------------
 G4ThreeVector GateVSource::UserFluencePosGenerateOne()
 {
-  int i = floor(mUserPosGenX.GenRandX());
-  int j = floor(mUserPosGenY[i].GenRandY());
+  int i = floor(mUserPosGenX->GenRandX());
+  int j = floor(mUserPosGenY[i]->GenRandY());
   
   // uniform rand in pixel
   double x = mUserPosX[i] + (G4UniformRand()-0.5)*mUserFluenceVoxelSize.x();
@@ -986,9 +998,9 @@ void GateVSource::InitializeUserFocalShape()
 {
   mIsUserFocalShapeActive = true;
   mUserFocalShapeInitialisation = false;
-  mUserFocalShape.SetBiasRndm( GetBiasRndm() );
-  mUserFocalShape.SetPosDisType("Plane");
-  mUserFocalShape.SetPosDisShape("Circle");
+  mUserFocalShape->SetBiasRndm( GetBiasRndm() );
+  mUserFocalShape->SetPosDisType("Plane");
+  mUserFocalShape->SetPosDisShape("Circle");
 
   m_angSPS->SetAngDistType("focused");
 }
@@ -997,7 +1009,7 @@ void GateVSource::InitializeUserFocalShape()
 //----------------------------------------------------------------------------------------
 G4ThreeVector GateVSource::UserFocalShapeGenerateOne()
 {
-  G4ThreeVector position = mUserFocalShape.GenerateOne();
+  G4ThreeVector position = mUserFocalShape->GenerateOne();
 //   DD(position);
   m_angSPS->SetFocusPoint(position);
   G4ThreeVector momentum = m_angSPS->GenerateOne();
