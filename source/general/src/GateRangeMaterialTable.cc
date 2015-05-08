@@ -83,7 +83,7 @@ void GateRangeMaterialTable::AddMaterial(int R1, int R2, G4String name, G4bool v
 //-----------------------------------------------------------------------------
 void GateRangeMaterialTable::Reset()
 {
-  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); )
+  for (GateMaterialsVector::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); )
   {
     it = mMaterialsVector.erase(it);
   }

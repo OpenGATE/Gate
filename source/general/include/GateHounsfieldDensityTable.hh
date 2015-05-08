@@ -25,14 +25,19 @@ class GateHounsfieldDensityTable
 public:
   GateHounsfieldDensityTable();
   ~GateHounsfieldDensityTable();
+  struct GateHDensTable
+  {
+	  double mH;
+	  double mD;
+  };
+  typedef std::vector<GateHDensTable> GateHDensTableVec;
 
   double GetDensityFromH(double H);
   double FindMaxDensityDifference(double HMin, double HMax);
   void Read(G4String filename);
 
 protected:
-  std::vector<double> mH;
-  std::vector<double> mD;
+  GateHDensTableVec HDensTableVec;
 
 };
 #endif

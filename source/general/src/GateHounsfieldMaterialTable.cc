@@ -27,7 +27,7 @@ GateHounsfieldMaterialTable::GateHounsfieldMaterialTable()
 //-----------------------------------------------------------------------------
 GateHounsfieldMaterialTable::~GateHounsfieldMaterialTable()
 {
-  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); )
+  for (GateMaterialsVector::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); )
   {
     it = mMaterialsVector.erase(it);
   }
@@ -70,7 +70,7 @@ void GateHounsfieldMaterialTable::WriteMaterialDatabase(G4String filename) {
   std::ofstream os;
   OpenFileOutput(filename, os);
   os << "[Materials]\n";
-  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++) 
+  for (GateMaterialsVector::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++)
   {
     os << "# Material corresponding to H=[ " 
        << it->mH1 << ";" << it->mH2 // << "],with density=[" 
@@ -88,7 +88,7 @@ void GateHounsfieldMaterialTable::WriteMaterialDatabase(G4String filename) {
 void GateHounsfieldMaterialTable::WriteMaterialtoHounsfieldLink(G4String filename) {
   std::ofstream os;
   OpenFileOutput(filename, os);
-  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++)  
+  for (GateMaterialsVector::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++)
   {
     os << it->mH1 << " " << it->mH2 << " " << it->mName << Gateendl;    
   }
@@ -125,7 +125,7 @@ void GateHounsfieldMaterialTable::AddMaterial(double H1, double H2, G4String nam
 //-----------------------------------------------------------------------------
 void GateHounsfieldMaterialTable::Reset()
 {
-  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); )
+  for (GateMaterialsVector::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); )
   {
     it = mMaterialsVector.erase(it);
   }
@@ -137,7 +137,7 @@ void GateHounsfieldMaterialTable::Reset()
 void GateHounsfieldMaterialTable::MapLabelToMaterial(LabelToMaterialNameType & m)
 {
   m.clear();int i = 0;
-  for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++, i++) 
+  for (GateMaterialsVector::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++, i++)
   {
     // GateMessage("Core", 0, 
     //               "i= " << i << " mi = "

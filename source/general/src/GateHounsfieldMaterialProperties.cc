@@ -64,8 +64,8 @@ void GateHounsfieldMaterialProperties::Read(std::ifstream & is, std::vector<G4St
   double h;
   is >> h;  
   // Read/Create all elements fractions 
-  for(unsigned int i=0; i<el.size(); i++) {
-    ReadAndStoreElementFraction(is, el[i]);
+  for(std::vector<G4String>::iterator it=el.begin(); it!=el.end(); it++) {
+    ReadAndStoreElementFraction(is, *it);
     /*
     //  H    C    N    O   Na  Mg   P   S   Cl  Ar  K   Ca
     ReadAndStoreElementFraction(is, "Hydrogen");
