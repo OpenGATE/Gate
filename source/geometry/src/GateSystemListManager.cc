@@ -92,7 +92,7 @@ GateSystemListManager::~GateSystemListManager()
 // Registers a new object-system in the system list
 void GateSystemListManager::RegisterSystem(GateVSystem* newSystem)
 {   
-  push_back(newSystem);
+	theListOfNamedObject.push_back(newSystem);
 }
 //-----------------------------------------------------------------------------
 
@@ -101,7 +101,7 @@ void GateSystemListManager::RegisterSystem(GateVSystem* newSystem)
 // Removes a deleted object-system from the system-list    
 void GateSystemListManager::UnregisterSystem(GateVSystem* aSystem) 
 {
-  erase( aSystem );
+	theListOfNamedObject.erase( std::remove(begin(), end(), aSystem) );
 }
 //-----------------------------------------------------------------------------
 

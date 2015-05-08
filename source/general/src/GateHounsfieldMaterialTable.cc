@@ -55,8 +55,9 @@ void GateHounsfieldMaterialTable::AddMaterial(double H1, double H2, double d,
   mat.mMaterial = new G4Material(mat.mName, d, p->GetNumberOfElements());
 
   // Material's elements
-  for(int i=0; i<p->GetNumberOfElements(); i++) {
-    mat.mMaterial->AddElement(p->GetElements(i), p->GetElementsFraction(i));
+  for(GateHounsfieldMaterialProperties::iterator it=p->begin(); it!=p->end(); it++)
+  {
+    mat.mMaterial->AddElement(it->Element, it->Fraction);
   }
 
   // Set material

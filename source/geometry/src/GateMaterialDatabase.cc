@@ -29,8 +29,7 @@ GateMaterialDatabase::GateMaterialDatabase() {
 GateMaterialDatabase::~GateMaterialDatabase()
 {
   if (water_MPT != NULL) delete water_MPT;
-  std::vector<GateMDBFile*>::iterator i;
-  for (std::vector<GateMDBFile*>::iterator it=mMDBFile.begin();it!=mMDBFile.end();) {
+  for (GateMDBVec::iterator it=mMDBFile.begin();it!=mMDBFile.end();) {
     it=mMDBFile.erase(it);
   }
 }
@@ -89,7 +88,7 @@ G4Element* GateMaterialDatabase::ReadElementFromDBFile(const G4String& elementNa
   int nDef=0;
   G4String fileName= "";
  
-  std::vector<GateMDBFile*>::iterator i;
+  GateMDBVec::iterator i;
   for (i=mMDBFile.begin();i!=mMDBFile.end();++i) {
     CreatorTemp = (*i)->ReadElement(elementName);
     if (CreatorTemp) {Creator = CreatorTemp; nDef++;fileName=(*i)->GetMDBFileName();}
@@ -119,7 +118,7 @@ G4Material* GateMaterialDatabase::ReadMaterialFromDBFile(const G4String& materia
   // If material is in NIST tables, you are done
   if(material!=NULL) return material;
 
-  std::vector<GateMDBFile*>::iterator i;
+  GateMDBVec::iterator i;
   for (i=mMDBFile.begin();i!=mMDBFile.end();++i) {
     
     CreatorTemp = (*i)->ReadMaterial(materialName);

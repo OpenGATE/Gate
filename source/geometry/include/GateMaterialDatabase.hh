@@ -32,6 +32,11 @@ class GateMaterialDatabase
 public:
   GateMaterialDatabase();
   ~GateMaterialDatabase();
+  typedef std::vector<GateMDBFile*> GateMDBVec;
+  typedef GateMDBVec::iterator iterator;
+  typedef GateMDBVec::const_iterator const_iterator;
+  iterator begin(){ return mMDBFile.begin(); }
+  iterator end(){ return mMDBFile.end(); }
 
   void AddMDBFile(const G4String& filename);
 
@@ -48,7 +53,7 @@ protected:
   inline G4Material* LookForMaterialInTable(const G4String& materialName) { return G4Material::GetMaterial(materialName, false); }
 
 private:
-  std::vector<GateMDBFile*> mMDBFile;
+  GateMDBVec mMDBFile;
   G4MaterialPropertiesTable * water_MPT;
 };
 
