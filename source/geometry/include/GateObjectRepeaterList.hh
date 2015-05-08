@@ -36,7 +36,7 @@ public:
   virtual GateVGlobalPlacement* FindInserter(const G4String& name)
   { return (GateVGlobalPlacement*) FindElement(name); }
   inline GateVGlobalPlacement* GetRepeater(size_t i)
-  {return (GateVGlobalPlacement*) GetElement(i);}
+  {return (GateVGlobalPlacement*) theListOfNamedObject[i];}
   inline GateVVolume* GetCreator()
   { return (GateVVolume*) GetMotherObject() ;}
 	  

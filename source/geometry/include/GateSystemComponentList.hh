@@ -32,7 +32,7 @@ class GateSystemComponentList : public GateModuleListManager
      virtual GateSystemComponent* FindChildComponent(const G4String& name)
       	  { return (GateSystemComponent*) FindElement(name); }
      virtual GateSystemComponent* GetChildComponent(size_t i)
-      	  {return (GateSystemComponent*) GetElement(i);}
+      	  {return (GateSystemComponent*) theListOfNamedObject[i];}
      inline GateSystemComponent* GetMotherComponent()
       	  { return (GateSystemComponent*) GetMotherObject() ;}
      virtual size_t GetChildNumber()

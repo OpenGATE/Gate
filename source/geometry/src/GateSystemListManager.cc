@@ -92,7 +92,7 @@ GateSystemListManager::~GateSystemListManager()
 // Registers a new object-system in the system list
 void GateSystemListManager::RegisterSystem(GateVSystem* newSystem)
 {   
-  theListOfNamedObject.push_back(newSystem);  
+  push_back(newSystem);
 }
 //-----------------------------------------------------------------------------
 
@@ -101,7 +101,7 @@ void GateSystemListManager::RegisterSystem(GateVSystem* newSystem)
 // Removes a deleted object-system from the system-list    
 void GateSystemListManager::UnregisterSystem(GateVSystem* aSystem) 
 {
-  theListOfNamedObject.erase( std::remove(theListOfNamedObject.begin(), theListOfNamedObject.end(), aSystem ) );
+  erase( aSystem );
 }
 //-----------------------------------------------------------------------------
 
@@ -116,7 +116,7 @@ void GateSystemListManager::UnregisterSystem(GateVSystem* aSystem)
 GateVSystem* GateSystemListManager::FindSystemOfCreator(GateVVolume* anCreator)
 {
   
-  for (iterator iter = theListOfNamedObject.begin(); iter!=theListOfNamedObject.end(); ++iter)
+  for (iterator iter = begin(); iter!=end(); ++iter)
     if ( ((GateVSystem*)(*iter))->CheckConnectionToCreator(anCreator) )
       return ((GateVSystem*)(*iter));
   return 0;

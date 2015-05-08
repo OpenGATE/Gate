@@ -54,7 +54,7 @@ public:
   virtual GateVVolume*       FindVolume(const G4String& name) { return (GateVVolume*) FindElement(name); }
   
   //! Returns the ith volume in the list
-  virtual GateVVolume*       GetVolume(size_t i) {return (GateVVolume*) GetElement(i);}
+  virtual GateVVolume*       GetVolume(size_t i) {return (GateVVolume*) theListOfNamedObject[i];}
   
   //! 
   virtual GateVVolume*       GetCreator() const { return (GateVVolume*) GetMotherObject() ;}

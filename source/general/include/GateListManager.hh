@@ -38,8 +38,7 @@ class GateListManager : public GateClockDependent
      //virtual  void ListElements(size_t indent=0) const;
      
      virtual GateNamedObject* FindElement(const G4String& name);
-     virtual inline GateNamedObject* GetElement(size_t i)
-      	  {return (i<theListOfNamedObject.size()) ? theListOfNamedObject[i] : 0; }
+
      virtual inline GateNamedObject* operator[](size_t i)
           {return (i<theListOfNamedObject.size()) ? theListOfNamedObject[i] : 0; }
      virtual inline size_t size() const
@@ -63,6 +62,7 @@ class GateListManager : public GateClockDependent
     inline void push_back(GateNamedObject* MM){ theListOfNamedObject.push_back(MM); }
     inline void pop_back(){ theListOfNamedObject.pop_back(); }
     inline void clear(){ theListOfNamedObject.clear(); }
+    inline void erase(GateNamedObject* MM){ theListOfNamedObject.erase(std::remove(begin(), end(), MM )); }
 
   protected:
     G4String mElementTypeName;

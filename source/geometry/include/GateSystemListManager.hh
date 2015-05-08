@@ -82,7 +82,7 @@ class GateSystemListManager : public GateListManager
     //! \name Access methods
     //@{
     GateVSystem* GetSystem(size_t i) 
-      {return (GateVSystem*) GetElement(i);}      	     //!< Retrieves a system from a store-iterator
+      {return (GateVSystem*) theListOfNamedObject[i];}      	     //!< Retrieves a system from a store-iterator
     //@}
 
     //! \name Methods to create new systems
