@@ -126,11 +126,6 @@ public:
   }
   //-----------------------------------------------------------------------------
 
-  //GateRangeMaterialTable                  m_voxelMaterialTranslation;
-
-  typedef std::map<G4Material*, G4VisAttributes*>          GateVoxelAttributesTranslationMap;
-  GateVoxelAttributesTranslationMap                        m_voxelAttributesTranslation;
-  
   //-----------------------------------------------------------------------------
   /// Builds a label to material map
   void BuildLabelToG4MaterialVector( std::vector<G4Material*>& );

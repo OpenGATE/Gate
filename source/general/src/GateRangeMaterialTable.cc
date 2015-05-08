@@ -63,29 +63,22 @@ void GateRangeMaterialTable::WriteMaterial(G4Material * m, std::ofstream & os) {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateRangeMaterialTable::AddMaterial(int R1, int R2, G4String name)
+void GateRangeMaterialTable::AddMaterial(int R1, int R2, G4String name, G4VisAttributes* Attributes)
 {
-  //int n = GetNumberOfMaterials(); 
-  //if(n==1) H1=mH2[n-1];
   mMaterials mat;
   mat.mR1 = R1;
   mat.mR2 = R2;
   mat.mName = name;
   mat.mMaterial = theMaterialDatabase.GetMaterial(name);
   mat.md1=mat.mMaterial->GetDensity();
+  mat.mVisAttributes=Attributes;
   mMaterialsVector.push_back(mat);
-  // Check
-//  if (R2 < R1) GateError("R2=" << R2 << " is lower than R1=" << R1 << ". Abort.\n");
-  //n++;
-
-//  if (n != 1) {
-//    if (R1 != mR2[n-2]) GateError("Current R1=" << R1 
-//				  << " is different from previous R2=" 
-//				  << mR2[n-2] << ". Abort.\n");
-//  }
-  
 }
 //-----------------------------------------------------------------------------
+void GateRangeMaterialTable::AddMaterial(int R1, int R2, G4String name, G4bool visibility, G4Colour Color)
+{
+	AddMaterial(R1, R2, name, new G4VisAttributes(visibility, Color));
+}
 
 //-----------------------------------------------------------------------------
 void GateRangeMaterialTable::Reset()

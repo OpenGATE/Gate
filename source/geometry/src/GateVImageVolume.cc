@@ -521,14 +521,12 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
 
     if(r2> pImage->GetOutsideValue()+1){
       if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
-        mRangeMaterialTable.AddMaterial(r1,r2,material);
+        mRangeMaterialTable.AddMaterial(r1,r2,material,
+        		new G4VisAttributes(visible, G4Colour(red, green, blue, alpha)));
     }
 
   mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
 
-
-  m_voxelAttributesTranslation[theMaterialDatabase.GetMaterial(material) ] =
-      new G4VisAttributes(visible, G4Colour(red, green, blue, alpha));
   }
 
   }else{
