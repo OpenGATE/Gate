@@ -41,7 +41,7 @@
  histoEnergy = new TH1D("histoEnergy", "Energy",100, 175, 185);
 
  int n = T->GetEntries();
- cout<<"\nNb Particles dans le PhS = "<<n<<endl;
+ cout<<"\nNb of particles in the PhS = "<<n<<endl;
 
 for (int i=0; i<n; i++)
 {   T->GetEntry(i);
