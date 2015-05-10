@@ -339,10 +339,10 @@ GateVSystem::compList_t* GateVSystem::MakeComponentListAtLevel(G4int level) cons
       level--;
       compList_t*  newList = new compList_t;
       for (compList_t::iterator it=currentList->begin(); it!=currentList->end(); it++){
-      	 for (size_t ichild=0;ichild<(*it)->GetChildNumber();ichild++)
+      	 for (GateSystemComponent::child_iterator ichild=(*it)->begin();ichild!=(*it)->end();ichild++)
       	 {
-      		 GateSystemComponent* comp = (*it)->GetChildComponent(ichild);
-      		 newList->push_back(comp);
+      		 //GateSystemComponent* comp = (GateSystemComponent*)(*ichild);
+      		 newList->push_back((GateSystemComponent*)(*ichild));
       	 }
       }
       delete currentList;

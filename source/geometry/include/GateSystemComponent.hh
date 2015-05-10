@@ -82,6 +82,11 @@ class GateSystemComponent  : public GateClockDependent
     //! Destructor
     virtual ~GateSystemComponent();
     
+    // Inserting an iterator to travel among the child components
+    typedef GateSystemComponentList::iterator child_iterator;
+    typedef GateSystemComponentList::const_iterator child_const_iterator;
+    child_iterator begin(){ return m_childComponentList->begin(); }
+    child_iterator end(){ return m_childComponentList->end(); }
  
     //! \name Description/print-out methods
     //@{

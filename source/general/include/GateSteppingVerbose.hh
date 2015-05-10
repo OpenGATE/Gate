@@ -38,6 +38,17 @@ public:
 
   void TrackingStarted(); 
 
+  struct GateTrackLevel
+  {
+	  G4SliceTimer* Timer;
+	  G4String Particle;
+	  G4String Process;
+	  G4String Volume;
+	  G4int Energy;
+	  G4double Time;
+  };
+  typedef std::vector<GateTrackLevel> GateTrackLevelVec;
+
   /*void AtRestDoItInvoked(){}
   void AlongStepDoItAllDone(){}
   void PostStepDoItAllDone(){}
@@ -71,11 +82,8 @@ protected:
   //G4int currentID;
   //G4bool mNewTrack;
   G4double mSumStepTime;
-  G4double mTempoEnergy;
-  G4String mTempoProcess;
-  G4String mTempoParticle;
-  G4String mTempoVolume;
 
+  GateTrackLevel mTempo;
   G4int currentID;
 
   bool mIsTrackingStep;
@@ -84,22 +92,8 @@ protected:
  
   G4int currentTrack;
 
-  std::vector<G4String> theListOfVolume; 
-  std::vector<G4String> theListOfProcess; 
-  std::vector<G4String> theListOfParticle; 
-  std::vector<G4double> theListOfTime; 
-  //std::vector<G4SliceTimer*> theListOfTimer; 
-  std::vector<G4double> theListOfTimer; 
-  std::vector<G4int> theListOfEnergy; 
-
-
-  std::vector<GateInfoForSteppingVerbose *> theListOfTrack; 
-
-  std::vector<G4String> theListOfVolumeAtTrackLevel; 
-  std::vector<G4String> theListOfProcessAtTrackLevel; 
-  std::vector<G4String> theListOfParticleAtTrackLevel; 
-  std::vector<G4SliceTimer*> theListOfTimerAtTrackLevel; 
-  std::vector<G4int> theListOfEnergyAtTrackLevel; 
+  GateTrackLevelVec theListOfStep;
+  GateTrackLevelVec theListOfTrack;
 
   //run, event?
 
