@@ -210,8 +210,9 @@ G4int GateVSystem::ComputeSubtreeID(GateSystemComponent* aComponent,
 
   // Ask each subtree to compute its section of the output ID until ones returns a success value
   G4int subtreeResult = -1;
-  for ( size_t i=0 ; i<aComponent->GetChildNumber() ; i++) {
-    subtreeResult = ComputeSubtreeID(aComponent->GetChildComponent(i),volumeID,outputVolumeID,depth+1);
+  for (GateSystemComponent::child_iterator ichild=aComponent->begin();
+		  ichild!=aComponent->end() ; ichild++) {
+    subtreeResult = ComputeSubtreeID((GateSystemComponent*)(*ichild),volumeID,outputVolumeID,depth+1);
     if (subtreeResult>=0) {
         outputVolumeID[depth+1]=subtreeResult;
       	break;
@@ -341,7 +342,6 @@ GateVSystem::compList_t* GateVSystem::MakeComponentListAtLevel(G4int level) cons
       for (compList_t::iterator it=currentList->begin(); it!=currentList->end(); it++){
       	 for (GateSystemComponent::child_iterator ichild=(*it)->begin();ichild!=(*it)->end();ichild++)
       	 {
-      		 //GateSystemComponent* comp = (GateSystemComponent*)(*ichild);
       		 newList->push_back((GateSystemComponent*)(*ichild));
       	 }
       }
