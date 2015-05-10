@@ -303,10 +303,9 @@ void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolum
     }
 
   GateObjectChildList * listOfChild = volume->GetTheChildList();
-  for(size_t i =0;i<listOfChild->size();i++)
+  for(GateObjectChildList::iterator it=listOfChild->begin();it!=listOfChild->end();it++)
     {
-      GateVVolume*  vol =  listOfChild->GetVolume(i) ;
-      SetMultiFunctionalDetector(actor, vol);
+      SetMultiFunctionalDetector(actor, (GateVVolume*)(*it));
     }
 
   // here indicate to the volume that he has to add the SD to his child ...
