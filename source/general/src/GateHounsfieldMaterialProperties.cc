@@ -19,7 +19,8 @@ See GATE/LICENSE.txt for further details
 #include "GateDetectorConstruction.hh"
 
 //-----------------------------------------------------------------------------
-GateHounsfieldMaterialProperties::GateHounsfieldMaterialProperties()
+GateHounsfieldMaterialProperties::GateHounsfieldMaterialProperties():
+	mH(0)
 {
 }
 //-----------------------------------------------------------------------------

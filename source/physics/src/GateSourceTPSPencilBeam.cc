@@ -32,7 +32,8 @@
 #include "GateMiscFunctions.hh"
 
 //------------------------------------------------------------------------------------------------------
-GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( name ), mDistriGeneral(NULL)
+GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( name ),
+	mTotalNumberOfSpots(0), mparticle_time(0), mPDF(0), mDistriGeneral(NULL)
 {
 
   strcpy(mParticleType,"proton");

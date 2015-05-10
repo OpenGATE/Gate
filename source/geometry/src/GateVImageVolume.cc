@@ -33,7 +33,8 @@ typedef unsigned int uint;
 /// the name of the volume to create
 /// Creates the messenger associated to the volume
 GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,G4int depth) :
-  GateVVolume(name,acceptsChildren,depth)
+  GateVVolume(name,acceptsChildren,depth),
+  pBoxSolid(0), pBoxLog(0), pBoxPhys(0)
 {
   GateMessageInc("Volume",5,"Begin GateVImageVolume("<<name<<")\n");
   mImageFilename="";

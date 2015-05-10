@@ -18,7 +18,9 @@
 #include "GateHounsfieldDensityTable.hh"
 
 //-------------------------------------------------------------------------------------------------
-GateHounsfieldToMaterialsBuilder::GateHounsfieldToMaterialsBuilder() {
+GateHounsfieldToMaterialsBuilder::GateHounsfieldToMaterialsBuilder() :
+	mDensityTol(1e-10)// FIXME: can't be 0, add a common tiny value
+{
   pMessenger = new GateHounsfieldToMaterialsBuilderMessenger(this);
   mMaterialTableFilename = "undefined_mMaterialTableFilename";
   mDensityTableFilename= "undefined_mDensityTableFilename";

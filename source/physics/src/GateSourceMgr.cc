@@ -33,7 +33,9 @@
 GateSourceMgr* GateSourceMgr::mInstance = 0;
 
 //----------------------------------------------------------------------------------------
-GateSourceMgr::GateSourceMgr()
+GateSourceMgr::GateSourceMgr():
+		m_needSourceInit(false), m_time(0), m_timeLimit(0), m_timeClock(0), m_firstTime(0),
+		m_TotNPart(0), mNbOfParticleInTheCurrentRun(0), mWeight(0), p_cK(0)
 {
   mSources.clear();
   m_sourceMgrMessenger = new GateSourceMgrMessenger( this );

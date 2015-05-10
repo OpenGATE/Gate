@@ -24,7 +24,8 @@
 
 //-----------------------------------------------------------------------------
 GateDoseActor::GateDoseActor(G4String name, G4int depth):
-  GateVImageActor(name,depth) {
+  GateVImageActor(name,depth), mUserStepHitType()
+{
   GateDebugMessageInc("Actor",4,"GateDoseActor() -- begin\n");
 
   mCurrentEvent=-1;

@@ -41,7 +41,9 @@
 // std
 #include <iostream>
 
-GateSourcePencilBeam::GateSourcePencilBeam(G4String name ):GateVSource( name ), mGaussian2DYPhi(NULL), mGaussian2DXTheta(NULL), mGaussianEnergy(NULL)
+GateSourcePencilBeam::GateSourcePencilBeam(G4String name ):GateVSource( name ),
+	mGaussian2DYPhi(NULL), mGaussian2DXTheta(NULL), mGaussianEnergy(NULL),
+	mparticle_time(0)
 {
   //Particle Type
   strcpy(mParticleType,"proton");

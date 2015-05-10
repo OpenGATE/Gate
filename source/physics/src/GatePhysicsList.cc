@@ -57,7 +57,8 @@
 
 
 //-----------------------------------------------------------------------------------------
-GatePhysicsList::GatePhysicsList(): G4VModularPhysicsList()
+GatePhysicsList::GatePhysicsList(): G4VModularPhysicsList(),
+	mUserPhysicList(0), emPhysicsListMixed(0)
 {
   // default cut value  (1.0mm)
   defaultCutValue = 1.0*mm;

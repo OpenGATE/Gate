@@ -33,7 +33,9 @@
 GateImageRegionalizedVolume::GateImageRegionalizedVolume(const G4String& name,
 							 G4bool acceptsChildren,
 							 G4int depth)
-  : GateVImageVolume(name,acceptsChildren,depth)
+  : GateVImageVolume(name,acceptsChildren,depth),
+    mLastInsidePointIsValid(false), mInsideComputedByLastDTO(false),
+    mLastTrackID(-1), mLastDTIPointIsValid(false)
 {
   GateMessageInc("Volume",5,"GateImageRegionalizedVolume() - begin\n");
 
