@@ -209,6 +209,7 @@ class GateVSystem : public GateClockDependent
     G4ThreeVector ComputeObjectCenter(const GateVolumeID* volID) const;
     GateVolumeID* MakeVolumeID(const std::vector<G4int>& numList) const;
   protected:
+    //FIXME: Use GateSystemComponentList instead, current implementation returns an orphan Component List
     typedef std::vector< GateSystemComponent* > compList_t;
     compList_t* MakeComponentListAtLevel(G4int level) const;
     GateSystemComponent * m_BaseComponent;      	//!< The base component of the system

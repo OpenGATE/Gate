@@ -17,8 +17,8 @@ See GATE/LICENSE.txt for further details
 std::ostream& operator<<(std::ostream& flux, const GateOutputVolumeID& volumeID)    
 {
   int w = flux.width();
-  for (size_t i=0; i<volumeID.size(); ++i)
-      flux << std::setw(w) << volumeID[i] << " ";
+  for (std::vector<G4int>::const_iterator it=volumeID.begin(); it!=volumeID.end(); it++)
+      flux << std::setw(w) << (*it) << " ";
   
   return flux;
 }
@@ -31,7 +31,7 @@ G4bool GateOutputVolumeID::IsValid() const
 { 
   if (empty())
     return false;
-  for (const_iterator iter=begin(); iter!=end(); ++iter)
+  for (const_iterator iter=begin(); iter!=end(); iter++)
     if ((*iter)<0)
       return false;
   return true;

@@ -680,7 +680,7 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
         GateError("Something went wrong, nb of particle is 0 in GateVSource::GeneratePrimaryVertex\n");
       }
 
-      for( G4int i = 0 ; i != GetNumberOfParticles() ; ++i )
+      for( G4int i = 0 ; i != GetNumberOfParticles() ; i++ )
         {
           G4ParticleMomentum particle_momentum_direction;
           if(mIsUserFocalShapeActive) { particle_momentum_direction = UserFocalShapeGenerateOne(); }

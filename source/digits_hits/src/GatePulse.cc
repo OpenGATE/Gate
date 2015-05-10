@@ -199,7 +199,7 @@ GatePulseList::GatePulseList(const GatePulseList& src):
 std::vector<GatePulse*>()
 {
     m_name=src.m_name;
-    for (GatePulseConstIterator it=src.begin();it != src.end() ;++it)
+    for (GatePulseConstIterator it=src.begin();it != src.end() ;it++)
     	push_back(new GatePulse( **it ));
 }
 GatePulseList::~GatePulseList()
@@ -219,7 +219,7 @@ GatePulse* GatePulseList::FindFirstPulse() const
 {
   G4double startTime = DBL_MAX;
   GatePulse* ans=0;
-  for ( const_iterator iter = begin(); iter < end() ; ++iter) {
+  for ( const_iterator iter = begin(); iter < end() ; iter++) {
       if ( (*iter)->GetTime() < startTime ){
       	startTime  = (*iter)->GetTime();
 	ans = *iter;
@@ -239,7 +239,7 @@ G4double GatePulseList::ComputeStartTime() const
 G4double GatePulseList::ComputeFinishTime() const
 {
   G4double finishTime = 0;
-  for ( const_iterator iter = begin(); iter < end() ; ++iter)
+  for ( const_iterator iter = begin(); iter < end() ; iter++)
       if ( (*iter)->GetTime() > finishTime )
       	finishTime  = (*iter)->GetTime();
 
@@ -249,7 +249,7 @@ G4double GatePulseList::ComputeFinishTime() const
 G4double GatePulseList::ComputeEnergy() const
 {
   G4double ans = 0;
-  for ( const_iterator iter = begin(); iter < end() ; ++iter) ans += (*iter)->GetEnergy();
+  for ( const_iterator iter = begin(); iter < end() ; iter++) ans += (*iter)->GetEnergy();
 
  return ans;
 }

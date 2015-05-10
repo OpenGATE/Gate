@@ -144,7 +144,7 @@ void  GateImageRegionalizedVolume::CreateSubVolumes()
 
   // Creation of the sub-volumes
   std::vector<LabelType>::iterator i;
-  for (i=labels.begin();i!=labels.end();++i) {
+  for (i=labels.begin();i!=labels.end();i++) {
     GateMessage("Volume",4,"* Label "<< *i << Gateendl);
     // Gets material
     G4String matName = GetMaterialNameFromLabel(*i);
@@ -238,7 +238,7 @@ EInside GateImageRegionalizedVolume::Inside(const G4ThreeVector& p, LabelType la
   }
 
   // Reset the vector
-  for (std::vector<EInside>::iterator i = mInside.begin(); i!=mInside.end(); ++i)
+  for (std::vector<EInside>::iterator i = mInside.begin(); i!=mInside.end(); i++)
     *i = kOutside;
 
   // Outside the BBox ? A ENLEVER ????
@@ -579,8 +579,7 @@ G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p,
 
   // Reset the vector
   for (std::vector<G4double>::iterator i = mDistanceToIn.begin();
-       i!=mDistanceToIn.end();
-       ++i)
+       i!=mDistanceToIn.end(); i++)
     *i = kInfinity;
 
   // Distance to bbox of the image

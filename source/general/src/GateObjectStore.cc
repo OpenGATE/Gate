@@ -100,7 +100,7 @@ GateVVolume* GateObjectStore::FindVolumeCreator(const G4String& volumeName)
   //     DD(GetCreator(iter)->GetLogicalVolume());
   //   }
   G4String list;
-  for (iterator iter = begin() ; iter != end() ; ++iter){
+  for (iterator iter = begin() ; iter != end() ; iter++){
     list += " "+ GetCreator(iter)->GetObjectName();
     if ( GetCreator(iter)->GetObjectName() == volumeName) return GetCreator(iter);
   }
@@ -119,7 +119,7 @@ GateVVolume* GateObjectStore::FindVolumeCreator(const G4String& volumeName)
 GateVVolume* GateObjectStore::FindVolumeCreator(G4VPhysicalVolume* volume)
 {
    
-  for (iterator iter = begin() ; iter != end() ; ++iter){
+  for (iterator iter = begin() ; iter != end() ; iter++){
         
   if ( GetCreator(iter)->GetPhysicalVolumeName() == volume->GetName()){
        

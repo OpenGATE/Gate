@@ -467,7 +467,7 @@ G4int GateSystemComponent::ComputeOutputOffset()
     while ( m_motherComponent->GetChildComponent(i) != this )
     {
       result += m_motherComponent->GetChildComponent(i)->GetVolumeNumber();
-      ++i;
+      i++;
     }
     //variant, Is this correct?? Is there more than one instance of children per list component??
     //for (size_t i = 0; i<m_motherComponent->GetChildNumber(); i++)

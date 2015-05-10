@@ -116,7 +116,7 @@ void GateSystemListManager::UnregisterSystem(GateVSystem* aSystem)
 GateVSystem* GateSystemListManager::FindSystemOfCreator(GateVVolume* anCreator)
 {
   
-  for (iterator iter = begin(); iter!=end(); ++iter)
+  for (iterator iter = begin(); iter!=end(); iter++)
     if ( ((GateVSystem*)(*iter))->CheckConnectionToCreator(anCreator) )
       return ((GateVSystem*)(*iter));
   return 0;

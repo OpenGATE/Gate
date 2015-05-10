@@ -191,7 +191,7 @@ GLubyte * GateImageBox::convertToRGB(std::vector<PixelType> slice, PixelType min
 
     PixelType interval = max - min;
     int i = 0;
-    for(std::vector<PixelType>::iterator it = slice.begin(); it != slice.end(); ++it) {
+    for(std::vector<PixelType>::iterator it = slice.begin(); it != slice.end(); it++) {
         PixelType pixel = *it - min;
         pixel /= interval;
         pixel *= std::numeric_limits<GLubyte>::max();

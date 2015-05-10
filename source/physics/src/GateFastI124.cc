@@ -87,16 +87,16 @@ void GateFastI124::GenerateVertex( G4Event* aEvent )
 		
 		// From the vector, create particles with own direction, type and energy
 		for( vector<psd>::iterator it = m_particleVector->begin(); 
-				 it != m_particleVector->end(); ++it )
+				 it != m_particleVector->end(); it++ )
 		{
 			if( m_source->GetVerboseLevel() > 1 ) 
-					 G4cout << "GateVSource::GeneratePrimaries - fastI124 " << (*it).first
-				 					<< ' ' << (*it).second << endl;
+					 G4cout << "GateVSource::GeneratePrimaries - fastI124 " << it->first
+				 					<< ' ' << it->second << endl;
 									
 			m_source->SetParticleDefinition( 
-				G4ParticleTable::GetParticleTable()->FindParticle( (*it).first )  );
+				G4ParticleTable::GetParticleTable()->FindParticle( it->first )  );
 			
-			m_source->GetEneDist()->SetMonoEnergy( (*it).second );
+			m_source->GetEneDist()->SetMonoEnergy( it->second );
 			m_source->GetEneDist()->GenerateOne( m_source->GetParticleDefinition() );
 			m_source->GetAngDist()->GenerateOne();
 			m_source->GeneratePrimaryVertex( aEvent );

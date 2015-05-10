@@ -472,7 +472,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
   }
 
   os<<"  ";
-  for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; ++it)
+  for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; it++)
   {
     os<<"\t"<<it->first;
   }
@@ -498,7 +498,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
     }
     if(j==3) os<<"0 - 1 keV";
     if(j>3) os<<G4BestUnit(pow(10,j-3),"Energy")<<" - "<<G4BestUnit(pow(10,j-2),"Energy");
-    for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; ++it)
+    for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; it++)
     {
       os<<"\t"<<it->second;
     }
@@ -506,7 +506,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
   }
 
   os<<"Total";
-  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerVolume.begin() ; it!=theListOfTotalPerVolume.end() ; ++it)
+  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerVolume.begin() ; it!=theListOfTotalPerVolume.end() ; it++)
   {
     os<<"\t"<<it->second;
   }
@@ -525,7 +525,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
   }
 
   os<<"  ";
-  for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; ++it)
+  for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; it++)
   {
     os<<"\t"<<it->first;
   }
@@ -551,7 +551,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
     }
     if(j==3) os<<"0 - 1 keV";
     if(j>3) os<<G4BestUnit(pow(10,j-3),"Energy")<<" - "<<G4BestUnit(pow(10,j-2),"Energy");
-    for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; ++it)
+    for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; it++)
     {
       os<<"\t"<<it->second;
     }
@@ -559,7 +559,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
   }
 
   os<<"Total";
-  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerProcess.begin() ; it!=theListOfTotalPerProcess.end() ; ++it)
+  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerProcess.begin() ; it!=theListOfTotalPerProcess.end() ; it++)
   {
     os<<"\t"<<it->second;
   }
@@ -600,7 +600,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
   }
 
   os<<"  ";
-  for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; ++it)
+  for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; it++)
   {
     os<<"\t"<<it->first;
   }
@@ -627,7 +627,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
     }
     if(j==3) os<<"0 - 1 keV";
     if(j>3) os<<G4BestUnit(pow(10,j-3),"Energy")<<" - "<<G4BestUnit(pow(10,j-2),"Energy");
-    for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; ++it)
+    for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; it++)
     {
       os<<"\t"<<it->second;
     }
@@ -635,7 +635,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
   }
 
   os<<"Total";
-  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerVolume.begin() ; it!=theListOfTotalPerVolume.end() ; ++it)
+  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerVolume.begin() ; it!=theListOfTotalPerVolume.end() ; it++)
   {
     os<<"\t"<<it->second;
   }
@@ -654,7 +654,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
   }
 
   os<<"  ";
-  for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; ++it)
+  for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; it++)
   {
     os<<"\t"<<it->first;
   }
@@ -681,7 +681,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
     }
     if(j==3) os<<"0 - 1 keV";
     if(j>3) os<<G4BestUnit(pow(10,j-3),"Energy")<<" - "<<G4BestUnit(pow(10,j-2),"Energy");
-    for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; ++it)
+    for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; it++)
     {
       os<<"\t"<<it->second;
     }
@@ -689,7 +689,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
   }
 
   os<<"Total";
-  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerProcess.begin() ; it!=theListOfTotalPerProcess.end() ; ++it)
+  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerProcess.begin() ; it!=theListOfTotalPerProcess.end() ; it++)
   {
     os<<"\t"<<it->second;
   }

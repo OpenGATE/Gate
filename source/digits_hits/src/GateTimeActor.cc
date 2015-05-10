@@ -108,18 +108,18 @@ void GateTimeActor::UpdateCurrentTextOutput()
   ss << Gateendl << "Time per particle \n";
   MapType::iterator iter;
   MapType::iterator iterT = mTrackPerParticle.begin();
-  for(iter = mTimePerParticle.begin(); iter != mTimePerParticle.end(); ++iter) {
+  for(iter = mTimePerParticle.begin(); iter != mTimePerParticle.end(); iter++) {
     ss << iter->first << " " << iter->second << " " << iterT->second << Gateendl;
     ++iterT;
   }
 
   ss << Gateendl << "Limiting process\n";
-  for(iter = mNumberOfLimitingProcess.begin(); iter != mNumberOfLimitingProcess.end(); ++iter) {
+  for(iter = mNumberOfLimitingProcess.begin(); iter != mNumberOfLimitingProcess.end(); iter++) {
     ss << iter->first << " " << iter->second << " \n";
   }
 
   ss << Gateendl << "Along process\n";
-  for(iter = mNumberOfAlongByProcess.begin(); iter != mNumberOfAlongByProcess.end(); ++iter) {
+  for(iter = mNumberOfAlongByProcess.begin(); iter != mNumberOfAlongByProcess.end(); iter++) {
     ss << iter->first << " " << iter->second << " \n";
   }
 

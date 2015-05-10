@@ -210,7 +210,7 @@ G4int GateVSystem::ComputeSubtreeID(GateSystemComponent* aComponent,
 
   // Ask each subtree to compute its section of the output ID until ones returns a success value
   G4int subtreeResult = -1;
-  for ( size_t i=0 ; i<aComponent->GetChildNumber() ; ++i) {
+  for ( size_t i=0 ; i<aComponent->GetChildNumber() ; i++) {
     subtreeResult = ComputeSubtreeID(aComponent->GetChildComponent(i),volumeID,outputVolumeID,depth+1);
     if (subtreeResult>=0) {
         outputVolumeID[depth+1]=subtreeResult;
@@ -243,11 +243,12 @@ G4int GateVSystem::ComputeComponentID(GateSystemComponent* aComponent, const Gat
     return ComputeMainComponentID(aComponent,volumeID);
 
   // Loop on the volume's creators until we recognise the component's creator
-  for (size_t depth=0; depth<volumeID.size(); ++depth)
-    if ( volumeID.GetCreator(depth) == aComponent->GetCreator())
-      return volumeID.GetCopyNo(depth);
+  for (std::vector<GateVolumeSelector>::const_iterator it=volumeID.begin();
+		  it!=volumeID.end(); it++)
+	  if (it->GetCreator() == aComponent->GetCreator())
+		  return it->GetCopyNo();
 
-  // We did not recognise the Cretaor
+  // We did not recognize the Creator
   return -1;
 }  
 //-----------------------------------------------------------------------------
@@ -257,18 +258,19 @@ G4int GateVSystem::ComputeComponentID(GateSystemComponent* aComponent, const Gat
 G4int GateVSystem::ComputeMainComponentID(GateSystemComponent* aComponent, const GateVolumeID& volumeID)
 {
   G4int copyNo=-1;
+  G4bool found = false;
 
-  // Loop on the volume's creators until we recognise our own creator
-  size_t depth;
-  for (depth=0; depth<volumeID.size(); ++depth)
-    if ( volumeID.GetCreator(depth) == aComponent->GetCreator()) {
-      copyNo = volumeID.GetCopyNo(depth);
+  // Loop on the volume's creators until we recognize our own creator
+  for (std::vector<GateVolumeSelector>::const_iterator it=volumeID.begin();
+  		  it!=volumeID.end(); it++)
+    if ( it->GetCreator() == aComponent->GetCreator()) {
+      copyNo = it->GetCopyNo();
+      found = true;
       break;
     }
 
-  // We did not recognise the creator
-  if (depth==volumeID.size()) 
-    return -1;
+  // We did not recognize the creator
+  if (!found) return -1;
 
   // OK, we found our creator, so we need to check that the copyNo agrees with the CCC convention
   GateObjectRepeaterList* repeaterlist = aComponent->GetCreator()->GetRepeaterList();
@@ -336,11 +338,12 @@ GateVSystem::compList_t* GateVSystem::MakeComponentListAtLevel(G4int level) cons
   while ( (level>0) && !currentList->empty() ){
       level--;
       compList_t*  newList = new compList_t;
-      for (size_t i=0;i<currentList->size();++i){
-      	 for (size_t ichild=0;ichild<(*currentList)[i]->GetChildNumber();++ichild){
-	    GateSystemComponent* comp = (*currentList)[i]->GetChildComponent(ichild);
-      	    newList->push_back(comp);
-	 }
+      for (compList_t::iterator it=currentList->begin(); it!=currentList->end(); it++){
+      	 for (size_t ichild=0;ichild<(*it)->GetChildNumber();ichild++)
+      	 {
+      		 GateSystemComponent* comp = (*it)->GetChildComponent(ichild);
+      		 newList->push_back(comp);
+      	 }
       }
       delete currentList;
       currentList = newList;
@@ -354,12 +357,12 @@ size_t GateVSystem::ComputeNofElementsAtLevel(size_t level) const
 {
   compList_t* currentList = MakeComponentListAtLevel(level);
   size_t ans = 0;
-  for (size_t i=0;i<currentList->size();++i){
-   if ( (*currentList)[i]->IsActive() ){
-	 size_t nofVol = (*currentList)[i]->GetVolumeNumber();
+  for (compList_t::iterator it=currentList->begin(); it!=currentList->end(); it++)
+   if ( (*it)->IsActive() )
+   {
+	 size_t nofVol = (*it)->GetVolumeNumber();
 	 ans += nofVol ? nofVol : 1;
-      }
-  }
+   }
   delete currentList;
   return ans;
 }
@@ -412,9 +415,9 @@ GateVolumeID* GateVSystem::MakeVolumeID(const std::vector<G4int>& numList) const
    ans->push_back( GateVolumeSelector(GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume()));
    if (vol) ans->push_back( GateVolumeSelector(vol)); else return ans;
    
-   for (size_t i=1;i<numList.size();++i){
+   for (std::vector<G4int>::const_iterator it=numList.begin();it!=numList.end();++it){
       if (comp->GetChildNumber()<1) break;
-      G4int num = numList[i];
+      G4int num = *it;
       if (num>=0){
       	 size_t numChild=0;
       	 while (num >= (G4int)comp->GetChildComponent(numChild)->GetVolumeNumber()){
@@ -433,7 +436,7 @@ GateVolumeID* GateVSystem::MakeVolumeID(const std::vector<G4int>& numList) const
     	     G4LogicalVolume* logical = last_vol->GetLogicalVolume();
 	     if (!logical->IsDaughter(vol)){
 	     	G4bool pb=true;
-	     	for (G4int ii=0;ii<logical->GetNoDaughters();++ii){
+	     	for (G4int ii=0;ii<logical->GetNoDaughters();ii++){
 	    	    last_vol=logical->GetDaughter(ii);
 		    if (last_vol->GetLogicalVolume()->IsAncestor(vol)) {
 		    	ans->push_back(last_vol);
@@ -465,8 +468,9 @@ G4ThreeVector GateVSystem::ComputeObjectCenter(const GateVolumeID* volID) const
    G4RotationMatrix rotation ;
    G4ThreeVector translation ;
    G4VPhysicalVolume* vol=0;
-   for (size_t i=0;i<volID->size();i++){
-      vol = volID->GetVolume(i);
+   for (std::vector<GateVolumeSelector>::const_iterator it=volID->begin();
+   		  it!=volID->end(); it++){
+      vol = it->GetVolume();
       G4RotationMatrix rot= vol->GetObjectRotationValue() ;
       G4ThreeVector transl= vol->GetObjectTranslation() ;
 

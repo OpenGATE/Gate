@@ -147,7 +147,7 @@ GatePulseList* GateReadout::ProcessPulseList(const GatePulseList* inputPulseList
 
   // Start loop on input pulses
   GatePulseConstIterator iterIn;
-  for (iterIn = inputPulseList->begin() ; iterIn != inputPulseList->end() ; ++iterIn)
+  for (iterIn = inputPulseList->begin() ; iterIn != inputPulseList->end() ; iterIn++)
   {
     GatePulse* inputPulse = *iterIn;
     const GateOutputVolumeID& blockID = inputPulse->GetOutputVolumeID().Top(m_depth);
@@ -283,7 +283,7 @@ GatePulseList* GateReadout::ProcessPulseList(const GatePulseList* inputPulseList
   {
     G4cout << "[" << GetObjectName() << "::ProcessPulseList]: returning output pulse-list with " << outputPulseList->size() << " entries\n";
     GatePulseIterator iterOut;
-    for (iterOut = outputPulseList->begin() ; iterOut != outputPulseList->end() ; ++iterOut)
+    for (iterOut = outputPulseList->begin() ; iterOut != outputPulseList->end() ; iterOut++)
       G4cout << **iterOut << Gateendl;
     G4cout << Gateendl;
   }

@@ -367,7 +367,7 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
     }
     //GateMessage("Core", 0, " pix = " << (*iter) << " lab = " << label << Gateendl);
     (*iter) = label;
-    ++iter;
+    iter++;
   }
 
   // Debug
@@ -401,15 +401,15 @@ void GateVImageVolume::DumpHLabelImage() {
     po = output.begin();
     while (pi != pImage->end()) {
       if (1) { // HU mean or d mean or label
-	// G4Material * mat =
-	// 	  theMaterialDatabase.GetMaterial(lab2mat[*pi]);
-	// 	GateDebugMessage("Volume", 2, "lab " << *pi << " = " << mat->GetName() << Gateendl);
-	// 	po = mat->GetDensity;
+    	  	   // G4Material * mat =
+    	  	   // 	  theMaterialDatabase.GetMaterial(lab2mat[*pi]);
+    	  	   // 	GateDebugMessage("Volume", 2, "lab " << *pi << " = " << mat->GetName() << Gateendl);
+    	  	   // 	po = mat->GetDensity;
 
-	double HU = mHounsfieldMaterialTable.GetHMeanFromLabel((int)lrint(*pi));
-	*po = HU;
-	++po;
-	++pi;
+    	  double HU = mHounsfieldMaterialTable.GetHMeanFromLabel((int)lrint(*pi));
+    	  *po = HU;
+    	  po++;
+    	  pi++;
       }
     }
 
@@ -460,7 +460,7 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable()
 
   GateMessage("Volume",5,"GateVImageVolume -- Label \tMaterial\n");
   LabelToMaterialNameType::iterator lit;
-  for (lit=mLabelToMaterialName.begin(); lit!=mLabelToMaterialName.end(); ++lit) {
+  for (lit=mLabelToMaterialName.begin(); lit!=mLabelToMaterialName.end(); lit++) {
     GateMessage("Volume",6,""<<(*lit).first << " \t" << (*lit).second << Gateendl);
 
   }
@@ -570,7 +570,7 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
     }
     //GateMessage("Core", 0, " pix = " << (*iter) << " lab = " << label << Gateendl);
     (*iter) = label;
-    ++iter;
+    iter++;
   }
 }
 //--------------------------------------------------------------------
@@ -582,8 +582,7 @@ void GateVImageVolume::BuildLabelsVector( std::vector<LabelType>& LabelsVector)
   //G4cout << "ok\n";
   GateMessage("Volume",5,"Begin GateVImageVolume::BuildLabelsVector()\n");
   std::set<LabelType> ens;
-  ImageType::iterator i;
-  for (i=pImage->begin(); i!=pImage->end(); ++i) {
+  for (ImageType::iterator i=pImage->begin(); i!=pImage->end(); i++) {
     if ( ((*i)!=-1) &&
 	 (ens.find(int(*i)) == ens.end())
 	 ) {
@@ -605,7 +604,7 @@ void GateVImageVolume::BuildLabelToG4MaterialVector( std::vector<G4Material*>& M
   LabelToMaterialNameType::iterator lit;
   int l = 0;
   M.resize(0);
-  for (lit=mLabelToMaterialName.begin(); lit!=mLabelToMaterialName.end(); ++lit) {
+  for (lit=mLabelToMaterialName.begin(); lit!=mLabelToMaterialName.end(); lit++) {
     if (l != (*lit).first  ) {
       GateError("Labels should be from 0 to n continuously ..."
                 << "Current labels n " << (*lit).first  << " is number " << l );
@@ -638,8 +637,7 @@ void GateVImageVolume::RemapLabelsContiguously( std::vector<LabelType>& labels, 
     cur++;
   }*/
 
-  std::vector<LabelType>::iterator i;
-  for (i=labels.begin(); i!=labels.end(); ++i, ++cur) {
+  for (std::vector<LabelType>::iterator i=labels.begin(); i!=labels.end(); i++, cur++) {
     //GateMessage("Core", 0, "cur = " << cur << " i= " << *i << " lmap before = " << lmap[*i] << Gateendl);
     lmap[*i] = cur;
     //GateMessage("Core", 0, "cur = " << cur << " i= " << *i << " lmap after = " << lmap[*i] << Gateendl);
@@ -647,8 +645,7 @@ void GateVImageVolume::RemapLabelsContiguously( std::vector<LabelType>& labels, 
   }
 
   // updates the image
-  ImageType::iterator j;
-  for (j=pImage->begin(); j!=pImage->end(); ++j) {
+  for (ImageType::iterator j=pImage->begin(); j!=pImage->end(); j++) {
     *j = lmap[(LabelType)*j];
   }
 
@@ -656,7 +653,7 @@ void GateVImageVolume::RemapLabelsContiguously( std::vector<LabelType>& labels, 
   LabelToMaterialNameType mmap;
   int k1 = 0; //entry in the label to material table
   LabelToMaterialNameType::iterator k;
-  for (k=mLabelToMaterialName.begin(); k!=mLabelToMaterialName.end(); ++k) {
+  for (k=mLabelToMaterialName.begin(); k!=mLabelToMaterialName.end(); k++) {
     // GateMessage("Core", 0, " k = "<<k1<<" first = " << lmap[(*k).first]
     //             << " second = " << (*k).second << Gateendl);
     if(lmap[(*k).first]!=0 || ( k1==0 && lmap[(*k).first]==0) ) mmap[ lmap[(*k).first] ] = (*k).second;
@@ -755,8 +752,8 @@ void GateVImageVolume::BuildDistanceTransfo()
       }
     */
     *p = static_cast<voxel>(lrint(*iter));
-    ++p;
-    ++iter;
+    p++;
+    iter++;
   }
 
   //   GateDebugMessage("Geometry", 0, "im val = " << pImage->GetValue(22, 54, 34) << Gateendl);
@@ -796,8 +793,8 @@ void GateVImageVolume::BuildDistanceTransfo()
   lvoxel * pp = tmpOutput.getDataPointer();
   while (it < output.end()) {
     *it = (float)sqrt(*pp * spacingFactor);
-    ++pp;
-    ++it;
+    pp++;
+    it++;
   }
 
   // Dump final result ...

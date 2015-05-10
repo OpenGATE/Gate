@@ -80,7 +80,7 @@ void GatePrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
     //    DD(m_particleGun->GetNumberofSource());
     //    DD(m_particleGun->GetCurrentSource()->GetNumberOfParticles());
     //    DD(m_particleGun->GetCurrentSource()->GetParticleTime());
-    ++i;
+    i++;
     /* GateMessage("Beam", 2, "(" << i << ") " << m_particleGun->GetParticleDefinition()->GetParticleName() 
        << " pos.=" << m_particleGun->GetParticlePosition()
        << " energy=" <<  m_particleGun->GetParticleEnergy() 

@@ -1316,7 +1316,7 @@ G4bool GateVProcess::AddFilter(G4String filterType, G4String particle )
   GateDebugMessageInc("Physic",4,"AddFilter() -- begin\n");
   if(GateActorManager::GetInstance()->theListOfFilterPrototypes[filterType])
     {
-      for (std::map<G4String,GenericWrapperProcess*>::const_iterator iter = theListOfWrapper.begin(); iter!=theListOfWrapper.end();++iter)
+      for (std::map<G4String,GenericWrapperProcess*>::const_iterator iter = theListOfWrapper.begin(); iter!=theListOfWrapper.end();iter++)
         {
           if(particle=="primaries"){
             iter->second->GetFilterManagerPrimary()->AddFilter(GateActorManager::GetInstance()->theListOfFilterPrototypes[filterType]("/gate/physics/processes/"+mG4ProcessName+"/primaries/"+filterType));

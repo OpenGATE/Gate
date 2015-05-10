@@ -184,7 +184,7 @@ void GateMessageManager::SetMessageLevel(std::string key,
       
     for (i=GetInstance()->mMessageLevel.begin();
 	 i!=GetInstance()->mMessageLevel.end();
-	 ++i) 
+	 i++)
       (*i).second = level;
       
   }
@@ -230,7 +230,7 @@ void GateMessageManager::PrintInfo()
   std::map<std::string,std::string>::iterator j;  
   for (i=GetInstance()->mMessageLevel.begin(),
 	 j=GetInstance()->mMessageHelp.begin();
-       i!=GetInstance()->mMessageLevel.end();++i,++j) {
+       i!=GetInstance()->mMessageLevel.end();i++,j++) {
     GateMessage("Help",1, (*i).first);
     for (int k=0;
 	 k<(int)(GetInstance()->mMaxMessageLength+2-(*i).first.length());

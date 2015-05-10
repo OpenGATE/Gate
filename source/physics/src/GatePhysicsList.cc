@@ -726,7 +726,7 @@ void GatePhysicsList::SetEmProcessOptions()
   // Fluorescence processes
   // - register all regions in deexcitation process with fluo, auger and PIXE set to "true"
   GateObjectStore *store = GateObjectStore::GetInstance();
-  for(GateObjectStore::iterator it=store->begin() ; it!=store->end() ; ++it){
+  for(GateObjectStore::iterator it=store->begin() ; it!=store->end() ; it++){
     opt->SetDeexcitationActiveRegion(it->first,true,true,true); // G4region, fluo, auger, PIXE
   }
 }
@@ -892,7 +892,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
       //G4ProductionCutsTable::GetProductionCutsTable()->UpdateCoupleTable(region->GetWorldPhysical());
       //modif Claire 31mars2011
     }
-    ++it;
+    it++;
   } // end loop regions
 
 
@@ -1097,7 +1097,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
         GateMessage("Cuts", 3, "Region " << regionName << " : no UserLimit\n");
       }
     }
-    ++it2;
+    it2++;
   }
 
   // DS

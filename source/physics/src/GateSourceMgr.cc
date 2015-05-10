@@ -34,7 +34,7 @@ GateSourceMgr* GateSourceMgr::mInstance = 0;
 
 //----------------------------------------------------------------------------------------
 GateSourceMgr::GateSourceMgr():
-		m_needSourceInit(false), m_time(0), m_timeLimit(0), m_timeClock(0), m_firstTime(0),
+		m_needSourceInit(false), m_time(0), m_timeLimit(0), m_timeClock(0), m_firstTime(-1),
 		m_TotNPart(0), mNbOfParticleInTheCurrentRun(0), mWeight(0), p_cK(0)
 {
   mSources.clear();
@@ -85,14 +85,13 @@ G4int GateSourceMgr::RemoveSource( G4String name )
     {
       //Erase all the sources
       for (GateVSourceVector::iterator it=mSources.begin(); it!=mSources.end(); )
-	it=mSources.erase(it);
+    	  it=mSources.erase(it);
       if( mVerboseLevel > 0 )
         G4cout << "GateSourceMgr::RemoveSource : all sources removed \n";
       return 0;
     }
 
-  GateVSourceVector::iterator itr;
-  for( itr = mSources.begin(); itr != mSources.end(); ++itr )
+  for(GateVSourceVector::iterator itr = mSources.begin(); itr != mSources.end(); itr++ )
     {
       if( ( *itr )->GetName() == name )
         {
@@ -128,23 +127,23 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
   //   G4double startTime      = 0.;
 
   // Loop over the words to download the elements
-  G4int nw = sourceVec.size();
+  G4int index = 0;
   G4bool isGood = true;
-  for( G4int iw = 0; ( iw < nw ) && isGood; ++iw ) {
-    G4String stranddummy = sourceVec[ iw ] + G4String( " dummy " );
+  for( std::vector<G4String>::iterator iw = sourceVec.begin(); ( iw != sourceVec.end() ) && isGood; iw++, index++ ) {
+    G4String stranddummy =  (*iw)  + G4String( " dummy " );
     const char* charWord = stranddummy;
     std::istringstream istrWord( charWord );
-    switch(iw) {
+    switch(index) {
     case 0 :
       istrWord >> sourceName;
       if( mVerboseLevel > 0 )
-        G4cout << "GateSourceMgr::AddSource : iw " << iw
+        G4cout << "GateSourceMgr::AddSource : iw " << index
                << " sourceName " << sourceName << Gateendl;
       break;
     case 1 :
       istrWord >> sourceGeomType;
       if( mVerboseLevel > 0 )
-        G4cout << "GateSourceMgr::AddSource : iw " << iw
+        G4cout << "GateSourceMgr::AddSource : iw " << index
                << " sourceGeomType " << sourceGeomType << Gateendl;
       break;
     }
@@ -173,13 +172,13 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
     }
     else
 #endif
-      if( sourceGeomType == G4String("voxel") || sourceGeomType == G4String("Voxel") )
+      if( G4String("voxel").compareTo(sourceGeomType, G4String::ignoreCase)==0 )
         {
           source = new GateSourceVoxellized( sourceName );
           source->SetSourceID( m_sourceProgressiveNumber );
           source->SetIfSourceVoxelized(true);  // added by I. Martinez-Rovira (immamartinez@gmail.com)
         }
-      else if( sourceGeomType == G4String("GPUEmisTomo") || sourceGeomType == G4String("GPUEmisTomo") )
+      else if( G4String("GPUEmisTomo").compareTo(sourceGeomType, G4String::ignoreCase)==0 )
         {
           source = new GateGPUEmisTomo( sourceName );
           source->SetSourceID( m_sourceProgressiveNumber );
@@ -189,8 +188,8 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
           source = new GateOpticalBiolumGPU( sourceName );
           source->SetSourceID( m_sourceProgressiveNumber );
         }
-      else if ((sourceGeomType == "linacBeam") ||
-               (sourceGeomType == "LinacBeam")) {
+      else if ( G4String("linacBeam").compareTo(sourceGeomType, G4String::ignoreCase)==0 )
+      {
         source = new GateSourceLinacBeam(sourceName);
         source->SetSourceID( m_sourceProgressiveNumber );
       }
@@ -204,8 +203,8 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
         // source->SetType("PencilBeam");
         source->SetSourceID( m_sourceProgressiveNumber );
       }
-      else if ((sourceGeomType == "gps") ||
-               (sourceGeomType == "GPS")) {
+      else if ( G4String("gps").compareTo(sourceGeomType, G4String::ignoreCase)==0 )
+      {
         source  =new GateVSource( sourceName );
         source->SetType("gps");
         source->SetSourceID( m_sourceProgressiveNumber );
@@ -253,8 +252,8 @@ G4int GateSourceMgr::CheckSourceName( G4String sourceName )
   G4int iRet = 0;
   // check if source name already exists
   GateVSourceVector::iterator itr;
-  for( itr = mSources.begin(); itr != mSources.end(); ++itr )
-    if( ( (*itr)->GetName() ) == sourceName)
+  for( itr = mSources.begin(); itr != mSources.end(); itr++ )
+    if( sourceName.compareTo( (*itr)->GetName(), G4String::ignoreCase ) == 0)
       {
         GateError( "GateSourceMgr::CheckSourceName : ERROR : source name <" << sourceName << "> already exists" );
         iRet=1;
@@ -267,18 +266,12 @@ G4int GateSourceMgr::CheckSourceName( G4String sourceName )
 //----------------------------------------------------------------------------------------
 GateVSource* GateSourceMgr::GetSourceByName( G4String name )
 {
-  GateVSource* source = 0;
-  GateVSourceVector::iterator itr;
-  for( itr = mSources.begin(); itr != mSources.end(); ++itr )
-    if( (*itr)->GetName() == name ){
-      source = *itr;
-      break;
-    }
+  for(GateVSourceVector::iterator itr = mSources.begin(); itr != mSources.end(); itr++ )
+    if( name.compareTo( (*itr)->GetName(), G4String::ignoreCase ) == 0 )
+      return *itr;
 
-  if( !source )
-    GateError( "GateSourceMgr::GetSourceByName : ERROR : source <" << name << "> not found" );
-
-  return source;
+  GateError( "GateSourceMgr::GetSourceByName : ERROR : source <" << name << "> not found" );
+  return 0;
 }
 //----------------------------------------------------------------------------------------
 
@@ -306,16 +299,15 @@ GateVSource* GateSourceMgr::GetNextSource()
     return NULL; // GateError ???
   }
 
-  G4double aTime;
-
-  if (IsTotalAmountOfPrimariesModeEnabled()) {
+  if (IsTotalAmountOfPrimariesModeEnabled())
+  {
     G4double randNumber = G4UniformRand()*mTotalIntensity;
     G4double sumIntensity=0.;
-    G4int currentSourceNumber = 0;
-    while ( (currentSourceNumber<(int)mSources.size()) && (sumIntensity<=randNumber)){
-      pFirstSource = mSources[ currentSourceNumber ];
+    for(GateVSourceVector::iterator itr = mSources.begin();
+    		itr != mSources.end() && (sumIntensity<=randNumber); itr++ )
+    {
+      pFirstSource = *itr;
       sumIntensity += pFirstSource->GetIntensity();
-      currentSourceNumber++;
     }
 
     m_firstTime = GateApplicationMgr::GetInstance()->GetTimeStepInTotalAmountOfPrimariesMode();
@@ -324,17 +316,18 @@ GateVSource* GateSourceMgr::GetNextSource()
     // if there is at least one source
     // make a competition among all the available sources
     // the source that proposes the shortest interval for the next event wins
-    GateVSourceVector::iterator itr;
-    for( itr = mSources.begin(); itr != mSources.end(); ++itr )
+	pFirstSource = * mSources.begin(); // initialize with the first source
+	m_firstTime = pFirstSource->GetNextTime( m_time ); // initialize the comparator
+    for(GateVSourceVector::iterator itr = mSources.begin(); itr != mSources.end(); ++itr/* Don't use the first*/ )
       {
-        aTime = (*itr)->GetNextTime( m_time ); // compute random time for this source
+        G4double aTime = (*itr)->GetNextTime( m_time ); // compute random time for this source
         if( mVerboseLevel > 1 )
           G4cout << "GateSourceMgr::GetNextSource : source "
                  << (*itr)->GetName()
                  << "    Next time (s) : " << aTime/s
                  << "   m_firstTime (s) : " << m_firstTime/s << Gateendl;
 
-        if( m_firstTime < 0. || ( aTime < m_firstTime ) )
+        if( aTime < m_firstTime )
           {
             m_firstTime = aTime;
             pFirstSource = *itr;
@@ -353,8 +346,7 @@ GateVSource* GateSourceMgr::GetNextSource()
 void GateSourceMgr::ListSources()
 {
   G4cout << "GateSourceMgr::ListSources: List of the sources in the source manager\n";
-  GateVSourceVector::iterator itr;
-  for( itr = mSources.begin(); itr != mSources.end(); ++itr )
+  for(GateVSourceVector::iterator itr = mSources.begin(); itr != mSources.end(); itr++ )
     ( *itr )->Dump( 0 );
 }
 //----------------------------------------------------------------------------------------
@@ -381,8 +373,7 @@ void GateSourceMgr::SelectSourceByName( G4String name )
 //----------------------------------------------------------------------------------------
 void GateSourceMgr::SetVerboseLevel( G4int value ) {
   mVerboseLevel = value;
-  GateVSourceVector::iterator itr;
-  for( itr = mSources.begin(); itr != mSources.end(); ++itr )
+  for(GateVSourceVector::iterator itr = mSources.begin(); itr != mSources.end(); itr++ )
     (*itr)->SetVerboseLevel( mVerboseLevel );
 }
 //----------------------------------------------------------------------------------------
@@ -420,8 +411,7 @@ void GateSourceMgr::Initialization()//std::vector<G4double> * time, std::vector<
       }
       G4cout<<"TEST  : Nsources = "<<nSliceTot<< Gateendl;*/
 
-  GateVSourceVector::iterator itr;
-  for( itr = mSources.begin(); itr != mSources.end(); ++itr )
+  for(GateVSourceVector::iterator itr = mSources.begin(); itr != mSources.end(); itr++ )
     {
       (*itr)->Initialize();
       // mNumberOfEventBySource
@@ -496,7 +486,7 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
   m_needSourceInit = true;
 
   // Update the sources (for example for new positioning according to the geometry movements)
-  for(GateVSourceVector::iterator itr = mSources.begin(); itr != mSources.end(); ++itr )
+  for(GateVSourceVector::iterator itr = mSources.begin(); itr != mSources.end(); itr++ )
     (*itr)->Update(m_time);
 
 

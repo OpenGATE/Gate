@@ -82,17 +82,17 @@ void GateCoincidencePulseProcessorChain::ListElements()
 const std::vector<GateCoincidencePulse*> GateCoincidencePulseProcessorChain::MakeInputList() const
 {
    std::vector<GateCoincidencePulse*> ans;
-   for (std::vector<G4String>::const_iterator itName = m_inputNames.begin() ; itName != m_inputNames.end() ; ++itName){
+   for (std::vector<G4String>::const_iterator itName = m_inputNames.begin() ; itName != m_inputNames.end() ; itName++){
      std::vector<GateCoincidencePulse*> pulseList 
         = GateDigitizer::GetInstance()->FindCoincidencePulse( *itName );
-     for (std::vector<GateCoincidencePulse*>::const_iterator it = pulseList.begin() ; it != pulseList.end() ; ++it){
+     for (std::vector<GateCoincidencePulse*>::const_iterator it = pulseList.begin() ; it != pulseList.end() ; it++){
 	GateCoincidencePulse* pulse = *it;
 	if (pulse->empty()) continue;
 	G4double time = pulse->GetTime();
 	bool last=true;
 	// should use a map to imrove sorted insertion, but typically lists are short,
 	// so this may not be a problem
-	for (std::vector<GateCoincidencePulse*>::iterator it2 = ans.begin() ; it2 != ans.end() ; ++it2){
+	for (std::vector<GateCoincidencePulse*>::iterator it2 = ans.begin() ; it2 != ans.end() ; it2++){
 	  if ( (*it2)->GetTime()>time) {ans.insert(it2,pulse) ; last=false; break;}
 	  if ( m_noPriority && ((*it2)->GetTime()==time)) {
 
@@ -132,7 +132,7 @@ void GateCoincidencePulseProcessorChain::ProcessCoincidencePulses()
 
   // Sequentially launch all pulse processors
   G4int i=0;
-  for (std::vector<GateCoincidencePulse*>::iterator it = pulseList.begin() ; it != pulseList.end() ; ++it,++i){
+  for (std::vector<GateCoincidencePulse*>::iterator it = pulseList.begin() ; it != pulseList.end() ; it++,i++){
      GateCoincidencePulse* pulse = *it;
      if (pulse->empty()) continue;
      for (iterator iter=begin(); iter!=end(); iter++)
