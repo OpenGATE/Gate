@@ -36,7 +36,7 @@ See GATE/LICENSE.txt for further details
 
 
 //==================================================
-GateSteppingVerbose::GateSteppingVerbose():G4SteppingVerbose()
+GateSteppingVerbose::GateSteppingVerbose():G4SteppingVerbose(), mSumStepTime(0)
 {
   pStepTime = new G4SliceTimer;
   pTrackTime = new G4SliceTimer;

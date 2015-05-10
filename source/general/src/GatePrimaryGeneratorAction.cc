@@ -29,7 +29,9 @@ See GATE/LICENSE.txt for further details
 #include "GateConfiguration.h"
 
 //---------------------------------------------------------------------------
-GatePrimaryGeneratorAction::GatePrimaryGeneratorAction()
+GatePrimaryGeneratorAction::GatePrimaryGeneratorAction():
+	m_primGenTime(0), m_maxTime(0), m_lifeTime(0), m_nAliveParticles(0),
+	m_nEvents(0), m_nEventsPerRun(0), m_nTotalEvents(0)
 {
   m_messenger = new GatePrimaryGeneratorMessenger(this);
   m_printModulo  = 100;

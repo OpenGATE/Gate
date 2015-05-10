@@ -93,7 +93,7 @@ void GateActorManager::CreateListsOfEnabledActors()
   // }
 
   std::vector<GateVActor*>::iterator sit;
-  for(sit= theListOfActors.begin(); sit!=theListOfActors.end(); ++sit)
+  for(sit= theListOfActors.begin(); sit!=theListOfActors.end(); sit++)
     {
       //if ((*sit)->GetObjectName() == "output") (*sit) = GateOutputMgr::GetInstance();
       //GateMessage("Core", 0, "Actor = " << (*sit)->GetObjectName() << Gateendl);
@@ -152,7 +152,7 @@ void GateActorManager::PrintListOfActorTypes() const
 void GateActorManager::PrintListOfActors() const
 {
   std::vector<GateVActor*>::const_iterator sit;
-  for(sit= theListOfActors.begin(); sit!=theListOfActors.end(); ++sit)
+  for(sit= theListOfActors.begin(); sit!=theListOfActors.end(); sit++)
     {
       GateMessage("Actor", 1,"Name = "<<  (*sit)->GetObjectName() <<"  Volume name = " << (*sit)->GetVolumeName() << Gateendl);
     }
@@ -172,7 +172,7 @@ void GateActorManager::BeginOfRunAction(const G4Run* run)
   std::vector<GateVActor*>::iterator sit;
 
   //GateMessage("Core", 0, "Run " << run->GetRunID() << " is starting.\n");
-  for(sit = theListOfActorsEnabledForBeginOfRun.begin(); sit!=theListOfActorsEnabledForBeginOfRun.end(); ++sit)
+  for(sit = theListOfActorsEnabledForBeginOfRun.begin(); sit!=theListOfActorsEnabledForBeginOfRun.end(); sit++)
     (*sit)->BeginOfRunAction(run);
 
 }
@@ -182,7 +182,7 @@ void GateActorManager::BeginOfRunAction(const G4Run* run)
 void GateActorManager::EndOfRunAction(const G4Run* run)
 {
   std::vector<GateVActor*>::iterator sit;
-  for(sit = theListOfActorsEnabledForEndOfRun.begin(); sit!=theListOfActorsEnabledForEndOfRun.end(); ++sit)
+  for(sit = theListOfActorsEnabledForEndOfRun.begin(); sit!=theListOfActorsEnabledForEndOfRun.end(); sit++)
     (*sit)->EndOfRunAction(run);
   //GateMessage("Core", 0, "Run " << run->GetRunID() << " is ending.\n");
 }
@@ -193,7 +193,7 @@ void GateActorManager::BeginOfEventAction(const G4Event* evt)
 {
   if (evt) mCurrentEventId = evt->GetEventID();
   std::vector<GateVActor*>::iterator sit;
-  for(sit = theListOfActorsEnabledForBeginOfEvent.begin(); sit!=theListOfActorsEnabledForBeginOfEvent.end(); ++sit)
+  for(sit = theListOfActorsEnabledForBeginOfEvent.begin(); sit!=theListOfActorsEnabledForBeginOfEvent.end(); sit++)
     (*sit)->BeginOfEventAction(evt);
 }
 //-----------------------------------------------------------------------------
@@ -202,7 +202,7 @@ void GateActorManager::BeginOfEventAction(const G4Event* evt)
 void GateActorManager::EndOfEventAction(const G4Event* evt)
 {
   std::vector<GateVActor*>::iterator sit;
-  for(sit = theListOfActorsEnabledForEndOfEvent.begin(); sit!=theListOfActorsEnabledForEndOfEvent.end(); ++sit)
+  for(sit = theListOfActorsEnabledForEndOfEvent.begin(); sit!=theListOfActorsEnabledForEndOfEvent.end(); sit++)
     (*sit)->EndOfEventAction(evt);
 }
 //-----------------------------------------------------------------------------
@@ -213,7 +213,7 @@ void GateActorManager::PreUserTrackingAction(const G4Track* track)
   // GateDebugMessage("Actor", 1, "listtrack= " << theListOfActorsEnabledForPreUserTrackingAction.size()
   //                    << Gateendl);
   std::vector<GateVActor*>::iterator sit;
-  for(sit = theListOfActorsEnabledForPreUserTrackingAction.begin(); sit!=theListOfActorsEnabledForPreUserTrackingAction.end(); ++sit)
+  for(sit = theListOfActorsEnabledForPreUserTrackingAction.begin(); sit!=theListOfActorsEnabledForPreUserTrackingAction.end(); sit++)
     {
       if((*sit)->GetNumberOfFilters()!=0)
 	if(!(*sit)->GetFilterManager()->Accept(track) ) continue;
@@ -226,7 +226,7 @@ void GateActorManager::PreUserTrackingAction(const G4Track* track)
 void GateActorManager::PostUserTrackingAction(const G4Track* track)
 {
   std::vector<GateVActor*>::iterator sit;
-  for(sit = theListOfActorsEnabledForPostUserTrackingAction.begin(); sit!=theListOfActorsEnabledForPostUserTrackingAction.end(); ++sit)
+  for(sit = theListOfActorsEnabledForPostUserTrackingAction.begin(); sit!=theListOfActorsEnabledForPostUserTrackingAction.end(); sit++)
     {
       if((*sit)->GetNumberOfFilters()!=0)
 	if(!(*sit)->GetFilterManager()->Accept(track) ) continue;
@@ -240,7 +240,7 @@ void GateActorManager::UserSteppingAction(const G4Step* step)
 {
   std::vector<GateVActor*>::iterator sit;
   // GateDebugMessage("Actor", 1, "list = " << theListOfActorsEnabledForUserSteppingAction.size() << Gateendl);
-  for(sit = theListOfActorsEnabledForUserSteppingAction.begin(); sit!=theListOfActorsEnabledForUserSteppingAction.end(); ++sit)
+  for(sit = theListOfActorsEnabledForUserSteppingAction.begin(); sit!=theListOfActorsEnabledForUserSteppingAction.end(); sit++)
     {
       // GateDebugMessage("Actor", 1, "Step for " << (*sit)->GetObjectName());
       if((*sit)->GetNumberOfFilters()!=0){

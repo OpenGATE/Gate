@@ -74,8 +74,8 @@ GateToASCII::GateToASCII(const G4String& name, GateOutputMgr* outputMgr, DigiMod
 
 GateToASCII::~GateToASCII()
 {
-  for (size_t i=0; i<m_outputChannelList.size() ; ++i )
-    delete m_outputChannelList[i];
+	for (std::vector<VOutputChannel*>::iterator it=m_outputChannelList.begin(); it!=m_outputChannelList.end(); )
+      it=m_outputChannelList.erase(it);
 
   delete m_asciiMessenger;
 
@@ -102,8 +102,8 @@ void GateToASCII::RecordBeginOfAcquisition()
   if (m_outFileHitsFlag)
     m_outFileHits.open((m_fileName+"Hits.dat").c_str(),std::ios::out);
 
-  for (size_t i=0; i<m_outputChannelList.size() ; ++i )
-    m_outputChannelList[i]->Open(m_fileName);
+  for (std::vector<VOutputChannel*>::iterator it=m_outputChannelList.begin(); it!=m_outputChannelList.end(); ++it)
+    (*it)->Open(m_fileName);
 
   if (nVerboseLevel > 0) G4cout << " ... ASCII output files opened\n";
 }
@@ -124,8 +124,8 @@ void GateToASCII::RecordEndOfAcquisition()
   if (m_outFileHitsFlag)
     m_outFileHits.close();
 
-  for (size_t i=0; i<m_outputChannelList.size() ; ++i )
-       m_outputChannelList[i]->Close();
+  for (std::vector<VOutputChannel*>::iterator it=m_outputChannelList.begin(); it!=m_outputChannelList.end(); ++it)
+       (*it)->Close();
 
 }
 

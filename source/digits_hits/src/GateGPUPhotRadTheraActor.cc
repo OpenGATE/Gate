@@ -112,7 +112,7 @@ void GateGPUPhotRadTheraActor::ResetData() {
   std::vector<float>::const_iterator iter = im->GetImage()->begin();
   while (iter != im->GetImage()->end()) {
     gpu_input->phantom_material_data.push_back((unsigned short int)*iter);
-    ++iter;
+    iter++;
   }
   DD(gpu_input->phantom_material_data.size());
   

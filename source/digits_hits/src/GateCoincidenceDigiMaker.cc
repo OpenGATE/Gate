@@ -49,7 +49,7 @@ void GateCoincidenceDigiMaker::Digitize()
   GateCoincidenceDigiCollection* CoincidenceDigiCollection = new GateCoincidenceDigiCollection(m_digitizer->GetObjectName(),m_collectionName);
 
   // Create and store the digi
-  for (std::vector<GateCoincidencePulse*>::const_iterator it = coincidencePulse.begin();it != coincidencePulse.end() ; ++it){
+  for (std::vector<GateCoincidencePulse*>::const_iterator it = coincidencePulse.begin();it != coincidencePulse.end() ; it++){
       if ((*it)->size()>2){
       	if (nVerboseLevel)
       	    G4cout  << "[GateCoincidenceDigiMaker::Digitize]: ignoring multiple coincidence --> no digits created\n";

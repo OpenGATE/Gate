@@ -35,8 +35,8 @@ std::ostream& operator<<(std::ostream& flux, const GateCoincidencePulse& pulse)
       	  << "\tStart  " << G4BestUnit(pulse.m_startTime,"Time") 	       << Gateendl
       	  << "\tOffset  "<< G4BestUnit(pulse.m_offsetWindow,"Time") 	       << Gateendl
 	  << "\tWindow " << G4BestUnit(pulse.m_coincidenceWindow,"Time")       << Gateendl ;
-  for (size_t i=0; i<pulse.size(); i++)
-     flux << *(pulse[i]) << "\n";
+  for (GateCoincidencePulse::const_iterator it=pulse.begin(); it!=pulse.end(); it++)
+     flux << *(*it) << "\n";
   flux    << "----------------------------"   	      	      	      	       << Gateendl;
 
   return flux;

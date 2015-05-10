@@ -250,8 +250,8 @@ void  PrintRecStep();
   void SetVerboseLevel(G4int val)
   {
     GateVOutputModule::SetVerboseLevel(val);
-    for (size_t i=0; i<m_outputChannelList.size(); ++i)
-      m_outputChannelList[i]->SetVerboseLevel(val);
+    for (std::vector<VOutputChannel*>::iterator it=m_outputChannelList.begin(); it!=m_outputChannelList.end(); ++it)
+      (*it)->SetVerboseLevel(val);
   };
 
 private:

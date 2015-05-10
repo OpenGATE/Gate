@@ -92,8 +92,8 @@ GateToASCIIMessenger::~GateToASCIIMessenger()
   delete OutFileHitsCmd;
   delete OutFileVoxelCmd;
   delete SetFileNameCmd;
-  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
-    delete OutputChannelCmdList[i];
+  for (std::vector<G4UIcmdWithABool*>::iterator it=OutputChannelCmdList.begin(); it!=OutputChannelCmdList.end(); )
+    it=OutputChannelCmdList.erase(it);
 }
 //--------------------------------------------------------------------------------------------------------
 
@@ -182,8 +182,8 @@ void GateToASCIIMessenger::CreateNewOutputChannelCommand(GateToASCII::VOutputCha
 //--------------------------------------------------------------------------------------------------------
 G4bool GateToASCIIMessenger::IsAnOutputChannelCmd(G4UIcommand* command)
 {
-  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
-    if ( command == OutputChannelCmdList[i] )
+	for (std::vector<G4UIcmdWithABool*>::iterator it=OutputChannelCmdList.begin(); it!=OutputChannelCmdList.end(); it++)
+    if ( command == (*it) )
       return true;
   return false;
 }
@@ -193,9 +193,9 @@ G4bool GateToASCIIMessenger::IsAnOutputChannelCmd(G4UIcommand* command)
 
 void GateToASCIIMessenger::ExecuteOutputChannelCmd(G4UIcommand* command,G4String newValue)
 {
-  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
-    if ( command == OutputChannelCmdList[i] ) {
-      m_outputChannelList[i]->SetOutputFlag( OutputChannelCmdList[i]->GetNewBoolValue(newValue) );
+	for (std::vector<G4UIcmdWithABool*>::iterator it=OutputChannelCmdList.begin(); it!=OutputChannelCmdList.end(); it++)
+    if ( command == (*it) ) {
+      m_outputChannelList[it-OutputChannelCmdList.begin()]->SetOutputFlag( (*it)->GetNewBoolValue(newValue) );
       break;
     }
 }

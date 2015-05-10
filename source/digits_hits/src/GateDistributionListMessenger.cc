@@ -62,9 +62,8 @@ const G4String& GateDistributionListMessenger::DumpMap()
 {
    static G4String ans="";
    if (ans.empty())
-      for (std::map<G4String,distType_t>::const_iterator it=fgkTypes.begin()
-           ; it != fgkTypes.end()
-	   ;++it)
+      for (std::map<G4String,distType_t>::const_iterator it=fgkTypes.begin();
+    		  it != fgkTypes.end(); it++)
       	    ans += (*it).first+' ';
    return ans;
 }
