@@ -101,26 +101,26 @@ GateSourcePencilBeam::~GateSourcePencilBeam()
 //------------------------------------------------------------------------------------------------------
 void GateSourcePencilBeam::SetIonParameter(G4String ParticleParameters){
   // 4 possible arguments are Z, A, Charge, Excite Energy
-    G4Tokenizer next(ParticleParameters);
-    mAtomicNumber = StoI(next());
-    mAtomicMass = StoI(next());
-    G4String sQ = next();
-    if (sQ.isNull())
+  G4Tokenizer next(ParticleParameters);
+  mAtomicNumber = StoI(next());
+  mAtomicMass = StoI(next());
+  G4String sQ = next();
+  if (sQ.isNull())
     {
-	mIonCharge = mAtomicNumber;
+      mIonCharge = mAtomicNumber;
     }
-    else
+  else
     {
-	mIonCharge = StoI(sQ);
-	sQ = next();
-	if (sQ.isNull())
-      {
+      mIonCharge = StoI(sQ);
+      sQ = next();
+      if (sQ.isNull())
+        {
 	  mIonExciteEnergy = 0.0;
-      }
+        }
       else
-      {
+        {
 	  mIonExciteEnergy = StoD(sQ) * keV;
-      }
+        }
     }
 }
 
@@ -229,8 +229,8 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
 
     G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
     G4IonTable* ionTable = G4IonTable::GetIonTable();
-    
-	 string parttype=mParticleType;
+
+    string parttype=mParticleType;
     if ( parttype == "GenericIon" ){
       particle_definition=  ionTable->GetIon( mAtomicNumber, mAtomicMass, mIonExciteEnergy);
       //G4cout<< Gateendl<< Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon\n";
@@ -310,21 +310,21 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
 
   //-------- PARTICLE GENERATION - START------------------
   /*
-  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  G4ParticleDefinition* particle_definition;
+    G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+    G4ParticleDefinition* particle_definition;
 
-  string parttype=mParticleType;
-  if ( parttype == "GenericIon" ){
+    string parttype=mParticleType;
+    if ( parttype == "GenericIon" ){
     particle_definition=  particleTable->GetIon( mAtomicNumber, mAtomicMass, mIonExciteEnergy);
-  //G4cout<< Gateendl<< Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon\n";
-  //G4cout<<mAtomicNumber<<"  "<<mAtomicMass<<"  "<<mIonCharge<<"  "<<mIonExciteEnergy<< Gateendl;
-  }
-  else{
+    //G4cout<< Gateendl<< Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon\n";
+    //G4cout<<mAtomicNumber<<"  "<<mAtomicMass<<"  "<<mIonCharge<<"  "<<mIonExciteEnergy<< Gateendl;
+    }
+    else{
     particle_definition = particleTable->FindParticle(mParticleType);
-  //G4cout<< Gateendl<< Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  other\n";
-  }
+    //G4cout<< Gateendl<< Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  other\n";
+    }
 
-  if(particle_definition==0) return;
+    if(particle_definition==0) return;
   */
 
   G4PrimaryVertex* vertex;
@@ -373,19 +373,19 @@ G4int GateSourcePencilBeam::GeneratePrimaries( G4Event* event )
 
 //------------------------------------------------------------------------------------------------------
 /*
-   G4ThreeVector GateSourcePencilBeam::SetRotation(G4ThreeVector v, double theta, double phi){
-   G4double a,b;
-   a=v[0]*cos(theta)-v[2]*sin(theta);
-   b=v[0]*sin(theta)+v[2]*cos(theta);
-   v[0]=a; v[2]=b;
+  G4ThreeVector GateSourcePencilBeam::SetRotation(G4ThreeVector v, double theta, double phi){
+  G4double a,b;
+  a=v[0]*cos(theta)-v[2]*sin(theta);
+  b=v[0]*sin(theta)+v[2]*cos(theta);
+  v[0]=a; v[2]=b;
 
-   a=v[1]*cos(phi)-v[2]*sin(phi);
-   b=v[1]*sin(phi)+v[2]*cos(phi);
-   v[1]=a; v[2]=b;
+  a=v[1]*cos(phi)-v[2]*sin(phi);
+  b=v[1]*sin(phi)+v[2]*cos(phi);
+  v[1]=a; v[2]=b;
 
-   return v;
-   }
-   */
+  return v;
+  }
+*/
 
 #endif
 #endif
