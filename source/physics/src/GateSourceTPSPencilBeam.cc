@@ -276,7 +276,10 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
             if ((mSelectedSpot != -1) && (k != mSelectedSpot)) allowedSpot = false;
 
             if (allowedField && allowedLayer && allowedSpot) { // loading the spots only for allowed fields
-              GateSourcePencilBeam *Pencil = new GateSourcePencilBeam ("PencilBeam");
+
+              // the false mean -> do not create messenger (memory gain)
+              GateSourcePencilBeam *Pencil = new GateSourcePencilBeam("PencilBeam", false);
+
               //Particle Type
               Pencil->SetParticleType(mParticleType);
               //Energy
@@ -339,6 +342,8 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
       GateMessage("Physic", 1, "[TPSPencilBeam] Plan description file successfully loaded.\n");
     }
     inFile.close();
+
+    std::cin.get(); // FIXME
 
     mTotalNumberOfSpots = mPencilBeams.size();
     if (mTotalNumberOfSpots == 0) {

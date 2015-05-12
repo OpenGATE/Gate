@@ -5,6 +5,7 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
   ----------------------*/
+
 #ifndef GATESOURCEPENCILBEAM_HH
 #define GATESOURCEPENCILBEAM_HH
 
@@ -34,12 +35,11 @@
 #include "GateRandomEngine.hh"
 #include "TMath.h"
 
-
 class GateSourcePencilBeam : public GateVSource, G4UImessenger
 {
 public:
 
-  GateSourcePencilBeam( G4String name);
+  GateSourcePencilBeam(G4String name, bool useMessenger=true);
   ~GateSourcePencilBeam();
 
   typedef CLHEP::RandMultiGauss RandMultiGauss;
@@ -79,9 +79,7 @@ public:
   void SetEllipseYPhiRotationNorm(string rotation) {mEllipseYPhiRotationNorm=rotation;}
   void SetTestFlag(bool b) {mTestFlag=b;}
 
-
 protected:
-
   GateSourcePencilBeamMessenger * pMessenger;
 
   bool mIsInitialized;

@@ -41,7 +41,8 @@
 // std
 #include <iostream>
 
-GateSourcePencilBeam::GateSourcePencilBeam(G4String name ):GateVSource( name ), mGaussian2DYPhi(NULL), mGaussian2DXTheta(NULL), mGaussianEnergy(NULL)
+GateSourcePencilBeam::GateSourcePencilBeam(G4String name, bool useMessenger):
+  GateVSource(name), mGaussian2DYPhi(NULL), mGaussian2DXTheta(NULL), mGaussianEnergy(NULL)
 {
   //Particle Type
   strcpy(mParticleType,"proton");
@@ -82,7 +83,7 @@ GateSourcePencilBeam::GateSourcePencilBeam(G4String name ):GateVSource( name ), 
   mTestFlag=false;
   mIsInitialized=false;
   mCurrentParticleNumber=0;
-  pMessenger = new GateSourcePencilBeamMessenger(this);
+  if (useMessenger) pMessenger = new GateSourcePencilBeamMessenger(this);
 }
 
 //------------------------------------------------------------------------------------------------------
