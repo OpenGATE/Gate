@@ -341,7 +341,7 @@ void GateVProcess::RemoveElementOfParticleList(G4String par )
         {
 
           if( (*lIt)==theListOfParticles[j] ) lIt = theListOfEnabledParticles.erase(lIt);
-          else ++lIt;
+          else lIt++;
         }
     }
 
@@ -501,7 +501,7 @@ void GateVProcess::UnSetDataSet(G4String cs ,G4String par )
               lIt = theListOfSelectedDataSets.erase(lIt);
               lItpart = theListOfParticlesWithSelectedDS.erase(lItpart);
             }
-          else {++lIt;++lItpart;}
+          else {lIt++;lItpart++;}
         }
     }
   else
@@ -520,7 +520,7 @@ void GateVProcess::UnSetDataSet(G4String cs ,G4String par )
                   lIt = theListOfSelectedDataSets.erase(lIt);
                   lItpart = theListOfParticlesWithSelectedDS.erase(lItpart);
                 }
-              else {++lIt;++lItpart;}
+              else {lIt++;lItpart++;}
             }
         }
     }
@@ -610,7 +610,7 @@ void GateVProcess::UnSetModel(G4String model,G4String par)
               lIt = theListOfSelectedModels.erase(lIt);
               lItpart = theListOfParticlesWithSelectedModels.erase(lItpart);
             }
-          else {++lIt;++lItpart;}
+          else {lIt++;lItpart++;}
         }
     }
   else
@@ -630,7 +630,7 @@ void GateVProcess::UnSetModel(G4String model,G4String par)
                   lIt = theListOfSelectedModels.erase(lIt);
                   lItpart = theListOfParticlesWithSelectedModels.erase(lItpart);
                 }
-              else {++lIt;++lItpart;}
+              else {lIt++;lItpart++;}
             }
         }
     }

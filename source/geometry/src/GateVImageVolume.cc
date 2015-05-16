@@ -517,14 +517,15 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
       is >> std::boolalpha >> visible >> red >> green >> blue >> alpha;
     }
 
-    G4cout << " min max " << r1 << " " << r2 << "  material: " << material
-    << std::boolalpha << ", visible " << visible << ", rgba(" << red<<',' << green << ',' << blue << ')' << Gateendl;
+    GateMessage("Materials",0,"min max " << r1 << " " << r2 << "  material: " << material
+    << std::boolalpha << ", visible " << visible << ", rgba(" << red<<',' << green << ',' << blue << ')' << Gateendl);
 
-    if(r2> pImage->GetOutsideValue()+1){
-      if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
+    if(r2> pImage->GetOutsideValue()){
+      if(r1>pImage->GetOutsideValue()) r1=pImage->GetOutsideValue();
         mRangeMaterialTable.AddMaterial(r1,r2,material,
         		new G4VisAttributes(visible, G4Colour(red, green, blue, alpha)));
     }
+    else {GateMessage("Materials",0,"Failed to add material "<< material << " to Database" << Gateendl);}
 
   mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
 

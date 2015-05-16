@@ -129,15 +129,16 @@ void GateVoxelOutput::RecordBeginOfAcquisition()
   if (nVerboseLevel > 2)
     G4cout << "GateVoxelOutput::RecordBeginOfAcquisition - Entered \n";
   
-  G4cout<< (*G4Material::GetMaterialTable()) << Gateendl;
+  //G4cout<< theMaterialDatabase.WriteMaterialDatabase << Gateendl;
+  G4cout<< (*G4Material::GetMaterialTable()) << Gateendl;//
 }
 //--------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------
-// write a binary file (4 bytes floats) containing the dose in cGy
+// write a binary file (4 bytes floats) containing the dose in gray, not cGy
 void GateVoxelOutput::RecordEndOfAcquisition()
 {
-  static const double cGy(gray/100.0);
+  //static const double cGy(gray/100.0);
 
   // G4cout << "GateVoxelOutput::RecordEndOfAcquisition - Entered at " << this << " for "<< GetName()  << Gateendl  << std::flush ;
   
@@ -175,8 +176,11 @@ void GateVoxelOutput::RecordEndOfAcquisition()
   f.open(m_fileName, std::ofstream::out | std::ofstream::binary);
   
   for (unsigned int i=0; i<m_array->size(); i++){
-    double mass ( voxelSize * theReader->GetVoxelMaterial(i)->GetDensity() );
-    float  dose ( (*m_array)[i] / mass / cGy );   // float to get a 32 bits floating point number
+	// it seems that the reader handles wrong the density
+	G4String material = theReader->GetVoxelMaterial(i)->GetName();
+    double mass ( voxelSize * theMaterialDatabase.GetMaterial(material)->GetDensity() );
+    //the dose should be output in gray units
+    float  dose ( (*m_array)[i] / mass / gray );   // float to get a 32 bits floating point number
     f.write( (char*)&dose, sizeof(dose));
     
     if (nVerboseLevel >0 )

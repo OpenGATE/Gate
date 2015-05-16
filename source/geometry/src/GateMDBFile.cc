@@ -126,7 +126,7 @@ GateMaterialCreator* GateMDBFile::ReadMaterial(const G4String& materialName)
   // Find the material definition line in the [Materials] section of the DB file
   G4String line = ReadItem("Materials",materialName);
   if (line == theReadItemErrorMsg) {
-    //GateMessage("Materials", 4, "GateMDBFile<"<<fileName<< ">::ReadMaterial("<< materialName<<") ReadError\n");
+    GateMessage("Materials", 4, "GateMDBFile<"<<fileName<< ">::ReadMaterial("<< materialName<<") ReadError\n");
     return 0;
   }
 

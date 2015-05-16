@@ -114,7 +114,7 @@ G4int GateVolumeID::GetCreatorDepth (G4String name) const
 {     
   G4int ctrl = -1;
   size_t depth;
-  for (depth = 0 ; depth < size() ; depth ++)
+  for (depth = 0 ; depth < size() ; depth++)
     if (GetCreator(depth)->GetObjectName() == name) {
       ctrl = 0;
       break;

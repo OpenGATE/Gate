@@ -156,7 +156,7 @@ void GateVSource::Visualize(G4String parmString){
   circle.SetFillStyle(G4Circle::filled);
   circle.SetVisAttributes(attribs);
 
-  for (int k=0; k<iCount; ++k){
+  for (int k=0; k<iCount; k++){
 	
     //m_sps->GeneratePositionStuff();
 	

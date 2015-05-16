@@ -226,7 +226,7 @@ __global__ void kernel_optical_voxelized_source(StackParticle photons,
     
     float rnd = Brent_real(id, photons.table_x_brent, 0);
     int pos = 0;
-    while (phantom_act[pos] < rnd) {++pos;};
+    while (phantom_act[pos] < rnd) {pos++;};
     
     // get the voxel position (x, y, z)
     ind = (float)(phantom_ind[pos]);

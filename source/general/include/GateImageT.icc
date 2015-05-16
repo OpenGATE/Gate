@@ -316,8 +316,8 @@ void GateImageT<PixelType>::MergeDataByAddition(G4String filename) {
   iterator po = begin();
   while (pi != pe) {
     *po = (*po)+(*pi);
-    ++po;
-    ++pi;
+    po++;
+    pi++;
   }
 }
 //-----------------------------------------------------------------------------

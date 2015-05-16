@@ -795,7 +795,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
 	mapOfRegionCuts[regionName].protonCut = -1;
       }
     }
-    ++pi;
+    pi++;
   }
 
   //-----------------------------------------------------------------------------
@@ -971,7 +971,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
         mapOfVolumeUserLimits[regionName]= new GateUserLimits();
       }
     }
-    ++pi;
+    pi++;
   }
 
   VolumeUserLimitsMapType::iterator it2 = mapOfVolumeUserLimits.begin();

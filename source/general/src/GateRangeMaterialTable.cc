@@ -14,7 +14,6 @@ GateRangeMaterialTable::~GateRangeMaterialTable()
   {
     it = mMaterialsVector.erase(it);
   }
-  mMaterialsVector.clear();
 }
 //-----------------------------------------------------------------------------
 
@@ -73,6 +72,8 @@ void GateRangeMaterialTable::AddMaterial(int R1, int R2, G4String name, G4VisAtt
   mat.md1=mat.mMaterial->GetDensity();
   mat.mVisAttributes=Attributes;
   mMaterialsVector.push_back(mat);
+  GateMessage("Materials",2,"Material added to Database:" << mat.mName <<
+		  "; density = " << mat.md1/(gram/centimeter3) << " g/cm3" << Gateendl);
 }
 //-----------------------------------------------------------------------------
 void GateRangeMaterialTable::AddMaterial(int R1, int R2, G4String name, G4bool visibility, G4Colour Color)
@@ -87,7 +88,6 @@ void GateRangeMaterialTable::Reset()
   {
     it = mMaterialsVector.erase(it);
   }
-  mMaterialsVector.clear();
 }
 //-----------------------------------------------------------------------------
 
@@ -97,10 +97,10 @@ void GateRangeMaterialTable::MapLabelToMaterial(LabelToMaterialNameType & m)
   m.clear();int i = 0;
   for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++, i++) 
   {
-    // GateMessage("Core", 0, 
-    //               "i= " << i << " mi = "
-    //             << m[i] << " mnamei = " 
-    //              << mName[i] << Gateendl);
+     //GateMessage("Core", 0,
+     //              "i= " << i << " mi = " << m[i]
+     //              << " mnamei = " << it->mName
+     //              << " dens = " << it->md1 << Gateendl);
     std::pair<LabelType,G4String> lMaterial;
     lMaterial.first = i;
     lMaterial.second = it->mName;

@@ -102,7 +102,7 @@ size_t GateSystemComponentList::GetActiveChildNumber()
   size_t activeChildNumber=0;
   for (iterator it=begin(); it!=end(); it++)
     if ( ((GateSystemComponent*)(*it))->IsActive() )
-      ++activeChildNumber;
+      activeChildNumber++;
   
   return activeChildNumber;
 }

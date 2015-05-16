@@ -415,7 +415,7 @@ GateVolumeID* GateVSystem::MakeVolumeID(const std::vector<G4int>& numList) const
    ans->push_back( GateVolumeSelector(GateDetectorConstruction::GetGateDetectorConstruction()->GetWorldVolume()));
    if (vol) ans->push_back( GateVolumeSelector(vol)); else return ans;
    
-   for (std::vector<G4int>::const_iterator it=numList.begin();it!=numList.end();++it){
+   for (std::vector<G4int>::const_iterator it=numList.begin();it!=numList.end();it++){
       if (comp->GetChildNumber()<1) break;
       G4int num = *it;
       if (num>=0){
