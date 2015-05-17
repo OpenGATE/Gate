@@ -143,9 +143,7 @@ void GateHounsfieldMaterialTable::MapLabelToMaterial(LabelToMaterialNameType & m
     //               "i= " << i << " mi = "
     //             << m[i] << " mnamei = " 
     //              << mName[i] << Gateendl);
-    std::pair<LabelType,G4String> lMaterial;
-    lMaterial.first = i;
-    lMaterial.second = it->mName;
+    std::pair<LabelType,G4String> lMaterial(i, it->mName);
     m.insert( lMaterial );
   }
 }

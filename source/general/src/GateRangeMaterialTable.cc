@@ -97,14 +97,12 @@ void GateRangeMaterialTable::MapLabelToMaterial(LabelToMaterialNameType & m)
   m.clear();int i = 0;
   for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++, i++) 
   {
-     //GateMessage("Core", 0,
-     //              "i= " << i << " mi = " << m[i]
-     //              << " mnamei = " << it->mName
-     //              << " dens = " << it->md1 << Gateendl);
-    std::pair<LabelType,G4String> lMaterial;
-    lMaterial.first = i;
-    lMaterial.second = it->mName;
+    std::pair<LabelType,G4String> lMaterial(i, it->mName);
     m.insert( lMaterial );
+    GateMessage("Core", 2,
+                       "i= " << i << " mi = " << m[i]
+                       << " mnamei = " << it->mName
+                       << " dens = " << it->md1/(gram/centimeter3) << " g/cm3" << Gateendl);
   }
 }
 //-----------------------------------------------------------------------------

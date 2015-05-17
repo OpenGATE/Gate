@@ -288,13 +288,9 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
 /// Loads the LabelToMaterial file
 void GateVImageVolume::LoadImageMaterialsTable()
 {
-  if (mLoadImageMaterialsFromHounsfieldTable) {
-    LoadImageMaterialsFromHounsfieldTable();
-  }
-  else {
-    if (mLoadImageMaterialsFromLabelTable) LoadImageMaterialsFromLabelTable();
-    else LoadImageMaterialsFromRangeTable();
-  }
+  if (mLoadImageMaterialsFromHounsfieldTable) LoadImageMaterialsFromHounsfieldTable();
+  else if (mLoadImageMaterialsFromLabelTable) LoadImageMaterialsFromLabelTable();
+  else LoadImageMaterialsFromRangeTable();
   GateMessage("Volume", 1, "Number of different materials in the image "
               << mImageFilename << " : " << mLabelToMaterialName.size() << Gateendl);
 }
@@ -474,6 +470,8 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable()
 //--------------------------------------------------------------------
 void GateVImageVolume::LoadImageMaterialsFromRangeTable()
 {
+  GateMessageInc("Volume",5,"Begin GateVImageVolume::LoadImageMaterialsFromRangeTable("
+			 <<mRangeToImageMaterialTableFilename<<")\n");
   //m_voxelMaterialTranslation.clear();
 
   std::ifstream inFile;
@@ -521,11 +519,14 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
     << std::boolalpha << ", visible " << visible << ", rgba(" << red<<',' << green << ',' << blue << ')' << Gateendl);
 
     if(r2> pImage->GetOutsideValue()){
-      if(r1>pImage->GetOutsideValue()) r1=pImage->GetOutsideValue();
+      if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
         mRangeMaterialTable.AddMaterial(r1,r2,material,
         		new G4VisAttributes(visible, G4Colour(red, green, blue, alpha)));
     }
-    else {GateMessage("Materials",0,"Failed to add material "<< material << " to Database" << Gateendl);}
+    else
+    {
+    	GateMessage("Materials",0,"Failed to add material "<< material << " to Database" << Gateendl);
+    }
 
   mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
 
@@ -543,7 +544,7 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
   is >> r1 >> r2;
   is >> material;
 
-  if(r2> pImage->GetOutsideValue()+1){
+  if(r2> pImage->GetOutsideValue()){
     if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
       mRangeMaterialTable.AddMaterial(r1,r2,material);
   }
@@ -573,6 +574,8 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
     (*iter) = label;
     iter++;
   }
+  GateMessageDec("Volume",5,"End GateVImageVolume::LoadImageMaterialsFromRangeTable("
+  			 <<mRangeToImageMaterialTableFilename<<")\n");
 }
 //--------------------------------------------------------------------
 
