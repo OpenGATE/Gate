@@ -518,7 +518,7 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
     GateMessage("Materials",0,"min max " << r1 << " " << r2 << "  material: " << material
     << std::boolalpha << ", visible " << visible << ", rgba(" << red<<',' << green << ',' << blue << ')' << Gateendl);
 
-    if(r2> pImage->GetOutsideValue()){
+    if(r2> pImage->GetOutsideValue()+1){
       if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
         mRangeMaterialTable.AddMaterial(r1,r2,material,
         		new G4VisAttributes(visible, G4Colour(red, green, blue, alpha)));
@@ -544,7 +544,7 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
   is >> r1 >> r2;
   is >> material;
 
-  if(r2> pImage->GetOutsideValue()){
+  if(r2> pImage->GetOutsideValue()+1){
     if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
       mRangeMaterialTable.AddMaterial(r1,r2,material);
   }
