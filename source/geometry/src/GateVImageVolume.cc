@@ -396,7 +396,7 @@ void GateVImageVolume::DumpHLabelImage() {
     pi = pImage->begin();
     po = output.begin();
     while (pi != pImage->end()) {
-      if (1) { // HU mean or d mean or label
+      /*if (1) { // HU mean or d mean or label
     	  	   // G4Material * mat =
     	  	   // 	  theMaterialDatabase.GetMaterial(lab2mat[*pi]);
     	  	   // 	GateDebugMessage("Volume", 2, "lab " << *pi << " = " << mat->GetName() << Gateendl);
@@ -406,7 +406,10 @@ void GateVImageVolume::DumpHLabelImage() {
     	  *po = HU;
     	  po++;
     	  pi++;
-      }
+      }*/
+    	*po = *pi;
+    	pi++;
+    	po++;
     }
 
     // Write image

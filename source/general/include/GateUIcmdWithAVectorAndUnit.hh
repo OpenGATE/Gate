@@ -13,6 +13,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcommand.hh"
 #include <vector>
 #include "GateTokenizer.hh"
+#include "GateMessageManager.hh"
 //LF
 //#include <strstream>
 #include <sstream>

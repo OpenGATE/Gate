@@ -27,6 +27,7 @@ See GATE/LICENSE.txt for further details
 
 //#include "GateSystem.h"
 #include <exception>
+#include "GateMessageManager.hh"
 
 namespace Gate
 {

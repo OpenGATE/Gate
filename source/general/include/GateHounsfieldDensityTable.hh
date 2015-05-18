@@ -35,6 +35,7 @@ public:
   double GetDensityFromH(double H);
   double FindMaxDensityDifference(double HMin, double HMax);
   void Read(G4String filename);
+  double GetHMax();
 
 protected:
   GateHDensTableVec HDensTableVec;

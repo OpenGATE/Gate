@@ -79,19 +79,24 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
   mDensityTable->Read(mDensityTableFilename);
   
   // Density tolerance
-  double dTol = mDensityTol;
+  //double dTol = mDensityTol;
 
   // Declare result
   GateHounsfieldMaterialTable * mHounsfieldMaterialTable = new GateHounsfieldMaterialTable();
 
   // Loop on material intervals
-  for(unsigned int i=0; i<mHounsfieldMaterialPropertiesVector.size(); i++) {
-    GateMessage("Geometry", 4, "Material " << i << " = " << mHounsfieldMaterialPropertiesVector[i]->GetName() << Gateendl);
+  for(std::vector<GateHounsfieldMaterialProperties*>::iterator it=mHounsfieldMaterialPropertiesVector.begin();
+		  it!=mHounsfieldMaterialPropertiesVector.end(); it++) {
+	unsigned int i =   it-mHounsfieldMaterialPropertiesVector.begin();
+    GateMessage("Geometry", 4, "Material " << i << " = " << (*it)->GetName() << Gateendl);
     
-    double HMin = mHounsfieldMaterialPropertiesVector[i]->GetH();
+    double HMin = (*it)->GetH();
     double HMax;
-    if (i == mHounsfieldMaterialPropertiesVector.size()-1) HMax = HMin+1;
-    else HMax = mHounsfieldMaterialPropertiesVector[i+1]->GetH();
+    if (i == mHounsfieldMaterialPropertiesVector.size()-1) HMax = mDensityTable->GetHMax()+1;
+    else {
+    	HMax = (*(++it))->GetH();
+    	it--;
+    }
     
     // Check
     if (HMax <= HMin) GateError("Hounsfield shoud be given in ascending order, but I read H["
@@ -100,40 +105,41 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
     // GateMessage("Core", 0, "H " << HMin << " " << HMax << Gateendl);    
 
     // Find densities interval (because densities not always increase)
-    double dMin = mDensityTable->GetDensityFromH(HMin);
-    double dMax = mDensityTable->GetDensityFromH(HMax);
+    //double dMin = mDensityTable->GetDensityFromH(HMin);
+    //double dMax = mDensityTable->GetDensityFromH(HMax);
     // GateMessage("Core", 0, "Density " << dMin << " " << dMax << Gateendl);    
     //     GateMessage("Core", 0, "Density " << dMin*g/cm3 << " " << dMax*g/cm3 << Gateendl);   
-    double dDiffMax = mDensityTable->FindMaxDensityDifference(HMin, HMax);
+   // double dDiffMax = mDensityTable->FindMaxDensityDifference(HMin, HMax);
 
-    double n = (dDiffMax)/dTol;
+    //double n = (dDiffMax)/dTol;
     // GateMessage("Core", 0, "n = " << n << Gateendl);
     
-    double HTol = (HMax-HMin)/n;
+    //double HTol = (HMax-HMin)/n;
     // GateMessage("Core", 0, "HTol = " << HTol << Gateendl);
     
-    if (n>1) {
-      GateMessage("Geometry", 4, "Material " << mHounsfieldMaterialPropertiesVector[i]->GetName() 
+   /* if (n>1) {
+      GateMessage("Geometry", 4, "Material " << (*it)->GetName()
 		  << " devided into " << n << " materials\n");
     }
 
     if (n<0) {
-      GateError("ERROR Material " << mHounsfieldMaterialPropertiesVector[i]->GetName() 
+      GateError("ERROR Material " << (*it)->GetName()
 		<< " devided into " << n << " materials : density decrease from " 
 		<< G4BestUnit(dMin, "Volumic Mass") << " to " 
 		<< G4BestUnit(dMax, "Volumic Mass") << Gateendl);
-    }
+    }*/
 
     // Loop on density interval
-    for(int j=0; j<n; j++) {
-      double h1 = HMin+j*HTol;
-      double h2 = std::min(HMin+(j+1)*HTol, HMax);
-      double d = mDensityTable->GetDensityFromH(h1+(h2-h1)/2.0);
+    //for(int j=0; j<n; j++) {
+      //double h1 = HMin+j*HTol;
+      //double h2 = std::min(HMin+(j+1)*HTol, HMax);
+      //double d = mDensityTable->GetDensityFromH(h1+(h2-h1)/2.0);
+    	double d = mDensityTable->GetDensityFromH(HMin);
       // GateMessage("Core", 0, "H1/H2 " << h1 << " " << h2 << " = " 
       // 		  << mHounsfieldMaterialPropertiesVector[i]->GetName() 
       // 		  << " d=" << G4BestUnit(d, "Volumic Mass") << Gateendl);    
-      mHounsfieldMaterialTable->AddMaterial(h1, h2, d, mHounsfieldMaterialPropertiesVector[i]);
-    }
+      mHounsfieldMaterialTable->AddMaterial(HMin, HMax, d, *it);
+    //}
   }
   
   // Write final list of material

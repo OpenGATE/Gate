@@ -42,9 +42,11 @@ double GateHounsfieldDensityTable::GetDensityFromH(double H)
 		it--;
 		return it->mD; //last value
 	}
-	GateHDensTable prev = HDensTableVec[it - HDensTableVec.begin() - 1];
-	return ((H-prev.mH)/(it->mH-prev.mH)) * (it->mD-prev.mD) + prev.mD;
-
+	//GateHDensTable prev = HDensTableVec[it - HDensTableVec.begin() - 1];
+	//return ((H-prev.mH)/(it->mH-prev.mH)) * (it->mD-prev.mD) + prev.mD;
+	return it->mD; // simply return density
+	// previous case should be better but the value of density should be average
+	// on material not the max value!!
 	//return LinearInterpolation(H, mH, mD);
 }
 //-----------------------------------------------------------------------------
@@ -91,5 +93,11 @@ void GateHounsfieldDensityTable::Read(G4String filename)
       }
     }
   }
+}
+
+double GateHounsfieldDensityTable::GetHMax()
+{
+	GateHDensTableVec::iterator it = HDensTableVec.end(); it--;
+	return it->mH;
 }
 //-----------------------------------------------------------------------------
