@@ -45,16 +45,16 @@ GateVSource::GateColorPair GateVSource::theColorTable[N_COLORCODES] = {
     GateColorPair ("cyan",       G4Colour(0.0, 1.0, 1.0)),
     GateColorPair ("magenta",    G4Colour(1.0, 0.0, 1.0)),
     GateColorPair ("yellow",     G4Colour(1.0, 1.0, 0.0))
-  };  
-GateVSource::GateColorMap GateVSource::theColorMap = 
+  };
+GateVSource::GateColorMap GateVSource::theColorMap =
       GateColorMap(N_COLORCODES,theColorTable);
 
 //-------------------------------------------------------------------------------------------------
 GateVSource::GateVSource(G4String name): m_name( name ) {
   m_type        			 = "";
   m_sourceID     			 = 0;
-  m_activity     			 = 0.*becquerel;     
-  m_startTime    			 = 0.*s;    
+  m_activity     			 = 0.*becquerel;
+  m_startTime    			 = 0.*s;
   m_time         			 = 0.*s;
   m_timeInterval = 0.*s;
   nVerboseLevel  			 = 0;
@@ -83,19 +83,20 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
 //   mUserPosRndm = NULL;
   mIsUserFocalShapeActive = false;
   mUserFocalShapeInitialisation = false;
+  mUserFocalShape = new G4SPSPosDistribution();
 
-
+  mUserPosGenX = new G4SPSRandomGenerator();
   m_posSPS = new GateSPSPosDistribution();
   m_posSPS->SetBiasRndm( GetBiasRndm() );
   m_eneSPS = new GateSPSEneDistribution();
-  m_eneSPS->SetBiasRndm( GetBiasRndm() );  
+  m_eneSPS->SetBiasRndm( GetBiasRndm() );
   m_angSPS = new GateSPSAngDistribution();
   m_angSPS->SetPosDistribution( m_posSPS );
   m_angSPS->SetBiasRndm( GetBiasRndm() );
 
   m_sourceMessenger = new GateVSourceMessenger( this );
   m_SPSMessenger    = new GateSingleParticleSourceMessenger( this );
-  
+
 
   SetNumberOfParticles(1); // important !
 }
@@ -110,12 +111,16 @@ GateVSource::~GateVSource()
     delete eneGenerator;
     delete biasRndm;*/
 
-
   delete m_sourceMessenger;
   delete m_SPSMessenger;
   delete m_posSPS;
   delete m_eneSPS;
   delete m_angSPS;
+  delete mUserFocalShape;
+  delete mUserPosGenX;
+  for (unsigned int i = 0; i<mUserPosGenY.size(); ++i) {
+    delete mUserPosGenY[i];
+  }
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -148,7 +153,7 @@ void GateVSource::Visualize(G4String parmString){
     G4cout << "Color name '" << sColor << "' was not recognised, yellow used instead.\n";
     colorMapIt = theColorMap.find("yellow");
   }
-  
+
   G4VisAttributes attribs(colorMapIt->second);
 
   G4Circle circle;
@@ -157,15 +162,15 @@ void GateVSource::Visualize(G4String parmString){
   circle.SetVisAttributes(attribs);
 
   for (int k=0; k<iCount; k++){
-	
+
     //m_sps->GeneratePositionStuff();
-	
+
 	//Fix to update source visualization when it is attached to a volume
-	//M Chamberland, 20/09/2013 
+	//M Chamberland, 20/09/2013
 	G4ThreeVector position = m_posSPS->GenerateOne();
 	ChangeParticlePositionRelativeToAttachedVolume(position);
 	circle.SetPosition(position);
-	  
+
 	visman->Draw(circle);
   }
 
@@ -225,7 +230,7 @@ G4String GateVSource::GetRelativePlacementVolume() {
 //-------------------------------------------------------------------------------------------------
 void GateVSource::SetRelativePlacementVolume(G4String volname) {
   mRelativePlacementVolumeName = volname;
-  // Search for volume 
+  // Search for volume
   mVolume =   GateObjectStore::GetInstance()->FindVolumeCreator(volname);
 //mVolume->Describe();
 }
@@ -233,7 +238,7 @@ void GateVSource::SetRelativePlacementVolume(G4String volname) {
 
 
 //-------------------------------------------------------------------------------------------------
-//G4double GateVSource::GetNextTimeInSuccessiveSourceMode(G4double /*timeStart*/, 
+//G4double GateVSource::GetNextTimeInSuccessiveSourceMode(G4double /*timeStart*/,
 /*                                                        G4int mNbOfParticleInTheCurrentRun) {
                                                           if (mNbOfParticleInTheCurrentRun == 0) {
                                                           return (1.0/m_activity)/2.0;
@@ -249,11 +254,11 @@ G4double GateVSource::GetNextTime( G4double timeStart )
 /* GetVolumeID ??? */
 
 
- 
-  // returns the proposed time for the next event of this source, sampled from the 
+
+  // returns the proposed time for the next event of this source, sampled from the
   // source time distribution
   G4double aTime = DBL_MAX;
- 
+
 //if(m_activity==0 && m_timeInterval!=0.)  SetActivity();
 
   if( m_activity > 0. )
@@ -270,7 +275,7 @@ G4double GateVSource::GetNextTime( G4double timeStart )
             {
 	      if( m_forcedLifeTime > 0. )
 	       {
-                activityNow = m_activity * 
+                activityNow = m_activity *
                   exp( - ( timeStart - m_startTime ) / m_forcedLifeTime );
 	       }
 	      else
@@ -279,7 +284,7 @@ G4double GateVSource::GetNextTime( G4double timeStart )
                        << m_forcedLifeTime/s << Gateendl;
 	      }
             }
-          else 
+          else
             {
               G4ParticleDefinition* partDef = GetParticleDefinition();
               if( partDef )
@@ -287,28 +292,28 @@ G4double GateVSource::GetNextTime( G4double timeStart )
                   if( !( partDef->GetPDGStable() ) )
                     {
                       if( nVerboseLevel > 0 )
-		      G4cout << "GateVSource::GetNextTime : unstable particle " 
-			  << GetParticleDefinition()->GetParticleName() 
+		      G4cout << "GateVSource::GetNextTime : unstable particle "
+			  << GetParticleDefinition()->GetParticleName()
 			  << " from source " <<  GetName() << Gateendl;
 		      // activity is constant
 		      activityNow = m_activity;
                     }
                   else
-                    if( nVerboseLevel > 1 ) 
-                      G4cout << "GateVSource::GetNextTime : stable particle " 
-                             << GetParticleDefinition()->GetParticleName() 
+                    if( nVerboseLevel > 1 )
+                      G4cout << "GateVSource::GetNextTime : stable particle "
+                             << GetParticleDefinition()->GetParticleName()
                              << " from source " <<  GetName() << Gateendl;
                 }
-              else 
-                if (nVerboseLevel>0) 
-                  G4cout << "GateVSource::GetNextTime : NULL ParticleDefinition for source " 
+              else
+                if (nVerboseLevel>0)
+                  G4cout << "GateVSource::GetNextTime : NULL ParticleDefinition for source "
                          << GetName() << " assumed stable \n";
             }
         }
       if( nVerboseLevel > 0 )
-        G4cout << "GateVSource::GetNextTime : Initial activity (becq) : " 
+        G4cout << "GateVSource::GetNextTime : Initial activity (becq) : "
                << m_activity/becquerel << Gateendl
-               << "                            At time (s) " << timeStart/s 
+               << "                            At time (s) " << timeStart/s
                << " activity (becq) " << activityNow/becquerel << Gateendl;
 
       // sampling of the interval distribution
@@ -326,12 +331,12 @@ G4double GateVSource::GetNextTime( G4double timeStart )
 
   if( nVerboseLevel > 0 )
     G4cout << "GateVSource::GetNextTime : next time (s) " << aTime/s << Gateendl;
-   
+
 
 //Dump(0);
-/*G4cout<< "    CentreCoords       (mm)  : " 
-             << m_posSPS->GetCentreCoords().x()/mm << " " 
-             << m_posSPS->GetCentreCoords().y()/mm << " " 
+/*G4cout<< "    CentreCoords       (mm)  : "
+             << m_posSPS->GetCentreCoords().x()/mm << " "
+             << m_posSPS->GetCentreCoords().y()/mm << " "
              << m_posSPS->GetCentreCoords().z()/mm << Gateendl;*/
   return aTime;
 }
@@ -342,12 +347,12 @@ void GateVSource::TrigMat()
 // Retrieve position according to world
   GateVVolume * v = mVolume;
   G4cout<<"------------------|||||||||||| TEST de SEBES =          "<<v->GetObjectName()<< Gateendl;
- 
+
 }
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-void GateVSource::Dump( G4int level ) 
+void GateVSource::Dump( G4int level )
 {
 
  G4cout << "Source --------------> " << m_name << Gateendl
@@ -366,37 +371,37 @@ void GateVSource::Dump( G4int level )
     {
       G4cout << "    GPS info ----------------> \n";
       if( GetParticleDefinition() )
-        G4cout << "    particle                 : " 
-               << GetParticleDefinition()->GetParticleName() 
+        G4cout << "    particle                 : "
+               << GetParticleDefinition()->GetParticleName()
                << Gateendl ;
       else
-        G4cout << "    particle                 : " 
-               << "not defined" 
+        G4cout << "    particle                 : "
+               << "not defined"
                << Gateendl ;
-			
-      G4cout << "    SourcePosType            : " 
+
+      G4cout << "    SourcePosType            : "
              << m_posSPS->GetPosDisType() << Gateendl
-             << "    Shape                    : " 
+             << "    Shape                    : "
              << m_posSPS->GetPosDisShape() << Gateendl
-             << "    halfx,halfy,halfz  (mm)  : " 
-             << m_posSPS->GetHalfX()/mm << " " 
-             << m_posSPS->GetHalfY()/mm << " " 
+             << "    halfx,halfy,halfz  (mm)  : "
+             << m_posSPS->GetHalfX()/mm << " "
+             << m_posSPS->GetHalfY()/mm << " "
              << m_posSPS->GetHalfZ()/mm << Gateendl
-             << "    Radius             (mm)  : " 
+             << "    Radius             (mm)  : "
              << m_posSPS->GetRadius()/mm << Gateendl
-             << "    CentreCoords       (mm)  : " 
-             << m_posSPS->GetCentreCoords().x()/mm << " " 
-             << m_posSPS->GetCentreCoords().y()/mm << " " 
+             << "    CentreCoords       (mm)  : "
+             << m_posSPS->GetCentreCoords().x()/mm << " "
+             << m_posSPS->GetCentreCoords().y()/mm << " "
              << m_posSPS->GetCentreCoords().z()/mm << Gateendl
-             << "    EnergyDisType            : " 
+             << "    EnergyDisType            : "
              << m_eneSPS->GetEnergyDisType() << Gateendl
              << "    AngleDisType            : "
              << m_angSPS->GetDistType() << Gateendl
-             << "    MinTheta, MaxTheta (deg) : " 
-             << m_angSPS->GetMinTheta()/deg << " " << m_angSPS->GetMaxTheta()/deg 
+             << "    MinTheta, MaxTheta (deg) : "
+             << m_angSPS->GetMinTheta()/deg << " " << m_angSPS->GetMaxTheta()/deg
              << Gateendl
-             << "    MinPhi, MaxPhi     (deg) : " 
-             << m_angSPS->GetMinPhi()/deg << " " << m_angSPS->GetMaxPhi()/deg 
+             << "    MinPhi, MaxPhi     (deg) : "
+             << m_angSPS->GetMinPhi()/deg << " " << m_angSPS->GetMaxPhi()/deg
              << Gateendl
              << "    -------------------------- \n"
              << Gateendl;
@@ -412,12 +417,12 @@ void GateVSource::GeneratePrimariesForBackToBackSource(G4Event* event) {
   backToBack->Initialize();
   backToBack->GenerateVertex( event, m_accolinearityFlag);
   if( nVerboseLevel > 1 )
-    G4cout << "GetNumberOfPrimaryVertex : " 
+    G4cout << "GetNumberOfPrimaryVertex : "
            << event->GetNumberOfPrimaryVertex() << Gateendl;
   if( nVerboseLevel > 1 )
-    G4cout << "GetNumberOfParticle      : " 
+    G4cout << "GetNumberOfParticle      : "
            << event->GetPrimaryVertex(0)->GetNumberOfParticle() << Gateendl;
-  
+
   delete backToBack;
 }
 //-------------------------------------------------------------------------------------------------
@@ -428,21 +433,21 @@ void GateVSource::GeneratePrimariesForFastI124Source(G4Event* event) {
   // Fast I124 : generates 0 to 3 particles (gammas and e+) according to a simplified decay scheme
   // No atomic deexcitation occurs
   GateFastI124* fastI124 = new GateFastI124( this );
-  
+
   if (!( fastI124->GetSimplifiedDecay())) fastI124->InitializeFastI124();
-  
+
   fastI124->GenerateVertex(event);
-  
+
   delete fastI124;
 }
 //-------------------------------------------------------------------------------------------------
 
 
 //-------------------------------------------------------------------------------------------------
-G4int GateVSource::GeneratePrimaries( G4Event* event ) 
+G4int GateVSource::GeneratePrimaries( G4Event* event )
 {
   if (event) GateMessage("Beam", 2, "Generating particle " << event->GetEventID() << Gateendl);
-  
+
   G4int numVertices = 0;
 
   GateSteppingAction* myAction = (GateSteppingAction *) ( GateRunManager::GetRunManager()->GetUserSteppingAction() );
@@ -450,7 +455,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
   TrackingMode theMode =myAction->GetMode();
 
   G4bool test = (theMode ==1 ) || ( theMode == 2 );
-  if ( test == 1  ) 
+  if ( test == 1  )
     {
       if (GetType() == G4String("backtoback"))    { GeneratePrimariesForBackToBackSource(event); }
       else if (GetType() == G4String("fastI124")) { GeneratePrimariesForFastI124Source(event); }
@@ -470,14 +475,14 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       if (event) {
         for(int i=0; i< event->GetPrimaryVertex(0)->GetNumberOfParticle(); i++) {
           G4PrimaryParticle  * p = event->GetPrimaryVertex(0)->GetPrimary(i);
-          GateMessage("Beam", 3, "(" << event->GetEventID() << ") " << p->GetG4code()->GetParticleName() 
+          GateMessage("Beam", 3, "(" << event->GetEventID() << ") " << p->GetG4code()->GetParticleName()
                       << " pos=" << event->GetPrimaryVertex(0)->GetPosition()
-                      << " weight=" << p->GetWeight()                                
+                      << " weight=" << p->GetWeight()
                       << " energy=" <<  G4BestUnit(mEnergy, "Energy")
                       << " mom=" << p->GetMomentum()
                       << " ptime=" <<  G4BestUnit(p->GetProperTime(), "Time")
                       << " atime=" <<  G4BestUnit(GetTime(), "Time")
-                      << ")\n");  
+                      << ")\n");
         }
       }
 
@@ -489,7 +494,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       //G4cout<<"Generate primaries\n";
       return numVertices;
     }// standard or tracker mode PY Descourt 08/09/2008
-  
+
   if ( theMode == 3 )// detector mode     here we have a fictive source
     {
       if ( fAbortNow == true ) { fAbortNow= false;
@@ -501,13 +506,13 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       //G4cout << "  GateSource::GeneratePrimaries   OK DEtector Mode   size of Tracks Vector " << aTrackVector->size()<< Gateendl;
 
       // Check the current Tracks Vector is empty ! otherwise something went wrong /////////
-      if ( aTrackVector->size() > 0 ) 
+      if ( aTrackVector->size() > 0 )
         {
           std::vector<GateTrack*>::iterator iter;
           for ( iter = aTrackVector->begin(); iter != aTrackVector->end() ; iter++){(*iter)->Print();}
           G4Exception( "GateSource::GeneratePrimaries", "GeneratePrimaries", FatalException, "ERROR : The tracks Vector is not empty.\n");
         }
-   
+
       /// READ DATA FROM ROOT FILE
       GateToRoot* gateToRoot = (GateToRoot* ) ( GateOutputMgr::GetInstance()->GetModule("root") );
       if ( gateToRoot == 0 )
@@ -556,10 +561,10 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       while ( test == 1 )
         {
           if ( m_currentTrack == 0 )test = 0;
-          else 
+          else
             {
               id1 =  ( m_currentTrack->GetRunID() ==  currentRun->GetRunID() );
-              G4bool id2 =  ( m_currentTrack->GetEventID() ==  event_id ) ; 
+              G4bool id2 =  ( m_currentTrack->GetEventID() ==  event_id ) ;
               if (  ( id1 == true )  && ( id2 == true ) )
                 {
                   GateTrack*  TmpTrack = new GateTrack( *m_currentTrack );
@@ -570,7 +575,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
                 }
               else test = 0;
             }
-        }        
+        }
       if ( id1 == false ) { fAbortNow = true; }
       std::vector<GateTrack*>::iterator iter = aTrackVector->begin();
       size_t k = 0;
@@ -628,19 +633,19 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
     } //                 Detector Mode - PY Descourt 08/09/2009
 
   return numVertices;
-   
+
 }
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-void GateVSource::Update(double t) 
+void GateVSource::Update(double t)
 {
   m_time = t;
-  if( nVerboseLevel > 0 ) 
+  if( nVerboseLevel > 0 )
     G4cout << "[GateVSource::Update] Source name: " << m_name << Gateendl;
   // called by the sourceMgr at the beginning of the run.
   // when a mechanism for the attachment of a source to a geometry volume will be in place
-  // if the source is "attached" to a volume here it should update its own position according 
+  // if the source is "attached" to a volume here it should update its own position according
   // to the (new) position of the volume.
 
   // if the activity change according to time, set it
@@ -659,14 +664,14 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
   if( GetParticleDefinition() == NULL ) return;
   if( GetPosDist()->GetPosDisType() == "UserFluenceImage" ) InitializeUserFluence();
   if( mUserFocalShapeInitialisation ) InitializeUserFocalShape();
-    
+
   if( nVerboseLevel > 1 ) {
     G4cout << " NumberOfParticlesToBeGenerated: " << GetNumberOfParticles() << Gateendl ;
   }
 
-  /* PY Descourt 08/09/2009 */  
+  /* PY Descourt 08/09/2009 */
   TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
-  if (  theMode == kBoth || theMode == kTracker ) 
+  if (  theMode == kBoth || theMode == kTracker )
     {
       G4ThreeVector particle_position;
       if(mIsUserFluenceActive) { particle_position = UserFluencePosGenerateOne(); }
@@ -693,27 +698,27 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
           G4double particle_energy = 0;
           particle_energy = m_eneSPS->GenerateOne( GetParticleDefinition() );
           mEnergy = particle_energy; // because particle_energy is private
-		
+
           G4double mass =  GetParticleDefinition()->GetPDGMass();
           G4double energy = particle_energy + mass;
           G4double pmom = std::sqrt( energy * energy - mass * mass );
           G4double px = pmom * particle_momentum_direction.x();
           G4double py = pmom * particle_momentum_direction.y();
           G4double pz = pmom * particle_momentum_direction.z();
-		
+
           G4PrimaryParticle* particle = new G4PrimaryParticle(GetParticleDefinition(), px, py, pz);
           particle->SetMass( mass );
           particle->SetCharge( GetParticleDefinition()->GetPDGCharge() );
           particle->SetPolarization( GetParticlePolarization().x(),
                                      GetParticlePolarization().y(),
                                      GetParticlePolarization().z() );
-		
+
           G4double particle_weight = GetBiasRndm()->GetBiasWeight();
           particle->SetWeight( particle_weight );
 
           // Add one particle
           vertex->SetPrimary( particle );
-		
+
 	  // Verbose
           if( nVerboseLevel > 1 ) {
             G4cout << "Particle name: " << GetParticleDefinition()->GetParticleName() << Gateendl;
@@ -777,7 +782,7 @@ void GateVSource::ChangeParticlePositionRelativeToAttachedVolume(G4ThreeVector &
     G4RotationMatrix r = v->GetPhysicalVolume(0)->GetObjectRotationValue();
     const G4ThreeVector & t = v->GetPhysicalVolume(0)->GetObjectTranslation();
     position = r*position;
-    position = position+t;    
+    position = position+t;
     GateMessage("Beam", 4, "Change current particle position = " << position << Gateendl);
     // next volume
     v = v->GetParentVolume();
@@ -799,10 +804,10 @@ void GateVSource::ChangeParticleMomentumRelativeToAttachedVolume(G4ParticleMomen
   while (v->GetObjectName() != "world") {
     // DD(v->GetObjectName());
     // DD(v->GetPhysicalVolume(0)->GetObjectTranslation());
-    // DD(v->GetPhysicalVolume(0)->GetObjectRotationValue());    
+    // DD(v->GetPhysicalVolume(0)->GetObjectRotationValue());
     G4RotationMatrix r = v->GetPhysicalVolume(0)->GetObjectRotationValue();
     //const G4ThreeVector & t = v->GetPhysicalVolume(0)->GetObjectTranslation();
-    momentum = r*momentum;    
+    momentum = r*momentum;
     // next volume
     v = v->GetParentVolume();
   }
@@ -848,7 +853,7 @@ void GateVSource::InitializeUserFluence()
 {
   GateMessage("Beam", 0, "WARNING message :\n");
   GateMessage("Beam", 0, "You are using a userFluenceImage source. Type, shape, size are automatically extracted from the image.\n");
-  
+
   if(mUserFluenceFilename == "")
   {
     GateError("You are using a userFluenceImage source. Please, enter a filename to be read (../gps/pos/setImage)");
@@ -856,15 +861,15 @@ void GateVSource::InitializeUserFluence()
   else
   {
     mIsUserFluenceActive = true;
-    
+
     // Define the 'official' randomPosEngine as a point type source (known in G4SPSPosDistribution)
-    // position is randomly selected using an alternative randomEngine according to the userFluenceImage 
+    // position is randomly selected using an alternative randomEngine according to the userFluenceImage
     // WARNING : units in userImage have to be in mm
     m_posSPS->SetPosDisType("Point");
-    
+
     GateImage userFluenceImage;
     userFluenceImage.Read(mUserFluenceFilename);
-    
+
     int resX = userFluenceImage.GetResolution().x();
     int resY = userFluenceImage.GetResolution().y();
     double sizeX = userFluenceImage.GetVoxelSize().x() * mm;
@@ -877,13 +882,13 @@ void GateVSource::InitializeUserFluence()
     mUserPosY.resize(resY);
     mUserPosGenY.resize(resX);
     double sum;
-    
+
     // Generate XBias and "YBias knowing X" according to fluence image
     double posX,posY;
     posX = (0.5 * sizeX) + userFluenceImage.GetOrigin().x();
 //     posX = ((0.5 * sizeX) - userFluenceImage.GetHalfSize().x());
-    
-    mUserPosGenX.SetXBias(G4ThreeVector(0.,0.,0.));
+
+    mUserPosGenX->SetXBias(G4ThreeVector(0.,0.,0.));
     for(int i=0; i<resX;i++)
     {
       mUserPosX[i] = posX;
@@ -891,21 +896,27 @@ void GateVSource::InitializeUserFluence()
       sum = 0.0;
       posY = (0.5 * sizeY) + userFluenceImage.GetOrigin().y();
 //       posY = ((0.5 * sizeY) - userFluenceImage.GetHalfSize().y());
-      
-      mUserPosGenY[i].SetYBias(G4ThreeVector(0.,0.,0.));
+
+      if (mUserPosGenY[i]==0) {
+        mUserPosGenY[i] = new G4SPSRandomGenerator();
+      }
+      mUserPosGenY[i]->SetYBias(G4ThreeVector(0.,0.,0.));
       for(int j=0; j<resY; j++)
       {
-	sum += userFluenceImage.GetValue(i,j,0);
-	mUserPosY[j] = posY;
+        sum += userFluenceImage.GetValue(i,j,0);
+        mUserPosY[j] = posY;
 
-	mUserPosGenY[i].SetYBias(G4ThreeVector(j+1,userFluenceImage.GetValue(i,j,0),0.));
-	posY += sizeY;
+        if (mUserPosGenY[i]==0) {
+          mUserPosGenY[i] = new G4SPSRandomGenerator();
+        }
+        mUserPosGenY[i]->SetYBias(G4ThreeVector(j+1,userFluenceImage.GetValue(i,j,0),0.));
+        posY += sizeY;
       }
-      
-      mUserPosGenX.SetXBias(G4ThreeVector(i+1,sum,0.));
+
+      mUserPosGenX->SetXBias(G4ThreeVector(i+1,sum,0.));
       posX += sizeX;
     }
-    
+
   }
 }
 //----------------------------------------------------------------------------------------
@@ -913,15 +924,15 @@ void GateVSource::InitializeUserFluence()
 //----------------------------------------------------------------------------------------
 G4ThreeVector GateVSource::UserFluencePosGenerateOne()
 {
-  int i = floor(mUserPosGenX.GenRandX());
-  int j = floor(mUserPosGenY[i].GenRandY());
-  
+  int i = floor(mUserPosGenX->GenRandX());
+  int j = floor(mUserPosGenY[i]->GenRandY());
+
   // uniform rand in pixel
   double x = mUserPosX[i] + (G4UniformRand()-0.5)*mUserFluenceVoxelSize.x();
   double y = mUserPosY[j] + (G4UniformRand()-0.5)*mUserFluenceVoxelSize.y();
   double z = 0.;
 
-  // This is a partial copy of G4SPSPosDistribution::GeneratePointsInPlane(...) 
+  // This is a partial copy of G4SPSPosDistribution::GeneratePointsInPlane(...)
   // - Apply Rotation Matrix
   // - x * Rotx, y * Roty and z * Rotz
   double tempx = (x * mRotX.x()) + (y * mRotY.x()) + (z * mRotZ.x());
@@ -935,7 +946,7 @@ G4ThreeVector GateVSource::UserFluencePosGenerateOne()
 
   // - Apply translation
   randPos += mCentreCoords;
-  
+
   // Moving the source (point) and call GenerateOne function
   m_posSPS->SetCentreCoords(randPos);
   G4ThreeVector position = m_posSPS->GenerateOne();
@@ -956,7 +967,7 @@ void GateVSource::SetPosRot1(G4ThreeVector posrot1)
 {
   mRotX = posrot1;
 
-  // This is a copy of G4SPSPosDistribution::GenerateRotationMatrices() 
+  // This is a copy of G4SPSPosDistribution::GenerateRotationMatrices()
   mRotX = mRotX.unit(); // x'
   mRotY = mRotY.unit(); // vector in x'y' plane
   mRotZ = mRotX.cross(mRotY); // z'
@@ -970,8 +981,8 @@ void GateVSource::SetPosRot1(G4ThreeVector posrot1)
 void GateVSource::SetPosRot2(G4ThreeVector posrot2)
 {
   mRotY = posrot2;
-  
-  // This is a copy of G4SPSPosDistribution::GenerateRotationMatrices() 
+
+  // This is a copy of G4SPSPosDistribution::GenerateRotationMatrices()
   mRotX = mRotX.unit(); // x'
   mRotY = mRotY.unit(); // vector in x'y' plane
   mRotZ = mRotX.cross(mRotY); // z'
@@ -986,9 +997,9 @@ void GateVSource::InitializeUserFocalShape()
 {
   mIsUserFocalShapeActive = true;
   mUserFocalShapeInitialisation = false;
-  mUserFocalShape.SetBiasRndm( GetBiasRndm() );
-  mUserFocalShape.SetPosDisType("Plane");
-  mUserFocalShape.SetPosDisShape("Circle");
+  mUserFocalShape->SetBiasRndm( GetBiasRndm() );
+  mUserFocalShape->SetPosDisType("Plane");
+  mUserFocalShape->SetPosDisShape("Circle");
 
   m_angSPS->SetAngDistType("focused");
 }
@@ -997,14 +1008,14 @@ void GateVSource::InitializeUserFocalShape()
 //----------------------------------------------------------------------------------------
 G4ThreeVector GateVSource::UserFocalShapeGenerateOne()
 {
-  G4ThreeVector position = mUserFocalShape.GenerateOne();
+  G4ThreeVector position = mUserFocalShape->GenerateOne();
 //   DD(position);
   m_angSPS->SetFocusPoint(position);
   G4ThreeVector momentum = m_angSPS->GenerateOne();
 //   DD(momentum);
 //   DD(position);
 //   DD(momentum);
-  
+
   return momentum;
 }
 //----------------------------------------------------------------------------------------
