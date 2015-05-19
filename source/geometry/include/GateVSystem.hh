@@ -210,8 +210,8 @@ class GateVSystem : public GateClockDependent
     GateVolumeID* MakeVolumeID(const std::vector<G4int>& numList) const;
   protected:
     //FIXME: Use GateSystemComponentList instead, current implementation returns an orphan Component List
-    typedef std::vector< GateSystemComponent* > compList_t;
-    compList_t* MakeComponentListAtLevel(G4int level) const;
+    //typedef std::vector< GateSystemComponent* > compList_t;
+    GateSystemComponentList* MakeComponentListAtLevel(G4int level) const;
     GateSystemComponent * m_BaseComponent;      	//!< The base component of the system
     size_t m_mainComponentDepth;		//!< depth of the main component (0 or 1)
     G4String m_itsOwnName;                      //! a name of a system, may be any name (multi-system approach)

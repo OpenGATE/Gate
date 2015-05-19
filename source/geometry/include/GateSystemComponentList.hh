@@ -46,6 +46,8 @@ class GateSystemComponentList : public GateModuleListManager
     */
     G4bool CheckConnectionToCreator(GateVVolume* anCreator);
     
+    G4bool empty(){return theListOfNamedObject.empty();}
+
     //! Compute the number of active daughter-components (i.e. components that are linked to an inserter)
     size_t GetActiveChildNumber();
 

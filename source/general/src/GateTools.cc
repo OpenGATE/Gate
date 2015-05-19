@@ -68,3 +68,11 @@ G4String GateTools::FindGateFile(const G4String& fileName)
 
 }
 //---------------------------------------------------------------------------
+
+G4String GateTools::InttoG4String(const G4int i)
+{
+	std::ostringstream stm ;
+	stm << i ;
+	return G4String(stm.str());
+}
+

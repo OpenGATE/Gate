@@ -353,7 +353,12 @@ class GateSystemComponent  : public GateClockDependent
 
     //! Append a new component at the end of the child-list
     void InsertChildComponent(GateSystemComponent* aComponent)
-    { m_childComponentList->InsertChildComponent(aComponent); }
+    {
+    	aComponent->SetMotherComponent(this);
+    	m_childComponentList->InsertChildComponent(aComponent);
+    }
+
+    G4bool empty(){return m_childComponentList->empty();}
 
     //! Compute the number of active daughter-components (i.e. components that are linked to an creator)
     size_t GetActiveChildNumber() const

@@ -332,17 +332,20 @@ G4bool GateVSystem::CheckConnectionToCreator(GateVVolume* anCreator) const
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-GateVSystem::compList_t* GateVSystem::MakeComponentListAtLevel(G4int level) const
+GateSystemComponentList* GateVSystem::MakeComponentListAtLevel(G4int level) const
 {
-  compList_t* currentList = new compList_t;
-  currentList->push_back(m_BaseComponent);
+  G4String LevelName = "level_" + GateTools::InttoG4String(level);
+  GateSystemComponentList* currentList = new GateSystemComponentList(m_BaseComponent, LevelName);
+  //currentList->push_back(m_BaseComponent);
   while ( (level>0) && !currentList->empty() ){
       level--;
-      compList_t*  newList = new compList_t;
-      for (compList_t::iterator it=currentList->begin(); it!=currentList->end(); it++){
-      	 for (GateSystemComponent::child_iterator ichild=(*it)->begin();ichild!=(*it)->end();ichild++)
+      LevelName = "level_" + GateTools::InttoG4String(level);
+      GateSystemComponentList*  newList = new GateSystemComponentList(m_BaseComponent, LevelName);
+      for (GateSystemComponentList::iterator it=currentList->begin(); it!=currentList->end(); it++){
+      	 for (GateSystemComponent::child_iterator ichild=((GateSystemComponent*)(*it))->begin();
+      			 ichild!=((GateSystemComponent*)(*it))->end();ichild++)
       	 {
-      		 newList->push_back((GateSystemComponent*)(*ichild));
+      		 newList->InsertChildComponent((GateSystemComponent*)(*ichild));
       	 }
       }
       delete currentList;
@@ -355,12 +358,12 @@ GateVSystem::compList_t* GateVSystem::MakeComponentListAtLevel(G4int level) cons
 //-----------------------------------------------------------------------------
 size_t GateVSystem::ComputeNofElementsAtLevel(size_t level) const
 {
-  compList_t* currentList = MakeComponentListAtLevel(level);
+  GateSystemComponentList* currentList = MakeComponentListAtLevel(level);
   size_t ans = 0;
-  for (compList_t::iterator it=currentList->begin(); it!=currentList->end(); it++)
-   if ( (*it)->IsActive() )
+  for (GateSystemComponentList::iterator it=currentList->begin(); it!=currentList->end(); it++)
+   if ( ((GateSystemComponent*)(*it))->IsActive() )
    {
-	 size_t nofVol = (*it)->GetVolumeNumber();
+	 size_t nofVol = ((GateSystemComponent*)(*it))->GetVolumeNumber();
 	 ans += nofVol ? nofVol : 1;
    }
   delete currentList;

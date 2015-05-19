@@ -44,6 +44,9 @@ namespace GateTools
   //! The function returns either the full file path or "" (file not found).
   G4String FindGateFile(const G4String& fileName);
 
+  //! Converts a number into a G4String
+  G4String InttoG4String(const G4int i);
+
 }
 
 #endif
