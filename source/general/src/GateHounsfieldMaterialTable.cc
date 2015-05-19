@@ -49,7 +49,7 @@ void GateHounsfieldMaterialTable::AddMaterial(double H1, double H2, double d,
   mat.md1 = d;
 
   // Material's name
-  mat.mName = p->GetName();//+"_"+DoubletoString(mMaterialsVector.size());
+  mat.mName = p->GetName()+"_"+DoubletoString(mMaterialsVector.size());
 
   // Create new material
   mat.mMaterial = new G4Material(mat.mName, d, p->GetNumberOfElements());

@@ -18,8 +18,8 @@
 #include "GateHounsfieldDensityTable.hh"
 
 //-------------------------------------------------------------------------------------------------
-GateHounsfieldToMaterialsBuilder::GateHounsfieldToMaterialsBuilder() :
-	mDensityTol(1e-10)// FIXME: can't be 0, add a common tiny value
+GateHounsfieldToMaterialsBuilder::GateHounsfieldToMaterialsBuilder()
+: mDensityTol(1)// FIXME: can't be 0, add a common tiny value
 {
   pMessenger = new GateHounsfieldToMaterialsBuilderMessenger(this);
   mMaterialTableFilename = "undefined_mMaterialTableFilename";
@@ -79,7 +79,7 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
   mDensityTable->Read(mDensityTableFilename);
   
   // Density tolerance
-  //double dTol = mDensityTol;
+  double dTol = mDensityTol;
 
   // Declare result
   GateHounsfieldMaterialTable * mHounsfieldMaterialTable = new GateHounsfieldMaterialTable();
@@ -102,22 +102,24 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
     if (HMax <= HMin) GateError("Hounsfield shoud be given in ascending order, but I read H["
 				<< i << "] = " << HMin
 				<< " and H[" << i+1 << "] = " << HMax << Gateendl);
-    // GateMessage("Core", 0, "H " << HMin << " " << HMax << Gateendl);    
+      GateMessage("Core", 0, "H " << HMin << " " << HMax << Gateendl);
 
     // Find densities interval (because densities not always increase)
-    //double dMin = mDensityTable->GetDensityFromH(HMin);
-    //double dMax = mDensityTable->GetDensityFromH(HMax);
-    // GateMessage("Core", 0, "Density " << dMin << " " << dMax << Gateendl);    
-    //     GateMessage("Core", 0, "Density " << dMin*g/cm3 << " " << dMax*g/cm3 << Gateendl);   
-   // double dDiffMax = mDensityTable->FindMaxDensityDifference(HMin, HMax);
+    double dMin = mDensityTable->GetDensityFromH(HMin);
+    double dMax = mDensityTable->GetDensityFromH(HMax);
+     //GateMessage("Core", 0, "Density " << dMin << " " << dMax << Gateendl);
+     GateMessage("Core", 0, "Density " << G4BestUnit(dMin, "Volumic Mass") <<
+    		 " " << G4BestUnit(dMax, "Volumic Mass") << Gateendl);
+    double dDiffMax = mDensityTable->FindMaxDensityDifference(HMin, HMax);
 
-    //double n = (dDiffMax)/dTol;
-    // GateMessage("Core", 0, "n = " << n << Gateendl);
+    //if difference is 0 then split into 1 material only
+    double n = (dDiffMax)/dTol/(g/cm3); n = n<1 ? 1 : n;
+     GateMessage("Core", 0, "n = " << n << Gateendl);
     
-    //double HTol = (HMax-HMin)/n;
-    // GateMessage("Core", 0, "HTol = " << HTol << Gateendl);
+    double HTol = (HMax-HMin)/n;
+    GateMessage("Core", 0, "HTol = " << HTol << Gateendl);
     
-   /* if (n>1) {
+    if (n>1) {
       GateMessage("Geometry", 4, "Material " << (*it)->GetName()
 		  << " devided into " << n << " materials\n");
     }
@@ -127,19 +129,19 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
 		<< " devided into " << n << " materials : density decrease from " 
 		<< G4BestUnit(dMin, "Volumic Mass") << " to " 
 		<< G4BestUnit(dMax, "Volumic Mass") << Gateendl);
-    }*/
+    }
 
     // Loop on density interval
-    //for(int j=0; j<n; j++) {
-      //double h1 = HMin+j*HTol;
-      //double h2 = std::min(HMin+(j+1)*HTol, HMax);
-      //double d = mDensityTable->GetDensityFromH(h1+(h2-h1)/2.0);
-    	double d = mDensityTable->GetDensityFromH(HMin);
-      // GateMessage("Core", 0, "H1/H2 " << h1 << " " << h2 << " = " 
-      // 		  << mHounsfieldMaterialPropertiesVector[i]->GetName() 
-      // 		  << " d=" << G4BestUnit(d, "Volumic Mass") << Gateendl);    
+    for(int j=0; j<n; j++) {
+      double h1 = HMin+j*HTol;
+      double h2 = std::min(HMin+(j+1)*HTol, HMax);
+      double d = mDensityTable->GetDensityFromH(h1+(h2-h1)/2.0);
+    	//double d = mDensityTable->GetDensityFromH(HMin);
+       GateMessage("Core", 0, "H1/H2 " << h1 << " " << h2 << " = "
+       		  << mHounsfieldMaterialPropertiesVector[i]->GetName()
+       		  << " d=" << G4BestUnit(d, "Volumic Mass") << Gateendl);
       mHounsfieldMaterialTable->AddMaterial(HMin, HMax, d, *it);
-    //}
+    }
   }
   
   // Write final list of material
