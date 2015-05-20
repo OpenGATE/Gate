@@ -107,6 +107,12 @@ G4String DoubletoString(G4double a) {
   os << a;
   return G4String(os.str());
 }
+G4String InttoG4String(const G4int i)
+{
+	std::ostringstream stm ;
+	stm << i ;
+	return G4String(stm.str());
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

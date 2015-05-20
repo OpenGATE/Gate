@@ -15,6 +15,7 @@
 #include "G4AffineTransform.hh"
 #include "G4VSolid.hh"
 
+#include "GateMiscFunctions.hh"
 #include "GateTools.hh"
 #include "GateSystemListManager.hh"
 #include "GateVVolume.hh"
@@ -334,12 +335,12 @@ G4bool GateVSystem::CheckConnectionToCreator(GateVVolume* anCreator) const
 //-----------------------------------------------------------------------------
 GateSystemComponentList* GateVSystem::MakeComponentListAtLevel(G4int level) const
 {
-  G4String LevelName = "level_" + GateTools::InttoG4String(level);
+  G4String LevelName = "level_" + InttoG4String(level);
   GateSystemComponentList* currentList = new GateSystemComponentList(m_BaseComponent, LevelName);
   //currentList->push_back(m_BaseComponent);
   while ( (level>0) && !currentList->empty() ){
       level--;
-      LevelName = "level_" + GateTools::InttoG4String(level);
+      LevelName = "level_" + InttoG4String(level);
       GateSystemComponentList*  newList = new GateSystemComponentList(m_BaseComponent, LevelName);
       for (GateSystemComponentList::iterator it=currentList->begin(); it!=currentList->end(); it++){
       	 for (GateSystemComponent::child_iterator ichild=((GateSystemComponent*)(*it))->begin();
