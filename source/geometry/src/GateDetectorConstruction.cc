@@ -69,15 +69,21 @@ GateDetectorConstruction::GateDetectorConstruction()
 
   //-------------------------------------------------------------------------
   // Create default material (air) for the world
-  G4Element* N  = new G4Element("worldDefaultN","N" , 7., 14.01*g/mole );
-  G4Element* O  = new G4Element("worldDefaultO"  ,"O" , 8., 16.00*g/mole);
-  G4Material* Air = new G4Material("worldDefaultAir"  , 1.290*mg/cm3, 2);
-  Air->AddElement(N, 0.7);
-  Air->AddElement(O, 0.3);
+  //G4String AirName = "Air";
+  //G4Material* Air = theMaterialDatabase.GetMaterial(AirName);
+  //if (!Air)//will never enter here
+  //{
+	  G4String AirName = "worldDefaultAir";
+	  G4Element* N  = new G4Element("worldDefaultN","N" , 7., 14.01*g/mole );
+	  G4Element* O  = new G4Element("worldDefaultO"  ,"O" , 8., 16.00*g/mole);
+	  G4Material* Air = new G4Material(AirName  , 1.290*mg/cm3, 2);
+	  Air->AddElement(N, 0.7);
+	  Air->AddElement(O, 0.3);
+  //}
   //-------------------------------------------------------------------------
 
-  pworld = new GateBox("world", "worldDefaultAir",  pworld_x, pworld_y, pworld_z, true);
-  pworld->SetMaterialName("worldDefaultAir");
+  pworld = new GateBox("world", AirName,  pworld_x, pworld_y, pworld_z, true);
+  pworld->SetMaterialName(AirName);
 
   G4SDManager* SDman = G4SDManager::GetSDMpointer();
 
