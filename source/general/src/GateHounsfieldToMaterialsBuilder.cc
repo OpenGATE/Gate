@@ -19,7 +19,7 @@
 
 //-------------------------------------------------------------------------------------------------
 GateHounsfieldToMaterialsBuilder::GateHounsfieldToMaterialsBuilder()
-: mDensityTol(1)// FIXME: can't be 0, add a common tiny value
+: mDensityTol(0.1*g/cm3)// FIXME: can't be 0, add a common tiny value
 {
   pMessenger = new GateHounsfieldToMaterialsBuilderMessenger(this);
   mMaterialTableFilename = "undefined_mMaterialTableFilename";
@@ -113,7 +113,7 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
     double dDiffMax = mDensityTable->FindMaxDensityDifference(HMin, HMax);
 
     //if difference is 0 then split into 1 material only
-    double n = (dDiffMax)/dTol/(g/cm3); n = n<1 ? 1 : n;
+    double n = (dDiffMax)/dTol; n = n<1 ? 1 : n;
      GateMessage("Core", 0, "n = " << n << Gateendl);
     
     double HTol = (HMax-HMin)/n;
@@ -135,12 +135,13 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
     for(int j=0; j<n; j++) {
       double h1 = HMin+j*HTol;
       double h2 = std::min(HMin+(j+1)*HTol, HMax);
-      double d = mDensityTable->GetDensityFromH(h1+(h2-h1)/2.0);
-    	//double d = mDensityTable->GetDensityFromH(HMin);
+      //double d = mDensityTable->GetDensityFromH(h1+(h2-h1)/2.0);
+      double d = mDensityTable->GetDensityFromH(h1);
+        //density shall always be taken from the lower h, otherwise you will never have a real material description
        GateMessage("Core", 0, "H1/H2 " << h1 << " " << h2 << " = "
        		  << mHounsfieldMaterialPropertiesVector[i]->GetName()
        		  << " d=" << G4BestUnit(d, "Volumic Mass") << Gateendl);
-      mHounsfieldMaterialTable->AddMaterial(HMin, HMax, d, *it);
+      mHounsfieldMaterialTable->AddMaterial(h1, h2, d, *it);
     }
   }
   
