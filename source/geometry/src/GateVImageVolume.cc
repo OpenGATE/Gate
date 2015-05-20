@@ -319,7 +319,7 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
   mHounsfieldMaterialTable.Reset();
   // mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(), pImage->GetOutsideValue()+1,"worldDefaultAir");
   G4String parentMat = GetParentVolume()->GetMaterialName();
-  mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue()+1,parentMat);
+  mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue(),parentMat);
 
   while (is) {
     skipComment(is);
@@ -330,7 +330,7 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
     G4String n;
     is >> n;
     if (is) {
-      if(h2> pImage->GetOutsideValue()+1){
+      if(h2> pImage->GetOutsideValue()){
         if(h1<pImage->GetOutsideValue()+1) h1=pImage->GetOutsideValue()+1;
         mHounsfieldMaterialTable.AddMaterial(h1,h2,n);
       }
