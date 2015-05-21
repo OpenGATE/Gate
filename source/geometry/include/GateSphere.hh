@@ -38,8 +38,8 @@ public:
   GateSphere(const G4String& itsName, const G4String& itsMaterialName,
              G4double itsRmax,
              G4double itsRmin=0.,
-             G4double itsSPhi=0., G4double itsDPhi=2*M_PI,
-             G4double itsSTheta=0., G4double itsDTheta=M_PI,
+             G4double itsSPhi=0., G4double itsDPhi=twopi,
+             G4double itsSTheta=0., G4double itsDTheta=pi,
              G4bool acceptsChildren=true,
              G4int depth=0);
   //! Destructor

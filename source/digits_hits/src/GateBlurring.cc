@@ -11,7 +11,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateBlurringMessenger.hh"
 #include "GateTools.hh"
-
+#include "GateConstants.hh"
 #include "Randomize.hh"
 
 
@@ -36,7 +36,7 @@ void GateBlurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
 {
 	G4double currentEnergy = inputPulse->GetEnergy();
 	GatePulse* outputPulse = new GatePulse(*inputPulse);
-	outputPulse->SetEnergy(G4RandGauss::shoot(currentEnergy,(m_blurringLaw->ComputeResolution(currentEnergy)*currentEnergy)/2.35482));
+	outputPulse->SetEnergy(G4RandGauss::shoot(currentEnergy,(m_blurringLaw->ComputeResolution(currentEnergy)*currentEnergy)/GateConstants::fwhm_to_sigma));
 	outputPulseList.push_back(outputPulse);
 }
 

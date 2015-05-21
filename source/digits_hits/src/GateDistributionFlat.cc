@@ -57,7 +57,7 @@ G4double GateDistributionFlat::Value(G4double x) const
 //___________________________________________________________________
 G4double GateDistributionFlat::ShootRandom() const
 {
-    return (m_Min + (m_Max - m_Min)*G4UniformRand());
+    return G4RandFlat::shoot(m_Min, m_Max);
 }
 //___________________________________________________________________
 void GateDistributionFlat::DescribeMyself(size_t indent)
