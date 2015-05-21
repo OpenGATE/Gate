@@ -222,7 +222,7 @@ void GateSourceLinacBeam::GeneratePrimaryVertex(G4Event* evt) {
     //if (volumeNumber==0) Rmax=25.;   // cible  
 
     // Get angle from (flat random)
-    angle = CLHEP::RandFlat::shoot(2*TMath::Pi());
+    angle = CLHEP::RandFlat::shoot(twopi);
       
     // Get distance from center 
     r = mHistoRadius[volumeNumber]->GetRandom();
@@ -250,7 +250,7 @@ void GateSourceLinacBeam::GeneratePrimaryVertex(G4Event* evt) {
   // ========================================================
 
   // Get the theta direction (TODO)
-  angle=angle*180./TMath::Pi();
+  angle=rad2deg(angle);
   bin1=(int)mNbOfRadiusBinsForAngle*r/100; 
   bin2=(int)mNbOfEnergyBinsForAngle*mEnergy/8; 
   // DD(bin1);
@@ -283,9 +283,9 @@ void GateSourceLinacBeam::GeneratePrimaryVertex(G4Event* evt) {
 
   //==========================================================================================
   // conversion des angles degrés->radians
-  angle=angle*TMath::Pi()/180;
-  ThetaDirection=ThetaDirection*TMath::Pi()/180;
-  Phi=Phi*TMath::Pi()/180;
+  angle=deg2rad(angle);
+  ThetaDirection=deg2rad(ThetaDirection);
+  Phi=deg2rad(Phi);
 
   //==========================================================================================
   // Calcul du vecteur direction x y z

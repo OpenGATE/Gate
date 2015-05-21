@@ -93,7 +93,6 @@ protected:
   G4String mStatFilename;
   G4double threshold_energy_C12;
 
-  G4double Na;
   G4double A_12;
   G4double A_16;
   G4double max_energy_cross_section;

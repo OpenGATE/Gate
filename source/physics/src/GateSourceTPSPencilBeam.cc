@@ -29,6 +29,7 @@
 #ifdef G4ANALYSIS_USE_ROOT
 #include "GateSourceTPSPencilBeam.hh"
 #include "G4Proton.hh"
+#include "GateMiscFunctions.hh"
 
 //------------------------------------------------------------------------------------------------------
 GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( name ), mDistriGeneral(NULL)
@@ -112,11 +113,11 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                 FieldID = atoi(oneline);
 
                 for (int i = 0; i < 4; i++) inFile.getline(oneline, MAXLINE);
-                GantryAngle = atof(oneline) * TMath::Pi() / 180.;
+                GantryAngle = deg2rad(atof(oneline));
 
                 //MISSING COUCH ANGLE inserted
                 for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
-                CouchAngle = atof(oneline) * TMath::Pi() / 180.;
+                CouchAngle = deg2rad(atof(oneline));
 
                 for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
                 ReadLineTo3Doubles(IsocenterPosition, oneline);
@@ -167,7 +168,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
                         //        position[1]=SpotParameters[1]*(mDistanceSMYToIsocenter-mDistanceSourcePatient)/mDistanceSMYToIsocenter;
                         //        position[2]=mDistanceSourcePatient;
                         //correct orientation problem by rotation 90 degrees around x-Axis
-                        double xCorrection = 90.*TMath::Pi() / 180.;
+                        double xCorrection = halfpi; // 90.*TMath::Pi() / 180.;
                         //            position.rotateX(xCorrection-CouchAngle);
                         position.rotateX(xCorrection - CouchAngle);
                         //if (GantryAngle!=0)//orig

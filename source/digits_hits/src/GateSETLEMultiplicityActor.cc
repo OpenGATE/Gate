@@ -65,7 +65,7 @@ void GateSETLEMultiplicityActor::Construct()
   EnablePostUserTrackingAction(true);
   EnableUserSteppingAction(true);
     
-  if((mDefaultPrimaryMultiplicity<0) or (mDefaultSecondaryMultiplicity<0)) {
+  if((mDefaultPrimaryMultiplicity<0) || (mDefaultSecondaryMultiplicity<0)) {
     GateError("Multiplicity cannot be inferior to 0 (Mprim = " << mDefaultPrimaryMultiplicity << ", Msec = " << mDefaultSecondaryMultiplicity << ")");
   }
 }
@@ -248,8 +248,8 @@ void GateSETLEMultiplicityActor::UserSteppingAction(const GateVVolume *, const G
 	    for(int i=0; i<currentSecondaryMultiplicity; i++)
 	    {
 	      // Random generation of the angle (no physical crossSection for fluorescence)
-	      double phi = 2.*pi*G4UniformRand();
-	      double cosTheta = 2.*(G4UniformRand()-0.5);
+	      double phi = G4RandFlat::shoot(twopi);
+	      double cosTheta = G4RandFlat::shoot(-1.0, 1.0);
 	      G4ThreeVector momentum;
 	      momentum.setX(cos(phi)*sqrt(1.-(cosTheta*cosTheta)));
 	      momentum.setY(sin(phi)*sqrt(1.-(cosTheta*cosTheta)));

@@ -17,12 +17,13 @@
 
 #include "GateCrossSectionProductionActor.hh"
 #include "GateMiscFunctions.hh"
+#include "G4PhysicalConstants.hh"
 #include <sys/time.h>
 //-----------------------------------------------------------------------------
 GateCrossSectionProductionActor::GateCrossSectionProductionActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
   GateDebugMessageInc("Actor",4,"GateCrossSectionProductionActor() -- begin"<<G4endl);
-  Na=6.02e+23;
+
   mCurrentEvent=0;
   nb_elemt_C12_in_table=-1;
   nb_elemt_O16_in_table=-1;
@@ -428,10 +429,10 @@ void GateCrossSectionProductionActor::UserSteppingActionInVoxel(const int index,
 void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
 {
   GateDebugMessage("Actor", 3, "GateCrossSectionProductionActor -- End of Event" << G4endl);
-  double volume_vox=mIsotopeImage->GetValueImage().GetVoxelVolume()*1e-3;//switch to mm3 to cm3
+  double volume_vox=mIsotopeImage->GetValueImage().GetVoxelVolume() *millimeter3/centimeter3; //switch from mm3 to cm3
 
   G4double prod =0.;
-  G4double beam_entrance_section=mIsotopeImage->GetValueImage().GetVoxelSize().getX()*mIsotopeImage->GetValueImage().GetVoxelSize().getY()*1.0e-2; //in cm2
+  G4double beam_entrance_section=mIsotopeImage->GetValueImage().GetVoxelSize().getX()*mIsotopeImage->GetValueImage().GetVoxelSize().getY() / centimeter2; //in cm2
 
   for(std::map<int,int>::iterator i =PixelValuePerEvent.begin() ; i!=PixelValuePerEvent.end(); ++i){
     //in this condition either the pixel has already been treater or no detection in the voxel
@@ -446,16 +447,16 @@ void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
       G4double f_O16 = mfractionO16Image.GetValue(vox_id );
 
       if(m_IsC11 && mean_energy >=threshold_energy_C12 /*&& nb_elemt_C12_in_table !=1*/){
-        prod= volume_vox*Na*density_in_vox*f_C12/A_12*GetSectionEfficace(mean_energy,SectionTableC11_C12)*1e-24*1e-3/beam_entrance_section;
+        prod= volume_vox*Avogadro*density_in_vox*f_C12/A_12*GetSectionEfficace(mean_energy,SectionTableC11_C12)*1e-24*1e-3/beam_entrance_section;
         mIsotopeImage->AddValue(vox_id,prod);
 
       }
       if(m_IsC11 && mean_energy >=threshold_energy_C12 /*&& nb_elemt_O16_in_table !=1*/){
-        prod=volume_vox*Na*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableC11_O16)*1e-24*1e-3/beam_entrance_section;
+        prod=volume_vox*Avogadro*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableC11_O16)*1e-24*1e-3/beam_entrance_section;
         mIsotopeImage->AddValue(vox_id,prod);
       }
       if(m_IsO15 && mean_energy >=threshold_energy_O16 /*&& nb_elemt_O16_in_table !=1*/){
-        prod=volume_vox*Na*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableO15_O16)*1e-24*1e-3/beam_entrance_section;
+        prod=volume_vox*Avogadro*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableO15_O16)*1e-24*1e-3/beam_entrance_section;
         mIsotopeImage_O15->AddValue(vox_id,prod);
       }
       /*G4cout << mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getX()<< " "<< mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getY()<< " "<< mIsotopeImage.GetValueImage().GetCoordinatesFromIndex(vox_id).getZ()<< " ";
@@ -481,15 +482,15 @@ void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
       G4double f_O16 = mfractionO16Image.GetValue(vox_id );
 
       if(m_IsC11 && mean_energy >=threshold_energy_C12 /*&& nb_elemt_C12_in_table !=1*/){
-        prod= volume_vox*Na*density_in_vox*f_C12/A_12*GetSectionEfficace(mean_energy,SectionTableC11_C12)*1e-24*1e-3/beam_entrance_section;
+        prod= volume_vox*Avogadro*density_in_vox*f_C12/A_12*GetSectionEfficace(mean_energy,SectionTableC11_C12)*1e-24*1e-3/beam_entrance_section;
         mIsotopeImage->AddValue(vox_id,prod);
       }
       if(m_IsC11 && mean_energy >=threshold_energy_C12 /*&& nb_elemt_O16_in_table !=1*/){
-        prod=volume_vox*Na*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableC11_O16)*1e-24*1e-3/beam_entrance_section;
+        prod=volume_vox*Avogadro*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableC11_O16)*1e-24*1e-3/beam_entrance_section;
         mIsotopeImage->AddValue(vox_id,prod);
       }
       if(m_IsO15 && mean_energy >=threshold_energy_O16 /*&& nb_elemt_O16_in_table !=1*/){
-        prod=volume_vox*Na*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableO15_O16)*1e-24*1e-3/beam_entrance_section;
+        prod=volume_vox*Avogadro*density_in_vox*f_O16/A_16*GetSectionEfficace(mean_energy,SectionTableO15_O16)*1e-24*1e-3/beam_entrance_section;
         mIsotopeImage_O15->AddValue(vox_id,prod);
       }
 

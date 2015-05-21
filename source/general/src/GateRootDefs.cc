@@ -491,14 +491,10 @@ void GateRootCoincBuffer::Fill(GateCoincidenceDigi* aDigi)
 G4double GateRootCoincBuffer::ComputeSinogramTheta()
 {
   G4double theta;
-  
-  if ((globalPosX1-globalPosX2) != 0.) {
-    theta = atan( (globalPosX1 - globalPosX2) / (globalPosY1 - globalPosY2) );
-    if (theta < 0.) theta = theta+3.1416;
-  } else {
-    theta=3.1416/2.;
+  theta = atan2(globalPosX1-globalPosX2, globalPosY1-globalPosY2);
+  if (theta < 0.0) {
+      theta = theta + pi;
   }
-
   return theta;
 }
 
@@ -515,27 +511,18 @@ G4double GateRootCoincBuffer::ComputeSinogramS()
   if (denom!=0.) {
     denom = sqrt(denom);
 
-    s = ( globalPosX1 * (globalPosY2-globalPosY1) +
-	  globalPosY1 * (globalPosX1-globalPosX2)  ) 
+    s = ( globalPosX1 * (globalPosY1-globalPosY2) +
+	  globalPosY1 * (globalPosX2-globalPosX1)  )
       	/ denom; 
   } else {
     s = 0.;
   }
 
   G4double theta;
-  if ((globalPosX1-globalPosX2)!=0.) {
-    theta=atan((globalPosX1-globalPosX2) /
-	       (globalPosY1-globalPosY2));
-  } else {
-    theta=3.1416/2.;
+  theta = atan2(globalPosX1-globalPosX2, globalPosY1-globalPosY2);
+  if (theta<0.0) {
+      s=-s;
   }
-  if ((theta > 0.) && ((globalPosX1-globalPosX2) > 0.)) s = -s;
-  if ((theta < 0.) && ((globalPosX1-globalPosX2) < 0.)) s = -s;
-  if ( theta < 0.) {
-    theta = theta+3.1416;
-    s = -s;
-  }
-
   return s;
 }
 
