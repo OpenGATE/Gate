@@ -26,6 +26,7 @@ GatePromptGammaStatisticActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
   pMessenger = new GatePromptGammaStatisticActorMessenger(this);
+  sigma_filled = false;
 }
 //-----------------------------------------------------------------------------
 
@@ -139,10 +140,12 @@ void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
   data.GetHEpInelastic()->Fill(particle_energy/MeV);
 
   // Only once : cross section of ProtonInelastic in that material
-  static bool sigma_filled=false;
   if (!sigma_filled) {
     for (int bin = 1; bin < data.GetHEpSigmaInelastic()->GetNbinsX()+1; bin++) {
-      G4double local_energy = data.GetHEpSigmaInelastic()->GetBinCenter(bin)*MeV;
+      G4double local_energy = data.GetHEpSigmaInelastic()->GetBinCenter(bin)*MeV;  //bincenter is convert to
+
+      //DD(local_energy); // Check this
+
       const G4double cross_section_local = store->GetCrossSectionPerVolume(particle, local_energy, process, material);
       data.GetHEpSigmaInelastic()->SetBinContent(bin,cross_section_local);
     }

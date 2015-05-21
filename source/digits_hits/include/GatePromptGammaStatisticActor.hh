@@ -44,6 +44,8 @@ protected:
   GatePromptGammaStatisticActorMessenger * pMessenger;
 
   GatePromptGammaData data;
+
+  bool sigma_filled;
 };
 //-----------------------------------------------------------------------------
 
