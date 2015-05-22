@@ -405,7 +405,11 @@ void GateVImageVolume::DumpHLabelImage() {
 			 po++;
 			 pi++;
 			 }*/
-			double Dens = mHounsfieldMaterialTable[(int)*pi].md1/(g/cm3);
+			double Dens =
+					mLoadImageMaterialsFromHounsfieldTable ?
+							mHounsfieldMaterialTable[(int) *pi].md1
+									/ (g / cm3) :
+							mRangeMaterialTable[(int) *pi].md1 / (g / cm3);
 			*po = Dens;
 			pi++;
 			po++;
@@ -579,6 +583,7 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable() {
 	}
 	GateMessageDec("Volume", 5,
 			"End GateVImageVolume::LoadImageMaterialsFromRangeTable(" <<mRangeToImageMaterialTableFilename<<")\n");
+	DumpHLabelImage();
 }
 //--------------------------------------------------------------------
 
