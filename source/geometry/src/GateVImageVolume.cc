@@ -22,6 +22,7 @@
 #include "GateDMapdt.h"
 #include "GateHounsfieldMaterialTable.hh"
 #include <G4TransportationManager.hh>
+#include "globals.hh"
 
 typedef unsigned int uint;
 
@@ -404,7 +405,8 @@ void GateVImageVolume::DumpHLabelImage() {
 			 po++;
 			 pi++;
 			 }*/
-			*po = *pi;
+			double Dens = mHounsfieldMaterialTable[(int)*pi].md1/(g/cm3);
+			*po = Dens;
 			pi++;
 			po++;
 		}
