@@ -245,7 +245,7 @@ G4int GateVSystem::ComputeComponentID(GateSystemComponent* aComponent, const Gat
     return ComputeMainComponentID(aComponent,volumeID);
 
   // Loop on the volume's creators until we recognise the component's creator
-  for (std::vector<GateVolumeSelector>::const_iterator it=volumeID.begin();
+  for (GateVolumeID::const_iterator it=volumeID.begin();
 		  it!=volumeID.end(); it++)
 	  if (it->GetCreator() == aComponent->GetCreator())
 		  return it->GetCopyNo();
@@ -263,7 +263,7 @@ G4int GateVSystem::ComputeMainComponentID(GateSystemComponent* aComponent, const
   G4bool found = false;
 
   // Loop on the volume's creators until we recognize our own creator
-  for (std::vector<GateVolumeSelector>::const_iterator it=volumeID.begin();
+  for (GateVolumeID::const_iterator it=volumeID.begin();
   		  it!=volumeID.end(); it++)
     if ( it->GetCreator() == aComponent->GetCreator()) {
       copyNo = it->GetCopyNo();
@@ -342,11 +342,12 @@ GateSystemComponentList* GateVSystem::MakeComponentListAtLevel(G4int level) cons
       level--;
       LevelName = "level_" + InttoG4String(level);
       GateSystemComponentList*  newList = new GateSystemComponentList(m_BaseComponent, LevelName);
-      for (GateSystemComponentList::iterator it=currentList->begin(); it!=currentList->end(); it++){
-      	 for (GateSystemComponent::child_iterator ichild=((GateSystemComponent*)(*it))->begin();
-      			 ichild!=((GateSystemComponent*)(*it))->end();ichild++)
+      for (GateSystemComponentList::iterator it=currentList->begin(); it!=currentList->end(); it++)
+      {
+    	  GateSystemComponent * acomp = (GateSystemComponent*)(*it);
+      	 for (GateSystemComponent::child_iterator ichild=acomp->begin(); ichild!=acomp->end(); ichild++)
       	 {
-      		 newList->InsertChildComponent((GateSystemComponent*)(*ichild));
+      		 newList->InsertChildComponent(acomp);
       	 }
       }
       delete currentList;
@@ -362,11 +363,14 @@ size_t GateVSystem::ComputeNofElementsAtLevel(size_t level) const
   GateSystemComponentList* currentList = MakeComponentListAtLevel(level);
   size_t ans = 0;
   for (GateSystemComponentList::iterator it=currentList->begin(); it!=currentList->end(); it++)
-   if ( ((GateSystemComponent*)(*it))->IsActive() )
+  {
+	  GateSystemComponent * acomp = (GateSystemComponent*)(*it);
+   if ( acomp->IsActive() )
    {
-	 size_t nofVol = ((GateSystemComponent*)(*it))->GetVolumeNumber();
+	 size_t nofVol = acomp->GetVolumeNumber();
 	 ans += nofVol ? nofVol : 1;
    }
+  }
   delete currentList;
   return ans;
 }
@@ -472,8 +476,7 @@ G4ThreeVector GateVSystem::ComputeObjectCenter(const GateVolumeID* volID) const
    G4RotationMatrix rotation ;
    G4ThreeVector translation ;
    G4VPhysicalVolume* vol=0;
-   for (std::vector<GateVolumeSelector>::const_iterator it=volID->begin();
-   		  it!=volID->end(); it++){
+   for (GateVolumeID::const_iterator it=volID->begin(); it!=volID->end(); it++){
       vol = it->GetVolume();
       G4RotationMatrix rot= vol->GetObjectRotationValue() ;
       G4ThreeVector transl= vol->GetObjectTranslation() ;

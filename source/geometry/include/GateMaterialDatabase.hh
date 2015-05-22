@@ -1,16 +1,15 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+ Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
-
+ This software is distributed under the terms
+ of the GNU Lesser General  Public Licence (LGPL)
+ See GATE/LICENSE.txt for further details
+ ----------------------*/
 
 /*!
-  \class GateMaterialDatabase
-  \ingroup scene
-*/
+ \class GateMaterialDatabase
+ \ingroup scene
+ */
 
 #ifndef GateMaterialDatabase_hh
 #define GateMaterialDatabase_hh
@@ -27,34 +26,40 @@ class G4Material;
 
 //#define DEFAULT_GATESURFACEMATDB "Materials.xml"
 
-class GateMaterialDatabase
-{
+class GateMaterialDatabase {
 public:
-  GateMaterialDatabase();
-  ~GateMaterialDatabase();
-  typedef std::vector<GateMDBFile*> GateMDBVec;
-  typedef GateMDBVec::iterator iterator;
-  typedef GateMDBVec::const_iterator const_iterator;
-  iterator begin(){ return mMDBFile.begin(); }
-  iterator end(){ return mMDBFile.end(); }
+	GateMaterialDatabase();
+	~GateMaterialDatabase();
+	typedef std::vector<GateMDBFile*> GateMDBVec;
+	typedef GateMDBVec::iterator iterator;
+	typedef GateMDBVec::const_iterator const_iterator;
+	iterator begin() {
+		return mMDBFile.begin();
+	}
+	iterator end() {
+		return mMDBFile.end();
+	}
 
-  void AddMDBFile(const G4String& filename);
+	void AddMDBFile(const G4String& filename);
 
-  G4Element*  GetElement(const G4String& name);
-  G4Material* GetMaterial(const G4String& materialName);
-
+	G4Element* GetElement(const G4String& name);
+	G4Material* GetMaterial(const G4String& materialName);
 
 protected:
-  G4Element*  ReadElementFromDBFile(const G4String& elementName)  ;
-  G4Material* ReadMaterialFromDBFile(const G4String& materialName);
+	G4Element* ReadElementFromDBFile(const G4String& elementName);
+	G4Material* ReadMaterialFromDBFile(const G4String& materialName);
 
-  //'false' to avoid warning messages!
-  inline G4Element*  LookForElementInTable(const G4String& elementName)   { return G4Element::GetElement(elementName,false); }
-  inline G4Material* LookForMaterialInTable(const G4String& materialName) { return G4Material::GetMaterial(materialName, false); }
+	//'false' to avoid warning messages!
+	inline G4Element* LookForElementInTable(const G4String& elementName) {
+		return G4Element::GetElement(elementName, false);
+	}
+	inline G4Material* LookForMaterialInTable(const G4String& materialName) {
+		return G4Material::GetMaterial(materialName, false);
+	}
 
 private:
-  GateMDBVec mMDBFile;
-  G4MaterialPropertiesTable * water_MPT;
+	GateMDBVec mMDBFile;
+	G4MaterialPropertiesTable * water_MPT;
 };
 
 #endif
