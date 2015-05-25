@@ -49,16 +49,17 @@ public:
     ~GateImageBox();
 
   typedef float PixelType; // FIXME
+  typedef std::vector<PixelType> PixelTypeVec;
 
     void DescribeYourselfTo(G4VGraphicsScene& scene) const;
 private:
 #ifdef GATEIMAGEBOX_USE_OPENGL
     void DescribeYourselfTo(G4OpenGLSceneHandler& scene) const;
 
-    std::vector<PixelType> getXYSlice(const GateImage & image, const size_t z) const;
-    std::vector<PixelType> getXZSlice(const GateImage & image, const size_t y) const;
-    std::vector<PixelType> getYZSlice(const GateImage & image, const size_t x) const;
-    GLubyte * convertToRGB(std::vector<PixelType> slice, PixelType min, PixelType max) const;
+    PixelTypeVec getXYSlice(const GateImage & image, const size_t z) const;
+    PixelTypeVec getXZSlice(const GateImage & image, const size_t y) const;
+    PixelTypeVec getYZSlice(const GateImage & image, const size_t x) const;
+    GLubyte * convertToRGB(PixelTypeVec slice, PixelType min, PixelType max) const;
     GLuint genOpenGLTexture(const GLubyte * rgb, int width, int height) const;
     void initOpenGLTextures(const GateImage & image, const size_t x, const size_t y, const size_t z);
 
