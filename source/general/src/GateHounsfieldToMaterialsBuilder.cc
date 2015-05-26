@@ -7,10 +7,10 @@
  ----------------------*/
 
 /*!
- \class  GateHounsfieldToMaterialsBuilder.cc
- \brief
- \author david.sarrut@creatis.insa-lyon.fr
- */
+  \class  GateHounsfieldToMaterialsBuilder.cc
+  \brief
+  \author david.sarrut@creatis.insa-lyon.fr
+*/
 
 #include "GateHounsfieldToMaterialsBuilder.hh"
 #include "GateHounsfieldMaterialTable.hh"

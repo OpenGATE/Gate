@@ -475,9 +475,8 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable() {
 
 //--------------------------------------------------------------------
 void GateVImageVolume::LoadImageMaterialsFromRangeTable() {
-	GateMessageInc("Volume", 5,
-			"Begin GateVImageVolume::LoadImageMaterialsFromRangeTable(" <<mRangeToImageMaterialTableFilename<<")\n");
-	//m_voxelMaterialTranslation.clear();
+  DD("LoadImageMaterialsFromRangeTable");
+  //m_voxelMaterialTranslation.clear();
 
 	std::ifstream inFile;
 
