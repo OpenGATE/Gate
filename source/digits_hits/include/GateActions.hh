@@ -58,7 +58,7 @@ public :
   //-----------------------------------------------------------------------------
 
 private:
-  GateRunAction() {}
+  GateRunAction() {}  //What is this for??
   GateUserActions* pCallbackMan;
   GateRecorderBase* recorder;
   G4int runIDcounter;
@@ -89,7 +89,7 @@ public :
   static inline GateEventAction* GetEventAction() { return peventAction; };
   //-----------------------------------------------------------------------------
 private:
-  GateEventAction() {}
+  GateEventAction() {}  //What is this for??
   GateUserActions* pCallbackMan;
   GateRecorderBase* recorder;
   G4bool flagBasicOutput;
@@ -112,7 +112,7 @@ public :
   void ShowG4TrackInfos( G4String,G4Track* );
   //-----------------------------------------------------------------------------
 private:
-  GateTrackingAction() {}
+  GateTrackingAction() {}  //What is this for??
   GateUserActions* pCallbackMan;
 
   /* PY Descourt 08/09/2009 */
@@ -160,7 +160,7 @@ public :
 
   //-----------------------------------------------------------------------------
 private:
-  GateSteppingAction() {}
+  GateSteppingAction() {}  //What is this for??
   GateUserActions* pCallbackMan;
   GateRecorderBase* recorder;
   G4int m_drawTrjLevel;

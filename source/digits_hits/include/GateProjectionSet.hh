@@ -291,6 +291,8 @@ inline GateProjectionSet::GateProjectionSet()
   , m_dataMax(0)
   , m_currentProjectionID(-1)
   , m_verboseLevel(0)
+  , m_rec(0)
+  , m_rej(0)
 {
   m_ARFdata = 0;
   m_ARFdataMax = 0;

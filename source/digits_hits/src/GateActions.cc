@@ -514,7 +514,7 @@ void GateTrackingAction::ShowG4TrackInfos( G4String outF, G4Track* aTrack )
 
 //-----------------------------------------------------------------------------
 GateSteppingAction::GateSteppingAction(GateUserActions * cbm, GateRecorderBase* r)
-  : pCallbackMan(cbm), recorder(r)
+  : pCallbackMan(cbm), recorder(r), m_NfilesRS(0), m_currentNRS(0)
 {
   m_drawTrjLevel = 1;
   m_verboseLevel = 0;

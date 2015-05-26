@@ -56,6 +56,7 @@ public:
 	  m_fileBaseName(G4String("")),
   	  m_collectionName(aCollectionName),
 	  m_fileCounter(0),
+	  m_outputFileBegin(0),
 	  m_collectionID(-1)
 	  //	  m_outputFileSizeLimit(2000000000),
 	{}

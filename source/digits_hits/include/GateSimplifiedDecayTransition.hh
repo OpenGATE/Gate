@@ -1,11 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+ Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
-
+ This software is distributed under the terms
+ of the GNU Lesser General  Public Licence (LGPL)
+ See GATE/LICENSE.txt for further details
+ ----------------------*/
 
 #ifndef GateSimplifiedDecayTransition_H
 #define GateSimplifiedDecayTransition_H 1
@@ -24,72 +23,62 @@ See GATE/LICENSE.txt for further details
 using namespace std;
 
 class GateSimplifiedDecay;
-typedef pair<string,double> psd;
-
+typedef pair<string, double> psd;
 
 class GateSimplifiedDecayTransition {
 
-  friend class GateSimplifiedDecay;
+	friend class GateSimplifiedDecay;
 
- public:
+public:
 
-  GateSimplifiedDecayTransition(int cs, int ns, double pr,  mem_fun_t<psd,GateSimplifiedDecayTransition> act, double en=0, double ampl=0, double norm=0, int Z=0):
-    currentState(cs),
-    nextState(ns),
-    probability(pr),
-    action(act),
-    energy(en),
-    amplitude(ampl),
-    normalisationFactor(norm),
-    atomicNumber(Z){;}
+	GateSimplifiedDecayTransition(int cs, int ns, double pr,
+			mem_fun_t<psd, GateSimplifiedDecayTransition> act, double en = 0,
+			double ampl = 0, double norm = 0, int Z = 0) :
+			sequenceNumber(0), currentState(cs), nextState(ns), probability(pr),
+			action(act), energy(en), amplitude(ampl), normalisationFactor(norm),
+			atomicNumber(Z) {
+	}
 
-  ~GateSimplifiedDecayTransition(){;}
+	~GateSimplifiedDecayTransition() {
+	}
 
-  inline psd issueGamma(){
-    return psd("gamma",energy);
-  }
-  inline psd issuePositron(){
-    //    return  psd("e+",majoredHitAndMiss());
-    return  psd("e+",simpleHitAndMiss());
-  }
-  inline psd issueNone(){
-    return  psd("none",0);
-  }
+	inline psd issueGamma() {
+		return psd("gamma", energy);
+	}
+	inline psd issuePositron() {
+		//    return  psd("e+",majoredHitAndMiss());
+		return psd("e+", simpleHitAndMiss());
+	}
+	inline psd issueNone() {
+		return psd("none", 0);
+	}
 
+	void print() {
+		cout << currentState << ", " << nextState << ", " << probability << ", "
+				<< energy << ", " << amplitude << ", " << normalisationFactor
+				<< ", " << atomicNumber << endl;
+	}
 
+	GateSimplifiedDecayTransition* sample(int n) {
+		for (int i = 0; i < n; i++)
+			cout << majoredHitAndMiss() << endl;
+		return this;
+	}
 
-  void print(){
-    cout
-	 << currentState << ", "
-	 <<  nextState << ", "
-	 <<  probability << ", "
-	 <<  energy << ", "
-	 <<  amplitude << ", "
-	 <<  normalisationFactor << ", "
-	 <<  atomicNumber
-	 <<  endl;
-  }
+private:
 
-  GateSimplifiedDecayTransition* sample(int n){
-    for (int i=0; i<n; i++) cout << majoredHitAndMiss() << endl;
-    return this;
-  }
+	double fermiFunction(double eKin);
+	double simpleHitAndMiss();
+	double majoredHitAndMiss();
 
-
- private:
-
-  double fermiFunction(double eKin);
-  double simpleHitAndMiss();
-  double majoredHitAndMiss();
-
-  inline double majoringFunction(double x){
-    return amplitude*sin(pi*x/energy);
-  }
-  inline double majoringInverseCDF(double x){
-    return energy/pi*acos(-pi*x/(energy * amplitude));
-  }
-  inline double CDFRandom(){
-    return majoringInverseCDF( energy * amplitude/pi * (2*G4UniformRand()-1) );
+	inline double majoringFunction(double x) {
+		return amplitude * sin(pi * x / energy);
+	}
+	inline double majoringInverseCDF(double x) {
+		return energy / pi * acos(-pi * x / (energy * amplitude));
+	}
+	inline double CDFRandom() {
+		return majoringInverseCDF(energy * amplitude / pi * (2 * G4UniformRand()-1) );
   }
 
  private:

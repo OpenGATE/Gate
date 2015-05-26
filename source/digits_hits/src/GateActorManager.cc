@@ -21,6 +21,7 @@ GateActorManager::GateActorManager()
 
   pActorManagerMessenger = new GateActorManagerMessenger(this);
   IsInitialized =0;
+  mCurrentEventId=0;
   resetAfterSaving = false;
   GateDebugMessageDec("Actor",4,"GateActormanager() -- end\n");
 }
