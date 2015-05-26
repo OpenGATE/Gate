@@ -40,8 +40,8 @@ GateTemporalResolution::~GateTemporalResolution()
 void GateTemporalResolution::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
 {
   if(m_timeResolution < 0 ) {
-    G4cerr << 	G4endl << "[GateTemporalResolution::ProcessOnePulse]:" << G4endl
-      	   <<   "Sorry, but the resolution (" << GetTimeResolution() << ") is invalid" << G4endl;
+    G4cerr << 	Gateendl << "[GateTemporalResolution::ProcessOnePulse]:\n"
+      	   <<   "Sorry, but the resolution (" << GetTimeResolution() << ") is invalid\n";
     G4Exception( "GateTemporalResolution::ProcessOnePulse", "ProcessOnePulse", FatalException,
 			"You must choose a temporal resolution >= 0 /gate/digitizer/Singles/Singles/timeResolution/setTimeResolution TIME\n or disable the temporal resolution using:\n\t/gate/digitizer/Singles/Singles/timeResolution/disable\n");
   }
@@ -62,13 +62,13 @@ void GateTemporalResolution::ProcessOnePulse(const GatePulse* inputPulse,GatePul
 
 	if (nVerboseLevel>1)
 	  {
-	    G4cout << "Pulse real time: " << G4endl
-		   << G4BestUnit(inputPulse->GetTime(),"Time") << G4endl
-		   << "Pulse new time: " << G4endl
-		   << G4BestUnit(outputPulse->GetTime(),"Time") << G4endl
-		   << "Difference (real - new time): " << G4endl
+	    G4cout << "Pulse real time: \n"
+		   << G4BestUnit(inputPulse->GetTime(),"Time") << Gateendl
+		   << "Pulse new time: \n"
+		   << G4BestUnit(outputPulse->GetTime(),"Time") << Gateendl
+		   << "Difference (real - new time): \n"
 		   << G4BestUnit(inputPulse->GetTime() - outputPulse->GetTime(),"Time")
-		   << G4endl << G4endl ;
+		   << Gateendl << Gateendl ;
 
 	  }
       }
@@ -78,5 +78,5 @@ void GateTemporalResolution::ProcessOnePulse(const GatePulse* inputPulse,GatePul
 
 void GateTemporalResolution::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Temporal resolution: " << G4BestUnit(m_timeResolution,"Time") << G4endl;
+  G4cout << GateTools::Indent(indent) << "Temporal resolution: " << G4BestUnit(m_timeResolution,"Time") << Gateendl;
 }

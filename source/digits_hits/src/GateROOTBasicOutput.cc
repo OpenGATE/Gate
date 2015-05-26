@@ -117,7 +117,7 @@ void GateROOTBasicOutput::RecordEndOfRun(const G4Run*)
 {
   hfile->Write();
   hfile->Close();
-  G4cout << " The hfile  " << hfile << " is closed. " << G4endl;
+  G4cout << " The hfile  " << hfile << " is closed. \n";
 }
 //----------------------------------------------------------------
 
@@ -174,7 +174,7 @@ void GateROOTBasicOutput::RecordEndOfEvent(const G4Event* event )
   // ooOO0OOoo  Remplissage du Tree ooOO0OOoo
   tree->Fill();
 
-  //  G4cout << " FIN GateROOTBasicOutput::RecordEndOfEvent" << G4endl;
+  //  G4cout << " FIN GateROOTBasicOutput::RecordEndOfEvent\n";
 }
 //-----------------------------------------------------------------
 
@@ -188,7 +188,7 @@ void GateROOTBasicOutput::RecordStepWithVolume(const GateVVolume *, const G4Step
 void GateROOTBasicOutput::SetfileName(G4String name)
 {
   fileName = name;
-  G4cout << " The ROOTBasic file name is = " << fileName << "." << G4endl;
+  G4cout << " The ROOTBasic file name is = " << fileName << ".\n";
 }
 //-----------------------------------------------------------------
 

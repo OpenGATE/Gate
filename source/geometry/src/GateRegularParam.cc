@@ -39,18 +39,18 @@ void GateRegularParam::ConstructOwnPhysicalVolume(G4bool flagUpdate)
 {
   if (itsInserter->GetVerbosity()>=1) {
     G4cout << "---- Exiting GateRegularParam::ConstructOwnPhysicalVolumes ..."
-             << G4endl
+             << Gateendl
              << "     --> without flagUpdate"        
-	     << G4endl << std::flush;
+	     << Gateendl << std::flush;
   }
 
   // For the update case; there is nothing to do here.
   if (flagUpdate) {
     if (itsInserter->GetVerbosity()>=1) {
       G4cout << "---- Exiting GateRegularParam::ConstructOwnPhysicalVolumes ..."
-             << G4endl
+             << Gateendl
              << "     --> with flagUpdate = true"
-             << G4endl << std::flush;
+             << Gateendl << std::flush;
     }
     return;
   }
@@ -79,7 +79,7 @@ void GateRegularParam::ConstructOwnPhysicalVolume(G4bool flagUpdate)
 
   if (itsInserter->GetVerbosity()>=1) {
     G4cout << "---- Exiting GateRegularParam::ConstructOwnPhysicalVolumes ..."
-           << G4endl << std::flush;
+           << Gateendl << std::flush;
   }
 }
 
@@ -90,7 +90,7 @@ void GateRegularParam::DestroyGeometry()
 {
   if (itsInserter->GetVerbosity()>=1) {
     G4cout << "++++ Entering GateRegularParam::DestroyOwnPhysicalVolumes ..."
-           << G4endl << std::flush;
+           << Gateendl << std::flush;
   }
 
   if (m_parameterization)
@@ -101,6 +101,6 @@ void GateRegularParam::DestroyGeometry()
   GateVVolume::DestroyGeometry();
   if (itsInserter->GetVerbosity()>=1) {
     G4cout << "---- Exiting GateRegularParam::DestroyOwnPhysicalVolumes ..."
-           << G4endl << std::flush;
+           << Gateendl << std::flush;
   }
 }

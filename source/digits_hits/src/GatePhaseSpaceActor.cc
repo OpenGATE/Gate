@@ -33,7 +33,7 @@
 // --------------------------------------------------------------------
 GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   GateVActor(name, depth) {
-  GateDebugMessageInc("Actor", 4, "GatePhaseSpaceActor() -- begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "GatePhaseSpaceActor() -- begin\n");
 
   pMessenger = new GatePhaseSpaceActorMessenger(this);
 
@@ -73,7 +73,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   pIAEARecordType = 0;
   pIAEAheader = 0;
   mFileSize = 0;
-  GateDebugMessageDec("Actor", 4, "GatePhaseSpaceActor() -- end" << G4endl);
+  GateDebugMessageDec("Actor", 4, "GatePhaseSpaceActor() -- end\n");
 }
 // --------------------------------------------------------------------
 
@@ -81,7 +81,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
 // --------------------------------------------------------------------
 /// Destructor
 GatePhaseSpaceActor::~GatePhaseSpaceActor() {
-  GateDebugMessageInc("Actor", 4, "~GatePhaseSpaceActor() -- begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "~GatePhaseSpaceActor() -- begin\n");
   // if(pIAEAFile) fclose(pIAEAFile);
   //  pIAEAFile = 0;
   free(pIAEAheader);
@@ -89,7 +89,7 @@ GatePhaseSpaceActor::~GatePhaseSpaceActor() {
   pIAEAheader = 0;
   pIAEARecordType = 0;
   delete pMessenger;
-  GateDebugMessageDec("Actor", 4, "~GatePhaseSpaceActor() -- end" << G4endl);
+  GateDebugMessageDec("Actor", 4, "~GatePhaseSpaceActor() -- end\n");
 }
 // --------------------------------------------------------------------
 
@@ -112,7 +112,7 @@ void GatePhaseSpaceActor::Construct() {
   if (extension == "root") mFileType = "rootFile";
   else if (extension == "IAEAphsp" || extension == "IAEAheader" ) mFileType = "IAEAFile";
   else GateError( "Unknow phase space file extension. Knowns extensions are : "
-                    << G4endl << ".IAEAphsp (or IAEAheader), .root" << G4endl);
+                    << Gateendl << ".IAEAphsp (or IAEAheader), .root\n");
 
   if (mFileType == "rootFile") {
 
@@ -200,8 +200,6 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e) {
 
   //----------------------- Set Primary Energy ------------------------
   bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy(); //GetInitialEnergy oid.
-  //cout << "Debug: GetPrimaryVertex " << e->GetPrimaryVertex()->Print(); << endl;
-  //G4cout << "Debug: bPrimaryEnergy " << bPrimaryEnergy << G4endl;
   //-------------------------------------------------------------------
 
   //----------------------- Set SourceID ------------------------
@@ -211,7 +209,6 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e) {
     //GateSourceTPSPencilBeam * tpspencilsource = dynamic_cast<GateSourceTPSPencilBeam*>(GateSourceMgr::GetInstance()->GetSource(0));
     //if (tpspencilsource == null) GateError("Please select a TPSPencilBeamSource if you want to store SpotIDs.");
     bSpotID = tpspencilsource->GetCurrentSpotID();
-    //G4cout << "Debug: SpotID: " << bSpotID << G4endl;
   }
   //-------------------------------------------------------------------
 }
@@ -388,19 +385,19 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   GateDebugMessage("Actor", 4, st
                    << " stepPoint time proper=" << G4BestUnit(stepPoint->GetProperTime(), "Time")
                    << " global=" << G4BestUnit(stepPoint->GetGlobalTime(), "Time")
-                   << " local=" << G4BestUnit(stepPoint->GetLocalTime(), "Time") << G4endl);
+                   << " local=" << G4BestUnit(stepPoint->GetLocalTime(), "Time") << Gateendl);
   GateDebugMessage("Actor", 4, "trackid="
                    << step->GetTrack()->GetParentID()
-                   << " event=" << G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID()
-                   << " run=" << G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID() << G4endl);
-  GateDebugMessage("Actor", 4, "pos = " << x << " " << y  << " " << z << G4endl);
-  GateDebugMessage("Actor", 4, "E = " << G4BestUnit(stepPoint->GetKineticEnergy(), "Energy") << G4endl);
+                   << " event=" << GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID()
+                   << " run=" << GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID() << Gateendl);
+  GateDebugMessage("Actor", 4, "pos = " << x << " " << y  << " " << z << Gateendl);
+  GateDebugMessage("Actor", 4, "E = " << G4BestUnit(stepPoint->GetKineticEnergy(), "Energy") << Gateendl);
 
   //---------Write energy of step present at the simulation--------------------------
   e = stepPoint->GetKineticEnergy();
 
   m = step->GetTrack()->GetDefinition()->GetAtomicMass();
-  //G4cout << st << " " << step->GetTrack()->GetDefinition()->GetAtomicMass() << " " << step->GetTrack()->GetDefinition()->GetPDGMass() << G4endl;
+  //G4cout << st << " " << step->GetTrack()->GetDefinition()->GetAtomicMass() << " " << step->GetTrack()->GetDefinition()->GetPDGMass() << Gateendl;
 
   //----------Process name at origin Track--------------------
   st = "";

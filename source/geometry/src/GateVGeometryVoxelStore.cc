@@ -42,21 +42,21 @@ GateVGeometryVoxelStore::~GateVGeometryVoxelStore()
 
 void GateVGeometryVoxelStore::SetDefaultMaterial(G4String materialName) 
 { 
-  SetDefaultMaterial( GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(materialName) );
+  SetDefaultMaterial( theMaterialDatabase.GetMaterial(materialName) );
 }
 
 void GateVGeometryVoxelStore::Describe(G4int ) 
 {
 
-  G4cout << "  Geom. voxel store -----> " << m_type << G4endl
+  G4cout << "  Geom. voxel store -----> " << m_type << Gateendl
 	 << "  position  (mm)         : " 
 	 << GetPosition().x()/mm << " " 
 	 << GetPosition().y()/mm << " " 
-	 << GetPosition().z()/mm << G4endl
+	 << GetPosition().z()/mm << Gateendl
 	 << "  voxel size  (mm)       : " 
 	 << GetVoxelSize().x()/mm << " " 
 	 << GetVoxelSize().y()/mm << " " 
-	 << GetVoxelSize().z()/mm << G4endl;
+	 << GetVoxelSize().z()/mm << Gateendl;
 
 }
 

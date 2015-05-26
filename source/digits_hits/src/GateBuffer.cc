@@ -57,7 +57,7 @@ void GateBuffer::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outp
       case 0 : m_bufferPos[iBuf] = m_bufferPos[iBuf]>deltaClocks ? m_bufferPos[iBuf]-deltaClocks : 0; break;
       case 1 : if (deltaClocks>0) m_bufferPos[iBuf]=0;break;
    }
-//   G4cout<<"Using buffer "<<iBuf<<" for level1="<<inputPulse->GetComponentID(1)<<G4endl;
+//   G4cout<<"Using buffer "<<iBuf<<" for level1="<<inputPulse->GetComponentID(1)<< Gateendl;
    if (m_bufferPos[iBuf]+1<=m_bufferSize) {
       GatePulse* pls = new GatePulse(*inputPulse);
       if (m_doModifyTime) {
@@ -74,5 +74,5 @@ void GateBuffer::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outp
 void GateBuffer::DescribeMyself(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "Buffer: " << G4BestUnit(m_bufferSize,"Memory size")
-         << "Read @ "<< G4BestUnit(m_readFrequency,"Frequency")<<G4endl;
+         << "Read @ "<< G4BestUnit(m_readFrequency,"Frequency")<< Gateendl;
 }

@@ -13,6 +13,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcommand.hh"
 #include <vector>
 #include "GateTokenizer.hh"
+#include "GateMessageManager.hh"
 
 //LF
 //#include <strstream>
@@ -56,7 +57,7 @@ GateUIcmdWithAVector<vContentType>::GateUIcmdWithAVector
 template<typename vContentType>
 std::vector<vContentType> GateUIcmdWithAVector<vContentType>::GetNewVectorValue(G4String paramString)
 {
-//    G4cout << "GateUIcmdWithAVector::GetNewVectorValue : paramString <" << paramString << ">" << G4endl;
+//    G4cout << "GateUIcmdWithAVector::GetNewVectorValue : paramString <" << paramString << ">\n";
 
   //const char* t = paramString;
   //LF 21/12/2005
@@ -66,7 +67,7 @@ std::vector<vContentType> GateUIcmdWithAVector<vContentType>::GetNewVectorValue(
   std::vector<vContentType> vec;
 //    G4int nElem;
 //    is >> nElem;
-  //  G4cout << "GateUIcmdWithAVector::GetNewVectorValue : nElem "<< nElem << G4endl;
+  //  G4cout << "GateUIcmdWithAVector::GetNewVectorValue : nElem "<< nElem << Gateendl;
   vContentType value;
   // TEST  G4int value;
 //    G4cout << "GateUIcmdWithAVector::GetNewVectorValue : ";
@@ -83,7 +84,7 @@ std::vector<vContentType> GateUIcmdWithAVector<vContentType>::GetNewVectorValue(
     }
   } while (length>0);
 
-//  G4cout << "GateUIcmdWithAVector::GetNewVectorValue : inputVec.size() : " << inputVec.size() << G4endl;
+//  G4cout << "GateUIcmdWithAVector::GetNewVectorValue : inputVec.size() : " << inputVec.size() << Gateendl;
 
   for (size_t iw=0; iw<inputVec.size(); iw++) {
     aToken = inputVec[iw] + G4String(" dummy ") ;
@@ -93,11 +94,11 @@ std::vector<vContentType> GateUIcmdWithAVector<vContentType>::GetNewVectorValue(
     std::istringstream istrToken(charToken); 
     //LF
     istrToken >> value;
-//      G4cout << "GateUIcmdWithAVector::GetNewVectorValue : aToken : " << aToken << " value : " << value << G4endl;
+//      G4cout << "GateUIcmdWithAVector::GetNewVectorValue : aToken : " << aToken << " value : " << value << Gateendl;
 //      G4cout << " is.eof() "         << istrToken.eof() 
 //  	   << " istrToken.fail() " << istrToken.fail() 
 //  	   << " istrToken.good() " << istrToken.good() 
-//  	   << " istrToken.bad() "  << istrToken.bad() << G4endl;
+//  	   << " istrToken.bad() "  << istrToken.bad() << Gateendl;
     if (istrToken.good() == 0) {
       ;//isGood = false;
     } else {
@@ -105,9 +106,9 @@ std::vector<vContentType> GateUIcmdWithAVector<vContentType>::GetNewVectorValue(
 //        G4cout << value << ", ";
     }
   }
-//    G4cout << G4endl;
+//    G4cout << Gateendl;
 
-//  G4cout << "GateUIcmdWithAVector::GetNewVectorValue : vec.size() " << vec.size() << G4endl;
+//  G4cout << "GateUIcmdWithAVector::GetNewVectorValue : vec.size() " << vec.size() << Gateendl;
 
   return vec;
 }
@@ -120,7 +121,7 @@ G4String GateUIcmdWithAVector<vContentType>::ConvertToString
   for (G4int i=0; i<vec.size(); i++) os << vec[i] << " "; 
   os << '\0';
   G4String vl = os.str();
-  G4cout << "GateUIcmdWithAVector::ConvertToString : " << vl << G4endl;
+  G4cout << "GateUIcmdWithAVector::ConvertToString : " << vl << Gateendl;
   return vl;
 }
 

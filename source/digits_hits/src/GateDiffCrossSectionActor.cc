@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 GateDiffCrossSectionActor::GateDiffCrossSectionActor( G4String name, G4int depth):GateVActor( name, depth), scatterFunctionData(0), formFactorData(0)
 {
-  GateDebugMessageInc( "Actor", 4, "GateDiffCrossSectionActor() -- begin" << G4endl);
+  GateDebugMessageInc( "Actor", 4, "GateDiffCrossSectionActor() -- begin\n");
   //scatterFunctionData = 0;
   mUserEnergy = 1.0*keV;
   mUserEnergyList.push_back(1.0*keV);
@@ -42,7 +42,7 @@ GateDiffCrossSectionActor::GateDiffCrossSectionActor( G4String name, G4int depth
   mExitFileNameDCSrayleigh = "DiffCrossSectionRayleigh_results.txt";
 
   pMessenger = new GateDiffCrossSectionActorMessenger( this);
-  GateDebugMessageDec("Actor", 4, "GateDiffCrossSectionActor( ) -- end" << G4endl);
+  GateDebugMessageDec("Actor", 4, "GateDiffCrossSectionActor( ) -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -67,7 +67,7 @@ void GateDiffCrossSectionActor::ReadListEnergy(G4String energylist)
   //Read energy list
   inEnergyFile.open( energylist);
   if( !inEnergyFile ) { // file couldn't be opened
-    G4cout << "Error: file could not be opened" << G4endl;
+    G4cout << "Error: file could not be opened\n";
     exit( 1);
   }
   while ( !inEnergyFile.eof( ))
@@ -90,7 +90,7 @@ void GateDiffCrossSectionActor::ReadListAngle( G4String anglelist)
   //Read angle list
   inAngleFile.open( anglelist);
   if( !inAngleFile ) { // file couldn't be opened
-    G4cout << "Error: file could not be opened" << G4endl;
+    G4cout << "Error: file could not be opened\n";
     exit( 1);
   }
   while ( !inAngleFile.eof( ))
@@ -112,7 +112,7 @@ void GateDiffCrossSectionActor::ReadMaterialList(G4String materiallist)
   mUserMaterialList.clear( );
   inMaterialFile.open( materiallist);
   if( !inMaterialFile ) { // file couldn't be opened
-    G4cout << "Error: file could not be opened" << G4endl;
+    G4cout << "Error: file could not be opened\n";
     exit( 1);
   }
   while ( !inMaterialFile.eof( ))
@@ -176,7 +176,7 @@ void GateDiffCrossSectionActor::Initialise()
 /// Construct
 void GateDiffCrossSectionActor::Construct()
 {
-  GateDebugMessageInc("Actor", 4, "GateDiffCrossSectionActor -- Construct - begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "GateDiffCrossSectionActor -- Construct - begin\n");
   GateVActor::Construct();
 
   // Enable callbacks
@@ -187,11 +187,11 @@ void GateDiffCrossSectionActor::Construct()
 
   // Print information
   GateMessage("Actor", 1,
-              "\tDiffCrossSection DiffCrossSectionActor    = '" << GetObjectName() << "'" << G4endl);
+              "\tDiffCrossSection DiffCrossSectionActor    = '" << GetObjectName() << "'\n");
 
 
   //  ResetData();
-  GateMessageDec("Actor", 4, "GateDiffCrossSectionActor -- Construct - end" << G4endl);
+  GateMessageDec("Actor", 4, "GateDiffCrossSectionActor -- Construct - end\n");
 
 }
 //-----------------------------------------------------------------------------
@@ -199,7 +199,7 @@ void GateDiffCrossSectionActor::Construct()
 //-----------------------------------------------------------------------------
 void GateDiffCrossSectionActor::BeginOfRunAction(const G4Run*)
 {
-  G4cout << "*******************************************" << G4endl;
+  G4cout << "*******************************************\n";
   G4double scatteringFunction, formFactor, Theta, cosT, sinT, sinT2, E_in, Ecompton, eRadiusTerm, DCSKleinNishinaTerm1, DCSKleinNishinaTerm2, DCSKleinNishina, DCSThomsonTerm1, DCSThomson, xi, DCScompton, DCSrayleigh, e0m;
   //****Ration energy (E / Me C^2)
   const G4MaterialTable* matTbl = G4Material::GetMaterialTable();
@@ -338,7 +338,7 @@ void GateDiffCrossSectionActor::BeginOfRunAction(const G4Run*)
       DriverDataOutDCScompton << " "  << "\n" ;
     }
   //DD("ici2");
-  G4cout << "*******************************************" << G4endl;
+  G4cout << "*******************************************\n";
 
 
 

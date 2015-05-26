@@ -120,16 +120,16 @@ void GateGpSpectrumActor::UserSteppingAction(const GateVVolume*, const G4Step* s
 	const G4VProcess* process = point->GetProcessDefinedStep();
 	assert(process);
 	const G4String process_name = process->GetProcessName();
-	
+
         if (process_name != "ProtonInelastic") return;
 
 	const G4Material* material = step->GetPreStepPoint()->GetMaterial();
-	G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();  
-	G4double cross_section = store->GetCrossSectionPerVolume(particle,particle_energy,process,material);  
+	G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
+	G4double cross_section = store->GetCrossSectionPerVolume(particle,particle_energy,process,material);
 	// G4cout << process_name << " = " << cross_section * mm << " mm-1" << G4endl;
 
 	pHEpInelastic->Fill(particle_energy/MeV);
-	
+
 	if (!sigma_filled)
 	{
 	for (int bin = 1; bin < pHEpSigmaInelastic->GetNbinsX()+1; bin++)
@@ -143,7 +143,7 @@ void GateGpSpectrumActor::UserSteppingAction(const GateVVolume*, const G4Step* s
 
 	G4bool produced_any_gamma = false;
 	for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++)
-	  { 
+	  {
 	    if ((*fSecondary)[lp1]->GetDefinition() -> GetParticleName() == "gamma")
 	      {
 		pHEpEgp->Fill(particle_energy/MeV,(*fSecondary)[lp1]->GetKineticEnergy()/MeV);

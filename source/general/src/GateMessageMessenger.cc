@@ -37,7 +37,7 @@ GateMessageMessenger::~GateMessageMessenger()
 //-----------------------------------------------------------------------------
 void GateMessageMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
-  //GateMessage("Manager",5,"GateMessageMessenger::SetNewValue("<<newValue<<")"<<Gateendl);
+  //GateMessage("Manager",5,"GateMessageMessenger::SetNewValue("<<newValue<<")\n");
   if (cmd == pVerboseCmd) {
     str_size pos = newValue.index (' ');
     if (pos<newValue.length()) {

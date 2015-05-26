@@ -60,7 +60,7 @@ GateCerenkovPB::GateCerenkovPB():GateVProcess("Cerenkov")
 G4VProcess* GateCerenkovPB::CreateProcess(G4ParticleDefinition *)
 {
 	G4Cerenkov* cerenkov = new G4Cerenkov(GetG4ProcessName());
-	//G4cout << "creating " << cerenkov << G4endl;
+	//G4cout << "creating " << cerenkov << Gateendl;
 	GateCerenkovMessenger* messenger = static_cast<GateCerenkovMessenger*>(pMessenger);
     cerenkov->SetMaxNumPhotonsPerStep(messenger->GetMaxNumPhotonsPerStep());
     cerenkov->SetTrackSecondariesFirst(messenger->GetTrackSecondariesFirst());
@@ -73,7 +73,7 @@ G4VProcess* GateCerenkovPB::CreateProcess(G4ParticleDefinition *)
 //-----------------------------------------------------------------------------
 void GateCerenkovPB::ConstructProcess(G4ProcessManager * manager)
 {
-	//G4cout << "contructing " << GetProcess() << G4endl;
+	//G4cout << "contructing " << GetProcess() << Gateendl;
 	manager->AddProcess(GetProcess());
 	manager->SetProcessOrdering(GetProcess(), idxPostStep);
 }

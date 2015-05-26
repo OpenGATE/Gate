@@ -25,7 +25,7 @@ inline G4double operator() (double photonEnergy) {
   std::map< G4double, G4double >::iterator iterResponseMap = mResponseMap.end();
   iterResponseMap =  mResponseMap.lower_bound( photonEnergy);
   if(iterResponseMap == mResponseMap.begin() || iterResponseMap == mResponseMap.end()) {
-     G4cout << " Photon Energy outside the Response Detector list" << G4endl;
+     G4cout << " Photon Energy outside the Response Detector list\n";
      exit(1);
   }
   double upperEn = iterResponseMap->first;
@@ -49,7 +49,7 @@ void ReadResponseDetectorFile(std::string responseFileName) {
   inResponseFile.open(responseFileName.c_str());
   if( !inResponseFile ) {
     // file couldn't be opened
-    G4cout << "Error: file [" << responseFileName << "] could not be opened" << G4endl;
+    G4cout << "Error: file [" << responseFileName << "] could not be opened\n";
     exit( 1);
   }
   while ( !inResponseFile.eof( )) {

@@ -46,11 +46,11 @@ void GateEnergyEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePulse
    }
    GateVSystem* system = GateSystemListManager::GetInstance()->GetSystem(0);
    if (!system){
-      G4cerr<<"[GateEnergyEfficiency::ProcessOnePulse] Problem : no system defined"<<G4endl;
+      G4cerr<<"[GateEnergyEfficiency::ProcessOnePulse] Problem : no system defined\n";
       return ;
    }
    G4double eff = m_efficiency->Value(inputPulse->GetEnergy());
-//   G4cout<<inputPulse->GetEnergy()<<"   "<<eff<<G4endl;
+//   G4cout<<inputPulse->GetEnergy()<<"   "<<eff<< Gateendl;
    if (G4UniformRand() < eff)
       outputPulseList.push_back(new GatePulse(*inputPulse));
 
@@ -58,5 +58,5 @@ void GateEnergyEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePulse
 
 void GateEnergyEfficiency::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Tabular Efficiency "<< G4endl;
+  G4cout << GateTools::Indent(indent) << "Tabular Efficiency "<< Gateendl;
 }

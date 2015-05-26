@@ -64,8 +64,8 @@ void GatePileup::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outp
 
   if (blockID.IsInvalid()) {
     if (nVerboseLevel>1)
-      	G4cout << "[GatePileup::ProcessOnePulse]: out-of-block hit for " << G4endl
-	      <<  *inputPulse << G4endl
+      	G4cout << "[GatePileup::ProcessOnePulse]: out-of-block hit for \n"
+	      <<  *inputPulse << Gateendl
 	      << " -> pulse ignored\n\n";
     return;
   }
@@ -86,14 +86,14 @@ void GatePileup::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outp
      (*iter)->SetEnergy(energySum);
      if (nVerboseLevel>1)
       	  G4cout  << "Overwritten previous pulse for block " << blockID << " with new pulse with higer energy.\n"
-      	          << "Resulting pulse is: " << G4endl
-		  << **iter << G4endl << G4endl ;
+      	          << "Resulting pulse is: \n"
+		  << **iter << Gateendl << Gateendl ;
   } else {
     GatePulse* outputPulse = new GatePulse(*inputPulse);
     if (nVerboseLevel>1)
       	G4cout << "Created new pulse for block " << blockID << ".\n"
-      	       << "Resulting pulse is: " << G4endl
-	       << *outputPulse << G4endl << G4endl ;
+      	       << "Resulting pulse is: \n"
+	       << *outputPulse << Gateendl << Gateendl ;
     outputPulseList.push_back(outputPulse);
   }
 }
@@ -104,5 +104,5 @@ void GatePileup::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outp
 
 void GatePileup::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Pileup at depth:      " << m_depth << G4endl;
+  G4cout << GateTools::Indent(indent) << "Pileup at depth:      " << m_depth << Gateendl;
 }

@@ -19,6 +19,7 @@ See GATE/LICENSE.txt for further details
 
 #include "G4ProcessManager.hh"
 #include "G4ParticleTypes.hh"
+#include "GateMessageManager.hh"
 
 
 void GateFakePhysicsList::ConstructParticle()
@@ -142,7 +143,7 @@ void GateFakePhysicsList::SetCuts()
 {
   if (verboseLevel >0){
     G4cout << "GateFakePhysicsList::SetCuts:";
-    G4cout << "CutLength : " << G4BestUnit(defaultCutValue,"Length") << G4endl;
+    G4cout << "CutLength : " << G4BestUnit(defaultCutValue,"Length") << Gateendl;
   }
 
   // set cut values for gamma at first and for e- second and next for e+,

@@ -73,12 +73,12 @@ void GateMaterialFilter::Add(const G4String& materialName)
 //---------------------------------------------------------------------------
 void GateMaterialFilter::show()
 {
-  G4cout << "------ Filter: " << GetObjectName() << " ------" << G4endl;
-  G4cout << "       Material list: " << G4endl;
+  G4cout << "------ Filter: " << GetObjectName() << " ------\n";
+  G4cout << "       Material list: \n";
 
   for ( size_t i = 0; i < theMdef.size(); i++ ){
-    G4cout << theMdef[i] << G4endl;
+    G4cout << theMdef[i] << Gateendl;
   }
-  G4cout << "-------------------------------------------" << G4endl;
+  G4cout << "-------------------------------------------\n";
 }
 //---------------------------------------------------------------------------

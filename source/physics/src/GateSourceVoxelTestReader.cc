@@ -38,7 +38,7 @@ void GateSourceVoxelTestReader::ReadFile(G4String fileName)
 
   // open the file
   std::ifstream inFile;
-  G4cout << "GateSourceVoxelTestReader::ReadFile : fileName: " << fileName << G4endl;
+  G4cout << "GateSourceVoxelTestReader::ReadFile : fileName: " << fileName << Gateendl;
   inFile.open(fileName.c_str(),std::ios::in);
 
   // read the parameters from the first lines of the file
@@ -46,14 +46,14 @@ void GateSourceVoxelTestReader::ReadFile(G4String fileName)
   G4int ix, iy, iz;
   G4double activity;
   inFile >> nVoxels;
-  G4cout << "GateSourceVoxelTestReader::ReadFile : nVoxels: " << nVoxels << G4endl;
+  G4cout << "GateSourceVoxelTestReader::ReadFile : nVoxels: " << nVoxels << Gateendl;
 
   // read the list of voxels
   for (G4int iV = 0; iV< nVoxels; iV++) {
     inFile >> ix >> iy >> iz >> activity;
     G4cout << "GateSourceVoxelTestReader::ReadFile : index: " 
 	   << ix << " " << iy << " " << iz 
-	   << " activity " << activity << G4endl;
+	   << " activity " << activity << Gateendl;
 
     // create a new voxel only if the corresponding activity is > 0.
     if (activity > 0.) {

@@ -11,7 +11,7 @@
 #ifndef GateMixedDNAPhysics_h
 #define GateMixedDNAPhysics_h 1
 
-#include "G4VUserPhysicsList.hh"
+#include "G4VModularPhysicsList.hh"
 #include "G4VModularPhysicsList.hh"
 #include "G4ProcessManager.hh"
 #include "G4ParticleTypes.hh"
@@ -22,7 +22,7 @@
 
 class GateMixedDNAPhysicsMessenger;
 
-class GateMixedDNAPhysics: public G4VUserPhysicsList
+class GateMixedDNAPhysics: public G4VModularPhysicsList
 {
 public:
 

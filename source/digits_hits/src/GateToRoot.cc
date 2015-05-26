@@ -35,7 +35,6 @@
 #include "G4VProcess.hh"
 #include "G4ios.hh"
 #include "G4UImanager.hh"
-#include "G4RunManager.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4Positron.hh"
 #include "G4GenericIon.hh"
@@ -151,7 +150,7 @@ GateToRoot::GateToRoot(const G4String& name, GateOutputMgr* outputMgr,DigiMode d
 GateToRoot::~GateToRoot()
 {
   delete m_rootMessenger;
-  if (nVerboseLevel > 0) G4cout << "GateToRoot deleting..." << G4endl;
+  if (nVerboseLevel > 0) G4cout << "GateToRoot deleting...\n";
   for (size_t i=0; i<m_outputChannelList.size(); ++i)
     delete m_outputChannelList[i];
 
@@ -175,7 +174,7 @@ void GateToRoot::Book()
 {
 
   if (nVerboseLevel > 2)
-    G4cout << "GateToRoot::Book" << G4endl;
+    G4cout << "GateToRoot::Book\n";
 
   if (m_recordFlag > 0)
     {
@@ -206,7 +205,7 @@ void GateToRoot::Book()
       //TNtuple *ntuple;
       G4String ntuple_name="Gate";
       if (nVerboseLevel > 0) G4cout
-                               << "GateToRoot: ROOT: Ntuple " << ntuple_name << " being Created"<<G4endl;
+                               << "GateToRoot: ROOT: Ntuple " << ntuple_name << " being Created\n";
       //ntuple = new TNtuple(ntuple_name,"Gate","event:iontime:poskinene:posannihildist");
       new TNtuple(ntuple_name,"Gate","event:iontime:poskinene:posannihildist");
 
@@ -280,11 +279,11 @@ void GateToRoot::RecordBeginOfAcquisition()
 {
 
   if (nVerboseLevel > 2)
-    G4cout << "GateToRoot::RecordBeginOfAcquisition" << G4endl;
+    G4cout << "GateToRoot::RecordBeginOfAcquisition\n";
 
-  GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
+  GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
   TrackingMode theMode = myAction->GetMode();
-  if (nVerboseLevel > 1) G4cout << " GateToRoot::RecordBeginOfAcquisition()  Tracking Mode " << theMode << G4endl;
+  if (nVerboseLevel > 1) G4cout << " GateToRoot::RecordBeginOfAcquisition()  Tracking Mode " << theMode << Gateendl;
 
   // PY. Descourt 11/12/2008
   // NORMAL OR DETECTOR MODE
@@ -303,12 +302,12 @@ void GateToRoot::RecordBeginOfAcquisition()
           /// OPEN ROOT DETECTOR OUTPUT FILE
 
           OpenTracksFile();
-          if (nVerboseLevel > 1) G4cout << "GateToRoot::RecordBeginOfAcquisition  gROOT is " << gROOT << G4endl;
+          if (nVerboseLevel > 1) G4cout << "GateToRoot::RecordBeginOfAcquisition  gROOT is " << gROOT << Gateendl;
         }
       ////
       //////////
       // Open the output file
-      if (nVerboseLevel > 0) G4cout << "GateToRoot: ROOT: files creation..." << G4endl;
+      if (nVerboseLevel > 0) G4cout << "GateToRoot: ROOT: files creation...\n";
       switch (m_digiMode) {
       case kruntimeMode:
         // In run-time mode, we open the file in RECREATE mode
@@ -375,8 +374,8 @@ void GateToRoot::RecordBeginOfAcquisition()
       m_currentGTrack = new GateTrack();
 
       //////////////////////////////////////////   TRACKS INFOS ROOT OUTPUT FILE /////////////////////////////////////////////////////////////////////////////////
-      G4cout << "Tracker Mode detected..."<< G4endl;
-      G4cout << "GateToRoot::RecordBeginOfAcquisition()   OPENING " << (m_fileName+"_TrackerData.root")<< " file "<< G4endl;
+      G4cout << "Tracker Mode detected..."<< Gateendl;
+      G4cout << "GateToRoot::RecordBeginOfAcquisition()   OPENING " << (m_fileName+"_TrackerData.root")<< " file "<< Gateendl;
 
       m_hfile = new TFile( (m_fileName+"_TrackerData.root").c_str() ,"RECREATE","ROOT file with Tracker Data");
 
@@ -391,7 +390,7 @@ void GateToRoot::RecordBeginOfAcquisition()
           G4String msg = "Could not open the requested output ROOT file '" + m_fileName + "_TrackerData.root'!";
           G4Exception( "GateToRoot::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException,msg );
 	}
-      if (nVerboseLevel > 0) G4cout << "GateToRoot: ROOT: Ntuple " << "PhTracksData" << " being Created"<<G4endl;
+      if (nVerboseLevel > 0) G4cout << "GateToRoot: ROOT: Ntuple " << "PhTracksData" << " being Created\n";
 
       tracksTuple = new TTree(G4String("PhTracksData").c_str(),"PhantomTracksData");
 
@@ -469,7 +468,7 @@ void GateToRoot::RecordBeginOfAcquisition()
 //--------------------------------------------------------------------------
 void GateToRoot::RecordEndOfAcquisition()
 {
-  //GateMessage("Output", 5, " GateToRoot::RecordEndOfAcquisition -- begin." << G4endl;);
+  //GateMessage("Output", 5, " GateToRoot::RecordEndOfAcquisition -- begin.\n";);
 
 
 
@@ -494,7 +493,7 @@ void GateToRoot::RecordEndOfAcquisition()
         }
       else
         {
-          G4cerr << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'latest_event_ID' histogram to fill it !" << G4endl;
+          G4cerr << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'latest_event_ID' histogram to fill it !\n";
         }
     }
   //=============================================================================
@@ -508,16 +507,16 @@ void GateToRoot::RecordEndOfAcquisition()
     }
   else
     {
-      G4cerr << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'total_nb_primaries' histogram to fill it !" << G4endl;
+      G4cerr << "GateToRoot::RecordEndOfAcquisition(): Failed to access to 'total_nb_primaries' histogram to fill it !\n";
     }
 
   /* PY Descourt 08/09/2009 */
 
-  GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
+  GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
   TrackingMode theMode = myAction->GetMode();
   if ( theMode == kTracker )
     {
-      G4cout << " ----- ROOT FILE DATA INFORMATIONS ----- " << G4endl;
+      G4cout << " ----- ROOT FILE DATA INFORMATIONS ----- \n";
       if ( tracksTuple != 0 ) {tracksTuple->Print();}
       if ( m_RecStepTree != 0 ) {m_RecStepTree->Print();}
       ///// IMPORTANT NOTE
@@ -526,12 +525,12 @@ void GateToRoot::RecordEndOfAcquisition()
       ///  which is not the one we intstantiated if more than one Root File has been written
       ////
       m_hfile = tracksTuple->GetCurrentFile();
-      G4cout << " GateToRoot::RecordEndOfAcquisition() : Tracker MODE  ::::::::    current Root Tracks Data File  = " << m_hfile << " named " << m_hfile->GetName() << G4endl;
+      G4cout << " GateToRoot::RecordEndOfAcquisition() : Tracker MODE  ::::::::    current Root Tracks Data File  = " << m_hfile << " named " << m_hfile->GetName() << Gateendl;
       //  if (m_verboseLevel > 0)
-      G4cout << "GateToRoot: ROOT: files writing..." << G4endl;
+      G4cout << "GateToRoot: ROOT: files writing...\n";
       m_hfile->Write();
       //  if (m_verboseLevel > 0)
-      G4cout << "GateToRoot: ROOT: files closing..." << G4endl;
+      G4cout << "GateToRoot: ROOT: files closing...\n";
       if ( m_hfile->IsOpen() ){ m_hfile->Close(); }
     }
 
@@ -548,13 +547,13 @@ void GateToRoot::RecordEndOfAcquisition()
       m_hfile = m_treeHit->GetCurrentFile();
 
       if (nVerboseLevel > 0)
-        G4cout << "GateToRoot: ROOT: files writing..." << G4endl;
-      //GateMessage("Output", 1, " GateToRoot: ROOT: files writing..." << G4endl;);
+        G4cout << "GateToRoot: ROOT: files writing...\n";
+      //GateMessage("Output", 1, " GateToRoot: ROOT: files writing...\n";);
       m_hfile->Write();
 
       if (nVerboseLevel > 0)
-        G4cout << "GateToRoot: ROOT: files closing..." << G4endl;
-      //GateMessage("Output", 1, " GateToRoot: ROOT: files closing..." << G4endl;);
+        G4cout << "GateToRoot: ROOT: files closing...\n";
+      //GateMessage("Output", 1, " GateToRoot: ROOT: files closing...\n";);
       m_hfile->Close();
     }
   /* PY Descourt 08/09/2009 */
@@ -580,7 +579,7 @@ void GateToRoot::RecordBeginOfRun(const G4Run* )
     }*/
 
   if (nVerboseLevel > 2)
-    G4cout << "GateToRoot::RecordBeginOfRun" << G4endl;
+    G4cout << "GateToRoot::RecordBeginOfRun\n";
   //  Book();
 }
 //--------------------------------------------------------------------------
@@ -598,7 +597,7 @@ void GateToRoot::RecordEndOfRun(const G4Run* )
      CLHEP::HepRandom::saveEngineStatus("endOfRun.rndm");
      }*/
   if (nVerboseLevel > 2)
-    G4cout << "GateToRoot::RecordEndOfRun" << G4endl;
+    G4cout << "GateToRoot::RecordEndOfRun\n";
 
   nbPrimaries-=1.; // Number of primaries increase too much at each end of run !
 
@@ -610,10 +609,10 @@ void GateToRoot::RecordEndOfRun(const G4Run* )
 //--------------------------------------------------------------------------
 void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
 {
-  //  GateMessage("Output", 5 , " GateToRoot::RecordBeginOfEvent -- begin" << G4endl;);
+  //  GateMessage("Output", 5 , " GateToRoot::RecordBeginOfEvent -- begin\n";);
 
   if (nVerboseLevel > 2)
-    G4cout << "GateToRoot::RecordBeginOfEvent" << G4endl;
+    G4cout << "GateToRoot::RecordBeginOfEvent\n";
 
   m_hitBuffer.Clear();
 
@@ -650,14 +649,14 @@ void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
   strcpy( theCRData.theRayleighVolumeName2, G4String("NULL").c_str()  );
 
 
-  TrackingMode theMode =( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
+  TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) )->GetMode();
   if ( (theMode == kDetector) &&   (evt->GetNumberOfPrimaryVertex() > 0) )
     {
 
       // we read the RecStep and number of rayleigh & compton scatterings from the RecStep Data Root file
       if ( fSkipRecStepData == 0 ) GetCurrentRecStepData( evt ) ;
       else
-        {   if (nVerboseLevel > 3) G4cout << "GateToRoot::RecordBeginOfEvent   WARNING  fSkipRecStepData = " <<fSkipRecStepData << G4endl;
+        {   if (nVerboseLevel > 3) G4cout << "GateToRoot::RecordBeginOfEvent   WARNING  fSkipRecStepData = " <<fSkipRecStepData << Gateendl;
           theCRData = theCRData_copy;
           m_positronKinEnergy = m_positronKinEnergy_copy;
           m_ionDecayPos = m_ionDecayPos_copy;
@@ -670,7 +669,7 @@ void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
           dyg2 = dyg2_copy;
           dzg2 = dzg2_copy;
           fSkipRecStepData = 0;
-          //G4cout << "GateToRoot::RecordBeginOfEvent "<<G4endl;
+          //G4cout << "GateToRoot::RecordBeginOfEvent \n";
           //PrintRecStep();
         }
 
@@ -679,7 +678,7 @@ void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
 
   /*PY Descourt 08/09/2009 */
 
-  //  GateMessage("Output", 5, " GateToRoot::RecordBeginOfEvent -- end" << G4endl;);
+  //  GateMessage("Output", 5, " GateToRoot::RecordBeginOfEvent -- end\n";);
 
 }
 //--------------------------------------------------------------------------
@@ -689,10 +688,10 @@ void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
 void GateToRoot::RecordEndOfEvent(const G4Event* event)
 {
 
-  // GateMessage("Output", 5 , " GateToRoot::RecordEndOfEvent -- begin" << G4endl;);
+  // GateMessage("Output", 5 , " GateToRoot::RecordEndOfEvent -- begin\n";);
 
 
-  GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
+  GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
   TrackingMode theMode = myAction->GetMode();
   if ( theMode == kTracker )return;
 
@@ -716,12 +715,12 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
       if (nVerboseLevel > 2)
         G4cout
           << "GateToRoot::RecordEndOfEvent : CrystalHitsCollection: processName : <" << processName
-          << ">    Particls PDG code : " << PDGEncoding << G4endl;
+          << ">    Particls PDG code : " << PDGEncoding << Gateendl;
 
       if (aHit->GoodForAnalysis()) {
 	m_hitBuffer.Fill(aHit);
 	if (nVerboseLevel > 1)
-	  G4cout << "GateToRoot::RecordEndOfEvent : m_treeHit->Fill" << G4endl;
+	  G4cout << "GateToRoot::RecordEndOfEvent : m_treeHit->Fill\n";
 
 
 	if (m_rootHitFlag) m_treeHit->Fill();
@@ -738,7 +737,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
 	hist->Fill(m_positronKinEnergy/MeV);
       } else {
 	if (nVerboseLevel > 0) G4cout
-				 << "GateToRoot: ROOT: Cannot find histo"<< hist_name << G4endl;
+				 << "GateToRoot: ROOT: Cannot find histo"<< hist_name << Gateendl;
       }
       hist_name = "Ion_decay_time_s";
       hist = NULL;
@@ -746,7 +745,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
 	hist->Fill(eventTime/s);
       } else {
 	if (nVerboseLevel > 0) G4cout
-				 << "GateToRoot:  ROOT: Cannot find histo"<< hist_name << G4endl;
+				 << "GateToRoot:  ROOT: Cannot find histo"<< hist_name << Gateendl;
       }
       G4ThreeVector posAnnihilDist = m_positronAnnihilPos - m_positronGenerationPos;
       hist_name = "Positron_annihil_distance_mm";
@@ -755,7 +754,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
 	hist->Fill(posAnnihilDist.mag()/mm);
       } else {
 	if (nVerboseLevel > 0) G4cout
-				 << "GateToRoot:  ROOT: Cannot find histo"<< hist_name << G4endl;
+				 << "GateToRoot:  ROOT: Cannot find histo"<< hist_name << Gateendl;
       }
 
       // Histo of acolinearity angle distribution
@@ -766,7 +765,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
 
       if (std::isnan(dev) ) dev = 0.;
 
-      // G4cout<< " dev = " << dev << G4endl;
+      // G4cout<< " dev = " << dev << Gateendl;
 
       hist_name = "Acolinea_Angle_Distribution_deg";
       hist = NULL;
@@ -774,18 +773,18 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
 	hist->Fill(dev);
       } else {
 	//if (nVerboseLevel > 0)
-	G4cout << "GateToRoot:  ROOT: Cannot find histo "<< hist_name << G4endl;
+	G4cout << "GateToRoot:  ROOT: Cannot find histo "<< hist_name << Gateendl;
       }
 
       TNtuple *ntuple;
       G4String ntuple_name="Gate";
       if ((ntuple=(TNtuple *)gDirectory->GetList()->FindObject(ntuple_name))==NULL) {
 	if (nVerboseLevel > 0) G4cout
-				 << "GateToRoot: ROOT: Cannot find ntuple "<< ntuple_name << G4endl;
+				 << "GateToRoot: ROOT: Cannot find ntuple "<< ntuple_name << Gateendl;
       } else {
 	//! better than the simple eventID, but still not enough: it's valid only for
 	//! the single run and not for the application
-	G4int iEvent = ((GatePrimaryGeneratorAction*)G4RunManager::GetRunManager()->
+	G4int iEvent = ((GatePrimaryGeneratorAction*)GateRunManager::GetRunManager()->
 			GetUserPrimaryGeneratorAction())->GetEventNumber();
 	if (m_rootNtupleFlag) ntuple->Fill(iEvent,
 					   eventTime/s,
@@ -803,7 +802,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
   RecordOpticalData(event);
   // v. cuplov - optical photons
 
-  // GateMessage("Output", 5, " GateToRoot::RecordEndOfEvent -- end" << G4endl;);
+  // GateMessage("Output", 5, " GateToRoot::RecordEndOfEvent -- end\n";);
 
 }
 
@@ -925,7 +924,7 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
 void GateToRoot::RecordDigitizer(const G4Event* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateToRoot::RecordDigitizer" << G4endl;
+    G4cout << "GateToRoot::RecordDigitizer\n";
 
   // Digitizer information
 
@@ -950,15 +949,15 @@ void GateToRoot::RecordStepWithVolume(const GateVVolume *, const G4Step* aStep)
   // v. cuplov - optical photon momentum direction
 
   if (m_recordFlag > 0) {
-    //GateMessage("OutputMgr", 5, " GateToRoot::RecordStep -- begin " << G4endl;);
+    //GateMessage("OutputMgr", 5, " GateToRoot::RecordStep -- begin \n";);
 
     if (nVerboseLevel > 2)
-      G4cout << "GateToRoot::RecordStep" << G4endl;
+      G4cout << "GateToRoot::RecordStep\n";
 
     G4ParticleDefinition* partDef = aStep->GetTrack()->GetDefinition();
 
     if (partDef == G4Positron::PositronDefinition()) {
-      if (nVerboseLevel > 1) G4cout << "GateToRoot: Positron " << G4endl;
+      if (nVerboseLevel > 1) G4cout << "GateToRoot: Positron \n";
       G4String procName;
       const G4VProcess* process;
       process = aStep->GetPreStepPoint()->GetProcessDefinedStep();
@@ -972,7 +971,7 @@ void GateToRoot::RecordStepWithVolume(const GateVVolume *, const G4Step* aStep)
         m_positronKinEnergy = aStep->GetPreStepPoint()->GetKineticEnergy();
         m_positronGenerationPos = aStep->GetPreStepPoint()->GetPosition();
         if (nVerboseLevel > 1) G4cout << "GateToRoot: Process empty."
-                                      << " m_positronKinEnergy " << m_positronKinEnergy << G4endl;
+                                      << " m_positronKinEnergy " << m_positronKinEnergy << Gateendl;
       }
       procName = aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
       if (procName == "annihil") {
@@ -1018,7 +1017,7 @@ void GateToRoot::RecordStepWithVolume(const GateVVolume *, const G4Step* aStep)
       }
     }
 
-    //GateMessage("OutputMgr", 5, " GateToRoot::RecordStep -- end " << G4endl;);
+    //GateMessage("OutputMgr", 5, " GateToRoot::RecordStep -- end \n";);
   }
 
 }
@@ -1067,7 +1066,7 @@ void GateToRoot::RecordVoxels(GateVGeometryVoxelStore* voxelStore)
   if (m_recordFlag > 0) {
 
     if (nVerboseLevel > 2)
-      G4cout << "GateToRoot::RecordVoxels" << G4endl;
+      G4cout << "GateToRoot::RecordVoxels\n";
 
     G4String voxelFileName = m_fileName + "Voxels.root";
     TFile* voxelsFile = new TFile( voxelFileName.c_str(), "RECREATE", "ROOT file with voxel info");
@@ -1094,7 +1093,7 @@ void GateToRoot::RecordVoxels(GateVGeometryVoxelStore* voxelStore)
       for (G4int iy=0; iy<ny; iy++) {
         for (G4int ix=0; ix<nx; ix++) {
           Float_t density = voxelStore->GetVoxelMaterial(ix,iy,iz)->GetDensity()/(gram/cm3);
-          //	G4cout << "Material: " << voxelStore->GetVoxelMaterial(ix,iy,iz)->GetName() << "  density: " << density << G4endl;
+          //	G4cout << "Material: " << voxelStore->GetVoxelMaterial(ix,iy,iz)->GetName() << "  density: " << density << Gateendl;
           histVoxels->Fill(ix,iy,iz,density);
           histVoxelSlices[iz]->Fill(ix,iy,density);
         }
@@ -1117,7 +1116,7 @@ void GateToRoot::RegisterNewSingleDigiCollection(const G4String& aCollectionName
     new SingleOutputChannel(aCollectionName,outputFlag);
   m_outputChannelList.push_back(singleOutputChannel);
 
-  //G4cout << " GateToRoot::RegisterNewSingleDigiCollection outputFlag = " <<outputFlag<< G4endl;
+  //G4cout << " GateToRoot::RegisterNewSingleDigiCollection outputFlag = " <<outputFlag<< Gateendl;
   m_rootMessenger->CreateNewOutputChannelCommand(singleOutputChannel);
 }
 //--------------------------------------------------------------------------
@@ -1145,20 +1144,20 @@ void GateToRoot::SingleOutputChannel::RecordDigitizer()
     (GateSingleDigiCollection*) (fDM->GetDigiCollection( m_collectionID ));
 
   if (!SDC) {
-    //GateMessage("OutputMgr", 5, " There is no SDC collection" << G4endl;);
+    //GateMessage("OutputMgr", 5, " There is no SDC collection\n";);
     if (nVerboseLevel>0) G4cout << "[GateToRoot::SingleOutputChannel::RecordDigitizer]:"
-				<< " digi collection '" << m_collectionName << "' not found" << G4endl;
+				<< " digi collection '" << m_collectionName << "' not found\n";
   } else {
     // Digi loop
-    //GateMessage("OutputMgr", 5, " There is SDC collection. " << G4endl;);
+    //GateMessage("OutputMgr", 5, " There is SDC collection. \n";);
     if (nVerboseLevel>0) G4cout << "[GateToRoot::SingleOutputChannel::RecordDigitizer]: Total Digits: "
-				<< SDC->entries() << G4endl;
+				<< SDC->entries() << Gateendl;
 
-    //  GateMessage("OutputMgr", 5, " Single collection m_outputFlag = " << m_outputFlag << G4endl;);
+    //  GateMessage("OutputMgr", 5, " Single collection m_outputFlag = " << m_outputFlag << Gateendl;);
 
     if (m_outputFlag) {
       G4int n_digi =  SDC->entries();
-      //GateMessage("OutputMgr", 5, " Single collection m_outputFlag = " << m_outputFlag << G4endl;);
+      //GateMessage("OutputMgr", 5, " Single collection m_outputFlag = " << m_outputFlag << Gateendl;);
       for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
         m_buffer.Fill( (*SDC)[iDigi] );
         m_tree->Fill();
@@ -1171,7 +1170,7 @@ void GateToRoot::SingleOutputChannel::RecordDigitizer()
 //--------------------------------------------------------------------------
 void GateToRoot::CoincidenceOutputChannel::RecordDigitizer()
 {
-  //GateMessage("OutputMgr", 5, " GateToRoot::CoincidenceOutputChannel::RecordDigitizer -- begin" << G4endl;);
+  //GateMessage("OutputMgr", 5, " GateToRoot::CoincidenceOutputChannel::RecordDigitizer -- begin\n";);
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
   if (m_collectionID<0)
     m_collectionID = fDM->GetDigiCollectionID(m_collectionName);
@@ -1179,17 +1178,17 @@ void GateToRoot::CoincidenceOutputChannel::RecordDigitizer()
     (GateCoincidenceDigiCollection*) (fDM->GetDigiCollection( m_collectionID ));
 
   if (!CDC) {
-    //GateMessage("OutputMgr", 5, " There is no CDC collection." << G4endl;);
+    //GateMessage("OutputMgr", 5, " There is no CDC collection.\n";);
     if (nVerboseLevel>0) G4cout << "[GateToRoot::CoincidenceOutputChannel::RecordDigitizer]:"
-				<< " digi collection '" << m_collectionName << "' not found" << G4endl;
+				<< " digi collection '" << m_collectionName << "' not found\n";
   } else {
 
-    //GateMessage("OutputMgr", 5, " There is CDC collection. " << G4endl;);
+    //GateMessage("OutputMgr", 5, " There is CDC collection. \n";);
     // Digi loop
     if (nVerboseLevel>0) G4cout << "[GateToRoot::CoincidenceOutputChannel::RecordDigitizer]: Total Digits: "
-				<< CDC->entries() << G4endl;
+				<< CDC->entries() << Gateendl;
 
-    //GateMessage("OutputMgr", 5, " Coincidence collection m_outputFlag = " << m_outputFlag << G4endl;);
+    //GateMessage("OutputMgr", 5, " Coincidence collection m_outputFlag = " << m_outputFlag << Gateendl;);
 
     if (m_outputFlag) {
       G4int n_digi =  CDC->entries();
@@ -1200,7 +1199,7 @@ void GateToRoot::CoincidenceOutputChannel::RecordDigitizer()
     }
   }
 
-  //GateMessage("OutputMgr", 5, " GateToRoot::CoincidenceOutputChannel::RecordDigitizer -- end" << G4endl;);
+  //GateMessage("OutputMgr", 5, " GateToRoot::CoincidenceOutputChannel::RecordDigitizer -- end\n";);
 }
 
 void GateToRoot::CloseTracksRootFile()
@@ -1210,8 +1209,8 @@ void GateToRoot::CloseTracksRootFile()
       m_RecStepTree ->GetEntry( m_currentRSData );
       last_RSEventID = m_RSEventID;
       if ( nVerboseLevel > 3 ){ G4cout << "GateToRoot::CloseTracksRootFile() ::: Closing Tracks Data Root File " <<  fTracksFN << " ... ";
-        G4cout << " GateToRoot::CloseTracksRootFile() --- m_currentRSData = " << m_currentRSData<<"   m_RecStepTree->GetEntries() = "<< m_RecStepTree->GetEntries()<<G4endl;
-        G4cout << " GateToRoot::CloseTracksRootFile() --- last_RSEventID = "<<last_RSEventID <<G4endl;
+        G4cout << " GateToRoot::CloseTracksRootFile() --- m_currentRSData = " << m_currentRSData<<"   m_RecStepTree->GetEntries() = "<< m_RecStepTree->GetEntries()<< Gateendl;
+        G4cout << " GateToRoot::CloseTracksRootFile() --- last_RSEventID = "<<last_RSEventID << Gateendl;
       }
       dxg1_copy = dxg1;
       dyg1_copy = dyg1;
@@ -1225,7 +1224,7 @@ void GateToRoot::CloseTracksRootFile()
       m_positronGenerationPos_copy = m_positronGenerationPos;
       m_positronAnnihilPos_copy = m_positronAnnihilPos;
       theCRData_copy = theCRData ;
-      //G4cout << " GateToRoot::CloseTracksRootFile()"<<G4endl;
+      //G4cout << " GateToRoot::CloseTracksRootFile()\n";
       //PrintRecStep();
 
       if ( m_TracksFile->IsOpen() )
@@ -1233,7 +1232,7 @@ void GateToRoot::CloseTracksRootFile()
     }
   m_EOF = 1;
   m_TracksFile = 0;
-  if ( nVerboseLevel > 3 )G4cout <<"done"<<G4endl;
+  if ( nVerboseLevel > 3 )G4cout <<"done\n";
 }
 
 G4int GateToRoot::CheckEOF()
@@ -1243,43 +1242,43 @@ G4int GateToRoot::CheckEOF()
 
 void GateToRoot::PrintRecStep()
 {
-  G4cout << "Ion Decay Position = " << m_ionDecayPos << G4endl;
-  G4cout << "positron Generation Position = " << m_positronGenerationPos << G4endl;
-  G4cout << "positron Annihilation Position = " << m_positronAnnihilPos << G4endl;
-  G4cout << "positron Kinetic Energy        = " << m_positronKinEnergy << G4endl;
-  G4cout << "dxg1 = " << dxg1 <<G4endl;
-  G4cout << "dyg1 = " << dyg1 <<G4endl;
-  G4cout << "dzg1 = " << dzg1 <<G4endl;
-  G4cout << "dxg2 = " << dxg2 <<G4endl;
-  G4cout << "dyg2 = " << dyg2 <<G4endl;
-  G4cout << "dzg2 = " << dzg2 <<G4endl;
-  G4cout << "photon1_phantom_Rayleigh = "<< theCRData.photon2_phantom_Rayleigh<<G4endl;
-  G4cout << "photon2_phantom_Rayleigh = "<<    theCRData.photon2_phantom_Rayleigh <<G4endl;
-  G4cout << "photon1_phantom_compton = "<<       theCRData.photon1_phantom_compton <<G4endl;
-  G4cout <<"photon2_phantom_compton  = "<<       theCRData.photon2_phantom_compton <<G4endl;
-  G4cout <<"theComptonVolumeName1   = "<<  theCRData.theComptonVolumeName1<<G4endl;
-  G4cout <<"theComptonVolumeName2   = "<<  theCRData.theComptonVolumeName2<<G4endl;
-  G4cout <<"theRayleighVolumeName1   = "<<  theCRData.theRayleighVolumeName1<<G4endl;
-  G4cout <<"theRayleighVolumeName2   = "<<  theCRData.theRayleighVolumeName2<<G4endl;
-  G4cout <<"--------------------- COPY------------------------------"<<G4endl;
-  G4cout << "Ion Decay Position = " << m_ionDecayPos_copy << G4endl;
-  G4cout << "positron Generation Position = " << m_positronGenerationPos_copy << G4endl;
-  G4cout << "positron Annihilation Position = " << m_positronAnnihilPos_copy << G4endl;
-  G4cout << "positron Kinetic Energy        = " << m_positronKinEnergy_copy << G4endl;
-  G4cout << "dxg1 = " << dxg1_copy <<G4endl;
-  G4cout << "dyg1 = " << dyg1_copy <<G4endl;
-  G4cout << "dzg1 = " << dzg1_copy <<G4endl;
-  G4cout << "dxg2 = " << dxg2_copy <<G4endl;
-  G4cout << "dyg2 = " << dyg2_copy <<G4endl;
-  G4cout << "dzg2 = " << dzg2_copy <<G4endl;
-  G4cout << "photon1_phantom_Rayleigh = "<< theCRData_copy.photon2_phantom_Rayleigh<<G4endl;
-  G4cout << "photon2_phantom_Rayleigh = "<<    theCRData_copy.photon2_phantom_Rayleigh <<G4endl;
-  G4cout << "photon1_phantom_compton = "<<       theCRData_copy.photon1_phantom_compton <<G4endl;
-  G4cout <<"photon2_phantom_compton  = "<<       theCRData_copy.photon2_phantom_compton <<G4endl;
-  G4cout <<"theComptonVolumeName1   = "<<  theCRData_copy.theComptonVolumeName1<<G4endl;
-  G4cout <<"theComptonVolumeName2   = "<<  theCRData_copy.theComptonVolumeName2<<G4endl;
-  G4cout <<"theRayleighVolumeName1   = "<<  theCRData_copy.theRayleighVolumeName1<<G4endl;
-  G4cout <<"theRayleighVolumeName2   = "<<  theCRData_copy.theRayleighVolumeName2<<G4endl;
+  G4cout << "Ion Decay Position = " << m_ionDecayPos << Gateendl;
+  G4cout << "positron Generation Position = " << m_positronGenerationPos << Gateendl;
+  G4cout << "positron Annihilation Position = " << m_positronAnnihilPos << Gateendl;
+  G4cout << "positron Kinetic Energy        = " << m_positronKinEnergy << Gateendl;
+  G4cout << "dxg1 = " << dxg1 << Gateendl;
+  G4cout << "dyg1 = " << dyg1 << Gateendl;
+  G4cout << "dzg1 = " << dzg1 << Gateendl;
+  G4cout << "dxg2 = " << dxg2 << Gateendl;
+  G4cout << "dyg2 = " << dyg2 << Gateendl;
+  G4cout << "dzg2 = " << dzg2 << Gateendl;
+  G4cout << "photon1_phantom_Rayleigh = "<< theCRData.photon2_phantom_Rayleigh<< Gateendl;
+  G4cout << "photon2_phantom_Rayleigh = "<<    theCRData.photon2_phantom_Rayleigh << Gateendl;
+  G4cout << "photon1_phantom_compton = "<<       theCRData.photon1_phantom_compton << Gateendl;
+  G4cout <<"photon2_phantom_compton  = "<<       theCRData.photon2_phantom_compton << Gateendl;
+  G4cout <<"theComptonVolumeName1   = "<<  theCRData.theComptonVolumeName1<< Gateendl;
+  G4cout <<"theComptonVolumeName2   = "<<  theCRData.theComptonVolumeName2<< Gateendl;
+  G4cout <<"theRayleighVolumeName1   = "<<  theCRData.theRayleighVolumeName1<< Gateendl;
+  G4cout <<"theRayleighVolumeName2   = "<<  theCRData.theRayleighVolumeName2<< Gateendl;
+  G4cout <<"--------------------- COPY------------------------------\n";
+  G4cout << "Ion Decay Position = " << m_ionDecayPos_copy << Gateendl;
+  G4cout << "positron Generation Position = " << m_positronGenerationPos_copy << Gateendl;
+  G4cout << "positron Annihilation Position = " << m_positronAnnihilPos_copy << Gateendl;
+  G4cout << "positron Kinetic Energy        = " << m_positronKinEnergy_copy << Gateendl;
+  G4cout << "dxg1 = " << dxg1_copy << Gateendl;
+  G4cout << "dyg1 = " << dyg1_copy << Gateendl;
+  G4cout << "dzg1 = " << dzg1_copy << Gateendl;
+  G4cout << "dxg2 = " << dxg2_copy << Gateendl;
+  G4cout << "dyg2 = " << dyg2_copy << Gateendl;
+  G4cout << "dzg2 = " << dzg2_copy << Gateendl;
+  G4cout << "photon1_phantom_Rayleigh = "<< theCRData_copy.photon2_phantom_Rayleigh<< Gateendl;
+  G4cout << "photon2_phantom_Rayleigh = "<<    theCRData_copy.photon2_phantom_Rayleigh << Gateendl;
+  G4cout << "photon1_phantom_compton = "<<       theCRData_copy.photon1_phantom_compton << Gateendl;
+  G4cout <<"photon2_phantom_compton  = "<<       theCRData_copy.photon2_phantom_compton << Gateendl;
+  G4cout <<"theComptonVolumeName1   = "<<  theCRData_copy.theComptonVolumeName1<< Gateendl;
+  G4cout <<"theComptonVolumeName2   = "<<  theCRData_copy.theComptonVolumeName2<< Gateendl;
+  G4cout <<"theRayleighVolumeName1   = "<<  theCRData_copy.theRayleighVolumeName1<< Gateendl;
+  G4cout <<"theRayleighVolumeName2   = "<<  theCRData_copy.theRayleighVolumeName2<< Gateendl;
 }
 
 /// OPEN ROOT TRACKS DATA FILE IN READ MODE
@@ -1290,7 +1289,7 @@ void GateToRoot::OpenTracksFile()
   G4String previousFN = fTracksFN ;
 
 
-  GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
+  GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
 
   G4int currentN = myAction->GetcurrentN();
 
@@ -1298,7 +1297,7 @@ void GateToRoot::OpenTracksFile()
   G4int NbOfFiles = myAction->GetNfiles();
 
   //if ( m_verboseLevel > 3 )
-  G4cout << ( NbOfFiles -currentN ) << " File(s) remain to be opened in Detector Mode :"<<G4endl;
+  G4cout << ( NbOfFiles -currentN ) << " File(s) remain to be opened in Detector Mode :\n";
 
   if ( currentN == 0 )
     {
@@ -1317,14 +1316,14 @@ void GateToRoot::OpenTracksFile()
           aFile = m_fileName+"_TrackerData_"+s.str()+".root";
         }
       //if ( m_verboseLevel > 3 )
-      G4cout << "---- " << aFile << G4endl;
+      G4cout << "---- " << aFile << Gateendl;
     }
 
   if ( currentN > 0 )   { std::stringstream s; // convert currentN into string
     s << currentN ;
     fTracksFN = m_fileName+"_TrackerData_"+s.str()+".root";
     lastEventID = EventID;
-    if ( nVerboseLevel > 3 ) G4cout << "  LAST EVENT ID " <<lastEventID<<G4endl;
+    if ( nVerboseLevel > 3 ) G4cout << "  LAST EVENT ID " <<lastEventID<< Gateendl;
     CloseTracksRootFile();
   }
 
@@ -1333,7 +1332,7 @@ void GateToRoot::OpenTracksFile()
   m_TracksFile = new TFile( fTracksFN.c_str() ,"READ","ROOT file with Tracker Data");
 
   //if ( m_verboseLevel > 3 )
-  G4cout << "GateToRoot::OpenTracksFile() :::: Opening Tracks Data Root File " << fTracksFN << G4endl;
+  G4cout << "GateToRoot::OpenTracksFile() :::: Opening Tracks Data Root File " << fTracksFN << Gateendl;
 
   // Check that we succeeded in opening the file
 
@@ -1399,10 +1398,10 @@ void GateToRoot::OpenTracksFile()
       tracksTuple->GetEntry(0);
       if ( EventID != lastEventID )
         { // if ( m_verboseLevel > 3 ) {
-          G4cout << "  GateToRoot::OpenTracksFile()  ::  last Event ID was " <<lastEventID<< "  ---  current one read from last Tracks Root File " <<fTracksFN<< " is " << EventID<<G4endl;
-          G4cout << " SAVING RecStep Data to be used in GateToRoot::RecordBeginOfEvent "<<G4endl;
-          G4cout <<" GateToRoot::OpenTracksFile()  ::  LAST event ID read from RecStep Data in file " <<previousFN<< " is " << m_RSEventID << G4endl;
-          G4cout <<" GateToRoot::OpenTracksFile()  ::  LAST Event ID read from Tracks Data in previous file "<<previousFN<< " is "<<lastEventID<< G4endl;
+          G4cout << "  GateToRoot::OpenTracksFile()  ::  last Event ID was " <<lastEventID<< "  ---  current one read from last Tracks Root File " <<fTracksFN<< " is " << EventID<< Gateendl;
+          G4cout << " SAVING RecStep Data to be used in GateToRoot::RecordBeginOfEvent \n";
+          G4cout <<" GateToRoot::OpenTracksFile()  ::  LAST event ID read from RecStep Data in file " <<previousFN<< " is " << m_RSEventID << Gateendl;
+          G4cout <<" GateToRoot::OpenTracksFile()  ::  LAST Event ID read from Tracks Data in previous file "<<previousFN<< " is "<<lastEventID<< Gateendl;
           //}
           if ( lastEventID ==  last_RSEventID )fSkipRecStepData = 1;
         }
@@ -1469,26 +1468,26 @@ void GateToRoot::GetCurrentRecStepData( const G4Event* evt )
   if ( m_currentRSData ==  m_RecStepTree->GetEntries() ) return;
   m_RecStepTree->GetEntry( m_currentRSData );
 
-  //G4cout << " GateToRoot::GetCurrentRecStepData " << G4endl;
+  //G4cout << " GateToRoot::GetCurrentRecStepData \n";
   //PrintRecStep();
 
   if ( m_RSEventID != evt->GetEventID() )
-    {const G4Run* currentRun =  G4RunManager::GetRunManager()->GetCurrentRun() ;
+    {const G4Run* currentRun =  GateRunManager::GetRunManager()->GetCurrentRun() ;
       G4int RunID = currentRun->GetRunID();
-      G4cout << " GateToRoot::GetCurrentRecStepData :::: current Run ID "<< RunID <<"    current RecStep File " <<m_RecStepTree->GetCurrentFile()->GetName()<<G4endl;
-      G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentTracksData = "<<m_currentTracksData  <<"     tracksTuple->GetEntries()   "<< tracksTuple->GetEntries() <<G4endl;
-      G4cout << " GateToRoot::GetCurrentRecStepData :::: current event ID read from RecStep File "<<m_RSEventID<<"     current event ID " << evt->GetEventID()<<G4endl;
-      G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentRSData = "<<m_currentRSData<<"    m_RecStepTree->GetEntries()  "<<m_RecStepTree->GetEntries()<<G4endl;
+      G4cout << " GateToRoot::GetCurrentRecStepData :::: current Run ID "<< RunID <<"    current RecStep File " <<m_RecStepTree->GetCurrentFile()->GetName()<< Gateendl;
+      G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentTracksData = "<<m_currentTracksData  <<"     tracksTuple->GetEntries()   "<< tracksTuple->GetEntries() << Gateendl;
+      G4cout << " GateToRoot::GetCurrentRecStepData :::: current event ID read from RecStep File "<<m_RSEventID<<"     current event ID " << evt->GetEventID()<< Gateendl;
+      G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentRSData = "<<m_currentRSData<<"    m_RecStepTree->GetEntries()  "<<m_RecStepTree->GetEntries()<< Gateendl;
       G4Exception( "GateToRoot::GetCurrentRecStepData", "GetCurrentRecStepData", FatalException, "Aborting ...");
     }
-  //G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentRSData = "<<m_currentRSData<<"    m_RecStepTree->GetEntries()  "<<m_RecStepTree->GetEntries()<<G4endl;
+  //G4cout << " GateToRoot::GetCurrentRecStepData :::: m_currentRSData = "<<m_currentRSData<<"    m_RecStepTree->GetEntries()  "<<m_RecStepTree->GetEntries()<< Gateendl;
   m_currentRSData++;
 }
 
 
 GateTrack* GateToRoot::GetCurrentTracksData()
 {
-  GateSteppingAction* myAction = ( (GateSteppingAction *)(G4RunManager::GetRunManager()->GetUserSteppingAction() ) );
+  GateSteppingAction* myAction = ( (GateSteppingAction *)(GateRunManager::GetRunManager()->GetUserSteppingAction() ) );
   if ( m_currentTracksData ==  tracksTuple->GetEntries() ) // check if we are done
     {
       m_EOF = 1;
@@ -1500,8 +1499,8 @@ GateTrack* GateToRoot::GetCurrentTracksData()
   G4int nbytes = tracksTuple->GetEntry(m_currentTracksData);
   if (nVerboseLevel > 1)
     {
-      G4cout << "GateToRoot::GetCurrentTracksData() :::  Reading buffer of size " << nbytes<<" bytes in " << m_fileName+"_TrackerData.root" << G4endl;
-      G4cout << "RunID " << RunID << "   EventID " << EventID<< "         Position " <<G4ThreeVector(posx,posy,posz) << G4endl;
+      G4cout << "GateToRoot::GetCurrentTracksData() :::  Reading buffer of size " << nbytes<<" bytes in " << m_fileName+"_TrackerData.root\n";
+      G4cout << "RunID " << RunID << "   EventID " << EventID<< "         Position " <<G4ThreeVector(posx,posy,posz) << Gateendl;
     }
   if ( m_currentGTrack != 0 )
     {
@@ -1543,21 +1542,21 @@ GateTrack* GateToRoot::GetCurrentTracksData()
     }
   if (nVerboseLevel > 1)
     {
-      G4cout << " RETRIEVING Current Gate Track Informations : "<<G4endl;
+      G4cout << " RETRIEVING Current Gate Track Informations : \n";
       m_currentGTrack->Print();
     }
   return m_currentGTrack;
 }
 void GateToRoot::RecordRecStepData( const G4Event* evt )
 {
-  //G4cout << " GateToRoot::RecordRecStepData : recording RecStep Data to ROOT file " << G4endl;
+  //G4cout << " GateToRoot::RecordRecStepData : recording RecStep Data to ROOT file \n";
   m_RSEventID = evt->GetEventID();
-  m_RSRunID   = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+  m_RSRunID   = GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
   m_RecStepTree->Fill();
   //PrintRecStep();
-  //G4cout << " GateToRoot::RecordRecStepData : runID " << m_RSRunID << "  eventID "<< m_RSEventID  << G4endl;
-  //G4cout << " GateToRoot::RecordRecStepData : total " << m_RecStepTree->GetEntries() << G4endl;
-  //G4cout << " GateToRoot::RecordRecStepData : time  " << (GateSourceMgr::GetInstance()->GetTime())/s << G4endl;
+  //G4cout << " GateToRoot::RecordRecStepData : runID " << m_RSRunID << "  eventID "<< m_RSEventID  << Gateendl;
+  //G4cout << " GateToRoot::RecordRecStepData : total " << m_RecStepTree->GetEntries() << Gateendl;
+  //G4cout << " GateToRoot::RecordRecStepData : time  " << (GateSourceMgr::GetInstance()->GetTime())/s << Gateendl;
 
 }
 
@@ -1578,7 +1577,7 @@ void GateToRoot::RecordTracks(GateSteppingAction* mySteppingAction){
     {
 
       if (nVerboseLevel > 0)
-        {G4cout << " Writing to Root File "<<G4endl;
+        {G4cout << " Writing to Root File \n";
           (*iter)->Print();
         }
 
@@ -1633,7 +1632,7 @@ void GateToRoot::RecordTracks(GateSteppingAction* mySteppingAction){
       strcpy (  m_processName  , (*iter)->GetProcessName().c_str()   );
       strcpy (  m_parentparticleName  , (*iter)->GetParentParticleName().c_str()   );
       strcpy (  m_volumeName  , (*iter)->GetVertexVolumeName().c_str()   );
-      //G4cout << "GateToRoot::RecordTracks ::: process Name " << m_processName << G4endl;
+      //G4cout << "GateToRoot::RecordTracks ::: process Name " << m_processName << Gateendl;
 
 
       //                G4String aString;
@@ -1645,8 +1644,8 @@ void GateToRoot::RecordTracks(GateSteppingAction* mySteppingAction){
 
       m_EventTime = (*iter)->GetTime();
 
-      //G4cout  << "GateToRoot::RecordTracks event Time "  << m_EventTime/s <<   "     EventID " <<  EventID << G4endl;
-      //G4cout  << "GateToRoot::RecordTracks source ID " << m_sourceID << G4endl;
+      //G4cout  << "GateToRoot::RecordTracks event Time "  << m_EventTime/s <<   "     EventID " <<  EventID << Gateendl;
+      //G4cout  << "GateToRoot::RecordTracks source ID " << m_sourceID << Gateendl;
 
       G4ParticleTable  *particleTable = G4ParticleTable::GetParticleTable();
 
@@ -1661,7 +1660,7 @@ void GateToRoot::RecordTracks(GateSteppingAction* mySteppingAction){
       tracksTuple->Fill();
       delete (*iter);
 
-      //G4cout << " GateToRoot::RecordTracks particle name " << m_particleName  << "   parent particle name " << m_parentparticleName<< G4endl;
+      //G4cout << " GateToRoot::RecordTracks particle name " << m_particleName  << "   parent particle name " << m_parentparticleName<< Gateendl;
 
 
       if ( mySteppingAction->GetTxtOn() == 1 )

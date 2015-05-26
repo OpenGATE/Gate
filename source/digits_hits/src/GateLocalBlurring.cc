@@ -44,7 +44,7 @@ G4int GateLocalBlurring::ChooseVolume(G4String val)
     return 1;
   }
   else {
-    G4cout << "Wrong Volume Name" << G4endl;
+    G4cout << "Wrong Volume Name\n";
     return 0;
   }
 }
@@ -56,15 +56,15 @@ void GateLocalBlurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseLis
   if(im != m_table.end())
     {
       if((*im).second.resolution < 0 ) {
-	G4cerr << 	G4endl << "[GateLocalBlurring::ProcessOnePulse]:" << G4endl
-	       <<   "Sorry, but the resolution (" << (*im).second.resolution << ") for " << (*im).first << " is invalid" << G4endl;
+	G4cerr << 	Gateendl << "[GateLocalBlurring::ProcessOnePulse]:\n"
+	       <<   "Sorry, but the resolution (" << (*im).second.resolution << ") for " << (*im).first << " is invalid\n";
 	G4String msg = "You must set the energy of reference AND the resolution: /gate/digitizer/Singles/localBlurring/" + (*im).first + "/setEnergyOfReference ENERGY or disable the local blurring using: /gate/digitizer/Singles/localBlurring/disable\n";
 	G4Exception( "GateLocalBlurring::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
       }
       else if((*im).second.eref < 0) {
-	G4cerr <<   G4endl << "[GateLocalBlurring::ProcessOnePulse]:" << G4endl
+	G4cerr <<   Gateendl << "[GateLocalBlurring::ProcessOnePulse]:\n"
 	       <<   "Sorry, but the energy of reference (" << G4BestUnit((*im).second.eref,"Energy") << ") for "
-	       << (*im).first <<" is invalid" << G4endl;
+	       << (*im).first <<" is invalid\n";
 	G4String msg = "You must set the resolution AND the energy of reference:\n\t/gate/digitizer/Singles/localBlurring/" + (*im).first + "/setEnergyOfReference ENERGY\nor disable the local blurring using:\n\t/gate/digitizer/Singles/localBlurring/disable";
 	G4Exception( "GateLocalBlurring::ProcessOnePulse", "ProcessOnePulse", FatalException, msg );
 	}
@@ -81,5 +81,5 @@ void GateLocalBlurring::DescribeMyself(size_t indent)
   for (im=m_table.begin(); im!=m_table.end(); im++)
     G4cout << GateTools::Indent(indent) << "Resolution of " << (*im).first << ":\n"
 	   << GateTools::Indent(indent+1) << (*im).second.resolution << "  for "
-	   << G4BestUnit((*im).second.eref,"Energy") <<  G4endl;
+	   << G4BestUnit((*im).second.eref,"Energy") <<  Gateendl;
 }

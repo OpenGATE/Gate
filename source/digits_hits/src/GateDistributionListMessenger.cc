@@ -28,6 +28,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UImanager.hh"
 
 #include "GateListManager.hh"
+#include "GateMessageManager.hh"
 
 std::map<G4String,GateDistributionListMessenger::distType_t> GateDistributionListMessenger::fgkTypes;
 // constructor
@@ -72,7 +73,7 @@ const G4String& GateDistributionListMessenger::DumpMap()
 // Pure virtual method: create and insert a new attachment
 void GateDistributionListMessenger::DoInsertion(const G4String& typeName)
 {
-   G4cout << " GateDistributionListMessenger::DoInsertion " << G4endl;
+   G4cout << " GateDistributionListMessenger::DoInsertion \n";
 
    if (fgkTypes.find(typeName) == fgkTypes.end()) return;
    if (GetNewInsertionBaseName().empty())
@@ -80,7 +81,7 @@ void GateDistributionListMessenger::DoInsertion(const G4String& typeName)
 
    AvoidNameConflicts();
    G4String name = GetListManager()->MakeElementName(GetNewInsertionBaseName());
-   G4cout<<"Creating element "<<name<<G4endl;
+   G4cout<<"Creating element "<<name<< Gateendl;
    switch (fgkTypes[typeName]){
       case kFile         : m_distribVector.push_back(new GateDistributionFile(name)) ; break;
       case kManual       : m_distribVector.push_back(new GateDistributionManual(name)) ; break;

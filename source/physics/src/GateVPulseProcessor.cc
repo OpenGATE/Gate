@@ -46,8 +46,8 @@ GatePulseList* GateVPulseProcessor::ProcessPulseList(const GatePulseList* inputP
   if (nVerboseLevel==1) {
       G4cout << "[" << GetObjectName() << "::ProcessPulseList]: returning output pulse-list with " << outputPulseList->size() << " entries\n";
       for (iter = outputPulseList->begin() ; iter != outputPulseList->end() ; ++iter)
-      	G4cout << **iter << G4endl;
-      G4cout << G4endl;
+      	G4cout << **iter << Gateendl;
+      G4cout << Gateendl;
   }
 
   return outputPulseList;
@@ -61,8 +61,8 @@ GatePulseList* GateVPulseProcessor::ProcessPulseList(const GatePulseList* inputP
 void GateVPulseProcessor::Describe(size_t indent) 
 {
   GateClockDependent::Describe(indent);
-  G4cout << GateTools::Indent(indent) << "Attached to:        '" << GetChain()->GetObjectName() << "'" << G4endl;
-  G4cout << GateTools::Indent(indent) << "Output:             '" << GetObjectName() << "'" << G4endl;
+  G4cout << GateTools::Indent(indent) << "Attached to:        '" << GetChain()->GetObjectName() << "'\n";
+  G4cout << GateTools::Indent(indent) << "Output:             '" << GetObjectName() << "'\n";
   DescribeMyself(indent);
 }
      
