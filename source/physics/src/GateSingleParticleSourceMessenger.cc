@@ -549,7 +549,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   maxthetaCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   maxthetaCmd->SetGuidance("Set maximum theta");
   maxthetaCmd->SetParameterName("MaxTheta",true,true);
-  maxthetaCmd->SetDefaultValue(3.1416);
+  maxthetaCmd->SetDefaultValue(pi);
   maxthetaCmd->SetDefaultUnit("rad");
   maxthetaCmd->SetUnitCandidates("rad deg");
 

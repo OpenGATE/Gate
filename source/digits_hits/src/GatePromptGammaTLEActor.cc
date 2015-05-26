@@ -26,6 +26,7 @@ GatePromptGammaTLEActor::GatePromptGammaTLEActor(G4String name, G4int depth):
   SetStepHitType("random");
   mCurrentEvent = -1;
   mIsVarianceImageEnabled = false;
+  alreadyHere = false;
 }
 //-----------------------------------------------------------------------------
 
@@ -104,12 +105,11 @@ void GatePromptGammaTLEActor::ResetData()
 void GatePromptGammaTLEActor::SaveData()
 {
   // Data are normalized by the number of primaries
-  static bool alreadyHere = false;
   if (alreadyHere) {
     GateError("The GatePromptGammaTLEActor has already been saved and normalized. However, it must write its results only once. Remove all 'SaveEvery' for this actor. Abort.");
   }
 
-  GateVImageActor::SaveData();  //What does this do?
+  //GateVImageActor::SaveData();  //What does this do?
 
   // Number of primaries for normalisation, so that we have the number per proton, which is easier to use.
   mImageGamma->Scale(1./(GateActorManager::GetInstance()->GetCurrentEventId() + 1));// +1 because start at zero
@@ -200,7 +200,7 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy);
 
   // Do not scale h directly because it will be reused
-  mImageGamma->AddValueDouble(index, h, distance * material->GetDensity() / (g / cm3));
+  mImageGamma->AddValueDouble(index, h, distance * material->GetDensity() / (g / cm3)); //material is converted from internal units to g/cm3
 }
 //-----------------------------------------------------------------------------
 

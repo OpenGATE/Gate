@@ -102,8 +102,7 @@ void GateCompressedVoxelOutput::RecordBeginOfAcquisition()
 // write a binary file (4 bytes floats) containing the dose in cGy
 void GateCompressedVoxelOutput::RecordEndOfAcquisition()
 {
-  static const double Gy (joule/kilogram);
-  static const double cGy(Gy/100.0);
+  static const double cGy(gray/100.0);
 
   // Get initial dimensions and size of the phantom and calculate original voxel volume
   GateVGeometryVoxelReader* theReader        ( m_inserter->GetReader());

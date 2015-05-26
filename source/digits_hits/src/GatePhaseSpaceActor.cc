@@ -14,6 +14,7 @@
   \author thibault.frisson@creatis.insa-lyon.fr
   laurent.guigues@creatis.insa-lyon.fr
   david.sarrut@creatis.insa-lyon.fr
+  brent.huisman@insa-lyon.fr
 */
 
 #include "G4VProcess.hh"
@@ -132,8 +133,8 @@ void GatePhaseSpaceActor::Construct() {
     if (EnableZDirection) pListeVar->Branch("dZ", &dz, "dZ/F");
     if (EnablePartName /*&& bEnableCompact==false*/) pListeVar->Branch("ParticleName", pname , "ParticleName/C");
     if (EnableProdVol && bEnableCompact == false) pListeVar->Branch("ProductionVolume", vol, "ProductionVolume/C");
-    if (EnableProdProcess && bEnableCompact == false) pListeVar->Branch("ProductionProcessTrack", pro_track, "ProductionProcessTrack/C");
-    if (EnableProdProcess && bEnableCompact == false) pListeVar->Branch("ProductionProcessStep", pro_step, "ProductionProcessStep/C");
+    if (EnableProdProcess && bEnableCompact == false) pListeVar->Branch("CreatorProcess", creator_process, "CreatorProcess/C");
+    if (EnableProdProcess && bEnableCompact == false) pListeVar->Branch("ProcessDefinedStep", pro_step, "ProcessDefinedStep/C");
     if (bEnableCompact == false) pListeVar->Branch("TrackID", &trackid, "TrackID/I");
     if (bEnableCompact == false) pListeVar->Branch("EventID", &eventid, "EventID/I");
     if (bEnableCompact == false) pListeVar->Branch("RunID", &runid, "RunID/I");
@@ -199,8 +200,8 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e) {
 
   //----------------------- Set Primary Energy ------------------------
   bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy(); //GetInitialEnergy oid.
-  //cout << "BRENT " << e->GetPrimaryVertex()->Print(); << endl;
-  //G4cout << "brent: " << bPrimaryEnergy << G4endl;
+  //cout << "Debug: GetPrimaryVertex " << e->GetPrimaryVertex()->Print(); << endl;
+  //G4cout << "Debug: bPrimaryEnergy " << bPrimaryEnergy << G4endl;
   //-------------------------------------------------------------------
 
   //----------------------- Set SourceID ------------------------
@@ -210,7 +211,7 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e) {
     //GateSourceTPSPencilBeam * tpspencilsource = dynamic_cast<GateSourceTPSPencilBeam*>(GateSourceMgr::GetInstance()->GetSource(0));
     //if (tpspencilsource == null) GateError("Please select a TPSPencilBeamSource if you want to store SpotIDs.");
     bSpotID = tpspencilsource->GetCurrentSpotID();
-    //G4cout << "brent: " << bSpotID << G4endl;
+    //G4cout << "Debug: SpotID: " << bSpotID << G4endl;
   }
   //-------------------------------------------------------------------
 }
@@ -405,7 +406,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   st = "";
   if (step->GetTrack()->GetCreatorProcess() )
     st =  step->GetTrack()->GetCreatorProcess()->GetProcessName();
-  strcpy(pro_track, st.c_str());
+  strcpy(creator_process, st.c_str());
 
   //----------
   st = "";
@@ -450,7 +451,6 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
   }
   mIsFistStep = false;
-
 }
 // --------------------------------------------------------------------
 

@@ -28,6 +28,7 @@ GatePromptGammaAnalogActor::GatePromptGammaAnalogActor(G4String name, G4int dept
   //SetStepHitType("random");
   mImageGamma = new GateImageOfHistograms("int");
   mSetOutputCount = false;
+  alreadyHere = false;
 }
 //-----------------------------------------------------------------------------
 
@@ -62,7 +63,7 @@ void GatePromptGammaAnalogActor::Construct()
 
   // Input data
   data.Read(mInputDataFilename);
-  data.InitializeMaterial();
+  //data.InitializeMaterial(); //we dont need the materials, only some metadata that is already extracted in Read()
 
   // Set image parameters and allocate (only mImageGamma not mImage)
   mImageGamma->SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
@@ -96,17 +97,16 @@ void GatePromptGammaAnalogActor::ResetData()
 void GatePromptGammaAnalogActor::SaveData()
 {
   // Data are normalized by the number of primaries
-  static bool alreadyHere = false;
   if (alreadyHere) {
-    GateError("The GatePromptGammaTLEActor has already been saved and normalized. However, it must write its results only once. Remove all 'SaveEvery' for this actor. Abort.");
+    GateError("The GatePromptGammaAnalogActor has already been saved and normalized. However, it must write its results only once. Remove all 'SaveEvery' for this actor. Abort.");
   }
   // Normalisation
   if(!mSetOutputCount){
     int n = GateActorManager::GetInstance()->GetCurrentEventId() + 1; // +1 because start at zero
     double f = 1.0 / n;
-    mImageGamma->Scale(f);
+    mImageGamma->Scale(f); //converts image to float
   }
-  GateVImageActor::SaveData();
+  //GateVImageActor::SaveData();
   mImageGamma->Write(mSaveFilename);
   alreadyHere = true;
 }
@@ -136,6 +136,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   const G4VProcess* process = step->GetPostStepPoint()->GetProcessDefinedStep();
   static G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
   static G4VProcess * protonInelastic = store->FindProcess(G4Proton::Proton(), fHadronInelastic);
+  const G4double &particle_energy = step->GetPreStepPoint()->GetKineticEnergy();
 
   // Check particle type ("proton")
   if (particle != G4Proton::Proton()) return;
@@ -143,18 +144,37 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   // Process type, store cross_section for ProtonInelastic process
   if (process != protonInelastic) return;
 
+  // Check if proton energy within bounds.
+  if (particle_energy > data.GetProtonEMax()) {
+    GateError("GatePromptGammaTLEActor -- Proton Energy (" << particle_energy << ") outside range of pgTLE (" << data.GetProtonEMax() << ") database! Aborting...");
+  }
+
   // For all secondaries, check if gamma and store pg-Energy in this voxel
   G4TrackVector* fSecondary = (const_cast<G4Step *> (step))->GetfSecondary();
   for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++) {
     if ((*fSecondary)[lp1]->GetDefinition() == G4Gamma::Gamma()) {
-      const double e = (*fSecondary)[lp1]->GetKineticEnergy()/MeV;
-      if (e>data.GetGammaEMax()) {
+      const double e = (*fSecondary)[lp1]->GetKineticEnergy()/MeV;  //convert from internal unit to MeV
+      if (e>data.GetGammaEMax() || e<0.003) { //FIXME understand lowE check.
+        //lower than we're interested in.
         //higher than we're interested in.
         continue;
       }
+      //Get thet correct gammabin
       // -1 because TH1D start at 1, and end at index=size.
-      int bin = data.GetGammaM(1)->GetYaxis()->FindFixBin(e)-1;
+      int bin = data.GetGammaZ()->GetYaxis()->FindFixBin(e)-1;
       mImageGamma->AddValueInt(index, bin, 1);
+
+      /*Some debug stuff
+      GateMessage("Actor",4,"PGAn "<<"PG added."<<std::endl);
+      //GateMessage("Actor",4,"PGAn "<<"EventID: "<< step->GetEvent()->GetEventID()<<std::endl);
+      GateMessage("Actor",4,"PGAn "<<"Energy: " << e<<std::endl);
+      GateMessage("Actor",4,"PGAn "<<"Energy Proton: " << particle_energy<<std::endl);
+      GateMessage("Actor",4,"PGAn "<<"Energy [MeV]: " << e/MeV<<std::endl);
+      GateMessage("Actor",4,"PGAn "<<"Energybin: " << bin<<std::endl);
+      G4HadronicProcess* hproc = (G4HadronicProcess*) process;
+      const G4Isotope* target = hproc->GetTargetIsotope();
+      hproc->DumpPhysicsTable();
+      */
     }
   }
 }

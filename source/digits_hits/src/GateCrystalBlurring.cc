@@ -16,6 +16,7 @@ See GATE/LICENSE.txt for further details
 
 #include "G4UnitsTable.hh"
 
+#include "GateConstants.hh"
 
 GateCrystalBlurring::GateCrystalBlurring(GatePulseProcessorChain* itsChain,
       	      	      	      	 const G4String& itsName,
@@ -45,13 +46,13 @@ GateCrystalBlurring::~GateCrystalBlurring()
 void GateCrystalBlurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
 {
 
-         m_crystalresolution = m_crystalresolutionmin + (m_crystalresolutionmax - m_crystalresolutionmin)*G4UniformRand();
+         m_crystalresolution = G4RandFlat::shoot(m_crystalresolutionmin, m_crystalresolutionmax);
 	 m_crystalcoeff = m_crystalresolution * sqrt(m_crystaleref);
 	 GatePulse* outputPulse = new GatePulse(*inputPulse);
 	 G4double m_QE = G4UniformRand();
 
 	 if(m_QE <= m_crystalQE)
-	 {outputPulse->SetEnergy(G4RandGauss::shoot(inputPulse->GetEnergy(),m_crystalcoeff*sqrt(inputPulse->GetEnergy())/2.35));
+	 {outputPulse->SetEnergy(G4RandGauss::shoot(inputPulse->GetEnergy(),m_crystalcoeff*sqrt(inputPulse->GetEnergy())/GateConstants::fwhm_to_sigma));
 	 outputPulseList.push_back(outputPulse);}
 	 else {outputPulse->SetEnergy(0);
 	 outputPulseList.push_back(outputPulse);}

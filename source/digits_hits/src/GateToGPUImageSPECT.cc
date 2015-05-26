@@ -29,8 +29,8 @@
 #include "G4Electron.hh"
 #include <cstddef>
 #include <sys/time.h>
+#include "GateMiscFunctions.hh"
 
-#define PI ( 4 * ::atan( 1 ) )
 
 GateToGPUImageSPECT::GateToGPUImageSPECT( const G4String& name,
     GateOutputMgr *outputMgr, GateVSystem* itsSystem, DigiMode digiMode )
@@ -635,10 +635,10 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 		G4double x = preStep->GetPosition().x()/mm;
 		G4double y = preStep->GetPosition().y()/mm;
 		G4double z = preStep->GetPosition().z()/mm;
-		G4double newX = ::cos( m_angle * PI / 180.0 ) * x
-			- ::sin( m_angle * PI / 180.0 ) * z;
-		G4double newZ = ::sin( m_angle * PI / 180.0 ) * x
-			+ ::cos( m_angle * PI / 180.0 ) * z;
+		G4double newX = ::cos( deg2rad(m_angle) ) * x
+			- ::sin( deg2rad(m_angle) ) * z;
+		G4double newZ = ::sin( deg2rad(m_angle) ) * x
+			+ ::cos( deg2rad(m_angle) ) * z;
 
 		// Check if the particule is on entry on collimator
 		if( newX <= ( m_ror + 0.001 ) ) // 0.1 of security double precision
@@ -658,10 +658,10 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 			G4double dx = preStep->GetMomentumDirection().x();
 			G4double dy = preStep->GetMomentumDirection().y();
 			G4double dz = preStep->GetMomentumDirection().z();
-			G4double newDx = ::cos( m_angle * PI / 180.0 ) * dx
-				- ::sin( m_angle * PI / 180.0 ) * dz;
-			G4double newDz = ::sin( m_angle * PI / 180.0 ) * dx
-				+ ::cos( m_angle * PI / 180.0 ) * dz;
+			G4double newDx = ::cos( deg2rad(m_angle) ) * dx
+				- ::sin( deg2rad(m_angle) ) * dz;
+			G4double newDz = ::sin( deg2rad(m_angle) ) * dx
+				+ ::cos( deg2rad(m_angle) ) * dz;
 
 			if( aStep->GetTrack()->GetDefinition() == G4Gamma::Gamma() )
 			{
@@ -836,11 +836,11 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					{
 						for( unsigned int i = 0; i < m_cpuParticle->size; ++i )
 						{
-							G4double x = m_cpuParticle->px[ i ] * ::cos( m_angle * PI / 180.0 )
-								+ m_cpuParticle->pz[ i ] * ::sin( m_angle * PI / 180.0 );
+							G4double x = m_cpuParticle->px[ i ] * ::cos( deg2rad(m_angle) )
+								+ m_cpuParticle->pz[ i ] * ::sin( deg2rad(m_angle));
 							G4double y = (G4float)m_cpuParticle->py[ i ];
-							G4double z = m_cpuParticle->pz[ i ] * ::cos( m_angle * PI / 180.0 )
-								- m_cpuParticle->px[ i ] * ::sin( m_angle * PI / 180.0 );
+							G4double z = m_cpuParticle->pz[ i ] * ::cos( deg2rad(m_angle) )
+								- m_cpuParticle->px[ i ] * ::sin( deg2rad(m_angle) );
 
 							m_posX_ExitCollimatorSource = (G4float)x/mm;
 							m_posY_ExitCollimatorSource = (G4float)y/mm;
@@ -854,11 +854,11 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					{
 						for( unsigned int i = 0; i < m_gpuParticle->size; ++i )
 						{
-							G4double x = m_gpuParticle->px[ i ] * ::cos( m_angle * PI / 180.0 )
-								+ m_gpuParticle->pz[ i ] * ::sin( m_angle * PI / 180.0 );
+							G4double x = m_gpuParticle->px[ i ] * ::cos( deg2rad(m_angle) )
+								+ m_gpuParticle->pz[ i ] * ::sin( deg2rad(m_angle) );
 							G4double y = (G4float)m_gpuParticle->py[ i ];
-							G4double z = m_gpuParticle->pz[ i ] * ::cos( m_angle * PI / 180.0 )
-								- m_gpuParticle->px[ i ] * ::sin( m_angle * PI / 180.0 );
+							G4double z = m_gpuParticle->pz[ i ] * ::cos( deg2rad(m_angle ) )
+								- m_gpuParticle->px[ i ] * ::sin( deg2rad(m_angle) );
 
 							m_posX_ExitCollimatorSource = (G4float)x/mm;
 							m_posY_ExitCollimatorSource = (G4float)y/mm;
@@ -904,17 +904,17 @@ void GateToGPUImageSPECT::CreateNewParticle( GateCPUParticle const *p,
     unsigned int id )
 {
 		// Rotate the momentum and position
-		G4double x = p->px[ id ] * ::cos( m_angle * PI / 180.0 )
-			+ p->pz[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double x = p->px[ id ] * ::cos( deg2rad(m_angle) )
+			+ p->pz[ id ] * ::sin( deg2rad(m_angle) );
 		G4double y = p->py[ id ];
-		G4double z = p->pz[ id ] * ::cos( m_angle * PI / 180.0 )
-			- p->px[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double z = p->pz[ id ] * ::cos( deg2rad(m_angle) )
+			- p->px[ id ] * ::sin( deg2rad(m_angle) );
 
-		G4double dx = p->dx[ id ] * ::cos( m_angle * PI / 180.0 )
-			+ p->dz[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double dx = p->dx[ id ] * ::cos( deg2rad(m_angle) )
+			+ p->dz[ id ] * ::sin( deg2rad(m_angle) );
 		G4double dy = p->dy[ id ];
-		G4double dz = p->dz[ id ] * ::cos( m_angle * PI / 180.0 )
-			- p->dx[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double dz = p->dz[ id ] * ::cos( deg2rad(m_angle) )
+			- p->dx[ id ] * ::sin( deg2rad(m_angle) );
 
     G4ThreeVector dir( dx, dy, dz );
     dir /= dir.mag();
@@ -943,17 +943,17 @@ void GateToGPUImageSPECT::CreateNewParticle( GateGPUParticle const *p,
     unsigned int id )
 {
 		// Rotate the momentum and position
-		G4double x = p->px[ id ] * ::cos( m_angle * PI / 180.0 )
-			+ p->pz[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double x = p->px[ id ] * ::cos( deg2rad(m_angle) )
+			+ p->pz[ id ] * ::sin( deg2rad(m_angle) );
 		G4double y = p->py[ id ];
-		G4double z = p->pz[ id ] * ::cos( m_angle * PI / 180.0 )
-			- p->px[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double z = p->pz[ id ] * ::cos( deg2rad(m_angle) )
+			- p->px[ id ] * ::sin( deg2rad(m_angle) );
 
-		G4double dx = p->dx[ id ] * ::cos( m_angle * PI / 180.0 )
-			+ p->dz[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double dx = p->dx[ id ] * ::cos( deg2rad(m_angle) )
+			+ p->dz[ id ] * ::sin( deg2rad(m_angle) );
 		G4double dy = p->dy[ id ];
-		G4double dz = p->dz[ id ] * ::cos( m_angle * PI / 180.0 )
-			- p->dx[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double dz = p->dz[ id ] * ::cos( deg2rad(m_angle) )
+			- p->dx[ id ] * ::sin( deg2rad(m_angle) );
 
     G4ThreeVector dir( dx, dy, dz );
     dir /= dir.mag();

@@ -22,7 +22,7 @@
 
 #include "G4UnitsTable.hh"
 #include "G4ProductionCutsTable.hh"
-
+#include "G4PhysicalConstants.hh"
 
 
 //-----------------------------------------------------------------------------
@@ -107,7 +107,6 @@ void GateEmCalculatorActor::SaveData()
   double cut = DBL_MAX;
   double EmDEDX=0, NuclearDEDX=0, TotalDEDX=0;
   double density=0;
-  double e=1.602176487e-19;
   double I=0;
   double eDensity=0;
   double radLength=0;
@@ -176,13 +175,13 @@ void GateEmCalculatorActor::SaveData()
 
 // values
       os << material << "\t\t";
-      os << density*e << "\t\t";
+      os << density*e_SI << "\t\t";
       os << eDensity << "\t";
       os << radLength << "\t\t";
       os << I*1.e6 << "\t";
-      os << EmDEDX*10./(e*density) << "\t\t";
-      os << NuclearDEDX*10./(e*density) << "\t";
-      os << TotalDEDX*10./(e*density) << "\t\t";
+      os << EmDEDX*10./(e_SI*density) << "\t\t";
+      os << NuclearDEDX*10./(e_SI*density) << "\t";
+      os << TotalDEDX*10./(e_SI*density) << "\t\t";
       os << MuMassCoeficient << std::endl;
     }
 

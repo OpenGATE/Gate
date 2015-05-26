@@ -180,7 +180,6 @@ void GatePromptGammaData::Read(std::string & filename)
     SetProtonEMax(GammaZ->GetXaxis()->GetXmax());
     SetGammaEMin(GammaZ->GetYaxis()->GetXmin());
     SetGammaEMax(GammaZ->GetYaxis()->GetXmax());
-
   }
 
   for(unsigned int i=0; i<m; i++) {
@@ -216,11 +215,11 @@ void GatePromptGammaData::SetCurrentPointerForThisElement(const G4Element * elem
 void GatePromptGammaData::Initialize(std::string & filename, const G4Material * material)
 {
   // Open the file in update mode, part will be overwriten, part will
-  // be keep as is.
+  // be kept as is.
   mFilename = filename;
   pTfile = new TFile(filename.c_str(),"UPDATE");
 
-  // Check if a directory for this material already exist
+  // Check if a directory for this material already exists
   std::string name = material->GetName();
   TDirectory * dir = pTfile->GetDirectory(name.c_str());
   if (dir == 0) {
@@ -229,7 +228,7 @@ void GatePromptGammaData::Initialize(std::string & filename, const G4Material * 
     dir->cd();
   }
   else {
-    // If already exist -> will be replaced.
+    // If already exists -> will be replaced.
     dir->cd();
     dir->Delete("*;*");
   }
@@ -240,7 +239,7 @@ void GatePromptGammaData::Initialize(std::string & filename, const G4Material * 
   GammaZ->SetXTitle("E_{proton} [MeV]");
   GammaZ->SetYTitle("E_{gp} [MeV]");
 
-  Ngamma = new TH2D("Ngamma","PG count per proton energy bin",
+  Ngamma = new TH2D("Ngamma","PG count per energy bin",
                      proton_bin, min_proton_energy/MeV, max_proton_energy/MeV,
                      gamma_bin, min_gamma_energy/MeV, max_gamma_energy/MeV);
   Ngamma->SetXTitle("E_{proton} [MeV]");
@@ -351,6 +350,7 @@ void GatePromptGammaData::InitializeMaterial()
       for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
         const G4Element * elem = m->GetElement(e);
         double f = m->GetFractionVector()[e];
+        //double f = m->GetAtomsVector()[e];
 
         if (elem->GetZ() != 1) { // if not Hydrogen.
           // (If hydrogen probability is zero)
@@ -371,6 +371,10 @@ void GatePromptGammaData::InitializeMaterial()
         }
       }
       GammaM[i] = hgammam; //Now it's no longer modulo rho(Z), or rho(M)!!!
+      std::string outfilename = "brent" +m->GetName()+".root";
+      TFile *myfile = new TFile(outfilename.c_str(), "RECREATE");
+      hgammam->Write();
+      myfile->Close();
       NgammaM[i] = hngammam;
     }
   }
@@ -399,7 +403,7 @@ TH1D * GatePromptGammaData::GetGammaEnergySpectrum(const int & materialIndex,
   }
 
   // Get the index of the energy bin
-  int binX = pHEp->FindFixBin(energy);
+  int binX = pHEp->FindFixBin(energy/MeV); //FIXME: divide by MeV or not?
 
   // Get the projected histogram of the material
   TH1D * h = mGammaEnergyHistoByMaterialByProtonEnergy[materialIndex][binX];

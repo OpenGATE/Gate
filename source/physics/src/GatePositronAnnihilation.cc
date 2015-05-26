@@ -35,14 +35,15 @@ G4VParticleChange* GatePositronAnnihilation::AtRestDoIt(const G4Track& aTrack,
 
    fParticleChange.SetNumberOfSecondaries(2) ;
    
-   G4double r  = CLHEP::RandGauss::shoot(0.,0.0011);
+   G4double r  = CLHEP::RandGauss::shoot(0.,0.0011); // hard coded value!
       
    G4double E1 = electron_mass_c2 + r;
    G4double E2 = electron_mass_c2 - r;
 
-   G4double DeltaTeta = 2*r/0.511;
+   G4double DeltaTeta = 2*r/electron_mass_c2;
    
-        G4double cosTeta = 2*G4UniformRand()-1. , sinTeta = sqrt(1.-cosTeta*cosTeta);
+        G4double cosTeta = G4RandFlat::shoot(-1.0, 1.0);
+        G4double sinTeta = sqrt(1.-cosTeta*cosTeta);
         G4double Phi     = twopi * G4UniformRand() ;
 	G4double Phi1     = (twopi * G4UniformRand())/2. ;
         G4ThreeVector Direction (sinTeta*cos(Phi), sinTeta*sin(Phi), cosTeta);   

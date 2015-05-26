@@ -244,7 +244,7 @@ int main( int argc, char* argv[] )
           printHelpAndQuit("Gate command line help" );
           break;
         case 'v':
-          std::cout << "Gate version is 7.0" << std::endl;
+          std::cout << "Gate version is 7.1" << std::endl;
           exit(0);
           break;
         case 'a':
@@ -324,7 +324,9 @@ int main( int argc, char* argv[] )
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
   // Declaring pointers
+#ifdef G4UI_USE
   G4UIExecutive* ui = NULL;
+#endif
   G4UIsession* session = NULL;
   if( isQt )
     {
@@ -384,12 +386,15 @@ int main( int argc, char* argv[] )
     GateMessage( "Core", 0, "End of macro " << macrofilename << G4endl);
   }
 
+#ifdef G4UI_USE
     if (ui) // Launching interactive mode // Qt
       {
         ui->SessionStart();
         delete ui;
       }
-    else {
+    else
+#endif
+      {
       if (session && !isMacroFile) { // Terminal
         session->SessionStart();
         delete session;

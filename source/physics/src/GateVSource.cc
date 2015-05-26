@@ -454,7 +454,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
     {
       if (GetType() == G4String("backtoback"))    { GeneratePrimariesForBackToBackSource(event); }
       else if (GetType() == G4String("fastI124")) { GeneratePrimariesForFastI124Source(event); }
-      else if ((GetType() == G4String("")) or (GetType() == G4String("gps"))) {
+      else if ((GetType() == G4String("")) || (GetType() == G4String("gps"))) {
         // decay time for ions inside the timeSlice controlled here and not by RDM
         // NB: temporary: secondary ions of the decay chain not properly treated
         SetParticleTime( m_time );
