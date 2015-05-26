@@ -53,7 +53,7 @@ void GateMergeManager::StartMerging(string splitfileName){
 // to process the splitfile
 void GateMergeManager::ReadSplitFile(string splitfileName){
 
-  ifstream splitfile;
+  std::ifstream splitfile;
   splitfile.open(splitfileName.c_str());
   if(!splitfile){
      cout<<"Can't open split file: "<<splitfileName<<endl;
@@ -312,7 +312,7 @@ void GateMergeManager::StartCleaning(string splitfileName,bool test){
 
   // test for the mark: ready_for_delete 
   string touched=dir+"/ready_for_delete";
-  ifstream ready;
+  std::ifstream ready;
   ready.open(touched.c_str());
   if (!ready) {
      cout<<"Cannot do the cleanup - directory "<<dir<<" not marked as ready!"<<endl;
