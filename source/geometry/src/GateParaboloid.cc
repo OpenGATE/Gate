@@ -78,7 +78,7 @@ G4LogicalVolume* GateParaboloid::ConstructOwnSolidAndLogicalVolume(G4Material* m
    }
    else {
      // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateParaboloid::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<G4endl);
+       GateMessage("Warning", 0, "GateParaboloid::ConstructOwnSolidAndLogicalVolume update mode not implemented\n");
    }
    return m_paraboloid_log;
 }
@@ -97,10 +97,10 @@ void GateParaboloid::DestroyOwnSolidAndLogicalVolume()
 
 void GateParaboloid::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: paraboloidrbolic tube (paraboloidrtube)" << G4endl;
-  G4cout << GateTools::Indent(level) << "Radius at -z/2: " << G4BestUnit(m_negR,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Radius at +z/2: " << G4BestUnit(m_posR,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Z length: " << G4BestUnit(m_zLength,"Length") << G4endl;
+  G4cout << GateTools::Indent(level) << "Shape: paraboloidrbolic tube (paraboloidrtube)\n";
+  G4cout << GateTools::Indent(level) << "Radius at -z/2: " << G4BestUnit(m_negR,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Radius at +z/2: " << G4BestUnit(m_posR,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Z length: " << G4BestUnit(m_zLength,"Length") << Gateendl;
 }
 
 G4double GateParaboloid::ComputeMyOwnVolume() const

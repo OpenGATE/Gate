@@ -35,8 +35,8 @@ GateLinearBlurringLaw::GateLinearBlurringLaw(const G4String& itsName, G4double i
 G4double GateLinearBlurringLaw::ComputeResolution(G4double energy) const {
 
 	if(m_resolution < 0. ) {
-		G4cerr << 	G4endl << "[GateLinearBlurringLaw::ComputeResolution]:" << G4endl
-      	   <<   "Sorry, but the resolution (" << GetResolution() << ") is invalid" << G4endl;
+		G4cerr << 	Gateendl << "[GateLinearBlurringLaw::ComputeResolution]:\n"
+      	   <<   "Sorry, but the resolution (" << GetResolution() << ") is invalid\n";
     	G4String msg = "You must set the energy of reference AND the resolution AND the slope:\n"
       "\t/gate/digitizer/blurring/linear/setResolution NUMBER\n"
       "or disable the blurring using:\n"
@@ -45,8 +45,8 @@ G4double GateLinearBlurringLaw::ComputeResolution(G4double energy) const {
 			G4Exception( "GateLinearBlurringLaw::ComputeResolution", "ComputeResolution", FatalException, msg );
 	}
 	else if (m_eref < 0.) {
-		G4cerr <<   G4endl << "[GateLinearBlurringLaw::ComputeResolution]:" << G4endl
-			<<   "Sorry, but the energy of reference (" << G4BestUnit(GetEnergyRef(),"Energy") << ") is invalid" << G4endl;
+		G4cerr <<   Gateendl << "[GateLinearBlurringLaw::ComputeResolution]:\n"
+			<<   "Sorry, but the energy of reference (" << G4BestUnit(GetEnergyRef(),"Energy") << ") is invalid\n";
 
 		G4String msg = "You must set the resolution AND the energy of reference AND the slope:\n"
          "\t/gate/digitizer/blurring/linear/setEnergyOfReference ENERGY\n"
@@ -61,8 +61,8 @@ G4double GateLinearBlurringLaw::ComputeResolution(G4double energy) const {
 
 
 void GateLinearBlurringLaw::DescribeMyself (size_t indent) const {
-	G4cout << "Linear law for energy blurring" << G4endl;
-	G4cout << GateTools::Indent(indent) << "Energy of Reference:\t" << G4BestUnit(GetEnergyRef(),"Energy") << G4endl;
-	G4cout << GateTools::Indent(indent) << "Resolution of Reference:\t" << GetResolution() << G4endl;
-	G4cout << GateTools::Indent(indent) << "Slope:\t" << G4BestUnit(GetSlope(),"Energy Slope") << G4endl;
+	G4cout << "Linear law for energy blurring\n";
+	G4cout << GateTools::Indent(indent) << "Energy of Reference:\t" << G4BestUnit(GetEnergyRef(),"Energy") << Gateendl;
+	G4cout << GateTools::Indent(indent) << "Resolution of Reference:\t" << GetResolution() << Gateendl;
+	G4cout << GateTools::Indent(indent) << "Slope:\t" << G4BestUnit(GetSlope(),"Energy Slope") << Gateendl;
 }

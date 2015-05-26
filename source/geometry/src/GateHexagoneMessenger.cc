@@ -35,7 +35,7 @@ GateHexagoneMessenger::GateHexagoneMessenger(GateHexagone *itsCreator)
 
   
   cmdName = dir + "setHeight";
-  G4cout << " GetDirectoryName()+ setHeight = "  << cmdName << G4endl;
+  G4cout << " GetDirectoryName()+ setHeight = "  << cmdName << Gateendl;
   HexagoneHeightCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   HexagoneHeightCmd->SetGuidance("Set height of the hexagone.");
   HexagoneHeightCmd->SetParameterName("Height",false);

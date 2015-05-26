@@ -171,11 +171,11 @@ G4cout.precision(10);
 //cosTheta[i] = tmp; tmp -= 0.8 / 2047.;
 
 cosTheta_i[ 2047 - i] = cosTheta[i];
-//G4cout << i << "  costheta " << cosTheta[i] <<"   theta " << m_theta[i]*180./M_PI<<G4endl;
+//G4cout << i << "  costheta " << cosTheta[i] <<"   theta " << m_theta[i]*180./M_PI<< Gateendl;
 
 }
 
- //for (G4int i = 0; i < 2048; i++) G4cout << i << "  costheta " << cosTheta_i[i] <<G4endl;
+ //for (G4int i = 0; i < 2048; i++) G4cout << i << "  costheta " << cosTheta_i[i] << Gateendl;
 
 
  if ( tanPhi !=0 ) { delete [] tanPhi;}
@@ -201,11 +201,11 @@ tanPhi_i = new G4double[ 256 ];
     if ( i < 256 ) tanPhi_i[i] = tanPhi[i];
     if ( i < 257 ) Phi[i] = atan( tanPhi[i] ); else Phi[i] = atan( tmpp );
 
-//G4cout << i << "  tanphi " << tanPhi[i] <<G4endl;
+//G4cout << i << "  tanphi " << tanPhi[i] << Gateendl;
 
 }
 
-      // for (G4int i = 0; i < 512; i++)G4cout << i << "  tanphi " << tanPhi[i] <<G4endl;
+      // for (G4int i = 0; i < 512; i++)G4cout << i << "  tanphi " << tanPhi[i] << Gateendl;
 
 
 
@@ -221,7 +221,7 @@ tanPhi_i = new G4double[ 256 ];
   for ( G4int i = 0 ; i < m_TotalNb ; i++ ) { m_theTable[i] = 0.;}
   for ( G4int i = 0;i < m_drfdimx * m_drfdimy ; i++ ) m_theDRFTable[i] = 0.;
 
-  G4cout << " Initialized ARF Table " << GetName() << G4endl;
+  G4cout << " Initialized ARF Table " << GetName() << Gateendl;
 
 
 std::stringstream s1,s2;
@@ -267,7 +267,7 @@ if ( itheta < 2047 &&  ( cosTheta[itheta+1] - costheta > 0. ) ) itheta++;
 
 // itheta = G4int( (1.0 - costheta ) * 2047./0.8  );
 
-//G4cout << cosTheta[itheta]<<"   "<<costheta<< cosTheta[itheta + 1 ]<<G4endl;
+//G4cout << cosTheta[itheta]<<"   "<<costheta<< cosTheta[itheta + 1 ]<< Gateendl;
 
 if ( itheta == 0 ) { iphi = 0; return 1; }
 
@@ -280,17 +280,17 @@ if (tanphi < 0.0) tanphi *= -1.0;
   if(tanphi - 1.00 < 0. ){ iphi  = G4int(  tanphi /dTanPhiStep1 + 0.5 );
                            if ( tanphi - tanPhi[iphi] < 0. ) iphi--;
 
-         //G4cout << " tanphi["<<iphi<<"] =  "<<tanPhi[iphi]<< "   "<< tanphi<<"   tanphi["<<iphi+1<<"] =  "<<tanPhi[iphi+1]<< G4endl;
+         //G4cout << " tanphi["<<iphi<<"] =  "<<tanPhi[iphi]<< "   "<< tanphi<<"   tanphi["<<iphi+1<<"] =  "<<tanPhi[iphi+1]<< Gateendl;
 
 
   }else {
           tanphi = fabs(x/y);G4int ii = G4int(  tanphi /dTanPhiStep1 + 0.5 );
 	  if ( tanphi - tanPhi[ii] < 0. ) ii--;
           iphi = 511 - ii;
-     // G4cout << " tanphi > 1 "<<G4endl;
-     // if ( iphi == 256 ) G4cout << " tanphi["<<iphi<<"] =  "<<tanPhi[iphi]<< "   "<< fabs(y/x)<<"   tanphi["<<iphi-1<<"] =  "<<tanPhi[iphi-1]<<G4endl;
+     // G4cout << " tanphi > 1 \n";
+     // if ( iphi == 256 ) G4cout << " tanphi["<<iphi<<"] =  "<<tanPhi[iphi]<< "   "<< fabs(y/x)<<"   tanphi["<<iphi-1<<"] =  "<<tanPhi[iphi-1]<< Gateendl;
 
-        // G4cout << " tanphi["<<ii<<"] =  "<<tanPhi[ii]<< "   "<< tanphi<<"   tanphi["<<ii+1<<"] =  "<<tanPhi[ii+1]<< G4endl;
+        // G4cout << " tanphi["<<ii<<"] =  "<<tanPhi[ii]<< "   "<< tanphi<<"   tanphi["<<ii+1<<"] =  "<<tanPhi[ii+1]<< Gateendl;
 
          }
 
@@ -443,13 +443,13 @@ std::ofstream destbin ( m_fn.c_str(), std::ios::out | std::ios::binary );
 destbin.write((const char*)( m_theTable ), theBufferSize );
 destbin.close();
 
-G4cout << " writing the ARF table to a text file " << G4endl;
+G4cout << " writing the ARF table to a text file \n";
 std::ofstream dest ( "arftable.txt");
 for (G4int i = 0;i <m_TotalNb; i++ )
 { G4int iphi = i/GetNbofTheta();
   G4int itheta = i - iphi * GetNbofTheta();
-dest <<iphi<<" "<<itheta<<"  "<<m_theTable[i]<<G4endl;
-if ( itheta == 2047 ) dest <<"  "<<G4endl;
+dest <<iphi<<" "<<itheta<<"  "<<m_theTable[i]<< Gateendl;
+if ( itheta == 2047 ) dest << Gateendl;
 }
 
 }
@@ -468,7 +468,7 @@ if ( Y - m_lowY < 0. || Y + m_lowY > 0. ) return;
 if ( ix > m_drfdimx - 1 || ( ix < 0 ) ) return;
 if ( iy > m_drfdimy - 1 || ( iy < 0 ) ) return;
 
-//G4cout << "X " <<X<<"   X pixelllized "<< G4double ( ix * m_drfbinsize ) + m_lowX<<"         Y "<<Y<<" Y pixelllized "<< G4double ( iy * m_drfbinsize ) + m_lowX<<G4endl;
+//G4cout << "X " <<X<<"   X pixelllized "<< G4double ( ix * m_drfbinsize ) + m_lowX<<"         Y "<<Y<<" Y pixelllized "<< G4double ( iy * m_drfbinsize ) + m_lowX<< Gateendl;
 
 G4int index = ix + m_drfdimx * iy;
 
@@ -506,7 +506,7 @@ G4int index = ix + m_drfdimx * iy;
     /*perfect energy resolution*/
                   result=1.0;
 
-//  G4cout  << m_ElowOut<<"   "<<dMeanE<<"  " <<m_EhighOut <<"  "<<result<<G4endl;
+//  G4cout  << m_ElowOut<<"   "<<dMeanE<<"  " <<m_EhighOut <<"  "<<result<< Gateendl;
 
   }
 m_theDRFTable[index]+=fabs(result);
@@ -517,22 +517,22 @@ m_theDRFTable[index]+=fabs(result);
 
 void GateARFTable::Describe()
 {
-G4cout << "===== Description of the ARF Table named " << GetName() << " ======" << G4endl;
-G4cout << "      Index                  " << GetIndex() << G4endl;
-G4cout << "      Number of Theta Angles " <<  GetNbofTheta()<<G4endl;
-G4cout << "      Number of Phi Angles   " <<  GetNbofPhi()<<G4endl;
-G4cout << "      Total number of values " <<  GetTotalNb() << G4endl;
-G4cout << "      Energy Window                 (keV)[" <<  GetElow()/keV << " , " << GetEhigh()/keV << "]"<<G4endl;
-G4cout << "      User Specified Energy Window  (keV)[" <<  m_ElowOut/keV << " , " << m_EhighOut/keV << "]"<<G4endl;
-G4cout << "      Is Primary             " << GetPrimary() << G4endl;
-G4cout << "      Energy Resolution " << dErgReso <<G4endl;
-G4cout << "      Energy Of Reference " <<dResoAtErg<<G4endl;
-G4cout << "      Energy Deposition Threshold " << m_ElowOut/keV<<" keV"<<G4endl;
-G4cout << "      Energy Deposition Uphold " << m_EhighOut/keV<<" keV"<<G4endl;
+G4cout << "===== Description of the ARF Table named " << GetName() << " ======\n";
+G4cout << "      Index                  " << GetIndex() << Gateendl;
+G4cout << "      Number of Theta Angles " <<  GetNbofTheta()<< Gateendl;
+G4cout << "      Number of Phi Angles   " <<  GetNbofPhi()<< Gateendl;
+G4cout << "      Total number of values " <<  GetTotalNb() << Gateendl;
+G4cout << "      Energy Window                 (keV)[" <<  GetElow()/keV << " , " << GetEhigh()/keV << "]\n";
+G4cout << "      User Specified Energy Window  (keV)[" <<  m_ElowOut/keV << " , " << m_EhighOut/keV << "]\n";
+G4cout << "      Is Primary             " << GetPrimary() << Gateendl;
+G4cout << "      Energy Resolution " << dErgReso << Gateendl;
+G4cout << "      Energy Of Reference " <<dResoAtErg<< Gateendl;
+G4cout << "      Energy Deposition Threshold " << m_ElowOut/keV<<" keV\n";
+G4cout << "      Energy Deposition Uphold " << m_EhighOut/keV<<" keV\n";
 
-//G4cout << "      Total Number Of Photons for the Energy Window " << m_TotPhotons << G4endl;
-G4cout << "      Total Number of Binned Photons (not necessarily detected in the energy window chosen) " <<  m_counter <<G4endl;
-//G4cout << "      number of REJECTED photons " << m_rejected <<G4endl;
+//G4cout << "      Total Number Of Photons for the Energy Window " << m_TotPhotons << Gateendl;
+G4cout << "      Total Number of Binned Photons (not necessarily detected in the energy window chosen) " <<  m_counter << Gateendl;
+//G4cout << "      number of REJECTED photons " << m_rejected << Gateendl;
 
 
 }

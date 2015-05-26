@@ -123,7 +123,7 @@ void GateGpSpectrumActor::UserSteppingAction(const GateVVolume*, const G4Step* s
 	//	<< "coucou " << particle_name << " " << particle_energy/MeV << " " << process_name << " "
 	//	<< secondaries->size() << " " << created_this_step << " "
 	//	<< material->GetName() << " " << dynamic_particle->GetKineticEnergy() << " "
-	//	<< process_casted << " " << data_store << " " << 1/(cross_section*mm) << G4endl;
+	//	<< process_casted << " " << data_store << " " << 1/(cross_section*mm) << Gateendl;
 
 	G4bool produced_any_gamma = false;
 	for (G4TrackVector::const_reverse_iterator iter=secondaries->rbegin(); iter!=secondaries->rend(); iter++)
@@ -131,7 +131,7 @@ void GateGpSpectrumActor::UserSteppingAction(const GateVVolume*, const G4Step* s
 		if (!created_this_step) break;
 		created_this_step--;
 		if ((*iter)->GetParticleDefinition()->GetParticleName() != "gamma") continue;
-		//G4cout << "    " << (*iter)->GetParticleDefinition()->GetParticleName() << " " << (*iter)->GetKineticEnergy()/MeV << G4endl;
+		//G4cout << "    " << (*iter)->GetParticleDefinition()->GetParticleName() << " " << (*iter)->GetKineticEnergy()/MeV << Gateendl;
 		pHEpEgp->Fill(particle_energy/MeV,(*iter)->GetKineticEnergy()/MeV);
 		pHEpEgpNormalized->Fill(particle_energy/MeV,(*iter)->GetKineticEnergy()/MeV,cross_section*meter);
 		produced_any_gamma = true;

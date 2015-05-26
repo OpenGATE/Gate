@@ -15,6 +15,8 @@ See GATE/LICENSE.txt for further details
 #ifndef __GateMachine_h__
 #define __GateMachine_h__
 
+#include "GateMessageManager.hh"
+
 /// \brief Handles the basic machine properties (e.g. endianness, bus size) and machine-dependent operations. 
 class GateMachine
 {
@@ -129,7 +131,7 @@ void GateMachine::TestBusSize ()
       m_64 = true ;
     } 
   else 
-    std::cout << "lgl::GateMachine::testBusSize : neither a 32 bits nor a 64 bits machine... Is it an extraterrestrial device ?" << std::endl ;
+    std::cout << "lgl::GateMachine::testBusSize : neither a 32 bits nor a 64 bits machine... Is it an extraterrestrial device ?\n" ;
 }
 
 

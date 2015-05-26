@@ -13,7 +13,9 @@
 #include "G4TransportationManager.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PhysicalVolumeStore.hh"
+
 #include "GateSPSPosDistribution.hh"
+#include "GateMessageManager.hh"
 
 //-----------------------------------------------------------------------------
 GateSPSPosDistribution::GateSPSPosDistribution()
@@ -218,26 +220,26 @@ void GateSPSPosDistribution::ForbidSourceToVolume( const G4String& Vname )
     tempPV = (*PVStore)[i];
     found  = tempPV->GetName() == Vname;
     if(verbosityLevel == 2)
-      G4cout << i << " " << " " << tempPV->GetName() << " " << Vname << " " << found << G4endl;
+      G4cout << i << " " << " " << tempPV->GetName() << " " << Vname << " " << found << Gateendl;
     i++;
   }
   // found = true then the volume exists else it doesnt.
   if(found == true)
     {
       if(verbosityLevel >= 1)
-	G4cout << "Volume " << Vname << " exists" << G4endl;
+	G4cout << "Volume " << Vname << " exists\n";
       Forbid = true;
       ForbidVector.push_back(tempPV);
       // Modif DS: we write a confirmation message 
-      G4cout << " Activity forbidden in volume '" << Vname << "' confirmed" << G4endl;
+      G4cout << " Activity forbidden in volume '" << Vname << "' confirmed\n";
     }
   else
     {
       // Modif DS: for volume-name "NULL", we don't write the error message
       // so as not to confuse users
       if ( Vname != "NULL" )
-        G4cout << " **** Error: Volume does not exist **** " << G4endl;
-      G4cout << " Ignoring forbid condition for volume '" << Vname << "'" << G4endl;
+        G4cout << " **** Error: Volume does not exist **** \n";
+      G4cout << " Ignoring forbid condition for volume '" << Vname << "'\n";
     }
 }
 //-----------------------------------------------------------------------------
@@ -248,7 +250,7 @@ G4bool GateSPSPosDistribution::IsSourceForbidden()
 {
   // Method to check point is within the volume specified
   if(Forbid == false)
-    G4cout << "Error: Forbid is false" << G4endl;
+    G4cout << "Error: Forbid is false\n";
   G4ThreeVector null(0.,0.,0.);
   G4ThreeVector *ptr = &null;
 
@@ -257,9 +259,9 @@ G4bool GateSPSPosDistribution::IsSourceForbidden()
   G4VPhysicalVolume *currentVolume = gNavigator->LocateGlobalPointAndSetup(particle_position,ptr,true);
 
   G4bool isForbidden = false;
-  for (size_t i=0; i<ForbidVector.size(); i++)
+  for (std::vector<G4VPhysicalVolume*>::iterator itr=ForbidVector.begin(); itr!=ForbidVector.end(); itr++)
   {
-    if (currentVolume==ForbidVector[i])
+    if (currentVolume==*itr)
     {
       isForbidden = true;
       break;

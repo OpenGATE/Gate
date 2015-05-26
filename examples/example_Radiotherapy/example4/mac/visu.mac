@@ -8,5 +8,8 @@
 /vis/viewer/flush
 /tracking/storeTrajectory             1
 /vis/scene/add/trajectories 
-/vis/scene/endOfEventAction           accumulate
-
+#/vis/scene/endOfEventAction           accumulate
+/vis/viewer/set/viewpointThetaPhi 70 70
+/vis/viewer/zoom 1
+/vis/viewer/set/style surface
+/gate/world/vis/setVisible false

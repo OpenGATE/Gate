@@ -76,7 +76,7 @@ G4double GateOpticalBiolumGPU::GetNextTime(G4double timeNow)
     t += GateSourceVoxellized::GetNextTime(a);
   }
 
-  GateMessage("Beam", 5, "Compute " << mNumberOfNextTime << " NextTime from " << G4BestUnit(timeNow, "Time") << " -> found = " << G4BestUnit(t, "Time") << "=" << G4BestUnit(timeNow+t, "Time") << std::endl);  
+  GateMessage("Beam", 5, "Compute " << mNumberOfNextTime << " NextTime from " << G4BestUnit(timeNow, "Time") << " -> found = " << G4BestUnit(t, "Time") << "=" << G4BestUnit(timeNow+t, "Time") << Gateendl);  
 
   return t;
 }
@@ -163,7 +163,7 @@ G4int GateOpticalBiolumGPU::GeneratePrimaries(G4Event* event)
   // FIXME  if (m_gpu_output->particles.empty()) {
   if (m_current_particle_index_in_buffer >= m_gpu_output->particles.size()) {
     //GateMessage("Beam", 5, "No particles in the buffer, we ask the gpu for " 
-    //            << m_gpu_input->nb_events << " events" << std::endl);
+    //            << m_gpu_input->nb_events << " events\n");
 
     // Go GPU
     m_gpu_input->firstInitialID = mCurrentTimeID; // fix a bug - JB
@@ -177,7 +177,7 @@ G4int GateOpticalBiolumGPU::GeneratePrimaries(G4Event* event)
 
 
     //GateMessage("Beam", 5, "Done : GPU send " << m_gpu_output->particles.size() 
-    //            << " events" << std::endl);
+    //            << " events\n");
     m_current_particle_index_in_buffer = 0;
     DD(m_gpu_output->particles.size());  
     DD(m_current_particle_index_in_buffer);
@@ -216,16 +216,16 @@ G4int GateOpticalBiolumGPU::GeneratePrimaries(G4Event* event)
                 << " Gate_time=" <<  G4BestUnit(GetTime(), "Time")
                 << " TOF_time=" <<  G4BestUnit(tof, "Time")
                 << " current_timeID=" <<  mCurrentTimeID
-                << G4endl);  
+                << Gateendl);  
 
     // Prepare for next particle
     if (m_current_particle_index_in_buffer < m_gpu_output->particles.size())  {
       // FIXME if (!m_gpu_output->particles.empty()) {
-      GateMessage("Beam", 5, "The next particle will be time ID = " << part.initialID << std::endl);
+      GateMessage("Beam", 5, "The next particle will be time ID = " << part.initialID << Gateendl);
       mNumberOfNextTime = m_gpu_output->particles.front().initialID - mCurrentTimeID;
     }  
     else {
-      GateMessage("Beam", 5, "No more particules in gpu buffer, time stay the same." << std::endl);
+      GateMessage("Beam", 5, "No more particules in gpu buffer, time stay the same.\n");
       mNumberOfNextTime = 1;
     }
   }
@@ -241,10 +241,10 @@ void GateOpticalBiolumGPU::GeneratePrimaryEventFromGPUOutput(const GateGPUIO_Par
                                                                 G4Event * event)
 {
   /*
-  std::cout << "From gpu pos = " << particle.px << " " << particle.py << " " << particle.pz << std::endl
-            << "         dir = " << particle.dx << " " << particle.dy << " " << particle.dz << std::endl
-            << "         E   = " << G4BestUnit(particle.E*MeV, "Energy") << std::endl
-            << "         t   = " << G4BestUnit(particle.t*ns, "Time") << std::endl;
+  std::cout << "From gpu pos = " << particle.px << " " << particle.py << " " << particle.pz << Gateendl
+            << "         dir = " << particle.dx << " " << particle.dy << " " << particle.dz << Gateendl
+            << "         E   = " << G4BestUnit(particle.E*MeV, "Energy") << Gateendl
+            << "         t   = " << G4BestUnit(particle.t*ns, "Time") << Gateendl;
   */
 
   // Position
@@ -270,10 +270,10 @@ particle_position.setZ(particle.pz*mm-92*mm);
   double particle_time = particle.t*ns; // assume time is in ns
 
   /*
-  std::cout << " gpu particle time (ns)             = " << particle.t << std::endl;
-  std::cout << " gpu particle time check best unit  = " << G4BestUnit(particle_time, "Time") << std::endl;
-  std::cout << " Gettime =" << G4BestUnit(GetTime() , "Time") << std::endl;
-  std::cout << " a+b =" << G4BestUnit(GetTime()+particle_time, "Time") << std::endl;
+  std::cout << " gpu particle time (ns)             = " << particle.t << Gateendl;
+  std::cout << " gpu particle time check best unit  = " << G4BestUnit(particle_time, "Time") << Gateendl;
+  std::cout << " Gettime =" << G4BestUnit(GetTime() , "Time") << Gateendl;
+  std::cout << " a+b =" << G4BestUnit(GetTime()+particle_time, "Time") << Gateendl;
   */
 
   // Set the time of this particle to the current time plus the TOF.
@@ -290,9 +290,9 @@ particle_position.setZ(particle.pz*mm-92*mm);
   G4ThreeVector particle_momentum = (particle.E*MeV) * particle_direction.unit();
   
   /*
-    std::cout << "Momentum = " << particle_momentum << std::endl;
-    std::cout << "Energy = " << particle.E << std::endl;
-    std::cout << "Energy = " << G4BestUnit(particle.E, "Energy")  << std::endl;
+    std::cout << "Momentum = " << particle_momentum << Gateendl;
+    std::cout << "Energy = " << particle.E << Gateendl;
+    std::cout << "Energy = " << G4BestUnit(particle.E, "Energy")  << Gateendl;
   */
   
   mEnergy = particle.E*MeV;
@@ -312,7 +312,7 @@ particle_position.setZ(particle.pz*mm-92*mm);
 //----------------------------------------------------------
 void GateOpticalBiolumGPU::ReaderInsert(G4String readerType)
 {
-  G4cout << "GateOpticalBiolumGPUMessenger ReaderInsert" << G4endl;
+  G4cout << "GateOpticalBiolumGPUMessenger ReaderInsert\n";
   GateSourceVoxellized::ReaderInsert(readerType);
 }
 //----------------------------------------------------------
@@ -321,7 +321,7 @@ void GateOpticalBiolumGPU::ReaderInsert(G4String readerType)
 //----------------------------------------------------------
 void GateOpticalBiolumGPU::ReaderRemove()
 {
-  G4cout << "GateOpticalBiolumGPUMessenger ReaderRemove" << G4endl;
+  G4cout << "GateOpticalBiolumGPUMessenger ReaderRemove\n";
   GateSourceVoxellized::ReaderRemove();
 }
 //----------------------------------------------------------
@@ -330,7 +330,7 @@ void GateOpticalBiolumGPU::ReaderRemove()
 //----------------------------------------------------------
 void GateOpticalBiolumGPU::Update(double time)
 {
-  G4cout << "GateOpticalBiolumGPUMessenger Update" << G4endl;
+  G4cout << "GateOpticalBiolumGPUMessenger Update\n";
   return GateSourceVoxellized::Update(time);
 }
 //----------------------------------------------------------

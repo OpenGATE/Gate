@@ -119,7 +119,7 @@ inline G4double GateCrossSectionsTable::GetCrossSection ( size_t materialIndex, 
 	assert ( size() >materialIndex );
 	assert ( energy>=m_nMinEnergy );
 	assert ( energy<m_nMaxEnergy );
-	//G4cout << "material no " << materialIndex << " energy "<< energy << G4endl;
+	//G4cout << "material no " << materialIndex << " energy "<< energy << Gateendl;
 	return operator() ( materialIndex )->GetValue ( energy,NotUsedAnyMoreIsOutOfRange );
 }
 

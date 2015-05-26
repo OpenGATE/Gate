@@ -27,9 +27,9 @@ void GateGeometryVoxelArrayStore::Describe(G4int level)
 
   GateVGeometryVoxelStore::Describe(level);
 
-  G4cout << "  number of voxels       : " << GetNumberOfVoxels() << G4endl;
+  G4cout << "  number of voxels       : " << GetNumberOfVoxels() << Gateendl;
   if (m_compressor)
-    G4cout << "  Compression achieved   : " << m_compressor->GetCompressionRatio() << " %"  << G4endl;
+    G4cout << "  Compression achieved   : " << m_compressor->GetCompressionRatio() << " %"  << Gateendl;
 
   if (level > 2) {
     if (m_geometryVoxelMaterials != 0) {
@@ -40,7 +40,7 @@ void GateGeometryVoxelArrayStore::Describe(G4int level)
 		   << " " << ix
 		   << " " << iy
 		   << " " << iz
-		   << " Material " << (m_geometryVoxelMaterials[RealArrayIndex(ix,iy,iz,m_voxelNx,m_voxelNy,m_voxelNz)])->GetName() << G4endl;
+		   << " Material " << (m_geometryVoxelMaterials[RealArrayIndex(ix,iy,iz,m_voxelNx,m_voxelNy,m_voxelNz)])->GetName() << Gateendl;
 	  }
 	}
       }
@@ -90,10 +90,10 @@ G4Material* GateGeometryVoxelArrayStore::GetVoxelMaterial(G4int ix, G4int iy, G4
     if ((ix<m_voxelNx) && (iy<m_voxelNy) && (iz<m_voxelNz)) {
       material = m_geometryVoxelMaterials[RealArrayIndex(ix,iy,iz,m_voxelNx,m_voxelNy,m_voxelNz)];
     } else {
-      G4cout << "GateGeometryVoxelArrayStore::GetVoxelMaterial: WARNING: requested voxel position outside the present voxel store" << G4endl;
+      G4cout << "GateGeometryVoxelArrayStore::GetVoxelMaterial: WARNING: requested voxel position outside the present voxel store\n";
     } 
   } else {
-    G4cout << "GateGeometryVoxelArrayStore::GetVoxelMaterial: WARNING: voxel store not yet defined " << G4endl;
+    G4cout << "GateGeometryVoxelArrayStore::GetVoxelMaterial: WARNING: voxel store not yet defined \n";
   }
 
   return material;
@@ -145,7 +145,7 @@ void GateGeometryVoxelArrayStore::SetVoxelNx(G4int n)
 //  		     << RealArrayIndex(ix,iy,iz,m_voxelNx,m_voxelNy,m_voxelNz) 
 //  		     << " new " 
 //  		     << RealArrayIndex(ix,iy,iz,        n,m_voxelNy,m_voxelNz) 
-//  		     << G4endl;
+//  		     << Gateendl;
 	      newStore[ RealArrayIndex(ix,iy,iz,n,m_voxelNy,m_voxelNz) ] = 
 		m_geometryVoxelMaterials[ RealArrayIndex(ix,iy,iz,m_voxelNx,m_voxelNy,m_voxelNz) ];
 	    }
