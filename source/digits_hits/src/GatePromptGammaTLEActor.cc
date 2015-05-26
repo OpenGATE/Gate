@@ -229,7 +229,7 @@ void GatePromptGammaTLEActor::BuildOutput() {
   //FIXME: pre-build label to G4Material map to save some time.
 
   //compute TLE output. first, loop over voxels
-  for(unsigned int vi = 0; vi < tmptrackl->GetNumberOfValues() ;vi++ ){
+  for(int vi = 0; vi < tmptrackl->GetNumberOfValues() ;vi++ ){
     //PixelType label = phantomvox->GetValue(tmptrackl->GetCoordinatesFromIndex(vi));
     //convert between voxelsizes in phantom and output, NEAREST NEIGHBOUR!
     G4String materialname = phantom->GetMaterialNameFromLabel(phantomvox->GetValue(tmptrackl->GetVoxelCenterFromIndex(vi)));
@@ -240,10 +240,10 @@ void GatePromptGammaTLEActor::BuildOutput() {
     TH2D* ngammam = data.GetNgammaM(materialindex);
 
     // prep some things that are constant for all gamma bins
-    double tracklav[data.GetProtonNbBins()];
-    double tracklavsq[data.GetProtonNbBins()];
-    double tracklsqsum[data.GetProtonNbBins()];
-    double tracklvar[data.GetProtonNbBins()];
+    std::vector<double> tracklav(data.GetProtonNbBins());
+    std::vector<double> tracklavsq(data.GetProtonNbBins());
+    std::vector<double> tracklsqsum(data.GetProtonNbBins());
+    std::vector<double> tracklvar(data.GetProtonNbBins());
     for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
       double trackli = trackl->GetValueDouble(vi,pi);
       if(trackli<=0.) { //if trackl==0, then all is zero.
