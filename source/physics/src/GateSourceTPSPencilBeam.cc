@@ -343,8 +343,6 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
     }
     inFile.close();
 
-    std::cin.get(); // FIXME
-
     mTotalNumberOfSpots = mPencilBeams.size();
     if (mTotalNumberOfSpots == 0) {
       GateError("0 spots have been loaded from the file \"" << mPlan << "\" simulation abort!");
