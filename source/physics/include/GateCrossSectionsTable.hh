@@ -76,7 +76,7 @@ class GateCrossSectionsTable: public G4PhysicsTable
 
 		G4double m_nMinEnergy, m_nMaxEnergy; // of G4PhysicsVectors
 		G4int m_nPhysicsVectorBinNumber;
-		const G4Material* pReplacementMaterial;
+		//const G4Material* pReplacementMaterial;
 
 		std::vector<G4double> m_oInvDensity;
 		std::vector<const G4Material*> m_oMaterialVec;
