@@ -117,7 +117,7 @@ inline void GateFictitiousFastSimulationModel::AddSecondaries(G4VParticleChange*
 			              "Not foreseen." );
 
 	pCurrentFastStep->SetNumberOfSecondaryTracks ( numSec );
-	for ( G4int i=0;i<numSec;i++ )
+	for ( G4int i=0;i<numSec;++i )
 	{
 		change->GetSecondary ( i )->SetGlobalTime ( m_nTime );
 		m_pTrackFastVector->SetElement(i+m_nNumSecondaries, (change->GetSecondary ( i )));
@@ -129,7 +129,7 @@ inline void GateFictitiousFastSimulationModel::AddSecondaries(G4VParticleChange*
 inline void GateFictitiousFastSimulationModel::AddSecondariesToFastStep()
 {
 		pCurrentFastStep->SetNumberOfSecondaries(m_nNumSecondaries);
-		for ( G4int i=0;i<m_nNumSecondaries;i++ )
+		for ( G4int i=0;i<m_nNumSecondaries;++i )
 			pCurrentFastStep->AddSecondary((*m_pTrackFastVector)[i]);
 }
 

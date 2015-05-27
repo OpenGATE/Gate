@@ -105,7 +105,7 @@ void GateSETLEMultiplicityActor::BeginOfEventAction(const G4Event *event)
       G4Event *modifiedEvent = const_cast<G4Event *>(event);
       int vertexNumber = event->GetNumberOfPrimaryVertex();
 
-      for(int i=0; i<mDefaultPrimaryMultiplicity; i++)
+      for(int i=0; i<mDefaultPrimaryMultiplicity; ++i)
       {
 	vertexNumber += source->GeneratePrimaries(modifiedEvent);
 	G4PrimaryParticle *hybridParticle = modifiedEvent->GetPrimaryVertex(vertexNumber-1)->GetPrimary();
@@ -121,7 +121,7 @@ void GateSETLEMultiplicityActor::BeginOfEventAction(const G4Event *event)
       G4Event *modifiedEvent = new G4Event();
       int vertexNumber = modifiedEvent->GetNumberOfPrimaryVertex();
       double weight = 1.0 / mDefaultPrimaryMultiplicity;
-      for(int i=0; i<mDefaultPrimaryMultiplicity; i++)
+      for(int i=0; i<mDefaultPrimaryMultiplicity; ++i)
       {
 	vertexNumber += source->GeneratePrimaries(modifiedEvent);
 	G4ThreeVector position = modifiedEvent->GetPrimaryVertex(vertexNumber-1)->GetPosition();
@@ -157,7 +157,7 @@ void GateSETLEMultiplicityActor::PreUserTrackingAction(const GateVVolume *, cons
     }
     else
     {
-      for(unsigned int i=0; i<mListOfHybridTrack.size(); i++)
+      for(unsigned int i=0; i<mListOfHybridTrack.size(); ++i)
       {
 	if(mListOfHybridTrack[i] == t)
 	{
@@ -181,7 +181,7 @@ void GateSETLEMultiplicityActor::PostUserTrackingAction(const GateVVolume *, con
     mListOfHybridWeight.erase(mListOfHybridWeight.begin() + mCurrentTrackIndex);
   }
 
-//   for(unsigned int i=0; i<mListOfHybridTrack.size(); i++) { GateMessage("Actor", 0, "track = " << mListOfHybridTrack[i] << " weight = " << mListOfHybridWeight[i] << Gateendl); }
+//   for(unsigned int i=0; i<mListOfHybridTrack.size(); ++i) { GateMessage("Actor", 0, "track = " << mListOfHybridTrack[i] << " weight = " << mListOfHybridWeight[i] << Gateendl); }
 //   GateMessage("Actor", 0, " \n");
 }
 //-----------------------------------------------------------------------------
@@ -211,7 +211,7 @@ void GateSETLEMultiplicityActor::UserSteppingAction(const GateVVolume *, const G
     if(processName != "Transportation")
     {
       G4VProcess *currentProcess = 0;
-      for(int i=0; i<mProcessListForGamma->size(); i++)
+      for(int i=0; i<mProcessListForGamma->size(); ++i)
       {
 	if((*mProcessListForGamma)[i]->GetProcessName() == processName)
 	{
@@ -245,7 +245,7 @@ void GateSETLEMultiplicityActor::UserSteppingAction(const GateVVolume *, const G
 	    G4double trackWeight = step->GetTrack()->GetWeight() / currentSecondaryMultiplicity;
 	    
 	    // Main loop dedicated to secondary hybrid particle 
-	    for(int i=0; i<currentSecondaryMultiplicity; i++)
+	    for(int i=0; i<currentSecondaryMultiplicity; ++i)
 	    {
 	      // Random generation of the angle (no physical crossSection for fluorescence)
 	      double phi = G4RandFlat::shoot(twopi);
@@ -312,7 +312,7 @@ void GateSETLEMultiplicityActor::UserSteppingAction(const GateVVolume *, const G
 	G4TrackVector *trackVector = (const_cast<G4Step *>(step))->GetfSecondary();
 
 	// Main loop dedicated to secondary hybrid particle 
-	for(int i=0; i<currentSecondaryMultiplicity; i++)
+	for(int i=0; i<currentSecondaryMultiplicity; ++i)
 	{
 	  // Call the PostStepDoIt function related to the current process
 	  particleChange = currentProcess->PostStepDoIt((const G4Track)(*myTrack), *myStep);

@@ -70,11 +70,11 @@ void GateSphereRepeater::PushMyPlacements(const G4RotationMatrix& currentRotatio
   G4double phi_0 = -phi;
   G4double theta_j;
 
-  for ( G4int k=0 ; k < nPhi ; k++)
+  for ( G4int k=0 ; k < nPhi ; ++k)
     {
       G4double phi_k = phi_0 + k * phi;
 
-    for ( G4int j=0 ; j < nTheta ; j++) 
+    for ( G4int j=0 ; j < nTheta ; ++j) 
       {
 	theta_j = j * theta;
 	G4RotationMatrix newRotationMatrix =  currentRotationMatrix; 

@@ -35,7 +35,7 @@ GateHounsfieldDensityTable::~GateHounsfieldDensityTable()
 double GateHounsfieldDensityTable::GetDensityFromH(double H)
 {
 	GateHDensTableVec::iterator it=HDensTableVec.begin();
-	while(it->mH < H && it!=HDensTableVec.end()) it++;
+	while(it->mH < H && it!=HDensTableVec.end()) ++it;
 	if(it==HDensTableVec.begin()) return it->mD;//first value
 	if(it==HDensTableVec.end())
 	{
@@ -55,8 +55,8 @@ double GateHounsfieldDensityTable::FindMaxDensityDifference(double HMin, double 
   double dMax = GetDensityFromH(HMax);
 
   GateHDensTableVec::iterator it=HDensTableVec.begin();
-  while (it->mH < HMin && it!=HDensTableVec.end()) it++;
-  for ( ; it!=HDensTableVec.end() && it->mH < HMax; it++)
+  while (it->mH < HMin && it!=HDensTableVec.end()) ++it;
+  for ( ; it!=HDensTableVec.end() && it->mH < HMax; ++it)
   {
 	  if (it->mD < dMin) dMin = it->mD;
 	  if (it->mD > dMax) dMax = it->mD;

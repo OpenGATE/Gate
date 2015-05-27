@@ -68,7 +68,7 @@ void GatePhysicsExtractorActor::SaveData()
 	handle << "ecut     = " << pCutThreshold/keV << "keV" << endl;
 	handle << "====================================================" << endl;
 	handle << "Energy [MeV]\tDEDX [MeV.mm-1]\tCS per volume[mm-1]\tMean Free Path[mm]" << endl;
-	for (int kk=0; kk<n; kk++)
+	for (int kk=0; kk<n; ++kk)
 	{
 		handle << energy/MeV << "\t";
 		handle << pCalculator->ComputeDEDX(energy,pParticleDefinition,pProcessName,pMaterial,pCutThreshold)/(MeV/mm) << "\t";

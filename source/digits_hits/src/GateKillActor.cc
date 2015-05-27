@@ -56,7 +56,7 @@ void GateKillActor::Construct()
 G4bool GateKillActor::ProcessHits(G4Step * step , G4TouchableHistory* )
 {
   step->GetTrack()->SetTrackStatus( fStopAndKill );
-  mNumberOfTrack++;
+  ++mNumberOfTrack;
   return true;
 }
 //-----------------------------------------------------------------------------

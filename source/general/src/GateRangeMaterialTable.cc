@@ -21,7 +21,7 @@ void GateRangeMaterialTable::WriteMaterialDatabase(G4String filename) {
 	OpenFileOutput(filename, os);
 	os << "[Materials]\n";
 	for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin();
-			it != mMaterialsVector.end(); it++) {
+			it != mMaterialsVector.end(); ++it) {
 		os << "# Material corresponding to H=[ " << it->mR1 << ";" << it->mR2 // << "],with density=["
 				//        << G4BestUnit(md1[i],"Volumic Mass")
 				//        << ";" << G4BestUnit(md2[i],"Volumic Mass") << "]"
@@ -38,7 +38,7 @@ void GateRangeMaterialTable::WriteMaterialtoRangeLink(G4String filename) {
 	std::ofstream os;
 	OpenFileOutput(filename, os);
 	for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin();
-			it != mMaterialsVector.end(); it++) {
+			it != mMaterialsVector.end(); ++it) {
 		os << it->mR1 << " " << it->mR2 << " " << it->mMaterial->GetName()
 				<< Gateendl;
 	}
@@ -50,7 +50,7 @@ void GateRangeMaterialTable::WriteMaterialtoRangeLink(G4String filename) {
 void GateRangeMaterialTable::WriteMaterial(G4Material * m, std::ofstream & os) {
 	os << m->GetName() << ": d=" << G4BestUnit(m->GetDensity(), "Volumic Mass")
 			<< "; n=" << m->GetNumberOfElements() << "; \n";
-	for (unsigned int j = 0; j < m->GetNumberOfElements(); j++) {
+	for (unsigned int j = 0; j < m->GetNumberOfElements(); ++j) {
 		os << "+el: name=" << m->GetElement(j)->GetName() << "; f="
 				<< m->GetFractionVector()[j] << Gateendl;
 	}
@@ -92,7 +92,7 @@ void GateRangeMaterialTable::MapLabelToMaterial(LabelToMaterialNameType & m) {
 	m.clear();
 	int i = 0;
 	for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin();
-			it != mMaterialsVector.end(); it++, i++) {
+			it != mMaterialsVector.end(); ++it, ++i) {
 		std::pair<LabelType, G4String> lMaterial(i, it->mName);
 		m.insert(lMaterial);
 		GateMessage("Core", 2,
@@ -105,7 +105,7 @@ void GateRangeMaterialTable::MapLabelToMaterial(LabelToMaterialNameType & m) {
 GateRangeMaterialTable::LabelType GateRangeMaterialTable::GetLabelFromR(int h) {
 	int i = 0;
 	while ((i < GetNumberOfMaterials() && h >= mMaterialsVector[i].mR1))
-		i++;
+		++i;
 	i--;
 	if ((i == GetNumberOfMaterials() - 1) && h > mMaterialsVector[i].mR2)
 		return i + 1;

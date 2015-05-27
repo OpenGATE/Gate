@@ -317,13 +317,13 @@ PrintInfo() const
   METAIO_STREAM::cout << "Modality = " << s << METAIO_STREAM::endl;
 
   METAIO_STREAM::cout << "DimSize = ";
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     METAIO_STREAM::cout << m_DimSize[i] << " ";
     }
   METAIO_STREAM::cout << METAIO_STREAM::endl;
   METAIO_STREAM::cout << "SubQuantity = ";
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     METAIO_STREAM::cout << m_SubQuantity[i] << " ";
     }
@@ -335,7 +335,7 @@ PrintInfo() const
   METAIO_STREAM::cout << "HeaderSize = " << m_HeaderSize << METAIO_STREAM::endl;
 
   METAIO_STREAM::cout << "SequenceID = ";
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     METAIO_STREAM::cout << m_SequenceID[i] << " ";
     }
@@ -344,7 +344,7 @@ PrintInfo() const
   METAIO_STREAM::cout << "ElementSizeValid = " << (int)m_ElementSizeValid
             << METAIO_STREAM::endl;
   METAIO_STREAM::cout << "ElementSize = ";
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     METAIO_STREAM::cout << m_ElementSize[i] << " ";
     }
@@ -522,7 +522,7 @@ InitializeEssential(int _nDims,
   m_SubQuantity[0] = 1;
   m_Quantity = 1;
   m_ElementSizeValid = false;
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     m_DimSize[i] = _dimSize[i];
     m_Quantity *= _dimSize[i];
@@ -768,7 +768,7 @@ ElementByteOrderSwap(METAIO_STL::streamoff _quantity)
     case 2:
       {
       int i;
-      for(i=0; i<quantity*m_ElementNumberOfChannels; i++)
+      for(i=0; i<quantity*m_ElementNumberOfChannels; ++i)
         {
         ((MET_USHORT_TYPE *)m_ElementData)[i] =
               MET_ByteOrderSwapShort(((MET_USHORT_TYPE *)m_ElementData)[i]);
@@ -778,7 +778,7 @@ ElementByteOrderSwap(METAIO_STL::streamoff _quantity)
     case 4:
       {
       int i;
-      for(i=0; i<quantity*m_ElementNumberOfChannels; i++)
+      for(i=0; i<quantity*m_ElementNumberOfChannels; ++i)
         {
         ((MET_UINT_TYPE *)m_ElementData)[i] =
               MET_ByteOrderSwapLong(((MET_UINT_TYPE *)m_ElementData)[i]);
@@ -789,7 +789,7 @@ ElementByteOrderSwap(METAIO_STL::streamoff _quantity)
       {
       int i;
       char* data = (char*)m_ElementData;
-      for(i=0; i<quantity*m_ElementNumberOfChannels; i++)
+      for(i=0; i<quantity*m_ElementNumberOfChannels; ++i)
         {
         MET_ByteOrderSwap8(data);
         data += 8;
@@ -840,7 +840,7 @@ ElementMinMaxRecalc(void)
   MET_ValueToDouble(m_ElementType, m_ElementData, 0, &tf);
   m_ElementMin = tf;
   m_ElementMax = tf;
-  for(i=1; i<m_Quantity*m_ElementNumberOfChannels; i++)
+  for(i=1; i<m_Quantity*m_ElementNumberOfChannels; ++i)
     {
     MET_ValueToDouble(m_ElementType, m_ElementData, i, &tf);
     if(tf<m_ElementMin)
@@ -995,7 +995,7 @@ ConvertElementDataTo(MET_ValueEnumType _elementType,
     }
 
   int i;
-  for(i=0; i<m_Quantity*m_ElementNumberOfChannels; i++)
+  for(i=0; i<m_Quantity*m_ElementNumberOfChannels; ++i)
     {
     MET_ValueToValue(m_ElementType, m_ElementData, i, _elementType,
                      newElementData, m_ElementMin, m_ElementMax,
@@ -1331,7 +1331,7 @@ ReadStream(int _nDims,
         {
         fileImageDim = (int)atof(wrds[1]);
         }
-      for(i=0; i<nWrds; i++)
+      for(i=0; i<nWrds; ++i)
         {
         delete [] wrds[i];
         }
@@ -1352,7 +1352,7 @@ ReadStream(int _nDims,
         {
         totalFiles *= m_DimSize[i-1];
         }
-      for(i=0; i< totalFiles && !_stream->eof(); i++)
+      for(i=0; i< totalFiles && !_stream->eof(); ++i)
         {
         _stream->getline(s, 1024);
         if(!_stream->eof())
@@ -1422,9 +1422,9 @@ ReadStream(int _nDims,
         // MET_StringToWordArray, which parses based on spaces.
         // Thus, we need to reconstruct the filename in this case.
         // The last three wrds must be numbers.  If they are not, we give an error.
-        for( i = nWrds-3; i < nWrds; i++ )
+        for( i = nWrds-3; i < nWrds; ++i )
         {
-          for( j = 0; j < strlen(wrds[i]); j++ )
+          for( j = 0; j < strlen(wrds[i]); ++j )
           {
             if( !isdigit(wrds[i][j]) )
             {
@@ -1437,7 +1437,7 @@ ReadStream(int _nDims,
         stepV = (int)atof(wrds[nWrds-1]);
         maxV =  (int)atof(wrds[nWrds-2]);
         minV =  (int)atof(wrds[nWrds-3]);
-        for( i = 1; i < nWrds-3; i++ )
+        for( i = 1; i < nWrds-3; ++i )
         {
           strcat(wrds[0]," ");
           strcat(wrds[0],wrds[i]);
@@ -1482,7 +1482,7 @@ ReadStream(int _nDims,
         readStreamTemp->close();
         }
       delete readStreamTemp;
-      for(i=0; i<nWrds; i++)
+      for(i=0; i<nWrds; ++i)
         {
         delete [] wrds[i];
         }
@@ -1502,7 +1502,7 @@ ReadStream(int _nDims,
       METAIO_STREAM::ifstream* readStreamTemp = new METAIO_STREAM::ifstream;
 
       const char *extensions[] = { "", ".gz", ".Z", 0 };
-      for(unsigned ii = 0; extensions[ii] != 0; ii++)
+      for(unsigned ii = 0; extensions[ii] != 0; ++ii)
         {
         METAIO_STL::string tempFName(fName);
         tempFName += extensions[ii];
@@ -2036,7 +2036,7 @@ M_WriteElementsROI(METAIO_STREAM::ofstream * _fstream,
 
   // Write the IO region line by line
   int * currentIndex = new int[m_NDims];
-  for(int i=0; i<m_NDims; i++)
+  for(int i=0; i<m_NDims; ++i)
     {
     currentIndex[i] = _indexMin[i];
     }
@@ -2062,7 +2062,7 @@ M_WriteElementsROI(METAIO_STREAM::ofstream * _fstream,
     {
     // Seek to the right position
     METAIO_STL::streamoff seekoff = _dataPos;
-    for(int i=0; i<m_NDims; i++)
+    for(int i=0; i<m_NDims; ++i)
       {
       seekoff += m_SubQuantity[i] * currentIndex[i] * elementNumberOfBytes;
       }
@@ -2080,7 +2080,7 @@ M_WriteElementsROI(METAIO_STREAM::ofstream * _fstream,
     ++currentIndex[movingDirection];
 
     // Check if we are still in the region
-    for( int j=movingDirection; j<m_NDims; j++ )
+    for( int j=movingDirection; j<m_NDims; ++j )
       {
       if( currentIndex[j] > _indexMax[j] )
         {
@@ -2253,7 +2253,7 @@ M_SetupWriteFields(void)
     }
 
   bool valid = false;
-  for(i=0; i<4; i++)
+  for(i=0; i<4; ++i)
     {
     if(m_SequenceID[i] != 0)
       {
@@ -2356,7 +2356,7 @@ M_Read(void)
   if(mF && mF->defined)
     {
     int i;
-    for(i=0; i<m_NDims; i++)
+    for(i=0; i<m_NDims; ++i)
       {
       m_DimSize[i] = (int)mF->value[i];
       }
@@ -2378,7 +2378,7 @@ M_Read(void)
   if(mF && mF->defined)
     {
     int i;
-    for(i=0; i<m_NDims; i++)
+    for(i=0; i<m_NDims; ++i)
       {
       m_SequenceID[i] = (float)(mF->value[i]);
       }
@@ -2388,7 +2388,7 @@ M_Read(void)
   if(mF && mF->defined)
     {
     int i;
-    for(i=0; i<m_NDims; i++)
+    for(i=0; i<m_NDims; ++i)
       {
       m_Offset[i] = static_cast<double>(mF->value[i]);
       }
@@ -2418,14 +2418,14 @@ M_Read(void)
     {
     m_ElementSizeValid = true;
     int i;
-    for(i=0; i<m_NDims; i++)
+    for(i=0; i<m_NDims; ++i)
       {
       m_ElementSize[i] = (float)(mF->value[i]);
       }
     mF = MET_GetFieldRecord("ElementSpacing", &m_Fields);
     if(mF && !mF->defined)
       {
-      for(i=0; i<m_NDims; i++)
+      for(i=0; i<m_NDims; ++i)
         {
         m_ElementSpacing[i] = m_ElementSize[i];
         }
@@ -2435,7 +2435,7 @@ M_Read(void)
     {
     int i;
     m_ElementSizeValid = false;
-    for(i=0; i<m_NDims; i++)
+    for(i=0; i<m_NDims; ++i)
       {
       m_ElementSize[i] = m_ElementSpacing[i];
       }
@@ -2593,7 +2593,7 @@ M_WriteElements(METAIO_STREAM::ofstream * _fstream,
       METAIO_STL::streamoff sliceNumberOfBytes = m_SubQuantity[m_NDims-1]*elementNumberOfBytes;
 
       METAIO_STREAM::ofstream* writeStreamTemp = new METAIO_STREAM::ofstream;
-      for(i=1; i<=m_DimSize[m_NDims-1]; i++)
+      for(i=1; i<=m_DimSize[m_NDims-1]; ++i)
         {
         sprintf(fName, dataFileName, i);
 
@@ -2656,7 +2656,7 @@ M_WriteElementData(METAIO_STREAM::ofstream * _fstream,
     {
 
     double tf;
-    for(METAIO_STL::streamoff i=0; i<_dataQuantity; i++)
+    for(METAIO_STL::streamoff i=0; i<_dataQuantity; ++i)
       {
       MET_ValueToDouble(m_ElementType, _data, i, &tf);
       if((i+1)/10 == (double)(i+1.0)/10.0)
@@ -2799,7 +2799,7 @@ bool MetaImage::ReadROIStream(int * _indexMin, int * _indexMax,
     METAIO_STL::streamoff quantity = 1;
     int i;
     size_t j;
-    for(i=0; i<m_NDims; i++)
+    for(i=0; i<m_NDims; ++i)
       {
       quantity *= (_indexMax[i] - _indexMin[i] + 1);
       }
@@ -2827,7 +2827,7 @@ bool MetaImage::ReadROIStream(int * _indexMin, int * _indexMax,
         {
         fileImageDim = (int)atof(wrds[1]);
         }
-      for(i=0; i<nWrds; i++)
+      for(i=0; i<nWrds; ++i)
         {
         delete [] wrds[i];
         }
@@ -2850,7 +2850,7 @@ bool MetaImage::ReadROIStream(int * _indexMin, int * _indexMax,
       int cnt=0;
 
       // Read the previous lines
-      for(i=0;i<minV;i++)
+      for(i=0;i<minV;++i)
         {
         _stream->getline(s, 1024);
         }
@@ -2943,9 +2943,9 @@ bool MetaImage::ReadROIStream(int * _indexMin, int * _indexMax,
         // MET_StringToWordArray, which parses based on spaces.
         // Thus, we need to reconstruct the filename in this case.
         // The last three wrds must be numbers.  If they are not, we give an error.
-        for( i = nWrds-3; i < nWrds; i++ )
+        for( i = nWrds-3; i < nWrds; ++i )
         {
-          for( j = 0; j < strlen(wrds[i]); j++ )
+          for( j = 0; j < strlen(wrds[i]); ++j )
           {
             if( !isdigit(wrds[i][j]) )
             {
@@ -2958,7 +2958,7 @@ bool MetaImage::ReadROIStream(int * _indexMin, int * _indexMax,
         stepV = (int)atof(wrds[nWrds-1]);
         maxV =  (int)atof(wrds[nWrds-2]);
         minV =  (int)atof(wrds[nWrds-3]);
-        for( i = 1; i < nWrds-3; i++ )
+        for( i = 1; i < nWrds-3; ++i )
         {
           strcat(wrds[0]," ");
           strcat(wrds[0],wrds[i]);
@@ -3030,7 +3030,7 @@ bool MetaImage::ReadROIStream(int * _indexMin, int * _indexMax,
         readStreamTemp->close();
         }
 
-      for(i=0; i<nWrds; i++)
+      for(i=0; i<nWrds; ++i)
         {
         delete [] wrds[i];
         }
@@ -3052,7 +3052,7 @@ bool MetaImage::ReadROIStream(int * _indexMin, int * _indexMax,
       METAIO_STREAM::ifstream* readStreamTemp = new METAIO_STREAM::ifstream;
 
       const char *extensions[] = { "", ".gz", ".Z", 0 };
-      for(unsigned ii = 0; extensions[ii] != 0; ii++)
+      for(unsigned ii = 0; extensions[ii] != 0; ++ii)
         {
         METAIO_STL::string tempFName(fName);
         tempFName += extensions[ii];
@@ -3166,7 +3166,7 @@ M_ReadElementsROI(METAIO_STREAM::ifstream * _fstream, void * _data,
       unsigned char* data = static_cast<unsigned char*>(_data);
       // Initialize the index
       int* currentIndex = new int[m_NDims];
-      for(i=0;i<m_NDims;i++)
+      for(i=0;i<m_NDims;++i)
         {
         currentIndex[i] = _indexMin[i];
         }
@@ -3195,7 +3195,7 @@ M_ReadElementsROI(METAIO_STREAM::ifstream * _fstream, void * _data,
         {
         // Seek to the right position
         METAIO_STL::streamoff seekoff = 0;
-        for(i=0; i<m_NDims; i++)
+        for(i=0; i<m_NDims; ++i)
           {
           seekoff += m_SubQuantity[i]*elementNumberOfBytes*currentIndex[i];
           }
@@ -3257,7 +3257,7 @@ M_ReadElementsROI(METAIO_STREAM::ifstream * _fstream, void * _data,
         currentIndex[movingDirection] += subSamplingFactor;
 
         // Check if we are still in the region
-        for(i=1;i<m_NDims;i++)
+        for(i=1;i<m_NDims;++i)
           {
           if(currentIndex[i]>_indexMax[i])
             {
@@ -3296,7 +3296,7 @@ M_ReadElementsROI(METAIO_STREAM::ifstream * _fstream, void * _data,
     char* data = static_cast<char*>(_data);
     // Initialize the index
     int* currentIndex = new int[m_NDims];
-    for(i=0;i<m_NDims;i++)
+    for(i=0;i<m_NDims;++i)
       {
       currentIndex[i] = _indexMin[i];
       }
@@ -3325,7 +3325,7 @@ M_ReadElementsROI(METAIO_STREAM::ifstream * _fstream, void * _data,
       {
       // Seek to the right position
       METAIO_STL::streamoff seekoff = 0;
-      for(i=0;i<m_NDims;i++)
+      for(i=0;i<m_NDims;++i)
         {
         seekoff += m_SubQuantity[i]*m_ElementNumberOfChannels*elementSize*currentIndex[i];
         }
@@ -3342,7 +3342,7 @@ M_ReadElementsROI(METAIO_STREAM::ifstream * _fstream, void * _data,
             *_fstream >> tf;
             MET_DoubleToValue(tf, m_ElementType, _data, i);
 
-            for(unsigned int j=0;j<subSamplingFactor;j++)
+            for(unsigned int j=0;j<subSamplingFactor;++j)
               {
               _fstream->get();
               }
@@ -3405,7 +3405,7 @@ M_ReadElementsROI(METAIO_STREAM::ifstream * _fstream, void * _data,
       currentIndex[movingDirection] += subSamplingFactor;
 
       // Check if we are still in the region
-      for(i=movingDirection;i<m_NDims;i++)
+      for(i=movingDirection;i<m_NDims;++i)
         {
         if(currentIndex[i]>_indexMax[i])
           {
@@ -3452,7 +3452,7 @@ M_ReadElementData(METAIO_STREAM::ifstream * _fstream,
     {
     double tf;
 
-    for(int i=0; i<_dataQuantity; i++)
+    for(int i=0; i<_dataQuantity; ++i)
       {
       *_fstream >> tf;
       MET_DoubleToValue(tf, m_ElementType, _data, i);

@@ -141,7 +141,7 @@ G4AffineTransform GateVolumeID::ComputeAffineTransform(G4int ancestorDepth) cons
   // Compute the affine tranform as the product of all the affine transforms of the volumes located
   // between the current depth (ancestor's depth) and the bottom volume depth
   G4AffineTransform targetTransform;
-  for ( size_t i=ancestorDepth+1 ; i<size(); i++) 
+  for ( size_t i=ancestorDepth+1 ; i<size(); ++i) 
       targetTransform = GetVolumeAffineTransform(GetVolume(i)) * targetTransform;
 
   // Return the final product
@@ -218,7 +218,7 @@ G4ThreeVector GateVolumeID::MoveToFrameByTransform(G4ThreeVector position,const 
 std::ostream& operator<<(std::ostream& flux, const GateVolumeID& volumeID)    
 {
     flux    << "Vol(0" ;
-    for (size_t i=0; i<volumeID.size(); i++) 
+    for (size_t i=0; i<volumeID.size(); ++i) 
       	    flux << " -> " << volumeID[i] ;
     flux    << ")";
     

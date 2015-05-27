@@ -125,7 +125,7 @@ void GateROOTBasicOutput::RecordEndOfRun(const G4Run*)
 void GateROOTBasicOutput::RecordBeginOfEvent(const G4Event*)
 {
 
-  for (G4int k = 0 ; k < dimOfHitVector ; k++)
+  for (G4int k = 0 ; k < dimOfHitVector ; ++k)
     {
       Edep[k] = 0.;
 
@@ -159,7 +159,7 @@ void GateROOTBasicOutput::RecordEndOfEvent(const G4Event* event )
   if ( numberHits > dimOfHitVector ) { numberHits = dimOfHitVector ; }
 
   GateCrystalHit* aHit;
-  for (G4int i = 0; i < numberHits ; i++)
+  for (G4int i = 0; i < numberHits ; ++i)
     {
       aHit = (*trackerHC)[i];
 

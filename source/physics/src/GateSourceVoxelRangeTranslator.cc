@@ -64,7 +64,7 @@ void GateSourceVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
   inFile >> nTotCol;
   //  G4cout << "nTotCol: " << nTotCol << Gateendl;
 
-  for (G4int iCol=0; iCol<nTotCol; iCol++) {
+  for (G4int iCol=0; iCol<nTotCol; ++iCol) {
 
     inFile >> xmin >> xmax;
     inFile >> activity;

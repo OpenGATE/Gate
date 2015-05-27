@@ -97,7 +97,7 @@ Clear(void)
   transformOrder = 0;
 
 
-  for(unsigned int i=0;i<100;i++)
+  for(unsigned int i=0;i<100;++i)
     {
     gridSpacing[i] = 1;
     gridOrigin[i] = 0;
@@ -171,7 +171,7 @@ M_SetupWriteFields(void)
       m_Fields.erase(it);
       break;
       }
-    it++;
+    ++it;
     }
 
   mF = MET_GetFieldRecord("Offset",&m_Fields);
@@ -183,7 +183,7 @@ M_SetupWriteFields(void)
       m_Fields.erase(it);
       break;
       }
-    it++;
+    ++it;
     }
 
   mF = MET_GetFieldRecord("ElementSpacing",&m_Fields);
@@ -195,12 +195,12 @@ M_SetupWriteFields(void)
       m_Fields.erase(it);
       break;
       }
-    it++;
+    ++it;
     }
 
   int i;
   bool writeCoR = false;
-  for(i=0;i<m_NDims;i++)
+  for(i=0;i<m_NDims;++i)
     {
     if(m_CenterOfRotation[i] != 0.0)
       {
@@ -220,7 +220,7 @@ M_SetupWriteFields(void)
         m_Fields.erase(it);
         break;
         }
-      it++;
+      ++it;
       }
     }
 
@@ -233,7 +233,7 @@ M_SetupWriteFields(void)
 
   // Grid Spacing
   bool writeGridSpacing = false;
-  for(i=0;i<100;i++)
+  for(i=0;i<100;++i)
     {
     if(gridSpacing[i] != 1)
       {
@@ -251,7 +251,7 @@ M_SetupWriteFields(void)
 
   // Grid Origin
   bool writeGridOrigin = false;
-  for(i=0;i<100;i++)
+  for(i=0;i<100;++i)
     {
     if(gridOrigin[i] != 0)
       {
@@ -269,7 +269,7 @@ M_SetupWriteFields(void)
 
   // Grid region size
   bool writeGridRegionSize = false;
-  for(i=0;i<100;i++)
+  for(i=0;i<100;++i)
     {
     if(gridRegionSize[i] != 0)
       {
@@ -288,7 +288,7 @@ M_SetupWriteFields(void)
 
   // Grid region index
   bool writeGridRegionIndex = false;
-  for(i=0;i<100;i++)
+  for(i=0;i<100;++i)
     {
     if(gridRegionIndex[i] != 0)
       {
@@ -328,7 +328,7 @@ M_Write(void)
     {
     char* data = new char[parametersDimension*sizeof(double)];
     unsigned int j=0;
-    for(unsigned int i=0;i<parametersDimension;i++)
+    for(unsigned int i=0;i<parametersDimension;++i)
       {
       data[j] = (char)parameters[i];
       j+=sizeof(double);
@@ -339,7 +339,7 @@ M_Write(void)
     }
   else
     {
-     for(unsigned int i=0;i<parametersDimension;i++)
+     for(unsigned int i=0;i<parametersDimension;++i)
       {
       *m_WriteStream << parameters[i] << " ";
       }
@@ -359,7 +359,7 @@ const double * MetaTransform::GridSpacing(void) const
 
 void  MetaTransform::GridSpacing(const double * _gridSpacing)
 {
-  for(int i=0;i<m_NDims;i++)
+  for(int i=0;i<m_NDims;++i)
     {
     gridSpacing[i] = _gridSpacing[i];
     }
@@ -373,7 +373,7 @@ const double * MetaTransform::GridOrigin(void) const
 
 void  MetaTransform::GridOrigin(const double * _gridOrigin)
 {
-  for(int i=0;i<m_NDims;i++)
+  for(int i=0;i<m_NDims;++i)
     {
     gridOrigin[i] = _gridOrigin[i];
     }
@@ -387,7 +387,7 @@ const double * MetaTransform::GridRegionSize(void) const
 
 void  MetaTransform::GridRegionSize(const double * _gridRegionSize)
 {
-  for(int i=0;i<m_NDims;i++)
+  for(int i=0;i<m_NDims;++i)
     {
     gridRegionSize[i] = _gridRegionSize[i];
     }
@@ -401,7 +401,7 @@ const double * MetaTransform::GridRegionIndex(void) const
 
 void  MetaTransform::GridRegionIndex(const double * _gridRegionIndex)
 {
-  for(int i=0;i<m_NDims;i++)
+  for(int i=0;i<m_NDims;++i)
     {
     gridRegionIndex[i] = _gridRegionIndex[i];
     }
@@ -425,7 +425,7 @@ void  MetaTransform::Parameters(unsigned int dimension, const double * _paramete
   parameters = new double[parametersDimension];
 
   // Copy the parameters
-  for(unsigned int i=0;i<parametersDimension;i++)
+  for(unsigned int i=0;i<parametersDimension;++i)
     {
     parameters[i] = _parameters[i];
     }
@@ -462,7 +462,7 @@ M_Read(void)
   int i;
   if(mF && mF->defined)
     {
-    for(i=0; i<mF->length; i++)
+    for(i=0; i<mF->length; ++i)
       {
       gridSpacing[i] = static_cast<double>( mF->value[i] );
       }
@@ -471,7 +471,7 @@ M_Read(void)
   mF = MET_GetFieldRecord("GridOrigin", &m_Fields);
   if(mF && mF->defined)
     {
-    for(i=0; i<mF->length; i++)
+    for(i=0; i<mF->length; ++i)
       {
       gridOrigin[i] = static_cast<double>( mF->value[i] );
       }
@@ -480,7 +480,7 @@ M_Read(void)
   mF = MET_GetFieldRecord("GridRegionSize", &m_Fields);
   if(mF && mF->defined)
     {
-    for(i=0; i<mF->length; i++)
+    for(i=0; i<mF->length; ++i)
       {
       gridRegionSize[i] = static_cast<double>( mF->value[i] );
       }
@@ -489,7 +489,7 @@ M_Read(void)
   mF = MET_GetFieldRecord("GridRegionIndex", &m_Fields);
   if(mF && mF->defined)
     {
-    for(i=0; i<mF->length; i++)
+    for(i=0; i<mF->length; ++i)
       {
       gridRegionIndex[i] = static_cast<double>( mF->value[i] );
       }
@@ -526,7 +526,7 @@ M_Read(void)
 
     unsigned long k=0;
 
-    for(unsigned int j=0; j<parametersDimension; j++)
+    for(unsigned int j=0; j<parametersDimension; ++j)
       {
       parameters[j] = _data[k];
       k += sizeof(double);

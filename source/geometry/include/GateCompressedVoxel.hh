@@ -40,7 +40,7 @@ public:
   // Compare this voxel with rhs on specified indices only (contained in valarray l)
   bool compare(const GateCompressedVoxel& rhs, const std::valarray<unsigned short>& l)const{
     bool ans(true);
-    for(unsigned int i=0; i<l.size(); i++) ans = ans && a[l[i]]==rhs.a[l[i]] ;
+    for(unsigned int i=0; i<l.size(); ++i) ans = ans && a[l[i]]==rhs.a[l[i]] ;
     return ans ;
   }
 
@@ -78,7 +78,7 @@ public:
   
   bool operator() (const GateCompressedVoxel& lhs,  const GateCompressedVoxel& rhs){ 
     register int i;
-    for( i=0; i<3; i++){
+    for( i=0; i<3; ++i){
       if ( lhs[index[i]] < rhs[index[i]] ) return true;
       else 
 	if ( lhs[index[i]] > rhs[index[i]] ) return false;

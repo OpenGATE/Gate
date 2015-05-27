@@ -131,7 +131,7 @@ G4VPhysicalVolume* GateDetectorConstruction::Construct() {
 
 	const G4MaterialTable * theTable = G4Material::GetMaterialTable();
 	for (G4MaterialTable::const_iterator it = theTable->begin();
-			it != theTable->end(); it++) {
+			it != theTable->end(); ++it) {
 		if (theListOfIonisationPotential[(*it)->GetName()]) {
 			(*it)->GetIonisation()->SetMeanExcitationEnergy(
 					theListOfIonisationPotential[(*it)->GetName()]);

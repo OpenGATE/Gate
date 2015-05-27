@@ -29,7 +29,7 @@ BlobPnt(int dim)
 {
   m_Dim = dim;
   m_X = new float[m_Dim];
-  for(unsigned int i=0;i<m_Dim;i++)
+  for(unsigned int i=0;i<m_Dim;++i)
     {
     m_X[i] = 0;
     }
@@ -158,7 +158,7 @@ Clear(void)
   while(it != m_PointList.end())
   {
     BlobPnt* pnt = *it;
-    it++;
+    ++it;
     delete pnt;
   }
   m_PointList.clear();
@@ -288,7 +288,7 @@ M_Read(void)
 
   int* posDim= new int[m_NDims];
   int i;
-  for(i= 0; i < m_NDims; i++)
+  for(i= 0; i < m_NDims; ++i)
   {
     posDim[i] = -1;
   }
@@ -299,7 +299,7 @@ M_Read(void)
 
 
   int j;
-  for(j = 0; j < pntDim; j++)
+  for(j = 0; j < pntDim; ++j)
   {
     if(!strcmp(pntVal[j], "x") || !strcmp(pntVal[j], "X"))
     {
@@ -315,7 +315,7 @@ M_Read(void)
     }
   }
 
-  for(i=0;i<pntDim;i++)
+  for(i=0;i<pntDim;++i)
     {
     delete [] pntVal[i];
     }
@@ -347,7 +347,7 @@ M_Read(void)
     i=0;
     int d;
     unsigned int k;
-    for(j=0; j<m_NPoints; j++)
+    for(j=0; j<m_NPoints; ++j)
     {
       BlobPnt* pnt = new BlobPnt(m_NDims);
 
@@ -355,7 +355,7 @@ M_Read(void)
       {
         float* num = new float[1];
         char* numAlias = reinterpret_cast<char*>(num);
-        for(k=0;k<sizeof(float);k++)
+        for(k=0;k<sizeof(float);++k)
           {
           numAlias[k] = _data[i+k];
           }
@@ -370,7 +370,7 @@ M_Read(void)
       {
         float* num = new float[1];
         char* numAlias = reinterpret_cast<char*>(num);
-        for(k=0;k<sizeof(float);k++)
+        for(k=0;k<sizeof(float);++k)
           {
           numAlias[k] = _data[i+k];
           }
@@ -387,11 +387,11 @@ M_Read(void)
   }
   else
   {
-    for(j=0; j<m_NPoints; j++)
+    for(j=0; j<m_NPoints; ++j)
     {
       BlobPnt* pnt = new BlobPnt(m_NDims);
 
-      for(int k=0; k<pntDim; k++)
+      for(int k=0; k<pntDim; ++k)
       {
         *m_ReadStream >> v[k];
         m_ReadStream->get();
@@ -454,16 +454,16 @@ M_Write(void)
         {
         float pntX = (*it)->m_X[d];
         MET_SwapByteIfSystemMSB(&pntX,MET_FLOAT);
-        MET_DoubleToValue((double)pntX,m_ElementType,data,i++);
+        MET_DoubleToValue((double)pntX,m_ElementType,data,++i);
         }
 
       for(d = 0; d < 4; d++)
         {
         float c = (*it)->m_Color[d];
         MET_SwapByteIfSystemMSB(&c,MET_FLOAT);
-        MET_DoubleToValue((double)c,m_ElementType,data,i++);
+        MET_DoubleToValue((double)c,m_ElementType,data,++i);
         }
-      it++;
+      ++it;
       }
     m_WriteStream->write((char *)data,(m_NDims+4)*m_NPoints*elementSize);
     m_WriteStream->write("\n",1);
@@ -488,7 +488,7 @@ M_Write(void)
         }
 
       *m_WriteStream << METAIO_STREAM::endl;
-      it++;
+      ++it;
       }
     }
 

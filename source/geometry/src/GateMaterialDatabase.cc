@@ -86,7 +86,7 @@ G4Element* GateMaterialDatabase::ReadElementFromDBFile(
 	int nDef = 0;
 	G4String fileName = "";
 
-	for (iterator it = begin(); it != end(); it++) {
+	for (iterator it = begin(); it != end(); ++it) {
 		CreatorTemp = (*it)->ReadElement(elementName);
 		if (CreatorTemp) {
 			Creator = CreatorTemp;
@@ -125,7 +125,7 @@ G4Material* GateMaterialDatabase::ReadMaterialFromDBFile(
 	if (material != NULL)
 		return material;
 
-	for (iterator it = begin(); it != end(); it++) {
+	for (iterator it = begin(); it != end(); ++it) {
 		CreatorTemp = (*it)->ReadMaterial(materialName);
 		if (CreatorTemp) {
 			Creator = CreatorTemp;

@@ -125,7 +125,7 @@ MetaVesselTube::
   while(it != m_PointList.end())
     {
     VesselTubePnt* pnt = *it;
-    it++;
+    ++it;
     delete pnt;
     }
   m_PointList.clear();
@@ -239,7 +239,7 @@ Clear(void)
   while(it != m_PointList.end())
     {
     VesselTubePnt* pnt = *it;
-    it++;
+    ++it;
     delete pnt;
     }
   m_PointList.clear();
@@ -478,7 +478,7 @@ M_Read(void)
     }
 
   int j;
-  for(j = 0; j < pntDim; j++)
+  for(j = 0; j < pntDim; ++j)
     {
     if(!strcmp(pntVal[j], "x") || !strcmp(pntVal[j], "X"))
       {
@@ -629,7 +629,7 @@ M_Read(void)
     i=0;
     int d;
     unsigned int k;
-    for(j=0; j<(int)m_NPoints; j++)
+    for(j=0; j<(int)m_NPoints; ++j)
       {
       VesselTubePnt* pnt = new VesselTubePnt(m_NDims);
 
@@ -824,7 +824,7 @@ M_Read(void)
     }
   else
     {
-    for(j=0; j<(int)m_NPoints; j++)
+    for(j=0; j<(int)m_NPoints; ++j)
       {
       if(m_Event)
         {
@@ -1073,7 +1073,7 @@ M_Write(void)
       MET_SwapByteIfSystemMSB(&id,MET_INT);
       MET_DoubleToValue((double)id,m_ElementType,data,i++);
 
-      it++;
+      ++it;
       }
 
     m_WriteStream->write((char *)data,
@@ -1141,7 +1141,7 @@ M_Write(void)
       *m_WriteStream << (*it)->m_ID << " ";
 
       *m_WriteStream << METAIO_STREAM::endl;
-      it++;
+      ++it;
       }
     }
   return true;

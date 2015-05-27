@@ -122,7 +122,7 @@ void GateCompressedVoxelOutput::RecordEndOfAcquisition()
   catch(...){  G4Exception( "GateCompressedVoxelOutput::RecordEndOfAcquisition", "RecordEndOfAcquisition", FatalException , "No memory for expanded array"); }
 
   // Process each (compressed) voxel:
-  for (unsigned int i=0; i<m_array->size(); i++){
+  for (unsigned int i=0; i<m_array->size(); ++i){
     // a) calculate dose
     const GateCompressedVoxel& gcv     ( theReader->GetCompressor().GetVoxel(i));
     G4Material*                mat     ( (*G4Material::GetMaterialTable())[gcv[6]]);
@@ -143,7 +143,7 @@ void GateCompressedVoxelOutput::RecordEndOfAcquisition()
   std::ofstream f;
   f.open(m_fileName, std::ofstream::out | std::ofstream::binary);
   
-  for (unsigned int i=0; i< expandedArray->size(); i++)
+  for (unsigned int i=0; i< expandedArray->size(); ++i)
     f.write( (char*)&(*expandedArray)[i], sizeof(float));
   f.close();
   
@@ -199,7 +199,7 @@ void GateCompressedVoxelOutput::RecordEndOfEvent(const G4Event* )
   GatePhantomHitsCollection* PHC = GetOutputMgr()->GetPhantomHitCollection();
   G4int NpHits = PHC->entries();
 
-  for (G4int i=0;i<NpHits;i++){
+  for (G4int i=0;i<NpHits;++i){
 
     GatePhantomHit* h    ( (*PHC)[i] );
     G4double        edep ( h->GetEdep() );

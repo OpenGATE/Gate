@@ -46,7 +46,7 @@ G4bool GateFilterManager::Accept(const G4Step* aStep) const
  // for(sit= theFilters.begin(); sit!=theFilters.end(); ++sit)
       //if(!(*sit)->Accept(aStep)) return false;
 
-  for(unsigned int i = 0;i<theFilters.size();i++)
+  for(unsigned int i = 0;i<theFilters.size();++i)
      if(!theFilters[i]->Accept(aStep)) return false;
 
   return true;
@@ -60,7 +60,7 @@ G4bool GateFilterManager::Accept(const G4Track* aTrack) const
  // for(sit= theFilters.begin(); sit!=theFilters.end(); ++sit)
       //if(!(*sit)->Accept(aStep)) return false;
 
-    for(unsigned int i = 0;i<theFilters.size();i++)
+    for(unsigned int i = 0;i<theFilters.size();++i)
       if(!theFilters[i]->Accept(aTrack)) return false;
 
   return true;
@@ -74,7 +74,7 @@ void GateFilterManager::show(){
   G4cout << "------Filter Manager: "<<mFilterName<<" ------\n";
 
   std::vector<GateVFilter*>::iterator sit;
-  for(sit= theFilters.begin(); sit!=theFilters.end(); sit++)
+  for(sit= theFilters.begin(); sit!=theFilters.end(); ++sit)
      (*sit)->show();
   
   G4cout << "-------------------------------------------\n";

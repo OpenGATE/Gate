@@ -123,12 +123,12 @@ size_t GateCrossSectionsTable::AddMaterial(const G4MaterialCutsCouple* couple) /
 				<< "GateCrossSectionsTable::AddMaterial( const G4Material* mat ) : add "
 				<< couple->GetMaterial()->GetName() << Gateendl;
 	}
-	for (size_t i = 0; i < a->GetVectorLength(); i++) {
+	for (size_t i = 0; i < a->GetVectorLength(); ++i) {
 		G4double energy = m_nMinEnergy + delta * i;
 		G4double b = 0;
 		G4double c = 0.;
 		for (std::vector<G4VDiscreteProcess*>::const_iterator it =
-				m_oProcessVec.begin(); it != m_oProcessVec.end(); it++) {
+				m_oProcessVec.begin(); it != m_oProcessVec.end(); ++it) {
 			if (dynamic_cast<G4VEmProcess*>(*it)) {
 				c = m_sEmCalculator.ComputeCrossSectionPerVolume(energy,
 						pParticleDefinition, (*it)->GetProcessName(),
@@ -208,7 +208,7 @@ size_t GateCrossSectionsTable::AddMaterial(const G4MaterialCutsCouple* couple) /
 	/*
 	 G4String totalname="table_"+couple->GetMaterial()->GetName();
 
-	 for ( size_t j=0;j<m_oProcessVec.size();j++ )
+	 for ( size_t j=0;j<m_oProcessVec.size();++j )
 	 totalname+=m_oProcessVec[j]->GetProcessName();
 	 ofstream fout;
 	 G4cout<< totalname.c_str() << Gateendl;
@@ -276,8 +276,8 @@ bool GateCrossSectionsTable::BuildMaxCrossSection(
 	size_t i = 0;
 	vector<size_t> involved_mat_index;
 
-	for (i = 0; i < m_oMaterialVec.size(); i++) {
-		for (size_t j = 0; j < vec.size(); j++) {
+	for (i = 0; i < m_oMaterialVec.size(); ++i) {
+		for (size_t j = 0; j < vec.size(); ++j) {
 			if (m_oMaterialVec[i] == vec[j]) {
 				involved_mat_index.push_back(i);
 #ifdef G4VERBOSE
@@ -298,10 +298,10 @@ bool GateCrossSectionsTable::BuildMaxCrossSection(
 	m_pMaxCrossSection = new G4PhysicsLinearVector(m_nMinEnergy, m_nMaxEnergy,
 			m_nPhysicsVectorBinNumber);
 //	const G4double delta= ( m_nMaxEnergy-m_nMinEnergy ) /m_nPhysicsVectorBinNumber;
-	for (size_t i = 0; i < m_pMaxCrossSection->GetVectorLength(); i++) {
+	for (size_t i = 0; i < m_pMaxCrossSection->GetVectorLength(); ++i) {
 //		G4double energy=m_nMinEnergy+delta*i;
 		G4double b = -1e9;
-		for (size_t j = 0; j < involved_mat_index.size(); j++) {
+		for (size_t j = 0; j < involved_mat_index.size(); ++j) {
 
 			if (operator[](involved_mat_index[j])->operator[](i) > b)
 				b = operator[](involved_mat_index[j])->operator[](i);
@@ -359,7 +359,7 @@ void GateCrossSectionsTable::StoreTable(std::ofstream& out, bool ascii) const {
 		out.write(reinterpret_cast<const char*>(&l), sizeof(l));
 
 	}
-	for (size_t i = 0; i < l; i++) {
+	for (size_t i = 0; i < l; ++i) {
 		Store(out, ascii, i);
 	}
 }
@@ -402,7 +402,7 @@ void GateCrossSectionsTable::RetrieveTable(std::ifstream& in, bool ascii) {
 	clearAndDestroy();
 	m_oInvDensity.resize(tmpsize);
 
-	for (size_t i = 0; i < tmpsize; i++) {
+	for (size_t i = 0; i < tmpsize; ++i) {
 		G4cout << "Read cross section table for fictitious material no " << i
 				<< Gateendl;
 		assert ( !in.fail() );

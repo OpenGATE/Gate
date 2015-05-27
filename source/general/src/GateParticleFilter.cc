@@ -38,7 +38,7 @@ G4bool GateParticleFilter::Accept(const G4Track* aTrack)
  // if(theParentPdef.size()==0)
  // {
  
-    for ( size_t i = 0; i < thePdef.size(); i++){
+    for ( size_t i = 0; i < thePdef.size(); ++i){
       if ( thePdef[i] == aTrack->GetDefinition()->GetParticleName() || 
 	   (aTrack->GetDefinition()->GetParticleSubType()=="generic" && thePdef[i] == "GenericIon") ) 
       {
@@ -53,7 +53,7 @@ G4bool GateParticleFilter::Accept(const G4Track* aTrack)
     GateTrackIDInfo  *trackInfo = GateUserActions::GetUserActions()->GetTrackIDInfo(aTrack->GetParentID());
     while(trackInfo)
     {
-      for ( size_t i = 0; i < theParentPdef.size(); i++){
+      for ( size_t i = 0; i < theParentPdef.size(); ++i){
         if ( theParentPdef[i] == trackInfo->GetParticleName()) 
         {
            nFilteredParticles++;
@@ -71,7 +71,7 @@ G4bool GateParticleFilter::Accept(const G4Track* aTrack)
 //---------------------------------------------------------------------------
 void GateParticleFilter::Add(const G4String& particleName)
 {
-  for ( size_t i = 0; i < thePdef.size(); i++){
+  for ( size_t i = 0; i < thePdef.size(); ++i){
     if ( thePdef[i] == particleName ) return;
   }
   thePdef.push_back(particleName);
@@ -79,7 +79,7 @@ void GateParticleFilter::Add(const G4String& particleName)
 
 void GateParticleFilter::AddParent(const G4String& particleName)
 {
-  for ( size_t i = 0; i < theParentPdef.size(); i++){
+  for ( size_t i = 0; i < theParentPdef.size(); ++i){
     if ( theParentPdef[i] == particleName ) return;
   }
   theParentPdef.push_back(particleName);
@@ -91,11 +91,11 @@ void GateParticleFilter::show(){
   G4cout << "------ Filter: "<<GetObjectName()<<" ------\n";
   G4cout <<"     particle list:\n";
 
-  for ( size_t i = 0; i < thePdef.size(); i++){
+  for ( size_t i = 0; i < thePdef.size(); ++i){
     G4cout << thePdef[i] << Gateendl;
   }
   G4cout <<"     parent particle list:\n";
-  for ( size_t i = 0; i < theParentPdef.size(); i++){
+  for ( size_t i = 0; i < theParentPdef.size(); ++i){
     G4cout << theParentPdef[i] << Gateendl;
   }
   G4cout << "-------------------------------------------\n";

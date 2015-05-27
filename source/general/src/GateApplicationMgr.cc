@@ -297,7 +297,7 @@ void GateApplicationMgr::StartDAQ() {
 		listOfTimeSlice.push_back(1 * s);
 	}
 	double time = GetTimeStart();
-	for (size_t j = 0; j < listOfTimeSlice.size(); j++) {
+	for (size_t j = 0; j < listOfTimeSlice.size(); ++j) {
 		time += listOfTimeSlice[j];
 		listOfEndTimeSlice.push_back(time);
 	}
@@ -503,7 +503,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param) {
 				"Problem in GateApplicationMgr::StartDAQCluster - No timeslice detected at all !");
 	}
 	double time = GetTimeStart();
-	for (size_t j = 0; j < listOfTimeSlice.size(); j++) {
+	for (size_t j = 0; j < listOfTimeSlice.size(); ++j) {
 		time += listOfTimeSlice[j];
 		listOfEndTimeSlice.push_back(time);
 	}
@@ -546,7 +546,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param) {
 	m_exitFlag = false;
 	m_pauseFlag = false;
 
-	for (unsigned int i = 0; i < listOfTimeSlice.size(); i++)
+	for (unsigned int i = 0; i < listOfTimeSlice.size(); ++i)
 		G4cout << "Slice n° " << i << "  | Time: " << listOfTimeSlice[i]
 				<< Gateendl;
 
@@ -652,7 +652,7 @@ void GateApplicationMgr::ComputeTimeStop() {
 	if (listOfTimeSlice.size() > 0) {
 //    if(m_timeStop!=0) GateError("Please do not use 'setTimeStop' command with 'addTimeSlice' or 'readTimeSlicesIn' commands");
 		m_timeStop = m_timeStart;
-		for (unsigned int i = 0; i < listOfTimeSlice.size(); i++) {
+		for (unsigned int i = 0; i < listOfTimeSlice.size(); ++i) {
 			m_timeStop += listOfTimeSlice[i];
 		}
 	} else {
@@ -660,14 +660,14 @@ void GateApplicationMgr::ComputeTimeStop() {
 			GateWarning("Time Slice bigger than DAQ total time");
 		}
 		int n = int((m_timeStop - m_timeStart) / m_timeSlice);
-		for (int i = 0; i < n; i++)
+		for (int i = 0; i < n; ++i)
 			listOfTimeSlice.push_back(m_timeSlice);
 		if (n * m_timeSlice < m_timeStop)
 			listOfTimeSlice.push_back(m_timeStop - n * m_timeSlice);
 	}
 
 	double time = GetTimeStart();
-	for (size_t j = 0; j < listOfTimeSlice.size(); j++) {
+	for (size_t j = 0; j < listOfTimeSlice.size(); ++j) {
 		time += listOfTimeSlice[j];
 		listOfEndTimeSlice.push_back(time);
 	}
@@ -679,7 +679,7 @@ void GateApplicationMgr::ComputeTimeStop() {
 /*int GateApplicationMgr::ComputeNumberOfGeneratedPrimaries() {
  GateVSource * source = GateSourceMgr::GetInstance()->GetSource(0);
  int mTotalNbOfParticles = 0;
- for(unsigned int i=0;i<listOfTimeSlice.size();i++) {
+ for(unsigned int i=0;i<listOfTimeSlice.size();++i) {
  int n = int(rint(listOfTimeSlice[i]*source->GetActivity()));
  //DD(n);
  mTotalNbOfParticles += n;

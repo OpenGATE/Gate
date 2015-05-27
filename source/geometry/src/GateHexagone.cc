@@ -73,11 +73,11 @@ G4LogicalVolume* GateHexagone::ConstructOwnSolidAndLogicalVolume(G4Material* mat
   if (!flagUpdateOnly)
   {
     size_t i;
-    for (i=0; i<2; i++) 
+    for (i=0; i<2; ++i) 
     {
       m_HexagoneZPlane[i] = i*m_HexagoneHeight-m_HexagoneHeight/2;
     }
-    for (i=0; i<6; i++) 
+    for (i=0; i<6; ++i) 
     {
       m_HexagoneRInner[i] = 0;
       m_HexagoneROuter[i] = m_HexagoneRadius;

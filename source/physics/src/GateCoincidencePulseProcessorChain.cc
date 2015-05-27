@@ -68,7 +68,7 @@ void GateCoincidencePulseProcessorChain::Describe(size_t indent)
 void GateCoincidencePulseProcessorChain::DescribeProcessors(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "Nb of modules:       " << size() << Gateendl;
-  for (iterator it=begin(); it!=end(); it++)
+  for (iterator it=begin(); it!=end(); ++it)
       ((GateVCoincidencePulseProcessor*)(*it))->Describe(indent+1);
 }
 //------------------------------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ const std::vector<GateCoincidencePulse*> GateCoincidencePulseProcessorChain::Mak
    for (std::vector<G4String>::const_iterator itName = m_inputNames.begin() ; itName != m_inputNames.end() ; itName++){
      std::vector<GateCoincidencePulse*> pulseList 
         = GateDigitizer::GetInstance()->FindCoincidencePulse( *itName );
-     for (std::vector<GateCoincidencePulse*>::const_iterator it = pulseList.begin() ; it != pulseList.end() ; it++){
+     for (std::vector<GateCoincidencePulse*>::const_iterator it = pulseList.begin() ; it != pulseList.end() ; ++it){
 	GateCoincidencePulse* pulse = *it;
 	if (pulse->empty()) continue;
 	G4double time = pulse->GetTime();
@@ -117,7 +117,7 @@ void GateCoincidencePulseProcessorChain::ProcessCoincidencePulses()
   std::vector<GateCoincidencePulse*> pulseList = MakeInputList();
 
   //mhadi_add[
-  for (iterator it=begin(); it!=end(); it++)
+  for (iterator it=begin(); it!=end(); ++it)
   {
     GateVCoincidencePulseProcessor* processor =  ((GateVCoincidencePulseProcessor*)(*it));
     if (processor->IsEnabled() && processor->IsTriCoincProcessor())
@@ -132,10 +132,10 @@ void GateCoincidencePulseProcessorChain::ProcessCoincidencePulses()
 
   // Sequentially launch all pulse processors
   G4int i=0;
-  for (std::vector<GateCoincidencePulse*>::iterator it = pulseList.begin() ; it != pulseList.end() ; it++,i++){
+  for (std::vector<GateCoincidencePulse*>::iterator it = pulseList.begin() ; it != pulseList.end() ; ++it,++i){
      GateCoincidencePulse* pulse = *it;
      if (pulse->empty()) continue;
-     for (iterator iter=begin(); iter!=end(); iter++)
+     for (iterator iter=begin(); iter!=end(); ++iter)
      {
        GateVCoincidencePulseProcessor* processor =  ((GateVCoincidencePulseProcessor*)(*iter));
        if (processor->IsEnabled()) {
@@ -162,7 +162,7 @@ GateVSystem* GateCoincidencePulseProcessorChain::FindSystem(G4String& inputName)
 
    /*G4int index = -1;
 
-   for(size_t i=0; i<CoincidenceSorterList.size(); i++)
+   for(size_t i=0; i<CoincidenceSorterList.size(); ++i)
    {
       G4String coincSorterChainName = CoincidenceSorterList[i]->GetOutputName();
       if(inputName.compare(coincSorterChainName) == 0)

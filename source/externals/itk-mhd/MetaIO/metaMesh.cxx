@@ -42,7 +42,7 @@ MeshPoint(int dim)
 {
   m_Dim = dim;
   m_X = new float[m_Dim];
-  for(unsigned int i=0;i<m_Dim;i++)
+  for(unsigned int i=0;i<m_Dim;++i)
     {
     m_X[i] = 0;
     }
@@ -60,7 +60,7 @@ MeshCell(int dim)
   m_Dim = dim;
   m_Id = -1;
   m_PointsId = new int[m_Dim];
-  for(unsigned int i=0;i<m_Dim;i++)
+  for(unsigned int i=0;i<m_Dim;++i)
     {
     m_PointsId[i] = -1;
     }
@@ -83,7 +83,7 @@ MetaMesh()
   if(META_DEBUG) METAIO_STREAM::cout << "MetaMesh()" << METAIO_STREAM::endl;
   m_NPoints = 0;
 
-  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;i++)
+  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;++i)
     {
     m_CellListArray[i] = NULL;
     }
@@ -98,7 +98,7 @@ MetaMesh(const char *_headerName)
   if(META_DEBUG)  METAIO_STREAM::cout << "MetaMesh()" << METAIO_STREAM::endl;
   m_NPoints = 0;
 
-  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;i++)
+  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;++i)
     {
     m_CellListArray[i] = NULL;
     }
@@ -113,7 +113,7 @@ MetaMesh(const MetaMesh *_mesh)
 {
   if(META_DEBUG)  METAIO_STREAM::cout << "MetaMesh()" << METAIO_STREAM::endl;
   m_NPoints = 0;
-  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;i++)
+  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;++i)
     {
     m_CellListArray[i] = NULL;
     }
@@ -130,7 +130,7 @@ MetaMesh(unsigned int dim)
 {
   if(META_DEBUG) METAIO_STREAM::cout << "MetaMesh()" << METAIO_STREAM::endl;
   m_NPoints = 0;
-  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;i++)
+  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;++i)
     {
     m_CellListArray[i] = NULL;
     }
@@ -142,7 +142,7 @@ MetaMesh::
 ~MetaMesh()
 {
   Clear();
-  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;i++)
+  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;++i)
     {
     delete m_CellListArray[i];
     m_CellListArray[i] = NULL;
@@ -236,7 +236,7 @@ Clear(void)
   }
 
   // Initialize the new array
-  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;i++)
+  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;++i)
     {
     if(m_CellListArray[i])
       {
@@ -350,7 +350,7 @@ M_SetupWriteFields(void)
   m_Fields.push_back(mF);
 
   unsigned int numberOfCellTypes = 0;
-  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;i++)
+  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;++i)
     {
     if(m_CellListArray[i]->size()>0)
       {
@@ -458,7 +458,7 @@ M_Read(void)
     }
 
     int i=0;
-    for(int j=0; j<m_NPoints; j++)
+    for(int j=0; j<m_NPoints; ++j)
       {
       MeshPoint* pnt = new MeshPoint(m_NDims);
         {
@@ -546,7 +546,7 @@ M_Read(void)
     }
   else
     {
-    for(int j=0; j<m_NPoints; j++)
+    for(int j=0; j<m_NPoints; ++j)
       {
       MeshPoint* pnt = new MeshPoint(m_NDims);
 
@@ -608,7 +608,7 @@ M_Read(void)
     mF = MET_GetFieldRecord("CellType", &m_Fields);
     if(mF->defined)
       {
-      for(int j=0;j<MET_NUM_CELL_TYPES;j++)
+      for(int j=0;j<MET_NUM_CELL_TYPES;++j)
         {
         if(!strncmp((char *)(mF->value),MET_CellTypeName[j],3))
           {
@@ -637,7 +637,7 @@ M_Read(void)
         }
 
       int i=0;
-      for(int j=0; j<(int)m_NCells; j++)
+      for(int j=0; j<(int)m_NCells; ++j)
         {
         int n = MET_CellSize[celltype];
         MeshCell* cell = new MeshCell(n);
@@ -672,7 +672,7 @@ M_Read(void)
       }
     else
       {
-      for(int j=0; j<(int)m_NCells; j++)
+      for(int j=0; j<(int)m_NCells; ++j)
         {
         int n = MET_CellSize[celltype];
         MeshCell* cell = new MeshCell(MET_CellSize[celltype]);
@@ -757,7 +757,7 @@ M_Read(void)
       return false;
       }
     int i=0;
-    for(int j=0; j<(int)m_NCellLinks; j++)
+    for(int j=0; j<(int)m_NCellLinks; ++j)
       {
       MeshCellLink* link = new MeshCellLink();
         {
@@ -803,7 +803,7 @@ M_Read(void)
     }
   else
     {
-    for(int j=0; j<(int)m_NCellLinks; j++)
+    for(int j=0; j<(int)m_NCellLinks; ++j)
       {
       int v;
       MeshCellLink* link = new MeshCellLink();
@@ -816,7 +816,7 @@ M_Read(void)
       m_ReadStream->get();
       int count = v;
 
-      for(int i=0;i<count;i++)
+      for(int i=0;i<count;++i)
         {
         *m_ReadStream >> v;
         m_ReadStream->get();
@@ -891,7 +891,7 @@ M_Read(void)
     }
   int i=0;
 
-  for(int j=0; j<(int)m_NPointData; j++)
+  for(int j=0; j<(int)m_NPointData; ++j)
     {
     MeshDataBase* pd;
 
@@ -1057,7 +1057,7 @@ M_Read(void)
     }
 
   i=0;
-  for(int j=0; j<(int)m_NCellData; j++)
+  for(int j=0; j<(int)m_NCellData; ++j)
     {
     MeshDataBase* cd;
     int td;
@@ -1198,15 +1198,15 @@ M_Write(void)
       {
       int pntId = (*it)->m_Id;
       MET_SwapByteIfSystemMSB(&pntId,MET_INT);
-      MET_DoubleToValue((double)pntId,MET_INT,data,i++);
+      MET_DoubleToValue((double)pntId,MET_INT,data,++i);
 
       for(d = 0; d < m_NDims; d++)
         {
         float pntX = (*it)->m_X[d];
         MET_SwapByteIfSystemMSB(&pntX,MET_FLOAT);
-        MET_DoubleToValue((double)pntX,m_PointType,data,i++);
+        MET_DoubleToValue((double)pntX,m_PointType,data,++i);
         }
-      it++;
+      ++it;
       }
     m_WriteStream->write((char *)data,(m_NDims+1)*m_NPoints*elementSize);
     m_WriteStream->write("\n",1);
@@ -1225,12 +1225,12 @@ M_Write(void)
         *m_WriteStream << (*it)->m_X[d] << " ";
         }
       *m_WriteStream << METAIO_STREAM::endl;
-      it++;
+      ++it;
       }
     }
 
   // Loop trough the array of cell types and write them if they exists
-  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;i++)
+  for(unsigned int i=0;i<MET_NUM_CELL_TYPES;++i)
     {
     if(m_CellListArray[i]->size()>0)
       {
@@ -1282,7 +1282,7 @@ M_Write(void)
             MET_SwapByteIfSystemMSB(&pntId,MET_INT);
             MET_DoubleToValue((double)pntId,MET_INT,data,j++);
             }
-          it++;
+          ++it;
         }
         m_WriteStream->write((char *)data,totalCellsSize*sizeof(int));
         m_WriteStream->write("\n",1);
@@ -1303,7 +1303,7 @@ M_Write(void)
             }
 
           *m_WriteStream << METAIO_STREAM::endl;
-          it++;
+          ++it;
           }
         }
     }
@@ -1327,7 +1327,7 @@ M_Write(void)
       while(it != itEnd)
         {
         cellLinksSize += static_cast<int>(2+(*it)->m_Links.size());
-        it++;
+        ++it;
         }
       mF = new MET_FieldRecordType;
       MET_InitWriteField(mF, "CellLinksSize", MET_INT,cellLinksSize);
@@ -1372,7 +1372,7 @@ M_Write(void)
           MET_DoubleToValue((double)links,MET_INT,data,j++);
           it2++;
           }
-        it++;
+        ++it;
         }
         m_WriteStream->write((char *)data,cellLinksSize*sizeof(int));
         m_WriteStream->write("\n",1);
@@ -1395,7 +1395,7 @@ M_Write(void)
           it2++;
           }
         *m_WriteStream << METAIO_STREAM::endl;
-        it++;
+        ++it;
         }
       }
     }
@@ -1417,7 +1417,7 @@ M_Write(void)
     while(it != itEnd)
       {
       pointDataSize += (*it)->GetSize();
-      it++;
+      ++it;
       }
 
     mF = new MET_FieldRecordType;
@@ -1442,7 +1442,7 @@ M_Write(void)
     while(it != itEnd)
       {
       (*it)->Write(m_WriteStream);
-      it++;
+      ++it;
       }
     m_WriteStream->write("\n",1);
 
@@ -1465,7 +1465,7 @@ M_Write(void)
     while(it != itEnd)
       {
       cellDataSize += (*it)->GetSize();
-      it++;
+      ++it;
       }
 
     mF = new MET_FieldRecordType;
@@ -1491,7 +1491,7 @@ M_Write(void)
     while(it != itEnd)
       {
       (*it)->Write(m_WriteStream);
-      it++;
+      ++it;
       }
     m_WriteStream->write("\n",1);
     }

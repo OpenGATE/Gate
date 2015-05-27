@@ -152,7 +152,7 @@ void GateEnergySpectrumActor::PreUserTrackingAction(const GateVVolume *, const G
 {
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- Begin of Track\n");
   newTrack = true; //nTrack++;
-  if(t->GetParentID()==1) nTrack++;
+  if(t->GetParentID()==1) ++nTrack;
   edepTrack = 0.;
 }
 //-----------------------------------------------------------------------------

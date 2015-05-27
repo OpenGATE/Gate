@@ -61,7 +61,7 @@ void GateObjectRepeaterList::AppendObjectRepeater(GateVGlobalPlacement* newObjec
 void GateObjectRepeaterList::DescribeRepeaters(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "Nb of " << m_typeName << "s:       " << size() << Gateendl;
-  for (iterator it=begin(); it!=end(); it++)
+  for (iterator it=begin(); it!=end(); ++it)
     ((GateVGlobalPlacement*)(*it))->Describe(indent+1);
 }
 //-------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ void GateObjectRepeaterList::ListElements()
 GatePlacementQueue* GateObjectRepeaterList::ComputePlacements(GatePlacementQueue *pQueue)
 {
   if (IsEnabled())
-    for (iterator it=begin(); it!=end(); it++)
+    for (iterator it=begin(); it!=end(); ++it)
       pQueue = ((GateVGlobalPlacement*)(*it))->ComputePlacements(pQueue);
 
   return pQueue;
@@ -91,7 +91,7 @@ GatePlacementQueue* GateObjectRepeaterList::ComputePlacements(GatePlacementQueue
 void GateObjectRepeaterList::ComputeParameters()
 {
   G4double aTime = GetCurrentTime();
-  for (iterator it=begin(); it!=end(); it++)
+  for (iterator it=begin(); it!=end(); ++it)
     if ( ((GateVGlobalPlacement*)(*it)) ) 
       ((GateVGlobalPlacement*)(*it))->ComputeParameters(aTime);
 }

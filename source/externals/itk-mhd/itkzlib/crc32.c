@@ -126,7 +126,7 @@ local void make_crc_table()
         /* generate a crc for every 8-bit value */
         for (n = 0; n < 256; n++) {
             c = (unsigned long)n;
-            for (k = 0; k < 8; k++)
+            for (k = 0; k < 8; ++k)
                 c = c & 1 ? poly ^ (c >> 1) : c >> 1;
             crc_table[0][n] = c;
         }
@@ -137,7 +137,7 @@ local void make_crc_table()
         for (n = 0; n < 256; n++) {
             c = crc_table[0][n];
             crc_table[4][n] = REV(c);
-            for (k = 1; k < 4; k++) {
+            for (k = 1; k < 4; ++k) {
                 c = crc_table[0][c & 0xff] ^ (c >> 8);
                 crc_table[k][n] = c;
                 crc_table[k + 4][n] = REV(c);
@@ -167,7 +167,7 @@ local void make_crc_table()
         write_table(out, crc_table[0]);
 #  ifdef BYFOUR
         fprintf(out, "#ifdef BYFOUR\n");
-        for (k = 1; k < 8; k++) {
+        for (k = 1; k < 8; ++k) {
             fprintf(out, "  },\n  {\n");
             write_table(out, crc_table[k]);
         }

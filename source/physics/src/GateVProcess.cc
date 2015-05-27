@@ -69,7 +69,7 @@ GateVProcess::~GateVProcess()
   //  theListOfWrapper.erase(iter);
   //}
 
-  for(std::list<G4HadronicInteraction*>::iterator i = theListOfG4HadronicModels.begin(); i!=theListOfG4HadronicModels.end(); i++)
+  for(std::list<G4HadronicInteraction*>::iterator i = theListOfG4HadronicModels.begin(); i!=theListOfG4HadronicModels.end(); )
     {
       delete (*i);
       i = theListOfG4HadronicModels.erase(i);
@@ -78,7 +78,7 @@ GateVProcess::~GateVProcess()
   delete theHandler;
   delete pMessenger;
 
-  for(std::list<G4VProcess*>::iterator i = theListOfG4Processes.begin(); i!=theListOfG4Processes.end(); i++)
+  for(std::list<G4VProcess*>::iterator i = theListOfG4Processes.begin(); i!=theListOfG4Processes.end(); )
     {
       if(*i!=0) delete (*i);
       i = theListOfG4Processes.erase(i);
@@ -129,12 +129,12 @@ void GateVProcess::ConstructProcess()
 
   bool alreadyDefined;
 
-  for(unsigned int k=0; k<theListOfEnabledParticles.size(); k++)
+  for(unsigned int k=0; k<theListOfEnabledParticles.size(); ++k)
     {//particle
       manager = theListOfEnabledParticles[k]->GetProcessManager();
       processvector = manager->GetProcessList();
       alreadyDefined = false;
-      for(int j=0;j<manager->GetProcessListLength();j++)
+      for(int j=0;j<manager->GetProcessListLength();++j)
         {
           pname = (*processvector)[j]->GetProcessName();
           if(pname==mG4ProcessName) alreadyDefined = true;
@@ -146,14 +146,14 @@ void GateVProcess::ConstructProcess()
 
           if(theListOfParticlesWithSelectedDS.size()!=0)
             {
-              for(unsigned int j=0; j<theListOfParticlesWithSelectedDS.size(); j++)
+              for(unsigned int j=0; j<theListOfParticlesWithSelectedDS.size(); ++j)
                 if(theListOfParticlesWithSelectedDS[j]==theListOfEnabledParticles[k])
                   AddDataSet(theListOfSelectedDataSets[j]);
             }
 
           if(theListOfParticlesWithSelectedModels.size()!=0)
             {
-              for(unsigned int j=0; j<theListOfParticlesWithSelectedModels.size(); j++)
+              for(unsigned int j=0; j<theListOfParticlesWithSelectedModels.size(); ++j)
                 if(theListOfParticlesWithSelectedModels[j]==theListOfEnabledParticles[k])
                   {
                     GateDebugMessage("Physic",2,"AddModel start - "<< theListOfSelectedModels[j]->GetModelName()
@@ -204,7 +204,7 @@ void GateVProcess::PrintEnabledParticles(G4String name)
 {
   int nSelectedModel = 0;
 
-  for(unsigned int k=0; k<theListOfEnabledParticles.size(); k++)
+  for(unsigned int k=0; k<theListOfEnabledParticles.size(); ++k)
     {
       if(name=="All" || name==theListOfEnabledParticles[k]->GetParticleName())
         {
@@ -223,7 +223,7 @@ void GateVProcess::PrintEnabledParticles(G4String name)
               else
                 {
                   nSelectedModel = 0;
-                  for(unsigned int i=0; i<theListOfParticlesWithSelectedModels.size(); i++)
+                  for(unsigned int i=0; i<theListOfParticlesWithSelectedModels.size(); ++i)
                     {
                       if(theListOfEnabledParticles[k]->GetParticleName()==theListOfParticlesWithSelectedModels[i]->GetParticleName())
                         {
@@ -241,7 +241,7 @@ void GateVProcess::PrintEnabledParticles(G4String name)
                 std::cout<<"       - Default\n";
 
               else
-                for(unsigned int i=0; i<theListOfParticlesWithSelectedDS.size(); i++)
+                for(unsigned int i=0; i<theListOfParticlesWithSelectedDS.size(); ++i)
                   {
                     if(theListOfEnabledParticles[k]->GetParticleName()==theListOfParticlesWithSelectedDS[i]->GetParticleName())
          	      std::cout<<"        - "<<theListOfSelectedDataSets[i] << Gateendl;
@@ -261,7 +261,7 @@ void GateVProcess::PrintEnabledParticlesToFile(G4String file)
   std::ofstream os;
   os.open(file.data(), std::ios_base::app);
 
-  for(unsigned int k=0; k<theListOfEnabledParticles.size(); k++)
+  for(unsigned int k=0; k<theListOfEnabledParticles.size(); ++k)
     {
       if(k==0) os<<"   ===  Process: "<<mG4ProcessName.data()<<"  ===\n";
       os<<"Particle: "<<theListOfEnabledParticles[k]->GetParticleName().data()<<"\n";
@@ -274,7 +274,7 @@ void GateVProcess::PrintEnabledParticlesToFile(G4String file)
             {
               nSelectedModel = 0;
               os.close();
-              for(unsigned int i=0; i<theListOfParticlesWithSelectedModels.size(); i++)
+              for(unsigned int i=0; i<theListOfParticlesWithSelectedModels.size(); ++i)
                 {
                   if(theListOfEnabledParticles[k]->GetParticleName()==theListOfParticlesWithSelectedModels[i]->GetParticleName())
                     {
@@ -292,7 +292,7 @@ void GateVProcess::PrintEnabledParticlesToFile(G4String file)
           if(theListOfParticlesWithSelectedDS.size()==0)
             os<<"       - Default\n";
           else
-            for(unsigned int i=0; i<theListOfParticlesWithSelectedDS.size(); i++)
+            for(unsigned int i=0; i<theListOfParticlesWithSelectedDS.size(); ++i)
               {
                 if(theListOfEnabledParticles[k]->GetParticleName()==theListOfParticlesWithSelectedDS[i]->GetParticleName())
                   os<<"        - "<<theListOfSelectedDataSets[i].data()<<"\n";
@@ -312,7 +312,7 @@ void GateVProcess::CreateEnabledParticle(G4String par)
 
   G4ParticleDefinition * particle=0;
 
-  for(unsigned int i=0; i<theListOfParticles.size(); i++)
+  for(unsigned int i=0; i<theListOfParticles.size(); ++i)
     {
       particle = theListOfParticles[i];
 
@@ -333,7 +333,7 @@ void GateVProcess::RemoveElementOfParticleList(G4String par )
 {
   std::vector<G4ParticleDefinition*>  theListOfParticles = GetParticles(par);
 
-  for(unsigned int j=0; j<theListOfParticles.size(); j++)
+  for(unsigned int j=0; j<theListOfParticles.size(); ++j)
     {
       std::vector<G4ParticleDefinition *>::iterator lIt;
 
@@ -352,7 +352,7 @@ void GateVProcess::RemoveElementOfParticleList(G4String par )
 //-----------------------------------------------------------------------------
 bool GateVProcess::IsEnabled(G4ParticleDefinition * par)
 {
-  for(unsigned int k=0; k<theListOfEnabledParticles.size(); k++)
+  for(unsigned int k=0; k<theListOfEnabledParticles.size(); ++k)
     {
       if(theListOfEnabledParticles[k]==par) return true;
     }
@@ -370,11 +370,11 @@ std::vector<G4ParticleDefinition*> GateVProcess::GetParticles(G4String param)
 
   if(param=="Default")
     {
-      for(unsigned int i=0; i<theListOfDefaultParticles.size(); i++)
+      for(unsigned int i=0; i<theListOfDefaultParticles.size(); ++i)
         {
           std::vector<G4String> tmplist;
           tmplist = FindParticleName(theListOfDefaultParticles[i]);
-          for(unsigned int j=0; j<tmplist.size(); j++)
+          for(unsigned int j=0; j<tmplist.size(); ++j)
             theListOfParticles.push_back(tmplist[j]);
         }
     }
@@ -389,7 +389,7 @@ std::vector<G4ParticleDefinition*> GateVProcess::GetParticles(G4String param)
 
   theParticleTable = G4ParticleTable::GetParticleTable();
 
-  for(unsigned int i=0; i<theListOfParticles.size(); i++)
+  for(unsigned int i=0; i<theListOfParticles.size(); ++i)
     {
       particle = theParticleTable->FindParticle(theListOfParticles[i]);
       theListOfG4Particles.push_back(particle);
@@ -457,7 +457,7 @@ void GateVProcess::SetDataSet(G4String cs ,G4String par)
 
   bool alreadySet = false;
 
-  for(unsigned int i=0; i<theListOfParticles.size(); i++)
+  for(unsigned int i=0; i<theListOfParticles.size(); ++i)
     {
       alreadySet = false;
       particle = theListOfParticles[i];
@@ -467,7 +467,7 @@ void GateVProcess::SetDataSet(G4String cs ,G4String par)
         continue;
       }
 
-      for(unsigned int j=0; j<theListOfParticlesWithSelectedDS.size(); j++)
+      for(unsigned int j=0; j<theListOfParticlesWithSelectedDS.size(); ++j)
         if(theListOfParticlesWithSelectedDS[j]==particle && theListOfSelectedDataSets[j]==cs)
           {
             alreadySet=true;
@@ -512,7 +512,7 @@ void GateVProcess::UnSetDataSet(G4String cs ,G4String par )
 
       for(lIt=theListOfSelectedDataSets.begin();lIt !=theListOfSelectedDataSets.end();)
         {
-          for(unsigned int j=0; j<theListOfParticles.size(); j++)
+          for(unsigned int j=0; j<theListOfParticles.size(); ++j)
             {
               particle=theListOfParticles[j];
               if( (*lIt) == cs && particle == (*lItpart))
@@ -532,7 +532,7 @@ void GateVProcess::UnSetDataSet(G4String cs ,G4String par )
 void GateVProcess::DataSetList(G4String par, G4int level, G4String symbol, G4String symbol2)
 {
   G4String space = " ";
-  for(G4int i = 1;i<level;i++) space += "  ";
+  for(G4int i = 1;i<level;++i) space += "  ";
   G4String space2 = space + "  " + symbol2 + " ";
   space += symbol + " ";
 
@@ -545,12 +545,12 @@ void GateVProcess::DataSetList(G4String par, G4int level, G4String symbol, G4Str
   std::vector<G4ParticleDefinition*>  theListOfParticles = GetParticles(par);
   G4ParticleDefinition * particle=0;
 
-  for(unsigned int i=0; i<theListOfParticles.size(); i++)
+  for(unsigned int i=0; i<theListOfParticles.size(); ++i)
     {
       particle = theListOfParticles[i];
       G4cout<<space<<"DataSet(s) for "<<particle->GetParticleName()<<" :\n";
 
-      for(unsigned int j=0; j<theListOfDataSets.size(); j++)
+      for(unsigned int j=0; j<theListOfDataSets.size(); ++j)
         if( IsDatasetApplicable(theListOfDataSets[j],particle) )
           G4cout<<space2<<theListOfDataSets[j]<< Gateendl;
     }
@@ -566,7 +566,7 @@ void GateVProcess::SetModel(G4String model,G4String par)
 
   bool alreadySet = false;
 
-  for(unsigned int i=0; i<theListOfParticles.size(); i++)
+  for(unsigned int i=0; i<theListOfParticles.size(); ++i)
     {
       alreadySet = false;
       particle = theListOfParticles[i];
@@ -576,7 +576,7 @@ void GateVProcess::SetModel(G4String model,G4String par)
         continue;
       }
 
-      for(unsigned int j=0; j<theListOfParticlesWithSelectedModels.size(); j++)
+      for(unsigned int j=0; j<theListOfParticlesWithSelectedModels.size(); ++j)
         if(theListOfParticlesWithSelectedModels[j]==particle && theListOfSelectedModels[j]->GetModelName()==model)
           {
             alreadySet=true;
@@ -618,7 +618,7 @@ void GateVProcess::UnSetModel(G4String model,G4String par)
       std::vector<G4ParticleDefinition*>  theListOfParticles = GetParticles(par);
 
       G4ParticleDefinition * particle=0;
-      for(unsigned int j=0; j<theListOfParticles.size(); j++)
+      for(unsigned int j=0; j<theListOfParticles.size(); ++j)
         {
           particle=theListOfParticles[j];
 
@@ -642,7 +642,7 @@ void GateVProcess::UnSetModel(G4String model,G4String par)
 void GateVProcess::ModelList(G4String par, G4int level, G4String symbol, G4String symbol2)
 {
   G4String space = " ";
-  for(G4int i = 1;i<level;i++) space += "  ";
+  for(G4int i = 1;i<level;++i) space += "  ";
   G4String space2 = space + "  " + symbol2 + " ";
   space += symbol + " ";
 
@@ -655,13 +655,13 @@ void GateVProcess::ModelList(G4String par, G4int level, G4String symbol, G4Strin
   std::vector<G4ParticleDefinition*>  theListOfParticles = GetParticles(par);
   G4ParticleDefinition * particle=0;
 
-  for(unsigned int i=0; i<theListOfParticles.size(); i++)
+  for(unsigned int i=0; i<theListOfParticles.size(); ++i)
     {
       particle = theListOfParticles[i];
       //GateMessage("Physic",0,space<<"Model(s) for "<<particle->GetParticleName()<<" :\n");
       G4cout<<space<<"Model(s) for "<<particle->GetParticleName()<<" :\n";
 
-      for(unsigned int j=0; j<theListOfModels.size(); j++)
+      for(unsigned int j=0; j<theListOfModels.size(); ++j)
         if( IsModelApplicable(theListOfModels[j],particle) )
           G4cout<<space2<<theListOfModels[j]<< Gateendl;
     }
@@ -678,14 +678,14 @@ void GateVProcess::SetModelEnergyMax(G4String model, G4double energy, G4String p
 
   bool alreadySet = false;
 
-  for(unsigned int i=0; i<theListOfParticles.size(); i++)
+  for(unsigned int i=0; i<theListOfParticles.size(); ++i)
     {
       alreadySet = false;
       particle = theListOfParticles[i];
 
       if( !IsModelApplicable(model, particle) ) continue;
 
-      for(unsigned int j=0; j<theListOfParticlesWithSelectedModels.size(); j++)
+      for(unsigned int j=0; j<theListOfParticlesWithSelectedModels.size(); ++j)
         if(theListOfParticlesWithSelectedModels[j]==particle && theListOfSelectedModels[j]->GetModelName()==model )
           {
             theListOfSelectedModels[j]->SetEmax(energy, opt);
@@ -708,14 +708,14 @@ void GateVProcess::SetModelEnergyMin(G4String model, G4double energy, G4String p
 
   bool alreadySet = false;
 
-  for(unsigned int i=0; i<theListOfParticles.size(); i++)
+  for(unsigned int i=0; i<theListOfParticles.size(); ++i)
     {
       alreadySet = false;
       particle = theListOfParticles[i];
 
       if( !IsModelApplicable(model, particle) ) continue;
 
-      for(unsigned int j=0; j<theListOfParticlesWithSelectedModels.size(); j++)
+      for(unsigned int j=0; j<theListOfParticlesWithSelectedModels.size(); ++j)
 
         if(theListOfParticlesWithSelectedModels[j]==particle && theListOfSelectedModels[j]->GetModelName()==model )
           {
@@ -735,7 +735,7 @@ void GateVProcess::ClearModelEnergyRange(G4String model,G4String par)
 {
 
   if(par=="All") {
-    for(unsigned int i=0; i<theListOfParticlesWithSelectedModels.size(); i++)
+    for(unsigned int i=0; i<theListOfParticlesWithSelectedModels.size(); ++i)
       if(theListOfSelectedModels[i]->GetModelName()==model) theListOfSelectedModels[i]->ClearERange();
   }
   else
@@ -746,12 +746,12 @@ void GateVProcess::ClearModelEnergyRange(G4String model,G4String par)
 
       //bool alreadySet = false;
 
-      for(unsigned int i=0; i<theListOfParticles.size(); i++)
+      for(unsigned int i=0; i<theListOfParticles.size(); ++i)
         {
           //alreadySet = false;
           particle = theListOfParticles[i];
 
-          for(unsigned int j=0; j<theListOfParticlesWithSelectedModels.size(); j++)
+          for(unsigned int j=0; j<theListOfParticlesWithSelectedModels.size(); ++j)
             {
               if(theListOfParticlesWithSelectedModels[j]==particle && theListOfSelectedModels[j]->GetModelName()==model)
                 theListOfSelectedModels[j]->ClearERange();
@@ -1260,7 +1260,7 @@ void GateVProcess::SetEnergyRange(G4HadronicInteraction * hadInteraction,GateLis
   std::vector<double> theListOfEmin = model->GetTheListOfEmin();
   std::vector<double> theListOfEmax = model->GetTheListOfEmax();
 
-  for(unsigned int j=0; j<theListOfOptions.size(); j++)
+  for(unsigned int j=0; j<theListOfOptions.size(); ++j)
     {
       if(theListOfOptions[j]=="NoOption")
         {
@@ -1289,7 +1289,7 @@ void GateVProcess::SetEnergyRange(G4HadronicInteraction * hadInteraction,GateLis
 /*void GateVProcess::Verify(G4ParticleDefinition * particule)/
   {
   int nModel = 0;
-  for(unsigned int i=0; i<theListOfEnabledParticles.size(); i++)
+  for(unsigned int i=0; i<theListOfEnabledParticles.size(); ++i)
   if(theListOfEnabledParticles[i]==particule) nModel++;
 
   if(nModel == 0)
@@ -1302,7 +1302,7 @@ void GateVProcess::SetEnergyRange(G4HadronicInteraction * hadInteraction,GateLis
   if(theListOfParticlesWithSelectedModels.size()==0)
 
   int nModelWithERange = 0;
-  for(unsigned int i=0; i<theListOfParticlesWithSelectedModels.size(); i++)
+  for(unsigned int i=0; i<theListOfParticlesWithSelectedModels.size(); ++i)
   {
   if(theListOfParticlesWithSelectedModels[i] == particule) nModelWithERange++;
   }
@@ -1316,7 +1316,7 @@ G4bool GateVProcess::AddFilter(G4String filterType, G4String particle )
   GateDebugMessageInc("Physic",4,"AddFilter() -- begin\n");
   if(GateActorManager::GetInstance()->theListOfFilterPrototypes[filterType])
     {
-      for (std::map<G4String,GenericWrapperProcess*>::const_iterator iter = theListOfWrapper.begin(); iter!=theListOfWrapper.end();iter++)
+      for (std::map<G4String,GenericWrapperProcess*>::const_iterator iter = theListOfWrapper.begin(); iter!=theListOfWrapper.end();++iter)
         {
           if(particle=="primaries"){
             iter->second->GetFilterManagerPrimary()->AddFilter(GateActorManager::GetInstance()->theListOfFilterPrototypes[filterType]("/gate/physics/processes/"+mG4ProcessName+"/primaries/"+filterType));

@@ -167,7 +167,7 @@ void GateGenericRepeater::PushMyPlacements(const G4RotationMatrix& currentRotati
   GateDebugMessage("Repeater", 3, "\t current position " << currentPosition << Gateendl);
   GateDebugMessage("Repeater", 3, "\t current rotation " << currentRotationMatrix << Gateendl);
   
-  for(unsigned int i=0; i<mPlacementsList.size(); i++) {
+  for(unsigned int i=0; i<mPlacementsList.size(); ++i) {
     GateDebugMessage("Repeater", 3, "\t translation " << i << " = " << mPlacementsList[i].second << Gateendl);
     GateDebugMessage("Repeater", 3, "\t final " << i << " = " << currentPosition+mPlacementsList[i].second << Gateendl);
     

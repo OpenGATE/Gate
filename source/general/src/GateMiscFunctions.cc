@@ -355,7 +355,7 @@ G4double LinearInterpolation(G4double x, std::vector<G4double> & X, std::vector<
   int i = 0;
   int n = X.size();
   
-  while (i<n && x>X[i]) i++;
+  while (i<n && x>X[i]) ++i;
   //  ThISMessage("Event", 1, "Lin x=" << x << " i=" << i << ThISendl);
   i--;
 
@@ -457,7 +457,7 @@ bool ReadColNameAndUnit(std::istream & is, std::string name, double & unit) {
   is >> s; 
   if (s != name) {
     // DD(s);
-    for(unsigned int i=0; i<s.size(); i++) is.unget();
+    for(unsigned int i=0; i<s.size(); ++i) is.unget();
     return false;
   }
   // Read unit name and convert
@@ -589,7 +589,7 @@ void ReadTimePlacementsRepeat(std::string filename,
     // Read time, translation and rotation
     timesList.push_back(ReadDouble(is)*timeUnit);
     std::vector<GatePlacement> * l = new std::vector<GatePlacement>;
-    for(int i=0; i<nbOfPlacements; i++) {
+    for(int i=0; i<nbOfPlacements; ++i) {
       l->push_back(ReadPlacement(is, mUseTranslation, mUseRotation, translationUnit, angleUnit));
     }
     listOfPlacementsList.push_back(*l);
@@ -640,7 +640,7 @@ int GetIndexFromTime(std::vector<double> & mTimeList, double aTime) {
   // Search for current "time"
   int i=0; 
   while ((i < (int)mTimeList.size()) && (aTime >= mTimeList[i])) {
-    i++;
+    ++i;
   }
 
   // Take the closest value in the time list

@@ -97,6 +97,7 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
   filename.replace(l-3,3,"img");
   std::ifstream is;
   OpenFileInput(filename, is);
+  unsigned int i=0;
 
   // Read values ...
   if (hdr.GetVoxelType() == GateAnalyzeHeader::SignedShortType) {
@@ -105,8 +106,8 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
     std::vector<VoxelType> temp(nbOfValues);
     data.resize(nbOfValues);
     is.read((char*)(&(temp[0])), nbOfValues*sizeof(VoxelType));
-    for(unsigned int i=0; i<temp.size(); i++) {
-      data[i] = (PixelType)temp[i];
+    for(std::vector<VoxelType>::iterator it=temp.begin(); it!=temp.end(); ++it, ++i) {
+      data[i] = (PixelType)(*it);
     }
   }
   else if (hdr.GetVoxelType() == GateAnalyzeHeader::FloatType) {
@@ -115,10 +116,10 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
     std::vector<VoxelType> temp(nbOfValues);
     data.resize(nbOfValues);
     is.read((char*)(&(temp[0])), nbOfValues*sizeof(VoxelType));
-    for(unsigned int i=0; i<temp.size(); i++) {
+    for(std::vector<VoxelType>::iterator it=temp.begin(); it!=temp.end(); ++it, ++i) {
       if(!hdr.IsRightEndian())
 	GateMachine::SwapEndians(temp[i]);
-      data[i] = (PixelType)temp[i];
+      data[i] = (PixelType)(*it);
     }
   }
   else if (hdr.GetVoxelType() == GateAnalyzeHeader::SignedIntType) {
@@ -127,8 +128,8 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
     std::vector<VoxelType> temp(nbOfValues);
     data.resize(nbOfValues);
     is.read((char*)(&(temp[0])), nbOfValues*sizeof(VoxelType));
-    for(unsigned int i=0; i<temp.size(); i++) {
-      data[i] = (PixelType)temp[i];
+    for(std::vector<VoxelType>::iterator it=temp.begin(); it!=temp.end(); ++it, ++i) {
+      data[i] = (PixelType)(*it);
     }
   }
   else if (hdr.GetVoxelType() == GateAnalyzeHeader::UnsignedCharType) {
@@ -137,8 +138,8 @@ void GateImageT<PixelType>::ReadAnalyze(G4String filename) {
     std::vector<VoxelType> temp(nbOfValues);
     data.resize(nbOfValues);
     is.read((char*)(&(temp[0])), nbOfValues*sizeof(VoxelType));
-    for(unsigned int i=0; i<temp.size(); i++) {
-      data[i] = (PixelType)temp[i];
+    for(std::vector<VoxelType>::iterator it=temp.begin(); it!=temp.end(); ++it, ++i) {
+      data[i] = (PixelType)(*it);
     }
   }
   else {
@@ -162,7 +163,7 @@ void GateImageT<PixelType>::ReadMHD(G4String filename) {
 
   // Convert mhd matrix to rotation matrix
   G4ThreeVector row_x, row_y, row_z;
-  for(unsigned int i=0; i<3; i++) {
+  for(unsigned int i=0; i<3; ++i) {
     row_x[i] = mhd->transform[i*3];
     row_y[i] = mhd->transform[i*3+1];
     row_z[i] = mhd->transform[i*3+2];
@@ -259,7 +260,7 @@ void GateImageT<PixelType>::ReadAscii(G4String filename) {
 
   if (dim <= 1) {
     // read values in columns
-    for(int i=0; i<nbOfValues; i++) {
+    for(int i=0; i<nbOfValues; ++i) {
       is >> v; //GateDebugMessage("Image",8,"val = " << v << Gateendl);
       data[i] = atof(v.c_str()); //GateDebugMessage("Image",8,"val = " << data[i] << Gateendl);
     }
@@ -272,22 +273,22 @@ void GateImageT<PixelType>::ReadAscii(G4String filename) {
     if (resolution.y() == 1.0) { width = resolution.x(); height = resolution.z(); }
     if (resolution.z() == 1.0) { width = resolution.x(); height = resolution.y(); }
     int i=0;
-    for(int y=0; y<height; y++) {
-      for(int x=0; x<width; x++) {
+    for(int y=0; y<height; ++y) {
+      for(int x=0; x<width; ++x) {
 	is >> v;
 	data[i] = atof(v.c_str());
-	i++;
+	++i;
       }
     }
   }
   if (dim == 3) {
     int i=0;
-    for(int z=0; z<resolution.z(); z++) {
-      for(int y=0; y<resolution.y(); y++) {
-	for(int x=0; x<resolution.x(); x++) {
+    for(int z=0; z<resolution.z(); ++z) {
+      for(int y=0; y<resolution.y(); ++y) {
+	for(int x=0; x<resolution.x(); ++x) {
 	  is >> v;
 	  data[i] = atof(v.c_str());
-	  i++;
+	  ++i;
 	}
       }
     }
@@ -316,8 +317,8 @@ void GateImageT<PixelType>::MergeDataByAddition(G4String filename) {
   iterator po = begin();
   while (pi != pe) {
     *po = (*po)+(*pi);
-    po++;
-    pi++;
+    ++po;
+    ++pi;
   }
 }
 //-----------------------------------------------------------------------------
@@ -394,7 +395,7 @@ void GateImageT<PixelType>::WriteBin(std::ofstream & os)
   // if PixelType is not float, we copy the values in a float vector
   if (typeid(PixelType) != typeid(float)) {
     std::vector<float>temp(nbOfValues);
-    for(int i=0;i<nbOfValues;i++){
+    for(int i=0;i<nbOfValues;++i){
       temp[i]=(float)data[i]; // cast of PixelType to float
     }
     os.write((char*)(&(temp[0])), nbOfValues*sizeof(float));
@@ -445,7 +446,7 @@ void GateImageT<PixelType>::WriteAscii(std::ofstream & os, const G4String & comm
 
   if (dim <= 1) {
     // write values in columns
-    for(int i=0; i<nbOfValues; i++)
+    for(int i=0; i<nbOfValues; ++i)
       os << std::setprecision(10) << data[i] << Gateendl;
   }
   if (dim == 2) {
@@ -456,21 +457,21 @@ void GateImageT<PixelType>::WriteAscii(std::ofstream & os, const G4String & comm
     if (resolution.y() == 1.0) { width = resolution.x(); height = resolution.z(); }
     if (resolution.z() == 1.0) { width = resolution.x(); height = resolution.y(); }
     int i=0;
-    for(int y=0; y<height; y++) {
-      for(int x=0; x<width; x++) {
+    for(int y=0; y<height; ++y) {
+      for(int x=0; x<width; ++x) {
 	os << data[i] << " ";
-	i++;
+	++i;
       }
       os << Gateendl;
     }
   }
   if (dim == 3) {
     int i=0;
-    for(int z=0; z<resolution.z(); z++) {
-      for(int y=0; y<resolution.y(); y++) {
-	for(int x=0; x<resolution.x(); x++) {
+    for(int z=0; z<resolution.z(); ++z) {
+      for(int y=0; y<resolution.y(); ++y) {
+	for(int x=0; x<resolution.x(); ++x) {
 	  os << data[i] << " ";
-	  i++;
+	  ++i;
 	}
 	os << Gateendl;
       }
@@ -504,7 +505,7 @@ void GateImageT<PixelType>::WriteRoot(G4String filename)
     int i=0;
     for(double x=mRootHistoBinxLow+s; x<mRootHistoBinxUp; x+=mRootHistoBinxSize) {
       h->Fill(x, data[i]);
-      i++;
+      ++i;
     }
     h->Write();
     f->Close();
@@ -523,10 +524,10 @@ void GateImageT<PixelType>::WriteRoot(G4String filename)
     double sy = mRootHistoBinySize/2.0;
     double x=mRootHistoBinxLow+sx;
     double y=mRootHistoBinyLow+sy;
-    for(int i = 0;i<mRootHistoBinxNb;i++)
+    for(int i = 0;i<mRootHistoBinxNb;++i)
       {
         y=mRootHistoBinyLow+sy;
-        for(int j = 0;j<mRootHistoBinyNb;j++)
+        for(int j = 0;j<mRootHistoBinyNb;++j)
           {
             h2->Fill(x,y, data[i*mRootHistoBinyNb+j]);
             y+=mRootHistoBinySize;
@@ -558,13 +559,13 @@ void GateImageT<PixelType>::WriteRoot(G4String filename)
     double x=mRootHistoBinxLow+sx;
     double y=mRootHistoBinyLow+sy;
     double z=mRootHistoBinzLow+sz;
-    for(int i = 0;i<mRootHistoBinxNb;i++)
+    for(int i = 0;i<mRootHistoBinxNb;++i)
       {
         y=mRootHistoBinyLow+sy;
-        for(int j = 0;j<mRootHistoBinyNb;j++)
+        for(int j = 0;j<mRootHistoBinyNb;++j)
           {
             z=mRootHistoBinzLow+sz;
-            for(int k = 0;k<mRootHistoBinzNb;k++)
+            for(int k = 0;k<mRootHistoBinzNb;++k)
               {
 
                 h3->Fill(x,y,z, data[k*mRootHistoBinxNb*mRootHistoBinyNb+ j*mRootHistoBinxNb+i]);

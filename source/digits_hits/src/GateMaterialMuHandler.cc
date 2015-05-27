@@ -167,7 +167,7 @@ void GateMaterialMuHandler::ConstructMaterial(const G4MaterialCutsCouple *couple
 
   int nb_e = 0;
   int nb_of_elements = material->GetNumberOfElements();
-  for(int i = 0; i < nb_of_elements; i++)
+  for(int i = 0; i < nb_of_elements; ++i)
     nb_e += mElementsTable[(int) material->GetElement(i)->GetZ()]->GetSize();
   
   double* energies = new double[nb_e];
@@ -179,17 +179,17 @@ void GateMaterialMuHandler::ConstructMaterial(const G4MaterialCutsCouple *couple
   
   const G4double* FractionMass = material->GetFractionVector();
 
-  for(int i = 0; i < nb_of_elements; i++){
+  for(int i = 0; i < nb_of_elements; ++i){
     e_tables[i] = mElementsTable[(int) material->GetElement(i)->GetZ()]->GetEnergies();
     mu_tables[i] = mElementsTable[(int) material->GetElement(i)->GetZ()]->GetMuTable();
     muen_tables[i] = mElementsTable[(int) material->GetElement(i)->GetZ()]->GetMuEnTable();
     index[i] = 0;
   }
-  for(int i = 0; i < nb_e; i++){
+  for(int i = 0; i < nb_e; ++i){
     int min_table = 0;
     while(index[min_table] >= mElementsTable[(int) material->GetElement(min_table)->GetZ()]->GetSize())
       min_table++;
-    for(int j = min_table + 1; j < nb_of_elements; j++)
+    for(int j = min_table + 1; j < nb_of_elements; ++j)
       if(e_tables[j][index[j]] < e_tables[min_table][index[min_table]])
   	min_table = j;
     energies[i] = e_tables[min_table][index[min_table]];
@@ -211,17 +211,17 @@ void GateMaterialMuHandler::ConstructMaterial(const G4MaterialCutsCouple *couple
   //And now computing mu_en
   double *MuEn = new double[nb_e];
   double *Mu = new double[nb_e];
-  for(int i = 0; i < nb_of_elements; i++){
+  for(int i = 0; i < nb_of_elements; ++i){
     index[i] = 0;
   }
   
 
   //Assume that all table begin with the same energy
-  for(int i = 0; i < nb_e; i++){
+  for(int i = 0; i < nb_e; ++i){
     MuEn[i] = 0.0;
     Mu[i] = 0.0;
     double current_e = energies[i];
-    for(int j = 0; j < nb_of_elements; j++){
+    for(int j = 0; j < nb_of_elements; ++j){
       //You never need to advance twice
       if(e_tables[j][index[j]] < current_e)
   	index[j]++;
@@ -252,7 +252,7 @@ void GateMaterialMuHandler::ConstructMaterial(const G4MaterialCutsCouple *couple
 
   GateMessage("Physic",3," \n");
   GateMessage("Physic",3," E(MeV)  mu(cm2/g)  muen(cm2/g)\n");
-  for(int i = 0; i < nb_e; i++){
+  for(int i = 0; i < nb_e; ++i){
     GateMessage("Physic",3," " << energies[i] << " " << Mu[i] << " " << MuEn[i] << " \n");
     table->PutValue(i, log(energies[i]), log(Mu[i]), log(MuEn[i]));
   }
@@ -292,13 +292,13 @@ void GateMaterialMuHandler::InitElementTable()
   mElementsTable = new GateMuTable *[mElementNumber+1];  
   int index = 0;
   
-  for(int i=0; i<mElementNumber+1; i++)
+  for(int i=0; i<mElementNumber+1; ++i)
   {
     int energyNumber = energyNumberList[i];
     GateMuTable* table = new GateMuTable(0, energyNumber);
     mElementsTable[i] = table;
     
-    for(int j=0; j<energyNumber; j++)
+    for(int j=0; j<energyNumber; ++j)
     {
       table->PutValue(j, data[index], data[index+1], data[index+2]);
       index += 3;
@@ -381,7 +381,7 @@ void GateMaterialMuHandler::SimulateMaterialTable()
 	primary.SetKineticEnergy(incidentEnergy);
 
 	// find the physical models according to the gamma energy
-	for(int i=0; i<processListForGamma->size(); i++)
+	for(int i=0; i<processListForGamma->size(); ++i)
 	{
 	  long unsigned int physicRegionNumber = 0;
 	  G4String processName = (*processListForGamma)[i]->GetProcessName();
@@ -559,10 +559,10 @@ void GateMaterialMuHandler::ConstructEnergyList(std::vector<MuStorageStruct> *mu
 
   // - add atomic shell energies
   int elementNumber = material->GetNumberOfElements();
-  for(int i = 0; i < elementNumber; i++)
+  for(int i = 0; i < elementNumber; ++i)
   {
     const G4Element *element = material->GetElement(i);
-    for(int j=0; j<material->GetElement(i)->GetNbOfAtomicShells(); j++)
+    for(int j=0; j<material->GetElement(i)->GetNbOfAtomicShells(); ++j)
     {
       double atomicShellEnergy = element->GetAtomicShell(j);
       if(atomicShellEnergy > mAtomicShellEnergyMin && atomicShellEnergy > mEnergyMin)

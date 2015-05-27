@@ -280,7 +280,7 @@ void GateFictitiousFastSimulationModel::VolumeTrace() {
 		return;
 	} else if (change->GetTrackStatus() == fKillTrackAndSecondaries) {
 		pCurrentFastStep->KillPrimaryTrack();
-		for (G4int i = 0; i < m_nNumSecondaries; i++)
+		for (G4int i = 0; i < m_nNumSecondaries; ++i)
 			delete (*m_pTrackFastVector)[i];
 		change->Clear();
 		return;

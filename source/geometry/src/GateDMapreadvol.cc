@@ -45,7 +45,7 @@ int Vol::readVolData( FILE *fin ) {
     }
 
     int i;
-    for (i = 0; (line[i] && (line[i] != ':')); i++) {;}
+    for (i = 0; (line[i] && (line[i] != ':')); ++i) {;}
 
     if (i == 0 || i >= 126 || line[i] != ':') {
       fprintf( debugFile, "LIBVOL : Invalid header read at line %d\n", linecount );
@@ -73,7 +73,7 @@ int Vol::readVolData( FILE *fin ) {
   }
 
   // Check required headers
-  for (int i = 0; requiredHeaders[i]; i++) {
+  for (int i = 0; requiredHeaders[i]; ++i) {
     if (getHeaderValue( "Version" ) != NULL && (strcmp( requiredHeaders[i], "Int-Endian" ) == 0 || strcmp( requiredHeaders[i], "Voxel-Endian" ) == 0)) {
       continue;
     }

@@ -77,7 +77,7 @@ G4double GateGPUEmisTomo::GetNextTime(G4double timeNow)
 {
   // Loop on the mother's GetNextTime
   G4double t = 0.0;
-  for(int i=0; i<mNumberOfNextTime; i++) {
+  for(int i=0; i<mNumberOfNextTime; ++i) {
     G4double a = timeNow + t;
     t += GateSourceVoxellized::GetNextTime(a);
   }
@@ -372,9 +372,9 @@ void GateGPUEmisTomo::SetPhantomVolumeData()
     /* THIS IS ELEGANT, BUT IT DOESN'T WORK PROPERLY.... (JB)
     // Find the list of material in the image and set the pixel
     std::vector<G4Material*> materials;
-    for(int k=0; k<m_gpu_input->phantom_size_z; k++)
-      for(int j=0; j<m_gpu_input->phantom_size_y; j++)
-        for(int i=0; i<m_gpu_input->phantom_size_x; i++) {
+    for(int k=0; k<m_gpu_input->phantom_size_z; ++k)
+      for(int j=0; j<m_gpu_input->phantom_size_y; ++j)
+        for(int i=0; i<m_gpu_input->phantom_size_x; ++i) {
           // Get the material
           G4Material * m = reader->GetVoxelMaterial(i,j,k); 
           std::vector<G4Material*>::iterator iter;

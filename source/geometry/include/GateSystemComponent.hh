@@ -391,7 +391,7 @@ C* GateSystemComponent::FindMove() const
       if (!m_creator)
       	return 0;
       GateObjectRepeaterList* aList = m_creator->GetMoveList();
-      for (size_t i=0; i < aList->size() ; i++)
+      for (size_t i=0; i < aList->size() ; ++i)
       	if ( dynamic_cast<C*>(aList->GetRepeater(i)) )
       	  return dynamic_cast<C*>(aList->GetRepeater(i));
       return 0;
@@ -406,7 +406,7 @@ C* GateSystemComponent::FindRepeater() const
       if (!m_creator)
       	return 0;
       GateObjectRepeaterList* aList = m_creator->GetRepeaterList();
-      for (size_t i=0; i < aList->size() ; i++)
+      for (size_t i=0; i < aList->size() ; ++i)
       	if ( dynamic_cast<C*>(aList->GetRepeater(i)) )
       	  return dynamic_cast<C*>(aList->GetRepeater(i));
       return 0;

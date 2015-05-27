@@ -108,23 +108,23 @@ int iaea_header_type::read_header ()
     }
 
     int i;
-    for (i=0;i<9;i++) record_contents[i] = 0;
+    for (i=0;i<9;++i) record_contents[i] = 0;
 
-    for (i=0;i<9;i++)
+    for (i=0;i<9;++i)
     {
       if( get_string(fheader,line) == FAIL ) return FAIL;
       if( *line == SEGMENT_BEG_TOKEN ) break; 
       record_contents[i] = atoi(line); 
     };
 
-    for(i=0;i<record_contents[7];i++) 
+    for(i=0;i<record_contents[7];++i) 
     {
       if( get_string(fheader,line) == FAIL ) return FAIL;
       if( *line == SEGMENT_BEG_TOKEN ) break; 
       extrafloat_contents[i] = atoi(line); 
     }
     
-    for(i=0;i<record_contents[8];i++) 
+    for(i=0;i<record_contents[8];++i) 
     {
       if( get_string(fheader,line) == FAIL ) return FAIL;
       if( *line == SEGMENT_BEG_TOKEN ) break; 
@@ -138,7 +138,7 @@ int iaea_header_type::read_header ()
          return FAIL; 
     }
 
-    for (i=0;i<7;i++)
+    for (i=0;i<7;++i)
     {
         record_constant[i] = 32000.f;
         if(record_contents[i] > 0) continue;
@@ -288,7 +288,7 @@ int iaea_header_type::read_header ()
       /*********************************************/
     if( get_blockname(line,(char*)"STATISTICAL_INFORMATION_PARTICLES") == OK) 
     {
-        for(i=0;i<MAX_NUM_PARTICLES;i++) 
+        for(i=0;i<MAX_NUM_PARTICLES;++i) 
         {
               if( get_string(fheader,line) == FAIL ) return FAIL;
               if( *line == SEGMENT_BEG_TOKEN ) break;
@@ -318,7 +318,7 @@ int iaea_header_type::read_header ()
         minimumX = minimumY = minimumZ = 32000.f;
         maximumX = maximumY = maximumZ = 0.f;
 
-        for(i=0;i<3;i++) 
+        for(i=0;i<3;++i) 
         {
             if(record_contents[i] == 1) 
             {
@@ -408,8 +408,8 @@ int iaea_header_type::read_block(char *lineread,char *blockname)
 int iaea_header_type::set_record_contents(iaea_record_type *p_iaea_record)
 {
    int i;
-   for(i=0;i<9;i++) record_contents[i] = 0;          
-   for(i=0;i<7;i++) record_constant[i] = 32000.f;          
+   for(i=0;i<9;++i) record_contents[i] = 0;          
+   for(i=0;i<7;++i) record_constant[i] = 32000.f;          
 
    if(p_iaea_record->ix > 0) record_contents[0] = 1;         
    else record_constant[0] = p_iaea_record->x;
@@ -436,7 +436,7 @@ int iaea_header_type::set_record_contents(iaea_record_type *p_iaea_record)
    if(p_iaea_record->iextralong>0) record_contents[8] = p_iaea_record->iextralong;
 
    record_length = 5; // To consider for particle type (1 byte) and energy (4 bytes)
-   for(i=0;i<8;i++) record_length += record_contents[i]*sizeof(float);          
+   for(i=0;i<8;++i) record_length += record_contents[i]*sizeof(float);          
    record_length -= 4; // 4 bytes substracted as w is not stored, just his sign
    record_length += record_contents[8]*sizeof(IAEA_I32);
    if(record_length > 0) return OK;
@@ -486,7 +486,7 @@ int iaea_header_type::get_record_contents(iaea_record_type *p_iaea_record)
    if(record_contents[8] > 0) p_iaea_record->iextralong = record_contents[8];         
 
    record_length = 5; // To consider for particle type (1 bytes) and energy (4 bytes)
-   for(i=0;i<8;i++) record_length += record_contents[i]*sizeof(float);
+   for(i=0;i<8;++i) record_length += record_contents[i]*sizeof(float);
    record_length -= 4; // 4 bytes substracted as w is not stored, just his sign
    record_length += record_contents[8]*sizeof(IAEA_I32);
    if(record_length > 0) return OK;
@@ -501,7 +501,7 @@ void iaea_header_type::initialize_counters()
 {
   nParticles = read_indep_histories = 0;
 
-  for(int i=0;i<MAX_NUM_PARTICLES;i++) 
+  for(int i=0;i<MAX_NUM_PARTICLES;++i) 
   {
         particle_number[i] = 0;
         sumParticleWeight[i] = 0.;
@@ -724,7 +724,7 @@ int iaea_header_type::write_header()
   fprintf(fheader,"   %2i     // Extra longs stored ?\n",record_contents[8]);
 
   int i; 
-  for(i=0;i<record_contents[7];i++) {
+  for(i=0;i<record_contents[7];++i) {
       if(extrafloat_contents[i] == 0) fprintf(fheader,
         "   %2i     // Generic float variable stored in the extrafloat array [%2i] \n",
         extrafloat_contents[i], i);
@@ -739,7 +739,7 @@ int iaea_header_type::write_header()
         extrafloat_contents[i], i);
   }
 
-  for(i=0;i<record_contents[8];i++) {
+  for(i=0;i<record_contents[8];++i) {
       if(extralong_contents[i] == 0) fprintf(fheader,
         "   %2i     // Generic integer variable stored in the extralong array [%2i] \n",
         extralong_contents[i], i);
@@ -851,7 +851,7 @@ int iaea_header_type::write_header()
 
   "//        Weight        Wmin       Wmax       <E>         Emin         Emax    Particle\n"); 
   double eaver; char buffer[15];
-  for(i=0;i<MAX_NUM_PARTICLES;i++) 
+  for(i=0;i<MAX_NUM_PARTICLES;++i) 
   { 
         if( particle_number[i] == 0 ) continue;
 
@@ -915,7 +915,7 @@ int iaea_header_type::print_header ()
 
     int i;
     printf("\nRECORD_CONTENTS:\n");
-    for (i=0;i<7;i++)
+    for (i=0;i<7;++i)
     {
             if(record_contents[i] == 0)
             printf(" // Variable %1i is constant\n",i+1);
@@ -924,7 +924,7 @@ int iaea_header_type::print_header ()
     if(record_contents[7] > 0)
         printf(" // %1i extra FLOAT variable(s) defined\n",record_contents[7]);
 
-    for(i=0;i<record_contents[7];i++) 
+    for(i=0;i<record_contents[7];++i) 
     {
       if(extrafloat_contents[i] == 0) printf(    
         " // Generic float variable stored in the extrafloat array [%2i] \n",i);    
@@ -939,7 +939,7 @@ int iaea_header_type::print_header ()
     if(record_contents[8] > 0)
         printf(" // %1i extra LONG variable(s) defined\n",record_contents[8]);
 
-    for(i=0;i<record_contents[8];i++) 
+    for(i=0;i<record_contents[8];++i) 
     {
       if(extralong_contents[i] == 0) printf(
         " // Generic integer variable stored in the extralong array [%2i] \n",i);
@@ -953,7 +953,7 @@ int iaea_header_type::print_header ()
 
     /*********************************************/
     printf("\nRECORD_CONSTANT:\n");
-    for (i=0;i<7;i++)
+    for (i=0;i<7;++i)
     {
         if(record_contents[i] > 0) continue;
         printf(" %8.4f // Constant variable # %1i\n",record_constant[i],i+1);

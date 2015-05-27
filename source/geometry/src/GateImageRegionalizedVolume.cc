@@ -57,9 +57,9 @@ GateImageRegionalizedVolume::~GateImageRegionalizedVolume()
   GateMessageInc("Volume",5,"~GateImageRegionalizedVolume() - begin\n");
 
   for(std::map<LabelType,GateImageRegionalizedSubVolume*>::iterator i = mLabelToSubVolume.begin();
-      i!=mLabelToSubVolume.end(); i++) {
+      i!=mLabelToSubVolume.end(); ++i) {
     for(std::vector<GateImageRegionalizedSubVolume*>::iterator it = mSubVolume.begin();
-        it!=mSubVolume.end(); it++)  {
+        it!=mSubVolume.end(); ++it)  {
       if(i->second==(*it)){
         delete (*it);
         (*it) = NULL;
@@ -70,7 +70,7 @@ GateImageRegionalizedVolume::~GateImageRegionalizedVolume()
     i->second  = NULL;
   }
   for(std::vector<GateImageRegionalizedSubVolume*>::iterator it = mSubVolume.begin();
-      it!=mSubVolume.end(); it++) {
+      it!=mSubVolume.end(); ++it) {
     if((*it)) {
       delete (*it);
       (*it) = NULL;
@@ -144,7 +144,7 @@ void  GateImageRegionalizedVolume::CreateSubVolumes()
 
   // Creation of the sub-volumes
   std::vector<LabelType>::iterator i;
-  for (i=labels.begin();i!=labels.end();i++) {
+  for (i=labels.begin();i!=labels.end();++i) {
     GateMessage("Volume",4,"* Label "<< *i << Gateendl);
     // Gets material
     G4String matName = GetMaterialNameFromLabel(*i);
@@ -238,7 +238,7 @@ EInside GateImageRegionalizedVolume::Inside(const G4ThreeVector& p, LabelType la
   }
 
   // Reset the vector
-  for (std::vector<EInside>::iterator i = mInside.begin(); i!=mInside.end(); i++)
+  for (std::vector<EInside>::iterator i = mInside.begin(); i!=mInside.end(); ++i)
     *i = kOutside;
 
   // Outside the BBox ? A ENLEVER ????
@@ -579,7 +579,7 @@ G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p,
 
   // Reset the vector
   for (std::vector<G4double>::iterator i = mDistanceToIn.begin();
-       i!=mDistanceToIn.end(); i++)
+       i!=mDistanceToIn.end(); ++i)
     *i = kInfinity;
 
   // Distance to bbox of the image
@@ -1326,7 +1326,7 @@ void GateImageRegionalizedVolume::PropagateSensitiveDetectorToChild(GateMultiSen
 void GateImageRegionalizedVolume::AttachPhantomSD()
 {
   GateVVolume::AttachPhantomSD();
-  for(unsigned int i=0; i< mSubVolume.size(); i++) {
+  for(unsigned int i=0; i< mSubVolume.size(); ++i) {
     mSubVolume[i]->AttachPhantomSD();
   }
 }

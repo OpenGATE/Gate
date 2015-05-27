@@ -32,7 +32,7 @@ TubePnt(int dim)
   m_T = new float[m_Dim];
   m_V1= new float[m_Dim];
   m_V2= new float[m_Dim];
-  for(unsigned int i=0;i<m_Dim;i++)
+  for(unsigned int i=0;i<m_Dim;++i)
     {
     m_X[i] = 0;
     m_V1[i]= 0;
@@ -104,7 +104,7 @@ MetaTube::
   while(it != m_PointList.end())
   {
     TubePnt* pnt = *it;
-    it++;
+    ++it;
     delete pnt;
   }
   m_PointList.clear();
@@ -200,7 +200,7 @@ Clear(void)
   while(it != m_PointList.end())
   {
     TubePnt* pnt = *it;
-    it++;
+    ++it;
     delete pnt;
   }
   m_PointList.clear();
@@ -361,7 +361,7 @@ M_Read(void)
 
   int* posDim= new int[m_NDims];
   int i;
-  for(i= 0; i < m_NDims; i++)
+  for(i= 0; i < m_NDims; ++i)
     {
     posDim[i] = -1;
     }
@@ -391,7 +391,7 @@ M_Read(void)
     }
 
   int j;
-  for(j = 0; j < pntDim; j++)
+  for(j = 0; j < pntDim; ++j)
     {
     if(!strcmp(pntVal[j], "x") || !strcmp(pntVal[j], "X"))
       {
@@ -475,7 +475,7 @@ M_Read(void)
       }
     }
 
-  for(i=0;i<pntDim;i++)
+  for(i=0;i<pntDim;++i)
     {
     delete [] pntVal[i];
     }
@@ -512,7 +512,7 @@ M_Read(void)
     i=0;
     int d;
     unsigned int k;
-    for(j=0; j<(int)m_NPoints; j++)
+    for(j=0; j<(int)m_NPoints; ++j)
       {
       TubePnt* pnt = new TubePnt(m_NDims);
 
@@ -614,7 +614,7 @@ M_Read(void)
     }
   else
     {
-    for(j=0; j<(int)m_NPoints; j++)
+    for(j=0; j<(int)m_NPoints; ++j)
       {
       if(m_Event)
         {
@@ -803,7 +803,7 @@ M_Write(void)
       int id = (*it)->m_ID;
       MET_SwapByteIfSystemMSB(&id,MET_INT);
       MET_DoubleToValue((double)id,m_ElementType,data,i++);
-      it++;
+      ++it;
       }
 
     m_WriteStream->write((char *)data,writeSize);
@@ -851,7 +851,7 @@ M_Write(void)
       *m_WriteStream << (*it)->m_ID << " ";
 
       *m_WriteStream << METAIO_STREAM::endl;
-      it++;
+      ++it;
       }
     }
   return true;

@@ -108,7 +108,7 @@ void GateTotalDiscreteProcess::BuildCrossSectionsTables()
 {
 	// build tables for single processes
         std::vector<G4VDiscreteProcess*> vec;
-	for (Gate_ProcessVec::iterator it=m_oProcessVec.begin();it!=m_oProcessVec.end(); it++)
+	for (Gate_ProcessVec::iterator it=m_oProcessVec.begin();it!=m_oProcessVec.end(); ++it)
 	{
 		it->Process->PreparePhysicsTable ( *pParticleType );
 		it->Process->BuildPhysicsTable ( *pParticleType );

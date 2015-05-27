@@ -40,12 +40,12 @@ GatePulseList* GateVPulseProcessor::ProcessPulseList(const GatePulseList* inputP
   GatePulseList* outputPulseList = new GatePulseList(GetObjectName());
 
   GatePulseConstIterator iter;
-  for (iter = inputPulseList->begin() ; iter != inputPulseList->end() ; iter++)
+  for (iter = inputPulseList->begin() ; iter != inputPulseList->end() ; ++iter)
       	ProcessOnePulse( *iter, *outputPulseList);
   
   if (nVerboseLevel==1) {
       G4cout << "[" << GetObjectName() << "::ProcessPulseList]: returning output pulse-list with " << outputPulseList->size() << " entries\n";
-      for (iter = outputPulseList->begin() ; iter != outputPulseList->end() ; iter++)
+      for (iter = outputPulseList->begin() ; iter != outputPulseList->end() ; ++iter)
       	G4cout << **iter << Gateendl;
       G4cout << Gateendl;
   }

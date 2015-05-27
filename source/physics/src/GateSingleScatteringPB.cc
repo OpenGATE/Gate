@@ -55,7 +55,7 @@ void GateSingleScatteringPB::ConstructProcess(G4ProcessManager * manager)
 //-----------------------------------------------------------------------------
 bool GateSingleScatteringPB::IsApplicable(G4ParticleDefinition * par)
 {
-  for(unsigned int i=0; i<theListOfDefaultParticles.size(); i++)
+  for(unsigned int i=0; i<theListOfDefaultParticles.size(); ++i)
       if(par->GetParticleName() == theListOfDefaultParticles[i]) return true;
   return false;
 }

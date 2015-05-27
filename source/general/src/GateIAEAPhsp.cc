@@ -109,12 +109,12 @@ void iaea_new_source(IAEA_I32 *source_ID, char *header_file,
    } // String length < 1
 
    if( !__iaea_n_source ) { // called for the first time
-       for(int j=0; j<MAX_NUM_SOURCES; j++) __iaea_source_used[j] = false;
+       for(int j=0; j<MAX_NUM_SOURCES; ++j) __iaea_source_used[j] = false;
    }
    int sid=-1;
    // do we have a spare spot in the arrays ?
    // (e.g. because a source was destroyed)
-   for(int j=0; j<__iaea_n_source; j++) {
+   for(int j=0; j<__iaea_n_source; ++j) {
        if( !__iaea_source_used[j] ) { sid = j; break; }
    }
    if( sid < 0 ) {
@@ -183,7 +183,7 @@ void iaea_new_source(IAEA_I32 *source_ID, char *header_file,
 
              int i;
              // Setting up Average Kinetic Energy counters to usable values
-             for(i=0;i<MAX_NUM_PARTICLES;i++)
+             for(i=0;i<MAX_NUM_PARTICLES;++i)
                  p_iaea_header[*source_ID]->averageKineticEnergy[i] *=
                  p_iaea_header[*source_ID]->sumParticleWeight[i];
 
@@ -341,7 +341,7 @@ void iaea_get_maximum_energy(const IAEA_I32 *id, IAEA_Float *Emax)
 
       // phsp file
       *Emax = 0.f;
-      for(int i=0;i<MAX_NUM_PARTICLES;i++)
+      for(int i=0;i<MAX_NUM_PARTICLES;++i)
       {
         *Emax = (IAEA_Float) max(*Emax,p_iaea_header[*id]->maximumKineticEnergy[i]);
       }
@@ -636,10 +636,10 @@ void iaea_get_type_extra_variables(const IAEA_I32 *id, IAEA_I32 *result,
       // No header found
       if(p_iaea_header[*id]->fheader == NULL) {*result = -1; return;}
 
-      for (int i=0;i<p_iaea_header[*id]->record_contents[8];i++ )
+      for (int i=0;i<p_iaea_header[*id]->record_contents[8];++i )
           extralong_types[i] = p_iaea_header[*id]->extralong_contents[i];
 
-      for (int j=0;j<p_iaea_header[*id]->record_contents[7];j++ )
+      for (int j=0;j<p_iaea_header[*id]->record_contents[7];++j )
           extrafloat_types[j] = p_iaea_header[*id]->extrafloat_contents[j];
 
       *result = +1;
@@ -1175,7 +1175,7 @@ IAEA_I32 *extra_ints)
       else                     *n_stat=0;
 
       if(p->iextralong > 0) {
-          for(int j=0;j<p->iextralong ;j++) {
+          for(int j=0;j<p->iextralong ;++j) {
               // Looking for incremental number of histories
               // (Type 1 of the extralong stored variable)
               if(p_iaea_header[*id]->extralong_contents[j] == 1) {
@@ -1209,8 +1209,8 @@ IAEA_I32 *extra_ints)
       if(p->iweight > 0) *wt = p->weight;   /* statistical weight */
       else               *wt = p_iaea_header[*id]->record_constant[6];
 
-      for(int k=0;k<p->iextrafloat;k++) extra_floats[k] = p->extrafloat[k];
-      for(int j=0;j<p->iextralong ;j++) extra_ints[j] = p->extralong[j];
+      for(int k=0;k<p->iextrafloat;++k) extra_floats[k] = p->extrafloat[k];
+      for(int j=0;j<p->iextralong ;++j) extra_ints[j] = p->extralong[j];
 
       /*
         Updating counters including:
@@ -1340,8 +1340,8 @@ const IAEA_I32 *extra_ints)
       if(p->iv > 0) p->v = *v;
       if(p->iw > 0) p->w = *w;
 
-      for(int k=0;k<p->iextrafloat;k++) p->extrafloat[k] = extra_floats[k];
-      for(int j=0;j<p->iextralong ;j++)  p->extralong[j] = extra_ints[j];
+      for(int k=0;k<p->iextrafloat;++k) p->extrafloat[k] = extra_floats[k];
+      for(int j=0;j<p->iextralong ;++j)  p->extralong[j] = extra_ints[j];
 
       if( p->write_particle() == FAIL ) {*n_stat = -1; return;}
 

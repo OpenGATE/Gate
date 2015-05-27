@@ -81,7 +81,7 @@ void GatePulseAdderCompton::ProcessOnePulse(const GatePulse* inputPulse,GatePuls
 					else
 					{
 						//G4cout <<  "Increment " ;
-						currentiter++;
+						++currentiter;
 						if (currentiter == outputPulseList.rend())
 						{
 							//G4cout << inputPulse->GetEventID() << " " << inputPulse->GetOutputVolumeID() << " " << inputPulse->GetEnergy() << " " << inputPulse->GetPDGEncoding() << " End of list\n";

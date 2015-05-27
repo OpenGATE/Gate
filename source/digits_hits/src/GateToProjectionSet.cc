@@ -344,7 +344,7 @@ void GateToProjectionSet::RecordEndOfEvent(const G4Event* )
 		}
 
 		G4int n_digi =  SDC->entries();
-		for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
+		for (G4int iDigi=0;iDigi<n_digi;++iDigi) {
 			G4int headID = m_system->GetMainComponentID( (*SDC)[iDigi]->GetPulse() );
 			G4double xProj = (*SDC)[iDigi]->GetLocalPos()[m_coordX];
 			G4double yProj = (*SDC)[iDigi]->GetLocalPos()[m_coordY];

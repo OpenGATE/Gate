@@ -92,13 +92,13 @@ public:
 
       long unsigned int GetNbOfGoingOutPhotons(){return NbofGoingOutPhotons;}
       long unsigned int GetNbOfInPhotons(){return  NbofGoingInPhotons;}
-      void IncrementGoingInPhotons(){NbofGoingInPhotons++;}
-      void IncrementGoingOutPhotons(){NbofGoingOutPhotons++;}
-      void IncrementKilledInsideCrystalPhotons(){NbofKilledInsideCrystalPhotons++;}
-      void IncrementKilledInsideColliPhotons(){NbofKilledInsideColliPhotons++;}
-      void IncrementKilledInsideCamera(){NbofKilledInsideCamera++;}
-      void IncrementInCamera(){ IN_camera++;}
-      void IncrementOutCamera(){ OUT_camera++;}
+      void IncrementGoingInPhotons(){++NbofGoingInPhotons;}
+      void IncrementGoingOutPhotons(){++NbofGoingOutPhotons;}
+      void IncrementKilledInsideCrystalPhotons(){++NbofKilledInsideCrystalPhotons;}
+      void IncrementKilledInsideColliPhotons(){++NbofKilledInsideColliPhotons;}
+      void IncrementKilledInsideCamera(){++NbofKilledInsideCamera;}
+      void IncrementInCamera(){ ++IN_camera;}
+      void IncrementOutCamera(){ ++OUT_camera;}
       void DisplayARFStatistics();
       G4int IsCounted(){return m_iscounted;}
       G4int IsCountedOut(){return m_iscountedOut;}

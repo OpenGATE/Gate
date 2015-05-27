@@ -89,7 +89,7 @@ int main(int, char * [])
       }
     }
 
-    it++;
+    ++it;
   }
 
   METAIO_STREAM::cout << "done" << METAIO_STREAM::endl;

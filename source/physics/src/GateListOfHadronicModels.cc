@@ -44,7 +44,7 @@ void GateListOfHadronicModels::SetEmin(double val, G4String opt)
 
   bool set = false;
   
-  for(unsigned int j=0; j<theListOfOptions.size(); j++)
+  for(unsigned int j=0; j<theListOfOptions.size(); ++j)
     if(theListOfOptions[j]==opt)
     {
        theListOfEmin[j] = val;
@@ -75,7 +75,7 @@ void GateListOfHadronicModels::SetEmax(double val, G4String opt)
 
   bool set = false;
   
-  for(unsigned int j=0; j<theListOfOptions.size(); j++)
+  for(unsigned int j=0; j<theListOfOptions.size(); ++j)
     if(theListOfOptions[j]==opt)
     {
        theListOfEmax[j] = val;
@@ -95,7 +95,7 @@ void GateListOfHadronicModels::SetEmax(double val, G4String opt)
 //-----------------------------------------------------------------------------
 G4double GateListOfHadronicModels::GetEmin( G4String opt)
 {
-  for(unsigned int j=0; j<theListOfOptions.size(); j++)
+  for(unsigned int j=0; j<theListOfOptions.size(); ++j)
     if(opt == theListOfOptions[j]) return theListOfEmin[j];
   
   return -1.;
@@ -106,7 +106,7 @@ G4double GateListOfHadronicModels::GetEmin( G4String opt)
 //-----------------------------------------------------------------------------
 G4double GateListOfHadronicModels::GetEmax( G4String opt)
 {
-  for(unsigned int j=0; j<theListOfOptions.size(); j++)
+  for(unsigned int j=0; j<theListOfOptions.size(); ++j)
     if(opt == theListOfOptions[j]) return theListOfEmax[j];
   
   return -1.;
@@ -130,7 +130,7 @@ G4Material * GateListOfHadronicModels::GetMaterial(G4String materialName)
    
   const G4MaterialTable* matTbl = G4Material::GetMaterialTable();
   
-  for(G4MaterialTable::const_iterator it=matTbl->begin();it!=matTbl->end();it++)
+  for(G4MaterialTable::const_iterator it=matTbl->begin();it!=matTbl->end();++it)
   {
     if((*it)->GetName() == materialName) return (*it);
   }
@@ -145,7 +145,7 @@ G4Element * GateListOfHadronicModels::GetElement(G4String elementName)
    
   const G4ElementTable * elemTbl  = G4Element::GetElementTable();
   
-  for(G4ElementTable::const_iterator it=elemTbl->begin();it!=elemTbl->end();it++)
+  for(G4ElementTable::const_iterator it=elemTbl->begin();it!=elemTbl->end();++it)
   {
     if((*it)->GetName() == elementName) return (*it);
   }
@@ -158,14 +158,14 @@ G4Element * GateListOfHadronicModels::GetElement(G4String elementName)
 void GateListOfHadronicModels::Print(G4int level, G4String symbol, G4String symbol2)
 {
   G4String space = " ";
-  for(G4int i = 1;i<level;i++) space += "  ";
+  for(G4int i = 1;i<level;++i) space += "  ";
   G4String space2 = space + "  " + symbol2 + " ";
   space += symbol + " ";
 
   std::cout<<space<<modelName << Gateendl;
 
 
-  for(unsigned int j=0; j<theListOfOptions.size(); j++)
+  for(unsigned int j=0; j<theListOfOptions.size(); ++j)
   {
     if(theListOfOptions[j]=="NoOption")
     {
@@ -180,7 +180,7 @@ void GateListOfHadronicModels::Print(G4int level, G4String symbol, G4String symb
     }
   }
 
-  for(unsigned int j=0; j<theListOfOptions.size(); j++)
+  for(unsigned int j=0; j<theListOfOptions.size(); ++j)
   {
     if(theListOfOptions[j]!="NoOption")
     {
@@ -207,14 +207,14 @@ void GateListOfHadronicModels::Print(G4String file,G4int level, G4String symbol,
   os.open(file.data(), std::ios_base::app);
 
   G4String space = " ";
-  for(G4int i = 1;i<level;i++) space += "  ";
+  for(G4int i = 1;i<level;++i) space += "  ";
   G4String space2 = space + "  " + symbol2 + " ";
   space += symbol + " ";
 
   os<<space<<modelName.data() << Gateendl;
 
 
-  for(unsigned int j=0; j<theListOfOptions.size(); j++)
+  for(unsigned int j=0; j<theListOfOptions.size(); ++j)
   {
     if(theListOfOptions[j]=="NoOption")
     {
@@ -229,7 +229,7 @@ void GateListOfHadronicModels::Print(G4String file,G4int level, G4String symbol,
     }
   }
 
-  for(unsigned int j=0; j<theListOfOptions.size(); j++)
+  for(unsigned int j=0; j<theListOfOptions.size(); ++j)
   {
     if(theListOfOptions[j]!="NoOption")
     {

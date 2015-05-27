@@ -32,7 +32,7 @@ FEMObjectNode(int dim)
   m_Dim = dim;
   m_GN = -1;
   m_X = new float[m_Dim];
-  for(unsigned int i=0;i<m_Dim;i++)
+  for(unsigned int i=0;i<m_Dim;++i)
     {
     m_X[i] = 0;
     }
@@ -50,7 +50,7 @@ FEMObjectElement(int dim)
   m_Dim = dim;
   m_GN = -1;
   m_NodesId = new int[m_Dim];
-  for(unsigned int i=0;i<m_Dim;i++)
+  for(unsigned int i=0;i<m_Dim;++i)
     {
     m_NodesId[i] = -1;
     }
@@ -504,7 +504,7 @@ void MetaFEMObject::M_Write_Node(FEMObjectNode *Node)
 
   /* write co-ordinate values */
   *this->m_WriteStream << "\t" << Node->m_Dim;
-  for (unsigned int i=0; i<Node->m_Dim; i++)
+  for (unsigned int i=0; i<Node->m_Dim; ++i)
     {
     *this->m_WriteStream << " " << Node->m_X[i];
     }
@@ -550,7 +550,7 @@ void MetaFEMObject::M_Write_Load(FEMObjectLoad *Load)
     *this->m_WriteStream << "\t" << Load->m_ElementGN << "\t% GN of element" << "\n";
     *this->m_WriteStream << "\t" << Load->m_DOF << "\t% DOF# in element" << "\n";
     *this->m_WriteStream << "\t" << Load->m_NumRHS;
-    for (int i=0; i<Load->m_NumRHS; i++)
+    for (int i=0; i<Load->m_NumRHS; ++i)
       {
       *this->m_WriteStream << " " << Load->m_RHS[i];
       }
@@ -563,7 +563,7 @@ void MetaFEMObject::M_Write_Load(FEMObjectLoad *Load)
     *this->m_WriteStream << "\t" << Load->m_ElementGN << "\t% GN of element" << "\n";
     *this->m_WriteStream << "\t" << Load->m_NodeNumber << " " << "\t% Point number within the element\n";
     *this->m_WriteStream << "\t" << Load->m_Dim;
-    for (int i=0; i<Load->m_Dim; i++)
+    for (int i=0; i<Load->m_Dim; ++i)
       {
       *this->m_WriteStream << " " << Load->m_ForceVector[i];
       }
@@ -578,7 +578,7 @@ void MetaFEMObject::M_Write_Load(FEMObjectLoad *Load)
 
     /** write each term */
     *this->m_WriteStream << "\t  %==>\n";
-    for ( int i=0; i<Load->m_NumLHS; i++ )
+    for ( int i=0; i<Load->m_NumLHS; ++i )
       {
       FEMObjectMFCTerm *mfcTerm = dynamic_cast< FEMObjectMFCTerm * > (&*Load->m_LHS[i]);
       *this->m_WriteStream << "\t  " <<mfcTerm->m_ElementGN << "\t% GN of element" << std::endl;
@@ -589,7 +589,7 @@ void MetaFEMObject::M_Write_Load(FEMObjectLoad *Load)
 
     /** write the rhs */
     *this->m_WriteStream << "\t" << Load->m_NumRHS;
-    for ( int i=0; i<Load->m_NumRHS; i++ )
+    for ( int i=0; i<Load->m_NumRHS; ++i )
       {
       *this->m_WriteStream << " "  << Load->m_RHS[i];
       }
@@ -610,11 +610,11 @@ void MetaFEMObject::M_Write_Load(FEMObjectLoad *Load)
     *this->m_WriteStream << "\t" << numRows << "\t% # rows in force matrix" << "\n";
     *this->m_WriteStream << "\t" << numCols << "\t% # cols in force matrix" << "\n";
     *this->m_WriteStream << "\t% force matrix\n";
-    for ( size_t i = 0; i < numRows; i++ )
+    for ( size_t i = 0; i < numRows; ++i )
       {
       *this->m_WriteStream << "\t";
       METAIO_STL::vector<float> F = Load->m_ForceMatrix[i];
-      for ( size_t j = 0; j < numCols; j++ )
+      for ( size_t j = 0; j < numCols; ++j )
         {
         *this->m_WriteStream << F[j] << " ";
         }
@@ -631,7 +631,7 @@ void MetaFEMObject::M_Write_Load(FEMObjectLoad *Load)
       *this->m_WriteStream << "\t" << Load->m_NumElements;
       *this->m_WriteStream << "\t% # of elements on which the load acts" << std::endl;
       *this->m_WriteStream << "\t";
-      for ( int i = 0; i < Load->m_NumElements; i++ )
+      for ( int i = 0; i < Load->m_NumElements; ++i )
         {
         *this->m_WriteStream << Load->m_Elements[i] << " ";
         }
@@ -643,7 +643,7 @@ void MetaFEMObject::M_Write_Load(FEMObjectLoad *Load)
       }
     /** then write the actual data force vector */
     *this->m_WriteStream << "\t" << Load->m_Dim << "\t% Size of the gravity force vector\n";
-    for (int i=0; i<Load->m_Dim; i++)
+    for (int i=0; i<Load->m_Dim; ++i)
       {
       *this->m_WriteStream << "\t" << Load->m_ForceVector[i] ;
       }
@@ -656,7 +656,7 @@ void MetaFEMObject::M_Write_Load(FEMObjectLoad *Load)
     size_t dim = Load->m_Undeformed.size();
 
     *this->m_WriteStream << "\t" << dim;
-    for ( size_t i = 0; i < dim; i++ )
+    for ( size_t i = 0; i < dim; ++i )
       {
       *this->m_WriteStream << Load->m_Undeformed[i] << " ";
       }
@@ -665,7 +665,7 @@ void MetaFEMObject::M_Write_Load(FEMObjectLoad *Load)
 
     // print deformed coordinates
     *this->m_WriteStream << "\t" << dim;
-    for ( size_t i = 0; i < dim; i++ )
+    for ( size_t i = 0; i < dim; ++i )
       {
       *this->m_WriteStream << Load->m_Deformed[i] << " ";
       }
@@ -698,7 +698,7 @@ bool MetaFEMObject::IsClassNamePresent(std::string c_string)
     {
     if((*it) == c_string)
       return true;
-    it++;
+    ++it;
     }
   return false;
 }
@@ -731,7 +731,7 @@ bool MetaFEMObject::M_Read_Node()
   node->m_GN = GN;
 
   this->SkipWhiteSpace();
-  for (unsigned int i = 0; i< n; i++)
+  for (unsigned int i = 0; i< n; ++i)
     {
     *this->m_ReadStream >> coor[i];
     if ( !this->m_ReadStream )
@@ -1041,7 +1041,7 @@ bool MetaFEMObject::M_Read_Load(std::string load_name)
     load->m_NumRHS = NumRHS;
     load->m_RHS.resize(NumRHS);
 
-    for (int i=0; i<NumRHS; i++)
+    for (int i=0; i<NumRHS; ++i)
       {
       this->SkipWhiteSpace();
       *this->m_ReadStream >> load->m_RHS[i];
@@ -1088,7 +1088,7 @@ bool MetaFEMObject::M_Read_Load(std::string load_name)
     load->m_Dim = Dim;
 
     load->m_ForceVector.resize(Dim);
-    for (int i=0; i<Dim; i++)
+    for (int i=0; i<Dim; ++i)
       {
       this->SkipWhiteSpace();
       *this->m_ReadStream >> load->m_ForceVector[i];
@@ -1113,7 +1113,7 @@ bool MetaFEMObject::M_Read_Load(std::string load_name)
       }
 
     load->m_NumLHS = NumLHS;
-    for ( int i = 0; i < NumLHS; i++ )
+    for ( int i = 0; i < NumLHS; ++i )
       {
       /** read and set pointer to element that we're applying the load to */
       this->SkipWhiteSpace();
@@ -1162,7 +1162,7 @@ bool MetaFEMObject::M_Read_Load(std::string load_name)
 
     load->m_NumRHS = NumRHS;
     load->m_RHS.resize(NumRHS);
-    for (int i=0; i<NumRHS; i++)
+    for (int i=0; i<NumRHS; ++i)
       {
       this->SkipWhiteSpace();
       *this->m_ReadStream >> load->m_RHS[i];
@@ -1220,11 +1220,11 @@ bool MetaFEMObject::M_Read_Load(std::string load_name)
       return false;
       }
 
-    for ( int i = 0; i < numRows; i++ )
+    for ( int i = 0; i < numRows; ++i )
       {
       this->SkipWhiteSpace();
       METAIO_STL::vector<float> F(numCols);
-      for ( int j = 0; j < numCols; j++ )
+      for ( int j = 0; j < numCols; ++j )
         {
         *this->m_ReadStream >> F[j];
         if (!this->m_ReadStream)
@@ -1250,7 +1250,7 @@ bool MetaFEMObject::M_Read_Load(std::string load_name)
       return false;
       }
 
-    for (int i=0; i<load->m_NumElements; i++)
+    for (int i=0; i<load->m_NumElements; ++i)
       {
       this->SkipWhiteSpace();
       *this->m_ReadStream >> elementGN ;
@@ -1275,7 +1275,7 @@ bool MetaFEMObject::M_Read_Load(std::string load_name)
 
     float loadcomp;
     /** then the actual values */
-    for (int i=0; i<load->m_Dim; i++)
+    for (int i=0; i<load->m_Dim; ++i)
       {
       this->SkipWhiteSpace();
       *this->m_ReadStream >> loadcomp;
@@ -1298,7 +1298,7 @@ bool MetaFEMObject::M_Read_Load(std::string load_name)
     this->SkipWhiteSpace();
     *this->m_ReadStream >> n1; if ( !this->m_ReadStream ) { return false; }
     load->m_Undeformed.resize(n1);
-    for (int i=0; i<n1; i++)
+    for (int i=0; i<n1; ++i)
       {
       this->SkipWhiteSpace();
       *this->m_ReadStream >> load->m_Undeformed[i];
@@ -1316,7 +1316,7 @@ bool MetaFEMObject::M_Read_Load(std::string load_name)
     this->SkipWhiteSpace();
     *this->m_ReadStream >> n2; if ( !this->m_ReadStream ) { return false; }
     load->m_Deformed.resize(n2);
-    for (int i=0; i<n2; i++)
+    for (int i=0; i<n2; ++i)
       {
       this->SkipWhiteSpace();
       *this->m_ReadStream >> load->m_Deformed[i];

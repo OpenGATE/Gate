@@ -78,7 +78,7 @@ void GateInterfileHeader::DoDataRead(std::vector<OutputPixelType> &data) {
 	  << "is inferior to the number computed from its header file (" << pixelNumber << ")!\n";
       G4Exception( "GateInterfileHeader.cc InterfileTooShort", "InterfileTooShort", FatalException, "Correct problem then try again... Sorry!" );
   }
-  for(unsigned int i=0; i<temp.size(); i++) {
+  for(unsigned int i=0; i<temp.size(); ++i) {
       if ( BYTE_ORDER != m_dataByteOrder ) {
 	  ReadPixelType t = temp[i];
 	  GateMachine::SwapEndians( t );

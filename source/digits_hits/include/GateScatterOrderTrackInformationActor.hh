@@ -49,10 +49,10 @@ public:
   {
     // New particle
     if(track->GetStep()==NULL)
-      mOrder++;
+      ++mOrder;
     // Same particle
     else if(track->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()!=(const G4String)"Transportation")
-      mOrder++;
+      ++mOrder;
   }
 
   inline void SetScatterProcess(const G4Track *track)

@@ -359,7 +359,7 @@ void GateCoincidenceSorter::VerifCoincidencePulses(const GatePulseList* inputPul
 	iteratorVect toWait, toCurrent;
     	for ( GatePulseList::iterator iter = m_coincidentPulses->begin()
 	    ; iter != m_coincidentPulses->end()
-	    ; iter++) {
+	    ; ++iter) {
     	    if ( !m_coincidentPulses->IsInCoincidence(*iter) ) {
 	    	toWait.push_back(iter);
     	    }
@@ -367,7 +367,7 @@ void GateCoincidenceSorter::VerifCoincidencePulses(const GatePulseList* inputPul
 	if (m_waitingPulses){
     	    for ( GatePulseList::iterator iter = m_waitingPulses->begin()
 		; iter != m_waitingPulses->end()
-		; iter++) {
+		; ++iter) {
     		if ( m_coincidentPulses->IsInCoincidence(*iter) ) {
 	    	    toCurrent.push_back(iter);
     		}
@@ -390,7 +390,7 @@ void GateCoincidenceSorter::VerifCoincidencePulses(const GatePulseList* inputPul
     	if (m_waitingPulses){
 	    for ( GatePulseList::const_iterator iter = m_waitingPulses->begin()
 	    	; iter != m_waitingPulses->end()
-	    	; iter++) {
+	    	; ++iter) {
 	     	    if ( m_coincidentPulses->IsAfterWindow(*iter) ) m_isCurrentFinished=true;
     	    }
 	    m_waitingPulses->SetStartTime(m_waitingPulses->ComputeStartTime());
@@ -407,7 +407,7 @@ void GateCoincidenceSorter::VerifCoincidencePulses(const GatePulseList* inputPul
 void GateCoincidenceSorter::DispatchPulses(const GatePulseList* inputPulseList)
 {
   // All incoming pulses go either into the coincident or into the waiting pulses
-  for ( GatePulseList::const_iterator iter = inputPulseList->begin(); iter < inputPulseList->end() ; iter++)
+  for ( GatePulseList::const_iterator iter = inputPulseList->begin(); iter < inputPulseList->end() ; ++iter)
   {
     if ( m_coincidentPulses->IsInCoincidence(*iter) ) {
       	// The incoming pulse is in coincidence with the 'current' pulse: store it there
@@ -541,7 +541,7 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
 	gm_coincSectNum = gkSectorMultiplier[0];
     }
     G4int ans=0;
-    for (G4int i=0;i<=m_depth;i++){
+    for (G4int i=0;i<=m_depth;++i){
     	G4int x = pulse.GetComponentID(i)%gkSectorNumber[i];
     	ans += x*gkSectorMultiplier[i];
     }

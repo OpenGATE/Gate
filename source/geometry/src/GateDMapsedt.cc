@@ -322,11 +322,11 @@ void phaseSaitoZ(const Vol &V,Longvol &sdt_xy, Longvol &sdt_xyz)
 //   sdt_x.dumpLongvol(destFile);
   
 // //   //Print the output
-// //   for(int k= sdt_x.minZ() ; k < sdt_x.maxZ() ; k++)  
+// //   for(int k= sdt_x.minZ() ; k < sdt_x.maxZ() ; ++k)  
 // //     {
-// //       for(int j= sdt_x.minY() ; j < sdt_x.maxY() ; j++)
+// //       for(int j= sdt_x.minY() ; j < sdt_x.maxY() ; ++j)
 // // 	{
-// // 	  for(int i= sdt_x.minX() ; i < sdt_x.maxX() ; i++)
+// // 	  for(int i= sdt_x.minX() ; i < sdt_x.maxX() ; ++i)
 // // 	    printf("%ld ", sdt_x(i,j,k));
 // // 	  printf("\n");
 // // 	}

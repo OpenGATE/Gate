@@ -92,7 +92,7 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
 	// Loop on material intervals
 	for (std::vector<GateHounsfieldMaterialProperties*>::iterator it =
 			mHounsfieldMaterialPropertiesVector.begin();
-			it != mHounsfieldMaterialPropertiesVector.end(); it++) {
+			it != mHounsfieldMaterialPropertiesVector.end(); ++it) {
 		unsigned int i = it - mHounsfieldMaterialPropertiesVector.begin();
 		GateMessage("Geometry", 4,
 				"Material " << i << " = " << (*it)->GetName() << Gateendl);
@@ -138,7 +138,7 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
 		}
 
 		// Loop on density interval
-		for (int j = 0; j < n; j++) {
+		for (int j = 0; j < n; ++j) {
 			double h1 = HMin + j * HTol;
 			double h2 = std::min(HMin + (j + 1) * HTol, HMax);
 			//double d = mDensityTable->GetDensityFromH(h1+(h2-h1)/2.0);

@@ -243,7 +243,7 @@ void GateToSinoAccel::RecordEndOfEvent(const G4Event* )
   G4ThreeVector        crystalPitchVector = crystalComponent->GetRepeatVector();
 
   if (nVerboseLevel>3) G4cout << " >> Total Digits: " << n_digi << Gateendl;
-  for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
+  for (G4int iDigi=0;iDigi<n_digi;++iDigi) {
     // crystal block ID
     G4int block1ID = m_system->GetMainComponentID( (*CDC)[iDigi]->GetPulse(0) );
     G4int block2ID = m_system->GetMainComponentID( (*CDC)[iDigi]->GetPulse(1) );

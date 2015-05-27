@@ -49,7 +49,7 @@ GateAnalyzeHeader::GateAnalyzeHeader()
 void GateAnalyzeHeader::SetDefaults()
 {
   m_data.hk.sizeof_hdr = 348;
-  //for(int i = 0;i<10;i++) m_data.hk.data_type[i]=;
+  //for(int i = 0;i<10;++i) m_data.hk.data_type[i]=;
   strcpy(m_data.hk.data_type,"dsr");
   strcpy(m_data.hk.db_name,"/home");
   m_data.hk.extents = 0;

@@ -163,7 +163,7 @@ void GateRunManager::InitGeometryOnly()
       RegionStore->DeRegister((*pi));
       GateMessage("Cuts", 5, "Region "<<regionName<<" deleted."<< Gateendl);
     }
-    else  pi++;
+    else  ++pi;
   }
   GateMessageDec("Cuts", 5, "G4Regions Initialized!\n");
 

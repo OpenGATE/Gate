@@ -114,7 +114,7 @@ public:
   GateTrack* GetCurrentTracksData();
   void GetCurrentRecStepData( const G4Event* );
   G4int GetHeadNo(){ return m_currentTracksData; };
-  void ReadForward() { m_currentTracksData++;};
+  void ReadForward() { ++m_currentTracksData;};
   void ReadBackward(){
    if ( tracksTuple != 0 )
     {

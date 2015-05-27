@@ -107,7 +107,7 @@ void GateGenericRepeaterMove::GetPlacementListFromTime(double aTime,
   // Search for current "time"
   int i=0; 
   while ((i < (int)mTimeList.size()) && (aTime >= mTimeList[i])) {
-    i++;
+    ++i;
   }
   i--;
   if ((i < 0) && (aTime < mTimeList[0])) {

@@ -218,7 +218,7 @@ public:
   {
 		GateVOutputModule::SetVerboseLevel( val );
 		for( std::vector< VOutputChannel* >::iterator it = m_outputChannelVector.begin();
-				it != m_outputChannelVector.end(); it++ )
+				it != m_outputChannelVector.end(); ++it )
 			(*it)->SetVerboseLevel( val );
   }
 

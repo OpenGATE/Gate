@@ -243,7 +243,7 @@ G4int GateVSystem::ComputeComponentID(GateSystemComponent* aComponent,
 
 	// Loop on the volume's creators until we recognise the component's creator
 	for (GateVolumeID::const_iterator it = volumeID.begin();
-			it != volumeID.end(); it++)
+			it != volumeID.end(); ++it)
 		if (it->GetCreator() == aComponent->GetCreator())
 			return it->GetCopyNo();
 
@@ -261,7 +261,7 @@ G4int GateVSystem::ComputeMainComponentID(GateSystemComponent* aComponent,
 
 	// Loop on the volume's creators until we recognize our own creator
 	for (GateVolumeID::const_iterator it = volumeID.begin();
-			it != volumeID.end(); it++)
+			it != volumeID.end(); ++it)
 		if (it->GetCreator() == aComponent->GetCreator()) {
 			copyNo = it->GetCopyNo();
 			found = true;
@@ -342,7 +342,7 @@ GateSystemComponentList* GateVSystem::MakeComponentListAtLevel(
 		GateSystemComponentList* newList = new GateSystemComponentList(
 				m_BaseComponent, LevelName);
 		for (GateSystemComponentList::iterator it = currentList->begin();
-				it != currentList->end(); it++) {
+				it != currentList->end(); ++it) {
 			GateSystemComponent * acomp = (GateSystemComponent*) (*it);
 			for (GateSystemComponent::child_iterator ichild = acomp->begin();
 					ichild != acomp->end(); ichild++) {
@@ -361,7 +361,7 @@ size_t GateVSystem::ComputeNofElementsAtLevel(size_t level) const {
 	GateSystemComponentList* currentList = MakeComponentListAtLevel(level);
 	size_t ans = 0;
 	for (GateSystemComponentList::iterator it = currentList->begin();
-			it != currentList->end(); it++) {
+			it != currentList->end(); ++it) {
 		GateSystemComponent * acomp = (GateSystemComponent*) (*it);
 		if (acomp->IsActive()) {
 			size_t nofVol = acomp->GetVolumeNumber();
@@ -399,14 +399,14 @@ size_t GateVSystem::ComputeIdFromVolID(const GateOutputVolumeID& volID,
 	static std::vector<G4int> nofCrystalList;
 	if (isFirstPass) {
 		isFirstPass = false;
-		for (size_t i = 0; i < GetTreeDepth(); i++) {
+		for (size_t i = 0; i < GetTreeDepth(); ++i) {
 			G4cout << "nofSubCrystal @ level " << i << Gateendl;
 			nofCrystalList.push_back(ComputeNofSubCrystalsAtLevel(i,enableList));
 			G4cout<<"= "<<nofCrystalList[i]<< Gateendl;
 		}
 	}
 	size_t ans = 0;
-	for (size_t i = 0; i < GetTreeDepth(); i++) {
+	for (size_t i = 0; i < GetTreeDepth(); ++i) {
 		if (enableList[i] && volID[i] >= 0)
 			ans += volID[i] * nofCrystalList[i];
 	}
@@ -431,7 +431,7 @@ GateVolumeID* GateVSystem::MakeVolumeID(
 		return ans;
 
 	for (std::vector<G4int>::const_iterator it = numList.begin();
-			it != numList.end(); it++) {
+			it != numList.end(); ++it) {
 		if (comp->GetChildNumber() < 1)
 			break;
 		G4int num = *it;
@@ -455,7 +455,7 @@ GateVolumeID* GateVSystem::MakeVolumeID(
 				G4LogicalVolume* logical = last_vol->GetLogicalVolume();
 				if (!logical->IsDaughter(vol)) {
 					G4bool pb = true;
-					for (G4int ii = 0; ii < logical->GetNoDaughters(); ii++) {
+					for (G4int ii = 0; ii < logical->GetNoDaughters(); ++ii) {
 						last_vol = logical->GetDaughter(ii);
 						if (last_vol->GetLogicalVolume()->IsAncestor(vol)) {
 							ans->push_back(last_vol);
@@ -491,7 +491,7 @@ G4ThreeVector GateVSystem::ComputeObjectCenter(
 	G4ThreeVector translation;
 	G4VPhysicalVolume* vol = 0;
 	for (GateVolumeID::const_iterator it = volID->begin(); it != volID->end();
-			it++) {
+			++it) {
 		vol = it->GetVolume();
 		G4RotationMatrix rot = vol->GetObjectRotationValue();
 		G4ThreeVector transl = vol->GetObjectTranslation();

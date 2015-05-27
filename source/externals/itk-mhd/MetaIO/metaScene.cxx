@@ -188,7 +188,7 @@ Read(const char *_headerName)
     }
 
   /** Objects should be added here */
-  for(i=0;i<m_NObjects;i++)
+  for(i=0;i<m_NObjects;++i)
     {
     if(META_DEBUG)
       {
@@ -432,7 +432,7 @@ Write(const char *_headName)
     {
     (*it)->BinaryData(this->BinaryData());
     (*it)->Append(_headName);
-    it++;
+    ++it;
     }
 
   return true;
@@ -452,7 +452,7 @@ Clear(void)
   while(it != m_ObjectList.end())
     {
     MetaObject* object = *it;
-    it++;
+    ++it;
     delete object;
     }
 

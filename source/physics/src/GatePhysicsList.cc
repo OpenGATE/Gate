@@ -96,14 +96,14 @@ GatePhysicsList::GatePhysicsList(): G4VModularPhysicsList(),
 GatePhysicsList::~GatePhysicsList()
 {
   delete pMessenger;
-  for(VolumeUserLimitsMapType::iterator i = mapOfVolumeUserLimits.begin(); i!=mapOfVolumeUserLimits.end(); i++)
+  for(VolumeUserLimitsMapType::iterator i = mapOfVolumeUserLimits.begin(); i!=mapOfVolumeUserLimits.end(); ++i)
     {
       delete (*i).second;
     }
   mapOfVolumeUserLimits.clear();
 
   delete userlimits;
-  for(std::list<G4ProductionCuts*>::iterator i = theListOfCuts.begin(); i!=theListOfCuts.end(); i++)
+  for(std::list<G4ProductionCuts*>::iterator i = theListOfCuts.begin(); i!=theListOfCuts.end(); ++i)
     {
       delete (*i);
     }
@@ -125,7 +125,7 @@ GatePhysicsList::~GatePhysicsList()
   while( (*theParticleIterator)() ){//&& !isTransportationDelete){
     G4ParticleDefinition* particle = theParticleIterator->value();
     G4ProcessVector * vect = particle->GetProcessManager()->GetProcessList();
-    for(int i = 0; i<vect->size();i++)
+    for(int i = 0; i<vect->size();++i)
       {
         if((*vect)[i]->GetProcessName()=="Transportation" )//&& !isTransportationDelete)
           {
@@ -154,7 +154,7 @@ GatePhysicsList::~GatePhysicsList()
     G4ProcessVector * vect = particle->GetProcessManager()->GetProcessList();
     G4cout<<"Particle= "<< particle->GetParticleName() << Gateendl;
 
-    for(int i = 0; i<vect->size();i++)
+    for(int i = 0; i<vect->size();++i)
     {
     if((*vect)[i]) G4cout<<"Process= "<<(*vect)[i]->GetProcessName()<< Gateendl;
     }
@@ -193,10 +193,10 @@ void GatePhysicsList::ConstructProcess()
     {
       // AddTransportation(); // not set here. Set only if no physics list builder is used
       //Does GetTheListOfProcesss() needs to be called every time??
-      for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
+      for(unsigned int i=0; i<GetTheListOfProcesss()->size(); ++i)
 	{
 	  theListOfPBName.push_back((*GetTheListOfProcesss())[i]->GetG4ProcessName());
-	  for(unsigned int j=0; j<GetTheListOfProcesss()->size(); j++)
+	  for(unsigned int j=0; j<GetTheListOfProcesss()->size(); ++j)
 	    if(i != j && (*GetTheListOfProcesss())[i]->GetG4ProcessName()==(*GetTheListOfProcesss())[j]->GetG4ProcessName() )
 	      GateWarning("Some processes have the same name: "
 			  <<(*GetTheListOfProcesss())[i]->GetG4ProcessName() );
@@ -208,7 +208,7 @@ void GatePhysicsList::ConstructProcess()
         AddTransportation();
       }
 
-      for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
+      for(unsigned int i=0; i<GetTheListOfProcesss()->size(); ++i)
         (*GetTheListOfProcesss())[i]->ConstructProcess();
 
       //opt->SetVerbose(2);
@@ -233,7 +233,7 @@ void GatePhysicsList::ConstructProcess()
       G4ParticleDefinition* particle = theParticleIterator->value();
       G4ProcessManager* pmanager = particle->GetProcessManager();
       G4String particleName = particle->GetParticleName();
-      for(unsigned int i=0; i<mListOfStepLimiter.size(); i++) {
+      for(unsigned int i=0; i<mListOfStepLimiter.size(); ++i) {
 	if(mListOfStepLimiter[i]==particleName) {
           GateMessage("Cuts", 3, "Activate G4StepLimiter for " << particleName << Gateendl);
           pmanager->AddProcess(new G4StepLimiter, -1,-1,3);
@@ -250,7 +250,7 @@ void GatePhysicsList::ConstructProcess()
       G4ParticleDefinition* particle = theParticleIterator->value();
       G4ProcessManager* pmanager = particle->GetProcessManager();
       G4String particleName = particle->GetParticleName();
-      for(unsigned int i=0; i<mListOfG4UserSpecialCut.size(); i++) {
+      for(unsigned int i=0; i<mListOfG4UserSpecialCut.size(); ++i) {
 	if(mListOfG4UserSpecialCut[i]==particleName) {
           GateMessage("Cuts", 3, "Activate G4UserSpecialCuts for " << particleName << Gateendl);
           pmanager-> AddProcess(new G4UserSpecialCuts,   -1,-1,4);
@@ -274,13 +274,13 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
   G4PhysListFactory * l = new G4PhysListFactory(); //  instantiate PhysList by environment variable "PHYSLIST"
   const std::vector<G4String>& list = l->AvailablePhysLists();
   mListOfPhysicsLists = "";
-  for(unsigned int i=0; i<list.size(); i++) {
+  for(unsigned int i=0; i<list.size(); ++i) {
     mListOfPhysicsLists += list[i];
     mListOfPhysicsLists += ", " ;
   }
   const std::vector<G4String>& list_em = l->AvailablePhysListsEM();
   mListOfPhysicsLists += "with the following EM option (or nothing for default) : ";
-  for(unsigned int i=0; i<list_em.size(); i++) {
+  for(unsigned int i=0; i<list_em.size(); ++i) {
     mListOfPhysicsLists += list_em[i];
     mListOfPhysicsLists += " " ;
   }
@@ -427,7 +427,7 @@ void GatePhysicsList::Print(G4String type, G4String particlename)
   if(type=="Enabled")
     {
       if(particlename != "All") std::cout<<"   ***  "<<particlename<<"  ***\n";
-      for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
+      for(unsigned int i=0; i<GetTheListOfProcesss()->size(); ++i)
 	(*GetTheListOfProcesss())[i]->PrintEnabledParticles(particlename);
 
       std::cout<< Gateendl;
@@ -445,7 +445,7 @@ void GatePhysicsList::Print(G4String type, G4String particlename)
       std::vector<G4String> DataSets;
       std::vector<G4String> Models;
 
-      for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
+      for(unsigned int i=0; i<GetTheListOfProcesss()->size(); ++i)
 	{
 	  DefaultParticles = (*GetTheListOfProcesss())[i]->GetTheListOfDefaultParticles();
 	  DataSets = (*GetTheListOfProcesss())[i]->GetTheListOfDataSets();
@@ -508,7 +508,7 @@ void GatePhysicsList::Print(G4String name)
 	// Transportation process is ignored for display;
 	std::cout<<"  * "<<particle->GetParticleName()<< Gateendl;
 	iDisp++;
-	for(int j=0;j<manager->GetProcessListLength();j++)
+	for(int j=0;j<manager->GetProcessListLength();++j)
 	  {
 	    if( (*processvector)[j]->GetProcessName() !=  "Transportation" )
 	      std::cout<<"    - "<<(*processvector)[j]->GetProcessName()<< Gateendl;
@@ -527,7 +527,7 @@ void GatePhysicsList::Print(G4String name)
       processvector = manager->GetProcessList();
       if(manager->GetProcessListLength()==0) return;
       std::cout<<"Particle: "<<particle->GetParticleName()<< Gateendl;
-      for(int j=0;j<manager->GetProcessListLength();j++)
+      for(int j=0;j<manager->GetProcessListLength();++j)
 	if( (*processvector)[j]->GetProcessName() !=  "Transportation" )
 	  std::cout<<"   - "<<(*processvector)[j]->GetProcessName()<< Gateendl;
     }
@@ -541,7 +541,7 @@ std::vector<GateVProcess*> GatePhysicsList::FindProcess(G4String name)
 {
   std::vector<GateVProcess*> thelist;
 
-  for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++) {
+  for(unsigned int i=0; i<GetTheListOfProcesss()->size(); ++i) {
     if((*GetTheListOfProcesss())[i]->GetG4ProcessName()==name) thelist.push_back((*GetTheListOfProcesss())[i]);
   }
   return thelist;
@@ -557,7 +557,7 @@ void GatePhysicsList::AddProcesses(G4String processname, G4String particle)
 
   std::vector<GateVProcess *>  process = FindProcess(processname);
   if(process.size()>0)
-    for(unsigned int i=0; i<process.size(); i++) process[i]->CreateEnabledParticle(particle);
+    for(unsigned int i=0; i<process.size(); ++i) process[i]->CreateEnabledParticle(particle);
   else
     {
       GateWarning("Unknown process: "<<processname );
@@ -590,7 +590,7 @@ void GatePhysicsList::RemoveProcesses(G4String processname, G4String particle)
 
   std::vector<GateVProcess *>  process = FindProcess(processname);
   if(process.size()>0)
-    for(unsigned int i=0; i<process.size(); i++) process[i]->RemoveElementOfParticleList(particle);
+    for(unsigned int i=0; i<process.size(); ++i) process[i]->RemoveElementOfParticleList(particle);
   else
     {
       GateWarning("Unknown process: "<<processname );;
@@ -611,7 +611,7 @@ void GatePhysicsList::PurgeIfFictitious()
 {
   bool isFictitious = false;
   // We first check if fictitious process is activated
-  for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++) {
+  for(unsigned int i=0; i<GetTheListOfProcesss()->size(); ++i) {
     if ( (*GetTheListOfProcesss())[i]->GetG4ProcessName() == "Fictitious" &&
          (*GetTheListOfProcesss())[i]->GetTheListOfEnabledParticles().size() != 0)
       {
@@ -630,7 +630,7 @@ void GatePhysicsList::PurgeIfFictitious()
            << "  --> Compton:         standard\n"
            << "  --> Rayleigh:        inactive\n"
            << "  --> GammaConversion: inactive\n";
-    for(unsigned int i=0; i<(*GetTheListOfProcesss()).size(); i++) {
+    for(unsigned int i=0; i<(*GetTheListOfProcesss()).size(); ++i) {
       if ( (*GetTheListOfProcesss())[i]->GetG4ProcessName() == "LowEnergyRayleighScattering" ||
            (*GetTheListOfProcesss())[i]->GetG4ProcessName() == "PhotoElectric" ||
            (*GetTheListOfProcesss())[i]->GetG4ProcessName() == "LowEnergyPhotoElectric" ||
@@ -682,7 +682,7 @@ void GatePhysicsList::Write(G4String file)
     if(manager->GetProcessListLength()==1 && (*processvector)[0]->GetProcessName()== "Transportation") continue;
     os    <<"  * "<<particle->GetParticleName().data()<<"\n";
     iDisp++;
-    for(int j=0;j<manager->GetProcessListLength();j++)
+    for(int j=0;j<manager->GetProcessListLength();++j)
       {
 	if( (*processvector)[j]->GetProcessName() !=  "Transportation" )
 	  os<<"    - "<<(*processvector)[j]->GetProcessName().data()<<"\n";
@@ -694,7 +694,7 @@ void GatePhysicsList::Write(G4String file)
 
   os.close();
 
-  for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
+  for(unsigned int i=0; i<GetTheListOfProcesss()->size(); ++i)
     (*GetTheListOfProcesss())[i]->PrintEnabledParticlesToFile(file);
   os.open(file.data(), std::ios_base::app);
   os << Gateendl;
@@ -726,7 +726,7 @@ void GatePhysicsList::SetEmProcessOptions()
   // Fluorescence processes
   // - register all regions in deexcitation process with fluo, auger and PIXE set to "true"
   GateObjectStore *store = GateObjectStore::GetInstance();
-  for(GateObjectStore::iterator it=store->begin() ; it!=store->end() ; it++){
+  for(GateObjectStore::iterator it=store->begin() ; it!=store->end() ; ++it){
     opt->SetDeexcitationActiveRegion(it->first,true,true,true); // G4region, fluo, auger, PIXE
   }
 }
@@ -795,7 +795,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
 	mapOfRegionCuts[regionName].protonCut = -1;
       }
     }
-    pi++;
+    ++pi;
   }
 
   //-----------------------------------------------------------------------------
@@ -892,7 +892,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
       //G4ProductionCutsTable::GetProductionCutsTable()->UpdateCoupleTable(region->GetWorldPhysical());
       //modif Claire 31mars2011
     }
-    it++;
+    ++it;
   } // end loop regions
 
 
@@ -929,7 +929,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
       G4ParticleDefinition* particle = theParticleIterator->value();
       G4ProcessManager* pmanager = particle->GetProcessManager();
       G4String particleName = particle->GetParticleName();
-      for(unsigned int i=0; i<mListOfStepLimiter.size(); i++) {
+      for(unsigned int i=0; i<mListOfStepLimiter.size(); ++i) {
 	if(mListOfStepLimiter[i]==particleName) {
           GateMessage("Cuts", 3, "Activate G4StepLimiter for " << particleName << Gateendl);
           pmanager->AddProcess(new G4StepLimiter, -1,-1,3);
@@ -948,7 +948,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
       G4ParticleDefinition* particle = theParticleIterator->value();
       G4ProcessManager* pmanager = particle->GetProcessManager();
       G4String particleName = particle->GetParticleName();
-      for(unsigned int i=0; i<mListOfG4UserSpecialCut.size(); i++) {
+      for(unsigned int i=0; i<mListOfG4UserSpecialCut.size(); ++i) {
 	if(mListOfG4UserSpecialCut[i]==particleName) {
           GateMessage("Cuts", 3, "Activate G4UserSpecialCuts for " << particleName << Gateendl);
           pmanager-> AddProcess(new G4UserSpecialCuts,   -1,-1,4);
@@ -971,7 +971,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
         mapOfVolumeUserLimits[regionName]= new GateUserLimits();
       }
     }
-    pi++;
+    ++pi;
   }
 
   VolumeUserLimitsMapType::iterator it2 = mapOfVolumeUserLimits.begin();

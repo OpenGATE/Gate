@@ -53,7 +53,7 @@ G4double GateARFTableMgr::ScanTables(G4double x , G4double y , G4double theEnerg
 {
 std::map<G4int,GateARFTable*>::iterator aIt;
 
-for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
+for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; ++aIt )
 {
   if ( (theEnergy - ( (*aIt).second )->GetElow() > 1.e-8 ) && (theEnergy - ( (*aIt).second )->GetEhigh() < 1.e-8 ) )
   {
@@ -68,7 +68,7 @@ void GateARFTableMgr::AddaTable( GateARFTable* aTable )
 {
 aTable->SetIndex( m_currentIndex );
 m_theList.insert( std::make_pair(m_currentIndex, aTable) );
-m_currentIndex++;
+++m_currentIndex;
 }
 
 void GateARFTableMgr::ComputeARFTablesFromEW(G4String aS)
@@ -136,7 +136,7 @@ if ( LoadARFTables == 1 ) return 1;
 
 std::map<G4int,GateARFTable*>::iterator aIt;
 
-for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
+for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; ++aIt )
 ( (*aIt).second )->Initialize(m_EThreshHold , m_EUpHold );
 
 G4cout << "GateARFTableMgr::InitializeTables() : All ARF Tables are initialized \n";
@@ -147,10 +147,10 @@ void GateARFTableMgr::SetNSimuPhotons(G4double* NPhotons)
 std::map<G4int,GateARFTable*>::iterator aIt;
 G4int i = 0;
 
-for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
+for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; ++aIt )
 {
  ( (*aIt).second )->SetNSimuPhotons( NPhotons[i]  );
-i++;
+++i;
 }
 }
 
@@ -166,7 +166,7 @@ std::map<G4int,GateARFTable*>::iterator aIt;
 
 m_EnReso = aEnerReso;
 
-for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
+for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; ++aIt )
 {
  ( (*aIt).second )->SetEnergyReso( aEnerReso );
 }
@@ -179,7 +179,7 @@ std::map<G4int,GateARFTable*>::iterator aIt;
 
 m_ERef = aEnerReso;
 
-for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
+for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; ++aIt )
 {
  ( (*aIt).second )->SetERef( aEnerReso );
 }
@@ -189,7 +189,7 @@ void GateARFTableMgr::convertDRF2ARF()
 {
 std::map<G4int,GateARFTable*>::iterator aIt;
 G4cout << " GateARFTableMgr::convertDRF2ARF()   CONVERTING DRF tables to ARF TABLES\n";
-for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
+for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; ++aIt )
 {
 //G4cout << " GateARFTableMgr::convertDRF2ARF()  flushing the raw DRF table to a binary file \n";
  ( (*aIt).second )->convertDRF2ARF();
@@ -213,7 +213,7 @@ std::map<G4int,GateARFTable*>::iterator aIt;
 G4cout << " ----------------------------------------------------------------------------------------------\n";
 G4cout << " GateARFTableMgr::ListTables()  List of the ARF Tables for ARF Sensitive Detector " << GetName() << Gateendl;
 
-for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
+for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; ++aIt )
 { ( (*aIt).second )->Describe(); }
 G4cout << " ----------------------------------------------------------------------------------------------\n";
 }
@@ -239,7 +239,7 @@ aIt = m_theList.begin();
     theSize = G4double( ( (*aIt).second )->GetTotalNb() );
 
     long pos = dest.tellp();
-    pos++;
+    ++pos;
     dest.write( (const char*)(&theSize),sizeof(G4double) );
 
 
@@ -248,7 +248,7 @@ aIt = m_theList.begin();
     size_t theBufferSize = theNb*sizeof(G4double);
 
 
-for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
+for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; ++aIt )
 {
     G4double* theBuffer = new G4double[ theNb ];
 
@@ -257,7 +257,7 @@ for ( aIt = m_theList.begin() ; aIt != m_theList.end() ; aIt++ )
 //    size_t thePosition = theTableNb*theBufferSize;
 
     long pos = dest.tellp();
-    pos++;
+    ++pos;
 
     dest.seekp( pos, std::ios::beg);
 
@@ -308,7 +308,7 @@ void GateARFTableMgr::LoadARFFromBinaryFile(G4String theFileName)
 
     dest.read( (char*)(&theNbOfTables),sizeof(G4double) );
     long pos = dest.tellg();
-    //pos++;
+    //++pos;
 
     G4cout << "Nb Of Tables "<<theNbOfTables<< Gateendl;
     G4cout <<pos<< Gateendl;
@@ -324,7 +324,7 @@ void GateARFTableMgr::LoadARFFromBinaryFile(G4String theFileName)
 
     G4double* theBuffer = new G4double[ theNb ];
 
-for ( size_t i =0  ; i < size_t(theNbOfTables) ; i++ )
+for ( size_t i =0  ; i < size_t(theNbOfTables) ; ++i )
 {
     std::ostringstream oss;
 
@@ -333,7 +333,7 @@ for ( size_t i =0  ; i < size_t(theNbOfTables) ; i++ )
     G4String thename = basename+oss.str();
 
     long pos = dest.tellg();
-    pos++;
+    ++pos;
     G4cout << " Reading ARF Table " <<thename<<" from file " <<theFileName<<" at position ";
 
     dest.seekg( pos, std::ios::beg);

@@ -164,7 +164,7 @@ int zmemcmp(s1, s2, len)
 {
     uInt j;
 
-    for (j = 0; j < len; j++) {
+    for (j = 0; j < len; ++j) {
         if (s1[j] != s2[j]) return 2*(s1[j] > s2[j])-1;
     }
     return 0;

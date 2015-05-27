@@ -71,10 +71,10 @@ GateDigitizer::~GateDigitizer()
 GateNamedObject* GateDigitizer::FindElement(const G4String& name)
 {
   size_t i;
-  for (i=0; i<m_singleChainList.size() ; i++)
+  for (i=0; i<m_singleChainList.size() ; ++i)
     if (m_singleChainList[i]->GetObjectName() == name)
       return m_singleChainList[i];
-  for (i=0; i<m_coincidenceSorterList.size() ; i++)
+  for (i=0; i<m_coincidenceSorterList.size() ; ++i)
     if (m_coincidenceSorterList[i]->GetObjectName() == name)
       return m_coincidenceSorterList[i];
   return 0;
@@ -111,7 +111,7 @@ void GateDigitizer::InsertCoincidenceChain(GateCoincidencePulseProcessorChain* n
 void GateDigitizer::DescribeChains(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "Nb of chains:       " << m_singleChainList.size() << "\n";
-  for (size_t i=0; i<m_singleChainList.size(); i++)
+  for (size_t i=0; i<m_singleChainList.size(); ++i)
       G4cout << GateTools::Indent(indent+1) << GetChain(i)->GetObjectName() << Gateendl;
 }
 //-----------------------------------------------------------------
@@ -216,14 +216,14 @@ GatePulseList* GateDigitizer::FindPulseList(const G4String& pulseListName)
     G4cout << "[GateDigitizer::FindPulseList]: Looking for pulse-list '" << pulseListName << "'"<< Gateendl;
 
   for (std::vector<GatePulseListAlias>::iterator it=m_pulseListAliasVector.begin();
-		  it!=m_pulseListAliasVector.end(); it++)
+		  it!=m_pulseListAliasVector.end(); ++it)
     if ( it->first == pulseListName) {
       if (nVerboseLevel>1)
         G4cout << "[GateDigitizer::FindPulseList]: Found pulse-list '" << pulseListName << "'"<< Gateendl;
       return it->second;
     }
   for (std::vector<GatePulseList*>::iterator it=m_pulseListVector.begin();
-		  it!=m_pulseListVector.end(); it++)
+		  it!=m_pulseListVector.end(); ++it)
     if ( (*it)->GetListName() == pulseListName) {
       if (nVerboseLevel>1)
         G4cout << "[GateDigitizer::FindPulseList]: Found pulse-list alias '" << pulseListName << "'"<< Gateendl;
@@ -245,14 +245,14 @@ std::vector<GateCoincidencePulse*> GateDigitizer::FindCoincidencePulse(const G4S
     G4cout << "[GateDigitizer::FindCoincidencePulse]: Looking for coincidence pulse '" << pulseName << "'"<< Gateendl;
 
   for (std::vector<GateCoincidencePulseListAlias>::iterator it=m_coincidencePulseListAliasVector.begin();
-  		  it!=m_coincidencePulseListAliasVector.end(); it++)
+  		  it!=m_coincidencePulseListAliasVector.end(); ++it)
     if ( it->first == pulseName) {
       if (nVerboseLevel>1)
         G4cout << "[GateDigitizer::FindCoincidencePulse]: Found pulse-list '" << pulseName << "'"<< Gateendl;
       ans.push_back(it->second);
     }
   for (std::vector<GateCoincidencePulse*>::iterator it=m_coincidencePulseVector.begin();
-    		  it!=m_coincidencePulseVector.end(); it++)
+    		  it!=m_coincidencePulseVector.end(); ++it)
     if ( (*it)->GetListName() == pulseName) {
       if (nVerboseLevel>1)
         G4cout << "[GateDigitizer::FindCoincidencePulse]: Found coincidence pulse '" << pulseName << "'"<< Gateendl;
@@ -300,7 +300,7 @@ void GateDigitizer::StoreNewCoincidenceProcessorChain(GateCoincidencePulseProces
   if(processorChain->GetInputNames().size() == 0)
   {
      G4int index = -1;
-     for(size_t i=0; i<GetCoinSorterList().size(); i++)
+     for(size_t i=0; i<GetCoinSorterList().size(); ++i)
      {
         G4String coincSorterChainName = GetCoinSorterList()[i]->GetOutputName();
         if(coincSorterChainName.compare("Coincidences") == 0)
@@ -376,7 +376,7 @@ void GateDigitizer::Digitize()
 
   // Have the hits processed by the pulse-processor chains
   size_t i;
-  for (i=0; i<GetChainNumber() ; i++) {
+  for (i=0; i<GetChainNumber() ; ++i) {
     if (nVerboseLevel>1)
       G4cout << "[GateDigitizer::Digitize]: launching processor chain '" << GetChain(i)->GetObjectName() << "'\n";
     GetChain(i)->ProcessPulseList();
@@ -454,7 +454,7 @@ void GateDigitizer::AddSystem(GateVSystem* aSystem)
    // mhadi_Note: We have here only one pulse processor chain, this is the default chain created at the detector construction stage and
    //             which has the "Singles" outputName. So this loop here is to set a system to this chain.
    size_t i;
-   for (i=0; i<GetChainNumber() ; i++)
+   for (i=0; i<GetChainNumber() ; ++i)
    {
       if(!(GetChain(i)->GetSystem()))
          GetChain(i)->SetSystem((*m_systemList)[0]);
@@ -490,7 +490,7 @@ GateVSystem* GateDigitizer::FindSystem(GatePulseProcessorChain* processorChain)
 //------------------------------------------------------------------------------
 GateVSystem* GateDigitizer::FindSystem(G4String& systemName)
 {
-   for(GateSystemList::iterator it=m_systemList->begin(); it!=m_systemList->end(); it++)
+   for(GateSystemList::iterator it=m_systemList->begin(); it!=m_systemList->end(); ++it)
    {
       if(systemName.compare((*it)->GetOwnName()) == 0)
          return (*it);

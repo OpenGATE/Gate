@@ -118,7 +118,7 @@ public:
   //bool IsFilter(){return mIsFilter;}
   GateFilterManager * GetFilterManager(){return pFilterManager;}
   G4int GetNumberOfFilters() {return mNumOfFilters;}
-  void IncNumberOfFilters() {mNumOfFilters++;}
+  void IncNumberOfFilters() {++mNumOfFilters;}
   //void AddFilter(G4String type){GateActorManager::GetInstance()->AddFilter(type, GetObjectname() )}
 
 protected:

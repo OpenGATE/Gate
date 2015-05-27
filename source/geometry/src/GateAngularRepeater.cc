@@ -97,13 +97,13 @@ void GateAngularRepeater::PushMyPlacements(const G4RotationMatrix& currentRotati
     G4cout << "\n GateAngularRepeater says: *** WARNING *** Modulo number > ModuloMax change value to 1 !! \n";
     m_moduloNumber = 1 ;}
 
-  //      for ( i= m_moduloNumber+1; i <= ModuloMax ; i++) {
+  //      for ( i= m_moduloNumber+1; i <= ModuloMax ; ++i) {
   //      if(Zshift_vector[i] > 0.)
   //      G4cout << "\n GateAngularRepeater says: macro line " << "setZShift" << i <<" "<<Zshift_vector[i]<<" ...\n"
   //      " with i greater than "<<m_moduloNumber<<" is not considered !!" <<
   //      "\n for bigger values, please change #define ModuloMax [max]\n in file GateAngularRepeater.h\n";}
 
-  for ( G4int i=0 ; i < GetRepeatNumber() ; i++) {
+  for ( G4int i=0 ; i < GetRepeatNumber() ; ++i) {
 
     G4RotationMatrix newRotationMatrix = currentRotationMatrix;
     G4Point3D m_shift = G4ThreeVector(0., 0., Zshift_vector[i%m_moduloNumber]); // Pick up right value

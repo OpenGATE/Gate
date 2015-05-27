@@ -124,15 +124,15 @@ void GateVDistributionArray::FillRepartition()
     m_arrayRepartition.clear();
     if (m_arrayX.size()<2) return;
     m_arrayRepartition.resize(m_arrayX.size());
-    for (G4int i=0;i<(G4int)m_arrayX.size();i++){m_arrayRepartition[i]=0;}
-    for (G4int i=1;i<(G4int)m_arrayX.size();i++){
+    for (G4int i=0;i<(G4int)m_arrayX.size();++i){m_arrayRepartition[i]=0;}
+    for (G4int i=1;i<(G4int)m_arrayX.size();++i){
     	G4double x1 = m_arrayX[i-1];
     	G4double x2 = m_arrayX[i];
     	G4double y1 = m_arrayY[i-1];
     	G4double y2 = m_arrayY[i];
     	m_arrayRepartition[i] = m_arrayRepartition[i-1] + (y1+y2)*(x2-x1)/2;
     }
-    for (G4int i=0;i<(G4int)m_arrayX.size();i++){
+    for (G4int i=0;i<(G4int)m_arrayX.size();++i){
     	m_arrayRepartition[i]/=Integral();
 //	G4cout<<"Repartition["<<i<<"] : "<<m_arrayX[i]<<'\t'<<m_arrayRepartition[i]<< Gateendl;
     }

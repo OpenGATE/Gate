@@ -150,14 +150,14 @@ void GateMachine::SwapEndians (double & d) {
   *(((int*)&d)+1) = ENDIAN_INVERT_4BYTES(tmp);
 }
 
-void GateMachine::SwapEndians (unsigned short* d, long n) { for (long i=0;i<n;i++,++d) SwapEndians(*d); }
-void GateMachine::SwapEndians (short* d, long n) { for (long i=0;i<n;i++,++d) SwapEndians(*d); }
-void GateMachine::SwapEndians (unsigned int* d, long n) { for (long i=0;i<n;i++,++d) SwapEndians(*d); }
-void GateMachine::SwapEndians (int* d, long n) { for (long i=0;i<n;i++,++d) SwapEndians(*d); }
-void GateMachine::SwapEndians (unsigned long* d, long n) { for (long i=0;i<n;i++,++d) SwapEndians(*d); }
-void GateMachine::SwapEndians (long* d, long n) { for (long i=0;i<n;i++,++d) SwapEndians(*d); }
-void GateMachine::SwapEndians (float* d, long n) { for (long i=0;i<n;i++,++d) SwapEndians(*d); }
-void GateMachine::SwapEndians (double* d, long n) { for (long i=0;i<n;i++,++d) SwapEndians(*d); }
+void GateMachine::SwapEndians (unsigned short* d, long n) { for (long i=0;i<n;++i,++d) SwapEndians(*d); }
+void GateMachine::SwapEndians (short* d, long n) { for (long i=0;i<n;++i,++d) SwapEndians(*d); }
+void GateMachine::SwapEndians (unsigned int* d, long n) { for (long i=0;i<n;++i,++d) SwapEndians(*d); }
+void GateMachine::SwapEndians (int* d, long n) { for (long i=0;i<n;++i,++d) SwapEndians(*d); }
+void GateMachine::SwapEndians (unsigned long* d, long n) { for (long i=0;i<n;++i,++d) SwapEndians(*d); }
+void GateMachine::SwapEndians (long* d, long n) { for (long i=0;i<n;++i,++d) SwapEndians(*d); }
+void GateMachine::SwapEndians (float* d, long n) { for (long i=0;i<n;++i,++d) SwapEndians(*d); }
+void GateMachine::SwapEndians (double* d, long n) { for (long i=0;i<n;++i,++d) SwapEndians(*d); }
 
 
 

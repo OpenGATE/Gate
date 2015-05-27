@@ -93,7 +93,7 @@ void GateSteppingVerbose::NewStep()
 
     bool knownState = false;
 
-    for (GateTrackLevelVec::iterator it=theListOfTrack.begin(); it!=theListOfTrack.end(); it++)
+    for (GateTrackLevelVec::iterator it=theListOfTrack.begin(); it!=theListOfTrack.end(); ++it)
     {
       if(it->Particle == mTempo.Particle && it->Process == mTempo.Process &&
       it->Volume == mTempo.Volume && it->Energy == mTempo.Energy)
@@ -134,7 +134,7 @@ void GateSteppingVerbose::StepInfo()
 
   //if(!pTrackTime->IsValid()) pTrackTime->Stop();
  // CopyState();
-  /*for(unsigned int i = 0; i<theListOfParticle.size();i++)
+  /*for(unsigned int i = 0; i<theListOfParticle.size();++i)
   {
    if(!theListOfTimer[i]->IsValid()) theListOfTimer[i]->Stop();
   }*/
@@ -153,7 +153,7 @@ void GateSteppingVerbose::StepInfo()
   StepLevel.Energy = GetEnergyRange(fStep->GetPreStepPoint()->GetKineticEnergy());
   bool knownState = false;
 
-  for (GateTrackLevelVec::iterator it=theListOfStep.begin(); it!=theListOfStep.end(); it++)
+  for (GateTrackLevelVec::iterator it=theListOfStep.begin(); it!=theListOfStep.end(); ++it)
   {
       if(it->Particle == StepLevel.Particle && it->Process ==  StepLevel.Process &&
     	  it->Volume == StepLevel.Volume && it->Energy == StepLevel.Energy)
@@ -190,7 +190,7 @@ void GateSteppingVerbose::TrackingStarted()
 
   bool knownState = false;
 
-  for (GateTrackLevelVec::iterator it=theListOfTrack.begin(); it!=theListOfTrack.end(); it++)
+  for (GateTrackLevelVec::iterator it=theListOfTrack.begin(); it!=theListOfTrack.end(); ++it)
   {
     if(it->Particle == mTempo.Particle && it->Process == mTempo.Process &&
     it->Volume == mTempo.Volume && it->Energy == mTempo.Energy)
@@ -266,7 +266,7 @@ void GateSteppingVerbose::EndOfRun()
 {
 
 
- /* for(unsigned int i = 0; i<theListOfParticle.size();i++)
+ /* for(unsigned int i = 0; i<theListOfParticle.size();++i)
   {
     G4cout<<theListOfParticle[i]<<"     "<<theListOfTimer[i]->GetUserElapsed()<<"   "<<G4BestUnit(theListOfTimer[i]->GetRealElapsed() , "Time")<< Gateendl;
 //G4BestUnit(theListOfUsedTime[i] , "Time");
@@ -276,10 +276,10 @@ void GateSteppingVerbose::EndOfRun()
 
   bool alreadyUsed = false;
 
-  for (GateTrackLevelVec::iterator it=theListOfTrack.begin(); it!=theListOfTrack.end(); it++)
+  for (GateTrackLevelVec::iterator it=theListOfTrack.begin(); it!=theListOfTrack.end(); ++it)
   {
      alreadyUsed = false;
-     for(GateTrackLevelVec::iterator jt = UsedThings.begin(); jt!=UsedThings.end(); jt++)
+     for(GateTrackLevelVec::iterator jt = UsedThings.begin(); jt!=UsedThings.end(); ++jt)
      {
         if(it->Particle == jt->Particle)
         {
@@ -305,7 +305,7 @@ void GateSteppingVerbose::EndOfRun()
   os<< Gateendl;
   os<<"----> Track level\n";
   os<< Gateendl;
-  for(GateTrackLevelVec::iterator jt = UsedThings.begin(); jt!=UsedThings.end(); jt++)
+  for(GateTrackLevelVec::iterator jt = UsedThings.begin(); jt!=UsedThings.end(); ++jt)
   {
     os<<"------------------------------------------------------------------------\n";
     os<<jt->Particle<<"     "<<jt->Time<<" s\n";
@@ -320,11 +320,11 @@ void GateSteppingVerbose::EndOfRun()
 
   UsedThings.clear();
 
-  for (GateTrackLevelVec::iterator it=theListOfStep.begin(); it!=theListOfStep.end(); it++)
+  for (GateTrackLevelVec::iterator it=theListOfStep.begin(); it!=theListOfStep.end(); ++it)
   {
      //os<<theListOfParticle[i]<<"  "<<theListOfProcess[i]<< Gateendl;
      alreadyUsed = false;
-     for(GateTrackLevelVec::iterator jt = UsedThings.begin(); jt!=UsedThings.end(); jt++)
+     for(GateTrackLevelVec::iterator jt = UsedThings.begin(); jt!=UsedThings.end(); ++jt)
      {
         if(it->Particle==jt->Particle)
         {
@@ -349,7 +349,7 @@ void GateSteppingVerbose::EndOfRun()
     os<<"----> Physical step level\n";
     os<< Gateendl;
 
-    for(GateTrackLevelVec::iterator jt = UsedThings.begin(); jt!=UsedThings.end(); jt++)
+    for(GateTrackLevelVec::iterator jt = UsedThings.begin(); jt!=UsedThings.end(); ++jt)
     {
       os<<"------------------------------------------------------------------------\n";
       os<<jt->Particle<<"     "<<jt->Time<<" s\n";
@@ -396,7 +396,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
 
   G4int energyMax = 0;
 
-  for (GateTrackLevelVec::iterator it=theListOfTrack.begin(); it!=theListOfTrack.end(); it++)
+  for (GateTrackLevelVec::iterator it=theListOfTrack.begin(); it!=theListOfTrack.end(); ++it)
   {
 	//Energy
     if(it->Energy > energyMax) energyMax = it->Energy;
@@ -409,16 +409,16 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
   }
 
   os<<"  ";
-  for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; it++)
+  for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; ++it)
   {
     os<<"\t"<<it->first;
   }
   os<< Gateendl;
  
 
-  for(int j = 3; j<=energyMax;j++)
+  for(int j = 3; j<=energyMax;++j)
   {
-	for (GateTrackLevelVec::iterator it=theListOfTrack.begin(); it!=theListOfTrack.end(); it++)
+	for (GateTrackLevelVec::iterator it=theListOfTrack.begin(); it!=theListOfTrack.end(); ++it)
     {
       theListOfUsedVolume[it->Volume] = 0.;
       if(it->Particle == particle)
@@ -432,7 +432,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
     }
     if(j==3) os<<"0 - 1 keV";
     if(j>3) os<<G4BestUnit(pow(10,j-3),"Energy")<<" - "<<G4BestUnit(pow(10,j-2),"Energy");
-    for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; it++)
+    for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; ++it)
     {
       os<<"\t"<<it->second;
     }
@@ -440,7 +440,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
   }
 
   os<<"Total";
-  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerVolume.begin() ; it!=theListOfTotalPerVolume.end() ; it++)
+  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerVolume.begin() ; it!=theListOfTotalPerVolume.end() ; ++it)
   {
     os<<"\t"<<it->second;
   }
@@ -449,16 +449,16 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
     os<< Gateendl;    
 
   os<<"  ";
-  for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; it++)
+  for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; ++it)
   {
     os<<"\t"<<it->first;
   }
   os<< Gateendl;    
  
 
-  for(int j = 3; j<=energyMax;j++)
+  for(int j = 3; j<=energyMax;++j)
   {
-	for (GateTrackLevelVec::iterator it=theListOfTrack.begin(); it!=theListOfTrack.end(); it++)
+	for (GateTrackLevelVec::iterator it=theListOfTrack.begin(); it!=theListOfTrack.end(); ++it)
     {
       if(it->Particle == particle)
       {
@@ -472,7 +472,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
     }
     if(j==3) os<<"0 - 1 keV";
     if(j>3) os<<G4BestUnit(pow(10,j-3),"Energy")<<" - "<<G4BestUnit(pow(10,j-2),"Energy");
-    for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; it++)
+    for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; ++it)
     {
       os<<"\t"<<it->second;
     }
@@ -480,7 +480,7 @@ void GateSteppingVerbose::DisplayTrack(G4String particle,std::ofstream &os)
   }
 
   os<<"Total";
-  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerProcess.begin() ; it!=theListOfTotalPerProcess.end() ; it++)
+  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerProcess.begin() ; it!=theListOfTotalPerProcess.end() ; ++it)
   {
     os<<"\t"<<it->second;
   }
@@ -507,7 +507,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
 
   G4int energyMax = 0;
 
-  for (GateTrackLevelVec::iterator it=theListOfStep.begin(); it!=theListOfStep.end(); it++)
+  for (GateTrackLevelVec::iterator it=theListOfStep.begin(); it!=theListOfStep.end(); ++it)
   {
 	//Energy
     if(it->Energy>energyMax) energyMax = it->Energy;
@@ -517,16 +517,16 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
   }
 
   os<<"  ";
-  for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; it++)
+  for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; ++it)
   {
     os<<"\t"<<it->first;
   }
   os<< Gateendl;
  
 
-  for(int j = 3; j<=energyMax;j++)
+  for(int j = 3; j<=energyMax;++j)
   {
-	for (GateTrackLevelVec::iterator it=theListOfStep.begin(); it!=theListOfStep.end(); it++)
+	for (GateTrackLevelVec::iterator it=theListOfStep.begin(); it!=theListOfStep.end(); ++it)
     {
       theListOfUsedVolume[it->Volume] = 0.;
       if(it->Particle == particle)
@@ -541,7 +541,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
     }
     if(j==3) os<<"0 - 1 keV";
     if(j>3) os<<G4BestUnit(pow(10,j-3),"Energy")<<" - "<<G4BestUnit(pow(10,j-2),"Energy");
-    for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; it++)
+    for(std::map<G4String,G4double>::iterator it=theListOfUsedVolume.begin() ; it!=theListOfUsedVolume.end() ; ++it)
     {
       os<<"\t"<<it->second;
     }
@@ -549,7 +549,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
   }
 
   os<<"Total";
-  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerVolume.begin() ; it!=theListOfTotalPerVolume.end() ; it++)
+  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerVolume.begin() ; it!=theListOfTotalPerVolume.end() ; ++it)
   {
     os<<"\t"<<it->second;
   }
@@ -558,7 +558,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
     os<< Gateendl;    
 
 //Process
-  for (GateTrackLevelVec::iterator it=theListOfStep.begin(); it!=theListOfStep.end(); it++)
+  for (GateTrackLevelVec::iterator it=theListOfStep.begin(); it!=theListOfStep.end(); ++it)
   {
    // os<<theListOfParticle[i]<<"  "<<theListOfProcess[i]<< Gateendl;
     if(it->Particle == particle) {
@@ -568,20 +568,20 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
   }
 
   os<<"  ";
-  for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; it++)
+  for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; ++it)
   {
     os<<"\t"<<it->first;
   }
   os<< Gateendl;    
  
 
-  for(int j = 3; j<=energyMax;j++)
+  for(int j = 3; j<=energyMax;++j)
   {
-	for (GateTrackLevelVec::iterator it=theListOfStep.begin(); it!=theListOfStep.end(); it++)
+	for (GateTrackLevelVec::iterator it=theListOfStep.begin(); it!=theListOfStep.end(); ++it)
     {
       if(it->Particle == particle) theListOfUsedProcess[it->Process] = 0.;
     }  
-	for (GateTrackLevelVec::iterator it=theListOfStep.begin(); it!=theListOfStep.end(); it++)
+	for (GateTrackLevelVec::iterator it=theListOfStep.begin(); it!=theListOfStep.end(); ++it)
     {
       if(it->Particle == particle)
       {
@@ -595,7 +595,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
     }
     if(j==3) os<<"0 - 1 keV";
     if(j>3) os<<G4BestUnit(pow(10,j-3),"Energy")<<" - "<<G4BestUnit(pow(10,j-2),"Energy");
-    for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; it++)
+    for(std::map<G4String,G4double>::iterator it=theListOfUsedProcess.begin() ; it!=theListOfUsedProcess.end() ; ++it)
     {
       os<<"\t"<<it->second;
     }
@@ -603,7 +603,7 @@ void GateSteppingVerbose::DisplayStep(G4String particle,  std::ofstream &os)
   }
 
   os<<"Total";
-  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerProcess.begin() ; it!=theListOfTotalPerProcess.end() ; it++)
+  for(std::map<G4String,G4double>::iterator it=theListOfTotalPerProcess.begin() ; it!=theListOfTotalPerProcess.end() ; ++it)
   {
     os<<"\t"<<it->second;
   }
@@ -622,6 +622,6 @@ void GateSteppingVerbose::Initialize(G4String filename, bool stepTracking)
   if(mIsTrackingStep)G4RunManagerKernel::GetRunManagerKernel()->GetTrackingManager()->SetVerboseLevel(0);
   fManager->SetVerboseLevel(1);
   mFileName = filename;
-  mNumberOfInit++;
+  ++mNumberOfInit;
 }
 //==================================================

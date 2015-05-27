@@ -1180,7 +1180,7 @@ __device__ unsigned long brent_int(unsigned int index, unsigned long *device_x_b
 			v ^= v<<10; v ^= v>>15;    // Recurrence has period 2**wlen-1
 			v ^= v<<4;  v ^= v>>13;    // for wlen = 32 or 64
 		}
-		for (w = v, k = 0; k < r; k++) { // Initialise circular array
+		for (w = v, k = 0; k < r; ++k) { // Initialise circular array
 			v ^= v<<10; v ^= v>>15; 
 			v ^= v<<4;  v ^= v>>13;
 			device_x_brent[k + z*index] = v + (w+=weyl);              

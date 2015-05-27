@@ -158,7 +158,7 @@ void GateFluenceActor::SaveData()
   // Printing scatter of each order
   if(mScatterOrderFilename != "")
     {
-      for(unsigned int k = 0; k<mFluencePerOrderImages.size(); k++)
+      for(unsigned int k = 0; k<mFluencePerOrderImages.size(); ++k)
 	{
 	  sprintf(filename, mScatterOrderFilename, rID, k+1);
 	  mFluencePerOrderImages[k]->Write((G4String)filename);
@@ -170,7 +170,7 @@ void GateFluenceActor::SaveData()
   {
     // Saving separately process images (e.g. Compton, Rayleigh...)
     std::map<G4String,GateImage*>::iterator it = mProcesses.end();
-    for(unsigned int i = 0; i<mProcessName.size(); i++){
+    for(unsigned int i = 0; i<mProcessName.size(); ++i){
       it = mProcesses.find(mProcessName[i]);
       if(it!=mProcesses.end()){
         stringstream filenamestream;

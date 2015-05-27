@@ -30,7 +30,7 @@ GateBlurringWithIntrinsicResolutionMessenger::GateBlurringWithIntrinsicResolutio
 GateBlurringWithIntrinsicResolutionMessenger::~GateBlurringWithIntrinsicResolutionMessenger()
 {
   delete newVolCmd;
-  for (G4int i=0;i<m_count;i++) {
+  for (G4int i=0;i<m_count;++i) {
     delete resolutionCmd[i];
     delete erefCmd[i];
   }
@@ -68,14 +68,14 @@ void GateBlurringWithIntrinsicResolutionMessenger::SetNewValue(G4UIcommand* comm
 void GateBlurringWithIntrinsicResolutionMessenger::SetNewValue2(G4UIcommand* command, G4String newValue)
 {
   G4int test=0;
-  for (G4int i=0;i<m_count;i++)  {
+  for (G4int i=0;i<m_count;++i)  {
     if ( command==resolutionCmd[i] ) {
       GetBlurringWithIntrinsicResolution()->SetIntrinsicResolution(m_name[i], resolutionCmd[i]->GetNewDoubleValue(newValue));
       test=1;
     }
   }
   if(test==0)
-    for (G4int i=0;i<m_count;i++)  {
+    for (G4int i=0;i<m_count;++i)  {
       if ( command==erefCmd[i] ) {
 	GetBlurringWithIntrinsicResolution()->SetRefEnergy(m_name[i], erefCmd[i]->GetNewDoubleValue(newValue));
 	test=1;

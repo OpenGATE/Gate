@@ -235,7 +235,7 @@ void GateTrackingAction::PreUserTrackingAction(const G4Track* a)
         {    G4bool test =false;
           G4Track* TmpTrack = const_cast<G4Track*>(a) ;
           std::vector<GateTrack*>::iterator iter;
-          for ( iter = aTrackVector->begin(); iter != aTrackVector->end(); iter++)
+          for ( iter = aTrackVector->begin(); iter != aTrackVector->end(); ++iter)
             {   // G4cout << "  GateTrackingAction::PreUserTrackingAction()   Tracks Vector size  " << aTrackVector->size()<< Gateendl;
               G4int track_id = (*iter)->GetTrackID();
               G4int p_id   = (*iter)->GetParentID();
@@ -273,7 +273,7 @@ void GateTrackingAction::PreUserTrackingAction(const G4Track* a)
                   G4LogicalVolumeStore* theLStore = G4LogicalVolumeStore::GetInstance();
                   G4LogicalVolume* theLogVol = 0;
                   std::vector<G4LogicalVolume*>::iterator itLog;
-                  for ( itLog = theLStore->begin(); itLog != theLStore->end(); itLog++)
+                  for ( itLog = theLStore->begin(); itLog != theLStore->end(); ++itLog)
                     { G4String aLogName = (*itLog)->GetName();
                       if ( aLogName == (*iter)->GetVertexVolumeName() )
                         {
@@ -301,14 +301,12 @@ void GateTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
 {
 
   if ( !dummy_track_vector.empty() )
-    { for ( size_t i = 0; i < dummy_track_vector.size();i++)
-        delete dummy_track_vector[i];
-      dummy_track_vector.clear();
+    { for ( std::vector<G4Track*>::iterator it = dummy_track_vector.begin(); it!= dummy_track_vector.end(); )
+        it=dummy_track_vector.erase(it);
     }
   if ( !dummy_step_vector.empty() )
-    { for ( size_t i = 0; i < dummy_step_vector.size();i++)
-        delete dummy_step_vector[i];
-      dummy_step_vector.clear();
+    { for ( std::vector<G4Step*>::iterator it = dummy_step_vector.begin(); it!= dummy_step_vector.end(); )
+    	it=dummy_step_vector.erase(it);
     }
 
   GateSteppingAction*  myAction = (GateSteppingAction *) (GateRunManager::GetRunManager()->GetUserSteppingAction()) ;
@@ -548,7 +546,7 @@ G4int GateSteppingAction::SeekNewFile(G4bool increase)
 
   if ( m_verboseLevel > 0 ) G4cout << " GateSteppingAction::SeekNewFile : Found one more Root Tracks Data File to open.\n";
   GateToRoot* gateToRoot = (GateToRoot* ) ( GateOutputMgr::GetInstance()->GetModule("root") );
-  if ( increase == true ) { m_currentN++;}
+  if ( increase == true ) { ++m_currentN;}
   if ( m_verboseLevel > 0 ) G4cout << " currrent file number in GateSteppingAction::SeekNewFile " << m_currentN << Gateendl;
   if ( gateToRoot != 0 ) {gateToRoot->OpenTracksFile();}
   return 1;

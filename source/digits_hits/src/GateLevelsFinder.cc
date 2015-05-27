@@ -43,7 +43,7 @@ std::vector<size_t> GateLevelsFinder::FindInputPulseParams(const GateVolumeID* a
 {
   std::vector<size_t> pulseLevels;
   size_t temp;
-  for(size_t i = 0; i < m_size; i++)
+  for(size_t i = 0; i < m_size; ++i)
     {
       temp = (aVolumeID->GetCopyNo(depth - i) != -1)
 	? aVolumeID->GetCopyNo(depth - i) : 0;

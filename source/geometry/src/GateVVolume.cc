@@ -426,7 +426,7 @@ G4bool GateVVolume::CheckOutputExistence()
   theList = GateActorManager::GetInstance()->GateActorManager::ReturnListOfActors();
 
   std::vector<GateVActor*>::iterator sit;
-  for(sit= theList.begin(); sit!=theList.end(); sit++)
+  for(sit= theList.begin(); sit!=theList.end(); ++sit)
     {
       if ((*sit)->GetObjectName() == "output")
 	{
@@ -449,7 +449,7 @@ void GateVVolume::AttachOutputToVolume()
 
   std::vector<GateVActor*>::iterator sit;
 
-  for(sit= theList.begin(); sit!=theList.end(); sit++)
+  for(sit= theList.begin(); sit!=theList.end(); ++sit)
     {
       if ((*sit)->GetObjectName() == "output")
 	{

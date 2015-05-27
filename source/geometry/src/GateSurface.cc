@@ -74,11 +74,11 @@ void GateSurface::BuildSurfaces()
     // first delete the old surfaces
     DeleteSurfaces();
     // iterate through all the physical volumes of iterator1
-    for (G4int i=0; i<m_inserter1->GetVolumeNumber(); i++)
+    for (G4int i=0; i<m_inserter1->GetVolumeNumber(); ++i)
     {
       G4VPhysicalVolume* vol1 = m_inserter1->GetPhysicalVolume(i);
       // iterate through all the physical volumes of iterator2
-      for (G4int j=0; j<m_inserter2->GetVolumeNumber(); j++)
+      for (G4int j=0; j<m_inserter2->GetVolumeNumber(); ++j)
       {
 	G4VPhysicalVolume*      vol2    = m_inserter2->GetPhysicalVolume(j);
 	// create a new surface

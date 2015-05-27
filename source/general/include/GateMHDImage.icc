@@ -81,7 +81,7 @@ void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * ima
 
   // Transform
   double matrix[9];
-  for(unsigned int i=0; i<3; i++) {
+  for(unsigned int i=0; i<3; ++i) {
     matrix[i*3  ] = image->GetTransformMatrix().row1()[i];
     matrix[i*3+1] = image->GetTransformMatrix().row2()[i];
     matrix[i*3+2] = image->GetTransformMatrix().row3()[i];
@@ -93,7 +93,7 @@ void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * ima
     if (convertDoubleFlag) {
       d.resize(image->GetNumberOfValues());
       PixelType * p = &(image->begin()[0]);
-      for(int i=0; i<image->GetNumberOfValues(); i++) {
+      for(int i=0; i<image->GetNumberOfValues(); ++i) {
         d[i] = (float)(*p); // cast into float
         ++p;
       }

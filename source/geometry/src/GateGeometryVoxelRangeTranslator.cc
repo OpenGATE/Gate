@@ -84,7 +84,7 @@ void GateGeometryVoxelRangeTranslator::ReadTranslationTable(G4String fileName)
   is >> nTotCol;
   //  G4cout << "nTotCol: " << nTotCol << Gateendl;
 
-  for (G4int iCol=0; iCol<nTotCol; iCol++) {
+  for (G4int iCol=0; iCol<nTotCol; ++iCol) {
     inFile.getline(buffer,200);
     is.clear();
     is.str(buffer);

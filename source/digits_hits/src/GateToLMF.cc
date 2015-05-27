@@ -55,7 +55,7 @@ GateToLMF::GateToLMF(const G4String& name,GateOutputMgr* outputMgr,GateVSystem *
     m_inputDataChannel("Singles"),
     m_inputDataChannelID(-1)
 {
-  for(int i = 0; i < 2; i++) {
+  for(int i = 0; i < 2; ++i) {
     m_LMFEnergy[i] = 0;
     m_LMFLayerID[i] = 0;
     m_LMFCrystalID[i] = 0;
@@ -114,7 +114,7 @@ GateToLMF::GateToLMF(const G4String& name,GateOutputMgr* outputMgr,GateVSystem *
 
   // pER                                                                                   //|
   // tested MALLOCs for Event Record structure                                             //|
-  for(int i = 0; i < 2; i++) {
+  for(int i = 0; i < 2; ++i) {
     pER[i] = (EVENT_RECORD*) malloc(sizeof(EVENT_RECORD));          //|
     if(pER[i]==NULL)                                                                            //|
       G4cout <<  "\n***ERROR : in GateToLMF.cc : impossible to do : malloc()" << "\n";       //|
@@ -144,7 +144,7 @@ GateToLMF::~GateToLMF()
     {
       if(pGDH)
 	free(pGDH);
-      for(int i = 0; i < 2; i++) {
+      for(int i = 0; i < 2; ++i) {
 	free(pER[i]->crystalIDs);
 	free(pER[i]->energy);
 	free(pER[i]);
@@ -178,7 +178,7 @@ void GateToLMF::buildLMFEventRecord()
   u16 flag;
 
   // static FILE *m_pfile=NULL;
-  for(k=0;k<8;k++)                //  TIME
+  for(k=0;k<8;++k)                //  TIME
       pER[0]->timeStamp[k] = m_pLMFTime[k][0]; //
 
 
@@ -280,7 +280,7 @@ void GateToLMF::createLMF_ASCIIfile(void)
       G4int m_RingModuloNumber = rsectorComponent->GetAngularModuloNumber();
 
       // G4cout << "2: "<< m_RingModuloNumber<<m_pZshift_vector << Gateendl;
-      for ( int i=0 ; i < m_RingModuloNumber ; i++)
+      for ( int i=0 ; i < m_RingModuloNumber ; ++i)
 	{
 	  if(m_pZshift_vector[i] != 0.)
 	    asciiFile << "z shift sector "<<i<<" mod "<<m_RingModuloNumber<<" : "<<m_pZshift_vector[i] / cm<<" cm"<< Gateendl;
@@ -409,7 +409,7 @@ void GateToLMF::StoreTheCoinciDigiInLMF(GateCoincidenceDigi *digi)
 
   GatePulse *aPulse[2];
 
-  for(int i= 0; i<2; i++) {
+  for(int i= 0; i<2; ++i) {
     aPulse[i] = &(digi->GetPulse(i));
 
     /*         Time              */
@@ -417,7 +417,7 @@ void GateToLMF::StoreTheCoinciDigiInLMF(GateCoincidenceDigi *digi)
       printf("\n************* EVENT TIME IS = %f\n",aPulse[i]->GetTime());
     SetTime(i,aPulse[i]->GetTime());
 
-    for(int k = 0; k<8; k++)
+    for(int k = 0; k<8; ++k)
       pER[i]->timeStamp[k] = m_pLMFTime[k][i];
 
     /*          Energy           */
@@ -493,7 +493,7 @@ void GateToLMF::StoreTheCoinciDigiInLMF(GateCoincidenceDigi *digi)
 
 //   LMFbuilder(pEncoH,pEH,pCRH,pGDH,pcC,pER[0],pCRR,&m_pfile,m_nameOfFile.c_str());   /* ...write it */
 
-  nCoinci++;
+  ++nCoinci;
   if((nCoinci%10000)==0)
     printf("\r%d coinci stored in LMF file",nCoinci);
 }
@@ -553,9 +553,9 @@ G4cout << " number of rsectors " << rsectornumber<< Gateendl;
 
   G4int RingID = -1;
   G4int TRNumber[200];
-  for ( G4int k = 0; k < 200 ; k++ )TRNumber[k]=0;
+  for ( G4int k = 0; k < 200 ; ++k )TRNumber[k]=0;
 
-for ( G4int k = 0; k < rsectornumber ; k++ )
+for ( G4int k = 0; k < rsectornumber ; ++k )
 {
 // determine the total number of rsectors components
 
@@ -569,7 +569,7 @@ G4cout << " rsector name  =" <<rsectorname<< Gateendl;
 
 if ( rsectorComponent->GetRingID() != RingID ) { AxialRsectorNumber += rsectorComponent->GetLinearRepeatNumber(); RingID =  rsectorComponent->GetRingID() ; }
 
-for ( G4int j = 0; j < rsectorComponent->GetLinearRepeatNumber(); j++)
+for ( G4int j = 0; j < rsectorComponent->GetLinearRepeatNumber(); ++j)
 TRNumber[RingID + j ] += rsectorComponent->GetAngularRepeatNumber();
 
   G4String module_name = "module"; if ( k > 0 ) module_name = rsectorname+module_name;
@@ -618,7 +618,7 @@ if ( (G4int)crystalComponent->GetActiveChildNumber() > rL ) rL = crystalComponen
 
 }
 
-for (G4int k = 1;k < RingID;k++)if ( TRNumber[k] != TRNumber[k-1] ){G4cout<<"GateToLMF::RecordBeginOfAcquisition() Ring # "<<k<<" and Ring # "<<k-1<<" do not have the same number of tangential Rsectors.\n";G4Exception("GateToLMF::RecordBeginOfAcquisition","Aborting...",FatalException,"Aborting...");}
+for (G4int k = 1;k < RingID;++k)if ( TRNumber[k] != TRNumber[k-1] ){G4cout<<"GateToLMF::RecordBeginOfAcquisition() Ring # "<<k<<" and Ring # "<<k-1<<" do not have the same number of tangential Rsectors.\n";G4Exception("GateToLMF::RecordBeginOfAcquisition","Aborting...",FatalException,"Aborting...");}
 
   fillEncoHforGate( AxialRsectorNumber,TRNumber[0] ,
 		   AxialModulesNumber ,
@@ -635,7 +635,7 @@ for (G4int k = 1;k < RingID;k++)if ( TRNumber[k] != TRNumber[k-1] ){G4cout<<"Gat
   pcC->typeOfCarrier = pEncoH->scanContent.eventRecordTag;                                 //|
 
 //bins = new G4int[AxialRsectorNumber * TRNumber[0] ];
-//for( G4int i = 0;i < AxialRsectorNumber * TRNumber[0] ;i++)bins[i]=0;
+//for( G4int i = 0;i < AxialRsectorNumber * TRNumber[0] ;++i)bins[i]=0;
 
   G4cout << "\n\n**************\n\n\n\n";
 }
@@ -656,7 +656,7 @@ void GateToLMF::RecordEndOfAcquisition()
       CloseLMFfile(m_pfile);
     } // these lines works but just for 1 file...
 
-      //for( G4int i = 0;i <  pEncoH->scannerTopology.totalNumberOfRsectors;i++)G4cout <<i<<" "<<bins[i]<< Gateendl;;
+      //for( G4int i = 0;i <  pEncoH->scannerTopology.totalNumberOfRsectors;++i)G4cout <<i<<" "<<bins[i]<< Gateendl;;
 }
 
 
@@ -691,7 +691,7 @@ void GateToLMF::RecordEndOfEvent(const G4Event*)
 	return;
       }
     n_digi =  SDC->entries();
-    for (iDigi=0 ; iDigi < n_digi ; iDigi++)
+    for (iDigi=0 ; iDigi < n_digi ; ++iDigi)
       StoreTheDigiInLMF((*SDC)[iDigi]);
   }
   else {
@@ -705,7 +705,7 @@ void GateToLMF::RecordEndOfEvent(const G4Event*)
 
 
     n_digi  =  CDC->entries();
-    for (size_t iDigi=0 ; iDigi < n_digi ; iDigi++)
+    for (size_t iDigi=0 ; iDigi < n_digi ; ++iDigi)
       StoreTheCoinciDigiInLMF((*CDC)[iDigi]);
   }
 }
@@ -844,7 +844,7 @@ void GateToLMF::SetTime(u8 id, G4double value)
   bufCharTime = u64ToU8(timeulli);
 
   //  memcpy(m_pLMFTime, doubleToChar(timeForLMF) , 8 );
-  for(int i =0 ; i<8 ; i++)
+  for(int i =0 ; i<8 ; ++i)
     m_pLMFTime[i][id] = bufCharTime[i];
 }
 
@@ -873,7 +873,7 @@ void GateToLMF::showOneLMFDigi()   // Display a digi in his LMF standard
   // ...................SHOW time
   G4cout <<  "\ntime (8 unsigned char)=" << "\n";
   int i=0;
-  for(i=0;i<8;i++)
+  for(i=0;i<8;++i)
     G4cout <<  "\t" << (G4int) m_pLMFTime[7-i][0];
   G4cout <<  " =  in picosec. : " << (G4double) u8ToDouble(m_pLMFTime[0]) << "\n";
   // ....................SHOW ID

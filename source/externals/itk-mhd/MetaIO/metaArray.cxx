@@ -383,7 +383,7 @@ ElementByteOrderSwap(void)
     case 2:
       {
       int i;
-      for(i=0; i<m_Length*m_ElementNumberOfChannels; i++)
+      for(i=0; i<m_Length*m_ElementNumberOfChannels; ++i)
         {
         ((MET_USHORT_TYPE *)m_ElementData)[i] =
               MET_ByteOrderSwapShort(((MET_USHORT_TYPE *)m_ElementData)[i]);
@@ -393,7 +393,7 @@ ElementByteOrderSwap(void)
     case 4:
       {
       int i;
-      for(i=0; i<m_Length*m_ElementNumberOfChannels; i++)
+      for(i=0; i<m_Length*m_ElementNumberOfChannels; ++i)
         {
         ((MET_UINT_TYPE *)m_ElementData)[i] =
               MET_ByteOrderSwapLong(((MET_UINT_TYPE *)m_ElementData)[i]);
@@ -404,7 +404,7 @@ ElementByteOrderSwap(void)
       {
       int i;
       char* data = (char*)m_ElementData;
-      for(i=0; i<m_Length*m_ElementNumberOfChannels; i++)
+      for(i=0; i<m_Length*m_ElementNumberOfChannels; ++i)
         {
         MET_ByteOrderSwap8(data);
         data += 8;
@@ -480,7 +480,7 @@ ImportBufferToElementData(const void * _fromBuffer,
     _fromMax = _fromMin;
 
     int i;
-    for(i=0; i<m_Length*m_ElementNumberOfChannels; i++)
+    for(i=0; i<m_Length*m_ElementNumberOfChannels; ++i)
       {
       double tf;
       MET_ValueToDouble(_fromElementType, _fromBuffer, i, &tf);
@@ -501,7 +501,7 @@ ImportBufferToElementData(const void * _fromBuffer,
     _toMax = _fromMax;
     }
 
-  for(int i=0; i<m_Length*m_ElementNumberOfChannels; i++)
+  for(int i=0; i<m_Length*m_ElementNumberOfChannels; ++i)
     {
     MET_ValueToValue(_fromElementType, _fromBuffer, i,
                      m_ElementType, m_ElementData,
@@ -1161,7 +1161,7 @@ M_ReadElements(METAIO_STREAM::ifstream * _fstream, void * _data,
     if(!m_BinaryData)
       {
       double tf;
-      for(int i=0; i<_dataQuantity*m_ElementNumberOfChannels; i++)
+      for(int i=0; i<_dataQuantity*m_ElementNumberOfChannels; ++i)
         {
         *_fstream >> tf;
         MET_DoubleToValue(tf, m_ElementType, _data, i);
@@ -1236,7 +1236,7 @@ M_WriteElements(METAIO_STREAM::ofstream * _fstream, const void * _data,
   if(!m_BinaryData)
     {
     double tf;
-    for(int i=0; i<m_Length*m_ElementNumberOfChannels; i++)
+    for(int i=0; i<m_Length*m_ElementNumberOfChannels; ++i)
       {
       MET_ValueToDouble(m_ElementType, _data, i, &tf);
       if((i+1)/10 == (double)(i+1.0)/10.0)

@@ -33,7 +33,7 @@ ContourControlPnt(int dim)
   m_X = new float[m_Dim];
   m_XPicked = new float[m_Dim];
   m_V = new float[m_Dim];
-  for(unsigned int i=0;i<m_Dim;i++)
+  for(unsigned int i=0;i<m_Dim;++i)
     {
     m_X[i] = 0;
     m_XPicked[i] = 0;
@@ -202,7 +202,7 @@ Clear(void)
   while(it != itEnd)
     {
     ContourControlPnt* pnt = *it;
-    it++;
+    ++it;
     delete pnt;
     }
   m_ControlPointsList.clear();
@@ -403,7 +403,7 @@ M_Read(void)
   MET_StringToWordArray(m_ControlPointDim, &pntDim, &pntVal);
 
   int i;
-  for(i=0;i<pntDim;i++)
+  for(i=0;i<pntDim;++i)
     {
     delete [] pntVal[i];
     }
@@ -430,14 +430,14 @@ M_Read(void)
     int d;
     i = 0;
     unsigned int k;
-    for(int j=0; j<m_NControlPoints; j++)
+    for(int j=0; j<m_NControlPoints; ++j)
       {
       ContourControlPnt* pnt = new ContourControlPnt(m_NDims);
 
         {
         int id;
         char * const num = (char *)(&id);
-        for(k=0;k<sizeof(int);k++)
+        for(k=0;k<sizeof(int);++k)
           {
           num[k] = _data[i+k];
           }
@@ -450,7 +450,7 @@ M_Read(void)
         {
         float td;
         char * const num = (char *)(&td);
-        for(k=0;k<sizeof(float);k++)
+        for(k=0;k<sizeof(float);++k)
           {
           num[k] = _data[i+k];
           }
@@ -463,7 +463,7 @@ M_Read(void)
         {
         float td;
         char * const num = (char *)(&td);
-        for(k=0;k<sizeof(float);k++)
+        for(k=0;k<sizeof(float);++k)
           {
           num[k] = _data[i+k];
           }
@@ -476,7 +476,7 @@ M_Read(void)
         {
         float td;
         char * const num = (char *)(&td);
-        for(k=0;k<sizeof(float);k++)
+        for(k=0;k<sizeof(float);++k)
           {
           num[k] = _data[i+k];
           }
@@ -489,7 +489,7 @@ M_Read(void)
         {
         float td;
         char * const num = (char *)(&td);
-        for(k=0;k<sizeof(float);k++)
+        for(k=0;k<sizeof(float);++k)
           {
           num[k] = _data[i+k];
           }
@@ -507,11 +507,11 @@ M_Read(void)
     // Ensure that there is enough space.
     assert(pntDim >= 1 + m_NDims * 3 + 4);
 
-    for(int j=0; j<m_NControlPoints; j++)
+    for(int j=0; j<m_NControlPoints; ++j)
       {
       ContourControlPnt* pnt = new ContourControlPnt(m_NDims);
 
-      for(int k=0; k<pntDim; k++)
+      for(int k=0; k<pntDim; ++k)
         {
         *m_ReadStream >> v[k];
         m_ReadStream->get(); // char c =
@@ -605,7 +605,7 @@ M_Read(void)
 
     MET_StringToWordArray(m_InterpolatedPointDim, &pntDim, &pntVal);
 
-    for(i=0;i<pntDim;i++)
+    for(i=0;i<pntDim;++i)
       {
       delete [] pntVal[i];
       }
@@ -632,14 +632,14 @@ M_Read(void)
       int d;
       unsigned int k;
       i=0;
-      for(int j=0; j<m_NInterpolatedPoints; j++)
+      for(int j=0; j<m_NInterpolatedPoints; ++j)
         {
         ContourInterpolatedPnt* pnt = new ContourInterpolatedPnt(m_NDims);
 
           {
           int id;
           char * const num = (char *)(&id);
-          for(k=0;k<sizeof(int);k++)
+          for(k=0;k<sizeof(int);++k)
             {
             num[k] = _data[i+k];
             }
@@ -652,7 +652,7 @@ M_Read(void)
           {
           float x;
           char * const num = (char *)(&x);
-          for(k=0;k<sizeof(float);k++)
+          for(k=0;k<sizeof(float);++k)
             {
             num[k] = _data[i+k];
             }
@@ -665,7 +665,7 @@ M_Read(void)
           {
           float x;
           char * const num = (char *)(&x);
-          for(k=0;k<sizeof(float);k++)
+          for(k=0;k<sizeof(float);++k)
             {
             num[k] = _data[i+k];
             }
@@ -683,11 +683,11 @@ M_Read(void)
       // Ensure that there is enough space.
       assert(pntDim >= 1 + m_NDims + 4);
 
-      for(int j=0; j<m_NInterpolatedPoints; j++)
+      for(int j=0; j<m_NInterpolatedPoints; ++j)
         {
         ContourInterpolatedPnt* pnt = new ContourInterpolatedPnt(m_NDims);
 
-        for(int k=0; k<pntDim; k++)
+        for(int k=0; k<pntDim; ++k)
           {
           *m_ReadStream >> v[k];
           m_ReadStream->get(); // char c =
@@ -755,36 +755,36 @@ M_Write(void)
       {
       unsigned int id = (*it)->m_Id;
       MET_SwapByteIfSystemMSB(&id,MET_UINT);
-      MET_DoubleToValue((double)id,MET_UINT,data,i++);
+      MET_DoubleToValue((double)id,MET_UINT,data,++i);
 
       for(d = 0; d < m_NDims; d++)
         {
         float pntX = (*it)->m_X[d];
         MET_SwapByteIfSystemMSB(&pntX,MET_FLOAT);
-        MET_DoubleToValue((double)pntX,MET_FLOAT,data,i++);
+        MET_DoubleToValue((double)pntX,MET_FLOAT,data,++i);
         }
 
       for(d = 0; d < m_NDims; d++)
         {
         float pntX = (*it)->m_XPicked[d];
         MET_SwapByteIfSystemMSB(&pntX,MET_FLOAT);
-        MET_DoubleToValue((double)pntX,MET_FLOAT,data,i++);
+        MET_DoubleToValue((double)pntX,MET_FLOAT,data,++i);
         }
 
       for(d = 0; d < m_NDims; d++)
         {
         float pntX = (*it)->m_V[d];
         MET_SwapByteIfSystemMSB(&pntX,MET_FLOAT);
-        MET_DoubleToValue((double)pntX,MET_FLOAT,data,i++);
+        MET_DoubleToValue((double)pntX,MET_FLOAT,data,++i);
         }
 
       for(d=0; d<4; d++)
         {
         float pntX = (*it)->m_Color[d];
         MET_SwapByteIfSystemMSB(&pntX,MET_FLOAT);
-        MET_DoubleToValue((double)pntX,MET_FLOAT,data,i++);
+        MET_DoubleToValue((double)pntX,MET_FLOAT,data,++i);
         }
-      it++;
+      ++it;
       }
 
     m_WriteStream->write((char *)data,(m_NDims*3+5)*m_NControlPoints*4);
@@ -821,7 +821,7 @@ M_Write(void)
         *m_WriteStream << (*it)->m_Color[d] << " ";
         }
       *m_WriteStream << METAIO_STREAM::endl;
-      it++;
+      ++it;
       }
     }
 
@@ -871,21 +871,21 @@ M_Write(void)
       {
       unsigned int id = (*it)->m_Id;
       MET_SwapByteIfSystemMSB(&id,MET_UINT);
-      MET_DoubleToValue((double)id,MET_UINT,data,i++);
+      MET_DoubleToValue((double)id,MET_UINT,data,++i);
 
       for(d = 0; d < m_NDims; d++)
         {
         float x = (*it)->m_X[d];
         MET_SwapByteIfSystemMSB(&x,MET_FLOAT);
-        MET_DoubleToValue((double)x,MET_FLOAT,data,i++);
+        MET_DoubleToValue((double)x,MET_FLOAT,data,++i);
         }
       for(d=0; d<4; d++)
         {
         float x = (*it)->m_Color[d];
         MET_SwapByteIfSystemMSB(&x,MET_FLOAT);
-        MET_DoubleToValue((double)x,MET_FLOAT,data,i++);
+        MET_DoubleToValue((double)x,MET_FLOAT,data,++i);
         }
-      it++;
+      ++it;
       }
 
     m_WriteStream->write((char *)data,(m_NDims+5)*m_NInterpolatedPoints*4);
@@ -914,7 +914,7 @@ M_Write(void)
         *m_WriteStream << (*it)->m_Color[d] << " ";
         }
       *m_WriteStream << METAIO_STREAM::endl;
-      it++;
+      ++it;
       }
     }
   return true;

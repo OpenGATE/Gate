@@ -194,13 +194,13 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin) {
 				G4ThreeVector(20 * cm, 20 * cm, 20 * cm));
 		tmp->Allocate();
 		int i, j, k;
-		for (i = 0; i < 32; i++)
-			for (j = 0; j < 32; j++)
-				for (k = 0; k < 32; k++)
+		for (i = 0; i < 32; ++i)
+			for (j = 0; j < 32; ++j)
+				for (k = 0; k < 32; ++k)
 					tmp->SetValue(i, j, k, 0);
-		for (i = 8; i < 24; i++)
-			for (j = 8; j < 24; j++)
-				for (k = 8; k < 24; k++)
+		for (i = 8; i < 24; ++i)
+			for (j = 8; j < 24; ++j)
+				for (k = 8; k < 24; ++k)
 					tmp->SetValue(i, j, k, 1);
 	} else if (mImageFilename == "test2") {
 		// Creates a 32x32x32 image of size 20x20x20 cm3
@@ -209,13 +209,13 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin) {
 				G4ThreeVector(20 * cm, 20 * cm, 20 * cm));
 		tmp->Allocate();
 		int i, j, k;
-		for (i = 0; i < 32; i++)
-			for (j = 0; j < 32; j++)
-				for (k = 0; k < 32; k++)
+		for (i = 0; i < 32; ++i)
+			for (j = 0; j < 32; ++j)
+				for (k = 0; k < 32; ++k)
 					tmp->SetValue(i, j, k, 0);
-		for (i = 0; i < 32; i++)
-			for (j = 0; j < 16; j++)
-				for (k = 0; k < 32; k++)
+		for (i = 0; i < 32; ++i)
+			for (j = 0; j < 16; ++j)
+				for (k = 0; k < 32; ++k)
 					tmp->SetValue(i, j, k, 1);
 	} else {
 		tmp->Read(mImageFilename);
@@ -243,9 +243,9 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin) {
 		pImage->SetOutsideValue(tmp->GetMinValue() - 1);
 		pImage->Fill(pImage->GetOutsideValue());
 		int i, j, k;
-		for (k = 0; k < res.z() - 2; k++)
-			for (j = 0; j < res.y() - 2; j++)
-				for (i = 0; i < res.x() - 2; i++)
+		for (k = 0; k < res.z() - 2; ++k)
+			for (j = 0; j < res.y() - 2; ++j)
+				for (i = 0; i < res.x() - 2; ++i)
 					pImage->SetValue(i + 1, j + 1, k + 1,
 							tmp->GetValue(i, j, k));
 
@@ -360,11 +360,11 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable() {
 		}
 		//GateMessage("Core", 0, " pix = " << (*iter) << " lab = " << label << Gateendl);
 		(*iter) = label;
-		iter++;
+		++iter;
 	}
 
 	// Debug
-	// for(uint i=0; i<mHounsfieldMaterialTable.GetH1Vector().size(); i++) {
+	// for(uint i=0; i<mHounsfieldMaterialTable.GetH1Vector().size(); ++i) {
 //     double h = mHounsfieldMaterialTable.GetH1Vector()[i];
 //     GateMessage("Volume", 4, "H=" << h << " label = " << mHounsfieldMaterialTable.GetLabelFromH(h) << Gateendl);
 //     GateMessage("Volume", 4, " => H mean" << mHounsfieldMaterialTable.GetHMeanFromLabel(mHounsfieldMaterialTable.GetLabelFromH(h)) << Gateendl);
@@ -402,8 +402,8 @@ void GateVImageVolume::DumpHLabelImage() {
 
 			 double HU = mHounsfieldMaterialTable.GetHMeanFromLabel((int)lrint(*pi));
 			 *po = HU;
-			 po++;
-			 pi++;
+			 ++po;
+			 ++pi;
 			 }*/
 			double Dens =
 					mLoadImageMaterialsFromHounsfieldTable ?
@@ -411,8 +411,8 @@ void GateVImageVolume::DumpHLabelImage() {
 									/ (g / cm3) :
 							mRangeMaterialTable[(int) *pi].md1 / (g / cm3);
 			*po = Dens;
-			pi++;
-			po++;
+			++pi;
+			++po;
 		}
 
 		// Write image
@@ -462,7 +462,7 @@ void GateVImageVolume::LoadImageMaterialsFromLabelTable() {
 	GateMessage("Volume", 5, "GateVImageVolume -- Label \tMaterial\n");
 	LabelToMaterialNameType::iterator lit;
 	for (lit = mLabelToMaterialName.begin(); lit != mLabelToMaterialName.end();
-			lit++) {
+			++lit) {
 		GateMessage("Volume", 6,
 				""<<(*lit).first << " \t" << (*lit).second << Gateendl);
 
@@ -503,7 +503,7 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable() {
 
 		if (is.eof()) {
 
-			for (G4int iCol = 0; iCol < firstline; iCol++) {
+			for (G4int iCol = 0; iCol < firstline; ++iCol) {
 				inFile.getline(buffer, 200);
 				is.clear();
 				is.str(buffer);
@@ -578,7 +578,7 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable() {
 		}
 		//GateMessage("Core", 0, " pix = " << (*iter) << " lab = " << label << Gateendl);
 		(*iter) = label;
-		iter++;
+		++iter;
 	}
 	GateMessageDec("Volume", 5,
 			"End GateVImageVolume::LoadImageMaterialsFromRangeTable(" <<mRangeToImageMaterialTableFilename<<")\n");
@@ -592,7 +592,7 @@ void GateVImageVolume::BuildLabelsVector(std::vector<LabelType>& LabelsVector) {
 	//G4cout << "ok\n";
 	GateMessage("Volume", 5, "Begin GateVImageVolume::BuildLabelsVector()\n");
 	std::set<LabelType> ens;
-	for (ImageType::iterator i = pImage->begin(); i != pImage->end(); i++) {
+	for (ImageType::iterator i = pImage->begin(); i != pImage->end(); ++i) {
 		if (((*i) != -1) && (ens.find(int(*i)) == ens.end())) {
 			ens.insert(int(*i));
 			LabelsVector.push_back(int(*i));
@@ -614,7 +614,7 @@ void GateVImageVolume::BuildLabelToG4MaterialVector(
 	int l = 0;
 	M.resize(0);
 	for (lit = mLabelToMaterialName.begin(); lit != mLabelToMaterialName.end();
-			lit++) {
+			++lit) {
 		if (l != (*lit).first) {
 			GateError(
 					"Labels should be from 0 to n continuously ..." << "Current labels n " << (*lit).first << " is number " << l);
@@ -625,7 +625,7 @@ void GateVImageVolume::BuildLabelToG4MaterialVector(
 				((*lit).first) << " -> " << ((*lit).second) << Gateendl);
 
 		M.push_back(theMaterialDatabase.GetMaterial((*lit).second));
-		l++;
+		++l;
 	}
 
 	GateMessage("Volume", 4,
@@ -651,7 +651,7 @@ void GateVImageVolume::RemapLabelsContiguously(std::vector<LabelType>& labels,
 	 }*/
 
 	for (std::vector<LabelType>::iterator i = labels.begin(); i != labels.end();
-			i++, cur++) {
+			++i, cur++) {
 		//GateMessage("Core", 0, "cur = " << cur << " i= " << *i << " lmap before = " << lmap[*i] << Gateendl);
 		lmap[*i] = cur;
 		//GateMessage("Core", 0, "cur = " << cur << " i= " << *i << " lmap after = " << lmap[*i] << Gateendl);
@@ -659,7 +659,7 @@ void GateVImageVolume::RemapLabelsContiguously(std::vector<LabelType>& labels,
 	}
 
 	// updates the image
-	for (ImageType::iterator j = pImage->begin(); j != pImage->end(); j++) {
+	for (ImageType::iterator j = pImage->begin(); j != pImage->end(); ++j) {
 		*j = lmap[(LabelType) *j];
 	}
 
@@ -668,7 +668,7 @@ void GateVImageVolume::RemapLabelsContiguously(std::vector<LabelType>& labels,
 	int k1 = 0; //entry in the label to material table
 	LabelToMaterialNameType::iterator k;
 	for (k = mLabelToMaterialName.begin(); k != mLabelToMaterialName.end();
-			k++) {
+			++k) {
 		// GateMessage("Core", 0, " k = "<<k1<<" first = " << lmap[(*k).first]
 		//             << " second = " << (*k).second << Gateendl);
 		if (lmap[(*k).first] != 0 || (k1 == 0 && lmap[(*k).first] == 0))
@@ -681,14 +681,14 @@ void GateVImageVolume::RemapLabelsContiguously(std::vector<LabelType>& labels,
 	// Is really no need to update name and material also??
 	std::vector<GateHounsfieldMaterialTable::mMaterials> tmp(
 			mHounsfieldMaterialTable.GetNumberOfMaterials());
-	for (int i = 0; i < mHounsfieldMaterialTable.GetNumberOfMaterials(); i++) {
+	for (int i = 0; i < mHounsfieldMaterialTable.GetNumberOfMaterials(); ++i) {
 		if (lmap[i] != 0 || (i == 0 && lmap[i] == 0)) {
 			tmp[lmap[i]].mH1 = mHounsfieldMaterialTable[i].mH1;
 			tmp[lmap[i]].mH2 = mHounsfieldMaterialTable[i].mH2;
 			tmp[lmap[i]].md1 = mHounsfieldMaterialTable[i].md1;
 		}
 	}
-	for (int i = 0; i < mHounsfieldMaterialTable.GetNumberOfMaterials(); i++) {
+	for (int i = 0; i < mHounsfieldMaterialTable.GetNumberOfMaterials(); ++i) {
 		mHounsfieldMaterialTable[i].mH1 = tmp[i].mH1;
 		mHounsfieldMaterialTable[i].mH2 = tmp[i].mH2;
 		mHounsfieldMaterialTable[i].md1 = tmp[i].md1;
@@ -758,7 +758,7 @@ void GateVImageVolume::BuildDistanceTransfo() {
 		 */
 		*p = static_cast<voxel>(lrint(*iter));
 		p++;
-		iter++;
+		++iter;
 	}
 
 	//   GateDebugMessage("Geometry", 0, "im val = " << pImage->GetValue(22, 54, 34) << Gateendl);
@@ -801,7 +801,7 @@ void GateVImageVolume::BuildDistanceTransfo() {
 	while (it < output.end()) {
 		*it = (float) sqrt(*pp * spacingFactor);
 		pp++;
-		it++;
+		++it;
 	}
 
 	// Dump final result ...

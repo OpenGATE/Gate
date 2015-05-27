@@ -46,7 +46,7 @@ Vol::Vol( 	int ssx, int ssy, int ssz, voxel defaultcolor ) :
 		data = new voxel[ total ];
 
 		// fill data with default color
-		for (int i = 0; i < total; i++)
+		for (int i = 0; i < total; ++i)
 			data[i] = defaultcolor;
 
 		setHeaderValue( "X", sx );
@@ -199,7 +199,7 @@ void Vol::copy( const Vol &v ) {
 
 	total = v.total;
 
-	for (int i = 0; i < MAX_HEADERNUMLINES; i++)
+	for (int i = 0; i < MAX_HEADERNUMLINES; ++i)
 		header[i] = v.header[i];
 
 	state_ok = true;
@@ -259,7 +259,7 @@ int Vol::dumpVol( const char *fname ) {
 	}
 
 	// Write header
-	for (int i = 0; i < MAX_HEADERNUMLINES; i++) {
+	for (int i = 0; i < MAX_HEADERNUMLINES; ++i) {
 		if (header[i].type != NULL) {
 			fprintf( f, "%s: %s\n", header[i].type, header[i].value );
 		}
@@ -360,7 +360,7 @@ int Vol::getHeaderField( const char *type ) const {
 
 	assert( state_ok );
 
-	for (int i = 0; i < MAX_HEADERNUMLINES; i++) {
+	for (int i = 0; i < MAX_HEADERNUMLINES; ++i) {
 		if (header[i].type != NULL && strcmp( header[i].type, type ) == 0 ) {
 			return i;
 		}
@@ -416,7 +416,7 @@ int Vol::setHeaderValue( const char *type, const char *value ) {
 		return 0;
 	}
 	int i;
-	for (i = 0; i < MAX_HEADERNUMLINES && header[i].type != NULL; i++) ;
+	for (i = 0; i < MAX_HEADERNUMLINES && header[i].type != NULL; ++i) ;
 	if (i == MAX_HEADERNUMLINES)
 		return 1;
 	header[i] = HeaderField( type, value );
@@ -449,11 +449,11 @@ Vol::endian_t Vol::initEndian() {
 
 	Vol::endian_t e;
 	e.i_endian.i = 0;
-	for (unsigned int i = 0; i < sizeof(e.i_endian.i); i++) {
+	for (unsigned int i = 0; i < sizeof(e.i_endian.i); ++i) {
 		e.i_endian.i += (i + '0') << (i*8);
 	}
 	e.v_endian.v = 0;
-	for (unsigned int i = 0; i < sizeof(e.v_endian.v); i++) {
+	for (unsigned int i = 0; i < sizeof(e.v_endian.v); ++i) {
 		e.v_endian.v += (i + '0') << (i*8);
 	}
 
@@ -521,9 +521,9 @@ Vol &Vol::operator &= (const Vol &v) {
 	getHeaderValueAsInt( "Alpha-Color", &alpha );
 	v.getHeaderValueAsInt( "Alpha-Color", &valpha );
 
-	for (int i = 0; i < v.sx; i++)
-		for (int j = 0; j < v.sy; j++)
-			for (int k = 0; k < v.sz; k++) {
+	for (int i = 0; i < v.sx; ++i)
+		for (int j = 0; j < v.sy; ++j)
+			for (int k = 0; k < v.sz; ++k) {
 			  int pos = posOf( i, j, k );
 				int vpos = v.posOf( i, j, k ) ;
 				if (data[pos] == alpha || v.data[vpos] == valpha) {
@@ -549,9 +549,9 @@ Vol &Vol::operator |= (const Vol &v) {
 	getHeaderValueAsInt( "Alpha-Color", &alpha );
 	v.getHeaderValueAsInt( "Alpha-Color", &valpha );
 
-	for (int i = 0; i < v.sx; i++)
-	    for (int j = 0; j < v.sy; j++)
-		    for (int k = 0; k < v.sz; k++) {
+	for (int i = 0; i < v.sx; ++i)
+	    for (int j = 0; j < v.sy; ++j)
+		    for (int k = 0; k < v.sz; ++k) {
 				int pos = posOf( i + px, j + py, k + pz );
 				int vpos = v.posOf( i, j, k );
 				if (data[pos] == alpha && v.data[vpos] != valpha) {
@@ -574,9 +574,9 @@ Vol &Vol::operator -= (const Vol &v) {
 	getHeaderValueAsInt( "Alpha-Color", &alpha );
 	v.getHeaderValueAsInt( "Alpha-Color", &valpha );
 
-	for (int i = 0; i < v.sx; i++)
-		for (int j = 0; j < v.sy; j++)
-			for (int k = 0; k < v.sz; k++) {
+	for (int i = 0; i < v.sx; ++i)
+		for (int j = 0; j < v.sy; ++j)
+			for (int k = 0; k < v.sz; ++k) {
 				int pos = posOf( i, j, k ) ;
 				int vpos = posOf( i, j, k );
 				if (v.data[vpos] != valpha) {
@@ -614,12 +614,12 @@ void Vol::resize( int nsx, int nsy, int nsz ) {
 		return;
 	}
 
-	for (int i = 0; i < total; i++)
+	for (int i = 0; i < total; ++i)
 		ndata[i] = alpha_color;
 
-	for (int i = 0; i < sx; i++) {
-		for (int j = 0; j < sy; j++) {
-			for (int k = 0; k < sz; k++) {
+	for (int i = 0; i < sx; ++i) {
+		for (int j = 0; j < sy; ++j) {
+			for (int k = 0; k < sz; ++k) {
 				int pos = posOf( i, j, k );
 			//	int npos = (i + (nsx - sx)/2)*nsy*nsx + (j + (nsy - sy)/2)*nsx + k + (nsz - sz)/2;
 			//	int npos = posOf( i + (nsx - sx)/2, j + (nsy - sy)/2, k + (nsz - sz)/2 );
@@ -663,7 +663,7 @@ bool Vol::rotatePoint( int i, int j, int k, double rx, double ry, double rz, int
 	double y = (double)(j - sy/2);
 	double z = (double)(k - sz/2);
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; ++i) {
 		invmat33( im[i], m[i] );
 
 		double nx = im[i][0][0]*x + im[i][0][1]*y + im[i][0][2]*z;
@@ -697,12 +697,12 @@ void Vol::rotate( double rx, double ry, double rz ) {
 		return;
 	}
 
-	for (int i = 0; i < total; i++)
+	for (int i = 0; i < total; ++i)
 		ndata[i] = alpha_color;
 
-	for (int i = 0; i < sx; i++) {
-		for (int j = 0; j < sy; j++) {
-			for (int k = 0; k < sz; k++) {
+	for (int i = 0; i < sx; ++i) {
+		for (int j = 0; j < sy; ++j) {
+			for (int k = 0; k < sz; ++k) {
 				int nx, ny, nz;
 				if (!rotatePoint( i, j, k, rx, ry, rz, &nx, &ny, &nz ))
 					continue;

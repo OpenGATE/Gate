@@ -58,7 +58,7 @@ GateSETLEDoseActor::GateSETLEDoseActor(G4String name, G4int depth) :
   GateActorManager *actorManager = GateActorManager::GetInstance();
   G4bool noMultiplicityActor = true;
   std::vector<GateVActor*> actorList = actorManager->GetTheListOfActors();
-  for(unsigned int i=0; i<actorList.size(); i++)
+  for(unsigned int i=0; i<actorList.size(); ++i)
   {
     if(actorList[i]->GetTypeName() == "GateSETLEMultiplicityActor") { noMultiplicityActor = false; }
   }
@@ -606,7 +606,7 @@ bool GateSETLEDoseActor::IntersectionBox(G4ThreeVector p, G4ThreeVector m)
 
   double T1,T2,tmpT(0.0);
 
-  for(int i=0; i<3; i++)
+  for(int i=0; i<3; ++i)
   {
     if(mRayDirection[i] == 0.0) {
       if(mRayOrigin[i]<mBoxMin[i] || mRayOrigin[i]>mBoxMax[i]) { return false; }

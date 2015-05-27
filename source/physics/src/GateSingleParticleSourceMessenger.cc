@@ -71,7 +71,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   static bool initialized = false;
   if (!initialized) {
     G4int nPtcl = particleTable->entries();
-    for(G4int i=0;i<nPtcl;i++)
+    for(G4int i=0;i<nPtcl;++i)
       {
         candidateList += particleTable->GetParticleName(i);
         candidateList += " ";

@@ -53,7 +53,7 @@ void GateSystemFilterMessenger::ObtainCandidates()
 
    size_t NISN = systemListManager->GetInsertedSystemsNames()->size();
 
-   for(size_t i=0; i<NISN; i++)
+   for(size_t i=0; i<NISN; ++i)
    {
       m_insertedSystems += systemListManager->GetInsertedSystemsNames()->at(i);
             if(i < (NISN-1))

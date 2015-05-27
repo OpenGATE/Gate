@@ -59,7 +59,7 @@ GateTrajectory::GateTrajectory(GateTrajectory & right)
   fTrackID = right.fTrackID;
   fParentID = right.fParentID;
   positionRecord = new GateTrajectoryPointContainer();
-  for(unsigned int i=0;i<right.positionRecord->size();i++)
+  for(unsigned int i=0;i<right.positionRecord->size();++i)
   {
     G4TrajectoryPoint* rightPoint = (G4TrajectoryPoint*)((*(right.positionRecord))[i]);
     positionRecord->push_back(new G4TrajectoryPoint(*rightPoint));
@@ -72,7 +72,7 @@ GateTrajectory::GateTrajectory(GateTrajectory & right)
 GateTrajectory::~GateTrajectory()
 {
   size_t i;
-  for(i=0;i<positionRecord->size();i++){
+  for(i=0;i<positionRecord->size();++i){
     delete  (*positionRecord)[i];
   }
   positionRecord->clear();
@@ -93,7 +93,7 @@ void GateTrajectory::ShowTrajectory(std::ostream& os) const
    os << "  Current trajectory has " << positionRecord->size()
         << " points.\n";
 
-   for( size_t i=0 ; i < positionRecord->size() ; i++){
+   for( size_t i=0 ; i < positionRecord->size() ; ++i){
        G4TrajectoryPoint* aTrajectoryPoint = (G4TrajectoryPoint*)((*positionRecord)[i]);
        os << "Point[" << i << "]"
             << " Position= " << aTrajectoryPoint->GetPosition() << Gateendl;
@@ -111,7 +111,7 @@ void GateTrajectory::ShowTrajectory(std::ostream& os) const
    G4ThreeVector pos;
 
    G4Polyline pPolyline;
-   for (unsigned int i = 0; i < positionRecord->size() ; i++) {
+   for (unsigned int i = 0; i < positionRecord->size() ; ++i) {
      G4TrajectoryPoint* aTrajectoryPoint = (G4TrajectoryPoint*)((*positionRecord)[i]);
      pos = aTrajectoryPoint->GetPosition();
      pPolyline.push_back( pos );
@@ -163,7 +163,7 @@ void GateTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
 
   GateTrajectory* seco = (GateTrajectory*)secondTrajectory;
   G4int ent = seco->GetPointEntries();
-  for(int i=1;i<ent;i++) // initial point of the second trajectory should not be merged
+  for(int i=1;i<ent;++i) // initial point of the second trajectory should not be merged
   {
     positionRecord->push_back((*(seco->positionRecord))[i]);
   }

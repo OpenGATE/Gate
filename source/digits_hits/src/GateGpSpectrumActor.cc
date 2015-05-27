@@ -126,7 +126,7 @@ void GateGpSpectrumActor::UserSteppingAction(const GateVVolume*, const G4Step* s
 	//	<< process_casted << " " << data_store << " " << 1/(cross_section*mm) << Gateendl;
 
 	G4bool produced_any_gamma = false;
-	for (G4TrackVector::const_reverse_iterator iter=secondaries->rbegin(); iter!=secondaries->rend(); iter++)
+	for (G4TrackVector::const_reverse_iterator iter=secondaries->rbegin(); iter!=secondaries->rend(); ++iter)
 	{
 		if (!created_this_step) break;
 		created_this_step--;

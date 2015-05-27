@@ -216,7 +216,7 @@ GateCompoundMaterialCreator* GateMDBFile::ReadCompoundMaterial(const G4String& m
   ReadAllMaterialOptions(materialName,stringPair.second,creator);
 
   // Read and store all material's components
-  for (G4int i=1;i<=creator->nComponents;i++) {
+  for (G4int i=1;i<=creator->nComponents;++i) {
     G4String componentOrdinal = CreateOrdinalString(i);
     GateComponentCreator* componentCreator = ReadComponent(materialName,componentOrdinal);
     creator->components.push_back(componentCreator);

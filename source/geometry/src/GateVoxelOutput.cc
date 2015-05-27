@@ -175,7 +175,7 @@ void GateVoxelOutput::RecordEndOfAcquisition()
   // Output the dose collection (main file)
   f.open(m_fileName, std::ofstream::out | std::ofstream::binary);
   
-  for (unsigned int i=0; i<m_array->size(); i++){
+  for (unsigned int i=0; i<m_array->size(); ++i){
 	// it seems that the reader handles wrong the density
 	G4String material = theReader->GetVoxelMaterial(i)->GetName();
     double mass ( voxelSize * theMaterialDatabase.GetMaterial(material)->GetDensity() );
@@ -205,7 +205,7 @@ void GateVoxelOutput::RecordEndOfAcquisition()
   if (m_uncertainty){
     f.open( (m_fileName+"U").c_str(), std::ofstream::out | std::ofstream::binary);
     
-    for (unsigned int i=0; i<m_array->size(); i++){
+    for (unsigned int i=0; i<m_array->size(); ++i){
       float relativeError(0) ;
       float relativeErrorSquared(0);
       
@@ -299,7 +299,7 @@ void GateVoxelOutput::RecordEndOfEvent(const G4Event* )
   GatePhantomHitsCollection* PHC = GetOutputMgr()->GetPhantomHitCollection();
   G4int NpHits = PHC->entries();
 
-  for (G4int i=0;i<NpHits;i++){
+  for (G4int i=0;i<NpHits;++i){
 
     GatePhantomHit* h    ( (*PHC)[i] );
     G4double        edep ( h->GetEdep() );

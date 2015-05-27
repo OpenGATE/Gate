@@ -73,16 +73,16 @@ void GenericWrapperProcess::Initialisation(G4String partName)
 
   G4String material;
  
-  for(size_t k=0;k<G4Material::GetNumberOfMaterials();k++)
+  for(size_t k=0;k<G4Material::GetNumberOfMaterials();++k)
     {
       material = (*matTbl)[k]->GetName();
 
-      for(int j= 0 ; j<mNbins;j++){// build table of cross section ratios in function of energy -> mNbins  bins between 0 and mEneMax MeV
+      for(int j= 0 ; j<mNbins;++j){// build table of cross section ratios in function of energy -> mNbins  bins between 0 and mEneMax MeV
 	energy = mEneMax/mNbins*j;
 	if(energy==0.) energy = 0.0000001;
 	sig1 = 0.;
 	sig2 = 0.;
-	for(int i =0;i<pList->size();i++){
+	for(int i =0;i<pList->size();++i){
 	  G4String proName = (*pList)[i]->GetProcessName();
 
 	  G4String realName= proName;
@@ -148,7 +148,7 @@ GenericWrapperProcess::PostStepDoIt(const G4Track& track, const G4Step& step)
   bool validFinalState = false;
 
   // Loop over PostStepDoIt method to generate multiple secondaries.
-  for (i=0; i<mSplitFactor; i++) {    
+  for (i=0; i<mSplitFactor; ++i) {    
     validFinalState = false;
     particleChange = pRegProcess->PostStepDoIt(track, step);
     particleChange->SetVerboseLevel(0);//?
@@ -160,18 +160,18 @@ GenericWrapperProcess::PostStepDoIt(const G4Track& track, const G4Step& step)
 
     if( (rdm<1. && weight>1.) || weight<1. || mCSEnhancement) {// =?
      if(pFilterManagerSecondary->GetNumberOfFilters()>0){
-        for (j=0; j<particleChange->GetNumberOfSecondaries(); j++) {
+        for (j=0; j<particleChange->GetNumberOfSecondaries(); ++j) {
           if(pFilterManagerSecondary->Accept(particleChange->GetSecondary(j)) ) validFinalState = true;
         }
         if(validFinalState)
-          for (j=0; j<particleChange->GetNumberOfSecondaries(); j++) {
+          for (j=0; j<particleChange->GetNumberOfSecondaries(); ++j) {
             ///particleChange->GetSecondary(j)->SetWeight(weight);
 	    secondaries.push_back(new G4Track(*(particleChange->GetSecondary(j))));
 	  }
 	else if(mkeepSec){
 	  rdm =  G4RandFlat::shoot(mWeight);
           if(rdm<1.) {
-	    for (j=0; j<particleChange->GetNumberOfSecondaries(); j++) {
+	    for (j=0; j<particleChange->GetNumberOfSecondaries(); ++j) {
 	      //filteredSecondaries.push_back(((particleChange->GetSecondary(j))));
               //particleChange->GetSecondary(j)->SetWeight(1.);
 	      filteredSecondaries.push_back(new G4Track(*(particleChange->GetSecondary(j))));
@@ -180,7 +180,7 @@ GenericWrapperProcess::PostStepDoIt(const G4Track& track, const G4Step& step)
 	}
       }//if(pFilterManagerSecondary->GetNumberOfFilters()>0)
       else {
-	for (j=0; j<particleChange->GetNumberOfSecondaries(); j++) {
+	for (j=0; j<particleChange->GetNumberOfSecondaries(); ++j) {
 	  secondaries.push_back(new G4Track(*(particleChange->GetSecondary(j))));
 	}
       }//else
@@ -198,7 +198,7 @@ GenericWrapperProcess::PostStepDoIt(const G4Track& track, const G4Step& step)
     //G4ProcessManager * pMan = pDef->GetProcessManager() ;
     /*G4ProcessVector * pList = partDef->GetProcessManager()-> GetProcessList();
 
-    for(int i =0;i<pList->size();i++){
+    for(int i =0;i<pList->size();++i){
       G4String proName = (*pList)[i]->GetProcessName();
       G4cout<<proName<<"  "<<GetProcessName()<< Gateendl;
       if(proName==GetProcessName()) 
@@ -229,7 +229,7 @@ GenericWrapperProcess::PostStepDoIt(const G4Track& track, const G4Step& step)
       G4ProcessVector * pList = partDef->GetProcessManager()-> GetProcessList();
       double sig1=0.;
       double sig2=0.;
-      for(int i =0;i<pList->size();i++){
+      for(int i =0;i<pList->size();++i){
 	G4String proName = (*pList)[i]->GetProcessName();
 	// G4cout<<proName<<"  "<<GetProcessName()<< Gateendl;
 G4String realName= proName;
@@ -305,7 +305,7 @@ G4String realName= proName;
       // particleChange takes ownership
       particleChange->AddSecondary(myTrack); 
     
-      iter++;
+      ++iter;
     }
 
     mNSecondaries += secondaries.size()+filteredSecondaries.size();//?

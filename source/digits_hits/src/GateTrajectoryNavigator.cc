@@ -51,7 +51,7 @@ G4int GateTrajectoryNavigator::FindSourceIndex()
   G4int sourceIndex = -1;
   G4bool found = false;
   G4int n_trajectories = m_trajectoryContainer->entries();
-  for (G4int iTrj=0; (iTrj<n_trajectories) && (!found); iTrj++) {
+  for (G4int iTrj=0; (iTrj<n_trajectories) && (!found); ++iTrj) {
     G4Trajectory* trj = (G4Trajectory*)((*m_trajectoryContainer)[iTrj]);
     if (trj->GetTrackID() == 1) {
       sourceIndex = iTrj;
@@ -69,7 +69,7 @@ void GateTrajectoryNavigator::SetIonID()
 
   m_ionID = 0;
 
-  for (G4int iTrj=0; iTrj<n_trajectories; iTrj++) {
+  for (G4int iTrj=0; iTrj<n_trajectories; ++iTrj) {
     G4Trajectory* trj = (G4Trajectory*)((*m_trajectoryContainer)[iTrj]);
     if (trj->GetCharge() > 2) m_ionID = 1;
 
@@ -97,7 +97,7 @@ G4int GateTrajectoryNavigator::FindPositronTrackID()
   } else {
     G4int n_trajectories = m_trajectoryContainer->entries();
     G4bool found = false;
-    for (G4int iTrj=0; (iTrj<n_trajectories) && (!found); iTrj++) {
+    for (G4int iTrj=0; (iTrj<n_trajectories) && (!found); ++iTrj) {
       G4Trajectory* trj = (G4Trajectory*)((*m_trajectoryContainer)[iTrj]);
 
 
@@ -136,7 +136,7 @@ TrackingMode theMode =( (GateSteppingAction *)(GateRunManager::GetRunManager()->
     // prepare the list of gammas for later analysis
     G4int n_trajectories = m_trajectoryContainer->entries();
 
-    for (G4int iTrj=0; iTrj<n_trajectories; iTrj++) {
+    for (G4int iTrj=0; iTrj<n_trajectories; ++iTrj) {
 
       G4Trajectory* trj = (G4Trajectory*)((*m_trajectoryContainer)[iTrj]);
 
@@ -278,7 +278,7 @@ G4int GateTrajectoryNavigator::FindPhotonID(G4int trackID)
       while (!((photonID==photon1ID)||(photonID==photon2ID)||(photonID==rootID))) {
 	found = false;
 	G4int n_trajectories = m_trajectoryContainer->entries();
-	for (G4int iTrj=0; (iTrj<n_trajectories) && (!found); iTrj++) {
+	for (G4int iTrj=0; (iTrj<n_trajectories) && (!found); ++iTrj) {
 	  G4Trajectory* trj = (G4Trajectory*)((*m_trajectoryContainer)[iTrj]);
 	  if (photonID == trj->GetTrackID()) {
 	    photonID = trj->GetParentID();
@@ -319,7 +319,7 @@ G4int GateTrajectoryNavigator::FindPrimaryID(G4int trackID)
     do {
       primaryID = tempParentID;
       found = false;
-      for (G4int iTrj=0; (iTrj<n_trajectories) && (!found); iTrj++) {
+      for (G4int iTrj=0; (iTrj<n_trajectories) && (!found); ++iTrj) {
 	G4Trajectory* trj = (G4Trajectory*)((*m_trajectoryContainer)[iTrj]);
 	if (primaryID == trj->GetTrackID()) {
 	  tempParentID = trj->GetParentID();

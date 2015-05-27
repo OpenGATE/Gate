@@ -131,7 +131,7 @@ G4LogicalVolume* GateImageRegularParametrisedVolume::ConstructOwnSolidAndLogical
   param->SetMaterials(mVectorLabel2Material);
   // Convert image voxel into size_t type.
   mImageData = new size_t[GetImage()->GetNumberOfValues()];
-  for(int i=0; i<GetImage()->GetNumberOfValues(); i++) {
+  for(int i=0; i<GetImage()->GetNumberOfValues(); ++i) {
     mImageData[i] = GetImage()->GetValue(i);
   }
   param->SetMaterialIndices(mImageData);

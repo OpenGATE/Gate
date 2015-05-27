@@ -69,7 +69,7 @@ GatePulseList* GateNoise::ProcessPulseList(const GatePulseList* inputPulseList)
         size_t depth = system->GetTreeDepth();
         GateOutputVolumeID outputVol(depth);
 //      G4cout<<"Choosing ";
-        for (size_t i=0;i<depth;i++) {
+        for (size_t i=0;i<depth;++i) {
             size_t max = system->ComputeNofElementsAtLevel(i);
             long n = CLHEP::RandFlat::shootInt((long int)0,(long int)(max));
             outputVol[i]=n;

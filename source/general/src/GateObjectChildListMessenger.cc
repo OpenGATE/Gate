@@ -50,7 +50,7 @@ const G4String& GateObjectChildListMessenger::DumpMap()
   std::map<G4String,maker_volume>::iterator iter; 
   
   GateMessage("Geometry", 10, "The available types of child-object are: \n"); 
-  for (iter = Child.begin(); iter!=Child.end(); iter++) {
+  for (iter = Child.begin(); iter!=Child.end(); ++iter) {
     theList+=iter->first;
     theList+=" ";     
     GateMessage("Geometry", 10, " " << iter->first << Gateendl;);
@@ -73,7 +73,7 @@ void GateObjectChildListMessenger::ListChoices()
    
   GateMessage("Geometry", 10, "The available types of child-object are: \n");
   
-  for (iter = Child.begin(); iter!=Child.end(); iter++) {
+  for (iter = Child.begin(); iter!=Child.end(); ++iter) {
     GateMessage("Geometry", 10, " " << iter->first << Gateendl;);
   }
 }

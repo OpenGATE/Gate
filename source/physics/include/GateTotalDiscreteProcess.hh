@@ -86,7 +86,7 @@ inline G4double 	GateTotalDiscreteProcess::PostStepGetPhysicalInteractionLength 
 {
 	G4double b=m_oProcessVec[0].Process->PostStepGetPhysicalInteractionLength ( track, previousStepSize, condition );
 	m_nProcessWithSmallestPIL=0;int i=0;
-	for (Gate_ProcessVec::iterator itr=m_oProcessVec.begin(); itr!= m_oProcessVec.end(); itr++, i++)
+	for (Gate_ProcessVec::iterator itr=m_oProcessVec.begin(); itr!= m_oProcessVec.end(); itr++, ++i)
 	{
 		const G4double a=itr->Process->PostStepGetPhysicalInteractionLength (track, previousStepSize, condition);
 		if (a<b)

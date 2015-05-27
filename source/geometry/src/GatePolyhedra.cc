@@ -26,7 +26,7 @@ G4double GatePolyhedra::DistanceToOut( const G4ThreeVector &p,
   while ( ( distance = G4Polyhedra::DistanceToOut(p,v2,calcNorm,validNorm,n) ) == kInfinity )
   {
   	v2.rotateZ(0.001*degree);
-	i++;
+	++i;
   }
 
   // Uncomment the line below to check the hexagon-trap bug for your system

@@ -161,7 +161,7 @@ void GateVSource::Visualize(G4String parmString){
   circle.SetFillStyle(G4Circle::filled);
   circle.SetVisAttributes(attribs);
 
-  for (int k=0; k<iCount; k++){
+  for (int k=0; k<iCount; ++k){
 
     //m_sps->GeneratePositionStuff();
 
@@ -473,7 +473,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       numVertices++;
 
       if (event) {
-        for(int i=0; i< event->GetPrimaryVertex(0)->GetNumberOfParticle(); i++) {
+        for(int i=0; i< event->GetPrimaryVertex(0)->GetNumberOfParticle(); ++i) {
           G4PrimaryParticle  * p = event->GetPrimaryVertex(0)->GetPrimary(i);
           GateMessage("Beam", 3, "(" << event->GetEventID() << ") " << p->GetG4code()->GetParticleName()
                       << " pos=" << event->GetPrimaryVertex(0)->GetPosition()
@@ -509,7 +509,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       if ( aTrackVector->size() > 0 )
         {
           std::vector<GateTrack*>::iterator iter;
-          for ( iter = aTrackVector->begin(); iter != aTrackVector->end() ; iter++){(*iter)->Print();}
+          for ( iter = aTrackVector->begin(); iter != aTrackVector->end() ; ++iter){(*iter)->Print();}
           G4Exception( "GateSource::GeneratePrimaries", "GeneratePrimaries", FatalException, "ERROR : The tracks Vector is not empty.\n");
         }
 
@@ -580,7 +580,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
       std::vector<GateTrack*>::iterator iter = aTrackVector->begin();
       size_t k = 0;
       G4int m_previous_SourceID = (*iter)->GetSourceID();
-      for ( iter = aTrackVector->begin(); iter != aTrackVector->end() ; iter++)
+      for ( iter = aTrackVector->begin(); iter != aTrackVector->end() ; ++iter)
         {
           G4int PDGCode = (*iter)->GetPDGCode();
           DirectionMomentum = (*iter)->GetMomentumDirection() ;
@@ -626,7 +626,7 @@ G4int GateVSource::GeneratePrimaries( G4Event* event )
           particle->SetPolarization(Polarization.x(),Polarization.y(),Polarization.z());
           particle->SetTrackID(TrackID);
           particle->SetMomentum(Momentum.x(),Momentum.y(),Momentum.z());
-          k++;
+          ++k;
           numVertices++;
           m_previous_SourceID = m_sourceID;
         }
@@ -685,7 +685,7 @@ void GateVSource::GeneratePrimaryVertex( G4Event* aEvent )
         GateError("Something went wrong, nb of particle is 0 in GateVSource::GeneratePrimaryVertex\n");
       }
 
-      for( G4int i = 0 ; i != GetNumberOfParticles() ; i++ )
+      for( G4int i = 0 ; i != GetNumberOfParticles() ; ++i )
         {
           G4ParticleMomentum particle_momentum_direction;
           if(mIsUserFocalShapeActive) { particle_momentum_direction = UserFocalShapeGenerateOne(); }
@@ -754,7 +754,7 @@ G4String nameMaterial = material->GetName();*/
       if(GetVerboseLevel() > 0)
         G4cout << "Creating primaries and assigning to vertex\n";
 
-      for( G4int i=0; i<GetNumberOfParticles(); i++ )
+      for( G4int i=0; i<GetNumberOfParticles(); ++i )
         {
           G4PrimaryParticle* particle = new G4PrimaryParticle(m_pd,0. ,0. , 0.);
           vertex->SetPrimary( particle );
@@ -889,7 +889,7 @@ void GateVSource::InitializeUserFluence()
 //     posX = ((0.5 * sizeX) - userFluenceImage.GetHalfSize().x());
 
     mUserPosGenX->SetXBias(G4ThreeVector(0.,0.,0.));
-    for(int i=0; i<resX;i++)
+    for(int i=0; i<resX;++i)
     {
       mUserPosX[i] = posX;
 
@@ -901,7 +901,7 @@ void GateVSource::InitializeUserFluence()
         mUserPosGenY[i] = new G4SPSRandomGenerator();
       }
       mUserPosGenY[i]->SetYBias(G4ThreeVector(0.,0.,0.));
-      for(int j=0; j<resY; j++)
+      for(int j=0; j<resY; ++j)
       {
         sum += userFluenceImage.GetValue(i,j,0);
         mUserPosY[j] = posY;

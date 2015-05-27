@@ -30,7 +30,7 @@ SurfacePnt(int dim)
   m_Dim = dim;
   m_X = new float[m_Dim];
   m_V = new float[m_Dim];
-  for(unsigned int i=0;i<m_Dim;i++)
+  for(unsigned int i=0;i<m_Dim;++i)
     {
     m_X[i] = 0;
     m_V[i] = 0;
@@ -157,7 +157,7 @@ Clear(void)
   while(it != m_PointList.end())
   {
     SurfacePnt* pnt = *it;
-    it++;
+    ++it;
     delete pnt;
   }
   m_PointList.clear();
@@ -288,7 +288,7 @@ M_Read(void)
   MET_StringToWordArray(m_PointDim, &pntDim, &pntVal);
 
   int i;
-  for(i=0;i<pntDim;i++)
+  for(i=0;i<pntDim;++i)
     {
       delete [] pntVal[i];
     }
@@ -319,7 +319,7 @@ M_Read(void)
     i=0;
     int d;
     unsigned int k;
-    for(int j=0; j<m_NPoints; j++)
+    for(int j=0; j<m_NPoints; ++j)
     {
       SurfacePnt* pnt = new SurfacePnt(m_NDims);
 
@@ -367,7 +367,7 @@ M_Read(void)
   }
   else
   {
-    for(int j=0; j<m_NPoints; j++)
+    for(int j=0; j<m_NPoints; ++j)
     {
       SurfacePnt* pnt = new SurfacePnt(m_NDims);
 
@@ -438,24 +438,24 @@ M_Write(void)
       {
         float x = (*it)->m_X[d];
         MET_SwapByteIfSystemMSB(&x,MET_FLOAT);
-        MET_DoubleToValue((double)x,m_ElementType,data,i++);
+        MET_DoubleToValue((double)x,m_ElementType,data,++i);
       }
 
       for(d = 0; d < m_NDims; d++)
       {
         float v = (*it)->m_V[d];
         MET_SwapByteIfSystemMSB(&v,MET_FLOAT);
-        MET_DoubleToValue((double)v,m_ElementType,data,i++);
+        MET_DoubleToValue((double)v,m_ElementType,data,++i);
       }
 
       for(d=0; d<4; d++)
       {
         float c = (*it)->m_Color[d];
         MET_SwapByteIfSystemMSB(&c,MET_FLOAT);
-        MET_DoubleToValue((double)c,m_ElementType,data,i++);
+        MET_DoubleToValue((double)c,m_ElementType,data,++i);
       }
 
-      it++;
+      ++it;
     }
 
     m_WriteStream->write((char *)data,(m_NDims*2+4)*m_NPoints*elementSize);
@@ -486,7 +486,7 @@ M_Write(void)
       }
 
       *m_WriteStream << METAIO_STREAM::endl;
-      it++;
+      ++it;
     }
   }
 

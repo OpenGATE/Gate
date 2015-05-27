@@ -292,7 +292,7 @@ void GateCrossSectionProductionActor::SaveData() {
   if(m_IsC11){
     mIsotopeImage->SaveData(mCurrentEvent+1,false);
     G4double total_C11 =0.;
-    for(int i = 0 ;i <mIsotopeImage->GetValueImage().GetNumberOfValues() ; i++){
+    for(int i = 0 ;i <mIsotopeImage->GetValueImage().GetNumberOfValues() ; ++i){
       total_C11 += mIsotopeImage->GetValue(i);
     }
 
@@ -434,7 +434,7 @@ void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
   G4double prod =0.;
   G4double beam_entrance_section=mIsotopeImage->GetValueImage().GetVoxelSize().getX()*mIsotopeImage->GetValueImage().GetVoxelSize().getY() / centimeter2; //in cm2
 
-  for(std::map<int,int>::iterator i =PixelValuePerEvent.begin() ; i!=PixelValuePerEvent.end(); i++){
+  for(std::map<int,int>::iterator i =PixelValuePerEvent.begin() ; i!=PixelValuePerEvent.end(); ++i){
     //in this condition either the pixel has already been treater or no detection in the voxel
     if(mStatImage.GetValue(i->first)!=0 && mEnergyImage.GetValue(i->first)> threshold_energy_O16 ){ //checking that the energy is higher than the threshold to speed up
       G4int vox_id = i->first;
@@ -469,7 +469,7 @@ void GateCrossSectionProductionActor::EndOfEventAction(const G4Event* eve)
   }
 
   PixelValuePerEvent.clear();
-  for(std::map<int,int>::iterator i =PixelValuePerEvent_secondary.begin() ; i!=PixelValuePerEvent_secondary.end(); i++){
+  for(std::map<int,int>::iterator i =PixelValuePerEvent_secondary.begin() ; i!=PixelValuePerEvent_secondary.end(); ++i){
     //in this condition either the pixel has already been treater or no detection in the voxel
     if(mStatImage_secondary.GetValue(i->first)!=0 && mEnergyImage_secondary.GetValue(i->first)> threshold_energy_O16 ){
       G4int vox_id = i->first;

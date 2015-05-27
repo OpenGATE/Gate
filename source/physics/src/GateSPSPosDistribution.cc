@@ -221,7 +221,7 @@ void GateSPSPosDistribution::ForbidSourceToVolume( const G4String& Vname )
     found  = tempPV->GetName() == Vname;
     if(verbosityLevel == 2)
       G4cout << i << " " << " " << tempPV->GetName() << " " << Vname << " " << found << Gateendl;
-    i++;
+    ++i;
   }
   // found = true then the volume exists else it doesnt.
   if(found == true)

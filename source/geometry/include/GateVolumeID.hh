@@ -137,7 +137,7 @@ class GateVolumeID : public std::vector<GateVolumeSelector>
     //! Store the daughterIDs into an array
     void StoreDaughterIDs(G4int* dest,size_t destSize) const
     {
-      	  for (size_t i=0;i<destSize;i++)
+      	  for (size_t i=0;i<destSize;++i)
       	    dest[i] = GetDaughterID(i);
     }
 

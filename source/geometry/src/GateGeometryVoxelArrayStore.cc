@@ -60,7 +60,7 @@ void GateGeometryVoxelArrayStore::EmptyStore()
 void GateGeometryVoxelArrayStore::InitStore(GateVoxelMaterialArray store, G4int nx, G4int ny, G4int nz)
 {
   if (store) {
-    for (G4int i=0; i<nx*ny*nz; i++) {
+    for (G4int i=0; i<nx*ny*nz; ++i) {
       store[i] = m_defaultMaterial;
     }    
   }

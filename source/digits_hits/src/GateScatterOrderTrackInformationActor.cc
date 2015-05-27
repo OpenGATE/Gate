@@ -110,7 +110,7 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
   else if(process->GetProcessName() == G4String("PhotoElectric")) {
     const G4TrackVector * list = step->GetSecondary();
 
-    for(unsigned short i=0; i<(*list).size(); i++)
+    for(unsigned short i=0; i<(*list).size(); ++i)
     {
       if((*list)[i]->GetUserInformation()==0 && (*list)[i]->GetDefinition()->GetParticleName()=="gamma")
       {

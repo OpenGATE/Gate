@@ -85,7 +85,7 @@ void GateGPUCollimIO_Input_Init_Materials(GateGPUCollimIO_Input * input,
   input->mat_nb_elements = new unsigned short int[n];
   input->mat_index = new unsigned short int[n];
   int k=0;
-  for(unsigned int i=0; i<n; i++) {
+  for(unsigned int i=0; i<n; ++i) {
     //DD(m[i]->GetName());
     input->mat_nb_elements[i] = m[i]->GetNumberOfElements();
     if (i == 0) input->mat_index[i] = 0;
@@ -104,7 +104,7 @@ void GateGPUCollimIO_Input_Init_Materials(GateGPUCollimIO_Input * input,
   input->mat_atom_num_dens = new float[k];
   int p = 0;
   double avo = CLHEP::Avogadro;
-  for(unsigned int i=0; i<n; i++) {
+  for(unsigned int i=0; i<n; ++i) {
     //DD(m[i]->GetName());
     for(unsigned int e=0; e<input->mat_nb_elements[i]; e++) {
       input->mat_mixture[p] = m[i]->GetElement(e)->GetZ();
@@ -121,7 +121,7 @@ void GateGPUCollimIO_Input_Init_Materials(GateGPUCollimIO_Input * input,
   input->mat_nb_atoms_per_vol = new float[n];
   input->mat_nb_electrons_per_vol = new float[n];
   p=0;
-  for(unsigned int i=0; i<n; i++) {
+  for(unsigned int i=0; i<n; ++i) {
     //DD(m[i]->GetName());
     input->mat_nb_atoms_per_vol[i] = 0;
     input->mat_nb_electrons_per_vol[i] = 0;
@@ -150,7 +150,7 @@ void GateGPUCollimIO_Input_Init_Materials(GateGPUCollimIO_Input * input,
   // std::string name = v->GetObjectName();
   //DD(name);
   G4EmCalculator * calculator = new G4EmCalculator;
-  for(unsigned int i=0; i<n; i++) {
+  for(unsigned int i=0; i<n; ++i) {
     //DD(m[i]->GetName());
     //DD(name);
     double range = pl->GetMapOfRegionCuts()[name].electronCut;
@@ -221,7 +221,7 @@ void GateGPUCollimIO_Input_Init_Materials(GateGPUCollimIO_Input * input,
   ActivityMaterialTuplesVector tuples;
   double total_activity = 0;
   { // fill tuples structure
-  for (ActivityMap::const_iterator iter = activities.begin(); iter != activities.end(); iter++)
+  for (ActivityMap::const_iterator iter = activities.begin(); iter != activities.end(); ++iter)
   {
   const int ii = iter->first[0];
   const int jj = iter->first[1];
@@ -255,7 +255,7 @@ void GateGPUCollimIO_Input_Init_Materials(GateGPUCollimIO_Input * input,
 
   { // allocate and fill gpu input structure
   double cumulated_activity = 0;
-  for (ActivityMaterialTuplesVector::const_iterator iter = tuples.begin(); iter != tuples.end(); iter++)
+  for (ActivityMaterialTuplesVector::const_iterator iter = tuples.begin(); iter != tuples.end(); ++iter)
   {
   cumulated_activity += iter->activity;
   input->activity_data.push_back(cumulated_activity/total_activity);

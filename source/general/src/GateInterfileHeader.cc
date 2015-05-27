@@ -52,7 +52,7 @@ void GateInterfileHeader::ReadHeader(G4String headerFileName)
 	  m_dataFileName = headerFileName.replace(headerFileName.length()-3, 3, "i33");
   }
 
-  for (G4int i=0; i<2; i++)
+  for (G4int i=0; i<2; ++i)
     m_matrixSize[i] = m_dim[i] * m_pixelSize[i];
 
   G4cout << " Header read from       '" << m_headerFileName << "'\n";

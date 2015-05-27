@@ -59,7 +59,7 @@ void GateHounsfieldMaterialProperties::Read(std::ifstream & is,
 	is >> h;
 	// Read/Create all elements fractions
 	for (std::vector<G4String>::iterator it = el.begin(); it != el.end();
-			it++) {
+			++it) {
 		ReadAndStoreElementFraction(is, *it);
 		/*
 		 //  H    C    N    O   Na  Mg   P   S   Cl  Ar  K   Ca
@@ -86,11 +86,12 @@ void GateHounsfieldMaterialProperties::Read(std::ifstream & is,
 		mName = n;
 		// Normalise fraction
 		double sum = 0.0;
+		for (auto Element : mElementsList) sum += Element.Fraction;
+		/*for (mElementVector::iterator it = mElementsList.begin();
+				it != mElementsList.end(); ++it)
+			sum += it->Fraction;*/
 		for (mElementVector::iterator it = mElementsList.begin();
-				it != mElementsList.end(); it++)
-			sum += it->Fraction;
-		for (mElementVector::iterator it = mElementsList.begin();
-				it != mElementsList.end(); it++)
+				it != mElementsList.end(); ++it)
 			it->Fraction /= sum;
 		GateDebugMessage("Geometry", 6, "Read " << h << " " << mName << " " << sum << Gateendl);
 	}

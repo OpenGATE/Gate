@@ -233,7 +233,7 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
     while (pi != pe) {
       if (*pi > max) max = *pi;
       sum += *pi*factor;
-      pi++;
+      ++pi;
     }
     if (mNormalizedToMax) SetScaleFactor(factor*1.0/max);
     if (mNormalizedToIntegral) SetScaleFactor(factor*1.0/sum);
@@ -249,8 +249,8 @@ void GateImageWithStatistic::SaveData(int numberOfEvents, bool normalise) {
     GateImageDouble::const_iterator pe = mValueImage.end();
     while (pi != pe) {
       *po = (*pi)*mScaleFactor;
-      pi++;
-      po++;
+      ++pi;
+      ++po;
     }
     mScaledValueImage.Write(mFilename);
     SetScaleFactor(factor);
@@ -281,8 +281,8 @@ void GateImageWithStatistic::UpdateImage() {
   GateImageDouble::const_iterator pe = mValueImage.end();
   while (pi != pe) {
     *pi += (*pt);
-    pt++;
-    pi++;
+    ++pt;
+    ++pi;
   }
 }
 //-----------------------------------------------------------------------------
@@ -300,10 +300,10 @@ void GateImageWithStatistic::UpdateSquaredImage() {
   double fact = mScaleFactor*mScaleFactor;
   while (pi != pe) {
     *pi += (*pt)*(*pt);
-    if(mIsValuesMustBeScaled)  {  *po = (*pi)*fact;po++;}
+    if(mIsValuesMustBeScaled)  {  *po = (*pi)*fact;++po;}
     *pt = 0;
-    pt++;
-    pi++;
+    ++pt;
+    ++pi;
   }
 }
 //-----------------------------------------------------------------------------
@@ -362,9 +362,9 @@ void GateImageWithStatistic::UpdateUncertaintyImage(int numberOfEvents)
     }
     else *po = 1.0;
     */
-    po++;
-    pi++;
-    pii++;
+    ++po;
+    ++pi;
+    ++pii;
   }
 }
 //-----------------------------------------------------------------------------

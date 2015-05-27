@@ -12,7 +12,7 @@ int main(int /*argc*/, char **argv)
              << argv[1] << " for reading."
              << std::endl;
     }
-  for(int i=0; i<m_MetaImage.NDims(); i++)
+  for(int i=0; i<m_MetaImage.NDims(); ++i)
     {
     std::cout << "Dimension #" << i << "=" << m_MetaImage.DimSize(i)/m_SubSamplingFactor << std::endl;
     std::cout << "Dimension #" << i << "=" << m_MetaImage.ElementSpacing(i)*m_SubSamplingFactor << std::endl;
