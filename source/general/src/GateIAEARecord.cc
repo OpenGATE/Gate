@@ -102,15 +102,15 @@ short iaea_record_type::write_particle()
   
   int i = 0;
 
-  if(ix > 0) floatArray[i++] = x;
-  if(iy > 0) floatArray[i++] = y;
-  if(iz > 0) floatArray[i++] = z;
-  if(iu > 0) floatArray[i++] = u;
-  if(iv > 0) floatArray[i++] = v;
-  if(iweight > 0) floatArray[i++] = weight;
+  if(ix > 0) floatArray[++i] = x;
+  if(iy > 0) floatArray[++i] = y;
+  if(iz > 0) floatArray[++i] = z;
+  if(iu > 0) floatArray[++i] = u;
+  if(iv > 0) floatArray[++i] = v;
+  if(iweight > 0) floatArray[++i] = weight;
 
   int j;
-  for(j=0;j<iextrafloat;++j) floatArray[i++] = extrafloat[j];
+  for(j=0;j<iextrafloat;++j) floatArray[++i] = extrafloat[j];
 
   reclength += (i+1)*sizeof(float);
 
@@ -196,13 +196,13 @@ short iaea_record_type::read_particle()
   energy = fabs(floatArray[0]);
 
   i = 0;
-  if(ix > 0) x = floatArray[i++]; 
-  if(iy > 0) y = floatArray[i++];
-  if(iz > 0) z = floatArray[i++];
-  if(iu > 0) u = floatArray[i++];
-  if(iv > 0) v = floatArray[i++];
-  if(iweight > 0) weight = floatArray[i++];
-  for(j=0;j<iextrafloat;++j) extrafloat[j] = floatArray[i++];
+  if(ix > 0) x = floatArray[++i];
+  if(iy > 0) y = floatArray[++i];
+  if(iz > 0) z = floatArray[++i];
+  if(iu > 0) u = floatArray[++i];
+  if(iv > 0) v = floatArray[++i];
+  if(iweight > 0) weight = floatArray[++i];
+  for(j=0;j<iextrafloat;++j) extrafloat[j] = floatArray[++i];
 
   if(iw > 0)
   {
