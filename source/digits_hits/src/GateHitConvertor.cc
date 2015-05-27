@@ -60,7 +60,7 @@ GatePulseList* GateHitConvertor::ProcessHits(const GateCrystalHitsCollection* hi
   GatePulseList* pulseList = new GatePulseList(GetObjectName());
 
   size_t i;
-  for (i=0;i<n_hit;i++) {
+  for (i=0;i<n_hit;++i) {
         if (nVerboseLevel>1)
       		G4cout << "[GateHitConvertor::ProcessHits]: processing hit[" << i << "]\n";
       	ProcessOneHit( (*hitCollection)[i], pulseList);
@@ -68,7 +68,7 @@ GatePulseList* GateHitConvertor::ProcessHits(const GateCrystalHitsCollection* hi
 
   if (nVerboseLevel==1) {
       G4cout << "[GateHitConvertor::ProcessHits]: returning pulse-list with " << pulseList->size() << " entries\n";
-      for (i=0; i<pulseList->size(); i++)
+      for (i=0; i<pulseList->size(); ++i)
       	G4cout << *((*pulseList)[i]) << Gateendl;
       G4cout << Gateendl;
   }

@@ -257,7 +257,7 @@ G4double GatePulseList::ComputeEnergy() const
 void GatePulseList::InsertUniqueSortedCopy(GatePulse* newPulse)
 {
     GatePulseList::iterator it;
-    for (it=this->begin();it!=this->end();it++){
+    for (it=this->begin();it!=this->end();++it){
     	if ( (*it)->GetTime()==newPulse->GetTime() ) return;
     	if ( (*it)->GetTime()>newPulse->GetTime()){
 	    this->insert(it,new GatePulse(*newPulse));

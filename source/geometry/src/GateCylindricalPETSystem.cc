@@ -166,7 +166,7 @@ void GateCylindricalPETSystem::PrintToStream(std::ostream& aStream,G4bool doPrin
   aStream << "crystal tangential pitch: " << G4BestUnit( crystalPitchVector.y() ,"Length")    	  << Gateendl;
 
   size_t NbLayers = crystalComponent->GetActiveChildNumber();
-  for (size_t i=0; i<NbLayers; i++) {
+  for (size_t i=0; i<NbLayers; ++i) {
 
     char buffer[80];
     sprintf(buffer,"layer%u",(unsigned int)i);

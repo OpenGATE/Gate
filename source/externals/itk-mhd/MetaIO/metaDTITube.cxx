@@ -33,13 +33,13 @@ DTITubePnt(int dim)
   m_TensorMatrix = new float[6];
 
   unsigned int i=0;
-  for(i=0;i<m_Dim;i++)
+  for(i=0;i<m_Dim;++i)
     {
     m_X[i] = 0;
     }
 
   // Initialize the tensor matrix to identity
-  for(i=0;i<6;i++)
+  for(i=0;i<6;++i)
     {
     m_TensorMatrix[i] = 0;
     }
@@ -134,7 +134,7 @@ MetaDTITube::
   while(it != m_PointList.end())
   {
     DTITubePnt* pnt = *it;
-    it++;
+    ++it;
     delete pnt;
   }
   m_PointList.clear();
@@ -231,7 +231,7 @@ Clear(void)
   while(it != m_PointList.end())
   {
     DTITubePnt* pnt = *it;
-    it++;
+    ++it;
     delete pnt;
   }
   m_PointList.clear();
@@ -441,13 +441,13 @@ M_Read(void)
 
   int j;
   m_Positions.clear();
-  for(j = 0; j < pntDim; j++)
+  for(j = 0; j < pntDim; ++j)
     {
     PositionType p(pntVal[j],j);
     m_Positions.push_back(p);
     }
 
-  for(i=0;i<pntDim;i++)
+  for(i=0;i<pntDim;++i)
     {
     delete [] pntVal[i];
     }
@@ -482,7 +482,7 @@ M_Read(void)
     i=0;
     int d;
     unsigned int k;
-    for(j=0; j<m_NPoints; j++)
+    for(j=0; j<m_NPoints; ++j)
       {
       DTITubePnt* pnt = new DTITubePnt(m_NDims);
 
@@ -548,7 +548,7 @@ M_Read(void)
     }
   else
     {
-    for(j=0; j<m_NPoints; j++)
+    for(j=0; j<m_NPoints; ++j)
       {
       if(m_Event)
         {
@@ -715,14 +715,14 @@ M_Write(void)
         {
         float x = (*it)->m_X[d];
         MET_SwapByteIfSystemMSB(&x,MET_FLOAT);
-        MET_DoubleToValue((double)x,m_ElementType,data,i++);
+        MET_DoubleToValue((double)x,m_ElementType,data,++i);
         }
 
       for(d = 0; d < 6; d++)
         {
         float x = (*it)->m_TensorMatrix[d];
         MET_SwapByteIfSystemMSB(&x,MET_FLOAT);
-        MET_DoubleToValue((double)x,m_ElementType, data, i++);
+        MET_DoubleToValue((double)x,m_ElementType, data, ++i);
         }
 
       // Add the extra fields
@@ -733,11 +733,11 @@ M_Write(void)
         {
         float x = (*itFields).second;
         MET_SwapByteIfSystemMSB(&x,MET_FLOAT);
-        MET_DoubleToValue((double)x,m_ElementType,data,i++);
+        MET_DoubleToValue((double)x,m_ElementType,data,++i);
         itFields++;
         }
 
-      it++;
+      ++it;
       }
 
     m_WriteStream->write((char *)data,i*elementSize);
@@ -773,7 +773,7 @@ M_Write(void)
         }
 
       *m_WriteStream << METAIO_STREAM::endl;
-      it++;
+      ++it;
       }
     }
   return true;

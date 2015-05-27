@@ -24,17 +24,20 @@ GateSurfaceList::~GateSurfaceList()
 { if (m_messenger) delete m_messenger;}
 
 void GateSurfaceList::BuildSurfaces()
-{ for (size_t i=0; i<size(); i++) GetSurface(i)->BuildSurfaces();}
+{ 
+  for (iterator it=begin(); it!=end(); ++it)
+    ((GateSurface*)(*it))->BuildSurfaces();
+}
 
 void GateSurfaceList::AddSurface(GateSurface* surface)
 { theListOfNamedObject.push_back(surface);}
 
 void GateSurfaceList::DescribeSurfaces(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Nb of surfaces:        " << theListOfNamedObject.size() << "\n";
-  for (size_t i=0; i<theListOfNamedObject.size(); i++)
+  G4cout << GateTools::Indent(indent) << "Nb of surfaces:        " << size() << Gateendl;
+  for (iterator it=begin(); it!=end(); ++it)
   {
-    if (theListOfNamedObject[i]) G4cout << GateTools::Indent(indent+1) << "surface: '" << theListOfNamedObject[i]->GetObjectName() << "'\n";
+    if (*it) G4cout << GateTools::Indent(indent+1) << "surface: '" << (*it)->GetObjectName() << "'\n";
     else G4cout << GateTools::Indent(indent+1) << "detached surface\n";
   }
 }

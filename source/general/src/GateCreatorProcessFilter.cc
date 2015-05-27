@@ -34,7 +34,7 @@ G4bool GateCreatorProcessFilter::Accept(const G4Track* aTrack)
   if (!creatorProcess) return false;
 
   G4String creatorProcessName = creatorProcess->GetProcessName();
-  for (CreatorProcesses::const_iterator iter=creatorProcesses.begin(); iter!=creatorProcesses.end(); iter++)
+  for (CreatorProcesses::const_iterator iter=creatorProcesses.begin(); iter!=creatorProcesses.end(); ++iter)
     if (*iter==creatorProcessName)
       return true;
 
@@ -53,7 +53,7 @@ void GateCreatorProcessFilter::show(){
   GateVFilter::show();
 
   G4cout << "creatorProcesses=\n";
-  for (CreatorProcesses::const_iterator iter=creatorProcesses.begin(); iter!=creatorProcesses.end(); iter++)
+  for (CreatorProcesses::const_iterator iter=creatorProcesses.begin(); iter!=creatorProcesses.end(); ++iter)
     G4cout << *iter << Gateendl;
 }
 //---------------------------------------------------------------------------

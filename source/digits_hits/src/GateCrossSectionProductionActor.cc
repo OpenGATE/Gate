@@ -292,7 +292,7 @@ void GateCrossSectionProductionActor::SaveData() {
   if(m_IsC11){
     mIsotopeImage->SaveData(mCurrentEvent+1,false);
     G4double total_C11 =0.;
-    for(int i = 0 ;i <mIsotopeImage->GetValueImage().GetNumberOfValues() ; i++){
+    for(int i = 0 ;i <mIsotopeImage->GetValueImage().GetNumberOfValues() ; ++i){
       total_C11 += mIsotopeImage->GetValue(i);
     }
 
@@ -541,7 +541,7 @@ double GateCrossSectionProductionActor::GetSectionEfficace(double nrj,std::map<f
 
   std::map<float, float>::iterator found2 = MapSigma.begin(); //lower energy
   float dedx_sigma = found2->second;
-  for (std::map<float, float>::iterator found = MapSigma.begin(); found != MapSigma.end(); ++found)
+  for (std::map<float, float>::iterator found = MapSigma.begin(); found != MapSigma.end(); found++)
     {
 
       if(nrj < found2->first){

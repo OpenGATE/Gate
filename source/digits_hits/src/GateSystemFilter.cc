@@ -62,7 +62,7 @@ void GateSystemFilter::SetSystemToItsChain()
    GateSystemList* systemList = digitizer->GetSystemList();
 
    GateSystemConstIterator iter;
-   for(iter=systemList->begin(); iter!=systemList->end(); iter++)
+   for(iter=systemList->begin(); iter!=systemList->end(); ++iter)
    {
       if(m_systemName.compare((*iter)->GetOwnName()) == 0)
       {

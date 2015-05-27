@@ -59,7 +59,7 @@ METAIO_STL::string MetaCommand::
 ExtractDateFromCVS(METAIO_STL::string date)
 {
   METAIO_STL::string newdate;
-  for(int i=7;i<(int)date.size()-1;i++)
+  for(int i=7;i<(int)date.size()-1;++i)
     {
     newdate += date[i];
     }
@@ -82,7 +82,7 @@ METAIO_STL::string MetaCommand::
 ExtractVersionFromCVS(METAIO_STL::string version)
 {
   METAIO_STL::string newversion;
-  for(int i=11;i<(int)version.size()-1;i++)
+  for(int i=11;i<(int)version.size()-1;++i)
     {
     newversion += version[i];
     }
@@ -279,7 +279,7 @@ SetOptionComplete(METAIO_STL::string optionName,
       (*it).complete = complete;
       return;
       }
-    it++;
+    ++it;
     }
  }
 
@@ -321,7 +321,7 @@ AddOptionField(METAIO_STL::string optionName,
         }
       return true;
       }
-    it++;
+    ++it;
     }
   return false;
 }
@@ -351,7 +351,7 @@ SetOptionRange(METAIO_STL::string optionName,
         itField++;
         }
       }
-    it++;
+    ++it;
     }
   return false;
 }
@@ -380,7 +380,7 @@ SetOptionEnumerations(METAIO_STL::string optionName,
         itField++;
         }
       }
-    it++;
+    ++it;
     }
   return false;
 }
@@ -420,7 +420,7 @@ GetValueAsBool(METAIO_STL::string optionName,
         itField++;
         }
       }
-    it++;
+    ++it;
     }
   return false;
 }
@@ -483,7 +483,7 @@ GetValueAsFloat(METAIO_STL::string optionName,
         itField++;
         }
       }
-    it++;
+    ++it;
     }
   return 0;
 }
@@ -537,7 +537,7 @@ GetValueAsInt(METAIO_STL::string optionName,
         itField++;
         }
       }
-    it++;
+    ++it;
     }
   return 0;
 }
@@ -591,7 +591,7 @@ GetValueAsString(METAIO_STL::string optionName,
         itField++;
         }
       }
-    it++;
+    ++it;
     }
   return "";
 }
@@ -645,7 +645,7 @@ GetValueAsList( METAIO_STL::string optionName )
       {
       return this->GetValueAsList( *it );
       }
-    it++;
+    ++it;
     }
   METAIO_STL::list< METAIO_STL::string > empty;
   empty.clear();
@@ -672,7 +672,7 @@ GetOptionWasSet( METAIO_STL::string optionName)
       {
       return true;
       }
-    it++;
+    ++it;
     }
   return false;
 }
@@ -773,8 +773,8 @@ ListOptions()
       itField++;
       }
     METAIO_STREAM::cout << METAIO_STREAM::endl;
-    i++;
-    it++;
+    ++i;
+    ++it;
     }
   if(m_HelpCallBack != NULL)
     {
@@ -854,8 +854,8 @@ void MetaCommand::ListOptionsXML()
       itField++;
       }
     METAIO_STREAM::cout << "</option>" << METAIO_STREAM::endl;
-    i++;
-    it++;
+    ++i;
+    ++it;
     }
 }
 
@@ -870,7 +870,7 @@ void MetaCommand::WriteXMLOptionToCout(METAIO_STL::string optionName,
       {
       break;
       }
-    it++;
+    ++it;
     }
 
   METAIO_STL::vector<Field>::const_iterator itField = (*it).fields.begin();
@@ -1051,7 +1051,7 @@ void MetaCommand::ListOptionsSlicerXML()
         {
         this->WriteXMLOptionToCout((*it).name.c_str(),index);
         }
-      it++;
+      ++it;
       } // end loop option
 
     METAIO_STREAM::cout << " </parameters>" <<  METAIO_STREAM::endl;
@@ -1114,7 +1114,7 @@ ParseXML(const char* buffer)
 
     // Now check the fields
     long posF = static_cast<long>(buf.find("<field>"));
-    for(unsigned int i=0;i<n;i++)
+    for(unsigned int i=0;i<n;++i)
       {
       METAIO_STL::string f = this->GetXML(buf.c_str(),"field",posF);
       Field field;
@@ -1332,7 +1332,7 @@ ListOptionsSimplified(bool extended)
             }
           }
         }
-      it++;
+      ++it;
       }
     }
 
@@ -1365,7 +1365,7 @@ OptionExistsByMinusTag(METAIO_STL::string minusTag)
       {
       return true;
       }
-    it++;
+    ++it;
     }
   return false;
 }
@@ -1394,7 +1394,7 @@ GetOptionByMinusTag(METAIO_STL::string minusTag)
       {
       return &(*it);
       }
-    it++;
+    ++it;
     }
   return NULL;
 }
@@ -1410,7 +1410,7 @@ GetOptionByTag(METAIO_STL::string tag)
       {
       return &(*it);
       }
-    it++;
+    ++it;
     }
   return NULL;
 }
@@ -1427,8 +1427,8 @@ GetOptionId(Option* option)
       {
       return i;
       }
-    i++;
-    it++;
+    ++i;
+    ++it;
     }
   return -1;
 }
@@ -1530,7 +1530,7 @@ ExportGAD(bool dynamic)
         }
       itFields++;
       }
-    it++;
+    ++it;
     }
 
   file << " <componentAction type=\"JobSubmission\" order=\"" << order << "\">"
@@ -1547,7 +1547,7 @@ ExportGAD(bool dynamic)
       file << " ";
       }
     file << "{" << (*it).name.c_str() << "}";
-    it++;
+    ++it;
     }
   file << "\"/>" << METAIO_STREAM::endl;
   // Write out the arguments that are not data
@@ -1569,7 +1569,7 @@ ExportGAD(bool dynamic)
 
     if(isData)
       {
-      it++;
+      ++it;
       continue;
       }
 
@@ -1633,7 +1633,7 @@ ExportGAD(bool dynamic)
       itFields++;
       }
     file << "  </group>" << METAIO_STREAM::endl;
-    it++;
+    ++it;
     }
   file << " </componentAction>" << METAIO_STREAM::endl;
   order++;
@@ -1682,7 +1682,7 @@ ExportGAD(bool dynamic)
         }
       itFields++;
       }
-    it++;
+    ++it;
     }
   file << "    </componentActionList>" << METAIO_STREAM::endl;
   file << "  </applicationComponent>" << METAIO_STREAM::endl;
@@ -1729,7 +1729,7 @@ bool MetaCommand::Parse(int argc, char* argv[])
   METAIO_STL::string completeString = "";
 
   bool exportGAD = false;
-  for(unsigned int i=1;i<(unsigned int)argc;i++)
+  for(unsigned int i=1;i<(unsigned int)argc;++i)
     {
     if(!strcmp(argv[i],"-V") || !strcmp(argv[i],"-H"))
       {
@@ -1754,7 +1754,7 @@ bool MetaCommand::Parse(int argc, char* argv[])
         return false;
         }
       this->LoadArgumentsFromXML(argv[i+1]);
-      i++;
+      ++i;
       continue;
       }
     if(!strcmp(argv[i],"-vxml")
@@ -1874,7 +1874,7 @@ bool MetaCommand::Parse(int argc, char* argv[])
             m_OptionVector[currentOption].fields[0].value = argv[i];
             valuesRemaining += valuesInList-1;
             char optName[255];
-            for(unsigned int j=0; j<valuesInList; j++)
+            for(unsigned int j=0; j<valuesInList; ++j)
               {
               sprintf(optName, "%03d", j);
               this->AddOptionField( m_OptionVector[currentOption].name,
@@ -1899,7 +1899,7 @@ bool MetaCommand::Parse(int argc, char* argv[])
         }
       if(inArgument)
         {
-        i++;
+        ++i;
         }
       }
     else if(!inArgument) // If this is a field
@@ -1918,7 +1918,7 @@ bool MetaCommand::Parse(int argc, char* argv[])
           break;
           }
         pos++;
-        it++;
+        ++it;
         }
 
       if(!found && m_Verbose)
@@ -2050,7 +2050,7 @@ bool MetaCommand::Parse(int argc, char* argv[])
                             << " is required but not defined"
                             << METAIO_STREAM::endl;
         requiredAndNotDefined = true;
-        it++;
+        ++it;
         continue;
         }
 
@@ -2083,7 +2083,7 @@ bool MetaCommand::Parse(int argc, char* argv[])
         requiredAndNotDefined = true;
         }
       }
-    it++;
+    ++it;
     }
 
   if(requiredAndNotDefined)
@@ -2277,7 +2277,7 @@ bool MetaCommand::SetParameterGroup(METAIO_STL::string optionName,
       {
       group = &(*it);
       }
-    it++;
+    ++it;
     }
 
   bool optionExists = false;
@@ -2419,7 +2419,7 @@ bool MetaCommand::SetOptionValue(const char* optionName,
         itField++;
         }
       }
-    it++;
+    ++it;
     }
 
   if(createMissingArgument)

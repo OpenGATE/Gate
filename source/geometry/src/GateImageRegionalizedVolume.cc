@@ -33,7 +33,9 @@
 GateImageRegionalizedVolume::GateImageRegionalizedVolume(const G4String& name,
 							 G4bool acceptsChildren,
 							 G4int depth)
-  : GateVImageVolume(name,acceptsChildren,depth)
+  : GateVImageVolume(name,acceptsChildren,depth),
+    mLastInsidePointIsValid(false), mInsideComputedByLastDTO(false),
+    mLastTrackID(-1), mLastDTIPointIsValid(false)
 {
   GateMessageInc("Volume",5,"GateImageRegionalizedVolume() - begin\n");
 
@@ -55,9 +57,9 @@ GateImageRegionalizedVolume::~GateImageRegionalizedVolume()
   GateMessageInc("Volume",5,"~GateImageRegionalizedVolume() - begin\n");
 
   for(std::map<LabelType,GateImageRegionalizedSubVolume*>::iterator i = mLabelToSubVolume.begin();
-      i!=mLabelToSubVolume.end(); i++) {
+      i!=mLabelToSubVolume.end(); ++i) {
     for(std::vector<GateImageRegionalizedSubVolume*>::iterator it = mSubVolume.begin();
-        it!=mSubVolume.end(); it++)  {
+        it!=mSubVolume.end(); ++it)  {
       if(i->second==(*it)){
         delete (*it);
         (*it) = NULL;
@@ -68,7 +70,7 @@ GateImageRegionalizedVolume::~GateImageRegionalizedVolume()
     i->second  = NULL;
   }
   for(std::vector<GateImageRegionalizedSubVolume*>::iterator it = mSubVolume.begin();
-      it!=mSubVolume.end(); it++) {
+      it!=mSubVolume.end(); ++it) {
     if((*it)) {
       delete (*it);
       (*it) = NULL;
@@ -577,8 +579,7 @@ G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p,
 
   // Reset the vector
   for (std::vector<G4double>::iterator i = mDistanceToIn.begin();
-       i!=mDistanceToIn.end();
-       ++i)
+       i!=mDistanceToIn.end(); ++i)
     *i = kInfinity;
 
   // Distance to bbox of the image
@@ -1325,7 +1326,7 @@ void GateImageRegionalizedVolume::PropagateSensitiveDetectorToChild(GateMultiSen
 void GateImageRegionalizedVolume::AttachPhantomSD()
 {
   GateVVolume::AttachPhantomSD();
-  for(unsigned int i=0; i< mSubVolume.size(); i++) {
+  for(unsigned int i=0; i< mSubVolume.size(); ++i) {
     mSubVolume[i]->AttachPhantomSD();
   }
 }

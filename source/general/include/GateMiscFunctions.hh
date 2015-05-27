@@ -57,7 +57,9 @@ void OpenFileInput(G4String filename, std::ifstream & is);
 void OpenFileOutput(G4String filename, std::ofstream & os);
 
 //-----------------------------------------------------------------------------
+//! Converts a number into a G4String
 G4String DoubletoString(G4double a);
+G4String InttoG4String(const G4int i);
 
 //-----------------------------------------------------------------------------
 void Get2StringsFromCommand(const G4UIcommand * command, const G4String & newValues, G4String & string1, G4String& string2);

@@ -54,7 +54,7 @@ bool GateBremsstrahlungPB::IsApplicable(G4ParticleDefinition * par)
 //-----------------------------------------------------------------------------
 bool GateBremsstrahlungPB::IsModelApplicable(G4String ,G4ParticleDefinition * par)
 {
-  for(unsigned int k = 0; k<theListOfParticlesWithSelectedModels.size();k++) 
+  for(unsigned int k = 0; k<theListOfParticlesWithSelectedModels.size();++k) 
     if(par==theListOfParticlesWithSelectedModels[k]) GateError("A "<< GetG4ProcessName()<<" model has been already selected for "<< par->GetParticleName());
   if(par == G4Electron::Electron() || par == G4Positron::Positron()) return true;
   return false;

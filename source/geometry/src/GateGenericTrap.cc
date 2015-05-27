@@ -96,9 +96,9 @@ void GateGenericTrap::DescribeMyself(size_t level)
 {
   G4cout << GateTools::Indent(level) << "Shape: generic trapezoid (generictrapezoid)\n";
   G4cout << GateTools::Indent(level) << "Z length: " << G4BestUnit(m_zLength,"Length") << Gateendl;
-  for (std::vector<G4TwoVector>::iterator i=m_vertices.begin(); i!=m_vertices.end(); ++i) {
-      G4cout << GateTools::Indent(level) << "vertex at: (" << G4BestUnit((*i).x(),"Length") << ", "
-							   << G4BestUnit((*i).x(),"Length") << ")\n";
+  for (std::vector<G4TwoVector>::iterator it=m_vertices.begin(); it!=m_vertices.end(); ++it) {
+      G4cout << GateTools::Indent(level) << "vertex at: (" << G4BestUnit((*it).x(),"Length") << ", "
+							   << G4BestUnit((*it).x(),"Length") << ")\n";
   }
 }
 

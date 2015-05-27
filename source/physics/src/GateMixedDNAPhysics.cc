@@ -505,7 +505,7 @@ void GateMixedDNAPhysics::setDNAInWorld() {
 // Inactivate Default Models In Region
 void GateMixedDNAPhysics::inactivateDefaultModelsInRegion() {
 
-  for (unsigned int k = 0; k < regionsWithDNA.size(); k++) {
+  for (unsigned int k = 0; k < regionsWithDNA.size(); ++k) {
 
     // **************************************
     // 2) Define processes for Target region
@@ -576,7 +576,7 @@ void GateMixedDNAPhysics::inactivateDefaultModelsInRegion() {
 
 // Activate DNA In Region
 void GateMixedDNAPhysics::activateDNAInRegion() {
-  for (unsigned int k = 0; k < regionsWithDNA.size(); k++) {
+  for (unsigned int k = 0; k < regionsWithDNA.size(); ++k) {
 
     // **************************************
     // 2) Define processes for Target region

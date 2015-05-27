@@ -71,11 +71,11 @@ void GateSourceLinacBeam::SetSourceFromPhaseSpaceFilename(G4String f) {
   mHistoPhiDirection.resize(mNumberOfVolume);
   mHistoEnergy.resize(mNumberOfVolume);
 
-  for (int i=0; i<mNumberOfVolume; i++) {
+  for (int i=0; i<mNumberOfVolume; ++i) {
     mHistoPhiDirection[i].resize(mNbOfRadiusBinsForAngle);
     mHistoThetaDirection[i].resize(mNbOfRadiusBinsForAngle);
     
-    for (int j=0; j<mNbOfRadiusBinsForAngle; j++) {
+    for (int j=0; j<mNbOfRadiusBinsForAngle; ++j) {
       mHistoPhiDirection[i][j].resize(mNbOfEnergyBinsForAngle);
       mHistoThetaDirection[i][j].resize(mNbOfEnergyBinsForAngle);
     }
@@ -90,7 +90,7 @@ void GateSourceLinacBeam::SetSourceFromPhaseSpaceFilename(G4String f) {
   //   DD(mHistoVolume->GetBinContent(3));
   
   // Read histo radius for each starting volume
-  for (int i=0; i<mNumberOfVolume; i++) {
+  for (int i=0; i<mNumberOfVolume; ++i) {
     // DD(mVolumeNames[i]);
     G4String n = "histoPositionR"+mVolumeNames[i];
     // DD(n);
@@ -110,8 +110,8 @@ void GateSourceLinacBeam::SetSourceFromPhaseSpaceFilename(G4String f) {
   // DD(mNbOfRadiusBins);
 
   // Read histo energy for each radius, each source
-  for (int i=0; i<mNumberOfVolume; i++) {
-    for (int j=0; j<mNbOfRadiusBins; j++) {
+  for (int i=0; i<mNumberOfVolume; ++i) {
+    for (int j=0; j<mNbOfRadiusBins; ++j) {
       G4String n = "histoE"+mVolumeNames[i]+DoubletoString(j);
       // DD(n);
       mHistoEnergy[i][j] = (TH1D*)(mPhaseSpaceFile->GetKey(n))->ReadObj() ;
@@ -120,9 +120,9 @@ void GateSourceLinacBeam::SetSourceFromPhaseSpaceFilename(G4String f) {
   // PrintHistoInfo(mHistoEnergy[0][0]);
 
   // Read histo for each angle, each radius, each source
-  for (int i=0; i<mNumberOfVolume; i++) {
-    for (int j=0; j<mNbOfRadiusBinsForAngle; j++) {
-      for (int k=0; k<mNbOfEnergyBinsForAngle; k++) {
+  for (int i=0; i<mNumberOfVolume; ++i) {
+    for (int j=0; j<mNbOfRadiusBinsForAngle; ++j) {
+      for (int k=0; k<mNbOfEnergyBinsForAngle; ++k) {
         G4String n = "histoPhi"+mVolumeNames[i]+DoubletoString(j)+"_"+DoubletoString(k);
         // DD(n);
         mHistoPhiDirection [i][j][k] = (TH1D*)(mPhaseSpaceFile->GetKey(n))->ReadObj() ;
@@ -173,7 +173,7 @@ int GateSourceLinacBeam::GetIndexFromTime(double aTime) {
   // Search for current "time"
   int i=0; 
   while ((i < (int)mTimeList.size()) && (aTime >= mTimeList[i])) {
-    i++;
+    ++i;
   }
   i--;
   if ((i < 0) && (aTime < mTimeList[0])) {

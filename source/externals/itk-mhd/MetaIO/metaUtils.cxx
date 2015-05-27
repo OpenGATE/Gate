@@ -79,7 +79,7 @@ MET_GetFieldRecordNumber(const char * _fieldName,
                          METAIO_STL::vector<MET_FieldRecordType *> * _fields)
   {
   int i;
-  for(i=0; i<(int)_fields->size(); i++)
+  for(i=0; i<(int)_fields->size(); ++i)
     {
     if(!strcmp((*_fields)[i]->name, _fieldName))
       {
@@ -220,7 +220,7 @@ char* MET_ReadSubType(METAIO_STREAM::istream &_fp)
 bool MET_StringToType(const char *_s, MET_ValueEnumType *_vType)
   {
   int i;
-  for(i=0; i<MET_NUM_VALUE_TYPES; i++)
+  for(i=0; i<MET_NUM_VALUE_TYPES; ++i)
     {
     if(!strcmp(_s, MET_ValueTypeName[i]))
       {
@@ -849,7 +849,7 @@ bool MET_StringToWordArray(const char *s, int *n, char ***val)
   *val = new char *[*n];
 
   ptrdiff_t i, j;
-  for(i=0; i<*n; i++)
+  for(i=0; i<*n; ++i)
     {
     if(p == l)
       {
@@ -1175,7 +1175,7 @@ bool MET_Read(METAIO_STREAM::istream &fp,
               {
               (*fieldIter)->length =
                     (int)((*fields)[(*fieldIter)->dependsOn]->value[0]);
-              for(j=0; j<(size_t)(*fieldIter)->length; j++)
+              for(j=0; j<(size_t)(*fieldIter)->length; ++j)
                 {
                 fp >> (*fieldIter)->value[j];
                 }
@@ -1189,7 +1189,7 @@ bool MET_Read(METAIO_STREAM::istream &fp,
                   << METAIO_STREAM::endl;
                 return false;
                 }
-              for(j=0; j<(size_t)(*fieldIter)->length; j++)
+              for(j=0; j<(size_t)(*fieldIter)->length; ++j)
                 {
                 fp >> (*fieldIter)->value[j];
                 }
@@ -1209,7 +1209,7 @@ bool MET_Read(METAIO_STREAM::istream &fp,
               (*fieldIter)->length =
                     (int)((*fields)[(*fieldIter)->dependsOn]->value[0]);
               for(j=0; j<(size_t)(*fieldIter)->length*(*fieldIter)->length;
-                  j++)
+                  ++j)
                 {
                 fp >> (*fieldIter)->value[j];
                 }
@@ -1223,7 +1223,7 @@ bool MET_Read(METAIO_STREAM::istream &fp,
                   << METAIO_STREAM::endl;
                 return false;
                 }
-              for(j=0; j<(size_t)(*fieldIter)->length*(*fieldIter)->length; j++)
+              for(j=0; j<(size_t)(*fieldIter)->length*(*fieldIter)->length; ++j)
                 {
                 fp >> (*fieldIter)->value[j];
                 }
@@ -1411,7 +1411,7 @@ bool MET_Write(METAIO_STREAM::ostream &fp,
             METAIO_STREAM::cerr << METAIO_STREAM::endl;
             }
           }
-        for(j=0; j<(*fieldIter)->length; j++)
+        for(j=0; j<(*fieldIter)->length; ++j)
           {
           fp << " " << (MET_LONG_TYPE)((*fieldIter)->value[j]);
           }
@@ -1432,7 +1432,7 @@ bool MET_Write(METAIO_STREAM::ostream &fp,
             METAIO_STREAM::cerr << METAIO_STREAM::endl;
             }
           }
-        for(j=0; j<(*fieldIter)->length; j++)
+        for(j=0; j<(*fieldIter)->length; ++j)
           {
 #if defined(_MSC_VER) || defined(__HP_aCC)
           // NOTE: you cannot use __int64 in an ostream in MSV6 or HPUX
@@ -1468,7 +1468,7 @@ bool MET_Write(METAIO_STREAM::ostream &fp,
             METAIO_STREAM::cerr << METAIO_STREAM::endl;
             }
           }
-        for(j=0; j<(*fieldIter)->length; j++)
+        for(j=0; j<(*fieldIter)->length; ++j)
           {
           fp << " " << (MET_ULONG_TYPE)((*fieldIter)->value[j]);
           }
@@ -1489,7 +1489,7 @@ bool MET_Write(METAIO_STREAM::ostream &fp,
             METAIO_STREAM::cerr << METAIO_STREAM::endl;
             }
           }
-        for(j=0; j<(*fieldIter)->length; j++)
+        for(j=0; j<(*fieldIter)->length; ++j)
           {
 #if defined(_MSC_VER) || defined(__HP_aCC)
           // NOTE: you cannot use __int64 in an ostream in MSV6
@@ -1523,7 +1523,7 @@ bool MET_Write(METAIO_STREAM::ostream &fp,
             METAIO_STREAM::cerr << METAIO_STREAM::endl;
             }
           }
-        for(j=0; j<(*fieldIter)->length; j++)
+        for(j=0; j<(*fieldIter)->length; ++j)
           {
           fp << " " << (double)(*fieldIter)->value[j];
           }
@@ -1543,7 +1543,7 @@ bool MET_Write(METAIO_STREAM::ostream &fp,
             METAIO_STREAM::cerr << METAIO_STREAM::endl;
             }
           }
-        for(j=0; j<(*fieldIter)->length*(*fieldIter)->length; j++)
+        for(j=0; j<(*fieldIter)->length*(*fieldIter)->length; ++j)
           {
           fp << " " << (double)(*fieldIter)->value[j];
           }
@@ -1576,70 +1576,70 @@ bool MET_WriteFieldToFile(METAIO_STREAM::ostream & _fp, const char *_fieldName,
     case MET_ASCII_CHAR:
     case MET_CHAR:
     case MET_CHAR_ARRAY:
-      for(i = 0; i < _n; i++)
+      for(i = 0; i < _n; ++i)
         {
         f.value[i] = (double)(((const MET_CHAR_TYPE *)_v)[i]);
         }
       break;
     case MET_UCHAR:
     case MET_UCHAR_ARRAY:
-      for(i = 0; i < _n; i++)
+      for(i = 0; i < _n; ++i)
         {
         f.value[i] = (double)(((const MET_UCHAR_TYPE *)_v)[i]);
         }
       break;
     case MET_SHORT:
     case MET_SHORT_ARRAY:
-      for(i=0; i<_n; i++)
+      for(i=0; i<_n; ++i)
         {
         f.value[i] = (double)(((const MET_SHORT_TYPE *)_v)[i]);
         }
       break;
     case MET_USHORT:
     case MET_USHORT_ARRAY:
-      for(i=0; i<_n; i++)
+      for(i=0; i<_n; ++i)
         {
         f.value[i] = (double)(((const MET_USHORT_TYPE *)_v)[i]);
         }
       break;
     case MET_INT:
     case MET_INT_ARRAY:
-      for(i=0; i<_n; i++)
+      for(i=0; i<_n; ++i)
         {
         f.value[i] = (double)(((const MET_INT_TYPE *)_v)[i]);
         }
       break;
     case MET_UINT:
     case MET_UINT_ARRAY:
-      for(i=0; i<_n; i++)
+      for(i=0; i<_n; ++i)
         {
         f.value[i] = (double)(((const MET_UINT_TYPE *)_v)[i]);
         }
       break;
     case MET_LONG:
     case MET_LONG_ARRAY:
-      for(i=0; i<_n; i++)
+      for(i=0; i<_n; ++i)
         {
         f.value[i] = (double)(((const MET_LONG_TYPE *)_v)[i]);
         }
       break;
     case MET_ULONG:
     case MET_ULONG_ARRAY:
-      for(i=0; i<_n; i++)
+      for(i=0; i<_n; ++i)
         {
         f.value[i] = (double)(((const MET_ULONG_TYPE *)_v)[i]);
         }
       break;
     case MET_LONG_LONG:
     case MET_LONG_LONG_ARRAY:
-      for(i=0; i<_n; i++)
+      for(i=0; i<_n; ++i)
         {
         f.value[i] = (double)(((const MET_LONG_LONG_TYPE *)_v)[i]);
         }
       break;
     case MET_ULONG_LONG:
     case MET_ULONG_LONG_ARRAY:
-      for(i=0; i<_n; i++)
+      for(i=0; i<_n; ++i)
         {
 #if defined(_MSC_VER) || defined(__HP_aCC)
         // NOTE: you cannot use __int64 in an ostream in MSV6 or HPUX
@@ -1652,14 +1652,14 @@ bool MET_WriteFieldToFile(METAIO_STREAM::ostream & _fp, const char *_fieldName,
       break;
     case MET_FLOAT:
     case MET_FLOAT_ARRAY:
-      for(i=0; i<_n; i++)
+      for(i=0; i<_n; ++i)
         {
         f.value[i] = (double)((const MET_FLOAT_TYPE *)_v)[i];
         }
       break;
     case MET_DOUBLE:
     case MET_DOUBLE_ARRAY:
-      for(i=0; i<_n; i++)
+      for(i=0; i<_n; ++i)
         {
         f.value[i] = (double)(((const MET_DOUBLE_TYPE *)_v)[i]);
         }
@@ -1668,7 +1668,7 @@ bool MET_WriteFieldToFile(METAIO_STREAM::ostream & _fp, const char *_fieldName,
       strcpy((MET_CHAR_TYPE *)(f.value), (const MET_CHAR_TYPE *)_v);
       break;
     case MET_FLOAT_MATRIX:
-      for(i=0; i<_n*_n; i++)
+      for(i=0; i<_n*_n; ++i)
         {
         f.value[i] = (double)((const MET_FLOAT_TYPE *)_v)[i];
         }
@@ -1711,7 +1711,7 @@ bool MET_StringToInterpolationType(const char * _str,
   {
   int i;
 
-  for(i=0; i<MET_NUM_INTERPOLATION_TYPES; i++)
+  for(i=0; i<MET_NUM_INTERPOLATION_TYPES; ++i)
     if(!strcmp(MET_InterpolationTypeName[i], _str))
       {
       *_type = (MET_InterpolationEnumType)i;

@@ -276,7 +276,7 @@ bool MetaOutput::AddListField(METAIO_STL::string name,
   while(it != list.end())
     {
     field.value.push_back(*it);
-    it++;
+    ++it;
     }
   field.type = LIST;
   m_FieldVector.push_back(field);
@@ -586,7 +586,7 @@ void MetaOutput::Write()
         {
         (*itStream)->Write(this->GenerateXML().c_str());
         }
-      it++;
+      ++it;
       }
 
     if(!(*itStream)->Close())

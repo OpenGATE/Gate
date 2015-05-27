@@ -110,7 +110,7 @@ short iaea_record_type::write_particle()
   if(iweight > 0) floatArray[++i] = weight;
 
   int j;
-  for(j=0;j<iextrafloat;j++) floatArray[++i] = extrafloat[j];
+  for(j=0;j<iextrafloat;++j) floatArray[++i] = extrafloat[j];
 
   reclength += (i+1)*sizeof(float);
 
@@ -122,7 +122,7 @@ short iaea_record_type::write_particle()
 
   if(iextralong > 0) 
   {
-     for(j=0;j<iextralong;j++) longArray[j] = extralong[j];
+     for(j=0;j<iextralong;++j) longArray[j] = extralong[j];
      reclength += iextralong*sizeof(IAEA_I32);
      if( fwrite(longArray, sizeof(IAEA_I32), (size_t)iextralong, p_file) != (size_t)iextralong)
      {
@@ -142,9 +142,9 @@ short iaea_record_type::write_particle()
   printf("\n Q %d E %f X %f Y %f Z %f \n\t u %f v %f w %f W %f Part %d \n",
   charge, energy, x, y, z, u, v, w, weight, particle);
   if( iextrafloat > 0) printf(" EXTRA FLOATs:"); 
-  for(j=0;j<iextrafloat;j++) printf(" F%i %f",j+1,extrafloat[j]);
+  for(j=0;j<iextrafloat;++j) printf(" F%i %f",j+1,extrafloat[j]);
   if( iextralong > 0)  printf(" EXTRA LONGs:"); 
-  for(j=0;j<iextralong;j++) printf(" L%i %d", j+1,extralong[j]);
+  for(j=0;j<iextralong;++j) printf(" L%i %d", j+1,extralong[j]);
   printf("\n"); 
   #endif
     
@@ -196,13 +196,13 @@ short iaea_record_type::read_particle()
   energy = fabs(floatArray[0]);
 
   i = 0;
-  if(ix > 0) x = floatArray[++i]; 
+  if(ix > 0) x = floatArray[++i];
   if(iy > 0) y = floatArray[++i];
   if(iz > 0) z = floatArray[++i];
   if(iu > 0) u = floatArray[++i];
   if(iv > 0) v = floatArray[++i];
   if(iweight > 0) weight = floatArray[++i];
-  for(j=0;j<iextrafloat;j++) extrafloat[j] = floatArray[++i];
+  for(j=0;j<iextrafloat;++j) extrafloat[j] = floatArray[++i];
 
   if(iw > 0)
   {
@@ -224,7 +224,7 @@ short iaea_record_type::read_particle()
        fprintf(stderr, "\n ERROR: read_particle: Failed to read LONGS\n");
        return (FAIL);
      }
-     for(int l=0,j=0;j<iextralong;j++) extralong[j] = longArray[l++];
+     for(int l=0,j=0;j<iextralong;++j) extralong[j] = longArray[l++];
      reclength += (iextralong)*sizeof(IAEA_I32);
   }
 
@@ -238,9 +238,9 @@ short iaea_record_type::read_particle()
   printf("\n Q %d E %f X %f Y %f Z %f \n\t u %f v %f w %f W %f Part %d \n",
   charge, energy, x, y, z, u, v, w, weight, particle);
   if( iextrafloat > 0) printf(" EXTRA FLOATs:"); 
-  for(j=0;j<iextrafloat;j++) printf(" F%i %f",j+1,extrafloat[j]);
+  for(j=0;j<iextrafloat;++j) printf(" F%i %f",j+1,extrafloat[j]);
   if( iextralong > 0)  printf(" EXTRA LONGs:"); 
-  for(j=0;j<iextralong;j++)  printf(" L%i %d",j+1,extralong[j]);
+  for(j=0;j<iextralong;++j)  printf(" L%i %d",j+1,extralong[j]);
   printf("\n"); 
   #endif
   return(reclength);

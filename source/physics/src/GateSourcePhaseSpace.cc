@@ -115,7 +115,7 @@ void GateSourcePhaseSpace::Initialize()
   if(mFileType == "rootFile"){
     T = new TChain("PhaseSpace");  //creates a chain to process a Tree called "T"
 
-    for(unsigned int i=0;i<listOfPhaseSpaceFile.size();i++) {
+    for(unsigned int i=0;i<listOfPhaseSpaceFile.size();++i) {
       GateMessage("Beam", 1, "Phase Space Source. Read file " << listOfPhaseSpaceFile[i] << Gateendl);
       T->Add(listOfPhaseSpaceFile[i]);
     }
@@ -139,7 +139,7 @@ void GateSourcePhaseSpace::Initialize()
     }
 
     if(mRmax>0){
-       for(int i = 0; i < mTotalNumberOfParticles;i++){
+       for(int i = 0; i < mTotalNumberOfParticles;++i){
           T->GetEntry(i);
           if(abs(x)<mRmax && abs(y)<mRmax) 
 	  {
@@ -156,13 +156,13 @@ void GateSourcePhaseSpace::Initialize()
     int totalEventInFile = 0;
     mCurrentParticleNumberInFile = -1;
     G4String IAEAFileName  = " ";
-    for(uint j=0;j<listOfPhaseSpaceFile.size();j++){
+    for(uint j=0;j<listOfPhaseSpaceFile.size();++j){
       IAEAFileName = G4String(removeExtension(listOfPhaseSpaceFile[j]));
       totalEventInFile = OpenIAEAFile(IAEAFileName);
       mTotalNumberOfParticles += totalEventInFile;
 
       if(mRmax>0){
-        for(int j=0 ; j<totalEventInFile ; j++)
+        for(int j=0 ; j<totalEventInFile ; ++j)
         {
           pIAEARecordType->read_particle();
           if( abs(pIAEARecordType->x*cm)<mRmax && abs(pIAEARecordType->y*cm)<mRmax )  {pListOfSelectedEvents.push_back(totalEvent);G4cout<<" --> OK  "<<totalEvent<< Gateendl;}
@@ -438,7 +438,7 @@ void GateSourcePhaseSpace::AddFile(G4String file)
 G4ThreeVector GateSourcePhaseSpace::SetReferencePosition(G4ThreeVector coordLocal)
 {
   for(int j = mListOfRotation.size()-1;j>=0;j--){
-  //for(int j = 0; j<mListOfRotation.size();j++){
+  //for(int j = 0; j<mListOfRotation.size();++j){
     const G4ThreeVector & t = mListOfTranslation[j];
     const G4RotationMatrix * r =  mListOfRotation[j];
  

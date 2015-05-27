@@ -66,11 +66,11 @@ void GateFictitiousVoxelMap::GetMaterials ( std::vector<G4Material*>& vec ) cons
 	G4int size=nx*ny*nz;
 
 	vec.clear();
-	for ( G4int i=0;i<size;i++ )
+	for ( G4int i=0;i<size;++i )
 	{
 		G4Material* mat=pGeometryVoxelReader->GetVoxelMaterial ( i );
 		bool found=false;
-		for ( size_t l=0;l<vec.size();l++ )
+		for ( size_t l=0;l<vec.size();++l )
 		{
 			if ( mat->GetIndex() ==vec[l]->GetIndex() )
 			{

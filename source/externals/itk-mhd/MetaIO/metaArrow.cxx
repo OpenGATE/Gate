@@ -77,7 +77,7 @@ PrintInfo() const
   MetaObject::PrintInfo();
   METAIO_STREAM::cout << "Length = " << M_Length << METAIO_STREAM::endl;
   METAIO_STREAM::cout << "Direction = ";
-  for (int i = 0; i < m_NDims; i++)
+  for (int i = 0; i < m_NDims; ++i)
     {
     METAIO_STREAM::cout << M_Direction[i] << " ";
     }
@@ -104,7 +104,7 @@ CopyInfo(const MetaObject * _object)
       {
       M_Length = arrow->Length();
       const double* direction = arrow->Direction();
-      for (int i = 0; i < m_NDims; i++)
+      for (int i = 0; i < m_NDims; ++i)
         {
         M_Direction[i] = direction[i];
         }
@@ -128,7 +128,7 @@ Length(void) const
 void  MetaArrow::
 Direction(const double *direction)
  {
-  for (int i = 0; i < m_NDims; i++)
+  for (int i = 0; i < m_NDims; ++i)
     {
     M_Direction[i] = direction[i];
     }
@@ -225,7 +225,7 @@ M_Read(void)
   mF_direction = MET_GetFieldRecord("Direction", &m_Fields);
   if(mF_direction->defined)
     {
-    for (int i = 0; i < m_NDims; i++)
+    for (int i = 0; i < m_NDims; ++i)
       {
       M_Direction[i] = (double)mF_direction->value[i];
       }

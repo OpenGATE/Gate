@@ -17,8 +17,8 @@ See GATE/LICENSE.txt for further details
 std::ostream& operator<<(std::ostream& flux, const GateOutputVolumeID& volumeID)    
 {
   int w = flux.width();
-  for (size_t i=0; i<volumeID.size(); ++i)
-      flux << std::setw(w) << volumeID[i] << " ";
+  for (std::vector<G4int>::const_iterator it=volumeID.begin(); it!=volumeID.end(); ++it)
+      flux << std::setw(w) << (*it) << " ";
   
   return flux;
 }
@@ -47,7 +47,7 @@ GateOutputVolumeID GateOutputVolumeID::Top(size_t maxDepth) const
   // S. Stute: correction for buffer overflow .....
   if (maxDepth>=this->size()) maxDepth = this->size()-1;
   GateOutputVolumeID topID(maxDepth+1);
-  for (size_t depth=0; depth<=maxDepth; ++depth)
+  for (size_t depth=0; depth<=maxDepth; depth++)
     topID[depth] = (*this)[depth];
   return topID;
 }

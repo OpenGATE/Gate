@@ -184,7 +184,7 @@ void GateMessageManager::SetMessageLevel(std::string key,
       
     for (i=GetInstance()->mMessageLevel.begin();
 	 i!=GetInstance()->mMessageLevel.end();
-	 ++i) 
+	 ++i)
       (*i).second = level;
       
   }
@@ -222,7 +222,7 @@ void GateMessageManager::PrintInfo()
   GateMessage("Help",1, "Category");
   for (int k=0;
        k<(int)(GetInstance()->mMaxMessageLength-8);
-       k++) {
+       ++k) {
     GateMessageCont("Help",1," "); 
   }
   GateMessageCont("Help",1,"Level  Nature\n");
@@ -234,7 +234,7 @@ void GateMessageManager::PrintInfo()
     GateMessage("Help",1, (*i).first);
     for (int k=0;
 	 k<(int)(GetInstance()->mMaxMessageLength+2-(*i).first.length());
-	 k++) {
+	 ++k) {
       GateMessageCont("Help",1," ");
     }
     GateMessageCont("Help",1, (*i).second << "\t" 
@@ -272,7 +272,7 @@ G4int GateMessageManager::ReceiveG4cout (G4String s)
 std::string GateMessageManager::GetSpace(int n) 
 { 
   std::string s; 
-  for (int i=0; i<n; i++) s.insert(0," "); 
+  for (int i=0; i<n; ++i) s.insert(0," "); 
   return s; 
 }
 //-----------------------------------------------------------

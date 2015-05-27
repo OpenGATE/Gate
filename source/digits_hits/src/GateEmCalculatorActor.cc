@@ -118,7 +118,7 @@ void GateEmCalculatorActor::SaveData()
   G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
   G4ProcessVector* plist = particle->GetProcessManager()->GetProcessList();
   std::vector<G4String> processNameVector;
-  for (G4int j = 0; j < plist->size(); j++)
+  for (G4int j = 0; j < plist->size(); ++j)
     {
         if ( ( (*plist)[j]->GetProcessType() == fElectromagnetic) && ((*plist)[j]->GetProcessName() != "msc"))
             {
@@ -151,7 +151,7 @@ void GateEmCalculatorActor::SaveData()
       os << "(MeV.cm²/g)\t";
       os << "(cm²/g)\n";
 
-  for(size_t k=0;k<G4Material::GetNumberOfMaterials();k++)
+  for(size_t k=0;k<G4Material::GetNumberOfMaterials();++k)
     {
       material = (*matTbl)[k]->GetName();
       density = (*matTbl)[k]->GetDensity();
@@ -161,7 +161,7 @@ void GateEmCalculatorActor::SaveData()
       EmDEDX = emcalc->ComputeElectronicDEDX(mEnergy, mPartName, material, cut);
       NuclearDEDX = emcalc->ComputeNuclearDEDX(mEnergy, mPartName, material);
       TotalDEDX = emcalc->ComputeTotalDEDX(mEnergy, mPartName, material, cut);
-      for( size_t j = 0; j < processNameVector.size(); j++)
+      for( size_t j = 0; j < processNameVector.size(); ++j)
         {
           CrossSectionProcess = emcalc->ComputeCrossSectionPerVolume( mEnergy, mPartName, processNameVector[j], material, cut);
           MuMassCoeficient += CrossSectionProcess / density;

@@ -49,7 +49,7 @@ void GateVoxelCompressor::MakeExclusionList(G4String val){
   }
   AddMaterial(  val.substr(lastPos,curPos-lastPos) );
 	 
-  for(std::set<unsigned short int>::iterator it=m_exclusionList->begin(); it!=m_exclusionList->end(); it++) {
+  for(std::set<unsigned short int>::iterator it=m_exclusionList->begin(); it!=m_exclusionList->end(); ++it) {
     G4cout << (*it) <<  Gateendl;
   }
 
@@ -100,8 +100,8 @@ void GateVoxelCompressor::Compress(){
 	voxelSetPass1.reserve(voxelEstimate);
 	
 	// First pass - run length along X3 ( or x,  the direction varying the most rapidly)
-	for(int i=0; i<m_array->GetVoxelNz() ; i++){
-	  for(int j=0; j< m_array->GetVoxelNy();  j++)
+	for(int i=0; i<m_array->GetVoxelNz() ; ++i){
+	  for(int j=0; j< m_array->GetVoxelNy();  ++j)
 	    runLength(i, j, voxelSetPass1);
 	}
 
@@ -136,7 +136,7 @@ void GateVoxelCompressor::runLength(int x1, int x2, voxelSet& vs){
   int runLength(1);
   int position (0);
   
-  for (int i=0; i < m_array->GetVoxelNx()-1; i++){
+  for (int i=0; i < m_array->GetVoxelNx()-1; ++i){
     unsigned short int  value( m_array->GetVoxelMaterial(i, x2, x1)->GetIndex() );
    
     // If same material voxel, increase run length
@@ -177,7 +177,7 @@ voxelSet& GateVoxelCompressor::runLength2nd(voxelSet& vs, const std::valarray<un
   int runLength(1);
   int position (0);
   
-  for (unsigned int i=0; i<vs.size()-1; i++){
+  for (unsigned int i=0; i<vs.size()-1; ++i){
     
     std::valarray<unsigned short int> difference(  vs[i+1].positionDifference(vs[i])  );
  

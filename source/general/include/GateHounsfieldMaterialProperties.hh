@@ -23,18 +23,28 @@ class GateHounsfieldMaterialProperties
 public:
   GateHounsfieldMaterialProperties();
   ~GateHounsfieldMaterialProperties();
+  
+  struct mElementCompound
+  {
+    G4Element* Element;
+    double Fraction;
+  };
+  typedef std::vector<mElementCompound> mElementVector;
+  typedef mElementVector::iterator iterator;
+  typedef mElementVector::const_iterator const_iterator;
+  iterator begin(){ return mElementsList.begin(); }
+  iterator end(){ return mElementsList.end(); }
 
   int GetNumberOfElements();
-  G4Element * GetElements(int i);
-  double GetElementsFraction(int i);
+  inline G4Element * GetElements(int i) { return mElementsList[i].Element; }
+  inline double GetElementsFraction(int i) { return mElementsList[i].Fraction; }
   G4String GetName();
   double GetH();
   void Read(std::ifstream & is, std::vector<G4String> & el);
 
 protected:
   void ReadAndStoreElementFraction(std::ifstream & is, G4String name);
-  std::vector<G4Element*> mElementsList;
-  std::vector<double> mElementsFractionList;
+  mElementVector mElementsList;
   G4String mName;
   double mH;
 };

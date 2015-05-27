@@ -49,7 +49,7 @@ GateCoincidencePulseProcessorChain::~GateCoincidencePulseProcessorChain()
 //------------------------------------------------------------------------------------------------------
 void GateCoincidencePulseProcessorChain::InsertProcessor(GateVCoincidencePulseProcessor* newChildProcessor)
 {
-  theListOfNamedObject.push_back(newChildProcessor);
+	theListOfNamedObject.push_back(newChildProcessor);
 }
 //------------------------------------------------------------------------------------------------------
 
@@ -67,9 +67,9 @@ void GateCoincidencePulseProcessorChain::Describe(size_t indent)
 //------------------------------------------------------------------------------------------------------
 void GateCoincidencePulseProcessorChain::DescribeProcessors(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Nb of modules:       " << theListOfNamedObject.size() << Gateendl;
-  for (size_t i=0; i<theListOfNamedObject.size(); i++)
-      GetProcessor(i)->Describe(indent+1);
+  G4cout << GateTools::Indent(indent) << "Nb of modules:       " << size() << Gateendl;
+  for (iterator it=begin(); it!=end(); ++it)
+      ((GateVCoincidencePulseProcessor*)(*it))->Describe(indent+1);
 }
 //------------------------------------------------------------------------------------------------------
 
@@ -82,7 +82,7 @@ void GateCoincidencePulseProcessorChain::ListElements()
 const std::vector<GateCoincidencePulse*> GateCoincidencePulseProcessorChain::MakeInputList() const
 {
    std::vector<GateCoincidencePulse*> ans;
-   for (std::vector<G4String>::const_iterator itName = m_inputNames.begin() ; itName != m_inputNames.end() ; ++itName){
+   for (std::vector<G4String>::const_iterator itName = m_inputNames.begin() ; itName != m_inputNames.end() ; itName++){
      std::vector<GateCoincidencePulse*> pulseList 
         = GateDigitizer::GetInstance()->FindCoincidencePulse( *itName );
      for (std::vector<GateCoincidencePulse*>::const_iterator it = pulseList.begin() ; it != pulseList.end() ; ++it){
@@ -92,7 +92,7 @@ const std::vector<GateCoincidencePulse*> GateCoincidencePulseProcessorChain::Mak
 	bool last=true;
 	// should use a map to imrove sorted insertion, but typically lists are short,
 	// so this may not be a problem
-	for (std::vector<GateCoincidencePulse*>::iterator it2 = ans.begin() ; it2 != ans.end() ; ++it2){
+	for (std::vector<GateCoincidencePulse*>::iterator it2 = ans.begin() ; it2 != ans.end() ; it2++){
 	  if ( (*it2)->GetTime()>time) {ans.insert(it2,pulse) ; last=false; break;}
 	  if ( m_noPriority && ((*it2)->GetTime()==time)) {
 
@@ -117,9 +117,9 @@ void GateCoincidencePulseProcessorChain::ProcessCoincidencePulses()
   std::vector<GateCoincidencePulse*> pulseList = MakeInputList();
 
   //mhadi_add[
-  for (size_t processorID = 0 ; processorID < GetProcessorNumber(); processorID++) 
+  for (iterator it=begin(); it!=end(); ++it)
   {
-    GateVCoincidencePulseProcessor* processor =  GetProcessor(processorID);
+    GateVCoincidencePulseProcessor* processor =  ((GateVCoincidencePulseProcessor*)(*it));
     if (processor->IsEnabled() && processor->IsTriCoincProcessor())
         processor->CollectSingles();
     
@@ -135,8 +135,9 @@ void GateCoincidencePulseProcessorChain::ProcessCoincidencePulses()
   for (std::vector<GateCoincidencePulse*>::iterator it = pulseList.begin() ; it != pulseList.end() ; ++it,++i){
      GateCoincidencePulse* pulse = *it;
      if (pulse->empty()) continue;
-     for (size_t processorID = 0 ; processorID < GetProcessorNumber(); processorID++) {
-       GateVCoincidencePulseProcessor* processor =  GetProcessor(processorID);
+     for (iterator iter=begin(); iter!=end(); ++iter)
+     {
+       GateVCoincidencePulseProcessor* processor =  ((GateVCoincidencePulseProcessor*)(*iter));
        if (processor->IsEnabled()) {
 	 pulse = processor->ProcessPulse(pulse,i);
 	 if (pulse){
@@ -161,7 +162,7 @@ GateVSystem* GateCoincidencePulseProcessorChain::FindSystem(G4String& inputName)
 
    /*G4int index = -1;
 
-   for(size_t i=0; i<CoincidenceSorterList.size(); i++)
+   for(size_t i=0; i<CoincidenceSorterList.size(); ++i)
    {
       G4String coincSorterChainName = CoincidenceSorterList[i]->GetOutputName();
       if(inputName.compare(coincSorterChainName) == 0)

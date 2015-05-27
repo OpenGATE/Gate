@@ -186,7 +186,7 @@ PrintInfo(void) const
              (*it)->type ==MET_FLOAT_ARRAY ||
              (*it)->type ==MET_DOUBLE_ARRAY )
       {
-      for(i=0; i<(*it)->length; i++)
+      for(i=0; i<(*it)->length; ++i)
         {
         printf("%f ",(*it)->value[i]);
         }
@@ -194,7 +194,7 @@ PrintInfo(void) const
     else if((*it)->type == MET_FLOAT_MATRIX)
       {
       METAIO_STREAM::cout << METAIO_STREAM::endl;
-      for(i=0; i<(*it)->length*(*it)->length; i++)
+      for(i=0; i<(*it)->length*(*it)->length; ++i)
         {
         printf("%f ",(*it)->value[i]);
         if(i==(*it)->length-1)
@@ -268,7 +268,7 @@ ClearFields()
   while( it != end )
     {
     MET_FieldRecordType* field = *it;
-    it++;
+    ++it;
 
     // Check if the pointer is not in one of the user's list
     bool exists = false;
@@ -496,7 +496,7 @@ ClearUserFields()
   while( it != end )
     {
     MET_FieldRecordType* field = *it;
-    it++;
+    ++it;
     delete field;
     }
 
@@ -521,7 +521,7 @@ ClearUserFields()
       it2++;
       }
 
-    it++;
+    ++it;
 
     if(!deleted)
       {
@@ -558,7 +558,7 @@ GetUserField(const char* _name)
         {
         const unsigned int numMatrixElements = itLength * itLength;
         out = (void*) (new char[numMatrixElements*eSize] );
-        for( unsigned int i=0; i < numMatrixElements; i++ )
+        for( unsigned int i=0; i < numMatrixElements; ++i )
           {
           MET_DoubleToValue((*it)->value[i],(*it)->type,out,i);
           }
@@ -566,14 +566,14 @@ GetUserField(const char* _name)
       else
         {
         out = (void*) (new char[itLength*eSize] );
-        for( unsigned int i=0; i < itLength; i++ )
+        for( unsigned int i=0; i < itLength; ++i )
           {
           MET_DoubleToValue((*it)->value[i],(*it)->type,out,i);
           }
         }
       return out;
       }
-    it++;
+    ++it;
     }
   return NULL;
   }
@@ -794,7 +794,7 @@ M_SetupReadFields(void)
   while( it != end )
     {
     m_Fields.push_back(*it);
-    it++;
+    ++it;
     }
   }
 
@@ -882,7 +882,7 @@ M_SetupWriteFields(void)
   while( it != end )
     {
     m_Fields.push_back(*it);
-    it++;
+    ++it;
     }
   }
 
@@ -979,7 +979,7 @@ M_Read(void)
     {
     mF = MET_GetFieldRecord((*it)->name, &m_Fields);
     m_UserDefinedWriteFields.push_back(mF);
-    it++;
+    ++it;
     }
 
   return true;

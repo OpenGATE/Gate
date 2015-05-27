@@ -30,7 +30,7 @@ bool MET_StringToImageModality(const char * _str,
   {
   int i;
 
-  for(i=0; i<MET_NUM_IMAGE_MODALITY_TYPES; i++)
+  for(i=0; i<MET_NUM_IMAGE_MODALITY_TYPES; ++i)
     if(!strcmp(MET_ImageModalityTypeName[i], _str))
       {
       *_type = (MET_ImageModalityEnumType)i;

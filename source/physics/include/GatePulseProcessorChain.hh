@@ -28,7 +28,7 @@ class GatePulseProcessorChain : public GateModuleListManager
     			    const G4String& itsOutputName);
     virtual ~GatePulseProcessorChain();
 
-     virtual void InsertProcessor(GateVPulseProcessor* newChildProcessor);
+     inline virtual void InsertProcessor(GateVPulseProcessor* newChildProcessor);
 
      /*! \brief Virtual method to print-out a description of the object
 
@@ -41,10 +41,8 @@ class GatePulseProcessorChain : public GateModuleListManager
      virtual GateVPulseProcessor* FindProcessor(const G4String& name)
       	  { return (GateVPulseProcessor*) FindElement(name); }
      virtual GateVPulseProcessor* GetProcessor(size_t i)
-      	  {return (GateVPulseProcessor*) GetElement(i);}
+      	  {return (GateVPulseProcessor*) theListOfNamedObject[i];}
      GatePulseList* ProcessPulseList();
-     virtual size_t GetProcessorNumber()
-      	  { return size();}
 	  
      const G4String& GetInputName() const
        { return m_inputName; }

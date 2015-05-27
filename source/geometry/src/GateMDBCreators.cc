@@ -99,11 +99,11 @@ G4Material* GateCompoundMaterialCreator::Construct()
 		G4String msg = "Failed to create a new material for '" + name + "'!";
     G4Exception( "GateCompoundMaterialCreator::Construct", "Construct", FatalException, msg );
 	}
-  for (G4int i=0; i<nComponents ; i++)
-    components[i]->AddToMaterial(material);
+  for (std::vector<GateComponentCreator*>::iterator it=components.begin(); it!=components.end(); ++it)
+    (*it)->AddToMaterial(material);
 
   double f=0.0;
-  for(unsigned int j=0; j<material->GetNumberOfElements(); j++) {
+  for(unsigned int j=0; j<material->GetNumberOfElements(); ++j) {
 	double frac = material->GetFractionVector()[j];
 	f+=frac;
 	if (frac<0.0) {
@@ -121,7 +121,7 @@ G4Material* GateCompoundMaterialCreator::Construct()
 	GateError("Sum of fraction is not 1.0 for mat " 
 			  << material->GetName()
 			  << " " << f);
-	for(unsigned int j=0; j<material->GetNumberOfElements(); j++) {
+	for(unsigned int j=0; j<material->GetNumberOfElements(); ++j) {
 	  GateError("Element " << j << " " 
 				<< material->GetElement(j)->GetName()
 				<< " = " << material->GetFractionVector()[j]);
@@ -135,7 +135,7 @@ G4Material* GateCompoundMaterialCreator::Construct()
 //-----------------------------------------------------------------------------
 GateCompoundMaterialCreator::~GateCompoundMaterialCreator()
 {
-  for (std::vector<GateComponentCreator*>::iterator iter=components.begin() ; iter!= components.end() ; iter++)
-    delete *iter;
+  for (std::vector<GateComponentCreator*>::iterator it=components.begin(); it!= components.end(); )
+    it=components.erase(it);
 }
 //-----------------------------------------------------------------------------

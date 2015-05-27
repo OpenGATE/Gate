@@ -216,7 +216,7 @@ void GateVProcessMessenger::BuildDataSetCommands(G4String base)
   if(nCS == 0) return;
 
   G4String candCS = "";
-  for(unsigned int i=0; i<nCS; i++)
+  for(unsigned int i=0; i<nCS; ++i)
     candCS += lcs[i]  + " ";
   
   base = mPrefix+base;
@@ -302,7 +302,7 @@ void GateVProcessMessenger::BuildModelsCommands(G4String base)
   if(nMod == 0) return;
 
   G4String candModel = "";
-  for(unsigned int i=0; i<nMod; i++)
+  for(unsigned int i=0; i<nMod; ++i)
     candModel += lmod[i]  + " ";
 
 
@@ -343,7 +343,7 @@ void GateVProcessMessenger::BuildEnergyRangeModelsCommands(G4String base)
   unsigned int nMod = lmod.size();
   if(nMod == 0) return;
 
-  for(unsigned int i=0; i<nMod; i++)
+  for(unsigned int i=0; i<nMod; ++i)
   {
     bb = baseModel+"/"+lmod[i]+"/clearEnergyRange";
     plModelClearERange.push_back(new G4UIcmdWithAString(bb,this));
@@ -444,7 +444,7 @@ void GateVProcessMessenger::SetEnergyRangeModelsNewValue(G4UIcommand* command, G
       pProcess->ModelList(par1);
   }
 
-  for(unsigned int i=0; i<nMod; i++)
+  for(unsigned int i=0; i<nMod; ++i)
   {
     if(command==plModelClearERange[i])
     {

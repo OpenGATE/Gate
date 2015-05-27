@@ -217,10 +217,9 @@ public:
 	inline virtual void SetVerboseLevel( G4int val )
   {
 		GateVOutputModule::SetVerboseLevel( val );
-		for( size_t i = 0; i < m_outputChannelVector.size(); ++i )
-		{
-			m_outputChannelVector[ i ]->SetVerboseLevel( val );
-		}
+		for( std::vector< VOutputChannel* >::iterator it = m_outputChannelVector.begin();
+				it != m_outputChannelVector.end(); ++it )
+			(*it)->SetVerboseLevel( val );
   }
 
 	/*!

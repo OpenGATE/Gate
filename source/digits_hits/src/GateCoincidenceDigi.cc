@@ -107,7 +107,7 @@ std::ofstream& operator<<(std::ofstream& flux, GateCoincidenceDigi* digi)
 void GateCoincidenceDigi::SetCoincidenceASCIIMask(G4bool newValue)
 {
   m_coincidenceASCIIMaskDefault = newValue;
-  for (G4int iMask=0; ((unsigned int) iMask)<m_coincidenceASCIIMask.size(); iMask++) {
+  for (G4int iMask=0; ((unsigned int) iMask)<m_coincidenceASCIIMask.size(); ++iMask) {
     m_coincidenceASCIIMask[iMask] = newValue;
   }
 }

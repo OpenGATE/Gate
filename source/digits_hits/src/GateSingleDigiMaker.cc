@@ -64,7 +64,7 @@ void GateSingleDigiMaker::Digitize()
   GateSingleDigiCollection* singleDigiCollection = new GateSingleDigiCollection(m_digitizer->GetObjectName(),m_collectionName);
 
   // Transform each pulse into a single digi
-  for (i=0;i<n_pulses;i++) {
+  for (i=0;i<n_pulses;++i) {
 	GateSingleDigi* Digi = new GateSingleDigi( (*pulseList)[i] );
 	singleDigiCollection->insert(Digi);
       }
@@ -72,7 +72,7 @@ void GateSingleDigiMaker::Digitize()
   if (nVerboseLevel>0) {
       	G4cout  << "[GateSingleDigiMaker::ConvertSinglePulseList]: "
 	      	<< "created " << singleDigiCollection->entries() << " single digits:\n";
-      	for (i=0; i<(size_t)(singleDigiCollection->entries()); i++)
+      	for (i=0; i<(size_t)(singleDigiCollection->entries()); ++i)
 	  (*singleDigiCollection)[i]->Print();
 	G4cout << Gateendl;
   }

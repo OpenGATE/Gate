@@ -67,7 +67,7 @@ void GateQvalueActor::SaveData() {
   GateVActor::SaveData();
   mQvalueImage.SaveData(mCurrentEvent+1);
   G4cout<< Gateendl;
-  for (std::map<G4String,G4double>::iterator it=listOfEmiss.begin(); it!=listOfEmiss.end(); it++)
+  for (std::map<G4String,G4double>::iterator it=listOfEmiss.begin(); it!=listOfEmiss.end(); ++it)
     G4cout<<(*it).first<<"  "<<(*it).second<< Gateendl;
 }
 //-----------------------------------------------------------------------------
@@ -92,7 +92,7 @@ void GateQvalueActor::UserSteppingActionInVoxel(const int index, const G4Step* s
 
   k = 0;
 
-  for(std::vector<G4Track*>::iterator it = trackVector->begin(); it != trackVector->end();it++ )
+  for(std::vector<G4Track*>::iterator it = trackVector->begin(); it != trackVector->end();++it )
     {
 
       //G4cout<<"Second no = "<<k<<"   "<<(*it)->GetDefinition()->GetParticleName()<<"   "<<mNSec ;
@@ -103,7 +103,7 @@ void GateQvalueActor::UserSteppingActionInVoxel(const int index, const G4Step* s
 	//G4cout<< (*it)->GetKineticEnergy()  << Gateendl;
 
       }
-      k++;
+      ++k;
     }
 
   double en = energyKinPre-energyKinPost-energyKinSec-step->GetTotalEnergyDeposit();
@@ -116,11 +116,11 @@ void GateQvalueActor::UserSteppingActionInVoxel(const int index, const G4Step* s
   }
   k = 0;
 
-  for(std::vector<G4Track*>::iterator it = trackVector->begin(); it != trackVector->end();it++ )
+  for(std::vector<G4Track*>::iterator it = trackVector->begin(); it != trackVector->end();++it )
     {
 
       if(k>=mNSec) mNSec++;
-      k++;
+      ++k;
 
     }
 

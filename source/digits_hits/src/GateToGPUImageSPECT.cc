@@ -776,7 +776,7 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					{
 						if( m_cpuParticle->hole[ i ] == -1.0f )
 						{
-							i++;
+							++i;
 							continue;
 						}
 						m_cpuParticle->px[ pack ] = m_cpuParticle->px[ i ];
@@ -791,7 +791,7 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 						m_cpuParticle->t[ pack ] = m_cpuParticle->t[ i ];
 						m_cpuParticle->E[ pack ] = m_cpuParticle->E[ i ];
 						m_cpuParticle->type[ pack ] = m_cpuParticle->type[ i ];
-						pack++, i++;
+						++pack, ++i;
 					}
 					m_cpuParticle->size = pack;
 

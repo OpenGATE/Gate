@@ -13,6 +13,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcommand.hh"
 #include <vector>
 #include "GateTokenizer.hh"
+#include "GateMessageManager.hh"
 //LF
 //#include <strstream>
 #include <sstream>
@@ -124,7 +125,7 @@ G4String GateUIcmdWithAVectorAndUnit<vContentType>::ConvertToString
   //std::ostrstream os(st,100);
   std::ostringstream os(st,100);
   //
-  for (G4int i=0; i<vec.size(); i++) os << vec[i] << " "; 
+  for (G4int i=0; i<vec.size(); ++i) os << vec[i] << " "; 
   os << '\0';
   G4String vl = st;
   G4cout << "GateUIcmdWithAVectorAndUnit::ConvertToString : " << vl << Gateendl;

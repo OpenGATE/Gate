@@ -29,7 +29,7 @@ LandmarkPnt(int dim)
 {
   m_Dim = dim;
   m_X = new float[m_Dim];
-  for(unsigned int i=0;i<m_Dim;i++)
+  for(unsigned int i=0;i<m_Dim;++i)
     {
     m_X[i] = 0;
     }
@@ -158,7 +158,7 @@ Clear(void)
   while(it != m_PointList.end())
   {
     LandmarkPnt* pnt = *it;
-    it++;
+    ++it;
     delete pnt;
   }
   m_PointList.clear();
@@ -288,7 +288,7 @@ M_Read(void)
 
   int* posDim= new int[m_NDims];
   int i;
-  for(i= 0; i < m_NDims; i++)
+  for(i= 0; i < m_NDims; ++i)
   {
     posDim[i] = -1;
   }
@@ -299,7 +299,7 @@ M_Read(void)
 
 
   int j;
-  for(j = 0; j < pntDim; j++)
+  for(j = 0; j < pntDim; ++j)
   {
     if(!strcmp(pntVal[j], "x") || !strcmp(pntVal[j], "X"))
     {
@@ -316,7 +316,7 @@ M_Read(void)
 
   }
 
-  for(i=0;i<pntDim;i++)
+  for(i=0;i<pntDim;++i)
     {
       delete [] pntVal[i];
     }
@@ -346,7 +346,7 @@ M_Read(void)
     i=0;
     int d;
     unsigned int k;
-    for(j=0; j<(int)m_NPoints; j++)
+    for(j=0; j<(int)m_NPoints; ++j)
     {
       LandmarkPnt* pnt = new LandmarkPnt(m_NDims);
 
@@ -382,7 +382,7 @@ M_Read(void)
   }
   else
   {
-    for(j=0; j<(int)m_NPoints; j++)
+    for(j=0; j<(int)m_NPoints; ++j)
     {
       LandmarkPnt* pnt = new LandmarkPnt(m_NDims);
 
@@ -446,16 +446,16 @@ M_Write(void)
       {
         float x = (*it)->m_X[d];
         MET_SwapByteIfSystemMSB(&x,MET_FLOAT);
-        MET_DoubleToValue((double)x,m_ElementType,data,i++);
+        MET_DoubleToValue((double)x,m_ElementType,data,++i);
       }
 
       for(d = 0; d < 4; d++)
       {
         float c = (*it)->m_Color[d];
         MET_SwapByteIfSystemMSB(&c,MET_FLOAT);
-        MET_DoubleToValue((double)c,m_ElementType,data,i++);
+        MET_DoubleToValue((double)c,m_ElementType,data,++i);
       }
-      it++;
+      ++it;
     }
     m_WriteStream->write((char *)data,(m_NDims+4)*m_NPoints*elementSize);
     m_WriteStream->write("\n",1);
@@ -480,7 +480,7 @@ M_Write(void)
       }
 
       *m_WriteStream << METAIO_STREAM::endl;
-      it++;
+      ++it;
     }
   }
 

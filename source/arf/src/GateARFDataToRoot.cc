@@ -196,7 +196,7 @@ void GateARFDataToRoot::RecordDigitizer(const G4Event* )
     G4cout << "[GateARFDataToRoot::SingleOutputChannel::RecordDigitizer]: Total Digits : " 
 				     << SDC->entries() <<" in digi collection '" << m_SingleDigiCollectionName << "' \n";
       G4int n_digi =  SDC->entries();
-      for (G4int iDigi=0;iDigi<n_digi;iDigi++) StoreARFData( (*SDC)[iDigi] );// we store the ARF data 
+      for (G4int iDigi=0;iDigi<n_digi;++iDigi) StoreARFData( (*SDC)[iDigi] );// we store the ARF data 
 
    }
   if (nVerboseLevel > 2)
@@ -219,7 +219,7 @@ m_SingleDigiCollectionName = aCollectionName;
 
 void GateARFDataToRoot::IncrementNbOfSourcePhotons() 
 {
- NbOfSourcePhotons++;
+ ++NbOfSourcePhotons;
 if (nVerboseLevel > 1 && (NbOfSourcePhotons % 1000000) == 0 ) DisplayARFStatistics();
 }
                                                
@@ -249,7 +249,7 @@ G4int GateARFDataToRoot::StoreARFData(GateSingleDigi* aDigi )
 G4ThreeVector position = aDigi->GetGlobalPos();
 G4ThreeVector PosAtVertex = aDigi->GetSourcePosition();
 
-NbofStoredPhotons++;
+++NbofStoredPhotons;
 
 
 G4cout <<" number of stored photons    " << NbofStoredPhotons<< Gateendl;

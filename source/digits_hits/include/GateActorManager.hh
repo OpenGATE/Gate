@@ -45,6 +45,8 @@ class GateActorManager
 public:
   ~GateActorManager();
 
+  typedef std::vector<GateVActor*> GateActorVec;
+
   static GateActorManager *GetInstance()
   {
     if (singleton_ActorManager == 0)
@@ -65,7 +67,7 @@ public:
   void PrintListOfActorTypes() const;
   GateVActor*  GetActor(const G4String &actorType, const G4String &actorName);
 
-  std::vector<GateVActor*> ReturnListOfActors();
+  GateActorVec ReturnListOfActors();
 
   //-----------------------------------------------------------------------------
   ///
@@ -98,20 +100,20 @@ public:
   void SetMultiFunctionalDetector(GateVActor * actor, GateVVolume * volume);
   std::vector<GateMultiSensitiveDetector*> theListOfMultiSensitiveDetector;
 
-  std::vector<GateVActor*> & GetTheListOfActors() { return theListOfActors; }
+  GateActorVec & GetTheListOfActors() { return theListOfActors; }
 
   G4int GetCurrentEventId() const { return mCurrentEventId; }
 
 protected:
   //std::vector<GateMultiSensitiveDetector*> theListOfMultiSensitiveDetector;
-  std::vector<GateVActor*> theListOfActors;
-  std::vector<GateVActor*> theListOfActorsEnabledForBeginOfRun;
-  std::vector<GateVActor*> theListOfActorsEnabledForEndOfRun;
-  std::vector<GateVActor*> theListOfActorsEnabledForBeginOfEvent;
-  std::vector<GateVActor*> theListOfActorsEnabledForEndOfEvent;
-  std::vector<GateVActor*> theListOfActorsEnabledForPreUserTrackingAction;
-  std::vector<GateVActor*> theListOfActorsEnabledForPostUserTrackingAction;
-  std::vector<GateVActor*> theListOfActorsEnabledForUserSteppingAction;
+  GateActorVec theListOfActors;
+  GateActorVec theListOfActorsEnabledForBeginOfRun;
+  GateActorVec theListOfActorsEnabledForEndOfRun;
+  GateActorVec theListOfActorsEnabledForBeginOfEvent;
+  GateActorVec theListOfActorsEnabledForEndOfEvent;
+  GateActorVec theListOfActorsEnabledForPreUserTrackingAction;
+  GateActorVec theListOfActorsEnabledForPostUserTrackingAction;
+  GateActorVec theListOfActorsEnabledForUserSteppingAction;
 
   GateActorManagerMessenger* pActorManagerMessenger;  //pointer to the Messenger
   G4int mCurrentEventId;

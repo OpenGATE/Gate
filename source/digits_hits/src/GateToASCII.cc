@@ -74,8 +74,8 @@ GateToASCII::GateToASCII(const G4String& name, GateOutputMgr* outputMgr, DigiMod
 
 GateToASCII::~GateToASCII()
 {
-  for (size_t i=0; i<m_outputChannelList.size() ; ++i )
-    delete m_outputChannelList[i];
+	for (std::vector<VOutputChannel*>::iterator it=m_outputChannelList.begin(); it!=m_outputChannelList.end(); )
+      it=m_outputChannelList.erase(it);
 
   delete m_asciiMessenger;
 
@@ -102,8 +102,8 @@ void GateToASCII::RecordBeginOfAcquisition()
   if (m_outFileHitsFlag)
     m_outFileHits.open((m_fileName+"Hits.dat").c_str(),std::ios::out);
 
-  for (size_t i=0; i<m_outputChannelList.size() ; ++i )
-    m_outputChannelList[i]->Open(m_fileName);
+  for (std::vector<VOutputChannel*>::iterator it=m_outputChannelList.begin(); it!=m_outputChannelList.end(); ++it)
+    (*it)->Open(m_fileName);
 
   if (nVerboseLevel > 0) G4cout << " ... ASCII output files opened\n";
 }
@@ -124,8 +124,8 @@ void GateToASCII::RecordEndOfAcquisition()
   if (m_outFileHitsFlag)
     m_outFileHits.close();
 
-  for (size_t i=0; i<m_outputChannelList.size() ; ++i )
-       m_outputChannelList[i]->Close();
+  for (std::vector<VOutputChannel*>::iterator it=m_outputChannelList.begin(); it!=m_outputChannelList.end(); ++it)
+       (*it)->Close();
 
 }
 
@@ -183,7 +183,7 @@ void GateToASCII::RecordEndOfEvent(const G4Event* event)
       // Hits loop
 
       NbHits = CHC->entries();
-      for (G4int iHit=0;iHit<NbHits;iHit++) {
+      for (G4int iHit=0;iHit<NbHits;++iHit) {
 	G4String processName = (*CHC)[iHit]->GetProcess();
 	G4int PDGEncoding  = (*CHC)[iHit]->GetPDGEncoding();
 	if (nVerboseLevel > 2) G4cout
@@ -391,7 +391,7 @@ void GateToASCII::SingleOutputChannel::RecordDigitizer()
 				 << SDC->entries() << Gateendl;
     if (m_outputFlag) {
       G4int n_digi =  SDC->entries();
-      for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
+      for (G4int iDigi=0;iDigi<n_digi;++iDigi) {
 	if (m_outputFileSizeLimit > 10000) { // to protect against the creation of too many files by mistake
 	  if (ExceedsSize()) {
 	    Close();
@@ -431,7 +431,7 @@ void GateToASCII::CoincidenceOutputChannel::RecordDigitizer()
 
     if (m_outputFlag) {
       G4int n_digi =  CDC->entries();
-      for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
+      for (G4int iDigi=0;iDigi<n_digi;++iDigi) {
 	if (m_outputFileSizeLimit > 10000) { // to protect against the creation of too many files by mistake
 	  if (ExceedsSize()) {
 	    Close();

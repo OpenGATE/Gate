@@ -26,15 +26,26 @@ GateHounsfieldDensityTable::GateHounsfieldDensityTable()
 //-----------------------------------------------------------------------------
 GateHounsfieldDensityTable::~GateHounsfieldDensityTable()
 {
-  mH.clear();
-  mD.clear();
+  for (GateHDensTableVec::iterator it=HDensTableVec.begin(); it!=HDensTableVec.end(); )
+	  it=HDensTableVec.erase(it);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 double GateHounsfieldDensityTable::GetDensityFromH(double H)
 {
-  return LinearInterpolation(H, mH, mD);
+	GateHDensTableVec::iterator it=HDensTableVec.begin();
+	while(it->mH < H && it!=HDensTableVec.end()) ++it;
+	if(it==HDensTableVec.begin()) return it->mD;//first value
+	if(it==HDensTableVec.end())
+	{
+		it--;
+		return it->mD; //last value
+	}
+	GateHDensTable prev = HDensTableVec[it - HDensTableVec.begin() - 1];
+	return ((H-prev.mH)/(it->mH-prev.mH)) * (it->mD-prev.mD) + prev.mD;
+	//return it->mD; // simply return density
+	//return LinearInterpolation(H, mH, mD);
 }
 //-----------------------------------------------------------------------------
 
@@ -43,15 +54,12 @@ double GateHounsfieldDensityTable::FindMaxDensityDifference(double HMin, double 
   double dMin = GetDensityFromH(HMin);
   double dMax = GetDensityFromH(HMax);
 
-  int i = 0;
-  int n = mH.size();
-  while (i<n && HMin>mH[i]) i++; //i--;
-  int j=0;
-  while (j<n && HMax>mH[j]) j++; j--;
-  for(int x=i; x<j; x++) {
-    // DD(G4BestUnit(mD[x], "Volumic Mass"));
-    if (mD[x] < dMin) dMin = mD[x];
-    if (mD[x] > dMax) dMax = mD[x];
+  GateHDensTableVec::iterator it=HDensTableVec.begin();
+  while (it->mH < HMin && it!=HDensTableVec.end()) ++it;
+  for ( ; it!=HDensTableVec.end() && it->mH < HMax; ++it)
+  {
+	  if (it->mD < dMin) dMin = it->mD;
+	  if (it->mD > dMax) dMax = it->mD;
   }
 
   return (dMax-dMin);
@@ -68,17 +76,26 @@ void GateHounsfieldDensityTable::Read(G4String filename)
     double h,d;
     is >> h;
     is >> d;
-    if (is) {
-      mH.push_back(h);
-      mD.push_back(d*g/cm3);
-      if (mH.size() > 1) {
-	if (h <= mH[mH.size()-2]) {
+    if (is)
+    {
+    	GateHDensTable MM;
+    	MM.mD=d*g/cm3;
+    	MM.mH=h;
+    	HDensTableVec.push_back(MM);
+      if (HDensTableVec.size() > 1) {
+	if (h <= HDensTableVec[HDensTableVec.size()-2].mH) {
 	  GateError("Error Hounsfield must be in strict ascending order, while I read h="
-		    << mH[mH.size()-2] << " and then h=" << h 
+		    << HDensTableVec[HDensTableVec.size()-2].mH << " and then h=" << h
 		    << " (in file " << filename << ")\n");
 	}
       }
     }
   }
+}
+
+double GateHounsfieldDensityTable::GetHMax()
+{
+	GateHDensTableVec::iterator it = HDensTableVec.end(); it--;
+	return it->mH;
 }
 //-----------------------------------------------------------------------------

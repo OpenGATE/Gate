@@ -19,6 +19,7 @@ See GATE/LICENSE.txt for further details
 
 #include "globals.hh"
 
+// FIXME: Perhaps this two classes will work better as structures, since they doesn't have methods
 class GateInfoParticles
 {
 public:

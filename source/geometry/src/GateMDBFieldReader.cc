@@ -355,7 +355,7 @@ G4State GateMDBFieldReader::ReadMaterialState(const G4String& materialName, cons
 {
   G4String stateString = DecodeTextField(materialName, field, "state", theStatePrefixMap);
 
-  for (G4int i=0; i<N_STATECODES ;i++)
+  for (G4int i=0; i<N_STATECODES ;++i)
     if ( theStateCodeTable[i].first == stateString ) {
       return (G4State) theStateCodeTable[i].second;
     }

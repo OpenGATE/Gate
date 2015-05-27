@@ -296,7 +296,7 @@ void GateProjectionSet::FillARF( G4int headID, G4double x, G4double y, G4double 
     return;
   }
 
-m_rec++;
+++m_rec;
 
   // Check whether we're out-of-bounds
   G4int binX = static_cast<G4int>( floor ( ( x - m_matrixLowEdgeX ) / m_pixelSizeX ) );
@@ -305,7 +305,7 @@ m_rec++;
       G4cerr << "[GateProjectionSet]: coordinate x (" << G4BestUnit(x,"Length") << ") outside the matrix boundaries ("
              << G4BestUnit(m_matrixLowEdgeX,"Length") << " , " << G4BestUnit(-m_matrixLowEdgeX,"Length") << "): ignored!\n";
 
-   m_rej++;
+   ++m_rej;
 
     return;
   }
@@ -316,7 +316,7 @@ m_rec++;
       G4cerr << "[GateProjectionSet]: coordinate y (" << G4BestUnit(y,"Length") << ") outside the matrix boundaries ("
              << G4BestUnit(m_matrixLowEdgeY,"Length") << " , " << G4BestUnit(-m_matrixLowEdgeY,"Length") << "): ignored!\n";
 
-   m_rej++;
+   ++m_rej;
 
     return;
   }

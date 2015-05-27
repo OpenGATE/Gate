@@ -32,7 +32,7 @@ GateObjectChildList::~GateObjectChildList()
 { 
   if (pMessenger) delete pMessenger;
 //GetPhysicalVolumeName()
-  /*for (size_t i=0; i<theListOfNamedObject.size(); i++){
+  /*for (size_t i=0; i<theListOfNamedObject.size(); ++i){
       if (theListOfNamedObject[i])        GetVolume(i)->DestroyGeometry();  */
 }
 //-----------------------------------------------------------------------------------------------------------------
@@ -42,9 +42,9 @@ GateObjectChildList::~GateObjectChildList()
 void GateObjectChildList::ConstructChildGeometry(G4LogicalVolume* logical, G4bool flagUpdateOnly)
 { 
  
-  for (size_t i=0; i<theListOfNamedObject.size(); i++){ 
-    if (theListOfNamedObject[i])
-    GetVolume(i)->ConstructGeometry(logical, flagUpdateOnly);
+  for (iterator it=begin(); it!=end(); ++it)
+  { 
+    if (*it) ((GateVVolume*)(*it))->ConstructGeometry(logical, flagUpdateOnly);
   }
 
 }
@@ -56,9 +56,9 @@ void GateObjectChildList::DestroyChildGeometry()
 {
   
   if (IsEnabled()){
-    for (size_t i=0; i<theListOfNamedObject.size(); i++){
-      if (theListOfNamedObject[i])
-        GetVolume(i)->DestroyGeometry();  
+    for (iterator it=begin(); it!=end(); ++it)
+    {
+      if (*it) ((GateVVolume*)(*it))->DestroyGeometry();  
 	/*G4cout<<"GateObjectChildList :: listObject = "<<i<< Gateendl;*/}
    }
    		
@@ -82,12 +82,12 @@ void GateObjectChildList::AddChild(GateVVolume* pnewChildCreator)
 //-----------------------------------------------------------------------------------------------------------------
 void GateObjectChildList::DescribeChildren(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Nb of children:        " << theListOfNamedObject.size() << "\n";
-  for (size_t i=0; i<theListOfNamedObject.size(); i++)
-    if (theListOfNamedObject[i])
-      	  G4cout << GateTools::Indent(indent+1) << "child: '" << theListOfNamedObject[i]->GetObjectName() << "'\n";
-      else
-      	  G4cout << GateTools::Indent(indent+1) << "detached child\n";
+  G4cout << GateTools::Indent(indent) << "Nb of children:        " << size() << Gateendl;
+  for (iterator it=begin(); it!=end(); ++it)
+    if (*it) 
+    	  G4cout << GateTools::Indent(indent+1) << "child: '" << ((GateVVolume*)(*it))->GetObjectName() << "'\n";
+    else
+    	  G4cout << GateTools::Indent(indent+1) << "detached child\n";
 }
 //-----------------------------------------------------------------------------------------------------------------
 
@@ -103,9 +103,10 @@ G4int GateObjectChildList::GetChildNo(GateVVolume* anInserter, G4int copyNo)
 {
   G4int childNo=0;
   
-  for (size_t i=0; i<theListOfNamedObject.size(); i++) {
-    if ( GetVolume(i) != anInserter ) 
-      childNo += GetVolume(i)->GetVolumeNumber();
+  for (iterator it=begin(); it!=end(); ++it)
+  {
+    if ( ((GateVVolume*)(*it)) != anInserter ) 
+      childNo += ((GateVVolume*)(*it))->GetVolumeNumber();
     else
       return childNo+copyNo;
   }

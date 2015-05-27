@@ -123,7 +123,7 @@ G4int GateSinogram::GetSinoID( G4int ring1ID, G4int ring2ID)
   if (DeltaZ < 0) ADeltaZ = -DeltaZ; else ADeltaZ = DeltaZ;
   sinoID = (ring1ID+ring2ID-ADeltaZ)/2;
   if (ADeltaZ > 0) sinoID += m_ringNb;
-  if (ADeltaZ > 1) for (i=1;i<ADeltaZ;i++) sinoID += 2*(m_ringNb-i);
+  if (ADeltaZ > 1) for (i=1;i<ADeltaZ;++i) sinoID += 2*(m_ringNb-i);
   if (DeltaZ < 0) sinoID += m_ringNb-ADeltaZ;
   return sinoID;
 }

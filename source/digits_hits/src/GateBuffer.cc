@@ -40,11 +40,11 @@ void GateBuffer::SetDepth(size_t depth)
     GateVSystem* system = GateSystemListManager::GetInstance()->GetSystem(0);
     m_enableList.resize(system->GetTreeDepth());
     if (depth>system->GetTreeDepth()-1) depth=system->GetTreeDepth()-1;
-    for (size_t i=0;i<=depth;i++) m_enableList[i]=true;
-    for (size_t i=depth+1;i<system->GetTreeDepth();i++) m_enableList[i]=false;
+    for (size_t i=0;i<=depth;++i) m_enableList[i]=true;
+    for (size_t i=depth+1;i<system->GetTreeDepth();++i) m_enableList[i]=false;
     size_t nofElements = system->ComputeNofSubCrystalsAtLevel(0,m_enableList);
     m_bufferPos.resize(nofElements);
-    for (size_t i=0;i<nofElements;i++) m_bufferPos[i]=0;
+    for (size_t i=0;i<nofElements;++i) m_bufferPos[i]=0;
 }
 void GateBuffer::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& outputPulseList)
 {

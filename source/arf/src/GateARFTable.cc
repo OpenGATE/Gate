@@ -145,7 +145,7 @@ G4cout.precision(10);
 
 // tmp = 1.;
 
- for (G4int i = 0; i < 2048; i++)
+ for (G4int i = 0; i < 2048; ++i)
 {
 
 
@@ -175,7 +175,7 @@ cosTheta_i[ 2047 - i] = cosTheta[i];
 
 }
 
- //for (G4int i = 0; i < 2048; i++) G4cout << i << "  costheta " << cosTheta_i[i] << Gateendl;
+ //for (G4int i = 0; i < 2048; ++i) G4cout << i << "  costheta " << cosTheta_i[i] << Gateendl;
 
 
  if ( tanPhi !=0 ) { delete [] tanPhi;}
@@ -186,7 +186,7 @@ tanPhi_i = new G4double[ 256 ];
 
  tmp = - dTanPhiStep1;
  G4double tmpp = 1.;
-        for (G4int i = 0; i < 512; i++)
+        for (G4int i = 0; i < 512; ++i)
  { /* i is the value of Phi, 0 --> 180 */
 
 
@@ -205,7 +205,7 @@ tanPhi_i = new G4double[ 256 ];
 
 }
 
-      // for (G4int i = 0; i < 512; i++)G4cout << i << "  tanphi " << tanPhi[i] << Gateendl;
+      // for (G4int i = 0; i < 512; ++i)G4cout << i << "  tanphi " << tanPhi[i] << Gateendl;
 
 
 
@@ -218,8 +218,8 @@ tanPhi_i = new G4double[ 256 ];
    m_lowX = - .5 * G4double(m_drfdimx) * m_drfbinsize;
    m_lowY = - .5 * G4double(m_drfdimy) * m_drfbinsize;
 
-  for ( G4int i = 0 ; i < m_TotalNb ; i++ ) { m_theTable[i] = 0.;}
-  for ( G4int i = 0;i < m_drfdimx * m_drfdimy ; i++ ) m_theDRFTable[i] = 0.;
+  for ( G4int i = 0 ; i < m_TotalNb ; ++i ) { m_theTable[i] = 0.;}
+  for ( G4int i = 0;i < m_drfdimx * m_drfdimy ; ++i ) m_theDRFTable[i] = 0.;
 
   G4cout << " Initialized ARF Table " << GetName() << Gateendl;
 
@@ -261,8 +261,8 @@ G4int GateARFTable:: GetIndexes( G4double x, G4double y , G4int& itheta, G4int& 
 
  if ( costheta - 0.75 <= 0.)     itheta =  G4int ( (0.75 - costheta ) * 256.0 / 0.55 )   + 1792;
 
-if ( itheta > 0 && (cosTheta[itheta] - costheta  <  0. )  ) itheta--;
-if ( itheta < 2047 &&  ( cosTheta[itheta+1] - costheta > 0. ) ) itheta++;
+if ( itheta > 0 && (cosTheta[itheta] - costheta  <  0. )  ) --itheta;
+if ( itheta < 2047 &&  ( cosTheta[itheta+1] - costheta > 0. ) ) ++itheta;
 
 
 // itheta = G4int( (1.0 - costheta ) * 2047./0.8  );
@@ -329,19 +329,19 @@ printf("\nnow in fCalcProb, iStarti=%d, iStartj=%d, iStopi=%d, iStopj=%d, Cos=%2
 printf("dRefRadius=%5.10g\n", dRefRadius);
 */
 
-	for (n = iStartj; n<iStopj+1; n++)
+	for (n = iStartj; n<iStopj+1; ++n)
 	{
-		for (m = iStarti; m<iStopi+1; m++)
+		for (m = iStarti; m<iStopi+1; ++m)
 		{
 			index0 = m + n * m_drfdimx;
 
 			/* loops k and l are used to check the 10x10 small elements in each big element (m, n). All elements with the distance
 			to the photon point (dTmpi, dTmpj) smaller than the user specified radius are used to do average */
-			for (k=0; k<10; k++)
+			for (k=0; k<10; ++k)
 			{
 				dSmallPixX = ( G4double (m-iCenteri) + (G4double( k ) - 4.5 ) / 10.0) * m_drfbinsize;
 
-				for (l=0; l<10; l++)
+				for (l=0; l<10; ++l)
 				{
 					/* dSmallPixX and dSmallPixY are the absolute values for that the small element in unit of cm */
 					dSmallPixY = ( G4double (n-iCenterj) + ( G4double( l ) - 4.5 ) / 10.0) * m_drfbinsize;
@@ -351,7 +351,7 @@ printf("dRefRadius=%5.10g\n", dRefRadius);
 
 					if(dLengthSqr < dRefRadiusSqr) {
 						dSum = dSum + m_theDRFTable[index0];
-						iNumSmallPixSummed++;
+						++iNumSmallPixSummed;
 					}
 				}  /* end of loop l */
 //	printf("dSmallPixX=%5.10g, dSmallPixY=%5.10g, dTmpi=%5.10g, dTmpj=%5.10g\n", dSmallPixX, dSmallPixY, dTmpi, dTmpj);
@@ -383,8 +383,8 @@ G4double cosphi, sinphi, i , j;
 G4int index1,index2,index3,index4;
 
 // prepare the DRF table before processing
-	for(G4int j=0; j< m_drfdimy; j++) {
-		for(G4int i=0; i< m_drfdimx; i++) {
+	for(G4int j=0; j< m_drfdimy; ++j) {
+		for(G4int i=0; i< m_drfdimx; ++i) {
 			index1= i+j*m_drfdimx;
 			index2= (m_drfdimx - i -1 ) + j * m_drfdimx;
 			index3= (m_drfdimx - i -1 ) + (m_drfdimy - j -1) * m_drfdimx;
@@ -397,7 +397,7 @@ G4int index1,index2,index3,index4;
 	dHalfTblRangeInCM_X = (m_drfdimx/2.0-iAvgPixNum-2.0)*m_drfbinsize;
 	dHalfTblRangeInCM_Y = (m_drfdimy/2.0-iAvgPixNum-2.0)*m_drfbinsize;
 
-	for (G4int iphi = 0; iphi < 512; iphi++)
+	for (G4int iphi = 0; iphi < 512; ++iphi)
  {
    if ( iphi ==0 ) {
 			sinphi = 0.0;
@@ -416,7 +416,7 @@ G4int index1,index2,index3,index4;
 			cosphi = sinphi * tanPhi[512 - iphi];
 
 		}
-	for (G4int itheta = 0; itheta < 2048; itheta++) { /* x is cos(Theta), 1.0 --> 0.20 */
+	for (G4int itheta = 0; itheta < 2048; ++itheta) { /* x is cos(Theta), 1.0 --> 0.20 */
 
 			G4int index = itheta + iphi * 2048;
 
@@ -445,7 +445,7 @@ destbin.close();
 
 G4cout << " writing the ARF table to a text file \n";
 std::ofstream dest ( "arftable.txt");
-for (G4int i = 0;i <m_TotalNb; i++ )
+for (G4int i = 0;i <m_TotalNb; ++i )
 { G4int iphi = i/GetNbofTheta();
   G4int itheta = i - iphi * GetNbofTheta();
 dest <<iphi<<" "<<itheta<<"  "<<m_theTable[i]<< Gateendl;
@@ -473,7 +473,7 @@ if ( iy > m_drfdimy - 1 || ( iy < 0 ) ) return;
 G4int index = ix + m_drfdimx * iy;
 
 
- m_counter++;
+ ++m_counter;
 
 /*------------------------------------------------------------------------------
    erf(x)=1/sqrt(PI) * integral(-x,x) of exp(-x^2)
@@ -547,7 +547,7 @@ void GateARFTable::GetARFAsBinaryBuffer(G4double*& theBuffer)
   theBuffer[3] = G4double( GetERef() );
   theBuffer[4] = G4double( GetEWlow() );
   theBuffer[5] = G4double( GetEWhigh() );
-  for (int i = 0;i< GetTotalNb();i++ )
+  for (int i = 0;i< GetTotalNb();++i )
   theBuffer[i+6] = m_theTable[i];
 
 }
@@ -569,7 +569,7 @@ void GateARFTable::FillTableFromBuffer(G4double*& theBuffer)
 
 
 
-  for (int i = 0;i< GetTotalNb();i++ )
+  for (int i = 0;i< GetTotalNb();++i )
   {m_theTable[i] = theBuffer[i+6];}
 
 }

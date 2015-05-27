@@ -317,7 +317,7 @@ void GateDetectionProfilePrimaryTimerActor::Construct()
 
   typedef std::list<G4String> Actors;
   Actors actors;
-  for (ActorHistos::const_iterator iter=histosTimeEnergy.begin(); iter!=histosTimeEnergy.end(); iter++) {
+  for (ActorHistos::const_iterator iter=histosTimeEnergy.begin(); iter!=histosTimeEnergy.end(); ++iter) {
     assert(iter->second==NULL);
     actors.push_back(iter->first);
   }
@@ -327,7 +327,7 @@ void GateDetectionProfilePrimaryTimerActor::Construct()
   assert(histosEnergyDeltaEnergy.empty());
   assert(histosEnergyDeltaEnergyPercent.empty());
 
-  for (Actors::const_iterator iter=actors.begin(); iter!=actors.end(); iter++) {
+  for (Actors::const_iterator iter=actors.begin(); iter!=actors.end(); ++iter) {
     {
       G4String name = "TESpectrum"+(*iter);
       TH2D *histo = new TH2D(name,"Time Energy Spectrum",200,0.,20.,200,0.,20.);

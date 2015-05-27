@@ -32,10 +32,10 @@ LinePnt(int dim)
   m_X = new float[m_Dim];
   m_V = new float*[m_Dim-1];
 
-  for(unsigned int i=0;i<m_Dim-1;i++)
+  for(unsigned int i=0;i<m_Dim-1;++i)
     {
     m_V[i] = new float[m_Dim];
-    for(unsigned int j=0;j<m_Dim;j++)
+    for(unsigned int j=0;j<m_Dim;++j)
       {
       m_V[i][j] = 0;
       m_X[j] = 0;
@@ -53,7 +53,7 @@ LinePnt::
 ~LinePnt()
 {
   delete [] m_X;
-  for(unsigned int i=0;i<m_Dim-1;i++)
+  for(unsigned int i=0;i<m_Dim-1;++i)
     {
     delete [] m_V[i];
     }
@@ -166,7 +166,7 @@ Clear(void)
   while(it != m_PointList.end())
   {
     LinePnt* pnt = *it;
-    it++;
+    ++it;
     delete pnt;
   }
   m_PointList.clear();
@@ -298,7 +298,7 @@ M_Read(void)
   MET_StringToWordArray(m_PointDim, &pntDim, &pntVal);
 
   int ii;
-  for(ii=0;ii<pntDim;ii++)
+  for(ii=0;ii<pntDim;++ii)
     {
       delete [] pntVal[ii];
     }
@@ -328,7 +328,7 @@ M_Read(void)
     int i=0;
     int d;
     unsigned int k;
-    for(int j=0; j<m_NPoints; j++)
+    for(int j=0; j<m_NPoints; ++j)
     {
       LinePnt* pnt = new LinePnt(m_NDims);
 
@@ -380,7 +380,7 @@ M_Read(void)
   }
   else
   {
-    for(int j=0; j<m_NPoints; j++)
+    for(int j=0; j<m_NPoints; ++j)
     {
       LinePnt* pnt = new LinePnt(m_NDims);
 
@@ -402,7 +402,7 @@ M_Read(void)
 
       for(k=0; k<m_NDims-1; k++)
       {
-        for(int jj=0; jj<m_NDims; jj++)
+        for(int jj=0; jj<m_NDims; ++jj)
         {
           *m_ReadStream >> v[jj];
           m_ReadStream->get();
@@ -463,16 +463,16 @@ M_Write(void)
         {
         float pntX = (*it)->m_X[d];
         MET_SwapByteIfSystemMSB(&pntX,MET_FLOAT);
-        MET_DoubleToValue((double)pntX,m_ElementType,data,i++);
+        MET_DoubleToValue((double)pntX,m_ElementType,data,++i);
         }
 
-      for(int j=0;j<m_NDims-1;j++)
+      for(int j=0;j<m_NDims-1;++j)
         {
         for(d=0; d<m_NDims; d++)
           {
           float v = (*it)->m_V[j][d];
           MET_SwapByteIfSystemMSB(&v,MET_FLOAT);
-          MET_DoubleToValue((double)v,m_ElementType,data,i++);
+          MET_DoubleToValue((double)v,m_ElementType,data,++i);
           }
         }
 
@@ -480,10 +480,10 @@ M_Write(void)
         {
         float c = (*it)->m_Color[d];
         MET_SwapByteIfSystemMSB(&c,MET_FLOAT);
-        MET_DoubleToValue((double)c,m_ElementType,data,i++);
+        MET_DoubleToValue((double)c,m_ElementType,data,++i);
         }
 
-      it++;
+      ++it;
       }
 
     m_WriteStream->write((char *)data,(m_NDims*m_NDims+4)*m_NPoints*elementSize);
@@ -505,7 +505,7 @@ M_Write(void)
 
       for(d = 0; d < m_NDims-1; d++)
       {
-        for(int i = 0; i < m_NDims; i++)
+        for(int i = 0; i < m_NDims; ++i)
         {
           *m_WriteStream << (*it)->m_V[d][i] << " ";
         }
@@ -517,7 +517,7 @@ M_Write(void)
       }
 
       *m_WriteStream << METAIO_STREAM::endl;
-      it++;
+      ++it;
     }
   }
 

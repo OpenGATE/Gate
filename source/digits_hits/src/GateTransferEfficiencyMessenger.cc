@@ -29,7 +29,7 @@ GateTransferEfficiencyMessenger::GateTransferEfficiencyMessenger(GateTransferEff
 GateTransferEfficiencyMessenger::~GateTransferEfficiencyMessenger()
 {
   delete newVolCmd;
-  for (G4int i=0;i<m_count;i++) {
+  for (G4int i=0;i<m_count;++i) {
     delete coeffTECmd[i];
   }
 }
@@ -61,7 +61,7 @@ void GateTransferEfficiencyMessenger::SetNewValue(G4UIcommand* command, G4String
 void GateTransferEfficiencyMessenger::SetNewValue2(G4UIcommand* command, G4String newValue)
 {
   G4int test=0;
-  for (G4int i=0;i<m_count;i++)  {
+  for (G4int i=0;i<m_count;++i)  {
     if ( command==coeffTECmd[i] ) {
       GetTransferEfficiency()->SetTECoeff(m_name[i], coeffTECmd[i]->GetNewDoubleValue(newValue));
       test=1;

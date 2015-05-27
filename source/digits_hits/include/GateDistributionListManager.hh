@@ -48,7 +48,7 @@ class GateDistributionListManager : public GateListManager
     //! \name Access methods
     //@{
     GateVDistribution* GetDistribution(size_t i)
-      {return (GateVDistribution*) GetElement(i);}      	     //!< Retrieves a Distribution from a store-iterator
+      {return (GateVDistribution*) theListOfNamedObject[i];}      	     //!< Retrieves a Distribution from a store-iterator
     //@}
 
 

@@ -24,7 +24,7 @@ See GATE/LICENSE.txt for further details
 using namespace std;
 
 GateTotalDiscreteProcess::GateTotalDiscreteProcess ( const G4String& name, G4ProcessType type, G4int num, const G4ParticleDefinition* p, G4double minn, G4double maxx, G4int binn )
-		:G4VDiscreteProcess ( name, type ),pParticleType ( p ),m_oProcessVec ( num,static_cast<G4VEmProcess*> ( NULL ) ),m_oProcessNameVec ( num,static_cast<G4String*> ( NULL ) ), m_oCrossSectionsTableVec ( num,static_cast<GateCrossSectionsTable*> ( NULL ) )
+		:G4VDiscreteProcess ( name, type ),pParticleType ( p ),m_oProcessVec ( num )
 {
 	assert ( *p==*G4Gamma::GammaDefinition() );
 	m_nNumProcesses=0;
@@ -38,11 +38,9 @@ GateTotalDiscreteProcess::GateTotalDiscreteProcess ( const G4String& name, G4Pro
 
 GateTotalDiscreteProcess::~GateTotalDiscreteProcess()
 {
-	for ( size_t i=0;i<m_oProcessNameVec.size();i++ )// This procedure is unsafe!!
+	for (Gate_ProcessVec::iterator it=m_oProcessVec.begin();it!=m_oProcessVec.end(); )
 	{
-		if ( m_oProcessNameVec[i]!=NULL ) delete m_oProcessNameVec[i];
-		if ( m_oCrossSectionsTableVec[i]!=NULL ) delete m_oCrossSectionsTableVec[i];
-		if ( m_oProcessVec[i]!=NULL ) delete ( m_oProcessVec[i] );
+	  it=m_oProcessVec.erase(it);
 	}
 	if ( m_pTotalCrossSectionsTable!=NULL ) delete m_pTotalCrossSectionsTable;
 }
@@ -65,8 +63,8 @@ bool GateTotalDiscreteProcess::AddDiscreteProcess ( G4VDiscreteProcess* p )
 
 	if ( static_cast<G4int> ( m_oProcessVec.size() ) <=m_nMaxNumProcesses )
 	{
-		m_oProcessVec[m_nNumProcesses]=p;
-		m_oProcessNameVec[m_nNumProcesses]=new G4String ( p->GetProcessName() );
+		m_oProcessVec[m_nNumProcesses].Process = p;
+		m_oProcessVec[m_nNumProcesses].Name = new G4String ( p->GetProcessName() );
 		m_nNumProcesses++;
 		return true;
 	}
@@ -109,23 +107,24 @@ void 	GateTotalDiscreteProcess::BuildPhysicsTable ( const G4ParticleDefinition &
 void GateTotalDiscreteProcess::BuildCrossSectionsTables()
 {
 	// build tables for single processes
-	for ( G4int i=0;i<m_nNumProcesses;i++ )
+        std::vector<G4VDiscreteProcess*> vec;
+	for (Gate_ProcessVec::iterator it=m_oProcessVec.begin();it!=m_oProcessVec.end(); ++it)
 	{
-		m_oProcessVec[i]->PreparePhysicsTable ( *pParticleType );
-		m_oProcessVec[i]->BuildPhysicsTable ( *pParticleType );
-		m_oCrossSectionsTableVec[i]=new GateCrossSectionsTable ( m_nTotalMinEnergy,m_nTotalMaxEnergy,m_nTotalBinNumber,pParticleType,*m_oProcessVec[i] );
+		it->Process->PreparePhysicsTable ( *pParticleType );
+		it->Process->BuildPhysicsTable ( *pParticleType );
+		it->CrossSectionsTable=new GateCrossSectionsTable ( m_nTotalMinEnergy,m_nTotalMaxEnergy,m_nTotalBinNumber,pParticleType,*(it->Process) );
 
 #ifdef G4VERBOSE
 		G4cout << "***************\n";
-		G4cout << "GATE SUBPROCESS " << *m_oProcessNameVec[i] <<" : Building fast linear tables for "<< pParticleType->GetParticleName() << " in the energy range [" << m_nTotalMinEnergy/keV << "," << m_nTotalMaxEnergy/keV << "] keV in " << m_nTotalBinNumber << " " << ( m_nTotalMaxEnergy-m_nTotalMinEnergy ) /m_nTotalBinNumber/keV << " keV bins\n";
+		G4cout << "GATE SUBPROCESS " << *(it->Name) <<" : Building fast linear tables for "<< pParticleType->GetParticleName() << " in the energy range [" << m_nTotalMinEnergy/keV << "," << m_nTotalMaxEnergy/keV << "] keV in " << m_nTotalBinNumber << " " << ( m_nTotalMaxEnergy-m_nTotalMinEnergy ) /m_nTotalBinNumber/keV << " keV bins\n";
 		G4cout << "***************\n";
 #endif
-		m_oCrossSectionsTableVec[i]->SetAndBuildProductionMaterialTable();
-	//	vec.push_back ( m_oProcessNameVec[i] );
+		it->CrossSectionsTable->SetAndBuildProductionMaterialTable();
+		vec.push_back ( it->Process );
 	}
 
 	// build tables for total cross section
-	m_pTotalCrossSectionsTable=new GateCrossSectionsTable ( m_nTotalMinEnergy,m_nTotalMaxEnergy,m_nTotalBinNumber,pParticleType,m_oProcessVec);
+	m_pTotalCrossSectionsTable=new GateCrossSectionsTable ( m_nTotalMinEnergy,m_nTotalMaxEnergy,m_nTotalBinNumber,pParticleType,vec);
 #ifdef G4VERBOSE
 	G4cout << "*****************\n";
 	G4cout << "GATE TOTALPROCESS " << GetProcessName() <<" : Building fast linear tables for "<< pParticleType->GetParticleName() << " in the energy range [" << m_nTotalMinEnergy/keV << "," << m_nTotalMaxEnergy/keV << "] keV in " << m_nTotalBinNumber << " " << ( m_nTotalMaxEnergy-m_nTotalMinEnergy ) /m_nTotalBinNumber/keV << " keV bins\n";
@@ -137,8 +136,8 @@ void GateTotalDiscreteProcess::BuildCrossSectionsTables()
 
 G4VParticleChange * 	GateTotalDiscreteProcess::PostStepDoIt ( const G4Track &track, const G4Step &stepData )
 {
-	G4VParticleChange * returnvalue=m_oProcessVec[m_nProcessWithSmallestPIL]-> PostStepDoIt ( track,stepData );
-	track.GetStep()->GetPostStepPoint()->SetProcessDefinedStep ( m_oProcessVec[m_nProcessWithSmallestPIL] );
+	G4VParticleChange * returnvalue=m_oProcessVec[m_nProcessWithSmallestPIL].Process-> PostStepDoIt ( track,stepData );
+	track.GetStep()->GetPostStepPoint()->SetProcessDefinedStep ( m_oProcessVec[m_nProcessWithSmallestPIL].Process );
 	return returnvalue;
 }
 

@@ -126,7 +126,7 @@ GateMaterialCreator* GateMDBFile::ReadMaterial(const G4String& materialName)
   // Find the material definition line in the [Materials] section of the DB file
   G4String line = ReadItem("Materials",materialName);
   if (line == theReadItemErrorMsg) {
-    //GateMessage("Materials", 4, "GateMDBFile<"<<fileName<< ">::ReadMaterial("<< materialName<<") ReadError\n");
+    GateMessage("Materials", 4, "GateMDBFile<"<<fileName<< ">::ReadMaterial("<< materialName<<") ReadError\n");
     return 0;
   }
 
@@ -216,7 +216,7 @@ GateCompoundMaterialCreator* GateMDBFile::ReadCompoundMaterial(const G4String& m
   ReadAllMaterialOptions(materialName,stringPair.second,creator);
 
   // Read and store all material's components
-  for (G4int i=1;i<=creator->nComponents;i++) {
+  for (G4int i=1;i<=creator->nComponents;++i) {
     G4String componentOrdinal = CreateOrdinalString(i);
     GateComponentCreator* componentCreator = ReadComponent(materialName,componentOrdinal);
     creator->components.push_back(componentCreator);

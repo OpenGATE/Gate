@@ -92,7 +92,7 @@ GateSystemListManager::~GateSystemListManager()
 // Registers a new object-system in the system list
 void GateSystemListManager::RegisterSystem(GateVSystem* newSystem)
 {   
-  theListOfNamedObject.push_back(newSystem);  
+	theListOfNamedObject.push_back(newSystem);
 }
 //-----------------------------------------------------------------------------
 
@@ -101,7 +101,7 @@ void GateSystemListManager::RegisterSystem(GateVSystem* newSystem)
 // Removes a deleted object-system from the system-list    
 void GateSystemListManager::UnregisterSystem(GateVSystem* aSystem) 
 {
-  theListOfNamedObject.erase( std::remove(theListOfNamedObject.begin(), theListOfNamedObject.end(), aSystem ) );
+	theListOfNamedObject.erase( std::remove(begin(), end(), aSystem) );
 }
 //-----------------------------------------------------------------------------
 
@@ -116,7 +116,7 @@ void GateSystemListManager::UnregisterSystem(GateVSystem* aSystem)
 GateVSystem* GateSystemListManager::FindSystemOfCreator(GateVVolume* anCreator)
 {
   
-  for (GateListOfNamedObject::iterator iter = theListOfNamedObject.begin(); iter!=theListOfNamedObject.end(); ++iter)
+  for (iterator iter = begin(); iter!=end(); ++iter)
     if ( ((GateVSystem*)(*iter))->CheckConnectionToCreator(anCreator) )
       return ((GateVSystem*)(*iter));
   return 0;
@@ -167,7 +167,7 @@ void GateSystemListManager::CheckScannerAutoCreation(GateVVolume* newChildCreato
 G4int GateSystemListManager::DecodeTypeName(const G4String& name)
 {
   size_t i;
-  for (i=0; !( theSystemNameList[i].empty() ) ; i++)
+  for (i=0; !( theSystemNameList[i].empty() ) ; ++i)
     if (theSystemNameList[i]==name)
       return i;
   return -1;
@@ -239,7 +239,7 @@ const G4String& GateSystemListManager::DumpChoices()
   static G4String theList;
   size_t i;
   if (theList.empty()) {
-    for (i=0; !( theSystemNameList[i].empty() ) ; i++)
+    for (i=0; !( theSystemNameList[i].empty() ) ; ++i)
       theList += theSystemNameList[i] + " ";
   }
   return theList;

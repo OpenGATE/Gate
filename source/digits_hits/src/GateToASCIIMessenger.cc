@@ -55,7 +55,7 @@ GateToASCIIMessenger::GateToASCIIMessenger(GateToASCII* gateToASCII)
   CoincidenceMaskCmd->SetGuidance("Sequence of 0 / 1");
 
   m_coincidenceMaskLength = 100;
-  for (G4int iMask=0; iMask<m_coincidenceMaskLength; iMask++) {
+  for (G4int iMask=0; iMask<m_coincidenceMaskLength; ++iMask) {
     G4UIparameter* MaskParam = new G4UIparameter("mask",'b',true);
     MaskParam->SetDefaultValue(false);
     CoincidenceMaskCmd->SetParameter(MaskParam);
@@ -67,7 +67,7 @@ GateToASCIIMessenger::GateToASCIIMessenger(GateToASCII* gateToASCII)
   SingleMaskCmd->SetGuidance("Sequence of 0 / 1");
 
   m_singleMaskLength = 100;
-  for (G4int iMask=0; iMask<m_singleMaskLength; iMask++) {
+  for (G4int iMask=0; iMask<m_singleMaskLength; ++iMask) {
     G4UIparameter* MaskParam = new G4UIparameter("mask",'b',true);
     MaskParam->SetDefaultValue(false);
     SingleMaskCmd->SetParameter(MaskParam);
@@ -92,8 +92,8 @@ GateToASCIIMessenger::~GateToASCIIMessenger()
   delete OutFileHitsCmd;
   delete OutFileVoxelCmd;
   delete SetFileNameCmd;
-  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
-    delete OutputChannelCmdList[i];
+  for (std::vector<G4UIcmdWithABool*>::iterator it=OutputChannelCmdList.begin(); it!=OutputChannelCmdList.end(); )
+    it=OutputChannelCmdList.erase(it);
 }
 //--------------------------------------------------------------------------------------------------------
 
@@ -112,7 +112,7 @@ void GateToASCIIMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     G4int tempIntBool;
     G4int tempBool;
     maskVector.clear();
-    for (G4int iMask=0; iMask<m_coincidenceMaskLength; iMask++) {
+    for (G4int iMask=0; iMask<m_coincidenceMaskLength; ++iMask) {
       is >> tempIntBool; // NB: is >> bool does not work, so we put is to an integer and we copy the integer to the bool
       tempBool = tempIntBool;
       maskVector.push_back(tempBool);
@@ -131,7 +131,7 @@ void GateToASCIIMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     G4int tempIntBool;
     G4int tempBool;
     maskVector.clear();
-    for (G4int iMask=0; iMask<m_singleMaskLength; iMask++) {
+    for (G4int iMask=0; iMask<m_singleMaskLength; ++iMask) {
       is >> tempIntBool; // NB: is >> bool does not work, so we put is to an integer and we copy the integer to the bool
       tempBool = tempIntBool;
       maskVector.push_back(tempBool);
@@ -182,8 +182,8 @@ void GateToASCIIMessenger::CreateNewOutputChannelCommand(GateToASCII::VOutputCha
 //--------------------------------------------------------------------------------------------------------
 G4bool GateToASCIIMessenger::IsAnOutputChannelCmd(G4UIcommand* command)
 {
-  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
-    if ( command == OutputChannelCmdList[i] )
+	for (std::vector<G4UIcmdWithABool*>::iterator it=OutputChannelCmdList.begin(); it!=OutputChannelCmdList.end(); ++it)
+    if ( command == (*it) )
       return true;
   return false;
 }
@@ -193,9 +193,9 @@ G4bool GateToASCIIMessenger::IsAnOutputChannelCmd(G4UIcommand* command)
 
 void GateToASCIIMessenger::ExecuteOutputChannelCmd(G4UIcommand* command,G4String newValue)
 {
-  for (size_t i = 0; i<OutputChannelCmdList.size() ; ++i)
-    if ( command == OutputChannelCmdList[i] ) {
-      m_outputChannelList[i]->SetOutputFlag( OutputChannelCmdList[i]->GetNewBoolValue(newValue) );
+	for (std::vector<G4UIcmdWithABool*>::iterator it=OutputChannelCmdList.begin(); it!=OutputChannelCmdList.end(); ++it)
+    if ( command == (*it) ) {
+      m_outputChannelList[it-OutputChannelCmdList.begin()]->SetOutputFlag( (*it)->GetNewBoolValue(newValue) );
       break;
     }
 }

@@ -282,14 +282,14 @@ void GateVSourceVoxelReader::UpdateActivities(G4String  HFN, G4String FN )
           G4double Xd[400],Yd[400]; // data set points needed for interpolation
           G4int npoints;
 
-          for ( iter = m_TimeActivTables.begin(); iter != m_TimeActivTables.end() ; iter++ )
+          for ( iter = m_TimeActivTables.begin(); iter != m_TimeActivTables.end() ; ++iter )
             {
               ActivCurve.clear();
               ActivCurve = iter->second;
               npoints = ActivCurve.size();
               G4double activmin = (iter->first).first;
               G4double activmax = (iter->first).second;
-              for ( G4int i = 0 ; i < npoints ; i++) // fill the points with the time curve activity values
+              for ( G4int i = 0 ; i < npoints ; ++i) // fill the points with the time curve activity values
                 {
                   Xd[i] = ActivCurve[i].first;
                   Yd[i] = ActivCurve[i].second;
@@ -335,14 +335,14 @@ void GateVSourceVoxelReader::UpdateActivities()
   G4double Xd[400],Yd[400]; // data set points needed for interpolation
   G4int npoints;
 
-  for ( iter = m_TimeActivTables.begin(); iter != m_TimeActivTables.end() ; iter++ )
+  for ( iter = m_TimeActivTables.begin(); iter != m_TimeActivTables.end() ; ++iter )
     {
       ActivCurve.clear();
       ActivCurve = iter->second;
       npoints = ActivCurve.size();
       G4double  activmin = (iter->first).first;
       G4double  activmax = (iter->first).second;
-      for ( G4int i = 0 ; i < npoints ; i++) // fill the points with the time curve activity values
+      for ( G4int i = 0 ; i < npoints ; ++i) // fill the points with the time curve activity values
         {
           Xd[i] = ActivCurve[i].first;
           Yd[i] = ActivCurve[i].second;
@@ -388,7 +388,7 @@ void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
 
   std::vector< std::pair<G4double,G4double> > m_ActivCurve;
 
-  for (G4int iCol=0; iCol<nTotCol; iCol++)
+  for (G4int iCol=0; iCol<nTotCol; ++iCol)
     {
       inFile.getline(buffer,200);
       is.clear();
@@ -423,7 +423,7 @@ void GateVSourceVoxelReader::SetTimeActivTables( G4String fileName)
         G4cout << "==== Source Voxel Reader Time Activity Curve Read From File "<< fname << "  ====\n";
         G4cout << "number of couples to be read : " << nCol << Gateendl;
 
-        for (G4int iCol=0; iCol<nCol; iCol++)
+        for (G4int iCol=0; iCol<nCol; ++iCol)
           {
             TimeCurveFile.getline(buf,200);
             iss.clear();

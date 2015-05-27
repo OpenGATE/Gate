@@ -87,7 +87,7 @@ void GateFastAnalysis::RecordEndOfEvent(const G4Event* event)
     G4int eventID  = event->GetEventID();
     G4int runID    = GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
 
-        for (G4int iHit=0;iHit<NbHits;iHit++)
+        for (G4int iHit=0;iHit<NbHits;++iHit)
            {
               if ((*CHC)[iHit]->GoodForAnalysis())
                {

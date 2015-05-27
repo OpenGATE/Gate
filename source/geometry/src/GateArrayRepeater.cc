@@ -74,9 +74,9 @@ void GateArrayRepeater::PushMyPlacements(const G4RotationMatrix& currentRotation
     y_0 = currentPosition[1] + firstCopyOffset[1],
     z_0 = currentPosition[2] + firstCopyOffset[2];
    
-  for ( G4int k=0 ; k < nz ; k++)
-    for ( G4int j=0 ; j < ny ; j++)      
-      for ( G4int i=0 ; i < nx ; i++) {
+  for ( G4int k=0 ; k < nz ; ++k)
+    for ( G4int j=0 ; j < ny ; ++j)      
+      for ( G4int i=0 ; i < nx ; ++i) {
           	   
 	G4double x = x_0 + i * dx,
 	  y = y_0 + j * dy,

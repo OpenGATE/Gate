@@ -218,7 +218,7 @@ void GateDiffCrossSectionActor::BeginOfRunAction(const G4Run*)
   this->Initialise();
 
   //****Loop for the different materials presents
-  for( size_t k = 0; k < G4Material::GetNumberOfMaterials(); k++)
+  for( size_t k = 0; k < G4Material::GetNumberOfMaterials(); ++k)
     {
       if( ( *matTbl)[k]->GetName() == mUserMaterial.c_str() )
 	{
@@ -231,12 +231,12 @@ void GateDiffCrossSectionActor::BeginOfRunAction(const G4Run*)
 
 	  Z = (*matTbl)[k]->GetElement(0)->GetZ();
 	  //****Loop for the differents energies choosen
-	  for( size_t l = 0; l < mUserEnergyList.size(); l++)
+	  for( size_t l = 0; l < mUserEnergyList.size(); ++l)
 	    {
               //****Incident energy
 	      E_in = mUserEnergyList[l];
 	      //****Loop for scattering angle emission
-	      for( size_t j = 0; j < mUserAngleList.size(); j++)
+	      for( size_t j = 0; j < mUserAngleList.size(); ++j)
 		{
                   //****Scatter angle in polar coordinates
 		  Theta = mUserAngleList[j];

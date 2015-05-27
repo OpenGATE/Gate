@@ -137,8 +137,8 @@ void GateImageBox::DescribeYourselfTo(G4OpenGLSceneHandler& scene) const{
 
 
 //-----------------------------------------------------------------------------
-std::vector<GateImageBox::PixelType> GateImageBox::getXYSlice(const GateImage & image, const size_t z) const{
-    std::vector<PixelType> slice;
+GateImageBox::PixelTypeVec GateImageBox::getXYSlice(const GateImage & image, const size_t z) const{
+	PixelTypeVec slice;
     slice.reserve(image.GetResolution().x() * image.GetResolution().y());
     for(size_t y = 0; y < image.GetResolution().y(); y++) {
         for(size_t x = 0; x < image.GetResolution().x(); x++) {
@@ -153,8 +153,8 @@ std::vector<GateImageBox::PixelType> GateImageBox::getXYSlice(const GateImage & 
 
 
 //-----------------------------------------------------------------------------
-std::vector<GateImageBox::PixelType> GateImageBox::getXZSlice(const GateImage & image, const size_t y) const{
-    std::vector<PixelType> slice;
+GateImageBox::PixelTypeVec GateImageBox::getXZSlice(const GateImage & image, const size_t y) const{
+	PixelTypeVec slice;
     slice.reserve(image.GetResolution().x() * image.GetResolution().z());
     for(size_t z = 0; z < image.GetResolution().z(); z++) {
         for(size_t x = 0; x < image.GetResolution().x(); x++) {
@@ -169,8 +169,8 @@ std::vector<GateImageBox::PixelType> GateImageBox::getXZSlice(const GateImage & 
 
 
 //-----------------------------------------------------------------------------
-std::vector<GateImageBox::PixelType> GateImageBox::getYZSlice(const GateImage & image, const size_t x) const{
-    std::vector<PixelType> slice;
+GateImageBox::PixelTypeVec GateImageBox::getYZSlice(const GateImage & image, const size_t x) const{
+	PixelTypeVec slice;
     slice.reserve(image.GetResolution().y() * image.GetResolution().z());
 
     for(size_t z = 0; z < image.GetResolution().z(); z++) {
@@ -186,12 +186,12 @@ std::vector<GateImageBox::PixelType> GateImageBox::getYZSlice(const GateImage & 
 
 
 //-----------------------------------------------------------------------------
-GLubyte * GateImageBox::convertToRGB(std::vector<PixelType> slice, PixelType min, PixelType max) const{
+GLubyte * GateImageBox::convertToRGB(PixelTypeVec slice, PixelType min, PixelType max) const{
     GLubyte * rgb = new GLubyte[slice.size() * 3];
 
     PixelType interval = max - min;
     int i = 0;
-    for(std::vector<PixelType>::iterator it = slice.begin(); it != slice.end(); ++it) {
+    for(PixelTypeVec::iterator it = slice.begin(); it != slice.end(); ++it) {
         PixelType pixel = *it - min;
         pixel /= interval;
         pixel *= std::numeric_limits<GLubyte>::max();
@@ -241,21 +241,21 @@ void GateImageBox::initOpenGLTextures(const GateImage & image, const size_t x, c
     position_z = (z < resolution_z) ? z : resolution_z * 0.5;
 
     {
-        std::vector<PixelType> sliceXY = getXYSlice(image, position_z);
+    	PixelTypeVec sliceXY = getXYSlice(image, position_z);
         GLubyte * rgb = convertToRGB(sliceXY, min, max);
         texture_xy = genOpenGLTexture(rgb, image.GetResolution().x(), image.GetResolution().y());
         delete [] rgb;
     }
 
     {
-        std::vector<PixelType> sliceXZ = getXZSlice(image, position_y);
+    	PixelTypeVec sliceXZ = getXZSlice(image, position_y);
         GLubyte * rgb = convertToRGB(sliceXZ, min, max);
         texture_xz = genOpenGLTexture(rgb, image.GetResolution().x(), image.GetResolution().z());
         delete [] rgb;
     }
 
     {
-        std::vector<PixelType> sliceYZ = getYZSlice(image, position_x);
+    	PixelTypeVec sliceYZ = getYZSlice(image, position_x);
         GLubyte * rgb = convertToRGB(sliceYZ, min, max);
         texture_yz = genOpenGLTexture(rgb, image.GetResolution().y(), image.GetResolution().z());
         delete [] rgb;

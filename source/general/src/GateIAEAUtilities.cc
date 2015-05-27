@@ -116,7 +116,7 @@ int check_byte_order()
 void print_runtime_info(int argc, char *argv[])
 {  // print file header stuff
 	  printf("\n Command Line: ");
-	  for(int i=0; i<argc; i++) printf(" %s", argv[i]);
+	  for(int i=0; i<argc; ++i) printf(" %s", argv[i]);
 	  // printf("\n Program %s Revision %f",  Prog_Name,Revision);
 	  printf("\n \t Copyright XXXX MCV");
 	  time_t t;
@@ -174,7 +174,7 @@ int clean_name(char *tmp_path, char *opath)
    /* remove spaces, *'s, :'s &'s and commas from the name */
    int len = strlen(tmp_path);
    int o_index=0;
-   for(int i=0; i<len; i++)
+   for(int i=0; i<len; ++i)
    {
       if( isspace(tmp_path[i] ) )
       {  
@@ -323,7 +323,7 @@ int latex_string(char *string, char *nstring)
    while(isspace(string[len-1]))len--; // remove space from end to string
 
    j=0;
-   for(int i=sval;i<len;i++)
+   for(int i=sval;i<len;++i)
    {
       if(string[i]=='%' ||
          string[i]=='$' ||
@@ -378,7 +378,7 @@ int array_read(char *in_string, float *array, int max_array)
          if(p!=NULL)
          {
 	   //array[i++] = atof(p);
-            if( sscanf(p,"%f",&array[i]) == 1) i++;
+            if( sscanf(p,"%f",&array[i]) == 1) ++i;
             // printf("\n Got Value of %f", array[i-1]);
          }
       }while(p!=NULL && i < max_array);
@@ -386,7 +386,7 @@ int array_read(char *in_string, float *array, int max_array)
   
 #ifdef DEBUG_ARRAY
    printf("\n atof %d", i);
-   for(int j=0; j<i; j++) {
+   for(int j=0; j<i; ++j) {
      //     array[j] = 0.0001*round(1000.0*array[j]);
       printf("\n i = %d, %f",j,array[j]);
    }
@@ -409,7 +409,7 @@ int array_read(FILE *istrm, float *array, int max_array)
    int slen = strlen(in_string);
 
    int k=0;
-   while(isspace(in_string[k]) && k < slen) k++;
+   while(isspace(in_string[k]) && k < slen) ++k;
    if(slen==0 || !(isdigit(in_string[k])
               ||    in_string[k] == '.'
               ||    in_string[k] == '+'
@@ -599,7 +599,7 @@ int writeLittleEndianBinaryFile(char *binaryFileName,  int nItemsToWrite, float 
 /* ***************************************************************************************************** */
 char *strnset(char *s, int ch, size_t n)
 {  /* mimic strnset command in dos/ os2/ win / ... */
-   for(int i=0; i< (int) n; i++)
+   for(int i=0; i< (int) n; ++i)
    {
      if(s[i] == STR_NULL ) return(s); // return when find null
       s[i] = ch;

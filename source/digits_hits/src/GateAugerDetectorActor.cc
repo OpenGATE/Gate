@@ -192,7 +192,7 @@ void GateAugerDetectorActor::UserSteppingAction(const GateVVolume*, const G4Step
 G4double GateAugerDetectorActor::GetTotalDepositedEnergy() const
 {
   G4double total_deposited_energy = 0;
-  for (std::list<AugerDeposition>::const_iterator iter=depositions.begin(); iter!=depositions.end(); iter++)
+  for (std::list<AugerDeposition>::const_iterator iter=depositions.begin(); iter!=depositions.end(); ++iter)
 	{
       total_deposited_energy += iter->energy;
 	}
@@ -205,7 +205,7 @@ G4ThreeVector GateAugerDetectorActor::GetWeighedBarycenterPosition() const
 {
   G4double total_weight = 0;
   G4ThreeVector accum(0,0,0);
-  for (std::list<AugerDeposition>::const_iterator iter=depositions.begin(); iter!=depositions.end(); iter++)
+  for (std::list<AugerDeposition>::const_iterator iter=depositions.begin(); iter!=depositions.end(); ++iter)
 	{
       total_weight += iter->energy;
       accum += iter->position*iter->energy;
@@ -219,7 +219,7 @@ G4double GateAugerDetectorActor::GetWeighedBarycenterTime() const
 {
   G4double total_weight = 0;
   G4double accum = 0;
-  for (std::list<AugerDeposition>::const_iterator iter=depositions.begin(); iter!=depositions.end(); iter++)
+  for (std::list<AugerDeposition>::const_iterator iter=depositions.begin(); iter!=depositions.end(); ++iter)
 	{
       total_weight += iter->energy;
       accum += iter->time*iter->energy;

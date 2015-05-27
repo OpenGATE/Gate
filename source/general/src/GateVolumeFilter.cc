@@ -32,8 +32,8 @@ G4bool GateVolumeFilter::Accept(const G4Step* aStep)
    G4TouchableHistory* theTouchable = (G4TouchableHistory*)(aStep->GetPreStepPoint()->GetTouchable());
    G4LogicalVolume * currentVol = theTouchable->GetVolume(0)->GetLogicalVolume();
 
-   for(unsigned int k =0 ; k<theListOfLogicalVolume.size();k++)
-            if(theListOfLogicalVolume[k]== currentVol ) return true;
+   for(std::vector<G4LogicalVolume*>::iterator k =theListOfLogicalVolume.begin(); k!=theListOfLogicalVolume.end();++k)
+            if(*k == currentVol ) return true;
    
    return false;
 }
@@ -48,8 +48,8 @@ G4bool GateVolumeFilter::Accept(const G4Track* t)
    G4TouchableHistory* theTouchable = (G4TouchableHistory*)(t->GetTouchable());
    G4LogicalVolume * currentVol = theTouchable->GetVolume(0)->GetLogicalVolume();
 
-   for(unsigned int k =0 ; k<theListOfLogicalVolume.size();k++)
-            if(theListOfLogicalVolume[k]== currentVol ) return true;
+   for(std::vector<G4LogicalVolume*>::iterator k =theListOfLogicalVolume.begin(); k!=theListOfLogicalVolume.end();++k)
+            if(*k == currentVol ) return true;
    
    return false;
 }
@@ -67,17 +67,17 @@ void GateVolumeFilter::Initialize()
 {
   IsInitialized=true;
   
-  for(unsigned int k =0 ; k<theTempoListOfVolumeName.size();k++)
+  for(std::vector<G4String>::iterator k =theTempoListOfVolumeName.begin(); k!=theTempoListOfVolumeName.end();++k)
   {
-    GateVVolume * mGateVolume = GateObjectStore::GetInstance()->FindVolumeCreator(theTempoListOfVolumeName[k]);
+    GateVVolume * mGateVolume = GateObjectStore::GetInstance()->FindVolumeCreator(*k);
     std::vector<GateVVolume *> theListOfTempoGateVVolume;
     if(mGateVolume)
     {
       theListOfVolume.push_back(mGateVolume);
       GateObjectChildList * child = mGateVolume->GetTheChildList();
-      for(unsigned int i =0;i<child->size();i++)
+      for(GateObjectChildList::iterator i=child->begin();i!=child->end();++i)
       {
-         theListOfTempoGateVVolume.push_back(child->GetVolume(i));
+         theListOfTempoGateVVolume.push_back((GateVVolume*)(*i));
       }
       if(theListOfTempoGateVVolume.size()>0)
       {
@@ -87,22 +87,23 @@ void GateVolumeFilter::Initialize()
          {
            theListOfVolume.push_back(mGateVolume);
            child = mGateVolume->GetTheChildList();
-           for(unsigned int i =0;i<child->size();i++)
+           for(GateObjectChildList::iterator i=child->begin();i!=child->end();++i)
            {
-              theListOfTempoGateVVolume.push_back(child->GetVolume(i));
+              theListOfTempoGateVVolume.push_back((GateVVolume*)(*i));
            }   
-	   it++;
+	   ++it;
 	   if(it>=(int)theListOfTempoGateVVolume.size()) mGateVolume=0;
 	   else mGateVolume = theListOfTempoGateVVolume[it];  
          }
        } 
     }
-    else GateError("In GateVolumeFilter: "<<GetObjectName()<<" -> Volume "<<theTempoListOfVolumeName[k]<<" does not exist!");
+    else GateError("In GateVolumeFilter: "<<GetObjectName()<<" -> Volume "<<*k<<" does not exist!");
   }
     
-  for(unsigned int k =0 ; k<theListOfVolume.size();k++)
+  for(std::vector<GateVVolume *>::iterator k = theListOfVolume.begin();
+		  k!=theListOfVolume.end(); ++k)
   {    
-    theListOfLogicalVolume.push_back(theListOfVolume[k]->GetLogicalVolume());   
+    theListOfLogicalVolume.push_back((*k)->GetLogicalVolume());
   }
 }
 //---------------------------------------------------------------------------

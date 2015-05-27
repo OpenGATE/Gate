@@ -566,13 +566,11 @@ void GateVVolume::AutoSetColor()
   // If not, we pick gray by default
 
   pOwnVisAtt->SetForceWireframe(false);
-  if ( mMaterialName=="worldDefaultAir" )
+  if ( mMaterialName=="worldDefaultAir" || mMaterialName=="Air" )
     {
       pOwnVisAtt->SetColor(G4Colour(1.0, 1.0, 1.0));
       pOwnVisAtt->SetForceWireframe(true);
     }
-  else if ( mMaterialName=="Air" )
-    pOwnVisAtt->SetColor(G4Colour(1.0, 1.0, 1.0));
   else if ( mMaterialName=="Water" )
     pOwnVisAtt->SetColor(G4Colour(0.0, 1.0, 1.0));
   else if ( (mMaterialName=="NaI") ||

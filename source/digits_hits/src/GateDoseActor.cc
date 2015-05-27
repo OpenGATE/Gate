@@ -15,6 +15,7 @@
 // gate
 #include "GateDoseActor.hh"
 #include "GateMiscFunctions.hh"
+#include "GateDetectorConstruction.hh"
 
 // g4
 #include <G4EmCalculator.hh>
@@ -24,7 +25,8 @@
 
 //-----------------------------------------------------------------------------
 GateDoseActor::GateDoseActor(G4String name, G4int depth):
-  GateVImageActor(name,depth) {
+  GateVImageActor(name,depth), mUserStepHitType()
+{
   GateDebugMessageInc("Actor",4,"GateDoseActor() -- begin\n");
 
   mCurrentEvent=-1;
@@ -191,19 +193,8 @@ void GateDoseActor::SaveData() {
   GateVActor::SaveData(); // (not needed because done into GateImageWithStatistic)
 
   if (mIsEdepImageEnabled) mEdepImage.SaveData(mCurrentEvent+1);
-  if (mIsDoseImageEnabled) {
-    if (mIsDoseNormalisationEnabled)
-      mDoseImage.SaveData(mCurrentEvent+1, true);
-    else
-      mDoseImage.SaveData(mCurrentEvent+1, false);
-  }
-
-  if (mIsDoseToWaterImageEnabled) {
-    if (mIsDoseToWaterNormalisationEnabled)
-      mDoseToWaterImage.SaveData(mCurrentEvent+1, true);
-    else
-      mDoseToWaterImage.SaveData(mCurrentEvent+1, false);
-  }
+  if (mIsDoseImageEnabled) mDoseImage.SaveData(mCurrentEvent+1, mIsDoseNormalisationEnabled);
+  if (mIsDoseToWaterImageEnabled) mDoseToWaterImage.SaveData(mCurrentEvent+1, mIsDoseToWaterNormalisationEnabled);
 
   if (mIsLastHitEventImageEnabled) {
     mLastHitEventImage.Fill(-1); // reset

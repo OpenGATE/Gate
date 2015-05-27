@@ -91,7 +91,7 @@ metaITKUtilLoadImage3D(const char *fname, MET_ValueEnumType _toType,
 
   itk::ImageRegionIterator< ImageType > it(image, region);
   it.Begin();
-  for(unsigned int i = 0; !it.IsAtEnd(); i++, ++it)
+  for(unsigned int i = 0; !it.IsAtEnd(); ++i, ++it)
     {
     it.Set( static_cast< typename ImageType::PixelType >( imIO->ElementData(i) ));
     }
@@ -112,7 +112,7 @@ bool metaITKUtilSaveImage(const char *fname, const char *dname,
   int nd = _im->GetImageDimension();
   int * si = new int[nd];
   float * sp = new float[nd];
-  for(i=0; i<nd; i++)
+  for(i=0; i<nd; ++i)
     {
     si[i] = _im->GetLargestPossibleRegion().GetSize()[i];
     sp[i] = _im->GetSpacing()[i];

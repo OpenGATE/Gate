@@ -706,7 +706,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
 
     G4int NbHits = CHC->entries();
 
-    for (G4int iHit=0;iHit<NbHits;iHit++) {
+    for (G4int iHit=0;iHit<NbHits;++iHit) {
 
       GateCrystalHit* aHit = (*CHC)[iHit];
       G4String processName = aHit->GetProcess();
@@ -837,7 +837,7 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
     G4int NpHits = PHC->entries();
     strcpy (NameOfProcessInPhantom, "");
 
-    for (G4int iPHit=0;iPHit<NpHits;iPHit++)
+    for (G4int iPHit=0;iPHit<NpHits;++iPHit)
       {
         GatePhantomHit* pHit = (*PHC)[iPHit];
         G4String processName = (*PHC)[iPHit]->GetProcess();
@@ -877,7 +877,7 @@ void GateToRoot::RecordOpticalData(const G4Event * event)
     G4int NbHits = CHC->entries();
     strcpy (NameOfProcessInCrystal, "");
 
-    for (G4int iHit=0;iHit<NbHits;iHit++)
+    for (G4int iHit=0;iHit<NbHits;++iHit)
       {
         GateCrystalHit* aHit = (*CHC)[iHit];
         G4String processName = aHit->GetProcess();
@@ -1158,7 +1158,7 @@ void GateToRoot::SingleOutputChannel::RecordDigitizer()
     if (m_outputFlag) {
       G4int n_digi =  SDC->entries();
       //GateMessage("OutputMgr", 5, " Single collection m_outputFlag = " << m_outputFlag << Gateendl;);
-      for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
+      for (G4int iDigi=0;iDigi<n_digi;++iDigi) {
         m_buffer.Fill( (*SDC)[iDigi] );
         m_tree->Fill();
       }
@@ -1192,7 +1192,7 @@ void GateToRoot::CoincidenceOutputChannel::RecordDigitizer()
 
     if (m_outputFlag) {
       G4int n_digi =  CDC->entries();
-      for (G4int iDigi=0;iDigi<n_digi;iDigi++) {
+      for (G4int iDigi=0;iDigi<n_digi;++iDigi) {
         m_buffer.Fill( (*CDC)[iDigi] );
         m_tree->Fill();
       }
@@ -1305,7 +1305,7 @@ void GateToRoot::OpenTracksFile()
     }
 
   G4String aFile;
-  for ( int i = currentN; i < NbOfFiles ;i++)
+  for ( int i = currentN; i < NbOfFiles ;++i)
     {
       if ( i == 0 )
         {aFile = m_fileName+"_TrackerData.root";}
@@ -1573,7 +1573,7 @@ void GateToRoot::RecordTracks(GateSteppingAction* mySteppingAction){
 
   std::vector<GateTrack*>::iterator iter;
 
-  for ( iter = PPTrackVector->begin(); iter != PPTrackVector->end(); iter++)
+  for ( iter = PPTrackVector->begin(); iter != PPTrackVector->end(); ++iter)
     {
 
       if (nVerboseLevel > 0)

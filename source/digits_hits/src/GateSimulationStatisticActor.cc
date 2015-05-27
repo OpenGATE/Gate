@@ -99,7 +99,7 @@ void GateSimulationStatisticActor::BeginOfEventAction(const G4Event*e)
 void GateSimulationStatisticActor::PreUserTrackingAction(const GateVVolume * v, const G4Track*t)
 {
   GateVActor::PreUserTrackingAction(v, t);
-  mNumberOfTrack++;
+  ++mNumberOfTrack;
 }
 //-----------------------------------------------------------------------------
 

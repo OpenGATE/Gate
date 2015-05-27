@@ -529,7 +529,7 @@ Longvol &Longvol::operator &= (const Longvol &v) {
 	v.getHeaderValueAsInt( "Alpha-Color", &valpha );
 	
 	for (int i = 0; i < v.sx; ++i)
-		for (int j = 0; j < v.sy; ++j) 
+		for (int j = 0; j < v.sy; ++j)
 			for (int k = 0; k < v.sz; ++k) {
 				int pos = posOf( i, j, k );
 				int vpos = v.posOf( i, j, k );
@@ -557,7 +557,7 @@ Longvol &Longvol::operator |= (const Longvol &v) {
 	v.getHeaderValueAsInt( "Alpha-Color", &valpha );
 
 	for (int i = 0; i < v.sx; ++i)
-	    for (int j = 0; j < v.sy; ++j) 
+	    for (int j = 0; j < v.sy; ++j)
 		    for (int k = 0; k < v.sz; ++k) {
 				int pos = posOf( i + px, j + py, k + pz );
 				int vpos = v.posOf( i, j, k );
@@ -582,7 +582,7 @@ Longvol &Longvol::operator -= (const Longvol &v) {
 	v.getHeaderValueAsInt( "Alpha-Color", &valpha );
 
 	for (int i = 0; i < v.sx; ++i)
-		for (int j = 0; j < v.sy; ++j) 
+		for (int j = 0; j < v.sy; ++j)
 			for (int k = 0; k < v.sz; ++k) {
 				int pos = posOf( i, j, k );
 				int vpos = posOf( i, j, k );
@@ -625,7 +625,7 @@ void Longvol::resize( int nsx, int nsy, int nsz ) {
 		ndata[i] = alpha_color;
 
 	for (int i = 0; i < sx; ++i) {
-		for (int j = 0; j < sy; ++j) { 
+		for (int j = 0; j < sy; ++j) {
 			for (int k = 0; k < sz; ++k) {
 				int pos = posOf( i, j, k );
 			//	int npos = (i + (nsx - sx)/2)*nsy*nsx + (j + (nsy - sy)/2)*nsx + k + (nsz - sz)/2;

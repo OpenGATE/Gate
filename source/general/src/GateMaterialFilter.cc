@@ -37,7 +37,7 @@ GateMaterialFilter::~GateMaterialFilter()
 //---------------------------------------------------------------------------
 G4bool GateMaterialFilter::Accept(const G4Step* aStep) 
 {
-    for ( size_t i = 0; i < theMdef.size(); i++){
+    for ( size_t i = 0; i < theMdef.size(); ++i){
       if ( theMdef[i] == aStep->GetPreStepPoint()->GetMaterial()->GetName() ) {
         nFilteredParticles++;
         return true;
@@ -50,7 +50,7 @@ G4bool GateMaterialFilter::Accept(const G4Step* aStep)
 //---------------------------------------------------------------------------
 G4bool GateMaterialFilter::Accept(const G4Track* aTrack) 
 {
-    for ( size_t i = 0; i < theMdef.size(); i++){ 	
+    for ( size_t i = 0; i < theMdef.size(); ++i){ 	
       if ( theMdef[i] == aTrack->GetMaterial()->GetName() ) {
         nFilteredParticles++;
         return true;
@@ -63,7 +63,7 @@ G4bool GateMaterialFilter::Accept(const G4Track* aTrack)
 //---------------------------------------------------------------------------
 void GateMaterialFilter::Add(const G4String& materialName)
 {
-  for ( size_t i = 0; i < theMdef.size(); i++ ){
+  for ( size_t i = 0; i < theMdef.size(); ++i ){
     if ( theMdef[i] == materialName ) return;
   }
   theMdef.push_back(materialName);
@@ -76,7 +76,7 @@ void GateMaterialFilter::show()
   G4cout << "------ Filter: " << GetObjectName() << " ------\n";
   G4cout << "       Material list: \n";
 
-  for ( size_t i = 0; i < theMdef.size(); i++ ){
+  for ( size_t i = 0; i < theMdef.size(); ++i ){
     G4cout << theMdef[i] << Gateendl;
   }
   G4cout << "-------------------------------------------\n";

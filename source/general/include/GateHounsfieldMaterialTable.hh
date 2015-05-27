@@ -47,6 +47,7 @@ public:
   void WriteMaterialDatabase(G4String filename);
   void WriteMaterialtoHounsfieldLink(G4String filename);
   void WriteMaterial(G4Material * m, std::ofstream & os);
+  void WriteMaterial(mMaterials m, std::ofstream & os);
   int GetNumberOfMaterials() { return mMaterialsVector.size(); }
   void Reset();
   void MapLabelToMaterial(LabelToMaterialNameType & m);

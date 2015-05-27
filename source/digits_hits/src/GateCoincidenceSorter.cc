@@ -541,7 +541,7 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
 	gm_coincSectNum = gkSectorMultiplier[0];
     }
     G4int ans=0;
-    for (G4int i=0;i<=m_depth;i++){
+    for (G4int i=0;i<=m_depth;++i){
     	G4int x = pulse.GetComponentID(i)%gkSectorNumber[i];
     	ans += x*gkSectorMultiplier[i];
     }

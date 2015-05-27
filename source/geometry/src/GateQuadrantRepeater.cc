@@ -51,13 +51,13 @@ void GateQuadrantRepeater::PushMyPlacements(const G4RotationMatrix& currentRotat
 	        	      	      	  const G4ThreeVector& currentPosition,
 			      	      	  G4double )
 {
-  for ( G4int i=0 ; i < m_lineNumber ; i++) {
+  for ( G4int i=0 ; i < m_lineNumber ; ++i) {
 
     G4int orthogonalRepeatNumber = i+1;
 
     G4ThreeVector startPosition = currentPosition + m_lineSpacingVector * i;
     
-    for ( G4int j=0 ; j<orthogonalRepeatNumber ; j++) {
+    for ( G4int j=0 ; j<orthogonalRepeatNumber ; ++j) {
 
       G4ThreeVector newPosition = startPosition + j * m_orthogonalRepeatVector;
 

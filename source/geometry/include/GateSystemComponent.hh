@@ -82,6 +82,11 @@ class GateSystemComponent  : public GateClockDependent
     //! Destructor
     virtual ~GateSystemComponent();
     
+    // Inserting an iterator to travel among the child components
+    typedef GateSystemComponentList::iterator child_iterator;
+    typedef GateSystemComponentList::const_iterator child_const_iterator;
+    child_iterator begin(){ return m_childComponentList->begin(); }
+    child_iterator end(){ return m_childComponentList->end(); }
  
     //! \name Description/print-out methods
     //@{
@@ -348,7 +353,12 @@ class GateSystemComponent  : public GateClockDependent
 
     //! Append a new component at the end of the child-list
     void InsertChildComponent(GateSystemComponent* aComponent)
-    { m_childComponentList->InsertChildComponent(aComponent); }
+    {
+    	aComponent->SetMotherComponent(this);
+    	m_childComponentList->InsertChildComponent(aComponent);
+    }
+
+    G4bool empty(){return m_childComponentList->empty();}
 
     //! Compute the number of active daughter-components (i.e. components that are linked to an creator)
     size_t GetActiveChildNumber() const
@@ -381,7 +391,7 @@ C* GateSystemComponent::FindMove() const
       if (!m_creator)
       	return 0;
       GateObjectRepeaterList* aList = m_creator->GetMoveList();
-      for (size_t i=0; i < aList->size() ; i++)
+      for (size_t i=0; i < aList->size() ; ++i)
       	if ( dynamic_cast<C*>(aList->GetRepeater(i)) )
       	  return dynamic_cast<C*>(aList->GetRepeater(i));
       return 0;
@@ -396,7 +406,7 @@ C* GateSystemComponent::FindRepeater() const
       if (!m_creator)
       	return 0;
       GateObjectRepeaterList* aList = m_creator->GetRepeaterList();
-      for (size_t i=0; i < aList->size() ; i++)
+      for (size_t i=0; i < aList->size() ; ++i)
       	if ( dynamic_cast<C*>(aList->GetRepeater(i)) )
       	  return dynamic_cast<C*>(aList->GetRepeater(i));
       return 0;

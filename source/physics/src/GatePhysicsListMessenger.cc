@@ -292,7 +292,7 @@ void GatePhysicsListMessenger::SetNewValue(G4UIcommand* command, G4String param)
           GateWarning("Physic List already initialized\n");
           return;
         }
-      nInit++;
+      ++nInit;
       pPhylist->ConstructProcess();
       return;
     }

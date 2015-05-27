@@ -101,7 +101,7 @@ void GateDeadTime::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
 /////// Bug Report - 8/6/2006 - Spencer Bowen - S.Jan ////////
 /*
 
-for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
+for(G4int i = 1 ; i < numberOfHigherLevels + 1; ++i)
     {
       m_generalDetId += aVolumeID->GetCopyNo(m_depth-i) * numberOfComponentForLevel[i-1];
 
@@ -109,7 +109,7 @@ for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
     }
 */
     G4int multFactor = 1;
-     for(G4int i = 1 ; i < numberOfHigherLevels + 1; i++)
+     for(G4int i = 1 ; i < numberOfHigherLevels + 1; ++i)
     {
           multFactor *= numberOfComponentForLevel[i-1];
           m_generalDetId += aVolumeID->GetCopyNo(m_depth-i)*multFactor;
@@ -243,7 +243,7 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
   numberOfComponentForLevel[0] = anotherInserter->GetVolumeNumber();
 
 
-  for(G4int i = 1 ; i < numberOfHigherLevels ; i++)
+  for(G4int i = 1 ; i < numberOfHigherLevels ; ++i)
     {
       anotherInserter = anotherInserter->GetMotherList()->GetCreator();
       numberOfComponentForLevel[i] = anotherInserter->GetVolumeNumber();
@@ -277,7 +277,7 @@ void GateDeadTime::FindLevelsParams(GateObjectStore*  anInserterStore)
       G4cout << "[GateDeadTime::FindLevelsParams]: malloc failed\n\n";
       return;
     } else {
-      for(G4int i=0;i<numberTotalOfComponentInSystem;i++){
+      for(G4int i=0;i<numberTotalOfComponentInSystem;++i){
 	m_deadTimeTable[i] = 0;
 	m_bufferCurrentSize[i] = 0.;
 

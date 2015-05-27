@@ -132,7 +132,7 @@ particle_energy = (m_Emin  + G4UniformRand() * m_EnergyRange) ;
 void GateSPSEneDistribution::BuildUserSpectrum(G4String FileName)
 {
 
-  ifstream inputFile (FileName.data());
+  std::ifstream inputFile (FileName.data());
   G4int nline(0);
   if(inputFile) {
     G4String line;
@@ -228,7 +228,7 @@ void GateSPSEneDistribution::GenerateFromUserSpectrum()
 G4int i=0;
 G4double pEnergy(0);
 G4double my_rndm=G4UniformRand();
-while(my_rndm>=(m_tab_sumproba[i])/m_sum_proba) i++;
+while(my_rndm>=(m_tab_sumproba[i])/m_sum_proba) ++i;
 
 
 G4double a,b,alpha,beta,gamma,X;

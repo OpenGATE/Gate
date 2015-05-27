@@ -22,11 +22,9 @@ public:
 
   ~GateSimplifiedDecay(){
     vector<GateSimplifiedDecayTransition*>::iterator i = this->transitionVector->begin();
-    for( ; i != this->transitionVector->end(); ++i ) {
-      delete *i;
+    for( ; i != this->transitionVector->end(); ) {
+      i= this->transitionVector->erase(i);
     }
-    transitionVector->clear();
-    delete transitionVector;
   }
 
   void print(){

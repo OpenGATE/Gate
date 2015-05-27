@@ -44,7 +44,7 @@ public:
   G4String GetObjectName() const;
 
   void Print(){
-    for (voxelSet::iterator it=m_voxelSet->begin(); it!=m_voxelSet->end();it++) std::cout << (*it) << Gateendl;
+    for (voxelSet::iterator it=m_voxelSet->begin(); it!=m_voxelSet->end();++it) std::cout << (*it) << Gateendl;
   }
 
 private:

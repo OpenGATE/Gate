@@ -55,7 +55,7 @@ void GateLinearRepeater::PushMyPlacements(const G4RotationMatrix& currentRotatio
   if (GetAutoCenterFlag())
       firstCopyOffset = m_repeatVector * .5 * ( 1 - m_repeatNumber );
   
-  for ( G4int i=0 ; i < m_repeatNumber ; i++) {
+  for ( G4int i=0 ; i < m_repeatNumber ; ++i) {
    
     
     G4ThreeVector newPosition = currentPosition + firstCopyOffset + m_repeatVector * i ;

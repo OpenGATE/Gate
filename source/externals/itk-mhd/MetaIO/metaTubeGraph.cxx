@@ -82,7 +82,7 @@ MetaTubeGraph::
   while(it != m_PointList.end())
     {
     TubeGraphPnt* pnt = *it;
-    it++;
+    ++it;
     delete pnt;
     }
   m_PointList.clear();
@@ -161,7 +161,7 @@ Clear(void)
   while(it != m_PointList.end())
   {
     TubeGraphPnt* pnt = *it;
-    it++;
+    ++it;
     delete pnt;
   }
   m_PointList.clear();
@@ -230,7 +230,7 @@ M_SetupWriteFields(void)
       m_Fields.erase(it);
       break;
       }
-    it++;
+    ++it;
     }
 
   mF = MET_GetFieldRecord("Offset",&m_Fields);
@@ -242,7 +242,7 @@ M_SetupWriteFields(void)
       m_Fields.erase(it);
       break;
       }
-    it++;
+    ++it;
     }
 
   mF = MET_GetFieldRecord("ElementSpacing",&m_Fields);
@@ -254,7 +254,7 @@ M_SetupWriteFields(void)
       m_Fields.erase(it);
       break;
       }
-    it++;
+    ++it;
     }
 
   mF = MET_GetFieldRecord("CenterOfRotation",&m_Fields);
@@ -266,7 +266,7 @@ M_SetupWriteFields(void)
       m_Fields.erase(it);
       break;
       }
-    it++;
+    ++it;
     }
 
   if(m_Root>0)
@@ -357,7 +357,7 @@ M_Read(void)
     }
 
   unsigned int j;
-  for(j = 0; j < (unsigned int)pntDim; j++)
+  for(j = 0; j < (unsigned int)pntDim; ++j)
     {
     if(!strcmp(pntVal[j], "node") || !strcmp(pntVal[j], "Node"))
       {
@@ -380,7 +380,7 @@ M_Read(void)
       }
     }
 
-  for(i=0;i<pntDim;i++)
+  for(i=0;i<pntDim;++i)
     {
     delete [] pntVal[i];
     }
@@ -414,7 +414,7 @@ M_Read(void)
       }
 
     double td;
-    for(j=0; j<(unsigned int)m_NPoints; j++)
+    for(j=0; j<(unsigned int)m_NPoints; ++j)
       {
       TubeGraphPnt* pnt = new TubeGraphPnt(m_NDims);
 
@@ -447,7 +447,7 @@ M_Read(void)
     }
   else
     {
-    for(j=0; j<(unsigned int)m_NPoints; j++)
+    for(j=0; j<(unsigned int)m_NPoints; ++j)
       {
       if(m_Event)
         {
@@ -548,7 +548,7 @@ M_Write(void)
         MET_DoubleToValue((double)(*it)->m_T[d],m_ElementType,data,i++);
         }
 
-      it++;
+      ++it;
       }
 
     m_WriteStream->write((char *)data,
@@ -577,7 +577,7 @@ M_Write(void)
 
       *m_WriteStream << METAIO_STREAM::endl;
 
-      it++;
+      ++it;
       }
     }
   return true;

@@ -57,14 +57,14 @@ void GateMHDImage::ReadHeader(std::string & filename)
     GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort.\n");
   }
 
-  for(int i=0; i<m_MetaImage.NDims(); i++) {
+  for(int i=0; i<m_MetaImage.NDims(); ++i) {
     size[i] = m_MetaImage.DimSize(i);
     spacing[i] = m_MetaImage.ElementSpacing(i);
     origin[i] = m_MetaImage.Position(i);
   }
 
   transform.resize(9);
-  for(int i=0; i<9; i++) { // 3 x 3 matrix
+  for(int i=0; i<9; ++i) { // 3 x 3 matrix
     transform[i] = m_MetaImage.TransformMatrix()[i];
   }
   //  Print();

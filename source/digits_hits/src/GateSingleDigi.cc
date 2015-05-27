@@ -95,7 +95,7 @@ std::ofstream& operator<<(std::ofstream& flux, GateSingleDigi* digi)
 void GateSingleDigi::SetSingleASCIIMask(G4bool newValue)
 {
   m_singleASCIIMaskDefault = newValue;
-  for (G4int iMask=0; ((unsigned int)iMask)<m_singleASCIIMask.size(); iMask++) {
+  for (G4int iMask=0; ((unsigned int)iMask)<m_singleASCIIMask.size(); ++iMask) {
     m_singleASCIIMask[iMask] = newValue;
   }
 }

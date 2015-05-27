@@ -44,10 +44,8 @@ class GateCoincidencePulseProcessorChain : public GateModuleListManager
      virtual GateVCoincidencePulseProcessor* FindProcessor(const G4String& name)
       	  { return (GateVCoincidencePulseProcessor*) FindElement(name); }
      virtual GateVCoincidencePulseProcessor* GetProcessor(size_t i)
-      	  {return (GateVCoincidencePulseProcessor*) GetElement(i);}
+      	  {return (GateVCoincidencePulseProcessor*) theListOfNamedObject[i];}
      void ProcessCoincidencePulses();
-     virtual size_t GetProcessorNumber()
-      	  { return size();}
 	  
      std::vector<G4String>& GetInputNames()
        { return m_inputNames; }

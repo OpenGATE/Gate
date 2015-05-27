@@ -143,7 +143,7 @@ void GateUserActions::EndOfEventAction(const G4Event* evt)
  //G4cout<<"Taille totale = "<<sizeof(theListOfTrackIDInfo)+sizeof(trInfo)*theListOfTrackIDInfo.size()<< Gateendl;
  for(std::map<G4int,GateTrackIDInfo>::iterator i = theListOfTrackIDInfo.begin(); i != theListOfTrackIDInfo.begin(); /*EMPTY*/)
  {
-   theListOfTrackIDInfo.erase(i++);
+   i=theListOfTrackIDInfo.erase(i);
  }
  theListOfTrackIDInfo.clear();
 }

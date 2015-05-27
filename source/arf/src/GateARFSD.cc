@@ -229,7 +229,7 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
                std::map<G4String,G4int>::iterator iter; 
     G4double* NSourcePhotons = new G4double[ m_EnWin.size() ];
     G4int iw = 0;
-    for (iter= m_EnWin.begin(); iter != m_EnWin.end(); iter++ )
+    for (iter= m_EnWin.begin(); iter != m_EnWin.end(); ++iter )
      {              NbOfSimuPhotons = 0;
                     NbofGoingOutPhotons =0 ;
                     NbofStraightPhotons =0 ;
@@ -247,7 +247,7 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
                    ULong64_t IN_camera_tmp = 0;
                    ULong64_t OUT_camera_tmp = 0;
                    
-                   for( G4int i = 0 ; i < ( iter->second ) ; i++ )
+                   for( G4int i = 0 ; i < ( iter->second ) ; ++i )
                    {
                     if ( i > 0 ) {
                                     std::stringstream s;
@@ -291,7 +291,7 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
                     TotNbOfSingles = m_singlesTree->GetEntries();
                     G4cout << " File " << cfn << " contains " << TotNbOfSingles << " entries \n";
                     G4cout << " Tree m_NbOfPhotonsTree " << cfn << " contains " << m_NbOfPhotonsTree->GetEntries() << " entries \n";
-                    for ( G4int j = 0 ;  j <  TotNbOfSingles ; j++ )
+                    for ( G4int j = 0 ;  j <  TotNbOfSingles ; ++j )
                     {
                      m_singlesTree->GetEntry(j);
                      // loop through ARF tables to get the table with the suitable energy window
@@ -314,7 +314,7 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
                   //G4cout << " --- Of Which : Number of Photons Going Out Camera    " << OUT_camera << " = " << 100. * double(OUT_camera)/double(NbOfSourcePhotons) << " %\n";
                   //G4cout << " --- Of Which : Number of Photons Going IN Camera     " << IN_camera << " = " << 100. * double(IN_camera)/double(NbOfSourcePhotons) << " %\n";
                   //G4cout << " --- Of Which : Number of Stored Photons              " << NbofStoredPhotons<< " = " << 100. * double(NbofStoredPhotons)/double(NbOfSourcePhotons) << " %\n";
-                  iw++; // now for next ARF table
+                  ++iw; // now for next ARF table
 
         }   
 
@@ -330,7 +330,7 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
 void GateARFSD::ComputeProjectionSet(G4ThreeVector thePosition,G4ThreeVector theDirection,G4double theEnergy)
 {
 
- nbofGoingIn++;
+ ++nbofGoingIn;
 
 //     transform to the detector frame the photon position
 

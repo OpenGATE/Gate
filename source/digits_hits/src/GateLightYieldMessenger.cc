@@ -30,7 +30,7 @@ GateLightYieldMessenger::GateLightYieldMessenger(GateLightYield* itsLightYield)
 GateLightYieldMessenger::~GateLightYieldMessenger()
 {
   delete newVolCmd;
-  for (G4int i=0;i<m_count;i++) {
+  for (G4int i=0;i<m_count;++i) {
     delete lightOutputCmd[i];
   }
 }
@@ -62,7 +62,7 @@ void GateLightYieldMessenger::SetNewValue(G4UIcommand* command, G4String newValu
 void GateLightYieldMessenger::SetNewValue2(G4UIcommand* command, G4String newValue)
 {
   G4int test=0;
-  for (G4int i=0;i<m_count;i++)  {
+  for (G4int i=0;i<m_count;++i)  {
     if ( command==lightOutputCmd[i] ) {
       GetLightYield()->SetLightOutput(m_name[i], lightOutputCmd[i]->GetNewDoubleValue(newValue)/MeV);
       test=1;

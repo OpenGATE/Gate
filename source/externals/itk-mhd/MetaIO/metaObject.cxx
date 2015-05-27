@@ -106,7 +106,7 @@ ClearFields()
   while( it != end )
     {
     MET_FieldRecordType* field = *it;
-    it++;
+    ++it;
 
     // Check if the pointer is not in one of the user's list
     bool exists = false;
@@ -156,7 +156,7 @@ void MetaObject
   while( it != end )
     {
     MET_FieldRecordType* field = *it;
-    it++;
+    ++it;
     delete field;
     }
 
@@ -182,7 +182,7 @@ void MetaObject
       it2++;
       }
 
-    it++;
+    ++it;
 
     if(!deleted)
       {
@@ -430,14 +430,14 @@ PrintInfo(void) const
                         << METAIO_STREAM::endl;
     }
   METAIO_STREAM::cout << "Color = " ;
-  for(i=0; i<4; i++)
+  for(i=0; i<4; ++i)
     {
     METAIO_STREAM::cout << m_Color[i] << " ";
     }
   METAIO_STREAM::cout << METAIO_STREAM::endl;
 
   METAIO_STREAM::cout << "Offset = ";
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     METAIO_STREAM::cout << m_Offset[i] << " ";
     }
@@ -445,9 +445,9 @@ PrintInfo(void) const
 
   METAIO_STREAM::cout << "TransformMatrix = ";
   METAIO_STREAM::cout << METAIO_STREAM::endl;
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
-    for(j=0; j<m_NDims; j++)
+    for(j=0; j<m_NDims; ++j)
       {
       METAIO_STREAM::cout << m_TransformMatrix[i*m_NDims+j] << " ";
       }
@@ -456,14 +456,14 @@ PrintInfo(void) const
 
   METAIO_STREAM::cout << "CenterOfRotation = ";
   METAIO_STREAM::cout << METAIO_STREAM::endl;
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     METAIO_STREAM::cout << m_CenterOfRotation[i] << " ";
     }
   METAIO_STREAM::cout << METAIO_STREAM::endl;
 
   METAIO_STREAM::cout << "ElementSpacing = ";
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     METAIO_STREAM::cout << m_ElementSpacing[i] << " ";
     }
@@ -517,7 +517,7 @@ PrintInfo(void) const
              (*it)->type ==MET_FLOAT_ARRAY ||
              (*it)->type ==MET_DOUBLE_ARRAY )
       {
-      for(i=0; i<(*it)->length; i++)
+      for(i=0; i<(*it)->length; ++i)
         {
         printf("%f ",(*it)->value[i]);
         }
@@ -525,7 +525,7 @@ PrintInfo(void) const
     else if((*it)->type == MET_FLOAT_MATRIX)
       {
       METAIO_STREAM::cout << METAIO_STREAM::endl;
-      for(i=0; i<(*it)->length*(*it)->length; i++)
+      for(i=0; i<(*it)->length*(*it)->length; ++i)
         {
         printf("%f ",(*it)->value[i]);
         if(i==(*it)->length-1)
@@ -599,7 +599,7 @@ void MetaObject::
 Offset(const double * _position)
   {
   int i;
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     m_Offset[i] = _position[i];
     }
@@ -628,7 +628,7 @@ void MetaObject::
 Position(const double * _position)
   {
   int i;
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     m_Offset[i] = _position[i];
     }
@@ -656,7 +656,7 @@ void MetaObject::
 Origin(const double * _position)
   {
   int i;
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     m_Offset[i] = _position[i];
     }
@@ -686,7 +686,7 @@ void MetaObject::
 TransformMatrix(const double * _orientation)
   {
   int i;
-  for(i=0; i<m_NDims*m_NDims; i++)
+  for(i=0; i<m_NDims*m_NDims; ++i)
     {
     m_TransformMatrix[i] = _orientation[i];
     }
@@ -715,7 +715,7 @@ void MetaObject::
 Rotation(const double * _orientation)
   {
   int i;
-  for(i=0; i<m_NDims*m_NDims; i++)
+  for(i=0; i<m_NDims*m_NDims; ++i)
     {
     m_TransformMatrix[i] = _orientation[i];
     }
@@ -744,7 +744,7 @@ void MetaObject::
 Orientation(const double * _orientation)
   {
   int i;
-  for(i=0; i<m_NDims*m_NDims; i++)
+  for(i=0; i<m_NDims*m_NDims; ++i)
     {
     m_TransformMatrix[i] = _orientation[i];
     }
@@ -774,7 +774,7 @@ void MetaObject::
 CenterOfRotation(const double * _position)
   {
   int i;
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     m_CenterOfRotation[i] = _position[i];
     }
@@ -810,7 +810,7 @@ DistanceUnits(const char * _distanceUnits)
   {
   int i;
   bool found = false;
-  for(i=0; i<MET_NUM_DISTANCE_UNITS_TYPES; i++)
+  for(i=0; i<MET_NUM_DISTANCE_UNITS_TYPES; ++i)
     {
     if(!strcmp(_distanceUnits, MET_DistanceUnitsTypeName[i]))
       {
@@ -832,7 +832,7 @@ AnatomicalOrientationAcronym(void) const
   {
   static char str[10];
   int i;
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     str[i] = MET_OrientationTypeName[m_AnatomicalOrientation[i]][0];
     }
@@ -856,9 +856,9 @@ void MetaObject::
 AnatomicalOrientation(const char *_ao)
   {
   int i, j;
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
-    for(j=0; j<MET_NUM_ORIENTATION_TYPES; j++)
+    for(j=0; j<MET_NUM_ORIENTATION_TYPES; ++j)
       {
       if(_ao[i] == MET_OrientationTypeName[j][0])
         {
@@ -877,7 +877,7 @@ void MetaObject::
 AnatomicalOrientation(const MET_OrientationEnumType *_ao)
   {
   int i;
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     m_AnatomicalOrientation[i] = _ao[i];
     }
@@ -893,7 +893,7 @@ void MetaObject::
 AnatomicalOrientation(int _dim, char _ao)
   {
   int j;
-  for(j=0; j<MET_NUM_ORIENTATION_TYPES; j++)
+  for(j=0; j<MET_NUM_ORIENTATION_TYPES; ++j)
     {
     if(_ao == MET_OrientationTypeName[j][0])
       {
@@ -923,7 +923,7 @@ void MetaObject::
 ElementSpacing(const float * _elementSpacing)
   {
   int i;
-  for(i=0; i<m_NDims; i++)
+  for(i=0; i<m_NDims; ++i)
     {
     m_ElementSpacing[i] = _elementSpacing[i];
     }
@@ -969,7 +969,7 @@ Color(float _r, float _g, float _b, float _a)
 void MetaObject::
 Color(const float * _color)
   {
-  for(unsigned int i=0; i<4; i++)
+  for(unsigned int i=0; i<4; ++i)
     {
     m_Color[i] = _color[i];
     }
@@ -1002,7 +1002,7 @@ int   MetaObject::ParentID(void) const
 void  MetaObject::
 AcquisitionDate(const char * _acquisitionDate)
   {
-  for(size_t i=0; i<strlen( _acquisitionDate ); i++)
+  for(size_t i=0; i<strlen( _acquisitionDate ); ++i)
     {
     m_AcquisitionDate[i] = _acquisitionDate[i];
     }
@@ -1084,7 +1084,7 @@ Clear(void)
                         << METAIO_STREAM::endl;
     }
   int i;
-  for(i=0; i<10; i++)
+  for(i=0; i<10; ++i)
     {
     m_ElementSpacing[i] = 1;
     m_AnatomicalOrientation[i] = MET_ORIENTATION_UNKNOWN;
@@ -1277,7 +1277,7 @@ M_SetupReadFields(void)
   while( it != end )
     {
     m_Fields.push_back(*it);
-    it++;
+    ++it;
     }
 
 
@@ -1359,7 +1359,7 @@ M_SetupWriteFields(void)
 
   bool valSet = false;
   int i;
-  for(i=0; i<4; i++)
+  for(i=0; i<4; ++i)
     {
     if(m_Color[i] != 1)
       {
@@ -1425,7 +1425,7 @@ M_SetupWriteFields(void)
     }
 
   valSet = false;
-  for(i=0; i<m_NDims*m_NDims; i++)
+  for(i=0; i<m_NDims*m_NDims; ++i)
     {
     if(m_TransformMatrix[i] != 0)
       {
@@ -1435,7 +1435,7 @@ M_SetupWriteFields(void)
     }
   if(!valSet)
     {
-    for(i=0; i<m_NDims; i++)
+    for(i=0; i<m_NDims; ++i)
       {
       m_TransformMatrix[i+i*m_NDims] = 1;
       }
@@ -1484,7 +1484,7 @@ M_SetupWriteFields(void)
   while( it != end )
     {
     m_Fields.push_back(*it);
-    it++;
+    ++it;
     }
   }
 
@@ -1554,7 +1554,7 @@ M_Read(void)
   mF = MET_GetFieldRecord("AcquisitionDate", &m_Fields);
   if(mF && mF->defined)
     {
-    for(size_t i=0; i<strlen((char *)mF->value); i++)
+    for(size_t i=0; i<strlen((char *)mF->value); ++i)
       {
       m_AcquisitionDate[i] = ((char *)mF->value)[i];
       }
@@ -1629,14 +1629,14 @@ M_Read(void)
     {
     if(mF->defined)
       {
-      for(i=0; i<mF->length && i < 4; i++)
+      for(i=0; i<mF->length && i < 4; ++i)
         {
         m_Color[i] = static_cast<float>( mF->value[i] );
         }
       }
     else
       {
-      for(i=0; i<mF->length && i < 4; i++)
+      for(i=0; i<mF->length && i < 4; ++i)
         {
         m_Color[i] = static_cast<unsigned int>( 1 );
         }
@@ -1646,7 +1646,7 @@ M_Read(void)
   mF = MET_GetFieldRecord("Position", &m_Fields);
   if(mF && mF->defined)
     {
-    for(i=0; i<mF->length; i++)
+    for(i=0; i<mF->length; ++i)
       {
       m_Offset[i] = static_cast<double>( mF->value[i] );
       }
@@ -1654,7 +1654,7 @@ M_Read(void)
   mF = MET_GetFieldRecord("Offset", &m_Fields);
   if(mF && mF->defined)
     {
-    for(i=0; i<mF->length; i++)
+    for(i=0; i<mF->length; ++i)
       {
       m_Offset[i] = static_cast<double>( mF->value[i] );
       }
@@ -1662,7 +1662,7 @@ M_Read(void)
   mF = MET_GetFieldRecord("Origin", &m_Fields);
   if(mF && mF->defined)
     {
-    for(i=0; i<mF->length; i++)
+    for(i=0; i<mF->length; ++i)
       {
       m_Offset[i] = static_cast<double>( mF->value[i] );
       }
@@ -1674,7 +1674,7 @@ M_Read(void)
     {
     transformMatrixDefined = true;
     int len = mF->length;
-    for(i=0; i<len*len; i++)
+    for(i=0; i<len*len; ++i)
       {
       m_TransformMatrix[i] = static_cast<double>( mF->value[i] );
       }
@@ -1684,7 +1684,7 @@ M_Read(void)
     {
     transformMatrixDefined = true;
     int len = mF->length;
-    for(i=0; i<len*len; i++)
+    for(i=0; i<len*len; ++i)
       {
       m_TransformMatrix[i] = static_cast<double>( mF->value[i] );
       }
@@ -1694,14 +1694,14 @@ M_Read(void)
     {
     transformMatrixDefined = true;
     int len = mF->length;
-    for(i=0; i<len*len; i++)
+    for(i=0; i<len*len; ++i)
       {
       m_TransformMatrix[i] = static_cast<double>( mF->value[i] );
       }
     }
   if(!transformMatrixDefined)
     {
-    for(i=0; i<m_NDims; i++)
+    for(i=0; i<m_NDims; ++i)
       {
       m_TransformMatrix[i+i*m_NDims] = 1;
       }
@@ -1710,14 +1710,14 @@ M_Read(void)
   mF = MET_GetFieldRecord("CenterOfRotation", &m_Fields);
   if(mF && mF->defined)
     {
-    for(i=0; i<mF->length; i++)
+    for(i=0; i<mF->length; ++i)
       {
       m_CenterOfRotation[i] = static_cast<double>( mF->value[i] );
       }
     }
   else
     {
-    for(i=0; i<m_NDims; i++)
+    for(i=0; i<m_NDims; ++i)
       {
       m_CenterOfRotation[i] = 0;
       }
@@ -1740,7 +1740,7 @@ M_Read(void)
     {
     if(mF->defined)
       {
-      for(i=0; i<mF->length && i < 10; i++)
+      for(i=0; i<mF->length && i < 10; ++i)
         {
         m_ElementSpacing[i] = static_cast<float>( mF->value[i] );
         if (META_DEBUG)
@@ -1753,7 +1753,7 @@ M_Read(void)
       }
     else
       {
-      for(i=0; i<mF->length && i < 10; i++)
+      for(i=0; i<mF->length && i < 10; ++i)
         {
         m_ElementSpacing[i] = 1;
         if (META_DEBUG)
@@ -1790,7 +1790,7 @@ M_Read(void)
        {
        m_UserDefinedWriteFields.push_back(mF);
        }
-     it++;
+     ++it;
    }
 
   return true;
@@ -1891,7 +1891,7 @@ void* MetaObject
         {
         const unsigned int numMatrixElements = itLength * itLength;
         out = (void*) (new char[numMatrixElements*eSize] );
-        for( unsigned int i=0; i < numMatrixElements; i++ )
+        for( unsigned int i=0; i < numMatrixElements; ++i )
           {
           MET_DoubleToValue((*it)->value[i],(*it)->type,out,i);
           }
@@ -1899,14 +1899,14 @@ void* MetaObject
       else
         {
         out = (void*) (new char[itLength*eSize] );
-        for( unsigned int i=0; i < itLength; i++ )
+        for( unsigned int i=0; i < itLength; ++i )
           {
           MET_DoubleToValue((*it)->value[i],(*it)->type,out,i);
           }
         }
       return out;
       }
-    it++;
+    ++it;
   }
   return NULL;
 }

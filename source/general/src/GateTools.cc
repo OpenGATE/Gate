@@ -14,7 +14,7 @@ See GATE/LICENSE.txt for further details
 G4String GateTools::Indent(size_t indent)
 {
   G4String indentString;
-  for (size_t i=0; i<indent ; i++)
+  for (size_t i=0; i<indent ; ++i)
     indentString += "\t";
   return indentString;
 }
@@ -68,3 +68,6 @@ G4String GateTools::FindGateFile(const G4String& fileName)
 
 }
 //---------------------------------------------------------------------------
+
+
+
