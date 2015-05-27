@@ -86,10 +86,10 @@ void GateHounsfieldMaterialProperties::Read(std::ifstream & is,
 		mName = n;
 		// Normalise fraction
 		double sum = 0.0;
-		for (auto Element : mElementsList) sum += Element.Fraction;
-		/*for (mElementVector::iterator it = mElementsList.begin();
+		//for (auto Element : mElementsList) sum += Element.Fraction; with c+11 compatibility we can do this
+		for (mElementVector::iterator it = mElementsList.begin();
 				it != mElementsList.end(); ++it)
-			sum += it->Fraction;*/
+			sum += it->Fraction;
 		for (mElementVector::iterator it = mElementsList.begin();
 				it != mElementsList.end(); ++it)
 			it->Fraction /= sum;
