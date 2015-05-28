@@ -14,6 +14,7 @@
 #include "GateMiscFunctions.hh"
 #include "GateObjectStore.hh"
 #include "GateVImageVolume.hh"
+#include "GateUtilityForG4ThreeVector.hh"
 
 #include <G4Step.hh>
 #include <G4TouchableHistory.hh>
@@ -81,9 +82,7 @@ void GateVImageActor::SetVoxelSize(G4ThreeVector v)
 void GateVImageActor::SetHalfSize(G4ThreeVector v)
 {
   mHalfSizeIsSet = true;
-  mHalfSize.setX(v.x());
-  mHalfSize.setY(v.y());
-  mHalfSize.setZ(v.z());
+  mHalfSize = v;
 }
 //-----------------------------------------------------------------------------
 
@@ -92,9 +91,7 @@ void GateVImageActor::SetHalfSize(G4ThreeVector v)
 void GateVImageActor::SetSize(G4ThreeVector v)
 {
   mHalfSizeIsSet = true;
-  mHalfSize.setX(v.x()/2.0);
-  mHalfSize.setY(v.y()/2.0);
-  mHalfSize.setZ(v.z()/2.0);
+  mHalfSize = v / 2.0;
 }
 //-----------------------------------------------------------------------------
 
@@ -139,15 +136,19 @@ void GateVImageActor::Construct()
   GateVActor::Construct();
 
   if (!mHalfSizeIsSet){
-    mHalfSize = ComputeBoundingBox(mVolume->GetLogicalVolume()->GetSolid());
+	  if (mResolutionIsSet && mVoxelSizeIsSet){
+		  mHalfSize = KroneckerProduct(mResolution, mVoxelSize)/2;
+	  }
+	  else {
+		  mHalfSize = ComputeBoundingBox(mVolume->GetLogicalVolume()->GetSolid());
+	  }
+	  mHalfSizeIsSet = true;
   }
-
-  //if (mPosition.x() == 0 &&
-  //	  mPosition.y() == 0 &&
-  //  mPosition.z() == 0) { mPositionIsSet = false; }
-
-  if (mResolutionIsSet && mVoxelSizeIsSet) {
-    GateError("GateVImageActor -- Construct: Please give the resolution OR the voxelsize (not both) for the sensor");
+  else {
+	  if (mResolutionIsSet && mVoxelSizeIsSet) {
+		  GateError("GateVImageActor -- Construct: Please give a combination of two between" <<
+				    " the size, the resolution and the voxelsize (not all) for the sensor");
+	  }
   }
 
   if (!mResolutionIsSet && !mVoxelSizeIsSet) {
@@ -179,7 +180,7 @@ void GateVImageActor::Construct()
   G4VoxelLimits limits;
   G4double min, max;
   G4AffineTransform origin;
-  double size[3];
+  G4ThreeVector size;
   mVolume->GetLogicalVolume()->GetSolid()->CalculateExtent(kXAxis, limits, origin, min, max);
   size[0] = max-min;
   mVolume->GetLogicalVolume()->GetSolid()->CalculateExtent(kYAxis, limits, origin, min, max);
@@ -188,17 +189,13 @@ void GateVImageActor::Construct()
   size[2] = max-min;
 
   // Translation between actor's size and mothervolume's size
-  mOrigin[0] = size[0]/2.0 - mHalfSize.x();
-  mOrigin[1] = size[1]/2.0 - mHalfSize.y();
-  mOrigin[2] = size[2]/2.0 - mHalfSize.z();
+  mOrigin = size / 2.0 - mHalfSize;
 
   // Take origin into account, consider halfpixel
-  mOrigin[0] = mVolume->GetOrigin().x()+mOrigin[0];
-  mOrigin[1] = mVolume->GetOrigin().y()+mOrigin[1];
-  mOrigin[2] = mVolume->GetOrigin().z()+mOrigin[2];
+  mOrigin += mVolume->GetOrigin();
 
   // Take translation into account
-  mOrigin = mOrigin + mPosition;
+  mOrigin += mPosition;
   mImage.SetOrigin(mOrigin);
 
   // Copy rotation matrix from attached image, if the attached volume
@@ -342,9 +339,7 @@ int GateVImageActor::GetIndexFromTrackPosition(const GateVVolume * v , const G4T
 
   if (mPositionIsSet) {
     GateDebugMessage("Track", 3, "GateVImageActor -- GetIndexFromStepPosition: Track position (vol reference) = " << position << Gateendl);
-    position.setX( position.x() - mPosition.x());
-    position.setY( position.y() - mPosition.y());
-    position.setZ( position.z() - mPosition.z());
+    position -= mPosition;
   }
 
   GateDebugMessage("Track", 3, "GateVImageActor -- GetIndexFromStepPosition: Track position = " << position << Gateendl);
@@ -393,12 +388,8 @@ int GateVImageActor::GetIndexFromStepPosition(const GateVVolume * v, const G4Ste
     GateDebugMessage("Step", 3, "GateVImageActor -- GetIndexFromStepPosition: Step postPosition (vol reference) = " << postPosition << Gateendl);
     GateDebugMessage("Step", 3, "GateVImageActor -- GetIndexFromStepPosition: Step prePosition (vol reference) = " << prePosition << Gateendl);
     GateDebugMessage("Step", 3, "GateVImageActor -- GetIndexFromStepPosition: Voxel grid position = " << mPosition << Gateendl);
-    prePosition.setX( prePosition.x() - mPosition.x());
-    prePosition.setY( prePosition.y() - mPosition.y());
-    prePosition.setZ( prePosition.z() - mPosition.z());
-    postPosition.setX( postPosition.x() - mPosition.x());
-    postPosition.setY( postPosition.y() - mPosition.y());
-    postPosition.setZ( postPosition.z() - mPosition.z());
+    prePosition -= mPosition;
+    postPosition -= mPosition;
   }
 
   GateDebugMessage("Step", 2, "GateVImageActor -- GetIndexFromStepPosition:Actor  UserSteppingAction (type = " << mStepHitTypeName << ")\n"
