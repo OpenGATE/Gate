@@ -322,7 +322,7 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
   mHounsfieldMaterialTable.Reset();
   // mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(), pImage->GetOutsideValue()+1,"worldDefaultAir");
   G4String parentMat = GetParentVolume()->GetMaterialName();
-  mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue()+1,parentMat);
+  mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue(),parentMat);
 
   while (is) {
     skipComment(is);
@@ -333,7 +333,7 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
     G4String n;
     is >> n;
     if (is) {
-      if(h2> pImage->GetOutsideValue()+1){
+      if(h2> pImage->GetOutsideValue()){
         if(h1<pImage->GetOutsideValue()+1) h1=pImage->GetOutsideValue()+1;
         mHounsfieldMaterialTable.AddMaterial(h1,h2,n);
       }
@@ -481,7 +481,7 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
   inFile.open(mRangeToImageMaterialTableFilename.c_str(),std::ios::in);
   mRangeMaterialTable.Reset();
   G4String parentMat = GetParentVolume()->GetMaterialName();
-  mRangeMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue()+1,parentMat);
+  mRangeMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue(),parentMat);
 
   if (inFile.is_open()){
     G4String material;
@@ -520,10 +520,14 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
         G4cout << " min max " << r1 << " " << r2 << "  material: " << material
                << std::boolalpha << ", visible " << visible << ", rgba(" << red<<',' << green << ',' << blue << ')' << Gateendl;
 
-        if(r2> pImage->GetOutsideValue()+1){
-          if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
-          mRangeMaterialTable.AddMaterial(r1,r2,material);
-        }
+    if(r2> pImage->GetOutsideValue()){
+      if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
+        mRangeMaterialTable.AddMaterial(r1,r2,material);
+    }
+    else
+    {
+    	GateMessage("Materials",0,"Failed to add material "<< material << " to Database" << Gateendl);
+    }
 
         mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
 
@@ -544,13 +548,14 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
         is >> r1 >> r2;
         is >> material;
 
-        if(r2> pImage->GetOutsideValue()+1){
-          if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
-          mRangeMaterialTable.AddMaterial(r1,r2,material);
-        }
-      }
-      mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
-    }
+
+  if(r2> pImage->GetOutsideValue()){
+    if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
+      mRangeMaterialTable.AddMaterial(r1,r2,material);
+  }
+  }
+  mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
+  }
 
   }
   else {G4cout << "Error opening file.\n";}

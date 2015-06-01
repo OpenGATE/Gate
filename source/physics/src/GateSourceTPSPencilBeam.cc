@@ -95,7 +95,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
       GateError("No clinical beam loaded !");
     }
 
-    ifstream inFile(mPlan);
+    std::ifstream inFile(mPlan);
     if (! inFile) {
       GateError("Cannot open Treatment plan file!");
     }
@@ -389,7 +389,7 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties() {
   char oneline[MAXLINE];
   int PolOrder;
 
-  ifstream inFile(mSourceDescriptionFile);
+  std::ifstream inFile(mSourceDescriptionFile);
   if (! inFile) {
     GateError("Cannot open source description file!");
   }
