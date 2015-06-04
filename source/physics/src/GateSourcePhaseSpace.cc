@@ -256,8 +256,7 @@ void GateSourcePhaseSpace::GenerateIAEAVertex( G4Event* /*aEvent*/ )
 
   dx = pIAEARecordType->u;
   dy = pIAEARecordType->v;
-  dz = sqrt(1. - dx*dx - dy*dy );
-  dz *= pIAEARecordType->w;
+  dz = pIAEARecordType->w;
 
   mParticleMomentum = G4ThreeVector(dx*mMomentum, dy*mMomentum, dz*mMomentum);
 
@@ -506,9 +505,9 @@ G4int GateSourcePhaseSpace::OpenIAEAFile(G4String file)
   if( pIAEAheader->read_header() ) GateError("Error reading phase space file header: " + IAEAFileName + IAEAHeaderExt);
 
   pIAEARecordType= (iaea_record_type *) calloc(1, sizeof(iaea_record_type));
-  pIAEAheader->get_record_contents(pIAEARecordType);
   pIAEARecordType->p_file = pIAEAFile;
   pIAEARecordType->initialize();
+  pIAEAheader->get_record_contents(pIAEARecordType);
 
   return pIAEAheader->nParticles;
 }
