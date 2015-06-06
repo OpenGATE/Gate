@@ -109,6 +109,9 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
     double n = std::max(1.,dDiffMax/dTol);
     // GateMessage("Core", 0, "n = " << n << Gateendl);
 
+    //If material is Air divide into only one range
+    if (mHounsfieldMaterialPropertiesVector[i]->GetName() == "Air") n = 1;
+
     double HTol = (HMax-HMin)/n;
     // GateMessage("Core", 0, "HTol = " << HTol << Gateendl);
 
@@ -128,7 +131,10 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
     for(int j=0; j<n; j++) {
       double h1 = HMin+j*HTol;
       double h2 = std::min(HMin+(j+1)*HTol, HMax);
-      double d = mDensityTable->GetDensityFromH(h1+(h2-h1)/2.0);
+      //If material is Air get the lowest density value to avoid adding importance to it
+      double d = mHounsfieldMaterialPropertiesVector[i]->GetName() == "Air" ?
+    		     mDensityTable->GetDensityFromH(h1)  :
+    		     mDensityTable->GetDensityFromH(h1+(h2-h1)/2.0);
        GateMessage("Geometry", 4, "H1/H2 " << h1 << " " << h2 << " = "
        		  << mHounsfieldMaterialPropertiesVector[i]->GetName()
        		  << " d=" << G4BestUnit(d, "Volumic Mass") << Gateendl);

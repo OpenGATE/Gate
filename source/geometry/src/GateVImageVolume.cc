@@ -314,8 +314,6 @@ void GateVImageVolume::SetLabeledImageFilename(G4String filename) {
 void GateVImageVolume::SetDensityImageFilename(G4String filename) {
   mDensityImageFilename = filename;
   mWriteDensityImage = true;
-  if (mImageMaterialsFromHounsfieldTableDone || mImageMaterialsFromRangeTableDone)
-	  DumpDensityImage();
 }
 //--------------------------------------------------------------------
 
@@ -452,10 +450,10 @@ void GateVImageVolume::DumpDensityImage() {
 	// 	  theMaterialDatabase.GetMaterial(lab2mat[*pi]);
 	// 	GateDebugMessage("Volume", 2, "lab " << *pi << " = " << mat->GetName() << Gateendl);
 	// 	po = mat->GetDensity;
-    double density =	mLoadImageMaterialsFromHounsfieldTable ?
-    	  				mHounsfieldMaterialTable[(int)lrint(*pi)].md1 / (g / cm3) :
-    	  				mRangeMaterialTable[(int)lrint(*pi)].md1 / (g / cm3);
-	*po = density;
+    double density = mLoadImageMaterialsFromHounsfieldTable ?
+    				 mHounsfieldMaterialTable[(int)lrint(*pi)].md1 :
+    				 mRangeMaterialTable[(int)lrint(*pi)].md1;
+	*po = density / (g / cm3);
 	++po;
 	++pi;
       }
