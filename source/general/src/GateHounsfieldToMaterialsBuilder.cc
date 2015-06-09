@@ -18,7 +18,9 @@
 #include "GateHounsfieldDensityTable.hh"
 
 //-------------------------------------------------------------------------------------------------
-GateHounsfieldToMaterialsBuilder::GateHounsfieldToMaterialsBuilder() {
+GateHounsfieldToMaterialsBuilder::GateHounsfieldToMaterialsBuilder()
+: mDensityTol(0.1*g/cm3)
+{
   pMessenger = new GateHounsfieldToMaterialsBuilderMessenger(this);
   mMaterialTableFilename = "undefined_mMaterialTableFilename";
   mDensityTableFilename= "undefined_mDensityTableFilename";
@@ -104,7 +106,7 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
     //     GateMessage("Core", 0, "Density " << dMin*g/cm3 << " " << dMax*g/cm3 << Gateendl);
     double dDiffMax = mDensityTable->FindMaxDensityDifference(HMin, HMax);
 
-    double n = (dDiffMax)/dTol;
+    double n = std::max(1.,dDiffMax/dTol);
     // GateMessage("Core", 0, "n = " << n << Gateendl);
 
     double HTol = (HMax-HMin)/n;
