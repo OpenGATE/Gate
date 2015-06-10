@@ -72,9 +72,9 @@ void GateObjectChildList::DestroyChildGeometry()
 	/*G4cout<<"GateObjectChildList :: listObject = "<<i<< Gateendl;}*/
 
 	  //using iterator functionalities
-	    for (iterator it=begin(); it!=end(); ){
-	  	   it=theListOfNamedObject.erase(it);
-	    }
+	   for (iterator it=begin(); it!=end(); ++it){
+	     if (*it) ((GateVVolume*)(*it))->DestroyGeometry();
+	   }
 
    }
    		
@@ -135,7 +135,7 @@ G4int GateObjectChildList::GetChildNo(GateVVolume* anInserter, G4int copyNo)
   }*/
   //using iterator functionalities
   for (iterator it=begin(); it!=end(); ++it){
-    if ( *it != anInserter )
+    if ( ((GateVVolume*)(*it)) != anInserter )
     	childNo += ((GateVVolume*)(*it))->GetVolumeNumber();
     else
     	return childNo+copyNo;
