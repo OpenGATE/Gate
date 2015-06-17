@@ -24,6 +24,7 @@
 #include "GateDMapdt.h"
 #include "GateHounsfieldMaterialTable.hh"
 #include <G4TransportationManager.hh>
+#include "globals.hh"
 
 typedef unsigned int uint;
 
@@ -48,6 +49,7 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
   mHounsfieldToImageMaterialTableFilename = "none";
   mRangeToImageMaterialTableFilename = "none";
   mWriteHLabelImage = false;
+  mWriteDensityImage = false;
   mHLabelImageFilename = "none";
   mIsBoundingBoxOnlyModeEnabled = false;
   mImageMaterialsFromHounsfieldTableDone = false;
@@ -308,6 +310,12 @@ void GateVImageVolume::SetLabeledImageFilename(G4String filename) {
 }
 //--------------------------------------------------------------------
 
+//--------------------------------------------------------------------
+void GateVImageVolume::SetDensityImageFilename(G4String filename) {
+  mDensityImageFilename = filename;
+  mWriteDensityImage = true;
+}
+//--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
 void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
@@ -379,6 +387,7 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
   // Dump label image if needed
   mImageMaterialsFromHounsfieldTableDone = true;
   DumpHLabelImage();
+  DumpDensityImage();
 }
 //--------------------------------------------------------------------
 
@@ -417,6 +426,43 @@ void GateVImageVolume::DumpHLabelImage() {
   }
 }
 
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+void GateVImageVolume::DumpDensityImage() {
+  // Dump image if needed
+  if (mWriteDensityImage) {
+    ImageType output;
+    output.SetResolutionAndVoxelSize(pImage->GetResolution(), pImage->GetVoxelSize());
+    output.SetOrigin(pImage->GetOrigin());
+    output.Allocate();
+
+    //  GateHounsfieldMaterialTable::LabelToMaterialNameType lab2mat;
+    //     mHounsfieldMaterialTable.MapLabelToMaterial(lab2mat);
+
+    ImageType::const_iterator pi;
+    ImageType::iterator po;
+    pi = pImage->begin();
+    po = output.begin();
+    while (pi != pImage->end()) {
+      if (1) { // HU mean or d mean or label
+	// G4Material * mat =
+	// 	  theMaterialDatabase.GetMaterial(lab2mat[*pi]);
+	// 	GateDebugMessage("Volume", 2, "lab " << *pi << " = " << mat->GetName() << Gateendl);
+	// 	po = mat->GetDensity;
+    double density = mLoadImageMaterialsFromHounsfieldTable ?
+    				 mHounsfieldMaterialTable[(int)lrint(*pi)].md1 :
+    				 mRangeMaterialTable[(int)lrint(*pi)].md1;
+	*po = density / (g / cm3);
+	++po;
+	++pi;
+      }
+    }
+
+    // Write image
+    output.Write(mDensityImageFilename);
+  }
+}
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -579,6 +625,8 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
     (*iter) = label;
     ++iter;
   }
+  mImageMaterialsFromRangeTableDone = true;
+  DumpDensityImage();
 }
 //--------------------------------------------------------------------
 
