@@ -155,8 +155,8 @@ void GatePromptGammaTLEActor::UserPreTrackActionInVoxel(const int, const G4Track
 //-----------------------------------------------------------------------------
 void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step *step)
 {
-  // Check index
-  if (index < 0) return;
+  // Check if we are inside the volume (YES THIS ACTUALLY NEEDS TO BE CHECKED).
+  if (index<0) return;
 
   // compute sameEvent
   // sameEvent is false the first time some energy is deposited for each primary particle
@@ -259,7 +259,7 @@ void GatePromptGammaTLEActor::BuildOutput() {
       tracklavsq[pi] = pow(tracklav[pi],2);
 
       //variance
-      if (n==1.) tracklvar[pi]=trackli; //TODO check with JM.
+      if (n==1.) tracklvar[pi]=trackli; //this is an overestimate, so results might be better.
       else tracklvar[pi] = tracklsqsum[pi]/n - pow(tracklav[pi],2);
       //else tracklvar[pi] = ( tracklsqsum[pi] - pow(trackli, 2)/n ) / (n-1.); //same as above (for large n, n=n-1)
     }

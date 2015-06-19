@@ -131,6 +131,9 @@ void GatePromptGammaAnalogActor::UserPreTrackActionInVoxel(const int, const G4Tr
 //-----------------------------------------------------------------------------
 void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4Step *step)
 {
+  // Check if we are inside the volume (YES THIS ACTUALLY NEEDS TO BE CHECKED).
+  if (index<0) return;
+
   // Get various information on the current step
   const G4ParticleDefinition* particle = step->GetTrack()->GetParticleDefinition();
   const G4VProcess* process = step->GetPostStepPoint()->GetProcessDefinedStep();
@@ -154,7 +157,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++) {
     if ((*fSecondary)[lp1]->GetDefinition() == G4Gamma::Gamma()) {
       const double e = (*fSecondary)[lp1]->GetKineticEnergy()/MeV;  //convert from internal unit to MeV
-      if (e>data.GetGammaEMax() || e<0.003) { //FIXME understand lowE check.
+      if (e>data.GetGammaEMax() || e<0.005) { //understand lowE check.
         //lower than we're interested in.
         //higher than we're interested in.
         continue;
