@@ -77,8 +77,7 @@ public:
   }
   
   bool operator() (const GateCompressedVoxel& lhs,  const GateCompressedVoxel& rhs){ 
-    register int i;
-    for( i=0; i<3; i++){
+    for( int i=0; i<3; i++){
       if ( lhs[index[i]] < rhs[index[i]] ) return true;
       else 
 	if ( lhs[index[i]] > rhs[index[i]] ) return false;
