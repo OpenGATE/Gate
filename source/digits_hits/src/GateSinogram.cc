@@ -24,6 +24,9 @@ See GATE/LICENSE.txt for further details
 #include "GateConstants.hh"
 #include "GateMessageManager.hh"
 
+// for std::abs
+#include <cmath>
+
 // Reset the matrix and prepare a new acquisition
 void GateSinogram::Reset(size_t ringNumber, size_t crystalNumber, size_t radialElemNb, size_t virtualRingNumber, size_t virtualCrystalPerBlockNumber)
 {
@@ -205,15 +208,15 @@ G4int GateSinogram::Fill( G4int ring1ID, G4int ring2ID, G4int crystal1ID, G4int 
 
   det1_c = binViewID;
   //det2_c = binViewID + (m_crystalNb/2);
-  if (fabs(crystal1ID - det1_c) < fabs(crystal1ID - (det1_c + (G4int)m_crystalNb)))
+  if (std::abs(crystal1ID - det1_c) < std::abs(crystal1ID - (det1_c + (G4int)m_crystalNb)))
     diff1 = crystal1ID - det1_c;
   else
     diff1 = crystal1ID - (det1_c + m_crystalNb);
-  if (fabs(crystal2ID - det1_c) < fabs(crystal2ID - (det1_c + (G4int)m_crystalNb)))
+  if (std::abs(crystal2ID - det1_c) < std::abs(crystal2ID - (det1_c + (G4int)m_crystalNb)))
     diff2 = crystal2ID - det1_c;
   else
     diff2 = crystal2ID - (det1_c + m_crystalNb);
-  if (fabs(diff1) < fabs(diff2)) sigma = crystal1ID - crystal2ID;
+  if (std::abs(diff1) < std::abs(diff2)) sigma = crystal1ID - crystal2ID;
   else sigma = crystal2ID - crystal1ID;
   if (sigma < 0)  sigma += m_crystalNb;
   // m_elemNb :=  m_crystalNb/2
