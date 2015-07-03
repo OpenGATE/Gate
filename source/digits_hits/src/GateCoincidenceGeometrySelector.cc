@@ -94,5 +94,5 @@ void GateCoincidenceGeometrySelector::DescribeMyself(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "GeometrySelector: "
       	 << "SMax      : "<<G4BestUnit(m_maxS,"Length")
-      	 << "DeltaZMax : "<<G4BestUnit(m_maxDeltaZ,"Length") << G4endl;
+      	 << "DeltaZMax : "<<G4BestUnit(m_maxDeltaZ,"Length") << Gateendl;
 }

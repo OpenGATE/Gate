@@ -15,7 +15,7 @@
 
 #include "G4VProcess.hh"
 #include "G4UnitsTable.hh"
-#include "G4RunManager.hh"
+#include "GateRunManager.hh"
 #include "G4EmCalculator.hh"
 #include "G4TouchableHistory.hh"
 #include "G4TransportationManager.hh"
@@ -128,37 +128,37 @@ void GateToImageCT::ModuleGeometry()
 
   if( numberOfModuleByAxis[0] > 1 || numberOfModuleByAxis[ 2 ] > 1 )
     {
-      G4cerr << "[GateToImageCT::RecordBeginOfAcquisition]: " << G4endl;
+      G4cerr << "[GateToImageCT::RecordBeginOfAcquisition]: \n";
       G4cerr << "The module repeater vector must be parallel to the Y axis"
-             << G4endl;
+             << Gateendl;
       G4Exception(
                   "GateToImageCT::ModuleGeometry", "ModuleGeometry", FatalException,"You must change these parameters then restart the simulation" );
     }
 
   if( nVerboseLevel > 0 )
     {
-      G4cout << G4endl;
+      G4cout << Gateendl;
       G4cout << "****************************************************"
-             << G4endl;
+             << Gateendl;
       G4cout << "**** Dimension of the module in your CT-scanner ****"
-             << G4endl;
+             << Gateendl;
       G4cout << "****************************************************"
-             << G4endl;
+             << Gateendl;
       G4cout << "size of the module in X : "
              << G4BestUnit(
-                           lenghtOfModuleByAxis[ 0 ], "Length" ) << G4endl;
+                           lenghtOfModuleByAxis[ 0 ], "Length" ) << Gateendl;
       G4cout << "size of the module in Y : "
              << G4BestUnit(
-                           lenghtOfModuleByAxis[ 1 ], "Length" ) << G4endl;
+                           lenghtOfModuleByAxis[ 1 ], "Length" ) << Gateendl;
       G4cout << "size of the module in Z : "
              << G4BestUnit(
-                           lenghtOfModuleByAxis[ 2 ], "Length" ) << G4endl;
+                           lenghtOfModuleByAxis[ 2 ], "Length" ) << Gateendl;
       G4cout << "number of the module in X : "
-             << numberOfModuleByAxis[ 0 ] << G4endl;
+             << numberOfModuleByAxis[ 0 ] << Gateendl;
       G4cout << "number of the module in Y : "
-             << numberOfModuleByAxis[ 1 ] << G4endl;
+             << numberOfModuleByAxis[ 1 ] << Gateendl;
       G4cout << "number of the module in Z : "
-             << numberOfModuleByAxis[ 2 ] << G4endl;
+             << numberOfModuleByAxis[ 2 ] << Gateendl;
     }
 }
 
@@ -204,40 +204,40 @@ void GateToImageCT::PixelGeometry( const G4String clusterVolumeArray[],
 
       if( nVerboseLevel > 0 )
         {
-          G4cout << G4endl;
+          G4cout << Gateendl;
           G4cout << "*****************************************************"
-                 << G4endl;
+                 << Gateendl;
           G4cout << "**** Dimension of the " << *(pixelVolumeArray + ptr )
-                 << " in your CT-scanner ****" << G4endl;
+                 << " in your CT-scanner ****\n";
           G4cout << "*****************************************************"
-                 << G4endl;
+                 << Gateendl;
           G4cout << "size of the " << *(pixelVolumeArray + ptr ) << " in X : "
                  << G4BestUnit(
-                               lenghtOfPixelByAxis[ ptr * 3 ], "Length" ) << G4endl;
+                               lenghtOfPixelByAxis[ ptr * 3 ], "Length" ) << Gateendl;
           G4cout << "size of the " << *(pixelVolumeArray + ptr ) << " in Y : "
                  << G4BestUnit(
-                               lenghtOfPixelByAxis[ ptr * 3 + 1 ], "Length" ) << G4endl;
+                               lenghtOfPixelByAxis[ ptr * 3 + 1 ], "Length" ) << Gateendl;
           G4cout << "size of the " << *(pixelVolumeArray + ptr ) << " in Z : "
                  << G4BestUnit(
-                               lenghtOfPixelByAxis[ ptr * 3 + 2 ], "Length" ) << G4endl;
+                               lenghtOfPixelByAxis[ ptr * 3 + 2 ], "Length" ) << Gateendl;
           G4cout << "number of the " << *(pixelVolumeArray + ptr )
                  << " in X by module : "
-                 << numberOfPixelByAxis[ ptr * 3 ] << G4endl;
+                 << numberOfPixelByAxis[ ptr * 3 ] << Gateendl;
           G4cout << "number of the " << *(pixelVolumeArray + ptr )
                  << " in Y by module : "
-                 << numberOfPixelByAxis[ ptr * 3 + 1 ] << G4endl;
+                 << numberOfPixelByAxis[ ptr * 3 + 1 ] << Gateendl;
           G4cout << "number of the " << *(pixelVolumeArray + ptr )
                  << " in Z by module : "
-                 << numberOfPixelByAxis[ ptr * 3 + 2 ] << G4endl;
+                 << numberOfPixelByAxis[ ptr * 3 + 2 ] << Gateendl;
           G4cout << "number of the " << *(pixelVolumeArray + ptr )
                  << " in X by cluster : "
-                 << numberOfPixelByCluster[ ptr * 3 ] << G4endl;
+                 << numberOfPixelByCluster[ ptr * 3 ] << Gateendl;
           G4cout << "number of the " << *(pixelVolumeArray + ptr )
                  << " in Y by cluster : "
-                 << numberOfPixelByCluster[ ptr * 3 + 1 ] << G4endl;
+                 << numberOfPixelByCluster[ ptr * 3 + 1 ] << Gateendl;
           G4cout << "number of the " << *(pixelVolumeArray + ptr )
                  << " in Z by cluster : "
-                 << numberOfPixelByCluster[ ptr * 3 + 2 ] << G4endl;
+                 << numberOfPixelByCluster[ ptr * 3 + 2 ] << Gateendl;
         }
     }
 }
@@ -246,7 +246,7 @@ void GateToImageCT::RecordBeginOfAcquisition()
 {
   if( nVerboseLevel > 1 )
     G4cout << ">> entering [GateToImageCT::RecordBeginOfAcquisition]"
-           << G4endl;
+           << Gateendl;
 
   //Seed the random
   CLHEP::HepRandom::setTheSeed( m_seed );
@@ -255,11 +255,11 @@ void GateToImageCT::RecordBeginOfAcquisition()
   //frame
   if( fmod( GetTotalDuration(), GetFrameDuration() ) != 0 )
     {
-      G4cerr << "[GateToImageCT::RecordBeginOfAcquisition] : " << G4endl
+      G4cerr << "[GateToImageCT::RecordBeginOfAcquisition] : \n"
              << "The study duration ( "
              << G4BestUnit( GetTotalDuration(), "Time" )
              << ") does not seem to be a multiple of the time-slice ( "
-             << G4BestUnit( GetFrameDuration(), "Time" ) << ")." << G4endl;
+             << G4BestUnit( GetFrameDuration(), "Time" ) << ").\n";
       G4Exception(
                   "GateToImageCT::RecordBeginOfAcquisition", "RecordBeginOfAcquisition", FatalException, "You must change these parameters then restart the simulation\n" );
     }
@@ -276,13 +276,13 @@ void GateToImageCT::RecordBeginOfAcquisition()
   //fast simulation : the user wants a self-made pixelisation
   if( m_fastPixelXNb != 0 && m_fastPixelYNb != 0 )
     {
-      G4cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << G4endl;
-      G4cout << "!!!!! Self-made digitalisation !!!!! " << G4endl;
-      G4cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << G4endl;
-      G4cout << G4endl;
+      G4cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! \n";
+      G4cout << "!!!!! Self-made digitalisation !!!!! \n";
+      G4cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! \n";
+      G4cout << Gateendl;
 
       G4cout << "WARNING : VRT not activate in self-made digitalisation mode"
-             << G4endl;
+             << Gateendl;
 
       m_selfDigi = true;
       std::vector<size_t> fastPixelByAxis( 9, 0 );
@@ -303,13 +303,13 @@ void GateToImageCT::RecordBeginOfAcquisition()
     }
 
   if( m_vrtFactor != 0 )
-    G4cout << G4endl
+    G4cout << Gateendl
            << "--> You asked for a self propagation with multiplicity: "
-           << m_vrtFactor << G4endl;
+           << m_vrtFactor << Gateendl;
 
   if( nVerboseLevel > 1 )
     G4cout << ">> leaving [GateToImageCT::RecordBeginOfAcquisition]"
-           << G4endl;
+           << Gateendl;
 }
 
 void GateToImageCT::RecordEndOfAcquisition()
@@ -319,22 +319,22 @@ void GateToImageCT::RecordEndOfAcquisition()
 void GateToImageCT::RecordBeginOfRun( const G4Run* aRun )
 {
   if( nVerboseLevel > 1 )
-    G4cout << " >> entering [GateToImageCT::RecordBeginOfRun]" << G4endl;
+    G4cout << " >> entering [GateToImageCT::RecordBeginOfRun]\n";
 
   G4cout << "#### FrameID = " << GetFrameID() + aRun->GetRunID()
-         << " ####" << G4endl;
+         << " ####\n";
 
   //One frame per RUN
   m_gateImageCT->ClearData( aRun->GetRunID() );
 
   if( nVerboseLevel > 1 )
-    G4cout << " >> leaving [GateToImageCT::RecordBeginOfRun]" << G4endl;
+    G4cout << " >> leaving [GateToImageCT::RecordBeginOfRun]\n";
 }
 
 void GateToImageCT::RecordEndOfRun( const G4Run* aRun )
 {
   if( nVerboseLevel > 1 )
-    G4cout << " >> entering [GateToImageCT::RecordEndOfRun]" << G4endl;
+    G4cout << " >> entering [GateToImageCT::RecordEndOfRun]\n";
 
   // Write the projection sets
   std::ostringstream frameNb;
@@ -352,22 +352,22 @@ void GateToImageCT::RecordEndOfRun( const G4Run* aRun )
     {
       G4cerr
         << "you are in GateToImageCT::RecordEndOfRun( const G4Run* aRun )"
-        << G4endl;
+        << Gateendl;
       G4Exception( "GateToImageCT::RecordEndOfRun", "RecordEndOfRun", FatalException, "probleme creating your output data file" );
     }
 
   m_gateImageCT->StreamOut( m_dataFile );
 
-  G4cout << "--> Image written to the raw file " << frameFileName << G4endl;
+  G4cout << "--> Image written to the raw file " << frameFileName << Gateendl;
 
   if( nVerboseLevel > 1 )
-    G4cout << " >> leaving [GateToImageCT::RecordEndOfRun]" << G4endl;
+    G4cout << " >> leaving [GateToImageCT::RecordEndOfRun]\n";
 }
 
 void GateToImageCT::RecordBeginOfEvent( const G4Event* aEvent )
 {
   if( nVerboseLevel > 3 )
-    G4cout << " >> entering [GateToImageCT::RecordBeginOfEvent]" << G4endl;
+    G4cout << " >> entering [GateToImageCT::RecordBeginOfEvent]\n";
 
   if( !aEvent->GetPrimaryVertex()
       || m_detectorInX == 0 || m_detectorInY == 0 )
@@ -386,13 +386,13 @@ void GateToImageCT::RecordBeginOfEvent( const G4Event* aEvent )
   if( fabs( newPosition.getX() ) > m_detectorInX / 2
       || fabs( newPosition.getY() )  > m_detectorInY / 2 )
     {
-      G4RunManager::GetRunManager()->AbortEvent();
+      GateRunManager::GetRunManager()->AbortEvent();
       if ( nVerboseLevel > 1 )
-        G4cout << " Abort event: Out of detector section "<< G4endl;
+        G4cout << " Abort event: Out of detector section "<< Gateendl;
     }
 
   if( nVerboseLevel > 3 )
-    G4cout << " >> leaving [GateToImageCT::RecordBeginOfEvent]" << G4endl;
+    G4cout << " >> leaving [GateToImageCT::RecordBeginOfEvent]\n";
 }
 
 void GateToImageCT::RecordEndOfEvent( const G4Event* )
@@ -406,7 +406,7 @@ void GateToImageCT::RecordEndOfEvent( const G4Event* )
     return;
 
   if( nVerboseLevel > 3 )
-    G4cout << " >> entering [GateToImageCT::RecordEndOfEvent]" << G4endl;
+    G4cout << " >> entering [GateToImageCT::RecordEndOfEvent]\n";
 
   n_digit = CDS->entries();
   for( G4int i = 0; i != n_digit; ++i )
@@ -441,11 +441,11 @@ void GateToImageCT::RecordEndOfEvent( const G4Event* )
 
           if( nVerboseLevel > 1 )
             {
-              G4cout << "********* Tree VolumeID : " << G4endl;
-              G4cout << "pixel in X : " << m_pixelInRaw << G4endl;
-              G4cout << "pixel in Y : " << m_pixelInColumn << G4endl;
-              G4cout << "pixelRawID : " << raw << G4endl;
-              G4cout << "pixelColumnID : " << column << G4endl;
+              G4cout << "********* Tree VolumeID : \n";
+              G4cout << "pixel in X : " << m_pixelInRaw << Gateendl;
+              G4cout << "pixel in Y : " << m_pixelInColumn << Gateendl;
+              G4cout << "pixelRawID : " << raw << Gateendl;
+              G4cout << "pixelColumnID : " << column << Gateendl;
             }
         }
       else
@@ -459,20 +459,20 @@ void GateToImageCT::RecordEndOfEvent( const G4Event* )
 
       if( nVerboseLevel > 2 )
         {
-          G4cout << "newPixelID : " << newPixelID << G4endl;
-          G4cout << G4endl;
+          G4cout << "newPixelID : " << newPixelID << Gateendl;
+          G4cout << Gateendl;
         }
     }
 
   if( nVerboseLevel > 3 )
-    G4cout << " >> leaving [GateToImageCT::RecordEndOfEvent]" << G4endl;
+    G4cout << " >> leaving [GateToImageCT::RecordEndOfEvent]\n";
 }
 
 void GateToImageCT::RecordStepWithVolume( const GateVVolume*,
                                           const G4Step* aStep )
 {
   if( nVerboseLevel > 3 )
-    G4cout << " >> entering [GateToImageCT::RecordStep]" << G4endl;
+    G4cout << " >> entering [GateToImageCT::RecordStep]\n";
 
   if( m_selfDigi )
     return;
@@ -502,20 +502,20 @@ void GateToImageCT::RecordStepWithVolume( const GateVVolume*,
 
       if( nVerboseLevel > 0 )
         {
-          G4cout << "########################### : NEW PHOTON" << G4endl;
-          G4cout << "Accelerated factor : " << m_vrtFactor << G4endl;
+          G4cout << "########################### : NEW PHOTON\n";
+          G4cout << "Accelerated factor : " << m_vrtFactor << Gateendl;
         }
 
       if( nVerboseLevel > 1 )
         {
           G4cout << "density : " << G4BestUnit( density, "Volumic Mass" )
-                 << G4endl;
-          G4cout << "energy : " << G4BestUnit( energy, "Energy" ) << G4endl;
-          G4cout << "momentum : " << momentum << G4endl;
+                 << Gateendl;
+          G4cout << "energy : " << G4BestUnit( energy, "Energy" ) << Gateendl;
+          G4cout << "momentum : " << momentum << Gateendl;
         }
 
       if( nVerboseLevel > 2 )
-        G4cout << "material : " << material << G4endl;
+        G4cout << "material : " << material << Gateendl;
 
       //standard energy model
       G4EmCalculator emCalculator;
@@ -534,7 +534,7 @@ void GateToImageCT::RecordStepWithVolume( const GateVVolume*,
       if( nVerboseLevel > 0 )
         G4cout << "mean free path : "
                << G4BestUnit( meanFreePath, "Length" )
-               << G4endl;
+               << Gateendl;
 
       G4Navigator* theNavigator =
         G4TransportationManager::GetTransportationManager()
@@ -578,7 +578,7 @@ void GateToImageCT::RecordStepWithVolume( const GateVVolume*,
       G4double geomlimit = lenghtOfPixelByAxis[ 2 ] / cosinus;
 
       if( nVerboseLevel > 0 )
-        G4cout << "geomlimit : " << G4BestUnit( geomlimit, "Length" ) << G4endl;
+        G4cout << "geomlimit : " << G4BestUnit( geomlimit, "Length" ) << Gateendl;
 
       //find the new position in the exit of the detector
       G4SteppingManager* limitSteppingManager = G4EventManager::GetEventManager()
@@ -593,7 +593,7 @@ void GateToImageCT::RecordStepWithVolume( const GateVVolume*,
 
       if( nVerboseLevel > 1 )
         G4cout << "nextStep : "
-               << G4BestUnit( nextStep, "Length" ) << G4endl;
+               << G4BestUnit( nextStep, "Length" ) << Gateendl;
 
       for( G4int i = 0; i != m_vrtFactor; ++i )
         {
@@ -602,7 +602,7 @@ void GateToImageCT::RecordStepWithVolume( const GateVVolume*,
           path = -log( 1 - G4UniformRand() ) * meanFreePath;
 
           if( nVerboseLevel > 1 )
-            G4cout << "path : " << G4BestUnit( path, "Length" ) << G4endl;
+            G4cout << "path : " << G4BestUnit( path, "Length" ) << Gateendl;
 
           if( path < geomlimit )
             {
@@ -634,7 +634,7 @@ void GateToImageCT::RecordStepWithVolume( const GateVVolume*,
     }
 
   if( nVerboseLevel > 3 )
-    G4cout << " >> leaving [GateToImageCT::RecordStep]" << G4endl;
+    G4cout << " >> leaving [GateToImageCT::RecordStep]\n";
 }
 
 size_t GateToImageCT::InverseMatrixPixel( size_t pixel )
@@ -693,12 +693,12 @@ size_t GateToImageCT::TransformPixel( size_t module,
 
   if( nVerboseLevel > 1 )
     {
-      G4cout << "********* Tree VolumeID : " << G4endl;
-      G4cout << "pixelID : " << newPixelID << G4endl;
-      G4cout << "moduleID : " << module << G4endl;
-      G4cout << "clusterID : " << cluster << G4endl;
-      G4cout << "pixelRawID : " << pixelRawID << G4endl;
-      G4cout << "pixelColumnID : " << pixelColumnID << G4endl;
+      G4cout << "********* Tree VolumeID : \n";
+      G4cout << "pixelID : " << newPixelID << Gateendl;
+      G4cout << "moduleID : " << module << Gateendl;
+      G4cout << "clusterID : " << cluster << Gateendl;
+      G4cout << "pixelRawID : " << pixelRawID << Gateendl;
+      G4cout << "pixelColumnID : " << pixelColumnID << Gateendl;
     }
 
   return  InverseMatrixPixel( newPixelID );

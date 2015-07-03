@@ -54,7 +54,7 @@ GateUIcmdWithAVectorAndUnit<vContentType>::GateUIcmdWithAVectorAndUnit
 template<typename vContentType>
 std::vector<vContentType> GateUIcmdWithAVectorAndUnit<vContentType>::GetNewVectorValue(G4String paramString)
 {
-  G4cout << "GateUIcmdWithAVectorAndUnit::GetNewVectorValue : paramString <" << paramString << ">" << G4endl;
+  G4cout << "GateUIcmdWithAVectorAndUnit::GetNewVectorValue : paramString <" << paramString << ">\n";
 
   //const char* t = paramString;
   //LF 21/12/2005
@@ -64,7 +64,7 @@ std::vector<vContentType> GateUIcmdWithAVectorAndUnit<vContentType>::GetNewVecto
   std::vector<vContentType> vec;
     G4int nElem;
     is >> nElem;
-    G4cout << "GateUIcmdWithAVectorAndUnit::GetNewVectorValue : nElem "<< nElem << G4endl;
+    G4cout << "GateUIcmdWithAVectorAndUnit::GetNewVectorValue : nElem "<< nElem << Gateendl;
   vContentType value;
 //    G4cout << "GateUIcmdWithAVectorAndUnit::GetNewVectorValue : ";
   G4String aToken;
@@ -72,7 +72,7 @@ std::vector<vContentType> GateUIcmdWithAVectorAndUnit<vContentType>::GetNewVecto
   G4bool isGood = true;
   do {
     aToken = parameterToken(); 
-    G4cout << " aToken = " << aToken << G4endl;
+    G4cout << " aToken = " << aToken << Gateendl;
     
     const char* charToken = aToken; 
     //LF
@@ -81,7 +81,7 @@ std::vector<vContentType> GateUIcmdWithAVectorAndUnit<vContentType>::GetNewVecto
     //LF
     istrToken >> value;
     
-    G4cout << " istrToken.good() = "  << istrToken.good() << G4endl;
+    G4cout << " istrToken.good() = "  << istrToken.good() << Gateendl;
     
     if (istrToken.good()) {
             G4cout << " is.eof() " << is.eof() << " is.fail() " << is.fail() << " is.bad() " << is.bad() << " ";
@@ -91,10 +91,10 @@ std::vector<vContentType> GateUIcmdWithAVectorAndUnit<vContentType>::GetNewVecto
       isGood = false;
     }
   } while (isGood);
-  //  G4cout << G4endl;
-  G4cout << "GateUIcmdWithAVectorAndUnit::GetNewVectorValue: vec.size()  " << vec.size() << G4endl;
+  //  G4cout << Gateendl;
+  G4cout << "GateUIcmdWithAVectorAndUnit::GetNewVectorValue: vec.size()  " << vec.size() << Gateendl;
   if ( aToken.length() == 0 ) {
-    G4cout << "GateUIcmdWithAVectorAndUnit::GetNewVectorValue : ERROR : missing Unit" << G4endl;
+    G4cout << "GateUIcmdWithAVectorAndUnit::GetNewVectorValue : ERROR : missing Unit\n";
   } else {
     //    char unts[30];
     const char* charToken = aToken; 
@@ -104,11 +104,11 @@ std::vector<vContentType> GateUIcmdWithAVectorAndUnit<vContentType>::GetNewVecto
     //LF
     G4String unt = "";
     istrToken >> unt;
-    //    G4cout << " unts : <" << unts << ">" << G4endl;
-    G4cout << " Unit " << unt << G4endl;
+    //    G4cout << " unts : <" << unts << ">\n";
+    G4cout << " Unit " << unt << Gateendl;
     G4double unitValue = ValueOf(unt);
-    for (size_t i=0; i<vec.size(); i++) {
-      vec[i] *= unitValue;
+    for (std::vector<vContentType>::iterator itr=vec.begin(); itr!=vec.end(); itr++) {
+      (*itr) *= unitValue;
     }
   }
 
@@ -127,7 +127,7 @@ G4String GateUIcmdWithAVectorAndUnit<vContentType>::ConvertToString
   for (G4int i=0; i<vec.size(); i++) os << vec[i] << " "; 
   os << '\0';
   G4String vl = st;
-  G4cout << "GateUIcmdWithAVectorAndUnit::ConvertToString : " << vl << G4endl;
+  G4cout << "GateUIcmdWithAVectorAndUnit::ConvertToString : " << vl << Gateendl;
   return vl;
 }
 

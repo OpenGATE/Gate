@@ -69,7 +69,7 @@ void GateUIcontrolMessenger::LaunchMacroFile(G4String fileName)
 {
   G4String filePath = GateTools::FindGateFile(fileName);
   if (filePath.empty()) {
-    G4cerr << "Could not find macro file '" << fileName << "'! Ignored!" << G4endl;
+    G4cerr << "Could not find macro file '" << fileName << "'! Ignored!\n";
     return;
   }
 

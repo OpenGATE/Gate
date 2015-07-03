@@ -40,7 +40,7 @@ GateSourceVoxelInterfileReader::~GateSourceVoxelInterfileReader()
 void GateSourceVoxelInterfileReader::ReadFile(G4String headerFileName)
 {
   if (!m_voxelTranslator) {
-      G4cout << "GateSourceVoxelInterfileReader::ReadFile: ERROR : insert a translator first" << G4endl;
+      G4cout << "GateSourceVoxelInterfileReader::ReadFile: ERROR : insert a translator first\n";
       return;
   }
   G4cout << "------------------------------------------------------------------------------------------------\n"
@@ -48,9 +48,9 @@ void GateSourceVoxelInterfileReader::ReadFile(G4String headerFileName)
          << "Older ones are being deprecated and will be removed from the next release.\n"
          << "Please, have a look at the related documentation at:\n"
          << "http://wiki.opengatecollaboration.org/index.php/Users_Guide_V7.1:Voxelized_Source_and_Phantom\n"
-          << "------------------------------------------------------------------------------------------------" << G4endl;
+          << "------------------------------------------------------------------------------------------------\n";
 
-  G4cout << "GateSourceVoxelInterfileReader::ReadFile : fileName: " <<  headerFileName << G4endl;
+  G4cout << "GateSourceVoxelInterfileReader::ReadFile : fileName: " <<  headerFileName << Gateendl;
 
   ReadHeader(headerFileName);
 
@@ -96,10 +96,10 @@ void GateSourceVoxelInterfileReader::ReadRTFile(G4String headerFileName, G4Strin
 
   if ( Ph != 0) {
       G4cout << " The Object "<< Ph->GetName()
-	       << " is attached to the "<<m_name<<" Source Voxel Reader." << G4endl;
+	       << " is attached to the "<<m_name<<" Source Voxel Reader.\n";
   }  else {
       G4cout << " GateSourceVoxelInterfileReader::ReadFile   WARNING The Object "<< Ph->GetName()
-	       << " is not attached to any Geometry Voxel Reader."<<G4endl;
+	       << " is not attached to any Geometry Voxel Reader.\n";
   }
 
   if (!m_voxelTranslator) {

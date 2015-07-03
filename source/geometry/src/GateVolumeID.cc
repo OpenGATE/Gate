@@ -62,7 +62,7 @@ GateVolumeID::GateVolumeID(const G4TouchableHistory* touchable)
       G4cout << "[GateVolumeID::GateVolumeID]: The volume is null!\n";
       return;
       
-  G4cout << " FIN Constructeur GateVolumeID" << G4endl;    
+  G4cout << " FIN Constructeur GateVolumeID\n";    
   }
 
 /*
@@ -134,7 +134,7 @@ G4AffineTransform GateVolumeID::ComputeAffineTransform(G4int ancestorDepth) cons
 {
   // Retrieve the ancestor's depth
   if ( !IsValidDepth(ancestorDepth) ) {
-      G4cout << "[GateVolumeID::ComputeAffineTransform]: level "<< ancestorDepth << " is out-of-range!!!" << G4endl;
+      G4cout << "[GateVolumeID::ComputeAffineTransform]: level "<< ancestorDepth << " is out-of-range!!!\n";
       return G4AffineTransform();
   }
 
@@ -155,7 +155,7 @@ G4AffineTransform GateVolumeID::ComputeAffineTransform(G4int ancestorDepth) cons
 G4AffineTransform GateVolumeID::GetVolumeAffineTransform(G4VPhysicalVolume* physicalVolume) 
 {   
     if (!physicalVolume) {
-      G4cout << "[GateVolumeID::GetVolumeAffineTransform]: volume is null!!!" << G4endl;
+      G4cout << "[GateVolumeID::GetVolumeAffineTransform]: volume is null!!!\n";
       return G4AffineTransform();
     }
     return G4AffineTransform(physicalVolume->GetRotation(),physicalVolume->GetTranslation()); 

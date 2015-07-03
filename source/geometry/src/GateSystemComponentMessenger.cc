@@ -119,15 +119,15 @@ void GateSystemComponentMessenger::AddCreator(const G4String& creatorName)
   // Find the creator from the creator's name
   GateVVolume* anCreator = GateObjectStore::GetInstance()->FindCreator(creatorName);
   
-//  G4cout << " GateObjectStore::GetInstance()->FindCreator(creatorName) "  << G4endl;
+//  G4cout << " GateObjectStore::GetInstance()->FindCreator(creatorName) "  << Gateendl;
   
   // If an creator was found, ask the system component to perform the attachement  
   if (anCreator) 
     {  GetSystemComponent()->SetCreator(anCreator); }
   else
-    G4cerr  << "[GateSystemComponentMessenger]: " << G4endl
-      	    << "could not find a volume creator for the name '" << creatorName << "'" << G4endl
-	    << "Attachment request will be ignored!" << G4endl << G4endl;
+    G4cerr  << "[GateSystemComponentMessenger]: \n"
+      	    << "could not find a volume creator for the name '" << creatorName << "'\n"
+	    << "Attachment request will be ignored!\n" << Gateendl;
 }
 
 // Next method was added for the multi-system approach 

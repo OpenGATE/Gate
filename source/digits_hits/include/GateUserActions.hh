@@ -27,7 +27,6 @@ See GATE/LICENSE.txt for further details
 #include <iomanip>
 #include <vector>
 
-//#include "G4RunManager.hh"
 #include "GateRunManager.hh"
 
 #include "GateMessageManager.hh"

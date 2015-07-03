@@ -80,7 +80,7 @@ G4LogicalVolume* GateEllipticalCone::ConstructOwnSolidAndLogicalVolume(G4Materia
    }
    else {
      // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateEllipticalCone::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<G4endl);
+       GateMessage("Warning", 0, "GateEllipticalCone::ConstructOwnSolidAndLogicalVolume update mode not implemented\n");
    }
    return m_ellipticalcone_log;
 }
@@ -99,11 +99,11 @@ void GateEllipticalCone::DestroyOwnSolidAndLogicalVolume()
 
 void GateEllipticalCone::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: elliptical cone (ellipticalcone)" << G4endl;
-  G4cout << GateTools::Indent(level) << "x semiaxis at the bottom of the cone: " << G4BestUnit(m_xSemiAxis,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "y semiaxis at the bottom of the cone: " << G4BestUnit(m_ySemiAxis,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Total Z height: " << G4BestUnit(m_zLength,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Height of the cutted region: " << G4BestUnit(m_zCut,"Length") << G4endl;
+  G4cout << GateTools::Indent(level) << "Shape: elliptical cone (ellipticalcone)\n";
+  G4cout << GateTools::Indent(level) << "x semiaxis at the bottom of the cone: " << G4BestUnit(m_xSemiAxis,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "y semiaxis at the bottom of the cone: " << G4BestUnit(m_ySemiAxis,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Total Z height: " << G4BestUnit(m_zLength,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Height of the cutted region: " << G4BestUnit(m_zCut,"Length") << Gateendl;
 }
 
 G4double GateEllipticalCone::ComputeMyOwnVolume() const

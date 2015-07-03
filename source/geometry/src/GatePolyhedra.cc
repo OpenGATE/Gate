@@ -30,7 +30,7 @@ G4double GatePolyhedra::DistanceToOut( const G4ThreeVector &p,
   }
 
   // Uncomment the line below to check the hexagon-trap bug for your system
-  // if (i) G4cout << G4endl << "Particle in a polyhedra can't find the way out: trajectory rotated by " << i << " millidegrees" << G4endl << G4endl;
+  // if (i) G4cout << Gateendl << "Particle in a polyhedra can't find the way out: trajectory rotated by " << i << " millidegrees\n" << Gateendl;
 
   return distance;
 }

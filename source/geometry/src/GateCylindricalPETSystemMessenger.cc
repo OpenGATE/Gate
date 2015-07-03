@@ -40,7 +40,7 @@ GateCylindricalPETSystemMessenger::GateCylindricalPETSystemMessenger(GateCylindr
   cmdName = GetDirectoryName()+"addAnewRsector";
   addNewRsectorcmd = new G4UIcmdWithAString(cmdName,this);
 
-G4cout<< " CREATED THE COMMAND " << cmdName << G4endl;
+G4cout<< " CREATED THE COMMAND " << cmdName << Gateendl;
 
 }
 

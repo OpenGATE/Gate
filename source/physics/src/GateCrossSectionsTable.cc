@@ -23,6 +23,7 @@ See GATE/LICENSE.txt for further details
 #include "G4ForceCondition.hh"
 #include "G4LivermoreComptonModel.hh"
 #include "G4LivermorePhotoElectricModel.hh"
+#include "GateMessageManager.hh"
 
 
 using namespace std;
@@ -65,7 +66,7 @@ GateCrossSectionsTable::GateCrossSectionsTable ( G4double minEnergy, G4double ma
 
 }
 
-GateCrossSectionsTable::GateCrossSectionsTable ( ifstream& in, bool ascii, const vector<G4VDiscreteProcess*>& processes ) :G4PhysicsTable(),m_oInvDensity(),m_oMaterialVec(), m_oProcessVec ( processes ),m_pMaxCrossSection ( NULL )
+GateCrossSectionsTable::GateCrossSectionsTable ( std::ifstream& in, bool ascii, const vector<G4VDiscreteProcess*>& processes ) :G4PhysicsTable(),m_oInvDensity(),m_oMaterialVec(), m_oProcessVec ( processes ),m_pMaxCrossSection ( NULL )
 {
 	GatePETVRTManager* man=GatePETVRTManager::GetInstance();
 	pMaterialTableToProductionCutsTable=man->GetMaterialTableToProductionCutsTable();
@@ -93,7 +94,7 @@ size_t GateCrossSectionsTable::AddMaterial ( const G4MaterialCutsCouple* couple 
 
 	if ( m_pMaxCrossSection!=NULL )
 	{
-		G4cout << "GateCrossSectionsTable::AddMaterial( const G4Material* mat ) : Added material AFTER building maximal! This will most probably lead to wrong results!" << G4endl;
+		G4cout << "GateCrossSectionsTable::AddMaterial( const G4Material* mat ) : Added material AFTER building maximal! This will most probably lead to wrong results!\n";
 	}
 
 	G4PhysicsLinearVector* a=new G4PhysicsLinearVector ( m_nMinEnergy, m_nMaxEnergy, m_nPhysicsVectorBinNumber );
@@ -107,7 +108,7 @@ size_t GateCrossSectionsTable::AddMaterial ( const G4MaterialCutsCouple* couple 
 	G4ProductionCuts product;
 	if (m_nVerbose>=3)
 	{
-		G4cout << "GateCrossSectionsTable::AddMaterial( const G4Material* mat ) : add " << couple->GetMaterial()->GetName() << G4endl;
+		G4cout << "GateCrossSectionsTable::AddMaterial( const G4Material* mat ) : add " << couple->GetMaterial()->GetName() << Gateendl;
 	}
 	for ( size_t i=0;i<a->GetVectorLength();i++ )
 	{
@@ -194,7 +195,7 @@ size_t GateCrossSectionsTable::AddMaterial ( const G4MaterialCutsCouple* couple 
 			for ( size_t j=0;j<m_oProcessVec.size();j++ )
 			totalname+=m_oProcessVec[j]->GetProcessName();
 		ofstream fout;
-		G4cout<< totalname.c_str() << G4endl;
+		G4cout<< totalname.c_str() << Gateendl;
 		fout.open(totalname.c_str());
 		a->Store(fout,true);
 		fout.close();
@@ -208,7 +209,7 @@ size_t GateCrossSectionsTable::SetAndBuildProductionMaterialTable () // returns 
 {
 
 	if ( size() >0 )
-		G4cout << "GateCrossSectionsTable::SetAndBuildProductionMaterialTable (): Delete old materials in table!" << G4endl;
+		G4cout << "GateCrossSectionsTable::SetAndBuildProductionMaterialTable (): Delete old materials in table!\n";
 	const G4ProductionCutsTable* table=G4ProductionCutsTable::GetProductionCutsTable ();
 	size_t	nMaterials = table->GetTableSize ();
 //	size_t nTotalMaterials=G4Material::GetNumberOfMaterials();
@@ -269,7 +270,7 @@ bool GateCrossSectionsTable::BuildMaxCrossSection ( const vector<G4Material*> & 
 			{
 				involved_mat_index.push_back ( i );
 #ifdef G4VERBOSE
-		G4cout << "BuildMaxCrossSection for phantom: Add material "<< m_oMaterialVec[i]->GetName() << G4endl;
+		G4cout << "BuildMaxCrossSection for phantom: Add material "<< m_oMaterialVec[i]->GetName() << Gateendl;
 #endif
 				break;
 			}
@@ -360,7 +361,7 @@ void GateCrossSectionsTable::RetrieveTable ( std::ifstream& in, bool ascii )
 		in >> name;
 		if ( name!=pParticleDefinition->GetParticleName() )
 		{
-			G4cout << "Try to Retrieve CrossSectionsTable for non-gamma! Particle panic!" << G4endl;
+			G4cout << "Try to Retrieve CrossSectionsTable for non-gamma! Particle panic!\n";
 			assert ( name==pParticleDefinition->GetParticleName() );
 			exit ( EXIT_FAILURE );
 		}
@@ -378,7 +379,7 @@ void GateCrossSectionsTable::RetrieveTable ( std::ifstream& in, bool ascii )
 		in.read ( reinterpret_cast<char*> ( &name ), PARTICLE_NAME_LENGTH );
 		if ( name!=pParticleDefinition->GetParticleName() )
 		{
-			G4cout << "Try to Retrieve CrossSectionsTable for non-gamma! Particle panic!" << G4endl;
+			G4cout << "Try to Retrieve CrossSectionsTable for non-gamma! Particle panic!\n";
 			assert ( name==pParticleDefinition->GetParticleName() );
 			exit ( EXIT_FAILURE );
 		}
@@ -393,7 +394,7 @@ void GateCrossSectionsTable::RetrieveTable ( std::ifstream& in, bool ascii )
 
 	for ( size_t i=0;i<tmpsize; i++ )
 	{
-		G4cout << "Read cross section table for fictitious material no " << i << G4endl;
+		G4cout << "Read cross section table for fictitious material no " << i << Gateendl;
 		assert ( !in.fail() );
 		G4PhysicsLinearVector* dummy=new G4PhysicsLinearVector ( m_nMinEnergy,m_nMaxEnergy ,m_nPhysicsVectorBinNumber );
 		push_back ( dummy );

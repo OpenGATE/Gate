@@ -12,7 +12,6 @@
 #include "globals.hh"
 
 #include "GateVVolume.hh"
-#include "G4RunManager.hh"
 #include "G4VVisManager.hh"
 #include "G4Trap.hh"
 #include "GateVolumeManager.hh"

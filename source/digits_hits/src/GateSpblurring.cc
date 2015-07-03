@@ -59,5 +59,5 @@ void GateSpblurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& 
 
 void GateSpblurring::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Resolution : " << m_spresolution  << G4endl;
+  G4cout << GateTools::Indent(indent) << "Resolution : " << m_spresolution  << Gateendl;
 }

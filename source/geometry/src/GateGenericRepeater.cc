@@ -141,7 +141,7 @@ void GateGenericRepeater::SetPlacementList(std::vector<GatePlacement> list) {
 //   else 
 //     p.second = G4ThreeVector(0,0,0);
 //   GateMessage("Geometry", 8, "I read placement " << tx << " " << ty << " " << tz 
-//               << " \t rot=" << angle << " \t axis=" << x << " " << y << " " << z << G4endl);
+//               << " \t rot=" << angle << " \t axis=" << x << " " << y << " " << z << Gateendl);
 // }
 //--------------------------------------------------------------------------------------------
 
@@ -163,13 +163,13 @@ void GateGenericRepeater::PushMyPlacements(const G4RotationMatrix& currentRotati
     GateError("Please provide a placement file with 'setPlacementsFilename'\n.");
   }
   
-  GateDebugMessage("Repeater", 3, "GateGenericRepeater " << GetObjectName() << G4endl);
-  GateDebugMessage("Repeater", 3, "\t current position " << currentPosition << G4endl);
-  GateDebugMessage("Repeater", 3, "\t current rotation " << currentRotationMatrix << G4endl);
+  GateDebugMessage("Repeater", 3, "GateGenericRepeater " << GetObjectName() << Gateendl);
+  GateDebugMessage("Repeater", 3, "\t current position " << currentPosition << Gateendl);
+  GateDebugMessage("Repeater", 3, "\t current rotation " << currentRotationMatrix << Gateendl);
   
   for(unsigned int i=0; i<mPlacementsList.size(); i++) {
-    GateDebugMessage("Repeater", 3, "\t translation " << i << " = " << mPlacementsList[i].second << G4endl);
-    GateDebugMessage("Repeater", 3, "\t final " << i << " = " << currentPosition+mPlacementsList[i].second << G4endl);
+    GateDebugMessage("Repeater", 3, "\t translation " << i << " = " << mPlacementsList[i].second << Gateendl);
+    GateDebugMessage("Repeater", 3, "\t final " << i << " = " << currentPosition+mPlacementsList[i].second << Gateendl);
     
     // New position
     G4ThreeVector newPosition;

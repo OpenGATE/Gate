@@ -51,13 +51,13 @@ void GateThresholder::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList&
     GatePulse* outputPulse = new GatePulse(*inputPulse);
     outputPulseList.push_back(outputPulse);
     if (nVerboseLevel>1)
-      	G4cout << "Copied pulse to output:" << G4endl
-      	       << *outputPulse << G4endl << G4endl ;
+      	G4cout << "Copied pulse to output:\n"
+      	       << *outputPulse << Gateendl << Gateendl ;
   }
   else {
       if (nVerboseLevel>1)
-      	G4cout << "Ignored pulse with energy below threshold:" << G4endl
-      	       << *inputPulse << G4endl << G4endl ;
+      	G4cout << "Ignored pulse with energy below threshold:\n"
+      	       << *inputPulse << Gateendl << Gateendl ;
   }
 }
 
@@ -65,5 +65,5 @@ void GateThresholder::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList&
 
 void GateThresholder::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Threshold: " << G4BestUnit(m_threshold,"Energy") << G4endl;
+  G4cout << GateTools::Indent(indent) << "Threshold: " << G4BestUnit(m_threshold,"Energy") << Gateendl;
 }

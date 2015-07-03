@@ -38,7 +38,7 @@ GateRegularParameterization::GateRegularParameterization( GateRegularParameteriz
   globalFictInserter=NULL;
   if (globalInserter->GetVerbosity()>=1) {
     G4cout << "+-+- Entering GateRegularParameterization::Constructor ..."
-           << G4endl << std::flush;
+           << Gateendl << std::flush;
   }
 }
 
@@ -53,7 +53,7 @@ GateRegularParameterization::GateRegularParameterization ( GateFictitiousVoxelMa
   globalInserter=NULL;
   if ( globalFictInserter->GetVerbosity() >=1 ) {
     G4cout << "+-+- Entering GateRegularParameterization::Constructor ..."
-           << G4endl << std::flush;
+           << Gateendl << std::flush;
   }
 }
 
@@ -67,13 +67,13 @@ void GateRegularParameterization::BuildRegularParameterization()
   if (globalInserter!=NULL) {
     if (globalInserter->GetVerbosity()>=1) {
       G4cout << "++++ Entering GateRegularParameterization::BuildRegularParameterization ..."
-             << G4endl << std::flush;
+             << Gateendl << std::flush;
     }
   }
   else {
     if (globalFictInserter->GetVerbosity()>=1) {
       G4cout << "++++ Entering GateRegularParameterization::BuildRegularParameterization ..."
-             << G4endl << std::flush;
+             << Gateendl << std::flush;
     }
   }
   //---------------------------------------------------------------------------------------------//
@@ -101,7 +101,7 @@ void GateRegularParameterization::BuildRegularParameterization()
   // Now we build the different G4Material that we put in a vector
   std::vector<G4Material*> theMaterials;
   for (size_t nbMat=0; nbMat<mat.size(); nbMat++)
-    theMaterials.push_back( GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(mat[nbMat]) );
+    theMaterials.push_back( theMaterialDatabase.GetMaterial(mat[nbMat]) );
   SetMaterials( theMaterials );
 
   // And then we search for each voxel his Material index (in the vector bellow)
@@ -173,13 +173,13 @@ void GateRegularParameterization::BuildRegularParameterization()
   if (globalInserter!=NULL) {
     if (globalInserter->GetVerbosity()>=1) {
       G4cout << "---- Exiting GateRegularParameterization::BuildRegularParameterization ..."
-             << G4endl << std::flush;
+             << Gateendl << std::flush;
     }
   }
   else {
     if (globalFictInserter->GetVerbosity()>=1) {
       G4cout << "---- Exiting GateRegularParameterization::BuildRegularParameterization ..."
-             << G4endl << std::flush;
+             << Gateendl << std::flush;
     }
   }
 }
