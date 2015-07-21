@@ -32,8 +32,8 @@ mv reference/benchRT-reference.tgz.md5-stamp excluded_from_test
 echo "Performing diff in folder:"
 echo $BENCHMARKS_DIRECTORY/$1/
 
-diff reference output
-diff /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.mhd output/gamma-3d-Edep.mhd
+diff --normal reference output
+diff --normal /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.mhd output/gamma-3d-Edep.mhd
 
 echo "diff in brief (diff -q)"
 diff -q reference output
