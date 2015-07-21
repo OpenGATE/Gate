@@ -1,4 +1,6 @@
 #!/bin/bash
+# Ensures the outpur of the test will not be truncated.
+echo CTEST_FULL_OUTPUT
 echo "Hello Gater!"
 pwd
 echo $1
