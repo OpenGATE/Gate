@@ -34,3 +34,12 @@ echo $BENCHMARKS_DIRECTORY/$1/
 
 diff reference output
 diff /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.mhd output/gamma-3d-Edep.mhd
+
+echo "diff in brief (diff -q)"
+diff -q reference output
+diff -q /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.mhd output/gamma-3d-Edep.mhd
+
+echo "diff in details (diff -s)"
+diff -s reference output
+diff -s /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.mhd output/gamma-3d-Edep.mhd
+
