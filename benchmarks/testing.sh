@@ -21,3 +21,4 @@ tar xvzf $1-reference.tgz
 cd ..
 
 diff reference output
+diff /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.mhd output/gamma-3d-Edep.mhd
