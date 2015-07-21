@@ -20,5 +20,14 @@ cd reference
 tar xvzf $1-reference.tgz
 cd ..
 
+mkdir excluded_from_test
+mv output/BenchAnalyse.C excluded_from_test
+mv output/output-gamma-Edep.mhd excluded_from_test
+mv output/output-gamma-Edep.raw excluded_from_test
+mv output/stat-gamma.txt excluded_from_test
+mv reference/benchRT-reference.tgz excluded_from_test
+mv reference/benchRT-reference.tgz/md5 excluded_from_test
+mv reference/benchRT-reference.tgz.md5-stamp excluded_from_test
+
 diff reference output
 diff /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.mhd output/gamma-3d-Edep.mhd
