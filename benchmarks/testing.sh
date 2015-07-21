@@ -12,7 +12,7 @@ pwd
 ls
 ls *
 
-$GATE_BINARY mac/$2.mac
+$GATE_BINARY mac/$2.mac > test_log.txt 2>&1
 
 ls *
 
