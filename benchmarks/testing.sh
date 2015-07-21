@@ -17,7 +17,7 @@ $GATE_BINARY mac/$2.mac
 ls *
 
 cd reference
-tar xvzf /$1-reference.tgz
+tar xvzf $1-reference.tgz
 cd ..
 
 diff reference output
