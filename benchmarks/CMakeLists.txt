@@ -26,4 +26,7 @@ GateAddBenchmarkData("DATA{benchImageNavigators/rt/data/patient-2mm.raw}")
 
 if(BUILD_TESTING)
   GateAddBenchmarkData("DATA{benchRT/reference/benchRT-reference.tgz}")
+  ADD_TEST(NAME hellotest
+    COMMAND /bin/bash testing.sh $ENV{PATH} $ENV{GATE_BINARY} $ENV{BENCHMARKS_DIRECTORY}  ${CTEST_BINARY_DIRECTORY}
+    WORKING_DIRECTORY "/tmp/dashboard_2015-07-20_19-11-42/opengate-creatis-dashboard-test/benchmarks/")
 endif(BUILD_TESTING)
