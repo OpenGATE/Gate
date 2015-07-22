@@ -23,7 +23,7 @@ tar xvzf $1-reference.tgz
 cd ..
 
 mkdir excluded_from_test
-mv output/BenchAnalyse.C excluded_from_test
+#mv output/BenchAnalyse.C excluded_from_test
 mv output/output-gamma-Edep.mhd excluded_from_test
 mv output/output-gamma-Edep.raw excluded_from_test
 mv output/stat-gamma.txt excluded_from_test
