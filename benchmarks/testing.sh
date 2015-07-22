@@ -50,6 +50,7 @@ diff /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmar
 diff -q /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep-Squared.raw /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.raw
 diff -s /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep-Squared.raw /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.raw 
 
-echo $?
+exit_status=echo $?
 
-exit 42
+echo $exit_status
+exit $exit_status
