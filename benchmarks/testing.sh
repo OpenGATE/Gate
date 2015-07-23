@@ -1,5 +1,5 @@
 #!/bin/bash
-# Ensures the outpur of the test will not be truncated.
+# Ensures the output of the test will not be truncated.
 echo CTEST_FULL_OUTPUT
 echo "Hello Gater!"
 pwd
@@ -11,10 +11,9 @@ echo $BENCHMARKS_DIRECTORY
 
 cd $BENCHMARKS_DIRECTORY/$1/
 pwd
-ls
-ls *
 
-$GATE_BINARY mac/$2.mac > test_log.txt 2>&1
+
+$GATE_BINARY mac/$2.mac
 
 ls *
 
@@ -44,6 +43,7 @@ diff -q /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/bench
 echo "diff in details (diff -s)"
 diff -s reference output
 diff -s /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.mhd output/gamma-3d-Edep.mhd
+diff -s /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output output/
 
 echo "diff on .raw"
 diff /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep-Squared.raw /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.raw
