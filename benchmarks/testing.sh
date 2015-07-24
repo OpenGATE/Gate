@@ -34,21 +34,29 @@ echo "Performing diff in folder:"
 echo $BENCHMARKS_DIRECTORY/$1/
 
 diff --normal reference output
+echo
 diff --normal /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.mhd output/gamma-3d-Edep.mhd
-
+echo
 echo "diff in brief (diff -q)"
 diff -q reference output
+echo
 diff -q /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.mhd output/gamma-3d-Edep.mhd
-
+echo
 echo "diff in details (diff -s)"
+echo
 diff -s reference output
+echo
 diff -s /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.mhd output/gamma-3d-Edep.mhd
+echo
 diff -s /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output output/
-
+echo
 echo "diff on .raw"
 diff /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep-Squared.raw /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.raw
+echo
 diff -q /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep-Squared.raw /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.raw
+echo
 diff -s /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep-Squared.raw /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.raw 
+echo
 
 exit_status=$?
 
