@@ -16,7 +16,7 @@
 
 #  ****************************************************************************
 #  *                                                                          *
-#  * OpenGATE Collaboration are pleased to announce the release of GATE 7.1.0 *
+#  * OpenGATE Collaboration are pleased to announce the release of GATE 7.1   *
 #  *                                                                          *
 #  ****************************************************************************
 
@@ -29,7 +29,7 @@
 
 
                           # *------------* #
-                          # * 03/23/2015 * #
+                          # * 03/30/2015 * #
                           # *------------* #
 
 
@@ -42,7 +42,7 @@
 - The installation of this GATE V7.1 version is supported, tested and recommanded with the following:
 
     - Linux distributions: RED HAT & Fedora & Mandrake & Mandriva & Ubuntu...
-    - Compiler: gcc 4.1 to 4.7
+    - Compiler: gcc 4.4 to 4.9
     - ROOT 5.xx (from 14 to last version)
     - Geant4 10.1 (including with embedded CLHEP)
     - Optional dependencies: lmf_v3.0
@@ -68,7 +68,6 @@ NOTES:
     - In the same directory, create two directories to build and install GATE:
       mkdir gate_v7.1-build
       mkdir gate_v7.1-install
-
     - Move into the GATE build directory:
       cd gate_v7.1-build
 

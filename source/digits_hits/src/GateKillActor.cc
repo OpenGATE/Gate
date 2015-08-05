@@ -20,9 +20,9 @@
 /// Constructors (Prototype)
 GateKillActor::GateKillActor(G4String name, G4int depth):GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateKillActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateKillActor() -- begin\n");
   pMessenger = new GateActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateKillActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateKillActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -31,9 +31,9 @@ GateKillActor::GateKillActor(G4String name, G4int depth):GateVActor(name,depth)
 /// Destructor
 GateKillActor::~GateKillActor()
 {
-  GateDebugMessageInc("Actor",4,"~GateKillActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"~GateKillActor() -- begin\n");
   delete pMessenger;
-  GateDebugMessageDec("Actor",4,"~GateKillActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"~GateKillActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -70,9 +70,9 @@ void GateKillActor::SaveData()
   if (mSaveFilename == "FilnameNotGivenForThisActor") return;
   std::ofstream os;
   OpenFileOutput(mSaveFilename, os);
-  os << "# NumberOfKillTracks = " << mNumberOfTrack << std::endl;
+  os << "# NumberOfKillTracks = " << mNumberOfTrack << Gateendl;
   if (!os) {
-    GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << G4endl);
+    GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << Gateendl);
   }
   os.flush();
   os.close();

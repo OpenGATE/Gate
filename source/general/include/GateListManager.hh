@@ -57,7 +57,8 @@ class GateListManager : public GateClockDependent
     G4String mElementTypeName;
     G4bool   bAcceptNewElements;
     
-    std::vector<GateNamedObject*>    theListOfNamedObject;
+    typedef std::vector<GateNamedObject*> GateListOfNamedObject;
+    GateListOfNamedObject   theListOfNamedObject;
 };
 
 #endif

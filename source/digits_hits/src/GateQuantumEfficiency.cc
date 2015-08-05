@@ -89,7 +89,7 @@ void GateQuantumEfficiency::CheckVolumeName(G4String val)
 
   }
   else {
-    G4cout << "Wrong Volume Name" << G4endl;
+    G4cout << "Wrong Volume Name\n";
   }
 }
 
@@ -99,8 +99,8 @@ void GateQuantumEfficiency::ProcessOnePulse(const GatePulse* inputPulse,GatePuls
     {
       if(!m_testVolume)
 	{
-	  G4cerr << 	G4endl << "[GateQuantumEfficiency::ProcessOnePulse]:" << G4endl
-		 <<   "Sorry, but you don't have choosen any volume !" << G4endl;
+	  G4cerr << 	Gateendl << "[GateQuantumEfficiency::ProcessOnePulse]:\n"
+		 <<   "Sorry, but you don't have choosen any volume !\n";
 	  G4Exception( "GateQuantumEfficiency::ProcessOnePulse", "ProcessOnePulse", FatalException, "You must choose a volume for crosstalk, e.g. crystal:\n\t/gate/digitizer/Singles/quantumEfficiency/chooseQEVolume VOLUME NAME\n or disable the quantumEfficiency using:\n\t/gate/digitizer/Singles/quantumEfficiency/disable\n");
 	}
       //Create the table containing the quantum efficiencies
@@ -149,15 +149,15 @@ void GateQuantumEfficiency::CreateTable()
   std::ofstream out;
 
   if (nVerboseLevel > 1)
-    G4cout << "Creation of a file called 'QETables.dat' which contains the quantum efficiencies tables" << G4endl;
+    G4cout << "Creation of a file called 'QETables.dat' which contains the quantum efficiencies tables\n";
 
   for (r = 0; r < m_nbTables; r++) {
     m_table[r] = new G4double [m_nbCrystals];
     if (m_nbFiles > 0) {
-      size_t rmd=MonteCarloInt(0,m_nbFiles-1);
+      size_t rmd = G4RandFlat::shootInt(m_nbFiles);
       in.open(m_file[rmd].c_str());
       for (n = 0; n < m_nbCrystals; n++){
-	G4double rmd2 = MonteCarloG4double(-0.025,0.025);
+	G4double rmd2 = G4RandFlat::shoot(-0.025, 0.025);
 	in >> m_table[r][n];
 	m_table[r][n]*=(rmd2+1);
       }
@@ -174,47 +174,13 @@ void GateQuantumEfficiency::CreateTable()
       {
 	if (! out.is_open())
 	  out.open("QETables.dat");
-	out << "#Table nb: " << r << G4endl;
+	out << "#Table nb: " << r << Gateendl;
 	for (n = 0; n < (m_nbCrystals); n++)
-	  out << m_table[r][n] << G4endl;
+	  out << m_table[r][n] << Gateendl;
       }
   }
   if (out.is_open())
     out.close();
-}
-
-
-G4double GateQuantumEfficiency::MonteCarloEngine()
-{
-  G4double aleac;
-  return (aleac = (((G4double) rand ()) / 2147483647.0));
-
-}
-
-size_t GateQuantumEfficiency::MonteCarloInt(size_t a,size_t b)
-{
-  size_t value;
-  static size_t A,B;
-  A = a;
-  B = b+1;
-  value =  ((size_t)(MonteCarloEngine()*(B-A))+A);
-
-
-  return (value);
-
-}
-
-G4double GateQuantumEfficiency::MonteCarloG4double(G4double a,G4double b)
-{
-  G4double value;
-  static G4double A,B;
-  A = a;
-  B = b;
-  value =  ((G4double)(MonteCarloEngine()*(B-A))+A);
-
-
-  return (value);
-
 }
 
 G4double GateQuantumEfficiency::GetMinQECoeff() {
@@ -230,11 +196,11 @@ G4double GateQuantumEfficiency::GetMinQECoeff() {
 void GateQuantumEfficiency::DescribeMyself(size_t indent)
 {
   if (m_nbFiles > 0) {
-    G4cout << GateTools::Indent(indent) << "Variable quantum efficiency based on the file(s): " << G4endl;
+    G4cout << GateTools::Indent(indent) << "Variable quantum efficiency based on the file(s): \n";
     std::vector<G4String>::iterator im;
     for (im=m_file.begin(); im!=m_file.end(); im++)
-      G4cout << GateTools::Indent(indent+1) << *im << G4endl;
+      G4cout << GateTools::Indent(indent+1) << *im << Gateendl;
   }
   else
-    G4cout << GateTools::Indent(indent) << "Fixed quantum efficiency equal to " << m_uniqueQE << G4endl;
+    G4cout << GateTools::Indent(indent) << "Fixed quantum efficiency equal to " << m_uniqueQE << Gateendl;
 }

@@ -554,9 +554,9 @@ void iaea_header_type::update_counters(iaea_record_type *p_iaea_record)
 
 void iaea_header_type::print_statistics()
 {
-   printf("\n *************************************** \n");
-   printf("           IAEA PHSP STATISTICS          \n");
-   printf(" *************************************** \n");
+   printf("\n ***************************************\n");
+   printf(" *        IAEA PHSP STATISTICS         *\n");
+   printf(" ***************************************\n");
    
 
    printf("\n Number of primary particles: %lld\n",orig_histories);

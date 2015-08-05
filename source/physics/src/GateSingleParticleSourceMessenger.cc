@@ -549,7 +549,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
   maxthetaCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   maxthetaCmd->SetGuidance("Set maximum theta");
   maxthetaCmd->SetParameterName("MaxTheta",true,true);
-  maxthetaCmd->SetDefaultValue(3.1416);
+  maxthetaCmd->SetDefaultValue(pi);
   maxthetaCmd->SetDefaultUnit("rad");
   maxthetaCmd->SetUnitCandidates("rad deg");
 
@@ -1056,7 +1056,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
       if ( newValues != "NULL" ) {
         if (newValues.substr( newValues.length()-5 ) != "_phys" )
           newValues += "_phys";
-        G4cout << "Confirming confinement to volume '" << newValues << "'..." << G4endl ;
+        G4cout << "Confirming confinement to volume '" << newValues << "'...\n" ;
       }
       fParticleGun->GetPosDist()->ConfineSourceToVolume( newValues ) ;
     }
@@ -1065,7 +1065,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
       if ( newValues != "NULL") {
         if (newValues.substr( newValues.length()-5 ) != "_phys" )
           newValues += "_phys";
-        G4cout << "Confirming activity forbidden in volume '" << newValues << "'..." << G4endl;
+        G4cout << "Confirming activity forbidden in volume '" << newValues << "'...\n";
       }
       fParticleGun->GetPosDist()->ForbidSourceToVolume(newValues);
     }
@@ -1522,7 +1522,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
 ///////////////////////////////// Yann PERROT, Simon NICOLAS LPC Clermont-ferrand ////////////////////////////////////////////////
   else
     {
-      G4cout << "Error entering command" << G4endl;
+      G4cout << "Error entering command\n";
     }
 
 
@@ -1590,7 +1590,7 @@ void GateSingleParticleSourceMessenger::IonCommand( G4String newValues )
       if( ion==0 )
         {
           G4cout << "Ion with Z=" << fAtomicNumber ;
-          G4cout << " A=" << fAtomicMass << "is not be defined" << G4endl ;
+          G4cout << " A=" << fAtomicMass << "is not be defined\n" ;
         }
       else
         {
@@ -1601,7 +1601,7 @@ void GateSingleParticleSourceMessenger::IonCommand( G4String newValues )
   else
     {
       G4cout << "Set /gps/particle to ion before using /gps/ion command" ;
-      G4cout << G4endl ;
+      G4cout << Gateendl ;
     }
 }
 //-------------------------------------------------------------------------------------------------

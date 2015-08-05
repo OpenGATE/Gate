@@ -14,6 +14,7 @@ See GATE/LICENSE.txt for further details
 //#include <CLHEP/Random/RandGauss.h>
 #include "Randomize.hh"
 #include "GateTools.hh"
+#include "GateConstants.hh"
 
 
 GateDistributionGauss::GateDistributionGauss(const G4String& itsName)
@@ -47,14 +48,12 @@ G4double GateDistributionGauss::MaxX() const
 //___________________________________________________________________
 G4double GateDistributionGauss::MaxY() const
 {
-    static const G4double one_over_sqrt_2pi = 0.39894228040143267794;
-    return m_Amplitude*one_over_sqrt_2pi;
+    return m_Amplitude*GateConstants::one_over_sqrt_2pi;
 }
 //___________________________________________________________________
 G4double GateDistributionGauss::Value(G4double x) const
 {
-    static const G4double one_over_sqrt_2pi = 0.39894228040143267794;
-    return one_over_sqrt_2pi*exp(-(x-m_Mean)*(x-m_Mean)/(2.*m_Sigma*m_Sigma))*m_Amplitude;
+    return GateConstants::one_over_sqrt_2pi*exp(-(x-m_Mean)*(x-m_Mean)/(2.*m_Sigma*m_Sigma))*m_Amplitude;
 }
 //___________________________________________________________________
 G4double GateDistributionGauss::ShootRandom() const
@@ -68,5 +67,5 @@ void GateDistributionGauss::DescribeMyself(size_t indent)
     	 <<"Mean : "         << m_Mean
          <<"  -- Sigma : "    << m_Sigma
          <<"  -- Amplitude : "<< m_Amplitude
-	 <<G4endl;
+	 << Gateendl;
 }

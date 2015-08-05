@@ -90,7 +90,7 @@ G4LogicalVolume* GateCutTubs::ConstructOwnSolidAndLogicalVolume(G4Material* mate
    }
    else {
      // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateCutTubs::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<G4endl);
+       GateMessage("Warning", 0, "GateCutTubs::ConstructOwnSolidAndLogicalVolume update mode not implemented\n");
    }
    return m_cuttubs_log;
 }
@@ -109,14 +109,14 @@ void GateCutTubs::DestroyOwnSolidAndLogicalVolume()
 
 void GateCutTubs::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: cutted tube (cuttube)" << G4endl;
-  G4cout << GateTools::Indent(level) << "Inner radius: " << G4BestUnit(m_innerR,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Outer radius: " << G4BestUnit(m_outerR,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Z length: " << G4BestUnit(m_zLength,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Start angle of the segment: " << m_startPhi / degree << " deg" << G4endl;
-  G4cout << GateTools::Indent(level) << "Delta angle of the segment: " << m_deltaPhi / degree << " deg" << G4endl;
-  G4cout << GateTools::Indent(level) << "Cutting plane normal at -z/2: " << m_negNorm << G4endl;
-  G4cout << GateTools::Indent(level) << "Cutting plane normal at +z/2: " << m_posNorm << G4endl;
+  G4cout << GateTools::Indent(level) << "Shape: cutted tube (cuttube)\n";
+  G4cout << GateTools::Indent(level) << "Inner radius: " << G4BestUnit(m_innerR,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Outer radius: " << G4BestUnit(m_outerR,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Z length: " << G4BestUnit(m_zLength,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Start angle of the segment: " << m_startPhi / degree << " deg\n";
+  G4cout << GateTools::Indent(level) << "Delta angle of the segment: " << m_deltaPhi / degree << " deg\n";
+  G4cout << GateTools::Indent(level) << "Cutting plane normal at -z/2: " << m_negNorm << Gateendl;
+  G4cout << GateTools::Indent(level) << "Cutting plane normal at +z/2: " << m_posNorm << Gateendl;
 }
 
 G4double GateCutTubs::ComputeMyOwnVolume() const

@@ -60,7 +60,7 @@ void GateCrystalHit::Draw()
 void GateCrystalHit::Print()
 {
   G4cout << this;
-  G4cout << G4endl;
+  G4cout << Gateendl;
 }
 //---------------------------------------------------------------------
 
@@ -110,7 +110,7 @@ std::ofstream& operator<<(std::ofstream& flux, GateCrystalHit* hit)
 	 << " " << hit->m_process
 	 << " " << hit->m_comptonVolumeName
 	 << " " << hit->m_RayleighVolumeName
-	 << G4endl;
+	 << Gateendl;
 
   return flux;
 }

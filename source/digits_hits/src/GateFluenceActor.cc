@@ -19,7 +19,7 @@
 GateFluenceActor::GateFluenceActor(G4String name, G4int depth):
   GateVImageActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateFluenceActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateFluenceActor() -- begin\n");
 
   mCurrentEvent=-1;
   mIsSquaredImageEnabled = false;
@@ -31,7 +31,7 @@ GateFluenceActor::GateFluenceActor(G4String name, G4int depth):
   pMessenger = new GateFluenceActorMessenger(this);
   SetStepHitType("pre");
   mResponseFileName = "";
-  GateDebugMessageDec("Actor",4,"GateFluenceActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateFluenceActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ GateFluenceActor::~GateFluenceActor()
 /// Construct
 void GateFluenceActor::Construct()
 {
-  GateDebugMessageInc("Actor", 4, "GateFluenceActor -- Construct - begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "GateFluenceActor -- Construct - begin\n");
   GateVImageActor::Construct(); // mImage is not allocated here
   mImage.Allocate();
 
@@ -112,10 +112,10 @@ void GateFluenceActor::Construct()
 
   // Print information
   GateMessage("Actor", 1,
-              "\tFluence FluenceActor    = '" << GetObjectName() << "'" << G4endl);
+              "\tFluence FluenceActor    = '" << GetObjectName() << "'\n");
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateFluenceActor -- Construct - end" << G4endl);
+  GateMessageDec("Actor", 4, "GateFluenceActor -- Construct - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -124,7 +124,7 @@ void GateFluenceActor::Construct()
 /// Save data
 void GateFluenceActor::SaveData()
 {
-  G4int rID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
+  G4int rID = GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
   char filename[1024];
   // Printing all particles
   GateVImageActor::SaveData();
@@ -201,7 +201,7 @@ void GateFluenceActor::ResetData()
 //-----------------------------------------------------------------------------
 void GateFluenceActor::BeginOfRunAction( const G4Run *)
 {
-  GateDebugMessage("Actor", 3, "GateFluenceActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateFluenceActor -- Begin of Run\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -213,7 +213,7 @@ void GateFluenceActor::BeginOfEventAction(const G4Event * e)
 {
   GateVActor::BeginOfEventAction(e);
   mCurrentEvent++;
-  GateDebugMessage("Actor", 3, "GateFluenceActor -- Begin of Event: "<<mCurrentEvent << G4endl);
+  GateDebugMessage("Actor", 3, "GateFluenceActor -- Begin of Event: "<<mCurrentEvent << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -221,13 +221,13 @@ void GateFluenceActor::BeginOfEventAction(const G4Event * e)
 //-----------------------------------------------------------------------------
 void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* step)
 {
-  GateDebugMessageInc("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel - begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel - begin\n");
   const double weight = step->GetTrack()->GetWeight();
   // Is this necessary?
   if(index <0)
     {
-      GateDebugMessage("Actor", 5, "index<0 : do nothing" << G4endl);
-      GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end" << G4endl);
+      GateDebugMessage("Actor", 5, "index<0 : do nothing\n");
+      GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end\n");
       return;
     }
 
@@ -244,7 +244,7 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
       bool sameEvent=true;
       if( mIsLastHitEventImageEnabled)
 	{
-	  GateDebugMessage( "Actor", 2,  "GateFluenceActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
+	  GateDebugMessage( "Actor", 2,  "GateFluenceActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << Gateendl);
 	  if( mCurrentEvent != mLastHitEventImage.GetValue( index))
 	    {
 	      sameEvent = false;
@@ -330,6 +330,6 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
           }
         }
       }
-  GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end" << G4endl);
+  GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end\n");
 }
 //-----------------------------------------------------------------------------

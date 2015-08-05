@@ -19,11 +19,11 @@ See GATE/LICENSE.txt for further details
 //-----------------------------------------------------------------------------
 GateImageRegularParametrisedVolumeMessenger::GateImageRegularParametrisedVolumeMessenger(GateImageRegularParametrisedVolume* volume):GateVImageVolumeMessenger(volume), pVolume(volume)
 {
-  GateMessageInc("Volume",6,"Begin GateImageRegularParametrisedVolumeMessenger()"<<G4endl);
+  GateMessageInc("Volume",6,"Begin GateImageRegularParametrisedVolumeMessenger()\n");
   G4String cmdName = GetDirectoryName()+"setSkipEqualMaterials";
   SkipEqualMaterialsCmd = new G4UIcmdWithABool(cmdName,this);
   SkipEqualMaterialsCmd->SetGuidance("Skip or not boundaries when neighbour voxels are made of same material (default: yes)");
-  GateMessageDec("Volume",6,"End GateImageRegularParametrisedVolumeMessenger()"<<G4endl);
+  GateMessageDec("Volume",6,"End GateImageRegularParametrisedVolumeMessenger()\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -31,9 +31,9 @@ GateImageRegularParametrisedVolumeMessenger::GateImageRegularParametrisedVolumeM
 //-----------------------------------------------------------------------------
 GateImageRegularParametrisedVolumeMessenger::~GateImageRegularParametrisedVolumeMessenger()
 {
-  GateMessageInc("Volume",6,"Begin ~GateImageRegularParametrisedVolumeMessenger()"<<G4endl);
+  GateMessageInc("Volume",6,"Begin ~GateImageRegularParametrisedVolumeMessenger()\n");
   delete SkipEqualMaterialsCmd;
-  GateMessageDec("Volume",6,"End ~GateImageRegularParametrisedVolumeMessenger()"<<G4endl);
+  GateMessageDec("Volume",6,"End ~GateImageRegularParametrisedVolumeMessenger()\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ GateImageRegularParametrisedVolumeMessenger::~GateImageRegularParametrisedVolume
 void GateImageRegularParametrisedVolumeMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {
   GateMessage("Volume",6,"GateImageRegularParametrisedVolumeMessenger::SetNewValue " << command->GetCommandPath()
-	      << " newValue=" << newValue << G4endl);
+	      << " newValue=" << newValue << Gateendl);
   if (command == SkipEqualMaterialsCmd) {
     pVolume->SetSkipEqualMaterialsFlag(SkipEqualMaterialsCmd->GetNewBoolValue(newValue));
   }

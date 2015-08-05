@@ -20,7 +20,7 @@
 /gate/source/PBS/setSigmaPhi 4 mrad
 
 #emittance
-/gate/source/PBS/setEllipseXThetaEmittance 30 mm*mrad
+/gate/source/PBS/setEllipseXThetaEmittance 40 mm*mrad
 /gate/source/PBS/setEllipseYPhiEmittance 40 mm*mrad
 
 #positive-> converging beam; negative diverging beam

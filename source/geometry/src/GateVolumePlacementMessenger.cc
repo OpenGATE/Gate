@@ -93,7 +93,7 @@ GateVolumePlacementMessenger::~GateVolumePlacementMessenger()
 //--------------------------------------------------------------------
 void GateVolumePlacementMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {  
-  //G4cout << " GateVolumePlacementMessenger::SetNewValue = " << newValue << G4endl;
+  //G4cout << " GateVolumePlacementMessenger::SetNewValue = " << newValue << Gateendl;
   if( command==TranslationCmd )
     { GetVolumePlacement()->SetTranslation(TranslationCmd->GetNew3VectorValue(newValue)); /*TellGeometryToUpdate();*/}   
   

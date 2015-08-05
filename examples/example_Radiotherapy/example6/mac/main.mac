@@ -36,6 +36,7 @@
 /gate/water_box/geometry/setYLength 30 cm
 /gate/water_box/geometry/setZLength 30 cm
 /gate/water_box/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/water_box/vis/setColor blue
 
 # Bone1-d109 BOX GEOMETRY
 /gate/water_box/daughters/name Bone1-d109
@@ -45,6 +46,7 @@
 /gate/Bone1-d109/geometry/setYLength 30 cm
 /gate/Bone1-d109/geometry/setZLength 2 cm
 /gate/Bone1-d109/placement/setTranslation 0.0 0.0 -14.0 cm
+/gate/Bone1-d109/vis/setColor yellow
 
 # Bone2-d125 BOX GEOMETRY
 /gate/water_box/daughters/name Bone2-d125
@@ -54,6 +56,7 @@
 /gate/Bone2-d125/geometry/setYLength 30 cm
 /gate/Bone2-d125/geometry/setZLength 4 cm
 /gate/Bone2-d125/placement/setTranslation 0.0 0.0 -11.0 cm
+/gate/Bone2-d125/vis/setColor cyan
 
 # Lung1-d026 BOX GEOMETRY
 /gate/water_box/daughters/name Lung1-d026
@@ -63,6 +66,7 @@
 /gate/Lung1-d026/geometry/setYLength 30 cm
 /gate/Lung1-d026/geometry/setZLength 4 cm
 /gate/Lung1-d026/placement/setTranslation 0.0 0.0 -7.0 cm
+/gate/Lung1-d026/vis/setColor red
 
 # Bone3-d190 BOX GEOMETRY
 /gate/water_box/daughters/name Bone3-d190
@@ -72,7 +76,7 @@
 /gate/Bone3-d190/geometry/setYLength 30 cm
 /gate/Bone3-d190/geometry/setZLength 4 cm
 /gate/Bone3-d190/placement/setTranslation 0.0 0.0 -3.0 cm
-
+/gate/Bone3-d190/vis/setColor black
 
 #=====================================================
 # PHYSICS
@@ -88,7 +92,12 @@
 /gate/physics/Electron/SetCutInRegion   water_box 0.1 mm
 /gate/physics/Positron/SetCutInRegion   water_box 0.1 mm
 
-/gate/physics/SetMaxStepSizeInRegion    water_box 0.01 mm
+/gate/physics/SetMaxStepSizeInRegion world 1 mm
+/gate/physics/ActivateStepLimiter proton
+/gate/physics/ActivateStepLimiter deuteron
+/gate/physics/ActivateStepLimiter triton
+/gate/physics/ActivateStepLimiter alpha
+/gate/physics/ActivateStepLimiter GenericIon
 
 /gate/physics/ActivateStepLimiter proton
 /gate/physics/ActivateStepLimiter e-
@@ -162,6 +171,6 @@
 # (without caring of the dose deposition)
 #/gate/application/setTotalNumberOfPrimaries 1
 # Otherwise
-/gate/application/setTotalNumberOfPrimaries 10
+/gate/application/setTotalNumberOfPrimaries 1000
 
 /gate/application/start

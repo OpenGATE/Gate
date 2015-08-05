@@ -79,7 +79,7 @@ G4LogicalVolume* GateTetra::ConstructOwnSolidAndLogicalVolume(G4Material* mater,
    }
    else {
        // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateTetra::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<G4endl);
+       GateMessage("Warning", 0, "GateTetra::ConstructOwnSolidAndLogicalVolume update mode not implemented\n");
    }
    return m_tetra_log;
 }
@@ -98,11 +98,11 @@ void GateTetra::DestroyOwnSolidAndLogicalVolume()
 
 void GateTetra::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: tetrahedron (tetra)" << G4endl;
-  G4cout << GateTools::Indent(level) << "Vertex #1: " << G4BestUnit(m_p1,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Vertex #2: " << G4BestUnit(m_p2,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Vertex #3: " << G4BestUnit(m_p3,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Vertex #4: " << G4BestUnit(m_p4,"Length") << G4endl;
+  G4cout << GateTools::Indent(level) << "Shape: tetrahedron (tetra)\n";
+  G4cout << GateTools::Indent(level) << "Vertex #1: " << G4BestUnit(m_p1,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Vertex #2: " << G4BestUnit(m_p2,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Vertex #3: " << G4BestUnit(m_p3,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Vertex #4: " << G4BestUnit(m_p4,"Length") << Gateendl;
 }
 
 G4double GateTetra::ComputeMyOwnVolume() const

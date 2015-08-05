@@ -19,9 +19,9 @@ GateSystemComponentList::GateSystemComponentList(GateSystemComponent* itsMother,
 						 const G4String& itsName)
   : GateModuleListManager(itsMother,itsName,"daughter")
 {
-//    G4cout << " DEBUT GateSystemComponentList"  << G4endl;
+//    G4cout << " DEBUT GateSystemComponentList"  << Gateendl;
     m_messenger = new GateSystemComponentListMessenger(this);
-//    G4cout << " FIN GateSystemComponentList"  << G4endl;
+//    G4cout << " FIN GateSystemComponentList"  << Gateendl;
 }
 
 
@@ -49,7 +49,7 @@ void GateSystemComponentList::DescribeChildComponents(size_t indent,G4bool recur
     if (recursiveDescribe)
       GetChildComponent(i)->Describe(indent+1);
     else
-      G4cout << GateTools::Indent(indent+1) << GetChildComponent(i)->GetObjectName() << G4endl;
+      G4cout << GateTools::Indent(indent+1) << GetChildComponent(i)->GetObjectName() << Gateendl;
 }
 
 void GateSystemComponentList::ListElements()

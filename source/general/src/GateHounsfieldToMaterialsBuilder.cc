@@ -7,12 +7,12 @@
   ----------------------*/
 
 
-/*! 
+/*!
   \class  GateHounsfieldToMaterialsBuilder.cc
-  \brief  
+  \brief
   \author david.sarrut@creatis.insa-lyon.fr
 */
- 
+
 #include "GateHounsfieldToMaterialsBuilder.hh"
 #include "GateHounsfieldMaterialTable.hh"
 #include "GateHounsfieldDensityTable.hh"
@@ -26,7 +26,7 @@ GateHounsfieldToMaterialsBuilder::GateHounsfieldToMaterialsBuilder() {
   mOutputHUMaterialFilename= "undefined_mOutputHUMaterialFilename";
 }
 //-------------------------------------------------------------------------------------------------
- 
+
 
 //-------------------------------------------------------------------------------------------------
 GateHounsfieldToMaterialsBuilder::~GateHounsfieldToMaterialsBuilder() {
@@ -37,7 +37,7 @@ GateHounsfieldToMaterialsBuilder::~GateHounsfieldToMaterialsBuilder() {
 
 //-------------------------------------------------------------------------------------------------
 void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
-  GateMessage("Geometry", 3, "GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials" << G4endl);
+  GateMessage("Geometry", 3, "GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials\n");
 
   // Read matTable.txt
   std::vector<GateHounsfieldMaterialProperties*> mHounsfieldMaterialPropertiesVector;
@@ -47,9 +47,9 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
   std::vector<G4String> elements;
   if (is) {
     G4String e;
-    is >> e; 
+    is >> e;
     if (e != "[Elements]") {
-      GateError("The file " << mMaterialTableFilename << " must begin with [Elements]" << G4endl);
+      GateError("The file " << mMaterialTableFilename << " must begin with [Elements]\n");
     }
     while (e != "[/Elements]") {
       is >> e;
@@ -63,19 +63,19 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
     if (is) mHounsfieldMaterialPropertiesVector.push_back(p);
     else delete p;
   }
-  
+
   //  DD(mHounsfieldMaterialPropertiesVector.size());
 
   if (mHounsfieldMaterialPropertiesVector.size() < 2) {
-    GateError("I manage to read " << mHounsfieldMaterialPropertiesVector.size() 
-	      << " materials in the file " << mMaterialTableFilename 
-	      << ". Please check it." << G4endl);
+    GateError("I manage to read " << mHounsfieldMaterialPropertiesVector.size()
+	      << " materials in the file " << mMaterialTableFilename
+	      << ". Please check it.\n");
   }
 
   // Read densities.txt
   GateHounsfieldDensityTable * mDensityTable = new GateHounsfieldDensityTable();
   mDensityTable->Read(mDensityTableFilename);
-  
+
   // Density tolerance
   double dTol = mDensityTol;
 
@@ -84,42 +84,42 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
 
   // Loop on material intervals
   for(unsigned int i=0; i<mHounsfieldMaterialPropertiesVector.size(); i++) {
-    GateMessage("Geometry", 4, "Material " << i << " = " << mHounsfieldMaterialPropertiesVector[i]->GetName() << G4endl);
-    
+    GateMessage("Geometry", 4, "Material " << i << " = " << mHounsfieldMaterialPropertiesVector[i]->GetName() << Gateendl);
+
     double HMin = mHounsfieldMaterialPropertiesVector[i]->GetH();
     double HMax;
     if (i == mHounsfieldMaterialPropertiesVector.size()-1) HMax = HMin+1;
     else HMax = mHounsfieldMaterialPropertiesVector[i+1]->GetH();
-    
+
     // Check
     if (HMax <= HMin) GateError("Hounsfield shoud be given in ascending order, but I read H["
 				<< i << "] = " << HMin
-				<< " and H[" << i+1 << "] = " << HMax << G4endl);
-    // GateMessage("Core", 0, "H " << HMin << " " << HMax << G4endl);    
+				<< " and H[" << i+1 << "] = " << HMax << Gateendl);
+    // GateMessage("Core", 0, "H " << HMin << " " << HMax << Gateendl);
 
     // Find densities interval (because densities not always increase)
     double dMin = mDensityTable->GetDensityFromH(HMin);
     double dMax = mDensityTable->GetDensityFromH(HMax);
-    // GateMessage("Core", 0, "Density " << dMin << " " << dMax << G4endl);    
-    //     GateMessage("Core", 0, "Density " << dMin*g/cm3 << " " << dMax*g/cm3 << G4endl);   
+    // GateMessage("Core", 0, "Density " << dMin << " " << dMax << Gateendl);
+    //     GateMessage("Core", 0, "Density " << dMin*g/cm3 << " " << dMax*g/cm3 << Gateendl);
     double dDiffMax = mDensityTable->FindMaxDensityDifference(HMin, HMax);
 
     double n = (dDiffMax)/dTol;
-    // GateMessage("Core", 0, "n = " << n << G4endl);
-    
+    // GateMessage("Core", 0, "n = " << n << Gateendl);
+
     double HTol = (HMax-HMin)/n;
-    // GateMessage("Core", 0, "HTol = " << HTol << G4endl);
-    
+    // GateMessage("Core", 0, "HTol = " << HTol << Gateendl);
+
     if (n>1) {
-      GateMessage("Geometry", 4, "Material " << mHounsfieldMaterialPropertiesVector[i]->GetName() 
-		  << " devided into " << n << " materials" << G4endl);
+      GateMessage("Geometry", 4, "Material " << mHounsfieldMaterialPropertiesVector[i]->GetName()
+		  << " devided into " << n << " materials\n");
     }
 
     if (n<0) {
-      GateError("ERROR Material " << mHounsfieldMaterialPropertiesVector[i]->GetName() 
-		<< " devided into " << n << " materials : density decrease from " 
-		<< G4BestUnit(dMin, "Volumic Mass") << " to " 
-		<< G4BestUnit(dMax, "Volumic Mass") << G4endl);
+      GateError("ERROR Material " << mHounsfieldMaterialPropertiesVector[i]->GetName()
+		<< " devided into " << n << " materials : density decrease from "
+		<< G4BestUnit(dMin, "Volumic Mass") << " to "
+		<< G4BestUnit(dMax, "Volumic Mass") << Gateendl);
     }
 
     // Loop on density interval
@@ -127,32 +127,29 @@ void GateHounsfieldToMaterialsBuilder::BuildAndWriteMaterials() {
       double h1 = HMin+j*HTol;
       double h2 = std::min(HMin+(j+1)*HTol, HMax);
       double d = mDensityTable->GetDensityFromH(h1+(h2-h1)/2.0);
-      // GateMessage("Core", 0, "H1/H2 " << h1 << " " << h2 << " = " 
-      // 		  << mHounsfieldMaterialPropertiesVector[i]->GetName() 
-      // 		  << " d=" << G4BestUnit(d, "Volumic Mass") << G4endl);    
+       GateMessage("Geometry", 4, "H1/H2 " << h1 << " " << h2 << " = "
+       		  << mHounsfieldMaterialPropertiesVector[i]->GetName()
+       		  << " d=" << G4BestUnit(d, "Volumic Mass") << Gateendl);
       mHounsfieldMaterialTable->AddMaterial(h1, h2, d, mHounsfieldMaterialPropertiesVector[i]);
     }
   }
-  
+
   // Write final list of material
   mHounsfieldMaterialTable->WriteMaterialDatabase(mOutputMaterialDatabaseFilename);
   mHounsfieldMaterialTable->WriteMaterialtoHounsfieldLink(mOutputHUMaterialFilename);
+  GateMessage("Geometry", 1, "Generation of "
+	      << mHounsfieldMaterialTable->GetNumberOfMaterials()
+	      << " materials.\n");
 
-  delete  mHounsfieldMaterialTable;
+  // Release memory
+  delete mHounsfieldMaterialTable;
   delete mDensityTable;
-
   elements.clear();
-
   for (std::vector<GateHounsfieldMaterialProperties*>::iterator it = mHounsfieldMaterialPropertiesVector.begin();
-                     it != mHounsfieldMaterialPropertiesVector.end(); )
-  {
+       it != mHounsfieldMaterialPropertiesVector.end(); ) {
     delete (*it);
     it = mHounsfieldMaterialPropertiesVector.erase(it);
   }
   if(is) is.close();
-
-  GateMessage("Geometry", 1, "Generation of " 
-	      << mHounsfieldMaterialTable->GetNumberOfMaterials() 
-	      << " materials." << G4endl);
 }
 //-------------------------------------------------------------------------------------------------

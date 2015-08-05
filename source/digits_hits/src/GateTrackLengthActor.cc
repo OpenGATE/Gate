@@ -17,7 +17,7 @@ See GATE/LICENSE.txt for further details
 GateTrackLengthActor::GateTrackLengthActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateTrackLengthActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateTrackLengthActor() -- begin\n");
 
    mLmin = 0.;
    mLmax = 50.;
@@ -26,7 +26,7 @@ GateTrackLengthActor::GateTrackLengthActor(G4String name, G4int depth):
 
   pMessenger = new GateTrackLengthActorMessenger(this);
 
-  GateDebugMessageDec("Actor",4,"GateTrackLengthActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateTrackLengthActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -35,11 +35,11 @@ GateTrackLengthActor::GateTrackLengthActor(G4String name, G4int depth):
 /// Destructor
 GateTrackLengthActor::~GateTrackLengthActor()
 {
-  GateDebugMessageInc("Actor",4,"~GateTrackLengthActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"~GateTrackLengthActor() -- begin\n");
 
 
 
-  GateDebugMessageDec("Actor",4,"~GateTrackLengthActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"~GateTrackLengthActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -86,7 +86,7 @@ void GateTrackLengthActor::ResetData()
 //-----------------------------------------------------------------------------
 void GateTrackLengthActor::BeginOfRunAction(const G4Run *)
 {
-  GateDebugMessage("Actor", 3, "GateTrackLengthActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateTrackLengthActor -- Begin of Run\n");
   ResetData();
 }
 //-----------------------------------------------------------------------------

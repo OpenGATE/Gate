@@ -22,7 +22,7 @@
 
 #include "G4UnitsTable.hh"
 #include "G4ProductionCutsTable.hh"
-
+#include "G4PhysicalConstants.hh"
 
 
 //-----------------------------------------------------------------------------
@@ -30,11 +30,11 @@
 GateEmCalculatorActor::GateEmCalculatorActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateEmCalculatorActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateEmCalculatorActor() -- begin\n");
   //SetTypeName("EmCalculatorActor");
 //  pActor = new GateActorMessenger(this);
   ResetData();
-  GateDebugMessageDec("Actor",4,"GateEmCalculatorActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateEmCalculatorActor() -- end\n");
 
   mEnergy = 100 ;
   mPartName = "proton";
@@ -107,7 +107,6 @@ void GateEmCalculatorActor::SaveData()
   double cut = DBL_MAX;
   double EmDEDX=0, NuclearDEDX=0, TotalDEDX=0;
   double density=0;
-  double e=1.602176487e-19;
   double I=0;
   double eDensity=0;
   double radLength=0;
@@ -127,10 +126,10 @@ void GateEmCalculatorActor::SaveData()
             }
     }
 
-      os << "# Output calculted for the following parameters:" << std::endl;
-      os << "# Energy\t" << mEnergy << " MeV" << std::endl;
-      os << "# Particle\t" << mPartName << "\n" << std::endl;
-      os << "# And for the following materials" << std::endl;
+      os << "# Output calculted for the following parameters:\n";
+      os << "# Energy\t" << mEnergy << " MeV\n";
+      os << "# Particle\t" << mPartName << "\n\n";
+      os << "# And for the following materials\n";
 // labels
       os << "Material\t";
       os << "Density\t\t";
@@ -140,7 +139,7 @@ void GateEmCalculatorActor::SaveData()
       os << "EM-DEDX\t\t";
       os << "Nucl-DEDX\t";
       os << "Tot-DEDX\t";
-      os << "Mu_mass" << std::endl;
+      os << "Mu_mass\n";
 // units
       os << "\t\t";
       os << "(g/cm³)\t\t";
@@ -150,7 +149,7 @@ void GateEmCalculatorActor::SaveData()
       os << "(MeV.cm²/g)\t";
       os << "(MeV.cm²/g)\t";
       os << "(MeV.cm²/g)\t";
-      os << "(cm²/g)" << std::endl;
+      os << "(cm²/g)\n";
 
   for(size_t k=0;k<G4Material::GetNumberOfMaterials();k++)
     {
@@ -176,18 +175,18 @@ void GateEmCalculatorActor::SaveData()
 
 // values
       os << material << "\t\t";
-      os << density*e << "\t\t";
+      os << density*e_SI << "\t\t";
       os << eDensity << "\t";
       os << radLength << "\t\t";
       os << I*1.e6 << "\t";
-      os << EmDEDX*10./(e*density) << "\t\t";
-      os << NuclearDEDX*10./(e*density) << "\t";
-      os << TotalDEDX*10./(e*density) << "\t\t";
-      os << MuMassCoeficient << std::endl;
+      os << EmDEDX*10./(e_SI*density) << "\t\t";
+      os << NuclearDEDX*10./(e_SI*density) << "\t";
+      os << TotalDEDX*10./(e_SI*density) << "\t\t";
+      os << MuMassCoeficient << Gateendl;
     }
 
   if (!os) {
-    GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << G4endl);
+    GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << Gateendl);
   }
   os.flush();
   os.close();
