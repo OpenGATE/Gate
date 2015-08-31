@@ -1,20 +1,28 @@
 #!/bin/bash
 # Ensures the output of the test will not be truncated.
 echo CTEST_FULL_OUTPUT
-echo "Hello Gater!"
+echo "Current directory:"
 pwd
 echo $1
 echo $2
 
+echo "Gate binary location:"
 echo $GATE_BINARY
+
+echo "Benchmarks directory:"
 echo $BENCHMARKS_DIRECTORY
 
 cd $BENCHMARKS_DIRECTORY/$1/
+echo "Working directory:"
 pwd
 
-
+echo -------------------------------------------------------------------------------------
+echo "Launching Gate binary."
 $GATE_BINARY mac/$2.mac
+echo "Gate binary has finished."
+echo -------------------------------------------------------------------------------------
 
+echo "Directory content before diff:"
 ls *
 
 cd reference
@@ -22,7 +30,7 @@ tar xvzf $1-reference.tgz
 cd ..
 
 mkdir excluded_from_test
-#mv output/BenchAnalyse.C excluded_from_test
+mv output/BenchAnalyse.C excluded_from_test
 mv output/output-gamma-Edep.mhd excluded_from_test
 mv output/output-gamma-Edep.raw excluded_from_test
 mv output/stat-gamma.txt excluded_from_test
@@ -30,24 +38,20 @@ mv reference/benchRT-reference.tgz excluded_from_test
 mv reference/benchRT-reference.tgz.md5 excluded_from_test
 mv reference/benchRT-reference.tgz.md5-stamp excluded_from_test
 
+echo "Directory content before diff:"
+ls *
+
 echo "Performing diff in folder:"
 echo $BENCHMARKS_DIRECTORY/$1/
 
 echo
-echo "diff in details (diff -s)"
+echo "diff in details ('diff -s reference output')"
 echo
 diff -s reference output
-echo $?
-diff -s /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.mhd output/gamma-3d-Edep.mhd
-echo $?
-diff -s /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output output/
-echo $?
-echo "diff on .raw"
-echo
-diff -s /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep-Squared.raw /tmp/dashboard_2015-07-21_12-04-41/opengate-creatis-dashboard-test/benchmarks/benchRT/output/gamma-3d-Edep.raw 
 
 
 exit_status=$?
 
+echo "exit_status is (1 : missing file or difference in a text file, 2 : difference on a binary file: "
 echo $exit_status
 exit $exit_status
