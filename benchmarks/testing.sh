@@ -21,8 +21,9 @@ echo
 echo
 echo --------------------------------------------------------------------------------------------------
 echo Launching Gate binary on mac/$2.mac
-$GATE_BINARY mac/$2.mac
+$GATE_BINARY mac/$2.mac > gate_simulation_log.txt 2>&1
 echo "Gate binary has finished."
+echo "See below for the generated output."
 echo --------------------------------------------------------------------------------------------------
 echo
 echo
@@ -53,4 +54,13 @@ exit_status=$?
 echo
 echo "exit_status is ('0': no difference ; '1': missing file or difference in a text file ; '2': difference on a binary file: "
 echo $exit_status
+
+
+echo
+echo --------------------------------------------------------------------------------------------------
+echo "For debugging information, here is the generated output of the simulation:"
+less gate_simulation_log.txt
+echo --------------------------------------------------------------------------------------------------
+
+
 exit $exit_status
