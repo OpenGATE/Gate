@@ -17,14 +17,15 @@ cd $BENCHMARKS_DIRECTORY/$1/
 echo "Working directory:"
 pwd
 
-echo -------------------------------------------------------------------------------------
+echo
+echo
+echo --------------------------------------------------------------------------------------------------
 echo Launching Gate binary on mac/$2.mac
 $GATE_BINARY mac/$2.mac
 echo "Gate binary has finished."
-echo -------------------------------------------------------------------------------------
-
-echo "Directory content before diff:"
-ls *
+echo --------------------------------------------------------------------------------------------------
+echo
+echo
 
 cd reference
 tar xvzf $1-reference.tgz
@@ -41,18 +42,15 @@ mv reference/benchRT-reference.tgz.md5-stamp excluded_from_test
 
 echo "Directory content before diff:"
 ls *
-
+echo
 echo "Performing diff in folder:"
 echo $BENCHMARKS_DIRECTORY/$1/
-
 echo
 echo "diff in details ('diff -s reference output')"
 echo
 diff -s reference output
-
-
 exit_status=$?
-
-echo "exit_status is (1 : missing file or difference in a text file, 2 : difference on a binary file: "
+echo
+echo "exit_status is ('0': no difference ; '1': missing file or difference in a text file ; '2': difference on a binary file: "
 echo $exit_status
 exit $exit_status
