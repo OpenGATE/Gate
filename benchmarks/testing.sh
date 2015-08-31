@@ -1,18 +1,21 @@
 #!/bin/bash
 # Ensures the output of the test will not be truncated.
 echo CTEST_FULL_OUTPUT
+echo
 echo "Current directory:"
 pwd
+echo
+
 echo "Printing the two parameters for debugging:"
 echo $1
 echo $2
-
+echo
 echo "Gate binary location:"
 echo $GATE_BINARY
-
+echo
 echo "Benchmarks directory:"
 echo $BENCHMARKS_DIRECTORY
-
+echo
 cd $BENCHMARKS_DIRECTORY/$1/
 echo "Working directory:"
 pwd
@@ -20,7 +23,7 @@ pwd
 echo
 echo
 echo --------------------------------------------------------------------------------------------------
-echo Launching Gate binary on mac/$2.mac
+echo "Launching Gate binary on mac/$2.mac."
 $GATE_BINARY mac/$2.mac > gate_simulation_log.txt 2>&1
 echo "Gate binary has finished."
 echo "See below for the generated output."
@@ -57,8 +60,9 @@ echo $exit_status
 
 
 echo
+echo
 echo --------------------------------------------------------------------------------------------------
-echo "For debugging information, here is the generated output of the simulation:"
+echo "For debugging information, here is the generated output of the simulation launched with Gate binary:"
 less gate_simulation_log.txt
 echo --------------------------------------------------------------------------------------------------
 
