@@ -58,7 +58,8 @@ echo $BENCHMARKS_DIRECTORY/$1/
 echo
 diff -s reference output
 exit_status=$?
-echoecho
+echo
+echo
 echo "exit_status is 
 echo $exit_status
 echo
