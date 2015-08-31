@@ -42,9 +42,9 @@ mv reference/benchRT-reference.tgz.md5 excluded_from_test
 mv reference/benchRT-reference.tgz.md5-stamp excluded_from_test
 
 echo "Directory content before diff:"
-echo --------------------------------
+echo "--------------------------------"
 ls *
-echo --------------------------------
+echo "--------------------------------"
 echo
 echo "Performing detailed diff ('diff -s reference output') in folder:"
 echo $BENCHMARKS_DIRECTORY/$1/
