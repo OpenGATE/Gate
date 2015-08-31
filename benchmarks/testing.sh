@@ -3,6 +3,7 @@
 echo CTEST_FULL_OUTPUT
 echo "Current directory:"
 pwd
+echo "Printing the two parameters for debugging:"
 echo $1
 echo $2
 
@@ -17,7 +18,7 @@ echo "Working directory:"
 pwd
 
 echo -------------------------------------------------------------------------------------
-echo "Launching Gate binary."
+echo Launching Gate binary on mac/$2.mac
 $GATE_BINARY mac/$2.mac
 echo "Gate binary has finished."
 echo -------------------------------------------------------------------------------------
