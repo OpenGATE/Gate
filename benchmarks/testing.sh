@@ -31,9 +31,9 @@ echo ---------------------------------------------------------------------------
 echo
 echo
 
-echo "Reference folder content:"
 cd reference
 echo "--------------------------------"
+echo "Reference folder content:"
 tar xvzf $1-reference.tgz
 echo "--------------------------------"
 cd ..
@@ -48,8 +48,8 @@ mv reference/benchRT-reference.tgz.md5 excluded_from_test
 mv reference/benchRT-reference.tgz.md5-stamp excluded_from_test
 
 echo
-echo "Directory content before diff:"
 echo "--------------------------------"
+echo "Directory content before diff:"
 ls *
 echo "--------------------------------"
 echo
