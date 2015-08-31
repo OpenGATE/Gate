@@ -58,9 +58,15 @@ echo $BENCHMARKS_DIRECTORY/$1/
 echo
 diff -s reference output
 exit_status=$?
-echo
-echo "exit_status is ('0': no difference ; '1': missing file or difference in a text file ; '2': difference on a binary file: "
+echoecho
+echo "exit_status is 
 echo $exit_status
+echo
+echo "Meaning:"
+echo "'0': no difference i.e. SUCCESSFUL TEST"
+echo "'1': missing file or difference in a text file i.e. FAILING TEST
+echo "'2': difference on a binary file i.e. FAILING TEST"
+
 
 
 echo
