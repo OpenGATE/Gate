@@ -46,7 +46,7 @@ echo --------------------------------
 ls *
 echo --------------------------------
 echo
-echo "Performing detailed diff('diff -s reference output') in folder:"
+echo "Performing detailed diff ('diff -s reference output') in folder:"
 echo $BENCHMARKS_DIRECTORY/$1/
 echo
 diff -s reference output
