@@ -26,13 +26,16 @@ echo ---------------------------------------------------------------------------
 echo "Launching Gate binary on mac/$2.mac."
 $GATE_BINARY mac/$2.mac > gate_simulation_log.txt 2>&1
 echo "Gate binary has finished."
-echo "See below for the generated output."
+echo "See at the end of this report for the generated output."
 echo --------------------------------------------------------------------------------------------------
 echo
 echo
 
+echo "Reference folder content:"
 cd reference
+echo "--------------------------------"
 tar xvzf $1-reference.tgz
+echo "--------------------------------"
 cd ..
 
 mkdir excluded_from_test
@@ -44,6 +47,7 @@ mv reference/benchRT-reference.tgz excluded_from_test
 mv reference/benchRT-reference.tgz.md5 excluded_from_test
 mv reference/benchRT-reference.tgz.md5-stamp excluded_from_test
 
+echo
 echo "Directory content before diff:"
 echo "--------------------------------"
 ls *
