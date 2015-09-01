@@ -65,7 +65,7 @@ echo $exit_status
 echo
 echo "Meaning of this status:"
 echo "'0': no difference i.e. SUCCESSFUL TEST"
-echo "'1': missing file or difference in a text file i.e. FAILING TEST
+echo "'1': missing file or difference in a text file i.e. FAILING TEST"
 echo "'2': difference on a binary file i.e. FAILING TEST"
 
 
