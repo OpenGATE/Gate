@@ -43,6 +43,7 @@ mv output/BenchAnalyse.C excluded_from_test
 mv output/output-gamma-Edep.mhd excluded_from_test
 mv output/output-gamma-Edep.raw excluded_from_test
 mv output/stat-gamma.txt excluded_from_test
+mv output/README excluded_from_test
 mv reference/benchRT-reference.tgz excluded_from_test
 mv reference/benchRT-reference.tgz.md5 excluded_from_test
 mv reference/benchRT-reference.tgz.md5-stamp excluded_from_test
@@ -66,7 +67,7 @@ echo
 echo
 echo "Performing detailed diff on the 6th first lines of stat-gamma.txt:"
 echo
-diff -s reference/stat-gamma.txt excluded_from_test/stat-gamma.txt
+diff -s <(head -n 6 reference/stat-gamma.txt) <(head -n 6 excluded_from_test/stat-gamma.txt)
 exit_status_stat=$?
 echo
 echo
@@ -86,6 +87,9 @@ echo "--------------------------------------------------------------------------
 echo "For debugging information, here is the generated output of the simulation launched with Gate binary:"
 less gate_simulation_log.txt
 echo "--------------------------------------------------------------------------------------------------"
+
+echo "exit_status_final=exit_status_folder+exit_status_stat is:"
+echo $exit_status_final
 
 exit_status_final=$exit_status_folder+$exit_status_stat
 exit $exit_status_final
