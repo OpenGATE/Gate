@@ -88,8 +88,9 @@ echo "For debugging information, here is the generated output of the simulation 
 less gate_simulation_log.txt
 echo "--------------------------------------------------------------------------------------------------"
 
+exit_status_final=$exit_status_folder+$exit_status_stat
+
 echo "exit_status_final=exit_status_folder+exit_status_stat is:"
 echo $exit_status_final
 
-exit_status_final=$exit_status_folder+$exit_status_stat
 exit $exit_status_final
