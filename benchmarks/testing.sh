@@ -57,13 +57,23 @@ echo "Performing detailed diff ('diff -s reference output') in folder:"
 echo $BENCHMARKS_DIRECTORY/$1/
 echo
 diff -s reference output
-exit_status=$?
+exit_status_folder=$?
 echo
 echo
-echo "exit_status is:"
-echo $exit_status
+echo "exit_status_folder is:"
+echo $exit_status_folder
 echo
-echo "Meaning of this status:"
+echo
+echo "Performing detailed diff on the 6th first lines of stat-gamma.txt:"
+echo
+diff -s reference/stat-gamma.txt excluded_from_test/stat-gamma.txt
+exit_status_stat=$?
+echo
+echo
+echo "exit_status_stat is:"
+echo $exit_status_stat
+echo
+echo "Meaning of these exit_status:"
 echo "'0': no difference i.e. SUCCESSFUL TEST"
 echo "'1': missing file or difference in a text file i.e. FAILING TEST"
 echo "'2': difference on a binary file i.e. FAILING TEST"
@@ -77,5 +87,5 @@ echo "For debugging information, here is the generated output of the simulation 
 less gate_simulation_log.txt
 echo "--------------------------------------------------------------------------------------------------"
 
-
-exit $exit_status
+exit_status_final=$exit_status_folder+$exit_status_stat
+exit $exit_status_final
