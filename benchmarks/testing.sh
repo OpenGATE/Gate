@@ -32,10 +32,10 @@ echo
 echo
 
 cd reference
-echo "--------------------------------"
+echo "----------------------------------------------------"
 echo "Reference folder content:"
 tar xvzf $1-reference.tgz
-echo "--------------------------------"
+echo "----------------------------------------------------"
 cd ..
 
 mkdir excluded_from_test
@@ -48,10 +48,10 @@ mv reference/benchRT-reference.tgz.md5 excluded_from_test
 mv reference/benchRT-reference.tgz.md5-stamp excluded_from_test
 
 echo
-echo "--------------------------------"
-echo "Directory content:"
+echo "----------------------------------------------------"
+echo "Folder in which diff will be performed contains:"
 ls *
-echo "--------------------------------"
+echo "----------------------------------------------------"
 echo
 echo "Performing detailed diff ('diff -s reference output') in folder:"
 echo $BENCHMARKS_DIRECTORY/$1/
