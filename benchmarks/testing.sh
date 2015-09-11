@@ -42,7 +42,7 @@ mkdir excluded_from_test
 mv output/BenchAnalyse.C excluded_from_test
 mv output/output-gamma-Edep.mhd excluded_from_test
 mv output/output-gamma-Edep.raw excluded_from_test
-mv reference/stat-gamma.txt excluded_from_test
+#mv reference/stat-gamma.txt excluded_from_test
 mv reference/README excluded_from_test
 mv reference/benchRT-reference.tgz excluded_from_test
 mv reference/benchRT-reference.tgz.md5 excluded_from_test
