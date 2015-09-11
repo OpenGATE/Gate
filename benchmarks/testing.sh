@@ -85,7 +85,7 @@ echo
 echo "--------------------------"
 echo
 exit_status_final=$(($exit_status_folder+$exit_status_stat))
-echo "exit_status_final=exit_status_folder + exit_status_stat is:"
+echo "exit_status_final = exit_status_folder + exit_status_stat is:"
 echo $exit_status_final
 
 
