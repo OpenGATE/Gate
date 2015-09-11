@@ -27,6 +27,6 @@ GateAddBenchmarkData("DATA{benchImageNavigators/rt/data/patient-2mm.raw}")
 if(BUILD_TESTING)
   GateAddBenchmarkData("DATA{benchRT/reference/benchRT-reference.tgz}")
   ADD_TEST(NAME hellotest
-    COMMAND /bin/bash testing.sh benchRT gamma
+    COMMAND /bin/bash $ENV{BENCHMARKS_DIRECTORY}/testing.sh benchRT gamma
     WORKING_DIRECTORY $ENV{BENCHMARKS_DIRECTORY})
 endif(BUILD_TESTING)
