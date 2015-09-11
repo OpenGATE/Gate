@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "GateEnergySpectrumActorMessenger.hh"
 
@@ -14,14 +14,13 @@ See GATE/LICENSE.txt for further details
 
 //-----------------------------------------------------------------------------
 GateEnergySpectrumActorMessenger::GateEnergySpectrumActorMessenger(GateEnergySpectrumActor * v)
-: GateActorMessenger(v),
-  pActor(v)
+  : GateActorMessenger(v),
+    pActor(v)
 {
-
   BuildCommands(baseName+pActor->GetObjectName());
-
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 GateEnergySpectrumActorMessenger::~GateEnergySpectrumActorMessenger()
@@ -34,6 +33,7 @@ GateEnergySpectrumActorMessenger::~GateEnergySpectrumActorMessenger()
   delete pEdepNBinsCmd;
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateEnergySpectrumActorMessenger::BuildCommands(G4String base)
@@ -84,17 +84,16 @@ void GateEnergySpectrumActorMessenger::BuildCommands(G4String base)
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateEnergySpectrumActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
-
   if(cmd == pEminCmd) pActor->SetEmin(  pEminCmd->GetNewDoubleValue(newValue)  ) ;
   if(cmd == pEmaxCmd) pActor->SetEmax(  pEmaxCmd->GetNewDoubleValue(newValue)  ) ;
   if(cmd == pNBinsCmd) pActor->SetENBins(  pNBinsCmd->GetNewIntValue(newValue)  ) ;
   if(cmd == pEdepminCmd) pActor->SetEdepmin(  pEdepminCmd->GetNewDoubleValue(newValue)  ) ;
   if(cmd == pEdepmaxCmd) pActor->SetEdepmax(  pEdepmaxCmd->GetNewDoubleValue(newValue)  ) ;
   if(cmd == pEdepNBinsCmd) pActor->SetEdepNBins(  pEdepNBinsCmd->GetNewIntValue(newValue)  ) ;
-
   GateActorMessenger::SetNewValue(cmd,newValue);
 }
 //-----------------------------------------------------------------------------

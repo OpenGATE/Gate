@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "GateEnergySpectrumActor.hh"
 #ifdef G4ANALYSIS_USE_ROOT
@@ -49,12 +49,10 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
 GateEnergySpectrumActor::~GateEnergySpectrumActor()
 {
   GateDebugMessageInc("Actor",4,"~GateEnergySpectrumActor() -- begin\n");
-
-
-
   GateDebugMessageDec("Actor",4,"~GateEnergySpectrumActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 /// Construct
@@ -70,7 +68,6 @@ void GateEnergySpectrumActor::Construct()
   EnableUserSteppingAction(true);
   EnableEndOfEventAction(true); // for save every n
 
-  //mHistName = "Precise/output/EnergySpectrum.root";
   pTfile = new TFile(mSaveFilename,"RECREATE");
 
   pEnergySpectrum = new TH1D("energySpectrum","Energy Spectrum",GetENBins(),GetEmin() ,GetEmax() );
@@ -79,7 +76,8 @@ void GateEnergySpectrumActor::Construct()
   pEdep  = new TH1D("edepHisto","Energy deposited per event",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
   pEdep->SetXTitle("E_{dep} (MeV)");
 
-  pEdepTime  = new TH2D("edepHistoTime","Energy deposited with time per event",GetEdepNBins(),0,20,GetEdepNBins(),GetEdepmin(),GetEdepmax());
+  pEdepTime  = new TH2D("edepHistoTime","Energy deposited with time per event",
+                        GetEdepNBins(),0,20,GetEdepNBins(),GetEdepmin(),GetEdepmax());
   pEdepTime->SetXTitle("t (ns)");
   pEdepTime->SetYTitle("E_{dep} (MeV)");
 
@@ -116,6 +114,7 @@ void GateEnergySpectrumActor::ResetData()
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateEnergySpectrumActor::BeginOfRunAction(const G4Run *)
 {
@@ -123,6 +122,7 @@ void GateEnergySpectrumActor::BeginOfRunAction(const G4Run *)
   ResetData();
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateEnergySpectrumActor::BeginOfEventAction(const G4Event*)
@@ -134,25 +134,25 @@ void GateEnergySpectrumActor::BeginOfEventAction(const G4Event*)
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateEnergySpectrumActor::EndOfEventAction(const G4Event*)
 {
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Event\n");
-  if (edep > 0)
-  {
-	  //G4cout << "hitted " << edep/MeV << "MeV " << tof/MeV << "ns\n";
-	  pEdep->Fill(edep/MeV);
-	  pEdepTime->Fill(tof/ns,edep/MeV);
+  if (edep > 0) {
+    pEdep->Fill(edep/MeV);
+    pEdepTime->Fill(tof/ns,edep/MeV);
   }
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateEnergySpectrumActor::PreUserTrackingAction(const GateVVolume *, const G4Track* t)
 {
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- Begin of Track\n");
-  newTrack = true; //nTrack++;
-  if(t->GetParentID()==1) nTrack++;
+  newTrack = true;
+  if (t->GetParentID()==1) nTrack++;
   edepTrack = 0.;
 }
 //-----------------------------------------------------------------------------
@@ -161,25 +161,16 @@ void GateEnergySpectrumActor::PreUserTrackingAction(const GateVVolume *, const G
 void GateEnergySpectrumActor::PostUserTrackingAction(const GateVVolume *, const G4Track* t)
 {
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Track\n");
-
   double eloss = Ei-Ef;
   if (eloss > 0) pDeltaEc->Fill(eloss/MeV,t->GetWeight() );
   if (edepTrack > 0)  pEdepTrack->Fill(edepTrack/MeV,t->GetWeight() );
 }
 //-----------------------------------------------------------------------------
 
-//G4bool GateEnergySpectrumActor::ProcessHits(G4Step * step , G4TouchableHistory* /*th*/)
+
+//-----------------------------------------------------------------------------
 void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4Step* step)
 {
-  //sumNi+=step->fNonIonizingEnergyDeposit;//GetNonIonizingEnergyDeposit();
-  /*if(step->GetPreStepPoint()->GetProcessDefinedStep() )
-if(step->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessName()!="eIonisation" )
-  { G4cout<<nTrack<<"  "<<step->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessName()<<"  "<< step->GetTotalEnergyDeposit()/ (step->GetPreStepPoint()->GetKineticEnergy()-step->GetPostStepPoint()->GetKineticEnergy())<< Gateendl;
-sumNi+=step->GetTotalEnergyDeposit();}
-  if(step->GetPostStepPoint()->GetProcessDefinedStep())*/
-//if(step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()!="ElectronIonisation" )
- //   G4cout<<"post "<<step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()<< Gateendl;
-
   assert(step->GetTrack()->GetWeight() == 1.); // edep doesnt handle weight
 
   if(step->GetTotalEnergyDeposit()>0.01) sumM1+=step->GetTotalEnergyDeposit();
@@ -205,16 +196,12 @@ sumNi+=step->GetTotalEnergyDeposit();}
     //cout << "****************** diff tof=" << ltof << " edep=" << edep << endl;
   }
 
-
   Ef=step->GetPostStepPoint()->GetKineticEnergy();
   if(newTrack){
-     Ei=step->GetPreStepPoint()->GetKineticEnergy();
-     pEnergySpectrum->Fill(Ei/MeV,step->GetTrack()->GetWeight());
-     newTrack=false;
+    Ei=step->GetPreStepPoint()->GetKineticEnergy();
+    pEnergySpectrum->Fill(Ei/MeV,step->GetTrack()->GetWeight());
+    newTrack=false;
   }
-
-
-  //return true;
 }
 //-----------------------------------------------------------------------------
 

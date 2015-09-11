@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "GateConfiguration.h"
 #ifdef G4ANALYSIS_USE_ROOT
@@ -12,10 +12,10 @@ See GATE/LICENSE.txt for further details
 /*!
   \class  GateEnergySpectrumActor
   \author thibault.frisson@creatis.insa-lyon.fr
-          laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
-	  pierre.gueth@creatis.insa-lyon.fr
- */
+  laurent.guigues@creatis.insa-lyon.fr
+  david.sarrut@creatis.insa-lyon.fr
+  pierre.gueth@creatis.insa-lyon.fr
+*/
 
 #ifndef GATEENERGYSPECTRUMACTOR_HH
 #define GATEENERGYSPECTRUMACTOR_HH
@@ -32,7 +32,7 @@ See GATE/LICENSE.txt for further details
 /// \brief Actor displaying nb events/tracks/step
 class GateEnergySpectrumActor : public GateVActor
 {
- public:
+public:
 
   virtual ~GateEnergySpectrumActor();
 
@@ -54,12 +54,12 @@ class GateEnergySpectrumActor : public GateVActor
   virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*) ;
   virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*) ;
   virtual void EndOfEventAction(const G4Event*);
+
   //-----------------------------------------------------------------------------
   /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
 
-//  virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
 

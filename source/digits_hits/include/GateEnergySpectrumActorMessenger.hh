@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "GateConfiguration.h"
 #ifdef G4ANALYSIS_USE_ROOT
@@ -12,8 +12,8 @@ See GATE/LICENSE.txt for further details
 /*
   \class  GateEnergySpectrumActorMessenger
   \author thibault.frisson@creatis.insa-lyon.fr
-          laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
+  laurent.guigues@creatis.insa-lyon.fr
+  david.sarrut@creatis.insa-lyon.fr
 */
 
 #ifndef GATEENERGYSPECTRUMACTORMESSENGER_HH
@@ -30,7 +30,7 @@ class GateEnergySpectrumActor;
 /// \brief Messenger of GateVImageActor
 class GateEnergySpectrumActorMessenger : public GateActorMessenger
 {
- public:
+public:
 
   //-----------------------------------------------------------------------------
   /// Constructor with pointer on the associated sensor
