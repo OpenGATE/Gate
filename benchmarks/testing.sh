@@ -62,7 +62,6 @@ echo
 diff -s reference output
 exit_status_folder=$?
 echo
-echo
 echo "exit_status_folder is:"
 echo $exit_status_folder
 echo
@@ -72,9 +71,9 @@ echo
 diff -s <(head -n 6 excluded_from_test/stat-gamma_reference.txt) <(head -n 6 excluded_from_test/stat-gamma_output.txt)
 exit_status_stat=$?
 echo
-echo
 echo "exit_status_stat is:"
 echo $exit_status_stat
+echo
 echo
 echo "Meaning of these partial exit_status:"
 echo "'0': no difference i.e. SUCCESSFUL TEST"
