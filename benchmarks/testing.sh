@@ -75,11 +75,15 @@ echo
 echo "exit_status_stat is:"
 echo $exit_status_stat
 echo
-echo "Meaning of these exit_status:"
+echo "Meaning of these partial exit_status:"
 echo "'0': no difference i.e. SUCCESSFUL TEST"
 echo "'1': missing file or difference in a text file i.e. FAILING TEST"
 echo "'2': difference on a binary file i.e. FAILING TEST"
 
+
+exit_status_final=$(($exit_status_folder+$exit_status_stat))
+echo "exit_status_final=exit_status_folder + exit_status_stat is:"
+echo $exit_status_final
 
 
 echo
@@ -89,9 +93,5 @@ echo "For debugging information, here is the generated output of the simulation 
 less gate_simulation_log.txt
 echo "--------------------------------------------------------------------------------------------------"
 
-exit_status_final=$(($exit_status_folder+$exit_status_stat))
-
-echo "exit_status_final=exit_status_folder + exit_status_stat is:"
-echo $exit_status_final
 
 exit $exit_status_final
