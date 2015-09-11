@@ -43,6 +43,7 @@ mv output/BenchAnalyse.C excluded_from_test
 mv output/output-gamma-Edep.mhd excluded_from_test
 mv output/output-gamma-Edep.raw excluded_from_test
 mv output/stat-gamma.txt excluded_from_test/stat-gamma_output.txt
+mv output/README excluded_from_test
 mv reference/stat-gamma.txt excluded_from_test/stat-gamma_reference.txt
 mv reference/README excluded_from_test
 mv reference/benchRT-reference.tgz excluded_from_test
