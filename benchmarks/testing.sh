@@ -48,6 +48,8 @@ mv reference/benchRT-reference.tgz excluded_from_test
 mv reference/benchRT-reference.tgz.md5 excluded_from_test
 mv reference/benchRT-reference.tgz.md5-stamp excluded_from_test
 
+rm reference/._*
+
 echo
 echo "----------------------------------------------------"
 echo "Folder in which diff will be performed contains:"
