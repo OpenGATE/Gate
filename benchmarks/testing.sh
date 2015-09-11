@@ -69,7 +69,7 @@ echo
 echo
 echo "Performing detailed diff on the 6th first lines of stat-gamma.txt:"
 echo
-diff -s <(head -n 6 reference/stat-gamma_reference.txt) <(head -n 6 excluded_from_test/stat-gamma_output.txt)
+diff -s <(head -n 6 excluded_from_test/stat-gamma_reference.txt) <(head -n 6 excluded_from_test/stat-gamma_output.txt)
 exit_status_stat=$?
 echo
 echo
