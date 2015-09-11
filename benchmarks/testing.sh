@@ -42,13 +42,12 @@ mkdir excluded_from_test
 mv output/BenchAnalyse.C excluded_from_test
 mv output/output-gamma-Edep.mhd excluded_from_test
 mv output/output-gamma-Edep.raw excluded_from_test
-#mv reference/stat-gamma.txt excluded_from_test
+mv output/stat-gamma.txt excluded_from_test/stat-gamma_output.txt
+mv reference/stat-gamma.txt excluded_from_test/stat-gamma_reference.txt
 mv reference/README excluded_from_test
 mv reference/benchRT-reference.tgz excluded_from_test
 mv reference/benchRT-reference.tgz.md5 excluded_from_test
 mv reference/benchRT-reference.tgz.md5-stamp excluded_from_test
-
-rm reference/._*
 
 echo
 echo "----------------------------------------------------"
@@ -69,7 +68,7 @@ echo
 echo
 echo "Performing detailed diff on the 6th first lines of stat-gamma.txt:"
 echo
-diff -s <(head -n 6 reference/stat-gamma.txt) <(head -n 6 excluded_from_test/stat-gamma.txt)
+diff -s <(head -n 6 reference/stat-gamma_reference.txt) <(head -n 6 excluded_from_test/stat-gamma_output.txt)
 exit_status_stat=$?
 echo
 echo
