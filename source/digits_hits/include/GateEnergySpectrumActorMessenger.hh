@@ -21,6 +21,7 @@
 
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4UIcmdWithABool.hh"
 
 #include "GateActorMessenger.hh"
 
@@ -50,11 +51,11 @@ protected:
   /// Command objects
   G4UIcmdWithADoubleAndUnit * pEmaxCmd;
   G4UIcmdWithADoubleAndUnit * pEminCmd;
-  G4UIcmdWithAnInteger * pNBinsCmd;
-
+  G4UIcmdWithAnInteger      * pNBinsCmd;
   G4UIcmdWithADoubleAndUnit * pEdepmaxCmd;
   G4UIcmdWithADoubleAndUnit * pEdepminCmd;
-  G4UIcmdWithAnInteger * pEdepNBinsCmd;
+  G4UIcmdWithAnInteger      * pEdepNBinsCmd;
+  G4UIcmdWithABool          * pSaveAsText;
 
 }; // end class GateEnergySpectrumActorMessenger
 //-----------------------------------------------------------------------------

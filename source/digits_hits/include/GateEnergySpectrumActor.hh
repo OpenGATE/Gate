@@ -78,7 +78,7 @@ public:
   void SetEdepmin(double v) {mEdepmin = v;}
   void SetEdepmax(double v) {mEdepmax = v;}
   void SetEdepNBins(int v) {mEdepNBins = v;}
-
+  void SetSaveAsTextFlag(bool b) { DD(b); mSaveAsTextFlag = b; }
 
 protected:
   GateEnergySpectrumActor(G4String name, G4int depth=0);
@@ -102,6 +102,7 @@ protected:
 
   double Ei,Ef;
   int nTrack;
+  int nEvent;
   bool newEvt;
   bool newTrack;
   double sumNi;
@@ -114,6 +115,11 @@ protected:
   double edepTrack;
 
   GateActorMessenger* pMessenger;
+
+  void SaveAsText(TH1D * histo, G4String initial_filename);
+  bool mSaveAsTextFlag;
+
+
 };
 
 MAKE_AUTO_CREATOR_ACTOR(EnergySpectrumActor,GateEnergySpectrumActor)
