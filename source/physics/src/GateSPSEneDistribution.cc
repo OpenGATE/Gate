@@ -1,32 +1,41 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #include "Randomize.hh"
+#include <fstream>
+#include "G4SystemOfUnits.hh"
 
 #include "GateSPSEneDistribution.hh"
 #include "GateMessageManager.hh"
-#include <fstream>
-#include "G4SystemOfUnits.hh"
+#include "GateMiscFunctions.hh"
+
 using namespace std;
 
+//-----------------------------------------------------------------------------
 GateSPSEneDistribution::GateSPSEneDistribution():
   G4SPSEneDistribution()
 {
 
 }
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 GateSPSEneDistribution::~GateSPSEneDistribution()
 {
   // delete[] m_tab_sumproba;
   // delete[] m_tab_energy;
 }
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 void GateSPSEneDistribution::GenerateFluor18()
 {
   // Fit parameters for the Fluor18 spectra
@@ -38,19 +47,22 @@ void GateSPSEneDistribution::GenerateFluor18()
   G4double u ;
   G4double energyF18 = 0. ;
 
-   do
+  do
     {
-     // hard wired constants!
-     E = G4RandFlat::shoot(0.511, 1.144); // Emin = 0.511 ; Emax = 1.144
-     u = G4RandFlat::shoot(0.5209);  // Nmin = 0 ; Nmax = 0.5209
-     energyF18 = E;
+      // hard wired constants!
+      E = G4RandFlat::shoot(0.511, 1.144); // Emin = 0.511 ; Emax = 1.144
+      u = G4RandFlat::shoot(0.5209);  // Nmin = 0 ; Nmax = 0.5209
+      energyF18 = E;
     }
-   while ( u > a*E*E*E + b*E*E + c*E + d ) ;
+  while ( u > a*E*E*E + b*E*E + c*E + d ) ;
   G4double energy_fluor = energyF18 - 0.511 ;
   particle_energy = energy_fluor ;
 
 }
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 void GateSPSEneDistribution::GenerateOxygen15()
 {
   // Fit parameters for the Oxygen15 spectra
@@ -63,18 +75,21 @@ void GateSPSEneDistribution::GenerateOxygen15()
   G4double E ;
   G4double u ;
   G4double energyO15 = 0. ;
-   do
+  do
     {
-     E = CLHEP::RandFlat::shoot( 0.511, 2.249 ) ; // Emin ; Emax
-     u = CLHEP::RandFlat::shoot( 0., 15.88 ) ;   // Nmin ; Nmax
-     energyO15 = E ;
+      E = CLHEP::RandFlat::shoot( 0.511, 2.249 ) ; // Emin ; Emax
+      u = CLHEP::RandFlat::shoot( 0., 15.88 ) ;   // Nmin ; Nmax
+      energyO15 = E ;
     }
-   while ( u > a*E*E*E*E*E + b*E*E*E*E + c*E*E*E + d*E*E + e*E + f ) ;
+  while ( u > a*E*E*E*E*E + b*E*E*E*E + c*E*E*E + d*E*E + e*E + f ) ;
   G4double energy_oxygen = energyO15 - 0.511 ;
   particle_energy = energy_oxygen ;
 
 }
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 void GateSPSEneDistribution::GenerateCarbon11()
 {
   // Fit parameters for the Carbon11 spectra
@@ -87,44 +102,51 @@ void GateSPSEneDistribution::GenerateCarbon11()
   G4double E ;
   G4double u ;
   G4double energyC11 = 0. ;
-   do
+  do
     {
-     E = CLHEP::RandFlat::shoot( 0.511, 1.47 ) ; // Emin ; Emax
-     u = CLHEP::RandFlat::shoot( 0., 2.2 ) ;   // Nmin ; Nmax
-     energyC11 = E;
+      E = CLHEP::RandFlat::shoot( 0.511, 1.47 ) ; // Emin ; Emax
+      u = CLHEP::RandFlat::shoot( 0., 2.2 ) ;   // Nmin ; Nmax
+      energyC11 = E;
     }
-   while ( u > a*E*E*E*E*E + b*E*E*E*E + c*E*E*E + d*E*E + e*E + f ) ;
+  while ( u > a*E*E*E*E*E + b*E*E*E*E + c*E*E*E + d*E*E + e*E + f ) ;
   G4double energy_carbon = energyC11 - 0.511 ;
   particle_energy = energy_carbon ;
 }
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 G4double GateSPSEneDistribution::GenerateOne( G4ParticleDefinition* a )
 {
 
   if( GetEnergyDisType() == "Fluor18" )
-   GenerateFluor18();
+    GenerateFluor18();
   else if( GetEnergyDisType() == "Oxygen15" )
-   GenerateOxygen15();
+    GenerateOxygen15();
   else if( GetEnergyDisType() == "Carbon11" )
-   GenerateCarbon11();
+    GenerateCarbon11();
   else if(GetEnergyDisType() == "Range")
     GenerateRangeEnergy();
   else if(GetEnergyDisType() == "UserSpectrum")
     GenerateFromUserSpectrum();
-	else particle_energy = G4SPSEneDistribution::GenerateOne( a );
+  else particle_energy = G4SPSEneDistribution::GenerateOne( a );
 
- return particle_energy ;
+  return particle_energy ;
 
 }
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 //PY.Descourt 08/09/2009
 void GateSPSEneDistribution::GenerateRangeEnergy()
 {
-
-particle_energy = (m_Emin  + G4UniformRand() * m_EnergyRange) ;
-
-
+  particle_energy = (m_Emin  + G4UniformRand() * m_EnergyRange) ;
 }
+//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 // BuildSpectrum fonction read a file which contain in first line mode of spectrum (Spectrum line (1), Histogramm (2)
 // or linear interpolated spectrum (3)) in first and in second start energy for the spectrum. Start energy it used only
 // for histogram mode but you want give default value (0 for example), even if this value don't serve for mode (1) and (3)
@@ -135,6 +157,8 @@ void GateSPSEneDistribution::BuildUserSpectrum(G4String FileName)
   std::ifstream inputFile (FileName.data());
   G4int nline(0);
   if(inputFile) {
+    skipComment(inputFile);
+
     G4String line;
     G4double proba_read;
     G4double energy_read;
@@ -147,8 +171,6 @@ void GateSPSEneDistribution::BuildUserSpectrum(G4String FileName)
     while(getline(inputFile, line)) nline++; // count number of line of inputFile
     m_dim_spectrum = nline-1;
 
-
-
     // create two tables for energy and probability
     m_tab_energy= new G4double[m_dim_spectrum];
     m_tab_proba= new G4double[m_dim_spectrum];
@@ -158,7 +180,7 @@ void GateSPSEneDistribution::BuildUserSpectrum(G4String FileName)
     inputFile.clear();
     inputFile.seekg(cursor_position, inputFile.beg); // return to the 2nd line in the file
 
-     while(nline<m_dim_spectrum){
+    while(nline<m_dim_spectrum){
       inputFile >> energy_read;
       inputFile >> proba_read;
 
@@ -167,73 +189,68 @@ void GateSPSEneDistribution::BuildUserSpectrum(G4String FileName)
       nline++;
     }
 
-
     inputFile.close();
-
 
     // Construct probability table
     m_sum_proba=0;
     nline=0;
 
     switch(m_mode){
-      case 1: // probability table to create discrete spectrum
-        G4cout << "Discrete spectrum\n";
-        m_tab_sumproba=new G4double[m_dim_spectrum];
-        while(nline<m_dim_spectrum){
-          m_sum_proba=m_sum_proba+m_tab_proba[nline];
-          m_tab_sumproba[nline]=m_sum_proba;
-          nline++;
-        }
-        PrintMessage();
-        break;
-      case 2: // probability table to create histogram
-        G4cout << "Histogram spectrum\n";
-        m_tab_sumproba=new G4double[m_dim_spectrum];
-        m_sum_proba=m_tab_proba[0]*(m_tab_energy[0]-m_Emin);
-        m_tab_sumproba[0]=m_sum_proba;
-        for(nline=1;nline<m_dim_spectrum;nline++){
-          m_sum_proba=m_sum_proba+(m_tab_energy[nline]-m_tab_energy[nline-1])*m_tab_proba[nline];
-          m_tab_sumproba[nline]=m_sum_proba;
-        }
-        PrintMessage();
-        break;
-      case 3: // probability table to create interpolated spectrum
-        G4cout << "Interpolated spectrum\n";
-        m_tab_sumproba= new G4double[m_dim_spectrum-1];
-        for(nline=1;nline<m_dim_spectrum;nline++){
-          m_sum_proba=m_sum_proba+(m_tab_energy[nline]-m_tab_energy[nline-1])*m_tab_proba[nline-1]-0.5*(m_tab_energy[nline]-m_tab_energy[nline-1])*(m_tab_proba[nline-1]-m_tab_proba[nline]);
-          m_tab_sumproba[nline-1]=m_sum_proba;
-        }
-        PrintMessage();
-        break;
-      default:
-      G4Exception("GateSPSEneDistribution::BuildUserSpectrum", "BuildUserSpectrum", FatalException, "Spectrum mode is not recognized, check your spectrum file." );
-        break;
-
+    case 1: // probability table to create discrete spectrum
+      GateMessage("Beam", 2, "Reading UserSpectrum: type is 1=Discrete." << Gateendl);
+      m_tab_sumproba=new G4double[m_dim_spectrum];
+      while(nline<m_dim_spectrum){
+        m_sum_proba=m_sum_proba+m_tab_proba[nline];
+        m_tab_sumproba[nline]=m_sum_proba;
+        nline++;
+      }
+      GateMessage("Beam", 2, "Reading UserSpectrum done. " << m_dim_spectrum << " bins." << Gateendl);
+      break;
+    case 2: // probability table to create histogram
+      GateMessage("Beam", 2, "Reading UserSpectrum: type is 2=Histogram." << Gateendl);
+      m_tab_sumproba=new G4double[m_dim_spectrum];
+      m_sum_proba=m_tab_proba[0]*(m_tab_energy[0]-m_Emin);
+      m_tab_sumproba[0]=m_sum_proba;
+      for(nline=1;nline<m_dim_spectrum;nline++){
+        m_sum_proba=m_sum_proba+(m_tab_energy[nline]-m_tab_energy[nline-1])*m_tab_proba[nline];
+        m_tab_sumproba[nline]=m_sum_proba;
+      }
+      GateMessage("Beam", 2, "Reading UserSpectrum done. " << m_dim_spectrum << " bins." << Gateendl);
+      break;
+    case 3: // probability table to create interpolated spectrum
+      GateMessage("Beam", 2, "Reading UserSpectrum: type is 3=Interpolated." << Gateendl);
+      m_tab_sumproba= new G4double[m_dim_spectrum-1];
+      for(nline=1;nline<m_dim_spectrum;nline++){
+        m_sum_proba=m_sum_proba+(m_tab_energy[nline]-m_tab_energy[nline-1])*m_tab_proba[nline-1]-0.5*(m_tab_energy[nline]-m_tab_energy[nline-1])*(m_tab_proba[nline-1]-m_tab_proba[nline]);
+        m_tab_sumproba[nline-1]=m_sum_proba;
+      }
+      GateMessage("Beam", 2, "Reading UserSpectrum done. " << m_dim_spectrum << " bins." << Gateendl);
+      break;
+    default:
+      G4Exception("GateSPSEneDistribution::BuildUserSpectrum", "BuildUserSpectrum", FatalException, "Spectrum mode is not recognized, check your spectrum file. Use 1,2 or 3 (Discrete/Histogram/Interpolated)." );
+      break;
     }
-
   }
-
-  else
-  {
+  else {
     G4Exception("GateSPSEneDistribution::BuildUserSpectrum", "BuildUserSpectrum", FatalException, "The User Spectrum is not found." );
-  }
+    }
 }
+//-----------------------------------------------------------------------------
 
 
-
+//-----------------------------------------------------------------------------
 void GateSPSEneDistribution::GenerateFromUserSpectrum()
 {
 
-G4int i=0;
-G4double pEnergy(0);
-G4double my_rndm=G4UniformRand();
-while(my_rndm>=(m_tab_sumproba[i])/m_sum_proba) i++;
+  G4int i=0;
+  G4double pEnergy(0);
+  G4double my_rndm=G4UniformRand();
+  while(my_rndm>=(m_tab_sumproba[i])/m_sum_proba) i++;
 
 
-G4double a,b,alpha,beta,gamma,X;
+  G4double a,b,alpha,beta,gamma,X;
 
-switch(m_mode){
+  switch(m_mode){
   case 1:
     //Discrete Spectrum
     pEnergy= m_tab_energy[i];
@@ -242,9 +259,9 @@ switch(m_mode){
   case 2:
     //Histogram spectrum
     if(i==0) {
-	pEnergy = G4RandFlat::shoot(m_Emin, m_tab_energy[0]);
+      pEnergy = G4RandFlat::shoot(m_Emin, m_tab_energy[0]);
     } else {
-	pEnergy = G4RandFlat::shoot(m_tab_energy[i-1], m_tab_energy[i]);
+      pEnergy = G4RandFlat::shoot(m_tab_energy[i-1], m_tab_energy[i]);
     }
     break;
   case 3:
@@ -265,13 +282,8 @@ switch(m_mode){
     pEnergy=0;
     break;
 
+  }
+
+  particle_energy = pEnergy;
 }
-
-    particle_energy = pEnergy;
-
-
-}
-
-void GateSPSEneDistribution::PrintMessage() {
-  G4cout << "####Energy spectrum correctly uploaded###\n";
-}
+//-----------------------------------------------------------------------------
