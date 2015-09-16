@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Ensures the output of the test will not be truncated.
 echo CTEST_FULL_OUTPUT
 echo
@@ -93,7 +94,7 @@ echo
 echo
 echo "--------------------------------------------------------------------------------------------------"
 echo "For debugging information, here is the generated output of the simulation launched with Gate binary:"
-less gate_simulation_log.txt
+cat gate_simulation_log.txt
 echo "--------------------------------------------------------------------------------------------------"
 
 
