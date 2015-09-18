@@ -91,7 +91,7 @@ void GateSteppingActionMessenger::SetNewValue(G4UIcommand * command,G4String new
   }
   if( command == PolicyCmd )
   {
-    G4cout << " ======== Stepping Policies =========" << G4endl;
+    G4cout << " ======== Stepping Policies =========\n";
     if ( newValue == "StopOnPhantomBoundary" ) {
       myAction->StopOnBoundary(1);
       return;
@@ -110,7 +110,7 @@ void GateSteppingActionMessenger::SetNewValue(G4UIcommand * command,G4String new
     if ( newValue == "Both"   ) { theMode = kBoth;     }
     if ( newValue == "Detector" ) { theMode = kDetector;   }
     if ( theMode  == kUnknown ) {
-         G4cout << " Gate Application Manager WARNING : The Application mode " << newValue <<" is not known. Switching to Normal Mode ..." << G4endl;theMode = kBoth;
+         G4cout << " Gate Application Manager WARNING : The Application mode " << newValue <<" is not known. Switching to Normal Mode ...\n";theMode = kBoth;
     }
     myAction->SetMode(theMode);
     return;

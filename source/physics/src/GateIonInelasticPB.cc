@@ -52,7 +52,7 @@ G4VProcess* GateIonInelasticPB::CreateProcess(G4ParticleDefinition * par)
   else {
     GateError("Error in GateIonInelasticPB::CreateProcess particle should be GenericIon/Triton/Alpha/Deuteron " 
 	      << "\n while it is " << par->GetParticleName() 
-	      << G4endl);
+	      << Gateendl);
     return NULL;
   }
 }

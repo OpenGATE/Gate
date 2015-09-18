@@ -42,6 +42,6 @@ void GateBlurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& ou
 
 void GateBlurring::DescribeMyself(size_t indent)
 {
- G4cout << GateTools::Indent(indent) << "Blurring law:\t" << m_blurringLaw->GetObjectName() << G4endl;
+ G4cout << GateTools::Indent(indent) << "Blurring law:\t" << m_blurringLaw->GetObjectName() << Gateendl;
  m_blurringLaw->DescribeMyself();
 }

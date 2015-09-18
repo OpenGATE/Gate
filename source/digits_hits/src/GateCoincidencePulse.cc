@@ -31,13 +31,13 @@ void GateCoincidencePulse::push_back(GatePulse* newPulse)
 
 std::ostream& operator<<(std::ostream& flux, const GateCoincidencePulse& pulse)
 {
-  flux    << "----GateCoincidencePulse----"   	      	      	      	       << G4endl
-      	  << "\tStart  " << G4BestUnit(pulse.m_startTime,"Time") 	       << G4endl
-      	  << "\tOffset  "<< G4BestUnit(pulse.m_offsetWindow,"Time") 	       << G4endl
-	  << "\tWindow " << G4BestUnit(pulse.m_coincidenceWindow,"Time")       << G4endl ;
+  flux    << "----GateCoincidencePulse----"   	      	      	      	       << Gateendl
+      	  << "\tStart  " << G4BestUnit(pulse.m_startTime,"Time") 	       << Gateendl
+      	  << "\tOffset  "<< G4BestUnit(pulse.m_offsetWindow,"Time") 	       << Gateendl
+	  << "\tWindow " << G4BestUnit(pulse.m_coincidenceWindow,"Time")       << Gateendl ;
   for (size_t i=0; i<pulse.size(); i++)
      flux << *(pulse[i]) << "\n";
-  flux    << "----------------------------"   	      	      	      	       << G4endl;
+  flux    << "----------------------------"   	      	      	      	       << Gateendl;
 
   return flux;
 }

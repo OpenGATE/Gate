@@ -8,7 +8,7 @@ See GATE/LICENSE.txt for further details
 
 
 #include "GateFilterManager.hh"
-
+#include "GateMessageManager.hh"
 
 
 //---------------------------------------------------------------------------
@@ -71,13 +71,13 @@ G4bool GateFilterManager::Accept(const G4Track* aTrack) const
 
 //---------------------------------------------------------------------------
 void GateFilterManager::show(){
-  G4cout << "------Filter Manager: "<<mFilterName<<" ------"<<G4endl;
+  G4cout << "------Filter Manager: "<<mFilterName<<" ------\n";
 
   std::vector<GateVFilter*>::iterator sit;
   for(sit= theFilters.begin(); sit!=theFilters.end(); ++sit)
      (*sit)->show();
   
-  G4cout << "-------------------------------------------"<<G4endl;
+  G4cout << "-------------------------------------------\n";
 }
 //---------------------------------------------------------------------------
 

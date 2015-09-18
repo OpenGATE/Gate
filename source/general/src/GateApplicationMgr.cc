@@ -164,7 +164,7 @@ void GateApplicationMgr::SetTimeSlice(G4double timeSlice)
   }
   mCstTimeSliceIsSet = true;
   m_timeSlice = timeSlice;
-  //if (nVerboseLevel>0) G4cout << "Time Slice set to (s) " << m_timeSlice/s << G4endl;
+  //if (nVerboseLevel>0) G4cout << "Time Slice set to (s) " << m_timeSlice/s << Gateendl;
 }
 //------------------------------------------------------------------------------------------
 
@@ -182,7 +182,7 @@ void GateApplicationMgr::SetTimeInterval(G4double v)
   mTimeSliceIsSetUsingAddSlice = true;
 
   listOfTimeSlice.push_back(v);
-  //if (nVerboseLevel>0) G4cout << "Time Slice set to (s) " << m_timeSlice/s << G4endl;
+  //if (nVerboseLevel>0) G4cout << "Time Slice set to (s) " << m_timeSlice/s << Gateendl;
 }
 //------------------------------------------------------------------------------------------
 
@@ -232,7 +232,7 @@ void GateApplicationMgr::SetTimeStart(G4double timeStart)
     GateError("setTimeStart command cannot be used with readTimeSlicesIn command. The first time in file is taken as timeStart.");
   }
   m_timeStart = timeStart;
-  if (nVerboseLevel>0) G4cout << "Time Start set to (s) " << m_timeStart/s << G4endl;
+  if (nVerboseLevel>0) G4cout << "Time Start set to (s) " << m_timeStart/s << Gateendl;
 }
 //------------------------------------------------------------------------------------------
 
@@ -252,7 +252,7 @@ void GateApplicationMgr::SetTimeStop(G4double timeStop)
     GateError("setTimeStop shoud not be negative");
   }
   m_timeStop = timeStop;
-  if (nVerboseLevel>0) G4cout << "Time Stop set to (s) " << m_timeStop/s << G4endl;
+  if (nVerboseLevel>0) G4cout << "Time Stop set to (s) " << m_timeStop/s << Gateendl;
 }
 //------------------------------------------------------------------------------------------
 
@@ -299,7 +299,7 @@ void GateApplicationMgr::StartDAQ()
   // filename given. In this case we disable the output module and send a warning.
   GateOutputMgr::GetInstance()->CheckFileNameForAllOutput();
 
-  GateMessage("Acquisition", 0,"                                     \n");
+  GateMessage("Acquisition", 0,"  \n");
   GateMessage("Acquisition", 0, "============= Source initialization =============\n");
  
   // Compute timeStop according to time slices
@@ -319,7 +319,7 @@ void GateApplicationMgr::StartDAQ()
     listOfEndTimeSlice.push_back(time);
   }
 
-  GateMessage("Acquisition", 0,"                                     \n");
+  GateMessage("Acquisition", 0,"  \n");
   GateMessage("Acquisition", 0, "============= Acquisition starts! =============\n");
 
   // Check if start/stop ok
@@ -363,7 +363,7 @@ void GateApplicationMgr::StartDAQ()
                 << initialLastSlice/s << " sec to "
                 << listOfTimeSlice.back()/s << " sec, to reach "
                 << mTotalNbOfParticles << " primaries. TimeStop is now " << GetTimeStop()/s
-                << std::endl);
+                << Gateendl);
   }
   */
 
@@ -399,7 +399,7 @@ void GateApplicationMgr::StartDAQ()
                     << initialLastSlice/s << " sec to "
                     << listOfTimeSlice.back()/s << " sec, to reach "
                     << mTotalNbOfParticles << " primaries. TimeStop is now " << GetTimeStop()/s
-                    << std::endl);
+                    << Gateendl);
       }
     }
   }*/
@@ -407,7 +407,7 @@ void GateApplicationMgr::StartDAQ()
  /* if (mATotalAmountOfPrimariesIsRequested) {
     if (mRequestedAmountOfPrimaries != mTotalNbOfParticles) {
       GateError("Requested nb of primaries is " << mRequestedAmountOfPrimaries
-                << " but planned is " << mTotalNbOfParticles << G4endl);
+                << " but planned is " << mTotalNbOfParticles << Gateendl);
     }
   }*/
 
@@ -432,7 +432,7 @@ void GateApplicationMgr::StartDAQ()
   }
 
  /* if (m_timeSlice > m_timeStop - m_timeStart) {
-    if (nVerboseLevel>0) G4cout << "WARNING: Time Slice bigger than DAQ total time" << G4endl;
+    if (nVerboseLevel>0) G4cout << "WARNING: Time Slice bigger than DAQ total time\n";
   }*/
 
   m_exitFlag = false;
@@ -442,7 +442,7 @@ void GateApplicationMgr::StartDAQ()
 
   G4int slice=0;
   while ((m_time < m_timeStop) && (!m_exitFlag) && (!m_pauseFlag)) {
-    //  GateMessage("Acquisition", 0, G4endl);
+    //  GateMessage("Acquisition", 0, Gateendl);
 
     double time1 = GetTimeStart();
     double time2 = 0.;
@@ -470,11 +470,11 @@ void GateApplicationMgr::StartDAQ()
     //m_time += listOfTimeSlice[slice];//m_timeSlice;
     //GateMessage("Acquisition", 0, "Slice after time = " << m_time/s << "\n");
 
-    GateMessage("Geometry", 5, " Time is going to be change :  = " << m_time/s << G4endl;);
+    GateMessage("Geometry", 5, " Time is going to be change :  = " << m_time/s << Gateendl;);
     slice++;
     theClock->SetTime(m_time);
 
-    //GateMessage("Geometry", 0, "Change geom status !!!" << G4endl);
+    //GateMessage("Geometry", 0, "Change geom status !!!\n");
     //GateDetectorConstruction::GetGateDetectorConstruction()->SetGeometryStatusFlag(GateDetectorConstruction::geometry_needs_rebuild);
   }
   
@@ -482,7 +482,7 @@ void GateApplicationMgr::StartDAQ()
 
 
   for(int nsource= 0 ; nsource<GateSourceMgr::GetInstance()->GetNumberOfSources() ; nsource++ )
-    GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgr::GetInstance()->GetNumberOfEventBySource(nsource+1)<<G4endl);
+    GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgr::GetInstance()->GetNumberOfEventBySource(nsource+1)<< Gateendl);
 
 }
 //------------------------------------------------------------------------------------------
@@ -495,7 +495,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
   // filename given. In this case we disable the output module and send a warning.
   GateOutputMgr::GetInstance()->CheckFileNameForAllOutput();
 
-  GateMessage("Acquisition", 0,"                                     \n");
+  GateMessage("Acquisition", 0,"  \n");
   GateMessage("Acquisition", 0, "============= Source initialization =============\n");
 
   // Compute timeStop according to time slices
@@ -514,7 +514,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
     listOfEndTimeSlice.push_back(time);
   }
 
-  GateMessage("Acquisition", 0,"                                     \n");
+  GateMessage("Acquisition", 0,"  \n");
   GateMessage("Acquisition", 0, "============= Acquisition starts! =============\n");
 
   // Check if start/stop ok
@@ -547,14 +547,14 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
   m_pauseFlag = false;
 
 
-  for (unsigned int i=0; i<listOfTimeSlice.size(); i++) G4cout << "Slice n° " << i << "  | Time: " << listOfTimeSlice[i] << G4endl;
+  for (unsigned int i=0; i<listOfTimeSlice.size(); i++) G4cout << "Slice n° " << i << "  | Time: " << listOfTimeSlice[i] << Gateendl;
 
   // ========================================================================================================
   // It is where the startDAQCluster command differs from the normal startDAQ command
 
   m_virtualStart= param[0]; // defined from macro from splitter
   m_virtualStop = param[1]; // this one too
-  if (nVerboseLevel>0) G4cout << "Cluster: virtual time start " <<m_virtualStart/s<<", virtual time stop "<<m_virtualStop/s<<G4endl;
+  if (nVerboseLevel>0) G4cout << "Cluster: virtual time start " <<m_virtualStart/s<<", virtual time stop "<<m_virtualStop/s<< Gateendl;
 
   G4double real_timeStop  = m_timeStop;
   m_timeStop=m_virtualStop;
@@ -572,7 +572,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
   m_time=virtualTime-listOfTimeSlice[slice-1];
   GateRunManager::GetRunManager()->SetRunIDCounter(slice-1);
   theClock->SetTime(m_time);
-  if (nVerboseLevel>0) G4cout << "Cluster: time start for geometry" <<m_time<<", runID moved to "<<slice-1<<G4endl;
+  if (nVerboseLevel>0) G4cout << "Cluster: time start for geometry" <<m_time<<", runID moved to "<<slice-1<< Gateendl;
 
   if (mOutputMode) GateOutputMgr::GetInstance()->RecordBeginOfAcquisition();
 
@@ -612,7 +612,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
   if (mOutputMode) GateOutputMgr::GetInstance()->RecordEndOfAcquisition();
 
   for(int nsource= 0 ; nsource<GateSourceMgr::GetInstance()->GetNumberOfSources() ; nsource++ )
-    GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgr::GetInstance()->GetNumberOfEventBySource(nsource+1)<<G4endl);
+    GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgr::GetInstance()->GetNumberOfEventBySource(nsource+1)<< Gateendl);
 
   // ========================================================================================================
 }
@@ -638,12 +638,12 @@ void GateApplicationMgr::PauseDAQ()
 //------------------------------------------------------------------------------------------
 void GateApplicationMgr::Describe() 
 {
-  G4cout << "Data Acquisition summary" << G4endl
-	 << "  time slice (s) : " << m_timeSlice/s << G4endl
-	 << "  time start (s) : " << m_timeStart/s << G4endl
-	 << "  time stop  (s) : " << m_timeStop/s  << G4endl
-	 << "------------------ " << G4endl
-	 << G4endl;
+  G4cout << "Data Acquisition summary\n"
+	 << "  time slice (s) : " << m_timeSlice/s << Gateendl
+	 << "  time start (s) : " << m_timeStart/s << Gateendl
+	 << "  time stop  (s) : " << m_timeStop/s  << Gateendl
+	 << "------------------ \n"
+	 << Gateendl;
 }
 //------------------------------------------------------------------------------------------
 
@@ -709,7 +709,7 @@ void GateApplicationMgr::EnableTimeStudyForSteps(G4String filename)
 
 void GateApplicationMgr::PrintStatus()
 {
-    const G4Run * run = G4RunManager::GetRunManager()->GetCurrentRun();
+    const G4Run * run = GateRunManager::GetRunManager()->GetCurrentRun();
     const int runID = run->GetRunID() + 1;
     const int runTotal = listOfTimeSlice.size();
 
@@ -727,5 +727,5 @@ void GateApplicationMgr::PrintStatus()
     std::clog << "Run ID : " << runID << " / " << runTotal
     << " ; Event ID : " << eventID << " / " << eventTotal
     << " ; " << GetCurrentTime()/CLHEP::s << " / " << GetTimeStop()/CLHEP::s << " s [" << floor(GetCurrentTime()*10000.0/GetTimeStop())/100 << "%]"
-    << std::endl;
+    << Gateendl;
 }

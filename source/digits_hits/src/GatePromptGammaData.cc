@@ -155,6 +155,15 @@ void GatePromptGammaData::Read(std::string & filename)
     dir->GetObject("SigmaInelastic", pHEpSigmaInelastic);
     dir->GetObject("EpInelasticProducedGamma", pHEpInelasticProducedGamma);
 
+    if (GammaZ == NULL) GateError("No branch 'GammaZ' in the database '" << mFilename << "'. Wrong root file ?");
+    if (Ngamma == NULL) GateError("No branch 'Ngamma' in the database '" << mFilename << "'. Wrong root file ?");
+    if (pHEpEpg == NULL) GateError("No branch 'EpEpg' in the database '" << mFilename << "'. Wrong root file ?");
+    if (pHEpEpgNormalized == NULL) GateError("No branch 'EpEpgNorm' in the database '" << mFilename << "'. Wrong root file ?");
+    if (pHEpInelastic == NULL) GateError("No branch 'EpInelastic' in the database '" << mFilename << "'. Wrong root file ?");
+    if (pHEp == NULL) GateError("No branch 'Ep' in the database '" << mFilename << "'. Wrong root file ?");
+    if (pHEpSigmaInelastic == NULL) GateError("No branch 'SigmaInelastic' in the database '" << mFilename << "'. Wrong root file ?");
+    if (pHEpInelasticProducedGamma == NULL) GateError("No branch 'EpInelasticProducedGamma' in the database '" << mFilename << "'. Wrong root file ?");
+
     // Set the pointers in the lists (have been changed by GetObject)
     GammaZList[elem->GetIndex()] = GammaZ;
     NgammaList[elem->GetIndex()] = Ngamma;
@@ -282,7 +291,6 @@ void GatePromptGammaData::InitializeMaterial()
   GammaM.resize(n);
   NgammaM.resize(n);
 
-  //std::cout << "number of materials in InitMat: " << n <<std::endl;
   for(unsigned int i=0; i<n; i++) {
     bool stop = false;
     const G4Material * m = matTable[i];
@@ -300,10 +308,6 @@ void GatePromptGammaData::InitializeMaterial()
         }
       }
     }
-    //std::cout<< "Mat index " << i << std::endl;
-    //std::cout<< "Mat name " << m->GetName() << std::endl;
-    //std::cout<< "Num elements " << m->GetNumberOfElements() << std::endl;
-    //std::cout<< "stop? " << stop << std::endl;
 
     if (!stop) {
       GateMessage("Actor", 1, "Create DB for " << m->GetName()
@@ -317,6 +321,8 @@ void GatePromptGammaData::InitializeMaterial()
         h->SetBins(gamma_bin, min_gamma_energy, max_gamma_energy);
 
         // Loop over element
+        TH1D * proj = pHEpEpgNormalized->ProjectionY("", j, j);
+
         for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
           const G4Element * elem = m->GetElement(e);
           double f = m->GetFractionVector()[e];
@@ -325,13 +331,16 @@ void GatePromptGammaData::InitializeMaterial()
             // (If hydrogen probability is zero)
             // Get histogram for the current bin
             SetCurrentPointerForThisElement(elem);
-            TH1D * he = new TH1D(*pHEpEpgNormalized->ProjectionY("", j, j));
+            TH1D * he = new TH1D(*proj); // copy the projection
 
             // Scale it according to the fraction of this element in the material
             he->Scale(f);
 
             // Add it to the current total histo
             h->Add(he);
+
+            // remove temporary allocated TH1D (important !)
+            delete he;
           }
         }
         mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
@@ -340,8 +349,10 @@ void GatePromptGammaData::InitializeMaterial()
       //Build GammaZ -> GammaM, EpEpg=Ngamma(z,E) -> Ngamma(m,E)
       TH2D * hgammam = new TH2D();
       TH2D * hngammam = new TH2D();
-      hgammam->SetBins(proton_bin, min_proton_energy, max_proton_energy, gamma_bin, min_gamma_energy, max_gamma_energy); //same arrangement as GammaZ
-      hngammam->SetBins(proton_bin, min_proton_energy, max_proton_energy, gamma_bin, min_gamma_energy, max_gamma_energy);
+      hgammam->SetBins(proton_bin, min_proton_energy, max_proton_energy,
+                       gamma_bin, min_gamma_energy, max_gamma_energy); //same arrangement as GammaZ
+      hngammam->SetBins(proton_bin, min_proton_energy, max_proton_energy,
+                        gamma_bin, min_gamma_energy, max_gamma_energy);
       // Loop over element
       for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
         const G4Element * elem = m->GetElement(e);
@@ -352,31 +363,24 @@ void GatePromptGammaData::InitializeMaterial()
           // (If hydrogen probability is zero)
           // Get histogram for the current bin
           SetCurrentPointerForThisElement(elem);
-          //TH2D * hgammam2 = new TH2D *GammaZ->Clone();
-          //TH2D * hngammam2 = new TH2D *Ngamma->Clone();
           TH2D * hngammam2 = (TH2D*) Ngamma->Clone();
           TH2D * hgammam2 = (TH2D*) GammaZ->Clone();
 
           // Scale it according to the fraction of this element in the material, multiplied with density ratio
           hgammam2->Scale(f * m->GetDensity() / (g / cm3) );// GammaZ=GammaZ/rho(Z), so dont need to divide by rho(Z)
           hngammam2->Scale(f * m->GetDensity() / (g / cm3) );
-          //DD("promptgammadata name "<<m->GetName() );
-          //DD("promptgammadata density "<<m->GetDensity() / (g / cm3));
 
           // Add it to the current total histo
           hgammam->Add(hgammam2);
           hngammam->Add(hngammam2);
+
+          // delete temporary TH2D
+          delete hngammam2;
+          delete hgammam2;
         }
       }
       GammaM[i] = hgammam; //Now it's no longer modulo rho(Z), or rho(M)!!!
       NgammaM[i] = hngammam;
-
-      /* Enable to dump the generated PGDBs for each material.
-      std::string outfilename = "brent" +m->GetName()+".root";
-      TFile *myfile = new TFile(outfilename.c_str(), "RECREATE");
-      hgammam->Write();
-      myfile->Close();
-      */
     }
   }
 }
@@ -438,4 +442,3 @@ TH2D* GatePromptGammaData::GetGammaM(const int & materialIndex)
   return GammaM[materialIndex];
 }
 //-----------------------------------------------------------------------------
-

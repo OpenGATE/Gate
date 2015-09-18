@@ -75,7 +75,7 @@ G4LogicalVolume* GateGenericTrap::ConstructOwnSolidAndLogicalVolume(G4Material* 
    }
    else {
      // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateGenericTrap::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<G4endl);
+       GateMessage("Warning", 0, "GateGenericTrap::ConstructOwnSolidAndLogicalVolume update mode not implemented\n");
    }
    return m_generictrap_log;
 }
@@ -94,11 +94,11 @@ void GateGenericTrap::DestroyOwnSolidAndLogicalVolume()
 
 void GateGenericTrap::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: generic trapezoid (generictrapezoid)" << G4endl;
-  G4cout << GateTools::Indent(level) << "Z length: " << G4BestUnit(m_zLength,"Length") << G4endl;
+  G4cout << GateTools::Indent(level) << "Shape: generic trapezoid (generictrapezoid)\n";
+  G4cout << GateTools::Indent(level) << "Z length: " << G4BestUnit(m_zLength,"Length") << Gateendl;
   for (std::vector<G4TwoVector>::iterator i=m_vertices.begin(); i!=m_vertices.end(); ++i) {
       G4cout << GateTools::Indent(level) << "vertex at: (" << G4BestUnit((*i).x(),"Length") << ", "
-							   << G4BestUnit((*i).x(),"Length") << ")" << G4endl;
+							   << G4BestUnit((*i).x(),"Length") << ")\n";
   }
 }
 

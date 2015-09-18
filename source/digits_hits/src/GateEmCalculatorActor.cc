@@ -30,11 +30,11 @@
 GateEmCalculatorActor::GateEmCalculatorActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateEmCalculatorActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateEmCalculatorActor() -- begin\n");
   //SetTypeName("EmCalculatorActor");
 //  pActor = new GateActorMessenger(this);
   ResetData();
-  GateDebugMessageDec("Actor",4,"GateEmCalculatorActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateEmCalculatorActor() -- end\n");
 
   mEnergy = 100 ;
   mPartName = "proton";
@@ -126,10 +126,10 @@ void GateEmCalculatorActor::SaveData()
             }
     }
 
-      os << "# Output calculted for the following parameters:" << std::endl;
-      os << "# Energy\t" << mEnergy << " MeV" << std::endl;
-      os << "# Particle\t" << mPartName << "\n" << std::endl;
-      os << "# And for the following materials" << std::endl;
+      os << "# Output calculted for the following parameters:\n";
+      os << "# Energy\t" << mEnergy << " MeV\n";
+      os << "# Particle\t" << mPartName << "\n\n";
+      os << "# And for the following materials\n";
 // labels
       os << "Material\t";
       os << "Density\t\t";
@@ -139,7 +139,7 @@ void GateEmCalculatorActor::SaveData()
       os << "EM-DEDX\t\t";
       os << "Nucl-DEDX\t";
       os << "Tot-DEDX\t";
-      os << "Mu_mass" << std::endl;
+      os << "Mu_mass\n";
 // units
       os << "\t\t";
       os << "(g/cm³)\t\t";
@@ -149,7 +149,7 @@ void GateEmCalculatorActor::SaveData()
       os << "(MeV.cm²/g)\t";
       os << "(MeV.cm²/g)\t";
       os << "(MeV.cm²/g)\t";
-      os << "(cm²/g)" << std::endl;
+      os << "(cm²/g)\n";
 
   for(size_t k=0;k<G4Material::GetNumberOfMaterials();k++)
     {
@@ -182,11 +182,11 @@ void GateEmCalculatorActor::SaveData()
       os << EmDEDX*10./(e_SI*density) << "\t\t";
       os << NuclearDEDX*10./(e_SI*density) << "\t";
       os << TotalDEDX*10./(e_SI*density) << "\t\t";
-      os << MuMassCoeficient << std::endl;
+      os << MuMassCoeficient << Gateendl;
     }
 
   if (!os) {
-    GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << G4endl);
+    GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << Gateendl);
   }
   os.flush();
   os.close();

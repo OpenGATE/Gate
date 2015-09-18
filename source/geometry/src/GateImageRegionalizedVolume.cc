@@ -35,7 +35,7 @@ GateImageRegionalizedVolume::GateImageRegionalizedVolume(const G4String& name,
 							 G4int depth)
   : GateVImageVolume(name,acceptsChildren,depth)
 {
-  GateMessageInc("Volume",5,"GateImageRegionalizedVolume() - begin"<<G4endl);
+  GateMessageInc("Volume",5,"GateImageRegionalizedVolume() - begin\n");
 
   // messenger
   pMessenger = new GateImageRegionalizedVolumeMessenger(this);
@@ -43,7 +43,7 @@ GateImageRegionalizedVolume::GateImageRegionalizedVolume(const G4String& name,
   kCarTolerance = G4GeometryTolerance::GetInstance()->GetSurfaceTolerance();
   mDistanceMapFilename = "none";
   pDistanceMap = 0;
-  GateMessageDec("Volume",5,"GateImageRegionalizedVolume() - end"<<G4endl);
+  GateMessageDec("Volume",5,"GateImageRegionalizedVolume() - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ GateImageRegionalizedVolume::GateImageRegionalizedVolume(const G4String& name,
 /// Destructor
 GateImageRegionalizedVolume::~GateImageRegionalizedVolume()
 {
-  GateMessageInc("Volume",5,"~GateImageRegionalizedVolume() - begin"<<G4endl);
+  GateMessageInc("Volume",5,"~GateImageRegionalizedVolume() - begin\n");
 
   for(std::map<LabelType,GateImageRegionalizedSubVolume*>::iterator i = mLabelToSubVolume.begin();
       i!=mLabelToSubVolume.end(); i++) {
@@ -77,7 +77,7 @@ GateImageRegionalizedVolume::~GateImageRegionalizedVolume()
 
   if(pDistanceMap) delete pDistanceMap;
   if(pMessenger) delete pMessenger;
-  GateMessageInc("Volume",5,"~GateImageRegionalizedVolume() - end"<<G4endl);
+  GateMessageInc("Volume",5,"~GateImageRegionalizedVolume() - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -87,7 +87,7 @@ GateImageRegionalizedVolume::~GateImageRegionalizedVolume()
 G4LogicalVolume* GateImageRegionalizedVolume::ConstructOwnSolidAndLogicalVolume(G4Material* mater,
 										G4bool /*flagUpdateOnly*/)
 {
-  GateMessage("Volume",1,"Begin GateImageRegionalizedVolume::ConstructOwnSolidAndLogicalVolume() - begin" << G4endl);
+  GateMessage("Volume",1,"Begin GateImageRegionalizedVolume::ConstructOwnSolidAndLogicalVolume() - begin\n");
 
   //---------------------------
   if (mIsBoundingBoxOnlyModeEnabled) {
@@ -128,7 +128,7 @@ void  GateImageRegionalizedVolume::ImageAndTableFilenamesOK()
 /// Creates the sub volumes
 void  GateImageRegionalizedVolume::CreateSubVolumes()
 {
-  GateMessageInc("Volume",1,"Begin GateImageRegionalizedVolume::CreateSubVolumes() - begin" << G4endl);
+  GateMessageInc("Volume",1,"Begin GateImageRegionalizedVolume::CreateSubVolumes() - begin\n");
 
   //-----------------------------
   // Load data
@@ -143,10 +143,10 @@ void  GateImageRegionalizedVolume::CreateSubVolumes()
   // Creation of the sub-volumes
   std::vector<LabelType>::iterator i;
   for (i=labels.begin();i!=labels.end();++i) {
-    GateMessage("Volume",4,"* Label "<< *i <<G4endl);
+    GateMessage("Volume",4,"* Label "<< *i << Gateendl);
     // Gets material
     G4String matName = GetMaterialNameFromLabel(*i);
-    GateMessage("Volume",4,"  - Material name <"<< matName<<">"<<G4endl);
+    GateMessage("Volume",4,"  - Material name <"<< matName<<">\n");
 
     G4String name = GetObjectName()+matName;
 
@@ -174,7 +174,7 @@ void  GateImageRegionalizedVolume::CreateSubVolumes()
   mInsideComputedByLastDTO = false;
   mLastDTIPointIsValid = false;
 
-  GateMessageDec("Volume",1,"Begin GateImageRegionalizedVolume::CreateSubVolumes() - end" << G4endl);
+  GateMessageDec("Volume",1,"Begin GateImageRegionalizedVolume::CreateSubVolumes() - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -183,16 +183,16 @@ void  GateImageRegionalizedVolume::CreateSubVolumes()
 /// Loads the distance map
 void GateImageRegionalizedVolume::LoadDistanceMap()
 {
-  GateMessageInc("Volume",3,"GateImageRegionalizedVolume::LoadDistanceMap("<<mDistanceMapFilename<<") - begin" << G4endl);
+  GateMessageInc("Volume",3,"GateImageRegionalizedVolume::LoadDistanceMap("<<mDistanceMapFilename<<") - begin\n");
 
   if (mDistanceMapFilename == "none") {
     GateError("ImageRegionalized Volume <" << GetObjectName()
 	      << "> : No distance map provided, the navigation could not be optimized."
-	      << G4endl
+	      << Gateendl
 	      << "Please use /gate/" << GetObjectName() << "/geometry/buildAndDumpDistanceTransfo dmap.mhd"
-	      << G4endl
+	      << Gateendl
 	      << "to generate the dmap and then, /gate/patient/geometry/distanceMap dmap.mhd to use it."
-	      << G4endl);
+	      << Gateendl);
     pDistanceMap = new DistanceMapType;
     pDistanceMap->SetResolutionAndHalfSize(GetImage()->GetResolution(), GetImage()->GetHalfSize());
     pDistanceMap->Allocate();
@@ -206,10 +206,10 @@ void GateImageRegionalizedVolume::LoadDistanceMap()
 
   // Check size
   if (!pDistanceMap->HasSameResolutionThan(GetImage())) {
-    GateError("Error distance map image does not have the same size than the image." << G4endl);
+    GateError("Error distance map image does not have the same size than the image.\n");
   }
 
-  GateMessageDec("Volume",3,"GateImageRegionalizedVolume::LoadDistanceMap("<<mDistanceMapFilename<<") - end" << G4endl);
+  GateMessageDec("Volume",3,"GateImageRegionalizedVolume::LoadDistanceMap("<<mDistanceMapFilename<<") - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -220,11 +220,11 @@ void GateImageRegionalizedVolume::LoadDistanceMap()
 //-----------------------------------------------------------------------------
 EInside GateImageRegionalizedVolume::Inside(const G4ThreeVector& p, LabelType label)
 {
-  GateDebugMessage("Volume", 6, "-----------------------------------------------------" << G4endl);
+  GateDebugMessage("Volume", 6, "-----------------------------------------------------\n");
   GateDebugMessage("Volume", 6,
 		   "\tGateImageRegionalizedVolume[" << GetObjectName() << "]::Inside("
 		   << p <<",lab=" << label << "["<<GetMaterialNameFromLabel(label) << "])"
-		   <<G4endl);
+		   << Gateendl);
 
   static G4ThreeVector sLastPoint(0,0,0);
 
@@ -241,18 +241,18 @@ EInside GateImageRegionalizedVolume::Inside(const G4ThreeVector& p, LabelType la
 
   // Outside the BBox ? A ENLEVER ????
   if (GetSolid()->Inside(p) == kOutside ) {
-    GateDebugMessage("Volume", 6, "\t** result = **OUTSIDE** the box" << G4endl);
+    GateDebugMessage("Volume", 6, "\t** result = **OUTSIDE** the box\n");
     return kOutside;
   }
 
   // Else ...
   int i,j,k;
   GetImage()->GetCoordinatesFromPosition(p,i,j,k);
-  GateDebugMessage("Volume", 6, "\tvox coords : "<<i<<" "<<j<<" "<<k<<G4endl);
+  GateDebugMessage("Volume", 6, "\tvox coords : "<<i<<" "<<j<<" "<<k<< Gateendl);
 
-  GateDebugMessage("Volume", 6, "\tix = " << GetImage()->GetXVoxelCornerFromXCoordinate(i) <<G4endl);
-  GateDebugMessage("Volume", 6, "\tkCarTolerance = " << kCarTolerance <<G4endl);
-  GateDebugMessage("Volume", 6, "\tp.x()-GetImage()->GetXVoxelCornerFromXCoordinate(i)=" << p.x()-GetImage()->GetXVoxelCornerFromXCoordinate(i)<<G4endl);
+  GateDebugMessage("Volume", 6, "\tix = " << GetImage()->GetXVoxelCornerFromXCoordinate(i) << Gateendl);
+  GateDebugMessage("Volume", 6, "\tkCarTolerance = " << kCarTolerance << Gateendl);
+  GateDebugMessage("Volume", 6, "\tp.x()-GetImage()->GetXVoxelCornerFromXCoordinate(i)=" << p.x()-GetImage()->GetXVoxelCornerFromXCoordinate(i)<< Gateendl);
 
   bool xsurf[2],ysurf[2],zsurf[2];
   // x surface ?
@@ -291,14 +291,14 @@ EInside GateImageRegionalizedVolume::Inside(const G4ThreeVector& p, LabelType la
     else zsurf[1] = false;
   }
 
-  GateDebugMessage("Volume", 6, "\tsurface ? xsurf " << xsurf[0] << " " << xsurf[1] << G4endl);
-  GateDebugMessage("Volume", 6, "\tsurface ? ysurf " << ysurf[0] << " " << ysurf[1] << G4endl);
-  GateDebugMessage("Volume", 6, "\tsurface ? zsurf " << zsurf[0] << " " << zsurf[1] << G4endl);
+  GateDebugMessage("Volume", 6, "\tsurface ? xsurf " << xsurf[0] << " " << xsurf[1] << Gateendl);
+  GateDebugMessage("Volume", 6, "\tsurface ? ysurf " << ysurf[0] << " " << ysurf[1] << Gateendl);
+  GateDebugMessage("Volume", 6, "\tsurface ? zsurf " << zsurf[0] << " " << zsurf[1] << Gateendl);
 
 
   // label of the center voxel
   LabelType cl = (int)GetImage()->GetValue(i,j,k);
-  GateDebugMessage("Volume", 6, "\tvox label : "<<cl<<G4endl);
+  GateDebugMessage("Volume", 6, "\tvox label : "<<cl<< Gateendl);
   // By default (if not on surface), the point is inside the region cl
   mInside[cl] = kInside;
 
@@ -310,12 +310,12 @@ EInside GateImageRegionalizedVolume::Inside(const G4ThreeVector& p, LabelType la
   // when the point is on a edge or on a vertex. In Gate latter cases,
   // several neighbors must be updated. It rarely appends, but it
   // appends !
-  GateDebugMessage("Volume", 6, "\tvox coord : " << i << " " << j << " " << k << G4endl);
+  GateDebugMessage("Volume", 6, "\tvox coord : " << i << " " << j << " " << k << Gateendl);
   LabelType nl;
 #define TEST(a,b,c)							\
-  GateDebugMessage("Volume", 6, "\t Test voisin " << a << " " << b << " " << c <<G4endl); \
+  GateDebugMessage("Volume", 6, "\t Test voisin " << a << " " << b << " " << c << Gateendl); \
   if ((nl=(LabelType)GetImage()->GetValue(a,b,c)) != cl) {		\
-    GateDebugMessage("Volume", 6, "\t ==> nl=" << nl << " => kSurface" <<G4endl); \
+    GateDebugMessage("Volume", 6, "\t ==> nl=" << nl << " => kSurface\n"); \
     mInside[cl] = mInside[nl] = kSurface;				\
   }
 
@@ -352,7 +352,7 @@ EInside GateImageRegionalizedVolume::Inside(const G4ThreeVector& p, LabelType la
 
   /*
     if (xsurf[0]) {
-    GateDebugMessage("Volume", 6, "\t xsurf, voisin=" << (LabelType)GetImage()->GetValue(i-1,j,k)<<G4endl);
+    GateDebugMessage("Volume", 6, "\t xsurf, voisin=" << (LabelType)GetImage()->GetValue(i-1,j,k)<< Gateendl);
     if ((nl=(LabelType)GetImage()->GetValue(i-1,j,k)) != cl)
     mInside[cl] = mInside[nl] = kSurface;
     if (ysurf[0]) {
@@ -391,11 +391,11 @@ EInside GateImageRegionalizedVolume::Inside(const G4ThreeVector& p, LabelType la
     }
     }
     else if (xsurf[1]) {
-    GateDebugMessage("Volume", 6, "\t xsurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j,k)<<G4endl);
+    GateDebugMessage("Volume", 6, "\t xsurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j,k)<< Gateendl);
     if ((nl=(LabelType)GetImage()->GetValue(i+1,j,k)) != cl)
     mInside[cl] = mInside[nl] = kSurface;
     if (ysurf[0]) {
-    GateDebugMessage("Volume", 6, "\t ysurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j-1,k)<<G4endl);
+    GateDebugMessage("Volume", 6, "\t ysurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j-1,k)<< Gateendl);
     if ((nl=(LabelType)GetImage()->GetValue(i+1,j-1,k)) != cl)
     mInside[cl] = mInside[nl] = kSurface;
     if (zsurf[0]) {
@@ -408,7 +408,7 @@ EInside GateImageRegionalizedVolume::Inside(const G4ThreeVector& p, LabelType la
     }
     }
     else if (ysurf[1]) {
-    GateDebugMessage("Volume", 6, "\t ysurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j+1,k)<<G4endl);
+    GateDebugMessage("Volume", 6, "\t ysurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j+1,k)<< Gateendl);
     if ((nl=(LabelType)GetImage()->GetValue(i+1,j+1,k)) != cl)
     mInside[cl] = mInside[nl] = kSurface;
     if (zsurf[0]) {
@@ -422,12 +422,12 @@ EInside GateImageRegionalizedVolume::Inside(const G4ThreeVector& p, LabelType la
     }
     else {
     if (zsurf[0]) {
-    GateDebugMessage("Volume", 6, "\t zsurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j,k-1)<<G4endl);
+    GateDebugMessage("Volume", 6, "\t zsurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j,k-1)<< Gateendl);
     if ((nl=(LabelType)GetImage()->GetValue(i+1,j,k-1)) != cl)
     mInside[cl] = mInside[nl] = kSurface;
     }
     else if (zsurf[1]) {
-    GateDebugMessage("Volume", 6, "\t zsurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j,k+1)<<G4endl);
+    GateDebugMessage("Volume", 6, "\t zsurf, voisin=" << (LabelType)GetImage()->GetValue(i+1,j,k+1)<< Gateendl);
     if ((nl=(LabelType)GetImage()->GetValue(i+1,j,k+1)) != cl)
     mInside[cl] = mInside[nl] = kSurface;
     }
@@ -472,7 +472,7 @@ EInside GateImageRegionalizedVolume::Inside(const G4ThreeVector& p, LabelType la
     // ok, we have parsed the complete 26-neighbourhood of the point !
     */
 
-  GateDebugMessage("Volume", 6, "\t** Result Inside for " << label << " = " << mInside[label] << G4endl);
+  GateDebugMessage("Volume", 6, "\t** Result Inside for " << label << " = " << mInside[label] << Gateendl);
 
   return mInside[label];
 }
@@ -484,38 +484,38 @@ EInside GateImageRegionalizedVolume::Inside(const G4ThreeVector& p, LabelType la
 // outside point. The distance can be an underestimate.
 G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p, LabelType label)
 {
-  GateDebugMessage("Volume", 6, "---------------------------------------------------==" << G4endl);
+  GateDebugMessage("Volume", 6, "---------------------------------------------------==\n");
   GateDebugMessage("Volume", 6,"\tGateImageRegionalizedVolume[" << GetObjectName()
 		   << "]::DistanceToIn_ISO(" << p <<",lab=" << label
-		   << "[" << GetMaterialNameFromLabel(label) << ", " << label << "])" << G4endl);
+		   << "[" << GetMaterialNameFromLabel(label) << ", " << label << "])\n");
 
   G4ThreeVector coord = GetImage()->GetCoordinatesFromPosition(p);
-  GateDebugMessage("Volume",6,"Coord " << coord << G4endl);
+  GateDebugMessage("Volume",6,"Coord " << coord << Gateendl);
 
   // If position has same label ?
   int index = GetImage()->GetIndexFromCoordinates(coord);
-  GateDebugMessage("Volume",6,"Index " << index << G4endl);
+  GateDebugMessage("Volume",6,"Index " << index << Gateendl);
 
   if (GetImage()->GetValue(index) == label) {
-    GateDebugMessage("Volume",6," DISTANCE TO IN (iso)  = 0 (INSIDE)" << G4endl);
+    GateDebugMessage("Volume",6," DISTANCE TO IN (iso)  = 0 (INSIDE)\n");
     return 0.0;
   }
 
   // If not : check if on a side
   GateImage::ESide side = GetImage()->GetSideFromPointAndCoordinate(p, coord);
-  GateDebugMessage("Volume",6,"Side = " << side << G4endl);
+  GateDebugMessage("Volume",6,"Side = " << side << Gateendl);
 
   if (side != GateImage::kUndefined) { // point is on a side
     int l = (int)GetImage()->GetNeighborValueFromCoordinate(side, coord);
-    GateDebugMessage("Volume",6,"Neighbor is " << l << G4endl);
+    GateDebugMessage("Volume",6,"Neighbor is " << l << Gateendl);
     if (l == label) {
-      GateDebugMessage("Volume",6,"*** INSIDE *** (neighbor label identical)" << G4endl);
-      GateDebugMessage("Volume",6," DISTANCE TO IN (iso)  = 0 (SURFACE/INSIDE)" << G4endl);
+      GateDebugMessage("Volume",6,"*** INSIDE *** (neighbor label identical)\n");
+      GateDebugMessage("Volume",6," DISTANCE TO IN (iso)  = 0 (SURFACE/INSIDE)\n");
       return 0.0;
     }
     else { // Could be : about half a voxel according to distance ...
       G4double d=0.0;
-      GateDebugMessage("Volume",6," DISTANCE TO IN (iso)  = " << d << G4endl);
+      GateDebugMessage("Volume",6," DISTANCE TO IN (iso)  = " << d << Gateendl);
       return d;
     }
   }
@@ -523,8 +523,8 @@ G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p, Label
   // point is not on a side
   index = pDistanceMap->GetIndexFromPosition(p); // no side problem
   G4double d = pDistanceMap->GetValue(index);
-  GateDebugMessage("Volume",6,"Is not on a side, index dmap = " << index << G4endl);
-  GateDebugMessage("Volume",6," DISTANCE TO IN (iso)  = " << d << G4endl);
+  GateDebugMessage("Volume",6,"Is not on a side, index dmap = " << index << Gateendl);
+  GateDebugMessage("Volume",6," DISTANCE TO IN (iso)  = " << d << Gateendl);
 
   return d;
 }
@@ -536,12 +536,12 @@ G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p,
 						   const G4ThreeVector& v,
 						   LabelType label)
 {
-  GateDebugMessage("Volume", 7, "---------------------------------------------------==" << G4endl);
+  GateDebugMessage("Volume", 7, "---------------------------------------------------==\n");
   GateDebugMessage("Volume", 7,"\tGateImageRegionalizedVolume["<<GetObjectName()
 		   <<"]::DistanceToInWithv("
 		   <<p<<","<<v
 		   <<",lab="<<label<<"["<<GetMaterialNameFromLabel(label)<<"])"
-		   <<G4endl);
+		   << Gateendl);
 
   //  bool done=false;
 
@@ -556,18 +556,18 @@ G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p,
        (mLastTrackID == TrackID)
        ) {
     GateDebugMessage("Volume",7,"\t** Same point and Track as before : result = "
-		     << mDistanceToIn[label] << G4endl);
+		     << mDistanceToIn[label] << Gateendl);
     return mDistanceToIn[label];
   }
 
   // Else compute the vector mDistanceToIn
   if ( mLastTrackID != TrackID ) {
-    GateDebugMessage("Volume",7,"\t** NEW TRACK : OLD="<<mLastTrackID<<" NEW="<<TrackID<<G4endl);
+    GateDebugMessage("Volume",7,"\t** NEW TRACK : OLD="<<mLastTrackID<<" NEW="<<TrackID<< Gateendl);
   }
   else {
-    GateDebugMessage("Volume",7,"\t** NEW POINT"<<G4endl);
+    GateDebugMessage("Volume",7,"\t** NEW POINT\n");
   }
-  GateDebugMessage("Volume",7,"\t### Computing complete distance vector ###" << G4endl);
+  GateDebugMessage("Volume",7,"\t### Computing complete distance vector ###\n");
 
   // memo last point
   mLastDTIPoint = p;
@@ -589,7 +589,7 @@ G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p,
     return kInfinity;
   }
 
-  GateDebugMessage("Volume",7,"\t\t dbox" << dbox << G4endl);
+  GateDebugMessage("Volume",7,"\t\t dbox" << dbox << Gateendl);
 
   // Initial position
   G4ThreeVector pos = p + dbox * v;
@@ -610,9 +610,9 @@ G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p,
     // Current position
     G4double posx(pos.x()),posy(pos.y()),posz(pos.z());
 
-    GateDebugMessage("Volume",7,"\tRegion Label = "<<label<<G4endl);
-    GateDebugMessage("Volume",7,"\tCoords = "<<GetImage()->GetCoordinatesFromPosition(p)<<G4endl);
-    GateDebugMessage("Volume",7,"\tImage Label before propag. = "<<GetImage()->GetValue(p)<<G4endl);
+    GateDebugMessage("Volume",7,"\tRegion Label = "<<label<< Gateendl);
+    GateDebugMessage("Volume",7,"\tCoords = "<<GetImage()->GetCoordinatesFromPosition(p)<< Gateendl);
+    GateDebugMessage("Volume",7,"\tImage Label before propag. = "<<GetImage()->GetValue(p)<< Gateendl);
 
     // Directions of propagation
     G4double dx(-1),dy(-1),dz(-1);
@@ -624,7 +624,7 @@ G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p,
     else if (v.z()>0) dz = 1;
 
     //  G4ThreeVector p2(posx,posy,posz);
-    GateDebugMessage("Volume",7,"\t\t Go Inside Loop ... " <<G4endl);
+    GateDebugMessage("Volume",7,"\t\t Go Inside Loop ... \n");
 
     // offsets to add when changing voxel
     int dindexx = (int)(1.0 * dx);
@@ -655,17 +655,17 @@ G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p,
       //while ( (GetImage()->GetValue(index) == currentLabel) ) {
       // ------------== DEBUG ESSAI ---------------------==
 
-      GateDebugMessage("Volume",7,"\t\t --- STEP ---" <<G4endl);
-      GateDebugMessage("Volume",7,"\t\t pos   = "<<posx<<","<<posy<<","<<posz<<G4endl);
-      GateDebugMessage("Volume",7,"\t\t pp    = "<<ppx<<","<<ppy<<","<<ppz<<G4endl);
-      GateDebugMessage("Volume",7,"\t\t index = "<<index<<G4endl);
-      GateDebugMessage("Volume",7,"\t\t label = "<<GetImage()->GetValue(index)<<" vs. "<<label<<G4endl);
+      GateDebugMessage("Volume",7,"\t\t --- STEP ---\n");
+      GateDebugMessage("Volume",7,"\t\t pos   = "<<posx<<","<<posy<<","<<posz<< Gateendl);
+      GateDebugMessage("Volume",7,"\t\t pp    = "<<ppx<<","<<ppy<<","<<ppz<< Gateendl);
+      GateDebugMessage("Volume",7,"\t\t index = "<<index<< Gateendl);
+      GateDebugMessage("Volume",7,"\t\t label = "<<GetImage()->GetValue(index)<<" vs. "<<label<< Gateendl);
 
       // compute t
       if (dx!=0) tx = (ppx - posx) / v.x();
       if (dy!=0) ty = (ppy - posy) / v.y();
       if (dz!=0) tz = (ppz - posz) / v.z();
-      GateDebugMessage("Volume",7,"\t\t    = "<<tx<<","<<ty<<","<<tz<<G4endl);
+      GateDebugMessage("Volume",7,"\t\t    = "<<tx<<","<<ty<<","<<tz<< Gateendl);
       //
       if ( tx < ty ) {
 	if ( tx < tz ) {
@@ -705,17 +705,17 @@ G4double GateImageRegionalizedVolume::DistanceToIn(const G4ThreeVector& p,
 
   } // end if dbox ....
 
-  GateDebugMessage("Volume",7,"\t\t --- EXIT ---" <<G4endl);
-  GateDebugMessage("Volume",7,"\t\t index = "<<index<<G4endl);
-  GateDebugMessage("Volume",7,"\t\t Image Label after propag. = "<<GetImage()->GetValue(index)<<G4endl);
+  GateDebugMessage("Volume",7,"\t\t --- EXIT ---\n");
+  GateDebugMessage("Volume",7,"\t\t index = "<<index<< Gateendl);
+  GateDebugMessage("Volume",7,"\t\t Image Label after propag. = "<<GetImage()->GetValue(index)<< Gateendl);
 
   // ------------== DEBUG ESSAI ---------------------==
   // if (!done)
   mDistanceToIn[ (LabelType)GetImage()->GetValue(index) ] = dbox;
   // ------------== DEBUG ESSAI ---------------------==
 
-  GateDebugMessage("Volume",7,"\t** DIST = "<<dbox <<G4endl);
-  GateDebugMessage("Volume",7,"\t** DIST = mDistanceToIn[ label ] = "<<mDistanceToIn[ label ] <<G4endl);
+  GateDebugMessage("Volume",7,"\t** DIST = "<<dbox << Gateendl);
+  GateDebugMessage("Volume",7,"\t** DIST = mDistanceToIn[ label ] = "<<mDistanceToIn[ label ] << Gateendl);
   return mDistanceToIn[ label ];
 }
 //-----------------------------------------------------------------------------
@@ -728,12 +728,12 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
 						    G4ThreeVector *n,
 						    LabelType label)
 {
-  GateDebugMessage("Volume", 8, "---------------------------------------------------==" << G4endl);
+  GateDebugMessage("Volume", 8, "---------------------------------------------------==\n");
   GateDebugMessage("Volume",8,"\tGateImageRegionalizedVolume["<<GetObjectName()
 		   <<"]::DistanceToOut("
 		   <<p<<","<<v
 		   <<",lab="<<label<<"["<<GetMaterialNameFromLabel(label)<<"])"
-		   <<G4endl);
+		   << Gateendl);
 
   // ------------------------------------------------------==
   // Ray tracing algorithm
@@ -757,29 +757,29 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
 
   // current image index
   int index = GetImage()->GetIndexFromPositionAndDirection(p,v);
-  GateDebugMessage("Volume",8,"\t\tGetIndex(p,v) = "<< index << G4endl);
+  GateDebugMessage("Volume",8,"\t\tGetIndex(p,v) = "<< index << Gateendl);
 
   // ------------------------------------------------------==
   // ASSERT DEBUG
   // if (index == -1) {
-  // 	GateError("point is outside image ??? p = " << p << G4endl);
+  // 	GateError("point is outside image ??? p = " << p << Gateendl);
   //   }
   // ------------------------------------------------------==
 
   // ------------------------------------------------------==
   // Current integer position (voxel coordinates)
   G4ThreeVector i = GetImage()->GetCoordinatesFromIndex(index);
-  GateDebugMessage("Volume",8,"\t\tCoord = "<< i << G4endl);
+  GateDebugMessage("Volume",8,"\t\tCoord = "<< i << Gateendl);
 
   // Test if outside given label (surface)
-  GateDebugMessage("Volume",8,"\t\tLabel = " << GetImage()->GetValue(index) << G4endl);
+  GateDebugMessage("Volume",8,"\t\tLabel = " << GetImage()->GetValue(index) << Gateendl);
   if (GetImage()->GetValue(index) != label) {
-    GateDebugMessage("Volume",8,"\t\tInitialisation **OUTSIDE** the region -> return 0.0"<<G4endl);
+    GateDebugMessage("Volume",8,"\t\tInitialisation **OUTSIDE** the region -> return 0.0\n");
 
     /*
     // Gate case rarely occur, but occur ... what to do ?
     LabelType l = (LabelType)GetImage()->GetNeighborValueFromCoordinate(side, i);
-    GateDebugMessage("Volume",8,"\t\tNeigh label = " << l << G4endl);
+    GateDebugMessage("Volume",8,"\t\tNeigh label = " << l << Gateendl);
     if (l != label) {
     // CA ARRIVE (RARE) !!!
     GateError("Label neighbor different from label !");
@@ -788,8 +788,8 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
 
     if (calcNorm) {
       GateImage::ESide side = GetImage()->GetSideFromPointAndCoordinate(p, i);
-      GateDebugMessage("Volume",8,"\t\tSide        = " << side << G4endl);
-      GateDebugMessage("Volume",6," calcNorm is USED ... " <<G4endl);
+      GateDebugMessage("Volume",8,"\t\tSide        = " << side << Gateendl);
+      GateDebugMessage("Volume",6," calcNorm is USED ... \n");
       n->set(0,0,0);
       *validNorm = true;
       switch (side) {
@@ -804,11 +804,11 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
 	GateDebugMessage("Volume",6,"Error ! not on surface ????");
 	// Gate case rarely occur, but occur ... what to do ?
       }
-      GateDebugMessage("Volume",6," validNorm = " << *validNorm << G4endl);
-      GateDebugMessage("Volume",6," norm = " << *n << G4endl);
+      GateDebugMessage("Volume",6," validNorm = " << *validNorm << Gateendl);
+      GateDebugMessage("Volume",6," norm = " << *n << Gateendl);
     }
 
-    GateDebugMessage("Volume",6,"\t***** DISTANCE = " << 0.0 << G4endl);
+    GateDebugMessage("Volume",6,"\t***** DISTANCE = " << 0.0 << Gateendl);
 
     return 0.0;
   }
@@ -817,7 +817,7 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
   // Initialisation for ray tracing
 
   if ((v.x() == v.y()) && (v.x() == v.z()) && (v.x() == 0.0)) {
-    GateDebugMessage("Volume",6,"Direction vanish !! return " << kInfinity << G4endl);
+    GateDebugMessage("Volume",6,"Direction vanish !! return " << kInfinity << Gateendl);
     return kInfinity;
   }
 
@@ -825,13 +825,13 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
   int dindexx = (int)lrint(1.0 * dx);
   int dindexy = (int)lrint(GetImage()->GetLineSize() * dy);
   int dindexz = (int)lrint(GetImage()->GetPlaneSize() * dz);
-  GateDebugMessage("Volume",8,"\t\t dindexx " << dindexx << G4endl);
-  GateDebugMessage("Volume",8,"\t\t dindexy " << dindexy << G4endl);
-  GateDebugMessage("Volume",8,"\t\t dindexz " << dindexz << G4endl);
+  GateDebugMessage("Volume",8,"\t\t dindexx " << dindexx << Gateendl);
+  GateDebugMessage("Volume",8,"\t\t dindexy " << dindexy << Gateendl);
+  GateDebugMessage("Volume",8,"\t\t dindexz " << dindexz << Gateendl);
 
   // Position of the next x/y/z-parallel planes to intersect
   G4ThreeVector pp = GetImage()->GetVoxelCornerFromCoordinates(i);
-  GateDebugMessage("Volume",8,"\t\tCorner = "<< pp << G4endl);
+  GateDebugMessage("Volume",8,"\t\tCorner = "<< pp << Gateendl);
 
   G4double ppx(pp.x()),ppy(pp.y()),ppz(pp.z());
   if (dx>0) ppx += vox.x() ;
@@ -846,7 +846,7 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
   G4double tx(1e30),ty(1e30),tz(1e30);
   // last step intersected a x,y or z parallel plane (0,1,2) ?
   int last_step = 0;
-  GateDebugMessage("Volume",8,"\t\t dir   = "<<v.x()<<","<<v.y()<<","<<v.z()<<G4endl);
+  GateDebugMessage("Volume",8,"\t\t dir   = "<<v.x()<<","<<v.y()<<","<<v.z()<< Gateendl);
 
   int nbStep = 0; // DEBUG
 
@@ -856,13 +856,13 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
   // Propagate while current voxel value is the region's label
   bool stop = false;
   do {
-    GateDebugMessage("Volume",9,"\t\t do loop index = " << index << G4endl);
-    GateDebugMessage("Volume",9,"\t\t do loop pos   = " << posx << " " << posy << " " << posz << G4endl);
-    GateDebugMessage("Volume",9,"\t\t do loop v     = " << v << G4endl);
-    GateDebugMessage("Volume",9,"\t\t v loop  pp    = " << ppx << " " << ppy << " " << ppz << G4endl);
-    GateDebugMessage("Volume",9,"\t\t v loop  dpp   = " << dppx << " " << dppy << " " << dppz << G4endl);
-    GateDebugMessage("Volume",9,"\t\t v loop  t     = " << tx << " " << ty << " " << tz << G4endl);
-    GateDebugMessage("Volume",9,"\t\t v loop  d     = " << dx << " " << dy << " " << dz << G4endl);
+    GateDebugMessage("Volume",9,"\t\t do loop index = " << index << Gateendl);
+    GateDebugMessage("Volume",9,"\t\t do loop pos   = " << posx << " " << posy << " " << posz << Gateendl);
+    GateDebugMessage("Volume",9,"\t\t do loop v     = " << v << Gateendl);
+    GateDebugMessage("Volume",9,"\t\t v loop  pp    = " << ppx << " " << ppy << " " << ppz << Gateendl);
+    GateDebugMessage("Volume",9,"\t\t v loop  dpp   = " << dppx << " " << dppy << " " << dppz << Gateendl);
+    GateDebugMessage("Volume",9,"\t\t v loop  t     = " << tx << " " << ty << " " << tz << Gateendl);
+    GateDebugMessage("Volume",9,"\t\t v loop  d     = " << dx << " " << dy << " " << dz << Gateendl);
 
     // First test : didn't seem to accelerate...-> comment out for the moment
     // To test : use dmap only for a minimum jump length
@@ -946,36 +946,36 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
       //GateError("nbStep > 1000");
     }
 
-    GateDebugMessage("Volume", 9, "\t\t nbStep " << nbStep << G4endl);
-    GateDebugMessage("Volume", 9, "\t\t index " << index << G4endl);
-    GateDebugMessage("Volume", 9, "\t\t vox center" << GetImage()->GetVoxelCenterFromIndex(index) << G4endl);
-    GateDebugMessage("Volume", 9, "\t\t half size" << GetImage()->GetHalfSize() << G4endl);
+    GateDebugMessage("Volume", 9, "\t\t nbStep " << nbStep << Gateendl);
+    GateDebugMessage("Volume", 9, "\t\t index " << index << Gateendl);
+    GateDebugMessage("Volume", 9, "\t\t vox center" << GetImage()->GetVoxelCenterFromIndex(index) << Gateendl);
+    GateDebugMessage("Volume", 9, "\t\t half size" << GetImage()->GetHalfSize() << Gateendl);
 
     if ((posx <= -GetImage()->GetHalfSize().x()) ||
         (posx >= GetImage()->GetHalfSize().x())) {
-      GateDebugMessage("Volume", 9, "VOXOUT X " << posx << " " << GetImage()->GetHalfSize() << G4endl);
+      GateDebugMessage("Volume", 9, "VOXOUT X " << posx << " " << GetImage()->GetHalfSize() << Gateendl);
       stop = true;
     }
     if ((posy <= -GetImage()->GetHalfSize().y()) ||
         (posy >= GetImage()->GetHalfSize().y())) {
-      GateDebugMessage("Volume", 9, "VOXOUT Y " << posy << " " << GetImage()->GetHalfSize() << G4endl);
+      GateDebugMessage("Volume", 9, "VOXOUT Y " << posy << " " << GetImage()->GetHalfSize() << Gateendl);
       stop = true;
     }
     if ((posz <= -GetImage()->GetHalfSize().z()) ||
         (posz >= GetImage()->GetHalfSize().z())) {
-      GateDebugMessage("Volume", 9, "VOXOUT Z " << posz << " " << GetImage()->GetHalfSize() << G4endl);
+      GateDebugMessage("Volume", 9, "VOXOUT Z " << posz << " " << GetImage()->GetHalfSize() << Gateendl);
       stop = true;
     }
 
   }
   while ( (!stop) && (GetImage()->GetValue(index) == label) );
 
-  GateDebugMessage("Volume",9,"\t\t --- EXIT ---" <<G4endl);
-  GateDebugMessage("Volume",9,"\t\t pos   = "<< posx <<"," << posy << "," << posz << G4endl);
-  GateDebugMessage("Volume",9,"\t\t pp    = "<< ppx <<"," << ppy << "," << ppz << G4endl);
-  GateDebugMessage("Volume",9,"\t\t index = "<< index << G4endl);
-  GateDebugMessage("Volume",9,"\t\t step  = "<< nbStep << G4endl);
-  GateDebugMessage("Volume",7,"\t\t Image Label after propag. = " << GetImage()->GetValue(index)<<G4endl);
+  GateDebugMessage("Volume",9,"\t\t --- EXIT ---\n");
+  GateDebugMessage("Volume",9,"\t\t pos   = "<< posx <<"," << posy << "," << posz << Gateendl);
+  GateDebugMessage("Volume",9,"\t\t pp    = "<< ppx <<"," << ppy << "," << ppz << Gateendl);
+  GateDebugMessage("Volume",9,"\t\t index = "<< index << Gateendl);
+  GateDebugMessage("Volume",9,"\t\t step  = "<< nbStep << Gateendl);
+  GateDebugMessage("Volume",7,"\t\t Image Label after propag. = " << GetImage()->GetValue(index)<< Gateendl);
 
   /*
     if (nbStep != 0) {
@@ -994,7 +994,7 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
 
   // Normal to the surface depends on last_step :
   if (calcNorm) {
-    GateDebugMessage("Volume",6," calcNorm is USED ... " <<G4endl);
+    GateDebugMessage("Volume",6," calcNorm is USED ... \n");
     n->set(0,0,0);
     *validNorm = true;
     if (last_step == 0) {
@@ -1006,11 +1006,11 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
     else {
       n->setZ(dz);
     }
-    GateDebugMessage("Volume",6," validNorm = " << *validNorm << G4endl);
-    GateDebugMessage("Volume",6," norm = " << *n << G4endl);
+    GateDebugMessage("Volume",6," validNorm = " << *validNorm << Gateendl);
+    GateDebugMessage("Volume",6," norm = " << *n << Gateendl);
   }
 
-  GateDebugMessage("Volume",8,"\t***** DISTANCE = "<<dist<<G4endl);
+  GateDebugMessage("Volume",8,"\t***** DISTANCE = "<<dist<< Gateendl);
 
   return dist;
 }
@@ -1019,19 +1019,19 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p,
 //-----------------------------------------------------------------------------
 G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p, LabelType label)
 {
-  GateDebugMessage("Volume", 6, "---------------------------------------------------==" << G4endl);
+  GateDebugMessage("Volume", 6, "---------------------------------------------------==\n");
   GateDebugMessage("Volume", 6, "\tGateImageRegionalizedVolume[" << GetObjectName()
 		   << "]::DistanceToOutIso(" << p
 		   << ",lab=" << label << "[" << GetMaterialNameFromLabel(label) << "])"
-		   << G4endl);
+		   << Gateendl);
 
   // Cache :
   static G4ThreeVector lPreviousP;
   static G4double lPreviousD;
   static LabelType lPreviousL;
   if ((label == lPreviousL) && (p == lPreviousP)){
-    GateDebugMessage("Volume",6,"Point is in cache !" << G4endl);
-    GateDebugMessage("Volume",6," DISTANCETOOUT = " << lPreviousD <<G4endl);
+    GateDebugMessage("Volume",6,"Point is in cache !\n");
+    GateDebugMessage("Volume",6," DISTANCETOOUT = " << lPreviousD << Gateendl);
     //	mNbCache++;
     return lPreviousD;
   }
@@ -1041,7 +1041,7 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p, Labe
   }
 
   G4ThreeVector coord = GetImage()->GetCoordinatesFromPosition(p);
-  GateDebugMessage("Volume",6,"Coord " << coord << G4endl);
+  GateDebugMessage("Volume",6,"Coord " << coord << Gateendl);
 
 
   /* ------------------------==
@@ -1051,12 +1051,12 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p, Labe
 
 
   /* GateImage::ESide side = GetImage()->GetSideFromPointAndCoordinate(p, coord);
-     GateDebugMessage("Volume",6,"Side = " << side << G4endl);
+     GateDebugMessage("Volume",6,"Side = " << side << Gateendl);
   */
 
   int index = GetImage()->GetIndexFromCoordinates(coord);
   LabelType l = (LabelType)GetImage()->GetValue(index);
-  GateDebugMessage("Volume",6,"Index = " << index << " la=" << l << G4endl);
+  GateDebugMessage("Volume",6,"Index = " << index << " la=" << l << Gateendl);
 
   // Not on a side
   if (l == label) {
@@ -1067,18 +1067,18 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p, Labe
       return d;
     }
 
-    GateDebugMessage("Volume",6,"Dmap index = " << index << " d=" << d << G4endl);
+    GateDebugMessage("Volume",6,"Dmap index = " << index << " d=" << d << Gateendl);
     // find min distance to voxel side
     const G4ThreeVector & v = GetImage()->GetVoxelCornerFromCoordinates(coord);
     const G4ThreeVector & s = GetImage()->GetVoxelSize();
-    GateDebugMessage("Volume",6,"Voxel = " << v << G4endl);
-    GateDebugMessage("Volume",6,"Smac  = " << s << G4endl);
-    GateDebugMessage("Volume", 6, "mx = " << p.x()-v.x() << G4endl);
-    GateDebugMessage("Volume", 6, "px = " << v.x()+s.x()-p.x() << G4endl);
-    GateDebugMessage("Volume", 6, "my = " << p.y()-v.y() << G4endl);
-    GateDebugMessage("Volume", 6, "py = " << v.y()+s.y()-p.y() << G4endl);
-    GateDebugMessage("Volume", 6, "mz = " << p.z()-v.z() << G4endl);
-    GateDebugMessage("Volume", 6, "pz = " << v.z()+s.z()-p.z() << G4endl);
+    GateDebugMessage("Volume",6,"Voxel = " << v << Gateendl);
+    GateDebugMessage("Volume",6,"Smac  = " << s << Gateendl);
+    GateDebugMessage("Volume", 6, "mx = " << p.x()-v.x() << Gateendl);
+    GateDebugMessage("Volume", 6, "px = " << v.x()+s.x()-p.x() << Gateendl);
+    GateDebugMessage("Volume", 6, "my = " << p.y()-v.y() << Gateendl);
+    GateDebugMessage("Volume", 6, "py = " << v.y()+s.y()-p.y() << Gateendl);
+    GateDebugMessage("Volume", 6, "mz = " << p.z()-v.z() << Gateendl);
+    GateDebugMessage("Volume", 6, "pz = " << v.z()+s.z()-p.z() << Gateendl);
 
     G4double offset = p.x()-v.x();
     offset = std::min(offset, v.x()+s.x()-p.x());
@@ -1088,7 +1088,7 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p, Labe
     offset = std::min(offset, p.z()-v.z());
 
     d += offset;
-    GateDebugMessage("Volume",6," DISTANCETOOUT = " << d <<G4endl);
+    GateDebugMessage("Volume",6," DISTANCETOOUT = " << d << Gateendl);
     lPreviousD = d;
     return d;
 
@@ -1108,68 +1108,68 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p, Labe
       // kPX
       pos.setX(std::min(GetImage()->GetResolution().x()-1, std::max(0.0,coord.x()+dx)));
       value = GetImage()->GetValue(GetImage()->GetIndexFromCoordinates(pos));
-      GateDebugMessage("Volume", 6, "Check pos = " << pos << " " << value << G4endl);
+      GateDebugMessage("Volume", 6, "Check pos = " << pos << " " << value << Gateendl);
       if (value != label) {
       offset = std::min(offset, v.x()+s.x()-p.x());
-      GateDebugMessage("Volume", 6, "Offset = " << offset << G4endl);
+      GateDebugMessage("Volume", 6, "Offset = " << offset << Gateendl);
       }
 
       // kMX
       pos.setX(std::min(GetImage()->GetResolution().x()-1, std::max(0.0,coord.x()-dx)));
       value = GetImage()->GetValue(GetImage()->GetIndexFromCoordinates(pos));
-      GateDebugMessage("Volume", 6, "Check pos = " << pos << " " << value << G4endl);
+      GateDebugMessage("Volume", 6, "Check pos = " << pos << " " << value << Gateendl);
       if (value != label) {
       offset = std::min(offset, p.x() - v.x());
-      GateDebugMessage("Volume", 6, "Offset = " << offset << G4endl);
+      GateDebugMessage("Volume", 6, "Offset = " << offset << Gateendl);
       }
 
       // kPY
       pos=coord;
       pos.setY(std::min(GetImage()->GetResolution().y()-1, std::max(0.0,coord.y()+dy)));
       value = GetImage()->GetValue(GetImage()->GetIndexFromCoordinates(pos));
-      GateDebugMessage("Volume", 6, "Check pos = " << pos << " " << value << G4endl);
+      GateDebugMessage("Volume", 6, "Check pos = " << pos << " " << value << Gateendl);
       if (value != label) {
       offset = std::min(offset, v.y()+s.y()-p.y());
-      GateDebugMessage("Volume", 6, "Offset = " << offset << G4endl);
+      GateDebugMessage("Volume", 6, "Offset = " << offset << Gateendl);
       }
 
       // kMY
       pos.setY(std::min(GetImage()->GetResolution().y()-1, std::max(0.0,coord.y()-dy)));
       value = GetImage()->GetValue(GetImage()->GetIndexFromCoordinates(pos));
-      GateDebugMessage("Volume", 6, "Check pos = " << pos << " " << value << G4endl);
+      GateDebugMessage("Volume", 6, "Check pos = " << pos << " " << value << Gateendl);
       if (value != label) {
       offset = std::min(offset, p.y() - v.y());
-      GateDebugMessage("Volume", 6, "Offset = " << offset << G4endl);
+      GateDebugMessage("Volume", 6, "Offset = " << offset << Gateendl);
       }
 
       // kPZ
       pos=coord;
       pos.setZ(std::min(GetImage()->GetResolution().z()-1, std::max(0.0,coord.z()+dz)));
       value = GetImage()->GetValue(GetImage()->GetIndexFromCoordinates(pos));
-      GateDebugMessage("Volume", 6, "Check pos = " << pos << " " << value << G4endl);
+      GateDebugMessage("Volume", 6, "Check pos = " << pos << " " << value << Gateendl);
       if (value != label) {
       offset = std::min(offset, v.z()+s.z()-p.z());
-      GateDebugMessage("Volume", 6, "Offset = " << offset << G4endl);
+      GateDebugMessage("Volume", 6, "Offset = " << offset << Gateendl);
       }
 
       // kMZ
       pos.setZ(std::min(GetImage()->GetResolution().z()-1, std::max(0.0,coord.z()-dz)));
       value = GetImage()->GetValue(GetImage()->GetIndexFromCoordinates(pos));
-      GateDebugMessage("Volume", 6, "Check pos = " << pos << " " << value << G4endl);
+      GateDebugMessage("Volume", 6, "Check pos = " << pos << " " << value << Gateendl);
       if (value != label) {
       offset = std::min(offset, p.z() - v.z());
-      GateDebugMessage("Volume", 6, "Offset = " << offset << G4endl);
+      GateDebugMessage("Volume", 6, "Offset = " << offset << Gateendl);
       }
 
       if (offset != 9999999) d += offset;
 
-      GateDebugMessage("Volume",6," DISTANCETOOUT = " << d <<G4endl);
+      GateDebugMessage("Volume",6," DISTANCETOOUT = " << d << Gateendl);
       lPreviousD = d;
       return d;
     */
   }
 
-  GateDebugMessage("Volume",6," DISTANCETOOUT = " << 0.0 <<G4endl);
+  GateDebugMessage("Volume",6," DISTANCETOOUT = " << 0.0 << Gateendl);
   lPreviousD = 0.0;
   return 0.0;
 }
@@ -1178,19 +1178,19 @@ G4double GateImageRegionalizedVolume::DistanceToOut(const G4ThreeVector& p, Labe
 //-----------------------------------------------------------------------------
 G4ThreeVector GateImageRegionalizedVolume::SurfaceNormal(const G4ThreeVector& p, LabelType label)
 {
-  GateDebugMessage("Volume", 6, "---------------------------------------------------==" << G4endl);
+  GateDebugMessage("Volume", 6, "---------------------------------------------------==\n");
   GateDebugMessage("Volume", 6,"\tGateImageRegionalizedVolume["<<GetObjectName()
 		   << "]::SurfaceNormal("
 		   << p
 		   << ",lab="<<label<<"["<<GetMaterialNameFromLabel(label)<<"])"
-		   << G4endl);
+		   << Gateendl);
   //
   // Check surface
   G4ThreeVector coord = GetImage()->GetCoordinatesFromPosition(p);
-  GateDebugMessage("Volume",6,"Coord " << coord << G4endl);
+  GateDebugMessage("Volume",6,"Coord " << coord << Gateendl);
 
   GateImage::ESide side = GetImage()->GetSideFromPointAndCoordinate(p, coord);
-  GateDebugMessage("Volume",6,"Side = " << side << G4endl);
+  GateDebugMessage("Volume",6,"Side = " << side << Gateendl);
 
   if (side == GateImage::kUndefined) { // not on surface
     // GateError("Not on surface ??");
@@ -1200,7 +1200,7 @@ G4ThreeVector GateImageRegionalizedVolume::SurfaceNormal(const G4ThreeVector& p,
 
 
 
-    GateDebugMessage("Volume",5,"SurfaceNormal :: Not on surface ??" << G4endl);
+    GateDebugMessage("Volume",5,"SurfaceNormal :: Not on surface ??\n");
     // IT APPENDS (rare) !! WHY ???? I DONT KNOW WHAT TO DO
     G4ThreeVector normal(1.0,0.0,0.0);
     return normal;
@@ -1208,11 +1208,11 @@ G4ThreeVector GateImageRegionalizedVolume::SurfaceNormal(const G4ThreeVector& p,
 
   int index = GetImage()->GetIndexFromCoordinates(coord);
   LabelType l = (LabelType)GetImage()->GetValue(index);
-  GateDebugMessage("Volume",6,"Index = " << index << " la=" << l << G4endl);
+  GateDebugMessage("Volume",6,"Index = " << index << " la=" << l << Gateendl);
 
   // ASSERT DEBUG
   LabelType nl =  (LabelType)GetImage()->GetNeighborValueFromCoordinate(side, coord);
-  GateDebugMessage("Volume",6,"Neighbor lab = " << nl << G4endl);
+  GateDebugMessage("Volume",6,"Neighbor lab = " << nl << Gateendl);
   if (nl == l) {
     GateDebugMessage("Volume",6,"Neighbors has same label !??");
     // IT APPENDS (rare) !! WHY ???? I DONT KNOW WHAT TO DO
@@ -1234,7 +1234,7 @@ G4ThreeVector GateImageRegionalizedVolume::SurfaceNormal(const G4ThreeVector& p,
   default: GateError("Side not known!");
   }
 
-  GateDebugMessage("Volume", 9,"\t norm = " << normal << G4endl);
+  GateDebugMessage("Volume", 9,"\t norm = " << normal << Gateendl);
   return normal;
 }
 //-----------------------------------------------------------------------------
@@ -1246,7 +1246,7 @@ G4ThreeVector GateImageRegionalizedVolume::SurfaceNormal(const G4ThreeVector& p,
 G4VPhysicalVolume* GateImageRegionalizedVolume::GetEnteredPhysicalVolume( const G4ThreeVector& globalPoint,
 									  const G4ThreeVector* globalDirection )
 {
-  GateDebugMessage("Navigation", 4,"GetEnteredPhysicalVolume("<<globalPoint<<","<<globalDirection<<")"<<std::endl);
+  GateDebugMessage("Navigation", 4,"GetEnteredPhysicalVolume("<<globalPoint<<","<<globalDirection<<")\n");
 
   int index;
   if (globalDirection)
@@ -1260,10 +1260,10 @@ G4VPhysicalVolume* GateImageRegionalizedVolume::GetEnteredPhysicalVolume( const 
     }
   LabelType l = (LabelType)GetImage()->GetValue(index);
 
-  GateDebugMessage("Navigation",4,"label = "<<l<<std::endl);
+  GateDebugMessage("Navigation",4,"label = "<<l<< Gateendl);
   if (l==0) return 0;
 
-  GateDebugMessage("Navigation",4,"phys = "<<mLabelToSubVolume[l]->GetPhysicalVolume()->GetName()<<std::endl);
+  GateDebugMessage("Navigation",4,"phys = "<<mLabelToSubVolume[l]->GetPhysicalVolume()->GetName()<< Gateendl);
 
   return ( mLabelToSubVolume[l]->GetPhysicalVolume() );
 }
@@ -1275,12 +1275,12 @@ G4double GateImageRegionalizedVolume::ComputeSafety(const G4ThreeVector& p)
 {
   GateDebugMessage("Navigation", 4,"GateImageRegionalizedVolume["
 		   << GetObjectName()
-		   << "]::ComputeSafety(" << p <<")" << G4endl);
+		   << "]::ComputeSafety(" << p <<")\n");
 
   int index = pDistanceMap->GetIndexFromPosition(p); // no side problem
   G4double d = pDistanceMap->GetValue(index);
 
-  GateDebugMessage("Navigation",6," Safety = " << d << G4endl);
+  GateDebugMessage("Navigation",6," Safety = " << d << Gateendl);
 
   return d;
 }
@@ -1303,7 +1303,7 @@ G4double GateImageRegionalizedVolume::ComputeStep(const G4ThreeVector& /*positio
   // 		   <<GetObjectName()
   // 		   <<"]::ComputeStep("
   // 		   <<position<<","<<direction
-  // 		   <<G4endl);
+  // 		   << Gateendl);
   return 0;
 }
 //-----------------------------------------------------------------------------
@@ -1312,7 +1312,7 @@ G4double GateImageRegionalizedVolume::ComputeStep(const G4ThreeVector& /*positio
 //-----------------------------------------------------------------------------
 void GateImageRegionalizedVolume::PropagateSensitiveDetectorToChild(GateMultiSensitiveDetector * /*msd*/)
 {
-  //GateDebugMessage("Volume", 5, "Add SD to child" << G4endl);
+  //GateDebugMessage("Volume", 5, "Add SD to child\n");
   // logXRep->SetSensitiveDetector(msd);
   // logYRep->SetSensitiveDetector(msd);
   // logZRep->SetSensitiveDetector(msd);

@@ -75,7 +75,7 @@ void GateHounsfieldDensityTable::Read(G4String filename)
 	if (h <= mH[mH.size()-2]) {
 	  GateError("Error Hounsfield must be in strict ascending order, while I read h="
 		    << mH[mH.size()-2] << " and then h=" << h 
-		    << " (in file " << filename << ")" << G4endl);
+		    << " (in file " << filename << ")\n");
 	}
       }
     }

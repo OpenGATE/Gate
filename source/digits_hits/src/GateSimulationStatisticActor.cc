@@ -38,11 +38,11 @@ std::string get_date_string() {
 GateSimulationStatisticActor::GateSimulationStatisticActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateSimulationStatisticActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateSimulationStatisticActor() -- begin\n");
   //SetTypeName("SimulationStatisticActor");
   pActor = new GateActorMessenger(this);
   ResetData();
-  GateDebugMessageDec("Actor",4,"GateSimulationStatisticActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateSimulationStatisticActor() -- end\n");
   gettimeofday(&start,NULL);
   startDateStr = get_date_string();
 }
@@ -144,27 +144,27 @@ void GateSimulationStatisticActor::SaveData()
   double t = get_elapsed_time(start,end);
   double twi = get_elapsed_time(start_afterinit,end);
 
-  os << "# NumberOfRun    = " << mNumberOfRuns << std::endl
-     << "# NumberOfEvents = " << mNumberOfEvents << std::endl
-     << "# NumberOfTracks = " << mNumberOfTrack << std::endl
-     << "# NumberOfSteps  = " << mNumberOfSteps << std::endl
-     << "# NumberOfGeometricalSteps  = " << mNumberOfGeometricalSteps << std::endl
-     << "# NumberOfPhysicalSteps     = " << mNumberOfPhysicalSteps << std::endl
-     << "# ElapsedTime           = " << t << std::endl
-     << "# ElapsedTimeWoInit     = " << twi << std::endl
+  os << "# NumberOfRun    = " << mNumberOfRuns << Gateendl
+     << "# NumberOfEvents = " << mNumberOfEvents << Gateendl
+     << "# NumberOfTracks = " << mNumberOfTrack << Gateendl
+     << "# NumberOfSteps  = " << mNumberOfSteps << Gateendl
+     << "# NumberOfGeometricalSteps  = " << mNumberOfGeometricalSteps << Gateendl
+     << "# NumberOfPhysicalSteps     = " << mNumberOfPhysicalSteps << Gateendl
+     << "# ElapsedTime           = " << t << Gateendl
+     << "# ElapsedTimeWoInit     = " << twi << Gateendl
      << "# StartDate             = " << startDateStr
      << "# EndDate               = " << get_date_string()
-     << "# StartSimulationTime        = " << startTime/s << std::endl
-     << "# StopSimulationTime         = " << stopTime/s << std::endl
-     << "# CurrentSimulationTime      = " << currentSimulationTime/s << std::endl
-     << "# VirtualStartSimulationTime = " << virtualStartTime/s << std::endl
-     << "# VirtualStopSimulationTime  = " << virtualStopTime/s << std::endl
-     << "# ElapsedSimulationTime      = " << elapsedSimulationTime/s << std::endl
-     << "# PPS (Primary per sec)      = " << mNumberOfEvents/twi << std::endl
-     << "# TPS (Track per sec)        = " << mNumberOfTrack/twi << std::endl
-     << "# SPS (Step per sec)         = " << mNumberOfSteps/twi << std::endl;
+     << "# StartSimulationTime        = " << startTime/s << Gateendl
+     << "# StopSimulationTime         = " << stopTime/s << Gateendl
+     << "# CurrentSimulationTime      = " << currentSimulationTime/s << Gateendl
+     << "# VirtualStartSimulationTime = " << virtualStartTime/s << Gateendl
+     << "# VirtualStopSimulationTime  = " << virtualStopTime/s << Gateendl
+     << "# ElapsedSimulationTime      = " << elapsedSimulationTime/s << Gateendl
+     << "# PPS (Primary per sec)      = " << mNumberOfEvents/twi << Gateendl
+     << "# TPS (Track per sec)        = " << mNumberOfTrack/twi << Gateendl
+     << "# SPS (Step per sec)         = " << mNumberOfSteps/twi << Gateendl;
   if (!os) {
-    GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << G4endl);
+    GateMessage("Output",1,"Error Writing file: " <<mSaveFilename << Gateendl);
   }
   os.flush();
   os.close();

@@ -29,7 +29,7 @@ void GateDistributionManual::DescribeMyself(size_t indent)
 {
   G4cout << GateTools::Indent(indent)
     	 <<"Size : "         << GetSize()
-	 <<G4endl;
+	 << Gateendl;
 }
 //___________________________________________________________________
 void GateDistributionManual::AddPoint(G4double x,G4double y)

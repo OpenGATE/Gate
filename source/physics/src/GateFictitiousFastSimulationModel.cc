@@ -85,12 +85,12 @@ void GateFictitiousFastSimulationModel::DoIt ( const G4FastTrack& ft, G4FastStep
 					G4double lb=pTotalDiscreteProcess->GetTotalCrossSectionsTable()->GetEnergyLimitForGivenMaxCrossSection ( 4./sqrt ( vs[0]*vs[0]+vs[1]*vs[1]+vs[2]*vs[2] ) ); // estimates
 					SetMinEnergy ( lb );
 #ifdef G4VERBOSE
-					G4cout << "GateFictitiousFastSimulationModel: Choose lower energy border = "<< lb/keV << " keV by using information about involved processes, materials, and voxel size." << G4endl;
+					G4cout << "GateFictitiousFastSimulationModel: Choose lower energy border = "<< lb/keV << " keV by using information about involved processes, materials, and voxel size.\n";
 #endif
 				}
 				else
 				{
-					G4cout << "Energy=" << GatePETVRTManager::GetInstance()->GetOrCreatePETVRTSettings()->GetFictitiousEnergy() /MeV << " MeV" << G4endl;
+					G4cout << "Energy=" << GatePETVRTManager::GetInstance()->GetOrCreatePETVRTSettings()->GetFictitiousEnergy() /MeV << " MeV\n";
 					G4Exception ( "GateFictitiousFastSimulationModel::DoIt(const G4FastTrack&, G4FastStep&)", "Fictitious energy too small", FatalException,
 					              "Cannot be negative or zero!" );
 				}
@@ -111,11 +111,11 @@ void GateFictitiousFastSimulationModel::DoIt ( const G4FastTrack& ft, G4FastStep
 #ifdef G4VERBOSE
 		if ( m_nDiscardEnergy>0 )
 		{
-			G4cout << "GateFictitiousFastSimulationModel: Use discard energy of "<< m_nDiscardEnergy / keV << " keV" << G4endl;
+			G4cout << "GateFictitiousFastSimulationModel: Use discard energy of "<< m_nDiscardEnergy / keV << " keV\n";
 
 		}
 
-		G4cout << "GateFictitiousFastSimulationModel: Use fictitious energy of "<< m_nMinEnergy / keV << " keV" << G4endl;
+		G4cout << "GateFictitiousFastSimulationModel: Use fictitious energy of "<< m_nMinEnergy / keV << " keV\n";
 #endif
 
 		if ( m_nMinEnergy>=m_nMaxEnergy )
@@ -147,7 +147,7 @@ void GateFictitiousFastSimulationModel::DoIt ( const G4FastTrack& ft, G4FastStep
 
 	m_nDistToOut=pEnvelopeSolid->DistanceToOut ( m_nCurrentLocalPosition,m_nCurrentLocalDirection ) +m_nSurfaceTolerance;
 
-//G4cout << "E:" << pCurrentFastTrack->GetPrimaryTrack()->GetDynamicParticle()->GetKineticEnergy() << " " << G4endl;
+//G4cout << "E:" << pCurrentFastTrack->GetPrimaryTrack()->GetDynamicParticle()->GetKineticEnergy() << " \n";
 	m_nCurrentInvFictCrossSection=1./pTotalDiscreteProcess->GetTotalCrossSectionsTable()->GetMaxCrossSection ( m_nCurrentEnergy );
 	m_nTime=pCurrentTrack->GetGlobalTime();
 
@@ -358,7 +358,7 @@ void GateFictitiousFastSimulationModel::SetFictitiousMap ( GateVFictitiousMap* p
 {
 	if ( ( pFictitiousMap!=NULL ) && ( p!=pFictitiousMap ) )
 	{
-		G4cout << "Warning! GateFictitiousFastSimulationModel::SetFictitiousVoxelMap: Fictitious voxel map pointer was already set. Fictitious voxel map pointer will be overwritten!" << G4endl;
+		G4cout << "Warning! GateFictitiousFastSimulationModel::SetFictitiousVoxelMap: Fictitious voxel map pointer was already set. Fictitious voxel map pointer will be overwritten!\n";
 	}
 	pFictitiousMap=p;
 

@@ -31,7 +31,7 @@
 
 for (int i=0; i<n; i++)
 {   T->GetEntry(i);
-  histoSpotSize->Fill(x,y,weight);
+  histoSpotSize->Fill(x,z,weight);
 }
 	gStyle->SetOptFit(1111);
 	gStyle->SetPalette(1);

@@ -62,8 +62,8 @@ protected:
   //  std::vector<G4SPSEneDistribution> mEnergyGen;
   std::vector<TH1D*> mEnergyGen;
   G4SPSRandomGenerator mPositionXGen;
-  std::vector<G4SPSRandomGenerator> mPositionYGen;
-  std::vector<std::vector<G4SPSRandomGenerator> > mPositionZGen;
+  std::vector<G4SPSRandomGenerator*> mPositionYGen;
+  std::vector<std::vector<G4SPSRandomGenerator*> > mPositionZGen;
 
 }; // end class
 //------------------------------------------------------------------------

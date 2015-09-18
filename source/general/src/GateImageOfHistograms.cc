@@ -48,19 +48,28 @@ void GateImageOfHistograms::SetHistoInfo(int n, double min, double max)
 //-----------------------------------------------------------------------------
 void GateImageOfHistograms::Allocate()
 {
-  
-
   sizeX = resolution.x();
   sizeY = resolution.y();
   sizeZ = resolution.z();
 
   // Allocate full vector
-  if (mDataTypeName == "double")
-    dataDouble.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
-  else if (mDataTypeName == "int")
-    dataInt.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
-  else
-    dataFloat.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
+  try {
+    if (mDataTypeName == "double")
+      dataDouble.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
+    else if (mDataTypeName == "int")
+      dataInt.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
+    else
+      dataFloat.resize(nbOfValues * nbOfBins); // FIXME To change for sparse allocation
+  }
+  catch(std::bad_alloc& ba) {
+    double n = nbOfValues * nbOfBins;
+    if (mDataTypeName == "double") n = n*sizeof(double);
+    if (mDataTypeName == "int")    n = n*sizeof(int);
+    else n = n*sizeof(float);
+    GateError("Cannot allocate ImageOfHistogram, too much memory needed: " << n/(1024.0*1024.0) << " MB.\n"
+              << " The image size is " << sizeX << "x" << sizeY << "x" << sizeZ
+              << " and nbOfBins is " << nbOfBins);
+  }
 
   // FIXME : Sparse
   /*

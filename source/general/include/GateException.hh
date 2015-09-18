@@ -46,12 +46,12 @@ namespace Gate
     ~Exception() throw() {}
     void Print() throw()
     {
-      std::cout << "* ERROR  : " << mMessage <<std::endl; 
+      std::cout << "* ERROR  : " << mMessage << Gateendl; 
       //       printf("ERROR : [%s]\n",mLabel.c_str());
       int lev = GateMessageManager::GetMessageLevel("Error");
       if (lev > 0) {
-	std::cout << "* OBJECT : " <<mObject<<std::endl;
-	std::cout << "* FILE   : " <<mFile<<std::endl;
+	std::cout << "* OBJECT : " <<mObject<< Gateendl;
+	std::cout << "* FILE   : " <<mFile<< Gateendl;
 	//More info displayed
       }
     }

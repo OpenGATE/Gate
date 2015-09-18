@@ -24,6 +24,11 @@ GateSourceOfPromptGammaData::GateSourceOfPromptGammaData()
 //------------------------------------------------------------------------
 GateSourceOfPromptGammaData::~GateSourceOfPromptGammaData()
 {
+  for(unsigned int i=0; i< mPositionYGen.size(); i++)
+    delete mPositionYGen[i];
+  for(unsigned int i=0; i< mPositionZGen.size(); i++)
+    for(unsigned int j=0; i< mPositionZGen[i].size(); j++)
+      delete mPositionZGen[i][j];
 }
 //------------------------------------------------------------------------
 
@@ -61,19 +66,21 @@ void GateSourceOfPromptGammaData::Initialize()
   mPositionXGen.SetXBias(G4ThreeVector(0., 0., 0.)); // important
   for(unsigned int i=0; i<sizeX; i++) {
     double sumYZ = 0.0;
-    mPositionYGen[i].SetYBias(G4ThreeVector(0., 0., 0.)); // important
+    mPositionYGen[i] = new G4SPSRandomGenerator;
+    mPositionYGen[i]->SetYBias(G4ThreeVector(0., 0., 0.)); // important
     for(unsigned int j=0; j<sizeY; j++) {
       double sumZ = 0.0;
-      mPositionZGen[i][j].SetZBias(G4ThreeVector(0., 0., 0.)); // important
+      mPositionZGen[i][j] = new G4SPSRandomGenerator;
+      mPositionZGen[i][j]->SetZBias(G4ThreeVector(0., 0., 0.)); // important
       for(unsigned int k=0; k<sizeZ; k++) {
         double val = mDataCounts[mImage->GetIndexFromPixelIndex(i, j, k)];
         sumZ += val;
         // Bias the Z component according to the voxel value
-        mPositionZGen[i][j].SetZBias(G4ThreeVector(k+1 ,val,0.));
+        mPositionZGen[i][j]->SetZBias(G4ThreeVector(k+1 ,val,0.));
       }
       sumYZ += sumZ;
       // Bias the Y component according to integration over Z
-      mPositionYGen[i].SetYBias(G4ThreeVector(j+1, sumZ,0.));
+      mPositionYGen[i]->SetYBias(G4ThreeVector(j+1, sumZ,0.));
     }
     // Bias the X component according to integration over YZ plane
     mPositionXGen.SetXBias(G4ThreeVector(i+1, sumYZ,0.));
@@ -135,11 +142,11 @@ void GateSourceOfPromptGammaData::SampleRandomPosition(G4ThreeVector & position)
   int i =  mCurrentIndex_i = floor(x);
   double y;
   if (mImage->GetResolution().y() == 1) y=G4UniformRand();
-  else y = mPositionYGen[i].GenRandY();
+  else y = mPositionYGen[i]->GenRandY();
   int j = mCurrentIndex_j = floor(y);
   double z;
   if (mImage->GetResolution().z() == 1) z=G4UniformRand();
-  else  z = mPositionZGen[i][j].GenRandZ();
+  else  z = mPositionZGen[i][j]->GenRandZ();
   mCurrentIndex_k = floor(z);
 
   // Offset according to image origin (and half voxel position)

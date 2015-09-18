@@ -157,7 +157,7 @@ GateApplicationMgrMessenger::~GateApplicationMgrMessenger()
 //-------------------------------------------------------------------------------------------------------------------
 void GateApplicationMgrMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {
-  //   G4cout << " GateApplicationMgrMessenger::SetNewValue " << newValue << G4endl;
+  //   G4cout << " GateApplicationMgrMessenger::SetNewValue " << newValue << Gateendl;
 
   GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
 
