@@ -291,7 +291,6 @@ void GatePromptGammaData::InitializeMaterial()
   GammaM.resize(n);
   NgammaM.resize(n);
 
-  //std::cout << "number of materials in InitMat: " << n <<std::endl;
   for(unsigned int i=0; i<n; i++) {
     bool stop = false;
     const G4Material * m = matTable[i];
@@ -309,10 +308,6 @@ void GatePromptGammaData::InitializeMaterial()
         }
       }
     }
-    //std::cout<< "Mat index " << i << std::endl;
-    //std::cout<< "Mat name " << m->GetName() << std::endl;
-    //std::cout<< "Num elements " << m->GetNumberOfElements() << std::endl;
-    //std::cout<< "stop? " << stop << std::endl;
 
     if (!stop) {
       GateMessage("Actor", 1, "Create DB for " << m->GetName()
@@ -326,12 +321,7 @@ void GatePromptGammaData::InitializeMaterial()
         h->SetBins(gamma_bin, min_gamma_energy, max_gamma_energy);
 
         // Loop over element
-        //        DD(m->GetNumberOfElements());
-        //DD("proj");
         TH1D * proj = pHEpEpgNormalized->ProjectionY("", j, j);
-        //        std::vector<TH1D> vhe(m->GetNumberOfElements());
-        //for(unsigned int e=0; e<m->GetNumberOfElements(); e++) { vhe[e] = *proj; }
-        //        DD("loop");
 
         for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
           const G4Element * elem = m->GetElement(e);
@@ -341,7 +331,7 @@ void GatePromptGammaData::InitializeMaterial()
             // (If hydrogen probability is zero)
             // Get histogram for the current bin
             SetCurrentPointerForThisElement(elem);
-            TH1D * he = new TH1D(*proj);//*pHEpEpgNormalized->ProjectionY("", j, j));
+            TH1D * he = new TH1D(*proj); // copy the projection
 
             // Scale it according to the fraction of this element in the material
             he->Scale(f);
@@ -349,7 +339,7 @@ void GatePromptGammaData::InitializeMaterial()
             // Add it to the current total histo
             h->Add(he);
 
-            // remove temporary allocated TH1D
+            // remove temporary allocated TH1D (important !)
             delete he;
           }
         }
@@ -373,8 +363,6 @@ void GatePromptGammaData::InitializeMaterial()
           // (If hydrogen probability is zero)
           // Get histogram for the current bin
           SetCurrentPointerForThisElement(elem);
-          //TH2D * hgammam2 = new TH2D *GammaZ->Clone();
-          //TH2D * hngammam2 = new TH2D *Ngamma->Clone();
           TH2D * hngammam2 = (TH2D*) Ngamma->Clone();
           TH2D * hgammam2 = (TH2D*) GammaZ->Clone();
 
@@ -393,13 +381,6 @@ void GatePromptGammaData::InitializeMaterial()
       }
       GammaM[i] = hgammam; //Now it's no longer modulo rho(Z), or rho(M)!!!
       NgammaM[i] = hngammam;
-
-      /* Enable to dump the generated PGDBs for each material.
-      std::string outfilename = "brent" +m->GetName()+".root";
-      TFile *myfile = new TFile(outfilename.c_str(), "RECREATE");
-      hgammam->Write();
-      myfile->Close();
-      */
     }
   }
 }
