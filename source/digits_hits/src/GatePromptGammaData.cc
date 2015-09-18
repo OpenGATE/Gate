@@ -321,6 +321,13 @@ void GatePromptGammaData::InitializeMaterial()
         h->SetBins(gamma_bin, min_gamma_energy, max_gamma_energy);
 
         // Loop over element
+        //        DD(m->GetNumberOfElements());
+        //DD("proj");
+        TH1D * proj = pHEpEpgNormalized->ProjectionY("", j, j);
+        //        std::vector<TH1D> vhe(m->GetNumberOfElements());
+        //for(unsigned int e=0; e<m->GetNumberOfElements(); e++) { vhe[e] = *proj; }
+        //        DD("loop");
+
         for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
           const G4Element * elem = m->GetElement(e);
           double f = m->GetFractionVector()[e];
@@ -329,13 +336,16 @@ void GatePromptGammaData::InitializeMaterial()
             // (If hydrogen probability is zero)
             // Get histogram for the current bin
             SetCurrentPointerForThisElement(elem);
-            TH1D * he = new TH1D(*pHEpEpgNormalized->ProjectionY("", j, j));
+            TH1D * he = new TH1D(*proj);//*pHEpEpgNormalized->ProjectionY("", j, j));
 
             // Scale it according to the fraction of this element in the material
             he->Scale(f);
 
             // Add it to the current total histo
             h->Add(he);
+
+            // remove temporary allocated TH1D
+            delete he;
           }
         }
         mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
@@ -344,8 +354,10 @@ void GatePromptGammaData::InitializeMaterial()
       //Build GammaZ -> GammaM, EpEpg=Ngamma(z,E) -> Ngamma(m,E)
       TH2D * hgammam = new TH2D();
       TH2D * hngammam = new TH2D();
-      hgammam->SetBins(proton_bin, min_proton_energy, max_proton_energy, gamma_bin, min_gamma_energy, max_gamma_energy); //same arrangement as GammaZ
-      hngammam->SetBins(proton_bin, min_proton_energy, max_proton_energy, gamma_bin, min_gamma_energy, max_gamma_energy);
+      hgammam->SetBins(proton_bin, min_proton_energy, max_proton_energy,
+                       gamma_bin, min_gamma_energy, max_gamma_energy); //same arrangement as GammaZ
+      hngammam->SetBins(proton_bin, min_proton_energy, max_proton_energy,
+                        gamma_bin, min_gamma_energy, max_gamma_energy);
       // Loop over element
       for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
         const G4Element * elem = m->GetElement(e);
@@ -368,6 +380,10 @@ void GatePromptGammaData::InitializeMaterial()
           // Add it to the current total histo
           hgammam->Add(hgammam2);
           hngammam->Add(hngammam2);
+
+          // delete temporary TH2D
+          delete hngammam2;
+          delete hgammam2;
         }
       }
       GammaM[i] = hgammam; //Now it's no longer modulo rho(Z), or rho(M)!!!
