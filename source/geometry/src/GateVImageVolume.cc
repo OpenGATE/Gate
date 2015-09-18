@@ -322,6 +322,9 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
   mHounsfieldMaterialTable.Reset();
   // mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(), pImage->GetOutsideValue()+1,"worldDefaultAir");
   G4String parentMat = GetParentVolume()->GetMaterialName();
+
+  //std::cout << "Loading from file " << GetMaterialName() << std::endl;
+
   mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue()+1,parentMat);
 
   while (is) {

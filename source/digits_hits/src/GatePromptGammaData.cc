@@ -291,6 +291,7 @@ void GatePromptGammaData::InitializeMaterial()
   GammaM.resize(n);
   NgammaM.resize(n);
 
+  //std::cout << "number of materials in InitMat: " << n <<std::endl;
   for(unsigned int i=0; i<n; i++) {
     bool stop = false;
     const G4Material * m = matTable[i];
@@ -308,6 +309,10 @@ void GatePromptGammaData::InitializeMaterial()
         }
       }
     }
+    //std::cout<< "Mat index " << i << std::endl;
+    //std::cout<< "Mat name " << m->GetName() << std::endl;
+    //std::cout<< "Num elements " << m->GetNumberOfElements() << std::endl;
+    //std::cout<< "stop? " << stop << std::endl;
 
     if (!stop) {
       GateMessage("Actor", 1, "Create DB for " << m->GetName()
@@ -387,11 +392,14 @@ void GatePromptGammaData::InitializeMaterial()
         }
       }
       GammaM[i] = hgammam; //Now it's no longer modulo rho(Z), or rho(M)!!!
+      NgammaM[i] = hngammam;
+
+      /* Enable to dump the generated PGDBs for each material.
       std::string outfilename = "brent" +m->GetName()+".root";
       TFile *myfile = new TFile(outfilename.c_str(), "RECREATE");
       hgammam->Write();
       myfile->Close();
-      NgammaM[i] = hngammam;
+      */
     }
   }
 }
@@ -415,11 +423,11 @@ TH1D * GatePromptGammaData::GetGammaEnergySpectrum(const int & materialIndex,
   if (!DataForMaterialExist(materialIndex)) {
     GateError("Error in GatePromptGammaData for TLE, the material " <<
               (*G4Material::GetMaterialTable())[materialIndex]->GetName()
-              << " is not in the DB");
+              << " is not in the DB. materialIndex: " << materialIndex);
   }
 
   // Get the index of the energy bin
-  int binX = pHEp->FindFixBin(energy/MeV); //FIXME: divide by MeV or not?
+  int binX = pHEp->FindFixBin(energy/MeV);
 
   // Get the projected histogram of the material
   TH1D * h = mGammaEnergyHistoByMaterialByProtonEnergy[materialIndex][binX];

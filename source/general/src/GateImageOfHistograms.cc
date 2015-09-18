@@ -228,7 +228,7 @@ double GateImageOfHistograms::GetValueDouble(const int & index, const int &bin)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateImageOfHistograms::AddValueInt(const int & index, const int &bin, const unsigned int value=1)
+void GateImageOfHistograms::AddValueInt(const int & index, const int & bin, const unsigned int value=1)
 {
   long index_data = index*nbOfBins+bin;
   dataInt[index_data] += value;

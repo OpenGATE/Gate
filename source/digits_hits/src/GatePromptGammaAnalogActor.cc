@@ -131,6 +131,9 @@ void GatePromptGammaAnalogActor::UserPreTrackActionInVoxel(const int, const G4Tr
 //-----------------------------------------------------------------------------
 void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4Step *step)
 {
+  // Check if we are inside the volume (YES THIS ACTUALLY NEEDS TO BE CHECKED).
+  if (index<0) return;
+
   // Get various information on the current step
   const G4ParticleDefinition* particle = step->GetTrack()->GetParticleDefinition();
   const G4VProcess* process = step->GetPostStepPoint()->GetProcessDefinedStep();
@@ -154,9 +157,13 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
   for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++) {
     if ((*fSecondary)[lp1]->GetDefinition() == G4Gamma::Gamma()) {
       const double e = (*fSecondary)[lp1]->GetKineticEnergy()/MeV;  //convert from internal unit to MeV
-      if (e>data.GetGammaEMax() || e<0.003) { //FIXME understand lowE check.
-        //lower than we're interested in.
-        //higher than we're interested in.
+      if (e>data.GetGammaEMax() || e<0.005) {
+        // Without this lowE filter, we encountered a high number of 1.72keV,2.597keV photons.
+        // These possibly correspond to Si molecular fluorescence and C-C,C-N binding energies (lung?) respectively.
+        // These particles are created, and destroyed in their very first step. That's why the PhaseSpaceActor does not detect them.
+        // When we filter them out, this actor and PhaseSpace agree perfectly.
+        // We do not understand 100% why these are created, but we do know that such lowE photons will never make it out of the body.
+        // So we think it's warrented to just filter them out, because then we reach consistency with the PhaseSpace and TLE actors.
         continue;
       }
       //Get thet correct gammabin
@@ -164,7 +171,7 @@ void GatePromptGammaAnalogActor::UserSteppingActionInVoxel(int index, const G4St
       int bin = data.GetGammaZ()->GetYaxis()->FindFixBin(e)-1;
       mImageGamma->AddValueInt(index, bin, 1);
 
-      /*Some debug stuff
+      /*Some debug stuff for lowE gammas.
       GateMessage("Actor",4,"PGAn "<<"PG added."<<std::endl);
       //GateMessage("Actor",4,"PGAn "<<"EventID: "<< step->GetEvent()->GetEventID()<<std::endl);
       GateMessage("Actor",4,"PGAn "<<"Energy: " << e<<std::endl);
