@@ -282,6 +282,7 @@ void GatePromptGammaData::InitializeMaterial()
   GammaM.resize(n);
   NgammaM.resize(n);
 
+  //std::cout << "number of materials in InitMat: " << n <<std::endl;
   for(unsigned int i=0; i<n; i++) {
     bool stop = false;
     const G4Material * m = matTable[i];
@@ -299,6 +300,10 @@ void GatePromptGammaData::InitializeMaterial()
         }
       }
     }
+    //std::cout<< "Mat index " << i << std::endl;
+    //std::cout<< "Mat name " << m->GetName() << std::endl;
+    //std::cout<< "Num elements " << m->GetNumberOfElements() << std::endl;
+    //std::cout<< "stop? " << stop << std::endl;
 
     if (!stop) {
       GateMessage("Actor", 1, "Create DB for " << m->GetName()
@@ -395,7 +400,7 @@ TH1D * GatePromptGammaData::GetGammaEnergySpectrum(const int & materialIndex,
   if (!DataForMaterialExist(materialIndex)) {
     GateError("Error in GatePromptGammaData for TLE, the material " <<
               (*G4Material::GetMaterialTable())[materialIndex]->GetName()
-              << " is not in the DB");
+              << " is not in the DB. materialIndex: " << materialIndex);
   }
 
   // Get the index of the energy bin

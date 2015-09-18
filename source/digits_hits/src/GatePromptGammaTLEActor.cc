@@ -51,6 +51,8 @@ void GatePromptGammaTLEActor::SetInputDataFilename(std::string filename)
 void GatePromptGammaTLEActor::Construct()
 {
   GateVImageActor::Construct();
+  //std::cout << "TLE Begin. Press any key to continue." << std::endl;
+  //std::cin.get();
 
   // Enable callbacks
   EnableBeginOfRunAction(false);
@@ -60,8 +62,12 @@ void GatePromptGammaTLEActor::Construct()
   EnableUserSteppingAction(true);
 
   // Input data
+  //std::cout << "Data Begin. Press any key to continue." << std::endl;
+  //std::cin.get();
   data.Read(mInputDataFilename);
   data.InitializeMaterial();
+  //std::cout << "Data End. Press any key to continue." << std::endl;
+  //std::cin.get();
 
   //set up and allocate lasthiteventimage
   SetOriginTransformAndFlagToImage(mLastHitEventImage);
@@ -69,6 +75,8 @@ void GatePromptGammaTLEActor::Construct()
   mLastHitEventImage.Allocate();
   mLastHitEventImage.Fill(-1); //does allocate imply Filling with zeroes?
 
+  //std::cout << "TLE Images Begin. Press any key to continue." << std::endl;
+  //std::cin.get();
   //set up and allocate runtime images.
   SetTLEIoH(mImageGamma);
   if (mIsVarianceImageEnabled){
@@ -76,6 +84,8 @@ void GatePromptGammaTLEActor::Construct()
     SetTrackIoH(trackl);
     SetTrackIoH(tracklsq);
   }
+  //std::cout << "TLE Images End. Press any key to continue." << std::endl;
+  //std::cin.get();
 
   // Force hit type to random
   if (mStepHitType != RandomStepHitType) {
@@ -85,6 +95,9 @@ void GatePromptGammaTLEActor::Construct()
 
   // Set to zero
   //ResetData(); //allocate implies reset
+
+  //std::cout << "TLE End. Press any key to continue." << std::endl;
+  //std::cin.get();
 }
 //-----------------------------------------------------------------------------
 
@@ -130,6 +143,8 @@ void GatePromptGammaTLEActor::SaveData()
 //-----------------------------------------------------------------------------
 // Callback at start of each event
 void GatePromptGammaTLEActor::BeginOfEventAction(const G4Event *e) {
+  //std::cout << "Event Begin. Press any key to continue." << std::endl;
+  //std::cin.get();
   GateVActor::BeginOfEventAction(e);
   mCurrentEvent++;
   GateDebugMessage("Actor", 3, "GatePromptGammaTLEActor -- Begin of Event: " << mCurrentEvent << G4endl);
