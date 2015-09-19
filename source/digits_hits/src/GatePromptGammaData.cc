@@ -315,13 +315,37 @@ void GatePromptGammaData::InitializeMaterial()
                   << ")" << std::endl);
       mGammaEnergyHistoByMaterialByProtonEnergy[i].resize(proton_bin+1); // from [1 to n]
 
+      //First, we build a TH2D for the current material.
+      TH2D * tmpmat = new TH2D("tmpmat","tmpmat",
+                               proton_bin, min_proton_energy/MeV, max_proton_energy/MeV,
+                               gamma_bin, min_gamma_energy/MeV, max_gamma_energy/MeV);
+      for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
+        const G4Element * elem = m->GetElement(e);
+        if (elem->GetZ() == 1) continue; //Nothing to do for hydrogen
+        double f = m->GetFractionVector()[e];
+        SetCurrentPointerForThisElement(elem);
+        TH2D * tmpelem = (TH2D*) pHEpEpgNormalized->Clone();
+        tmpelem->Scale(f);
+        tmpmat->Add(tmpelem);
+        delete tmpelem;
+      }
+      //Now that tmpmat is complete, we slice it up and copy it into mGammaEnergyHistoByMaterialByProtonEnergy
+      for(unsigned int j=1; j<proton_bin+1; j++) {
+        //TH1D * h = tmpmat->ProjectionY("", j, j);
+        TH1D * h = new TH1D(*tmpmat->ProjectionY("", j, j));
+        mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
+        delete h;
+      }
+      delete tmpmat;
+
+      /* START OLD LOOP
       //set mGammaEnergyHistoByMaterialByProtonEnergy
       for(unsigned int j=1; j<proton_bin+1; j++) {
         TH1D * h = new TH1D();
         h->SetBins(gamma_bin, min_gamma_energy, max_gamma_energy);
 
         // Loop over element
-        TH1D * proj = pHEpEpgNormalized->ProjectionY("", j, j);
+        //TH1D * proj = pHEpEpgNormalized->ProjectionY("", j, j);
 
         for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
           const G4Element * elem = m->GetElement(e);
@@ -331,7 +355,9 @@ void GatePromptGammaData::InitializeMaterial()
             // (If hydrogen probability is zero)
             // Get histogram for the current bin
             SetCurrentPointerForThisElement(elem);
-            TH1D * he = new TH1D(*proj); // copy the projection
+            TH1D * he = new TH1D(*pHEpEpgNormalized->ProjectionY("", j, j)); //TODO: why must it be done like this?
+            //TH1D * he = new TH1D(*proj); // copy the projection
+            //TH1D * he = (TH1D*) proj->Clone();
 
             // Scale it according to the fraction of this element in the material
             he->Scale(f);
@@ -345,6 +371,7 @@ void GatePromptGammaData::InitializeMaterial()
         }
         mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
       }
+      END OLD LOOP */
 
       //Build GammaZ -> GammaM, EpEpg=Ngamma(z,E) -> Ngamma(m,E)
       TH2D * hgammam = new TH2D();
