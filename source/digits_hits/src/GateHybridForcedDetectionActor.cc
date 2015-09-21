@@ -283,8 +283,8 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
 
     // Remove noise from I0.
     if(mNoisePrimary != 0) {
-      for(unsigned int i=0; i<h.GetVectorLength(); i++) {
-        energyWeightList.back() *= mEnergyResponseDetector(energyList.back());
+      for(unsigned int i=0; i<energyWeightList.size(); i++) {
+        energyWeightList[i] *= mEnergyResponseDetector(energyList[i]);
       }
       primaryProjector->GetProjectedValueAccumulation().SetNumberOfPrimaries(0.);
     }
