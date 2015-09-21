@@ -280,8 +280,15 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     mFlatFieldImage = CreateVoidProjectionImage();
     primaryProjector->SetInput(mFlatFieldImage);
     primaryProjector->SetInput(1, flatFieldSource->GetOutput() );
-    // Removed noise from I0. 
-    primaryProjector->GetProjectedValueAccumulation().SetNumberOfPrimaries(0.);
+
+    // Remove noise from I0.
+    if(mNoisePrimary != 0) {
+      for(unsigned int i=0; i<h.GetVectorLength(); i++) {
+        energyWeightList.back() *= mEnergyResponseDetector(energyList.back());
+      }
+      primaryProjector->GetProjectedValueAccumulation().SetNumberOfPrimaries(0.);
+    }
+
     TRY_AND_EXIT_ON_ITK_EXCEPTION(primaryProjector->Update());
     mFlatFieldImage = primaryProjector->GetOutput();
   }
