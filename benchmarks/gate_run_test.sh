@@ -12,7 +12,23 @@ echo $1
 echo $2
 echo
 echo "Gate binary location:"
-echo $GATE_BINARY
+# GATE_BINARY is unset
+if [ -z ${GATE_BINARY+x} ]; then
+    which Gate
+    # if Gate exists, the previous command returns 0 (0 is true)
+    if [ `echo $?` -eq 0 ]; then
+	GATE_BINARY=`which Gate`
+	echo "GATE_BINARY is set to '$GATE_BINARY'"
+    # if Gate does not exist, the previous command returns 1: exit the test
+    else
+	echo "Please provide a valid installation for Gate. Nothing was found by the command 'which Gate'."
+	exit 1
+    fi
+# GATE_BINARY is set from dashboard CMakeLists
+else
+    echo "GATE_BINARY is set to '$GATE_BINARY'"
+fi
+
 echo
 echo "Benchmarks directory:"
 echo $BENCHMARKS_DIRECTORY
