@@ -93,7 +93,9 @@ echo $exit_status_final
 echo
 echo
 echo "--------------------------------------------------------------------------------------------------"
-echo "For debugging information, here is the generated output of the simulation launched with Gate binary:"
+echo "For debugging information, here is the generated output of the simulation launched with Gate binary."
+echo "If it ends by 'G4Exception', please install Geant4 properly by launching a command such as:"
+echo "source GEANT4_INSTALL_PATH/bin/geant4.sh"
 cat gate_simulation_log.txt
 echo "--------------------------------------------------------------------------------------------------"
 
