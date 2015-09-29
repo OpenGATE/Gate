@@ -7,9 +7,10 @@ echo "Current directory:"
 pwd
 echo
 
-echo "Printing the two parameters for debugging:"
+echo "Printing the three parameters for debugging:"
 echo $1
 echo $2
+echo $3
 echo
 echo "Gate binary location:"
 # GATE_BINARY is unset
@@ -30,10 +31,31 @@ else
 fi
 
 echo
+
+# $3 is not empty i.e ${Gate_SOURCE_DIR} is defined i.e. this test is launched from 'make test' or for the nightly dashboard
+if [ ! -z ${3+x} ]; then
+    echo "This test is launched from 'make test' or for the nightly dashboard."
+    BENCHMARKS_DIRECTORY=$3/benchmarks
+
+# this script should be launched locally, from its containing folder
+else
+    # Note : ${BASH_SOURCE[0]} contains this script name
+    # Tests -ge instead of -eq to include the case of there are backup versions of the script in the current folder.
+    if [ `ls | grep ${BASH_SOURCE[0]} | wc -l` -ge 1 ]; then
+	echo "This script is launched locally, from its containing folder."
+	BENCHMARKS_DIRECTORY=`pwd`
+    # exit otherwise
+    else
+	echo "You are launching gate_run_test.sh from an improper location. Please launch this script locally, from its containing folder."
+	exit 1
+    fi
+fi
+
 echo "Benchmarks directory:"
 echo $BENCHMARKS_DIRECTORY
 echo
 cd $BENCHMARKS_DIRECTORY/$1/
+
 echo "Working directory:"
 pwd
 
