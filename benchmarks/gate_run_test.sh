@@ -34,7 +34,7 @@ echo
 
 # $3 is not empty i.e ${Gate_SOURCE_DIR} is defined i.e. this test is launched from 'make test' or for the nightly dashboard
 if [ ! -z ${3+x} ]; then
-    echo "This test is launched from 'make test' or for the nightly dashboard."
+    echo "This test is launched from 'make test' or for the Nightly dashboard."
     BENCHMARKS_DIRECTORY=$3/benchmarks
 
 # this script should be launched locally, from its containing folder
@@ -64,6 +64,16 @@ echo
 echo "--------------------------------------------------------------------------------------------------"
 echo "Launching Gate binary on mac/$2.mac."
 $GATE_BINARY mac/$2.mac > gate_simulation_log.txt 2>&1
+
+# Testing if there is Geant4 installation problem
+# Exit if any 'G4Exception' is found in gate_simulation_log.txt.
+if [ `cat gate_simulation_log.txt | grep G4Exception | wc -l` -ge 1 ]; then
+    echo "gate_simulation_log.txt contains 'G4Exception'."
+    echo "Please install Geant4 properly by launching a command such as:"
+    echo "source GEANT4_INSTALL_PATH/bin/geant4.sh"
+    exit 1
+fi
+
 echo "Gate binary has finished."
 echo "See at the end of this report for the generated output."
 echo "--------------------------------------------------------------------------------------------------"
@@ -132,8 +142,6 @@ echo
 echo
 echo "--------------------------------------------------------------------------------------------------"
 echo "For debugging information, here is the generated output of the simulation launched with Gate binary."
-echo "If it ends by 'G4Exception', please install Geant4 properly by launching a command such as:"
-echo "source GEANT4_INSTALL_PATH/bin/geant4.sh"
 cat gate_simulation_log.txt
 echo "--------------------------------------------------------------------------------------------------"
 
