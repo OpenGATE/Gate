@@ -3,6 +3,8 @@
 
 #include <fstream>
 
+#include "GateSourceY90BremTables.cc"
+
 GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
 {
   GateMessage("Beam", 1, "GateSourceY90Brem::GateSourceY90Brem(G4String) called." << Gateendl);
@@ -11,48 +13,32 @@ GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
 
   int i, j;
   ifstream input_file;
-  G4float discard;
 
   // TODO: the location of these files shouldn't be hardcoded to my personal directory
-  G4String brem_energy_file = "/home/Pinstrum/jared/Y90_brem/y90_brem_energy_pdf.txt";
   G4String brem_range_file = "/home/Pinstrum/jared/Y90_brem/y90_brem_range_pdf.txt";
   G4String brem_angle_file = "/home/Pinstrum/jared/Y90_brem/y90_brem_angle_pdf.txt";
 
-  input_file.open(brem_energy_file);
-  if(input_file)
-  {
-    input_file >> discard >> discard;   // throw away first two values (required for BuildUserSpectrum)
-    mEnergyTable = new G4double[200];
-    for(i=0;i<200;i++)
-        input_file >> discard >> mEnergyTable[i];
-    input_file.close();
+  // calculate total probability of bremsstrahlung emission for a single beta
+  mBremProb = 0;
+  for(i=0;i<200;i++)
+    mBremProb += mEnergyTable[i];
 
-    mBremProb = 0;
-    for(i=0;i<200;i++)
-      mBremProb += mEnergyTable[i];
+  mCumulativeEnergyTable = new G4double[200];
+  mCumulativeEnergyTable[0]  = mEnergyTable[0];
+  for(i=1;i<200;i++)
+    mCumulativeEnergyTable[i]=mCumulativeEnergyTable[i-1] + mEnergyTable[i];
+  for(i=0;i<200;i++)
+    mCumulativeEnergyTable[i] /= mCumulativeEnergyTable[199];
 
-    mCumulativeEnergyTable = new G4double[200];
-    mCumulativeEnergyTable[0]  = mEnergyTable[0];
-    for(i=1;i<200;i++)
-      mCumulativeEnergyTable[i]=mCumulativeEnergyTable[i-1] + mEnergyTable[i];
-    for(i=0;i<200;i++)
-      mCumulativeEnergyTable[i] /= mCumulativeEnergyTable[199];
-
-    for(i=0;i<5;i++)
-      G4cout << mEnergyTable[i] << " ";
-    G4cout << G4endl;
-    for(i=0;i<5;i++)
-      G4cout << mCumulativeEnergyTable[i] << " ";
-    G4cout << G4endl;
+  for(i=0;i<5;i++)
+    G4cout << mEnergyTable[i] << " ";
+  G4cout << G4endl;
+  for(i=0;i<5;i++)
+    G4cout << mCumulativeEnergyTable[i] << " ";
+  G4cout << G4endl;
 
 
-    G4cout << "Energy file loaded. Total brem likelihood: " << mBremProb << G4endl;
-  }
-  else
-    G4Exception("GateSourceY90Brem", "constructor", FatalException, "Energy spectrum file not found." );
-
-//  m_eneSPS->BuildUserSpectrum(brem_energy_file);
-//  m_eneSPS->SetEnergyDisType("UserSpectrum");
+  G4cout << "Energy file loaded. Total brem likelihood: " << mBremProb << G4endl;
 
   // TODO: Eliminate all the hardcoded table sizes ?
   input_file.open(brem_range_file);
@@ -117,8 +103,6 @@ GateSourceY90Brem::~GateSourceY90Brem()
 {
   // delete the allocated arrays for the range and angle tables.
   int i;
-  if(mEnergyTable)
-    delete [] mEnergyTable;
 
   if(mCumulativeEnergyTable)
     delete [] mCumulativeEnergyTable;
@@ -191,7 +175,7 @@ G4int GateSourceY90Brem::GeneratePrimaries(G4Event *event)
   return numVertices;
 }
 
-void GateSourceY90Brem::GeneratePrimaryVertex(G4Event* event)
+void GateSourceY90Brem::GeneratePrimaryVertex(G4Event*)
 {
   ;
 }

@@ -42,7 +42,7 @@ protected:
   G4double mMinEnergy;  // minimum energy below which photons won't be generated TODO: not implemented yet
   G4double mBremProb;   // probability of a brem photon above minEnergy
 
-  G4double *mEnergyTable;
+  static const G4double mEnergyTable[200];  // energy probability table in 10 keV steps
   G4double *mCumulativeEnergyTable; // cumulative histogram of energy probability
   G4float **mRangeTable; // cumulative probability table of range in 0.1 mm increments
   G4float **mAngleTable; // cumulative probability table of angle in 1 degree increments
