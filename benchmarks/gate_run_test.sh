@@ -36,7 +36,6 @@ echo
 if [ ! -z ${3+x} ]; then
     echo "This test is launched from 'make test' or for the Nightly dashboard."
     BENCHMARKS_DIRECTORY=$3/benchmarks
-
 # this script should be launched locally, from its containing folder
 else
     # Note : ${BASH_SOURCE[0]} contains this script name
@@ -82,22 +81,25 @@ echo
 
 cd reference
 echo "----------------------------------------------------"
-echo "Reference folder content:"
+echo "Reference archive content:"
 tar xvzf $1-reference.tgz
+# Testing if the archive exists, otherwise explain how to get it
+if [ `echo $?` -ge 1 ]; then
+    echo "The archive $1-reference.tgz is not present in the folder $BENCHMARKS_DIRECTORY/$1/reference."
+    echo "To retrieve it:"
+    echo "Go to Gate compilation folder ;"
+    echo "Launch 'ccmake .' and set the options 'BUILD_TESTING' and 'GATE_DOWNLOAD_BENCHMARKS_DATA' to ON ;"
+    echo "Configure and Generate ;"
+    echo "Launch make."
+    exit 1
+fi
 echo "----------------------------------------------------"
 cd ..
 
-mkdir excluded_from_test
-mv output/BenchAnalyse.C excluded_from_test
-mv output/output-gamma-Edep.mhd excluded_from_test
-mv output/output-gamma-Edep.raw excluded_from_test
-mv output/stat-gamma.txt excluded_from_test/stat-gamma_output.txt
-mv output/README excluded_from_test
-mv reference/stat-gamma.txt excluded_from_test/stat-gamma_reference.txt
-mv reference/README excluded_from_test
-mv reference/benchRT-reference.tgz excluded_from_test
-mv reference/benchRT-reference.tgz.md5 excluded_from_test
-mv reference/benchRT-reference.tgz.md5-stamp excluded_from_test
+while read line
+do
+    echo "$ line \ n"
+done <$BENCHMARKS_DIRECTORY/$1/reference/$2.txt
 
 echo
 echo "----------------------------------------------------"
