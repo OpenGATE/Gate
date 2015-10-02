@@ -58,7 +58,7 @@ do
 done <reference/$2.txt
 
 cp reference/$2.txt test_ref
-git add reference/$2.txt test_ref
+git add reference/$2.txt
 
 echo "This reference was created by launching a Gate simulation on" >reference/$2_ref.txt
 echo $(date) >>reference/$2_ref.txt
