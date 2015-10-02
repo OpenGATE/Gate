@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $# -ne 3 ]
+if [ "$#" -ne 3 ]
 then
     echo "Usage (example): `basename $0` benchRT gamma Linux"
     exit 1
