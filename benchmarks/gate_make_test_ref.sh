@@ -73,8 +73,10 @@ echo $(uname --all) >>reference/$2_ref.txt
 cp reference/$2_ref.txt test_ref
 git add reference/$2_ref.txt test_ref
 
-tar cvzf $1-reference.tgz test_ref/*
-mv $1-reference.tgz reference
+cd test_ref
+tar cvzf $1-reference.tgz *
+cd ..
+mv test_ref/$1-reference.tgz reference
 rm -rf test_ref
 echo "----------------------------------------------------"
 
