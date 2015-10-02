@@ -64,7 +64,7 @@ echo "--------------------------------------------------------------------------
 echo "Launching Gate binary on mac/$2.mac."
 $GATE_BINARY mac/$2.mac > gate_simulation_log.txt 2>&1
 
-# Testing if there is Geant4 installation problem
+# Testing if there is a Geant4 installation problem
 # Exit if any 'G4Exception' is found in gate_simulation_log.txt.
 if [ `cat gate_simulation_log.txt | grep G4Exception | wc -l` -ge 1 ]; then
     echo "gate_simulation_log.txt contains 'G4Exception'."
@@ -90,16 +90,11 @@ if [ `echo $?` -ge 1 ]; then
     echo "Go to Gate compilation folder ;"
     echo "Launch 'ccmake .' and set the options 'BUILD_TESTING' and 'GATE_DOWNLOAD_BENCHMARKS_DATA' to ON ;"
     echo "Configure and Generate ;"
-    echo "Launch make."
+    echo "Launch 'make'."
     exit 1
 fi
 echo "----------------------------------------------------"
 cd ..
-
-while read line
-do
-    echo "$ line \ n"
-done <$BENCHMARKS_DIRECTORY/$1/reference/$2.txt
 
 echo
 echo "----------------------------------------------------"
@@ -107,38 +102,50 @@ echo "Folder in which diff will be performed contains:"
 ls *
 echo "----------------------------------------------------"
 echo
-echo "Performing detailed diff ('diff -s reference output') in folder:"
+echo "Performing detailed diff ('diff -s reference output') from folder:"
 echo $BENCHMARKS_DIRECTORY/$1/
 echo
-diff -s reference output
-exit_status_folder=$?
-echo
-echo "exit_status_folder is:"
-echo $exit_status_folder
-echo
-echo "--------------------------"
-echo
-echo "Performing detailed diff on the 6th first lines of stat-gamma.txt:"
-echo
-diff -s <(head -n 6 excluded_from_test/stat-gamma_reference.txt) <(head -n 6 excluded_from_test/stat-gamma_output.txt)
-exit_status_stat=$?
-echo
-echo "exit_status_stat is:"
-echo $exit_status_stat
-echo
-echo "--------------------------"
-echo
-echo "Meaning of these partial exit_status:"
-echo "'0': no difference i.e. SUCCESSFUL TEST"
-echo "'1': missing file or difference in a text file i.e. FAILING TEST"
-echo "'2': difference on a binary file i.e. FAILING TEST"
-echo
-echo "--------------------------"
-echo
-exit_status_final=$(($exit_status_folder+$exit_status_stat))
-echo "exit_status_final = exit_status_folder + exit_status_stat is:"
-echo $exit_status_final
 
+exit_status_final=0
+
+# Each line of the $2.txt file is splitted (separator is space) and stored in an array 'WORD'
+while read -a WORD
+do
+    echo "${WORD[@]}"
+
+    if [ ${WORD[0]} == "diff" ]; then
+	echo "diff: Performing diff -s"
+	diff -s reference/${WORD[1]} output/${WORD[1]}
+	exit_status_partial=$?
+    fi
+
+    if [ ${WORD[0]} == "diff_stat" ]; then
+	echo "diff_stat: Performing detailed diff on the 6th first lines of stat-gamma.txt:"
+	diff -s <(head -n 6 reference/stat-gamma.txt) <(head -n 6 output/stat-gamma.txt)
+	exit_status_partial=$?
+    fi
+
+    echo "exit_status_partial is:"
+    echo $exit_status_partial
+    echo
+    exit_status_final=$(($exit_status_final+$exit_status_partial))
+done <$BENCHMARKS_DIRECTORY/$1/reference/$2.txt
+
+echo
+echo "--------------------------"
+echo
+echo "Meaning of the exit_status_partial:"
+echo "'0': no difference i.e. SUCCESSFUL TEST"
+echo "'1': difference in a text file i.e. FAILING TEST"
+echo "'2': difference on a binary file or missing file i.e. FAILING TEST"
+echo
+echo "--------------------------"
+echo
+
+echo "--------------------------"
+echo "exit_status_final is:"
+echo $exit_status_final
+echo "--------------------------"
 
 echo
 echo
