@@ -25,3 +25,7 @@ Date:   Tue Sep 1 17:19:24 2015 +0200
 on the branch dashboard-test from opengate-creatis repository
 
 with the Build Name linux-gcc_4.8.3-geant4_10.01-opengate-creatis-dashboard-test
+
+on the architecture
+[mouton@linux15]$ uname --all
+Linux linux15.dg.creatis.insa-lyon.fr 4.1.7-200.fc22.x86_64 #1 SMP Mon Sep 14 20:19:24 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
