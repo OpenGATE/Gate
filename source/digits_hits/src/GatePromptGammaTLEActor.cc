@@ -281,7 +281,7 @@ void GatePromptGammaTLEActor::BuildOutput() {
 
     for(int gi=0; gi<data.GetGammaNbBins() ; gi++ ){ //per proton bin, compute the contribution to the gammabin
       double tleval = 0.;
-      double tleuncval = 0.;
+      double tlevarval = 0.;
       for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
         if(tracklav[pi]==0.) {
           continue; //dont need to add anything to TLE or TLEunc.
@@ -291,13 +291,13 @@ void GatePromptGammaTLEActor::BuildOutput() {
         //TLE, TLE uncertainty
         tleval += igammam * tracklav[pi];
 
-        if (ingammam > 0.) tleuncval += ( pow(igammam,2) * ( tracklvar[pi]/n + tracklavsq[pi]/ingammam ) );
-        else tleuncval += ( pow(igammam,2) * ( tracklvar[pi]/n + tracklavsq[pi] ) );
+        if (ingammam > 0.) tlevarval += ( pow(igammam,2) * ( tracklvar[pi]/n + tracklavsq[pi]/ingammam ) );
+        else tlevarval += ( pow(igammam,2) * ( tracklvar[pi]/n + tracklavsq[pi] ) );
         //if (tleuncval!=tleuncval) tleuncval = 0.; //check for division by zero.
       }
 
       tle->SetValueDouble(vi,gi,tleval);
-      tlevariance->SetValueDouble(vi,gi,tleuncval); //remember this is the SQUARE of stddev, must take root later.
+      tlevariance->SetValueDouble(vi,gi,tlevarval); //remember this is the SQUARE of stddev, must take root later.
       //we do this so we can sum variances and take sqrt and get proper stddev when integrating a dimension.
     }
 

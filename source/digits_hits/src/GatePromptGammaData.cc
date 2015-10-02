@@ -332,8 +332,6 @@ void GatePromptGammaData::InitializeMaterial()
       //Now that tmpmat is complete, we slice it up and copy it into mGammaEnergyHistoByMaterialByProtonEnergy
       for(unsigned int j=1; j<proton_bin+1; j++) {
         TH1D * h = tmpmat->ProjectionY("", j, j);
-        //TH1D * h = new TH1D(*tmpmat->ProjectionY("", j, j));
-        //TH1D * h = (TH1D*) tmpmat->ProjectionY("", j, j)->Clone();
         mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
         //delete h; DO NOT DELETE!!!! Because mGammaEnergyHistoByMaterialByProtonEnergy only holds to pointer to h, not h itself.
       }
