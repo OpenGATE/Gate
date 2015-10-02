@@ -92,8 +92,6 @@ git add .gitignore
 
 cd ../..
 
-echo "GateAddBenchmarkData(\"DATA{$1/reference/$1-reference.tgz}\")" >> CMakeLists.txt
-git add CMakeLists.txt
 
 echo
 echo "----------------------------------------------------"
