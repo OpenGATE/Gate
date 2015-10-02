@@ -71,7 +71,7 @@ echo "on the architecture" >>reference/$2_ref.txt
 echo $(uname --all) >>reference/$2_ref.txt
 
 cp reference/$2_ref.txt test_ref
-git add reference/$2_ref.txt test_ref
+git add reference/$2_ref.txt
 
 cd test_ref
 tar cvzf $1-reference.tgz *
