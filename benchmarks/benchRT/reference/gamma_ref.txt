@@ -1,8 +1,8 @@
 This reference was created by launching a Gate simulation on
-ven. oct. 2 05:11:09 CEST 2015
+ven. oct. 2 12:25:25 CEST 2015
 with the configuration file benchmarks/benchRT/mac/gamma.mac
 from the commit
-commit 8c3cda394eef91eb51f6bba928c61a4a4729303a
+commit 227b73f1e8a5385450dc40f6d68fbcecb4bff706
 with the version of gcc
 gcc (GCC) 5.1.1 20150618 (Red Hat 5.1.1-4)
 on the architecture
