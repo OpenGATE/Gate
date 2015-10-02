@@ -4,10 +4,10 @@
 echo CTEST_FULL_OUTPUT
 echo
 
-# 2 parameters should be provided, exit otherwise
-if [ "$#" -ne 2 ]
+# 2 or 3 parameters should be provided, exit otherwise
+# 3rd parameter is the path used by Nightly dashboard and 'make test'
+if [ "$#" -le 1 ] || [ "$#" -ge 4 ]
 then
-    echo "You should provide 2 parameters."
     echo "Usage (example): `basename $0` benchRT gamma"
     exit 1
 fi
