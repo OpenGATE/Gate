@@ -4,11 +4,11 @@
 echo CTEST_FULL_OUTPUT
 echo
 
-# 2 or 3 parameters should be provided, exit otherwise
-if [ "$#" -le 1 ] || [ "$#" -ge 4 ]
+# 2 parameters should be provided, exit otherwise
+if [ "$#" -ne 2 ]
 then
-    echo "You should provide 2 or 3 parameters."
-    echo "Usage (example): `basename $0` benchRT gamma [/tmp/dashboard_2015-10-02_11-37-08/opengate-creatis-dashboard-test]"
+    echo "You should provide 2 parameters."
+    echo "Usage (example): `basename $0` benchRT gamma"
     exit 1
 fi
 
