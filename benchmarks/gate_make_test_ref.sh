@@ -72,7 +72,7 @@ echo "from the commit" >>reference/$2_ref.txt
 echo $(git log |head -1) >>reference/$2_ref.txt
 echo "with the version of gcc" >>reference/$2_ref.txt
 echo $(gcc --version |head -1) >>reference/$2_ref.txt
-echo "on the architecture" >>reference/$2_ref.txt
+echo "on the architecture $3" >>reference/$2_ref.txt
 echo $(uname --all) >>reference/$2_ref.txt
 
 cp reference/$2_ref.txt test_ref
