@@ -7,7 +7,12 @@ then
     exit 1
 fi
 
+echo "WARNING"
+echo "If you are creating a new reference archive, please use AddExternalData.sh."
+echo "This sript can be used to update an existing reference."
+echo
 echo "The reference will be built from the $1/'output' folder content, based on the list of files provided in the reference/$2.txt file. $3 is the architecture (not mandatory)."
+echo
 echo "This script should be launched from a git repository."
 
 echo "Current directory:"
@@ -85,10 +90,6 @@ cd reference
 echo "md5sum creation."
 echo $(md5sum $1-reference.tgz | cut -f 1-1 -d ' ') >$1-reference.tgz.md5
 git add $1-reference.tgz.md5
-
-echo "$1-reference.tgz" >> .gitignore
-echo "$1-reference.tgz.md5-stamp" >> .gitignore
-git add .gitignore
 
 cd ../..
 
