@@ -3,10 +3,11 @@
 if [ "$#" -ne 3 ]
 then
     echo "Usage (example): `basename $0` benchRT gamma Linux"
+    echo "The reference will be built from the benchRT/'output' folder content, based on the list of files provided in the reference/gamma.txt file. Linux is the architecture (not mandatory)."
     exit 1
 fi
 
-echo "The reference will be built from the first_parameter/'output' folder content, based on the list of files provided in the reference/second_parameter.txt file. Third parameter is the architecture (not mandatory)."
+echo "The reference will be built from the $1/'output' folder content, based on the list of files provided in the reference/$2.txt file. $3 is the architecture (not mandatory)."
 echo "This script should be launched from a git repository."
 
 echo "Current directory:"
