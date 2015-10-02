@@ -1,31 +1,9 @@
-Reference folder content:
-gamma-3d-Dose.mhd
-gamma-3d-Dose.raw
-gamma-3d-Edep-Squared.mhd
-gamma-3d-Edep-Squared.raw
-gamma-3d-Edep-Uncertainty.mhd
-gamma-3d-Edep-Uncertainty.raw
-gamma-3d-Edep.mhd
-gamma-3d-Edep.raw
-README
-stat-gamma.txt
-
-
-This reference was created by launching a Gate simulation
-
-on September 9th 2015
-
+This reference was created by launching a Gate simulation on
+ven. oct. 2 05:11:09 CEST 2015
 with the configuration file benchmarks/benchRT/mac/gamma.mac
-
-from the commit 053ce43002e62a851b650086269d13278ae08857
-Author: Claire Mouton <claire.mouton@creatis.insa-lyon.fr>
-Date:   Tue Sep 1 17:19:24 2015 +0200
-    Fixed a bug in testing.sh.
-
-on the branch dashboard-test from opengate-creatis repository
-
-with the Build Name linux-gcc_4.8.3-geant4_10.01-opengate-creatis-dashboard-test
-
+from the commit
+commit 8c3cda394eef91eb51f6bba928c61a4a4729303a
+with the version of gcc
+gcc (GCC) 5.1.1 20150618 (Red Hat 5.1.1-4)
 on the architecture
-[mouton@linux15]$ uname --all
 Linux linux15.dg.creatis.insa-lyon.fr 4.1.7-200.fc22.x86_64 #1 SMP Mon Sep 14 20:19:24 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
