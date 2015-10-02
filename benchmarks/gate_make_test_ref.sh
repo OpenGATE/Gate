@@ -57,8 +57,20 @@ do
 done <reference/$2.txt
 
 cp reference/$2.txt test_ref
+git add reference/$2.txt test_ref
+
+echo "This reference was created by launching a Gate simulation on" >reference/$2_ref.txt
+echo $(date) >>reference/$2_ref.txt
+echo "with the configuration file benchmarks/$1/mac/$2.mac" >>reference/$2_ref.txt
+echo "from the commit" >>reference/$2_ref.txt
+echo $(git log |head -1) >>reference/$2_ref.txt
+echo "with the version of gcc" >>reference/$2_ref.txt
+echo $(gcc --version |head -1) >>reference/$2_ref.txt
+echo "on the architecture" >>reference/$2_ref.txt
+echo $(uname --all) >>reference/$2_ref.txt
 
 cp reference/$2_ref.txt test_ref
+git add reference/$2_ref.txt test_ref
 
 tar cvzf $1-reference.tgz test_ref/*
 mv $1-reference.tgz reference
