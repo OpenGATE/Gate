@@ -305,6 +305,9 @@ void GatePromptGammaData::InitializeMaterial()
                       << " because " << elem->GetName()
                       << " is missing in the DB." << std::endl);
           stop = true;
+          GateError("Skipping " << m->GetName()
+                      << " because " << elem->GetName()
+                      << " is missing in the DB." << std::endl);
         }
       }
     }
@@ -321,17 +324,19 @@ void GatePromptGammaData::InitializeMaterial()
                                gamma_bin, min_gamma_energy/MeV, max_gamma_energy/MeV);
       for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
         const G4Element * elem = m->GetElement(e);
-        if (elem->GetZ() == 1) continue; //Nothing to do for hydrogen
-        double f = m->GetFractionVector()[e];
-        SetCurrentPointerForThisElement(elem);
-        TH2D * tmpelem = (TH2D*) pHEpEpgNormalized->Clone();
-        tmpelem->Scale(f);
-        tmpmat->Add(tmpelem);
-        delete tmpelem;
+        if (elem->GetZ() != 1) { //Nothing to do for hydrogen
+          double f = m->GetFractionVector()[e];
+          SetCurrentPointerForThisElement(elem);
+          TH2D * tmpelem = (TH2D*) pHEpEpgNormalized->Clone();
+          tmpelem->Scale(f);
+          tmpmat->Add(tmpelem);
+          delete tmpelem;
+        }
       }
       //Now that tmpmat is complete, we slice it up and copy it into mGammaEnergyHistoByMaterialByProtonEnergy
       for(unsigned int j=1; j<proton_bin+1; j++) {
-        TH1D * h = tmpmat->ProjectionY("", j, j);
+        //TH1D * h = tmpmat->ProjectionY("", j, j);
+        TH1D * h = new TH1D(*tmpmat->ProjectionY("", j, j)); //without a new it gives wrong results.
         mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
         //delete h; DO NOT DELETE!!!! Because mGammaEnergyHistoByMaterialByProtonEnergy only holds to pointer to h, not h itself.
       }
@@ -354,9 +359,7 @@ void GatePromptGammaData::InitializeMaterial()
             // (If hydrogen probability is zero)
             // Get histogram for the current bin
             SetCurrentPointerForThisElement(elem);
-            TH1D * he = new TH1D(*pHEpEpgNormalized->ProjectionY("", j, j)); //TODO: why must it be done like this?
-            //TH1D * he = new TH1D(*proj); // copy the projection
-            //TH1D * he = (TH1D*) proj->Clone();
+            TH1D * he = new TH1D(*pHEpEpgNormalized->ProjectionY("", j, j)); //without a new it gives wrong results.
 
             // Scale it according to the fraction of this element in the material
             he->Scale(f);
@@ -370,7 +373,7 @@ void GatePromptGammaData::InitializeMaterial()
         }
         mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
       }
-      END OLD LOOP */
+      //END OLD LOOP */
 
       //Build GammaZ -> GammaM, EpEpg=Ngamma(z,E) -> Ngamma(m,E)
       TH2D * hgammam = new TH2D();
