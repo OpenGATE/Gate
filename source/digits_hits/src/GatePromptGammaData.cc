@@ -292,125 +292,116 @@ void GatePromptGammaData::InitializeMaterial()
   NgammaM.resize(n);
 
   for(unsigned int i=0; i<n; i++) {
-    bool stop = false;
     const G4Material * m = matTable[i];
+    //std::cout << "Material: " << m->GetName() << std::endl;
+    if (m->GetName() == "worldDefaultAir") continue; //skip, should not occur in phantom.
 
-    // Check material
+    // Check existence of materials and elements
     for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
       const G4Element * elem = m->GetElement(e);
+      //std::cout << "Element: " << elem->GetName() << std::endl;
       unsigned int elementIndex = elem->GetIndex();
       if (elem->GetZ() != 1) { // skip
         if (ElementIndexList[elementIndex] == false) {
-          GateMessage("Actor", 1, "Skipping " << m->GetName()
-                      << " because " << elem->GetName()
-                      << " is missing in the DB." << std::endl);
-          stop = true;
-          GateError("Skipping " << m->GetName()
-                      << " because " << elem->GetName()
-                      << " is missing in the DB." << std::endl);
+          GateError("Aborting, because in material " << m->GetName()
+                      << " element " << elem->GetName()
+                      << " is missing from the PGDB." << std::endl);
         }
       }
     }
 
-    if (!stop) {
-      GateMessage("Actor", 1, "Create DB for " << m->GetName()
-                  << " (d = " << m->GetDensity()/(g/cm3)
-                  << ")" << std::endl);
-      mGammaEnergyHistoByMaterialByProtonEnergy[i].resize(proton_bin+1); // from [1 to n]
+    GateMessage("Actor", 1, "Create DB for " << m->GetName()
+              << " (d = " << m->GetDensity()/(g/cm3)
+              << ")" << std::endl);
+    mGammaEnergyHistoByMaterialByProtonEnergy[i].resize(proton_bin+1); // from [1 to n]
 
-      //First, we build a TH2D for the current material.
-      TH2D * tmpmat = new TH2D("tmpmat","tmpmat",
-                               proton_bin, min_proton_energy/MeV, max_proton_energy/MeV,
-                               gamma_bin, min_gamma_energy/MeV, max_gamma_energy/MeV);
-      for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
-        const G4Element * elem = m->GetElement(e);
-        if (elem->GetZ() != 1) { //Nothing to do for hydrogen
-          double f = m->GetFractionVector()[e];
-          SetCurrentPointerForThisElement(elem);
-          TH2D * tmpelem = (TH2D*) pHEpEpgNormalized->Clone();
-          tmpelem->Scale(f);
-          tmpmat->Add(tmpelem);
-          delete tmpelem;
-        }
+    /* START OLD LOOP
+    //set mGammaEnergyHistoByMaterialByProtonEnergy
+    for(unsigned int j=1; j<proton_bin+1; j++) {
+    TH1D * h = new TH1D();
+    h->SetBins(gamma_bin, min_gamma_energy, max_gamma_energy);
+
+    // Loop over element
+    //TH1D * proj = pHEpEpgNormalized->ProjectionY("", j, j);
+
+    for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
+      const G4Element * elem = m->GetElement(e);
+      double f = m->GetFractionVector()[e];
+
+      if (elem->GetZ() != 1) { // if not Hydrogen.
+        // (If hydrogen probability is zero)
+        // Get histogram for the current bin
+        SetCurrentPointerForThisElement(elem);
+        TH1D * he = new TH1D(*pHEpEpgNormalized->ProjectionY("", j, j)); //without a new it gives wrong results.
+
+        // Scale it according to the fraction of this element in the material
+        he->Scale(f);
+
+        // Add it to the current total histo
+        h->Add(he);
+
+        // remove temporary allocated TH1D (important !)
+        delete he;
       }
-      //Now that tmpmat is complete, we slice it up and copy it into mGammaEnergyHistoByMaterialByProtonEnergy
-      for(unsigned int j=1; j<proton_bin+1; j++) {
-        //TH1D * h = tmpmat->ProjectionY("", j, j);
-        TH1D * h = new TH1D(*tmpmat->ProjectionY("", j, j)); //without a new it gives wrong results.
-        mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
-        //delete h; DO NOT DELETE!!!! Because mGammaEnergyHistoByMaterialByProtonEnergy only holds to pointer to h, not h itself.
-      }
-      delete tmpmat;
-
-      /* START OLD LOOP
-      //set mGammaEnergyHistoByMaterialByProtonEnergy
-      for(unsigned int j=1; j<proton_bin+1; j++) {
-        TH1D * h = new TH1D();
-        h->SetBins(gamma_bin, min_gamma_energy, max_gamma_energy);
-
-        // Loop over element
-        //TH1D * proj = pHEpEpgNormalized->ProjectionY("", j, j);
-
-        for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
-          const G4Element * elem = m->GetElement(e);
-          double f = m->GetFractionVector()[e];
-
-          if (elem->GetZ() != 1) { // if not Hydrogen.
-            // (If hydrogen probability is zero)
-            // Get histogram for the current bin
-            SetCurrentPointerForThisElement(elem);
-            TH1D * he = new TH1D(*pHEpEpgNormalized->ProjectionY("", j, j)); //without a new it gives wrong results.
-
-            // Scale it according to the fraction of this element in the material
-            he->Scale(f);
-
-            // Add it to the current total histo
-            h->Add(he);
-
-            // remove temporary allocated TH1D (important !)
-            delete he;
-          }
-        }
-        mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
-      }
-      //END OLD LOOP */
-
-      //Build GammaZ -> GammaM, EpEpg=Ngamma(z,E) -> Ngamma(m,E)
-      TH2D * hgammam = new TH2D();
-      TH2D * hngammam = new TH2D();
-      hgammam->SetBins(proton_bin, min_proton_energy, max_proton_energy,
-                       gamma_bin, min_gamma_energy, max_gamma_energy); //same arrangement as GammaZ
-      hngammam->SetBins(proton_bin, min_proton_energy, max_proton_energy,
-                        gamma_bin, min_gamma_energy, max_gamma_energy);
-      // Loop over element
-      for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
-        const G4Element * elem = m->GetElement(e);
-        double f = m->GetFractionVector()[e];
-        //double f = m->GetAtomsVector()[e];
-
-        if (elem->GetZ() != 1) { // if not Hydrogen.
-          // (If hydrogen probability is zero)
-          // Get histogram for the current bin
-          SetCurrentPointerForThisElement(elem);
-          TH2D * hngammam2 = (TH2D*) Ngamma->Clone();
-          TH2D * hgammam2 = (TH2D*) GammaZ->Clone();
-
-          // Scale it according to the fraction of this element in the material, multiplied with density ratio
-          hgammam2->Scale(f * m->GetDensity() / (g / cm3) );// GammaZ=GammaZ/rho(Z), so dont need to divide by rho(Z)
-          hngammam2->Scale(f * m->GetDensity() / (g / cm3) );
-
-          // Add it to the current total histo
-          hgammam->Add(hgammam2);
-          hngammam->Add(hngammam2);
-
-          // delete temporary TH2D
-          delete hngammam2;
-          delete hgammam2;
-        }
-      }
-      GammaM[i] = hgammam; //Now it's no longer modulo rho(Z), or rho(M)!!!
-      NgammaM[i] = hngammam;
     }
+    mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
+    }
+    //END OLD LOOP */
+
+    //Build GammaZ -> GammaM, EpEpg=Ngamma(z,E) -> Ngamma(m,E)
+    TH2D * hgammam = new TH2D();
+    TH2D * hngammam = new TH2D();
+    hgammam->SetBins(proton_bin, min_proton_energy, max_proton_energy,
+                   gamma_bin, min_gamma_energy, max_gamma_energy); //same arrangement as GammaZ
+    hngammam->SetBins(proton_bin, min_proton_energy, max_proton_energy,
+                    gamma_bin, min_gamma_energy, max_gamma_energy);
+    //Build tmpmat for mGammaEnergyHistoByMaterialByProtonEnergy
+    TH2D * tmpmat = new TH2D("tmpmat","tmpmat",
+                           proton_bin, min_proton_energy/MeV, max_proton_energy/MeV,
+                           gamma_bin, min_gamma_energy/MeV, max_gamma_energy/MeV);
+
+    // Loop over element
+    for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
+      const G4Element * elem = m->GetElement(e);
+      if (elem->GetZ() == 1) continue; // if Hydrogen, probability is zero => skip
+
+      double f = m->GetFractionVector()[e];
+      //double f = m->GetAtomsVector()[e];
+
+      // Get histogram for the current bin
+      SetCurrentPointerForThisElement(elem);
+      TH2D * hngammam2 = (TH2D*) Ngamma->Clone();
+      TH2D * hgammam2 = (TH2D*) GammaZ->Clone();
+
+      // Scale it according to the fraction of this element in the material, multiplied with density ratio
+      hgammam2->Scale(f * m->GetDensity() / (g / cm3) );// GammaZ=GammaZ/rho(Z), so dont need to divide by rho(Z)
+      hngammam2->Scale(f * m->GetDensity() / (g / cm3) );
+
+      // Add it to the current total histo
+      hgammam->Add(hgammam2);
+      hngammam->Add(hngammam2);
+
+      // delete temporary TH2D
+      delete hngammam2;
+      delete hgammam2;
+
+      //Fill tmpmat will this element
+      TH2D * tmpelem = (TH2D*) pHEpEpgNormalized->Clone();
+      tmpelem->Scale(f);
+      tmpmat->Add(tmpelem);
+      delete tmpelem;
+    }
+    //update GammaM,NgammaM
+    GammaM[i] = hgammam; //Now it's no longer modulo rho(Z), or rho(M)!!!
+    NgammaM[i] = hngammam;
+
+    //tmpmat is complete, so we slice it up and copy it into mGammaEnergyHistoByMaterialByProtonEnergy
+    for(unsigned int j=1; j<proton_bin+1; j++) {
+      TH1D * h = new TH1D(*tmpmat->ProjectionY("", j, j)); //without a new it gives wrong results.
+      mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
+      //delete h; DO NOT DELETE h!!!! Because mGammaEnergyHistoByMaterialByProtonEnergy only holds to pointer to h, not h itself.
+    }
+    delete tmpmat;
   }
 }
 //-----------------------------------------------------------------------------
