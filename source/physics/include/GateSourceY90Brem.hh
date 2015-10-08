@@ -43,8 +43,11 @@ protected:
   G4double mBremProb;   // probability of a brem photon above minEnergy
 
   static const G4double mEnergyTable[200];  // energy probability table in 10 keV steps
+  static const G4double mRangeTable[100][120]; // cumulative probability table of range in 0.1 mm increments
+
   G4double *mCumulativeEnergyTable; // cumulative histogram of energy probability
-  static const G4float **mRangeTable; // cumulative probability table of range in 0.1 mm increments
+  G4double **mCumulativeRangeTable; // cumulative histogram of energy probability
+
   G4float **mAngleTable; // cumulative probability table of angle in 1 degree increments
 
   G4ParticleDefinition* pParticleDefinition;

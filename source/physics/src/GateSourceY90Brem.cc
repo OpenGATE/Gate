@@ -15,7 +15,7 @@ GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
   ifstream input_file;
 
   // TODO: the location of these files shouldn't be hardcoded to my personal directory
-  G4String brem_range_file = "/home/Pinstrum/jared/Y90_brem/y90_brem_range_pdf.txt";
+  //  G4String brem_range_file = "/home/Pinstrum/jared/Y90_brem/y90_brem_range_pdf.txt";
   G4String brem_angle_file = "/home/Pinstrum/jared/Y90_brem/y90_brem_angle_pdf.txt";
 
   // calculate total probability of bremsstrahlung emission for a single beta
@@ -30,40 +30,19 @@ GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
   for(i=0;i<200;i++)
     mCumulativeEnergyTable[i] /= mCumulativeEnergyTable[199];
 
-  for(i=0;i<5;i++)
-    G4cout << mEnergyTable[i] << " ";
-  G4cout << G4endl;
-  for(i=0;i<5;i++)
-    G4cout << mCumulativeEnergyTable[i] << " ";
-  G4cout << G4endl;
-
   G4cout << "Energy file loaded. Total brem likelihood: " << mBremProb << G4endl;
 
-  // TODO: Eliminate all the hardcoded table sizes ?
-  input_file.open(brem_range_file);
-  if(input_file)
+  // convert to cumulative distribution and normalize each row
+  mCumulativeRangeTable = new G4double*[100];
+  for(i=0;i<100;i++)
   {
-    mRangeTable = new G4float*[100];
-    for(i=0;i<100;i++)
-      mRangeTable[i]=new G4float[120];
-    for(i=0;i<100;i++)
-      for(j=0;j<120;j++)
-        input_file >> mRangeTable[i][j];
-    input_file.close();
-
-    // convert to cumulative distribution and normalize each row
-    for(i=0;i<100;i++)
-    {
-      for(j=1;j<120;j++)
-        mRangeTable[i][j] += mRangeTable[i][j-1];
-      for(j=0;j<120;j++)
-        mRangeTable[i][j] /= mRangeTable[i][119];
-    }
-
-    G4cout << "Range file loaded." << G4endl;
+    mCumulativeRangeTable[i]=new G4double[120];
+    mCumulativeRangeTable[i][0] = mRangeTable[i][0];
+    for(j=1;j<120;j++)
+      mCumulativeRangeTable[i][j] += mRangeTable[i][j-1];
+    for(j=0;j<120;j++)
+      mCumulativeRangeTable[i][j] /= mCumulativeRangeTable[i][119];
   }
-  else
-    G4Exception("GateSourceY90Brem", "constructor", FatalException, "Range spectrum file not found." );
 
   input_file.open(brem_angle_file);
   if(input_file)
@@ -106,11 +85,11 @@ GateSourceY90Brem::~GateSourceY90Brem()
   if(mCumulativeEnergyTable)
     delete [] mCumulativeEnergyTable;
 
-  if(mRangeTable)
+  if(mCumulativeRangeTable)
   {
     for(i=0;i<100;i++)
-      delete [] mRangeTable[i];
-    delete [] mRangeTable;
+      delete [] mCumulativeRangeTable[i];
+    delete [] mCumulativeRangeTable;
   }
 
   if(mAngleTable)
@@ -203,7 +182,7 @@ G4double GateSourceY90Brem::GetRange(G4double energy)
   G4double range;
 
   G4float P = G4UniformRand();
-  while(P > mRangeTable[bin][i])
+  while(P > mCumulativeRangeTable[bin][i])
     i++;
 
   range = (i+ G4UniformRand())*0.1*mm;
