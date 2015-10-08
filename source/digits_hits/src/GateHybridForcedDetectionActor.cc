@@ -124,7 +124,16 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   }
   mSource = sm->GetSource(0);
 
-  // Checks. FIXME: check on rot1 and rot2 would be required
+  // Check Point: dosen't work if rot1 != (1,0,0) or  rot2 != (0,1,0)
+  if (mSource->getRotX().getX() != 1
+          || mSource->getRotX().getY() != 0
+          || mSource->getRotX().getZ() != 0
+          || mSource->getRotY().getX() != 0
+          || mSource->getRotY().getY() != 1
+          || mSource->getRotY().getZ() != 0)
+    {
+    GateError("Forced detection only supports plane source without rotations");
+    }
   if(mSource->GetPosDist()->GetPosDisType() == "Point") {
     if(mSource->GetAngDist()->GetDistType() != "iso") {
       GateError("Forced detection only supports iso distributions with Point source.");
@@ -182,7 +191,12 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                                        it++)
     {
     if(dynamic_cast<GateVImageVolume*>(it->second))
-    {
+     {
+    // Loop on volumes to check that they contain world material only
+     if (it->second->GetMaterialName() != mVolume->GetMaterialName() && it->second->GetMaterialName() != "")
+      {
+       GateError("Additionnal volumes should share the world's material -> "<<mVolume->GetMaterialName()<<" : ("<<it->first << " -> " << it->second->GetMaterialName()<<")");
+      }
       if(gate_image_volume != NULL)
         GateError("There is more than one voxelized volume and don't know yet how to cope with this.");
       else
@@ -192,7 +206,6 @@ void GateHybridForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   if(!gate_image_volume)
     GateError("You need a voxelized volume in your scene.");
 
-  // TODO: loop on volumes to check that they contain world material only
 
   // Conversion of CT to ITK and to int values
   mGateVolumeImage = ConvertGateImageToITKImage(gate_image_volume);
@@ -1213,12 +1226,36 @@ void GateHybridForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(
 
   // Detector parameters
   G4AffineTransform detectorToCT(detectorToWorld *  m_WorldToCT);
-
-  // TODO: check where to get the two directions of the detector.
+  // check where to get the two directions of the detector.
   // Probably the dimension that has lowest size in one of the three directions.
-  G4ThreeVector du = detectorToCT.TransformAxis(G4ThreeVector(1,0,0));
-  G4ThreeVector dv = detectorToCT.TransformAxis(G4ThreeVector(0,1,0));
-  G4ThreeVector dp = detectorToCT.TransformPoint(G4ThreeVector(0,0,0));
+  G4ThreeVector du;
+  G4ThreeVector dv;
+  if (detector->GetHalfDimension(0) > 0.00000055
+      && detector->GetHalfDimension(1) > 0.00000055
+      && detector->GetHalfDimension(2) > 0.00000055)
+      {
+          GateError("Only plane detectors have been implemented yet -> one dimension of the box should be at 1 nm.  (x = "<<2.0*detector->GetHalfDimension(0)<<"mm, y = "<<2.0*detector->GetHalfDimension(1)<<"mm, z = "<<2.0*detector->GetHalfDimension(2)<<"mm)");
+      }
+  else
+      {
+          if (v->GetHalfDimension(0) < 0.00000055)
+              {
+                  du = detectorToCT.TransformAxis(G4ThreeVector(0, 1, 0));
+                  dv = detectorToCT.TransformAxis(G4ThreeVector(0, 0, 1));
+              }
+          else if (v->GetHalfDimension(0) < 0.00000055)
+              {
+                  du = detectorToCT.TransformAxis(G4ThreeVector(1, 0, 0));
+                  dv = detectorToCT.TransformAxis(G4ThreeVector(0, 0, 1));
+              }
+          else
+              {
+                  du = detectorToCT.TransformAxis(G4ThreeVector(1, 0, 0));
+                  dv = detectorToCT.TransformAxis(G4ThreeVector(0, 1, 0));
+              }
+
+      }
+  G4ThreeVector dp = detectorToCT.TransformPoint(G4ThreeVector(0, 0, 0));
 
   // Source
   G4ThreeVector s = src->GetAngDist()->GetFocusPointCopy();
