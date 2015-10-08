@@ -37,7 +37,6 @@ GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
     G4cout << mCumulativeEnergyTable[i] << " ";
   G4cout << G4endl;
 
-
   G4cout << "Energy file loaded. Total brem likelihood: " << mBremProb << G4endl;
 
   // TODO: Eliminate all the hardcoded table sizes ?
