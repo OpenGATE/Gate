@@ -293,13 +293,16 @@ void GatePromptGammaData::InitializeMaterial()
 
   for(unsigned int i=0; i<n; i++) {
     const G4Material * m = matTable[i];
-    //std::cout << "Material: " << m->GetName() << std::endl;
     if (m->GetName() == "worldDefaultAir") continue; //skip, should not occur in phantom.
+
+    GateMessage("Actor", 3,"Material: " << m->GetName() << std::endl);
 
     // Check existence of materials and elements
     for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
       const G4Element * elem = m->GetElement(e);
-      //std::cout << "Element: " << elem->GetName() << std::endl;
+
+      GateMessage("Actor", 3,"Element: " << elem->GetName() << std::endl);
+
       unsigned int elementIndex = elem->GetIndex();
       if (elem->GetZ() != 1) { // skip
         if (ElementIndexList[elementIndex] == false) {

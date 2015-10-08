@@ -210,6 +210,16 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // Check material
   const G4Material *material = step->GetPreStepPoint()->GetMaterial();
 
+  /* Because step->GetPreStepPoint() and tmptrackl->GetVoxelCenterFromIndex(index) are different positions,
+   * we may get different materials if the phantom-volume and tle-output-volume are different (size, offset, voxelsize).
+   * GetPreStepPoint is more precise, so we keep that here, but in case it is necessary to have identical outputs,
+   * uncomment the below 4 lines to get the material. *
+  GateVImageVolume* phantom = GetPhantom(); //this has the correct label to material database.
+  GateImage* phantomvox = phantom->GetImage(); //this has the array of voxels.
+  G4String materialname = phantom->GetMaterialNameFromLabel(phantomvox->GetValue(tmptrackl->GetVoxelCenterFromIndex(index)));
+  G4Material* material = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(materialname);
+// */
+
   // Get value from histogram. We do not check the material index, and
   // assume everything exist (has been computed by InitializeMaterial)
   TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy);
@@ -241,7 +251,6 @@ void GatePromptGammaTLEActor::BuildOutput() {
 
   GateVImageVolume* phantom = GetPhantom(); //this has the correct label to material database.
   GateImage* phantomvox = phantom->GetImage(); //this has the array of voxels.
-  //FIXME: pre-build label to G4Material map to save some time.
 
   //compute TLE output. first, loop over voxels
   for(int vi = 0; vi < tmptrackl->GetNumberOfValues() ;vi++ ){
