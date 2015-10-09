@@ -399,6 +399,7 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
   // Dump label image if needed
   mImageMaterialsFromHounsfieldTableDone = true;
   DumpHLabelImage();
+  DumpDensityImage();
 }
 //--------------------------------------------------------------------
 
@@ -437,6 +438,43 @@ void GateVImageVolume::DumpHLabelImage() {
   }
 }
 
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+void GateVImageVolume::DumpDensityImage() {
+  // Dump image if needed
+  if (mWriteDensityImage) {
+    ImageType output;
+    output.SetResolutionAndVoxelSize(pImage->GetResolution(), pImage->GetVoxelSize());
+    output.SetOrigin(pImage->GetOrigin());
+    output.Allocate();
+
+    //  GateHounsfieldMaterialTable::LabelToMaterialNameType lab2mat;
+    //     mHounsfieldMaterialTable.MapLabelToMaterial(lab2mat);
+
+    ImageType::const_iterator pi;
+    ImageType::iterator po;
+    pi = pImage->begin();
+    po = output.begin();
+    while (pi != pImage->end()) {
+      if (1) { // HU mean or d mean or label
+	// G4Material * mat =
+	// 	  theMaterialDatabase.GetMaterial(lab2mat[*pi]);
+	// 	GateDebugMessage("Volume", 2, "lab " << *pi << " = " << mat->GetName() << Gateendl);
+	// 	po = mat->GetDensity;
+    double density = mLoadImageMaterialsFromHounsfieldTable ?
+    				 mHounsfieldMaterialTable[(int)lrint(*pi)].md1 :
+    				 mRangeMaterialTable[(int)lrint(*pi)].md1;
+	*po = density / (g / cm3);
+	++po;
+	++pi;
+      }
+    }
+
+    // Write image
+    output.Write(mDensityImageFilename);
+  }
+}
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
