@@ -24,6 +24,7 @@
 #include "GateDMapdt.h"
 #include "GateHounsfieldMaterialTable.hh"
 #include <G4TransportationManager.hh>
+#include "globals.hh"
 
 typedef unsigned int uint;
 
@@ -48,6 +49,7 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
   mHounsfieldToImageMaterialTableFilename = "none";
   mRangeToImageMaterialTableFilename = "none";
   mWriteHLabelImage = false;
+  mWriteDensityImage = false;
   mHLabelImageFilename = "none";
   mIsBoundingBoxOnlyModeEnabled = false;
   mImageMaterialsFromHounsfieldTableDone = false;
@@ -308,6 +310,12 @@ void GateVImageVolume::SetLabeledImageFilename(G4String filename) {
 }
 //--------------------------------------------------------------------
 
+//--------------------------------------------------------------------
+void GateVImageVolume::SetDensityImageFilename(G4String filename) {
+  mDensityImageFilename = filename;
+  mWriteDensityImage = true;
+}
+//--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
 void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
@@ -324,13 +332,14 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
   //FIXME: remove these two lines, we should load the HU-file as-is. It's up to the user to make sure it works.
   // GetOutsideValue returns the lowest value found in the image - 1. NOT the lowest value in mHounsfieldToImageMaterialTableFilename
   G4String parentMat = GetParentVolume()->GetMaterialName();
-  mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue()+1,parentMat);
+  mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue(),parentMat);
 
   double low = 1e6; //must start oppositely for the comparisons to work.
   double high = -1e6;
   while (is) {
     skipComment(is);
     double h1,h2;
+
     is >> h1;
     is >> h2;
     G4String n;
@@ -338,8 +347,7 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
     low = (h1<low)?h1:low; //set low to h1 if h1 is lower
     high = (h2>high)?h2:high; //set high to h2 if h2 is higher
     if (is) {
-      //FIXME: remove these ifs, we should load the HU-file as-is. It's up to the user to make sure it works.
-      if(h2> pImage->GetOutsideValue()+1){
+      if(h2> pImage->GetOutsideValue()){
         if(h1<pImage->GetOutsideValue()+1) h1=pImage->GetOutsideValue()+1;
         mHounsfieldMaterialTable.AddMaterial(h1,h2,n);
       }
@@ -493,7 +501,7 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
   inFile.open(mRangeToImageMaterialTableFilename.c_str(),std::ios::in);
   mRangeMaterialTable.Reset();
   G4String parentMat = GetParentVolume()->GetMaterialName();
-  mRangeMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue()+1,parentMat);
+  mRangeMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue(),parentMat);
 
   if (inFile.is_open()){
     G4String material;
@@ -532,10 +540,14 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
         G4cout << " min max " << r1 << " " << r2 << "  material: " << material
                << std::boolalpha << ", visible " << visible << ", rgba(" << red<<',' << green << ',' << blue << ')' << Gateendl;
 
-        if(r2> pImage->GetOutsideValue()+1){
-          if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
-          mRangeMaterialTable.AddMaterial(r1,r2,material);
-        }
+    if(r2> pImage->GetOutsideValue()){
+      if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
+        mRangeMaterialTable.AddMaterial(r1,r2,material);
+    }
+    else
+    {
+    	GateMessage("Materials",0,"Failed to add material "<< material << " to Database" << Gateendl);
+    }
 
         mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
 
@@ -556,13 +568,14 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
         is >> r1 >> r2;
         is >> material;
 
-        if(r2> pImage->GetOutsideValue()+1){
-          if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
-          mRangeMaterialTable.AddMaterial(r1,r2,material);
-        }
-      }
-      mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
-    }
+
+  if(r2> pImage->GetOutsideValue()){
+    if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
+      mRangeMaterialTable.AddMaterial(r1,r2,material);
+  }
+  }
+  mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
+  }
 
   }
   else {G4cout << "Error opening file.\n";}
@@ -586,6 +599,8 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
     (*iter) = label;
     ++iter;
   }
+  mImageMaterialsFromRangeTableDone = true;
+  DumpDensityImage();
 }
 //--------------------------------------------------------------------
 

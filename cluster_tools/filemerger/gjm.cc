@@ -129,7 +129,7 @@ int main(int argc,char** argv)
 
   if(outDir!=""){     // check if the outDir exist
      if( outDir.substr(outDir.length()-1,1) != "/" ) outDir+="/";
-     ifstream dirstream(outDir.c_str());
+     std::ifstream dirstream(outDir.c_str());
      if (!dirstream) {
          cout<<"Failed to open output directory "<<outDir<<endl;
          exit(1);

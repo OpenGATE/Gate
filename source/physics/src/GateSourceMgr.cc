@@ -485,14 +485,10 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
   UImanager->ApplyCommand( "/grdm/allVolumes" );
 
   // set time limit of the GateRDM decay
-  char timechar[ 10 ];
-  sprintf( timechar, "%8g", timeSlice/s );
   command = G4String( "/gate/decay/setDecayTimeLimit " )
-    + G4String( timechar ) + G4String( " s" );
+    + G4UIcommand::ConvertToString(timeSlice/s) + G4String( " s" );
   if( mVerboseLevel > 3 )
     G4cout << "GateSourceMgr::PrepareNextEvent: command " << command << Gateendl;
-  command = G4String( "/gate/decay/setDecayTimeLimit " ) + G4String( timechar ) + G4String( " s" );
-  if( mVerboseLevel > 3 ) G4cout << "GateSourceMgr::PrepareNextEvent: command " << command << Gateendl;
   UImanager->ApplyCommand( command.c_str() );
   // tell to the GateRDM to avoid the generation of the sampled decay time for the ions
   // (the time is set by the SourceMgr)

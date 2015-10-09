@@ -66,7 +66,7 @@ GateCrossSectionsTable::GateCrossSectionsTable ( G4double minEnergy, G4double ma
 
 }
 
-GateCrossSectionsTable::GateCrossSectionsTable ( ifstream& in, bool ascii, const vector<G4VDiscreteProcess*>& processes ) :G4PhysicsTable(),m_oInvDensity(),m_oMaterialVec(), m_oProcessVec ( processes ),m_pMaxCrossSection ( NULL )
+GateCrossSectionsTable::GateCrossSectionsTable ( std::ifstream& in, bool ascii, const vector<G4VDiscreteProcess*>& processes ) :G4PhysicsTable(),m_oInvDensity(),m_oMaterialVec(), m_oProcessVec ( processes ),m_pMaxCrossSection ( NULL )
 {
 	GatePETVRTManager* man=GatePETVRTManager::GetInstance();
 	pMaterialTableToProductionCutsTable=man->GetMaterialTableToProductionCutsTable();
