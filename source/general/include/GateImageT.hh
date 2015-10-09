@@ -88,7 +88,7 @@ public:
   inline PixelType GetMinValue() const{ return *std::min_element(begin(), end()); }
   inline PixelType GetMaxValue() const{ return *std::max_element(begin(), end()); }
 
-  inline PixelType GetOutsideValue()   { return mOutsideValue; }
+  inline PixelType GetOutsideValue()   { return mOutsideValue; } //The HU value that must be considered not part of the phantom
   inline void SetOutsideValue( PixelType v ) { mOutsideValue=v; }
   PixelType GetNeighborValueFromCoordinate(const ESide & side, const G4ThreeVector & coord);
 
