@@ -86,6 +86,11 @@ void GateEnergySpectrumActorMessenger::BuildCommands(G4String base)
   guidance = G4String("In addition to root output files, also write .txt files (that can be open as a source, 'UserSpectrum')");
   pSaveAsText->SetGuidance(guidance);
 
+  bb = base+"/saveAsTextDiscreteEnergySpectrum";
+  pSaveAsTextDiscreteEnergySpectrum = new G4UIcmdWithABool(bb, this);
+  guidance = G4String("In addition to root output files, also write .txt files, discrete spectrum (that can be open as a source, 'UserSpectrum')");
+  pSaveAsTextDiscreteEnergySpectrum->SetGuidance(guidance);
+
 }
 //-----------------------------------------------------------------------------
 
@@ -100,6 +105,7 @@ void GateEnergySpectrumActorMessenger::SetNewValue(G4UIcommand* cmd, G4String ne
   if(cmd == pEdepmaxCmd) pActor->SetEdepmax(  pEdepmaxCmd->GetNewDoubleValue(newValue)  ) ;
   if(cmd == pEdepNBinsCmd) pActor->SetEdepNBins(  pEdepNBinsCmd->GetNewIntValue(newValue)  ) ;
   if(cmd == pSaveAsText) pActor->SetSaveAsTextFlag(  pSaveAsText->GetNewBoolValue(newValue)  ) ;
+  if(cmd == pSaveAsTextDiscreteEnergySpectrum) pActor->SetSaveAsTextDiscreteEnergySpectrumFlag(  pSaveAsTextDiscreteEnergySpectrum->GetNewBoolValue(newValue)  ) ;
   GateActorMessenger::SetNewValue(cmd,newValue);
 }
 //-----------------------------------------------------------------------------

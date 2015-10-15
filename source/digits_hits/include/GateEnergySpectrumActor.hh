@@ -22,6 +22,7 @@
 
 #include "GateVActor.hh"
 #include "GateActorMessenger.hh"
+#include "GateDiscreteSpectrum.hh"
 
 #include <TROOT.h>
 #include <TFile.h>
@@ -79,6 +80,7 @@ public:
   void SetEdepmax(double v) {mEdepmax = v;}
   void SetEdepNBins(int v) {mEdepNBins = v;}
   void SetSaveAsTextFlag(bool b) { mSaveAsTextFlag = b; }
+  void SetSaveAsTextDiscreteEnergySpectrumFlag(bool b) { mSaveAsDiscreteSpectrumTextFlag = b; if (b) SetSaveAsTextFlag(b); }
 
 protected:
   GateEnergySpectrumActor(G4String name, G4int depth=0);
@@ -116,9 +118,11 @@ protected:
 
   GateActorMessenger* pMessenger;
 
+
+  GateDiscreteSpectrum mDiscreteSpectrum;
   void SaveAsText(TH1D * histo, G4String initial_filename);
   bool mSaveAsTextFlag;
-
+  bool mSaveAsDiscreteSpectrumTextFlag;
 
 };
 

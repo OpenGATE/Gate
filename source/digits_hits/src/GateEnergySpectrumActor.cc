@@ -39,6 +39,7 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   edep = 0.;
 
   mSaveAsTextFlag = true;
+  mSaveAsDiscreteSpectrumTextFlag = false;
 
   pMessenger = new GateEnergySpectrumActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateEnergySpectrumActor() -- end\n");
@@ -214,10 +215,14 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
   if(newTrack){
     Ei=step->GetPreStepPoint()->GetKineticEnergy();
     pEnergySpectrum->Fill(Ei/MeV,step->GetTrack()->GetWeight());
+    if (mSaveAsDiscreteSpectrumTextFlag) {
+      mDiscreteSpectrum.Fill(Ei/MeV, step->GetTrack()->GetWeight());
+    }
     newTrack=false;
   }
 }
 //-----------------------------------------------------------------------------
+
 
 
 //-----------------------------------------------------------------------------
@@ -227,34 +232,51 @@ void GateEnergySpectrumActor::SaveAsText(TH1D * histo, G4String initial_filename
   std::string filename = removeExtension(initial_filename);
   filename = filename + "_"+histo->GetName()+".txt";
 
-  // write as text file with header and 2 columns: 1) energy 2) probability
-  // The header is two numbers:
-  ///    1 because it is mode 1 (see gps UserSpectrum)
-  //     Emin of the histo
-
-  // Root convention
-  // For all histogram types: nbins, xlow, xup
-  //         bin = 0;       underflow bin
-  //         bin = 1;       first bin with low-edge xlow INCLUDED
-  //         bin = nbins;   last bin with upper-edge xup EXCLUDED
-  //         bin = nbins+1; overflow bin
-
+  // Create output file
   std::ofstream oss;
   OpenFileOutput(filename, oss);
-  oss << "# First line is two numbers " << std::endl
-      << "#     First value is '2', it means 'histogram mode'" << std::endl
-      << "#     Second value is 'Emin' of the histogram" << std::endl
-      << "# Other lines : 2 columns. 1) energy 2) probability (nb divided by NbEvent)" << std::endl
-      << "# Number of bins = " << histo->GetNbinsX() << std::endl
-      << "# Content below the first bin: " << histo->GetBinContent(0) << std::endl
-      << "# Content above the last  bin: " << histo->GetBinContent(histo->GetNbinsX()+2) << std::endl
-      << "# Content above the last  bin: " << histo->GetBinContent(histo->GetNbinsX()+2) << std::endl
-      << "# Number of events: " << nEvent << std::endl
-      << "2 " << histo->GetBinLowEdge(1) << std::endl; // start at 1
-  for(int i=1; i<histo->GetNbinsX()+1; i++) {
-    oss << histo->GetBinLowEdge(i) + histo->GetBinWidth(i) << " " << histo->GetBinContent(i)/nEvent << std::endl;
+
+  // FIXME
+  if (mSaveAsDiscreteSpectrumTextFlag) {
+    oss << "# First line is two numbers " << std::endl
+        << "#     First value is '1', it means 'discrete energy mode'" << std::endl
+        << "#     Second value is ignored" << std::endl
+        << "# Other lines : 2 columns. 1) energy 2) probability (nb divided by NbEvent)" << std::endl
+        << "# Number of bins = " << mDiscreteSpectrum.size() << std::endl
+        << "# Number of events: " << nEvent << std::endl
+        << "1 0" << std::endl;
+    for(int i=0; i<mDiscreteSpectrum.size(); i++) {
+      oss << mDiscreteSpectrum.GetEnergy(i) << " " << mDiscreteSpectrum.GetValue(i)/nEvent << std::endl;
+    }
+    oss.close();
   }
-  oss.close();
+  else {
+    // write as text file with header and 2 columns: 1) energy 2) probability
+    // The header is two numbers:
+    ///    1 because it is mode 1 (see gps UserSpectrum)
+    //     Emin of the histo
+
+    // Root convention
+    // For all histogram types: nbins, xlow, xup
+    //         bin = 0;       underflow bin
+    //         bin = 1;       first bin with low-edge xlow INCLUDED
+    //         bin = nbins;   last bin with upper-edge xup EXCLUDED
+    //         bin = nbins+1; overflow bin
+    oss << "# First line is two numbers " << std::endl
+        << "#     First value is '2', it means 'histogram mode'" << std::endl
+        << "#     Second value is 'Emin' of the histogram" << std::endl
+        << "# Other lines : 2 columns. 1) energy 2) probability (nb divided by NbEvent)" << std::endl
+        << "# Number of bins = " << histo->GetNbinsX() << std::endl
+        << "# Content below the first bin: " << histo->GetBinContent(0) << std::endl
+        << "# Content above the last  bin: " << histo->GetBinContent(histo->GetNbinsX()+2) << std::endl
+        << "# Content above the last  bin: " << histo->GetBinContent(histo->GetNbinsX()+2) << std::endl
+        << "# Number of events: " << nEvent << std::endl
+        << "2 " << histo->GetBinLowEdge(1) << std::endl; // start at 1
+    for(int i=1; i<histo->GetNbinsX()+1; i++) {
+      oss << histo->GetBinLowEdge(i) + histo->GetBinWidth(i) << " " << histo->GetBinContent(i)/nEvent << std::endl;
+    }
+    oss.close();
+  }
 }
 //-----------------------------------------------------------------------------
 

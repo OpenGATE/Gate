@@ -56,6 +56,7 @@ protected:
   G4UIcmdWithADoubleAndUnit * pEdepminCmd;
   G4UIcmdWithAnInteger      * pEdepNBinsCmd;
   G4UIcmdWithABool          * pSaveAsText;
+  G4UIcmdWithABool          * pSaveAsTextDiscreteEnergySpectrum;
 
 }; // end class GateEnergySpectrumActorMessenger
 //-----------------------------------------------------------------------------
