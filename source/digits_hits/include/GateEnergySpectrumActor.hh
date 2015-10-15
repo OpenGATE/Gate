@@ -78,7 +78,7 @@ public:
   void SetEdepmin(double v) {mEdepmin = v;}
   void SetEdepmax(double v) {mEdepmax = v;}
   void SetEdepNBins(int v) {mEdepNBins = v;}
-  void SetSaveAsTextFlag(bool b) { DD(b); mSaveAsTextFlag = b; }
+  void SetSaveAsTextFlag(bool b) { mSaveAsTextFlag = b; }
 
 protected:
   GateEnergySpectrumActor(G4String name, G4int depth=0);
