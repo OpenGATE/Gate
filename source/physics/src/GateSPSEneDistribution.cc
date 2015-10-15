@@ -232,7 +232,8 @@ void GateSPSEneDistribution::BuildUserSpectrum(G4String FileName)
     }
   }
   else {
-    G4Exception("GateSPSEneDistribution::BuildUserSpectrum", "BuildUserSpectrum", FatalException, "The User Spectrum is not found." );
+    std::string s = "The User Spectrum file '" + FileName + "' is not found.";
+    G4Exception("GateSPSEneDistribution::BuildUserSpectrum", "BuildUserSpectrum", FatalException, s.c_str());
     }
 }
 //-----------------------------------------------------------------------------
