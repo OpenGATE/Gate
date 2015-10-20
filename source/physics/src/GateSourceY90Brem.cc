@@ -14,10 +14,6 @@ GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
   int i, j;
   ifstream input_file;
 
-  // TODO: the location of these files shouldn't be hardcoded to my personal directory
-  //  G4String brem_range_file = "/home/Pinstrum/jared/Y90_brem/y90_brem_range_pdf.txt";
-  G4String brem_angle_file = "/home/Pinstrum/jared/Y90_brem/y90_brem_angle_pdf.txt";
-
   // calculate total probability of bremsstrahlung emission for a single beta
   mBremProb = 0;
   for(i=0;i<200;i++)
@@ -39,35 +35,22 @@ GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
     mCumulativeRangeTable[i]=new G4double[120];
     mCumulativeRangeTable[i][0] = mRangeTable[i][0];
     for(j=1;j<120;j++)
-      mCumulativeRangeTable[i][j] += mRangeTable[i][j-1];
+      mCumulativeRangeTable[i][j] = mCumulativeRangeTable[i][j-1] + mRangeTable[i][j];
     for(j=0;j<120;j++)
       mCumulativeRangeTable[i][j] /= mCumulativeRangeTable[i][119];
   }
 
-  input_file.open(brem_angle_file);
-  if(input_file)
+  // convert to cumulative distribution and normalize each row
+  mCumulativeAngleTable = new G4double*[100];
+  for(i=0;i<100;i++)
   {
-    mAngleTable = new G4float*[100];
-    for(i=0;i<100;i++)
-      mAngleTable[i]=new G4float[180];
-    for(i=0;i<100;i++)
-      for(j=0;j<180;j++)
-        input_file >> mAngleTable[i][j];
-    input_file.close();
-
-    // convert to cumulative distribution and normalize each row
-    for(i=0;i<100;i++)
-    {
-      for(j=1;j<180;j++)
-        mAngleTable[i][j] += mAngleTable[i][j-1];
-      for(j=0;j<180;j++)
-        mAngleTable[i][j] /= mAngleTable[i][179];
-    }
-
-    G4cout << "Angle file loaded." << G4endl;
+    mCumulativeAngleTable[i] = new G4double[180];
+    mCumulativeAngleTable[i][0] = mAngleTable[i][0];
+    for(j=1;j<180;j++)
+      mCumulativeAngleTable[i][j] = mCumulativeAngleTable[i][j-1] + mAngleTable[i][j];
+    for(j=0;j<180;j++)
+      mCumulativeAngleTable[i][j] /= mCumulativeAngleTable[i][179];
   }
-  else
-    G4Exception("GateSourceY90Brem", "constructor", FatalException, "Angular spectrum file not found." );
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   pParticleDefinition = particleTable->FindParticle("gamma");
@@ -92,11 +75,11 @@ GateSourceY90Brem::~GateSourceY90Brem()
     delete [] mCumulativeRangeTable;
   }
 
-  if(mAngleTable)
+  if(mCumulativeAngleTable)
   {
     for(i=0;i<100;i++)
-      delete [] mAngleTable[i];
-    delete [] mAngleTable;
+      delete [] mCumulativeAngleTable[i];
+    delete [] mCumulativeAngleTable;
   }
 }
 
