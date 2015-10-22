@@ -30,7 +30,7 @@ void GateSourceY90BremMessenger::SetNewValue(G4UIcommand* command, G4String newV
   if ( command == setMinBremEnergyCmd )
     mSource->SetMinEnergy(setMinBremEnergyCmd->GetNewDoubleValue(newValue));
   else if (command == setPosProbabilityCmd)
-    mSource->SetPositronProbability((setPosProbabilityCmd->GetNewDoubleValue(newValue)));
+    mSource->SetPositronProbability(setPosProbabilityCmd->GetNewDoubleValue(newValue));
 }
 
 

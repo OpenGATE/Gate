@@ -28,7 +28,7 @@ GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
   for(i=0;i<200;i++)
     mCumulativeEnergyTable[i] /= mCumulativeEnergyTable[199];
 
-  G4cout << "Energy file loaded. Total brem likelihood: " << mBremProb << G4endl;
+  G4cout << "Energy table loaded. Total brem likelihood: " << mBremProb << G4endl;
 
   // convert to cumulative distribution and normalize each row
   mCumulativeRangeTable = new G4double*[100];
@@ -187,7 +187,7 @@ G4double GateSourceY90Brem::GetRange(G4double energy)
 {
   int bin;
   int i=0;
-  bin = int(energy/0.02); //TODO: un-hardcode the energy bin widths?
+  bin = int(energy/(20.0*keV)); //TODO: un-hardcode the energy bin widths?
   bin = min(bin,99);
 
   G4double range;
@@ -205,7 +205,7 @@ G4double GateSourceY90Brem::GetAngle(G4double energy)
 {
   int bin;
   int i=0;
-  bin = int(energy/(20*keV)); //TODO: un-hardcode the energy bin widths?
+  bin = int(energy/(20.0*keV)); //TODO: un-hardcode the energy bin widths?
   bin = min(bin,99);
 
   G4double angle;
@@ -225,7 +225,7 @@ G4ThreeVector GateSourceY90Brem::PerturbVector(G4ThreeVector original, G4double 
   G4ThreeVector r_hat = original;
   G4ThreeVector theta_hat;
   G4ThreeVector phi_hat;
-  G4double sin_theta = sqrt(1-r_hat.getZ()*r_hat.getZ()); // not the same theta, this is the theta of the unit vectors
+  G4double sin_theta = sqrt(1-r_hat.getZ()*r_hat.getZ());
   if(sin_theta==0)
   {
     theta_hat.set(1, 0, 0);
