@@ -56,7 +56,7 @@ GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   pGammaParticleDefinition = particleTable->FindParticle("gamma");
-  pPositronParticleDefinition = particleTable->FindParticle("positron");
+  pPositronParticleDefinition = particleTable->FindParticle("e+");
 
   m_angSPS->SetAngDistType("iso");
   mMinEnergy = 0.0;
@@ -102,6 +102,7 @@ G4int GateSourceY90Brem::GeneratePrimaries(G4Event *event)
   SetParticleTime(m_time);
 
   G4double P = G4UniformRand();
+  G4cout << P << ", " << mPosProb << ", " << mBremProb << G4endl;
   if (P < (mPosProb/(mPosProb+mBremProb)) )
   {
     pParticle = new G4PrimaryParticle(pPositronParticleDefinition);

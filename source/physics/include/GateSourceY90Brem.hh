@@ -34,7 +34,9 @@ public:
   void GeneratePrimaryVertex(G4Event* event);
 
   void SetMinEnergy(G4double energy) {mMinEnergy = energy;}
-  G4float GetMinEnergy() {return mMinEnergy;}
+  G4double GetMinEnergy() {return mMinEnergy;}
+
+  void SetPositronProbability(G4double probability) {mPosProb = probability;}
 
   G4double GetNextTime( G4double timeStart );
 

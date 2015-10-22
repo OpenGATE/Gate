@@ -4,6 +4,7 @@
 #include "GateVSourceMessenger.hh"
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4UIcmdWithADouble.hh"
 
 class GateSourceY90Brem;
 
@@ -18,7 +19,8 @@ public:
 protected:
   GateSourceY90Brem *mSource;
 
-  G4UIcmdWithADoubleAndUnit* setMinEnergy;
+  G4UIcmdWithADoubleAndUnit* setMinBremEnergyCmd;
+  G4UIcmdWithADouble* setPosProbabilityCmd;
 };
 
 #endif
