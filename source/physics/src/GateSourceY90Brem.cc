@@ -19,6 +19,8 @@ GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
   for(i=0;i<200;i++)
     mBremProb += mEnergyTable[i];
 
+  mPosProb = 3.184e-5;
+
   mCumulativeEnergyTable = new G4double[200];
   mCumulativeEnergyTable[0]  = mEnergyTable[0];
   for(i=1;i<200;i++)
@@ -53,7 +55,8 @@ GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
   }
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  pParticleDefinition = particleTable->FindParticle("gamma");
+  pGammaParticleDefinition = particleTable->FindParticle("gamma");
+  pPositronParticleDefinition = particleTable->FindParticle("positron");
 
   m_angSPS->SetAngDistType("iso");
   mMinEnergy = 0.0;
@@ -87,21 +90,47 @@ G4int GateSourceY90Brem::GeneratePrimaries(G4Event *event)
 {
 
   G4int numVertices = 0;
-
+  G4PrimaryParticle* pParticle;
   G4double energy;
   G4ThreeVector position;
   G4ThreeVector direction;      // direction vector from beta particle source to point of brem
   G4ThreeVector momentum_dir;
 
+  G4PrimaryVertex* pVertex;
+
   GateMessage("Beam", 1, "GateSourceY90Brem::GeneratePrimaries(G4Event*) called at " << m_time << " s." << Gateendl);
   SetParticleTime(m_time);
 
-  // sample energy distribution
-  energy = GetEnergy();
-  if(energy>mMinEnergy)
+  G4double P = G4UniformRand();
+  if (P < (mPosProb/(mPosProb+mBremProb)) )
   {
-    G4PrimaryParticle* pParticle = new G4PrimaryParticle(pParticleDefinition);
-  //    G4PrimaryParticle* pParticle = new G4PrimaryParticle(G4Gamma::Gamma());
+    pParticle = new G4PrimaryParticle(pPositronParticleDefinition);
+    pParticle->SetTotalEnergy(300.0 * keV);
+
+    direction = m_angSPS->GenerateOne();
+    pParticle->SetMomentumDirection(direction);
+
+    position = m_posSPS->GenerateOne();
+    pVertex = new G4PrimaryVertex(position, m_time);
+    pVertex->SetPrimary(pParticle);
+
+    event->AddPrimaryVertex(pVertex);
+
+    if(nVerboseLevel>1)
+    {
+      G4cout << "GateSourceY90Brem::GeneratePrimaries()\n";
+      G4cout << "++ positron ++\n";
+      G4cout << "Energy: " << energy << " MeV\n";
+      G4cout << "Direction: (" << direction.getX() << "," << direction.getY() << "," << direction.getZ() << ")\n";
+      G4cout << "Position: (" << position.getX() << "," << position.getY() << "," << position.getZ() << ")\n";
+    }
+    numVertices++;
+
+  } else {
+    // generate brem
+    energy = GetEnergy();
+    pParticle = new G4PrimaryParticle(pGammaParticleDefinition);
+    //    G4PrimaryParticle* pParticle = new G4PrimaryParticle(G4Gamma::Gamma());
     pParticle->SetTotalEnergy(energy);
 
     // look up range from histogram and add to the position
@@ -110,10 +139,11 @@ G4int GateSourceY90Brem::GeneratePrimaries(G4Event *event)
     position += GetRange(energy) * direction;
 
     // look up angular offset (offset between direction and momentum) and adjust direction
-    momentum_dir = PerturbVector(direction,GetAngle(energy));
+    G4double delta_angle = GetAngle(energy);
+    momentum_dir = PerturbVector(direction,delta_angle);
     pParticle->SetMomentumDirection(momentum_dir);
 
-    G4PrimaryVertex* pVertex = new G4PrimaryVertex(position, m_time);
+    pVertex = new G4PrimaryVertex(position, m_time);
     pVertex->SetPrimary(pParticle);
 
     event->AddPrimaryVertex(pVertex);
@@ -121,17 +151,15 @@ G4int GateSourceY90Brem::GeneratePrimaries(G4Event *event)
     if(nVerboseLevel>1)
     {
       G4cout << "GateSourceY90Brem::GeneratePrimaries()\n";
-      G4cout << "Energy: " << mEnergy << " MeV\n";
+      G4cout << "++ brem photon ++\n";
+      G4cout << "Energy: " << energy << " MeV\n";
       G4cout << "Direction: (" << direction.getX() << "," << direction.getY() << "," << direction.getZ() << ")\n";
       G4cout << "Position: (" << position.getX() << "," << position.getY() << "," << position.getZ() << ")\n";
       G4cout << "Momentum direction: (" << momentum_dir.getX() << "," << momentum_dir.getY() << "," << momentum_dir.getZ() << ")\n";
-      G4cout << "Relative angle: " << direction.angle(momentum_dir) << G4endl;
+      G4cout << "Relative angle: " << delta_angle << G4endl;
     }
     numVertices++;
   }
-  else
-    if(nVerboseLevel>1)
-      G4cout << "Energy below Emin. No particle generated." << G4endl;
 
   return numVertices;
 }
@@ -177,13 +205,13 @@ G4double GateSourceY90Brem::GetAngle(G4double energy)
 {
   int bin;
   int i=0;
-  bin = int(energy/0.02); //TODO: un-hardcode the energy bin widths?
+  bin = int(energy/(20*keV)); //TODO: un-hardcode the energy bin widths?
   bin = min(bin,99);
 
   G4double angle;
 
   G4float P = G4UniformRand();
-  while(P > mAngleTable[bin][i])
+  while(P > mCumulativeAngleTable[bin][i])
     i++;
 
   angle = (i+ G4UniformRand()) * CLHEP::pi / 180.0;
@@ -191,7 +219,7 @@ G4double GateSourceY90Brem::GetAngle(G4double energy)
   return angle;
 }
 
-G4ThreeVector GateSourceY90Brem::PerturbVector(G4ThreeVector original, G4double theta)
+G4ThreeVector GateSourceY90Brem::PerturbVector(G4ThreeVector original, G4double alpha)
 {
   // calculate the unit vectors
   G4ThreeVector r_hat = original;
@@ -200,7 +228,7 @@ G4ThreeVector GateSourceY90Brem::PerturbVector(G4ThreeVector original, G4double 
   G4double sin_theta = sqrt(1-r_hat.getZ()*r_hat.getZ()); // not the same theta, this is the theta of the unit vectors
   if(sin_theta==0)
   {
-    theta_hat.set(r_hat.getZ(), 0, 0);
+    theta_hat.set(1, 0, 0);
     phi_hat.set(0,1,0);
   }
   else
@@ -211,7 +239,7 @@ G4ThreeVector GateSourceY90Brem::PerturbVector(G4ThreeVector original, G4double 
 
   // tilt the original vector by creating a new vector composed of the original unit vectors
   G4double phi = G4RandFlat::shoot(0.0,CLHEP::twopi);
-  G4ThreeVector theVector = cos(theta)*r_hat + sin(theta)*cos(phi)*theta_hat + sin(theta)*sin(phi)*phi_hat;
+  G4ThreeVector theVector = cos(alpha)*r_hat + sin(alpha)*cos(phi)*theta_hat + sin(alpha)*sin(phi)*phi_hat;
 
   return theVector;
 }
@@ -258,7 +286,7 @@ G4double GateSourceY90Brem::GetNextTime( G4double timeStart )
       // sampling of the interval distribution
       if (!mEnableRegularActivity)
       {
-        aTime = -log( G4UniformRand() ) * ( 1. / (mBremProb * activityNow )); // activity is reduced here
+        aTime = -log( G4UniformRand() ) * ( 1. / ((mPosProb + mBremProb) * activityNow )); // activity is reduced here
       }
       else {
         GateError("I should not be here. ");

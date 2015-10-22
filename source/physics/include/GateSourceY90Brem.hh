@@ -41,16 +41,18 @@ public:
 protected:
   G4double mMinEnergy;  // minimum energy below which photons won't be generated TODO: not implemented
   G4double mBremProb;   // probability of a brem photon above minEnergy
+  G4double mPosProb; // probability of producing a positron
 
   static const G4double mEnergyTable[200];  // energy probability table in 10 keV steps
-  static const G4int mRangeTable[100][120]; // probability table of range in 0.1 mm increments
-  static const G4int mAngleTable[100][180]; // probability table of angles in 1 degree increments
+  static const G4double mRangeTable[100][120]; // probability table of range in 0.1 mm increments
+  static const G4double mAngleTable[100][180]; // probability table of angles in 1 degree increments
 
   G4double *mCumulativeEnergyTable; // cumulative histogram of energy probability
   G4double **mCumulativeRangeTable; // cumulative histogram of energy probability
   G4double **mCumulativeAngleTable; // cumulative probability table of angle in 1 degree increments
 
-  G4ParticleDefinition* pParticleDefinition;
+  G4ParticleDefinition* pGammaParticleDefinition;
+  G4ParticleDefinition* pPositronParticleDefinition;
 
   G4double GetEnergy();
   G4double GetRange(G4double energy);
