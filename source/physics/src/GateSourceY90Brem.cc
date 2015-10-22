@@ -102,7 +102,6 @@ G4int GateSourceY90Brem::GeneratePrimaries(G4Event *event)
   SetParticleTime(m_time);
 
   G4double P = G4UniformRand();
-  G4cout << P << ", " << mPosProb << ", " << mBremProb << G4endl;
   if (P < (mPosProb/(mPosProb+mBremProb)) )
   {
     pParticle = new G4PrimaryParticle(pPositronParticleDefinition);
