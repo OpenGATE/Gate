@@ -1,23 +1,23 @@
-#ifndef GATEHYBRIDFORCEDDETECTIONPROJECTOR_HH
-#define GATEHYBRIDFORCEDDETECTIONPROJECTOR_HH
+#ifndef GATEFIXEDFORCEDDETECTIONPROJECTOR_HH
+#define GATEFIXEDFORCEDDETECTIONPROJECTOR_HH
 
 #include <rtkJosephForwardProjectionImageFilter.h>
-#include "GateHybridForcedDetectionFunctors.hh"
+#include "GateFixedForcedDetectionFunctors.hh"
 
 template < class TProjectedValueAccumulation >
-class ITK_EXPORT GateHybridForcedDetectionProjector :
+class ITK_EXPORT GateFixedForcedDetectionProjector :
  public rtk::JosephForwardProjectionImageFilter < itk::Image<float,3>,
                                                   itk::Image<float,3>,
-                                                  GateHybridForcedDetectionFunctor::InterpolationWeightMultiplication,
+                                                  GateFixedForcedDetectionFunctor::InterpolationWeightMultiplication,
                                                   TProjectedValueAccumulation >
 {
 public:
   /** Standard class typedefs. */
-  typedef GateHybridForcedDetectionProjector                     Self;
+  typedef GateFixedForcedDetectionProjector                     Self;
   typedef  rtk::JosephForwardProjectionImageFilter <
     itk::Image<float,3>,
     itk::Image<float,3>,
-    GateHybridForcedDetectionFunctor::InterpolationWeightMultiplication,
+    GateFixedForcedDetectionFunctor::InterpolationWeightMultiplication,
     TProjectedValueAccumulation >                                Superclass;
   typedef itk::SmartPointer<Self>                                Pointer;
   typedef itk::SmartPointer<const Self>                          ConstPointer;
@@ -31,14 +31,14 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(GateHybridForcedDetectionProjector, JosephForwardProjectionImageFilter);
+  itkTypeMacro(GateFixedForcedDetectionProjector, JosephForwardProjectionImageFilter);
 
 protected:
-  GateHybridForcedDetectionProjector() {}
-  virtual ~GateHybridForcedDetectionProjector() {}
+  GateFixedForcedDetectionProjector() {}
+  virtual ~GateFixedForcedDetectionProjector() {}
 
 private:
-  GateHybridForcedDetectionProjector(const Self&); //purposely not implemented
+  GateFixedForcedDetectionProjector(const Self&); //purposely not implemented
   void operator=(const Self&);                     //purposely not implemented
 };
 

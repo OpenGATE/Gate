@@ -192,33 +192,12 @@ FILE(GLOB headers
 #=========================================================
 # RTK
 IF(GATE_USE_RTK)
-
-# FIND_PACKAGE(ITK)
-# IF(ITK_FOUND)
-#   INCLUDE(${ITK_USE_FILE})
-#   if(${ITK_VERSION_MAJOR} EQUAL 3)
-#     # Check that the ITK_USE_REVIEW is ON
-#     if(NOT ITK_USE_REVIEW)
-#       message(FATAL_ERROR "Please set ITK_USE_REVIEW to ON when configuring ITK before using RTK")
-#     endif(NOT ITK_USE_REVIEW)
-#   endif(${ITK_VERSION_MAJOR} EQUAL 3)
-# ELSE(ITK_FOUND)
-#   MESSAGE(FATAL_ERROR "Cannot build without ITK. Set ITK_DIR.")
-# ENDIF(ITK_FOUND)
-
-
-   #MESSAGE("use rtk on")
    FIND_PACKAGE(RTK REQUIRED)
-   #MESSAGE("${RTK_USE_FILE}")
    INCLUDE(${RTK_USE_FILE})
-   #MESSAGE("lib = ${RTK_LIBRARIES}")
    STRING(REPLACE "-pedantic" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
 ELSE()
    SET(ITK_LIBRARIES ITKMetaIO itkzlib)
 ENDIF()
-
-#ADD_SUBDIRECTORY(source/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
 
 #=========================================================
 # Add the executable, and link it to the Geant4 libraries
@@ -232,13 +211,10 @@ ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} ${RTK_LIBRARIES} pthread)
 
 #=========================================================
-# MHD management from ITK
-IF(GATE_USE_RTK)
-  #MESSAGE("no need mhd")
-ELSE(GATE_USE_RTK)
+# included ITK to read/write mhd image file format
+IF(NOT GATE_USE_RTK)
   ADD_SUBDIRECTORY(source/externals/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
-ENDIF(GATE_USE_RTK)
-
+ENDIF()
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)

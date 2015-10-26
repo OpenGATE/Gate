@@ -42,8 +42,8 @@
 
 # --> Commmon part
 /gate/geometry/setMaterialDatabase                      data/HUmaterials-tol-0.1.db
-/gate/patient/geometry/SetHUToMaterialFile              data/cylinder.mat
-/gate/patient/geometry/SetImage                         data/cylinder.mha
+/gate/patient/geometry/setHUToMaterialFile              data/cylinder.mat
+/gate/patient/geometry/setImage                         data/cylinder.mha
 
 #/gate/patient/geometry/TranslateTheImageAtThisIsoCenter 75.5 108.9 -646.7 mm
 #/gate/patient/geometry/TranslateTheImageAtThisIsoCenter 0 0 0 mm

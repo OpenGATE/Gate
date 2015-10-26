@@ -9,14 +9,14 @@
   ----------------------*/
 
 //-----------------------------------------------------------------------------
-/// \class GateHybridForcedDetectionActor
+/// \class GateFixedForcedDetectionActor
 //-----------------------------------------------------------------------------
 
 #include "GateConfiguration.h"
 #ifdef GATE_USE_RTK
 
-#ifndef GATEHYBRIDFORCEDDECTECTIONACTOR_HH
-#define GATEHYBRIDFORCEDDECTECTIONACTOR_HH
+#ifndef GATEFIXEDFORCEDDECTECTIONACTOR_HH
+#define GATEFIXEDFORCEDDECTECTIONACTOR_HH
 
 #include "globals.hh"
 #include "G4String.hh"
@@ -25,14 +25,14 @@
 
 // Gate
 #include "GateVActor.hh"
-#include "GateHybridForcedDetectionActorMessenger.hh"
+#include "GateFixedForcedDetectionActorMessenger.hh"
 #include "GateImage.hh"
 #include "GateSourceMgr.hh"
 #include "GateVImageVolume.hh"
-#include "GateHybridForcedDetectionFunctors.hh"
+#include "GateFixedForcedDetectionFunctors.hh"
 #include "GateEnergyResponseFunctor.hh"
-#include "GateHybridForcedDetectionProjector.h"
-#include "GateHybridForcedDetectionProcessType.hh"
+#include "GateFixedForcedDetectionProjector.h"
+#include "GateFixedForcedDetectionProcessType.hh"
 
 // itk
 #include <itkTimeProbe.h>
@@ -44,31 +44,29 @@
 
 //-----------------------------------------------------------------------------
 
-class GateHybridForcedDetectionActorMessenger;
-class GateHybridForcedDetectionActor : public GateVActor
+class GateFixedForcedDetectionActorMessenger;
+class GateFixedForcedDetectionActor : public GateVActor
 {
 public:
 
   //-----------------------------------------------------------------------------
   // This macro initialize the CreatePrototype and CreateInstance
-  FCT_FOR_AUTO_CREATOR_ACTOR(GateHybridForcedDetectionActor)
+  FCT_FOR_AUTO_CREATOR_ACTOR(GateFixedForcedDetectionActor)
 
-  GateHybridForcedDetectionActor(G4String name, G4int depth=0);
-  virtual ~GateHybridForcedDetectionActor();
+  GateFixedForcedDetectionActor(G4String name, G4int depth=0);
+  virtual ~GateFixedForcedDetectionActor();
 
   // Constructs the actor
   virtual void Construct();
 
   // Callbacks
   virtual void BeginOfRunAction(const G4Run*);
-  virtual void EndOfRunAction(const G4Run*);
   virtual void BeginOfEventAction(const G4Event*e=NULL);
   virtual void EndOfEventAction(const G4Event*e=NULL);
-  // virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
 
   // Saves the data collected to the file
-  virtual void SaveData() { SaveData(""); }
+  virtual void SaveData();
   virtual void SaveData(const G4String prefix);
   virtual void ResetData();
 
@@ -89,22 +87,10 @@ public:
   void EnableSecondarySquaredImage(bool b) { mIsSecondarySquaredImageEnabled = b; }
   void EnableSecondaryUncertaintyImage(bool b) { mIsSecondaryUncertaintyImageEnabled = b; }
   void SetTotalFilename(G4String name) { mTotalFilename = name; }
-  void SetSingleInteractionFilename(G4String name) { mSingleInteractionFilename = name; }
-  void SetSingleInteractionType(G4String type) { mSingleInteractionType = type; }
-  void SetSingleInteractionPosition(G4ThreeVector pos) { mSingleInteractionPosition = pos; }
-  void SetSingleInteractionDirection(G4ThreeVector dir) { mSingleInteractionDirection = dir; }
-  void SetSingleInteractionEnergy(G4double e) { mSingleInteractionEnergy = e; }
-  void SetSingleInteractionZ(G4int z) { mSingleInteractionZ = z; }
   void SetPhaseSpaceFilename(G4String name) { mPhaseSpaceFilename = name; }
   void SetWaterLUTFilename(G4String name) { mWaterLUTFilename = name; }
   void SetWaterLUTMaterial(G4String name) { mWaterLUTMaterial = name; }
   void SetNoisePrimary(G4int n) { mNoisePrimary = n; }
-  void SetSecondPassPrefix(G4String name) { mSecondPassPrefix = name; }
-  void SetSecondPassDetectorResolution(int x, int y) { mSecondPassDetectorResolution[0] = x; mSecondPassDetectorResolution[1] = y; }
-  void SetRussianRouletteFilename(G4String name) { mRussianRouletteFilename = name; }
-  void SetRussianRouletteSpacing(G4double s) { mRussianRouletteSpacing = s; }
-  void SetRussianRouletteMinimumCountInRegion(G4double p) { mRussianRouletteMinimumCountInRegion = std::max(2.,p); }
-  void SetRussianRouletteMinimumProbability(G4double p) { mRussianRouletteMinimumProbability = p; }
   void SetInputRTKGeometryFilename(G4String name) { mInputRTKGeometryFilename = name; }
 
   // Typedef for rtk
@@ -133,21 +119,21 @@ public:
                                                   VectorType &detectorColVector);
   InputImageType::Pointer ConvertGateImageToITKImage(GateVImageVolume * gateImgVol);
   InputImageType::Pointer CreateVoidProjectionImage();
-  void CreatePhaseSpace(const G4String phaseSpaceFilename, TFile *&phaseSpaceFile, TTree *&phaseSpace);
+  virtual void CreatePhaseSpace(const G4String phaseSpaceFilename, TFile *&phaseSpaceFile, TTree *&phaseSpace);
 
   // The actual forced detection functions
-  void ForceDetectionOfInteraction(G4int runID, G4int eventID, G4int trackID,
-                                   G4String prodVol, G4String creatorProc,
-                                   G4String processName, G4String interVol,
-                                   G4ThreeVector pt, G4ThreeVector dir,
-                                   double energy, double weight,
-                                   G4String material, int Z);
+  virtual void ForceDetectionOfInteraction(G4int runID, G4int eventID, G4int trackID,
+                                           G4String prodVol, G4String creatorProc,
+                                           G4String processName, G4String interVol,
+                                           G4ThreeVector pt, G4ThreeVector dir,
+                                           double energy, double weight,
+                                           G4String material, int Z);
   template <ProcessType VProcess, class TProjectorType>
   void ForceDetectionOfInteraction(TProjectorType *projector,
                                    InputImageType::Pointer &input);
 
 protected:
-  GateHybridForcedDetectionActorMessenger * pActorMessenger;
+  GateFixedForcedDetectionActorMessenger * pActorMessenger;
 
   G4String mDetectorName;
   G4EmCalculator * mEMCalculator;
@@ -200,15 +186,15 @@ protected:
   VectorType mDetectorColVector;
 
   // Accumulation type
-  typedef GateHybridForcedDetectionFunctor::VAccumulation AccumulationType;
+  typedef GateFixedForcedDetectionFunctor::VAccumulation AccumulationType;
 
   // Primary stuff
   unsigned int mNumberOfEventsInRun;
   typedef rtk::JosephForwardProjectionImageFilter<
                  InputImageType,
                  InputImageType,
-                 GateHybridForcedDetectionFunctor::InterpolationWeightMultiplication,
-                 GateHybridForcedDetectionFunctor::PrimaryValueAccumulation>
+                 GateFixedForcedDetectionFunctor::InterpolationWeightMultiplication,
+                 GateFixedForcedDetectionFunctor::PrimaryValueAccumulation>
                    PrimaryProjectionType;
 
   // Per process members
@@ -218,25 +204,16 @@ protected:
   std::map<ProcessType, G4String> mProcessImageFilenames;
 
   // Compton stuff
-  typedef GateHybridForcedDetectionProjector<GateHybridForcedDetectionFunctor::ComptonValueAccumulation> ComptonProjectionType;
+  typedef GateFixedForcedDetectionProjector<GateFixedForcedDetectionFunctor::ComptonValueAccumulation> ComptonProjectionType;
   ComptonProjectionType::Pointer mComptonProjector;
 
   // Rayleigh stuff
-  typedef GateHybridForcedDetectionProjector<GateHybridForcedDetectionFunctor::RayleighValueAccumulation> RayleighProjectionType;
+  typedef GateFixedForcedDetectionProjector<GateFixedForcedDetectionFunctor::RayleighValueAccumulation> RayleighProjectionType;
   RayleighProjectionType::Pointer mRayleighProjector;
 
   // Fluorescence stuff
-  typedef GateHybridForcedDetectionProjector<GateHybridForcedDetectionFunctor::FluorescenceValueAccumulation> FluorescenceProjectionType;
+  typedef GateFixedForcedDetectionProjector<GateFixedForcedDetectionFunctor::FluorescenceValueAccumulation> FluorescenceProjectionType;
   FluorescenceProjectionType::Pointer mFluorescenceProjector;
-
-  // Parameters for single event output
-  InputImageType::Pointer mSingleInteractionImage;
-  G4String                mSingleInteractionFilename;
-  G4String                mSingleInteractionType;
-  G4ThreeVector           mSingleInteractionPosition;
-  G4ThreeVector           mSingleInteractionDirection;
-  G4double                mSingleInteractionEnergy;
-  G4int                   mSingleInteractionZ;
 
   // Phase space variables
   G4String mPhaseSpaceFilename;
@@ -244,6 +221,7 @@ protected:
   TTree   *mPhaseSpace;
   G4ThreeVector mInteractionDirection;
   G4ThreeVector mInteractionPosition;
+  PointType     mInteractionITKPosition;
   double        mInteractionEnergy;
   double        mInteractionWeight;
   Char_t        mInteractionProductionVolume[256];
@@ -259,6 +237,7 @@ protected:
   int           mInteractionZ;
   int           mInteractionOrder;
   int           mInteractionChainCode;
+  double        mInteractionSquaredIntegralOverDetector;
 
   // Water equivalent conversion
   void CreateWaterLUT(const std::vector<double> &energyList,
@@ -267,32 +246,13 @@ protected:
   // Account for primary fluence weighting
   InputImageType::Pointer PrimaryFluenceWeighting(const InputImageType::Pointer input);
 
-  // Second pass members
   G4String AddPrefix(G4String prefix, G4String filename);
-  OutputImageType::Pointer CreateRussianRouletteVoidImage();
-  G4String mSecondPassPrefix;
-  G4String mRussianRouletteFilename;
-  G4ThreeVector mSecondPassDetectorResolution;
-  typedef int RussianRouletteImageKeyType;
-  //typedef ProcessType RussianRouletteImageKeyType;
-  std::map<RussianRouletteImageKeyType, OutputImageType::Pointer> mRussianRouletteImages;
-  std::map<RussianRouletteImageKeyType, OutputImageType::Pointer> mRussianRouletteSquaredImages;
-  std::map<RussianRouletteImageKeyType, OutputImageType::Pointer> mRussianRouletteCountImages;
-  std::map<RussianRouletteImageKeyType, OutputImageType::Pointer> mRussianRouletteProbabilityImages;
-  G4int mRussianRouletteNumberOfEnergyBins;
-  G4int mRussianRouletteMaxNumberOfOrders;
-  RussianRouletteImageKeyType mRussianRouletteMaxKey;
-  G4double mRussianRouletteSpacing;
-  G4int mRussianRouletteMinimumCountInRegion;
-  G4double mRussianRouletteMinimumProbability;
-  TFile   *mSecondPassPhaseSpaceFile;
-  TTree   *mSecondPassPhaseSpace;
 };
 //-----------------------------------------------------------------------------
 
-MAKE_AUTO_CREATOR_ACTOR(HybridForcedDetectionActor, GateHybridForcedDetectionActor)
+MAKE_AUTO_CREATOR_ACTOR(FixedForcedDetectionActor, GateFixedForcedDetectionActor)
 
 
-#endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTOR_HH */
+#endif /* end #define GATEFIXEDFORCEDDECTECTIONACTOR_HH */
 
 #endif // GATE_USE_RTK

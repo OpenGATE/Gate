@@ -90,33 +90,33 @@
 /gate/actor/soti/attachTo              world
 
 # -----------------------------------------------------
-# Hybrid ForcedDetection Actor (hfda)
-/gate/actor/addActor                          HybridForcedDetectionActor hfda
-/gate/actor/hfda/attachTo                     world
-/gate/actor/hfda/setDetector                  DetectorPlane
-/gate/actor/hfda/setDetectorResolution        256 256
-/gate/actor/hfda/geometryFilename             output/geometry.xml
-/gate/actor/hfda/primaryFilename              output/primary%.04d.mha
-/gate/actor/hfda/rayleighFilename             output/rayleigh%.04d.mha
-/gate/actor/hfda/comptonFilename              output/compton%.04d.mha
-/gate/actor/hfda/fluorescenceFilename         output/fluorescence%.04d.mha
-/gate/actor/hfda/secondaryFilename            output/secondary%.04d.mha
-/gate/actor/hfda/enableUncertaintySecondary   true
-/gate/actor/hfda/enableSquaredSecondary       true
-/gate/actor/hfda/totalFilename                output/total%.04d.mha
-/gate/actor/hfda/materialMuFilename           output/materialMu.mha
-/gate/actor/hfda/attenuationFilename          output/attenuation%.04d.mha
-/gate/actor/hfda/flatFieldFilename            output/flatField%.04d.mha
-/gate/actor/hfda/saveEveryNSeconds            120
-#/gate/actor/hfda/singleInteractionFilename    output/single{ZDISTANCE}.mha
-#/gate/actor/hfda/singleInteractionType        Compton
-#/gate/actor/hfda/singleInteractionPosition    0 0 {ZDISTANCE} cm
-#/gate/actor/hfda/singleInteractionDirection   0 0 -1
-#/gate/actor/hfda/singleInteractionEnergy      70 keV
-#/gate/actor/hfda/singleInteractionZ           7
-#/gate/actor/hfda/phaseSpaceFilename           output/interactions.root
-#/gate/actor/hfda/waterLUTFilename             output/waterLUT.mhd
-#/gate/actor/hfda/responseDetectorFilename     data/reponseDetector.txt
+# FixedForcedDetection Actor (ffda)
+/gate/actor/addActor                          FixedForcedDetectionActor ffda
+/gate/actor/ffda/attachTo                     world
+/gate/actor/ffda/setDetector                  DetectorPlane
+/gate/actor/ffda/setDetectorResolution        256 256
+/gate/actor/ffda/geometryFilename             output/geometry.xml
+/gate/actor/ffda/primaryFilename              output/primary%.04d.mha
+/gate/actor/ffda/rayleighFilename             output/rayleigh%.04d.mha
+/gate/actor/ffda/comptonFilename              output/compton%.04d.mha
+/gate/actor/ffda/fluorescenceFilename         output/fluorescence%.04d.mha
+/gate/actor/ffda/secondaryFilename            output/secondary%.04d.mha
+/gate/actor/ffda/enableUncertaintySecondary   true
+/gate/actor/ffda/enableSquaredSecondary       true
+/gate/actor/ffda/totalFilename                output/total%.04d.mha
+/gate/actor/ffda/materialMuFilename           output/materialMu.mha
+/gate/actor/ffda/attenuationFilename          output/attenuation%.04d.mha
+/gate/actor/ffda/flatFieldFilename            output/flatField%.04d.mha
+/gate/actor/ffda/saveEveryNSeconds            120
+#/gate/actor/ffda/singleInteractionFilename    output/single{ZDISTANCE}.mha
+#/gate/actor/ffda/singleInteractionType        Compton
+#/gate/actor/ffda/singleInteractionPosition    0 0 {ZDISTANCE} cm
+#/gate/actor/ffda/singleInteractionDirection   0 0 -1
+#/gate/actor/ffda/singleInteractionEnergy      70 keV
+#/gate/actor/ffda/singleInteractionZ           7
+#/gate/actor/ffda/phaseSpaceFilename           output/interactions.root
+#/gate/actor/ffda/waterLUTFilename             output/waterLUT.mhd
+#/gate/actor/ffda/responseDetectorFilename     data/reponseDetector.txt
 
 
 # find source if gps. --> keep the first one.

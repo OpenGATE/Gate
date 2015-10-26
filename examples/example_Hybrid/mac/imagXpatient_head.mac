@@ -38,8 +38,8 @@
 
 # --> Commmon part
 /gate/geometry/setMaterialDatabase                      data/HUmaterials-tol-0.1.db
-/gate/patient/geometry/SetHUToMaterialFile              data/HU2mat-tol-0.1.txt
-/gate/patient/geometry/SetImage                         data/103130_head__1.5mm_recon.mhd
+/gate/patient/geometry/setHUToMaterialFile              data/HU2mat-tol-0.1.txt
+/gate/patient/geometry/setImage                         data/103130_head__1.5mm_recon.mhd
 
 
 # For visu debug, enable the following

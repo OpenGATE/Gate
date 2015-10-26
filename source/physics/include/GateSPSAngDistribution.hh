@@ -29,6 +29,10 @@ class GateSPSAngDistribution : public G4SPSAngDistribution
   GateSPSAngDistribution () ;
   ~GateSPSAngDistribution () ; 
 
+  // FocusPointCopy is a copy of the private member FocusPoint in G4SPSAngDistribution
+  // that cannot be accessed from get because there is no GetFocusPoint and the member
+  // is private. Every call to GateSPSAngDistribution::SetFocusPoint is doubled with a
+  // call to GateSPSAngDistribution::SetFocusPointCopy to be able to access its value.
   G4ThreeVector GetFocusPointCopy();  
   void 	SetFocusPointCopy (G4ThreeVector);
 

@@ -1,5 +1,5 @@
-#ifndef GATEHYBRIDFORCEDDETECTIONACTORFUNCTORS_HH
-#define GATEHYBRIDFORCEDDETECTIONACTORFUNCTORS_HH
+#ifndef GATEFIXEDFORCEDDETECTIONACTORFUNCTORS_HH
+#define GATEFIXEDFORCEDDETECTIONACTORFUNCTORS_HH
 
 // Geant4
 #include <G4VEMDataSet.hh>
@@ -20,7 +20,7 @@
 // RTK
 #include <rtkConfiguration.h>
 
-namespace GateHybridForcedDetectionFunctor
+namespace GateFixedForcedDetectionFunctor
 {
 
 //-----------------------------------------------------------------------------
@@ -728,4 +728,4 @@ private:
 
 }
 
-#endif // GATEHYBRIDFORCEDDETECTIONACTORFUNCTORS_HH
+#endif // GATEFIXEDFORCEDDETECTIONACTORFUNCTORS_HH

@@ -11,8 +11,8 @@ See GATE/LICENSE.txt for further details
 #include "GateConfiguration.h"
 #ifdef GATE_USE_RTK
 
-#ifndef GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH
-#define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH
+#ifndef GATEFIXEDFORCEDDECTECTIONACTORMESSENGER_HH
+#define GATEFIXEDFORCEDDECTECTIONACTORMESSENGER_HH
 
 #include "G4UIcmdWith3Vector.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
@@ -20,22 +20,22 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcmdWithADouble.hh"
 
 #include "globals.hh"
-#include "GateHybridForcedDetectionActor.hh"
+#include "GateFixedForcedDetectionActor.hh"
 #include "GateActorMessenger.hh"
 #include "GateUIcmdWith2Vector.hh"
 
-class GateHybridForcedDetectionActor;
-class GateHybridForcedDetectionActorMessenger: public GateActorMessenger
+class GateFixedForcedDetectionActor;
+class GateFixedForcedDetectionActorMessenger: public GateActorMessenger
 {
 public:
-  GateHybridForcedDetectionActorMessenger(GateHybridForcedDetectionActor* sensor);
-  virtual ~GateHybridForcedDetectionActorMessenger();
+  GateFixedForcedDetectionActorMessenger(GateFixedForcedDetectionActor* sensor);
+  virtual ~GateFixedForcedDetectionActorMessenger();
 
   void BuildCommands(G4String base);
   void SetNewValue(G4UIcommand*, G4String);
 
 protected:
-  GateHybridForcedDetectionActor * pHybridActor;
+  GateFixedForcedDetectionActor * pActor;
   G4UIcmdWithAString * pSetDetectorCmd;
   GateUIcmdWith2Vector * pSetDetectorResolCmd;
   G4UIcmdWithAString * pSetGeometryFilenameCmd;
@@ -51,24 +51,12 @@ protected:
   G4UIcmdWithABool * pEnableSecondarySquaredCmd;
   G4UIcmdWithABool * pEnableSecondaryUncertaintyCmd;
   G4UIcmdWithAString * pSetTotalFilenameCmd;
-  G4UIcmdWithAString * pSetSingleInteractionFilenameCmd;
-  G4UIcmdWithAString * pSetSingleInteractionTypeCmd;
-  G4UIcmdWith3Vector * pSetSingleInteractionDirectionCmd;
-  G4UIcmdWith3VectorAndUnit * pSetSingleInteractionPositionCmd;
-  G4UIcmdWithADoubleAndUnit * pSetSingleInteractionEnergyCmd;
-  G4UIcmdWithAnInteger * pSetSingleInteractionZCmd;
   G4UIcmdWithAString * pSetPhaseSpaceFilenameCmd;
   G4UIcmdWithAString * pSetWaterLUTFilenameCmd;
   G4UIcmdWithAString * pSetWaterLUTMaterialCmd;
-  G4UIcmdWithAString * pSetSecondPassPrefixCmd;
-  GateUIcmdWith2Vector * pSetSecondPassDetectorResolCmd;
-  G4UIcmdWithAString * pSetRussianRouletteFilenameCmd;
-  G4UIcmdWithADoubleAndUnit * pSetRussianRouletteSpacingCmd;
-  G4UIcmdWithAnInteger * pSetRussianRouletteMinimumCountInRegionCmd;
-  G4UIcmdWithADouble * pSetRussianRouletteMinimumProbabilityCmd;
   G4UIcmdWithAString * pSetInputRTKGeometryFilenameCmd;
   G4UIcmdWithAnInteger * pSetNoisePrimaryCmd;
 };
 
-#endif /* end #define GATEHYBRIDFORCEDDECTECTIONACTORMESSENGER_HH*/
+#endif /* end #define GATEFIXEDFORCEDDECTECTIONACTORMESSENGER_HH*/
 #endif // GATE_USE_RTK

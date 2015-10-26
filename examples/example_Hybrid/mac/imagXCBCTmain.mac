@@ -65,20 +65,20 @@
 
 
 # -----------------------------------------------------
-# Hybrid ForcedDetection Actor (hfda)
-/gate/actor/addActor                       HybridForcedDetectionActor hfda
-/gate/actor/hfda/attachTo                  world
-/gate/actor/hfda/setDetector               DetectorPlane
-/gate/actor/hfda/setDetectorResolution     224 224
-/gate/actor/hfda/responseDetectorFilename  data/imagXresponseDetector.txt
-/gate/actor/hfda/geometryFilename          output/imag_geometry_Hy.xml
-/gate/actor/hfda/primaryFilename           output/imag_primary_Hy.mhd
-/gate/actor/hfda/rayleighFilename          output/imag_rayleigh_Hy.mhd
-/gate/actor/hfda/comptonFilename           output/imag_compton_Hy.mhd
-/gate/actor/hfda/fluorescenceFilename      output/imag_fluorescence_Hy.mhd
-/gate/actor/hfda/secondaryFilename         output/imag_secondary_Hy.mhd
-/gate/actor/hfda/materialMuFilename        output/imag_materialMu.mhd
-/gate/actor/hfda/saveEveryNSeconds         120
+# Fixed ForcedDetection Actor (ffda)
+/gate/actor/addActor                       FixedForcedDetectionActor ffda
+/gate/actor/ffda/attachTo                  world
+/gate/actor/ffda/setDetector               DetectorPlane
+/gate/actor/ffda/setDetectorResolution     224 224
+/gate/actor/ffda/responseDetectorFilename  data/imagXresponseDetector.txt
+/gate/actor/ffda/geometryFilename          output/imag_geometry_Hy.xml
+/gate/actor/ffda/primaryFilename           output/imag_primary_Hy.mhd
+/gate/actor/ffda/rayleighFilename          output/imag_rayleigh_Hy.mhd
+/gate/actor/ffda/comptonFilename           output/imag_compton_Hy.mhd
+/gate/actor/ffda/fluorescenceFilename      output/imag_fluorescence_Hy.mhd
+/gate/actor/ffda/secondaryFilename         output/imag_secondary_Hy.mhd
+/gate/actor/ffda/materialMuFilename        output/imag_materialMu.mhd
+/gate/actor/ffda/saveEveryNSeconds         120
 
 
 # find source if gps. --> keep the first one.
