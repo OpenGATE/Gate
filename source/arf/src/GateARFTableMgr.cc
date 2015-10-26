@@ -223,7 +223,7 @@ G4cout << " --------------------------------------------------------------------
 void GateARFTableMgr::SaveARFToBinaryFile()
 {
 
-ofstream dest;
+std::ofstream dest;
 dest.open ( theFN.c_str() );
 
 std::map<G4int,GateARFTable*>::iterator aIt;
@@ -299,7 +299,7 @@ void GateARFTableMgr::LoadARFFromBinaryFile(G4String theFileName)
 
   G4String basename = GetName()+"ARFTable_";
 
-  ifstream dest;
+  std::ifstream dest;
   dest.open ( theFileName.c_str(),std::ios::binary );
 
     dest.seekg(0, std::ios::beg);

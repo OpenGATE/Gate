@@ -79,6 +79,11 @@ GateVImageVolumeMessenger::GateVImageVolumeMessenger(GateVImageVolume* volume)
   pBuildLabeledImageCmd = new G4UIcmdWithAString(n,this);
   pBuildLabeledImageCmd->SetGuidance("Build and dump the image labeled according to the materials list. Give the filename.");
 
+  n = dir +"/buildAndDumpDensityImage";
+  pBuildDensityImageCmd = 0;
+  pBuildDensityImageCmd = new G4UIcmdWithAString(n,this);
+  pBuildDensityImageCmd->SetGuidance("Build and dump the density image according to the materials list. Give the filename.");
+
   n = dir +"/enableBoundingBoxOnly";
   pDoNotBuildVoxelsCmd = 0;
   pDoNotBuildVoxelsCmd = new G4UIcmdWithABool(n,this);
@@ -100,6 +105,7 @@ GateVImageVolumeMessenger::~GateVImageVolumeMessenger()
   delete pIsoCenterCmd;
   delete pSetOriginCmd;
   delete pBuildLabeledImageCmd;
+  delete pBuildDensityImageCmd;
   delete pDoNotBuildVoxelsCmd;
 }
 //---------------------------------------------------------------------------
@@ -134,6 +140,9 @@ void GateVImageVolumeMessenger::SetNewValue(G4UIcommand* command,
   }
   else if (command == pBuildLabeledImageCmd) {
     pVImageVolume->SetLabeledImageFilename(newValue);
+  }
+  else if (command == pBuildDensityImageCmd) {
+    pVImageVolume->SetDensityImageFilename(newValue);
   }
   else if (command == pDoNotBuildVoxelsCmd) {
     pVImageVolume->EnableBoundingBoxOnly(pDoNotBuildVoxelsCmd->GetNewBoolValue(newValue));

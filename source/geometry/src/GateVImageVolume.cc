@@ -24,6 +24,7 @@
 #include "GateDMapdt.h"
 #include "GateHounsfieldMaterialTable.hh"
 #include <G4TransportationManager.hh>
+#include "globals.hh"
 
 typedef unsigned int uint;
 
@@ -48,6 +49,7 @@ GateVImageVolume::GateVImageVolume( const G4String& name,G4bool acceptsChildren,
   mHounsfieldToImageMaterialTableFilename = "none";
   mRangeToImageMaterialTableFilename = "none";
   mWriteHLabelImage = false;
+  mWriteDensityImage = false;
   mHLabelImageFilename = "none";
   mIsBoundingBoxOnlyModeEnabled = false;
   mImageMaterialsFromHounsfieldTableDone = false;
@@ -308,6 +310,12 @@ void GateVImageVolume::SetLabeledImageFilename(G4String filename) {
 }
 //--------------------------------------------------------------------
 
+//--------------------------------------------------------------------
+void GateVImageVolume::SetDensityImageFilename(G4String filename) {
+  mDensityImageFilename = filename;
+  mWriteDensityImage = true;
+}
+//--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
 void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
@@ -322,7 +330,7 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
   mHounsfieldMaterialTable.Reset();
   // mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(), pImage->GetOutsideValue()+1,"worldDefaultAir");
   G4String parentMat = GetParentVolume()->GetMaterialName();
-  mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue()+1,parentMat);
+  mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue(),parentMat);
 
   while (is) {
     skipComment(is);
@@ -333,7 +341,7 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
     G4String n;
     is >> n;
     if (is) {
-      if(h2> pImage->GetOutsideValue()+1){
+      if(h2> pImage->GetOutsideValue()){
         if(h1<pImage->GetOutsideValue()+1) h1=pImage->GetOutsideValue()+1;
         mHounsfieldMaterialTable.AddMaterial(h1,h2,n);
       }
@@ -379,6 +387,7 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
   // Dump label image if needed
   mImageMaterialsFromHounsfieldTableDone = true;
   DumpHLabelImage();
+  DumpDensityImage();
 }
 //--------------------------------------------------------------------
 
@@ -417,6 +426,43 @@ void GateVImageVolume::DumpHLabelImage() {
   }
 }
 
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+void GateVImageVolume::DumpDensityImage() {
+  // Dump image if needed
+  if (mWriteDensityImage) {
+    ImageType output;
+    output.SetResolutionAndVoxelSize(pImage->GetResolution(), pImage->GetVoxelSize());
+    output.SetOrigin(pImage->GetOrigin());
+    output.Allocate();
+
+    //  GateHounsfieldMaterialTable::LabelToMaterialNameType lab2mat;
+    //     mHounsfieldMaterialTable.MapLabelToMaterial(lab2mat);
+
+    ImageType::const_iterator pi;
+    ImageType::iterator po;
+    pi = pImage->begin();
+    po = output.begin();
+    while (pi != pImage->end()) {
+      if (1) { // HU mean or d mean or label
+	// G4Material * mat =
+	// 	  theMaterialDatabase.GetMaterial(lab2mat[*pi]);
+	// 	GateDebugMessage("Volume", 2, "lab " << *pi << " = " << mat->GetName() << Gateendl);
+	// 	po = mat->GetDensity;
+    double density = mLoadImageMaterialsFromHounsfieldTable ?
+    				 mHounsfieldMaterialTable[(int)lrint(*pi)].md1 :
+    				 mRangeMaterialTable[(int)lrint(*pi)].md1;
+	*po = density / (g / cm3);
+	++po;
+	++pi;
+      }
+    }
+
+    // Write image
+    output.Write(mDensityImageFilename);
+  }
+}
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -481,7 +527,7 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
   inFile.open(mRangeToImageMaterialTableFilename.c_str(),std::ios::in);
   mRangeMaterialTable.Reset();
   G4String parentMat = GetParentVolume()->GetMaterialName();
-  mRangeMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue()+1,parentMat);
+  mRangeMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue(),parentMat);
 
   if (inFile.is_open()){
     G4String material;
@@ -520,10 +566,14 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
         G4cout << " min max " << r1 << " " << r2 << "  material: " << material
                << std::boolalpha << ", visible " << visible << ", rgba(" << red<<',' << green << ',' << blue << ')' << Gateendl;
 
-        if(r2> pImage->GetOutsideValue()+1){
-          if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
-          mRangeMaterialTable.AddMaterial(r1,r2,material);
-        }
+    if(r2> pImage->GetOutsideValue()){
+      if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
+        mRangeMaterialTable.AddMaterial(r1,r2,material);
+    }
+    else
+    {
+    	GateMessage("Materials",0,"Failed to add material "<< material << " to Database" << Gateendl);
+    }
 
         mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
 
@@ -544,13 +594,14 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
         is >> r1 >> r2;
         is >> material;
 
-        if(r2> pImage->GetOutsideValue()+1){
-          if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
-          mRangeMaterialTable.AddMaterial(r1,r2,material);
-        }
-      }
-      mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
-    }
+
+  if(r2> pImage->GetOutsideValue()){
+    if(r1<pImage->GetOutsideValue()+1) r1=pImage->GetOutsideValue()+1;
+      mRangeMaterialTable.AddMaterial(r1,r2,material);
+  }
+  }
+  mRangeMaterialTable.MapLabelToMaterial(mLabelToMaterialName);
+  }
 
   }
   else {G4cout << "Error opening file.\n";}
@@ -574,6 +625,8 @@ void GateVImageVolume::LoadImageMaterialsFromRangeTable()
     (*iter) = label;
     ++iter;
   }
+  mImageMaterialsFromRangeTableDone = true;
+  DumpDensityImage();
 }
 //--------------------------------------------------------------------
 

@@ -54,7 +54,7 @@ void GateSplitManager::StartSplitting()
  G4String dir=getenv("GC_DOT_GATE_DIR");
  if (dir.substr(dir.length()-1,dir.length())=="/") dir=dir+".Gate/";
  else dir=dir+"/.Gate/";
- ifstream dirstream(dir.c_str()); 
+ std::ifstream dirstream(dir.c_str());
  if (!dirstream) { 
  const G4String mkdir("mkdir "+dir); 
  if(m_verboseLevel>1)cout<<"Information : Creating a .Gate directory... "; 
