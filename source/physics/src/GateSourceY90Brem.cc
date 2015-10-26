@@ -19,7 +19,8 @@ GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
   for(i=0;i<200;i++)
     mBremProb += mEnergyTable[i];
 
-  mPosProb = 3.184e-5;
+  mPosProb = 3.186e-5;
+  mGammaProb = 0.0;
 
   mCumulativeEnergyTable = new G4double[200];
   mCumulativeEnergyTable[0]  = mEnergyTable[0];
