@@ -56,7 +56,7 @@ int GateToPlatform::GenerateOpenPBSScriptfile()
 	if (dir.substr(dir.length()-1,dir.length())!="/") dir=dir+"/"; 
 	
 	//check if we have an existing directory
-	ifstream dirstream(dir.c_str()); 
+	std::ifstream dirstream(dir.c_str());
 	if (!dirstream) { 
 		cout<<"Error : Failed to detect the Gate executable directory"<<endl;
 		cout<<"Please check your environment variables!"<<endl; 
@@ -75,7 +75,7 @@ int GateToPlatform::GenerateOpenPBSScriptfile()
 		ostringstream cnt;
 		cnt<<i;
 		// open template script file
-		ifstream inFile(pbsScript);
+		std::ifstream inFile(pbsScript);
 		if (!inFile) {
 			cout<< "Error : could not access openPBS script template file! "<<pbsScript<< endl;
 			return(1);
@@ -120,7 +120,7 @@ int GateToPlatform::GenerateOpenPBSSubmitfile()
 	if (dir.substr(dir.length()-1,dir.length())!="/") dir=dir+"/"; 
 	
 	//check if we have an existing director
-	ifstream dirstream(dir.c_str()); 
+	std::ifstream dirstream(dir.c_str());
 	if (!dirstream) { 
 		cout<<"Error : Failed to detect the Gate executable directory"<<endl;
 		cout<<"Please check your environment variables!"<<endl; 
@@ -153,7 +153,7 @@ int GateToPlatform::GenerateOpenMosixSubmitfile()
 	if (dir.substr(dir.length()-1,dir.length())!="/") dir=dir+"/"; 
 	
 	//check if we have an existing directory
-	ifstream dirstream(dir.c_str()); 
+	std::ifstream dirstream(dir.c_str());
 	if (!dirstream) { 
 		cout<<"Error : Failed to detect the Gate executable directory"<<endl;
 		cout<<"Please check your environment variables!"<<endl; 
@@ -188,7 +188,7 @@ int GateToPlatform::GenerateCondorSubmitfile()
 	if (dir.substr(dir.length()-1,dir.length())!="/") dir=dir+"/"; 
 	
 	//check if we have an existing directory
-	ifstream dirstream(dir.c_str()); 
+	std::ifstream dirstream(dir.c_str());
 	if (!dirstream) { 
 		cout<<"Error : Failed to detect the Gate executable directory"<<endl;
 		cout<<"Please check your environment variables!"<<endl; 
@@ -203,7 +203,7 @@ int GateToPlatform::GenerateCondorSubmitfile()
 		cout<< "Error : could not create submit file! "<<submitFile<< endl;
 		return(1);
 	}
-	ifstream scriptFile(condorScript.c_str());
+	std::ifstream scriptFile(condorScript.c_str());
 	if (!scriptFile) {
 		cout<< "Error : could not open the condor script file! "<<scriptFile<< endl;
 		return(1);
@@ -240,7 +240,7 @@ int GateToPlatform::GenerateXgridSubmitfile()
 	if (dir.substr(dir.length()-1,dir.length())!="/") dir=dir+"/"; 
 	
 	//check if we have an existing directory
-	ifstream dirstream(dir.c_str()); 
+	std::ifstream dirstream(dir.c_str());
 	if (!dirstream) { 
 		cout<<"Error : Failed to detect the Gate executable directory"<<endl;
 		cout<<"Please check your environment variables!"<<endl; 

@@ -28,8 +28,8 @@
 /gate/world/daughters/name             mainBoxEntrance
 /gate/world/daughters/insert           box
 /gate/mainBoxEntrance/geometry/setXLength 40 cm
-/gate/mainBoxEntrance/geometry/setYLength 40 cm
-/gate/mainBoxEntrance/geometry/setZLength 1 nm
+/gate/mainBoxEntrance/geometry/setZLength 40 cm
+/gate/mainBoxEntrance/geometry/setYLength 1 nm
 /gate/mainBoxEntrance/placement/setTranslation 0.0 0.0 0.0 cm
 /gate/mainBoxEntrance/setMaterial Water
 /gate/mainBoxEntrance/vis/setVisible 1
@@ -71,6 +71,7 @@
 #/gate/actor/PHS_GLOBALBOX/useVolumeFrame
 /gate/actor/PHS_GLOBALBOX/save output/GlobalBoxEntrance2Beams.root
 
+
 #=====================================================
 # INITIALISATION
 #=====================================================
@@ -95,5 +96,5 @@
 
 /gate/random/setEngineName MersenneTwister
 /gate/random/setEngineSeed auto
-/gate/application/setTotalNumberOfPrimaries 1000
+/gate/application/setTotalNumberOfPrimaries 100000
 /gate/application/start

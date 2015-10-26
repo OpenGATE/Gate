@@ -81,7 +81,6 @@ GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name ):GateVSource( name )
 
   mTotalSimuTime = 0.;
   mAlreadyLoad = false;
-  PI = 4*(atan (1.0));
   mRmax=0;
   mCurrentParticleInIAEAFiles = 0;
   mCurrentUsedParticleInIAEAFiles = 0;
@@ -108,7 +107,7 @@ GateSourcePhaseSpace::~GateSourcePhaseSpace()
 // ----------------------------------------------------------------------------------
 void GateSourcePhaseSpace::Initialize()
 {
-  // GateMessage("Beam", 1, "Phase Space Source - Initialisation" << G4endl);
+  // GateMessage("Beam", 1, "Phase Space Source - Initialisation\n");
 
   InitializeTransformation();
   mTotalSimuTime = GateApplicationMgr::GetInstance()->GetTimeStop() - GateApplicationMgr::GetInstance()->GetTimeStart();
@@ -117,7 +116,7 @@ void GateSourcePhaseSpace::Initialize()
     T = new TChain("PhaseSpace");  //creates a chain to process a Tree called "T"
 
     for(unsigned int i=0;i<listOfPhaseSpaceFile.size();i++) {
-      GateMessage("Beam", 1, "Phase Space Source. Read file " << listOfPhaseSpaceFile[i] << G4endl);
+      GateMessage("Beam", 1, "Phase Space Source. Read file " << listOfPhaseSpaceFile[i] << Gateendl);
       T->Add(listOfPhaseSpaceFile[i]);
     }
 
@@ -166,7 +165,7 @@ void GateSourcePhaseSpace::Initialize()
         for(int j=0 ; j<totalEventInFile ; j++)
         {
           pIAEARecordType->read_particle();
-          if( abs(pIAEARecordType->x*cm)<mRmax && abs(pIAEARecordType->y*cm)<mRmax )  {pListOfSelectedEvents.push_back(totalEvent);G4cout<<" --> OK  "<<totalEvent<<G4endl;}
+          if( abs(pIAEARecordType->x*cm)<mRmax && abs(pIAEARecordType->y*cm)<mRmax )  {pListOfSelectedEvents.push_back(totalEvent);G4cout<<" --> OK  "<<totalEvent<< Gateendl;}
           totalEvent++;
 	}
       }
@@ -180,7 +179,7 @@ void GateSourcePhaseSpace::Initialize()
     SetIntensity(mNumberOfParticlesInFile);
 
   GateMessage("Beam", 1, "Phase Space Source. Total nb of particles in PhS " 
-              << mNumberOfParticlesInFile << G4endl);
+              << mNumberOfParticlesInFile << Gateendl);
 }
 // ----------------------------------------------------------------------------------
 
@@ -257,8 +256,7 @@ void GateSourcePhaseSpace::GenerateIAEAVertex( G4Event* /*aEvent*/ )
 
   dx = pIAEARecordType->u;
   dy = pIAEARecordType->v;
-  dz = sqrt(1. - dx*dx - dy*dy );
-  dz *= pIAEARecordType->w;
+  dz = pIAEARecordType->w;
 
   mParticleMomentum = G4ThreeVector(dx*mMomentum, dy*mMomentum, dz*mMomentum);
 
@@ -278,8 +276,8 @@ void GateSourcePhaseSpace::GenerateIAEAVertex( G4Event* /*aEvent*/ )
 // ----------------------------------------------------------------------------------
 G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event ) 
 {
-  //GateMessage("Beam", 2, "Generating particle " << event->GetEventID() << G4endl);
-  //GateMessage("Beam", 4, "GeneratePrimaries " << event->GetEventID() << G4endl);
+  //GateMessage("Beam", 2, "Generating particle " << event->GetEventID() << Gateendl);
+  //GateMessage("Beam", 4, "GeneratePrimaries " << event->GetEventID() << Gateendl);
 
   G4int numVertices = 0;
   double timeSlice = 0.;
@@ -303,7 +301,7 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
     }
     mLoop = int(mRequestedNumberOfParticlesPerRun/mTotalNumberOfParticles)  ;
   
-    mAngle = 2.*PI/(mLoop);
+    mAngle = twopi/(mLoop);
   }//Calculate the number of time each particle in phase space will be used
 
   
@@ -359,7 +357,7 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
      mParticleMomentum2 =  rotation*mParticleMomentum2;
   }
   if(GetUseRandomSymmetry() && mCurrentUse!=0) {
-     G4double randAngle = ((double)std::rand()/((double)RAND_MAX+1)*2.*PI);
+     G4double randAngle = G4RandFlat::shoot(twopi);
      rotation.rotateZ(randAngle);
      mParticleMomentum2 =  rotation*mParticleMomentum2;
   }
@@ -405,7 +403,7 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
               << " momentum=" << pVertex->GetPrimary()->GetMomentum()
               << " weight=" << pVertex->GetWeight()
 	          << " time=" << pVertex->GetT0()
-              << G4endl);
+              << Gateendl);
 
   numVertices++;
   return numVertices;
@@ -422,7 +420,7 @@ void GateSourcePhaseSpace::AddFile(G4String file)
      if (extension == "root") mFileType = "rootFile";
      else if (extension == "IAEAphsp" || extension == "IAEAheader" ) mFileType = "IAEAFile";
      else GateError( "Unknow phase space file extension. Knowns extensions are : "
-    	               << G4endl << ".IAEAphsp (or IAEAheader), .root" << G4endl);
+    	               << Gateendl << ".IAEAphsp (or IAEAheader), .root\n");
      listOfPhaseSpaceFile.push_back(file);
      return;
   }
@@ -507,9 +505,9 @@ G4int GateSourcePhaseSpace::OpenIAEAFile(G4String file)
   if( pIAEAheader->read_header() ) GateError("Error reading phase space file header: " + IAEAFileName + IAEAHeaderExt);
 
   pIAEARecordType= (iaea_record_type *) calloc(1, sizeof(iaea_record_type));
-  pIAEAheader->get_record_contents(pIAEARecordType);
   pIAEARecordType->p_file = pIAEAFile;
   pIAEARecordType->initialize();
+  pIAEAheader->get_record_contents(pIAEARecordType);
 
   return pIAEAheader->nParticles;
 }

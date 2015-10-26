@@ -15,6 +15,7 @@ See GATE/LICENSE.txt for further details
 #include "globals.hh"
 #include "GateCompressedVoxel.hh"
 #include "GateVoxelCompressorMessenger.hh"
+#include "GateMessageManager.hh"
 
 class GateGeometryVoxelArrayStore;
 
@@ -30,8 +31,6 @@ public:
     void Initialize();/* PY Descourt 08/09/2009 */  
 	
   void      Compress();
-  void      runLength(int x1, int x2, voxelSet& vs);
-  voxelSet& runLength2nd(voxelSet& vs, const std::valarray<unsigned short int>& chk, int fusion);
 
   const GateCompressedVoxel& GetVoxel(int copyNo) const { return (*m_voxelSet)[copyNo]; }
   int                        GetNbOfCopies()      const { return m_voxelSet->size();    }
@@ -43,11 +42,13 @@ public:
   G4String GetObjectName() const;
 
   void Print(){
-    for (voxelSet::iterator it=m_voxelSet->begin(); it!=m_voxelSet->end();it++) std::cout << (*it) << std::endl;
+    for (voxelSet::iterator it=m_voxelSet->begin(); it!=m_voxelSet->end();it++) std::cout << (*it) << Gateendl;
   }
 
 private:
 
+  void runLength(int x1, int x2, voxelSet& vs);
+  void runLength2nd(voxelSet& vs, const std::valarray<unsigned short int>& chk, int fusion);
   void AddMaterial(G4String m);
   bool isNotExcluded(unsigned short int n) const { return  m_exclusionList->find( n )==m_exclusionList->end();}
 

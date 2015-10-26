@@ -38,7 +38,7 @@ GateTotalDiscreteProcess::GateTotalDiscreteProcess ( const G4String& name, G4Pro
 
 GateTotalDiscreteProcess::~GateTotalDiscreteProcess()
 {
-	for ( size_t i=0;i<m_oProcessNameVec.size();i++ )
+	for ( size_t i=0;i<m_oProcessNameVec.size();i++ )// This procedure is unsafe!!
 	{
 		if ( m_oProcessNameVec[i]!=NULL ) delete m_oProcessNameVec[i];
 		if ( m_oCrossSectionsTableVec[i]!=NULL ) delete m_oCrossSectionsTableVec[i];
@@ -78,7 +78,7 @@ bool GateTotalDiscreteProcess::AddDiscreteProcess ( G4VDiscreteProcess* p )
 void 	GateTotalDiscreteProcess::BuildPhysicsTable ( const G4ParticleDefinition & part )
 {
 #ifdef G4VERBOSE
-	G4cout << "Build physics table for GateTotalDiscreteProcess." << G4endl;
+	G4cout << "Build physics table for GateTotalDiscreteProcess.\n";
 #endif
 
 	if ( part!=*pParticleType )
@@ -116,9 +116,9 @@ void GateTotalDiscreteProcess::BuildCrossSectionsTables()
 		m_oCrossSectionsTableVec[i]=new GateCrossSectionsTable ( m_nTotalMinEnergy,m_nTotalMaxEnergy,m_nTotalBinNumber,pParticleType,*m_oProcessVec[i] );
 
 #ifdef G4VERBOSE
-		G4cout << "***************" << G4endl;
-		G4cout << "GATE SUBPROCESS " << *m_oProcessNameVec[i] <<" : Building fast linear tables for "<< pParticleType->GetParticleName() << " in the energy range [" << m_nTotalMinEnergy/keV << "," << m_nTotalMaxEnergy/keV << "] keV in " << m_nTotalBinNumber << " " << ( m_nTotalMaxEnergy-m_nTotalMinEnergy ) /m_nTotalBinNumber/keV << " keV bins" << G4endl;
-		G4cout << "***************" << G4endl;
+		G4cout << "***************\n";
+		G4cout << "GATE SUBPROCESS " << *m_oProcessNameVec[i] <<" : Building fast linear tables for "<< pParticleType->GetParticleName() << " in the energy range [" << m_nTotalMinEnergy/keV << "," << m_nTotalMaxEnergy/keV << "] keV in " << m_nTotalBinNumber << " " << ( m_nTotalMaxEnergy-m_nTotalMinEnergy ) /m_nTotalBinNumber/keV << " keV bins\n";
+		G4cout << "***************\n";
 #endif
 		m_oCrossSectionsTableVec[i]->SetAndBuildProductionMaterialTable();
 	//	vec.push_back ( m_oProcessNameVec[i] );
@@ -127,9 +127,9 @@ void GateTotalDiscreteProcess::BuildCrossSectionsTables()
 	// build tables for total cross section
 	m_pTotalCrossSectionsTable=new GateCrossSectionsTable ( m_nTotalMinEnergy,m_nTotalMaxEnergy,m_nTotalBinNumber,pParticleType,m_oProcessVec);
 #ifdef G4VERBOSE
-	G4cout << "*****************" << G4endl;
-	G4cout << "GATE TOTALPROCESS " << GetProcessName() <<" : Building fast linear tables for "<< pParticleType->GetParticleName() << " in the energy range [" << m_nTotalMinEnergy/keV << "," << m_nTotalMaxEnergy/keV << "] keV in " << m_nTotalBinNumber << " " << ( m_nTotalMaxEnergy-m_nTotalMinEnergy ) /m_nTotalBinNumber/keV << " keV bins" << G4endl;
-	G4cout << "*****************" << G4endl;
+	G4cout << "*****************\n";
+	G4cout << "GATE TOTALPROCESS " << GetProcessName() <<" : Building fast linear tables for "<< pParticleType->GetParticleName() << " in the energy range [" << m_nTotalMinEnergy/keV << "," << m_nTotalMaxEnergy/keV << "] keV in " << m_nTotalBinNumber << " " << ( m_nTotalMaxEnergy-m_nTotalMinEnergy ) /m_nTotalBinNumber/keV << " keV bins\n";
+	G4cout << "*****************\n";
 #endif
 	m_pTotalCrossSectionsTable->SetAndBuildProductionMaterialTable();
 }
@@ -156,9 +156,9 @@ G4double GateTotalDiscreteProcess::GetMeanFreePath ( const G4Track &aTrack, G4do
 void GateTotalDiscreteProcess::CreateTotalMaxCrossSectionTable ( const std::vector<G4Material*>& vec )
 {
 #ifdef G4VERBOSE
-	G4cout << "******************************" << G4endl;
-	G4cout << "GATE TOTALMAXFICTITIOUSPROCESS "<< GetProcessName() << " : Building fast linear tables for "<< pParticleType->GetParticleName() << " in the energy range [" << m_nTotalMinEnergy/keV << "," << m_nTotalMaxEnergy/keV << "] keV in " << m_nTotalBinNumber << " " << ( m_nTotalMaxEnergy-m_nTotalMinEnergy ) /m_nTotalBinNumber/keV << " keV bins" << G4endl;
-	G4cout << "******************************" << G4endl;
+	G4cout << "******************************\n";
+	G4cout << "GATE TOTALMAXFICTITIOUSPROCESS "<< GetProcessName() << " : Building fast linear tables for "<< pParticleType->GetParticleName() << " in the energy range [" << m_nTotalMinEnergy/keV << "," << m_nTotalMaxEnergy/keV << "] keV in " << m_nTotalBinNumber << " " << ( m_nTotalMaxEnergy-m_nTotalMinEnergy ) /m_nTotalBinNumber/keV << " keV bins\n";
+	G4cout << "******************************\n";
 #endif
 	m_pTotalCrossSectionsTable->BuildMaxCrossSection ( vec );
 }

@@ -14,7 +14,6 @@ See GATE/LICENSE.txt for further details
 #include "GateVolumeManager.hh"
 
 #include "G4Trap.hh"
-#include "G4RunManager.hh"
 #include "G4VVisManager.hh"
 
 #include "globals.hh"

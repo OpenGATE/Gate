@@ -10,6 +10,7 @@ See GATE/LICENSE.txt for further details
 #include "Randomize.hh"
 
 #include "GateSPSEneDistribution.hh"
+#include "GateMessageManager.hh"
 #include <fstream>
 #include "G4SystemOfUnits.hh"
 using namespace std;
@@ -39,8 +40,9 @@ void GateSPSEneDistribution::GenerateFluor18()
 
    do
     {
-     E = 0.511 + ( 1.144 - 0.511 ) * G4UniformRand() ; // Emin = 0.511 ; Emax = 1.144
-     u = 0.5209 * G4UniformRand() ;   // Nmin = 0 ; Nmax = 0.5209
+     // hard wired constants!
+     E = G4RandFlat::shoot(0.511, 1.144); // Emin = 0.511 ; Emax = 1.144
+     u = G4RandFlat::shoot(0.5209);  // Nmin = 0 ; Nmax = 0.5209
      energyF18 = E;
     }
    while ( u > a*E*E*E + b*E*E + c*E + d ) ;
@@ -130,7 +132,7 @@ particle_energy = (m_Emin  + G4UniformRand() * m_EnergyRange) ;
 void GateSPSEneDistribution::BuildUserSpectrum(G4String FileName)
 {
 
-  ifstream inputFile (FileName.data());
+  std::ifstream inputFile (FileName.data());
   G4int nline(0);
   if(inputFile) {
     G4String line;
@@ -175,7 +177,7 @@ void GateSPSEneDistribution::BuildUserSpectrum(G4String FileName)
 
     switch(m_mode){
       case 1: // probability table to create discrete spectrum
-        G4cout << "Discrete spectrum" << G4endl;
+        G4cout << "Discrete spectrum\n";
         m_tab_sumproba=new G4double[m_dim_spectrum];
         while(nline<m_dim_spectrum){
           m_sum_proba=m_sum_proba+m_tab_proba[nline];
@@ -185,7 +187,7 @@ void GateSPSEneDistribution::BuildUserSpectrum(G4String FileName)
         PrintMessage();
         break;
       case 2: // probability table to create histogram
-        G4cout << "Histogram spectrum" << G4endl;
+        G4cout << "Histogram spectrum\n";
         m_tab_sumproba=new G4double[m_dim_spectrum];
         m_sum_proba=m_tab_proba[0]*(m_tab_energy[0]-m_Emin);
         m_tab_sumproba[0]=m_sum_proba;
@@ -196,7 +198,7 @@ void GateSPSEneDistribution::BuildUserSpectrum(G4String FileName)
         PrintMessage();
         break;
       case 3: // probability table to create interpolated spectrum
-        G4cout << "Interpolated spectrum" << G4endl;
+        G4cout << "Interpolated spectrum\n";
         m_tab_sumproba= new G4double[m_dim_spectrum-1];
         for(nline=1;nline<m_dim_spectrum;nline++){
           m_sum_proba=m_sum_proba+(m_tab_energy[nline]-m_tab_energy[nline-1])*m_tab_proba[nline-1]-0.5*(m_tab_energy[nline]-m_tab_energy[nline-1])*(m_tab_proba[nline-1]-m_tab_proba[nline]);
@@ -239,8 +241,11 @@ switch(m_mode){
     break;
   case 2:
     //Histogram spectrum
-    if(i==0) pEnergy=(m_tab_energy[0]-m_Emin)*G4UniformRand()+ m_Emin;
-    else pEnergy=(m_tab_energy[i]-m_tab_energy[i-1])*G4UniformRand()+ m_tab_energy[i-1];
+    if(i==0) {
+	pEnergy = G4RandFlat::shoot(m_Emin, m_tab_energy[0]);
+    } else {
+	pEnergy = G4RandFlat::shoot(m_tab_energy[i-1], m_tab_energy[i]);
+    }
     break;
   case 3:
     //Interpolated spectrum
@@ -268,5 +273,5 @@ switch(m_mode){
 }
 
 void GateSPSEneDistribution::PrintMessage() {
-  G4cout << "####Energy spectrum correctly uploaded###" << G4endl;
+  G4cout << "####Energy spectrum correctly uploaded###\n";
 }

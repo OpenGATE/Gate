@@ -34,7 +34,7 @@ GateGeometryVoxelImageReader::~GateGeometryVoxelImageReader()
 
 void GateGeometryVoxelImageReader::Describe(G4int level) 
 {
-  G4cout << " Voxel reader type ---> " << m_name << G4endl;
+  G4cout << " Voxel reader type ---> " << m_name << Gateendl;
 
   GateVGeometryVoxelReader::Describe(level);
   
@@ -43,8 +43,8 @@ void GateGeometryVoxelImageReader::Describe(G4int level)
 void GateGeometryVoxelImageReader::ReadFile(G4String fileName)
 {
   if (m_voxelTranslator == NULL) {
-    G4cout << "GateGeometryVoxelImageReader::ReadFile: WARNING: Insert the translator before reading the image" << G4endl
-	   << "                                                 Reading aborted." << G4endl;
+    G4cout << "GateGeometryVoxelImageReader::ReadFile: WARNING: Insert the translator before reading the image\n"
+	   << "                                                 Reading aborted.\n";
     return;
   }
 
@@ -53,7 +53,7 @@ void GateGeometryVoxelImageReader::ReadFile(G4String fileName)
   EmptyStore();
 
   std::ifstream inFile;
-  G4cout << "GateSourceVoxelImageReader::ReadFile : fileName: " << fileName << G4endl;
+  G4cout << "GateSourceVoxelImageReader::ReadFile : fileName: " << fileName << Gateendl;
   inFile.open(fileName.c_str(),std::ios::in);
 
   G4String materialName; 
@@ -62,13 +62,13 @@ void GateGeometryVoxelImageReader::ReadFile(G4String fileName)
   G4int    nx, ny, nz;
 
   inFile >> nx >> ny >> nz;
-  G4cout << "nx ny nz: " << nx << " " << ny << " " << nz << G4endl;
+  G4cout << "nx ny nz: " << nx << " " << ny << " " << nz << Gateendl;
   SetVoxelNx( nx );
   SetVoxelNy( ny );
   SetVoxelNz( nz );
 
   inFile >> dx >> dy >> dz;
-  G4cout << "dx dy dz: " << dx << " " << dy << " " << dz << G4endl;
+  G4cout << "dx dy dz: " << dx << " " << dy << " " << dz << Gateendl;
   SetVoxelSize( G4ThreeVector(dx, dy, dz) * mm );
 
   for (G4int iz=0; iz<nz; iz++) {
@@ -80,7 +80,7 @@ void GateGeometryVoxelImageReader::ReadFile(G4String fileName)
 	  G4Material* material = mMaterialDatabase.GetMaterial(materialName);
 	  AddVoxel(ix, iy, iz, material);
 	} else {
-	  G4cout << "GateSourceVoxelImageReader::ReadFile: WARNING: voxel not added (material translation not found)" << G4endl;
+	  G4cout << "GateSourceVoxelImageReader::ReadFile: WARNING: voxel not added (material translation not found)\n";
 	}
       }
     }
@@ -96,7 +96,7 @@ void GateGeometryVoxelImageReader::ReadFile(G4String fileName)
   if (m_compressor) {
     Compress();
     EmptyStore();
-    G4cout << "GateSourceVoxelImageReader::ReadFile: For your information, the voxel store has been emptied." << G4endl;
+    G4cout << "GateSourceVoxelImageReader::ReadFile: For your information, the voxel store has been emptied.\n";
   }
   
 
@@ -113,13 +113,13 @@ GateRTPhantom *Ph = GateRTPhantomMgr::GetInstance()->CheckGeometryAttached( GetC
 
 if ( Ph != 0) 
 {G4cout << " The Object "<< Ph->GetName()
-<<" is attached to the "<<m_name<<" Geometry Voxel Reader"<<G4endl;
+<<" is attached to the "<<m_name<<" Geometry Voxel Reader\n";
 } 
 
 
   if (m_voxelTranslator == NULL) {
-    G4cout << "GateGeometryVoxelImageReader::ReadFile: WARNING: Insert the translator before reading the image" << G4endl
-    << "                                                 Reading aborted." << G4endl;
+    G4cout << "GateGeometryVoxelImageReader::ReadFile: WARNING: Insert the translator before reading the image\n"
+    << "                                                 Reading aborted.\n";
     return;
   }
 
@@ -128,7 +128,7 @@ if ( Ph != 0)
   EmptyStore();
 
   std::ifstream inFile;
-  G4cout << "GateSourceVoxelImageReader::ReadFile : fileName: " << fileName << G4endl;
+  G4cout << "GateSourceVoxelImageReader::ReadFile : fileName: " << fileName << Gateendl;
   inFile.open(fileName.c_str(),std::ios::in);
 
   G4String materialName;
@@ -137,13 +137,13 @@ if ( Ph != 0)
   G4int    nx, ny, nz;
 
   inFile >> nx >> ny >> nz;
-  G4cout << "nx ny nz: " << nx << " " << ny << " " << nz << G4endl;
+  G4cout << "nx ny nz: " << nx << " " << ny << " " << nz << Gateendl;
   SetVoxelNx( nx );
   SetVoxelNy( ny );
   SetVoxelNz( nz );
 
   inFile >> dx >> dy >> dz;
-  G4cout << "dx dy dz: " << dx << " " << dy << " " << dz << G4endl;
+  G4cout << "dx dy dz: " << dx << " " << dy << " " << dz << Gateendl;
   SetVoxelSize( G4ThreeVector(dx, dy, dz) * mm );
 
   for (G4int iz=0; iz<nz; iz++) {
@@ -155,7 +155,7 @@ if ( Ph != 0)
    G4Material* material = mMaterialDatabase.GetMaterial(materialName);
    AddVoxel(ix, iy, iz, material);
  } else {
-   G4cout << "GateSourceVoxelImageReader::ReadFile: WARNING: voxel not added (material translation not found)" << G4endl;
+   G4cout << "GateSourceVoxelImageReader::ReadFile: WARNING: voxel not added (material translation not found)\n";
  }
       }
     }
@@ -167,7 +167,7 @@ if ( Ph != 0)
 
   if (m_compressor) {
     Compress();
-    G4cout << "GateGeometryVoxelImageReader::ReadFile: For your information, the voxel store has been emptied." << G4endl;
+    G4cout << "GateGeometryVoxelImageReader::ReadFile: For your information, the voxel store has been emptied.\n";
   }
  
 }

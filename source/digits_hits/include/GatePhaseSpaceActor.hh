@@ -150,7 +150,7 @@ protected:
   float m;
   Char_t vol[256];
 
-  Char_t pro_track[256];
+  Char_t creator_process[256];
   Char_t pro_step[256];
 
   int trackid;

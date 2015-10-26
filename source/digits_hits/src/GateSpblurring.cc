@@ -17,6 +17,7 @@ See GATE/LICENSE.txt for further details
 #include "GateTools.hh"
 
 #include "Randomize.hh"
+#include "GateConstants.hh"
 
 GateSpblurring::GateSpblurring(GatePulseProcessorChain* itsChain,
 			       const G4String& itsName,
@@ -46,9 +47,9 @@ void GateSpblurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& 
 	G4double Px = P.x();
 	G4double Py = P.y();
 	G4double Pz = P.z();
-	G4double PxNew = G4RandGauss::shoot(Px,m_spresolution/2.35);
-	G4double PyNew = G4RandGauss::shoot(Py,m_spresolution/2.35);
-	G4double PzNew = G4RandGauss::shoot(Pz,m_spresolution/2.35); //TC
+	G4double PxNew = G4RandGauss::shoot(Px,m_spresolution/GateConstants::fwhm_to_sigma);
+	G4double PyNew = G4RandGauss::shoot(Py,m_spresolution/GateConstants::fwhm_to_sigma);
+	G4double PzNew = G4RandGauss::shoot(Pz,m_spresolution/GateConstants::fwhm_to_sigma); //TC
 	//TC G4double PzNew = Pz;
 	outputPulse->SetLocalPos(G4ThreeVector(PxNew,PyNew,PzNew)); //TC
 	outputPulse->SetGlobalPos(outputPulse->GetVolumeID().MoveToAncestorVolumeFrame(outputPulse->GetLocalPos())); //TC
@@ -58,5 +59,5 @@ void GateSpblurring::ProcessOnePulse(const GatePulse* inputPulse,GatePulseList& 
 
 void GateSpblurring::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "Resolution : " << m_spresolution  << G4endl;
+  G4cout << GateTools::Indent(indent) << "Resolution : " << m_spresolution  << Gateendl;
 }

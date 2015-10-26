@@ -10,7 +10,7 @@
 
 #include <Randomize.hh>
 #include "GateAugerDetectorActorMessenger.hh"
-
+#include "GateConstants.hh"
 //-----------------------------------------------------------------------------
 GateAugerDetectorActor::GateAugerDetectorActor(G4String name, G4int depth)
   : GateVActor(name,depth)
@@ -150,10 +150,10 @@ void GateAugerDetectorActor::EndOfEventAction(const G4Event*)
 
   if (total_deposited_energy < min_energy_deposition) return;
   const G4ThreeVector hit_position = GetWeighedBarycenterPosition();
-  const G4double noise_projection = G4RandGauss::shoot(0,profile_noise_fwhm/2.3548);
-  //G4cout << "HITTTTTED!!!!!" << G4endl;
-  //G4cout << "ndep = " << depositions.size() << " total_edep = " << total_deposited_energy << G4endl;
-  //G4cout << "position = " << hit_position << G4endl;
+  const G4double noise_projection = G4RandGauss::shoot(0,profile_noise_fwhm/GateConstants::fwhm_to_sigma);
+  //G4cout << "HITTTTTED!!!!!\n";
+  //G4cout << "ndep = " << depositions.size() << " total_edep = " << total_deposited_energy << Gateendl;
+  //G4cout << "position = " << hit_position << Gateendl;
   pProfileHisto->Fill((projection_direction.dot(hit_position)+noise_projection)/mm);
 }
 //-----------------------------------------------------------------------------
@@ -184,7 +184,7 @@ void GateAugerDetectorActor::UserSteppingAction(const GateVVolume*, const G4Step
 
   depositions.push_back(deposition);
 
-  //G4cout << "edep = " << deposition.energy/MeV << " " << (step->GetPreStepPoint()->GetKineticEnergy()-step->GetPostStepPoint()->GetKineticEnergy())/MeV << G4endl;
+  //G4cout << "edep = " << deposition.energy/MeV << " " << (step->GetPreStepPoint()->GetKineticEnergy()-step->GetPostStepPoint()->GetKineticEnergy())/MeV << Gateendl;
 }
 //-----------------------------------------------------------------------------
 

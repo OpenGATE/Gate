@@ -59,7 +59,7 @@ public:
   //! Command interpreter
   void SetNewValue(G4UIcommand*, G4String);
 
-  virtual inline void SetFlagMove(G4bool val)  { moveFlag = val; G4cout << " MoveMess::SetFlagMove " << val << G4endl; };
+  virtual inline void SetFlagMove(G4bool val)  { moveFlag = val; G4cout << " MoveMess::SetFlagMove " << val << Gateendl; };
   virtual inline G4bool GetFlagMove() const { return moveFlag; };
 
   //e    virtual inline void SetObjectMoveListMess(GateObjectMoveListMessenger* moveMess) { moveListMess = moveMess; };

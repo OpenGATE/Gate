@@ -23,11 +23,11 @@ See GATE/LICENSE.txt for further details
 GateFragmentationAndProductionActor::GateFragmentationAndProductionActor(G4String name, G4int depth):
   GateVActor(name,depth), pNBins(100)
 {
-  GateDebugMessageInc("Actor",4,"GateFragmentationAndProductionActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateFragmentationAndProductionActor() -- begin\n");
 
   pMessenger = new GateFragmentationAndProductionActorMessenger(this);
 
-  GateDebugMessageDec("Actor",4,"GateFragmentationAndProductionActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateFragmentationAndProductionActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -36,12 +36,12 @@ GateFragmentationAndProductionActor::GateFragmentationAndProductionActor(G4Strin
 /// Destructor
 GateFragmentationAndProductionActor::~GateFragmentationAndProductionActor()
 {
-  GateDebugMessageInc("Actor",4,"~GateFragmentationAndProductionActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"~GateFragmentationAndProductionActor() -- begin\n");
 
   delete pMessenger;
 
 
-  GateDebugMessageDec("Actor",4,"~GateFragmentationAndProductionActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"~GateFragmentationAndProductionActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ void GateFragmentationAndProductionActor::Construct()
   pTFile = new TFile(mSaveFilename,"RECREATE");
 
   double halfLength = mVolume->GetHalfDimension(2);
-  GateMessage("Actor", 0, "GateFragmentationAndProductionActor -- Construct -- halfLength=" << halfLength << " nBins=" << pNBins << G4endl);
+  GateMessage("Actor", 0, "GateFragmentationAndProductionActor -- Construct -- halfLength=" << halfLength << " nBins=" << pNBins << Gateendl);
 
   pGammaProduction = new TH1D("gammaProduction","Gamma production",pNBins,-halfLength,halfLength);
   pGammaProduction->SetXTitle("z [mm]");
@@ -95,7 +95,7 @@ void GateFragmentationAndProductionActor::Construct()
 void GateFragmentationAndProductionActor::SaveData()
 {
   GateVActor::SaveData();
-  GateMessage("Actor", 0, "GateFragmentationAndProductionActor -- Saving data to " << mSaveFilename << G4endl);
+  GateMessage("Actor", 0, "GateFragmentationAndProductionActor -- Saving data to " << mSaveFilename << Gateendl);
   pTFile->cd();
   pNEvent->Write("nevents");
   pTFile->Write();
@@ -117,14 +117,14 @@ void GateFragmentationAndProductionActor::ResetData()
 //-----------------------------------------------------------------------------
 void GateFragmentationAndProductionActor::BeginOfRunAction(const G4Run *)
 {
-  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- Begin of Run\n");
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateFragmentationAndProductionActor::BeginOfEventAction(const G4Event*)
 {
-  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- Begin of Event" << G4endl);
+  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- Begin of Event\n");
   pNEvent->Set(pNEvent->X()+1,0);
 }
 //-----------------------------------------------------------------------------
@@ -132,14 +132,14 @@ void GateFragmentationAndProductionActor::BeginOfEventAction(const G4Event*)
 //-----------------------------------------------------------------------------
 void GateFragmentationAndProductionActor::EndOfEventAction(const G4Event*)
 {
-  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- End of Event" << G4endl);
+  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- End of Event\n");
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateFragmentationAndProductionActor::PreUserTrackingAction(const GateVVolume *, const G4Track* t)
 {
-  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- Begin of Track" << G4endl);
+  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- Begin of Track\n");
   const G4String &name = t->GetDefinition()->GetParticleName();
   if (name=="gamma")   { pGammaProduction->Fill(t->GetPosition()[2],t->GetWeight()); }
   if (name=="neutron") { pNeutronProduction->Fill(t->GetPosition()[2],t->GetWeight()); }
@@ -149,16 +149,16 @@ void GateFragmentationAndProductionActor::PreUserTrackingAction(const GateVVolum
 //-----------------------------------------------------------------------------
 void GateFragmentationAndProductionActor::PostUserTrackingAction(const GateVVolume *, const G4Track* /*t*/)
 {
-  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- End of Track" << G4endl);
-  //G4cout << name << " " << (t->GetCreatorProcess()? t->GetCreatorProcess()->GetProcessName():"no process") << G4endl;
+  GateDebugMessage("Actor", 3, "GateFragmentationAndProductionActor -- End of Track\n");
+  //G4cout << name << " " << (t->GetCreatorProcess()? t->GetCreatorProcess()->GetProcessName():"no process") << Gateendl;
   //if (name=="C12[0.0]") {
-  //  G4cout << "*** c12 fragment" << G4endl;
+  //  G4cout << "*** c12 fragment\n";
   //  const G4Step *step = t->GetStep();
   //  assert(step);
   //  const G4StepPoint *point = step->GetPostStepPoint();
   //  assert(point);
   //  const G4ThreeVector &position = point->GetPosition();
-  //  G4cout << "*** end track name=" << name << " pos=" << position << position[2] << G4endl;
+  //  G4cout << "*** end track name=" << name << " pos=" << position << position[2] << Gateendl;
   //}
 }
 //-----------------------------------------------------------------------------
@@ -187,9 +187,9 @@ void GateFragmentationAndProductionActor::UserSteppingAction(const GateVVolume *
   }
   //const G4String &name = step->GetTrack()->GetDefinition()->GetParticleName();
   //if (name=="e-") return;
-  //G4cout << "name=" << name << G4endl;
-  //G4cout << "trackid=" << step->GetTrack()->GetTrackID() << " stepnumber=" << step->GetTrack()->GetCurrentStepNumber() << G4endl;
-  //G4cout << "prepoint=" << getProcessName(step->GetPreStepPoint()) << " postpoint=" << getProcessName(step->GetPostStepPoint()) << G4endl;
+  //G4cout << "name=" << name << Gateendl;
+  //G4cout << "trackid=" << step->GetTrack()->GetTrackID() << " stepnumber=" << step->GetTrack()->GetCurrentStepNumber() << Gateendl;
+  //G4cout << "prepoint=" << getProcessName(step->GetPreStepPoint()) << " postpoint=" << getProcessName(step->GetPostStepPoint()) << Gateendl;
 }
 //-----------------------------------------------------------------------------
 

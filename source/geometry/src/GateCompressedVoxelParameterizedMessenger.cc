@@ -22,7 +22,7 @@ GateCompressedVoxelParameterizedMessenger::GateCompressedVoxelParameterizedMesse
    m_inserter(itsInserter)
 { 
  
-  // G4cout << "GateCompressedVoxelParameterizedMessenger::GateCompressedVoxelParameterizedMessenger - Entered " << GetDirectoryName() << G4endl; 
+  // G4cout << "GateCompressedVoxelParameterizedMessenger::GateCompressedVoxelParameterizedMessenger - Entered " << GetDirectoryName() << Gateendl; 
 
   GetDirectory()->SetGuidance("Control the parameterized geometry.");
 
@@ -37,7 +37,7 @@ GateCompressedVoxelParameterizedMessenger::GateCompressedVoxelParameterizedMesse
   AddOutputCmd->SetGuidance("1. output module name");
 
   cmdName = GetDirectoryName()+"insertReader";
-  G4cout << " cmdName = " << cmdName << G4endl;
+  G4cout << " cmdName = " << cmdName << Gateendl;
   InsertReaderCmd = new G4UIcmdWithAString(cmdName,this);
   InsertReaderCmd->SetGuidance("Insert a reader of the type specified");
   InsertReaderCmd->SetGuidance("1. reader type");
@@ -65,19 +65,19 @@ GateCompressedVoxelParameterizedMessenger::~GateCompressedVoxelParameterizedMess
 void GateCompressedVoxelParameterizedMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
 
-  G4cout << "GateCompressedVoxelParameterizedMessenger SetNewValue" << G4endl;
+  G4cout << "GateCompressedVoxelParameterizedMessenger SetNewValue\n";
 
   if( command==AttachPhantomSDCmd )
     {       
     
-      G4cout << " Call  AttachPhantomSD " << G4endl;
+      G4cout << " Call  AttachPhantomSD \n";
       GetVoxelParameterizedInserter()->AttachPhantomSD();}   
 
   else if ( command == AddOutputCmd )
     { GetVoxelParameterizedInserter()->AddOutput(newValue); }
 
   else if ( command == InsertReaderCmd )
-    { G4cout << " Call InsertReader for compressedVoxel " << G4endl; GetVoxelParameterizedInserter()->InsertReader(newValue); }
+    { G4cout << " Call InsertReader for compressedVoxel \n"; GetVoxelParameterizedInserter()->InsertReader(newValue); }
 
   else if ( command == RemoveReaderCmd )
     { GetVoxelParameterizedInserter()->RemoveReader(); }

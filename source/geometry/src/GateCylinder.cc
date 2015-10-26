@@ -59,7 +59,7 @@ GateCylinder::GateCylinder(const G4String& itsName, const G4String& /*itsMateria
     mCylinderRmin = 0.0*cm;
     mCylinderRmax = 1.0*cm;
     mCylinderSPhi = 0.;
-    mCylinderDPhi = 2*M_PI;
+    mCylinderDPhi = twopi;
     pMessenger = new GateCylinderMessenger(this);
    }
 //--------------------------------------------------------------------------------- 

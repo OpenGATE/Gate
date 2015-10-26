@@ -61,7 +61,7 @@ public:
 
   virtual void SetForcedUnstableFlag( G4bool value ) { m_forcedUnstableFlag = value; }
   virtual G4bool GetForcedUnstableFlag()             { return m_forcedUnstableFlag; }
-  
+
   virtual void SetAccolinearityFlag( G4bool value ) { m_accolinearityFlag = value; }
   virtual G4bool GetAccolinearityFlag()            { return m_accolinearityFlag; }
 
@@ -83,19 +83,20 @@ public:
   virtual G4int GetVerboseLevel()             { return nVerboseLevel; }
 
   // Main functions
-  virtual G4int GeneratePrimaries(G4Event* event);	
+  virtual G4int GeneratePrimaries(G4Event* event);
   virtual void GeneratePrimaryVertex(G4Event* event);
 
   void GeneratePrimariesForBackToBackSource(G4Event* event);
   void GeneratePrimariesForFastI124Source(G4Event* event);
-  
+
   virtual GateSPSPosDistribution* GetPosDist() { return m_posSPS ; }
-  virtual GateSPSEneDistribution* GetEneDist() { return m_eneSPS ; }  
+  virtual GateSPSEneDistribution* GetEneDist() { return m_eneSPS ; }
   virtual GateSPSAngDistribution* GetAngDist() { return m_angSPS ; }
+
   virtual G4ThreeVector getRotX() { return mRotX ; }
   virtual G4ThreeVector getRotY() { return mRotY ; }
   virtual G4ThreeVector getRotZ() { return mRotZ ; }
-  
+
   G4String GetRelativePlacementVolume();
   void SetRelativePlacementVolume(G4String volname);
   void EnableRegularActivity(bool b);
@@ -108,7 +109,7 @@ public:
 
   void SetTimeActivityFilename(G4String filename);
   //void AddTimeSlicesFromFile(G4String filename);
-  
+
   // Class function related to the userFluenceImage source
   // - initialization and 2D biased random engine
   void SetUserFluenceFilename( G4String s ) { mUserFluenceFilename = s; }
@@ -118,11 +119,11 @@ public:
   void SetPosRot1(G4ThreeVector);
   void SetPosRot2(G4ThreeVector);
   void SetCentreCoords(G4ThreeVector);
-  
+
     // Class function related to the userFocused angDist type
   void InitializeUserFocalShape();
   G4ThreeVector UserFocalShapeGenerateOne();
-  G4SPSPosDistribution *GetUserFocalShape() { return &mUserFocalShape;}
+  G4SPSPosDistribution *GetUserFocalShape() { return mUserFocalShape; }
   void SetUserFocalShapeFlag(G4bool b) { mUserFocalShapeInitialisation = b; }
 
   //void AddTimeSlices(double time, int nParticles);
@@ -131,23 +132,23 @@ public:
 
   void SetIntensity(G4double value){m_intensity = value;}
   G4double GetIntensity(){return m_intensity ;}
-  
-  void Visualize( G4String parms); 
- 
+
+  void Visualize( G4String parms);
+
   void TrigMat();
- 
-  private:
+
+private:
   typedef GateMap<G4String,G4Colour> GateColorMap ;
   typedef GateColorMap::MapPair GateColorPair ;
-  
+
   static GateColorPair theColorTable[];
   static GateColorMap theColorMap;
-    
+
 protected:
   GateVSourceMessenger*               m_sourceMessenger;
   GateSingleParticleSourceMessenger*  m_SPSMessenger ;
   GateSPSPosDistribution*             m_posSPS;
-  GateSPSEneDistribution*             m_eneSPS;  
+  GateSPSEneDistribution*             m_eneSPS;
   GateSPSAngDistribution*             m_angSPS;
 
   void ChangeParticlePositionRelativeToAttachedVolume(G4ThreeVector & position);
@@ -157,8 +158,8 @@ protected:
   G4String   m_type;         // source type
   G4int      m_sourceID;     // source progressive number
   G4double   m_activity;     // activity of the source (e.g. # becquerel)
-  G4double   m_startTime;    
-  G4double   m_time;         
+  G4double   m_startTime;
+  G4double   m_time;
   G4bool     m_needInit;
   G4int      nVerboseLevel;
   G4bool     m_forcedUnstableFlag;
@@ -168,7 +169,7 @@ protected:
   G4String   mRelativePlacementVolumeName;
   G4String   m_materialName;
   GateVVolume * mVolume;
-  G4bool    mIsSourceVoxelized;  // added by I. Martinez-Rovira (immamartinez@gmail.com)  
+  G4bool    mIsSourceVoxelized;  // added by I. Martinez-Rovira (immamartinez@gmail.com)
 
   G4double mEnergy;
   bool mEnableRegularActivity;
@@ -189,28 +190,28 @@ protected:
   G4ThreeVector mUserFluenceVoxelSize;
   std::vector<double> mUserPosX;
   std::vector<double> mUserPosY;
-  G4SPSRandomGenerator mUserPosGenX;
-  std::vector<G4SPSRandomGenerator> mUserPosGenY; 
+  G4SPSRandomGenerator *mUserPosGenX;
+  std::vector<G4SPSRandomGenerator*> mUserPosGenY;
   // - copy of useful members from G4SPSPosDistribution (unreachable G4 class)
   G4ThreeVector mCentreCoords;
   G4ThreeVector mRotX;
   G4ThreeVector mRotY;
   G4ThreeVector mRotZ;
-  
+
     //userFocalShape
   G4bool mIsUserFocalShapeActive;
   G4bool mUserFocalShapeInitialisation;
   G4double mUserFocalRadius;
-  G4SPSPosDistribution mUserFocalShape;
+  G4SPSPosDistribution *mUserFocalShape;
 
   std::vector<double> mTimeList;
   std::vector<double> mActivityList;
-  
+
   /* PY Descourt 08/09/2009 */
     G4bool fAbortNow; // detector mode
   G4ThreeVector fPosition;// for detector mode because G4Trajectory does not allow to set first trajectory point position !!!
 G4ParticleDefinition* m_pd;
-  
+
 };
 
 typedef std::vector<GateVSource*> GateVSourceVector;

@@ -26,7 +26,7 @@ GateVoxelBoxParameterizedMessenger::GateVoxelBoxParameterizedMessenger(GateVoxel
    m_inserter(itsInserter)
 { 
  
-  // G4cout << "GateVoxelBoxParameterizedMessenger::GateVoxelBoxParameterizedMessenger - Entered " << GetDirectoryName() << G4endl; 
+  // G4cout << "GateVoxelBoxParameterizedMessenger::GateVoxelBoxParameterizedMessenger - Entered " << GetDirectoryName() << Gateendl; 
 
   GetDirectory()->SetGuidance("Control the parameterized geometry.");
 
@@ -75,7 +75,7 @@ void GateVoxelBoxParameterizedMessenger::SetNewValue(G4UIcommand* command,G4Stri
     { GetVoxelParameterizedInserter()->AddOutput(newValue); }
 
   else if ( command == InsertReaderCmd )
-    { G4cout << " Call VoxelParameterized::InsertReader"  << G4endl; GetVoxelParameterizedInserter()->InsertReader(newValue); }
+    { G4cout << " Call VoxelParameterized::InsertReader"  << Gateendl; GetVoxelParameterizedInserter()->InsertReader(newValue); }
 
   else if ( command == RemoveReaderCmd )
     { GetVoxelParameterizedInserter()->RemoveReader(); }

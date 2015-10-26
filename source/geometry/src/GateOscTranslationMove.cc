@@ -49,7 +49,7 @@ void GateOscTranslationMove::PushMyPlacements(const G4RotationMatrix& currentRot
 	        	        	      const G4ThreeVector& currentPosition,
 			      	      	      G4double aTime)
 {
-    m_currentTranslation =  m_amplitude * sin ( 2. * M_PI * m_frequency * aTime + m_phase);
+    m_currentTranslation =  m_amplitude * sin ( twopi * m_frequency * aTime + m_phase);
     G4ThreeVector newPosition = currentPosition + m_currentTranslation;
 
     PushBackPlacement(GatePlacement(currentRotationMatrix,newPosition)); 
@@ -61,11 +61,11 @@ void GateOscTranslationMove::PushMyPlacements(const G4RotationMatrix& currentRot
 //-------------------------------------------------------------------------------------------------
 void GateOscTranslationMove::DescribeMyself(size_t indent)
 {
-    G4cout << GateTools::Indent(indent) << "Move type:            " << "oscillating translation"   << G4endl;
-    G4cout << GateTools::Indent(indent) << "Maximum amplitude:    " << G4BestUnit(m_amplitude,"Length") << G4endl;
-    G4cout << GateTools::Indent(indent) << "Frequency:            " << G4BestUnit(m_frequency,"Frequency") << G4endl;
-    G4cout << GateTools::Indent(indent) << "Period:               " << G4BestUnit(GetPeriod(),"Time") << G4endl;
-    G4cout << GateTools::Indent(indent) << "Phase:                " << m_phase / degree << " deg" << G4endl;
-    G4cout << GateTools::Indent(indent) << "Current translation:  " << G4BestUnit(m_currentTranslation,"Length") << G4endl;
+    G4cout << GateTools::Indent(indent) << "Move type:            " << "oscillating translation"   << Gateendl;
+    G4cout << GateTools::Indent(indent) << "Maximum amplitude:    " << G4BestUnit(m_amplitude,"Length") << Gateendl;
+    G4cout << GateTools::Indent(indent) << "Frequency:            " << G4BestUnit(m_frequency,"Frequency") << Gateendl;
+    G4cout << GateTools::Indent(indent) << "Period:               " << G4BestUnit(GetPeriod(),"Time") << Gateendl;
+    G4cout << GateTools::Indent(indent) << "Phase:                " << m_phase / degree << " deg\n";
+    G4cout << GateTools::Indent(indent) << "Current translation:  " << G4BestUnit(m_currentTranslation,"Length") << Gateendl;
 }
 //-------------------------------------------------------------------------------------------------

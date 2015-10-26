@@ -90,7 +90,7 @@ G4LogicalVolume* GateTwistedTubs::ConstructOwnSolidAndLogicalVolume(G4Material* 
    }
    else {
      // Update mode: refresh the dimensions of the solid
-       GateMessage("Warning", 0, "GateTwistedTubs::ConstructOwnSolidAndLogicalVolume update mode not implemented"<<G4endl);
+       GateMessage("Warning", 0, "GateTwistedTubs::ConstructOwnSolidAndLogicalVolume update mode not implemented\n");
    }
    return m_twistedtubs_log;
 }
@@ -109,14 +109,14 @@ void GateTwistedTubs::DestroyOwnSolidAndLogicalVolume()
 
 void GateTwistedTubs::DescribeMyself(size_t level)
 {
-  G4cout << GateTools::Indent(level) << "Shape: twisted tubs (twistedtubs)" << G4endl;
-  G4cout << GateTools::Indent(level) << "Lower endcap z position: " << G4BestUnit(m_negZ,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Upper endcap z position: " << G4BestUnit(m_posZ,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Inner radius at z=0: " << G4BestUnit(m_innerR,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Outer radius at z=0: " << G4BestUnit(m_outerR,"Length") << G4endl;
-  G4cout << GateTools::Indent(level) << "Number of segments: " << m_nSegment << G4endl;
-  G4cout << GateTools::Indent(level) << "Total phi coverage: " << m_totalPhi / degree << " deg" << G4endl;
-  G4cout << GateTools::Indent(level) << "Twist angle: " << m_twistAngle / degree << " deg" << G4endl;
+  G4cout << GateTools::Indent(level) << "Shape: twisted tubs (twistedtubs)\n";
+  G4cout << GateTools::Indent(level) << "Lower endcap z position: " << G4BestUnit(m_negZ,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Upper endcap z position: " << G4BestUnit(m_posZ,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Inner radius at z=0: " << G4BestUnit(m_innerR,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Outer radius at z=0: " << G4BestUnit(m_outerR,"Length") << Gateendl;
+  G4cout << GateTools::Indent(level) << "Number of segments: " << m_nSegment << Gateendl;
+  G4cout << GateTools::Indent(level) << "Total phi coverage: " << m_totalPhi / degree << " deg\n";
+  G4cout << GateTools::Indent(level) << "Twist angle: " << m_twistAngle / degree << " deg\n";
 }
 
 G4double GateTwistedTubs::ComputeMyOwnVolume() const

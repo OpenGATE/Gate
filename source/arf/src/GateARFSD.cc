@@ -85,7 +85,7 @@ m_edepthreshold = 0.;
 headID = -1;
 m_XPlane =0.;
 m_ARFStage = -2;
-G4cout << " created a ARF Sensivitive Detector "<< G4endl;
+G4cout << " created a ARF Sensivitive Detector "<< Gateendl;
 }
 
 
@@ -99,6 +99,7 @@ GateARFSD::~GateARFSD()
 void GateARFSD::Initialize(G4HCofThisEvent*HCE)
 {
   static int HCID = -1; // Static variable storing the hit collection ID
+  // Not thread safe but moving to local variable doesn't work
 
   // Creation of a new hit collection
   ARFCollection = new GateCrystalHitsCollection
@@ -165,9 +166,9 @@ if (volumeID.IsInvalid()) //G4Exception("[GateARFSD]: could not get the volume I
     G4double mag = theDirection.mag();
     theDirection /= mag;
 
-//    G4cout << " local position  " << localPosition << G4endl;
-//    G4cout << " Vertex Position "<<VertexPosition<< G4endl;
-//    G4cout << " direction      " << theDirection<<G4endl;
+//    G4cout << " local position  " << localPosition << Gateendl;
+//    G4cout << " Vertex Position "<<VertexPosition<< Gateendl;
+//    G4cout << " direction      " << theDirection<< Gateendl;
 
     ComputeProjectionSet(localPosition, theDirection , theInEnergy );
 
@@ -179,19 +180,19 @@ G4int GateARFSD::PrepareCreatorAttachment(GateVVolume* aCreator)
 { 
   GateVSystem* creatorSystem = GateSystemListManager::GetInstance()->FindSystemOfCreator(aCreator);
   if (!creatorSystem) {
-    G4cout  << G4endl << G4endl << "[GateARFSD::PrepareCreatorAttachment]:" << G4endl
-     << "Volume '" << aCreator->GetObjectName() << "' does not belong to any system." << G4endl
-           << "Your volume must belong to a system to be used with a GeomColliSD." << G4endl
-     << "Attachment request ignored --> you won't have any hit output from this volume!!!" << G4endl << G4endl;
+    G4cout  << Gateendl << Gateendl << "[GateARFSD::PrepareCreatorAttachment]:\n"
+     << "Volume '" << aCreator->GetObjectName() << "' does not belong to any system.\n"
+           << "Your volume must belong to a system to be used with a GeomColliSD.\n"
+     << "Attachment request ignored --> you won't have any hit output from this volume!!!\n";
     return -1;
   }
 
   if (m_system) {
     if (creatorSystem!=m_system)     {
-      G4cout  << G4endl << G4endl << "[GateARFSD::PrepareCreatorAttachment]:" << G4endl
-       << "Volume '" << aCreator->GetObjectName() << "' belongs to system '" << creatorSystem->GetObjectName() << "'" << G4endl
-             << "while the GeomColliSD has already been attached to a volume from another system ('" << m_system->GetObjectName()<< "')." << G4endl
-       << "Attachment request ignored --> you won't have any hit output from this volume!!!" << G4endl << G4endl;
+      G4cout  << Gateendl << Gateendl << "[GateARFSD::PrepareCreatorAttachment]:\n"
+       << "Volume '" << aCreator->GetObjectName() << "' belongs to system '" << creatorSystem->GetObjectName() << "'\n"
+             << "while the GeomColliSD has already been attached to a volume from another system ('" << m_system->GetObjectName()<< "').\n"
+       << "Attachment request ignored --> you won't have any hit output from this volume!!!\n";
       return -1;
     }
   }
@@ -217,7 +218,7 @@ if ( m_ARFStage != 1 )
 	G4Exception( "GateARFSD::computeTable", "computeTable", FatalException, "Illegal state of the Gate ARF Sensitive Detector" );
 }
 
-G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Detector " << GetName() << G4endl;
+G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Detector " << GetName() << Gateendl;
 
       time_t theTimeBefore = time(NULL);
 
@@ -256,14 +257,14 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
                     if ( m_file != 0 ) { delete m_file; m_file = 0;}
 
                     m_file = new TFile( cfn.c_str() ,"READ","ROOT filefor ARF purpose");
-                    G4cout << "GateARFSD::computeTables():::::: Reading ROOT File  " << cfn << G4endl;
+                    G4cout << "GateARFSD::computeTables():::::: Reading ROOT File  " << cfn << Gateendl;
                     m_singlesTree = (TTree* ) ( m_file->Get("theTree") );
-                    G4cout << " m_singlesTree = " << m_singlesTree<<G4endl;
+                    G4cout << " m_singlesTree = " << m_singlesTree<< Gateendl;
                     m_singlesTree->SetBranchAddress("Edep", &theData.m_Edep);
    		            m_singlesTree->SetBranchAddress("outY", &theData.m_Y);
    		            m_singlesTree->SetBranchAddress("outX", &theData.m_X);
                     m_NbOfPhotonsTree = (TTree* ) ( m_file->Get("theNumberOfPhoton") );
-                    G4cout << " m_NbOfPhotonsTree = " <<m_NbOfPhotonsTree<< G4endl;
+                    G4cout << " m_NbOfPhotonsTree = " <<m_NbOfPhotonsTree<< Gateendl;
                     m_NbOfPhotonsTree->SetBranchAddress("NOfOutGoingPhot",&NbofGoingOutPhotons_tmp);
                     m_NbOfPhotonsTree->SetBranchAddress("NbOfInGoingPhot",&NbofGoingInPhotons_tmp);
                     m_NbOfPhotonsTree->SetBranchAddress("NbOfSourcePhot",&NbOfSourcePhotons_tmp);
@@ -280,16 +281,16 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
  		    IN_camera += IN_camera_tmp;
  		    OUT_camera += OUT_camera_tmp;
  		    
-                    G4cout << " In File " << cfn << G4endl;
-                    G4cout << " Total number of Source photons Going Out Crystal  " << NbofGoingOutPhotons_tmp<<G4endl;
-                    G4cout << " Total number of Source photons Going In Crystal   " << NbofGoingInPhotons_tmp<<G4endl;
-                    G4cout << " Total number of Source photons                    " << NbOfSourcePhotons_tmp<<G4endl;
-                    G4cout << " Total number of Source photons Going In Camera    " << IN_camera_tmp<<G4endl;
-                    G4cout << " Total number of Source photons Going Out Camera   " << OUT_camera_tmp<<G4endl;
-                    G4cout << " Total number of Stored photons                    " << NbofStoredPhotons_tmp<<G4endl;
+                    G4cout << " In File " << cfn << Gateendl;
+                    G4cout << " Total number of Source photons Going Out Crystal  " << NbofGoingOutPhotons_tmp<< Gateendl;
+                    G4cout << " Total number of Source photons Going In Crystal   " << NbofGoingInPhotons_tmp<< Gateendl;
+                    G4cout << " Total number of Source photons                    " << NbOfSourcePhotons_tmp<< Gateendl;
+                    G4cout << " Total number of Source photons Going In Camera    " << IN_camera_tmp<< Gateendl;
+                    G4cout << " Total number of Source photons Going Out Camera   " << OUT_camera_tmp<< Gateendl;
+                    G4cout << " Total number of Stored photons                    " << NbofStoredPhotons_tmp<< Gateendl;
                     TotNbOfSingles = m_singlesTree->GetEntries();
-                    G4cout << " File " << cfn << " contains " << TotNbOfSingles << " entries " << G4endl;
-                    G4cout << " Tree m_NbOfPhotonsTree " << cfn << " contains " << m_NbOfPhotonsTree->GetEntries() << " entries " << G4endl;
+                    G4cout << " File " << cfn << " contains " << TotNbOfSingles << " entries \n";
+                    G4cout << " Tree m_NbOfPhotonsTree " << cfn << " contains " << m_NbOfPhotonsTree->GetEntries() << " entries \n";
                     for ( G4int j = 0 ;  j <  TotNbOfSingles ; j++ )
                     {
                      m_singlesTree->GetEntry(j);
@@ -304,20 +305,20 @@ G4cout << "GateARFSD::computeTables() -  Computing ARF Tables for Sensitive Dete
                    }
                   time_t theTimeAfter = time(NULL);
                   NSourcePhotons[iw] = NbOfSourcePhotons * NbOfHeads;
-                  G4cout << " ARF Table # "<<iw<<"  Computation Time " << (theTimeAfter - theTimeBefore ) << " seconds " << G4endl;
-                  //G4cout << " the Total final number of photons simulated          " << NbOfSimuPhotons << G4endl;
-                  //G4cout << " number of Energy Windows " << m_EnWin.size() <<G4endl;
-                  //G4cout << " Number of SOURCE photons                             " << NbOfSourcePhotons << G4endl;
-                  //G4cout << " --- Of Which : Number of Photons Going Out Crystal   " << NbofGoingOutPhotons << " = " << 100. * double(NbofGoingOutPhotons)/double(NbOfSourcePhotons) << " %"<<G4endl;
-                  //G4cout << " --- Of Which : Number of Photons Going IN Crystal    " << NbofGoingInPhotons << " = " << 100. * double(NbofGoingInPhotons)/double(NbOfSourcePhotons) << " %"<<G4endl;
-                  //G4cout << " --- Of Which : Number of Photons Going Out Camera    " << OUT_camera << " = " << 100. * double(OUT_camera)/double(NbOfSourcePhotons) << " %"<<G4endl;
-                  //G4cout << " --- Of Which : Number of Photons Going IN Camera     " << IN_camera << " = " << 100. * double(IN_camera)/double(NbOfSourcePhotons) << " %"<<G4endl;
-                  //G4cout << " --- Of Which : Number of Stored Photons              " << NbofStoredPhotons<< " = " << 100. * double(NbofStoredPhotons)/double(NbOfSourcePhotons) << " %"<<G4endl;
+                  G4cout << " ARF Table # "<<iw<<"  Computation Time " << (theTimeAfter - theTimeBefore ) << " seconds \n";
+                  //G4cout << " the Total final number of photons simulated          " << NbOfSimuPhotons << Gateendl;
+                  //G4cout << " number of Energy Windows " << m_EnWin.size() << Gateendl;
+                  //G4cout << " Number of SOURCE photons                             " << NbOfSourcePhotons << Gateendl;
+                  //G4cout << " --- Of Which : Number of Photons Going Out Crystal   " << NbofGoingOutPhotons << " = " << 100. * double(NbofGoingOutPhotons)/double(NbOfSourcePhotons) << " %\n";
+                  //G4cout << " --- Of Which : Number of Photons Going IN Crystal    " << NbofGoingInPhotons << " = " << 100. * double(NbofGoingInPhotons)/double(NbOfSourcePhotons) << " %\n";
+                  //G4cout << " --- Of Which : Number of Photons Going Out Camera    " << OUT_camera << " = " << 100. * double(OUT_camera)/double(NbOfSourcePhotons) << " %\n";
+                  //G4cout << " --- Of Which : Number of Photons Going IN Camera     " << IN_camera << " = " << 100. * double(IN_camera)/double(NbOfSourcePhotons) << " %\n";
+                  //G4cout << " --- Of Which : Number of Stored Photons              " << NbofStoredPhotons<< " = " << 100. * double(NbofStoredPhotons)/double(NbOfSourcePhotons) << " %\n";
                   iw++; // now for next ARF table
 
         }   
 
-      //G4cout << " Number of Heads " << NbOfHeads<<G4endl;
+      //G4cout << " Number of Heads " << NbOfHeads<< Gateendl;
 
    m_ARFTableMgr->SetNSimuPhotons( NSourcePhotons );
 
@@ -360,7 +361,7 @@ void GateARFSD::ComputeProjectionSet(G4ThreeVector thePosition,G4ThreeVector the
 
 G4double theARFvalue = m_ARFTableMgr->ScanTables(  theDirection.z() , theDirection.y() , theEnergy);
 
-//if (theARFvalue>0.1)G4cout << acos(costheta) << "   " << atan(tanphi) << "   "<<theARFvalue<<G4endl;
+//if (theARFvalue>0.1)G4cout << acos(costheta) << "   " << atan(tanphi) << "   "<<theARFvalue<< Gateendl;
 
 // the coordinates of the intersection of the path of the photon with the back surface of the detector
 // is given by
@@ -392,7 +393,7 @@ if ( theProjectionSet == 0 ) {GateOutputMgr* outputMgr = GateOutputMgr::GetInsta
                               theProjectionSet = PSet->GetProjectionSet();
                              }
 
-// G4cout << " BINNING PROJECTION FOR HEAD ID " << headID << " ( "<<xp<<" ; "<<yp<<") " << G4endl;
+// G4cout << " BINNING PROJECTION FOR HEAD ID " << headID << " ( "<<xp<<" ; "<<yp<<") \n";
 
 theProjectionSet->FillARF( headID , xp , yp , theARFvalue );
 

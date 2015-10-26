@@ -53,7 +53,7 @@ GateCone::GateCone(const G4String& itsName,
   m_coneRmin2 = 1.0*cm;
   m_coneRmax2 = 1.0*cm;
   m_coneSPhi = 0.;
-  m_coneDPhi = 2*M_PI;
+  m_coneDPhi = twopi;
 
   m_Messenger = new GateConeMessenger(this);
 }
@@ -85,7 +85,7 @@ G4LogicalVolume* GateCone::ConstructOwnSolidAndLogicalVolume(G4Material* mater, 
   }
   else {
 
-    G4cout << " second" << G4endl;
+    G4cout << " second\n";
     m_cone_solid->SetZHalfLength(GetConeHalfHeight());
     m_cone_solid->SetInnerRadiusMinusZ(GetConeRmin1());
     m_cone_solid->SetOuterRadiusMinusZ(GetConeRmax1());

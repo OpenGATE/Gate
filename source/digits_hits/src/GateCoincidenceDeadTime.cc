@@ -74,8 +74,8 @@ GateCoincidencePulse* GateCoincidenceDeadTime::ProcessPulse(GateCoincidencePulse
   // FIND TIME OF PULSE
   if (nVerboseLevel>5){
       G4cout << "A new pulse is processed by dead time time : " << (inputPulse->GetTime())/picosecond
-	     << " =  "<< currentTime  <<G4endl  ;
-      G4cout << "Rebirth time is " << m_rebirthTime << G4endl ;
+	     << " =  "<< currentTime  << Gateendl  ;
+      G4cout << "Rebirth time is " << m_rebirthTime << Gateendl ;
 
   }
   GateCoincidencePulse* outputPulse=0;
@@ -94,9 +94,9 @@ GateCoincidencePulse* GateCoincidenceDeadTime::ProcessPulse(GateCoincidencePulse
       }
       if (nVerboseLevel>5){
 	 G4cout << "We have accept " << currentTime << " a pulse "
-	   <<"\trebirth time\t" << m_rebirthTime << G4endl;
-	 G4cout << "Copied pulse to output:" << G4endl
-		<< *outputPulse << G4endl << G4endl ;
+	   <<"\trebirth time\t" << m_rebirthTime << Gateendl;
+	 G4cout << "Copied pulse to output:\n"
+		<< *outputPulse << Gateendl << Gateendl ;
       }
   } else {
       // YES DETECTOR IS DEAD : MAY BE REMOVE PULSE
@@ -106,16 +106,16 @@ GateCoincidencePulse* GateCoincidenceDeadTime::ProcessPulse(GateCoincidencePulse
       	    outputPulse= new GateCoincidencePulse(*inputPulse);
 	    if (nVerboseLevel>5){
 	       G4cout << "We have accept " << currentTime << " a pulse "
-		 <<"\trebirth time\t" << m_rebirthTime << G4endl;
-	       G4cout << "Copied pulse to output:" << G4endl
-		      << *outputPulse << G4endl << G4endl ;
+		 <<"\trebirth time\t" << m_rebirthTime << Gateendl;
+	       G4cout << "Copied pulse to output:\n"
+		      << *outputPulse << Gateendl << Gateendl ;
 	    }
             if (m_isParalysable && (m_bufferCurrentSize==m_bufferSize)){
                 m_rebirthTime  = currentTime + m_deadTime;
 	    }
 	} else {
       	    if (nVerboseLevel>5)
-	    	G4cout << "Removed pulse, due to dead time." << G4endl;
+	    	G4cout << "Removed pulse, due to dead time.\n";
 	    outputPulse=0;
 	}
       } else {
@@ -124,7 +124,7 @@ GateCoincidencePulse* GateCoincidenceDeadTime::ProcessPulse(GateCoincidencePulse
 	     m_rebirthTime  = currentTime + m_deadTime;
 	 }
       	 if (nVerboseLevel>5)
-	     G4cout << "Removed pulse, due to dead time." << G4endl;
+	     G4cout << "Removed pulse, due to dead time.\n";
 	 outputPulse=0;
       }
   }
@@ -139,7 +139,7 @@ GateCoincidencePulse* GateCoincidenceDeadTime::ProcessPulse(GateCoincidencePulse
 void GateCoincidenceDeadTime::SetDeadTimeMode(G4String val)
 {
   if((val!="paralysable")&&(val!="nonparalysable"))
-    G4cout << "*** GateCoincidenceDeadTime.cc : Wrong dead time mode : candidates are : paralysable nonparalysable" << G4endl;
+    G4cout << "*** GateCoincidenceDeadTime.cc : Wrong dead time mode : candidates are : paralysable nonparalysable\n";
   else
    m_isParalysable = (val=="paralysable");
 
@@ -147,5 +147,5 @@ void GateCoincidenceDeadTime::SetDeadTimeMode(G4String val)
 
 void GateCoincidenceDeadTime::DescribeMyself(size_t indent)
 {
-  G4cout << GateTools::Indent(indent) << "DeadTime: " << G4BestUnit(m_deadTime,"Time") << G4endl;
+  G4cout << GateTools::Indent(indent) << "DeadTime: " << G4BestUnit(m_deadTime,"Time") << Gateendl;
 }

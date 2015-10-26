@@ -27,8 +27,8 @@
     }                                                                   \
   catch( itk::ExceptionObject & err )                                   \
     {                                                                   \
-    std::cerr << "ExceptionObject caught with " #execFunc << std::endl; \
-    std::cerr << err << std::endl;                                      \
+    std::cerr << "ExceptionObject caught with " #execFunc << Gateendl; \
+    std::cerr << err << Gateendl;                                      \
     exit(EXIT_FAILURE);                                                 \
     }
 
@@ -38,9 +38,9 @@
 GateScatterOrderTrackInformationActor::GateScatterOrderTrackInformationActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateScatterOrderTrackInformationActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateScatterOrderTrackInformationActor() -- begin\n");
   pActorMessenger = new GateScatterOrderTrackInformationActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateScatterOrderTrackInformationActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateScatterOrderTrackInformationActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 

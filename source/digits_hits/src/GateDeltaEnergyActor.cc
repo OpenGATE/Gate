@@ -18,7 +18,7 @@
 //-----------------------------------------------------------------------------
 GateStoppingPowerActor::GateStoppingPowerActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateStoppingPowerActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateStoppingPowerActor() -- begin\n");
 
   mCurrentEvent=-1;
 
@@ -35,7 +35,7 @@ GateStoppingPowerActor::GateStoppingPowerActor(G4String name, G4int depth):
 
   pMessenger = new GateImageActorMessenger(this);
 
-  GateDebugMessageDec("Actor",4,"GateStoppingPowerActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateStoppingPowerActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ GateStoppingPowerActor::~GateStoppingPowerActor()  {
 //-----------------------------------------------------------------------------
 /// Construct
 void GateStoppingPowerActor::Construct() {
-  GateDebugMessageInc("Actor", 4, "GateStoppingPowerActor -- Construct - begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "GateStoppingPowerActor -- Construct - begin\n");
   GateVImageActor::Construct();
 
   // Enable callbacks
@@ -111,19 +111,19 @@ void GateStoppingPowerActor::Construct() {
 
   // Print information
   GateMessage("Actor", 1,
-              "\tRelStopPower StoppingPowerActor    = '" << GetObjectName() << "'" << G4endl <<
-              "\tRelStopPower image        = " << mIsRelStopPowerImageEnabled << G4endl <<
-              "\tRelStopPower squared      = " << mIsRelStopPowerSquaredImageEnabled << G4endl <<
-              "\tRelStopPower uncertainty  = " << mIsRelStopPowerUncertaintyImageEnabled << G4endl <<
-              "\tStopPower image        = " << mIsStopPowerImageEnabled << G4endl <<
-              "\tStopPower squared      = " << mIsStopPowerSquaredImageEnabled << G4endl <<
-              "\tStopPower uncertainty  = " << mIsStopPowerUncertaintyImageEnabled << G4endl <<
-              "\tNumber of hit     = " << mIsNumberOfHitsImageEnabled << G4endl <<
-              "\t     (last hit)   = " << mIsLastHitEventImageEnabled << G4endl <<
-              "\tNb Hits filename  = " << mNbOfHitsFilename << G4endl);
+              "\tRelStopPower StoppingPowerActor    = '" << GetObjectName() << "'\n" <<
+              "\tRelStopPower image        = " << mIsRelStopPowerImageEnabled << Gateendl <<
+              "\tRelStopPower squared      = " << mIsRelStopPowerSquaredImageEnabled << Gateendl <<
+              "\tRelStopPower uncertainty  = " << mIsRelStopPowerUncertaintyImageEnabled << Gateendl <<
+              "\tStopPower image        = " << mIsStopPowerImageEnabled << Gateendl <<
+              "\tStopPower squared      = " << mIsStopPowerSquaredImageEnabled << Gateendl <<
+              "\tStopPower uncertainty  = " << mIsStopPowerUncertaintyImageEnabled << Gateendl <<
+              "\tNumber of hit     = " << mIsNumberOfHitsImageEnabled << Gateendl <<
+              "\t     (last hit)   = " << mIsLastHitEventImageEnabled << Gateendl <<
+              "\tNb Hits filename  = " << mNbOfHitsFilename << Gateendl);
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateStoppingPowerActor -- Construct - end" << G4endl);
+  GateMessageDec("Actor", 4, "GateStoppingPowerActor -- Construct - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -170,7 +170,7 @@ void GateStoppingPowerActor::UserSteppingAction(const GateVVolume *, const G4Ste
 //-----------------------------------------------------------------------------
 void GateStoppingPowerActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
-  GateDebugMessage("Actor", 3, "GateStoppingPowerActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateStoppingPowerActor -- Begin of Run\n");
   // ResetData(); // Do no reset here !! (when multiple run);
 }
 //-----------------------------------------------------------------------------
@@ -180,13 +180,13 @@ void GateStoppingPowerActor::BeginOfRunAction(const G4Run * r) {
 void GateStoppingPowerActor::BeginOfEventAction(const G4Event * e) {
   GateVActor::BeginOfEventAction(e);
   mCurrentEvent++;
-  GateDebugMessage("Actor", 3, "GateStoppingPowerActor -- Begin of Event: "<<mCurrentEvent << G4endl);
+  GateDebugMessage("Actor", 3, "GateStoppingPowerActor -- Begin of Event: "<<mCurrentEvent << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateStoppingPowerActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
-  GateDebugMessageInc("Actor", 4, "GateStoppingPowerActor -- UserSteppingActionInVoxel - begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "GateStoppingPowerActor -- UserSteppingActionInVoxel - begin\n");
 
   // double weight = step->GetTrack()->GetWeight(); // unused yet. Keep it for debug
   double stoppingPower = step->GetPreStepPoint()->GetKineticEnergy() - step->GetPostStepPoint()->GetKineticEnergy() ;
@@ -194,14 +194,14 @@ void GateStoppingPowerActor::UserSteppingActionInVoxel(const int index, const G4
   double relativeStopPower = stoppingPower/kineE;
 
   if (index <0) {
-    GateDebugMessage("Actor", 5, "index<0 : do nothing" << G4endl);
-    GateDebugMessageDec("Actor", 4, "GateStoppingPowerActor -- UserSteppingActionInVoxel -- end" << G4endl);
+    GateDebugMessage("Actor", 5, "index<0 : do nothing\n");
+    GateDebugMessageDec("Actor", 4, "GateStoppingPowerActor -- UserSteppingActionInVoxel -- end\n");
     return;
   }
 
   bool sameEvent=true;
   if (mIsLastHitEventImageEnabled) {
-    GateDebugMessage("Actor", 2,  "GateStoppingPowerActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
+    GateDebugMessage("Actor", 2,  "GateStoppingPowerActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << Gateendl);
     if (mCurrentEvent != mLastHitEventImage.GetValue(index)) {
       sameEvent = false;
       mLastHitEventImage.SetValue(index, mCurrentEvent);
@@ -230,6 +230,6 @@ void GateStoppingPowerActor::UserSteppingActionInVoxel(const int index, const G4
 
 
 
-  GateDebugMessageDec("Actor", 4, "GateStoppingPowerActor -- UserSteppingActionInVoxel -- end" << G4endl);
+  GateDebugMessageDec("Actor", 4, "GateStoppingPowerActor -- UserSteppingActionInVoxel -- end\n");
 }
 //-----------------------------------------------------------------------------

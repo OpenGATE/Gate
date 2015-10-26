@@ -14,7 +14,6 @@
 #include "GateToOpticalRaw.hh"
 #include "GateToOpticalRawMessenger.hh"
 #include "globals.hh"
-#include "G4RunManager.hh"
 #include "G4Run.hh"
 
 #include "GateOutputMgr.hh"
@@ -49,7 +48,7 @@ GateToOpticalRaw::~GateToOpticalRaw()
 {
   delete m_asciiMessenger;
 
-  if (nVerboseLevel > 0) G4cout << "GateToOpticalRaw deleting..." << G4endl;
+  if (nVerboseLevel > 0) G4cout << "GateToOpticalRaw deleting...\n";
 
   if (m_headerFile.is_open())
     m_headerFile.close();
@@ -77,7 +76,7 @@ void GateToOpticalRaw::RecordBeginOfAcquisition()
 	}
   // Pre-write the header file
   WriteGeneralInfo();
-  m_headerFile  << "!END OF INTERFILE :="    	      	    << G4endl;
+  m_headerFile  << "!END OF INTERFILE :="    	      	    << Gateendl;
 
   // Open the data file
   m_dataFile.open((m_fileName+".bin").c_str(),std::ios::out | std::ios::trunc | std::ios::binary);
@@ -100,7 +99,7 @@ void GateToOpticalRaw::RecordEndOfAcquisition()
   m_headerFile.seekp(0,std::ios::beg);
   if ( m_headerFile.bad() ) G4Exception( "GateToOpticalRaw::RecordEndOfAcquisition", "RecordEndOfAcquisition", FatalException, "Could not go to back to the beginning of the header file (file missing?)!\n");
   WriteGeneralInfo();
-  m_headerFile  << "!END OF INTERFILE :="    	      	    << G4endl;
+  m_headerFile  << "!END OF INTERFILE :="    	      	    << Gateendl;
   m_headerFile.close();
 
 
@@ -137,8 +136,8 @@ void GateToOpticalRaw::RecordEndOfRun(const G4Run* )
 		}
 
 	} else {
-		G4cerr << "[GateToOpticalRaw::RecordEndOfRun]:" << G4endl
-		<< "No data available to write to projection set." << G4endl;
+		G4cerr << "[GateToOpticalRaw::RecordEndOfRun]:\n"
+		<< "No data available to write to projection set.\n";
 	}
 
 }
@@ -152,10 +151,10 @@ void GateToOpticalRaw::RecordEndOfRun(const G4Run* )
 void GateToOpticalRaw::Describe(size_t indent)
 {
   GateVOutputModule::Describe(indent);
-  G4cout << GateTools::Indent(indent) << "Job:                   write a set of projections into an raw output file" << G4endl;
-  G4cout << GateTools::Indent(indent) << "Is enabled?            " << ( IsEnabled() ? "Yes" : "No") << G4endl;
-  G4cout << GateTools::Indent(indent) << "File name:             '" << m_fileName << "'" << G4endl;
-  G4cout << GateTools::Indent(indent) << "Attached to system:    '" << m_system->GetObjectName() << "'" << G4endl;
+  G4cout << GateTools::Indent(indent) << "Job:                   write a set of projections into an raw output file\n";
+  G4cout << GateTools::Indent(indent) << "Is enabled?            " << ( IsEnabled() ? "Yes" : "No") << Gateendl;
+  G4cout << GateTools::Indent(indent) << "File name:             '" << m_fileName << "'\n";
+  G4cout << GateTools::Indent(indent) << "Attached to system:    '" << m_system->GetObjectName() << "'\n";
 }
 
 
@@ -163,22 +162,22 @@ void GateToOpticalRaw::Describe(size_t indent)
 // Write the general INTERFILE information into the header
 void GateToOpticalRaw::WriteGeneralInfo()
 {
-  m_headerFile  << "!INTERFILE :="    	      	      	    << G4endl
-		<< "!imaging modality := "       	    << "optical imaging" << G4endl
-      	      	<< ";" << G4endl;
+  m_headerFile  << "!INTERFILE :="    	      	      	    << Gateendl
+		<< "!imaging modality := "       	    << "optical imaging\n"
+      	      	<< ";\n";
 
-  m_headerFile  << "!GENERAL DATA :=" 	      	      	    << G4endl
-		<< "data description := "     	      	    << "GATE simulation" << G4endl
- 		<< "!name of data file := "    	      	    << m_fileName+".bin" << G4endl
-    	      	<< ";" << G4endl;
+  m_headerFile  << "!GENERAL DATA :=" 	      	      	    << Gateendl
+		<< "data description := "     	      	    << "GATE simulation\n"
+ 		<< "!name of data file := "    	      	    << m_fileName+".bin\n"
+    	      	<< ";\n";
 
   GateToProjectionSet* setMaker = m_system->GetProjectionSetMaker();
 
 
-  m_headerFile  << "!GENERAL IMAGE DATA :="   	      	    << G4endl
-		<< "!type of data := "     	      	    << "OPTICAL" << G4endl
- 		<< "!total number of images := "      	    << setMaker->GetTotalImageNb() << G4endl
- 	      	<< ";" << G4endl;
+  m_headerFile  << "!GENERAL IMAGE DATA :="   	      	    << Gateendl
+		<< "!type of data := "     	      	    << "OPTICAL\n"
+ 		<< "!total number of images := "      	    << setMaker->GetTotalImageNb() << Gateendl
+ 	      	<< ";\n";
 
     // Modified by HDS : multiple energy windows support
 	//------------------------------------------------------------------
@@ -198,8 +197,8 @@ void GateToOpticalRaw::WriteGeneralInfo()
 		aChainName = setMaker->GetInputDataName(energyWindowID);
 		aPulseProcessorChain = dynamic_cast<GatePulseProcessorChain*>(theDigitizer->FindElementByBaseName( aChainName ));
 		if (!aPulseProcessorChain) {
-			G4cerr  << 	G4endl << "[GateToOpticalRaw::WriteGeneralInfo]:" << G4endl
-					<< "Can't find digitizer chain '" << aChainName << "', aborting" << G4endl;
+			G4cerr  << 	Gateendl << "[GateToOpticalRaw::WriteGeneralInfo]:\n"
+					<< "Can't find digitizer chain '" << aChainName << "', aborting\n";
 			G4Exception( "GateToOpticalRaw::WriteGeneralInfo", "WriteGeneralInfo", FatalException, "You must change this parameter then restart the simulation\n");
 		}
 
@@ -218,56 +217,56 @@ void GateToOpticalRaw::WriteGeneralInfo()
 		aThreshold = 0.;
 		aUphold = 0.;*/
 
-		m_headerFile  << "!OPTICAL STUDY (general) :="        	    << G4endl
-      	   	<< "number of detector heads := "     	    << setMaker->GetHeadNb() << G4endl
- 	      	<< ";" << G4endl;
+		m_headerFile  << "!OPTICAL STUDY (general) :="        	    << Gateendl
+      	   	<< "number of detector heads := "     	    << setMaker->GetHeadNb() << Gateendl
+ 	      	<< ";\n";
 
 		// Write description for each head
 		for (size_t headID=0; headID<setMaker->GetHeadNb() ; headID++) {
 
-			m_headerFile  << "!number of images divided by number of energy window := "    << setMaker->GetTotalImageNb()  / setMaker->GetEnergyWindowNb() << G4endl
-				  << "projection matrix size [1] := "     	      << setMaker->GetPixelNbX() << G4endl
-				  << "projection matrix size [2] := "     	      << setMaker->GetPixelNbY() << G4endl
-				  << "projection pixel size along X-axis (cm) [1] := "     << setMaker->GetPixelSizeX()/cm << G4endl
-				  << "projection pixel size along Y-axis (cm) [2] := "     << setMaker->GetPixelSizeY()/cm << G4endl
-				  << "!number of projections := "             << setMaker->GetProjectionNb()<< G4endl
-				  << "!extent of rotation := "       	      << setMaker->GetAngularSpan()/deg << G4endl
-				  << "!time per projection (sec) := "         << setMaker->GetTimePerProjection() / second << G4endl
-				  << ";" << G4endl;
+			m_headerFile  << "!number of images divided by number of energy window := "    << setMaker->GetTotalImageNb()  / setMaker->GetEnergyWindowNb() << Gateendl
+				  << "projection matrix size [1] := "     	      << setMaker->GetPixelNbX() << Gateendl
+				  << "projection matrix size [2] := "     	      << setMaker->GetPixelNbY() << Gateendl
+				  << "projection pixel size along X-axis (cm) [1] := "     << setMaker->GetPixelSizeX()/cm << Gateendl
+				  << "projection pixel size along Y-axis (cm) [2] := "     << setMaker->GetPixelSizeY()/cm << Gateendl
+				  << "!number of projections := "             << setMaker->GetProjectionNb()<< Gateendl
+				  << "!extent of rotation := "       	      << setMaker->GetAngularSpan()/deg << Gateendl
+				  << "!time per projection (sec) := "         << setMaker->GetTimePerProjection() / second << Gateendl
+				  << ";\n";
 		}
 
 	}
 
-  m_headerFile  << ";GATE GEOMETRY :="               	  << G4endl;
+  m_headerFile  << ";GATE GEOMETRY :="               	  << Gateendl;
 
   GateVVolume *baseInserter  = m_system->GetBaseComponent()->GetCreator();
-  m_headerFile  << ";Optical System x dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(0)/cm << G4endl
-      	      	<< ";Optical System y dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(1)/cm << G4endl
-      	      	<< ";Optical System z dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(2)/cm << G4endl
-      	      	<< ";Optical System material := "                	  <<  baseInserter->GetCreator()->GetMaterialName() << G4endl
-		<< ";Optical System x translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().x()/cm << G4endl
-		<< ";Optical System y translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().y()/cm << G4endl
-		<< ";Optical System z translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().z()/cm << G4endl;
+  m_headerFile  << ";Optical System x dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(0)/cm << Gateendl
+      	      	<< ";Optical System y dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(1)/cm << Gateendl
+      	      	<< ";Optical System z dimension (cm) := "            <<  2.* baseInserter->GetCreator()->GetHalfDimension(2)/cm << Gateendl
+      	      	<< ";Optical System material := "                	  <<  baseInserter->GetCreator()->GetMaterialName() << Gateendl
+		<< ";Optical System x translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().x()/cm << Gateendl
+		<< ";Optical System y translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().y()/cm << Gateendl
+		<< ";Optical System z translation (cm) := "      	  <<  baseInserter->GetVolumePlacement()->GetTranslation().z()/cm << Gateendl;
 
   GateVVolume *crystalInserter  = m_system->GetCrystalComponent()->GetCreator();
   if ( crystalInserter )
-    m_headerFile  << ";"          << G4endl
-                  << ";Optical System LEVEL 1 element is crystal := "          << G4endl
-                  << ";Optical System crystal x dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(0)/cm << G4endl
-      	      	  << ";Optical System crystal y dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(1)/cm << G4endl
-      	      	  << ";Optical System crystal z dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(2)/cm << G4endl
-      	      	  << ";Optical System crystal material := "                 <<  crystalInserter->GetCreator()->GetMaterialName() << G4endl;
+    m_headerFile  << ";"          << Gateendl
+                  << ";Optical System LEVEL 1 element is crystal := "          << Gateendl
+                  << ";Optical System crystal x dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(0)/cm << Gateendl
+      	      	  << ";Optical System crystal y dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(1)/cm << Gateendl
+      	      	  << ";Optical System crystal z dimension (cm) := "         <<  2.* crystalInserter->GetCreator()->GetHalfDimension(2)/cm << Gateendl
+      	      	  << ";Optical System crystal material := "                 <<  crystalInserter->GetCreator()->GetMaterialName() << Gateendl;
 
   GateVVolume *pixelInserter  = m_system->GetPixelComponent()->GetCreator();
   if ( pixelInserter )
-    m_headerFile  << ";"          << G4endl
-                  << ";Optical System LEVEL 2 element is pixel := "          << G4endl
-                  << ";Optical System pixel x dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(0)/cm << G4endl
-      	      	  << ";Optical System pixel y dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(1)/cm << G4endl
-      	      	  << ";Optical System pixel z dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(2)/cm << G4endl
-      	      	  << ";Optical System pixel material := "                 <<  pixelInserter->GetCreator()->GetMaterialName() << G4endl;
+    m_headerFile  << ";"          << Gateendl
+                  << ";Optical System LEVEL 2 element is pixel := "          << Gateendl
+                  << ";Optical System pixel x dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(0)/cm << Gateendl
+      	      	  << ";Optical System pixel y dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(1)/cm << Gateendl
+      	      	  << ";Optical System pixel z dimension (cm) := "         <<  2.* pixelInserter->GetCreator()->GetHalfDimension(2)/cm << Gateendl
+      	      	  << ";Optical System pixel material := "                 <<  pixelInserter->GetCreator()->GetMaterialName() << Gateendl;
 
-  m_headerFile  << ";" << G4endl;
+  m_headerFile  << ";\n";
 
 
 }

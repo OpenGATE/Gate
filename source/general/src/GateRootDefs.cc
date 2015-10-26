@@ -67,8 +67,8 @@ G4bool GateRootDefs::GetRecordSeptalFlag()
 	GateOutputMgr* theOutputMgr = GateOutputMgr::GetInstance();
 	GateAnalysis* analysis = dynamic_cast<GateAnalysis*>(theOutputMgr->GetModule("analysis"));
 	if ( ! analysis ) {
-		G4cout << G4endl << "!!! WARNING : No 'analysis' output module found. "
-				<< "Septal hits won't be recorded. !!!" << G4endl
+		G4cout << Gateendl << "!!! WARNING : No 'analysis' output module found. "
+				<< "Septal hits won't be recorded. !!!\n"
 				<< "!!! This is just a warning message. The simulation will continue. !!!";
 	} else {
 		ans = analysis->GetRecordSeptalFlag();
@@ -158,17 +158,17 @@ void GateRootHitBuffer::Fill(GateCrystalHit* aHit)
   strcpy (comptonVolumeName,aHit->GetComptonVolumeName().c_str());
   if (aHit->GetComptonVolumeName().length()>=40)
     G4cout << "GateToRoot::RecordEndOfEvent : length of volume name exceeding 40: " << 
-	      aHit->GetComptonVolumeName().length()+1 << G4endl;
+	      aHit->GetComptonVolumeName().length()+1 << Gateendl;
 
   strcpy (RayleighVolumeName,aHit->GetRayleighVolumeName().c_str());
   if (aHit->GetRayleighVolumeName().length()>=40)
     G4cout << "GateToRoot::RecordEndOfEvent : length of volume name exceeding 40: " << 
-	      aHit->GetRayleighVolumeName().length()+1 << G4endl;
+	      aHit->GetRayleighVolumeName().length()+1 << Gateendl;
 
   aHit->GetVolumeID().StoreDaughterIDs(volumeID,ROOT_VOLUMEIDSIZE);
 
 
-//G4cout << "RootDefs : runID = " << runID << G4endl;
+//G4cout << "RootDefs : runID = " << runID << Gateendl;
 
 
 }
@@ -491,14 +491,10 @@ void GateRootCoincBuffer::Fill(GateCoincidenceDigi* aDigi)
 G4double GateRootCoincBuffer::ComputeSinogramTheta()
 {
   G4double theta;
-  
-  if ((globalPosX1-globalPosX2) != 0.) {
-    theta = atan( (globalPosX1 - globalPosX2) / (globalPosY1 - globalPosY2) );
-    if (theta < 0.) theta = theta+3.1416;
-  } else {
-    theta=3.1416/2.;
+  theta = atan2(globalPosX1-globalPosX2, globalPosY1-globalPosY2);
+  if (theta < 0.0) {
+      theta = theta + pi;
   }
-
   return theta;
 }
 
@@ -515,27 +511,18 @@ G4double GateRootCoincBuffer::ComputeSinogramS()
   if (denom!=0.) {
     denom = sqrt(denom);
 
-    s = ( globalPosX1 * (globalPosY2-globalPosY1) +
-	  globalPosY1 * (globalPosX1-globalPosX2)  ) 
+    s = ( globalPosX1 * (globalPosY1-globalPosY2) +
+	  globalPosY1 * (globalPosX2-globalPosX1)  )
       	/ denom; 
   } else {
     s = 0.;
   }
 
   G4double theta;
-  if ((globalPosX1-globalPosX2)!=0.) {
-    theta=atan((globalPosX1-globalPosX2) /
-	       (globalPosY1-globalPosY2));
-  } else {
-    theta=3.1416/2.;
+  theta = atan2(globalPosX1-globalPosX2, globalPosY1-globalPosY2);
+  if (theta<0.0) {
+      s=-s;
   }
-  if ((theta > 0.) && ((globalPosX1-globalPosX2) > 0.)) s = -s;
-  if ((theta < 0.) && ((globalPosX1-globalPosX2) < 0.)) s = -s;
-  if ( theta < 0.) {
-    theta = theta+3.1416;
-    s = -s;
-  }
-
   return s;
 }
 
