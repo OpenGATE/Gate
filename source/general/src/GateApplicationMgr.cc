@@ -308,15 +308,17 @@ void GateApplicationMgr::StartDAQ()
   // init sources if needed
   GateSourceMgr::GetInstance()->Initialization();
 
-  if (listOfTimeSlice.size() == 0) {
+  if (listOfTimeSlice.size() == 0) { // this logic should be moved into ComputeTimeStop()
     SetTimeStart(0.0*s);
     SetTimeStop(1.0*s);
     listOfTimeSlice.push_back(1*s);
-  }
-  double time = GetTimeStart();
-  for(size_t j = 0 ; j<listOfTimeSlice.size() ; j++){
-    time += listOfTimeSlice[j];
-    listOfEndTimeSlice.push_back(time);
+
+    double time = GetTimeStart();
+    for(size_t j = 0 ; j<listOfTimeSlice.size() ; j++)
+    {
+      time += listOfTimeSlice[j];
+      listOfEndTimeSlice.push_back(time);
+    }
   }
 
   GateMessage("Acquisition", 0,"  \n");
@@ -507,11 +509,6 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
   if (listOfTimeSlice.size() == 0)
   {
     GateError("Problem in GateApplicationMgr::StartDAQCluster - No timeslice detected at all !");
-  }
-  double time = GetTimeStart();
-  for(size_t j = 0 ; j<listOfTimeSlice.size() ; j++){
-    time += listOfTimeSlice[j];
-    listOfEndTimeSlice.push_back(time);
   }
 
   GateMessage("Acquisition", 0,"  \n");
