@@ -52,8 +52,6 @@ protected:
   G4UIcmdWithABool * pEnableSecondaryUncertaintyCmd;
   G4UIcmdWithAString * pSetTotalFilenameCmd;
   G4UIcmdWithAString * pSetPhaseSpaceFilenameCmd;
-  G4UIcmdWithAString * pSetWaterLUTFilenameCmd;
-  G4UIcmdWithAString * pSetWaterLUTMaterialCmd;
   G4UIcmdWithAString * pSetInputRTKGeometryFilenameCmd;
   G4UIcmdWithAnInteger * pSetNoisePrimaryCmd;
 };

@@ -118,16 +118,6 @@ void GateFixedForcedDetectionActorMessenger::BuildCommands(G4String base)
   guidance = "Set the file name for storing all interactions in a phase space file in root format.";
   pSetPhaseSpaceFilenameCmd->SetGuidance(guidance);
 
-  bb = base+"/waterLUTFilename";
-  pSetWaterLUTFilenameCmd = new G4UIcmdWithAString(bb,this);
-  guidance = "Set the file name for storing all interactions in a phase space file in root format.";
-  pSetWaterLUTFilenameCmd->SetGuidance(guidance);
-
-  bb = base+"/waterLUTMaterial";
-  pSetWaterLUTMaterialCmd = new G4UIcmdWithAString(bb,this);
-  guidance = "Set the material name for computing the lookup table. Default is G4_WATER.";
-  pSetWaterLUTMaterialCmd->SetGuidance(guidance);
-
   bb = base+"/setInputRTKGeometryFilename";
   pSetInputRTKGeometryFilenameCmd = new G4UIcmdWithAString(bb,this);
   guidance = "Set filename for using an RTK geometry file as input.";
@@ -160,8 +150,6 @@ void GateFixedForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, G
   if(command == pEnableSecondaryUncertaintyCmd) pActor->EnableSecondaryUncertaintyImage(pEnableSecondaryUncertaintyCmd->GetNewBoolValue(param));
   if(command == pSetTotalFilenameCmd) pActor->SetTotalFilename(param);
   if(command == pSetPhaseSpaceFilenameCmd) pActor->SetPhaseSpaceFilename(param);
-  if(command == pSetWaterLUTFilenameCmd) pActor->SetWaterLUTFilename(param);
-  if(command == pSetWaterLUTMaterialCmd) pActor->SetWaterLUTMaterial(param);
   if(command == pSetInputRTKGeometryFilenameCmd) pActor->SetInputRTKGeometryFilename(param);
   if(command == pSetNoisePrimaryCmd) pActor->SetNoisePrimary(pSetNoisePrimaryCmd->GetNewIntValue(param));
 

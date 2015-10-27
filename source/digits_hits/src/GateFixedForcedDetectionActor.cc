@@ -45,7 +45,6 @@ GateFixedForcedDetectionActor::GateFixedForcedDetectionActor(G4String name, G4in
   GateVActor(name,depth),
   mIsSecondarySquaredImageEnabled(false),
   mIsSecondaryUncertaintyImageEnabled(false),
-  mWaterLUTMaterial("G4_WATER"),
   mNoisePrimary(0),
   mInputRTKGeometryFilename("")
 {
@@ -346,9 +345,6 @@ void GateFixedForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                                                          mMaxPrimaryEnergy,
                                                                          gate_image_volume);
   mFluorescenceProjector->GetProjectedValueAccumulation().Init( mFluorescenceProjector->GetNumberOfThreads() );
-
-  if(mWaterLUTFilename != "")
-    CreateWaterLUT(energyList, energyWeightList);
 
   if(mIsSecondarySquaredImageEnabled || mIsSecondaryUncertaintyImageEnabled) {
     for(unsigned int i=0; i<PRIMARY; i++)
@@ -1097,107 +1093,6 @@ GateFixedForcedDetectionActor::CreateVoidProjectionImage()
   output->DisconnectPipeline();
 
   return output;
-}
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-void
-GateFixedForcedDetectionActor::CreateWaterLUT(const std::vector<double> &energyList,
-                                               const std::vector<double> &energyWeightList)
-{
-  // Get the list of involved processes (Rayleigh, Compton, PhotoElectric)
-  G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
-  G4ProcessVector* plist = particle->GetProcessManager()->GetProcessList();
-  std::vector<G4String> processNameVector;
-  for (G4int j = 0; j < plist->size(); j++) {
-    G4ProcessType type = (*plist)[j]->GetProcessType();
-    std::string name = (*plist)[j]->GetProcessName();
-    if ((type == fElectromagnetic) && (name != "msc")) {
-      processNameVector.push_back(name);
-    }
-  }
-
-  // Create mu data
-  std::vector<double> mu(energyList.size(), 0.);
-  G4Material * mat = G4NistManager::Instance()->FindOrBuildMaterial(mWaterLUTMaterial);
-  double energyWeightDetRespSum = 0.;
-  std::vector<double> energyWeightDetResp(energyList.size(), 0.);
-  for(unsigned int e=0; e<energyList.size(); e++) {
-    for (unsigned int j = 0; j < processNameVector.size(); j++) {
-      mu[e] +=
-          mEMCalculator->ComputeCrossSectionPerVolume(energyList[e],
-                                                      "gamma",
-                                                      processNameVector[j],
-                                                      mat->GetName());
-    }
-    energyWeightDetResp[e] = energyWeightList[e] * mEnergyResponseDetector(energyList[e]);
-    energyWeightDetRespSum += energyWeightDetResp[e];
-  }
-  for(unsigned int e=0; e<energyList.size(); e++)
-    energyWeightDetResp[e] /= energyWeightDetRespSum;
-
-  const double spacing = 0.1;
-  unsigned int n = (unsigned int)floor(1000./spacing);
-  typedef itk::Image<double, 1> LUTType;
-  LUTType::RegionType region;
-  region.SetSize(0, n);
-  LUTType::Pointer lengthToAttenuationLUT = LUTType::New();
-  lengthToAttenuationLUT->SetRegions(region);
-  lengthToAttenuationLUT->Allocate();
-  lengthToAttenuationLUT->SetSpacing(&spacing);
-  itk::ImageRegionIterator<LUTType> it(lengthToAttenuationLUT, region);
-  double prev = itk::NumericTraits<double>::NonpositiveMin();
-  double deltaMin = itk::NumericTraits<double>::max();
-  for(unsigned int i=0; i<n; i++, ++it) {
-    const double length = i*spacing*CLHEP::mm;
-    double value = 0.;
-    for(unsigned int e=0; e<energyList.size(); e++) {
-      value += energyWeightDetResp[e] * exp(-1.*mu[e]*length);
-    }
-    value = -1. * log(value);
-    it.Set(value);
-    deltaMin = std::min(deltaMin, value-prev);
-    prev = value;
-  }
-  --it;
-
-  // Take the inverse
-  LUTType::Pointer attenuationToLengthLUT = LUTType::New();
-  n = (unsigned int)floor(it.Get()/deltaMin);
-  region.SetSize(0, n);
-  attenuationToLengthLUT->SetRegions(region);
-  attenuationToLengthLUT->Allocate();
-  attenuationToLengthLUT->SetSpacing(&deltaMin);
-
-  itk::ImageRegionIterator<LUTType> itInv(attenuationToLengthLUT, region);
-  itInv.Set(0.);
-  ++itInv;
-  double currAtt = deltaMin;
-  double lengthLeft = 0.;
-  double attLeft = 0.;
-  it.GoToBegin();
-  ++it;
-  double attRight = it.Get();
-  while(!itInv.IsAtEnd()) {
-    while(attRight<currAtt) {
-      attLeft = it.Get();
-      lengthLeft += spacing;
-      ++it;
-      attRight = it.Get();
-    }
-    itInv.Set( ((currAtt-attLeft) * (lengthLeft+spacing) + (attRight-currAtt) * (lengthLeft)) / (attRight-attLeft) );
-
-    // Next
-    ++itInv;
-    currAtt += deltaMin;
-  }
-
-  // Write result
-  typedef itk::ImageFileWriter<LUTType> WriterType;
-  WriterType::Pointer writer = WriterType::New();
-  writer->SetInput(attenuationToLengthLUT);
-  writer->SetFileName(mWaterLUTFilename);
-  TRY_AND_EXIT_ON_ITK_EXCEPTION(writer->Update());
 }
 //-----------------------------------------------------------------------------
 

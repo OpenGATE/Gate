@@ -88,8 +88,6 @@ public:
   void EnableSecondaryUncertaintyImage(bool b) { mIsSecondaryUncertaintyImageEnabled = b; }
   void SetTotalFilename(G4String name) { mTotalFilename = name; }
   void SetPhaseSpaceFilename(G4String name) { mPhaseSpaceFilename = name; }
-  void SetWaterLUTFilename(G4String name) { mWaterLUTFilename = name; }
-  void SetWaterLUTMaterial(G4String name) { mWaterLUTMaterial = name; }
   void SetNoisePrimary(G4int n) { mNoisePrimary = n; }
   void SetInputRTKGeometryFilename(G4String name) { mInputRTKGeometryFilename = name; }
 
@@ -150,8 +148,6 @@ protected:
   bool mIsSecondarySquaredImageEnabled;
   bool mIsSecondaryUncertaintyImageEnabled;
   G4String mTotalFilename;
-  G4String mWaterLUTFilename;
-  G4String mWaterLUTMaterial;
 
   //parameter for statistical noise
   G4int   mNoisePrimary; 
@@ -238,10 +234,6 @@ protected:
   int           mInteractionOrder;
   int           mInteractionChainCode;
   double        mInteractionSquaredIntegralOverDetector;
-
-  // Water equivalent conversion
-  void CreateWaterLUT(const std::vector<double> &energyList,
-                      const std::vector<double> &energyWeightList);
 
   // Account for primary fluence weighting
   InputImageType::Pointer PrimaryFluenceWeighting(const InputImageType::Pointer input);
