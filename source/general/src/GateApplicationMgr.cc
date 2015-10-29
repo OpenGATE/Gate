@@ -25,15 +25,16 @@ See GATE/LICENSE.txt for further details
 GateApplicationMgr* GateApplicationMgr::instance = 0; 
 //------------------------------------------------------------------------------------------
 GateApplicationMgr::GateApplicationMgr(): 
-  m_timeSlice(1*s),  m_timeStart(0*s),  m_timeStop(1*s), 
   nVerboseLevel(0), m_pauseFlag(false), m_exitFlag(false), 
-  mOutputMode(true), mTimeSliceIsSet(false),
-  mTimeSliceIsSetUsingAddSlice(false), mTimeSliceIsSetUsingReadSliceInFile(false),
-  mCstTimeSliceIsSet(false)
+  mOutputMode(true),  mTimeSliceIsSetUsingAddSlice(false), mTimeSliceIsSetUsingReadSliceInFile(false)
 {
   if(instance != 0)
     { G4Exception( "GateApplicationMgr::GateApplicationMgr", "GateApplicationMgr", FatalException, "GateApplicationMgr constructed twice."); }
   m_appMgrMessenger = new GateApplicationMgrMessenger();
+
+  mTimeSliceDuration = 0;
+  mTimeSlices.push_back(0);
+  mTimeSlices.push_back(1*s);   // default to a single, 1s run with one time slice
 
   mRequestedAmountOfPrimaries = 0;
   mRequestedAmountOfPrimariesPerRun = 0;
@@ -102,12 +103,14 @@ void GateApplicationMgr::ReadTimeSlicesInAFile(G4String filename) {
   if (mTimeSliceIsSetUsingReadSliceInFile) {
     GateError("Please do not use 'readTimeSlicesIn' twice");
   }
-  if (mCstTimeSliceIsSet) {
+  if (mTimeSliceDuration != 0.0) {
     GateError("Please do not use 'addSlice' or 'readTimeSlicesIn' commands with 'setTimeSlice' command");
   }
   if (mTimeSliceIsSetUsingAddSlice) {
     GateError("Please do not use 'addSlice' and 'readTimeSlicesIn' commands at the same time");
   }
+
+  /* TODO: this does nothing for now. Fix later. JS 28/10/2015
   // Open file  
   std::ifstream is;
   OpenFileInput(filename, is);
@@ -152,6 +155,7 @@ void GateApplicationMgr::ReadTimeSlicesInAFile(G4String filename) {
 
   mTimeSliceIsSet = true;
   mTimeSliceIsSetUsingReadSliceInFile = true;
+  */
 }
 //------------------------------------------------------------------------------------------
 
@@ -159,11 +163,10 @@ void GateApplicationMgr::ReadTimeSlicesInAFile(G4String filename) {
 //------------------------------------------------------------------------------------------
 void GateApplicationMgr::SetTimeSlice(G4double timeSlice) 
 {
-  if (mTimeSliceIsSet) {
+  if (mTimeSliceIsSetUsingReadSliceInFile || mTimeSliceIsSetUsingAddSlice) {
     GateError("Please do not use 'setTimeSlice' command with 'addTimeSlice' or 'readTimeSlicesIn' commands");
   }
-  mCstTimeSliceIsSet = true;
-  m_timeSlice = timeSlice;
+  mTimeSliceDuration = timeSlice;
   //if (nVerboseLevel>0) G4cout << "Time Slice set to (s) " << m_timeSlice/s << Gateendl;
 }
 //------------------------------------------------------------------------------------------
@@ -172,16 +175,26 @@ void GateApplicationMgr::SetTimeSlice(G4double timeSlice)
 //------------------------------------------------------------------------------------------
 void GateApplicationMgr::SetTimeInterval(G4double v)
 {
-  if (mCstTimeSliceIsSet) {
-    GateError("Please do not use 'addSlice' or 'readTimeSlicesIn' commands with 'setTimeSlice' command");
+  // this should really be called AddSlice or something similar to the macro command that invokes it
+  if (mTimeSliceDuration!=0.0) {
+    GateError("Please do not use 'addSlice' commands with 'setTimeSlice' command");
   }
   if (mTimeSliceIsSetUsingReadSliceInFile) {
     GateError("Please do not use 'addSlice' and 'readTimeSlicesIn' commands at the same time");
   }
-  mTimeSliceIsSet = true;
-  mTimeSliceIsSetUsingAddSlice = true;
 
-  listOfTimeSlice.push_back(v);
+  if(mTimeSliceIsSetUsingAddSlice) // we've already added a slice previously
+  {
+    G4double previous_slice = mTimeSlices[mTimeSlices.size()-1];
+    mTimeSlices.push_back(previous_slice+v);
+  }
+  else
+  {
+    mTimeSlices[1] = mTimeSlices[0] + v;
+    mTimeSliceIsSetUsingAddSlice = true;
+  }
+
+  // listOfTimeSlice.push_back(v);
   //if (nVerboseLevel>0) G4cout << "Time Slice set to (s) " << m_timeSlice/s << Gateendl;
 }
 //------------------------------------------------------------------------------------------
@@ -190,7 +203,7 @@ void GateApplicationMgr::SetTimeInterval(G4double v)
 //------------------------------------------------------------------------------------------
 G4double GateApplicationMgr::GetTimeSlice() 
 {
-  return m_timeSlice;
+  return mTimeSliceDuration;
 }
 //------------------------------------------------------------------------------------------
 
@@ -200,11 +213,11 @@ G4double GateApplicationMgr::GetTimeSlice(int run)
 {
   //if(listOfTimeSlice.size()==0) return m_timeSlice;
 
-  if (run>=(int)listOfTimeSlice.size()) {
+  if (run>(int)(mTimeSlices.size()-2)) {
     GateWarning("Warning in GateApplicationMgr::GetTimeSlice, run=" << run << " is greater than the list of slices. Do nothing\n");
     return 0.0; // DO NOTHING in this case
   }
-  return listOfTimeSlice[run];
+  return (mTimeSlices[run+1]-mTimeSlices[run]);
 }
 //------------------------------------------------------------------------------------------
 
@@ -214,10 +227,10 @@ G4double GateApplicationMgr::GetEndTimeSlice(int run)
 {
   //if(listOfTimeSlice.size()==0) return m_timeSlice;
 
-  if (run>=(int)listOfEndTimeSlice.size()) {
-    GateError("Error in GateApplicationMgr::GetTimeSlice, run=" << run << "\n");
+  if (run>(int)(mTimeSlices.size()-2)) {
+    GateError("Error in GateApplicationMgr::GetEndTimeSlice, run=" << run << "\n");
   }
-  return listOfEndTimeSlice[run];
+  return mTimeSlices[run+1];
 }
 //------------------------------------------------------------------------------------------
 
@@ -226,13 +239,17 @@ G4double GateApplicationMgr::GetEndTimeSlice(int run)
 void GateApplicationMgr::SetTimeStart(G4double timeStart) 
 {
   if (timeStart<0.0) {
-    GateError("setTimeStart shoud not be negative");
+    GateError("setTimeStart should not be negative");
   }
   if (mTimeSliceIsSetUsingReadSliceInFile) {
     GateError("setTimeStart command cannot be used with readTimeSlicesIn command. The first time in file is taken as timeStart.");
   }
-  m_timeStart = timeStart;
-  if (nVerboseLevel>0) G4cout << "Time Start set to (s) " << m_timeStart/s << Gateendl;
+  if (mTimeSliceIsSetUsingAddSlice) {
+    GateWarning("The start time should be set before adding time slices.");
+  }
+
+  mTimeSlices[0] = timeStart;
+  if (nVerboseLevel>0) G4cout << "Time Start set to (s) " << mTimeSlices[0]/s << Gateendl;
 }
 //------------------------------------------------------------------------------------------
 
@@ -240,7 +257,7 @@ void GateApplicationMgr::SetTimeStart(G4double timeStart)
 //------------------------------------------------------------------------------------------
 G4double GateApplicationMgr::GetTimeStart() 
 {
-  return m_timeStart;
+  return mTimeSlices.front();
 }
 //------------------------------------------------------------------------------------------
 
@@ -249,10 +266,19 @@ G4double GateApplicationMgr::GetTimeStart()
 void GateApplicationMgr::SetTimeStop(G4double timeStop) 
 {
   if (timeStop<0.0) {
-    GateError("setTimeStop shoud not be negative");
+    GateError("setTimeStop can not be negative");
   }
-  m_timeStop = timeStop;
-  if (nVerboseLevel>0) G4cout << "Time Stop set to (s) " << m_timeStop/s << Gateendl;
+  if (mTimeSliceIsSetUsingReadSliceInFile) {
+    GateWarning("Stop time already set by readTimeSlicesIn command. Command ignored.");
+    return;
+  }
+  if (mTimeSliceIsSetUsingAddSlice) {
+    GateWarning("The stop time is calculated from the added time slices. Command ignored.");
+    return;
+  }
+
+  mTimeSlices[1] = timeStop;
+  if (nVerboseLevel>0) G4cout << "Time Stop set to (s) " << mTimeSlices.back()/s << Gateendl;
 }
 //------------------------------------------------------------------------------------------
 
@@ -260,7 +286,7 @@ void GateApplicationMgr::SetTimeStop(G4double timeStop)
 //------------------------------------------------------------------------------------------
 G4double GateApplicationMgr::GetTimeStop() 
 {
-  return m_timeStop;
+  return mTimeSlices.back();
 }
 //------------------------------------------------------------------------------------------
 
@@ -302,182 +328,77 @@ void GateApplicationMgr::StartDAQ()
   GateMessage("Acquisition", 0,"  \n");
   GateMessage("Acquisition", 0, "============= Source initialization =============\n");
  
-  // Compute timeStop according to time slices
-  ComputeTimeStop();
+  InitializeTimeSlices();
 
   // init sources if needed
   GateSourceMgr::GetInstance()->Initialization();
 
-  if (listOfTimeSlice.size() == 0) { // this logic should be moved into ComputeTimeStop()
-    SetTimeStart(0.0*s);
-    SetTimeStop(1.0*s);
-    listOfTimeSlice.push_back(1*s);
-
-    double time = GetTimeStart();
-    for(size_t j = 0 ; j<listOfTimeSlice.size() ; j++)
-    {
-      time += listOfTimeSlice[j];
-      listOfEndTimeSlice.push_back(time);
-    }
-  }
-
   GateMessage("Acquisition", 0,"  \n");
   GateMessage("Acquisition", 0, "============= Acquisition starts! =============\n");
 
-  // Check if start/stop ok
-  if (m_timeStop<m_timeStart) {
-    GateError("TimeStart is " << m_timeStart/s << " sec, while timeStop is "
-              << m_timeStop/s << " sec. Please provide timeStop after timeStart");
-  }
-  
-  // Check if start and stop is equal : assume a single run in this case
-  if (m_timeStop == m_timeStart) { // assume a single run
-    //    GateWarning("Time start is equal to time stop. I assume a single run from 0 to 1 sec.\n");
-    SetTimeStart(0.0*s);
-    SetTimeStop(1.0*s);
-    if (mTimeSliceIsSet || mCstTimeSliceIsSet) {
-      GateWarning("Your time slices will be ignored.");
-    }
-    mTimeSliceIsSet = false;
-    mCstTimeSliceIsSet = false;
-    SetTimeSlice(1.0*s);
-  }
-   
-  // Compute timeStop according to time slices
-  //ComputeTimeStop();
-
-  // Set the exact number
-  /*double mTotalNbOfParticles = ComputeNumberOfGeneratedPrimaries();
-  GateVSource * source = GateSourceMgr::GetInstance()->GetSource(0);
-  if (mRequestedAmountOfPrimaries != mTotalNbOfParticles) {
-    double diff = mRequestedAmountOfPrimaries - mTotalNbOfParticles;
-    double initialLastSlice = listOfTimeSlice.back();
-    double x = diff/source->GetActivity()/s;
-    int lastN = rint(listOfTimeSlice.back()*source->GetActivity());
-    int newLastN = lastN;
-    while (newLastN != lastN+diff) {
-      listOfTimeSlice.back() = listOfTimeSlice.back() + x*s/2;
-      newLastN = rint(listOfTimeSlice.back()*source->GetActivity());
-    }
-    ComputeTimeStop();      
-    mTotalNbOfParticles = ComputeNumberOfGeneratedPrimaries();
-    GateWarning("I slightly change the last slice, from " 
-                << initialLastSlice/s << " sec to "
-                << listOfTimeSlice.back()/s << " sec, to reach "
-                << mTotalNbOfParticles << " primaries. TimeStop is now " << GetTimeStop()/s
-                << Gateendl);
-  }
-  */
-
-  // If needed, compute the source activity to reach a total amount of particle
-  //double mTotalNbOfParticles = ComputeNumberOfGeneratedPrimaries();
-  //DD(mTotalNbOfParticles);
-  /*if (mATotalAmountOfPrimariesIsRequested) {
-    if (mSuccessiveSourceMode) {
-      GateVSource * source = GateSourceMgr::GetInstance()->GetSource(0);
-      double activity = mRequestedAmountOfPrimaries/((GetTimeStop()-GetTimeStart())/s);
-      //DD(activity);
-      //DD(source->GetActivity());
-      source->SetActivity(activity/s);
-      //DD(source->GetActivity()); 
-      GateMessage("Acquisition", 0, "Simulation activity changed to = " << activity/s << " sec.\n");      
-      mTotalNbOfParticles = ComputeNumberOfGeneratedPrimaries();
-
-      // Set the exact number
-      if (mRequestedAmountOfPrimaries != mTotalNbOfParticles) {
-        double diff = mRequestedAmountOfPrimaries - mTotalNbOfParticles;
-        double initialLastSlice = listOfTimeSlice.back();
-        double x = diff/source->GetActivity()/s;
-        int lastN = rint(listOfTimeSlice.back()*source->GetActivity());
-        int newLastN = lastN;
-        while (newLastN != lastN+diff) {
-          listOfTimeSlice.back() = listOfTimeSlice.back() + x*s/2;
-          newLastN = rint(listOfTimeSlice.back()*source->GetActivity());
-        }
-        ComputeTimeStop();      
-        mTotalNbOfParticles = ComputeNumberOfGeneratedPrimaries();
-
-        GateWarning("I slightly change the last slice, from " 
-                    << initialLastSlice/s << " sec to "
-                    << listOfTimeSlice.back()/s << " sec, to reach "
-                    << mTotalNbOfParticles << " primaries. TimeStop is now " << GetTimeStop()/s
-                    << Gateendl);
-      }
-    }
-  }*/
-
- /* if (mATotalAmountOfPrimariesIsRequested) {
-    if (mRequestedAmountOfPrimaries != mTotalNbOfParticles) {
-      GateError("Requested nb of primaries is " << mRequestedAmountOfPrimaries
-                << " but planned is " << mTotalNbOfParticles << Gateendl);
-    }
-  }*/
-
   // Verbose 
-  GateMessage("Acquisition", 0, "Simulation start time = " << m_timeStart/s << " sec\n");
-  GateMessage("Acquisition", 0, "Simulation end time   = " << m_timeStop/s << " sec\n");
-  GateMessage("Acquisition", 0, "Simulation will have  = " << listOfTimeSlice.size() << " run(s)\n");
+  GateMessage("Acquisition", 0, "Simulation start time = " << mTimeSlices.front()/s << " sec\n");
+  GateMessage("Acquisition", 0, "Simulation end time   = " << mTimeSlices.back()/s << " sec\n");
+  GateMessage("Acquisition", 0, "Simulation will have  = " << (mTimeSlices.size()-1) << " run(s)\n");
   //GateMessage("Acquisition", 0, "Simulation will generate " << mTotalNbOfParticles << " primaries.\n");
 
-   // It's where we initialize the random engine for the entire simulation
+   // Initialize the random engine for the entire simulation
   GateRandomEngine* theRandomEngine = GateRandomEngine::GetInstance();
   theRandomEngine->Initialize();
   if (theRandomEngine->GetVerbosity()>=1) theRandomEngine->ShowStatus();
 
   GateClock* theClock = GateClock::GetInstance();
 
-  if (!m_pauseFlag) {
-    m_time = m_timeStart;
+/*
+  if (!m_pauseFlag) { // skip the initialization if we're coming back from a paused state
+    m_time = mTimeSlices[0];
     GateMessage("Geometry", 5, " Start SetTime in GateApplicationMgr before while");
     theClock->SetTime(m_time);
     GateMessage("Geometry", 5, " End SetTime in GateApplicationMgr before while");
   }
-
- /* if (m_timeSlice > m_timeStop - m_timeStart) {
-    if (nVerboseLevel>0) G4cout << "WARNING: Time Slice bigger than DAQ total time\n";
-  }*/
-
+*/
   m_exitFlag = false;
   m_pauseFlag = false;
 
-  if (mOutputMode) GateOutputMgr::GetInstance()->RecordBeginOfAcquisition();
+  if (mOutputMode)
+    GateOutputMgr::GetInstance()->RecordBeginOfAcquisition();
 
   G4int slice=0;
-  while ((m_time < m_timeStop) && (!m_exitFlag) && (!m_pauseFlag)) {
-    //  GateMessage("Acquisition", 0, Gateendl);
+  while(slice<(mTimeSlices.size()-1) && !m_exitFlag && ! m_pauseFlag)
+  {
+    // Informational message about the current slice
+    GateMessage("Acquisition", 0, "Slice " << slice << " from "
+                << mTimeSlices[slice]/s << " to "
+                << mTimeSlices[slice+1]/s
+                << " s [slice="
+                << GetTimeInterval(slice)/s
+                << " s]\n");
 
-    double time1 = GetTimeStart();
-    double time2 = 0.;
-    if(slice>0) time1 = listOfEndTimeSlice[slice-1];
-    time2 = listOfEndTimeSlice[slice];
-    
-    GateMessage("Acquisition", 0, "Slice " << slice << " from " 
-                << time1/s << " to " 
-                << time2/s 
-                << " s [slice=" 
-                << listOfTimeSlice[slice]/s
-                << " s], final stop at " << m_timeStop/s << " s.\n");    
-
-    m_timeSlice=listOfTimeSlice[slice];    
-    //GateMessage("Acquisition", 0, "Current slice is " << m_timeSlice/s << "\n");
-
-    if(IsTotalAmountOfPrimariesModeEnabled()){
-      if(!mAnAmountOfPrimariesPerRunIsRequested) mTimeStepInTotalAmountOfPrimariesMode = (m_timeStop-m_timeStart)/mRequestedAmountOfPrimaries;
-      else {
-          mTimeStepInTotalAmountOfPrimariesMode = m_timeSlice/mRequestedAmountOfPrimariesPerRun;
-          m_weight=m_timeSlice/(m_timeStop-m_timeStart);
-      }
-    } 
-    GateRunManager::GetRunManager()->BeamOn(INT_MAX);
-    //m_time += listOfTimeSlice[slice];//m_timeSlice;
-    //GateMessage("Acquisition", 0, "Slice after time = " << m_time/s << "\n");
-
-    GateMessage("Geometry", 5, " Time is going to be change :  = " << m_time/s << Gateendl;);
-    slice++;
+    m_time = mTimeSlices[slice];
+    GateMessage("Geometry", 5, " Time is going to change :  = " << m_time/s << Gateendl;);
     theClock->SetTime(m_time);
 
-    //GateMessage("Geometry", 0, "Change geom status !!!\n");
-    //GateDetectorConstruction::GetGateDetectorConstruction()->SetGeometryStatusFlag(GateDetectorConstruction::geometry_needs_rebuild);
+    // calculate the time steps for total primaries mode
+    if(mATotalAmountOfPrimariesIsRequested){
+      if(mAnAmountOfPrimariesPerRunIsRequested)
+      {
+        mTimeStepInTotalAmountOfPrimariesMode = GetTimeInterval(slice)/mRequestedAmountOfPrimariesPerRun;
+        m_weight=GetTimeInterval(slice)/(mTimeSlices.back()-mTimeSlices.front());
+      }
+      else {
+        mTimeStepInTotalAmountOfPrimariesMode = (mTimeSlices.back()-mTimeSlices.front())/mRequestedAmountOfPrimaries;
+      }
+    }
+
+    while(m_time<mTimeSlices[slice+1])
+    {
+      GateRunManager::GetRunManager()->SetRunIDCounter(slice); // otherwise the runID gets incremented each time
+      GateRunManager::GetRunManager()->BeamOn(INT_MAX);
+      theClock->SetTimeNoGeoUpdate(m_time);
+      G4cout << "time: " << m_time/s << G4endl;
+    }
+    slice++;
+
   }
   
   if (mOutputMode) GateOutputMgr::GetInstance()->RecordEndOfAcquisition();
@@ -493,7 +414,7 @@ void GateApplicationMgr::StartDAQ()
 //------------------------------------------------------------------------------------------
 void GateApplicationMgr::StartDAQCluster(G4ThreeVector param) 
 { 
-  // With this method we check for all output module enabled but with no
+/*  // With this method we check for all output module enabled but with no
   // filename given. In this case we disable the output module and send a warning.
   GateOutputMgr::GetInstance()->CheckFileNameForAllOutput();
 
@@ -610,7 +531,8 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
 
   for(int nsource= 0 ; nsource<GateSourceMgr::GetInstance()->GetNumberOfSources() ; nsource++ )
     GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgr::GetInstance()->GetNumberOfEventBySource(nsource+1)<< Gateendl);
-
+*/
+  return;
   // ========================================================================================================
 }
 //------------------------------------------------------------------------------------------
@@ -636,44 +558,39 @@ void GateApplicationMgr::PauseDAQ()
 void GateApplicationMgr::Describe() 
 {
   G4cout << "Data Acquisition summary\n"
-	 << "  time slice (s) : " << m_timeSlice/s << Gateendl
-	 << "  time start (s) : " << m_timeStart/s << Gateendl
-	 << "  time stop  (s) : " << m_timeStop/s  << Gateendl
+	 << "  time slice (s) : " << mTimeSliceDuration/s << Gateendl
+	 << "  time start (s) : " << mTimeSlices[0]/s << Gateendl
+	 << "  time stop  (s) : " << mTimeSlices[mTimeSlices.size()-1]/s  << Gateendl
 	 << "------------------ \n"
 	 << Gateendl;
 }
 //------------------------------------------------------------------------------------------
 
 
-//------------------------------------------------------------------------------------------
-void GateApplicationMgr::ComputeTimeStop()
+void GateApplicationMgr::InitializeTimeSlices()
 {
-  if(listOfTimeSlice.size()>0)
+  if(mTimeSliceIsSetUsingAddSlice || mTimeSliceIsSetUsingReadSliceInFile)
   {
-//    if(m_timeStop!=0) GateError("Please do not use 'setTimeStop' command with 'addTimeSlice' or 'readTimeSlicesIn' commands");
-    m_timeStop = m_timeStart;
-    for(unsigned int i=0;i<listOfTimeSlice.size();i++) {
-      m_timeStop += listOfTimeSlice[i];
+    // TODO: check that slices are in order
+    ;
+  }
+  else if(mTimeSliceDuration!=0.0) // could check that TimeSliceDuration is non-zero
+  {
+    G4double endTime = mTimeSlices[1];
+    mTimeSlices.resize(1);
+    G4int i=0;
+    while((mTimeSlices[i] + mTimeSliceDuration) < endTime)
+    {
+      mTimeSlices.push_back(mTimeSlices[i] + mTimeSliceDuration);
+      i++;
     }
+    mTimeSlices.push_back(endTime);
   }
-  else {
-    if (m_timeSlice > m_timeStop - m_timeStart) {
-       GateWarning("Time Slice bigger than DAQ total time");
-    }
-    int n = int((m_timeStop-m_timeStart)/m_timeSlice);
-    for(int i=0;i<n;i++) listOfTimeSlice.push_back(m_timeSlice);
-    if (n*m_timeSlice < m_timeStop) listOfTimeSlice.push_back(m_timeStop-n*m_timeSlice);
-  }
+  else
+    mTimeSliceDuration = mTimeSlices[1]-mTimeSlices[0];
 
-  double time = GetTimeStart();
-  for(size_t j = 0 ; j<listOfTimeSlice.size() ; j++){
-    time += listOfTimeSlice[j];
-    listOfEndTimeSlice.push_back(time);
-  }
-
+  return;
 }
-//------------------------------------------------------------------------------------------
-
 
 //------------------------------------------------------------------------------------------
 /*int GateApplicationMgr::ComputeNumberOfGeneratedPrimaries() {
@@ -708,7 +625,7 @@ void GateApplicationMgr::PrintStatus()
 {
     const G4Run * run = GateRunManager::GetRunManager()->GetCurrentRun();
     const int runID = run->GetRunID() + 1;
-    const int runTotal = listOfTimeSlice.size();
+    const int runTotal = mTimeSlices.size()-1;
 
     const int eventID = run->GetNumberOfEvent() + 1;
     int eventTotal = 0;

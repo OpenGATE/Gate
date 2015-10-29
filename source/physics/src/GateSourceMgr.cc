@@ -41,7 +41,7 @@ GateSourceMgr::GateSourceMgr()
   m_sourceProgressiveNumber = 0;
   mVerboseLevel = 0;
   //m_use_autoweight = false;
-  m_runNumber=-1;
+//  m_runNumber=-1;
   //mCurrentSliceTotalTime = 0.;
   m_previousSource = 0;
   m_currentSourceNumber=0;
@@ -496,7 +496,7 @@ G4int GateSourceMgr::PrepareNextRun( const G4Run* r)
     (*itr)->Update(m_time);
 
 
-  m_runNumber++;
+//  m_runNumber++;
 
   // if(m_runNumber==0)
   //     {
@@ -600,10 +600,10 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
             if( mVerboseLevel > 0 )
               G4cout << "GateSourceMgr::PrepareNextEvent : m_time > m_timeLimit. No vertex generated\n";
 
-            if(m_time <= timeStop){
+            /*if(m_time <= timeStop){
               m_time-=m_firstTime;
               appMgr->SetCurrentTime(m_time);
-            }
+            }*/
           }
         }
       else {
