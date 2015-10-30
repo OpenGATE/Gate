@@ -184,10 +184,7 @@ void GateApplicationMgr::SetTimeInterval(G4double v)
   }
 
   if(mTimeSliceIsSetUsingAddSlice) // we've already added a slice previously
-  {
-    G4double previous_slice = mTimeSlices[mTimeSlices.size()-1];
-    mTimeSlices.push_back(previous_slice+v);
-  }
+    mTimeSlices.push_back(mTimeSlices.back()+v);
   else
   {
     mTimeSlices[1] = mTimeSlices[0] + v;
@@ -230,7 +227,8 @@ G4double GateApplicationMgr::GetEndTimeSlice(int run)
   if (run>(int)(mTimeSlices.size()-2)) {
     GateError("Error in GateApplicationMgr::GetEndTimeSlice, run=" << run << "\n");
   }
-  return mTimeSlices[run+1];
+
+  return min(mTimeSlices[run+1],m_virtualStop);
 }
 //------------------------------------------------------------------------------------------
 
@@ -357,14 +355,17 @@ void GateApplicationMgr::StartDAQ()
     GateMessage("Geometry", 5, " End SetTime in GateApplicationMgr before while");
   }
 */
-  m_exitFlag = false;
-  m_pauseFlag = false;
+  // m_exitFlag = false;
+  // m_pauseFlag = false;
+
+  m_virtualStop = mTimeSlices.back();
 
   if (mOutputMode)
     GateOutputMgr::GetInstance()->RecordBeginOfAcquisition();
 
   G4int slice=0;
-  while(slice<(mTimeSlices.size()-1) && !m_exitFlag && ! m_pauseFlag)
+  m_time = mTimeSlices.front();
+  while(m_time < mTimeSlices.back()) // && !m_exitFlag && ! m_pauseFlag)
   {
     // Informational message about the current slice
     GateMessage("Acquisition", 0, "Slice " << slice << " from "
@@ -390,19 +391,17 @@ void GateApplicationMgr::StartDAQ()
       }
     }
 
-    while(m_time<mTimeSlices[slice+1])
+    while(m_time<GetEndTimeSlice(slice))  // sometimes a single slice might require more than MAX_INT events
     {
-      GateRunManager::GetRunManager()->SetRunIDCounter(slice); // otherwise the runID gets incremented each time
+      GateRunManager::GetRunManager()->SetRunIDCounter(slice); // keep the RunID in sync with the slice #
       GateRunManager::GetRunManager()->BeamOn(INT_MAX);
       theClock->SetTimeNoGeoUpdate(m_time);
-      G4cout << "time: " << m_time/s << G4endl;
     }
     slice++;
 
   }
   
   if (mOutputMode) GateOutputMgr::GetInstance()->RecordEndOfAcquisition();
-
 
   for(int nsource= 0 ; nsource<GateSourceMgr::GetInstance()->GetNumberOfSources() ; nsource++ )
     GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgr::GetInstance()->GetNumberOfEventBySource(nsource+1)<< Gateendl);
@@ -414,124 +413,93 @@ void GateApplicationMgr::StartDAQ()
 //------------------------------------------------------------------------------------------
 void GateApplicationMgr::StartDAQCluster(G4ThreeVector param) 
 { 
-/*  // With this method we check for all output module enabled but with no
+  // With this method we check for all output module enabled but with no
   // filename given. In this case we disable the output module and send a warning.
   GateOutputMgr::GetInstance()->CheckFileNameForAllOutput();
 
   GateMessage("Acquisition", 0,"  \n");
   GateMessage("Acquisition", 0, "============= Source initialization =============\n");
-
-  // Compute timeStop according to time slices
-  ComputeTimeStop();
-
-  // init sources if needed
-  GateSourceMgr::GetInstance()->Initialization();
-
-  if (listOfTimeSlice.size() == 0)
-  {
-    GateError("Problem in GateApplicationMgr::StartDAQCluster - No timeslice detected at all !");
-  }
+  GateSourceMgr::GetInstance()->Initialization();    // init sources if needed
 
   GateMessage("Acquisition", 0,"  \n");
   GateMessage("Acquisition", 0, "============= Acquisition starts! =============\n");
-
-  // Check if start/stop ok
-  if (m_timeStop<=m_timeStart)
-  {
-    GateError("TimeStart is " << m_timeStart/s << " sec, while timeStop is "
-              << m_timeStop/s << " sec. Please provide timeStop after timeStart");
-  }
+  InitializeTimeSlices();
 
   // Verbose
-  GateMessage("Acquisition", 0, "Simulation start time = " << m_timeStart/s << " sec\n");
-  GateMessage("Acquisition", 0, "Simulation end time   = " << m_timeStop/s << " sec\n");
-  GateMessage("Acquisition", 0, "Simulation will have  = " << listOfTimeSlice.size() << " run(s)\n");
+  GateMessage("Acquisition", 0, "Simulation start time = " << mTimeSlices.front()/s << " sec\n");
+  GateMessage("Acquisition", 0, "Simulation end time   = " << mTimeSlices.back()/s << " sec\n");
+  GateMessage("Acquisition", 0, "Simulation will have  = " << (mTimeSlices.size()-1) << " run(s)\n");
 
-  // It's where we initialize the random engine for the entire simulation
+  // Initialize the random engine for the entire simulation
   GateRandomEngine* theRandomEngine = GateRandomEngine::GetInstance();
   theRandomEngine->Initialize();
   if (theRandomEngine->GetVerbosity()>=1) theRandomEngine->ShowStatus();
 
   GateClock* theClock = GateClock::GetInstance();
 
-  if (!m_pauseFlag) {
-    m_time = m_timeStart;
-    GateMessage("Geometry", 5, " Start SetTime in GateApplicationMgr before while");
-    theClock->SetTime(m_time);
-    GateMessage("Geometry", 5, " End SetTime in GateApplicationMgr before while");
-  }
-
-  m_exitFlag = false;
-  m_pauseFlag = false;
-
-
-  for (unsigned int i=0; i<listOfTimeSlice.size(); i++) G4cout << "Slice n° " << i << "  | Time: " << listOfTimeSlice[i] << Gateendl;
-
-  // ========================================================================================================
-  // It is where the startDAQCluster command differs from the normal startDAQ command
-
+  // check boundary conditions of provided start and stop times
   m_virtualStart= param[0]; // defined from macro from splitter
   m_virtualStop = param[1]; // this one too
-  if (nVerboseLevel>0) G4cout << "Cluster: virtual time start " <<m_virtualStart/s<<", virtual time stop "<<m_virtualStop/s<< Gateendl;
+  if(m_virtualStart>m_virtualStop)
+    GateError("Cluster start time is after cluster stop time.");
+  if(m_virtualStart<mTimeSlices.front() || m_virtualStart>mTimeSlices.back())
+    GateError("Cluster start time is outside of [StartTime,StopTime]");
+  if(m_virtualStop<mTimeSlices.front() || m_virtualStop>mTimeSlices.back())
+    GateError("Cluster stop time is outside of [StartTime,StopTime]");
+  if (nVerboseLevel>0)
+    G4cout << "Cluster: virtual time start " <<m_virtualStart/s<<", virtual time stop "<<m_virtualStop/s<< Gateendl;
 
-  G4double real_timeStop  = m_timeStop;
-  m_timeStop=m_virtualStop;
-
-  // we have to go to the start of the current time slice
-  // the point before virtual start
-  G4double virtualTime = m_timeStart;
-
-  G4int slice=0;
-  while (virtualTime<=m_virtualStart)
-  {
-    virtualTime+=listOfTimeSlice[slice];
-    slice++;
-  }
-  m_time=virtualTime-listOfTimeSlice[slice-1];
-  GateRunManager::GetRunManager()->SetRunIDCounter(slice-1);
-  theClock->SetTime(m_time);
-  if (nVerboseLevel>0) G4cout << "Cluster: time start for geometry" <<m_time<<", runID moved to "<<slice-1<< Gateendl;
 
   if (mOutputMode) GateOutputMgr::GetInstance()->RecordBeginOfAcquisition();
 
-  while ((m_time < m_timeStop) && (!m_exitFlag) && (!m_pauseFlag))
+  G4int slice=0;
+  while(m_virtualStart > mTimeSlices[slice+1])
+    slice++;
+
+  while(m_time < m_virtualStop) // && !m_exitFlag && ! m_pauseFlag)
   {
-    m_timeSlice=listOfTimeSlice[slice-1];
-    if(IsTotalAmountOfPrimariesModeEnabled())
-    {
-      if(!mAnAmountOfPrimariesPerRunIsRequested) mTimeStepInTotalAmountOfPrimariesMode = (real_timeStop-m_timeStart)/mRequestedAmountOfPrimaries;
-      else
+    // Informational message about the current slice
+    GateMessage("Acquisition", 0, "Slice " << slice << " from "
+                << mTimeSlices[slice]/s << " to "
+                << mTimeSlices[slice+1]/s
+                << " s [slice="
+                << GetTimeInterval(slice)/s
+                << " s]\n");
+
+    // set the geometry to the beginning of the current slice
+    GateMessage("Geometry", 5, " Time is going to change :  = " << m_time/s << Gateendl;);
+    theClock->SetTime(mTimeSlices[slice]);
+
+    m_time = max(mTimeSlices[slice],m_virtualStart);
+    theClock->SetTimeNoGeoUpdate(m_time);
+
+    // calculate the time steps for total primaries mode
+    if(mATotalAmountOfPrimariesIsRequested){
+      if(mAnAmountOfPrimariesPerRunIsRequested)
       {
-          mTimeStepInTotalAmountOfPrimariesMode = m_timeSlice/mRequestedAmountOfPrimariesPerRun;
-          m_weight=m_timeSlice/(real_timeStop-m_timeStart);
+        mTimeStepInTotalAmountOfPrimariesMode = GetTimeInterval(slice)/mRequestedAmountOfPrimariesPerRun;
+        m_weight=GetTimeInterval(slice)/(mTimeSlices.back()-mTimeSlices.front());
+      }
+      else {
+        mTimeStepInTotalAmountOfPrimariesMode = (mTimeSlices.back()-mTimeSlices.front())/mRequestedAmountOfPrimaries;
       }
     }
 
-    if(m_time<m_virtualStart)
+    while(m_time<GetEndTimeSlice(slice))  // sometimes a single slice might require more than MAX_INT events
     {
-        // we move to the virtualStart without geometry update
-        // and change to a smaller timeSlice accordingly
-        m_timeSlice=m_time+listOfTimeSlice[slice-1]-m_virtualStart;
-        m_time = m_virtualStart;
-        theClock->SetTimeNoGeoUpdate(m_time);
+      GateRunManager::GetRunManager()->SetRunIDCounter(slice); // keep the RunID in sync with the slice #
+      GateRunManager::GetRunManager()->BeamOn(INT_MAX);       // otherwise RunID is automatically incremented
+      theClock->SetTimeNoGeoUpdate(m_time);
     }
-    if(m_time+listOfTimeSlice[slice-1]>m_virtualStop)
-    {
-       // we have to stop before the end of the timeSlice
-       // so we reduce m_timeSlice to match with  m_virtualStop
-       m_timeSlice=m_virtualStop-m_time;
-    }
-    GateRunManager::GetRunManager()->BeamOn(INT_MAX);
     slice++;
-    theClock->SetTime(m_time);
+
   }
-  m_timeStop=real_timeStop;
   
   if (mOutputMode) GateOutputMgr::GetInstance()->RecordEndOfAcquisition();
 
   for(int nsource= 0 ; nsource<GateSourceMgr::GetInstance()->GetNumberOfSources() ; nsource++ )
     GateMessage("Acquisition", 1, "Source "<<nsource+1<<" --> Number of events = "<<GateSourceMgr::GetInstance()->GetNumberOfEventBySource(nsource+1)<< Gateendl);
-*/
+
   return;
   // ========================================================================================================
 }
@@ -541,7 +509,8 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
 //------------------------------------------------------------------------------------------
 void GateApplicationMgr::StopDAQ() 
 {
-  SetExitFlag(true);
+  //SetExitFlag(true);
+  m_exitFlag = true;
 }
 //------------------------------------------------------------------------------------------
 
@@ -549,7 +518,8 @@ void GateApplicationMgr::StopDAQ()
 //------------------------------------------------------------------------------------------
 void GateApplicationMgr::PauseDAQ() 
 {
-  SetPauseFlag(true);
+  //SetPauseFlag(true);
+  m_pauseFlag = true;
 }
 //------------------------------------------------------------------------------------------
 
@@ -574,7 +544,7 @@ void GateApplicationMgr::InitializeTimeSlices()
     // TODO: check that slices are in order
     ;
   }
-  else if(mTimeSliceDuration!=0.0) // could check that TimeSliceDuration is non-zero
+  else if(mTimeSliceDuration!=0.0)
   {
     G4double endTime = mTimeSlices[1];
     mTimeSlices.resize(1);
