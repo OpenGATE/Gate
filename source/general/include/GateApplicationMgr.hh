@@ -57,7 +57,7 @@ public:
   void PrintStatus();
   void SetVerboseLevel(G4int value) { nVerboseLevel = value; }
 
-  G4double GetTimeInterval(int i){return listOfTimeSlice[i];}
+  G4double GetTimeInterval(int i){return (mTimeSlices[i+1]-mTimeSlices[i]);} // should check that i is not past the end
   void SetTimeInterval(G4double v);
   void SetActivity(G4double v){ listOfActivity.push_back(v);}
   void SetTotalNumberOfPrimaries(double n);
@@ -89,9 +89,6 @@ protected:
   GateApplicationMgr();
   static GateApplicationMgr* instance;
   
-  G4double m_timeSlice;
-  G4double m_timeStart;
-  G4double m_timeStop;
 
   G4double m_virtualStart;
   G4double m_virtualStop;
@@ -105,23 +102,30 @@ protected:
 
   G4double m_weight;
 
-  std::vector<G4double> listOfTimeSlice;
-  std::vector<G4double> listOfEndTimeSlice;
+  G4double mTimeSliceDuration;
+//  G4double m_timeStart;
+//  G4double m_timeStop;
+  std::vector<G4double> mTimeSlices;
+//  std::vector<G4double> listOfTimeSlice;
+//  std::vector<G4double> listOfEndTimeSlice;
+
   std::vector<G4double> listOfActivity;
   std::vector<G4double> listOfWeight;
 
+
   bool mOutputMode;
   //bool mSuccessiveSourceMode;
-  bool mTimeSliceIsSet;
+//  bool mTimeSliceIsSet;
   bool mTimeSliceIsSetUsingAddSlice;
   bool mTimeSliceIsSetUsingReadSliceInFile;
-  bool mCstTimeSliceIsSet;
+//  bool mCstTimeSliceIsSet;
   long int mRequestedAmountOfPrimaries;
   bool mATotalAmountOfPrimariesIsRequested;
   long int mRequestedAmountOfPrimariesPerRun;
   bool mAnAmountOfPrimariesPerRunIsRequested;
 
-  void ComputeTimeStop();
+//  void ComputeTimeStop();
+  void InitializeTimeSlices();
   //int ComputeNumberOfGeneratedPrimaries();
   GateApplicationMgrMessenger* m_appMgrMessenger;
 

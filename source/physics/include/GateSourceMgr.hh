@@ -145,7 +145,7 @@ protected:
 	G4int                     m_sourceProgressiveNumber;
   G4int                     mVerboseLevel;
   G4int                     m_TotNPart;
-  G4int                     m_runNumber;
+//  G4int                     m_runNumber;
   G4int                     m_currentSourceNumber;
   //G4bool                    m_use_autoweight;
   //std::vector<G4double>     mListOfTimeSlices;
