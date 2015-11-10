@@ -3,8 +3,6 @@
 
 #include <fstream>
 
-#include "GateSourceY90BremTables.cc"
-
 GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
 {
   GateMessage("Beam", 1, "GateSourceY90Brem::GateSourceY90Brem(G4String) called." << Gateendl);
