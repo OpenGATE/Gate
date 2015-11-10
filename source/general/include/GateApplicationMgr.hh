@@ -39,11 +39,11 @@ public:
   G4double GetVirtualTimeStop();
   G4double GetVirtualTimeStart();
 
-  inline G4bool GetExitFlag()           { return m_exitFlag; };
-  inline void SetExitFlag(G4bool value) { m_exitFlag = value; };
+//  inline G4bool GetExitFlag()           { return m_exitFlag; };
+//  inline void SetExitFlag(G4bool value) { m_exitFlag = value; };
 
-  inline G4bool GetPauseFlag()           { return m_pauseFlag; };
-  inline void SetPauseFlag(G4bool value) { m_pauseFlag = value; };
+//  inline G4bool GetPauseFlag()           { return m_pauseFlag; };
+//  inline void SetPauseFlag(G4bool value) { m_pauseFlag = value; };
 
   void StartDAQ();
 

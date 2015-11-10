@@ -26,7 +26,8 @@ GateApplicationMgr* GateApplicationMgr::instance = 0;
 //------------------------------------------------------------------------------------------
 GateApplicationMgr::GateApplicationMgr(): 
   nVerboseLevel(0), m_pauseFlag(false), m_exitFlag(false), 
-  mOutputMode(true),  mTimeSliceIsSetUsingAddSlice(false), mTimeSliceIsSetUsingReadSliceInFile(false)
+  mOutputMode(true),  mTimeSliceIsSetUsingAddSlice(false), mTimeSliceIsSetUsingReadSliceInFile(false),
+  mTimeStepInTotalAmountOfPrimariesMode(0.0)
 {
   if(instance != 0)
     { G4Exception( "GateApplicationMgr::GateApplicationMgr", "GateApplicationMgr", FatalException, "GateApplicationMgr constructed twice."); }
@@ -110,7 +111,7 @@ void GateApplicationMgr::ReadTimeSlicesInAFile(G4String filename) {
     GateError("Please do not use 'addSlice' and 'readTimeSlicesIn' commands at the same time");
   }
 
-  /* TODO: this does nothing for now. Fix later. JS 28/10/2015
+  // TODO: this does nothing for now. Fix later. JS 28/10/2015
   // Open file  
   std::ifstream is;
   OpenFileInput(filename, is);
@@ -121,41 +122,32 @@ void GateApplicationMgr::ReadTimeSlicesInAFile(G4String filename) {
   if (!ReadColNameAndUnit(is, "Time", timeUnit)) {
     GateError("The file '" << filename << "' need to begin with 'Time'\n");
   }
-  
-  // Loop line
+
   skipComment(is);
-  int n=0;
-  double prevT=0;
-  while (is) {
-    // Read time
-    double t = ReadDouble(is)*timeUnit;
-    // Compute slice duration
-    if (n == 0) {
-      SetTimeStart(t);
+  double t = ReadDouble(is)*timeUnit; // read first time
+  mTimeSlices.resize(1);
+  mTimeSlices[0] = t;
+  skipComment(is); // just in case the user felt like cluttering up the time slice list with comments...
+  
+  while (is)
+  {
+    t = ReadDouble(is)*timeUnit;
+    if (t < mTimeSlices.back())
+    {
+      GateError("Time slices should be in increasing order, but I read " << t/s
+                << " sec after " << mTimeSlices.back()/s << " sec.\n");
+      exit(-1);
     }
-    else {
-      //listOfEndTimeSlice.push_back(t);
-      if (listOfTimeSlice.size() == 0) listOfTimeSlice.push_back(t);// ? non sauf si le premier temps est le depart et le deuxieme le premier intervalle 
-      else listOfTimeSlice.push_back(t-prevT);
-      if (t<prevT) {
-        GateError("Time slices should be in increasing order, but I read " << t/s 
-                  << " sec after " << prevT/s << " sec.\n");
-        exit(-1);                  
-      }
-      // DD((t-prevT)/s);
-      prevT = t;
-    }
-    SetTimeStop(t);
-    n++;
+    t -= mTimeSlices.back();
+    mTimeSlices.push_back(t);
+
     skipComment(is);
   }
 
-  // End
   is.close();
 
-  mTimeSliceIsSet = true;
   mTimeSliceIsSetUsingReadSliceInFile = true;
-  */
+
 }
 //------------------------------------------------------------------------------------------
 
@@ -487,8 +479,8 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
 
     while(m_time<GetEndTimeSlice(slice))  // sometimes a single slice might require more than MAX_INT events
     {
-      GateRunManager::GetRunManager()->SetRunIDCounter(slice); // keep the RunID in sync with the slice #
-      GateRunManager::GetRunManager()->BeamOn(INT_MAX);       // otherwise RunID is automatically incremented
+      GateRunManager::GetRunManager()->SetRunIDCounter(slice); // Must explicitly keep the RunID in sync with the slice #
+      GateRunManager::GetRunManager()->BeamOn(INT_MAX);        // otherwise RunID is automatically incremented
       theClock->SetTimeNoGeoUpdate(m_time);
     }
     slice++;
@@ -509,7 +501,6 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
 //------------------------------------------------------------------------------------------
 void GateApplicationMgr::StopDAQ() 
 {
-  //SetExitFlag(true);
   m_exitFlag = true;
 }
 //------------------------------------------------------------------------------------------
@@ -518,7 +509,6 @@ void GateApplicationMgr::StopDAQ()
 //------------------------------------------------------------------------------------------
 void GateApplicationMgr::PauseDAQ() 
 {
-  //SetPauseFlag(true);
   m_pauseFlag = true;
 }
 //------------------------------------------------------------------------------------------

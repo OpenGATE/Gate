@@ -564,7 +564,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
 
 
           GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
-          G4double timeStop           = appMgr->GetTimeStop();
+          // G4double timeStop           = appMgr->GetTimeStop();
           appMgr->SetCurrentTime(m_time);
 
           if( mVerboseLevel > 1 )
