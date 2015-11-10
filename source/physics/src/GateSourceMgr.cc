@@ -569,7 +569,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
 
 
           GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
-          G4double timeStop           = appMgr->GetTimeStop();
+//          G4double timeStop           = appMgr->GetTimeStop();
           appMgr->SetCurrentTime(m_time);
 
           if( mVerboseLevel > 1 )
@@ -586,7 +586,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
           // G4cout << m_time - m_timeLimit<<"   "<<m_firstTime<<"    "<<m_firstTime*(1-1.E-10) <<"  "<< (m_time - m_timeLimit) - m_firstTime << Gateendl;
 
 //          if( !appMgr->IsTotalAmountOfPrimariesModeEnabled() && ( m_time <= m_timeLimit ) )
-          if( m_time <= m_timeLimit )
+          if( m_time <= m_timeLimit ) // this should work for both total primaries and total time
  //             || (appMgr->IsTotalAmountOfPrimariesModeEnabled() && appMgr->IsAnAmountOfPrimariesPerRunModeEnabled() && (mNbOfParticleInTheCurrentRun < appMgr->GetNumberOfPrimariesPerRun()))
  //             || (appMgr->IsTotalAmountOfPrimariesModeEnabled() && ( fabs(m_time - m_timeLimit - m_firstTime) > m_firstTime*0.5  ) && ( m_time - timeStop  <= m_firstTime )))
             {
