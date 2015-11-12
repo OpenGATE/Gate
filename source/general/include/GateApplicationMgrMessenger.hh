@@ -49,7 +49,7 @@ private:
   G4UIcmdWithoutParameter*   StopDAQCmd;
   G4UIcmdWithoutParameter*   PauseDAQCmd;
   G4UIcmdWithAnInteger*      VerboseCmd;
-  G4UIcmdWithABool*          ExitFlagCmd;
+//  G4UIcmdWithABool*          ExitFlagCmd;
   G4UIcmdWithoutParameter*   DescribeCmd;
 
   G4UIcmdWithoutParameter * NoOutputCmd;
