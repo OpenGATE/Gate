@@ -9,7 +9,7 @@ fi
 
 echo "WARNING"
 echo "If you are creating a new reference archive, please use AddExternalData.sh."
-echo "This sript can be used to update an existing reference."
+echo "This script can be used to update an existing reference."
 echo
 echo "The reference will be built from the $1/'output' folder content, based on the list of files provided in the reference/$2.txt file. $3 is the architecture (not mandatory)."
 echo
@@ -28,7 +28,7 @@ echo $3
 # This script should be launched locally, from its containing folder
 # Note : ${BASH_SOURCE[0]} contains this script name
 # Tests -ge instead of -eq to include the case of there are backup versions of the script in the current folder.
-if [ `ls | grep ${BASH_SOURCE[0]} | wc -l` -ge 1 ]; then
+if [ `ls | grep ${BASH_SOURCE[0]##*/} | wc -l` -ge 1 ]; then
     echo "This script is launched locally, from its containing folder."
     BENCHMARKS_DIRECTORY=`pwd`
 # exit otherwise
@@ -73,7 +73,7 @@ echo $(git log |head -1) >>reference/$2_ref.txt
 echo "with the version of gcc" >>reference/$2_ref.txt
 echo $(gcc --version |head -1) >>reference/$2_ref.txt
 echo "on the architecture $3" >>reference/$2_ref.txt
-echo $(uname --all) >>reference/$2_ref.txt
+echo $(uname -a) >>reference/$2_ref.txt
 
 cp reference/$2_ref.txt test_ref
 git add reference/$2_ref.txt
