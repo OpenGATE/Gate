@@ -117,7 +117,7 @@
 
 # JamesRandom Ranlux64 MersenneTwister
 /gate/random/setEngineName MersenneTwister
-/gate/random/setEngineSeed auto
+/gate/random/setEngineSeed 123456
 
 # /gate/random/verbose 1
 # /gate/source/verbose 0
@@ -126,7 +126,7 @@
 #/tracking/verbose 1
 
 /gate/application/noGlobalOutput
-/gate/application/setTotalNumberOfPrimaries 20000
+/gate/application/setTotalNumberOfPrimaries 200
 /gate/application/start
 
 exit
