@@ -84,8 +84,8 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
   mIsUserFocalShapeActive = false;
   mUserFocalShapeInitialisation = false;
   mUserFocalShape = new G4SPSPosDistribution();
+  mUserPosGenX = 0;
 
-  mUserPosGenX = new G4SPSRandomGenerator();
   m_posSPS = new GateSPSPosDistribution();
   m_posSPS->SetBiasRndm( GetBiasRndm() );
   m_eneSPS = new GateSPSEneDistribution();
@@ -97,8 +97,8 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
   m_sourceMessenger = new GateVSourceMessenger( this );
   m_SPSMessenger    = new GateSingleParticleSourceMessenger( this );
 
-
   SetNumberOfParticles(1); // important !
+
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -117,10 +117,14 @@ GateVSource::~GateVSource()
   delete m_eneSPS;
   delete m_angSPS;
   delete mUserFocalShape;
-  delete mUserPosGenX;
-  for (unsigned int i = 0; i<mUserPosGenY.size(); ++i) {
-    delete mUserPosGenY[i];
+  if(mUserPosGenX != 0)
+    delete mUserPosGenX;
+  for (unsigned int i = 0; i<mUserPosGenY.size(); ++i)
+  {
+    if(mUserPosGenY[i] != 0)
+      delete mUserPosGenY[i];
   }
+
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -887,6 +891,8 @@ void GateVSource::InitializeUserFluence()
     double posX,posY;
     posX = (0.5 * sizeX) + userFluenceImage.GetOrigin().x();
 //     posX = ((0.5 * sizeX) - userFluenceImage.GetHalfSize().x());
+
+    mUserPosGenX = new G4SPSRandomGenerator();
 
     mUserPosGenX->SetXBias(G4ThreeVector(0.,0.,0.));
     for(int i=0; i<resX;i++)
