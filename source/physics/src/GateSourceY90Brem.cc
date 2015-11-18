@@ -101,10 +101,11 @@ G4int GateSourceY90Brem::GeneratePrimaries(G4Event *event)
   SetParticleTime(m_time);
 
   G4double P = G4UniformRand();
-  if (P < (mPosProb/(mPosProb+mBremProb)) )
+  if (P < (mPosProb/(mPosProb+mBremProb)) ) // generate positron;
   {
     pParticle = new G4PrimaryParticle(pPositronParticleDefinition);
-    pParticle->SetTotalEnergy(300.0 * keV);
+    energy = 738.0 * G4UniformRand();
+    pParticle->SetKineticEnergy(energy);
 
     direction = m_angSPS->GenerateOne();
     pParticle->SetMomentumDirection(direction);
