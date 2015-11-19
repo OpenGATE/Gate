@@ -106,16 +106,13 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
 //-------------------------------------------------------------------------------------------------
 GateVSource::~GateVSource()
 {
-  /*delete posGenerator;
-    delete angGenerator;
-    delete eneGenerator;
-    delete biasRndm;*/
-
   delete m_sourceMessenger;
   delete m_SPSMessenger;
+
   delete m_posSPS;
   delete m_eneSPS;
   delete m_angSPS;
+
   delete mUserFocalShape;
   if(mUserPosGenX != 0)
     delete mUserPosGenX;
@@ -905,16 +902,16 @@ void GateVSource::InitializeUserFluence()
 
       if (mUserPosGenY[i]==0) {
         mUserPosGenY[i] = new G4SPSRandomGenerator();
+        mUserPosGenY[i]->SetYBias(G4ThreeVector(0.,0.,0.));
+        mUserPosGenY[i]->GetBiasWeight();       // these two lines are kludges to initialize
+        mUserPosGenY[i]->ReSetHist("biaspp");   // all the G4Cache objects in G4SPSRandomGenerator
       }
-      mUserPosGenY[i]->SetYBias(G4ThreeVector(0.,0.,0.));
+
       for(int j=0; j<resY; j++)
       {
         sum += userFluenceImage.GetValue(i,j,0);
         mUserPosY[j] = posY;
 
-        if (mUserPosGenY[i]==0) {
-          mUserPosGenY[i] = new G4SPSRandomGenerator();
-        }
         mUserPosGenY[i]->SetYBias(G4ThreeVector(j+1,userFluenceImage.GetValue(i,j,0),0.));
         posY += sizeY;
       }
