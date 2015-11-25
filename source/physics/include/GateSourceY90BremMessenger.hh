@@ -5,6 +5,8 @@
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithADouble.hh"
+#include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWith3VectorAndUnit.hh"
 
 class GateSourceY90Brem;
 
@@ -21,6 +23,8 @@ protected:
 
   G4UIcmdWithADoubleAndUnit* setMinBremEnergyCmd;
   G4UIcmdWithADouble* setPosProbabilityCmd;
+  G4UIcmdWithAString* loadVoxelizedPhantomCmd;
+  G4UIcmdWith3VectorAndUnit* setPhantomPositionCmd;
 };
 
 #endif

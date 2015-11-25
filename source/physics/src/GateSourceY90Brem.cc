@@ -1,7 +1,5 @@
 #include "GateSourceY90Brem.hh"
-#include "G4PrimaryVertex.hh"
-
-#include <fstream>
+#include "GateVoxelizedPosDistribution.hh"
 
 GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
 {
@@ -100,6 +98,11 @@ G4int GateSourceY90Brem::GeneratePrimaries(G4Event *event)
   GateMessage("Beam", 1, "GateSourceY90Brem::GeneratePrimaries(G4Event*) called at " << m_time << " s." << Gateendl);
   SetParticleTime(m_time);
 
+  // get the particle position
+  position = m_posSPS->GenerateOne();
+  direction = m_angSPS->GenerateOne();
+
+
   G4double P = G4UniformRand();
   if (P < (mPosProb/(mPosProb+mBremProb)) ) // generate positron;
   {
@@ -107,10 +110,8 @@ G4int GateSourceY90Brem::GeneratePrimaries(G4Event *event)
     energy = 738.0 * G4UniformRand();
     pParticle->SetKineticEnergy(energy);
 
-    direction = m_angSPS->GenerateOne();
     pParticle->SetMomentumDirection(direction);
 
-    position = m_posSPS->GenerateOne();
     pVertex = new G4PrimaryVertex(position, m_time);
     pVertex->SetPrimary(pParticle);
 
@@ -134,8 +135,6 @@ G4int GateSourceY90Brem::GeneratePrimaries(G4Event *event)
     pParticle->SetTotalEnergy(energy);
 
     // look up range from histogram and add to the position
-    position = m_posSPS->GenerateOne();
-    direction = m_angSPS->GenerateOne();
     position += GetRange(energy) * direction;
 
     // look up angular offset (offset between direction and momentum) and adjust direction
@@ -298,4 +297,23 @@ G4double GateSourceY90Brem::GetNextTime( G4double timeStart )
     G4cout << "GateSourceY90Source::GetNextTime : next time (s) " << aTime/s << Gateendl;
 
   return aTime;
+}
+
+void GateSourceY90Brem::LoadVoxelizedPhantom(G4String filename)
+{
+  if(m_posSPS)
+    delete m_posSPS;
+  m_posSPS = new GateVoxelizedPosDistribution(filename);
+  m_angSPS->SetPosDistribution(m_posSPS);
+
+}
+
+void GateSourceY90Brem::SetPhantomPosition(G4ThreeVector pos)
+{
+  GateVoxelizedPosDistribution* posDist = dynamic_cast<GateVoxelizedPosDistribution*>(m_posSPS);
+  if(posDist)
+    posDist->SetPosition(pos);
+  else
+    G4cout << "Can't use this command unless a voxelized phantom has already been loaded." << G4endl;
+
 }

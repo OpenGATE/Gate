@@ -12,9 +12,6 @@
 #include "G4PrimaryVertex.hh"
 #include "G4ParticleMomentum.hh"
 
-#include <iomanip>
-#include <vector>
-
 #include "GateVSource.hh"
 #include "GateSourceY90BremMessenger.hh"
 
@@ -28,8 +25,6 @@ public:
   GateSourceY90Brem(G4String name);
   ~GateSourceY90Brem();
 
-//  void Initialize() {};
-
   G4int GeneratePrimaries(G4Event *event);
   void GeneratePrimaryVertex(G4Event* event);
 
@@ -37,6 +32,9 @@ public:
   G4double GetMinEnergy() {return mMinEnergy;}
 
   void SetPositronProbability(G4double probability) {mPosProb = probability;}
+
+  void LoadVoxelizedPhantom(G4String filename);
+  void SetPhantomPosition(G4ThreeVector pos);
 
   G4double GetNextTime( G4double timeStart );
 
@@ -62,6 +60,7 @@ protected:
   G4double GetRange(G4double energy);
   G4double GetAngle(G4double energy);
   G4ThreeVector PerturbVector(G4ThreeVector original, G4double theta);
+
 };
 
 #endif
