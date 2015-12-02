@@ -1,0 +1,10 @@
+
+#=====================================================
+# VISUALISATION 
+
+/vis/open                             OGLIQt
+/vis/drawVolume
+/vis/viewer/flush
+/tracking/storeTrajectory             1
+/vis/scene/add/trajectories 
+/vis/scene/endOfEventAction           accumulate

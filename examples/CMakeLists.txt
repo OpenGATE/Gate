@@ -62,3 +62,4 @@ GateAddExampleData("DATA{example_dosimetry/electron_radiotherapy/data/Rando.raw}
 
 GateAddExampleData("DATA{example_fluorescence/data/fluorescence.pdf}")
 GateAddExampleData("DATA{example_fluorescence/data/voxelisedPhantom.raw}")
+GateAddExampleData("DATA{example_CT/fixedForcedDetectionCT/data/ICRP_AF.raw}")
