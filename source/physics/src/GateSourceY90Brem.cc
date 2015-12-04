@@ -25,8 +25,6 @@ GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
   for(i=0;i<200;i++)
     mCumulativeEnergyTable[i] /= mCumulativeEnergyTable[199];
 
-  G4cout << "Energy table loaded. Total brem likelihood: " << mBremProb << G4endl;
-
   // convert to cumulative distribution and normalize each row
   mCumulativeRangeTable = new G4double*[100];
   for(i=0;i<100;i++)
@@ -107,7 +105,7 @@ G4int GateSourceY90Brem::GeneratePrimaries(G4Event *event)
   if (P < (mPosProb/(mPosProb+mBremProb)) ) // generate positron;
   {
     pParticle = new G4PrimaryParticle(pPositronParticleDefinition);
-    energy = 738.0 * G4UniformRand();
+    energy = G4UniformRand() * 738.8 * keV;
     pParticle->SetKineticEnergy(energy);
 
     pParticle->SetMomentumDirection(direction);
