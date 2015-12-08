@@ -34,9 +34,6 @@ GateAddExampleData("DATA{example_ARF/HowToUse_ARF.pdf}")
 
 GateAddExampleData("DATA{example_CT/exampleCT.pdf}")
 
-GateAddExampleData("DATA{example_Hybrid/data/patient.raw}")
-GateAddExampleData("DATA{example_Hybrid/data/sphere.mha}")
-
 GateAddExampleData("DATA{example_Radiotherapy/example2/data/patient-2mm.raw}")
 GateAddExampleData("DATA{example_Radiotherapy/example3/data/patient-4mm.raw}")
 GateAddExampleData("DATA{example_Radiotherapy/example3/data/linac-beam.root}")

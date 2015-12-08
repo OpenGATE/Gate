@@ -1,7 +1,0 @@
-Water Cylinder
-
-// -------------------
-
-
-[Box]        A=128.         B=0.           C=0.           x=0.        y=0.           z=0.        beta=0        gray=-1000
-[Cylinder]   A=100.         B=0.           C=100.         x=0.        y=0.           z=0.        beta=0        gray=1000
