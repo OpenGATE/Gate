@@ -21,6 +21,14 @@ GateFixedForcedDetectionActorMessenger::GateFixedForcedDetectionActorMessenger(G
   GateActorMessenger(sensor),pActor(sensor)
 {
   BuildCommands(baseName+sensor->GetObjectName());
+
+  // Remove commands that we do not use in the fixed forced detection actor
+  delete pSetOverWriteFilesFlagCmd;
+  pSetOverWriteFilesFlagCmd = NULL;
+  delete pSetFileNameCmd;
+  pSetFileNameCmd = NULL;
+  delete pSetResetDataAtEachRunFlagCmd;
+  pSetResetDataAtEachRunFlagCmd = NULL;
 }
 //-----------------------------------------------------------------------------
 
@@ -50,7 +58,7 @@ void GateFixedForcedDetectionActorMessenger::BuildCommands(G4String base)
 
   bb = base+"/geometryFilename";
   pSetGeometryFilenameCmd = new G4UIcmdWithAString(bb,this);
-  guidance = "Set the file name for the RTK geometry filename.";
+  guidance = "Set the file name for the output RTK geometry filename corresponding to primary projections.";
   pSetGeometryFilenameCmd->SetGuidance(guidance);
 
   bb = base+"/primaryFilename";
@@ -60,42 +68,42 @@ void GateFixedForcedDetectionActorMessenger::BuildCommands(G4String base)
 
   bb = base+"/materialMuFilename";
   pSetMaterialMuFilenameCmd = new G4UIcmdWithAString(bb,this);
-  guidance = "Set the file name for writing the image that provides the attenuation of each material at each energy.";
+  guidance = "Set the file name for the attenuation lookup table. Two paramaters: material index and energy.";
   pSetMaterialMuFilenameCmd->SetGuidance(guidance);
 
   bb = base+"/attenuationFilename";
   pSetAttenuationFilenameCmd = new G4UIcmdWithAString(bb,this);
-  guidance = "Set the file name for writing the image that provides the attenuation image.";
+  guidance = "Set the file name for the attenuation image (printf format with runId as a single parameter).";
   pSetAttenuationFilenameCmd->SetGuidance(guidance);
 
   bb = base+"/responseDetectorFilename";
   pSetResponseDetectorFilenameCmd = new G4UIcmdWithAString(bb, this);
-  guidance = G4String( "Response detector curve (weight to each energy)");
+  guidance = G4String( "Input response detector curve.");
   pSetResponseDetectorFilenameCmd->SetGuidance( guidance);
 
   bb = base+"/flatFieldFilename";
   pSetFlatFieldFilenameCmd = new G4UIcmdWithAString(bb,this);
-  guidance = "Set the file name for writing the image that provides the flat field image.";
+  guidance = "Set the file name for the flat field image (printf format with runId as a single parameter).";
   pSetFlatFieldFilenameCmd->SetGuidance(guidance);
 
   bb = base+"/comptonFilename";
   pSetComptonFilenameCmd = new G4UIcmdWithAString(bb,this);
-  guidance = "Set the file name for writing the image that provides the Compton image.";
+  guidance = "Set the file name for the Compton image (printf format with runId as a single parameter).";
   pSetComptonFilenameCmd->SetGuidance(guidance);
 
   bb = base+"/rayleighFilename";
   pSetRayleighFilenameCmd = new G4UIcmdWithAString(bb,this);
-  guidance = "Set the file name for writing the image that provides the rayleigh image.";
+  guidance = "Set the file name for the Rayleigh image (printf format with runId as a single parameter).";
   pSetRayleighFilenameCmd->SetGuidance(guidance);
 
   bb = base+"/fluorescenceFilename";
   pSetFluorescenceFilenameCmd = new G4UIcmdWithAString(bb,this);
-  guidance = "Set the file name for writing the image that provides the fluorescence image.";
+  guidance = "Set the file name for the fluorescence image (printf format with runId as a single parameter).";
   pSetFluorescenceFilenameCmd->SetGuidance(guidance);
 
   bb = base+"/secondaryFilename";
   pSetSecondaryFilenameCmd = new G4UIcmdWithAString(bb,this);
-  guidance = "Set the file name for writing the image that provides the scattering image.";
+  guidance = "Set the file name for the scatter image (printf format with runId as a single parameter).";
   pSetSecondaryFilenameCmd->SetGuidance(guidance);
 
   bb = base+"/enableSquaredSecondary";
@@ -110,7 +118,7 @@ void GateFixedForcedDetectionActorMessenger::BuildCommands(G4String base)
 
   bb = base+"/totalFilename";
   pSetTotalFilenameCmd = new G4UIcmdWithAString(bb,this);
-  guidance = "Set the file name for writing the image that provides the total (primary + scaterring) image.";
+  guidance = "Set the file name for the total (primary + scatter) image (printf format with runId as a single parameter).";
   pSetTotalFilenameCmd->SetGuidance(guidance);
   
   bb = base+"/phaseSpaceFilename";
@@ -120,7 +128,7 @@ void GateFixedForcedDetectionActorMessenger::BuildCommands(G4String base)
 
   bb = base+"/setInputRTKGeometryFilename";
   pSetInputRTKGeometryFilenameCmd = new G4UIcmdWithAString(bb,this);
-  guidance = "Set filename for using an RTK geometry file as input.";
+  guidance = "Set filename for using an RTK geometry file as input geometry.";
   pSetInputRTKGeometryFilenameCmd->SetGuidance(guidance);
 
   bb = base+"/noisePrimaryNumber";
