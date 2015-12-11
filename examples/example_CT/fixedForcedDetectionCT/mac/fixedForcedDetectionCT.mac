@@ -12,21 +12,6 @@
 # Physics list
 /gate/physics/addPhysicsList emlivermore
 
-# TABLE
-# Create the table volume
-##
-/gate/world/daughters/name table
-/gate/world/daughters/insert box
-/gate/table/geometry/setXLength 0.6 cm
-/gate/table/geometry/setYLength 8. cm
-/gate/table/geometry/setZLength 34. cm
-/gate/table/placement/setRotationAxis 0 0 1
-/gate/table/placement/setRotationAngle 90 deg
-/gate/table/placement/setTranslation 100. 0. 0. cm
-/gate/table/moves/insert translation
-/gate/table/setMaterial Vacuum
-/gate/table/vis/setColor grey
-
 # Beam
 /gate/source/addSource mybeam gps
 /gate/source/mybeam/gps/particle       gamma
