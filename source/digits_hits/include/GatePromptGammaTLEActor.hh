@@ -43,6 +43,7 @@ public:
   virtual void ResetData();
 
   void EnableVarianceImage(bool b) { mIsVarianceImageEnabled = b; }  //all is needed to calc tle uncertainty
+  void EnableSysVarianceImage(bool b) { mIsSysVarianceImageEnabled = b; }  //all is needed to calc tle uncertainty
   //void EnableIntermediaryUncertaintyOutput(bool b) { mIsIntermediaryUncertaintyOutputEnabled = b; } //this is only used to output trackl,tracklsq, no other effects on calculation
 
 protected:
@@ -54,13 +55,15 @@ protected:
   bool alreadyHere;
 
   bool mIsVarianceImageEnabled;
+  bool mIsSysVarianceImageEnabled;
   //bool mIsIntermediaryUncertaintyOutputEnabled;
 
   //helper functions
   void SetTrackIoH(GateImageOfHistograms*&);
   void SetTLEIoH(GateImageOfHistograms*&);
   GateVImageVolume* GetPhantom();
-  void BuildOutput(); //converts trackl,tracklsq into mImageGamma and tleuncertain
+  void BuildVarianceOutput(); //converts trackl,tracklsq into mImageGamma and tlevar
+  void BuildSysVarianceOutput(); //converts trackl into mImageGamma and tlesysvarv
 
   //used and reset each track
   GateImageOfHistograms * tmptrackl;    //l_i
@@ -72,9 +75,10 @@ protected:
   //output, calculated at end of simu
   GateImageOfHistograms * mImageGamma;  //oldstyle main output,
   GateImageOfHistograms * tle;  //main output (yield)
+  GateImageOfHistograms * tlesysvar;  //systematic variance per voxel, per E_gamma
   GateImageOfHistograms * tlevariance; //uncertainty per voxel, per E_gamma
 
-  GateImageInt mLastHitEventImage;      //store eventID when last updated. TODO: not sure if necesary
+  GateImageInt mLastHitEventImage;      //store eventID when last updated.
   int mCurrentEvent;                    //monitor event. TODO: not sure if necesary
 };
 //-----------------------------------------------------------------------------

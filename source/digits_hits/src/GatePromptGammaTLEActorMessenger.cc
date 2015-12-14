@@ -28,6 +28,7 @@ GatePromptGammaTLEActorMessenger::~GatePromptGammaTLEActorMessenger()
   DD("GatePromptGammaTLEActorMessenger destructor");
   delete pSetInputDataFileCmd;
   delete pEnableVarianceCmd;
+  delete pEnableSysVarianceCmd;
   //delete pEnableIntermediaryUncertaintyOutputCmd;
 }
 //-----------------------------------------------------------------------------
@@ -46,6 +47,11 @@ void GatePromptGammaTLEActorMessenger::BuildCommands(G4String base)
   guidance = G4String("Enable variance output (per voxel per E_gamma).");
   pEnableVarianceCmd->SetGuidance(guidance);
 
+  bb = base+"/enableSystematicVariance";
+  pEnableSysVarianceCmd = new G4UIcmdWithABool(bb, this);
+  guidance = G4String("Enable systematic variance output (per voxel per E_gamma).");
+  pEnableSysVarianceCmd->SetGuidance(guidance);
+
   /*bb = base+"/enableIntermediaryUncertaintyOutput";
   pEnableIntermediaryUncertaintyOutputCmd = new G4UIcmdWithABool(bb, this);
   guidance = G4String("Enable outputs to calculate uncertainty post process. Output is Gamma_m database, and L and L^2 per voxel per proton energy.");
@@ -60,6 +66,7 @@ void GatePromptGammaTLEActorMessenger::SetNewValue(G4UIcommand* cmd, G4String ne
 {
   if (cmd == pSetInputDataFileCmd) pTLEActor->SetInputDataFilename(newValue);
   if (cmd == pEnableVarianceCmd) pTLEActor->EnableVarianceImage(pEnableVarianceCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableSysVarianceCmd) pTLEActor->EnableSysVarianceImage(pEnableSysVarianceCmd->GetNewBoolValue(newValue));
   //if (cmd == pEnableIntermediaryUncertaintyOutputCmd) pTLEActor->EnableIntermediaryUncertaintyOutput(pEnableIntermediaryUncertaintyOutputCmd->GetNewBoolValue(newValue));
   GateImageActorMessenger::SetNewValue(cmd,newValue);
 }
