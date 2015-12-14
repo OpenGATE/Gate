@@ -87,9 +87,18 @@ echo "----------------------------------------------------"
 
 cd reference
 
+echo "----------------------------------------------------"
 echo "md5sum creation."
-echo $(md5sum $1-reference.tgz | cut -f 1-1 -d ' ') >$1-reference.tgz.md5
+
+if test "$(uname)" = "Darwin"
+then
+    md5 -q $1-reference.tgz >$1-reference.tgz.md5
+else
+    echo $(md5sum $1-reference.tgz | cut -f 1-1 -d ' ') >$1-reference.tgz.md5
+fi
+
 git add $1-reference.tgz.md5
+echo "----------------------------------------------------"
 
 cd ../..
 
