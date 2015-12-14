@@ -32,6 +32,8 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
   pEnableEdepSquaredCmd= 0;
   pEnableEdepUncertaintyCmd= 0;
   pEnableNumberOfHitsCmd= 0;
+  pSetDoseAlgorithmCmd= 0;
+  pImportMassFileCmd= 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -54,6 +56,8 @@ GateDoseActorMessenger::~GateDoseActorMessenger()
   if(pEnableEdepSquaredCmd) delete pEnableEdepSquaredCmd;
   if(pEnableEdepUncertaintyCmd) delete pEnableEdepUncertaintyCmd;
   if(pEnableNumberOfHitsCmd) delete pEnableNumberOfHitsCmd;
+  if(pSetDoseAlgorithmCmd) delete pSetDoseAlgorithmCmd;
+  if(pImportMassFileCmd) delete pImportMassFileCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -126,6 +130,18 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   pEnableNumberOfHitsCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable number of hits computation");
   pEnableNumberOfHitsCmd->SetGuidance(guid);
+
+  n = base+"/setDoseAlgorithm";
+  pSetDoseAlgorithmCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Set the alogrithm used in the dose calculation");
+  pSetDoseAlgorithmCmd->SetGuidance(guid);
+  pSetDoseAlgorithmCmd->SetParameterName("Dose algorithm",false);
+
+  n = base+"/importMassFile";
+  pImportMassFileCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Import a voxelized mass file");
+  pImportMassFileCmd->SetGuidance(guid);
+  pImportMassFileCmd->SetParameterName("Mass file",false);
 }
 //-----------------------------------------------------------------------------
 
@@ -148,8 +164,11 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pEnableDoseNormToIntegralCmd) pDoseActor->EnableDoseNormalisationToIntegral(pEnableDoseNormToIntegralCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseToWaterNormCmd) pDoseActor->EnableDoseToWaterNormalisation(pEnableDoseToWaterNormCmd->GetNewBoolValue(newValue));
 
+  if (cmd == pSetDoseAlgorithmCmd) pDoseActor->SetDoseAlogithm(newValue);
+  if (cmd == pImportMassFileCmd) pDoseActor->ImportMassFile(newValue);
+
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
 //-----------------------------------------------------------------------------
 
-#endif /* end #define GATEDOSEACTORMESSENGER_CC */
+#endif 

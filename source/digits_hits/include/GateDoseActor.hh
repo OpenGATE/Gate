@@ -11,11 +11,13 @@ See GATE/LICENSE.txt for further details
   \class  GateDoseActor
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
-
-	  DoseToWater option added by Loïc Grevillot
+	        david.sarrut@creatis.insa-lyon.fr
   \date	March 2011
+
+	  - DoseToWater option added by Loïc Grevillot
+    - Dose calculation in inhomogeneous volume added by Thomas Deschler (thomas.deschler@iphc.cnrs.fr)
  */
+
 
 #ifndef GATEDOSEACTOR_HH
 #define GATEDOSEACTOR_HH
@@ -27,6 +29,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UnitsTable.hh"
 #include "GateDoseActorMessenger.hh"
 #include "GateImageWithStatistic.hh"
+#include "GateVoxelizedMass.hh"
 
 class G4EmCalculator;
 
@@ -57,6 +60,8 @@ class GateDoseActor : public GateVImageActor
   void EnableDoseNormalisationToMax(bool b);
   void EnableDoseNormalisationToIntegral(bool b);
   void EnableDoseToWaterNormalisation(bool b) { mIsDoseToWaterNormalisationEnabled = b; mDoseToWaterImage.SetScaleFactor(1.0); }
+  void SetDoseAlogithm(G4String b) { mDoseAlgorithm = b; }
+  void ImportMassFile(G4String b) { mMassFile = b; }
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
@@ -73,10 +78,10 @@ class GateDoseActor : public GateVImageActor
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
 
-
 protected:
   GateDoseActor(G4String name, G4int depth=0);
-  GateDoseActorMessenger * pMessenger;
+  GateDoseActorMessenger* pMessenger;
+  GateVoxelizedMass mVoxelizedMass;
 
   int mCurrentEvent;
   StepHitType mUserStepHitType;
@@ -100,13 +105,16 @@ protected:
   GateImageWithStatistic mDoseToWaterImage;
   GateImageInt mNumberOfHitsImage;
   GateImageInt mLastHitEventImage;
+  GateImageDouble mMassImage;
 
   G4String mEdepFilename;
   G4String mDoseFilename;
   G4String mDoseToWaterFilename;
   G4String mNbOfHitsFilename;
+  G4String mDoseAlgorithm;
+  G4String mMassFile;
 
-  G4EmCalculator * emcalc;
+  G4EmCalculator* emcalc;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(DoseActor,GateDoseActor)
