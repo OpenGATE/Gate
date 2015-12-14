@@ -8,7 +8,7 @@ then
 fi
 
 echo
-echo "The reference will be built from the $1/'output' folder content, based on the list of files provided in the reference/$2.txt file. $3 is the architecture (not mandatory)."
+echo "The reference will be built from the $1/'output' folder content, based on the list of files provided in the reference/$1_$2.txt file. $3 is the architecture (not mandatory)."
 echo
 echo "This script should be launched from a git repository."
 
@@ -50,35 +50,35 @@ echo "----------------------------------------------------"
 echo "Reference archive creation:"
 mkdir test_ref
 
-# Each line of the $2.txt file is splitted (separator is space) and stored in an array 'WORD'
+# Each line of the $1_$2.txt file is splitted (separator is space) and stored in an array 'WORD'
 while read -a WORD
 do
     echo "${WORD[@]}"
 
     cp output/${WORD[1]} test_ref
 
-done <reference/$2.txt
+done <reference/$1_$2.txt
 
-cp reference/$2.txt test_ref
-git add reference/$2.txt
+cp reference/$1_$2.txt test_ref
+git add reference/$1_$2.txt
 
-echo "This reference was created by launching a Gate simulation on" >reference/$2_ref.txt
-echo $(date) >>reference/$2_ref.txt
-echo "with the configuration file benchmarks/$1/mac/$2.mac" >>reference/$2_ref.txt
-echo "from the commit" >>reference/$2_ref.txt
-echo $(git log |head -1) >>reference/$2_ref.txt
-echo "with the version of gcc" >>reference/$2_ref.txt
-echo $(gcc --version |head -1) >>reference/$2_ref.txt
-echo "on the architecture $3" >>reference/$2_ref.txt
-echo $(uname -a) >>reference/$2_ref.txt
+echo "This reference was created by launching a Gate simulation on" >reference/$1_$2_ref.txt
+echo $(date) >>reference/$1_$2_ref.txt
+echo "with the configuration file benchmarks/$1/mac/$2.mac" >>reference/$1_$2_ref.txt
+echo "from the commit" >>reference/$1_$2_ref.txt
+echo $(git log |head -1) >>reference/$1_$2_ref.txt
+echo "with the version of gcc" >>reference/$1_$2_ref.txt
+echo $(gcc --version |head -1) >>reference/$1_$2_ref.txt
+echo "on the architecture $3" >>reference/$1_$2_ref.txt
+echo $(uname -a) >>reference/$1_$2_ref.txt
 
-cp reference/$2_ref.txt test_ref
-git add reference/$2_ref.txt
+cp reference/$1_$2_ref.txt test_ref
+git add reference/$1_$2_ref.txt
 
 cd test_ref
-tar cvzf $1-reference.tgz *
+tar cvzf $1_$2-reference.tgz *
 cd ..
-mv test_ref/$1-reference.tgz reference
+mv test_ref/$1_$2-reference.tgz reference
 rm -rf test_ref
 echo "----------------------------------------------------"
 
@@ -90,12 +90,12 @@ echo "md5sum creation."
 
 if test "$(uname)" = "Darwin"
 then
-    md5 -q $1-reference.tgz >$1-reference.tgz.md5
+    md5 -q $1_$2-reference.tgz >$1_$2-reference.tgz.md5
 else
-    echo $(md5sum $1-reference.tgz | cut -f 1-1 -d ' ') >$1-reference.tgz.md5
+    echo $(md5sum $1_$2-reference.tgz | cut -f 1-1 -d ' ') >$1_$2-reference.tgz.md5
 fi
 
-git add $1-reference.tgz.md5
+git add $1_$2-reference.tgz.md5
 echo "----------------------------------------------------"
 
 echo
@@ -104,8 +104,8 @@ if [ `grep $1_$2 ../../CMakeLists.txt |grep ADD_TEST|wc -l` -eq 0 ];
 then
     echo "Addition of a new external reference data."
 
-    echo "$1-reference.tgz.md5-stamp" >> .gitignore
-    echo "$1-reference.tgz"           >> .gitignore
+    echo "$1_$2-reference.tgz.md5-stamp" >> .gitignore
+    echo "$1_$2-reference.tgz"           >> .gitignore
     git add .gitignore
 
     echo "
@@ -129,7 +129,7 @@ echo "Here is a 'git status':"
 git status
 echo "Don't forget to commit and push the local modifications, especially the new files."
 echo
-echo "Don't forget to upload your data $1-reference.tgz (from $1/reference folder) in http://midas3.kitware.com/midas/community/28"
-echo "To do so, login, select Public/benchmarks/$1/reference/$1-reference.tgz (without checking it), click on 'View' and then 'Upload new revision'."
+echo "Don't forget to upload your data $1_$2-reference.tgz (from $1/reference folder) in http://midas3.kitware.com/midas/community/28"
+echo "To do so, login, select Public/benchmarks/$1/reference/$1_$2-reference.tgz (without checking it), click on 'View' and then 'Upload new revision'."
 
 exit 0
