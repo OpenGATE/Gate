@@ -7,9 +7,6 @@ then
     exit 1
 fi
 
-echo "WARNING"
-echo "If you are creating a new reference archive, please use AddExternalData.sh."
-echo "This script can be used to update an existing reference."
 echo
 echo "The reference will be built from the $1/'output' folder content, based on the list of files provided in the reference/$2.txt file. $3 is the architecture (not mandatory)."
 echo
