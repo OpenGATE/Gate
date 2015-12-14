@@ -87,6 +87,7 @@ echo "----------------------------------------------------"
 
 cd reference
 
+echo
 echo "----------------------------------------------------"
 echo "md5sum creation."
 
@@ -100,8 +101,30 @@ fi
 git add $1-reference.tgz.md5
 echo "----------------------------------------------------"
 
-cd ../..
+echo
+echo "----------------------------------------------------"
+if [ `grep $1_$2 ../../CMakeLists.txt |grep ADD_TEST|wc -l` -eq 0 ];
+then
+    echo "Addition of a new external reference data."
 
+    echo "$1-reference.tgz.md5-stamp" >> .gitignore
+    echo "$1-reference.tgz"           >> .gitignore
+    git add .gitignore
+
+    echo "
+if(BUILD_TESTING)
+  GateAddBenchmarkData(\"DATA{$1/reference/$1_$2-reference.tgz}\")
+  ADD_TEST(NAME $1_$2
+    COMMAND /bin/bash  \${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh $1 $2 \${Gate_SOURCE_DIR})
+endif(BUILD_TESTING)" >> ../../CMakeLists.txt
+    git add ../../CMakeLists.txt
+
+else
+    echo "Already existing external reference data."
+fi
+echo "----------------------------------------------------"
+
+cd ../..
 
 echo
 echo "----------------------------------------------------"
