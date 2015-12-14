@@ -11,11 +11,11 @@ See GATE/LICENSE.txt for further details
   \class  GateDoseActor
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
-	        david.sarrut@creatis.insa-lyon.fr
+          david.sarrut@creatis.insa-lyon.fr
   \date	March 2011
 
 	  - DoseToWater option added by Loïc Grevillot
-    - Dose calculation in inhomogeneous volume added by Thomas Deschler (thomas.deschler@iphc.cnrs.fr)
+	  - Dose calculation in inhomogeneous volume added by Thomas Deschler (thomas.deschler@iphc.cnrs.fr)
  */
 
 
