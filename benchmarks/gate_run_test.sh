@@ -50,8 +50,6 @@ if [ ! -z ${3+x} ]; then
 else
     # Note : ${BASH_SOURCE[0]} contains this script name
     # Tests -ge instead of -eq to include the case of there are backup versions of the script in the current folder.
-    echo $0
-    echo ${BASH_SOURCE[0]}
     if [ `ls | grep ${BASH_SOURCE[0]##*/} | wc -l` -ge 1 ]; then
 	echo "This script is launched locally, from its containing folder."
 	BENCHMARKS_DIRECTORY=`pwd`
