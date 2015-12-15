@@ -22,7 +22,6 @@
 #include "G4UIterminal.hh"
 #include "G4UItcsh.hh"
 #include <G4UIQt.hh>
-#include <qmainwindow.h>
 #include "GateRunManager.hh"
 #include "GateMessageManager.hh"
 #include "GateSteppingVerbose.hh"
@@ -40,7 +39,6 @@
 #include "GateDigitizer.hh"
 #include "GateClock.hh"
 #include "GateUIcontrolMessenger.hh"
-
 #ifdef G4ANALYSIS_USE_ROOT
 #include "GateROOTBasicOutput.hh"
 #include "TPluginManager.h"
@@ -332,11 +330,18 @@ int main( int argc, char* argv[] )
   if( isQt )
     {
 #ifdef G4UI_USE
-      ui = new G4UIExecutive( argc, argv );
-      G4UIQt* qui = static_cast<G4UIQt*> (UImanager->GetG4UIWindow());
-      if (qui) {
+    	#if QT_VERSION >= 0x050000
+    	// Qt5 code
+    	#else
+    	// Qt4 code
+    	
+	#include <qmainwindow.h>
+        ui = new G4UIExecutive( argc, argv );
+        G4UIQt* qui = static_cast<G4UIQt*> (UImanager->GetG4UIWindow());
+        if (qui) {
         qui->GetMainWindow()->setVisible(true);
-      }
+        }
+	#endif
 #else
 #ifdef G4UI_USE_TCSH
       session = new G4UIterminal( new G4UItcsh );
