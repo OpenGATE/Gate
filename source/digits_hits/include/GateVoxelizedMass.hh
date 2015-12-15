@@ -18,7 +18,6 @@ See GATE/LICENSE.txt for further details
 #include "GateVImageActor.hh"
 #include "GateActorManager.hh"
 #include "G4UnitsTable.hh"
-#include "GateVoxelizedMassActorMessenger.hh"
 #include "GateImageWithStatistic.hh"
 
 #include <G4Box.hh>
@@ -27,7 +26,7 @@ class GateVoxelizedMass
 {
  public:
 
-  GateVoxelizedMass() {}
+  GateVoxelizedMass();
   virtual ~GateVoxelizedMass() {}
 
   void Initialize(const G4String mExtVolumeName, const GateImageDouble mExtImage,const G4String mExtMassFile="");
@@ -46,8 +45,10 @@ class GateVoxelizedMass
   int GetNumberOfVolumes(const int index);
   void SetEdep(const int index,const G4String SVName,const double Edep);
   double GetMaxDose(const int index);
+  GateImageDouble UpdateImage(GateImageDouble image);
 
  protected:
+
 
   G4VPhysicalVolume* DAPV;
   G4LogicalVolume* DALV;
@@ -81,6 +82,7 @@ class GateVoxelizedMass
   G4String mVolumeName;
   G4String mMassFile;
 
+  bool mIsInitialized;
   bool mIsParameterised;
   bool mIsVecGenerated;
 

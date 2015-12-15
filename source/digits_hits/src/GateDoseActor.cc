@@ -41,7 +41,8 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mIsDoseNormalisationEnabled = false;
   mIsDoseToWaterNormalisationEnabled = false;
   mDoseAlgorithm = "VolumeWeighting";
-  mMassFile = "";
+  mImportMassImage = "";
+  mExportMassImage = "";
 
   pMessenger = new GateDoseActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateDoseActor() -- end\n");
@@ -109,6 +110,7 @@ void GateDoseActor::Construct() {
   mDoseFilename = G4String(removeExtension(mSaveFilename))+"-Dose."+G4String(getExtension(mSaveFilename));
   mDoseToWaterFilename = G4String(removeExtension(mSaveFilename))+"-DoseToWater."+G4String(getExtension(mSaveFilename));
   mNbOfHitsFilename = G4String(removeExtension(mSaveFilename))+"-NbOfHits."+G4String(getExtension(mSaveFilename));
+  mMassFilename = G4String(removeExtension(mSaveFilename))+"-Mass."+G4String(getExtension(mSaveFilename));
 
   // Set origin, transform, flag
   SetOriginTransformAndFlagToImage(mEdepImage);
@@ -163,19 +165,24 @@ void GateDoseActor::Construct() {
     mNumberOfHitsImage.Allocate();
   }
 
-  if (mDoseAlgorithm=="MassWeighting")
+  if (mExportMassImage!=""||mDoseAlgorithm=="MassWeighting")
   {
     mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mMassImage.Allocate();
-    mVoxelizedMass.Initialize(mVolumeName,mMassImage,mMassFile);
+    mVoxelizedMass.Initialize(mVolumeName,mMassImage,mImportMassImage);
+    mMassImage=mVoxelizedMass.UpdateImage(mMassImage);
   }
-  else
+
+  if (mExportMassImage!=""&&mImportMassImage!="")
+    G4cerr<<"Warning : exported mass image will be the same as the imported !"<<G4endl;
+
+  if (mDoseAlgorithm!="MassWeighting")
   {
     mDoseAlgorithm="VolumeWeighting";
-    if (mMassFile!="")
+    if (mImportMassImage!="")
     {
-      mMassFile="";
-      GateMessage("Actor", 0,"importMassFile command is only compatible with MassWeighting algorithm !"<<Gateendl);
+      mImportMassImage="";
+      G4cerr<<"Warning : importMassImage command is only compatible with MassWeighting algorithm !"<<G4endl;
     }
   }
 
@@ -194,9 +201,11 @@ void GateDoseActor::Construct() {
               "\tNumber of hit     = " << mIsNumberOfHitsImageEnabled << Gateendl <<
               "\t     (last hit)   = " << mIsLastHitEventImageEnabled << Gateendl <<
               "\tDose algorithm    = " << mDoseAlgorithm << Gateendl <<
-              "\tMass file         = " << mMassFile << Gateendl <<
+              "\tMass image (import) = " << mImportMassImage << Gateendl <<
+              "\tMass image (export) = " << mExportMassImage << Gateendl <<
               "\tEdepFilename      = " << mEdepFilename << Gateendl <<
               "\tDoseFilename      = " << mDoseFilename << Gateendl <<
+              "\tMassFilename      = " << mMassFilename << Gateendl <<
               "\tNb Hits filename  = " << mNbOfHitsFilename << Gateendl);
 
   ResetData();
@@ -232,6 +241,9 @@ void GateDoseActor::SaveData() {
   if (mIsNumberOfHitsImageEnabled) {
     mNumberOfHitsImage.Write(mNbOfHitsFilename);
   }
+
+  if (mExportMassImage!="")
+    mMassImage.Write(mMassFilename);
 }
 //-----------------------------------------------------------------------------
 
@@ -242,7 +254,7 @@ void GateDoseActor::ResetData() {
   if (mIsDoseImageEnabled) mDoseImage.Reset();
   if (mIsDoseToWaterImageEnabled) mDoseToWaterImage.Reset();
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.Fill(0);
-  if (mDoseAlgorithm=="MassWeighting") mMassImage.Fill(0);
+  //if (mExportMassImage!=""||mDoseAlgorithm=="MassWeighting") mMassImage.Fill(0);
 }
 //-----------------------------------------------------------------------------
 

@@ -33,7 +33,8 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
   pEnableEdepUncertaintyCmd= 0;
   pEnableNumberOfHitsCmd= 0;
   pSetDoseAlgorithmCmd= 0;
-  pImportMassFileCmd= 0;
+  pImportMassImageCmd= 0;
+  pExportMassImageCmd= 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -57,7 +58,8 @@ GateDoseActorMessenger::~GateDoseActorMessenger()
   if(pEnableEdepUncertaintyCmd) delete pEnableEdepUncertaintyCmd;
   if(pEnableNumberOfHitsCmd) delete pEnableNumberOfHitsCmd;
   if(pSetDoseAlgorithmCmd) delete pSetDoseAlgorithmCmd;
-  if(pImportMassFileCmd) delete pImportMassFileCmd;
+  if(pImportMassImageCmd) delete pImportMassImageCmd;
+  if(pExportMassImageCmd) delete pExportMassImageCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -137,11 +139,17 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   pSetDoseAlgorithmCmd->SetGuidance(guid);
   pSetDoseAlgorithmCmd->SetParameterName("Dose algorithm",false);
 
-  n = base+"/importMassFile";
-  pImportMassFileCmd = new G4UIcmdWithAString(n, this);
-  guid = G4String("Import a voxelized mass file");
-  pImportMassFileCmd->SetGuidance(guid);
-  pImportMassFileCmd->SetParameterName("Mass file",false);
+  n = base+"/importMassImage";
+  pImportMassImageCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Import mass image");
+  pImportMassImageCmd->SetGuidance(guid);
+  pImportMassImageCmd->SetParameterName("Import mass image",false);
+
+  n = base+"/exportMassImage";
+  pExportMassImageCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Export mass image");
+  pExportMassImageCmd->SetGuidance(guid);
+  pExportMassImageCmd->SetParameterName("Export mass image",false);
 }
 //-----------------------------------------------------------------------------
 
@@ -165,7 +173,8 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pEnableDoseToWaterNormCmd) pDoseActor->EnableDoseToWaterNormalisation(pEnableDoseToWaterNormCmd->GetNewBoolValue(newValue));
 
   if (cmd == pSetDoseAlgorithmCmd) pDoseActor->SetDoseAlogithm(newValue);
-  if (cmd == pImportMassFileCmd) pDoseActor->ImportMassFile(newValue);
+  if (cmd == pImportMassImageCmd) pDoseActor->ImportMassImage(newValue);
+  if (cmd == pExportMassImageCmd) pDoseActor->ExportMassImage(newValue);
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }

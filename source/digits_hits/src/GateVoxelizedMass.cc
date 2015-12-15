@@ -30,6 +30,15 @@
 #include <ctime>
 
 //-----------------------------------------------------------------------------
+GateVoxelizedMass::GateVoxelizedMass()
+{
+  mIsInitialized=false;
+  mIsParameterised=false;
+  mIsVecGenerated=false;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImageDouble mExtImage,const G4String mExtMassFile)
 {
   mMassFile=mExtMassFile;
@@ -53,25 +62,22 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
   if(mMassFile!="")
   {
     mMassImage.Read(mMassFile);
-    if(//mMassImage.GetHalfSize()!=mImage.GetHalfSize()||
-       //mMassImage.GetResolution()!=mImage.GetResolution()||
-       mMassImage.GetNumberOfValues()!=mImage.GetNumberOfValues())
+    if(mMassImage.GetHalfSize()!=mImage.GetHalfSize()||
+       mMassImage.GetResolution()!=mImage.GetResolution())
+       //mMassImage.GetNumberOfValues()!=mImage.GetNumberOfValues())
     {
       /*G4cout<<"mMassImage.GetHalfSize()="<<mMassImage.GetHalfSize()<<G4endl
             <<"mImage.GetHalfSize()="<<mImage.GetHalfSize()<<G4endl;
       G4cout<<"mMassImage.GetResolution()="<<mMassImage.GetResolution()<<G4endl
             <<"mImage.GetResolution()="<<mImage.GetResolution()<<G4endl;
       G4cout<<"mMassImage.GetNumberOfValues()="<<mMassImage.GetNumberOfValues()<<G4endl
-            <<"mImage.GetNumberOfValues()="<<mImage.GetNumberOfValues()<<G4endl;
-      GateError("!!! ERROR : "<<mMassFile<<" hasn't the right size and resolution."<<Gateendl);*/
-      GateError("!!! ERROR : "<<mMassFile<<" hasn't the right number of values."<<Gateendl);
+            <<"mImage.GetNumberOfValues()="<<mImage.GetNumberOfValues()<<G4endl;*/
+      GateError("!!! ERROR : "<<mMassFile<<" hasn't the right size and resolution."<<Gateendl);
+      //GateError("!!! ERROR : "<<mMassFile<<" hasn't the right number of values."<<Gateendl);
     }
     doselExternalMass.resize(mMassImage.GetNumberOfValues(),-1.);
     for(int i=0;i<mMassImage.GetNumberOfValues();i++)
-    {
       doselExternalMass[i]=mMassImage.GetValue(i)*kg;
-      //G4cout<<"TEST : "<<mMassImage.GetValue(i)<<G4endl;
-    }
   }
 
   DAPV=G4PhysicalVolumeStore::GetInstance()->GetVolume(mVolumeName+"_phys");
@@ -94,6 +100,7 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
     if(doselExternalMass.size()==0)
       GateVoxelizedMass::GenerateVoxels();
   }
+  mIsInitialized=true;
 }
 //-----------------------------------------------------------------------------
 
@@ -177,7 +184,7 @@ void GateVoxelizedMass::GenerateVectors()
     G4cout<<"     Number of voxels : "<<DALV->GetDaughter(0)->GetMultiplicity()<<G4endl;
   G4cout<<"     Number of dosels : "<<mImage.GetNumberOfValues()<<G4endl;
   G4cout<<"     Dosels reconstructed total mass : "<<G4BestUnit(doselReconstructedTotalMass,"Mass")<<G4endl;
-  G4cout<<"     Dosels reconstructed total cubic volume : "<<G4BestUnit(doselReconstructedTotalCubicVolume,"Volume")<<G4endl;
+  //G4cout<<"     Dosels reconstructed total cubic volume : "<<G4BestUnit(doselReconstructedTotalCubicVolume,"Volume")<<G4endl;
   G4cout<<"================================================================"<<G4endl<<G4endl;
 
   mIsVecGenerated=true;
@@ -528,5 +535,21 @@ double GateVoxelizedMass::GetMaxDose(const int index)
     }
 
   return edepmax/GetPartialMass(index,SVName);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+GateImageDouble GateVoxelizedMass::UpdateImage(GateImageDouble image)
+{
+  if(mIsInitialized)
+  {
+    std::vector<double> vector;
+    vector.clear();
+    vector=GetVoxelMassVector();
+
+    for(size_t i=0;i<vector.size();i++)
+      image.AddValue(i,vector[i]/kg);
+  }
+  return image;
 }
 //-----------------------------------------------------------------------------

@@ -10,7 +10,7 @@ See GATE/LICENSE.txt for further details
   \class  GateDoseActorMessenger
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
+          david.sarrut@creatis.insa-lyon.fr
 */
 
 #ifndef GATEDOSEACTORMESSENGER_HH
@@ -47,7 +47,8 @@ protected:
   G4UIcmdWithABool * pEnableDoseNormToIntegralCmd;
   G4UIcmdWithABool * pEnableDoseToWaterNormCmd;
   G4UIcmdWithAString * pSetDoseAlgorithmCmd;
-  G4UIcmdWithAString * pImportMassFileCmd;
+  G4UIcmdWithAString * pImportMassImageCmd;
+  G4UIcmdWithAString * pExportMassImageCmd;
 };
 
 #endif /* end #define GATEDOSEACTORMESSENGER_HH*/
