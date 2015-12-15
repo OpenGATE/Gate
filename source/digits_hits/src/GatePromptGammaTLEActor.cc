@@ -142,7 +142,7 @@ void GatePromptGammaTLEActor::SaveData()
   }
   if (mIsSysVarianceImageEnabled) {
     BuildSysVarianceOutput();
-    tle->Write(G4String(removeExtension(mSaveFilename))+"-tle2."+G4String(getExtension(mSaveFilename)));
+    tle->Write(G4String(removeExtension(mSaveFilename))+"-tle."+G4String(getExtension(mSaveFilename)));
     tlesysvar->Write(G4String(removeExtension(mSaveFilename))+"-tlesysvar."+G4String(getExtension(mSaveFilename)));
   }
 
@@ -366,14 +366,16 @@ void GatePromptGammaTLEActor::BuildSysVarianceOutput() {
 
     // prep some things that are constant for all gamma bins
     std::vector<double> tracklav(data.GetProtonNbBins());
+    std::vector<double> tracklavsq(data.GetProtonNbBins());
     for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
       double trackli = trackl->GetValueDouble(vi,pi);
       if(trackli<=0.) { //if trackl==0, then all is zero.
         tracklav[pi] = 0.;
         continue;
       }
-      //if not, compute trackl,tracklsq,tracklavsq
+      //if not, compute tracklav,tracklavsq
       tracklav[pi] = trackli/n; //only now do we average, before it was actually the tracksum
+      tracklavsq[pi] = tracklav[pi]*tracklav[pi]; //only now do we average, before it was actually the tracksum
     }
 
     for(int gi=0; gi<data.GetGammaNbBins() ; gi++ ){ //per proton bin, compute the contribution to the gammabin
@@ -388,9 +390,8 @@ void GatePromptGammaTLEActor::BuildSysVarianceOutput() {
         //TLE, TLE uncertainty
         tleval += igammam * tracklav[pi];
 
-        double tracklavsq = tracklav[pi] * tracklav[pi];
-        if (ingammam > 0.) tlevarval += pow(igammam,2) * tracklavsq/ingammam;
-        else tlevarval += pow(igammam,2) * tracklavsq;
+        if (ingammam > 0.) tlevarval += pow(igammam,2) * tracklavsq[pi]/ingammam;
+        else tlevarval += pow(igammam,2) * tracklavsq[pi];
       }
 
       tle->SetValueDouble(vi,gi,tleval);
