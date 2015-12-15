@@ -102,6 +102,7 @@ public:
 
   //-----------------------------------------------------------------------------
   void SetSaveFilename(G4String  f);
+  G4String GetSaveFilename() { return mSaveFilename; }
   virtual void SaveData();
   virtual void ResetData() = 0;
   void EnableSaveEveryNEvents(int n) { mSaveEveryNEvents = n; }

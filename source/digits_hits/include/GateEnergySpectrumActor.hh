@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 #include "GateConfiguration.h"
 #ifdef G4ANALYSIS_USE_ROOT
@@ -12,16 +12,17 @@ See GATE/LICENSE.txt for further details
 /*!
   \class  GateEnergySpectrumActor
   \author thibault.frisson@creatis.insa-lyon.fr
-          laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
-	  pierre.gueth@creatis.insa-lyon.fr
- */
+  laurent.guigues@creatis.insa-lyon.fr
+  david.sarrut@creatis.insa-lyon.fr
+  pierre.gueth@creatis.insa-lyon.fr
+*/
 
 #ifndef GATEENERGYSPECTRUMACTOR_HH
 #define GATEENERGYSPECTRUMACTOR_HH
 
 #include "GateVActor.hh"
 #include "GateActorMessenger.hh"
+#include "GateDiscreteSpectrum.hh"
 
 #include <TROOT.h>
 #include <TFile.h>
@@ -32,7 +33,7 @@ See GATE/LICENSE.txt for further details
 /// \brief Actor displaying nb events/tracks/step
 class GateEnergySpectrumActor : public GateVActor
 {
- public:
+public:
 
   virtual ~GateEnergySpectrumActor();
 
@@ -54,12 +55,12 @@ class GateEnergySpectrumActor : public GateVActor
   virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*) ;
   virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*) ;
   virtual void EndOfEventAction(const G4Event*);
+
   //-----------------------------------------------------------------------------
   /// Saves the data collected to the file
   virtual void SaveData();
   virtual void ResetData();
 
-//  virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
 
@@ -78,7 +79,8 @@ class GateEnergySpectrumActor : public GateVActor
   void SetEdepmin(double v) {mEdepmin = v;}
   void SetEdepmax(double v) {mEdepmax = v;}
   void SetEdepNBins(int v) {mEdepNBins = v;}
-
+  void SetSaveAsTextFlag(bool b) { mSaveAsTextFlag = b; }
+  void SetSaveAsTextDiscreteEnergySpectrumFlag(bool b) { mSaveAsDiscreteSpectrumTextFlag = b; if (b) SetSaveAsTextFlag(b); }
 
 protected:
   GateEnergySpectrumActor(G4String name, G4int depth=0);
@@ -102,6 +104,7 @@ protected:
 
   double Ei,Ef;
   int nTrack;
+  int nEvent;
   bool newEvt;
   bool newTrack;
   double sumNi;
@@ -114,6 +117,13 @@ protected:
   double edepTrack;
 
   GateActorMessenger* pMessenger;
+
+
+  GateDiscreteSpectrum mDiscreteSpectrum;
+  void SaveAsText(TH1D * histo, G4String initial_filename);
+  bool mSaveAsTextFlag;
+  bool mSaveAsDiscreteSpectrumTextFlag;
+
 };
 
 MAKE_AUTO_CREATOR_ACTOR(EnergySpectrumActor,GateEnergySpectrumActor)
