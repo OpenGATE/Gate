@@ -62,17 +62,20 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
   if(mMassFile!="")
   {
     mMassImage.Read(mMassFile);
-    if(mMassImage.GetHalfSize()!=mImage.GetHalfSize()||
-       mMassImage.GetResolution()!=mImage.GetResolution())
-       //mMassImage.GetNumberOfValues()!=mImage.GetNumberOfValues())
+    if(std::abs(mMassImage.GetVoxelVolume()-mImage.GetVoxelVolume())>1E-4||//FIXME
+       mMassImage.GetResolution().getX()!=mImage.GetResolution().getX()||
+       mMassImage.GetResolution().getY()!=mImage.GetResolution().getY()||
+       mMassImage.GetResolution().getZ()!=mImage.GetResolution().getZ()||
+       mMassImage.GetNumberOfValues()!=mImage.GetNumberOfValues())
     {
-      /*G4cout<<"mMassImage.GetHalfSize()="<<mMassImage.GetHalfSize()<<G4endl
-            <<"mImage.GetHalfSize()="<<mImage.GetHalfSize()<<G4endl;
+      /*G4cout<<"mMassImage.GetVoxelVolume()="<<mMassImage.GetVoxelVolume()<<G4endl
+            <<"mImage.GetVoxelVolume()="<<mImage.GetVoxelVolume()<<G4endl;
+      G4cout<<"std::abs(mMassImage.GetVoxelVolume()-mImage.GetVoxelVolume())="<<std::abs(mMassImage.GetVoxelVolume()-mImage.GetVoxelVolume())<<G4endl;
       G4cout<<"mMassImage.GetResolution()="<<mMassImage.GetResolution()<<G4endl
             <<"mImage.GetResolution()="<<mImage.GetResolution()<<G4endl;
       G4cout<<"mMassImage.GetNumberOfValues()="<<mMassImage.GetNumberOfValues()<<G4endl
             <<"mImage.GetNumberOfValues()="<<mImage.GetNumberOfValues()<<G4endl;*/
-      GateError("!!! ERROR : "<<mMassFile<<" hasn't the right size and resolution."<<Gateendl);
+      GateError("!!! ERROR : "<<mMassFile<<" hasn't the right voxel volume and resolution !"<<Gateendl);
       //GateError("!!! ERROR : "<<mMassFile<<" hasn't the right number of values."<<Gateendl);
     }
     doselExternalMass.resize(mMassImage.GetNumberOfValues(),-1.);

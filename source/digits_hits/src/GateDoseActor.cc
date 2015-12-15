@@ -173,7 +173,7 @@ void GateDoseActor::Construct() {
   }
 
   if (mExportMassImage!=""&&mImportMassImage!="")
-    G4cerr<<"Warning : exported mass image will be the same as the imported !"<<G4endl;
+    G4cerr<<"Warning : exported mass image will be the same as the imported one !"<<G4endl;
 
   if (mDoseAlgorithm!="MassWeighting")
   {
