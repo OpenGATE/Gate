@@ -50,8 +50,6 @@ if [ ! -z ${3+x} ]; then
 else
     # Note : ${BASH_SOURCE[0]} contains this script name
     # Tests -ge instead of -eq to include the case of there are backup versions of the script in the current folder.
-    echo $0
-    echo ${BASH_SOURCE[0]}
     if [ `ls | grep ${BASH_SOURCE[0]##*/} | wc -l` -ge 1 ]; then
 	echo "This script is launched locally, from its containing folder."
 	BENCHMARKS_DIRECTORY=`pwd`
@@ -94,10 +92,10 @@ echo
 cd reference
 echo "----------------------------------------------------"
 echo "Reference archive content:"
-tar xvzf $1-reference.tgz
+tar xvzf $1_$2-reference.tgz
 # Testing if the archive exists, otherwise explain how to get it
 if [ `echo $?` -ge 1 ]; then
-    echo "The archive $1-reference.tgz is not present in the folder $BENCHMARKS_DIRECTORY/$1/reference."
+    echo "The archive $1_$2-reference.tgz is not present in the folder $BENCHMARKS_DIRECTORY/$1/reference."
     echo "To retrieve it:"
     echo "Go to Gate compilation folder ;"
     echo "Launch 'ccmake .' and set the options 'BUILD_TESTING' and 'GATE_DOWNLOAD_BENCHMARKS_DATA' to ON ;"
@@ -120,7 +118,7 @@ echo
 
 exit_status_final=0
 
-# Each line of the $2.txt file is splitted (separator is space) and stored in an array 'WORD'
+# Each line of the $1_$2.txt file is splitted (separator is space) and stored in an array 'WORD'
 while read -a WORD
 do
     echo "${WORD[@]}"
@@ -132,8 +130,8 @@ do
     fi
 
     if [ ${WORD[0]} == "diff_stat" ]; then
-	echo "diff_stat: Performing detailed diff on the 6th first lines of stat-gamma.txt:"
-	diff -s <(head -n 6 reference/stat-gamma.txt) <(head -n 6 output/stat-gamma.txt)
+	echo "diff_stat: Performing detailed diff on the 6th first lines of stat-$2.txt:"
+	diff -s <(head -n 6 reference/stat-$2.txt) <(head -n 6 output/stat-$2.txt)
 	exit_status_partial=$?
     fi
 
@@ -141,7 +139,7 @@ do
     echo $exit_status_partial
     echo
     exit_status_final=$(($exit_status_final+$exit_status_partial))
-done <$BENCHMARKS_DIRECTORY/$1/reference/$2.txt
+done <$BENCHMARKS_DIRECTORY/$1/reference/$1_$2.txt
 
 echo
 echo "--------------------------"
