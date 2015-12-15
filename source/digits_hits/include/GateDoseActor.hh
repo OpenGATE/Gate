@@ -110,7 +110,6 @@ protected:
 
   G4String mEdepFilename;
   G4String mDoseFilename;
-  G4String mMassFilename;
   G4String mDoseToWaterFilename;
   G4String mNbOfHitsFilename;
   G4String mDoseAlgorithm;

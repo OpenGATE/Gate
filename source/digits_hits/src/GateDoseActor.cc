@@ -110,7 +110,6 @@ void GateDoseActor::Construct() {
   mDoseFilename = G4String(removeExtension(mSaveFilename))+"-Dose."+G4String(getExtension(mSaveFilename));
   mDoseToWaterFilename = G4String(removeExtension(mSaveFilename))+"-DoseToWater."+G4String(getExtension(mSaveFilename));
   mNbOfHitsFilename = G4String(removeExtension(mSaveFilename))+"-NbOfHits."+G4String(getExtension(mSaveFilename));
-  mMassFilename = G4String(removeExtension(mSaveFilename))+"-Mass."+G4String(getExtension(mSaveFilename));
 
   // Set origin, transform, flag
   SetOriginTransformAndFlagToImage(mEdepImage);
@@ -205,7 +204,6 @@ void GateDoseActor::Construct() {
               "\tMass image (export) = " << mExportMassImage << Gateendl <<
               "\tEdepFilename      = " << mEdepFilename << Gateendl <<
               "\tDoseFilename      = " << mDoseFilename << Gateendl <<
-              "\tMassFilename      = " << mMassFilename << Gateendl <<
               "\tNb Hits filename  = " << mNbOfHitsFilename << Gateendl);
 
   ResetData();
@@ -243,7 +241,7 @@ void GateDoseActor::SaveData() {
   }
 
   if (mExportMassImage!="")
-    mMassImage.Write(mMassFilename);
+    mMassImage.Write(mExportMassImage);
 }
 //-----------------------------------------------------------------------------
 
