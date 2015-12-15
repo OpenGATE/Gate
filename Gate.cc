@@ -21,7 +21,8 @@
 #include "G4UImanager.hh"
 #include "G4UIterminal.hh"
 #include "G4UItcsh.hh"
-#include <G4UIQt.hh>
+
+
 #include "GateRunManager.hh"
 #include "GateMessageManager.hh"
 #include "GateSteppingVerbose.hh"
@@ -49,7 +50,16 @@
 #endif
 #ifdef G4UI_USE
 #include "G4UIExecutive.hh"
+#if QT_VERSION >= 0x050000
+// Qt5 code
+#else
+// Qt4 code
+#include <G4UIQt.hh>
+#include <qmainwindow.h>
 #endif
+#endif
+
+
 
 //-----------------------------------------------------------------------------
 void printHelpAndQuit( G4String msg )
@@ -335,7 +345,7 @@ int main( int argc, char* argv[] )
     	#else
     	// Qt4 code
     	
-	#include <qmainwindow.h>
+	
         ui = new G4UIExecutive( argc, argv );
         G4UIQt* qui = static_cast<G4UIQt*> (UImanager->GetG4UIWindow());
         if (qui) {
