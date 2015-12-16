@@ -89,8 +89,8 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
   vectorSV.clear();
   doselReconstructedMass.clear();
   doselReconstructedCubicVolume.clear();
-  doselReconstructedMass.resize(mImage.GetNumberOfValues(),-1.);
-  doselReconstructedCubicVolume.resize(mImage.GetNumberOfValues(),-1.);
+  doselReconstructedMass.resize(mImage.GetNumberOfValues(),0.);
+  doselReconstructedCubicVolume.resize(mImage.GetNumberOfValues(),0.);
 
   doselSV=new G4Box("DoselSV",
                     mImage.GetVoxelSize().getX()/2.0,
@@ -239,7 +239,13 @@ void GateVoxelizedMass::GenerateVoxels()
       GateError("!!! ERROR : Too many voxels !!! (xVoxel="<<xVoxel<<",yVoxel="<<yVoxel<<",zVoxel="<<zVoxel<<")"<<Gateendl);
 
     voxelCubicVolume[xVoxel][yVoxel][zVoxel]=daughterParameterisation->ComputeSolid(i,daughterPV)->GetCubicVolume();
+    if(voxelCubicVolume[xVoxel][yVoxel][zVoxel]<=0.)
+      GateError("!!! ERROR : Voxel (index : "<<i<<") cubic volume is less or equal to zero !!! (cubic volume="<<voxelCubicVolume[xVoxel][yVoxel][zVoxel]<<")"<<Gateendl);
+
     voxelMass[xVoxel][yVoxel][zVoxel]=daughterParameterisation->ComputeMaterial(i,daughterPV)->GetDensity()*daughterParameterisation->ComputeSolid(i,daughterPV)->GetCubicVolume();
+
+    if(voxelMass[xVoxel][yVoxel][zVoxel]<=0.)
+      GateError("!!! ERROR : Voxel (index : "<<i<<") mass is less or equal to zero !!! (mass="<<voxelMass[xVoxel][yVoxel][zVoxel]<<")"<<Gateendl);
   }
 }
 //-----------------------------------------------------------------------------
@@ -367,6 +373,20 @@ std::pair<double,double> GateVoxelizedMass::ParameterizedVolume(const int index)
 
               doselReconstructedCubicVolume[index]+=voxelCubicVolume[coord[0][xVox]][coord[1][yVox]][coord[2][zVox]]*coefVox;
               doselReconstructedMass[index]+=voxelMass[coord[0][xVox]][coord[1][yVox]][coord[2][zVox]]*coefVox;
+
+              if(doselReconstructedCubicVolume[index]<0.)
+                GateError("!!! ERROR : doselReconstructedCubicVolume is negative !"<<Gateendl
+                        <<"     More informations :"<<Gateendl
+                        <<"            doselReconstructedCubicVolume["<<index<<"]="<<doselReconstructedCubicVolume[index]<<Gateendl
+                        <<"            voxelCubicVolume="<<voxelCubicVolume[coord[0][xVox]][coord[1][yVox]][coord[2][zVox]]<<Gateendl
+                        <<"            coefVox="<<coefVox<<Gateendl);
+
+              if(doselReconstructedMass[index]<0.)
+                GateError("!!! ERROR : doselReconstructedMass is negative !"<<Gateendl
+                        <<"     More informations :"<<Gateendl
+                        <<"            doselReconstructedMass["<<index<<"]="<<doselReconstructedMass[index]<<Gateendl
+                        <<"            voxelMass="<<voxelMass[coord[0][xVox]][coord[1][yVox]][coord[2][zVox]]<<Gateendl
+                        <<"            coefVox="<<coefVox<<Gateendl);
             }
       }
   if(doselReconstructedMass[index]<0.)
