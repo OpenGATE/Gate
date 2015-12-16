@@ -256,8 +256,6 @@ G4double GateSourceY90Brem::GetNextTime( G4double timeStart )
         activityNow = 0.;
       else
       {
-        // Force life time to 0, time is managed by GATE not G4
-        //GetParticleDefinition()->SetPDGLifeTime(0);
         if( m_forcedUnstableFlag )
         {
           if( m_forcedLifeTime > 0. )
