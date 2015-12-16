@@ -21,8 +21,6 @@
 #include "G4UImanager.hh"
 #include "G4UIterminal.hh"
 #include "G4UItcsh.hh"
-
-
 #include "GateRunManager.hh"
 #include "GateMessageManager.hh"
 #include "GateSteppingVerbose.hh"
@@ -49,15 +47,14 @@
 #include "G4VisExecutive.hh"
 #endif
 #ifdef G4UI_USE
+#include "qglobal.h"
 #include "G4UIExecutive.hh"
-#if QT_VERSION >= 0x050000
-// Qt5 code
-#else
-// Qt4 code
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <G4UIQt.hh>
 #include <qmainwindow.h>
 #endif
 #endif
+
 
 
 
@@ -340,13 +337,8 @@ int main( int argc, char* argv[] )
   if( isQt )
     {
 #ifdef G4UI_USE
-    	#if QT_VERSION >= 0x050000
-    	// Qt5 code
-    	#else
-    	// Qt4 code
-    	
-	
-        ui = new G4UIExecutive( argc, argv );
+    	#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+	ui = new G4UIExecutive( argc, argv );
         G4UIQt* qui = static_cast<G4UIQt*> (UImanager->GetG4UIWindow());
         if (qui) {
         qui->GetMainWindow()->setVisible(true);
