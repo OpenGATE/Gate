@@ -1,0 +1,46 @@
+#############################################
+## DoseActors with MassWeighting algorithm ##
+#############################################
+
+# Phantom resolution
+/gate/actor/addActor DoseActor            DAMW1x
+/gate/actor/DAMW1x/save                   output/DAMW1x.mhd
+/gate/actor/DAMW1x/attachTo               patient
+/gate/actor/DAMW1x/stepHitType            random
+/gate/actor/DAMW1x/setResolution          299 137 1
+/gate/actor/DAMW1x/enableDose             true
+/gate/actor/DAMW1x/enableSquaredDose      true
+/gate/actor/DAMW1x/enableUncertaintyDose  true
+/gate/actor/DAMW1x/setDoseAlgorithm       MassWeighting
+
+# 1/2 phantom resolution
+/gate/actor/addActor DoseActor            DAMW2x
+/gate/actor/DAMW2x/save                   output/DAMW2x.mhd
+/gate/actor/DAMW2x/attachTo               patient
+/gate/actor/DAMW2x/stepHitType            random
+/gate/actor/DAMW2x/setResolution          150 68 1
+/gate/actor/DAMW2x/enableDose             true
+/gate/actor/DAMW2x/enableSquaredDose      true
+/gate/actor/DAMW2x/enableUncertaintyDose  true
+/gate/actor/DAMW2x/setDoseAlgorithm       MassWeighting
+
+# 1/4 phantom resolution
+/gate/actor/addActor DoseActor            DAMW4x
+/gate/actor/DAMW4x/save                   output/DAMW4x.mhd
+/gate/actor/DAMW4x/attachTo               patient
+/gate/actor/DAMW4x/stepHitType            random
+/gate/actor/DAMW4x/setResolution          75 34 1
+/gate/actor/DAMW4x/enableDose             true
+/gate/actor/DAMW4x/enableSquaredDose      true
+/gate/actor/DAMW4x/enableUncertaintyDose  true
+/gate/actor/DAMW4x/setDoseAlgorithm       MassWeighting
+
+## MASS IMAGES EXPORT
+/gate/actor/DAMW1x/exportMassImage        output/DAMW1x-Mass.mhd
+/gate/actor/DAMW2x/exportMassImage        output/DAMW2x-Mass.mhd
+/gate/actor/DAMW4x/exportMassImage        output/DAMW4x-Mass.mhd
+
+## MASS IMAGES IMPORT
+#/gate/actor/DAMW1x/importMassImage        data/DAMW1x-Mass.mhd
+#/gate/actor/DAMW2x/importMassImage        data/DAMW2x-Mass.mhd
+#/gate/actor/DAMW4x/importMassImage        data/DAMW4x-Mass.mhd
