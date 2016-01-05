@@ -1,0 +1,36 @@
+###############################################
+## DoseActors with VolumeWeighting algorithm ##
+###############################################
+
+# Phantom resolution
+/gate/actor/addActor DoseActor            DAVW1x
+/gate/actor/DAVW1x/save                   output/DAVW1x.mhd
+/gate/actor/DAVW1x/attachTo    	          patient
+/gate/actor/DAVW1x/stepHitType            random
+/gate/actor/DAVW1x/setResolution          299 137 1
+/gate/actor/DAVW1x/enableDose             true
+/gate/actor/DAVW1x/enableSquaredDose      true
+/gate/actor/DAVW1x/enableUncertaintyDose  true
+/gate/actor/DAVW1x/setDoseAlgorithm       VolumeWeighting # Not mandatory, algorithm used by default
+
+# 1/2 phantom resolution
+/gate/actor/addActor DoseActor            DAVW2x
+/gate/actor/DAVW2x/save                   output/DAVW2x.mhd
+/gate/actor/DAVW2x/attachTo    	          patient
+/gate/actor/DAVW2x/stepHitType            random
+/gate/actor/DAVW2x/setResolution          150 68 1
+/gate/actor/DAVW2x/enableDose             true
+/gate/actor/DAVW2x/enableSquaredDose      true
+/gate/actor/DAVW2x/enableUncertaintyDose  true
+/gate/actor/DAVW2x/setDoseAlgorithm       VolumeWeighting # Not mandatory, algorithm used by default
+
+# 1/4 phantom resolution
+/gate/actor/addActor DoseActor            DAVW4x
+/gate/actor/DAVW4x/save                   output/DAVW4x.mhd
+/gate/actor/DAVW4x/attachTo    	          patient
+/gate/actor/DAVW4x/stepHitType            random
+/gate/actor/DAVW4x/setResolution          75 34 1
+/gate/actor/DAVW4x/enableDose             true
+/gate/actor/DAVW4x/enableSquaredDose      true
+/gate/actor/DAVW4x/enableUncertaintyDose  true
+/gate/actor/DAVW4x/setDoseAlgorithm       VolumeWeighting # Not mandatory, algorithm used by default
