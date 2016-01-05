@@ -97,8 +97,7 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
                     mImage.GetVoxelSize().getY()/2.0,
                     mImage.GetVoxelSize().getZ()/2.0);
 
-  if(DALV->GetNoDaughters()==1&&DALV->GetDaughter(0)->IsParameterised())
-  {
+  if (DALV->GetNoDaughters()==1 && DALV->GetDaughter(0)->IsParameterised()) {
     mIsParameterised=true;
     if(doselExternalMass.size()==0)
       GateVoxelizedMass::GenerateVoxels();
@@ -152,6 +151,8 @@ void GateVoxelizedMass::GenerateVectors()
   doselReconstructedTotalCubicVolume=0.;
   doselReconstructedTotalMass=0.;
 
+  DD(mImage.GetNumberOfValues());
+  DD(mIsParameterised);
   for(long int i=0;i<mImage.GetNumberOfValues();i++)
   {
     time(&timer3);
@@ -425,7 +426,7 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
 
   // Overlap Mother-Dosel
   motherSV=new G4IntersectionSolid(motherSV->GetName(),//+"∩"+doselSV->GetName(),
-                                  doselSV, 
+                                  doselSV,
                                   motherSV,
                                   &doselRotation, // Local rotation
                                   doselTranslation); // Local translation
@@ -435,7 +436,7 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
     return std::make_pair(0.,0.);
 
   // Calculation for daughter(s) ///////////////////////////////////////////
-  if(motherLV->GetNoDaughters()>0) 
+  if(motherLV->GetNoDaughters()>0)
   {
     for(int i=0;i<motherLV->GetNoDaughters();i++)
     {
@@ -452,7 +453,7 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
                                       daughterSV,
                                       &daughterRotation, // Local rotation
                                       daughterTranslation); // Local translation
-    
+
       // Daughter absolute translation and rotation
       if(Generation>0)
       {
@@ -462,7 +463,7 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
 
       std::pair<double,double> daughterIteration(VoxelIteration(daughterPV,Generation+1,daughterRotation,daughterTranslation,index));
 
-      motherProgenyMass+=daughterIteration.first; 
+      motherProgenyMass+=daughterIteration.first;
       motherProgenyCubicVolume+=daughterIteration.second;
     }
   }

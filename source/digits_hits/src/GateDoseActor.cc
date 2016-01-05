@@ -178,7 +178,7 @@ void GateDoseActor::Construct() {
     mDoseAlgorithmType="VolumeWeighting";
     if (mImportMassImage!="") {
       mImportMassImage="";
-      GateWarning("importMassImage command is only compatible with MassWeighting algorithm. Ignored. "<<G4endl;
+      GateWarning("importMassImage command is only compatible with MassWeighting algorithm. Ignored. ");
     }
   }
 
