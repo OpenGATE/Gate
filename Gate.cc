@@ -47,14 +47,15 @@
 #include "G4VisExecutive.hh"
 #endif
 #ifdef G4UI_USE
-#include "qglobal.h"
 #include "G4UIExecutive.hh"
+#ifdef G4UI_USE_QT
+#include "qglobal.h"
 #if (QT_VERSION >= QT_VERSION_CHECK(4, 0, 0))
 #include <G4UIQt.hh>
 #include <qmainwindow.h>
 #endif
 #endif
-
+#endif
 
 
 
@@ -337,12 +338,14 @@ int main( int argc, char* argv[] )
   if( isQt )
     {
 #ifdef G4UI_USE
+	#ifdef G4UI_USE_QT
     	#if (QT_VERSION >= QT_VERSION_CHECK(4, 0, 0))
 	ui = new G4UIExecutive( argc, argv );
         G4UIQt* qui = static_cast<G4UIQt*> (UImanager->GetG4UIWindow());
         if (qui) {
         qui->GetMainWindow()->setVisible(true);
         }
+	#endif
 	#endif
 #else
 #ifdef G4UI_USE_TCSH
