@@ -40,7 +40,7 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mIsNumberOfHitsImageEnabled = false;
   mIsDoseNormalisationEnabled = false;
   mIsDoseToWaterNormalisationEnabled = false;
-  mDoseAlgorithm = "VolumeWeighting";
+  mDoseAlgorithmType = "VolumeWeighting";
   mImportMassImage = "";
   mExportMassImage = "";
 
@@ -164,24 +164,21 @@ void GateDoseActor::Construct() {
     mNumberOfHitsImage.Allocate();
   }
 
-  if (mExportMassImage!=""||mDoseAlgorithm=="MassWeighting")
-  {
+  if (mExportMassImage!="" || mDoseAlgorithmType=="MassWeighting") {
     mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mMassImage.Allocate();
     mVoxelizedMass.Initialize(mVolumeName,mMassImage,mImportMassImage);
     mMassImage=mVoxelizedMass.UpdateImage(mMassImage);
   }
 
-  if (mExportMassImage!=""&&mImportMassImage!="")
-    G4cerr<<"Warning : exported mass image will be the same as the imported one !"<<G4endl;
+  if (mExportMassImage!="" && mImportMassImage!="")
+    GateWarning("Exported mass image will be the same as the imported one.");
 
-  if (mDoseAlgorithm!="MassWeighting")
-  {
-    mDoseAlgorithm="VolumeWeighting";
-    if (mImportMassImage!="")
-    {
+  if (mDoseAlgorithmType != "MassWeighting") {
+    mDoseAlgorithmType="VolumeWeighting";
+    if (mImportMassImage!="") {
       mImportMassImage="";
-      G4cerr<<"Warning : importMassImage command is only compatible with MassWeighting algorithm !"<<G4endl;
+      GateWarning("importMassImage command is only compatible with MassWeighting algorithm. Ignored. "<<G4endl;
     }
   }
 
@@ -199,7 +196,7 @@ void GateDoseActor::Construct() {
               "\tEdep uncertainty  = " << mIsEdepUncertaintyImageEnabled << Gateendl <<
               "\tNumber of hit     = " << mIsNumberOfHitsImageEnabled << Gateendl <<
               "\t     (last hit)   = " << mIsLastHitEventImageEnabled << Gateendl <<
-              "\tDose algorithm    = " << mDoseAlgorithm << Gateendl <<
+              "\tDose algorithm    = " << mDoseAlgorithmType << Gateendl <<
               "\tMass image (import) = " << mImportMassImage << Gateendl <<
               "\tMass image (export) = " << mExportMassImage << Gateendl <<
               "\tEdepFilename      = " << mEdepFilename << Gateendl <<
@@ -240,10 +237,11 @@ void GateDoseActor::SaveData() {
     mNumberOfHitsImage.Write(mNbOfHitsFilename);
   }
 
-  if (mExportMassImage!="")
+  if (mExportMassImage != "")
     mMassImage.Write(mExportMassImage);
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateDoseActor::ResetData() {
@@ -252,9 +250,10 @@ void GateDoseActor::ResetData() {
   if (mIsDoseImageEnabled) mDoseImage.Reset();
   if (mIsDoseToWaterImageEnabled) mDoseToWaterImage.Reset();
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.Fill(0);
-  //if (mExportMassImage!=""||mDoseAlgorithm=="MassWeighting") mMassImage.Fill(0);
+  //if (mExportMassImage!=""||mDoseAlgorithmType=="MassWeighting") mMassImage.Fill(0);
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateDoseActor::BeginOfRunAction(const G4Run * r) {
@@ -265,6 +264,7 @@ void GateDoseActor::BeginOfRunAction(const G4Run * r) {
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 // Callback at each event
 void GateDoseActor::BeginOfEventAction(const G4Event * e) {
@@ -274,6 +274,7 @@ void GateDoseActor::BeginOfEventAction(const G4Event * e) {
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateDoseActor::UserPreTrackActionInVoxel(const int /*index*/, const G4Track* track)
 {
@@ -281,6 +282,7 @@ void GateDoseActor::UserPreTrackActionInVoxel(const int /*index*/, const G4Track
   else { mStepHitType = mUserStepHitType; }
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
@@ -320,13 +322,12 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
   //---------------------------------------------------------------------------------
   // Mass weighting
-  if(mDoseAlgorithm=="MassWeighting")
+  if(mDoseAlgorithmType == "MassWeighting")
     density = mVoxelizedMass.GetVoxelMass(index)/mDoseImage.GetVoxelVolume();
   //---------------------------------------------------------------------------------
 
   double dose=0.;
-  if (mIsDoseImageEnabled)
-  {
+  if (mIsDoseImageEnabled) {
     // ------------------------------------
     // Convert deposited energy into Gray
     dose = edep/density/mDoseImage.GetVoxelVolume()/gray;
@@ -351,19 +352,14 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     G4String material = step->GetPreStepPoint()->GetMaterial()->GetName();
     double Energy = step->GetPreStepPoint()->GetKineticEnergy();
     G4String PartName = step->GetTrack()->GetDefinition()->GetParticleName();
-    //    const G4ParticleDefinition * PartDef = step->GetTrack()->GetParticleDefinition();
-    //    G4Material  * MatDef = step->GetTrack()->GetMaterial();
     double DEDX=0, DEDX_Water=0;
-    //    G4cout<<PartName<<"\t";//Gateendl;//"  "<<edep<<"  "<<NonIonizingEdep<< Gateendl;
-
 
     // Dose to water: it could be possible to make this process more
     // generic by choosing any material in place of water
     double Volume = mDoseToWaterImage.GetVoxelVolume();
 
     // Other particles should be taken into account (Helium etc), but bug ? FIXME
-    if (PartName== "proton" || PartName== "e-" || PartName== "e+" || PartName== "deuteron")
-    {
+    if (PartName== "proton" || PartName== "e-" || PartName== "e+" || PartName== "deuteron") {
       //if (PartName != "O16[0.0]" && PartName != "alpha" && PartName != "Be7[0.0]" && PartName != "C12[0.0]"){
 
       DEDX = emcalc->ComputeTotalDEDX(Energy, PartName, material, cut);
@@ -371,8 +367,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
       doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
     }
-    else
-    {
+    else {
       DEDX = emcalc->ComputeTotalDEDX(100, "proton", material, cut);
       DEDX_Water = emcalc->ComputeTotalDEDX(100, "proton", "G4_WATER", cut);
       doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
