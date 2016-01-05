@@ -157,12 +157,7 @@ echo "exit_status_final is:"
 echo $exit_status_final
 echo "--------------------------"
 
-echo
-echo
-echo "--------------------------------------------------------------------------------------------------"
-echo "For debugging information, here is the generated output of the simulation launched with Gate binary."
-cat gate_simulation_log.txt
-echo "--------------------------------------------------------------------------------------------------"
+echo "(Gate output is in gate_simulation_log.txt)"
 
 
 exit $exit_status_final
