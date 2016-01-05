@@ -1401,6 +1401,7 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
 	}
   else if(command == angfocusCmd)
 	{
+	  fParticleGun->GetAngDist()->SetFocusPointCopy(angfocusCmd->GetNew3VectorValue(newValues));
 	  fParticleGun->GetAngDist()->SetFocusPoint(angfocusCmd->GetNew3VectorValue(newValues));
 	}
   else if(command == useuserangaxisCmd1)
