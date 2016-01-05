@@ -35,3 +35,9 @@ if(BUILD_TESTING)
   ADD_TEST(NAME benchRT_proton
     COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchRT proton ${Gate_SOURCE_DIR})
 endif(BUILD_TESTING)
+
+if(BUILD_TESTING)
+  GateAddBenchmarkData("DATA{benchRT/reference/benchRT_carbon-reference.tgz}")
+  ADD_TEST(NAME benchRT_carbon
+    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchRT carbon ${Gate_SOURCE_DIR})
+endif(BUILD_TESTING)
