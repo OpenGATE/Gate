@@ -136,7 +136,7 @@
 #=====================================================
 
 /gate/random/setEngineName MersenneTwister
-/gate/random/setEngineSeed auto
+/gate/random/setEngineSeed 123456
 
 /gate/application/noGlobalOutput
 /gate/application/setTotalNumberOfPrimaries 200

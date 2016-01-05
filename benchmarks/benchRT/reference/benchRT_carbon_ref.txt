@@ -1,8 +1,8 @@
 This reference was created by launching a Gate simulation on
-Tue Jan 5 11:22:49 CET 2016
+Tue Jan 5 11:25:26 CET 2016
 with the configuration file benchmarks/benchRT/mac/carbon.mac
 from the commit
-commit fa6a316d0bbdcaefd160c710f258aa214cab3fb1
+commit 8207bb36a0c0348f137bfcfe20c39b8efcf4e17a
 with the version of gcc
 gcc (SUSE Linux) 4.8.3 20140627 [gcc-4_8-branch revision 212064]
 on the architecture Linux
