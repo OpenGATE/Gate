@@ -49,7 +49,7 @@
 #ifdef G4UI_USE
 #include "qglobal.h"
 #include "G4UIExecutive.hh"
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#if (QT_VERSION >= QT_VERSION_CHECK(4, 0, 0))
 #include <G4UIQt.hh>
 #include <qmainwindow.h>
 #endif
@@ -337,7 +337,7 @@ int main( int argc, char* argv[] )
   if( isQt )
     {
 #ifdef G4UI_USE
-    	#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    	#if (QT_VERSION >= QT_VERSION_CHECK(4, 0, 0))
 	ui = new G4UIExecutive( argc, argv );
         G4UIQt* qui = static_cast<G4UIQt*> (UImanager->GetG4UIWindow());
         if (qui) {
