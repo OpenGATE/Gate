@@ -12,6 +12,7 @@
 #cmakedefine GATE_USE_LMF                  @GATE_USE_LMF@
 #cmakedefine GATE_USE_ECAT7                @GATE_USE_ECAT7@
 #cmakedefine GATE_USE_GEANT4_UIVIS         @GATE_USE_GEANT4_UIVIS@
+#cmakedefine GATE_USE_RTK                  @GATE_USE_RTK@
 
 #ifdef GATE_USE_ROOT
  #define G4ANALYSIS_USE_ROOT 1
