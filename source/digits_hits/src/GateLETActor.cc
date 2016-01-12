@@ -26,10 +26,7 @@
 GateLETActor::GateLETActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
   GateDebugMessageInc("Actor",4,"GateLETActor() -- begin\n");
-
-  mCurrentEvent=-1;
   mIsRestrictedFlag = false;
-
   pMessenger = new GateLETActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateLETActor() -- end\n");
   emcalc = new G4EmCalculator;
@@ -63,12 +60,20 @@ void GateLETActor::Construct() {
   // Set origin, transform, flag
   SetOriginTransformAndFlagToImage(mLETImage);
   SetOriginTransformAndFlagToImage(mEdepImage);
+  SetOriginTransformAndFlagToImage(mFinalImage);
 
   // Resize and allocate images
   mLETImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mLETImage.Allocate();
   mEdepImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mEdepImage.Allocate();
+  mFinalImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+  mFinalImage.Allocate();
+
+  // Warning: for the moment we force to PostStepHitType. This is ok
+  // (slightly faster) if voxel sizes are the same between the
+  // let-actor and the attached voxelized volume. But wring if not.
+  mStepHitType = PostStepHitType; // Warning
 
   // Print information
   GateMessage("Actor", 1,
@@ -90,17 +95,13 @@ void GateLETActor::SaveData() {
   GateVActor::SaveData();
 
   // Final computation: divide the cumulated LET by the cumulated
-  // edep. A new image is created each time it is save.
-  DD("Save data");
-  GateImage mFinalImage;
-  SetOriginTransformAndFlagToImage(mFinalImage);
-  mFinalImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-  mFinalImage.Allocate();
+  // edep.
   GateImage::const_iterator iter_LET = mLETImage.begin();
   GateImage::const_iterator iter_Edep = mEdepImage.begin();
   GateImage::iterator iter_Final = mFinalImage.begin();
   for(iter_LET = mLETImage.begin(); iter_LET != mLETImage.end(); iter_LET++) {
-    *iter_Final = (*iter_LET)/(*iter_Edep);
+    if (*iter_Edep == 0.0) *iter_Final = 0.0; // do not divide by zero
+    else *iter_Final = (*iter_LET)/(*iter_Edep);
     iter_Edep++;
     iter_Final++;
   }
@@ -130,7 +131,6 @@ void GateLETActor::BeginOfRunAction(const G4Run * r) {
 // Callback at each event
 void GateLETActor::BeginOfEventAction(const G4Event * e) {
   GateVActor::BeginOfEventAction(e);
-  mCurrentEvent++;
   GateDebugMessage("Actor", 3, "GateLETActor -- Begin of Event: "<<mCurrentEvent << Gateendl);
 }
 //-----------------------------------------------------------------------------
@@ -163,6 +163,8 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
   double energy=(energy1+energy2)/2;
   G4String partname = step->GetTrack()->GetDefinition()->GetParticleName();
+
+  // The following variable should be used: mIsRestrictedFlag mDeltaRestricted
 
   // Compute the dedx for the current particle in the current material
   double dedx = emcalc->ComputeElectronicDEDX(energy, partname, material);

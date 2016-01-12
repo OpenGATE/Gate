@@ -64,12 +64,11 @@ protected:
   GateLETActor(G4String name, G4int depth=0);
   GateLETActorMessenger * pMessenger;
 
-  int mCurrentEvent;
-
   bool mIsRestrictedFlag;
   double mDeltaRestricted;
   GateImage mLETImage;
   GateImage mEdepImage;
+  GateImage mFinalImage;
   G4String mLETFilename;
 
   G4EmCalculator * emcalc;
