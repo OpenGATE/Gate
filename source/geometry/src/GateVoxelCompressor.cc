@@ -20,7 +20,7 @@ GateVoxelCompressor::GateVoxelCompressor(GateGeometryVoxelArrayStore* s):
   m_voxelSet(0),
   m_exclusionList(  new std::set<unsigned short int> ),
   m_messenger( new GateVoxelCompressorMessenger(this) ){
-  // std::cout << "GateVoxelCompressor::GateVoxelCompressor - Entered." << std::endl;
+  // std::cout << "GateVoxelCompressor::GateVoxelCompressor - Entered.\n";
 }
 //-----------------------------------------------------------------------------
 
@@ -50,7 +50,7 @@ void GateVoxelCompressor::MakeExclusionList(G4String val){
   AddMaterial(  val.substr(lastPos,curPos-lastPos) );
 	 
   for(std::set<unsigned short int>::iterator it=m_exclusionList->begin(); it!=m_exclusionList->end(); it++) {
-    G4cout << (*it) <<  std::endl;
+    G4cout << (*it) <<  Gateendl;
   }
 
 }
@@ -60,7 +60,7 @@ void GateVoxelCompressor::MakeExclusionList(G4String val){
 void GateVoxelCompressor::AddMaterial(G4String m){
     G4Material* materialPtr =  G4Material::GetMaterial( m );
     if (materialPtr) m_exclusionList->insert( materialPtr->GetIndex() );
-    else G4cout << "GateVoxelCompressor::MakeExclusionList - ERROR ! Material " << m << " not found."<< G4endl;
+    else G4cout << "GateVoxelCompressor::MakeExclusionList - ERROR ! Material " << m << " not found."<< Gateendl;
 }
 //-----------------------------------------------------------------------------
 
@@ -74,9 +74,9 @@ double GateVoxelCompressor::GetCompressionRatio() const{
 void GateVoxelCompressor::Initialize()
 {
        if ( m_voxelSet != 0 )
-          {G4cout << " %%%%%%%%%%%%%%%%   GateVoxelCompressor::Initialize() " << m_voxelSet->size() << G4endl;
+          {G4cout << " %%%%%%%%%%%%%%%%   GateVoxelCompressor::Initialize() " << m_voxelSet->size() << Gateendl;
            m_voxelSet->clear();
-           G4cout << " %%%%%%%%%%%%%%%%   GateVoxelCompressor::Initialize() NOW SIZE IS  " << m_voxelSet->size() << G4endl;
+           G4cout << " %%%%%%%%%%%%%%%%   GateVoxelCompressor::Initialize() NOW SIZE IS  " << m_voxelSet->size() << Gateendl;
            delete m_voxelSet;
            m_voxelSet = 0;
           }
@@ -92,17 +92,22 @@ void GateVoxelCompressor::Initialize()
 // Compression is performed in three passes: first along x, then along y and z.
 void GateVoxelCompressor::Compress(){
   
-        // Allocate a voxel set for the first pass
-        voxelSet& voxelSetPass1(*new voxelSet);
-	if (!&voxelSetPass1)
-	  std::cerr << "GateVoxelCompressor::Compress - Insufficient memory for voxel set"<<std::endl<<std::flush;
+        // just to be sure: clean up old voxel set before allocating a new one
+        // almost the same as Initialize(), but I don't know if it's OK to clear the exclusion list.
+        if (m_voxelSet != 0){
+           m_voxelSet->clear();
+           delete m_voxelSet;
+        }
+        m_voxelSet = new voxelSet;
+
+        // Allocate the voxel set for the first pass
 	int voxelEstimate ( m_array->GetVoxelNx() * m_array->GetVoxelNy() * m_array->GetVoxelNz() );
-	voxelSetPass1.reserve(voxelEstimate);
+	m_voxelSet->reserve(voxelEstimate);
 	
 	// First pass - run length along X3 ( or x,  the direction varying the most rapidly)
 	for(int i=0; i<m_array->GetVoxelNz() ; i++){
 	  for(int j=0; j< m_array->GetVoxelNy();  j++)
-	    runLength(i, j, voxelSetPass1);
+	    runLength(i, j, *m_voxelSet);
 	}
 
 
@@ -110,7 +115,7 @@ void GateVoxelCompressor::Compress(){
 	
 	//       a) sort with  minor dimension as X2 (along y). X2 is index 1.
 	
-	sort(voxelSetPass1.begin(), voxelSetPass1.end(),  GateCompressedVoxelOrdering(0,2,1)); // ordering( major, ..., minor)
+	sort(m_voxelSet->begin(), m_voxelSet->end(),  GateCompressedVoxelOrdering(0,2,1)); // ordering( major, ..., minor)
 	
 	//       b) the valarray<> is the expected difference for adjacent voxels
 	//          in comparison.  The last parameter (4) means that if two voxels
@@ -118,15 +123,12 @@ void GateVoxelCompressor::Compress(){
 	//          are to be added
 	
 	unsigned short int passTwo[]={0,1,0};
-	voxelSet& voxelSetPass2 = runLength2nd(voxelSetPass1, std::valarray<unsigned short int>(passTwo,3), 4);
-	delete &voxelSetPass1;
+	runLength2nd(*m_voxelSet, std::valarray<unsigned short int>(passTwo,3), 4);
 	
 	// Third pass - run length along X1 (or z)
-	sort(voxelSetPass2.begin(), voxelSetPass2.end(),  GateCompressedVoxelOrdering(1,2,0)); // ordering( major, ..., minor)
+	sort(m_voxelSet->begin(), m_voxelSet->end(),  GateCompressedVoxelOrdering(1,2,0)); // ordering( major, ..., minor)
 	unsigned short int passThree[]={1,0,0}; 
-	m_voxelSet  = & runLength2nd(voxelSetPass2, std::valarray<unsigned short int>(passThree,3), 3);
-	delete &voxelSetPass2;
-	
+	runLength2nd(*m_voxelSet, std::valarray<unsigned short int>(passThree,3), 3);
 }
 //-----------------------------------------------------------------------------
 
@@ -161,12 +163,13 @@ void GateVoxelCompressor::runLength(int x1, int x2, voxelSet& vs){
 //  vs     : the current voxel set
 //  diff   : the expected difference in position for adjacent voxels
 //  fusion : an index in GateCompressedVoxel representing one of the dimensions (dx1, dx2 or dx3) that is to be fused
-voxelSet& GateVoxelCompressor::runLength2nd(voxelSet& vs, const std::valarray<unsigned short int>& diff, int fusion){
-  voxelSet& newVoxels( *new voxelSet() );
+void GateVoxelCompressor::runLength2nd(voxelSet& vs, const std::valarray<unsigned short int>& diff, int fusion){
+  voxelSet newVoxels;
   newVoxels.reserve( vs.size() );
   
-  if (!&newVoxels) {
-    std::cerr <<  "GateVoxelCompressor::runLength2nd - Insufficient memory for new voxel set"<<std::endl<<std::flush;
+  if (newVoxels.capacity()<vs.size()) {
+    std::cerr <<  "GateVoxelCompressor::runLength2nd - Insufficient memory for new voxel set\n"<<std::flush;
+    // DJB: TODO: shouldn't we throw an error in this case? Continuing seems pointless.
   }
   
   //  These are the indices in GateCompressedVoxel used for comparison (3:dx1, 4:dx2, 5:dx3, 6:value)
@@ -201,7 +204,7 @@ voxelSet& GateVoxelCompressor::runLength2nd(voxelSet& vs, const std::valarray<un
   v[fusion]=runLength;
   newVoxels.push_back( v );
 
-  return newVoxels;
+  newVoxels.swap(vs);
 }
 //-----------------------------------------------------------------------------
 

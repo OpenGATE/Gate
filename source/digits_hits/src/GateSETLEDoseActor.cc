@@ -29,6 +29,7 @@
 #include "GateActions.hh"
 #include "G4Hybridino.hh"
 #include "G4RegionStore.hh"
+#include "G4PhysicalConstants.hh"
 
 #include <typeinfo>
 //-----------------------------------------------------------------------------
@@ -77,7 +78,7 @@ GateSETLEDoseActor::~GateSETLEDoseActor()  {
  //-----------------------------------------------------------------------------
 /// Construct
 void GateSETLEDoseActor::Construct() {
-  GateMessage("Actor", 0, " SETLEDoseActor construction" << G4endl);
+  GateMessage("Actor", 0, " SETLEDoseActor construction\n");
   GateVImageActor::Construct();
 
   // Multiplicity initialisation
@@ -102,12 +103,12 @@ void GateSETLEDoseActor::Construct() {
   EnableBeginOfEventAction(true);
   EnableUserSteppingAction(true);
 
-//   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " placement " << mPosition << G4endl);
+//   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " placement " << mPosition << Gateendl);
   mResolution = dynamic_cast<GateVImageVolume*>(GetVolume())->GetImage()->GetResolution();
   mVoxelSize = dynamic_cast<GateVImageVolume*>(GetVolume())->GetImage()->GetVoxelSize();
   mHalfSize = dynamic_cast<GateVImageVolume*>(GetVolume())->GetImage()->GetHalfSize();
 //   WARNING : 'SETLE Dose Actor' inherits automatically the geometric properties of the attached volume
-//   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxelSize << G4endl);
+//   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxelSize << Gateendl);
 
   // Total dose map initialisation
   mDoseFilename = G4String(removeExtension(mSaveFilename))+"-Dose."+G4String(getExtension(mSaveFilename));
@@ -176,7 +177,7 @@ void GateSETLEDoseActor::Construct() {
   mLineSize = (int)lrint(mResolution.x());
   mPlaneSize = (int)lrint(mResolution.x()*mResolution.y());
 
-  ConversionFactor = 1.60217653e-19 * 1.e6 * 1.e3 * 1.e3;
+  ConversionFactor = e_SI * 1.0e12;
   VoxelVolume = GetDoselVolume();
   ResetData();
 }
@@ -251,7 +252,7 @@ void GateSETLEDoseActor::ResetData()
 //-----------------------------------------------------------------------------
 void GateSETLEDoseActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
-  GateDebugMessage("Actor", 3, "GateSETLEDoseActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateSETLEDoseActor -- Begin of Run\n");
   // ResetData(); // Do no reset here !! (when multiple run);
 
   // security on attachedVolume
@@ -274,7 +275,7 @@ void GateSETLEDoseActor::BeginOfRunAction(const G4Run * r) {
 
   mRotationMatrix = volumeToWorld.NetRotation();
   worldToVolume = volumeToWorld.Inverse();
-  //   GateMessage("Actor", 0," Translation " << worldToVolume.NetTranslation() << " Rotation " << worldToVolume.NetRotation() << G4endl);
+  //   GateMessage("Actor", 0," Translation " << worldToVolume.NetTranslation() << " Rotation " << worldToVolume.NetRotation() << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -285,7 +286,7 @@ void GateSETLEDoseActor::BeginOfEventAction(const G4Event *) {
   mCurrentEvent++;
   // if(mCurrentEvent % 100 == 0)
   // {
-  //   GateMessage("Actor", 0, " BeginOfEventAction - " << mCurrentEvent << " - primary weight = " << 1./mPrimaryMultiplicity << " - secondary weight = " << 1./mSecondaryMultiplicity << G4endl);
+  //   GateMessage("Actor", 0, " BeginOfEventAction - " << mCurrentEvent << " - primary weight = " << 1./mPrimaryMultiplicity << " - secondary weight = " << 1./mSecondaryMultiplicity << Gateendl);
   // }
 }
 //-----------------------------------------------------------------------------
@@ -386,8 +387,8 @@ static inline int getIncrement(double value)
 //-----------------------------------------------------------------------------
 double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight, G4ThreeVector position, G4ThreeVector momentum)
 {
-//   GateMessage("Actor", 0, "  " << G4endl;);
-//   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxSize << G4endl);
+//   GateMessage("Actor", 0, "  \n";);
+//   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxSize << Gateendl);
 
   int xincr = getIncrement(momentum.x());
   int yincr = getIncrement(momentum.y());
@@ -427,7 +428,7 @@ double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight,
   mTotalLength = 2.0*mHalfSize.x()*mHalfSize.y()*mHalfSize.z();
   double Ltmp = mTotalLength;
 
-//   GateMessage("Actor", 0, "increment " << xincr << " " << yincr << " " << zincr << G4endl);
+//   GateMessage("Actor", 0, "increment " << xincr << " " << yincr << " " << zincr << Gateendl);
 
   if(xincr > 0){
     Rx = xincr * (-mHalfSize.x() + (x+1)*mVoxelSize.x() - position.x())/momentum.x();
@@ -462,10 +463,10 @@ double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight,
 
   if (Ltmp < mTotalLength) {mTotalLength = Ltmp;}
 
-//   GateMessage("Actor", 0, "Lx : " << Lx << " Ly " << Ly << " Lz " << Lz << G4endl);
-//   GateMessage("Actor", 0, "Rx : " << Rx << " Ry " << Ry << " Rz " << Rz << G4endl);
-//   GateMessage("Actor", 0, "entry index " << x << " " << y << " " << z << G4endl);
-//   GateMessage("Actor", 0, "LTot" << mTotalLength << G4endl);
+//   GateMessage("Actor", 0, "Lx : " << Lx << " Ly " << Ly << " Lz " << Lz << Gateendl);
+//   GateMessage("Actor", 0, "Rx : " << Rx << " Ry " << Ry << " Rz " << Rz << Gateendl);
+//   GateMessage("Actor", 0, "entry index " << x << " " << y << " " << z << Gateendl);
+//   GateMessage("Actor", 0, "LTot" << mTotalLength << Gateendl);
 
   int index = 0;
   double dose = 0.0;
@@ -501,19 +502,19 @@ double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight,
 
   while(L < mTotalLength-0.00001)
   {
-//     GateMessage("Actor", 0, " index " << x << " " << y << " " << z << " | Rest " << Rx << " " << Ry << " " << Rz << " | L " << L << " mTotalLength " << mTotalLength << G4endl);
-//     GateMessage("Actor", 0, " Rest  " << Rx << " " << Ry << " " << Rz << G4endl);
-//     GateMessage("Actor", 0, "L " << L << " mTotalLength " << mTotalLength << G4endl);
-//     GateMessage("Actor", 0, "Volume = " << GetVolume()->GetLogicalVolumeName() << G4endl);
-//     GateMessage("Actor", 0, "material 1 : " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(x,y,z)) << G4endl);
-//     GateMessage("Actor", 0, "label : " << volume->GetImage()->GetValue(0,0,0) << " " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(0,0,0)) << G4endl);
+//     GateMessage("Actor", 0, " index " << x << " " << y << " " << z << " | Rest " << Rx << " " << Ry << " " << Rz << " | L " << L << " mTotalLength " << mTotalLength << Gateendl);
+//     GateMessage("Actor", 0, " Rest  " << Rx << " " << Ry << " " << Rz << Gateendl);
+//     GateMessage("Actor", 0, "L " << L << " mTotalLength " << mTotalLength << Gateendl);
+//     GateMessage("Actor", 0, "Volume = " << GetVolume()->GetLogicalVolumeName() << Gateendl);
+//     GateMessage("Actor", 0, "material 1 : " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(x,y,z)) << Gateendl);
+//     GateMessage("Actor", 0, "label : " << volume->GetImage()->GetValue(0,0,0) << " " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(0,0,0)) << Gateendl);
 
     index = x+y*mLineSize+z*mPlaneSize;
 
     bool sameEvent = true;
     if(mIsLastHitEventImageEnabled)
     {
-      GateDebugMessage("Actor", 2,  "GateSETLEDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << G4endl);
+      GateDebugMessage("Actor", 2,  "GateSETLEDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << Gateendl);
       if(mCurrentEvent != mLastHitEventImage.GetValue(index))
       {
 	sameEvent = false;
@@ -524,7 +525,7 @@ double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight,
     bool currentContributionSameEvent = true;
     if(isCurrentLastHitImageEnabled)
     {
-      GateDebugMessage("Actor", 2,  "GateSETLEDoseActor -- UserSteppingActionInVoxel: Last event in index = " << currentLastHitImage->GetValue(index) << G4endl);
+      GateDebugMessage("Actor", 2,  "GateSETLEDoseActor -- UserSteppingActionInVoxel: Last event in index = " << currentLastHitImage->GetValue(index) << Gateendl);
       if(mCurrentEvent != currentLastHitImage->GetValue(index))
       {
 	currentContributionSameEvent = false;
@@ -608,7 +609,7 @@ bool GateSETLEDoseActor::IntersectionBox(G4ThreeVector p, G4ThreeVector m)
   for(int i=0; i<3; i++)
   {
     if(mRayDirection[i] == 0.0) {
-      if(mRayOrigin[i]<mBoxMin[i] or mRayOrigin[i]>mBoxMax[i]) { return false; }
+      if(mRayOrigin[i]<mBoxMin[i] || mRayOrigin[i]>mBoxMax[i]) { return false; }
     }
 
     T1 = (mBoxMin[i] - mRayOrigin[i]) / mRayDirection[i];

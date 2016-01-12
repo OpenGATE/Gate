@@ -25,9 +25,9 @@ GateVImageVolumeMessenger::GateVImageVolumeMessenger(GateVImageVolume* volume)
   pVImageVolume(volume)
 {
 
-  GateMessage("Volume",5,"GateVImageVolumeMessenger("<<G4endl);
+  GateMessage("Volume",5,"GateVImageVolumeMessenger()\n");
   G4String dir = GetDirectoryName() + "geometry";
-  //  G4cout<<dir<<G4endl;
+  //  G4cout<<dir<< Gateendl;
 
   G4String n = dir +"/setImage";
   pImageFileNameCmd = 0;
@@ -79,6 +79,11 @@ GateVImageVolumeMessenger::GateVImageVolumeMessenger(GateVImageVolume* volume)
   pBuildLabeledImageCmd = new G4UIcmdWithAString(n,this);
   pBuildLabeledImageCmd->SetGuidance("Build and dump the image labeled according to the materials list. Give the filename.");
 
+  n = dir +"/buildAndDumpDensityImage";
+  pBuildDensityImageCmd = 0;
+  pBuildDensityImageCmd = new G4UIcmdWithAString(n,this);
+  pBuildDensityImageCmd->SetGuidance("Build and dump the density image according to the materials list. Give the filename.");
+
   n = dir +"/enableBoundingBoxOnly";
   pDoNotBuildVoxelsCmd = 0;
   pDoNotBuildVoxelsCmd = new G4UIcmdWithABool(n,this);
@@ -89,7 +94,7 @@ GateVImageVolumeMessenger::GateVImageVolumeMessenger(GateVImageVolume* volume)
 //---------------------------------------------------------------------------
 GateVImageVolumeMessenger::~GateVImageVolumeMessenger()
 {
-  GateMessage("Volume",5,"~GateVImageVolumeMessenger("<<G4endl);
+  GateMessage("Volume",5,"~GateVImageVolumeMessenger()\n");
 
   delete pImageFileNameCmd;
   delete pImageFileNameCmdDeprecated;
@@ -100,6 +105,7 @@ GateVImageVolumeMessenger::~GateVImageVolumeMessenger()
   delete pIsoCenterCmd;
   delete pSetOriginCmd;
   delete pBuildLabeledImageCmd;
+  delete pBuildDensityImageCmd;
   delete pDoNotBuildVoxelsCmd;
 }
 //---------------------------------------------------------------------------
@@ -110,18 +116,18 @@ void GateVImageVolumeMessenger::SetNewValue(G4UIcommand* command,
 {
   GateMessage("Volume",5,"GateVImageVolumeMessenger::SetNewValue "
 	      << command->GetCommandPath()
-	      << " newValue=" << newValue << G4endl);
+	      << " newValue=" << newValue << Gateendl);
 
   if (command == pImageFileNameCmd || command == pImageFileNameCmdDeprecated) {
     pVImageVolume->SetImageFilename(newValue);
-    if (command == pImageFileNameCmdDeprecated) G4cout << "### WARNING ### SetImage is obsolete and will be removed from the next release. Please use setImage" << G4endl;
+    if (command == pImageFileNameCmdDeprecated) G4cout << "### WARNING ### SetImage is obsolete and will be removed from the next release. Please use setImage\n";
   }
   else if (command == pLabelToMaterialFileNameCmd) {
     pVImageVolume->SetLabelToMaterialTableFilename(newValue);
   }
   else if (command == pHUToMaterialFileNameCmd || command == pHUToMaterialFileNameCmdDeprecated) {
     pVImageVolume->SetHUToMaterialTableFilename(newValue);
-    if (command == pHUToMaterialFileNameCmdDeprecated) G4cout << "### WARNING ### SetHUToMaterialFile is obsolete and will be removed from the next release. Please use setHUToMaterialFile" << G4endl;
+    if (command == pHUToMaterialFileNameCmdDeprecated) G4cout << "### WARNING ### SetHUToMaterialFile is obsolete and will be removed from the next release. Please use setHUToMaterialFile\n";
   }
   else if (command == pRangeMaterialFileNameCmd) {
     pVImageVolume->SetRangeMaterialTableFilename(newValue);
@@ -134,6 +140,9 @@ void GateVImageVolumeMessenger::SetNewValue(G4UIcommand* command,
   }
   else if (command == pBuildLabeledImageCmd) {
     pVImageVolume->SetLabeledImageFilename(newValue);
+  }
+  else if (command == pBuildDensityImageCmd) {
+    pVImageVolume->SetDensityImageFilename(newValue);
   }
   else if (command == pDoNotBuildVoxelsCmd) {
     pVImageVolume->EnableBoundingBoxOnly(pDoNotBuildVoxelsCmd->GetNewBoolValue(newValue));

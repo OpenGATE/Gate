@@ -119,7 +119,7 @@ public:
   G4String GetMaterialNameFromLabel(LabelType l) {
     LabelToMaterialNameType::iterator mi = mLabelToMaterialName.find(l);
     if (mi == mLabelToMaterialName.end()) {
-      G4cerr << "GateVImageVolume<"<<GetObjectName()<<">::GetMaterialNameFromLabel : Could not find material of label "<<l<<" in correspondence table" << G4endl;
+      G4cerr << "GateVImageVolume<"<<GetObjectName()<<">::GetMaterialNameFromLabel : Could not find material of label "<<l<<" in correspondence table\n";
       exit(0);
     }
     return (*mi).second ;
@@ -161,6 +161,7 @@ public:
 
   void SetBuildDistanceTransfoFilename(G4String filename);
   void SetLabeledImageFilename(G4String filename);
+  void SetDensityImageFilename(G4String filename);
   void EnableBoundingBoxOnly(bool b);
 
 protected:
@@ -202,7 +203,12 @@ protected:
   bool mWriteHLabelImage;
   G4String mHLabelImageFilename;
   void DumpHLabelImage();
+  //-----------------------------------------------------------------------------
+  bool mWriteDensityImage;
+  G4String mDensityImageFilename;
+  void DumpDensityImage();
   bool mImageMaterialsFromHounsfieldTableDone;
+  bool mImageMaterialsFromRangeTableDone;
 
   //-----------------------------------------------------------------------------
   /// The name of the Image file

@@ -29,7 +29,7 @@
 #include "G4DNAGenericIonsManager.hh"
 #include "G4ParticleTable.hh"
 #include "G4PhysListFactory.hh"
-#include "G4VUserPhysicsList.hh"
+#include "G4VModularPhysicsList.hh"
 #include "G4ExceptionHandler.hh"
 #include "G4StateManager.hh"
 
@@ -37,6 +37,7 @@
 #include "G4EmStandardPhysics_option1.hh"
 #include "G4EmStandardPhysics_option2.hh"
 #include "G4EmStandardPhysics_option3.hh"
+#include "G4EmStandardPhysics_option4.hh"
 #include "G4EmLivermorePolarizedPhysics.hh"
 #include "G4EmLivermorePhysics.hh"
 #include "G4EmPenelopePhysics.hh"
@@ -57,7 +58,7 @@
 
 
 //-----------------------------------------------------------------------------------------
-GatePhysicsList::GatePhysicsList(): G4VUserPhysicsList()
+GatePhysicsList::GatePhysicsList(): G4VModularPhysicsList()
 {
   // default cut value  (1.0mm)
   defaultCutValue = 1.0*mm;
@@ -135,7 +136,7 @@ GatePhysicsList::~GatePhysicsList()
         /*else {
           if( (*vect)[i] ){
           if((*vect)[i]->GetProcessName()=="Decay" ){
-          G4cout<<"test  "<<particle->GetParticleName()<<"   "<<(*vect)[i]<<G4endl;
+          G4cout<<"test  "<<particle->GetParticleName()<<"   "<<(*vect)[i]<< Gateendl;
           delete (*vect)[i];
 	  }
           }
@@ -151,11 +152,11 @@ GatePhysicsList::~GatePhysicsList()
     while( (*theParticleIterator)()){
     G4ParticleDefinition* particle = theParticleIterator->value();
     G4ProcessVector * vect = particle->GetProcessManager()->GetProcessList();
-    G4cout<<"Particle= "<< particle->GetParticleName() <<G4endl;
+    G4cout<<"Particle= "<< particle->GetParticleName() << Gateendl;
 
     for(int i = 0; i<vect->size();i++)
     {
-    if((*vect)[i]) G4cout<<"Process= "<<(*vect)[i]->GetProcessName()<<G4endl;
+    if((*vect)[i]) G4cout<<"Process= "<<(*vect)[i]->GetProcessName()<< Gateendl;
     }
     }*/
 }
@@ -173,9 +174,9 @@ std::vector<GateVProcess*>* GatePhysicsList::GetTheListOfProcesss()
 //-----------------------------------------------------------------------------------------
 void GatePhysicsList::ConstructProcess()
 {
-  GateMessage("Physic",2,"GatePhysicsList::ConstructProcess " << G4endl);
-  GateMessage("Physic",3,"mLoadState = " << mLoadState << G4endl);
-  GateMessage("Physic",3,"mListOfStepLimiter.size = " << mListOfStepLimiter.size() << G4endl);
+  GateMessage("Physic",2,"GatePhysicsList::ConstructProcess \n");
+  GateMessage("Physic",3,"mLoadState = " << mLoadState << Gateendl);
+  GateMessage("Physic",3,"mListOfStepLimiter.size = " << mListOfStepLimiter.size() << Gateendl);
 
   // if ((mLoadState == 0) && (mUserPhysicListName == "")) {
   //   DD("direct return : do nothing");
@@ -185,12 +186,13 @@ void GatePhysicsList::ConstructProcess()
   if ((mLoadState==1) && (mUserPhysicListName == "")) {
     GateMessage("Physic", 0, "WARNING: manual physic lists are being deprecated.\n"
                 << "Please, use physic list builder mechanism instead. Related documentation can be found at:\n"
-                << "http://wiki.opengatecollaboration.org/index.php/Users_Guide_V7.0:Setting_up_the_physics" << G4endl);
+                << "http://wiki.opengatecollaboration.org/index.php/Users_Guide_V7.0:Setting_up_the_physics\n");
   }
 
   if(mLoadState==0)
     {
       // AddTransportation(); // not set here. Set only if no physics list builder is used
+      //Does GetTheListOfProcesss() needs to be called every time??
       for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
 	{
 	  theListOfPBName.push_back((*GetTheListOfProcesss())[i]->GetG4ProcessName());
@@ -216,7 +218,7 @@ void GatePhysicsList::ConstructProcess()
       if(mEmax>0)          opt->SetMaxEnergy(mEmax);
       opt->SetSplineFlag(mSplineFlag);
     }
-  else GateMessage("Physic",1,"GatePhysicsList::Construct() -- Warning: processes already defined!" << G4endl);
+  else GateMessage("Physic",1,"GatePhysicsList::Construct() -- Warning: processes already defined!\n");
 
   //SetCuts();
 
@@ -233,7 +235,7 @@ void GatePhysicsList::ConstructProcess()
       G4String particleName = particle->GetParticleName();
       for(unsigned int i=0; i<mListOfStepLimiter.size(); i++) {
 	if(mListOfStepLimiter[i]==particleName) {
-          GateMessage("Cuts", 3, "Activate G4StepLimiter for " << particleName << G4endl);
+          GateMessage("Cuts", 3, "Activate G4StepLimiter for " << particleName << Gateendl);
           pmanager->AddProcess(new G4StepLimiter, -1,-1,3);
         }
       }
@@ -250,7 +252,7 @@ void GatePhysicsList::ConstructProcess()
       G4String particleName = particle->GetParticleName();
       for(unsigned int i=0; i<mListOfG4UserSpecialCut.size(); i++) {
 	if(mListOfG4UserSpecialCut[i]==particleName) {
-          GateMessage("Cuts", 3, "Activate G4UserSpecialCuts for " << particleName << G4endl);
+          GateMessage("Cuts", 3, "Activate G4UserSpecialCuts for " << particleName << Gateendl);
           pmanager-> AddProcess(new G4UserSpecialCuts,   -1,-1,4);
         }
       }
@@ -267,7 +269,7 @@ void GatePhysicsList::ConstructProcess()
 // Construction of the physics list from a G4 builder
 void GatePhysicsList::ConstructPhysicsList(G4String name)
 {
-  GateMessage("Physic", 0, "The following Geant4's physic-list is enabled :" << name << G4endl);
+  GateMessage("Physic", 0, "The following Geant4's physic-list is enabled :" << name << Gateendl);
 
   G4PhysListFactory * l = new G4PhysListFactory(); //  instantiate PhysList by environment variable "PHYSLIST"
   const std::vector<G4String>& list = l->AvailablePhysLists();
@@ -298,6 +300,9 @@ void GatePhysicsList::ConstructPhysicsList(G4String name)
   }
   if (mUserPhysicListName == "emstandard_opt3") {
     pl = new G4EmStandardPhysics_option3();
+  }
+  if (mUserPhysicListName == "emstandard_opt4") {
+    pl = new G4EmStandardPhysics_option4();
   }
   if (mUserPhysicListName == "emlivermore") {
     pl = new G4EmLivermorePhysics();
@@ -389,9 +394,9 @@ void GatePhysicsList::ConstructParticle()
 
   //  Construct  resonaces and quarks
   G4ShortLivedConstructor slive;
-  slive.ConstructParticle(); 
-  
-  //  Construct hybridino 
+  slive.ConstructParticle();
+
+  //  Construct hybridino
   G4Hybridino::HybridinoDefinition();
 
 
@@ -409,7 +414,7 @@ void GatePhysicsList::ConstructParticle()
   dnagenericIonsManager->GetIon("nitrogen");
   dnagenericIonsManager->GetIon("iron");
   dnagenericIonsManager->GetIon("oxygen");
-  
+
 }
 //-----------------------------------------------------------------------------------------
 
@@ -418,23 +423,23 @@ void GatePhysicsList::ConstructParticle()
 void GatePhysicsList::Print(G4String type, G4String particlename)
 {
 
-  if(type=="Initialized") std::cout<<"\n\nList of initialized processes:\n"<<std::endl;
-  else if(type=="Enabled") std::cout<<"\n\nList of Enabled processes:\n"<<std::endl;
-  else if(type=="Available") std::cout<<"\n\nList of Available processes:\n"<<std::endl;
+  if(type=="Initialized") std::cout<<"\n\nList of initialized processes:\n\n";
+  else if(type=="Enabled") std::cout<<"\n\nList of Enabled processes:\n\n";
+  else if(type=="Available") std::cout<<"\n\nList of Available processes:\n\n";
 
   if(type=="Enabled")
     {
-      if(particlename != "All") std::cout<<"   ***  "<<particlename<<"  ***"<<std::endl;
+      if(particlename != "All") std::cout<<"   ***  "<<particlename<<"  ***\n";
       for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
 	(*GetTheListOfProcesss())[i]->PrintEnabledParticles(particlename);
 
-      std::cout<<"\n"<<std::endl;
+      std::cout<< Gateendl;
     }
 
   if(type=="Initialized")
     {
       Print(particlename);
-      std::cout<<"\n"<<std::endl;
+      std::cout<< Gateendl;
     }
 
   if(type=="Available")
@@ -449,32 +454,32 @@ void GatePhysicsList::Print(G4String type, G4String particlename)
 	  DataSets = (*GetTheListOfProcesss())[i]->GetTheListOfDataSets();
 	  Models = (*GetTheListOfProcesss())[i]->GetTheListOfModels();
 	  if((*GetTheListOfProcesss())[i]->GetProcessInfo()!="")
-	    std::cout<<"  * "<<(*GetTheListOfProcesss())[i]->GetG4ProcessName()<<" ("<<(*GetTheListOfProcesss())[i]->GetProcessInfo()<<")"<<std::endl;
-	  else std::cout<<"  * "<<(*GetTheListOfProcesss())[i]->GetG4ProcessName()<<std::endl;
+	    std::cout<<"  * "<<(*GetTheListOfProcesss())[i]->GetG4ProcessName()<<" ("<<(*GetTheListOfProcesss())[i]->GetProcessInfo()<<")\n";
+	  else std::cout<<"  * "<<(*GetTheListOfProcesss())[i]->GetG4ProcessName()<< Gateendl;
 
-	  if(DefaultParticles.size() > 1) std::cout<<"     - Default particles: "<<std::endl;
-	  else if(DefaultParticles.size() == 1) std::cout<<"     - Default particle: "<<std::endl;
+	  if(DefaultParticles.size() > 1) std::cout<<"     - Default particles: \n";
+	  else if(DefaultParticles.size() == 1) std::cout<<"     - Default particle: \n";
 	  for(unsigned int i1=0; i1<DefaultParticles.size(); i1++)
 	    {
-	      std::cout<<"        + "<<DefaultParticles[i1]<<std::endl;
+	      std::cout<<"        + "<<DefaultParticles[i1]<< Gateendl;
 	    }
 
-	  if(Models.size() > 1) std::cout<<"     - Models: "<<std::endl;
-	  else if(Models.size() == 1) std::cout<<"     - Model: "<<std::endl;
+	  if(Models.size() > 1) std::cout<<"     - Models: \n";
+	  else if(Models.size() == 1) std::cout<<"     - Model: \n";
 	  for(unsigned int i1=0; i1<Models.size(); i1++)
 	    {
-	      std::cout<<"        + "<<Models[i1]<<std::endl;
+	      std::cout<<"        + "<<Models[i1]<< Gateendl;
 	    }
 
-	  if(DataSets.size() > 1) std::cout<<"     - DataSets: "<<std::endl;
-	  if(DataSets.size() == 1) std::cout<<"     - DataSet: "<<std::endl;
+	  if(DataSets.size() > 1) std::cout<<"     - DataSets: \n";
+	  if(DataSets.size() == 1) std::cout<<"     - DataSet: \n";
 	  for(unsigned int i1=0; i1<DataSets.size(); i1++)
 	    {
-	      std::cout<<"        + "<<DataSets[i1]<<std::endl;
+	      std::cout<<"        + "<<DataSets[i1]<< Gateendl;
 	    }
-	  std::cout<<std::endl;
+	  std::cout<< Gateendl;
 	}
-      std::cout<<"\n"<<std::endl;
+      std::cout<< Gateendl;
     }
 
 }
@@ -504,12 +509,12 @@ void GatePhysicsList::Print(G4String name)
 	if(manager->GetProcessListLength()==0) continue;
 	if(manager->GetProcessListLength()==1 && (*processvector)[0]->GetProcessName()== "Transportation") continue;
 	// Transportation process is ignored for display;
-	std::cout<<"  * "<<particle->GetParticleName()<<std::endl;
+	std::cout<<"  * "<<particle->GetParticleName()<< Gateendl;
 	iDisp++;
 	for(int j=0;j<manager->GetProcessListLength();j++)
 	  {
 	    if( (*processvector)[j]->GetProcessName() !=  "Transportation" )
-	      std::cout<<"    - "<<(*processvector)[j]->GetProcessName()<<std::endl;
+	      std::cout<<"    - "<<(*processvector)[j]->GetProcessName()<< Gateendl;
 	  }
       }
     }
@@ -524,10 +529,10 @@ void GatePhysicsList::Print(G4String name)
       manager  = particle->GetProcessManager();
       processvector = manager->GetProcessList();
       if(manager->GetProcessListLength()==0) return;
-      std::cout<<"Particle: "<<particle->GetParticleName()<<std::endl;
+      std::cout<<"Particle: "<<particle->GetParticleName()<< Gateendl;
       for(int j=0;j<manager->GetProcessListLength();j++)
 	if( (*processvector)[j]->GetProcessName() !=  "Transportation" )
-	  std::cout<<"   - "<<(*processvector)[j]->GetProcessName()<<std::endl;
+	  std::cout<<"   - "<<(*processvector)[j]->GetProcessName()<< Gateendl;
     }
 
 }
@@ -623,11 +628,11 @@ void GatePhysicsList::PurgeIfFictitious()
   // --> Rayleigh: inactive
   // --> GammaConvertion: inactive
   if (isFictitious) {
-    G4cout << "Fictitious interactions are activated, so gamma processes are forced to:" << G4endl
-           << "  --> PhotoElectric:   standard" << G4endl
-           << "  --> Compton:         standard" << G4endl
-           << "  --> Rayleigh:        inactive" << G4endl
-           << "  --> GammaConversion: inactive" << G4endl;
+    G4cout << "Fictitious interactions are activated, so gamma processes are forced to:\n"
+           << "  --> PhotoElectric:   standard\n"
+           << "  --> Compton:         standard\n"
+           << "  --> Rayleigh:        inactive\n"
+           << "  --> GammaConversion: inactive\n";
     for(unsigned int i=0; i<(*GetTheListOfProcesss()).size(); i++) {
       if ( (*GetTheListOfProcesss())[i]->GetG4ProcessName() == "LowEnergyRayleighScattering" ||
            (*GetTheListOfProcesss())[i]->GetG4ProcessName() == "PhotoElectric" ||
@@ -695,7 +700,7 @@ void GatePhysicsList::Write(G4String file)
   for(unsigned int i=0; i<GetTheListOfProcesss()->size(); i++)
     (*GetTheListOfProcesss())[i]->PrintEnabledParticlesToFile(file);
   os.open(file.data(), std::ios_base::app);
-  os << std::endl;
+  os << Gateendl;
   os.close();
 }
 //-----------------------------------------------------------------------------------------
@@ -736,7 +741,7 @@ void GatePhysicsList::SetCuts()
 {
   /* if (verboseLevel >0){
      std::cout << "GatePhysicsList::SetCuts: default cut length : "
-     << G4BestUnit(defaultCutValue,"Length") << std::endl;
+     << G4BestUnit(defaultCutValue,"Length") << Gateendl;
      }  */
 
   // These values are used as the default production thresholds
@@ -752,8 +757,8 @@ void GatePhysicsList::SetCuts()
 //-----------------------------------------------------------------------------
 void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
 {
-  // GateMessage("Cuts",4,"===================================" << G4endl);
-  // GateMessage("Cuts",4,"GatePhysicsList::SetCuts() -- begin" << G4endl);
+  // GateMessage("Cuts",4,"===================================\n");
+  // GateMessage("Cuts",4,"GatePhysicsList::SetCuts() -- begin\n");
 
   //-----------------------------------------------------------------------------
   // Set defaults production cut for the world
@@ -768,7 +773,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
               << worldCuts.gammaCut << " "
               << worldCuts.electronCut << " "
               << worldCuts.positronCut << " "
-              << worldCuts.protonCut   << " mm" << G4endl);
+              << worldCuts.protonCut   << " mm\n");
 
   phys->SetCutValue(worldCuts.gammaCut, "gamma","DefaultRegionForTheWorld");
   phys->SetCutValue(worldCuts.electronCut, "e-","DefaultRegionForTheWorld");
@@ -786,7 +791,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
     if (regionName != "DefaultRegionForTheWorld" && regionName !="world") {
       RegionCutMapType::iterator current = mapOfRegionCuts.find(regionName);
       if (current == mapOfRegionCuts.end()) {
-	// GateMessage("Cuts",5, " Cut not set for region " << regionName << " put -1" << G4endl);
+	// GateMessage("Cuts",5, " Cut not set for region " << regionName << " put -1\n");
 	mapOfRegionCuts[regionName].gammaCut = -1;
 	mapOfRegionCuts[regionName].electronCut = -1;
 	mapOfRegionCuts[regionName].positronCut = -1;
@@ -801,7 +806,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
   RegionCutMapType::iterator it = mapOfRegionCuts.begin();
   while (it != mapOfRegionCuts.end()) {
     // do not apply cut for the world region
-    // GateMessage("Cuts", 5, "Region (*it).first : " << (*it).first<< G4endl);
+    // GateMessage("Cuts", 5, "Region (*it).first : " << (*it).first<< Gateendl);
     if (((*it).first != "DefaultRegionForTheWorld") && ((*it).first != "world")) {
       G4Region* region = RegionStore->GetRegion((*it).first);
       if (!region) {
@@ -869,7 +874,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
                   << G4BestUnit(regionCuts.gammaCut, "Length") << " "
                   << G4BestUnit(regionCuts.electronCut, "Length") << " "
                   << G4BestUnit(regionCuts.positronCut, "Length") << " "
-                  << G4BestUnit(regionCuts.protonCut, "Length")   << G4endl);
+                  << G4BestUnit(regionCuts.protonCut, "Length")   << Gateendl);
 
       // apply the cut
       /* G4ProductionCuts* cuts = region->GetProductionCuts();
@@ -929,7 +934,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
       G4String particleName = particle->GetParticleName();
       for(unsigned int i=0; i<mListOfStepLimiter.size(); i++) {
 	if(mListOfStepLimiter[i]==particleName) {
-          GateMessage("Cuts", 3, "Activate G4StepLimiter for " << particleName << G4endl);
+          GateMessage("Cuts", 3, "Activate G4StepLimiter for " << particleName << Gateendl);
           pmanager->AddProcess(new G4StepLimiter, -1,-1,3);
         }
       }
@@ -948,7 +953,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
       G4String particleName = particle->GetParticleName();
       for(unsigned int i=0; i<mListOfG4UserSpecialCut.size(); i++) {
 	if(mListOfG4UserSpecialCut[i]==particleName) {
-          GateMessage("Cuts", 3, "Activate G4UserSpecialCuts for " << particleName << G4endl);
+          GateMessage("Cuts", 3, "Activate G4UserSpecialCuts for " << particleName << Gateendl);
           pmanager-> AddProcess(new G4UserSpecialCuts,   -1,-1,4);
         }
       }
@@ -965,7 +970,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
     if (regionName != "DefaultRegionForTheWorld" && regionName !="world") {
       VolumeUserLimitsMapType::iterator current = mapOfVolumeUserLimits.find(regionName);
       if (current == mapOfVolumeUserLimits.end()) {
-	GateMessage("Cuts",5, " UserCuts not set for region " << regionName << " put -1" << G4endl);
+	GateMessage("Cuts",5, " UserCuts not set for region " << regionName << " put -1\n");
         mapOfVolumeUserLimits[regionName]= new GateUserLimits();
       }
     }
@@ -975,7 +980,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
   VolumeUserLimitsMapType::iterator it2 = mapOfVolumeUserLimits.begin();
   while (it2 != mapOfVolumeUserLimits.end()) {
     // do not apply cut for the world region
-    // GateMessage("Cuts", 5, "Region (*it2).first : " << (*it2).first<< G4endl);
+    // GateMessage("Cuts", 5, "Region (*it2).first : " << (*it2).first<< Gateendl);
     if (((*it2).first != "DefaultRegionForTheWorld") && ((*it2).first != "world")) {
       G4Region* region = RegionStore->GetRegion((*it2).first);
       if (!region) {
@@ -993,7 +998,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
           if(parentRegion->GetName() != "DefaultRegionForTheWorld"){
             GateUserLimits * parentRegionUserLimits = mapOfVolumeUserLimits[parentRegion->GetName()];
             regionUserLimit->SetMaxStepSize(  parentRegionUserLimits->GetMaxStepSize()) ;
-            GateMessage("Cuts", 5, "Region " << (*it2).first << " maxStepSize " << parentRegionUserLimits->GetMaxStepSize() << G4endl);
+            GateMessage("Cuts", 5, "Region " << (*it2).first << " maxStepSize " << parentRegionUserLimits->GetMaxStepSize() << Gateendl);
           }
           else regionUserLimit->SetMaxStepSize( worldUserLimit->GetMaxStepSize());
           regionTmp = parentRegion;
@@ -1007,7 +1012,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
           if(parentRegion->GetName() != "DefaultRegionForTheWorld"){
             GateUserLimits * parentRegionUserLimits = mapOfVolumeUserLimits[parentRegion->GetName()];
             regionUserLimit->SetMaxTrackLength(  parentRegionUserLimits->GetMaxTrackLength()) ;
-            GateMessage("Cuts", 5, "Region " << (*it2).first << " maxTrackLength " << parentRegionUserLimits->GetMaxTrackLength() << G4endl);
+            GateMessage("Cuts", 5, "Region " << (*it2).first << " maxTrackLength " << parentRegionUserLimits->GetMaxTrackLength() << Gateendl);
           }
           else regionUserLimit->SetMaxTrackLength( worldUserLimit->GetMaxTrackLength());
           regionTmp = parentRegion;
@@ -1063,36 +1068,36 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
       if(regionUserLimit->GetMaxStepSize()       != -1.){
         userlimits->SetMaxAllowedStep(regionUserLimit->GetMaxStepSize());
         GateMessage("Cuts", 3, "Region " << regionName
-                    << " maxStepSize " << regionUserLimit->GetMaxStepSize() << G4endl);
+                    << " maxStepSize " << regionUserLimit->GetMaxStepSize() << Gateendl);
         IsULimitDefined = true;
       }
       if(regionUserLimit->GetMaxTrackLength()    != -1.){
         userlimits->SetUserMaxTrackLength(regionUserLimit->GetMaxTrackLength());
         GateMessage("Cuts", 3, "Region " << regionName
-                    << " maxTrackLength " << regionUserLimit->GetMaxTrackLength() << G4endl);
+                    << " maxTrackLength " << regionUserLimit->GetMaxTrackLength() << Gateendl);
         IsULimitDefined = true;
       }
       if(regionUserLimit->GetMaxToF()            != -1.){
         userlimits->SetUserMaxTime(regionUserLimit->GetMaxToF());
         GateMessage("Cuts", 3, "Region " << regionName
-                    << " MaxToF " << regionUserLimit->GetMaxToF() << G4endl);
+                    << " MaxToF " << regionUserLimit->GetMaxToF() << Gateendl);
         IsULimitDefined = true;
       }
       if(regionUserLimit->GetMinKineticEnergy()  != -1.){
         userlimits->SetUserMinEkine(regionUserLimit->GetMinKineticEnergy());
         GateMessage("Cuts", 3, "Region " << regionName
-                    << " MinEkine " << regionUserLimit->GetMinKineticEnergy() << G4endl);
+                    << " MinEkine " << regionUserLimit->GetMinKineticEnergy() << Gateendl);
         IsULimitDefined = true;
       }
       if(regionUserLimit->GetMinRemainingRange() != -1.){
         userlimits->SetUserMinRange(regionUserLimit->GetMinRemainingRange());
         GateMessage("Cuts", 3, "Region " << regionName
-                    << " MinRange " << regionUserLimit->GetMinRemainingRange() << G4endl);
+                    << " MinRange " << regionUserLimit->GetMinRemainingRange() << Gateendl);
         IsULimitDefined = true;
       }
       if(IsULimitDefined) region->SetUserLimits(userlimits);
       else {
-        GateMessage("Cuts", 3, "Region " << regionName << " : no UserLimit" << G4endl);
+        GateMessage("Cuts", 3, "Region " << regionName << " : no UserLimit\n");
       }
     }
     ++it2;
@@ -1114,7 +1119,7 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
   //   opt->SetApplyCuts(true);
   // }
 
-  GateMessageDec("Cuts",4,"GatePhysicsList::SetCuts() -- end" << G4endl);
+  GateMessageDec("Cuts",4,"GatePhysicsList::SetCuts() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -1126,7 +1131,7 @@ void GatePhysicsList::SetCutInRegion(G4String particleName, G4String regionName,
   /*
     GateMessage("Cuts",3,"SetCutInRegion '" << regionName
     << "' for particle '" << particleName
-    << "' : " << cutValue << G4endl);
+    << "' : " << cutValue << Gateendl);
   */
 
   if(regionName=="world") regionName="DefaultRegionForTheWorld";
@@ -1148,7 +1153,7 @@ void GatePhysicsList::SetCutInRegion(G4String particleName, G4String regionName,
     GateMessage("Cuts", 3, " Current Cut is g=" <<
     mapOfRegionCuts[regionName].gammaCut << " e-=" <<
     mapOfRegionCuts[regionName].electronCut << " e+=" <<
-    mapOfRegionCuts[regionName].positronCut << G4endl);
+    mapOfRegionCuts[regionName].positronCut << Gateendl);
   */
   // DS verbose is in DefineCuts
 

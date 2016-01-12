@@ -34,12 +34,12 @@ GateAddExampleData("DATA{example_ARF/HowToUse_ARF.pdf}")
 
 GateAddExampleData("DATA{example_CT/exampleCT.pdf}")
 
-GateAddExampleData("DATA{example_Radiotherapy/example8/data/EGS.root}")
-GateAddExampleData("DATA{example_Radiotherapy/example9/data/EGS.root}")
-#GateAddExampleData("DATA{example_Radiotherapy/example10/data/resampledTHORAX.raw}")
-GateAddExampleData("DATA{example_Radiotherapy/example10/data/phantom.raw}")
 GateAddExampleData("DATA{example_Radiotherapy/example2/data/patient-2mm.raw}")
 GateAddExampleData("DATA{example_Radiotherapy/example3/data/patient-4mm.raw}")
+GateAddExampleData("DATA{example_Radiotherapy/example3/data/linac-beam.root}")
+GateAddExampleData("DATA{example_Radiotherapy/example8/data/EGS.root}")
+GateAddExampleData("DATA{example_Radiotherapy/example9/data/EGS.root}")
+GateAddExampleData("DATA{example_Radiotherapy/example10/data/phantom.raw}")
 
 GateAddExampleData("DATA{gpumacros/ct/data/patient-2mm.raw}")
 GateAddExampleData("DATA{gpumacros/optical/optical_phantom.bin}")
@@ -55,7 +55,8 @@ GateAddExampleData("DATA{example_dosimetry/molecular-therapy-I131/data/CT_128_12
 GateAddExampleData("DATA{example_dosimetry/molecular-therapy-I131/data/PET_64_64_125_16uint.raw}")
 GateAddExampleData("DATA{example_dosimetry/molecular-therapy-I131/data/air-mouse.raw}")
 GateAddExampleData("DATA{example_dosimetry/protontherapy/data/patient-2mm.raw}")
+GateAddExampleData("DATA{example_dosimetry/electron_radiotherapy/data/Rando.raw}")
 
 GateAddExampleData("DATA{example_fluorescence/data/fluorescence.pdf}")
 GateAddExampleData("DATA{example_fluorescence/data/voxelisedPhantom.raw}")
-GateAddExampleData("DATA{example_dosimetry/electron_radiotherapy/data/Rando.raw}")
+GateAddExampleData("DATA{example_CT/fixedForcedDetectionCT/data/ICRP_AF.raw}")

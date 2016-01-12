@@ -44,7 +44,7 @@ GateDetectorMessenger::GateDetectorMessenger(GateDetectorConstruction* GateDet)
   new G4UnitDefinition(    "cm/h","cm/h"      ,"Speed",centimeter/hour); 
   new G4UnitDefinition(    "mm/h","mm/h"      ,"Speed",millimeter/hour); 
  
-  G4double turn   = 2. * M_PI * radian;
+  G4double turn   = twopi * radian;
 
   //We build a table of angular speed units
   new G4UnitDefinition(    "radian/s","rad/s"      ,"Angular speed",radian/second); 

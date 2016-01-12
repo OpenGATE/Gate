@@ -28,7 +28,7 @@ GateSphereMessenger::GateSphereMessenger(GateSphere *itsCreator)
   G4String cmdName = dir+"setRmin";
   SphereRminCmd = new G4UIcmdWithADoubleAndUnit(cmdName.c_str(),this);
   
-  G4cout << " Rmin" << cmdName.c_str() << G4endl;
+  G4cout << " Rmin" << cmdName.c_str() << Gateendl;
   
   SphereRminCmd->SetGuidance("Set internal radius of the sphere (0 for full sphere).");
   SphereRminCmd->SetParameterName("Rmin",false);

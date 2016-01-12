@@ -12,6 +12,7 @@ See GATE/LICENSE.txt for further details
 
 #include "globals.hh"
 #include "GateConfiguration.h"
+#include "GateMessageManager.hh"
 
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"

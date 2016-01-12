@@ -8,6 +8,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GatePETVRTManager.hh"
 #include "GatePETVRTSettings.hh"
+#include "GateMessageManager.hh"
 
 GatePETVRTManager* GatePETVRTManager::m_sInstance=NULL;
 
@@ -41,7 +42,7 @@ GateMaterialTableToProductionCutsTable* GatePETVRTManager::GetMaterialTableToPro
 void GatePETVRTManager::DeletePETVRTSettings ()
 {
 	if (m_nDeletePETVRTSettings) delete pGatePETVRTSettings;
-	else G4cout << "GatePETVRTManager::DeletePETVRTSettings: Try to delete, but GatePETVRTSettings not deletable!" << G4endl;
+	else G4cout << "GatePETVRTManager::DeletePETVRTSettings: Try to delete, but GatePETVRTSettings not deletable!\n";
 	pGatePETVRTSettings=NULL;
 }
 
@@ -49,7 +50,7 @@ void GatePETVRTManager::RegisterPETVRTSettings ( GatePETVRTSettings* s, bool del
 {
 	if ((pGatePETVRTSettings!=NULL)&& m_nDeletePETVRTSettings )
 	{
-		G4cout << "GatePETVRTManager::SetPETVRTSettings: PETVRTSettings already registered. Delete first. Do nothing!" << G4endl;
+		G4cout << "GatePETVRTManager::SetPETVRTSettings: PETVRTSettings already registered. Delete first. Do nothing!\n";
 	}
 	else
 	pGatePETVRTSettings=s;

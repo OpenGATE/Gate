@@ -8,6 +8,8 @@ See GATE/LICENSE.txt for further details
 
 
 #include "GateTrajectory.hh"
+#include "GateMessageManager.hh"
+
 #include "G4ParticleTable.hh"
 #include "G4ParticleTypes.hh"
 #include "G4Polyline.hh"
@@ -80,25 +82,25 @@ GateTrajectory::~GateTrajectory()
 
 void GateTrajectory::ShowTrajectory(std::ostream& os) const
 {
-   os << G4endl << "TrackID =" << fTrackID
-        << " : ParentID=" << fParentID << G4endl;
+   os << Gateendl << "TrackID =" << fTrackID
+        << " : ParentID=" << fParentID << Gateendl;
    os << "Particle name : " << ParticleName
-        << "  Charge : " << PDGCharge << G4endl;
+        << "  Charge : " << PDGCharge << Gateendl;
    os << "Original momentum : " <<
-        G4BestUnit(momentum,"Energy") << G4endl;
+        G4BestUnit(momentum,"Energy") << Gateendl;
    os << "Vertex : " << G4BestUnit(vertexPosition,"Length")
-        << "  Global time : " << G4BestUnit(globalTime,"Time") << G4endl;
+        << "  Global time : " << G4BestUnit(globalTime,"Time") << Gateendl;
    os << "  Current trajectory has " << positionRecord->size()
-        << " points." << G4endl;
+        << " points.\n";
 
    for( size_t i=0 ; i < positionRecord->size() ; i++){
        G4TrajectoryPoint* aTrajectoryPoint = (G4TrajectoryPoint*)((*positionRecord)[i]);
        os << "Point[" << i << "]"
-            << " Position= " << aTrajectoryPoint->GetPosition() << G4endl;
+            << " Position= " << aTrajectoryPoint->GetPosition() << Gateendl;
    }
 }
 
-#if (G4VERSION_MAJOR == 10 and G4VERSION_MINOR == 0)
+#if (G4VERSION_MAJOR == 10 && G4VERSION_MINOR == 0)
   void GateTrajectory::DrawTrajectory(G4int /*i_mode =0*/) const
 #else
   void GateTrajectory::DrawTrajectory() const

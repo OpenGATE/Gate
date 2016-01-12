@@ -1,0 +1,89 @@
+
+                     #  *ooooOOOO0000OOOOoooo*  #
+                     #  *                    *  #
+                     #  *    GATE_v7.1       *  #
+                     #  *                    *  #
+                     #  *ooooOOOO0000OOOOoooo*  #
+
+
+                          # *------------* #
+                          # * 03/30/2015 * #
+                          # *------------* #
+
+
+
+-------------------------------
+General set-up and installation:
+-------------------------------
+
+	- This version is validated for Geant4 10.1
+	- The compilation is validated for from gcc4.4 to gcc4.9
+	- It is no more needed to use system CLHEP. Geant4 embedded version now works (flag GATE_USE_SYSTEM_CLHEP=OFF by default). 
+	  Alternatively, users may still use system CLHEP version 2.2.0.4 (put the flag ON).
+	- To download binary data for benchmark and example folders, set GATE_DOWNLOAD_BENCHMARKS_DATA and GATE_DOWNLOAD_EXAMPLES_DATA
+	  variables to ON.
+	- For GPU features the CUDA tools are needed (see doc). 
+
+
+----------------------------------------------------------------------------
+All information regarding the installation are provided by the documentation:
+----------------------------------------------------------------------------
+
+Generic page: 		http://wiki.opengatecollaboration.org/index.php/InstallationGuideV7.1
+Cmake procedure: 	http://wiki.opengatecollaboration.org/index.php/New_Compilation_ProcedureV7.1
+GPU modules:		http://wiki.opengatecollaboration.org/index.php/New_Compilation_ProcedureV7.1#GPU_.26_CUDA_tools
+
+
+-----------------------------
+New developments and features:
+-----------------------------
+
+	- GPU modules for OpticalPET and CT applications. For details, read the user’s guide on the section:
+	  http://wiki.opengatecollaboration.org/index.php/Users_Guide_V7.1:How_to_use_Gate_on_a_GPU
+	  Note: technical limitations of the GPU modules are indicated in the user’s guide. 
+	  Read also the examples provided within the GATE sources for understanding the interests and limitations.
+	  
+	- Reader of voxellized sources within GATE have been extended. They now can read 3D images in following formats: 
+		* Interfile (8-bit, 16- or 32-bit Signed and Unsigned, and 32- or 64-bit Real)
+		* Analyze
+		* MetaImage (mhd/raw)
+	  For details, read the user’s guide on the section: 
+          http://wiki.opengatecollaboration.org/index.php/Users_Guide_V7.1:Voxelized_Source_and_Phantom#Voxelized_sources
+
+	- New options with the General Particle Source (GPS) to define and customize an energy spectrum associated to primary events. 
+	  For details, read the user’s guide on the section: http://wiki.opengatecollaboration.org/index.php/Users_Guide_V7.1:Source#Defining_the_energy
+	   
+	- Physic list builder mechanism is available, following the Geant4 approach. For details, read the following section: 
+	  http://wiki.opengatecollaboration.org/index.php/Users_Guide_V7.1:Setting_up_the_physics#New_physics_list_mechanism 
+	  
+	- DoseActor now uses double precision for computation (so the required memory is doubled). 
+	  Outputs are still in float. This should solve precision issues in some situations.
+	  
+	- New fast algorithm to compute dose for low energy gamma beams (lower than 1 MeV), the seTLE (split-exponential Track Length
+	  Estimator), about 105-106 faster than plain Monte-Carlo. See example 10 in the source code and
+	  http://wiki.opengatecollaboration.org/index.php/Users_Guide_V7.1:Readout_parameters_for_Radiotherapy_applications:_Actors#TLE_and_seTLE_.28Track_Length_Estimator.29 
+
+	- Various bug corrections for the PhaseSpaceActor (store all steps default value to off). 
+
+	- Various bug fixes and improvements.
+
+
+---------------------
+Documentation updates:
+---------------------
+
+Generic page: 		    http://www.opengatecollaboration.org/UsersGuide
+Dedicated wiki page: 	    http://wiki.opengatecollaboration.org/index.php/Users_Guide_V7.1
+
+
+--------
+Examples:
+--------
+
+	- GPU modules: Optical configurations are described in the following source directory:
+	  PATH_TO/examples/example_GPU
+	- How to define an customize an energy spectrum:  
+	  PATH_TO/examples/example_UserSpectrum 
+	- Dosimetry example:
+	  PATH_TO/examples/example_Radiotherapy
+

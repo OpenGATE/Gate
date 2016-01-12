@@ -22,7 +22,7 @@
 GateVActor::GateVActor(G4String name, G4int depth)
   :GateNamedObject(name), G4VPrimitiveScorer(name, depth)
 {
-  GateDebugMessageInc("Actor",4,"GateVActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateVActor() -- begin\n");
   EnableBeginOfRunAction(false);
   EnableEndOfRunAction(true); // for save
   EnableBeginOfEventAction(false);
@@ -40,7 +40,7 @@ GateVActor::GateVActor(G4String name, G4int depth)
   mNumOfFilters = 0;
   mOverWriteFilesFlag = true;
   pFilterManager = new GateFilterManager(GetObjectName()+"_filter");
-  GateDebugMessageDec("Actor",4,"GateVActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateVActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -48,9 +48,9 @@ GateVActor::GateVActor(G4String name, G4int depth)
 //-----------------------------------------------------------------------------
 GateVActor::~GateVActor()
 {
-  GateDebugMessageInc("Actor",4,"~GateVActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"~GateVActor() -- begin\n");
   delete pFilterManager;
-  GateDebugMessageDec("Actor",4,"~GateVActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"~GateVActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -93,7 +93,7 @@ void GateVActor::EndOfEventAction(const G4Event*e)
     gettimeofday(&end, NULL);
     long seconds  = end.tv_sec  - mTimeOfLastSaveEvent.tv_sec;
     if (seconds > mSaveEveryNSeconds) {
-      //GateMessage("Core", 0, "Actor " << GetName() << " : " << mSaveEveryNSeconds << " seconds." << G4endl);
+      //GateMessage("Core", 0, "Actor " << GetName() << " : " << mSaveEveryNSeconds << " seconds.\n");
       SaveData();
       mTimeOfLastSaveEvent = end;
     }
@@ -115,12 +115,10 @@ void GateVActor::SetSaveFilename(G4String  f)
 void GateVActor::AttachToVolume(G4String /*volumeName*/)
 {
   if (mVolumeName != "") {
-    GateDebugMessageInc("Actor",4,"Attach "<<GetObjectName()<<" to volume -- begin"<<G4endl);
+    GateDebugMessageInc("Actor",4,"Attach "<<GetObjectName()<<" to volume -- begin\n");
     mVolume =   GateObjectStore::GetInstance()->FindVolumeCreator(mVolumeName);
-    // DD(mVolume);
-    // DD(mVolume->GetLogicalVolume());
-    GateDebugMessage("Actor",5,"actor attached to: "<<mVolume->GetObjectName()<<G4endl);
-    GateDebugMessageDec("Actor",4,"Attach "<<GetObjectName()<<" to volume -- end\n"<<G4endl);
+    GateDebugMessage("Actor",5,"actor attached to: "<<mVolume->GetObjectName()<< Gateendl);
+    GateDebugMessageDec("Actor",4,"Attach "<<GetObjectName()<<" to volume -- end\n");
   }
 }
 //-----------------------------------------------------------------------------

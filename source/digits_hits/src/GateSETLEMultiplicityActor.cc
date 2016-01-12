@@ -31,9 +31,9 @@
 GateSETLEMultiplicityActor::GateSETLEMultiplicityActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateSETLEMultiplicityActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateSETLEMultiplicityActor() -- begin\n");
   mMaterialHandler = GateMaterialMuHandler::GetInstance();
-  GateDebugMessageDec("Actor",4,"GateSETLEMultiplicityActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateSETLEMultiplicityActor() -- end\n");
 
   mIsHybridinoEnabled = false;
   mDefaultPrimaryMultiplicity = 0;
@@ -55,7 +55,7 @@ GateSETLEMultiplicityActor::~GateSETLEMultiplicityActor() {}
 /// Construct
 void GateSETLEMultiplicityActor::Construct()
 {
-  GateMessage("Actor", 0, " SETLEMultiplicityActor auto-construction" << G4endl);
+  GateMessage("Actor", 0, " SETLEMultiplicityActor auto-construction\n");
   
   GateVActor::Construct();
   // Enable callbacks
@@ -65,7 +65,7 @@ void GateSETLEMultiplicityActor::Construct()
   EnablePostUserTrackingAction(true);
   EnableUserSteppingAction(true);
     
-  if((mDefaultPrimaryMultiplicity<0) or (mDefaultSecondaryMultiplicity<0)) {
+  if((mDefaultPrimaryMultiplicity<0) || (mDefaultSecondaryMultiplicity<0)) {
     GateError("Multiplicity cannot be inferior to 0 (Mprim = " << mDefaultPrimaryMultiplicity << ", Msec = " << mDefaultSecondaryMultiplicity << ")");
   }
 }
@@ -150,7 +150,7 @@ void GateSETLEMultiplicityActor::PreUserTrackingAction(const GateVVolume *, cons
   mCurrentHybridTrackWeight = 1.;
   if(t->GetParticleDefinition()->GetParticleName() == "hybridino")
   {
-//     GateMessage("Actor", 0, "track = " << t << " parentID = " << t->GetParentID() << G4endl);
+//     GateMessage("Actor", 0, "track = " << t << " parentID = " << t->GetParentID() << Gateendl);
     if(t->GetParentID() == 0)
     {
       mCurrentHybridTrackWeight = t->GetWeight() / mDefaultPrimaryMultiplicity;
@@ -181,8 +181,8 @@ void GateSETLEMultiplicityActor::PostUserTrackingAction(const GateVVolume *, con
     mListOfHybridWeight.erase(mListOfHybridWeight.begin() + mCurrentTrackIndex);
   }
 
-//   for(unsigned int i=0; i<mListOfHybridTrack.size(); i++) { GateMessage("Actor", 0, "track = " << mListOfHybridTrack[i] << " weight = " << mListOfHybridWeight[i] << G4endl); }
-//   GateMessage("Actor", 0, " " << G4endl);
+//   for(unsigned int i=0; i<mListOfHybridTrack.size(); i++) { GateMessage("Actor", 0, "track = " << mListOfHybridTrack[i] << " weight = " << mListOfHybridWeight[i] << Gateendl); }
+//   GateMessage("Actor", 0, " \n");
 }
 //-----------------------------------------------------------------------------
 
@@ -203,7 +203,7 @@ void GateSETLEMultiplicityActor::UserSteppingAction(const GateVVolume *, const G
       G4double mu = mMaterialHandler->GetMu(couple, energy);    
       mCurrentHybridTrackWeight = mCurrentHybridTrackWeight * exp(-mu*stepLength/10.);
     }
-//     GateMessage("ActorMult", 0, "hybridWeight = " << currentHybridTrackWeight << G4endl);
+//     GateMessage("ActorMult", 0, "hybridWeight = " << currentHybridTrackWeight << Gateendl);
   }
   else if(particleName == "gamma")
   {
@@ -248,8 +248,8 @@ void GateSETLEMultiplicityActor::UserSteppingAction(const GateVVolume *, const G
 	    for(int i=0; i<currentSecondaryMultiplicity; i++)
 	    {
 	      // Random generation of the angle (no physical crossSection for fluorescence)
-	      double phi = 2.*pi*G4UniformRand();
-	      double cosTheta = 2.*(G4UniformRand()-0.5);
+	      double phi = G4RandFlat::shoot(twopi);
+	      double cosTheta = G4RandFlat::shoot(-1.0, 1.0);
 	      G4ThreeVector momentum;
 	      momentum.setX(cos(phi)*sqrt(1.-(cosTheta*cosTheta)));
 	      momentum.setY(sin(phi)*sqrt(1.-(cosTheta*cosTheta)));
@@ -295,9 +295,9 @@ void GateSETLEMultiplicityActor::UserSteppingAction(const GateVVolume *, const G
 	myStep->GetPostStepPoint()->SetMomentumDirection(incidentMomentum);
 	myStep->SetStepLength(step->GetStepLength());
 
-  //       GateMessage("Actor", 0, "prePos = " << myStep->GetPreStepPoint()->GetPosition() << " preDir = " << myStep->GetPreStepPoint()->GetMomentumDirection() << G4endl);
-  //       GateMessage("Actor", 0, "posPos = " << myStep->GetPostStepPoint()->GetPosition() << " posDir = " << myStep->GetPostStepPoint()->GetMomentumDirection() << G4endl);
-  //       GateMessage("Actor", 0, "traPos = " << myStep->GetTrack()->GetPosition() << " traDir = " << myStep->GetTrack()->GetMomentumDirection() << " trackAdress = " << myStep->GetTrack() << G4endl);
+  //       GateMessage("Actor", 0, "prePos = " << myStep->GetPreStepPoint()->GetPosition() << " preDir = " << myStep->GetPreStepPoint()->GetMomentumDirection() << Gateendl);
+  //       GateMessage("Actor", 0, "posPos = " << myStep->GetPostStepPoint()->GetPosition() << " posDir = " << myStep->GetPostStepPoint()->GetMomentumDirection() << Gateendl);
+  //       GateMessage("Actor", 0, "traPos = " << myStep->GetTrack()->GetPosition() << " traDir = " << myStep->GetTrack()->GetMomentumDirection() << " trackAdress = " << myStep->GetTrack() << Gateendl);
 
 	int currentSecondaryMultiplicity;
 	std::map<G4VPhysicalVolume *,int>::iterator it = mSecondaryMultiplicityMap.find(step->GetTrack()->GetVolume());
@@ -319,8 +319,8 @@ void GateSETLEMultiplicityActor::UserSteppingAction(const GateVVolume *, const G
 	  particleChange->SetVerboseLevel(0);
 	  particleChange->UpdateStepForPostStep(myStep);
 
-  // 	GateMessage("Actor", 0, "prePos = " << newStep->GetPreStepPoint()->GetPosition() << " preDir = " << newStep->GetPreStepPoint()->GetMomentumDirection() << G4endl);
-  // 	GateMessage("Actor", 0, "posPos = " << newStep->GetPostStepPoint()->GetPosition() << " posDir = " << newStep->GetPostStepPoint()->GetMomentumDirection() << G4endl);
+  // 	GateMessage("Actor", 0, "prePos = " << newStep->GetPreStepPoint()->GetPosition() << " preDir = " << newStep->GetPreStepPoint()->GetMomentumDirection() << Gateendl);
+  // 	GateMessage("Actor", 0, "posPos = " << newStep->GetPostStepPoint()->GetPosition() << " posDir = " << newStep->GetPostStepPoint()->GetMomentumDirection() << Gateendl);
 
 	  G4double energy = myStep->GetPostStepPoint()->GetKineticEnergy();
 	  G4ThreeVector momentum = myStep->GetPostStepPoint()->GetMomentumDirection();

@@ -63,10 +63,10 @@ void GateLinearRepeaterMessenger::SetNewValue(G4UIcommand* command,G4String newV
   
   if( command==SetRepeatVectorCmd )
 
-    {  GateMessage("Geometry", 5, "Linear repeater : repeat vector = " << SetRepeatVectorCmd->GetNew3VectorValue(newValue) << G4endl;);      
+    {  GateMessage("Geometry", 5, "Linear repeater : repeat vector = " << SetRepeatVectorCmd->GetNew3VectorValue(newValue) << Gateendl;);      
     GetLinearRepeater()->SetRepeatVector(SetRepeatVectorCmd->GetNew3VectorValue(newValue));}   
   else if( command==SetRepeatNumberCmd )
-    { GateMessage("Geometry", 5, "Linear repeater : repeat number = " << SetRepeatNumberCmd->GetNewIntValue(newValue) << G4endl; ); 
+    { GateMessage("Geometry", 5, "Linear repeater : repeat number = " << SetRepeatNumberCmd->GetNewIntValue(newValue) << Gateendl; ); 
     GetLinearRepeater()->SetRepeatNumber(SetRepeatNumberCmd->GetNewIntValue(newValue)); }   
   else if( command==AutoCenterCmd )
     { GetLinearRepeater()->SetAutoCenterFlag(AutoCenterCmd->GetNewBoolValue(newValue));}   

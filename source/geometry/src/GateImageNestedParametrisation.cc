@@ -26,34 +26,34 @@ GateImageNestedParametrisation::GateImageNestedParametrisation(GateImageNestedPa
   : pVolume(volume)
 {
 
-  GateMessage("Volume",5,"Begin GateImageNestedParametrisation()"<<G4endl);
+  GateMessage("Volume",5,"Begin GateImageNestedParametrisation()\n");
   pVolume->BuildLabelToG4MaterialVector(mVectorLabel2Material);
 
   mAirMaterial = 
-    GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial("Air");
+    theMaterialDatabase.GetMaterial("Air");
 
   // Computation of Z position
   G4double zp;
   G4double fNz = pVolume->GetImage()->GetResolution().z();
-  GateMessage("Volume",6,"GateImageNestedParametrisation() -- fNz = " << fNz << G4endl);
+  GateMessage("Volume",6,"GateImageNestedParametrisation() -- fNz = " << fNz << Gateendl);
   G4double fdZ = pVolume->GetImage()->GetVoxelSize().z()/2.0;
-  GateMessage("Volume",6,"GateImageNestedParametrisation() -- fdZ = " << fdZ << G4endl);
+  GateMessage("Volume",6,"GateImageNestedParametrisation() -- fdZ = " << fdZ << Gateendl);
   G4double fZoffset = 0; // ??
   for(int iz = 0; iz < fNz; iz++) {
     zp = (-fNz+1+2*iz)*fdZ+fZoffset;
     fpZ.push_back(zp);
-    GateMessage("Volume",6,"GateImageNestedParametrisation() -- "<<iz << " -> " << zp << G4endl);
+    GateMessage("Volume",6,"GateImageNestedParametrisation() -- "<<iz << " -> " << zp << Gateendl);
   }
 
-  GateMessage("Volume",5,"End GateImageNestedParametrisation()"<<G4endl);
+  GateMessage("Volume",5,"End GateImageNestedParametrisation()\n");
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 GateImageNestedParametrisation::~GateImageNestedParametrisation()
 {
-  GateMessageInc("Volume",5,"Begin ~GateImageNestedParametrisation()"<<G4endl);
-  GateMessageDec("Volume",5,"End ~GateImageNestedParametrisation()"<<G4endl);
+  GateMessageInc("Volume",5,"Begin ~GateImageNestedParametrisation()\n");
+  GateMessageDec("Volume",5,"End ~GateImageNestedParametrisation()\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -88,7 +88,7 @@ G4Material* GateImageNestedParametrisation::ComputeMaterial(G4VPhysicalVolume* /
     // GateDebugMessage("Volume",6,"GateImageNestedParametrisation::ComputeMaterial parent=0" 
     // 		     << physVol->GetName() << " copy=" << copyNo
     // 		     << " mat = " << copyNo
-    // 		     << G4endl);
+    // 		     << Gateendl);
     return mVectorLabel2Material[0];
   }
 
@@ -97,13 +97,13 @@ G4Material* GateImageNestedParametrisation::ComputeMaterial(G4VPhysicalVolume* /
   G4int iz = copyNo;
   
   GateDebugMessage("Volume",6,"GateImageNestedParametrisation::ComputeMaterial vox " 
-		   << ix << " " << iy << " " << iz << G4endl);
+		   << ix << " " << iy << " " << iz << Gateendl);
   
   // Get label of material at voxel "copyNo"
   G4int lab = (G4int)pVolume->GetImage()->GetValue(ix, iy, iz);
   
   GateDebugMessage("Volume",6,"GateImageNestedParametrisation::ComputeMaterial lab " 
-		   << lab << G4endl);
+		   << lab << Gateendl);
  
   // assert to be removed ? // Done.
   // assert(lab>=0);
@@ -112,7 +112,7 @@ G4Material* GateImageNestedParametrisation::ComputeMaterial(G4VPhysicalVolume* /
   // Get material from label
   G4Material* mat = mVectorLabel2Material[lab];
   
-  GateDebugMessage("Volume",6,"mat = " << mat->GetName() << G4endl);
+  GateDebugMessage("Volume",6,"mat = " << mat->GetName() << Gateendl);
   
   return mat;
 }
@@ -123,7 +123,7 @@ G4Material* GateImageNestedParametrisation::ComputeMaterial(G4VPhysicalVolume* /
 G4int GateImageNestedParametrisation::GetNumberOfMaterials() const
 {
   int nMat = mVectorLabel2Material.size();
-  GateDebugMessage("Volume",6,"Nested GetNumberOfMaterials: "<<nMat << G4endl);
+  GateDebugMessage("Volume",6,"Nested GetNumberOfMaterials: "<<nMat << Gateendl);
   return nMat;
 }
 //-----------------------------------------------------------------------------
@@ -131,7 +131,7 @@ G4int GateImageNestedParametrisation::GetNumberOfMaterials() const
 //-----------------------------------------------------------------------------
 G4Material* GateImageNestedParametrisation::GetMaterial(G4int idx) const
 {
-  //  GateDebugMessage("Volume",6,"Nested GetMaterial " << idx << G4endl);
+  //  GateDebugMessage("Volume",6,"Nested GetMaterial " << idx << Gateendl);
   return mVectorLabel2Material[idx];
 }
 //-----------------------------------------------------------------------------

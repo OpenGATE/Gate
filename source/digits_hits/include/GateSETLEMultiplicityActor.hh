@@ -56,10 +56,10 @@ public:
   {   
     if (singleton_SETLEMultiplicityActor == 0)
     {
-      //std::cout << "creating GateActorManager..." << std::endl;
+      //std::cout << "creating GateActorManager...\n";
       singleton_SETLEMultiplicityActor = new GateSETLEMultiplicityActor("seTLEMultiplicityActor",0);
     }
-    //else std::cout << "GateActorManager already created!" << std::endl;
+    //else std::cout << "GateActorManager already created!\n";
     return singleton_SETLEMultiplicityActor;
   };
   

@@ -46,7 +46,7 @@ void GateTranslationMoveMessenger::SetNewValue(G4UIcommand* command,G4String new
 { 
   if( command==TranslationVelocityCmd )
     { 
-     G4cout << "Translation speed = " << newValue << G4endl;
+     G4cout << "Translation speed = " << newValue << Gateendl;
      GetTranslationMove()->SetVelocity(TranslationVelocityCmd->GetNew3VectorValue(newValue));}      
   
   else 

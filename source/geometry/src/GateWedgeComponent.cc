@@ -40,8 +40,8 @@ G4bool GateWedgeComponent::IsValidAttachmentRequest(GateVVolume* anCreator) cons
   // Check whether the creator is connected to a Wedge-creator
   GateWedge* WedgeCreator = GetWedgeCreator(anCreator);
   if (!WedgeCreator) {
-       G4cerr   << "[" << anCreator->GetObjectName() << "::IsValidAttachmentRequest]:" << G4endl
-                << "\tThe volume creator ('" << WedgeCreator->GetObjectName() << "') for this creator does not seem to be a Wedge" << G4endl << G4endl;
+       G4cerr   << "[" << anCreator->GetObjectName() << "::IsValidAttachmentRequest]:\n"
+                << "\tThe volume creator ('" << WedgeCreator->GetObjectName() << "') for this creator does not seem to be a Wedge\n" << Gateendl;
       return false;
   }
 

@@ -19,6 +19,7 @@ See GATE/LICENSE.txt for further details
 #include <algorithm>
 
 #include "Randomize.hh"
+#include <G4PhysicalConstants.hh>
 
 using namespace std;
 
@@ -82,13 +83,13 @@ class GateSimplifiedDecayTransition {
   double majoredHitAndMiss();
 
   inline double majoringFunction(double x){
-    return amplitude*sin(Pi*x/energy);
+    return amplitude*sin(pi*x/energy);
   }
   inline double majoringInverseCDF(double x){
-    return energy/Pi*acos(- Pi*x/(energy * amplitude));
+    return energy/pi*acos(-pi*x/(energy * amplitude));
   }
   inline double CDFRandom(){
-    return majoringInverseCDF( energy * amplitude/Pi * (2*G4UniformRand()-1) );
+    return majoringInverseCDF( energy * amplitude/pi * (2*G4UniformRand()-1) );
   }
 
  private:
@@ -102,10 +103,7 @@ class GateSimplifiedDecayTransition {
   double normalisationFactor;                       //  normalisation factor for PDF (for positrons)
   int    atomicNumber;
 
-  static  double kAlpha;
   static  double kAlphaSquared;
-  static  double Pi;
-  static  double E;
 
 };
 

@@ -116,7 +116,7 @@ void GateToASCIIMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
       is >> tempIntBool; // NB: is >> bool does not work, so we put is to an integer and we copy the integer to the bool
       tempBool = tempIntBool;
       maskVector.push_back(tempBool);
-      //      G4cout << "[GateToASCIIMessenger::SetNewValue] iMask: " << iMask << " maskVector[iMask]: " << maskVector[iMask] << G4endl;
+      //      G4cout << "[GateToASCIIMessenger::SetNewValue] iMask: " << iMask << " maskVector[iMask]: " << maskVector[iMask] << Gateendl;
     }
     GateCoincidenceDigi::SetCoincidenceASCIIMask( maskVector );
 
@@ -135,7 +135,7 @@ void GateToASCIIMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
       is >> tempIntBool; // NB: is >> bool does not work, so we put is to an integer and we copy the integer to the bool
       tempBool = tempIntBool;
       maskVector.push_back(tempBool);
-      //      G4cout << "[GateToASCIIMessenger::SetNewValue] iMask: " << iMask << " maskVector[iMask]: " << maskVector[iMask] << G4endl;
+      //      G4cout << "[GateToASCIIMessenger::SetNewValue] iMask: " << iMask << " maskVector[iMask]: " << maskVector[iMask] << Gateendl;
     }
     GateSingleDigi::SetSingleASCIIMask( maskVector );
 

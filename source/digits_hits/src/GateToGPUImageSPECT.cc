@@ -8,11 +8,9 @@
 #include <cmath>
 #include "pthread.h"
 #include <vector>
-#include "G4RunManager.hh"
 #include "GateConfiguration.h"
 #include "G4VProcess.hh"
 #include "G4UnitsTable.hh"
-#include "G4RunManager.hh"
 #include "G4EmCalculator.hh"
 #include "G4TouchableHistory.hh"
 #include "G4TransportationManager.hh"
@@ -29,8 +27,8 @@
 #include "G4Electron.hh"
 #include <cstddef>
 #include <sys/time.h>
+#include "GateMiscFunctions.hh"
 
-#define PI ( 4 * ::atan( 1 ) )
 
 GateToGPUImageSPECT::GateToGPUImageSPECT( const G4String& name,
     GateOutputMgr *outputMgr, GateVSystem* itsSystem, DigiMode digiMode )
@@ -313,10 +311,10 @@ void GateToGPUImageSPECT::RecordBeginOfAcquisition()
 {
 	if( nVerboseLevel > 1 )
 		G4cout << ">> entering [GateToGPUImageSPECT::RecordBeginOfAcquisition]"
-			   << G4endl;
+			   << Gateendl;
 
     // Creating ROOT file
-    G4cout << "GateToGPUImageSPECT: ROOT files creating..." << G4endl;
+    G4cout << "GateToGPUImageSPECT: ROOT files creating...\n";
     m_file = new TFile( ( m_fileName + ".root" ).c_str(), "RECREATE" );
 
     // Check that we succeeded in opening the file
@@ -337,7 +335,7 @@ void GateToGPUImageSPECT::RecordBeginOfAcquisition()
 
     if( nVerboseLevel > 0 )
         G4cout << "GateToGPUImageSPECT::RecordBeginOfAcquisition, filename: "
-            << m_fileName << ".root created" << G4endl;
+            << m_fileName << ".root created\n";
 
 		if( m_cpuFlag )
 			m_cpuParticle = GateCPUParticle_new( m_bufferParticleEntry );
@@ -424,7 +422,7 @@ void GateToGPUImageSPECT::RecordBeginOfAcquisition()
 		if( m_cpuFlag )
 		{
 			if( nVerboseLevel>0 )
-				G4cout << "Creating CPU collimator..." << G4endl;
+				G4cout << "Creating CPU collimator...\n";
 
 			m_cpuCollimator = GateCPUCollimator_new( m_ny_pixel, m_nz_pixel, m_septa,
 				m_fy, m_fz, m_collimatorHeight,
@@ -435,7 +433,7 @@ void GateToGPUImageSPECT::RecordBeginOfAcquisition()
 		else
 		{
 			if( nVerboseLevel>0 )
-				G4cout << "Creating GPU collimator..." << G4endl;
+				G4cout << "Creating GPU collimator...\n";
 
 			m_gpuCollimator = GateGPUCollimator_new( m_ny_pixel, m_nz_pixel, m_septa,
         m_fy, m_fz, m_collimatorHeight,
@@ -448,20 +446,20 @@ void GateToGPUImageSPECT::RecordBeginOfAcquisition()
 
 	if( nVerboseLevel > 1 )
 		G4cout << ">> leaving [GateToGPUImageSPECT::RecordBeginOfAcquisition]"
-			<< G4endl;
+			<< Gateendl;
 }
 
 void GateToGPUImageSPECT::RecordEndOfAcquisition()
 {
     if( nVerboseLevel > 1 )
 		G4cout << ">> entering [GateToGPUImageSPECT::RecordEndOfAcquisition]"
-			   << G4endl;
+			   << Gateendl;
 
     // Freeing memory
 		if( m_cpuFlag )
 		{
 			if( nVerboseLevel>0 )
-				G4cout << "Deleting CPU collimator..." << G4endl;
+				G4cout << "Deleting CPU collimator...\n";
 
     	GateCPUCollimator_delete( m_cpuCollimator );
     	GateCPUParticle_delete( m_cpuParticle );
@@ -469,14 +467,14 @@ void GateToGPUImageSPECT::RecordEndOfAcquisition()
 		else
 		{
 			if( nVerboseLevel>0 )
-				G4cout << "Deleting GPU collimator..." << G4endl;
+				G4cout << "Deleting GPU collimator...\n";
 
     	GateGPUCollimator_delete( m_gpuCollimator );
     	GateGPUParticle_delete( m_gpuParticle );
 		}
 
     m_file->Write();
-    G4cout << "GateToGPUImageSPECT: ROOT files closing..." << G4endl;
+    G4cout << "GateToGPUImageSPECT: ROOT files closing...\n";
     if( m_file->IsOpen() )
     {
         m_file->Close();
@@ -485,19 +483,19 @@ void GateToGPUImageSPECT::RecordEndOfAcquisition()
 		if( m_timeFlag )
 		{
 			//G4cout << "Elapsed time in GPU/SPECT collimator: " << m_elapsedTime
-			//	<< " seconds" << G4endl;
+			//	<< " seconds\n";
             printf("Elapsed time in SPECT collimator: %f s\n", m_elapsedTime);
 		}
 
 	if( nVerboseLevel > 1 )
 		G4cout << ">> leaving [GateToGPUImageSPECT::RecordEndOfAcquisition]"
-			<< G4endl;
+			<< Gateendl;
 }
 
 void GateToGPUImageSPECT::RecordBeginOfRun( const G4Run* aRun )
 {
 	if( nVerboseLevel > 1 )
-		G4cout << " >> entering [GateToGPUImageSPECT::RecordBeginOfRun]" << G4endl;
+		G4cout << " >> entering [GateToGPUImageSPECT::RecordBeginOfRun]\n";
 
 	m_runID = aRun->GetRunID();
 
@@ -513,22 +511,22 @@ void GateToGPUImageSPECT::RecordBeginOfRun( const G4Run* aRun )
 
 
 	if( nVerboseLevel > 1 )
-		G4cout << " >> leaving [GateToGPUImageSPECT::RecordBeginOfRun]" << G4endl;
+		G4cout << " >> leaving [GateToGPUImageSPECT::RecordBeginOfRun]\n";
 }
 
 void GateToGPUImageSPECT::RecordEndOfRun( const G4Run* )
 {
 	if( nVerboseLevel > 1 )
-		G4cout << " >> entering [GateToGPUImageSPECT::RecordEndOfRun]" << G4endl;
+		G4cout << " >> entering [GateToGPUImageSPECT::RecordEndOfRun]\n";
 
 	if( nVerboseLevel > 1 )
-		G4cout << " >> leaving [GateToGPUImageSPECT::RecordEndOfRun]" << G4endl;
+		G4cout << " >> leaving [GateToGPUImageSPECT::RecordEndOfRun]\n";
 }
 
 void GateToGPUImageSPECT::RecordBeginOfEvent( const G4Event* aEvent )
 {
 	if( nVerboseLevel > 3 )
-		G4cout << " >> entering [GateToGPUImageSPECT::RecordBeginOfEvent]" << G4endl;
+		G4cout << " >> entering [GateToGPUImageSPECT::RecordBeginOfEvent]\n";
 
 	if( !aEvent->GetPrimaryVertex() )
 		return;
@@ -548,13 +546,13 @@ void GateToGPUImageSPECT::RecordBeginOfEvent( const G4Event* aEvent )
 	m_launchLastBuffer = GateSourceMgr::GetInstance()->IsLaunchLastBuffer();
 
 	if( nVerboseLevel > 3 )
-		G4cout << " >> leaving [GateToGPUImageSPECT::RecordBeginOfEvent]" << G4endl;
+		G4cout << " >> leaving [GateToGPUImageSPECT::RecordBeginOfEvent]\n";
 }
 
 void GateToGPUImageSPECT::RecordEndOfEvent( const G4Event* )
 {
 	if( nVerboseLevel > 3 )
-		G4cout << " >> entering [GateToGPUImageSPECT::RecordEndOfEvent]" << G4endl;
+		G4cout << " >> entering [GateToGPUImageSPECT::RecordEndOfEvent]\n";
 
     // Tracking singles
     if( m_rootSingleFlag )
@@ -611,14 +609,14 @@ void GateToGPUImageSPECT::RecordEndOfEvent( const G4Event* )
     }
 
 	if( nVerboseLevel > 3 )
-		G4cout << " >> leaving [GateToGPUImageSPECT::RecordEndOfEvent]" << G4endl;
+		G4cout << " >> leaving [GateToGPUImageSPECT::RecordEndOfEvent]\n";
 }
 
 void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 	const G4Step *aStep )
 {
 	if( nVerboseLevel > 3 )
-		G4cout << " >> entering [GateToGPUImageSPECT::RecordStep]" << G4endl;
+		G4cout << " >> entering [GateToGPUImageSPECT::RecordStep]\n";
 
 	// Filter on new created particle on parentID and PDG
 	G4int PDGencoding = aStep->GetTrack()->GetDynamicParticle()->GetPDGcode();
@@ -635,10 +633,10 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 		G4double x = preStep->GetPosition().x()/mm;
 		G4double y = preStep->GetPosition().y()/mm;
 		G4double z = preStep->GetPosition().z()/mm;
-		G4double newX = ::cos( m_angle * PI / 180.0 ) * x
-			- ::sin( m_angle * PI / 180.0 ) * z;
-		G4double newZ = ::sin( m_angle * PI / 180.0 ) * x
-			+ ::cos( m_angle * PI / 180.0 ) * z;
+		G4double newX = ::cos( deg2rad(m_angle) ) * x
+			- ::sin( deg2rad(m_angle) ) * z;
+		G4double newZ = ::sin( deg2rad(m_angle) ) * x
+			+ ::cos( deg2rad(m_angle) ) * z;
 
 		// Check if the particule is on entry on collimator
 		if( newX <= ( m_ror + 0.001 ) ) // 0.1 of security double precision
@@ -658,10 +656,10 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 			G4double dx = preStep->GetMomentumDirection().x();
 			G4double dy = preStep->GetMomentumDirection().y();
 			G4double dz = preStep->GetMomentumDirection().z();
-			G4double newDx = ::cos( m_angle * PI / 180.0 ) * dx
-				- ::sin( m_angle * PI / 180.0 ) * dz;
-			G4double newDz = ::sin( m_angle * PI / 180.0 ) * dx
-				+ ::cos( m_angle * PI / 180.0 ) * dz;
+			G4double newDx = ::cos( deg2rad(m_angle) ) * dx
+				- ::sin( deg2rad(m_angle) ) * dz;
+			G4double newDz = ::sin( deg2rad(m_angle) ) * dx
+				+ ::cos( deg2rad(m_angle) ) * dz;
 
 			if( aStep->GetTrack()->GetDefinition() == G4Gamma::Gamma() )
 			{
@@ -728,13 +726,13 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					if( m_cpuFlag )
 					{
 						G4cout << "->->->->-> Launching CPU on " << m_cpuNumber
-							<< " thread(s) ... <-<-<-<-<-" << G4endl;
-						G4cout << "Particle entry CPU: " << m_cpuParticle->size << G4endl;
+							<< " thread(s) ... <-<-<-<-<-\n";
+						G4cout << "Particle entry CPU: " << m_cpuParticle->size << Gateendl;
 					}
 					else
 					{
-						G4cout << "->->->->-> Launching GPU... <-<-<-<-<-" << G4endl;
-						G4cout << "Particle entry GPU: " << m_gpuParticle->size << G4endl;
+						G4cout << "->->->->-> Launching GPU... <-<-<-<-<-\n";
+						G4cout << "Particle entry GPU: " << m_gpuParticle->size << Gateendl;
 					}
 				}
 
@@ -805,7 +803,7 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					// Getting the number of particles after the CPU
 					sizeAfter = m_cpuParticle->size;
 					if( nVerboseLevel > 0 )
-						G4cout << "Particle exit CPU: " << sizeAfter<< G4endl;
+						G4cout << "Particle exit CPU: " << sizeAfter<< Gateendl;
 				}
 				#ifdef GATE_USE_GPU
 				else
@@ -825,7 +823,7 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					// Getting the number of particles after the GPU
 					sizeAfter = m_gpuParticle->size;
 					if( nVerboseLevel > 0 )
-						G4cout << "Particle exit GPU: " << m_gpuParticle->size << G4endl;
+						G4cout << "Particle exit GPU: " << m_gpuParticle->size << Gateendl;
 				}
 				#endif
 
@@ -836,11 +834,11 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					{
 						for( unsigned int i = 0; i < m_cpuParticle->size; ++i )
 						{
-							G4double x = m_cpuParticle->px[ i ] * ::cos( m_angle * PI / 180.0 )
-								+ m_cpuParticle->pz[ i ] * ::sin( m_angle * PI / 180.0 );
+							G4double x = m_cpuParticle->px[ i ] * ::cos( deg2rad(m_angle) )
+								+ m_cpuParticle->pz[ i ] * ::sin( deg2rad(m_angle));
 							G4double y = (G4float)m_cpuParticle->py[ i ];
-							G4double z = m_cpuParticle->pz[ i ] * ::cos( m_angle * PI / 180.0 )
-								- m_cpuParticle->px[ i ] * ::sin( m_angle * PI / 180.0 );
+							G4double z = m_cpuParticle->pz[ i ] * ::cos( deg2rad(m_angle) )
+								- m_cpuParticle->px[ i ] * ::sin( deg2rad(m_angle) );
 
 							m_posX_ExitCollimatorSource = (G4float)x/mm;
 							m_posY_ExitCollimatorSource = (G4float)y/mm;
@@ -854,11 +852,11 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
 					{
 						for( unsigned int i = 0; i < m_gpuParticle->size; ++i )
 						{
-							G4double x = m_gpuParticle->px[ i ] * ::cos( m_angle * PI / 180.0 )
-								+ m_gpuParticle->pz[ i ] * ::sin( m_angle * PI / 180.0 );
+							G4double x = m_gpuParticle->px[ i ] * ::cos( deg2rad(m_angle) )
+								+ m_gpuParticle->pz[ i ] * ::sin( deg2rad(m_angle) );
 							G4double y = (G4float)m_gpuParticle->py[ i ];
-							G4double z = m_gpuParticle->pz[ i ] * ::cos( m_angle * PI / 180.0 )
-								- m_gpuParticle->px[ i ] * ::sin( m_angle * PI / 180.0 );
+							G4double z = m_gpuParticle->pz[ i ] * ::cos( deg2rad(m_angle ) )
+								- m_gpuParticle->px[ i ] * ::sin( deg2rad(m_angle) );
 
 							m_posX_ExitCollimatorSource = (G4float)x/mm;
 							m_posY_ExitCollimatorSource = (G4float)y/mm;
@@ -892,7 +890,7 @@ void GateToGPUImageSPECT::RecordStepWithVolume( const GateVVolume*,
     }
 
 	if( nVerboseLevel > 3 )
-		G4cout << " >> leaving [GateToGPUImageSPECT::RecordStep]" << G4endl;
+		G4cout << " >> leaving [GateToGPUImageSPECT::RecordStep]\n";
 }
 
 void GateToGPUImageSPECT::SetVolumeToAttach( G4String& volName )
@@ -904,17 +902,17 @@ void GateToGPUImageSPECT::CreateNewParticle( GateCPUParticle const *p,
     unsigned int id )
 {
 		// Rotate the momentum and position
-		G4double x = p->px[ id ] * ::cos( m_angle * PI / 180.0 )
-			+ p->pz[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double x = p->px[ id ] * ::cos( deg2rad(m_angle) )
+			+ p->pz[ id ] * ::sin( deg2rad(m_angle) );
 		G4double y = p->py[ id ];
-		G4double z = p->pz[ id ] * ::cos( m_angle * PI / 180.0 )
-			- p->px[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double z = p->pz[ id ] * ::cos( deg2rad(m_angle) )
+			- p->px[ id ] * ::sin( deg2rad(m_angle) );
 
-		G4double dx = p->dx[ id ] * ::cos( m_angle * PI / 180.0 )
-			+ p->dz[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double dx = p->dx[ id ] * ::cos( deg2rad(m_angle) )
+			+ p->dz[ id ] * ::sin( deg2rad(m_angle) );
 		G4double dy = p->dy[ id ];
-		G4double dz = p->dz[ id ] * ::cos( m_angle * PI / 180.0 )
-			- p->dx[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double dz = p->dz[ id ] * ::cos( deg2rad(m_angle) )
+			- p->dx[ id ] * ::sin( deg2rad(m_angle) );
 
     G4ThreeVector dir( dx, dy, dz );
     dir /= dir.mag();
@@ -943,17 +941,17 @@ void GateToGPUImageSPECT::CreateNewParticle( GateGPUParticle const *p,
     unsigned int id )
 {
 		// Rotate the momentum and position
-		G4double x = p->px[ id ] * ::cos( m_angle * PI / 180.0 )
-			+ p->pz[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double x = p->px[ id ] * ::cos( deg2rad(m_angle) )
+			+ p->pz[ id ] * ::sin( deg2rad(m_angle) );
 		G4double y = p->py[ id ];
-		G4double z = p->pz[ id ] * ::cos( m_angle * PI / 180.0 )
-			- p->px[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double z = p->pz[ id ] * ::cos( deg2rad(m_angle) )
+			- p->px[ id ] * ::sin( deg2rad(m_angle) );
 
-		G4double dx = p->dx[ id ] * ::cos( m_angle * PI / 180.0 )
-			+ p->dz[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double dx = p->dx[ id ] * ::cos( deg2rad(m_angle) )
+			+ p->dz[ id ] * ::sin( deg2rad(m_angle) );
 		G4double dy = p->dy[ id ];
-		G4double dz = p->dz[ id ] * ::cos( m_angle * PI / 180.0 )
-			- p->dx[ id ] * ::sin( m_angle * PI / 180.0 );
+		G4double dz = p->dz[ id ] * ::cos( deg2rad(m_angle) )
+			- p->dx[ id ] * ::sin( deg2rad(m_angle) );
 
     G4ThreeVector dir( dx, dy, dz );
     dir /= dir.mag();
@@ -1053,28 +1051,28 @@ void GateGPUCollimator_delete( GateGPUCollimator *in )
 
 void GateGPUCollimator_print( GateGPUCollimator* in )
 {
-    G4cout << "Print collimator informations:" << G4endl;
+    G4cout << "Print collimator informations:\n";
     if( in )
     {
         G4cout << "Number of pixel elements in Y: "
-            << in->y_size/2.0 << G4endl;
+            << in->y_size/2.0 << Gateendl;
         G4cout << "Number of pixel elements in Z: "
-            << in->z_size/2.0 << G4endl;
+            << in->z_size/2.0 << Gateendl;
         G4cout << "Number of elements in Y at entry and exit collimator: "
-            << in->y_size << G4endl;
+            << in->y_size << Gateendl;
         G4cout << "Number of elements in Z at entry and exit collimator: "
-            << in->z_size << G4endl;
-        G4cout << "position points in Y: " << G4endl;
+            << in->z_size << Gateendl;
+        G4cout << "position points in Y: \n";
         for( unsigned int i = 0; i < in->y_size; ++i )
         {
             G4cout << "entry: " << in->entry_collim_y[ i ]
-                << "\t\t\t\texit: " << in->exit_collim_y[ i ] << G4endl;
+                << "\t\t\t\texit: " << in->exit_collim_y[ i ] << Gateendl;
         }
-        G4cout << "position points in Z: " << G4endl;
+        G4cout << "position points in Z: \n";
         for( unsigned int i = 0; i < in->z_size; ++i )
         {
             G4cout << "entry: " << in->entry_collim_z[ i ]
-                << "\t\t\t\texit: " << in->exit_collim_z[ i ] << G4endl;
+                << "\t\t\t\texit: " << in->exit_collim_z[ i ] << Gateendl;
         }
     }
 }
@@ -1153,28 +1151,28 @@ void GateCPUCollimator_delete( GateCPUCollimator *in )
 
 void GateCPUCollimator_print( GateCPUCollimator* in )
 {
-    G4cout << "Print collimator informations:" << G4endl;
+    G4cout << "Print collimator informations:\n";
     if( in )
     {
         G4cout << "Number of pixel elements in Y: "
-            << in->y_size/2.0 << G4endl;
+            << in->y_size/2.0 << Gateendl;
         G4cout << "Number of pixel elements in Z: "
-            << in->z_size/2.0 << G4endl;
+            << in->z_size/2.0 << Gateendl;
         G4cout << "Number of elements in Y at entry and exit collimator: "
-            << in->y_size << G4endl;
+            << in->y_size << Gateendl;
         G4cout << "Number of elements in Z at entry and exit collimator: "
-            << in->z_size << G4endl;
-        G4cout << "position points in Y: " << G4endl;
+            << in->z_size << Gateendl;
+        G4cout << "position points in Y: \n";
         for( unsigned int i = 0; i < in->y_size; ++i )
         {
             G4cout << "entry: " << in->entry_collim_y[ i ]
-                << "\t\t\t\texit: " << in->exit_collim_y[ i ] << G4endl;
+                << "\t\t\t\texit: " << in->exit_collim_y[ i ] << Gateendl;
         }
-        G4cout << "position points in Z: " << G4endl;
+        G4cout << "position points in Z: \n";
         for( unsigned int i = 0; i < in->z_size; ++i )
         {
             G4cout << "entry: " << in->entry_collim_z[ i ]
-                << "\t\t\t\texit: " << in->exit_collim_z[ i ] << G4endl;
+                << "\t\t\t\texit: " << in->exit_collim_z[ i ] << Gateendl;
         }
     }
 }

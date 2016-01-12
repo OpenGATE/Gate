@@ -77,7 +77,7 @@ void GateClockDependentMessenger::SetARFCommands()
  cmdName = GetDirectoryName()+"arf/setARFStage";
  ARFcmd = new G4UIcmdWithAString(cmdName,this);
 
-G4cout << " created command " << cmdName <<G4endl;
+G4cout << " created command " << cmdName << Gateendl;
 
  cmdName = GetDirectoryName() +"attachToARFSD";
  AttachARFSDcmd = new G4UIcmdWithoutParameter(cmdName,this);
@@ -102,7 +102,7 @@ void GateClockDependentMessenger::SetNewValue(G4UIcommand* command,G4String newV
      GateVVolume* creator = GateObjectStore::GetInstance()->FindCreator("SPECThead");
      if ( creator != 0 ) creator->AttachARFSD();
      else {
-     	   G4cout << " GateObjectCreatorStore : could not find ' "<< GetClockDependent()->GetObjectName()<<" ' "<<G4endl;
+     	   G4cout << " GateObjectCreatorStore : could not find ' "<< GetClockDependent()->GetObjectName()<<" ' \n";
      	   G4Exception( "GateClockDependentMessenger::SetNewValue", "SetNewValue", FatalException, "Aborting...");
      	  }
      return;

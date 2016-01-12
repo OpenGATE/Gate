@@ -71,7 +71,7 @@ class GateTrajectory : public G4VTrajectory
    virtual G4ThreeVector GetInitialMomentum() const = 0;
 
    virtual void ShowTrajectory(std::ostream&) const;
-#if (G4VERSION_MAJOR == 10 and G4VERSION_MINOR == 0)
+#if (G4VERSION_MAJOR == 10 && G4VERSION_MINOR == 0)
    virtual void DrawTrajectory(G4int i_mode =0) const;
 #else
   virtual void DrawTrajectory() const;

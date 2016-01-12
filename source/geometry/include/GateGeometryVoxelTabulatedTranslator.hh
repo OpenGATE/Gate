@@ -50,6 +50,10 @@ protected:
   GateVoxelAttributesTranslationMap m_voxelAttributesTranslation;
 
   GateGeometryVoxelTabulatedTranslatorMessenger* m_messenger; 
+  
+private:
+  // iterator for the GetNextMaterial function
+  GateVoxelMaterialTranslationMap::iterator anIterator;
 
 };
 

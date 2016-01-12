@@ -19,11 +19,11 @@
 //-----------------------------------------------------------------------------
 GateParticleInVolumeActor::GateParticleInVolumeActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
-  GateDebugMessageInc("Actor",4,"GateParticleInVolumeActor() -- begin"<<G4endl);
+  GateDebugMessageInc("Actor",4,"GateParticleInVolumeActor() -- begin\n");
   outsideTrack = false;
   mIsParticleInVolumeImageEnabled = true;
   pMessenger = new GateImageActorMessenger(this);
-  GateDebugMessageDec("Actor",4,"GateParticleInVolumeActor() -- end"<<G4endl);
+  GateDebugMessageDec("Actor",4,"GateParticleInVolumeActor() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ GateParticleInVolumeActor::~GateParticleInVolumeActor()  {
 //-----------------------------------------------------------------------------
 /// Construct
 void GateParticleInVolumeActor::Construct() {
-  GateDebugMessageInc("Actor", 4, "GateParticleInVolumeActor -- Construct - begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "GateParticleInVolumeActor -- Construct - begin\n");
   GateVImageActor::Construct();
 
   // Enable callbacks
@@ -60,7 +60,7 @@ void GateParticleInVolumeActor::Construct() {
   mParticleInVolumeImage.Allocate();
 
   ResetData();
-  GateMessageDec("Actor", 4, "GateParticleInVolumeActor -- Construct - end" << G4endl);
+  GateMessageDec("Actor", 4, "GateParticleInVolumeActor -- Construct - end\n");
 }
 //-----------------------------------------------------------------------------
 
@@ -84,7 +84,7 @@ void GateParticleInVolumeActor::ResetData() {
 //-----------------------------------------------------------------------------
 void GateParticleInVolumeActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
-  GateDebugMessage("Actor", 3, "GateParticleInVolumeActor -- Begin of Run" << G4endl);
+  GateDebugMessage("Actor", 3, "GateParticleInVolumeActor -- Begin of Run\n");
   // ResetData(); // Do no reset here !! (when multiple run);
 }
 //-----------------------------------------------------------------------------
@@ -95,7 +95,7 @@ void GateParticleInVolumeActor::BeginOfEventAction(const G4Event * e) {
 
   mLastHitEventImage.Fill(-1);
 
-  GateDebugMessage("Actor", 3, "GateParticleInVolumeActor -- Begin of Event: "<<mCurrentEvent << G4endl);
+  GateDebugMessage("Actor", 3, "GateParticleInVolumeActor -- Begin of Event: "<<mCurrentEvent << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -108,13 +108,13 @@ void GateParticleInVolumeActor::UserPreTrackActionInVoxel(const int index, const
 
 //-----------------------------------------------------------------------------
 void GateParticleInVolumeActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
-  GateDebugMessageInc("Actor", 4, "GateParticleInVolumeActor -- UserSteppingActionInVoxel - begin" << G4endl);
+  GateDebugMessageInc("Actor", 4, "GateParticleInVolumeActor -- UserSteppingActionInVoxel - begin\n");
 
   // double weight = step->GetTrack()->GetWeight(); // unused yet. Keep it for debug
 
   if (index <0) {
-    GateDebugMessage("Actor", 5, "index<0 : do nothing" << G4endl);
-    GateDebugMessageDec("Actor", 4, "GateParticleInVolumeActor -- UserSteppingActionInVoxel -- end" << G4endl);
+    GateDebugMessage("Actor", 5, "index<0 : do nothing\n");
+    GateDebugMessageDec("Actor", 4, "GateParticleInVolumeActor -- UserSteppingActionInVoxel -- end\n");
     return;
   }
 
@@ -131,6 +131,6 @@ void GateParticleInVolumeActor::UserSteppingActionInVoxel(const int index, const
     mParticleInVolumeImage.AddValue(index, 1);
   }
 
-  GateDebugMessageDec("Actor", 4, "GateParticleInVolumeActor -- UserSteppingActionInVoxel -- end" << G4endl);
+  GateDebugMessageDec("Actor", 4, "GateParticleInVolumeActor -- UserSteppingActionInVoxel -- end\n");
 }
 //-----------------------------------------------------------------------------

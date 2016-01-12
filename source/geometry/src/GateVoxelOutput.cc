@@ -18,7 +18,6 @@ See GATE/LICENSE.txt for further details
 #include "G4VProcess.hh"
 #include "G4ios.hh"
 #include "G4UImanager.hh"
-#include "G4RunManager.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4Positron.hh"
 #include "G4GenericIon.hh"
@@ -38,6 +37,9 @@ See GATE/LICENSE.txt for further details
 #include "GateCrystalHit.hh"
 #include "GatePhantomHit.hh"
 #include "GateRecorderBase.hh"
+
+// for std::abs
+#include <cmath>
 
 //--------------------------------------------------------------------------------------------------
 GateVoxelOutput::GateVoxelOutput(const G4String& name,const G4String& phantomName, GateOutputMgr* outputMgr,DigiMode digiMode,GateVoxelBoxParameterized* inserter) 
@@ -110,7 +112,7 @@ GateVoxelOutput::GateVoxelOutput(const G4String& name,const G4String& phantomNam
 GateVoxelOutput::~GateVoxelOutput() 
 {
   delete m_outputMessenger;
-  if (nVerboseLevel > 0) G4cout << "GateVoxelOutput deleting..." << G4endl;
+  if (nVerboseLevel > 0) G4cout << "GateVoxelOutput deleting...\n";
   delete m_array;
 }
 //--------------------------------------------------------------------------------------------------
@@ -125,12 +127,12 @@ const G4String& GateVoxelOutput::GiveNameOfFile()
 //--------------------------------------------------------------------------------------------------
 void GateVoxelOutput::RecordBeginOfAcquisition()
 {
-  //  G4cout << "GateVoxelOutput::RecordBeginOfAcquisition - Entered at " << this << " for "<< GetName()  << G4endl  << std::flush ;
+  //  G4cout << "GateVoxelOutput::RecordBeginOfAcquisition - Entered at " << this << " for "<< GetName()  << Gateendl  << std::flush ;
 
   if (nVerboseLevel > 2)
-    G4cout << "GateVoxelOutput::RecordBeginOfAcquisition - Entered " << G4endl;
+    G4cout << "GateVoxelOutput::RecordBeginOfAcquisition - Entered \n";
   
-  G4cout<< (*G4Material::GetMaterialTable()) << G4endl;
+  G4cout<< (*G4Material::GetMaterialTable()) << Gateendl;
 }
 //--------------------------------------------------------------------------------------------------
 
@@ -138,13 +140,12 @@ void GateVoxelOutput::RecordBeginOfAcquisition()
 // write a binary file (4 bytes floats) containing the dose in cGy
 void GateVoxelOutput::RecordEndOfAcquisition()
 {
-  static const double Gy (joule/kilogram);
-  static const double cGy(Gy/100.0);
+  static const double cGy(gray/100.0);
 
-  // G4cout << "GateVoxelOutput::RecordEndOfAcquisition - Entered at " << this << " for "<< GetName()  << G4endl  << std::flush ;
+  // G4cout << "GateVoxelOutput::RecordEndOfAcquisition - Entered at " << this << " for "<< GetName()  << Gateendl  << std::flush ;
   
   if (nVerboseLevel > 0)
-    G4cout << "GateVoxelOutput::RecordEndOfAcquisition - Writing to "<< m_fileName << G4endl;
+    G4cout << "GateVoxelOutput::RecordEndOfAcquisition - Writing to "<< m_fileName << Gateendl;
   
   std::ofstream f;
   
@@ -185,7 +186,7 @@ void GateVoxelOutput::RecordEndOfAcquisition()
       G4cout << "bin " << i
 	     << ", energy "<< (*m_array)[i] 
 	     << ", dose "<<   dose 
-	     << G4endl;
+	     << Gateendl;
   }
   f.close();
   
@@ -213,7 +214,7 @@ void GateVoxelOutput::RecordEndOfAcquisition()
 	double SS( (*m_array)[i] * (*m_array)[i]      );
 	double S2( (*m_arraySquare)[i]                );
 	relativeErrorSquared = ( N*S2 - SS )/ ( (N-1)*SS );
-	if ( abs(relativeErrorSquared) < 1.0e-15 ) relativeErrorSquared=0; // Chop tiny values 
+	if ( std::abs(relativeErrorSquared) < 1.0e-15 ) relativeErrorSquared=0; // Chop tiny values 
 	relativeError=sqrt(relativeErrorSquared);
       }
       
@@ -225,7 +226,7 @@ void GateVoxelOutput::RecordEndOfAcquisition()
 	       << ", square of sum  " << ( (*m_array)[i]*(*m_array)[i] )
 	       << ", counts "         << (*m_arrayCounts)[i]
 	       << ", relative error " << relativeError
-	       << G4endl;
+	       << Gateendl;
     }
     f.close();
   }
@@ -237,7 +238,7 @@ void GateVoxelOutput::RecordEndOfAcquisition()
 void GateVoxelOutput::RecordBeginOfRun(const G4Run * )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateVoxelOutput::RecordBeginOfRun" << G4endl;
+    G4cout << "GateVoxelOutput::RecordBeginOfRun\n";
 }
 //--------------------------------------------------------------------------------------------------
 
@@ -245,7 +246,7 @@ void GateVoxelOutput::RecordBeginOfRun(const G4Run * )
 void GateVoxelOutput::RecordEndOfRun(const G4Run * )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateVoxelOutput::RecordEndOfRun" << G4endl;
+    G4cout << "GateVoxelOutput::RecordEndOfRun\n";
 }
 //--------------------------------------------------------------------------------------------------
 
@@ -253,7 +254,7 @@ void GateVoxelOutput::RecordEndOfRun(const G4Run * )
 void GateVoxelOutput::RecordBeginOfEvent(const G4Event* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateVoxelOutput::RecordBeginOfEvent" << G4endl;
+    G4cout << "GateVoxelOutput::RecordBeginOfEvent\n";
 }
 //--------------------------------------------------------------------------------------------------
 
@@ -292,7 +293,7 @@ void GateVoxelOutput::RecordEndOfEvent(const G4Event* )
   
 
   if (nVerboseLevel > 2)
-    G4cout << "GateVoxelOutput::RecordEndOfEvent - Entered for phantom "<< m_phantomName << G4endl;
+    G4cout << "GateVoxelOutput::RecordEndOfEvent - Entered for phantom "<< m_phantomName << Gateendl;
 
   GatePhantomHitsCollection* PHC = GetOutputMgr()->GetPhantomHitCollection();
   G4int NpHits = PHC->entries();
@@ -306,7 +307,7 @@ void GateVoxelOutput::RecordEndOfEvent(const G4Event* )
 
     if( 0 == physVolName.compare(0, m_phantomName.size(), m_phantomName) ){
 
-      //  G4cout << "GateVoxelOutput::RecordEndOfEvent - HIT at voxel "<< n  << " in "<< physVolName << G4endl;
+      //  G4cout << "GateVoxelOutput::RecordEndOfEvent - HIT at voxel "<< n  << " in "<< physVolName << Gateendl;
       
       (*m_array)[n]+=edep;
       if (m_uncertainty){
@@ -322,7 +323,7 @@ void GateVoxelOutput::RecordEndOfEvent(const G4Event* )
 	       << ", array[n] "  <<  (*m_array)[n]
 	       << ", square[n] " <<  (*m_arraySquare)[n]
 	       << ", counts[n] " <<  (*m_arrayCounts)[n]
-	       << G4endl;
+	       << Gateendl;
       
     }// end if phantom    
   }//end for loop
@@ -333,7 +334,7 @@ void GateVoxelOutput::RecordEndOfEvent(const G4Event* )
 void GateVoxelOutput::RecordStepWithVolume(const GateVVolume *, const G4Step* )
 {
   if (nVerboseLevel > 2)
-    G4cout << "GateVoxelOutput::RecordStep" << G4endl;
+    G4cout << "GateVoxelOutput::RecordStep\n";
 }
 //--------------------------------------------------------------------------------------------------
 
