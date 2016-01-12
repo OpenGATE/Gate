@@ -54,6 +54,7 @@ protected:
   G4UIcmdWithAString * pSetPhaseSpaceFilenameCmd;
   G4UIcmdWithAString * pSetInputRTKGeometryFilenameCmd;
   G4UIcmdWithAnInteger * pSetNoisePrimaryCmd;
+  G4UIcmdWithADoubleAndUnit * pEnergyResolvedBinSizeCmd;
 };
 
 #endif /* end #define GATEFIXEDFORCEDDECTECTIONACTORMESSENGER_HH*/
