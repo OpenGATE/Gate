@@ -22,3 +22,22 @@ GateAddBenchmarkData("DATA{benchVoxelRegular25x25x25/maps/corps_cubique.i33}")
 GateAddBenchmarkData("DATA{benchImageNavigators/pet/data/brain_phantom.i33}")
 GateAddBenchmarkData("DATA{benchImageNavigators/pet/data/brain_phantom.raw}")
 GateAddBenchmarkData("DATA{benchImageNavigators/rt/data/patient-2mm.raw}")
+
+
+if(BUILD_TESTING)
+  GateAddBenchmarkData("DATA{benchRT/reference/benchRT_gamma-reference.tgz}")
+  ADD_TEST(NAME benchRT_gamma
+    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchRT gamma ${Gate_SOURCE_DIR})
+endif(BUILD_TESTING)
+
+if(BUILD_TESTING)
+  GateAddBenchmarkData("DATA{benchRT/reference/benchRT_proton-reference.tgz}")
+  ADD_TEST(NAME benchRT_proton
+    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchRT proton ${Gate_SOURCE_DIR})
+endif(BUILD_TESTING)
+
+if(BUILD_TESTING)
+  GateAddBenchmarkData("DATA{benchRT/reference/benchRT_carbon-reference.tgz}")
+  ADD_TEST(NAME benchRT_carbon
+    COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchRT carbon ${Gate_SOURCE_DIR})
+endif(BUILD_TESTING)
