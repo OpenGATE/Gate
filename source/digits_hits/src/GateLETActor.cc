@@ -131,7 +131,7 @@ void GateLETActor::BeginOfRunAction(const G4Run * r) {
 // Callback at each event
 void GateLETActor::BeginOfEventAction(const G4Event * e) {
   GateVActor::BeginOfEventAction(e);
-  GateDebugMessage("Actor", 3, "GateLETActor -- Begin of Event: "<<mCurrentEvent << Gateendl);
+  GateDebugMessage("Actor", 3, "GateLETActor -- Begin of Event: " << mCurrentEvent << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
