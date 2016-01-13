@@ -16,6 +16,7 @@ See GATE/LICENSE.txt for further details
 #define GATEVOXELIZEDMASS_HH
 
 #include "GateVImageActor.hh"
+#include "GateVImageVolume.hh"
 #include "GateActorManager.hh"
 #include "G4UnitsTable.hh"
 #include "GateImageWithStatistic.hh"
@@ -49,12 +50,11 @@ class GateVoxelizedMass
 
  protected:
 
-
+  GateVImageVolume* imageVolume;
   G4VPhysicalVolume* DAPV;
   G4LogicalVolume* DALV;
   G4Box* doselSV;
   G4Box* DABox;
-  G4Box* voxelBox;
 
   double doselReconstructedTotalCubicVolume;
   double doselReconstructedTotalMass;
@@ -71,8 +71,8 @@ class GateVoxelizedMass
   std::vector<double> doselMax;
   std::vector<double> doselExternalMass;
 
-  std::vector<std::vector<std::vector<double> > > voxelCubicVolume;
   std::vector<std::vector<std::vector<double> > > voxelMass;
+  double voxelCubicVolume;
 
   std::vector<G4VSolid*> vectorSV;
 
