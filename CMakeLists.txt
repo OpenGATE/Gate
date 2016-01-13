@@ -194,24 +194,24 @@ FILE(GLOB headers
 
 #=========================================================
 
-# RTK
+# RTK / ITK 
 IF(GATE_USE_RTK)
    FIND_PACKAGE(RTK REQUIRED)
-   INCLUDE(${RTK_USE_FILE})
-   STRING(REPLACE "-pedantic" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-ELSE()
-  ADD_SUBDIRECTORY(source/externals/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
-  SET(ITK_LIBRARIES MetaIO itkzlib)
-ENDIF()
-
-# Option for ITK
-IF(GATE_USE_ITK)
+   IF(RTK_FOUND)
+     INCLUDE(${RTK_USE_FILE})
+     STRING(REPLACE "-pedantic" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+  ENDIF(RTK_FOUND)
+ELSEIF(GATE_USE_ITK)
   FIND_PACKAGE(ITK REQUIRED)
   IF(ITK_FOUND)
     INCLUDE(${ITK_USE_FILE})
     STRING(REPLACE "-pedantic" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
   ENDIF(ITK_FOUND)
-ENDIF(GATE_USE_ITK)
+ELSE()
+  ADD_SUBDIRECTORY(source/externals/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
+  SET(ITK_LIBRARIES MetaIO itkzlib)
+ENDIF()
+
 
 #=========================================================
 # Add the executable, and link it to the Geant4 libraries
