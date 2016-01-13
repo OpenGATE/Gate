@@ -74,6 +74,18 @@
 /gate/actor/doseDistribution/enableUncertaintyDose false
 /gate/actor/doseDistribution/enableNumberOfHits    false
 
+/gate/actor/addActor                     DoseActor  dose3d
+/gate/actor/dose3d/save                  output/carbon-3d.mhd
+/gate/actor/dose3d/attachTo    	         mainbox1
+/gate/actor/dose3d/stepHitType           random
+/gate/actor/dose3d/setPosition           0 0 0 cm
+/gate/actor/dose3d/setResolution         50 50 50
+/gate/actor/dose3d/enableEdep            true
+/gate/actor/dose3d/enableUncertaintyEdep true
+/gate/actor/dose3d/enableDose            true
+/gate/actor/dose3d/enableUncertaintyDose false
+/gate/actor/dose3d/enableNumberOfHits    true
+
 /gate/actor/addActor               SimulationStatisticActor stat
 /gate/actor/stat/save              output/stat-carbon.txt
 /gate/actor/stat/saveEveryNSeconds 60
@@ -124,10 +136,10 @@
 #=====================================================
 
 /gate/random/setEngineName MersenneTwister
-/gate/random/setEngineSeed auto
+/gate/random/setEngineSeed 123456
 
 /gate/application/noGlobalOutput
-/gate/application/setTotalNumberOfPrimaries 5000
+/gate/application/setTotalNumberOfPrimaries 200
 /gate/application/start
 
 exit

@@ -383,14 +383,14 @@ void GateDigitizer::Digitize()
   // Have the pulses processed by the coincidence sorters
   for (i=0; i<m_coincidenceSorterList.size() ; ++i) {
     if (nVerboseLevel>1)
-      G4cout << "[GateDigitizer::Digitize]: launching coincidence sorter '" << m_coincidenceChainList[i]->GetObjectName() << "'\n";
+      G4cout << "[GateDigitizer::Digitize]: launching coincidence sorter '" << m_coincidenceSorterList[i]->GetObjectName() << "'\n";
     m_coincidenceSorterList[i]->ProcessSinglePulseList();
   }
 
   // Have the coincidences processed by the coincidence-processor chains
   for (i=0; i<m_coincidenceChainList.size() ; ++i) {
     if (nVerboseLevel>1)
-      G4cout << "[GateDigitizer::Digitize]: launching coincidence-processor '" << m_coincidenceSorterList[i]->GetObjectName() << "'\n";
+      G4cout << "[GateDigitizer::Digitize]: launching coincidence-processor '" << m_coincidenceChainList[i]->GetObjectName() << "'\n";
     m_coincidenceChainList[i]->ProcessCoincidencePulses();
   }
 
