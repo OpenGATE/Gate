@@ -265,6 +265,14 @@ void GateVImageActor::SetStepHitType(G4String t)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+/// Gets the voxel size (vc)
+G4ThreeVector GateVImageActor::GetVoxelSize() 
+{
+  return mVoxelSize;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 void GateVImageActor::PreUserTrackingAction(const GateVVolume*, const G4Track * t)
 {
   //GateVActor::PreUserTrackingAction(v, t);

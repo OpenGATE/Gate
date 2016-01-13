@@ -7,8 +7,9 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 /*
-  \class  GateNanoActorMessenger
-  \author 
+  \class GateNanoActorMessenger
+  \brief This class is the GateNanoActor messenger. 
+  \author vesna.cuplov@gmail.com
 */
 
 #ifndef GATENANOACTORMESSENGER_HH
@@ -30,13 +31,20 @@ public:
 
 protected:
   GateNanoActor * pNanoActor;
-
-  G4UIcmdWithABool * pEnableNanoAbsorptionCmd;
-
-  G4UIcmdWithADouble* pSigmaCmd;
   G4UIcmdWithADouble* pTimeCmd;
   G4UIcmdWithADouble* pDiffusivityCmd;
-
+  G4UIcmdWithADouble* pBodyTempCmd;
+  G4UIcmdWithADouble* pBloodTempCmd;
+  G4UIcmdWithADouble* pNanoTempCmd;
+  G4UIcmdWithADouble* pBloodPerfusionRateCmd;
+  G4UIcmdWithADouble* pBloodDensityCmd;
+  G4UIcmdWithADouble* pBloodHeatCapacityCmd;
+  G4UIcmdWithADouble* pTissueDensityCmd;
+  G4UIcmdWithADouble* pTissueHeatCapacityCmd;
+  G4UIcmdWithADouble* pTissueThermalConductivityCmd;
+  G4UIcmdWithADouble* pNanoAbsorptionCrossSectionCmd;
+  G4UIcmdWithADouble* pNanoDensityCmd;
+  G4UIcmdWithADouble* pScaleCmd;
 
 };
 

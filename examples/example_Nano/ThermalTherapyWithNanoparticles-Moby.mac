@@ -1,0 +1,182 @@
+#################################################################
+#
+# Example of hyperthermia therapy induced by gold nanoparticles
+# irradiated by photons
+# 
+# see the README for full details about the simulation
+# 
+##################################################################
+                                                       
+#=================================================================
+# VISUALISATION
+#=================================================================
+
+/vis/disable
+/vis/open VRML2FILE
+/vis/viewer/reset
+/vis/drawVolume
+/tracking/storeTrajectory           1
+/vis/scene/add/trajectories 
+/vis/scene/endOfEventAction         accumulate  20
+
+#=================================================================
+# VERBOSE
+#=================================================================
+
+/gate/verbose Physic    0
+/gate/verbose Cuts      0
+/gate/verbose SD        0
+/gate/verbose Actions   0
+/gate/verbose Actor     0
+/gate/verbose Step      0
+/gate/verbose Error     0
+/gate/verbose Warning   0
+/gate/verbose Output    0
+/gate/verbose Beam      0
+/gate/verbose Volume    0
+/gate/verbose Image     0
+/gate/verbose Geometry  0
+/gate/verbose Core      0
+/run/verbose            0
+/event/verbose          0
+/tracking/verbose       0
+	      
+/gate/output/verbose    1
+
+#=================================================================
+#     W O R L D
+#=================================================================
+
+/gate/geometry/setMaterialDatabase    ./GateMaterials.db 
+
+/gate/world/geometry/setXLength       20. cm
+/gate/world/geometry/setYLength       20. cm
+/gate/world/geometry/setZLength       20. cm
+/gate/world/setMaterial               Air
+
+#=================================================================
+#                   P H A N T O M : M O B Y
+#=================================================================
+
+/gate/world/daughters/name                              Mouse 
+/gate/world/daughters/insert                            compressedMatrix 
+/gate/Mouse/geometry/insertReader                       interfile 
+/gate/Mouse/interfileReader/insertTranslator            range 
+/gate/Mouse/interfileReader/rangeTranslator/readTable   ./attenuation.dat
+/gate/Mouse/interfileReader/rangeTranslator/describe    1 
+/gate/Mouse/interfileReader/readFile                    ./moby.h33
+/gate/Mouse/placement/setTranslation                    0. 0. 0. cm
+/gate/Mouse/placement/setRotationAxis                   1 0 0
+/gate/Mouse/placement/setRotationAngle                  90 deg
+/gate/Mouse/attachVoxelPhantomSD 
+
+
+#=================================================================
+#                  P H Y S I C S
+#=================================================================
+
+#/gate/physics/addProcess OpticalAbsorption
+#/gate/physics/addProcess OpticalRayleigh
+#/gate/physics/addProcess OpticalMie
+#/gate/physics/addProcess OpticalBoundary
+#/gate/physics/addProcess OpticalWLS 
+/gate/physics/addProcess NanoAbsorption 
+
+/gate/physics/processList Enabled
+/gate/physics/processList Initialized
+
+
+#=================================================================
+#  N A N O    A C T O R
+#=================================================================
+
+/gate/actor/addActor NanoActor           nano
+/gate/actor/nano/save                    Hyperthermia-moby.hdr
+/gate/actor/nano/attachTo                Mouse
+/gate/actor/nano/stepHitType             random
+/gate/actor/nano/setPosition             0. 0. 0. cm
+/gate/actor/nano/setVoxelSize            0.25 0.25 0.25 mm
+
+# Nanoparticles properties:
+/gate/actor/nano/setNanoDensity                1E15 1/m3
+/gate/actor/nano/setNanoAbsorptionCrossSection 3.8E-14 m2
+
+# thermal conductivity should be in W/(mxK)
+/gate/actor/nano/setTissueThermalConductivity    0.613
+
+# Tissue and Blood properties for the diffusivity:
+/gate/actor/nano/setTime               3 s
+/gate/actor/nano/setDiffusivity        0.131 mm2/s
+/gate/actor/nano/setBodyTemperature    37
+/gate/actor/nano/setBloodTemperature   37
+
+# blood perfusion rate in s-1
+/gate/actor/nano/setBloodPerfusionRate 0.0085
+
+# density and heat capacity should just be in the same unit for both blood and tissue
+# these quantities appear in a fraction, so the units will cancel as long as they
+# are consistent for blood and tissue:
+# in this example, the density is in kg/mm3 and the heat capacity in mJ kg-1 C-1
+/gate/actor/nano/setBloodDensity          1.06E-6
+/gate/actor/nano/setBloodHeatCapacity     3.6E6
+/gate/actor/nano/setTissueDensity         1.04E-6
+/gate/actor/nano/setTissueHeatCapacity    3.65E6
+
+# OPTIONAL: Simulation scale
+/gate/actor/nano/setScale                        1E20
+
+#=================================================================
+# INITIALISATION
+#=================================================================
+
+/gate/run/initialize
+
+#=================================================================
+#  S O U R C E
+#=================================================================
+
+/gate/source/addSource                           Mysource gps
+/gate/source/Mysource/gps/particle               opticalphoton
+/gate/source/Mysource/gps/energytype             Mono
+/gate/source/Mysource/setActivity                1000 becquerel 
+/gate/source/Mysource/gps/polarization           1 0 0
+/gate/source/Mysource/gps/monoenergy             2.3 eV
+/gate/source/Mysource/gps/type Volume
+/gate/source/Mysource/gps/shape Cylinder 
+/gate/source/Mysource/gps/radius                 0.7 cm 
+/gate/source/Mysource/gps/halfz                  2. cm 
+/gate/source/Mysource/gps/direction              0. 0. 1.
+/gate/source/Mysource/gps/centre                 0. 0.3 -10. cm 
+
+
+#=================================================================
+#  D A T A   O U T P U T   
+#=================================================================
+
+#/gate/output/analysis/enable
+#/gate/output/fastanalysis/enable
+
+#=================================================================
+#   R A N D O M
+#=================================================================
+
+# Choose between: JamesRandom Ranluxconfus64 MersenneTwister
+/gate/random/setEngineName MersenneTwister
+#/gate/random/setEngineSeed auto
+/gate/random/setEngineSeed 123456789
+/gate/random/verbose 1
+
+#=================================================================
+# A C Q U I S I T I O N
+#=================================================================
+
+/gate/application/setTimeSlice   50 s
+/gate/application/setTimeStart   0 s
+/gate/application/setTimeStop    50 s
+/gate/application/startDAQ
+
+
+
+
+
+

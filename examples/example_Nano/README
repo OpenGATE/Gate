@@ -1,0 +1,137 @@
+#############################################################################################################
+#
+# Example of hyperthermia therapy induced by gold nanoparticles irradiated by photons
+#
+# [1] reference paper
+# "Thermophysical and biological responses of gold nanoparticle laser heating", Z. Qin and J. C. Bischof
+# Chem. Soc. Rev. 41 (2012) 
+#
+# [2] tissue properties
+# http://www.itis.ethz.ch/virtual-population/tissue-properties/database/
+#
+# 
+##############################################################################################################
+
+
+
+                                                                    absorption map        heat diffusion map
+         laser                _________                               _________              _________
+         optical photons     |         |                             |         |            |         |          
+         ~~~~~~~>            | nano    |    GATE                     |         |            |   xx    |
+         ~~~~~~~>            | objects |    Simulation Results ==>   |   xx    |     +      |  xxxx   |
+         ~~~~~~~>            | in the  |    (voxelised images)       |   xx    |            |  xxxx   |
+         ~~~~~~~>            | phantom |                             |         |            |   xx    |
+                             |_________|                             |_________|            |_________|
+
+
+===============================================================================================================
+
+1) Voxelised phantom
+
+In this example, a voxelised phantom (MOBY) is used. A spherical tumor has been inserted under the skin of the 
+mouse, on its back. The attenuation (attenuation.dat) describes a mouse made of Adipose tissue (defined in the
+GateMaterials.db and Materials.xml files. The tumor is made of Water and has been infused with a certain density
+of nanoparticles:
+
+/gate/actor/nano/setNanoDensity                1E15 1/m3
+
+attenuation.dat:
+3
+0 0 Air false 0.0 0.0 0.0 0.2
+1 75 Adipose true 1.0 1.0 1.0 0.2
+78 78 Water true 1.0 0.0 0.0 0.2
+
+===============================================================================================================
+
+2) Absorption map
+
+The Moby phantom tumor is irradiated by an optical photon source of 2.3 eV. From [1], we find the optical
+Absorption Cross-Section for the nanoparticles which have been injected in the tumor. This cross-section
+depends on the shape and size of the object:
+
+/gate/actor/nano/setNanoAbsorptionCrossSection       3.8E-14 m2  
+This value corresponds to the absorption cross-section for gold nanoshells of 65nm radius ([1] p. 1201)
+
+From this absorption-cross section value, we need to compute the photons absorption coefficient:
+
+mu_a = nanoparticle_DENSITY x nanoparticle_AbsorptionCrossSection
+
+In our example, mu_a = 38 1/m and therefore its inverse, which represents the photon absorption length, is
+equal to 26 mm. This value needs to be added in the properties of the nanomaterial that composes the tumor
+material, in the Materials.xml file:
+
+In our example, the tumor is made of the material Water with an additional nano property, called NANOdensity:
+<material name="Water">
+    <propertiestable>
+      <propertyvector name="NANOdensity" unit="mm" energyunit="eV">
+       <ve energy="2.20" value="26"/>
+        <ve energy="2.35" value="26"/>
+        <ve energy="2.40" value="26"/>
+      </propertyvector>
+    </propertiestable>
+  </material>
+
+The tissue thermal conductivity which should be given in W/(mxK) is needed in order to express the photon 
+absorption map in temperature. 
+/gate/actor/nano/setTissueThermalConductivity    0.613 
+This value is the Water thermal conductivity taken from [1].
+
+===============================================================================================================
+
+3) Heat diffusion map
+
+The simulation needs a list of parameters in order to perform the diffusion of the heat in the biological
+tissues. These parameters are:
+
+# Diffusion time:
+/gate/actor/nano/setTime               3 s
+
+# Tissue diffusivity:
+/gate/actor/nano/setDiffusivity        0.131 mm2/s
+This is a mean value of the diffusivity in biological tissues obtained from [2].
+
+# Body and Blood temperature:
+/gate/actor/nano/setBodyTemperature    37
+/gate/actor/nano/setBloodTemperature   37
+
+# Blood perfusion rate in s-1 
+This parameter is needed to take into account the heat loss in the blood.
+/gate/actor/nano/setBloodPerfusionRate 0.0085
+
+# Tissue and Blood density and heat capacity
+These should be given in consistent units. As these parameters appear in a fraction, units will simply cancel.
+In our example, the density is in kg/mm3 and the heat capacity in mJ kg-1 C-1.
+
+/gate/actor/nano/setBloodDensity          1.06E-6
+/gate/actor/nano/setBloodHeatCapacity     3.6E6
+/gate/actor/nano/setTissueDensity         1.04E-6
+/gate/actor/nano/setTissueHeatCapacity    3.65E6
+
+===============================================================================================================
+
+4) Simulation scale (?)
+
+There is an optional parameter which can be used to scale the simulation. 
+
+===============================================================================================================
+
+5) Simulation outputs
+
+The simulation gives 4 output as voxelised images (the image voxel size is set in the macro):
+
+Hyperthermia-moby-AbsorptionMap.img/hdr
+Hyperthermia-moby-AbsorptioninTemperatureMap.img/hdr
+Hyperthermia-moby-HeatConductionMap.img/hdr
+Hyperthermia-moby-HeatConductionAdvectionMap.img/hdr
+
+Using AMIDE (Import File) you can open the .hdr files. 
+
+ 
+
+
+
+
+
+
+
+
