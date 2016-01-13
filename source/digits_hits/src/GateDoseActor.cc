@@ -100,7 +100,8 @@ void GateDoseActor::Construct() {
   if (!mIsEdepImageEnabled &&
       !mIsDoseImageEnabled &&
       !mIsDoseToWaterImageEnabled &&
-      !mIsNumberOfHitsImageEnabled)  {
+      !mIsNumberOfHitsImageEnabled &&
+      mExportMassImage=="")  {
     GateError("The DoseActor " << GetObjectName()
               << " does not have any image enabled ...\n Please select at least one ('enableEdep true' for example)");
   }
@@ -170,6 +171,8 @@ void GateDoseActor::Construct() {
     mMassImage.Allocate();
     mVoxelizedMass.Initialize(mVolumeName,mMassImage,mImportMassImage);
     mMassImage=mVoxelizedMass.UpdateImage(mMassImage);
+    if (mExportMassImage!="")
+      mMassImage.Write(mExportMassImage);
   }
 
   if (mExportMassImage!=""&&mImportMassImage!="")
@@ -239,9 +242,6 @@ void GateDoseActor::SaveData() {
   if (mIsNumberOfHitsImageEnabled) {
     mNumberOfHitsImage.Write(mNbOfHitsFilename);
   }
-
-  if (mExportMassImage!="")
-    mMassImage.Write(mExportMassImage);
 }
 //-----------------------------------------------------------------------------
 
@@ -252,7 +252,6 @@ void GateDoseActor::ResetData() {
   if (mIsDoseImageEnabled) mDoseImage.Reset();
   if (mIsDoseToWaterImageEnabled) mDoseToWaterImage.Reset();
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.Fill(0);
-  //if (mExportMassImage!=""||mDoseAlgorithm=="MassWeighting") mMassImage.Fill(0);
 }
 //-----------------------------------------------------------------------------
 
