@@ -7,7 +7,7 @@
 /gate/actor/DAMW1x/save                   output/DAMW1x.mhd
 /gate/actor/DAMW1x/attachTo               patient
 /gate/actor/DAMW1x/stepHitType            random
-/gate/actor/DAMW1x/setResolution          299 137 1
+/gate/actor/DAMW1x/setResolution          299 137 10
 /gate/actor/DAMW1x/enableDose             true
 /gate/actor/DAMW1x/enableSquaredDose      true
 /gate/actor/DAMW1x/enableUncertaintyDose  true
@@ -18,7 +18,7 @@
 /gate/actor/DAMW2x/save                   output/DAMW2x.mhd
 /gate/actor/DAMW2x/attachTo               patient
 /gate/actor/DAMW2x/stepHitType            random
-/gate/actor/DAMW2x/setResolution          150 68 1
+/gate/actor/DAMW2x/setResolution          150 68 5
 /gate/actor/DAMW2x/enableDose             true
 /gate/actor/DAMW2x/enableSquaredDose      true
 /gate/actor/DAMW2x/enableUncertaintyDose  true
@@ -29,7 +29,7 @@
 /gate/actor/DAMW4x/save                   output/DAMW4x.mhd
 /gate/actor/DAMW4x/attachTo               patient
 /gate/actor/DAMW4x/stepHitType            random
-/gate/actor/DAMW4x/setResolution          75 34 1
+/gate/actor/DAMW4x/setResolution          75 34 3
 /gate/actor/DAMW4x/enableDose             true
 /gate/actor/DAMW4x/enableSquaredDose      true
 /gate/actor/DAMW4x/enableUncertaintyDose  true
