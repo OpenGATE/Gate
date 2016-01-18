@@ -62,6 +62,7 @@ class GateCoincidenceSorterMessenger: public GateClockDependentMessenger
     G4UIcmdWithADoubleAndUnit   *offsetJitterCmd;    //!< the UI command 'setOffsetJitter'
     G4UIcmdWithAnInteger        *minSectorDiffCmd;   //!< the UI command 'minSectorDifference'
     G4UIcmdWithAnInteger        *setDepthCmd;        //!< the UI command 'setDepth'
+    G4UIcmdWithAnInteger        *setPresortBufferSizeCmd;  //!< the UI command 'setPresortBufferSize'
     G4UIcmdWithAString          *SetInputNameCmd;    //!< The UI command "set input name"
     G4UIcmdWithAString          *MultiplePolicyCmd;  //!< The UI command "allowMultiples"
     G4UIcmdWithABool            *AllPulseOpenCoincGateCmd;  //!< The UI command "allowMultiples"

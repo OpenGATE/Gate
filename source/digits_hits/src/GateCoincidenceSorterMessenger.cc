@@ -56,6 +56,12 @@ GateCoincidenceSorterMessenger::GateCoincidenceSorterMessenger(GateCoincidenceSo
   setDepthCmd->SetParameterName("depth",false);
   setDepthCmd->SetRange("depth>=1");
 
+  cmdName = GetDirectoryName()+"setPresortBufferSize";
+  setPresortBufferSizeCmd = new G4UIcmdWithAnInteger(cmdName.c_str(),this);
+  setPresortBufferSizeCmd->SetGuidance("Set the size of the presort buffer.");
+  setPresortBufferSizeCmd->SetParameterName("size",false);
+  setPresortBufferSizeCmd->SetRange("size>=32");
+
   cmdName = GetDirectoryName()+"setInputName";
   SetInputNameCmd = new G4UIcmdWithAString(cmdName,this);
   SetInputNameCmd->SetGuidance("Set the name of the input pulse channel");
@@ -77,9 +83,12 @@ GateCoincidenceSorterMessenger::~GateCoincidenceSorterMessenger()
 {
   delete windowCmd;
   delete offsetCmd;
+  delete windowJitterCmd;
+  delete offsetJitterCmd;
   delete minSectorDiffCmd;
   delete SetInputNameCmd;
   delete MultiplePolicyCmd;
+  delete setPresortBufferSizeCmd;
   delete AllPulseOpenCoincGateCmd;
 }
 
@@ -98,6 +107,8 @@ void GateCoincidenceSorterMessenger::SetNewValue(G4UIcommand* aCommand, G4String
     { GetCoincidenceSorter()->SetMinSectorDifference(minSectorDiffCmd->GetNewIntValue(newValue)); }
   else if( aCommand == setDepthCmd )
     { GetCoincidenceSorter()->SetDepth(setDepthCmd->GetNewIntValue(newValue)); }
+  else if( aCommand == setPresortBufferSizeCmd )
+    { GetCoincidenceSorter()->SetPresortBufferSize(setPresortBufferSizeCmd->GetNewIntValue(newValue)); }
   else if (aCommand == SetInputNameCmd)
     {
      GetCoincidenceSorter()->SetInputName(newValue);
