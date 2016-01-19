@@ -172,7 +172,7 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pEnableDoseNormToIntegralCmd) pDoseActor->EnableDoseNormalisationToIntegral(pEnableDoseNormToIntegralCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseToWaterNormCmd) pDoseActor->EnableDoseToWaterNormalisation(pEnableDoseToWaterNormCmd->GetNewBoolValue(newValue));
 
-  if (cmd == pSetDoseAlgorithmCmd) pDoseActor->SetDoseAlogithm(newValue);
+  if (cmd == pSetDoseAlgorithmCmd) pDoseActor->SetDoseAlgorithmType(newValue);
   if (cmd == pImportMassImageCmd) pDoseActor->ImportMassImage(newValue);
   if (cmd == pExportMassImageCmd) pDoseActor->ExportMassImage(newValue);
 
@@ -180,4 +180,4 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 }
 //-----------------------------------------------------------------------------
 
-#endif 
+#endif

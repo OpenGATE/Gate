@@ -60,7 +60,7 @@ class GateDoseActor : public GateVImageActor
   void EnableDoseNormalisationToMax(bool b);
   void EnableDoseNormalisationToIntegral(bool b);
   void EnableDoseToWaterNormalisation(bool b) { mIsDoseToWaterNormalisationEnabled = b; mDoseToWaterImage.SetScaleFactor(1.0); }
-  void SetDoseAlogithm(G4String b) { mDoseAlgorithm = b; }
+  void SetDoseAlgorithmType(G4String b) { mDoseAlgorithmType = b; }
   void ImportMassImage(G4String b) { mImportMassImage = b; }
   void ExportMassImage(G4String b) { mExportMassImage = b; }
 
@@ -112,7 +112,7 @@ protected:
   G4String mDoseFilename;
   G4String mDoseToWaterFilename;
   G4String mNbOfHitsFilename;
-  G4String mDoseAlgorithm;
+  G4String mDoseAlgorithmType;
   G4String mImportMassImage;
   G4String mExportMassImage;
 

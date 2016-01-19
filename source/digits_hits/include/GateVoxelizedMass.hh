@@ -15,13 +15,14 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEVOXELIZEDMASS_HH
 #define GATEVOXELIZEDMASS_HH
 
+#include <G4UnitsTable.hh>
+#include <G4Box.hh>
+
 #include "GateVImageActor.hh"
 #include "GateVImageVolume.hh"
 #include "GateActorManager.hh"
-#include "G4UnitsTable.hh"
 #include "GateImageWithStatistic.hh"
 
-#include <G4Box.hh>
 
 class GateVoxelizedMass
 {
