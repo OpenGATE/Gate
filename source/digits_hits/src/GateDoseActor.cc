@@ -187,7 +187,7 @@ void GateDoseActor::Construct() {
 
   // Print information
   GateMessage("Actor", 1,
-              "\tDose DoseActor    = '" << GetObjectName() << "'\n" <<
+              "Dose DoseActor    = '" << GetObjectName() << "'\n" <<
               "\tDose image        = " << mIsDoseImageEnabled << Gateendl <<
               "\tDose squared      = " << mIsDoseSquaredImageEnabled << Gateendl <<
               "\tDose uncertainty  = " << mIsDoseUncertaintyImageEnabled << Gateendl <<
