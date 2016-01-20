@@ -100,7 +100,7 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
                     mImage.GetVoxelSize().getY()/2.0,
                     mImage.GetVoxelSize().getZ()/2.0);
 
-  if ((DALV->GetNoDaughters()==1 && DALV->GetDaughter(0)->IsParameterised() ||
+  if ((DALV->GetNoDaughters()==1 && DALV->GetDaughter(0)->IsParameterised()) ||
      (DALV->GetDaughter(0)->GetName().find("voxel_phys_Y")!=std::string::npos &&
      DALV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_X")!=std::string::npos &&
      DALV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_Z")!=std::string::npos))
@@ -160,14 +160,14 @@ void GateVoxelizedMass::GenerateVectors()
   time_t timer1,timer2,timer3,timer4;
   time(&timer1);
 
-  G4cout<<G4endl<<"================================================================"<<G4endl;
-  G4cout<<" * Total voxelized mass calculation in progress, please wait ... "<<G4endl;
+  GateMessage("Actor", 0,  "[GateVoxelizedMass] Total voxelized mass calculation for in progress, please wait ... " << Gateendl);
 
   doselReconstructedTotalCubicVolume=0.;
   doselReconstructedTotalMass=0.;
 
-  DD(mImage.GetNumberOfValues());
-  DD(mIsParameterised);
+  GateMessage("Actor", 1, "[GateVoxelizedMass] Number of values in the images: " <<  mImage.GetNumberOfValues() << Gateendl);
+  GateMessage("Actor", 1, "[GateVoxelizedMass] Is parameterised ? " <<  mIsParameterised << Gateendl);
+
   for(long int i=0;i<mImage.GetNumberOfValues();i++)
   {
     time(&timer3);
@@ -198,15 +198,17 @@ void GateVoxelizedMass::GenerateVectors()
   time(&timer2);
   seconds=difftime(timer2,timer1);
 
-  G4cout<<" * SUMMARY : Mass calculation for voxelized volume :"<<G4endl;
-  G4cout<<"     Time elapsed : "<<seconds/60<<"min"<<seconds%60<<"s ("<<seconds<<"s)"<<G4endl;
-  if(mIsParameterised)
-    G4cout<<"     Number of voxels : "<<imageVolume->GetImage()->GetNumberOfValues()<<G4endl;
-  G4cout<<"     Number of dosels : "<<mImage.GetNumberOfValues()<<G4endl;
-  G4cout<<"     Dosels reconstructed total mass : "<<G4BestUnit(doselReconstructedTotalMass,"Mass")<<G4endl;
-  G4cout<<"     Dosels reconstructed total cubic volume : "<<G4BestUnit(doselReconstructedTotalCubicVolume,"Volume")<<G4endl;
-  G4cout<<"================================================================"<<G4endl<<G4endl;
-
+  G4String s="\n";
+  if (mIsParameterised)
+    s = "\tNumber of voxels : "+DoubletoString(imageVolume->GetImage()->GetNumberOfValues())+'\n';
+  GateMessage("Actor", 1,
+              "[GateVoxelizedMass] Summary: mass calculation for voxelized volume :" << G4endl
+              <<"\tTime elapsed : " << seconds/60 << "min" << seconds%60 << "s (" << seconds << "s)" << G4endl
+              << s
+              << "\tNumber of dosels : " << mImage.GetNumberOfValues() << G4endl
+              << "\tDosels reconstructed total mass : " << G4BestUnit(doselReconstructedTotalMass,"Mass") << G4endl
+              << "\tDosels reconstructed total cubic volume : "
+              << G4BestUnit(doselReconstructedTotalCubicVolume,"Volume") << G4endl);
   mIsVecGenerated=true;
 }
 //-----------------------------------------------------------------------------
