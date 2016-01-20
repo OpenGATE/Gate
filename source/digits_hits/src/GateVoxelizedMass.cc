@@ -100,7 +100,7 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
                     mImage.GetVoxelSize().getY()/2.0,
                     mImage.GetVoxelSize().getZ()/2.0);
 
-  if (DALV->GetNoDaughters()==1 && DALV->GetDaughter(0)->IsParameterised() ||
+  if ((DALV->GetNoDaughters()==1 && DALV->GetDaughter(0)->IsParameterised() ||
      (DALV->GetDaughter(0)->GetName().find("voxel_phys_Y")!=std::string::npos &&
      DALV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_X")!=std::string::npos &&
      DALV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_Z")!=std::string::npos))
