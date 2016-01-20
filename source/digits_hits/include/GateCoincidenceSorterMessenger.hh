@@ -39,6 +39,7 @@ class GateCoincidenceSorter;
     \sa GateCoincidenceSorter
 */
 //    Last modification in 12/2011 by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr, for the multi-system approach.
+//    Modified 01/2016 by Jared.STRYDHORST@cea.fr for the
 
 class GateCoincidenceSorterMessenger: public GateClockDependentMessenger
 {
@@ -64,7 +65,7 @@ class GateCoincidenceSorterMessenger: public GateClockDependentMessenger
     G4UIcmdWithAnInteger        *setDepthCmd;        //!< the UI command 'setDepth'
     G4UIcmdWithAnInteger        *setPresortBufferSizeCmd;  //!< the UI command 'setPresortBufferSize'
     G4UIcmdWithAString          *SetInputNameCmd;    //!< The UI command "set input name"
-    G4UIcmdWithAString          *MultiplePolicyCmd;  //!< The UI command "allowMultiples"
+    G4UIcmdWithAString          *MultiplePolicyCmd;  //!< The UI command "MultiplesPolicy"
     G4UIcmdWithABool            *AllPulseOpenCoincGateCmd;  //!< The UI command "allowMultiples"
 };
 

@@ -137,6 +137,7 @@ void GateVisManager::RegisterGraphicsSystems () {
       "\nYou have successfully chosen to use the following graphics systems."
 	 << Gateendl;
     PrintAvailableGraphicsSystems ();
+//    PrintAvailableGraphicsSystems (G4VisManager::warnings);
   }
 }
 

@@ -30,7 +30,7 @@ class GateCoincidencePulse : public GatePulseList
         m_endTime = m_startTime + itsCoincidenceWindow;
     }
 
-    GateCoincidencePulse(const GateCoincidencePulse& src);  // is there any need for the copy constructor?
+    GateCoincidencePulse(const GateCoincidencePulse& src);
 
     virtual ~GateCoincidencePulse(){}
 

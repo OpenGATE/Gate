@@ -29,6 +29,11 @@ GateCoincidenceSorterMessenger::GateCoincidenceSorterMessenger(GateCoincidenceSo
   windowCmd->SetGuidance("Set time-window for coincidence");
   windowCmd->SetUnitCategory("Time");
 
+  cmdName = GetDirectoryName() + "setWindowJitter";
+  windowJitterCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
+  windowJitterCmd->SetGuidance("Set standard deviation of window jitter");
+  windowJitterCmd->SetUnitCategory("Time");
+
   cmdName = GetDirectoryName() + "setOffset";
   offsetCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   offsetCmd->SetGuidance("Set time offset for delay coincidences");
@@ -36,13 +41,8 @@ GateCoincidenceSorterMessenger::GateCoincidenceSorterMessenger(GateCoincidenceSo
 
   cmdName = GetDirectoryName() + "setOffsetJitter";
   offsetJitterCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  offsetJitterCmd->SetGuidance("Set time offset for delay coincidences");
+  offsetJitterCmd->SetGuidance("Set standard deviation of offset jitter");
   offsetJitterCmd->SetUnitCategory("Time");
-
-  cmdName = GetDirectoryName() + "setWindowJitter";
-  windowJitterCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  windowJitterCmd->SetGuidance("Set time-window for coincidence");
-  windowJitterCmd->SetUnitCategory("Time");
 
   cmdName = GetDirectoryName()+"minSectorDifference";
   minSectorDiffCmd = new G4UIcmdWithAnInteger(cmdName.c_str(),this);

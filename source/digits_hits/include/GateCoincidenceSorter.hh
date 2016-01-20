@@ -12,8 +12,8 @@ See GATE/LICENSE.txt for further details
 
 #include "globals.hh"
 #include <iostream>
-#include <vector>
 #include <list>
+#include <deque>
 #include "G4ThreeVector.hh"
 
 #include "GateCoincidencePulse.hh"
@@ -36,7 +36,7 @@ class GateDigitizer;
 */
 //    Last modification in 12/2011 by Abdul-Fattah.Mohamad-Hadi@subatech.in2p3.fr, for the multi-system approach.
 
-//   01/2016 Rewritten completely by Jared Strydhorst
+//    01/2016 Rewritten completely by Jared.STRYDHORST@cea.fr
 
 typedef enum {kKillAll,
               kTakeAllGoods,
@@ -159,16 +159,15 @@ class GateCoincidenceSorter : public GateClockDependent
     //@{
 
     std::list<GatePulse*> m_presortBuffer;      // incoming pulses are presorted and buffered
-    std::size_t           m_presortBufferSize;
+    G4int                 m_presortBufferSize;
     G4bool                m_presortWarning;     // avoid repeat warnings
 
-    std::deque<GateCoincidencePulse*> m_coincidencePulses;  // list of open coincidence windows
+    std::deque<GateCoincidencePulse*> m_coincidencePulses;  // open coincidence windows
 
     void ProcessCompletedCoincidenceWindow(GateCoincidencePulse*);
 
     G4bool IsForbiddenCoincidence(const GatePulse* pulse1,const GatePulse* pulse2);
-    GateCoincidencePulse* CreateSubPulse(const GatePulse* pulse1,const GatePulse* pulse2);
-
+    GateCoincidencePulse* CreateSubPulse(GateCoincidencePulse* coincidence, G4int i, G4int j);
     G4int ComputeSectorID(const GatePulse& pulse);
     static G4int          gm_coincSectNum;     // internal use
 
