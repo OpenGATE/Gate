@@ -80,7 +80,7 @@ GateCoincidenceSorter::~GateCoincidenceSorter()
 
 
 //------------------------------------------------------------------------------------------------------
-// Oevrload of the virtual method declared by the base class GateVCoincidenceSorter
+// Overload of the virtual method declared by the base class GateVCoincidenceSorter
 // print-out the attributes specific of the sorter
 void GateCoincidenceSorter::Describe(size_t indent)
 {
