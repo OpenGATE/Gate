@@ -24,7 +24,8 @@ See GATE/LICENSE.txt for further details
 #include "GateVSystem.hh"
 #include "GateCoincidenceDigiMaker.hh"
 
-#include <map>
+//#include <map>
+
 //------------------------------------------------------------------------------------------------------
 G4int GateCoincidenceSorter::gm_coincSectNum=0;
 // Constructs a new coincidence sorter, attached to a GateDigitizer and to a system
@@ -42,13 +43,13 @@ GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizer* itsDigitizer,
     m_offset(0.),
     m_offsetJitter(0.),
     m_minSectorDifference(2),
-    m_depth(1),
-    m_coincidentPulses(0),
-    m_waitingPulses(0),
-    m_isCurrentFinished (false),
     m_multiplesPolicy(kKeepIfAllAreGoods),
-    m_allPulseOpenCoincGate(false)
+    m_allPulseOpenCoincGate(false),
+    m_depth(1),
+    m_presortBufferSize(256),
+    m_presortWarning(false)
 {
+
   // Create the messenger
   m_messenger = new GateCoincidenceSorterMessenger(this);
 
@@ -61,10 +62,18 @@ GateCoincidenceSorter::GateCoincidenceSorter(GateDigitizer* itsDigitizer,
 // Destructor
 GateCoincidenceSorter::~GateCoincidenceSorter()
 {
-  if (m_coincidentPulses)
-    delete m_coincidentPulses;
-  if (m_waitingPulses)
-    delete m_waitingPulses;
+  while(m_presortBuffer.size() > 0)
+  {
+    delete m_presortBuffer.back();
+    m_presortBuffer.pop_back();
+  }
+
+  while(m_coincidencePulses.size() > 0)
+  {
+    delete m_coincidencePulses.back();
+    m_coincidencePulses.pop_back();
+  }
+
   delete m_messenger;
 }
 //------------------------------------------------------------------------------------------------------
@@ -76,13 +85,14 @@ GateCoincidenceSorter::~GateCoincidenceSorter()
 void GateCoincidenceSorter::Describe(size_t indent)
 {
   GateClockDependent::Describe(indent);
-  G4cout << GateTools::Indent(indent) << "Coincidence window: " << G4BestUnit(m_coincidenceWindow,"Time") << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Coincidence window:  " << G4BestUnit(m_coincidenceWindow,"Time") << Gateendl;
   G4cout << GateTools::Indent(indent) << "Coincidence window jitter: " << G4BestUnit(m_coincidenceWindowJitter,"Time") << Gateendl;
-  G4cout << GateTools::Indent(indent) << "Coincidence offset: " << G4BestUnit(m_offset,"Time") << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Coincidence offset:  " << G4BestUnit(m_offset,"Time") << Gateendl;
   G4cout << GateTools::Indent(indent) << "Coincidence offset jitter: " << G4BestUnit(m_offsetJitter,"Time") << Gateendl;
-  G4cout << GateTools::Indent(indent) << "Min sector diff.:   " << m_minSectorDifference << Gateendl;
-  G4cout << GateTools::Indent(indent) << "Input:              '" << m_inputName << "'\n";
-  G4cout << GateTools::Indent(indent) << "Output:             '" << m_outputName << "'\n";
+  G4cout << GateTools::Indent(indent) << "Min sector diff.:    " << m_minSectorDifference << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Presort buffer size: " << m_presortBufferSize << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Input:              '" << m_inputName << "'" << Gateendl;
+  G4cout << GateTools::Indent(indent) << "Output:             '" << m_outputName << "'" << Gateendl;
 }
 //------------------------------------------------------------------------------------------------------
 
@@ -110,411 +120,294 @@ void GateCoincidenceSorter::SetMultiplesPolicy(const G4String& policy)
     	m_multiplesPolicy=kKeepAll;
     else {
     	if (policy!="keepIfAllAreGoods")
-    	    G4cout<<"WARNING : policy not recognised, using default : keepMultiplesIfAllAreGoods\n";
+    	    G4cout<<"WARNING : policy not recognized, using default : keepMultiplesIfAllAreGoods\n";
   	m_multiplesPolicy=kKeepIfAllAreGoods;
     }
 }
 //------------------------------------------------------------------------------------------------------
 
 
-//------------------------------------------------------------------------------------------------------
-// Implementation of the pure virtual method declared by the base class GateVCoincidenceSorter
-// Processes a list of pulses and tries to compute a coincidence pulse
 void GateCoincidenceSorter::ProcessSinglePulseList(GatePulseList* inp)
 {
-//   if (m_coincidentPulses){
-//     	G4cout<<"ATTENTION0 "
-//     	<<m_coincidentPulses->size()<<" current initiales"
-// 	<< Gateendl;
-// 	if (inp)
-// 	    G4cout<<"Avec inp a "<<inp->size()<< Gateendl;
-// 	else
-// 	    G4cout<<"Sans inp\n";
-//   }
-//   if (m_waitingPulses){
-//     	G4cout<<"ATTENTION0' "
-//     	<<m_waitingPulses->size()<<" attente initiales"
-// 	<< Gateendl;
-//   }
-  // Check whether we're enabled
+  GatePulse* pulse;
+  std::list<GatePulse*>::iterator buf_iter;                // presort buffer iterator
+  std::deque<GateCoincidencePulse*>::iterator coince_iter; // coincidence list iterator
+
+  G4bool inCoincidence;
+
+  GateCoincidencePulse* coincidence;
+  G4double window, offset;
+
+  GatePulseIterator gpl_iter;      // input pulse list iterator
+
   if (!IsEnabled())
-    return ;
-
-
-  // C. Comtat, 07.02.2006
-  if (m_offset > 0.0 && m_offset/s < MIN_COINC_OFFSET) {
-    G4cout << "Delayed coincidences offset (" << m_offset/s << " sec) should be bigger or equal to " << MIN_COINC_OFFSET << " sec\n";
-    G4Exception( "GateCoincidenceSorter::ProcessSinglePulseList", "ProcessSinglePulseList", FatalException, "Goodbye\n");
-  } else if (m_coincidenceWindow/s > MIN_COINC_OFFSET/4) {
-    G4cout << "Coincidence window (" << m_coincidenceWindow/s << " sec) should be smaller or equal to " << MIN_COINC_OFFSET/4 << " sec\n";
-    G4Exception( "GateCoincidenceSorter::ProcessSinglePulseList", "ProcessSinglePulseList", FatalException, "Goodbye\n");
-  }
+    return;
 
   GatePulseList* inputPulseList = inp ? inp : m_digitizer->FindPulseList( m_inputName );
 
-  // Input pulse-list vector is null
   if (!inputPulseList)
     return ;
 
-  // Get the number of input pulses
-  G4int n_pulses = inputPulseList->size();
-  if (nVerboseLevel==1)
-      	G4cout << "[GateCoincidenceSorter::ProcessPulseList]: processing input list with " << inputPulseList->size() << " entries\n";
-  if (!n_pulses)
-    return ;
-
-  m_isCurrentFinished=false;
-  // If there is no coincident pulses and we had a list of waiting pulses, they form the new coincident pulse
-  if ( !m_coincidentPulses )
-    InitCoincidencePulses(inputPulseList);
-  else
-    VerifCoincidencePulses(inputPulseList);
-  // All incoming pulses are dispatched either into the coincident or into the waiting pulses
-  DispatchPulses(inputPulseList);
-
-  if ( !m_isCurrentFinished ) {
-    // No pulse is after offset + window, it means that all new pulses are within the coincidence
-    // window of the current pulse, and it is still too early to return anything: stop there
-    if (nVerboseLevel>=1)
-      	G4cout << "[GateCoincidenceSorter::ProcessPulseList]: still in the coincidence window --> returning 0\n";
-    return ;
-  }
-
-
-  // At least one of the new pulses is after the coincidence window of the current pulse.
-  // We can analyse the current coincidence pulse
-
-  GateCoincidencePulse* outputPulse = m_coincidentPulses;
-  m_coincidentPulses = 0;
-  G4double stime = outputPulse->ComputeStartTime();
-  if (m_allPulseOpenCoincGate){
-    for (size_t k1=0;k1<outputPulse->size();k1++){
-    	if ((*outputPulse)[k1]->GetTime()>stime){
-	    if (!m_waitingPulses) m_waitingPulses = CreateNewCoincidencePulse();
-    	    m_waitingPulses->InsertUniqueSortedCopy((*outputPulse)[k1]);
-	  //  G4cout<<outputPulse->size()<<"-----------"<<m_waitingPulses<<"----------"<<(*outputPulse)[k1]<<"------"<<(*outputPulse)[k1]->GetTime()<<"---------"<<stime<< Gateendl;
-
-	}
-    }
-  }
-
-  if ((m_multiplesPolicy!=kKeepAll) && (outputPulse->size()<=2)){
-    if (CoincidentPulseIsValid(outputPulse))
-    	m_digitizer->StoreCoincidencePulse(outputPulse);
-    else
-    	delete outputPulse;
-  } else {
-//      GatePulse* firstOfCoinc = outputPulse->FindFirstPulse();
-      if (m_multiplesPolicy==kKeepIfAllAreGoods){
-	if (CoincidentPulseIsValid(outputPulse)) m_digitizer->StoreCoincidencePulse(outputPulse);
-	else delete outputPulse;
-      } else if (m_multiplesPolicy==kKeepIfAnyIsGood){
-	if (CoincidentPulseIsValid(outputPulse,true)) m_digitizer->StoreCoincidencePulse(outputPulse);
-	else delete outputPulse;
-      } else if (m_multiplesPolicy==kKeepIfOnlyOneGood){
-	GateCoincidencePulse* toRegister=FindIfOnlyOneGood(outputPulse);
-	if (toRegister){
-//    	    outputPulse->SetTime(toRegister->GetTime());
-    	    m_digitizer->StoreCoincidencePulse(outputPulse);
-	    delete toRegister;
-	} else delete outputPulse;
-      } else if (m_multiplesPolicy==kKeepAll){
-	if ( (outputPulse->size()>=2) ) {
-	  if (nVerboseLevel>=1)
-	    G4cout << "[GateCoincidenceSorter::ProcessPulseList]: adding coincidence pulse \n"
-		   << *outputPulse << Gateendl;
-    	    if ( (outputPulse->size()==2) && !CoincidentPulseIsValid(outputPulse))
-	    	outputPulse->push_back( new GatePulse((*outputPulse)[0])); // to ensure that the coinc is killed by multiple killer
-    	    m_digitizer->StoreCoincidencePulse(outputPulse);
-	} else delete outputPulse;
-      } else if (m_multiplesPolicy==kKillAll){
-	delete outputPulse;
-      } else if (m_multiplesPolicy==kKillAllIfMultipleGoods){
-	GateCoincidencePulse* toRegister=FindIfOnlyOneGood(outputPulse);
-	if ( toRegister) {
-	  if (nVerboseLevel>=1)
-	    G4cout << "[GateCoincidenceSorter::ProcessPulseList]: adding coincidence pulse \n"
-		   << *toRegister << Gateendl;
-	    m_digitizer->StoreCoincidencePulse(toRegister);
-	}
-	delete outputPulse;
-      } else {
-//          G4cout<<"creation sous coinc \n";
-	  GateCoincidencePulse* toRegister=0;
-	  for (size_t k1=0;k1<outputPulse->size();k1++){
-	    for (size_t k2=k1+1;k2<outputPulse->size();k2++){
-    		GateCoincidencePulse* gp = new GateCoincidencePulse(
-		    outputPulse->GetListName(),outputPulse->GetWindow(),outputPulse->GetOffset());
-
-
-    		if ( (*outputPulse)[k1]->GetTime() < (*outputPulse)[k2]->GetTime() ){
-	    	    gp->push_back( new GatePulse((*outputPulse)[k1]));
-		    gp->SetStartTime((*outputPulse)[k1]->GetTime());
-		    if (gp->IsInCoincidence((*outputPulse)[k2]))
-			gp->push_back( new GatePulse((*outputPulse)[k2]));
-		} else {
-	    	    gp->push_back( new GatePulse((*outputPulse)[k2]));
-		    gp->SetStartTime((*outputPulse)[k2]->GetTime());
-		    if (gp->IsInCoincidence((*outputPulse)[k1]))
-			gp->push_back( new GatePulse((*outputPulse)[k1]));
-		}
-//                G4cout<<"creation sous coinc termine\n";
-    		if (gp->size()==2){
-		    if (m_multiplesPolicy==kTakeAllGoods ){
-		    	if (CoincidentPulseIsValid(gp))
-			    m_digitizer->StoreCoincidencePulse(gp);
-			else delete gp;
-    		    } else if ((m_multiplesPolicy==kTakeWinnerIfIsGood) || (m_multiplesPolicy==kTakeWinnerIfAllAreGoods)){
-			if (!toRegister || toRegister->ComputeEnergy()<gp->ComputeEnergy()){
-			    if (toRegister) delete toRegister;
-			    toRegister=gp;
-			} else delete gp;
-		    } else {
-			if ( CoincidentPulseIsValid(gp) ) {
-			  if (nVerboseLevel>=1)
-			    G4cout << "[GateCoincidenceSorter::ProcessPulseList]: adding coincidence pulse \n"
-				   << *gp << Gateendl;
-    	    		  if (m_multiplesPolicy==kTakeWinnerOfGoods){
-			      if (!toRegister || toRegister->ComputeEnergy()<gp->ComputeEnergy()){
-		    		  if (toRegister) delete toRegister;
-		    		  toRegister=gp;
-			      } else delete gp;
-			  } else G4cerr<<"[GateCoincidenceSorter::ProcessOnePulse] Unknown policy situation...\n";
-			} else {
-			    delete gp;
-			}
-		    }
-		} else delete gp;
-	    }
-	  }
-
-	  if (toRegister) {
-    	    G4bool doRegister=true;
-      	    if (m_multiplesPolicy==kTakeWinnerIfIsGood)
-		doRegister = CoincidentPulseIsValid(toRegister);
-            if (m_multiplesPolicy==kTakeWinnerIfAllAreGoods)
-		doRegister = CoincidentPulseIsValid(outputPulse);
-      	    if (doRegister)
-		m_digitizer->StoreCoincidencePulse(toRegister);
-	    else
-		delete toRegister;
-	  }
-	  delete outputPulse;
-      }
-  }
-
-
-  if (m_waitingPulses){
-    GatePulseList* wasWaiting = m_waitingPulses;
-    m_waitingPulses=0;
-    ProcessSinglePulseList(wasWaiting);
-    delete wasWaiting;
-  }
-}
-//------------------------------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------------------------------
-// Initialise the coincident pulses as needed
-void GateCoincidenceSorter::InitCoincidencePulses(const GatePulseList* inputPulseList)
-{
-  G4double startTime;
-
-  m_coincidentPulses = CreateNewCoincidencePulse();
-  m_isCurrentFinished=false;
-  if (m_waitingPulses) {
-    // If we had a list of waiting pulses, the first of them
-    // form the new current pulse list
-    // and we dispatch all of the following pulses into
-    // the new current pulse or a new waiting pulse list
-
-    startTime = std::min(m_waitingPulses->ComputeStartTime(),inputPulseList->ComputeStartTime());
-    m_coincidentPulses->SetStartTime(startTime);
-    GatePulseList* wasWaiting = m_waitingPulses;
-    m_waitingPulses = 0;
-    DispatchPulses(wasWaiting);
-    delete wasWaiting;
-  } else {
-    // There were no waiting pulses: we create a new one and set its start-time
-    startTime = inputPulseList->ComputeStartTime();
-    m_coincidentPulses->SetStartTime( startTime );
-  }
-
-
-
-  if (nVerboseLevel>1)
-    G4cout << "[GateCoincidenceSorter::InitCoincidencePulses]: start time set to: " << G4BestUnit(startTime,"Time") << Gateendl;
-}
-//------------------------------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------------------------------
-// Verify the coincident pulses as needed
-void GateCoincidenceSorter::VerifCoincidencePulses(const GatePulseList* inputPulseList)
-{
-    GatePulse* firstNew = inputPulseList->FindFirstPulse();
-    if (firstNew->GetTime()<m_coincidentPulses->GetStartTime()){
-    	m_coincidentPulses->SetStartTime(firstNew->GetTime());
-	typedef std::vector< GatePulseList::iterator >  iteratorVect ;
-	iteratorVect toWait, toCurrent;
-    	for ( GatePulseList::iterator iter = m_coincidentPulses->begin()
-	    ; iter != m_coincidentPulses->end()
-	    ; ++iter) {
-    	    if ( !m_coincidentPulses->IsInCoincidence(*iter) ) {
-	    	toWait.push_back(iter);
-    	    }
-	}
-	if (m_waitingPulses){
-    	    for ( GatePulseList::iterator iter = m_waitingPulses->begin()
-		; iter != m_waitingPulses->end()
-		; ++iter) {
-    		if ( m_coincidentPulses->IsInCoincidence(*iter) ) {
-	    	    toCurrent.push_back(iter);
-    		}
-	    }
-	    for (iteratorVect::reverse_iterator it = toCurrent.rbegin() ; it != toCurrent.rend() ; ++it){
-		GatePulse* pulse = **it;
-		m_waitingPulses->erase( *it );
-		m_coincidentPulses->push_back ( pulse );
-	    }
-	} else {
-	    if (!toWait.empty()) m_waitingPulses = CreateNewCoincidencePulse();
-	}
-	for (iteratorVect::reverse_iterator it = toWait.rbegin() ; it != toWait.rend() ; ++it){
-	    GatePulse* pulse = **it;
-	    m_coincidentPulses->erase( *it );
-	    m_waitingPulses->push_back ( pulse );
-	}
-	m_isCurrentFinished=false;
-	if (m_waitingPulses && m_waitingPulses->empty()) {delete m_waitingPulses; m_waitingPulses=0;}
-    	if (m_waitingPulses){
-	    for ( GatePulseList::const_iterator iter = m_waitingPulses->begin()
-	    	; iter != m_waitingPulses->end()
-	    	; ++iter) {
-	     	    if ( m_coincidentPulses->IsAfterWindow(*iter) ) m_isCurrentFinished=true;
-    	    }
-	    m_waitingPulses->SetStartTime(m_waitingPulses->ComputeStartTime());
-	}
-    }
-    return;
-
-}
-//------------------------------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------------------------------
-// Dispatch all pulses either into the coincident or into the waiting pulse lists
-void GateCoincidenceSorter::DispatchPulses(const GatePulseList* inputPulseList)
-{
-  // All incoming pulses go either into the coincident or into the waiting pulses
-  for ( GatePulseList::const_iterator iter = inputPulseList->begin(); iter < inputPulseList->end() ; ++iter)
+  // put input pulses in sorted input buffer
+  for(gpl_iter = inputPulseList->begin();gpl_iter != inputPulseList->end();gpl_iter++)
   {
-    if ( m_coincidentPulses->IsInCoincidence(*iter) ) {
-      	// The incoming pulse is in coincidence with the 'current' pulse: store it there
-      	m_coincidentPulses->push_back( new GatePulse(**iter) );
-      	if (nVerboseLevel>1)
-      	  G4cout << "[GateCoincidenceSorter::ProcessPulseList]: appended new pulse into current coincidence pulse: \n"
-	      	 << **iter << Gateendl;
-    } else {
-       // The incoming pulse is not in coincidence with the 'current' pulse: store it in the 'next' coincident pulse
+    // make a copy of the pulse
+    pulse = new GatePulse(**gpl_iter);
 
-        // There is no waiting pulse list: we create a new one
-       if ( !m_waitingPulses ) {
-         m_waitingPulses = CreateNewCoincidencePulse();
-       }
-       // Store the pulse
-       m_waitingPulses->push_back( new GatePulse(**iter) );
-       // if the time of the pulse is AFTER (and not before) the current pulse list
-       // start time, one can mark the current pulse list as completely filled
-       if (m_coincidentPulses->IsAfterWindow(*iter) ) m_isCurrentFinished=true;
-       if (nVerboseLevel>1)
-      	  G4cout << "[GateCoincidenceSorter::ProcessPulseList]: appended new pulse into waiting pulse list: \n"
-	      	 << **iter << Gateendl;
+    if(m_presortBuffer.empty())
+      m_presortBuffer.push_back(pulse);
+    else if(pulse->GetTime() < m_presortBuffer.back()->GetTime())    // check that even isn't earlier than the earliest event in the buffer
+    {
+      if(!m_presortWarning)
+        GateWarning("Event is earlier than earliest event in coincidence presort buffer. Consider using a larger buffer.");
+      m_presortWarning = true;
+      m_presortBuffer.push_back(pulse); // this will probably not cause a problem, but coincidences may be missed
     }
-  }
-  m_coincidentPulses->SetStartTime(m_coincidentPulses->ComputeStartTime());
-}
-//------------------------------------------------------------------------------------------------------
+    else // put the event into the presort buffer in the right place
+    {
+      buf_iter = m_presortBuffer.begin();
+      while(pulse->GetTime() < (*buf_iter)->GetTime())
+        buf_iter++;
+      m_presortBuffer.insert(buf_iter, pulse);
+    }
 
-
-//------------------------------------------------------------------------------------------------------
-inline GateCoincidencePulse* GateCoincidenceSorter::CreateNewCoincidencePulse() const
-{
-   G4double window = G4RandGauss::shoot(m_coincidenceWindow,m_coincidenceWindowJitter);
-   G4double offset = G4RandGauss::shoot(m_offset,m_offsetJitter);
-//   G4cout<<"Window "<<window<<" offset "<<offset<< Gateendl;
-   return new GateCoincidencePulse(m_outputName,window,offset);
-}
-
-
-
-// Check the validity of the coincident pulse
-G4bool GateCoincidenceSorter::CoincidentPulseIsValid(GateCoincidencePulse* outputPulse,G4bool any)
-{
-  // Check whether we got at least two singles in the coincidence pulse
-  if (outputPulse->size() < 2 ) {
-    // Nop, we don't have a coincidence: erase and return 0
-    if (nVerboseLevel>=1)
-        G4cout << "[GateCoincidenceSorter::CoincidentPulseIsValid]: deleting coincidence pulse with only 1 single \n"
-	       << *outputPulse << Gateendl;
-    return false;
   }
 
-  // Look for forbidden coincidences
-  for ( GateCoincidencePulse::iterator iter1 = outputPulse->begin(); iter1 < outputPulse->end() ; iter1++)
-    for ( GateCoincidencePulse::iterator iter2 = (iter1+1) ; iter2 < outputPulse->end() ; iter2++) {
-      if ( IsForbiddenCoincidence(*iter1,*iter2) )
+  //  once buffer reaches the specified size look for coincidences
+  for(G4int i = m_presortBuffer.size();i > m_presortBufferSize;i--)
+  {
+    pulse = m_presortBuffer.back();
+    m_presortBuffer.pop_back();
+
+    // process completed coincidence pulse window at front of list
+    while(!m_coincidencePulses.empty() && m_coincidencePulses.front()->IsAfterWindow(pulse))
+    {
+      coincidence = m_coincidencePulses.front();
+      m_coincidencePulses.pop_front();
+
+      ProcessCompletedCoincidenceWindow(coincidence);
+    }
+
+    // add event to coincidences
+    inCoincidence = false;
+    coince_iter = m_coincidencePulses.begin();
+    while( coince_iter != m_coincidencePulses.end() && (*coince_iter)->IsInCoincidence(pulse) )
+    {
+      inCoincidence = true;
+      (*coince_iter)->push_back(new GatePulse(pulse)); // add a copy so we can delete safely
+      coince_iter++;
+    }
+
+    // if not after or in the windows, it must be before the rest of coincidence windows
+    // so there's no need to check the rest of the coincidence list
+
+    // update coincidence pulse list
+    if(m_allPulseOpenCoincGate || !inCoincidence)
+    {
+      if(m_coincidenceWindowJitter > 0.0)
+        window = G4RandGauss::shoot(m_coincidenceWindow,m_coincidenceWindowJitter);
+      else
+        window = m_coincidenceWindow;
+
+      if(m_offsetJitter > 0.0)
+        offset = G4RandGauss::shoot(m_offset,m_offsetJitter);
+      else
+        offset = m_offset;
+
+      coincidence = new GateCoincidencePulse(m_outputName,pulse,window,offset);
+      m_coincidencePulses.push_back(coincidence);
+    }
+    else
+      delete pulse; // pulses that don't open a coincidence window can be discarded
+  }
+
+}
+
+// look for valid coincidences
+void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidencePulse *coincidence)
+{
+  G4int i, j, nPulses;
+  G4int nGoods, maxGoods;
+  G4double E, maxE;
+  G4int winner_i=0;
+  G4int winner_j=1;
+
+  nPulses = coincidence->size();
+
+  if (nPulses<2)
+  {
+    delete coincidence;
+    return;
+  }
+  else if (nPulses==2)
+  {
+    // check if good good
+    if(IsForbiddenCoincidence(coincidence->at(0),coincidence->at(1)) )
+      delete coincidence;
+    else
+      m_digitizer->StoreCoincidencePulse(coincidence);
+    return;
+  }
+  else // nPulses>2 multiples
+  {
+    if(m_multiplesPolicy==kKillAll)
+    {
+      delete coincidence;
+      return;
+    }
+
+
+    if(m_multiplesPolicy==kTakeAllGoods)
+    {
+      for(i=0; i<(m_allPulseOpenCoincGate?1:(nPulses-1)); i++) // iterate over all pairs (single window) or just pairs with initial event (multi-window)
+        for(j=i+1; j<nPulses; j++)
+          if(!IsForbiddenCoincidence(coincidence->at(i),coincidence->at(j)) )
+            m_digitizer->StoreCoincidencePulse(CreateSubPulse(coincidence, i, j));
+      delete coincidence; // valid pulses extracted so we can delete
+      return;
+    }
+
+    // count the goods (iterate over all pairs because we're considering the multi as a unit, not breaking it up into pairs)
+    nGoods = 0;
+    for(i=0; i<(nPulses-1); i++)
+      for(j=i+1; j<nPulses; j++)
+        if(!IsForbiddenCoincidence(coincidence->at(i),coincidence->at(j)))
+          nGoods++;
+
+    if( nGoods == 0 )  // all of the remaining options expect at least one good
+    {
+      delete coincidence;
+      return;
+    }
+
+    // all the Keep* policies pass on a multi-coincidence rather than breaking into pairs
+    if( ( (m_multiplesPolicy==kKeepIfAnyIsGood) /*&& (nGoods>0)*/          ) || // if nGoods = 0, we don't get here
+        ( (m_multiplesPolicy==kKeepIfOnlyOneGood) && (nGoods==1)           ) ||
+        ( (m_multiplesPolicy==kKeepIfAllAreGoods) && (nGoods==(nPulses*(nPulses-1)/2)) ) )
+    {
+      m_digitizer->StoreCoincidencePulse(coincidence);
+      return; // don't delete the coincidence
+    }
+    if((m_multiplesPolicy==kKeepIfAnyIsGood)   ||
+       (m_multiplesPolicy==kKeepIfOnlyOneGood) ||
+       (m_multiplesPolicy==kKeepIfAllAreGoods) )
+    {
+      delete coincidence;
+      return;
+    }
+
+    // find winner and count the goods
+    maxE = 0.0;
+    nGoods = 0;
+    for(i=0; i<(m_allPulseOpenCoincGate?1:(nPulses-1)); i++)
+      for(j=i+1; j<nPulses; j++)
       {
-      	if (nVerboseLevel>=1)
-          G4cout << "[GateCoincidenceSorter::ProcessPulseList]: deleting coincidence pulse with forbidden coincidence \n"
-	      	 << *outputPulse << Gateendl;
-      	if (!any) return false;
-      } else if (any) return true;
+        // this time we might only be counting goods on the subset involving the first event
+        if(!IsForbiddenCoincidence(coincidence->at(i),coincidence->at(j)))
+          nGoods++;
+
+        E = coincidence->at(i)->GetEnergy() + coincidence->at(j)->GetEnergy();
+        if(E>maxE)
+        {
+          maxE = E;
+          winner_i = i;
+          winner_j = j;
+        }
+      }
+
+    if(nGoods==0) // check again, we may have reduced the subset.
+    {
+      delete coincidence;
+      return;
     }
 
-  return !any;
-}
+    if(m_multiplesPolicy==kTakeWinnerIfIsGood)
+    {
+      if(!IsForbiddenCoincidence(coincidence->at(winner_i),coincidence->at(winner_j)) )
+        m_digitizer->StoreCoincidencePulse(CreateSubPulse(coincidence, winner_i, winner_j));
+      delete coincidence;
+      return;
+    }
 
-GateCoincidencePulse* GateCoincidenceSorter::FindIfOnlyOneGood(GateCoincidencePulse* outputPulse){
-  if (outputPulse->size() < 2 ) return 0;
-  GateCoincidencePulse* ans = 0;
-  for ( GateCoincidencePulse::iterator iter1 = outputPulse->begin(); iter1 < outputPulse->end() ; iter1++) {
-    for ( GateCoincidencePulse::iterator iter2 = (iter1+1) ; iter2 < outputPulse->end() ; iter2++) {
-      if ( !IsForbiddenCoincidence(*iter1,*iter2) ) {
-      	GateCoincidencePulse* pls = new GateCoincidencePulse(
-	    	     outputPulse->GetListName()
-                    ,outputPulse->GetWindow()
-	    	    ,outputPulse->GetOffset());
-    	if ( (*iter1)->GetTime() < (*iter2)->GetTime() ){
-	    pls->push_back( new GatePulse(*iter1));
-	    if (pls->IsInCoincidence(*iter2))
-		pls->push_back( new GatePulse(*iter2));
-	} else {
-	    pls->push_back( new GatePulse(*iter2));
-	    if (pls->IsInCoincidence(*iter1))
-		pls->push_back( new GatePulse(*iter1));
-	}
-	if (pls->size() == 2) {
-            if (ans) {
-		delete ans; delete pls;
-		return 0;
-	    } else {
-      		ans = pls;
-            }
-	} else delete pls;
+    if(m_multiplesPolicy==kKillAllIfMultipleGoods)
+    {
+      if(nGoods>1)
+      {
+        delete coincidence;
+        return;
+      } // else find and return the one good event
+      else // nGoods==1
+      {
+        for(i=0; i<(nPulses-1); i++)
+          for(j=i+1; j<nPulses; j++)
+            if(!IsForbiddenCoincidence(coincidence->at(i),coincidence->at(j)))
+              m_digitizer->StoreCoincidencePulse(CreateSubPulse(coincidence, i, j));
+        delete coincidence;
+        return;
       }
     }
-   }
-   return ans;
-}
-//------------------------------------------------------------------------------------------------------
 
+    maxGoods = m_allPulseOpenCoincGate?(nPulses-1):(nPulses*(nPulses-1)/2);
+    if(m_multiplesPolicy==kTakeWinnerIfAllAreGoods)
+    {
+      if(nGoods==maxGoods)
+      {
+        m_digitizer->StoreCoincidencePulse(CreateSubPulse(coincidence, winner_i, winner_j));
+        delete coincidence;
+        return;
+      }
+      else
+      {
+        delete coincidence;
+        return;
+
+      }
+    }
+
+    if(m_multiplesPolicy==kTakeWinnerOfGoods)
+    {
+      // find winner
+      maxE = 0.0;
+      for(i=0; i<(m_allPulseOpenCoincGate?1:(nPulses-1)); i++)
+        for(j=i+1; j<nPulses; j++)
+        {
+          if(!IsForbiddenCoincidence(coincidence->at(i),coincidence->at(j)))
+          {
+            E = coincidence->at(i)->GetEnergy() + coincidence->at(j)->GetEnergy();
+            if(E>maxE)
+            {
+              maxE = E;
+              winner_i = i;
+              winner_j = j;
+            }
+          }
+        }
+      m_digitizer->StoreCoincidencePulse(CreateSubPulse(coincidence, winner_i, winner_j));
+      delete coincidence; // valid pulses extracted so we can delete
+      return;
+    }
+  }
+
+  delete coincidence;
+  return;
+
+}
+
+GateCoincidencePulse* GateCoincidenceSorter::CreateSubPulse(GateCoincidencePulse* coincidence, G4int i, G4int j)
+{
+  GatePulse* pulse1 = new GatePulse(coincidence->at(i));
+  GatePulse* pulse2 = new GatePulse(coincidence->at(j));
+  G4double offset = coincidence->GetStartTime() - pulse1->GetTime();
+  GateCoincidencePulse *newCoincPulse = new GateCoincidencePulse(m_outputName,pulse1,m_coincidenceWindow,offset);
+  newCoincPulse->push_back(pulse2);
+  return newCoincPulse;
+}
 
 //------------------------------------------------------------------------------------------------------
 G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
 {
     if (m_depth>=(G4int)pulse.GetOutputVolumeID().size()) {
-    	G4cerr<<"[GateCoincidenceSorter::ComputeSectorID]: Requiered depth's too deep, setting it to 1\n";
+    	G4cerr<<"[GateCoincidenceSorter::ComputeSectorID]: Required depth's too deep, setting it to 1\n";
 	m_depth=1;
     }
     static std::vector<G4int> gkSectorMultiplier;
@@ -545,6 +438,7 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
     	G4int x = pulse.GetComponentID(i)%gkSectorNumber[i];
     	ans += x*gkSectorMultiplier[i];
     }
+
     return ans;
 }
 //------------------------------------------------------------------------------------------------------
@@ -552,7 +446,7 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
 
 //------------------------------------------------------------------------------------------------------
 // Check whether a coincidence is invalid: ring difference or sector difference too small...
-G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GatePulse& pulse1,const GatePulse& pulse2)
+G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GatePulse* pulse1, const GatePulse* pulse2)
 {
   G4int blockID1 = m_system->GetMainComponentID(pulse1),
         blockID2 = m_system->GetMainComponentID(pulse2);
@@ -568,44 +462,44 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GatePulse& pulse1,con
   int comp = strcmp(name,nameComp);
 
   if (comp == 0) {
-  // Compute the sector difference
-  	G4int sectorID1 = m_system->ComputeSectorIDSphere(blockID1),
-      	      sectorID2 = m_system->ComputeSectorIDSphere(blockID2);
+    // Compute the sector difference
+    G4int sectorID1 = m_system->ComputeSectorIDSphere(blockID1),
+    sectorID2 = m_system->ComputeSectorIDSphere(blockID2);
 
-        // Get the number of sectors per ring
-  	G4int sectorNumber = m_system->GetCoincidentSectorNumberSphere();
+    // Get the number of sectors per ring
+    G4int sectorNumber = m_system->GetCoincidentSectorNumberSphere();
 
-  	// Deal with the circular difference problem
-  	G4int sectorDiff1 = sectorID1 - sectorID2;
-  	if (sectorDiff1<0)
-    		sectorDiff1 += sectorNumber;
-  	G4int sectorDiff2 = sectorID2 - sectorID1;
-  	if (sectorDiff2<0)
-    		sectorDiff2 += sectorNumber;
- 	 G4int sectorDifference = std::min(sectorDiff1,sectorDiff2);
+    // Deal with the circular difference problem
+    G4int sectorDiff1 = sectorID1 - sectorID2;
+    if (sectorDiff1<0)
+      sectorDiff1 += sectorNumber;
+    G4int sectorDiff2 = sectorID2 - sectorID1;
+    if (sectorDiff2<0)
+      sectorDiff2 += sectorNumber;
+    G4int sectorDifference = std::min(sectorDiff1,sectorDiff2);
 
-  	//Compare the sector difference with the minimum differences for valid coincidences
-  	if (sectorDifference<m_minSectorDifference) {
-      	if (nVerboseLevel>1)
-      	    G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: coincidence between neighbour blocks --> refused\n";
-	return true;
-	}
-	return false;
+    //Compare the sector difference with the minimum differences for valid coincidences
+    if (sectorDifference<m_minSectorDifference) {
+      if (nVerboseLevel>1)
+        G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: coincidence between neighbour blocks --> refused\n";
+      return true;
+    }
+    return false;
   }
   else {
   // Compute the sector difference
-  G4int sectorID1 = ComputeSectorID(pulse1),
-      	sectorID2 = ComputeSectorID(pulse2);
+  G4int sectorID1 = ComputeSectorID(*pulse1),
+      	sectorID2 = ComputeSectorID(*pulse2);
 
   // Get the number of sectors per ring
-  G4int sectorNumber = GetCoincidentSectorNumber();
+  // G4int sectorNumber = GetCoincidentSectorNumber();
   // Deal with the circular difference problem
   G4int sectorDiff1 = sectorID1 - sectorID2;
   if (sectorDiff1<0)
-    sectorDiff1 += sectorNumber;
+    sectorDiff1 += gm_coincSectNum;
   G4int sectorDiff2 = sectorID2 - sectorID1;
   if (sectorDiff2<0)
-    sectorDiff2 += sectorNumber;
+    sectorDiff2 += gm_coincSectNum;
   G4int sectorDifference = std::min(sectorDiff1,sectorDiff2);
 
   //Compare the sector difference with the minimum differences for valid coincidences
@@ -616,7 +510,7 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GatePulse& pulse1,con
   }
 
   return false;
-}
+  }
 }
 //------------------------------------------------------------------------------------------------------
 
