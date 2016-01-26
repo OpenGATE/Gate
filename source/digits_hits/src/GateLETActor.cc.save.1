@@ -27,9 +27,6 @@ GateLETActor::GateLETActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
   GateDebugMessageInc("Actor",4,"GateLETActor() -- begin\n");
   mIsRestrictedFlag = false;
-  mIsLETUncertaintyImageEnabled = false;
-  mIsDoseToWaterEnabled = false;
-  mAveragingType = "DoseAveraged";
   pMessenger = new GateLETActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateLETActor() -- end\n");
   emcalc = new G4EmCalculator;
@@ -50,22 +47,12 @@ GateLETActor::~GateLETActor()  {
 void GateLETActor::Construct() {
   GateDebugMessageInc("Actor", 4, "GateLETActor -- Construct - begin\n");
   GateVImageActor::Construct();
-  
-  
-  // Find G4_WATER. This it needed here because we will used this
-  // material for dedx computation for DoseToWater.
-  G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
 
   // Enable callbacks
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(true);
   EnableUserSteppingAction(true);
-  
-  if (mAveragingType == "DoseAveraged"){mIsDoseAveraged = true; mIsTrackAveraged= false;}
-  else if (mAveragingType == "TrackAveraged"){mIsTrackAveraged = true; mIsDoseAveraged = false; }
-  else {GateError("The LET averaging Type" << GetObjectName()
-              << " is not valid ...\n Please select 'DoseAveraged' or 'TrackAveraged')");}
 
   // Output Filename
   mLETFilename = mSaveFilename;
@@ -173,54 +160,18 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
 
   // Get somes values
   G4double density = step->GetPreStepPoint()->GetMaterial()->GetDensity();
-  G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName();
+  G4String material = step->GetPreStepPoint()->GetMaterial()->GetName();
   G4double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
   G4double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
   G4double energy=(energy1+energy2)/2;
-  G4ParticleDefinition* partname = step->GetTrack()->GetDefinition();//->GetParticleName();
+  G4String partname = step->GetTrack()->GetDefinition()->GetParticleName();
   //double voxelVolume=mLETImage.GetVoxelVolume();
   // The following variable should be used: mIsRestrictedFlag mDeltaRestricted
 
   // Compute the dedx for the current particle in the current material
-  G4double doseAveragedLET =0;
+  
   G4double dedx = emcalc->ComputeElectronicDEDX(energy, partname, material);
-  if (mIsRestrictedFlag){
-	  dedx = emcalc->ComputeElectronicDEDX(energy, partname, material,mDeltaRestricted);
-  }
-  G4double normalizationVal = 0;
-  //G4cout<<"This is edep: "<< edep<<G4endl;
-  if (mIsDoseAveraged){
-	  doseAveragedLET=edep*dedx; // /(density/(g/cm3)); 
-	  normalizationVal = edep;
-	  //G4cout<<"This is dose Averaged: "<< doseAveragedLET<<G4endl;
-  }
-  else if (mIsTrackAveraged){
-	  doseAveragedLET=edep;
-	  normalizationVal = steplength;
-	  
-	  //G4cout<<"This is Track Averaged Track!!: "<< doseAveragedLET<<G4endl;
-  }
-  if (mIsDoseToWaterEnabled){
-	  G4double energyScalingFactor= emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER"); // include here also mDeltaRestricted
-	  energyScalingFactor /= emcalc->ComputeTotalDEDX(energy, partname, material); // include here also mDeltaRestricted
-	  G4double massScalingFactor = density;
-	  massScalingFactor /= 1.0;
-	  if (mIsDoseAveraged){
-		  doseAveragedLET*=(massScalingFactor*energyScalingFactor*energyScalingFactor);
-		  normalizationVal*=(massScalingFactor*energyScalingFactor);
-	  }
-	  else if (mIsTrackAveraged){
-		  doseAveragedLET*=(energyScalingFactor);
-	  }
-			  
-		//factor*=calc.ComputeTotalDEDX(aStep->GetPreStepPoint()->GetKineticEnergy(),proton,HU_10to4,1.0*km);
-
-		//factor/=calc.ComputeTotalDEDX(aStep->GetPreStepPoint()->GetKineticEnergy(),proton,aStep->GetTrack()->GetStep()->GetPreStepPoint()->GetMaterial(),1.0*km);
-
-		  //massScalingFactor= density;
-		  //massScalingFactor/= HU_10to4->GetDensity();
-  }
-  //G4cout<< "difference between LETT and edep"<< doseAveragedLET-edep << G4endl;
+  G4double doseAveragedLET=edep*dedx; // /(density/(g/cm3)); 
   /*
   G4cout<<"This is dedx from emcalc: "<<dedx<<G4endl;
   G4cout<<"This is edep/dx: "<<dedx<<G4endl;
@@ -244,8 +195,9 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   mLETImage.AddValue(index, doseAveragedLET);
 
   // Store the Edep (needed for final computation)
-  mEdepImage.AddValue(index, normalizationVal);
+  mEdepImage.AddValue(index, edep);
 
   GateDebugMessageDec("Actor", 4, "GateLETActor -- UserSteppingActionInVoxel -- end\n");
 }
 //-----------------------------------------------------------------------------
+
