@@ -41,7 +41,7 @@ class GateLETActor : public GateVImageActor
   virtual void Construct();
 
   void SetRestrictedFlag(bool b) { mIsRestrictedFlag = b; }
-  void SetDeltaRestrictedValue(double d) { mDeltaRestricted = d; }
+  void SetDeltaRestrictedValue(G4double d) { mDeltaRestricted = d; }
   //test AResch 25 01 2016
   void EnableLETUncertaintyImage(bool b) { mIsLETUncertaintyImageEnabled = b; }
   void SetDoseToWater(bool b) { mIsDoseToWaterEnabled = b; }
@@ -73,7 +73,7 @@ protected:
   bool mIsLETUncertaintyImageEnabled;
   bool mIsDoseToWaterEnabled;
   G4String mAveragingType;
-  double mDeltaRestricted;
+  G4double mDeltaRestricted;
   GateImage mLETImage;
   GateImage mEdepImage;
   GateImage mFinalImage;

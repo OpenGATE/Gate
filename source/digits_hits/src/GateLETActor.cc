@@ -27,6 +27,7 @@ GateLETActor::GateLETActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
   GateDebugMessageInc("Actor",4,"GateLETActor() -- begin\n");
   mIsRestrictedFlag = false;
+  //mDeltaRestricted = 800000.0;
   mIsLETUncertaintyImageEnabled = false;
   mIsDoseToWaterEnabled = false;
   mAveragingType = "DoseAveraged";
@@ -103,7 +104,7 @@ void GateLETActor::Construct() {
 
 
 //-----------------------------------------------------------------------------
-/// Save data
+/// Save datamDeltaRestricted
 void GateLETActor::SaveData() {
   GateVActor::SaveData();
 
@@ -184,9 +185,36 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   // Compute the dedx for the current particle in the current material
   G4double doseAveragedLET =0;
   G4double dedx = emcalc->ComputeElectronicDEDX(energy, partname, material);
-  if (mIsRestrictedFlag){
-	  dedx = emcalc->ComputeElectronicDEDX(energy, partname, material,mDeltaRestricted);
+/*  if (dedx>10){
+  G4cout<<"this dx um "<<steplength/um<<G4endl;
+  G4cout<<"this dx "<<steplength<<G4endl;
+  G4cout<<"this edep"<< edep/keV<<G4endl;
+  G4cout<<"this (edep/dx)/dx "<< (edep/keV)/(steplength/um)/(steplength/um)<<G4endl;
+  G4cout<<"this DEDX/dx  um "<< (dedx/(keV/um))/(steplength/um) << G4endl;
+  G4cout<<"this DEDX/dx   "<< dedx/(steplength) << G4endl;
+  G4cout<<"this E*DEDX/E "<< edep*dedx/edep <<G4endl;
+  G4cout<<"this DEDX "<< dedx <<G4endl;
+  G4cout<<"this is unrestricted dedx:   " << emcalc->ComputeElectronicDEDX(energy, partname, material)<<G4endl;
+  
+  G4cout<<"new event"<<G4endl<<G4endl;
+  
   }
+  */
+  //G4double meanFreePath = emcalc->GetMeanFreePath(energyOfSecElectron)
+  //G4double 	GetMeanFreePath (G4double kinEnergy, const G4ParticleDefinition *, const G4String &processName, const G4Material *, const G4Region *r=0)
+  if (mIsRestrictedFlag){
+	  //dedx = emcalc->ComputeElectronicDEDX(energy, partname, material,mDeltaRestricted);
+	  //G4cout<<"this is the cut value: " << mDeltaRestricted<<G4endl;
+	  //G4cout<<"this is the cut value mm: " << mDeltaRestricted *mm<<G4endl;
+	  //G4cout<<"this is the cut value um: " << mDeltaRestricted *um<<G4endl;
+	  //G4cout<<"this is restricted dedx: " <<emcalc->ComputeElectronicDEDX(energy, partname, material,mDeltaRestricted)<<G4endl;
+	  //G4cout<<"this is unrestricted dedx:   " << emcalc->ComputeElectronicDEDX(energy, partname, material)<<G4endl;
+	  //G4cout<<"this is restricted dedx m: " <<emcalc->ComputeElectronicDEDX(energy, partname, material,mDeltaRestricted*m)<<G4endl;
+	  //G4cout<<"this is restricted dedx mm: " <<emcalc->ComputeElectronicDEDX(energy, partname, material,mDeltaRestricted*mm)<<G4endl;
+  }
+  
+  //G4cout<<"new event"<<G4endl<<G4endl;
+
   G4double normalizationVal = 0;
   //G4cout<<"This is edep: "<< edep<<G4endl;
   if (mIsDoseAveraged){

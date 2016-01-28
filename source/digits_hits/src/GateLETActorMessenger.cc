@@ -47,8 +47,8 @@ void GateLETActorMessenger::BuildCommands(G4String base)
   pSetRestrictedCmd = new G4UIcmdWithABool(n, this);
   G4String guid = G4String("Enable restricted LET computation (with cut)");
   pSetRestrictedCmd->SetGuidance(guid);
-
-  n = base+"/SetDeltaRestricted";
+  
+  n = base+"/setDeltaRestricted";
   pSetDeltaRestrictedCmd = new G4UIcmdWithADoubleAndUnit(n, this);
   guid = G4String("Set the delta value for restricted LET");
   pSetDeltaRestrictedCmd->SetGuidance(guid);
@@ -112,6 +112,7 @@ void GateLETActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
     pLETActor->SetRestrictedFlag(pSetRestrictedCmd->GetNewBoolValue(newValue));
   if (cmd == pSetDeltaRestrictedCmd)
     pLETActor->SetDeltaRestrictedValue(pSetDeltaRestrictedCmd->GetNewDoubleValue(newValue));
+    G4cout<<"this is mRestricted in messenger"<< pSetDeltaRestrictedCmd->GetNewDoubleValue(newValue)<<G4endl;
   if (cmd == pEnableLETUncertaintyCmd) pLETActor->EnableLETUncertaintyImage(pEnableLETUncertaintyCmd->GetNewBoolValue(newValue));
   if (cmd == pSetDoseToWaterCmd) pLETActor->SetDoseToWater(pSetDoseToWaterCmd->GetNewBoolValue(newValue));
   if (cmd == pAveragingTypeCmd) pLETActor->SetLETType(newValue);
