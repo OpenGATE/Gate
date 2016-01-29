@@ -39,27 +39,18 @@ public:
   G4double GetVirtualTimeStop();
   G4double GetVirtualTimeStart();
 
-  inline G4bool GetExitFlag()           { return m_exitFlag; };
-  inline void SetExitFlag(G4bool value) { m_exitFlag = value; };
-
-  inline G4bool GetPauseFlag()           { return m_pauseFlag; };
-  inline void SetPauseFlag(G4bool value) { m_pauseFlag = value; };
-
   void StartDAQ();
-
   void StartDAQCluster(G4ThreeVector param);
 
   void StartDAQComplete(G4ThreeVector param);
-  void StopDAQ();
-  void PauseDAQ();
+  void StopDAQ() {};
+  void PauseDAQ() {};
 
   void Describe();
   void PrintStatus();
   void SetVerboseLevel(G4int value) { nVerboseLevel = value; }
 
-  G4double GetTimeInterval(int i){return listOfTimeSlice[i];}
   void SetTimeInterval(G4double v);
-  void SetActivity(G4double v){ listOfActivity.push_back(v);}
   void SetTotalNumberOfPrimaries(double n);
   long int GetTotalNumberOfPrimaries(){return mRequestedAmountOfPrimaries;}
   void SetNumberOfPrimariesPerRun(double n);
@@ -67,8 +58,6 @@ public:
 
   void SetNoOutputMode();
   bool GetOutputMode(){return mOutputMode;}
-  //void EnableSuccessiveSourceMode(bool t);
-  //bool IsSuccessiveSourceModeIsEnabled();
   bool IsTotalAmountOfPrimariesModeEnabled(){return mATotalAmountOfPrimariesIsRequested;}
   bool IsAnAmountOfPrimariesPerRunModeEnabled(){return mRequestedAmountOfPrimariesPerRun;}
   void ReadTimeSlicesInAFile(G4String filename);
@@ -89,44 +78,31 @@ protected:
   GateApplicationMgr();
   static GateApplicationMgr* instance;
   
-  G4double m_timeSlice;
-  G4double m_timeStart;
-  G4double m_timeStop;
-
-  G4double m_virtualStart;
-  G4double m_virtualStop;
+  G4double m_clusterStart;
+  G4double m_clusterStop;
 
   G4int nVerboseLevel;
-
-  G4bool m_pauseFlag;
-  G4bool m_exitFlag;
 
   G4double m_time;
 
   G4double m_weight;
 
-  std::vector<G4double> listOfTimeSlice;
-  std::vector<G4double> listOfEndTimeSlice;
-  std::vector<G4double> listOfActivity;
-  std::vector<G4double> listOfWeight;
+  G4double mTimeSliceDuration;
+  std::vector<G4double> mTimeSlices;
 
   bool mOutputMode;
-  //bool mSuccessiveSourceMode;
-  bool mTimeSliceIsSet;
   bool mTimeSliceIsSetUsingAddSlice;
   bool mTimeSliceIsSetUsingReadSliceInFile;
-  bool mCstTimeSliceIsSet;
+
   long int mRequestedAmountOfPrimaries;
   bool mATotalAmountOfPrimariesIsRequested;
   long int mRequestedAmountOfPrimariesPerRun;
   bool mAnAmountOfPrimariesPerRunIsRequested;
-
-  void ComputeTimeStop();
-  //int ComputeNumberOfGeneratedPrimaries();
-  GateApplicationMgrMessenger* m_appMgrMessenger;
-
-  //double m_currentTime;
   double mTimeStepInTotalAmountOfPrimariesMode;
+
+  void InitializeTimeSlices();
+
+  GateApplicationMgrMessenger* m_appMgrMessenger;
 
 };
 

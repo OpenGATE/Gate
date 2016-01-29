@@ -1,0 +1,92 @@
+#=====================================================
+# VERBOSE
+#=====================================================
+
+/control/execute mac/verbose.mac
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+/gate/geometry/setMaterialDatabase          data/GateMaterials.db
+/gate/world/setMaterial                     Vacuum
+/gate/world/geometry/setXLength             587. mm
+/gate/world/geometry/setYLength             586. mm
+/gate/world/geometry/setZLength             48.4 mm
+
+# Container to rotate the phantom
+/gate/world/daughters/name                  CT
+/gate/world/daughters/insert                box
+/gate/CT/setMaterial                        Vacuum
+/gate/CT/geometry/setXLength                531. mm
+/gate/CT/geometry/setYLength                244. mm
+/gate/CT/geometry/setZLength                48.4 mm
+/gate/CT/moves/insert                       rotation
+/gate/CT/rotation/setSpeed                  45 deg/s
+/gate/CT/rotation/setAxis                   0 0 1
+
+# Patient phantom
+/gate/CT/daughters/name			    patient
+/gate/CT/daughters/insert		    ImageNestedParametrisedVolume
+/gate/patient/geometry/setHUToMaterialFile  data/HU2mat.txt
+/gate/patient/geometry/setImage             data/PhantomSlice10px.mha
+
+#=====================================================
+# BEAM
+#=====================================================
+
+/gate/source/addSource xraygun       gps
+/gate/source/xraygun/gps/particle    gamma
+/gate/source/xraygun/gps/energytype  Mono
+/gate/source/xraygun/gps/ene/mono    60 keV
+/gate/source/xraygun/gps/centre      293.5 0. 0. mm
+/gate/source/xraygun/gps/direction   -1 0 0
+/gate/source/xraygun/gps/type        Plane
+/gate/source/xraygun/gps/shape       Rectangle
+/gate/source/xraygun/gps/halfx       24.2 mm
+/gate/source/xraygun/gps/halfy       293 mm
+/gate/source/xraygun/gps/pos/rot1    0 0 1
+/gate/source/xraygun/gps/pos/rot2    0 1 0
+
+#=====================================================
+# PHYSICS
+#=====================================================
+
+/gate/physics/addPhysicsList            emstandard_opt3
+
+/gate/physics/Gamma/SetCutInRegion      world 10 mm
+/gate/physics/Electron/SetCutInRegion   world 10 mm
+
+/gate/physics/Gamma/SetCutInRegion      patient 1 mm
+/gate/physics/Electron/SetCutInRegion   patient 1 mm
+
+#=====================================================
+# DETECTORS
+#=====================================================
+
+/gate/actor/addActor SimulationStatisticActor SSA
+/gate/actor/SSA/save output/SSA.txt
+
+/control/execute     mac/DAVW.mac # DoseActors with VolumeWeighting algorithm
+/control/execute     mac/DAMW.mac # DoseActors with MassWeighting algorithm
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed auto
+
+#=====================================================
+# START BEAM
+#=====================================================
+
+#/control/execute mac/visu.mac
+
+# /gate/application/setTimeSlice              1 s
+# /gate/application/setTimeStart              0 s
+# /gate/application/setTimeStop               8 s
+
+/gate/application/setTotalNumberOfPrimaries 1e5
+/gate/application/start

@@ -117,8 +117,6 @@ void GateVActor::AttachToVolume(G4String /*volumeName*/)
   if (mVolumeName != "") {
     GateDebugMessageInc("Actor",4,"Attach "<<GetObjectName()<<" to volume -- begin\n");
     mVolume =   GateObjectStore::GetInstance()->FindVolumeCreator(mVolumeName);
-    // DD(mVolume);
-    // DD(mVolume->GetLogicalVolume());
     GateDebugMessage("Actor",5,"actor attached to: "<<mVolume->GetObjectName()<< Gateendl);
     GateDebugMessageDec("Actor",4,"Attach "<<GetObjectName()<<" to volume -- end\n");
   }

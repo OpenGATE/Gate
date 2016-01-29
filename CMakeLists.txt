@@ -196,7 +196,8 @@ IF(GATE_USE_RTK)
    INCLUDE(${RTK_USE_FILE})
    STRING(REPLACE "-pedantic" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 ELSE()
-   SET(ITK_LIBRARIES ITKMetaIO itkzlib)
+  ADD_SUBDIRECTORY(source/externals/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
+  SET(ITK_LIBRARIES MetaIO itkzlib)
 ENDIF()
 
 #=========================================================
@@ -209,12 +210,6 @@ ELSE(GATE_USE_GPU AND CUDA_FOUND)
 ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 
 TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} ${RTK_LIBRARIES} pthread)
-
-#=========================================================
-# included ITK to read/write mhd image file format
-IF(NOT GATE_USE_RTK)
-  ADD_SUBDIRECTORY(source/externals/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
-ENDIF()
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
