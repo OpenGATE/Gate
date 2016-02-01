@@ -44,6 +44,11 @@ GateDetectorMessenger::GateDetectorMessenger(GateDetectorConstruction* GateDet)
   new G4UnitDefinition(    "cm/h","cm/h"      ,"Speed",centimeter/hour); 
   new G4UnitDefinition(    "mm/h","mm/h"      ,"Speed",millimeter/hour); 
  
+  //We build a table of LET units
+  
+  new G4UnitDefinition( "keV/um", "keV/um", "Energy/Length", keV/um );
+  new G4UnitDefinition( "MeV/mm", "MeV/mm", "Energy/Length", MeV/mm );
+  
   G4double turn   = twopi * radian;
 
   //We build a table of angular speed units

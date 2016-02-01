@@ -28,6 +28,8 @@
 #include "GateIAEAUtilities.h"
 #include "GateSourceMgr.hh"
 
+#include <G4EmCalculator.hh>
+
 #include "G4ParticleTable.hh"
 
 // --------------------------------------------------------------------
@@ -36,7 +38,9 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   GateDebugMessageInc("Actor", 4, "GatePhaseSpaceActor() -- begin\n");
 
   pMessenger = new GatePhaseSpaceActorMessenger(this);
-
+  EnableCharge = true;
+  EnableElectronicDEDX = true;
+  EnableTotalDEDX = true;
   EnableXPosition = true;
   EnableYPosition = true;
   EnableZPosition = true;
@@ -50,7 +54,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   EnableWeight = true;
   EnableTime = false;
   EnableLocalTime = false;
-  EnableMass = false;
+  EnableMass = true;
   EnableSec = false;
   mIsFistStep = true;
   mUseVolFrame = false;
@@ -74,6 +78,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   pIAEAheader = 0;
   mFileSize = 0;
   GateDebugMessageDec("Actor", 4, "GatePhaseSpaceActor() -- end\n");
+  
+  emcalc = new G4EmCalculator;
 }
 // --------------------------------------------------------------------
 
@@ -121,10 +127,16 @@ void GatePhaseSpaceActor::Construct() {
 
     if (GetMaxFileSize() != 0) pListeVar->SetMaxTreeSize(GetMaxFileSize());
 
+    if (EnableCharge) pListeVar->Branch("Charge", &c, "Charge/I");
+    if (EnableElectronicDEDX) pListeVar->Branch("ElectronicDEDX", &elecDEDX, "elecDEDX/F");
+    if (EnableElectronicDEDX) pListeVar->Branch("StepLength", &stepLength, "stepLength/F");
+    if (EnableElectronicDEDX) pListeVar->Branch("Edep", &edep, "Edep/F");
+    if (EnableTotalDEDX) pListeVar->Branch("TotalDEDX", &totalDEDX, "totalDEDX/F");
+    
     if (EnableEkine) pListeVar->Branch("Ekine", &e, "Ekine/F");
     if (EnableWeight) pListeVar->Branch("Weight", &w, "Weight/F");
     if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/F");
-    if (EnableMass) pListeVar->Branch("Mass", &m, "Mass/F"); // in MeV/c2
+    if (EnableMass) pListeVar->Branch("Mass", &m, "Mass/I"); // in MeV/c2
     if (EnableXPosition) pListeVar->Branch("X", &x, "X/F");
     if (EnableYPosition) pListeVar->Branch("Y", &y, "Y/F");
     if (EnableZPosition) pListeVar->Branch("Z", &z, "Z/F");
@@ -321,7 +333,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     volumeToWorld = volumeToWorld.NetRotation();
     G4AffineTransform worldToVolume = volumeToWorld.Inverse();
 
-    //old crap:
+    //old crap:stepLength
     //const G4AffineTransform transformation = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame())->GetPhysicalVolume()->GetTouchable()->GetHistory()->GetTopTransform();
     localPosition = worldToVolume.TransformPoint(localPosition);
 
@@ -396,7 +408,27 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   //---------Write energy of step present at the simulation--------------------------
   e = stepPoint->GetKineticEnergy();
 
+  c = step->GetTrack()->GetDefinition()->GetAtomicNumber();//std::floor(stepPoint->GetCharge()+0.1);  //floor & +0.1 to avoid round off error
   m = step->GetTrack()->GetDefinition()->GetAtomicMass();
+  
+  if (EnableElectronicDEDX || EnableTotalDEDX) 
+  {
+	  G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName();
+	  G4double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
+	  G4double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
+	  G4double energy=(energy1+energy2)/2;
+	  G4ParticleDefinition* partname = step->GetTrack()->GetDefinition();//->GetParticleName();
+	  
+	  elecDEDX = emcalc->ComputeElectronicDEDX(energy, partname, material);
+	  stepLength=step->GetStepLength();
+		  
+	  edep = step->GetTotalEnergyDeposit()*w;
+	  totalDEDX = emcalc->ComputeTotalDEDX(energy, partname, material);
+  }
+  
+  //elecDEDX= 1.;
+  //totalDEDX=2.;
+  
   //G4cout << st << " " << step->GetTrack()->GetDefinition()->GetAtomicMass() << " " << step->GetTrack()->GetDefinition()->GetPDGMass() << Gateendl;
 
   //----------Process name at origin Track--------------------

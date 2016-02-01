@@ -81,6 +81,7 @@ protected:
 
   bool mIsDoseAveraged;
   bool mIsTrackAveraged;
+  
   G4EmCalculator * emcalc;
 };
 

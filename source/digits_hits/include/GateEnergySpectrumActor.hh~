@@ -29,7 +29,6 @@
 #include <TH1.h>
 #include <TH2.h>
 
-class G4EmCalculator;
 //-----------------------------------------------------------------------------
 /// \brief Actor displaying nb events/tracks/step
 class GateEnergySpectrumActor : public GateVActor

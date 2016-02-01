@@ -202,16 +202,16 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   */
   //G4double meanFreePath = emcalc->GetMeanFreePath(energyOfSecElectron)
   //G4double 	GetMeanFreePath (G4double kinEnergy, const G4ParticleDefinition *, const G4String &processName, const G4Material *, const G4Region *r=0)
-  if (mIsRestrictedFlag){
-	  //dedx = emcalc->ComputeElectronicDEDX(energy, partname, material,mDeltaRestricted);
-	  //G4cout<<"this is the cut value: " << mDeltaRestricted<<G4endl;
-	  //G4cout<<"this is the cut value mm: " << mDeltaRestricted *mm<<G4endl;
-	  //G4cout<<"this is the cut value um: " << mDeltaRestricted *um<<G4endl;
-	  //G4cout<<"this is restricted dedx: " <<emcalc->ComputeElectronicDEDX(energy, partname, material,mDeltaRestricted)<<G4endl;
-	  //G4cout<<"this is unrestricted dedx:   " << emcalc->ComputeElectronicDEDX(energy, partname, material)<<G4endl;
-	  //G4cout<<"this is restricted dedx m: " <<emcalc->ComputeElectronicDEDX(energy, partname, material,mDeltaRestricted*m)<<G4endl;
-	  //G4cout<<"this is restricted dedx mm: " <<emcalc->ComputeElectronicDEDX(energy, partname, material,mDeltaRestricted*mm)<<G4endl;
-  }
+  //if (mIsRestrictedFlag){
+	  ////dedx = emcalc->ComputeElectronicDEDX(energy, partname, material,mDeltaRestricted);
+	  ////G4cout<<"this is the cut value: " << mDeltaRestricted<<G4endl;
+	  ////G4cout<<"this is the cut value mm: " << mDeltaRestricted *mm<<G4endl;
+	  ////G4cout<<"this is the cut value um: " << mDeltaRestricted *um<<G4endl;
+	  ////G4cout<<"this is restricted dedx: " <<emcalc->ComputeElectronicDEDX(energy, partname, material,mDeltaRestricted)<<G4endl;
+	  ////G4cout<<"this is unrestricted dedx:   " << emcalc->ComputeElectronicDEDX(energy, partname, material)<<G4endl;
+	  ////G4cout<<"this is restricted dedx m: " <<emcalc->ComputeElectronicDEDX(energy, partname, material,mDeltaRestricted*m)<<G4endl;
+	  ////G4cout<<"this is restricted dedx mm: " <<emcalc->ComputeElectronicDEDX(energy, partname, material,mDeltaRestricted*mm)<<G4endl;
+  //}
   
   //G4cout<<"new event"<<G4endl<<G4endl;
 

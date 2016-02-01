@@ -16,6 +16,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "GateImageActorMessenger.hh"
+#include "G4SystemOfUnits.hh" 
 
 class GateLETActor;
 class GateLETActorMessenger : public GateImageActorMessenger
@@ -26,7 +27,7 @@ public:
 
   void BuildCommands(G4String base);
   void SetNewValue(G4UIcommand*, G4String);
-
+  
 protected:
   GateLETActor * pLETActor;
 
