@@ -24,6 +24,7 @@ public:
 private:
 
   void RegisterGraphicsSystems ();
+  G4VisManager::Verbosity fVerbosity;
 
 };
 

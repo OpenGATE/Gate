@@ -16,7 +16,7 @@ See GATE/LICENSE.txt for further details
 #include "G4PhotoElectricEffect.hh"
 #include "G4LivermorePhotoElectricModel.hh"
 #include "G4PenelopePhotoElectricModel.hh"
-#include "G4LivermorePolarizedPhotoElectricModel.hh"
+//#include "G4LivermorePolarizedPhotoElectricModel.hh"
 
 MAKE_PROCESS_AUTO_CREATOR_WITH_MODEL(GatePhotoElectricPB)
 
