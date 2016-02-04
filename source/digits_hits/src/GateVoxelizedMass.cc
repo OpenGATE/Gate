@@ -572,7 +572,7 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
   if (Generation==0)
   {
     double diff((motherProgenyCubicVolume-doselSV->GetCubicVolume())*100/doselSV->GetCubicVolume());
-    double substractionError(0.1);
+    double substractionError(0.5);
 
     if(std::abs(diff)>substractionError)
       GateError("Error: Dosel n°" << index << " is wrongly reconstructed !" << Gateendl <<
