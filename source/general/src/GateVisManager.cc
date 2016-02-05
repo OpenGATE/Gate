@@ -136,7 +136,11 @@ void GateVisManager::RegisterGraphicsSystems () {
     G4cout <<
       "\nYou have successfully chosen to use the following graphics systems."
 	 << Gateendl;
+    #if (G4VERSION_MAJOR == 10) && (G4VERSION_MINOR <= 1)
     PrintAvailableGraphicsSystems ();
+    #elif (G4VERSION_MAJOR == 10) && (G4VERSION_MINOR == 2)
+    PrintAvailableGraphicsSystems (fVerbosity);
+    #endif
   }
 }
 
