@@ -42,6 +42,17 @@ ELSE()
   FIND_PACKAGE(Geant4 REQUIRED)
 ENDIF()
 
+#=========================================================
+# Refuse to build with MT geant4, allow dev override
+OPTION(GATE_ALLOW_MT_GEANT4 "Allow multithreaded geant4 (for MT Gate development)" OFF)
+IF(Geant4_multithreaded_FOUND)
+    IF(GATE_ALLOW_MT_GEANT4)
+        MESSAGE(WARNING "GATE does not yet work correctly with multithreaded Geant4, proceed with caution...")
+    ELSE()
+        MESSAGE(FATAL_ERROR "GATE should be compiled with a non-multithreaded installation of Geant4")
+    ENDIF()
+ENDIF()
+
 # Check if OpenGL headers are still available
 IF(Geant4_qt_FOUND OR Geant4_vis_opengl_x11_FOUND)
   FIND_PACKAGE(OpenGL QUIET)
