@@ -86,7 +86,10 @@ OPTION(GATE_USE_LMF "Gate use LMF" OFF)
 OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
 OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4. Use OFF if you compile G4 with embedded CLHEP" OFF)
 OPTION(GATE_USE_GPU "Gate use GPU (voxelized src and tracking), need CUDA " OFF)
-OPTION(GATE_USE_RTK "Gate use RTK (for hybrid simulation)" OFF)
+#=========================================================
+# RTK / ITK
+option(GATE_USE_RTK "Use the Reconstruction Toolkit (RTK, requires also ITK)" OFF)
+option(GATE_USE_ITK "Use the Insight Toolkit (ITK, required by RTK)" OFF)
 
 #=========================================================
 # ROOT
@@ -173,11 +176,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/source/physics/include
   ${PROJECT_SOURCE_DIR}/source/digits_hits/include
   ${PROJECT_SOURCE_DIR}/source/general/include
-  ${PROJECT_SOURCE_DIR}/source/externals/clhep/include
-  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/
-  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/itkzlib
-  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/MetaIO
-  ${PROJECT_BINARY_DIR}/itk-mhd/)
+  ${PROJECT_SOURCE_DIR}/source/externals/clhep/include)
 
 #=========================================================
 # Locate sources and headers for this project
@@ -206,13 +205,23 @@ IF(GATE_USE_RTK)
    FIND_PACKAGE(RTK REQUIRED)
    INCLUDE(${RTK_USE_FILE})
    STRING(REPLACE "-pedantic" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+ELSEIF(GATE_USE_ITK)
+  FIND_PACKAGE(ITK REQUIRED)
+  INCLUDE(${ITK_USE_FILE})
+  STRING(REPLACE "-pedantic" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 ELSE()
   ADD_SUBDIRECTORY(source/externals/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
   SET(ITK_LIBRARIES MetaIO itkzlib)
+  INCLUDE_DIRECTORIES(
+    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/
+    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/itkzlib
+    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/MetaIO
+    ${PROJECT_BINARY_DIR}/itk-mhd/)
+  SET(ITKMHD_LIBS MetaIO itkzlib)
 ENDIF()
 
 #=========================================================
-# Add the executable, and link it to the Geant4 libraries
+# Add the executable, and link it to the Geant4/ROOT/CLHEP/ITK libraries
 IF(GATE_USE_GPU AND CUDA_FOUND)
   SET(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20;-gencode arch=compute_30,code=sm_30;-use_fast_math;-w;--ptxas-options=-v")
   CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
