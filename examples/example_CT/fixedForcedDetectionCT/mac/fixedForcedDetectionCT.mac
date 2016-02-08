@@ -65,6 +65,7 @@
 /gate/actor/hfda/materialMuFilename           output/materialMu.mha
 /gate/actor/hfda/flatFieldFilename            output/flatField.mha
 /gate/actor/hfda/responseDetectorFilename     data/responseDetector.txt
+/gate/actor/hfda/energyResolvedBinSize        0 keV
 
 # Save particles stats
 /gate/actor/addActor  SimulationStatisticActor stat

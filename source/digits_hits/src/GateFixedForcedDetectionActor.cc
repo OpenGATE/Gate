@@ -238,6 +238,9 @@ void GateFixedForcedDetectionActor::BeginOfRunAction(const G4Run*r)
                                       mDetectorColVector);
 
   // Create primary projector and compute primary
+  unsigned int nPixOneSlice =
+    mPrimaryImage->GetLargestPossibleRegion().GetNumberOfPixels() /
+    mPrimaryImage->GetLargestPossibleRegion().GetSize(2);
   mProcessTimeProbe[PRIMARY].Start();
   PrimaryProjectionType::Pointer primaryProjector = PrimaryProjectionType::New();
   primaryProjector->InPlaceOn();
@@ -256,10 +259,8 @@ void GateFixedForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   primaryProjector->GetProjectedValueAccumulation().Init( primaryProjector->GetNumberOfThreads() );
   primaryProjector->GetProjectedValueAccumulation().SetNumberOfPrimaries(mNoisePrimary);
   primaryProjector->GetProjectedValueAccumulation().SetResponseDetector( &mEnergyResponseDetector );
-  primaryProjector->GetProjectedValueAccumulation().SetEnergyResolvedParameters( mEnergyResolvedBinSize,
-                                                                                 primaryProjector->GetInput()->GetLargestPossibleRegion().GetNumberOfPixels() );
+  primaryProjector->GetProjectedValueAccumulation().SetEnergyResolvedParameters( mEnergyResolvedBinSize, nPixOneSlice );
   TRY_AND_EXIT_ON_ITK_EXCEPTION(primaryProjector->Update());
-  mPrimaryImage->Modified();
 
   // Compute flat field if required
   if(mAttenuationFilename != "" || mFlatFieldFilename != "") {
@@ -292,15 +293,10 @@ void GateFixedForcedDetectionActor::BeginOfRunAction(const G4Run*r)
     }
 
     TRY_AND_EXIT_ON_ITK_EXCEPTION(primaryProjector->Update());
-    mFlatFieldImage->Modified();
   }
   mProcessTimeProbe[PRIMARY].Stop();
 
   // Prepare Compton
-  unsigned int nPixOneSlice =
-    mPrimaryImage->GetLargestPossibleRegion().GetNumberOfPixels() /
-    mPrimaryImage->GetLargestPossibleRegion().GetSize(2);
-
   mComptonProjector = ComptonProjectionType::New();
   mComptonProjector->InPlaceOn();
   mComptonProjector->SetInput(1, mGateVolumeImage );
@@ -619,7 +615,6 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType *
   projector->GetProjectedValueAccumulation().SetEnergyZAndWeight( mInteractionEnergy, mInteractionZ, mInteractionWeight );
   projector->GetProjectedValueAccumulation().SetDirection( direction );
   TRY_AND_EXIT_ON_ITK_EXCEPTION(projector->Update());
-  input->Modified();
   mProcessTimeProbe[VProcess].Stop();
   mInteractionTotalContribution = projector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
 
@@ -630,7 +625,6 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType *
       mPerOrderImages[VProcess].push_back( CreateVoidProjectionImage() );
     projector->SetInput(FirstSliceProjection(mPerOrderImages[VProcess][mInteractionOrder-1]));
     TRY_AND_EXIT_ON_ITK_EXCEPTION(projector->Update());
-    mPerOrderImages[VProcess][mInteractionOrder-1]->Modified();
   }
 }
 //-----------------------------------------------------------------------------
@@ -1104,14 +1098,16 @@ GateFixedForcedDetectionActor::CreateVoidProjectionImage()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+// This function is used for energy resolved outputs. We create an image that
+// has one (energy) slice only so that itk will only iterate on one slice.
+// However, the pointer points to a full image and we move the pointer around
+// to the correct energy slice in the functors (see the Accumulate function).
 GateFixedForcedDetectionActor::InputImageType::Pointer
-GateFixedForcedDetectionActor::FirstSliceProjection(const InputImageType::Pointer &input)
+GateFixedForcedDetectionActor::FirstSliceProjection(InputImageType::Pointer &input)
 {
+  input->Modified();
   GateFixedForcedDetectionActor::InputImageType::RegionType region;
   region = input->GetLargestPossibleRegion();
-  if(region.GetSize(2) == 1)
-    return input;
-
   rtk::ImportImageFilter<InputImageType>::Pointer sliceFilter = rtk::ImportImageFilter<InputImageType>::New();
   region.SetSize(2,1);
   sliceFilter->SetRegion(region);
@@ -1244,15 +1240,9 @@ GateFixedForcedDetectionActor::CreatePhaseSpace(const G4String phaseSpaceFilenam
   phaseSpace->Branch("dX", &(mInteractionDirection[0]), "dX/D");
   phaseSpace->Branch("dY", &(mInteractionDirection[1]), "dY/D");
   phaseSpace->Branch("dZ", &(mInteractionDirection[2]), "dZ/D");
-  //  phaseSpace->Branch("ProductionVolume", mInteractionProductionVolume, "ProductionVolume/C");
-  //  phaseSpace->Branch("TrackID",&mInteractionTrackId, "TrackID/I");
   phaseSpace->Branch("EventID",&mInteractionEventId, "EventID/I");
-  //  phaseSpace->Branch("RunID",&mInteractionRunId, "RunID/I");
-  //  phaseSpace->Branch("ProductionProcessTrack", mInteractionProductionProcessTrack, "ProductionProcessTrack/C");
   phaseSpace->Branch("ProductionProcessStep", mInteractionProductionProcessStep, "ProductionProcessStep/C");
   phaseSpace->Branch("TotalContribution", &mInteractionTotalContribution, "TotalContribution/D");
-  //  phaseSpace->Branch("InteractionVolume", mInteractionVolume, "Volume/C");
-  //  phaseSpace->Branch("Material", mInteractionMaterial, "Material/C");
   phaseSpace->Branch("MaterialZ", &mInteractionZ, "MaterialZ/I");
   phaseSpace->Branch("Order", &mInteractionOrder, "Order/I");
 }

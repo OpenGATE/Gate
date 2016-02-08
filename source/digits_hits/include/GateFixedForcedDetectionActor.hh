@@ -118,7 +118,7 @@ public:
                                                   VectorType &detectorColVector);
   InputImageType::Pointer ConvertGateImageToITKImage(GateVImageVolume * gateImgVol);
   InputImageType::Pointer CreateVoidProjectionImage();
-  InputImageType::Pointer FirstSliceProjection(const InputImageType::Pointer &input);
+  InputImageType::Pointer FirstSliceProjection(InputImageType::Pointer &input);
   virtual void CreatePhaseSpace(const G4String phaseSpaceFilename, TFile *&phaseSpaceFile, TTree *&phaseSpace);
 
   // The actual forced detection functions
@@ -185,12 +185,11 @@ protected:
   VectorType mDetectorColVector;
 
   // Accumulation type
-  typedef GateFixedForcedDetectionFunctor::VAccumulation<false> AccumulationType;
-  typedef GateFixedForcedDetectionFunctor::VAccumulation<true>  EnergyResolvedAccumulationType;
+  typedef GateFixedForcedDetectionFunctor::VAccumulation AccumulationType;
 
   // Primary stuff
   unsigned int mNumberOfEventsInRun;
-  typedef GateFixedForcedDetectionProjector< GateFixedForcedDetectionFunctor::PrimaryValueAccumulation<true> > PrimaryProjectionType;
+  typedef GateFixedForcedDetectionProjector< GateFixedForcedDetectionFunctor::PrimaryValueAccumulation > PrimaryProjectionType;
 
   // Per process members
   std::map<ProcessType, bool> mDoFFDForThisProcess;
@@ -199,15 +198,15 @@ protected:
   std::map<ProcessType, G4String> mProcessImageFilenames;
 
   // Compton stuff
-  typedef GateFixedForcedDetectionProjector< GateFixedForcedDetectionFunctor::ComptonValueAccumulation<true> > ComptonProjectionType;
+  typedef GateFixedForcedDetectionProjector<GateFixedForcedDetectionFunctor::ComptonValueAccumulation> ComptonProjectionType;
   ComptonProjectionType::Pointer mComptonProjector;
 
   // Rayleigh stuff
-  typedef GateFixedForcedDetectionProjector< GateFixedForcedDetectionFunctor::RayleighValueAccumulation<true> > RayleighProjectionType;
+  typedef GateFixedForcedDetectionProjector<GateFixedForcedDetectionFunctor::RayleighValueAccumulation> RayleighProjectionType;
   RayleighProjectionType::Pointer mRayleighProjector;
 
   // Fluorescence stuff
-  typedef GateFixedForcedDetectionProjector< GateFixedForcedDetectionFunctor::FluorescenceValueAccumulation<true> > FluorescenceProjectionType;
+  typedef GateFixedForcedDetectionProjector<GateFixedForcedDetectionFunctor::FluorescenceValueAccumulation> FluorescenceProjectionType;
   FluorescenceProjectionType::Pointer mFluorescenceProjector;
 
   // Phase space variables
