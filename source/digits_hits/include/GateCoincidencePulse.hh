@@ -28,6 +28,10 @@ class GateCoincidencePulse : public GatePulseList
         push_back(firstPulse);
         m_startTime = firstPulse->GetTime() + itsOffsetWindow;
         m_endTime = m_startTime + itsCoincidenceWindow;
+        if(itsOffsetWindow > 0.0)
+          m_delayed = true;
+        else
+          m_delayed = false;
     }
 
     GateCoincidencePulse(const GateCoincidencePulse& src);
@@ -43,6 +47,9 @@ class GateCoincidencePulse : public GatePulseList
     virtual G4bool IsInCoincidence(const GatePulse* newPulse) const;
     virtual G4bool IsAfterWindow(const GatePulse* newPulse) const;
 
+    inline G4bool IsDelayed() const
+      { return m_delayed;}
+
     //printing methods
     //
     friend std::ostream& operator<<(std::ostream&, const GateCoincidencePulse&);
@@ -50,6 +57,7 @@ class GateCoincidencePulse : public GatePulseList
   private:
     G4double m_startTime;
     G4double m_endTime;
+    G4bool m_delayed;
 };
 
 #endif

@@ -232,6 +232,8 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidencePul
   G4int winner_i=0;
   G4int winner_j=1;
 
+  G4bool PairWithFirstPulseOnly;
+
   nPulses = coincidence->size();
 
   if (nPulses<2)
@@ -241,7 +243,7 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidencePul
   }
   else if (nPulses==2)
   {
-    // check if good good
+    // check if good
     if(IsForbiddenCoincidence(coincidence->at(0),coincidence->at(1)) )
       delete coincidence;
     else
@@ -256,10 +258,13 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidencePul
       return;
     }
 
+    // if dealing with a delayed window or if other pulses open coincidence windows,
+    // we only want to pair with the first pulse to avoid invalid pairs, or double counting
+    PairWithFirstPulseOnly = m_allPulseOpenCoincGate | coincidence->IsDelayed();
 
     if(m_multiplesPolicy==kTakeAllGoods)
     {
-      for(i=0; i<(m_allPulseOpenCoincGate?1:(nPulses-1)); i++) // iterate over all pairs (single window) or just pairs with initial event (multi-window)
+      for(i=0; i<(PairWithFirstPulseOnly?1:(nPulses-1)); i++) // iterate over all pairs (single window) or just pairs with initial event (multi-window)
         for(j=i+1; j<nPulses; j++)
           if(!IsForbiddenCoincidence(coincidence->at(i),coincidence->at(j)) )
             m_digitizer->StoreCoincidencePulse(CreateSubPulse(coincidence, i, j));
@@ -269,7 +274,7 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidencePul
 
     // count the goods (iterate over all pairs because we're considering the multi as a unit, not breaking it up into pairs)
     nGoods = 0;
-    for(i=0; i<(nPulses-1); i++)
+    for(i=0; i<(coincidence->IsDelayed()?1:(nPulses-1)); i++)
       for(j=i+1; j<nPulses; j++)
         if(!IsForbiddenCoincidence(coincidence->at(i),coincidence->at(j)))
           nGoods++;
@@ -299,7 +304,7 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidencePul
     // find winner and count the goods
     maxE = 0.0;
     nGoods = 0;
-    for(i=0; i<(m_allPulseOpenCoincGate?1:(nPulses-1)); i++)
+    for(i=0; i<(PairWithFirstPulseOnly?1:(nPulses-1)); i++)
       for(j=i+1; j<nPulses; j++)
       {
         // this time we might only be counting goods on the subset involving the first event
@@ -338,7 +343,7 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidencePul
       } // else find and return the one good event
       else // nGoods==1
       {
-        for(i=0; i<(nPulses-1); i++)
+        for(i=0; i<(coincidence->IsDelayed()?1:(nPulses-1)); i++)
           for(j=i+1; j<nPulses; j++)
             if(!IsForbiddenCoincidence(coincidence->at(i),coincidence->at(j)))
               m_digitizer->StoreCoincidencePulse(CreateSubPulse(coincidence, i, j));
@@ -368,7 +373,7 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidencePul
     {
       // find winner
       maxE = 0.0;
-      for(i=0; i<(m_allPulseOpenCoincGate?1:(nPulses-1)); i++)
+      for(i=0; i<(PairWithFirstPulseOnly?1:(nPulses-1)); i++)
         for(j=i+1; j<nPulses; j++)
         {
           if(!IsForbiddenCoincidence(coincidence->at(i),coincidence->at(j)))
@@ -413,7 +418,7 @@ G4int GateCoincidenceSorter::ComputeSectorID(const GatePulse& pulse)
     static std::vector<G4int> gkSectorMultiplier;
     static std::vector<G4int> gkSectorNumber;
     if (gkSectorMultiplier.empty()){
-    	// this code is done just one time for perfrormance improving
+    	// this code is done just one time for performance improving
 	// one suppose that the system hierarchy is linear until the desired depth
     	GateSystemComponent* comp = m_system->GetBaseComponent();
 	G4int depth=0;
@@ -481,7 +486,7 @@ G4bool GateCoincidenceSorter::IsForbiddenCoincidence(const GatePulse* pulse1, co
     //Compare the sector difference with the minimum differences for valid coincidences
     if (sectorDifference<m_minSectorDifference) {
       if (nVerboseLevel>1)
-        G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: coincidence between neighbour blocks --> refused\n";
+        G4cout << "[GateCoincidenceSorter::IsForbiddenCoincidence]: coincidence between neighbor blocks --> refused\n";
       return true;
     }
     return false;
