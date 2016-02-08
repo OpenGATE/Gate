@@ -85,8 +85,6 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
                 "   " << mMassFile << " dosel cubic volume: " << G4BestUnit(mMassImage.GetVoxelVolume(),"Volume") << Gateendl <<
                 "   Difference: " << diff << Gateendl);
 
-      //G4cout<<"std::abs(mMassImage.GetVoxelVolume()-mImage.GetVoxelVolume())="<<std::abs(mMassImage.GetVoxelVolume()-mImage.GetVoxelVolume())<<G4endl;
-
     doselExternalMass.resize(mMassImage.GetNumberOfValues(),-1.);
     for(int i=0;i<mMassImage.GetNumberOfValues();i++)
       doselExternalMass[i]=mMassImage.GetValue(i)*kg;
@@ -106,22 +104,19 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
                     mImage.GetVoxelSize().getY()/2.0,
                     mImage.GetVoxelSize().getZ()/2.0);
 
-  if ((DALV->GetNoDaughters()==1 && DALV->GetDaughter(0)->IsParameterised()) ||
-     (DALV->GetDaughter(0)->GetName().find("voxel_phys_Y")!=std::string::npos &&
-     DALV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_X")!=std::string::npos &&
-     DALV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_Z")!=std::string::npos))
-  {
-    imageVolume=dynamic_cast<GateVImageVolume*>(GateObjectStore::GetInstance()->FindVolumeCreator(DAPV));
+  if (DALV->GetNoDaughters()==1)
+    if (DALV->GetDaughter(0)->IsParameterised() ||
+       (DALV->GetDaughter(0)->GetName().find("voxel_phys_Y")!=std::string::npos &&
+       DALV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_X")!=std::string::npos &&
+       DALV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_Z")!=std::string::npos))
+    {
+      imageVolume=dynamic_cast<GateVImageVolume*>(GateObjectStore::GetInstance()->FindVolumeCreator(DAPV));
 
-    //G4cout<<"imageVolume->GetImage()->GetResolution().x()="<<imageVolume->GetImage()->GetResolution().x()<<G4endl;
-    //G4cout<<"imageVolume->GetImage()->GetResolution().y()="<<imageVolume->GetImage()->GetResolution().y()<<G4endl;
-    //G4cout<<"imageVolume->GetImage()->GetResolution().z()="<<imageVolume->GetImage()->GetResolution().z()<<G4endl;
+      mIsParameterised=true;
 
-    mIsParameterised=true;
-
-    if(doselExternalMass.size()==0)
-      GateVoxelizedMass::GenerateVoxels();
-  }
+      if(doselExternalMass.size()==0)
+        GateVoxelizedMass::GenerateVoxels();
+    }
 
   mIsInitialized=true;
 }
