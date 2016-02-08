@@ -65,22 +65,28 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
   if(mMassFile!="")
   {
     mMassImage.Read(mMassFile);
-    if(std::abs(mMassImage.GetVoxelVolume()-mImage.GetVoxelVolume())>1E-4||//FIXME
-       mMassImage.GetResolution().getX()!=mImage.GetResolution().getX()||
-       mMassImage.GetResolution().getY()!=mImage.GetResolution().getY()||
-       mMassImage.GetResolution().getZ()!=mImage.GetResolution().getZ()||
-       mMassImage.GetNumberOfValues()!=mImage.GetNumberOfValues())
-    {
-      /*G4cout<<"mMassImage.GetVoxelVolume()="<<mMassImage.GetVoxelVolume()<<G4endl
-            <<"mImage.GetVoxelVolume()="<<mImage.GetVoxelVolume()<<G4endl;
-      G4cout<<"std::abs(mMassImage.GetVoxelVolume()-mImage.GetVoxelVolume())="<<std::abs(mMassImage.GetVoxelVolume()-mImage.GetVoxelVolume())<<G4endl;
-      G4cout<<"mMassImage.GetResolution()="<<mMassImage.GetResolution()<<G4endl
-            <<"mImage.GetResolution()="<<mImage.GetResolution()<<G4endl;
-      G4cout<<"mMassImage.GetNumberOfValues()="<<mMassImage.GetNumberOfValues()<<G4endl
-            <<"mImage.GetNumberOfValues()="<<mImage.GetNumberOfValues()<<G4endl;*/
-      GateError("!!! ERROR : "<<mMassFile<<" hasn't the right voxel volume and resolution !"<<Gateendl);
-      //GateError("!!! ERROR : "<<mMassFile<<" hasn't the right number of values."<<Gateendl);
-    }
+
+    if (mMassImage.GetResolution() != mImage.GetResolution())
+      GateError("Error: " << mMassFile << " hasn't the right resolution !" << Gateendl <<
+                "   Actor resolution: " << mImage.GetResolution() << Gateendl <<
+                "   " << mMassFile << " resolution: " << mMassImage.GetResolution() << Gateendl);
+
+    if (mMassImage.GetNumberOfValues() != mImage.GetNumberOfValues())
+      GateError("Error: " << mMassFile << " hasn't the right number of dosels !" << Gateendl <<
+                "   Actor number of dosels: " << mImage.GetNumberOfValues() << Gateendl <<
+                "   " << mMassFile << " number of dosels: " << mMassImage.GetNumberOfValues() << Gateendl);
+
+    double diff((mMassImage.GetVoxelVolume()-mImage.GetVoxelVolume())*100/mImage.GetVoxelVolume());
+    double substractionError(0.5);
+
+    if (std::abs(diff) > substractionError)
+      GateError("Error: " << mMassFile << " hasn't the right dosel cubic volume !" << Gateendl <<
+                "   Actor dosel cubic volume: " << G4BestUnit(mImage.GetVoxelVolume(),"Volume") << Gateendl <<
+                "   " << mMassFile << " dosel cubic volume: " << G4BestUnit(mMassImage.GetVoxelVolume(),"Volume") << Gateendl <<
+                "   Difference: " << diff << Gateendl);
+
+      //G4cout<<"std::abs(mMassImage.GetVoxelVolume()-mImage.GetVoxelVolume())="<<std::abs(mMassImage.GetVoxelVolume()-mImage.GetVoxelVolume())<<G4endl;
+
     doselExternalMass.resize(mMassImage.GetNumberOfValues(),-1.);
     for(int i=0;i<mMassImage.GetNumberOfValues();i++)
       doselExternalMass[i]=mMassImage.GetValue(i)*kg;
