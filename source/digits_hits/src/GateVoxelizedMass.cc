@@ -356,7 +356,7 @@ std::pair<double,double> GateVoxelizedMass::ParameterizedVolume(const int index)
             else
             {
               coord[dim].push_back(origCoord[dim]);
-              coef[dim].push_back(abs((1-fmod(doselMin[dim],1))-fmod(doselMax[dim],1))); //FIXME ?
+              coef[dim].push_back(std::abs((1-fmod(doselMin[dim],1))-fmod(doselMax[dim],1))); //FIXME ?
             }
           }
           else if(isMin[dim])

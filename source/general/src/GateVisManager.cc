@@ -5,11 +5,12 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
   ----------------------*/
-  
+
 #ifdef G4VIS_USE
 
 #include "GateVisManager.hh"
 #include "GateMessageManager.hh"
+#include "G4Version.hh"
 
 // Supported drivers...
 
@@ -136,7 +137,11 @@ void GateVisManager::RegisterGraphicsSystems () {
     G4cout <<
       "\nYou have successfully chosen to use the following graphics systems."
 	 << Gateendl;
+#if ( G4VERSION_NUMBER >= 1020 )
+    PrintAvailableGraphicsSystems (G4VisManager::all);
+#else
     PrintAvailableGraphicsSystems ();
+#endif
   }
 }
 
