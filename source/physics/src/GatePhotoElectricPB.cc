@@ -20,7 +20,8 @@ GatePhotoElectricPB::GatePhotoElectricPB():GateVProcess("PhotoElectric")
 
   AddToModelList("StandardModel");
   AddToModelList("LivermoreModel");
-  AddToModelList("LivermorePolarizedModel");
+
+  //AddToModelList("LivermorePolarizedModel");
   AddToModelList("PenelopeModel");
 
   pMessenger = new GatePhotoElectricMessenger(this);  
@@ -102,23 +103,24 @@ void GatePhotoElectricPB::AddUserModel(GateListOfHadronicModels *model){
        dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermorePhotoElectricModel); 
     #endif
   }
-  else if(model->GetModelName() == "LivermorePolarizedModel")
-  {
-    G4LivermorePolarizedPhotoElectricModel* theLivermorePhotoElectricModel = new G4LivermorePolarizedPhotoElectricModel();
+//Next lines must be commented until a patch fixing the problem 1816 associated to Geant4 10.2 (the #include guard on G4LivermorePolarizedPhotoElectricModel.hh) was not provided
+  //else if(model->GetModelName() == "LivermorePolarizedModel")
+  //{
+  //   G4LivermorePolarizedPhotoElectricModel* theLivermorePhotoElectricModel = new G4LivermorePolarizedPhotoElectricModel();
 
-    //bool auger = dynamic_cast<GatePhotoElectricMessenger*>(pMessenger)->GetIsAugerActivated();
-    //double lowEGamma = dynamic_cast<GatePhotoElectricMessenger*>(pMessenger)->GetLowEnergyGammaCut();
-    //double lowEElec = dynamic_cast<GatePhotoElectricMessenger*>(pMessenger)->GetLowEnergyElectronCut();
-    //if(auger) theLivermorePhotoElectricModel->ActivateAuger(true);
-    // if( lowEGamma>0 ) theLivermorePhotoElectricModel->SetCutForLowEnSecPhotons(lowEGamma);
-    // if( lowEElec>0  ) theLivermorePhotoElectricModel->SetCutForLowEnSecElectrons(lowEElec);
+  //  //bool auger = dynamic_cast<GatePhotoElectricMessenger*>(pMessenger)->GetIsAugerActivated();
+  //  //double lowEGamma = dynamic_cast<GatePhotoElectricMessenger*>(pMessenger)->GetLowEnergyGammaCut();
+  //  //double lowEElec = dynamic_cast<GatePhotoElectricMessenger*>(pMessenger)->GetLowEnergyElectronCut();
+  //  //if(auger) theLivermorePhotoElectricModel->ActivateAuger(true);
+  //  // if( lowEGamma>0 ) theLivermorePhotoElectricModel->SetCutForLowEnSecPhotons(lowEGamma);
+  //  // if( lowEElec>0  ) theLivermorePhotoElectricModel->SetCutForLowEnSecElectrons(lowEElec);
 
-    #if (G4VERSION_MAJOR > 9) || ((G4VERSION_MAJOR ==9 && G4VERSION_MINOR > 5))
-       dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theLivermorePhotoElectricModel); 
-     #else
-       dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermorePhotoElectricModel); 
-    #endif
-  }
+  //  #if (G4VERSION_MAJOR > 9) || ((G4VERSION_MAJOR ==9 && G4VERSION_MINOR > 5))
+  //     dynamic_cast<G4VEmProcess*>(pProcess)->SetEmModel(theLivermorePhotoElectricModel); 
+  //   #else
+  //    dynamic_cast<G4VEmProcess*>(pProcess)->SetModel(theLivermorePhotoElectricModel); 
+  // #endif
+  //}
   else if(model->GetModelName() == "PenelopeModel")
   {
     G4PenelopePhotoElectricModel* thePhotoElectricModel = new G4PenelopePhotoElectricModel();
