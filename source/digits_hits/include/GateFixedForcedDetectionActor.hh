@@ -90,6 +90,7 @@ public:
   void SetPhaseSpaceFilename(G4String name) { mPhaseSpaceFilename = name; }
   void SetNoisePrimary(G4int n) { mNoisePrimary = n; }
   void SetInputRTKGeometryFilename(G4String name) { mInputRTKGeometryFilename = name; }
+  void SetEnergyResolvedBinSize(const double e) { mEnergyResolvedBinSize = e; }
 
   // Typedef for rtk
   static const unsigned int Dimension = 3;
@@ -117,6 +118,7 @@ public:
                                                   VectorType &detectorColVector);
   InputImageType::Pointer ConvertGateImageToITKImage(GateVImageVolume * gateImgVol);
   InputImageType::Pointer CreateVoidProjectionImage();
+  InputImageType::Pointer FirstSliceProjection(InputImageType::Pointer &input);
   virtual void CreatePhaseSpace(const G4String phaseSpaceFilename, TFile *&phaseSpaceFile, TTree *&phaseSpace);
 
   // The actual forced detection functions
@@ -159,6 +161,7 @@ protected:
   GateEnergyResponseFunctor mEnergyResponseDetector;
 
   G4String mInputRTKGeometryFilename;
+  G4double mEnergyResolvedBinSize;
   rtk::ThreeDCircularProjectionGeometry::Pointer mInputGeometry;
   GeometryType::Pointer mGeometry;
   InputImageType::Pointer mGateVolumeImage;
@@ -186,12 +189,7 @@ protected:
 
   // Primary stuff
   unsigned int mNumberOfEventsInRun;
-  typedef rtk::JosephForwardProjectionImageFilter<
-                 InputImageType,
-                 InputImageType,
-                 GateFixedForcedDetectionFunctor::InterpolationWeightMultiplication,
-                 GateFixedForcedDetectionFunctor::PrimaryValueAccumulation>
-                   PrimaryProjectionType;
+  typedef GateFixedForcedDetectionProjector< GateFixedForcedDetectionFunctor::PrimaryValueAccumulation > PrimaryProjectionType;
 
   // Per process members
   std::map<ProcessType, bool> mDoFFDForThisProcess;
