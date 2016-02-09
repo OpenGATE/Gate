@@ -5,7 +5,7 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
   ----------------------*/
-  
+
 #ifndef GateVisManager_h
 #define GateVisManager_h 1
 
