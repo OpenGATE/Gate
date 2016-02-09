@@ -280,7 +280,7 @@ void GatePromptGammaData::Initialize(std::string & filename, const G4Material * 
 
 //-----------------------------------------------------------------------------
 // FIXME change the name of this function
-void GatePromptGammaData::InitializeMaterial()
+void GatePromptGammaData::InitializeMaterial(bool DebugOutputEnabled)
 {
   GateMessage("Actor", 1, "Create DB for used material. " << std::endl);
   const G4MaterialTable & matTable = *G4Material::GetMaterialTable();
@@ -317,39 +317,6 @@ void GatePromptGammaData::InitializeMaterial()
               << " (d = " << m->GetDensity()/(g/cm3)
               << ")" << std::endl);
     mGammaEnergyHistoByMaterialByProtonEnergy[i].resize(proton_bin+1); // from [1 to n]
-
-    /* START OLD LOOP
-    //set mGammaEnergyHistoByMaterialByProtonEnergy
-    for(unsigned int j=1; j<proton_bin+1; j++) {
-    TH1D * h = new TH1D();
-    h->SetBins(gamma_bin, min_gamma_energy, max_gamma_energy);
-
-    // Loop over element
-    //TH1D * proj = pHEpEpgNormalized->ProjectionY("", j, j);
-
-    for(unsigned int e=0; e<m->GetNumberOfElements(); e++) {
-      const G4Element * elem = m->GetElement(e);
-      double f = m->GetFractionVector()[e];
-
-      if (elem->GetZ() != 1) { // if not Hydrogen.
-        // (If hydrogen probability is zero)
-        // Get histogram for the current bin
-        SetCurrentPointerForThisElement(elem);
-        TH1D * he = new TH1D(*pHEpEpgNormalized->ProjectionY("", j, j)); //without a new it gives wrong results.
-
-        // Scale it according to the fraction of this element in the material
-        he->Scale(f);
-
-        // Add it to the current total histo
-        h->Add(he);
-
-        // remove temporary allocated TH1D (important !)
-        delete he;
-      }
-    }
-    mGammaEnergyHistoByMaterialByProtonEnergy[i][j] = h;
-    }
-    //END OLD LOOP */
 
     //Build GammaZ -> GammaM, EpEpg=Ngamma(z,E) -> Ngamma(m,E)
     TH2D * hgammam = new TH2D();
@@ -397,6 +364,15 @@ void GatePromptGammaData::InitializeMaterial()
     //update GammaM,NgammaM
     GammaM[i] = hgammam; //Now it's no longer modulo rho(Z), or rho(M)!!!
     NgammaM[i] = hngammam;
+
+    if(DebugOutputEnabled){
+        G4String fn1 = "output/debug.GammaM"+m->GetName()+".root";
+        G4String fn2 = "output/debug.NgammaM"+m->GetName()+".root";
+        TFile f1(fn1.c_str(),"new");
+        hgammam->Write();
+        TFile f2(fn2.c_str(),"new");
+        hngammam->Write();
+      }
 
     //tmpmat is complete, so we slice it up and copy it into mGammaEnergyHistoByMaterialByProtonEnergy
     for(unsigned int j=1; j<proton_bin+1; j++) {

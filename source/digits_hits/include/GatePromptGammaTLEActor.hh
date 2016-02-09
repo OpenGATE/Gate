@@ -42,9 +42,10 @@ public:
   virtual void SaveData();
   virtual void ResetData();
 
-  void EnableVarianceImage(bool b) { mIsVarianceImageEnabled = b; }  //all is needed to calc tle uncertainty
-  void EnableSysVarianceImage(bool b) { mIsSysVarianceImageEnabled = b; }  //all is needed to calc tle uncertainty
-  //void EnableIntermediaryUncertaintyOutput(bool b) { mIsIntermediaryUncertaintyOutputEnabled = b; } //this is only used to output trackl,tracklsq, no other effects on calculation
+  void EnableDebugOutput(bool b) { mIsDebugOutputEnabled = b; }
+  void EnableOutputMatch(bool b) { mIsOutputMatchEnabled = b; }
+  //void EnableSysVarianceImage(bool b) { mIsSysVarianceImageEnabled = b; }
+  //void EnableIntermediaryUncertaintyOutput(bool b) { mIsIntermediaryUncertaintyOutputEnabled = b; }
 
 protected:
   GatePromptGammaTLEActor(G4String name, G4int depth=0);
@@ -54,16 +55,15 @@ protected:
   GatePromptGammaData data;
   bool alreadyHere;
 
-  bool mIsVarianceImageEnabled;
-  bool mIsSysVarianceImageEnabled;
-  //bool mIsIntermediaryUncertaintyOutputEnabled;
+  bool mIsDebugOutputEnabled;
+  bool mIsOutputMatchEnabled;
 
   //helper functions
   void SetTrackIoH(GateImageOfHistograms*&);
   void SetTLEIoH(GateImageOfHistograms*&);
   GateVImageVolume* GetPhantom();
-  void BuildVarianceOutput(); //converts trackl,tracklsq into mImageGamma and tlevar
-  void BuildSysVarianceOutput(); //converts trackl into mImageGamma and tlesysvarv
+  void BuildVarianceOutput(); //converts trackl,tracklsq into mImageGamma and tlevar per voxel. Not used.
+  //void BuildSysVarianceOutput(); //converts trackl into mImageGamma and tlesysvarv. Not used.
 
   //used and reset each track
   GateImageOfHistograms * tmptrackl;    //l_i
@@ -74,9 +74,9 @@ protected:
 
   //output, calculated at end of simu
   GateImageOfHistograms * mImageGamma;  //oldstyle main output,
-  GateImageOfHistograms * tle;  //main output (yield)
-  GateImageOfHistograms * tlesysvar;  //systematic variance per voxel, per E_gamma
-  GateImageOfHistograms * tlevariance; //uncertainty per voxel, per E_gamma
+  GateImageOfHistograms * tle;          //main output (yield)
+  GateImageOfHistograms * tlesysvar;    //systematic variance per voxel, per E_gamma. Not used.
+  GateImageOfHistograms * tlevariance;  //uncertainty per voxel, per E_gamma. Not used.
 
   GateImageInt mLastHitEventImage;      //store eventID when last updated.
   int mCurrentEvent;                    //monitor event. TODO: not sure if necesary

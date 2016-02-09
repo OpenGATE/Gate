@@ -30,9 +30,8 @@ protected:
   GatePromptGammaTLEActor* pTLEActor;
 
   G4UIcmdWithAString * pSetInputDataFileCmd;
-  G4UIcmdWithABool * pEnableVarianceCmd;
-  G4UIcmdWithABool * pEnableSysVarianceCmd;
-  //G4UIcmdWithABool * pEnableIntermediaryUncertaintyOutputCmd;
+  G4UIcmdWithABool * pEnableDebugOutputCmd;
+  G4UIcmdWithABool * pEnableOutputMatchCmd;
 };
 //-----------------------------------------------------------------------------
 

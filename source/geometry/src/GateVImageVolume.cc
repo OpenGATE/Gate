@@ -356,8 +356,11 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
 
   // Bounds check
   if(pImage->GetMinValue() < low || pImage->GetMaxValue() > high){
-      GateError("The image contains HU indices out of range of the HU range found in "
-            << mHounsfieldToImageMaterialTableFilename << ". Abort.\n");
+      GateError("The image contains HU indices out of range of the HU range found in " <<
+            mHounsfieldToImageMaterialTableFilename <<
+            "\nmin, max:" << low << ", " << high <<
+            ".\nmin, max in image: " << pImage->GetMinValue() << ", " << pImage->GetMaxValue() <<
+            "\nAbort.\n");
   }
   //  if (mHounsfieldMaterialTable.GetNumberOfMaterials() == 0) {
   if (mHounsfieldMaterialTable.GetNumberOfMaterials() == 1 ) {//there is a default mat = worldDefaultAir

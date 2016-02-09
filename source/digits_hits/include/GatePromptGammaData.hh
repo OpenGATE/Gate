@@ -41,7 +41,7 @@ public:
   int GetGammaNbBins()   { return gamma_bin; }
 
   void Initialize(std::string & filename, const G4Material * m);
-  void InitializeMaterial();
+  void InitializeMaterial(bool DebugOutputEnabled);
   void Read(std::string & filename);
   void SaveData();
   void ResetData();

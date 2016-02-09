@@ -25,7 +25,8 @@ GatePromptGammaTLEActor::GatePromptGammaTLEActor(G4String name, G4int depth):
   pMessenger = new GatePromptGammaTLEActorMessenger(this);
   SetStepHitType("random");
   mCurrentEvent = -1;
-  mIsVarianceImageEnabled = false;
+  mIsDebugOutputEnabled = false;
+  mIsOutputMatchEnabled = false;
   alreadyHere = false;
 }
 //-----------------------------------------------------------------------------
@@ -51,8 +52,6 @@ void GatePromptGammaTLEActor::SetInputDataFilename(std::string filename)
 void GatePromptGammaTLEActor::Construct()
 {
   GateVImageActor::Construct();
-  //std::cout << "TLE Begin. Press any key to continue." << std::endl;
-  //std::cin.get();
 
   // Enable callbacks
   EnableBeginOfRunAction(false);
@@ -62,19 +61,12 @@ void GatePromptGammaTLEActor::Construct()
   EnableUserSteppingAction(true);
 
   // Input data
-  //std::cout << "Data Begin. Press any key to continue." << std::endl;
-  //std::cin.get();
   data.Read(mInputDataFilename);
-  data.InitializeMaterial();
-  //std::cout << "Data End. Press any key to continue." << std::endl;
-  //std::cin.get();
-
-  //std::cout << "TLE Images Begin. Press any key to continue." << std::endl;
-  //std::cin.get();
+  data.InitializeMaterial(mIsDebugOutputEnabled);
 
   //set up and allocate runtime images.
   SetTLEIoH(mImageGamma);
-  if (mIsVarianceImageEnabled){
+  if (mIsDebugOutputEnabled){
     //set up and allocate lasthiteventimage
     SetOriginTransformAndFlagToImage(mLastHitEventImage);
     mLastHitEventImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
@@ -85,11 +77,6 @@ void GatePromptGammaTLEActor::Construct()
     SetTrackIoH(trackl);
     SetTrackIoH(tracklsq);
   }
-  if (mIsSysVarianceImageEnabled){
-    SetTrackIoH(trackl);
-  }
-  //std::cout << "TLE Images End. Press any key to continue." << std::endl;
-  //std::cin.get();
 
   // Force hit type to random
   if (mStepHitType != RandomStepHitType) {
@@ -99,9 +86,6 @@ void GatePromptGammaTLEActor::Construct()
 
   // Set to zero
   //ResetData(); //allocate implies reset
-
-  //std::cout << "TLE End. Press any key to continue." << std::endl;
-  //std::cin.get();
 }
 //-----------------------------------------------------------------------------
 
@@ -132,18 +116,12 @@ void GatePromptGammaTLEActor::SaveData()
   mImageGamma->Scale(1./(GateActorManager::GetInstance()->GetCurrentEventId() + 1));// +1 because start at zero
   mImageGamma->Write(mSaveFilename);
 
-  if (mIsVarianceImageEnabled) {
+  if (mIsDebugOutputEnabled) {
     BuildVarianceOutput();
-    tle->Write(G4String(removeExtension(mSaveFilename))+"-tle."+G4String(getExtension(mSaveFilename)));
-    tlevariance->Write(G4String(removeExtension(mSaveFilename))+"-tlevar."+G4String(getExtension(mSaveFilename)));
-
-    //Enable for debug:
-    //trackl->Write(G4String(removeExtension(mSaveFilename))+"-trackl."+G4String(getExtension(mSaveFilename)));
-  }
-  if (mIsSysVarianceImageEnabled) {
-    BuildSysVarianceOutput();
-    tle->Write(G4String(removeExtension(mSaveFilename))+"-tle."+G4String(getExtension(mSaveFilename)));
-    tlesysvar->Write(G4String(removeExtension(mSaveFilename))+"-tlesysvar."+G4String(getExtension(mSaveFilename)));
+    tle->Write(G4String(removeExtension(mSaveFilename))+"-debugtle."+G4String(getExtension(mSaveFilename)));
+    tlevariance->Write(G4String(removeExtension(mSaveFilename))+"-debugvar."+G4String(getExtension(mSaveFilename)));
+    trackl->Write(G4String(removeExtension(mSaveFilename))+"-debugtrackl."+G4String(getExtension(mSaveFilename)));
+    tracklsq->Write(G4String(removeExtension(mSaveFilename))+"-debugtracklsq."+G4String(getExtension(mSaveFilename)));
   }
 
   alreadyHere = true;
@@ -197,8 +175,8 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
     GateError("GatePromptGammaTLEActor -- Proton Energy (" << particle_energy << ") outside range of pgTLE (" << data.GetProtonEMax() << ") database! Aborting...");
   }
 
-  // New style TLE + TLE systematic + random variance (for the uncorrelated case, which is wrong).
-  if (mIsVarianceImageEnabled) {
+  // Post computation TLE + TLE systematic + random variance (for the uncorrelated case, which is wrong).
+  if (mIsDebugOutputEnabled) {
     // compute sameEvent
     // sameEvent is false the first time some energy is deposited for each primary particle
     bool sameEvent=true;
@@ -217,24 +195,19 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
     } else tmptrackl->AddValueDouble(index, protbin, distance);
   }
 
-  // New style TLE + TLE SYSTEMATIC variance
-  if (mIsSysVarianceImageEnabled) {
-    int protbin = data.GetHEp()->FindFixBin(particle_energy)-1;
-    trackl->AddValueDouble(index, protbin, distance);
-  }
-
-  // Old style TLE
-  const G4Material *material = step->GetPreStepPoint()->GetMaterial();
+  // Regular TLE
+  G4Material *material = step->GetPreStepPoint()->GetMaterial();
 
   /* Because step->GetPreStepPoint() and tmptrackl->GetVoxelCenterFromIndex(index) are different positions,
    * we may get different materials if the phantom-volume and tle-output-volume are different (size, offset, voxelsize).
    * GetPreStepPoint is more precise, so we keep that here, but in case it is necessary to have identical outputs,
-   * uncomment the below 4 lines to get the material. *
-  GateVImageVolume* phantom = GetPhantom(); //this has the correct label to material database.
-  GateImage* phantomvox = phantom->GetImage(); //this has the array of voxels.
-  G4String materialname = phantom->GetMaterialNameFromLabel(phantomvox->GetValue(tmptrackl->GetVoxelCenterFromIndex(index)));
-  G4Material* material = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(materialname);
-  // */
+   * uncomment the below 4 lines to get the material. */
+  if(mIsOutputMatchEnabled) {
+    GateVImageVolume* phantom = GetPhantom(); //this has the correct label to material database.
+    GateImage* phantomvox = phantom->GetImage(); //this has the array of voxels.
+    G4String materialname = phantom->GetMaterialNameFromLabel(phantomvox->GetValue(tmptrackl->GetVoxelCenterFromIndex(index)));
+    material = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(materialname);
+  }
 
   // Get value from histogram. We do not check the material index, and
   // assume everything exist (has been computed by InitializeMaterial)
@@ -335,68 +308,6 @@ void GatePromptGammaTLEActor::BuildVarianceOutput() {
       TH1D *h = data.GetGammaEnergySpectrum(materialindex, (double)pi/250.*200.+0.5*200./250.);
       tleuncertain->AddValueDouble(vi, h, tracklav[pi] * dens );
     }*/
-
-  }//end voxelloop
-
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void GatePromptGammaTLEActor::BuildSysVarianceOutput() {
-  //nr primaries, +1 because start at zero, double because we will divide by it.
-  double n = GateActorManager::GetInstance()->GetCurrentEventId() + 1;
-
-  //allocate output images
-  SetTLEIoH(tle);
-  SetTLEIoH(tlesysvar);
-
-  GateVImageVolume* phantom = GetPhantom(); //this has the correct label to material database.
-  GateImage* phantomvox = phantom->GetImage(); //this has the array of voxels.
-
-  //compute TLE output. first, loop over voxels
-  for(int vi = 0; vi < trackl->GetNumberOfValues() ;vi++ ){
-    //convert between voxelsizes in phantom and output, NEAREST NEIGHBOUR!
-    G4String materialname = phantom->GetMaterialNameFromLabel(phantomvox->GetValue(trackl->GetVoxelCenterFromIndex(vi)));
-    G4Material* material = GateDetectorConstruction::GetGateDetectorConstruction()->mMaterialDatabase.GetMaterial(materialname);
-    int materialindex = material->GetIndex();
-
-    TH2D* gammam = data.GetGammaM(materialindex);
-    TH2D* ngammam = data.GetNgammaM(materialindex);
-
-    // prep some things that are constant for all gamma bins
-    std::vector<double> tracklav(data.GetProtonNbBins());
-    std::vector<double> tracklavsq(data.GetProtonNbBins());
-    for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
-      double trackli = trackl->GetValueDouble(vi,pi);
-      if(trackli<=0.) { //if trackl==0, then all is zero.
-        tracklav[pi] = 0.;
-        continue;
-      }
-      //if not, compute tracklav,tracklavsq
-      tracklav[pi] = trackli/n; //only now do we average, before it was actually the tracksum
-      tracklavsq[pi] = tracklav[pi]*tracklav[pi]; //only now do we average, before it was actually the tracksum
-    }
-
-    for(int gi=0; gi<data.GetGammaNbBins() ; gi++ ){ //per proton bin, compute the contribution to the gammabin
-      double tleval = 0.;
-      double tlevarval = 0.;
-      for(int pi=0; pi<data.GetProtonNbBins() ; pi++ ){
-        if(tracklav[pi]==0.) {
-          continue; //dont need to add anything
-        }
-        double igammam = gammam->GetBinContent(pi+1,gi+1);
-        double ingammam = ngammam->GetBinContent(pi+1,gi+1);
-        //TLE, TLE uncertainty
-        tleval += igammam * tracklav[pi];
-
-        if (ingammam > 0.) tlevarval += pow(igammam,2) * tracklavsq[pi]/ingammam;
-        else tlevarval += pow(igammam,2) * tracklavsq[pi];
-      }
-
-      tle->SetValueDouble(vi,gi,tleval);
-      tlesysvar->SetValueDouble(vi,gi,tlevarval);
-    }
 
   }//end voxelloop
 

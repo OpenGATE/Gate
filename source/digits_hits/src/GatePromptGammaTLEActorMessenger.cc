@@ -27,8 +27,8 @@ GatePromptGammaTLEActorMessenger::~GatePromptGammaTLEActorMessenger()
 {
   DD("GatePromptGammaTLEActorMessenger destructor");
   delete pSetInputDataFileCmd;
-  delete pEnableVarianceCmd;
-  delete pEnableSysVarianceCmd;
+  delete pEnableDebugOutputCmd;
+  //delete pEnableSysVarianceCmd;
   //delete pEnableIntermediaryUncertaintyOutputCmd;
 }
 //-----------------------------------------------------------------------------
@@ -42,20 +42,15 @@ void GatePromptGammaTLEActorMessenger::BuildCommands(G4String base)
   G4String guidance = G4String("Set input root filename with proton/gamma energy 2D spectrum (obtained from PromptGammaStatisticsActor).");
   pSetInputDataFileCmd->SetGuidance(guidance);
 
-//  bb = base+"/enableVariance";
-//  pEnableVarianceCmd = new G4UIcmdWithABool(bb, this);
-//  guidance = G4String("Enable variance output (per voxel per E_gamma).");
-//  pEnableVarianceCmd->SetGuidance(guidance);
+  bb = base+"/enableDebugOutput";
+  pEnableDebugOutputCmd = new G4UIcmdWithABool(bb, this);
+  guidance = G4String("Enable tracklengths output (L and L^2) and Gamma_M (per voxel per E_gamma). May be used to compute variance afterwards.");
+  pEnableDebugOutputCmd->SetGuidance(guidance);
 
-  bb = base+"/enableSystematicVariance";
-  pEnableSysVarianceCmd = new G4UIcmdWithABool(bb, this);
-  guidance = G4String("Enable systematic variance output (per voxel per E_gamma).");
-  pEnableSysVarianceCmd->SetGuidance(guidance);
-
-  /*bb = base+"/enableIntermediaryUncertaintyOutput";
-  pEnableIntermediaryUncertaintyOutputCmd = new G4UIcmdWithABool(bb, this);
-  guidance = G4String("Enable outputs to calculate uncertainty post process. Output is Gamma_m database, and L and L^2 per voxel per proton energy.");
-  pEnableIntermediaryUncertaintyOutputCmd->SetGuidance(guidance);*/
+  bb = base+"/enableOutputMatch";
+  pEnableOutputMatchCmd = new G4UIcmdWithABool(bb, this);
+  guidance = G4String("Enable this too make sure the regular TLE output and debug output match. In corner cases where voxels of the image and TLE actor don't match, DebugOutput will take the material at the voxel center, while regular TLE will take the material at the interaction point. Enabling this will force regular TLE to also look at the voxel center.");
+  pEnableOutputMatchCmd->SetGuidance(guidance);
 
 }
 //-----------------------------------------------------------------------------
@@ -65,8 +60,9 @@ void GatePromptGammaTLEActorMessenger::BuildCommands(G4String base)
 void GatePromptGammaTLEActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
   if (cmd == pSetInputDataFileCmd) pTLEActor->SetInputDataFilename(newValue);
-  if (cmd == pEnableVarianceCmd) pTLEActor->EnableVarianceImage(pEnableVarianceCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableSysVarianceCmd) pTLEActor->EnableSysVarianceImage(pEnableSysVarianceCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableDebugOutputCmd) pTLEActor->EnableDebugOutput(pEnableDebugOutputCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableOutputMatchCmd) pTLEActor->EnableOutputMatch(pEnableOutputMatchCmd->GetNewBoolValue(newValue));
+  //if (cmd == pEnableSysVarianceCmd) pTLEActor->EnableSysVarianceImage(pEnableSysVarianceCmd->GetNewBoolValue(newValue));
   //if (cmd == pEnableIntermediaryUncertaintyOutputCmd) pTLEActor->EnableIntermediaryUncertaintyOutput(pEnableIntermediaryUncertaintyOutputCmd->GetNewBoolValue(newValue));
   GateImageActorMessenger::SetNewValue(cmd,newValue);
 }
