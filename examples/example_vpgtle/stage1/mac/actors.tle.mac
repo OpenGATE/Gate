@@ -1,0 +1,26 @@
+# ----------------------------------------------------
+# Statistics Actor
+# ----------------------------------------------------
+/gate/actor/addActor               SimulationStatisticActor stat
+/gate/actor/stat/save              output/stat-proton.txt
+
+# ----------------------------------------------------
+# TLE Actor
+# ----------------------------------------------------
+/gate/actor/addActor                    PromptGammaTLEActor  pgtle
+/gate/actor/pgtle/attachTo    	        patient
+/gate/actor/pgtle/setInputDataFile      data/pgdb.root
+/gate/actor/pgtle/save                  output/source.mhd
+
+#/gate/actor/pgtle/setVoxelSize          1 1 1 mm
+/gate/actor/pgtle/setVoxelSize          2 2 2 mm
+
+
+/gate/actor/pgtle/setPosition           0 -51 0 mm
+/gate/actor/pgtle/setSize               70 170 70 mm
+
+#/gate/actor/pgtle/enableDebugOutput		true
+#/gate/actor/pgtle/enableOutputMatch		true
+
+#/gate/actor/pgtleplacement/setRotationAxis X 0 0 
+#/gate/actor/pgtleplacement/setRotationAngle N deg 
