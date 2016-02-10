@@ -49,23 +49,23 @@
 /gate/DetectorPlane/vis/setColor             yellow
 
 # Fluence of gamma
-/gate/actor/addActor FixedForcedDetectionActor hfda
-/gate/actor/hfda/attachTo                     world
-/gate/actor/hfda/setDetector                  DetectorPlane
-/gate/actor/hfda/setDetectorResolution        128 128
-/gate/actor/hfda/geometryFilename             output/geometry.xml
-/gate/actor/hfda/primaryFilename              output/primary.mha
-/gate/actor/hfda/attenuationFilename          output/attenuation.mha
-/gate/actor/hfda/rayleighFilename             output/rayleigh.mha
-/gate/actor/hfda/comptonFilename              output/compton.mha
-/gate/actor/hfda/secondaryFilename            output/secondary.mha
-/gate/actor/hfda/totalFilename                output/total.mha
-/gate/actor/hfda/enableUncertaintySecondary   true
-/gate/actor/hfda/enableSquaredSecondary       true
-/gate/actor/hfda/materialMuFilename           output/materialMu.mha
-/gate/actor/hfda/flatFieldFilename            output/flatField.mha
-/gate/actor/hfda/responseDetectorFilename     data/responseDetector.txt
-/gate/actor/hfda/energyResolvedBinSize        0 keV
+/gate/actor/addActor FixedForcedDetectionActor ffda
+/gate/actor/ffda/attachTo                     world
+/gate/actor/ffda/setDetector                  DetectorPlane
+/gate/actor/ffda/setDetectorResolution        128 128
+/gate/actor/ffda/geometryFilename             output/geometry.xml
+/gate/actor/ffda/primaryFilename              output/primary.mha
+/gate/actor/ffda/attenuationFilename          output/attenuation.mha
+/gate/actor/ffda/rayleighFilename             output/rayleigh.mha
+/gate/actor/ffda/comptonFilename              output/compton.mha
+/gate/actor/ffda/secondaryFilename            output/secondary.mha
+/gate/actor/ffda/totalFilename                output/total.mha
+/gate/actor/ffda/enableUncertaintySecondary   true
+/gate/actor/ffda/enableSquaredSecondary       true
+/gate/actor/ffda/materialMuFilename           output/materialMu.mha
+/gate/actor/ffda/flatFieldFilename            output/flatField.mha
+/gate/actor/ffda/responseDetectorFilename     data/responseDetector.txt
+/gate/actor/ffda/energyResolvedBinSize        0 keV
 
 # Save particles stats
 /gate/actor/addActor  SimulationStatisticActor stat

@@ -48,16 +48,15 @@
 /gate/DetectorPlane/vis/setVisible           1
 /gate/DetectorPlane/vis/setColor             yellow
 
-
-/gate/actor/addActor FluenceActor      Detector
-/gate/actor/Detector/save              output/detectorMC.mhd
-/gate/actor/Detector/attachTo          DetectorPlane
-/gate/actor/Detector/stepHitType       pre
-/gate/actor/Detector/setSize           409.6 409.6 1 mm
-/gate/actor/Detector/setResolution     128 128 1
-/gate/actor/Detector/enableScatter     true
-
-
+# Fluence of gamma
+/gate/actor/addActor FluenceActor                    DetectorFluence
+/gate/actor/DetectorFluence/save                     output/detectorMC.mhd
+/gate/actor/DetectorFluence/attachTo                 DetectorPlane
+/gate/actor/DetectorFluence/stepHitType              pre
+/gate/actor/DetectorFluence/setResolution            128 128 1
+/gate/actor/DetectorFluence/enableScatter            true
+/gate/actor/DetectorFluence/enableUncertainty        true
+/gate/actor/DetectorFluence/responseDetectorFilename data/responseDetector.txt
 
 # Save particles stats
 /gate/actor/addActor  SimulationStatisticActor stat
