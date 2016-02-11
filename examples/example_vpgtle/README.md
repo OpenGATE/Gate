@@ -1,7 +1,8 @@
 ## vpgTLE example
 
-vpgTLE is broken up into three parts. Stage 0 is required to be run once, and each vp
-gTLE simulation is then broken up into Stage 1 and Stage 2. For each stage, you can find and example in the `examples/vpgTLE` directory.
+This actor is used to investigate prompt gamma production in proton therapy simulations. It provides a speedup factor of around 1000 compared to analog MC.
+
+vpgTLE is broken up into three parts. Stage 0 is required to be run once, and each vpgTLE simulation is then broken up into Stage 1 and Stage 2. For each stage, you can find and example in the `examples/vpgTLE` directory.
 
 To understand the background, physics and mathematics of this example, refer to `Accelerated Prompt Gamma estimation for clinical Proton Therapy simulations` by B.F.B. Huisman.
 
