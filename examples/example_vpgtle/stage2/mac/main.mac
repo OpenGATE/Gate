@@ -1,0 +1,97 @@
+#=====================================================
+# VERBOSITY, PREAMBLE
+#=====================================================
+
+#/control/alias NPRIM 1000000
+
+# Verbose
+/gate/verbose Physic    0
+/gate/verbose Cuts      0
+/gate/verbose SD        0
+/gate/verbose Actions   0
+/gate/verbose Actor     0
+/gate/verbose Step      0
+/gate/verbose Error     0
+/gate/verbose Warning   0
+/gate/verbose Output    0
+/gate/verbose Beam      0
+/gate/verbose Volume    0
+/gate/verbose Image     0
+/gate/verbose Geometry  0
+#/tracking/verbose 2
+
+# Materials
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+# Analytic phantom
+#/control/execute mac/phantom_Parodi_TNS_2005_52_3_modified.mac
+
+# Voxillized phantom
+/control/execute mac/geo.mac
+
+#=====================================================
+# PHYSICS
+#=====================================================
+
+/control/execute mac/physics.mac
+
+#=====================================================
+# ACTORS
+#=====================================================
+
+# ----------------------------------------------------
+# Gamma Production Counter
+# Count number of produced gammas in patient.
+/gate/actor/addActor ProductionAndStoppingActor GammaProdCounter
+/gate/actor/GammaProdCounter/save		output/GammProdCount.root
+/gate/actor/GammaProdCounter/attachTo		patient
+/gate/actor/GammaProdCounter/setResolution	1 400 1 #400 bins alongside depth of beam
+/gate/actor/GammaProdCounter/stepHitType	post
+/gate/actor/GammaProdCounter/addFilter		particleFilter
+/gate/actor/GammaProdCounter/particleFilter/addParticle gamma
+
+# ----------------------------------------------------
+# Gammas entering detector
+/gate/actor/addActor 		PhaseSpaceActor		GammaInDetector
+/gate/actor/GammaInDetector/save			output/detector.root
+/gate/actor/GammaInDetector/attachTo			detector
+/gate/actor/GammaInDetector/addFilter			particleFilter
+/gate/actor/GammaInDetector/particleFilter/addParticle	gamma
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+
+#=====================================================
+# SOURCE
+#=====================================================
+
+/gate/source/addSource PGS SourceOfPromptGamma
+/gate/source/PGS/setFilename data/source.mhd
+/gate/source/PGS/attachTo patient
+#/gate/source/PGS/setPosition           0 -51 0 mm
+#/gate/source/PGS/setSize               70 170 70 mm
+
+#=====================================================
+# START BEAMS
+#=====================================================
+
+/gate/application/noGlobalOutput
+/gate/run/enableGlobalOutput false
+
+#/vis/disable
+
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed auto
+#/gate/application/setTotalNumberOfPrimaries 57600000
+#/gate/application/setTotalNumberOfPrimaries 576000
+/gate/application/setTotalNumberOfPrimaries {NPRIM}
+#/gate/application/setTotalNumberOfPrimaries 1000000
+#/gate/application/setTotalNumberOfPrimaries 28800000
+/gate/application/start
