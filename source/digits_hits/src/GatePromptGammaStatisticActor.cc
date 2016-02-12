@@ -158,6 +158,16 @@ void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
   for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++) {
     if ((*fSecondary)[lp1]->GetDefinition() == G4Gamma::Gamma()) {
       const double e = (*fSecondary)[lp1]->GetKineticEnergy()/MeV;
+      if (e>data.GetGammaEMax() || e<0.040) {
+        // Without this lowE filter, we encountered a high number of 1.72keV,2.597keV,7,98467keV,8.5719keV,22.139keV,25.2572keV photons. And a bunch more.
+        // These possibly correspond to Si molecular fluorescence and C-C,C-N binding energies (lung?) respectively.
+        // These particles are created, and destroyed in their very first step. That's why the PhaseSpaceActor does not detect them.
+        // When we filter them out, this actor and PhaseSpace agree perfectly.
+        // We do not understand 100% why these are created, but we do know that such lowE photons will never make it out of the body.
+        // So we think it's warrented to just filter them out, because then we reach consistency with the PhaseSpace and TLE actors.
+        // These particles show up with vpgTLE too (in the db, mostly in heavier elements), so we choose a limit of 40keV so that we kill exactly the lowest bin.
+        continue;
+      }
       data.GetHEpEpg()->Fill(particle_energy/MeV, e);
       data.GetNgamma()->Fill(particle_energy/MeV, e);
       data.GetHEpEpgNormalized()->Fill(particle_energy/MeV, e, cross_section);

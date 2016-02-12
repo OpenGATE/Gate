@@ -30,8 +30,7 @@ Titanium Copper Zinc  Silver Tin
   1300   3.9 17.9  4.1 42.9 0.1 0.2  9.6 0.3  0   0   0  21.0 0   0  0   0   0  Marrow_Bone13   
   1400   3.6 16.5  4.2 43.2 0.1 0.2 10.0 0.3  0   0   0  21.9 0   0  0   0   0  Marrow_Bone14   
   1500   3.4 15.5  4.2 43.5 0.1 0.2 10.3 0.3  0   0   0  22.5 0   0  0   0   0  Marrow_Bone15   
-  3000   3.4 15.5  4.2 43.5 0.1 0.2 10.3 0.3  0   0   0  22.5 0   0  0   0   0  Marrow_Bone15   #tmp line, remove when uncommenting below  
-#  1640   0   0     0   0    0   0   0    0    0   0   0    0  0    4  2  65  29  AmalgamTooth
-#  2300   0   0     0   0    0   0   0    0    0   0   0    0  100  0  0  0   0  MetallImplants
-#  3000   0   0     0   0    0   0   0    0    0   0   0    0  100  0  0  0   0  MetallImplants
+  1640   0   0     0   0    0   0   0    0    0   0   0    0  0    4  2  65  29  AmalgamTooth
+  2300   0   0     0   0    0   0   0    0    0   0   0    0  100  0  0  0   0  MetallImplants
+  3000   0   0     0   0    0   0   0    0    0   0   0    0  100  0  0  0   0  MetallImplants
 
