@@ -40,4 +40,4 @@ Secondly, `/gate/actor/pgtle/enableOutputMatch` will change the regular actor to
 
 To produce and propagate the PGs throughout the scene (into your PG detector), we execute Stage 2. Using the output of Stage 1 as a source, we use a toy PG collimated camera to record some signal. Again execute with `Gate mac/main.mac -a '[NPRIM,1000]'` where the number of primaries is now the number of protons for which you want to get a representative PG signal.
 
-Generate an output `source.mhd` and `source.raw` in Stage 1 and move the files to `stage2/data` to make the example work. It outputs the gammas produced along the beam direction and a PhaseSpace of the PGs that make it through the collimator.
+An example `source.mhd` and `source.raw` produced in Stage 1 are provide and placed in `stage2/data`. The actors in the Stage 2 example output the gammas produced along the beam direction and a PhaseSpace of the PGs that make it through the collimator.
