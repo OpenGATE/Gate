@@ -1,8 +1,7 @@
 ## vpgTLE example
 
-This actor is used to investigate prompt gamma production in proton therapy simulations. It provides a speedup factor of around 1000 compared to analog MC.
-
-vpgTLE is broken up into three parts. Stage 0 is required to be run once, and each vpgTLE simulation is then broken up into Stage 1 and Stage 2. For each stage, you can find and example in the `examples/vpgTLE` directory.
+vpgTLE is broken up into three parts. Stage 0 is required to be run once, and each vp
+gTLE simulation is then broken up into Stage 1 and Stage 2. For each stage, you can find and example in the `examples/vpgTLE` directory.
 
 To understand the background, physics and mathematics of this example, refer to `Accelerated Prompt Gamma estimation for clinical Proton Therapy simulations` by B.F.B. Huisman.
 
@@ -13,6 +12,10 @@ Creating the PGdb means computing $\frac{\Gamma_Z}{\rho_Z}$ for the elements tha
 Note that mac/main.mac can be used to alter the number of primaries per run, and the maximum proton energy which has been set at 200MeV. If your simulation in Stage 1 uses higher proton energies, the pgdb must be recomputed.
 
 A pgdb.root with $10^9$ primaries per material has been supplied in the example for Stage 1.
+
+#### Note
+
+At the time of writing Geant4 generates a very large number of low energy PGs (2-25keV) that appear not physical. They're killed in their first step. The pgdb.root therefore doesn't ship with the 5 heaviest elements, that are severly affected by these affected by these particles. Therefore, the actor (`PromptGammaStatisticActor`) used to create the elemental databases has a hard cut on PGs <40keV (the first bin with the PGs energy windows+binning settings). We feel this is acceptable until the issue with Geant4 is solved, as these particles will never exit the patient anyway.
 
 ### Stage 1
 
@@ -29,6 +32,10 @@ The number of primaries required is a user choice. We recommend at least $10^6$ 
 Another important consideration is the region where the actors score. It is set to a region containing the layer of the treatment plan.
 
 Run the simulation with `Gate mac/main.mac -a '[NPRIM,1000]'` to get the PGyd for $10^3$ primaries.
+
+#### Note
+
+To keep the results consistent between the `PromptGammaAnalogActor` and the database create in Stage 0, also here we apply a hard cut on PGs <40keV. Furthermore, the heavy materials are commented out in `data/Schneider2000MaterialsTable.txt`, with the original table in `data/Schneider2000MaterialsTable.orig`.
 
 #### Stage 1 Debug outputs
 
