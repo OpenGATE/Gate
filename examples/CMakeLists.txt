@@ -65,3 +65,4 @@ GateAddExampleData("DATA{example_doseactor/voxelized-phantom/data/PhantomSlice10
 GateAddExampleData("DATA{example_vpgtle/stage1/data/patient-2mm.raw}")
 GateAddExampleData("DATA{example_vpgtle/stage1/data/pgdb.root}")
 GateAddExampleData("DATA{example_vpgtle/stage2/data/patient-2mm.raw}")
+GateAddExampleData("DATA{example_vpgtle/stage2/data/source.raw}")
