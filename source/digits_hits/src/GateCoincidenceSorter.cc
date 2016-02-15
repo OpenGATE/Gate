@@ -352,7 +352,7 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidencePul
       }
     }
 
-    maxGoods = m_allPulseOpenCoincGate?(nPulses-1):(nPulses*(nPulses-1)/2);
+    maxGoods = PairWithFirstPulseOnly?(nPulses-1):(nPulses*(nPulses-1)/2);
     if(m_multiplesPolicy==kTakeWinnerIfAllAreGoods)
     {
       if(nGoods==maxGoods)
@@ -365,7 +365,6 @@ void GateCoincidenceSorter::ProcessCompletedCoincidenceWindow(GateCoincidencePul
       {
         delete coincidence;
         return;
-
       }
     }
 
