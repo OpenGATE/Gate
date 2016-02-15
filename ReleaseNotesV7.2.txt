@@ -7,7 +7,7 @@
 
 
                           # *------------* #
-                          # * 02/15/2015 * #
+                          # * 02/15/2016 * #
                           # *------------* #
 
 
@@ -76,7 +76,7 @@ Dedicated wiki page: 	    http://wiki.opengatecollaboration.org/index.php/Users_
 Examples:
 --------
 
-   	- New X-ray imaging Fixed Forced Detection (FFD) actor:
+   - New X-ray imaging Fixed Forced Detection (FFD) actor:
 	  PATH_TO/examples/example_CT/fixedForcedDetectionCT
 	- New vpgTLE actor: 
 	  PATH_TO/examples/example_vpgtle
