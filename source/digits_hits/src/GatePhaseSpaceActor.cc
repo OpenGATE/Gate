@@ -134,6 +134,8 @@ void GatePhaseSpaceActor::Construct() {
     if (EnableTotalDEDX) pListeVar->Branch("TotalDEDX", &totalDEDX, "totalDEDX/F");
     
     if (EnableEkine) pListeVar->Branch("Ekine", &e, "Ekine/F");
+    if (EnableEkine) pListeVar->Branch("Ekpost", &ekPost, "Ekpost/F");
+    if (EnableEkine) pListeVar->Branch("Ekpre", &ekPre, "Ekpre/F");
     if (EnableWeight) pListeVar->Branch("Weight", &w, "Weight/F");
     if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/F");
     if (EnableMass) pListeVar->Branch("Mass", &m, "Mass/I"); // in MeV/c2
@@ -147,7 +149,8 @@ void GatePhaseSpaceActor::Construct() {
     if (EnableProdVol && bEnableCompact == false) pListeVar->Branch("ProductionVolume", vol, "ProductionVolume/C");
     if (EnableProdProcess && bEnableCompact == false) pListeVar->Branch("CreatorProcess", creator_process, "CreatorProcess/C");
     if (EnableProdProcess && bEnableCompact == false) pListeVar->Branch("ProcessDefinedStep", pro_step, "ProcessDefinedStep/C");
-    if (bEnableCompact == false) pListeVar->Branch("TrackID", &trackid, "TrackID/I");
+    if (bEnableCompact == false) pListeVar->Branch("TrackID", &trackid, "TrackID/I");   
+    if (bEnableCompact == false) pListeVar->Branch("ParentID", &parentid, "ParentID/I");
     if (bEnableCompact == false) pListeVar->Branch("EventID", &eventid, "EventID/I");
     if (bEnableCompact == false) pListeVar->Branch("RunID", &runid, "RunID/I");
     if (bEnablePrimaryEnergy) pListeVar->Branch("PrimaryEnergy", &bPrimaryEnergy, "primaryEnergy/F");
@@ -340,6 +343,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   }
 
   trackid = step->GetTrack()->GetTrackID();
+  parentid = step->GetTrack()->GetParentID();
   eventid = GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   runid   = GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
 
@@ -407,6 +411,8 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
   //---------Write energy of step present at the simulation--------------------------
   e = stepPoint->GetKineticEnergy();
+  ekPost=step->GetPostStepPoint()->GetKineticEnergy();
+  ekPre=step->GetPreStepPoint()->GetKineticEnergy();
 
   c = step->GetTrack()->GetDefinition()->GetAtomicNumber();//std::floor(stepPoint->GetCharge()+0.1);  //floor & +0.1 to avoid round off error
   m = step->GetTrack()->GetDefinition()->GetAtomicMass();

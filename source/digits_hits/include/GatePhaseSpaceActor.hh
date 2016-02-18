@@ -162,6 +162,8 @@ protected:
   float dy;
   float dz;
   float e;
+  float ekPost;
+  float ekPre;
   float w;
   float t;//t is either time or local time.
   G4int m;
@@ -171,6 +173,7 @@ protected:
   Char_t pro_step[256];
 
   int trackid;
+  int parentid;
   int eventid;
   int runid;
  

@@ -48,6 +48,8 @@ GateDetectorMessenger::GateDetectorMessenger(GateDetectorConstruction* GateDet)
   
   new G4UnitDefinition( "keV/um", "keV/um", "Energy/Length", keV/um );
   new G4UnitDefinition( "MeV/mm", "MeV/mm", "Energy/Length", MeV/mm );
+  new G4UnitDefinition( "keV/mm", "keV/mm", "Energy/Length", keV/mm );
+  new G4UnitDefinition( "MeV/um", "MeV/um", "Energy/Length", MeV/um );
   
   G4double turn   = twopi * radian;
 

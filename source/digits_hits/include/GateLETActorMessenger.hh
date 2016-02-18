@@ -37,6 +37,7 @@ protected:
   G4UIcmdWithABool * pEnableLETUncertaintyCmd;
   G4UIcmdWithABool * pSetDoseToWaterCmd;
   G4UIcmdWithAString * pAveragingTypeCmd; 
+  G4UIcmdWithABool * pSetParallelCalculationCmd;
 };
 
 #endif /* end #define GATELETACTORMESSENGER_HH*/

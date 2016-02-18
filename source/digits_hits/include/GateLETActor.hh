@@ -45,6 +45,7 @@ class GateLETActor : public GateVImageActor
   //test AResch 25 01 2016
   void EnableLETUncertaintyImage(bool b) { mIsLETUncertaintyImageEnabled = b; }
   void SetDoseToWater(bool b) { mIsDoseToWaterEnabled = b; }
+  void SetParallelCalculation(bool b) { mIsParallelCalculationEnabled = b; }
   void SetLETType(G4String s) { mAveragingType = s; }
 
   virtual void BeginOfRunAction(const G4Run*r);
@@ -78,9 +79,13 @@ protected:
   GateImage mEdepImage;
   GateImage mFinalImage;
   G4String mLETFilename;
+  G4String uncertaintyFilename;
+  GateImage mLETSecondMomentImage;
+  GateImage mLETUncertaintyFinalImage;
 
   bool mIsDoseAveraged;
   bool mIsTrackAveraged;
+  bool mIsParallelCalculationEnabled;
   
   G4EmCalculator * emcalc;
 };

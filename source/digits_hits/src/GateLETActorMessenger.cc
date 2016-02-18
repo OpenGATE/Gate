@@ -63,6 +63,11 @@ void GateLETActorMessenger::BuildCommands(G4String base)
   guid = G4String("Enable dose-to-water correction in LET calculation");
   pSetDoseToWaterCmd->SetGuidance(guid);
   
+  n = base+"/doParallelCalculation";
+  pSetParallelCalculationCmd = new G4UIcmdWithABool(n, this);
+  guid = G4String("Enable parallel calculation: creates 2 output files for each simulation");
+  pSetParallelCalculationCmd->SetGuidance(guid);
+  
   n = base +"/setType";
   pAveragingTypeCmd = new G4UIcmdWithAString(n,this);
   guid = G4String("Sets  averaging method ('DoseAverage', 'TrackAverage'). Default is 'DoseAverage'.");
@@ -83,6 +88,8 @@ void GateLETActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
     //G4cout<<"this is mRestricted in messenger"<< pSetDeltaRestrictedCmd->GetNewDoubleValue(newValue)<<G4endl;
   if (cmd == pEnableLETUncertaintyCmd) pLETActor->EnableLETUncertaintyImage(pEnableLETUncertaintyCmd->GetNewBoolValue(newValue));
   if (cmd == pSetDoseToWaterCmd) pLETActor->SetDoseToWater(pSetDoseToWaterCmd->GetNewBoolValue(newValue));
+  if (cmd == pSetParallelCalculationCmd) pLETActor->SetParallelCalculation(pSetParallelCalculationCmd->GetNewBoolValue(newValue));
+  
   if (cmd == pAveragingTypeCmd) pLETActor->SetLETType(newValue);
    
   GateImageActorMessenger::SetNewValue( cmd, newValue);
