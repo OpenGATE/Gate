@@ -1,0 +1,85 @@
+#/control/execute mac/visu.mac
+/vis/disable
+/control/execute mac/verbose.mac
+/gate/geometry/setMaterialDatabase data/ICRP_HUmaterials.db
+
+# World
+/gate/world/setMaterial            Vacuum
+/gate/world/geometry/setXLength    5 m
+/gate/world/geometry/setYLength    5 m
+/gate/world/geometry/setZLength    5 m
+
+# Physics list
+/gate/physics/addPhysicsList emlivermore
+
+# Beam
+/gate/source/addSource mybeam gps
+/gate/source/mybeam/gps/particle       gamma
+/gate/source/mybeam/gps/ene/type       User
+/gate/source/mybeam/gps/hist/type      energy
+/gate/source/mybeam/gps/pos/halfx      8 mm
+/gate/source/mybeam/gps/pos/halfy      8 mm
+/gate/source/mybeam/gps/pos/rot1       1 0 0
+/gate/source/mybeam/gps/pos/rot2       0 1 0
+/gate/source/mybeam/gps/pos/centre     0 0 1060 mm
+/gate/source/mybeam/gps/pos/type       Plane
+/gate/source/mybeam/gps/pos/shape      Rectangle
+/gate/source/mybeam/gps/ang/type       focused
+/gate/source/mybeam/gps/ang/focuspoint 0 0 1000 mm
+
+/control/execute mac/120keV.mac
+
+# Insert phantom
+/gate/world/daughters/name                              patient
+/gate/world/daughters/insert                            ImageNestedParametrisedVolume
+/gate/patient/geometry/setHUToMaterialFile              data/ICRP_HU2mat.txt
+/gate/patient/geometry/setImage                         data/ICRP_AF.mhd
+/gate/patient/geometry/TranslateTheImageAtThisIsoCenter 0 0 0 mm
+/gate/patient/vis/forceWireframe
+
+# Detection plane
+/gate/world/daughters/name                   DetectorPlane
+/gate/world/daughters/insert                 box
+/gate/DetectorPlane/geometry/setXLength      409.6 mm
+/gate/DetectorPlane/geometry/setYLength      409.6 mm
+/gate/DetectorPlane/geometry/setZLength      1 nm
+/gate/DetectorPlane/placement/setTranslation 0 0 -536 mm
+/gate/DetectorPlane/setMaterial              Vacuum
+/gate/DetectorPlane/vis/setVisible           1
+/gate/DetectorPlane/vis/setColor             yellow
+
+# Fluence of gamma
+/gate/actor/addActor FixedForcedDetectionActor ffda
+/gate/actor/ffda/attachTo                     world
+/gate/actor/ffda/setDetector                  DetectorPlane
+/gate/actor/ffda/setDetectorResolution        128 128
+/gate/actor/ffda/geometryFilename             output/geometry.xml
+/gate/actor/ffda/primaryFilename              output/primary.mha
+/gate/actor/ffda/attenuationFilename          output/attenuation.mha
+/gate/actor/ffda/rayleighFilename             output/rayleigh.mha
+/gate/actor/ffda/comptonFilename              output/compton.mha
+/gate/actor/ffda/secondaryFilename            output/secondary.mha
+/gate/actor/ffda/totalFilename                output/total.mha
+/gate/actor/ffda/enableUncertaintySecondary   true
+/gate/actor/ffda/enableSquaredSecondary       true
+/gate/actor/ffda/materialMuFilename           output/materialMu.mha
+/gate/actor/ffda/flatFieldFilename            output/flatField.mha
+/gate/actor/ffda/responseDetectorFilename     data/responseDetector.txt
+/gate/actor/ffda/energyResolvedBinSize        0 keV
+
+# Save particles stats
+/gate/actor/addActor  SimulationStatisticActor stat
+/gate/actor/stat/save output/stats.txt
+
+/gate/run/initialize
+
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed 123456
+
+/gate/application/setTimeSlice 1 s
+/gate/application/setTimeStart 0 s
+/gate/application/setTimeStop 1 s
+
+/gate/application/setTotalNumberOfPrimaries 10000
+/gate/application/start
+

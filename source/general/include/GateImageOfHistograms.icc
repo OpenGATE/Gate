@@ -1,0 +1,59 @@
+/*----------------------
+  GATE version name: gate_v7
+
+  Copyright (C): OpenGATE Collaboration
+
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
+
+
+
+//-----------------------------------------------------------------------------
+template<class PT>
+void GateImageOfHistograms::ConvertPixelOrderToXYZH(std::vector<PT> & input,
+                                                    std::vector<PT> & output)
+{
+  output.resize(nbOfValues*nbOfBins);
+  std::fill(output.begin(), output.end(), 0.0);
+  unsigned long index_image = 0;
+  unsigned long index_data = 0;
+  for(unsigned int l=0; l<nbOfBins; l++) {
+    index_data = l;
+    for(unsigned int k=0; k<sizeZ; k++) {
+      for(unsigned int j=0; j<sizeY; j++) {
+        for(unsigned int i=0; i<sizeX; i++) {
+          output[index_image] = input[index_data];
+          index_image++;
+          index_data +=nbOfBins;
+        }
+      }
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PT>
+void GateImageOfHistograms::ConvertPixelOrderToHXYZ(std::vector<PT> & input,
+                                                    std::vector<PT> & output)
+{
+  output.resize(nbOfValues*nbOfBins);
+  std::fill(output.begin(), output.end(), 0.0);
+  unsigned long index_image = 0;
+  unsigned long index_data = 0;
+  for(unsigned int k=0; k<sizeZ; k++) {
+    for(unsigned int j=0; j<sizeY; j++) {
+      for(unsigned int i=0; i<sizeX; i++) {
+        for(unsigned int l=0; l<nbOfBins; l++) {
+          output[index_data] = input[index_image+l*nbOfValues];
+          index_data++;
+        }
+        index_image++;
+      }
+    }
+  }
+}
+//-----------------------------------------------------------------------------

@@ -42,6 +42,17 @@ ELSE()
   FIND_PACKAGE(Geant4 REQUIRED)
 ENDIF()
 
+#=========================================================
+# Refuse to build with MT geant4, allow dev override
+OPTION(GATE_ALLOW_MT_GEANT4 "Allow multithreaded geant4 (for MT Gate development)" OFF)
+IF(Geant4_multithreaded_FOUND)
+    IF(GATE_ALLOW_MT_GEANT4)
+        MESSAGE(WARNING "GATE does not yet work correctly with multithreaded Geant4, proceed with caution...")
+    ELSE()
+        MESSAGE(FATAL_ERROR "GATE should be compiled with a non-multithreaded installation of Geant4")
+    ENDIF()
+ENDIF()
+
 # Check if OpenGL headers are still available
 IF(Geant4_qt_FOUND OR Geant4_vis_opengl_x11_FOUND)
   FIND_PACKAGE(OpenGL QUIET)
@@ -59,8 +70,8 @@ STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION
 #MESSAGE(${G4VERSION_MAJOR})
 #MESSAGE(${G4VERSION_MINOR})
 #MESSAGE(${G4VERSION_PATCH})
-IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.1)
-  MESSAGE("Warning! GATE version 7.1 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.1 distribution instead.")
+IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.1 AND NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.2)
+  MESSAGE("Warning! GATE version 7.1 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.1 or 10.2 distribution instead.")
 ENDIF()
 
 #=========================================================
@@ -75,6 +86,10 @@ OPTION(GATE_USE_LMF "Gate use LMF" OFF)
 OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
 OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4. Use OFF if you compile G4 with embedded CLHEP" OFF)
 OPTION(GATE_USE_GPU "Gate use GPU (voxelized src and tracking), need CUDA " OFF)
+#=========================================================
+# RTK / ITK
+option(GATE_USE_RTK "Use the Reconstruction Toolkit (RTK, requires also ITK)" OFF)
+option(GATE_USE_ITK "Use the Insight Toolkit (ITK, required by RTK)" OFF)
 
 #=========================================================
 # ROOT
@@ -105,7 +120,6 @@ IF(GATE_USE_SYSTEM_CLHEP)
   FIND_PACKAGE(CLHEP REQUIRED)
   INCLUDE_DIRECTORIES(${CLHEP_INCLUDE_DIR})
   SET(LINK_DIRECTORIES ${CLHEP_LIBRARIES})
-  MESSAGE("Your current Geant4 version is ${Geant4_VERSION}")
   MESSAGE("Your current CLHEP version is ${CLHEP_VERSION}")
   MESSAGE("Please refer to http://geant4.web.cern.ch/geant4/support/ReleaseNotes4.${G4VERSION_MAJOR}.${G4VERSION_MINOR}.html to verify that your CLHEP version is supported by Geant4.")
 
@@ -161,11 +175,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/source/physics/include
   ${PROJECT_SOURCE_DIR}/source/digits_hits/include
   ${PROJECT_SOURCE_DIR}/source/general/include
-  ${PROJECT_SOURCE_DIR}/source/externals/clhep/include
-  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/
-  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/itkzlib
-  ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/MetaIO
-  ${PROJECT_BINARY_DIR}/itk-mhd/)
+  ${PROJECT_SOURCE_DIR}/source/externals/clhep/include)
 
 #=========================================================
 # Locate sources and headers for this project
@@ -189,7 +199,31 @@ FILE(GLOB headers
   ${PROJECT_SOURCE_DIR}/source/gpu/include/*.hh)
 
 #=========================================================
-# Add the executable, and link it to the Geant4 libraries
+# RTK
+IF(GATE_USE_RTK)
+   FIND_PACKAGE(RTK REQUIRED)
+   IF("${RTK_VERSION_MAJOR}.${RTK_VERSION_MINOR}" VERSION_LESS 1.2)
+       MESSAGE(FATAL_ERROR "RTK version 1.2 is required")
+   ENDIF()
+   INCLUDE(${RTK_USE_FILE})
+   STRING(REPLACE "-pedantic" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+ELSEIF(GATE_USE_ITK)
+  FIND_PACKAGE(ITK REQUIRED)
+  INCLUDE(${ITK_USE_FILE})
+  STRING(REPLACE "-pedantic" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+ELSE()
+  ADD_SUBDIRECTORY(source/externals/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
+  SET(ITK_LIBRARIES MetaIO itkzlib)
+  INCLUDE_DIRECTORIES(
+    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/
+    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/itkzlib
+    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/MetaIO
+    ${PROJECT_BINARY_DIR}/itk-mhd/)
+  SET(ITKMHD_LIBS MetaIO itkzlib)
+ENDIF()
+
+#=========================================================
+# Add the executable, and link it to the Geant4/ROOT/CLHEP/ITK libraries
 IF(GATE_USE_GPU AND CUDA_FOUND)
   SET(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20;-gencode arch=compute_30,code=sm_30;-use_fast_math;-w;--ptxas-options=-v")
   CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
@@ -197,11 +231,7 @@ ELSE(GATE_USE_GPU AND CUDA_FOUND)
   ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
 ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 
-TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} MetaIO itkzlib pthread)
-
-#=========================================================
-# included ITK to read/write mhd image file format
-ADD_SUBDIRECTORY(source/externals/itk-mhd ${PROJECT_BINARY_DIR}/itk-mhd)
+TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} ${RTK_LIBRARIES} pthread)
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
@@ -230,4 +260,15 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
 IF(GATE_USE_STDC11)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 ENDIF(GATE_USE_STDC11)
+#=========================================================
+
+#=========================================================
+# Display Geant4 version
+MESSAGE("Your current Geant4 version is ${Geant4_VERSION}")
+
+#=========================================================
+# Add gprof to RELWITHDEBINFO target
+SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -pg")
+SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} -pg")
+SET(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} -pg")
 #=========================================================

@@ -1,0 +1,26 @@
+#!/bin/bash
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Aluminium]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Argon]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Beryllium]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Boron]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Calcium]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Carbon]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Chlorine]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Fluorine]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Helium]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Hydrogen]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Lithium]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Magnesium]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Neon]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Nitrogen]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Oxygen]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Phosphor]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Potassium]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Silicon]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Sodium]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Sulfur]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Titanium]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Copper]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Zinc]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Silver]'";
+gate_run_submit_cluster.sh mac/main.mac 100 NONE "-a '[ELEMENT\,Tin]'";

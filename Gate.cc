@@ -21,7 +21,6 @@
 #include "G4UImanager.hh"
 #include "G4UIterminal.hh"
 #include "G4UItcsh.hh"
-
 #include "GateRunManager.hh"
 #include "GateMessageManager.hh"
 #include "GateSteppingVerbose.hh"
@@ -39,7 +38,6 @@
 #include "GateDigitizer.hh"
 #include "GateClock.hh"
 #include "GateUIcontrolMessenger.hh"
-
 #ifdef G4ANALYSIS_USE_ROOT
 #include "GateROOTBasicOutput.hh"
 #include "TPluginManager.h"
@@ -50,7 +48,16 @@
 #endif
 #ifdef G4UI_USE
 #include "G4UIExecutive.hh"
+#ifdef G4UI_USE_QT
+#include "qglobal.h"
+#if (QT_VERSION >= QT_VERSION_CHECK(4, 0, 0))
+#include <G4UIQt.hh>
+#include <qmainwindow.h>
 #endif
+#endif
+#endif
+
+
 
 //-----------------------------------------------------------------------------
 void printHelpAndQuit( G4String msg )
@@ -151,7 +158,7 @@ void welcome()
 {
   GateMessage("Core", 0, G4endl);
   GateMessage("Core", 0, "**********************************************************************" << G4endl);
-  GateMessage("Core", 0, " GATE version name: gate_v7.1                                         " << G4endl);
+  GateMessage("Core", 0, " GATE version name: gate_v7.2                                         " << G4endl);
   GateMessage("Core", 0, "                    Copyright : OpenGATE Collaboration                " << G4endl);
   GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 49 (2004) 4543-4561  " << G4endl);
   GateMessage("Core", 0, "                    Reference : Phys. Med. Biol. 56 (2011) 881-901    " << G4endl);
@@ -244,7 +251,7 @@ int main( int argc, char* argv[] )
           printHelpAndQuit("Gate command line help" );
           break;
         case 'v':
-          std::cout << "Gate version is 7.1" << std::endl;
+          std::cout << "Gate version is 7.2" << std::endl;
           exit(0);
           break;
         case 'a':
@@ -331,7 +338,15 @@ int main( int argc, char* argv[] )
   if( isQt )
     {
 #ifdef G4UI_USE
-      ui = new G4UIExecutive( argc, argv );
+	#ifdef G4UI_USE_QT
+    	#if (QT_VERSION >= QT_VERSION_CHECK(4, 0, 0))
+	ui = new G4UIExecutive( argc, argv );
+        G4UIQt* qui = static_cast<G4UIQt*> (UImanager->GetG4UIWindow());
+        if (qui) {
+        qui->GetMainWindow()->setVisible(true);
+        }
+	#endif
+	#endif
 #else
 #ifdef G4UI_USE_TCSH
       session = new G4UIterminal( new G4UItcsh );
