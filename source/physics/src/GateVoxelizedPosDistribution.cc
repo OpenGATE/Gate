@@ -202,8 +202,8 @@ GateVoxelizedPosDistribution::GateVoxelizedPosDistribution(G4String filename)
 
   G4cout << data_filename << G4endl;
   G4cout << "(" << m_nx << "," << m_ny << "," << m_nz << ")" << G4endl;
-  G4cout << "(" << mResolution[0] << "," << mResolution[1] << "," << mResolution[2] << ")" << G4endl;
-  G4cout << "(" << mPosition[0] << "," << mPosition[1] << "," << mPosition[2] << ")" << G4endl;
+  G4cout << mResolution << G4endl;
+  G4cout << mPosition << G4endl;
 
 /* attempt to speed up position generation
   m_xbits = int_log2(m_nx);

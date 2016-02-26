@@ -28,7 +28,11 @@ public:
   G4int GeneratePrimaries(G4Event *event);
   void GeneratePrimaryVertex(G4Event* event);
 
-  void SetMinEnergy(G4double energy) {mMinEnergy = energy;}
+  void SetMinEnergy(G4double energy)
+  {
+    mMinEnergy = energy;
+    CalculateEnergyTable();
+  }
   G4double GetMinEnergy() {return mMinEnergy;}
 
   void SetPositronProbability(G4double probability) {mPosProb = probability;}
@@ -39,7 +43,7 @@ public:
   G4double GetNextTime( G4double timeStart );
 
 protected:
-  G4double mMinEnergy;  // minimum energy below which photons won't be generated TODO: not implemented
+  G4double mMinEnergy;  // minimum energy below which photons won't be generated
 
   G4double mBremProb;   // probability of a brem photon above minEnergy
   G4double mPosProb;    // probability of producing a positron
@@ -55,6 +59,8 @@ protected:
 
   G4ParticleDefinition* pGammaParticleDefinition;
   G4ParticleDefinition* pPositronParticleDefinition;
+
+  void CalculateEnergyTable(); // create the energy table
 
   G4double GetEnergy();
   G4double GetRange(G4double energy);

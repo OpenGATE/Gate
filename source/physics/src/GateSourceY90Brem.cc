@@ -10,20 +10,13 @@ GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
   int i, j;
   ifstream input_file;
 
-  // calculate total probability of bremsstrahlung emission for a single beta
-  mBremProb = 0;
-  for(i=0;i<200;i++)
-    mBremProb += mEnergyTable[i];
 
   mPosProb = 3.186e-5;
   mGammaProb = 0.0;
 
   mCumulativeEnergyTable = new G4double[200];
-  mCumulativeEnergyTable[0]  = mEnergyTable[0];
-  for(i=1;i<200;i++)
-    mCumulativeEnergyTable[i]=mCumulativeEnergyTable[i-1] + mEnergyTable[i];
-  for(i=0;i<200;i++)
-    mCumulativeEnergyTable[i] /= mCumulativeEnergyTable[199];
+  mMinEnergy = 0.0;
+  CalculateEnergyTable();
 
   // convert to cumulative distribution and normalize each row
   mCumulativeRangeTable = new G4double*[100];
@@ -54,7 +47,6 @@ GateSourceY90Brem::GateSourceY90Brem(G4String name) : GateVSource( name )
   pPositronParticleDefinition = particleTable->FindParticle("e+");
 
   m_angSPS->SetAngDistType("iso");
-  mMinEnergy = 0.0;
 
 }
 
@@ -166,6 +158,35 @@ void GateSourceY90Brem::GeneratePrimaryVertex(G4Event*)
   ;
 }
 
+void GateSourceY90Brem::CalculateEnergyTable()
+{
+  G4int i;
+  G4int firstBin;
+
+  // The actual minimum energy is going to fall on a 10 keV boundary. Handling this more exactly
+  // isn't worth the effort, since this is a cutoff to get rid of photons that aren't going anywhere,
+  // not a precisely calculated point
+  firstBin = G4int( mMinEnergy / (10*keV) );
+
+  for(i=0;i<firstBin;i++)
+    mCumulativeEnergyTable[i]  = 0;
+  mCumulativeEnergyTable[firstBin] = mEnergyTable[firstBin];
+  for(i=firstBin+1;i<200;i++)
+    mCumulativeEnergyTable[i]=mCumulativeEnergyTable[i-1] + mEnergyTable[i];
+
+  for(i=0;i<200;i++)
+    mCumulativeEnergyTable[i] /= mCumulativeEnergyTable[199];
+
+  // calculate total probability of bremsstrahlung emission for a single beta
+  mBremProb = mEnergyTable[firstBin];
+  for(i=firstBin+1;i<200;i++)
+    mBremProb += mEnergyTable[i];
+
+  G4cout << "Total brem prob: " << mBremProb << G4endl;
+
+}
+
+
 G4double GateSourceY90Brem::GetEnergy()
 {
   int i=0;
@@ -175,7 +196,7 @@ G4double GateSourceY90Brem::GetEnergy()
   G4double P = G4UniformRand();
   while(P > mCumulativeEnergyTable[i] && i<200)
     i++;
-  energy = (i + G4UniformRand())*10*keV;
+  energy = (i + G4UniformRand())*(10*keV);
 
   return energy;
 }
@@ -193,7 +214,7 @@ G4double GateSourceY90Brem::GetRange(G4double energy)
   while(P > mCumulativeRangeTable[bin][i])
     i++;
 
-  range = (i+ G4UniformRand())*0.1*mm;
+  range = (i+ G4UniformRand())*(0.1*mm);
 
   return range;
 }
