@@ -168,7 +168,8 @@ void GateDoseActor::Construct() {
     mNumberOfHitsImage.Allocate();
   }
 
-  if (mExportMassImage!="" || mDoseAlgorithmType=="MassWeighting") {
+  if (mExportMassImage!="" || mDoseAlgorithmType=="MassWeighting"
+      || mVolumeFilter!="" || mMaterialFilter!="") {
     mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mMassImage.Allocate();
     mVoxelizedMass.Initialize(mVolumeName,mMassImage,mImportMassImage);
@@ -306,12 +307,19 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     return;
   }
 
-  if (mVolumeFilter!=""&&mVolumeFilter!=mVolumeName) {
+  if (mVolumeFilter!=""&&mVolumeFilter+"_phys"!=step->GetPreStepPoint()->GetPhysicalVolume()->GetName()) {
     return;
   }
 
   if (mMaterialFilter!=""&&mMaterialFilter!=step->GetPreStepPoint()->GetMaterial()->GetName()) {
     return;
+  }
+
+  G4String filterVol("");
+  double filterDensity(0.);
+  if (mVolumeFilter!="" || mMaterialFilter!="") {
+    filterVol=step->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetSolid()->GetName();
+    filterDensity=mVoxelizedMass.GetPartialMass(index,filterVol)/mVoxelizedMass.GetPartialVolume(index,filterVol);
   }
 
   // compute sameEvent
@@ -334,6 +342,12 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   // Mass weighting
   if(mDoseAlgorithmType == "MassWeighting")
     density = mVoxelizedMass.GetVoxelMass(index)/mDoseImage.GetVoxelVolume();
+  //---------------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------------
+  // Filters
+  if(filterDensity != 0.)
+    density = filterDensity;
   //---------------------------------------------------------------------------------
 
   double dose=0.;
