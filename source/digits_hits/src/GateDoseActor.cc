@@ -44,6 +44,9 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mImportMassImage = "";
   mExportMassImage = "";
 
+  mVolumeFilter = "";
+  mMaterialFilter = "";
+
   pMessenger = new GateDoseActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateDoseActor() -- end\n");
   emcalc = new G4EmCalculator;
@@ -300,6 +303,14 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   if (index < 0) {
     GateDebugMessage("Actor", 5, "index < 0 : do nothing\n");
     GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end\n");
+    return;
+  }
+
+  if (mVolumeFilter!=""&&mVolumeFilter!=mVolumeName) {
+    return;
+  }
+
+  if (mMaterialFilter!=""&&mMaterialFilter!=step->GetPreStepPoint()->GetMaterial()->GetName()) {
     return;
   }
 
