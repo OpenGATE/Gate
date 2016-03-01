@@ -638,8 +638,10 @@ double GateVoxelizedMass::GetPartialVolumeWithMatName(const int index,const G4St
 {
   mMaterialFilter=MatName;
 
-  if(mIsParameterised)
-    return ParameterizedVolume(index).second;
+  if(!mIsParameterised)
+    GateError("Error: GateVoxelizedMass::GetPartialVolumeWithMatName: This method only work with voxelized volumes !"<<Gateendl);
+
+  return ParameterizedVolume(index).second;
 }
 //-----------------------------------------------------------------------------
 
@@ -648,7 +650,9 @@ double GateVoxelizedMass::GetPartialMassWithMatName(const int index,const G4Stri
 {
   mMaterialFilter=MatName;
 
-  if(mIsParameterised)
+  if(!mIsParameterised)
+    GateError("Error: GateVoxelizedMass::GetPartialMassWithMatName: This method only work with voxelized volumes !"<<Gateendl);
+
     return ParameterizedVolume(index).first;
 }
 //-----------------------------------------------------------------------------
