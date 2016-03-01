@@ -23,6 +23,7 @@ See GATE/LICENSE.txt for further details
 #include "G4UnitsTable.hh"
 #include "GateLETActorMessenger.hh"
 #include "GateImageWithStatistic.hh"
+#include "G4VProcess.hh"
 
 class G4EmCalculator;
 
@@ -71,20 +72,38 @@ protected:
 
   bool mIsRestrictedFlag;
   
+  int mCurrentEvent;
   bool mIsLETUncertaintyImageEnabled;
   bool mIsDoseToWaterEnabled;
   G4String mAveragingType;
   G4double mDeltaRestricted;
-  GateImage mLETImage;
-  GateImage mEdepImage;
-  GateImage mFinalImage;
+  GateImageDouble mLETImage;
+  GateImageDouble mEdepImage;
+  GateImageDouble mFinalImage;
   G4String mLETFilename;
   G4String uncertaintyFilename;
-  GateImage mLETSecondMomentImage;
-  GateImage mLETUncertaintyFinalImage;
+  GateImageDouble mLETSecondMomentImage;
+  GateImageDouble mLETUncertaintyFinalImage;
+  //GateImageWithStatistic mTestImage;
 
   bool mIsDoseAveraged;
   bool mIsTrackAveraged;
+  
+  bool mIsTrackAveragedFluenceAveraged;
+  bool mIsTrackAveragedFluenceTrackAveraged;
+  bool mIsTrackAveragedDXAveraged;
+  bool mIsTrackAveragedDXAveragedCancelled;
+  
+  bool mIsDoseAveragedDEDXAveraged;
+  bool mIsDoseAveragedEdepDXAveraged;
+  
+  GateImageDouble mLETTempImage;
+  GateImageInt mNumberOfHitsImage;
+  GateImageInt mLastHitEventImage;
+  bool mIsRelUncertEnabled;
+  
+  GateImageDouble mRelUncertImage;
+  
   bool mIsParallelCalculationEnabled;
   
   G4EmCalculator * emcalc;
