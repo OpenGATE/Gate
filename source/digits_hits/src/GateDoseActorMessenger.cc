@@ -158,13 +158,13 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   pExportMassImageCmd->SetParameterName("Export mass image",false);
 
 
-  n = base+"/volumeFilter";
+  n = base+"/setVolumeFilter";
   pVolumeFilterCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Volume filter");
   pVolumeFilterCmd->SetGuidance(guid);
   pVolumeFilterCmd->SetParameterName("Volume filter",false);
 
-  n = base+"/materialFilter";
+  n = base+"/setMaterialFilter";
   pMaterialFilterCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Material filter");
   pMaterialFilterCmd->SetGuidance(guid);

@@ -317,9 +317,12 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
   G4String filterVol("");
   double filterDensity(0.);
-  if (mVolumeFilter!="" || mMaterialFilter!="") {
+  if (mVolumeFilter!="") {
     filterVol=step->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetSolid()->GetName();
-    filterDensity=mVoxelizedMass.GetPartialMass(index,filterVol)/mVoxelizedMass.GetPartialVolume(index,filterVol);
+    filterDensity=mVoxelizedMass.GetPartialMassWithSV(index,filterVol)/mVoxelizedMass.GetPartialVolumeWithSV(index,filterVol);
+  }
+  if (mMaterialFilter!="") {
+    filterDensity=mVoxelizedMass.GetPartialMassWithMatName(index,mMaterialFilter)/mVoxelizedMass.GetPartialVolumeWithMatName(index,mMaterialFilter);
   }
 
   // compute sameEvent

@@ -41,12 +41,15 @@ class GateVoxelizedMass
   virtual void GenerateDosels(const int index);
   virtual std::pair<double,double> ParameterizedVolume(const int index);
   virtual std::pair<double,double> VoxelIteration(G4VPhysicalVolume* motherPV,const int Generation,G4RotationMatrix MotherRotation,G4ThreeVector MotherTranslation,const int index);
-  double GetPartialVolume(const int index,const G4String SVName);
-  double GetTotalVolume();
-  double GetPartialMass(const int index,const G4String SVName);
-  int GetNumberOfVolumes(const int index);
-  void SetEdep(const int index,const G4String SVName,const double Edep);
-  double GetMaxDose(const int index);
+  double  GetPartialVolumeWithSV     (const int index,const G4String SVName);
+  double  GetPartialMassWithSV       (const int index,const G4String SVName);
+  double  GetPartialVolumeWithMatName(const int index,const G4String MatName);
+  double  GetPartialMassWithMatName  (const int index,const G4String MatName);
+  double  GetTotalVolume();
+  int     GetNumberOfVolumes(const int index);
+  double  GetMaxDose(const int index);
+  void    SetEdep(const int index,const G4String SVName,const double Edep);
+  void    SetMaterialFilter(G4String Material);
   GateImageDouble UpdateImage(GateImageDouble image);
 
  protected:
@@ -72,7 +75,8 @@ class GateVoxelizedMass
   std::vector<double> doselMax;
   std::vector<double> doselExternalMass;
 
-  std::vector<std::vector<std::vector<double> > > voxelMass;
+  std::vector<std::vector<std::vector<double> > >   voxelMass;
+  std::vector<std::vector<std::vector<G4String> > > voxelMatName;
   double voxelCubicVolume;
 
   std::vector<G4VSolid*> vectorSV;
@@ -82,6 +86,7 @@ class GateVoxelizedMass
 
   G4String mVolumeName;
   G4String mMassFile;
+  G4String mMaterialFilter;
 
   bool mIsInitialized;
   bool mIsParameterised;
