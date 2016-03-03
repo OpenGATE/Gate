@@ -328,10 +328,14 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
   std::ifstream is;
   OpenFileInput(mHounsfieldToImageMaterialTableFilename, is);
   mHounsfieldMaterialTable.Reset();
-  // mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(), pImage->GetOutsideValue()+1,"worldDefaultAir");
+
+  //FIXME: remove these two lines, we should load the HU-file as-is. It's up to the user to make sure it works.
+  // GetOutsideValue returns the lowest value found in the image - 1. NOT the lowest value in mHounsfieldToImageMaterialTableFilename
   G4String parentMat = GetParentVolume()->GetMaterialName();
   mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue(),parentMat);
 
+  double low = 1e6; //must start oppositely for the comparisons to work.
+  double high = -1e6;
   while (is) {
     skipComment(is);
     double h1,h2;
@@ -340,6 +344,8 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
     is >> h2;
     G4String n;
     is >> n;
+    low = (h1<low)?h1:low; //set low to h1 if h1 is lower
+    high = (h2>high)?h2:high; //set high to h2 if h2 is higher
     if (is) {
       if(h2> pImage->GetOutsideValue()){
         if(h1<pImage->GetOutsideValue()+1) h1=pImage->GetOutsideValue()+1;
@@ -347,10 +353,19 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
       }
     }
   }
+
+  // Bounds check
+  if(pImage->GetMinValue() < low || pImage->GetMaxValue() > high){
+      GateError("The image contains HU indices out of range of the HU range found in " <<
+            mHounsfieldToImageMaterialTableFilename <<
+            "\nmin, max:" << low << ", " << high <<
+            ".\nmin, max in image: " << pImage->GetMinValue() << ", " << pImage->GetMaxValue() <<
+            "\nAbort.\n");
+  }
   //  if (mHounsfieldMaterialTable.GetNumberOfMaterials() == 0) {
   if (mHounsfieldMaterialTable.GetNumberOfMaterials() == 1 ) {//there is a default mat = worldDefaultAir
     GateError("No Hounsfield material defined in the file "
-	      << mHounsfieldToImageMaterialTableFilename << ". Abort\n");
+          << mHounsfieldToImageMaterialTableFilename << ". Abort.\n");
   }
 
   // Loop, create map H->label + verify

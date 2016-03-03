@@ -1,0 +1,86 @@
+#=====================================================
+# VERBOSE and VISUALISATION
+#=====================================================
+
+/control/execute mac/verbose.mac
+#/control/execute mac/visu.mac
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+# -----------------------------------------------------
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+/gate/geometry/setMaterialDatabase data/GateMaterialsElements.db
+
+# -----------------------------------------------------
+# World
+/gate/world/geometry/setXLength 3 m
+/gate/world/geometry/setYLength 3 m
+/gate/world/geometry/setZLength 3 m
+/gate/world/setMaterial Vacuum
+
+# -----------------------------------------------------
+# simple box
+/gate/world/daughters/name Box
+/gate/world/daughters/insert box
+/gate/Box/setMaterial {ELEMENT}
+/gate/Box/geometry/setXLength 70 cm
+/gate/Box/geometry/setYLength 70 cm
+/gate/Box/geometry/setZLength 70 cm
+/gate/Box/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/Box/vis/setColor      blue
+/gate/Box/vis/setVisible    1
+
+#=====================================================
+# PHYSICS
+#=====================================================
+
+/control/execute mac/physics.mac
+
+#=====================================================
+# DETECTORS
+#=====================================================
+
+/gate/actor/addActor               SimulationStatisticActor stat
+/gate/actor/stat/save              output/db-{ELEMENT}-stat.txt
+/gate/actor/stat/saveEveryNSeconds 30
+
+## Set maximum proton energy (used in proton-monoE.mac too)
+/control/alias PMAX 200
+/gate/actor/addActor                     PromptGammaStatisticActor  pgstat
+/gate/actor/pgstat/save                  output/db-{ELEMENT}.root
+/gate/actor/pgstat/attachTo    	         Box
+/gate/actor/pgstat/setProtonMaxEnergy    {PMAX} MeV
+/gate/actor/pgstat/setGammaMaxEnergy     10 MeV
+/gate/actor/pgstat/setProtonMinEnergy    0 MeV
+/gate/actor/pgstat/setGammaMinEnergy     0 MeV
+/gate/actor/pgstat/setProtonNbBins       250
+/gate/actor/pgstat/setGammaNbBins        250
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+
+#=====================================================
+# BEAMS
+#=====================================================
+
+/control/execute mac/proton-monoE.mac
+
+#=====================================================
+# START BEAMS
+#=====================================================
+
+#/tracking/verbose 2
+
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed auto
+/gate/application/noGlobalOutput
+/gate/run/enableGlobalOutput false
+/gate/application/setTotalNumberOfPrimaries 10000000
+#/gate/application/setTotalNumberOfPrimaries 10
+
+/gate/application/start

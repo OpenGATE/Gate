@@ -60,3 +60,9 @@ GateAddExampleData("DATA{example_dosimetry/electron_radiotherapy/data/Rando.raw}
 GateAddExampleData("DATA{example_fluorescence/data/fluorescence.pdf}")
 GateAddExampleData("DATA{example_fluorescence/data/voxelisedPhantom.raw}")
 GateAddExampleData("DATA{example_CT/fixedForcedDetectionCT/data/ICRP_AF.raw}")
+GateAddExampleData("DATA{example_doseactor/voxelized-phantom/data/PhantomSlice10px.mha}")
+
+GateAddExampleData("DATA{example_vpgtle/stage1/data/patient-2mm.raw}")
+GateAddExampleData("DATA{example_vpgtle/stage1/data/pgdb.root}")
+GateAddExampleData("DATA{example_vpgtle/stage2/data/patient-2mm.raw}")
+GateAddExampleData("DATA{example_vpgtle/stage2/data/source.raw}")

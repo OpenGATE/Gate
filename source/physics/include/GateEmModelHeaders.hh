@@ -25,8 +25,19 @@ See GATE/LICENSE.txt for further details
 #include "G4PenelopeAnnihilationModel.hh"
 
 //PhotoElectric
-#include "G4LivermorePhotoElectricModel.hh"
 #include "G4LivermorePolarizedPhotoElectricModel.hh"
+// The following three lines are necessary to work around a bug in the
+// Geant4 10.02 release (December 2015): the "polarized" Livermore
+// photo-electric model include file has the exact same #include guard
+// as the (not polarized) Livermore photo-electric model.
+// FIXME: once Geant4 releases a patched version in which this issue
+// is fixed, this ugly work-around can be removed. Maybe we should then
+// add a Geant4 version check in CMakeLists.txt to warn in case the
+// user still uses the unpatched 4.10.02 version.
+#ifdef G4LivermorePhotoElectricModel_h
+#undef G4LivermorePhotoElectricModel_h
+#endif
+#include "G4LivermorePhotoElectricModel.hh"
 #include "G4PenelopePhotoElectricModel.hh"
 
 //Rayleigh

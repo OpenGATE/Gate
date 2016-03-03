@@ -10,7 +10,8 @@ See GATE/LICENSE.txt for further details
   \class  GateParticleFilter
   \author thibault.frisson@creatis.insa-lyon.fr
           laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
+    david.sarrut@creatis.insa-lyon.fr
+    brent.huisman@creatis.insa-lyon.fr
 */
 
 
@@ -26,7 +27,7 @@ See GATE/LICENSE.txt for further details
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
 
-class  GateParticleFilter : 
+class  GateParticleFilter :
   public GateVFilter
 {
 public:
@@ -35,22 +36,24 @@ public:
 
   FCT_FOR_AUTO_CREATOR_FILTER(GateParticleFilter)
 
-  virtual G4bool Accept(const G4Track*);
+  virtual G4bool Accept(const G4Track *);
 
-  void Add(const G4String& particleName);
-  void AddParent(const G4String& particleName);
- // add the particle into acceptable particle list.
+  void Add(const G4String &particleName);
+  void AddParent(const G4String &particleName);
+  void AddDirectParent(const G4String &particleName);
+  // add the particle into acceptable particle list.
   //
   virtual void show();
 
 private:
- std::vector<G4String> thePdef;
- std::vector<G4String> theParentPdef;
- GateParticleFilterMessenger * pPartMessenger;
- 
+  std::vector<G4String> thePdef;
+  std::vector<G4String> theParentPdef;
+  std::vector<G4String> theDirectParentPdef;
+  GateParticleFilterMessenger *pPartMessenger;
+
   int nFilteredParticles;
 };
 
-MAKE_AUTO_CREATOR_FILTER(particleFilter,GateParticleFilter)
+MAKE_AUTO_CREATOR_FILTER(particleFilter, GateParticleFilter)
 
 #endif /* end #define GATEPARTICLEFILTER_HH */

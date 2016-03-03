@@ -52,6 +52,12 @@ void GateParticleFilterMessenger::BuildCommands(G4String base)
   guidance = "Add parent particle";
   pAddParentParticleCmd->SetGuidance(guidance);
   pAddParentParticleCmd->SetParameterName("Particle name",false);
+
+  bb = base+"/addDirectParentParticle";
+  pAddDirectParentParticleCmd = new G4UIcmdWithAString(bb,this);
+  guidance = "Add direct parent particle";
+  pAddDirectParentParticleCmd->SetGuidance(guidance);
+  pAddDirectParentParticleCmd->SetParameterName("Particle name",false);
 }
 //-----------------------------------------------------------------------------
 
@@ -63,6 +69,8 @@ void GateParticleFilterMessenger::SetNewValue(G4UIcommand* command, G4String par
       pParticleFilter->Add(param);
   if(command==pAddParentParticleCmd)
       pParticleFilter->AddParent(param);
+  if(command==pAddDirectParentParticleCmd)
+      pParticleFilter->AddDirectParent(param);
 
 }
 //-----------------------------------------------------------------------------
