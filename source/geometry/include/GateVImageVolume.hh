@@ -102,6 +102,9 @@ public:
   /// Gets the Image
   inline ImageType* GetImage() { return pImage; }
   inline const ImageType* GetImage() const { return pImage; }
+  
+  // Change Imagefile during simulation for GateImageDeformActor
+  inline void SetImage(ImageType* imageImported) { pImage = imageImported; }
 
   /// Returns the volume's transform matrix
   inline G4RotationMatrix GetTransformMatrix() const { return mTransformMatrix; }
@@ -163,15 +166,16 @@ public:
   void SetLabeledImageFilename(G4String filename);
   void SetDensityImageFilename(G4String filename);
   void EnableBoundingBoxOnly(bool b);
-
-protected:
-
+  
   //-----------------------------------------------------------------------------
   /// Loads the image
   /// If add1VoxelMargin is true then a margin of one voxel in each direction is added to the image (the margin voxels have the value -1).
   void LoadImage(bool add1VoxelMargin);
   /// Loads the LabelToMaterial file
   void LoadImageMaterialsTable();
+  
+protected:
+
   void LoadImageMaterialsFromHounsfieldTable();
   void LoadImageMaterialsFromLabelTable();
   void LoadImageMaterialsFromRangeTable();
