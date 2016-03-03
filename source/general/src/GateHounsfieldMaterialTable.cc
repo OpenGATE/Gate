@@ -118,7 +118,8 @@ void GateHounsfieldMaterialTable::AddMaterial(double H1, double H2, G4String nam
   mat.mName = name;
   mat.mMaterial = theMaterialDatabase.GetMaterial(name);
   mat.md1=mat.mMaterial->GetDensity();
-  mMaterialsVector.push_back(mat);  
+  mMaterialsVector.push_back(mat);
+  GateMessage("Actor",3,H1 << " " << H2 << " " << name);
 }
 //-----------------------------------------------------------------------------
 

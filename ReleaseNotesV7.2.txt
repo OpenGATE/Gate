@@ -1,0 +1,85 @@
+
+                     #  *ooooOOOO0000OOOOoooo*  #
+                     #  *                    *  #
+                     #  *    GATE_v7.2       *  #
+                     #  *                    *  #
+                     #  *ooooOOOO0000OOOOoooo*  #
+
+
+                          # *------------* #
+                          # * 02/15/2016 * #
+                          # *------------* #
+
+
+
+-------------------------------
+General set-up and installation:
+-------------------------------
+
+	- This version is validated for Geant4 10.2 and Geant4 10.1 
+	- The compilation is validated for from gcc4.4 to gcc4.9
+	- It is no more needed to use system CLHEP. Geant4 embedded version now works (flag GATE_USE_SYSTEM_CLHEP=OFF by default). 
+	  Alternatively, users may still use system CLHEP version 2.3.1.1 (put the flag ON).
+	- To download binary data for benchmark and example folders, set GATE_DOWNLOAD_BENCHMARKS_DATA and GATE_DOWNLOAD_EXAMPLES_DATA
+	  variables to ON.
+	- For GPU features the CUDA tools are needed (see doc). 
+
+
+----------------------------------------------------------------------------
+All information regarding the installation are provided by the documentation:
+----------------------------------------------------------------------------
+
+Generic page: 		http://wiki.opengatecollaboration.org/index.php/InstallationGuideV7.2
+Cmake procedure: 	http://wiki.opengatecollaboration.org/index.php/New_Compilation_ProcedureV7.2
+GPU modules:		http://wiki.opengatecollaboration.org/index.php/New_Compilation_ProcedureV7.2#GPU_.26_CUDA_tools
+
+
+-----------------------------
+New developments and features:
+-----------------------------
+
+
+	- GATE must use GEANT4 10.2, compiled without MT support
+
+ 	- New X-ray imaging Fixed Forced Detection (FFD) actor (analytic primary radiations / fixed forced variance reduction 		  technique for scattered radiations). It requires RTK v1.2 (http://www.openrtk.org)
+
+	- New vpgTLE actor to compute prompt-gamma yield (10^3 faster than conventional Monte-Carlo)
+
+	- Improve DoseActor (MassWeighting and buildAndDumpDensityImage option)
+
+	- Qt5 compatible (if Geant4 is linked with Qt5)
+
+	- Default material is now NIST Air
+
+	- IAEA phase space bug correction
+
+	- C++11 compatibility
+
+	- ImageActor now accepts any combination of two among Size, Voxel Size and Resolution
+
+	- Phase space: change branch names to reflect G4 names (CreatorProcess and DefinedStepProcess)
+
+	- Save a lot of memory in TPSPencilBeam
+
+	- Various bug fixes
+
+
+---------------------
+Documentation updates:
+---------------------
+
+Generic page: 		    http://www.opengatecollaboration.org/index.php/Main_Page
+Dedicated wiki page: 	    http://wiki.opengatecollaboration.org/index.php/Users_Guide_V7.2
+
+
+--------
+Examples:
+--------
+
+   - New X-ray imaging Fixed Forced Detection (FFD) actor:
+	  PATH_TO/examples/example_CT/fixedForcedDetectionCT
+	- New vpgTLE actor: 
+	  PATH_TO/examples/example_vpgtle
+	- Improve DoseActor:
+	  PATH_TO/examples/example_doseactor
+

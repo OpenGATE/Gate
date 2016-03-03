@@ -54,8 +54,8 @@
 #include "GateIAEAHeader.h"
 #include "GateIAEAPhsp.h"
 
-#define false 0
-#define true  1
+#define iaea_false 0
+#define iaea_true  1
 
 // These variables are defined globally. They contain pointers
 // to header and record structures defined by calling iaea_new_source()
@@ -109,7 +109,7 @@ void iaea_new_source(IAEA_I32 *source_ID, char *header_file,
    } // String length < 1
 
    if( !__iaea_n_source ) { // called for the first time
-       for(int j=0; j<MAX_NUM_SOURCES; j++) __iaea_source_used[j] = false;
+       for(int j=0; j<MAX_NUM_SOURCES; j++) __iaea_source_used[j] = iaea_false;
    }
    int sid=-1;
    // do we have a spare spot in the arrays ?
@@ -125,7 +125,7 @@ void iaea_new_source(IAEA_I32 *source_ID, char *header_file,
        }
        sid = __iaea_n_source-1; *source_ID = sid;
    }
-   __iaea_source_used[sid] = true;
+   __iaea_source_used[sid] = iaea_true;
 
    //int ilen = strlen(header_file);
    // the above requires a null-terminated string, which may not be
@@ -1464,7 +1464,7 @@ void iaea_destroy_source(const IAEA_I32 *source_ID, IAEA_I32 *result)
    // Deallocating IAEA record
    free(p_iaea_record[*source_ID]);
 
-   __iaea_source_used[*source_ID] = false;
+   __iaea_source_used[*source_ID] = iaea_false;
 
    *result = 1; // Return OK
 
