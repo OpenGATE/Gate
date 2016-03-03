@@ -75,10 +75,7 @@ void GateImageDeformActor::Construct()
     {
         GateError ( "GateImageDeformActor -- It must be a image volume" );
     }
-
-    G4cout<<GetObjectName() <<G4endl;
-
-    
+   
     
     GateMessage ( "Actor", 4, "GateImageDeformActor -- Construct - end" << G4endl );
 }
