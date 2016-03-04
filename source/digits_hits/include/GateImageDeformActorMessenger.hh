@@ -30,38 +30,37 @@ class GateImageDeformActorMessenger: public GateActorMessenger
 {
 public:
   
-    /*!
-      \brief GateImageDeformActorMessenger constructor
-      \param v GateImageDeformActor associated object
-    */
-    GateImageDeformActorMessenger(GateImageDeformActor * v);
-    
-    /*!
-      \brief GateImageDeformActor destructor
-    */    
-    ~GateImageDeformActorMessenger();
+  /*!
+    \brief GateImageDeformActorMessenger constructor
+    \param v GateImageDeformActor associated object
+  */
+  GateImageDeformActorMessenger(GateImageDeformActor * v);
+  
+  /*!
+    \brief GateImageDeformActor destructor
+  */    
+  ~GateImageDeformActorMessenger();
 
-    
-    /*!
-      \fn virtual void SetNewValue(G4UIcommand*, G4String);
-      \brief Function from GateActorMessenger
-    */
-    virtual void SetNewValue(G4UIcommand*, G4String);
-    
-    /*!
-      \fn void BuildCommands(G4String base);
-      \brief Function from GateActorMessenger that create "setPDFFile" command
-    */
-    void BuildCommands(G4String base);
-    
-    
-    GateImageDeformActor *mDeform;
+  /*!
+    \fn virtual void SetNewValue(G4UIcommand*, G4String);
+    \brief Function from GateActorMessenger
+  */
+  virtual void SetNewValue(G4UIcommand*, G4String);
+  
+  /*!
+    \fn void BuildCommands(G4String base);
+    \brief Function from GateActorMessenger that create "setPDFFile" command
+  */
+  void BuildCommands(G4String base);
+  
+  
+  GateImageDeformActor *mDeform;
 
   
 protected:
-    G4UIcmdWithAString * pName;
-    G4UIcmdWithAString * pSetPDFFile;
-    G4UIcmdWithABool * mInitialization;
+  G4UIcmdWithAString * pName;
+  G4UIcmdWithAString * pSetPDFFile;
+  G4UIcmdWithABool * mInitialization;
    
 };
 //-------------------------------------------------------------------------------------------------
