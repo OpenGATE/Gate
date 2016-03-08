@@ -29,8 +29,9 @@ GateImageDeformActor::GateImageDeformActor ( G4String name, G4int depth ) :
   GateVActor ( name,depth ), mMessenger ( 0 )
 {
   currentPhase = -1;
+  mFirstRun = true;
   pClock = GateClock::GetInstance();
-
+  
   GateDebugMessageDec ( "Actor",4,"GateImageDeformActor() -- begin" << G4endl );
   mMessenger = new GateImageDeformActorMessenger ( this );
 
@@ -126,6 +127,33 @@ void GateImageDeformActor::BeginOfRunAction ( const G4Run * r )
   GateVActor::BeginOfRunAction ( r );
   GateMessage ( "Actor", 3, "GateImageDeformActor -- Begin of Run" << G4endl );
 
+  if (mFirstRun) // Check only at the first run
+  {
+    mFirstRun = false;
+
+    GateActorManager *actorManager = GateActorManager::GetInstance();
+
+    std::vector<GateVActor*> actorList = actorManager->GetTheListOfActors();
+    
+    for(unsigned int i=0; i<actorList.size(); i++)
+    {
+      if(actorList[i]->GetVolumeName() == this->GetVolumeName()) // Compare if volumes attached to actors are the same
+      {
+        if(actorList[i]->GetTypeName() == "GateDoseActor") 
+        {
+          if(!actorList[i]->GetResetDataAtEachRunFlag())
+          {
+            GateMessage ( "Actor", 0, "Warning, you should put the setResetDataAtEachRunFlag on true in GateDoseActor when using GateImageDeformActor." << G4endl );
+//             GateWarning("You should put the setResetDataAtEachRunFlag on true in GateDoseActor when using GateImageDeformActor.");
+          }
+        }
+      }
+    }
+    
+    actorManager = nullptr;
+    delete actorManager;
+  }
+  
   double i=0.;
   G4int phase=0;
   for ( phase=0; phase<mNumberOfPhases; ++phase )

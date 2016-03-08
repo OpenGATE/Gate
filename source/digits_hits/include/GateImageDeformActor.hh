@@ -134,7 +134,8 @@ private :
   G4int currentPhase;
   GateVImageVolume *pVImageVolume;
   G4int mNumberOfPhases;
-    
+  G4bool mFirstRun;
+  
 };
 
 
