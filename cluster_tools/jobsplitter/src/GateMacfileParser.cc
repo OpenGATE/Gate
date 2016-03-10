@@ -38,7 +38,7 @@ GateMacfileParser::GateMacfileParser(G4String macfileName,G4int numberOfSplits,G
 	PWD=getenv("PWD");
 
 	// For the random engine's seeds
-	srand(time(NULL)*getpid());
+        srand(time(NULL)/**getpid()*/);
 }
 
 GateMacfileParser::~GateMacfileParser()
@@ -59,7 +59,7 @@ G4int GateMacfileParser::GenerateResolvedMacros(G4String directory)
 	}
 	G4String macNameDir=tmp.substr(0,pos_dot);
 	G4String dir=directory+macNameDir+"/";
-	std::ifstream dirstream(dir.c_str());
+	ifstream dirstream(dir.c_str());
 	int i=0;
 	stringstream i_str; 
 	while (dirstream)
@@ -135,7 +135,7 @@ G4String GateMacfileParser::GetOutputMacDir()
 G4int GateMacfileParser::GenerateResolvedMacro(G4String outputName,G4int splitNumber,ofstream& splitfile)
 {
 	char buffer[256];
-	std::ifstream macfile;
+	ifstream macfile;
 	const G4String dir(outputName); 
 	ofstream outputMacfile(dir.c_str());
  
@@ -225,7 +225,7 @@ void GateMacfileParser::InsertSubMacros(ofstream& output,G4int splitNumber,ofstr
 		char buffer[256];
 		G4String extMacfileName=macline.substr(17,256);
 		if (extMacfileName.contains("/")) ExtractLocalDirectory(extMacfileName);
-		std::ifstream extMacfile;
+		ifstream extMacfile;
 		extMacfile.open(extMacfileName);
 		if (!extMacfile)
 		{

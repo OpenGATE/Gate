@@ -4,7 +4,7 @@ https://github.com/OpenGATE/Gate is the public repository of the GATE software.
 
 More details on: http://www.opengatecollaboration.org
 
-* The stable version is branch 'master' (or tag 7.1): http://github.com/OpenGATE/Gate/tree/V7.1
+* The stable version is branch 'master' (or tag 7.2): https://github.com/OpenGATE/Gate/tree/v7.2
 * The current development version is branch 'develop' (default): http://github.com/OpenGATE/Gate/tree/develop
 * Dashboard of daily compilation : http://my.cdash.org/index.php?project=GATE
 * Data of examples: http://midas3.kitware.com/midas/community/28
