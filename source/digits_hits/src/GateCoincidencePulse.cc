@@ -14,8 +14,9 @@ See GATE/LICENSE.txt for further details
 GateCoincidencePulse::GateCoincidencePulse(const GateCoincidencePulse& src)
    :GatePulseList(src)
 {
-    m_startTime=src.m_startTime;
+    m_startTime = src.m_startTime;
     m_endTime = src.m_endTime;
+    m_delayed = src.m_delayed;
 }
 
 std::ostream& operator<<(std::ostream& flux, const GateCoincidencePulse& pulse)
