@@ -15,6 +15,7 @@
 #include "CLHEP/Random/Ranlux64Engine.h"
 #include <ctime>
 #include <cstdlib>
+#include <random>
 #include "GateMessageManager.hh"
 
 #ifdef G4ANALYSIS_USE_ROOT
@@ -122,19 +123,9 @@ void GateRandomEngine::Initialize() {
   if (theSeed=="default" && theSeedFile==" ") {
     isSeed=false;
   } else if (theSeed=="auto") {
-    // initialize seed by reading from kernel random generator /dev/urandom
-    // FIXME may not be portable
-    FILE *hrandom = fopen("/dev/urandom","rb");
-    if(fread(static_cast<void*>(&seed),sizeof(seed),1,hrandom) == 0 ){G4cerr<< "Problem reading data!!!\n";}
-    if(fread(static_cast<void*>(&rest),sizeof(rest),1,hrandom) == 0 ){G4cerr<< "Problem reading data!!!\n";}
-    fclose(hrandom);
-
-    isSeed=true;
-  } else {
-    seed = atol(theSeed.c_str());
-    rest = 0;
-
-    isSeed=true;
+	  std::random_device rd; //this uses /dev/urandom by default
+	  seed = rd(); // Generates a single random int
+	  isSeed=true;
   }
 
   if (isSeed) {
