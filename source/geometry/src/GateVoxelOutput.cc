@@ -38,6 +38,9 @@ See GATE/LICENSE.txt for further details
 #include "GatePhantomHit.hh"
 #include "GateRecorderBase.hh"
 
+// for std::abs
+#include <cmath>
+
 //--------------------------------------------------------------------------------------------------
 GateVoxelOutput::GateVoxelOutput(const G4String& name,const G4String& phantomName, GateOutputMgr* outputMgr,DigiMode digiMode,GateVoxelBoxParameterized* inserter) 
   : GateVOutputModule(name,outputMgr,digiMode),
@@ -211,7 +214,7 @@ void GateVoxelOutput::RecordEndOfAcquisition()
 	double SS( (*m_array)[i] * (*m_array)[i]      );
 	double S2( (*m_arraySquare)[i]                );
 	relativeErrorSquared = ( N*S2 - SS )/ ( (N-1)*SS );
-	if ( abs(relativeErrorSquared) < 1.0e-15 ) relativeErrorSquared=0; // Chop tiny values 
+	if ( std::abs(relativeErrorSquared) < 1.0e-15 ) relativeErrorSquared=0; // Chop tiny values 
 	relativeError=sqrt(relativeErrorSquared);
       }
       

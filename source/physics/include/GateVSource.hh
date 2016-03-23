@@ -93,6 +93,10 @@ public:
   virtual GateSPSEneDistribution* GetEneDist() { return m_eneSPS ; }
   virtual GateSPSAngDistribution* GetAngDist() { return m_angSPS ; }
 
+  virtual G4ThreeVector getRotX() { return mRotX ; }
+  virtual G4ThreeVector getRotY() { return mRotY ; }
+  virtual G4ThreeVector getRotZ() { return mRotZ ; }
+
   G4String GetRelativePlacementVolume();
   void SetRelativePlacementVolume(G4String volname);
   void EnableRegularActivity(bool b);
@@ -206,7 +210,7 @@ protected:
   /* PY Descourt 08/09/2009 */
     G4bool fAbortNow; // detector mode
   G4ThreeVector fPosition;// for detector mode because G4Trajectory does not allow to set first trajectory point position !!!
-G4ParticleDefinition* m_pd;
+  G4ParticleDefinition* m_pd;
 
 };
 

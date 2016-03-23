@@ -1,0 +1,53 @@
+# Voxillized Phantom
+# World
+/gate/world/setMaterial            Air
+/gate/world/geometry/setXLength    8.0 m
+/gate/world/geometry/setYLength    8.0 m
+/gate/world/geometry/setZLength    8.0 m
+
+# Phantom
+# Generate materials from Hounsfield units
+# This isnt gemoetry per se, just preps stuff for the (patient) geometry
+/gate/HounsfieldMaterialGenerator/SetMaterialTable      data/Schneider2000MaterialsTable.txt
+/gate/HounsfieldMaterialGenerator/SetDensityTable       data/Schneider2000DensitiesTable.txt
+/gate/HounsfieldMaterialGenerator/SetDensityTolerance   0.05 g/cm3
+#/gate/HounsfieldMaterialGenerator/SetDensityTolerance   50 g/cm3
+/gate/HounsfieldMaterialGenerator/SetOutputMaterialDatabaseFilename     data/patient-HUmaterials.db
+/gate/HounsfieldMaterialGenerator/SetOutputHUMaterialFilename           data/patient-HU2mat.txt
+/gate/HounsfieldMaterialGenerator/Generate
+
+/gate/world/daughters/name                         patient
+/gate/world/daughters/insert                       ImageNestedParametrisedVolume
+/gate/geometry/setMaterialDatabase              data/patient-HUmaterials.db
+/gate/patient/geometry/setHUToMaterialFile      data/patient-HU2mat.txt
+/gate/patient/geometry/setImage                 data/patient-2mm.mhd
+#/gate/patient/geometry/buildAndDumpLabeledImage	output/labelimage.mhd
+
+#Making the collimator. First, one leaf, which is called collimator, as in Gate hierarchy it'll be the parent.
+/gate/world/daughters/name collimator
+/gate/world/daughters/insert box
+/gate/collimator/setMaterial Tungsten
+/gate/collimator/geometry/setXLength 300. mm
+/gate/collimator/geometry/setYLength 3. mm
+/gate/collimator/geometry/setZLength 170. mm
+/gate/collimator/placement/setTranslation 8.34 20.64 350 mm
+
+# Collimator, second step, duplicate!
+/gate/collimator/repeaters/insert linear
+/gate/collimator/linear/autoCenter true
+/gate/collimator/linear/setRepeatNumber 44
+/gate/collimator/linear/setRepeatVector 0. 7. 0. mm
+
+#now, the detector. simply a box behind the collimators.
+/gate/world/daughters/name detector
+/gate/world/daughters/insert box
+/gate/detector/setMaterial Water
+# X,Y values taken from patient-2mm.mhd. Multiplied by 2
+/gate/detector/geometry/setXLength 548 mm
+/gate/detector/geometry/setYLength 548 mm
+/gate/detector/geometry/setZLength 2 cm
+# X,Y displacement taken from TranslateTheImageAtThisIsoCenter from CT image. multiplied with -1
+# Z is behind the collimator
+/gate/detector/placement/setTranslation 8.34 20.64 500 mm
+/gate/detector/placement/setRotationAxis 1 0 0
+/gate/detector/placement/setRotationAngle 0 deg

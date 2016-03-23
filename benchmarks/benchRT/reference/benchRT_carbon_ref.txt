@@ -1,0 +1,9 @@
+This reference was created by launching a Gate simulation on
+Fri Mar 18 13:58:53 CET 2016
+with the configuration file benchmarks/benchRT/mac/carbon.mac
+from the commit
+commit 946702bd29ba2099788c64fb85d97dbd3b9f72fb
+with the version of gcc
+gcc (SUSE Linux) 4.8.3 20140627 [gcc-4_8-branch revision 212064]
+on the architecture Linux
+Linux psilocybe 3.16.7-29-desktop #1 SMP PREEMPT Fri Oct 23 00:46:04 UTC 2015 (6be6a97) x86_64 x86_64 x86_64 GNU/Linux
