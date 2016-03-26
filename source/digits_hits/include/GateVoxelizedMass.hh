@@ -43,13 +43,13 @@ class GateVoxelizedMass
   virtual std::pair<double,double> VoxelIteration(G4VPhysicalVolume* motherPV,const int Generation,G4RotationMatrix MotherRotation,G4ThreeVector MotherTranslation,const int index);
   double  GetPartialVolumeWithSV     (const int index,const G4String SVName);
   double  GetPartialMassWithSV       (const int index,const G4String SVName);
-  double  GetPartialVolumeWithMatName(const int index,const G4String MatName);
-  double  GetPartialMassWithMatName  (const int index,const G4String MatName);
+  double  GetPartialVolumeWithMatName(const int index);
+  double  GetPartialMassWithMatName  (const int index);
   double  GetTotalVolume();
   int     GetNumberOfVolumes(const int index);
   double  GetMaxDose(const int index);
   void    SetEdep(const int index,const G4String SVName,const double Edep);
-  void    SetMaterialFilter(G4String Material);
+  void    SetMaterialFilter(const G4String MatName);
   GateImageDouble UpdateImage(GateImageDouble image);
 
  protected:

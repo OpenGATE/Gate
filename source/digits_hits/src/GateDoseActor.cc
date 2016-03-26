@@ -173,6 +173,7 @@ void GateDoseActor::Construct() {
     mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mMassImage.Allocate();
     mVoxelizedMass.Initialize(mVolumeName,mMassImage,mImportMassImage);
+    mVoxelizedMass.SetMaterialFilter(mMaterialFilter);
     mMassImage=mVoxelizedMass.UpdateImage(mMassImage);
     if (mExportMassImage!="")
       mMassImage.Write(mExportMassImage);
@@ -322,7 +323,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     filterDensity=mVoxelizedMass.GetPartialMassWithSV(index,filterVol)/mVoxelizedMass.GetPartialVolumeWithSV(index,filterVol);
   }
   if (mMaterialFilter!="") {
-    filterDensity=mVoxelizedMass.GetPartialMassWithMatName(index,mMaterialFilter)/mVoxelizedMass.GetPartialVolumeWithMatName(index,mMaterialFilter);
+    filterDensity=mVoxelizedMass.GetPartialMassWithMatName(index)/mVoxelizedMass.GetPartialVolumeWithMatName(index);
   }
 
   // compute sameEvent

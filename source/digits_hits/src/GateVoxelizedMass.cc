@@ -634,9 +634,10 @@ double GateVoxelizedMass::GetPartialMassWithSV(const int index,const G4String SV
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateVoxelizedMass::GetPartialVolumeWithMatName(const int index,const G4String MatName)
+double GateVoxelizedMass::GetPartialVolumeWithMatName(const int index)
 {
-  mMaterialFilter=MatName;
+  if(mMaterialFilter=="")
+    GateError("Error: GateVoxelizedMass::GetPartialVolumeWithMatName: No material filter defined !"<<Gateendl);
 
   if(!mIsParameterised)
     GateError("Error: GateVoxelizedMass::GetPartialVolumeWithMatName: This method only work with voxelized volumes !"<<Gateendl);
@@ -646,9 +647,10 @@ double GateVoxelizedMass::GetPartialVolumeWithMatName(const int index,const G4St
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateVoxelizedMass::GetPartialMassWithMatName(const int index,const G4String MatName)
+double GateVoxelizedMass::GetPartialMassWithMatName(const int index)
 {
-  mMaterialFilter=MatName;
+  if(mMaterialFilter=="")
+    GateError("Error: GateVoxelizedMass::GetPartialMassWithMatName: No material filter defined !"<<Gateendl);
 
   if(!mIsParameterised)
     GateError("Error: GateVoxelizedMass::GetPartialMassWithMatName: This method only work with voxelized volumes !"<<Gateendl);
@@ -717,5 +719,16 @@ GateImageDouble GateVoxelizedMass::UpdateImage(GateImageDouble image)
       image.AddValue(i,vector[i]/kg);
   }
   return image;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateVoxelizedMass::SetMaterialFilter(const G4String MatName)
+{
+  mMaterialFilter=MatName;
+
+  if(!mIsParameterised)
+    GateError("Error: GateVoxelizedMass::SetMaterialFilter: This filter only work with voxelized volumes !"<<Gateendl);
 }
 //-----------------------------------------------------------------------------
