@@ -308,23 +308,21 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     return;
   }
 
-  if (mVolumeFilter!=""&&mVolumeFilter+"_phys"!=step->GetPreStepPoint()->GetPhysicalVolume()->GetName()) {
+  //if (mVolumeFilter!=""&&mVolumeFilter+"_phys"!=step->GetPreStepPoint()->GetPhysicalVolume()->GetName()) {
+  //  return;
+  //}
+
+  if (mMaterialFilter !="" && mMaterialFilter != step->GetPreStepPoint()->GetMaterial()->GetName()) {
     return;
   }
 
-  if (mMaterialFilter!=""&&mMaterialFilter!=step->GetPreStepPoint()->GetMaterial()->GetName()) {
-    return;
-  }
+  //G4String filterVol("");
+  //double filterDensity(0.);
+  //if (mVolumeFilter!="") {
+  //  filterVol=step->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetSolid()->GetName();
+  //  filterDensity=mVoxelizedMass.GetPartialMassWithSV(index,filterVol)/mVoxelizedMass.GetPartialVolumeWithSV(index,filterVol);
+  //}
 
-  G4String filterVol("");
-  double filterDensity(0.);
-  if (mVolumeFilter!="") {
-    filterVol=step->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetSolid()->GetName();
-    filterDensity=mVoxelizedMass.GetPartialMassWithSV(index,filterVol)/mVoxelizedMass.GetPartialVolumeWithSV(index,filterVol);
-  }
-  if (mMaterialFilter!="") {
-    filterDensity=mVoxelizedMass.GetPartialMassWithMatName(index)/mVoxelizedMass.GetPartialVolumeWithMatName(index);
-  }
 
   // compute sameEvent
   // sameEvent is false the first time some energy is deposited for each primary particle
@@ -344,14 +342,27 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
   //---------------------------------------------------------------------------------
   // Mass weighting
-  if(mDoseAlgorithmType == "MassWeighting")
+  if (mDoseAlgorithmType == "MassWeighting")
     density = mVoxelizedMass.GetVoxelMass(index)/mDoseImage.GetVoxelVolume();
   //---------------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------------
   // Filters
-  if(filterDensity != 0.)
-    density = filterDensity;
+  if (mMaterialFilter != "")
+  {
+    density = mVoxelizedMass.GetPartialMassWithMatName(index)/mDoseImage.GetVoxelVolume();
+
+    GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel: material filter debug = "
+		     << Gateendl
+		     << " material name        = " << step->GetPreStepPoint()->GetMaterial()->GetName()
+		     << Gateendl
+		     << " density              = " << G4BestUnit(mVoxelizedMass.GetPartialMassWithMatName(index)/mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volumic Mass")
+		     << Gateendl
+		     << " dosel cubic volume   = " << G4BestUnit(mDoseImage.GetVoxelVolume(), "Volume")
+		     << Gateendl
+		     << " partial cubic volume = " << G4BestUnit(mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volume")
+		     << Gateendl );
+  }
   //---------------------------------------------------------------------------------
 
   double dose=0.;

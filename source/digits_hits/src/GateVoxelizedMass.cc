@@ -642,7 +642,10 @@ double GateVoxelizedMass::GetPartialVolumeWithMatName(const int index)
   if(!mIsParameterised)
     GateError("Error: GateVoxelizedMass::GetPartialVolumeWithMatName: This method only work with voxelized volumes !"<<Gateendl);
 
-  return ParameterizedVolume(index).second;
+  if(!mIsVecGenerated)
+    GenerateVectors();
+
+  return doselReconstructedCubicVolume[index];
 }
 //-----------------------------------------------------------------------------
 
@@ -655,7 +658,10 @@ double GateVoxelizedMass::GetPartialMassWithMatName(const int index)
   if(!mIsParameterised)
     GateError("Error: GateVoxelizedMass::GetPartialMassWithMatName: This method only work with voxelized volumes !"<<Gateendl);
 
-    return ParameterizedVolume(index).first;
+  if(!mIsVecGenerated)
+    GenerateVectors();
+
+  return doselReconstructedMass[index];
 }
 //-----------------------------------------------------------------------------
 
