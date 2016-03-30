@@ -9,22 +9,15 @@ See GATE/LICENSE.txt for further details
 
 #ifndef GateSimplifiedDecayTransition_H
 #define GateSimplifiedDecayTransition_H 1
-#include "math.h"
-#include <limits>
-#include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include <string>
-#include <vector>
+#include <utility>
 #include <functional>
-#include <algorithm>
-
 #include "Randomize.hh"
-#include <G4PhysicalConstants.hh>
-
-using namespace std;
 
 class GateSimplifiedDecay;
-typedef pair<string,double> psd;
+typedef std::pair<string,double> psd;
 
 
 class GateSimplifiedDecayTransition {
@@ -33,7 +26,7 @@ class GateSimplifiedDecayTransition {
 
  public:
 
-  GateSimplifiedDecayTransition(int cs, int ns, double pr,  mem_fun_t<psd,GateSimplifiedDecayTransition> act, double en=0, double ampl=0, double norm=0, int Z=0):
+  GateSimplifiedDecayTransition(int cs, int ns, double pr,  std::mem_fun_t<psd,GateSimplifiedDecayTransition> act, double en=0, double ampl=0, double norm=0, int Z=0):
     currentState(cs),
     nextState(ns),
     probability(pr),
@@ -59,7 +52,7 @@ class GateSimplifiedDecayTransition {
 
 
   void print(){
-    cout
+    std::cout
 	 << currentState << ", "
 	 <<  nextState << ", "
 	 <<  probability << ", "
@@ -67,11 +60,11 @@ class GateSimplifiedDecayTransition {
 	 <<  amplitude << ", "
 	 <<  normalisationFactor << ", "
 	 <<  atomicNumber
-	 <<  endl;
+	 <<  std::endl;
   }
 
   GateSimplifiedDecayTransition* sample(int n){
-    for (int i=0; i<n; i++) cout << majoredHitAndMiss() << endl;
+    for (int i=0; i<n; i++) std::cout << majoredHitAndMiss() << std::endl;
     return this;
   }
 
@@ -97,7 +90,7 @@ class GateSimplifiedDecayTransition {
   int    currentState;
   int    nextState;
   double probability;
-  mem_fun_t<psd,GateSimplifiedDecayTransition> action;
+  std::mem_fun_t<psd,GateSimplifiedDecayTransition> action;
   double energy;                                    //  Maximum energy (inMeV)
   double amplitude;                                 //  Majoring function amplitude (for positrons)
   double normalisationFactor;                       //  normalisation factor for PDF (for positrons)

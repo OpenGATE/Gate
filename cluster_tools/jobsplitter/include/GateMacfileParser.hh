@@ -13,14 +13,7 @@ See GATE/LICENSE.txt for further details
 #define GateMacfileParser_h 1
 #include "globals.hh"
 #include <vector>
-#include <iostream> 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sstream> 
 #include <fstream> 
-#include <math.h>
-
-using namespace std;
 
 /*use this class to generate fully resolved macfiles and a splitfile*/
 
@@ -36,7 +29,7 @@ public:
   G4int GenerateResolvedMacros(G4String directory);
   G4String GetOutputMacDir();
   G4String GetoutputDir(){return outputDir;}; 
-  void CleanAbort(ofstream& output, ofstream& splitfile);
+  void CleanAbort(std::ofstream& output, std::ofstream& splitfile);
   
  protected:
   
@@ -76,25 +69,25 @@ public:
 	G4String originalSPECTGPUFileName;
   G4String originalARFFileName;
   // Conerning actor
-  vector<G4String> listOfActorType;
-  vector<G4String> listOfActorName;
-  vector<G4String> listOfEnabledActorType;
-  vector<G4String> listOfEnabledActorName;
+  std::vector<G4String> listOfActorType;
+  std::vector<G4String> listOfActorName;
+  std::vector<G4String> listOfEnabledActorType;
+  std::vector<G4String> listOfEnabledActorName;
   // Member functions
   void InsertAliases();
-  void InsertSubMacros(ofstream& output,G4int splitNumber,ofstream& splitfile);
-  void DealWithTimeCommands(ofstream& output,G4int splitNumber,ofstream& splitfile);
+  void InsertSubMacros(std::ofstream& output,G4int splitNumber,std::ofstream& splitfile);
+  void DealWithTimeCommands(std::ofstream& output,G4int splitNumber,std::ofstream& splitfile);
   void IgnoreRandomEngineCommand();
   void ExtractLocalDirectory(G4String macfileName);
-  G4int GenerateResolvedMacro(G4String outputName,G4int splitNumber,ofstream& splitfile);
-  void InsertOutputFileNames(G4int splitNumber,ofstream& splitfile);
-  void SearchForActors(G4int splitNumber,ofstream& output, ofstream& splitfile);
+  G4int GenerateResolvedMacro(G4String outputName,G4int splitNumber,std::ofstream& splitfile);
+  void InsertOutputFileNames(G4int splitNumber,std::ofstream& splitfile);
+  void SearchForActors(G4int splitNumber,std::ofstream& output, std::ofstream& splitfile);
   void AddSplitNumberWithExtension(G4int splitNumber);
   bool IsComment(G4String line);
   void FormatMacline();
   void LookForEnableOutput();
   void CheckOutputPrint();
-  void CheckOutput(ofstream&,ofstream&,G4int);
+  void CheckOutput(std::ofstream&,std::ofstream&,G4int);
   int enable[SIZE];
   int filenames[SIZE];
   bool* usedAliases;
