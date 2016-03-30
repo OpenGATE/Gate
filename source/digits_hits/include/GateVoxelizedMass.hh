@@ -31,7 +31,7 @@ class GateVoxelizedMass
   GateVoxelizedMass();
   virtual ~GateVoxelizedMass() {}
 
-  void Initialize(const G4String mExtVolumeName, const GateImageDouble mExtImage,const G4String mExtMassFile="");
+  void Initialize(const G4String mExtVolumeName, const GateImageDouble mExtImage);
 
   double GetVoxelMass(const int index);
   std::vector<double> GetVoxelMassVector();
@@ -50,6 +50,8 @@ class GateVoxelizedMass
   double  GetMaxDose(const int index);
   void    SetEdep(const int index,const G4String SVName,const double Edep);
   void    SetMaterialFilter(const G4String MatName);
+  void    SetExternalMassImage(const G4String extMassFile);
+
   GateImageDouble UpdateImage(GateImageDouble image);
 
  protected:
@@ -91,6 +93,8 @@ class GateVoxelizedMass
   bool mIsInitialized;
   bool mIsParameterised;
   bool mIsVecGenerated;
+  bool mHasFilter;
+  bool mHasExternalMassImage;
 
   int seconds;
 };

@@ -35,16 +35,20 @@
 //-----------------------------------------------------------------------------
 GateVoxelizedMass::GateVoxelizedMass()
 {
-  mIsInitialized=false;
-  mIsParameterised=false;
-  mIsVecGenerated=false;
+  mIsInitialized        =false;
+  mIsParameterised      =false;
+  mIsVecGenerated       =false;
+  mHasFilter            =false;
+  mHasExternalMassImage =false;
+
+  mMassFile       ="";
+  mMaterialFilter ="";
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImageDouble mExtImage,const G4String mExtMassFile)
+void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImageDouble mExtImage)
 {
-  mMassFile=mExtMassFile;
   mVolumeName=mExtVolumeName;
   mImage=mExtImage;
 
@@ -62,7 +66,7 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
   }
 
   doselExternalMass.clear();
-  if(mMassFile!="")
+  if(mHasExternalMassImage && mMassFile!="")
   {
     mMassImage.Read(mMassFile);
 
@@ -118,6 +122,9 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
         GateVoxelizedMass::GenerateVoxels();
     }
 
+  if(mHasFilter && !mIsParameterised)
+    GateError( "Error: GateVoxelizedMass::Initialize: material filter only work with voxelized volumes !" << Gateendl);
+
   mIsInitialized=true;
 }
 //-----------------------------------------------------------------------------
@@ -125,8 +132,14 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
 //-----------------------------------------------------------------------------
 double GateVoxelizedMass::GetVoxelMass(const int index)
 {
-  if(doselExternalMass.size()>0)
-    return doselExternalMass[index];
+  // Case of imported mass image
+  if(mHasExternalMassImage)
+  {
+    if(doselExternalMass.size()>0)
+      return doselExternalMass[index];
+    else
+      GateError( "Error: GateVoxelizedMass::GetVoxelMass: initialization of doselExternalMass is incorrect !" << Gateendl);
+  }
 
   if(doselReconstructedMass[index]==-1.)
   {
@@ -217,7 +230,6 @@ void GateVoxelizedMass::GenerateVectors()
 //-----------------------------------------------------------------------------
 void GateVoxelizedMass::GenerateVoxels()
 {
-
   const int nxVoxel=imageVolume->GetImage()->GetResolution().x(),
             nyVoxel=imageVolume->GetImage()->GetResolution().y(),
             nzVoxel=imageVolume->GetImage()->GetResolution().z();
@@ -652,16 +664,7 @@ double GateVoxelizedMass::GetPartialVolumeWithMatName(const int index)
 //-----------------------------------------------------------------------------
 double GateVoxelizedMass::GetPartialMassWithMatName(const int index)
 {
-  if(mMaterialFilter=="")
-    GateError("Error: GateVoxelizedMass::GetPartialMassWithMatName: No material filter defined !"<<Gateendl);
-
-  if(!mIsParameterised)
-    GateError("Error: GateVoxelizedMass::GetPartialMassWithMatName: This method only work with voxelized volumes !"<<Gateendl);
-
-  if(!mIsVecGenerated)
-    GenerateVectors();
-
-  return doselReconstructedMass[index];
+  return GetVoxelMass(index);
 }
 //-----------------------------------------------------------------------------
 
@@ -732,9 +735,28 @@ GateImageDouble GateVoxelizedMass::UpdateImage(GateImageDouble image)
 //-----------------------------------------------------------------------------
 void GateVoxelizedMass::SetMaterialFilter(const G4String MatName)
 {
-  mMaterialFilter=MatName;
+  if(MatName != "")
+  {
+    mMaterialFilter=MatName;
+    mHasFilter=true;
 
-  if(!mIsParameterised)
-    GateError("Error: GateVoxelizedMass::SetMaterialFilter: This filter only work with voxelized volumes !"<<Gateendl);
+    if(mHasExternalMassImage)
+      GateError( "Error: GateVoxelizedMass::SetMaterialFilter: mass image importation is not compatible with filters !" << Gateendl);
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateVoxelizedMass::SetExternalMassImage(const G4String extMassFile)
+{
+  if(extMassFile != "")
+  {
+    mMassFile=extMassFile;
+    mHasExternalMassImage=true;
+
+    if(mHasFilter)
+      GateError( "Error: GateVoxelizedMass::SetExternalMassImage: mass image importation is not compatible with filters !" << Gateendl);
+  }
 }
 //-----------------------------------------------------------------------------
