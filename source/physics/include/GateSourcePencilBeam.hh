@@ -24,6 +24,7 @@
 #include "G4UImessenger.hh"
 #include <iomanip>
 #include <vector>
+#include <string>
 
 #include "GateVSource.hh"
 #include "GateSourcePencilBeamMessenger.hh"
@@ -75,8 +76,8 @@ public:
   //Correlation Position/Direction
   void SetEllipseXThetaArea(double EllipseXThetaArea) {mEllipseXThetaArea=EllipseXThetaArea;}
   void SetEllipseYPhiArea(double EllipseYPhiArea) {mEllipseYPhiArea=EllipseYPhiArea;}
-  void SetEllipseXThetaRotationNorm(string rotation) {mEllipseXThetaRotationNorm=rotation;}
-  void SetEllipseYPhiRotationNorm(string rotation) {mEllipseYPhiRotationNorm=rotation;}
+  void SetEllipseXThetaRotationNorm(std::string rotation) {mEllipseXThetaRotationNorm=rotation;}
+  void SetEllipseYPhiRotationNorm(std::string rotation) {mEllipseYPhiRotationNorm=rotation;}
   void SetTestFlag(bool b) {mTestFlag=b;}
 
 protected:
@@ -107,8 +108,8 @@ protected:
   //Correlation Position/Direction
   double mEllipseXThetaArea;	//mm*rad
   double mEllipseYPhiArea;	//mm*rad
-  string mEllipseXThetaRotationNorm;
-  string mEllipseYPhiRotationNorm;
+  std::string mEllipseXThetaRotationNorm;
+  std::string mEllipseYPhiRotationNorm;
   //Gaussian distribution generation for direction
   RandMultiGauss * mGaussian2DYPhi;
   RandMultiGauss * mGaussian2DXTheta;
