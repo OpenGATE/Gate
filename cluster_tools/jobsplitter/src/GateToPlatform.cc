@@ -14,10 +14,16 @@ See GATE/LICENSE.txt for further details
 #include <iostream> 
 #include <sstream> 
 #include <fstream> 
+#include <cstdlib> 
+#include <sys/stat.h>
 
 #include "GateToPlatform.hh"
 
-using namespace std;
+using std::cout;
+using std::endl;
+using std::ofstream;
+using std::ifstream;
+using std::ostringstream;
               
 GateToPlatform::GateToPlatform(G4int numberOfSplits, G4String thePlatform, G4String thePbsscript, G4String theCondorScript, G4String outputMacName, G4int time)
 {
@@ -141,7 +147,7 @@ int GateToPlatform::GenerateOpenPBSSubmitfile()
 	G4String submitFilename=outputMacfilename+".submit";
 	ofstream submitFile(submitFilename.c_str());
 	if (!submitFile) {
-		cout<< "Error : could not create submit file! "<<submitFile<< endl;
+		cout<< "Error : could not create submit file! "<<submitFilename<< endl;
 		return(1);
 	}
 	submitFile<<"#! /bin/sh"<<endl;
@@ -174,7 +180,7 @@ int GateToPlatform::GenerateOpenMosixSubmitfile()
 	G4String submitFilename=outputMacfilename+".submit";
 	ofstream submitFile(submitFilename.c_str());
 	if (!submitFile) {
-		cout<< "Error : could not create submit file! "<<submitFile<< endl;
+		cout<< "Error : could not create submit file! "<<submitFilename<< endl;
 		return(1);
 	}
 	submitFile<<"#! /bin/sh"<<endl;
@@ -209,12 +215,12 @@ int GateToPlatform::GenerateCondorSubmitfile()
 	G4String submitFilename=outputMacfilename+".submit";
 	ofstream submitFile(submitFilename.c_str());
 	if (!submitFile) {
-		cout<< "Error : could not create submit file! "<<submitFile<< endl;
+		cout<< "Error : could not create submit file! "<<submitFilename<< endl;
 		return(1);
 	}
 	ifstream scriptFile(condorScript.c_str());
 	if (!scriptFile) {
-		cout<< "Error : could not open the condor script file! "<<scriptFile<< endl;
+		cout<< "Error : could not open the condor script file! "<<condorScript<< endl;
 		return(1);
 	}
 	while(!scriptFile.eof())
@@ -260,7 +266,7 @@ int GateToPlatform::GenerateXgridSubmitfile()
 		G4String submitXgridFilename=outputMacfilename+".plist";
 	ofstream submitXgridFile(submitXgridFilename.c_str());
 	if (!submitXgridFile) {
-		cout<< "Error : could not create submit file! "<<submitXgridFile<< endl;
+		cout<< "Error : could not create submit file! "<<submitXgridFilename<< endl;
 		return(1);
 	}
 	submitXgridFile << "{"<<endl;
