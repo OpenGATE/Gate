@@ -13,6 +13,7 @@ See GATE/LICENSE.txt for further details
 #define GateMacfileParser_h 1
 #include "globals.hh"
 #include <vector>
+#include <string> 
 #include <fstream> 
 
 /*use this class to generate fully resolved macfiles and a splitfile*/
@@ -98,7 +99,7 @@ public:
   void AddPWD(G4String key);
   void CalculateTimeSplit(G4int splitNumber);
   void skipComment(std::istream & is);
-  bool ReadColNameAndUnit(std::istream & is, std::string name, string & unit);
+  bool ReadColNameAndUnit(std::istream & is, std::string name, std::string & unit);
 
 };
 #endif
