@@ -15,9 +15,10 @@ See GATE/LICENSE.txt for further details
 #include <utility>
 #include <functional>
 #include "Randomize.hh"
+#include <G4PhysicalConstants.hh>
 
 class GateSimplifiedDecay;
-typedef std::pair<string,double> psd;
+typedef std::pair<std::string,double> psd;
 
 
 class GateSimplifiedDecayTransition {
