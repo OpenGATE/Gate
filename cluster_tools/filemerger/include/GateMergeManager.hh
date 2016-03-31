@@ -14,9 +14,9 @@ See GATE/LICENSE.txt for further details
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cstdlib>
 #include <TFile.h>
 #include <TChain.h>
-#include <cstdlib>
 
 class GateMergeManager
 {
@@ -32,7 +32,7 @@ public:
 
      //check if a .Gate directory can be found
      if (!getenv("GC_DOT_GATE_DIR")) {
-        cout<<"Environment variable GC_DOT_GATE_DIR not set !"<<endl;
+        std::cout<<"Environment variable GC_DOT_GATE_DIR not set !"<<std::endl;
         exit(1);
      }
      m_dir=getenv("GC_DOT_GATE_DIR");
@@ -40,7 +40,7 @@ public:
      else m_dir=m_dir+"/.Gate/";
      ifstream dirstream(m_dir.c_str());
      if (!dirstream) {
-        cout<<"Failed to open .Gate directory"<<endl;
+        std::cout<<"Failed to open .Gate directory"<<std::endl;
         exit(1);
      }
      dirstream.close();
@@ -54,13 +54,13 @@ public:
 
   void StartMerging(std::string splitfileName);
   void ReadSplitFile(std::string splitfileName);
-  bool MergeTree(std::tring name);
+  bool MergeTree(std::string name);
   bool MergeGate(TChain* chain);
   bool MergeSing(TChain* chain);
   bool MergeCoin(TChain* chain);
 
   // the cleanup after succesful merging
-  void StartCleaning(std::tring splitfileName,bool test);
+  void StartCleaning(std::string splitfileName,bool test);
 
   // the merging methods
   void MergeRoot();
