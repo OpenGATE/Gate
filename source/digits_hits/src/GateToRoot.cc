@@ -609,6 +609,8 @@ void GateToRoot::RecordEndOfRun(const G4Run* )
 //--------------------------------------------------------------------------
 void GateToRoot::RecordBeginOfEvent(const G4Event* evt )
 {
+
+
   //  GateMessage("Output", 5 , " GateToRoot::RecordBeginOfEvent -- begin\n";);
 
   if (nVerboseLevel > 2)
@@ -705,9 +707,9 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
     // Hits loop
 
     G4int NbHits = CHC->entries();
-
-    for (G4int iHit=0;iHit<NbHits;iHit++) {
-
+  
+   for (G4int iHit=0;iHit<NbHits;iHit++) {
+ 
       GateCrystalHit* aHit = (*CHC)[iHit];
       G4String processName = aHit->GetProcess();
       G4int PDGEncoding  =   aHit->GetPDGEncoding();
@@ -718,7 +720,7 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
           << ">    Particls PDG code : " << PDGEncoding << Gateendl;
 
       if (aHit->GoodForAnalysis()) {
-	m_hitBuffer.Fill(aHit);
+  m_hitBuffer.Fill(aHit);
 	if (nVerboseLevel > 1)
 	  G4cout << "GateToRoot::RecordEndOfEvent : m_treeHit->Fill\n";
 
@@ -726,6 +728,8 @@ void GateToRoot::RecordEndOfEvent(const G4Event* event)
 	if (m_rootHitFlag) m_treeHit->Fill();
       }
     }
+
+
 
     if (m_recordFlag > 0) {
       G4double eventTime = (GateSourceMgr::GetInstance())->GetTime();

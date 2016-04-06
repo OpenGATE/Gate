@@ -83,6 +83,9 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   G4Track* aTrack       = aStep->GetTrack();
   G4int    trackID      = aTrack->GetTrackID();
   G4int    parentID     = aTrack->GetParentID();
+  // Seb Modif 5/4/2016
+  G4double trackLength  = aTrack->GetTrackLength();
+  G4double trackLocalTime = aTrack->GetLocalTime();
 
   G4String partName     = aTrack->GetDefinition()->GetParticleName();
   G4int    PDGEncoding  = aTrack->GetDefinition()->GetPDGEncoding();
@@ -94,7 +97,7 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
 
   //  Get the process name
   const G4VProcess* process = newStepPoint->GetProcessDefinedStep();
- G4String processName = ( (process != NULL) ? process->GetProcessName() : G4String() ) ;
+  G4String processName = ( (process != NULL) ? process->GetProcessName() : G4String() ) ;
 
   //  For all processes except transportation, we select the PostStepPoint volume
   //  For the transportation, we select the PreStepPoint volume
@@ -115,6 +118,9 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   //Modifs Seb 22-06-2011
   //G4ThreeVector position = oldStepPoint->GetPosition();
   G4ThreeVector position = newStepPoint->GetPosition();
+  
+  // Get the hit momentumDirecton
+  G4ThreeVector momentumDirection = newStepPoint->GetMomentumDirection();
 
   // Compute the hit local position
   // (It will be in the reference frame of the PreStepPoint volume for a transportation hit)
@@ -158,6 +164,10 @@ G4bool GateCrystalSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   aHit->SetLocalPos( localPosition );
   aHit->SetProcess( processName );
   aHit->SetTrackID( trackID );
+ // Seb Modif 5/4/2016 
+  aHit->SetTrackLength( trackLength );
+  aHit->SetTrackLocalTime( trackLocalTime );
+  aHit->SetMomentumDir( momentumDirection );
   aHit->SetParentID( parentID );
   aHit->SetVolumeID( volumeID );
   aHit->SetScannerPos( scannerPos );
