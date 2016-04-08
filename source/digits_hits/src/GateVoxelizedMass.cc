@@ -122,9 +122,6 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
         GateVoxelizedMass::GenerateVoxels();
     }
 
-  if(mHasFilter && !mIsParameterised)
-    GateError( "Error: GateVoxelizedMass::Initialize: material filter only work with voxelized volumes !" << Gateendl);
-
   mIsInitialized=true;
 }
 //-----------------------------------------------------------------------------
@@ -450,11 +447,12 @@ std::pair<double,double> GateVoxelizedMass::ParameterizedVolume(const int index)
 //-----------------------------------------------------------------------------
 std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* motherPV,const int Generation,G4RotationMatrix motherRotation,G4ThreeVector motherTranslation,const int index)
 {
-  //FIXME : Doesn't work with daughter overlapping its mother.
-
   if (Generation==0) {
-    GateMessage("Actor", 2, Gateendl);
-    GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] Dosel n°" << index << ":" << Gateendl);
+    GateMessage("Actor", 2, Gateendl << "[GateVoxelizedMass::VoxelIteration] Dosel n°" << index << ":" << Gateendl);
+
+    mFilteredVolumeMass = 0.;
+    mFilteredVolumeCubicVolume = 0.;
+    mIsFilteredVolumeProcessed = false;
   }
 
   GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] Generation n°" << Generation << " (motherPV: " <<  motherPV->GetName() << ") :" << Gateendl);
@@ -480,8 +478,7 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
   G4RotationMatrix motherAbsoluteRotation    = motherRotation;
   G4ThreeVector    motherAbsoluteTranslation = motherTranslation;
 
-  if(Generation==0)
-  {
+  if(Generation==0) {
     motherAbsoluteRotation.   set(0.,0.,0.);
     motherAbsoluteTranslation.set(0.,0.,0.);
   }
@@ -558,7 +555,7 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
           if(daughterIteration.first==0.)
             GateError("Error: daughterIteration.first is null ! (daughterPhysicalVolume : "<<daughterPV->GetName()<<")"<<Gateendl);
           if(daughterIteration.second==0.)
-            GateError("Error: daughterIteration.second is null ! (motherPhysicalVolume : "<<daughterPV->GetName()<<")"<<Gateendl);
+            GateError("Error: daughterIteration.second is null ! (daughterPhysicalVolume : "<<daughterPV->GetName()<<")"<<Gateendl);
 
           motherProgenyMass+=daughterIteration.first;
           motherProgenyCubicVolume+=daughterIteration.second;
@@ -584,6 +581,13 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
   mMass[index].push_back       (std::make_pair(motherSV->GetName(),motherMass));
   //////////////////////////////////////////////////////////////////////////
 
+  if (mHasFilter && mVolumeFilter != "" && motherSV->GetName() == mVolumeFilter) {
+    GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] VolumeFilter: Filtered volume " <<  motherSV->GetName() << " finded ! (Generation n°" << Generation << ")" << Gateendl);
+    mFilteredVolumeMass        = motherMass;
+    mFilteredVolumeCubicVolume = motherCubicVolume;
+    mIsFilteredVolumeProcessed = true;
+  }
+
   if(motherProgenyMass==0.)
     GateError("Error: motherProgenyMass is null ! (motherPhysicalVolume : "<<motherPV->GetName()<<")"<<Gateendl);
   if(motherProgenyCubicVolume==0.)
@@ -603,6 +607,13 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
     GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] Dosel n°"<< index << " informations :" << Gateendl <<
                             "                                     motherProgenyMass        = " << G4BestUnit(motherProgenyMass,"Mass") << Gateendl <<
                             "                                     motherProgenyCubicVolume = " << G4BestUnit(motherProgenyCubicVolume,"Volume") << Gateendl);
+
+    if (mHasFilter && mVolumeFilter != "") {
+      if (mIsFilteredVolumeProcessed)
+        return std::make_pair(mFilteredVolumeMass,mFilteredVolumeCubicVolume);
+      else
+        return std::make_pair(0.,0.);
+    }
   }
 
   return std::make_pair(motherProgenyMass,motherProgenyCubicVolume);
@@ -735,13 +746,36 @@ GateImageDouble GateVoxelizedMass::UpdateImage(GateImageDouble image)
 //-----------------------------------------------------------------------------
 void GateVoxelizedMass::SetMaterialFilter(const G4String MatName)
 {
-  if(MatName != "")
-  {
-    mMaterialFilter=MatName;
-    mHasFilter=true;
-
-    if(mHasExternalMassImage)
+  if (MatName != "") {
+    if (mHasFilter)
+      GateError( "Error: GateVoxelizedMass::SetMaterialFilter: material filter is not compatible with other filters !" << Gateendl);
+    else if (mHasExternalMassImage)
       GateError( "Error: GateVoxelizedMass::SetMaterialFilter: mass image importation is not compatible with filters !" << Gateendl);
+    else if (!mIsParameterised)
+      GateError( "Error: GateVoxelizedMass::SetMaterialFilter: material filter is only compatible with parameterised volumes !" << Gateendl);
+    else {
+      mMaterialFilter=MatName;
+      mHasFilter=true;
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateVoxelizedMass::SetVolumeFilter(const G4String VolName)
+{
+  if (VolName != "") {
+    if (mHasFilter)
+      GateError( "Error: GateVoxelizedMass::SetVolumeFilter: volume filter is not compatible with other filters !" << Gateendl);
+    else if (mHasExternalMassImage)
+      GateError( "Error: GateVoxelizedMass::SetVolumeFilter: mass image importation is not compatible with filters !" << Gateendl);
+    else if (mIsParameterised)
+      GateError( "Error: GateVoxelizedMass::SetVolumeFilter: volume filter is not compatible with parameterised volumes !" << Gateendl);
+    else {
+      mVolumeFilter=VolName+"_solid";
+      mHasFilter=true;
+    }
   }
 }
 //-----------------------------------------------------------------------------

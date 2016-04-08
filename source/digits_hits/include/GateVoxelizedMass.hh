@@ -50,6 +50,7 @@ class GateVoxelizedMass
   double  GetMaxDose(const int index);
   void    SetEdep(const int index,const G4String SVName,const double Edep);
   void    SetMaterialFilter(const G4String MatName);
+  void    SetVolumeFilter(const G4String MatName);
   void    SetExternalMassImage(const G4String extMassFile);
 
   GateImageDouble UpdateImage(GateImageDouble image);
@@ -79,7 +80,10 @@ class GateVoxelizedMass
 
   std::vector<std::vector<std::vector<double> > >   voxelMass;
   std::vector<std::vector<std::vector<G4String> > > voxelMatName;
+
   double voxelCubicVolume;
+  double mFilteredVolumeMass;
+  double mFilteredVolumeCubicVolume;
 
   std::vector<G4VSolid*> vectorSV;
 
@@ -89,10 +93,12 @@ class GateVoxelizedMass
   G4String mVolumeName;
   G4String mMassFile;
   G4String mMaterialFilter;
+  G4String mVolumeFilter;
 
   bool mIsInitialized;
   bool mIsParameterised;
   bool mIsVecGenerated;
+  bool mIsFilteredVolumeProcessed;
   bool mHasFilter;
   bool mHasExternalMassImage;
 
