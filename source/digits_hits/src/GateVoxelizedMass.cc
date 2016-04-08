@@ -109,12 +109,12 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
                     mImage.GetVoxelSize().getZ()/2.0);
 
   if (IsLVParameterized(DALV)) {
-      imageVolume=dynamic_cast<GateVImageVolume*>(GateObjectStore::GetInstance()->FindVolumeCreator(DAPV));
+    imageVolume=dynamic_cast<GateVImageVolume*>(GateObjectStore::GetInstance()->FindVolumeCreator(DAPV));
 
-      mIsParameterised=true;
+    if(doselExternalMass.size()==0)
+      GateVoxelizedMass::GenerateVoxels();
 
-      if(doselExternalMass.size()==0)
-        GateVoxelizedMass::GenerateVoxels();
+    mIsParameterised=true;
   }
 
   if (mHasFilter) {
@@ -464,8 +464,9 @@ std::pair<double,double> GateVoxelizedMass::ParameterizedVolume(const int index)
 std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* motherPV,const int Generation,G4RotationMatrix motherRotation,G4ThreeVector motherTranslation,const int index)
 {
   if (Generation==0) {
-    if (motherPV->IsParameterised())
-      GateError("The volume " << motherPV->GetName() << " is parameterized !" <<Gateendl<< "Please attach the Actor directly on this volume !" << Gateendl);
+    if (IsLVParameterized(motherPV->GetLogicalVolume()))
+      GateError("The volume " << motherPV->GetName() << " is parameterized !" << Gateendl
+          << "Please attach the DoseActor directly on this volume !" << Gateendl);
 
     GateMessage("Actor", 2, Gateendl << "[GateVoxelizedMass::VoxelIteration] Dosel n°" << index << ":" << Gateendl);
 
@@ -478,12 +479,6 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
 
   G4LogicalVolume* motherLV(motherPV->GetLogicalVolume());
   G4VSolid*        motherSV(motherLV->GetSolid());
-
-  if (IsLVParameterized(motherPV->GetLogicalVolume())) {
-    GateWarning("Warning: The volume " << motherPV->GetName() << " is parameterized !" << Gateendl
-        << "Returned cubic volume: " <<  G4BestUnit(motherSV->GetCubicVolume(),"Volume") << Gateendl);
-    return std::make_pair(0.,motherSV->GetCubicVolume());
-  }
 
   double motherMass(0.);
   double motherProgenyMass(0.);
@@ -525,6 +520,12 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
   }
 
   GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] "<< motherPV->GetName() <<" (after overlap mother-dosel)  : " << G4BestUnit(motherSV->GetCubicVolume(),"Volume") << Gateendl);
+
+  if (IsLVParameterized(motherLV)) {
+    GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] WARNING: " << motherPV->GetName() << " is parameterized !" << Gateendl
+        << " ==> Returning null mass ! " << Gateendl);
+    return std::make_pair(0.,motherSV->GetCubicVolume());
+  }
 
   // Calculation for daughter(s) ///////////////////////////////////////////
   if(motherLV->GetNoDaughters()>0)
@@ -572,13 +573,13 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
           GateError("Error: CubicVolume after substraction is bigger than before !" << Gateendl << " difference: " << diff << "%" << Gateendl);
         else if(diff<=-substractionError)
         {
-          std::pair<double,double> daughterIteration(VoxelIteration(daughterPV,Generation+1,daughterAbsoluteRotation,daughterAbsoluteTranslation,index)); // OK
+          std::pair<double,double> daughterIteration(VoxelIteration(daughterPV,Generation+1,daughterAbsoluteRotation,daughterAbsoluteTranslation,index));
 
           if (daughterIteration.first == 0.)
-            GateError("Error: daughterIteration.first is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ")" << Gateendl
+            GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] WARNING: daughterIteration.first (mass) is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ")" << Gateendl
                 << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl);
           if (daughterIteration.second == 0.)
-            GateError("Error: daughterIteration.second is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ") "<< Gateendl
+            GateError("Error: daughterIteration.second (volume) is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ") "<< Gateendl
                 << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl);
 
           motherProgenyMass+=daughterIteration.first;
