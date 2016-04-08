@@ -108,21 +108,37 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
                     mImage.GetVoxelSize().getY()/2.0,
                     mImage.GetVoxelSize().getZ()/2.0);
 
-  if (DALV->GetNoDaughters()==1)
-    if (DALV->GetDaughter(0)->IsParameterised() ||
-       (DALV->GetDaughter(0)->GetName().find("voxel_phys_Y")!=std::string::npos &&
-       DALV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_X")!=std::string::npos &&
-       DALV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_Z")!=std::string::npos))
-    {
+  if (IsLVParameterized(DALV)) {
       imageVolume=dynamic_cast<GateVImageVolume*>(GateObjectStore::GetInstance()->FindVolumeCreator(DAPV));
 
       mIsParameterised=true;
 
       if(doselExternalMass.size()==0)
         GateVoxelizedMass::GenerateVoxels();
-    }
+  }
+
+  if (mHasFilter) {
+    if (mIsParameterised && mVolumeFilter != "")
+      GateError( "Error: GateVoxelizedMass::Initialize: volume filter is not compatible with parameterised volumes !" << Gateendl);
+    else if (!mIsParameterised && mMaterialFilter != "")
+      GateError( "Error: GateVoxelizedMass::Initialize: material filter is only compatible with parameterised volumes !" << Gateendl);
+  }
 
   mIsInitialized=true;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+bool GateVoxelizedMass::IsLVParameterized(const G4LogicalVolume* LV)
+{
+  if (LV->GetNoDaughters()==1)
+    if (LV->GetDaughter(0)->IsParameterised() ||
+       (LV->GetDaughter(0)->GetName().find("voxel_phys_Y")!=std::string::npos &&
+       LV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_X")!=std::string::npos &&
+       LV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_Z")!=std::string::npos))
+      return true;
+
+  return false;
 }
 //-----------------------------------------------------------------------------
 
@@ -448,6 +464,9 @@ std::pair<double,double> GateVoxelizedMass::ParameterizedVolume(const int index)
 std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* motherPV,const int Generation,G4RotationMatrix motherRotation,G4ThreeVector motherTranslation,const int index)
 {
   if (Generation==0) {
+    if (motherPV->IsParameterised())
+      GateError("The volume " << motherPV->GetName() << " is parameterized !" <<Gateendl<< "Please attach the Actor directly on this volume !" << Gateendl);
+
     GateMessage("Actor", 2, Gateendl << "[GateVoxelizedMass::VoxelIteration] Dosel n°" << index << ":" << Gateendl);
 
     mFilteredVolumeMass = 0.;
@@ -457,11 +476,14 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
 
   GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] Generation n°" << Generation << " (motherPV: " <<  motherPV->GetName() << ") :" << Gateendl);
 
-  if(motherPV->IsParameterised())
-    GateError("The volume " << motherPV->GetName() << " is parameterized !" <<Gateendl<< "Please attach the Actor directly on this volume !" << Gateendl);
-
   G4LogicalVolume* motherLV(motherPV->GetLogicalVolume());
   G4VSolid*        motherSV(motherLV->GetSolid());
+
+  if (IsLVParameterized(motherPV->GetLogicalVolume())) {
+    GateWarning("Warning: The volume " << motherPV->GetName() << " is parameterized !" << Gateendl
+        << "Returned cubic volume: " <<  G4BestUnit(motherSV->GetCubicVolume(),"Volume") << Gateendl);
+    return std::make_pair(0.,motherSV->GetCubicVolume());
+  }
 
   double motherMass(0.);
   double motherProgenyMass(0.);
@@ -554,10 +576,10 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
 
           if (daughterIteration.first == 0.)
             GateError("Error: daughterIteration.first is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ")" << Gateendl
-                << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << " ?" << Gateendl);
+                << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl);
           if (daughterIteration.second == 0.)
             GateError("Error: daughterIteration.second is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ") "<< Gateendl
-                << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << " ?" << Gateendl);
+                << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl);
 
           motherProgenyMass+=daughterIteration.first;
           motherProgenyCubicVolume+=daughterIteration.second;
@@ -753,8 +775,6 @@ void GateVoxelizedMass::SetMaterialFilter(const G4String MatName)
       GateError( "Error: GateVoxelizedMass::SetMaterialFilter: material filter is not compatible with other filters !" << Gateendl);
     else if (mHasExternalMassImage)
       GateError( "Error: GateVoxelizedMass::SetMaterialFilter: mass image importation is not compatible with filters !" << Gateendl);
-    else if (!mIsParameterised)
-      GateError( "Error: GateVoxelizedMass::SetMaterialFilter: material filter is only compatible with parameterised volumes !" << Gateendl);
     else {
       mMaterialFilter=MatName;
       mHasFilter=true;
@@ -772,8 +792,6 @@ void GateVoxelizedMass::SetVolumeFilter(const G4String VolName)
       GateError( "Error: GateVoxelizedMass::SetVolumeFilter: volume filter is not compatible with other filters !" << Gateendl);
     else if (mHasExternalMassImage)
       GateError( "Error: GateVoxelizedMass::SetVolumeFilter: mass image importation is not compatible with filters !" << Gateendl);
-    else if (mIsParameterised)
-      GateError( "Error: GateVoxelizedMass::SetVolumeFilter: volume filter is not compatible with parameterised volumes !" << Gateendl);
     else {
       mVolumeFilter=VolName+"_solid";
       mHasFilter=true;

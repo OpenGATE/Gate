@@ -36,6 +36,7 @@ class GateVoxelizedMass
   double GetVoxelMass(const int index);
   std::vector<double> GetVoxelMassVector();
 
+  virtual bool IsLVParameterized(const G4LogicalVolume* LV);
   virtual void GenerateVectors();
   virtual void GenerateVoxels();
   virtual void GenerateDosels(const int index);
@@ -52,6 +53,7 @@ class GateVoxelizedMass
   void    SetMaterialFilter(const G4String MatName);
   void    SetVolumeFilter(const G4String MatName);
   void    SetExternalMassImage(const G4String extMassFile);
+
 
   GateImageDouble UpdateImage(GateImageDouble image);
 
