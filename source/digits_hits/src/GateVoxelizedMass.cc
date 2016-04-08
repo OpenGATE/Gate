@@ -552,10 +552,12 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
         {
           std::pair<double,double> daughterIteration(VoxelIteration(daughterPV,Generation+1,daughterAbsoluteRotation,daughterAbsoluteTranslation,index)); // OK
 
-          if(daughterIteration.first==0.)
-            GateError("Error: daughterIteration.first is null ! (daughterPhysicalVolume : "<<daughterPV->GetName()<<")"<<Gateendl);
-          if(daughterIteration.second==0.)
-            GateError("Error: daughterIteration.second is null ! (daughterPhysicalVolume : "<<daughterPV->GetName()<<")"<<Gateendl);
+          if (daughterIteration.first == 0.)
+            GateError("Error: daughterIteration.first is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ")" << Gateendl
+                << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << " ?" << Gateendl);
+          if (daughterIteration.second == 0.)
+            GateError("Error: daughterIteration.second is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ") "<< Gateendl
+                << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << " ?" << Gateendl);
 
           motherProgenyMass+=daughterIteration.first;
           motherProgenyCubicVolume+=daughterIteration.second;
