@@ -385,6 +385,9 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & )
       total += dataDouble[i];
       dataFloat[i] = (float)dataDouble[i]; // convert double to float
     }
+    std::vector<double>().swap(dataDouble);
+    //we swap with empty vector, thereby releasing memory of original dataDouble
+    //once this new vector, with the contents of dataDouble, goes out of scope (after this line)
   }
 
   //output int to int
@@ -416,12 +419,15 @@ void GateImageOfHistograms::Scale(double f)
   if (mDataTypeName == "double") {
     for(unsigned int i=0; i<dataDouble.size(); i++)
       dataDouble[i] = f * dataDouble[i];
-  } else if (mDataTypeName == "int") { //move ints to float image
+  } else if (mDataTypeName == "int") { //cant scale and int
     dataFloat.resize(dataInt.size());
     for(unsigned int i=0; i<dataInt.size(); i++) {
       dataFloat[i] = f * (float)dataInt[i]; // convert int to float
     }
     mDataTypeName = "float";
+    std::vector<unsigned int>().swap(dataInt);
+    //we swap with empty vector, thereby releasing memory of original dataDouble
+    //once this new vector, with the contents of dataDouble, goes out of scope (after this line)
   } else {
     for(unsigned int i=0; i<dataFloat.size(); i++)
       dataFloat[i] = f * dataFloat[i];
