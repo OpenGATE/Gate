@@ -567,7 +567,7 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
         GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] "<<motherPV->GetName()<<" (after sub. mother-daughter)  : " << G4BestUnit(motherSV->GetCubicVolume(),"Volume") << " (daughterPV : "<<daughterPV->GetName()<<")"<< Gateendl);
 
         double diff((motherSV->GetCubicVolume()-motherCubicVolumeBefore)*100/motherCubicVolumeBefore);
-        double substractionError(0.1);
+        double substractionError(0.5);
 
         if(diff>substractionError)
           GateError("Error: CubicVolume after substraction is bigger than before !" << Gateendl << " difference: " << diff << "%" << Gateendl);
@@ -579,8 +579,10 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
             GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] WARNING: daughterIteration.first (mass) is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ")" << Gateendl
                 << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl);
           if (daughterIteration.second == 0.)
-            GateError("Error: daughterIteration.second (volume) is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ") "<< Gateendl
-                << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl);
+            GateError("Error: daughterIteration.second (cubic volume) is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ") "<< Gateendl
+                << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl
+                << "     diff substraction Mother-Daughter: " << diff << "%" << Gateendl
+                << "     diff substraction tolerance      : ±" << substractionError << "%" << Gateendl);
 
           motherProgenyMass+=daughterIteration.first;
           motherProgenyCubicVolume+=daughterIteration.second;
