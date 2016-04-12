@@ -58,6 +58,8 @@ class GateDoseActor : public GateVImageActor
   void EnableDoseNormalisationToIntegral(bool b);
   void EnableDoseToWaterNormalisation(bool b) { mIsDoseToWaterNormalisationEnabled = b; mDoseToWaterImage.SetScaleFactor(1.0); }
 
+  void EnablePeakfinderImage(bool b) { mIsPeakfinderImageEnabled = b; }
+  
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
 
@@ -94,17 +96,20 @@ protected:
   bool mIsNumberOfHitsImageEnabled;
   bool mIsDoseNormalisationEnabled;
   bool mIsDoseToWaterNormalisationEnabled;
+  bool mIsPeakfinderImageEnabled;
 
   GateImageWithStatistic mEdepImage;
   GateImageWithStatistic mDoseImage;
   GateImageWithStatistic mDoseToWaterImage;
   GateImageInt mNumberOfHitsImage;
   GateImageInt mLastHitEventImage;
+  GateImageWithStatistic mPeakfinderImage;
 
   G4String mEdepFilename;
   G4String mDoseFilename;
   G4String mDoseToWaterFilename;
   G4String mNbOfHitsFilename;
+  G4String mPeakfinderFilename;
 
   G4EmCalculator * emcalc;
 };

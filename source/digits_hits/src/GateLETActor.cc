@@ -81,7 +81,7 @@ void GateLETActor::Construct() {
   else if (mAveragingType == "TrackAveragedFluenceStep"){mIsTrackAveragedFluenceAveraged = true;}
   else if (mAveragingType == "TrackAveragedCancelled"){mIsTrackAveragedDXAveragedCancelled = true;}
   else if (mAveragingType == "TrackAveragedFluenceTrack"){mIsTrackAveragedFluenceTrackAveraged = true;}
-  else if (mAveragingType == "TrackAveragedDXAveraged"){mIsTrackAveragedDXAveraged = true;}
+  else if (mAveragingType == "TrackAveraged" || mAveragingType == "TrackAveragedDXAveraged"){mIsTrackAveragedDXAveraged = true;}
   else if (mAveragingType == "DoseAveragedEdep"){mIsDoseAveragedEdepDXAveraged = true;}
   
   else {GateError("The LET averaging Type" << GetObjectName()
