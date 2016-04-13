@@ -515,8 +515,8 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
 
   // If the mother's doesn't intersects the dosel
   if(motherSV->GetCubicVolume()==0.) {
-    GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] " <<  motherPV->GetName() << " is not contained inside the dosel n°" << index << Gateendl);
-    return std::make_pair(0.,0.);
+    GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] WARNING: " <<  motherPV->GetName() << " is not contained inside the dosel n°" << index << Gateendl);
+    return std::make_pair(0.,-1.);
   }
 
   GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] "<< motherPV->GetName() <<" (after overlap mother-dosel)  : " << G4BestUnit(motherSV->GetCubicVolume(),"Volume") << Gateendl);
@@ -567,7 +567,7 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
         GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] "<<motherPV->GetName()<<" (after sub. mother-daughter)  : " << G4BestUnit(motherSV->GetCubicVolume(),"Volume") << " (daughterPV : "<<daughterPV->GetName()<<")"<< Gateendl);
 
         double diff((motherSV->GetCubicVolume()-motherCubicVolumeBefore)*100/motherCubicVolumeBefore);
-        double substractionError(0.5);
+        double substractionError(1);
 
         if(diff>substractionError)
           GateError("Error: CubicVolume after substraction is bigger than before !" << Gateendl << " difference: " << diff << "%" << Gateendl);
@@ -578,9 +578,14 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
           if (daughterIteration.first == 0.)
             GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] WARNING: daughterIteration.first (mass) is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ")" << Gateendl
                 << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl);
-          if (daughterIteration.second == 0.)
+          if (daughterIteration.second == -1.)
+            GateError("ERROR: GEANT4 has trouble to compute intersection between " << daughterPV->GetName() << " and the dosel n° " << index << "!" << Gateendl
+                << "  => It can be related to the geometry of " << daughterPV->GetName() << " (" << daughterSV->GetEntityType() << ")" << Gateendl
+                << "     diff substraction Mother-Daughter: " << diff << "%" << Gateendl
+                << "     diff substraction tolerance      : ±" << substractionError << "%" << Gateendl);
+          else if (daughterIteration.second == 0.)
             GateError("Error: daughterIteration.second (cubic volume) is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ") "<< Gateendl
-                << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl
+                << "  => Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl
                 << "     diff substraction Mother-Daughter: " << diff << "%" << Gateendl
                 << "     diff substraction tolerance      : ±" << substractionError << "%" << Gateendl);
 
@@ -623,13 +628,14 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
   if (Generation==0)
   {
     double diff((motherProgenyCubicVolume-doselSV->GetCubicVolume())*100/doselSV->GetCubicVolume());
-    double substractionError(0.5);
+    double substractionError(1);
 
     if(std::abs(diff)>substractionError)
       GateError("Error: Dosel n°" << index << " is wrongly reconstructed !" << Gateendl <<
                 "                            dosel (theorical)     = " << G4BestUnit(doselSV->GetCubicVolume(),"Volume") << Gateendl <<
                 "                            dosel (reconstructed) = " << G4BestUnit(motherProgenyCubicVolume,"Volume") << Gateendl <<
-                "                            difference            = " << diff << "%" << Gateendl );
+                "                            difference            = " << diff << "%" << Gateendl <<
+                "                            difference tolerance  = ±" << substractionError << "%" <<Gateendl );
 
     GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] Dosel n°"<< index << " informations :" << Gateendl <<
                             "                                     motherProgenyMass        = " << G4BestUnit(motherProgenyMass,"Mass") << Gateendl <<
