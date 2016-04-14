@@ -1,9 +1,9 @@
 This reference was created by launching a Gate simulation on
-lun. déc. 14 18:55:12 CET 2015
+Fri Mar 18 13:52:33 CET 2016
 with the configuration file benchmarks/benchRT/mac/gamma.mac
 from the commit
-commit df2822ce03dd174148064d84b6cd558655177818
+commit 946702bd29ba2099788c64fb85d97dbd3b9f72fb
 with the version of gcc
-gcc (GCC) 5.1.1 20150618 (Red Hat 5.1.1-4)
+gcc (SUSE Linux) 4.8.3 20140627 [gcc-4_8-branch revision 212064]
 on the architecture Linux
-Linux linux20.dg.creatis.insa-lyon.fr 4.2.6-201.fc22.x86_64 #1 SMP Tue Nov 24 18:42:39 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+Linux psilocybe 3.16.7-29-desktop #1 SMP PREEMPT Fri Oct 23 00:46:04 UTC 2015 (6be6a97) x86_64 x86_64 x86_64 GNU/Linux
