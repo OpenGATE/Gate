@@ -557,6 +557,9 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
 
       if(motherCubicVolumeBefore>0.)
       {
+        // Creating a backup of motherSV before the substraction
+        G4VSolid* motherBeforeSubSV(motherSV->Clone());
+
         // Substraction Dosel-Daughter
         motherSV=new G4SubtractionSolid(motherSV->GetName(),
                                         motherSV,
@@ -579,12 +582,15 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
             GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] WARNING: daughterIteration.first (mass) is null ! (daughterPV: " << daughterPV->GetName() << ")" << Gateendl
                 << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl);
 
-          if (daughterIteration.second == -1.)
-            GateError("ERROR: " << daughterPV->GetName() << " seems to be outside the dosel n°" << index << " !" << Gateendl
-                << "  => GEANT4 has trouble to compute soustraction between " << daughterPV->GetName() << " and its mother " << motherPV->GetName() << "!" << Gateendl
-                << "  => It can be related to the geometry of " << daughterPV->GetName() << " (" << daughterSV->GetEntityType() << ")" << Gateendl
-                << "     diff substraction Mother-Daughter: " << diff << "%" << Gateendl
-                << "     diff substraction tolerance      : ±" << substractionError << "%" << Gateendl);
+          if (daughterIteration.second == -1.) {
+            GateMessage("Actor", 0, "[GateVoxelizedMass::VoxelIteration] WARNING: " << daughterPV->GetName() << " seems to be outside the dosel n°" << index << " !" << Gateendl);
+            GateMessage("Actor", 2, "  => GEANT4 has trouble to compute soustraction between " << daughterPV->GetName() << " and its mother " << motherPV->GetName() << "!" << Gateendl
+                        << "  => It can be related to the geometry of " << daughterPV->GetName() << " (" << daughterSV->GetEntityType() << ")" << Gateendl
+                        << "     diff substraction Mother-Daughter: " << diff << "%" << Gateendl
+                        << "     diff substraction tolerance      : ±" << substractionError << "%" << Gateendl);
+            GateMessage("Actor", 0, "[GateVoxelizedMass::VoxelIteration] WARNING: " << daughterPV->GetName() << " ignored for the dosel n°" << index << " !" << Gateendl);
+            motherSV=motherBeforeSubSV;
+          }
           else if (daughterIteration.second == 0.)
             GateError("Error: daughterIteration.second (cubic volume) is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ") "<< Gateendl
                 << "  => Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl
