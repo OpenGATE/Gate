@@ -573,7 +573,9 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
         double substractionError(0.5);
 
         if(diff>substractionError)
-          GateError("Error: CubicVolume after substraction is bigger than before !" << Gateendl << " difference: " << diff << "%" << Gateendl);
+          GateError("Error: CubicVolume after substraction is bigger than before !" << Gateendl
+              << "     diff substraction Mother-Daughter: " << diff << "%" << Gateendl
+              << "     diff substraction tolerance      : ±" << substractionError << "%" << Gateendl);
         else if(diff<=-substractionError)
         {
           std::pair<double,double> daughterIteration(VoxelIteration(daughterPV,Generation+1,daughterAbsoluteRotation,daughterAbsoluteTranslation,index));
