@@ -514,8 +514,12 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
                                   motherDoselRelativeTranslation);
 
   // If the mother's doesn't intersects the dosel
-  if(motherSV->GetCubicVolume()==0.) {
-    GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] WARNING: " <<  motherPV->GetName() << " is not contained inside the dosel n°" << index << Gateendl);
+  double ratio(motherSV->GetCubicVolume()*100./doselSV->GetCubicVolume());
+  double tolerance(1.);
+  if(ratio<tolerance) {
+    GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] WARNING: " <<  motherPV->GetName() << " is not contained inside the dosel n°" << index << Gateendl
+      << "     diff overlap Dosel-Mother: " << ratio << "%" << Gateendl
+      << "     diff overlap tolerance   : " << tolerance << "%" << Gateendl);
     return std::make_pair(0.,-1.);
   }
 
@@ -570,38 +574,62 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
         GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] "<<motherPV->GetName()<<" (after sub. mother-daughter)  : " << G4BestUnit(motherSV->GetCubicVolume(),"Volume") << " (daughterPV : "<<daughterPV->GetName()<<")"<< Gateendl);
 
         double diff((motherSV->GetCubicVolume()-motherCubicVolumeBefore)*100/motherCubicVolumeBefore);
-        double substractionError(0.5);
+        double substractionError(1.);
 
-        if(diff>substractionError)
-          GateError("Error: CubicVolume after substraction is bigger than before !" << Gateendl
+        if(diff>substractionError) {
+          GateMessage("Actor", 0, "[GateVoxelizedMass] WARNING: " << daughterPV->GetName() << " seems to be outside the dosel n°" << index << " !" << Gateendl);
+          GateMessage("Actor", 1, " => Volume of " << motherPV->GetName() << " after substraction with " << daughterPV->GetName() << " is bigger than before !" << Gateendl
               << "     diff substraction Mother-Daughter: " << diff << "%" << Gateendl
               << "     diff substraction tolerance      : ±" << substractionError << "%" << Gateendl);
-        else if(diff<=-substractionError)
+            GateMessage("Actor", 0, " ===> " << daughterPV->GetName() << " ignored for the dosel n°" << index << " !" << Gateendl);
+            motherSV=motherBeforeSubSV;
+        }
+        else if(diff<-substractionError)
         {
           std::pair<double,double> daughterIteration(VoxelIteration(daughterPV,Generation+1,daughterAbsoluteRotation,daughterAbsoluteTranslation,index));
+          double daughterCubicVolume(daughterIteration.second);
 
           if (daughterIteration.first == 0. && !mHasFilter)
-            GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] WARNING: daughterIteration.first (mass) is null ! (daughterPV: " << daughterPV->GetName() << ")" << Gateendl
-                << "Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl);
+            GateMessage("Actor", 2, "[GateVoxelizedMass] WARNING: daughterIteration.first (mass) is null ! (daughterPV: " << daughterPV->GetName() << ")" << Gateendl
+                << " => Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl);
 
-          if (daughterIteration.second == -1.) {
-            GateMessage("Actor", 0, "[GateVoxelizedMass::VoxelIteration] WARNING: " << daughterPV->GetName() << " seems to be outside the dosel n°" << index << " !" << Gateendl);
-            GateMessage("Actor", 2, "  => GEANT4 has trouble to compute soustraction between " << daughterPV->GetName() << " and its mother " << motherPV->GetName() << "!" << Gateendl
-                        << "  => It can be related to the geometry of " << daughterPV->GetName() << " (" << daughterSV->GetEntityType() << ")" << Gateendl
+
+          if (daughterCubicVolume == -1.) {
+            GateMessage("Actor", 0, "[GateVoxelizedMass] WARNING: " << daughterPV->GetName() << " seems to be outside the dosel n°" << index << " !" << Gateendl);
+            GateMessage("Actor", 1, " => GEANT4 has trouble to compute soustraction between " << daughterPV->GetName() << " and its mother " << motherPV->GetName() << " !" << Gateendl);
+            GateMessage("Actor", 1, " => It can be related to the geometry of " << daughterPV->GetName() << " (" << daughterSV->GetEntityType() << ")" << Gateendl
                         << "     diff substraction Mother-Daughter: " << diff << "%" << Gateendl
                         << "     diff substraction tolerance      : ±" << substractionError << "%" << Gateendl);
-            GateMessage("Actor", 0, "[GateVoxelizedMass::VoxelIteration] WARNING: " << daughterPV->GetName() << " ignored for the dosel n°" << index << " !" << Gateendl);
+            GateMessage("Actor", 0, " ===> " << daughterPV->GetName() << " ignored for the dosel n°" << index << " !" << Gateendl);
             motherSV=motherBeforeSubSV;
           }
-          else if (daughterIteration.second == 0.)
-            GateError("Error: daughterIteration.second (cubic volume) is null ! (daughterPhysicalVolume: " << daughterPV->GetName() << ") "<< Gateendl
+          else if (daughterCubicVolume == 0.)
+            GateError("ERROR: " << daughterPV->GetName() << " cubic volume is null in the dosel n°" << index << " !" << Gateendl
                 << "  => Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl
                 << "     diff substraction Mother-Daughter: " << diff << "%" << Gateendl
                 << "     diff substraction tolerance      : ±" << substractionError << "%" << Gateendl);
 
+          double diffVol((daughterCubicVolume-(motherBeforeSubSV->GetCubicVolume()-motherSV->GetCubicVolume()))*100./(motherBeforeSubSV->GetCubicVolume()-motherSV->GetCubicVolume()));
+          double diffVolTolerance(1.);
+          if (std::abs(diffVol)>diffVolTolerance) {
+            GateMessage("Actor", 0, "[GateVoxelizedMass] WARNING: Volume of " << daughterPV->GetName() << " is not correctly calculated in the dosel n°" << index << " !" << Gateendl);
+            GateMessage("Actor", 1, "Informations:" << Gateendl
+                << "     Daughter volume (theorical)    : " << G4BestUnit(motherBeforeSubSV->GetCubicVolume()-motherSV->GetCubicVolume(),"Volume") << Gateendl
+                << "     Daughter volume (reconstructed): " << G4BestUnit(daughterCubicVolume,"Volume") << Gateendl
+                << "     diff                           : " << diffVol << "%" << Gateendl
+                << "     diff tolerance                 : ±" << diffVolTolerance << "%" << Gateendl);
+            GateMessage("Actor", 0, " ===> Using theorical volume for " << daughterPV->GetName()<< Gateendl);
+            daughterCubicVolume=motherBeforeSubSV->GetCubicVolume()-motherSV->GetCubicVolume();
+            }
+
           motherProgenyMass+=daughterIteration.first;
-          motherProgenyCubicVolume+=daughterIteration.second;
+          motherProgenyCubicVolume+=daughterCubicVolume;
         }
+        else if (std::abs(diff)<=substractionError) {
+          GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] " << daughterPV->GetName() << " is not contained inside dosel n°" << index << Gateendl);
+          motherSV=motherBeforeSubSV;
+        }
+        GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] " << motherPV->GetName() << " volume: " << G4BestUnit(motherSV->GetCubicVolume(),"Volume") << Gateendl);
       }
     }
   }
@@ -638,7 +666,7 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
   if (Generation==0)
   {
     double diff((motherProgenyCubicVolume-doselSV->GetCubicVolume())*100/doselSV->GetCubicVolume());
-    double substractionError(0.5);
+    double substractionError(1.);
 
     if(std::abs(diff)>substractionError)
       GateError("Error: Dosel n°" << index << " is wrongly reconstructed !" << Gateendl <<
