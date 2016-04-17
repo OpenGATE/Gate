@@ -834,11 +834,13 @@ void GateVoxelizedMass::SetMaterialFilter(const G4String MatName)
 //-----------------------------------------------------------------------------
 void GateVoxelizedMass::SetVolumeFilter(const G4String VolName)
 {
+  if (VolName == "world")
+    GateError( "ERROR: GateVoxelizedMass::SetVolumeFilter: DoseActor doesn't work when attached to world !" << Gateendl);
   if (VolName != "") {
     if (mHasFilter)
-      GateError( "Error: GateVoxelizedMass::SetVolumeFilter: volume filter is not compatible with other filters !" << Gateendl);
-    else if (mHasExternalMassImage)
-      GateError( "Error: GateVoxelizedMass::SetVolumeFilter: mass image importation is not compatible with filters !" << Gateendl);
+      GateError( "ERROR: GateVoxelizedMass::SetVolumeFilter: volume filter is not compatible with other filters !" << Gateendl);
+    //else if (mHasExternalMassImage)
+    //  GateError( "Error: GateVoxelizedMass::SetVolumeFilter: mass image importation is not compatible with filters !" << Gateendl);
     else {
       mVolumeFilter=VolName+"_solid";
       mHasFilter=true;
@@ -856,8 +858,8 @@ void GateVoxelizedMass::SetExternalMassImage(const G4String extMassFile)
     mMassFile=extMassFile;
     mHasExternalMassImage=true;
 
-    if(mHasFilter)
-      GateError( "Error: GateVoxelizedMass::SetExternalMassImage: mass image importation is not compatible with filters !" << Gateendl);
+    //if(mHasFilter)
+    //  GateError( "Error: GateVoxelizedMass::SetExternalMassImage: mass image importation is not compatible with filters !" << Gateendl);
   }
 }
 //-----------------------------------------------------------------------------

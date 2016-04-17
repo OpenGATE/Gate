@@ -310,21 +310,11 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     return;
   }
 
-  if (mVolumeFilter!="" && mVolumeFilter+"_phys"!=step->GetPreStepPoint()->GetPhysicalVolume()->GetName()) {
+  if (mVolumeFilter != "" && mVolumeFilter+"_phys" != step->GetPreStepPoint()->GetPhysicalVolume()->GetName())
     return;
-  }
 
-  if (mMaterialFilter !="" && mMaterialFilter != step->GetPreStepPoint()->GetMaterial()->GetName()) {
+  if (mMaterialFilter != "" && mMaterialFilter != step->GetPreStepPoint()->GetMaterial()->GetName())
     return;
-  }
-
-  //G4String filterVol("");
-  //double filterDensity(0.);
-  //if (mVolumeFilter!="") {
-  //  filterVol=step->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetSolid()->GetName();
-  //  filterDensity=mVoxelizedMass.GetPartialMassWithSV(index,filterVol)/mVoxelizedMass.GetPartialVolumeWithSV(index,filterVol);
-  //}
-
 
   // compute sameEvent
   // sameEvent is false the first time some energy is deposited for each primary particle
@@ -349,8 +339,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   //---------------------------------------------------------------------------------
 
   if (mMaterialFilter != "")
-  {
-    GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel: material filter debug = "
+    GateDebugMessage("Actor", 3,  "GateDoseActor -- UserSteppingActionInVoxel: material filter debug = "
 		     << Gateendl
 		     << " material name        = " << step->GetPreStepPoint()->GetMaterial()->GetName()
 		     << Gateendl
@@ -360,7 +349,14 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 		     << Gateendl
 		     << " partial cubic volume = " << G4BestUnit(mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volume")
 		     << Gateendl );
-  }
+
+  if (mVolumeFilter != "")
+    GateDebugMessage("Actor", 3,  "GateDoseActor -- UserSteppingActionInVoxel: volume filter debug = "
+		     << Gateendl
+		     << " volume name          = " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName()
+		     << Gateendl
+		     << " Dose scored inside volume filtered volume !"
+		     << Gateendl );
 
   double dose=0.;
   if (mIsDoseImageEnabled) {
