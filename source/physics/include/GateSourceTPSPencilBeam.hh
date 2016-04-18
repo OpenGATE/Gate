@@ -55,7 +55,7 @@ public:
   //Test Flag
   void SetTestFlag(bool b) {mTestFlag=b;}
   //Treatment Plan file
-  void SetPlan(string plan) {mPlan=plan;}
+  void SetPlan(std::string plan) {mPlan=plan;}
   //FlatGenerationFlag
   void SetGeneFlatFlag(bool b) {mFlatGenerationFlag=b;}
   //Pencil beam parameters calculation
@@ -96,7 +96,7 @@ protected:
   bool mIsASourceDescriptionFile;
   G4String mSourceDescriptionFile;
 
-  vector<GateSourcePencilBeam*> mPencilBeams;
+  std::vector<GateSourcePencilBeam*> mPencilBeams;
   double mDistanceSMXToIsocenter;
   double mDistanceSMYToIsocenter;
   double mDistanceSourcePatient;
@@ -114,11 +114,11 @@ protected:
   double *mPDF;
   RandGeneral * mDistriGeneral;
   //Not alloweed fields
-  vector<int> mNotAllowedFields;
+  std::vector<int> mNotAllowedFields;
   //Allowed fields
-  vector<int> mAllowedFields;
+  std::vector<int> mAllowedFields;
   //clinical beam parameters (polynomial equations)
-  vector<double> mEnergy, mEnergySpread, mX, mY, mTheta, mPhi, mXThetaEmittance, mYPhiEmittance;
+  std::vector<double> mEnergy, mEnergySpread, mX, mY, mTheta, mPhi, mXThetaEmittance, mYPhiEmittance;
   //Configuration of spot intensity
   bool mSpotIntensityAsNbProtons;
   //Convergent or divergent beam model
