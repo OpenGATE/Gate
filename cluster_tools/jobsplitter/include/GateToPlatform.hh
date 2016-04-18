@@ -12,14 +12,7 @@ See GATE/LICENSE.txt for further details
 #ifndef GateToPlatform_h
 #define GateToPlatform_h 1
 #include "globals.hh"
-#include "vector"
-#include <iostream> 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sstream> 
-#include <fstream> 
-using namespace std;
-              
+
 /*use this class to generate submit files for different platforms
 based on output from GateMacfileParser*/
 

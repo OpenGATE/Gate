@@ -7,6 +7,9 @@
   ----------------------*/
 
 #include "GateSimplifiedDecay.hh"
+#include "Randomize.hh"
+
+using namespace std;
 
 //----------------------------------------------------------------------------------------
 //  doDecay: "decays" the isotope according to the simplified scheme.

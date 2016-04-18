@@ -23,10 +23,12 @@
 #ifndef GATESOURCETPSPENCILBEAM_CC
 #define GATESOURCETPSPENCILBEAM_CC
 
-#include <algorithm>
+// #include <algorithm>
 #include "GateConfiguration.h"
 
 #ifdef G4ANALYSIS_USE_ROOT
+#include <string>
+#include <sstream>
 #include "GateSourceTPSPencilBeam.hh"
 #include "G4Proton.hh"
 #include "GateMiscFunctions.hh"
@@ -324,15 +326,15 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
               mPencilBeams.push_back(Pencil);
 
               if (mTestFlag) {
-                cout << "Energy\t" << energy << endl;
-                cout << "SetEnergy\t" << GetEnergy(energy) << endl;
-                cout << "SetSigmaEnergy\t" << GetSigmaEnergy(energy) << endl;
-                cout << "SetSigmaX\t" << GetSigmaX(energy) << endl;
-                cout << "SetSigmaY\t" << GetSigmaY(energy) << endl;
-                cout << "SetSigmaTheta\t" << GetSigmaTheta(energy) << endl;
-                cout << "SetSigmaPhi\t" << GetSigmaPhi(energy) << endl;
-                cout << "SetEllipseXThetaArea\t" << GetEllipseXThetaArea(energy) << endl;
-                cout << "SetEllipseYPhiArea\t" << GetEllipseYPhiArea(energy) << endl;
+                G4cout << "Energy\t" << energy << Gateendl;
+                G4cout << "SetEnergy\t" << GetEnergy(energy) << Gateendl;
+                G4cout << "SetSigmaEnergy\t" << GetSigmaEnergy(energy) << Gateendl;
+                G4cout << "SetSigmaX\t" << GetSigmaX(energy) << Gateendl;
+                G4cout << "SetSigmaY\t" << GetSigmaY(energy) << Gateendl;
+                G4cout << "SetSigmaTheta\t" << GetSigmaTheta(energy) << Gateendl;
+                G4cout << "SetSigmaPhi\t" << GetSigmaPhi(energy) << Gateendl;
+                G4cout << "SetEllipseXThetaArea\t" << GetEllipseXThetaArea(energy) << Gateendl;
+                G4cout << "SetEllipseYPhiArea\t" << GetEllipseYPhiArea(energy) << Gateendl;
               }
             }
           }
@@ -597,9 +599,9 @@ return v;
 // FUNCTION
 //------------------------------------------------------------------------------------------------------
 void ReadLineTo3Doubles(double *toto, char *oneline) {
-  string data = oneline;
-  istringstream iss(data);
-  string token;
+  std::string data = oneline;
+  std::istringstream iss(data);
+  std::string token;
   for (int j=0; j<3; j++) {
     getline(iss, token, ' ');
     toto[j]=atof(token.c_str());
