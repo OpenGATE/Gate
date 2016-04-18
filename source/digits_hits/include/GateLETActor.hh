@@ -81,6 +81,8 @@ protected:
   GateImageDouble mEdepImage;
   GateImageDouble mFinalImage;
   G4String mLETFilename;
+  G4String numeratorFileName;
+  G4String denominatorFileName;
   G4String uncertaintyFilename;
   GateImageDouble mLETSecondMomentImage;
   GateImageDouble mLETUncertaintyFinalImage;

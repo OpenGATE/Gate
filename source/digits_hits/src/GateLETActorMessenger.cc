@@ -70,7 +70,7 @@ void GateLETActorMessenger::BuildCommands(G4String base)
   
   n = base +"/setType";
   pAveragingTypeCmd = new G4UIcmdWithAString(n,this);
-  guid = G4String("Sets  averaging method ('DoseAverage', 'TrackAverage'). Default is 'DoseAverage'.");
+  guid = G4String("Sets  averaging method ('DoseAveraged', 'TrackAveraged'). Default is 'DoseAveraged'.");
   pAveragingTypeCmd->SetGuidance(guid);
 
 

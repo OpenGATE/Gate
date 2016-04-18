@@ -85,7 +85,7 @@ void GateDoseActor::Construct() {
   // Find G4_WATER. This it needed here because we will used this
   // material for dedx computation for DoseToWater.
   G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
-
+  
   // Record the stepHitType
   mUserStepHitType = mStepHitType;
 
@@ -382,8 +382,8 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 	  {
 		  double x = step->GetPostStepPoint()->GetPosition().x();
 		  double y = step->GetPostStepPoint()->GetPosition().y();
-		  //double z = step->GetPostStepPoint()->GetPosition().z();
-		  
+		  double z = step->GetPostStepPoint()->GetPosition().z();
+		  G4cout << z << " " << edep <<G4endl;
 		  double dx = step->GetPostStepPoint()->GetMomentum().x();
 		  double dy = step->GetPostStepPoint()->GetMomentum().y();
 		  double dz = step->GetPostStepPoint()->GetMomentum().z();
@@ -406,14 +406,14 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 					 }
 					 else
 					{	
-						G4cout << tParticle->GetParticleName()<< G4endl;
-						G4cout<< "x = " << x<<G4endl;
-                       G4cout<< "y = " << y<<G4endl;
-                       G4cout<< "k = " << k<<G4endl;
-                       G4cout<< "dx" <<dx <<G4endl;
-                       G4cout<< "dy " << dy<<G4endl;
-                       G4cout<< "dz " << dz<<G4endl;
-                       G4cout<< "hst" << hst<<G4endl;
+						//G4cout << tParticle->GetParticleName()<< G4endl;
+						//G4cout<< "x = " << x<<G4endl;
+                       //G4cout<< "y = " << y<<G4endl;
+                       //G4cout<< "k = " << k<<G4endl;
+                       //G4cout<< "dx" <<dx <<G4endl;
+                       //G4cout<< "dy " << dy<<G4endl;
+                       //G4cout<< "dz " << dz<<G4endl;
+                       //G4cout<< "hst" << hst<<G4endl;
 					}
 					 //else
 					 //{ G4cout << "no hit in second layer" << G4endl;}

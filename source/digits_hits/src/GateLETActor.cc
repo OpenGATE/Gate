@@ -77,11 +77,11 @@ void GateLETActor::Construct() {
   //G4cout<< "Averaging type is:" <<G4endl;
   //G4cout<<mAveragingType<<G4endl<<G4endl;
 
-  if (mAveragingType == "DoseAveraged"){mIsDoseAveragedDEDXAveraged = true;}
+  if (mAveragingType == "DoseAveraged" || mAveragingType == "DoseAverage" || mAveragingType == "doseaverage" || mAveragingType == "dose"){mIsDoseAveragedDEDXAveraged = true;}
   else if (mAveragingType == "TrackAveragedFluenceStep"){mIsTrackAveragedFluenceAveraged = true;}
   else if (mAveragingType == "TrackAveragedCancelled"){mIsTrackAveragedDXAveragedCancelled = true;}
   else if (mAveragingType == "TrackAveragedFluenceTrack"){mIsTrackAveragedFluenceTrackAveraged = true;}
-  else if (mAveragingType == "TrackAveraged" || mAveragingType == "TrackAveragedDXAveraged"){mIsTrackAveragedDXAveraged = true;}
+  else if (mAveragingType == "TrackAveraged" || mAveragingType == "TrackAverage" || mAveragingType == "Track" || mAveragingType == "track" || mAveragingType == "TrackAveragedDXAveraged"){mIsTrackAveragedDXAveraged = true;}
   else if (mAveragingType == "DoseAveragedEdep"){mIsDoseAveragedEdepDXAveraged = true;}
   
   else {GateError("The LET averaging Type" << GetObjectName()
@@ -89,8 +89,27 @@ void GateLETActor::Construct() {
 //if (mIsTrackAveragedDXAveraged) {G4cout<<"yes yes track averaged DX"<<G4endl;}
 //if (mIsTrackAveragedDXAveraged) {G4cout<<"yes yes track averaged DX"<<G4endl;}
   // Output Filename
+  
+  
   mLETFilename = mSaveFilename;
-
+  if (mIsDoseAveragedDEDXAveraged)
+  {
+	  mLETFilename= removeExtension(mSaveFilename) + "-doseAveraged."+ getExtension(mSaveFilename);
+  }
+  else if (mIsTrackAveragedDXAveraged)
+  {
+	  mLETFilename= removeExtension(mSaveFilename) + "-trackAveraged."+ getExtension(mSaveFilename);
+  }
+  if (mIsDoseToWaterEnabled){
+		mLETFilename= removeExtension(mLETFilename) + "-letToWater."+ getExtension(mLETFilename);
+		//G4cout <<"LET filename:" << mLETFilename << G4endl;
+	  }
+  if (mIsParallelCalculationEnabled)
+  {
+	  numeratorFileName= removeExtension(mLETFilename) + "-numerator."+ getExtension(mLETFilename);
+	  denominatorFileName= removeExtension(mLETFilename) + "-denominator."+ getExtension(mLETFilename);
+  }
+  
   // Set origin, transform, flag
   SetOriginTransformAndFlagToImage(mLETImage);
   SetOriginTransformAndFlagToImage(mEdepImage);
@@ -171,8 +190,14 @@ void GateLETActor::SaveData() {
   // Final computation: divide the cumulated LET by the cumulated
   // edep.
   if (mIsParallelCalculationEnabled){
-	  mLETImage.Write(removeExtension(mLETFilename) + "-numerator."+ getExtension(mLETFilename));
-	  mEdepImage.Write(removeExtension(mLETFilename) + "-denominator."+ getExtension(mLETFilename));
+	  //G4String numeratorFileName= removeExtension(mLETFilename) + "-numerator."+ getExtension(mLETFilename);
+	  //G4String denominatorFileName= removeExtension(mLETFilename) + "-denominator."+ getExtension(mLETFilename);
+	  //if (mIsDoseToWaterEnabled){
+		  //numeratorFileName= removeExtension(numeratorFileName) + "-doseToWater."+ getExtension(numeratorFileName);
+		  //denominatorFileName= removeExtension(denominatorFileName) + "-doseToWater."+ getExtension(denominatorFileName);
+	  //}
+	  mLETImage.Write(numeratorFileName);
+	  mEdepImage.Write(denominatorFileName);
 	  if (mIsLETUncertaintyImageEnabled)
 		{
 			mLETSecondMomentImage.Write(removeExtension(mLETFilename) + "-variance-unnormalizedSecondMoment."+ getExtension(mLETFilename));
@@ -181,7 +206,10 @@ void GateLETActor::SaveData() {
   }
   else
   {
-	  
+	  //if (mIsDoseToWaterEnabled){
+		//mLETFilename= removeExtension(mSaveFilename) + "-doseToWater."+ getExtension(mSaveFilename);
+		////G4cout <<"LET filename:" << mLETFilename << G4endl;
+	  //}
 	  GateImageDouble::const_iterator iter_LET = mLETImage.begin();
 	  GateImageDouble::const_iterator iter_Edep = mEdepImage.begin();
 	  GateImageDouble::iterator iter_Final = mFinalImage.begin();
@@ -293,7 +321,7 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
     return;
   }
   // Get somes values
-  double density = step->GetPreStepPoint()->GetMaterial()->GetDensity();
+  //double density = step->GetPreStepPoint()->GetMaterial()->GetDensity();
   //const G4VProcess * thisProcess= step->GetPostStepPoint()->GetProcessDefinedStep(); // ->GetProcessName() or ->GetProcessType() 
    //G4ProcessType thisProcessType = thisProcess->GetProcessType();
    //G4String thisProcessName;
@@ -486,18 +514,21 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   
   if (mIsDoseToWaterEnabled){
 	   //G4cout<< "LET t should not enter here mIsDoseToWaterEnabled" << G4endl;
-	  double energyScalingFactor= emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER"); // include here also mDeltaRestricted
-	  energyScalingFactor /= emcalc->ComputeTotalDEDX(energy, partname, material); // include here also mDeltaRestricted
-	  double massScalingFactor = density;
-	  massScalingFactor /= 1.0;
-	  if (mIsDoseAveraged){
-		  doseAveragedLET*=(massScalingFactor*energyScalingFactor*energyScalingFactor);
-		  normalizationVal*=(massScalingFactor*energyScalingFactor);
-	  }
-	  else if (mIsTrackAveraged){
-		  doseAveragedLET*=(energyScalingFactor);
-	  }
-			 
+	  //double energyScalingFactor= emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER"); // include here also mDeltaRestricted
+	  //energyScalingFactor /= emcalc->ComputeTotalDEDX(energy, partname, material); // include here also mDeltaRestricted
+	  //double massScalingFactor = density;
+	  //massScalingFactor /= 1.0;
+	  //G4cout << energyScalingFactor << G4endl;
+	  //if (mIsDoseAveraged){
+		  //doseAveragedLET*=energyScalingFactor;
+		  ////doseAveragedLET*=(massScalingFactor*energyScalingFactor*energyScalingFactor);
+		  ////normalizationVal*=(massScalingFactor*energyScalingFactor);
+	  //}
+	  //else if (mIsTrackAveraged){
+		  //doseAveragedLET*=(energyScalingFactor);
+	  //}
+	  doseAveragedLET=edep*emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER");
+	  //G4cout << doseAveragedLET/normalizationVal << G4endl;
   }
   
    
@@ -508,7 +539,7 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   if (mIsLETUncertaintyImageEnabled)
   {
 	   //G4cout<< "LET t should not enter here mIsLETUncertaintyImageEnabled" << G4endl;
-	double secondMomentLET;
+	double secondMomentLET = 0;
 	if (mIsDoseAveragedDEDXAveraged){
 		secondMomentLET = edep*dedx*dedx;
 	}
