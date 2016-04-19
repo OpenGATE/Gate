@@ -18,9 +18,6 @@
 #include "GateImageOfHistograms.hh"
 #include "GatePromptGammaData.hh"
 
-#include <TFile.h>
-#include <TH1.h>
-#include <TH2.h>
 
 //-----------------------------------------------------------------------------
 class GatePromptGammaAnalogActor: public GateVImageActor

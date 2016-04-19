@@ -590,7 +590,7 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
             source->SetSourceWeight(GetWeight());
             mNumberOfEventBySource[source->GetSourceID()+1]+=1;
             numVertices = source->GeneratePrimaries( event );
-          }
+        }
         else {
           if( mVerboseLevel > 0 )
             G4cout << "GateSourceMgr::PrepareNextEvent : m_time > m_timeLimit. No vertex generated\n";
