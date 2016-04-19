@@ -170,6 +170,24 @@ double GateVoxelizedMass::GetVoxelMass(const int index)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+double GateVoxelizedMass::GetVoxelCubicVolume(const int index)
+{
+  if(doselReconstructedCubicVolume[index]==-1.)
+  {
+    if(mIsParameterised)
+      doselReconstructedData=ParameterizedVolume(index);
+    else
+      doselReconstructedData=VoxelIteration(DAPV,0,DAPV->GetObjectRotationValue(),DAPV->GetObjectTranslation(),index);
+
+    doselReconstructedMass[index]=doselReconstructedData.first;
+    doselReconstructedCubicVolume[index]=doselReconstructedData.second;
+  }
+
+  return doselReconstructedCubicVolume[index];
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 std::vector<double> GateVoxelizedMass::GetVoxelMassVector()
 {
   if(doselExternalMass.size()>0)
