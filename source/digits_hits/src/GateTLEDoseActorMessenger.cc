@@ -11,7 +11,6 @@ See GATE/LICENSE.txt for further details
 #define GATETLEDOSEACTORMESSENGER_CC
 
 #include "GateTLEDoseActorMessenger.hh"
-
 #include "GateTLEDoseActor.hh"
 
 //-----------------------------------------------------------------------------
@@ -25,6 +24,8 @@ GateTLEDoseActorMessenger::GateTLEDoseActorMessenger(GateTLEDoseActor* sensor)
   pEnableDoseSquaredCmd= 0;
   pEnableEdepSquaredCmd= 0;
   pEnableEdepUncertaintyCmd= 0;
+  pVolumeFilterCmd= 0;
+  pMaterialFilterCmd= 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -40,7 +41,8 @@ GateTLEDoseActorMessenger::~GateTLEDoseActorMessenger()
   if(pEnableDoseSquaredCmd) delete pEnableDoseSquaredCmd;
   if(pEnableEdepSquaredCmd) delete pEnableEdepSquaredCmd;
   if(pEnableEdepUncertaintyCmd) delete pEnableEdepUncertaintyCmd;
-
+  if(pVolumeFilterCmd) delete pVolumeFilterCmd;
+  if(pMaterialFilterCmd) delete pMaterialFilterCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -79,6 +81,17 @@ void GateTLEDoseActorMessenger::BuildCommands(G4String base)
   guid = G4String("Enable uncertainty edep computation");
   pEnableEdepUncertaintyCmd->SetGuidance(guid);
 
+  n = base+"/setVolumeFilter";
+  pVolumeFilterCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Volume filter");
+  pVolumeFilterCmd->SetGuidance(guid);
+  pVolumeFilterCmd->SetParameterName("Volume filter",false);
+
+  n = base+"/setMaterialFilter";
+  pMaterialFilterCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Material filter");
+  pMaterialFilterCmd->SetGuidance(guid);
+  pMaterialFilterCmd->SetParameterName("Material filter",false);
 }
 //-----------------------------------------------------------------------------
 
@@ -89,12 +102,13 @@ void GateTLEDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pEnableDoseCmd) pDoseActor->EnableDoseImage(pEnableDoseCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableEdepCmd) pDoseActor->EnableEdepImage(pEnableEdepCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseUncertaintyCmd) pDoseActor->EnableDoseUncertaintyImage(pEnableDoseUncertaintyCmd->GetNewBoolValue(newValue));
- if (cmd == pEnableDoseSquaredCmd) pDoseActor->EnableDoseSquaredImage(pEnableDoseSquaredCmd->GetNewBoolValue(newValue));
- if (cmd == pEnableEdepSquaredCmd) pDoseActor->EnableEdepSquaredImage(pEnableEdepSquaredCmd->GetNewBoolValue(newValue));
- if (cmd == pEnableEdepUncertaintyCmd) pDoseActor->EnableEdepUncertaintyImage(pEnableEdepUncertaintyCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableDoseSquaredCmd) pDoseActor->EnableDoseSquaredImage(pEnableDoseSquaredCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableEdepSquaredCmd) pDoseActor->EnableEdepSquaredImage(pEnableEdepSquaredCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableEdepUncertaintyCmd) pDoseActor->EnableEdepUncertaintyImage(pEnableEdepUncertaintyCmd->GetNewBoolValue(newValue));
+  if (cmd == pVolumeFilterCmd) pDoseActor->VolumeFilter(newValue);
+  if (cmd == pMaterialFilterCmd) pDoseActor->MaterialFilter(newValue);
 
- GateImageActorMessenger::SetNewValue( cmd, newValue);
-
+  GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
 //-----------------------------------------------------------------------------
 

@@ -15,6 +15,7 @@ See GATE/LICENSE.txt for further details
 #define GATETLEDOSEACTORMESSENGER_HH
 
 #include "G4UIcmdWithABool.hh"
+#include "G4UIcmdWithAString.hh"
 #include "GateImageActorMessenger.hh"
 
 class GateTLEDoseActor;
@@ -37,6 +38,8 @@ protected:
   G4UIcmdWithABool * pEnableEdepSquaredCmd;
   G4UIcmdWithABool * pEnableEdepUncertaintyCmd;
 
+  G4UIcmdWithAString * pVolumeFilterCmd;
+  G4UIcmdWithAString * pMaterialFilterCmd;
 };
 
 #endif /* end #define GATETLEDOSEACTORMESSENGER_HH*/

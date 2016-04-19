@@ -6,18 +6,15 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-
 /*
   \brief Class GateTLEDoseActor :
   \brief
 */
 
-#ifndef GATETLEDOSEACTOR_CC
-#define GATETLEDOSEACTOR_CC
-
 #include "GateTLEDoseActor.hh"
 #include "GateMiscFunctions.hh"
 #include "GateMaterialMuHandler.hh"
+
 #include <G4PhysicalConstants.hh>
 
 //-----------------------------------------------------------------------------
@@ -33,6 +30,8 @@ GateTLEDoseActor::GateTLEDoseActor(G4String name, G4int depth):
   mIsEdepUncertaintyImageEnabled = false;
   mIsDoseSquaredImageEnabled = false;
 
+  mVolumeFilter = "";
+  mMaterialFilter = "";
 }
 //-----------------------------------------------------------------------------
 
@@ -98,6 +97,16 @@ void GateTLEDoseActor::Construct() {
     mDoseImage.SetOrigin(mOrigin);
   }
 
+  if (mVolumeFilter!="" || mMaterialFilter!="") {
+    mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    mMassImage.Allocate();
+    mVoxelizedMass.SetMaterialFilter(mMaterialFilter);
+    mVoxelizedMass.SetVolumeFilter(mVolumeFilter);
+    mVoxelizedMass.SetExternalMassImage(mImportMassImage);
+    mVoxelizedMass.Initialize(mVolumeName,mMassImage);
+    mMassImage=mVoxelizedMass.UpdateImage(mMassImage);
+  }
+
   ConversionFactor = e_SI * 1.0e11;
   VoxelVolume = GetDoselVolume();
   ResetData();
@@ -153,7 +162,15 @@ void GateTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step *
   G4StepPoint *PostStep(step->GetPostStepPoint());
   G4ThreeVector prePosition = PreStep->GetPosition();
   G4ThreeVector postPosition = PostStep->GetPosition();
+
   if (step->GetTrack()->GetDefinition()->GetParticleName() == "gamma") {
+    // Filters conditions
+    if ((mVolumeFilter != "" && mVolumeFilter+"_phys" != step->GetPreStepPoint()->GetPhysicalVolume()->GetName()) ||
+        (mMaterialFilter != "" && mMaterialFilter != step->GetPreStepPoint()->GetMaterial()->GetName()))
+      return;
+    else if (mMaterialFilter != "" || mVolumeFilter != "")
+      VoxelVolume = mVoxelizedMass.GetVoxelVolume();
+
     G4double distance = step->GetStepLength();
     G4double energy = PreStep->GetKineticEnergy();
     double muenOverRho = mMaterialHandler->GetMuEnOverRho(PreStep->GetMaterialCutsCouple(), energy);
@@ -193,5 +210,3 @@ void GateTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step *
   }
 }
 //-----------------------------------------------------------------------------
-
-#endif /* end #define GATETLEDOSEACTOR_CC */

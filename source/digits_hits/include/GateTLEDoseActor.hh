@@ -8,9 +8,12 @@
 
 
 /*!
-  \class  GateDoseActor
+  \class  GateTLEDoseActor
   \author fabien.baldacci@creatis.insa-lyon.fr
+
+  - Filters added by Thomas Deschler (thomas.deschler@iphc.cnrs.fr)
 */
+
 
 #ifndef GATETLEDOSEACTOR_HH
 #define GATETLEDOSEACTOR_HH
@@ -21,6 +24,7 @@
 #include "GateImageWithStatistic.hh"
 #include "GateMaterialMuHandler.hh"
 #include "G4UnitsTable.hh"
+#include "GateVoxelizedMass.hh"
 
 class GateTLEDoseActor : public GateVImageActor
 {
@@ -66,19 +70,25 @@ protected:
   GateTLEDoseActor(G4String name, G4int depth=0);
   GateTLEDoseActorMessenger * pMessenger;
 
+  GateVoxelizedMass mVoxelizedMass;
+
   GateImageWithStatistic mDoseImage;
-  //GateImageWithStatistic mPrimaryDoseImage;
-  //GateImageWithStatistic mSecondaryDoseImage;
   GateImageWithStatistic mEdepImage;
   GateImage mLastHitEventImage;
 
   GateMaterialMuHandler* mMaterialHandler;
+
   G4String mDoseFilename;
   G4String mPDoseFilename;
   G4String mSDoseFilename;
   G4String mEdepFilename;
+
+  G4String mVolumeFilter;
+  G4String mMaterialFilter;
+
   G4double ConversionFactor;
   G4double VoxelVolume;
+
   bool mIsEdepImageEnabled;
   bool mIsDoseUncertaintyImageEnabled;
   bool mIsLastHitEventImageEnabled;
@@ -86,6 +96,7 @@ protected:
   bool mIsEdepUncertaintyImageEnabled;
   bool mIsDoseImageEnabled;
   bool mIsDoseSquaredImageEnabled;
+
   int mCurrentEvent;
   G4double outputEnergy;
   G4double totalEnergy;
