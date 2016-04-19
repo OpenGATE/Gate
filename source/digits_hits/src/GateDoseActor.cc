@@ -338,25 +338,19 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     density = mVoxelizedMass.GetVoxelMass(index)/mDoseImage.GetVoxelVolume();
   //---------------------------------------------------------------------------------
 
-  if (mMaterialFilter != "")
-    GateDebugMessage("Actor", 3,  "GateDoseActor -- UserSteppingActionInVoxel: material filter debug = "
-		     << Gateendl
-		     << " material name        = " << step->GetPreStepPoint()->GetMaterial()->GetName()
-		     << Gateendl
-		     << " density              = " << G4BestUnit(mVoxelizedMass.GetPartialMassWithMatName(index)/mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volumic Mass")
-		     << Gateendl
-		     << " dosel cubic volume   = " << G4BestUnit(mDoseImage.GetVoxelVolume(), "Volume")
-		     << Gateendl
-		     << " partial cubic volume = " << G4BestUnit(mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volume")
-		     << Gateendl );
+  if (mMaterialFilter != "") {
+    GateDebugMessage("Actor", 3,  "GateDoseActor -- UserSteppingActionInVoxel: material filter debug = " << Gateendl
+		     << " material name        = " << step->GetPreStepPoint()->GetMaterial()->GetName() << Gateendl
+		     << " density              = " << G4BestUnit(mVoxelizedMass.GetPartialMassWithMatName(index)/mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volumic Mass") << Gateendl
+		     << " dosel cubic volume   = " << G4BestUnit(mDoseImage.GetVoxelVolume(), "Volume") << Gateendl
+		     << " partial cubic volume = " << G4BestUnit(mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volume") << Gateendl);
+  }
 
-  if (mVolumeFilter != "")
-    GateDebugMessage("Actor", 3,  "GateDoseActor -- UserSteppingActionInVoxel: volume filter debug = "
-		     << Gateendl
-		     << " volume name          = " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName()
-		     << Gateendl
-		     << " Dose scored inside volume filtered volume !"
-		     << Gateendl );
+  if (mVolumeFilter != "") {
+    GateDebugMessage("Actor", 3,  "GateDoseActor -- UserSteppingActionInVoxel: volume filter debug = " << Gateendl
+		     << " volume name          = " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << Gateendl
+		     << " Dose scored inside volume filtered volume !" << Gateendl);
+  }
 
   double dose=0.;
   if (mIsDoseImageEnabled) {
