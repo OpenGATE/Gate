@@ -33,15 +33,15 @@ class GateVoxelizedMass
 
   void Initialize(const G4String mExtVolumeName, const GateImageDouble mExtImage);
 
-  double GetVoxelMass(const int index);
-  std::vector<double> GetVoxelMassVector();
-
   virtual bool IsLVParameterized(const G4LogicalVolume* LV);
   virtual void GenerateVectors();
   virtual void GenerateVoxels();
   virtual void GenerateDosels(const int index);
   virtual std::pair<double,double> ParameterizedVolume(const int index);
   virtual std::pair<double,double> VoxelIteration(G4VPhysicalVolume* motherPV,const int Generation,G4RotationMatrix MotherRotation,G4ThreeVector MotherTranslation,const int index);
+  double  GetVoxelMass(const int index);
+  std::vector<double> GetVoxelMassVector();
+  double  GetVoxelCubicVolume(const int index);
   double  GetPartialVolumeWithSV     (const int index,const G4String SVName);
   double  GetPartialMassWithSV       (const int index,const G4String SVName);
   double  GetPartialVolumeWithMatName(const int index);
