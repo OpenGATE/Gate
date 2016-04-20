@@ -96,14 +96,14 @@ void GateTLEDoseActor::Construct() {
     mDoseImage.SetOrigin(mOrigin);
   }
 
-  if (mVolumeFilter!="" || mMaterialFilter!="") {
+  if (mDoseAlgorithmType=="MassWeighting" || mVolumeFilter!="" || mMaterialFilter!="") {
     mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mMassImage.Allocate();
+
     mVoxelizedMass.SetMaterialFilter(mMaterialFilter);
     mVoxelizedMass.SetVolumeFilter(mVolumeFilter);
     mVoxelizedMass.SetExternalMassImage(mImportMassImage);
     mVoxelizedMass.Initialize(mVolumeName,mMassImage);
-    mMassImage=mVoxelizedMass.UpdateImage(mMassImage);
   }
 
   ConversionFactor = e_SI * 1.0e11;
