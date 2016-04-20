@@ -38,6 +38,8 @@ protected:
   G4UIcmdWithABool * pEnableEdepSquaredCmd;
   G4UIcmdWithABool * pEnableEdepUncertaintyCmd;
 
+  G4UIcmdWithAString * pSetDoseAlgorithmCmd;
+  G4UIcmdWithAString * pImportMassImageCmd;
   G4UIcmdWithAString * pVolumeFilterCmd;
   G4UIcmdWithAString * pMaterialFilterCmd;
 };

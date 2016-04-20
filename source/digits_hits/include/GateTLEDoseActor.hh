@@ -46,6 +46,10 @@ public:
   void EnableEdepUncertaintyImage(bool b) { mIsEdepUncertaintyImageEnabled = b; }
   void EnableDoseImage(bool b) { mIsDoseImageEnabled = b; }
   void EnableDoseSquaredImage(bool b) { mIsDoseSquaredImageEnabled = b; }
+  void SetDoseAlgorithmType(G4String b) { mDoseAlgorithmType = b; }
+  void ImportMassImage(G4String b) { mImportMassImage = b; }
+  void VolumeFilter(G4String b) { mVolumeFilter = b; }
+  void MaterialFilter(G4String b) { mMaterialFilter = b; }
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
@@ -75,6 +79,7 @@ protected:
   GateImageWithStatistic mDoseImage;
   GateImageWithStatistic mEdepImage;
   GateImage mLastHitEventImage;
+  GateImageDouble mMassImage;
 
   GateMaterialMuHandler* mMaterialHandler;
 
@@ -82,7 +87,8 @@ protected:
   G4String mPDoseFilename;
   G4String mSDoseFilename;
   G4String mEdepFilename;
-
+  G4String mDoseAlgorithmType;
+  G4String mImportMassImage;
   G4String mVolumeFilter;
   G4String mMaterialFilter;
 

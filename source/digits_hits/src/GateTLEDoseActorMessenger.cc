@@ -24,6 +24,8 @@ GateTLEDoseActorMessenger::GateTLEDoseActorMessenger(GateTLEDoseActor* sensor)
   pEnableDoseSquaredCmd= 0;
   pEnableEdepSquaredCmd= 0;
   pEnableEdepUncertaintyCmd= 0;
+  pSetDoseAlgorithmCmd= 0;
+  pImportMassImageCmd= 0;
   pVolumeFilterCmd= 0;
   pMaterialFilterCmd= 0;
 
@@ -41,6 +43,8 @@ GateTLEDoseActorMessenger::~GateTLEDoseActorMessenger()
   if(pEnableDoseSquaredCmd) delete pEnableDoseSquaredCmd;
   if(pEnableEdepSquaredCmd) delete pEnableEdepSquaredCmd;
   if(pEnableEdepUncertaintyCmd) delete pEnableEdepUncertaintyCmd;
+  if(pSetDoseAlgorithmCmd) delete pSetDoseAlgorithmCmd;
+  if(pImportMassImageCmd) delete pImportMassImageCmd;
   if(pVolumeFilterCmd) delete pVolumeFilterCmd;
   if(pMaterialFilterCmd) delete pMaterialFilterCmd;
 }
@@ -81,6 +85,18 @@ void GateTLEDoseActorMessenger::BuildCommands(G4String base)
   guid = G4String("Enable uncertainty edep computation");
   pEnableEdepUncertaintyCmd->SetGuidance(guid);
 
+  n = base+"/setDoseAlgorithm";
+  pSetDoseAlgorithmCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Set the alogrithm used in the dose calculation");
+  pSetDoseAlgorithmCmd->SetGuidance(guid);
+  pSetDoseAlgorithmCmd->SetParameterName("Dose algorithm",false);
+
+  n = base+"/importMassImage";
+  pImportMassImageCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Import mass image");
+  pImportMassImageCmd->SetGuidance(guid);
+  pImportMassImageCmd->SetParameterName("Import mass image",false);
+
   n = base+"/setVolumeFilter";
   pVolumeFilterCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Volume filter");
@@ -105,6 +121,8 @@ void GateTLEDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pEnableDoseSquaredCmd) pDoseActor->EnableDoseSquaredImage(pEnableDoseSquaredCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableEdepSquaredCmd) pDoseActor->EnableEdepSquaredImage(pEnableEdepSquaredCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableEdepUncertaintyCmd) pDoseActor->EnableEdepUncertaintyImage(pEnableEdepUncertaintyCmd->GetNewBoolValue(newValue));
+  if (cmd == pSetDoseAlgorithmCmd) pDoseActor->SetDoseAlgorithmType(newValue);
+  if (cmd == pImportMassImageCmd) pDoseActor->ImportMassImage(newValue);
   if (cmd == pVolumeFilterCmd) pDoseActor->VolumeFilter(newValue);
   if (cmd == pMaterialFilterCmd) pDoseActor->MaterialFilter(newValue);
 
@@ -112,4 +130,4 @@ void GateTLEDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 }
 //-----------------------------------------------------------------------------
 
-#endif /* end #define GATETLEDOSEACTORMESSENGER_CC */
+#endif

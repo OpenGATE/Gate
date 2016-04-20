@@ -29,12 +29,12 @@ GateTLEDoseActor::GateTLEDoseActor(G4String name, G4int depth):
   mIsEdepSquaredImageEnabled = false;
   mIsEdepUncertaintyImageEnabled = false;
   mIsDoseSquaredImageEnabled = false;
-
+  mDoseAlgorithmType = "";
+  mImportMassImage = "";
   mVolumeFilter = "";
   mMaterialFilter = "";
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 /// Destructor
@@ -42,7 +42,6 @@ GateTLEDoseActor::~GateTLEDoseActor()  {
   delete pMessenger;
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 /// Construct
@@ -113,7 +112,6 @@ void GateTLEDoseActor::Construct() {
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
 /// Save data
 void GateTLEDoseActor::SaveData() {
@@ -168,14 +166,21 @@ void GateTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step *
     if ((mVolumeFilter != "" && mVolumeFilter+"_phys" != step->GetPreStepPoint()->GetPhysicalVolume()->GetName()) ||
         (mMaterialFilter != "" && mMaterialFilter != step->GetPreStepPoint()->GetMaterial()->GetName()))
       return;
-    else if (mMaterialFilter != "" || mVolumeFilter != "")
-      VoxelVolume = mVoxelizedMass.GetVoxelVolume();
 
-    G4double distance = step->GetStepLength();
-    G4double energy = PreStep->GetKineticEnergy();
+    double distance = step->GetStepLength();
+    double energy = PreStep->GetKineticEnergy();
     double muenOverRho = mMaterialHandler->GetMuEnOverRho(PreStep->GetMaterialCutsCouple(), energy);
-    G4double dose = ConversionFactor * energy * muenOverRho * distance / VoxelVolume;
-    G4double edep = 0.1 * energy * muenOverRho * distance * PreStep->GetMaterial()->GetDensity() / (g / cm3);
+    double dose = ConversionFactor * energy * muenOverRho * distance / VoxelVolume;
+
+    //---------------------------------------------------------------------------------
+    // Mass weighting OR filter
+    if (mDoseAlgorithmType == "MassWeighting" || mMaterialFilter != "" || mVolumeFilter != "") {
+      double muen = mMaterialHandler->GetMuEn(PreStep->GetMaterialCutsCouple(), energy);
+      dose = energy * muen * distance / mVoxelizedMass.GetVoxelMass(index) / gray * 0.1;
+    }
+    //---------------------------------------------------------------------------------
+
+    double edep = 0.1 * energy * muenOverRho * distance * PreStep->GetMaterial()->GetDensity() / (g / cm3);
     bool sameEvent = true;
 
     if (mIsLastHitEventImageEnabled) {
