@@ -55,8 +55,6 @@ class GateParameterisedCollimator : public GateBox
 	{ return m_DimensionX; }
      inline G4double GetCollimatorDimensionY() const
 	{ return m_DimensionY; }
-     inline const G4String& GetCollimatorMaterial() const
-	{ return mMaterialName; }
 
      inline void SetCollimatorFocalDistanceX(G4double val)
 	{ m_FocalDistanceX = val; ResizeCollimator();}
@@ -72,12 +70,9 @@ class GateParameterisedCollimator : public GateBox
 	{ m_DimensionX = val; ResizeCollimator(); }
      inline void SetCollimatorDimensionY(G4double val)
 	{ m_DimensionY = val; ResizeCollimator();}
-     inline void SetCollimatorMaterial(const G4String& val)
-	{ mMaterialName = val; ResizeCollimator();}
 
   protected:
      G4double m_FocalDistanceX,m_FocalDistanceY,m_SeptalThickness,m_InnerRadius,m_Height,m_DimensionX,m_DimensionY;
-     G4String mMaterialName;
 
      GateParameterisedHole*                m_holeInserter;
      GateParameterisedCollimatorMessenger* m_messenger;
