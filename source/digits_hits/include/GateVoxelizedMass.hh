@@ -103,6 +103,7 @@ class GateVoxelizedMass
   bool mIsFilteredVolumeProcessed;
   bool mHasFilter;
   bool mHasExternalMassImage;
+  bool mHasSameResolution;
 
   int seconds;
 };
