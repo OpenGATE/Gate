@@ -40,6 +40,7 @@ GateVoxelizedMass::GateVoxelizedMass()
   mIsVecGenerated       =false;
   mHasFilter            =false;
   mHasExternalMassImage =false;
+  mHasSameResolution    =false;
 
   mMassFile       ="";
   mMaterialFilter ="";
@@ -145,6 +146,9 @@ bool GateVoxelizedMass::IsLVParameterized(const G4LogicalVolume* LV)
 //-----------------------------------------------------------------------------
 double GateVoxelizedMass::GetVoxelMass(const int index)
 {
+  if (mHasSameResolution)
+    return theMaterialDatabase.GetMaterial((G4String)imageVolume->GetMaterialNameFromLabel(imageVolume->GetImage()->GetValue(index)))->GetDensity()*imageVolume->GetImage()->GetVoxelVolume();
+
   // Case of imported mass image
   if(mHasExternalMassImage)
   {
@@ -172,6 +176,9 @@ double GateVoxelizedMass::GetVoxelMass(const int index)
 //-----------------------------------------------------------------------------
 double GateVoxelizedMass::GetVoxelCubicVolume(const int index)
 {
+  if (mHasSameResolution)
+    return imageVolume->GetImage()->GetVoxelVolume();
+
   if(doselReconstructedCubicVolume[index]==-1.)
   {
     if(mIsParameterised)
@@ -278,6 +285,12 @@ void GateVoxelizedMass::GenerateVoxels()
   //G4cout<<"nxDosel="<<nxDosel<<G4endl;
   //G4cout<<"nyDosel="<<nyDosel<<G4endl;
   //G4cout<<"nzDosel="<<nzDosel<<G4endl;
+
+  if(nxDosel == nxVoxel && nyDosel == nyVoxel && nzDosel == nzVoxel) {
+    mHasSameResolution=true;
+    GateMessage("Actor", 2, "[GateVoxelizedMass] INFO: Resolution of voxels and dosels are the same !" << Gateendl);
+  }
+
 
   if(nxDosel>nxVoxel||nyDosel>nyVoxel||nzDosel>nzVoxel)
       GateError("!!! ERROR : The dosel resolution is smaller than the voxel resolution !!!"<<Gateendl);
