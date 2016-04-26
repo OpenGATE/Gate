@@ -404,7 +404,14 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
 	  //G4cout<<"This is dose Averaged: "<< doseAveragedLET<<G4endl;	
       //G4cout<< "LET t should not enter here mIsDoseAveraged" << G4endl;
   }
-
+  else if (mIsTrackAveragedDXAveraged)
+  { 
+	   //G4cout<< "LET t should  enter here TrackAveragedDXAveraged" << G4endl;
+	  doseAveragedLET=dedx*steplength;
+	  normalizationVal = steplength;
+	  //doseAveragedLET=edep;
+	  //normalizationVal = steplength;
+  }  
   else if (mIsTrackAveragedFluenceTrackAveraged){
 	  //if (index > 8 && index < 10) {
 	  //G4cout<<"mCurrentEvent: "<<mCurrentEvent<<G4endl;
@@ -485,14 +492,7 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   }
   
   
-  else if (mIsTrackAveragedDXAveraged)
-  { 
-	   //G4cout<< "LET t should  enter here TrackAveragedDXAveraged" << G4endl;
-	  doseAveragedLET=dedx*steplength;
-	  normalizationVal = steplength;
-	  //doseAveragedLET=edep;
-	  //normalizationVal = steplength;
-  }  
+
   else if (mIsTrackAveragedDXAveragedCancelled)
   { 
 	   //G4cout<< "LET t should not enter here TrackAveragedCancelled" << G4endl;
