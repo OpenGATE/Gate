@@ -14,6 +14,7 @@
 // Gate
 #include "GateFluenceActor.hh"
 #include "GateScatterOrderTrackInformationActor.hh"
+#include <sstream>
 
 //-----------------------------------------------------------------------------
 GateFluenceActor::GateFluenceActor(G4String name, G4int depth):
@@ -173,7 +174,7 @@ void GateFluenceActor::SaveData()
     for(unsigned int i = 0; i<mProcessName.size(); i++){
       it = mProcesses.find(mProcessName[i]);
       if(it!=mProcesses.end()){
-        stringstream filenamestream;
+        std::stringstream filenamestream;
         filenamestream << mSeparateProcessFilename << "_" << mProcessName[i] << ".mhd";
         sprintf(filename, filenamestream.str().c_str(), rID);
         mProcesses[mProcessName[i]]->Write((G4String)filename);

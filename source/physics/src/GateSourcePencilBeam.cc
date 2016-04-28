@@ -39,7 +39,7 @@
 #include "G4UnitsTable.hh"
 
 // std
-#include <iostream>
+#include <string>
 
 GateSourcePencilBeam::GateSourcePencilBeam(G4String name, bool useMessenger):
   GateVSource(name), mGaussian2DYPhi(NULL), mGaussian2DXTheta(NULL), mGaussianEnergy(NULL)
@@ -138,15 +138,15 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
 
     //---------SOURCE PARAMETERS - CONTROL ----------------
     if (pi*mSigmaX*mSigmaTheta<mEllipseXThetaArea){
-      cout<<"\n !!! ERROR !!! -> Wrong Source Parameters: EmmittanceX-Theta is lower than Pi*SigmaX*SigmaTheta! Please correct it."<<endl;
-      cout<<"Please make sure that the energy used belongs to the beam model energy range."<<endl;
-      cout<<"Energy "<<mEnergy<<"\tX "<<mSigmaX<<"\tTheta "<<mSigmaTheta<<"\tEmittance "<<mEllipseXThetaArea<<"\n"<<endl;
+      G4cout<<"\n !!! ERROR !!! -> Wrong Source Parameters: EmmittanceX-Theta is lower than Pi*SigmaX*SigmaTheta! Please correct it."<<Gateendl;
+      G4cout<<"Please make sure that the energy used belongs to the beam model energy range."<<Gateendl;
+      G4cout<<"Energy "<<mEnergy<<"\tX "<<mSigmaX<<"\tTheta "<<mSigmaTheta<<"\tEmittance "<<mEllipseXThetaArea<<"\n"<<Gateendl;
       exit(0);
     }
     if (pi*mSigmaY*mSigmaPhi<mEllipseYPhiArea){
-      cout<<"\n !!! ERROR !!! -> Wrong Source Parameters: EmmittanceY-Phi is lower than Pi*SigmaY*SigmaPhi! Please correct it.\n"<<endl;
-      cout<<"Please make sure that the energy used belongs to the beam model energy range."<<endl;
-      cout<<"Energy "<<mEnergy<<"\tY "<<mSigmaY<<"\tPhi "<<mSigmaPhi<<"\tEmittance "<<mEllipseYPhiArea<<"\n"<<endl;
+      G4cout<<"\n !!! ERROR !!! -> Wrong Source Parameters: EmmittanceY-Phi is lower than Pi*SigmaY*SigmaPhi! Please correct it.\n"<<Gateendl;
+      G4cout<<"Please make sure that the energy used belongs to the beam model energy range."<<Gateendl;
+      G4cout<<"Energy "<<mEnergy<<"\tY "<<mSigmaY<<"\tPhi "<<mSigmaPhi<<"\tEmittance "<<mEllipseYPhiArea<<"\n"<<Gateendl;
       exit(0);
     }
 
@@ -193,11 +193,11 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     mSXTheta(2,2)=gamma*epsilon;
 
     if (mTestFlag){
-      G4cout<<"--ELIPSE X-THETA PARAMETERS--\n";
-      G4cout<<"Outputs - beta "<<beta<<"  gamma "<<gamma<<"   alpha" <<alpha<<"   epsilon" <<epsilon<<endl;
-      G4cout<<"Outputs - Xmax² "<<mSXTheta(1,1)<<"  Ymax² "<<mSXTheta(2,2)<<endl;
-      G4cout<<"Outputs - beta*gamma-1 = "<<beta*gamma-1.<<endl;
-      G4cout<<"Outputs - beta*gamma-alpha*alpha = "<<beta*gamma-alpha*alpha<<"\n"<<endl;
+      G4cout<<"--ELIPSE X-THETA PARAMETERS--" << Gateendl << Gateendl;
+      G4cout<<"Outputs - beta "<<beta<<"  gamma "<<gamma<<"   alpha" <<alpha<<"   epsilon" <<epsilon<<Gateendl;
+      G4cout<<"Outputs - Xmax² "<<mSXTheta(1,1)<<"  Ymax² "<<mSXTheta(2,2)<<Gateendl;
+      G4cout<<"Outputs - beta*gamma-1 = "<<beta*gamma-1.<<Gateendl;
+      G4cout<<"Outputs - beta*gamma-alpha*alpha = "<<beta*gamma-alpha*alpha<<Gateendl<<Gateendl;
     }
 
     mGaussian2DXTheta = new RandMultiGauss(engine,mUXTheta,mSXTheta);
@@ -220,10 +220,10 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
 
     if (mTestFlag){
       G4cout<<"--ELIPSE Y-PHI PARAMETERS--\n";
-      G4cout<<"Outputs - beta "<<beta<<"  gamma "<<gamma<<"   alpha" <<alpha<<"   epsilon" <<epsilon<<endl;
-      G4cout<<"Outputs - Xmax² "<<mSYPhi(1,1)<<"  Ymax² "<<mSYPhi(2,2)<<endl;
-      G4cout<<"Outputs - beta*gamma-1 = "<<beta*gamma-1.<<endl;
-      G4cout<<"Outputs - beta*gamma-alpha*alpha = "<<beta*gamma-alpha*alpha<<"\n"<<endl;
+      G4cout<<"Outputs - beta "<<beta<<"  gamma "<<gamma<<"   alpha" <<alpha<<"   epsilon" <<epsilon<<Gateendl;
+      G4cout<<"Outputs - Xmax² "<<mSYPhi(1,1)<<"  Ymax² "<<mSYPhi(2,2)<<Gateendl;
+      G4cout<<"Outputs - beta*gamma-1 = "<<beta*gamma-1.<<Gateendl;
+      G4cout<<"Outputs - beta*gamma-alpha*alpha = "<<beta*gamma-alpha*alpha<<"\n"<<Gateendl;
     }
     mGaussian2DYPhi = new RandMultiGauss(engine,mUYPhi,mSYPhi);
 
@@ -233,7 +233,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
     G4IonTable* ionTable = G4IonTable::GetIonTable();
 
-    string parttype=mParticleType;
+    std::string parttype=mParticleType;
     if ( parttype == "GenericIon" ){
       particle_definition=  ionTable->GetIon( mAtomicNumber, mAtomicMass, mIonExciteEnergy);
       //G4cout<< Gateendl<< Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon\n";

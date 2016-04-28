@@ -1,0 +1,87 @@
+#=====================================================
+# VERBOSITY, PREAMBLE
+#=====================================================
+
+#/control/alias NPRIM 1000000
+
+# Verbose
+/gate/verbose Physic    0
+/gate/verbose Cuts      0
+/gate/verbose SD        0
+/gate/verbose Actions   0
+/gate/verbose Actor     0
+/gate/verbose Step      0
+/gate/verbose Error     0
+/gate/verbose Warning   0
+/gate/verbose Output    0
+/gate/verbose Beam      0
+/gate/verbose Volume    0
+/gate/verbose Image     0
+/gate/verbose Geometry  0
+#/tracking/verbose 2
+
+# Materials
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+# Analytic phantom
+#/control/execute mac/phantom_Parodi_TNS_2005_52_3_modified.mac
+
+# Voxillized phantom
+/control/execute mac/geo.mac
+
+#=====================================================
+# PHYSICS
+#=====================================================
+
+/control/execute mac/physics.mac
+
+#=====================================================
+# ACTORS
+#=====================================================
+
+/gate/output/allowNoOutput
+/control/execute mac/actors.tle.mac
+#/control/execute mac/actors.analog.ps.mac
+#/control/execute mac/actors.analog.voxel.mac
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+
+#=====================================================
+# SOURCE
+#=====================================================
+
+/gate/source/addSource PBS TPSPencilBeam
+/gate/source/PBS/setTestFlag false
+#/gate/source/PBS/setPlan data/RTIPLAN.0912590.16.onespot.txt
+/gate/source/PBS/setPlan data/RTIPLAN.0912590.16.onelayer.txt
+#/gate/source/PBS/setPlan data/RTIPLAN.0912590.16.onebeam.txt
+#/gate/source/PBS/setPlan data/RTIPLAN.0912590.16.orig
+#/gate/source/PBS/setNotAllowedFieldID 2
+/gate/source/PBS/setFlatGenerationFlag false
+/gate/source/PBS/setSourceDescriptionFile data/Source-Properties.txt
+
+#=====================================================
+# START BEAMS
+#=====================================================
+
+/gate/application/noGlobalOutput
+/gate/run/enableGlobalOutput false
+
+#/vis/disable
+
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed auto
+#/gate/application/setTotalNumberOfPrimaries 57600000
+#/gate/application/setTotalNumberOfPrimaries 576000
+/gate/application/setTotalNumberOfPrimaries {NPRIM}
+#/gate/application/setTotalNumberOfPrimaries 1000000
+#/gate/application/setTotalNumberOfPrimaries 28800000
+/gate/application/start

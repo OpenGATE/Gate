@@ -33,6 +33,10 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
   pEnableEdepUncertaintyCmd= 0;
   pEnableNumberOfHitsCmd= 0;
   pEnablePeakFinderDoseCalculationCmd =0;
+  pSetDoseAlgorithmCmd= 0;
+  pImportMassImageCmd= 0;
+  pExportMassImageCmd= 0;
+
   BuildCommands(baseName+sensor->GetObjectName());
 }
 //-----------------------------------------------------------------------------
@@ -55,7 +59,10 @@ GateDoseActorMessenger::~GateDoseActorMessenger()
   if(pEnableEdepUncertaintyCmd) delete pEnableEdepUncertaintyCmd;
   if(pEnableNumberOfHitsCmd) delete pEnableNumberOfHitsCmd;
   if(pEnablePeakFinderDoseCalculationCmd) delete pEnablePeakFinderDoseCalculationCmd;
-  
+  if(pSetDoseAlgorithmCmd) delete pSetDoseAlgorithmCmd;
+  if(pImportMassImageCmd) delete pImportMassImageCmd;
+  if(pExportMassImageCmd) delete pExportMassImageCmd;
+
 }
 //-----------------------------------------------------------------------------
 
@@ -127,13 +134,30 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   n = base+"/enableNumberOfHits";
   pEnableNumberOfHitsCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable number of hits computation");
-  pEnableNumberOfHitsCmd->SetGuidance(guid); 
-  
+  pEnableNumberOfHitsCmd->SetGuidance(guid);
+
   n = base+"/enablePeakfinder";
   pEnablePeakFinderDoseCalculationCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("doPeakFinderDoseCalculation");
   pEnablePeakFinderDoseCalculationCmd->SetGuidance(guid);
 
+  n = base+"/setDoseAlgorithm";
+  pSetDoseAlgorithmCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Set the alogrithm used in the dose calculation");
+  pSetDoseAlgorithmCmd->SetGuidance(guid);
+  pSetDoseAlgorithmCmd->SetParameterName("Dose algorithm",false);
+
+  n = base+"/importMassImage";
+  pImportMassImageCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Import mass image");
+  pImportMassImageCmd->SetGuidance(guid);
+  pImportMassImageCmd->SetParameterName("Import mass image",false);
+
+  n = base+"/exportMassImage";
+  pExportMassImageCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Export mass image");
+  pExportMassImageCmd->SetGuidance(guid);
+  pExportMassImageCmd->SetParameterName("Export mass image",false);
 }
 //-----------------------------------------------------------------------------
 
@@ -157,8 +181,12 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pEnableDoseToWaterNormCmd) pDoseActor->EnableDoseToWaterNormalisation(pEnableDoseToWaterNormCmd->GetNewBoolValue(newValue));
   if (cmd == pEnablePeakFinderDoseCalculationCmd) pDoseActor->EnablePeakfinderImage(pEnablePeakFinderDoseCalculationCmd->GetNewBoolValue(newValue));
 
+  if (cmd == pSetDoseAlgorithmCmd) pDoseActor->SetDoseAlgorithmType(newValue);
+  if (cmd == pImportMassImageCmd) pDoseActor->ImportMassImage(newValue);
+  if (cmd == pExportMassImageCmd) pDoseActor->ExportMassImage(newValue);
+
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
 //-----------------------------------------------------------------------------
 
-#endif /* end #define GATEDOSEACTORMESSENGER_CC */
+#endif

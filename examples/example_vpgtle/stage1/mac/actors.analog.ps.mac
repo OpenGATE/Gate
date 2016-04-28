@@ -1,0 +1,36 @@
+# ----------------------------------------------------
+# Statistics Actor
+# ----------------------------------------------------
+#/gate/actor/addActor               SimulationStatisticActor stat2
+#/gate/actor/stat2/save              output/stat-proton.txt
+
+# ----------------------------------------------------
+# PG Escape Counter
+# ----------------------------------------------------
+# Stores the gammas escaping the patient.
+
+/gate/actor/addActor               	PhaseSpaceActor interPS
+/gate/actor/interPS/attachTo		patient
+/gate/actor/interPS/save      		output/interps-out-gamma-inel-prodirect-{NPRIM}.root
+/gate/actor/interPS/storeOutgoingParticles false
+/gate/actor/interPS/storeSecondaries true
+
+# Enable brand new toys.
+/gate/actor/interPS/enableCompact	true
+/gate/actor/interPS/enableSpotIDFromSource	PBS
+/gate/actor/interPS/enablePrimaryEnergy	true
+/gate/actor/interPS/enableLocalTime	true
+/gate/actor/interPS/enableEmissionPoint true
+/gate/actor/interPS/enableParticleName	false
+/gate/actor/interPS/useVolumeFrame       false
+#/gate/actor/interPS/enableProductionProcess     true
+
+# Filter for Prompt Gammas
+/gate/actor/interPS/addFilter    	particleFilter
+/gate/actor/interPS/particleFilter/addParticle gamma
+/gate/actor/interPS/particleFilter/addDirectParentParticle proton
+/gate/actor/interPS/enableProductionProcess     true
+/gate/actor/interPS/addFilter                   creatorProcessFilter
+/gate/actor/interPS/creatorProcessFilter/addCreatorProcess  protonInelastic
+/gate/actor/interPS/addFilter    	energyFilter
+/gate/actor/interPS/energyFilter/setEmax  10 MeV #to keep the output identical to the PromptGammaAnalogActor

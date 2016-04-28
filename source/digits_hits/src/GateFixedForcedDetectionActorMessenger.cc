@@ -135,6 +135,11 @@ void GateFixedForcedDetectionActorMessenger::BuildCommands(G4String base)
   pSetNoisePrimaryCmd = new G4UIcmdWithAnInteger(bb,this);
   guidance = "Set a number of primary for noise estimate in a phase space file in root format.";
   pSetNoisePrimaryCmd->SetGuidance(guidance);
+
+  bb = base+"/energyResolvedBinSize";
+  pEnergyResolvedBinSizeCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
+  guidance = "Set energy bin size for having an energy resolved output. Default is 0, i.e., off.";
+  pEnergyResolvedBinSizeCmd->SetGuidance(guidance);
 }
 //-----------------------------------------------------------------------------
 
@@ -160,6 +165,7 @@ void GateFixedForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, G
   if(command == pSetPhaseSpaceFilenameCmd) pActor->SetPhaseSpaceFilename(param);
   if(command == pSetInputRTKGeometryFilenameCmd) pActor->SetInputRTKGeometryFilename(param);
   if(command == pSetNoisePrimaryCmd) pActor->SetNoisePrimary(pSetNoisePrimaryCmd->GetNewIntValue(param));
+  if(command == pEnergyResolvedBinSizeCmd) pActor->SetEnergyResolvedBinSize(pEnergyResolvedBinSizeCmd->GetNewDoubleValue(param));
 
   GateActorMessenger::SetNewValue(command ,param );
 }

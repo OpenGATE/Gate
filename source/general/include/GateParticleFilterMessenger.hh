@@ -39,6 +39,7 @@ protected:
 
   G4UIcmdWithAString* pAddParticleCmd;
   G4UIcmdWithAString* pAddParentParticleCmd;
+  G4UIcmdWithAString* pAddDirectParentParticleCmd;
 };
 
 #endif /* end #define GATEPARTFILTERMESSENGER_HH */

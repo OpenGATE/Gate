@@ -21,6 +21,7 @@ See GATE/LICENSE.txt for further details
 #include "GateVSource.hh"
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
+#include <algorithm> /* min and max */
 
 GateApplicationMgr* GateApplicationMgr::instance = 0; 
 //------------------------------------------------------------------------------------------
@@ -198,7 +199,7 @@ G4double GateApplicationMgr::GetEndTimeSlice(int run)
     GateError("Error in GateApplicationMgr::GetEndTimeSlice, run=" << run << "\n");
   }
 
-  return min(mTimeSlices[run+1], m_clusterStop); // the end of the current time slice or the end of cluster run
+  return std::min(mTimeSlices[run+1], m_clusterStop); // the end of the current time slice or the end of cluster run
 }
 //------------------------------------------------------------------------------------------
 
@@ -289,6 +290,7 @@ void GateApplicationMgr::StartDAQComplete(G4ThreeVector param)
 //------------------------------------------------------------------------------------------
 void GateApplicationMgr::StartDAQ() 
 {
+
   // With this method we check for all output module enabled but with no
   // filename given. In this case we disable the output module and send a warning.
   GateOutputMgr::GetInstance()->CheckFileNameForAllOutput();
@@ -339,25 +341,34 @@ void GateApplicationMgr::StartDAQ()
     theClock->SetTime(m_time);
 
     // calculate the time steps for total primaries mode
-    if(mATotalAmountOfPrimariesIsRequested){
+    if(mATotalAmountOfPrimariesIsRequested)
+    {
       if(mAnAmountOfPrimariesPerRunIsRequested)
       {
         mTimeStepInTotalAmountOfPrimariesMode = GetTimeSlice(slice)/mRequestedAmountOfPrimariesPerRun;
         m_weight=GetTimeSlice(slice)/(mTimeSlices.back()-mTimeSlices.front());
       }
-      else {
+      else
+      {
         mTimeStepInTotalAmountOfPrimariesMode = (mTimeSlices.back()-mTimeSlices.front())/mRequestedAmountOfPrimaries;
+        mRequestedAmountOfPrimariesPerRun = int(mTimeSlices[slice+1]/mTimeStepInTotalAmountOfPrimariesMode)
+                                              - int(mTimeSlices[slice]/mTimeStepInTotalAmountOfPrimariesMode);
+      }
+      GateRunManager::GetRunManager()->SetRunIDCounter(slice);                    // Must explicitly keep the RunID in sync with the slice #
+      GateRunManager::GetRunManager()->BeamOn(mRequestedAmountOfPrimariesPerRun); // otherwise RunID is automatically incremented
+      m_time = mTimeSlices[slice+1];
+    }
+    else
+    {
+      while(m_time<GetEndTimeSlice(slice))  // sometimes a single slice might require more than MAX_INT events
+      {
+        GateRunManager::GetRunManager()->SetRunIDCounter(slice); // Must explicitly keep the RunID in sync with the slice #
+        GateRunManager::GetRunManager()->BeamOn(INT_MAX);        // otherwise RunID is automatically incremented
+        theClock->SetTimeNoGeoUpdate(m_time);
       }
     }
 
-    while(m_time<GetEndTimeSlice(slice))  // sometimes a single slice might require more than MAX_INT events
-    {
-      GateRunManager::GetRunManager()->SetRunIDCounter(slice); // keep the RunID in sync with the slice #
-      GateRunManager::GetRunManager()->BeamOn(INT_MAX);
-      theClock->SetTimeNoGeoUpdate(m_time);
-    }
     slice++;
-
   }
   
   if (mOutputMode) GateOutputMgr::GetInstance()->RecordEndOfAcquisition();
@@ -406,7 +417,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
   if(m_clusterStop<mTimeSlices.front() || m_clusterStop>mTimeSlices.back())
     GateError("Cluster stop time is outside of [StartTime,StopTime]");
   if (nVerboseLevel>0)
-    G4cout << "Cluster: virtual time start " <<m_clusterStart/s<<", virtual time stop "<<m_clusterStop/s<< Gateendl;
+    G4cout << "Cluster: virtual time start " << m_clusterStart/s <<", virtual time stop "<<m_clusterStop/s<< Gateendl;
 
   if (mOutputMode) GateOutputMgr::GetInstance()->RecordBeginOfAcquisition();
 
@@ -428,26 +439,35 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
     GateMessage("Geometry", 5, " Time is going to change :  = " << m_time/s << Gateendl;);
     theClock->SetTime(mTimeSlices[slice]);
 
-    m_time = max(mTimeSlices[slice],m_clusterStart);
+    m_time = std::max(mTimeSlices[slice],m_clusterStart);
     theClock->SetTimeNoGeoUpdate(m_time);
 
     // calculate the time steps for total primaries mode
-    if(mATotalAmountOfPrimariesIsRequested){
+    if(mATotalAmountOfPrimariesIsRequested)
+    {
       if(mAnAmountOfPrimariesPerRunIsRequested)
       {
         mTimeStepInTotalAmountOfPrimariesMode = GetTimeSlice(slice)/mRequestedAmountOfPrimariesPerRun;
         m_weight=GetTimeSlice(slice)/(mTimeSlices.back()-mTimeSlices.front());
       }
-      else {
+      else
+      {
         mTimeStepInTotalAmountOfPrimariesMode = (mTimeSlices.back()-mTimeSlices.front())/mRequestedAmountOfPrimaries;
+        mRequestedAmountOfPrimariesPerRun = int(mTimeSlices[slice+1]/mTimeStepInTotalAmountOfPrimariesMode)
+                                              - int(mTimeSlices[slice]/mTimeStepInTotalAmountOfPrimariesMode);
       }
+      GateRunManager::GetRunManager()->SetRunIDCounter(slice);                    // Must explicitly keep the RunID in sync with the slice #
+      GateRunManager::GetRunManager()->BeamOn(mRequestedAmountOfPrimariesPerRun); // otherwise RunID is automatically incremented
+      m_time = mTimeSlices[slice+1];
     }
-
-    while(m_time<GetEndTimeSlice(slice))  // sometimes a single slice might require more than MAX_INT events
+    else
     {
-      GateRunManager::GetRunManager()->SetRunIDCounter(slice); // Must explicitly keep the RunID in sync with the slice #
-      GateRunManager::GetRunManager()->BeamOn(INT_MAX);        // otherwise RunID is automatically incremented
-      theClock->SetTimeNoGeoUpdate(m_time);
+      while(m_time<GetEndTimeSlice(slice))  // sometimes a single slice might require more than MAX_INT events
+      {
+        GateRunManager::GetRunManager()->SetRunIDCounter(slice); // Must explicitly keep the RunID in sync with the slice #
+        GateRunManager::GetRunManager()->BeamOn(INT_MAX);        // otherwise RunID is automatically incremented
+        theClock->SetTimeNoGeoUpdate(m_time);
+      }
     }
     slice++;
 
@@ -479,7 +499,7 @@ void GateApplicationMgr::Describe()
 
 void GateApplicationMgr::InitializeTimeSlices()
 {
-  if(mTimeSliceIsSetUsingAddSlice || mTimeSliceIsSetUsingReadSliceInFile)
+  if( mTimeSlices.size()>2 || mTimeSliceIsSetUsingAddSlice || mTimeSliceIsSetUsingReadSliceInFile) // already initialized
   {
     // TODO: could check that slices are in order but this was already done in the routines that create the slices
     ;

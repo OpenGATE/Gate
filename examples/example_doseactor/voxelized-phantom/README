@@ -1,0 +1,8 @@
+* Author:
+ - Thomas DESCHLER (thomas.deschler@iphc.cnrs.fr)
+ - Nicolas ARBOR (nicolas.arbor@iphc.cnrs.fr)
+
+* Informations:
+  * You can test mass image import/export by commenting/decommenting 
+  corresponding sections in mac/DAMW.mac. By default the macro will 
+  export mass image in output folder.
