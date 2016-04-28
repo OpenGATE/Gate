@@ -1,0 +1,255 @@
+/gate/source/addSource one gps
+/gate/source/one/gps/particle proton
+/gate/source/one/gps/pos/type Beam
+/gate/source/one/gps/pos/rot1 0 1 0
+/gate/source/one/gps/pos/rot2 1 0 0
+/gate/source/one/gps/pos/shape Circle
+/gate/source/one/gps/pos/centre 0 0 0 mm
+/gate/source/one/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/one/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/one/gps/ene/mono 131.714 MeV
+/gate/source/one/gps/ene/type Gauss
+/gate/source/one/gps/ene/sigma {BeamESigma} MeV
+/gate/source/one/gps/direction 0 0 1
+/gate/source/one/setIntensity 0.0114384
+
+/gate/source/addSource twoBeam gps
+/gate/source/twoBeam/gps/particle proton
+/gate/source/twoBeam/gps/pos/type Beam
+/gate/source/twoBeam/gps/pos/rot1 0 1 0
+/gate/source/twoBeam/gps/pos/rot2 1 0 0
+/gate/source/twoBeam/gps/pos/shape Circle
+/gate/source/twoBeam/gps/pos/centre 0 0 0 mm
+/gate/source/twoBeam/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/twoBeam/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/twoBeam/gps/ene/mono  133.657  MeV
+/gate/source/twoBeam/gps/ene/type Gauss
+/gate/source/twoBeam/gps/ene/sigma {BeamESigma} MeV
+/gate/source/twoBeam/gps/direction 0 0 1
+/gate/source/twoBeam/setIntensity 0.00206887
+
+
+
+/gate/source/addSource three gps
+/gate/source/three/gps/particle proton
+/gate/source/three/gps/pos/type Beam
+/gate/source/three/gps/pos/rot1 0 1 0
+/gate/source/three/gps/pos/rot2 1 0 0
+/gate/source/three/gps/pos/shape Circle
+/gate/source/three/gps/pos/centre 0 0 0 mm
+/gate/source/three/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/three/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/three/gps/ene/mono 135.601 MeV
+/gate/source/three/gps/ene/type Gauss
+/gate/source/three/gps/ene/sigma {BeamESigma} MeV
+/gate/source/three/gps/direction 0 0 1
+/gate/source/three/setIntensity 0.0103155
+
+
+
+/gate/source/addSource four gps
+/gate/source/four/gps/particle proton
+/gate/source/four/gps/pos/type Beam
+/gate/source/four/gps/pos/rot1 0 1 0
+/gate/source/four/gps/pos/rot2 1 0 0
+/gate/source/four/gps/pos/shape Circle
+/gate/source/four/gps/pos/centre 0 0 0 mm
+/gate/source/four/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/four/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/four/gps/ene/mono 137.544 MeV
+/gate/source/four/gps/ene/type Gauss
+/gate/source/four/gps/ene/sigma {BeamESigma} MeV
+/gate/source/four/gps/direction 0 0 1
+/gate/source/four/setIntensity 0.00398577
+
+/gate/source/addSource five gps
+/gate/source/five/gps/particle proton
+/gate/source/five/gps/pos/type Beam
+/gate/source/five/gps/pos/rot1 0 1 0
+/gate/source/five/gps/pos/rot2 1 0 0
+/gate/source/five/gps/pos/shape Circle
+/gate/source/five/gps/pos/centre 0 0 0 mm
+/gate/source/five/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/five/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/five/gps/ene/mono 139.487 MeV
+/gate/source/five/gps/ene/type Gauss
+/gate/source/five/gps/ene/sigma {BeamESigma} MeV
+/gate/source/five/gps/direction 0 0 1
+/gate/source/five/setIntensity 0.0105235
+
+
+/gate/source/addSource six gps
+/gate/source/six/gps/particle proton
+/gate/source/six/gps/pos/type Beam
+/gate/source/six/gps/pos/rot1 0 1 0
+/gate/source/six/gps/pos/rot2 1 0 0
+/gate/source/six/gps/pos/shape Circle
+/gate/source/six/gps/pos/centre 0 0 0 mm
+/gate/source/six/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/six/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/six/gps/ene/mono 141.43 MeV
+/gate/source/six/gps/ene/type Gauss
+/gate/source/six/gps/ene/sigma {BeamESigma} MeV
+/gate/source/six/gps/direction 0 0 1
+/gate/source/six/setIntensity 0.0045803
+
+
+/gate/source/addSource seven gps
+/gate/source/seven/gps/particle proton
+/gate/source/seven/gps/pos/type Beam
+/gate/source/seven/gps/pos/rot1 0 1 0
+/gate/source/seven/gps/pos/rot2 1 0 0
+/gate/source/seven/gps/pos/shape Circle
+/gate/source/seven/gps/pos/centre 0 0 0 mm
+/gate/source/seven/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/seven/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/seven/gps/ene/mono 143.373 MeV
+/gate/source/seven/gps/ene/type Gauss
+/gate/source/seven/gps/ene/sigma {BeamESigma} MeV
+/gate/source/seven/gps/direction 0 0 1
+/gate/source/seven/setIntensity 0.0112426
+
+
+/gate/source/addSource eight gps
+/gate/source/eight/gps/particle proton
+/gate/source/eight/gps/pos/type Beam
+/gate/source/eight/gps/pos/rot1 0 1 0
+/gate/source/eight/gps/pos/rot2 1 0 0
+/gate/source/eight/gps/pos/shape Circle
+/gate/source/eight/gps/pos/centre 0 0 0 mm
+/gate/source/eight/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/eight/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/eight/gps/ene/mono 145.317 MeV
+/gate/source/eight/gps/ene/type Gauss
+/gate/source/eight/gps/ene/sigma {BeamESigma} MeV
+/gate/source/eight/gps/direction 0 0 1
+/gate/source/eight/setIntensity 0.00799366
+
+
+
+/gate/source/addSource nine gps
+/gate/source/nine/gps/particle proton
+/gate/source/nine/gps/pos/type Beam
+/gate/source/nine/gps/pos/rot1 0 1 0
+/gate/source/nine/gps/pos/rot2 1 0 0
+/gate/source/nine/gps/pos/shape Circle
+/gate/source/nine/gps/pos/centre 0 0 0 mm
+/gate/source/nine/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/nine/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/nine/gps/ene/mono 147.26 MeV
+/gate/source/nine/gps/ene/type Gauss
+/gate/source/nine/gps/ene/sigma {BeamESigma} MeV
+/gate/source/nine/gps/direction 0 0 1
+/gate/source/nine/setIntensity 0.0127049
+
+
+
+/gate/source/addSource ten gps
+/gate/source/ten/gps/particle proton
+/gate/source/ten/gps/pos/type Beam
+/gate/source/ten/gps/pos/rot1 0 1 0
+/gate/source/ten/gps/pos/rot2 1 0 0
+/gate/source/ten/gps/pos/shape Circle
+/gate/source/ten/gps/pos/centre 0 0 0 mm
+/gate/source/ten/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/ten/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/ten/gps/ene/mono 149.203 MeV
+/gate/source/ten/gps/ene/type Gauss
+/gate/source/ten/gps/ene/sigma {BeamESigma} MeV
+/gate/source/ten/gps/direction 0 0 1
+/gate/source/ten/setIntensity 0.0104618
+
+
+
+/gate/source/addSource thisShouldHaveBeenEleven gps
+/gate/source/thisShouldHaveBeenEleven/gps/particle proton
+/gate/source/thisShouldHaveBeenEleven/gps/pos/type Beam
+/gate/source/thisShouldHaveBeenEleven/gps/pos/rot1 0 1 0
+/gate/source/thisShouldHaveBeenEleven/gps/pos/rot2 1 0 0
+/gate/source/thisShouldHaveBeenEleven/gps/pos/shape Circle
+/gate/source/thisShouldHaveBeenEleven/gps/pos/centre 0 0 0 mm
+/gate/source/thisShouldHaveBeenEleven/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/thisShouldHaveBeenEleven/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/thisShouldHaveBeenEleven/gps/ene/mono 151.146 MeV
+/gate/source/thisShouldHaveBeenEleven/gps/ene/type Gauss
+/gate/source/thisShouldHaveBeenEleven/gps/ene/sigma {BeamESigma} MeV
+/gate/source/thisShouldHaveBeenEleven/gps/direction 0 0 1
+/gate/source/thisShouldHaveBeenEleven/setIntensity 0.0160297
+
+
+
+
+
+/gate/source/addSource eleven gps
+/gate/source/eleven/gps/particle proton
+/gate/source/eleven/gps/pos/type Beam
+/gate/source/eleven/gps/pos/rot1 0 1 0
+/gate/source/eleven/gps/pos/rot2 1 0 0
+/gate/source/eleven/gps/pos/shape Circle
+/gate/source/eleven/gps/pos/centre 0 0 0 mm
+/gate/source/eleven/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/eleven/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/eleven/gps/ene/mono 153.089 MeV
+/gate/source/eleven/gps/ene/type Gauss
+/gate/source/eleven/gps/ene/sigma {BeamESigma} MeV
+/gate/source/eleven/gps/direction 0 0 1
+/gate/source/eleven/setIntensity 0.011918
+
+
+/gate/source/addSource twelve gps
+/gate/source/twelve/gps/particle proton
+/gate/source/twelve/gps/pos/type Beam
+/gate/source/twelve/gps/pos/rot1 0 1 0
+/gate/source/twelve/gps/pos/rot2 1 0 0
+/gate/source/twelve/gps/pos/shape Circle
+/gate/source/twelve/gps/pos/centre 0 0 0 mm
+/gate/source/twelve/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/twelve/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/twelve/gps/ene/mono 155.033  MeV
+/gate/source/twelve/gps/ene/type Gauss
+/gate/source/twelve/gps/ene/sigma {BeamESigma} MeV
+/gate/source/twelve/gps/direction 0 0 1
+/gate/source/twelve/setIntensity 0.0301021
+
+
+
+/gate/source/addSource thirteen gps
+/gate/source/thirteen/gps/particle proton
+/gate/source/thirteen/gps/pos/type Beam
+/gate/source/thirteen/gps/pos/rot1 0 1 0
+/gate/source/thirteen/gps/pos/rot2 1 0 0
+/gate/source/thirteen/gps/pos/shape Circle
+/gate/source/thirteen/gps/pos/centre 0 0 0 mm
+/gate/source/thirteen/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/thirteen/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/thirteen/gps/ene/mono 156.976 MeV
+/gate/source/thirteen/gps/ene/type Gauss
+/gate/source/thirteen/gps/ene/sigma {BeamESigma} MeV
+/gate/source/thirteen/gps/direction 0 0 1
+/gate/source/thirteen/setIntensity 0.006
+
+
+
+
+/gate/source/addSource fourteen gps
+/gate/source/fourteen/gps/particle proton
+/gate/source/fourteen/gps/pos/type Beam
+/gate/source/fourteen/gps/pos/rot1 0 1 0
+/gate/source/fourteen/gps/pos/rot2 1 0 0
+/gate/source/fourteen/gps/pos/shape Circle
+/gate/source/fourteen/gps/pos/centre 0 0 0 mm
+/gate/source/fourteen/gps/pos/sigma_x {BeamSigmaX} mm
+/gate/source/fourteen/gps/pos/sigma_y {BeamSigmaY} mm
+/gate/source/fourteen/gps/ene/mono 158.919 MeV
+/gate/source/fourteen/gps/ene/type Gauss
+/gate/source/fourteen/gps/ene/sigma {BeamESigma} MeV
+/gate/source/fourteen/gps/direction 0 0 1
+/gate/source/fourteen/setIntensity 0.105724  
+
+
+
+
+
+
+
+
