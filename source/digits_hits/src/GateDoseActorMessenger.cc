@@ -32,7 +32,6 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
   pEnableEdepSquaredCmd= 0;
   pEnableEdepUncertaintyCmd= 0;
   pEnableNumberOfHitsCmd= 0;
-  pEnablePeakFinderDoseCalculationCmd =0;
   pSetDoseAlgorithmCmd= 0;
   pImportMassImageCmd= 0;
   pExportMassImageCmd= 0;
@@ -58,11 +57,9 @@ GateDoseActorMessenger::~GateDoseActorMessenger()
   if(pEnableEdepSquaredCmd) delete pEnableEdepSquaredCmd;
   if(pEnableEdepUncertaintyCmd) delete pEnableEdepUncertaintyCmd;
   if(pEnableNumberOfHitsCmd) delete pEnableNumberOfHitsCmd;
-  if(pEnablePeakFinderDoseCalculationCmd) delete pEnablePeakFinderDoseCalculationCmd;
   if(pSetDoseAlgorithmCmd) delete pSetDoseAlgorithmCmd;
   if(pImportMassImageCmd) delete pImportMassImageCmd;
   if(pExportMassImageCmd) delete pExportMassImageCmd;
-
 }
 //-----------------------------------------------------------------------------
 
@@ -136,11 +133,6 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   guid = G4String("Enable number of hits computation");
   pEnableNumberOfHitsCmd->SetGuidance(guid);
 
-  n = base+"/enablePeakfinder";
-  pEnablePeakFinderDoseCalculationCmd = new G4UIcmdWithABool(n, this);
-  guid = G4String("doPeakFinderDoseCalculation");
-  pEnablePeakFinderDoseCalculationCmd->SetGuidance(guid);
-
   n = base+"/setDoseAlgorithm";
   pSetDoseAlgorithmCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Set the alogrithm used in the dose calculation");
@@ -179,7 +171,6 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pEnableDoseNormToMaxCmd) pDoseActor->EnableDoseNormalisationToMax(pEnableDoseNormToMaxCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseNormToIntegralCmd) pDoseActor->EnableDoseNormalisationToIntegral(pEnableDoseNormToIntegralCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseToWaterNormCmd) pDoseActor->EnableDoseToWaterNormalisation(pEnableDoseToWaterNormCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnablePeakFinderDoseCalculationCmd) pDoseActor->EnablePeakfinderImage(pEnablePeakFinderDoseCalculationCmd->GetNewBoolValue(newValue));
 
   if (cmd == pSetDoseAlgorithmCmd) pDoseActor->SetDoseAlgorithmType(newValue);
   if (cmd == pImportMassImageCmd) pDoseActor->ImportMassImage(newValue);

@@ -64,8 +64,6 @@ class GateDoseActor : public GateVImageActor
   void ImportMassImage(G4String b) { mImportMassImage = b; }
   void ExportMassImage(G4String b) { mExportMassImage = b; }
 
-  void EnablePeakfinderImage(bool b) { mIsPeakfinderImageEnabled = b; }
-
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
 
@@ -102,21 +100,18 @@ protected:
   bool mIsNumberOfHitsImageEnabled;
   bool mIsDoseNormalisationEnabled;
   bool mIsDoseToWaterNormalisationEnabled;
-  bool mIsPeakfinderImageEnabled;
 
   GateImageWithStatistic mEdepImage;
   GateImageWithStatistic mDoseImage;
   GateImageWithStatistic mDoseToWaterImage;
   GateImageInt mNumberOfHitsImage;
   GateImageInt mLastHitEventImage;
-  GateImageWithStatistic mPeakfinderImage;
   GateImageDouble mMassImage;
 
   G4String mEdepFilename;
   G4String mDoseFilename;
   G4String mDoseToWaterFilename;
   G4String mNbOfHitsFilename;
-  G4String mPeakfinderFilename;
   G4String mDoseAlgorithmType;
   G4String mImportMassImage;
   G4String mExportMassImage;

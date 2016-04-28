@@ -40,7 +40,6 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mIsNumberOfHitsImageEnabled = false;
   mIsDoseNormalisationEnabled = false;
   mIsDoseToWaterNormalisationEnabled = false;
-  mIsPeakfinderImageEnabled = false;
   mDoseAlgorithmType = "VolumeWeighting";
   mImportMassImage = "";
   mExportMassImage = "";
@@ -112,7 +111,7 @@ void GateDoseActor::Construct() {
   mDoseFilename = G4String(removeExtension(mSaveFilename))+"-Dose."+G4String(getExtension(mSaveFilename));
   mDoseToWaterFilename = G4String(removeExtension(mSaveFilename))+"-DoseToWater."+G4String(getExtension(mSaveFilename));
   mNbOfHitsFilename = G4String(removeExtension(mSaveFilename))+"-NbOfHits."+G4String(getExtension(mSaveFilename));
-  mPeakfinderFilename = G4String(removeExtension(mSaveFilename))+"-Peakfinder."+G4String(getExtension(mSaveFilename));
+
   // Set origin, transform, flag
   SetOriginTransformAndFlagToImage(mEdepImage);
   SetOriginTransformAndFlagToImage(mDoseImage);
@@ -166,12 +165,6 @@ void GateDoseActor::Construct() {
     mNumberOfHitsImage.Allocate();
   }
 
- if (mIsPeakfinderImageEnabled) {
-    mPeakfinderImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mPeakfinderImage.Allocate();
-    mPeakfinderImage.SetFilename(mPeakfinderFilename);
-  }
-
   if (mExportMassImage!="" || mDoseAlgorithmType=="MassWeighting") {
     mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mMassImage.Allocate();
@@ -192,7 +185,6 @@ void GateDoseActor::Construct() {
     }
   }
 
->>>>>>> develop
   // Print information
   GateMessage("Actor", 1,
               "Dose DoseActor    = '" << GetObjectName() << "'\n" <<
@@ -244,7 +236,6 @@ void GateDoseActor::SaveData() {
     mLastHitEventImage.Fill(-1); // reset
   }
 
-  if (mIsPeakfinderImageEnabled) mPeakfinderImage.SaveData(mCurrentEvent+1);
   if (mIsNumberOfHitsImageEnabled) {
     mNumberOfHitsImage.Write(mNbOfHitsFilename);
   }
@@ -259,7 +250,6 @@ void GateDoseActor::ResetData() {
   if (mIsDoseImageEnabled) mDoseImage.Reset();
   if (mIsDoseToWaterImageEnabled) mDoseToWaterImage.Reset();
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.Fill(0);
-  if (mIsPeakfinderImageEnabled) mPeakfinderImage.Reset();
 }
 //-----------------------------------------------------------------------------
 
@@ -372,9 +362,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
       //if (PartName != "O16[0.0]" && PartName != "alpha" && PartName != "Be7[0.0]" && PartName != "C12[0.0]"){
 
       DEDX = emcalc->ComputeTotalDEDX(Energy, PartName, material, cut);
-
       DEDX_Water = emcalc->ComputeTotalDEDX(Energy, PartName, "G4_WATER", cut);
-
 
       doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
     }
@@ -383,9 +371,6 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
       DEDX_Water = emcalc->ComputeTotalDEDX(100, "proton", "G4_WATER", cut);
       doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
     }
-     //G4cout<<Energy<<" "<<emcalc->ComputeTotalDEDX(Energy, "O16", material)<<G4endl;
-     //G4cout<<material<<G4endl;
-
 
     GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = "
 		     << G4BestUnit(doseToWater, "Dose to water")
@@ -396,81 +381,14 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   if (mIsEdepImageEnabled) {
     GateDebugMessage("Actor", 2, "GateDoseActor -- UserSteppingActionInVoxel:\tedep = " << G4BestUnit(edep, "Energy") << Gateendl);
   }
-<<<<<<< HEAD
-  double edepPeakfinder = 0;
-  if (mIsPeakfinderImageEnabled)
+
+  if (mIsDoseImageEnabled)
   {
-	  G4ParticleDefinition* tParticle = step->GetTrack()->GetDefinition();
-	  //G4cout << tParticle->GetParticleName()<< G4endl;
-	  //G4cout << tParticle->GetPDGEncoding()<< G4endl;
-	  //if (tParticle->GetPDGEncoding()==11) // electron has PDG: 11; proton 2212; neutron 2112
-	  //{
-		  ////G4cout << "particle encoding e-: 11" << G4endl<<G4endl;
-		  //G4cout << "e- atomic number: "<< tParticle->GetAtomicNumber() <<G4endl;
-		  //G4cout << "e- atomic mass: "<< tParticle->GetAtomicMass() <<G4endl;
-		  //edepPeakfinder = edep;
-		  //if (tParticle->GetAtomicMass() > 0 )
-		  //{G4cout << "problem"<<G4endl;}
-	  //}
-	  if (tParticle->GetPDGEncoding()==22 || tParticle->GetAtomicMass() > 0 ) // electron has PDG: 11; gamma: 22;proton 2212; neutron 2112
-	  {
-		  double x = step->GetPostStepPoint()->GetPosition().x();
-		  double y = step->GetPostStepPoint()->GetPosition().y();
-		  double z = step->GetPostStepPoint()->GetPosition().z();
-		  G4cout << z << " " << edep <<G4endl;
-		  double dx = step->GetPostStepPoint()->GetMomentum().x();
-		  double dy = step->GetPostStepPoint()->GetMomentum().y();
-		  double dz = step->GetPostStepPoint()->GetMomentum().z();
-		  double k = 0;
-
-		          if (dz != 0){
-                   k = 4.62/dz;//eigentlich: (Pz -Z)/dZ
-                   //cout <<"Pz: "<< Z <<endl;
-                   if (k > 0){
-                       double s = x + k*dx;
-                       double t = y + k*dy;
-                       double hst = s*s + t*t;
-
-           //            cout<< "s: " << s <<endl;
-           //            cout<<"t: "<< t <<endl;
-                       // hst < 56.837^2
-					 if (hst < 1664.64){
-						 //G4cout<< "Hit in second layer "  << G4endl;
-						 edepPeakfinder = edep;
-					 }
-					 else
-					{
-						//G4cout << tParticle->GetParticleName()<< G4endl;
-						//G4cout<< "x = " << x<<G4endl;
-                       //G4cout<< "y = " << y<<G4endl;
-                       //G4cout<< "k = " << k<<G4endl;
-                       //G4cout<< "dx" <<dx <<G4endl;
-                       //G4cout<< "dy " << dy<<G4endl;
-                       //G4cout<< "dz " << dz<<G4endl;
-                       //G4cout<< "hst" << hst<<G4endl;
-					}
-					 //else
-					 //{ G4cout << "no hit in second layer" << G4endl;}
-	 }}
-	  }
-	  else
-	  {
-		   edepPeakfinder = edep;
-	   }
-	  //if (tParticle->GetPDGEncoding()==2212) // electron has PDG: 11; proton 2212; neutron 2112, O16: 1000080160
-	  //{
-		  //G4cout << "particle encoding p: 2212" << G4endl<<G4endl;
-	  //}
-  }
-
-
-  if (mIsDoseImageEnabled) {
-
     if (mIsDoseUncertaintyImageEnabled || mIsDoseSquaredImageEnabled)
-      {
-        if (sameEvent) mDoseImage.AddTempValue(index, dose);
-        else mDoseImage.AddValueAndUpdate(index, dose);
-      }
+    {
+      if (sameEvent) mDoseImage.AddTempValue(index, dose);
+      else mDoseImage.AddValueAndUpdate(index, dose);
+    }
     else mDoseImage.AddValue(index, dose);
   }
 
@@ -493,9 +411,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     }
     else mEdepImage.AddValue(index, edep);
   }
-  if (mIsPeakfinderImageEnabled) {
-     mPeakfinderImage.AddValue(index, edepPeakfinder);
-  }
+
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.AddValue(index, weight);
 
   GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end\n");
