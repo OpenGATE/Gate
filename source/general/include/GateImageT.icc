@@ -64,9 +64,10 @@ void GateImageT<PixelType>::Read(G4String filename) {
   else if (extension == "mhd" || extension == "mha") ReadMHD(filename);
   else if (extension == "h33" || extension == "iff") ReadInterfile(filename);
   else if (extension == "i33") ReadInterfile(filename);
+  else if (extension == "dcm") ReadDICOM(filename);
   else {
     GateError( "Unknow image file extension. Knowns extensions are : "
-               << Gateendl << ".vox, .hdr, .img, .mhd, .mha, .h33, .i33\n");
+               << Gateendl << ".vox, .hdr, .img, .mhd, .mha, .h33, .i33, .dcm\n");
     exit(0);
   }
 }
@@ -296,6 +297,31 @@ void GateImageT<PixelType>::ReadAscii(G4String filename) {
     //GateError( "Error while reading \n");
     exit(0);
   }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::ReadDICOM(G4String filename) {
+  #ifdef GATE_USE_ITK
+    GateDICOMImage* dicom = new GateDICOMImage;
+    dicom->ReadSeries(filename);
+    
+    resolution = G4ThreeVector(dicom->GetResolution()[0], dicom->GetResolution()[1], dicom->GetResolution()[2]);
+    voxelSize  = G4ThreeVector(dicom->GetSpacing()[0], dicom->GetSpacing()[1], dicom->GetSpacing()[2]);
+    origin     = G4ThreeVector(dicom->GetOrigin()[0], dicom->GetOrigin()[1], dicom->GetOrigin()[2]);
+
+    UpdateSizesFromResolutionAndVoxelSize();
+    Allocate();
+    
+    // Get image data
+    //dicom->GetPixels(data);
+    
+    delete dicom;
+  #else
+    GateError( "Unable to process " << filename << " . GATE was not compiled with DICOM support.");
+  #endif
 }
 //-----------------------------------------------------------------------------
 

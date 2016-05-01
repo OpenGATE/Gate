@@ -29,6 +29,7 @@
 #include "GateVImage.hh"
 #include "GateMachine.hh"
 #include "GateMHDImage.hh"
+#include "GateDICOMImage.hh"
 #include "GateMiscFunctions.hh"
 
 // root
@@ -121,6 +122,7 @@ protected:
   void ReadAnalyze(G4String filename);
   void ReadMHD(G4String filename);
   void ReadInterfile(G4String fileName);
+  void ReadDICOM(G4String fileName);
 
   void WriteVox(std::ofstream & os);
   void WriteAscii(std::ofstream & os, const G4String & comment);

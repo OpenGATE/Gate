@@ -8,8 +8,9 @@
 
 /*
   \class  GateDICOMImage
-  \author Jérôme Suhard (jerome@suhard.fr)
-          Thomas DESCHLER (thomas@deschler.fr)
+  \author Thomas DESCHLER (thomas@deschler.fr)
+  based on the work of
+          Jérôme Suhard (jerome@suhard.fr)
   \date	April 2016
 */
 
@@ -19,6 +20,30 @@
 //#if ( ( ITK_VERSION_MAJOR == 4 ) && ( ITK_VERSION_MINOR < 6 ) )
 
 // INFO: reader->GetOutput() = http://www.itk.org/Doxygen/html/classitk_1_1GDCMImageIO.html
+
+
+//-----------------------------------------------------------------------------
+void GateDICOMImage::Read(const std::string fileName)
+{
+  reader = ReaderType::New();
+  reader->SetFileName(fileName);
+  reader->SetImageIO(ImageIOType::New());
+
+  try
+    {
+    reader->Update();
+    }
+  catch (itk::ExceptionObject & e)
+    {
+    std::cerr << "exception in file reader " << std::endl;
+    std::cerr << e << std::endl;
+    exit(EXIT_FAILURE);
+    }
+
+  //reader->GetOutput()->GetUIDPrefix(); //FIXME
+}
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateDICOMImage::ReadSeries(const std::string seriesDirectory)
@@ -100,6 +125,20 @@ std::vector<double> GateDICOMImage::GetImageSize()
 
 
 //-----------------------------------------------------------------------------
+std::vector<double> GateDICOMImage::GetOrigin()
+{
+  ImageType::PointType origin = reader->GetOutput()->GetOrigin();
+
+  std::vector<double> vOrigin(reader->GetOutput()->GetImageDimension(),0.);
+  for(size_t i=0;i<reader->GetOutput()->GetImageDimension();i++)
+    vOrigin[i]=origin[i];
+
+  return vOrigin;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 double GateDICOMImage::GetPixelValue(const std::vector<int> coord)
 {
   ImageType::IndexType index;
@@ -115,14 +154,16 @@ double GateDICOMImage::GetPixelValue(const std::vector<int> coord)
 
 
 //-----------------------------------------------------------------------------
-std::vector<double> GateDICOMImage::GetOrigin()
+void GateDICOMImage::GetPixels(std::vector<int>& output)
 {
-  ImageType::PointType origin = reader->GetOutput()->GetOrigin();
+  // Voir GateVDICOM.cc
+}
+//-----------------------------------------------------------------------------
 
-  std::vector<double> vOrigin(reader->GetOutput()->GetImageDimension(),0.);
-  for(size_t i=0;i<reader->GetOutput()->GetImageDimension();i++)
-    vOrigin[i]=origin[i];
 
-  return vOrigin;
+//-----------------------------------------------------------------------------
+unsigned int GateDICOMImage::GetPixelsCount()
+{
+  return GetResolution()[0]*GetResolution()[1]*GetResolution()[2];
 }
 //-----------------------------------------------------------------------------

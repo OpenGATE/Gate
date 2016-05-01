@@ -32,12 +32,15 @@ class GateDICOMImage
     GateDICOMImage() {}
     ~GateDICOMImage() {}
 
+    void Read(const std::string);
     void ReadSeries(const std::string);
     std::vector<int> GetResolution();
     std::vector<double> GetSpacing();
     std::vector<double> GetOrigin();
     std::vector<double> GetImageSize();
     double              GetPixelValue(const std::vector<int>);
+    void                GetPixels( std::vector<int>&);
+    unsigned int        GetPixelsCount();
 
   private:
     typedef signed short                        PixelType;
@@ -47,6 +50,7 @@ class GateDICOMImage
     typedef itk::GDCMSeriesFileNames            NamesGeneratorType;
 
     ReaderType::Pointer reader;
+    std::vector<int> pixels;
 };
 
 #endif
