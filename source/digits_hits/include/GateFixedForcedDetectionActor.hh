@@ -123,6 +123,13 @@ public:
     {
     mSourceType = name;
     }
+  void SetGeneratePhotons(G4String name)
+    {
+    if (name == "true" || name == "True")
+      {
+      mGeneratePhotons = true;
+      }
+    }
   void SetSecondaryFilename(G4String name)
     {
     mSecondaryFilename = name;
@@ -194,10 +201,14 @@ public:
                                            G4ThreeVector dir,
                                            double energy,
                                            double weight,
-                                           int Z);
+                                           int Z,
+                                           const double & properTime = 0);
+
   template<ProcessType VProcess, class TProjectorType>
-  void ForceDetectionOfInteraction(TProjectorType *projector, InputImageType::Pointer &input);
-  GateVSource* TestSource(GateSourceMgr * sm);
+  void ForceDetectionOfInteraction(TProjectorType *projector,
+                                   InputImageType::Pointer &input,
+                                   const double & properTime = 0);
+  void TestSource(GateSourceMgr * sm);
   void GetEnergyList(std::vector<double> & energyList, std::vector<double> & energyWeightList);
   GateVImageVolume* SearchForVoxelisedVolume();
 
@@ -223,6 +234,9 @@ public:
                                GateVImageVolume* gate_image_volume,
                                unsigned int & nPixOneSlice);
   void CreateProjectionImages();
+  void GeneratePhotons(const unsigned int & numberOfThreads,
+                       const std::vector<std::vector<newPhoton> > & photonList,
+                       const double & properTime);
   void ComputeFlatField(std::vector<double> & energyList, std::vector<double> & energyWeightList);
 protected:
   GateFixedForcedDetectionActorMessenger * pActorMessenger;
@@ -243,7 +257,7 @@ protected:
   bool mIsSecondaryUncertaintyImageEnabled;
   G4String mTotalFilename;
 
-  /* parameter for statistical noise */
+  /* Parameter for statistical noise */
   G4int mNoisePrimary;
 
   G4double mMinPrimaryEnergy;
@@ -328,6 +342,7 @@ protected:
   int mInteractionChainCode;
   double mInteractionSquaredIntegralOverDetector;
   G4String mSourceType;
+  bool mGeneratePhotons;
   /* Account for primary fluence weighting */
   InputImageType::Pointer PrimaryFluenceWeighting(const InputImageType::Pointer input);
 

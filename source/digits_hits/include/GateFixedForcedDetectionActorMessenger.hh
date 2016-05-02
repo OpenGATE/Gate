@@ -49,6 +49,7 @@ protected:
   G4UIcmdWithAString * pSetFluorescenceFilenameCmd;
   G4UIcmdWithAString * pSetIsotropicPrimaryFilenameCmd;
   G4UIcmdWithAString * pSetSourceTypeCmd;
+  G4UIcmdWithAString * pSetGeneratePhotonsCmd;
   G4UIcmdWithAString * pSetSecondaryFilenameCmd;
   G4UIcmdWithABool * pEnableSecondarySquaredCmd;
   G4UIcmdWithABool * pEnableSecondaryUncertaintyCmd;
