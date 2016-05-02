@@ -20,34 +20,70 @@
 //#if ( ( ITK_VERSION_MAJOR == 4 ) && ( ITK_VERSION_MINOR < 6 ) )
 
 // INFO: reader->GetOutput() = http://www.itk.org/Doxygen/html/classitk_1_1GDCMImageIO.html
+// INFO: NamesGeneratorType::Pointer = http://www.itk.org/Doxygen/html/classitk_1_1GDCMSeriesFileNames.html
 
 
 //-----------------------------------------------------------------------------
-void GateDICOMImage::Read(const std::string fileName)
+GateDICOMImage::GateDICOMImage()
 {
-  reader = ReaderType::New();
-  reader->SetFileName(fileName);
-  reader->SetImageIO(ImageIOType::New());
-
-  try
-    {
-    reader->Update();
-    }
-  catch (itk::ExceptionObject & e)
-    {
-    std::cerr << "exception in file reader " << std::endl;
-    std::cerr << e << std::endl;
-    exit(EXIT_FAILURE);
-    }
-
-  //reader->GetOutput()->GetUIDPrefix(); //FIXME
+  vResolution.resize(0);
+  vSpacing.resize(0);
+  vSize.resize(0);
+  vOrigin.resize(0);
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GateDICOMImage::ReadSeries(const std::string seriesDirectory)
+void GateDICOMImage::Read(const std::string fileName)
 {
+  std::string path = gdcm::Filename(fileName.c_str()).GetPath();
+
+  reader = ReaderType::New();
+  reader->SetFileName(fileName);
+
+  ImageIOType::Pointer imgIO = ImageIOType::New();
+  reader->SetImageIO(imgIO);
+
+  try
+  {
+    reader->Update();
+  }
+  catch (itk::ExceptionObject & e)
+  {
+    std::cerr << "exception in file reader " << std::endl;
+    std::cerr << e << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  #if ITK_VERSION_MAJOR >= 4
+    std::string seriesUID = gdcm::UIDGenerator().Generate();
+  #else
+    std::string seriesUID = gdcm::Util::CreateUniqueUID( gdcmIO->GetUIDPrefix());
+  #endif
+
+  ReaderType::DictionaryRawPointer dict = (*(reader->GetMetaDataDictionaryArray()))[0];
+  typedef itk::MetaDataObject< std::string >  MetaDataStringType;
+  MetaDataStringType::Pointer entryvalue =
+    dynamic_cast<MetaDataStringType *>( dict->Find( "0020|000e" )->second.GetPointer() );//OK Mais incomplet
+
+  if( entryvalue )
+    seriesUID=entryvalue->GetMetaDataObjectValue();
+  else
+    GateError("Can't find the series UID from the file" << Gateendl);
+
+  GateMessage("Image", 5, "GateDICOMImage::Read: File: " << fileName <<", series UID: "<< seriesUID << Gateendl);
+
+  ReadSeries(path,seriesUID);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDICOMImage::ReadSeries(const std::string seriesDirectory, std::string UID)
+{
+  GateMessage("Image", 5, "GateDICOMImage::ReadSeries: series path: " << seriesDirectory <<", series UID: "<< UID << Gateendl);
+
   reader = ReaderType::New();
   reader->SetImageIO(ImageIOType::New());
 
@@ -55,14 +91,33 @@ void GateDICOMImage::ReadSeries(const std::string seriesDirectory)
   nameGenerator->SetUseSeriesDetails( true );
   nameGenerator->SetDirectory( seriesDirectory );
 
-  if(nameGenerator->GetSeriesUIDs().size()==1)
+    std::cout << std::endl << "The directory " << seriesDirectory << std::endl << std::endl;
+    std::cout << "Contains " << nameGenerator->GetSeriesUIDs().size() << " DICOM Series:";
+    std::cout << std::endl << std::endl;
+
+    std::vector< std::string >::const_iterator seriesItr = nameGenerator->GetSeriesUIDs().begin();
+    std::vector< std::string >::const_iterator seriesEnd = nameGenerator->GetSeriesUIDs().end();
+
+    while( seriesItr != seriesEnd )
+    {
+      std::string seriesUID(seriesItr->c_str());
+      if(UID!="" && UID==seriesUID.substr(0, UID.size()))
+        UID=seriesItr->c_str();
+      //std::cout << "UID: " << UID << "seriesUID.substr: " << seriesUID.substr(0, UID.size()) << std::endl;
+      std::cout << seriesItr->c_str() << std::endl;
+      ++seriesItr;
+    }
+
+  if(UID!="")
+    reader->SetFileNames(nameGenerator->GetFileNames(UID));
+  else if(nameGenerator->GetSeriesUIDs().size()==1)
   {
-    std::cerr << "The folder " << seriesDirectory << " does not contain any DICOM series." << std::endl;
+    GateError( "The folder " << seriesDirectory << " does not contain any DICOM series." << Gateendl);
     exit(EXIT_FAILURE);
   }
   else if(nameGenerator->GetSeriesUIDs().size()>1)
   {
-    std::cerr << "The folder " << seriesDirectory << " contains two or more DICOM series." << std::endl;
+    GateError( "The folder " << seriesDirectory << " contains two or more DICOM series." << Gateendl);
     exit(EXIT_FAILURE);
   }
   else
@@ -85,12 +140,16 @@ void GateDICOMImage::ReadSeries(const std::string seriesDirectory)
 //-----------------------------------------------------------------------------
 std::vector<int> GateDICOMImage::GetResolution()
 {
-  ImageType::SizeType resolution = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
+  if(vResolution.size()==0)
+  {
+    ImageType::SizeType resolution = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
 
-  std::vector<int> vResolution(resolution.GetSizeDimension(),-1);
-  for(size_t i=0;i<resolution.GetSizeDimension();i++)
-    vResolution[i]=resolution[i];
+    vResolution.resize(resolution.GetSizeDimension(),-1);
+    for(size_t i=0;i<resolution.GetSizeDimension();i++)
+      vResolution[i]=resolution[i];
 
+    GateMessage("Image", 5, "GateDICOMImage::GetResolution: " << vResolution[0] <<","<< vResolution[1] <<","<< vResolution[2] << " mm" << Gateendl);
+  }
   return vResolution;
 }
 //-----------------------------------------------------------------------------
@@ -99,12 +158,16 @@ std::vector<int> GateDICOMImage::GetResolution()
 //-----------------------------------------------------------------------------
 std::vector<double> GateDICOMImage::GetSpacing()
 {
-  ImageType::SpacingType spacing = reader->GetOutput()->GetSpacing();
+  if(vSpacing.size()==0)
+  {
+    ImageType::SpacingType spacing = reader->GetOutput()->GetSpacing();
 
-  std::vector<double> vSpacing(reader->GetOutput()->GetImageDimension(),0.);
-  for(size_t i=0;i<reader->GetOutput()->GetImageDimension();i++)
-    vSpacing[i]=spacing[i];
+    vSpacing.resize(reader->GetOutput()->GetImageDimension(),0.);
+    for(size_t i=0;i<reader->GetOutput()->GetImageDimension();i++)
+      vSpacing[i]=spacing[i];
 
+    GateMessage("Image", 5, "GateDICOMImage::GetSpacing: " << vSpacing[0] <<","<< vSpacing[1] <<","<< vSpacing[2] << " mm" << Gateendl);
+  }
   return vSpacing;
 }
 //-----------------------------------------------------------------------------
@@ -113,12 +176,14 @@ std::vector<double> GateDICOMImage::GetSpacing()
 //-----------------------------------------------------------------------------
 std::vector<double> GateDICOMImage::GetImageSize()
 {
-  std::vector<double> vSize(reader->GetOutput()->GetImageDimension(),0.);
-  for(size_t i=0;i<reader->GetOutput()->GetImageDimension();i++)
-    vSize[i]=GetResolution()[i]*GetSpacing()[i];
+  if(vSize.size()==0)
+  {
+    vSize.resize(reader->GetOutput()->GetImageDimension(),0.);
+    for(size_t i=0;i<reader->GetOutput()->GetImageDimension();i++)
+      vSize[i]=GetResolution()[i]*GetSpacing()[i];
 
-  //std::cout << vSize[0] <<","<< vSize[1] <<","<< vSize[2] << " mm" << std::endl;
-
+    GateMessage("Image", 5, "GateDICOMImage::GetImageSize: " << vSize[0] <<","<< vSize[1] <<","<< vSize[2] << " mm" << Gateendl);
+  }
   return vSize;
 }
 //-----------------------------------------------------------------------------
@@ -127,12 +192,16 @@ std::vector<double> GateDICOMImage::GetImageSize()
 //-----------------------------------------------------------------------------
 std::vector<double> GateDICOMImage::GetOrigin()
 {
-  ImageType::PointType origin = reader->GetOutput()->GetOrigin();
+  if(vOrigin.size()==0)
+  {
+    ImageType::PointType origin = reader->GetOutput()->GetOrigin();
 
-  std::vector<double> vOrigin(reader->GetOutput()->GetImageDimension(),0.);
-  for(size_t i=0;i<reader->GetOutput()->GetImageDimension();i++)
-    vOrigin[i]=origin[i];
+    vOrigin.resize(reader->GetOutput()->GetImageDimension(),0.);
+    for(size_t i=0;i<reader->GetOutput()->GetImageDimension();i++)
+      vOrigin[i]=origin[i];
 
+    GateMessage("Image", 5, "GateDICOMImage::GetOrigin: " << vOrigin[0] <<","<< vOrigin[1] <<","<< vOrigin[2] << Gateendl);
+  }
   return vOrigin;
 }
 //-----------------------------------------------------------------------------

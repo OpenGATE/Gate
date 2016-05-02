@@ -306,7 +306,7 @@ template<class PixelType>
 void GateImageT<PixelType>::ReadDICOM(G4String filename) {
   #ifdef GATE_USE_ITK
     GateDICOMImage* dicom = new GateDICOMImage;
-    dicom->ReadSeries(filename);
+    dicom->Read(filename);
     
     resolution = G4ThreeVector(dicom->GetResolution()[0], dicom->GetResolution()[1], dicom->GetResolution()[2]);
     voxelSize  = G4ThreeVector(dicom->GetSpacing()[0], dicom->GetSpacing()[1], dicom->GetSpacing()[2]);

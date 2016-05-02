@@ -21,6 +21,17 @@ See GATE/LICENSE.txt for further details
 #include "itkGDCMSeriesFileNames.h"
 #include "itkImageSeriesReader.h"
 
+#include <gdcmFilename.h>
+
+#if ITK_VERSION_MAJOR >= 4
+  #include "gdcmUIDGenerator.h"
+#else
+  #include "gdcm/src/gdcmFile.h"
+  #include "gdcm/src/gdcmUtil.h"
+#endif
+
+#include "GateMiscFunctions.hh"
+
 #include <string>
 
 
@@ -29,11 +40,11 @@ class GateDICOMImage
   //const unsigned int Dimension = 3;
 
   public:
-    GateDICOMImage() {}
+    GateDICOMImage();
     ~GateDICOMImage() {}
 
     void Read(const std::string);
-    void ReadSeries(const std::string);
+    void ReadSeries(const std::string, std::string="");
     std::vector<int> GetResolution();
     std::vector<double> GetSpacing();
     std::vector<double> GetOrigin();
@@ -51,6 +62,10 @@ class GateDICOMImage
 
     ReaderType::Pointer reader;
     std::vector<int> pixels;
+    std::vector<int> vResolution;
+    std::vector<double> vSpacing;
+    std::vector<double> vSize;
+    std::vector<double> vOrigin;
 };
 
 #endif
