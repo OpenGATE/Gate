@@ -20,7 +20,7 @@ G4double GateNanoAbsorption::GetMeanFreePath(const G4Track& aTrack,
  
    if ( aMaterialPropertyTable ) {
       AttenuationLengthVector = aMaterialPropertyTable->
-                                                 GetProperty("NANOdensity");
+                                                 GetProperty("NANOABSLENGTH");
             if ( AttenuationLengthVector ){
               AttenuationLength = AttenuationLengthVector->
                                           Value(thePhotonMomentum);
