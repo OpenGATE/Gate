@@ -305,6 +305,7 @@ void GateImageT<PixelType>::ReadAscii(G4String filename) {
 template<class PixelType>
 void GateImageT<PixelType>::ReadDICOM(G4String filename) {
   #ifdef GATE_USE_ITK
+    GateMessage("Image", 2, "GateImageT::ReadDICOM" << Gateendl);
     GateDICOMImage* dicom = new GateDICOMImage;
     dicom->Read(filename);
     
@@ -316,7 +317,13 @@ void GateImageT<PixelType>::ReadDICOM(G4String filename) {
     Allocate();
     
     // Get image data
-    //dicom->GetPixels(data);
+    dicom->GetPixels(data);
+
+    GateMessage("Image", 5, " data.size(): " << data.size() << Gateendl);
+
+    //for(size_t i=0;i<data.size();i++)
+    //  if(data[i]!=0)
+    //    GateMessage("Image", 5, " data[" << i << "]: " << data[i] << Gateendl);
     
     delete dicom;
   #else

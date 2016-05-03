@@ -8,8 +8,9 @@ See GATE/LICENSE.txt for further details
 
 /*
   \class  GateDICOMImage
-  \author Jérôme Suhard (jerome@suhard.fr)
-          Thomas DESCHLER (thomas@deschler.fr)
+  \author Thomas DESCHLER (thomas@deschler.fr)
+  based on the work of
+          Jérôme Suhard (jerome@suhard.fr)
   \date	April 2016
 */
 
@@ -23,17 +24,11 @@ See GATE/LICENSE.txt for further details
 
 #include <gdcmFilename.h>
 
-#if ITK_VERSION_MAJOR >= 4
-  #include "gdcmUIDGenerator.h"
-#else
-  #include "gdcm/src/gdcmFile.h"
-  #include "gdcm/src/gdcmUtil.h"
-#endif
-
 #include "GateMiscFunctions.hh"
 
 #include <string>
 
+template<class PixelType> class GateImageT;
 
 class GateDICOMImage
 {
@@ -49,23 +44,29 @@ class GateDICOMImage
     std::vector<double> GetSpacing();
     std::vector<double> GetOrigin();
     std::vector<double> GetImageSize();
-    double              GetPixelValue(const std::vector<int>);
-    void                GetPixels( std::vector<int>&);
     unsigned int        GetPixelsCount();
+    int GetPixelValue(const std::vector<int>);
+
+    template<class PixelType>
+    void GetPixels(std::vector<PixelType> & data);
 
   private:
-    typedef signed short                        PixelType;
-    typedef itk::Image< PixelType, 3 >          ImageType;
+    typedef signed short                        TypeOfPixel;
+    typedef itk::Image<TypeOfPixel, 3 >         ImageType;
     typedef itk::ImageSeriesReader< ImageType > ReaderType;
     typedef itk::GDCMImageIO                    ImageIOType;
     typedef itk::GDCMSeriesFileNames            NamesGeneratorType;
 
     ReaderType::Pointer reader;
-    std::vector<int> pixels;
+
+    unsigned int pixelsCount;
+
     std::vector<int> vResolution;
     std::vector<double> vSpacing;
     std::vector<double> vSize;
     std::vector<double> vOrigin;
 };
+
+#include "GateDICOMImage.icc"
 
 #endif

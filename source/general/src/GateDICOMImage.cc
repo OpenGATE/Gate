@@ -30,6 +30,7 @@ GateDICOMImage::GateDICOMImage()
   vSpacing.resize(0);
   vSize.resize(0);
   vOrigin.resize(0);
+  pixelsCount=0;
 }
 //-----------------------------------------------------------------------------
 
@@ -56,25 +57,20 @@ void GateDICOMImage::Read(const std::string fileName)
     exit(EXIT_FAILURE);
   }
 
-  #if ITK_VERSION_MAJOR >= 4
-    std::string seriesUID = gdcm::UIDGenerator().Generate();
-  #else
-    std::string seriesUID = gdcm::Util::CreateUniqueUID( gdcmIO->GetUIDPrefix());
-  #endif
-
   ReaderType::DictionaryRawPointer dict = (*(reader->GetMetaDataDictionaryArray()))[0];
   typedef itk::MetaDataObject< std::string >  MetaDataStringType;
   MetaDataStringType::Pointer entryvalue =
     dynamic_cast<MetaDataStringType *>( dict->Find( "0020|000e" )->second.GetPointer() );//OK Mais incomplet
 
   if( entryvalue )
-    seriesUID=entryvalue->GetMetaDataObjectValue();
+  {
+    std::string seriesUID(entryvalue->GetMetaDataObjectValue());
+    GateMessage("Image", 5, "GateDICOMImage::Read: File: " << fileName <<", series UID: "<< seriesUID << Gateendl);
+    ReadSeries(path,seriesUID);
+  }
   else
     GateError("Can't find the series UID from the file" << Gateendl);
 
-  GateMessage("Image", 5, "GateDICOMImage::Read: File: " << fileName <<", series UID: "<< seriesUID << Gateendl);
-
-  ReadSeries(path,seriesUID);
 }
 //-----------------------------------------------------------------------------
 
@@ -91,9 +87,7 @@ void GateDICOMImage::ReadSeries(const std::string seriesDirectory, std::string U
   nameGenerator->SetUseSeriesDetails( true );
   nameGenerator->SetDirectory( seriesDirectory );
 
-    std::cout << std::endl << "The directory " << seriesDirectory << std::endl << std::endl;
-    std::cout << "Contains " << nameGenerator->GetSeriesUIDs().size() << " DICOM Series:";
-    std::cout << std::endl << std::endl;
+    GateMessage("Image", 5, "The directory " << seriesDirectory << " contains " << nameGenerator->GetSeriesUIDs().size() << " DICOM Series:" << Gateendl);
 
     std::vector< std::string >::const_iterator seriesItr = nameGenerator->GetSeriesUIDs().begin();
     std::vector< std::string >::const_iterator seriesEnd = nameGenerator->GetSeriesUIDs().end();
@@ -104,7 +98,7 @@ void GateDICOMImage::ReadSeries(const std::string seriesDirectory, std::string U
       if(UID!="" && UID==seriesUID.substr(0, UID.size()))
         UID=seriesItr->c_str();
       //std::cout << "UID: " << UID << "seriesUID.substr: " << seriesUID.substr(0, UID.size()) << std::endl;
-      std::cout << seriesItr->c_str() << std::endl;
+      GateMessage("Image", 5, "  " << seriesItr->c_str() << Gateendl);
       ++seriesItr;
     }
 
@@ -208,7 +202,24 @@ std::vector<double> GateDICOMImage::GetOrigin()
 
 
 //-----------------------------------------------------------------------------
-double GateDICOMImage::GetPixelValue(const std::vector<int> coord)
+unsigned int GateDICOMImage::GetPixelsCount()
+{
+  if(pixelsCount!=0)
+  {
+    for(size_t i=0;i<GetResolution().size();i++)
+    {
+      pixelsCount*=GetResolution()[i];
+    }
+  GateMessage("Image", 5, "GateDICOMImage::GetPixelsCount: " << pixelsCount << Gateendl);
+  }
+
+  return pixelsCount;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+int GateDICOMImage::GetPixelValue(const std::vector<int> coord)
 {
   ImageType::IndexType index;
   if(coord.size()==reader->GetOutput()->GetImageDimension())
@@ -218,21 +229,5 @@ double GateDICOMImage::GetPixelValue(const std::vector<int> coord)
   }
 
   return reader->GetOutput()->GetPixel(index);
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void GateDICOMImage::GetPixels(std::vector<int>& output)
-{
-  // Voir GateVDICOM.cc
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-unsigned int GateDICOMImage::GetPixelsCount()
-{
-  return GetResolution()[0]*GetResolution()[1]*GetResolution()[2];
 }
 //-----------------------------------------------------------------------------
