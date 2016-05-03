@@ -9,7 +9,7 @@
 #include <G4LogLogInterpolation.hh>
 #include <G4CompositeEMDataSet.hh>
 #include <G4CrossSectionHandler.hh>
-#include "G4Poisson.hh"
+#include <G4Poisson.hh>
 #include "GateEnergyResponseFunctor.hh"
 
 // ITK
@@ -69,7 +69,16 @@ public:
   typedef itk::Image<InputPixelType, Dimension>                      InputImageType;
   typedef itk::Image<double, 2>                                      MaterialMuImageType;
 
-  VAccumulation(): m_NumberOfPrimaries(0) { for(int i=0; i<ITK_MAX_THREADS; i++) {m_IntegralOverDetector[i] = 0.; m_SquaredIntegralOverDetector[i] = 0.;} }
+  VAccumulation():
+    m_NumberOfPrimaries(0),
+    m_EnergyResolvedBinSize(0.)
+  {
+    for(int i=0; i<ITK_MAX_THREADS; i++)
+      {
+      m_IntegralOverDetector[i] = 0.;
+      m_SquaredIntegralOverDetector[i] = 0.;
+      }
+  }
 
   bool operator!=( const VAccumulation & ) const
   {
@@ -210,13 +219,25 @@ public:
 
   void SetNumberOfPrimaries(G4int i) { m_NumberOfPrimaries = i; }
   void SetResponseDetector(GateEnergyResponseFunctor *_arg){ m_ResponseDetector = _arg; }
+  void SetEnergyResolvedParameters(const double bin, const unsigned int slice)
+  {
+    m_EnergyResolvedBinSize = bin;
+    m_EnergyResolvedSliceSize = slice;
+  }
 
 protected:
-  void Accumulate(const rtk::ThreadIdType threadId,
-                  double &input,
-                  const double valueToAccumulate)
+  inline void Accumulate(const rtk::ThreadIdType threadId,
+                         float &output,
+                         const double valueToAccumulate,
+                         const double energy)
   {
-    input += valueToAccumulate;
+    if(m_EnergyResolvedBinSize>0)
+      {
+      const std::ptrdiff_t offset = m_EnergyResolvedSliceSize * itk::Math::Floor<unsigned int>(energy/m_EnergyResolvedBinSize+0.5);
+      *(&output+offset) += valueToAccumulate;
+      }
+    else
+      output += valueToAccumulate;
     m_IntegralOverDetector[threadId] += valueToAccumulate;
     m_SquaredIntegralOverDetector[threadId] += valueToAccumulate * valueToAccumulate;
   }
@@ -231,6 +252,8 @@ protected:
   G4int                         m_NumberOfPrimaries;
   GateEnergyResponseFunctor    *m_ResponseDetector;
   std::vector<double>           m_EnergyList;
+  double                        m_EnergyResolvedBinSize;
+  unsigned int                  m_EnergyResolvedSliceSize;
 };
 //-----------------------------------------------------------------------------
 
@@ -246,14 +269,15 @@ public:
   PrimaryValueAccumulation() {}
   ~PrimaryValueAccumulation() {}
 
-  inline double operator()( const rtk::ThreadIdType threadId,
-                            double input,
-                            const double &itkNotUsed(rayCastValue),
-                            const VectorType &stepInMM,
-                            const VectorType &itkNotUsed(source),
-                            const VectorType &sourceToPixel,
-                            const VectorType &nearestPoint,
-                            const VectorType &farthestPoint)
+  inline void operator()( const rtk::ThreadIdType threadId,
+                          const float &itkNotUsed(input),
+                          float &output,
+                          const double &itkNotUsed(rayCastValue),
+                          const VectorType &stepInMM,
+                          const VectorType &itkNotUsed(source),
+                          const VectorType &sourceToPixel,
+                          const VectorType &nearestPoint,
+                          const VectorType &farthestPoint)
   {
     double *p = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
 
@@ -284,20 +308,22 @@ public:
         double a =vcl_exp(-rayIntegral);
         double nprimE = m_NumberOfPrimaries * (*m_EnergyWeightList)[i];
         double n = ((nprimE)?G4Poisson(nprimE*a)/nprimE:0.);
-        Accumulate(threadId, input, n * (*m_EnergyWeightList)[i] * (*m_ResponseDetector)( m_EnergyList[i] ));
+        this->Accumulate(threadId,
+                         output,
+                         n * (*m_EnergyWeightList)[i] * (*m_ResponseDetector)(m_EnergyList[i] ),
+                         m_EnergyList[i]);
         }
       else
-        Accumulate(threadId, input, vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i]);
+        this->Accumulate(threadId,
+                         output,
+                         vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i],
+                         m_EnergyList[i]);
     }
 
-    // FIXME: the source is not punctual but it is homogeneous on the detection plane
-    // so one should not multiply by the solid angle but by the pixel surface.
-    // To be discussed...
-    //input *= GetSolidAngle(sourceToPixel);
-
     // Reset weights for next ray in thread.
-    std::fill(m_InterpolationWeights[threadId].begin(), m_InterpolationWeights[threadId].end(), 0.);
-    return input;
+    std::fill(m_InterpolationWeights[threadId].begin(),
+              m_InterpolationWeights[threadId].end(),
+              0.);
   }
 };
 //-----------------------------------------------------------------------------
@@ -324,14 +350,15 @@ public:
     delete m_CrossSectionHandler;
   }
 
-  inline double operator()( const rtk::ThreadIdType threadId,
-                            double input,
-                            const double &itkNotUsed(rayCastValue),
-                            const VectorType &stepInMM,
-                            const VectorType &itkNotUsed(source),
-                            const VectorType &sourceToPixel,
-                            const VectorType &nearestPoint,
-                            const VectorType &farthestPoint)
+  inline void operator()( const rtk::ThreadIdType threadId,
+                          const float &itkNotUsed(input),
+                          float &output,
+                          const double &itkNotUsed(rayCastValue),
+                          const VectorType &stepInMM,
+                          const VectorType &itkNotUsed(source),
+                          const VectorType &sourceToPixel,
+                          const VectorType &nearestPoint,
+                          const VectorType &farthestPoint)
   {
     // Compute ray length in world material
     // This is used to compute the length in world as well as the direction
@@ -348,9 +375,6 @@ public:
 
     // This is taken from GateDiffCrossSectionActor.cc and simplified
     double Eratio = 1./(1.+m_E0m*(1.-cosT));
-    //double DCSKleinNishina = m_eRadiusOverCrossSectionTerm *
-    //                         Eratio * Eratio *                      // DCSKleinNishinaTerm1
-    //                         (Eratio + 1./Eratio - 1. + cosT*cosT); // DCSKleinNishinaTerm2
     double DCSKleinNishina = m_eRadiusOverCrossSectionTerm*Eratio*(1.+Eratio*(Eratio-1.+cosT*cosT));
     double DCScompton = DCSKleinNishina * scatteringFunction;
 
@@ -364,34 +388,7 @@ public:
     // the length from farthest point to pixel point.
     m_InterpolationWeights[threadId].back() = worldVectorNorm;
 
- // DEFINITION for Activation/Deactivation log-log interpolation of mu value
-//#define INTERP
     const double energy = Eratio*m_Energy;
-#ifdef INTERP
-    // Pointer to adequate mus
-    unsigned int ceil = itk::Math::Ceil<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
-    unsigned int floor = itk::Math::Floor<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
-    double *p1 = m_MaterialMu->GetPixelContainer()->GetBufferPointer() +
-                floor * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
-    double *p2 = m_MaterialMu->GetPixelContainer()->GetBufferPointer() +
-                ceil * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
-
-    double rayIntegral = 0.;
-    double logEnergy   = log(energy/m_MaterialMu->GetSpacing()[1]);
-    double logCeil     = log(ceil);
-    double logFloor    = log(floor);
-
-    // log-log interpolation for mu calculation
-    double interp =  exp( ((log(*p2 / *p1))/(logCeil-logFloor))*( logEnergy - logCeil ) + log(*p2) );
-
-    for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
-    {
-      // Ray integral
-      rayIntegral += m_InterpolationWeights[threadId][j] * interp;
-      p2++; p1++;
-      interp = exp( ((log(*p2 / *p1))/(logCeil-logFloor)) * (logEnergy - logCeil) + log(*p2) );
-    }
-#else
     unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
     double *p = m_MaterialMu->GetPixelContainer()->GetBufferPointer() +
                 e * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
@@ -400,14 +397,17 @@ public:
     double rayIntegral = 0.;
     for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
       rayIntegral += m_InterpolationWeights[threadId][j] * *p++;
-#endif
+
     // Final computation
-    Accumulate(threadId, input,
-               vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel) * (*m_ResponseDetector)(energy));
+    Accumulate(threadId,
+               output,
+               vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel) * (*m_ResponseDetector)(energy),
+               energy);
 
     // Reset weights for next ray in thread.
-    std::fill(m_InterpolationWeights[threadId].begin(), m_InterpolationWeights[threadId].end(), 0.);
-    return input;
+    std::fill(m_InterpolationWeights[threadId].begin(),
+              m_InterpolationWeights[threadId].end(),
+              0.);
   }
 
   void SetDirection(const VectorType &_arg){ m_Direction = _arg; }
@@ -459,14 +459,15 @@ public:
     delete m_CrossSectionHandler;
   }
 
-  inline double operator()( const rtk::ThreadIdType threadId,
-                            double input,
-                            const double &itkNotUsed(rayCastValue),
-                            const VectorType &stepInMM,
-                            const VectorType &itkNotUsed(source),
-                            const VectorType &sourceToPixel,
-                            const VectorType &nearestPoint,
-                            const VectorType &farthestPoint)
+  inline void operator()( const rtk::ThreadIdType threadId,
+                          const float &itkNotUsed(input),
+                          float &output,
+                          const double &itkNotUsed(rayCastValue),
+                          const VectorType &stepInMM,
+                          const VectorType &itkNotUsed(source),
+                          const VectorType &sourceToPixel,
+                          const VectorType &nearestPoint,
+                          const VectorType &farthestPoint)
   {
     // Compute ray length in world material
     // This is used to compute the length in world as well as the direction
@@ -493,60 +494,29 @@ public:
     // The last material is the world material. One must fill the weight with
     // the length from farthest point to pixel point.
     m_InterpolationWeights[threadId].back() = worldVectorNorm;
-#ifdef INTERP
-    unsigned int floor = itk::Math::Floor<double, double>(m_Energy);
-    unsigned int ceil = itk::Math::Ceil<double, double>(m_Energy);
 
-    double *p1 = m_MaterialMu->GetPixelContainer()->GetBufferPointer()
-               + floor * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
-    double *p2 = m_MaterialMu->GetPixelContainer()->GetBufferPointer()
-               + ceil * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
-
-    double rayIntegral = 0.;
-    double logEnergy   = std::log(m_Energy);
-    double logCeil     = std::log(ceil);
-    double logFloor    = std::log(floor);
-
-    // Energy integer case, no interpolation needed
-    if(floor == ceil)
-    {
-      // Ray integral
-      for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
-        rayIntegral += m_InterpolationWeights[threadId][j] * *(m_MaterialMuPointer+j);
-    }
-    // Interpolation needed
-    else
-    {
-      // log-log interpolation for mu calculation
-      double interp = std::exp( (std::log(*p2 / *p1)/(logCeil-logFloor)) * (logEnergy - logCeil) + std::log(*p2) );
-      // Ray integral
-      for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
-      {
-        rayIntegral += m_InterpolationWeights[threadId][j] * interp;
-        p2++; p1++;
-        interp = std::exp( ((std::log(*p2 / *p1) )/(logCeil-logFloor)) * (logEnergy - logCeil) + std::log(*p2) );
-      }
-    }
-#else
     // Ray integral
     double rayIntegral = 0.;
     for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
       rayIntegral += m_InterpolationWeights[threadId][j] * *(m_MaterialMuPointer+j);
-#endif
+
     // Final computation
-    Accumulate(threadId, input,
-               vcl_exp(-rayIntegral) * DCSrayleigh * GetSolidAngle(sourceToPixel));
+    Accumulate(threadId,
+               output,
+               vcl_exp(-rayIntegral) * DCSrayleigh * GetSolidAngle(sourceToPixel),
+               m_Energy);
 
     // Reset weights for next ray in thread.
-    std::fill(m_InterpolationWeights[threadId].begin(), m_InterpolationWeights[threadId].end(), 0.);
-    return input;
+    std::fill(m_InterpolationWeights[threadId].begin(),
+              m_InterpolationWeights[threadId].end(),
+              0.);
   }
 
   void SetDirection(const VectorType &_arg){ m_Direction = _arg; }
   void SetEnergyZAndWeight(const double  &energy, const unsigned int &Z, const double &weight) {
     unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
     m_InvWlPhoton = std::sqrt(0.5) * cm * energy / (h_Planck * c_light); // sqrt(0.5) for trigo reasons, see comment when used
-    m_Energy = energy / m_MaterialMu->GetSpacing()[1];
+    m_Energy = energy;
     m_MaterialMuPointer = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
     m_MaterialMuPointer += e * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
 
@@ -578,14 +548,15 @@ public:
   FluorescenceValueAccumulation() {}
   ~FluorescenceValueAccumulation() {}
 
-  inline double operator()( const rtk::ThreadIdType threadId,
-                            double input,
-                            const double &itkNotUsed(rayCastValue),
-                            const VectorType &stepInMM,
-                            const VectorType &itkNotUsed(source),
-                            const VectorType &sourceToPixel,
-                            const VectorType &nearestPoint,
-                            const VectorType &farthestPoint)
+  inline void operator()( const rtk::ThreadIdType threadId,
+                          const float &itkNotUsed(input),
+                          float &output,
+                          const double &itkNotUsed(rayCastValue),
+                          const VectorType &stepInMM,
+                          const VectorType &itkNotUsed(source),
+                          const VectorType &sourceToPixel,
+                          const VectorType &nearestPoint,
+                          const VectorType &farthestPoint)
   {
     // Compute ray length in world material
     // This is used to compute the length in world as well as the direction
@@ -604,62 +575,29 @@ public:
     // The last material is the world material. One must fill the weight with
     // the length from farthest point to pixel point.
     m_InterpolationWeights[threadId].back() = worldVectorNorm;
-#ifdef INTERP
-    unsigned int floor = itk::Math::Floor<double, double>(m_Energy);
-    unsigned int ceil = itk::Math::Ceil<double, double>(m_Energy);
 
-    double *p1 = m_MaterialMu->GetPixelContainer()->GetBufferPointer()
-               + floor * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
-    double *p2 = m_MaterialMu->GetPixelContainer()->GetBufferPointer()
-               + ceil * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
-
-
-    double rayIntegral = 0.;
-    double logEnergy   = std::log(m_Energy);
-    double logCeil     = std::log(ceil);
-    double logFloor    = std::log(floor);
-    double interp      = 0.;
-
-    // Energy integer case, no interpolation needed
-    if(floor == ceil)
-    {
-      // Ray integral
-      for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
-        rayIntegral += m_InterpolationWeights[threadId][j] * *(m_MaterialMuPointer+j);
-    }
-    // Interpolation needed
-    else
-    {
-      // log-log interpolation for mu calculation
-      interp = std::exp( (std::log(*p2 / *p1)/(logCeil-logFloor)) * (logEnergy - logCeil) + std::log(*p2) );
-      // Ray integral
-      for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
-      {
-        rayIntegral += m_InterpolationWeights[threadId][j] * interp;
-        p2++; p1++;
-        interp = std::exp( ((std::log(*p2 / *p1) )/(logCeil-logFloor)) * (logEnergy - logCeil) + std::log(*p2) );
-      }
-    }
-#else
     // Ray integral
     double rayIntegral = 0.;
     for(unsigned int j=0; j<m_InterpolationWeights[threadId].size(); j++)
       rayIntegral += m_InterpolationWeights[threadId][j] * *(m_MaterialMuPointer+j);
-#endif
+
     // Final computation
-    Accumulate(threadId, input,
-               m_Weight * vcl_exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi));
+    Accumulate(threadId,
+               output,
+               m_Weight * vcl_exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi),
+               m_Energy);
 
     // Reset weights for next ray in thread.
-    std::fill(m_InterpolationWeights[threadId].begin(), m_InterpolationWeights[threadId].end(), 0.);
-    return input;
+    std::fill(m_InterpolationWeights[threadId].begin(),
+              m_InterpolationWeights[threadId].end(),
+              0.);
   }
 
   void SetDirection(const VectorType &itkNotUsed(_arg)){}
   void SetEnergyZAndWeight(const double &energy, const unsigned int &itkNotUsed(Z), const double &weight) {
     unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
     m_Weight = weight;
-    m_Energy = energy / m_MaterialMu->GetSpacing()[1];
+    m_Energy = energy;
     m_MaterialMuPointer = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
     m_MaterialMuPointer += e * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
   }

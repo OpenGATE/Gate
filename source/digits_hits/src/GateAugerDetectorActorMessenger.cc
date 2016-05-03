@@ -47,7 +47,7 @@ void GateAugerDetectorActorMessenger::BuildCommands(G4String base)
 	pMaxProfileCmd->SetDefaultUnit("mm");
 
 	pSizeProfileCmd = new G4UIcmdWithAnInteger((base+"/setProfileSize").c_str(),this);
-	pSizeProfileCmd->SetGuidance("Set the number of pixel in the profile");
+	pSizeProfileCmd->SetGuidance("Set the number of bins (!) in the profile");
 	pSizeProfileCmd->SetParameterName("ProfileSize",false);
 
 	pProfileNoiseFWHMCmd = new G4UIcmdWithADoubleAndUnit((base+"/setProfileNoiseFWHM").c_str(),this);

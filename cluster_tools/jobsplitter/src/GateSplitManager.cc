@@ -8,8 +8,14 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-
 #include "GateSplitManager.hh"
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 GateSplitManager::GateSplitManager(G4int nAliases,G4String* aliases,G4String platform,G4String pbsscript,
                                    G4String condorscript,G4String macfile,G4int nSplits,G4int time)
 {
@@ -79,7 +85,7 @@ void GateSplitManager::StartSplitting()
 
 void GateSplitManager::CleanAbort()
 {
- ofstream tmp1, tmp2;
+ std::ofstream tmp1, tmp2;
  if (macParser) macParser->CleanAbort(tmp1,tmp2);
  cout<<"Made clean exit !"<<endl;  
  exit(1);
