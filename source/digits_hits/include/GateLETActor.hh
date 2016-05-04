@@ -1,17 +1,17 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 /*!
   \class  GateLETActor
   Compute LET (Linear Energy Transfer) at a voxel level.
   \date	2016
- */
+*/
 
 #ifndef GATELETACTOR_HH
 #define GATELETACTOR_HH
@@ -29,7 +29,7 @@ class G4EmCalculator;
 
 class GateLETActor : public GateVImageActor
 {
- public:
+public:
 
   //-----------------------------------------------------------------------------
   // Actor name
@@ -43,7 +43,6 @@ class GateLETActor : public GateVImageActor
 
   void SetRestrictedFlag(bool b) { mIsRestrictedFlag = b; }
   void SetDeltaRestrictedValue(G4double d) { mDeltaRestricted = d; }
-  //test AResch 25 01 2016
   void EnableLETUncertaintyImage(bool b) { mIsLETUncertaintyImageEnabled = b; }
   void SetDoseToWater(bool b) { mIsDoseToWaterEnabled = b; }
   void SetParallelCalculation(bool b) { mIsParallelCalculationEnabled = b; }
@@ -71,7 +70,7 @@ protected:
   GateLETActorMessenger * pMessenger;
 
   bool mIsRestrictedFlag;
-  
+
   int mCurrentEvent;
   bool mIsLETUncertaintyImageEnabled;
   bool mIsDoseToWaterEnabled;
@@ -86,28 +85,27 @@ protected:
   G4String uncertaintyFilename;
   GateImageDouble mLETSecondMomentImage;
   GateImageDouble mLETUncertaintyFinalImage;
-  //GateImageWithStatistic mTestImage;
 
   bool mIsDoseAveraged;
   bool mIsTrackAveraged;
-  
+
   bool mIsTrackAveragedFluenceAveraged;
   bool mIsTrackAveragedFluenceTrackAveraged;
   bool mIsTrackAveragedDXAveraged;
   bool mIsTrackAveragedDXAveragedCancelled;
-  
+
   bool mIsDoseAveragedDEDXAveraged;
   bool mIsDoseAveragedEdepDXAveraged;
-  
+
   GateImageDouble mLETTempImage;
   GateImageInt mNumberOfHitsImage;
   GateImageInt mLastHitEventImage;
   bool mIsRelUncertEnabled;
-  
+
   GateImageDouble mRelUncertImage;
-  
+
   bool mIsParallelCalculationEnabled;
-  
+
   G4EmCalculator * emcalc;
 };
 
