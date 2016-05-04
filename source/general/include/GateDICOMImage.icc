@@ -18,22 +18,20 @@
 template<class PixelType>
 void GateDICOMImage::GetPixels(std::vector<PixelType> & data)
 {
-  //data.resize(GetPixelsCount(),-1);
-
   if (reader->GetOutput()->GetImageDimension()==3)
   {
-    std::vector<int> coord(3,-1);
+    ImageType::IndexType index;
     int i=0;
     for(int z=0; z<GetResolution()[2]; z++)
     {
-      coord[2]=z;
+      index[2]=z;
       for(int y=0; y<GetResolution()[1]; y++)
       {
-        coord[1]=y;
+        index[1]=y;
 	      for(int x=0; x<GetResolution()[0]; x++)
         {
-          coord[0]=x;
-          data[i]=GetPixelValue(coord);
+          index[0]=x;
+          data[i]=reader->GetOutput()->GetPixel(index);
           i++;
         }
       }

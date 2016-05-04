@@ -44,8 +44,6 @@ class GateDICOMImage
     std::vector<double> GetSpacing();
     std::vector<double> GetOrigin();
     std::vector<double> GetImageSize();
-    unsigned int        GetPixelsCount();
-    int GetPixelValue(const std::vector<int>);
 
     template<class PixelType>
     void GetPixels(std::vector<PixelType> & data);

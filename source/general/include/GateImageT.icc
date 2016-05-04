@@ -43,6 +43,7 @@ void GateImageT<PixelType>::PrintInfo() {
   GateMessage("Image", 1, "HalfSize=\t"    << halfSize    << Gateendl);
   GateMessage("Image", 1, "Resol=\t"       << resolution  << Gateendl);
   GateMessage("Image", 1, "VoxelSize=\t"   << voxelSize   << Gateendl);
+  GateMessage("Image", 1, "Origin=\t"      << origin      << Gateendl);
   GateMessage("Image", 1, "planeSize=\t"   << planeSize   << Gateendl);
   GateMessage("Image", 1, "lineSize=\t"    << lineSize    << Gateendl);
   GateMessage("Image", 1, "nbOfValues=\t"  << nbOfValues  << Gateendl);
@@ -310,20 +311,14 @@ void GateImageT<PixelType>::ReadDICOM(G4String filename) {
     dicom->Read(filename);
     
     resolution = G4ThreeVector(dicom->GetResolution()[0], dicom->GetResolution()[1], dicom->GetResolution()[2]);
-    voxelSize  = G4ThreeVector(dicom->GetSpacing()[0], dicom->GetSpacing()[1], dicom->GetSpacing()[2]);
-    origin     = G4ThreeVector(dicom->GetOrigin()[0], dicom->GetOrigin()[1], dicom->GetOrigin()[2]);
+    voxelSize  = G4ThreeVector(dicom->GetSpacing()[0]   , dicom->GetSpacing()[1]   , dicom->GetSpacing()[2]);
+    origin     = G4ThreeVector(dicom->GetOrigin()[0]    , dicom->GetOrigin()[1]    , dicom->GetOrigin()[2]);
 
     UpdateSizesFromResolutionAndVoxelSize();
     Allocate();
     
     // Get image data
     dicom->GetPixels(data);
-
-    GateMessage("Image", 5, " data.size(): " << data.size() << Gateendl);
-
-    //for(size_t i=0;i<data.size();i++)
-    //  if(data[i]!=0)
-    //    GateMessage("Image", 5, " data[" << i << "]: " << data[i] << Gateendl);
     
     delete dicom;
   #else

@@ -43,8 +43,7 @@ void GateDICOMImage::Read(const std::string fileName)
   reader = ReaderType::New();
   reader->SetFileName(fileName);
 
-  ImageIOType::Pointer imgIO = ImageIOType::New();
-  reader->SetImageIO(imgIO);
+  reader->SetImageIO(ImageIOType::New());
 
   try
   {
@@ -52,15 +51,15 @@ void GateDICOMImage::Read(const std::string fileName)
   }
   catch (itk::ExceptionObject & e)
   {
-    std::cerr << "exception in file reader " << std::endl;
-    std::cerr << e << std::endl;
+    GateError("Cannot read the file: " << fileName << Gateendl);
     exit(EXIT_FAILURE);
   }
 
+  GateMessage("Image", 5, "GateDICOMImage::Read " << fileName << Gateendl);
+
   ReaderType::DictionaryRawPointer dict = (*(reader->GetMetaDataDictionaryArray()))[0];
-  typedef itk::MetaDataObject< std::string >  MetaDataStringType;
-  MetaDataStringType::Pointer entryvalue =
-    dynamic_cast<MetaDataStringType *>( dict->Find( "0020|000e" )->second.GetPointer() );//OK Mais incomplet
+  itk::MetaDataObject< std::string >::Pointer entryvalue =
+    dynamic_cast<itk::MetaDataObject< std::string > *>( dict->Find( "0020|000e" )->second.GetPointer() );
 
   if( entryvalue )
   {
@@ -69,8 +68,10 @@ void GateDICOMImage::Read(const std::string fileName)
     ReadSeries(path,seriesUID);
   }
   else
+  {
     GateError("Can't find the series UID from the file" << Gateendl);
-
+    exit(EXIT_FAILURE);
+  }
 }
 //-----------------------------------------------------------------------------
 
@@ -136,11 +137,9 @@ std::vector<int> GateDICOMImage::GetResolution()
 {
   if(vResolution.size()==0)
   {
-    ImageType::SizeType resolution = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
-
-    vResolution.resize(resolution.GetSizeDimension(),-1);
-    for(size_t i=0;i<resolution.GetSizeDimension();i++)
-      vResolution[i]=resolution[i];
+    vResolution.resize(reader->GetOutput()->GetImageDimension(),-1);
+    for(size_t i=0;i<reader->GetOutput()->GetImageDimension();i++)
+      vResolution[i]=reader->GetOutput()->GetLargestPossibleRegion().GetSize()[i];
 
     GateMessage("Image", 5, "GateDICOMImage::GetResolution: " << vResolution[0] <<","<< vResolution[1] <<","<< vResolution[2] << " mm" << Gateendl);
   }
@@ -154,11 +153,9 @@ std::vector<double> GateDICOMImage::GetSpacing()
 {
   if(vSpacing.size()==0)
   {
-    ImageType::SpacingType spacing = reader->GetOutput()->GetSpacing();
-
     vSpacing.resize(reader->GetOutput()->GetImageDimension(),0.);
     for(size_t i=0;i<reader->GetOutput()->GetImageDimension();i++)
-      vSpacing[i]=spacing[i];
+      vSpacing[i]=reader->GetOutput()->GetSpacing()[i];
 
     GateMessage("Image", 5, "GateDICOMImage::GetSpacing: " << vSpacing[0] <<","<< vSpacing[1] <<","<< vSpacing[2] << " mm" << Gateendl);
   }
@@ -188,46 +185,12 @@ std::vector<double> GateDICOMImage::GetOrigin()
 {
   if(vOrigin.size()==0)
   {
-    ImageType::PointType origin = reader->GetOutput()->GetOrigin();
-
     vOrigin.resize(reader->GetOutput()->GetImageDimension(),0.);
     for(size_t i=0;i<reader->GetOutput()->GetImageDimension();i++)
-      vOrigin[i]=origin[i];
+      vOrigin[i]=reader->GetOutput()->GetOrigin()[i];
 
     GateMessage("Image", 5, "GateDICOMImage::GetOrigin: " << vOrigin[0] <<","<< vOrigin[1] <<","<< vOrigin[2] << Gateendl);
   }
   return vOrigin;
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-unsigned int GateDICOMImage::GetPixelsCount()
-{
-  if(pixelsCount!=0)
-  {
-    for(size_t i=0;i<GetResolution().size();i++)
-    {
-      pixelsCount*=GetResolution()[i];
-    }
-  GateMessage("Image", 5, "GateDICOMImage::GetPixelsCount: " << pixelsCount << Gateendl);
-  }
-
-  return pixelsCount;
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-int GateDICOMImage::GetPixelValue(const std::vector<int> coord)
-{
-  ImageType::IndexType index;
-  if(coord.size()==reader->GetOutput()->GetImageDimension())
-  {
-    for(size_t i=0;i<reader->GetOutput()->GetImageDimension();i++)
-      index[i]=coord[i];
-  }
-
-  return reader->GetOutput()->GetPixel(index);
 }
 //-----------------------------------------------------------------------------
