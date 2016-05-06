@@ -18,6 +18,8 @@
 template<class PixelType>
 void GateDICOMImage::GetPixels(std::vector<PixelType>& data)
 {
+  GateMessage("Image", 10, "GateDICOMImage::GetPixels: data PixelType: " << typeid(PixelType).name() << Gateendl);
+
   int i=0;
   for(unsigned int z=0; z<reader->GetOutput()->GetLargestPossibleRegion().GetSize()[2]; z++)
     for(unsigned int y=0; y<reader->GetOutput()->GetLargestPossibleRegion().GetSize()[1]; y++)
@@ -34,6 +36,8 @@ void GateDICOMImage::GetPixels(std::vector<PixelType>& data)
 template<class PixelType>
 void GateDICOMImage::SetPixels(std::vector<PixelType>& data)
 {
+  GateMessage("Image", 10, "GateDICOMImage::SetPixels: data PixelType: " << typeid(PixelType).name() << Gateendl);
+
   int i=0;
   for(unsigned int z=0; z<dicomIO->GetLargestPossibleRegion().GetSize()[2]; z++)
     for(unsigned int y=0; y<dicomIO->GetLargestPossibleRegion().GetSize()[1]; y++)

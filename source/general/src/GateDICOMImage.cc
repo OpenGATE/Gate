@@ -82,7 +82,7 @@ void GateDICOMImage::Read(const std::string fileName)
 //-----------------------------------------------------------------------------
 void GateDICOMImage::ReadSeries(const std::string seriesDirectory, std::string UID)
 {
-  GateMessage("Image", 5, "GateDICOMImage::ReadSeries: series path: " << seriesDirectory <<", series UID: "<< UID << Gateendl);
+  GateMessage("Image", 5, "GateDICOMImage::ReadSeries: path: " << seriesDirectory <<", UID: "<< UID << Gateendl);
 
   reader = ReaderType::New();
   reader->SetImageIO(ImageIOType::New());
@@ -202,12 +202,6 @@ std::vector<double> GateDICOMImage::GetOrigin()
 //-----------------------------------------------------------------------------
 void GateDICOMImage::SetResolution(std::vector<long unsigned int> resolution)
 {
-  //if(dicomIO->GetImageDimension()==3)
-  //{
-  //  GateError("GateDICOMImage::SetResolution: The image dimension is not 3 (it's " << dicomIO->GetImageDimension << ")" << Gateendl);
-  //  exit(EXIT_FAILURE);
-  //}
-
   ImageType::RegionType region;
   region.SetIndex({{0,0,0}});
   region.SetSize({{resolution[0],resolution[1],resolution[2]}});
@@ -289,6 +283,7 @@ void GateDICOMImage::Write(const std::string fileName)
   itk::ImageFileWriter<ImageType>::Pointer writer = itk::ImageFileWriter<ImageType>::New();
 
   writer->SetFileName(fileName);
+  writer->SetImageIO(ImageIOType::New());
   writer->SetInput(dicomIO);
   dumpIO();
 

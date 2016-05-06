@@ -64,6 +64,7 @@ class GateDICOMImage
     typedef itk::GDCMSeriesFileNames            NamesGeneratorType;
 
     ReaderType::Pointer reader;
+
     ImageType::Pointer dicomIO;
 
     unsigned int pixelsCount;
