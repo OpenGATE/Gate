@@ -31,6 +31,10 @@ GateDICOMImage::GateDICOMImage()
   vSize.resize(0);
   vOrigin.resize(0);
   pixelsCount=0;
+
+  dicomIO=ImageType::New();
+
+  GateMessage("Image", 5, "GateDICOMImage: dicomIO dimensions : " << dicomIO->GetImageDimension() << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -42,7 +46,6 @@ void GateDICOMImage::Read(const std::string fileName)
 
   reader = ReaderType::New();
   reader->SetFileName(fileName);
-
   reader->SetImageIO(ImageIOType::New());
 
   try
@@ -141,7 +144,7 @@ std::vector<int> GateDICOMImage::GetResolution()
     for(size_t i=0;i<reader->GetOutput()->GetImageDimension();i++)
       vResolution[i]=reader->GetOutput()->GetLargestPossibleRegion().GetSize()[i];
 
-    GateMessage("Image", 5, "GateDICOMImage::GetResolution: " << vResolution[0] <<","<< vResolution[1] <<","<< vResolution[2] << " mm" << Gateendl);
+    GateMessage("Image", 5, "GateDICOMImage::GetResolution: " << vResolution[0] <<","<< vResolution[1] <<","<< vResolution[2] << Gateendl);
   }
   return vResolution;
 }
@@ -192,5 +195,115 @@ std::vector<double> GateDICOMImage::GetOrigin()
     GateMessage("Image", 5, "GateDICOMImage::GetOrigin: " << vOrigin[0] <<","<< vOrigin[1] <<","<< vOrigin[2] << Gateendl);
   }
   return vOrigin;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDICOMImage::SetResolution(std::vector<long unsigned int> resolution)
+{
+  //if(dicomIO->GetImageDimension()==3)
+  //{
+  //  GateError("GateDICOMImage::SetResolution: The image dimension is not 3 (it's " << dicomIO->GetImageDimension << ")" << Gateendl);
+  //  exit(EXIT_FAILURE);
+  //}
+
+  ImageType::RegionType region;
+  region.SetIndex({{0,0,0}});
+  region.SetSize({{resolution[0],resolution[1],resolution[2]}});
+
+  dicomIO->SetRegions(region);
+  dicomIO->Allocate();
+
+  GateMessage("Image", 5, "GateDICOMImage::SetResolution: "
+            << dicomIO->GetLargestPossibleRegion().GetSize()[0] <<","
+            << dicomIO->GetLargestPossibleRegion().GetSize()[1] <<","
+            << dicomIO->GetLargestPossibleRegion().GetSize()[2] << Gateendl);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDICOMImage::SetSpacing(std::vector<double> spacing)
+{
+  ImageType::SpacingType spacingST;
+
+  for(size_t i=0;i<dicomIO->GetImageDimension();i++)
+    spacingST[i]=spacing[i];
+
+  dicomIO->SetSpacing(spacingST);
+
+  GateMessage("Image", 5, "GateDICOMImage::SetSpacing: "
+            << dicomIO->GetSpacing()[0] <<","
+            << dicomIO->GetSpacing()[1] <<","
+            << dicomIO->GetSpacing()[2] << Gateendl);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDICOMImage::SetOrigin(std::vector<double> origin)
+{
+  ImageType::PointType originPT;
+
+  for(size_t i=0;i<dicomIO->GetImageDimension();i++)
+    originPT[i]=origin[i];
+
+  dicomIO->SetOrigin(originPT);
+
+  GateMessage("Image", 5, "GateDICOMImage::SetOrigin: "
+            << dicomIO->GetOrigin()[0] <<","
+            << dicomIO->GetOrigin()[1] <<","
+            << dicomIO->GetOrigin()[2] << Gateendl);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDICOMImage::dumpIO()
+{
+  GateMessage("Image", 5, "GateDICOMImage::dumpIO: dicomIO resolution : "
+            << dicomIO->GetLargestPossibleRegion().GetSize()[0] <<","
+            << dicomIO->GetLargestPossibleRegion().GetSize()[1] <<","
+            << dicomIO->GetLargestPossibleRegion().GetSize()[2] << Gateendl);
+
+  GateMessage("Image", 5, "GateDICOMImage::dumpIO: dicomIO spacing : "
+            << dicomIO->GetSpacing()[0] <<","
+            << dicomIO->GetSpacing()[1] <<","
+            << dicomIO->GetSpacing()[2] << Gateendl);
+
+  GateMessage("Image", 5, "GateDICOMImage::dumpIO: dicomIO origin : "
+            << dicomIO->GetOrigin()[0] <<","
+            << dicomIO->GetOrigin()[1] <<","
+            << dicomIO->GetOrigin()[2] << Gateendl);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDICOMImage::Write(const std::string fileName)
+{
+  if(fileName=="")
+    std::cerr << "ERROR: No filename given for the exported image !" << std::endl;
+
+  itk::ImageFileWriter<ImageType>::Pointer writer = itk::ImageFileWriter<ImageType>::New();
+
+  writer->SetFileName(fileName);
+  writer->SetInput(dicomIO);
+  dumpIO();
+
+  GateMessage("Image", 5, "GateDICOMImage::Write: Writing the image as " << fileName << Gateendl);
+
+  try
+  {
+    writer->Update();
+  }
+  catch (itk::ExceptionObject &excp)
+  {
+    std::cerr << "Exception thrown while writing the series" << std::endl;
+    std::cerr << excp << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
 }
 //-----------------------------------------------------------------------------

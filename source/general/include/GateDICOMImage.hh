@@ -21,6 +21,7 @@ See GATE/LICENSE.txt for further details
 #include "itkGDCMImageIO.h"
 #include "itkGDCMSeriesFileNames.h"
 #include "itkImageSeriesReader.h"
+#include "itkImageFileWriter.h"
 
 #include <gdcmFilename.h>
 
@@ -44,18 +45,26 @@ class GateDICOMImage
     std::vector<double> GetSpacing();
     std::vector<double> GetOrigin();
     std::vector<double> GetImageSize();
+    void SetResolution(std::vector<long unsigned int>);
+    void SetSpacing(std::vector<double>);
+    void SetOrigin(std::vector<double>);
+    void dumpIO();
+    void Write(const std::string);
 
     template<class PixelType>
-    void GetPixels(std::vector<PixelType> & data);
+    void GetPixels(std::vector<PixelType>& data);
+
+    template<class PixelType>
+    void SetPixels(std::vector<PixelType>& data);
 
   private:
-    typedef signed short                        TypeOfPixel;
-    typedef itk::Image<TypeOfPixel, 3 >         ImageType;
+    typedef itk::Image<signed short,3>          ImageType;
     typedef itk::ImageSeriesReader< ImageType > ReaderType;
     typedef itk::GDCMImageIO                    ImageIOType;
     typedef itk::GDCMSeriesFileNames            NamesGeneratorType;
 
     ReaderType::Pointer reader;
+    ImageType::Pointer dicomIO;
 
     unsigned int pixelsCount;
 

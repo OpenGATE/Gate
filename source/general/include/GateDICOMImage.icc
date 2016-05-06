@@ -16,31 +16,31 @@
 
 //-----------------------------------------------------------------------------
 template<class PixelType>
-void GateDICOMImage::GetPixels(std::vector<PixelType> & data)
+void GateDICOMImage::GetPixels(std::vector<PixelType>& data)
 {
-  if (reader->GetOutput()->GetImageDimension()==3)
-  {
-    ImageType::IndexType index;
-    int i=0;
-    for(int z=0; z<GetResolution()[2]; z++)
-    {
-      index[2]=z;
-      for(int y=0; y<GetResolution()[1]; y++)
+  int i=0;
+  for(unsigned int z=0; z<reader->GetOutput()->GetLargestPossibleRegion().GetSize()[2]; z++)
+    for(unsigned int y=0; y<reader->GetOutput()->GetLargestPossibleRegion().GetSize()[1]; y++)
+	    for(unsigned int x=0; x<reader->GetOutput()->GetLargestPossibleRegion().GetSize()[0]; x++)
       {
-        index[1]=y;
-	      for(int x=0; x<GetResolution()[0]; x++)
-        {
-          index[0]=x;
-          data[i]=reader->GetOutput()->GetPixel(index);
-          i++;
-        }
+        data[i]=reader->GetOutput()->GetPixel({{x,y,z}});
+        i++;
       }
-    }
-  }
-  else
-  {
-    GateError("GateDICOMImage::GetPixels() Error: resolution not defined" << Gateendl);
-    exit(EXIT_FAILURE);
-  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateDICOMImage::SetPixels(std::vector<PixelType>& data)
+{
+  int i=0;
+  for(unsigned int z=0; z<dicomIO->GetLargestPossibleRegion().GetSize()[2]; z++)
+    for(unsigned int y=0; y<dicomIO->GetLargestPossibleRegion().GetSize()[1]; y++)
+	    for(unsigned int x=0; x<dicomIO->GetLargestPossibleRegion().GetSize()[0]; x++)
+      {
+        dicomIO->SetPixel({{x,y,z}},data[i]);
+        i++;
+      }
 }
 //-----------------------------------------------------------------------------

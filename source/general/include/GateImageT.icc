@@ -398,11 +398,16 @@ void GateImageT<PixelType>::Write(G4String filename, const G4String & comment){
             WriteRoot(filename);
           }
           else {
-            GateMessage("Image",0,"WARNING : Don't know how to write '" << extension
-                        << " format... I try ASCII file\n");
-            // open
-            OpenFileOutput(filename, os);
-            WriteAscii(os, comment);
+            if (extension == "dcm") {
+              WriteDICOM(filename);
+            }
+            else {
+              GateMessage("Image",0,"WARNING : Don't know how to write '" << extension
+                          << " format... I try ASCII file\n");
+              // open
+              OpenFileOutput(filename, os);
+              WriteAscii(os, comment);
+            }
           }
         }
       }
@@ -616,6 +621,28 @@ void GateImageT<PixelType>::WriteRoot(G4String filename)
 #endif
 
 
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::WriteDICOM(std::string filename)
+{
+  #ifdef GATE_USE_ITK
+    GateMessage("Image",2,"GateImageT::WriteDICOM" << Gateendl);
+    GateDICOMImage* dicom = new GateDICOMImage;
+
+    dicom->SetResolution({{(long unsigned int)resolution.getX(),(long unsigned int)resolution.getY(),(long unsigned int)resolution.getZ()}});
+    dicom->SetSpacing   ({{voxelSize.getX() ,voxelSize.getY() ,voxelSize.getZ()}});
+    dicom->SetOrigin    ({{origin.getX()    ,origin.getY()    ,origin.getZ()}});
+    dicom->SetPixels(data);
+    dicom->Write(filename);
+
+    delete dicom;
+  #else
+    GateError( "Unable to process " << filename << " . GATE was not compiled with DICOM support.");
+  #endif
 }
 //-----------------------------------------------------------------------------
 
