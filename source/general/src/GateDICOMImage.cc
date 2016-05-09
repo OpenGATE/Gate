@@ -284,6 +284,7 @@ void GateDICOMImage::Write(const std::string fileName)
 
   writer->SetFileName(fileName);
   writer->SetImageIO(ImageIOType::New());
+  writer->UseInputMetaDataDictionaryOff();
   writer->SetInput(dicomIO);
   dumpIO();
 
