@@ -9,6 +9,7 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEFASTI124_HH
 #define GATEFASTI124_HH
 
+#include <vector>
 #include "G4Event.hh"
 
 #include "GateVSource.hh"
@@ -30,7 +31,7 @@ public:
 private:
 	GateVSource* m_source;
 	GateSimplifiedDecay* m_simpleDecay;
-	vector<psd>* m_particleVector;
+	std::vector<psd>* m_particleVector;
 	
 };
 

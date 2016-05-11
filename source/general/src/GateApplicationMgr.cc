@@ -21,6 +21,7 @@ See GATE/LICENSE.txt for further details
 #include "GateVSource.hh"
 #include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
+#include <algorithm> /* min and max */
 
 GateApplicationMgr* GateApplicationMgr::instance = 0; 
 //------------------------------------------------------------------------------------------
@@ -198,7 +199,7 @@ G4double GateApplicationMgr::GetEndTimeSlice(int run)
     GateError("Error in GateApplicationMgr::GetEndTimeSlice, run=" << run << "\n");
   }
 
-  return min(mTimeSlices[run+1], m_clusterStop); // the end of the current time slice or the end of cluster run
+  return std::min(mTimeSlices[run+1], m_clusterStop); // the end of the current time slice or the end of cluster run
 }
 //------------------------------------------------------------------------------------------
 
@@ -438,7 +439,7 @@ void GateApplicationMgr::StartDAQCluster(G4ThreeVector param)
     GateMessage("Geometry", 5, " Time is going to change :  = " << m_time/s << Gateendl;);
     theClock->SetTime(mTimeSlices[slice]);
 
-    m_time = max(mTimeSlices[slice],m_clusterStart);
+    m_time = std::max(mTimeSlices[slice],m_clusterStart);
     theClock->SetTimeNoGeoUpdate(m_time);
 
     // calculate the time steps for total primaries mode

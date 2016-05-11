@@ -29,6 +29,7 @@
 #include <TH1.h>
 #include <TH2.h>
 
+class G4EmCalculator;
 //-----------------------------------------------------------------------------
 /// \brief Actor displaying nb events/tracks/step
 class GateEnergySpectrumActor : public GateVActor
@@ -67,6 +68,13 @@ public:
   double GetEmin() {return mEmin; }
   double GetEmax() {return mEmax;}
   int GetENBins() {return mENBins;}
+  
+  G4double GetLETmin() {return mLETmin; }
+  G4double GetLETmax() {return mLETmax; }
+  int GetNLETBins() {return mLETBins; }
+  void SetLETmin(double v) {mLETmin = v;}
+  void SetLETmax(double v) {mLETmax = v;}
+  void SetNLETBins(double v) {mLETBins = v;}
 
   void SetEmin(double v) {mEmin = v;}
   void SetEmax(double v) {mEmax = v;}
@@ -79,6 +87,7 @@ public:
   void SetEdepmin(double v) {mEdepmin = v;}
   void SetEdepmax(double v) {mEdepmax = v;}
   void SetEdepNBins(int v) {mEdepNBins = v;}
+  void SetLETSpectrumCalc(bool b) {mEnableLETSpectrumFlag = b; }
   void SetSaveAsTextFlag(bool b) { mSaveAsTextFlag = b; }
   void SetSaveAsTextDiscreteEnergySpectrumFlag(bool b) { mSaveAsDiscreteSpectrumTextFlag = b; if (b) SetSaveAsTextFlag(b); }
 
@@ -94,6 +103,11 @@ protected:
   TH2D * pEdepTime;
   TH1D * pEdepTrack;
 
+  TH1D * pLETSpectrum;
+  G4double mLETmin;
+  G4double mLETmax;
+  int mLETBins;
+  
   double mEmin;
   double mEmax;
   int mENBins;
@@ -123,7 +137,9 @@ protected:
   void SaveAsText(TH1D * histo, G4String initial_filename);
   bool mSaveAsTextFlag;
   bool mSaveAsDiscreteSpectrumTextFlag;
-
+  bool mEnableLETSpectrumFlag;
+  
+  G4EmCalculator * emcalc;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(EnergySpectrumActor,GateEnergySpectrumActor)
