@@ -24,11 +24,12 @@ GateTLEDoseActor::GateTLEDoseActor(G4String name, G4int depth):
   pMessenger = new GateTLEDoseActorMessenger(this);
   mMaterialHandler = GateMaterialMuHandler::GetInstance();
   mIsEdepImageEnabled = false;
-  mIsDoseUncertaintyImageEnabled = false;
-  mIsLastHitEventImageEnabled = false;
   mIsEdepSquaredImageEnabled = false;
   mIsEdepUncertaintyImageEnabled = false;
   mIsDoseSquaredImageEnabled = false;
+  mIsDoseUncertaintyImageEnabled = false;
+  mIsLastHitEventImageEnabled = false;
+  mIsDoseNormalisationEnabled = false;
   mDoseAlgorithmType = "";
   mImportMassImage = "";
   mVolumeFilter = "";
@@ -42,6 +43,25 @@ GateTLEDoseActor::~GateTLEDoseActor()  {
   delete pMessenger;
 }
 //-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateTLEDoseActor::EnableDoseNormalisationToMax(bool b) {
+  mIsDoseNormalisationEnabled = b;
+  mDoseImage.SetNormalizeToMax(b);
+  mDoseImage.SetScaleFactor(1.0);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateTLEDoseActor::EnableDoseNormalisationToIntegral(bool b) {
+  mIsDoseNormalisationEnabled = b;
+  mDoseImage.SetNormalizeToIntegral(b);
+  mDoseImage.SetScaleFactor(1.0);
+}
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 /// Construct
@@ -116,7 +136,12 @@ void GateTLEDoseActor::Construct() {
 /// Save data
 void GateTLEDoseActor::SaveData() {
   GateVActor::SaveData();
-  if (mIsDoseImageEnabled) mDoseImage.SaveData(mCurrentEvent + 1, false);
+  if (mIsDoseImageEnabled) {
+    if (mIsDoseNormalisationEnabled)
+      mDoseImage.SaveData(mCurrentEvent+1, true);
+    else
+      mDoseImage.SaveData(mCurrentEvent+1, false);
+  }
   if (mIsEdepImageEnabled) mEdepImage.SaveData(mCurrentEvent + 1, false);
   if (mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1);
 }

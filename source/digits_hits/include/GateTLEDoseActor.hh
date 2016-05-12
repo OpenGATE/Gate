@@ -41,11 +41,13 @@ public:
   virtual void Construct();
 
   void EnableEdepImage(bool b) { mIsEdepImageEnabled = b; }
-  void EnableDoseUncertaintyImage(bool b) { mIsDoseUncertaintyImageEnabled = b; }
   void EnableEdepSquaredImage(bool b) { mIsEdepSquaredImageEnabled = b; }
   void EnableEdepUncertaintyImage(bool b) { mIsEdepUncertaintyImageEnabled = b; }
   void EnableDoseImage(bool b) { mIsDoseImageEnabled = b; }
   void EnableDoseSquaredImage(bool b) { mIsDoseSquaredImageEnabled = b; }
+  void EnableDoseUncertaintyImage(bool b) { mIsDoseUncertaintyImageEnabled = b; }
+  void EnableDoseNormalisationToMax(bool b);
+  void EnableDoseNormalisationToIntegral(bool b);
   void SetDoseAlgorithmType(G4String b) { mDoseAlgorithmType = b; }
   void ImportMassImage(G4String b) { mImportMassImage = b; }
   void VolumeFilter(G4String b) { mVolumeFilter = b; }
@@ -96,12 +98,13 @@ protected:
   G4double VoxelVolume;
 
   bool mIsEdepImageEnabled;
-  bool mIsDoseUncertaintyImageEnabled;
-  bool mIsLastHitEventImageEnabled;
   bool mIsEdepSquaredImageEnabled;
   bool mIsEdepUncertaintyImageEnabled;
   bool mIsDoseImageEnabled;
   bool mIsDoseSquaredImageEnabled;
+  bool mIsDoseUncertaintyImageEnabled;
+  bool mIsDoseNormalisationEnabled;
+  bool mIsLastHitEventImageEnabled;
 
   int mCurrentEvent;
   G4double outputEnergy;
