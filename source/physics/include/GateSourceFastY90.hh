@@ -52,6 +52,7 @@ protected:
   static const G4double mEnergyTable[200];  // energy probability table in 10 keV steps
   static const G4double mRangeTable[100][120]; // probability table of range in 0.1 mm increments
   static const G4double mAngleTable[100][180]; // probability table of angles in 1 degree increments
+  static const G4double mPositronEnergyTable[738];
 
   G4double *mCumulativeEnergyTable; // cumulative histogram of energy probability
   G4double **mCumulativeRangeTable; // cumulative histogram of energy probability
@@ -66,6 +67,7 @@ protected:
   G4double GetRange(G4double energy);
   G4double GetAngle(G4double energy);
   G4ThreeVector PerturbVector(G4ThreeVector original, G4double theta);
+  G4double GetPositronEnergy();
 
 };
 

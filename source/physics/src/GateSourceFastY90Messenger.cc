@@ -22,9 +22,9 @@ GateSourceFastY90Messenger::GateSourceFastY90Messenger(GateSourceFastY90 *source
   loadVoxelizedPhantomCmd->SetGuidance("Load a voxelized phantom from an image file.");
   loadVoxelizedPhantomCmd->SetParameterName("vox_phantom", false);
 
-  cmdName = GetDirectoryName()+"setPhantomPosition";
+  cmdName = GetDirectoryName()+"setVoxelizedPhantomPosition";
   setPhantomPositionCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
-  setPhantomPositionCmd->SetGuidance("Set the position of the phantom.");
+  setPhantomPositionCmd->SetGuidance("Set the position of the voxelized phantom.");
   setPhantomPositionCmd->SetParameterName("pos_x", "pos_y", "pos_z", false);
 
 }

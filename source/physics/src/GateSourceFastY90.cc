@@ -97,7 +97,7 @@ G4int GateSourceFastY90::GeneratePrimaries(G4Event *event)
   if (P < (mPosProb/(mPosProb+mBremProb)) ) // generate positron;
   {
     pParticle = new G4PrimaryParticle(pPositronParticleDefinition);
-    energy = G4UniformRand() * 738.8 * keV;
+    energy = GetPositronEnergy();
     pParticle->SetKineticEnergy(energy);
 
     pParticle->SetMomentumDirection(direction);
@@ -198,6 +198,17 @@ G4double GateSourceFastY90::GetEnergy()
     i++;
   energy = (i + G4UniformRand())*(10*keV);
 
+  return energy;
+}
+
+G4double GateSourceFastY90::GetPositronEnergy()
+{
+  int i=0;
+  G4double energy;
+  G4double P=G4UniformRand();
+  while(P > mPositronEnergyTable[i])
+    i++;
+  energy = i * keV;
   return energy;
 }
 
