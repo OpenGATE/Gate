@@ -151,7 +151,7 @@ void GateAugerDetectorActor::EndOfEventAction(const G4Event*)
   if (total_deposited_energy < min_energy_deposition) return;
   const G4ThreeVector hit_position = GetWeighedBarycenterPosition();
   const G4double noise_projection = G4RandGauss::shoot(0,profile_noise_fwhm/GateConstants::fwhm_to_sigma);
-  //G4cout << "HITTTTTED!!!!!\n";
+  //G4cout << "HIT!!!!!\n";
   //G4cout << "ndep = " << depositions.size() << " total_edep = " << total_deposited_energy << Gateendl;
   //G4cout << "position = " << hit_position << Gateendl;
   pProfileHisto->Fill((projection_direction.dot(hit_position)+noise_projection)/mm);

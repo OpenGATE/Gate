@@ -12,10 +12,8 @@
 #include "GateVActor.hh"
 #include "GateActorMessenger.hh"
 
-#include <TROOT.h>
 #include <TFile.h>
 #include <TH1.h>
-#include <TH2.h>
 #include <list>
 
 struct AugerDeposition

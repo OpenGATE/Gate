@@ -25,8 +25,7 @@ GateParameterisedCollimator::GateParameterisedCollimator(const G4String& itsName
 : GateBox(itsName,"Vacuum",41.,22.,4.,acceptsChildren,depth),
      m_FocalDistanceX(39.7*cm),m_FocalDistanceY(0.0*cm),
      m_SeptalThickness(0.1* cm),m_InnerRadius(0.05*cm),m_Height(4.*cm),
-     m_DimensionX(41.0*cm),m_DimensionY(22.0*cm),
-     mMaterialName("Vacuum")
+     m_DimensionX(41.0*cm),m_DimensionY(22.0*cm)
 { 
   G4cout << " Constructor GateParameterisedCollimator - begin " << itsName << Gateendl;
   
@@ -51,8 +50,7 @@ GateParameterisedCollimator::GateParameterisedCollimator(const G4String& itsName
      : GateBox(itsName,itsMaterialName,itsDimensionX,itsDimensionY,itsHeight,false,false),
      m_FocalDistanceX(itsFocalDistanceX),m_FocalDistanceY(itsFocalDistanceY),
      m_SeptalThickness(itsSeptalThickness),m_InnerRadius(itsInnerRadius),m_Height(itsHeight),
-     m_DimensionX(itsDimensionX),m_DimensionY (itsDimensionY),
-     mMaterialName(itsMaterialName)
+     m_DimensionX(itsDimensionX),m_DimensionY (itsDimensionY)
 {
   m_holeInserter = new GateParameterisedHole("hole","Air",m_FocalDistanceX,m_FocalDistanceY,m_SeptalThickness,
   		m_InnerRadius,m_Height,m_DimensionX,m_DimensionY);
@@ -77,7 +75,6 @@ void GateParameterisedCollimator::ResizeCollimator()
   GetCollimatorCreator()->SetBoxXLength(m_DimensionX);
   GetCollimatorCreator()->SetBoxYLength(m_DimensionY);
   GetCollimatorCreator()->SetBoxZLength(m_Height);
-  GetCollimatorCreator()->SetMaterialName(mMaterialName);
 
   m_holeInserter->ResizeHole(m_FocalDistanceX,m_FocalDistanceY,m_SeptalThickness,m_InnerRadius,
 			     m_Height,m_DimensionX,m_DimensionY);

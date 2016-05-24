@@ -51,12 +51,16 @@ protected:
   /// Command objects
   G4UIcmdWithADoubleAndUnit * pEmaxCmd;
   G4UIcmdWithADoubleAndUnit * pEminCmd;
+  G4UIcmdWithADoubleAndUnit * pLETminCmd;
+  G4UIcmdWithADoubleAndUnit * pLETmaxCmd;
+  G4UIcmdWithAnInteger      * pNLETBinsCmd;
   G4UIcmdWithAnInteger      * pNBinsCmd;
   G4UIcmdWithADoubleAndUnit * pEdepmaxCmd;
   G4UIcmdWithADoubleAndUnit * pEdepminCmd;
   G4UIcmdWithAnInteger      * pEdepNBinsCmd;
   G4UIcmdWithABool          * pSaveAsText;
   G4UIcmdWithABool          * pSaveAsTextDiscreteEnergySpectrum;
+  G4UIcmdWithABool          * pEnableLETSpectrumCmd;
 
 }; // end class GateEnergySpectrumActorMessenger
 //-----------------------------------------------------------------------------

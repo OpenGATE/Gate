@@ -25,6 +25,8 @@
 struct iaea_header_type;
 struct iaea_record_type;
 
+class G4EmCalculator;
+
 //====================================================================
 class GatePhaseSpaceActor : public GateVActor
 {
@@ -67,7 +69,12 @@ class GatePhaseSpaceActor : public GateVActor
   void SetIsMassEnabled(bool b){EnableMass = b;}
   void SetIsSecStored(bool b){EnableSec = b;}
   void SetIsAllStep(bool b){EnableAllStep = b;}
-
+  //_______________________________________________
+  void SetIsChargeEnabled(bool b){EnableCharge = b;}
+  void SetIsElectronicDEDXEnabled(bool b) {EnableElectronicDEDX = b;}
+  void SetIsTotalDEDXEnabled(bool b) {EnableTotalDEDX = b;}
+  //_______________________________________________
+  
   void SetUseVolumeFrame(bool b){mUseVolFrame=b;}
   bool GetUseVolumeFrame(){return mUseVolFrame;}
 
@@ -98,7 +105,10 @@ protected:
 
   TFile * pFile;
   TTree * pListeVar;
-
+  
+  bool EnableCharge;
+  bool EnableElectronicDEDX;
+  bool EnableTotalDEDX;
   bool EnableXPosition;
   bool EnableYPosition;
   bool EnableZPosition;
@@ -138,6 +148,13 @@ protected:
   bool mIsFistStep;
 
   Char_t  pname[256];
+  
+  G4int c;
+  float elecDEDX;
+  float totalDEDX;
+  float stepLength;
+  float edep;
+  
   float x;
   float y;
   float z;
@@ -145,18 +162,23 @@ protected:
   float dy;
   float dz;
   float e;
+  float ekPost;
+  float ekPre;
   float w;
   float t;//t is either time or local time.
-  float m;
+  G4int m;
   Char_t vol[256];
 
   Char_t creator_process[256];
   Char_t pro_step[256];
 
   int trackid;
+  int parentid;
   int eventid;
   int runid;
+ 
 
+  G4EmCalculator * emcalc;
   GatePhaseSpaceActorMessenger* pMessenger;
 
   iaea_record_type *pIAEARecordType;

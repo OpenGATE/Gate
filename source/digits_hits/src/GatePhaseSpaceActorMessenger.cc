@@ -28,7 +28,12 @@ GatePhaseSpaceActorMessenger::GatePhaseSpaceActorMessenger(GatePhaseSpaceActor* 
 
 //-----------------------------------------------------------------------------
 GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger()
-{
+{ 
+  //____________________
+  delete pEnableChargeCmd;
+  delete pEnableElectronicDEDXCmd;
+  delete pEnableTotalDEDXCmd;
+  //___________________
   delete pEnableMassCmd;
   delete pEnableEkineCmd;
   delete pEnablePositionXCmd;
@@ -63,7 +68,27 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
 {
   G4String guidance;
   G4String bb;
+  
+  //________________________________
+  bb = base+"/enableCharge";
+  pEnableChargeCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Save electric charge of particles in the phase space file.";
+  pEnableChargeCmd->SetGuidance(guidance);
+  pEnableChargeCmd->SetParameterName("State",false);
+//____
 
+  bb = base+"/enableElectronicDEDX";
+  pEnableElectronicDEDXCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Save electronic energy loss de/dx of particles in the phase space file.";
+  pEnableElectronicDEDXCmd->SetGuidance(guidance);
+  pEnableElectronicDEDXCmd->SetParameterName("State",false);
+  
+  bb = base+"/enableTotalDEDX";
+  pEnableTotalDEDXCmd = new G4UIcmdWithABool(bb,this);
+  guidance = "Save total energy loss de/dx  of particles in the phase space file.";
+  pEnableTotalDEDXCmd->SetGuidance(guidance);
+  pEnableTotalDEDXCmd->SetParameterName("State",false);
+  
   bb = base+"/enableEkine";
   pEnableEkineCmd = new G4UIcmdWithABool(bb,this);
   guidance = "Save kinetic energy of particles in the phase space file.";
@@ -215,6 +240,11 @@ void GatePhaseSpaceActorMessenger::BuildCommands(G4String base)
 //-----------------------------------------------------------------------------
 void GatePhaseSpaceActorMessenger::SetNewValue(G4UIcommand* command, G4String param)
 {
+//______________________________________
+  if(command == pEnableChargeCmd) pActor->SetIsChargeEnabled(pEnableChargeCmd->GetNewBoolValue(param));
+  if(command == pEnableElectronicDEDXCmd) pActor->SetIsElectronicDEDXEnabled(pEnableElectronicDEDXCmd->GetNewBoolValue(param));
+  if(command == pEnableTotalDEDXCmd) pActor->SetIsTotalDEDXEnabled(pEnableTotalDEDXCmd->GetNewBoolValue(param));
+//
   if(command == pEnableEkineCmd) pActor->SetIsEkineEnabled(pEnableEkineCmd->GetNewBoolValue(param));
   if(command == pEnablePositionXCmd) pActor->SetIsXPositionEnabled(pEnablePositionXCmd->GetNewBoolValue(param));
   if(command == pEnableDirectionXCmd) pActor->SetIsXDirectionEnabled(pEnableDirectionXCmd->GetNewBoolValue(param));

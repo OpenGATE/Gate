@@ -1,0 +1,4 @@
+diff optical_results.root
+diff optical_projection.hdr
+diff optical_projection.bin
+diff_stat stat-optical.txt

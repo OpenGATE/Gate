@@ -47,7 +47,7 @@ void GateFastI124::InitializeFastI124()
   //                               ... / amplitude of majoring function / normalisation factor for energy distribution (Fermi function) / atomic number
 
 	m_simpleDecay = new GateSimplifiedDecay();
-	m_particleVector = new vector<psd>;
+	m_particleVector = new std::vector<psd>;
 	
   m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 1, 0.0175,  mem_fun( &GateSimplifiedDecayTransition::issueGamma),     1.376   )  );
   m_simpleDecay->addTransition( new GateSimplifiedDecayTransition(0, 1, 0.0488,  mem_fun( &GateSimplifiedDecayTransition::issueGamma),     1.509   )  );
@@ -86,12 +86,12 @@ void GateFastI124::GenerateVertex( G4Event* aEvent )
 			m_source->GetParticlePosition(), m_source->GetTime() );
 		
 		// From the vector, create particles with own direction, type and energy
-		for( vector<psd>::iterator it = m_particleVector->begin(); 
+		for( std::vector<psd>::iterator it = m_particleVector->begin(); 
 				 it != m_particleVector->end(); ++it )
 		{
 			if( m_source->GetVerboseLevel() > 1 ) 
 					 G4cout << "GateVSource::GeneratePrimaries - fastI124 " << (*it).first
-				 					<< ' ' << (*it).second << endl;
+				 					<< ' ' << (*it).second << Gateendl;
 									
 			m_source->SetParticleDefinition( 
 				G4ParticleTable::GetParticleTable()->FindParticle( (*it).first )  );
