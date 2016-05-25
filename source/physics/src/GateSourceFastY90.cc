@@ -8,8 +8,7 @@ GateSourceFastY90::GateSourceFastY90(G4String name) : GateVSource( name )
   m_sourceMessenger = new GateSourceFastY90Messenger(this);
 
   int i, j;
-  ifstream input_file;
-
+  std::ifstream input_file;
 
   mPosProb = 3.186e-5;
   mGammaProb = 0.0;
@@ -92,7 +91,6 @@ G4int GateSourceFastY90::GeneratePrimaries(G4Event *event)
   position = m_posSPS->GenerateOne();
   direction = m_angSPS->GenerateOne();
 
-
   G4double P = G4UniformRand();
   if (P < (mPosProb/(mPosProb+mBremProb)) ) // generate positron;
   {
@@ -119,7 +117,7 @@ G4int GateSourceFastY90::GeneratePrimaries(G4Event *event)
 
   } else {
     // generate brem
-    energy = GetEnergy();
+    energy = GetBremsstrahlungEnergy();
     pParticle = new G4PrimaryParticle(pGammaParticleDefinition);
     //    G4PrimaryParticle* pParticle = new G4PrimaryParticle(G4Gamma::Gamma());
     pParticle->SetTotalEnergy(energy);
@@ -187,7 +185,7 @@ void GateSourceFastY90::CalculateEnergyTable()
 }
 
 
-G4double GateSourceFastY90::GetEnergy()
+G4double GateSourceFastY90::GetBremsstrahlungEnergy()
 {
   int i=0;
 
@@ -217,7 +215,7 @@ G4double GateSourceFastY90::GetRange(G4double energy)
   int bin;
   int i=0;
   bin = int(energy/(20.0*keV)); //TODO: un-hardcode the energy bin widths?
-  bin = min(bin,99);
+  bin = std::min(bin,99);
 
   G4double range;
 
@@ -235,7 +233,7 @@ G4double GateSourceFastY90::GetAngle(G4double energy)
   int bin;
   int i=0;
   bin = int(energy/(20.0*keV)); //TODO: un-hardcode the energy bin widths?
-  bin = min(bin,99);
+  bin = std::min(bin,99);
 
   G4double angle;
 

@@ -8,7 +8,8 @@
 #include "GateVoxelizedPosDistribution.hh"
 #include "Randomize.hh"
 
-// trim, tokenize, and get_key_index really belong elsewhere
+// trim, tokenize, and get_key_index really belong elsewhere since they're
+// general functions for parsing the header file
 
 G4String trim(const G4String& str,  const G4String& whitespace = " \t")
 {
@@ -61,16 +62,6 @@ G4String get_path(const G4String str)
     return "";
   return str.substr(0,found+1);
 }
-
-/*
-inline G4int int_log2(G4int v)
-{
-  G4int r=0;
-  while(v>>=1)
-    r++;
-  return r;
-}
-*/
 
 GateVoxelizedPosDistribution::GateVoxelizedPosDistribution(G4String filename)
 {
@@ -205,11 +196,6 @@ GateVoxelizedPosDistribution::GateVoxelizedPosDistribution(G4String filename)
   G4cout << mResolution << G4endl;
   G4cout << mPosition << G4endl;
 
-/* attempt to speed up position generation
-  m_xbits = int_log2(m_nx);
-  m_ybits = int_log2(m_ny);
-  m_zbits = int_log2(m_nz);
-*/
 }
 
 GateVoxelizedPosDistribution::~GateVoxelizedPosDistribution()
@@ -266,51 +252,3 @@ G4ThreeVector GateVoxelizedPosDistribution::GenerateOne()
   return pos;
 
 }
-
-/*
-G4ThreeVector GateVoxelizedPosDistribution::GenerateOne()
-{
-  G4int i, j, k;
-  G4ThreeVector pos;
-  G4double p;
-
-  i=0;
-  p=G4UniformRand();
-  for(int m=1<<m_zbits; m > 0; m>>=1)
-  {
-    if((i|m) >= m_nz)
-      continue;
-    if(p > mPosDistZCDF[(i|m)-1])
-      i |= m;
-  }
-
-  j=0;
-  p=G4UniformRand();
-  for(int m=1<<m_ybits; m > 0; m>>=1)
-  {
-    if((j|m) >= m_ny)
-      continue;
-    if(p > mPosDistYCDF[i][(j|m)-1])
-      j |= m;
-  }
-
-  k=0;
-  p=G4UniformRand();
-  for(int m=1<<m_xbits; m > 0; m>>=1)
-  {
-    if((k|m) >= m_nx)
-      continue;
-    if(p > mPosDistXCDF[i][j][(k|m)-1])
-      k |= m;
-  }
-
-  pos.set(mResolution[0] * (k + G4UniformRand()),
-          mResolution[1] * (j + G4UniformRand()),
-          mResolution[2] * (i + G4UniformRand()) );
-  pos += mPosition;
-
-  return pos;
-
-}*/
-
-

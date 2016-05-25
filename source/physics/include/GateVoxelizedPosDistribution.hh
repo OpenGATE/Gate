@@ -28,7 +28,6 @@ private:
   G4ThreeVector mResolution;     // resolution of data
 
   G4int m_nx, m_ny, m_nz;     // size of voxelized distribution
-//  G4int m_xbits, m_ybits, m_zbits;                // speeds up position generation
   G4double *mPosDistZCDF;   // Cumulative distribution function in Z
   G4double **mPosDistYCDF;  // CDF in Y
   G4double ***mPosDistXCDF;
