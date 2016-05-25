@@ -11,6 +11,7 @@ See GATE/LICENSE.txt for further details
   \author Thomas DESCHLER (thomas@deschler.fr)
   based on the work of
           Jérôme Suhard (jerome@suhard.fr)
+          Albertine Dubois (adubois@imnc.in2p3.fr)
   \date	April 2016
 */
 
