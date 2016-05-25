@@ -363,12 +363,12 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
       if (n_i>0){
         double relUncert = 1-(L_i/(L_i+doseAveragedLET)) *((n_i+normalizationVal)/n_i) ;
         double oldRelUncertVal = mRelUncertImage.GetValue(index);
-        if (mCurrentEvent % 10000 == 0)
-          {
-            mRelUncertImage.SetValue(index, relUncert);
-          }
-        else if (std::abs(oldRelUncertVal) < relUncert)
-          { mRelUncertImage.SetValue(index, relUncert);}
+        if (mCurrentEvent % 10000 == 0) {
+          mRelUncertImage.SetValue(index, relUncert);
+        }
+        else if (std::abs(oldRelUncertVal) < relUncert) {
+          mRelUncertImage.SetValue(index, relUncert);
+        }
       }
     }
   }
