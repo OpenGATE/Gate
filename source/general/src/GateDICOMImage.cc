@@ -196,19 +196,7 @@ std::vector<double> GateDICOMImage::GetOrigin()
     for(size_t i=0 ; i<reader->GetOutput()->GetImageDimension() ; i++)
       vOrigin[i] = reader->GetOutput()->GetOrigin()[i];
 
-    // Gate convention: origin is the corner of the first pixel
-    // MHD / ITK convention: origin is the center of the first pixel
-    // -> Add a half pixel
-    GateMessage("Image", 5, "[GateDICOMImage::GetOrigin] Untouched origin: "
-                << vOrigin[0] <<","
-                << vOrigin[1] <<","
-                << vOrigin[2] << Gateendl);
-
-    vOrigin[0] -= GetSpacing()[0]/2.0;
-    vOrigin[1] -= GetSpacing()[1]/2.0;
-    vOrigin[2] -= GetSpacing()[2]/2.0;
-
-    GateMessage("Image", 5, "[GateDICOMImage::GetOrigin] GATE conventional origin:"
+    GateMessage("Image", 5, "[GateDICOMImage::GetOrigin] "
                 << vOrigin[0] <<","
                 << vOrigin[1] <<","
                 << vOrigin[2] << Gateendl);

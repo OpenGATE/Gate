@@ -309,17 +309,22 @@ void GateImageT<PixelType>::ReadDICOM(G4String filename) {
     GateMessage("Image", 2, "GateImageT::ReadDICOM" << Gateendl);
     GateDICOMImage* dicom = new GateDICOMImage;
     dicom->Read(filename);
-    
+
     resolution = G4ThreeVector(dicom->GetResolution()[0], dicom->GetResolution()[1], dicom->GetResolution()[2]);
     voxelSize  = G4ThreeVector(dicom->GetSpacing()[0]   , dicom->GetSpacing()[1]   , dicom->GetSpacing()[2]);
     origin     = G4ThreeVector(dicom->GetOrigin()[0]    , dicom->GetOrigin()[1]    , dicom->GetOrigin()[2]);
 
+    // We need to shift to half a pixel to be coherent with Gate
+    // coordinates system. Must be transformed because voxel size is
+    // known before rotation and origin is after rotation.
+    origin -= voxelSize/2.0;
+
     UpdateSizesFromResolutionAndVoxelSize();
     Allocate();
-    
+
     // Get image data
     dicom->GetPixels(data);
-    
+
     delete dicom;
   #else
     GateError( "Unable to process " << filename << ". GATE was not compiled with ITK support.");
