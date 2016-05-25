@@ -67,7 +67,7 @@ void GateImageT<PixelType>::Read(G4String filename) {
   else if (extension == "i33") ReadInterfile(filename);
   else if (extension == "dcm") ReadDICOM(filename);
   else {
-    GateError( "Unknow image file extension. Knowns extensions are : "
+    GateError( "Unknown image file extension. Supported extensions are : "
                << Gateendl << ".vox, .hdr, .img, .mhd, .mha, .h33, .i33, .dcm\n");
     exit(0);
   }
@@ -322,7 +322,7 @@ void GateImageT<PixelType>::ReadDICOM(G4String filename) {
     
     delete dicom;
   #else
-    GateError( "Unable to process " << filename << " . GATE was not compiled with DICOM support.");
+    GateError( "Unable to process " << filename << ". GATE was not compiled with ITK support.");
   #endif
 }
 //-----------------------------------------------------------------------------
@@ -364,55 +364,43 @@ void GateImageT<PixelType>::Write(G4String filename, const G4String & comment){
     OpenFileOutput(filename, os);
     WriteBin(os);
   }
-  else {
-     if (extension == "txt") {
-      // open
-      GateMessage("Actor",5,"Write text file"<< Gateendl);
-      OpenFileOutput(filename, os);
-      GateMessage("Actor",5,"Write text file"<< Gateendl);
-      WriteAscii(os, comment);
-      GateMessage("Actor",5,"Write text file - end \n");
-    }
-    else {
-      if (extension == "hdr") {
-        // Header
-        GateAnalyzeHeader hdr;
-        hdr.SetVoxelType(GateAnalyzeHeader::FloatType);
-        hdr.SetImageSize((short int)resolution.x(),(short int)resolution.y(),(short int)resolution.z());
-        hdr.SetVoxelSize((GateAnalyzeHeader::PixelType)voxelSize.x(),
-                         (GateAnalyzeHeader::PixelType)voxelSize.y(),
-                         (GateAnalyzeHeader::PixelType)voxelSize.z());
-        hdr.Write(filename);
-        // Data
-        setExtension(filename,"img");
-        // open
-        OpenFileOutput(filename, os);
-        WriteBin(os);
-      }
-      else {
-        if (extension == "mhd" || extension == "mha") {
-          WriteMHD(filename);
-        }
-        else {
-          if (extension == "root") {
-            WriteRoot(filename);
-          }
-          else {
-            if (extension == "dcm") {
-              WriteDICOM(filename);
-            }
-            else {
-              GateMessage("Image",0,"WARNING : Don't know how to write '" << extension
-                          << " format... I try ASCII file\n");
-              // open
-              OpenFileOutput(filename, os);
-              WriteAscii(os, comment);
-            }
-          }
-        }
-      }
-    }
+  else if (extension == "txt") {
+    // open
+    GateMessage("Actor",5,"Write text file"<< Gateendl);
+    OpenFileOutput(filename, os);
+    GateMessage("Actor",5,"Write text file"<< Gateendl);
+    WriteAscii(os, comment);
+    GateMessage("Actor",5,"Write text file - end \n");
   }
+  else if (extension == "hdr") {
+    // Header
+    GateAnalyzeHeader hdr;
+    hdr.SetVoxelType(GateAnalyzeHeader::FloatType);
+    hdr.SetImageSize((short int)resolution.x(),(short int)resolution.y(),(short int)resolution.z());
+    hdr.SetVoxelSize((GateAnalyzeHeader::PixelType)voxelSize.x(),
+                     (GateAnalyzeHeader::PixelType)voxelSize.y(),
+                     (GateAnalyzeHeader::PixelType)voxelSize.z());
+    hdr.Write(filename);
+    // Data
+    setExtension(filename,"img");
+    // open
+    OpenFileOutput(filename, os);
+    WriteBin(os);
+  }
+  else if (extension == "mhd" || extension == "mha")
+    WriteMHD(filename);
+  else if (extension == "root")
+    WriteRoot(filename);
+  else if (extension == "dcm")
+    WriteDICOM(filename);
+  else {
+    GateMessage("Image",0,"WARNING : Don't know how to write '" << extension
+                << " format... I try ASCII file\n");
+    // open
+    OpenFileOutput(filename, os);
+    WriteAscii(os, comment);
+  }
+
   os.close();
 }
 //-----------------------------------------------------------------------------
@@ -633,15 +621,16 @@ void GateImageT<PixelType>::WriteDICOM(std::string filename)
     GateMessage("Image",2,"GateImageT::WriteDICOM" << Gateendl);
     GateDICOMImage* dicom = new GateDICOMImage;
 
-    dicom->SetResolution({{(long unsigned int)resolution.getX(),(long unsigned int)resolution.getY(),(long unsigned int)resolution.getZ()}});
     dicom->SetSpacing   ({{voxelSize.getX() ,voxelSize.getY() ,voxelSize.getZ()}});
     dicom->SetOrigin    ({{origin.getX()    ,origin.getY()    ,origin.getZ()}});
+    dicom->SetResolution({{(long unsigned int)resolution.getX(),(long unsigned int)resolution.getY(),(long unsigned int)resolution.getZ()}});
+
     dicom->SetPixels(data);
     dicom->Write(filename);
 
     delete dicom;
   #else
-    GateError( "Unable to process " << filename << " . GATE was not compiled with DICOM support.");
+    GateError( "Unable to process " << filename << ". GATE was not compiled with ITK support.");
   #endif
 }
 //-----------------------------------------------------------------------------
