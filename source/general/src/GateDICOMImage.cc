@@ -11,6 +11,7 @@
   \author Thomas DESCHLER (thomas@deschler.fr)
   based on the work of
           Jérôme Suhard (jerome@suhard.fr)
+          Albertine Dubois (adubois@imnc.in2p3.fr)
   \date	April 2016
 */
 
@@ -18,10 +19,6 @@
 
 //#if ITK_VERSION_MAJOR >= 4
 //#if ( ( ITK_VERSION_MAJOR == 4 ) && ( ITK_VERSION_MINOR < 6 ) )
-
-// INFO: reader->GetOutput() = http://www.itk.org/Doxygen/html/classitk_1_1GDCMImageIO.html
-// INFO: NamesGeneratorType::Pointer = http://www.itk.org/Doxygen/html/classitk_1_1GDCMSeriesFileNames.html
-
 
 //-----------------------------------------------------------------------------
 GateDICOMImage::GateDICOMImage()
@@ -199,7 +196,22 @@ std::vector<double> GateDICOMImage::GetOrigin()
     for(size_t i=0 ; i<reader->GetOutput()->GetImageDimension() ; i++)
       vOrigin[i] = reader->GetOutput()->GetOrigin()[i];
 
-    GateMessage("Image", 5, "[GateDICOMImage::GetOrigin] " << vOrigin[0] <<","<< vOrigin[1] <<","<< vOrigin[2] << Gateendl);
+    // Gate convention: origin is the corner of the first pixel
+    // MHD / ITK convention: origin is the center of the first pixel
+    // -> Add a half pixel
+    GateMessage("Image", 5, "[GateDICOMImage::GetOrigin] Untouched origin: "
+                << vOrigin[0] <<","
+                << vOrigin[1] <<","
+                << vOrigin[2] << Gateendl);
+
+    vOrigin[0] -= GetSpacing()[0]/2.0;
+    vOrigin[1] -= GetSpacing()[1]/2.0;
+    vOrigin[2] -= GetSpacing()[2]/2.0;
+
+    GateMessage("Image", 5, "[GateDICOMImage::GetOrigin] GATE conventional origin:"
+                << vOrigin[0] <<","
+                << vOrigin[1] <<","
+                << vOrigin[2] << Gateendl);
   }
   return vOrigin;
 }
@@ -311,7 +323,7 @@ void GateDICOMImage::dumpIO()
 //-----------------------------------------------------------------------------
 void GateDICOMImage::Write(const std::string fileName)
 {
-
+  // EXPERIMENTAL METHOD !! FIXME
   GateMessage("Image", 0, "[GateDICOMImage::Write] WARNING: DICOM writing is experimental !" << fileName << Gateendl);
 
   if(fileName == "")
@@ -326,7 +338,7 @@ void GateDICOMImage::Write(const std::string fileName)
   writer->SetInput(dicomIO);
   writer->UseInputMetaDataDictionaryOn(); //MANDATORY
   writer->SetImageIO(ImageIOType::New());
-  dumpIO();
+  //dumpIO();
 
   GateMessage("Image", 5, "[GateDICOMImage::Write] Writing the image as " << fileName << Gateendl);
 
