@@ -22,6 +22,7 @@ See GATE/LICENSE.txt for further details
 #include "itkGDCMSeriesFileNames.h"
 #include "itkImageSeriesReader.h"
 #include "itkImageFileWriter.h"
+//#include <itkDCMTKImageIO.h>
 
 #include <gdcmFilename.h>
 
@@ -40,7 +41,7 @@ class GateDICOMImage
     ~GateDICOMImage() {}
 
     void Read(const std::string);
-    void ReadSeries(const std::string, std::string="");
+    void ReadSeries(const std::string, const std::string);
     std::vector<int> GetResolution();
     std::vector<double> GetSpacing();
     std::vector<double> GetOrigin();
@@ -62,6 +63,7 @@ class GateDICOMImage
     typedef itk::ImageSeriesReader< ImageType > ReaderType;
     typedef itk::GDCMImageIO                    ImageIOType;
     typedef itk::GDCMSeriesFileNames            NamesGeneratorType;
+    //typedef itk::DCMTKImageIO                   DCMTKIOType;
 
     ReaderType::Pointer reader;
 
