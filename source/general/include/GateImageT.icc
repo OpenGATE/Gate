@@ -39,6 +39,7 @@ void GateImageT<PixelType>::Allocate() {
 //-----------------------------------------------------------------------------
 template<class PixelType>
 void GateImageT<PixelType>::PrintInfo() {
+  GateMessage("Image", 5, std::setprecision(15) << Gateendl);
   GateMessage("Image", 1, "Matrix Size=\t" << size        << Gateendl);
   GateMessage("Image", 1, "HalfSize=\t"    << halfSize    << Gateendl);
   GateMessage("Image", 1, "Resol=\t"       << resolution  << Gateendl);

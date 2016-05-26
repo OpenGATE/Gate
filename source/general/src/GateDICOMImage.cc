@@ -131,7 +131,7 @@ void GateDICOMImage::ReadSeries(const std::string seriesDirectory, std::string U
 
 
 //-----------------------------------------------------------------------------
-std::vector<int> GateDICOMImage::GetResolution()
+std::vector<long int unsigned> GateDICOMImage::GetResolution()
 {
   if(vResolution.size() == 0)
   {
@@ -156,7 +156,7 @@ std::vector<double> GateDICOMImage::GetSpacing()
   {
     vSpacing.resize(reader->GetOutput()->GetImageDimension(), 0.);
     for(size_t i = 0; i < reader->GetOutput()->GetImageDimension(); i++)
-      vSpacing[i] = reader->GetOutput()->GetSpacing()[i];
+      vSpacing[i] = round_to_digits(reader->GetOutput()->GetSpacing()[i],6);
 
     GateMessage("Image", 5, "[GateDICOMImage::GetSpacing] "
                 << vSpacing[0] << ","
@@ -169,15 +169,15 @@ std::vector<double> GateDICOMImage::GetSpacing()
 
 
 //-----------------------------------------------------------------------------
-std::vector<double> GateDICOMImage::GetImageSize()
+std::vector<double> GateDICOMImage::GetSize()
 {
   if(vSize.size() == 0)
   {
-    vSize.resize(reader->GetOutput()->GetImageDimension() , 0.);
+    vSize.resize(reader->GetOutput()->GetImageDimension(), 0);
     for(size_t i=0 ; i<reader->GetOutput()->GetImageDimension() ; i++)
-      vSize[i]=GetResolution()[i] * GetSpacing()[i];
+      vSize[i] = round_to_digits(GetResolution()[i] * GetSpacing()[i],6);
 
-    GateMessage("Image", 5, "[GateDICOMImage::GetImageSize] "
+    GateMessage("Image", 5, "[GateDICOMImage::GetSize] "
                 << vSize[0] << ","
                 << vSize[1] << ","
                 << vSize[2] << " mm" << Gateendl);
@@ -194,7 +194,7 @@ std::vector<double> GateDICOMImage::GetOrigin()
   {
     vOrigin.resize(reader->GetOutput()->GetImageDimension(),0.);
     for(size_t i=0 ; i<reader->GetOutput()->GetImageDimension() ; i++)
-      vOrigin[i] = reader->GetOutput()->GetOrigin()[i];
+      vOrigin[i] = round_to_digits(reader->GetOutput()->GetOrigin()[i],6);
 
     GateMessage("Image", 5, "[GateDICOMImage::GetOrigin] "
                 << vOrigin[0] <<","
@@ -336,5 +336,18 @@ void GateDICOMImage::Write(const std::string fileName)
     GateError("[GateDICOMImage::Write] ERROR: Exception thrown while writing " << fileName << Gateendl);
     exit(EXIT_FAILURE);
   }
+}
+//-----------------------------------------------------------------------------
+
+
+
+//-----------------------------------------------------------------------------
+double GateDICOMImage::round_to_digits(double value, int digits)
+{
+  if (value == 0.0)
+    return 0.0;
+
+  double factor (pow(10.0, digits - ceil(log10(fabs(value)))));
+  return round(value * factor) / factor;
 }
 //-----------------------------------------------------------------------------
