@@ -171,6 +171,11 @@ void GateImageT<PixelType>::ReadMHD(G4String filename) {
     row_z[i] = mhd->transform[i*3+2];
   }
   transformMatrix.setRows(row_x, row_y, row_z);
+
+  GateMessage("Image", 10, "[GateImageT::ReadMHD] " << transformMatrix.rowX() << Gateendl);
+  GateMessage("Image", 10, "[GateImageT::ReadMHD] " << transformMatrix.rowY() << Gateendl);
+  GateMessage("Image", 10, "[GateImageT::ReadMHD] " << transformMatrix.rowZ() << Gateendl);
+
   if( !transformMatrix.row1().isNear(CLHEP::HepLorentzVector(row_x, 0.), 0.1) ||
       !transformMatrix.row2().isNear(CLHEP::HepLorentzVector(row_y, 0.), 0.1) ||
       !transformMatrix.row3().isNear(CLHEP::HepLorentzVector(row_z, 0.), 0.1) ) {
@@ -315,10 +320,22 @@ void GateImageT<PixelType>::ReadDICOM(G4String filename) {
     voxelSize  = G4ThreeVector(dicom->GetSpacing()[0]   , dicom->GetSpacing()[1]   , dicom->GetSpacing()[2]);
     origin     = G4ThreeVector(dicom->GetOrigin()[0]    , dicom->GetOrigin()[1]    , dicom->GetOrigin()[2]);
 
+    transformMatrix = dicom->GetRotationMatrix();
+
+    GateMessage("Image", 10, "[GateImageT::ReadDICOM] " << transformMatrix.rowX() << Gateendl);
+    GateMessage("Image", 10, "[GateImageT::ReadDICOM] " << transformMatrix.rowY() << Gateendl);
+    GateMessage("Image", 10, "[GateImageT::ReadDICOM] " << transformMatrix.rowZ() << Gateendl);
+
+    if( !transformMatrix.row1().isNear(CLHEP::HepLorentzVector(dicom->GetRotationMatrix().row1(), 0.), 0.1) ||
+        !transformMatrix.row2().isNear(CLHEP::HepLorentzVector(dicom->GetRotationMatrix().row2(), 0.), 0.1) ||
+        !transformMatrix.row3().isNear(CLHEP::HepLorentzVector(dicom->GetRotationMatrix().row3(), 0.), 0.1) )
+      GateError(filename << " contains a transformation which is not a rotation. "
+                << "It is probably a flip and this is not handled.");
+
     // We need to shift to half a pixel to be coherent with Gate
     // coordinates system. Must be transformed because voxel size is
     // known before rotation and origin is after rotation.
-    origin -= voxelSize/2.0;
+    origin -= transformMatrix * (voxelSize/2.0);
 
     UpdateSizesFromResolutionAndVoxelSize();
     Allocate();

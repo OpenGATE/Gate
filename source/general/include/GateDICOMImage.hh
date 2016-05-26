@@ -47,6 +47,7 @@ class GateDICOMImage
     std::vector<double> GetSpacing();
     std::vector<double> GetOrigin();
     std::vector<double> GetSize();
+    G4RotationMatrix GetRotationMatrix();
     void SetResolution(std::vector<long unsigned int>);
     void SetSpacing(std::vector<double>);
     void SetOrigin(std::vector<double>);
@@ -77,6 +78,8 @@ class GateDICOMImage
     std::vector<double> vSpacing;
     std::vector<double> vSize;
     std::vector<double> vOrigin;
+
+    G4RotationMatrix rotationMatrix;
 };
 
 #include "GateDICOMImage.icc"

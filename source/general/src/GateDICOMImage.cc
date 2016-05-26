@@ -207,6 +207,18 @@ std::vector<double> GateDICOMImage::GetOrigin()
 
 
 //-----------------------------------------------------------------------------
+G4RotationMatrix GateDICOMImage::GetRotationMatrix()
+{
+  rotationMatrix.set(G4ThreeVector(reader->GetOutput()->GetDirection().GetVnlMatrix().get(0,0),reader->GetOutput()->GetDirection().GetVnlMatrix().get(0,1),reader->GetOutput()->GetDirection().GetVnlMatrix().get(0,2)),
+                     G4ThreeVector(reader->GetOutput()->GetDirection().GetVnlMatrix().get(1,0),reader->GetOutput()->GetDirection().GetVnlMatrix().get(1,1),reader->GetOutput()->GetDirection().GetVnlMatrix().get(1,2)),
+                     G4ThreeVector(reader->GetOutput()->GetDirection().GetVnlMatrix().get(2,0),reader->GetOutput()->GetDirection().GetVnlMatrix().get(2,1),reader->GetOutput()->GetDirection().GetVnlMatrix().get(2,2)));
+
+  return rotationMatrix;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 void GateDICOMImage::SetResolution(std::vector<long unsigned int> resolution)
 {
   ImageType::RegionType region;
