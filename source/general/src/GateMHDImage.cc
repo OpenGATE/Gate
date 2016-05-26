@@ -43,35 +43,27 @@ GateMHDImage::~GateMHDImage()
 
 //-----------------------------------------------------------------------------
 void GateMHDImage::ReadHeader(std::string & filename)
-    {
-        GateMessage("Image", 5, "GateMHDImage::ReadMHD " << filename << Gateendl);
-        //std::cout << "*** WARNING *** The mhd reader is experimental... (itk version)\n";
+{
+  GateMessage("Image", 5, "GateMHDImage::ReadMHD " << filename << Gateendl);
 
-        MetaImage m_MetaImage;
-        if (!m_MetaImage.Read(filename.c_str(), false))
-            {
-                GateError("MHD File cannot be read: " << filename << Gateendl);
-            }
+  MetaImage m_MetaImage;
+  if (!m_MetaImage.Read(filename.c_str(), false))
+    GateError("MHD File cannot be read: " << filename << Gateendl);
 
-        if (m_MetaImage.NDims() != 3)
-            {
-                GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort.\n");
-            }
+  if (m_MetaImage.NDims() != 3)
+    GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort.\n");
 
-        for (int i = 0; i < m_MetaImage.NDims(); i++)
-            {
-                size[i] = m_MetaImage.DimSize(i);
-                spacing[i] = m_MetaImage.ElementSpacing(i);
-                origin[i] = m_MetaImage.Position(i);
-            }
+  for (int i = 0; i < m_MetaImage.NDims(); i++)
+  {
+      size[i]    = m_MetaImage.DimSize(i);
+      spacing[i] = round_to_digits(m_MetaImage.ElementSpacing(i),6);
+      origin[i]  = round_to_digits(m_MetaImage.Position(i),6);
+  }
 
-        transform.resize(9);
-        for (int i = 0; i < 9; i++)
-            { // 3 x 3 matrix
-                transform[i] = m_MetaImage.TransformMatrix()[i];
-            }
-        //  Print();
-    }
+  transform.resize(9);
+  for (int i = 0; i < 9; i++) // 3 x 3 matrix
+    transform[i] = m_MetaImage.TransformMatrix()[i];
+}
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -156,6 +148,18 @@ void GateMHDImage::GetRawFilename(std::string filename,
                 f = filename + "sin";
             }
     }
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+double GateMHDImage::round_to_digits(double value, int digits)
+{
+  if (value == 0.0)
+    return 0.0;
+
+  double factor (pow(10.0, digits - ceil(log10(fabs(value)))));
+  return round(value * factor) / factor;
+}
 //-----------------------------------------------------------------------------
 
 #endif

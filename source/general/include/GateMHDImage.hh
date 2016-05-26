@@ -66,6 +66,7 @@ protected:
                         std::string & f,
                         bool keepFolder,
                         bool changeExtension = false);
+    double round_to_digits(double, int);
 
     };
 
