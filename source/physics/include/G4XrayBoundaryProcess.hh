@@ -71,86 +71,82 @@
 
 class G4XrayBoundaryProcess : public G4VDiscreteProcess {
 
- public:
+public:
 
-  ////////////////////////////////
-  // Constructors and Destructor
-  ////////////////////////////////
+    ////////////////////////////////
+    // Constructors and Destructor
+    ////////////////////////////////
 
-  G4XrayBoundaryProcess(const G4String &processName = "XrayBoundary", G4ProcessType type = fElectromagnetic);
-  ~G4XrayBoundaryProcess();
+    G4XrayBoundaryProcess(const G4String &processName = "XrayBoundary", G4ProcessType type = fElectromagnetic);
+    ~G4XrayBoundaryProcess();
 
- private:
+private:
 
-  G4XrayBoundaryProcess(const G4XrayBoundaryProcess &right);
-  //////////////
-  // Operators
-  //////////////
+    G4XrayBoundaryProcess(const G4XrayBoundaryProcess &right);
 
-  G4XrayBoundaryProcess &operator=(const G4XrayBoundaryProcess &right);
+    //////////////
+    // Operators
+    //////////////
 
- public:
+    G4XrayBoundaryProcess &operator=(const G4XrayBoundaryProcess &right);
 
-  ////////////
-  // Methods
-  ////////////
+public:
 
-  G4bool IsApplicable(const G4ParticleDefinition &aParticleType);
+    ////////////
+    // Methods
+    ////////////
 
-  void DoReflection();
+    G4bool IsApplicable(const G4ParticleDefinition &aParticleType);
 
-  G4double GetMeanFreePath(const G4Track &aTrack, G4double , G4ForceCondition *condition);
-  // Returns infinity; i. e. the process does not limit the step,
-  // but sets the 'Forced' condition for the DoIt to be invoked at
-  // every step. However, only at a boundary will any action be
-  // taken.
+    void DoReflection();
 
-  G4VParticleChange *PostStepDoIt(const G4Track &aTrack, const G4Step &aStep);
-  // This is the method implementing boundary processes.
+    G4double GetMeanFreePath(const G4Track &aTrack, G4double , G4ForceCondition *condition);
+    // Returns infinity; i. e. the process does not limit the step,
+    // but sets the 'Forced' condition for the DoIt to be invoked at
+    // every step. However, only at a boundary will any action be
+    // taken.
 
- private:
+    G4VParticleChange *PostStepDoIt(const G4Track &aTrack, const G4Step &aStep);
+    // This is the method implementing boundary processes.
 
-  G4double GetIncidentAngle();
+private:
 
- private:
-  G4double TotalMomentum;
-  G4ThreeVector OldMomentum;
-  G4ThreeVector OldPolarization;
+    G4double GetIncidentAngle();
 
-  G4ThreeVector NewMomentum;
-  G4ThreeVector NewPolarization;
+private:
+    G4double TotalMomentum;
+    G4ThreeVector OldMomentum;
+    G4ThreeVector OldPolarization;
 
-  G4ThreeVector theGlobalNormal;
+    G4ThreeVector NewMomentum;
+    G4ThreeVector NewPolarization;
 
-  G4double Rindex1;
-  G4double Rindex2;
+    G4ThreeVector theGlobalNormal;
 
-  G4double cost1, cost2, sint1, sint2;
+    G4double Rindex1;
+    G4double Rindex2;
 
-  G4Material *Material1;
-  G4Material *Material2;
+    G4double cost1, cost2, sint1, sint2;
 
-  G4double kCarTolerance;
+    G4Material *Material1;
+    G4Material *Material2;
+
+    G4double kCarTolerance;
 };
 
 ////////////////////
 // Inline methods
 ////////////////////
 
-// For now, return true for all particles
 inline
 G4bool G4XrayBoundaryProcess::IsApplicable(const G4ParticleDefinition &aParticleType) {
-  return ( &aParticleType == G4Gamma::Gamma() );
+    return ( &aParticleType == G4Gamma::Gamma() );
 }
 
 inline
-void G4XrayBoundaryProcess::DoReflection()
-{
-        G4double PdotN = OldMomentum * theGlobalNormal;
-        NewMomentum = OldMomentum - (2.*PdotN)*theGlobalNormal;
-
-        // G4double EdotN = OldPolarization * theFacetNormal;
-        // NewPolarization = -OldPolarization + (2.*EdotN)*theFacetNormal;
+void G4XrayBoundaryProcess::DoReflection() {
+    G4double PdotN = OldMomentum * theGlobalNormal;
+    NewMomentum = OldMomentum - (2.*PdotN) * theGlobalNormal;
 }
 
 #endif /* G4XrayBoundaryProcess_h */
