@@ -58,6 +58,7 @@
 #include "G4ParallelWorldProcess.hh"
 #include "G4Gamma.hh"
 #include "G4TransportationManager.hh"
+#include "G4GeometryTolerance.hh"
 
 // Class Description:
 // Discrete Process -- reflection/refraction at interfaces.
@@ -96,6 +97,8 @@ class G4XrayBoundaryProcess : public G4VDiscreteProcess {
 
   G4bool IsApplicable(const G4ParticleDefinition &aParticleType);
 
+  void DoReflection();
+
   G4double GetMeanFreePath(const G4Track &aTrack, G4double , G4ForceCondition *condition);
   // Returns infinity; i. e. the process does not limit the step,
   // but sets the 'Forced' condition for the DoIt to be invoked at
@@ -110,7 +113,7 @@ class G4XrayBoundaryProcess : public G4VDiscreteProcess {
   G4double GetIncidentAngle();
 
  private:
-  G4double totalEnergy;
+  G4double TotalMomentum;
   G4ThreeVector OldMomentum;
   G4ThreeVector OldPolarization;
 
@@ -118,9 +121,6 @@ class G4XrayBoundaryProcess : public G4VDiscreteProcess {
   G4ThreeVector NewPolarization;
 
   G4ThreeVector theGlobalNormal;
-
-  G4MaterialPropertyVector *PropertyPointer1;
-  G4MaterialPropertyVector *PropertyPointer2;
 
   G4double Rindex1;
   G4double Rindex2;
@@ -130,6 +130,7 @@ class G4XrayBoundaryProcess : public G4VDiscreteProcess {
   G4Material *Material1;
   G4Material *Material2;
 
+  G4double kCarTolerance;
 };
 
 ////////////////////
@@ -140,6 +141,16 @@ class G4XrayBoundaryProcess : public G4VDiscreteProcess {
 inline
 G4bool G4XrayBoundaryProcess::IsApplicable(const G4ParticleDefinition &aParticleType) {
   return ( &aParticleType == G4Gamma::Gamma() );
+}
+
+inline
+void G4XrayBoundaryProcess::DoReflection()
+{
+        G4double PdotN = OldMomentum * theGlobalNormal;
+        NewMomentum = OldMomentum - (2.*PdotN)*theGlobalNormal;
+
+        // G4double EdotN = OldPolarization * theFacetNormal;
+        // NewPolarization = -OldPolarization + (2.*EdotN)*theFacetNormal;
 }
 
 #endif /* G4XrayBoundaryProcess_h */

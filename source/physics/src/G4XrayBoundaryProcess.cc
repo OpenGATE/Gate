@@ -59,6 +59,17 @@ G4XrayBoundaryProcess::G4XrayBoundaryProcess(const G4String &processName, G4Proc
     G4cout << GetProcessName() << " is created " << G4endl;
   }
   //SetProcessSubType(fXrayBoundary);
+
+  Material1 = NULL;
+  Material2 = NULL;
+
+  kCarTolerance = G4GeometryTolerance::GetInstance()
+                  ->GetSurfaceTolerance();
+
+  TotalMomentum = 0.;
+  Rindex1 = Rindex2 = 1.;
+  cost1 = cost2 = sint1 = sint2 = 0.;
+
 }
 
 
@@ -110,9 +121,15 @@ G4VParticleChange *G4XrayBoundaryProcess::PostStepDoIt(const G4Track &aTrack, co
     if (thePostPV) G4cout << " thePostPV: " << thePostPV->GetName() << G4endl;
   }
 
+  // What is this used for?
+  if (aTrack.GetStepLength() <= kCarTolerance / 2) {
+    // if ( verboseLevel > 0) BoundaryProcessVerbose();
+    return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
+  }
+
   const G4DynamicParticle *aParticle = aTrack.GetDynamicParticle();
 
-  totalEnergy       = aParticle->GetTotalEnergy();
+  TotalMomentum     = aParticle->GetTotalMomentum();
   OldMomentum       = aParticle->GetMomentumDirection();
   OldPolarization   = aParticle->GetPolarization();
 
@@ -148,6 +165,7 @@ G4VParticleChange *G4XrayBoundaryProcess::PostStepDoIt(const G4Track &aTrack, co
                 "Invalid Surface Normal - Geometry must return valid surface normal");
   }
 
+
   G4MaterialPropertiesTable *aMaterialPropertiesTable;
   G4MaterialPropertyVector *Rindex;
 
@@ -160,20 +178,37 @@ G4VParticleChange *G4XrayBoundaryProcess::PostStepDoIt(const G4Track &aTrack, co
     return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
   }
 
-  PropertyPointer1 =
-          aMaterialPropertiesTable->GetProperty("REALRINDEX");
-  PropertyPointer2 =
-          aMaterialPropertiesTable->GetProperty("IMAGINARYRINDEX");
+  if (Rindex) {
+    Rindex1 = Rindex->Value(TotalMomentum);
+  } else {
+    return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
+  }
 
-  //G4cout << "REALRINDEX = " << PropertyPointer1->Value(totalEnergy) << G4endl;
+  aMaterialPropertiesTable = Material2->GetMaterialPropertiesTable();
+
+  if (aMaterialPropertiesTable) {
+    Rindex = aMaterialPropertiesTable->GetProperty("RINDEX");
+  } else {
+    // if ( verboseLevel > 0) BoundaryProcessVerbose();
+    return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
+  }
+
+  if (Rindex) {
+    Rindex2 = Rindex->Value(TotalMomentum);
+  } else {
+    return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
+  }
+
+  // G4cout << "REALRINDEX = " << Rindex1 << G4endl;
+  // G4cout << "REALRINDEX = " << totalEnergy << G4endl;
 
   G4double PdotN = OldMomentum * theGlobalNormal;
   G4double EdotN = OldPolarization * theGlobalNormal;
   cost1 = - PdotN;
 
-  G4double Rindex1 = thePrePV->GetName() == "Water" ? 1.33 : 1.00028;
-  G4double Rindex2 = thePostPV->GetName() == "Air" ? 1.00028 : 1.33;
-  if (std::abs(cost1) < 1.0) {
+  //G4double Rindex1 = thePrePV->GetName() == "Water" ? 1.33 : 1.00028;
+  //G4double Rindex2 = thePostPV->GetName() == "Air" ? 1.00028 : 1.33;
+  if (std::abs(cost1) < 1.0 - kCarTolerance) {
     sint1 = std::sqrt(1. - cost1 * cost1);
     sint2 = sint1 * Rindex1 / Rindex2; // *** Snell's Law ***
   } else {
@@ -181,22 +216,34 @@ G4VParticleChange *G4XrayBoundaryProcess::PostStepDoIt(const G4Track &aTrack, co
     sint2 = 0.0;
   }
 
-  if (cost1 > 0.0) {
-    cost2 =  std::sqrt(1. - sint2 * sint2);
+  if (sint2 >= 1.0) {
+    DoReflection(); // *** Total reflection ***
   } else {
-    cost2 = -std::sqrt(1. - sint2 * sint2);
+    if (cost1 > 0.0) {
+      cost2 =  std::sqrt(1. - sint2 * sint2);
+    } else {
+      cost2 = -std::sqrt(1. - sint2 * sint2);
+    }
+    G4double alpha = cost1 - cost2 * (Rindex2 / Rindex1);
+    NewMomentum = OldMomentum + alpha * theGlobalNormal;
+//    PdotN = OldMomentum * theGlobalNormal;
+//    NewMomentum = OldMomentum - (2.*PdotN)*theGlobalNormal;
   }
 
-  G4double alpha = cost1 - cost2 * (Rindex2 / Rindex1);
-  NewMomentum = OldMomentum + alpha * theGlobalNormal;
   NewMomentum = NewMomentum.unit();
+  NewPolarization = NewPolarization.unit();
+
+  if ( verboseLevel > 0 ) {
+    G4cout << " New Momentum Direction: " << NewMomentum     << G4endl;
+    G4cout << " New Polarization:       " << NewPolarization << G4endl;
+  }
 
   aParticleChange.ProposePolarization(OldPolarization);
   aParticleChange.ProposeMomentumDirection(NewMomentum);
 
 
 
-  G4cout << "Incident angle: " << GetIncidentAngle() * 180 / pi << "refraction angle:" << std::asin(sint2) * 180 / pi << G4endl;
+  G4cout << "Incident angle: " << GetIncidentAngle() * 180 / pi << " refraction angle: " << std::asin(sint2) * 180 / pi << G4endl;
   return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
 }
 
