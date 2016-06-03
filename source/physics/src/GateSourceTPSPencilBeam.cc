@@ -128,7 +128,6 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
         for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
 
         for (int j = 0; j < NbOfLayers; j++) {
-
           for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
           int currentLayerID = atoi(oneline); // ControlPointIndex
 
@@ -276,6 +275,9 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
 
             bool allowedSpot = true;
             if ((mSelectedSpot != -1) && (k != mSelectedSpot)) allowedSpot = false;
+
+            // Skip empty spots
+            if (SpotParameters[2] == 0) allowedSpot = false;
 
             if (allowedField && allowedLayer && allowedSpot) { // loading the spots only for allowed fields
 
