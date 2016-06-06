@@ -1108,7 +1108,12 @@ void GateFixedForcedDetectionActor::SetGeometryFromInputRTKGeometryFile(GateVSou
     {
     ct->GetPhysicalVolume()->SetRotation(new G4RotationMatrix);
     }
-  ct->GetPhysicalVolume()->GetRotation()->setRows(rows[0], rows[1], rows[2]);
+  static G4RotationMatrix imgRot = *(ct->GetPhysicalVolume()->GetRotation());
+  // Compose with existing rotation (image transform)
+  G4RotationMatrix *g4rot = ct->GetPhysicalVolume()->GetRotation();
+  g4rot->setRows(rows[0], rows[1], rows[2]);
+  G4RotationMatrix compRot = imgRot * (*g4rot);
+  g4rot->set(compRot.axisAngle());
 
   /*  According to BookForAppliDev.pdf section 3.4.4.3, we are allowed to change
    the geometry in BeginOfRunAction provided that we call this: */
