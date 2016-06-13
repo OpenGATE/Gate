@@ -53,7 +53,20 @@ G4bool GateParticleFilter::Accept(const G4Track *aTrack)
       }
     }
   }
-
+  
+  if (thePdefZ.empty()) {
+    accept = true; //if no particles given, setting to true will disable filtering on particle
+  } else {
+    for ( size_t i = 0; i < thePdef.size(); i++) { 
+      if ( thePdefZ[i] == aTrack->GetDefinition()->GetAtomicNumber() ||
+           (aTrack->GetDefinition()->GetParticleSubType() == "generic" && thePdef[i] == "GenericIon") )
+      {
+        nFilteredParticles++;
+        accept = true;
+        break;
+      }
+    }
+  }
   if (theParentPdef.empty()) {
     acceptparent = true; //if no parents given, setting to true will disable filtering on parent
   } else {
@@ -100,6 +113,15 @@ void GateParticleFilter::Add(const G4String &particleName)
     if ( thePdef[i] == particleName ) return;
   }
   thePdef.push_back(particleName);
+}
+
+//---------------------------------------------------------------------------
+void GateParticleFilter::AddZ(const G4int &particleZ)
+{
+  for ( size_t i = 0; i < thePdef.size(); i++) {
+    if ( thePdef[i] == particleZ ) return;
+  }
+  thePdef.push_back(particleZ);
 }
 //---------------------------------------------------------------------------
 

@@ -149,7 +149,7 @@ protected:
 
   Char_t  pname[256];
   
-  G4int c;
+  G4int Za;
   float elecDEDX;
   float totalDEDX;
   float stepLength;
