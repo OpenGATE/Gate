@@ -288,7 +288,7 @@ void GateApplicationMgr::StartDAQComplete(G4ThreeVector param)
 
 
 //------------------------------------------------------------------------------------------
-void GateApplicationMgr::StartDAQ() 
+void GateApplicationMgr::StartDAQ()
 {
 
   // With this method we check for all output module enabled but with no

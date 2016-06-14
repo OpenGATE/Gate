@@ -51,6 +51,8 @@ void GateSourceOfPromptGamma::SetFilename(G4String filename)
 //------------------------------------------------------------------------
 void GateSourceOfPromptGamma::Initialize()
 {
+
+  if (mIsInitializedFlag) return;
   // Get filename, load data
   mData->LoadData(mFilename);
 
@@ -62,6 +64,11 @@ void GateSourceOfPromptGamma::Initialize()
   // Weight is fixed for the moment (could change in the future)
   //particle_weight = 1.0; // could not be initialized here
 
+  // Weight is abused to scale to convert number of proton primaries
+  // into number of gamma primaries. See GateApplicationMgrMessenger.cc
+  // WILL NOT WORK WITH SEVERAL SOURCES !
+  SetSourceWeight(mData->ComputeSum());
+
   // It is initialized
   mIsInitializedFlag = true;
 }
@@ -71,6 +78,8 @@ void GateSourceOfPromptGamma::Initialize()
 //------------------------------------------------------------------------
 void GateSourceOfPromptGamma::InitializeNumberOfPrimaries()
 {
+  // NOT USED, because has no effect (anymore?)
+
   // The user set the number of primaries in number of proton. To
   // generate the corresponding number of gamma we scale according to
   // the sum in the source. We then cheat by changing the timeStop of
@@ -86,8 +95,9 @@ void GateSourceOfPromptGamma::InitializeNumberOfPrimaries()
   double sum = mData->ComputeSum();
   double ng = np*sum;
   double timestep = appMgr->GetTimeStepInTotalAmountOfPrimariesMode();
+
   double newTimeStop = timestep*ng;
-  appMgr->SetTimeStop(newTimeStop);
+  appMgr->SetTimeStop(newTimeStop);//set new endtime to timestep*newnumberofprims
 
   GateMessage("Run", 0, "Requested number of proton is " << np
               << ". According to the data source, it corresponds to "
@@ -99,13 +109,12 @@ void GateSourceOfPromptGamma::InitializeNumberOfPrimaries()
 //------------------------------------------------------------------------
 
 
-
 //------------------------------------------------------------------------
 void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
 {
   // Initialisation of the distribution information (only once)
   if (!mIsInitializedFlag) Initialize();
-  if (!mIsInitializedNumberOfPrimariesFlag) InitializeNumberOfPrimaries();
+  //if (!mIsInitializedNumberOfPrimariesFlag) InitializeNumberOfPrimaries();
 
   // Position
   G4ThreeVector particle_position;
@@ -150,6 +159,14 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
 //------------------------------------------------------------------------
 G4int GateSourceOfPromptGamma::GeneratePrimaries(G4Event* event)
 {
+//  This does not work unfortunately. Events are not running, AbortingRun will just create newruns.
+//  TerminateEvenloop seems to have no effect.
+//  if(event->GetEventID()>nrGammaPrim){
+//      GateRunManager::GetRunManager()->AbortRun();
+//      GateRunManager::GetRunManager()->AbortEvent();
+//      GateRunManager::GetRunManager()->TerminateEventLoop();
+//      return 0;
+//  }
   GenerateVertex(event);
   G4PrimaryParticle  * p = event->GetPrimaryVertex(0)->GetPrimary(0);
   GateMessage("Beam", 3, "(" << event->GetEventID() << ") " << p->GetG4code()->GetParticleName()

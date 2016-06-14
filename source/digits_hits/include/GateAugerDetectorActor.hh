@@ -31,9 +31,11 @@ class GateAugerDetectorActor : public GateVActor
 {
 	public:
 
-		virtual ~GateAugerDetectorActor();
-		void setMaxTOF(G4double tof);
-		void setMinEdep(G4double edep);
+        virtual ~GateAugerDetectorActor();
+        void setMinTOF(G4double tof);
+        void setMaxTOF(G4double tof);
+        void setMinEdep(G4double edep);
+        void setMaxEdep(G4double edep);
 		void setProjectionDirection(const G4ThreeVector& dir);
 		void setMinimumProfileAxis(G4double min);
 		void setMaximumProfileAxis(G4double max);
@@ -80,9 +82,11 @@ class GateAugerDetectorActor : public GateVActor
 		TH1D* pTimeOfFlightHisto;
 
 		GateActorMessenger * pMessenger;
-		AugerDepositions depositions;
-		G4double max_time_of_flight;
-		G4double min_energy_deposition;
+        AugerDepositions depositions;
+        G4double min_time_of_flight;
+        G4double max_time_of_flight;
+        G4double min_energy_deposition;
+        G4double max_energy_deposition;
 		G4ThreeVector projection_direction;
 		G4double profile_min;
 		G4double profile_max;

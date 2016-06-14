@@ -126,6 +126,20 @@ void GateImageOfHistograms::Reset()
 
 
 //-----------------------------------------------------------------------------
+void GateImageOfHistograms::Deallocate()
+{
+    // this thing frees the data memory, while keeping the rest intact. USE WITH CAUTION!
+  if (mDataTypeName == "double")
+      std::vector<double>().swap(dataDouble);
+  else if (mDataTypeName == "float")
+      std::vector<float>().swap(dataFloat);
+  else
+      std::vector<unsigned int>().swap(dataInt);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 long GateImageOfHistograms::GetIndexFromPixelIndex(int i, int j, int k)
 {
   return (i + j*sizeX + k*sizePlane);
@@ -239,87 +253,95 @@ void GateImageOfHistograms::AddValueInt(const int & index, const int & bin, cons
 //-----------------------------------------------------------------------------
 void GateImageOfHistograms::Read(G4String filename)
 {
-  MetaImage m_MetaImage;
-  m_MetaImage.AddUserField("HistoMinInMeV", MET_FLOAT_ARRAY, 1);
-  m_MetaImage.AddUserField("HistoMaxInMeV", MET_FLOAT_ARRAY, 1);
+  std::vector<float> input;//put mhd imagedata here
 
-  if (!m_MetaImage.Read(filename.c_str(), true)) {
-    GateError("MHD File cannot be read: " << filename << std::endl);
-  }
+  {//start metaImage scope. setup all metadata. separate scope to save memory
+      MetaImage m_MetaImage;
+      m_MetaImage.AddUserField("HistoMinInMeV", MET_FLOAT_ARRAY, 1);
+      m_MetaImage.AddUserField("HistoMaxInMeV", MET_FLOAT_ARRAY, 1);
 
-  // Dimension must be 4
-  if (m_MetaImage.NDims() != 4) {
-    GateError("MHD ImageOfHistogram  <" << filename << "> is not 4D but "
-              << m_MetaImage.NDims() << "D, abort." << std::endl);
-  }
+      if (!m_MetaImage.Read(filename.c_str(), true)) {
+        GateError("MHD File cannot be read: " << filename << std::endl);
+      }
 
-  // Get image parameters
-  for(int i=0; i<3; i++) {
-    resolution[i] = m_MetaImage.DimSize(i);
-    voxelSize[i] = m_MetaImage.ElementSpacing(i);
-    origin[i] = m_MetaImage.Position(i);
-  }
-  nbOfBins = m_MetaImage.DimSize(3);
+      // Dimension must be 4
+      if (m_MetaImage.NDims() != 4) {
+        GateError("MHD ImageOfHistogram  <" << filename << "> is not 4D but "
+                  << m_MetaImage.NDims() << "D, abort." << std::endl);
+      }
 
-  std::vector<double> transform;
-  transform.resize(16);
-  for(int i=0; i<16; i++) { // 4 x 4 matrix
-    transform[i] = m_MetaImage.TransformMatrix()[i];
-  }
+      // Get image parameters
+      for(int i=0; i<3; i++) {
+        resolution[i] = m_MetaImage.DimSize(i);
+        voxelSize[i] = m_MetaImage.ElementSpacing(i);
+        origin[i] = m_MetaImage.Position(i);
+      }
+      nbOfBins = m_MetaImage.DimSize(3);
 
- // Convert mhd 4D matrix to 3D rotation matrix
-  G4ThreeVector row_x, row_y, row_z;
-  for(unsigned int i=0; i<3; i++) {
-    row_x[i] = transform[i*4];
-    row_y[i] = transform[i*4+1];
-    row_z[i] = transform[i*4+2];
-  }
-  transformMatrix.setRows(row_x, row_y, row_z);
-  if( !transformMatrix.row1().isNear(CLHEP::HepLorentzVector(row_x, 0.), 0.1) ||
-      !transformMatrix.row2().isNear(CLHEP::HepLorentzVector(row_y, 0.), 0.1) ||
-      !transformMatrix.row3().isNear(CLHEP::HepLorentzVector(row_z, 0.), 0.1) ) {
-      GateError(filename << " contains a transformation which is not a rotation. "
-                << "It is probably a flip and this is not handled.");
-  }
+      std::vector<double> transform;
+      transform.resize(16);
+      for(int i=0; i<16; i++) { // 4 x 4 matrix
+        transform[i] = m_MetaImage.TransformMatrix()[i];
+      }
 
-  // We need to shift to half a pixel to be coherent with Gate
-  // coordinates system. Must be transformed because voxel size is
-  // known before rotation and origin is after rotation.
-  origin -= transformMatrix*(voxelSize/2.0);
-  UpdateSizesFromResolutionAndVoxelSize();
+     // Convert mhd 4D matrix to 3D rotation matrix
+      G4ThreeVector row_x, row_y, row_z;
+      for(unsigned int i=0; i<3; i++) {
+        row_x[i] = transform[i*4];
+        row_y[i] = transform[i*4+1];
+        row_z[i] = transform[i*4+2];
+      }
+      transformMatrix.setRows(row_x, row_y, row_z);
+      if( !transformMatrix.row1().isNear(CLHEP::HepLorentzVector(row_x, 0.), 0.1) ||
+          !transformMatrix.row2().isNear(CLHEP::HepLorentzVector(row_y, 0.), 0.1) ||
+          !transformMatrix.row3().isNear(CLHEP::HepLorentzVector(row_z, 0.), 0.1) ) {
+          GateError(filename << " contains a transformation which is not a rotation. "
+                    << "It is probably a flip and this is not handled.");
+      }
 
-  // Set data in the correct order
-  int len = resolution[0] * resolution[1] * resolution[2] * nbOfBins;
-  std::vector<float> input;
-  input.assign((float*)(m_MetaImage.ElementData()), (float*)(m_MetaImage.ElementData()) + len);
+      // Read info in mhd
+      void * r = 0;
+      r = m_MetaImage.GetUserField("HistoMinInMeV");
+      if (r==0) {
+        GateError("User field HistoMin not found in this mhd file : " << filename);
+      }
+      minValue = *static_cast<float*>(r);
+      r = m_MetaImage.GetUserField("HistoMaxInMeV");
+      if (r==0) {
+        GateError("User field HistoMax not found in this mhd file : " << filename);
+      }
+      maxValue = *static_cast<float*>(r);
+      SetHistoInfo(nbOfBins, minValue, maxValue);
+
+      // We need to shift to half a pixel to be coherent with Gate
+      // coordinates system. Must be transformed because voxel size is
+      // known before rotation and origin is after rotation.
+      origin -= transformMatrix*(voxelSize/2.0);
+      UpdateSizesFromResolutionAndVoxelSize();
+
+      // Cast input data to float and put in input vector. this is done because metaImage nullpointer sucks.
+      int len = resolution[0] * resolution[1] * resolution[2] * nbOfBins;
+      input.assign((float*)(m_MetaImage.ElementData()), (float*)(m_MetaImage.ElementData()) + len);
+
+  }//end metaImage scope. it does not exist anymore.
+
+  //Set to correct order. This allocates dataFloat.
   ConvertPixelOrderToHXYZ(input, dataFloat);
 
-  // Now the initial input can be deleted, only the dataDouble/dataFloat data
-  // are kept.
-  m_MetaImage.Clear();
-  input.clear();
+  // Do NOT clear metaimages yourself, then the destructor will NOT deallocate datamemory!
+  // m_MetaImage.Clear();
 
-  // Convert to double is needed
-  if (mDataTypeName == "double") {
+  // FIXME: this couldn't possibly work. Incase we were reading an image of doubles,
+  // we'd already casted in the previous steps to float, which we even assume, so no
+  // double image caant be read right now. Would only be usefull if we would continue
+  // to update this image with small values, which I don't think will ever happen.
+  /*if (mDataTypeName == "double") {
     dataDouble.resize(dataFloat.size());
     for(unsigned int i=0; i<dataDouble.size(); i++)
       dataDouble[i] = (double)dataFloat[i]; // convert float to double
     dataFloat.clear();
-  }
+  }*/
 
-  // Read info in mhd
-  void * r = 0;
-  r = m_MetaImage.GetUserField("HistoMinInMeV");
-  if (r==0) {
-    GateError("User field HistoMin not found in this mhd file : " << filename);
-  }
-  minValue = *static_cast<float*>(r);
-  r = m_MetaImage.GetUserField("HistoMaxInMeV");
-  if (r==0) {
-    GateError("User field HistoMax not found in this mhd file : " << filename);
-  }
-  maxValue = *static_cast<float*>(r);
-  SetHistoInfo(nbOfBins, minValue, maxValue);
 }
 //-----------------------------------------------------------------------------
 

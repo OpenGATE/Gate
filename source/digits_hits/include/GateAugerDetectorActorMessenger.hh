@@ -32,9 +32,11 @@ class GateAugerDetectorActorMessenger : public GateActorMessenger
 		GateAugerDetectorActor * pActor;
 
 		/// Command objects
-		//G4UIcmdWithAnInteger * pNBinsCmd;
-		G4UIcmdWithADoubleAndUnit* pMaxTOFCmd;
-		G4UIcmdWithADoubleAndUnit* pMinEdepCmd;
+        //G4UIcmdWithAnInteger * pNBinsCmd;
+        G4UIcmdWithADoubleAndUnit* pMinTOFCmd;
+        G4UIcmdWithADoubleAndUnit* pMaxTOFCmd;
+        G4UIcmdWithADoubleAndUnit* pMinEdepCmd;
+        G4UIcmdWithADoubleAndUnit* pMaxEdepCmd;
 		G4UIcmdWith3Vector* pProfileDirectionCmd;
 		G4UIcmdWithADoubleAndUnit* pMinProfileCmd;
 		G4UIcmdWithADoubleAndUnit* pMaxProfileCmd;

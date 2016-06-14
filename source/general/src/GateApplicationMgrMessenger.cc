@@ -8,6 +8,7 @@
 
 #include "GateApplicationMgrMessenger.hh"
 #include "GateApplicationMgr.hh"
+#include "GateSourceMgr.hh"
 
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithABool.hh"
@@ -210,7 +211,18 @@ void GateApplicationMgrMessenger::SetNewValue(G4UIcommand* command, G4String new
     appMgr->ReadTimeSlicesInAFile(newValue);
   }
   else if (command == SetTotalNumberOfPrimariesCmd) {
-    appMgr->SetTotalNumberOfPrimaries(SetTotalNumberOfPrimariesCmd->GetNewDoubleValue(newValue));
+      double f=1.;
+      GateSourceMgr * sourceMgr = GateSourceMgr::GetInstance();
+      if (sourceMgr->GetNumberOfSources() == 1) {
+        if(sourceMgr->GetSource(0)->GetName()=="PGS"){
+          sourceMgr->GetSource(0)->Initialize();
+          f=sourceMgr->GetSource(0)->GetSourceWeight();
+          GateMessage("Run", 0, "Requested number of proton is " << newValue
+                      << ". According to the PGS source, it's scaled with factor "
+                      << f << "." << std::endl);
+        }
+      }
+    appMgr->SetTotalNumberOfPrimaries(SetTotalNumberOfPrimariesCmd->GetNewDoubleValue(newValue)*f);
   }
   else if (command == SetNumberOfPrimariesPerRunCmd) {
     appMgr->SetNumberOfPrimariesPerRun(SetNumberOfPrimariesPerRunCmd->GetNewDoubleValue(newValue));
