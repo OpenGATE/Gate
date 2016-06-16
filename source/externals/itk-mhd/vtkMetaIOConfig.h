@@ -1,6 +1,6 @@
 //
-// To install MetaIO in ITK, this file should be copied into the directory
-//   /ITK/Utilities and renamed to metaIOConfig.h
+// To install MetaIO in VTK, this file should be copied into the directory
+//   /VTK/Utilities and renamed to metaIOConfig.h
 //
 // This file is automatically included by
 //   MetaIO/localMetaConfiguration.h
@@ -14,7 +14,7 @@
 // repository. The common MetaIO cvs tree is located in KWPublic/MetaIO/src.
 //
 
-#undef METAIO_FOR_VTK
+#undef METAIO_FOR_ITK
 
-#define METAIO_FOR_ITK 1
+#define METAIO_FOR_VTK 1
 
