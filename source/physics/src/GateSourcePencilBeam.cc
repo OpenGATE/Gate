@@ -173,7 +173,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     mUYPhi(2)=0.;		//mu phi
 
     mGaussianEnergy = new RandGauss(engine, mEnergy, mSigmaEnergy);
-	G4cout << "A.Resch 2016: mGaussianEnergy " << mGaussianEnergy<<G4endl<<G4endl<<G4endl<<G4endl<<G4endl;
+    //G4cout << "A.Resch 2016: mGaussianEnergy " << mGaussianEnergy<<G4endl<<G4endl<<G4endl<<G4endl<<G4endl;
 	
     // Notations & Calculations based on Transport code - Beam Phase Space Notations - P35
     double alpha, beta, gamma, epsilon;
