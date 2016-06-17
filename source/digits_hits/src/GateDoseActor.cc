@@ -409,7 +409,11 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
       if (sameEvent) mEdepImage.AddTempValue(index, edep);
       else mEdepImage.AddValueAndUpdate(index, edep);
     }
-    else mEdepImage.AddValue(index, edep);
+    else
+    {
+		mEdepImage.AddValue(index, edep);
+		
+	}
   }
 
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.AddValue(index, weight);

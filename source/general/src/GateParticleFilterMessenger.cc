@@ -76,7 +76,7 @@ void GateParticleFilterMessenger::SetNewValue(G4UIcommand* command, G4String par
   if(command==pAddParticleCmd)
       pParticleFilter->Add(param); 
   if(command==pAddParticleZCmd)
-      pParticleFilter->AddZ(pAddParticleZCmd->GetNewIntValue(param));
+	  pParticleFilter->AddZ(pAddParticleZCmd->GetNewIntValue(param));
   if(command==pAddParentParticleCmd)
       pParticleFilter->AddParent(param);
   if(command==pAddDirectParentParticleCmd)

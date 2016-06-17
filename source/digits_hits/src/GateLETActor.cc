@@ -71,9 +71,9 @@ void GateLETActor::Construct() {
 
 
   if (mAveragingType == "DoseAveraged" || mAveragingType == "DoseAverage" || mAveragingType == "doseaverage" || mAveragingType == "dose"){mIsDoseAverageDEDX = true;}
-  else if (mAveragingType == "DoseAveragedEdep"){mIsDoseAverageEdepDX = true;}
+  else if (mAveragingType == "DoseAveragedEdep" || mAveragingType == "DoseAverageEdep" ){mIsDoseAverageEdepDX = true;}
   else if (mAveragingType == "TrackAveraged" || mAveragingType == "TrackAverage" || mAveragingType == "Track" || mAveragingType == "track" || mAveragingType == "TrackAveragedDXAveraged"){mIsTrackAverageDEDX = true;}
-  else if (mAveragingType == "TrackAveragedEdep"){mIsTrackAverageEdepDX = true;}
+  else if (mAveragingType == "TrackAveragedEdep" || mAveragingType == "TrackAverageEdep" ){mIsTrackAverageEdepDX = true;}
   else {GateError("The LET averaging Type" << GetObjectName()
                   << " is not valid ...\n Please select 'DoseAveraged' or 'TrackAveraged')");}
 
@@ -226,6 +226,7 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   GateDebugMessageInc("Actor", 4, "GateLETActor -- UserSteppingActionInVoxel - begin\n");
   GateDebugMessageInc("Actor", 4, "enedepo = " << step->GetTotalEnergyDeposit() << Gateendl);
   GateDebugMessageInc("Actor", 4, "weight = " <<  step->GetTrack()->GetWeight() << Gateendl);
+//	G4cout << "In LET actor: " << step->GetTrack()->GetDefinition()->GetAtomicNumber() << G4endl;
 
   // Get edep and current particle weight
   const double weight = step->GetTrack()->GetWeight();
@@ -277,7 +278,7 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   }
 
   if (mIsLETtoWaterEnabled){
-    weightedLET=edep*emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER");
+    weightedLET/=dedx*emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER");
   }
 
   if (mIsLETSecondMomentImageEnabled) {
@@ -293,9 +294,8 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
 
 
 
-  // Store the LET
+
     mWeightedLETImage.AddValue(index, weightedLET);
-    // Store the Edep (needed for final computation)
     mNormalizationLETImage.AddValue(index, normalizationVal);
 
 

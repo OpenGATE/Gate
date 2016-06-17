@@ -39,8 +39,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
 
   pMessenger = new GatePhaseSpaceActorMessenger(this);
   EnableCharge = true;
-  EnableElectronicDEDX = true;
-  EnableTotalDEDX = true;
+  EnableElectronicDEDX = false;
+  EnableTotalDEDX = false;
   EnableXPosition = true;
   EnableYPosition = true;
   EnableZPosition = true;

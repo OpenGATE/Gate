@@ -56,15 +56,26 @@ G4bool GateParticleFilter::Accept(const G4Track *aTrack)
   
   if (thePdefZ.empty()) {
     accept = true; //if no particles given, setting to true will disable filtering on particle
+    //G4cout<< "List empty. "<<G4endl;
   } else {
-    for ( size_t i = 0; i < thePdef.size(); i++) { 
-      if ( thePdefZ[i] == aTrack->GetDefinition()->GetAtomicNumber() ||
-           (aTrack->GetDefinition()->GetParticleSubType() == "generic" && thePdef[i] == "GenericIon") )
+    for ( size_t i = 0; i < thePdefZ.size(); i++) { 
+	  //if ( thePdefZ[i] == aTrack->GetDefinition()->GetAtomicNumber())
+	  //{ 
+		  //G4cout << "Z particle equal to defined Atomic Number " << thePdefZ[i]<< G4endl; 
+	  //}
+      if ( thePdefZ[i] == aTrack->GetDefinition()->GetAtomicNumber() )
       {
+		  //G4cout << "Enters and is simulated: "<< aTrack->GetDefinition()->GetAtomicNumber() << G4endl;
         nFilteredParticles++;
         accept = true;
         break;
       }
+      else
+      {
+		  accept = false;
+		  //G4cout << "Particle is rejected: " << aTrack->GetDefinition()->GetAtomicNumber() << G4endl;
+	  }
+       //G4cout << "Z particle equal to defined Atomic Number " << aTrack->GetDefinition()->GetAtomicNumber()<< G4endl; 
     }
   }
   if (theParentPdef.empty()) {
@@ -117,11 +128,11 @@ void GateParticleFilter::Add(const G4String &particleName)
 
 //---------------------------------------------------------------------------
 void GateParticleFilter::AddZ(const G4int &particleZ)
-{
-  for ( size_t i = 0; i < thePdef.size(); i++) {
-    if ( thePdef[i] == particleZ ) return;
+{ 
+  for ( size_t i = 0; i < thePdefZ.size(); i++) {
+    if ( thePdefZ[i] == particleZ ) return;
   }
-  thePdef.push_back(particleZ);
+  thePdefZ.push_back(particleZ);
 }
 //---------------------------------------------------------------------------
 

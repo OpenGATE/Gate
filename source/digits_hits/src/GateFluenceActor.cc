@@ -20,6 +20,7 @@ GateFluenceActor::GateFluenceActor(G4String name, G4int depth) :
   GateDebugMessageInc("Actor",4,"GateFluenceActor() -- begin\n");
   mCurrentEvent = -1;
   mIsSquaredImageEnabled = false;
+  mIsStepLengthImageEnabled = true;
   mIsUncertaintyImageEnabled = false;
   mIsLastHitEventImageEnabled = false;
   mIsNormalisationEnabled = false;
@@ -65,7 +66,9 @@ void GateFluenceActor::Construct()
   mImageProcess.SetOrigin(mOrigin);
   mLastHitEventImage.SetOrigin(mOrigin);
   mNumberOfHitsImage.SetOrigin(mOrigin);
-
+  mStepLengthImage.SetOrigin(mOrigin);
+  mNumberOfHitsStepLengthImage.SetOrigin(mOrigin);
+  
   mImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
   mImageProcess.SetOverWriteFilesFlag(mOverWriteFilesFlag);
 
@@ -75,7 +78,16 @@ void GateFluenceActor::Construct()
     mLastHitEventImage.Allocate();
     mIsLastHitEventImageEnabled = true;
     }
-
+    if (mIsStepLengthImageEnabled)
+    {
+    mStepLengthImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    mStepLengthImage.Allocate();
+    mIsStepLengthImageEnabled = true;   
+    
+    mNumberOfHitsStepLengthImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    mNumberOfHitsStepLengthImage.Allocate();
+    }
+  
   mImage.EnableSquaredImage(mIsSquaredImageEnabled);
   mImage.EnableUncertaintyImage(mIsUncertaintyImageEnabled);
   /* Force the computation of squared image if uncertainty is enabled */
@@ -127,6 +139,24 @@ void GateFluenceActor::SaveData()
     {
     sprintf(filename, mSaveFilename, rID);
     mImage.SetFilename(G4String(filename));
+    
+    if (mIsStepLengthImageEnabled)
+	{
+		//G4cout << "yes yes yes " <<G4endl<<G4endl;
+		GateImageDouble::iterator iter_stepLength = mStepLengthImage.begin();
+      GateImageDouble::const_iterator iter_Edep = mNumberOfHitsStepLengthImage.begin();
+     
+      for(iter_stepLength = mStepLengthImage.begin(); iter_stepLength != mStepLengthImage.end(); iter_stepLength++) {
+        if (*iter_Edep == 0.0) *iter_stepLength = 0.0; // do not divide by zero
+        else *iter_stepLength = (*iter_stepLength)/1;//(*iter_Edep);
+        iter_Edep++;
+        
+      }
+
+	  
+	  mStepLengthImage.Write(removeExtension(filename) + "-stepLength." + G4String(getExtension(filename)));
+	}
+    
     if (mIsNormalisationEnabled)
       {
       mImage.SaveData(mCurrentEvent + 1, true);
@@ -208,6 +238,11 @@ void GateFluenceActor::ResetData()
   mImage.Reset();
   mImageProcess.Reset();
   mImage.Fill(0);
+  if (mIsStepLengthImageEnabled)
+  {
+	  mStepLengthImage.Fill(0);
+	  mNumberOfHitsStepLengthImage.Fill(0);
+  }
   if (mIsScatterImageEnabled)
     {
     mImageProcess.Fill(0);
@@ -230,6 +265,13 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
   {
   GateDebugMessageInc("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel - begin\n");
   const double weight = step->GetTrack()->GetWeight();
+  
+  if (mIsStepLengthImageEnabled)
+  {
+	  mStepLengthImage.AddValue( index, step->GetStepLength());
+	  mNumberOfHitsStepLengthImage.AddValue(index, 1.);
+  }
+  
   /* Is this necessary? */
   if (index < 0)
     {

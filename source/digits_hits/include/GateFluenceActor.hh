@@ -41,6 +41,10 @@ public:
     {
     mIsSquaredImageEnabled = b;
     }
+  void EnableStepLengthImage(bool b)
+    {
+    mIsStepLengthImageEnabled = b;
+    }
   void EnableUncertaintyImage(bool b)
     {
     mIsUncertaintyImageEnabled = b;
@@ -104,13 +108,16 @@ protected:
   GateImageWithStatistic mImageProcess;
   GateImage mLastHitEventImage;
   GateImage mNumberOfHitsImage;
-
+  GateImageDouble mStepLengthImage;
+  GateImageDouble mNumberOfHitsStepLengthImage;
+  
   //GateImage mImageScatter;
   GateFluenceActor(G4String name, G4int depth = 0);
   GateFluenceActorMessenger * pMessenger;
 
   int mCurrentEvent;
   bool mIsLastHitEventImageEnabled;
+  bool mIsStepLengthImageEnabled;
   bool mIsSquaredImageEnabled;
   bool mIsUncertaintyImageEnabled;
   bool mIsNormalisationEnabled;
