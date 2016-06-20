@@ -278,7 +278,7 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   }
 
   if (mIsLETtoWaterEnabled){
-    weightedLET/=dedx*emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER");
+    weightedLET = (weightedLET/dedx)*	emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER") ;
   }
 
   if (mIsLETSecondMomentImageEnabled) {
