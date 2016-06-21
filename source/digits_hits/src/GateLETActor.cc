@@ -148,19 +148,13 @@ void GateLETActor::SaveData() {
     mNormalizationLETImage.Write(denominatorFileName);
   }
   else
-    { int indA = 0;
+    { 
       GateImageDouble::const_iterator iter_LET = mWeightedLETImage.begin();
       GateImageDouble::const_iterator iter_Edep = mNormalizationLETImage.begin();
       GateImageDouble::iterator iter_Final = mDoseTrackAverageLETImage.begin();
       for(iter_LET = mWeightedLETImage.begin(); iter_LET != mWeightedLETImage.end(); iter_LET++) {
         if (*iter_Edep == 0.0) *iter_Final = 0.0; // do not divide by zero
         else *iter_Final = (*iter_LET)/(*iter_Edep);
-        if (indA < 1)
-	{
-	 G4cout<<"Iter final: "<< *iter_Final << G4endl;
-	indA++;
-}
- 
         iter_Edep++;
         iter_Final++;
       }
