@@ -48,6 +48,8 @@ void GateFluenceActor::Construct()
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(false);
+  
+  EnablePostUserTrackingAction(true);
   EnableUserSteppingAction(true);
 
   /* the image index will be computed according to the preStep */
@@ -66,6 +68,16 @@ void GateFluenceActor::Construct()
   mLastHitEventImage.SetOrigin(mOrigin);
   mNumberOfHitsImage.SetOrigin(mOrigin);
 
+// aresch
+  mTrackLengthImage.SetOrigin(mOrigin);
+   mTrackLengthImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    mTrackLengthImage.Allocate();
+    
+  mStepLengthImage.SetOrigin(mOrigin);
+   mStepLengthImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    mStepLengthImage.Allocate();
+    
+    
   mImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
   mImageProcess.SetOverWriteFilesFlag(mOverWriteFilesFlag);
 
@@ -123,6 +135,10 @@ void GateFluenceActor::SaveData()
   char filename[1024];
   /* Printing all particles */
   GateVImageActor::SaveData();
+  
+  mTrackLengthImage.Write(removeExtension(mSaveFilename) + "-TrackLengthImage."+ getExtension(mSaveFilename));
+  mStepLengthImage.Write(removeExtension(mSaveFilename) + "-TrackLengthNorm."+ getExtension(mSaveFilename));
+  
   if (mSaveFilename != "")
     {
     sprintf(filename, mSaveFilename, rID);
@@ -208,6 +224,8 @@ void GateFluenceActor::ResetData()
   mImage.Reset();
   mImageProcess.Reset();
   mImage.Fill(0);
+  mTrackLengthImage.Fill(0);
+  mStepLengthImage.Fill(0);
   if (mIsScatterImageEnabled)
     {
     mImageProcess.Fill(0);
@@ -226,6 +244,15 @@ void GateFluenceActor::BeginOfEventAction(const G4Event * e)
   GateDebugMessage("Actor", 3, "GateFluenceActor -- Begin of Event: "<<mCurrentEvent << Gateendl);
   }
 
+void GateFluenceActor::UserPostTrackActionInVoxel(const int index, const G4Track * aTrack)
+{
+	
+  double trackLength= aTrack->GetStep()->GetStepLength();	//aTrack->GetTrackLength(); //,aTrack->GetWeight();
+  //G4cout<< "Track length: " << trackLength << G4endl;
+  mTrackLengthImage.AddValue(index,trackLength);
+  mStepLengthImage.AddValue(index,1);
+  // Nothing (but must be implemented because virtual)
+}
 void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* step)
   {
   GateDebugMessageInc("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel - begin\n");
@@ -389,5 +416,11 @@ void GateFluenceActor::UserSteppingActionInVoxel(const int index, const G4Step* 
         }
       }
     }GateDebugMessageDec("Actor", 4, "GateFluenceActor -- UserSteppingActionInVoxel -- end\n");
+  
+
+  //void GateTrackLengthActor::PostUserTrackingAction(const GateVVolume * /*vol*/, const G4Track* aTrack)
+	//{
+  //aTrack->GetTrackLength(),aTrack->GetWeight();
+	//}
   }
 

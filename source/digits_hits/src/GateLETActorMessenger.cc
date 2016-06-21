@@ -19,7 +19,7 @@ GateLETActorMessenger::GateLETActorMessenger(GateLETActor* sensor)
    pLETActor(sensor)
 {
  
-  pEnableLETUncertaintyCmd = 0;
+  pEnableLETSigmaCmd = 0;
   pSetLETtoWaterCmd = 0;
   pAveragingTypeCmd = 0;
   BuildCommands(baseName+sensor->GetObjectName());
@@ -31,7 +31,7 @@ GateLETActorMessenger::GateLETActorMessenger(GateLETActor* sensor)
 GateLETActorMessenger::~GateLETActorMessenger()
 {
   
-  if(pEnableLETUncertaintyCmd) delete pEnableLETUncertaintyCmd;
+  if(pEnableLETSigmaCmd) delete pEnableLETSigmaCmd;
   if(pSetLETtoWaterCmd) delete pSetLETtoWaterCmd;
   if(pAveragingTypeCmd) delete pAveragingTypeCmd;
 }
@@ -42,10 +42,10 @@ GateLETActorMessenger::~GateLETActorMessenger()
 void GateLETActorMessenger::BuildCommands(G4String base)
 {
  
-  G4String n = base+"/enableUncertaintyLET";
-  pEnableLETUncertaintyCmd = new G4UIcmdWithABool(n, this);
-  G4String guid = G4String("Enable LET uncertainty calculation");
-  pEnableLETUncertaintyCmd->SetGuidance(guid);
+  G4String n = base+"/enableSigmaLET";
+  pEnableLETSigmaCmd = new G4UIcmdWithABool(n, this);
+  G4String guid = G4String("Enable LET Sigma calculation");
+  pEnableLETSigmaCmd->SetGuidance(guid);
   
   n = base+"/setLETtoWater";
   pSetLETtoWaterCmd = new G4UIcmdWithABool(n, this);
@@ -70,7 +70,7 @@ void GateLETActorMessenger::BuildCommands(G4String base)
 //-----------------------------------------------------------------------------
 void GateLETActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
-  if (cmd == pEnableLETUncertaintyCmd) pLETActor->EnableLETUncertaintyImage(pEnableLETUncertaintyCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableLETSigmaCmd) pLETActor->EnableLETSigmaImage(pEnableLETSigmaCmd->GetNewBoolValue(newValue));
   if (cmd == pSetLETtoWaterCmd) pLETActor->SetLETtoWater(pSetLETtoWaterCmd->GetNewBoolValue(newValue));
   if (cmd == pSetParallelCalculationCmd) pLETActor->SetParallelCalculation(pSetParallelCalculationCmd->GetNewBoolValue(newValue));
   
