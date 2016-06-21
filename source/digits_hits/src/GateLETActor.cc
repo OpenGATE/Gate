@@ -245,8 +245,8 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
     normalizationVal = edep;
   }
   else if (mIsAverageKinEnergy) {
-	weightedLET=energy*weight;
-    normalizationVal = weight;
+	weightedLET=steplength*energy*weight;
+    normalizationVal = steplength;
   }
   
   if (mIsLETtoWaterEnabled){
