@@ -51,6 +51,11 @@ void GateFluenceActorMessenger::BuildCommands(G4String base)
   G4String guid = G4String("Enable computation of scattered particles fluence");
   pEnableScatterCmd->SetGuidance(guid);
 
+  n = base + "/enableStepLength";
+  pEnableStepLengthCmd = new G4UIcmdWithABool(n, this);
+  guid = G4String("Enable step length");
+  pEnableStepLengthCmd->SetGuidance(guid);
+  
   n = base + "/enableSquared";
   pEnableSquaredCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable squared image statistic");
@@ -100,6 +105,10 @@ void GateFluenceActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
     {
     pFluenceActor->EnableSquaredImage(pEnableSquaredCmd->GetNewBoolValue(newValue));
     }
+  if (cmd == pEnableStepLengthCmd)
+    {
+    pFluenceActor->EnableStepLengthImage(pEnableStepLengthCmd->GetNewBoolValue(newValue));
+    }    
   if (cmd == pEnableUncertaintyCmd)
     {
     pFluenceActor->EnableUncertaintyImage(pEnableUncertaintyCmd->GetNewBoolValue(newValue));

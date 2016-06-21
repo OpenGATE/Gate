@@ -40,12 +40,20 @@ void GateParticleFilterMessenger::BuildCommands(G4String base)
 {
   G4String guidance;
   G4String bb;
-  
+
+    
   bb = base+"/addParticle";
   pAddParticleCmd = new G4UIcmdWithAString(bb,this);
   guidance = "Add particle";
   pAddParticleCmd->SetGuidance(guidance);
   pAddParticleCmd->SetParameterName("Particle name",false);
+  
+  bb = base+"/addParticleZ";
+  pAddParticleZCmd = new G4UIcmdWithAnInteger(bb,this);
+  guidance = "Add particles by atomic number";
+  pAddParticleZCmd->SetGuidance(guidance);
+  pAddParticleZCmd->SetParameterName("Particles atomic number",false);
+
 
   bb = base+"/addParentParticle";
   pAddParentParticleCmd = new G4UIcmdWithAString(bb,this);
@@ -66,7 +74,9 @@ void GateParticleFilterMessenger::BuildCommands(G4String base)
 void GateParticleFilterMessenger::SetNewValue(G4UIcommand* command, G4String param)
 {
   if(command==pAddParticleCmd)
-      pParticleFilter->Add(param);
+      pParticleFilter->Add(param); 
+  if(command==pAddParticleZCmd)
+	  pParticleFilter->AddZ(pAddParticleZCmd->GetNewIntValue(param));
   if(command==pAddParentParticleCmd)
       pParticleFilter->AddParent(param);
   if(command==pAddDirectParentParticleCmd)
