@@ -159,14 +159,14 @@ void GateSourceOfPromptGamma::GenerateVertex(G4Event* aEvent)
 //------------------------------------------------------------------------
 G4int GateSourceOfPromptGamma::GeneratePrimaries(G4Event* event)
 {
-//  This does not work unfortunately. Events are not running, AbortingRun will just create newruns.
-//  TerminateEvenloop seems to have no effect.
-//  if(event->GetEventID()>nrGammaPrim){
-//      GateRunManager::GetRunManager()->AbortRun();
-//      GateRunManager::GetRunManager()->AbortEvent();
-//      GateRunManager::GetRunManager()->TerminateEventLoop();
-//      return 0;
-//  }
+  //  This does not work unfortunately. Events are not running, AbortingRun will just create newruns.
+  //  TerminateEvenloop seems to have no effect.
+  //  if(event->GetEventID()>nrGammaPrim){
+  //      GateRunManager::GetRunManager()->AbortRun();
+  //      GateRunManager::GetRunManager()->AbortEvent();
+  //      GateRunManager::GetRunManager()->TerminateEventLoop();
+  //      return 0;
+  //  }
   GenerateVertex(event);
   G4PrimaryParticle  * p = event->GetPrimaryVertex(0)->GetPrimary(0);
   GateMessage("Beam", 3, "(" << event->GetEventID() << ") " << p->GetG4code()->GetParticleName()

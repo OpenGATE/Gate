@@ -33,7 +33,7 @@ GateLETActor::GateLETActor(G4String name, G4int depth):
   mIsDoseAverageDEDX=false;
   mIsDoseAverageEdepDX=false;
 
-  
+
   mIsLETSecondMomentImageEnabled = false;
   mIsLETtoWaterEnabled = false;
   mIsParallelCalculationEnabled = false;
@@ -102,7 +102,7 @@ void GateLETActor::Construct() {
   SetOriginTransformAndFlagToImage(mDoseTrackAverageLETImage);
   SetOriginTransformAndFlagToImage(mLETSecondMomentImage);
   SetOriginTransformAndFlagToImage(mLETUncertaintyFinalImage);
-  
+
   SetOriginTransformAndFlagToImage(mLETTempImage);
 
   // Resize and allocate images
@@ -113,7 +113,7 @@ void GateLETActor::Construct() {
   mDoseTrackAverageLETImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mDoseTrackAverageLETImage.Allocate();
 
- 
+
   if (mIsLETSecondMomentImageEnabled) {
     mLETSecondMomentImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     mLETSecondMomentImage.Allocate();
@@ -226,7 +226,7 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   GateDebugMessageInc("Actor", 4, "GateLETActor -- UserSteppingActionInVoxel - begin\n");
   GateDebugMessageInc("Actor", 4, "enedepo = " << step->GetTotalEnergyDeposit() << Gateendl);
   GateDebugMessageInc("Actor", 4, "weight = " <<  step->GetTrack()->GetWeight() << Gateendl);
-//	G4cout << "In LET actor: " << step->GetTrack()->GetDefinition()->GetAtomicNumber() << G4endl;
+  //	G4cout << "In LET actor: " << step->GetTrack()->GetDefinition()->GetAtomicNumber() << G4endl;
 
   // Get edep and current particle weight
   const double weight = step->GetTrack()->GetWeight();
@@ -266,8 +266,6 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
     weightedLET=dedx*steplength;
     normalizationVal = steplength;
   }
-
-
   else if (mIsTrackAverageEdepDX) {
     weightedLET=edep;
     normalizationVal = steplength;
@@ -292,12 +290,8 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
     mLETSecondMomentImage.AddValue(index, secondMomentLET);
   }
 
-
-
-
-    mWeightedLETImage.AddValue(index, weightedLET);
-    mNormalizationLETImage.AddValue(index, normalizationVal);
-
+  mWeightedLETImage.AddValue(index, weightedLET);
+  mNormalizationLETImage.AddValue(index, normalizationVal);
 
   GateDebugMessageDec("Actor", 4, "GateLETActor -- UserSteppingActionInVoxel -- end\n");
 }

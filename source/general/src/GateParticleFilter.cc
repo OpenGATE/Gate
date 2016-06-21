@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #include "GateParticleFilter.hh"
@@ -46,36 +46,36 @@ G4bool GateParticleFilter::Accept(const G4Track *aTrack)
     for ( size_t i = 0; i < thePdef.size(); i++) {
       if ( thePdef[i] == aTrack->GetDefinition()->GetParticleName() ||
            (aTrack->GetDefinition()->GetParticleSubType() == "generic" && thePdef[i] == "GenericIon") )
-      {
-        nFilteredParticles++;
-        accept = true;
-        break;
-      }
+        {
+          nFilteredParticles++;
+          accept = true;
+          break;
+        }
     }
   }
-  
+
   if (thePdefZ.empty()) {
     accept = true; //if no particles given, setting to true will disable filtering on particle
     //G4cout<< "List empty. "<<G4endl;
   } else {
-    for ( size_t i = 0; i < thePdefZ.size(); i++) { 
-	  //if ( thePdefZ[i] == aTrack->GetDefinition()->GetAtomicNumber())
-	  //{ 
-		  //G4cout << "Z particle equal to defined Atomic Number " << thePdefZ[i]<< G4endl; 
-	  //}
+    for ( size_t i = 0; i < thePdefZ.size(); i++) {
+      //if ( thePdefZ[i] == aTrack->GetDefinition()->GetAtomicNumber())
+      //{
+      //G4cout << "Z particle equal to defined Atomic Number " << thePdefZ[i]<< G4endl;
+      //}
       if ( thePdefZ[i] == aTrack->GetDefinition()->GetAtomicNumber() )
-      {
-		  //G4cout << "Enters and is simulated: "<< aTrack->GetDefinition()->GetAtomicNumber() << G4endl;
-        nFilteredParticles++;
-        accept = true;
-        break;
-      }
+        {
+          //G4cout << "Enters and is simulated: "<< aTrack->GetDefinition()->GetAtomicNumber() << G4endl;
+          nFilteredParticles++;
+          accept = true;
+          break;
+        }
       else
-      {
-		  accept = false;
-		  //G4cout << "Particle is rejected: " << aTrack->GetDefinition()->GetAtomicNumber() << G4endl;
-	  }
-       //G4cout << "Z particle equal to defined Atomic Number " << aTrack->GetDefinition()->GetAtomicNumber()<< G4endl; 
+        {
+          accept = false;
+          //G4cout << "Particle is rejected: " << aTrack->GetDefinition()->GetAtomicNumber() << G4endl;
+        }
+      //G4cout << "Z particle equal to defined Atomic Number " << aTrack->GetDefinition()->GetAtomicNumber()<< G4endl;
     }
   }
   if (theParentPdef.empty()) {
@@ -83,19 +83,19 @@ G4bool GateParticleFilter::Accept(const G4Track *aTrack)
   } else {
     trackInfo = GateUserActions::GetUserActions()->GetTrackIDInfo(aTrack->GetParentID());
     while (trackInfo)
-    {
-      for ( size_t i = 0; i < theParentPdef.size(); i++) {
-        if ( theParentPdef[i] == trackInfo->GetParticleName())
-        {
-          nFilteredParticles++;
-          acceptparent = true;
-          break;
+      {
+        for ( size_t i = 0; i < theParentPdef.size(); i++) {
+          if ( theParentPdef[i] == trackInfo->GetParticleName())
+            {
+              nFilteredParticles++;
+              acceptparent = true;
+              break;
+            }
         }
+        if (acceptparent == true) break;
+        int id = trackInfo->GetParentID();
+        trackInfo = GateUserActions::GetUserActions()->GetTrackIDInfo(id);
       }
-      if (acceptparent == true) break;
-      int id = trackInfo->GetParentID();
-      trackInfo = GateUserActions::GetUserActions()->GetTrackIDInfo(id);
-    }
   }
 
   if (theDirectParentPdef.empty()) {
@@ -105,11 +105,11 @@ G4bool GateParticleFilter::Accept(const G4Track *aTrack)
     if (trackInfo) {
       for ( size_t i = 0; i < theDirectParentPdef.size(); i++) {
         if ( theDirectParentPdef[i] == trackInfo->GetParticleName())
-        {
-          nFilteredParticles++;
-          acceptdirectparent = true;
-          break;
-        }
+          {
+            nFilteredParticles++;
+            acceptdirectparent = true;
+            break;
+          }
       }
     }
   }
@@ -128,7 +128,7 @@ void GateParticleFilter::Add(const G4String &particleName)
 
 //---------------------------------------------------------------------------
 void GateParticleFilter::AddZ(const G4int &particleZ)
-{ 
+{
   for ( size_t i = 0; i < thePdefZ.size(); i++) {
     if ( thePdefZ[i] == particleZ ) return;
   }

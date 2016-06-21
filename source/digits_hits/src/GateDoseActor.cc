@@ -340,81 +340,81 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
   double doseToWater = 0;
   if (mIsDoseToWaterImageEnabled)
-  {
-    // to get nuclear inelastic cross-section, see "geant4.9.4.p01/examples/extended/hadronic/Hadr00/"
-    // #include "G4HadronicProcessStore.hh"
-    // G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
-    // store->GetInelasticCrossSectionPerAtom(particle,e,elm);
+    {
+      // to get nuclear inelastic cross-section, see "geant4.9.4.p01/examples/extended/hadronic/Hadr00/"
+      // #include "G4HadronicProcessStore.hh"
+      // G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
+      // store->GetInelasticCrossSectionPerAtom(particle,e,elm);
 
-    double cut = DBL_MAX;
-    cut=1;
-    G4String material = step->GetPreStepPoint()->GetMaterial()->GetName();
-    double Energy = step->GetPreStepPoint()->GetKineticEnergy();
-    G4String PartName = step->GetTrack()->GetDefinition()->GetParticleName();
-    double DEDX=0, DEDX_Water=0;
+      double cut = DBL_MAX;
+      cut=1;
+      G4String material = step->GetPreStepPoint()->GetMaterial()->GetName();
+      double Energy = step->GetPreStepPoint()->GetKineticEnergy();
+      G4String PartName = step->GetTrack()->GetDefinition()->GetParticleName();
+      double DEDX=0, DEDX_Water=0;
 
-    // Dose to water: it could be possible to make this process more
-    // generic by choosing any material in place of water
-    double Volume = mDoseToWaterImage.GetVoxelVolume();
+      // Dose to water: it could be possible to make this process more
+      // generic by choosing any material in place of water
+      double Volume = mDoseToWaterImage.GetVoxelVolume();
 
-    // Other particles should be taken into account (Helium etc), but bug ? FIXME
-    if (PartName== "proton" || PartName== "e-" || PartName== "e+" || PartName== "deuteron") {
-      //if (PartName != "O16[0.0]" && PartName != "alpha" && PartName != "Be7[0.0]" && PartName != "C12[0.0]"){
+      // Other particles should be taken into account (Helium etc), but bug ? FIXME
+      if (PartName== "proton" || PartName== "e-" || PartName== "e+" || PartName== "deuteron") {
+        //if (PartName != "O16[0.0]" && PartName != "alpha" && PartName != "Be7[0.0]" && PartName != "C12[0.0]"){
 
-      DEDX = emcalc->ComputeTotalDEDX(Energy, PartName, material, cut);
-      DEDX_Water = emcalc->ComputeTotalDEDX(Energy, PartName, "G4_WATER", cut);
+        DEDX = emcalc->ComputeTotalDEDX(Energy, PartName, material, cut);
+        DEDX_Water = emcalc->ComputeTotalDEDX(Energy, PartName, "G4_WATER", cut);
 
-      doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
+        doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
+      }
+      else {
+        DEDX = emcalc->ComputeTotalDEDX(100, "proton", material, cut);
+        DEDX_Water = emcalc->ComputeTotalDEDX(100, "proton", "G4_WATER", cut);
+        doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
+      }
+
+      GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = "
+                       << G4BestUnit(doseToWater, "Dose to water")
+                       << " rho = "
+                       << G4BestUnit(density, "Volumic Mass")<< Gateendl );
     }
-    else {
-      DEDX = emcalc->ComputeTotalDEDX(100, "proton", material, cut);
-      DEDX_Water = emcalc->ComputeTotalDEDX(100, "proton", "G4_WATER", cut);
-      doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
-    }
-
-    GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = "
-		     << G4BestUnit(doseToWater, "Dose to water")
-		     << " rho = "
-		     << G4BestUnit(density, "Volumic Mass")<< Gateendl );
-  }
 
   if (mIsEdepImageEnabled) {
     GateDebugMessage("Actor", 2, "GateDoseActor -- UserSteppingActionInVoxel:\tedep = " << G4BestUnit(edep, "Energy") << Gateendl);
   }
 
   if (mIsDoseImageEnabled)
-  {
-    if (mIsDoseUncertaintyImageEnabled || mIsDoseSquaredImageEnabled)
     {
-      if (sameEvent) mDoseImage.AddTempValue(index, dose);
-      else mDoseImage.AddValueAndUpdate(index, dose);
+      if (mIsDoseUncertaintyImageEnabled || mIsDoseSquaredImageEnabled)
+        {
+          if (sameEvent) mDoseImage.AddTempValue(index, dose);
+          else mDoseImage.AddValueAndUpdate(index, dose);
+        }
+      else mDoseImage.AddValue(index, dose);
     }
-    else mDoseImage.AddValue(index, dose);
-  }
 
   if (mIsDoseToWaterImageEnabled)
-  {
-    if (mIsDoseToWaterUncertaintyImageEnabled || mIsDoseToWaterSquaredImageEnabled)
     {
-      if (sameEvent) mDoseToWaterImage.AddTempValue(index, doseToWater);
-      else mDoseToWaterImage.AddValueAndUpdate(index, doseToWater);
+      if (mIsDoseToWaterUncertaintyImageEnabled || mIsDoseToWaterSquaredImageEnabled)
+        {
+          if (sameEvent) mDoseToWaterImage.AddTempValue(index, doseToWater);
+          else mDoseToWaterImage.AddValueAndUpdate(index, doseToWater);
+        }
+      else mDoseToWaterImage.AddValue(index, doseToWater);
     }
-    else mDoseToWaterImage.AddValue(index, doseToWater);
-  }
 
   if (mIsEdepImageEnabled)
-  {
-    if (mIsEdepUncertaintyImageEnabled || mIsEdepSquaredImageEnabled)
     {
-      if (sameEvent) mEdepImage.AddTempValue(index, edep);
-      else mEdepImage.AddValueAndUpdate(index, edep);
-    }
-    else
-    {
-		mEdepImage.AddValue(index, edep);
-		
+      if (mIsEdepUncertaintyImageEnabled || mIsEdepSquaredImageEnabled)
+        {
+          if (sameEvent) mEdepImage.AddTempValue(index, edep);
+          else mEdepImage.AddValueAndUpdate(index, edep);
+        }
+      else
+        {
+          mEdepImage.AddValue(index, edep);
+
 	}
-  }
+    }
 
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.AddValue(index, weight);
 

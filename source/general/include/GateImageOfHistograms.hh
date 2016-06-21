@@ -34,7 +34,7 @@
   FIXME:
   - manage a sparse version (not an histo at every pixel)
 
- */
+*/
 
 //-----------------------------------------------------------------------------
 class GateImageOfHistograms:public GateImage
@@ -70,7 +70,6 @@ public:
   void Scale(double f);
   double ComputeSum();
   void Deallocate();
-
 
   // Compute and image (data only) of the sum of histo by pixel (in order HXYZ)
   void ComputeTotalOfCountsImageDataFloat(std::vector<float> & output);
