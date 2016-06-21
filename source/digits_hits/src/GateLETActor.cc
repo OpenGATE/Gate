@@ -67,6 +67,7 @@ void GateLETActor::Construct() {
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(true);
+  EnablePostUserTrackingAction(true);
   EnableUserSteppingAction(true);
 
 
@@ -90,6 +91,9 @@ void GateLETActor::Construct() {
     }
   if (mIsLETtoWaterEnabled){
     mLETFilename= removeExtension(mLETFilename) + "-letToWater."+ getExtension(mLETFilename);
+  }
+  if (mIsAverageKinEnergy){
+    mLETFilename= removeExtension(mLETFilename) + "-kinEnergyFluenceAverage."+getExtension(mLETFilename);
   }
   if (mIsParallelCalculationEnabled)
     {
@@ -144,13 +148,19 @@ void GateLETActor::SaveData() {
     mNormalizationLETImage.Write(denominatorFileName);
   }
   else
-    {
+    { int indA = 0;
       GateImageDouble::const_iterator iter_LET = mWeightedLETImage.begin();
       GateImageDouble::const_iterator iter_Edep = mNormalizationLETImage.begin();
       GateImageDouble::iterator iter_Final = mDoseTrackAverageLETImage.begin();
       for(iter_LET = mWeightedLETImage.begin(); iter_LET != mWeightedLETImage.end(); iter_LET++) {
         if (*iter_Edep == 0.0) *iter_Final = 0.0; // do not divide by zero
         else *iter_Final = (*iter_LET)/(*iter_Edep);
+        if (indA < 1)
+	{
+	 G4cout<<"Iter final: "<< *iter_Final << G4endl;
+	indA++;
+}
+ 
         iter_Edep++;
         iter_Final++;
       }
@@ -234,8 +244,6 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
     weightedLET=dedx*steplength;
     normalizationVal = steplength;
   }
-
-
   else if (mIsTrackAverageEdepDX) {
     weightedLET=edep;
     normalizationVal = steplength;
@@ -245,7 +253,7 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
     normalizationVal = edep;
   }
   else if (mIsAverageKinEnergy) {
-	weightedLET=steplength*energy*weight;
+    weightedLET=steplength*energy*weight;
     normalizationVal = steplength;
   }
   
