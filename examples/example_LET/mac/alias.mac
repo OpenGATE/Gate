@@ -25,7 +25,7 @@
 	# Phantom Material
 /control/alias Material "Water"
 /control/alias BoneMaterial "RibBone"
-/control/alias airishMaterial "Air"
+/control/alias airishMaterial "Lung"
 
 
 
