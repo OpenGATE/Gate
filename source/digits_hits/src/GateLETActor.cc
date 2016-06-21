@@ -34,7 +34,7 @@ GateLETActor::GateLETActor(G4String name, G4int depth):
   mIsDoseAverageEdepDX=false;
   mIsAverageKinEnergy=false;
   
-  mIsLETSecondMomentImageEnabled = false;
+
   mIsLETtoWaterEnabled = false;
   mIsParallelCalculationEnabled = false;
   mAveragingType = "DoseAverage";
@@ -101,10 +101,8 @@ void GateLETActor::Construct() {
   SetOriginTransformAndFlagToImage(mWeightedLETImage);
   SetOriginTransformAndFlagToImage(mNormalizationLETImage);
   SetOriginTransformAndFlagToImage(mDoseTrackAverageLETImage);
-  SetOriginTransformAndFlagToImage(mLETSecondMomentImage);
-  SetOriginTransformAndFlagToImage(mLETSigmaFinalImage);
   
-  SetOriginTransformAndFlagToImage(mLETTempImage);
+
 
   // Resize and allocate images
   mWeightedLETImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
@@ -115,12 +113,6 @@ void GateLETActor::Construct() {
   mDoseTrackAverageLETImage.Allocate();
 
  
-  if (mIsLETSecondMomentImageEnabled) {
-    mLETSecondMomentImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mLETSecondMomentImage.Allocate();
-    mLETSigmaFinalImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mLETSigmaFinalImage.Allocate();
-  }
 
   // Warning: for the moment we force to PostStepHitType. This is ok
   // (slightly faster) if voxel sizes are the same between the
@@ -150,9 +142,6 @@ void GateLETActor::SaveData() {
   if (mIsParallelCalculationEnabled) {
     mWeightedLETImage.Write(numeratorFileName);
     mNormalizationLETImage.Write(denominatorFileName);
-    if (mIsLETSecondMomentImageEnabled) {
-      mLETSecondMomentImage.Write(removeExtension(mLETFilename) + "-variance-unnormalizedSecondMoment."+ getExtension(mLETFilename));
-    }
   }
   else
     {
@@ -167,27 +156,6 @@ void GateLETActor::SaveData() {
       }
       mDoseTrackAverageLETImage.Write(mLETFilename);
 
-      sigmaFilename = removeExtension(mLETFilename) + "-variance."+ getExtension(mLETFilename);
-      if (mIsLETSecondMomentImageEnabled)
-        {
-	  GateImageDouble::const_iterator iter_LET_u = mWeightedLETImage.begin();
-	  GateImageDouble::const_iterator iter_LET_secMoment = mLETSecondMomentImage.begin();
-	  GateImageDouble::const_iterator iter_Edep_u = mNormalizationLETImage.begin();
-	  GateImageDouble::iterator iter_Final_uncert = mLETSigmaFinalImage.begin();
-	  for(iter_LET_u = mWeightedLETImage.begin(); iter_LET_u != mWeightedLETImage.end(); iter_LET_u++) {
-            if (*iter_Edep_u == 0.0) *iter_Final_uncert = 0.0; // do not divide by zero
-            else *iter_Final_uncert = (*iter_LET_secMoment)/(*iter_Edep_u) - (*iter_LET_u)*(*iter_LET_u)/(*iter_Edep_u)/(*iter_Edep_u);
-            G4cout<< "X2: " << *iter_LET_secMoment<<G4endl;
-            G4cout<< "mu: " << *iter_LET_u<<G4endl;
-            
-            G4cout<< "N: " << *iter_Edep_u<<G4endl;
-            G4cout<< "s2: " << *iter_Final_uncert<<G4endl;
-            iter_Edep_u++;
-            iter_LET_secMoment++;
-            iter_Final_uncert++;
-	  }
-	  mLETSigmaFinalImage.Write(sigmaFilename);
-        }
     }
 }
 //-----------------------------------------------------------------------------
@@ -197,12 +165,6 @@ void GateLETActor::SaveData() {
 void GateLETActor::ResetData() {
   mWeightedLETImage.Fill(0.0);
   mNormalizationLETImage.Fill(0.0);
-
-  if (mIsLETSecondMomentImageEnabled) {
-    mLETSecondMomentImage.Fill(0.0);
-  }
-
-
 
 }
 //-----------------------------------------------------------------------------
@@ -290,20 +252,6 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
   if (mIsLETtoWaterEnabled){
     weightedLET = (weightedLET/dedx)*	emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER") ;
   }
-
-  if (mIsLETSecondMomentImageEnabled) {
-    double secondMomentLET = 0;
-    if (mIsDoseAverageDEDX){
-      secondMomentLET = edep*dedx*dedx;
-    }
-    else if (mIsTrackAverageDEDX) { secondMomentLET = steplength*dedx*dedx;}
-    else if (mIsTrackAverageEdepDX) { secondMomentLET = edep*edep/steplength;}
-    else if (mIsDoseAverageEdepDX) { secondMomentLET = edep*edep/steplength;}
-    else if (mIsAverageKinEnergy) {secondMomentLET = energy*energy*weight*weight;};
-    mLETSecondMomentImage.AddValue(index, secondMomentLET);
-  }
-
-
 
 
     mWeightedLETImage.AddValue(index, weightedLET);

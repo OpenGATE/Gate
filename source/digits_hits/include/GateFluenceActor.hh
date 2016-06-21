@@ -72,9 +72,7 @@ public:
   virtual void UserPreTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/)
     {
     }
-  virtual void UserPostTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/)
-    {
-    }
+  virtual void UserPostTrackActionInVoxel(const int index, const G4Track* aTrack);
 
   /// Saves the data collected to the file
   virtual void SaveData();
@@ -108,6 +106,7 @@ protected:
   GateImageWithStatistic mImageProcess;
   GateImage mLastHitEventImage;
   GateImage mNumberOfHitsImage;
+  GateImageDouble mTrackLengthImage;
   GateImageDouble mStepLengthImage;
   GateImageDouble mNumberOfHitsStepLengthImage;
   
