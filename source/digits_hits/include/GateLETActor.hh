@@ -41,7 +41,6 @@ public:
   // Constructs the sensor
   virtual void Construct();
 
-  void EnableLETUncertaintyImage(bool b) { mIsLETSecondMomentImageEnabled = b; }
   void SetLETtoWater(bool b) { mIsLETtoWaterEnabled = b; }
   void SetParallelCalculation(bool b) { mIsParallelCalculationEnabled = b; }
   void SetLETType(G4String s) { mAveragingType = s; }
@@ -68,7 +67,6 @@ protected:
   GateLETActorMessenger * pMessenger;
 
   int mCurrentEvent;
-  bool mIsLETSecondMomentImageEnabled;
   bool mIsLETtoWaterEnabled;
   G4String mAveragingType;
   
@@ -80,8 +78,6 @@ protected:
   G4String denominatorFileName;
   G4String sigmaFilename;
   
-  GateImageDouble mLETSecondMomentImage;
-  GateImageDouble mLETUncertaintyFinalImage;
 
   bool mIsDoseAveraged;
   bool mIsTrackAveraged;
@@ -92,11 +88,8 @@ protected:
   bool mIsDoseAverageDEDX;
   bool mIsDoseAverageEdepDX;
   
-  bool hallomein;
+  bool mIsAverageKinEnergy;
 
-  GateImageDouble mLETTempImage;
-  GateImageInt mNumberOfHitsImage;
-  GateImageInt mLastHitEventImage;
 
   bool mIsParallelCalculationEnabled;
 

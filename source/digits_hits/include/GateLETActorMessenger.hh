@@ -32,7 +32,6 @@ protected:
   GateLETActor * pLETActor;
 
   
-  G4UIcmdWithABool * pEnableLETUncertaintyCmd;
   G4UIcmdWithABool * pSetLETtoWaterCmd;
   G4UIcmdWithAString * pAveragingTypeCmd; 
   G4UIcmdWithABool * pSetParallelCalculationCmd;

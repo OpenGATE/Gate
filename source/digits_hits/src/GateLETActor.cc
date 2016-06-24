@@ -27,17 +27,15 @@ GateLETActor::GateLETActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
   GateDebugMessageInc("Actor",4,"GateLETActor() -- begin\n");
 
-
   mIsTrackAverageDEDX=false;
   mIsTrackAverageEdepDX=false;
   mIsDoseAverageDEDX=false;
   mIsDoseAverageEdepDX=false;
+  mIsAverageKinEnergy=false;
 
-
-  mIsLETSecondMomentImageEnabled = false;
   mIsLETtoWaterEnabled = false;
   mIsParallelCalculationEnabled = false;
-  mAveragingType = "DoseAveraged";
+  mAveragingType = "DoseAverage";
   pMessenger = new GateLETActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateLETActor() -- end\n");
   emcalc = new G4EmCalculator;
@@ -67,6 +65,7 @@ void GateLETActor::Construct() {
   EnableBeginOfRunAction(true);
   EnableBeginOfEventAction(true);
   EnablePreUserTrackingAction(true);
+  EnablePostUserTrackingAction(true);
   EnableUserSteppingAction(true);
 
 
@@ -74,6 +73,7 @@ void GateLETActor::Construct() {
   else if (mAveragingType == "DoseAveragedEdep" || mAveragingType == "DoseAverageEdep" ){mIsDoseAverageEdepDX = true;}
   else if (mAveragingType == "TrackAveraged" || mAveragingType == "TrackAverage" || mAveragingType == "Track" || mAveragingType == "track" || mAveragingType == "TrackAveragedDXAveraged"){mIsTrackAverageDEDX = true;}
   else if (mAveragingType == "TrackAveragedEdep" || mAveragingType == "TrackAverageEdep" ){mIsTrackAverageEdepDX = true;}
+  else if (mAveragingType == "AverageKinEnergy"){mIsAverageKinEnergy = true;}
   else {GateError("The LET averaging Type" << GetObjectName()
                   << " is not valid ...\n Please select 'DoseAveraged' or 'TrackAveraged')");}
 
@@ -90,6 +90,9 @@ void GateLETActor::Construct() {
   if (mIsLETtoWaterEnabled){
     mLETFilename= removeExtension(mLETFilename) + "-letToWater."+ getExtension(mLETFilename);
   }
+  if (mIsAverageKinEnergy){
+    mLETFilename= removeExtension(mLETFilename) + "-kinEnergyFluenceAverage."+getExtension(mLETFilename);
+  }
   if (mIsParallelCalculationEnabled)
     {
       numeratorFileName= removeExtension(mLETFilename) + "-numerator."+ getExtension(mLETFilename);
@@ -100,10 +103,6 @@ void GateLETActor::Construct() {
   SetOriginTransformAndFlagToImage(mWeightedLETImage);
   SetOriginTransformAndFlagToImage(mNormalizationLETImage);
   SetOriginTransformAndFlagToImage(mDoseTrackAverageLETImage);
-  SetOriginTransformAndFlagToImage(mLETSecondMomentImage);
-  SetOriginTransformAndFlagToImage(mLETUncertaintyFinalImage);
-
-  SetOriginTransformAndFlagToImage(mLETTempImage);
 
   // Resize and allocate images
   mWeightedLETImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
@@ -112,14 +111,6 @@ void GateLETActor::Construct() {
   mNormalizationLETImage.Allocate();
   mDoseTrackAverageLETImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
   mDoseTrackAverageLETImage.Allocate();
-
-
-  if (mIsLETSecondMomentImageEnabled) {
-    mLETSecondMomentImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mLETSecondMomentImage.Allocate();
-    mLETUncertaintyFinalImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mLETUncertaintyFinalImage.Allocate();
-  }
 
   // Warning: for the moment we force to PostStepHitType. This is ok
   // (slightly faster) if voxel sizes are the same between the
@@ -149,9 +140,6 @@ void GateLETActor::SaveData() {
   if (mIsParallelCalculationEnabled) {
     mWeightedLETImage.Write(numeratorFileName);
     mNormalizationLETImage.Write(denominatorFileName);
-    if (mIsLETSecondMomentImageEnabled) {
-      mLETSecondMomentImage.Write(removeExtension(mLETFilename) + "-variance-unnormalizedSecondMoment."+ getExtension(mLETFilename));
-    }
   }
   else
     {
@@ -166,22 +154,6 @@ void GateLETActor::SaveData() {
       }
       mDoseTrackAverageLETImage.Write(mLETFilename);
 
-      sigmaFilename = removeExtension(mLETFilename) + "-variance."+ getExtension(mLETFilename);
-      if (mIsLETSecondMomentImageEnabled)
-        {
-	  GateImageDouble::const_iterator iter_LET_u = mWeightedLETImage.begin();
-	  GateImageDouble::const_iterator iter_LET_secMoment = mLETSecondMomentImage.begin();
-	  GateImageDouble::const_iterator iter_Edep_u = mNormalizationLETImage.begin();
-	  GateImageDouble::iterator iter_Final_uncert = mLETUncertaintyFinalImage.begin();
-	  for(iter_LET_u = mWeightedLETImage.begin(); iter_LET_u != mWeightedLETImage.end(); iter_LET_u++) {
-            if (*iter_Edep_u == 0.0) *iter_Final_uncert = 0.0; // do not divide by zero
-            else *iter_Final_uncert = (*iter_LET_secMoment)/(*iter_Edep_u) - (*iter_LET_u)*(*iter_LET_u)/(*iter_Edep_u)/(*iter_Edep_u);
-            iter_Edep_u++;
-            iter_LET_secMoment++;
-            iter_Final_uncert++;
-	  }
-	  mLETUncertaintyFinalImage.Write(sigmaFilename);
-        }
     }
 }
 //-----------------------------------------------------------------------------
@@ -191,12 +163,6 @@ void GateLETActor::SaveData() {
 void GateLETActor::ResetData() {
   mWeightedLETImage.Fill(0.0);
   mNormalizationLETImage.Fill(0.0);
-
-  if (mIsLETSecondMomentImageEnabled) {
-    mLETSecondMomentImage.Fill(0.0);
-  }
-
-
 
 }
 //-----------------------------------------------------------------------------
@@ -274,20 +240,13 @@ void GateLETActor::UserSteppingActionInVoxel(const int index, const G4Step* step
     weightedLET=edep*edep/steplength;
     normalizationVal = edep;
   }
-
-  if (mIsLETtoWaterEnabled){
-    weightedLET/=dedx*emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER");
+  else if (mIsAverageKinEnergy) {
+    weightedLET=steplength*energy*weight;
+    normalizationVal = steplength;
   }
 
-  if (mIsLETSecondMomentImageEnabled) {
-    double secondMomentLET = 0;
-    if (mIsDoseAverageDEDX){
-      secondMomentLET = edep*dedx*dedx;
-    }
-    else if (mIsTrackAverageDEDX) { secondMomentLET = steplength*dedx*dedx;}
-    else if (mIsTrackAverageEdepDX) { secondMomentLET = edep*edep/steplength;}
-    else if (mIsDoseAverageEdepDX) { secondMomentLET = edep*edep/steplength;}
-    mLETSecondMomentImage.AddValue(index, secondMomentLET);
+  if (mIsLETtoWaterEnabled){
+    weightedLET = (weightedLET/dedx)*	emcalc->ComputeTotalDEDX(energy, partname->GetParticleName(), "G4_WATER") ;
   }
 
   mWeightedLETImage.AddValue(index, weightedLET);
