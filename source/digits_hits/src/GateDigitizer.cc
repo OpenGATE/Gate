@@ -228,7 +228,7 @@ GatePulseList* GateDigitizer::FindPulseList(const G4String& pulseListName)
       return m_pulseListVector[i];
     }
   if (nVerboseLevel>1)
-    G4cout << "[GateDigitizer::FindPulseList]: Cound not find pulse-list '" << pulseListName << "'"<< Gateendl;
+    G4cout << "[GateDigitizer::FindPulseList]: Could not find pulse-list '" << pulseListName << "'"<< Gateendl;
   return 0;
 }
 

@@ -1,0 +1,14 @@
+/gate/actor/addActor                               DoseActor  doseIn3D
+/gate/actor/doseIn3D/save                  output/dose.txt
+/gate/actor/doseIn3D/attachTo    	   		phantom
+/gate/actor/doseIn3D/stepHitType           random
+/gate/actor/doseIn3D/setPosition           0 0 0 cm
+/gate/actor/doseIn3D/setVoxelSize  		   {PhantomSizeXY} {PhantomSizeXY} 0.2 mm
+/gate/actor/doseIn3D/enableEdep            true
+/gate/actor/doseIn3D/enableUncertaintyEdep false
+/gate/actor/doseIn3D/enableDose            false
+/gate/actor/doseIn3D/enableUncertaintyDose false
+/gate/actor/doseIn3D/enableDoseToWater     true
+/gate/actor/doseIn3D/saveEveryNSeconds     3000
+
+

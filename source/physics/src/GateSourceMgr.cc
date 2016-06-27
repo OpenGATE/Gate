@@ -231,6 +231,11 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
         source->SetType("fastI124");
         source->SetSourceID( m_sourceProgressiveNumber );
       }
+      else if (sourceGeomType == "fastY90") {
+        source = new GateSourceFastY90( sourceName );
+        source->SetType("fastY90");
+        source->SetSourceID( m_sourceProgressiveNumber );
+      }
       else if (sourceGeomType == "") {
         source = new GateVSource( sourceName );
         source->SetType("gps");

@@ -17,6 +17,7 @@
 //------------------------------------------------------------------------
 GateSourceOfPromptGammaData::GateSourceOfPromptGammaData()
 {
+    computesum = 0;
 }
 //------------------------------------------------------------------------
 
@@ -60,6 +61,7 @@ void GateSourceOfPromptGammaData::Initialize()
 
   // Build the scalar image with total number of counts at each pixel
   mImage->ComputeTotalOfCountsImageDataFloat(mDataCounts);
+  computesum = mImage->ComputeSum();
 
   // Initialize random generator for position. Loop over the total
   // count scalar image (mDataCounts)
@@ -127,6 +129,10 @@ void GateSourceOfPromptGammaData::Initialize()
   mAngleGen.SetBiasRndm(biasRndm);
   mAngleGen.SetPosDistribution(new G4SPSPosDistribution); // needed
   mAngleGen.SetAngDistType("iso");
+
+  // ATTENTION: THIS DELETES THE ON DISK DATA FROM MEMORY. ACCESSING THE DATA IN mImage
+  // WILL SEGFAULT. METADATA IS KEPT.
+  mImage->Deallocate();
 }
 //------------------------------------------------------------------------
 

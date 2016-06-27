@@ -37,7 +37,7 @@ public:
   G4int GeneratePrimaries(G4Event* event);
   void GenerateVertex(G4Event* );
   void SetFilename(G4String filename);
-
+  
 protected:
   GateSourceOfPromptGammaMessenger * pMessenger;
   bool mIsInitializedFlag;
@@ -47,6 +47,7 @@ protected:
   double mEnergy; // because particle_energy is private (FIXME will be changed)
 
   void Initialize();
+  double ng;
   void InitializeNumberOfPrimaries();
 }; // end class
 //------------------------------------------------------------------------

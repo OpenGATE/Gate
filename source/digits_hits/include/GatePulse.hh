@@ -41,11 +41,12 @@ class GatePulse
     //! Constructor
     GatePulse(const void* itsMother=0);
 
-    //! Copy constructor
+    //! Copy constructor  <- not really, this is just a normal constructor that takes a pointer!
     inline GatePulse(const GatePulse* right)
     {
       	*this = *right;
     }
+
     //! Destructor
     virtual inline ~GatePulse() {}
 

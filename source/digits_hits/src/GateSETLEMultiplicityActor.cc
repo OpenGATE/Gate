@@ -83,7 +83,7 @@ void GateSETLEMultiplicityActor::SetMultiplicity(bool b, int mP, int mS, G4VPhys
 
   // register expTLEDoseActor's volume
   std::map<G4VPhysicalVolume *,int>::iterator it = mSecondaryMultiplicityMap.find(v);  
-  if(it == mSecondaryMultiplicityMap.end()) { mSecondaryMultiplicityMap.insert(make_pair(v,mS)); }
+  if(it == mSecondaryMultiplicityMap.end()) { mSecondaryMultiplicityMap.insert(std::make_pair(v,mS)); }
   else { GateError("Number of 'hybridDoseActor' attached to '" << v->GetName() << "' is too large (1 maximum)"); }
 }
 //-----------------------------------------------------------------------------

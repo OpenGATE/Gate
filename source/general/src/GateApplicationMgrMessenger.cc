@@ -8,6 +8,7 @@
 
 #include "GateApplicationMgrMessenger.hh"
 #include "GateApplicationMgr.hh"
+#include "GateSourceMgr.hh"
 
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithABool.hh"
@@ -83,9 +84,9 @@ GateApplicationMgrMessenger::GateApplicationMgrMessenger()
   PauseDAQCmd->SetGuidance("Pause the DAQ");
   //  StopDAQCmd->AvailableForStates(Idle);
 
-//  ExitFlagCmd = new G4UIcmdWithABool("/gate/application/setExitFlag",this);
-//  ExitFlagCmd->SetGuidance("Set GATE application manager exit flag");
-//  ExitFlagCmd->SetGuidance("If true, it stops the DAQ loop");
+  //  ExitFlagCmd = new G4UIcmdWithABool("/gate/application/setExitFlag",this);
+  //  ExitFlagCmd->SetGuidance("Set GATE application manager exit flag");
+  //  ExitFlagCmd->SetGuidance("If true, it stops the DAQ loop");
 
   VerboseCmd = new G4UIcmdWithAnInteger("/gate/application/verbose",this);
   VerboseCmd->SetGuidance("Set GATE application manager verbose level");
@@ -139,7 +140,7 @@ GateApplicationMgrMessenger::~GateApplicationMgrMessenger()
   delete StopDAQCmd;
   delete PauseDAQCmd;
   delete VerboseCmd;
-//  delete ExitFlagCmd;
+  //  delete ExitFlagCmd;
   delete DescribeCmd;
   delete NoOutputCmd;
   //delete EnableSuccessiveSourceMode;
@@ -194,9 +195,9 @@ void GateApplicationMgrMessenger::SetNewValue(G4UIcommand* command, G4String new
   else if( command == VerboseCmd ) {
     appMgr->SetVerboseLevel(VerboseCmd->GetNewIntValue(newValue));
   }
-//  else if( command == ExitFlagCmd ) {
-//    appMgr->SetExitFlag(ExitFlagCmd->GetNewBoolValue(newValue));
-//  }
+  //  else if( command == ExitFlagCmd ) {
+  //    appMgr->SetExitFlag(ExitFlagCmd->GetNewBoolValue(newValue));
+  //  }
   else  if( command == DescribeCmd ) {
     appMgr->Describe();
   }
@@ -210,7 +211,18 @@ void GateApplicationMgrMessenger::SetNewValue(G4UIcommand* command, G4String new
     appMgr->ReadTimeSlicesInAFile(newValue);
   }
   else if (command == SetTotalNumberOfPrimariesCmd) {
-    appMgr->SetTotalNumberOfPrimaries(SetTotalNumberOfPrimariesCmd->GetNewDoubleValue(newValue));
+    double f=1.;
+    GateSourceMgr * sourceMgr = GateSourceMgr::GetInstance();
+    if (sourceMgr->GetNumberOfSources() == 1) {
+      if(sourceMgr->GetSource(0)->GetName()=="PGS"){
+        sourceMgr->GetSource(0)->Initialize();
+        f=sourceMgr->GetSource(0)->GetSourceWeight();
+        GateMessage("Run", 0, "Requested number of proton is " << newValue
+                    << ". According to the PGS source, it's scaled with factor "
+                    << f << "." << std::endl);
+      }
+    }
+    appMgr->SetTotalNumberOfPrimaries(SetTotalNumberOfPrimariesCmd->GetNewDoubleValue(newValue)*f);
   }
   else if (command == SetNumberOfPrimariesPerRunCmd) {
     appMgr->SetNumberOfPrimariesPerRun(SetNumberOfPrimariesPerRunCmd->GetNewDoubleValue(newValue));
