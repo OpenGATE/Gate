@@ -25,7 +25,7 @@ bool tokenize(G4String str, G4String &key, G4String &value)
 {
   // split at :=
   std::size_t separator;
-  std::size_t start;
+  std::size_t start=0;
   std::size_t end;
 
   // strip off comments
