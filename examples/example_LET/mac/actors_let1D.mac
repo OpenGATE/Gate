@@ -1,0 +1,70 @@
+
+/gate/actor/addActor                         LETActor  let
+/gate/actor/let/save                         output/letDoseAvDEDX_primary.txt
+/gate/actor/let/attachTo                     phantom
+/gate/actor/let/setVoxelSize                 {PhantomSizeXY} {PhantomSizeXY} 0.2 mm
+/gate/actor/let/setType						 DoseAveraged
+/gate/actor/let/doParallelCalculation		 false
+/gate/actor/let/setLETtoWater               false
+## The ID filter can be applied to any actor. ID = 1: only primary particles
+/gate/actor/let/addFilter                    IDFilter
+/gate/actor/let/IDFilter/selectID			 1
+#This does the same as IDFilter 1:
+#/gate/actor/let/addFilter                    particleFilter
+#/gate/actor/let/particleFilter/addParticleZ	 1
+/gate/actor/let/saveEveryNSeconds    		 3000
+
+/gate/actor/addActor                         LETActor  letSecProtons
+/gate/actor/letSecProtons/save                         output/letDoseAvDEDX_secProtons.txt
+/gate/actor/letSecProtons/attachTo                     phantom
+/gate/actor/letSecProtons/setVoxelSize                 {PhantomSizeXY} {PhantomSizeXY} 0.2 mm
+/gate/actor/letSecProtons/setType		  DoseAverage
+/gate/actor/letSecProtons/doParallelCalculation		 false
+/gate/actor/letSecProtons/setLETtoWater               false
+## The ID filter can be applied to any actor. ID = 1: only primary particles
+/gate/actor/letSecProtons/addFilter                    particleFilter
+/gate/actor/letSecProtons/particleFilter/addParticle	proton
+/gate/actor/letSecProtons/saveEveryNSeconds    		 3000
+
+
+
+/gate/actor/addActor                         LETActor  letDoseToWater
+/gate/actor/letDoseToWater/save                         output/letToWaterDEDX_primary.txt
+/gate/actor/letDoseToWater/attachTo                     phantom
+/gate/actor/letDoseToWater/setVoxelSize                 {PhantomSizeXY} {PhantomSizeXY} 0.2 mm
+/gate/actor/letDoseToWater/setType						 DoseAveraged
+/gate/actor/letDoseToWater/setLETtoWater               true
+/gate/actor/letDoseToWater/doParallelCalculation		false
+## The ID filter can be applied to any actor. ID = 1: only primary particles
+/gate/actor/letDoseToWater/addFilter                    IDFilter
+/gate/actor/letDoseToWater/IDFilter/selectID			1
+/gate/actor/letDoseToWater/saveEveryNSeconds     		3000
+
+
+/gate/actor/addActor                         LETActor  letDoseToWaterSecProtons
+/gate/actor/letDoseToWaterSecProtons/save                         output/letToWaterDEDX_secProtons.txt
+/gate/actor/letDoseToWaterSecProtons/attachTo                     phantom
+/gate/actor/letDoseToWaterSecProtons/setVoxelSize                 {PhantomSizeXY} {PhantomSizeXY} 0.2 mm
+/gate/actor/letDoseToWaterSecProtons/setType						 DoseAveraged
+/gate/actor/letDoseToWaterSecProtons/setLETtoWater               true
+/gate/actor/letDoseToWaterSecProtons/doParallelCalculation		false
+## The ID filter can be applied to any actor. ID = 1: only primary particles
+/gate/actor/letDoseToWaterSecProtons/addFilter                    particleFilter
+/gate/actor/letDoseToWaterSecProtons/particleFilter/addParticle			proton
+/gate/actor/letDoseToWaterSecProtons/saveEveryNSeconds     		3000
+
+### Track averaged LET
+##### primary and secondary protons  
+#/gate/actor/addActor                         LETActor  letTrack
+#/gate/actor/letTrack/save                         output/letDoseToWater.txt
+#/gate/actor/letTrack/attachTo                     phantom
+#/gate/actor/letTrack/setVoxelSize                 {PhantomSizeXY} {PhantomSizeXY} 0.2 mm
+#/gate/actor/letTrack/setType					  TrackAveraged
+##/gate/actor/letTrack/setRestricted				  false
+##/gate/actor/letTrack/setDeltaRestricted  		  50000 mm
+#/gate/actor/letTrack/setDoseToWater               true
+#/gate/actor/letTrack/doParallelCalculation		  false
+##/gate/actor/letTrack/saveEveryNSeconds     			720
+### The particle filter can be applied to any actor. proton: all protons (primary, secondary, tertiary...)
+#/gate/actor/letTrack/addFilter                    particleFilter
+#/gate/actor/letTrack/particleFilter/addParticle   proton

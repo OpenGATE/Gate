@@ -1,0 +1,59 @@
+#=====================================================
+# ALIAS
+#=====================================================
+/control/execute mac/alias.mac
+
+#=====================================================
+# DATABASE
+#=====================================================
+/gate/geometry/setMaterialDatabase data/GateMaterials.db
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+/control/execute mac/geometry.mac
+
+#=====================================================
+# PHYSICS
+#=====================================================
+/control/execute mac/physics.mac
+
+#=====================================================
+# ACTORS & OUTPUT
+#=====================================================
+/control/execute mac/actors.mac
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+
+#=====================================================
+# BEAMS
+#=====================================================
+
+/control/execute mac/beam.mac 
+
+#=====================================================
+# VISUALISATION
+#=====================================================
+
+#/control/execute mac/visu.mac
+
+#=====================================================
+# START BEAMS
+#=====================================================
+
+# JamesRandom Ranlux64 MersenneTwister
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed auto
+
+# /gate/random/verbose 1
+# /gate/source/verbose 0
+
+/gate/application/noGlobalOutput
+/gate/application/setTotalNumberOfPrimaries {npart}
+/gate/application/start
+
+exit
