@@ -59,6 +59,13 @@
 #include "G4Gamma.hh"
 #include "G4TransportationManager.hh"
 #include "G4GeometryTolerance.hh"
+#include "G4SystemOfUnits.hh"
+
+#include "GateConfiguration.h"
+
+#ifdef GATE_USE_XRAYLIB
+#include <xraylib.h>
+#endif
 
 // Class Description:
 // Discrete Process -- reflection/refraction at interfaces.
@@ -99,6 +106,8 @@ public:
     G4bool IsApplicable(const G4ParticleDefinition &aParticleType);
 
     void DoReflection();
+
+    G4double GetRindex(G4Material *Material, G4double Energy);
 
     G4double GetMeanFreePath(const G4Track &aTrack, G4double , G4ForceCondition *condition);
     // Returns infinity; i. e. the process does not limit the step,
@@ -147,6 +156,26 @@ inline
 void G4XrayBoundaryProcess::DoReflection() {
     G4double PdotN = OldMomentum * theGlobalNormal;
     NewMomentum = OldMomentum - (2.*PdotN) * theGlobalNormal;
+}
+
+inline
+G4double G4XrayBoundaryProcess::GetRindex(G4Material *Material, G4double Energy) {
+    G4double delta = 0.0;
+    G4double Density = Material->GetDensity() / (g / cm3);
+
+#ifdef GATE_USE_XRAYLIB
+    for (unsigned int i = 0; i < Material->GetElementVector()->size(); ++i)
+        delta += (1 - Refractive_Index_Re(Material->GetElementVector()->at(i)->GetSymbol(), Energy/(keV), 1.0)) * Material->GetFractionVector()[i];
+//    // **************** Test Output ****************** //
+//    G4cout << Material << G4endl;
+//    G4cout << "delta sum = " << delta << G4endl;
+//    for (unsigned int i = 0; i < Material->GetElementVector()->size(); ++i)
+//        G4cout << "Symbol " << Material->GetElementVector()->at(i)->GetSymbol() << " Energy " << Energy/(keV)  << G4endl;
+//    G4cout << "density: " << Density << G4endl;
+//    // **************** Test Output ****************** //
+#endif
+
+    return 1 - delta * Density;
 }
 
 #endif /* G4XrayBoundaryProcess_h */

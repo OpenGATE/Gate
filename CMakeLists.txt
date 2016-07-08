@@ -82,6 +82,7 @@ SET(GATE_ANALYSIS_USE_FILE ON)
 
 OPTION(GATE_USE_STDC11 "Use the c++11 standard in the compilation" OFF)
 OPTION(GATE_USE_OPTICAL "Gate use optical photon" OFF)
+OPTION(GATE_USE_XRAYLIB "Option for XRAYLIB use" OFF)
 OPTION(GATE_USE_LMF "Gate use LMF" OFF)
 OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
 OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4. Use OFF if you compile G4 with embedded CLHEP" OFF)
@@ -113,6 +114,17 @@ IF(GATE_USE_OPTICAL)
   INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
   SET(LINK_DIRECTORIES ${LIBXML2_LIBRARIES})
 ENDIF(GATE_USE_OPTICAL)
+
+#=========================================================
+# Option for XRAYLIB use
+IF(GATE_USE_XRAYLIB)
+  FIND_PACKAGE(LIBXRL REQUIRED)
+  INCLUDE_DIRECTORIES(${LIBXRL_INCLUDE_DIR})
+  SET(LINK_DIRECTORIES ${LIBXRL_LIBRARIES})
+  IF(NOT LIBXRL_INCLUDE_DIR)
+    MESSAGE("xraylib not found! Please install xraylib and make it available in PATH")
+  ENDIF()
+ENDIF(GATE_USE_XRAYLIB)
 
 #=========================================================
 # Option for Clhep use
@@ -231,7 +243,7 @@ ELSE(GATE_USE_GPU AND CUDA_FOUND)
   ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
 ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 
-TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} ${RTK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXRL_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} ${RTK_LIBRARIES} pthread)
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)

@@ -162,37 +162,41 @@ G4VParticleChange *G4XrayBoundaryProcess::PostStepDoIt(const G4Track &aTrack, co
     }
 
 
-    G4MaterialPropertiesTable *aMaterialPropertiesTable;
-    G4MaterialPropertyVector *Rindex;
+//    G4MaterialPropertiesTable *aMaterialPropertiesTable;
+//    G4MaterialPropertyVector *Rindex;
 
-    aMaterialPropertiesTable = Material1->GetMaterialPropertiesTable();
+//    aMaterialPropertiesTable = Material1->GetMaterialPropertiesTable();
 
-    if (aMaterialPropertiesTable) {
-        Rindex = aMaterialPropertiesTable->GetProperty("RINDEX");
-    } else {
-        return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
-    }
+//    if (aMaterialPropertiesTable) {
+//        Rindex = aMaterialPropertiesTable->GetProperty("RINDEX");
+//    } else {
+//        return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
+//    }
 
-    if (Rindex) {
-        Rindex1 = Rindex->Value(TotalMomentum);
-    } else {
-        return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
-    }
+//    if (Rindex) {
+//        Rindex1 = Rindex->Value(TotalMomentum);
+//    } else {
+//        return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
+//    }
 
-    aMaterialPropertiesTable = Material2->GetMaterialPropertiesTable();
+//    aMaterialPropertiesTable = Material2->GetMaterialPropertiesTable();
 
-    if (aMaterialPropertiesTable) {
-        Rindex = aMaterialPropertiesTable->GetProperty("RINDEX");
-    } else {
-        return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
-    }
+//    if (aMaterialPropertiesTable) {
+//        Rindex = aMaterialPropertiesTable->GetProperty("RINDEX");
+//    } else {
+//        return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
+//    }
 
-    if (Rindex) {
-        Rindex2 = Rindex->Value(TotalMomentum);
-    } else {
-        return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
-    }
+//    if (Rindex) {
+//        Rindex2 = Rindex->Value(TotalMomentum);
+//    } else {
+//        return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
+//    }
 
+    Rindex1 = GetRindex(Material1, TotalMomentum);
+    Rindex2 = GetRindex(Material2, TotalMomentum);
+//Rindex1 = Material1->GetName() == "Vacuum" ? 1.0 : 1-0.000002;
+//Rindex2 = Material1->GetName() == "Vacuum" ? 1-0.000002 : 1.0;
     G4double PdotN = OldMomentum * theGlobalNormal;
     cost1 = - PdotN;
 
@@ -203,7 +207,7 @@ G4VParticleChange *G4XrayBoundaryProcess::PostStepDoIt(const G4Track &aTrack, co
         sint1 = 0.0;
         sint2 = 0.0;
     }
-
+//    double Refractive_Index_Re(const char compound[], double E, double density);
     if (sint2 >= 1.0) {
         DoReflection(); // *** Total reflection ***
     } else {
@@ -233,7 +237,9 @@ G4VParticleChange *G4XrayBoundaryProcess::PostStepDoIt(const G4Track &aTrack, co
     aParticleChange.ProposePolarization(OldPolarization);
     aParticleChange.ProposeMomentumDirection(NewMomentum);
 
-    G4cout << "Incident angle: " << GetIncidentAngle() * 180 / pi << " refraction angle: " << std::asin(sint2) * 180 / pi << G4endl;
+//    G4cout << Material1->GetName() << " " << Material2->GetName() << G4endl;
+//    G4cout << "refreaction index: " << Rindex1 << " " << Rindex2 << G4endl;
+//    G4cout << "Incident angle: " << GetIncidentAngle() * 180 / pi << " refraction angle: " << std::asin(sint2) * 180 / pi << G4endl;
 
     return G4VDiscreteProcess::PostStepDoIt(aTrack, aStep);
 }
