@@ -68,6 +68,16 @@ void GateFixedForcedDetectionActorMessenger::BuildCommands(G4String base)
   guidance = "Set the file name for the attenuation image (printf format with runId as a single parameter).";
   pSetAttenuationFilenameCmd->SetGuidance(guidance);
 
+  bb = base + "/materialDeltaFilename";
+  pSetMaterialDeltaFilenameCmd = new G4UIcmdWithAString(bb, this);
+  guidance = "Set the file name for the refractive index decrement lookup table. Two paramaters: material index and energy.";
+  pSetMaterialDeltaFilenameCmd->SetGuidance(guidance);
+
+  bb = base + "/fresnelFilename";
+  pSetFresnelFilenameCmd = new G4UIcmdWithAString(bb, this);
+  guidance = "Set the file name for the Fresnel diffraction image (printf format with runId as a single parameter).";
+  pSetFresnelFilenameCmd->SetGuidance(guidance);
+
   bb = base + "/responseDetectorFilename";
   pSetResponseDetectorFilenameCmd = new G4UIcmdWithAString(bb, this);
   guidance = G4String("Input response detector curve.");
@@ -176,6 +186,14 @@ void GateFixedForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, G
   if (command == pSetAttenuationFilenameCmd)
     {
     pActor->SetAttenuationFilename(param);
+    }
+  if (command == pSetMaterialDeltaFilenameCmd)
+    {
+    pActor->SetMaterialDeltaFilename(param);
+    }
+  if (command == pSetFresnelFilenameCmd)
+    {
+    pActor->SetFresnelFilename(param);
     }
   if (command == pSetFlatFieldFilenameCmd)
     {

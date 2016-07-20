@@ -12,13 +12,20 @@
 #include <G4Poisson.hh>
 #include "GateEnergyResponseFunctor.hh"
 #include "G4Gamma.hh"
+#include "G4SystemOfUnits.hh"
 /* ITK */
 #include <itkImage.h>
 #include <itkImageRegionIterator.h>
 #include <itkTimeProbe.h>
+#include <itkForwardFFTImageFilter.h>
 
 /* RTK */
 #include <rtkConfiguration.h>
+
+/* XRAYLIB */
+#ifdef GATE_USE_XRAYLIB
+#include <xraylib.h>
+#endif
 
 struct newPhoton
   {
@@ -44,11 +51,11 @@ namespace GateFixedForcedDetectionFunctor
       InterpolationWeightMultiplication()
         {
         }
-      ;
+
       ~InterpolationWeightMultiplication()
         {
         }
-      ;
+
       bool operator!=(const InterpolationWeightMultiplication &) const
         {
         return false;
@@ -86,6 +93,7 @@ namespace GateFixedForcedDetectionFunctor
       typedef float InputPixelType;
       typedef itk::Image<InputPixelType, Dimension> InputImageType;
       typedef itk::Image<double, 2> MaterialMuImageType;
+      typedef itk::Image<double, 2> MaterialDeltaImageType;
 
       VAccumulation() :
           m_NumberOfPrimaries(0), m_EnergyResolvedBinSize(0.), m_generatePhotons(false)
@@ -118,6 +126,11 @@ namespace GateFixedForcedDetectionFunctor
         {
         m_EnergyWeightList = _arg;
         }
+      void SetMuToDeltaImageOffset(const std::ptrdiff_t o)
+        {
+        m_MuToDeltaImageOffset = o;
+        }
+
       void Init(unsigned int nthreads)
         {
         for (unsigned int i = 0; i < nthreads; i++)
@@ -152,6 +165,11 @@ namespace GateFixedForcedDetectionFunctor
         return m_MaterialMu.GetPointer();
         }
 
+      MaterialDeltaImageType *GetMaterialDelta()
+        {
+        return m_MaterialDelta.GetPointer();
+        }
+
       void CreateMaterialMuMap(G4EmCalculator *emCalculator,
                                const double energySpacing,
                                const double energyMax,
@@ -164,10 +182,6 @@ namespace GateFixedForcedDetectionFunctor
           energyList.push_back(energyList.back() + energySpacing);
           }
         CreateMaterialMuMap(emCalculator, energyList, gateImageVolume);
-        MaterialMuImageType::SpacingType spacing;
-        spacing[0] = 1.;
-        spacing[1] = energySpacing;
-        m_MaterialMu->SetSpacing(spacing);
         MaterialMuImageType::PointType origin;
         origin.Fill(0.);
         m_MaterialMu->SetOrigin(origin);
@@ -240,11 +254,102 @@ namespace GateFixedForcedDetectionFunctor
         << muProbe.GetTotal() << ' '
         << muProbe.GetUnit()
         << G4endl;
+
+        MaterialMuImageType::SpacingType spacing;
+        spacing[0] = 1.;
+        if(energyList.size()>1)
+          spacing[1] = energyList[1]-energyList[0];
+        else
+          spacing[1] = 1.*keV;
+        m_MaterialMu->SetSpacing(spacing);
         }
+
+      void CreateMaterialDeltaMap(const double energySpacing,
+                               const double energyMax,
+                               GateVImageVolume * gateImageVolume)
+        {
+        std::vector<double> energyList;
+        energyList.push_back(0.);
+        while (energyList.back() < energyMax)
+          {
+          energyList.push_back(energyList.back() + energySpacing);
+          }
+        CreateMaterialDeltaMap(energyList, gateImageVolume);
+        MaterialDeltaImageType::PointType origin;
+        origin.Fill(0.);
+        m_MaterialDelta->SetOrigin(origin);
+        }
+
+      void CreateMaterialDeltaMap(const std::vector<double> & energyList,
+                               GateVImageVolume * gateImageVolume)
+        {
+        m_EnergyList = energyList;
+        itk::TimeProbe deltaProbe;
+        deltaProbe.Start();
+
+        /* Get image materials + world */
+        std::vector<G4Material*> imageWorldMaterials;
+        gateImageVolume->BuildLabelToG4MaterialVector(imageWorldMaterials);
+        GateVVolume *volume = gateImageVolume;
+        while (volume->GetLogicalVolumeName() != "world_log")
+          {
+          volume = volume->GetParentVolume();
+          }
+        imageWorldMaterials.push_back(const_cast<G4Material*>(volume->GetMaterial()));
+
+        MaterialDeltaImageType::RegionType region;
+        region.SetSize(0, imageWorldMaterials.size());
+        region.SetSize(1, energyList.size());
+        m_MaterialDelta = MaterialDeltaImageType::New();
+        m_MaterialDelta->SetRegions(region);
+        m_MaterialDelta->Allocate();
+        itk::ImageRegionIterator<MaterialDeltaImageType> it(m_MaterialDelta, region);
+        for (unsigned int energy = 0; energy < energyList.size(); energy++)
+          {
+          for (unsigned int i = 0; i < imageWorldMaterials.size(); i++)
+            {
+            G4Material * mat = imageWorldMaterials[i];
+            double delta = 0.0;
+            double Density = mat->GetDensity() / (g / cm3);
+            #ifdef GATE_USE_XRAYLIB
+            for (unsigned int i = 0; i < mat->GetElementVector()->size(); ++i)
+              {
+              delta += (1 - Refractive_Index_Re(mat->GetElementVector()->at(i)->GetSymbol(), energyList[energy]/(keV), 1.0)) * mat->GetFractionVector()[i];
+              }
+            #endif
+
+            delta *= Density;
+            it.Set(delta);
+            ++it;
+            }
+          }
+
+        deltaProbe.Stop();
+        G4cout
+        << "Computation of the delta lookup table took "
+        << deltaProbe.GetTotal() << ' '
+        << deltaProbe.GetUnit()
+        << G4endl;
+
+        MaterialDeltaImageType::SpacingType spacing;
+        spacing[0] = 1.;
+        if(energyList.size()>1)
+          spacing[1] = energyList[1]-energyList[0];
+        else
+          spacing[1] = 1.*keV;
+        m_MaterialDelta->SetSpacing(spacing);
+        }
+
 
       MaterialMuImageType::Pointer GetMaterialMuMap()
         {
         return m_MaterialMu;
+        }
+
+
+      MaterialDeltaImageType::Pointer GetMaterialDeltaMap()
+        {
+        return m_MaterialDelta;
         }
 
       double GetIntegralOverDetectorAndReset()
@@ -331,6 +436,11 @@ namespace GateFixedForcedDetectionFunctor
         m_generatePhotons = boolean;
         }
 
+      void setActivateFresnelDiffraction(const bool & boolean)
+        {
+        m_ActivateDiffraction = boolean;
+        }
+
     protected:
       inline void Accumulate(const rtk::ThreadIdType threadId,
                              float & output,
@@ -353,20 +463,41 @@ namespace GateFixedForcedDetectionFunctor
         m_SquaredIntegralOverDetector[threadId] += valueToAccumulate * valueToAccumulate;
         }
 
+      inline void AccumulatePhase(float & output,
+                             const double valueToAccumulate,
+                             const double energy)
+        {
+        if (m_EnergyResolvedBinSize > 0)
+          {
+          const std::ptrdiff_t offset = m_EnergyResolvedSliceSize
+                                        * itk::Math::Floor<unsigned int>(energy
+                                                                         / m_EnergyResolvedBinSize
+                                                                         + 0.5);
+          *(&output + offset + m_MuToDeltaImageOffset) += valueToAccumulate;
+          }
+        else
+          {
+          *(&output + m_MuToDeltaImageOffset) += valueToAccumulate;
+          }
+        }
+
       VectorType m_VolumeSpacing;
       std::vector<double> *m_InterpolationWeights;
       std::vector<double> *m_EnergyWeightList;
       MaterialMuImageType::Pointer m_MaterialMu;
+      MaterialDeltaImageType::Pointer m_MaterialDelta;
       VectorType m_DetectorOrientationTimesPixelSurface;
       double m_IntegralOverDetector[ITK_MAX_THREADS];
       double m_SquaredIntegralOverDetector[ITK_MAX_THREADS];
       G4int m_NumberOfPrimaries;
       GateEnergyResponseFunctor *m_ResponseDetector;
       std::vector<double> m_EnergyList;
+      std::ptrdiff_t m_MuToDeltaImageOffset;
       double m_EnergyResolvedBinSize;
       unsigned int m_EnergyResolvedSliceSize;
       std::vector<std::vector<newPhoton> > m_PhotonList;
       bool m_generatePhotons;
+      bool m_ActivateDiffraction;
       };
 
     /* Most of the computation for the primary is done in this functor. After a ray
@@ -394,6 +525,7 @@ namespace GateFixedForcedDetectionFunctor
                              const VectorType & farthestPoint)
         {
         double *p = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
+        double *q = m_MaterialDelta->GetPixelContainer()->GetBufferPointer();
         /* Multiply interpolation weights by step norm in MM to convert voxel
          intersection length to MM. */
         const double stepInMMNorm = stepInMM.GetNorm();
@@ -437,8 +569,29 @@ namespace GateFixedForcedDetectionFunctor
             this->Accumulate(threadId,
             output,
             vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i],
-            m_EnergyList[i]);}
+            m_EnergyList[i]);
+
+              double rayIntegral = 0.;
+              for (unsigned int j = 0; j < m_InterpolationWeights[threadId].size(); j++)
+                {
+                rayIntegral += m_InterpolationWeights[threadId][j] * *q++;
+                }
+
+
+                  /* Matter wave : for photon, the formula is lambda = hc/E
+                   * https://fr.wikipedia.org/wiki/Hypoth%C3%A8se_de_De_Broglie
+                   */
+                  double wavelength = h_Planck*c_light/(m_EnergyList[i]/joule);
+                  rayIntegral *= (-2*itk::Math::pi/wavelength);
+
+                  this->AccumulatePhase(output,
+                  rayIntegral * (*m_EnergyWeightList)[i],
+                  m_EnergyList[i]);
+
+            }
           }
+
+
 
         /* Reset weights for next ray in thread.*/
         std::fill(m_InterpolationWeights[threadId].begin(),
@@ -915,6 +1068,36 @@ namespace GateFixedForcedDetectionFunctor
     private:
       double m_invN;
       double m_invNm1;
+      };
+
+    template<class TInput1, class TInput2 = TInput1, class TOutput = std::complex<TInput1>>
+    class Transmittance
+      {
+    public:
+      Transmittance()
+        {
+        }
+      ~Transmittance()
+        {
+        }
+      bool operator!=(const Transmittance &) const
+        {
+        return false;
+        }
+
+      bool operator==(const Transmittance & other) const
+        {
+        return !(*this != other);
+        }
+
+      inline TOutput operator()(const TInput1 A, const TInput2 B) const
+        {
+        /* Calculating diffraction image */
+        const std::complex<TInput1> i(0.0,1.0);  // imaginary unit
+        std::complex<TInput1> amp = std::sqrt(A);  // Amplitude
+        std::complex<TInput1> pt = std::exp(i*std::complex<TInput1>(B));  // Phase Transition
+        return (TOutput) (amp*pt);
+        }
       };
 
   }

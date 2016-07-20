@@ -95,6 +95,14 @@ public:
     {
     mAttenuationFilename = name;
     }
+  void SetMaterialDeltaFilename(G4String name)
+    {
+    mMaterialDeltaFilename = name;
+    }
+  void SetFresnelFilename(G4String name)
+    {
+    mFresnelFilename = name;
+    }
   void SetResponseDetectorFilename(G4String name)
     {
     mResponseFilename = name;
@@ -167,8 +175,10 @@ public:
   static const unsigned int Dimension = 3;
   typedef float InputPixelType;
   typedef itk::Image<InputPixelType, Dimension> InputImageType;
+  typedef itk::Image<double> InternalPrecision;
   typedef itk::Image<int, Dimension> IntegerImageType;
   typedef itk::Image<double, Dimension> DoubleImageType;
+  typedef itk::Image<std::complex<InputPixelType>, Dimension> ComplexImageType;
   typedef float OutputPixelType;
   typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
   typedef rtk::Reg23ProjectionGeometry GeometryType;
@@ -233,6 +243,9 @@ public:
                                std::vector<double> & energyWeightList,
                                GateVImageVolume* gate_image_volume,
                                unsigned int & nPixOneSlice);
+
+  void CalculatePropagatorImage(const double D, std::vector<double> & energyList);
+
   void CreateProjectionImages();
   void GeneratePhotons(const unsigned int & numberOfThreads,
                        const std::vector<std::vector<newPhoton> > & photonList,
@@ -249,6 +262,8 @@ protected:
   G4String mPrimaryFilename;
   G4String mMaterialMuFilename;
   G4String mAttenuationFilename;
+  G4String mMaterialDeltaFilename;
+  G4String mFresnelFilename;
   G4String mResponseFilename;
   G4String mFlatFieldFilename;
   G4String mSecondaryFilename;
@@ -273,7 +288,10 @@ protected:
   InputImageType::Pointer mGateVolumeImage;
   rtk::ImportImageFilter<InputImageType>::Pointer mGateToITKImageFilter;
   InputImageType::Pointer mPrimaryImage;
+  InputImageType::Pointer mDeltaImage;
+  ComplexImageType::Pointer mPropagatorImage;
   InputImageType::Pointer mFlatFieldImage;
+  InputImageType::Pointer mFlatFieldDeltaImage;
   std::map<ProcessType, InputImageType::Pointer> mProcessImage;
   std::map<ProcessType, InputImageType::Pointer> mSquaredImage;
   std::map<ProcessType, InputImageType::Pointer> mEventImage;
@@ -303,7 +321,6 @@ protected:
   std::map<ProcessType, itk::TimeProbe> mProcessTimeProbe;
   std::map<ProcessType, std::vector<InputImageType::Pointer> > mPerOrderImages;
   std::map<ProcessType, G4String> mProcessImageFilenames;
-
   /* Compton stuff */
   typedef GateFixedForcedDetectionProjector<
       GateFixedForcedDetectionFunctor::ComptonValueAccumulation> ComptonProjectionType;
@@ -343,6 +360,8 @@ protected:
   double mInteractionSquaredIntegralOverDetector;
   G4String mSourceType;
   bool mGeneratePhotons;
+  bool mActivateFresnelDiffraction;
+
   /* Account for primary fluence weighting */
   InputImageType::Pointer PrimaryFluenceWeighting(const InputImageType::Pointer input);
 

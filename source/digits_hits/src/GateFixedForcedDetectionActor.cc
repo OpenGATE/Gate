@@ -38,6 +38,13 @@
 #include <itkBinaryFunctorImageFilter.h>
 #include <itkAddImageFilter.h>
 #include <itksys/SystemTools.hxx>
+#include <itkFFTConvolutionImageFilter.h>
+#include <itkComplexToComplexFFTImageFilter.h>
+#include <itkComplexToModulusImageFilter.h>
+#include <itkRescaleIntensityImageFilter.h>
+#include <itkComplexToRealImageFilter.h>
+#include <itkComplexToImaginaryImageFilter.h>
+#include <itkComposeImageFilter.h>
 
 /*  Constructors */
 GateFixedForcedDetectionActor::GateFixedForcedDetectionActor(G4String name, G4int depth) :
@@ -48,7 +55,8 @@ GateFixedForcedDetectionActor::GateFixedForcedDetectionActor(G4String name, G4in
     mInputRTKGeometryFilename(""),
     mEnergyResolvedBinSize(0),
     mSourceType("plane"),
-    mGeneratePhotons(false)
+    mGeneratePhotons(false),
+    mActivateFresnelDiffraction(true)
   {
   GateDebugMessageInc("Actor",4,"GateFixedForcedDetectionActor() -- begin"<<G4endl);
   pActorMessenger = new GateFixedForcedDetectionActorMessenger(this);
@@ -221,6 +229,21 @@ GateVImageVolume* GateFixedForcedDetectionActor::SearchForVoxelisedVolume()
 void GateFixedForcedDetectionActor::CreateProjectionImages()
   {
   mPrimaryImage = CreateVoidProjectionImage();
+  mDeltaImage = CreateVoidProjectionImage();
+  /* creator propagator complex image */
+  InputImageType::Pointer propagatorImageRe;
+  InputImageType::Pointer propagatorImageIm;
+  propagatorImageRe = CreateVoidProjectionImage();
+  propagatorImageIm = CreateVoidProjectionImage();
+  typedef itk::ComposeImageFilter<InputImageType,ComplexImageType> RealAndImaginaryToComplexImageFilterType;
+  RealAndImaginaryToComplexImageFilterType::Pointer realAndImaginaryToComplexImageFilter = RealAndImaginaryToComplexImageFilterType::New();
+  realAndImaginaryToComplexImageFilter->SetInput1(propagatorImageRe);
+  realAndImaginaryToComplexImageFilter->SetInput2(propagatorImageIm);
+  realAndImaginaryToComplexImageFilter->Update();
+
+  mPropagatorImage = realAndImaginaryToComplexImageFilter->GetOutput();
+
+  //mPropagatorImage = CreateVoidProjectionImage();
   for (unsigned int i = 0; i < PRIMARY; i++)
     {
     const ProcessType pt = ProcessType(i);
@@ -331,8 +354,11 @@ void GateFixedForcedDetectionActor::ComputeFlatField(std::vector<double> & energ
   flatFieldSource->SetConstant(mPrimaryProjector->GetProjectedValueAccumulation().GetMaterialMuMap()->GetLargestPossibleRegion().GetSize()[0]
                                - 1);
   mFlatFieldImage = CreateVoidProjectionImage();
+  mFlatFieldDeltaImage = CreateVoidProjectionImage();
   mPrimaryProjector->SetInput(FirstSliceProjection(mFlatFieldImage));
   mPrimaryProjector->SetInput(1, flatFieldSource->GetOutput());
+  mPrimaryProjector->GetProjectedValueAccumulation().SetMuToDeltaImageOffset(mFlatFieldDeltaImage->GetPixelContainer()->GetBufferPointer() -
+                                                                             mFlatFieldImage->GetPixelContainer()->GetBufferPointer());
   /* Remove noise from I0. */
   if (mNoisePrimary != 0)
     {
@@ -344,7 +370,6 @@ void GateFixedForcedDetectionActor::ComputeFlatField(std::vector<double> & energ
     }
 
   TRY_AND_EXIT_ON_ITK_EXCEPTION(mPrimaryProjector->Update());
-
   }
 
 void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointer oneProjGeometry,
@@ -364,16 +389,42 @@ void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointe
   mPrimaryProjector->GetProjectedValueAccumulation().SetVolumeSpacing(mGateVolumeImage->GetSpacing());
   mPrimaryProjector->GetProjectedValueAccumulation().SetInterpolationWeights(mPrimaryProjector->GetInterpolationWeightMultiplication().GetInterpolationWeights());
   mPrimaryProjector->GetProjectedValueAccumulation().SetEnergyWeightList(&energyWeightList);
+  mPrimaryProjector->GetProjectedValueAccumulation().SetMuToDeltaImageOffset(mDeltaImage->GetPixelContainer()->GetBufferPointer() -
+                                                                             mPrimaryImage->GetPixelContainer()->GetBufferPointer());
   mPrimaryProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
                                                                          energyList,
                                                                          gate_image_volume);
+  mPrimaryProjector->GetProjectedValueAccumulation().CreateMaterialDeltaMap(energyList,
+                                                                           gate_image_volume);
   mPrimaryProjector->GetProjectedValueAccumulation().Init(mPrimaryProjector->GetNumberOfThreads());
   mPrimaryProjector->GetProjectedValueAccumulation().SetNumberOfPrimaries(mNoisePrimary);
   mPrimaryProjector->GetProjectedValueAccumulation().SetResponseDetector(&mEnergyResponseDetector);
   mPrimaryProjector->GetProjectedValueAccumulation().SetEnergyResolvedParameters(mEnergyResolvedBinSize,
                                                                                  nPixOneSlice);
   TRY_AND_EXIT_ON_ITK_EXCEPTION(mPrimaryProjector->Update());
+  CalculatePropagatorImage(oneProjGeometry->GetSourceToDetectorDistances()[0]-
+                           oneProjGeometry->GetSourceToIsocenterDistances()[0], energyList);
   }
+void GateFixedForcedDetectionActor::CalculatePropagatorImage(const double D, std::vector<double> & energyList)
+{
+DD(D/CLHEP::m)
+  /* define the imaginary unit */
+  const std::complex<InputPixelType> J(0.0,1.0);
+  itk::ImageRegionIterator<ComplexImageType> it(mPropagatorImage,
+                                              mPropagatorImage->GetLargestPossibleRegion());
+
+    InputPixelType wavelength = h_Planck*c_light/(energyList[0]/joule);
+    std::complex<InputPixelType> amp(0.0,-1./(wavelength*(D/CLHEP::m)));
+    InputPixelType y = mPropagatorImage->GetOrigin()[1];
+    for(unsigned int j=0; j<mPropagatorImage->GetLargestPossibleRegion().GetSize()[1]; j++, y+=mPropagatorImage->GetSpacing()[1])
+      {
+      InputPixelType x = mPropagatorImage->GetOrigin()[0];
+      for(unsigned int i=0; i<mPropagatorImage->GetLargestPossibleRegion().GetSize()[0]; i++, ++it, x+=mPropagatorImage->GetSpacing()[0])
+        {
+        it.Set(amp * std::exp((std::complex<InputPixelType>(-itk::Math::pi)*amp)*(x*x+y*y)));
+        }
+      }
+}
 
 void GateFixedForcedDetectionActor::PrepareComptonProjector(GateVImageVolume* gate_image_volume,
                                                             unsigned int & nPixOneSlice,
@@ -714,7 +765,7 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
                                                             properTime);
         break;
 
-      default:
+     default:
         GateError("Error: implementation problem, unexpected process type reached.");
       }
     }
@@ -892,6 +943,104 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
     imgWriter->SetFileName(filename);
     imgWriter->SetInput(atten->GetOutput());
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+    }
+
+  if (mMaterialDeltaFilename != "")
+    {
+      AccumulationType::MaterialDeltaImageType *map;
+      map = mPrimaryProjector->GetProjectedValueAccumulation().GetMaterialDelta();
+
+      /* Change spacing to keV */
+      AccumulationType::MaterialDeltaImageType::SpacingType spacing = map->GetSpacing();
+      spacing[1] /= keV;
+
+      typedef itk::ChangeInformationImageFilter<AccumulationType::MaterialDeltaImageType> CIType;
+      CIType::Pointer ci = CIType::New();
+      ci->SetInput(map);
+      ci->SetOutputSpacing(spacing);
+      ci->ChangeSpacingOn();
+      ci->Update();
+
+      typedef itk::ImageFileWriter<AccumulationType::MaterialDeltaImageType> TwoDWriter;
+      TwoDWriter::Pointer w = TwoDWriter::New();
+      w->SetInput(ci->GetOutput());
+      w->SetFileName(AddPrefix(prefix, mMaterialDeltaFilename));
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(w->Update());
+    }
+
+  if (mFresnelFilename != "")
+    {
+    /* Transmittance Functor -> trans */
+    typedef itk::BinaryFunctorImageFilter<InputImageType, InputImageType, ComplexImageType,
+        GateFixedForcedDetectionFunctor::Transmittance<InputImageType::PixelType> > transFunctor;
+    transFunctor::Pointer trans = transFunctor::New();
+
+    trans->SetInput1(FirstSliceProjection(mPrimaryImage));
+    trans->SetInput2(FirstSliceProjection(mDeltaImage));
+    trans->Update();
+
+
+    /* Fresnel propagator setup */
+
+    /* Fresnel diffraction by convolution */
+
+    /* A combination of ConstantPadImageFilter, MultiplyImageFilter, and
+InverseFFTImageFilter should do the trick. */
+
+      // Compute the direct FFT
+      //  FFT filter
+      typedef itk::ComplexToComplexFFTImageFilter < ComplexImageType > FFTFilterType;
+      FFTFilterType::Pointer fftFilterImage = FFTFilterType::New();
+      fftFilterImage->SetTransformDirection( FFTFilterType::FORWARD );
+      fftFilterImage->SetInput( trans->GetOutput() );
+
+      FFTFilterType::Pointer fftFilterKernel = FFTFilterType::New();
+      fftFilterKernel->SetTransformDirection( FFTFilterType::FORWARD );
+      fftFilterKernel->SetInput( mPropagatorImage );
+
+      // Multiplication in Fourier domain
+      typedef itk::MultiplyImageFilter <ComplexImageType, ComplexImageType > MultiplyImageFilterType;
+      MultiplyImageFilterType::Pointer multiplyFilter = MultiplyImageFilterType::New ();
+      multiplyFilter->SetInput1(fftFilterImage->GetOutput());
+      multiplyFilter->SetInput2(fftFilterKernel->GetOutput());
+
+      // Compute the inverse FFT
+      FFTFilterType::Pointer fftFilterOutputImage = FFTFilterType::New();
+      fftFilterOutputImage->SetTransformDirection( FFTFilterType::INVERSE );
+      fftFilterOutputImage->SetInput( multiplyFilter->GetOutput() );
+
+
+      // Save the complex image
+//      typedef itk::ImageFileWriter< ComplexImageType >   WriterType;
+//      WriterType::Pointer writer = WriterType::New();
+//      writer->SetFileName("prop.mha");
+////      writer->SetInput( fftFilterOutputImage->GetOutput() );
+//       writer->SetInput( mPropagatorImage );
+//      TRY_AND_EXIT_ON_ITK_EXCEPTION(writer->Update());
+
+      typedef itk::ComplexToModulusImageFilter<FFTFilterType::OutputImageType, InputImageType> ModulusFilterType;
+      ModulusFilterType::Pointer modulusFilter = ModulusFilterType::New();
+      modulusFilter->SetInput(fftFilterOutputImage->GetOutput());
+      imgWriter->SetFileName("fft.mha");
+      imgWriter->SetInput(modulusFilter->GetOutput());
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+
+      modulusFilter->SetInput(trans->GetOutput());
+      imgWriter->SetFileName("trans.mha");
+      imgWriter->SetInput(modulusFilter->GetOutput());
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+
+      modulusFilter->SetInput(mPropagatorImage);
+      imgWriter->SetFileName("prop.mha");
+      imgWriter->SetInput(modulusFilter->GetOutput());
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+
+
+      // delta integral output
+      sprintf(filename, AddPrefix(prefix, mFresnelFilename).c_str(), rID);
+      imgWriter->SetFileName(filename);
+      imgWriter->SetInput(mDeltaImage);
+      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
     }
 
   if (mFlatFieldFilename != "")
