@@ -44,13 +44,12 @@
 const G4String GateARFSD::mArfHitCollectionName = "ARFCollection";
 
 /* Constructor */
-GateARFSD::GateARFSD(const G4String& pathname, const G4String & aName) :
-    G4VSensitiveDetector(pathname), mSystem(0), mName(aName)
+GateARFSD::GateARFSD(const G4String& pathname, const G4String & name) :
+    G4VSensitiveDetector(pathname), mSystem(0), mName(name)
   {
   collectionName.insert(mArfHitCollectionName);
   mNbOfRejectedPhotons = 0;
   mMessenger = new GateARFSDMessenger(this);
-  mNbOfGoingIn = 0;
   mInserter = 0;
   mProjectionSet = 0;
   mArfTableMgr = new GateARFTableMgr(GetName(), this);
@@ -68,7 +67,7 @@ GateARFSD::GateARFSD(const G4String& pathname, const G4String & aName) :
   mHeadID = -1;
   mDetectorXDepth = 0.;
   mArfStage = -2;
-  G4cout << " created a ARF Sensivitive Detector " << Gateendl;
+  G4cout << "ARF Sensitive Detector created" << Gateendl;
 
   }
 
@@ -137,12 +136,12 @@ G4bool GateARFSD::ProcessHits(G4Step*step, G4TouchableHistory*)
 
   /* now we compute the position in the current frame to be able to extract the angles theta and phi */
 
-  G4ThreeVector localPosition = volumeID.MoveToBottomVolumeFrame(track->GetPosition());
-  G4ThreeVector vertexPosition = volumeID.MoveToBottomVolumeFrame(track->GetVertexPosition());
-  G4ThreeVector direction = localPosition - vertexPosition;
+  G4ThreeVector incidentPosition = volumeID.MoveToBottomVolumeFrame(track->GetPosition());
+  G4ThreeVector lastPosition = volumeID.MoveToBottomVolumeFrame(step->GetPreStepPoint()->GetPosition());
+  G4ThreeVector direction = incidentPosition - lastPosition;
   G4double magnitude = direction.mag();
   direction /= magnitude;
-  ComputeProjectionSet(localPosition, direction, track->GetTotalEnergy());
+  ComputeProjectionSet(incidentPosition, direction, track->GetTotalEnergy(), track->GetWeight());
   return true;
   }
 
@@ -201,8 +200,7 @@ void GateARFSD::computeTables()
     {
     return;
     }
-  std::map<G4String, G4int>::iterator mapIterator;
-  G4double* nbSourcePhotons = new G4double[mEnergyWindow.size()];
+  G4double* nbSourcePhotons = new G4double[mEnergyWindows.size()];
   G4int tableIndex = 0;
   G4int totalNumberOfSingles = 0;
   G4String rootName;
@@ -212,7 +210,7 @@ void GateARFSD::computeTables()
   ULong64_t tempNbofStoredPhotons = 0;
   ULong64_t tempInCamera = 0;
   ULong64_t tempOutCamera = 0;
-  for (mapIterator = mEnergyWindow.begin(); mapIterator != mEnergyWindow.end(); mapIterator++)
+  for (unsigned int numberOfWindows = 0; numberOfWindows < mEnergyWindows.size(); numberOfWindows++)
     {
     mNbOfSimuPhotons = 0;
     mNbofGoingOutPhotons = 0;
@@ -222,8 +220,8 @@ void GateARFSD::computeTables()
     mNbofStoredPhotons = 0;
     mInCamera = 0;
     mOutCamera = 0;
+    rootName = mEnergyWindows[numberOfWindows] + ".root";
     totalNumberOfSingles = 0;
-    rootName = (mapIterator->first) + ".root";
     tempNbofGoingOutPhotons = 0;
     tempNbofGoingInPhotons = 0;
     tempNbOfSourcePhotons = 0;
@@ -231,13 +229,13 @@ void GateARFSD::computeTables()
     tempInCamera = 0;
     tempOutCamera = 0;
 
-    for (G4int i = 0; i < (mapIterator->second); i++)
+    for (G4int i = 0; i < mEnergyWindowsNumberOfPrimaries[numberOfWindows]; i++)
       {
       if (i > 0)
         {
         std::stringstream s;
         s << i;
-        rootName = (mapIterator->first) + "_" + s.str() + ".root";
+        rootName = mEnergyWindows[numberOfWindows] + "_" + s.str() + ".root";
         }
       if (mFile != 0)
         {
@@ -261,7 +259,6 @@ void GateARFSD::computeTables()
       mNbOfPhotonsTree->SetBranchAddress("NbOfOutCameraPhot", &tempOutCamera);
       mNbOfPhotonsTree->SetBranchAddress("NbOfHeads", &mNbOfHeads);
       mNbOfPhotonsTree->GetEntry(0);
-
       mNbofGoingOutPhotons += tempNbofGoingOutPhotons;
       mNbofGoingInPhotons += tempNbofGoingInPhotons;
       mNbOfSourcePhotons += tempNbOfSourcePhotons;
@@ -319,9 +316,9 @@ void GateARFSD::computeTables()
 
 void GateARFSD::ComputeProjectionSet(const G4ThreeVector & position,
                                      const G4ThreeVector & direction,
-                                     const G4double & energy)
+                                     const G4double & energy,
+                                     const G4double & weight)
   {
-  mNbOfGoingIn++;
   /*
    transform to the detector frame the photon position
    we compute the direction and position relative to the detector frame
@@ -341,7 +338,7 @@ void GateARFSD::ComputeProjectionSet(const G4ThreeVector & position,
    all these coordinates are relative to the detector frame where the origin of hte detector is a t the center
    */
   G4double arfValue = mArfTableMgr->ScanTables(direction.z(), direction.y(), energy);
-  /* the coordinates of the intersection of the path of the photon with the back surface of the detector
+  /* The coordinates of the intersection of the path of the photon with the back surface of the detector
    is given by
    x = deltaX/2
    y = yin + t * uy
@@ -352,7 +349,7 @@ void GateARFSD::ComputeProjectionSet(const G4ThreeVector & position,
    and
    t = ( deltaX/2 - xin ) / ux
    deltaX is the dimension of the detector on the Ox axis
-   all these coordinates are relative to the detector frame where the origin of hte detector is a t the center */
+   all these coordinates are relative to the detector frame where the origin of the detector is a t the center */
 
   G4double t = (mDetectorXDepth - position.x()) / direction.x();
   G4double xP = position.z() + t * direction.z();
@@ -373,7 +370,7 @@ void GateARFSD::ComputeProjectionSet(const G4ThreeVector & position,
       }
     mProjectionSet = projectionSet->GetProjectionSet();
     }
-  mProjectionSet->FillARF(mHeadID, xP, yP, arfValue);
+  mProjectionSet->FillARF(mHeadID, yP, xP, arfValue * weight);
   }
 
 #endif

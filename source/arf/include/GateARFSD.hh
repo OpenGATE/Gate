@@ -56,7 +56,8 @@ class GateARFData
   {
 public:
   G4double mDepositedEnergy; // deposited energy
-  G4double mProjectionPositionY, mProjectionPositionX; // porjection position on the detection plane
+  G4double mProjectionPositionY;
+  G4double mProjectionPositionX; // porjection position on the detection plane
   };
 
 class GateARFSD: public G4VSensitiveDetector
@@ -118,13 +119,15 @@ public:
 
   void AddNewEnergyWindow(const G4String & basename, const G4int & NFiles)
     {
-    mEnergyWindow.insert(make_pair(basename, NFiles));
+    mEnergyWindows.push_back(basename);
+    mEnergyWindowsNumberOfPrimaries.push_back(NFiles);
     }
   ;
 
   void ComputeProjectionSet(const G4ThreeVector & position,
                             const G4ThreeVector & direction,
-                            const G4double & energy);
+                            const G4double & energy,
+                            const G4double & weight);
 
   void SetDepth(const G4double & aDepth)
     {
@@ -179,8 +182,6 @@ private:
 
   long unsigned int mNbOfRejectedPhotons;
 
-  ULong64_t mNbOfGoingIn;
-
   GateARFData mArfData;
 
   GateProjectionSet* mProjectionSet;
@@ -189,7 +190,8 @@ private:
 
   G4double mDetectorXDepth; // depth of the detector ( x length )
 
-  std::map<G4String, G4int> mEnergyWindow;
+  std::vector<G4String> mEnergyWindows;
+  std::vector<G4int> mEnergyWindowsNumberOfPrimaries;
   G4double mEnergyDepositionThreshold;
   G4int mArfStage;
   };
