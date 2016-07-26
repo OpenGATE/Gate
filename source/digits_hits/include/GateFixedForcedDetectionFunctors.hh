@@ -24,9 +24,7 @@ struct newPhoton
   {
   G4ThreeVector direction;
   G4ThreeVector position;
-  double energy;
   double weight;
-  double time;
   };
 
 namespace GateFixedForcedDetectionFunctor
@@ -88,7 +86,10 @@ namespace GateFixedForcedDetectionFunctor
       typedef itk::Image<double, 2> MaterialMuImageType;
 
       VAccumulation() :
-          m_NumberOfPrimaries(0), m_EnergyResolvedBinSize(0.), m_generatePhotons(false)
+          m_NumberOfPrimaries(0),
+          m_EnergyResolvedBinSize(0.),
+          m_generatePhotons(false),
+          m_ARF(false)
         {
         for (int i = 0; i < ITK_MAX_THREADS; i++)
           {
@@ -311,24 +312,25 @@ namespace GateFixedForcedDetectionFunctor
       void SavePhotonsparameters(const rtk::ThreadIdType threadId,
                                  const VectorType & photonPosition,
                                  const VectorType & photonDirection,
-                                 const double & weight,
-                                 const double & energy)
+                                 const double & weight)
         {
         newPhoton photon;
         photon.weight = weight;
-
         for (int i = 0; i < 3; i++)
           {
           photon.position[i] = photonPosition[i];
           photon.direction[i] = photonDirection[i];
           }
 
-        photon.energy = energy;
         m_PhotonList[threadId].push_back(photon);
         }
       void setGeneratePhotons(const bool & boolean)
         {
         m_generatePhotons = boolean;
+        }
+      void setGenerateARF(const bool & boolean)
+        {
+        m_ARF = boolean;
         }
 
     protected:
@@ -367,6 +369,7 @@ namespace GateFixedForcedDetectionFunctor
       unsigned int m_EnergyResolvedSliceSize;
       std::vector<std::vector<newPhoton> > m_PhotonList;
       bool m_generatePhotons;
+      bool m_ARF;
       };
 
     /* Most of the computation for the primary is done in this functor. After a ray
@@ -427,10 +430,7 @@ namespace GateFixedForcedDetectionFunctor
             double a = vcl_exp(-rayIntegral);
             double nprimE = m_NumberOfPrimaries * (*m_EnergyWeightList)[i];
             double n = ((nprimE)?G4Poisson(nprimE*a)/nprimE:0.);
-            this->Accumulate(threadId,
-            output,
-            n * (*m_EnergyWeightList)[i] * (*m_ResponseDetector)(m_EnergyList[i] ),
-            m_EnergyList[i]);
+            this->Accumulate(threadId, output, n * (*m_EnergyWeightList)[i] * (*m_ResponseDetector)(m_EnergyList[i] ), m_EnergyList[i]);
             }
           else
             {
@@ -808,24 +808,34 @@ namespace GateFixedForcedDetectionFunctor
           }
 
         /* Final computation */
-
+        double weight = m_Weight * vcl_exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi);
         if (m_generatePhotons)
           {
-          double weight = m_Weight * vcl_exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi);
-          Accumulate(threadId, output, weight, m_Energy);
+          //Accumulate(threadId, output, weight, m_Energy);
           VectorType photonDirection;
           VectorType photonPosition;
           for (int i = 0; i < 3; i++)
             {
-            photonDirection[i] =worldVector[i]/worldVectorNorm;
-            photonPosition[i]=farthestPoint[i]*m_VolumeSpacing[i];
+            photonDirection[i] = worldVector[i] / worldVectorNorm;
+            photonPosition[i] = farthestPoint[i] * m_VolumeSpacing[i];
             }
-
-          SavePhotonsparameters(threadId, photonPosition, photonDirection,weight,m_Energy);
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          }
+        else if (m_ARF)
+          {
+          //Accumulate(threadId, output, weight, m_Energy);
+          VectorType photonDirection;
+          VectorType photonPosition;
+          for (int i = 0; i < 3; i++)
+            {
+            photonDirection[i] = worldVector[i] / worldVectorNorm;
+            photonPosition[i] = sourceToPixel[i] * m_VolumeSpacing[i];
+            }
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
           }
         else
           {
-          Accumulate(threadId, output, m_Weight * vcl_exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi), m_Energy);
+          Accumulate(threadId, output, weight, m_Energy);
           }
 
         /* Reset weights for next ray in thread. */
@@ -837,9 +847,9 @@ namespace GateFixedForcedDetectionFunctor
       void SetDirection(const VectorType &itkNotUsed(_arg))
         {
         }
-      void SetEnergyZAndWeight(const double &energy,
+      void SetEnergyZAndWeight(const double & energy,
                                const unsigned int &itkNotUsed(Z),
-                               const double &weight)
+                               const double & weight)
         {
         unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
         m_Weight = weight;
