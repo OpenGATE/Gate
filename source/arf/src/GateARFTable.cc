@@ -57,9 +57,9 @@ GateARFTable::GateARFTable(const G4String & aName) :
   mBase4 = 0.750005; /* 1792 */
   /*
    variables for energy resolution
-   If dErgReso>0, used for energy resolution ~ square_root (photon enerngy)
-   static double dEWindowWidth, dErgReso = 10.0, dResoAtErg = 140.5;
-   if dErgReso<0, energy resolution linearly depends on photon energy
+   If mEnergyResolution>0, used for energy resolution ~ square_root (photon energy)
+   static double dEWindowWidth, mEnergyResolution = 10.0, dResoAtErg = 140.5;
+   if mEnergyResolution<0, energy resolution linearly depends on photon energy
    for max E > 240 keV: Siemens E.CAM, dConstant=0.971162, dLinear=0.0555509
    for max E < 240 keV: Siemens E.CAM, dConstant=1.9335, dLinear=0.0383678
    OLD(for Siemens E.CAM, dConstant=-0.226416, dLinear=0.0592695)
@@ -114,34 +114,34 @@ void GateARFTable::Initialize(const G4double & energyLow, const G4double & energ
   mTheta = new G4double[2048];
   G4cout.precision(10);
   G4double tmp = 1.0 + mStep1;
-  for (G4int cosTheta = 0; cosTheta < 2048; cosTheta++)
+  for (G4int cosThetaI = 0; cosThetaI < 2048; cosThetaI++)
     {
     /* cosTheta 1.0 --> 0.20 */
-    if (cosTheta < 1025)
+    if (cosThetaI < 1025)
       {
       tmp -= mStep1;
-      mCosTheta[cosTheta] = tmp;
-      mTheta[cosTheta] = acos(tmp);
+      mCosTheta[cosThetaI] = tmp;
+      mTheta[cosThetaI] = acos(tmp);
       }
-    if ((cosTheta > 1024) && (cosTheta < 1537))
+    if ((cosThetaI > 1024) && (cosThetaI < 1537))
       {
       tmp -= mStep2;
-      mCosTheta[cosTheta] = tmp;
-      mTheta[cosTheta] = acos(tmp);
+      mCosTheta[cosThetaI] = tmp;
+      mTheta[cosThetaI] = acos(tmp);
       }
-    if ((cosTheta > 1536) && (cosTheta < 1793))
+    if ((cosThetaI > 1536) && (cosThetaI < 1793))
       {
       tmp -= mStep3;
-      mCosTheta[cosTheta] = tmp;
-      mTheta[cosTheta] = acos(tmp);
+      mCosTheta[cosThetaI] = tmp;
+      mTheta[cosThetaI] = acos(tmp);
       }
-    if (cosTheta > 1792)
+    if (cosThetaI > 1792)
       {
       tmp -= mStep4;
-      mCosTheta[cosTheta] = tmp;
-      mTheta[cosTheta] = acos(tmp);
+      mCosTheta[cosThetaI] = tmp;
+      mTheta[cosThetaI] = acos(tmp);
       }
-    mCosThetaI[2047 - cosTheta] = mCosTheta[cosTheta];
+    mCosThetaI[2047 - cosThetaI] = mCosTheta[cosThetaI];
     }
   if (mTanPhi != 0)
     {
@@ -205,7 +205,7 @@ void GateARFTable::Initialize(const G4double & energyLow, const G4double & energ
 G4double GateARFTable::RetrieveProbability(const G4double & x, const G4double & y)
   {
   G4int theta = 0;
-  G4int phi;
+  G4int phi = 0;
   if (GetIndexes(x, y, theta, phi) == 1)
     {
     return mArfTableVector[theta + phi * mNbOfCosTheta];
@@ -225,36 +225,36 @@ void GateARFTable::SetERef(const G4double & aE)
 
 G4int GateARFTable::GetIndexes(const G4double & x, const G4double & y, G4int& theta, G4int& phi)
   {
-  G4double costheta = sqrt(1. - x * x - y * y);
-  if (costheta < 0.2)
+  G4double cosTheta = sqrt(1. - x * x - y * y);
+  if (cosTheta < 0.2)
     {
     return 0;
     }
-  if (costheta - 0.99 > 0.)
+  if (cosTheta - 0.99 > 0.)
     {
-    theta = G4int((1.0 - costheta) * 1024.0 / 0.010);
+    theta = G4int((1.0 - cosTheta) * 1024.0 / 0.010);
     }
 
-  if ((costheta - 0.95 > 0.) && (costheta - 0.99 <= 0.))
+  if ((cosTheta - 0.95 > 0.) && (cosTheta - 0.99 <= 0.))
     {
-    theta = G4int((0.99 - costheta) * 512.0 / 0.040) + 1024;
+    theta = G4int((0.99 - cosTheta) * 512.0 / 0.040) + 1024;
     }
 
-  if ((costheta - 0.75 > 0.) && (costheta - 0.95 <= 0.))
+  if ((cosTheta - 0.75 > 0.) && (cosTheta - 0.95 <= 0.))
     {
-    theta = G4int((0.95 - costheta) * 256.0 / 0.20) + 1536;
+    theta = G4int((0.95 - cosTheta) * 256.0 / 0.20) + 1536;
     }
 
-  if (costheta - 0.75 <= 0.)
+  if (cosTheta - 0.75 <= 0.)
     {
-    theta = G4int((0.75 - costheta) * 256.0 / 0.55) + 1792;
+    theta = G4int((0.75 - cosTheta) * 256.0 / 0.55) + 1792;
     }
 
-  if (theta > 0 && (mCosTheta[theta] - costheta < 0.))
+  if (theta > 0 && (mCosTheta[theta] - cosTheta < 0.))
     {
     theta--;
     }
-  if (theta < 2047 && (mCosTheta[theta + 1] - costheta > 0.))
+  if (theta < 2047 && (mCosTheta[theta + 1] - cosTheta > 0.))
     {
     theta++;
     }
@@ -303,7 +303,6 @@ G4double GateARFTable::computeARFfromDRF(const G4double & xI,
   G4int i;
   G4int j;
   G4double sum = 0.0;
-
   G4double smallPixX;
   G4double smallPixY;
   G4double lengthSqr;
@@ -436,20 +435,22 @@ void GateARFTable::convertDRF2ARF()
   std::ofstream outputTableBin(arfDrfTableBinName.c_str(), std::ios::out | std::ios::binary);
   outputTableBin.write((const char*) (mArfTableVector), tableBufferSize);
   outputTableBin.close();
-  G4cout << " writing the ARF table to a text file \n";
-  std::ofstream outputArtTableTxt("arftable.txt");
-  G4int phiIndex;
-  G4int thetaIndex;
-  for (G4int i = 0; i < mTotalNbOfThetaPhi; i++)
-    {
-    phiIndex = i / GetNbofTheta();
-    thetaIndex = i - phiIndex * GetNbofTheta();
-    outputArtTableTxt << phiIndex << " " << thetaIndex << "  " << mArfTableVector[i] << Gateendl;
-    if (thetaIndex == 2047)
-      {
-      outputArtTableTxt << Gateendl;}
-    }
-  outputArtTableTxt.close();
+  /*
+   G4cout << " writing the ARF table to a text file \n";
+   std::ofstream outputArtTableTxt("arftable.txt");
+   G4int phiIndex;
+   G4int thetaIndex;
+   for (G4int i = 0; i < mTotalNbOfThetaPhi; i++)
+   {
+   phiIndex = i / GetNbofTheta();
+   thetaIndex = i - phiIndex * GetNbofTheta();
+   outputArtTableTxt << phiIndex << " " << thetaIndex << "  " << mArfTableVector[i] << Gateendl;
+   if (thetaIndex == 2047)
+   {
+   outputArtTableTxt << Gateendl;}
+   }
+   outputArtTableTxt.close();
+   */
   }
 
 void GateARFTable::FillDRFTable(const G4double & meanE, const G4double & X, const G4double & Y)
@@ -487,7 +488,7 @@ void GateARFTable::FillDRFTable(const G4double & meanE, const G4double & X, cons
   G4double result = 0.;
   if (mEnergyResolution > 0.000001)
     {
-    /* energy resolution (in %) ~ sqrt(E), relative to dErgReso@dResoAtErg kev*/
+    /* energy resolution (in %) ~ sqrt(E), relative to mEnergyResolution@dResoAtErg kev*/
     fwhm = mEnergyResolution * sqrt(mEnergyReference * meanE);
     sigma = fwhm / (2.0 * sqrt(log(2.0)));
     result = (TMath::Erf((mEnergyHighOut - meanE) / sigma)

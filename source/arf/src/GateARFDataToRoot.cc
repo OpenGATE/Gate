@@ -214,8 +214,11 @@ G4int GateARFDataToRoot::StoreARFData(GateSingleDigi * aDigi)
   G4ThreeVector position = aDigi->GetGlobalPos();
   G4ThreeVector PosAtVertex = aDigi->GetSourcePosition();
   mNbofStoredPhotons++;
-  G4cout << " number of stored photons    " << mNbofStoredPhotons << Gateendl;
-  G4cout << " number of NbOfSourcePhotons " << mNbOfSourcePhotons << Gateendl;
+  if (mNbofStoredPhotons % 1000 == 0)
+    {
+    G4cout << " number of stored photons    " << mNbofStoredPhotons << Gateendl;
+    G4cout << " number of NbOfSourcePhotons " << mNbOfSourcePhotons << Gateendl;
+    }
   /*compute projection of the energy deposition location onto the projection plane as the intersection of the plane X=m_X
    and the line passing through totalposition with unit vector director Indirection, the incident direction */
   if (mDrfProjectionMode == 0) /*smooth positions by substracting source emission position */

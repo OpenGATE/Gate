@@ -84,9 +84,9 @@ void GateARFTableMgr::ComputeARFTablesFromEW(const G4String & filename)
     return;
     }
   char buffer[200];
-  G4double minEnergy;
-  G4double maxEnergy;
-  G4int numberOfFiles;
+  G4double minEnergy = 0;
+  G4double maxEnergy = 0;
+  G4int numberOfFiles = 0;
   G4String rootBaseFilename;
   G4String baseName = GetName() + "ARFTable_";
 
@@ -261,20 +261,21 @@ void GateARFTableMgr::SaveARFToBinaryFile()
       }
     outputBinaryFile.flush();
     delete[] tableBuffer;
-    G4cout << " All ARF tables have been saved to binary file\n " << mBinaryFilename;
     }
+  G4cout << " All ARF tables have been saved to binary file\n " << mBinaryFilename;
   outputBinaryFile.close();
   }
 
 void GateARFTableMgr::LoadARFFromBinaryFile(const G4String & binaryFilename)
   {
   mLoadArfTables = 1;
+  mCurrentIndex = 0;
   G4String basename = GetName() + "ARFTable_";
   std::ifstream inputBinaryFile;
   inputBinaryFile.open(binaryFilename.c_str(), std::ios::binary);
   inputBinaryFile.seekg(0, std::ios::beg);
-  G4double nbOfTables;
-  G4double tableSize;
+  G4double nbOfTables = 0;
+  G4double tableSize = 0;
   inputBinaryFile.read((char*) (&nbOfTables), sizeof(G4double));
   long readingPosition = inputBinaryFile.tellg();
   G4cout << "Nb Of Tables " << nbOfTables << Gateendl;

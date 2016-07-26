@@ -134,6 +134,16 @@ public:
     mDetectorXDepth = aDepth;
     }
 
+  G4double GetDepth()
+    {
+    return mDetectorXDepth;
+    }
+
+  void SetShortcutARF(const bool & boolean)
+    {
+    mShortcutARF = boolean;
+    }
+
   G4int GetCopyNo()
     {
     return mHeadID;
@@ -194,6 +204,7 @@ private:
   std::vector<G4int> mEnergyWindowsNumberOfPrimaries;
   G4double mEnergyDepositionThreshold;
   G4int mArfStage;
+  bool mShortcutARF;
   };
 
 #endif

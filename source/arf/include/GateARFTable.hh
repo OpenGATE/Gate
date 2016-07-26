@@ -55,7 +55,7 @@ private:
   G4double mStep2;
   G4double mStep3;
   G4double mStep4;
-  G4double mTanPhiStep; /* setpes parameters for the theta,phi grids */
+  G4double mTanPhiStep; /* Steps parameters for the theta,phi grids */
   G4double mBase1;
   G4double mBase2;
   G4double mBase3;
