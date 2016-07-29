@@ -408,12 +408,10 @@ void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointe
 void GateFixedForcedDetectionActor::CalculatePropagatorImage(const double D, std::vector<double> & energyList)
 {
 DD(D/CLHEP::m)
-  /* define the imaginary unit */
-  const std::complex<InputPixelType> J(0.0,1.0);
   itk::ImageRegionIterator<ComplexImageType> it(mPropagatorImage,
                                               mPropagatorImage->GetLargestPossibleRegion());
 
-    InputPixelType wavelength = h_Planck*c_light/(energyList[0]/joule);
+    InputPixelType wavelength = h_Planck/(eV*s) * c_light/(m/s) / (energyList[0]/eV);
     std::complex<InputPixelType> amp(0.0,-1./(wavelength*(D/CLHEP::m)));
     InputPixelType y = mPropagatorImage->GetOrigin()[1];
     for(unsigned int j=0; j<mPropagatorImage->GetLargestPossibleRegion().GetSize()[1]; j++, y+=mPropagatorImage->GetSpacing()[1])
@@ -421,7 +419,9 @@ DD(D/CLHEP::m)
       InputPixelType x = mPropagatorImage->GetOrigin()[0];
       for(unsigned int i=0; i<mPropagatorImage->GetLargestPossibleRegion().GetSize()[0]; i++, ++it, x+=mPropagatorImage->GetSpacing()[0])
         {
-        it.Set(amp * std::exp((std::complex<InputPixelType>(-itk::Math::pi)*amp)*(x*x+y*y)));
+        InputPixelType squared_dist = (x/CLHEP::m)*(x/CLHEP::m) + (y/CLHEP::m)*(y/CLHEP::m);
+        std::complex<InputPixelType> phase = (std::complex<InputPixelType>(-itk::Math::pi)*amp)*std::complex<InputPixelType>(squared_dist);
+        it.Set(amp*std::exp(phase));
         }
       }
 }
@@ -975,10 +975,9 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
         GateFixedForcedDetectionFunctor::Transmittance<InputImageType::PixelType> > transFunctor;
     transFunctor::Pointer trans = transFunctor::New();
 
-    trans->SetInput1(FirstSliceProjection(mPrimaryImage));
-    trans->SetInput2(FirstSliceProjection(mDeltaImage));
+    trans->SetInput1(mPrimaryImage);
+    trans->SetInput2(mDeltaImage);
     trans->Update();
-
 
     /* Fresnel propagator setup */
 
@@ -1034,6 +1033,24 @@ InverseFFTImageFilter should do the trick. */
       imgWriter->SetFileName("prop.mha");
       imgWriter->SetInput(modulusFilter->GetOutput());
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+
+
+      /* Test Code */
+      // Extract the real part
+     typedef itk::ComplexToRealImageFilter<FFTFilterType::OutputImageType, InputImageType> RealFilterType;
+     RealFilterType::Pointer realFilter = RealFilterType::New();
+     realFilter->SetInput(mPropagatorImage);
+     imgWriter->SetFileName("prop_real.mha");
+     imgWriter->SetInput(realFilter->GetOutput());
+     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+     // Extract the complex part
+     typedef itk::ComplexToImaginaryImageFilter<FFTFilterType::OutputImageType, InputImageType> ImaginaryFilterType;
+     ImaginaryFilterType::Pointer imaginaryFilter = ImaginaryFilterType::New();
+     imaginaryFilter->SetInput(mPropagatorImage);
+     imgWriter->SetFileName("prop_imag.mha");
+     imgWriter->SetInput(imaginaryFilter->GetOutput());
+     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+     /* Test Code */
 
 
       // delta integral output

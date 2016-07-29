@@ -581,9 +581,8 @@ namespace GateFixedForcedDetectionFunctor
                   /* Matter wave : for photon, the formula is lambda = hc/E
                    * https://fr.wikipedia.org/wiki/Hypoth%C3%A8se_de_De_Broglie
                    */
-                  double wavelength = h_Planck*c_light/(m_EnergyList[i]/joule);
+                  double wavelength = h_Planck/(eV*s) * c_light/(m/s) / (m_EnergyList[i]/eV);
                   rayIntegral *= (-2*itk::Math::pi/wavelength);
-
                   this->AccumulatePhase(output,
                   rayIntegral * (*m_EnergyWeightList)[i],
                   m_EnergyList[i]);
@@ -1094,7 +1093,7 @@ namespace GateFixedForcedDetectionFunctor
         {
         /* Calculating diffraction image */
         const std::complex<TInput1> i(0.0,1.0);  // imaginary unit
-        std::complex<TInput1> amp = std::sqrt(A);  // Amplitude
+        std::complex<TInput1> amp = std::sqrt(std::complex<TInput1>(A));  // Amplitude
         std::complex<TInput1> pt = std::exp(i*std::complex<TInput1>(B));  // Phase Transition
         return (TOutput) (amp*pt);
         }
