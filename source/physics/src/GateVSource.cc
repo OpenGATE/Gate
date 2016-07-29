@@ -54,7 +54,8 @@ GateVSource::GateVSource(G4String name): m_name( name ) {
   m_type        			 = "";
   m_sourceID     			 = 0;
   m_activity     			 = 0.*becquerel;
-  m_startTime    			 = 0.*s;
+  m_startTime                = 0.*s;
+  m_stopTime    			 = -1.*s;
   m_time         			 = 0.*s;
   m_timeInterval = 0.*s;
   nVerboseLevel  			 = 0;
@@ -266,7 +267,8 @@ G4double GateVSource::GetNextTime( G4double timeStart )
     {
       // compute the present activity, on the base of the starting activity and the lifetime (if any)
       G4double activityNow = m_activity;
-      if( timeStart < m_startTime )
+      // Test if time is between m_startTime and m_stopTime. 
+      if( ( timeStart < m_startTime ) || ( (timeStart > m_stopTime) &&  (m_stopTime > 0.) )  )
         activityNow = 0.;
       else
         {
@@ -360,8 +362,10 @@ void GateVSource::Dump( G4int level )
          << "  ID                 : " << m_sourceID << Gateendl
          << "  type               : " << m_type << Gateendl
          << "  activity (Bq)      : " << m_activity/becquerel << Gateendl
-         << "  startTime (s)      : " << m_startTime/s << Gateendl
-         << "  time (s)           : " << m_time/s << Gateendl
+         << "  startTime (s)      : " << m_startTime/s << Gateendl;
+ if(m_stopTime>-1.)
+ G4cout  << "  stopTime (s)       : " << m_stopTime/s << Gateendl;
+ G4cout  << "  time (s)           : " << m_time/s << Gateendl
          << "  forcedUnstable     : " << m_forcedUnstableFlag << Gateendl
          << "  forcedHalfLife (s) : " << GetForcedHalfLife()/s << Gateendl
          << "  verboseLevel       : " << nVerboseLevel << Gateendl
