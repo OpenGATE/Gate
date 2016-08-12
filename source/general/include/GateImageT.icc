@@ -39,7 +39,8 @@ void GateImageT<PixelType>::Allocate() {
 //-----------------------------------------------------------------------------
 template<class PixelType>
 void GateImageT<PixelType>::PrintInfo() {
-  GateMessage("Image", 5, std::setprecision(15) << Gateendl);
+  // This GateMessage changes the cout precision to the number of decimal digits necessary to differentiate all values of double type.
+  GateMessage("Image", 15, std::setprecision(std::numeric_limits<double>::digits10) << Gateendl);
   GateMessage("Image", 1, "Matrix Size=\t" << size        << Gateendl);
   GateMessage("Image", 1, "HalfSize=\t"    << halfSize    << Gateendl);
   GateMessage("Image", 1, "Resol=\t"       << resolution  << Gateendl);

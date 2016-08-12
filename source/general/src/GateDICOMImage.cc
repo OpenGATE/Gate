@@ -31,8 +31,8 @@ GateDICOMImage::GateDICOMImage()
 
   dicomIO=ImageType::New();
 
-  // This GateMessage changes the cout precision to the number of decimal digits necessary to differentiate all values of double type
-  GateMessage("Image", 15, std::setprecision(std::numeric_limits<double>::digits10));
+  // This GateMessage changes the cout precision to the number of decimal digits necessary to differentiate all values of double type.
+  GateMessage("Image", 15, std::setprecision(std::numeric_limits<double>::digits10) << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
