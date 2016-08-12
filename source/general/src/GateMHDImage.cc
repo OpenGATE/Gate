@@ -53,9 +53,12 @@ void GateMHDImage::ReadHeader(std::string & filename)
   if (m_MetaImage.NDims() != 3)
     GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort.\n");
 
+
   for (int i = 0; i < m_MetaImage.NDims(); i++)
   {
       size[i]    = m_MetaImage.DimSize(i);
+      // NOTE: The spacing and origin of MHD header files are (always?) rounded at 6 digits.
+      // Thus rounding the spacing and the origin at 6 digits is mandatory for MHD images in order to keep original MHD header precision and avoid errors.
       spacing[i] = round_to_digits(m_MetaImage.ElementSpacing(i),6);
       origin[i]  = round_to_digits(m_MetaImage.Position(i),6);
   }
