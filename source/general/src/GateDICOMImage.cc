@@ -30,6 +30,9 @@ GateDICOMImage::GateDICOMImage()
   pixelsCount=0;
 
   dicomIO=ImageType::New();
+
+  // This GateMessage changes the cout precision to the number of decimal digits necessary to differentiate all values of double type
+  GateMessage("Image", 15, std::setprecision(std::numeric_limits<double>::digits10));
 }
 //-----------------------------------------------------------------------------
 
@@ -49,11 +52,11 @@ void GateDICOMImage::Read(const std::string fileName)
   }
   catch (itk::ExceptionObject & e)
   {
-    GateError("[GateDICOMImage::Read] ERROR: Cannot read the file " << fileName << Gateendl);
+    GateError("[GateDICOMImage::" << __FUNCTION__ << "] ERROR: Cannot read the file " << fileName << Gateendl);
     exit(EXIT_FAILURE);
   }
 
-  GateMessage("Image", 5, "[GateDICOMImage::Read] Opening " << fileName << Gateendl);
+  GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] Opening " << fileName << Gateendl);
 
   ReaderType::DictionaryRawPointer dict = (*(reader->GetMetaDataDictionaryArray()))[0];
   itk::MetaDataObject< std::string >::Pointer entryvalue =
@@ -62,7 +65,7 @@ void GateDICOMImage::Read(const std::string fileName)
   if( entryvalue )
   {
     std::string seriesUID(entryvalue->GetMetaDataObjectValue());
-    GateMessage("Image", 5, "GateDICOMImage::Read: File: " << fileName <<", series UID: "<< seriesUID << Gateendl);
+    GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] File: " << fileName <<", series UID: "<< seriesUID << Gateendl);
     ReadSeries(path,seriesUID);
   }
   else
@@ -77,7 +80,7 @@ void GateDICOMImage::Read(const std::string fileName)
 //-----------------------------------------------------------------------------
 void GateDICOMImage::ReadSeries(const std::string seriesDirectory, std::string UID)
 {
-  GateMessage("Image", 5, "[GateDICOMImage::ReadSeries]: path: " << seriesDirectory <<", UID: "<< UID << Gateendl);
+  GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "]: path: " << seriesDirectory <<", UID: "<< UID << Gateendl);
 
   reader = ReaderType::New();
   reader->SetImageIO(ImageIOType::New());
@@ -88,7 +91,7 @@ void GateDICOMImage::ReadSeries(const std::string seriesDirectory, std::string U
 
   if(nameGenerator->GetSeriesUIDs().size() == 0)
   {
-    GateError( "[GateDICOMImage::ReadSeries] ERROR:" << seriesDirectory << " does not contain any DICOM series !" << Gateendl);
+    GateError( "[GateDICOMImage::" << __FUNCTION__ << "] ERROR:" << seriesDirectory << " does not contain any DICOM series !" << Gateendl);
     exit(EXIT_FAILURE);
   }
 
@@ -102,7 +105,7 @@ void GateDICOMImage::ReadSeries(const std::string seriesDirectory, std::string U
     if(UID != "" && UID == seriesUID.substr(0, UID.size()))
     {
       UID=seriesItr->c_str();
-      GateMessage("Image", 2, "[GateDICOMImage::ReadSeries] Corresponding DICOM series found ! (UID: " << seriesItr->c_str() << ")" << Gateendl);
+      GateMessage("Image", 2, "[GateDICOMImage::" << __FUNCTION__ << "] Corresponding DICOM series found ! (UID: " << seriesItr->c_str() << ")" << Gateendl);
       found = true;
     }
     ++seriesItr;
@@ -110,7 +113,7 @@ void GateDICOMImage::ReadSeries(const std::string seriesDirectory, std::string U
 
   if(!found)
   {
-    GateError( "[GateDICOMImage::ReadSeries] ERROR:" << seriesDirectory << " does not contain any corresponding DICOM series !" << Gateendl);
+    GateError( "[GateDICOMImage::" << __FUNCTION__ << "] ERROR:" << seriesDirectory << " does not contain any corresponding DICOM series !" << Gateendl);
     exit(EXIT_FAILURE);
   }
 
@@ -123,7 +126,7 @@ void GateDICOMImage::ReadSeries(const std::string seriesDirectory, std::string U
   }
   catch (itk::ExceptionObject &excp)
   {
-    GateError( "[GateDICOMImage::ReadSeries] ERROR:" << seriesDirectory << " does not contain any corresponding DICOM series !" << Gateendl);
+    GateError( "[GateDICOMImage::" << __FUNCTION__ << "] ERROR:" << seriesDirectory << " does not contain any corresponding DICOM series !" << Gateendl);
     exit(EXIT_FAILURE);
   }
 }
@@ -139,7 +142,7 @@ std::vector<long int unsigned> GateDICOMImage::GetResolution()
     for(size_t i = 0; i < reader->GetOutput()->GetImageDimension(); i++)
       vResolution[i] = reader->GetOutput()->GetLargestPossibleRegion().GetSize()[i];
 
-    GateMessage("Image", 5, "[GateDICOMImage::GetResolution] "
+    GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] "
                 << vResolution[0] << ","
                 << vResolution[1] << ","
                 << vResolution[2] << Gateendl);
@@ -156,9 +159,10 @@ std::vector<double> GateDICOMImage::GetSpacing()
   {
     vSpacing.resize(reader->GetOutput()->GetImageDimension(), 0.);
     for(size_t i = 0; i < reader->GetOutput()->GetImageDimension(); i++)
+      // NOTE: Rounding the spacing at six digits is mandatory to have the same precision for the DCM images and for the MHD images (the precision of the spacing in MHD images is rounded at six digits).
       vSpacing[i] = round_to_digits(reader->GetOutput()->GetSpacing()[i],6);
 
-    GateMessage("Image", 5, "[GateDICOMImage::GetSpacing] "
+    GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] "
                 << vSpacing[0] << ","
                 << vSpacing[1] << ","
                 << vSpacing[2] << " mm" << Gateendl);
@@ -175,9 +179,9 @@ std::vector<double> GateDICOMImage::GetSize()
   {
     vSize.resize(reader->GetOutput()->GetImageDimension(), 0);
     for(size_t i=0 ; i<reader->GetOutput()->GetImageDimension() ; i++)
-      vSize[i] = round_to_digits(GetResolution()[i] * GetSpacing()[i],6);
+      vSize[i] = GetResolution()[i] * GetSpacing()[i];
 
-    GateMessage("Image", 5, "[GateDICOMImage::GetSize] "
+    GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] "
                 << vSize[0] << ","
                 << vSize[1] << ","
                 << vSize[2] << " mm" << Gateendl);
@@ -194,9 +198,10 @@ std::vector<double> GateDICOMImage::GetOrigin()
   {
     vOrigin.resize(reader->GetOutput()->GetImageDimension(),0.);
     for(size_t i=0 ; i<reader->GetOutput()->GetImageDimension() ; i++)
+      // NOTE: Rounding the origin at six digits is mandatory to have the same precision for the DCM images and for the MHD images (the precision of the origin in MHD images is rounded at six digits).
       vOrigin[i] = round_to_digits(reader->GetOutput()->GetOrigin()[i],6);
 
-    GateMessage("Image", 5, "[GateDICOMImage::GetOrigin] "
+    GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] "
                 << vOrigin[0] <<","
                 << vOrigin[1] <<","
                 << vOrigin[2] << Gateendl);
@@ -228,7 +233,7 @@ void GateDICOMImage::SetResolution(std::vector<long unsigned int> resolution)
   dicomIO->SetRegions(region);
   dicomIO->Allocate();
 
-  GateMessage("Image", 5, "[GateDICOMImage::SetResolution] "
+  GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] "
             << dicomIO->GetLargestPossibleRegion().GetSize()[0] <<","
             << dicomIO->GetLargestPossibleRegion().GetSize()[1] <<","
             << dicomIO->GetLargestPossibleRegion().GetSize()[2] << Gateendl);
@@ -246,7 +251,7 @@ void GateDICOMImage::SetSpacing(std::vector<double> spacing)
 
   dicomIO->SetSpacing(spacingST);
 
-  GateMessage("Image", 5, "GateDICOMImage::SetSpacing: "
+  GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] "
             << dicomIO->GetSpacing()[0] <<","
             << dicomIO->GetSpacing()[1] <<","
             << dicomIO->GetSpacing()[2] << Gateendl);
@@ -267,7 +272,7 @@ void GateDICOMImage::SetOrigin(std::vector<double> origin)
   // Gate convention: origin is the corner of the first pixel
   // MHD / ITK convention: origin is the center of the first pixel
   // -> Add a half pixel
-  GateMessage("Image", 5, "[GateDICOMImage::SetOrigin] Untouched origin: "
+  GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] Untouched origin: "
                 << origin[0] << ","
                 << origin[1] << ","
                 << origin[2] << Gateendl);
@@ -281,7 +286,7 @@ void GateDICOMImage::SetOrigin(std::vector<double> origin)
 
   dicomIO->SetOrigin(originPT);
 
-  GateMessage("Image", 5, "[GateDICOMImage::SetOrigin] Conventional origin: "
+  GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] Conventional origin: "
             << dicomIO->GetOrigin()[0] << ","
             << dicomIO->GetOrigin()[1] << ","
             << dicomIO->GetOrigin()[2] << Gateendl);
@@ -302,17 +307,17 @@ void GateDICOMImage::SetOrigin(std::vector<double> origin)
 //-----------------------------------------------------------------------------
 void GateDICOMImage::dumpIO()
 {
-  GateMessage("Image", 5, "GateDICOMImage::dumpIO: dicomIO resolution : "
+  GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] dicomIO resolution : "
             << dicomIO->GetLargestPossibleRegion().GetSize()[0] <<","
             << dicomIO->GetLargestPossibleRegion().GetSize()[1] <<","
             << dicomIO->GetLargestPossibleRegion().GetSize()[2] << Gateendl);
 
-  GateMessage("Image", 5, "GateDICOMImage::dumpIO: dicomIO spacing : "
+  GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] dicomIO spacing : "
             << dicomIO->GetSpacing()[0] <<","
             << dicomIO->GetSpacing()[1] <<","
             << dicomIO->GetSpacing()[2] << Gateendl);
 
-  GateMessage("Image", 5, "GateDICOMImage::dumpIO: dicomIO origin : "
+  GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] dicomIO origin : "
             << dicomIO->GetOrigin()[0] <<","
             << dicomIO->GetOrigin()[1] <<","
             << dicomIO->GetOrigin()[2] << Gateendl);
@@ -324,11 +329,11 @@ void GateDICOMImage::dumpIO()
 void GateDICOMImage::Write(const std::string fileName)
 {
   // EXPERIMENTAL METHOD !! FIXME
-  GateMessage("Image", 0, "[GateDICOMImage::Write] WARNING: DICOM writing is experimental !" << fileName << Gateendl);
+  GateMessage("Image", 0, "[GateDICOMImage::" << __FUNCTION__ << "] WARNING: DICOM writing is experimental !" << fileName << Gateendl);
 
   if(fileName == "")
   {
-    GateError("[GateDICOMImage::Write] ERROR: No filename given for the exported image !" << fileName << Gateendl);
+    GateError("[GateDICOMImage::" << __FUNCTION__ << "] ERROR: No filename given for the exported image !" << fileName << Gateendl);
     exit(EXIT_FAILURE);
   }
 
@@ -340,12 +345,12 @@ void GateDICOMImage::Write(const std::string fileName)
   writer->SetImageIO(ImageIOType::New());
   //dumpIO();
 
-  GateMessage("Image", 5, "[GateDICOMImage::Write] Writing the image as " << fileName << Gateendl);
+  GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] Writing the image as " << fileName << Gateendl);
 
   try {writer->Update();}
   catch (itk::ExceptionObject &excp)
   {
-    GateError("[GateDICOMImage::Write] ERROR: Exception thrown while writing " << fileName << Gateendl);
+    GateError("[GateDICOMImage::" << __FUNCTION__ << "] ERROR: Exception thrown while writing " << fileName << Gateendl);
     exit(EXIT_FAILURE);
   }
 }
