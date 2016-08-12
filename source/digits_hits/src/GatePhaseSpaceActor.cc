@@ -39,8 +39,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
 
   pMessenger = new GatePhaseSpaceActorMessenger(this);
   EnableCharge = true;
-  EnableElectronicDEDX = true;
-  EnableTotalDEDX = true;
+  EnableElectronicDEDX = false;
+  EnableTotalDEDX = false;
   EnableXPosition = true;
   EnableYPosition = true;
   EnableZPosition = true;
@@ -127,15 +127,15 @@ void GatePhaseSpaceActor::Construct() {
 
     if (GetMaxFileSize() != 0) pListeVar->SetMaxTreeSize(GetMaxFileSize());
 
-    if (EnableCharge) pListeVar->Branch("Charge", &c, "Charge/I");
+    if (EnableCharge) pListeVar->Branch("AtomicNumber", &Za, "AtomicNumber/I");
     if (EnableElectronicDEDX) pListeVar->Branch("ElectronicDEDX", &elecDEDX, "elecDEDX/F");
     if (EnableElectronicDEDX) pListeVar->Branch("StepLength", &stepLength, "stepLength/F");
     if (EnableElectronicDEDX) pListeVar->Branch("Edep", &edep, "Edep/F");
     if (EnableTotalDEDX) pListeVar->Branch("TotalDEDX", &totalDEDX, "totalDEDX/F");
     
     if (EnableEkine) pListeVar->Branch("Ekine", &e, "Ekine/F");
-    if (EnableEkine) pListeVar->Branch("Ekpost", &ekPost, "Ekpost/F");
-    if (EnableEkine) pListeVar->Branch("Ekpre", &ekPre, "Ekpre/F");
+    if (EnableElectronicDEDX) pListeVar->Branch("Ekpost", &ekPost, "Ekpost/F");
+    if (EnableElectronicDEDX) pListeVar->Branch("Ekpre", &ekPre, "Ekpre/F");
     if (EnableWeight) pListeVar->Branch("Weight", &w, "Weight/F");
     if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/F");
     if (EnableMass) pListeVar->Branch("Mass", &m, "Mass/I"); // in MeV/c2
@@ -414,7 +414,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   ekPost=step->GetPostStepPoint()->GetKineticEnergy();
   ekPre=step->GetPreStepPoint()->GetKineticEnergy();
 
-  c = step->GetTrack()->GetDefinition()->GetAtomicNumber();//std::floor(stepPoint->GetCharge()+0.1);  //floor & +0.1 to avoid round off error
+  Za = step->GetTrack()->GetDefinition()->GetAtomicNumber();//std::floor(stepPoint->GetCharge()+0.1);  //floor & +0.1 to avoid round off error
   m = step->GetTrack()->GetDefinition()->GetAtomicMass();
   
   if (EnableElectronicDEDX || EnableTotalDEDX) 

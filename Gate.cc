@@ -20,6 +20,7 @@
 
 #include "G4UImanager.hh"
 #include "G4UIterminal.hh"
+#include "GateUIterminal.hh"
 #include "G4UItcsh.hh"
 #include "GateRunManager.hh"
 #include "GateMessageManager.hh"
@@ -349,9 +350,9 @@ int main( int argc, char* argv[] )
 	#endif
 #else
 #ifdef G4UI_USE_TCSH
-      session = new G4UIterminal( new G4UItcsh );
+      session = new GateUIterminal( new G4UItcsh );
 #else
-      session = new G4UIterminal();
+      session = new GateUIterminal();
 #endif
 #endif
 #ifndef _WIN32
@@ -361,9 +362,9 @@ int main( int argc, char* argv[] )
   else
     {
 #ifdef G4UI_USE_TCSH
-      session = new G4UIterminal( new G4UItcsh );
+      session = new GateUIterminal( new G4UItcsh );
 #else
-      session = new G4UIterminal();
+      session = new GateUIterminal();
 #endif
     }
 

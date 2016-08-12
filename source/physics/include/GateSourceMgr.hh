@@ -19,6 +19,7 @@
 #include "GateApplicationMgr.hh"
 #include "GateSourcePencilBeam.hh"
 #include "GateSourceTPSPencilBeam.hh"
+#include "GateSourceFastY90.hh"
 
 class GateSourceMgrMessenger;
 

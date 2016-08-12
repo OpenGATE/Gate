@@ -41,10 +41,7 @@ public:
   // Constructs the sensor
   virtual void Construct();
 
-  void SetRestrictedFlag(bool b) { mIsRestrictedFlag = b; }
-  void SetDeltaRestrictedValue(G4double d) { mDeltaRestricted = d; }
-  void EnableLETUncertaintyImage(bool b) { mIsLETUncertaintyImageEnabled = b; }
-  void SetDoseToWater(bool b) { mIsDoseToWaterEnabled = b; }
+  void SetLETtoWater(bool b) { mIsLETtoWaterEnabled = b; }
   void SetParallelCalculation(bool b) { mIsParallelCalculationEnabled = b; }
   void SetLETType(G4String s) { mAveragingType = s; }
 
@@ -69,40 +66,30 @@ protected:
   GateLETActor(G4String name, G4int depth=0);
   GateLETActorMessenger * pMessenger;
 
-  bool mIsRestrictedFlag;
-
   int mCurrentEvent;
-  bool mIsLETUncertaintyImageEnabled;
-  bool mIsDoseToWaterEnabled;
+  bool mIsLETtoWaterEnabled;
   G4String mAveragingType;
-  G4double mDeltaRestricted;
-  GateImageDouble mLETImage;
-  GateImageDouble mEdepImage;
-  GateImageDouble mFinalImage;
+  
+  GateImageDouble mWeightedLETImage;
+  GateImageDouble mNormalizationLETImage;
+  GateImageDouble mDoseTrackAverageLETImage;
   G4String mLETFilename;
   G4String numeratorFileName;
   G4String denominatorFileName;
-  G4String uncertaintyFilename;
-  GateImageDouble mLETSecondMomentImage;
-  GateImageDouble mLETUncertaintyFinalImage;
+  G4String sigmaFilename;
+  
 
   bool mIsDoseAveraged;
   bool mIsTrackAveraged;
 
-  bool mIsTrackAveragedFluenceAveraged;
-  bool mIsTrackAveragedFluenceTrackAveraged;
-  bool mIsTrackAveragedDXAveraged;
-  bool mIsTrackAveragedDXAveragedCancelled;
+  bool mIsTrackAverageDEDX;
+  bool mIsTrackAverageEdepDX;
 
-  bool mIsDoseAveragedDEDXAveraged;
-  bool mIsDoseAveragedEdepDXAveraged;
+  bool mIsDoseAverageDEDX;
+  bool mIsDoseAverageEdepDX;
+  
+  bool mIsAverageKinEnergy;
 
-  GateImageDouble mLETTempImage;
-  GateImageInt mNumberOfHitsImage;
-  GateImageInt mLastHitEventImage;
-  bool mIsRelUncertEnabled;
-
-  GateImageDouble mRelUncertImage;
 
   bool mIsParallelCalculationEnabled;
 

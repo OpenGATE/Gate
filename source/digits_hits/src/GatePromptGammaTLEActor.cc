@@ -213,8 +213,12 @@ void GatePromptGammaTLEActor::UserSteppingActionInVoxel(int index, const G4Step 
   // assume everything exist (has been computed by InitializeMaterial)
   TH1D *h = data.GetGammaEnergySpectrum(material->GetIndex(), particle_energy);
 
+  // Also take the particle weight into account
+  double w = step->GetTrack()->GetWeight();
+
   // Do not scale h directly because it will be reused
-  mImageGamma->AddValueDouble(index, h, distance * material->GetDensity() / (g / cm3)); //material is converted from internal units to g/cm3
+  mImageGamma->AddValueDouble(index, h, w * distance * material->GetDensity() / (g / cm3));
+  // (material is converted from internal units to g/cm3)
 }
 //-----------------------------------------------------------------------------
 

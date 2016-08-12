@@ -33,7 +33,7 @@
 # BEAMS
 #=====================================================
 
-/control/execute mac/beam.mac
+/control/execute mac/beam.mac 
 
 #=====================================================
 # VISUALISATION

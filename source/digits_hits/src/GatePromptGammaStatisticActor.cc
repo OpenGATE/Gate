@@ -136,8 +136,9 @@ void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
 
   // Process type, store cross_section for ProtonInelastic process
   if (process != protonInelastic) return;
-  G4double cross_section = store->GetCrossSectionPerVolume(particle, particle_energy, process, material);
-  data.GetHEpInelastic()->Fill(particle_energy/MeV);
+  G4double cross_section = store->GetCrossSectionPerVolume(particle, particle_energy, process, material);//(\kappa_{inel})
+
+  data.GetHEpInelastic()->Fill(particle_energy/MeV);//N_{inel}
 
   // Only once : cross section of ProtonInelastic in that material
   if (!sigma_filled) {
@@ -169,9 +170,9 @@ void GatePromptGammaStatisticActor::UserSteppingAction(const GateVVolume*,
         continue;
       }
       data.GetHEpEpg()->Fill(particle_energy/MeV, e);
-      data.GetNgamma()->Fill(particle_energy/MeV, e);
+      data.GetNgamma()->Fill(particle_energy/MeV, e);//N_{\gamma}
       data.GetHEpEpgNormalized()->Fill(particle_energy/MeV, e, cross_section);
-      data.GetGammaZ()->Fill(particle_energy/MeV, e, cross_section);
+      data.GetGammaZ()->Fill(particle_energy/MeV, e, cross_section);  //so we score cross_section*1 (\kappa_{inel}*N_{\gamma}) as func of Ep,Epg
         //it stores Ngamma(which is 1) multiplied y crosssection. Divide at the end by EpInelastic to obtain GammaZ/rho(Z)
       produced_gamma++;
     }

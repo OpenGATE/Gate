@@ -29,6 +29,7 @@ public:
 protected:
 
   G4UIcmdWithABool * pEnableSquaredCmd;
+  G4UIcmdWithABool * pEnableStepLengthCmd;
   G4UIcmdWithABool * pEnableUncertaintyCmd;
   G4UIcmdWithABool * pEnableNormCmd;
   G4UIcmdWithABool * pEnableNumberOfHitsCmd;
