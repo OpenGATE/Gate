@@ -73,7 +73,7 @@ GateSourcePencilBeam::GateSourcePencilBeam(G4String name, bool useMessenger):
   mRotationAngle=0;
   //Correlation Position/Direction
   mEllipseXThetaArea=1.;  mEllipseYPhiArea=1.;
-  mEllipseXThetaRotationNorm="negative";  mEllipseYPhiRotationNorm="negative";
+  mConvergenceX = mConvergenceY = false;
   //Gaussian distribution generation for direction
   mUXTheta = HepVector(2); mUYPhi = HepVector(2);
   mSXTheta = HepSymMatrix(2,0); mSYPhi = HepSymMatrix(2,0);
@@ -162,7 +162,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
       G4cout<<"*Position: sigmaX = "<<mSigmaX<<" mm   sigmaY = "<<mSigmaY<<" mm\n";
       G4cout<<"*Direction: sigmaTheta = "<<mSigmaTheta<<" rad   sigmaY' = "<<mSigmaPhi<<" rad\n";
       G4cout<<"*Correlation: XTheta ellipse emittance:  "<<mEllipseXThetaArea<<" mm.rad  YPhi ellipse emittance: "<<mEllipseYPhiArea<<" mm.rad\n";
-      G4cout<<"*Correlation: XTheta ellipse rotation DirNorm:  "<<mEllipseXThetaRotationNorm<<"   YPhi ellipse rotation DirNorm: "<<mEllipseYPhiRotationNorm<< Gateendl;
+      G4cout<<"*Correlation: XTheta ellipse rotation DirNorm:  "<<(mConvergenceX?"positive":"negative")<<"   YPhi ellipse rotation DirNorm: "<<(mConvergenceY?"positive":"negative")<< Gateendl;
     }
 
     // for initialization mu=0 everywhere.
@@ -185,7 +185,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     gamma=mSigmaTheta*mSigmaTheta/epsilon;
     alpha=sqrt(beta*gamma-1.);
 
-    if (mEllipseXThetaRotationNorm=="negative") {alpha=-alpha;}
+    if (!mConvergenceX) {alpha=-alpha;}
 
     mSXTheta(1,1)=beta*epsilon;
     mSXTheta(1,2)=-alpha*epsilon;
@@ -211,7 +211,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     gamma=mSigmaPhi*mSigmaPhi/epsilon;
     alpha=sqrt(beta*gamma-1.);
 
-    if (mEllipseYPhiRotationNorm=="negative") {alpha=-alpha;}
+    if (!mConvergenceY) {alpha=-alpha;}
 
     mSYPhi(1,1)=beta*epsilon;
     mSYPhi(1,2)=-alpha*epsilon;

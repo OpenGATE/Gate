@@ -76,8 +76,10 @@ public:
   //Correlation Position/Direction
   void SetEllipseXThetaArea(double EllipseXThetaArea) {mEllipseXThetaArea=EllipseXThetaArea;}
   void SetEllipseYPhiArea(double EllipseYPhiArea) {mEllipseYPhiArea=EllipseYPhiArea;}
-  void SetEllipseXThetaRotationNorm(std::string rotation) {mEllipseXThetaRotationNorm=rotation;}
-  void SetEllipseYPhiRotationNorm(std::string rotation) {mEllipseYPhiRotationNorm=rotation;}
+  void SetEllipseXThetaRotationNorm(std::string rotation) {mConvergenceX=(rotation=="positive");}
+  void SetEllipseYPhiRotationNorm(std::string rotation) {mConvergenceY=(rotation=="positive");}
+  void SetConvergenceX(bool b) {mConvergenceX=b;}
+  void SetConvergenceY(bool b) {mConvergenceY=b;}
   void SetTestFlag(bool b) {mTestFlag=b;}
 
 protected:
@@ -108,8 +110,8 @@ protected:
   //Correlation Position/Direction
   double mEllipseXThetaArea;	//mm*rad
   double mEllipseYPhiArea;	//mm*rad
-  std::string mEllipseXThetaRotationNorm;
-  std::string mEllipseYPhiRotationNorm;
+  bool mConvergenceX; // true corresponds to: X-Theta rotation norm is positive
+  bool mConvergenceY; // true corresponds to: Y-Phi rotation norm is positive
   //Gaussian distribution generation for direction
   RandMultiGauss * mGaussian2DYPhi;
   RandMultiGauss * mGaussian2DXTheta;
