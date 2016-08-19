@@ -21,6 +21,7 @@
 #include "G4ParticleMomentum.hh"
 #include <iomanip>
 #include <vector>
+#include <string>
 
 #include "GateVSource.hh"
 #include "GateSourceTPSPencilBeamMessenger.hh"
@@ -34,7 +35,7 @@
 #include "GateRandomEngine.hh"
 #include "TMath.h"
 
-void ReadLineTo3Doubles(double *toto, char *oneline);
+void ReadLineTo3Doubles(double *toto, const std::string &oneline);
 
 //------------------------------------------------------------------------------------------------------
 class GateSourceTPSPencilBeam : public GateVSource

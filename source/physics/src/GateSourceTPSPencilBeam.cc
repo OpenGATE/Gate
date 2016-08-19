@@ -76,8 +76,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
     //---------INITIALIZATION - START----------------------
     mIsInitialized = true;
 
-    const int MAXLINE = 256;
-    char oneline[MAXLINE];
+    std::string oneline;
     int NbFields, FieldID, TotalMeterSet, NbOfLayers;
     double GantryAngle;
     double CouchAngle;
@@ -104,39 +103,39 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
 
     // integrating the plan description file data
     while (inFile && again) {
-      for (int i = 0; i < 9; i++) inFile.getline(oneline, MAXLINE);
-      NbFields = atoi(oneline);
-      for (int i = 0; i < 2 * NbFields; i++) inFile.getline(oneline, MAXLINE);
-      for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
-      TotalMeterSet = atoi(oneline);
+      for (int i = 0; i < 9; i++) std::getline(inFile,oneline);
+      NbFields = atoi(oneline.c_str());
+      for (int i = 0; i < 2 * NbFields; i++) std::getline(inFile,oneline);
+      for (int i = 0; i < 2; i++) std::getline(inFile,oneline);
+      TotalMeterSet = atoi(oneline.c_str());
 
       for (int f = 0; f < NbFields; f++) {
-        for (int i = 0; i < 4; i++) inFile.getline(oneline, MAXLINE);
-        FieldID = atoi(oneline);
+        for (int i = 0; i < 4; i++) std::getline(inFile,oneline);
+        FieldID = atoi(oneline.c_str());
 
-        for (int i = 0; i < 4; i++) inFile.getline(oneline, MAXLINE);
-        GantryAngle = deg2rad(atof(oneline));
+        for (int i = 0; i < 4; i++) std::getline(inFile,oneline);
+        GantryAngle = deg2rad(atof(oneline.c_str()));
 
         //MISSING COUCH ANGLE inserted
-        for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
-        CouchAngle = deg2rad(atof(oneline));
+        for (int i = 0; i < 2; i++) std::getline(inFile,oneline);
+        CouchAngle = deg2rad(atof(oneline.c_str()));
 
-        for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
+        for (int i = 0; i < 2; i++) std::getline(inFile,oneline);
         ReadLineTo3Doubles(IsocenterPosition, oneline);
-        for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
-        NbOfLayers = atoi(oneline);
-        for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
+        for (int i = 0; i < 2; i++) std::getline(inFile,oneline);
+        NbOfLayers = atoi(oneline.c_str());
+        for (int i = 0; i < 2; i++) std::getline(inFile,oneline);
 
         for (int j = 0; j < NbOfLayers; j++) {
-          for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
-          int currentLayerID = atoi(oneline); // ControlPointIndex
+          for (int i = 0; i < 2; i++) std::getline(inFile,oneline);
+          int currentLayerID = atoi(oneline.c_str()); // ControlPointIndex
 
-          for (int i = 0; i < 6; i++) inFile.getline(oneline, MAXLINE);
-          double energy = atof(oneline);
+          for (int i = 0; i < 6; i++) std::getline(inFile,oneline);
+          double energy = atof(oneline.c_str());
 
-          for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
-          int NbOfSpots = atof(oneline);
-          for (int i = 0; i < 1; i++) inFile.getline(oneline, MAXLINE);
+          for (int i = 0; i < 2; i++) std::getline(inFile,oneline);
+          int NbOfSpots = atof(oneline.c_str());
+          for (int i = 0; i < 1; i++) std::getline(inFile,oneline);
 
           if (mTestFlag) {
             G4cout << "TESTREAD NbFields " << NbFields << Gateendl;
@@ -148,7 +147,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
             G4cout << "TESTREAD NbOfSpots " << NbOfSpots << Gateendl;
           }
           for (int k = 0; k < NbOfSpots; k++) {
-            inFile.getline(oneline, MAXLINE);
+            std::getline(inFile,oneline);
             double SpotParameters[3];
             ReadLineTo3Doubles(SpotParameters, oneline);
             if (mTestFlag) {
@@ -389,8 +388,7 @@ double GateSourceTPSPencilBeam::ConvertMuToProtons(double weight, double energy)
 //------------------------------------------------------------------------------------------------------
 void GateSourceTPSPencilBeam::LoadClinicalBeamProperties() {
 
-  const int MAXLINE=256;
-  char oneline[MAXLINE];
+  std::string oneline;
   int PolOrder;
 
   std::ifstream inFile(mSourceDescriptionFile);
@@ -398,96 +396,96 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties() {
     GateError("Cannot open source description file!");
   }
 
-  for (int i=0; i<4; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<4; i++) std::getline(inFile,oneline);
   // distance source patient
-  mDistanceSourcePatient=atof(oneline);
+  mDistanceSourcePatient=atof(oneline.c_str());
 
-  for (int i=0; i<2; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<2; i++) std::getline(inFile,oneline);
   // distance SMX patient
-  mDistanceSMXToIsocenter=atof(oneline);
+  mDistanceSMXToIsocenter=atof(oneline.c_str());
 
-  for (int i=0; i<2; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<2; i++) std::getline(inFile,oneline);
   // distance SMY patient
-  mDistanceSMYToIsocenter=atof(oneline);
+  mDistanceSMYToIsocenter=atof(oneline.c_str());
 
-  for (int i=0; i<5; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<5; i++) std::getline(inFile,oneline);
   // Energy
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mEnergy.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mEnergy.push_back(atof(oneline));
+      std::getline(inFile,oneline);
+    mEnergy.push_back(atof(oneline.c_str()));
   }
 
-  for (int i=0; i<4; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<4; i++) std::getline(inFile,oneline);
   // Energy
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mEnergySpread.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mEnergySpread.push_back(atof(oneline));
+    std::getline(inFile,oneline);
+    mEnergySpread.push_back(atof(oneline.c_str()));
   }
 
-  for (int i=0; i<5; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<5; i++) std::getline(inFile,oneline);
   // X
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mX.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mX.push_back(atof(oneline));
+    std::getline(inFile,oneline);
+    mX.push_back(atof(oneline.c_str()));
   }
 
-  for (int i=0; i<3; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<3; i++) std::getline(inFile,oneline);
   // Theta
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mTheta.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mTheta.push_back(atof(oneline));
+    std::getline(inFile,oneline);
+    mTheta.push_back(atof(oneline.c_str()));
   }
 
-  for (int i=0; i<3; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<3; i++) std::getline(inFile,oneline);
   // Y
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mY.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mY.push_back(atof(oneline));
+    std::getline(inFile,oneline);
+    mY.push_back(atof(oneline.c_str()));
   }
 
-  for (int i=0; i<3; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<3; i++) std::getline(inFile,oneline);
   // Phi
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mPhi.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mPhi.push_back(atof(oneline));
+    std::getline(inFile,oneline);
+    mPhi.push_back(atof(oneline.c_str()));
   }
 
-  for (int i=0; i<5; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<5; i++) std::getline(inFile,oneline);
   // Emittance X Theta
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mXThetaEmittance.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mXThetaEmittance.push_back(atof(oneline));
+    std::getline(inFile,oneline);
+    mXThetaEmittance.push_back(atof(oneline.c_str()));
   }
 
-  for (int i=0; i<3; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<3; i++) std::getline(inFile,oneline);
   // Emittance Y Phi
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mYPhiEmittance.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mYPhiEmittance.push_back(atof(oneline));
+    std::getline(inFile,oneline);
+    mYPhiEmittance.push_back(atof(oneline.c_str()));
   }
 
   if (mTestFlag) {
@@ -600,8 +598,7 @@ return v;
 */
 // FUNCTION
 //------------------------------------------------------------------------------------------------------
-void ReadLineTo3Doubles(double *toto, char *oneline) {
-  std::string data = oneline;
+void ReadLineTo3Doubles(double *toto, const std::string &data) {
   std::istringstream iss(data);
   std::string token;
   for (int j=0; j<3; j++) {
