@@ -407,23 +407,67 @@ void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointe
   }
 void GateFixedForcedDetectionActor::CalculatePropagatorImage(const double D, std::vector<double> & energyList)
 {
-DD(D/CLHEP::m)
-  itk::ImageRegionIterator<ComplexImageType> it(mPropagatorImage,
-                                              mPropagatorImage->GetLargestPossibleRegion());
+//DD(D/CLHEP::m)
+//  itk::ImageRegionIterator<ComplexImageType> it(mPropagatorImage,
+//                                              mPropagatorImage->GetLargestPossibleRegion());
 
-    InputPixelType wavelength = h_Planck/(eV*s) * c_light/(m/s) / (energyList[0]/eV);
-    std::complex<InputPixelType> amp(0.0,-1./(wavelength*(D/CLHEP::m)));
-    InputPixelType y = mPropagatorImage->GetOrigin()[1];
-    for(unsigned int j=0; j<mPropagatorImage->GetLargestPossibleRegion().GetSize()[1]; j++, y+=mPropagatorImage->GetSpacing()[1])
-      {
-      InputPixelType x = mPropagatorImage->GetOrigin()[0];
-      for(unsigned int i=0; i<mPropagatorImage->GetLargestPossibleRegion().GetSize()[0]; i++, ++it, x+=mPropagatorImage->GetSpacing()[0])
-        {
-        InputPixelType squared_dist = (x/CLHEP::m)*(x/CLHEP::m) + (y/CLHEP::m)*(y/CLHEP::m);
-        std::complex<InputPixelType> phase = (std::complex<InputPixelType>(-itk::Math::pi)*amp)*std::complex<InputPixelType>(squared_dist);
-        it.Set(amp*std::exp(phase));
-        }
-      }
+//    InputPixelType wavelength = h_Planck/(eV*s) * c_light/(m/s) / (energyList[0]/eV);
+//    std::complex<InputPixelType> amp(0.0,-1./(wavelength*(D/CLHEP::m)));
+//    InputPixelType y = mPropagatorImage->GetOrigin()[1];
+//    for(unsigned int j=0; j<mPropagatorImage->GetLargestPossibleRegion().GetSize()[1]; j++, y+=mPropagatorImage->GetSpacing()[1])
+//      {
+//      InputPixelType x = mPropagatorImage->GetOrigin()[0];
+//      for(unsigned int i=0; i<mPropagatorImage->GetLargestPossibleRegion().GetSize()[0]; i++, ++it, x+=mPropagatorImage->GetSpacing()[0])
+//        {
+//        InputPixelType squared_dist = (x/CLHEP::m)*(x/CLHEP::m) + (y/CLHEP::m)*(y/CLHEP::m);
+//        std::complex<InputPixelType> phase = (std::complex<InputPixelType>(-itk::Math::pi)*amp)*std::complex<InputPixelType>(squared_dist);
+//        it.Set(amp*std::exp(phase));
+//        }
+//      }
+
+    //DD(D/CLHEP::m)
+      itk::ImageRegionIterator<ComplexImageType> it(mPropagatorImage,
+                                                  mPropagatorImage->GetLargestPossibleRegion());
+
+
+        InputPixelType wavelength = h_Planck/(eV*s) * c_light/(m/s) / (energyList[0]/eV);
+
+        InputPixelType fsamplex = 1./(mPropagatorImage->GetSpacing()[0]/m);
+        InputPixelType fsampley = 1./(mPropagatorImage->GetSpacing()[1]/m);
+        unsigned int mf = mPropagatorImage->GetLargestPossibleRegion().GetSize()[0];
+        unsigned int nf = mPropagatorImage->GetLargestPossibleRegion().GetSize()[1];
+
+        InputPixelType fx;
+        InputPixelType fy;
+
+        InputPixelType y = mPropagatorImage->GetOrigin()[1];
+        for(unsigned int j=0; j<mPropagatorImage->GetLargestPossibleRegion().GetSize()[1]; j++, y+=mPropagatorImage->GetSpacing()[1])
+          {
+          InputPixelType x = mPropagatorImage->GetOrigin()[0];
+          for(unsigned int i=0; i<mPropagatorImage->GetLargestPossibleRegion().GetSize()[0]; i++, ++it, x+=mPropagatorImage->GetSpacing()[0])
+            {
+            if (i <= mf/2)
+              {
+              fx =i*fsamplex/mf;
+              }
+            else
+              {
+              fx = -fsamplex/2+fsamplex/mf + (i-mf/2)*fsamplex/mf;
+              }
+
+            if (j <= nf/2)
+              {
+              fy =j*fsampley/nf;
+              }
+            else
+              {
+              fy = -fsampley/2+fsampley/nf + (j-nf/2)*fsampley/nf;
+              }
+            InputPixelType f_square = fx*fx + fy*fy;
+            it.Set(std::exp(std::complex<InputPixelType>(0.0, -itk::Math::pi* wavelength * (D/m) * 1e7 * f_square)));
+            //DD(mPropagatorImage->GetSpacing()[1]/m)
+            }
+          }
 }
 
 void GateFixedForcedDetectionActor::PrepareComptonProjector(GateVImageVolume* gate_image_volume,
@@ -993,15 +1037,15 @@ InverseFFTImageFilter should do the trick. */
       fftFilterImage->SetTransformDirection( FFTFilterType::FORWARD );
       fftFilterImage->SetInput( trans->GetOutput() );
 
-      FFTFilterType::Pointer fftFilterKernel = FFTFilterType::New();
-      fftFilterKernel->SetTransformDirection( FFTFilterType::FORWARD );
-      fftFilterKernel->SetInput( mPropagatorImage );
+//      FFTFilterType::Pointer fftFilterKernel = FFTFilterType::New();
+//      fftFilterKernel->SetTransformDirection( FFTFilterType::FORWARD );
+//      fftFilterKernel->SetInput( mPropagatorImage );
 
       // Multiplication in Fourier domain
       typedef itk::MultiplyImageFilter <ComplexImageType, ComplexImageType > MultiplyImageFilterType;
       MultiplyImageFilterType::Pointer multiplyFilter = MultiplyImageFilterType::New ();
       multiplyFilter->SetInput1(fftFilterImage->GetOutput());
-      multiplyFilter->SetInput2(fftFilterKernel->GetOutput());
+      multiplyFilter->SetInput2(mPropagatorImage);
 
       // Compute the inverse FFT
       FFTFilterType::Pointer fftFilterOutputImage = FFTFilterType::New();
@@ -1020,44 +1064,40 @@ InverseFFTImageFilter should do the trick. */
       typedef itk::ComplexToModulusImageFilter<FFTFilterType::OutputImageType, InputImageType> ModulusFilterType;
       ModulusFilterType::Pointer modulusFilter = ModulusFilterType::New();
       modulusFilter->SetInput(fftFilterOutputImage->GetOutput());
-      imgWriter->SetFileName("fft.mha");
-      imgWriter->SetInput(modulusFilter->GetOutput());
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-
-      modulusFilter->SetInput(trans->GetOutput());
-      imgWriter->SetFileName("trans.mha");
-      imgWriter->SetInput(modulusFilter->GetOutput());
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-
-      modulusFilter->SetInput(mPropagatorImage);
-      imgWriter->SetFileName("prop.mha");
-      imgWriter->SetInput(modulusFilter->GetOutput());
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-
-
-      /* Test Code */
-      // Extract the real part
-     typedef itk::ComplexToRealImageFilter<FFTFilterType::OutputImageType, InputImageType> RealFilterType;
-     RealFilterType::Pointer realFilter = RealFilterType::New();
-     realFilter->SetInput(mPropagatorImage);
-     imgWriter->SetFileName("prop_real.mha");
-     imgWriter->SetInput(realFilter->GetOutput());
-     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-     // Extract the complex part
-     typedef itk::ComplexToImaginaryImageFilter<FFTFilterType::OutputImageType, InputImageType> ImaginaryFilterType;
-     ImaginaryFilterType::Pointer imaginaryFilter = ImaginaryFilterType::New();
-     imaginaryFilter->SetInput(mPropagatorImage);
-     imgWriter->SetFileName("prop_imag.mha");
-     imgWriter->SetInput(imaginaryFilter->GetOutput());
-     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
-     /* Test Code */
-
 
       // delta integral output
       sprintf(filename, AddPrefix(prefix, mFresnelFilename).c_str(), rID);
       imgWriter->SetFileName(filename);
-      imgWriter->SetInput(mDeltaImage);
+      imgWriter->SetInput(modulusFilter->GetOutput());
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+
+//      modulusFilter->SetInput(trans->GetOutput());
+//      imgWriter->SetFileName("trans.mha");
+//      imgWriter->SetInput(modulusFilter->GetOutput());
+//      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+
+//      modulusFilter->SetInput(mPropagatorImage);
+//      imgWriter->SetFileName("prop.mha");
+//      imgWriter->SetInput(modulusFilter->GetOutput());
+//      TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+
+
+//      /* Test Code */
+//      // Extract the real part
+//     typedef itk::ComplexToRealImageFilter<FFTFilterType::OutputImageType, InputImageType> RealFilterType;
+//     RealFilterType::Pointer realFilter = RealFilterType::New();
+//     realFilter->SetInput(mPropagatorImage);
+//     imgWriter->SetFileName("prop_real.mha");
+//     imgWriter->SetInput(realFilter->GetOutput());
+//     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+//     // Extract the complex part
+//     typedef itk::ComplexToImaginaryImageFilter<FFTFilterType::OutputImageType, InputImageType> ImaginaryFilterType;
+//     ImaginaryFilterType::Pointer imaginaryFilter = ImaginaryFilterType::New();
+//     imaginaryFilter->SetInput(mPropagatorImage);
+//     imgWriter->SetFileName("prop_imag.mha");
+//     imgWriter->SetInput(imaginaryFilter->GetOutput());
+//     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
+//     /* Test Code */
     }
 
   if (mFlatFieldFilename != "")

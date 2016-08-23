@@ -58,6 +58,7 @@
 /gate/actor/ffda/attenuationFilename          output/attenuation.mha
 /gate/actor/ffda/rayleighFilename             output/rayleigh.mha
 /gate/actor/ffda/comptonFilename              output/compton.mha
+/gate/actor/ffda/fresnelFilename              output/fresnel.mha
 /gate/actor/ffda/secondaryFilename            output/secondary.mha
 /gate/actor/ffda/totalFilename                output/total.mha
 /gate/actor/ffda/enableUncertaintySecondary   true
