@@ -286,16 +286,13 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
 
               //Particle Type
               Pencil->SetParticleType(mParticleType);
-              //Energy
+              
+	      //Energy
               Pencil->SetEnergy(GetEnergy(energy));
-              Pencil->SetSigmaEnergy(GetSigmaEnergy(energy));
+              Pencil->SetSigmaEnergy(GetSigmaEnergy(energy)*GetEnergy(energy)/100.);
 
-              //cerr << "Brent " << GetSigmaEnergy(energy) << " en " << GetEnergy(energy) <<endl;
-
-              //changed because obiously incorrect.
-              //Pencil->SetSigmaEnergy(GetSigmaEnergy(energy)*GetEnergy(energy)/100.);
+              
               //Weight
-
               if (mSpotIntensityAsNbProtons) {
                 NbProtons = SpotParameters[2];
               } else {
