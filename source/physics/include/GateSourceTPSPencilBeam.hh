@@ -10,7 +10,6 @@
 
 #include "GateConfiguration.h"
 
-#ifdef G4ANALYSIS_USE_ROOT
 #include "G4Event.hh"
 #include "globals.hh"
 #include "G4VPrimaryGenerator.hh"
@@ -33,7 +32,6 @@
 #include "CLHEP/Matrix/Vector.h"
 #include "CLHEP/Matrix/SymMatrix.h"
 #include "GateRandomEngine.hh"
-#include "TMath.h"
 
 void ReadLineTo3Doubles(double *toto, const std::string &oneline);
 
@@ -55,6 +53,8 @@ public:
   void SetParticleType(G4String ParticleType) {strcpy(mParticleType, ParticleType);}
   //Test Flag
   void SetTestFlag(bool b) {mTestFlag=b;}
+  //Temporary Flag to switch between old and new style vertex generation
+  void SetOldStyleFlag(bool b) {mOldStyleFlag=b;}
   //Treatment Plan file
   void SetPlan(std::string plan) {mPlan=plan;}
   //FlatGenerationFlag
@@ -90,14 +90,17 @@ public:
 
 protected:
 
+  void ConfigurePencilBeam();
+
   GateSourceTPSPencilBeamMessenger * pMessenger;
 
   bool mIsInitialized;
-  int mCurrentSpot, mTotalNumberOfSpots;
+  int mCurrentSpot, mTotalNumberOfSpots, mTotalNbProtons;
   bool mIsASourceDescriptionFile;
   G4String mSourceDescriptionFile;
 
   std::vector<GateSourcePencilBeam*> mPencilBeams;
+  GateSourcePencilBeam* mPencilBeam; // new style vertex generation uses only one pencil beam
   double mDistanceSMXToIsocenter;
   double mDistanceSMYToIsocenter;
   double mDistanceSourcePatient;
@@ -105,6 +108,8 @@ protected:
   char mParticleType[64];
   //Test flag (for verbosity)
   bool mTestFlag;
+  //Old style flag (temporary, for debugging new pencil beam vertex generation)
+  bool mOldStyleFlag;
   //Treatment Plan file
   G4String mPlan;
   //Others
@@ -126,9 +131,15 @@ protected:
   bool mConvergentSource;
   int mSelectedLayerID;
   int mSelectedSpot;
+  std::vector<double> mSpotEnergy;
+  std::vector<double> mSpotWeight; // (proportional to) the expected number (for each bin in a multinomial distribution)
+  std::vector<int> mNbProtonsToGenerate; // the actual number (for each bin in a multinomial distribution)
+  std::vector<G4ThreeVector> mSpotPosition, mSpotRotation;
+private:
+  void OldGenerateVertex( G4Event* );
+  void NewGenerateVertex( G4Event* );
 };
 //------------------------------------------------------------------------------------------------------
 
-
-#endif
+// vim: ai sw=2 ts=2 et
 #endif
