@@ -11,7 +11,6 @@
 
 #include "GateConfiguration.h"
 
-#ifdef G4ANALYSIS_USE_ROOT
 #include "G4Event.hh"
 #include "globals.hh"
 #include "G4VPrimaryGenerator.hh"
@@ -34,7 +33,6 @@
 #include "CLHEP/Matrix/Vector.h"
 #include "CLHEP/Matrix/SymMatrix.h"
 #include "GateRandomEngine.hh"
-#include "TMath.h"
 
 class GateSourcePencilBeam : public GateVSource, G4UImessenger
 {
@@ -125,5 +123,4 @@ protected:
   int mCurrentParticleNumber;
 };
 
-#endif
 #endif

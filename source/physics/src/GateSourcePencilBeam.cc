@@ -26,11 +26,8 @@
 #ifndef GATESOURCEPENCILBEAM_CC
 #define GATESOURCEPENCILBEAM_CC
 
-#include "GateConfiguration.h"
-
-#ifdef G4ANALYSIS_USE_ROOT
-
 // gate
+#include "GateConfiguration.h"
 #include "GateSourcePencilBeam.hh"
 
 // g4
@@ -390,5 +387,4 @@ G4int GateSourcePencilBeam::GeneratePrimaries( G4Event* event )
   }
 */
 
-#endif
 #endif
