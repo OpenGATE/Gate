@@ -54,6 +54,7 @@ GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( na
   mConvergentSource=false;
   mSelectedLayerID = -1; // all layer selected by default
   mSelectedSpot = -1; // all spots selected by default
+  mTotalNbProtons = 0.;
 }
 //------------------------------------------------------------------------------------------------------
 
@@ -808,17 +809,17 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties() {
   }
 
   if (mTestFlag) {
-    G4cout<<"DSP "<<mDistanceSourcePatient<< Gateendl;
-    G4cout<<"SMX "<<mDistanceSMXToIsocenter<< Gateendl;
-    G4cout<<"SMY "<<mDistanceSMYToIsocenter<< Gateendl;
-    for (unsigned int i=0; i<mEnergy.size(); i++) G4cout<<"mEnergy\t"<<mEnergy[i]<< Gateendl;
-    for (unsigned int i=0; i<mEnergySpread.size(); i++) G4cout<<"mEnergySpread\t"<<mEnergySpread[i]<< Gateendl;
-    for (unsigned int i=0; i<mX.size(); i++) G4cout<<"mX\t"<<mX[i]<< Gateendl;
-    for (unsigned int i=0; i<mTheta.size(); i++) G4cout<<"mTheta\t"<<mTheta[i]<< Gateendl;
-    for (unsigned int i=0; i<mY.size(); i++) G4cout<<"mY\t"<<mY[i]<< Gateendl;
-    for (unsigned int i=0; i<mPhi.size(); i++) G4cout<<"mPhi\t"<<mPhi[i]<< Gateendl;
-    for (unsigned int i=0; i<mXThetaEmittance.size(); i++) G4cout<<"mXThetaEmittance\t"<<mXThetaEmittance[i]<< Gateendl;
-    for (unsigned int i=0; i<mYPhiEmittance.size(); i++) G4cout<<"mYPhiEmittance\t"<<mYPhiEmittance[i]<< Gateendl;
+    GateMessage("Beam",0,"TESTREAD DSP "<<mDistanceSourcePatient<< Gateendl);
+    GateMessage("Beam",0,"TESTREAD SMX "<<mDistanceSMXToIsocenter<< Gateendl);
+    GateMessage("Beam",0,"TESTREAD SMY "<<mDistanceSMYToIsocenter<< Gateendl);
+    for (unsigned int i=0; i<mEnergy.size(); i++) GateMessage("Beam",0,"TESTREAD mEnergy\t"<<mEnergy[i]<< Gateendl);
+    for (unsigned int i=0; i<mEnergySpread.size(); i++) GateMessage("Beam",0,"TESTREAD mEnergySpread\t"<<mEnergySpread[i]<< Gateendl);
+    for (unsigned int i=0; i<mX.size(); i++) GateMessage("Beam",0,"TESTREAD mX\t"<<mX[i]<< Gateendl);
+    for (unsigned int i=0; i<mTheta.size(); i++) GateMessage("Beam",0,"TESTREAD mTheta\t"<<mTheta[i]<< Gateendl);
+    for (unsigned int i=0; i<mY.size(); i++) GateMessage("Beam",0,"TESTREAD mY\t"<<mY[i]<< Gateendl);
+    for (unsigned int i=0; i<mPhi.size(); i++) GateMessage("Beam",0,"TESTREAD mPhi\t"<<mPhi[i]<< Gateendl);
+    for (unsigned int i=0; i<mXThetaEmittance.size(); i++) GateMessage("Beam",0,"TESTREAD mXThetaEmittance\t"<<mXThetaEmittance[i]<< Gateendl);
+    for (unsigned int i=0; i<mYPhiEmittance.size(); i++) GateMessage("Beam",0,"TESTREAD mYPhiEmittance\t"<<mYPhiEmittance[i]<< Gateendl);
   }
 }
 //------------------------------------------------------------------------------------------------------

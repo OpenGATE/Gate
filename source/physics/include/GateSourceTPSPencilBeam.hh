@@ -95,7 +95,8 @@ protected:
   GateSourceTPSPencilBeamMessenger * pMessenger;
 
   bool mIsInitialized;
-  int mCurrentSpot, mTotalNumberOfSpots, mTotalNbProtons;
+  int mCurrentSpot, mTotalNumberOfSpots;
+  double mTotalNbProtons;
   bool mIsASourceDescriptionFile;
   G4String mSourceDescriptionFile;
 
