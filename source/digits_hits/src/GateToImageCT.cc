@@ -34,7 +34,7 @@ GateToImageCT::GateToImageCT( const G4String& name, GateOutputMgr* outputMgr,
   m_system = itsSystem;
 
   //value by default
-  m_seed = 567665;
+  m_seed = -1;
   m_vrtFactor = 0;
   m_fileName = " "; // All default output file from all output modules are set to " ".
   // They are then checked in GateApplicationMgr::StartDAQ, using
@@ -249,7 +249,9 @@ void GateToImageCT::RecordBeginOfAcquisition()
            << Gateendl;
 
   //Seed the random
-  CLHEP::HepRandom::setTheSeed( m_seed );
+  if(m_seed != -1) {
+    CLHEP::HepRandom::setTheSeed( m_seed );
+  }
 
   //Define the number of the first frame, and check the multiplicity of the
   //frame

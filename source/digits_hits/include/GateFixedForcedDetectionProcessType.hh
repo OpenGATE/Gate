@@ -8,7 +8,8 @@ typedef enum {
   COMPTON=0,
   RAYLEIGH,
   PHOTOELECTRIC,
-  PRIMARY
+  ISOTROPICPRIMARY,
+  PRIMARY,
 } ProcessType;
 
 

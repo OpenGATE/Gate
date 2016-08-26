@@ -12,6 +12,14 @@
 #include "GateEnergySpectrumActorMessenger.hh"
 #include "GateMiscFunctions.hh"
 
+// g4 // inserted 30 Jan 2016:
+#include <G4EmCalculator.hh>
+#include <G4VoxelLimits.hh>
+#include <G4NistManager.hh>
+#include <G4PhysicalConstants.hh>
+
+
+
 //-----------------------------------------------------------------------------
 /// Constructors (Prototype)
 GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
@@ -22,6 +30,10 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
   mEmin = 0.;
   mEmax = 50.;
   mENBins = 100;
+  
+  mLETmin = 0.;
+  mLETmax = 100.;
+  mLETBins = 200;
 
   mEdepmin = 0.;
   mEdepmax = 50.;
@@ -40,6 +52,8 @@ GateEnergySpectrumActor::GateEnergySpectrumActor(G4String name, G4int depth):
 
   mSaveAsTextFlag = true;
   mSaveAsDiscreteSpectrumTextFlag = false;
+  mEnableLETSpectrumFlag = true;
+  emcalc = new G4EmCalculator;
 
   pMessenger = new GateEnergySpectrumActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateEnergySpectrumActor() -- end\n");
@@ -75,6 +89,9 @@ void GateEnergySpectrumActor::Construct()
 
   pEnergySpectrum = new TH1D("energySpectrum","Energy Spectrum",GetENBins(),GetEmin() ,GetEmax() );
   pEnergySpectrum->SetXTitle("Energy (MeV)");
+  
+  pLETSpectrum = new TH1D("LETSpectrum","LET Spectrum",GetNLETBins(),GetLETmin() ,GetLETmax() );
+  pLETSpectrum->SetXTitle("LET (keV/um)");
 
   pEdep  = new TH1D("edepHisto","Energy deposited per event",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
   pEdep->SetXTitle("E_{dep} (MeV)");
@@ -120,6 +137,7 @@ void GateEnergySpectrumActor::ResetData()
 {
   pEnergySpectrum->Reset();
   pEdep->Reset();
+  pLETSpectrum->Reset();
   pEdepTime->Reset();
   pEdepTrack->Reset();
   pDeltaEc->Reset();
@@ -219,6 +237,16 @@ void GateEnergySpectrumActor::UserSteppingAction(const GateVVolume *, const G4St
       mDiscreteSpectrum.Fill(Ei/MeV, step->GetTrack()->GetWeight());
     }
     newTrack=false;
+  }
+  if(mEnableLETSpectrumFlag) {
+  //G4double density = step->GetPreStepPoint()->GetMaterial()->GetDensity();
+  G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName();
+  G4double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
+  G4double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
+  G4double energy=(energy1+energy2)/2;
+  G4ParticleDefinition* partname = step->GetTrack()->GetDefinition();//->GetParticleName();
+  G4double dedx = emcalc->ComputeElectronicDEDX(energy, partname, material);
+  pLETSpectrum->Fill(dedx/(keV/um));
   }
 }
 //-----------------------------------------------------------------------------

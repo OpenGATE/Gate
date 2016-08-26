@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 /*
@@ -52,102 +52,59 @@ void GateSecondaryProductionActor::Construct() {
   // Output Filename
   mProdFilename = G4String(removeExtension(mSaveFilename))+"-Secondaries.root";
 
-   pTfile = new TFile(mProdFilename,"RECREATE");
+  pTfile = new TFile(mProdFilename,"RECREATE");
 
+  pFrag = new TH1F("fragments","Fragment production",3,0,1);
+  pFrag->SetXTitle("Fragment name");
+#if ROOT_VERSION_CODE >= ROOT_VERSION(6,0,0)
+  pFrag->SetCanExtend(TH1::kXaxis); // <--- Root6
+#else
+  pFrag->SetBit(TH1::kCanRebin); // <--- Root5
+#endif
 
-
-   pFrag = new TH1F("fragments","Fragment production",3,0,1);
-   pFrag->SetXTitle("Fragment name");
-   pFrag->SetBit(TH1::kCanRebin);
-
-
-   pFrag->Fill("e- Ioni",0.);
-
-   pFrag->Fill("e-",0.);
-
-   pFrag->Fill("e+",0.);
-
-   pFrag->Fill("e+ Decay",0.);
-
-   pFrag->Fill("gamma (EM)",0.);
-
-   pFrag->Fill("gamma (HAD)",0.);
-
-   pFrag->Fill("gamma Decay",0.);
-
-   pFrag->Fill("gamma (others)",0.);
-
-   pFrag->Fill("proton",0.);
-
-   pFrag->Fill("neutron",0.);
-
-   pFrag->Fill("alpha",0.);
-
-   pFrag->Fill("deuteron",0.);
-
-   pFrag->Fill("triton",0.);
-
-   pFrag->Fill("He3",0.);
-
-   pFrag->Fill("He3[0.0]",0.);
-
-   pFrag->Fill("He4[0.0]",0.);
-
-   pFrag->Fill("He5[0.0]",0.);
-
-   pFrag->Fill("Li5[0.0]",0.);
-
-   pFrag->Fill("Li6[0.0]",0.);
-
-   pFrag->Fill("Li7[0.0]",0.);
-
-   pFrag->Fill("Be7[0.0]",0.);
-
-   pFrag->Fill("Be8[0.0]",0.);
-
-   pFrag->Fill("B8[0.0]",0.);
-
-   pFrag->Fill("B9[0.0]",0.);
-
-   pFrag->Fill("B10[0.0]",0.);
-
-   pFrag->Fill("B11[0.0]",0.);
-
-   pFrag->Fill("C11[0.0]",0.);
-
-   pFrag->Fill("C12[0.0]",0.);
-
-   pFrag->Fill("C13[0.0]",0.);
-
-   pFrag->Fill("C14[0.0]",0.);
-
-   pFrag->Fill("N13[0.0]",0.);
-
-   pFrag->Fill("N14[0.0]",0.);
-
-   pFrag->Fill("N15[0.0]",0.);
-
-   pFrag->Fill("N16[0.0]",0.);
-
-   pFrag->Fill("O14[0.0]",0.);
-
-   pFrag->Fill("O15[0.0]",0.);
-
-   pFrag->Fill("O16[0.0]",0.);
-
-   pFrag->Fill("O17[0.0]",0.);
-
-   pFrag->Fill("O18[0.0]",0.);
-
-   pFrag->Fill("F15[0.0]",0.);
-
-   pFrag->Fill("F16[0.0]",0.);
-
-   pFrag->Fill("F17[0.0]",0.);
-
-   pFrag->Fill("F18[0.0]",0.);
-
-
+  pFrag->Fill("e- Ioni",0.);
+  pFrag->Fill("e-",0.);
+  pFrag->Fill("e+",0.);
+  pFrag->Fill("e+ Decay",0.);
+  pFrag->Fill("gamma (EM)",0.);
+  pFrag->Fill("gamma (HAD)",0.);
+  pFrag->Fill("gamma Decay",0.);
+  pFrag->Fill("gamma (others)",0.);
+  pFrag->Fill("proton",0.);
+  pFrag->Fill("neutron",0.);
+  pFrag->Fill("alpha",0.);
+  pFrag->Fill("deuteron",0.);
+  pFrag->Fill("triton",0.);
+  pFrag->Fill("He3",0.);
+  pFrag->Fill("He3[0.0]",0.);
+  pFrag->Fill("He4[0.0]",0.);
+  pFrag->Fill("He5[0.0]",0.);
+  pFrag->Fill("Li5[0.0]",0.);
+  pFrag->Fill("Li6[0.0]",0.);
+  pFrag->Fill("Li7[0.0]",0.);
+  pFrag->Fill("Be7[0.0]",0.);
+  pFrag->Fill("Be8[0.0]",0.);
+  pFrag->Fill("B8[0.0]",0.);
+  pFrag->Fill("B9[0.0]",0.);
+  pFrag->Fill("B10[0.0]",0.);
+  pFrag->Fill("B11[0.0]",0.);
+  pFrag->Fill("C11[0.0]",0.);
+  pFrag->Fill("C12[0.0]",0.);
+  pFrag->Fill("C13[0.0]",0.);
+  pFrag->Fill("C14[0.0]",0.);
+  pFrag->Fill("N13[0.0]",0.);
+  pFrag->Fill("N14[0.0]",0.);
+  pFrag->Fill("N15[0.0]",0.);
+  pFrag->Fill("N16[0.0]",0.);
+  pFrag->Fill("O14[0.0]",0.);
+  pFrag->Fill("O15[0.0]",0.);
+  pFrag->Fill("O16[0.0]",0.);
+  pFrag->Fill("O17[0.0]",0.);
+  pFrag->Fill("O18[0.0]",0.);
+  pFrag->Fill("F15[0.0]",0.);
+  pFrag->Fill("F16[0.0]",0.);
+  pFrag->Fill("F17[0.0]",0.);
+  pFrag->Fill("F18[0.0]",0.);
 }
 //-----------------------------------------------------------------------------
 
@@ -202,7 +159,7 @@ void GateSecondaryProductionActor::PreUserTrackingAction(const GateVVolume *, co
 	else {name += " (others)";}
       }
     }
-   // pFragPos->Fill(name,t->GetVertexPosition().z(),1);
+    // pFragPos->Fill(name,t->GetVertexPosition().z(),1);
     pFrag->Fill(name,1);
   }
 }

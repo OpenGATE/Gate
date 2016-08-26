@@ -11,8 +11,9 @@ GateAugerDetectorActorMessenger::GateAugerDetectorActorMessenger(GateAugerDetect
 
 GateAugerDetectorActorMessenger::~GateAugerDetectorActorMessenger()
 {
-	delete pMaxTOFCmd;
-	delete pMinEdepCmd;
+    delete pMaxTOFCmd;
+    delete pMinEdepCmd;
+    delete pMaxEdepCmd;
 	delete pProfileDirectionCmd;
 	delete pMinProfileCmd;
 	delete pMaxProfileCmd;
@@ -22,15 +23,25 @@ GateAugerDetectorActorMessenger::~GateAugerDetectorActorMessenger()
 
 void GateAugerDetectorActorMessenger::BuildCommands(G4String base)
 {
-	pMaxTOFCmd = new G4UIcmdWithADoubleAndUnit((base+"/setMaxTOF").c_str(),this);
-	pMaxTOFCmd->SetGuidance("Set maximum time of flight window");
-	pMaxTOFCmd->SetParameterName("MaxTOF",false);
-	pMaxTOFCmd->SetDefaultUnit("ns");
+    pMaxTOFCmd = new G4UIcmdWithADoubleAndUnit((base+"/setMinTOF").c_str(),this);
+    pMaxTOFCmd->SetGuidance("Set minimum time of flight window");
+    pMaxTOFCmd->SetParameterName("MinTOF",false);
+    pMaxTOFCmd->SetDefaultUnit("ns");
 
-	pMinEdepCmd = new G4UIcmdWithADoubleAndUnit((base+"/setMinEdep").c_str(),this);
-	pMinEdepCmd->SetGuidance("Set minimum energy deposition to trigger detection");
-	pMinEdepCmd->SetParameterName("MinEdep",false);
-	pMinEdepCmd->SetDefaultUnit("MeV");
+    pMaxTOFCmd = new G4UIcmdWithADoubleAndUnit((base+"/setMaxTOF").c_str(),this);
+    pMaxTOFCmd->SetGuidance("Set maximum time of flight window");
+    pMaxTOFCmd->SetParameterName("MaxTOF",false);
+    pMaxTOFCmd->SetDefaultUnit("ns");
+
+    pMinEdepCmd = new G4UIcmdWithADoubleAndUnit((base+"/setMinEdep").c_str(),this);
+    pMinEdepCmd->SetGuidance("Set minimum energy deposition to trigger detection");
+    pMinEdepCmd->SetParameterName("MinEdep",false);
+    pMinEdepCmd->SetDefaultUnit("MeV");
+
+    pMaxEdepCmd = new G4UIcmdWithADoubleAndUnit((base+"/setMaxEdep").c_str(),this);
+    pMaxEdepCmd->SetGuidance("Set maximum energy deposition to trigger detection");
+    pMaxEdepCmd->SetParameterName("MaxEdep",false);
+    pMaxEdepCmd->SetDefaultUnit("MeV");
 
 	pProfileDirectionCmd = new G4UIcmdWith3Vector((base+"/setProjectionDirection").c_str(),this);
 	pProfileDirectionCmd->SetGuidance("Set the direction in which the profile is built");
@@ -58,8 +69,10 @@ void GateAugerDetectorActorMessenger::BuildCommands(G4String base)
 
 void GateAugerDetectorActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
-	if(cmd == pMaxTOFCmd) pActor->setMaxTOF(  G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue)  );
-	if(cmd == pMinEdepCmd) pActor->setMinEdep(  G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue)  );
+    if(cmd == pMinTOFCmd) pActor->setMinTOF(  G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue)  );
+    if(cmd == pMaxTOFCmd) pActor->setMaxTOF(  G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue)  );
+    if(cmd == pMinEdepCmd) pActor->setMinEdep(  G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue)  );
+    if(cmd == pMaxEdepCmd) pActor->setMaxEdep(  G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue)  );
 	if(cmd == pProfileDirectionCmd) pActor->setProjectionDirection(  G4UIcmdWith3Vector::GetNew3VectorValue(newValue)  );
 	if(cmd == pMinProfileCmd) pActor->setMinimumProfileAxis(  G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue)  );
 	if(cmd == pMaxProfileCmd) pActor->setMaximumProfileAxis(  G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValue)  );

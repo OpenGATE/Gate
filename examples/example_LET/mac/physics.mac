@@ -1,0 +1,19 @@
+/gate/physics/addPhysicsList QGSP_BIC_HP_EMY
+
+/gate/physics/Gamma/SetCutInRegion      world {CutInWorld} mm
+/gate/physics/Electron/SetCutInRegion   world {CutInWorld} mm
+/gate/physics/Positron/SetCutInRegion   world {CutInWorld} mm
+
+/gate/physics/Gamma/SetCutInRegion      phantom {CutInPhantom} mm
+/gate/physics/Electron/SetCutInRegion   phantom {CutInPhantom} mm
+/gate/physics/Positron/SetCutInRegion   phantom {CutInPhantom} mm
+
+/gate/physics/SetMaxStepSizeInRegion world 0.1 mm
+/gate/physics/SetMaxStepSizeInRegion phantom 0.1 mm
+/gate/physics/ActivateStepLimiter proton
+/gate/physics/ActivateStepLimiter deuteron
+/gate/physics/ActivateStepLimiter triton
+/gate/physics/ActivateStepLimiter alpha
+/gate/physics/ActivateStepLimiter GenericIon
+
+/gate/physics/displayCuts
