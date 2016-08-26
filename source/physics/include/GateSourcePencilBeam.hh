@@ -51,41 +51,41 @@ public:
   void GenerateVertex( G4Event* );
 
   //Particle Type
-  void SetParticleType(G4String ParticleType) {strcpy(mParticleType, ParticleType);}
-  void SetWeight(double w) {mWeight=w; }
+  void SetParticleType(G4String ParticleType) {mIsInitialized &= (ParticleType==mParticleType); mParticleType = ParticleType;}
+  void SetWeight(double w) { mWeight=w; } // no need for re-initialization
   double GetWeight() {return mWeight; }
   //Particle Properties If GenericIon
   void SetIonParameter(G4String ParticleParameters);
   //Energy
-  void SetEnergy(double energy) {mEnergy=energy;}
-  void SetSigmaEnergy(double sigmaE) {mSigmaEnergy=sigmaE;}
+  void SetEnergy(double energy) {mIsInitialized &= (mEnergy==energy); mEnergy=energy;}
+  void SetSigmaEnergy(double sigmaE) {mIsInitialized &= (mSigmaEnergy==sigmaE); mSigmaEnergy=sigmaE;}
   //Position
-  void SetPosition(G4ThreeVector p) {mPosition=p;}
-  void SetSigmaX(double SigmaX) {mSigmaX=SigmaX;}
-  void SetSigmaY(double SigmaY) {mSigmaY=SigmaY;}
+  void SetPosition(G4ThreeVector p) {mPosition=p;} // no need for re-initialization
+  void SetSigmaX(double SigmaX) {mIsInitialized &= (mSigmaX==SigmaX); mSigmaX=SigmaX;}
+  void SetSigmaY(double SigmaY) {mIsInitialized &= (mSigmaY==SigmaY); mSigmaY=SigmaY;}
   //Direction
-  void SetSigmaTheta(double SigmaTheta) {mSigmaTheta=SigmaTheta;}
-  void SetSigmaPhi(double SigmaPhi) {mSigmaPhi=SigmaPhi;}
+  void SetSigmaTheta(double SigmaTheta) {mIsInitialized &= (mSigmaTheta==SigmaTheta); mSigmaTheta=SigmaTheta;}
+  void SetSigmaPhi(double SigmaPhi) {mIsInitialized &= (mSigmaPhi==SigmaPhi); mSigmaPhi=SigmaPhi;}
   // first rotation possibility => Necessary for the GateSourceTPSPencilBeam !!!!!!
-  void SetRotation(G4ThreeVector rot) {mRotation=rot;}
+  void SetRotation(G4ThreeVector rot) {mRotation=rot;} // no need for re-initialization
   //second rotation possibility
-  void SetRotationAxis(G4ThreeVector axis) {mRotationAxis=axis;}
-  void SetRotationAngle(double angle) {mRotationAngle=angle;}
+  void SetRotationAxis(G4ThreeVector axis) {mRotationAxis=axis;} // no need for re-initialization
+  void SetRotationAngle(double angle) {mRotationAngle=angle;} // no need for re-initialization
   //Correlation Position/Direction
-  void SetEllipseXThetaArea(double EllipseXThetaArea) {mEllipseXThetaArea=EllipseXThetaArea;}
-  void SetEllipseYPhiArea(double EllipseYPhiArea) {mEllipseYPhiArea=EllipseYPhiArea;}
-  void SetEllipseXThetaRotationNorm(std::string rotation) {mConvergenceX=(rotation=="positive");}
-  void SetEllipseYPhiRotationNorm(std::string rotation) {mConvergenceY=(rotation=="positive");}
-  void SetConvergenceX(bool b) {mConvergenceX=b;}
-  void SetConvergenceY(bool b) {mConvergenceY=b;}
-  void SetTestFlag(bool b) {mTestFlag=b;}
+  void SetEllipseXThetaArea(double EllipseXThetaArea) {mIsInitialized &= (mEllipseXThetaArea==EllipseXThetaArea); mEllipseXThetaArea=EllipseXThetaArea;}
+  void SetEllipseYPhiArea(double EllipseYPhiArea) {mIsInitialized &= (mEllipseYPhiArea==EllipseYPhiArea); mEllipseYPhiArea=EllipseYPhiArea;}
+  void SetEllipseXThetaRotationNorm(std::string rotation) { SetConvergenceX(rotation=="positive");}
+  void SetEllipseYPhiRotationNorm(std::string rotation) { SetConvergenceY(rotation=="positive");}
+  void SetConvergenceX(bool b) {mIsInitialized &= (mConvergenceX==b); mConvergenceX=b;}
+  void SetConvergenceY(bool b) {mIsInitialized &= (mConvergenceY==b); mConvergenceY=b;}
+  void SetTestFlag(bool b) {mTestFlag=b;} // no need for re-initialization
 
 protected:
   GateSourcePencilBeamMessenger * pMessenger;
 
   bool mIsInitialized;
   //Particle Type
-  char mParticleType[64];
+  G4String mParticleType;
   double mWeight;
   //Particle Properties If GenericIon
   G4int    mAtomicNumber;
