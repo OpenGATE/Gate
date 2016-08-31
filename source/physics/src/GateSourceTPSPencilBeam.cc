@@ -102,7 +102,7 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
 
     if (mIsASourceDescriptionFile) {
       LoadClinicalBeamProperties();
-      GateMessage("Physic", 1, "[TPSPencilBeam] Source description file successfully loaded.\n");
+      GateMessage("Beam", 1, "[TPSPencilBeam] Source description file successfully loaded." << Gateendl);
     } else {
       GateError("No clinical beam loaded !");
     }
@@ -353,7 +353,7 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
         }
       }
       again = false;
-      GateMessage("Physic", 1, "[TPSPencilBeam] Plan description file successfully loaded.\n");
+      GateMessage("Beam", 1, "[TPSPencilBeam] Plan description file successfully loaded." << Gateendl);
     }
     inFile.close();
 
@@ -362,8 +362,8 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
       GateError("0 spots have been loaded from the file \"" << mPlan << "\" simulation abort!");
     }
 
-    GateMessage("Physic", 1, "[TPSPencilBeam] Starting particle generation:  "
-                << mTotalNumberOfSpots << " spots loaded.\n");
+    GateMessage("Beam", 1, "[TPSPencilBeam] Starting particle generation:  "
+                << mTotalNumberOfSpots << " spots loaded." << Gateendl );
     mPDF = new double[mTotalNumberOfSpots];
     for (int i = 0; i < mTotalNumberOfSpots; i++) {
       // it is strongly adviced to set mFlatGenerationFlag=false
@@ -411,7 +411,7 @@ typename std::vector<T> parse_N_items_of_type_T(std::string line,int lineno, con
 // * check that we really get N items of type T from the current line
 // * throw exception with informative error message in case of trouble
 template<typename T, int N>
-typename std::vector<T>  ReadNextContentLine( istream& input, int& lineno, const G4String& fname ) {
+typename std::vector<T>  ReadNextContentLine( istream& input, int& lineno, const std::string& fname ) {
   while ( input ){
     std::string line;
     std::getline(input,line);
@@ -429,7 +429,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
 
   bool need_pencilbeam_config = false;
   if (!mIsInitialized) {
-    GateMessage("Beam", 0, "[TPSPencilBeam] going to try loading the PBS plan description.\n");
+    GateMessage("Beam", 1, "[TPSPencilBeam] Going to try loading the PBS plan description." << Gateendl );
     // get GATE random engine
     CLHEP::HepRandomEngine *engine = GateRandomEngine::GetInstance()->GetRandomEngine();
     // the "false" means -> do not create messenger (memory gain)
@@ -447,7 +447,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
 
     if (mIsASourceDescriptionFile) {
       LoadClinicalBeamProperties();
-      GateMessage("Beam", 1, "[TPSPencilBeam] Source description file successfully loaded.\n");
+      GateMessage("Beam", 1, "[TPSPencilBeam] Source description file successfully loaded." << Gateendl );
     } else {
       GateError("No clinical beam loaded !");
     }
@@ -588,7 +588,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
         }
       }
       mTotalNumberOfSpots = mSpotWeight.size();
-      GateMessage("Beam", 1, "[TPSPencilBeam] Plan description file \"" << mPlan << "\" successfully loaded: " << NbFields << " field(s) with a total of " << mTotalNumberOfSpots << " spots, " << nrejected << " spots rejected.\n");
+      GateMessage("Beam", 1, "[TPSPencilBeam] Plan description file \"" << mPlan << "\" successfully loaded: " << NbFields << " field(s) with a total of " << mTotalNumberOfSpots << " spots, " << nrejected << " spots rejected." << Gateendl );
     } catch ( const std::runtime_error& oops ){
       GateError("Something went wrong while parsing plan description file \"" << mPlan << "\": " << Gateendl << oops.what() << Gateendl );
     }
@@ -622,6 +622,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
       GateMessage("Beam", 3, "[TPSPencilBeam] bin " << std::setw(5) << i << ": spotweight=" << std::setw(8) << mPDF[i] << ", Ngen=" << mNbProtonsToGenerate[i] << Gateendl );
     }
     need_pencilbeam_config = true;
+    GateMessage("Beam", 1, "[TPSPencilBeam] Plan description file successfully loaded." << Gateendl );
 
     //---------INITIALIZATION - END-----------------------
   }
