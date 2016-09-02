@@ -411,7 +411,7 @@ typename std::vector<T> parse_N_items_of_type_T(std::string line,int lineno, con
 // * check that we really get N items of type T from the current line
 // * throw exception with informative error message in case of trouble
 template<typename T, int N>
-typename std::vector<T>  ReadNextContentLine( istream& input, int& lineno, const std::string& fname ) {
+typename std::vector<T>  ReadNextContentLine( std::istream& input, int& lineno, const std::string& fname ) {
   while ( input ){
     std::string line;
     std::getline(input,line);
