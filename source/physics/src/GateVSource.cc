@@ -363,8 +363,8 @@ void GateVSource::Dump( G4int level )
          << "  type               : " << m_type << Gateendl
          << "  activity (Bq)      : " << m_activity/becquerel << Gateendl
          << "  startTime (s)      : " << m_startTime/s << Gateendl;
- if(m_stopTime>-1.)
- G4cout  << "  stopTime (s)       : " << m_stopTime/s << Gateendl;
+ if(m_stopTime>0.)
+    G4cout  << "  stopTime (s)       : " << m_stopTime/s << Gateendl;
  G4cout  << "  time (s)           : " << m_time/s << Gateendl
          << "  forcedUnstable     : " << m_forcedUnstableFlag << Gateendl
          << "  forcedHalfLife (s) : " << GetForcedHalfLife()/s << Gateendl
