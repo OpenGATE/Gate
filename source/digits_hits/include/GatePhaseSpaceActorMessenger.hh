@@ -27,6 +27,7 @@ class G4UIcmdWithABool;
 class G4UIcmdWithoutParameter;
 class G4UIcmdWithADoubleAndUnit;
 class G4UIcmdWithAString;
+
 class GatePhaseSpaceActor;
 
 class GatePhaseSpaceActorMessenger : public  GateActorMessenger
@@ -40,7 +41,11 @@ public:
 
 protected:
   GatePhaseSpaceActor * pActor;
-
+  // ------------
+  G4UIcmdWithABool* pEnableChargeCmd;
+  G4UIcmdWithABool* pEnableElectronicDEDXCmd;
+  G4UIcmdWithABool* pEnableTotalDEDXCmd;
+  //--------
   G4UIcmdWithABool* pEnableEkineCmd;
   G4UIcmdWithABool* pEnablePositionXCmd;
   G4UIcmdWithABool* pEnablePositionYCmd;
@@ -66,6 +71,7 @@ protected:
   G4UIcmdWithAString* bSpotIDFromSourceCmd;
   G4UIcmdWithABool* bEnablePDGCodeCmd;
   G4UIcmdWithABool* bEnableCompactCmd;
+  
 
 };
 

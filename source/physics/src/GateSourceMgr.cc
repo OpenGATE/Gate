@@ -231,6 +231,11 @@ G4int GateSourceMgr::AddSource( std::vector<G4String> sourceVec )
         source->SetType("fastI124");
         source->SetSourceID( m_sourceProgressiveNumber );
       }
+      else if (sourceGeomType == "fastY90") {
+        source = new GateSourceFastY90( sourceName );
+        source->SetType("fastY90");
+        source->SetSourceID( m_sourceProgressiveNumber );
+      }
       else if (sourceGeomType == "") {
         source = new GateVSource( sourceName );
         source->SetType("gps");
@@ -555,64 +560,47 @@ G4int GateSourceMgr::PrepareNextEvent( G4Event* event )
       GateVSource* source = GetNextSource();
 
       if( source )
-        {
-          // obsolete: to avoid the initialization phase for the source if it's the same as
-          // the previous event (always the same with only 1 source). Not needed now with one gps
-          // per source
-          if( source != m_previousSource ) m_needSourceInit = true;
-          m_previousSource = source;
+      {
+        // obsolete: to avoid the initialization phase for the source if it's the same as
+        // the previous event (always the same with only 1 source). Not needed now with one gps
+        // per source
+        if( source != m_previousSource ) m_needSourceInit = true;
+        m_previousSource = source;
 
-          // save the information, that can then be asked during the analysis phase
-          m_currentSources.push_back( source );
+        // save the information, that can then be asked during the analysis phase
+        m_currentSources.push_back( source );
 
-          // update the internal time
-          m_time += m_firstTime;
+        // update the internal time
+        m_time += m_firstTime;
 
 
-          GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
-          // G4double timeStop           = appMgr->GetTimeStop();
-          appMgr->SetCurrentTime(m_time);
+        GateApplicationMgr* appMgr = GateApplicationMgr::GetInstance();
+        // G4double timeStop           = appMgr->GetTimeStop();
+        appMgr->SetCurrentTime(m_time);
 
-          if( mVerboseLevel > 1 )
-            G4cout << "GateSourceMgr::PrepareNextEvent :  m_time (s) " << m_time/s
-                   << "  m_timeLimit (s) " << m_timeLimit/s << Gateendl;
+        if( mVerboseLevel > 1 )
+          G4cout << "GateSourceMgr::PrepareNextEvent :  m_time (s) " << m_time/s
+                 << "  m_timeLimit (s) " << m_timeLimit/s << Gateendl;
 
-          // Warning: the comparison  m_time <= m_timeLimit should be wrong due to decimal floating point problem
+        if( m_time <= m_timeLimit || appMgr->IsTotalAmountOfPrimariesModeEnabled())
+          {
+            if( mVerboseLevel > 1 )
+              G4cout << "GateSourceMgr::PrepareNextEvent : source selected <"
+                     << source->GetName() << ">\n";
 
-          /*  if (((!appMgr->IsAnAmountOfPrimariesPerRunModeEnabled() && ( m_time <= m_timeLimit ))
-              || (appMgr->IsAnAmountOfPrimariesPerRunModeEnabled()
-              && (mNbOfParticleInTheCurrentRun < appMgr->GetNumberOfPrimariesPerRun()) ))
-              && ( m_time <= timeStop ) ) */
-          //      if( (  m_timeLimit - m_time >= -0.001 ) && ( m_time <= timeStop ) )
-          // G4cout << m_time - m_timeLimit<<"   "<<m_firstTime<<"    "<<m_firstTime*(1-1.E-10) <<"  "<< (m_time - m_timeLimit) - m_firstTime << Gateendl;
-
-//          if( !appMgr->IsTotalAmountOfPrimariesModeEnabled() && ( m_time <= m_timeLimit ) )
-          if( m_time <= m_timeLimit )
- //             || (appMgr->IsTotalAmountOfPrimariesModeEnabled() && appMgr->IsAnAmountOfPrimariesPerRunModeEnabled() && (mNbOfParticleInTheCurrentRun < appMgr->GetNumberOfPrimariesPerRun()))
- //             || (appMgr->IsTotalAmountOfPrimariesModeEnabled() && ( fabs(m_time - m_timeLimit - m_firstTime) > m_firstTime*0.5  ) && ( m_time - timeStop  <= m_firstTime )))
-            {
-	      if( mVerboseLevel > 1 )
-                G4cout << "GateSourceMgr::PrepareNextEvent : source selected <"
-                       << source->GetName() << ">\n";
-
-              // transmit the time to the source and ask it to generate the primary vertex
-              source->SetTime( m_time );
-              source->SetNeedInit( m_needSourceInit );
-              SetWeight(appMgr->GetWeight());
-              source->SetSourceWeight(GetWeight());
-              mNumberOfEventBySource[source->GetSourceID()+1]+=1;
-              numVertices = source->GeneratePrimaries( event );
-            }
-          else {
-            if( mVerboseLevel > 0 )
-              G4cout << "GateSourceMgr::PrepareNextEvent : m_time > m_timeLimit. No vertex generated\n";
-
-            /*if(m_time <= timeStop){
-              m_time-=m_firstTime;
-              appMgr->SetCurrentTime(m_time);
-            }*/
+            // transmit the time to the source and ask it to generate the primary vertex
+            source->SetTime( m_time );
+            source->SetNeedInit( m_needSourceInit );
+            SetWeight(appMgr->GetWeight());
+            source->SetSourceWeight(GetWeight());
+            mNumberOfEventBySource[source->GetSourceID()+1]+=1;
+            numVertices = source->GeneratePrimaries( event );
           }
+        else {
+          if( mVerboseLevel > 0 )
+            G4cout << "GateSourceMgr::PrepareNextEvent : m_time > m_timeLimit. No vertex generated\n";
         }
+      }
       else {
         G4cout << "GateSourceMgr::PrepareNextEvent : WARNING : GateSourceMgr::GetNextSource gave no source\n";
       }

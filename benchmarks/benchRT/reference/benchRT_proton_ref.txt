@@ -1,8 +1,8 @@
 This reference was created by launching a Gate simulation on
-Tue Jan 5 11:12:05 CET 2016
+Fri Mar 18 13:58:50 CET 2016
 with the configuration file benchmarks/benchRT/mac/proton.mac
 from the commit
-commit 8a83de7988149afc010b22c708b0ccdfe76a93f9
+commit 946702bd29ba2099788c64fb85d97dbd3b9f72fb
 with the version of gcc
 gcc (SUSE Linux) 4.8.3 20140627 [gcc-4_8-branch revision 212064]
 on the architecture Linux

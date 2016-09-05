@@ -84,14 +84,19 @@ void GateRootHitBuffer::Clear()
   trackID       = 0;
   parentID      = 0;
   time            = 0./s;
+  trackLocalTime  = 0./s;
   edep            = 0./MeV;
   stepLength      = 0./mm;
+  trackLength      = 0./mm;
   posX            = 0./mm;
   posY            = 0./mm;
   posZ            = 0./mm;
   localPosX       = 0./mm;
   localPosY       = 0./mm;
   localPosZ       = 0./mm;
+  momDirX         = 0.;
+  momDirY         = 0.;
+  momDirZ         = 0.;
   photonID        = -1;
   nPhantomCompton = -1;
   nCrystalCompton = -1;
@@ -130,8 +135,10 @@ void GateRootHitBuffer::Fill(GateCrystalHit* aHit)
   trackID         = aHit->GetTrackID();
   parentID        = aHit->GetParentID();
   SetTime(          aHit->GetTime() );
+  SetTrackLocalTime(          aHit->GetTrackLocalTime() );
   SetEdep(          aHit->GetEdep() );
   SetStepLength(    aHit->GetStepLength() );
+  SetTrackLength(    aHit->GetTrackLength() );
   SetPos(           aHit->GetGlobalPos() );
   SetLocalPos(      aHit->GetLocalPos() );
   parentID        = aHit->GetParentID();
@@ -147,6 +154,9 @@ void GateRootHitBuffer::Fill(GateCrystalHit* aHit)
   sourceID        = aHit->GetSourceID();
   eventID         = aHit->GetEventID();
   runID           = aHit->GetRunID();
+  momDirX         = aHit->GetMomentumDir().x();
+  momDirY         = aHit->GetMomentumDir().y();
+  momDirZ         = aHit->GetMomentumDir().z();
   SetAxialPos(      aHit->GetScannerPos().z() );
   SetRotationAngle( aHit->GetScannerRotAngle() );
 	  
@@ -190,9 +200,14 @@ GateCrystalHit* GateRootHitBuffer::CreateHit()
     // Initialise the hit data from the root-hit data
     aHit->SetEdep(    	      	GetEdep() );  
     aHit->SetStepLength(      	GetStepLength() );  
+    aHit->SetTrackLength(      	GetTrackLength() );  
     aHit->SetTime(    	      	GetTime() );
+    aHit->SetTrackLocalTime(    	GetTrackLocalTime() );
     aHit->SetGlobalPos(       	GetPos() );
     aHit->SetLocalPos(        	GetLocalPos() );
+
+    aHit->SetMomentumDir(   G4ThreeVector(0., 0., 0. )     );
+
     aHit->SetProcess( 	      	processName );
     aHit->SetPDGEncoding(     	PDGEncoding );
     aHit->SetTrackID( 	      	trackID );
@@ -223,15 +238,21 @@ void GateHitTree::Init(GateRootHitBuffer& buffer)
     Branch("PDGEncoding",    &buffer.PDGEncoding,"PDGEncoding/I");
     Branch("trackID",        &buffer.trackID,"trackID/I");
     Branch("parentID",       &buffer.parentID,"parentID/I");
+    Branch("trackLocalTime", &buffer.trackLocalTime,"trackLocalTime/D");
     Branch("time",           &buffer.time,"time/D");
     Branch("edep",           &buffer.edep,"edep/F");
     Branch("stepLength",     &buffer.stepLength,"stepLength/F");
+    Branch("trackLength",    &buffer.stepLength,"trackLength/F");
     Branch("posX",           &buffer.posX,"posX/F");
     Branch("posY",           &buffer.posY,"posY/F");
     Branch("posZ",           &buffer.posZ,"posZ/F");
     Branch("localPosX",      &buffer.localPosX,"localPosX/F");
     Branch("localPosY",      &buffer.localPosY,"localPosY/F");
     Branch("localPosZ",      &buffer.localPosZ,"localPosZ/F");
+    Branch("momDirX",      &buffer.momDirX,"momDirX/F");
+    Branch("momDirY",      &buffer.momDirY,"momDirY/F");
+    Branch("momDirZ",      &buffer.momDirZ,"momDirZ/F");
+
     for (size_t d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
       Branch(outputIDName[d],(void *)(buffer.outputID+d),outputIDLeafList[d]);
     Branch("photonID",       &buffer.photonID,"photonID/I");
@@ -271,8 +292,11 @@ void GateHitTree::SetBranchAddresses(TTree* hitTree,GateRootHitBuffer& buffer)
   hitTree->SetBranchAddress("localPosX",&buffer.localPosX);
   hitTree->SetBranchAddress("localPosY",&buffer.localPosY);
   hitTree->SetBranchAddress("localPosZ",&buffer.localPosZ);
+  hitTree->SetBranchAddress("momDirX",&buffer.momDirX);
+  hitTree->SetBranchAddress("momDirY",&buffer.momDirY);
+  hitTree->SetBranchAddress("momDirZ",&buffer.momDirZ);
   for (size_t d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-      hitTree->SetBranchAddress(outputIDName[d],(void *)(buffer.outputID+d));
+  hitTree->SetBranchAddress(outputIDName[d],(void *)(buffer.outputID+d));
   hitTree->SetBranchAddress("photonID",&buffer.photonID);
   hitTree->SetBranchAddress("nPhantomCompton",&buffer.nPhantomCompton);
   hitTree->SetBranchAddress("nCrystalCompton",&buffer.nCrystalCompton);
@@ -310,13 +334,13 @@ void GateRootSingleBuffer::Clear()
   globalPosY       = 0./mm;
   globalPosZ       = 0./mm;
   for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
-    outputID[d]    = -1;
+  outputID[d]      = -1;
   axialPos         = 0.;
   rotationAngle    = 0.;
   comptonPhantom   = -1;
   comptonCrystal   = -1;
-  RayleighPhantom   = -1;
-  RayleighCrystal   = -1;
+  RayleighPhantom  = -1;
+  RayleighCrystal  = -1;
   strcpy (comptonVolumeName," ");
   strcpy (RayleighVolumeName," ");
   // HDS : septal

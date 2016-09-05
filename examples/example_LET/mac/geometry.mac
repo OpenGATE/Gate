@@ -1,0 +1,75 @@
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+/gate/geometry/setMagField {MagneticField} T
+
+# World
+/gate/world/geometry/setXLength 1 m
+/gate/world/geometry/setYLength 1 m
+/gate/world/geometry/setZLength 1 m
+/gate/world/setMaterial Air
+/gate/world/vis/forceWireframe
+
+# Global Box
+/gate/world/daughters/name              phantom
+/gate/world/daughters/insert           box
+/gate/phantom/geometry/setXLength      {PhantomSizeXY} mm
+/gate/phantom/geometry/setYLength      {PhantomSizeXY} mm
+/gate/phantom/geometry/setZLength      {PhantomSizeZ} mm
+/gate/phantom/placement/setTranslation 0.0 0.0 {HalfPhantomSizeZ} mm
+/gate/phantom/setMaterial {Material}
+/gate/phantom/vis/setVisible 1
+/gate/phantom/vis/setColor green
+
+
+# Detector Box
+/gate/phantom/daughters/name             det0 
+/gate/phantom/daughters/insert           box
+/gate/det0/geometry/setXLength      {PhantomSizeXY} mm
+/gate/det0/geometry/setYLength      {PhantomSizeXY} mm
+/gate/det0/geometry/setZLength      4 mm
+/gate/det0/placement/setTranslation 0.0 0.0 -80 mm
+/gate/det0/setMaterial    {BoneMaterial}
+/gate/det0/vis/setVisible 1
+/gate/det0/vis/setColor blue
+
+# Detector Box
+/gate/phantom/daughters/name             det1
+/gate/phantom/daughters/insert           box
+/gate/det1/geometry/setXLength      {PhantomSizeXY} mm
+/gate/det1/geometry/setYLength      {PhantomSizeXY} mm
+/gate/det1/geometry/setZLength      4 mm
+/gate/det1/placement/setTranslation 0.0 0.0 -70 mm
+/gate/det1/setMaterial  {airishMaterial}
+/gate/det1/vis/setVisible 1
+/gate/det1/vis/setColor yellow
+
+# Detector Box
+/gate/phantom/daughters/name             det2
+/gate/phantom/daughters/insert           box
+/gate/det2/geometry/setXLength      {PhantomSizeXY} mm
+/gate/det2/geometry/setYLength      {PhantomSizeXY} mm
+/gate/det2/geometry/setZLength      1 mm
+/gate/det2/placement/setTranslation 0.0 0.0 60 mm
+/gate/det2/setMaterial   {BoneMaterial}
+/gate/det2/vis/setVisible 1
+/gate/det2/vis/setColor red
+
+# Detector Box
+/gate/phantom/daughters/name             det3
+/gate/phantom/daughters/insert           box
+/gate/det3/geometry/setXLength      {PhantomSizeXY} mm
+/gate/det3/geometry/setYLength      {PhantomSizeXY} mm
+/gate/det3/geometry/setZLength      1 mm
+/gate/det3/placement/setTranslation 0.0 0.0 62 mm
+/gate/det3/setMaterial  	{airishMaterial}
+/gate/det3/vis/setVisible 1
+/gate/det3/vis/setColor green
+
+
+
+
+
+/gate/geometry/setIonisationPotential Water 75 eV
+/gate/geometry/setIonisationPotential Air 85.7 eV

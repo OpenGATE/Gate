@@ -1,0 +1,76 @@
+    # Primaries
+/control/alias npart "100"
+
+
+#-----------------------------------------------------
+#--------------G E O M E T R Y------------------------
+#-----------------------------------------------------
+
+    # Magnetic Field in T
+/control/alias MagneticField "0 0 0"
+
+
+#-----------------------------------------------------
+#--------------P H A N T O M--------------------------
+#-----------------------------------------------------
+
+    # Phantom Size in mm
+/control/alias PhantomSizeXY "350"
+/control/alias HalfPhantomSizeXY "175"
+/control/alias PhantomSizeZ "200"
+/control/alias HalfPhantomSizeZ "100"
+
+/control/alias detThickness "10"
+
+	# Phantom Material
+/control/alias Material "Water"
+/control/alias BoneMaterial "RibBone"
+/control/alias airishMaterial "Lung"
+
+
+
+#-----------------------------------------------------
+#--------------B E A M--------------------------------
+#-----------------------------------------------------
+
+	# Beam Energy in MeV
+/control/alias BeamEnergy "160"
+
+	# Beam Energy Sigma in MeV
+/control/alias BeamESigma "1.04"
+
+	# Beam Size Sigma X in mm
+/control/alias BeamSigmaX "8.9"
+
+	# Beam Size Sigma Y in mm
+/control/alias BeamSigmaY "8.9"
+
+
+#-----------------------------------------------------
+#--------------C U T S--------------------------------
+#--------------for e-,e+,gamma, in mm-----------------
+
+    # Cut in World
+/control/alias CutInWorld "1000"
+
+   # Cut in Phantom
+/control/alias CutInPhantom "1000"
+
+
+#-----------------------------------------------------
+#--------------ACTOR RESOLUTION-----------------------
+#--------------in mm----------------------------------
+
+   # Transversal Resolution
+/control/alias TransversalResol "0.5"
+
+   # Longitudinal Resolution
+/control/alias LongitudinalResol "0.5"
+
+
+#-----------------------------------------------------
+#--------------F I L E  N A M I N G-------------------
+#-----------------------------------------------------
+
+    # Filename start
+/control/alias Name "inhomWaterPhantom_SOBP"

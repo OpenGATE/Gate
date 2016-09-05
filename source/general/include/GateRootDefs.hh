@@ -80,6 +80,14 @@ class GateRootHitBuffer
     inline void SetTime(G4double aTime)
       { time = aTime / second;}
 
+    //! Returns the time in G4 units (conversion from seconds)
+    inline G4double GetTrackLocalTime() const
+      { return trackLocalTime * second;}
+    //! Set the time from a value expressed in G4 units (conversion into seconds)
+    inline void SetTrackLocalTime(G4double aTime)
+      { trackLocalTime = aTime / second;}
+
+
     //! Returns the energy deposition in G4 units (conversion from MeVs)
     inline G4double GetEdep() const
       { return edep * MeV;}
@@ -93,6 +101,15 @@ class GateRootHitBuffer
     //! Set the step length from a value given in G4 units (conversion into millimeters)
     inline void SetStepLength(G4double aLength)
       { stepLength = aLength / mm;}
+
+
+    //! Returns the track length in G4 units (conversion from millimeters)
+    inline G4double GetTrackLength() const
+      { return trackLength * mm;}
+    //! Set the track length from a value given in G4 units (conversion into millimeters)
+    inline void SetTrackLength(G4double aLength)
+      { trackLength = aLength / mm;}
+
 
     //! Returns the global position in G4 units (conversion from millimeters)
     inline G4ThreeVector GetPos() const
@@ -149,9 +166,12 @@ class GateRootHitBuffer
     Int_t    trackID; 	      	      	      	//!< Track ID
     Int_t    parentID;	      	      	      	//!< Parent ID
     Double_t time;    	      	      	      	//!< Time of the hit (in seconds)
+    Double_t trackLocalTime;    	      	      	//!< Time of the current track (in seconds)
     Float_t  edep;    	      	      	      	//!< Deposited energy (in MeVs)
     Float_t  stepLength;      	      	      	//!< Step length (in millimeters)
+    Float_t  trackLength;      	      	      	//!< Track length (in millimeters)
     Float_t  posX,posY,posZ;  	      	      	//!< Global hit position (in millimeters)
+    Float_t  momDirX,momDirY,momDirZ;              //!< Global hit momentum
     Float_t  localPosX, localPosY, localPosZ; 	//!< Local hit position (in millimeters)
     Int_t    outputID[ROOT_OUTPUTIDSIZE];	//!< 6-position output ID
     Int_t    photonID;	      	      	      	//!< Photon ID

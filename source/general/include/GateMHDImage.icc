@@ -37,7 +37,7 @@ void GateMHDImage::ReadData(std::string filename, std::vector<PixelType> & data)
 
 //-----------------------------------------------------------------------------
 template<class PixelType>
-void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * image, bool writeData)
+void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * image, bool writeData,bool  changeExtension,bool isARF)
 {
   MetaImage m_MetaImage;
   int ds[3];
@@ -64,12 +64,22 @@ void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * ima
     m_MetaImage.InitializeEssential(3, ds, es, MET_INT);
     done=true;
   }
+    if (typeid(PixelType) == typeid(unsigned short) && isARF==false) {
+    m_MetaImage.InitializeEssential(3, ds, es, MET_USHORT);
+    done=true;
+  }
+  
+   if (isARF==true) {
+    m_MetaImage.InitializeEssential(3, ds, es, MET_DOUBLE);
+    done=true;
+  }
+  
   if (!done) {
     GateError("Error could not create a MHD image of pixeltype = " << typeid(PixelType).name() << Gateendl);
   }
   std::string headName = filename;
   std::string dataName;
-  GetRawFilename(filename, dataName, false);
+  GetRawFilename(filename, dataName, false,changeExtension);
   double p[3];
   // Gate convention: origin is the corner of the first pixel
   // MHD / ITK convention: origin is the center of the first pixel
