@@ -7,7 +7,7 @@
 # VISUALISATION
 #=====================================================
 
-#/control/execute visu.mac
+#/control/execute mac/visu.mac
 
 
 #=====================================================
