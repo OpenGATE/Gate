@@ -1,0 +1,23 @@
+/control/execute mac/verbose.mac
+
+/control/execute mac/geometry.mac
+
+/control/execute mac/actors.mac
+
+/gate/Volume/geometry/setImage                 data/dcm/ffs/Souris1_TBI_0000.dcm
+/gate/Volume/geometry/buildAndDumpDensityImage output/density-ffs-dcm.mhd
+
+/gate/actor/DAVolume/save          output/DA-ffs-dcm.mhd
+/gate/actor/DAVolume/setResolution 254 195 523
+
+/control/execute mac/beam.mac
+
+/control/execute mac/physics.mac
+
+/control/execute mac/detectors.mac
+
+/control/execute mac/initialisation.mac
+
+#/control/execute mac/visu.mac
+
+/control/execute mac/startbeam.mac

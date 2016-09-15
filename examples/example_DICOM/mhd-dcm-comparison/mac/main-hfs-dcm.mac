@@ -1,0 +1,23 @@
+/control/execute mac/verbose.mac
+
+/control/execute mac/geometry.mac
+
+/control/execute mac/actors.mac
+
+/gate/Volume/geometry/setImage                 data/dcm/hfs/CT.1.2.826.0.1.3680043.2.200.259546189.673.92804.233.1.dcm
+/gate/Volume/geometry/buildAndDumpDensityImage output/density-hfs-dcm.mhd
+
+/gate/actor/DAVolume/save          output/DA-hfs-dcm.mhd
+/gate/actor/DAVolume/setResolution 284 284 123
+
+/control/execute mac/beam.mac
+
+/control/execute mac/physics.mac
+
+/control/execute mac/detectors.mac
+
+/control/execute mac/initialisation.mac
+
+#/control/execute mac/visu.mac
+
+/control/execute mac/startbeam.mac

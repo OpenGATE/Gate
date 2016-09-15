@@ -1,0 +1,14 @@
+* Author:
+ - Thomas DESCHLER (thomas@deschler.fr)
+
+* DICOM Series given by:
+ - Jérôme Suhard (jerome@suhard.fr)
+
+* Informations:
+  * The main simulation files are constructed like this : main-[series name]-[input format].mac
+    [series name] : ffp, ffs, hfp, hfs
+    [input format]: mhd, dcm
+  * Each main file will generate two mhd images, one containing the density dump of the image (density-[series name]-[input format].mhd/.raw) and one containing the deposited dose in the image (DA-[series name]-[input format]-Dose.mhd/.raw).
+  * Comparison between input formats can be made by the diff command:
+    For example :
+      diff DA-[seriesA]-mhd-Dose.raw DA-[seriesA]-dcm-Dose.raw

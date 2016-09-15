@@ -1,0 +1,3 @@
+-2000 -800 Vacuum
+-800 -40 Air
+-40 19000 TissueEquivalent

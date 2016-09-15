@@ -1,0 +1,6 @@
+/gate/source/addSource xraygun      gps
+/gate/source/xraygun/gps/particle   gamma
+/gate/source/xraygun/gps/energytype Mono
+/gate/source/xraygun/gps/ene/mono   100 keV
+/gate/source/xraygun/gps/angtype    iso 
+/gate/source/xraygun/gps/type       Point
