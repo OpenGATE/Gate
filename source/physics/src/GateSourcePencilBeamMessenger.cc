@@ -5,12 +5,9 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
   ----------------------*/
-#ifndef GATESOURCEPENCILBEAMMESSENGER_CC
-#define GATESOURCEPENCILBEAMMESSENGER_CC
 
 #include "GateConfiguration.h"
 
-#ifdef G4ANALYSIS_USE_ROOT
 #include "GateSourcePencilBeamMessenger.hh"
 #include "GateSourcePencilBeam.hh"
 #include "GateUIcmdWithTwoDouble.hh"
@@ -147,6 +144,3 @@ void GateSourcePencilBeamMessenger::SetNewValue(G4UIcommand* command,G4String ne
   //Tests
   if (command == pTestCmd) {pSourcePencilBeam->SetTestFlag(pTestCmd->GetNewBoolValue(newValue)); }
 }
-#endif
-
-#endif

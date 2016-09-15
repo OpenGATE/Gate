@@ -23,14 +23,8 @@
 //    thanks to the SetX0, SetY0, SetZ0 and SetRotation methods.
 //=======================================================
 
-#ifndef GATESOURCEPENCILBEAM_CC
-#define GATESOURCEPENCILBEAM_CC
-
-#include "GateConfiguration.h"
-
-#ifdef G4ANALYSIS_USE_ROOT
-
 // gate
+#include "GateConfiguration.h"
 #include "GateSourcePencilBeam.hh"
 
 // g4
@@ -45,7 +39,7 @@ GateSourcePencilBeam::GateSourcePencilBeam(G4String name, bool useMessenger):
   GateVSource(name), mGaussian2DYPhi(NULL), mGaussian2DXTheta(NULL), mGaussianEnergy(NULL)
 {
   //Particle Type
-  strcpy(mParticleType,"proton");
+  mParticleType="proton";
   mWeight=1.;
   //Particle Properties If GenericIon [C12]
   mAtomicNumber=6;
@@ -73,7 +67,7 @@ GateSourcePencilBeam::GateSourcePencilBeam(G4String name, bool useMessenger):
   mRotationAngle=0;
   //Correlation Position/Direction
   mEllipseXThetaArea=1.;  mEllipseYPhiArea=1.;
-  mEllipseXThetaRotationNorm="negative";  mEllipseYPhiRotationNorm="negative";
+  mConvergenceX = mConvergenceY = false;
   //Gaussian distribution generation for direction
   mUXTheta = HepVector(2); mUYPhi = HepVector(2);
   mSXTheta = HepSymMatrix(2,0); mSYPhi = HepSymMatrix(2,0);
@@ -90,6 +84,9 @@ GateSourcePencilBeam::GateSourcePencilBeam(G4String name, bool useMessenger):
 GateSourcePencilBeam::~GateSourcePencilBeam()
 {
   delete pMessenger;
+  delete mGaussianEnergy;
+  delete mGaussian2DXTheta;
+  delete mGaussian2DYPhi;
   //FIXME segfault when uncommented
   //if (mGaussian2DXTheta) delete mGaussian2DXTheta;
   //if (mGaussian2DYPhi) delete mGaussian2DYPhi;
@@ -138,31 +135,29 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
 
     //---------SOURCE PARAMETERS - CONTROL ----------------
     if (pi*mSigmaX*mSigmaTheta<mEllipseXThetaArea){
-      G4cout<<"\n !!! ERROR !!! -> Wrong Source Parameters: EmmittanceX-Theta is lower than Pi*SigmaX*SigmaTheta! Please correct it."<<Gateendl;
-      G4cout<<"Please make sure that the energy used belongs to the beam model energy range."<<Gateendl;
-      G4cout<<"Energy "<<mEnergy<<"\tX "<<mSigmaX<<"\tTheta "<<mSigmaTheta<<"\tEmittance "<<mEllipseXThetaArea<<"\n"<<Gateendl;
-      exit(0);
+      GateMessage("Beam",0,"Please make sure that the energy used belongs to the beam model energy range."<<Gateendl);
+      GateMessage("Beam",0,"Energy "<<mEnergy<<"\tX "<<mSigmaX<<"\tTheta "<<mSigmaTheta<<"\tEmittance "<<mEllipseXThetaArea<<"\n"<<Gateendl);
+      GateError("!!! ERROR !!! -> Wrong Source Parameters: EmittanceX-Theta is lower than Pi*SigmaX*SigmaTheta! Please correct it."<<Gateendl);
     }
     if (pi*mSigmaY*mSigmaPhi<mEllipseYPhiArea){
-      G4cout<<"\n !!! ERROR !!! -> Wrong Source Parameters: EmmittanceY-Phi is lower than Pi*SigmaY*SigmaPhi! Please correct it.\n"<<Gateendl;
-      G4cout<<"Please make sure that the energy used belongs to the beam model energy range."<<Gateendl;
-      G4cout<<"Energy "<<mEnergy<<"\tY "<<mSigmaY<<"\tPhi "<<mSigmaPhi<<"\tEmittance "<<mEllipseYPhiArea<<"\n"<<Gateendl;
-      exit(0);
+      GateMessage("Beam",0,"Please make sure that the energy used belongs to the beam model energy range."<<Gateendl);
+      GateMessage("Beam",0,"Energy "<<mEnergy<<"\tY "<<mSigmaY<<"\tPhi "<<mSigmaPhi<<"\tEmittance "<<mEllipseYPhiArea<<"\n"<<Gateendl);
+      GateError("!!! ERROR !!! -> Wrong Source Parameters: EmmittanceY-Phi is lower than Pi*SigmaY*SigmaPhi! Please correct it.\n"<<Gateendl);
     }
 
     //---------INITIALIZATION - START----------------------
     mIsInitialized=true;
 
     if (mTestFlag){
-      G4cout<<"----------------TEST CONFIG---------------------------\n";
-      G4cout<<"--PENCIL BEAM PARAMETERS--\n";
-      G4cout<<"*Energy: E0 = "<<mEnergy<<" MeV   SigmaEnergy = "<<mSigmaEnergy<<" MeV\n";
-      //G4cout<<"*Position: X0 = "<<mX0<<"   Y0 = "<<mY0<<"   Z0 = "<<mZ0<< Gateendl;
-      G4cout<<"*Position: X0 = "<<mPosition[0]<<"   Y0 = "<<mPosition[1]<<"   Z0 = "<<mPosition[2]<< Gateendl;
-      G4cout<<"*Position: sigmaX = "<<mSigmaX<<" mm   sigmaY = "<<mSigmaY<<" mm\n";
-      G4cout<<"*Direction: sigmaTheta = "<<mSigmaTheta<<" rad   sigmaY' = "<<mSigmaPhi<<" rad\n";
-      G4cout<<"*Correlation: XTheta ellipse emittance:  "<<mEllipseXThetaArea<<" mm.rad  YPhi ellipse emittance: "<<mEllipseYPhiArea<<" mm.rad\n";
-      G4cout<<"*Correlation: XTheta ellipse rotation DirNorm:  "<<mEllipseXThetaRotationNorm<<"   YPhi ellipse rotation DirNorm: "<<mEllipseYPhiRotationNorm<< Gateendl;
+      GateMessage("Beam",0,"----------------TEST CONFIG---------------------------" << Gateendl);
+      GateMessage("Beam",0,"--PENCIL BEAM PARAMETERS--" << Gateendl);
+      GateMessage("Beam",0,"*Energy: E0 = "<<mEnergy<<" MeV   SigmaEnergy = "<<mSigmaEnergy<<" MeV" << Gateendl);
+      //GateMessage("Beam",0,"*Position: X0 = "<<mX0<<"   Y0 = "<<mY0<<"   Z0 = "<<mZ0<< Gateendl);
+      GateMessage("Beam",0,"*Position: X0 = "<<mPosition[0]<<"   Y0 = "<<mPosition[1]<<"   Z0 = "<<mPosition[2]<< Gateendl);
+      GateMessage("Beam",0,"*Position: sigmaX = "<<mSigmaX<<" mm   sigmaY = "<<mSigmaY<<" mm" << Gateendl);
+      GateMessage("Beam",0,"*Direction: sigmaTheta = "<<mSigmaTheta<<" rad   sigmaY' = "<<mSigmaPhi<<" rad" << Gateendl);
+      GateMessage("Beam",0,"*Correlation: XTheta ellipse emittance:  "<<mEllipseXThetaArea<<" mm.rad  YPhi ellipse emittance: "<<mEllipseYPhiArea<<" mm.rad" << Gateendl);
+      GateMessage("Beam",0,"*Correlation: XTheta ellipse rotation DirNorm:  "<<(mConvergenceX?"positive":"negative")<<"   YPhi ellipse rotation DirNorm: "<<(mConvergenceY?"positive":"negative")<< Gateendl);
     }
 
     // for initialization mu=0 everywhere.
@@ -172,20 +167,23 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     mUYPhi(1)=0.;		//mu Y
     mUYPhi(2)=0.;		//mu phi
 
-    mGaussianEnergy = new RandGauss(engine, mEnergy, mSigmaEnergy);
-    //G4cout << "A.Resch 2016: mGaussianEnergy " << mGaussianEnergy<<G4endl<<G4endl<<G4endl<<G4endl<<G4endl;
+    delete mGaussianEnergy;
+    mGaussianEnergy = new RandGauss(*engine, mEnergy, mSigmaEnergy);
+    //GateMessage("Beam",0,< "A.Resch 2016: mGaussianEnergy " << mGaussianEnergy<<G4endl<<G4endl<<G4endl<<G4endl<<G4endl);
 	
     // Notations & Calculations based on Transport code - Beam Phase Space Notations - P35
     double alpha, beta, gamma, epsilon;
     //==============================================================
     // X Theta Phase Space Ellipse
     epsilon=mEllipseXThetaArea/pi;
-    if (epsilon==0) { G4cout<<"Error Elipse area is 0 !!!\n";}
+    if (epsilon==0) {
+      GateError("Error Elipse area is 0 !!!" << Gateendl);
+    }
     beta=mSigmaX*mSigmaX/epsilon;
     gamma=mSigmaTheta*mSigmaTheta/epsilon;
     alpha=sqrt(beta*gamma-1.);
 
-    if (mEllipseXThetaRotationNorm=="negative") {alpha=-alpha;}
+    if (!mConvergenceX) {alpha=-alpha;}
 
     mSXTheta(1,1)=beta*epsilon;
     mSXTheta(1,2)=-alpha*epsilon;
@@ -193,25 +191,28 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     mSXTheta(2,2)=gamma*epsilon;
 
     if (mTestFlag){
-      G4cout<<"--ELIPSE X-THETA PARAMETERS--" << Gateendl << Gateendl;
-      G4cout<<"Outputs - beta "<<beta<<"  gamma "<<gamma<<"   alpha" <<alpha<<"   epsilon" <<epsilon<<Gateendl;
-      G4cout<<"Outputs - Xmax² "<<mSXTheta(1,1)<<"  Ymax² "<<mSXTheta(2,2)<<Gateendl;
-      G4cout<<"Outputs - beta*gamma-1 = "<<beta*gamma-1.<<Gateendl;
-      G4cout<<"Outputs - beta*gamma-alpha*alpha = "<<beta*gamma-alpha*alpha<<Gateendl<<Gateendl;
+      GateMessage("Beam",0,"--ELIPSE X-THETA PARAMETERS--" << Gateendl);
+      GateMessage("Beam",0,"Outputs - beta "<<beta<<"  gamma "<<gamma<<"   alpha" <<alpha<<"   epsilon" <<epsilon<<Gateendl);
+      GateMessage("Beam",0,"Outputs - Xmax² "<<mSXTheta(1,1)<<"  Ymax² "<<mSXTheta(2,2)<<Gateendl);
+      GateMessage("Beam",0,"Outputs - beta*gamma-1 = "<<beta*gamma-1.<<Gateendl);
+      GateMessage("Beam",0,"Outputs - beta*gamma-alpha*alpha = "<<beta*gamma-alpha*alpha<<Gateendl);
     }
 
-    mGaussian2DXTheta = new RandMultiGauss(engine,mUXTheta,mSXTheta);
+    delete mGaussian2DXTheta;
+    mGaussian2DXTheta = new RandMultiGauss(*engine,mUXTheta,mSXTheta);
 
-    //G4cout << "A.Resch 2016: mGaussian2DXThetay " << mGaussian2DXTheta<<G4endl;
+    //GateMessage("Beam",0,< "A.Resch 2016: mGaussian2DXThetay " << mGaussian2DXTheta<<G4endl);
     //==============================================================
     // Y Phi Phase Space Ellipse
     epsilon=mEllipseYPhiArea/pi;
     beta=mSigmaY*mSigmaY/epsilon;
-    if (epsilon==0) {G4cout<<"Error Elipse area is 0 !!!\n";}
+    if (epsilon==0) {
+      GateError("Error Elipse area is 0 !!!" << Gateendl);
+    }
     gamma=mSigmaPhi*mSigmaPhi/epsilon;
     alpha=sqrt(beta*gamma-1.);
 
-    if (mEllipseYPhiRotationNorm=="negative") {alpha=-alpha;}
+    if (!mConvergenceY) {alpha=-alpha;}
 
     mSYPhi(1,1)=beta*epsilon;
     mSYPhi(1,2)=-alpha*epsilon;
@@ -219,13 +220,14 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     mSYPhi(2,2)=gamma*epsilon;
 
     if (mTestFlag){
-      G4cout<<"--ELIPSE Y-PHI PARAMETERS--\n";
-      G4cout<<"Outputs - beta "<<beta<<"  gamma "<<gamma<<"   alpha" <<alpha<<"   epsilon" <<epsilon<<Gateendl;
-      G4cout<<"Outputs - Xmax² "<<mSYPhi(1,1)<<"  Ymax² "<<mSYPhi(2,2)<<Gateendl;
-      G4cout<<"Outputs - beta*gamma-1 = "<<beta*gamma-1.<<Gateendl;
-      G4cout<<"Outputs - beta*gamma-alpha*alpha = "<<beta*gamma-alpha*alpha<<"\n"<<Gateendl;
+      GateMessage("Beam",0,"--ELIPSE Y-PHI PARAMETERS--\n");
+      GateMessage("Beam",0,"Outputs - beta "<<beta<<"  gamma "<<gamma<<"   alpha" <<alpha<<"   epsilon" <<epsilon<<Gateendl);
+      GateMessage("Beam",0,"Outputs - Xmax² "<<mSYPhi(1,1)<<"  Ymax² "<<mSYPhi(2,2)<<Gateendl);
+      GateMessage("Beam",0,"Outputs - beta*gamma-1 = "<<beta*gamma-1.<<Gateendl);
+      GateMessage("Beam",0,"Outputs - beta*gamma-alpha*alpha = "<<beta*gamma-alpha*alpha<<Gateendl);
     }
-    mGaussian2DYPhi = new RandMultiGauss(engine,mUYPhi,mSYPhi);
+    delete mGaussian2DYPhi;
+    mGaussian2DYPhi = new RandMultiGauss(*engine,mUYPhi,mSYPhi);
 
     //---------INITIALIZATION - END-----------------------
 
@@ -233,18 +235,19 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
     G4IonTable* ionTable = G4IonTable::GetIonTable();
 
-    std::string parttype=mParticleType;
-    if ( parttype == "GenericIon" ){
+    if ( mParticleType == "GenericIon" ){
       particle_definition=  ionTable->GetIon( mAtomicNumber, mAtomicMass, mIonExciteEnergy);
-      //G4cout<< Gateendl<< Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon\n";
-      //G4cout<<mAtomicNumber<<"  "<<mAtomicMass<<"  "<<mIonCharge<<"  "<<mIonExciteEnergy<< Gateendl;
+      GateMessage("Beam",3, "mParticleType  "<<mParticleType<<"     selected loop \"GenericIon\"" << Gateendl);
+      GateMessage("Beam",3,mAtomicNumber<<"  "<<mAtomicMass<<"  "<<mIonCharge<<"  "<<mIonExciteEnergy<< Gateendl);
     }
     else{
       particle_definition = particleTable->FindParticle(mParticleType);
-      //G4cout<< Gateendl<< Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  other\n";
+      GateMessage("Beam",3, "mParticleType  "<<mParticleType<<"     selected loop \"other\"" << Gateendl);
     }
 
-    if(particle_definition==0) return;
+    if(particle_definition==0){
+      GateError("ERROR: UNSUPPORTED PARTICLE TYPE: " << mParticleType << Gateendl);
+    }
   }
 
   //=======================================================
@@ -272,10 +275,10 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
   if (mTestFlag){
     //Pos[0]=1; Pos[1]=2; Pos[2]=1000;
     //Dir[0]=0; Dir[1]=0; Dir[2]=1;
-    G4cout<<" \n";
-    G4cout<<"--SPOT GENERATION--\n";
-    G4cout<<"°Initial Position        "<<Pos[0]<<"  "<<Pos[1]<<"  "<<Pos[2]<< Gateendl;
-    G4cout<<"°Initial Direction       "<<Dir[0]<<"  "<<Dir[1]<<"  "<<Dir[2]<< Gateendl;
+    GateMessage("Beam",0,"===================" << Gateendl);
+    GateMessage("Beam",0,"--SPOT GENERATION--" << Gateendl);
+    GateMessage("Beam",0,"°Initial Position        "<<Pos[0]<<"  "<<Pos[1]<<"  "<<Pos[2]<< Gateendl);
+    GateMessage("Beam",0,"°Initial Direction       "<<Dir[0]<<"  "<<Dir[1]<<"  "<<Dir[2]<< Gateendl);
   }
 
   //Rotation and position are performed so that user defines the beam at 0,0,0, with beam direction +Z.
@@ -291,9 +294,9 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
   Pos.rotate(mRotationAngle, mRotationAxis);
 
   if (mTestFlag){
-    G4cout<<"-AFTER ROTATION \n";
-    G4cout<<"°Intermediate Position   "<<Pos[0]<<"  "<<Pos[1]<<"  "<<Pos[2]<< Gateendl;
-    G4cout<<"°Final Direction         "<<Dir[0]<<"  "<<Dir[1]<<"  "<<Dir[2]<< Gateendl;
+    GateMessage("Beam",0,"-AFTER ROTATION \n");
+    GateMessage("Beam",0,"°Intermediate Position   "<<Pos[0]<<"  "<<Pos[1]<<"  "<<Pos[2]<< Gateendl);
+    GateMessage("Beam",0,"°Final Direction         "<<Dir[0]<<"  "<<Dir[1]<<"  "<<Dir[2]<< Gateendl);
   }
   // initial position offset
   Pos[0]+=mPosition[0];
@@ -302,9 +305,9 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
 
 
   if (mTestFlag){
-    G4cout<<"-AFTER POSITION OFFSET \n";
-    G4cout<<"°Final Position   "<<Pos[0]<<"  "<<Pos[1]<<"  "<<Pos[2]<< Gateendl;
-    //G4cout<<"°Final Direction  "<<Dir[0]<<"  "<<Dir[1]<<"  "<<Dir[2]<< Gateendl;
+    GateMessage("Beam",0,"-AFTER POSITION OFFSET \n");
+    GateMessage("Beam",0,"°Final Position   "<<Pos[0]<<"  "<<Pos[1]<<"  "<<Pos[2]<< Gateendl);
+    //GateMessage("Beam",0,"°Final Direction  "<<Dir[0]<<"  "<<Dir[1]<<"  "<<Dir[2]<< Gateendl);
   }
 
   //-------- PARTICLE SAMPLING - END------------------
@@ -319,12 +322,12 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     string parttype=mParticleType;
     if ( parttype == "GenericIon" ){
     particle_definition=  particleTable->GetIon( mAtomicNumber, mAtomicMass, mIonExciteEnergy);
-    //G4cout<< Gateendl<< Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon\n";
-    //G4cout<<mAtomicNumber<<"  "<<mAtomicMass<<"  "<<mIonCharge<<"  "<<mIonExciteEnergy<< Gateendl;
+    //GateMessage("Beam",0, Gateendl<< Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon\n");
+    //GateMessage("Beam",0,mAtomicNumber<<"  "<<mAtomicMass<<"  "<<mIonCharge<<"  "<<mIonExciteEnergy<< Gateendl);
     }
     else{
     particle_definition = particleTable->FindParticle(mParticleType);
-    //G4cout<< Gateendl<< Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  other\n";
+    //GateMessage("Beam",0, Gateendl<< Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  other\n");
     }
 
     if(particle_definition==0) return;
@@ -368,7 +371,7 @@ G4int GateSourcePencilBeam::GeneratePrimaries( G4Event* event )
               << " mom=" << p->GetMomentum()
               << " ptime=" <<  G4BestUnit(p->GetProperTime(), "Time")
               << " atime=" <<  G4BestUnit(GetTime(), "Time")
-              << ")\n");
+              << ")" << Gateendl);
 
   numVertices++;
   return numVertices;
@@ -390,5 +393,4 @@ G4int GateSourcePencilBeam::GeneratePrimaries( G4Event* event )
   }
 */
 
-#endif
-#endif
+// vim: ai sw=2 ts=2 et
