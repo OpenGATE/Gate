@@ -153,6 +153,11 @@ void GateFixedForcedDetectionActorMessenger::BuildCommands(G4String base)
   guidance = "Set a number of primary for noise estimate in a phase space file in root format.";
   pSetNoisePrimaryCmd->SetGuidance(guidance);
 
+  bb = base + "/shrinkFactor";
+  pSetShrinkFactorCmd = new G4UIcmdWithAnInteger(bb, this);
+  guidance = "Set bin shrink factor for modeling the pixel-binning in a detector.";
+  pSetShrinkFactorCmd->SetGuidance(guidance);
+
   bb = base + "/energyResolvedBinSize";
   pEnergyResolvedBinSizeCmd = new G4UIcmdWithADoubleAndUnit(bb, this);
   guidance = "Set energy bin size for having an energy resolved output. Default is 0, i.e., off.";
@@ -254,6 +259,10 @@ void GateFixedForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, G
   if (command == pSetNoisePrimaryCmd)
     {
     pActor->SetNoisePrimary(pSetNoisePrimaryCmd->GetNewIntValue(param));
+    }
+  if (command == pSetShrinkFactorCmd)
+    {
+    pActor->SetShrinkFactor(pSetShrinkFactorCmd->GetNewIntValue(param));
     }
   if (command == pEnergyResolvedBinSizeCmd)
     {

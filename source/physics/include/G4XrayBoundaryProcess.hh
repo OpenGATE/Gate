@@ -24,7 +24,7 @@
 // ********************************************************************
 //
 //
-// $Id: G4XrayBoundaryProcess.hh 84717 2014-10-20 07:39:47Z gcosmo $
+// $Id: G4XrayBoundaryProcess.hh 84717 2016-05-26 07:39:47Z gcosmo $
 //
 //
 ////////////////////////////////////////////////////////////////////////
@@ -166,13 +166,6 @@ G4double G4XrayBoundaryProcess::GetRindex(G4Material *Material, G4double Energy)
 #ifdef GATE_USE_XRAYLIB
     for (unsigned int i = 0; i < Material->GetElementVector()->size(); ++i)
         delta += (1 - Refractive_Index_Re(Material->GetElementVector()->at(i)->GetSymbol(), Energy/(keV), 1.0)) * Material->GetFractionVector()[i];
-//    // **************** Test Output ****************** //
-//    G4cout << Material << G4endl;
-//    G4cout << "delta sum = " << delta << G4endl;
-//    for (unsigned int i = 0; i < Material->GetElementVector()->size(); ++i)
-//        G4cout << "Symbol " << Material->GetElementVector()->at(i)->GetSymbol() << " Energy " << Energy/(keV)  << G4endl;
-//    G4cout << "density: " << Density << G4endl;
-//    // **************** Test Output ****************** //
 #endif
 
     return 1 - delta * Density;

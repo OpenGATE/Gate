@@ -59,6 +59,7 @@ protected:
   G4UIcmdWithAString * pSetPhaseSpaceFilenameCmd;
   G4UIcmdWithAString * pSetInputRTKGeometryFilenameCmd;
   G4UIcmdWithAnInteger * pSetNoisePrimaryCmd;
+  G4UIcmdWithAnInteger * pSetShrinkFactorCmd;
   G4UIcmdWithADoubleAndUnit * pEnergyResolvedBinSizeCmd;
   };
 

@@ -162,6 +162,10 @@ public:
     {
     mNoisePrimary = n;
     }
+  void SetShrinkFactor(G4int n)
+    {
+    mShrinkFactor = n;
+    }
   void SetInputRTKGeometryFilename(G4String name)
     {
     mInputRTKGeometryFilename = name;
@@ -274,6 +278,8 @@ protected:
 
   /* Parameter for statistical noise */
   G4int mNoisePrimary;
+  /* Parameter for modeling pixel-binning */
+  G4int mShrinkFactor;
 
   G4double mMinPrimaryEnergy;
   G4double mMaxPrimaryEnergy;
