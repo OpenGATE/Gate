@@ -58,13 +58,11 @@
 /gate/actor/ffda/attenuationFilename          output/attenuation.mha
 /gate/actor/ffda/rayleighFilename             output/rayleigh.mha
 /gate/actor/ffda/comptonFilename              output/compton.mha
-/gate/actor/ffda/fresnelFilename              output/fresnel.mha
 /gate/actor/ffda/secondaryFilename            output/secondary.mha
 /gate/actor/ffda/totalFilename                output/total.mha
 /gate/actor/ffda/enableUncertaintySecondary   true
 /gate/actor/ffda/enableSquaredSecondary       true
 /gate/actor/ffda/materialMuFilename           output/materialMu.mha
-/gate/actor/ffda/materialDeltaFilename        output/materialDelta.mha
 /gate/actor/ffda/flatFieldFilename            output/flatField.mha
 /gate/actor/ffda/responseDetectorFilename     data/responseDetector.txt
 /gate/actor/ffda/energyResolvedBinSize        0 keV
@@ -82,6 +80,6 @@
 /gate/application/setTimeStart 0 s
 /gate/application/setTimeStop 1 s
 
-/gate/application/setTotalNumberOfPrimaries 1
+/gate/application/setTotalNumberOfPrimaries 10000
 /gate/application/start
 

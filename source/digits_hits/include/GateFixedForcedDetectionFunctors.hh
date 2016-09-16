@@ -10,9 +10,11 @@
 #include <G4CompositeEMDataSet.hh>
 #include <G4CrossSectionHandler.hh>
 #include <G4Poisson.hh>
+#include <G4Gamma.hh>
+
+/* Gate */
 #include "GateEnergyResponseFunctor.hh"
-#include "G4Gamma.hh"
-#include "G4SystemOfUnits.hh"
+
 /* ITK */
 #include <itkImage.h>
 #include <itkImageRegionIterator.h>
@@ -311,12 +313,12 @@ namespace GateFixedForcedDetectionFunctor
             G4Material * mat = imageWorldMaterials[i];
             double delta = 0.0;
             double Density = mat->GetDensity() / (g/cm3);
-            #ifdef GATE_USE_XRAYLIB
+#ifdef GATE_USE_XRAYLIB
             for (unsigned int i = 0; i < mat->GetElementVector()->size(); ++i)
               {
               delta += (1 - Refractive_Index_Re(mat->GetElementVector()->at(i)->GetSymbol(), energyList[energy]/(keV), 1.0)) * mat->GetFractionVector()[i];
               }
-            #endif
+#endif
             delta *= Density;
             it.Set(delta);
             ++it;
@@ -1087,7 +1089,7 @@ namespace GateFixedForcedDetectionFunctor
 
       inline TOutput operator()(const TInput1 A, const TInput2 B) const
         {
-        /* Calculating diffraction image */
+        /* Calculate transmittance */
         const std::complex<TInput1> i(0.0,1.0);  // imaginary unit
         std::complex<TInput1> amp = std::sqrt(std::complex<TInput1>(A));  // Amplitude
         std::complex<TInput1> pt = std::exp(i*std::complex<TInput1>(B));  // Phase Transition

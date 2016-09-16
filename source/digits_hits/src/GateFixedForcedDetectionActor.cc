@@ -227,6 +227,7 @@ GateVImageVolume* GateFixedForcedDetectionActor::SearchForVoxelisedVolume()
 void GateFixedForcedDetectionActor::CreateProjectionImages()
   {
   mPrimaryImage = CreateVoidProjectionImage();
+
   mDeltaImage = CreateVoidProjectionImage();
   /* creator propagator complex image */
   InputImageType::Pointer propagatorImageRe;
@@ -241,7 +242,6 @@ void GateFixedForcedDetectionActor::CreateProjectionImages()
 
   mPropagatorImage = realAndImaginaryToComplexImageFilter->GetOutput();
 
-  //mPropagatorImage = CreateVoidProjectionImage();
   for (unsigned int i = 0; i < PRIMARY; i++)
     {
     const ProcessType pt = ProcessType(i);
@@ -393,15 +393,16 @@ void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointe
                                                                          energyList,
                                                                          gate_image_volume);
   mPrimaryProjector->GetProjectedValueAccumulation().CreateMaterialDeltaMap(energyList,
-                                                                           gate_image_volume);
+                                                                            gate_image_volume);
   mPrimaryProjector->GetProjectedValueAccumulation().Init(mPrimaryProjector->GetNumberOfThreads());
   mPrimaryProjector->GetProjectedValueAccumulation().SetNumberOfPrimaries(mNoisePrimary);
   mPrimaryProjector->GetProjectedValueAccumulation().SetResponseDetector(&mEnergyResponseDetector);
   mPrimaryProjector->GetProjectedValueAccumulation().SetEnergyResolvedParameters(mEnergyResolvedBinSize,
                                                                                  nPixOneSlice);
   TRY_AND_EXIT_ON_ITK_EXCEPTION(mPrimaryProjector->Update());
-  CalculatePropagatorImage(oneProjGeometry->GetSourceToDetectorDistances()[0]-
-                           oneProjGeometry->GetSourceToIsocenterDistances()[0], energyList);
+  const double sdd = oneProjGeometry->GetSourceToDetectorDistances()[0];
+  const double sid = oneProjGeometry->GetSourceToIsocenterDistances()[0];
+  CalculatePropagatorImage(sdd-sid, energyList);
   }
 
 void GateFixedForcedDetectionActor::CalculatePropagatorImage(const double D, std::vector<double> & energyList)
@@ -409,10 +410,10 @@ void GateFixedForcedDetectionActor::CalculatePropagatorImage(const double D, std
   itk::ImageRegionIterator<ComplexImageType> it(mPropagatorImage,
                                                 mPropagatorImage->GetLargestPossibleRegion());
 
-  InputPixelType wavelength = h_Planck/(eV*s) * c_light/(m/s) / (energyList[0]/eV);
+  InputPixelType wavelength = h_Planck * c_light / energyList[0];
 
-  InputPixelType fsamplex = 1./(mPropagatorImage->GetSpacing()[0]/m);
-  InputPixelType fsampley = 1./(mPropagatorImage->GetSpacing()[1]/m);
+  InputPixelType fsamplex = 1./mPropagatorImage->GetSpacing()[0];
+  InputPixelType fsampley = 1./mPropagatorImage->GetSpacing()[1];
   unsigned int mf = mPropagatorImage->GetLargestPossibleRegion().GetSize()[0];
   unsigned int nf = mPropagatorImage->GetLargestPossibleRegion().GetSize()[1];
   InputPixelType fx;
@@ -439,7 +440,7 @@ void GateFixedForcedDetectionActor::CalculatePropagatorImage(const double D, std
         fy = -fsampley/2 + (j-nf/2)*fsampley/nf;
         }
         InputPixelType f_square = fx*fx + fy*fy;
-        it.Set(std::exp(std::complex<InputPixelType>(0.0, -itk::Math::pi*wavelength*(D/m)*f_square)));
+        it.Set(std::exp(std::complex<InputPixelType>(0.0, -itk::Math::pi*wavelength*D*f_square)));
       }
     }
   }
@@ -783,7 +784,7 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
                                                             properTime);
         break;
 
-     default:
+      default:
         GateError("Error: implementation problem, unexpected process type reached.");
       }
     }
@@ -965,25 +966,25 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
 
   if (mMaterialDeltaFilename != "")
     {
-      AccumulationType::MaterialDeltaImageType *map;
-      map = mPrimaryProjector->GetProjectedValueAccumulation().GetMaterialDelta();
+    AccumulationType::MaterialDeltaImageType *map;
+    map = mPrimaryProjector->GetProjectedValueAccumulation().GetMaterialDelta();
 
-      /* Change spacing to keV */
-      AccumulationType::MaterialDeltaImageType::SpacingType spacing = map->GetSpacing();
-      spacing[1] /= keV;
+    /* Change spacing to keV */
+    AccumulationType::MaterialDeltaImageType::SpacingType spacing = map->GetSpacing();
+    spacing[1] /= keV;
 
-      typedef itk::ChangeInformationImageFilter<AccumulationType::MaterialDeltaImageType> CIType;
-      CIType::Pointer ci = CIType::New();
-      ci->SetInput(map);
-      ci->SetOutputSpacing(spacing);
-      ci->ChangeSpacingOn();
-      ci->Update();
+    typedef itk::ChangeInformationImageFilter<AccumulationType::MaterialDeltaImageType> CIType;
+    CIType::Pointer ci = CIType::New();
+    ci->SetInput(map);
+    ci->SetOutputSpacing(spacing);
+    ci->ChangeSpacingOn();
+    ci->Update();
 
-      typedef itk::ImageFileWriter<AccumulationType::MaterialDeltaImageType> TwoDWriter;
-      TwoDWriter::Pointer w = TwoDWriter::New();
-      w->SetInput(ci->GetOutput());
-      w->SetFileName(AddPrefix(prefix, mMaterialDeltaFilename));
-      TRY_AND_EXIT_ON_ITK_EXCEPTION(w->Update());
+    typedef itk::ImageFileWriter<AccumulationType::MaterialDeltaImageType> TwoDWriter;
+    TwoDWriter::Pointer w = TwoDWriter::New();
+    w->SetInput(ci->GetOutput());
+    w->SetFileName(AddPrefix(prefix, mMaterialDeltaFilename));
+    TRY_AND_EXIT_ON_ITK_EXCEPTION(w->Update());
     }
 
   if (mFresnelFilename != "")
