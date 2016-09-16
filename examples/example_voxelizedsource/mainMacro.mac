@@ -1,0 +1,314 @@
+
+                                                             
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+#
+#         D E F I N E   Y O U R   S C A N N E R   A N D       
+#                                                             
+#        Y O U R   C O M P L E T E   S I M U L A T I O N   
+#                                                             
+#        F O R   I M A G I N G    A P P L I CA T I O N S       
+#                                                     
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+
+
+#=====================================================
+# VISUALISATION
+#=====================================================
+
+/vis/disable
+# 
+/vis/open                           VRML2FILE
+/vis/viewer/set/viewpointThetaPhi   60 60
+/vis/viewer/zoom                    6.0
+/vis/drawVolume
+/tracking/storeTrajectory           1
+/vis/scene/add/trajectories 
+/vis/scene/endOfEventAction         accumulate
+/vis/scene/add/scale
+/vis/scene/add/axes
+/control/execute                    Verbose.mac
+
+
+#=====================================================
+# GEOMETRY
+#=====================================================
+
+
+
+/gate/geometry/setMaterialDatabase    GateMaterials.db
+
+#
+#     W O R L D
+#
+/gate/world/geometry/setXLength       400. cm
+/gate/world/geometry/setYLength       400. cm
+/gate/world/geometry/setZLength       400. cm
+
+
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+#                                                                 #
+#     D E F I N I T I O N   A N D   D E S C R I T I O N           #
+#        O F   Y O U R   P E T   D E V I C E                      #
+#                                                                 #
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+# 
+# #	CYLINDRICAL
+# /gate/world/daughters/name                    cylindricalPET
+# /gate/world/daughters/insert                  cylinder
+# /gate/cylindricalPET/placement/setTranslation 0.0 0.0 0.0 cm
+# /gate/cylindricalPET/geometry/setRmax         52.0 cm
+# /gate/cylindricalPET/geometry/setRmin         39.9 cm
+# /gate/cylindricalPET/geometry/setHeight       40.2 cm
+# /gate/cylindricalPET/setMaterial              Air
+# /gate/cylindricalPET/vis/forceWireframe
+# /gate/cylindricalPET/vis/setColor             white
+# 
+# #	HEAD
+# /gate/cylindricalPET/daughters/name           head
+# /gate/cylindricalPET/daughters/insert         box
+# /gate/head/placement/setTranslation           44.0 0.0 0.0 cm
+# /gate/head/geometry/setXLength                8  cm
+# /gate/head/geometry/setYLength                32 cm
+# /gate/head/geometry/setZLength                40 cm
+# /gate/head/setMaterial                        Air
+# /gate/head/vis/setVisible                     0
+# 
+# 
+# #	BLOCK
+# /gate/head/daughters/name                     block
+# /gate/head/daughters/insert                   box
+# /gate/block/placement/setTranslation          0.0 0.0 0.0 cm
+# /gate/block/geometry/setXLength               30 mm
+# /gate/block/geometry/setYLength               16 mm
+# /gate/block/geometry/setZLength               20 mm
+# /gate/block/setMaterial                       Air
+# /gate/block/vis/setVisible                    0
+# 
+# #	C R Y S T A L
+# /gate/block/daughters/name                    crystal
+# /gate/block/daughters/insert                  box
+# /gate/crystal/placement/setTranslation        0.0 0.0 0.0 cm
+# /gate/crystal/geometry/setXLength             30 mm
+# /gate/crystal/geometry/setYLength             3.0 mm
+# /gate/crystal/geometry/setZLength             3.8 mm
+# /gate/crystal/setMaterial                     Air
+# /gate/crystal/vis/setVisible                  0
+# 
+# 
+# #	LSO layer
+# /gate/crystal/daughters/name                  LSO
+# /gate/crystal/daughters/insert                box
+# /gate/LSO/placement/setTranslation            -0.75 0.0 0.0 cm
+# /gate/LSO/geometry/setXLength                 15 mm
+# /gate/LSO/geometry/setYLength                 3.0 mm
+# /gate/LSO/geometry/setZLength                 3.8 mm
+# /gate/LSO/setMaterial                         LSO
+# /gate/LSO/vis/setColor                        red
+# 
+# #	BGO layer
+# /gate/crystal/daughters/name                  BGO
+# /gate/crystal/daughters/insert                box
+# /gate/BGO/placement/setTranslation            +0.75 0.0 0.0 cm
+# /gate/BGO/geometry/setXLength                 15 mm
+# /gate/BGO/geometry/setYLength                 3.0 mm
+# /gate/BGO/geometry/setZLength                 3.8 mm
+# /gate/BGO/setMaterial                         BGO
+# /gate/BGO/vis/setColor                        yellow
+# 
+# #	R E P E A T    C R Y S T A L
+# /gate/crystal/repeaters/insert                cubicArray
+# /gate/crystal/cubicArray/setRepeatNumberX     1
+# /gate/crystal/cubicArray/setRepeatNumberY     5
+# /gate/crystal/cubicArray/setRepeatNumberZ     5
+# /gate/crystal/cubicArray/setRepeatVector      0.0 3.2 4.0 mm
+# 
+# 
+# #	R E P E A T    BLOCK
+# /gate/block/repeaters/insert                  cubicArray
+# /gate/block/cubicArray/setRepeatNumberX       1
+# /gate/block/cubicArray/setRepeatNumberY       20
+# /gate/block/cubicArray/setRepeatNumberZ       20
+# /gate/block/cubicArray/setRepeatVector        0.0 1.6 2.0 cm
+# 
+# 
+# #	R E P E A T HEAD
+# /gate/head/repeaters/insert                   ring
+# /gate/head/ring/setRepeatNumber               4
+# 
+# 
+# #	A T T A C H    S Y S T E M 
+# /gate/systems/cylindricalPET/rsector/attach   head
+# /gate/systems/cylindricalPET/module/attach    block
+# /gate/systems/cylindricalPET/crystal/attach   crystal
+# /gate/systems/cylindricalPET/layer0/attach    LSO
+# /gate/systems/cylindricalPET/layer1/attach    BGO
+# 
+# #	A T T A C H    C R Y S T A L  SD
+# 
+# /gate/LSO/attachCrystalSD
+# /gate/BGO/attachCrystalSD
+# 
+# /gate/systems/cylindricalPET/describe
+# 
+# /gate/cylindricalPET/moves/insert             orbiting
+# /gate/cylindricalPET/orbiting/setSpeed        30 deg/s
+# /gate/cylindricalPET/orbiting/setPoint1       0 0 0 cm
+# /gate/cylindricalPET/orbiting/setPoint2       0 0 1 cm
+
+#=====================================================
+# VOXEL PHANTOM
+#=====================================================
+
+/control/execute VoxelizedPhantom.mac
+
+#=====================================================
+# PHYSICS
+#=====================================================
+
+/gate/physics/addProcess PhotoElectric
+/gate/physics/processes/PhotoElectric/setModel StandardModel
+
+/gate/physics/addProcess Compton
+/gate/physics/processes/Compton/setModel StandardModel
+
+/gate/physics/addProcess RayleighScattering
+/gate/physics/processes/RayleighScattering/setModel PenelopeModel
+
+/gate/physics/addProcess ElectronIonisation
+/gate/physics/processes/ElectronIonisation/setModel StandardModel e-
+/gate/physics/processes/ElectronIonisation/setModel StandardModel e+
+
+/gate/physics/addProcess Bremsstrahlung
+/gate/physics/processes/Bremsstrahlung/setModel StandardModel e-
+/gate/physics/processes/Bremsstrahlung/setModel StandardModel e+
+
+/gate/physics/addProcess PositronAnnihilation
+
+/gate/physics/addProcess MultipleScattering e+
+/gate/physics/addProcess MultipleScattering e-
+
+/gate/physics/processList Enabled
+/gate/physics/processList Initialized
+
+#=====================================================
+# CUTS
+#=====================================================
+# 
+# /gate/physics/Gamma/SetCutInRegion      LSO 1.0 cm
+# /gate/physics/Electron/SetCutInRegion   LSO 1.0 cm
+# /gate/physics/Positron/SetCutInRegion   LSO 1.0 cm
+# 
+# /gate/physics/Gamma/SetCutInRegion      BGO 1.0 cm
+# /gate/physics/Electron/SetCutInRegion   BGO 1.0 cm
+# /gate/physics/Positron/SetCutInRegion   BGO 1.0 cm
+# 
+
+/gate/physics/Gamma/SetCutInRegion      hof_brain 0.1 mm
+/gate/physics/Electron/SetCutInRegion   hof_brain 0.1 mm
+/gate/physics/Positron/SetCutInRegion   hof_brain 0.1 mm
+
+/gate/physics/SetMaxStepSizeInRegion    hof_brain 0.01 mm
+
+
+# /gate/actor/addActor                               DoseActor  doseDistribution
+# /gate/actor/doseDistribution/attachTo          hof_brain
+# /gate/actor/doseDistribution/stepHitType           random
+# /gate/actor/doseDistribution/setPosition           0 0 0 mm
+# /gate/actor/doseDistribution/setVoxelSize          2 2 2 mm
+# /gate/actor/doseDistribution/saveEveryNSeconds     6000
+# /gate/actor/doseDistribution/enableEdep            true
+# /gate/actor/doseDistribution/enableUncertaintyEdep true
+# /gate/actor/doseDistribution/enableDose            true
+# /gate/actor/doseDistribution/enableNumberOfHits    true
+# 
+# /gate/actor/doseDistribution/save  dosimetrie.root
+
+/gate/actor/addActor                               DoseActor  doseDistribution
+/gate/actor/doseDistribution/attachTo              hof_brain
+/gate/actor/doseDistribution/stepHitType           random
+/gate/actor/doseDistribution/setPosition           0. 0. 0. mm
+/gate/actor/doseDistribution/setVoxelSize          9.0 9.0 11. mm
+/gate/actor/doseDistribution/saveEveryNSeconds     7200
+/gate/actor/doseDistribution/enableEdep            true
+/gate/actor/doseDistribution/enableUncertaintyEdep false
+/gate/actor/doseDistribution/enableDose            true
+/gate/actor/doseDistribution/enableNumberOfHits    true
+/gate/actor/doseDistribution/setResetDataAtEachRunFlag    false
+/gate/actor/doseDistribution/setOverWriteFilesFlag    false
+
+/gate/actor/doseDistribution/save  toto.mhd
+
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+
+
+/gate/run/initialize
+
+
+#=====================================================
+# Show how the geometry moves with time
+#=====================================================
+
+/control/execute                        MoveVisu.mac
+
+#=====================================================
+#   D I G I T I Z E R: DETECTOR ELECTRONIC RESPONSE
+#===================================================== 
+
+# /gate/digitizer/Singles/insert                        adder
+# /gate/digitizer/Singles/insert                        readout
+# /gate/digitizer/Singles/readout/setDepth              1
+# 
+# /gate/digitizer/Singles/insert                        blurring
+# /gate/digitizer/Singles/blurring/setResolution        0.26
+# /gate/digitizer/Singles/blurring/setEnergyOfReference 511. keV
+# 
+# /gate/digitizer/Singles/insert                        thresholder
+# /gate/digitizer/Singles/thresholder/setThreshold      350. keV
+# /gate/digitizer/Singles/insert                        upholder
+# /gate/digitizer/Singles/upholder/setUphold            650. keV
+# 
+
+
+#=====================================================
+#	C O I N C I D E N C E    S O R T E R
+#===================================================== 
+
+# /gate/digitizer/Coincidences/setWindow          10. ns
+# 
+# /gate/digitizer/name                            delay
+# /gate/digitizer/insert                          coincidenceSorter
+# /gate/digitizer/delay/setWindow                 10. ns
+# /gate/digitizer/delay/setOffset                 500. ns
+
+#=====================================================
+#  VOXELIZED SOURCE
+#=====================================================
+
+/control/execute VoxelizedSource.mac
+
+#=====================================================
+#  DATA OUTPUT   
+#=====================================================
+
+# /gate/output/root/enable
+# /gate/output/root/setFileName             /home/yannick/gate_voxsrc/srcvox/testsrcvox
+# /gate/output/root/setRootHitFlag          0
+# /gate/output/root/setRootSinglesFlag      1
+# /gate/output/root/setRootCoincidencesFlag 1
+# /gate/output/root/setRootdelayFlag        1
+# /gate/output/root/setRootNtupleFlag       0
+
+
+
+#=====================================================
+#   MEASUREMENT SETTINGS   
+#=====================================================
+
+/gate/application/setTimeSlice   0.5 s
+/gate/application/setTimeStart   0.   s
+/gate/application/setTimeStop    1. s
+
+/gate/application/startDAQ

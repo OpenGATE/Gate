@@ -1,0 +1,38 @@
+#=====================================================
+# BEAMS : SIMPLE PHOTON BEAM (6 MeV e- -> ~2.2 MeV, 20mm radius)
+#=====================================================
+
+#=====================================================
+# Type of particle & Energy spectrum
+#=====================================================
+
+/gate/source/addSource mybeam             gps
+/gate/source/mybeam/gps/verbose   1
+/gate/source/mybeam/gps/particle  gamma
+/gate/source/mybeam/gps/energytype Mono
+/gate/source/mybeam/gps/monoenergy        6. MeV 
+
+#=====================================================
+# Position and shape
+#=====================================================
+/gate/source/mybeam/gps/position      0. 0. -1000 mm
+/gate/source/mybeam/gps/pos/type      Point
+/gate/source/mybeam/gps/ang/type      iso
+/gate/source/mybeam/gps/ang/mintheta  180. deg
+/gate/source/mybeam/gps/ang/minphi    0. deg
+/gate/source/mybeam/gps/ang/maxphi    360. deg
+/gate/source/mybeam/gps/pos/rot1      1 0 0
+/gate/source/mybeam/gps/pos/rot2      0 0 1
+
+#### 10x10 square field (at isocenter)
+/gate/source/mybeam/gps/ang/maxtheta  182.8624 deg
+
+#### 5x5 square field (at isocenter)
+# /gate/source/mybeam/gps/ang/maxtheta  181.4312 deg
+
+#### 1.5x1.5 square field (at isocenter)
+#/gate/source/mybeam/gps/ang/maxtheta  0.4297223 deg
+
+#### ~ pencil
+#/gate/source/mybeam/gps/ang/maxtheta  0.5 deg
+
