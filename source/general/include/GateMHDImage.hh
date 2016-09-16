@@ -20,7 +20,7 @@
 #include "GateMessageManager.hh"
 
 // itk (for mhd reader)
-#include "metaObject.h"
+//#include "metaObject.h"
 #include "metaImage.h"
 
 template<class PixelType> class GateImageT;
