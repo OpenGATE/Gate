@@ -229,7 +229,7 @@ ELSE()
   INCLUDE_DIRECTORIES(
     ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/
     ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/itkzlib
-    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/MetaIO
+    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/src
     ${PROJECT_BINARY_DIR}/itk-mhd/)
   SET(ITKMHD_LIBS MetaIO itkzlib)
 ENDIF()

@@ -1,10 +1,10 @@
 /*----------------------
-  Copyright (C): OpenGATE Collaboration
+ Copyright (C): OpenGATE Collaboration
 
-  This software is distributed under the terms
-  of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
-  ----------------------*/
+ This software is distributed under the terms
+ of the GNU Lesser General  Public Licence (LGPL)
+ See GATE/LICENSE.txt for further details
+ ----------------------*/
 
 #ifndef GateARFTableMgrMessenger_h
 #define GateARFTableMgrMessenger_h 1
@@ -24,31 +24,27 @@ class G4UIcmdWithoutParameter;
 
 #include "GateUIcmdWithAVector.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
 class GateARFTableMgrMessenger: public G4UImessenger
-{
+  {
 public:
   GateARFTableMgrMessenger(G4String aName, GateARFTableMgr*);
   ~GateARFTableMgrMessenger();
-
   void SetNewValue(G4UIcommand*, G4String);
 
 private:
-  GateARFTableMgr*             m_ARFTableMgr;
-
-  G4UIdirectory*               GateARFTableDir;
-  G4UIcmdWithAString*          cptTableEWCmd;
-  G4UIcmdWithoutParameter*     ListARFTableCmd;
-  G4UIcmdWithAnInteger*        VerboseCmd;
-  G4UIcmdWithADouble*          setEResocmd;
-  G4UIcmdWithADoubleAndUnit*   setERefcmd;
-  G4UIcmdWithADoubleAndUnit*   setEThreshHoldcmd ;
-  G4UIcmdWithADoubleAndUnit*   setEUpHoldcmd ;
-  G4UIcmdWithAString*          SaveToBinaryFileCmd;
-  G4UIcmdWithAnInteger*        SetNBinsCmd;
-  G4UIcmdWithAString*          LoadFromBinaryFileCmd;
-  G4UIcmdWithADoubleAndUnit*   setDistancecmd;
-};
+  GateARFTableMgr* mArfTableMgr;
+  G4UIdirectory* mGateARFTableDir;
+  G4UIcmdWithAString* mCptTableEWCmd;
+  G4UIcmdWithoutParameter* mListARFTableCmd;
+  G4UIcmdWithAnInteger* mVerboseCmd;
+  G4UIcmdWithADouble* mSetEResocmd;
+  G4UIcmdWithADoubleAndUnit* mSetERefcmd;
+  G4UIcmdWithADoubleAndUnit* mSetEThreshHoldcmd;
+  G4UIcmdWithADoubleAndUnit* mSetEUpHoldcmd;
+  G4UIcmdWithAString* mSaveToBinaryFileCmd;
+  G4UIcmdWithAnInteger* mSetNBinsCmd;
+  G4UIcmdWithAString* mLoadFromBinaryFileCmd;
+  G4UIcmdWithADoubleAndUnit* mSetDistancecmd;
+  };
 
 #endif

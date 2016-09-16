@@ -6,11 +6,10 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-#include "GateConfiguration.h"
-#ifdef G4ANALYSIS_USE_ROOT
 #ifndef GateSourceTPSPencilBeamMessenger_h
 #define GateSourceTPSPencilBeamMessenger_h 1
 
+#include "GateConfiguration.h"
 #include "globals.hh"
 #include "G4UImessenger.hh"
 #include "GateMessenger.hh"
@@ -48,6 +47,8 @@ class GateSourceTPSPencilBeamMessenger: public GateVSourceMessenger
     G4UIcmdWithAString * pParticleTypeCmd;
     //Configuration of tests
     G4UIcmdWithABool* pTestCmd;
+    //Configuration of vertex generation method
+    G4UIcmdWithABool* pOldStyleCmd;
     //Treatment Plan file
     G4UIcmdWithAString * pPlanCmd;
     //FlatGenerationFlag
@@ -68,6 +69,5 @@ class GateSourceTPSPencilBeamMessenger: public GateVSourceMessenger
     G4UIcmdWithAnInteger * pSelectSpotCmd;
 };
 
-#endif
-
+// vim: ai sw=2 ts=2 et
 #endif
