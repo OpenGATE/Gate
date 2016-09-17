@@ -6,6 +6,7 @@
 
 /gate/Volume/geometry/setImage                 data/dcm/ffp/playmo_0000.dcm
 /gate/Volume/geometry/buildAndDumpDensityImage output/density-ffp-dcm.mhd
+/gate/Volume/placement/setTranslation          -0.1 0. 0. mm # GEANT4 bug bypass
 
 /gate/actor/DAVolume/save          output/DA-ffp-dcm.mhd
 /gate/actor/DAVolume/setResolution 40 20 80
