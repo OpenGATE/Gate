@@ -34,6 +34,7 @@
 
 /* itk */
 #include <itkTimeProbe.h>
+#include <itkBinShrinkImageFilter.h>
 
 /* rtk */
 #include <rtkConstantImageSource.h>
@@ -162,9 +163,19 @@ public:
     {
     mNoisePrimary = n;
     }
-  void SetShrinkFactor(G4int n)
+  const G4ThreeVector & GetBinningFactor() const
     {
-    mShrinkFactor = n;
+    return mBinningFactor;
+    }
+  void SetBinningFactor(G4int x, G4int y)
+    {
+    mBinningFactor[0] = x;
+    mBinningFactor[1] = y;
+
+    BinShrinkFilterType::ShrinkFactorsType shrinkFactor(1);
+    shrinkFactor[0] = x;
+    shrinkFactor[1] = y;
+    mBinShrinkFilter->SetShrinkFactors(shrinkFactor);
     }
   void SetInputRTKGeometryFilename(G4String name)
     {
@@ -279,7 +290,7 @@ protected:
   /* Parameter for statistical noise */
   G4int mNoisePrimary;
   /* Parameter for modeling pixel-binning */
-  G4int mShrinkFactor;
+  G4ThreeVector mBinningFactor;
 
   G4double mMinPrimaryEnergy;
   G4double mMaxPrimaryEnergy;
@@ -347,6 +358,10 @@ protected:
       GateFixedForcedDetectionFunctor::IsotropicPrimaryValueAccumulation> IsotropicPrimaryProjectionType;
   IsotropicPrimaryProjectionType::Pointer mIsotropicPrimaryProjector;
 
+  /* Pixel-binning stuff */
+  typedef itk::BinShrinkImageFilter<InputImageType, OutputImageType> BinShrinkFilterType;
+  BinShrinkFilterType::Pointer mBinShrinkFilter;
+
   /* Phase space variables */
   G4String mPhaseSpaceFilename;
   TFile *mPhaseSpaceFile;
@@ -370,6 +385,9 @@ protected:
 
   /* Account for primary fluence weighting */
   InputImageType::Pointer PrimaryFluenceWeighting(const InputImageType::Pointer input);
+
+  /* Account for pixel-binning */
+  InputImageType::Pointer PixelBinning(const InputImageType::Pointer input);
 
   G4String AddPrefix(G4String prefix, G4String filename);
   };

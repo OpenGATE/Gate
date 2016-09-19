@@ -38,6 +38,7 @@ protected:
   GateFixedForcedDetectionActor * pActor;
   G4UIcmdWithAString * pSetDetectorCmd;
   GateUIcmdWith2Vector * pSetDetectorResolCmd;
+  GateUIcmdWith2Vector * pSetBinningFactorCmd;
   G4UIcmdWithAString * pSetGeometryFilenameCmd;
   G4UIcmdWithAString * pSetPrimaryFilenameCmd;
   G4UIcmdWithAString * pSetMaterialMuFilenameCmd;
@@ -59,7 +60,6 @@ protected:
   G4UIcmdWithAString * pSetPhaseSpaceFilenameCmd;
   G4UIcmdWithAString * pSetInputRTKGeometryFilenameCmd;
   G4UIcmdWithAnInteger * pSetNoisePrimaryCmd;
-  G4UIcmdWithAnInteger * pSetShrinkFactorCmd;
   G4UIcmdWithADoubleAndUnit * pEnergyResolvedBinSizeCmd;
   };
 

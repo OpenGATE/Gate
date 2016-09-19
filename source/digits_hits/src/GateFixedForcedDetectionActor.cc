@@ -41,7 +41,6 @@
 #include <itkComplexToComplexFFTImageFilter.h>
 #include <itkComplexToModulusImageFilter.h>
 #include <itkComposeImageFilter.h>
-#include <itkBinShrinkImageFilter.h>
 
 /*  Constructors */
 GateFixedForcedDetectionActor::GateFixedForcedDetectionActor(G4String name, G4int depth) :
@@ -49,7 +48,6 @@ GateFixedForcedDetectionActor::GateFixedForcedDetectionActor(G4String name, G4in
     mIsSecondarySquaredImageEnabled(false),
     mIsSecondaryUncertaintyImageEnabled(false),
     mNoisePrimary(0),
-    mShrinkFactor(1),
     mInputRTKGeometryFilename(""),
     mEnergyResolvedBinSize(0),
     mSourceType("plane"),
@@ -59,6 +57,8 @@ GateFixedForcedDetectionActor::GateFixedForcedDetectionActor(G4String name, G4in
   GateDebugMessageInc("Actor",4,"GateFixedForcedDetectionActor() -- begin"<<G4endl);
   pActorMessenger = new GateFixedForcedDetectionActorMessenger(this);
   mDetectorResolution[0] = mDetectorResolution[1] = mDetectorResolution[2] = 1;
+  mBinningFactor[0] = mBinningFactor[1] = mBinningFactor[2] = 1;
+  mBinShrinkFilter = BinShrinkFilterType::New();
   GateDebugMessageDec("Actor",4,"GateFixedForcedDetectionActor() -- end"<<G4endl);
 
   mMapProcessNameWithType["Compton"] = COMPTON;
@@ -392,8 +392,11 @@ void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointe
   mPrimaryProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
                                                                          energyList,
                                                                          gate_image_volume);
-  mPrimaryProjector->GetProjectedValueAccumulation().CreateMaterialDeltaMap(energyList,
+  if (mActivateFresnelDiffraction)
+    {
+    mPrimaryProjector->GetProjectedValueAccumulation().CreateMaterialDeltaMap(energyList,
                                                                            gate_image_volume);
+    }
   mPrimaryProjector->GetProjectedValueAccumulation().Init(mPrimaryProjector->GetNumberOfThreads());
   mPrimaryProjector->GetProjectedValueAccumulation().SetNumberOfPrimaries(mNoisePrimary);
   mPrimaryProjector->GetProjectedValueAccumulation().SetResponseDetector(&mEnergyResponseDetector);
@@ -912,11 +915,11 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
     imgWriter->SetFileName(filename);
     if (mSourceType == "isotropic")
       {
-      imgWriter->SetInput(PrimaryFluenceWeighting(mProcessImage[ISOTROPICPRIMARY]));
+      imgWriter->SetInput(PixelBinning(PrimaryFluenceWeighting(mProcessImage[ISOTROPICPRIMARY])));
       }
     else
       {
-      imgWriter->SetInput(PrimaryFluenceWeighting(mPrimaryImage));
+      imgWriter->SetInput(PixelBinning(PrimaryFluenceWeighting(mPrimaryImage)));
       }
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
     }
@@ -959,7 +962,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
 
     sprintf(filename, AddPrefix(prefix, mAttenuationFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
-    imgWriter->SetInput(atten->GetOutput());
+    imgWriter->SetInput(PixelBinning(atten->GetOutput()));
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
     }
 
@@ -1026,18 +1029,10 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
     scalarMultiplyFilter->SetInput1(modulusFilter->GetOutput());
     scalarMultiplyFilter->SetInput2(modulusFilter->GetOutput());
 
-    // Modelize pixel-binning
-    typedef itk::BinShrinkImageFilter<InputImageType, OutputImageType> BinShrinkFilterType;
-    BinShrinkFilterType::Pointer bin = BinShrinkFilterType::New();
-    bin->SetInput(scalarMultiplyFilter->GetOutput());
-    BinShrinkFilterType::ShrinkFactorsType binType(1);
-    binType[0] = mShrinkFactor;
-    bin->SetShrinkFactors(binType);
-
     // Fresnel diffraction output
     sprintf(filename, AddPrefix(prefix, mFresnelFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
-    imgWriter->SetInput(bin->GetOutput());
+    imgWriter->SetInput(PixelBinning(scalarMultiplyFilter->GetOutput()));
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
     }
 
@@ -1047,7 +1042,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
      primary source. */
     sprintf(filename, AddPrefix(prefix, mFlatFieldFilename).c_str(), rID);
     imgWriter->SetFileName(filename);
-    imgWriter->SetInput(PrimaryFluenceWeighting(mFlatFieldImage));
+    imgWriter->SetInput(PixelBinning(PrimaryFluenceWeighting(mFlatFieldImage)));
     TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
     }
 
@@ -1058,14 +1053,14 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       {
       sprintf(filename, AddPrefix(prefix, mProcessImageFilenames[pt]).c_str(), rID);
       imgWriter->SetFileName(filename);
-      imgWriter->SetInput(mProcessImage[pt]);
+      imgWriter->SetInput(PixelBinning(mProcessImage[pt]));
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
       if (mIsSecondarySquaredImageEnabled)
         {
         imgWriter->SetFileName(G4String(removeExtension(filename))
                                + "-Squared."
                                + G4String(getExtension(filename)));
-        imgWriter->SetInput(mSquaredImage[pt]);
+        imgWriter->SetInput(PixelBinning(mSquaredImage[pt]));
         TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
         }
       if (mIsSecondaryUncertaintyImageEnabled)
@@ -1079,7 +1074,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
         imgWriter->SetFileName(G4String(removeExtension(filename))
                                + "-Uncertainty."
                                + G4String(getExtension(filename)));
-        imgWriter->SetInput(chetty->GetOutput());
+        imgWriter->SetInput(PixelBinning(chetty->GetOutput()));
 
         TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
         }
@@ -1093,7 +1088,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
                 rID,
                 k);
         imgWriter->SetFileName(filename);
-        imgWriter->SetInput(mPerOrderImages[pt][k]);
+        imgWriter->SetInput(PixelBinning(mPerOrderImages[pt][k]));
         TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
         }
       }
@@ -1127,7 +1122,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       {
       sprintf(filename, AddPrefix(prefix, mSecondaryFilename).c_str(), rID);
       imgWriter->SetFileName(filename);
-      imgWriter->SetInput(mSecondaryImage);
+      imgWriter->SetInput(PixelBinning(mSecondaryImage));
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
       }
 
@@ -1136,7 +1131,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       imgWriter->SetFileName(G4String(removeExtension(filename))
                              + "-Squared."
                              + G4String(getExtension(filename)));
-      imgWriter->SetInput(mSecondarySquaredImage);
+      imgWriter->SetInput(PixelBinning(mSecondarySquaredImage));
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
       }
 
@@ -1152,7 +1147,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       imgWriter->SetFileName(G4String(removeExtension(filename))
                              + "-Uncertainty."
                              + G4String(getExtension(filename)));
-      imgWriter->SetInput(chetty->GetOutput());
+      imgWriter->SetInput(PixelBinning(chetty->GetOutput()));
 
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
       }
@@ -1169,7 +1164,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       /*  Write Total Image */
       sprintf(filename, AddPrefix(prefix, mTotalFilename).c_str(), rID);
       imgWriter->SetFileName(filename);
-      imgWriter->SetInput(mSecondaryImage);
+      imgWriter->SetInput(PixelBinning(mSecondaryImage));
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
       }
     }
@@ -1276,7 +1271,7 @@ void GateFixedForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(G
                                                                                VectorType & detectorColVector)
   {
   /*  The placement of a volume relative to its mother's coordinate system is not
-   very well explained in Geant4's doc but the code follows what's done in
+   very well explSetBinained in Geant4's doc but the code follows what's done in
    source/geometry/volumes/src/G4PVPlacement.cc.
 
    One must be extremely careful with the multiplication order. It is not
@@ -1427,8 +1422,8 @@ GateFixedForcedDetectionActor::InputImageType::Pointer GateFixedForcedDetectionA
   {
   mDetector = GateObjectStore::GetInstance()->FindVolumeCreator(mDetectorName);
   InputImageType::SizeType size;
-  size[0] = GetDetectorResolution()[0];
-  size[1] = GetDetectorResolution()[1];
+  size[0] = GetDetectorResolution()[0] * GetBinningFactor()[0];
+  size[1] = GetDetectorResolution()[1] * GetBinningFactor()[1];
   if (mEnergyResolvedBinSize == 0.)
     {
     size[2] = 1;
@@ -1578,6 +1573,12 @@ GateFixedForcedDetectionActor::InputImageType::Pointer GateFixedForcedDetectionA
     output = mult->GetOutput();
     }
   return output;
+  }
+
+GateFixedForcedDetectionActor::InputImageType::Pointer GateFixedForcedDetectionActor::PixelBinning(const InputImageType::Pointer input)
+  {
+    mBinShrinkFilter->SetInput(input);
+    return mBinShrinkFilter->GetOutput();
   }
 
 G4String GateFixedForcedDetectionActor::AddPrefix(G4String prefix, G4String filename)
