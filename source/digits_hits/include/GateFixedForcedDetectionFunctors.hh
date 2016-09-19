@@ -318,6 +318,8 @@ namespace GateFixedForcedDetectionFunctor
               {
               delta += (1 - Refractive_Index_Re(mat->GetElementVector()->at(i)->GetSymbol(), energyList[energy]/(keV), 1.0)) * mat->GetFractionVector()[i];
               }
+#else
+            G4Exception( "GateFixedForcedDetectionFunctors::CreateMaterialDeltaMap", "CreateMaterialDeltaMap", FatalException, "Xraylib is not available\n");
 #endif
             delta *= Density;
             it.Set(delta);
@@ -437,11 +439,6 @@ namespace GateFixedForcedDetectionFunctor
         m_generatePhotons = boolean;
         }
 
-      void setActivateFresnelDiffraction(const bool & boolean)
-        {
-        m_ActivateDiffraction = boolean;
-        }
-
     protected:
       inline void Accumulate(const rtk::ThreadIdType threadId,
                              float & output,
@@ -498,7 +495,6 @@ namespace GateFixedForcedDetectionFunctor
       unsigned int m_EnergyResolvedSliceSize;
       std::vector<std::vector<newPhoton> > m_PhotonList;
       bool m_generatePhotons;
-      bool m_ActivateDiffraction;
       };
 
     /* Most of the computation for the primary is done in this functor. After a ray
@@ -526,7 +522,6 @@ namespace GateFixedForcedDetectionFunctor
                              const VectorType & farthestPoint)
         {
         double *p = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
-        double *q = m_MaterialDelta->GetPixelContainer()->GetBufferPointer();
         /* Multiply interpolation weights by step norm in MM to convert voxel
          intersection length to MM. */
         const double stepInMMNorm = stepInMM.GetNorm();
@@ -572,21 +567,25 @@ namespace GateFixedForcedDetectionFunctor
             vcl_exp(-rayIntegral) * (*m_EnergyWeightList)[i],
             m_EnergyList[i]);
 
-            double rayIntegral = 0.;
-            for (unsigned int j = 0; j < m_InterpolationWeights[threadId].size(); j++)
+            if (m_MaterialDelta != nullptr)
               {
-              rayIntegral += m_InterpolationWeights[threadId][j] * *q++;
-              }
+              double *q = m_MaterialDelta->GetPixelContainer()->GetBufferPointer();
+              double rayIntegral = 0.;
+              for (unsigned int j = 0; j < m_InterpolationWeights[threadId].size(); j++)
+                {
+                rayIntegral += m_InterpolationWeights[threadId][j] * *q++;
+                }
 
-            /* Matter wave : for photon, the formula is lambda = hc/E
-             * https://fr.wikipedia.org/wiki/Hypoth%C3%A8se_de_De_Broglie
-             */
-            double wavelength = h_Planck/(eV*s) * c_light/(m/s) / (m_EnergyList[i]/eV);
-            wavelength = wavelength * (m/mm); // To use the same unit as Geant4
-            rayIntegral *= (-2*itk::Math::pi/wavelength);
-            this->AccumulatePhase(output,
-            rayIntegral * (*m_EnergyWeightList)[i],
-            m_EnergyList[i]);
+              /* Matter wave : for photon, the formula is lambda = hc/E
+               * https://fr.wikipedia.org/wiki/Hypoth%C3%A8se_de_De_Broglie
+               */
+              double wavelength = h_Planck/(eV*s) * c_light/(m/s) / (m_EnergyList[i]/eV);
+              wavelength = wavelength * (m/mm); // To use the same unit as Geant4
+              rayIntegral *= (-2*itk::Math::pi/wavelength);
+              this->AccumulatePhase(output,
+              rayIntegral * (*m_EnergyWeightList)[i],
+              m_EnergyList[i]);
+              }
             }
           }
 

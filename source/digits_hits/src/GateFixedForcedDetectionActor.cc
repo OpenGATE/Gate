@@ -51,8 +51,7 @@ GateFixedForcedDetectionActor::GateFixedForcedDetectionActor(G4String name, G4in
     mInputRTKGeometryFilename(""),
     mEnergyResolvedBinSize(0),
     mSourceType("plane"),
-    mGeneratePhotons(false),
-    mActivateFresnelDiffraction(true)
+    mGeneratePhotons(false)
   {
   GateDebugMessageInc("Actor",4,"GateFixedForcedDetectionActor() -- begin"<<G4endl);
   pActorMessenger = new GateFixedForcedDetectionActorMessenger(this);
@@ -392,8 +391,11 @@ void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointe
   mPrimaryProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
                                                                          energyList,
                                                                          gate_image_volume);
-  mPrimaryProjector->GetProjectedValueAccumulation().CreateMaterialDeltaMap(energyList,
-                                                                            gate_image_volume);
+  if (mMaterialDeltaFilename != "" || mFresnelFilename != "")
+    {
+    mPrimaryProjector->GetProjectedValueAccumulation().CreateMaterialDeltaMap(energyList,
+                                                                              gate_image_volume);
+    }
   mPrimaryProjector->GetProjectedValueAccumulation().Init(mPrimaryProjector->GetNumberOfThreads());
   mPrimaryProjector->GetProjectedValueAccumulation().SetNumberOfPrimaries(mNoisePrimary);
   mPrimaryProjector->GetProjectedValueAccumulation().SetResponseDetector(&mEnergyResponseDetector);

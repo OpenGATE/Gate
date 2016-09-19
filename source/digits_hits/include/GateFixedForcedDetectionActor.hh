@@ -381,7 +381,6 @@ protected:
   double mInteractionSquaredIntegralOverDetector;
   G4String mSourceType;
   bool mGeneratePhotons;
-  bool mActivateFresnelDiffraction;
 
   /* Account for primary fluence weighting */
   InputImageType::Pointer PrimaryFluenceWeighting(const InputImageType::Pointer input);
