@@ -190,7 +190,6 @@ public:
   static const unsigned int Dimension = 3;
   typedef float InputPixelType;
   typedef itk::Image<InputPixelType, Dimension> InputImageType;
-  typedef itk::Image<double> InternalPrecision;
   typedef itk::Image<int, Dimension> IntegerImageType;
   typedef itk::Image<double, Dimension> DoubleImageType;
   typedef itk::Image<std::complex<InputPixelType>, Dimension> ComplexImageType;
@@ -338,6 +337,7 @@ protected:
   std::map<ProcessType, itk::TimeProbe> mProcessTimeProbe;
   std::map<ProcessType, std::vector<InputImageType::Pointer> > mPerOrderImages;
   std::map<ProcessType, G4String> mProcessImageFilenames;
+
   /* Compton stuff */
   typedef GateFixedForcedDetectionProjector<
       GateFixedForcedDetectionFunctor::ComptonValueAccumulation> ComptonProjectionType;
