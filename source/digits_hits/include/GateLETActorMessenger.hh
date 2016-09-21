@@ -31,11 +31,8 @@ public:
 protected:
   GateLETActor * pLETActor;
 
-  G4UIcmdWithABool * pSetRestrictedCmd;
-  G4UIcmdWithADoubleAndUnit * pSetDeltaRestrictedCmd;
   
-  G4UIcmdWithABool * pEnableLETUncertaintyCmd;
-  G4UIcmdWithABool * pSetDoseToWaterCmd;
+  G4UIcmdWithABool * pSetLETtoWaterCmd;
   G4UIcmdWithAString * pAveragingTypeCmd; 
   G4UIcmdWithABool * pSetParallelCalculationCmd;
 };

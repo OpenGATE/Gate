@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+ Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+ This software is distributed under the terms
+ of the GNU Lesser General  Public Licence (LGPL)
+ See GATE/LICENSE.txt for further details
+ ----------------------*/
 
 #include "GateConfiguration.h"
 
@@ -41,279 +41,230 @@ See GATE/LICENSE.txt for further details
 
 #include "GateDigitizer.hh"
 #include "GateSingleDigi.hh"
-
-//#include "GateSourceMgr.hh"
 #include "GateOutputMgr.hh"
-
 #include "TROOT.h"
 #include "TTree.h"
 #include "TFile.h"
 #include "G4DigiManager.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-GateARFDataToRoot::GateARFDataToRoot(const G4String& name, GateOutputMgr* outputMgr,DigiMode digiMode)
-  : GateVOutputModule(name,outputMgr,digiMode)
-{
-
-  m_isEnabled = false; // Keep this flag false: all output are disabled by default
-                       // Moreover this output will slow down a lot all the simulation !
+GateARFDataToRoot::GateARFDataToRoot(const G4String& name,
+                                     GateOutputMgr* outputMgr,
+                                     DigiMode digiMode) :
+    GateVOutputModule(name, outputMgr, digiMode)
+  {
+  m_isEnabled = false; /* Keep this flag false: all output are disabled by default
+   Moreover this output will slow down a lot all the simulation ! */
   nVerboseLevel = 0;
+  mRootMessenger = new GateARFDataToRootMessenger(this);
+  mDrfProjectionMode = 0;
+  mArfDataFilename = " "; /* All default output file from all output modules are set to " ".
+   They are then checked in GateApplicationMgr::StartDAQ, using
+   the VOutputModule pure virtual method GiveNameOfFile() */
+  mArfDataFile = 0;
+  mArfDataTree = 0;
+  mXPlane = 0.;
+  mNbofGoingOutPhotons = 0;
+  mNbofStraightPhotons = 0;
+  mNbofGoingInPhotons = 0;
+  mNbofKilledInsideCrystalPhotons = 0;
+  mNbofKilledInsideColliPhotons = 0;
+  mNbofKilledInsideCamera = 0;
+  mNbOfSourcePhotons = 0;
+  mNbofStoredPhotons = 0;
+  mNbOfHeads = 0;
+  mInCamera = 0;
+  mOutCamera = 0;
+  }
 
-//G4cout << " GateARFDataToRoot::GateARFDataToRoot \n";
+GateARFDataToRoot::~GateARFDataToRoot()
+  {
+  delete mRootMessenger;
+  if (nVerboseLevel > 0)
+    {
+    G4cout << "GateARFDataToRoot deleting...\n";
+    }
 
-  m_rootMessenger = new GateARFDataToRootMessenger(this);
-
-
-m_DRFprojectionmode = 0;
-
-m_ARFDatafilename = " "; // All default output file from all output modules are set to " ".
-                         // They are then checked in GateApplicationMgr::StartDAQ, using
-                         // the VOutputModule pure virtual method GiveNameOfFile()
-
-m_ARFDatafile = 0;
-m_ARFDataTree = 0;
-
-m_Xplane = 0.;
-
-NbofGoingOutPhotons = 0;
-NbofStraightPhotons = 0;
-NbofGoingInPhotons = 0;
-NbofKilledInsideCrystalPhotons = 0;
-NbofKilledInsideColliPhotons = 0;NbofKilledInsideCamera=0;
-NbOfSourcePhotons = 0;
-NbofStoredPhotons = 0;
-NbOfHeads = 0;
-IN_camera = 0;
-OUT_camera = 0;
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...
-
-GateARFDataToRoot::~GateARFDataToRoot() 
-{
-  delete m_rootMessenger;
-  if (nVerboseLevel > 0) G4cout << "GateARFDataToRoot deleting...\n";
-
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...
+  }
 
 const G4String& GateARFDataToRoot::GiveNameOfFile()
-{
-  return m_ARFDatafilename;
-}
+  {
+  return mArfDataFilename;
+  }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...
-
-// Method called at the beginning of each acquisition by the application manager: opens the ROOT file and prepare the trees
+/* Method called at the beginning of each acquisition by the application manager: opens the ROOT file and prepare the trees */
 void GateARFDataToRoot::RecordBeginOfAcquisition()
-{
-
-   
-
-    m_ARFDatafile = new TFile( m_ARFDatafilename.c_str() ,"RECREATE","ROOT file for ARF purpose");
-
-    m_ARFDataTree = new TTree("theTree","ARF Data Tree");
-
-    m_ARFDataTree->Branch("Edep", &theData.m_Edep,"Edep/D");
-    m_ARFDataTree->Branch("outY", &theData.m_Y,"outY/D");
-    m_ARFDataTree->Branch("outX", &theData.m_X,"outX/D");
-
-   m_NbOfPhotonsTree = new TTree("theNumberOfPhoton"," statistics on Simulated Photons");
-   m_NbOfPhotonsTree->Branch("NOfOutGoingPhot",&NbofGoingOutPhotons,"NbOfOutGoingPhotons/l");
-   m_NbOfPhotonsTree->Branch("NbOfInGoingPhot",&NbofGoingInPhotons,"NbOfInGoingPhotons/l");
-   m_NbOfPhotonsTree->Branch("NbOfSourcePhot",&NbOfSourcePhotons,"NbOfSourcePhotons/l");
-   m_NbOfPhotonsTree->Branch("NbOfInCameraPhot",&IN_camera,"NbOfInCameraPhotons/l");
-   m_NbOfPhotonsTree->Branch("NbOfOutCameraPhot",&OUT_camera,"NbOfOutCameraPhotons/l");
-   m_NbOfPhotonsTree->Branch("NbOfStoredPhotons",&NbofStoredPhotons,"NbOfStoredPhotons/l");
-   m_NbOfPhotonsTree->Branch("NbOfHeads",&NbOfHeads,"NbOfHeads/I");
-
-}
-
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+  {
+  mArfDataFile = new TFile(mArfDataFilename.c_str(), "RECREATE", "ROOT file for ARF purpose");
+  mArfDataTree = new TTree("theTree", "ARF Data Tree");
+  mArfDataTree->Branch("Edep", &mArfData.mDepositedEnergy, "Edep/D");
+  mArfDataTree->Branch("outY", &mArfData.mProjectionPositionY, "outY/D");
+  mArfDataTree->Branch("outX", &mArfData.mProjectionPositionX, "outX/D");
+  mNbOfPhotonsTree = new TTree("theNumberOfPhoton", " statistics on Simulated Photons");
+  mNbOfPhotonsTree->Branch("NOfOutGoingPhot", &mNbofGoingOutPhotons, "NbOfOutGoingPhotons/l");
+  mNbOfPhotonsTree->Branch("NbOfInGoingPhot", &mNbofGoingInPhotons, "NbOfInGoingPhotons/l");
+  mNbOfPhotonsTree->Branch("NbOfSourcePhot", &mNbOfSourcePhotons, "NbOfSourcePhotons/l");
+  mNbOfPhotonsTree->Branch("NbOfInCameraPhot", &mInCamera, "NbOfInCameraPhotons/l");
+  mNbOfPhotonsTree->Branch("NbOfOutCameraPhot", &mOutCamera, "NbOfOutCameraPhotons/l");
+  mNbOfPhotonsTree->Branch("NbOfStoredPhotons", &mNbofStoredPhotons, "NbOfStoredPhotons/l");
+  mNbOfPhotonsTree->Branch("NbOfHeads", &mNbOfHeads, "NbOfHeads/I");
+  }
 
 void GateARFDataToRoot::RecordEndOfAcquisition()
-{
+  {
+  CloseARFDataRootFile();
+  DisplayARFStatistics();
+  }
 
-CloseARFDataRootFile();
-DisplayARFStatistics();
-}
+void GateARFDataToRoot::RecordBeginOfRun(const G4Run*)
+  {
+  }
 
+void GateARFDataToRoot::RecordEndOfRun(const G4Run*)
+  {
+  }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+void GateARFDataToRoot::RecordBeginOfEvent(const G4Event*)
+  {
 
-void GateARFDataToRoot::RecordBeginOfRun(const G4Run* )
-{
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-void GateARFDataToRoot::RecordEndOfRun(const G4Run* )
-{
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-void GateARFDataToRoot::RecordBeginOfEvent(const G4Event* )
-{
-
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+  }
 
 void GateARFDataToRoot::RecordEndOfEvent(const G4Event* event)
-{
-RecordDigitizer(event);
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-void GateARFDataToRoot::RecordDigitizer(const G4Event* ) 
-{
-   if (nVerboseLevel > 2)
-    G4cout << "GateARFDataToRoot::RecordDigitizer -- begin \n";
-
-  // Get Digitizer information
-
-  G4DigiManager * fDM = G4DigiManager::GetDMpointer();
-
-  G4int m_collectionID = fDM->GetDigiCollectionID(m_SingleDigiCollectionName);      
-  const GateSingleDigiCollection * SDC = 
-    (GateSingleDigiCollection*) (fDM->GetDigiCollection( m_collectionID ));
-
-  if (!SDC)
   {
-    if (nVerboseLevel>0) 
-    G4cout << "[GateARFDataToRoot::SingleOutputChannel::RecordDigitizer]:"<< " digi collection '" << m_SingleDigiCollectionName << "' not found\n";
-    
-  } else
-   {
-    // Digi loop
+  RecordDigitizer(event);
+  }
 
-   if (nVerboseLevel>0)
-    G4cout << "[GateARFDataToRoot::SingleOutputChannel::RecordDigitizer]: Total Digits : " 
-				     << SDC->entries() <<" in digi collection '" << m_SingleDigiCollectionName << "' \n";
-      G4int n_digi =  SDC->entries();
-      for (G4int iDigi=0;iDigi<n_digi;iDigi++) StoreARFData( (*SDC)[iDigi] );// we store the ARF data 
-
-   }
+void GateARFDataToRoot::RecordDigitizer(const G4Event*)
+  {
   if (nVerboseLevel > 2)
-  G4cout << "GateARFDataToRoot::RecordDigitizer -- end \n";
+    {
+    G4cout << "GateARFDataToRoot::RecordDigitizer -- begin \n";
+    }
+  /* Get Digitizer information */
+  G4DigiManager * fDM = G4DigiManager::GetDMpointer();
+  G4int collectionID = fDM->GetDigiCollectionID(mSingleDigiCollectionName);
+  const GateSingleDigiCollection * SDC = (GateSingleDigiCollection*) (fDM->GetDigiCollection(collectionID));
+  if (!SDC)
+    {
+    if (nVerboseLevel > 0)
+      {
+      G4cout << "[GateARFDataToRoot::SingleOutputChannel::RecordDigitizer]:"
+             << " digi collection '"
+             << mSingleDigiCollectionName
+             << "' not found\n";
+      }
+    }
+  else
+    {
+    /* Digi loop */
 
-}
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+    if (nVerboseLevel > 0)
+      {
+      G4cout << "[GateARFDataToRoot::SingleOutputChannel::RecordDigitizer]: Total Digits : "
+             << SDC->entries()
+             << " in digi collection '"
+             << mSingleDigiCollectionName
+             << "' \n";
+      }
+    G4int nDigi = SDC->entries();
+    for (G4int digi = 0; digi < nDigi; digi++)
+      {
+      StoreARFData((*SDC)[digi]);
+      } /* we store the ARF data */
 
-void GateARFDataToRoot::RegisterNewSingleDigiCollection(const G4String& aCollectionName,G4bool)
-{
+    }
+  if (nVerboseLevel > 2)
+    {
+    G4cout << "GateARFDataToRoot::RecordDigitizer -- end \n";
+    }
 
-  //G4cout << " GateARFDataToRoot::RegisterNewSingleDigiCollection single digi collection name " << aCollectionName<< Gateendl;
+  }
 
-m_SingleDigiCollectionName = aCollectionName;
+void GateARFDataToRoot::RegisterNewSingleDigiCollection(const G4String& aCollectionName, G4bool)
+  {
+  mSingleDigiCollectionName = aCollectionName;
+  }
 
-}
+void GateARFDataToRoot::IncrementNbOfSourcePhotons()
+  {
+  mNbOfSourcePhotons++;
+  if (nVerboseLevel > 1 && (mNbOfSourcePhotons % 1000000) == 0)
+    {
+    DisplayARFStatistics();
+    }
+  }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-
-void GateARFDataToRoot::IncrementNbOfSourcePhotons() 
-{
- NbOfSourcePhotons++;
-if (nVerboseLevel > 1 && (NbOfSourcePhotons % 1000000) == 0 ) DisplayARFStatistics();
-}
-                                               
 void GateARFDataToRoot::SetARFDataRootFileName(G4String aName)
-{ m_ARFDatafilename = aName+".root";}
-
+  {
+  mArfDataFilename = aName + ".root";
+  }
 
 void GateARFDataToRoot::CloseARFDataRootFile()
-{
- m_ARFDatafile = m_ARFDataTree->GetCurrentFile();
+  {
+  mArfDataFile = mArfDataTree->GetCurrentFile();
+  if (mArfDataFile->IsOpen())
+    {
+    mNbOfPhotonsTree->Fill();
+    mArfDataFile->Write();
+    mArfDataFile->Close();
+    }
+  }
 
- // G4cout << " GateARFDataToRoot::CloseARFDataRootFile : "<< m_ARFDatafile << "   "<< m_NbOfPhotonsTree->GetCurrentFile()<< Gateendl;
-
- 
-
-        if ( m_ARFDatafile->IsOpen() ) 
-                                {
-                                 m_NbOfPhotonsTree->Fill();
-                                 
-                                 m_ARFDatafile->Write(); 
-                                 m_ARFDatafile->Close();
-                                }
-}
-
-G4int GateARFDataToRoot::StoreARFData(GateSingleDigi* aDigi )
-{
-G4ThreeVector position = aDigi->GetGlobalPos();
-G4ThreeVector PosAtVertex = aDigi->GetSourcePosition();
-
-NbofStoredPhotons++;
-
-
-G4cout <<" number of stored photons    " << NbofStoredPhotons<< Gateendl;
-G4cout <<" number of NbOfSourcePhotons "<< NbOfSourcePhotons << Gateendl;
-
-// compute projection of the energy deposition location onto the projection plane as the intersection of the plane X=m_X
-// and the line passing through totalposition with unit vector director Indirection, the incident direction
-
-if (m_DRFprojectionmode == 0 ) // smooth positions by substracting source emission position
- {
-  theData.m_X = position.z() - PosAtVertex.z();
-  theData.m_Y = position.y() - PosAtVertex.y();
- }
-  else if ( m_DRFprojectionmode == 1 ) // line project
-   {
+G4int GateARFDataToRoot::StoreARFData(GateSingleDigi * aDigi)
+  {
+  G4ThreeVector position = aDigi->GetGlobalPos();
+  G4ThreeVector PosAtVertex = aDigi->GetSourcePosition();
+  mNbofStoredPhotons++;
+  G4cout << " number of stored photons    " << mNbofStoredPhotons << Gateendl;
+  G4cout << " number of NbOfSourcePhotons " << mNbOfSourcePhotons << Gateendl;
+  /*compute projection of the energy deposition location onto the projection plane as the intersection of the plane X=m_X
+   and the line passing through totalposition with unit vector director Indirection, the incident direction */
+  if (mDrfProjectionMode == 0) /*smooth positions by substracting source emission position */
+    {
+    mArfData.mProjectionPositionX = position.z() - PosAtVertex.z();
+    mArfData.mProjectionPositionY = position.y() - PosAtVertex.y();
+    }
+  else if (mDrfProjectionMode == 1) /* line project */
+    {
     G4ThreeVector Indirection = position - PosAtVertex;
     G4double magnitude = Indirection.mag();
     Indirection /= magnitude;
-    G4double t = ( m_Xplane - position.x() ) / Indirection.x();
-    theData.m_X = position.z() + t * Indirection.z();
-    theData.m_Y = position.y() + t * Indirection.y();
-   }
-    else if ( m_DRFprojectionmode == 2 ) // orthogonal projection
-         {
-           theData.m_X = position.z();
-           theData.m_Y = position.y();
-         }
+    G4double t = (mXPlane - position.x()) / Indirection.x();
+    mArfData.mProjectionPositionX = position.z() + t * Indirection.z();
+    mArfData.mProjectionPositionY = position.y() + t * Indirection.y();
+    }
+  else if (mDrfProjectionMode == 2) /* orthogonal projection */
+    {
+    mArfData.mProjectionPositionX = position.z();
+    mArfData.mProjectionPositionY = position.y();
+    }
+  mArfData.mDepositedEnergy = aDigi->GetEnergy();
+  mArfDataTree->Fill();
+  return 1;
 
-theData.m_Edep =  aDigi->GetEnergy();
-
-m_ARFDataTree->Fill();
-
-return 1;
-
-
-}
-
+  }
 
 void GateARFDataToRoot::DisplayARFStatistics()
-{
-G4cout << " Source Photons Statistics For ARF Data " <<  Gateendl;
-G4cout << " Camera heads number                             " << NbOfHeads<< Gateendl;
-G4cout << " Source Photons                                  " << NbOfSourcePhotons<< Gateendl;
-G4cout << " Detected Photons                                " << NbofStoredPhotons << Gateendl;
-G4cout << " Source Photons Going Outside the Camera         " << OUT_camera<< Gateendl;
-G4cout << " Source Photons Going Inside the Camera          " << IN_camera << Gateendl;
-G4cout << " Source Photons Going Outside the Crystal        " << NbofGoingOutPhotons<< Gateendl;
-G4cout << " Source Photons Going Inside the Crystal         " << NbofGoingInPhotons<< Gateendl;
-G4cout << " Source Photons Killed Inside the Collimator     " << NbofKilledInsideColliPhotons<< Gateendl;
-G4cout << " Source Photons Killed Inside the Camera         " << NbofKilledInsideCamera<< Gateendl;
-G4cout << " Source Photons Killed Inside the Crystal        " << NbofKilledInsideCrystalPhotons<< Gateendl;
+  {
+  G4cout << " Source Photons Statistics For ARF Data " << Gateendl;
+  G4cout << " Camera heads number                             " << mNbOfHeads<< Gateendl;
+  G4cout << " Source Photons                                  " << mNbOfSourcePhotons<< Gateendl;
+  G4cout << " Detected Photons                                " << mNbofStoredPhotons << Gateendl;
+  G4cout << " Source Photons Going Outside the Camera         " << mOutCamera<< Gateendl;
+  G4cout << " Source Photons Going Inside the Camera          " << mInCamera << Gateendl;
+  G4cout << " Source Photons Going Outside the Crystal        " << mNbofGoingOutPhotons<< Gateendl;
+  G4cout << " Source Photons Going Inside the Crystal         " << mNbofGoingInPhotons<< Gateendl;
+  G4cout << " Source Photons Killed Inside the Collimator     " << mNbofKilledInsideColliPhotons<< Gateendl;
+  G4cout << " Source Photons Killed Inside the Camera         " << mNbofKilledInsideCamera<< Gateendl;
+  G4cout << " Source Photons Killed Inside the Crystal        " << mNbofKilledInsideCrystalPhotons<< Gateendl;
+  }
 
-}
+void GateARFDataToRoot::RecordStep(const G4Step*)
+  {
+  }
 
-
-void  GateARFDataToRoot::RecordStep(const G4Step*){}
-
-void  GateARFDataToRoot::RecordVoxels(GateVGeometryVoxelStore*){}
+void GateARFDataToRoot::RecordVoxels(GateVGeometryVoxelStore*)
+  {
+  }
 
 #endif
-
-
-
-
-
-
 
