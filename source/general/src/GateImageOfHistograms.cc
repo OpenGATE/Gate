@@ -75,11 +75,11 @@ void GateImageOfHistograms::Allocate()
   /*
     mHistoData.resize(nbOfValues);
     // Could not allocate this way for 3D image -> too long !!
-  for(int i=0; i<nbOfValues; i++) {
-  // Create TH1D with no names (to save memory)
-  //DD(i);
-  mHistoData[i] = new TH1D("","", nbOfBins, minValue, maxValue);
-  }
+    for(int i=0; i<nbOfValues; i++) {
+    // Create TH1D with no names (to save memory)
+    //DD(i);
+    mHistoData[i] = new TH1D("","", nbOfBins, minValue, maxValue);
+    }
   */
 
   // Set to zero
@@ -121,6 +121,20 @@ void GateImageOfHistograms::Reset()
     fill(dataFloat.begin(), dataFloat.end(), 0.0);
   else
     fill(dataInt.begin(), dataInt.end(), 0);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateImageOfHistograms::Deallocate()
+{
+  // this thing frees the data memory, while keeping the rest intact. USE WITH CAUTION!
+  if (mDataTypeName == "double")
+    std::vector<double>().swap(dataDouble);
+  else if (mDataTypeName == "float")
+    std::vector<float>().swap(dataFloat);
+  else
+    std::vector<unsigned int>().swap(dataInt);
 }
 //-----------------------------------------------------------------------------
 
@@ -239,87 +253,95 @@ void GateImageOfHistograms::AddValueInt(const int & index, const int & bin, cons
 //-----------------------------------------------------------------------------
 void GateImageOfHistograms::Read(G4String filename)
 {
-  MetaImage m_MetaImage;
-  m_MetaImage.AddUserField("HistoMinInMeV", MET_FLOAT_ARRAY, 1);
-  m_MetaImage.AddUserField("HistoMaxInMeV", MET_FLOAT_ARRAY, 1);
+  std::vector<float> input;//put mhd imagedata here
 
-  if (!m_MetaImage.Read(filename.c_str(), true)) {
-    GateError("MHD File cannot be read: " << filename << std::endl);
-  }
+  {//start metaImage scope. setup all metadata. separate scope to save memory
+    MetaImage m_MetaImage;
+    m_MetaImage.AddUserField("HistoMinInMeV", MET_FLOAT_ARRAY, 1);
+    m_MetaImage.AddUserField("HistoMaxInMeV", MET_FLOAT_ARRAY, 1);
 
-  // Dimension must be 4
-  if (m_MetaImage.NDims() != 4) {
-    GateError("MHD ImageOfHistogram  <" << filename << "> is not 4D but "
-              << m_MetaImage.NDims() << "D, abort." << std::endl);
-  }
+    if (!m_MetaImage.Read(filename.c_str(), true)) {
+      GateError("MHD File cannot be read: " << filename << std::endl);
+    }
 
-  // Get image parameters
-  for(int i=0; i<3; i++) {
-    resolution[i] = m_MetaImage.DimSize(i);
-    voxelSize[i] = m_MetaImage.ElementSpacing(i);
-    origin[i] = m_MetaImage.Position(i);
-  }
-  nbOfBins = m_MetaImage.DimSize(3);
+    // Dimension must be 4
+    if (m_MetaImage.NDims() != 4) {
+      GateError("MHD ImageOfHistogram  <" << filename << "> is not 4D but "
+                << m_MetaImage.NDims() << "D, abort." << std::endl);
+    }
 
-  std::vector<double> transform;
-  transform.resize(16);
-  for(int i=0; i<16; i++) { // 4 x 4 matrix
-    transform[i] = m_MetaImage.TransformMatrix()[i];
-  }
+    // Get image parameters
+    for(int i=0; i<3; i++) {
+      resolution[i] = m_MetaImage.DimSize(i);
+      voxelSize[i] = m_MetaImage.ElementSpacing(i);
+      origin[i] = m_MetaImage.Position(i);
+    }
+    nbOfBins = m_MetaImage.DimSize(3);
 
- // Convert mhd 4D matrix to 3D rotation matrix
-  G4ThreeVector row_x, row_y, row_z;
-  for(unsigned int i=0; i<3; i++) {
-    row_x[i] = transform[i*4];
-    row_y[i] = transform[i*4+1];
-    row_z[i] = transform[i*4+2];
-  }
-  transformMatrix.setRows(row_x, row_y, row_z);
-  if( !transformMatrix.row1().isNear(CLHEP::HepLorentzVector(row_x, 0.), 0.1) ||
-      !transformMatrix.row2().isNear(CLHEP::HepLorentzVector(row_y, 0.), 0.1) ||
-      !transformMatrix.row3().isNear(CLHEP::HepLorentzVector(row_z, 0.), 0.1) ) {
+    std::vector<double> transform;
+    transform.resize(16);
+    for(int i=0; i<16; i++) { // 4 x 4 matrix
+      transform[i] = m_MetaImage.TransformMatrix()[i];
+    }
+
+    // Convert mhd 4D matrix to 3D rotation matrix
+    G4ThreeVector row_x, row_y, row_z;
+    for(unsigned int i=0; i<3; i++) {
+      row_x[i] = transform[i*4];
+      row_y[i] = transform[i*4+1];
+      row_z[i] = transform[i*4+2];
+    }
+    transformMatrix.setRows(row_x, row_y, row_z);
+    if( !transformMatrix.row1().isNear(CLHEP::HepLorentzVector(row_x, 0.), 0.1) ||
+        !transformMatrix.row2().isNear(CLHEP::HepLorentzVector(row_y, 0.), 0.1) ||
+        !transformMatrix.row3().isNear(CLHEP::HepLorentzVector(row_z, 0.), 0.1) ) {
       GateError(filename << " contains a transformation which is not a rotation. "
                 << "It is probably a flip and this is not handled.");
-  }
+    }
 
-  // We need to shift to half a pixel to be coherent with Gate
-  // coordinates system. Must be transformed because voxel size is
-  // known before rotation and origin is after rotation.
-  origin -= transformMatrix*(voxelSize/2.0);
-  UpdateSizesFromResolutionAndVoxelSize();
+    // Read info in mhd
+    void * r = 0;
+    r = m_MetaImage.GetUserField("HistoMinInMeV");
+    if (r==0) {
+      GateError("User field HistoMin not found in this mhd file : " << filename);
+    }
+    minValue = *static_cast<float*>(r);
+    r = m_MetaImage.GetUserField("HistoMaxInMeV");
+    if (r==0) {
+      GateError("User field HistoMax not found in this mhd file : " << filename);
+    }
+    maxValue = *static_cast<float*>(r);
+    SetHistoInfo(nbOfBins, minValue, maxValue);
 
-  // Set data in the correct order
-  int len = resolution[0] * resolution[1] * resolution[2] * nbOfBins;
-  std::vector<float> input;
-  input.assign((float*)(m_MetaImage.ElementData()), (float*)(m_MetaImage.ElementData()) + len);
+    // We need to shift to half a pixel to be coherent with Gate
+    // coordinates system. Must be transformed because voxel size is
+    // known before rotation and origin is after rotation.
+    origin -= transformMatrix*(voxelSize/2.0);
+    UpdateSizesFromResolutionAndVoxelSize();
+
+    // Cast input data to float and put in input vector. this is done because metaImage nullpointer sucks.
+    int len = resolution[0] * resolution[1] * resolution[2] * nbOfBins;
+    input.assign((float*)(m_MetaImage.ElementData()), (float*)(m_MetaImage.ElementData()) + len);
+
+  }//end metaImage scope. it does not exist anymore.
+
+  //Set to correct order. This allocates dataFloat.
   ConvertPixelOrderToHXYZ(input, dataFloat);
 
-  // Now the initial input can be deleted, only the dataDouble/dataFloat data
-  // are kept.
-  m_MetaImage.Clear();
-  input.clear();
+  // Do NOT clear metaimages yourself, then the destructor will NOT deallocate datamemory!
+  // m_MetaImage.Clear();
 
-  // Convert to double is needed
-  if (mDataTypeName == "double") {
+  // FIXME: this couldn't possibly work. Incase we were reading an image of doubles,
+  // we'd already casted in the previous steps to float, which we even assume, so no
+  // double image caant be read right now. Would only be usefull if we would continue
+  // to update this image with small values, which I don't think will ever happen.
+  /*if (mDataTypeName == "double") {
     dataDouble.resize(dataFloat.size());
     for(unsigned int i=0; i<dataDouble.size(); i++)
-      dataDouble[i] = (double)dataFloat[i]; // convert float to double
+    dataDouble[i] = (double)dataFloat[i]; // convert float to double
     dataFloat.clear();
-  }
+    }*/
 
-  // Read info in mhd
-  void * r = 0;
-  r = m_MetaImage.GetUserField("HistoMinInMeV");
-  if (r==0) {
-    GateError("User field HistoMin not found in this mhd file : " << filename);
-  }
-  minValue = *static_cast<float*>(r);
-  r = m_MetaImage.GetUserField("HistoMaxInMeV");
-  if (r==0) {
-    GateError("User field HistoMax not found in this mhd file : " << filename);
-  }
-  maxValue = *static_cast<float*>(r);
-  SetHistoInfo(nbOfBins, minValue, maxValue);
 }
 //-----------------------------------------------------------------------------
 
@@ -385,6 +407,9 @@ void GateImageOfHistograms::Write(G4String filename, const G4String & )
       total += dataDouble[i];
       dataFloat[i] = (float)dataDouble[i]; // convert double to float
     }
+    std::vector<double>().swap(dataDouble);
+    //we swap with empty vector, thereby releasing memory of original dataDouble
+    //once this new vector, with the contents of dataDouble, goes out of scope (after this line)
   }
 
   //output int to int
@@ -416,12 +441,15 @@ void GateImageOfHistograms::Scale(double f)
   if (mDataTypeName == "double") {
     for(unsigned int i=0; i<dataDouble.size(); i++)
       dataDouble[i] = f * dataDouble[i];
-  } else if (mDataTypeName == "int") { //move ints to float image
+  } else if (mDataTypeName == "int") { //cant scale and int
     dataFloat.resize(dataInt.size());
     for(unsigned int i=0; i<dataInt.size(); i++) {
       dataFloat[i] = f * (float)dataInt[i]; // convert int to float
     }
     mDataTypeName = "float";
+    std::vector<unsigned int>().swap(dataInt);
+    //we swap with empty vector, thereby releasing memory of original dataDouble
+    //once this new vector, with the contents of dataDouble, goes out of scope (after this line)
   } else {
     for(unsigned int i=0; i<dataFloat.size(); i++)
       dataFloat[i] = f * dataFloat[i];

@@ -1,0 +1,9 @@
+This reference was created by launching a Gate simulation on
+Mon Oct 3 15:16:34 BST 2016
+with the configuration file benchmarks/benchImaging/mac/optical.mac
+from the commit
+commit 071dd73d910f3ddb6eb1c2beb56c79a41bed764c
+with the version of gcc
+gcc (Ubuntu 4.8.4-2ubuntu1~14.04) 4.8.4
+on the architecture Linux
+Linux IMNC-EURYDICE 3.19.0-39-generic #44~14.04.1-Ubuntu SMP Wed Dec 2 10:00:35 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux

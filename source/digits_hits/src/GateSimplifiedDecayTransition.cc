@@ -9,6 +9,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateSimplifiedDecayTransition.hh"
 #include <G4PhysicalConstants.hh>
+#include <cmath>
 
 // A few static constants
 double GateSimplifiedDecayTransition::kAlphaSquared = fine_structure_const*fine_structure_const;

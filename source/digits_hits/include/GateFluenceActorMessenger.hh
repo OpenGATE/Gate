@@ -29,9 +29,11 @@ public:
 protected:
 
   G4UIcmdWithABool * pEnableSquaredCmd;
+  G4UIcmdWithABool * pEnableStepLengthCmd;
   G4UIcmdWithABool * pEnableUncertaintyCmd;
   G4UIcmdWithABool * pEnableNormCmd;
   G4UIcmdWithABool * pEnableNumberOfHitsCmd;
+  G4UIcmdWithABool * pSetIgnoreWeightCmd;
   GateFluenceActor * pFluenceActor;
   G4UIcmdWithAString * pSetResponseDetectorFileCmd;
   G4UIcmdWithABool * pEnableScatterCmd;

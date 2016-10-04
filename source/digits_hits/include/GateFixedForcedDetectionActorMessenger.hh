@@ -1,12 +1,12 @@
 /*----------------------
-   GATE version name: gate_v6
+ GATE version name: gate_v6
 
-   Copyright (C): OpenGATE Collaboration
+ Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+ This software is distributed under the terms
+ of the GNU Lesser General  Public Licence (LGPL)
+ See GATE/LICENSE.txt for further details
+ ----------------------*/
 
 #include "GateConfiguration.h"
 #ifdef GATE_USE_RTK
@@ -26,7 +26,7 @@ See GATE/LICENSE.txt for further details
 
 class GateFixedForcedDetectionActor;
 class GateFixedForcedDetectionActorMessenger: public GateActorMessenger
-{
+  {
 public:
   GateFixedForcedDetectionActorMessenger(GateFixedForcedDetectionActor* sensor);
   virtual ~GateFixedForcedDetectionActorMessenger();
@@ -47,6 +47,9 @@ protected:
   G4UIcmdWithAString * pSetComptonFilenameCmd;
   G4UIcmdWithAString * pSetRayleighFilenameCmd;
   G4UIcmdWithAString * pSetFluorescenceFilenameCmd;
+  G4UIcmdWithAString * pSetIsotropicPrimaryFilenameCmd;
+  G4UIcmdWithAString * pSetSourceTypeCmd;
+  G4UIcmdWithAString * pSetGeneratePhotonsCmd;
   G4UIcmdWithAString * pSetSecondaryFilenameCmd;
   G4UIcmdWithABool * pEnableSecondarySquaredCmd;
   G4UIcmdWithABool * pEnableSecondaryUncertaintyCmd;
@@ -55,7 +58,7 @@ protected:
   G4UIcmdWithAString * pSetInputRTKGeometryFilenameCmd;
   G4UIcmdWithAnInteger * pSetNoisePrimaryCmd;
   G4UIcmdWithADoubleAndUnit * pEnergyResolvedBinSizeCmd;
-};
+  };
 
 #endif /* end #define GATEFIXEDFORCEDDECTECTIONACTORMESSENGER_HH*/
 #endif // GATE_USE_RTK

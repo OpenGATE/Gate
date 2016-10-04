@@ -12,7 +12,6 @@ See GATE/LICENSE.txt for further details
 #ifndef GateSplitManager_h
 #define GateSplitManager_h 1
 #include "globals.hh"
-#include "vector"
 #include "GateToPlatform.hh"
 #include "GateMacfileParser.hh"
 

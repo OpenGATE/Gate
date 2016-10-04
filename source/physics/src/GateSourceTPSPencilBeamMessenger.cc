@@ -5,12 +5,8 @@
   of the GNU Lesser General  Public Licence (LGPL)
   See GATE/LICENSE.txt for further details
   ----------------------*/
-#ifndef GATESOURCETPSPENCILBEAMMESSENGER_CC
-#define GATESOURCETPSPENCILBEAMMESSENGER_CC
 
 #include "GateConfiguration.h"
-
-#ifdef G4ANALYSIS_USE_ROOT
 #include "GateSourceTPSPencilBeamMessenger.hh"
 #include "GateSourceTPSPencilBeam.hh"
 #include "GateUIcmdWithTwoDouble.hh"
@@ -35,6 +31,9 @@
   //Configuration of tests
   cmdName = GetDirectoryName()+"setTestFlag";
   pTestCmd = new G4UIcmdWithABool(cmdName,this);
+  //Temporary configuration of vertex generation method
+  cmdName = GetDirectoryName()+"setOldStyleFlag";
+  pOldStyleCmd = new G4UIcmdWithABool(cmdName,this);
   //Treatment Plan file
   cmdName = GetDirectoryName()+"setPlan";
   pPlanCmd = new G4UIcmdWithAString(cmdName,this);
@@ -74,6 +73,8 @@ GateSourceTPSPencilBeamMessenger::~GateSourceTPSPencilBeamMessenger()
   delete pParticleTypeCmd;
   //Configuration of tests
   delete pTestCmd;
+  //Temporary configuration of vertex generation method
+  delete pOldStyleCmd;
   //Treatment Plan file
   delete pPlanCmd;
   //FlatGenerationFlag
@@ -103,6 +104,8 @@ void GateSourceTPSPencilBeamMessenger::SetNewValue(G4UIcommand* command,G4String
   if (command == pParticleTypeCmd) {pSourceTPSPencilBeam->SetParticleType(newValue);  }
   //Configuration of tests
   if (command == pTestCmd) {pSourceTPSPencilBeam->SetTestFlag(pTestCmd->GetNewBoolValue(newValue)); }
+  //Configuration of tests
+  if (command == pOldStyleCmd) {pSourceTPSPencilBeam->SetOldStyleFlag(pOldStyleCmd->GetNewBoolValue(newValue)); }
   //Treatment Plan file
   if (command == pPlanCmd) {pSourceTPSPencilBeam->SetPlan(newValue);  }
   //Configuration of FlatFlag gene
@@ -122,6 +125,4 @@ void GateSourceTPSPencilBeamMessenger::SetNewValue(G4UIcommand* command,G4String
   //Convergent or divergent beam model
   if (command == pDivergenceCmd) {pSourceTPSPencilBeam->SetBeamConvergence(pDivergenceCmd->GetNewBoolValue(newValue)); }
 }
-#endif
-
-#endif
+// vim: ai sw=2 ts=2 et

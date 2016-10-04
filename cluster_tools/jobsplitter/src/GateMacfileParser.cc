@@ -12,6 +12,20 @@ See GATE/LICENSE.txt for further details
 #include "GateMacfileParser.hh"
 #include <time.h>
 
+#include <iostream> 
+#include <sstream> 
+
+// for log
+#include <cmath>
+// for getenv() and system()
+#include <cstdlib>
+
+using namespace std;
+
+// These were included by I don't know why.
+// #include <sys/types.h>
+// #include <sys/stat.h>
+
 GateMacfileParser::GateMacfileParser(G4String macfileName,G4int numberOfSplits,G4int numberOfAliases,G4String* aliasesPtr)
 {
 	macName=macfileName;
@@ -446,7 +460,7 @@ void GateMacfileParser::DealWithTimeCommands(ofstream& output,G4int splitNumber,
                 }
 		G4String filename = macline.substr(35);
 		// Opening file
-		std::ifstream is;
+		ifstream is;
 		is.open(filename.c_str());
 		if (!is)
 		{
@@ -1014,7 +1028,7 @@ bool GateMacfileParser::TreatOutputStream(G4String key, G4String def, G4String& 
 }
 
 /// Misc functions
-void GateMacfileParser::skipComment(std::istream & is)
+void GateMacfileParser::skipComment(istream & is)
 {
   char c;
   char line[1024];
@@ -1028,10 +1042,10 @@ void GateMacfileParser::skipComment(std::istream & is)
   is.unget();
 }
 
-bool GateMacfileParser::ReadColNameAndUnit(std::istream & is, std::string name, string & unit) {
+bool GateMacfileParser::ReadColNameAndUnit(istream & is, string name, string & unit) {
   skipComment(is);
   // Read name
-  std::string s;
+  string s;
   is >> s;
   if (s != name) {
     for(unsigned int i=0; i<s.size(); i++) is.unget();
