@@ -55,3 +55,7 @@ MACRO(ITK_THIRD_PARTY_SUBDIR upper lower)
     SUBDIRS(${lower})
   ENDIF(NOT ITK_USE_SYSTEM_${upper})
 ENDMACRO(ITK_THIRD_PARTY_SUBDIR)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/itkThirdParty.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/itkThirdParty.h )
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
