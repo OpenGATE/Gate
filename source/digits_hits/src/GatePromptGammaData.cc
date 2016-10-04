@@ -95,6 +95,10 @@ void GatePromptGammaData::Read(std::string & filename)
 {
   mFilename = filename;
   pTfile = new TFile(filename.c_str(),"READ");
+  //ROOT does halt if a file doesnt exist, so we must test
+  if (pTfile->IsZombie()) {
+      GateError("Prompt Gamma database file '" << filename << "' not found. Aborting...");
+  }
 
   // How many material in this file
   TList * l = pTfile->GetListOfKeys();
