@@ -1,0 +1,33 @@
+#=====================================================
+# INITIALISATION
+#=====================================================
+
+/gate/run/initialize
+
+# Enable the following lines to display available and enabled processes
+# /gate/physics/processList Available
+# /gate/physics/processList Enabled
+
+#=====================================================
+# BEAMS
+#=====================================================
+
+/control/execute mac/beam-photon.mac
+
+#=====================================================
+# START BEAMS
+#=====================================================
+
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed auto
+#=====================================================
+# INITIALIZATION and START
+#=====================================================
+/gate/application/setTimeSlice      0.25  s
+/gate/application/setTimeStart      0.    s
+/gate/application/setTimeStop      1.  s
+
+/gate/application/setTotalNumberOfPrimaries 1000000
+/gate/application/startDAQ
+
+
