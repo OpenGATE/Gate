@@ -1,0 +1,5 @@
+# Time (s)  CT file
+0.0 data/p-4mm-00.mhd 
+0.25 data/p-4mm-10.mhd 
+0.7 data/p-4mm-20.mhd 
+1.0 data/p-4mm-30.mhd 
