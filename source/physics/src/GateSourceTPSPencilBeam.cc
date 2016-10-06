@@ -324,6 +324,8 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
               Pencil->SetSigmaPhi(GetSigmaPhi(energy));
               Pencil->SetEllipseYPhiArea(GetEllipseYPhiArea(energy));
               Pencil->SetRotation(rotation);
+              
+              mSpotLayer.push_back(currentLayerID);
 
               //Correlation Position/Direction
               if (mConvergentSource) {
@@ -358,6 +360,7 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
     inFile.close();
 
     mTotalNumberOfSpots = mPencilBeams.size();
+    mTotalNumberOfLayers = mSpotLayer.back();
     if (mTotalNumberOfSpots == 0) {
       GateError("0 spots have been loaded from the file \"" << mPlan << "\" simulation abort!");
     }
@@ -382,6 +385,7 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
   //---------OLD GENERATION - START-----------------------
   int bin = mTotalNumberOfSpots * mDistriGeneral->fire();
   mCurrentSpot = bin;
+  mCurrentLayer = mSpotLayer[mCurrentSpot];
   mPencilBeams[bin]->GenerateVertex(aEvent);
 }
 //---------OLD GENERATION - END-----------------------
@@ -579,6 +583,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
               mSpotWeight.push_back(NbProtons);
               mSpotPosition.push_back(position);
               mSpotRotation.push_back(rotation);
+              mSpotLayer.push_back(currentLayerID);
 
             } else if (mTestFlag) {
               ++nrejected;
@@ -588,6 +593,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
         }
       }
       mTotalNumberOfSpots = mSpotWeight.size();
+      mTotalNumberOfLayers = mSpotLayer.back();
       GateMessage("Beam", 1, "[TPSPencilBeam] Plan description file \"" << mPlan << "\" successfully loaded: " << NbFields << " field(s) with a total of " << mTotalNumberOfSpots << " spots, " << nrejected << " spots rejected." << Gateendl );
     } catch ( const std::runtime_error& oops ){
       GateError("Something went wrong while parsing plan description file \"" << mPlan << "\": " << Gateendl << oops.what() << Gateendl );
@@ -630,6 +636,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
   while ( (mCurrentSpot<mTotalNumberOfSpots) && (mNbProtonsToGenerate[mCurrentSpot] <= 0) ){
     GateMessage("Beam", 4, "[TPSPencilBeam] spot " << mCurrentSpot << " has no protons left to generate." << Gateendl );
     mCurrentSpot++;
+    mCurrentLayer = mSpotLayer[mCurrentSpot];
     need_pencilbeam_config = true;
   }
   if ( mCurrentSpot>=mTotalNumberOfSpots ){
