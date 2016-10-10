@@ -20,6 +20,7 @@ GateNTLEDoseActorMessenger::GateNTLEDoseActorMessenger(GateNTLEDoseActor* sensor
   pEnableDoseCmd = 0;
   pEnableDoseSquaredCmd= 0;
   pEnableDoseUncertaintyCmd= 0;
+  pEnableDoseCorrectionCmd= 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -69,7 +70,7 @@ void GateNTLEDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue
   if (cmd == pEnableDoseCmd) pDoseActor->EnableDoseImage(pEnableDoseCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseSquaredCmd) pDoseActor->EnableDoseSquaredImage(pEnableDoseSquaredCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseUncertaintyCmd) pDoseActor->EnableDoseUncertaintyImage(pEnableDoseUncertaintyCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableDoseCorrectionCmd) pDoseActor->EnableDoseUncertaintyImage(pEnableDoseCorrectionCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableDoseCorrectionCmd) pDoseActor->EnableDoseCorrection(pEnableDoseCorrectionCmd->GetNewBoolValue(newValue));
 
  GateImageActorMessenger::SetNewValue(cmd, newValue);
 }

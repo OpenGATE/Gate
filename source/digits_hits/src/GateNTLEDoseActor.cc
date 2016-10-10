@@ -25,7 +25,7 @@ GateNTLEDoseActor::GateNTLEDoseActor(G4String name, G4int depth):
   pMessenger = new GateNTLEDoseActorMessenger(this);
   mKFHandler = new GateKermaFactorHandler();
 
-  mIsDoseImageEnabled            = true;
+  mIsDoseImageEnabled            = false;
   mIsDoseSquaredImageEnabled     = false;
   mIsDoseUncertaintyImageEnabled = false;
   mIsDoseCorrectionEnabled       = false;
@@ -77,6 +77,14 @@ void GateNTLEDoseActor::Construct() {
     mDoseImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
     mDoseImage.SetOrigin(mOrigin);
   }
+
+  GateMessage("Actor", 1,
+              "NTLE DoseActor    = '" << GetObjectName() << "'\n" <<
+              "\tDose image        = " << mIsDoseImageEnabled << Gateendl <<
+              "\tDose squared      = " << mIsDoseSquaredImageEnabled << Gateendl <<
+              "\tDose uncertainty  = " << mIsDoseUncertaintyImageEnabled << Gateendl <<
+              "\tDose correction   = " << mIsDoseCorrectionEnabled << Gateendl <<
+              "\tDoseFilename      = " << mDoseFilename << Gateendl);
 
   ResetData();
 }
