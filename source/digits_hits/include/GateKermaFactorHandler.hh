@@ -35,12 +35,12 @@ class GateKermaFactorHandler
 
   private:
     double GetKermaFactor(double);
+    double GetPhotonFactor(const G4Material*);
 
     double m_energy;
     double m_cubicVolume;
     double m_distance;
     double m_kerma_factor;
-    double m_h;
 
     const G4Material* m_material;
 };

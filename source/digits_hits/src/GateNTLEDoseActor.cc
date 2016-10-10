@@ -6,7 +6,6 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-
 /*
   \brief Class GateNTLEDoseActor :
   \brief
@@ -14,7 +13,6 @@
 
 #include "GateNTLEDoseActor.hh"
 #include "GateMiscFunctions.hh"
-
 
 #include <G4PhysicalConstants.hh>
 
