@@ -71,6 +71,7 @@ double GateKermaFactorHandler::GetPhotonFactor(const G4Material* eMaterial)
     if(eMaterial->GetElement(i)->GetSymbol() == "H")
     {
 	    factor = 6.022e23 * FractionMass[i] / 1.008;
+	    factor = 1.602e-6 * 3.32e-25 * factor * 2.2 * 1e-8;
       GateMessage("Actor", 9, "Photon correction factor: " << factor << Gateendl);
       return factor;
     }
@@ -79,7 +80,6 @@ double GateKermaFactorHandler::GetPhotonFactor(const G4Material* eMaterial)
   return factor;
 }
 //-----------------------------------------------------------------------------
-
 
 
 //-----------------------------------------------------------------------------
@@ -106,7 +106,6 @@ return kerma_factor;
 //-----------------------------------------------------------------------------
 
 
-
 //-----------------------------------------------------------------------------
 double GateKermaFactorHandler::GetDose()
 {
@@ -119,8 +118,7 @@ double GateKermaFactorHandler::GetDose()
 double GateKermaFactorHandler::GetDoseCorrected()
 {
   if(m_energy <= 0.025*eV)
-    return (GetKermaFactor(m_energy) + 7.13e-16) * m_distance / m_cubicVolume /m*m3;
-    //return (GetKermaFactor(m_energy) + GetPhotonFactor(m_material)) * m_distance / m_cubicVolume /m*m3;
+    return (GetKermaFactor(m_energy) + GetPhotonFactor(m_material)) * m_distance / m_cubicVolume /m*m3;
 
   return GetKermaFactor(m_energy) * m_distance / m_cubicVolume /m*m3;
 }
