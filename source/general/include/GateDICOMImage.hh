@@ -14,6 +14,8 @@ See GATE/LICENSE.txt for further details
           Albertine Dubois (adubois@imnc.in2p3.fr)
   \date	April 2016
 */
+#include "GateConfiguration.h"
+#ifdef  GATE_USE_ITK
 
 #ifndef GATEDICOMIMAGE_HH
 #define GATEDICOMIMAGE_HH
@@ -84,4 +86,5 @@ class GateDICOMImage
 
 #include "GateDICOMImage.icc"
 
+#endif
 #endif
