@@ -413,7 +413,7 @@ typename std::vector<T> parse_N_items_of_type_T(std::string line,int lineno, con
 // * skip all comment lines (lines string with a '#')
 // * skip empty
 // * check that we really get N items of type T from the current line
-// * throw exception with informative error message in case of trouble
+// * throw exception with informDistriGeneralmative error message in case of trouble
 template<typename T, int N>
 typename std::vector<T>  ReadNextContentLine( std::istream& input, int& lineno, const std::string& fname ) {
   while ( input ){
@@ -705,6 +705,9 @@ void GateSourceTPSPencilBeam::ConfigurePencilBeam() {
 
 //------------------------------------------------------------------------------------------------------
 double GateSourceTPSPencilBeam::ConvertMuToProtons(double weight, double energy) {
+  //this function introduces a dependence on energy for the spot intensities.
+  //depending on whether mSpotIntensityAsNbProtons is set, the MSW[MU] or the #protons set by this function are used as a PDF.
+  //mDistriGeneral takes a PDF to compute the number of protons that Gate is actually going to simulate.
   double K=37.60933;
   double SP=9.6139E-09*pow(energy,4)-7.0508E-06*pow(energy,3)+2.0028E-03*pow(energy,2)-2.7615E-01*pow(energy,1)+2.0082E+01*pow(energy,0);
   double PTP=1;
