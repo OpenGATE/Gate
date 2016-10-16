@@ -85,23 +85,20 @@ double GateKermaFactorHandler::GetPhotonFactor(const G4Material* eMaterial)
 //-----------------------------------------------------------------------------
 double GateKermaFactorHandler::GetKermaFactor(double eEnergy)
 {
-  double kerma_factor = 0;
-
-  if (eEnergy/MeV < energy_tableau[0])
-    return kerma_factor_muscle_tableau[0];
+  if (eEnergy/MeV < energy_tableau[0] && eEnergy/MeV >= 1e-10)
+    return 7.011e-21 * std::pow(eEnergy/MeV, -0.466);
 
   for (size_t i=1; i<energy_tableau.size(); i++)
     if (eEnergy/MeV >= energy_tableau[i-1] && eEnergy/MeV < energy_tableau[i])
     {
-      const double s_diff_energy = (eEnergy/MeV)-(energy_tableau[i-1]);
-      const double b_diff_energy = energy_tableau[i]-energy_tableau[i-1];
-      const double diff_kerma_factor = kerma_factor_muscle_tableau[i]-kerma_factor_muscle_tableau[i-1];
+      const double s_diff_energy = (eEnergy/MeV) - (energy_tableau[i-1]);
+      const double b_diff_energy = energy_tableau[i] - energy_tableau[i-1];
+      const double diff_kerma_factor = kerma_factor_muscle_tableau[i] - kerma_factor_muscle_tableau[i-1];
 
-      kerma_factor = ((s_diff_energy * diff_kerma_factor)/b_diff_energy) + kerma_factor_muscle_tableau[i-1];
-      return kerma_factor;
+      return ((s_diff_energy * diff_kerma_factor) / b_diff_energy) + kerma_factor_muscle_tableau[i-1];
     }
 
-return kerma_factor;
+  return 0.;
 }
 //-----------------------------------------------------------------------------
 
