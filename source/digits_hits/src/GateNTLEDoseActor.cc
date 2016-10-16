@@ -16,6 +16,8 @@
 
 #include <G4PhysicalConstants.hh>
 
+#include <TCanvas.h>
+
 //-----------------------------------------------------------------------------
 GateNTLEDoseActor::GateNTLEDoseActor(G4String name, G4int depth):
   GateVImageActor(name, depth) {
@@ -28,6 +30,7 @@ GateNTLEDoseActor::GateNTLEDoseActor(G4String name, G4int depth):
   mIsDoseUncertaintyImageEnabled = false;
   mIsDoseCorrectionEnabled       = false;
   mIsLastHitEventImageEnabled    = false;
+  mIsKermaFactorDumped           = false;
 }
 //-----------------------------------------------------------------------------
 
@@ -35,6 +38,8 @@ GateNTLEDoseActor::GateNTLEDoseActor(G4String name, G4int depth):
 //-----------------------------------------------------------------------------
 GateNTLEDoseActor::~GateNTLEDoseActor() {
   delete pMessenger;
+  if(mIsKermaFactorDumped)
+    delete mg;
 }
 //-----------------------------------------------------------------------------
 
@@ -76,12 +81,19 @@ void GateNTLEDoseActor::Construct() {
     mDoseImage.SetOrigin(mOrigin);
   }
 
+  if (mIsKermaFactorDumped)
+  {
+    mg = new TMultiGraph();
+    mg->SetTitle(";Neutron energy [MeV];Kerma factor [Gy*m^{2}/neutron]");
+  }
+
   GateMessage("Actor", 1,
               "NTLE DoseActor    = '" << GetObjectName() << "'\n" <<
               "\tDose image        = " << mIsDoseImageEnabled << Gateendl <<
               "\tDose squared      = " << mIsDoseSquaredImageEnabled << Gateendl <<
               "\tDose uncertainty  = " << mIsDoseUncertaintyImageEnabled << Gateendl <<
               "\tDose correction   = " << mIsDoseCorrectionEnabled << Gateendl <<
+              "\tDump kerma factor = " << mIsKermaFactorDumped << Gateendl <<
               "\tDoseFilename      = " << mDoseFilename << Gateendl);
 
   ResetData();
@@ -94,6 +106,16 @@ void GateNTLEDoseActor::SaveData() {
   GateVActor::SaveData();
   if (mIsDoseImageEnabled) mDoseImage.SaveData(mCurrentEvent + 1, false);
   if (mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1);
+  if(mIsKermaFactorDumped)
+  {
+    TCanvas* c = new TCanvas();
+    c->SetLogx();
+    c->SetLogy();
+    c->SetGrid();
+    mg->Draw("AP");
+    c->SaveAs((removeExtension(mSaveFilename) + "-KermaFactorDump.root").c_str());
+    c->SaveAs((removeExtension(mSaveFilename) + "-KermaFactorDump.eps").c_str());
+  }
 }
 //-----------------------------------------------------------------------------
 
@@ -102,6 +124,9 @@ void GateNTLEDoseActor::SaveData() {
 void GateNTLEDoseActor::ResetData() {
   if (mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1);
   if (mIsDoseImageEnabled) mDoseImage.Reset();
+  if (mIsKermaFactorDumped){
+    mMaterialList.clear();
+    mg->Clear();}
 }
 //-----------------------------------------------------------------------------
 
@@ -161,6 +186,20 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
       }
       else
         mDoseImage.AddValue(index, dose);
+    }
+
+    if (mIsKermaFactorDumped)
+    {
+      bool found(false);
+      for(size_t i=0; i < mMaterialList.size(); i++)
+        if (mMaterialList[i] == PreStep->GetMaterial()->GetName())
+          found = true;
+
+      if(!found)
+      {
+        mMaterialList.push_back(PreStep->GetMaterial()->GetName());
+        mg->Add(mKFHandler->GetKermaFactorGraph());
+      }
     }
   }
 }

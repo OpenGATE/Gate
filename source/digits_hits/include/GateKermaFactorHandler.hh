@@ -19,6 +19,8 @@
 
 #include <G4Material.hh>
 
+#include <TGraph.h>
+
 class GateKermaFactorHandler
 {
   public:
@@ -32,6 +34,8 @@ class GateKermaFactorHandler
 
     double GetDoseCorrected();
     double GetDose();
+
+    TGraph* GetKermaFactorGraph();
 
   private:
     double GetKermaFactor(double);

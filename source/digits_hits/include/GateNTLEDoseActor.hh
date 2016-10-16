@@ -23,6 +23,8 @@
 
 #include <G4UnitsTable.hh>
 
+#include <TMultiGraph.h>
+
 class GateNTLEDoseActor : public GateVImageActor
 {
 public:
@@ -41,6 +43,7 @@ public:
   void EnableDoseSquaredImage(bool b)     { mIsDoseSquaredImageEnabled = b; }
   void EnableDoseUncertaintyImage(bool b) { mIsDoseUncertaintyImageEnabled = b; }
   void EnableDoseCorrection(bool b)       { mIsDoseCorrectionEnabled = b; }
+  void EnableKermaFactorDump(bool b)      { mIsKermaFactorDumped = b; }
 
   virtual void BeginOfRunAction(const G4Run*);
   virtual void BeginOfEventAction(const G4Event*);
@@ -77,8 +80,13 @@ protected:
   bool mIsDoseUncertaintyImageEnabled;
   bool mIsDoseCorrectionEnabled;
   bool mIsLastHitEventImageEnabled;
+  bool mIsKermaFactorDumped;
 
   int mCurrentEvent;
+
+  std::vector<G4String> mMaterialList;
+
+  TMultiGraph* mg;
 };
 
 MAKE_AUTO_CREATOR_ACTOR(NTLEDoseActor,GateNTLEDoseActor)

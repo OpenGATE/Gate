@@ -18,9 +18,10 @@ GateNTLEDoseActorMessenger::GateNTLEDoseActorMessenger(GateNTLEDoseActor* sensor
    pDoseActor(sensor)
 {
   pEnableDoseCmd = 0;
-  pEnableDoseSquaredCmd= 0;
-  pEnableDoseUncertaintyCmd= 0;
-  pEnableDoseCorrectionCmd= 0;
+  pEnableDoseSquaredCmd = 0;
+  pEnableDoseUncertaintyCmd = 0;
+  pEnableDoseCorrectionCmd = 0;
+  pEnableKermaFactorDumpCmd = 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -34,6 +35,7 @@ GateNTLEDoseActorMessenger::~GateNTLEDoseActorMessenger()
   if(pEnableDoseSquaredCmd) delete pEnableDoseSquaredCmd;
   if(pEnableDoseUncertaintyCmd) delete pEnableDoseUncertaintyCmd;
   if(pEnableDoseCorrectionCmd) delete pEnableDoseCorrectionCmd;
+  if(pEnableKermaFactorDumpCmd) delete pEnableKermaFactorDumpCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -60,6 +62,11 @@ void GateNTLEDoseActorMessenger::BuildCommands(G4String base)
   pEnableDoseCorrectionCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable dose correction computation");
   pEnableDoseCorrectionCmd->SetGuidance(guid);
+
+  n = base+"/enableKermaFactorDump";
+  pEnableKermaFactorDumpCmd = new G4UIcmdWithABool(n, this);
+  guid = G4String("Enable kerma factor graph dump");
+  pEnableKermaFactorDumpCmd->SetGuidance(guid);
 }
 //-----------------------------------------------------------------------------
 
@@ -71,6 +78,7 @@ void GateNTLEDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue
   if (cmd == pEnableDoseSquaredCmd) pDoseActor->EnableDoseSquaredImage(pEnableDoseSquaredCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseUncertaintyCmd) pDoseActor->EnableDoseUncertaintyImage(pEnableDoseUncertaintyCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseCorrectionCmd) pDoseActor->EnableDoseCorrection(pEnableDoseCorrectionCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableKermaFactorDumpCmd) pDoseActor->EnableKermaFactorDump(pEnableKermaFactorDumpCmd->GetNewBoolValue(newValue));
 
  GateImageActorMessenger::SetNewValue(cmd, newValue);
 }

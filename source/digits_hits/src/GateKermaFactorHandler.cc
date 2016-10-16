@@ -120,3 +120,23 @@ double GateKermaFactorHandler::GetDoseCorrected()
   return GetKermaFactor(m_energy) * m_distance / m_cubicVolume /m*m3;
 }
 //-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+TGraph* GateKermaFactorHandler::GetKermaFactorGraph()
+{
+  GateMessage("Actor", 5, "GateKermaFactorHandler -- Begin of GetKermaFactorGraph\n");
+  TGraph* g = new TGraph();
+  g->SetTitle((m_material->GetName()+";Neutron energy [MeV];Kerma factor [Gy*m^{2}/neutron]").c_str());
+  g->SetMarkerStyle(kFullCircle);
+  unsigned n(0);
+  for (double i= 1e-10; i <= 2.9e1; i=i*10)
+  {
+    GateMessage("Actor", 5, "i = " << i << "\n");
+    g->SetPoint(n,i,GetKermaFactor(i*MeV));
+    n++;
+  }
+  GateMessage("Actor", 5, "GateKermaFactorHandler -- End of GetKermaFactorGraph\n");
+  return g;
+}
+//-----------------------------------------------------------------------------
