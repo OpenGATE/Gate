@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+ Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+ This software is distributed under the terms
+ of the GNU Lesser General  Public Licence (LGPL)
+ See GATE/LICENSE.txt for further details
+ ----------------------*/
 
 #ifndef GateARFSDMessenger_h
 #define GateARFSDMessenger_h 1
@@ -25,24 +25,19 @@ class G4UIcmdWith3VectorAndUnit;
 class GateARFSD;
 
 class GateARFSDMessenger: public GateMessenger
-{
-  public:
+  {
+public:
+  GateARFSDMessenger(GateARFSD* ARFSD);
+  virtual ~GateARFSDMessenger();
 
-    GateARFSDMessenger(GateARFSD* ARFSD);
-    virtual ~GateARFSDMessenger();
-    
-    //! UI command interpreter method
-    void SetNewValue(G4UIcommand*, G4String);
+  //! UI command interpreter method
+  void SetNewValue(G4UIcommand*, G4String);
 
-
-
-  protected:
-
- GateARFSD* m_ARFSD;
-
- G4UIcmdWithADoubleAndUnit* setDepth; 
- G4UIcmdWithADoubleAndUnit* setEThreshHoldcmd;
- };
+protected:
+  GateARFSD* mArfSD;
+  G4UIcmdWithADoubleAndUnit* mSetDepth;
+  G4UIcmdWithADoubleAndUnit* mSetEThreshHoldcmd;
+  };
 
 #endif
 

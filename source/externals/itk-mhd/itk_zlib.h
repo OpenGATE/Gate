@@ -1,10 +1,10 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    itk_zlib.h
+  Module:    $RCSfile: itk_zlib.h,v $
   Language:  C++
-  Date:      $Date$
-  Version:   $Revision$
+  Date:      $Date: 2006-09-28 13:11:06 $
+  Version:   $Revision: 1.1 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -17,15 +17,15 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itk_zlib_h
-#define __itk_zlib_h
+#ifndef itk_zlib_h
+#define itk_zlib_h
 
 /* Use the zlib library configured for ITK.  */
-//#include "itkThirdParty.h"
-//#ifdef ITK_USE_SYSTEM_ZLIB
-//# include <zlib.h>
-//#else
+#include "itkThirdParty.h"
+#ifdef ITK_USE_SYSTEM_ZLIB
+# include <zlib.h>
+#else
 # include <itkzlib/zlib.h>
-//#endif
+#endif
 
 #endif

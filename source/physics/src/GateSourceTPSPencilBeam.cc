@@ -20,21 +20,22 @@
 //Corrected angle calculation to be conform with DICOM standards
 //Corrected energy distribution to conform to expected behaviour and publication
 
-#ifndef GATESOURCETPSPENCILBEAM_CC
-#define GATESOURCETPSPENCILBEAM_CC
-
-// #include <algorithm>
 #include "GateConfiguration.h"
-
-#ifdef G4ANALYSIS_USE_ROOT
 #include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+#include <iomanip>
+#include <iterator>
+#include <exception>
 #include <sstream>
 #include "GateSourceTPSPencilBeam.hh"
 #include "G4Proton.hh"
 #include "GateMiscFunctions.hh"
+#include "GateApplicationMgr.hh"
 
 //------------------------------------------------------------------------------------------------------
-GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( name ), mDistriGeneral(NULL)
+GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( name ), mPencilBeam(NULL), mDistriGeneral(NULL)
 {
 
   strcpy(mParticleType,"proton");
@@ -42,6 +43,7 @@ GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( na
   mDistanceSMYToIsocenter=1000;
   mDistanceSourcePatient=500;
   pMessenger = new GateSourceTPSPencilBeamMessenger(this);
+  mOldStyleFlag=false;
   mTestFlag=false;
   mCurrentParticleNumber=0;
   mCurrentSpot=0;
@@ -52,6 +54,7 @@ GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( na
   mConvergentSource=false;
   mSelectedLayerID = -1; // all layer selected by default
   mSelectedSpot = -1; // all spots selected by default
+  mTotalNbProtons = 0.;
 }
 //------------------------------------------------------------------------------------------------------
 
@@ -62,12 +65,20 @@ GateSourceTPSPencilBeam::~GateSourceTPSPencilBeam() {
   //  for (int i=0; i<mPencilBeams.size(); i++)  { delete mPencilBeams[i]; }
   //FIXME segfault when uncommented
   //if (mDistriGeneral) delete mDistriGeneral;
+  // maybe we should delete mPencilBeam, maybe not...
 }
 //------------------------------------------------------------------------------------------------------
 
+void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
+  if (mOldStyleFlag) {
+    this->OldGenerateVertex(aEvent);
+  } else {
+    this->NewGenerateVertex(aEvent);
+  }
+}
 
 //------------------------------------------------------------------------------------------------------
-void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
+void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
 
   if (!mIsInitialized) {
     // get GATE random engine
@@ -76,8 +87,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
     //---------INITIALIZATION - START----------------------
     mIsInitialized = true;
 
-    const int MAXLINE = 256;
-    char oneline[MAXLINE];
+    std::string oneline;
     int NbFields, FieldID, TotalMeterSet, NbOfLayers;
     double GantryAngle;
     double CouchAngle;
@@ -92,7 +102,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
 
     if (mIsASourceDescriptionFile) {
       LoadClinicalBeamProperties();
-      GateMessage("Physic", 1, "[TPSPencilBeam] Source description file successfully loaded.\n");
+      GateMessage("Beam", 1, "[TPSPencilBeam] Source description file successfully loaded." << Gateendl);
     } else {
       GateError("No clinical beam loaded !");
     }
@@ -104,39 +114,39 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
 
     // integrating the plan description file data
     while (inFile && again) {
-      for (int i = 0; i < 9; i++) inFile.getline(oneline, MAXLINE);
-      NbFields = atoi(oneline);
-      for (int i = 0; i < 2 * NbFields; i++) inFile.getline(oneline, MAXLINE);
-      for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
-      TotalMeterSet = atoi(oneline);
+      for (int i = 0; i < 9; i++) std::getline(inFile,oneline);
+      NbFields = atoi(oneline.c_str());
+      for (int i = 0; i < 2 * NbFields; i++) std::getline(inFile,oneline);
+      for (int i = 0; i < 2; i++) std::getline(inFile,oneline);
+      TotalMeterSet = atoi(oneline.c_str());
 
       for (int f = 0; f < NbFields; f++) {
-        for (int i = 0; i < 4; i++) inFile.getline(oneline, MAXLINE);
-        FieldID = atoi(oneline);
+        for (int i = 0; i < 4; i++) std::getline(inFile,oneline);
+        FieldID = atoi(oneline.c_str());
 
-        for (int i = 0; i < 4; i++) inFile.getline(oneline, MAXLINE);
-        GantryAngle = deg2rad(atof(oneline));
+        for (int i = 0; i < 4; i++) std::getline(inFile,oneline);
+        GantryAngle = deg2rad(atof(oneline.c_str()));
 
         //MISSING COUCH ANGLE inserted
-        for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
-        CouchAngle = deg2rad(atof(oneline));
+        for (int i = 0; i < 2; i++) std::getline(inFile,oneline);
+        CouchAngle = deg2rad(atof(oneline.c_str()));
 
-        for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
+        for (int i = 0; i < 2; i++) std::getline(inFile,oneline);
         ReadLineTo3Doubles(IsocenterPosition, oneline);
-        for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
-        NbOfLayers = atoi(oneline);
-        for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
+        for (int i = 0; i < 2; i++) std::getline(inFile,oneline);
+        NbOfLayers = atoi(oneline.c_str());
+        for (int i = 0; i < 2; i++) std::getline(inFile,oneline);
 
         for (int j = 0; j < NbOfLayers; j++) {
-          for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
-          int currentLayerID = atoi(oneline); // ControlPointIndex
+          for (int i = 0; i < 2; i++) std::getline(inFile,oneline);
+          int currentLayerID = atoi(oneline.c_str()); // ControlPointIndex
 
-          for (int i = 0; i < 6; i++) inFile.getline(oneline, MAXLINE);
-          double energy = atof(oneline);
+          for (int i = 0; i < 6; i++) std::getline(inFile,oneline);
+          double energy = atof(oneline.c_str());
 
-          for (int i = 0; i < 2; i++) inFile.getline(oneline, MAXLINE);
-          int NbOfSpots = atof(oneline);
-          for (int i = 0; i < 1; i++) inFile.getline(oneline, MAXLINE);
+          for (int i = 0; i < 2; i++) std::getline(inFile,oneline);
+          int NbOfSpots = atof(oneline.c_str());
+          for (int i = 0; i < 1; i++) std::getline(inFile,oneline);
 
           if (mTestFlag) {
             G4cout << "TESTREAD NbFields " << NbFields << Gateendl;
@@ -148,7 +158,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
             G4cout << "TESTREAD NbOfSpots " << NbOfSpots << Gateendl;
           }
           for (int k = 0; k < NbOfSpots; k++) {
-            inFile.getline(oneline, MAXLINE);
+            std::getline(inFile,oneline);
             double SpotParameters[3];
             ReadLineTo3Doubles(SpotParameters, oneline);
             if (mTestFlag) {
@@ -343,7 +353,7 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
         }
       }
       again = false;
-      GateMessage("Physic", 1, "[TPSPencilBeam] Plan description file successfully loaded.\n");
+      GateMessage("Beam", 1, "[TPSPencilBeam] Plan description file successfully loaded." << Gateendl);
     }
     inFile.close();
 
@@ -352,8 +362,8 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
       GateError("0 spots have been loaded from the file \"" << mPlan << "\" simulation abort!");
     }
 
-    GateMessage("Physic", 1, "[TPSPencilBeam] Starting particle generation:  "
-                << mTotalNumberOfSpots << " spots loaded.\n");
+    GateMessage("Beam", 1, "[TPSPencilBeam] Starting particle generation:  "
+                << mTotalNumberOfSpots << " spots loaded." << Gateendl );
     mPDF = new double[mTotalNumberOfSpots];
     for (int i = 0; i < mTotalNumberOfSpots; i++) {
       // it is strongly adviced to set mFlatGenerationFlag=false
@@ -369,12 +379,322 @@ void GateSourceTPSPencilBeam::GenerateVertex( G4Event *aEvent ) {
 
     //---------INITIALIZATION - END-----------------------
   }
-  //---------GENERATION - START-----------------------
+  //---------OLD GENERATION - START-----------------------
   int bin = mTotalNumberOfSpots * mDistriGeneral->fire();
   mCurrentSpot = bin;
   mPencilBeams[bin]->GenerateVertex(aEvent);
 }
+//---------OLD GENERATION - END-----------------------
+
+template<typename T, int N>
+typename std::vector<T> parse_N_items_of_type_T(std::string line,int lineno, const std::string& fname){
+    std::istringstream sin(line);
+    typename std::istream_iterator<T> eos;
+    typename std::istream_iterator<T> isd(sin);
+    typename std::vector<T> vecT(N);
+    typename std::vector<T>::iterator endT = std::copy(isd,eos,vecT.begin());
+    size_t nread = endT - vecT.begin();
+    if (nread != N){
+        std::ostringstream errMsg;
+        errMsg << "wrong number of items ("
+               << nread << ") on line " << lineno << " of " << fname
+               << "; expected " << N << " item(s) of type " << typeid(T).name()<< std::endl;
+        throw std::runtime_error(errMsg.str());
+    }
+    return vecT;
+}
+
+
+// Function to read the next content line
+// * skip all comment lines (lines string with a '#')
+// * skip empty
+// * check that we really get N items of type T from the current line
+// * throw exception with informative error message in case of trouble
+template<typename T, int N>
+typename std::vector<T>  ReadNextContentLine( std::istream& input, int& lineno, const std::string& fname ) {
+  while ( input ){
+    std::string line;
+    std::getline(input,line);
+    ++lineno;
+    if (line.empty()) continue;
+    if (line[0]=='#') continue;
+    return parse_N_items_of_type_T<T,N>(line,lineno,fname);
+  }
+  throw std::runtime_error(std::string("reached end of file")+fname+std::string("unexpectedly"));
+}
+
+
+//------------------------------------------------------------------------------------------------------
+void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
+
+  bool need_pencilbeam_config = false;
+  if (!mIsInitialized) {
+    GateMessage("Beam", 1, "[TPSPencilBeam] Going to try loading the PBS plan description." << Gateendl );
+    // get GATE random engine
+    CLHEP::HepRandomEngine *engine = GateRandomEngine::GetInstance()->GetRandomEngine();
+    // the "false" means -> do not create messenger (memory gain)
+    mPencilBeam = new GateSourcePencilBeam("PencilBeam", false);
+
+
+    //---------INITIALIZATION - START----------------------
+    mIsInitialized = true;
+
+    double NbProtons = 0.; // actually: spot weight
+
+    if (mSelectedLayerID != -1 && mSelectedLayerID%2 == 1){
+      GateError("Invalid LayerID selected! Select the first ControlPointIndex of a pair (an even number).");
+    }
+
+    if (mIsASourceDescriptionFile) {
+      LoadClinicalBeamProperties();
+      GateMessage("Beam", 1, "[TPSPencilBeam] Source description file successfully loaded." << Gateendl );
+    } else {
+      GateError("No clinical beam loaded !");
+    }
+
+    std::ifstream inFile(mPlan);
+    if (! inFile) {
+      GateError("Cannot open Treatment plan file!");
+    }
+
+    // integrating the plan description file data
+    try {
+      int lineno = 0;
+      std::string dummy_PlanName = ReadNextContentLine<std::string,1>(inFile,lineno,mPlan)[0];
+      int dummy_NbOfFractions = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0]; // not used
+      std::string dummy_FractionID = ReadNextContentLine<std::string,1>(inFile,lineno,mPlan)[0]; // not used
+      if ( dummy_NbOfFractions != 1){
+        GateMessage("Beam",0,"WARNING: nb of fractions is assumed to be 1, but plan file says: " << dummy_NbOfFractions << " and fractionID=" << dummy_FractionID << Gateendl);
+      }
+      int NbFields = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0];
+      for (int f = 0; f < NbFields; f++) {
+        // field IDs, not used
+        int dummy_fieldID = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0];
+        GateMessage("Beam",4,"Field ID " << dummy_fieldID << Gateendl );
+      }
+      double TotalMeterSet = ReadNextContentLine<double,1>(inFile,lineno,mPlan)[0];
+      int nrejected = 0; // number of spots rejected based on layer/spot selection configuration
+      for (int f = 0; f < NbFields; f++) {
+        int FieldID = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0];
+        double MeterSetWeight = ReadNextContentLine<double,1>(inFile,lineno,mPlan)[0];
+        GateMessage("Beam",4,"TODO: check that total MSW for this field is indeed " << MeterSetWeight << Gateendl );
+        double GantryAngle = deg2rad(ReadNextContentLine<double,1>(inFile,lineno,mPlan)[0]);
+        double CouchAngle = deg2rad(ReadNextContentLine<double,1>(inFile,lineno,mPlan)[0]);
+        std::vector<double> IsocenterPosition = ReadNextContentLine<double,3>(inFile,lineno,mPlan);
+        int NbOfLayers = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0];
+        for (int j = 0; j < NbOfLayers; j++) {
+          int currentLayerID = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0];
+          std::string dummy_spotID = ReadNextContentLine<std::string,1>(inFile,lineno,mPlan)[0];
+          GateMessage("Beam",4,"spot ID " << dummy_spotID << Gateendl );
+          int dummy_cumulative_msw = ReadNextContentLine<double,1>(inFile,lineno,mPlan)[0];
+          GateMessage("Beam",4,"cumulative MSW = " << dummy_cumulative_msw << Gateendl );
+          double energy = ReadNextContentLine<double,1>(inFile,lineno,mPlan)[0];
+          int NbOfSpots = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0];
+          if (mTestFlag) {
+            GateMessage( "Beam", 1, "TESTREAD NbFields " << NbFields << Gateendl );
+            GateMessage( "Beam", 1, "TESTREAD TotalMeterSet " << TotalMeterSet << Gateendl );
+            GateMessage( "Beam", 1, "TESTREAD FieldID " << FieldID << Gateendl );
+            GateMessage( "Beam", 1, "TESTREAD GantryAngle " << GantryAngle << Gateendl );
+            GateMessage( "Beam", 1, "TESTREAD CouchAngle " << CouchAngle << Gateendl );
+            GateMessage( "Beam", 1, "TESTREAD Layers No. " << j << Gateendl );
+            GateMessage( "Beam", 1, "TESTREAD NbOfSpots " << NbOfSpots << Gateendl );
+          }
+          for (int k = 0; k < NbOfSpots; k++) {
+            std::vector<double> SpotParameters = ReadNextContentLine<double,3>(inFile,lineno,mPlan);
+            if (mTestFlag) {
+              GateMessage( "Beam", 1, "TESTREAD Spot No. " << k << "    parameters: "
+                                      << SpotParameters[0] << " "
+                                      << SpotParameters[1] << " "
+                                      << SpotParameters[2] << Gateendl);
+            }
+
+            // Brent 2014-02-19: This check is in an inner loop, but with good reason: we're in the parsing stage.
+            // Rewrote to work also with AllowedFields.
+            bool allowedField = true;
+            // if mNotAllowedFields was set, then check if FieldID was NotAllowed
+            if (!mNotAllowedFields.empty()) if ( std::count(mNotAllowedFields.begin(), mNotAllowedFields.end(), FieldID) >  0 ) allowedField = false;
+            // if mAllowedFields was set, then check if FieldID was not Allowed.
+            if (!mAllowedFields.empty()   ) if ( std::count(mAllowedFields.begin()   , mAllowedFields.end()   , FieldID) == 0 ) allowedField = false;
+
+
+            bool allowedLayer = true;
+            if ((mSelectedLayerID != -1) && (currentLayerID != mSelectedLayerID)) allowedLayer = false;
+
+            bool allowedSpot = true;
+            if ((mSelectedSpot != -1) && (k != mSelectedSpot)) allowedSpot = false;
+
+            // Skip empty spots
+            if (SpotParameters[2] == 0) allowedSpot = false;
+
+            if (allowedField && allowedLayer && allowedSpot) { // loading the spots only for allowed fields
+
+              //POSITION
+              // To calculate the beam position with a gantry angle
+              G4ThreeVector position;
+              position[0] = SpotParameters[0] * (mDistanceSMXToIsocenter - mDistanceSourcePatient) / mDistanceSMXToIsocenter;
+              position[1] = SpotParameters[1] * (mDistanceSMYToIsocenter - mDistanceSourcePatient) / mDistanceSMYToIsocenter;
+              position[2] = mDistanceSourcePatient;
+              //correct orientation problem by rotation 90 degrees around x-Axis
+              double xCorrection = halfpi; // 90.*TMath::Pi() / 180.;
+              position.rotateX(xCorrection - CouchAngle);
+              //include gantry rotation
+              position.rotateZ(GantryAngle);
+
+              if (mTestFlag) {
+                GateMessage( "Beam", 1, "TESTREAD Spot Effective source position " << position[0] << " " << position[1] << " " << position[2] << Gateendl );
+                GateMessage( "Beam", 1, "TESTREAD IsocenterPosition " << IsocenterPosition[0] << " " << IsocenterPosition[1] << " " << IsocenterPosition[2] << Gateendl );
+                GateMessage( "Beam", 1, "TESTREAD NbOfLayers " << NbOfLayers << Gateendl );
+              }
+
+              //DIRECTION
+              // To calculate the 3 required rotation angles to rotate the beam according to the direction set in the TPS
+              G4ThreeVector rotation, direction, test;
+
+              rotation[0] = -xCorrection; //270 degrees
+
+              // deltaY in the patient plan
+              double y = atan(SpotParameters[1] / mDistanceSMYToIsocenter);
+              rotation[0] += y;
+              // deltaX in the patient plan
+              double x = -atan(SpotParameters[0] / mDistanceSMXToIsocenter);
+              double z = 0.;
+              rotation[1] = sin(CouchAngle) * (x) + cos(CouchAngle) * z;
+              // no gantry head rotation
+              rotation[2] = cos(CouchAngle) * (x) + sin(CouchAngle) * z;
+              //set gantry angle rotation
+              rotation[2] += GantryAngle; //+CouchAngle;
+              rotation[0] += -CouchAngle; //-couchAngle
+
+              if (mTestFlag) {
+                GateMessage( "Beam", 1, "TESTREAD source rotation " << rotation[0] << " " << rotation[1] << " " << rotation[2] << Gateendl );
+              }
+
+              if (mSpotIntensityAsNbProtons) {
+                NbProtons = SpotParameters[2];
+              } else {
+                NbProtons = ConvertMuToProtons(SpotParameters[2], GetEnergy(energy));
+              }
+              mTotalNbProtons += NbProtons;
+              mSpotEnergy.push_back(energy);
+              mSpotWeight.push_back(NbProtons);
+              mSpotPosition.push_back(position);
+              mSpotRotation.push_back(rotation);
+
+            } else if (mTestFlag) {
+              ++nrejected;
+              GateMessage("Beam",1,"Rejected spot nr " << k << " for energy=" << energy << " MeV, layer " << j << " in field=" << f << " lineno=" << lineno << Gateendl );
+            }
+          }
+        }
+      }
+      mTotalNumberOfSpots = mSpotWeight.size();
+      GateMessage("Beam", 1, "[TPSPencilBeam] Plan description file \"" << mPlan << "\" successfully loaded: " << NbFields << " field(s) with a total of " << mTotalNumberOfSpots << " spots, " << nrejected << " spots rejected." << Gateendl );
+    } catch ( const std::runtime_error& oops ){
+      GateError("Something went wrong while parsing plan description file \"" << mPlan << "\": " << Gateendl << oops.what() << Gateendl );
+    }
+    inFile.close();
+
+    if (mTotalNumberOfSpots == 0) {
+      GateError("0 spots have been loaded from the file \"" << mPlan << "\" simulation abort!");
+    }
+
+    mPDF = new double[mTotalNumberOfSpots];
+    if (mFlatGenerationFlag) {
+      GateMessage("Beam", 0, "WARNING [TPSPencilBeam]: flat generation flag is ON (not recommended for patient simulation)" << Gateendl);
+    }
+    for (int i = 0; i < mTotalNumberOfSpots; i++) {
+      // it is strongly adviced to set mFlatGenerationFlag=false
+      // a few test demonstrated a lot more efficiency for "real field like" simulation in patients.
+      if (mFlatGenerationFlag) {
+        mPDF[i] = 1;
+      } else {
+        mPDF[i] = mSpotWeight[i];
+      }
+    }
+    mDistriGeneral = new RandGeneral(engine, mPDF, mTotalNumberOfSpots, 0);
+    mNbProtonsToGenerate.resize(mTotalNumberOfSpots,0);
+    long int ntotal = GateApplicationMgr::GetInstance()->GetTotalNumberOfPrimaries();
+    for (long int i = 0; i<ntotal; i++){
+      int bin = mTotalNumberOfSpots * mDistriGeneral->fire();
+      ++mNbProtonsToGenerate[bin];
+    }
+    for (int i = 0; i < mTotalNumberOfSpots; i++) {
+      GateMessage("Beam", 3, "[TPSPencilBeam] bin " << std::setw(5) << i << ": spotweight=" << std::setw(8) << mPDF[i] << ", Ngen=" << mNbProtonsToGenerate[i] << Gateendl );
+    }
+    need_pencilbeam_config = true;
+    GateMessage("Beam", 1, "[TPSPencilBeam] Plan description file successfully loaded." << Gateendl );
+
+    //---------INITIALIZATION - END-----------------------
+  }
+  //---------GENERATION - START-----------------------
+  while ( (mCurrentSpot<mTotalNumberOfSpots) && (mNbProtonsToGenerate[mCurrentSpot] <= 0) ){
+    GateMessage("Beam", 4, "[TPSPencilBeam] spot " << mCurrentSpot << " has no protons left to generate." << Gateendl );
+    mCurrentSpot++;
+    need_pencilbeam_config = true;
+  }
+  if ( mCurrentSpot>=mTotalNumberOfSpots ){
+    GateError("Too many primary vertex requests!");
+  }
+  if ( need_pencilbeam_config ){
+    GateMessage("Beam", 4, "[TPSPencilBeam] configuring pencil beam for spot " << mCurrentSpot
+        << ", to generate " << mNbProtonsToGenerate[mCurrentSpot] << " protons." << Gateendl );
+    ConfigurePencilBeam();
+  }
+  mPencilBeam->GenerateVertex(aEvent);
+  --mNbProtonsToGenerate[mCurrentSpot];
+}
 //---------GENERATION - END-----------------------
+
+void GateSourceTPSPencilBeam::ConfigurePencilBeam() {
+  double energy = mSpotEnergy[mCurrentSpot];
+  //Particle Type
+  mPencilBeam->SetParticleType(mParticleType);
+  //Energy
+  mPencilBeam->SetEnergy(GetEnergy(energy));
+  mPencilBeam->SetSigmaEnergy(GetSigmaEnergy(energy));
+  //Weight
+  if (mFlatGenerationFlag) {
+    mPencilBeam->SetWeight(mSpotWeight[mCurrentSpot]);
+  } else {
+    mPencilBeam->SetWeight(1.);
+  }
+  //Position
+  mPencilBeam->SetPosition(mSpotPosition[mCurrentSpot]);
+  mPencilBeam->SetSigmaX(GetSigmaX(energy));
+  mPencilBeam->SetSigmaY(GetSigmaY(energy));
+  //Direction
+  mPencilBeam->SetSigmaTheta(GetSigmaTheta(energy));
+  mPencilBeam->SetEllipseXThetaArea(GetEllipseXThetaArea(energy));
+  mPencilBeam->SetSigmaPhi(GetSigmaPhi(energy));
+  mPencilBeam->SetEllipseYPhiArea(GetEllipseYPhiArea(energy));
+  mPencilBeam->SetRotation(mSpotRotation[mCurrentSpot]);
+
+  //Correlation Position/Direction
+  if (mConvergentSource) {
+    mPencilBeam->SetEllipseXThetaRotationNorm("positive");   // convergent beam
+    mPencilBeam->SetEllipseYPhiRotationNorm("positive"); // convergent beam
+  } else {
+    mPencilBeam->SetEllipseXThetaRotationNorm("negative");   // divergent beam
+    mPencilBeam->SetEllipseYPhiRotationNorm("negative"); // divergent beam
+  }
+  mPencilBeam->SetTestFlag(mTestFlag);
+
+  if (mTestFlag) {
+    GateMessage("Beam", 1, "Configuration of spot No. " << mCurrentSpot << " (out of " << mTotalNumberOfSpots << ")" << Gateendl);
+    GateMessage("Beam", 1, "Energy\t" << energy << Gateendl);
+    GateMessage("Beam", 1, "Spot weight (\"expected number of protons\")\t" << mSpotWeight[mCurrentSpot] << Gateendl);
+    GateMessage("Beam", 1, "Number of protons to generate\t" << mNbProtonsToGenerate[mCurrentSpot] << Gateendl);
+    GateMessage("Beam", 1, "Total Spot weight\t" << mTotalNbProtons << Gateendl);
+    GateMessage("Beam", 1, "SetEnergy\t" << GetEnergy(energy) << Gateendl);
+    GateMessage("Beam", 1, "SetSigmaEnergy\t" << GetSigmaEnergy(energy) << Gateendl);
+    GateMessage("Beam", 1, "SetSigmaX\t" << GetSigmaX(energy) << Gateendl);
+    GateMessage("Beam", 1, "SetSigmaY\t" << GetSigmaY(energy) << Gateendl);
+    GateMessage("Beam", 1, "SetSigmaTheta\t" << GetSigmaTheta(energy) << Gateendl);
+    GateMessage("Beam", 1, "SetSigmaPhi\t" << GetSigmaPhi(energy) << Gateendl);
+    GateMessage("Beam", 1, "SetEllipseXThetaArea\t" << GetEllipseXThetaArea(energy) << Gateendl);
+    GateMessage("Beam", 1, "SetEllipseYPhiArea\t" << GetEllipseYPhiArea(energy) << Gateendl);
+  }
+}
 
 //------------------------------------------------------------------------------------------------------
 double GateSourceTPSPencilBeam::ConvertMuToProtons(double weight, double energy) {
@@ -389,8 +709,7 @@ double GateSourceTPSPencilBeam::ConvertMuToProtons(double weight, double energy)
 //------------------------------------------------------------------------------------------------------
 void GateSourceTPSPencilBeam::LoadClinicalBeamProperties() {
 
-  const int MAXLINE=256;
-  char oneline[MAXLINE];
+  std::string oneline;
   int PolOrder;
 
   std::ifstream inFile(mSourceDescriptionFile);
@@ -398,110 +717,110 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties() {
     GateError("Cannot open source description file!");
   }
 
-  for (int i=0; i<4; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<4; i++) std::getline(inFile,oneline);
   // distance source patient
-  mDistanceSourcePatient=atof(oneline);
+  mDistanceSourcePatient=atof(oneline.c_str());
 
-  for (int i=0; i<2; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<2; i++) std::getline(inFile,oneline);
   // distance SMX patient
-  mDistanceSMXToIsocenter=atof(oneline);
+  mDistanceSMXToIsocenter=atof(oneline.c_str());
 
-  for (int i=0; i<2; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<2; i++) std::getline(inFile,oneline);
   // distance SMY patient
-  mDistanceSMYToIsocenter=atof(oneline);
+  mDistanceSMYToIsocenter=atof(oneline.c_str());
 
-  for (int i=0; i<5; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<5; i++) std::getline(inFile,oneline);
   // Energy
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mEnergy.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mEnergy.push_back(atof(oneline));
+      std::getline(inFile,oneline);
+    mEnergy.push_back(atof(oneline.c_str()));
   }
 
-  for (int i=0; i<4; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<4; i++) std::getline(inFile,oneline);
   // Energy
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mEnergySpread.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mEnergySpread.push_back(atof(oneline));
+    std::getline(inFile,oneline);
+    mEnergySpread.push_back(atof(oneline.c_str()));
   }
 
-  for (int i=0; i<5; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<5; i++) std::getline(inFile,oneline);
   // X
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mX.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mX.push_back(atof(oneline));
+    std::getline(inFile,oneline);
+    mX.push_back(atof(oneline.c_str()));
   }
 
-  for (int i=0; i<3; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<3; i++) std::getline(inFile,oneline);
   // Theta
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mTheta.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mTheta.push_back(atof(oneline));
+    std::getline(inFile,oneline);
+    mTheta.push_back(atof(oneline.c_str()));
   }
 
-  for (int i=0; i<3; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<3; i++) std::getline(inFile,oneline);
   // Y
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mY.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mY.push_back(atof(oneline));
+    std::getline(inFile,oneline);
+    mY.push_back(atof(oneline.c_str()));
   }
 
-  for (int i=0; i<3; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<3; i++) std::getline(inFile,oneline);
   // Phi
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mPhi.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mPhi.push_back(atof(oneline));
+    std::getline(inFile,oneline);
+    mPhi.push_back(atof(oneline.c_str()));
   }
 
-  for (int i=0; i<5; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<5; i++) std::getline(inFile,oneline);
   // Emittance X Theta
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mXThetaEmittance.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mXThetaEmittance.push_back(atof(oneline));
+    std::getline(inFile,oneline);
+    mXThetaEmittance.push_back(atof(oneline.c_str()));
   }
 
-  for (int i=0; i<3; i++) inFile.getline(oneline, MAXLINE);
+  for (int i=0; i<3; i++) std::getline(inFile,oneline);
   // Emittance Y Phi
-  PolOrder=atoi(oneline);
+  PolOrder=atoi(oneline.c_str());
   mYPhiEmittance.push_back(PolOrder);
-  inFile.getline(oneline, MAXLINE);
+  std::getline(inFile,oneline);
   for (int i=0; i<=PolOrder; i++) {
-    inFile.getline(oneline, MAXLINE);
-    mYPhiEmittance.push_back(atof(oneline));
+    std::getline(inFile,oneline);
+    mYPhiEmittance.push_back(atof(oneline.c_str()));
   }
 
   if (mTestFlag) {
-    G4cout<<"DSP "<<mDistanceSourcePatient<< Gateendl;
-    G4cout<<"SMX "<<mDistanceSMXToIsocenter<< Gateendl;
-    G4cout<<"SMY "<<mDistanceSMYToIsocenter<< Gateendl;
-    for (unsigned int i=0; i<mEnergy.size(); i++) G4cout<<"mEnergy\t"<<mEnergy[i]<< Gateendl;
-    for (unsigned int i=0; i<mEnergySpread.size(); i++) G4cout<<"mEnergySpread\t"<<mEnergySpread[i]<< Gateendl;
-    for (unsigned int i=0; i<mX.size(); i++) G4cout<<"mX\t"<<mX[i]<< Gateendl;
-    for (unsigned int i=0; i<mTheta.size(); i++) G4cout<<"mTheta\t"<<mTheta[i]<< Gateendl;
-    for (unsigned int i=0; i<mY.size(); i++) G4cout<<"mY\t"<<mY[i]<< Gateendl;
-    for (unsigned int i=0; i<mPhi.size(); i++) G4cout<<"mPhi\t"<<mPhi[i]<< Gateendl;
-    for (unsigned int i=0; i<mXThetaEmittance.size(); i++) G4cout<<"mXThetaEmittance\t"<<mXThetaEmittance[i]<< Gateendl;
-    for (unsigned int i=0; i<mYPhiEmittance.size(); i++) G4cout<<"mYPhiEmittance\t"<<mYPhiEmittance[i]<< Gateendl;
+    GateMessage("Beam",0,"TESTREAD DSP "<<mDistanceSourcePatient<< Gateendl);
+    GateMessage("Beam",0,"TESTREAD SMX "<<mDistanceSMXToIsocenter<< Gateendl);
+    GateMessage("Beam",0,"TESTREAD SMY "<<mDistanceSMYToIsocenter<< Gateendl);
+    for (unsigned int i=0; i<mEnergy.size(); i++) GateMessage("Beam",0,"TESTREAD mEnergy\t"<<mEnergy[i]<< Gateendl);
+    for (unsigned int i=0; i<mEnergySpread.size(); i++) GateMessage("Beam",0,"TESTREAD mEnergySpread\t"<<mEnergySpread[i]<< Gateendl);
+    for (unsigned int i=0; i<mX.size(); i++) GateMessage("Beam",0,"TESTREAD mX\t"<<mX[i]<< Gateendl);
+    for (unsigned int i=0; i<mTheta.size(); i++) GateMessage("Beam",0,"TESTREAD mTheta\t"<<mTheta[i]<< Gateendl);
+    for (unsigned int i=0; i<mY.size(); i++) GateMessage("Beam",0,"TESTREAD mY\t"<<mY[i]<< Gateendl);
+    for (unsigned int i=0; i<mPhi.size(); i++) GateMessage("Beam",0,"TESTREAD mPhi\t"<<mPhi[i]<< Gateendl);
+    for (unsigned int i=0; i<mXThetaEmittance.size(); i++) GateMessage("Beam",0,"TESTREAD mXThetaEmittance\t"<<mXThetaEmittance[i]<< Gateendl);
+    for (unsigned int i=0; i<mYPhiEmittance.size(); i++) GateMessage("Beam",0,"TESTREAD mYPhiEmittance\t"<<mYPhiEmittance[i]<< Gateendl);
   }
 }
 //------------------------------------------------------------------------------------------------------
@@ -600,8 +919,7 @@ return v;
 */
 // FUNCTION
 //------------------------------------------------------------------------------------------------------
-void ReadLineTo3Doubles(double *toto, char *oneline) {
-  std::string data = oneline;
+void ReadLineTo3Doubles(double *toto, const std::string &data) {
   std::istringstream iss(data);
   std::string token;
   for (int j=0; j<3; j++) {
@@ -610,5 +928,4 @@ void ReadLineTo3Doubles(double *toto, char *oneline) {
     //  G4cout<<"toto "<<toto[j]<< Gateendl;
   }
 }
-#endif
-#endif
+// vim: ai sw=2 ts=2 et
