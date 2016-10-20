@@ -511,8 +511,15 @@ namespace GateFixedForcedDetectionFunctor
 
         /* The last material is the world material. One must fill the weight with
          the length from farthest point to pixel point. */
-        m_InterpolationWeights[threadId].back() = worldVectorNorm;
 
+        if (!m_generatePhotons)
+          {
+          m_InterpolationWeights[threadId].back() = worldVectorNorm;
+          }
+        else
+          {
+          m_InterpolationWeights[threadId].back() = worldVectorNorm;
+          }
         const double energy = Eratio * m_Energy;
         unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
         double *p = m_MaterialMu->GetPixelContainer()->GetBufferPointer()
@@ -526,7 +533,36 @@ namespace GateFixedForcedDetectionFunctor
           }
 
         /* Final computation */
-        Accumulate(threadId, output, vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel) * (*m_ResponseDetector)(energy), energy);
+        // double weight = vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel) * (*m_ResponseDetector)(energy);
+        double weight = vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel);
+
+        if (m_generatePhotons)
+          {
+          //Accumulate(threadId, output, weight, m_Energy);
+          VectorType photonDirection;
+          VectorType photonPosition;
+          for (int i = 0; i < 3; i++)
+            {
+            photonDirection[i] = worldVector[i] / worldVectorNorm;
+            photonPosition[i] = farthestPoint[i] * m_VolumeSpacing[i];
+            }
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          }
+        else if (m_ARF)
+          {
+          VectorType photonDirection;
+          VectorType photonPosition;
+          for (int i = 0; i < 3; i++)
+            {
+            photonDirection[i] = worldVector[i] / worldVectorNorm;
+            photonPosition[i] = sourceToPixel[i] * m_VolumeSpacing[i];
+            }
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          }
+        else
+          {
+          Accumulate(threadId, output, weight * (*m_ResponseDetector)(energy), energy);
+          }
 
         /* Reset weights for next ray in thread. */
         std::fill(m_InterpolationWeights[threadId].begin(),
@@ -542,6 +578,7 @@ namespace GateFixedForcedDetectionFunctor
       void SetEnergyZAndWeight(const double &energy, const unsigned int &Z, const double &weight)
         {
         m_Energy = energy;
+        m_Weight = weight;
         m_E0m = m_Energy / electron_mass_c2;
         m_InvWlPhoton = std::sqrt(0.5) * cm * m_Energy / (h_Planck * c_light); /* sqrt(0.5) for trigo reasons, see comment when used */
 
@@ -555,6 +592,8 @@ namespace GateFixedForcedDetectionFunctor
       VectorType m_Direction;
       double m_Energy;
       double m_E0m;
+      double m_Weight;
+
       double m_InvWlPhoton;
       unsigned int m_Z;
       double m_eRadiusOverCrossSectionTerm;
@@ -632,7 +671,34 @@ namespace GateFixedForcedDetectionFunctor
           }
 
         /* Final computation */
-        Accumulate(threadId, output, vcl_exp(-rayIntegral) * DCSrayleigh * GetSolidAngle(sourceToPixel), m_Energy);
+        double weight = vcl_exp(-rayIntegral) * DCSrayleigh * GetSolidAngle(sourceToPixel);
+        if (m_generatePhotons)
+          {
+          VectorType photonDirection;
+          VectorType photonPosition;
+          for (int i = 0; i < 3; i++)
+            {
+            photonDirection[i] = worldVector[i] / worldVectorNorm;
+            photonPosition[i] = farthestPoint[i] * m_VolumeSpacing[i];
+            }
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          }
+        else if (m_ARF)
+          {
+          VectorType photonDirection;
+          VectorType photonPosition;
+          for (int i = 0; i < 3; i++)
+            {
+            photonDirection[i] = worldVector[i] / worldVectorNorm;
+            photonPosition[i] = sourceToPixel[i] * m_VolumeSpacing[i];
+            }
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          }
+
+        else
+          {
+          Accumulate(threadId, output, weight, m_Energy);
+          }
 
         /* Reset weights for next ray in thread. */
         std::fill(m_InterpolationWeights[threadId].begin(),
@@ -649,6 +715,7 @@ namespace GateFixedForcedDetectionFunctor
         unsigned int e = itk::Math::Round<double, double>(energy / m_MaterialMu->GetSpacing()[1]);
         m_InvWlPhoton = std::sqrt(0.5) * cm * energy / (h_Planck * c_light); // sqrt(0.5) for trigo reasons, see comment when used
         m_Energy = energy;
+        m_Weight = weight;
         m_MaterialMuPointer = m_MaterialMu->GetPixelContainer()->GetBufferPointer();
         m_MaterialMuPointer += e * m_MaterialMu->GetLargestPossibleRegion().GetSize()[0];
 
@@ -662,6 +729,7 @@ namespace GateFixedForcedDetectionFunctor
       VectorType m_Direction;
       double *m_MaterialMuPointer;
       double m_InvWlPhoton;
+      double m_Weight;
       double m_Energy;
       unsigned int m_Z;
       double m_eRadiusOverCrossSectionTerm;
@@ -722,7 +790,34 @@ namespace GateFixedForcedDetectionFunctor
           }
 
         /* Final computation */
-        Accumulate(threadId, output, m_Weight * vcl_exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi), m_Energy);
+        double weight = m_Weight * vcl_exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi);
+        if (m_generatePhotons)
+          {
+          VectorType photonDirection;
+          VectorType photonPosition;
+          for (int i = 0; i < 3; i++)
+            {
+            photonDirection[i] = worldVector[i] / worldVectorNorm;
+            photonPosition[i] = farthestPoint[i] * m_VolumeSpacing[i];
+            }
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          }
+        else if (m_ARF)
+          {
+          VectorType photonDirection;
+          VectorType photonPosition;
+          for (int i = 0; i < 3; i++)
+            {
+            photonDirection[i] = worldVector[i] / worldVectorNorm;
+            photonPosition[i] = sourceToPixel[i] * m_VolumeSpacing[i];
+            }
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          }
+
+        else
+          {
+          Accumulate(threadId, output, weight, m_Energy);
+          }
         /* Reset weights for next ray in thread. */
         std::fill(m_InterpolationWeights[threadId].begin(),
                   m_InterpolationWeights[threadId].end(),
@@ -811,7 +906,6 @@ namespace GateFixedForcedDetectionFunctor
         double weight = m_Weight * vcl_exp(-rayIntegral)*GetSolidAngle(sourceToPixel)/(4*itk::Math::pi);
         if (m_generatePhotons)
           {
-          //Accumulate(threadId, output, weight, m_Energy);
           VectorType photonDirection;
           VectorType photonPosition;
           for (int i = 0; i < 3; i++)
@@ -823,7 +917,6 @@ namespace GateFixedForcedDetectionFunctor
           }
         else if (m_ARF)
           {
-          //Accumulate(threadId, output, weight, m_Energy);
           VectorType photonDirection;
           VectorType photonPosition;
           for (int i = 0; i < 3; i++)
@@ -833,6 +926,7 @@ namespace GateFixedForcedDetectionFunctor
             }
           SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
           }
+
         else
           {
           Accumulate(threadId, output, weight, m_Energy);

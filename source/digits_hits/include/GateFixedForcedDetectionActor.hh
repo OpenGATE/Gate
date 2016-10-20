@@ -357,6 +357,7 @@ protected:
   G4String mSourceType;
   bool mGeneratePhotons;
   bool mARF;
+  unsigned int mNumberOfProcessedPrimaries;
   /* Account for primary fluence weighting */
   InputImageType::Pointer PrimaryFluenceWeighting(const InputImageType::Pointer input);
 
