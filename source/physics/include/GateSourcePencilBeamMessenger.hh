@@ -6,11 +6,10 @@
   See GATE/LICENSE.txt for further details
   ----------------------*/
 
-#include "GateConfiguration.h"
-
-#ifdef G4ANALYSIS_USE_ROOT
 #ifndef GateSourcePencilBeamMessenger_h
 #define GateSourcePencilBeamMessenger_h 1
+
+#include "GateConfiguration.h"
 
 #include "globals.hh"
 #include "G4UImessenger.hh"
@@ -69,6 +68,3 @@ class GateSourcePencilBeamMessenger: public GateVSourceMessenger
 };
 
 #endif
-
-#endif
-
