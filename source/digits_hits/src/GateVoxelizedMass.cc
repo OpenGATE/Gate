@@ -44,6 +44,12 @@ GateVoxelizedMass::GateVoxelizedMass()
 
   mMassFile       ="";
   mMaterialFilter ="";
+
+  doselReconstructedMass.clear();
+  doselReconstructedMass.resize(mImage.GetNumberOfValues(),-1.);
+
+  doselReconstructedCubicVolume.clear();
+  doselReconstructedCubicVolume.resize(mImage.GetNumberOfValues(),-1.);
 }
 //-----------------------------------------------------------------------------
 
@@ -99,10 +105,12 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
   DALV=DAPV->GetLogicalVolume();
 
   vectorSV.clear();
+
   doselReconstructedMass.clear();
+  doselReconstructedMass.resize(mImage.GetNumberOfValues(),-1.);
+
   doselReconstructedCubicVolume.clear();
-  doselReconstructedMass.resize(mImage.GetNumberOfValues(),0.);
-  doselReconstructedCubicVolume.resize(mImage.GetNumberOfValues(),0.);
+  doselReconstructedCubicVolume.resize(mImage.GetNumberOfValues(),-1.);
 
   doselSV=new G4Box("DoselSV",
                     mImage.GetVoxelSize().getX()/2.0,
@@ -146,28 +154,41 @@ bool GateVoxelizedMass::IsLVParameterized(const G4LogicalVolume* LV)
 //-----------------------------------------------------------------------------
 double GateVoxelizedMass::GetVoxelMass(const int index)
 {
+  //GateMessage("Actor", 7,  "[GateVoxelizedMass::" << __FUNCTION__ << "] STARTED (index: " << index << ")" << Gateendl);
+
   if (mHasSameResolution)
+  {
+    GateMessage("Actor", 11,  "[GateVoxelizedMass::" << __FUNCTION__ << "] Volume and actor resolution are the same ! I will simply read the mass of the voxel." << Gateendl);
     return theMaterialDatabase.GetMaterial((G4String)imageVolume->GetMaterialNameFromLabel(imageVolume->GetImage()->GetValue(index)))->GetDensity()*imageVolume->GetImage()->GetVoxelVolume();
+  }
 
   // Case of imported mass image
-  if(mHasExternalMassImage)
+  if (mHasExternalMassImage)
   {
-    if(doselExternalMass.size()>0)
+    if (doselExternalMass.size() > 0.)
       return doselExternalMass[index];
     else
-      GateError( "Error: GateVoxelizedMass::GetVoxelMass: initialization of doselExternalMass is incorrect !" << Gateendl);
+      GateError( "[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: initialization of doselExternalMass is incorrect !" << Gateendl);
   }
 
-  if(doselReconstructedMass[index]==-1.)
+  if(doselReconstructedMass[index] < 0.)
   {
-    if(mIsParameterised)
-      doselReconstructedData=ParameterizedVolume(index);
-    else
-      doselReconstructedData=VoxelIteration(DAPV,0,DAPV->GetObjectRotationValue(),DAPV->GetObjectTranslation(),index);
+    GateMessage("Actor", 11,  "[GateVoxelizedMass::" << __FUNCTION__ << "] I don't have the mass of this voxel (index: " << index << ")" << Gateendl);
 
-    doselReconstructedMass[index]=doselReconstructedData.first;
-    doselReconstructedCubicVolume[index]=doselReconstructedData.second;
+    if (mIsParameterised)
+      doselReconstructedData = ParameterizedVolume(index);
+    else
+      doselReconstructedData = VoxelIteration(DAPV,
+                                              0,
+                                              DAPV->GetObjectRotationValue(),
+                                              DAPV->GetObjectTranslation(),
+                                              index);
+
+    doselReconstructedMass[index]        = doselReconstructedData.first;
+    doselReconstructedCubicVolume[index] = doselReconstructedData.second;
   }
+
+  GateMessage("Actor", 11,  "[GateVoxelizedMass::" << __FUNCTION__ << "] Computed mass of voxel (index: " << index << "):" << doselReconstructedMass[index] << Gateendl);
 
   return doselReconstructedMass[index];
 }
