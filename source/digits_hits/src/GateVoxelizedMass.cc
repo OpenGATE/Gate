@@ -385,6 +385,9 @@ std::pair<double,double> GateVoxelizedMass::ParameterizedVolume(const int index)
 {
   GenerateDosels(index);
 
+  doselReconstructedCubicVolume[index] = 0.;
+  doselReconstructedMass[index]        = 0.;
+
   for(int x=round(doselMin[0]);x<round(doselMax[0]);x++)
     for(int y=round(doselMin[1]);y<round(doselMax[1]);y++)
       for(int z=round(doselMin[2]);z<round(doselMax[2]);z++)
@@ -483,30 +486,31 @@ std::pair<double,double> GateVoxelizedMass::ParameterizedVolume(const int index)
             for(size_t zVox=0;zVox<coord[2].size();zVox++)
               if(mMaterialFilter==""||mMaterialFilter==voxelMatName[coord[0][xVox]][coord[1][yVox]][coord[2][zVox]])
               {
-                double coefVox(coef[0][xVox]*coef[1][yVox]*coef[2][zVox]);
+                const double coefVox(coef[0][xVox] * coef[1][yVox] * coef[2][zVox]);
 
-                doselReconstructedCubicVolume[index]+=voxelCubicVolume*coefVox;
-                doselReconstructedMass[index]+=voxelMass[coord[0][xVox]][coord[1][yVox]][coord[2][zVox]]*coefVox;
+                doselReconstructedCubicVolume[index] += voxelCubicVolume * coefVox;
+                doselReconstructedMass[index]        += voxelMass[coord[0][xVox]][coord[1][yVox]][coord[2][zVox]] * coefVox;
 
-                if(doselReconstructedCubicVolume[index]<0.)
-                  GateError("!!! ERROR : doselReconstructedCubicVolume is negative !"<<Gateendl
+                if(doselReconstructedCubicVolume[index] < 0.)
+                  GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR : doselReconstructedCubicVolume is negative !" << Gateendl
                           <<"     More informations :"<<Gateendl
                           <<"            doselReconstructedCubicVolume["<<index<<"]="<<doselReconstructedCubicVolume[index]<<Gateendl
                           <<"            voxelCubicVolume="<<voxelCubicVolume<<Gateendl
                           <<"            coefVox="<<coefVox<<Gateendl);
 
-                if(doselReconstructedMass[index]<0.)
-                  GateError("!!! ERROR : doselReconstructedMass is negative !"<<Gateendl
+                if(doselReconstructedMass[index] < 0.)
+                  GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR : doselReconstructedMass is negative !" << Gateendl
                           <<"     More informations :"<<Gateendl
                           <<"            doselReconstructedMass["<<index<<"]="<<doselReconstructedMass[index]<<Gateendl
                           <<"            voxelMass="<<voxelMass[coord[0][xVox]][coord[1][yVox]][coord[2][zVox]]<<Gateendl
                           <<"            coefVox="<<coefVox<<Gateendl);
               }
       }
-  if(doselReconstructedMass[index]<0.)
-    GateError("!!! ERROR : doselReconstructedMass is negative ! (doselReconstructedMass["<<index<<"]="<<doselReconstructedMass[index]<<")"<<Gateendl);
-  if(doselReconstructedCubicVolume[index]<0.)
-    GateError("!!! ERROR : doselReconstructedCubicVolume is negative ! (doselReconstructedCubicVolume["<<index<<"]="<<doselReconstructedCubicVolume[index]<<")"<<Gateendl);
+
+  if(doselReconstructedMass[index] < 0.)
+    GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: doselReconstructedMass is negative ! (doselReconstructedMass["<<index<<"] = "<<doselReconstructedMass[index]<<")"<<Gateendl);
+  if(doselReconstructedCubicVolume[index] < 0.)
+    GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: doselReconstructedCubicVolume is negative ! (doselReconstructedCubicVolume["<<index<<"] = "<<doselReconstructedCubicVolume[index]<<")"<<Gateendl);
 
   return std::make_pair(doselReconstructedMass[index],doselReconstructedCubicVolume[index]);
 }
@@ -871,12 +875,12 @@ void GateVoxelizedMass::SetMaterialFilter(const G4String MatName)
 {
   if (MatName != "") {
     if (mHasFilter)
-      GateError( "Error: GateVoxelizedMass::SetMaterialFilter: material filter is not compatible with other filters !" << Gateendl);
+      GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: material filter is not compatible with other filters !" << Gateendl);
     else if (mHasExternalMassImage)
-      GateError( "Error: GateVoxelizedMass::SetMaterialFilter: mass image importation is not compatible with filters !" << Gateendl);
+      GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: mass image importation is not compatible with filters !" << Gateendl);
     else {
-      mMaterialFilter=MatName;
-      mHasFilter=true;
+      mMaterialFilter = MatName;
+      mHasFilter = true;
     }
   }
 }
@@ -887,10 +891,10 @@ void GateVoxelizedMass::SetMaterialFilter(const G4String MatName)
 void GateVoxelizedMass::SetVolumeFilter(const G4String VolName)
 {
   if (VolName == "world")
-    GateError( "ERROR: GateVoxelizedMass::SetVolumeFilter: DoseActor doesn't work when attached to world !" << Gateendl);
+    GateError( "[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: DoseActor doesn't work when attached to world !" << Gateendl);
   if (VolName != "") {
     if (mHasFilter)
-      GateError( "ERROR: GateVoxelizedMass::SetVolumeFilter: volume filter is not compatible with other filters !" << Gateendl);
+      GateError( "[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: volume filter is not compatible with other filters !" << Gateendl);
     //else if (mHasExternalMassImage)
     //  GateError( "Error: GateVoxelizedMass::SetVolumeFilter: mass image importation is not compatible with filters !" << Gateendl);
     else {
