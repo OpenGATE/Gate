@@ -22,6 +22,7 @@ GateNTLEDoseActorMessenger::GateNTLEDoseActorMessenger(GateNTLEDoseActor* sensor
   pEnableDoseUncertaintyCmd = 0;
   pEnableDoseCorrectionCmd = 0;
   pEnableKermaFactorDumpCmd = 0;
+  pEnableKillSecondaryCmd = 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -36,6 +37,7 @@ GateNTLEDoseActorMessenger::~GateNTLEDoseActorMessenger()
   if(pEnableDoseUncertaintyCmd) delete pEnableDoseUncertaintyCmd;
   if(pEnableDoseCorrectionCmd) delete pEnableDoseCorrectionCmd;
   if(pEnableKermaFactorDumpCmd) delete pEnableKermaFactorDumpCmd;
+  if(pEnableKillSecondaryCmd) delete pEnableKillSecondaryCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -67,6 +69,11 @@ void GateNTLEDoseActorMessenger::BuildCommands(G4String base)
   pEnableKermaFactorDumpCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable kerma factor graph dump");
   pEnableKermaFactorDumpCmd->SetGuidance(guid);
+
+  n = base+"/enableKillSecondary";
+  pEnableKillSecondaryCmd = new G4UIcmdWithABool(n, this);
+  guid = G4String("Enable the killing of secondary particles");
+  pEnableKillSecondaryCmd->SetGuidance(guid);
 }
 //-----------------------------------------------------------------------------
 
@@ -79,6 +86,7 @@ void GateNTLEDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue
   if (cmd == pEnableDoseUncertaintyCmd) pDoseActor->EnableDoseUncertaintyImage(pEnableDoseUncertaintyCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseCorrectionCmd) pDoseActor->EnableDoseCorrection(pEnableDoseCorrectionCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableKermaFactorDumpCmd) pDoseActor->EnableKermaFactorDump(pEnableKermaFactorDumpCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableKillSecondaryCmd) pDoseActor->EnableKillSecondary(pEnableKillSecondaryCmd->GetNewBoolValue(newValue));
 
  GateImageActorMessenger::SetNewValue(cmd, newValue);
 }

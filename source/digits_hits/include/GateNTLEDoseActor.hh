@@ -44,6 +44,7 @@ public:
   void EnableDoseUncertaintyImage(bool b) { mIsDoseUncertaintyImageEnabled = b; }
   void EnableDoseCorrection(bool b)       { mIsDoseCorrectionEnabled = b; }
   void EnableKermaFactorDump(bool b)      { mIsKermaFactorDumped = b; }
+  void EnableKillSecondary(bool b)        { mIsKillSecondaryEnabled = b; }
 
   virtual void BeginOfRunAction(const G4Run*);
   virtual void BeginOfEventAction(const G4Event*);
@@ -81,6 +82,7 @@ protected:
   bool mIsDoseCorrectionEnabled;
   bool mIsLastHitEventImageEnabled;
   bool mIsKermaFactorDumped;
+  bool mIsKillSecondaryEnabled;
 
   int mCurrentEvent;
 

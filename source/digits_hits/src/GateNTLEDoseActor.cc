@@ -31,6 +31,7 @@ GateNTLEDoseActor::GateNTLEDoseActor(G4String name, G4int depth):
   mIsDoseCorrectionEnabled       = false;
   mIsLastHitEventImageEnabled    = false;
   mIsKermaFactorDumped           = false;
+  mIsKillSecondaryEnabled        = false;
 }
 //-----------------------------------------------------------------------------
 
@@ -158,13 +159,11 @@ void GateNTLEDoseActor::BeginOfEventAction(const G4Event* e) {
 
 //-----------------------------------------------------------------------------
 void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
-  const G4StepPoint* PreStep (step->GetPreStepPoint() );
-
   if (step->GetTrack()->GetDefinition()->GetParticleName() == "neutron") {
-    mKFHandler->SetMaterial(PreStep->GetMaterial());
+    mKFHandler->SetEnergy     (step->GetPreStepPoint()->GetKineticEnergy());
+    mKFHandler->SetMaterial   (step->GetPreStepPoint()->GetMaterial());
+    mKFHandler->SetDistance   (step->GetStepLength());
     mKFHandler->SetCubicVolume(GetDoselVolume());
-    mKFHandler->SetDistance(step->GetStepLength());
-    mKFHandler->SetEnergy(PreStep->GetKineticEnergy());
 
     double dose = mKFHandler->GetDose();
     if (mIsDoseCorrectionEnabled)
@@ -192,15 +191,17 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
     {
       bool found(false);
       for(size_t i=0; i < mMaterialList.size(); i++)
-        if (mMaterialList[i] == PreStep->GetMaterial()->GetName())
+        if (mMaterialList[i] == step->GetPreStepPoint()->GetMaterial()->GetName())
           found = true;
 
       if(!found)
       {
-        mMaterialList.push_back(PreStep->GetMaterial()->GetName());
+        mMaterialList.push_back(step->GetPreStepPoint()->GetMaterial()->GetName());
         mg->Add(mKFHandler->GetKermaFactorGraph());
       }
     }
   }
+  else if (mIsKillSecondaryEnabled)
+    step->GetTrack()->SetTrackStatus(fStopAndKill);
 }
 //-----------------------------------------------------------------------------
