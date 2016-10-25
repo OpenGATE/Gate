@@ -21,7 +21,7 @@ GateDoseSourceActor::GateDoseSourceActor(G4String name, G4int depth):
   //SetStepHitType("random");
   doseSourceImage = new GateImageOfHistograms("double"); //TODO: maybe float?
   bID = -1;
-    bSourceName = " ";
+  bSourceName = " ";
   
   areweinityet = false;
 }
@@ -63,13 +63,13 @@ void GateDoseSourceActor::Construct()
 //-----------------------------------------------------------------------------
 void GateDoseSourceActor::ResetData()
 {
-    doseSourceImage->Reset();
+  doseSourceImage->Reset();
 }
 //-----------------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void GateDoseSourceActor::BeginOfEventAction(const G4Event *e) {
+void GateDoseSourceActor::BeginOfEventAction(const G4Event *) {
   //----------------------- Init beam and image ------------------------
   // because sources init after actors, we cannot request nbspots and allocate doseSpotIDimage any sooner than here
   if(areweinityet==false){
@@ -80,17 +80,17 @@ void GateDoseSourceActor::BeginOfEventAction(const G4Event *e) {
     //need to get nrspots from source here
     tpspencilsource = dynamic_cast<GateSourceTPSPencilBeam *>(GateSourceMgr::GetInstance()->GetSourceByName( bSourceName ));
     if(SpotOrNot){
-        int nbspots = tpspencilsource->GetTotalNumberOfSpots();
-        doseSourceImage->SetHistoInfo(nbspots, 0, nbspots-1);
-        //DD("brent, nbspots" << nbspots)
-        doseSourceImage->Allocate();
-        doseSourceImage->PrintInfo();
+      int nbspots = tpspencilsource->GetTotalNumberOfSpots();
+      doseSourceImage->SetHistoInfo(nbspots, 0, nbspots-1);
+      //DD("brent, nbspots" << nbspots)
+      doseSourceImage->Allocate();
+      doseSourceImage->PrintInfo();
     } else {
-        int nblayers = tpspencilsource->GetTotalNumberOfLayers();
-        doseSourceImage->SetHistoInfo(nblayers, 0, nblayers-1);
-        //DD("brent, nblayers" << nblayers)
-        doseSourceImage->Allocate();
-        doseSourceImage->PrintInfo();
+      int nblayers = tpspencilsource->GetTotalNumberOfLayers();
+      doseSourceImage->SetHistoInfo(nblayers, 0, nblayers-1);
+      //DD("brent, nblayers" << nblayers)
+      doseSourceImage->Allocate();
+      doseSourceImage->PrintInfo();
         
     }
     areweinityet=true;
@@ -112,7 +112,7 @@ void GateDoseSourceActor::BeginOfEventAction(const G4Event *e) {
 void GateDoseSourceActor::SaveData()
 {
   //GateVImageActor::SaveData();
-    doseSourceImage->Write(mSaveFilename);
+  doseSourceImage->Write(mSaveFilename);
 }
 //-----------------------------------------------------------------------------
 
