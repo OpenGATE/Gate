@@ -114,6 +114,8 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
 
     // integrating the plan description file data
     while (inFile && again) {
+      int spotcounter = -1; //we count spots during init, to be able to match /selectSpot correctly.
+
       for (int i = 0; i < 9; i++) std::getline(inFile,oneline);
       NbFields = atoi(oneline.c_str());
       for (int i = 0; i < 2 * NbFields; i++) std::getline(inFile,oneline);
@@ -161,6 +163,7 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
             std::getline(inFile,oneline);
             double SpotParameters[3];
             ReadLineTo3Doubles(SpotParameters, oneline);
+
             if (mTestFlag) {
               G4cout << "TESTREAD Spot N° " << k << "    parameters: " << SpotParameters[0] << " " << SpotParameters[1] << " " << SpotParameters[2] << Gateendl;
             }
@@ -284,13 +287,20 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
             if ((mSelectedLayerID != -1) && (currentLayerID != mSelectedLayerID)) allowedLayer = false;
 
             bool allowedSpot = true;
-            if ((mSelectedSpot != -1) && (k != mSelectedSpot)) allowedSpot = false;
+            //if disallowed field, layer, or empty spot, skip spot
+            if (!allowedField || !allowedLayer || SpotParameters[2] == 0) allowedSpot = false;
 
-            // Skip empty spots
-            if (SpotParameters[2] == 0) allowedSpot = false;
+            // count spots.
+            if (allowedSpot){
+              spotcounter++;
+              // Skip if /selectSpot was set.
+              if ((mSelectedSpot != -1) && (spotcounter != mSelectedSpot)) allowedSpot = false;
+            }
 
             if (allowedField && allowedLayer && allowedSpot) { // loading the spots only for allowed fields
-
+              if (mTestFlag) {
+                G4cout << "TESTREAD Spot Loaded. N° " << spotcounter << "   parameters: " << SpotParameters[0] << " " << SpotParameters[1] << " " << SpotParameters[2] << Gateendl;
+              }
               // the false mean -> do not create messenger (memory gain)
               GateSourcePencilBeam *Pencil = new GateSourcePencilBeam("PencilBeam", false);
 
@@ -463,6 +473,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
 
     // integrating the plan description file data
     try {
+      int spotcounter = -1; //we count spots during init, to be able to match /selectSpot correctly.
       int lineno = 0;
       std::string dummy_PlanName = ReadNextContentLine<std::string,1>(inFile,lineno,mPlan)[0];
       int dummy_NbOfFractions = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0]; // not used
@@ -512,25 +523,30 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
                                       << SpotParameters[2] << Gateendl);
             }
 
-            // Brent 2014-02-19: This check is in an inner loop, but with good reason: we're in the parsing stage.
-            // Rewrote to work also with AllowedFields.
             bool allowedField = true;
             // if mNotAllowedFields was set, then check if FieldID was NotAllowed
             if (!mNotAllowedFields.empty()) if ( std::count(mNotAllowedFields.begin(), mNotAllowedFields.end(), FieldID) >  0 ) allowedField = false;
             // if mAllowedFields was set, then check if FieldID was not Allowed.
             if (!mAllowedFields.empty()   ) if ( std::count(mAllowedFields.begin()   , mAllowedFields.end()   , FieldID) == 0 ) allowedField = false;
 
-
             bool allowedLayer = true;
             if ((mSelectedLayerID != -1) && (currentLayerID != mSelectedLayerID)) allowedLayer = false;
 
             bool allowedSpot = true;
-            if ((mSelectedSpot != -1) && (k != mSelectedSpot)) allowedSpot = false;
+            //if disallowed field, layer, or empty spot, skip spot
+            if (!allowedField || !allowedLayer || SpotParameters[2] == 0) allowedSpot = false;
 
-            // Skip empty spots
-            if (SpotParameters[2] == 0) allowedSpot = false;
+            // count spots.
+            if (allowedSpot){
+              spotcounter++;
+              // Skip if /selectSpot was set.
+              if ((mSelectedSpot != -1) && (spotcounter != mSelectedSpot)) allowedSpot = false;
+            }
 
             if (allowedField && allowedLayer && allowedSpot) { // loading the spots only for allowed fields
+              if (mTestFlag) {
+                GateMessage( "Beam", 1, "TESTREAD Spot Loaded. No " << spotcounter << "   parameters: " << SpotParameters[0] << " " << SpotParameters[1] << " " << SpotParameters[2] << Gateendl );
+              }
 
               //POSITION
               // To calculate the beam position with a gantry angle
