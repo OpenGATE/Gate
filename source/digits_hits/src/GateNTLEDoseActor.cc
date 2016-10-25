@@ -159,15 +159,23 @@ void GateNTLEDoseActor::BeginOfEventAction(const G4Event* e) {
 
 //-----------------------------------------------------------------------------
 void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
-  if (step->GetTrack()->GetDefinition()->GetParticleName() == "neutron") {
+  if ( step->GetTrack()->GetDefinition()->GetParticleName() == "neutron" ||
+      (step->GetTrack()->GetDefinition()->GetParticleName() == "gamma"   &&
+       mIsDoseCorrectionTLEEnabled)) {
     mKFHandler->SetEnergy     (step->GetPreStepPoint()->GetKineticEnergy());
     mKFHandler->SetMaterial   (step->GetPreStepPoint()->GetMaterial());
     mKFHandler->SetDistance   (step->GetStepLength());
     mKFHandler->SetCubicVolume(GetDoselVolume());
 
-    double dose = mKFHandler->GetDose();
-    if (mIsDoseCorrectionEnabled)
-      dose = mKFHandler->GetDoseCorrected();
+    double dose(0.);
+
+    if (step->GetTrack()->GetDefinition()->GetParticleName() == "neutron") {
+      dose = mKFHandler->GetDose();
+      if (mIsDoseCorrectionEnabled)
+        dose = mKFHandler->GetDoseCorrected();
+    }
+    else
+      dose = mKFHandler->GetDoseCorrectedTLE();
 
     bool sameEvent = true;
 

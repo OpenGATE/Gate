@@ -16,6 +16,7 @@
 #define GATEKERMAFACTORHANDLER_HH
 
 #include "GateKermaFactorDatabase.hh"
+#include "GateNTLEMuEnDatabase.hh"
 
 #include <G4Material.hh>
 
@@ -32,14 +33,16 @@ class GateKermaFactorHandler
     void SetDistance(double);
     void SetMaterial(const G4Material*);
 
-    double GetDoseCorrected();
     double GetDose();
+    double GetDoseCorrected();
+    double GetDoseCorrectedTLE();
 
     TGraph* GetKermaFactorGraph();
 
   private:
     double GetKermaFactor(double);
     double GetPhotonFactor(const G4Material*);
+    double GetMuEnOverRho();
 
     double m_energy;
     double m_cubicVolume;

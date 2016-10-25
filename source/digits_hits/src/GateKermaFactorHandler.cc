@@ -21,7 +21,12 @@ using namespace CLHEP;
 
 //-----------------------------------------------------------------------------
 GateKermaFactorHandler::GateKermaFactorHandler()
-{}
+{
+  m_energy       = 0.;
+  m_cubicVolume  = 0.;
+  m_distance     = 0.;
+  m_kerma_factor = 0.;
+}
 //-----------------------------------------------------------------------------
 
 
@@ -61,7 +66,7 @@ void GateKermaFactorHandler::SetMaterial(const G4Material* eMaterial)
 //-----------------------------------------------------------------------------
 double GateKermaFactorHandler::GetPhotonFactor(const G4Material* eMaterial)
 {
-  GateMessage("Actor", 10, "Material: " << eMaterial->GetName() << Gateendl);
+  GateMessage("Actor", 15, "Material: " << eMaterial->GetName() << Gateendl);
 
   double factor(0.);
   const double* FractionMass(eMaterial->GetFractionVector());
@@ -72,7 +77,7 @@ double GateKermaFactorHandler::GetPhotonFactor(const G4Material* eMaterial)
     {
 	    factor = 6.022e23 * FractionMass[i] / 1.008;
 	    factor = 1.602e-6 * 3.32e-25 * factor * 2.2 * 1e-8;
-      GateMessage("Actor", 9, "Photon correction factor: " << factor << Gateendl);
+      GateMessage("Actor", 10, "Photon correction factor: " << factor << Gateendl);
       return factor;
     }
   }
@@ -118,6 +123,38 @@ double GateKermaFactorHandler::GetDoseCorrected()
     return (GetKermaFactor(m_energy) + GetPhotonFactor(m_material)) * m_distance / m_cubicVolume /m*m3;
 
   return GetKermaFactor(m_energy) * m_distance / m_cubicVolume /m*m3;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+double GateKermaFactorHandler::GetDoseCorrectedTLE()
+{
+  const double dose = m_energy * GetMuEnOverRho() * m_distance / m_cubicVolume / gray;
+  GateMessage("Actor", 10, "GetDoseCorrectedTLE dose: " << dose << " Gy" << Gateendl);
+  return dose;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+double GateKermaFactorHandler::GetMuEnOverRho()
+{
+  if (m_energy/MeV < energyTableTLE[0])
+    return 0.;
+
+  for (size_t i=1; i<energyTableTLE.size(); i++)
+    if (m_energy/MeV >= energyTableTLE[i-1] &&
+        m_energy/MeV <  energyTableTLE[i])
+    {
+      const double s_diff_energy = (m_energy/MeV) - (energyTableTLE[i-1]);
+      const double b_diff_energy = energyTableTLE[i] - energyTableTLE[i-1];
+      const double diff_MuEn = MuEnMuscleTable[i] - MuEnMuscleTable[i-1];
+
+      return (((s_diff_energy * diff_MuEn) / b_diff_energy) + MuEnMuscleTable[i-1]) * cm2 / g;
+    }
+
+  return 0.;
 }
 //-----------------------------------------------------------------------------
 

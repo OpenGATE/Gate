@@ -21,6 +21,7 @@ GateNTLEDoseActorMessenger::GateNTLEDoseActorMessenger(GateNTLEDoseActor* sensor
   pEnableDoseSquaredCmd = 0;
   pEnableDoseUncertaintyCmd = 0;
   pEnableDoseCorrectionCmd = 0;
+  pEnableDoseCorrectionTLECmd = 0;
   pEnableKermaFactorDumpCmd = 0;
   pEnableKillSecondaryCmd = 0;
 
@@ -36,6 +37,7 @@ GateNTLEDoseActorMessenger::~GateNTLEDoseActorMessenger()
   if(pEnableDoseSquaredCmd) delete pEnableDoseSquaredCmd;
   if(pEnableDoseUncertaintyCmd) delete pEnableDoseUncertaintyCmd;
   if(pEnableDoseCorrectionCmd) delete pEnableDoseCorrectionCmd;
+  if(pEnableDoseCorrectionTLECmd) delete pEnableDoseCorrectionTLECmd;
   if(pEnableKermaFactorDumpCmd) delete pEnableKermaFactorDumpCmd;
   if(pEnableKillSecondaryCmd) delete pEnableKillSecondaryCmd;
 }
@@ -65,6 +67,11 @@ void GateNTLEDoseActorMessenger::BuildCommands(G4String base)
   guid = G4String("Enable dose correction computation");
   pEnableDoseCorrectionCmd->SetGuidance(guid);
 
+  n = base+"/enableDoseCorrectionTLE";
+  pEnableDoseCorrectionTLECmd = new G4UIcmdWithABool(n, this);
+  guid = G4String("Enable dose correction (with TLE) computation");
+  pEnableDoseCorrectionTLECmd->SetGuidance(guid);
+
   n = base+"/enableKermaFactorDump";
   pEnableKermaFactorDumpCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable kerma factor graph dump");
@@ -85,6 +92,7 @@ void GateNTLEDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue
   if (cmd == pEnableDoseSquaredCmd) pDoseActor->EnableDoseSquaredImage(pEnableDoseSquaredCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseUncertaintyCmd) pDoseActor->EnableDoseUncertaintyImage(pEnableDoseUncertaintyCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseCorrectionCmd) pDoseActor->EnableDoseCorrection(pEnableDoseCorrectionCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableDoseCorrectionTLECmd) pDoseActor->EnableDoseCorrectionTLE(pEnableDoseCorrectionTLECmd->GetNewBoolValue(newValue));
   if (cmd == pEnableKermaFactorDumpCmd) pDoseActor->EnableKermaFactorDump(pEnableKermaFactorDumpCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableKillSecondaryCmd) pDoseActor->EnableKillSecondary(pEnableKillSecondaryCmd->GetNewBoolValue(newValue));
 

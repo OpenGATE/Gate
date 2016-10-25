@@ -43,6 +43,7 @@ public:
   void EnableDoseSquaredImage(bool b)     { mIsDoseSquaredImageEnabled = b; }
   void EnableDoseUncertaintyImage(bool b) { mIsDoseUncertaintyImageEnabled = b; }
   void EnableDoseCorrection(bool b)       { mIsDoseCorrectionEnabled = b; }
+  void EnableDoseCorrectionTLE(bool b)    { mIsDoseCorrectionTLEEnabled = b; }
   void EnableKermaFactorDump(bool b)      { mIsKermaFactorDumped = b; }
   void EnableKillSecondary(bool b)        { mIsKillSecondaryEnabled = b; }
 
@@ -80,6 +81,7 @@ protected:
   bool mIsDoseSquaredImageEnabled;
   bool mIsDoseUncertaintyImageEnabled;
   bool mIsDoseCorrectionEnabled;
+  bool mIsDoseCorrectionTLEEnabled;
   bool mIsLastHitEventImageEnabled;
   bool mIsKermaFactorDumped;
   bool mIsKillSecondaryEnabled;
