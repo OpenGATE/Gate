@@ -589,6 +589,10 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
       GateError("The volume " << motherPV->GetName() << " is parameterized !" << Gateendl
           << "Please attach the DoseActor directly on this volume !" << Gateendl);
 
+    // IMPORTANT WARNING
+    if (motherPV->GetLogicalVolume()->GetSolid()->GetEntityType() != "G4Box")
+      GateMessage("Actor", 0, "[GateVoxelizedMass::VoxelIteration] WARNING: Attaching a DoseActor to a volume with another geometry than a box can lead to a wrong dose calculation ! Please verify that the volume of the dosel is correctly reconstructed !" << Gateendl);
+
     GateMessage("Actor", 2, Gateendl << "[GateVoxelizedMass::VoxelIteration] Dosel n°" << index << ":" << Gateendl);
 
     mFilteredVolumeMass = 0.;
@@ -784,13 +788,20 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
   if(motherProgenyCubicVolume==0.)
     GateError("Error: motherProgenyCubicVolume is null ! (motherPhysicalVolume : "<<motherPV->GetName()<<")"<<Gateendl);
 
-  if (Generation==0)
+  if (Generation == 0)
   {
-    double diff((motherProgenyCubicVolume-doselSV->GetCubicVolume())*100/doselSV->GetCubicVolume());
+    double diff(0.);
     double substractionError(1.);
 
-    if(std::abs(diff)>substractionError)
+    if (motherPV->GetLogicalVolume()->GetSolid()->GetEntityType() == "G4Box")
+      diff = (motherProgenyCubicVolume - doselSV->GetCubicVolume()) * 100. / doselSV->GetCubicVolume();
+    else
+      GateMessage("Actor", 0, "[GateVoxelizedMass::VoxelIteration] WARNING: The volume attached to this DoseActor is a " << motherPV->GetLogicalVolume()->GetSolid()->GetEntityType() << ". The reconstruted volume of the dosel is " << G4BestUnit(motherProgenyCubicVolume,"Volume") << ". Please verify it is correct !" << Gateendl);
+
+
+    if (std::abs(diff) > substractionError)
       GateError("Error: Dosel n°" << index << " is wrongly reconstructed !" << Gateendl <<
+                "                            SV geometry type      = " << motherPV->GetLogicalVolume()->GetSolid()->GetEntityType() << Gateendl <<
                 "                            dosel (theorical)     = " << G4BestUnit(doselSV->GetCubicVolume(),"Volume") << Gateendl <<
                 "                            dosel (reconstructed) = " << G4BestUnit(motherProgenyCubicVolume,"Volume") << Gateendl <<
                 "                            difference            = " << diff << "%" << Gateendl <<
