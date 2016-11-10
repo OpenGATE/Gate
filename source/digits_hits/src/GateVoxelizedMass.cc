@@ -70,7 +70,7 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
     mMass       .resize(mImage.GetNumberOfValues());
     mEdep       .resize(mImage.GetNumberOfValues());
 
-    for(unsigned long int index=0; index < mImage.GetNumberOfValues(); index++) {
+    for(signed long int index=0; index < mImage.GetNumberOfValues(); index++) {
       mCubicVolume[index].clear();
       mMass       [index].clear();
       mEdep       [index].clear();
@@ -103,7 +103,7 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
 
     doselExternalMass.resize(mMassImage.GetNumberOfValues(),-1.);
 
-    for(unsigned long int i=0; i < mMassImage.GetNumberOfValues(); i++)
+    for(signed long int i=0; i < mMassImage.GetNumberOfValues(); i++)
       doselExternalMass[i]=mMassImage.GetValue(i)*kg;
   }
 
@@ -118,7 +118,7 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
     imageVolume = dynamic_cast<GateVImageVolume*>(GateObjectStore::GetInstance()->FindVolumeCreator(DAPV));
 
     if (doselExternalMass.size() == 0)
-      GateVoxelizedMass::GenerateVoxels();
+      GenerateVoxels();
   }
 
   GateMessage("Actor", 1,  "[GateVoxelizedMass::" << __FUNCTION__ << "] Has same resolution ? " << mHasSameResolution << Gateendl);
@@ -132,10 +132,14 @@ void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImag
   }
 
   if (mHasFilter) {
-    if (mIsParameterised && mVolumeFilter != "")
+    if (mIsParameterised && mVolumeFilter != "") {
       GateError( "[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: volume filter is not compatible with parameterised volumes !" << Gateendl);
-    else if (!mIsParameterised && mMaterialFilter != "")
+      exit(EXIT_FAILURE);
+    }
+    else if (!mIsParameterised && mMaterialFilter != "") {
       GateError( "[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: material filter is only compatible with parameterised volumes !" << Gateendl);
+      exit(EXIT_FAILURE);
+    }
   }
 
   mIsInitialized=true;
@@ -279,11 +283,9 @@ void GateVoxelizedMass::GenerateVectors()
   doselReconstructedTotalCubicVolume = 0.;
   doselReconstructedTotalMass        = 0.;
 
-  for(unsigned long int i=0; i < mImage.GetNumberOfValues(); i++)
+  for(signed long int i=0; i < mImage.GetNumberOfValues(); i++)
   {
     time(&timer3);
-
-    G4cout << "test" << G4endl;
 
     if(mIsParameterised)
       doselReconstructedData = ParameterizedVolume(i);
@@ -293,8 +295,6 @@ void GateVoxelizedMass::GenerateVectors()
                                               DAPV->GetObjectRotationValue(),
                                               DAPV->GetObjectTranslation(),
                                               i);
-
-    G4cout << "test2" << G4endl;
 
     doselReconstructedMass[i]        = doselReconstructedData.first;
     doselReconstructedCubicVolume[i] = doselReconstructedData.second;
@@ -387,7 +387,7 @@ void GateVoxelizedMass::GenerateVoxels()
   if(voxelCubicVolume<=0.)
     GateError("!!! ERROR : Voxels cubic volume is less or equal to zero !!! (cubic volume="<<voxelCubicVolume<<")"<<Gateendl);
 
-  for (unsigned long int i=0; i < imageVolume->GetImage()->GetNumberOfValues(); i++) {
+  for (signed long int i=0; i < imageVolume->GetImage()->GetNumberOfValues(); i++) {
     const int xVoxel(round((DABox->GetXHalfLength()+imageVolume->GetImage()->GetVoxelCenterFromIndex(i).x()-imageVolume->GetImage()->GetVoxelSize().x()/2.)/imageVolume->GetImage()->GetVoxelSize().x())),
               yVoxel(round((DABox->GetYHalfLength()+imageVolume->GetImage()->GetVoxelCenterFromIndex(i).y()-imageVolume->GetImage()->GetVoxelSize().y()/2.)/imageVolume->GetImage()->GetVoxelSize().y())),
               zVoxel(round((DABox->GetZHalfLength()+imageVolume->GetImage()->GetVoxelCenterFromIndex(i).z()-imageVolume->GetImage()->GetVoxelSize().z()/2.)/imageVolume->GetImage()->GetVoxelSize().z()));
@@ -398,8 +398,13 @@ void GateVoxelizedMass::GenerateVoxels()
     //G4cout<<"yVoxel="<<yVoxel<<G4endl;
     //G4cout<<"zVoxel="<<zVoxel<<G4endl;
 
-    if(xVoxel>=nxVoxel||yVoxel>=nyVoxel||zVoxel>=nzVoxel)
-      GateError("!!! ERROR : Too many voxels !!! (xVoxel="<<xVoxel<<",yVoxel="<<yVoxel<<",zVoxel="<<zVoxel<<")"<<Gateendl);
+    if (xVoxel >= nxVoxel ||
+        yVoxel >= nyVoxel ||
+        zVoxel >= nzVoxel)
+    {
+      GateError("!!! ERROR : Too many voxels !!! (xVoxel = " << xVoxel << ", yVoxel = " << yVoxel << ", zVoxel = " << zVoxel << ")" << Gateendl);
+      exit(EXIT_FAILURE);
+    }
 
     //G4cout<<"imageVolume->GetImage()->GetValue(i)="<<imageVolume->GetImage()->GetValue(i)<<G4endl;
     //G4cout<<"imageVolume->GetMaterialNameFromLabel((LabelType)imageVolume->GetImage()->GetValue(i))="<<imageVolume->GetMaterialNameFromLabel(imageVolume->GetImage()->GetValue(i))<<G4endl;
