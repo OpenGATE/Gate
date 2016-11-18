@@ -50,5 +50,8 @@ class GateKermaFactorHandler
     double m_kerma_factor;
 
     const G4Material* m_material;
+
+    std::vector<double> kfTable;
+    std::vector<double> MuEnTable;
 };
 #endif

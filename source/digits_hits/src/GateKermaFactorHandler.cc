@@ -26,6 +26,9 @@ GateKermaFactorHandler::GateKermaFactorHandler()
   m_cubicVolume  = 0.;
   m_distance     = 0.;
   m_kerma_factor = 0.;
+
+  kfTable.clear();
+  MuEnTable.clear();
 }
 //-----------------------------------------------------------------------------
 
@@ -59,6 +62,26 @@ void GateKermaFactorHandler::SetMaterial(const G4Material* eMaterial)
 {
   GateMessage("Actor", 10, "Material: " << eMaterial->GetName() << Gateendl);
   m_material = eMaterial;
+
+  const G4String name(m_material->GetName());
+
+  if (name == "G4_MUSCLE_STRIATED_ICRU")
+  {
+    kfTable = kerma_factor_muscle_tableau;
+    MuEnTable = MuEnMuscleTable;
+  }
+  //else if (name == "G4_LUNG_ICRP")
+  //{
+  //  kfTable = kerma_factor_lung_tableau;
+  //  MuEnTable = MuEnLungTable;
+  //}
+  //else if (name == "G4_BONE_CORTICAL_ICRP")
+  //{
+  //  kfTable = kerma_factor_bone_tableau;
+  //  MuEnTable = MuEnBoneTable;
+  //}
+  else
+    GateError("Material " << name << " not supported !" << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -90,6 +113,9 @@ double GateKermaFactorHandler::GetPhotonFactor(const G4Material* eMaterial)
 //-----------------------------------------------------------------------------
 double GateKermaFactorHandler::GetKermaFactor(double eEnergy)
 {
+  if (kfTable.size() == 0)
+    GateError("Kerma Factor table is empty !" << Gateendl);
+
   if (eEnergy/MeV < energy_tableau[0] && eEnergy/MeV >= 1e-10)
     return 7.011e-21 * std::pow(eEnergy/MeV, -0.466);
 
@@ -98,9 +124,9 @@ double GateKermaFactorHandler::GetKermaFactor(double eEnergy)
     {
       const double s_diff_energy = (eEnergy/MeV) - (energy_tableau[i-1]);
       const double b_diff_energy = energy_tableau[i] - energy_tableau[i-1];
-      const double diff_kerma_factor = kerma_factor_muscle_tableau[i] - kerma_factor_muscle_tableau[i-1];
+      const double diff_kerma_factor = kfTable[i] - kfTable[i-1];
 
-      return ((s_diff_energy * diff_kerma_factor) / b_diff_energy) + kerma_factor_muscle_tableau[i-1];
+      return ((s_diff_energy * diff_kerma_factor) / b_diff_energy) + kfTable[i-1];
     }
 
   return 0.;
@@ -140,6 +166,9 @@ double GateKermaFactorHandler::GetDoseCorrectedTLE()
 //-----------------------------------------------------------------------------
 double GateKermaFactorHandler::GetMuEnOverRho()
 {
+  if (MuEnTable.size() == 0)
+    GateError("MuEn table is empty !" << Gateendl);
+
   if (m_energy/MeV < energyTableTLE[0])
     return 0.;
 
@@ -149,9 +178,9 @@ double GateKermaFactorHandler::GetMuEnOverRho()
     {
       const double s_diff_energy = (m_energy/MeV) - (energyTableTLE[i-1]);
       const double b_diff_energy = energyTableTLE[i] - energyTableTLE[i-1];
-      const double diff_MuEn = MuEnMuscleTable[i] - MuEnMuscleTable[i-1];
+      const double diff_MuEn = MuEnTable[i] - MuEnTable[i-1];
 
-      return (((s_diff_energy * diff_MuEn) / b_diff_energy) + MuEnMuscleTable[i-1]) * cm2 / g;
+      return (((s_diff_energy * diff_MuEn) / b_diff_energy) + MuEnTable[i-1]) * cm2 / g;
     }
 
   return 0.;
