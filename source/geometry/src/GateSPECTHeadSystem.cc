@@ -76,10 +76,13 @@ void GateSPECTHeadSystem::setARFStage(G4String thestage)
 
   if ( ARFSD != 0 ) ARFSD->SetStage( m_ARFStage );
 
-  G4cout << " GateSPECTHeadSystem::setARFStage  stage = "<< thestage<< "  " << m_ARFStage<< Gateendl;
+  GateMessage("Geometry", 2, "GateSPECTHeadSystem::setARFStage stage = "
+              << thestage << "  " << m_ARFStage);
 
-  if ( m_ARFStage == -2 ) {G4String msg = "GateSPECTHeadSystem::setARFStage stage '"+thestage+"' is not valid."; G4Exception( "GateSPECTHeadSystem::setARFStage", "setARFStage", FatalException, msg);}
-
+  if ( m_ARFStage == -2 ) {
+    G4String msg = "GateSPECTHeadSystem::setARFStage stage '"+thestage+"' is not valid.";
+    G4Exception( "GateSPECTHeadSystem::setARFStage", "setARFStage", FatalException, msg);
+  }
 }
 
 
