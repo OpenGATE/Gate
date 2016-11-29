@@ -240,7 +240,10 @@ void GateThermalActor::EndOfRunAction(const G4Run* r)
   
 // Boost in Temperature for Nanoparticles:
 //  deltaT= mUserSimulationScale*mUserNanoDensity*pow(voxelsizex/2,2)*mUserNanoAbsorptionCS*(1.6E-19/(duration*voxelsizex*voxelsizey))/(2*mUserTissueThermalConductivity);
-  deltaT= 1;
+//  deltaT= 1;
+  deltaT= mUserSimulationScale;
+
+//  std::cout << "Simulation Scale = " << deltaT << std::endl;
 
   typedef itk::MultiplyImageFilter< ImageType, ImageType, ImageType > FilterType;
   FilterType::Pointer multiplyFilter = FilterType::New();
@@ -377,7 +380,9 @@ for(int i=0; i!=mUserNumberOfTimeFrames-1; ++i) {
   ImageTemp = addFilter->GetOutput();
 }
 
-// FINAL Absorption image:
+//////////////////////////////////////////////////////////////////////////////
+//                       FINAL ABSORPTION MAP IMAGE                         //
+//////////////////////////////////////////////////////////////////////////////
   AddFilterType::Pointer addFilterFinal = AddFilterType::New();
   addFilterFinal->SetInput1( ImageTemp );
   addFilterFinal->SetInput2( ImageAbsorptionSample );
@@ -444,6 +449,16 @@ for(int i=0; i!=mUserNumberOfTimeFrames-1; ++i) {
 }
 
 else {
+
+
+//////////////////////////////////////////////////////////////////////////////
+//                       FINAL ABSORPTION MAP IMAGE                         //
+//////////////////////////////////////////////////////////////////////////////
+
+  writer->SetFileName( mAbsorptionFilename );
+  writer->SetInput( multiplyFilter->GetOutput() );
+  writer->Update(); 
+
 
 //////////////////////////////////////////////////////////////////////////////
 // APPLY HEAT DIFFUSION ON THE FINAL ABSORPTION MAP IMAGE                   //

@@ -72,7 +72,7 @@ void GateThermalActorMessenger::BuildCommands(G4String base)
   pTissueHeatCapacityCmd = new G4UIcmdWithADouble((base+"/setTissueHeatCapacity").c_str(),this);
   pTissueHeatCapacityCmd->SetGuidance("Set the tissue heat capacity");
 
-  pScaleCmd = new G4UIcmdWithADouble((base+"/setScale").c_str(),this);
+  pScaleCmd = new G4UIcmdWithADouble((base+"/setSimulationScale").c_str(),this);
   pScaleCmd->SetGuidance("Set simulation scale");
 
   pNumTimeFramesCmd = new G4UIcmdWithAnInteger((base+"/setNumberOfTimeFrames").c_str(),this);
