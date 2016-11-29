@@ -35,7 +35,7 @@ public:
   GateVSource( G4String name );
   virtual ~GateVSource();
 
-  virtual  void Initialize();
+  virtual  void Initialize(){}
 
   virtual void SetName( G4String value ) { m_name = value; }
   virtual G4String GetName()             { return m_name; }

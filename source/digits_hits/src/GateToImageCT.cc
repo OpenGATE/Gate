@@ -613,14 +613,10 @@ void GateToImageCT::RecordStepWithVolume( const GateVVolume*,
                   G4ThreeVector posStep = ( path * momentum + pos );
                   G4Step* newStep = (G4Step*)aStep;
 
-                  G4StepPoint* moveStepPoint = newStep->GetPostStepPoint();
-
-                  moveStepPoint->SetPosition( posStep );
-                  newStep->SetPostStepPoint( moveStepPoint );
+                  newStep->GetPostStepPoint()->SetPosition( posStep );
 
                   const G4TouchableHistory* newTouchable;
-                  newTouchable = (const G4TouchableHistory*)(
-                                                             moveStepPoint->GetTouchable() );
+                  newTouchable = (const G4TouchableHistory*)( newStep->GetPostStepPoint()->GetTouchable() );
 
                   GateVolumeID VolumeID(newTouchable);
 
