@@ -65,7 +65,7 @@ void GateKermaFactorHandler::SetMaterial(const G4Material* eMaterial)
 
   const G4String name(m_material->GetName());
 
-  if (name == "G4_MUSCLE_STRIATED_ICRU")
+  if (name == "G4_MUSCLE_STRIATED_ICRU" || name == "Muscle_Skeletal_ICRP_23")
   {
     kfTable = kerma_factor_muscle_tableau;
     MuEnTable = MuEnMuscleTable;
