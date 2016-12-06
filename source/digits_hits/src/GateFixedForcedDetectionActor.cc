@@ -1015,7 +1015,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       /*  Primary */
       mSecondaryImage->DisconnectPipeline();
       addFilter->SetInput1(mSecondaryImage);
-      addFilter->SetInput2(mPrimaryImage);
+      addFilter->SetInput2(PrimaryFluenceWeighting(mPrimaryImage));
       TRY_AND_EXIT_ON_ITK_EXCEPTION(addFilter->Update());
       mSecondaryImage = addFilter->GetOutput();
 
