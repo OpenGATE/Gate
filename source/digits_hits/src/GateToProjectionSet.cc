@@ -127,17 +127,17 @@ GateToProjectionSet::GateToProjectionSet(const G4String& name,
   m_system(itsSystem)
 {
 
-m_isEnabled = false; // Keep this flag false: all output are disabled by default
-m_projectionSet = new GateProjectionSet();
-m_inputDataChannelList.push_back("Singles");
-m_messenger = new GateToProjectionSetMessenger(this);
+  m_isEnabled = false; // Keep this flag false: all output are disabled by default
+  m_projectionSet = new GateProjectionSet();
+  m_inputDataChannelList.push_back("Singles");
+  m_messenger = new GateToProjectionSetMessenger(this);
 
-SetVerboseLevel(0);
+  SetVerboseLevel(0);
 }
 
-  GateToProjectionSet::~GateToProjectionSet()
-  {
-delete m_projectionSet;
+GateToProjectionSet::~GateToProjectionSet()
+{
+  delete m_projectionSet;
 }
 
 const G4String& GateToProjectionSet::GiveNameOfFile()
