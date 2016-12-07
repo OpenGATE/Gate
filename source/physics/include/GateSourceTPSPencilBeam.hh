@@ -87,6 +87,9 @@ public:
   //Convergent or divergent beam model
   void SetBeamConvergence(bool c) {mConvergentSource=c;}
   int GetCurrentSpotID() {return mCurrentSpot;}
+  int GetTotalNumberOfSpots() {return mTotalNumberOfSpots;}
+  int GetCurrentLayerID() {return mCurrentLayer;}
+  int GetTotalNumberOfLayers() {return mTotalNumberOfLayers;}
 
 protected:
 
@@ -96,6 +99,7 @@ protected:
 
   bool mIsInitialized;
   int mCurrentSpot, mTotalNumberOfSpots;
+  int mCurrentLayer, mTotalNumberOfLayers;
   double mTotalNbProtons;
   bool mIsASourceDescriptionFile;
   G4String mSourceDescriptionFile;
@@ -120,7 +124,7 @@ protected:
   bool mFlatGenerationFlag;
   double *mPDF;
   RandGeneral * mDistriGeneral;
-  //Not alloweed fields
+  //Disallowed fields
   std::vector<int> mNotAllowedFields;
   //Allowed fields
   std::vector<int> mAllowedFields;
@@ -132,6 +136,7 @@ protected:
   bool mConvergentSource;
   int mSelectedLayerID;
   int mSelectedSpot;
+  std::vector<int> mSpotLayer; //in which layer is this spot?
   std::vector<double> mSpotEnergy;
   std::vector<double> mSpotWeight; // (proportional to) the expected number (for each bin in a multinomial distribution)
   std::vector<int> mNbProtonsToGenerate; // the actual number (for each bin in a multinomial distribution)
