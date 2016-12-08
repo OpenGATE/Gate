@@ -114,6 +114,8 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
 
     // integrating the plan description file data
     while (inFile && again) {
+      int spotcounter = -1; //we count spots during init, to be able to match /selectSpot correctly.
+
       for (int i = 0; i < 9; i++) std::getline(inFile,oneline);
       NbFields = atoi(oneline.c_str());
       for (int i = 0; i < 2 * NbFields; i++) std::getline(inFile,oneline);
@@ -161,6 +163,7 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
             std::getline(inFile,oneline);
             double SpotParameters[3];
             ReadLineTo3Doubles(SpotParameters, oneline);
+
             if (mTestFlag) {
               G4cout << "TESTREAD Spot N° " << k << "    parameters: " << SpotParameters[0] << " " << SpotParameters[1] << " " << SpotParameters[2] << Gateendl;
             }
@@ -284,13 +287,20 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
             if ((mSelectedLayerID != -1) && (currentLayerID != mSelectedLayerID)) allowedLayer = false;
 
             bool allowedSpot = true;
-            if ((mSelectedSpot != -1) && (k != mSelectedSpot)) allowedSpot = false;
+            //if disallowed field, layer, or empty spot, skip spot
+            if (!allowedField || !allowedLayer || SpotParameters[2] == 0) allowedSpot = false;
 
-            // Skip empty spots
-            if (SpotParameters[2] == 0) allowedSpot = false;
+            // count spots.
+            if (allowedSpot){
+              spotcounter++;
+              // Skip if /selectSpot was set.
+              if ((mSelectedSpot != -1) && (spotcounter != mSelectedSpot)) allowedSpot = false;
+            }
 
             if (allowedField && allowedLayer && allowedSpot) { // loading the spots only for allowed fields
-
+              if (mTestFlag) {
+                G4cout << "TESTREAD Spot Loaded. N° " << spotcounter << "   parameters: " << SpotParameters[0] << " " << SpotParameters[1] << " " << SpotParameters[2] << Gateendl;
+              }
               // the false mean -> do not create messenger (memory gain)
               GateSourcePencilBeam *Pencil = new GateSourcePencilBeam("PencilBeam", false);
 
@@ -324,6 +334,8 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
               Pencil->SetSigmaPhi(GetSigmaPhi(energy));
               Pencil->SetEllipseYPhiArea(GetEllipseYPhiArea(energy));
               Pencil->SetRotation(rotation);
+              
+              mSpotLayer.push_back(currentLayerID);
 
               //Correlation Position/Direction
               if (mConvergentSource) {
@@ -358,6 +370,7 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
     inFile.close();
 
     mTotalNumberOfSpots = mPencilBeams.size();
+    mTotalNumberOfLayers = mSpotLayer.back();
     if (mTotalNumberOfSpots == 0) {
       GateError("0 spots have been loaded from the file \"" << mPlan << "\" simulation abort!");
     }
@@ -382,6 +395,7 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
   //---------OLD GENERATION - START-----------------------
   int bin = mTotalNumberOfSpots * mDistriGeneral->fire();
   mCurrentSpot = bin;
+  mCurrentLayer = mSpotLayer[mCurrentSpot];
   mPencilBeams[bin]->GenerateVertex(aEvent);
 }
 //---------OLD GENERATION - END-----------------------
@@ -459,6 +473,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
 
     // integrating the plan description file data
     try {
+      int spotcounter = -1; //we count spots during init, to be able to match /selectSpot correctly.
       int lineno = 0;
       std::string dummy_PlanName = ReadNextContentLine<std::string,1>(inFile,lineno,mPlan)[0];
       int dummy_NbOfFractions = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0]; // not used
@@ -508,25 +523,30 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
                                       << SpotParameters[2] << Gateendl);
             }
 
-            // Brent 2014-02-19: This check is in an inner loop, but with good reason: we're in the parsing stage.
-            // Rewrote to work also with AllowedFields.
             bool allowedField = true;
             // if mNotAllowedFields was set, then check if FieldID was NotAllowed
             if (!mNotAllowedFields.empty()) if ( std::count(mNotAllowedFields.begin(), mNotAllowedFields.end(), FieldID) >  0 ) allowedField = false;
             // if mAllowedFields was set, then check if FieldID was not Allowed.
             if (!mAllowedFields.empty()   ) if ( std::count(mAllowedFields.begin()   , mAllowedFields.end()   , FieldID) == 0 ) allowedField = false;
 
-
             bool allowedLayer = true;
             if ((mSelectedLayerID != -1) && (currentLayerID != mSelectedLayerID)) allowedLayer = false;
 
             bool allowedSpot = true;
-            if ((mSelectedSpot != -1) && (k != mSelectedSpot)) allowedSpot = false;
+            //if disallowed field, layer, or empty spot, skip spot
+            if (!allowedField || !allowedLayer || SpotParameters[2] == 0) allowedSpot = false;
 
-            // Skip empty spots
-            if (SpotParameters[2] == 0) allowedSpot = false;
+            // count spots.
+            if (allowedSpot){
+              spotcounter++;
+              // Skip if /selectSpot was set.
+              if ((mSelectedSpot != -1) && (spotcounter != mSelectedSpot)) allowedSpot = false;
+            }
 
             if (allowedField && allowedLayer && allowedSpot) { // loading the spots only for allowed fields
+              if (mTestFlag) {
+                GateMessage( "Beam", 1, "TESTREAD Spot Loaded. No " << spotcounter << "   parameters: " << SpotParameters[0] << " " << SpotParameters[1] << " " << SpotParameters[2] << Gateendl );
+              }
 
               //POSITION
               // To calculate the beam position with a gantry angle
@@ -579,6 +599,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
               mSpotWeight.push_back(NbProtons);
               mSpotPosition.push_back(position);
               mSpotRotation.push_back(rotation);
+              mSpotLayer.push_back(currentLayerID);
 
             } else if (mTestFlag) {
               ++nrejected;
@@ -588,6 +609,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
         }
       }
       mTotalNumberOfSpots = mSpotWeight.size();
+      mTotalNumberOfLayers = mSpotLayer.back();
       GateMessage("Beam", 1, "[TPSPencilBeam] Plan description file \"" << mPlan << "\" successfully loaded: " << NbFields << " field(s) with a total of " << mTotalNumberOfSpots << " spots, " << nrejected << " spots rejected." << Gateendl );
     } catch ( const std::runtime_error& oops ){
       GateError("Something went wrong while parsing plan description file \"" << mPlan << "\": " << Gateendl << oops.what() << Gateendl );
@@ -630,6 +652,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
   while ( (mCurrentSpot<mTotalNumberOfSpots) && (mNbProtonsToGenerate[mCurrentSpot] <= 0) ){
     GateMessage("Beam", 4, "[TPSPencilBeam] spot " << mCurrentSpot << " has no protons left to generate." << Gateendl );
     mCurrentSpot++;
+    mCurrentLayer = mSpotLayer[mCurrentSpot];
     need_pencilbeam_config = true;
   }
   if ( mCurrentSpot>=mTotalNumberOfSpots ){
@@ -698,6 +721,9 @@ void GateSourceTPSPencilBeam::ConfigurePencilBeam() {
 
 //------------------------------------------------------------------------------------------------------
 double GateSourceTPSPencilBeam::ConvertMuToProtons(double weight, double energy) {
+  //this function introduces a dependence on energy for the spot intensities.
+  //depending on whether mSpotIntensityAsNbProtons is set, the MSW[MU] or the #protons set by this function are used as a PDF.
+  //mDistriGeneral takes a PDF to compute the number of protons that Gate is actually going to simulate.
   double K=37.60933;
   double SP=9.6139E-09*pow(energy,4)-7.0508E-06*pow(energy,3)+2.0028E-03*pow(energy,2)-2.7615E-01*pow(energy,1)+2.0082E+01*pow(energy,0);
   double PTP=1;
