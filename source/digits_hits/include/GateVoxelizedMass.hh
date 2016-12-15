@@ -31,38 +31,43 @@ class GateVoxelizedMass
   GateVoxelizedMass();
   virtual ~GateVoxelizedMass() {}
 
-  void Initialize(const G4String, const GateVImage*);
+  void Initialize(G4String, const GateVImage*);
 
-  virtual bool IsLVParameterized(const G4LogicalVolume* LV);
-  virtual void GenerateVectors();
-  virtual void GenerateVoxels();
-  virtual void GenerateDosels(const int index);
-  virtual std::pair<double,double> ParameterizedVolume(const int index);
-  virtual std::pair<double,double> VoxelIteration(const G4VPhysicalVolume*, const int, G4RotationMatrix, G4ThreeVector,const int index);
+  void UpdateImage(GateImageDouble*);
+
   std::vector<double> GetDoselMassVector();
 
   G4String GetVoxelMatName(int x, int y, int z);
   G4double GetVoxelMass(int x, int y, int z);
   G4double GetVoxelVolume();
 
-  G4double GetDoselMass(const int index);
+  G4double GetDoselMass(int index);
   G4double GetDoselVolume();
 
-  double  GetPartialVolumeWithSV     (const int index,const G4String SVName);
-  double  GetPartialMassWithSV       (const int index,const G4String SVName);
-  //double  GetPartialVolumeWithMatName(const int index);
-  double  GetPartialMassWithMatName  (const int index);
+  double  GetPartialVolumeWithSV     (int index,G4String);
+  double  GetPartialMassWithSV       (int index,G4String);
+  //double  GetPartialVolumeWithMatName(int index);
+  double  GetPartialMassWithMatName  (int index);
   double  GetTotalVolume();
-  int     GetNumberOfVolumes(const int index);
-  double  GetMaxDose(const int index);
-  void    SetEdep(const int index,const G4String SVName,const double Edep);
-  void    SetMaterialFilter(const G4String MatName);
-  void    SetVolumeFilter(const G4String MatName);
-  void    SetExternalMassImage(const G4String extMassFile);
+  int     GetNumberOfVolumes(int index);
+  double  GetMaxDose(int index);
 
-  void UpdateImage(GateImageDouble*);
+  void    SetEdep(int index,G4String,double);
+  void    SetMaterialFilter   (G4String);
+  void    SetVolumeFilter     (G4String);
+
+  void    SetExternalMassImage(G4String);
 
  protected:
+
+  bool IsLVParameterized(const G4LogicalVolume*);
+
+  void GenerateVectors();
+  void GenerateVoxels();
+  void GenerateDosels(int index);
+
+  std::pair<double,double> ParameterizedVolume(int index);
+  std::pair<double,double> VoxelIteration(const G4VPhysicalVolume*,int, G4RotationMatrix, G4ThreeVector,int index);
 
   GateVImageVolume* imageVolume;
   const G4VPhysicalVolume* DAPV;

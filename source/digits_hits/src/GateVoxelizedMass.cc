@@ -55,7 +55,7 @@ GateVoxelizedMass::GateVoxelizedMass()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateVoxelizedMass::Initialize(const G4String _mVolumeName, const GateVImage* _mImage)
+void GateVoxelizedMass::Initialize(G4String _mVolumeName, const GateVImage* _mImage)
 {
   GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
 
@@ -169,7 +169,7 @@ bool GateVoxelizedMass::IsLVParameterized(const G4LogicalVolume* LV)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateVoxelizedMass::GetDoselMass(const int index)
+double GateVoxelizedMass::GetDoselMass(int index)
 {
   GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
 
@@ -420,7 +420,7 @@ G4double GateVoxelizedMass::GetVoxelMass(int x, int y, int z)
 
 
 //-----------------------------------------------------------------------------
-void GateVoxelizedMass::GenerateDosels(const int index)
+void GateVoxelizedMass::GenerateDosels(int index)
 {
   GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
   // INFO : Dimension of the vectors : x = 0, y = 1, z = 2
@@ -440,7 +440,7 @@ void GateVoxelizedMass::GenerateDosels(const int index)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-std::pair<double,double> GateVoxelizedMass::ParameterizedVolume(const int index)
+std::pair<double,double> GateVoxelizedMass::ParameterizedVolume(int index)
 {
   GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
 
@@ -581,7 +581,7 @@ std::pair<double,double> GateVoxelizedMass::ParameterizedVolume(const int index)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-std::pair<double,double> GateVoxelizedMass::VoxelIteration(const G4VPhysicalVolume* motherPV,const int Generation,G4RotationMatrix motherRotation,G4ThreeVector motherTranslation,const int index)
+std::pair<double,double> GateVoxelizedMass::VoxelIteration(const G4VPhysicalVolume* motherPV,int Generation,G4RotationMatrix motherRotation,G4ThreeVector motherTranslation,int index)
 {
   if (Generation==0) {
     if (IsLVParameterized(motherPV->GetLogicalVolume()))
@@ -823,7 +823,7 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(const G4VPhysicalVolu
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateVoxelizedMass::GetPartialVolumeWithSV(const int index,const G4String SVName)
+double GateVoxelizedMass::GetPartialVolumeWithSV(int index,G4String SVName)
 {
   if (mIsParameterised) {
     GateError("Error: GateVoxelizedMass::GetPartialVolumeWithSV: This method doesn't work with voxelized volumes !"<<Gateendl);
@@ -843,7 +843,7 @@ double GateVoxelizedMass::GetPartialVolumeWithSV(const int index,const G4String 
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateVoxelizedMass::GetPartialMassWithSV(const int index,const G4String SVName)
+double GateVoxelizedMass::GetPartialMassWithSV(int index,G4String SVName)
 {
   if (mIsParameterised) {
     GateError("Error: GateVoxelizedMass::GetPartialMassWithSV: This method doesn't work with voxelized volumes !"<<Gateendl);
@@ -863,7 +863,7 @@ double GateVoxelizedMass::GetPartialMassWithSV(const int index,const G4String SV
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//double GateVoxelizedMass::GetPartialVolumeWithMatName(const int index)
+//double GateVoxelizedMass::GetPartialVolumeWithMatName(int index)
 //{
 //  if(mMaterialFilter=="")
 //    GateError("Error: GateVoxelizedMass::GetPartialVolumeWithMatName: No material filter defined !"<<Gateendl);
@@ -879,14 +879,14 @@ double GateVoxelizedMass::GetPartialMassWithSV(const int index,const G4String SV
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateVoxelizedMass::GetPartialMassWithMatName(const int index)
+double GateVoxelizedMass::GetPartialMassWithMatName(int index)
 {
   return GetDoselMass(index);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-int GateVoxelizedMass::GetNumberOfVolumes(const int index)
+int GateVoxelizedMass::GetNumberOfVolumes(int index)
 {
  return mMass[index].size();
 }
@@ -900,7 +900,7 @@ double GateVoxelizedMass::GetTotalVolume()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateVoxelizedMass::SetEdep(const int index,const G4String SVName,const double edep)
+void GateVoxelizedMass::SetEdep(int index,G4String SVName,double edep)
 {
   bool ok(false);
   for(size_t i=0;i<mEdep[index].size();i++)
@@ -916,7 +916,7 @@ void GateVoxelizedMass::SetEdep(const int index,const G4String SVName,const doub
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateVoxelizedMass::GetMaxDose(const int index)
+double GateVoxelizedMass::GetMaxDose(int index)
 {
   double edepmax(0.);
   G4String SVName("");
@@ -948,7 +948,7 @@ void GateVoxelizedMass::UpdateImage(GateImageDouble* image)
 
 
 //-----------------------------------------------------------------------------
-void GateVoxelizedMass::SetMaterialFilter(const G4String MatName)
+void GateVoxelizedMass::SetMaterialFilter(G4String MatName)
 {
   if (MatName != "") {
     if (mHasFilter)
@@ -965,7 +965,7 @@ void GateVoxelizedMass::SetMaterialFilter(const G4String MatName)
 
 
 //-----------------------------------------------------------------------------
-void GateVoxelizedMass::SetVolumeFilter(const G4String VolName)
+void GateVoxelizedMass::SetVolumeFilter(G4String VolName)
 {
   if (VolName == "world")
     GateError( "[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: DoseActor doesn't work when attached to world !" << Gateendl);
@@ -984,7 +984,7 @@ void GateVoxelizedMass::SetVolumeFilter(const G4String VolName)
 
 
 //-----------------------------------------------------------------------------
-void GateVoxelizedMass::SetExternalMassImage(const G4String extMassFile)
+void GateVoxelizedMass::SetExternalMassImage(G4String extMassFile)
 {
   if(extMassFile != "")
   {
