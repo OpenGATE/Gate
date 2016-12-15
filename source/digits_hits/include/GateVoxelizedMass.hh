@@ -38,7 +38,7 @@ class GateVoxelizedMass
   virtual void GenerateVoxels();
   virtual void GenerateDosels(const int index);
   virtual std::pair<double,double> ParameterizedVolume(const int index);
-  virtual std::pair<double,double> VoxelIteration(G4VPhysicalVolume* motherPV,const int Generation,G4RotationMatrix MotherRotation,G4ThreeVector MotherTranslation,const int index);
+  virtual std::pair<double,double> VoxelIteration(const G4VPhysicalVolume*, const int, G4RotationMatrix, G4ThreeVector,const int index);
   std::vector<double> GetDoselMassVector();
 
   G4String GetVoxelMatName(int x, int y, int z);
@@ -46,11 +46,11 @@ class GateVoxelizedMass
   G4double GetVoxelVolume();
 
   G4double GetDoselMass(const int index);
-  G4double GetDoselVolume(const int index);
+  G4double GetDoselVolume();
 
   double  GetPartialVolumeWithSV     (const int index,const G4String SVName);
   double  GetPartialMassWithSV       (const int index,const G4String SVName);
-  double  GetPartialVolumeWithMatName(const int index);
+  //double  GetPartialVolumeWithMatName(const int index);
   double  GetPartialMassWithMatName  (const int index);
   double  GetTotalVolume();
   int     GetNumberOfVolumes(const int index);
@@ -65,10 +65,13 @@ class GateVoxelizedMass
  protected:
 
   GateVImageVolume* imageVolume;
-  G4VPhysicalVolume* DAPV;
-  G4LogicalVolume* DALV;
+  const G4VPhysicalVolume* DAPV;
+  const G4LogicalVolume* DALV;
   G4Box* doselSV;
-  G4Box* DABox;
+  const G4Box* DABox;
+
+  const GateVImage* mImage;
+  GateImageDouble* mMassImage;
 
   double doselReconstructedTotalCubicVolume;
   double doselReconstructedTotalMass;
@@ -79,7 +82,7 @@ class GateVoxelizedMass
   std::vector<std::vector<std::pair<G4String,double> > > mMass;
   std::vector<std::vector<std::pair<G4String,double> > > mEdep;
 
-  std::vector<double> doselReconstructedCubicVolume;
+  //std::vector<double> doselReconstructedCubicVolume;
   std::vector<double> doselReconstructedMass;
   std::vector<double> doselMin;
   std::vector<double> doselMax;
@@ -89,10 +92,8 @@ class GateVoxelizedMass
   double mFilteredVolumeMass;
   double mFilteredVolumeCubicVolume;
 
-  std::vector<G4VSolid*> vectorSV;
+  //std::vector<G4VSolid*> vectorSV;
 
-  const GateVImage* mImage;
-  GateImageDouble mMassImage;
 
   G4String mVolumeName;
   G4String mMassFile;
