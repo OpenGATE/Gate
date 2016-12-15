@@ -201,7 +201,7 @@ void GateTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step *
     // Mass weighting OR filter
     if (mDoseAlgorithmType == "MassWeighting" || mMaterialFilter != "" || mVolumeFilter != "") {
       double muen = mMaterialHandler->GetMuEn(PreStep->GetMaterialCutsCouple(), energy);
-      dose = energy * muen * distance / mVoxelizedMass.GetVoxelMass(index) / gray * 0.1;
+      dose = energy * muen * distance / mVoxelizedMass.GetDoselMass(index) / gray * 0.1;
     }
     //---------------------------------------------------------------------------------
 

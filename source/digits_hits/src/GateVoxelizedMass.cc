@@ -163,7 +163,7 @@ bool GateVoxelizedMass::IsLVParameterized(const G4LogicalVolume* LV)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateVoxelizedMass::GetVoxelMass(const int index)
+double GateVoxelizedMass::GetDoselMass(const int index)
 {
   GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
 
@@ -217,7 +217,7 @@ double GateVoxelizedMass::GetVoxelMass(const int index)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateVoxelizedMass::GetVoxelCubicVolume(const int index)
+double GateVoxelizedMass::GetDoselVolume(const int index)
 {
   if (mHasSameResolution)
     return imageVolume->GetImage()->GetVoxelVolume();
@@ -247,7 +247,7 @@ double GateVoxelizedMass::GetVoxelCubicVolume(const int index)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-std::vector<double> GateVoxelizedMass::GetVoxelMassVector()
+std::vector<double> GateVoxelizedMass::GetDoselMassVector()
 {
   if (doselExternalMass.size() > 0)
     return doselExternalMass;
@@ -370,22 +370,6 @@ void GateVoxelizedMass::GenerateVoxels()
       nzDosel > nzVoxel)
       GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR : The dosel resolution is smaller than the voxel resolution !" << Gateendl);
 
-  voxelMass   .resize(nxVoxel);
-  voxelMatName.resize(nxVoxel);
-  for(int x=0;x<nxVoxel;x++)
-  {
-    voxelMass[x]   .resize(nyVoxel);
-    voxelMatName[x].resize(nyVoxel);
-    for(int y=0;y<nyVoxel;y++)
-    {
-      voxelMass[x][y]   .resize(nzVoxel,-1.);
-      voxelMatName[x][y].resize(nzVoxel,"");
-    }
-  }
-
-  voxelCubicVolume=imageVolume->GetImage()->GetVoxelVolume();
-  if(voxelCubicVolume<=0.)
-    GateError("!!! ERROR : Voxels cubic volume is less or equal to zero !!! (cubic volume="<<voxelCubicVolume<<")"<<Gateendl);
 
   for (signed long int i=0; i < imageVolume->GetImage()->GetNumberOfValues(); i++) {
     const int xVoxel(round((DABox->GetXHalfLength()+imageVolume->GetImage()->GetVoxelCenterFromIndex(i).x()-imageVolume->GetImage()->GetVoxelSize().x()/2.)/imageVolume->GetImage()->GetVoxelSize().x())),
@@ -398,28 +382,61 @@ void GateVoxelizedMass::GenerateVoxels()
     //G4cout<<"yVoxel="<<yVoxel<<G4endl;
     //G4cout<<"zVoxel="<<zVoxel<<G4endl;
 
+    if (imageVolume->GetImage()->GetValue(i) != imageVolume->GetImage()->GetValue(xVoxel,yVoxel,zVoxel))
+    {
+      GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: Reconstructed coordinates of voxels don't correspond to index ! (index: " << i << ", coord: " << xVoxel << "," << yVoxel << "," << zVoxel << ")" << Gateendl);
+      exit(EXIT_FAILURE);
+    }
+
     if (xVoxel >= nxVoxel ||
         yVoxel >= nyVoxel ||
         zVoxel >= nzVoxel)
     {
-      GateError("!!! ERROR : Too many voxels !!! (xVoxel = " << xVoxel << ", yVoxel = " << yVoxel << ", zVoxel = " << zVoxel << ")" << Gateendl);
+      GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: Too many voxels ! (xVoxel = " << xVoxel << ", yVoxel = " << yVoxel << ", zVoxel = " << zVoxel << ")" << Gateendl);
       exit(EXIT_FAILURE);
     }
-
-    //G4cout<<"imageVolume->GetImage()->GetValue(i)="<<imageVolume->GetImage()->GetValue(i)<<G4endl;
-    //G4cout<<"imageVolume->GetMaterialNameFromLabel((LabelType)imageVolume->GetImage()->GetValue(i))="<<imageVolume->GetMaterialNameFromLabel(imageVolume->GetImage()->GetValue(i))<<G4endl;
-
-    voxelMatName[xVoxel][yVoxel][zVoxel]=(G4String)imageVolume->GetMaterialNameFromLabel(imageVolume->GetImage()->GetValue(i));
-
-    double density(theMaterialDatabase.GetMaterial(voxelMatName[xVoxel][yVoxel][zVoxel])->GetDensity());
-
-    voxelMass[xVoxel][yVoxel][zVoxel]=density*voxelCubicVolume;
-
-    if(voxelMass[xVoxel][yVoxel][zVoxel]<=0.)
-      GateError("!!! ERROR : Voxel (index : "<<i<<") mass is less or equal to zero !!! (mass="<<voxelMass[xVoxel][yVoxel][zVoxel]<<")"<<Gateendl);
   }
 }
 //-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+G4String GateVoxelizedMass::GetVoxelMatName(int x, int y, int z)
+{
+ return G4String(imageVolume->GetMaterialNameFromLabel(imageVolume->GetImage()->GetValue(x,y,z)));
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+G4double GateVoxelizedMass::GetVoxelVolume()
+{
+  const G4double volume = imageVolume->GetImage()->GetVoxelVolume();
+
+  if (volume <= 0.)
+    GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: Voxels cubic volume is less or equal to zero ! (volume: " << volume << ")" << Gateendl);
+
+  return volume;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+G4double GateVoxelizedMass::GetVoxelMass(int x, int y, int z)
+{
+  const G4double density = theMaterialDatabase.GetMaterial(GetVoxelMatName(x,y,z))->GetDensity();
+  const G4double mass    = density * GetVoxelVolume();
+
+  if (mass <= 0.)
+  {
+    GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: Voxel (coord: " << x << "," << y << "," << z <<") mass is less or equal to zero ! (mass: "<< mass << ")" << Gateendl);
+    exit(EXIT_FAILURE);
+  }
+
+  return mass;
+}
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateVoxelizedMass::GenerateDosels(const int index)
@@ -547,26 +564,27 @@ std::pair<double,double> GateVoxelizedMass::ParameterizedVolume(const int index)
         for(size_t xVox=0;xVox<coord[0].size();xVox++)
           for(size_t yVox=0;yVox<coord[1].size();yVox++)
             for(size_t zVox=0;zVox<coord[2].size();zVox++)
-              if(mMaterialFilter==""||mMaterialFilter==voxelMatName[coord[0][xVox]][coord[1][yVox]][coord[2][zVox]])
+              if (mMaterialFilter == "" ||
+                  mMaterialFilter == GetVoxelMatName(coord[0][xVox], coord[1][yVox], coord[2][zVox]))
               {
                 const double coefVox(coef[0][xVox] * coef[1][yVox] * coef[2][zVox]);
 
-                doselReconstructedCubicVolume[index] += voxelCubicVolume * coefVox;
-                doselReconstructedMass[index]        += voxelMass[coord[0][xVox]][coord[1][yVox]][coord[2][zVox]] * coefVox;
+                doselReconstructedCubicVolume[index] += GetVoxelVolume() * coefVox;
+                doselReconstructedMass[index]        += GetVoxelMass(coord[0][xVox], coord[1][yVox], coord[2][zVox]) * coefVox;
 
                 if(doselReconstructedCubicVolume[index] < 0.)
                   GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR : doselReconstructedCubicVolume is negative !" << Gateendl
-                          <<"     More informations :"<<Gateendl
-                          <<"            doselReconstructedCubicVolume["<<index<<"]="<<doselReconstructedCubicVolume[index]<<Gateendl
-                          <<"            voxelCubicVolume="<<voxelCubicVolume<<Gateendl
-                          <<"            coefVox="<<coefVox<<Gateendl);
+                          <<"     More informations :" << Gateendl
+                          <<"            doselReconstructedCubicVolume[" << index << "]=" << doselReconstructedCubicVolume[index] << Gateendl
+                          <<"            Voxel Volume: " << GetVoxelVolume() << Gateendl
+                          <<"            coefVox=" << coefVox <<Gateendl);
 
                 if(doselReconstructedMass[index] < 0.)
                   GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR : doselReconstructedMass is negative !" << Gateendl
-                          <<"     More informations :"<<Gateendl
-                          <<"            doselReconstructedMass["<<index<<"]="<<doselReconstructedMass[index]<<Gateendl
-                          <<"            voxelMass="<<voxelMass[coord[0][xVox]][coord[1][yVox]][coord[2][zVox]]<<Gateendl
-                          <<"            coefVox="<<coefVox<<Gateendl);
+                          <<"     More informations:" << Gateendl
+                          <<"            doselReconstructedMass[" << index << "]=" << doselReconstructedMass[index] << Gateendl
+                          <<"            Voxel Mass: " << GetVoxelMass(coord[0][xVox], coord[1][yVox], coord[2][zVox]) << Gateendl
+                          <<"            coefVox= " << coefVox << Gateendl);
               }
       }
 
@@ -832,7 +850,7 @@ double GateVoxelizedMass::GetPartialVolumeWithSV(const int index,const G4String 
   }
 
   if(mCubicVolume[index].empty())
-    GetVoxelMass(index);
+    GetDoselMass(index);
 
   for(size_t i=0;i<mCubicVolume[index].size();i++)
     if(mCubicVolume[index][i].first==SVName)
@@ -852,7 +870,7 @@ double GateVoxelizedMass::GetPartialMassWithSV(const int index,const G4String SV
   }
 
   if(mMass[index].empty())
-    GetVoxelMass(index);
+    GetDoselMass(index);
 
   for(size_t i=0;i<mMass[index].size();i++)
     if(mMass[index][i].first==SVName)
@@ -882,7 +900,7 @@ double GateVoxelizedMass::GetPartialVolumeWithMatName(const int index)
 //-----------------------------------------------------------------------------
 double GateVoxelizedMass::GetPartialMassWithMatName(const int index)
 {
-  return GetVoxelMass(index);
+  return GetDoselMass(index);
 }
 //-----------------------------------------------------------------------------
 
@@ -937,7 +955,7 @@ double GateVoxelizedMass::GetMaxDose(const int index)
 GateImageDouble GateVoxelizedMass::UpdateImage(GateImageDouble image)
 {
   if (mIsInitialized) {
-    const std::vector<double> vector = GetVoxelMassVector();
+    const std::vector<double> vector = GetDoselMassVector();
 
     for (size_t i=0; i<vector.size(); i++)
       image.AddValue(i, vector[i]/kg);

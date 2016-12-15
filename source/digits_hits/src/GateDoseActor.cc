@@ -338,7 +338,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   //---------------------------------------------------------------------------------
   // Mass weighting OR filter
   if (mDoseAlgorithmType == "MassWeighting" || mMaterialFilter != "" || mVolumeFilter != "")
-    density = mVoxelizedMass.GetVoxelMass(index)/mDoseImage.GetVoxelVolume();
+    density = mVoxelizedMass.GetDoselMass(index)/mDoseImage.GetVoxelVolume();
   //---------------------------------------------------------------------------------
 
   if (mMaterialFilter != "") {
