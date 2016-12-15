@@ -81,7 +81,6 @@ protected:
   GateImageWithStatistic mDoseImage;
   GateImageWithStatistic mEdepImage;
   GateImage mLastHitEventImage;
-  GateImageDouble mMassImage;
 
   GateMaterialMuHandler* mMaterialHandler;
 

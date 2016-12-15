@@ -168,18 +168,20 @@ void GateDoseActor::Construct() {
     mNumberOfHitsImage.Allocate();
   }
 
-  if (mExportMassImage!="" || mDoseAlgorithmType=="MassWeighting"
-      || mVolumeFilter!="" || mMaterialFilter!="") {
-    mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mMassImage.Allocate();
-
+  if (mIsDoseImageEnabled &&
+      (mExportMassImage != "" || mDoseAlgorithmType == "MassWeighting" ||
+       mVolumeFilter != ""    || mMaterialFilter != "")) {
     mVoxelizedMass.SetMaterialFilter(mMaterialFilter);
     mVoxelizedMass.SetVolumeFilter(mVolumeFilter);
     mVoxelizedMass.SetExternalMassImage(mImportMassImage);
-    mVoxelizedMass.Initialize(mVolumeName,mMassImage);
+    mVoxelizedMass.Initialize(mVolumeName, &mDoseImage.GetValueImage());
 
-    if (mExportMassImage!="") {
-      mMassImage=mVoxelizedMass.UpdateImage(mMassImage);
+    if (mExportMassImage != "") {
+      mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+      mMassImage.Allocate();
+
+      mVoxelizedMass.UpdateImage(&mMassImage);
+
       mMassImage.Write(mExportMassImage);
     }
   }

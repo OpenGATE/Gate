@@ -31,7 +31,7 @@ class GateVoxelizedMass
   GateVoxelizedMass();
   virtual ~GateVoxelizedMass() {}
 
-  void Initialize(const G4String mExtVolumeName, const GateImageDouble mExtImage);
+  void Initialize(const G4String, const GateVImage*);
 
   virtual bool IsLVParameterized(const G4LogicalVolume* LV);
   virtual void GenerateVectors();
@@ -60,8 +60,7 @@ class GateVoxelizedMass
   void    SetVolumeFilter(const G4String MatName);
   void    SetExternalMassImage(const G4String extMassFile);
 
-
-  GateImageDouble UpdateImage(GateImageDouble image);
+  void UpdateImage(GateImageDouble*);
 
  protected:
 
@@ -92,7 +91,7 @@ class GateVoxelizedMass
 
   std::vector<G4VSolid*> vectorSV;
 
-  GateImageDouble mImage;
+  const GateVImage* mImage;
   GateImageDouble mMassImage;
 
   G4String mVolumeName;
