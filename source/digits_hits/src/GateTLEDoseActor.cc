@@ -37,6 +37,7 @@ GateTLEDoseActor::GateTLEDoseActor(G4String name, G4int depth):
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 /// Destructor
 GateTLEDoseActor::~GateTLEDoseActor()  {
@@ -130,6 +131,7 @@ void GateTLEDoseActor::Construct() {
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 /// Save data
 void GateTLEDoseActor::SaveData() {
@@ -145,6 +147,7 @@ void GateTLEDoseActor::SaveData() {
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 void GateTLEDoseActor::ResetData() {
   if (mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1);
@@ -153,12 +156,15 @@ void GateTLEDoseActor::ResetData() {
 }
 //-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 void GateTLEDoseActor::UserSteppingAction(const GateVVolume *, const G4Step *step)
 {
   int index = GetIndexFromStepPosition(GetVolume(), step);
   UserSteppingActionInVoxel(index, step);
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateTLEDoseActor::BeginOfRunAction(const G4Run *r) {
@@ -168,6 +174,7 @@ void GateTLEDoseActor::BeginOfRunAction(const G4Run *r) {
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 // Callback at each event
 void GateTLEDoseActor::BeginOfEventAction(const G4Event *e) {
@@ -176,6 +183,7 @@ void GateTLEDoseActor::BeginOfEventAction(const G4Event *e) {
 
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step *step) {
