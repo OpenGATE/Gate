@@ -190,11 +190,10 @@ void GateDoseActor::Construct() {
     GateWarning("Exported mass image will be the same as the imported one.");
 
   if (mDoseAlgorithmType != "MassWeighting") {
-    mDoseAlgorithmType="VolumeWeighting";
-    if (mImportMassImage!="") {
-      mImportMassImage="";
+    mDoseAlgorithmType = "VolumeWeighting";
+
+    if (mImportMassImage != "")
       GateWarning("importMassImage command is only compatible with MassWeighting algorithm. Ignored. ");
-    }
   }
 
   // Print information
