@@ -121,8 +121,8 @@
 
 /gate/physics/addPhysicsList           emstandard_opt3
 
-/gate/physics/Gamma/SetCutInRegion     world 10 mm
-/gate/physics/Electron/SetCutInRegion  world 10 mm
+/gate/physics/Gamma/SetCutInRegion     world 1 mm
+/gate/physics/Electron/SetCutInRegion  world 1 mm
 
 #=====================================================
 # DETECTORS
@@ -135,22 +135,35 @@
 /gate/actor/DAVW/save                         output/DAVW.mhd
 /gate/actor/DAVW/attachTo                     VolumeTot
 /gate/actor/DAVW/stepHitType                  random
-/gate/actor/DAVW/setDoseAlgorithm             VolumeWeighting
 /gate/actor/DAVW/setResolution                2 2 2
 /gate/actor/DAVW/enableDose                   true
 /gate/actor/DAVW/enableSquaredDose            true
 /gate/actor/DAVW/enableUncertaintyDose        true
+/gate/actor/DAVW/setDoseAlgorithm             VolumeWeighting
 
 /gate/actor/addActor DoseActor                DAMW
 /gate/actor/DAMW/save                         output/DAMW.mhd
 /gate/actor/DAMW/attachTo                     VolumeTot
 /gate/actor/DAMW/stepHitType                  random
-/gate/actor/DAMW/setDoseAlgorithm             MassWeighting
 /gate/actor/DAMW/setResolution                2 2 2
 /gate/actor/DAMW/enableDose                   true
 /gate/actor/DAMW/enableSquaredDose            true
 /gate/actor/DAMW/enableUncertaintyDose        true
+/gate/actor/DAMW/setDoseAlgorithm             MassWeighting
 /gate/actor/DAMW/exportMassImage              output/DAMW-Mass.mhd
+
+# DoseActor with VolumeFilter
+/gate/actor/addActor DoseActor                DAWater
+/gate/actor/DAWater/save                      output/DAWater.mhd
+/gate/actor/DAWater/attachTo                  VolumeTot
+/gate/actor/DAWater/stepHitType               random
+/gate/actor/DAWater/setResolution             2 2 2
+/gate/actor/DAWater/enableDose                true
+/gate/actor/DAWater/enableSquaredDose         true
+/gate/actor/DAWater/enableUncertaintyDose     true
+/gate/actor/DAWater/setDoseAlgorithm          MassWeighting
+/gate/actor/DAWater/setVolumeFilter           VolumeWater
+/gate/actor/DAWater/exportMassImage           output/DAWater-Mass.mhd
 
 #=====================================================
 # INITIALISATION
@@ -159,7 +172,8 @@
 /gate/run/initialize
 
 /gate/random/setEngineName MersenneTwister
-/gate/random/setEngineSeed auto
+#/gate/random/setEngineSeed auto
+/gate/random/setEngineSeed 1234
 
 #=====================================================
 # VISUALISATION
