@@ -186,6 +186,16 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
       }
     }
 
+    GateMessage("Actor", 2,  "GateNTLEDoseActor -- UserSteppingActionInVoxel:" << Gateendl
+         << " Dosel index    = " << index << Gateendl
+         << " Dosel volume   = " << G4BestUnit(GetDoselVolume(), "Volume") << Gateendl
+         << " Dosel material = " << step->GetPreStepPoint()->GetMaterial()->GetName() << Gateendl
+         << " Particle       = " << step->GetTrack()->GetDefinition()->GetParticleName() << Gateendl
+         << " KinEnergy      = " << G4BestUnit(step->GetPreStepPoint()->GetKineticEnergy(), "Energy") << Gateendl
+         << " Distance       = " << G4BestUnit(step->GetStepLength(), "Length") << Gateendl
+         << " Dose           = " << G4BestUnit(dose, "Dose") << Gateendl);
+
+
     if (mIsDoseImageEnabled) {
       if (mIsDoseUncertaintyImageEnabled || mIsDoseSquaredImageEnabled) {
         if (sameEvent) mDoseImage.AddTempValue(index, dose);
