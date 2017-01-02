@@ -217,7 +217,7 @@ ELSE()
   INCLUDE_DIRECTORIES(
     ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/
     ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/itkzlib
-    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/MetaIO
+    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/src
     ${PROJECT_BINARY_DIR}/itk-mhd/)
   SET(ITKMHD_LIBS MetaIO itkzlib)
 ENDIF()
@@ -225,7 +225,7 @@ ENDIF()
 #=========================================================
 # Add the executable, and link it to the Geant4/ROOT/CLHEP/ITK libraries
 IF(GATE_USE_GPU AND CUDA_FOUND)
-  SET(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20;-gencode arch=compute_30,code=sm_30;-use_fast_math;-w;--ptxas-options=-v")
+  SET(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20;-gencode arch=compute_21,code=sm_21;-gencode arch=compute_30,code=sm_30;-gencode arch=compute_32,code=sm_32;-gencode arch=compute_35,code=sm_35;-gencode arch=compute_37,code=sm_37;-gencode arch=compute_50,code=sm_50;-gencode arch=compute_52,code=sm_52;-gencode arch=compute_53,code=sm_53;-gencode arch=compute_60,code=sm_60;-gencode arch=compute_61,code=sm_61;-use_fast_math;-w;--ptxas-options=-v")
   CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
 ELSE(GATE_USE_GPU AND CUDA_FOUND)
   ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})

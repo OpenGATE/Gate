@@ -108,7 +108,7 @@ void GatePhaseSpaceActor::Construct() {
   EnableBeginOfEventAction(false);
 
   // bEnableEmissionPoint=true;
-  if (bEnablePrimaryEnergy || bEnableEmissionPoint) EnableBeginOfEventAction(true);
+  if (bEnablePrimaryEnergy || bEnableEmissionPoint || bEnableSpotID) EnableBeginOfEventAction(true);
 
   EnablePreUserTrackingAction(true);
   EnableUserSteppingAction(true);
