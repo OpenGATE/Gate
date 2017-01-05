@@ -65,21 +65,30 @@ void GateKermaFactorHandler::SetMaterial(const G4Material* eMaterial)
 
   const G4String name(m_material->GetName());
 
-  if (name == "G4_MUSCLE_STRIATED_ICRU" || name == "Muscle_Skeletal_ICRP_23")
+  if (name == "G4_MUSCLE_STRIATED_ICRU" ||
+      name == "Muscle_Skeletal_ICRP_23")
   {
     kfTable = kerma_factor_muscle_tableau;
     MuEnTable = MuEnMuscleTable;
   }
-  //else if (name == "G4_LUNG_ICRP")
-  //{
-  //  kfTable = kerma_factor_lung_tableau;
-  //  MuEnTable = MuEnLungTable;
-  //}
-  //else if (name == "G4_BONE_CORTICAL_ICRP")
-  //{
-  //  kfTable = kerma_factor_bone_tableau;
-  //  MuEnTable = MuEnBoneTable;
-  //}
+  else if (name == "G4_LUNG_ICRP" ||
+           name == "Lung_ICRP_23")
+  {
+    kfTable = kerma_factor_Lung_tableau;
+    MuEnTable = MuEnLungTable;
+  }
+  else if (name == "G4_BONE_CORTICAL_ICRP" ||
+           name == "Cortical_Bone_ICRP_23")
+  {
+    kfTable = kerma_factor_Cortical_Bone_tableau;
+    MuEnTable = MuEnCorticalBoneTable;
+  }
+  else if (name == "G4_Galactic" ||
+           name == "Vacuum")
+  {
+    kfTable = kerma_factor_Vacuum_tableau;
+    MuEnTable = MuEnVacuumTable;
+  }
   else
     GateError("Material " << name << " not supported !" << Gateendl);
 }
