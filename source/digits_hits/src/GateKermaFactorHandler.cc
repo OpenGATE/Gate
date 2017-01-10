@@ -90,7 +90,12 @@ void GateKermaFactorHandler::SetMaterial(const G4Material* eMaterial)
     MuEnTable = MuEnVacuumTable;
   }
   else
-    GateError("Material " << name << " not supported !" << Gateendl);
+  {
+    GateWarning("Material " << name << " not supported ! Cannot compute dose for this material." << Gateendl);
+
+    kfTable = kerma_factor_Vacuum_tableau;
+    MuEnTable = MuEnVacuumTable;
+  }
 }
 //-----------------------------------------------------------------------------
 
