@@ -280,24 +280,24 @@ void GateKermaActor::BeginOfEventAction(const G4Event * e) {
 //-----------------------------------------------------------------------------
 void GateKermaActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
   GateDebugMessageInc("Actor", 4, "GateKermaActor -- UserSteppingActionInVoxel - begin\n");
-  GateDebugMessageInc("Actor", 4, "enedepo = " << step->GetTotalEnergyDeposit() << Gateendl);
-  GateDebugMessageInc("Actor", 4, "weight = " <<  step->GetTrack()->GetWeight() << Gateendl);
+
   const double weight = step->GetTrack()->GetWeight();
-  // const double edep = step->GetTotalEnergyDeposit()*weight;//*step->GetTrack()->GetWeight();
-  double edep(0.0);
-  G4String particleName(step->GetTrack()->GetDefinition()->GetParticleName());
-  if (particleName == "gamma") {
+  double       edep   = 0.0;
+
+  if (step->GetTrack()->GetDefinition()->GetParticleName() == "gamma") {
     edep = step->GetPreStepPoint()->GetKineticEnergy() - step->GetPostStepPoint()->GetKineticEnergy();
+
     G4TrackVector* fSecondary = (const_cast<G4Step *>(step))->GetfSecondary();
-    for(int idx=0; idx < (G4int) ((*fSecondary).size()); idx++) {
+    for(int idx=0; idx < (G4int) ((*fSecondary).size()); idx++)
       if ((*fSecondary)[idx]->GetDefinition()->GetParticleName() == "gamma") {
-	edep -= (*fSecondary)[idx]->GetKineticEnergy();
-	GateDebugMessageInc("Actor", 4, "enedepo fluo = " << (*fSecondary)[idx]->GetKineticEnergy() << Gateendl);
-	std::cout << "YES\n";
+        edep -= (*fSecondary)[idx]->GetKineticEnergy();
+
+        GateDebugMessageInc("Actor", 4, "enedepo fluo = " << (*fSecondary)[idx]->GetKineticEnergy() << Gateendl);
       }
-    }
   }
 
+  GateDebugMessageInc("Actor", 4, "weight  = " << step->GetTrack()->GetWeight() << Gateendl);
+  GateDebugMessageInc("Actor", 4, "enedepo = " << step->GetTotalEnergyDeposit() << Gateendl);
 
   // if no energy is deposited or energy is deposited outside image => do nothing
   if (edep == 0.0) {
