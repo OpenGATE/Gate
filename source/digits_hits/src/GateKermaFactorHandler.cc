@@ -77,6 +77,11 @@ void GateKermaFactorHandler::SetMaterial(const G4Material* eMaterial)
     kfTable = kerma_factor_Lung_tableau;
     MuEnTable = MuEnLungTable;
   }
+  else if (name == "Griffith_Lung_ICRU")
+  {
+    kfTable = kerma_factor_Lung_Griffith_tableau;
+    MuEnTable = MuEn_ICRU44_Lung_Griffith_Table;
+  }
   else if (name == "G4_BONE_CORTICAL_ICRP" ||
            name == "Cortical_Bone_ICRP_23")
   {
@@ -183,15 +188,20 @@ double GateKermaFactorHandler::GetMuEnOverRho()
   if (MuEnTable.size() == 0)
     GateError("MuEn table is empty !" << Gateendl);
 
-  if (m_energy/MeV < energyTableTLE[0])
+  std::vector<double> enTableTLE = energyTableTLE;
+
+  if (MuEnTable.size() == energyTableTLE_ICRU44.size())
+    enTableTLE = energyTableTLE_ICRU44;
+
+  if (m_energy/MeV < enTableTLE[0])
     return 0.;
 
-  for (size_t i=1; i<energyTableTLE.size(); i++)
-    if (m_energy/MeV >= energyTableTLE[i-1] &&
-        m_energy/MeV <  energyTableTLE[i])
+  for (size_t i=1; i<enTableTLE.size(); i++)
+    if (m_energy/MeV >= enTableTLE[i-1] &&
+        m_energy/MeV <  enTableTLE[i])
     {
-      const double s_diff_energy = (m_energy/MeV) - (energyTableTLE[i-1]);
-      const double b_diff_energy = energyTableTLE[i] - energyTableTLE[i-1];
+      const double s_diff_energy = (m_energy/MeV) - (enTableTLE[i-1]);
+      const double b_diff_energy = enTableTLE[i] - enTableTLE[i-1];
       const double diff_MuEn = MuEnTable[i] - MuEnTable[i-1];
 
       return (((s_diff_energy * diff_MuEn) / b_diff_energy) + MuEnTable[i-1]) * cm2 / g;
