@@ -48,6 +48,10 @@
 /gate/DetectorPlane/vis/setVisible           1
 /gate/DetectorPlane/vis/setColor             yellow
 
+# Record scatter order information
+/gate/actor/addActor ScatterOrderTrackInformationActor ScatterOrder
+/gate/actor/ScatterOrder/attachTo                      patient
+
 # Fluence of gamma
 /gate/actor/addActor FluenceActor                    DetectorFluence
 /gate/actor/DetectorFluence/save                     output/detectorMC.mhd
@@ -57,6 +61,7 @@
 /gate/actor/DetectorFluence/enableScatter            true
 /gate/actor/DetectorFluence/enableUncertainty        true
 /gate/actor/DetectorFluence/responseDetectorFilename data/responseDetector.txt
+#/gate/actor/DetectorFluence/scatterOrderFilename     output/scatter_run%04d_order%04d.mhd
 
 # Save particles stats
 /gate/actor/addActor  SimulationStatisticActor stat
