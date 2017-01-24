@@ -22,11 +22,11 @@ void GateDICOMImage::GetPixels(std::vector<PixelType>& data)
   GateMessage("Image", 10, "[GateDICOMImage::GetPixels] data PixelType: " << typeid(PixelType).name() << Gateendl);
 
   int i=0;
-  for(unsigned int z=0; z<reader->GetOutput()->GetLargestPossibleRegion().GetSize()[2]; z++)
-    for(unsigned int y=0; y<reader->GetOutput()->GetLargestPossibleRegion().GetSize()[1]; y++)
-	    for(unsigned int x=0; x<reader->GetOutput()->GetLargestPossibleRegion().GetSize()[0]; x++)
+  for(unsigned int z=0; z<image->GetLargestPossibleRegion().GetSize()[2]; z++)
+    for(unsigned int y=0; y<image->GetLargestPossibleRegion().GetSize()[1]; y++)
+	    for(unsigned int x=0; x<image->GetLargestPossibleRegion().GetSize()[0]; x++)
       {
-        data[i]=reader->GetOutput()->GetPixel({{x,y,z}});
+        data[i]=image->GetPixel({{x,y,z}});
         i++;
       }
 }
