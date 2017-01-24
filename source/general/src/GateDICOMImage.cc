@@ -42,7 +42,7 @@ void GateDICOMImage::Read(const std::string fileName)
 {
   std::string path = gdcm::Filename(fileName.c_str()).GetPath();
 
-  reader = ReaderType::New();
+  ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(fileName);
   reader->SetImageIO(ImageIOType::New());
 
@@ -73,6 +73,8 @@ void GateDICOMImage::Read(const std::string fileName)
     GateError("Can't find the series UID from the file" << Gateendl);
     exit(EXIT_FAILURE);
   }
+
+  image = reader->GetOutput();
 }
 //-----------------------------------------------------------------------------
 
@@ -82,7 +84,7 @@ void GateDICOMImage::ReadSeries(const std::string seriesDirectory, std::string U
 {
   GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "]: path: " << seriesDirectory <<", UID: "<< UID << Gateendl);
 
-  reader = ReaderType::New();
+  ReaderType::Pointer reader = ReaderType::New();
   reader->SetImageIO(ImageIOType::New());
 
   NamesGeneratorType::Pointer nameGenerator = NamesGeneratorType::New();
@@ -129,6 +131,8 @@ void GateDICOMImage::ReadSeries(const std::string seriesDirectory, std::string U
     GateError( "[GateDICOMImage::" << __FUNCTION__ << "] ERROR:" << seriesDirectory << " does not contain any corresponding DICOM series !" << Gateendl);
     exit(EXIT_FAILURE);
   }
+
+  image = reader->GetOutput();
 }
 //-----------------------------------------------------------------------------
 
@@ -138,9 +142,9 @@ std::vector<long int unsigned> GateDICOMImage::GetResolution()
 {
   if(vResolution.size() == 0)
   {
-    vResolution.resize(reader->GetOutput()->GetImageDimension(), -1);
-    for(size_t i = 0; i < reader->GetOutput()->GetImageDimension(); i++)
-      vResolution[i] = reader->GetOutput()->GetLargestPossibleRegion().GetSize()[i];
+    vResolution.resize(image->GetImageDimension(), -1);
+    for(size_t i = 0; i < image->GetImageDimension(); i++)
+      vResolution[i] = image->GetLargestPossibleRegion().GetSize()[i];
 
     GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] "
                 << vResolution[0] << ","
@@ -157,10 +161,10 @@ std::vector<double> GateDICOMImage::GetSpacing()
 {
   if(vSpacing.size() == 0)
   {
-    vSpacing.resize(reader->GetOutput()->GetImageDimension(), 0.);
-    for(size_t i = 0; i < reader->GetOutput()->GetImageDimension(); i++)
+    vSpacing.resize(image->GetImageDimension(), 0.);
+    for(size_t i = 0; i < image->GetImageDimension(); i++)
       // NOTE: Rounding the spacing at six digits is mandatory to have the same precision for the DCM images and for the MHD images (the precision of the spacing in MHD images is rounded at six digits).
-      vSpacing[i] = round_to_digits(reader->GetOutput()->GetSpacing()[i],6);
+      vSpacing[i] = round_to_digits(image->GetSpacing()[i],6);
 
     GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] "
                 << vSpacing[0] << ","
@@ -177,8 +181,8 @@ std::vector<double> GateDICOMImage::GetSize()
 {
   if(vSize.size() == 0)
   {
-    vSize.resize(reader->GetOutput()->GetImageDimension(), 0);
-    for(size_t i=0 ; i<reader->GetOutput()->GetImageDimension() ; i++)
+    vSize.resize(image->GetImageDimension(), 0);
+    for(size_t i=0 ; i<image->GetImageDimension() ; i++)
       vSize[i] = GetResolution()[i] * GetSpacing()[i];
 
     GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] "
@@ -196,10 +200,10 @@ std::vector<double> GateDICOMImage::GetOrigin()
 {
   if(vOrigin.size() == 0)
   {
-    vOrigin.resize(reader->GetOutput()->GetImageDimension(),0.);
-    for(size_t i=0 ; i<reader->GetOutput()->GetImageDimension() ; i++)
+    vOrigin.resize(image->GetImageDimension(),0.);
+    for(size_t i=0 ; i<image->GetImageDimension() ; i++)
       // NOTE: Rounding the origin at six digits is mandatory to have the same precision for the DCM images and for the MHD images (the precision of the origin in MHD images is rounded at six digits).
-      vOrigin[i] = round_to_digits(reader->GetOutput()->GetOrigin()[i],6);
+      vOrigin[i] = round_to_digits(image->GetOrigin()[i],6);
 
     GateMessage("Image", 5, "[GateDICOMImage::" << __FUNCTION__ << "] "
                 << vOrigin[0] <<","
@@ -214,9 +218,9 @@ std::vector<double> GateDICOMImage::GetOrigin()
 //-----------------------------------------------------------------------------
 G4RotationMatrix GateDICOMImage::GetRotationMatrix()
 {
-  rotationMatrix.set(G4ThreeVector(reader->GetOutput()->GetDirection().GetVnlMatrix().get(0,0),reader->GetOutput()->GetDirection().GetVnlMatrix().get(0,1),reader->GetOutput()->GetDirection().GetVnlMatrix().get(0,2)),
-                     G4ThreeVector(reader->GetOutput()->GetDirection().GetVnlMatrix().get(1,0),reader->GetOutput()->GetDirection().GetVnlMatrix().get(1,1),reader->GetOutput()->GetDirection().GetVnlMatrix().get(1,2)),
-                     G4ThreeVector(reader->GetOutput()->GetDirection().GetVnlMatrix().get(2,0),reader->GetOutput()->GetDirection().GetVnlMatrix().get(2,1),reader->GetOutput()->GetDirection().GetVnlMatrix().get(2,2)));
+  rotationMatrix.set(G4ThreeVector(image->GetDirection().GetVnlMatrix().get(0,0),image->GetDirection().GetVnlMatrix().get(0,1),image->GetDirection().GetVnlMatrix().get(0,2)),
+                     G4ThreeVector(image->GetDirection().GetVnlMatrix().get(1,0),image->GetDirection().GetVnlMatrix().get(1,1),image->GetDirection().GetVnlMatrix().get(1,2)),
+                     G4ThreeVector(image->GetDirection().GetVnlMatrix().get(2,0),image->GetDirection().GetVnlMatrix().get(2,1),image->GetDirection().GetVnlMatrix().get(2,2)));
 
   return rotationMatrix;
 }
