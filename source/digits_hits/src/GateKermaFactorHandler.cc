@@ -95,6 +95,12 @@ void GateKermaFactorHandler::SetMaterial(const G4Material* eMaterial)
     kfTable = kerma_factor_Air_ICRU_tableau;
     MuEnTable = MuEn_ICRU44_Air_Table;
   }
+  else if (name == "G4_Galactic" ||
+           name == "Vacuum")
+  {
+    kfTable = kerma_factor_Vacuum_tableau;
+    MuEnTable = MuEnVacuumTable;
+  }
   else
   {
     GateWarning("Material " << name << " not supported ! Cannot compute dose for this material." << Gateendl);
