@@ -75,8 +75,6 @@ void GateDICOMImage::Read(const std::string fileName)
     GateError("Can't find the series UID from the file" << Gateendl);
     exit(EXIT_FAILURE);
   }
-
-  image = reader->GetOutput();
 }
 //-----------------------------------------------------------------------------
 
