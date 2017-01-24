@@ -70,7 +70,7 @@ class GateDICOMImage
     typedef itk::GDCMSeriesFileNames            NamesGeneratorType;
     //typedef itk::DCMTKImageIO                   DCMTKIOType;
 
-    ReaderType::Pointer reader;
+    ImageType::Pointer image;
 
     ImageType::Pointer dicomIO;
 
