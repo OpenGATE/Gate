@@ -88,11 +88,12 @@ void GateKermaFactorHandler::SetMaterial(const G4Material* eMaterial)
     kfTable = kerma_factor_Cortical_Bone_tableau;
     MuEnTable = MuEnCorticalBoneTable;
   }
-  else if (name == "G4_Galactic" ||
-           name == "Vacuum")
+  else if (name == "Air_ICRU" ||
+           name == "G4_AIR"   ||
+           name == "Air")
   {
-    kfTable = kerma_factor_Vacuum_tableau;
-    MuEnTable = MuEnVacuumTable;
+    kfTable = kerma_factor_Air_ICRU_tableau;
+    MuEnTable = MuEn_ICRU44_Air_Table;
   }
   else
   {
