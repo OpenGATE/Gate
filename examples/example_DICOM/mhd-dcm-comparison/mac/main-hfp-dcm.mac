@@ -4,6 +4,8 @@
 
 /control/execute mac/actors.mac
 
+#/control/execute mac/visu.mac
+
 /gate/Volume/geometry/setImage                 data/dcm/hfp/CT.1.3.12.2.1107.5.1.4.11087.30000013101008163082800011195.dcm
 /gate/Volume/geometry/buildAndDumpDensityImage output/density-hfp-dcm.mhd
 
@@ -17,7 +19,5 @@
 /control/execute mac/detectors.mac
 
 /control/execute mac/initialisation.mac
-
-#/control/execute mac/visu.mac
 
 /control/execute mac/startbeam.mac

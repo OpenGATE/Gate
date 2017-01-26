@@ -4,6 +4,8 @@
 
 /control/execute mac/actors.mac
 
+#/control/execute mac/visu.mac
+
 /gate/Volume/geometry/setImage                 data/dcm/ffp/playmo_0000.dcm
 /gate/Volume/geometry/buildAndDumpDensityImage output/density-ffp-dcm.mhd
 /gate/Volume/placement/setTranslation          -0.1 0. 0. mm # GEANT4 bug bypass
@@ -18,7 +20,5 @@
 /control/execute mac/detectors.mac
 
 /control/execute mac/initialisation.mac
-
-#/control/execute mac/visu.mac
 
 /control/execute mac/startbeam.mac
