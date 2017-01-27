@@ -1,0 +1,46 @@
+######################################
+## DoseActors with Material Filters ##
+######################################
+
+# Phantom resolution
+/gate/actor/addActor DoseActor               DAHeart1x
+/gate/actor/DAHeart1x/save                   output/DAHeart1x.mhd
+/gate/actor/DAHeart1x/attachTo               patient
+/gate/actor/DAHeart1x/stepHitType            random
+/gate/actor/DAHeart1x/setResolution          299 137 10
+/gate/actor/DAHeart1x/enableDose             true
+/gate/actor/DAHeart1x/enableSquaredDose      true
+/gate/actor/DAHeart1x/enableUncertaintyDose  true
+/gate/actor/DAHeart1x/setMaterialFilter      Heart
+
+# 1/2 phantom resolution
+/gate/actor/addActor DoseActor               DAHeart2x
+/gate/actor/DAHeart2x/save                   output/DAHeart2x.mhd
+/gate/actor/DAHeart2x/attachTo               patient
+/gate/actor/DAHeart2x/stepHitType            random
+/gate/actor/DAHeart2x/setResolution          150 68 5
+/gate/actor/DAHeart2x/enableDose             true
+/gate/actor/DAHeart2x/enableSquaredDose      true
+/gate/actor/DAHeart2x/enableUncertaintyDose  true
+/gate/actor/DAHeart2x/setMaterialFilter      Heart
+
+# Integrated heart dose
+/gate/actor/addActor DoseActor               DAHeartInt
+/gate/actor/DAHeartInt/save                  output/DAHeartInt.txt
+/gate/actor/DAHeartInt/attachTo              patient
+/gate/actor/DAHeartInt/stepHitType           random
+/gate/actor/DAHeartInt/setResolution         1 1 1
+/gate/actor/DAHeartInt/enableDose            true
+/gate/actor/DAHeartInt/enableSquaredDose     true
+/gate/actor/DAHeartInt/enableUncertaintyDose true
+/gate/actor/DAHeartInt/setMaterialFilter     Heart
+
+## MASS IMAGES EXPORT
+/gate/actor/DAHeart1x/exportMassImage         output/DAHeart1x-Mass.mhd
+/gate/actor/DAHeart2x/exportMassImage         output/DAHeart2x-Mass.mhd
+/gate/actor/DAHeartInt/exportMassImage        output/DAHeartInt-Mass.txt # Return the integrated mass of heart (in kg)
+
+## MASS IMAGES IMPORT
+#/gate/actor/DAHeart1x/importMassImage         data/DAHeart1x-Mass.mhd
+#/gate/actor/DAHeart2x/importMassImage         data/DAHeart2x-Mass.mhd
+#/gate/actor/DAHeartInt/importMassImage        data/DAHeartInt-Mass.txt

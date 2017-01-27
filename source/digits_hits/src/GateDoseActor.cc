@@ -44,6 +44,9 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mImportMassImage = "";
   mExportMassImage = "";
 
+  mVolumeFilter = "";
+  mMaterialFilter = "";
+
   pMessenger = new GateDoseActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateDoseActor() -- end\n");
   emcalc = new G4EmCalculator;
@@ -165,24 +168,32 @@ void GateDoseActor::Construct() {
     mNumberOfHitsImage.Allocate();
   }
 
-  if (mExportMassImage!="" || mDoseAlgorithmType=="MassWeighting") {
-    mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
-    mMassImage.Allocate();
-    mVoxelizedMass.Initialize(mVolumeName,mMassImage,mImportMassImage);
-    mMassImage=mVoxelizedMass.UpdateImage(mMassImage);
-    if (mExportMassImage!="")
+  if (mIsDoseImageEnabled &&
+      (mExportMassImage != "" || mDoseAlgorithmType == "MassWeighting" ||
+       mVolumeFilter != ""    || mMaterialFilter != "")) {
+    mVoxelizedMass.SetMaterialFilter(mMaterialFilter);
+    mVoxelizedMass.SetVolumeFilter(mVolumeFilter);
+    mVoxelizedMass.SetExternalMassImage(mImportMassImage);
+    mVoxelizedMass.Initialize(mVolumeName, &mDoseImage.GetValueImage());
+
+    if (mExportMassImage != "") {
+      mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+      mMassImage.Allocate();
+
+      mVoxelizedMass.UpdateImage(&mMassImage);
+
       mMassImage.Write(mExportMassImage);
+    }
   }
 
   if (mExportMassImage!="" && mImportMassImage!="")
     GateWarning("Exported mass image will be the same as the imported one.");
 
   if (mDoseAlgorithmType != "MassWeighting") {
-    mDoseAlgorithmType="VolumeWeighting";
-    if (mImportMassImage!="") {
-      mImportMassImage="";
+    mDoseAlgorithmType = "VolumeWeighting";
+
+    if (mImportMassImage != "")
       GateWarning("importMassImage command is only compatible with MassWeighting algorithm. Ignored. ");
-    }
   }
 
   // Print information
@@ -303,6 +314,12 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     return;
   }
 
+  if (mVolumeFilter != "" && mVolumeFilter+"_phys" != step->GetPreStepPoint()->GetPhysicalVolume()->GetName())
+    return;
+
+  if (mMaterialFilter != "" && mMaterialFilter != step->GetPreStepPoint()->GetMaterial()->GetName())
+    return;
+
   // compute sameEvent
   // sameEvent is false the first time some energy is deposited for each primary particle
   bool sameEvent=true;
@@ -320,10 +337,24 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   //---------------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------------
-  // Mass weighting
-  if(mDoseAlgorithmType == "MassWeighting")
-    density = mVoxelizedMass.GetVoxelMass(index)/mDoseImage.GetVoxelVolume();
+  // Mass weighting OR filter
+  if (mDoseAlgorithmType == "MassWeighting" || mMaterialFilter != "" || mVolumeFilter != "")
+    density = mVoxelizedMass.GetDoselMass(index)/mDoseImage.GetVoxelVolume();
   //---------------------------------------------------------------------------------
+
+  if (mMaterialFilter != "") {
+    GateDebugMessage("Actor", 3,  "GateDoseActor -- UserSteppingActionInVoxel: material filter debug = " << Gateendl
+		     << " material name        = " << step->GetPreStepPoint()->GetMaterial()->GetName() << Gateendl
+		     << " density              = " << G4BestUnit(mVoxelizedMass.GetPartialMassWithMatName(index)/mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volumic Mass") << Gateendl
+		     << " dosel cubic volume   = " << G4BestUnit(mDoseImage.GetVoxelVolume(), "Volume") << Gateendl
+		     << " partial cubic volume = " << G4BestUnit(mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volume") << Gateendl);
+  }
+
+  if (mVolumeFilter != "") {
+    GateDebugMessage("Actor", 3,  "GateDoseActor -- UserSteppingActionInVoxel: volume filter debug = " << Gateendl
+		     << " volume name          = " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << Gateendl
+		     << " Dose scored inside volume filtered volume !" << Gateendl);
+  }
 
   double dose=0.;
   if (mIsDoseImageEnabled) {
