@@ -615,26 +615,43 @@ vector<pair<double,double>> GateVoxelizedMass::MTIteration()
                           << "       Total Index  : " << NbOfIndex   << Gateendl
                           << "       Index Step   : " << Step        << Gateendl);
 
-  vector<pair<double,double>> vData(NbOfIndex);
+  vector<vector<pair<double,double>>> vData(NbOfIndex);
   vector<thread> threads;
 
   unsigned int ind(0);
   for (unsigned int i=0;i<NbOfThreads;i++)
   {
-    threads.push_back(thread(bind(LoopOverIndex,ind,ind+Step,&vData,this)));
+    unsigned int first = ind;
+    unsigned int last  = ind + Step;
+
+    if (last >= NbOfIndex)
+      last = NbOfIndex - 1;
+
+    GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: Thread " << i << " index min: " << first << ", max: " << last << Gateendl);
+
+    threads.push_back(thread(LoopOverIndex,first,last,&vData[i],this));
+
     ind += Step;
 
-    GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] Thread " << i << " created !" << Gateendl);
+    GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: Thread " << i << " created !" << Gateendl);
   }
 
   for (auto& t : threads)
     t.join();
 
+  vector<pair<double,double>> data;
+  for (size_t thread=0; thread<vData.size(); thread++)
+    for (size_t index=0; index<vData[thread].size(); index++)
+      data.push_back(vData[thread][index]);
+
+  for (size_t index=0;index<data.size();index++)
+    GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: Index " << index << " volume: " << data[index].second << Gateendl);
+
   time(&tEnd);
 
   GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: Computing time: " << difftime(tEnd,tStart) << " s" << Gateendl);
 
-  return vData;
+  return data;
 }
 //-----------------------------------------------------------------------------
 
@@ -644,13 +661,13 @@ void GateVoxelizedMass::LoopOverIndex(const unsigned int first, const unsigned i
 {
   const G4VPhysicalVolume* DAPV(GVM->GetDAPV());
 
-  for(unsigned long int i=first; i < last; i++)
+  for(unsigned long int index=first; index < last; index++)
   {
-   (*(vData))[i] = GVM->VoxelIteration(DAPV,
-                                       0,
-                                       DAPV->GetObjectRotationValue(),
-                                       DAPV->GetObjectTranslation(),
-                                       i);
+   (*(vData)).push_back(GVM->VoxelIteration(DAPV,
+                        0,
+                        DAPV->GetObjectRotationValue(),
+                        DAPV->GetObjectTranslation(),
+                        index));
   }
 }
 //-----------------------------------------------------------------------------
@@ -669,7 +686,12 @@ pair<double,double> GateVoxelizedMass::VoxelIteration(const G4VPhysicalVolume* m
     if (motherPV->GetLogicalVolume()->GetSolid()->GetEntityType() != "G4Box")
       GateMessage("Actor", 0, "[GateVoxelizedMass::VoxelIteration] WARNING: Attaching a DoseActor to a volume with another geometry than a box can lead to a wrong dose calculation ! Please verify that the volume of the dosel is correctly reconstructed !" << Gateendl);
 
-    GateMessage("Actor", 2, Gateendl << "[GateVoxelizedMass::VoxelIteration] Dosel n°" << index << ":" << Gateendl);
+    GateMessage("Actor", 2, Gateendl << "[GateVoxelizedMass::" << __FUNCTION__ << "] Dosel n°" << index << ":" << Gateendl);
+
+    GateMessage("Actor", 5, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: Dosel n°" << index << " coordinates: "
+                   << mImage->GetVoxelCenterFromIndex(index).x() << ","
+                   << mImage->GetVoxelCenterFromIndex(index).y() << ","
+                   << mImage->GetVoxelCenterFromIndex(index).z() << Gateendl);
 
     mFilteredVolumeMass        = 0.;
     mFilteredVolumeCubicVolume = 0.;
