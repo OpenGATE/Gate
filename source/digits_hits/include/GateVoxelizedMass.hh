@@ -23,6 +23,7 @@ See GATE/LICENSE.txt for further details
 #include "GateActorManager.hh"
 #include "GateImageWithStatistic.hh"
 
+using namespace std;
 
 class GateVoxelizedMass
 {
@@ -55,8 +56,12 @@ class GateVoxelizedMass
   void    SetEdep(int index,G4String,double);
   void    SetMaterialFilter   (G4String);
   void    SetVolumeFilter     (G4String);
-
   void    SetExternalMassImage(G4String);
+  void    SetNbOfThreads      (int _NbOfThreads) {NbOfThreads = _NbOfThreads;}
+
+  pair<double,double> VoxelIteration(const G4VPhysicalVolume*,int, G4RotationMatrix, G4ThreeVector,int index);
+
+  const G4VPhysicalVolume* GetDAPV() const {return DAPV;}
 
  protected:
 
@@ -66,8 +71,10 @@ class GateVoxelizedMass
   void GenerateVoxels();
   void GenerateDosels(int index);
 
-  std::pair<double,double> ParameterizedVolume(int index);
-  std::pair<double,double> VoxelIteration(const G4VPhysicalVolume*,int, G4RotationMatrix, G4ThreeVector,int index);
+  static void LoopOverIndex(const unsigned int first, const unsigned int last, vector<pair<double,double>>* vData,GateVoxelizedMass* GVM);
+  vector<pair<double,double>> MTIteration();
+
+  pair<double,double> ParameterizedVolume(int index);
 
   GateVImageVolume* imageVolume;
   const G4VPhysicalVolume* DAPV;
@@ -114,6 +121,7 @@ class GateVoxelizedMass
   bool mHasSameResolution;
 
   int seconds;
+  unsigned int NbOfThreads;
 };
 
 #endif
