@@ -47,6 +47,8 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mVolumeFilter = "";
   mMaterialFilter = "";
 
+  mNbOfThreads = 1;
+
   pMessenger = new GateDoseActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateDoseActor() -- end\n");
   emcalc = new G4EmCalculator;
@@ -174,6 +176,7 @@ void GateDoseActor::Construct() {
     mVoxelizedMass.SetMaterialFilter(mMaterialFilter);
     mVoxelizedMass.SetVolumeFilter(mVolumeFilter);
     mVoxelizedMass.SetExternalMassImage(mImportMassImage);
+    mVoxelizedMass.SetNbOfThreads(mNbOfThreads);
     mVoxelizedMass.Initialize(mVolumeName, &mDoseImage.GetValueImage());
 
     if (mExportMassImage != "") {

@@ -58,6 +58,7 @@ class GateKermaActor : public GateVImageActor
   void ExportMassImage(G4String b)      { mExportMassImage = b; }
   void VolumeFilter(G4String b)         { mVolumeFilter = b; }
   void MaterialFilter(G4String b)       { mMaterialFilter = b; }
+  void NbOfThreads(unsigned int b)      { mNbOfThreads = b; }
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
@@ -112,6 +113,8 @@ protected:
   G4String mExportMassImage;
   G4String mVolumeFilter;
   G4String mMaterialFilter;
+
+  unsigned int mNbOfThreads;
 
   G4EmCalculator * emcalc;
 };

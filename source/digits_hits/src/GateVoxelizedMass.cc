@@ -54,7 +54,7 @@ GateVoxelizedMass::GateVoxelizedMass()
   doselReconstructedMass.clear();
   doselExternalMass     .clear();
 
-  NbOfThreads = 3;
+  NbOfThreads = 1;
 }
 //-----------------------------------------------------------------------------
 

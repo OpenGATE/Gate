@@ -18,7 +18,6 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
   :GateImageActorMessenger(sensor),
   pDoseActor(sensor)
 {
-
   pEnableDoseCmd = 0;
   pEnableDoseNormToMaxCmd= 0;
   pEnableDoseNormToIntegralCmd= 0;
@@ -38,6 +37,7 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
 
   pVolumeFilterCmd= 0;
   pMaterialFilterCmd= 0;
+  pNbOfThreadsCmd = 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -66,6 +66,7 @@ GateDoseActorMessenger::~GateDoseActorMessenger()
 
   if(pVolumeFilterCmd) delete pVolumeFilterCmd;
   if(pMaterialFilterCmd) delete pMaterialFilterCmd;
+  if(pNbOfThreadsCmd) delete pNbOfThreadsCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -73,7 +74,6 @@ GateDoseActorMessenger::~GateDoseActorMessenger()
 //-----------------------------------------------------------------------------
 void GateDoseActorMessenger::BuildCommands(G4String base)
 {
-
   G4String  n = base+"/enableDose";
   pEnableDoseCmd = new G4UIcmdWithABool(n, this);
   G4String guid = G4String("Enable dose computation");
@@ -143,32 +143,31 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   pSetDoseAlgorithmCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Set the alogrithm used in the dose calculation");
   pSetDoseAlgorithmCmd->SetGuidance(guid);
-  pSetDoseAlgorithmCmd->SetParameterName("Dose algorithm",false);
 
   n = base+"/importMassImage";
   pImportMassImageCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Import mass image");
   pImportMassImageCmd->SetGuidance(guid);
-  pImportMassImageCmd->SetParameterName("Import mass image",false);
 
   n = base+"/exportMassImage";
   pExportMassImageCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Export mass image");
   pExportMassImageCmd->SetGuidance(guid);
-  pExportMassImageCmd->SetParameterName("Export mass image",false);
-
 
   n = base+"/setVolumeFilter";
   pVolumeFilterCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Volume filter");
   pVolumeFilterCmd->SetGuidance(guid);
-  pVolumeFilterCmd->SetParameterName("Volume filter",false);
 
   n = base+"/setMaterialFilter";
   pMaterialFilterCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Material filter");
   pMaterialFilterCmd->SetGuidance(guid);
-  pMaterialFilterCmd->SetParameterName("Material filter",false);
+
+  n = base+"/setNbOfThreads";
+  pNbOfThreadsCmd = new G4UIcmdWithAnInteger(n, this);
+  guid = G4String("Number of threads for VoxelizedMass computation");
+  pNbOfThreadsCmd->SetGuidance(guid);
 }
 //-----------------------------------------------------------------------------
 
@@ -197,6 +196,7 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 
   if (cmd == pVolumeFilterCmd) pDoseActor->VolumeFilter(newValue);
   if (cmd == pMaterialFilterCmd) pDoseActor->MaterialFilter(newValue);
+  if (cmd == pNbOfThreadsCmd) pDoseActor->NbOfThreads(pNbOfThreadsCmd->GetNewIntValue(newValue));
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }

@@ -18,6 +18,8 @@ See GATE/LICENSE.txt for further details
 
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithAnInteger.hh"
+
 #include "GateImageActorMessenger.hh"
 
 class GateDoseActor;
@@ -46,12 +48,14 @@ protected:
   G4UIcmdWithABool * pEnableDoseNormToMaxCmd;
   G4UIcmdWithABool * pEnableDoseNormToIntegralCmd;
   G4UIcmdWithABool * pEnableDoseToWaterNormCmd;
+
   G4UIcmdWithAString * pSetDoseAlgorithmCmd;
   G4UIcmdWithAString * pImportMassImageCmd;
   G4UIcmdWithAString * pExportMassImageCmd;
-
   G4UIcmdWithAString * pVolumeFilterCmd;
   G4UIcmdWithAString * pMaterialFilterCmd;
+
+  G4UIcmdWithAnInteger * pNbOfThreadsCmd;
 };
 
 #endif /* end #define GATEDOSEACTORMESSENGER_HH*/

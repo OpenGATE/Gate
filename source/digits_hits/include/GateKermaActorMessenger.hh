@@ -18,6 +18,8 @@ See GATE/LICENSE.txt for further details
 
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithAnInteger.hh"
+
 #include "GateImageActorMessenger.hh"
 
 class GateKermaActor;
@@ -51,6 +53,8 @@ protected:
   G4UIcmdWithAString * pExportMassImageCmd;
   G4UIcmdWithAString * pVolumeFilterCmd;
   G4UIcmdWithAString * pMaterialFilterCmd;
+
+  G4UIcmdWithAnInteger * pNbOfThreadsCmd;
 };
 
 #endif /* end #define GATEDOSEACTORMESSENGER_HH*/

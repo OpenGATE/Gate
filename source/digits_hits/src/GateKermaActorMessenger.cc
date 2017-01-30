@@ -35,6 +35,7 @@ GateKermaActorMessenger::GateKermaActorMessenger(GateKermaActor* sensor)
   pExportMassImageCmd= 0;
   pVolumeFilterCmd= 0;
   pMaterialFilterCmd= 0;
+  pNbOfThreadsCmd= 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -61,6 +62,7 @@ GateKermaActorMessenger::~GateKermaActorMessenger()
   if(pExportMassImageCmd) delete pExportMassImageCmd;
   if(pVolumeFilterCmd) delete pVolumeFilterCmd;
   if(pMaterialFilterCmd) delete pMaterialFilterCmd;
+  if(pNbOfThreadsCmd) delete pNbOfThreadsCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -133,31 +135,31 @@ void GateKermaActorMessenger::BuildCommands(G4String base)
   pSetDoseAlgorithmCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Set the alogrithm used in the dose calculation");
   pSetDoseAlgorithmCmd->SetGuidance(guid);
-  pSetDoseAlgorithmCmd->SetParameterName("Dose algorithm",false);
 
   n = base+"/importMassImage";
   pImportMassImageCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Import mass image");
   pImportMassImageCmd->SetGuidance(guid);
-  pImportMassImageCmd->SetParameterName("Import mass image",false);
 
   n = base+"/exportMassImage";
   pExportMassImageCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Export mass image");
   pExportMassImageCmd->SetGuidance(guid);
-  pExportMassImageCmd->SetParameterName("Export mass image",false);
 
   n = base+"/setVolumeFilter";
   pVolumeFilterCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Volume filter");
   pVolumeFilterCmd->SetGuidance(guid);
-  pVolumeFilterCmd->SetParameterName("Volume filter",false);
 
   n = base+"/setMaterialFilter";
   pMaterialFilterCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Material filter");
   pMaterialFilterCmd->SetGuidance(guid);
-  pMaterialFilterCmd->SetParameterName("Material filter",false);
+
+  n = base+"/setNbOfThreads";
+  pNbOfThreadsCmd = new G4UIcmdWithAnInteger(n, this);
+  guid = G4String("Number of threads for VoxelizedMass computation");
+  pNbOfThreadsCmd->SetGuidance(guid);
 }
 //-----------------------------------------------------------------------------
 
@@ -183,6 +185,7 @@ void GateKermaActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pExportMassImageCmd)  pKermaActor->ExportMassImage(newValue);
   if (cmd == pVolumeFilterCmd)     pKermaActor->VolumeFilter(newValue);
   if (cmd == pMaterialFilterCmd)   pKermaActor->MaterialFilter(newValue);
+  if (cmd == pNbOfThreadsCmd)      pKermaActor->NbOfThreads(pNbOfThreadsCmd->GetNewIntValue(newValue));
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
