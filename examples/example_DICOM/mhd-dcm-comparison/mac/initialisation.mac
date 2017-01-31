@@ -1,0 +1,3 @@
+/gate/run/initialize
+/gate/random/setEngineName MersenneTwister
+/gate/random/setEngineSeed 1234
