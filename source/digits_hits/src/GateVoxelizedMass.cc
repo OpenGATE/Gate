@@ -615,7 +615,7 @@ vector<pair<double,double>> GateVoxelizedMass::MTIteration()
                           << "       Total Index  : " << NbOfIndex   << Gateendl
                           << "       Index Step   : " << Step        << Gateendl);
 
-  vector<vector<pair<double,double>>> vData(NbOfIndex);
+  vector<pair<double,double>> vData(NbOfThreads);
   vector<thread> threads;
 
   unsigned int ind(0);
@@ -629,7 +629,7 @@ vector<pair<double,double>> GateVoxelizedMass::MTIteration()
 
     GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: Thread " << i << " index min: " << first << ", max: " << last << Gateendl);
 
-    threads.push_back(thread(LoopOverIndex,first,last,&vData[i],this));
+    threads.push_back(thread(LoopOverIndex,first,last,&vData,this));
 
     ind += Step;
 
@@ -639,19 +639,15 @@ vector<pair<double,double>> GateVoxelizedMass::MTIteration()
   for (auto& t : threads)
     t.join();
 
-  vector<pair<double,double>> data;
-  for (size_t thread=0; thread<vData.size(); thread++)
-    for (size_t index=0; index<vData[thread].size(); index++)
-      data.push_back(vData[thread][index]);
 
-  for (size_t index=0;index<data.size();index++)
-    GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: Index " << index << " volume: " << data[index].second << Gateendl);
+  for (size_t index=0;index<vData.size();index++)
+    GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: Index " << index << " volume: " << vData[index].second << Gateendl);
 
   time(&tEnd);
 
   GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: Computing time: " << difftime(tEnd,tStart) << " s" << Gateendl);
 
-  return data;
+  return vData;
 }
 //-----------------------------------------------------------------------------
 
@@ -662,13 +658,11 @@ void GateVoxelizedMass::LoopOverIndex(const unsigned int first, const unsigned i
   const G4VPhysicalVolume* DAPV(GVM->GetDAPV());
 
   for(unsigned long int index=first; index < last; index++)
-  {
-   (*(vData)).push_back(GVM->VoxelIteration(DAPV,
-                        0,
-                        DAPV->GetObjectRotationValue(),
-                        DAPV->GetObjectTranslation(),
-                        index));
-  }
+    (*(vData))[index] = (GVM->VoxelIteration(DAPV,
+                         0,
+                         DAPV->GetObjectRotationValue(),
+                         DAPV->GetObjectTranslation(),
+                         index));
 }
 //-----------------------------------------------------------------------------
 
@@ -721,8 +715,8 @@ pair<double,double> GateVoxelizedMass::VoxelIteration(const G4VPhysicalVolume* m
     GateError("Error: motherSV->GetCubicVolume() is null ! (motherPhysicalVolume : "<<motherPV->GetName()<<")"<<Gateendl);
 
   // Dosel absolute rotation and translation
-  G4RotationMatrix doselAbsoluteRotation    = mImage->GetTransformMatrix();
-  G4ThreeVector    doselAbsoluteTranslation = mImage->GetVoxelCenterFromIndex(index);
+  const G4RotationMatrix doselAbsoluteRotation    = mImage->GetTransformMatrix();
+  const G4ThreeVector    doselAbsoluteTranslation = mImage->GetVoxelCenterFromIndex(index);
 
   // Mother absolute rotation and translation
   G4RotationMatrix motherAbsoluteRotation    = motherRotation;
