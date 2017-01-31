@@ -8,9 +8,12 @@
 
 
 /*!
-  \class  GateDoseActor
+  \class  GateTLEDoseActor
   \author fabien.baldacci@creatis.insa-lyon.fr
+
+  - Filters added by Thomas Deschler (thomas.deschler@iphc.cnrs.fr)
 */
+
 
 #ifndef GATETLEDOSEACTOR_HH
 #define GATETLEDOSEACTOR_HH
@@ -21,6 +24,7 @@
 #include "GateImageWithStatistic.hh"
 #include "GateMaterialMuHandler.hh"
 #include "G4UnitsTable.hh"
+#include "GateVoxelizedMass.hh"
 
 class GateTLEDoseActor : public GateVImageActor
 {
@@ -37,11 +41,17 @@ public:
   virtual void Construct();
 
   void EnableEdepImage(bool b) { mIsEdepImageEnabled = b; }
-  void EnableDoseUncertaintyImage(bool b) { mIsDoseUncertaintyImageEnabled = b; }
   void EnableEdepSquaredImage(bool b) { mIsEdepSquaredImageEnabled = b; }
   void EnableEdepUncertaintyImage(bool b) { mIsEdepUncertaintyImageEnabled = b; }
   void EnableDoseImage(bool b) { mIsDoseImageEnabled = b; }
   void EnableDoseSquaredImage(bool b) { mIsDoseSquaredImageEnabled = b; }
+  void EnableDoseUncertaintyImage(bool b) { mIsDoseUncertaintyImageEnabled = b; }
+  void EnableDoseNormalisationToMax(bool b);
+  void EnableDoseNormalisationToIntegral(bool b);
+  void SetDoseAlgorithmType(G4String b) { mDoseAlgorithmType = b; }
+  void ImportMassImage(G4String b) { mImportMassImage = b; }
+  void VolumeFilter(G4String b) { mVolumeFilter = b; }
+  void MaterialFilter(G4String b) { mMaterialFilter = b; }
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
@@ -66,26 +76,35 @@ protected:
   GateTLEDoseActor(G4String name, G4int depth=0);
   GateTLEDoseActorMessenger * pMessenger;
 
+  GateVoxelizedMass mVoxelizedMass;
+
   GateImageWithStatistic mDoseImage;
-  //GateImageWithStatistic mPrimaryDoseImage;
-  //GateImageWithStatistic mSecondaryDoseImage;
   GateImageWithStatistic mEdepImage;
   GateImage mLastHitEventImage;
 
   GateMaterialMuHandler* mMaterialHandler;
+
   G4String mDoseFilename;
   G4String mPDoseFilename;
   G4String mSDoseFilename;
   G4String mEdepFilename;
+  G4String mDoseAlgorithmType;
+  G4String mImportMassImage;
+  G4String mVolumeFilter;
+  G4String mMaterialFilter;
+
   G4double ConversionFactor;
   G4double VoxelVolume;
+
   bool mIsEdepImageEnabled;
-  bool mIsDoseUncertaintyImageEnabled;
-  bool mIsLastHitEventImageEnabled;
   bool mIsEdepSquaredImageEnabled;
   bool mIsEdepUncertaintyImageEnabled;
   bool mIsDoseImageEnabled;
   bool mIsDoseSquaredImageEnabled;
+  bool mIsDoseUncertaintyImageEnabled;
+  bool mIsDoseNormalisationEnabled;
+  bool mIsLastHitEventImageEnabled;
+
   int mCurrentEvent;
   G4double outputEnergy;
   G4double totalEnergy;

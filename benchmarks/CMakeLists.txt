@@ -49,11 +49,11 @@ if(BUILD_TESTING)
     COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchImaging ct ${Gate_SOURCE_DIR})
 endif(BUILD_TESTING)
 
-if(BUILD_TESTING)
+if(BUILD_TESTING AND GATE_USE_OPTICAL)
   GateAddBenchmarkData("DATA{benchImaging/reference/benchImaging_optical-reference.tgz}")
   ADD_TEST(NAME benchImaging_optical
     COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchImaging optical ${Gate_SOURCE_DIR})
-endif(BUILD_TESTING)
+endif(BUILD_TESTING AND GATE_USE_OPTICAL)
 
 if(BUILD_TESTING)
   GateAddBenchmarkData("DATA{benchImaging/reference/benchImaging_spect-reference.tgz}")
@@ -61,8 +61,8 @@ if(BUILD_TESTING)
     COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchImaging spect ${Gate_SOURCE_DIR})
 endif(BUILD_TESTING)
 
-if(BUILD_TESTING)
+if(BUILD_TESTING AND GATE_USE_ECAT7)
   GateAddBenchmarkData("DATA{benchImaging/reference/benchImaging_pet-reference.tgz}")
   ADD_TEST(NAME benchImaging_pet
     COMMAND /bin/bash  ${Gate_SOURCE_DIR}/benchmarks/gate_run_test.sh benchImaging pet ${Gate_SOURCE_DIR})
-endif(BUILD_TESTING)
+endif(BUILD_TESTING AND GATE_USE_ECAT7)

@@ -9,7 +9,7 @@
 #=====================================================
 
 /gate/geometry/setMaterialDatabase          data/GateMaterials.db
-/gate/world/setMaterial                     Vacuum
+/gate/world/setMaterial                     G4_Galactic
 /gate/world/geometry/setXLength             587. mm
 /gate/world/geometry/setYLength             586. mm
 /gate/world/geometry/setZLength             48.4 mm
@@ -17,7 +17,7 @@
 # Container to rotate the phantom
 /gate/world/daughters/name                  CT
 /gate/world/daughters/insert                box
-/gate/CT/setMaterial                        Vacuum
+/gate/CT/setMaterial                        G4_Galactic
 /gate/CT/geometry/setXLength                531. mm
 /gate/CT/geometry/setYLength                244. mm
 /gate/CT/geometry/setZLength                48.4 mm
@@ -26,8 +26,8 @@
 /gate/CT/rotation/setAxis                   0 0 1
 
 # Patient phantom
-/gate/CT/daughters/name			    patient
-/gate/CT/daughters/insert		    ImageNestedParametrisedVolume
+/gate/CT/daughters/name                     patient
+/gate/CT/daughters/insert                   ImageNestedParametrisedVolume
 /gate/patient/geometry/setHUToMaterialFile  data/HU2mat.txt
 /gate/patient/geometry/setImage             data/PhantomSlice10px.mha
 
@@ -57,8 +57,8 @@
 /gate/physics/Gamma/SetCutInRegion      world 10 mm
 /gate/physics/Electron/SetCutInRegion   world 10 mm
 
-/gate/physics/Gamma/SetCutInRegion      patient 1 mm
-/gate/physics/Electron/SetCutInRegion   patient 1 mm
+/gate/physics/Gamma/SetCutInRegion      patient .1 mm
+/gate/physics/Electron/SetCutInRegion   patient .1 mm
 
 #=====================================================
 # DETECTORS
@@ -67,8 +67,9 @@
 /gate/actor/addActor SimulationStatisticActor SSA
 /gate/actor/SSA/save output/SSA.txt
 
-/control/execute     mac/DAVW.mac # DoseActors with VolumeWeighting algorithm
-/control/execute     mac/DAMW.mac # DoseActors with MassWeighting algorithm
+/control/execute     mac/DAVW.mac      # DoseActors with VolumeWeighting algorithm
+/control/execute     mac/DAMW.mac      # DoseActors with MassWeighting algorithm
+/control/execute     mac/DAFilters.mac # DoseActors with Material Filters
 
 #=====================================================
 # INITIALISATION
@@ -76,7 +77,8 @@
 
 /gate/run/initialize
 /gate/random/setEngineName MersenneTwister
-/gate/random/setEngineSeed auto
+#/gate/random/setEngineSeed auto
+/gate/random/setEngineSeed 1234
 
 #=====================================================
 # START BEAM
