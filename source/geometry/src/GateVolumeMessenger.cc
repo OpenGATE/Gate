@@ -51,7 +51,7 @@ GateVolumeMessenger::GateVolumeMessenger(GateVVolume* itsCreator, const G4String
   pAttachPhantomSDCmd = new G4UIcmdWithoutParameter(cmdName,this);
   pAttachPhantomSDCmd->SetGuidance("Attach the phantom-SD to the object.");
 
-  cmdName = GetDirectoryName()+"DumpVoxelizedGeometry";
+  cmdName = GetDirectoryName()+"dumpVoxelizedGeometry";
   pDumpVoxelizedVolumeCmd = new G4UIcmdWith3VectorAndUnit(cmdName,this);
   pDumpVoxelizedVolumeCmd->SetGuidance("Dump voxelized image of the geometry.");
   pDumpVoxelizedVolumeCmd->SetParameterName("Spacingx", "Spacingy", "Spacingz", false);
