@@ -201,6 +201,8 @@ public :
 
   void AttachARFSD(); /* PY Descourt 08/09/2009 */
 
+  void DumpVoxelizedVolume(G4ThreeVector);
+
   virtual void AttachOutputToVolume();
 
   virtual G4bool CheckOutputExistence();
