@@ -49,6 +49,9 @@ protected:
   G4UIcmdWithAString * pSetDoseAlgorithmCmd;
   G4UIcmdWithAString * pImportMassImageCmd;
   G4UIcmdWithAString * pExportMassImageCmd;
+
+  G4UIcmdWithAString * pVolumeFilterCmd;
+  G4UIcmdWithAString * pMaterialFilterCmd;
 };
 
 #endif /* end #define GATEDOSEACTORMESSENGER_HH*/

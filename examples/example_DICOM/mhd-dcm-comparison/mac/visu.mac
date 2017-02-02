@@ -1,0 +1,8 @@
+/vis/open                         OGLI
+/vis/drawVolume
+/vis/scene/add/trajectories 
+/vis/viewer/zoom                  2
+/vis/viewer/set/viewpointThetaPhi 45 45
+/vis/viewer/set/hiddenMarker      1
+/vis/scene/endOfEventAction       accumulate
+/vis/scene/add/axes               0 0 0 500 mm

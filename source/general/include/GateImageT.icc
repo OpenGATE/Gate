@@ -39,10 +39,13 @@ void GateImageT<PixelType>::Allocate() {
 //-----------------------------------------------------------------------------
 template<class PixelType>
 void GateImageT<PixelType>::PrintInfo() {
+  // This GateMessage changes the cout precision to the number of decimal digits necessary to differentiate all values of double type.
+  GateMessage("Image", 15, std::setprecision(std::numeric_limits<double>::digits10) << Gateendl);
   GateMessage("Image", 1, "Matrix Size=\t" << size        << Gateendl);
   GateMessage("Image", 1, "HalfSize=\t"    << halfSize    << Gateendl);
   GateMessage("Image", 1, "Resol=\t"       << resolution  << Gateendl);
   GateMessage("Image", 1, "VoxelSize=\t"   << voxelSize   << Gateendl);
+  GateMessage("Image", 1, "Origin=\t"      << origin      << Gateendl);
   GateMessage("Image", 1, "planeSize=\t"   << planeSize   << Gateendl);
   GateMessage("Image", 1, "lineSize=\t"    << lineSize    << Gateendl);
   GateMessage("Image", 1, "nbOfValues=\t"  << nbOfValues  << Gateendl);
@@ -64,9 +67,10 @@ void GateImageT<PixelType>::Read(G4String filename) {
   else if (extension == "mhd" || extension == "mha") ReadMHD(filename);
   else if (extension == "h33" || extension == "iff") ReadInterfile(filename);
   else if (extension == "i33") ReadInterfile(filename);
+  else if (extension == "dcm") ReadDICOM(filename);
   else {
-    GateError( "Unknow image file extension. Knowns extensions are : "
-               << Gateendl << ".vox, .hdr, .img, .mhd, .mha, .h33, .i33\n");
+    GateError( "Unknown image file extension. Supported extensions are : "
+               << Gateendl << ".vox, .hdr, .img, .mhd, .mha, .h33, .i33, .dcm\n");
     exit(0);
   }
 }
@@ -168,6 +172,11 @@ void GateImageT<PixelType>::ReadMHD(G4String filename) {
     row_z[i] = mhd->transform[i*3+2];
   }
   transformMatrix.setRows(row_x, row_y, row_z);
+
+  GateMessage("Image", 10, "[GateImageT::ReadMHD] " << transformMatrix.rowX() << Gateendl);
+  GateMessage("Image", 10, "[GateImageT::ReadMHD] " << transformMatrix.rowY() << Gateendl);
+  GateMessage("Image", 10, "[GateImageT::ReadMHD] " << transformMatrix.rowZ() << Gateendl);
+
   if( !transformMatrix.row1().isNear(CLHEP::HepLorentzVector(row_x, 0.), 0.1) ||
       !transformMatrix.row2().isNear(CLHEP::HepLorentzVector(row_y, 0.), 0.1) ||
       !transformMatrix.row3().isNear(CLHEP::HepLorentzVector(row_z, 0.), 0.1) ) {
@@ -302,6 +311,49 @@ void GateImageT<PixelType>::ReadAscii(G4String filename) {
 
 //-----------------------------------------------------------------------------
 template<class PixelType>
+void GateImageT<PixelType>::ReadDICOM(G4String filename) {
+  #ifdef GATE_USE_ITK
+    GateMessage("Image", 2, "GateImageT::ReadDICOM" << Gateendl);
+    GateDICOMImage* dicom = new GateDICOMImage;
+    dicom->Read(filename);
+
+    resolution = G4ThreeVector(dicom->GetResolution()[0], dicom->GetResolution()[1], dicom->GetResolution()[2]);
+    voxelSize  = G4ThreeVector(dicom->GetSpacing()[0]   , dicom->GetSpacing()[1]   , dicom->GetSpacing()[2]);
+    origin     = G4ThreeVector(dicom->GetOrigin()[0]    , dicom->GetOrigin()[1]    , dicom->GetOrigin()[2]);
+
+    transformMatrix = dicom->GetRotationMatrix();
+
+    GateMessage("Image", 10, "[GateImageT::ReadDICOM] " << transformMatrix.rowX() << Gateendl);
+    GateMessage("Image", 10, "[GateImageT::ReadDICOM] " << transformMatrix.rowY() << Gateendl);
+    GateMessage("Image", 10, "[GateImageT::ReadDICOM] " << transformMatrix.rowZ() << Gateendl);
+
+    if( !transformMatrix.row1().isNear(CLHEP::HepLorentzVector(dicom->GetRotationMatrix().row1(), 0.), 0.1) ||
+        !transformMatrix.row2().isNear(CLHEP::HepLorentzVector(dicom->GetRotationMatrix().row2(), 0.), 0.1) ||
+        !transformMatrix.row3().isNear(CLHEP::HepLorentzVector(dicom->GetRotationMatrix().row3(), 0.), 0.1) )
+      GateError(filename << " contains a transformation which is not a rotation. "
+                << "It is probably a flip and this is not handled.");
+
+    // We need to shift to half a pixel to be coherent with Gate
+    // coordinates system. Must be transformed because voxel size is
+    // known before rotation and origin is after rotation.
+    origin -= transformMatrix * (voxelSize/2.0);
+
+    UpdateSizesFromResolutionAndVoxelSize();
+    Allocate();
+
+    // Get image data
+    dicom->GetPixels(data);
+
+    delete dicom;
+  #else
+    GateError( "Unable to process " << filename << ". GATE was not compiled with ITK support.");
+  #endif
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
 void GateImageT<PixelType>::MergeDataByAddition(G4String filename) {
   // check if it exist
   std::ifstream is(filename);
@@ -336,50 +388,43 @@ void GateImageT<PixelType>::Write(G4String filename, const G4String & comment){
     OpenFileOutput(filename, os);
     WriteBin(os);
   }
-  else {
-     if (extension == "txt") {
-      // open
-      GateMessage("Actor",5,"Write text file"<< Gateendl);
-      OpenFileOutput(filename, os);
-      GateMessage("Actor",5,"Write text file"<< Gateendl);
-      WriteAscii(os, comment);
-      GateMessage("Actor",5,"Write text file - end \n");
-    }
-    else {
-      if (extension == "hdr") {
-        // Header
-        GateAnalyzeHeader hdr;
-        hdr.SetVoxelType(GateAnalyzeHeader::FloatType);
-        hdr.SetImageSize((short int)resolution.x(),(short int)resolution.y(),(short int)resolution.z());
-        hdr.SetVoxelSize((GateAnalyzeHeader::PixelType)voxelSize.x(),
-                         (GateAnalyzeHeader::PixelType)voxelSize.y(),
-                         (GateAnalyzeHeader::PixelType)voxelSize.z());
-        hdr.Write(filename);
-        // Data
-        setExtension(filename,"img");
-        // open
-        OpenFileOutput(filename, os);
-        WriteBin(os);
-      }
-      else {
-        if (extension == "mhd" || extension == "mha") {
-          WriteMHD(filename);
-        }
-        else {
-          if (extension == "root") {
-            WriteRoot(filename);
-          }
-          else {
-            GateMessage("Image",0,"WARNING : Don't know how to write '" << extension
-                        << " format... I try ASCII file\n");
-            // open
-            OpenFileOutput(filename, os);
-            WriteAscii(os, comment);
-          }
-        }
-      }
-    }
+  else if (extension == "txt") {
+    // open
+    GateMessage("Actor",5,"Write text file"<< Gateendl);
+    OpenFileOutput(filename, os);
+    GateMessage("Actor",5,"Write text file"<< Gateendl);
+    WriteAscii(os, comment);
+    GateMessage("Actor",5,"Write text file - end \n");
   }
+  else if (extension == "hdr") {
+    // Header
+    GateAnalyzeHeader hdr;
+    hdr.SetVoxelType(GateAnalyzeHeader::FloatType);
+    hdr.SetImageSize((short int)resolution.x(),(short int)resolution.y(),(short int)resolution.z());
+    hdr.SetVoxelSize((GateAnalyzeHeader::PixelType)voxelSize.x(),
+                     (GateAnalyzeHeader::PixelType)voxelSize.y(),
+                     (GateAnalyzeHeader::PixelType)voxelSize.z());
+    hdr.Write(filename);
+    // Data
+    setExtension(filename,"img");
+    // open
+    OpenFileOutput(filename, os);
+    WriteBin(os);
+  }
+  else if (extension == "mhd" || extension == "mha")
+    WriteMHD(filename);
+  else if (extension == "root")
+    WriteRoot(filename);
+  else if (extension == "dcm")
+    WriteDICOM(filename);
+  else {
+    GateMessage("Image",0,"WARNING : Don't know how to write '" << extension
+                << " format... I try ASCII file\n");
+    // open
+    OpenFileOutput(filename, os);
+    WriteAscii(os, comment);
+  }
+
   os.close();
 }
 //-----------------------------------------------------------------------------
@@ -588,6 +633,29 @@ void GateImageT<PixelType>::WriteRoot(G4String filename)
 #endif
 
 
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateImageT<PixelType>::WriteDICOM(std::string filename)
+{
+  #ifdef GATE_USE_ITK
+    GateMessage("Image",2,"GateImageT::WriteDICOM" << Gateendl);
+    GateDICOMImage* dicom = new GateDICOMImage;
+
+    dicom->SetSpacing   ({{voxelSize.getX() ,voxelSize.getY() ,voxelSize.getZ()}});
+    dicom->SetOrigin    ({{origin.getX()    ,origin.getY()    ,origin.getZ()}});
+    dicom->SetResolution({{(long unsigned int)resolution.getX(),(long unsigned int)resolution.getY(),(long unsigned int)resolution.getZ()}});
+
+    dicom->SetPixels(data);
+    dicom->Write(filename);
+
+    delete dicom;
+  #else
+    GateError( "Unable to process " << filename << ". GATE was not compiled with ITK support.");
+  #endif
 }
 //-----------------------------------------------------------------------------
 

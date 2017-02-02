@@ -84,9 +84,20 @@ void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * ima
   // Gate convention: origin is the corner of the first pixel
   // MHD / ITK convention: origin is the center of the first pixel
   // -> Add a half pixel
-  p[0] = image->GetOrigin().x() + image->GetVoxelSize().x()/2.0;
-  p[1] = image->GetOrigin().y() + image->GetVoxelSize().y()/2.0;
-  p[2] = image->GetOrigin().z() + image->GetVoxelSize().z()/2.0;
+  GateMessage("Image", 10, "[GateMHDImage::WriteHeader] GATE conventional origin: "
+                << image->GetOrigin().x() << ","
+                << image->GetOrigin().y() << ","
+                << image->GetOrigin().z() << Gateendl);
+
+  p[0] = round_to_digits(image->GetOrigin().x() + image->GetVoxelSize().x()/2.0, 6);
+  p[1] = round_to_digits(image->GetOrigin().y() + image->GetVoxelSize().y()/2.0, 6);
+  p[2] = round_to_digits(image->GetOrigin().z() + image->GetVoxelSize().z()/2.0, 6);
+
+  GateMessage("Image", 10, "[GateMHDImage::WriteHeader] ITK conventional origin: "
+                << p[0] << ","
+                << p[1] << ","
+                << p[2] << Gateendl);
+
   m_MetaImage.Position(p);
 
   // Transform
