@@ -708,8 +708,8 @@ void GateVVolume::DumpVoxelizedVolume(G4ThreeVector spacing)
       name.push_back(PV->GetLogicalVolume()->GetMaterial()->GetName());
       nb = name.size()-1;
       std::ostringstream a,b;
-      a << nb-1;
-      b << nb;
+      a << nb;
+      b << nb+1;
       file << a.str() << " " << b.str() << " " << PV->GetLogicalVolume()->GetMaterial()->GetName() << std::endl;
     }
 
