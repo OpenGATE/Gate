@@ -72,13 +72,13 @@ GateDetectorConstruction::GateDetectorConstruction()
   G4String AirName = "worldDefaultAir";
   G4Material* Air = G4NistManager::Instance()->FindOrBuildMaterial("Air"); // Use Air for NIST Manager
   if (Air==NULL)//will never enter here
-  {
+    {
    	  G4Element* N  = new G4Element("worldDefaultN","N" , 7., 14.01*g/mole );
   	  G4Element* O  = new G4Element("worldDefaultO","O" , 8., 16.00*g/mole);
    	  G4Material* Air = new G4Material(AirName  , 1.290*mg/cm3, 2);
    	  Air->AddElement(N, 0.7);
    	  Air->AddElement(O, 0.3);
-  }
+    }
   else Air->SetName(AirName);//For compatibility put name of this Air material to "worldDefaultAir"
 
   //-------------------------------------------------------------------------
@@ -302,17 +302,19 @@ void GateDetectorConstruction::ClockHasChanged()
   GateMessage("Move", 6, "Clock has changed.\n");
 }
 //---------------------------------------------------------------------------------
-/*PY Descourt 08/09/2008 */
+
+
+//---------------------------------------------------------------------------------
 void GateDetectorConstruction::insertARFSD( G4String aName , G4int stage )
 {
-  G4cout << " GateDetectorConstruction::insertARFSD  entered \n";
+  GateMessage("Geometry", 2, "GateDetectorConstruction::insertARFSD entered");
 
-  if ( m_ARFSD == 0 )
-    {
-      m_ARFSD = new GateARFSD("/gate/arf", aName );
-      G4SDManager* SDMan = G4SDManager::GetSDMpointer();
-      SDMan->AddNewDetector( m_ARFSD );
-    }
+  if (m_ARFSD == 0) {
+    m_ARFSD = new GateARFSD("/gate/arf", aName );
+    G4SDManager* SDMan = G4SDManager::GetSDMpointer();
+    SDMan->AddNewDetector( m_ARFSD );
+  }
   m_ARFSD->SetStage( stage );
 }
-/*PY Descourt 08/09/2008 */
+//---------------------------------------------------------------------------------
+
