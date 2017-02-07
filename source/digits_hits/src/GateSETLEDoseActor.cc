@@ -32,6 +32,7 @@
 #include "G4PhysicalConstants.hh"
 
 #include <typeinfo>
+
 //-----------------------------------------------------------------------------
 GateSETLEDoseActor::GateSETLEDoseActor(G4String name, G4int depth) :
   GateVImageActor(name,depth) {
@@ -54,15 +55,21 @@ GateSETLEDoseActor::GateSETLEDoseActor(G4String name, G4int depth) :
   mIsHybridinoEnabled = false;
   mIsMuTableInitialized = false;
 
+  mDoseAlgorithmType = "";
+  mMaterialFilter = "";
+
   // Create a 'MultiplicityActor' if not exist
   GateActorManager *actorManager = GateActorManager::GetInstance();
   G4bool noMultiplicityActor = true;
   std::vector<GateVActor*> actorList = actorManager->GetTheListOfActors();
+
   for(unsigned int i=0; i<actorList.size(); i++)
-  {
-    if(actorList[i]->GetTypeName() == "GateSETLEMultiplicityActor") { noMultiplicityActor = false; }
-  }
-  if(noMultiplicityActor) { actorManager->AddActor("SETLEMultiplicityActor","seTLEMultiplicityActor"); }
+    if(actorList[i]->GetTypeName() == "GateSETLEMultiplicityActor")
+      noMultiplicityActor = false;
+
+  if(noMultiplicityActor)
+    actorManager->AddActor("SETLEMultiplicityActor","seTLEMultiplicityActor");
+
   pSETLEMultiplicityActor = GateSETLEMultiplicityActor::GetInstance();
 }
 //-----------------------------------------------------------------------------
@@ -75,7 +82,8 @@ GateSETLEDoseActor::~GateSETLEDoseActor()  {
 }
 //-----------------------------------------------------------------------------
 
- //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 /// Construct
 void GateSETLEDoseActor::Construct() {
   GateMessage("Actor", 0, " SETLEDoseActor construction\n");
@@ -103,12 +111,17 @@ void GateSETLEDoseActor::Construct() {
   EnableBeginOfEventAction(true);
   EnableUserSteppingAction(true);
 
-//   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " placement " << mPosition << Gateendl);
-  mResolution = dynamic_cast<GateVImageVolume*>(GetVolume())->GetImage()->GetResolution();
-  mVoxelSize = dynamic_cast<GateVImageVolume*>(GetVolume())->GetImage()->GetVoxelSize();
-  mHalfSize = dynamic_cast<GateVImageVolume*>(GetVolume())->GetImage()->GetHalfSize();
-//   WARNING : 'SETLE Dose Actor' inherits automatically the geometric properties of the attached volume
-//   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxelSize << Gateendl);
+  GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " placement " << mPosition << Gateendl);
+
+  if (mDoseAlgorithmType != "MassWeighting" || mMaterialFilter != "")
+  {
+    mResolution = dynamic_cast<GateVImageVolume*>(GetVolume())->GetImage()->GetResolution();
+    mVoxelSize  = dynamic_cast<GateVImageVolume*>(GetVolume())->GetImage()->GetVoxelSize();
+    mHalfSize   = dynamic_cast<GateVImageVolume*>(GetVolume())->GetImage()->GetHalfSize();
+    //   WARNING : 'SETLE Dose Actor' inherits automatically the geometric properties of the attached volume
+  }
+
+  GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxelSize << Gateendl);
 
   // Total dose map initialisation
   mDoseFilename = G4String(removeExtension(mSaveFilename))+"-Dose."+G4String(getExtension(mSaveFilename));
@@ -167,6 +180,14 @@ void GateSETLEDoseActor::Construct() {
     mSecondaryDoseImage.SetFilename(mSecondaryDoseFilename);
   }
 
+
+  if (mIsDoseImageEnabled &&
+      (mDoseAlgorithmType == "MassWeighting" || mMaterialFilter != "")) {
+    mVoxelizedMass.SetMaterialFilter(mMaterialFilter);
+    mVoxelizedMass.Initialize(mVolumeName, &mDoseImage.GetValueImage());
+  }
+
+
   // Initialize raycasting members
   mBoxMin[0] = -mHalfSize.x();
   mBoxMin[1] = -mHalfSize.y();
@@ -182,6 +203,7 @@ void GateSETLEDoseActor::Construct() {
   ResetData();
 }
 //-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateSETLEDoseActor::InitializeMaterialAndMuTable()
@@ -321,16 +343,16 @@ void GateSETLEDoseActor::UserSteppingAction(const GateVVolume *v, const G4Step* 
       bool interceptBox = IntersectionBox(position, momentum);
       if(interceptBox)
       {
-	if(mNearestDistance > 0.0)
-	{
-	  double muWorld = mMaterialHandler->GetMu(mWorldCouple, energy);
-	  weight = weight * exp(-muWorld * mNearestDistance / 10.);
-	  position = position + (mNearestDistance * momentum);
-	  mFarthestDistance = mFarthestDistance - mNearestDistance;
-	  mNearestDistance = 0.0;
-	}
+        if(mNearestDistance > 0.0)
+        {
+          double muWorld = mMaterialHandler->GetMu(mWorldCouple, energy);
+          weight = weight * exp(-muWorld * mNearestDistance / 10.);
+          position = position + (mNearestDistance * momentum);
+          mFarthestDistance = mFarthestDistance - mNearestDistance;
+          mNearestDistance = 0.0;
+        }
 
-	weight = RayCast(isPrimary, energy, weight, position, momentum);
+        weight = RayCast(isPrimary, energy, weight, position, momentum);
       }
     }
 
@@ -339,7 +361,7 @@ void GateSETLEDoseActor::UserSteppingAction(const GateVVolume *v, const G4Step* 
   else if(step->GetTrack()->GetDefinition()->GetParticleName() == "hybridino")
   {
     bool isPrimary = false;
-    if(step->GetTrack()->GetParentID() == 0) { isPrimary = true; }
+    if(step->GetTrack()->GetParentID() == 0) isPrimary = true;
 
     G4StepPoint *preStep(step->GetPreStepPoint());
     double energy = preStep->GetKineticEnergy();
@@ -351,7 +373,7 @@ void GateSETLEDoseActor::UserSteppingAction(const GateVVolume *v, const G4Step* 
     momentum.transform(mRotationMatrix);
 
     bool interceptBox = IntersectionBox(position, momentum);
-    if(!interceptBox) { GateError("Error in GateSETLEDoseActor: intercept box failed"); }
+    if(!interceptBox) GateError("Error in GateSETLEDoseActor: intercept box failed");
 
     weight = RayCast(isPrimary, energy, weight, position, momentum);
 
@@ -387,8 +409,7 @@ static inline int getIncrement(double value)
 //-----------------------------------------------------------------------------
 double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight, G4ThreeVector position, G4ThreeVector momentum)
 {
-//   GateMessage("Actor", 0, "  \n";);
-//   GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxSize << Gateendl);
+  //GateMessage("Actor", 0, " halfSize " << mHalfSize << " resolution " << mResolution << " voxelSize " << mVoxelSize << Gateendl);
 
   int xincr = getIncrement(momentum.x());
   int yincr = getIncrement(momentum.y());
@@ -399,26 +420,27 @@ double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight,
   double Lx = xincr * mVoxelSize.x() / momentum.x(); //*norm
   double Ly = yincr * mVoxelSize.y() / momentum.y(); //*norm
   double Lz = zincr * mVoxelSize.z() / momentum.z(); //*norm
-  //Coordinates
-  int x, y, z;
+
   //Because GateImage is shit
   //mImage.GetCoordinatesFromPosition(position, x, y, z);
   double xtemp = (position.x()+mHalfSize.x())/mVoxelSize.x();
   double ytemp = (position.y()+mHalfSize.y())/mVoxelSize.y();
   double ztemp = (position.z()+mHalfSize.z())/mVoxelSize.z();
-  x = (int) floor(xtemp);
-  y = (int) floor(ytemp);
-  z = (int) floor(ztemp);
+
+  //Coordinates
+  int x = (int) floor(xtemp);
+  int y = (int) floor(ytemp);
+  int z = (int) floor(ztemp);
 
   //Security on matrix boundaries
-  if(x < 0) { x = 0; }
-  else if(x >= mResolution.x()) { x = mResolution.x()-1; }
+  if(x < 0) x = 0;
+  else if(x >= mResolution.x()) x = mResolution.x()-1;
 
-  if(y < 0) { y = 0; }
-  else if(y >= mResolution.y()) { y = mResolution.y()-1; }
+  if(y < 0) y = 0;
+  else if(y >= mResolution.y()) y = mResolution.y()-1;
 
-  if(z < 0) { z = 0; }
-  else if(z >= mResolution.z()) { z = mResolution.z()-1; }
+  if(z < 0) z = 0;
+  else if(z >= mResolution.z()) z = mResolution.z()-1;
 
   //Remaining and Total lengths
   double Rx = 1.0e15;
@@ -430,43 +452,50 @@ double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight,
 
 //   GateMessage("Actor", 0, "increment " << xincr << " " << yincr << " " << zincr << Gateendl);
 
-  if(xincr > 0){
+  if(xincr > 0)
+  {
     Rx = xincr * (-mHalfSize.x() + (x+1)*mVoxelSize.x() - position.x())/momentum.x();
     mTotalLength = (mHalfSize.x() - position.x())/momentum.x();
   }
-  else if (momentum.x() < 0){
+  else if (momentum.x() < 0)
+  {
     Rx = xincr * (position.x() - (-mHalfSize.x() + x*mVoxelSize.x()))/momentum.x();
     mTotalLength = (-mHalfSize.x() - position.x())/momentum.x();
   }
-  else {Rx = 2*mTotalLength;}
+  else Rx = 2*mTotalLength;
 
-  if(yincr > 0){
-      Ry = yincr * (-mHalfSize.y() + (y+1)*mVoxelSize.y() - position.y())/momentum.y();
-      Ltmp = (mHalfSize.y() - position.y())/momentum.y();
+  if(yincr > 0)
+  {
+    Ry = yincr * (-mHalfSize.y() + (y+1)*mVoxelSize.y() - position.y())/momentum.y();
+    Ltmp = (mHalfSize.y() - position.y())/momentum.y();
   }
-  else if(momentum.y() < 0){
+  else if(momentum.y() < 0)
+  {
     Ry = yincr * (position.y() - (-mHalfSize.y() + y*mVoxelSize.y()))/momentum.y();
     Ltmp = (-mHalfSize.y() - position.y())/momentum.y();
   }
-  else {Ry = 2*mTotalLength;}
-  if (Ltmp < mTotalLength) {mTotalLength = Ltmp;}
+  else Ry = 2*mTotalLength;
 
-  if(zincr > 0){
+  if (Ltmp < mTotalLength) mTotalLength = Ltmp;
+
+  if(zincr > 0)
+  {
     Rz = zincr * (-mHalfSize.z() + (z+1)*mVoxelSize.z() - position.z())/momentum.z();
-      Ltmp = (mHalfSize.z() - position.z())/momentum.z();
+    Ltmp = (mHalfSize.z() - position.z())/momentum.z();
   }
-  else if (momentum.z() < 0)  {
-      Rz = zincr * (position.z() - (-mHalfSize.z() + z*mVoxelSize.z()))/momentum.z();
-      Ltmp = (-mHalfSize.z() - position.z())/momentum.z();
+  else if (momentum.z() < 0)
+  {
+    Rz = zincr * (position.z() - (-mHalfSize.z() + z*mVoxelSize.z()))/momentum.z();
+    Ltmp = (-mHalfSize.z() - position.z())/momentum.z();
   }
-  else {Rz = 2*mTotalLength;}
+  else Rz = 2*mTotalLength;
 
-  if (Ltmp < mTotalLength) {mTotalLength = Ltmp;}
+  if (Ltmp < mTotalLength) mTotalLength = Ltmp;
 
-//   GateMessage("Actor", 0, "Lx : " << Lx << " Ly " << Ly << " Lz " << Lz << Gateendl);
-//   GateMessage("Actor", 0, "Rx : " << Rx << " Ry " << Ry << " Rz " << Rz << Gateendl);
-//   GateMessage("Actor", 0, "entry index " << x << " " << y << " " << z << Gateendl);
-//   GateMessage("Actor", 0, "LTot" << mTotalLength << Gateendl);
+  //GateMessage("Actor", 0, "Lx : " << Lx << " Ly " << Ly << " Lz " << Lz << Gateendl);
+  //GateMessage("Actor", 0, "Rx : " << Rx << " Ry " << Ry << " Rz " << Rz << Gateendl);
+  //GateMessage("Actor", 0, "entry index " << x << " " << y << " " << z << Gateendl);
+  //GateMessage("Actor", 0, "LTot" << mTotalLength << Gateendl);
 
   int index = 0;
   double dose = 0.0;
@@ -500,16 +529,21 @@ double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight,
     currentLastHitImage = &mSecondaryLastHitEventImage;
   }
 
+  GateVImageVolume* volume = dynamic_cast<GateVImageVolume*>(GetVolume());
+
   while(L < mTotalLength-0.00001)
   {
-//     GateMessage("Actor", 0, " index " << x << " " << y << " " << z << " | Rest " << Rx << " " << Ry << " " << Rz << " | L " << L << " mTotalLength " << mTotalLength << Gateendl);
-//     GateMessage("Actor", 0, " Rest  " << Rx << " " << Ry << " " << Rz << Gateendl);
-//     GateMessage("Actor", 0, "L " << L << " mTotalLength " << mTotalLength << Gateendl);
-//     GateMessage("Actor", 0, "Volume = " << GetVolume()->GetLogicalVolumeName() << Gateendl);
-//     GateMessage("Actor", 0, "material 1 : " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(x,y,z)) << Gateendl);
-//     GateMessage("Actor", 0, "label : " << volume->GetImage()->GetValue(0,0,0) << " " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(0,0,0)) << Gateendl);
+    //GateMessage("Actor", 0, " index " << x << " " << y << " " << z << " | Rest " << Rx << " " << Ry << " " << Rz << " | L " << L << " mTotalLength " << mTotalLength << Gateendl);
+    //GateMessage("Actor", 0, " Rest  " << Rx << " " << Ry << " " << Rz << Gateendl);
+    //GateMessage("Actor", 0, "L " << L << " mTotalLength " << mTotalLength << Gateendl);
+    //GateMessage("Actor", 0, "Volume: " << GetVolume()->GetLogicalVolumeName() << Gateendl);
+    //GateMessage("Actor", 0, "material 1 : " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(x,y,z)) << Gateendl);
+    //GateMessage("Actor", 0, "label : " << volume->GetImage()->GetValue(0,0,0) << " " << volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(0,0,0)) << Gateendl);
 
     index = x+y*mLineSize+z*mPlaneSize;
+
+    if (index >= mResolution.x()*mResolution.y()*mResolution.z())
+      GateError("Error: calculated index is outside volume ! (index: " << index << ", Total indexes: " << mResolution.x()*mResolution.y()*mResolution.z() << ")");
 
     bool sameEvent = true;
     if(mIsLastHitEventImageEnabled)
@@ -517,8 +551,8 @@ double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight,
       GateDebugMessage("Actor", 2,  "GateSETLEDoseActor -- UserSteppingActionInVoxel: Last event in index = " << mLastHitEventImage.GetValue(index) << Gateendl);
       if(mCurrentEvent != mLastHitEventImage.GetValue(index))
       {
-	sameEvent = false;
-	mLastHitEventImage.SetValue(index, mCurrentEvent);
+        sameEvent = false;
+        mLastHitEventImage.SetValue(index, mCurrentEvent);
       }
     }
 
@@ -528,59 +562,99 @@ double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight,
       GateDebugMessage("Actor", 2,  "GateSETLEDoseActor -- UserSteppingActionInVoxel: Last event in index = " << currentLastHitImage->GetValue(index) << Gateendl);
       if(mCurrentEvent != currentLastHitImage->GetValue(index))
       {
-	currentContributionSameEvent = false;
-	currentLastHitImage->SetValue(index, mCurrentEvent);
+        currentContributionSameEvent = false;
+        currentLastHitImage->SetValue(index, mCurrentEvent);
       }
     }
 
     mu = mListOfMuTable[index]->GetMu(energy);
     muenOverRho = mListOfMuTable[index]->GetMuEnOverRho(energy);
 
-    if(Rx < Ry && Rx < Rz){
+    if(Rx < Ry && Rx < Rz)
+    {
       delta_out = delta_in*exp(-mu*Rx/10.);
-      L+=Rx;
-      Ry-=Rx;
-      Rz-=Rx;
-      Rx=Lx;
-      x+=xincr;
+      L  += Rx;
+      Ry -= Rx;
+      Rz -= Rx;
+      Rx  = Lx;
+      x  += xincr;
     }
-    else if (Ry < Rz){
+    else if (Ry < Rz)
+    {
       delta_out = delta_in*exp(-mu*Ry/10.);
-      L+=Ry;
-      Rx-=Ry;
-      Rz-=Ry;
-      Ry=Ly;
-      y+=yincr;
+      L  += Ry;
+      Rx -= Ry;
+      Rz -= Ry;
+      Ry  = Ly;
+      y  += yincr;
     }
-    else{
+    else
+    {
       delta_out = delta_in*exp(-mu*Rz/10.);
-      L+=Rz;
-      Rx-=Rz;
-      Ry-=Rz;
-      Rz=Lz;
-      z+=zincr;
+      L  += Rz;
+      Rx -= Rz;
+      Ry -= Rz;
+      Rz  = Lz;
+      z  += zincr;
+    }
+
+    if (x == mResolution.x())
+    {
+      GateWarning("Warning: x index is outside the volume !");
+      x--;
+    }
+    if (y == mResolution.y())
+    {
+      GateWarning("Warning: y index is outside the volume !");
+      y--;
+    }
+    if (z == mResolution.z())
+    {
+      GateWarning("Warning: z index is outside the volume !");
+      z--;
     }
 
     dose = ConversionFactor*energy*muenOverRho*(delta_in-delta_out)/mu/VoxelVolume;
 
-    if(mIsDoseImageEnabled)
-    {
-      if(mIsDoseUncertaintyImageEnabled)
-      {
-	if(sameEvent) { mDoseImage.AddTempValue(index, dose); }
-	else { mDoseImage.AddValueAndUpdate(index, dose); }
-      }
-      else { mDoseImage.AddValue(index, dose); }
-    }
+    //G4cout << "Orig. dose: " << dose << G4endl;
 
-    if(currentDoseImage)
+    //---------------------------------------------------------------------------------
+    // Mass weighting OR filter
+    if (mDoseAlgorithmType == "MassWeighting" || mMaterialFilter != "")
     {
-      if(isCurrentDoseUncertaintyEnabled)
+      const double muen = mListOfMuTable[index]->GetMuEn(energy);
+      const double density = mVoxelizedMass.GetDoselMass(index) / CLHEP::g / (VoxelVolume / CLHEP::cm3);
+
+      //G4cout << "muenOverRho: " << muenOverRho << G4endl;
+      //G4cout << "muen: " << muen << " | muen/rho: " << muen/density<< G4endl;
+
+      dose = ConversionFactor * energy * muen / density * ((delta_in-delta_out) / mu) / VoxelVolume;
+
+      //G4cout << "MW dose   : " << dose << G4endl;
+    }
+    //---------------------------------------------------------------------------------
+
+    if (mMaterialFilter == "" || mMaterialFilter == volume->GetMaterialNameFromLabel(volume->GetImage()->GetValue(index)))
+    {
+      if(mIsDoseImageEnabled)
       {
-	if(currentContributionSameEvent) { currentDoseImage->AddTempValue(index, dose); }
-	else { currentDoseImage->AddValueAndUpdate(index, dose); }
+        if(mIsDoseUncertaintyImageEnabled)
+        {
+          if(sameEvent) mDoseImage.AddTempValue(index, dose);
+          else mDoseImage.AddValueAndUpdate(index, dose);
+        }
+        else mDoseImage.AddValue(index, dose);
       }
-      else { currentDoseImage->AddValue(index, dose); }
+
+      if(currentDoseImage)
+      {
+        if(isCurrentDoseUncertaintyEnabled)
+        {
+          if(currentContributionSameEvent) currentDoseImage->AddTempValue(index, dose);
+          else currentDoseImage->AddValueAndUpdate(index, dose);
+        }
+        else currentDoseImage->AddValue(index, dose);
+      }
     }
 
     delta_in = delta_out;
@@ -590,6 +664,7 @@ double GateSETLEDoseActor::RayCast(bool isPrimary, double energy, double weight,
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 bool GateSETLEDoseActor::IntersectionBox(G4ThreeVector p, G4ThreeVector m)
 {
 //   double rayOrigin[3];
@@ -631,7 +706,6 @@ bool GateSETLEDoseActor::IntersectionBox(G4ThreeVector p, G4ThreeVector m)
 
   return true;
 }
-
 //-----------------------------------------------------------------------------
 
 #endif /* end #define GATEHYBRIDDOSEACTOR_CC */

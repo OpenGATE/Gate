@@ -27,11 +27,12 @@ See GATE/LICENSE.txt for further details
 #include "GateImageWithStatistic.hh"
 #include "GateMaterialMuHandler.hh"
 #include "G4SteppingManager.hh"
+#include "GateVoxelizedMass.hh"
 
 class GateSETLEDoseActor : public GateVImageActor
 {
- public: 
-  
+ public:
+
   //-----------------------------------------------------------------------------
   // Actor name
   virtual ~GateSETLEDoseActor();
@@ -49,10 +50,12 @@ class GateSETLEDoseActor : public GateVImageActor
   void EnableSecondaryDoseImage(bool b) { mIsSecondaryDoseImageEnabled = b; }
   void EnableSecondaryDoseUncertaintyImage(bool b) { mIsSecondaryDoseUncertaintyImageEnabled = b; }
   void EnableHybridino(bool b) { mIsHybridinoEnabled = b; }
+  void SetDoseAlgorithmType(G4String b) { mDoseAlgorithmType = b; }
+  void MaterialFilter(G4String b) { mMaterialFilter = b; }
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
-  
+
   virtual void PreUserTrackingAction(const GateVVolume *, const G4Track* t);
   virtual void PostUserTrackingAction(const GateVVolume *, const G4Track* t);
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
@@ -63,7 +66,7 @@ class GateSETLEDoseActor : public GateVImageActor
   void SetPrimaryMultiplicity(int m) { mPrimaryMultiplicity = m; }
   void SetSecondaryMultiplicity(int m) { mSecondaryMultiplicity = m; }
   void SetSecondaryMultiplicity(double t, double n) { mSecondaryMultiplicity = int( ((t / n) - 26.6557E-4) / 1.26961E-4 ); }
-  
+
   int GetPrimaryMultiplicity() { return mPrimaryMultiplicity; }
   int GetSecondaryMultiplicity() { return mSecondaryMultiplicity; }
 
@@ -79,38 +82,42 @@ class GateSETLEDoseActor : public GateVImageActor
   virtual void clear(){ResetData();}
   virtual void Initialize(G4HCofThisEvent*){}
   virtual void EndOfEvent(G4HCofThisEvent*){}
-  
+
 protected:
   GateSETLEDoseActor(G4String name, G4int depth=0);
   GateSETLEDoseActorMessenger *pMessenger;
-  
+
+  GateVoxelizedMass mVoxelizedMass;
+
   GateImageWithStatistic mDoseImage;
   GateImage mLastHitEventImage;
   bool mIsLastHitEventImageEnabled;
   bool mIsDoseImageEnabled;
   bool mIsDoseUncertaintyImageEnabled;
-  
+
   GateImageWithStatistic mPrimaryDoseImage;
   GateImage mPrimaryLastHitEventImage;
   bool mIsPrimaryLastHitEventImageEnabled;
   bool mIsPrimaryDoseImageEnabled;
   bool mIsPrimaryDoseUncertaintyImageEnabled;
-  
+
   GateImageWithStatistic mSecondaryDoseImage;
   GateImage mSecondaryLastHitEventImage;
   bool mIsSecondaryLastHitEventImageEnabled;
   bool mIsSecondaryDoseImageEnabled;
   bool mIsSecondaryDoseUncertaintyImageEnabled;
-  
+
   GateMaterialMuHandler* mMaterialHandler;
   G4String mDoseFilename;
   G4String mPrimaryDoseFilename;
   G4String mSecondaryDoseFilename;
+  G4String mDoseAlgorithmType;
+  G4String mMaterialFilter;
 
   G4double ConversionFactor;
   G4double VoxelVolume;
   const G4MaterialCutsCouple *mWorldCouple;
-  
+
   GateSETLEMultiplicityActor *pSETLEMultiplicityActor;
   int mPrimaryMultiplicity;
   int mSecondaryMultiplicity;
@@ -119,7 +126,7 @@ protected:
 
   bool mIsMuTableInitialized;
   std::vector<GateMuTable *> mListOfMuTable;
-  
+
   int mCurrentEvent;
   G4SteppingManager *mSteppingManager;
   G4RotationMatrix mRotationMatrix;
