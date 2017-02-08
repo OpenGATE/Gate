@@ -393,13 +393,14 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
         DEDX = emcalc->ComputeTotalDEDX(Energy, PartName, material, cut);
         DEDX_Water = emcalc->ComputeTotalDEDX(Energy, PartName, "G4_WATER", cut);
-
         doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
+        if (DEDX_Water == 0 || DEDX == 0) doseToWater = 0.0; // to avoid inf or NaN
       }
       else {
         DEDX = emcalc->ComputeTotalDEDX(100, "proton", material, cut);
         DEDX_Water = emcalc->ComputeTotalDEDX(100, "proton", "G4_WATER", cut);
         doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
+        if (DEDX_Water == 0 || DEDX == 0) doseToWater = 0.0; // to avoid inf or NaN
       }
 
       GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = "
