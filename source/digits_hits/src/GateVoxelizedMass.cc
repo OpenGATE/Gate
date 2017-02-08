@@ -31,7 +31,6 @@
 
 #include <ctime>
 #include <cstring>
-#include <thread>
 
 
 //-----------------------------------------------------------------------------
@@ -53,8 +52,6 @@ GateVoxelizedMass::GateVoxelizedMass()
 
   doselReconstructedMass.clear();
   doselExternalMass     .clear();
-
-  NbOfThreads = 1;
 }
 //-----------------------------------------------------------------------------
 
@@ -256,7 +253,8 @@ void GateVoxelizedMass::GenerateVectors()
   time_t timer1,timer2,timer3,timer4;
   time(&timer1);
 
-  if (doselReconstructedMass.size()        == 0) {
+  if (doselReconstructedMass.size() == 0)
+  {
     doselReconstructedMass.clear();
     doselReconstructedMass.resize(mImage->GetNumberOfValues(),-1.);
   }
@@ -264,46 +262,34 @@ void GateVoxelizedMass::GenerateVectors()
   doselReconstructedTotalCubicVolume = 0.;
   doselReconstructedTotalMass        = 0.;
 
-  bool hasMT = false;
-  if (!mIsParameterised && NbOfThreads > 1)
-    hasMT = true;
-
-  if (!hasMT)
+  for(signed long int i=0; i < mImage->GetNumberOfValues(); i++)
   {
-    for(signed long int i=0; i < mImage->GetNumberOfValues(); i++)
+    time(&timer3);
+
+    if(mIsParameterised)
+      doselReconstructedData = ParameterizedVolume(i);
+    else
+      doselReconstructedData = VoxelIteration(DAPV,
+                                              0,
+                                              DAPV->GetObjectRotationValue(),
+                                              DAPV->GetObjectTranslation(),
+                                              i);
+
+    doselReconstructedMass[i]        = doselReconstructedData.first;
+
+    doselReconstructedTotalMass        += doselReconstructedMass[i];
+    doselReconstructedTotalCubicVolume += doselReconstructedData.second;
+
+    time(&timer4);
+    seconds=difftime(timer4,timer1);
+
+    if (difftime(timer4,timer1) >= 60 && i%100 == 0)
     {
-      time(&timer3);
-
-      if(mIsParameterised)
-        doselReconstructedData = ParameterizedVolume(i);
-      else
-        doselReconstructedData = VoxelIteration(DAPV,
-                                                0,
-                                                DAPV->GetObjectRotationValue(),
-                                                DAPV->GetObjectTranslation(),
-                                                i);
-
-      doselReconstructedMass[i]        = doselReconstructedData.first;
-
-      doselReconstructedTotalMass        += doselReconstructedMass[i];
-      doselReconstructedTotalCubicVolume += doselReconstructedData.second;
-
-      time(&timer4);
-      seconds=difftime(timer4,timer1);
-
-      if (difftime(timer4,timer1) >= 60 && i%100 == 0) {
-        std::cout<<" "<<i*100/mImage->GetNumberOfValues()<<"% (time elapsed : "<<seconds/60<<"min"<<seconds%60<<"s)      \r"<<std::flush;
-        // Experimental
-        /*seconds=(mImage->GetNumberOfValues()-i)*difftime(timer4,timer3);
-        if(seconds!=0.) std::cout<<"Estimated remaining time : "<<seconds/60<<"min"<<seconds%60<<"s ("<<seconds<<"s)                \r"<<std::flush;*/
-      }
+      std::cout<<" "<<i*100/mImage->GetNumberOfValues()<<"% (time elapsed : "<<seconds/60<<"min"<<seconds%60<<"s)      \r"<<std::flush;
+      // Experimental
+      /*seconds=(mImage->GetNumberOfValues()-i)*difftime(timer4,timer3);
+      if(seconds!=0.) std::cout<<"Estimated remaining time : "<<seconds/60<<"min"<<seconds%60<<"s ("<<seconds<<"s)                \r"<<std::flush;*/
     }
-  }
-  else
-  {
-    vector<pair<double,double>> vDoselData = MTIteration();
-    for(size_t i=0;i<vDoselData.size();i++)
-      doselReconstructedMass[i] = vDoselData[i].first;
   }
 
   time(&timer2);
@@ -397,14 +383,12 @@ void GateVoxelizedMass::GenerateVoxels()
 }
 //-----------------------------------------------------------------------------
 
-
 //-----------------------------------------------------------------------------
 G4String GateVoxelizedMass::GetVoxelMatName(int x, int y, int z)
 {
  return G4String(imageVolume->GetMaterialNameFromLabel(imageVolume->GetImage()->GetValue(x,y,z)));
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 G4double GateVoxelizedMass::GetVoxelVolume()
@@ -417,7 +401,6 @@ G4double GateVoxelizedMass::GetVoxelVolume()
   return volume;
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 G4double GateVoxelizedMass::GetVoxelMass(int x, int y, int z)
@@ -434,7 +417,6 @@ G4double GateVoxelizedMass::GetVoxelMass(int x, int y, int z)
   return mass;
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 void GateVoxelizedMass::GenerateDosels(int index)
@@ -455,7 +437,6 @@ void GateVoxelizedMass::GenerateDosels(int index)
   GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Ended" << Gateendl);
 }
 //-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 pair<double,double> GateVoxelizedMass::ParameterizedVolume(int index)
@@ -597,75 +578,6 @@ pair<double,double> GateVoxelizedMass::ParameterizedVolume(int index)
   return std::make_pair(doselReconstructedMass[index],doselReconstructedVolume);
 }
 //-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-vector<pair<double,double>> GateVoxelizedMass::MTIteration()
-{
-  GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] Starting" << Gateendl);
-
-  time_t tStart, tEnd;
-  time(&tStart);
-
-  const unsigned int NbOfIndex   = mImage->GetNumberOfValues();
-  const unsigned int Step        = round(NbOfIndex/double(NbOfThreads));
-
-  GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: Informations:" << Gateendl
-                          << "       Total Threads: " << NbOfThreads << Gateendl
-                          << "       Total Index  : " << NbOfIndex   << Gateendl
-                          << "       Index Step   : " << Step        << Gateendl);
-
-  vector<pair<double,double>> vData(NbOfThreads);
-  vector<thread> threads;
-
-  unsigned int ind(0);
-  for (unsigned int i=0;i<NbOfThreads;i++)
-  {
-    unsigned int first = ind;
-    unsigned int last  = ind + Step;
-
-    if (last >= NbOfIndex)
-      last = NbOfIndex - 1;
-
-    GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: Thread " << i << " index min: " << first << ", max: " << last << Gateendl);
-
-    threads.push_back(thread(LoopOverIndex,first,last,&vData,this));
-
-    ind += Step;
-
-    GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: Thread " << i << " created !" << Gateendl);
-  }
-
-  for (auto& t : threads)
-    t.join();
-
-
-  for (size_t index=0;index<vData.size();index++)
-    GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: Index " << index << " volume: " << vData[index].second << Gateendl);
-
-  time(&tEnd);
-
-  GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: Computing time: " << difftime(tEnd,tStart) << " s" << Gateendl);
-
-  return vData;
-}
-//-----------------------------------------------------------------------------
-
-
-//-----------------------------------------------------------------------------
-void GateVoxelizedMass::LoopOverIndex(const unsigned int first, const unsigned int last, vector<pair<double,double>>* vData,GateVoxelizedMass* GVM)
-{
-  const G4VPhysicalVolume* DAPV(GVM->GetDAPV());
-
-  for(unsigned long int index=first; index < last; index++)
-    (*(vData))[index] = (GVM->VoxelIteration(DAPV,
-                         0,
-                         DAPV->GetObjectRotationValue(),
-                         DAPV->GetObjectTranslation(),
-                         index));
-}
-//-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 pair<double,double> GateVoxelizedMass::VoxelIteration(const G4VPhysicalVolume* motherPV,int Generation,const G4RotationMatrix motherRotation,const G4ThreeVector motherTranslation,int index)

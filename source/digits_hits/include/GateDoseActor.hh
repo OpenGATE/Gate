@@ -63,8 +63,6 @@ class GateDoseActor : public GateVImageActor
   void SetDoseAlgorithmType(G4String b) { mDoseAlgorithmType = b; }
   void ImportMassImage(G4String b) { mImportMassImage = b; }
   void ExportMassImage(G4String b) { mExportMassImage = b; }
-  void NbOfThreads(unsigned int b) { mNbOfThreads = b; }
-
   void VolumeFilter(G4String b) { mVolumeFilter = b; }
   void MaterialFilter(G4String b) { mMaterialFilter = b; }
 
@@ -119,11 +117,8 @@ protected:
   G4String mDoseAlgorithmType;
   G4String mImportMassImage;
   G4String mExportMassImage;
-
   G4String mVolumeFilter;
   G4String mMaterialFilter;
-
-  unsigned int mNbOfThreads;
 
   G4EmCalculator* emcalc;
 };

@@ -43,7 +43,6 @@ GateKermaActor::GateKermaActor(G4String name, G4int depth):
   mExportMassImage = "";
   mVolumeFilter = "";
   mMaterialFilter = "";
-  mNbOfThreads = 1;
 
   pMessenger = new GateKermaActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateKermaActor() -- end\n");
@@ -172,15 +171,12 @@ void GateKermaActor::Construct() {
     mVoxelizedMass.SetMaterialFilter(mMaterialFilter);
     mVoxelizedMass.SetVolumeFilter(mVolumeFilter);
     mVoxelizedMass.SetExternalMassImage(mImportMassImage);
-    mVoxelizedMass.SetNbOfThreads(mNbOfThreads);
     mVoxelizedMass.Initialize(mVolumeName, &mDoseImage.GetValueImage());
 
     if (mExportMassImage != "") {
       mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
       mMassImage.Allocate();
-
       mVoxelizedMass.UpdateImage(&mMassImage);
-
       mMassImage.Write(mExportMassImage);
     }
   }

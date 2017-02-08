@@ -57,7 +57,6 @@ class GateVoxelizedMass
   void    SetMaterialFilter   (G4String);
   void    SetVolumeFilter     (G4String);
   void    SetExternalMassImage(G4String);
-  void    SetNbOfThreads      (int _NbOfThreads) {NbOfThreads = _NbOfThreads;}
 
   pair<double,double> VoxelIteration(const G4VPhysicalVolume*,int, G4RotationMatrix, G4ThreeVector,int index);
 
@@ -70,9 +69,6 @@ class GateVoxelizedMass
   void GenerateVectors();
   void GenerateVoxels();
   void GenerateDosels(int index);
-
-  static void LoopOverIndex(const unsigned int first, const unsigned int last, vector<pair<double,double>>* vData,GateVoxelizedMass* GVM);
-  vector<pair<double,double>> MTIteration();
 
   pair<double,double> ParameterizedVolume(int index);
 
@@ -121,7 +117,6 @@ class GateVoxelizedMass
   bool mHasSameResolution;
 
   int seconds;
-  unsigned int NbOfThreads;
 };
 
 #endif

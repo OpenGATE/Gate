@@ -35,7 +35,6 @@ GateKermaActorMessenger::GateKermaActorMessenger(GateKermaActor* sensor)
   pExportMassImageCmd= 0;
   pVolumeFilterCmd= 0;
   pMaterialFilterCmd= 0;
-  pNbOfThreadsCmd= 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -62,7 +61,6 @@ GateKermaActorMessenger::~GateKermaActorMessenger()
   if(pExportMassImageCmd) delete pExportMassImageCmd;
   if(pVolumeFilterCmd) delete pVolumeFilterCmd;
   if(pMaterialFilterCmd) delete pMaterialFilterCmd;
-  if(pNbOfThreadsCmd) delete pNbOfThreadsCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -70,7 +68,6 @@ GateKermaActorMessenger::~GateKermaActorMessenger()
 //-----------------------------------------------------------------------------
 void GateKermaActorMessenger::BuildCommands(G4String base)
 {
-
   G4String  n = base+"/enableDose";
   pEnableDoseCmd = new G4UIcmdWithABool(n, this);
   G4String guid = G4String("Enable dose computation");
@@ -155,11 +152,6 @@ void GateKermaActorMessenger::BuildCommands(G4String base)
   pMaterialFilterCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Material filter");
   pMaterialFilterCmd->SetGuidance(guid);
-
-  n = base+"/setNbOfThreads";
-  pNbOfThreadsCmd = new G4UIcmdWithAnInteger(n, this);
-  guid = G4String("Number of threads for VoxelizedMass computation");
-  pNbOfThreadsCmd->SetGuidance(guid);
 }
 //-----------------------------------------------------------------------------
 
@@ -179,13 +171,11 @@ void GateKermaActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pEnableNumberOfHitsCmd) pKermaActor->EnableNumberOfHitsImage(pEnableNumberOfHitsCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseNormCmd) pKermaActor->EnableDoseNormalisation(pEnableDoseNormCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseToWaterNormCmd) pKermaActor->EnableDoseToWaterNormalisation(pEnableDoseToWaterNormCmd->GetNewBoolValue(newValue));
-
   if (cmd == pSetDoseAlgorithmCmd) pKermaActor->SetDoseAlgorithmType(newValue);
   if (cmd == pImportMassImageCmd)  pKermaActor->ImportMassImage(newValue);
   if (cmd == pExportMassImageCmd)  pKermaActor->ExportMassImage(newValue);
   if (cmd == pVolumeFilterCmd)     pKermaActor->VolumeFilter(newValue);
   if (cmd == pMaterialFilterCmd)   pKermaActor->MaterialFilter(newValue);
-  if (cmd == pNbOfThreadsCmd)      pKermaActor->NbOfThreads(pNbOfThreadsCmd->GetNewIntValue(newValue));
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }

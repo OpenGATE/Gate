@@ -19,25 +19,23 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
   pDoseActor(sensor)
 {
   pEnableDoseCmd = 0;
-  pEnableDoseNormToMaxCmd= 0;
-  pEnableDoseNormToIntegralCmd= 0;
-  pEnableDoseSquaredCmd= 0;
-  pEnableDoseUncertaintyCmd= 0;
+  pEnableDoseNormToMaxCmd = 0;
+  pEnableDoseNormToIntegralCmd = 0;
+  pEnableDoseSquaredCmd = 0;
+  pEnableDoseUncertaintyCmd = 0;
   pEnableDoseToWaterCmd = 0;
-  pEnableDoseToWaterNormCmd= 0;
-  pEnableDoseToWaterSquaredCmd= 0;
-  pEnableDoseToWaterUncertaintyCmd= 0;
-  pEnableEdepCmd= 0;
-  pEnableEdepSquaredCmd= 0;
-  pEnableEdepUncertaintyCmd= 0;
-  pEnableNumberOfHitsCmd= 0;
-  pSetDoseAlgorithmCmd= 0;
-  pImportMassImageCmd= 0;
-  pExportMassImageCmd= 0;
-
-  pVolumeFilterCmd= 0;
-  pMaterialFilterCmd= 0;
-  pNbOfThreadsCmd = 0;
+  pEnableDoseToWaterNormCmd = 0;
+  pEnableDoseToWaterSquaredCmd = 0;
+  pEnableDoseToWaterUncertaintyCmd = 0;
+  pEnableEdepCmd = 0;
+  pEnableEdepSquaredCmd = 0;
+  pEnableEdepUncertaintyCmd = 0;
+  pEnableNumberOfHitsCmd = 0;
+  pSetDoseAlgorithmCmd = 0;
+  pImportMassImageCmd = 0;
+  pExportMassImageCmd = 0;
+  pVolumeFilterCmd = 0;
+  pMaterialFilterCmd = 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -63,10 +61,8 @@ GateDoseActorMessenger::~GateDoseActorMessenger()
   if(pSetDoseAlgorithmCmd) delete pSetDoseAlgorithmCmd;
   if(pImportMassImageCmd) delete pImportMassImageCmd;
   if(pExportMassImageCmd) delete pExportMassImageCmd;
-
   if(pVolumeFilterCmd) delete pVolumeFilterCmd;
   if(pMaterialFilterCmd) delete pMaterialFilterCmd;
-  if(pNbOfThreadsCmd) delete pNbOfThreadsCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -163,11 +159,6 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   pMaterialFilterCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Material filter");
   pMaterialFilterCmd->SetGuidance(guid);
-
-  n = base+"/setNbOfThreads";
-  pNbOfThreadsCmd = new G4UIcmdWithAnInteger(n, this);
-  guid = G4String("Number of threads for VoxelizedMass computation");
-  pNbOfThreadsCmd->SetGuidance(guid);
 }
 //-----------------------------------------------------------------------------
 
@@ -193,10 +184,8 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pSetDoseAlgorithmCmd) pDoseActor->SetDoseAlgorithmType(newValue);
   if (cmd == pImportMassImageCmd) pDoseActor->ImportMassImage(newValue);
   if (cmd == pExportMassImageCmd) pDoseActor->ExportMassImage(newValue);
-
   if (cmd == pVolumeFilterCmd) pDoseActor->VolumeFilter(newValue);
   if (cmd == pMaterialFilterCmd) pDoseActor->MaterialFilter(newValue);
-  if (cmd == pNbOfThreadsCmd) pDoseActor->NbOfThreads(pNbOfThreadsCmd->GetNewIntValue(newValue));
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
