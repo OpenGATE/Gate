@@ -6,8 +6,6 @@ of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
 ----------------------*/
 
-
-
 #ifndef GateVolumeMessenger_h
 #define GateVolumeMessenger_h 1
 
@@ -37,6 +35,7 @@ class GateVolumeMessenger: public GateClockDependentMessenger
     G4UIcmdWithoutParameter*        pAttachPhantomSDCmd;
 
     G4UIcmdWith3VectorAndUnit*      pDumpVoxelizedVolumeCmd;
+    G4UIcmdWithAString*             pSetDumpPathCmd;
 };
 
 #endif

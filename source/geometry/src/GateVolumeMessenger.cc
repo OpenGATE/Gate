@@ -26,7 +26,6 @@ GateVolumeMessenger::GateVolumeMessenger(GateVVolume* itsCreator, const G4String
   //: GateClockDependentMessenger(itsCreator, itsCreator->GetObjectName()+"/geometry"),
   : GateClockDependentMessenger(itsCreator, itsDirectoryName)
 {
-
   G4String guidance = G4String("Controls the geometry for '") + GetVolumeCreator()->GetObjectName() +"'";
 
   GetDirectory()->SetGuidance(guidance.c_str());
@@ -56,6 +55,10 @@ GateVolumeMessenger::GateVolumeMessenger(GateVVolume* itsCreator, const G4String
   pDumpVoxelizedVolumeCmd->SetGuidance("Dump voxelized image of the geometry.");
   pDumpVoxelizedVolumeCmd->SetParameterName("Spacingx", "Spacingy", "Spacingz", false);
   pDumpVoxelizedVolumeCmd->SetUnitCategory("Length");
+
+  cmdName = GetDirectoryName()+"setDumpPath";
+  pSetDumpPathCmd = new G4UIcmdWithAString(cmdName,this);
+  pSetDumpPathCmd->SetGuidance("Select dump voxelized image path.");
 }
 //-------------------------------------------------------------------------------------
 
@@ -67,6 +70,7 @@ GateVolumeMessenger::~GateVolumeMessenger()
    delete pAttachCrystalSDCmd;
    delete pAttachPhantomSDCmd;
    delete pDumpVoxelizedVolumeCmd;
+   delete pSetDumpPathCmd;
 }
 //-------------------------------------------------------------------------------------
 
@@ -81,6 +85,8 @@ void GateVolumeMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     GetVolumeCreator()->AttachPhantomSD();
   else if( command == pDumpVoxelizedVolumeCmd )
     GetVolumeCreator()->DumpVoxelizedVolume(pDumpVoxelizedVolumeCmd->GetNew3VectorValue(newValue));
+  else if( command == pSetDumpPathCmd )
+    GetVolumeCreator()->SetDumpPath(newValue);
   else
     GateClockDependentMessenger::SetNewValue(command,newValue);
 }

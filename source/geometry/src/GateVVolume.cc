@@ -78,9 +78,9 @@ GateVVolume::GateVVolume(const G4String& itsName,
     pMotherLogicalVolume(0),
     m_creator(0),
     m_sensitiveDetector(0),
-    mParent(0)
+    mParent(0),
+    mDumpPath("")
 {
-
   SetCreator(this);
 
   // Create a new vis-attributes object
@@ -686,7 +686,10 @@ void GateVVolume::DumpVoxelizedVolume(G4ThreeVector spacing)
 
   std::vector<G4String> name;
 
-  G4String HU2MatPath = "data/"+GetPhysicalVolume()->GetName()+"-HU2Mat.txt";
+  if (mDumpPath == "")
+    mDumpPath = "data/";
+
+  G4String HU2MatPath = mDumpPath+"/"+GetPhysicalVolume()->GetName()+"-HU2Mat.txt";
   ofstream file(HU2MatPath, ofstream::out | ofstream::trunc);
 
   for(signed long int index=0;index<image->GetNumberOfValues();index++)
@@ -727,7 +730,7 @@ void GateVVolume::DumpVoxelizedVolume(G4ThreeVector spacing)
   sy << spacing.y();
   sz << spacing.z();
 
-  G4String imagePath = "data/"+GetPhysicalVolume()->GetName()+"-"+sx.str()+"-"+sy.str()+"-"+sz.str()+"mm.mhd";
+  G4String imagePath = mDumpPath+"/"+GetPhysicalVolume()->GetName()+"-"+sx.str()+"-"+sy.str()+"-"+sz.str()+"mm.mhd";
 
   image->Write(imagePath);
 
