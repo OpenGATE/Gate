@@ -88,6 +88,51 @@ void GateKermaFactorHandler::SetMaterial(const G4Material* eMaterial)
     kfTable = kerma_factor_Cortical_Bone_tableau;
     MuEnTable = MuEnCorticalBoneTable;
   }
+  else if (name == "Urinary_bladder_empty_Adult_ICRU46")
+  {
+    kfTable   = kerma_factor_Urinary_bladder_empty_Adult_ICRU46_tableau;
+    MuEnTable = MuEn_Urinary_bladder_empty_Adult_ICRU46_tableau;
+  }
+  else if (name == "Skin_Adult_ICRU46")
+  {
+    kfTable   = kerma_factor_Skin_Adult_ICRU46_tableau;
+    MuEnTable = MuEn_Skin_Adult_ICRU46_tableau;
+  }
+  else if (name == "Adipose_tissue_Adult_1_ICRU46")
+  {
+    kfTable   = kerma_factor_Adipose_tissue_Adult_1_ICRU46_tableau;
+    MuEnTable = MuEn_Adipose_tissue_Adult_1_ICRU46_tableau;
+  }
+  else if (name == "Testis_Adult_ICRU46")
+  {
+    kfTable   = kerma_factor_Testis_Adult_ICRU46_tableau;
+    MuEnTable = MuEn_Testis_Adult_ICRU46_tableau;
+  }
+  else if (name == "Lymph_Adult_ICRU46")
+  {
+    kfTable   = kerma_factor_Lymph_Adult_ICRU46_ICRU46_tableau;
+    MuEnTable = MuEn_Lymph_Adult_ICRU46_ICRU46_tableau;
+  }
+  else if (name == "Blood_Adult_ICRU46")
+  {
+    kfTable   = kerma_factor_Blood_Adult_ICRU46_tableau;
+    MuEnTable = MuEn_Blood_Adult_ICRU46_tableau;
+  }
+  else if (name == "Skeleton_cartilage_Adult_ICRU46")
+  {
+    kfTable   = kerma_factor_Skeleton_cartilage_Adult_ICRU46_tableau;
+    MuEnTable = MuEn_Skeleton_cartilage_Adult_ICRU46_tableau;
+  }
+  else if (name == "Skeleton_spongiosa_Adult_ICRU46")
+  {
+    kfTable   = kerma_factor_Skeleton_spongiosa_Adult_ICRU46_tableau;
+    MuEnTable = MuEn_Skeleton_spongiosa_Adult_ICRU46_tableau;
+  }
+  else if (name == "GI_track_intestine_Adult_ICRU46")
+  {
+    kfTable   = kerma_factor_GI_track_intestine_Adult_ICRU46_tableau;
+    MuEnTable = MuEn_GI_track_intestine_Adult_ICRU46_tableau;
+  }
   else if (name == "Air_ICRU" ||
            name == "G4_AIR"   ||
            name == "Air")
