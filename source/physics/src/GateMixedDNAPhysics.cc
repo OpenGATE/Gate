@@ -179,6 +179,9 @@ void GateMixedDNAPhysics::ConstructEM()
 void GateMixedDNAPhysics::setDefaultModelsInWorld(G4String NPM) {
   if (NPM == "emstandard_opt3_mixed_emdna") {
 
+#if ( G4VERSION_NUMBER >= 1030 )
+    auto theParticleIterator=GetParticleIterator();
+#endif
     theParticleIterator->reset();
     while( (*theParticleIterator)() )
       {
@@ -266,7 +269,10 @@ void GateMixedDNAPhysics::setDefaultModelsInWorld(G4String NPM) {
         }
       }
   } else if (NPM == "emlivermore_mixed_emdna") {
-
+    
+#if G4VERSION_NUMBER >= 1030
+    auto theParticleIterator=GetParticleIterator();
+#endif
     theParticleIterator->reset();
     while( (*theParticleIterator)() )
       {
@@ -368,6 +374,9 @@ void GateMixedDNAPhysics::setDefaultModelsInWorld(G4String NPM) {
 // Set DNA In World
 void GateMixedDNAPhysics::setDNAInWorld() {
 
+#if G4VERSION_NUMBER >= 1030
+  auto theParticleIterator=GetParticleIterator();
+#endif
   theParticleIterator->reset();
   while( (*theParticleIterator)() )
     {
