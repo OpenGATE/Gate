@@ -51,14 +51,6 @@
 
 /gate/detector/attachCrystalSD
 
-# Definition of surfaces
-/gate/detector/surfaces/name                             Detection1 
-/gate/detector/surfaces/insert                           Electronics
-/gate/detector/surfaces/Detection1/setSurface            perfect_apd   
-/gate/Electronics/surfaces/name                          Detection2 
-/gate/Electronics/surfaces/insert                        detector 
-/gate/Electronics/surfaces/Detection2/setSurface         perfect_apd   
-
 # Phantom 
 /gate/world/daughters/name                       waterBox 
 /gate/world/daughters/insert                     box 
@@ -96,6 +88,14 @@
 #=====================================================
 
 /gate/run/initialize
+
+# Definition of surfaces
+/gate/detector/surfaces/name                             Detection1 
+/gate/detector/surfaces/insert                           Electronics
+/gate/detector/surfaces/Detection1/setSurface            perfect_apd   
+/gate/Electronics/surfaces/name                          Detection2 
+/gate/Electronics/surfaces/insert                        detector 
+/gate/Electronics/surfaces/Detection2/setSurface         perfect_apd   
 
 #=====================================================
 # DIGITIZER 
