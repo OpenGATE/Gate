@@ -107,14 +107,10 @@ G4LogicalVolume* GateCylinder::ConstructOwnSolidAndLogicalVolume(G4Material* mat
 //---------------------------------------------------------------------------------
 void GateCylinder::DestroyOwnSolidAndLogicalVolume()
 {
-
-  if (pCylinderLog)
-    delete pCylinderLog;
+  if (pCylinderLog) delete pCylinderLog;
   pCylinderLog = 0;
 
-  if (pCylinderSolid)
-    delete pCylinderSolid;
+  if (pCylinderSolid) delete pCylinderSolid;
   pCylinderSolid = 0;
-
 }
 //---------------------------------------------------------------------------------
