@@ -713,7 +713,7 @@ void GateVVolume::DumpVoxelizedVolume(G4ThreeVector spacing)
       std::ostringstream a,b;
       a << nb;
       b << nb+1;
-      file << a.str() << " " << b.str() << " " << PV->GetLogicalVolume()->GetMaterial()->GetName() << std::endl;
+      file << a.str() << " " << a.str() << " " << PV->GetLogicalVolume()->GetMaterial()->GetName() << std::endl;
     }
 
     //G4cout << "Index: " << index << " , Mat name is: " << PV->GetLogicalVolume()->GetMaterial()->GetName() << " (" << nb << ")" << G4endl;
