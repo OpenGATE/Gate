@@ -62,6 +62,8 @@ class GateVoxelizedMass
 
   const G4VPhysicalVolume* GetDAPV() const {return DAPV;}
 
+  GateImage* Copy(GateImage*);
+
  protected:
 
   bool IsLVParameterized(const G4LogicalVolume*);
@@ -80,6 +82,8 @@ class GateVoxelizedMass
 
   const GateVImage* mImage;
   GateImageDouble* mMassImage;
+
+  GateImage* imageVoxel;
 
   double doselReconstructedTotalCubicVolume;
   double doselReconstructedTotalMass;
