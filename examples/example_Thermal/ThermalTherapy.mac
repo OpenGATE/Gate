@@ -22,7 +22,7 @@
 # VERBOSE
 #=================================================================
 
-/gate/verbose Physic    0
+/gate/verbose Physic    1
 /gate/verbose Cuts      0
 /gate/verbose SD        0
 /gate/verbose Actions   0
@@ -83,6 +83,12 @@
 /gate/physics/processList Initialized
 
 #=================================================================
+# INITIALISATION
+#=================================================================
+
+/gate/run/initialize
+
+#=================================================================
 # T H E R M A L   A C T O R
 #=================================================================
 
@@ -111,12 +117,6 @@
 
 /gate/actor/addActor SimulationStatisticActor MyActor
 /gate/actor/MyActor/save Statistics.txt
-
-#=================================================================
-# INITIALISATION
-#=================================================================
-
-/gate/run/initialize
 
 #=================================================================
 # S O U R C E

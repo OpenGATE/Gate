@@ -12,12 +12,12 @@
 /gate/actor/DAVolume/save          output/DA-hfp-dcm.mhd
 /gate/actor/DAVolume/setResolution 512 512 9
 
-/control/execute mac/beam.mac
-
 /control/execute mac/physics.mac
 
 /control/execute mac/detectors.mac
 
 /control/execute mac/initialisation.mac
+
+/control/execute mac/beam.mac
 
 /control/execute mac/startbeam.mac
