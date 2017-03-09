@@ -171,7 +171,11 @@ void GateAugerDetectorActor::EndOfEventAction(const G4Event*)
   //G4cout << "HIT!!!!!\n";
   //G4cout << "ndep = " << depositions.size() << " total_edep = " << total_deposited_energy << Gateendl;
   //G4cout << "position = " << hit_position << Gateendl;
-  pProfileHisto->Fill((projection_direction.dot(hit_position)+noise_projection)/mm);
+  double pos = (projection_direction.dot(hit_position)+noise_projection)/mm;
+  pProfileHisto->Fill(pos);
+  
+  //DD( hit_position.x()  )
+  //DD(  pos )
 }
 //-----------------------------------------------------------------------------
 
@@ -193,9 +197,18 @@ void GateAugerDetectorActor::UserSteppingAction(const GateVVolume*, const G4Step
   const G4double time = step->GetPostStepPoint()->GetGlobalTime();
   if (time<min_time_of_flight) return;
   if (time>max_time_of_flight) return;
-
+  
+  //2016-02-16: For LOCAL coords a transform MUST be made, see PhaseSpaceActor.cc:309-312
+  //also see http://geant4.cern.ch/support/faq.shtml#a-geom-4
+  G4ThreeVector worldPosition = (step->GetPostStepPoint()->GetPosition()+step->GetPreStepPoint()->GetPosition())/2.;
+  const G4AffineTransform transformation = step->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform();
+  G4ThreeVector localPosition = transformation.TransformPoint(worldPosition);
+  
+  //DD(worldPosition.x());
+  //DD(localPosition.x());
+  
   AugerDeposition deposition;
-  deposition.position = (step->GetPostStepPoint()->GetPosition()+step->GetPreStepPoint()->GetPosition())/2.;
+  deposition.position = localPosition;
   deposition.energy = step->GetTotalEnergyDeposit();
   deposition.time = time;
   if (deposition.energy <= 0) return;
