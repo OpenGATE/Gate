@@ -50,7 +50,11 @@ GateFixedForcedDetectionActor::GateFixedForcedDetectionActor(G4String name, G4in
     mSourceType("plane"),
     mGeneratePhotons(false),
     mARF(false),
-    mNumberOfProcessedPrimaries(0)
+    mNumberOfProcessedPrimaries(0),
+    mNumberOfProcessedSecondaries(0),
+    mNumberOfProcessedCompton(0),
+    mNumberOfProcessedRayleigh(0),
+    mNumberOfProcessedPE(0)
   {
   GateDebugMessageInc("Actor",4,"GateFixedForcedDetectionActor() -- begin"<<G4endl);
   pActorMessenger = new GateFixedForcedDetectionActorMessenger(this);
@@ -136,7 +140,7 @@ void GateFixedForcedDetectionActor::TestSource(GateSourceMgr * sm)
         }
       }
     }
-  else if (mSourceType == "isotropic")
+  else if (mSourceType == "isotropic" or mSourceType == "isotropicWoP")
     {
 
     }
@@ -624,16 +628,14 @@ void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, co
   if (!process)
     {
     /* See if we have to place it in BeginOfEvent */
-    if (mSourceType == "isotropic"
-        && GateRunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex()->GetPosition()
-           == step->GetPreStepPoint()->GetPosition())
+    if (mSourceType == "isotropic" && step->GetTrack()->GetCurrentStepNumber() == 1)
       {
       ForceDetectionOfInteraction(GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID(),
                                   G4String("IsotropicPrimary"),
                                   step->GetPreStepPoint()->GetPosition(),
                                   step->GetPreStepPoint()->GetMomentumDirection(),
                                   step->GetPreStepPoint()->GetKineticEnergy(),
-                                  step->GetPreStepPoint()->GetWeight() ,
+                                  step->GetPreStepPoint()->GetWeight(),
                                   0,
                                   step->GetPreStepPoint()->GetTotalEnergy());
       mNumberOfProcessedPrimaries++;
@@ -643,6 +645,7 @@ void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, co
       }
     return;
     }
+
   /* FIXME: do we prefer this solution or computing the scattering function for the material? */
   const G4MaterialCutsCouple *couple = step->GetPreStepPoint()->GetMaterialCutsCouple();
   const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
@@ -666,6 +669,7 @@ void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, co
       /* Check if photon has been emitted */
       if (nameSecondary == G4String("gamma"))
         {
+
         ForceDetectionOfInteraction(GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID(),
                                     process->GetProcessName(),
                                     step->GetPostStepPoint()->GetPosition(),
@@ -716,6 +720,7 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
     }
   else
     {
+
     mInteractionOrder++;
     switch (mMapProcessNameWithType[processName])
       {
@@ -724,7 +729,8 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
           {
           mInteractionWeight = 1;
           }
-
+        mNumberOfProcessedSecondaries++;
+        mNumberOfProcessedCompton++;
         this->ForceDetectionOfInteraction<COMPTON>(mComptonProjector.GetPointer(),
                                                    mProcessImage[COMPTON],
                                                    totalEnergy);
@@ -740,17 +746,22 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
           {
           mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy) * mInteractionWeight;
           }
+        mNumberOfProcessedSecondaries++;
+        mNumberOfProcessedRayleigh++;
         this->ForceDetectionOfInteraction<RAYLEIGH>(mRayleighProjector.GetPointer(),
                                                     mProcessImage[RAYLEIGH],
                                                     totalEnergy);
 
         break;
+
       case PHOTOELECTRIC:
         mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy) * mInteractionWeight;
         if (mARF || mGeneratePhotons)
           {
           mInteractionWeight = 1;
           }
+        mNumberOfProcessedSecondaries++;
+        mNumberOfProcessedPE++;
         this->ForceDetectionOfInteraction<PHOTOELECTRIC>(mFluorescenceProjector.GetPointer(),
                                                          mProcessImage[PHOTOELECTRIC],
                                                          totalEnergy);
@@ -807,7 +818,8 @@ void GateFixedForcedDetectionActor::GeneratePhotons(const unsigned int & numberO
   }
 void GateFixedForcedDetectionActor::ConnectARF(const unsigned int & numberOfThreads,
                                                const std::vector<std::vector<newPhoton> > & photonList,
-                                               const double & energy)
+                                               const double & energy,
+                                               unsigned int newHead)
   {
   GateARFSD* arfSD = GateDetectorConstruction::GetGateDetectorConstruction()->GetARFSD();
   arfSD->SetCopyNo(0);
@@ -816,13 +828,30 @@ void GateFixedForcedDetectionActor::ConnectARF(const unsigned int & numberOfThre
     {
     for (unsigned int photonId = 0; photonId < photonList[thread].size(); photonId++)
       {
+      position[0] = photonList[thread][photonId].position[0] + mInteractionPosition[0];
       position[1] = photonList[thread][photonId].position[1] + mInteractionPosition[1];
       position[2] = photonList[thread][photonId].position[2] + mInteractionPosition[2];
+      position = m_SourceToDetector.TransformAxis(position);
       position[0] = arfSD->GetDepth();
-      arfSD->ComputeProjectionSet(position,
-                                  photonList[thread][photonId].direction,
-                                  energy,
-                                  photonList[thread][photonId].weight);
+      if (thread == 0 && photonId == 0 && newHead == ISOTROPICPRIMARY)
+        {
+        arfSD->ComputeProjectionSet(position,
+                                    m_WorldToDetector.TransformAxis(photonList[thread][photonId].direction),
+                                    energy,
+                                    photonList[thread][photonId].weight,
+                                    true,
+                                    newHead + 1);
+        }
+      else
+        {
+        arfSD->ComputeProjectionSet(position,
+                                    m_WorldToDetector.TransformAxis(photonList[thread][photonId].direction),
+                                    energy,
+                                    photonList[thread][photonId].weight,
+                                    false,
+                                    newHead + 1);
+
+        }
       }
     }
   }
@@ -876,7 +905,9 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType *
     {
     ConnectARF(projector->GetNumberOfThreads(),
                projector->GetProjectedValueAccumulation().GetPhotonList(),
-               energy);
+               energy,
+               VProcess);
+
     }
 
   /* Scatter order */
@@ -917,7 +948,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
   char filename[1024];
   G4int rID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
 
-  if (mPrimaryFilename != "")
+  if (mPrimaryFilename != "" && !mARF)
     {
     /* Write the image of primary radiation accounting for the fluence of the
      primary source. */
@@ -982,7 +1013,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
   for (unsigned int i = 0; i < PRIMARY; i++)
     {
     ProcessType pt = ProcessType(i);
-    if (mProcessImageFilenames[pt] != "")
+    if (mProcessImageFilenames[pt] != "" && !mARF)
       {
       sprintf(filename, AddPrefix(prefix, mProcessImageFilenames[pt]).c_str(), rID);
       imgWriter->SetFileName(filename);
@@ -1026,11 +1057,25 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
         }
       }
     }
-
-  if (mSecondaryFilename != ""
-      || mIsSecondarySquaredImageEnabled
-      || mIsSecondaryUncertaintyImageEnabled
-      || mTotalFilename != "")
+  std::cout
+  << "mNumberOfEventsInRun "
+  << mNumberOfEventsInRun
+  << " Primaries "
+  << mNumberOfProcessedPrimaries
+  << " Secondaries "
+  << mNumberOfProcessedSecondaries
+  << " Compton "
+  << mNumberOfProcessedCompton
+  << " Rayleigh "
+  << mNumberOfProcessedRayleigh
+  << " PE "
+  << mNumberOfProcessedPE
+  << std::endl;
+  if ((mSecondaryFilename != ""
+       || mIsSecondarySquaredImageEnabled
+       || mIsSecondaryUncertaintyImageEnabled
+       || mTotalFilename != "")
+      && !mARF)
     {
     typedef itk::AddImageFilter<OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
     AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
@@ -1051,7 +1096,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       }
 
     /*  Write scatter image */
-    if (mSecondaryFilename != "")
+    if (mSecondaryFilename != "" && !mARF)
       {
       sprintf(filename, AddPrefix(prefix, mSecondaryFilename).c_str(), rID);
       imgWriter->SetFileName(filename);
@@ -1085,7 +1130,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
       }
 
-    if (mTotalFilename != "")
+    if (mTotalFilename != "" && !mARF)
       {
       /*  Primary */
       mSecondaryImage->DisconnectPipeline();
@@ -1232,6 +1277,24 @@ void GateFixedForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(G
     G4AffineTransform x(phys->GetRotation(), phys->GetTranslation());
     detectorToWorld = detectorToWorld * x;
     }
+  G4AffineTransform detectorPlane();
+
+  CLHEP::Hep3Vector rows[3];
+  rows[0][0] = 0;
+  rows[0][1] = 0;
+  rows[0][2] = 1;
+  rows[1][0] = 0;
+  rows[1][1] = 1;
+  rows[1][2] = 0;
+  rows[2][0] = -1;
+  rows[2][1] = 0;
+  rows[2][2] = 0;
+
+  G4RotationMatrix rotationInDetectorPlane(rows[0], rows[1], rows[2]);
+
+  //m_WorldToDetector = detectorToWorld;
+
+  m_WorldToDetector = detectorToWorld.Inverse() * rotationInDetectorPlane;
 
   /*  CT to world */
   v = ct;
@@ -1300,6 +1363,7 @@ void GateFixedForcedDetectionActor::ComputeGeometryInfoInImageCoordinateSystem(G
     } /*  point */
 
   m_SourceToCT = sourceToWorld * m_WorldToCT;
+  m_SourceToDetector = sourceToWorld * m_WorldToDetector;
   s = m_SourceToCT.TransformPoint(s);
 
   /*  Copy in ITK vectors */
@@ -1437,7 +1501,6 @@ GateFixedForcedDetectionActor::InputImageType::Pointer GateFixedForcedDetectionA
     sourceCorner2[0] += mSource->GetPosDist()->GetHalfX();
     sourceCorner2[1] += mSource->GetPosDist()->GetHalfY();
     sourceCorner2 = m_SourceToCT.TransformPoint(sourceCorner2);
-
     /* Compute source plane corner positions in homogeneous coordinates */
     itk::Vector<double, 4> corner1Hom, corner2Hom;
     corner1Hom[0] = sourceCorner1[0];

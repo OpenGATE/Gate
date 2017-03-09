@@ -37,7 +37,7 @@ void GateMHDImage::ReadData(std::string filename, std::vector<PixelType> & data)
 
 //-----------------------------------------------------------------------------
 template<class PixelType>
-void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * image, bool writeData,bool  changeExtension,bool isARF)
+void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * image, bool writeData,bool  changeExtension,bool isARF,int numberOfARFFFDHeads)
 {
   MetaImage m_MetaImage;
   int ds[3];
@@ -45,6 +45,11 @@ void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * ima
   ds[0] = image->GetResolution().x();
   ds[1] = image->GetResolution().y();
   ds[2] = image->GetResolution().z();
+  if(isARF)
+  {
+  ds[2]*=numberOfARFFFDHeads;
+  }
+  
   es[0] = image->GetVoxelSize().x();
   es[1] = image->GetVoxelSize().y();
   es[2] = image->GetVoxelSize().z();

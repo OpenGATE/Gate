@@ -535,7 +535,6 @@ namespace GateFixedForcedDetectionFunctor
         /* Final computation */
         // double weight = vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel) * (*m_ResponseDetector)(energy);
         double weight = vcl_exp(-rayIntegral) * DCScompton * GetSolidAngle(sourceToPixel);
-
         if (m_generatePhotons)
           {
           //Accumulate(threadId, output, weight, m_Energy);

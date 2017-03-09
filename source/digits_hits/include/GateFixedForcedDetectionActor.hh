@@ -248,7 +248,8 @@ public:
 
   void ConnectARF(const unsigned int & numberOfThreads,
                   const std::vector<std::vector<newPhoton> > & photonList,
-                  const double & energy);
+                  const double & energy,
+                  unsigned int newHead = 1);
 
   void ComputeFlatField(std::vector<double> & energyList, std::vector<double> & energyWeightList);
 protected:
@@ -297,7 +298,9 @@ protected:
 
   /* Geometry information initialized at the beginning of the run */
   G4AffineTransform m_WorldToCT;
+  G4AffineTransform m_WorldToDetector;
   G4AffineTransform m_SourceToCT;
+  G4AffineTransform m_SourceToDetector;
   PointType mPrimarySourcePosition;
   PointType mDetectorPosition;
   VectorType mDetectorRowVector;
@@ -358,6 +361,10 @@ protected:
   bool mGeneratePhotons;
   bool mARF;
   unsigned int mNumberOfProcessedPrimaries;
+  unsigned int mNumberOfProcessedSecondaries;
+  unsigned int mNumberOfProcessedCompton;
+  unsigned int mNumberOfProcessedRayleigh;
+  unsigned int mNumberOfProcessedPE;
   /* Account for primary fluence weighting */
   InputImageType::Pointer PrimaryFluenceWeighting(const InputImageType::Pointer input);
 

@@ -102,49 +102,47 @@ void GateARFSD::Initialize(G4HCofThisEvent*HCE)
 G4bool GateARFSD::ProcessHits(G4Step*step, G4TouchableHistory*)
   {
   if (!mShortcutARF)
-  {
-  G4Track* track = static_cast<G4Track*>(step->GetTrack());
+    {
+    G4Track* track = static_cast<G4Track*>(step->GetTrack());
     /* TODO Check if necessary */
-  if (track->GetParentID() != 0)
-    {
-    return false;
-    }
-  track->SetTrackStatus(fKillTrackAndSecondaries);
-  /* Get the step-points */
-  G4StepPoint *preStepPoint = step->GetPreStepPoint();
-  G4StepPoint *postStepPoint = step->GetPostStepPoint();
-  const G4VProcess*processDefinedStep = postStepPoint->GetProcessDefinedStep();
+    if (track->GetParentID() != 0)
+      {
+      return false;
+      }
+    track->SetTrackStatus(fKillTrackAndSecondaries);
+    /* Get the step-points */
+    G4StepPoint *preStepPoint = step->GetPreStepPoint();
+    G4StepPoint *postStepPoint = step->GetPostStepPoint();
+    const G4VProcess*processDefinedStep = postStepPoint->GetProcessDefinedStep();
 
-  /*  For all processes except transportation, we select the PostStepPoint volume
-   For the transportation, we select the PreStepPoint volume */
-  const G4TouchableHistory* touchable;
-  if (processDefinedStep->GetProcessType() == fTransportation)
-    {
-    touchable = (const G4TouchableHistory*) (preStepPoint->GetTouchable());
-    }
-  else
-    {
-    touchable = (const G4TouchableHistory*) (postStepPoint->GetTouchable());
-    }
-  GateVolumeID volumeID(touchable);
+    /*  For all processes except transportation, we select the PostStepPoint volume
+     For the transportation, we select the PreStepPoint volume */
+    const G4TouchableHistory* touchable;
+    if (processDefinedStep->GetProcessType() == fTransportation)
+      {
+      touchable = (const G4TouchableHistory*) (preStepPoint->GetTouchable());
+      }
+    else
+      {
+      touchable = (const G4TouchableHistory*) (postStepPoint->GetTouchable());
+      }
+    GateVolumeID volumeID(touchable);
+    mHeadID = volumeID.GetVolume(volumeID.GetCreatorDepth("SPECThead"))->GetCopyNo();
+    if (volumeID.IsInvalid())
+      {
+      G4Exception("GateARFSD::ProcessHits",
+                  "ProcessHits",
+                  FatalException,
+                  "Could not get the volume ID! Aborting!");
+      }
 
-  mHeadID = volumeID.GetVolume(volumeID.GetCreatorDepth("SPECThead"))->GetCopyNo();
-
-  if (volumeID.IsInvalid())
-    {
-    G4Exception("GateARFSD::ProcessHits",
-                "ProcessHits",
-                FatalException,
-                "Could not get the volume ID! Aborting!");
-    }
-
-  /* now we compute the position in the current frame to be able to extract the angles theta and phi */
-
+    /* now we compute the position in the current frame to be able to extract the angles theta and phi */
     G4ThreeVector localPosition = volumeID.MoveToBottomVolumeFrame(track->GetPosition());
     G4ThreeVector vertexPosition = volumeID.MoveToBottomVolumeFrame(step->GetPreStepPoint()->GetPosition());
     G4ThreeVector direction = localPosition - vertexPosition;
-  G4double magnitude = direction.mag();
-  direction /= magnitude;
+
+    G4double magnitude = direction.mag();
+    direction /= magnitude;
     ComputeProjectionSet(localPosition,
                          direction,
                          track->GetTotalEnergy(),
@@ -208,7 +206,6 @@ void GateARFSD::computeTables()
     {
     return;
     }
-
   G4double* nbSourcePhotons = new G4double[mEnergyWindows.size()];
   G4int tableIndex = 0;
   G4int totalNumberOfSingles = 0;
@@ -268,7 +265,6 @@ void GateARFSD::computeTables()
       mNbOfPhotonsTree->SetBranchAddress("NbOfOutCameraPhot", &tempOutCamera);
       mNbOfPhotonsTree->SetBranchAddress("NbOfHeads", &mNbOfHeads);
       mNbOfPhotonsTree->GetEntry(0);
-
       mNbofGoingOutPhotons += tempNbofGoingOutPhotons;
       mNbofGoingInPhotons += tempNbofGoingInPhotons;
       mNbOfSourcePhotons += tempNbOfSourcePhotons;
@@ -327,7 +323,9 @@ void GateARFSD::computeTables()
 void GateARFSD::ComputeProjectionSet(const G4ThreeVector & position,
                                      const G4ThreeVector & direction,
                                      const G4double & energy,
-                                     const G4double & weight)
+                                     const G4double & weight,
+                                     bool addEmToArfCount,
+                                     unsigned int newHead)
   {
   /*
    transform to the detector frame the photon position
@@ -347,6 +345,7 @@ void GateARFSD::ComputeProjectionSet(const G4ThreeVector & position,
    deltaX is the projection plane of the detector on the Ox axis
    all these coordinates are relative to the detector frame where the origin of hte detector is a t the center
    */
+
   G4double arfValue = mArfTableMgr->ScanTables(direction.z(), direction.y(), energy);
   /* The coordinates of the intersection of the path of the photon with the back surface of the detector
    is given by
@@ -365,7 +364,7 @@ void GateARFSD::ComputeProjectionSet(const G4ThreeVector & position,
   G4double xP = position.z() + t * direction.z();
   G4double yP = position.y() + t * direction.y();
 
-  /* now store projection with the GateProjectionSet Module thourgh its method GateProjectionSet::Fill */
+  /* now store projection with the GateProjectionSet Module though its method GateProjectionSet::Fill */
 
   if (mProjectionSet == 0)
     {
@@ -380,7 +379,11 @@ void GateARFSD::ComputeProjectionSet(const G4ThreeVector & position,
       }
     mProjectionSet = projectionSet->GetProjectionSet();
     }
-  mProjectionSet->FillARF(mHeadID, yP, xP, arfValue * weight);
+  mProjectionSet->FillARF(mHeadID, yP, -xP, arfValue * weight, addEmToArfCount);
+  if (mShortcutARF)
+    {
+    mProjectionSet->FillARF(newHead, yP, -xP, arfValue * weight, false);
+    }
   }
 
 #endif

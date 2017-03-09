@@ -104,7 +104,7 @@ public:
 
   //! Store a digi into a projection
   void Fill(G4int energyWindowID, G4int headID, G4double x, G4double y);
-  void FillARF(G4int, G4double, G4double, G4double); /*PY Descourt 08/09/2009*/
+  void FillARF(G4int, G4double, G4double, G4double, bool addEmToArfCount = false); /*PY Descourt 08/09/2009*/
   //! \name getters and setters
   //@{
 
@@ -306,6 +306,20 @@ public:
     m_matrixLowEdgeY = -0.5 * m_pixelNbY * m_pixelSizeY;
     }
 
+  //! Returns the number of bytes per head
+  inline G4int GetNumberOfEmEvents() const
+    {
+    return m_numberOfEmEvents;
+    }
+
+  inline size_t GetNumberOfARFFFDHeads() const
+    {
+    return m_numberOfARFFFDHeads;
+    }
+
+
+
+
   /*! \brief Writes a head-projection onto an output stream
 
    \param dest:    	  the destination stream
@@ -330,6 +344,8 @@ public:
 
   ARFProjectionDataType **m_ARFdata;/*PY Descourt 08/09/2009*/
   ARFProjectionDataType *m_ARFdataMax;/*PY Descourt 08/09/2009*/
+  G4int m_numberOfEmEvents;
+  size_t m_numberOfARFFFDHeads;
   //@}
 
   };
@@ -348,7 +364,9 @@ inline GateProjectionSet::GateProjectionSet() :
     m_data(0),
     m_dataMax(0),
     m_currentProjectionID(-1),
-    m_verboseLevel(0)
+    m_verboseLevel(0),
+    m_numberOfEmEvents(0),
+    m_numberOfARFFFDHeads(1)
   {
   m_ARFdata = 0;
   m_ARFdataMax = 0;

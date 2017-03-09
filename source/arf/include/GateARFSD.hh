@@ -127,7 +127,9 @@ public:
   void ComputeProjectionSet(const G4ThreeVector & position,
                             const G4ThreeVector & direction,
                             const G4double & energy,
-                            const G4double & weight);
+                            const G4double & weight,
+                            bool addEmToArfCount = false,
+                            unsigned int newHead = 1);
 
   void SetDepth(const G4double & aDepth)
     {
