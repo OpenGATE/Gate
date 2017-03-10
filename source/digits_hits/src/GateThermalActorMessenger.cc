@@ -15,6 +15,10 @@ See GATE/LICENSE.txt for further details
 #ifndef GATETHERMALACTORMESSENGER_CC
 #define GATETHERMALACTORMESSENGER_CC
 
+// This actor is only compiled if ITK is available
+#include "GateConfiguration.h"
+#ifdef  GATE_USE_ITK
+
 #include "GateThermalActorMessenger.hh"
 #include "GateThermalActor.hh"
 
@@ -100,3 +104,5 @@ void GateThermalActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 //-----------------------------------------------------------------------------
 
 #endif /* end #define GATEThermalActorMESSENGER_CC */
+
+#endif // end define USE_ITK

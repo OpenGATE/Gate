@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 /*
   \class GateThermalActor
@@ -43,7 +43,7 @@ See GATE/LICENSE.txt for further details
 
 class GateThermalActor : public GateVImageActor
 {
- public:
+public:
 
   //-----------------------------------------------------------------------------
   // Actor name
@@ -92,7 +92,7 @@ protected:
 
   StepHitType mUserStepHitType;
 
-  GateImageWithStatistic mAbsorptionImage; 
+  GateImageWithStatistic mAbsorptionImage;
 
   G4String mAbsorptionFilename;
   G4String mHeatDiffusionFilename;
