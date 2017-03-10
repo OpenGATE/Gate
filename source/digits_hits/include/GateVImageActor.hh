@@ -63,6 +63,9 @@ public :
 
   double GetDoselVolume(){return mVoxelSize.x()*mVoxelSize.y()*mVoxelSize.z();}
 
+  // Retreive the image voxel size (vc)
+  G4ThreeVector GetVoxelSize();
+
   //-----------------------------------------------------------------------------
   /// Computes the voxel in which to store the data and invokes
   /// UserHitAction which is responsible for voxel data updating

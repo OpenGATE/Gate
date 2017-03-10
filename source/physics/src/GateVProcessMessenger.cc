@@ -13,6 +13,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVProcess.hh"
 #include "GateVProcessMessenger.hh"
+#include "G4SystemOfUnits.hh"
 
 #include "G4UIdirectory.hh"
 

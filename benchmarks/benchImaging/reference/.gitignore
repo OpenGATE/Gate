@@ -16,8 +16,8 @@ benchImaging_petCylindrical-reference.tgz
 /pet_results.root
 /pet_sinogram_frame0.ra.s
 /pet_sinogram_frame0.ra.s.hdr
-/output/pet_sinogram_frame0.s
-/output/pet_sinogram_frame0.s.hdr
+/pet_sinogram_frame0.s
+/pet_sinogram_frame0.s.hdr
 /pet_sinogram_frame0.sc.s
 /pet_sinogram_frame0.sc.s.hdr
 /spect_projection.hdr
