@@ -82,6 +82,8 @@ public:
     void WriteGateScannerInfo();
     //! Write the GATE specific run information into the header
     void WriteGateRunInfo(G4int runNb);
+    void WriteGateEmEventsInfo(G4int runNb);
+
 
 private:
     GateToInterfileMessenger* m_asciiMessenger;

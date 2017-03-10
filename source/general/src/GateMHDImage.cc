@@ -43,30 +43,36 @@ GateMHDImage::~GateMHDImage()
 
 //-----------------------------------------------------------------------------
 void GateMHDImage::ReadHeader(std::string & filename)
-{
-  GateMessage("Image", 5, "GateMHDImage::ReadMHD " << filename << Gateendl);
-
-  MetaImage m_MetaImage;
-  if (!m_MetaImage.Read(filename.c_str(), false))
-    GateError("MHD File cannot be read: " << filename << Gateendl);
-
-  if (m_MetaImage.NDims() != 3)
-    GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort.\n");
+    {
+        GateMessage("Image", 5, "GateMHDImage::ReadMHD " << filename << Gateendl);
 
 
-  for (int i = 0; i < m_MetaImage.NDims(); i++)
-  {
-      size[i]    = m_MetaImage.DimSize(i);
+        MetaImage m_MetaImage;
+        if (!m_MetaImage.Read(filename.c_str(), false))
+            {
+                GateError("MHD File cannot be read: " << filename << Gateendl);
+            }
+
+        if (m_MetaImage.NDims() != 3)
+            {
+                GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort.\n");
+            }
+
+        for (int i = 0; i < m_MetaImage.NDims(); i++)
+            {
+                size[i] = m_MetaImage.DimSize(i);
       // NOTE: The spacing and origin of MHD header files are (always?) rounded at 6 digits.
       // Thus rounding the spacing and the origin at 6 digits is mandatory for MHD images in order to keep original MHD header precision and avoid errors.
       spacing[i] = round_to_digits(m_MetaImage.ElementSpacing(i),6);
       origin[i]  = round_to_digits(m_MetaImage.Position(i),6);
-  }
+            }
 
-  transform.resize(9);
-  for (int i = 0; i < 9; i++) // 3 x 3 matrix
-    transform[i] = m_MetaImage.TransformMatrix()[i];
-}
+        transform.resize(9);
+        for (int i = 0; i < 9; i++)
+            { // 3 x 3 matrix
+                transform[i] = m_MetaImage.TransformMatrix()[i];
+            }
+    }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -162,7 +168,7 @@ double GateMHDImage::round_to_digits(double value, int digits)
 
   double factor (pow(10.0, digits - ceil(log10(fabs(value)))));
   return round(value * factor) / factor;
-}
+    }
 //-----------------------------------------------------------------------------
 
 #endif

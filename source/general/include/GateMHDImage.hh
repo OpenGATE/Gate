@@ -44,7 +44,8 @@ public:
                      GateImageT<PixelType> * image,
                      bool writeData = false,
                      bool changeExtension = false,
-                     bool isARF = false);
+                   bool isARF = false,
+                   int numberOfARFFFDHeads = 1);
     template<class PixelType>
     void WriteData(std::string filename, GateImageT<PixelType> * image);
 

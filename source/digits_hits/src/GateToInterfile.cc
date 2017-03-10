@@ -181,6 +181,7 @@ void GateToInterfile::RecordEndOfAcquisition()
   WriteGateRunInfo(m_system->GetProjectionSetMaker()->GetProjectionSet()->GetCurrentProjectionID()
                    + 1);
 
+  WriteGateEmEventsInfo(m_system->GetProjectionSetMaker()->GetProjectionSet()->GetNumberOfEmEvents());
   m_headerFile << "!END OF INTERFILE :=" << Gateendl;
 
   m_headerFile.close();
@@ -188,9 +189,8 @@ void GateToInterfile::RecordEndOfAcquisition()
   GateImageT<unsigned short>* image = new GateImageT<unsigned short>;
   G4ThreeVector resolution(m_system->GetProjectionSetMaker()->GetPixelNbX(),
                            m_system->GetProjectionSetMaker()->GetPixelNbY(),
-                           m_system->GetProjectionSetMaker()->GetEnergyWindowNb()
-                           * m_system->GetProjectionSetMaker()->GetHeadNb());
-
+                           m_system->GetProjectionSetMaker()->GetHeadNb()
+                           * m_system->GetProjectionSetMaker()->GetEnergyWindowNb());
   G4ThreeVector voxelSize(m_system->GetProjectionSetMaker()->GetPixelSizeX(),
                           m_system->GetProjectionSetMaker()->GetPixelSizeY(),
                           1);
@@ -199,7 +199,12 @@ void GateToInterfile::RecordEndOfAcquisition()
   GateMHDImage * mhd = new GateMHDImage;
   if (m_system->GetProjectionSetMaker()->GetProjectionSet()->GetARFData() != 0)
     {
-    mhd->WriteHeader(m_fileName + ".", image, false, true, true);
+    mhd->WriteHeader(m_fileName + ".",
+                     image,
+                     false,
+                     true,
+                     true,
+                     m_system->GetProjectionSetMaker()->GetProjectionSet()->GetNumberOfARFFFDHeads());
     }
   else
     {
@@ -237,7 +242,9 @@ void GateToInterfile::RecordEndOfRun(const G4Run*)
 
   else if (m_system->GetProjectionSetMaker()->GetProjectionSet()->GetARFData() != 0)
     {
-    for (size_t headID = 0; headID < m_system->GetProjectionSetMaker()->GetHeadNb(); headID++)
+    for (size_t headID = 0;
+        headID < m_system->GetProjectionSetMaker()->GetProjectionSet()->GetNumberOfARFFFDHeads();
+        headID++)
       {
       m_system->GetProjectionSetMaker()->GetProjectionSet()->StreamOutARFProjection(m_dataFile,
                                                                                     headID);
@@ -440,5 +447,11 @@ void GateToInterfile::WriteGateScannerInfo()
 void GateToInterfile::WriteGateRunInfo(G4int runNb)
   {
   m_headerFile << ";GATE SIMULATION :=" << Gateendl<< ";number of runs := " << runNb << Gateendl
+  << ";\n";
+  }
+// Write the GATE specific run information into the header
+void GateToInterfile::WriteGateEmEventsInfo(G4int runNb)
+  {
+  m_headerFile << ";GATE SIMULATION :=" << Gateendl<< ";number of EM events := " << runNb << Gateendl
   << ";\n";
   }
