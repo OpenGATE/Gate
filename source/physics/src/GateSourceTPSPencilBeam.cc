@@ -400,41 +400,52 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
 }
 //---------OLD GENERATION - END-----------------------
 
+//------------------------------------------------------------------------------------------------------
+//  try get N values of type T from a given input line
+// * throw exception with informative error message in case of trouble.
+// * NOTE that while this catches some common errors, it is not yet fool proof.
 template<typename T, int N>
-typename std::vector<T> parse_N_items_of_type_T(std::string line,int lineno, const std::string& fname){
-    std::istringstream sin(line);
-    typename std::istream_iterator<T> eos;
-    typename std::istream_iterator<T> isd(sin);
-    typename std::vector<T> vecT(N);
-    typename std::vector<T>::iterator endT = std::copy(isd,eos,vecT.begin());
-    size_t nread = endT - vecT.begin();
-    if (nread != N){
-        std::ostringstream errMsg;
-        errMsg << "wrong number of items ("
-               << nread << ") on line " << lineno << " of " << fname
-               << "; expected " << N << " item(s) of type " << typeid(T).name()<< std::endl;
-        throw std::runtime_error(errMsg.str());
-    }
-    return vecT;
+typename std::vector<T> parse_N_values_of_type_T(std::string line,int lineno, const std::string& fname){
+  GateMessage("Beam", 5, "[TPSPencilBeam] trying to parse line " << lineno << " from file " << fname << Gateendl );
+  std::istringstream iss(line);
+  typename std::istream_iterator<T> iss_end;
+  typename std::istream_iterator<T> isiT(iss);
+  typename std::vector<T> vecT;
+  while (isiT != iss_end) vecT.push_back(*(isiT++));
+  int nread = vecT.size();
+  if (nread != N){
+    std::ostringstream errMsg;
+    errMsg << "wrong number of values (" << nread << ") on line " << lineno << " of " << fname
+           << ", expected " << N << " value(s) of type " << typeid(T).name() << std::endl;
+    throw std::runtime_error(errMsg.str());
+  }
+  return vecT;
 }
 
-
+//------------------------------------------------------------------------------------------------------
 // Function to read the next content line
 // * skip all comment lines (lines string with a '#')
 // * skip empty
-// * check that we really get N items of type T from the current line
-// * throw exception with informative error message in case of trouble
-template<typename T, int N>
-typename std::vector<T>  ReadNextContentLine( std::istream& input, int& lineno, const std::string& fname ) {
+// * throw exception with informative error message in case of missing data
+std::string ReadNextContentLine( std::istream& input, int& lineno, const std::string& fname ) {
   while ( input ){
     std::string line;
     std::getline(input,line);
     ++lineno;
     if (line.empty()) continue;
     if (line[0]=='#') continue;
-    return parse_N_items_of_type_T<T,N>(line,lineno,fname);
+    return line;
   }
-  throw std::runtime_error(std::string("reached end of file")+fname+std::string("unexpectedly"));
+  throw std::runtime_error(std::string("reached end of file '")+fname+std::string("' unexpectedly."));
+}
+
+//------------------------------------------------------------------------------------------------------
+// Function to read AND parse the next content line
+// * check that we really get N values of type T from the current line
+template<typename T, int N>
+typename std::vector<T>  ParseNextContentLine( std::istream& input, int& lineno, const std::string& fname ) {
+  std::string line = ReadNextContentLine(input,lineno,fname);
+  return parse_N_values_of_type_T<T,N>(line,lineno,fname);
 }
 
 
@@ -475,36 +486,36 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
     try {
       int spotcounter = -1; //we count spots during init, to be able to match /selectSpot correctly.
       int lineno = 0;
-      std::string dummy_PlanName = ReadNextContentLine<std::string,1>(inFile,lineno,mPlan)[0];
-      int dummy_NbOfFractions = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0]; // not used
-      std::string dummy_FractionID = ReadNextContentLine<std::string,1>(inFile,lineno,mPlan)[0]; // not used
+      std::string dummy_PlanName = ReadNextContentLine(inFile,lineno,mPlan);
+      int dummy_NbOfFractions = ParseNextContentLine<int,1>(inFile,lineno,mPlan)[0]; // not used
+      std::string dummy_FractionID = ParseNextContentLine<std::string,1>(inFile,lineno,mPlan)[0]; // not used
       if ( dummy_NbOfFractions != 1){
         GateMessage("Beam",0,"WARNING: nb of fractions is assumed to be 1, but plan file says: " << dummy_NbOfFractions << " and fractionID=" << dummy_FractionID << Gateendl);
       }
-      int NbFields = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0];
+      int NbFields = ParseNextContentLine<int,1>(inFile,lineno,mPlan)[0];
       for (int f = 0; f < NbFields; f++) {
         // field IDs, not used
-        int dummy_fieldID = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0];
+        int dummy_fieldID = ParseNextContentLine<int,1>(inFile,lineno,mPlan)[0];
         GateMessage("Beam",4,"Field ID " << dummy_fieldID << Gateendl );
       }
-      double TotalMeterSet = ReadNextContentLine<double,1>(inFile,lineno,mPlan)[0];
+      double TotalMeterSet = ParseNextContentLine<double,1>(inFile,lineno,mPlan)[0];
       int nrejected = 0; // number of spots rejected based on layer/spot selection configuration
       for (int f = 0; f < NbFields; f++) {
-        int FieldID = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0];
-        double MeterSetWeight = ReadNextContentLine<double,1>(inFile,lineno,mPlan)[0];
+        int FieldID = ParseNextContentLine<int,1>(inFile,lineno,mPlan)[0];
+        double MeterSetWeight = ParseNextContentLine<double,1>(inFile,lineno,mPlan)[0];
         GateMessage("Beam",4,"TODO: check that total MSW for this field is indeed " << MeterSetWeight << Gateendl );
-        double GantryAngle = deg2rad(ReadNextContentLine<double,1>(inFile,lineno,mPlan)[0]);
-        double CouchAngle = deg2rad(ReadNextContentLine<double,1>(inFile,lineno,mPlan)[0]);
-        std::vector<double> IsocenterPosition = ReadNextContentLine<double,3>(inFile,lineno,mPlan);
-        int NbOfLayers = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0];
+        double GantryAngle = deg2rad(ParseNextContentLine<double,1>(inFile,lineno,mPlan)[0]);
+        double CouchAngle = deg2rad(ParseNextContentLine<double,1>(inFile,lineno,mPlan)[0]);
+        std::vector<double> IsocenterPosition = ParseNextContentLine<double,3>(inFile,lineno,mPlan);
+        int NbOfLayers = ParseNextContentLine<int,1>(inFile,lineno,mPlan)[0];
         for (int j = 0; j < NbOfLayers; j++) {
-          int currentLayerID = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0];
-          std::string dummy_spotID = ReadNextContentLine<std::string,1>(inFile,lineno,mPlan)[0];
+          int currentLayerID = ParseNextContentLine<int,1>(inFile,lineno,mPlan)[0];
+          std::string dummy_spotID = ParseNextContentLine<std::string,1>(inFile,lineno,mPlan)[0];
           GateMessage("Beam",4,"spot ID " << dummy_spotID << Gateendl );
-          int dummy_cumulative_msw = ReadNextContentLine<double,1>(inFile,lineno,mPlan)[0];
+          int dummy_cumulative_msw = ParseNextContentLine<double,1>(inFile,lineno,mPlan)[0];
           GateMessage("Beam",4,"cumulative MSW = " << dummy_cumulative_msw << Gateendl );
-          double energy = ReadNextContentLine<double,1>(inFile,lineno,mPlan)[0];
-          int NbOfSpots = ReadNextContentLine<int,1>(inFile,lineno,mPlan)[0];
+          double energy = ParseNextContentLine<double,1>(inFile,lineno,mPlan)[0];
+          int NbOfSpots = ParseNextContentLine<int,1>(inFile,lineno,mPlan)[0];
           if (mTestFlag) {
             GateMessage( "Beam", 1, "TESTREAD NbFields " << NbFields << Gateendl );
             GateMessage( "Beam", 1, "TESTREAD TotalMeterSet " << TotalMeterSet << Gateendl );
@@ -515,7 +526,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
             GateMessage( "Beam", 1, "TESTREAD NbOfSpots " << NbOfSpots << Gateendl );
           }
           for (int k = 0; k < NbOfSpots; k++) {
-            std::vector<double> SpotParameters = ReadNextContentLine<double,3>(inFile,lineno,mPlan);
+            std::vector<double> SpotParameters = ParseNextContentLine<double,3>(inFile,lineno,mPlan);
             if (mTestFlag) {
               GateMessage( "Beam", 1, "TESTREAD Spot No. " << k << "    parameters: "
                                       << SpotParameters[0] << " "
@@ -668,6 +679,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
 }
 //---------GENERATION - END-----------------------
 
+//------------------------------------------------------------------------------------------------------
 void GateSourceTPSPencilBeam::ConfigurePencilBeam() {
   double energy = mSpotEnergy[mCurrentSpot];
   //Particle Type
