@@ -32,12 +32,11 @@ void GateCompressedVoxelParameterized::InsertReader(G4String readerType){
     m_voxelReader = new GateGeometryVoxelInterfileReader(this);
     m_voxelReader->CreateCompressor();
   }
-  else {
-    // initialize voxel sizes with fake values
-    m_voxelReader->SetVoxelNx(10);
-    m_voxelReader->SetVoxelNy(10);
-    m_voxelReader->SetVoxelNz(10);
-  }
+
+  // initialize voxel sizes with fake values
+  m_voxelReader->SetVoxelNx(10);
+  m_voxelReader->SetVoxelNy(10);
+  m_voxelReader->SetVoxelNz(10);
 }
 //---------------------------------------------------------------------------
 
