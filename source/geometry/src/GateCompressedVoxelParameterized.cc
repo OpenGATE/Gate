@@ -19,7 +19,7 @@
 
 //---------------------------------------------------------------------------
 void GateCompressedVoxelParameterized::InsertReader(G4String readerType){
-  
+
   if (m_voxelReader) {
     return;
   }
@@ -31,14 +31,13 @@ void GateCompressedVoxelParameterized::InsertReader(G4String readerType){
   } else if (readerType == G4String("interfile")) {
     m_voxelReader = new GateGeometryVoxelInterfileReader(this);
     m_voxelReader->CreateCompressor();
-  } else
-
-  // initialize voxel sizes with fake values  
-
-       m_voxelReader->SetVoxelNx(10);
-       m_voxelReader->SetVoxelNy(10);
-       m_voxelReader->SetVoxelNz(10);
-
+  }
+  else {
+    // initialize voxel sizes with fake values
+    m_voxelReader->SetVoxelNx(10);
+    m_voxelReader->SetVoxelNy(10);
+    m_voxelReader->SetVoxelNz(10);
+  }
 }
 //---------------------------------------------------------------------------
 
@@ -49,7 +48,7 @@ void GateCompressedVoxelParameterized::RemoveReader(){
 
 
 void GateCompressedVoxelParameterized::AttachPhantomSD(){
-   m_voxelInserter->GetCreator()->AttachPhantomSD();
+  m_voxelInserter->GetCreator()->AttachPhantomSD();
 
 }
 //---------------------------------------------------------------------------
@@ -63,7 +62,7 @@ void GateCompressedVoxelParameterized::AddOutput(G4String name){
 
 //---------------------------------------------------------------------------
 void GateCompressedVoxelParameterized::ConstructGeometry(G4LogicalVolume* mother_log, G4bool flagUpdateOnly){
-   
+
   if (m_voxelReader){
     //  Get the original number of voxels and size from the reader
     voxelNumber = G4ThreeVector(m_voxelReader->GetVoxelNx(), m_voxelReader->GetVoxelNy(), m_voxelReader->GetVoxelNz());
@@ -71,7 +70,7 @@ void GateCompressedVoxelParameterized::ConstructGeometry(G4LogicalVolume* mother
   }else{
     return;
   }
-    
+
   GateBox* m_boxCreator;
 
   //  Update the dimensions of the enclosing box
@@ -98,4 +97,3 @@ void GateCompressedVoxelParameterized::ConstructGeometry(G4LogicalVolume* mother
   creatorVis->SetForceWireframe(true);
 }
 //---------------------------------------------------------------------------
-
