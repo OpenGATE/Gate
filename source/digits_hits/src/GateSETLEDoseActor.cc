@@ -95,10 +95,11 @@ void GateSETLEDoseActor::Construct()
   G4VPhysicalVolume *attachedVolume = GetVolume()->GetPhysicalVolume();
   int daughterNumber = attachedVolume->GetLogicalVolume()->GetNoDaughters();
   while(daughterNumber)
-    {
-      attachedVolume = attachedVolume->GetLogicalVolume()->GetDaughter(0);
-      daughterNumber = attachedVolume->GetLogicalVolume()->GetNoDaughters();
-    }
+  {
+    attachedVolume = attachedVolume->GetLogicalVolume()->GetDaughter(0);
+    daughterNumber = attachedVolume->GetLogicalVolume()->GetNoDaughters();
+  }
+
   // --> Set primary and secondary multiplicities in 'MultiplicityActor'
   pSETLEMultiplicityActor->SetMultiplicity(mIsHybridinoEnabled, mPrimaryMultiplicity, mSecondaryMultiplicity, attachedVolume);
   mListOfRaycasting = pSETLEMultiplicityActor->GetRaycastingList();
