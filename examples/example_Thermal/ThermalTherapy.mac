@@ -1,0 +1,164 @@
+#################################################################
+#
+# Example of hyperthermia therapy induced by gold nanoparticles
+# irradiated by photons
+# 
+##################################################################
+                                                       
+#=================================================================
+# VISUALISATION
+#=================================================================
+
+/vis/disable
+/vis/open VRML2FILE
+/vis/viewer/reset
+/vis/drawVolume
+/tracking/storeTrajectory           1
+/vis/scene/add/trajectories 
+/vis/scene/endOfEventAction         accumulate  20
+
+
+#=================================================================
+# VERBOSE
+#=================================================================
+
+/gate/verbose Physic    1
+/gate/verbose Cuts      0
+/gate/verbose SD        0
+/gate/verbose Actions   0
+/gate/verbose Actor     0
+/gate/verbose Step      0
+/gate/verbose Error     0
+/gate/verbose Warning   0
+/gate/verbose Output    0
+/gate/verbose Beam      0
+/gate/verbose Volume    0
+/gate/verbose Image     0
+/gate/verbose Geometry  0
+/gate/verbose Core      0
+/run/verbose            0
+/event/verbose          0
+/tracking/verbose       0
+	      
+/gate/output/verbose    1
+
+#=================================================================
+# W O R L D
+#=================================================================
+
+/gate/geometry/setMaterialDatabase    ./GateMaterials.db 
+
+/gate/world/geometry/setXLength       20. cm
+/gate/world/geometry/setYLength       20. cm
+/gate/world/geometry/setZLength       20. cm
+/gate/world/setMaterial               Air
+
+#=================================================================
+# P H A N T O M : M O B Y
+#=================================================================
+
+/gate/world/daughters/name                              Mouse 
+/gate/world/daughters/insert                            compressedMatrix 
+/gate/Mouse/geometry/insertReader                       interfile 
+/gate/Mouse/interfileReader/insertTranslator            range 
+/gate/Mouse/interfileReader/rangeTranslator/readTable   ./attenuation.dat
+/gate/Mouse/interfileReader/rangeTranslator/describe    1 
+/gate/Mouse/interfileReader/readFile                    ./MOBY1cmTumor.h33
+/gate/Mouse/placement/setTranslation                    0. 0. 0. cm
+/gate/Mouse/placement/setRotationAxis                   1 0 0
+/gate/Mouse/placement/setRotationAngle                  90 deg
+/gate/Mouse/vis/forceWireframe 
+
+#=================================================================
+# P H Y S I C S
+#=================================================================
+
+/gate/physics/addProcess OpticalAbsorption
+/gate/physics/addProcess OpticalRayleigh
+/gate/physics/addProcess OpticalMie
+/gate/physics/addProcess OpticalBoundary
+/gate/physics/addProcess NanoAbsorption 
+
+/gate/physics/processList Enabled
+/gate/physics/processList Initialized
+
+#=================================================================
+# INITIALISATION
+#=================================================================
+
+/gate/run/initialize
+
+#=================================================================
+# T H E R M A L   A C T O R
+#=================================================================
+
+/gate/actor/addActor ThermalActor        nano
+/gate/actor/nano/save                    ./MobyNP.hdr
+/gate/actor/nano/attachTo                Mouse
+/gate/actor/nano/stepHitType             random
+/gate/actor/nano/setPosition             0. 0. 0. cm
+/gate/actor/nano/setVoxelSize            0.25 0.25 0.25 mm
+
+/gate/actor/nano/setDiffusionTime               2 s
+/gate/actor/nano/setThermalDiffusivity        	0.190 mm2/s
+/gate/actor/nano/setBloodPerfusionRate 		0.004
+
+# density and heat capacity should just be in the same unit for both blood and tissue
+# in this example, the density is in kg/mm3 and the heat capacity in mJ kg-1 C-1
+/gate/actor/nano/setBloodDensity          	1.06E-6
+/gate/actor/nano/setBloodHeatCapacity     	3.6E6
+/gate/actor/nano/setTissueDensity         	1.04E-6
+/gate/actor/nano/setTissueHeatCapacity    	3.65E6
+
+# OPTIONAL: Simulation scale
+/gate/actor/nano/setSimulationScale        	1E10
+
+/gate/actor/nano/setNumberOfTimeFrames          60
+
+/gate/actor/addActor SimulationStatisticActor MyActor
+/gate/actor/MyActor/save Statistics.txt
+
+#=================================================================
+# S O U R C E
+#=================================================================
+
+/gate/source/addSource                           Mysource gps
+/gate/source/Mysource/gps/particle               opticalphoton
+/gate/source/Mysource/gps/energytype             Mono
+/gate/source/Mysource/setActivity                20000 becquerel 
+/gate/source/Mysource/gps/polarization           1 0 0
+/gate/source/Mysource/gps/monoenergy             1.51 eV
+/gate/source/Mysource/gps/type 			 Beam
+/gate/source/Mysource/gps/pos/centre             0. 0.45 -1.3 cm 
+/gate/source/Mysource/gps/direction              0. 0. 1.
+/gate/source/Mysource/gps/pos/shape 		 Circle 
+/gate/source/Mysource/gps/pos/radius		 2.5 mm 
+/gate/source/Mysource/gps/mintheta 		 -30. deg 
+/gate/source/Mysource/gps/maxtheta 		  30. deg 
+/gate/source/Mysource/gps/minphi 		   0. deg 
+/gate/source/Mysource/gps/maxphi 		 360. deg 
+
+#=================================================================
+# R A N D O M
+#=================================================================
+
+# Choose between: JamesRandom Ranluxconfus64 MersenneTwister
+/gate/random/setEngineName MersenneTwister
+#/gate/random/setEngineSeed auto
+/gate/random/setEngineSeed 666677
+/gate/random/verbose 1
+
+#=================================================================
+# A C Q U I S I T I O N
+#=================================================================
+
+/gate/application/setTimeSlice   60 s
+/gate/application/setTimeStart   0 s
+/gate/application/setTimeStop    60 s
+/gate/application/startDAQ
+
+
+
+
+
+

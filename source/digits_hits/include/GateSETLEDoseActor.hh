@@ -56,12 +56,12 @@ class GateSETLEDoseActor : public GateVImageActor
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
 
-  virtual void PreUserTrackingAction(const GateVVolume *, const G4Track* t);
-  virtual void PostUserTrackingAction(const GateVVolume *, const G4Track* t);
-  virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
-  virtual void UserSteppingActionInVoxel(const int index, const G4Step* step);
-  virtual void UserPreTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/) {}
-  virtual void UserPostTrackActionInVoxel(const int /*index*/, const G4Track* /*t*/) {}
+  virtual void PreUserTrackingAction (const GateVVolume*, const G4Track*) {}
+  virtual void PostUserTrackingAction(const GateVVolume*, const G4Track*) {}
+  virtual void UserSteppingAction(const GateVVolume*, const G4Step*);
+  virtual void UserSteppingActionInVoxel (const int, const G4Step*)  {}
+  virtual void UserPreTrackActionInVoxel (const int, const G4Track*) {}
+  virtual void UserPostTrackActionInVoxel(const int, const G4Track*) {}
 
   void SetPrimaryMultiplicity(int m) { mPrimaryMultiplicity = m; }
   void SetSecondaryMultiplicity(int m) { mSecondaryMultiplicity = m; }
