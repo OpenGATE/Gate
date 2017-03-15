@@ -360,13 +360,16 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   if (mIsDoseImageEnabled) {
     // ------------------------------------
     // Convert deposited energy into Gray
-    dose = edep/density/mDoseImage.GetVoxelVolume()/gray;
+    dose = edep/density/mDoseImage.GetVoxelVolume();
     // ------------------------------------
 
     GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose = "
 		     << G4BestUnit(dose, "Dose")
 		     << " rho = "
 		     << G4BestUnit(density, "Volumic Mass")<< Gateendl );
+	
+	// Convert to Gy AFTER debug message
+	dose = dose / gray;
   }
 
   double doseToWater = 0;
@@ -389,18 +392,19 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
       double Volume = mDoseToWaterImage.GetVoxelVolume();
 
       // Other particles should be taken into account (Helium etc), but bug ? FIXME
-      if (PartName== "proton" || PartName== "e-" || PartName== "e+" || PartName== "deuteron") {
+      if (PartName== "proton" || PartName== "e-" || PartName== "e+" || PartName== "deuteron"|| PartName== "gamma") {
         //if (PartName != "O16[0.0]" && PartName != "alpha" && PartName != "Be7[0.0]" && PartName != "C12[0.0]"){
 
         DEDX = emcalc->ComputeTotalDEDX(Energy, PartName, material, cut);
         DEDX_Water = emcalc->ComputeTotalDEDX(Energy, PartName, "G4_WATER", cut);
-        doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
+        doseToWater=edep/density/Volume*(DEDX_Water/1.)/(DEDX/(density*e_SI));
         if (DEDX_Water == 0 || DEDX == 0) doseToWater = 0.0; // to avoid inf or NaN
       }
-      else {
+      else { 
+      // FIX ME FOR OTHER PARTICLES
         DEDX = emcalc->ComputeTotalDEDX(100, "proton", material, cut);
         DEDX_Water = emcalc->ComputeTotalDEDX(100, "proton", "G4_WATER", cut);
-        doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
+        doseToWater=edep/density/Volume*(DEDX_Water/1.)/(DEDX/(density*e_SI));
         if (DEDX_Water == 0 || DEDX == 0) doseToWater = 0.0; // to avoid inf or NaN
       }
 
@@ -408,6 +412,10 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
                        << G4BestUnit(doseToWater, "Dose to water")
                        << " rho = "
                        << G4BestUnit(density, "Volumic Mass")<< Gateendl );
+    
+   	// Convert to Gy AFTER debug message
+	dose = dose / gray;
+
     }
 
   if (mIsEdepImageEnabled) {
