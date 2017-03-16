@@ -409,7 +409,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
       }
 
       GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = "
-                       << G4BestUnit(doseToWater*gray, "Dose to water")
+                       << G4BestUnit(doseToWater*gray, "Dose")
                        << " rho = "
                        << G4BestUnit(density, "Volumic Mass")<< Gateendl );
     
