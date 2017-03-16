@@ -360,16 +360,15 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   if (mIsDoseImageEnabled) {
     // ------------------------------------
     // Convert deposited energy into Gray
-    dose = edep/density/mDoseImage.GetVoxelVolume();
+    dose = edep/density/mDoseImage.GetVoxelVolume()/gray;
     // ------------------------------------
 
     GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose = "
-		     << G4BestUnit(dose, "Dose")
+		     << G4BestUnit(dose*gray, "Dose")
 		     << " rho = "
 		     << G4BestUnit(density, "Volumic Mass")<< Gateendl );
 	
-	// Convert to Gy AFTER debug message
-	dose = dose / gray;
+	
   }
 
   double doseToWater = 0;
@@ -397,25 +396,23 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
         DEDX = emcalc->ComputeTotalDEDX(Energy, PartName, material, cut);
         DEDX_Water = emcalc->ComputeTotalDEDX(Energy, PartName, "G4_WATER", cut);
-        doseToWater=edep/density/Volume*(DEDX_Water/1.)/(DEDX/(density*e_SI));
+        doseToWater=edep/density/Volume*(DEDX_Water/1.)/(DEDX/(density*e_SI))/gray;
+               
         if (DEDX_Water == 0 || DEDX == 0) doseToWater = 0.0; // to avoid inf or NaN
       }
       else { 
       // FIX ME FOR OTHER PARTICLES
         DEDX = emcalc->ComputeTotalDEDX(100, "proton", material, cut);
         DEDX_Water = emcalc->ComputeTotalDEDX(100, "proton", "G4_WATER", cut);
-        doseToWater=edep/density/Volume*(DEDX_Water/1.)/(DEDX/(density*e_SI));
+        doseToWater=edep/density/Volume*(DEDX_Water/1.)/(DEDX/(density*e_SI))/gray;
         if (DEDX_Water == 0 || DEDX == 0) doseToWater = 0.0; // to avoid inf or NaN
       }
 
       GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = "
-                       << G4BestUnit(doseToWater, "Dose to water")
+                       << G4BestUnit(doseToWater*gray, "Dose to water")
                        << " rho = "
                        << G4BestUnit(density, "Volumic Mass")<< Gateendl );
     
-   	// Convert to Gy AFTER debug message
-	dose = dose / gray;
-
     }
 
   if (mIsEdepImageEnabled) {
