@@ -232,7 +232,7 @@ void GateFixedForcedDetectionActor::CreateProjectionImages()
     const ProcessType pt = ProcessType(i);
     mDoFFDForThisProcess[pt] = (mProcessImageFilenames[pt] != ""
                                 || mTotalFilename != ""
-                                || mSecondaryFilename != "");
+                                || mSecondaryFilename != "" || mARF);
     mProcessImage[pt] = CreateVoidProjectionImage();
     mSquaredImage[pt] = CreateVoidProjectionImage();
     mPerOrderImages[pt].clear();
