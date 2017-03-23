@@ -34,6 +34,9 @@
   //Temporary configuration of vertex generation method
   cmdName = GetDirectoryName()+"setOldStyleFlag";
   pOldStyleCmd = new G4UIcmdWithABool(cmdName,this);
+  //Generate protons on random spots or by the same spot order as given in the plan
+  cmdName = GetDirectoryName()+"setSortedSpotGenerationFlag";
+  pSortedSpotGenerationCmd = new G4UIcmdWithABool(cmdName,this);
   //Treatment Plan file
   cmdName = GetDirectoryName()+"setPlan";
   pPlanCmd = new G4UIcmdWithAString(cmdName,this);
@@ -75,6 +78,8 @@ GateSourceTPSPencilBeamMessenger::~GateSourceTPSPencilBeamMessenger()
   delete pTestCmd;
   //Temporary configuration of vertex generation method
   delete pOldStyleCmd;
+  //sorted or random generation
+  delete pSortedSpotGenerationCmd;
   //Treatment Plan file
   delete pPlanCmd;
   //FlatGenerationFlag
@@ -104,8 +109,10 @@ void GateSourceTPSPencilBeamMessenger::SetNewValue(G4UIcommand* command,G4String
   if (command == pParticleTypeCmd) {pSourceTPSPencilBeam->SetParticleType(newValue);  }
   //Configuration of tests
   if (command == pTestCmd) {pSourceTPSPencilBeam->SetTestFlag(pTestCmd->GetNewBoolValue(newValue)); }
-  //Configuration of tests
+  //For debugging: generate spots with the old code
   if (command == pOldStyleCmd) {pSourceTPSPencilBeam->SetOldStyleFlag(pOldStyleCmd->GetNewBoolValue(newValue)); }
+  //random or sorted spot generation
+  if (command == pSortedSpotGenerationCmd) {pSourceTPSPencilBeam->SetSortedSpotGenerationFlag(pSortedSpotGenerationCmd->GetNewBoolValue(newValue)); }
   //Treatment Plan file
   if (command == pPlanCmd) {pSourceTPSPencilBeam->SetPlan(newValue);  }
   //Configuration of FlatFlag gene

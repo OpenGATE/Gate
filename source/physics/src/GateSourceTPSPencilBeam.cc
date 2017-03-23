@@ -44,9 +44,10 @@ GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( na
   mDistanceSourcePatient=500;
   pMessenger = new GateSourceTPSPencilBeamMessenger(this);
   mOldStyleFlag=false;
+  mSortedSpotGenerationFlag=false; // try to be backwards compatible
   mTestFlag=false;
   mCurrentParticleNumber=0;
-  mCurrentSpot=0;
+  mCurrentSpot=-1;
   mFlatGenerationFlag=false;
   mIsASourceDescriptionFile=false;
   mSpotIntensityAsNbProtons=false;
@@ -645,14 +646,17 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
       }
     }
     mDistriGeneral = new RandGeneral(engine, mPDF, mTotalNumberOfSpots, 0);
-    mNbProtonsToGenerate.resize(mTotalNumberOfSpots,0);
-    long int ntotal = GateApplicationMgr::GetInstance()->GetTotalNumberOfPrimaries();
-    for (long int i = 0; i<ntotal; i++){
-      int bin = mTotalNumberOfSpots * mDistriGeneral->fire();
-      ++mNbProtonsToGenerate[bin];
-    }
-    for (int i = 0; i < mTotalNumberOfSpots; i++) {
-      GateMessage("Beam", 3, "[TPSPencilBeam] bin " << std::setw(5) << i << ": spotweight=" << std::setw(8) << mPDF[i] << ", Ngen=" << mNbProtonsToGenerate[i] << Gateendl );
+    if (mSortedSpotGenerationFlag){
+      mNbProtonsToGenerate.resize(mTotalNumberOfSpots,0);
+      long int ntotal = GateApplicationMgr::GetInstance()->GetTotalNumberOfPrimaries();
+      for (long int i = 0; i<ntotal; i++){
+        int bin = mTotalNumberOfSpots * mDistriGeneral->fire();
+        ++mNbProtonsToGenerate[bin];
+      }
+      for (int i = 0; i < mTotalNumberOfSpots; i++) {
+        GateMessage("Beam", 3, "[TPSPencilBeam] bin " << std::setw(5) << i << ": spotweight=" << std::setw(8) << mPDF[i] << ", Ngen=" << mNbProtonsToGenerate[i] << Gateendl );
+      }
+      mCurrentSpot = 0;
     }
     need_pencilbeam_config = true;
     GateMessage("Beam", 1, "[TPSPencilBeam] Plan description file successfully loaded." << Gateendl );
@@ -660,14 +664,22 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
     //---------INITIALIZATION - END-----------------------
   }
   //---------GENERATION - START-----------------------
-  while ( (mCurrentSpot<mTotalNumberOfSpots) && (mNbProtonsToGenerate[mCurrentSpot] <= 0) ){
-    GateMessage("Beam", 4, "[TPSPencilBeam] spot " << mCurrentSpot << " has no protons left to generate." << Gateendl );
-    mCurrentSpot++;
+  if (mSortedSpotGenerationFlag){
+    while ( (mCurrentSpot<mTotalNumberOfSpots) && (mNbProtonsToGenerate[mCurrentSpot] <= 0) ){
+      GateMessage("Beam", 4, "[TPSPencilBeam] spot " << mCurrentSpot << " has no protons left to generate." << Gateendl );
+      mCurrentSpot++;
+      mCurrentLayer = mSpotLayer[mCurrentSpot];
+      need_pencilbeam_config = true;
+    }
+    if ( mCurrentSpot>=mTotalNumberOfSpots ){
+      GateError("Too many primary vertex requests!");
+    }
+  } else {
+    int nextspot = mTotalNumberOfSpots * mDistriGeneral->fire();
+    need_pencilbeam_config = (nextspot!=mCurrentSpot);
+    GateMessage("Beam", 5, "[TPSPencilBeam] hopping from spot " << mCurrentSpot << " to spot " << nextspot << Gateendl );
+    mCurrentSpot = nextspot;
     mCurrentLayer = mSpotLayer[mCurrentSpot];
-    need_pencilbeam_config = true;
-  }
-  if ( mCurrentSpot>=mTotalNumberOfSpots ){
-    GateError("Too many primary vertex requests!");
   }
   if ( need_pencilbeam_config ){
     GateMessage("Beam", 4, "[TPSPencilBeam] configuring pencil beam for spot " << mCurrentSpot
@@ -675,7 +687,9 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
     ConfigurePencilBeam();
   }
   mPencilBeam->GenerateVertex(aEvent);
-  --mNbProtonsToGenerate[mCurrentSpot];
+  if (mSortedSpotGenerationFlag){
+    --mNbProtonsToGenerate[mCurrentSpot];
+  }
 }
 //---------GENERATION - END-----------------------
 

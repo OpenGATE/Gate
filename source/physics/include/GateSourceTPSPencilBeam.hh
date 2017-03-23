@@ -55,6 +55,8 @@ public:
   void SetTestFlag(bool b) {mTestFlag=b;}
   //Temporary Flag to switch between old and new style vertex generation
   void SetOldStyleFlag(bool b) {mOldStyleFlag=b;}
+  //Flag to switch between sorted and random spot selection
+  void SetSortedSpotGenerationFlag(bool b) {mSortedSpotGenerationFlag=b;}
   //Treatment Plan file
   void SetPlan(std::string plan) {mPlan=plan;}
   //FlatGenerationFlag
@@ -115,6 +117,8 @@ protected:
   bool mTestFlag;
   //Old style flag (temporary, for debugging new pencil beam vertex generation)
   bool mOldStyleFlag;
+  //generate protons sorted by spot, or every proton on a random spot?
+  bool mSortedSpotGenerationFlag;
   //Treatment Plan file
   G4String mPlan;
   //Others
