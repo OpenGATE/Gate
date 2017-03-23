@@ -17,6 +17,7 @@
 
 # energy spread
 # polynomial order
+percent
 1
 # polynomial parameters (highest to lowest)
 0.01
