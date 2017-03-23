@@ -232,7 +232,9 @@ void GateFixedForcedDetectionActor::CreateProjectionImages()
     const ProcessType pt = ProcessType(i);
     mDoFFDForThisProcess[pt] = (mProcessImageFilenames[pt] != ""
                                 || mTotalFilename != ""
-                                || mSecondaryFilename != "" || mARF);
+                                || mSecondaryFilename != ""
+                                || mARF
+                                || mGeneratePhotons);
     mProcessImage[pt] = CreateVoidProjectionImage();
     mSquaredImage[pt] = CreateVoidProjectionImage();
     mPerOrderImages[pt].clear();
@@ -612,87 +614,102 @@ void GateFixedForcedDetectionActor::EndOfEventAction(const G4Event *e)
 void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, const G4Step * step)
   {
   GateVActor::UserSteppingAction(v, step);
-  /* Get interaction point from step
-   Retrieve :
-   - type of limiting process (Compton Rayleigh Fluorescence)
-   - coordinate of interaction, convert if needed into world coordinate system
-   - Get Energy
-   - -> generate adequate forward projections towards detector
-   */
-
-  /* We are only interested in EM processes. One should check post-step to know
-   what is going to happen, but pre-step is used afterward to get direction
-   and position. */
-  const G4VProcess *pr = step->GetPostStepPoint()->GetProcessDefinedStep();
-  const G4VEmProcess *process = dynamic_cast<const G4VEmProcess*>(pr);
-  if (!process)
+  if (!mGeneratePhotons || step->GetTrack()->GetParentID() != 666)
     {
-    /* See if we have to place it in BeginOfEvent */
-    if (mSourceType == "isotropic" && step->GetTrack()->GetCurrentStepNumber() == 1)
+
+    /* Get interaction point from step
+     Retrieve :
+     - type of limiting process (Compton Rayleigh Fluorescence)
+     - coordinate of interaction, convert if needed into world coordinate system
+     - Get Energy
+     - -> generate adequate forward projections towards detector
+     */
+
+    /* We are only interested in EM processes. One should check post-step to know
+     what is going to happen, but pre-step is used afterward to get direction
+     and position. */
+    const G4VProcess *pr = step->GetPostStepPoint()->GetProcessDefinedStep();
+    const G4VEmProcess *process = dynamic_cast<const G4VEmProcess*>(pr);
+
+    if (!process)
+      {
+      /* See if we have to place it in BeginOfEvent */
+      if (mSourceType == "isotropic" && step->GetTrack()->GetCurrentStepNumber() == 1)
+        {
+        ForceDetectionOfInteraction(GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID(),
+                                    G4String("IsotropicPrimary"),
+                                    step->GetPreStepPoint()->GetPosition(),
+                                    step->GetPreStepPoint()->GetMomentumDirection(),
+                                    step->GetPreStepPoint()->GetKineticEnergy(),
+                                    step->GetPreStepPoint()->GetWeight(),
+                                    0,
+                                    step->GetPreStepPoint()->GetTotalEnergy());
+        mNumberOfProcessedPrimaries++;
+        /* TODO Kill photons going outside of phantom */
+        if (mGeneratePhotons)
+          {
+          step->GetPostStepPoint()->SetWeight(0);
+          }
+        /* For now, put weight=0 but see if other method is more appropriate and check secondaries */
+        }
+      return;
+      }
+
+    /* FIXME: do we prefer this solution or computing the scattering function for the material? */
+    const G4MaterialCutsCouple *couple = step->GetPreStepPoint()->GetMaterialCutsCouple();
+    const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
+#if G4VERSION_MAJOR<10 && G4VERSION_MINOR==5
+    G4VEmModel* model = const_cast<G4VEmProcess*>(process)->Model();
+#else
+    G4VEmModel* model = const_cast<G4VEmProcess*>(process)->EmModel();
+#endif
+    const G4Element* elm = model->SelectRandomAtom(couple,
+                                                   particle,
+                                                   step->GetPreStepPoint()->GetKineticEnergy());
+
+    if (process->GetProcessName() == G4String("PhotoElectric")
+        || process->GetProcessName() == G4String("phot"))
+      {
+      /* List of secondary particles */
+      const G4TrackVector * list = step->GetSecondary();
+      for (unsigned int i = 0; i < (*list).size(); i++)
+        {
+        G4String nameSecondary = (*list)[i]->GetDefinition()->GetParticleName();
+        /* Check if photon has been emitted */
+        if (nameSecondary == G4String("gamma"))
+          {
+
+          ForceDetectionOfInteraction(GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID(),
+                                      process->GetProcessName(),
+                                      step->GetPostStepPoint()->GetPosition(),
+                                      (*list)[i]->GetMomentumDirection(),
+                                      (*list)[i]->GetKineticEnergy(),
+                                      (*list)[i]->GetWeight(),
+                                      elm->GetZ(),
+                                      step->GetPostStepPoint()->GetTotalEnergy());
+          if (mGeneratePhotons)
+            {
+            step->GetPostStepPoint()->SetWeight(0);
+            }
+          }
+        }
+      }
+    else
       {
       ForceDetectionOfInteraction(GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID(),
-                                  G4String("IsotropicPrimary"),
-                                  step->GetPreStepPoint()->GetPosition(),
+                                  process->GetProcessName(),
+                                  step->GetPostStepPoint()->GetPosition(),
                                   step->GetPreStepPoint()->GetMomentumDirection(),
                                   step->GetPreStepPoint()->GetKineticEnergy(),
-                                  step->GetPreStepPoint()->GetWeight(),
-                                  0,
-                                  step->GetPreStepPoint()->GetTotalEnergy());
-      mNumberOfProcessedPrimaries++;
-      /* TODO Kill photons going outside of phantom */
-      //step->GetPostStepPoint()->SetWeight(1);
-      /* For now, put weight=0 but see if other method is more appropriate and check secondaries */
-      }
-    return;
-    }
-
-  /* FIXME: do we prefer this solution or computing the scattering function for the material? */
-  const G4MaterialCutsCouple *couple = step->GetPreStepPoint()->GetMaterialCutsCouple();
-  const G4ParticleDefinition *particle = step->GetTrack()->GetParticleDefinition();
-#if G4VERSION_MAJOR<10 && G4VERSION_MINOR==5
-  G4VEmModel* model = const_cast<G4VEmProcess*>(process)->Model();
-#else
-  G4VEmModel* model = const_cast<G4VEmProcess*>(process)->EmModel();
-#endif
-  const G4Element* elm = model->SelectRandomAtom(couple,
-                                                 particle,
-                                                 step->GetPreStepPoint()->GetKineticEnergy());
-
-  if (process->GetProcessName() == G4String("PhotoElectric")
-      || process->GetProcessName() == G4String("phot"))
-    {
-    /* List of secondary particles */
-    const G4TrackVector * list = step->GetSecondary();
-    for (unsigned int i = 0; i < (*list).size(); i++)
-      {
-      G4String nameSecondary = (*list)[i]->GetDefinition()->GetParticleName();
-      /* Check if photon has been emitted */
-      if (nameSecondary == G4String("gamma"))
+                                  step->GetPostStepPoint()->GetWeight(),
+                                  elm->GetZ(),
+                                  step->GetPostStepPoint()->GetTotalEnergy());
+      if (mGeneratePhotons)
         {
-
-        ForceDetectionOfInteraction(GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID(),
-                                    process->GetProcessName(),
-                                    step->GetPostStepPoint()->GetPosition(),
-                                    (*list)[i]->GetMomentumDirection(),
-                                    (*list)[i]->GetKineticEnergy(),
-                                    (*list)[i]->GetWeight(),
-                                    elm->GetZ(),
-                                    step->GetPostStepPoint()->GetTotalEnergy());
+        step->GetPostStepPoint()->SetWeight(0);
         }
       }
     }
-  else
-    {
-    ForceDetectionOfInteraction(GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID(),
-                                process->GetProcessName(),
-                                step->GetPostStepPoint()->GetPosition(),
-                                step->GetPreStepPoint()->GetMomentumDirection(),
-                                step->GetPreStepPoint()->GetKineticEnergy(),
-                                step->GetPostStepPoint()->GetWeight(),
-                                elm->GetZ(),
-                                step->GetPostStepPoint()->GetTotalEnergy());
-    }
-
   }
 
 /* Save data */
@@ -720,11 +737,11 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
     }
   else
     {
-
     mInteractionOrder++;
     switch (mMapProcessNameWithType[processName])
       {
       case COMPTON:
+        std::cout << "COMPTON" << std::endl;
         if (mARF || mGeneratePhotons)
           {
           mInteractionWeight = 1;
@@ -738,6 +755,7 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
         break;
 
       case RAYLEIGH:
+        std::cout << "RAYLEIGH" << std::endl;
         if (mARF || mGeneratePhotons)
           {
           mInteractionWeight = 1;
@@ -769,8 +787,8 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
         break;
 
       case ISOTROPICPRIMARY:
+        std::cout << "ISOTROPICPRIMARY" << std::endl;
         mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy) * mInteractionWeight;
-
         if (mARF || mGeneratePhotons)
           {
           mInteractionWeight = 1;
@@ -784,6 +802,7 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
         GateError("Error: implementation problem, unexpected process type reached.");
       }
     }
+  std::cout << "Done" << std::endl;
   if (mPhaseSpaceFile)
     {
     mPhaseSpace->Fill();
@@ -805,12 +824,13 @@ void GateFixedForcedDetectionActor::GeneratePhotons(const unsigned int & numberO
         {
         position[i] = photonList[thread][photonId].position[i]
                       + mGateToITKImageFilter->GetOrigin()[i];
+
         }
       G4DynamicParticle * newPhoton = new G4DynamicParticle(G4Gamma::Gamma(),
                                                             photonList[thread][photonId].direction,
                                                             energy);
       G4Track * newTrack = new G4Track(newPhoton, 0, position);
-      newTrack->SetParentID(0);
+      newTrack->SetParentID(666);
       newTrack->SetWeight(photonList[thread][photonId].weight);
       sm->PushOneTrack(newTrack);
       }
@@ -892,15 +912,13 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType *
   TRY_AND_EXIT_ON_ITK_EXCEPTION(projector->Update());
   mProcessTimeProbe[VProcess].Stop();
   mInteractionTotalContribution = projector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
-  if (VProcess == 3)
+  if (mGeneratePhotons)
     {
-    if (mGeneratePhotons)
-      {
-      GeneratePhotons(projector->GetNumberOfThreads(),
-                      projector->GetProjectedValueAccumulation().GetPhotonList(),
-                      energy);
-      }
+    GeneratePhotons(projector->GetNumberOfThreads(),
+                    projector->GetProjectedValueAccumulation().GetPhotonList(),
+                    energy);
     }
+
   if (mARF)
     {
     ConnectARF(projector->GetNumberOfThreads(),
@@ -909,7 +927,6 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType *
                VProcess);
 
     }
-
   /* Scatter order */
   if (mPerOrderImagesBaseName != "")
     {
@@ -948,7 +965,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
   char filename[1024];
   G4int rID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
 
-  if (mPrimaryFilename != "" && !mARF)
+  if (mPrimaryFilename != "" && !mARF && !mGeneratePhotons)
     {
     /* Write the image of primary radiation accounting for the fluence of the
      primary source. */
@@ -1013,7 +1030,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
   for (unsigned int i = 0; i < PRIMARY; i++)
     {
     ProcessType pt = ProcessType(i);
-    if (mProcessImageFilenames[pt] != "" && !mARF)
+    if (mProcessImageFilenames[pt] != "" && !mARF && !mGeneratePhotons)
       {
       sprintf(filename, AddPrefix(prefix, mProcessImageFilenames[pt]).c_str(), rID);
       imgWriter->SetFileName(filename);
@@ -1057,25 +1074,11 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
         }
       }
     }
-  std::cout
-  << "mNumberOfEventsInRun "
-  << mNumberOfEventsInRun
-  << " Primaries "
-  << mNumberOfProcessedPrimaries
-  << " Secondaries "
-  << mNumberOfProcessedSecondaries
-  << " Compton "
-  << mNumberOfProcessedCompton
-  << " Rayleigh "
-  << mNumberOfProcessedRayleigh
-  << " PE "
-  << mNumberOfProcessedPE
-  << std::endl;
   if ((mSecondaryFilename != ""
        || mIsSecondarySquaredImageEnabled
        || mIsSecondaryUncertaintyImageEnabled
        || mTotalFilename != "")
-      && !mARF)
+      && !mARF && !mGeneratePhotons)
     {
     typedef itk::AddImageFilter<OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
     AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
@@ -1096,7 +1099,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       }
 
     /*  Write scatter image */
-    if (mSecondaryFilename != "" && !mARF)
+    if (mSecondaryFilename != "" && !mARF && !mGeneratePhotons)
       {
       sprintf(filename, AddPrefix(prefix, mSecondaryFilename).c_str(), rID);
       imgWriter->SetFileName(filename);
@@ -1130,7 +1133,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
       }
 
-    if (mTotalFilename != "" && !mARF)
+    if (mTotalFilename != "" && !mARF && !mGeneratePhotons)
       {
       /*  Primary */
       mSecondaryImage->DisconnectPipeline();
