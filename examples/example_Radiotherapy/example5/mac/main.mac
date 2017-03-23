@@ -88,6 +88,8 @@
 #/gate/source/PBS/setNotAllowedFieldID 1
 #/gate/source/PBS/setNotAllowedFieldID 2
 /gate/source/PBS/setFlatGenerationFlag false
+/gate/source/PBS/setSortedSpotGenerationFlag false
+/gate/source/PBS/setSigmaEnergyInMeVFlag false
 /gate/source/PBS/setSourceDescriptionFile data/Source-Properties.txt
 
 #=====================================================
