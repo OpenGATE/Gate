@@ -120,11 +120,17 @@ G4OpticalSurface* GateSurface::ReadOpticalSurface(const G4String& name) const
       // if found create the optical surface
       surface = new G4OpticalSurface(name);
       // model is always the unified model
-      surface->SetModel(unified);
+
+      // mstockhoff Feb 2017
+      // model is unified or DAVIS model
+      G4String model = doc->GetProperty("model");
+      if(model == "DAVIS") surface->SetModel(DAVIS);
+      else    surface->SetModel(unified);
       // set the type
       G4String type = doc->GetProperty("type");
       if (type=="dielectric_dielectric") surface->SetType(dielectric_dielectric);
       else if (type=="dielectric_metal") surface->SetType(dielectric_metal);
+       else if (type=="dielectric_LUTDAVIS") surface->SetType(dielectric_LUTDAVIS);
       // set the finish
       G4String finish = doc->GetProperty("finish");
       if (finish=="polished") surface->SetFinish(polished);
@@ -133,6 +139,21 @@ G4OpticalSurface* GateSurface::ReadOpticalSurface(const G4String& name) const
       else if (finish=="groundbackpainted") surface->SetFinish(groundbackpainted);
       else if (finish=="polishedfrontpainted") surface->SetFinish(polishedfrontpainted);
       else if (finish=="groundfrontpainted") surface->SetFinish(groundfrontpainted);
+      
+      else if (finish=="Rough_LUT") surface->SetFinish(Rough_LUT);
+      else if (finish=="RoughTeflon_LUT") surface->SetFinish(RoughTeflon_LUT);
+      else if (finish=="RoughESR_LUT") surface->SetFinish(RoughESR_LUT);
+      else if (finish=="RoughESRGrease_LUT") surface->SetFinish(RoughESRGrease_LUT);
+      else if (finish=="Polished_LUT") surface->SetFinish(Polished_LUT);
+      else if (finish=="PolishedTeflon_LUT") surface->SetFinish(PolishedTeflon_LUT);
+      else if (finish=="PolishedESR_LUT") surface->SetFinish(PolishedESR_LUT);
+      else if (finish=="PolishedESRGrease_LUT") surface->SetFinish(PolishedESRGrease_LUT);
+      else if (finish=="Detector_LUT") surface->SetFinish(Detector_LUT);
+      
+      
+      
+      
+      
       // set sigma alpha
       G4String sigmaalpha = doc->GetProperty("sigmaalpha");
       surface->SetSigmaAlpha(G4UIcmdWithADouble::GetNewDoubleValue(sigmaalpha.c_str())*deg);

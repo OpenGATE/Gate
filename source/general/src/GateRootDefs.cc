@@ -242,7 +242,7 @@ void GateHitTree::Init(GateRootHitBuffer& buffer)
     Branch("time",           &buffer.time,"time/D");
     Branch("edep",           &buffer.edep,"edep/F");
     Branch("stepLength",     &buffer.stepLength,"stepLength/F");
-    Branch("trackLength",    &buffer.stepLength,"trackLength/F");
+    Branch("trackLength",    &buffer.trackLength,"trackLength/F");
     Branch("posX",           &buffer.posX,"posX/F");
     Branch("posY",           &buffer.posY,"posY/F");
     Branch("posZ",           &buffer.posZ,"posZ/F");

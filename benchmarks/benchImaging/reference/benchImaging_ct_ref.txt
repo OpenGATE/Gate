@@ -1,8 +1,8 @@
 This reference was created by launching a Gate simulation on
-Thu Feb 23 16:28:04 UTC 2017
+Thu Mar 23 14:29:03 UTC 2017
 with the configuration file benchmarks/benchImaging/mac/ct.mac
 from the commit
-commit 033d48fd215671bc0c06d43b24a86cdf74a7e0b3
+commit 2c971277537a0392b183b526b3b9785082a9a8be
 with the version of gcc
 gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4
 on the architecture Linux

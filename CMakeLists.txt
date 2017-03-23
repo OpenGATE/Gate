@@ -44,14 +44,14 @@ ENDIF()
 
 #=========================================================
 # Refuse to build with MT geant4, allow dev override
-OPTION(GATE_ALLOW_MT_GEANT4 "Allow multithreaded geant4 (for MT Gate development)" OFF)
-IF(Geant4_multithreaded_FOUND)
-    IF(GATE_ALLOW_MT_GEANT4)
-        MESSAGE(WARNING "GATE does not yet work correctly with multithreaded Geant4, proceed with caution...")
-    ELSE()
-        MESSAGE(FATAL_ERROR "GATE should be compiled with a non-multithreaded installation of Geant4")
-    ENDIF()
-ENDIF()
+#OPTION(GATE_ALLOW_MT_GEANT4 "Allow multithreaded geant4 (for MT Gate development)" OFF)
+#IF(Geant4_multithreaded_FOUND)
+    #IF(GATE_ALLOW_MT_GEANT4)
+        #MESSAGE(WARNING "GATE does not yet work correctly with multithreaded Geant4, proceed with caution...")
+    #ELSE()
+        #MESSAGE(FATAL_ERROR "GATE should be compiled with a non-multithreaded installation of Geant4")
+    #ENDIF()
+#ENDIF()
 
 # Check if OpenGL headers are still available
 IF(Geant4_qt_FOUND OR Geant4_vis_opengl_x11_FOUND)
@@ -80,16 +80,18 @@ SET(GATE_USE_ROOT ON)
 SET(GATE_ANALYSIS_USE_GENERAL ON)
 SET(GATE_ANALYSIS_USE_FILE ON)
 
-OPTION(GATE_USE_STDC11 "Use the c++11 standard in the compilation" OFF)
+OPTION(GATE_USE_STDC11 "Use the c++11 standard in the compilation" ON)
 OPTION(GATE_USE_OPTICAL "Gate use optical photon" OFF)
+OPTION(GATE_USE_DAVIS "Gate use Davis LUT model" OFF)
 OPTION(GATE_USE_LMF "Gate use LMF" OFF)
 OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
 OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4. Use OFF if you compile G4 with embedded CLHEP" OFF)
-OPTION(GATE_USE_GPU "Gate use GPU (voxelized src and tracking), need CUDA " OFF)
+OPTION(GATE_USE_GPU "Gate use GPU (voxelized source and tracking), need CUDA " OFF)
+
 #=========================================================
 # RTK / ITK
 option(GATE_USE_RTK "Use the Reconstruction Toolkit (RTK, requires also ITK)" OFF)
-option(GATE_USE_ITK "Use the Insight Toolkit (ITK, required by RTK)" OFF)
+option(GATE_USE_ITK "Use the Insight Toolkit (ITK, required by RTK, DICOM reader and thermal therapy capability)" OFF)
 
 #=========================================================
 # ROOT
@@ -113,6 +115,12 @@ IF(GATE_USE_OPTICAL)
   INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
   SET(LINK_DIRECTORIES ${LIBXML2_LIBRARIES})
 ENDIF(GATE_USE_OPTICAL)
+
+#=========================================================
+# Option for Davis model
+IF(GATE_USE_DAVIS)
+  MESSAGE("You are using a manually modified version of Geant4 to use the Davis LUT model")
+ENDIF(GATE_USE_DAVIS)
 
 #=========================================================
 # Option for Clhep use
@@ -238,7 +246,7 @@ INSTALL(TARGETS Gate DESTINATION bin)
 
 #=========================================================
 option(GATE_DOWNLOAD_BENCHMARKS_DATA "Download the missing binary data to run gate benchmarks" OFF)
-option(GATE_DOWNLOAD_EXAMPLES_DATA "Download the missing binary data to run gate examples" OFF)
+#option(GATE_DOWNLOAD_EXAMPLES_DATA "Download the missing binary data to run gate examples" OFF)
 IF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
   INCLUDE(cmake-modules/GateExternalData.cmake)
 ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
@@ -246,10 +254,10 @@ IF(GATE_DOWNLOAD_BENCHMARKS_DATA)
   ADD_SUBDIRECTORY(benchmarks)
   ExternalData_add_target(GateBenchmarkData)
 ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA)
-IF(GATE_DOWNLOAD_EXAMPLES_DATA)
-  ADD_SUBDIRECTORY(examples)
-  ExternalData_add_target(GateExampleData)
-ENDIF(GATE_DOWNLOAD_EXAMPLES_DATA)
+#IF(GATE_DOWNLOAD_EXAMPLES_DATA)
+  #ADD_SUBDIRECTORY(examples)
+  #ExternalData_add_target(GateExampleData)
+#ENDIF(GATE_DOWNLOAD_EXAMPLES_DATA)
 #=========================================================
 
 
