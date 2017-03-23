@@ -57,6 +57,8 @@ public:
   void SetOldStyleFlag(bool b) {mOldStyleFlag=b;}
   //Flag to switch between sorted and random spot selection
   void SetSortedSpotGenerationFlag(bool b) {mSortedSpotGenerationFlag=b;}
+  //Flag to switch between absolute (MeV) and relative (%) energy spread specification
+  void SetSigmaEnergyInMeVFlag(bool b) {mSigmaEnergyInMeVFlag=b;}
   //Treatment Plan file
   void SetPlan(std::string plan) {mPlan=plan;}
   //FlatGenerationFlag
@@ -119,6 +121,8 @@ protected:
   bool mOldStyleFlag;
   //generate protons sorted by spot, or every proton on a random spot?
   bool mSortedSpotGenerationFlag;
+  //does the source properties file give the absolute sigma (in MeV) or relative (in %)?
+  bool mSigmaEnergyInMeVFlag;
   //Treatment Plan file
   G4String mPlan;
   //Others

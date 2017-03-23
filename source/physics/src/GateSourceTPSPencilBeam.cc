@@ -45,6 +45,7 @@ GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( na
   pMessenger = new GateSourceTPSPencilBeamMessenger(this);
   mOldStyleFlag=false;
   mSortedSpotGenerationFlag=false; // try to be backwards compatible
+  mSigmaEnergyInMeVFlag = false; // compatibility with wiki documentation, not with 7.2 code
   mTestFlag=false;
   mCurrentParticleNumber=0;
   mCurrentSpot=-1;
@@ -308,8 +309,14 @@ void GateSourceTPSPencilBeam::OldGenerateVertex( G4Event *aEvent ) {
               //Particle Type
               Pencil->SetParticleType(mParticleType);
               //Energy
-              Pencil->SetEnergy(GetEnergy(energy));
-              Pencil->SetSigmaEnergy(GetSigmaEnergy(energy));
+              if ( mSigmaEnergyInMeVFlag ){
+                Pencil->SetEnergy(GetEnergy(energy));
+                Pencil->SetSigmaEnergy(GetSigmaEnergy(energy));
+              } else {
+                double source_energy = GetEnergy(energy);
+                Pencil->SetEnergy(source_energy);
+                Pencil->SetSigmaEnergy(GetSigmaEnergy(energy)*source_energy/100.);
+              }
 
               //cerr << "Brent " << GetSigmaEnergy(energy) << " en " << GetEnergy(energy) <<endl;
 
@@ -792,7 +799,18 @@ void GateSourceTPSPencilBeam::LoadClinicalBeamProperties() {
   }
 
   for (int i=0; i<4; i++) std::getline(inFile,oneline);
-  // Energy
+  // Energy Spread
+  if (oneline == "MeV"){
+    mSigmaEnergyInMeVFlag = true;
+    GateMessage("Beam",0,"source description file specifies energy spread in MeV" << Gateendl);
+    GateMessage("Beam",0,"(This overrides whatever you configured for the 'setSigmaEnergyInMeVFlag' in the configuration of TPSPencilBeam.)" << Gateendl);
+    std::getline(inFile,oneline);
+  } else if ( (oneline == "PERCENT") || (oneline == "percent") || (oneline == "%") ){
+    mSigmaEnergyInMeVFlag = false;
+    GateMessage("Beam",0,"source description file specifies energy spread in PERCENT (%)" << Gateendl);
+    GateMessage("Beam",0,"(This overrides whatever you configured for the 'setSigmaEnergyInMeVFlag' in the configuration of TPSPencilBeam.)" << Gateendl);
+    std::getline(inFile,oneline);
+  }
   PolOrder=atoi(oneline.c_str());
   mEnergySpread.push_back(PolOrder);
   std::getline(inFile,oneline);
