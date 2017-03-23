@@ -233,7 +233,8 @@ void GateFixedForcedDetectionActor::CreateProjectionImages()
     mDoFFDForThisProcess[pt] = (mProcessImageFilenames[pt] != ""
                                 || mTotalFilename != ""
                                 || mSecondaryFilename != ""
-                                || mARF);
+                                || mARF
+                                || mGeneratePhotons);
     mProcessImage[pt] = CreateVoidProjectionImage();
     mSquaredImage[pt] = CreateVoidProjectionImage();
     mPerOrderImages[pt].clear();
@@ -613,6 +614,8 @@ void GateFixedForcedDetectionActor::EndOfEventAction(const G4Event *e)
 void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, const G4Step * step)
   {
   GateVActor::UserSteppingAction(v, step);
+  if (!mGeneratePhotons || step->GetTrack()->GetParentID() != 666)
+    {
   /* Get interaction point from step
    Retrieve :
    - type of limiting process (Compton Rayleigh Fluorescence)
@@ -640,7 +643,10 @@ void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, co
                                   0);
       mNumberOfProcessedPrimaries++;
       /* TODO Kill photons going outside of phantom */
-      //step->GetPostStepPoint()->SetWeight(1);
+        if (mGeneratePhotons)
+          {
+          step->GetPostStepPoint()->SetWeight(0);
+          }
       /* For now, put weight=0 but see if other method is more appropriate and check secondaries */
       }
     return;
@@ -676,7 +682,10 @@ void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, co
                                     (*list)[i]->GetMomentumDirection(),
                                     (*list)[i]->GetKineticEnergy(),
                                     (*list)[i]->GetWeight(),
-                                    elm->GetZ());
+          if (mGeneratePhotons)
+            {
+            step->GetPostStepPoint()->SetWeight(0);
+            }
         }
       }
     }
@@ -689,8 +698,12 @@ void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, co
                                 step->GetPreStepPoint()->GetKineticEnergy(),
                                 step->GetPostStepPoint()->GetWeight(),
                                 elm->GetZ());
+      if (mGeneratePhotons)
+        {
+        step->GetPostStepPoint()->SetWeight(0);
+        }
+      }
     }
-
   }
 
 /* Save data */
@@ -700,7 +713,8 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
                                                                 G4ThreeVector interactionDirection,
                                                                 double energy,
                                                                 double weight,
-                                                                int Z)
+                                                                int Z,
+                                                                const double & totalEnergy)
   {
   /* In case a root file is created, copy values to branched variables */
   mInteractionPosition = interactionPosition;
@@ -802,7 +816,7 @@ void GateFixedForcedDetectionActor::GeneratePhotons(const unsigned int & numberO
                                                             photonList[thread][photonId].direction,
                                                             photonList[thread][photonId].energy);
       G4Track * newTrack = new G4Track(newPhoton, 0, position);
-      newTrack->SetParentID(0);
+      newTrack->SetParentID(666);
       newTrack->SetWeight(photonList[thread][photonId].weight);
       sm->PushOneTrack(newTrack);
       }
@@ -882,15 +896,12 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType *
   TRY_AND_EXIT_ON_ITK_EXCEPTION(projector->Update());
   mProcessTimeProbe[VProcess].Stop();
   mInteractionTotalContribution = projector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
-  if (VProcess == 3)
-    {
     if (mGeneratePhotons)
       {
       GeneratePhotons(projector->GetNumberOfThreads(),
                       projector->GetProjectedValueAccumulation().GetPhotonList());
       }
-    }
-  if (mARF)
+    if (mARF)
     {
     ConnectARF(projector->GetNumberOfThreads(),
                projector->GetProjectedValueAccumulation().GetPhotonList(),
@@ -936,7 +947,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
   char filename[1024];
   G4int rID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
 
-  if (mPrimaryFilename != "" && !mARF)
+  if (mPrimaryFilename != "" && !mARF && !mGeneratePhotons)
     {
     /* Write the image of primary radiation accounting for the fluence of the
      primary source. */
@@ -1001,7 +1012,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
   for (unsigned int i = 0; i < PRIMARY; i++)
     {
     ProcessType pt = ProcessType(i);
-    if (mProcessImageFilenames[pt] != "" && !mARF)
+    if (mProcessImageFilenames[pt] != "" && !mARF && !mGeneratePhotons)
       {
       sprintf(filename, AddPrefix(prefix, mProcessImageFilenames[pt]).c_str(), rID);
       imgWriter->SetFileName(filename);
@@ -1063,7 +1074,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
        || mIsSecondarySquaredImageEnabled
        || mIsSecondaryUncertaintyImageEnabled
        || mTotalFilename != "")
-      && !mARF)
+      && !mARF && !mGeneratePhotons)
     {
     typedef itk::AddImageFilter<OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
     AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
@@ -1084,7 +1095,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       }
 
     /*  Write scatter image */
-    if (mSecondaryFilename != "" && !mARF)
+    if (mSecondaryFilename != "" && !mARF && !mGeneratePhotons)
       {
       sprintf(filename, AddPrefix(prefix, mSecondaryFilename).c_str(), rID);
       imgWriter->SetFileName(filename);
@@ -1118,7 +1129,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
       }
 
-    if (mTotalFilename != "" && !mARF)
+    if (mTotalFilename != "" && !mARF && !mGeneratePhotons)
       {
       /*  Primary */
       mSecondaryImage->DisconnectPipeline();
