@@ -72,7 +72,7 @@ TH2F *fantome = new TH2F("fantome","",100,-100,100,100,-100,100);
    c1->SetFillColor(0);
    c1->SetBorderMode(0);   
        
-   fantome.Draw("contZ");
+   fantome->Draw("contZ");
    
    c1->Update(); 
 
