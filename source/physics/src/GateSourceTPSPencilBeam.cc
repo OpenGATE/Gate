@@ -707,7 +707,14 @@ void GateSourceTPSPencilBeam::ConfigurePencilBeam() {
   mPencilBeam->SetParticleType(mParticleType);
   //Energy
   mPencilBeam->SetEnergy(GetEnergy(energy));
-  mPencilBeam->SetSigmaEnergy(GetSigmaEnergy(energy));
+  if ( mSigmaEnergyInMeVFlag ){
+    mPencilBeam->SetEnergy(GetEnergy(energy));
+    mPencilBeam->SetSigmaEnergy(GetSigmaEnergy(energy));
+  } else {
+    double source_energy = GetEnergy(energy);
+    mPencilBeam->SetEnergy(source_energy);
+    mPencilBeam->SetSigmaEnergy(GetSigmaEnergy(energy)*source_energy/100.);
+  }
   //Weight
   if (mFlatGenerationFlag) {
     mPencilBeam->SetWeight(mSpotWeight[mCurrentSpot]);
