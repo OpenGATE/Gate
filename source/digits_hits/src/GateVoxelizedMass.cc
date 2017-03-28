@@ -340,9 +340,10 @@ void GateVoxelizedMass::GenerateVoxels()
   GateMessage("Actor", 5, "[GateVoxelizedMass::" << __FUNCTION__ << "] Total dosels    : " << nxDosel * nyDosel * nzDosel << Gateendl);
 
 
-  if (nxDosel + 2 == nxVoxel &&
-      nyDosel + 2 == nyVoxel &&
-      nzDosel + 2 == nzVoxel)
+  if ((nxDosel + 2 == nxVoxel &&
+       nyDosel + 2 == nyVoxel &&
+       nzDosel + 2 == nzVoxel) ||
+       DALV->GetSolid()->GetEntityType() == "GateImageRegionalizedVolumeSolid")
   {
     GateMessage("Actor", 2, "[GateVoxelizedMass::" << __FUNCTION__ << "] Voxel margins detected in image ! Generating a new image with no margins !" << Gateendl);
 
