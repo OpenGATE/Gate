@@ -251,7 +251,10 @@ void GateFixedForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   GateSourceMgr * sourceMessenger = GateSourceMgr::GetInstance();
   TestSource(sourceMessenger);
   /* Read the response detector curve from an external file */
-  mEnergyResponseDetector.ReadResponseDetectorFile(mResponseFilename);
+  if (!mGeneratePhotons && !mARF)
+    {
+    mEnergyResponseDetector.ReadResponseDetectorFile(mResponseFilename);
+    }
   /* Create list of energies */
   std::vector<double> energyList;
   std::vector<double> energyWeightList;
@@ -379,7 +382,10 @@ void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointe
 
   mPrimaryProjector->GetProjectedValueAccumulation().Init(mPrimaryProjector->GetNumberOfThreads());
   mPrimaryProjector->GetProjectedValueAccumulation().SetNumberOfPrimaries(mNoisePrimary);
-  mPrimaryProjector->GetProjectedValueAccumulation().SetResponseDetector(&mEnergyResponseDetector);
+  if (!mGeneratePhotons && !mARF)
+    {
+    mPrimaryProjector->GetProjectedValueAccumulation().SetResponseDetector(&mEnergyResponseDetector);
+    }
   mPrimaryProjector->GetProjectedValueAccumulation().SetEnergyResolvedParameters(mEnergyResolvedBinSize,
                                                                                  nPixOneSlice);
   TRY_AND_EXIT_ON_ITK_EXCEPTION(mPrimaryProjector->Update());
@@ -404,7 +410,10 @@ void GateFixedForcedDetectionActor::PrepareComptonProjector(GateVImageVolume* ga
                                                                              mDetectorColVector);
   mComptonProjector->GetProjectedValueAccumulation().SetVolumeSpacing(mGateVolumeImage->GetSpacing());
   mComptonProjector->GetProjectedValueAccumulation().SetInterpolationWeights(mComptonProjector->GetInterpolationWeightMultiplication().GetInterpolationWeights());
-  mComptonProjector->GetProjectedValueAccumulation().SetResponseDetector(&mEnergyResponseDetector);
+  if (!mGeneratePhotons && !mARF)
+    {
+    mComptonProjector->GetProjectedValueAccumulation().SetResponseDetector(&mEnergyResponseDetector);
+    }
   mComptonProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
                                                                          1. * keV,
                                                                          mMaxPrimaryEnergy,
@@ -741,7 +750,7 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
     switch (mMapProcessNameWithType[processName])
       {
       case COMPTON:
-        std::cout << "COMPTON" << std::endl;
+        //std::cout << "COMPTON" << std::endl;
         if (mARF || mGeneratePhotons)
           {
           mInteractionWeight = 1;
@@ -751,11 +760,11 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
         this->ForceDetectionOfInteraction<COMPTON>(mComptonProjector.GetPointer(),
                                                    mProcessImage[COMPTON],
                                                    totalEnergy);
-
+        //std::cout << "DONE" << std::endl;
         break;
 
       case RAYLEIGH:
-        std::cout << "RAYLEIGH" << std::endl;
+        //std::cout << "RAYLEIGH" << std::endl;
         if (mARF || mGeneratePhotons)
           {
           mInteractionWeight = 1;
@@ -787,7 +796,7 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
         break;
 
       case ISOTROPICPRIMARY:
-        std::cout << "ISOTROPICPRIMARY" << std::endl;
+        //std::cout << "ISOTROPICPRIMARY" << std::endl;
         mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy) * mInteractionWeight;
         if (mARF || mGeneratePhotons)
           {
@@ -802,7 +811,6 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
         GateError("Error: implementation problem, unexpected process type reached.");
       }
     }
-  std::cout << "Done" << std::endl;
   if (mPhaseSpaceFile)
     {
     mPhaseSpace->Fill();
@@ -950,7 +958,10 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       GateFixedForcedDetectionFunctor::Chetty<InputImageType::PixelType> > ChettyType;
 
   GateVActor::SaveData();
-
+  std::cout << "  Number of primaries " << mNumberOfProcessedPrimaries << std::endl;
+  std::cout << "  Number of Compton " << mNumberOfProcessedCompton << std::endl;
+  std::cout << "  Number of Rayleigh " << mNumberOfProcessedRayleigh << std::endl;
+  std::cout << "  Number of fluorescence " << mNumberOfProcessedPE << std::endl;
   /* Geometry */
   if (mGeometryFilename != "")
     {
