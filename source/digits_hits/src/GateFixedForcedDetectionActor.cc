@@ -253,7 +253,7 @@ void GateFixedForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   /* Read the response detector curve from an external file */
   if (!mGeneratePhotons && !mARF)
     {
-  mEnergyResponseDetector.ReadResponseDetectorFile(mResponseFilename);
+    mEnergyResponseDetector.ReadResponseDetectorFile(mResponseFilename);
     }
   /* Create list of energies */
   std::vector<double> energyList;
@@ -384,7 +384,7 @@ void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointe
   mPrimaryProjector->GetProjectedValueAccumulation().SetNumberOfPrimaries(mNoisePrimary);
   if (!mGeneratePhotons && !mARF)
     {
-  mPrimaryProjector->GetProjectedValueAccumulation().SetResponseDetector(&mEnergyResponseDetector);
+    mPrimaryProjector->GetProjectedValueAccumulation().SetResponseDetector(&mEnergyResponseDetector);
     }
   mPrimaryProjector->GetProjectedValueAccumulation().SetEnergyResolvedParameters(mEnergyResolvedBinSize,
                                                                                  nPixOneSlice);
@@ -412,7 +412,7 @@ void GateFixedForcedDetectionActor::PrepareComptonProjector(GateVImageVolume* ga
   mComptonProjector->GetProjectedValueAccumulation().SetInterpolationWeights(mComptonProjector->GetInterpolationWeightMultiplication().GetInterpolationWeights());
   if (!mGeneratePhotons && !mARF)
     {
-  mComptonProjector->GetProjectedValueAccumulation().SetResponseDetector(&mEnergyResponseDetector);
+    mComptonProjector->GetProjectedValueAccumulation().SetResponseDetector(&mEnergyResponseDetector);
     }
   mComptonProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
                                                                          1. * keV,
@@ -943,7 +943,6 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       GateFixedForcedDetectionFunctor::Chetty<InputImageType::PixelType> > ChettyType;
 
   GateVActor::SaveData();
-
   std::cout << "  Number of primaries " << mNumberOfProcessedPrimaries << std::endl;
   std::cout << "  Number of Compton " << mNumberOfProcessedCompton << std::endl;
   std::cout << "  Number of Rayleigh " << mNumberOfProcessedRayleigh << std::endl;
