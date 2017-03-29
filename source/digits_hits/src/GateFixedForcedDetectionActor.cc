@@ -398,6 +398,7 @@ void GateFixedForcedDetectionActor::PrepareComptonProjector(GateVImageVolume* ga
   mComptonProjector = ComptonProjectionType::New();
   mComptonProjector->GetProjectedValueAccumulation().setGeneratePhotons(mGeneratePhotons);
   mComptonProjector->GetProjectedValueAccumulation().setGenerateARF(mARF);
+  mComptonProjector->SetNumberOfThreads(1); // TO REMOVE
   if (mGeneratePhotons || mARF)
     {
     mComptonProjector->GetProjectedValueAccumulation().PreparePhotonsList(mComptonProjector->GetNumberOfThreads());
@@ -430,11 +431,13 @@ void GateFixedForcedDetectionActor::PrepareRayleighProjector(GateVImageVolume* g
   mRayleighProjector = RayleighProjectionType::New();
   mRayleighProjector->GetProjectedValueAccumulation().setGeneratePhotons(mGeneratePhotons);
   mRayleighProjector->GetProjectedValueAccumulation().setGenerateARF(mARF);
+  mRayleighProjector->SetNumberOfThreads(1); // TO REMOVE
   if (mGeneratePhotons || mARF)
     {
     mRayleighProjector->GetProjectedValueAccumulation().PreparePhotonsList(mRayleighProjector->GetNumberOfThreads());
     }
   mRayleighProjector->InPlaceOn();
+
   mRayleighProjector->SetInput(1, mGateVolumeImage);
   mRayleighProjector->SetGeometry(oneProjGeometry.GetPointer());
   mRayleighProjector->GetProjectedValueAccumulation().SetSolidAngleParameters(mProcessImage[RAYLEIGH],
@@ -459,6 +462,7 @@ void GateFixedForcedDetectionActor::PrepareFluorescenceProjector(GateVImageVolum
   mFluorescenceProjector = FluorescenceProjectionType::New();
   mFluorescenceProjector->GetProjectedValueAccumulation().setGeneratePhotons(mGeneratePhotons);
   mFluorescenceProjector->GetProjectedValueAccumulation().setGenerateARF(mARF);
+  mFluorescenceProjector->SetNumberOfThreads(1); // TO REMOVE
   if (mGeneratePhotons || mARF)
     {
     mFluorescenceProjector->GetProjectedValueAccumulation().PreparePhotonsList(mFluorescenceProjector->GetNumberOfThreads());
@@ -488,6 +492,7 @@ void GateFixedForcedDetectionActor::PrepareIsotropicPrimaryProjector(GateVImageV
   mIsotropicPrimaryProjector = IsotropicPrimaryProjectionType::New();
   mIsotropicPrimaryProjector->GetProjectedValueAccumulation().setGeneratePhotons(mGeneratePhotons);
   mIsotropicPrimaryProjector->GetProjectedValueAccumulation().setGenerateARF(mARF);
+  mIsotropicPrimaryProjector->SetNumberOfThreads(1); // TO REMOVE
   if (mARF)
     {
     GateARFSD* arfSD = GateDetectorConstruction::GetGateDetectorConstruction()->GetARFSD();
@@ -541,6 +546,7 @@ void GateFixedForcedDetectionActor::BeginOfEventAction(const G4Event *e)
 
 void GateFixedForcedDetectionActor::EndOfEventAction(const G4Event *e)
   {
+
   if (mIsSecondarySquaredImageEnabled || mIsSecondaryUncertaintyImageEnabled)
     {
     typedef itk::AddImageFilter<OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
@@ -623,9 +629,8 @@ void GateFixedForcedDetectionActor::EndOfEventAction(const G4Event *e)
 void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, const G4Step * step)
   {
   GateVActor::UserSteppingAction(v, step);
-  if (!mGeneratePhotons || step->GetTrack()->GetParentID() != 666)
+  if ((!mGeneratePhotons || step->GetTrack()->GetParentID() != 666))
     {
-
     /* Get interaction point from step
      Retrieve :
      - type of limiting process (Compton Rayleigh Fluorescence)
@@ -642,9 +647,14 @@ void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, co
 
     if (!process)
       {
+
       /* See if we have to place it in BeginOfEvent */
-      if (mSourceType == "isotropic" && step->GetTrack()->GetCurrentStepNumber() == 1)
+      if (mSourceType == "isotropic"
+          && step->GetTrack()->GetCurrentStepNumber() == 1
+          && step->GetTrack()->GetDefinition()->GetParticleName() != "e-"
+          && step->GetTrack()->GetDefinition()->GetParticleName() != "e+")
         {
+
         ForceDetectionOfInteraction(GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID(),
                                     G4String("IsotropicPrimary"),
                                     step->GetPreStepPoint()->GetPosition(),
@@ -675,7 +685,6 @@ void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, co
     const G4Element* elm = model->SelectRandomAtom(couple,
                                                    particle,
                                                    step->GetPreStepPoint()->GetKineticEnergy());
-
     if (process->GetProcessName() == G4String("PhotoElectric")
         || process->GetProcessName() == G4String("phot"))
       {
@@ -750,7 +759,6 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
     switch (mMapProcessNameWithType[processName])
       {
       case COMPTON:
-        //std::cout << "COMPTON" << std::endl;
         if (mARF || mGeneratePhotons)
           {
           mInteractionWeight = 1;
@@ -760,11 +768,9 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
         this->ForceDetectionOfInteraction<COMPTON>(mComptonProjector.GetPointer(),
                                                    mProcessImage[COMPTON],
                                                    totalEnergy);
-        //std::cout << "DONE" << std::endl;
         break;
 
       case RAYLEIGH:
-        //std::cout << "RAYLEIGH" << std::endl;
         if (mARF || mGeneratePhotons)
           {
           mInteractionWeight = 1;
@@ -796,7 +802,6 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
         break;
 
       case ISOTROPICPRIMARY:
-        //std::cout << "ISOTROPICPRIMARY" << std::endl;
         mInteractionWeight = mEnergyResponseDetector(mInteractionEnergy) * mInteractionWeight;
         if (mARF || mGeneratePhotons)
           {
@@ -841,9 +846,11 @@ void GateFixedForcedDetectionActor::GeneratePhotons(const unsigned int & numberO
       newTrack->SetParentID(666);
       newTrack->SetWeight(photonList[thread][photonId].weight);
       sm->PushOneTrack(newTrack);
+
       }
     }
   }
+
 void GateFixedForcedDetectionActor::ConnectARF(const unsigned int & numberOfThreads,
                                                const std::vector<std::vector<newPhoton> > & photonList,
                                                const double & energy,
@@ -902,7 +909,6 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType *
     mInteractionITKPosition[i] = interactionPositionInCT[i];
     direction[i] = interactionDirectionInCT[i];
     }
-
   /* Create interaction geometry */
   GeometryType::Pointer oneProjGeometry = GeometryType::New();
   oneProjGeometry->AddReg23Projection(mInteractionITKPosition,
