@@ -119,7 +119,7 @@ ENDIF(GATE_USE_OPTICAL)
 #=========================================================
 # Option for Davis model
 IF(GATE_USE_DAVIS)
-  MESSAGE("You are using a manually modified version of Geant4 to use the Davis LUT model")
+  MESSAGE("Warning! You have to install a manually modified version of Geant4 to use the Davis LUT model. Please refer to http://wiki.opengatecollaboration.org/index.php/Enabling_LUT_Davis_Model for detailed step-by-step compiling instructions")
 ENDIF(GATE_USE_DAVIS)
 
 #=========================================================
