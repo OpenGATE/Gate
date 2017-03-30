@@ -123,14 +123,22 @@ G4OpticalSurface* GateSurface::ReadOpticalSurface(const G4String& name) const
 
       // mstockhoff Feb 2017
       // model is unified or DAVIS model
+
+#ifdef GATE_USE_DAVIS
       G4String model = doc->GetProperty("model");
       if(model == "DAVIS") surface->SetModel(DAVIS);
       else    surface->SetModel(unified);
+#else
+      surface->SetModel(unified);
+#endif
+
       // set the type
       G4String type = doc->GetProperty("type");
       if (type=="dielectric_dielectric") surface->SetType(dielectric_dielectric);
       else if (type=="dielectric_metal") surface->SetType(dielectric_metal);
+#ifdef GATE_USE_DAVIS
        else if (type=="dielectric_LUTDAVIS") surface->SetType(dielectric_LUTDAVIS);
+#endif
       // set the finish
       G4String finish = doc->GetProperty("finish");
       if (finish=="polished") surface->SetFinish(polished);
@@ -139,7 +147,8 @@ G4OpticalSurface* GateSurface::ReadOpticalSurface(const G4String& name) const
       else if (finish=="groundbackpainted") surface->SetFinish(groundbackpainted);
       else if (finish=="polishedfrontpainted") surface->SetFinish(polishedfrontpainted);
       else if (finish=="groundfrontpainted") surface->SetFinish(groundfrontpainted);
-      
+
+#ifdef GATE_USE_DAVIS
       else if (finish=="Rough_LUT") surface->SetFinish(Rough_LUT);
       else if (finish=="RoughTeflon_LUT") surface->SetFinish(RoughTeflon_LUT);
       else if (finish=="RoughESR_LUT") surface->SetFinish(RoughESR_LUT);
@@ -149,6 +158,7 @@ G4OpticalSurface* GateSurface::ReadOpticalSurface(const G4String& name) const
       else if (finish=="PolishedESR_LUT") surface->SetFinish(PolishedESR_LUT);
       else if (finish=="PolishedESRGrease_LUT") surface->SetFinish(PolishedESRGrease_LUT);
       else if (finish=="Detector_LUT") surface->SetFinish(Detector_LUT);
+#endif
       
       
       
