@@ -195,9 +195,9 @@ cout<<""<<endl;
    c1->SetFillColor(0);
    c1->SetBorderMode(0);   
        
-   gamma1.Draw();
+   gamma1->Draw();
    gamma1->SetFillColor(2);
-   gamma2.Draw("same");  
+   gamma2->Draw("same");  
    gamma2->SetFillColor(9);
    
    
@@ -221,7 +221,7 @@ cout<<""<<endl;
    c2->SetGrid();
    c2->SetBorderMode(0); 
 
-   position.Draw();
+   position->Draw();
    
    c2->Update(); 
     
