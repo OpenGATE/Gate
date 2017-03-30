@@ -398,7 +398,6 @@ void GateFixedForcedDetectionActor::PrepareComptonProjector(GateVImageVolume* ga
   mComptonProjector = ComptonProjectionType::New();
   mComptonProjector->GetProjectedValueAccumulation().setGeneratePhotons(mGeneratePhotons);
   mComptonProjector->GetProjectedValueAccumulation().setGenerateARF(mARF);
-  mComptonProjector->SetNumberOfThreads(1); // TO REMOVE
   if (mGeneratePhotons || mARF)
     {
     mComptonProjector->GetProjectedValueAccumulation().PreparePhotonsList(mComptonProjector->GetNumberOfThreads());
@@ -431,7 +430,6 @@ void GateFixedForcedDetectionActor::PrepareRayleighProjector(GateVImageVolume* g
   mRayleighProjector = RayleighProjectionType::New();
   mRayleighProjector->GetProjectedValueAccumulation().setGeneratePhotons(mGeneratePhotons);
   mRayleighProjector->GetProjectedValueAccumulation().setGenerateARF(mARF);
-  mRayleighProjector->SetNumberOfThreads(1); // TO REMOVE
   if (mGeneratePhotons || mARF)
     {
     mRayleighProjector->GetProjectedValueAccumulation().PreparePhotonsList(mRayleighProjector->GetNumberOfThreads());
@@ -462,7 +460,6 @@ void GateFixedForcedDetectionActor::PrepareFluorescenceProjector(GateVImageVolum
   mFluorescenceProjector = FluorescenceProjectionType::New();
   mFluorescenceProjector->GetProjectedValueAccumulation().setGeneratePhotons(mGeneratePhotons);
   mFluorescenceProjector->GetProjectedValueAccumulation().setGenerateARF(mARF);
-  mFluorescenceProjector->SetNumberOfThreads(1); // TO REMOVE
   if (mGeneratePhotons || mARF)
     {
     mFluorescenceProjector->GetProjectedValueAccumulation().PreparePhotonsList(mFluorescenceProjector->GetNumberOfThreads());
@@ -492,7 +489,6 @@ void GateFixedForcedDetectionActor::PrepareIsotropicPrimaryProjector(GateVImageV
   mIsotropicPrimaryProjector = IsotropicPrimaryProjectionType::New();
   mIsotropicPrimaryProjector->GetProjectedValueAccumulation().setGeneratePhotons(mGeneratePhotons);
   mIsotropicPrimaryProjector->GetProjectedValueAccumulation().setGenerateARF(mARF);
-  mIsotropicPrimaryProjector->SetNumberOfThreads(1); // TO REMOVE
   if (mARF)
     {
     GateARFSD* arfSD = GateDetectorConstruction::GetGateDetectorConstruction()->GetARFSD();
@@ -651,8 +647,7 @@ void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, co
       /* See if we have to place it in BeginOfEvent */
       if (mSourceType == "isotropic"
           && step->GetTrack()->GetCurrentStepNumber() == 1
-          && step->GetTrack()->GetDefinition()->GetParticleName() != "e-"
-          && step->GetTrack()->GetDefinition()->GetParticleName() != "e+")
+          && step->GetTrack()->GetDefinition()->GetParticleName() == "gamma")
         {
 
         ForceDetectionOfInteraction(GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID(),
