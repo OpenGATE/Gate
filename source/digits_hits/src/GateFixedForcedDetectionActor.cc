@@ -232,7 +232,9 @@ void GateFixedForcedDetectionActor::CreateProjectionImages()
     const ProcessType pt = ProcessType(i);
     mDoFFDForThisProcess[pt] = (mProcessImageFilenames[pt] != ""
                                 || mTotalFilename != ""
-                                || mSecondaryFilename != "" || mARF);
+                                || mSecondaryFilename != ""
+                                || mARF
+                                || mGeneratePhotons);
     mProcessImage[pt] = CreateVoidProjectionImage();
     mSquaredImage[pt] = CreateVoidProjectionImage();
     mPerOrderImages[pt].clear();
@@ -249,7 +251,10 @@ void GateFixedForcedDetectionActor::BeginOfRunAction(const G4Run*r)
   GateSourceMgr * sourceMessenger = GateSourceMgr::GetInstance();
   TestSource(sourceMessenger);
   /* Read the response detector curve from an external file */
+  if (!mGeneratePhotons && !mARF)
+    {
   mEnergyResponseDetector.ReadResponseDetectorFile(mResponseFilename);
+    }
   /* Create list of energies */
   std::vector<double> energyList;
   std::vector<double> energyWeightList;
@@ -377,7 +382,10 @@ void GateFixedForcedDetectionActor::PreparePrimaryProjector(GeometryType::Pointe
 
   mPrimaryProjector->GetProjectedValueAccumulation().Init(mPrimaryProjector->GetNumberOfThreads());
   mPrimaryProjector->GetProjectedValueAccumulation().SetNumberOfPrimaries(mNoisePrimary);
+  if (!mGeneratePhotons && !mARF)
+    {
   mPrimaryProjector->GetProjectedValueAccumulation().SetResponseDetector(&mEnergyResponseDetector);
+    }
   mPrimaryProjector->GetProjectedValueAccumulation().SetEnergyResolvedParameters(mEnergyResolvedBinSize,
                                                                                  nPixOneSlice);
   TRY_AND_EXIT_ON_ITK_EXCEPTION(mPrimaryProjector->Update());
@@ -402,7 +410,10 @@ void GateFixedForcedDetectionActor::PrepareComptonProjector(GateVImageVolume* ga
                                                                              mDetectorColVector);
   mComptonProjector->GetProjectedValueAccumulation().SetVolumeSpacing(mGateVolumeImage->GetSpacing());
   mComptonProjector->GetProjectedValueAccumulation().SetInterpolationWeights(mComptonProjector->GetInterpolationWeightMultiplication().GetInterpolationWeights());
+  if (!mGeneratePhotons && !mARF)
+    {
   mComptonProjector->GetProjectedValueAccumulation().SetResponseDetector(&mEnergyResponseDetector);
+    }
   mComptonProjector->GetProjectedValueAccumulation().CreateMaterialMuMap(mEMCalculator,
                                                                          1. * keV,
                                                                          mMaxPrimaryEnergy,
@@ -612,6 +623,8 @@ void GateFixedForcedDetectionActor::EndOfEventAction(const G4Event *e)
 void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, const G4Step * step)
   {
   GateVActor::UserSteppingAction(v, step);
+  if (!mGeneratePhotons || step->GetTrack()->GetParentID() != 666)
+    {
   /* Get interaction point from step
    Retrieve :
    - type of limiting process (Compton Rayleigh Fluorescence)
@@ -628,7 +641,9 @@ void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, co
   if (!process)
     {
     /* See if we have to place it in BeginOfEvent */
-    if (mSourceType == "isotropic" && step->GetTrack()->GetCurrentStepNumber() == 1)
+      if (mSourceType == "isotropic"
+          && step->GetTrack()->GetCurrentStepNumber() == 1
+          && step->GetTrack()->GetDefinition()->GetParticleName() == "gamma")
       {
       ForceDetectionOfInteraction(GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID(),
                                   G4String("IsotropicPrimary"),
@@ -636,11 +651,13 @@ void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, co
                                   step->GetPreStepPoint()->GetMomentumDirection(),
                                   step->GetPreStepPoint()->GetKineticEnergy(),
                                   step->GetPreStepPoint()->GetWeight(),
-                                  0,
-                                  step->GetPreStepPoint()->GetTotalEnergy());
+                                  0);
       mNumberOfProcessedPrimaries++;
       /* TODO Kill photons going outside of phantom */
-      //step->GetPostStepPoint()->SetWeight(1);
+        if (mGeneratePhotons)
+          {
+          step->GetPostStepPoint()->SetWeight(0);
+          }
       /* For now, put weight=0 but see if other method is more appropriate and check secondaries */
       }
     return;
@@ -676,8 +693,11 @@ void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, co
                                     (*list)[i]->GetMomentumDirection(),
                                     (*list)[i]->GetKineticEnergy(),
                                     (*list)[i]->GetWeight(),
-                                    elm->GetZ(),
-                                    step->GetPostStepPoint()->GetTotalEnergy());
+                                      elm->GetZ());
+          if (mGeneratePhotons)
+            {
+            step->GetPostStepPoint()->SetWeight(0);
+            }
         }
       }
     }
@@ -689,10 +709,14 @@ void GateFixedForcedDetectionActor::UserSteppingAction(const GateVVolume * v, co
                                 step->GetPreStepPoint()->GetMomentumDirection(),
                                 step->GetPreStepPoint()->GetKineticEnergy(),
                                 step->GetPostStepPoint()->GetWeight(),
-                                elm->GetZ(),
-                                step->GetPostStepPoint()->GetTotalEnergy());
+                                elm->GetZ());
+      if (mGeneratePhotons)
+        {
+        step->GetPostStepPoint()->SetWeight(0);
     }
 
+      }
+    }
   }
 
 /* Save data */
@@ -702,8 +726,7 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
                                                                 G4ThreeVector interactionDirection,
                                                                 double energy,
                                                                 double weight,
-                                                                int Z,
-                                                                const double & totalEnergy)
+                                                                int Z)
   {
   /* In case a root file is created, copy values to branched variables */
   mInteractionPosition = interactionPosition;
@@ -732,8 +755,7 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
         mNumberOfProcessedSecondaries++;
         mNumberOfProcessedCompton++;
         this->ForceDetectionOfInteraction<COMPTON>(mComptonProjector.GetPointer(),
-                                                   mProcessImage[COMPTON],
-                                                   totalEnergy);
+                                                   mProcessImage[COMPTON]);
 
         break;
 
@@ -749,8 +771,7 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
         mNumberOfProcessedSecondaries++;
         mNumberOfProcessedRayleigh++;
         this->ForceDetectionOfInteraction<RAYLEIGH>(mRayleighProjector.GetPointer(),
-                                                    mProcessImage[RAYLEIGH],
-                                                    totalEnergy);
+                                                    mProcessImage[RAYLEIGH]);
 
         break;
 
@@ -763,8 +784,7 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
         mNumberOfProcessedSecondaries++;
         mNumberOfProcessedPE++;
         this->ForceDetectionOfInteraction<PHOTOELECTRIC>(mFluorescenceProjector.GetPointer(),
-                                                         mProcessImage[PHOTOELECTRIC],
-                                                         totalEnergy);
+                                                         mProcessImage[PHOTOELECTRIC]);
 
         break;
 
@@ -776,8 +796,7 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
           mInteractionWeight = 1;
           }
         this->ForceDetectionOfInteraction<ISOTROPICPRIMARY>(mIsotropicPrimaryProjector.GetPointer(),
-                                                            mProcessImage[ISOTROPICPRIMARY],
-                                                            totalEnergy);
+                                                            mProcessImage[ISOTROPICPRIMARY]);
         break;
 
       default:
@@ -791,8 +810,7 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(G4int eventID,
   }
 
 void GateFixedForcedDetectionActor::GeneratePhotons(const unsigned int & numberOfThreads,
-                                                    const std::vector<std::vector<newPhoton> > & photonList,
-                                                    const double & energy)
+                                                    const std::vector<std::vector<newPhoton> > & photonList)
   {
   static G4EventManager * em = G4EventManager::GetEventManager();
   G4StackManager * sm = em->GetStackManager();
@@ -808,9 +826,9 @@ void GateFixedForcedDetectionActor::GeneratePhotons(const unsigned int & numberO
         }
       G4DynamicParticle * newPhoton = new G4DynamicParticle(G4Gamma::Gamma(),
                                                             photonList[thread][photonId].direction,
-                                                            energy);
+                                                            photonList[thread][photonId].energy);
       G4Track * newTrack = new G4Track(newPhoton, 0, position);
-      newTrack->SetParentID(0);
+      newTrack->SetParentID(666);
       newTrack->SetWeight(photonList[thread][photonId].weight);
       sm->PushOneTrack(newTrack);
       }
@@ -818,7 +836,6 @@ void GateFixedForcedDetectionActor::GeneratePhotons(const unsigned int & numberO
   }
 void GateFixedForcedDetectionActor::ConnectARF(const unsigned int & numberOfThreads,
                                                const std::vector<std::vector<newPhoton> > & photonList,
-                                               const double & energy,
                                                unsigned int newHead)
   {
   GateARFSD* arfSD = GateDetectorConstruction::GetGateDetectorConstruction()->GetARFSD();
@@ -837,7 +854,6 @@ void GateFixedForcedDetectionActor::ConnectARF(const unsigned int & numberOfThre
         {
         arfSD->ComputeProjectionSet(position,
                                     m_WorldToDetector.TransformAxis(photonList[thread][photonId].direction),
-                                    energy,
                                     photonList[thread][photonId].weight,
                                     true,
                                     newHead + 1);
@@ -846,7 +862,6 @@ void GateFixedForcedDetectionActor::ConnectARF(const unsigned int & numberOfThre
         {
         arfSD->ComputeProjectionSet(position,
                                     m_WorldToDetector.TransformAxis(photonList[thread][photonId].direction),
-                                    energy,
                                     photonList[thread][photonId].weight,
                                     false,
                                     newHead + 1);
@@ -857,8 +872,7 @@ void GateFixedForcedDetectionActor::ConnectARF(const unsigned int & numberOfThre
   }
 template<ProcessType VProcess, class TProjectorType>
 void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType *projector,
-                                                                InputImageType::Pointer & input,
-                                                                const double & energy)
+                                                                InputImageType::Pointer & input)
   {
   if (!mDoFFDForThisProcess[VProcess])
     {
@@ -892,20 +906,15 @@ void GateFixedForcedDetectionActor::ForceDetectionOfInteraction(TProjectorType *
   TRY_AND_EXIT_ON_ITK_EXCEPTION(projector->Update());
   mProcessTimeProbe[VProcess].Stop();
   mInteractionTotalContribution = projector->GetProjectedValueAccumulation().GetIntegralOverDetectorAndReset();
-  if (VProcess == 3)
-    {
     if (mGeneratePhotons)
       {
       GeneratePhotons(projector->GetNumberOfThreads(),
-                      projector->GetProjectedValueAccumulation().GetPhotonList(),
-                      energy);
+                      projector->GetProjectedValueAccumulation().GetPhotonList());
       }
-    }
   if (mARF)
     {
     ConnectARF(projector->GetNumberOfThreads(),
                projector->GetProjectedValueAccumulation().GetPhotonList(),
-               energy,
                VProcess);
 
     }
@@ -934,6 +943,10 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
 
   GateVActor::SaveData();
 
+  std::cout << "  Number of primaries " << mNumberOfProcessedPrimaries << std::endl;
+  std::cout << "  Number of Compton " << mNumberOfProcessedCompton << std::endl;
+  std::cout << "  Number of Rayleigh " << mNumberOfProcessedRayleigh << std::endl;
+  std::cout << "  Number of fluorescence " << mNumberOfProcessedPE << std::endl;
   /* Geometry */
   if (mGeometryFilename != "")
     {
@@ -948,7 +961,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
   char filename[1024];
   G4int rID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
 
-  if (mPrimaryFilename != "" && !mARF)
+  if (mPrimaryFilename != "" && !mARF && !mGeneratePhotons)
     {
     /* Write the image of primary radiation accounting for the fluence of the
      primary source. */
@@ -1013,7 +1026,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
   for (unsigned int i = 0; i < PRIMARY; i++)
     {
     ProcessType pt = ProcessType(i);
-    if (mProcessImageFilenames[pt] != "" && !mARF)
+    if (mProcessImageFilenames[pt] != "" && !mARF && !mGeneratePhotons)
       {
       sprintf(filename, AddPrefix(prefix, mProcessImageFilenames[pt]).c_str(), rID);
       imgWriter->SetFileName(filename);
@@ -1075,7 +1088,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
        || mIsSecondarySquaredImageEnabled
        || mIsSecondaryUncertaintyImageEnabled
        || mTotalFilename != "")
-      && !mARF)
+      && !mARF && !mGeneratePhotons)
     {
     typedef itk::AddImageFilter<OutputImageType, OutputImageType, OutputImageType> AddImageFilterType;
     AddImageFilterType::Pointer addFilter = AddImageFilterType::New();
@@ -1096,7 +1109,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       }
 
     /*  Write scatter image */
-    if (mSecondaryFilename != "" && !mARF)
+    if (mSecondaryFilename != "" && !mARF && !mGeneratePhotons)
       {
       sprintf(filename, AddPrefix(prefix, mSecondaryFilename).c_str(), rID);
       imgWriter->SetFileName(filename);
@@ -1130,7 +1143,7 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
       TRY_AND_EXIT_ON_ITK_EXCEPTION(imgWriter->Update());
       }
 
-    if (mTotalFilename != "" && !mARF)
+    if (mTotalFilename != "" && !mARF && !mGeneratePhotons)
       {
       /*  Primary */
       mSecondaryImage->DisconnectPipeline();
