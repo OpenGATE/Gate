@@ -1,4 +1,0 @@
-/gate/actor/addActor DoseActor   DAVolume
-/gate/actor/DAVolume/attachTo    Volume
-/gate/actor/DAVolume/stepHitType random
-/gate/actor/DAVolume/enableDose  true

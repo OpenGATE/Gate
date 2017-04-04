@@ -1,3 +1,0 @@
-/gate/actor/addActor SimulationStatisticActor SSA
-/gate/actor/SSA/save output/SSA.txt
-/gate/actor/SSA/saveEveryNSeconds 60
