@@ -1071,20 +1071,6 @@ void GateFixedForcedDetectionActor::SaveData(const G4String prefix)
         }
       }
     }
-  std::cout
-  << "mNumberOfEventsInRun "
-  << mNumberOfEventsInRun
-  << " Primaries "
-  << mNumberOfProcessedPrimaries
-  << " Secondaries "
-  << mNumberOfProcessedSecondaries
-  << " Compton "
-  << mNumberOfProcessedCompton
-  << " Rayleigh "
-  << mNumberOfProcessedRayleigh
-  << " PE "
-  << mNumberOfProcessedPE
-  << std::endl;
   if ((mSecondaryFilename != ""
        || mIsSecondarySquaredImageEnabled
        || mIsSecondaryUncertaintyImageEnabled
