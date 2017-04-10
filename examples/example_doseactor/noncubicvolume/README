@@ -1,7 +1,0 @@
-* Author:
- - Thomas DESCHLER (thomas.deschler@iphc.cnrs.fr)
-
-* Informations:
-  * This example has for purpose to show the utility of the MassWeighting algorithm for dose calculation in volumes who are not boxes. 
-  * DAVW is the output of the original DoseActor (VolumeWeighting algorithm)
-  * DAMW is the output of the DoseActor with the MassWeighting algorithm
