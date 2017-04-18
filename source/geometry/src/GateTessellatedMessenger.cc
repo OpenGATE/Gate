@@ -16,22 +16,22 @@ GateTessellatedMessenger::GateTessellatedMessenger(
   G4String dir = GetDirectoryName() + "geometry/";
 
   G4String cmdName;
-  cmdName = dir + "setPathToSTLFile";
-  PathToSTLFileCmd = new G4UIcmdWithAString( cmdName, this );
-  PathToSTLFileCmd->SetGuidance( "Set path to STL file" );
+  cmdName = dir + "setPathToVerticesFile";
+  PathToVerticesFileCmd = new G4UIcmdWithAString( cmdName, this );
+  PathToVerticesFileCmd->SetGuidance( "Set path to raw file" );
 }
 
 GateTessellatedMessenger::~GateTessellatedMessenger()
 {
-  delete PathToSTLFileCmd;
+  delete PathToVerticesFileCmd;
 }
 
 void GateTessellatedMessenger::SetNewValue( G4UIcommand* command,
   G4String newValue )
 {
-  if( command == PathToSTLFileCmd )
+  if( command == PathToVerticesFileCmd )
   {
-    GetTessellatedCreator()->SetPathToSTLFile( newValue );
+    GetTessellatedCreator()->SetPathToVerticesFile( newValue );
   }
   else
   {
