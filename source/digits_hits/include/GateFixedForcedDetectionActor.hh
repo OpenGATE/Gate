@@ -209,13 +209,11 @@ public:
                                            G4ThreeVector dir,
                                            double energy,
                                            double weight,
-                                           int Z,
-                                           const double & totalEnergy = 0);
+                                           int Z);
 
   template<ProcessType VProcess, class TProjectorType>
   void ForceDetectionOfInteraction(TProjectorType *projector,
-                                   InputImageType::Pointer &input,
-                                   const double & totalEnergy = 0);
+                                   InputImageType::Pointer &input);
   void TestSource(GateSourceMgr * sm);
   void GetEnergyList(std::vector<double> & energyList, std::vector<double> & energyWeightList);
   GateVImageVolume* SearchForVoxelisedVolume();
@@ -243,12 +241,10 @@ public:
                                unsigned int & nPixOneSlice);
   void CreateProjectionImages();
   void GeneratePhotons(const unsigned int & numberOfThreads,
-                       const std::vector<std::vector<newPhoton> > & photonList,
-                       const double & energy);
+                       const std::vector<std::vector<newPhoton> > & photonList);
 
   void ConnectARF(const unsigned int & numberOfThreads,
                   const std::vector<std::vector<newPhoton> > & photonList,
-                  const double & energy,
                   unsigned int newHead = 1);
 
   void ComputeFlatField(std::vector<double> & energyList, std::vector<double> & energyWeightList);
