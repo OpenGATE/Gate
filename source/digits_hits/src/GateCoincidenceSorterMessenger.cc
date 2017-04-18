@@ -29,6 +29,11 @@ GateCoincidenceSorterMessenger::GateCoincidenceSorterMessenger(GateCoincidenceSo
   windowCmd->SetGuidance("Set time-window for coincidence");
   windowCmd->SetUnitCategory("Time");
 
+  cmdName = GetDirectoryName() + "setWindowJitter";
+  windowJitterCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
+  windowJitterCmd->SetGuidance("Set standard deviation of window jitter");
+  windowJitterCmd->SetUnitCategory("Time");
+
   cmdName = GetDirectoryName() + "setOffset";
   offsetCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   offsetCmd->SetGuidance("Set time offset for delay coincidences");
@@ -36,13 +41,8 @@ GateCoincidenceSorterMessenger::GateCoincidenceSorterMessenger(GateCoincidenceSo
 
   cmdName = GetDirectoryName() + "setOffsetJitter";
   offsetJitterCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  offsetJitterCmd->SetGuidance("Set time offset for delay coincidences");
+  offsetJitterCmd->SetGuidance("Set standard deviation of offset jitter");
   offsetJitterCmd->SetUnitCategory("Time");
-
-  cmdName = GetDirectoryName() + "setWindowJitter";
-  windowJitterCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-  windowJitterCmd->SetGuidance("Set time-window for coincidence");
-  windowJitterCmd->SetUnitCategory("Time");
 
   cmdName = GetDirectoryName()+"minSectorDifference";
   minSectorDiffCmd = new G4UIcmdWithAnInteger(cmdName.c_str(),this);
@@ -55,6 +55,12 @@ GateCoincidenceSorterMessenger::GateCoincidenceSorterMessenger(GateCoincidenceSo
   setDepthCmd->SetGuidance("Set the depth of system-level for coincidences.");
   setDepthCmd->SetParameterName("depth",false);
   setDepthCmd->SetRange("depth>=1");
+
+  cmdName = GetDirectoryName()+"setPresortBufferSize";
+  setPresortBufferSizeCmd = new G4UIcmdWithAnInteger(cmdName.c_str(),this);
+  setPresortBufferSizeCmd->SetGuidance("Set the size of the presort buffer.");
+  setPresortBufferSizeCmd->SetParameterName("size",false);
+  setPresortBufferSizeCmd->SetRange("size>=32");
 
   cmdName = GetDirectoryName()+"setInputName";
   SetInputNameCmd = new G4UIcmdWithAString(cmdName,this);
@@ -77,9 +83,12 @@ GateCoincidenceSorterMessenger::~GateCoincidenceSorterMessenger()
 {
   delete windowCmd;
   delete offsetCmd;
+  delete windowJitterCmd;
+  delete offsetJitterCmd;
   delete minSectorDiffCmd;
   delete SetInputNameCmd;
   delete MultiplePolicyCmd;
+  delete setPresortBufferSizeCmd;
   delete AllPulseOpenCoincGateCmd;
 }
 
@@ -98,6 +107,8 @@ void GateCoincidenceSorterMessenger::SetNewValue(G4UIcommand* aCommand, G4String
     { GetCoincidenceSorter()->SetMinSectorDifference(minSectorDiffCmd->GetNewIntValue(newValue)); }
   else if( aCommand == setDepthCmd )
     { GetCoincidenceSorter()->SetDepth(setDepthCmd->GetNewIntValue(newValue)); }
+  else if( aCommand == setPresortBufferSizeCmd )
+    { GetCoincidenceSorter()->SetPresortBufferSize(setPresortBufferSizeCmd->GetNewIntValue(newValue)); }
   else if (aCommand == SetInputNameCmd)
     {
      GetCoincidenceSorter()->SetInputName(newValue);

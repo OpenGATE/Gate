@@ -24,7 +24,7 @@ GateParameterisedHole::GateParameterisedHole(const G4String& itsName,const G4Str
      m_InnerRadius (itsInnerRadius),m_Height (itsHeight),m_DimensionX (itsDimensionX),m_DimensionY (itsDimensionY)
 {
   PreComputeConstants ();
-
+  SetMaterialName(itsMaterialName);
   SetParameterisation ( new GateHoleParameterisation(Coll_FDx,Coll_FDy,Trap_Dx,Trap_Dy,Trap_Nx,Trap_Ny,
   	Trap_OffsetX,Trap_OffsetY1,Trap_OffsetY2,Trap_Dz,Trap_Dy1,Trap_Dy2,Trap_Dx1,Trap_Dx2,Trap_Dx3,Trap_Dx4) );
 }

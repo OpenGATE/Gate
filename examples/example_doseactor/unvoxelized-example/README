@@ -1,7 +1,0 @@
-* Author:
- - Thomas DESCHLER (thomas.deschler@iphc.cnrs.fr)
-
-* Informations:
-  * You can verify that the mass algorithm is working correctly by verifying
-  the total reconstructed mass and volume (given with "/gate/verbose Actor 1").
-  It should be 31,5211g and 8cm³.

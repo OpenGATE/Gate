@@ -237,27 +237,28 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
     // The image is copied with a margin of 1 voxel in all directions
     pImage = new ImageType;
 
-    G4ThreeVector res ( tmp->GetResolution().x() + 2,
-			tmp->GetResolution().y() + 2,
-			tmp->GetResolution().z() + 2);
+    G4ThreeVector res (tmp->GetResolution().x() + 2,
+                       tmp->GetResolution().y() + 2,
+                       tmp->GetResolution().z() + 2);
     pImage->SetResolutionAndVoxelSize(res,tmp->GetVoxelSize());
     pImage->SetOrigin(tmp->GetOrigin());
     pImage->SetTransformMatrix(tmp->GetTransformMatrix());
     pImage->Allocate();
     //pImage->Fill(-1);
-    pImage->SetOutsideValue(  tmp->GetMinValue() - 1 );
+    pImage->SetOutsideValue( tmp->GetMinValue() - 1 );
     pImage->Fill(pImage->GetOutsideValue() );
+
     int i,j,k;
     for (k=0;k<res.z()-2;k++)
       for (j=0;j<res.y()-2;j++)
-	for (i=0;i<res.x()-2;i++)
-	  pImage->SetValue(i+1,j+1,k+1,tmp->GetValue(i,j,k));
+        for (i=0;i<res.x()-2;i++)
+          pImage->SetValue(i+1,j+1,k+1,tmp->GetValue(i,j,k));
 
     delete tmp;
   }
   else {
     pImage = tmp;
-    pImage->SetOutsideValue(  pImage->GetMinValue() - 1 );
+    pImage->SetOutsideValue( pImage->GetMinValue() - 1 );
   }
 
   // Set volume origin from the image origin
@@ -289,6 +290,8 @@ void GateVImageVolume::LoadImage(bool add1VoxelMargin)
 /// Loads the LabelToMaterial file
 void GateVImageVolume::LoadImageMaterialsTable()
 {
+  GateMessageInc("Volume",4,"Begin GateVImageVolume::LoadImageMaterialsTable("<<mImageFilename<<")\n");
+
   if (mLoadImageMaterialsFromHounsfieldTable) {
     LoadImageMaterialsFromHounsfieldTable();
   }
@@ -298,6 +301,8 @@ void GateVImageVolume::LoadImageMaterialsTable()
   }
   GateMessage("Volume", 1, "Number of different materials in the image "
               << mImageFilename << " : " << mLabelToMaterialName.size() << Gateendl);
+
+  GateMessageDec("Volume",4,"End GateVImageVolume::LoadImageMaterialsTable("<<mImageFilename<<")\n");
 }
 //--------------------------------------------------------------------
 
@@ -334,33 +339,51 @@ void GateVImageVolume::LoadImageMaterialsFromHounsfieldTable()
   G4String parentMat = GetParentVolume()->GetMaterialName();
   mHounsfieldMaterialTable.AddMaterial(pImage->GetOutsideValue(),pImage->GetOutsideValue(),parentMat);
 
-  double low = 1e6; //must start oppositely for the comparisons to work.
+  double low  =  1e6; //must start oppositely for the comparisons to work.
   double high = -1e6;
   while (is) {
     skipComment(is);
     double h1,h2;
+    G4String n;
 
     is >> h1;
     is >> h2;
-    G4String n;
     is >> n;
-    low = (h1<low)?h1:low; //set low to h1 if h1 is lower
+
+    low  = (h1<low)?h1:low; //set low to h1 if h1 is lower
     high = (h2>high)?h2:high; //set high to h2 if h2 is higher
+
     if (is) {
-      if(h2> pImage->GetOutsideValue()){
-        if(h1<pImage->GetOutsideValue()+1) h1=pImage->GetOutsideValue()+1;
+      if (h2 > pImage->GetOutsideValue()) {
+        if (h1 < pImage->GetOutsideValue()+1)
+          h1 = pImage->GetOutsideValue()+1;
+
         mHounsfieldMaterialTable.AddMaterial(h1,h2,n);
       }
     }
   }
 
+  low  =  1e6;
+  high = -1e6;
+  GateHounsfieldMaterialTable::GateMaterialsVector vec = mHounsfieldMaterialTable.GetMaterials();
+  for (size_t i=0 ; i < vec.size() ; i++)
+  {
+    GateMessage("Volume",5,"h1: " << vec[i].mH1 << ", h2: " << vec[i].mH2 << ", n: " << vec[i].mName  << Gateendl);
+
+    low  = (vec[i].mH1<low )?vec[i].mH1:low; //set low to h1 if h1 is lower
+    high = (vec[i].mH2>high)?vec[i].mH2:high; //set high to h2 if h2 is higher
+  }
+
   // Bounds check
-  if(pImage->GetMinValue() < low || pImage->GetMaxValue() > high){
+  GateMessage("Volume",5,"ImageMinValue: " << pImage->GetMinValue() << ", ImageMaxValue: " << pImage->GetMaxValue() << Gateendl);
+  GateMessage("Volume",5,"HUMinValue   : " << low << ", HUMaxValue: " << high << Gateendl);
+
+  if(pImage->GetMinValue() < low || pImage->GetMaxValue() > high) {
       GateError("The image contains HU indices out of range of the HU range found in " <<
-            mHounsfieldToImageMaterialTableFilename <<
-            "\nmin, max:" << low << ", " << high <<
-            ".\nmin, max in image: " << pImage->GetMinValue() << ", " << pImage->GetMaxValue() <<
-            "\nAbort.\n");
+            mHounsfieldToImageMaterialTableFilename << Gateendl <<
+            "HU    min, max: " << low << ", " << high << Gateendl <<
+            "Image min, max: " << pImage->GetMinValue() << ", " << pImage->GetMaxValue() << Gateendl <<
+            "Abort." << Gateendl);
   }
   //  if (mHounsfieldMaterialTable.GetNumberOfMaterials() == 0) {
   if (mHounsfieldMaterialTable.GetNumberOfMaterials() == 1 ) {//there is a default mat = worldDefaultAir

@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+ Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+ This software is distributed under the terms
+ of the GNU Lesser General  Public Licence (LGPL)
+ See GATE/LICENSE.txt for further details
+ ----------------------*/
 
 #include "GateConfiguration.h"
 
@@ -31,126 +31,183 @@ class G4TouchableHistory;
 class GateVSystem;
 class GateARFSDMessenger;
 
-
 /*! \class  GateARFSD
-    \brief  The GateARFSD is a sensitive detector , derived from G4VSensitiveDetector, 
-    \brief  to be attached to one or more volumes of a scanner
-    
-    - GateVolumeID - by Giovanni.Santin@cern.ch
-    
-    - A GateGeomColliSD can be attached to one or more volumes of a scanner. These volumes are
-      essentially meant to be scintillating elements (crystals) but the GateGeomColliSD can also be
-      attached to non-scintillating elements such as collimators, shields or septa.
-      
-    - A GateGeomColliSD can be attached only to those volumes that belong to a system (i.e. that
-      are connected to an object derived from GateVSystem). Once a GateGeomColliSD has been attached
-      to a volume that belongs to a given system, it is considered as attached to this system, and 
-      can be attached only to volumes that belong to the same system.
-      
-    - The GateGeomColliSD generates hits of the class GateCrystalHit, which are stored in a regular
-      hit collection.
-*/      
+ \brief  The GateARFSD is a sensitive detector , derived from G4VSensitiveDetector,
+ \brief  to be attached to one or more volumes of a scanner
+
+ - GateVolumeID - by Giovanni.Santin@cern.ch
+
+ - A GateGeomColliSD can be attached to one or more volumes of a scanner. These volumes are
+ essentially meant to be scintillating elements (crystals) but the GateGeomColliSD can also be
+ attached to non-scintillating elements such as collimators, shields or septa.
+
+ - A GateGeomColliSD can be attached only to those volumes that belong to a system (i.e. that
+ are connected to an object derived from GateVSystem). Once a GateGeomColliSD has been attached
+ to a volume that belongs to a given system, it is considered as attached to this system, and
+ can be attached only to volumes that belong to the same system.
+
+ - The GateGeomColliSD generates hits of the class GateCrystalHit, which are stored in a regular
+ hit collection.
+ */
 class GateVVolume;
 class GateARFTableMgr;
 
 class GateARFData
-{ public :
-      G4double m_Edep; // deposited energy
-      G4double m_Y, m_X; // porjection position on the detection plane
-};
+  {
+public:
+  G4double mDepositedEnergy; // deposited energy
+  G4double mProjectionPositionY;
+  G4double mProjectionPositionX; // porjection position on the detection plane
+  };
 
-class GateARFSD : public G4VSensitiveDetector
-{
+class GateARFSD: public G4VSensitiveDetector
+  {
 
-  public:
-      //! Constructor.
-      //! The argument is the name of the sensitive detector
-      GateARFSD(const G4String& pathname, G4String aName );
-      //! Destructor
-      ~GateARFSD();
+public:
+  //! Constructor.
+  //! The argument is the name of the sensitive detector
+  GateARFSD(const G4String& pathname, const G4String & aName);
+  //! Destructor
+  ~GateARFSD();
 
-      //! Method overloading the virtual method Initialize() of G4VSensitiveDetector
-      void Initialize(G4HCofThisEvent*HCE);
-      
-      //! Implementation of the pure virtual method ProcessHits().
-      //! This methods generates a GateCrystalHit and stores it into the SD's hit collection
-      G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
+  //! Method overloading the virtual method Initialize() of G4VSensitiveDetector
+  void Initialize(G4HCofThisEvent*HCE);
 
-      //! Tool method returning the name of the hit-collection where the crystal hits are stored
-      static inline const G4String& GetCrystalCollectionName()
-         { return theARFCollectionName; }
+  //! Implementation of the pure virtual method ProcessHits().
+  //! This methods generates a GateCrystalHit and stores it into the SD's hit collection
+  G4bool ProcessHits(G4Step*aStep, G4TouchableHistory*ROhist);
 
-      //! Returns the system to which the SD is attached   
-      inline GateVSystem* GetSystem()
-         { return m_system;}
-      //! Set the system to which the SD is attached
-      void SetSystem(GateVSystem* aSystem);
+  //! Tool method returning the name of the hit-collection where the crystal hits are stored
+  static inline const G4String& GetCrystalCollectionName()
+    {
+    return mArfHitCollectionName;
+    }
 
-      G4String GetName(){ return m_name; };
+  //! Returns the system to which the SD is attached
+  inline GateVSystem* GetSystem()
+    {
+    return mSystem;
+    }
+  //! Set the system to which the SD is attached
+  void SetSystem(GateVSystem* aSystem);
 
-      G4int PrepareCreatorAttachment(GateVVolume* aCreator);
+  G4String GetName()
+    {
+    return mName;
+    }
+  ;
 
-      inline void setEnergyDepositionThreshold(G4double aT){m_edepthreshold = aT;};
-      void SetInserter( GateVVolume* aInserter ){ m_inserter = aInserter; };
-      GateVVolume* GetInserter() { return m_inserter;}; 
+  G4int PrepareCreatorAttachment(GateVVolume* aCreator);
 
-      void computeTables();
+  inline void setEnergyDepositionThreshold(G4double aT)
+    {
+    mEnergyDepositionThreshold = aT;
+    }
+  ;
+  void SetInserter(GateVVolume* aInserter)
+    {
+    mInserter = aInserter;
+    }
+  ;
+  GateVVolume* GetInserter()
+    {
+    return mInserter;
+    }
+  ;
 
-      void AddNewEnergyWindow( G4String basename, G4int NFiles){ m_EnWin.insert( make_pair( basename,NFiles) ); };
+  void computeTables();
 
-      void ComputeProjectionSet(G4ThreeVector, G4ThreeVector, G4double );
+  void AddNewEnergyWindow(const G4String & basename, const G4int & NFiles)
+    {
+    mEnergyWindows.push_back(basename);
+    mEnergyWindowsNumberOfPrimaries.push_back(NFiles);
+    }
+  ;
 
-      void SetDepth(G4double aDepth){m_XPlane = aDepth;}
+  void ComputeProjectionSet(const G4ThreeVector & position,
+                            const G4ThreeVector & direction,
+                            const G4double & energy,
+                            const G4double & weight,
+                            bool addEmToArfCount = false,
+                            unsigned int newHead = 1);
 
-      G4int GetCopyNo(){return headID;};
-      void SetCopyNo(G4int aID){ headID = aID; };
+  void SetDepth(const G4double & aDepth)
+    {
+    mDetectorXDepth = aDepth;
+    }
 
-      void SetStage( G4int I ){ m_ARFStage = I; };
-      G4int GetStage(){ return m_ARFStage; };
-      
-      protected:
-      GateVSystem* m_system;                       //! System to which the SD is attached
+  G4double GetDepth()
+    {
+    return mDetectorXDepth;
+    }
 
-  private:
-      GateCrystalHitsCollection * ARFCollection;  //! Hit collection
-      
-      static const G4String theARFCollectionName; //! Name of the hit collection
+  void SetShortcutARF(const bool & boolean)
+    {
+    mShortcutARF = boolean;
+    }
 
-      GateARFSDMessenger* m_messenger;
+  G4int GetCopyNo()
+    {
+    return mHeadID;
+    }
+  ;
+  void SetCopyNo(const G4int & aID)
+    {
+    mHeadID = aID;
+    }
+  ;
 
-      G4String m_name;
+  void SetStage(const G4int & I)
+    {
+    mArfStage = I;
+    }
+  ;
+  G4int GetStage()
+    {
+    return mArfStage;
+    }
+  ;
 
-      GateVVolume* m_inserter;
+protected:
+  GateVSystem* mSystem;                       //! System to which the SD is attached
 
-      GateARFTableMgr* m_ARFTableMgr; // this manages the ARF tables for this ARF Sensitive Detector
+private:
+  GateCrystalHitsCollection * mArfHitCollection;  //! Hit collection
+  static const G4String mArfHitCollectionName; //! Name of the hit collection
+  GateARFSDMessenger* mMessenger;
+  G4String mName;
+  GateVVolume* mInserter;
+  GateARFTableMgr* mArfTableMgr; // this manages the ARF tables for this ARF Sensitive Detector
+  TFile* mFile;
+  TTree* mSinglesTree;
+  TTree* mNbOfPhotonsTree;
 
-      TFile* m_file;
-      TTree* m_singlesTree;
-      TTree* m_NbOfPhotonsTree;
+  ULong64_t mNbOfSourcePhotons;
+  ULong64_t mNbOfSimuPhotons;
+  ULong64_t mNbofGoingOutPhotons;
+  ULong64_t mNbofGoingInPhotons;
+  ULong64_t mNbofStraightPhotons;
+  ULong64_t mNbofStoredPhotons;
+  ULong64_t mNbOfGoodPhotons;
+  ULong64_t mInCamera;
+  ULong64_t mOutCamera;
 
-      ULong64_t NbOfSourcePhotons, NbOfSimuPhotons, NbofGoingOutPhotons, NbofGoingInPhotons, NbofStraightPhotons;
-      ULong64_t NbofStoredPhotons;
-      ULong64_t NbOfGoodPhotons,IN_camera,OUT_camera;
+  long unsigned int mNbOfRejectedPhotons;
 
-      long unsigned int m_NbOfRejectedPhotons;
+  GateARFData mArfData;
 
-      ULong64_t nbofGoingIn;
+  GateProjectionSet* mProjectionSet;
+  G4int mHeadID;
+  G4int mNbOfHeads;
 
-      GateARFData  theData;
+  G4double mDetectorXDepth; // depth of the detector ( x length )
 
-      GateProjectionSet* theProjectionSet;
-      G4int headID;
-      G4int NbOfHeads;
-
-      G4double m_XPlane; // depth of the detector ( x length )
-
-     std::map< G4String, G4int > m_EnWin;
-     G4double m_edepthreshold;
-     G4int m_ARFStage;
-};
-
-
-
+  std::vector<G4String> mEnergyWindows;
+  std::vector<G4int> mEnergyWindowsNumberOfPrimaries;
+  G4double mEnergyDepositionThreshold;
+  G4int mArfStage;
+  bool mShortcutARF;
+  };
 
 #endif
 

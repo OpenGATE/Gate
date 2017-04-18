@@ -36,6 +36,9 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
   pImportMassImageCmd= 0;
   pExportMassImageCmd= 0;
 
+  pVolumeFilterCmd= 0;
+  pMaterialFilterCmd= 0;
+
   BuildCommands(baseName+sensor->GetObjectName());
 }
 //-----------------------------------------------------------------------------
@@ -60,6 +63,9 @@ GateDoseActorMessenger::~GateDoseActorMessenger()
   if(pSetDoseAlgorithmCmd) delete pSetDoseAlgorithmCmd;
   if(pImportMassImageCmd) delete pImportMassImageCmd;
   if(pExportMassImageCmd) delete pExportMassImageCmd;
+
+  if(pVolumeFilterCmd) delete pVolumeFilterCmd;
+  if(pMaterialFilterCmd) delete pMaterialFilterCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -150,6 +156,19 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   guid = G4String("Export mass image");
   pExportMassImageCmd->SetGuidance(guid);
   pExportMassImageCmd->SetParameterName("Export mass image",false);
+
+
+  n = base+"/setVolumeFilter";
+  pVolumeFilterCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Volume filter");
+  pVolumeFilterCmd->SetGuidance(guid);
+  pVolumeFilterCmd->SetParameterName("Volume filter",false);
+
+  n = base+"/setMaterialFilter";
+  pMaterialFilterCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Material filter");
+  pMaterialFilterCmd->SetGuidance(guid);
+  pMaterialFilterCmd->SetParameterName("Material filter",false);
 }
 //-----------------------------------------------------------------------------
 
@@ -175,6 +194,9 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pSetDoseAlgorithmCmd) pDoseActor->SetDoseAlgorithmType(newValue);
   if (cmd == pImportMassImageCmd) pDoseActor->ImportMassImage(newValue);
   if (cmd == pExportMassImageCmd) pDoseActor->ExportMassImage(newValue);
+
+  if (cmd == pVolumeFilterCmd) pDoseActor->VolumeFilter(newValue);
+  if (cmd == pMaterialFilterCmd) pDoseActor->MaterialFilter(newValue);
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }

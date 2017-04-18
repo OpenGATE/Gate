@@ -12,7 +12,8 @@
   \class  GateSourceOfPromptGammaData
 
   Manage a 3D distribution of prompt gamma, with 1 energy spectrum at
-  each voxel.
+  each voxel, stored as TH1D. For voxels with yield==0, the TH1D is not
+  instantiated/allocated.
 
 */
 
@@ -40,7 +41,8 @@ public:
 
   void LoadData(std::string mFilename);
   void Initialize();
-  double ComputeSum() { return mImage->ComputeSum(); }
+  double computesum;
+  double ComputeSum() { return computesum; }
 
 protected:
   // The 3D prompt gamma distribution

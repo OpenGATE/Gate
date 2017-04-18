@@ -28,6 +28,8 @@
 #include "GateIAEAUtilities.h"
 #include "GateSourceMgr.hh"
 
+#include <G4EmCalculator.hh>
+
 #include "G4ParticleTable.hh"
 
 // --------------------------------------------------------------------
@@ -36,7 +38,9 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   GateDebugMessageInc("Actor", 4, "GatePhaseSpaceActor() -- begin\n");
 
   pMessenger = new GatePhaseSpaceActorMessenger(this);
-
+  EnableCharge = true;
+  EnableElectronicDEDX = false;
+  EnableTotalDEDX = false;
   EnableXPosition = true;
   EnableYPosition = true;
   EnableZPosition = true;
@@ -50,7 +54,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   EnableWeight = true;
   EnableTime = false;
   EnableLocalTime = false;
-  EnableMass = false;
+  EnableMass = true;
   EnableSec = false;
   mIsFistStep = true;
   mUseVolFrame = false;
@@ -74,6 +78,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   pIAEAheader = 0;
   mFileSize = 0;
   GateDebugMessageDec("Actor", 4, "GatePhaseSpaceActor() -- end\n");
+  
+  emcalc = new G4EmCalculator;
 }
 // --------------------------------------------------------------------
 
@@ -102,7 +108,7 @@ void GatePhaseSpaceActor::Construct() {
   EnableBeginOfEventAction(false);
 
   // bEnableEmissionPoint=true;
-  if (bEnablePrimaryEnergy || bEnableEmissionPoint) EnableBeginOfEventAction(true);
+  if (bEnablePrimaryEnergy || bEnableEmissionPoint || bEnableSpotID) EnableBeginOfEventAction(true);
 
   EnablePreUserTrackingAction(true);
   EnableUserSteppingAction(true);
@@ -121,10 +127,18 @@ void GatePhaseSpaceActor::Construct() {
 
     if (GetMaxFileSize() != 0) pListeVar->SetMaxTreeSize(GetMaxFileSize());
 
+    if (EnableCharge) pListeVar->Branch("AtomicNumber", &Za, "AtomicNumber/I");
+    if (EnableElectronicDEDX) pListeVar->Branch("ElectronicDEDX", &elecDEDX, "elecDEDX/F");
+    if (EnableElectronicDEDX) pListeVar->Branch("StepLength", &stepLength, "stepLength/F");
+    if (EnableElectronicDEDX) pListeVar->Branch("Edep", &edep, "Edep/F");
+    if (EnableTotalDEDX) pListeVar->Branch("TotalDEDX", &totalDEDX, "totalDEDX/F");
+    
     if (EnableEkine) pListeVar->Branch("Ekine", &e, "Ekine/F");
+    if (EnableElectronicDEDX) pListeVar->Branch("Ekpost", &ekPost, "Ekpost/F");
+    if (EnableElectronicDEDX) pListeVar->Branch("Ekpre", &ekPre, "Ekpre/F");
     if (EnableWeight) pListeVar->Branch("Weight", &w, "Weight/F");
     if (EnableTime || EnableLocalTime) pListeVar->Branch("Time", &t, "Time/F");
-    if (EnableMass) pListeVar->Branch("Mass", &m, "Mass/F"); // in MeV/c2
+    if (EnableMass) pListeVar->Branch("Mass", &m, "Mass/I"); // in MeV/c2
     if (EnableXPosition) pListeVar->Branch("X", &x, "X/F");
     if (EnableYPosition) pListeVar->Branch("Y", &y, "Y/F");
     if (EnableZPosition) pListeVar->Branch("Z", &z, "Z/F");
@@ -135,7 +149,8 @@ void GatePhaseSpaceActor::Construct() {
     if (EnableProdVol && bEnableCompact == false) pListeVar->Branch("ProductionVolume", vol, "ProductionVolume/C");
     if (EnableProdProcess && bEnableCompact == false) pListeVar->Branch("CreatorProcess", creator_process, "CreatorProcess/C");
     if (EnableProdProcess && bEnableCompact == false) pListeVar->Branch("ProcessDefinedStep", pro_step, "ProcessDefinedStep/C");
-    if (bEnableCompact == false) pListeVar->Branch("TrackID", &trackid, "TrackID/I");
+    if (bEnableCompact == false) pListeVar->Branch("TrackID", &trackid, "TrackID/I");   
+    if (bEnableCompact == false) pListeVar->Branch("ParentID", &parentid, "ParentID/I");
     if (bEnableCompact == false) pListeVar->Branch("EventID", &eventid, "EventID/I");
     if (bEnableCompact == false) pListeVar->Branch("RunID", &runid, "RunID/I");
     if (bEnablePrimaryEnergy) pListeVar->Branch("PrimaryEnergy", &bPrimaryEnergy, "primaryEnergy/F");
@@ -321,13 +336,14 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     volumeToWorld = volumeToWorld.NetRotation();
     G4AffineTransform worldToVolume = volumeToWorld.Inverse();
 
-    //old crap:
+    //old crap:stepLength
     //const G4AffineTransform transformation = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame())->GetPhysicalVolume()->GetTouchable()->GetHistory()->GetTopTransform();
     localPosition = worldToVolume.TransformPoint(localPosition);
 
   }
 
   trackid = step->GetTrack()->GetTrackID();
+  parentid = step->GetTrack()->GetParentID();
   eventid = GateRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   runid   = GateRunManager::GetRunManager()->GetCurrentRun()->GetRunID();
 
@@ -395,8 +411,30 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
   //---------Write energy of step present at the simulation--------------------------
   e = stepPoint->GetKineticEnergy();
+  ekPost=step->GetPostStepPoint()->GetKineticEnergy();
+  ekPre=step->GetPreStepPoint()->GetKineticEnergy();
 
+  Za = step->GetTrack()->GetDefinition()->GetAtomicNumber();//std::floor(stepPoint->GetCharge()+0.1);  //floor & +0.1 to avoid round off error
   m = step->GetTrack()->GetDefinition()->GetAtomicMass();
+  
+  if (EnableElectronicDEDX || EnableTotalDEDX) 
+  {
+	  G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName();
+	  G4double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
+	  G4double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
+	  G4double energy=(energy1+energy2)/2;
+	  G4ParticleDefinition* partname = step->GetTrack()->GetDefinition();//->GetParticleName();
+	  
+	  elecDEDX = emcalc->ComputeElectronicDEDX(energy, partname, material);
+	  stepLength=step->GetStepLength();
+		  
+	  edep = step->GetTotalEnergyDeposit()*w;
+	  totalDEDX = emcalc->ComputeTotalDEDX(energy, partname, material);
+  }
+  
+  //elecDEDX= 1.;
+  //totalDEDX=2.;
+  
   //G4cout << st << " " << step->GetTrack()->GetDefinition()->GetAtomicMass() << " " << step->GetTrack()->GetDefinition()->GetPDGMass() << Gateendl;
 
   //----------Process name at origin Track--------------------
@@ -423,7 +461,7 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     else if ( pdg == 11) pIAEARecordType->particle = 2; // electron
     else if ( pdg == -11) pIAEARecordType->particle = 3; // positron
     else if ( pdg == 2112) pIAEARecordType->particle = 4; // neutron
-    else if ( pdg == 2122) pIAEARecordType->particle = 5; // proton
+    else if ( pdg == 2212) pIAEARecordType->particle = 5; // proton
     else GateError("Actor phase space: particle not available in IAEA format." );
 
     pIAEARecordType->energy = e;

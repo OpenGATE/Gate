@@ -10,7 +10,6 @@
 
 #include "GateConfiguration.h"
 
-#ifdef G4ANALYSIS_USE_ROOT
 #include "G4Event.hh"
 #include "globals.hh"
 #include "G4VPrimaryGenerator.hh"
@@ -21,6 +20,7 @@
 #include "G4ParticleMomentum.hh"
 #include <iomanip>
 #include <vector>
+#include <string>
 
 #include "GateVSource.hh"
 #include "GateSourceTPSPencilBeamMessenger.hh"
@@ -32,9 +32,8 @@
 #include "CLHEP/Matrix/Vector.h"
 #include "CLHEP/Matrix/SymMatrix.h"
 #include "GateRandomEngine.hh"
-#include "TMath.h"
 
-void ReadLineTo3Doubles(double *toto, char *oneline);
+void ReadLineTo3Doubles(double *toto, const std::string &oneline);
 
 //------------------------------------------------------------------------------------------------------
 class GateSourceTPSPencilBeam : public GateVSource
@@ -54,8 +53,10 @@ public:
   void SetParticleType(G4String ParticleType) {strcpy(mParticleType, ParticleType);}
   //Test Flag
   void SetTestFlag(bool b) {mTestFlag=b;}
+  //Temporary Flag to switch between old and new style vertex generation
+  void SetOldStyleFlag(bool b) {mOldStyleFlag=b;}
   //Treatment Plan file
-  void SetPlan(string plan) {mPlan=plan;}
+  void SetPlan(std::string plan) {mPlan=plan;}
   //FlatGenerationFlag
   void SetGeneFlatFlag(bool b) {mFlatGenerationFlag=b;}
   //Pencil beam parameters calculation
@@ -86,17 +87,25 @@ public:
   //Convergent or divergent beam model
   void SetBeamConvergence(bool c) {mConvergentSource=c;}
   int GetCurrentSpotID() {return mCurrentSpot;}
+  int GetTotalNumberOfSpots() {return mTotalNumberOfSpots;}
+  int GetCurrentLayerID() {return mCurrentLayer;}
+  int GetTotalNumberOfLayers() {return mTotalNumberOfLayers;}
 
 protected:
+
+  void ConfigurePencilBeam();
 
   GateSourceTPSPencilBeamMessenger * pMessenger;
 
   bool mIsInitialized;
   int mCurrentSpot, mTotalNumberOfSpots;
+  int mCurrentLayer, mTotalNumberOfLayers;
+  double mTotalNbProtons;
   bool mIsASourceDescriptionFile;
   G4String mSourceDescriptionFile;
 
-  vector<GateSourcePencilBeam*> mPencilBeams;
+  std::vector<GateSourcePencilBeam*> mPencilBeams;
+  GateSourcePencilBeam* mPencilBeam; // new style vertex generation uses only one pencil beam
   double mDistanceSMXToIsocenter;
   double mDistanceSMYToIsocenter;
   double mDistanceSourcePatient;
@@ -104,6 +113,8 @@ protected:
   char mParticleType[64];
   //Test flag (for verbosity)
   bool mTestFlag;
+  //Old style flag (temporary, for debugging new pencil beam vertex generation)
+  bool mOldStyleFlag;
   //Treatment Plan file
   G4String mPlan;
   //Others
@@ -113,21 +124,28 @@ protected:
   bool mFlatGenerationFlag;
   double *mPDF;
   RandGeneral * mDistriGeneral;
-  //Not alloweed fields
-  vector<int> mNotAllowedFields;
+  //Disallowed fields
+  std::vector<int> mNotAllowedFields;
   //Allowed fields
-  vector<int> mAllowedFields;
+  std::vector<int> mAllowedFields;
   //clinical beam parameters (polynomial equations)
-  vector<double> mEnergy, mEnergySpread, mX, mY, mTheta, mPhi, mXThetaEmittance, mYPhiEmittance;
+  std::vector<double> mEnergy, mEnergySpread, mX, mY, mTheta, mPhi, mXThetaEmittance, mYPhiEmittance;
   //Configuration of spot intensity
   bool mSpotIntensityAsNbProtons;
   //Convergent or divergent beam model
   bool mConvergentSource;
   int mSelectedLayerID;
   int mSelectedSpot;
+  std::vector<int> mSpotLayer; //in which layer is this spot?
+  std::vector<double> mSpotEnergy;
+  std::vector<double> mSpotWeight; // (proportional to) the expected number (for each bin in a multinomial distribution)
+  std::vector<int> mNbProtonsToGenerate; // the actual number (for each bin in a multinomial distribution)
+  std::vector<G4ThreeVector> mSpotPosition, mSpotRotation;
+private:
+  void OldGenerateVertex( G4Event* );
+  void NewGenerateVertex( G4Event* );
 };
 //------------------------------------------------------------------------------------------------------
 
-
-#endif
+// vim: ai sw=2 ts=2 et
 #endif

@@ -1,0 +1,3 @@
+diff_stat spect_projection.hdr
+diff spect_projection.sin
+diff_stat stat-spect.txt

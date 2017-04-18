@@ -44,14 +44,14 @@ ENDIF()
 
 #=========================================================
 # Refuse to build with MT geant4, allow dev override
-OPTION(GATE_ALLOW_MT_GEANT4 "Allow multithreaded geant4 (for MT Gate development)" OFF)
-IF(Geant4_multithreaded_FOUND)
-    IF(GATE_ALLOW_MT_GEANT4)
-        MESSAGE(WARNING "GATE does not yet work correctly with multithreaded Geant4, proceed with caution...")
-    ELSE()
-        MESSAGE(FATAL_ERROR "GATE should be compiled with a non-multithreaded installation of Geant4")
-    ENDIF()
-ENDIF()
+#OPTION(GATE_ALLOW_MT_GEANT4 "Allow multithreaded geant4 (for MT Gate development)" OFF)
+#IF(Geant4_multithreaded_FOUND)
+    #IF(GATE_ALLOW_MT_GEANT4)
+        #MESSAGE(WARNING "GATE does not yet work correctly with multithreaded Geant4, proceed with caution...")
+    #ELSE()
+        #MESSAGE(FATAL_ERROR "GATE should be compiled with a non-multithreaded installation of Geant4")
+    #ENDIF()
+#ENDIF()
 
 # Check if OpenGL headers are still available
 IF(Geant4_qt_FOUND OR Geant4_vis_opengl_x11_FOUND)
@@ -70,8 +70,8 @@ STRING(REGEX REPLACE "(.*)[.](.*)[.](.*)" "\\3" G4VERSION_PATCH ${Geant4_VERSION
 #MESSAGE(${G4VERSION_MAJOR})
 #MESSAGE(${G4VERSION_MINOR})
 #MESSAGE(${G4VERSION_PATCH})
-IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.1 AND NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.2)
-  MESSAGE("Warning! GATE version 7.2 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.1 or 10.2 distribution instead.")
+IF(NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.2 AND NOT ${G4VERSION_MAJOR}.${G4VERSION_MINOR} EQUAL 10.3)
+  MESSAGE("Warning! GATE version 8.0 is not validated for Geant4 ${G4VERSION_MAJOR}.${G4VERSION_MINOR} distribution. Please use Geant4 10.2 or 10.3 distribution instead.")
 ENDIF()
 
 #=========================================================
@@ -80,16 +80,18 @@ SET(GATE_USE_ROOT ON)
 SET(GATE_ANALYSIS_USE_GENERAL ON)
 SET(GATE_ANALYSIS_USE_FILE ON)
 
-OPTION(GATE_USE_STDC11 "Use the c++11 standard in the compilation" OFF)
+OPTION(GATE_USE_STDC11 "Use the c++11 standard in the compilation" ON)
 OPTION(GATE_USE_OPTICAL "Gate use optical photon" OFF)
+OPTION(GATE_USE_DAVIS "Gate use Davis LUT model" OFF)
 OPTION(GATE_USE_LMF "Gate use LMF" OFF)
 OPTION(GATE_USE_ECAT7 "Gate use ECAT7" OFF)
 OPTION(GATE_USE_SYSTEM_CLHEP "If 'ON', Gate does not use the standard CLHEP of GEANT4. Use OFF if you compile G4 with embedded CLHEP" OFF)
-OPTION(GATE_USE_GPU "Gate use GPU (voxelized src and tracking), need CUDA " OFF)
+OPTION(GATE_USE_GPU "Gate use GPU (voxelized source and tracking), need CUDA " OFF)
+
 #=========================================================
 # RTK / ITK
 option(GATE_USE_RTK "Use the Reconstruction Toolkit (RTK, requires also ITK)" OFF)
-option(GATE_USE_ITK "Use the Insight Toolkit (ITK, required by RTK)" OFF)
+option(GATE_USE_ITK "Use the Insight Toolkit (ITK, required by RTK, DICOM reader and thermal therapy capability)" OFF)
 
 #=========================================================
 # ROOT
@@ -113,6 +115,12 @@ IF(GATE_USE_OPTICAL)
   INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
   SET(LINK_DIRECTORIES ${LIBXML2_LIBRARIES})
 ENDIF(GATE_USE_OPTICAL)
+
+#=========================================================
+# Option for Davis model
+IF(GATE_USE_DAVIS)
+  MESSAGE("Warning! You have to install a manually modified version of Geant4 to use the Davis LUT model. Please refer to http://wiki.opengatecollaboration.org/index.php/Enabling_LUT_Davis_Model for detailed step-by-step compiling instructions")
+ENDIF(GATE_USE_DAVIS)
 
 #=========================================================
 # Option for Clhep use
@@ -208,7 +216,7 @@ IF(GATE_USE_RTK)
    INCLUDE(${RTK_USE_FILE})
    STRING(REPLACE "-pedantic" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 ELSEIF(GATE_USE_ITK)
-  FIND_PACKAGE(ITK REQUIRED)
+  FIND_PACKAGE(ITK 4.9 REQUIRED)
   INCLUDE(${ITK_USE_FILE})
   STRING(REPLACE "-pedantic" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 ELSE()
@@ -217,7 +225,7 @@ ELSE()
   INCLUDE_DIRECTORIES(
     ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/
     ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/itkzlib
-    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/MetaIO
+    ${PROJECT_SOURCE_DIR}/source/externals/itk-mhd/src
     ${PROJECT_BINARY_DIR}/itk-mhd/)
   SET(ITKMHD_LIBS MetaIO itkzlib)
 ENDIF()
@@ -225,20 +233,20 @@ ENDIF()
 #=========================================================
 # Add the executable, and link it to the Geant4/ROOT/CLHEP/ITK libraries
 IF(GATE_USE_GPU AND CUDA_FOUND)
-  SET(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20;-gencode arch=compute_30,code=sm_30;-use_fast_math;-w;--ptxas-options=-v")
+  SET(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20;-gencode arch=compute_21,code=sm_21;-gencode arch=compute_30,code=sm_30;-gencode arch=compute_32,code=sm_32;-gencode arch=compute_35,code=sm_35;-gencode arch=compute_37,code=sm_37;-gencode arch=compute_50,code=sm_50;-gencode arch=compute_52,code=sm_52;-gencode arch=compute_53,code=sm_53;-gencode arch=compute_60,code=sm_60;-gencode arch=compute_61,code=sm_61;-use_fast_math;-w;--ptxas-options=-v")
   CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
 ELSE(GATE_USE_GPU AND CUDA_FOUND)
   ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
 ENDIF(GATE_USE_GPU AND CUDA_FOUND)
 
-TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${ITK_LIBRARIES} ${RTK_LIBRARIES} pthread)
+TARGET_LINK_LIBRARIES(Gate ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${CLHEP_LIBRARIES} ${LIBXML2_LIBRARIES} ${LMF_LIBRARY} ${ECAT7_LIBRARY} ${RTK_LIBRARIES} ${ITK_LIBRARIES} pthread)
 
 #=========================================================
 INSTALL(TARGETS Gate DESTINATION bin)
 
 #=========================================================
 option(GATE_DOWNLOAD_BENCHMARKS_DATA "Download the missing binary data to run gate benchmarks" OFF)
-option(GATE_DOWNLOAD_EXAMPLES_DATA "Download the missing binary data to run gate examples" OFF)
+#option(GATE_DOWNLOAD_EXAMPLES_DATA "Download the missing binary data to run gate examples" OFF)
 IF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
   INCLUDE(cmake-modules/GateExternalData.cmake)
 ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA OR GATE_DOWNLOAD_EXAMPLES_DATA)
@@ -246,10 +254,10 @@ IF(GATE_DOWNLOAD_BENCHMARKS_DATA)
   ADD_SUBDIRECTORY(benchmarks)
   ExternalData_add_target(GateBenchmarkData)
 ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA)
-IF(GATE_DOWNLOAD_EXAMPLES_DATA)
-  ADD_SUBDIRECTORY(examples)
-  ExternalData_add_target(GateExampleData)
-ENDIF(GATE_DOWNLOAD_EXAMPLES_DATA)
+#IF(GATE_DOWNLOAD_EXAMPLES_DATA)
+  #ADD_SUBDIRECTORY(examples)
+  #ExternalData_add_target(GateExampleData)
+#ENDIF(GATE_DOWNLOAD_EXAMPLES_DATA)
 #=========================================================
 
 

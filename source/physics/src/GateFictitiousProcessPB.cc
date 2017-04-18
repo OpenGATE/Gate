@@ -8,6 +8,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateFictitiousProcessPB.hh"
 #include "G4FastSimulationManagerProcess.hh"
+#include "G4SystemOfUnits.hh"
 
 #include "GateEMStandardProcessMessenger.hh"
 

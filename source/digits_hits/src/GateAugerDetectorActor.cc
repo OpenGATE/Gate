@@ -15,8 +15,10 @@
 GateAugerDetectorActor::GateAugerDetectorActor(G4String name, G4int depth)
   : GateVActor(name,depth)
 {
+  min_time_of_flight = 0*ns;
   max_time_of_flight = 10*ns;
-  min_energy_deposition = 2*MeV;
+  min_energy_deposition = 1*MeV;
+  max_energy_deposition = 8*MeV;
   projection_direction = G4ThreeVector(1,0,0);
   profile_min = -160*mm;
   profile_max = 160*mm;
@@ -35,6 +37,13 @@ GateAugerDetectorActor::~GateAugerDetectorActor()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+void GateAugerDetectorActor::setMinTOF(G4double tof)
+{
+  min_time_of_flight = tof;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 void GateAugerDetectorActor::setMaxTOF(G4double tof)
 {
   max_time_of_flight = tof;
@@ -45,6 +54,13 @@ void GateAugerDetectorActor::setMaxTOF(G4double tof)
 void GateAugerDetectorActor::setMinEdep(G4double edep)
 {
   min_energy_deposition = edep;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+void GateAugerDetectorActor::setMaxEdep(G4double edep)
+{
+  max_energy_deposition = edep;
 }
 //-----------------------------------------------------------------------------
 
@@ -103,7 +119,7 @@ void GateAugerDetectorActor::Construct()
   pEnergyDepositionHisto = new TH1D("edepHisto","energy deposited",500,0,5);
   pEnergyDepositionHisto->SetXTitle("deposited energy (MeV)");
 
-  pTimeOfFlightHisto = new TH1D("tofHisto","time of flight",500,0,max_time_of_flight);
+  pTimeOfFlightHisto = new TH1D("tofHisto","time of flight",500,min_time_of_flight,max_time_of_flight);
   pTimeOfFlightHisto->SetXTitle("time of flight (ns)");
 
   ResetData();
@@ -149,12 +165,17 @@ void GateAugerDetectorActor::EndOfEventAction(const G4Event*)
   pTimeOfFlightHisto->Fill(GetWeighedBarycenterTime()/ns);
 
   if (total_deposited_energy < min_energy_deposition) return;
+  if (total_deposited_energy > max_energy_deposition) return;
   const G4ThreeVector hit_position = GetWeighedBarycenterPosition();
   const G4double noise_projection = G4RandGauss::shoot(0,profile_noise_fwhm/GateConstants::fwhm_to_sigma);
-  //G4cout << "HITTTTTED!!!!!\n";
+  //G4cout << "HIT!!!!!\n";
   //G4cout << "ndep = " << depositions.size() << " total_edep = " << total_deposited_energy << Gateendl;
   //G4cout << "position = " << hit_position << Gateendl;
-  pProfileHisto->Fill((projection_direction.dot(hit_position)+noise_projection)/mm);
+  double pos = (projection_direction.dot(hit_position)+noise_projection)/mm;
+  pProfileHisto->Fill(pos);
+  
+  //DD( hit_position.x()  )
+  //DD(  pos )
 }
 //-----------------------------------------------------------------------------
 
@@ -174,10 +195,20 @@ void GateAugerDetectorActor::PostUserTrackingAction(const GateVVolume*, const G4
 void GateAugerDetectorActor::UserSteppingAction(const GateVVolume*, const G4Step* step)
 {
   const G4double time = step->GetPostStepPoint()->GetGlobalTime();
+  if (time<min_time_of_flight) return;
   if (time>max_time_of_flight) return;
-
+  
+  //2016-02-16: For LOCAL coords a transform MUST be made, see PhaseSpaceActor.cc:309-312
+  //also see http://geant4.cern.ch/support/faq.shtml#a-geom-4
+  G4ThreeVector worldPosition = (step->GetPostStepPoint()->GetPosition()+step->GetPreStepPoint()->GetPosition())/2.;
+  const G4AffineTransform transformation = step->GetPreStepPoint()->GetTouchable()->GetHistory()->GetTopTransform();
+  G4ThreeVector localPosition = transformation.TransformPoint(worldPosition);
+  
+  //DD(worldPosition.x());
+  //DD(localPosition.x());
+  
   AugerDeposition deposition;
-  deposition.position = (step->GetPostStepPoint()->GetPosition()+step->GetPreStepPoint()->GetPosition())/2.;
+  deposition.position = localPosition;
   deposition.energy = step->GetTotalEnergyDeposit();
   deposition.time = time;
   if (deposition.energy <= 0) return;

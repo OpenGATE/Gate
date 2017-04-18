@@ -186,8 +186,8 @@ std::ostream& operator<<(std::ostream& flux, const GatePulse& pulse)
 	  << "\t\t" << "OutputID      " << pulse.m_outputVolumeID     	      	      	      	      	      	      	       << Gateendl
 	  << "\t\t" << "#Compton      " << pulse.m_nPhantomCompton      	      	      	      	      	      	       << Gateendl
 	  << "\t\t" << "#Rayleigh     " << pulse.m_nPhantomRayleigh      	      	      	      	      	      	       << Gateendl
-      	  << "\t\t" << "scannerPos    [ " << G4BestUnit(pulse.m_scannerPos,"Length")        	      	      	      	<< "]\n"
-      	  << "\t\t" << "scannerRotAngle " << pulse.m_scannerRotAngle/degree           	      	      	      	     << " deg\n"
+      	  << "\t\t" << "scannerPos    [ " << G4BestUnit(pulse.m_scannerPos,"Length")        	      	      	      	<< "]\n" << Gateendl
+      	  << "\t\t" << "scannerRotAngle " << pulse.m_scannerRotAngle/degree           	      	      	      	     << " deg\n" << Gateendl
      	  << "\t-----------------\n";
 
   return flux;
@@ -202,17 +202,15 @@ std::vector<GatePulse*>()
     for (GatePulseConstIterator it=src.begin();it != src.end() ;++it)
     	push_back(new GatePulse( **it ));
 }
+
 GatePulseList::~GatePulseList()
 {
   while (!empty()) {
         delete back();
-        erase(end()-1);
+        pop_back();
+        // erase(end()-1);
   }
 }
-
-
-
-
 
 // Return the min-time of all pulses
 GatePulse* GatePulseList::FindFirstPulse() const
@@ -249,14 +247,15 @@ G4double GatePulseList::ComputeFinishTime() const
 G4double GatePulseList::ComputeEnergy() const
 {
   G4double ans = 0;
-  for ( const_iterator iter = begin(); iter < end() ; ++iter) ans += (*iter)->GetEnergy();
+  for ( const_iterator iter = begin(); iter < end() ; ++iter)
+    ans += (*iter)->GetEnergy();
 
  return ans;
 }
 //Insert a new pulse in the good place wrt it time of arrival
 void GatePulseList::InsertUniqueSortedCopy(GatePulse* newPulse)
 {
-    GatePulseList::iterator it;
+    GatePulseIterator it;
     for (it=this->begin();it!=this->end();it++){
     	if ( (*it)->GetTime()==newPulse->GetTime() ) return;
     	if ( (*it)->GetTime()>newPulse->GetTime()){

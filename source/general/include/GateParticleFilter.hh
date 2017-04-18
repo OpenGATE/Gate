@@ -39,6 +39,7 @@ public:
   virtual G4bool Accept(const G4Track *);
 
   void Add(const G4String &particleName);
+  void AddZ(const G4int &particleZ);
   void AddParent(const G4String &particleName);
   void AddDirectParent(const G4String &particleName);
   // add the particle into acceptable particle list.
@@ -47,6 +48,7 @@ public:
 
 private:
   std::vector<G4String> thePdef;
+  std::vector<G4int> thePdefZ;
   std::vector<G4String> theParentPdef;
   std::vector<G4String> theDirectParentPdef;
   GateParticleFilterMessenger *pPartMessenger;

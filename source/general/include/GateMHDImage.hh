@@ -20,7 +20,7 @@
 #include "GateMessageManager.hh"
 
 // itk (for mhd reader)
-#include "metaObject.h"
+//#include "metaObject.h"
 #include "metaImage.h"
 
 template<class PixelType> class GateImageT;
@@ -40,7 +40,12 @@ public:
   void ReadData(std::string filename, std::vector<PixelType> & data);
 
   template<class PixelType>
-  void WriteHeader(std::string filename, GateImageT<PixelType> * image, bool writeData=false);
+  void WriteHeader(std::string filename,
+                   GateImageT<PixelType> * image,
+                   bool writeData = false,
+                   bool changeExtension = false,
+                   bool isARF = false,
+                   int numberOfARFFFDHeads = 1);
   template<class PixelType>
   void WriteData(std::string filename, GateImageT<PixelType> * image);
 
@@ -55,10 +60,14 @@ protected:
 
   void Print();
   void Read_3_values(std::string tag, double * v);
-  int  Read_tag(std::string tag);
+  int Read_tag(std::string tag);
   void Check_tag_value(std::string tag, std::string value);
   void EraseWhiteSpaces(std::string & s);
-  void GetRawFilename(std::string filename, std::string & f, bool keepFolder);
+  void GetRawFilename(std::string filename,
+                      std::string & f,
+                      bool keepFolder,
+                      bool changeExtension = false);
+  double round_to_digits(double, int);
 
 };
 

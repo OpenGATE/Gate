@@ -34,7 +34,7 @@ GateToImageCT::GateToImageCT( const G4String& name, GateOutputMgr* outputMgr,
   m_system = itsSystem;
 
   //value by default
-  m_seed = 567665;
+  m_seed = -1;
   m_vrtFactor = 0;
   m_fileName = " "; // All default output file from all output modules are set to " ".
   // They are then checked in GateApplicationMgr::StartDAQ, using
@@ -249,7 +249,9 @@ void GateToImageCT::RecordBeginOfAcquisition()
            << Gateendl;
 
   //Seed the random
-  CLHEP::HepRandom::setTheSeed( m_seed );
+  if(m_seed != -1) {
+    CLHEP::HepRandom::setTheSeed( m_seed );
+  }
 
   //Define the number of the first frame, and check the multiplicity of the
   //frame
@@ -611,14 +613,10 @@ void GateToImageCT::RecordStepWithVolume( const GateVVolume*,
                   G4ThreeVector posStep = ( path * momentum + pos );
                   G4Step* newStep = (G4Step*)aStep;
 
-                  G4StepPoint* moveStepPoint = newStep->GetPostStepPoint();
-
-                  moveStepPoint->SetPosition( posStep );
-                  newStep->SetPostStepPoint( moveStepPoint );
+                  newStep->GetPostStepPoint()->SetPosition( posStep );
 
                   const G4TouchableHistory* newTouchable;
-                  newTouchable = (const G4TouchableHistory*)(
-                                                             moveStepPoint->GetTouchable() );
+                  newTouchable = (const G4TouchableHistory*)( newStep->GetPostStepPoint()->GetTouchable() );
 
                   GateVolumeID VolumeID(newTouchable);
 
