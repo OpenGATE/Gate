@@ -256,6 +256,13 @@ double GateKermaFactorHandler::GetMuEnOverRho()
       const double b_diff_energy = enTableTLE[i] - enTableTLE[i-1];
       const double diff_MuEn = MuEnTable[i] - MuEnTable[i-1];
 
+      GateMessage("Actor", 5,  "GateKermaFactorHandler -- GetMuEnOverRho:" << Gateendl
+           << " Material name   = " << m_material->GetName() << Gateendl
+           << " Photon energy   = " << G4BestUnit(m_energy, "Energy") << Gateendl
+           << " enTableTLE[i-1] = " << G4BestUnit(enTableTLE[i-1], "Energy") << Gateendl
+           << " enTableTLE[i]   = " << G4BestUnit(enTableTLE[i], "Energy") << Gateendl
+           << " enTableTLE size = " << enTableTLE.size() << Gateendl);
+
       return (((s_diff_energy * diff_MuEn) / b_diff_energy) + MuEnTable[i-1]) * cm2 / g;
     }
 
