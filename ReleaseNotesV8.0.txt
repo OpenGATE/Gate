@@ -24,6 +24,8 @@ Check the README file to have all informations related to the installation and c
 
 -> In the main macro file configuration, the sources MUST be define AFTER /gate/run/initialize command line <-
 
+-> For collimator design, the Fan Beam option is out of order and should be debug ASAP <-
+
 -----------------------------
 New developments and features:
 -----------------------------
