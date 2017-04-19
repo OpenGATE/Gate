@@ -1051,13 +1051,20 @@ void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4Str
     }
   else if (command == confineCmd )
     {
-      // Modif DS: for all names exept NULL, we add the tag "_phys" at the end
+      // Modif DS/FS: for all names exept NULL, we add the tag "_phys" at the end
       // of the volume name when the user forgot to do it
-      if ( newValues != "NULL" ) {
-        if (newValues.substr( newValues.length()-5 ) != "_phys" )
-          newValues += "_phys";
-        G4cout << "Confirming confinement to volume '" << newValues << "'...\n" ;
-      }
+      if ( newValues != "NULL" )
+      {
+	bool test = false;
+	if (newValues.length() < 5) { test = true; }
+	else if (newValues.substr( newValues.length()-5 ) != "_phys" ) { test = true; }
+
+	if (test)
+	{
+	  newValues += "_phys";
+	  G4cout << "Confirming confinement to volume '" << newValues << "'...\n" ;
+	}
+      }      
       fParticleGun->GetPosDist()->ConfineSourceToVolume( newValues ) ;
     }
   else if (command == ForbidCmd )
