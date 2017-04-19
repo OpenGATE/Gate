@@ -49,7 +49,7 @@ New developments and features:
 
 - DICOM Reader
 #For details:
-#
+#http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.0:Voxelized_Source_and_Phantom#Examples
 
 - New LET (Linear Energy Transfert) actor
 #For details:
@@ -59,33 +59,33 @@ New developments and features:
 #For details:
 #http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.0:Tools_to_Interact_with_the_Simulation_:_Actors#PromptGammaTLEActor
 
-- AugerDetectorActor: detector response modelling with the actor approach 
-#For details:
-#
-
-- DoseSourceActor to records the dose as function of the spot or layer ID (proton TPSPencilBeam only)
-#For details:
-#
-
-- Improved fast PromptGamma yield actor (vPGTLE, Track Length Estimator)
-#For details:
-#
-
-- FFD (Fixed Forced Detection) with fluence source, FFD example improved 
-#For details:
-#
-
-- Fast SPECT simulation with adapted FFD 
-#For details:
-#
-
-- Improved TPSPencilBeam (use less memory)
-#For details:
-#
-
 - Fast 90-Yttrium (fastY90) source
 #For details:
 #http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.0:Source#The_fastY90_source
+
+- AugerDetectorActor: detector response modelling with the actor approach 
+#For details:
+#Coming soon
+
+- DoseSourceActor to records the dose as function of the spot or layer ID (proton TPSPencilBeam only)
+#For details:
+#Coming soon
+
+- Improved fast PromptGamma yield actor (vPGTLE, Track Length Estimator)
+#For details:
+#Coming soon
+
+- FFD (Fixed Forced Detection) with fluence source, FFD example improved 
+#For details:
+#Coming soon
+
+- Fast SPECT simulation with adapted FFD 
+#For details:
+#Coming soon
+
+- Improved TPSPencilBeam (use less memory)
+#For details:
+#Coming soon
 
 
  # BUG FIXES #
