@@ -41,7 +41,7 @@ New developments and features:
 #For details:
 #http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.0:Generating_and_tracking_optical_photons#LUT_Davis_Model
 
-- TESSELATED volume (read ASCII and STL input files)
+- TESSELATED volume (read ASCII input files)
 #For details:
 #http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.0:Defining_a_geometry#How_to_build_a_.22tessellated.22_volume
 
