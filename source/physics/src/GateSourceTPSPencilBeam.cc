@@ -689,8 +689,7 @@ void GateSourceTPSPencilBeam::NewGenerateVertex( G4Event *aEvent ) {
     mCurrentLayer = mSpotLayer[mCurrentSpot];
   }
   if ( need_pencilbeam_config ){
-    GateMessage("Beam", 4, "[TPSPencilBeam] configuring pencil beam for spot " << mCurrentSpot
-        << ", to generate " << mNbProtonsToGenerate[mCurrentSpot] << " protons." << Gateendl );
+    GateMessage("Beam", 5, "[TPSPencilBeam] mCurrentSpot = " << mCurrentSpot << Gateendl );
     ConfigurePencilBeam();
   }
   mPencilBeam->GenerateVertex(aEvent);
@@ -707,7 +706,14 @@ void GateSourceTPSPencilBeam::ConfigurePencilBeam() {
   mPencilBeam->SetParticleType(mParticleType);
   //Energy
   mPencilBeam->SetEnergy(GetEnergy(energy));
-  mPencilBeam->SetSigmaEnergy(GetSigmaEnergy(energy));
+  if ( mSigmaEnergyInMeVFlag ){
+    mPencilBeam->SetEnergy(GetEnergy(energy));
+    mPencilBeam->SetSigmaEnergy(GetSigmaEnergy(energy));
+  } else {
+    double source_energy = GetEnergy(energy);
+    mPencilBeam->SetEnergy(source_energy);
+    mPencilBeam->SetSigmaEnergy(GetSigmaEnergy(energy)*source_energy/100.);
+  }
   //Weight
   if (mFlatGenerationFlag) {
     mPencilBeam->SetWeight(mSpotWeight[mCurrentSpot]);
