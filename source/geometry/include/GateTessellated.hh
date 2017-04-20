@@ -34,10 +34,13 @@ class GateTessellated : public GateVVolume
     // Declaration of pure virtual method
     inline virtual G4double GetHalfDimension( size_t ) { return 0.; }
 
-    void SetPathToVerticesFile( G4String );
+    void SetPathToSTLFile( G4String );
 
   private:
-    void AddFacet( G4ThreeVector, G4ThreeVector, G4ThreeVector );
+    void ReadSTL_ASCII();
+    void ReadSTL_Binary();
+    void DescribeMyself(size_t);
+    G4double ComputeMyOwnVolume() const;
 
   private:
     G4TessellatedSolid*     m_tessellated_solid;
@@ -45,8 +48,10 @@ class GateTessellated : public GateVVolume
     G4VPhysicalVolume*      m_tessellated_phys;
 
   private:
-    G4String m_PathToVerticesFile;
+    G4String m_PathToSTLFile;
     GateTessellatedMessenger* m_Messenger;
+    G4String FacetType;
+    unsigned long nbFacets;
 };
 
 MAKE_AUTO_CREATOR_VOLUME(tessellated,GateTessellated)
