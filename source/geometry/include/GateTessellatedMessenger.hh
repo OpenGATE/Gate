@@ -27,7 +27,7 @@ class GateTessellatedMessenger : public GateVolumeMessenger
     }
 
   private:
-    G4UIcmdWithAString* PathToVerticesFileCmd;
+    G4UIcmdWithAString* PathToSTLFileCmd;
 };
 
 #endif
