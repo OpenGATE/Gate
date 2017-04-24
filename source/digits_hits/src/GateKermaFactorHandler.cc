@@ -242,8 +242,13 @@ double GateKermaFactorHandler::GetMuEnOverRho()
 
   std::vector<double> enTableTLE = energyTableTLE;
 
+  double unitCoef = cm2 / g;
+
   if (MuEnTable.size() == energyTableTLE_ICRU44.size())
+  {
+    unitCoef = m2 / kg;
     enTableTLE = energyTableTLE_ICRU44;
+  }
 
   if (m_energy/MeV < enTableTLE[0])
     return 0.;
@@ -263,7 +268,7 @@ double GateKermaFactorHandler::GetMuEnOverRho()
            << " enTableTLE[i]   = " << G4BestUnit(enTableTLE[i], "Energy") << Gateendl
            << " enTableTLE size = " << enTableTLE.size() << Gateendl);
 
-      return (((s_diff_energy * diff_MuEn) / b_diff_energy) + MuEnTable[i-1]) * cm2 / g;
+      return (((s_diff_energy * diff_MuEn) / b_diff_energy) + MuEnTable[i-1]) * unitCoef;
     }
 
   return 0.;
