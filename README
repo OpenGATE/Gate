@@ -29,7 +29,7 @@
 
 
                           # *------------* #
-                          # * 04/15/2017 * #
+                          # * 04/20/2017 * #
                           # *------------* #
 
 
@@ -44,6 +44,7 @@
     - Linux distributions: RED HAT & Fedora & Mandrake & Mandriva & Ubuntu...
     - Compiler: gcc 4.8 to 6.2
     - ROOT 5.xx (from 14 to last version) or ROOT 6.xx (from 00 to last version)
+    - ITK (version 4.10.xx or later)
     - Geant4 10.3 (including the embedded CLHEP) but remains backward compatible with Geant4 10.2 
     - Optional dependencies: lmf_v3.0 and ecat7
 
@@ -75,6 +76,7 @@ NOTES:
       ccmake ../gate_v8.0
 
       Warning : look at the information about following compilation options:
+       
        BUILD_TESTING                      OFF: by default, set to ON if you want to perform build testing
        GATE_DOWNLOAD_BENCHMARKS_DATA      OFF: by default, set to ON if you want to download them
        GATE_USE_ECAT7                     OFF: by default, set to ON if you want to use this library
@@ -86,7 +88,7 @@ NOTES:
        GATE_USE_STDC11                    ON : by default, set to ON if you want to use another standard for the C programming language (advanced users)
        GATE_USE_DAVIS                     OFF: by default, set to ON if you want to use the Davis LUT model
        GEANT4_USE_SYSTEM_CLHEP            OFF: by default, set to ON if you want to use an external CLHEP version
-      
+       
      - Configure CMAKE_INSTALL_PREFIX to the full path of the gate_v8.0-install directory that you just created.
 
      - Like for Geant4, press 'c' to configure and 'g' to generate the makefile.
