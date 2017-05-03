@@ -25,6 +25,7 @@ struct newPhoton
   G4ThreeVector direction;
   G4ThreeVector position;
   double weight;
+  double energy;
   };
 
 namespace GateFixedForcedDetectionFunctor
@@ -312,10 +313,12 @@ namespace GateFixedForcedDetectionFunctor
       void SavePhotonsparameters(const rtk::ThreadIdType threadId,
                                  const VectorType & photonPosition,
                                  const VectorType & photonDirection,
-                                 const double & weight)
+                                 const double & weight,
+                                 const double & energy)
         {
         newPhoton photon;
         photon.weight = weight;
+        photon.energy = energy;
         for (int i = 0; i < 3; i++)
           {
           photon.position[i] = photonPosition[i];
@@ -545,7 +548,7 @@ namespace GateFixedForcedDetectionFunctor
             photonDirection[i] = worldVector[i] / worldVectorNorm;
             photonPosition[i] = farthestPoint[i] * m_VolumeSpacing[i];
             }
-          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight, energy);
           }
         else if (m_ARF)
           {
@@ -556,7 +559,7 @@ namespace GateFixedForcedDetectionFunctor
             photonDirection[i] = worldVector[i] / worldVectorNorm;
             photonPosition[i] = sourceToPixel[i] * m_VolumeSpacing[i];
             }
-          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight, energy);
           }
         else
           {
@@ -680,7 +683,7 @@ namespace GateFixedForcedDetectionFunctor
             photonDirection[i] = worldVector[i] / worldVectorNorm;
             photonPosition[i] = farthestPoint[i] * m_VolumeSpacing[i];
             }
-          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight, m_Energy);
           }
         else if (m_ARF)
           {
@@ -691,7 +694,7 @@ namespace GateFixedForcedDetectionFunctor
             photonDirection[i] = worldVector[i] / worldVectorNorm;
             photonPosition[i] = sourceToPixel[i] * m_VolumeSpacing[i];
             }
-          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight, m_Energy);
           }
 
         else
@@ -799,7 +802,7 @@ namespace GateFixedForcedDetectionFunctor
             photonDirection[i] = worldVector[i] / worldVectorNorm;
             photonPosition[i] = farthestPoint[i] * m_VolumeSpacing[i];
             }
-          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight, m_Energy);
           }
         else if (m_ARF)
           {
@@ -810,7 +813,7 @@ namespace GateFixedForcedDetectionFunctor
             photonDirection[i] = worldVector[i] / worldVectorNorm;
             photonPosition[i] = sourceToPixel[i] * m_VolumeSpacing[i];
             }
-          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight, m_Energy);
           }
 
         else
@@ -912,7 +915,7 @@ namespace GateFixedForcedDetectionFunctor
             photonDirection[i] = worldVector[i] / worldVectorNorm;
             photonPosition[i] = farthestPoint[i] * m_VolumeSpacing[i];
             }
-          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight, m_Energy);
           }
         else if (m_ARF)
           {
@@ -923,7 +926,7 @@ namespace GateFixedForcedDetectionFunctor
             photonDirection[i] = worldVector[i] / worldVectorNorm;
             photonPosition[i] = sourceToPixel[i] * m_VolumeSpacing[i];
             }
-          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight);
+          SavePhotonsparameters(threadId, photonPosition, photonDirection, weight, m_Energy);
           }
 
         else

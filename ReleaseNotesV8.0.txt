@@ -1,0 +1,117 @@
+
+                     #  *ooooOOOO0000OOOOoooo*  #
+                     #  *                    *  #
+                     #  *    GATE_v8.0       *  #
+                     #  *                    *  #
+                     #  *ooooOOOO0000OOOOoooo*  #
+
+
+                          # *------------* #
+                          # * 04/20/2017 * #
+                          # *------------* #
+
+
+
+-------------------------------
+General set-up and installation:
+-------------------------------
+
+Check the README file to have all informations related to the installation and compilation for this version.
+
+----------------------
+--I M P O R T A N T --
+----------------------
+
+-> In the main macro file configuration, the sources MUST be define AFTER /gate/run/initialize command line <-
+
+-> For collimator design, the Fan Beam option is out of order and should be debug ASAP <-
+
+-----------------------------
+New developments and features:
+-----------------------------
+
+ # NEWS & UPDATES #
+  ----------------
+
+- New module for THERMOTERAPY applications.
+#For details:
+#http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.0#Thermal_therapy_application
+
+- New module for OPTICAL simulation of scintillation detector
+#For details:
+#http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.0:Generating_and_tracking_optical_photons#LUT_Davis_Model
+
+- TESSELATED volume (read STL input files)
+#For details:
+#http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.0:Defining_a_geometry#How_to_build_a_.22tessellated.22_volume
+
+- HYBRID NAVIGATOR: particle tracking in a volume which combine an analytical and  voxelized description
+#For details:
+#http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.0:Tools_to_Interact_with_the_Simulation_:_Actors#Merged_Volume_Actor
+
+- DICOM Reader
+#For details:
+#http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.0:Voxelized_Source_and_Phantom#Examples
+
+- New LET (Linear Energy Transfert) actor
+#For details:
+#http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.0:Tools_to_Interact_with_the_Simulation_:_Actors#LET_Actor
+
+- Tissue Equivalent Proportional Counter Actor
+#For details:
+#http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.0:Tools_to_Interact_with_the_Simulation_:_Actors#PromptGammaTLEActor
+
+- Fast 90-Yttrium (fastY90) source
+#For details:
+#http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.0:Source#The_fastY90_source
+
+- AugerDetectorActor: detector response modelling with the actor approach 
+#For details:
+#Coming soon
+
+- DoseSourceActor to records the dose as function of the spot or layer ID (proton TPSPencilBeam only)
+#For details:
+#Coming soon
+
+- Improved fast PromptGamma yield actor (vPGTLE, Track Length Estimator)
+#For details:
+#Coming soon
+
+- FFD (Fixed Forced Detection) with fluence source, FFD example improved 
+#For details:
+#Coming soon
+
+- Fast SPECT simulation with adapted FFD 
+#For details:
+#Coming soon
+
+- Improved TPSPencilBeam (use less memory)
+#For details:
+#Coming soon
+
+
+ # BUG FIXES #
+  -----------
+
+- Bug correction in ARF (for SPECT simulation)
+- Correction of the PDG encoding for proton in IAEA format
+- "HU indices out of the range": fixed
+- Fixing mass calculation when volume is not a G4Box
+
+---------------------
+Documentation updates:
+---------------------
+
+Generic page: 		          http://www.opengatecollaboration.org/index.php/Main_Page
+Dedicated wiki page: 	    http://wiki.opengatecollaboration.org/index.php/Users_Guide_V8.0
+Installation guide:         http://wiki.opengatecollaboration.org/index.php/Installation_Guide_V8.0
+
+
+-------------------------
+Examples and other stuffs:
+-------------------------
+
+All examples are removed from the GATE source folder and are now available on the github repository:
+https://github.com/OpenGATE/GateContrib
+ 
+
