@@ -690,7 +690,7 @@ void GateVVolume::DumpVoxelizedVolume(G4ThreeVector spacing)
     mDumpPath = "data/";
 
   G4String HU2MatPath = mDumpPath+"/"+GetPhysicalVolume()->GetName()+"-HU2Mat.txt";
-  ofstream file(HU2MatPath, ofstream::out | ofstream::trunc);
+  std::ofstream file(HU2MatPath, std::ofstream::out | std::ofstream::trunc);
 
   for(signed long int index=0;index<image->GetNumberOfValues();index++)
   {
