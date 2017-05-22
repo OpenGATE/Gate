@@ -20,6 +20,11 @@
 #include <G4VoxelLimits.hh>
 #include <G4NistManager.hh>
 #include <G4PhysicalConstants.hh>
+#include <G4Gamma.hh>
+#include <G4Proton.hh>
+#include <G4Positron.hh>
+#include <G4Deuteron.hh>
+#include <G4Electron.hh>
 
 //-----------------------------------------------------------------------------
 GateDoseActor::GateDoseActor(G4String name, G4int depth):
@@ -46,6 +51,8 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
 
   mVolumeFilter = "";
   mMaterialFilter = "";
+
+  mDose2WaterWarningFlag = true;
 
   pMessenger = new GateDoseActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateDoseActor() -- end\n");
@@ -269,8 +276,8 @@ void GateDoseActor::ResetData() {
 void GateDoseActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
   GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Run\n");
+  mDose2WaterWarningFlag = true;
   // ResetData(); // Do no reset here !! (when multiple run);
-  //
 }
 //-----------------------------------------------------------------------------
 
@@ -280,7 +287,7 @@ void GateDoseActor::BeginOfRunAction(const G4Run * r) {
 void GateDoseActor::BeginOfEventAction(const G4Event * e) {
   GateVActor::BeginOfEventAction(e);
   mCurrentEvent++;
-  GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Event: "<<mCurrentEvent << Gateendl);
+  GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Event: "<< mCurrentEvent << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -288,7 +295,7 @@ void GateDoseActor::BeginOfEventAction(const G4Event * e) {
 //-----------------------------------------------------------------------------
 void GateDoseActor::UserPreTrackActionInVoxel(const int /*index*/, const G4Track* track)
 {
-  if(track->GetDefinition()->GetParticleName() == "gamma") { mStepHitType = PostStepHitType; }
+  if(track->GetDefinition() == G4Gamma::Gamma()) { mStepHitType = PostStepHitType; }
   else { mStepHitType = mUserStepHitType; }
 }
 //-----------------------------------------------------------------------------
@@ -344,16 +351,16 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
   if (mMaterialFilter != "") {
     GateDebugMessage("Actor", 3,  "GateDoseActor -- UserSteppingActionInVoxel: material filter debug = " << Gateendl
-		     << " material name        = " << step->GetPreStepPoint()->GetMaterial()->GetName() << Gateendl
-		     << " density              = " << G4BestUnit(mVoxelizedMass.GetPartialMassWithMatName(index)/mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volumic Mass") << Gateendl
-		     << " dosel cubic volume   = " << G4BestUnit(mDoseImage.GetVoxelVolume(), "Volume") << Gateendl
-		     << " partial cubic volume = " << G4BestUnit(mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volume") << Gateendl);
+                     << " material name        = " << step->GetPreStepPoint()->GetMaterial()->GetName() << Gateendl
+                     << " density              = " << G4BestUnit(mVoxelizedMass.GetPartialMassWithMatName(index)/mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volumic Mass") << Gateendl
+                     << " dosel cubic volume   = " << G4BestUnit(mDoseImage.GetVoxelVolume(), "Volume") << Gateendl
+                     << " partial cubic volume = " << G4BestUnit(mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volume") << Gateendl);
   }
 
   if (mVolumeFilter != "") {
     GateDebugMessage("Actor", 3,  "GateDoseActor -- UserSteppingActionInVoxel: volume filter debug = " << Gateendl
-		     << " volume name          = " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << Gateendl
-		     << " Dose scored inside volume filtered volume !" << Gateendl);
+                     << " volume name          = " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << Gateendl
+                     << " Dose scored inside volume filtered volume !" << Gateendl);
   }
 
   double dose=0.;
@@ -364,9 +371,9 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     // ------------------------------------
 
     GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose = "
-		     << G4BestUnit(dose, "Dose")
-		     << " rho = "
-		     << G4BestUnit(density, "Volumic Mass")<< Gateendl );
+                     << G4BestUnit(dose, "Dose")
+                     << " rho = "
+                     << G4BestUnit(density, "Volumic Mass")<< Gateendl );
   }
 
   double doseToWater = 0;
@@ -379,29 +386,34 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
       double cut = DBL_MAX;
       cut=1;
-      G4String material = step->GetPreStepPoint()->GetMaterial()->GetName();
-      double Energy = step->GetPreStepPoint()->GetKineticEnergy();
-      G4String PartName = step->GetTrack()->GetDefinition()->GetParticleName();
+      G4Material * material = step->GetPreStepPoint()->GetMaterial();
+      static G4Material * water = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
+      double energy = step->GetPreStepPoint()->GetKineticEnergy();
       double DEDX=0, DEDX_Water=0;
 
       // Dose to water: it could be possible to make this process more
       // generic by choosing any material in place of water
-      double Volume = mDoseToWaterImage.GetVoxelVolume();
+      double volume = mDoseToWaterImage.GetVoxelVolume();
 
-      // Other particles should be taken into account (Helium etc), but bug ? FIXME
-      if (PartName== "proton" || PartName== "e-" || PartName== "e+" || PartName== "deuteron") {
-        //if (PartName != "O16[0.0]" && PartName != "alpha" && PartName != "Be7[0.0]" && PartName != "C12[0.0]"){
-
-        DEDX = emcalc->ComputeTotalDEDX(Energy, PartName, material, cut);
-        DEDX_Water = emcalc->ComputeTotalDEDX(Energy, PartName, "G4_WATER", cut);
-        doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
-        if (DEDX_Water == 0 || DEDX == 0) doseToWater = 0.0; // to avoid inf or NaN
+      // Get current particle
+      const G4ParticleDefinition * p = step->GetTrack()->GetParticleDefinition();
+      if (p == G4Proton::Proton() or
+          p == G4Electron::Electron() or
+          p == G4Positron::Positron() or
+          p == G4Deuteron::Deuteron() or
+          p == G4Gamma::Gamma()) {
+        // For Gamma, we consider the DEDX from Electron
+        if (p == G4Gamma::Gamma()) p = G4Electron::Electron();
+        DEDX = emcalc->ComputeTotalDEDX(energy, p, material, cut);
+        DEDX_Water = emcalc->ComputeTotalDEDX(energy, p, water, cut);
+        doseToWater = edep/density/volume/gray*(DEDX_Water/1.0)/(DEDX/(density*e_SI));
+        if (DEDX_Water == 0 or DEDX == 0) doseToWater = 0.0; // to avoid inf or NaN
       }
       else {
-        DEDX = emcalc->ComputeTotalDEDX(100, "proton", material, cut);
-        DEDX_Water = emcalc->ComputeTotalDEDX(100, "proton", "G4_WATER", cut);
-        doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
-        if (DEDX_Water == 0 || DEDX == 0) doseToWater = 0.0; // to avoid inf or NaN
+        if (mDose2WaterWarningFlag) {
+          GateMessage("Actor", 0, "WARNING: DoseToWater with a particle which is not proton/electron/positron/gamma/deuteron: results could be wrong." << G4endl);
+          mDose2WaterWarningFlag = false;
+        }
       }
 
       GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = "
@@ -445,7 +457,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
         {
           mEdepImage.AddValue(index, edep);
 
-	}
+        }
     }
 
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.AddValue(index, weight);
