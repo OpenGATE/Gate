@@ -2,9 +2,9 @@
 #ifdef G4ANALYSIS_USE_ROOT
 
 /*!
-  \class  GateAugerDetectorActor
-  \author pierre.gueth@creatis.insa-lyon.fr
-*/
+ \class  GateAugerDetectorActor
+ \author pierre.gueth@creatis.insa-lyon.fr
+ */
 
 #ifndef GATEAUGERDETECTORACTOR_HH
 #define GATEAUGERDETECTORACTOR_HH
@@ -15,20 +15,21 @@
 #include <TFile.h>
 #include <TH1.h>
 #include <list>
-
+#include "TTree.h"
+#include "TBranch.h"
 struct AugerDeposition
-{
+  {
   G4ThreeVector position;
   G4double energy;
   G4double time;
-};
+  };
 
 typedef std::list<AugerDeposition> AugerDepositions;
 
 ///----------------------------------------------------------------------------
 /// \brief Actor displaying nb events/tracks/step
-class GateAugerDetectorActor : public GateVActor
-{
+class GateAugerDetectorActor: public GateVActor
+  {
 public:
 
   virtual ~GateAugerDetectorActor();
@@ -41,6 +42,13 @@ public:
   void setMaximumProfileAxis(G4double max);
   void setProfileSize(int nbpts);
   void setProfileNoiseFWHM(G4double noise_fwhm);
+  void setGenerateArf(G4bool b);
+  void setArfFilename(G4String s);
+
+  /* ARF */
+  void defineArfTRootFile();
+  void closeArfDataRootFile();
+  void storeArfRootData(const G4ThreeVector direction, const G4double energy);
 
   //-----------------------------------------------------------------------------
   // This macro initialize the CreatePrototype and CreateInstance
@@ -54,11 +62,11 @@ public:
   // Callbacks
 
   virtual void BeginOfRunAction(const G4Run * r);
-  virtual void BeginOfEventAction(const G4Event *) ;
+  virtual void BeginOfEventAction(const G4Event *);
   virtual void UserSteppingAction(const GateVVolume *, const G4Step*);
 
-  virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*) ;
-  virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*) ;
+  virtual void PreUserTrackingAction(const GateVVolume *, const G4Track*);
+  virtual void PostUserTrackingAction(const GateVVolume *, const G4Track*);
   virtual void EndOfEventAction(const G4Event*);
   //-----------------------------------------------------------------------------
   /// Saves the data collected to the file
@@ -66,11 +74,15 @@ public:
   virtual void ResetData();
 
   //  virtual G4bool ProcessHits(G4Step *, G4TouchableHistory*);
-  virtual void Initialize(G4HCofThisEvent*){}
-  virtual void EndOfEvent(G4HCofThisEvent*){}
+  virtual void Initialize(G4HCofThisEvent*)
+    {
+    }
+  virtual void EndOfEvent(G4HCofThisEvent*)
+    {
+    }
 
 protected:
-  GateAugerDetectorActor(G4String name, G4int depth=0);
+  GateAugerDetectorActor(G4String name, G4int depth = 0);
 
   G4double GetTotalDepositedEnergy() const;
   G4ThreeVector GetWeighedBarycenterPosition() const;
@@ -92,10 +104,23 @@ protected:
   G4double profile_max;
   int profile_nbpts;
   G4double profile_noise_fwhm;
-};
+  /* ARF data */
 
-MAKE_AUTO_CREATOR_ACTOR(AugerDetectorActor,GateAugerDetectorActor)
+  G4String _arfDataFilename;
+  TFile* _arfDataFile;
+  TTree* _arfDataTree;
+  TTree* _nbOfPhotonsTree;
+  ULong64_t _nbOfSourcePhotons;
+  ULong64_t _nbOfStoredPhotons;
+  G4double _depositedEnergy;
+  G4double _projectionPositionY;
+  G4double _projectionPositionX;
+  G4int _nbOfHeads;
+  bool _isARF;
 
+  };
+
+MAKE_AUTO_CREATOR_ACTOR(AugerDetectorActor, GateAugerDetectorActor)
 
 #endif /* end #define GATEAUGERDETECTORACTOR_HH */
 #endif

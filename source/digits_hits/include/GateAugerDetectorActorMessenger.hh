@@ -41,7 +41,9 @@ protected:
   G4UIcmdWithADoubleAndUnit* pMinProfileCmd;
   G4UIcmdWithADoubleAndUnit* pMaxProfileCmd;
   G4UIcmdWithAnInteger* pSizeProfileCmd;
+  G4UIcmdWithABool* pGenerateArfCmd;
   G4UIcmdWithADoubleAndUnit* pProfileNoiseFWHMCmd;
+  G4UIcmdWithAString* pArfFilenameCmd;
 };
 
 #endif

@@ -116,13 +116,13 @@ public:
   ;
 
   void computeTables();
-
+  void computeTablesSimple();
   void AddNewEnergyWindow(const G4String & basename, const G4int & NFiles)
     {
     mEnergyWindows.push_back(basename);
     mEnergyWindowsNumberOfPrimaries.push_back(NFiles);
     }
-  ;
+
 
   void ComputeProjectionSet(const G4ThreeVector & position,
                             const G4ThreeVector & direction,

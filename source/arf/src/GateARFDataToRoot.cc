@@ -209,10 +209,10 @@ void GateARFDataToRoot::CloseARFDataRootFile()
     }
   }
 
-G4int GateARFDataToRoot::StoreARFData(GateSingleDigi * aDigi)
+G4int GateARFDataToRoot::StoreARFData(GateSingleDigi * singlesDigitizer)
   {
-  G4ThreeVector position = aDigi->GetGlobalPos();
-  G4ThreeVector PosAtVertex = aDigi->GetSourcePosition();
+  G4ThreeVector globalPosition = singlesDigitizer->GetGlobalPos();
+  G4ThreeVector sourcePosition = singlesDigitizer->GetSourcePosition();
   mNbofStoredPhotons++;
   if (mNbofStoredPhotons % 1000 == 0)
     {
@@ -223,27 +223,29 @@ G4int GateARFDataToRoot::StoreARFData(GateSingleDigi * aDigi)
    and the line passing through totalposition with unit vector director Indirection, the incident direction */
   if (mDrfProjectionMode == 0) /*smooth positions by substracting source emission position */
     {
-    mArfData.mProjectionPositionX = position.z() - PosAtVertex.z();
-    mArfData.mProjectionPositionY = position.y() - PosAtVertex.y();
+    mArfData.mProjectionPositionX = globalPosition.z() - sourcePosition.z();
+    mArfData.mProjectionPositionY = globalPosition.y() - sourcePosition.y();
+    std::cout<<globalPosition<<std::endl;
+    std::cout<<sourcePosition<<std::endl;
+    std::getchar();
     }
   else if (mDrfProjectionMode == 1) /* line project */
     {
-    G4ThreeVector Indirection = position - PosAtVertex;
+    G4ThreeVector Indirection = globalPosition - sourcePosition;
     G4double magnitude = Indirection.mag();
     Indirection /= magnitude;
-    G4double t = (mXPlane - position.x()) / Indirection.x();
-    mArfData.mProjectionPositionX = position.z() + t * Indirection.z();
-    mArfData.mProjectionPositionY = position.y() + t * Indirection.y();
+    G4double t = (mXPlane - globalPosition.x()) / Indirection.x();
+    mArfData.mProjectionPositionX = globalPosition.z() + t * Indirection.z();
+    mArfData.mProjectionPositionY = globalPosition.y() + t * Indirection.y();
     }
   else if (mDrfProjectionMode == 2) /* orthogonal projection */
     {
-    mArfData.mProjectionPositionX = position.z();
-    mArfData.mProjectionPositionY = position.y();
+    mArfData.mProjectionPositionX = globalPosition.z();
+    mArfData.mProjectionPositionY = globalPosition.y();
     }
-  mArfData.mDepositedEnergy = aDigi->GetEnergy();
+  mArfData.mDepositedEnergy = singlesDigitizer->GetEnergy();
   mArfDataTree->Fill();
   return 1;
-
   }
 
 void GateARFDataToRoot::DisplayARFStatistics()

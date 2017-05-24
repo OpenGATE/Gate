@@ -335,6 +335,80 @@ void GateARFSD::computeTables()
   mArfTableMgr->convertDRF2ARF();
   }
 
+void GateARFSD::computeTablesSimple()
+  {
+  if (mArfTableMgr->InitializeTables() == 1)
+    {
+    return;
+    }
+  G4double* nbSourcePhotons = new G4double[mEnergyWindows.size()];
+  G4int totalNumberOfSingles = 0;
+  ULong64_t tempNbOfSourcePhotons = 0;
+  G4String rootName;
+  for (unsigned int numberOfWindows = 0; numberOfWindows < mEnergyWindows.size(); numberOfWindows++)
+    {
+    mNbOfSourcePhotons = 0;
+    rootName = mEnergyWindows[numberOfWindows] + ".root";
+    totalNumberOfSingles = 0;
+    for (G4int i = 0; i < mEnergyWindowsNumberOfPrimaries[numberOfWindows]; i++)
+      {
+      if (mEnergyWindowsNumberOfPrimaries[numberOfWindows] > 1)
+        {
+        std::stringstream s;
+        s << i;
+        if (mEnergyWindowsNumberOfPrimaries[numberOfWindows] <= 10)
+          {
+          rootName = mEnergyWindows[numberOfWindows] + "_" + s.str() + ".root";
+          }
+        else if (mEnergyWindowsNumberOfPrimaries[numberOfWindows] <= 100)
+          {
+          if (i < 10)
+            {
+            rootName = mEnergyWindows[numberOfWindows] + "_0" + s.str() + ".root";
+            }
+          else
+            {
+            rootName = mEnergyWindows[numberOfWindows] + "_" + s.str() + ".root";
+            }
+          }
+        }
+      if (mFile != 0)
+        {
+        delete mFile;
+        mFile = 0;
+        }
+      mFile = new TFile(rootName.c_str(), "READ", "ROOT filefor ARF purpose");
+      mSinglesTree = (TTree*) (mFile->Get("theTree"));
+      mSinglesTree->SetBranchAddress("Edep", &mArfData.mDepositedEnergy);
+      mSinglesTree->SetBranchAddress("outY", &mArfData.mProjectionPositionY);
+      mSinglesTree->SetBranchAddress("outX", &mArfData.mProjectionPositionX);
+      mNbOfPhotonsTree = (TTree*) (mFile->Get("theNumberOfPhoton"));
+      mNbOfPhotonsTree->SetBranchAddress("NbOfHeads", &mNbOfHeads);
+      mNbOfPhotonsTree->SetBranchAddress("NbOfSourcePhot", &tempNbOfSourcePhotons);
+      mNbOfPhotonsTree->GetEntry(0);
+      mNbOfSourcePhotons += tempNbOfSourcePhotons;
+      totalNumberOfSingles = mSinglesTree->GetEntries();
+      for (G4int j = 0; j < totalNumberOfSingles; j++)
+        {
+        mSinglesTree->GetEntry(j);
+        /* loop through ARF tables to get the table with the suitable energy window */
+        if (mArfData.mDepositedEnergy / keV - mEnergyDepositionThreshold >= 0.)
+          {
+          mArfTableMgr->FillDRFTable(numberOfWindows,
+                                     mArfData.mDepositedEnergy,
+                                     mArfData.mProjectionPositionX,
+                                     mArfData.mProjectionPositionY);
+          }
+        }
+      mFile->Close();
+      }
+    nbSourcePhotons[numberOfWindows] = mNbOfSourcePhotons * mNbOfHeads;
+    }
+
+  mArfTableMgr->SetNSimuPhotons(nbSourcePhotons);
+  mArfTableMgr->convertDRF2ARF();
+  }
+
 void GateARFSD::ComputeProjectionSet(const G4ThreeVector & position,
                                      const G4ThreeVector & direction,
                                      const G4double & energy,
@@ -360,8 +434,8 @@ void GateARFSD::ComputeProjectionSet(const G4ThreeVector & position,
    deltaX is the projection plane of the detector on the Ox axis
    all these coordinates are relative to the detector frame where the origin of hte detector is a t the center
    */
-
   G4double arfValue = mArfTableMgr->ScanTables(direction.z(), direction.y(), energy);
+
   /* The coordinates of the intersection of the path of the photon with the back surface of the detector
    is given by
    x = deltaX/2
