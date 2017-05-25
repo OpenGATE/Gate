@@ -17,13 +17,17 @@ GateNTLEDoseActorMessenger::GateNTLEDoseActorMessenger(GateNTLEDoseActor* sensor
   :GateImageActorMessenger(sensor),
    pDoseActor(sensor)
 {
-  pEnableDoseCmd = 0;
-  pEnableDoseSquaredCmd = 0;
-  pEnableDoseUncertaintyCmd = 0;
-  pEnableDoseCorrectionCmd = 0;
+  pEnableDoseCmd              = 0;
+  pEnableDoseSquaredCmd       = 0;
+  pEnableDoseUncertaintyCmd   = 0;
+  pEnableDoseCorrectionCmd    = 0;
   pEnableDoseCorrectionTLECmd = 0;
-  pEnableKermaFactorDumpCmd = 0;
-  pEnableKillSecondaryCmd = 0;
+  pEnableKermaFactorDumpCmd   = 0;
+  pEnableKillSecondaryCmd     = 0;
+
+  pEnableFluxCmd              = 0;
+  pEnableFluxSquaredCmd       = 0;
+  pEnableFluxUncertaintyCmd   = 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -33,13 +37,17 @@ GateNTLEDoseActorMessenger::GateNTLEDoseActorMessenger(GateNTLEDoseActor* sensor
 //-----------------------------------------------------------------------------
 GateNTLEDoseActorMessenger::~GateNTLEDoseActorMessenger()
 {
-  if(pEnableDoseCmd) delete pEnableDoseCmd;
-  if(pEnableDoseSquaredCmd) delete pEnableDoseSquaredCmd;
-  if(pEnableDoseUncertaintyCmd) delete pEnableDoseUncertaintyCmd;
-  if(pEnableDoseCorrectionCmd) delete pEnableDoseCorrectionCmd;
+  if(pEnableDoseCmd)              delete pEnableDoseCmd;
+  if(pEnableDoseSquaredCmd)       delete pEnableDoseSquaredCmd;
+  if(pEnableDoseUncertaintyCmd)   delete pEnableDoseUncertaintyCmd;
+  if(pEnableDoseCorrectionCmd)    delete pEnableDoseCorrectionCmd;
   if(pEnableDoseCorrectionTLECmd) delete pEnableDoseCorrectionTLECmd;
-  if(pEnableKermaFactorDumpCmd) delete pEnableKermaFactorDumpCmd;
-  if(pEnableKillSecondaryCmd) delete pEnableKillSecondaryCmd;
+  if(pEnableKermaFactorDumpCmd)   delete pEnableKermaFactorDumpCmd;
+  if(pEnableKillSecondaryCmd)     delete pEnableKillSecondaryCmd;
+
+  if(pEnableFluxCmd)              delete pEnableFluxCmd;
+  if(pEnableFluxSquaredCmd)       delete pEnableFluxSquaredCmd;
+  if(pEnableFluxUncertaintyCmd)   delete pEnableFluxUncertaintyCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -81,6 +89,21 @@ void GateNTLEDoseActorMessenger::BuildCommands(G4String base)
   pEnableKillSecondaryCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable the killing of secondary particles");
   pEnableKillSecondaryCmd->SetGuidance(guid);
+
+  n = base+"/enableFlux";
+  pEnableFluxCmd = new G4UIcmdWithABool(n, this);
+  guid = G4String("Enable neutron flux computation");
+  pEnableFluxCmd->SetGuidance(guid);
+
+  n = base+"/enableSquaredFlux";
+  pEnableFluxSquaredCmd = new G4UIcmdWithABool(n, this);
+  guid = G4String("Enable squared neutron flux computation");
+  pEnableFluxSquaredCmd->SetGuidance(guid);
+
+  n = base+"/enableUncertaintyFlux";
+  pEnableFluxUncertaintyCmd = new G4UIcmdWithABool(n, this);
+  guid = G4String("Enable neuton flux uncertainty computation");
+  pEnableFluxUncertaintyCmd->SetGuidance(guid);
 }
 //-----------------------------------------------------------------------------
 
@@ -88,13 +111,17 @@ void GateNTLEDoseActorMessenger::BuildCommands(G4String base)
 //-----------------------------------------------------------------------------
 void GateNTLEDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 {
-  if (cmd == pEnableDoseCmd) pDoseActor->EnableDoseImage(pEnableDoseCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableDoseSquaredCmd) pDoseActor->EnableDoseSquaredImage(pEnableDoseSquaredCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableDoseUncertaintyCmd) pDoseActor->EnableDoseUncertaintyImage(pEnableDoseUncertaintyCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableDoseCorrectionCmd) pDoseActor->EnableDoseCorrection(pEnableDoseCorrectionCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableDoseCmd)              pDoseActor->EnableDoseImage(pEnableDoseCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableDoseSquaredCmd)       pDoseActor->EnableDoseSquaredImage(pEnableDoseSquaredCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableDoseUncertaintyCmd)   pDoseActor->EnableDoseUncertaintyImage(pEnableDoseUncertaintyCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableDoseCorrectionCmd)    pDoseActor->EnableDoseCorrection(pEnableDoseCorrectionCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableDoseCorrectionTLECmd) pDoseActor->EnableDoseCorrectionTLE(pEnableDoseCorrectionTLECmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableKermaFactorDumpCmd) pDoseActor->EnableKermaFactorDump(pEnableKermaFactorDumpCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableKillSecondaryCmd) pDoseActor->EnableKillSecondary(pEnableKillSecondaryCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableKermaFactorDumpCmd)   pDoseActor->EnableKermaFactorDump(pEnableKermaFactorDumpCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableKillSecondaryCmd)     pDoseActor->EnableKillSecondary(pEnableKillSecondaryCmd->GetNewBoolValue(newValue));
+
+  if (cmd == pEnableFluxCmd)              pDoseActor->EnableFluxImage(pEnableFluxCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableFluxSquaredCmd)       pDoseActor->EnableFluxSquaredImage(pEnableFluxSquaredCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableFluxUncertaintyCmd)   pDoseActor->EnableFluxUncertaintyImage(pEnableFluxUncertaintyCmd->GetNewBoolValue(newValue));
 
  GateImageActorMessenger::SetNewValue(cmd, newValue);
 }

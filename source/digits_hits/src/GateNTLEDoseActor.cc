@@ -32,6 +32,10 @@ GateNTLEDoseActor::GateNTLEDoseActor(G4String name, G4int depth):
   mIsLastHitEventImageEnabled    = false;
   mIsKermaFactorDumped           = false;
   mIsKillSecondaryEnabled        = false;
+
+  mIsFluxImageEnabled            = false;
+  mIsFluxSquaredImageEnabled     = false;
+  mIsFluxUncertaintyImageEnabled = false;
 }
 //-----------------------------------------------------------------------------
 
@@ -39,6 +43,7 @@ GateNTLEDoseActor::GateNTLEDoseActor(G4String name, G4int depth):
 //-----------------------------------------------------------------------------
 GateNTLEDoseActor::~GateNTLEDoseActor() {
   delete pMessenger;
+
   if(mIsKermaFactorDumped)
     delete mg;
 }
@@ -61,6 +66,7 @@ void GateNTLEDoseActor::Construct() {
 
   // Output Filename
   mDoseFilename = G4String(removeExtension(mSaveFilename)) + "-Dose." + G4String(getExtension(mSaveFilename));
+  mFluxFilename = G4String(removeExtension(mSaveFilename)) + "-Flux." + G4String(getExtension(mSaveFilename));
 
   SetOriginTransformAndFlagToImage(mDoseImage);
   SetOriginTransformAndFlagToImage(mLastHitEventImage);
@@ -82,6 +88,16 @@ void GateNTLEDoseActor::Construct() {
     mDoseImage.SetOrigin(mOrigin);
   }
 
+  if (mIsFluxImageEnabled) {
+    mFluxImage.EnableSquaredImage    (mIsFluxSquaredImageEnabled);
+    mFluxImage.EnableUncertaintyImage(mIsFluxUncertaintyImageEnabled);
+    mFluxImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    mFluxImage.Allocate();
+    mFluxImage.SetFilename(mFluxFilename);
+    mFluxImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
+    mFluxImage.SetOrigin(mOrigin);
+  }
+
   if (mIsKermaFactorDumped)
   {
     mg = new TMultiGraph();
@@ -95,7 +111,11 @@ void GateNTLEDoseActor::Construct() {
               "\tDose uncertainty  = " << mIsDoseUncertaintyImageEnabled << Gateendl <<
               "\tDose correction   = " << mIsDoseCorrectionEnabled << Gateendl <<
               "\tDump kerma factor = " << mIsKermaFactorDumped << Gateendl <<
-              "\tDoseFilename      = " << mDoseFilename << Gateendl);
+              "\tDoseFilename      = " << mDoseFilename << Gateendl <<
+              "\tFlux image        = " << mIsFluxImageEnabled << Gateendl <<
+              "\tFlux squared      = " << mIsFluxSquaredImageEnabled << Gateendl <<
+              "\tFlux uncertainty  = " << mIsFluxUncertaintyImageEnabled << Gateendl <<
+              "\tFluxFilename      = " << mFluxFilename << Gateendl);
 
   ResetData();
 }
@@ -106,6 +126,7 @@ void GateNTLEDoseActor::Construct() {
 void GateNTLEDoseActor::SaveData() {
   GateVActor::SaveData();
   if (mIsDoseImageEnabled) mDoseImage.SaveData(mCurrentEvent + 1, false);
+  if (mIsFluxImageEnabled) mFluxImage.SaveData(mCurrentEvent + 1, false);
   if (mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1);
   if(mIsKermaFactorDumped)
   {
@@ -123,11 +144,14 @@ void GateNTLEDoseActor::SaveData() {
 
 //-----------------------------------------------------------------------------
 void GateNTLEDoseActor::ResetData() {
-  if (mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1);
   if (mIsDoseImageEnabled) mDoseImage.Reset();
-  if (mIsKermaFactorDumped){
+  if (mIsFluxImageEnabled) mFluxImage.Reset();
+  if (mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1);
+  if (mIsKermaFactorDumped)
+  {
     mMaterialList.clear();
-    mg->Clear();}
+    mg->Clear();
+  }
 }
 //-----------------------------------------------------------------------------
 
@@ -168,9 +192,11 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
     mKFHandler->SetCubicVolume(GetDoselVolume());
 
     double dose(0.);
+    double flux(0.);
 
     if (step->GetTrack()->GetDefinition()->GetParticleName() == "neutron") {
       dose = mKFHandler->GetDose();
+      flux = mKFHandler->GetFlux();
       if (mIsDoseCorrectionEnabled)
         dose = mKFHandler->GetDoseCorrected();
     }
@@ -193,7 +219,8 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
          << " Particle       = " << step->GetTrack()->GetDefinition()->GetParticleName() << Gateendl
          << " KinEnergy      = " << G4BestUnit(step->GetPreStepPoint()->GetKineticEnergy(), "Energy") << Gateendl
          << " Distance       = " << G4BestUnit(step->GetStepLength(), "Length") << Gateendl
-         << " Dose           = " << G4BestUnit(dose, "Dose") << Gateendl);
+         << " Dose           = " << G4BestUnit(dose, "Dose") << Gateendl
+         << " Flux           = " << G4BestUnit(flux, "Flux") << Gateendl);
 
 
     if (mIsDoseImageEnabled) {
@@ -203,6 +230,15 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
       }
       else
         mDoseImage.AddValue(index, dose);
+    }
+
+    if (mIsFluxImageEnabled) {
+      if (mIsFluxUncertaintyImageEnabled || mIsFluxSquaredImageEnabled) {
+        if (sameEvent) mFluxImage.AddTempValue(index, flux);
+        else mFluxImage.AddValueAndUpdate(index, flux);
+      }
+      else
+        mFluxImage.AddValue(index, flux);
     }
 
     if (mIsKermaFactorDumped)

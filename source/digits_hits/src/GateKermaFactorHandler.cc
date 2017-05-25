@@ -206,6 +206,14 @@ double GateKermaFactorHandler::GetKermaFactor(double eEnergy)
 
 
 //-----------------------------------------------------------------------------
+double GateKermaFactorHandler::GetFlux()
+{
+  return m_distance / m_cubicVolume / m * m3;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 double GateKermaFactorHandler::GetDose()
 {
   return GetKermaFactor(m_energy) * m_distance / m_cubicVolume /m*m3;

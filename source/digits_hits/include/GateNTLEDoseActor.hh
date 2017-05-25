@@ -39,13 +39,17 @@ public:
   // Constructs the sensor
   virtual void Construct();
 
-  void EnableDoseImage(bool b)            { mIsDoseImageEnabled = b; }
-  void EnableDoseSquaredImage(bool b)     { mIsDoseSquaredImageEnabled = b; }
-  void EnableDoseUncertaintyImage(bool b) { mIsDoseUncertaintyImageEnabled = b; }
-  void EnableDoseCorrection(bool b)       { mIsDoseCorrectionEnabled = b; }
-  void EnableDoseCorrectionTLE(bool b)    { mIsDoseCorrectionTLEEnabled = b; }
-  void EnableKermaFactorDump(bool b)      { mIsKermaFactorDumped = b; }
-  void EnableKillSecondary(bool b)        { mIsKillSecondaryEnabled = b; }
+  void EnableDoseImage            (bool b) { mIsDoseImageEnabled = b; }
+  void EnableDoseSquaredImage     (bool b) { mIsDoseSquaredImageEnabled = b; }
+  void EnableDoseUncertaintyImage (bool b) { mIsDoseUncertaintyImageEnabled = b; }
+  void EnableDoseCorrection       (bool b) { mIsDoseCorrectionEnabled = b; }
+  void EnableDoseCorrectionTLE    (bool b) { mIsDoseCorrectionTLEEnabled = b; }
+  void EnableKermaFactorDump      (bool b) { mIsKermaFactorDumped = b; }
+  void EnableKillSecondary        (bool b) { mIsKillSecondaryEnabled = b; }
+
+  void EnableFluxImage            (bool b) { mIsFluxImageEnabled = b; }
+  void EnableFluxSquaredImage     (bool b) { mIsFluxSquaredImageEnabled = b; }
+  void EnableFluxUncertaintyImage (bool b) { mIsFluxUncertaintyImageEnabled = b; }
 
   virtual void BeginOfRunAction(const G4Run*);
   virtual void BeginOfEventAction(const G4Event*);
@@ -70,12 +74,14 @@ protected:
   GateNTLEDoseActorMessenger * pMessenger;
 
   GateImageWithStatistic mDoseImage;
+  GateImageWithStatistic mFluxImage;
 
   GateImage mLastHitEventImage;
 
   GateKermaFactorHandler* mKFHandler;
 
   G4String mDoseFilename;
+  G4String mFluxFilename;
 
   bool mIsDoseImageEnabled;
   bool mIsDoseSquaredImageEnabled;
@@ -85,6 +91,10 @@ protected:
   bool mIsLastHitEventImageEnabled;
   bool mIsKermaFactorDumped;
   bool mIsKillSecondaryEnabled;
+
+  bool mIsFluxImageEnabled;
+  bool mIsFluxSquaredImageEnabled;
+  bool mIsFluxUncertaintyImageEnabled;
 
   int mCurrentEvent;
 

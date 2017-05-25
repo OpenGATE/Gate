@@ -37,6 +37,8 @@ class GateKermaFactorHandler
     double GetDoseCorrected();
     double GetDoseCorrectedTLE();
 
+    double GetFlux();
+
     TGraph* GetKermaFactorGraph();
 
   private:
