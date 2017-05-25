@@ -220,7 +220,7 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
          << " KinEnergy      = " << G4BestUnit(step->GetPreStepPoint()->GetKineticEnergy(), "Energy") << Gateendl
          << " Distance       = " << G4BestUnit(step->GetStepLength(), "Length") << Gateendl
          << " Dose           = " << G4BestUnit(dose, "Dose") << Gateendl
-         << " Flux           = " << G4BestUnit(flux, "Flux") << Gateendl);
+         << " Flux           = " << flux << " neutrons/m⁻²" << Gateendl);
 
 
     if (mIsDoseImageEnabled) {
