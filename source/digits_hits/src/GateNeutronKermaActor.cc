@@ -17,6 +17,7 @@
 #include <G4VoxelLimits.hh>
 #include <G4NistManager.hh>
 #include <G4PhysicalConstants.hh>
+#include <G4VProcess.hh>
 
 //-----------------------------------------------------------------------------
 GateNeutronKermaActor::GateNeutronKermaActor(G4String name, G4int depth):
@@ -193,7 +194,7 @@ void GateNeutronKermaActor::UserSteppingActionInVoxel(const int index, const G4S
   else
     return;
 
-  GateMessage("Actor", 2, "GateNeutronKermaActor -- UserSteppingActionInVoxel: edep = " << G4BestUnit(edep, "Energy") << ", PreEKin = " << G4BestUnit(step->GetPreStepPoint()->GetKineticEnergy(), "Energy") << ", PostEKin = " << G4BestUnit(step->GetPostStepPoint()->GetKineticEnergy(), "Energy") << Gateendl);
+  GateMessage("Actor", 2, "GateNeutronKermaActor -- UserSteppingActionInVoxel: edep = " << G4BestUnit(edep, "Energy") << ", PreEKin = " << G4BestUnit(step->GetPreStepPoint()->GetKineticEnergy(), "Energy") << ", PostEKin = " << G4BestUnit(step->GetPostStepPoint()->GetKineticEnergy(), "Energy") << ", ProcName: " << (G4String)step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName() << Gateendl);
 
   if (edep == 0.) {
     GateDebugMessage("Actor", 5, "edep == 0 : do nothing\n");
