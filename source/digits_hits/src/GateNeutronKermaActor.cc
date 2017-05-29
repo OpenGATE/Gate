@@ -193,8 +193,7 @@ void GateNeutronKermaActor::UserSteppingActionInVoxel(const int index, const G4S
   else
     return;
 
-  if (mIsEdepImageEnabled) {
-    GateMessage("Actor", 2, "GateNeutronKermaActor -- UserSteppingActionInVoxel: edep = " << G4BestUnit(edep, "Energy") << ", PreEKin = " << G4BestUnit(step->GetPreStepPoint()->GetKineticEnergy(), "Energy") << ", PostEKin = " << G4BestUnit(step->GetPostStepPoint()->GetKineticEnergy(), "Energy") << Gateendl);}
+  GateMessage("Actor", 2, "GateNeutronKermaActor -- UserSteppingActionInVoxel: edep = " << G4BestUnit(edep, "Energy") << ", PreEKin = " << G4BestUnit(step->GetPreStepPoint()->GetKineticEnergy(), "Energy") << ", PostEKin = " << G4BestUnit(step->GetPostStepPoint()->GetKineticEnergy(), "Energy") << Gateendl);
 
   if (edep == 0.) {
     GateDebugMessage("Actor", 5, "edep == 0 : do nothing\n");
