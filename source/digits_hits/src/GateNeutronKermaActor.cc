@@ -180,7 +180,7 @@ void GateNeutronKermaActor::BeginOfEventAction(const G4Event * e) {
 
 //-----------------------------------------------------------------------------
 void GateNeutronKermaActor::UserSteppingActionInVoxel(const int index, const G4Step* step) {
-  GateDebugMessageInc("Actor", 4, "GateNeutronKermaActor -- UserSteppingActionInVoxel - begin\n");
+  GateMessageInc("Actor", 4, "GateNeutronKermaActor -- UserSteppingActionInVoxel - begin\n");
 
   const double weight = step->GetTrack()->GetWeight();
 
@@ -194,18 +194,18 @@ void GateNeutronKermaActor::UserSteppingActionInVoxel(const int index, const G4S
   else
     return;
 
-  GateMessage("Actor", 2, "GateNeutronKermaActor -- UserSteppingActionInVoxel: edep = " << G4BestUnit(edep, "Energy") << ", PreEKin = " << G4BestUnit(step->GetPreStepPoint()->GetKineticEnergy(), "Energy") << ", PostEKin = " << G4BestUnit(step->GetPostStepPoint()->GetKineticEnergy(), "Energy") << ", ProcName: " << (G4String)step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName() << Gateendl);
-
   if (edep <= 0.) {
-    GateDebugMessage("Actor", 5, "edep <= 0 : do nothing\n");
-    GateDebugMessageDec("Actor", 4, "GateNeutronKermaActor -- UserSteppingActionInVoxel -- end\n");
+    GateMessage("Actor", 5, "edep <= 0 : do nothing\n");
+    GateMessageDec("Actor", 4, "GateNeutronKermaActor -- UserSteppingActionInVoxel -- end\n");
     return;
   }
   if (index < 0) {
-    GateDebugMessage("Actor", 5, "index<0 : do nothing\n");
-    GateDebugMessageDec("Actor", 4, "GateNeutronKermaActor -- UserSteppingActionInVoxel -- end\n");
+    GateMessage("Actor", 5, "index < 0 : do nothing\n");
+    GateMessageDec("Actor", 4, "GateNeutronKermaActor -- UserSteppingActionInVoxel -- end\n");
     return;
   }
+
+  GateMessage("Actor", 2, "GateNeutronKermaActor -- UserSteppingActionInVoxel: edep = " << G4BestUnit(edep, "Energy") << ", PreEKin = " << G4BestUnit(step->GetPreStepPoint()->GetKineticEnergy(), "Energy") << ", PostEKin = " << G4BestUnit(step->GetPostStepPoint()->GetKineticEnergy(), "Energy") << ", ProcName: " << (G4String)step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName() << Gateendl);
 
   // compute sameEvent
   // sameEvent is false the first time some energy is deposited for each primary particle
