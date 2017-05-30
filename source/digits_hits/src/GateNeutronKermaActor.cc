@@ -196,8 +196,8 @@ void GateNeutronKermaActor::UserSteppingActionInVoxel(const int index, const G4S
 
   GateMessage("Actor", 2, "GateNeutronKermaActor -- UserSteppingActionInVoxel: edep = " << G4BestUnit(edep, "Energy") << ", PreEKin = " << G4BestUnit(step->GetPreStepPoint()->GetKineticEnergy(), "Energy") << ", PostEKin = " << G4BestUnit(step->GetPostStepPoint()->GetKineticEnergy(), "Energy") << ", ProcName: " << (G4String)step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName() << Gateendl);
 
-  if (edep == 0.) {
-    GateDebugMessage("Actor", 5, "edep == 0 : do nothing\n");
+  if (edep <= 0.) {
+    GateDebugMessage("Actor", 5, "edep <= 0 : do nothing\n");
     GateDebugMessageDec("Actor", 4, "GateNeutronKermaActor -- UserSteppingActionInVoxel -- end\n");
     return;
   }
