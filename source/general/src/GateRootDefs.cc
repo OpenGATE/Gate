@@ -383,27 +383,48 @@ void GateRootSingleBuffer::Fill(GateSingleDigi* aDigi)
 void GateSingleTree::Init(GateRootSingleBuffer& buffer)
 {
     SetAutoSave(1000);
+if ( GateSingleDigi::GetSingleASCIIMask(0) )
     Branch("runID",          &buffer.runID,"runID/I");
+if ( GateSingleDigi::GetSingleASCIIMask(1) )
     Branch("eventID",        &buffer.eventID,"eventID/I");
+if ( GateSingleDigi::GetSingleASCIIMask(2) )
     Branch("sourceID",       &buffer.sourceID,"sourceID/I");
+if ( GateSingleDigi::GetSingleASCIIMask(3) )
     Branch("sourcePosX",     &buffer.sourcePosX,"sourcePosX/F");
+if ( GateSingleDigi::GetSingleASCIIMask(4) )
     Branch("sourcePosY",     &buffer.sourcePosY,"sourcePosY/F");
+if ( GateSingleDigi::GetSingleASCIIMask(5) )
     Branch("sourcePosZ",     &buffer.sourcePosZ,"sourcePosZ/F");
+if ( GateSingleDigi::GetSingleASCIIMask(7) )
     Branch("time",           &buffer.time,"time/D");
+if ( GateSingleDigi::GetSingleASCIIMask(8) )
     Branch("energy",         &buffer.energy,"energy/F");
+if ( GateSingleDigi::GetSingleASCIIMask(9) )
     Branch("globalPosX",     &buffer.globalPosX,"globalPosX/F");
+if ( GateSingleDigi::GetSingleASCIIMask(10) )
     Branch("globalPosY",     &buffer.globalPosY,"globalPosY/F");
+if ( GateSingleDigi::GetSingleASCIIMask(11) )
     Branch("globalPosZ",     &buffer.globalPosZ,"globalPosZ/F");
+if ( GateSingleDigi::GetSingleASCIIMask(6) )
     for (size_t d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
       Branch(outputIDName[d],(void *)(buffer.outputID+d),outputIDLeafList[d]);
+if ( GateSingleDigi::GetSingleASCIIMask(12) )
     Branch("comptonPhantom", &buffer.comptonPhantom,"comptonPhantom/I");
+if ( GateSingleDigi::GetSingleASCIIMask(13) )
     Branch("comptonCrystal", &buffer.comptonCrystal,"comptonCrystal/I");
+if ( GateSingleDigi::GetSingleASCIIMask(14) )
     Branch("RayleighPhantom", &buffer.RayleighPhantom,"RayleighPhantom/I");
+if ( GateSingleDigi::GetSingleASCIIMask(15) )
     Branch("RayleighCrystal", &buffer.RayleighCrystal,"RayleighCrystal/I");
+if ( GateSingleDigi::GetSingleASCIIMask(18) )
     Branch("axialPos",       &buffer.axialPos,"axialPos/F");
+if ( GateSingleDigi::GetSingleASCIIMask(19) )
     Branch("rotationAngle",  &buffer.rotationAngle,"rotationAngle/F");
+if ( GateSingleDigi::GetSingleASCIIMask(16) )
     Branch("comptVolName",   (void *)buffer.comptonVolumeName,"comptVolName/C");
+if ( GateSingleDigi::GetSingleASCIIMask(17) )
     Branch("RayleighVolName",   (void *)buffer.RayleighVolumeName,"RayleighVolName/C");
+if ( GateSingleDigi::GetSingleASCIIMask(20) )
     // HDS : record septal penetration
     if (GateRootDefs::GetRecordSeptalFlag())	Branch("septalNb",   &buffer.septalNb,"septalNb/I");
 }
@@ -555,52 +576,91 @@ G4double GateRootCoincBuffer::ComputeSinogramS()
 void GateCoincTree::Init(GateRootCoincBuffer& buffer)
 {
     SetAutoSave(1000);
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(0) )
     Branch("runID",          &buffer.runID,"runID/I");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(16) )
     Branch("axialPos",       &buffer.axialPos,"axialPos/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(17) )
     Branch("rotationAngle",  &buffer.rotationAngle,"rotationAngle/F");
     
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(1) )
     Branch("eventID1",       &buffer.eventID1,"eventID1/I");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(2) )
     Branch("sourceID1",      &buffer.sourceID1,"sourceID1/I");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(3) )
     Branch("sourcePosX1",    &buffer.sourcePosX1,"sourcePosX1/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(4) )
     Branch("sourcePosY1",    &buffer.sourcePosY1,"sourcePosY1/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(5) )
     Branch("sourcePosZ1",    &buffer.sourcePosZ1,"sourcePosZ1/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(6) )
     Branch("time1",          &buffer.time1,"time1/D");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(7) )
     Branch("energy1",        &buffer.energy1,"energy1/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(8) )
     Branch("globalPosX1",    &buffer.globalPosX1,"globalPosX1/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(9) )
     Branch("globalPosY1",    &buffer.globalPosY1,"globalPosY1/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(10) )
     Branch("globalPosZ1",    &buffer.globalPosZ1,"globalPosZ1/F");
     size_t d;
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(11) )
     for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
       Branch(outputIDName1[d],(void*)( buffer.outputID1 +d ),outputIDLeafList1[d]);
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(12) )
     Branch("comptonPhantom1",&buffer.comptonPhantom1,"comptonPhantom1/I");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(13) )
     Branch("comptonCrystal1",&buffer.comptonCrystal1,"comptonCrystal1/I");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(14) )
     Branch("RayleighPhantom1",&buffer.RayleighPhantom1,"RayleighPhantom1/I");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(15) )
     Branch("RayleighCrystal1",&buffer.RayleighCrystal1,"RayleighCrystal1/I");
 
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(1) )
     Branch("eventID2",       &buffer.eventID2,"eventID2/I");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(2) )
     Branch("sourceID2",      &buffer.sourceID2,"sourceID2/I");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(3) )
     Branch("sourcePosX2",    &buffer.sourcePosX2,"sourcePosX2/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(4) )
     Branch("sourcePosY2",    &buffer.sourcePosY2,"sourcePosY2/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(5) )
     Branch("sourcePosZ2",    &buffer.sourcePosZ2,"sourcePosZ2/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(6) )
     Branch("time2",          &buffer.time2,"time2/D");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(7) )
     Branch("energy2",        &buffer.energy2,"energy2/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(8) )
     Branch("globalPosX2",    &buffer.globalPosX2,"globalPosX2/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(9) )
     Branch("globalPosY2",    &buffer.globalPosY2,"globalPosY2/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(10) )
     Branch("globalPosZ2",    &buffer.globalPosZ2,"globalPosZ2/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(11) )
     for (d=0; d<ROOT_OUTPUTIDSIZE ; ++d)
       Branch(outputIDName2[d],(void*)( buffer.outputID2 + d),outputIDLeafList2[d]);
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(12) )
     Branch("comptonPhantom2",&buffer.comptonPhantom2,"comptonPhantom2/I");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(13) )
     Branch("comptonCrystal2",&buffer.comptonCrystal2,"comptonCrystal2/I");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(14) )
     Branch("RayleighPhantom2",&buffer.RayleighPhantom2,"RayleighPhantom2/I");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(15) )
     Branch("RayleighCrystal2",&buffer.RayleighCrystal2,"RayleighCrystal2/I");
     
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(18) )
     Branch("sinogramTheta",  &buffer.sinogramTheta,"sinogramTheta/F");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(19) )
     Branch("sinogramS",      &buffer.sinogramS,"sinogramS/F");
 
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(20) )
     Branch("comptVolName1",  (void *)buffer.comptonVolumeName1,"comptVolName1/C");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(20) )
     Branch("comptVolName2",  (void *)buffer.comptonVolumeName2,"comptVolName2/C");
 
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(21) )
     Branch("RayleighVolName1",  (void *)buffer.RayleighVolumeName1,"RayleighVolName1/C");
+if ( GateCoincidenceDigi::GetCoincidenceASCIIMask(21) )
     Branch("RayleighVolName2",  (void *)buffer.RayleighVolumeName2,"RayleighVolName2/C");
 }
 

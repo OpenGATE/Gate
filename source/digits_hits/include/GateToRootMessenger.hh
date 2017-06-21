@@ -30,6 +30,7 @@ class G4UIcmdWithADouble;
 class G4UIcmdWithADoubleAndUnit;
 class G4UIcmdWith3VectorAndUnit;
 class G4UIcmdWithoutParameter;
+class G4UIcommand;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -57,6 +58,12 @@ class GateToRootMessenger: public GateOutputModuleMessenger
     G4UIcmdWithABool*        RootRecordCmd;
     G4UIcmdWithABool*        SaveRndmCmd;
     G4UIcmdWithAString*      SetFileNameCmd;
+
+    G4UIcommand*      CoincidenceMaskCmd;
+	G4int m_coincidenceMaskLength;
+
+    G4UIcommand*      SingleMaskCmd;
+	G4int m_singleMaskLength;
 
     std::vector<G4UIcmdWithABool*>  		 OutputChannelCmdList;
     std::vector<GateToRoot::VOutputChannel*>  m_outputChannelList;
