@@ -188,7 +188,24 @@ double GateKermaFactorHandler::GetKermaFactor(double eEnergy)
     GateError("Kerma Factor table is empty !" << Gateendl);
 
   if (eEnergy/MeV < energy_tableau[0] && eEnergy/MeV >= 1e-10)
-    return 7.011e-21 * std::pow(eEnergy/MeV, -0.466);
+  {
+    GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] Neutron energy (" << eEnergy/MeV << " MeV) is inferior to minimum energy of kfTable (" << energy_tableau[0] << " MeV) !" << Gateendl);
+
+    bool kfExtrapolation = false;
+
+    if (kfExtrapolation)
+    {
+      GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] ===> Doing Kerma Factor Extrapolation !" << Gateendl);
+
+      return 7.011e-21 * std::pow(eEnergy/MeV, -0.466);
+    }
+    else
+    {
+      GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] ===> Returning " << energy_tableau[0] << " MeV Kerma Factor ! (" << kfTable[0] << ")" << Gateendl);
+
+      return kfTable[0];
+    }
+  }
 
   for (size_t i=1; i<energy_tableau.size(); i++)
     if (eEnergy/MeV >= energy_tableau[i-1] && eEnergy/MeV < energy_tableau[i])
