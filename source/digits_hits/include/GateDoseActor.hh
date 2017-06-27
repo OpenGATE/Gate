@@ -103,6 +103,7 @@ protected:
   bool mIsNumberOfHitsImageEnabled;
   bool mIsDoseNormalisationEnabled;
   bool mIsDoseToWaterNormalisationEnabled;
+  bool mDose2WaterWarningFlag;
 
   GateImageWithStatistic mEdepImage;
   GateImageWithStatistic mDoseImage;
