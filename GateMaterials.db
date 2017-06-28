@@ -221,7 +221,13 @@ PTFE:   d= 2.18 g/cm3 ; n=2 ; state=solid
         +el: name=Fluorine   ; n=2
 
 
-LYSO:   d=5.37 g/cm3; n=4 ; state=Solid
+LYSO:   d=7.36 g/cm3; n=4 ; state=Solid
+        +el: name=Lutetium ; f=0.714467891
+        +el: name=Yttrium ; f=0.04033805
+        +el: name=Silicon; f=0.063714272
+        +el: name=Oxygen; f=0.181479788
+
+LYSOold:   d=5.37 g/cm3; n=4 ; state=Solid
         +el: name=Lutetium   ; f=0.31101534
         +el: name=Yttrium    ; f=0.368765605
         +el: name=Silicon    ; f=0.083209699
