@@ -970,6 +970,13 @@ void GateMacfileParser::FormatMacline()
 		macline=temp;
 	}
 
+	//remove "\t"
+        while (macline.contains("\t"))
+        {
+               position = macline.find("\t");
+               macline.replace(position,1," ");
+        }
+	
 	//remove trailing spaces
 	size=macline.length();
 	subString=macline(size-1);
