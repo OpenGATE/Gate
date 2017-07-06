@@ -21,7 +21,7 @@ public:
   std::string ToString();
   void Update(long event_id, double edep, double density);
 
-  static void ComputeRegionVolumes(GateImageInt & image,
+  static void ComputeRegionVolumes(GateImageFloat & image,
                                    std::map<int, GateRegionDoseStat> & mMapOfRegionStat);
 
   double sum_edep;

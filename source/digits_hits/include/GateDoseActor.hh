@@ -118,7 +118,7 @@ protected:
   GateImageInt mNumberOfHitsImage;
   GateImageInt mLastHitEventImage;
   GateImageDouble mMassImage;
-  GateImageInt mDoseByRegionsLabelImage;
+  GateImageFloat mDoseByRegionsLabelImage;
   std::map<int, GateRegionDoseStat> mMapOfRegionStat;
   double mScalingFactor;
 

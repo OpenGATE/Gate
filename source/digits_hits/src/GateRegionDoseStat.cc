@@ -62,10 +62,10 @@ void GateRegionDoseStat::Update(long event_id, double edep, double density)
 
 
 //-----------------------------------------------------------------------------
-void GateRegionDoseStat::ComputeRegionVolumes(GateImageInt & image,
+void GateRegionDoseStat::ComputeRegionVolumes(GateImageFloat & image,
                                               std::map<int, GateRegionDoseStat> & mMapOfRegionStat)
 {
-  GateImageInt::const_iterator pi = image.begin();
+  GateImageFloat::const_iterator pi = image.begin();
   while (pi != image.end()) {
     int label = *pi;
     mMapOfRegionStat[label].volume += 1.0;
