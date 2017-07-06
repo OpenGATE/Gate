@@ -27,6 +27,23 @@
 #include <G4Electron.hh>
 
 //-----------------------------------------------------------------------------
+bool IsEqual(double a, double b, double tol)
+{
+  double d = fabs(a-b);
+  return d<tol;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+bool IsEqual(G4ThreeVector a, G4ThreeVector b, double tol)
+{
+  return (IsEqual(a.x(), b.x(), tol) &&
+          IsEqual(a.y(), b.y(), tol) &&
+          IsEqual(a.z(), b.z(), tol));
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 GateDoseActor::GateDoseActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
   GateDebugMessageInc("Actor",4,"GateDoseActor() -- begin\n");
@@ -48,11 +65,13 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mDoseAlgorithmType = "VolumeWeighting";
   mImportMassImage = "";
   mExportMassImage = "";
-
+  mDoseByRegionsFlag = false;
+  mDoseByRegionsInputFilename = "";
+  mDoseByRegionsOutputFilename = "DoseByRegions.txt";
   mVolumeFilter = "";
   mMaterialFilter = "";
-
   mDose2WaterWarningFlag = true;
+  mScalingFactor = 1.0;
 
   pMessenger = new GateDoseActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateDoseActor() -- end\n");
@@ -130,6 +149,13 @@ void GateDoseActor::Construct() {
   SetOriginTransformAndFlagToImage(mDoseToWaterImage);
   SetOriginTransformAndFlagToImage(mMassImage);
 
+  // Scaling ?
+  if (mScalingFactor != 1.0) {
+    mEdepImage.SetScaleFactor(mScalingFactor);
+    mDoseImage.SetScaleFactor(mScalingFactor);
+    mDoseToWaterImage.SetScaleFactor(mScalingFactor);
+  }
+
   // Resize and allocate images
   if (mIsEdepSquaredImageEnabled || mIsEdepUncertaintyImageEnabled ||
       mIsDoseSquaredImageEnabled || mIsDoseUncertaintyImageEnabled ||
@@ -139,7 +165,6 @@ void GateDoseActor::Construct() {
     mIsLastHitEventImageEnabled = true;
   }
   if (mIsEdepImageEnabled) {
-    //  mEdepImage.SetLastHitEventImage(&mLastHitEventImage);
     mEdepImage.EnableSquaredImage(mIsEdepSquaredImageEnabled);
     mEdepImage.EnableUncertaintyImage(mIsEdepUncertaintyImageEnabled);
     // Force the computation of squared image if uncertainty is enabled
@@ -149,15 +174,11 @@ void GateDoseActor::Construct() {
     mEdepImage.SetFilename(mEdepFilename);
   }
   if (mIsDoseImageEnabled) {
-    // mDoseImage.SetLastHitEventImage(&mLastHitEventImage);
     mDoseImage.EnableSquaredImage(mIsDoseSquaredImageEnabled);
     mDoseImage.EnableUncertaintyImage(mIsDoseUncertaintyImageEnabled);
     mDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     // Force the computation of squared image if uncertainty is enabled
     if (mIsDoseUncertaintyImageEnabled) mDoseImage.EnableSquaredImage(true);
-
-    // DD(mDoseImage.GetVoxelVolume());
-    //mDoseImage.SetScaleFactor(1e12/mDoseImage.GetVoxelVolume());
     mDoseImage.Allocate();
     mDoseImage.SetFilename(mDoseFilename);
   }
@@ -186,9 +207,7 @@ void GateDoseActor::Construct() {
     if (mExportMassImage != "") {
       mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
       mMassImage.Allocate();
-
       mVoxelizedMass.UpdateImage(&mMassImage);
-
       mMassImage.Write(mExportMassImage);
     }
   }
@@ -203,8 +222,21 @@ void GateDoseActor::Construct() {
       GateWarning("importMassImage command is only compatible with MassWeighting algorithm. Ignored. ");
   }
 
+  if (mDoseByRegionsFlag) {
+    mDoseByRegionsLabelImage.Read(mDoseByRegionsInputFilename);
+    SetOriginTransformAndFlagToImage(mDoseByRegionsLabelImage);
+    double tol = 0.00000001;
+    if (!IsEqual(mDoseByRegionsLabelImage.GetResolution(), mResolution, tol) ||
+        !IsEqual(mDoseByRegionsLabelImage.GetVoxelSize(), mVoxelSize, tol) ||
+        !IsEqual(mDoseByRegionsLabelImage.GetOrigin(), mOrigin, tol)) {
+      GateError("The DoseByRegions labels image must have the same size than the dose image.");
+    }
+    GateRegionDoseStat::ComputeRegionVolumes(mDoseByRegionsLabelImage, mMapOfRegionStat);
+  }
+
+
   // Print information
-  GateMessage("Actor", 1,
+  GateMessage("Actor", 0,
               "Dose DoseActor    = '" << GetObjectName() << "'\n" <<
               "\tDose image        = " << mIsDoseImageEnabled << Gateendl <<
               "\tDose squared      = " << mIsDoseSquaredImageEnabled << Gateendl <<
@@ -222,6 +254,10 @@ void GateDoseActor::Construct() {
               "\tMass image (export) = " << mExportMassImage << Gateendl <<
               "\tEdepFilename      = " << mEdepFilename << Gateendl <<
               "\tDoseFilename      = " << mDoseFilename << Gateendl <<
+              "\tDoseByRegions     = " << mDoseByRegionsFlag << Gateendl <<
+              "\tDoseByRegionsInput  = " << mDoseByRegionsInputFilename << Gateendl <<
+              "\tDoseByRegionsOutput = " << mDoseByRegionsOutputFilename << Gateendl <<
+              "\tScaling factor    = " << mScalingFactor << Gateendl << 
               "\tNb Hits filename  = " << mNbOfHitsFilename << Gateendl);
 
   ResetData();
@@ -256,6 +292,43 @@ void GateDoseActor::SaveData() {
 
   if (mIsNumberOfHitsImageEnabled) {
     mNumberOfHitsImage.Write(mNbOfHitsFilename);
+  }
+
+  if (mDoseByRegionsFlag) {
+
+    // Finish unfinished squared dose
+    for (auto & m:mMapOfRegionStat)
+      m.second.Update(mCurrentEvent, 0.0, 0.0);
+
+    // Compute std and write results
+    double N = mCurrentEvent+1;
+    std::ofstream os(mDoseByRegionsOutputFilename);
+    os << "#id \tvol(mm3) \tedep(MeV) \tstd_edep \tsq_edep \tdose(Gy) \tstd_dose \tsq_dose \tn_hit \tn_event_roi" << std::endl;
+    for(auto m:mMapOfRegionStat) {
+      auto & region = m.second;
+      double edep = region.sum_edep;
+      double sq_edep = region.sum_squared_edep;
+      double std_edep = sqrt( (1.0/(N-1))*(sq_edep/N - pow(edep/N, 2)) )/(edep/N);
+      if( edep == 0.0 || N == 1 || sq_edep == 0 )
+        std_edep = 1.0; // relative uncertainty of 100%
+      double dose = region.sum_dose;
+      double sq_dose = region.sum_squared_dose;
+      double std_dose = sqrt( (1.0/(N-1))*(sq_dose/N - pow(dose/N, 2)) )/(dose/N);
+      if( dose == 0.0 || N == 1 || sq_dose == 0 )
+        std_dose = 1.0; // relative uncertainty of 100%
+      os.precision(10);
+      os << m.first << "\t"
+         << region.volume << "\t"
+         << edep*mScalingFactor << "\t"
+         << std_edep << "\t"
+         << sq_edep*mScalingFactor*mScalingFactor << "\t"
+         << dose*mScalingFactor << "\t"
+         << std_dose << "\t"
+         << sq_dose*mScalingFactor*mScalingFactor << "\t"
+         << region.nb_hits << "\t"
+         << region.nb_event_hits << std::endl;
+    }
+    os.close();
   }
 }
 //-----------------------------------------------------------------------------
@@ -426,42 +499,72 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     GateDebugMessage("Actor", 2, "GateDoseActor -- UserSteppingActionInVoxel:\tedep = " << G4BestUnit(edep, "Energy") << Gateendl);
   }
 
-  if (mIsDoseImageEnabled)
-    {
-      if (mIsDoseUncertaintyImageEnabled || mIsDoseSquaredImageEnabled)
-        {
-          if (sameEvent) mDoseImage.AddTempValue(index, dose);
-          else mDoseImage.AddValueAndUpdate(index, dose);
-        }
-      else mDoseImage.AddValue(index, dose);
+  if (mIsDoseImageEnabled) {
+    if (mIsDoseUncertaintyImageEnabled || mIsDoseSquaredImageEnabled) {
+      if (sameEvent) mDoseImage.AddTempValue(index, dose);
+      else mDoseImage.AddValueAndUpdate(index, dose);
     }
+    else mDoseImage.AddValue(index, dose);
+  }
 
-  if (mIsDoseToWaterImageEnabled)
-    {
-      if (mIsDoseToWaterUncertaintyImageEnabled || mIsDoseToWaterSquaredImageEnabled)
-        {
-          if (sameEvent) mDoseToWaterImage.AddTempValue(index, doseToWater);
-          else mDoseToWaterImage.AddValueAndUpdate(index, doseToWater);
-        }
-      else mDoseToWaterImage.AddValue(index, doseToWater);
+  if (mIsDoseToWaterImageEnabled) {
+    if (mIsDoseToWaterUncertaintyImageEnabled || mIsDoseToWaterSquaredImageEnabled) {
+      if (sameEvent) mDoseToWaterImage.AddTempValue(index, doseToWater);
+      else mDoseToWaterImage.AddValueAndUpdate(index, doseToWater);
     }
+    else mDoseToWaterImage.AddValue(index, doseToWater);
+  }
 
-  if (mIsEdepImageEnabled)
-    {
-      if (mIsEdepUncertaintyImageEnabled || mIsEdepSquaredImageEnabled)
-        {
-          if (sameEvent) mEdepImage.AddTempValue(index, edep);
-          else mEdepImage.AddValueAndUpdate(index, edep);
-        }
-      else
-        {
-          mEdepImage.AddValue(index, edep);
-
-        }
+  if (mIsEdepImageEnabled) {
+    if (mIsEdepUncertaintyImageEnabled || mIsEdepSquaredImageEnabled) {
+      if (sameEvent) mEdepImage.AddTempValue(index, edep);
+      else mEdepImage.AddValueAndUpdate(index, edep);
     }
+    else {
+      mEdepImage.AddValue(index, edep);
+    }
+  }
 
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.AddValue(index, weight);
+
+  //---------------------------------------------------------------------------------
+  if (mDoseByRegionsFlag) {
+    int label = mDoseByRegionsLabelImage.GetValue(index);
+    auto & region = mMapOfRegionStat[label];
+    region.Update(mCurrentEvent, edep, density);
+  }
+
+  //---------------------------------------------------------------------------------
 
   GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end\n");
 }
 //-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDoseActor::SetDoseByRegionsInputFilename(std::string f)
+{
+  mDoseByRegionsFlag = true;
+  mIsDoseImageEnabled = true;
+  mDoseByRegionsInputFilename = f;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDoseActor::SetDoseByRegionsOutputFilename(std::string f)
+{
+  mDoseByRegionsFlag = true;
+  mIsDoseImageEnabled = true;
+  mDoseByRegionsOutputFilename = f;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDoseActor::SetOutputScalingFactor(double s)
+{
+  mScalingFactor = s;
+}
+//-----------------------------------------------------------------------------
+

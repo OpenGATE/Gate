@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #ifndef GATEDOSEACTORMESSENGER_CC
@@ -16,28 +16,30 @@ See GATE/LICENSE.txt for further details
 //-----------------------------------------------------------------------------
 GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
   :GateImageActorMessenger(sensor),
-  pDoseActor(sensor)
+   pDoseActor(sensor)
 {
 
   pEnableDoseCmd = 0;
-  pEnableDoseNormToMaxCmd= 0;
-  pEnableDoseNormToIntegralCmd= 0;
-  pEnableDoseSquaredCmd= 0;
-  pEnableDoseUncertaintyCmd= 0;
+  pEnableDoseNormToMaxCmd = 0;
+  pEnableDoseNormToIntegralCmd = 0;
+  pEnableDoseSquaredCmd = 0;
+  pEnableDoseUncertaintyCmd = 0;
   pEnableDoseToWaterCmd = 0;
-  pEnableDoseToWaterNormCmd= 0;
-  pEnableDoseToWaterSquaredCmd= 0;
-  pEnableDoseToWaterUncertaintyCmd= 0;
-  pEnableEdepCmd= 0;
-  pEnableEdepSquaredCmd= 0;
-  pEnableEdepUncertaintyCmd= 0;
-  pEnableNumberOfHitsCmd= 0;
-  pSetDoseAlgorithmCmd= 0;
-  pImportMassImageCmd= 0;
-  pExportMassImageCmd= 0;
-
-  pVolumeFilterCmd= 0;
-  pMaterialFilterCmd= 0;
+  pEnableDoseToWaterNormCmd = 0;
+  pEnableDoseToWaterSquaredCmd = 0;
+  pEnableDoseToWaterUncertaintyCmd = 0;
+  pEnableEdepCmd = 0;
+  pEnableEdepSquaredCmd = 0;
+  pEnableEdepUncertaintyCmd = 0;
+  pEnableNumberOfHitsCmd = 0;
+  pSetDoseAlgorithmCmd = 0;
+  pImportMassImageCmd = 0;
+  pExportMassImageCmd = 0;
+  pDoseRegionInputCmd = 0;
+  pDoseRegionOutputCmd = 0;
+  pVolumeFilterCmd = 0;
+  pMaterialFilterCmd = 0;
+  pScaleOutputCmd = 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -63,9 +65,11 @@ GateDoseActorMessenger::~GateDoseActorMessenger()
   if(pSetDoseAlgorithmCmd) delete pSetDoseAlgorithmCmd;
   if(pImportMassImageCmd) delete pImportMassImageCmd;
   if(pExportMassImageCmd) delete pExportMassImageCmd;
-
   if(pVolumeFilterCmd) delete pVolumeFilterCmd;
   if(pMaterialFilterCmd) delete pMaterialFilterCmd;
+  if(pDoseRegionOutputCmd) delete pDoseRegionOutputCmd;
+  if(pDoseRegionInputCmd) delete pDoseRegionInputCmd;
+  if(pScaleOutputCmd) delete pScaleOutputCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -157,7 +161,6 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   pExportMassImageCmd->SetGuidance(guid);
   pExportMassImageCmd->SetParameterName("Export mass image",false);
 
-
   n = base+"/setVolumeFilter";
   pVolumeFilterCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Volume filter");
@@ -169,6 +172,25 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   guid = G4String("Material filter");
   pMaterialFilterCmd->SetGuidance(guid);
   pMaterialFilterCmd->SetParameterName("Material filter",false);
+
+  n = base+"/inputDoseByRegions";
+  pDoseRegionInputCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Image filename to read the region labels.");
+  pDoseRegionInputCmd->SetGuidance(guid);
+  pDoseRegionInputCmd->SetParameterName("Image filename",false);
+
+  n = base+"/outputDoseByRegions";
+  pDoseRegionOutputCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Filename to store dose by regions.");
+  pDoseRegionOutputCmd->SetGuidance(guid);
+  pDoseRegionOutputCmd->SetParameterName("Filename (txt)",false);
+
+  n = base+"/setScalingFactor";
+  pScaleOutputCmd = new G4UIcmdWithADouble(n, this);
+  guid = G4String("Scale the output by a value");
+  pScaleOutputCmd->SetGuidance(guid);
+  pScaleOutputCmd->SetParameterName("Scaling factor",false);
+
 }
 //-----------------------------------------------------------------------------
 
@@ -197,6 +219,11 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 
   if (cmd == pVolumeFilterCmd) pDoseActor->VolumeFilter(newValue);
   if (cmd == pMaterialFilterCmd) pDoseActor->MaterialFilter(newValue);
+
+  if (cmd == pDoseRegionInputCmd) pDoseActor->SetDoseByRegionsInputFilename(newValue);
+  if (cmd == pDoseRegionOutputCmd) pDoseActor->SetDoseByRegionsOutputFilename(newValue);
+
+  if (cmd == pScaleOutputCmd) pDoseActor->SetOutputScalingFactor(pScaleOutputCmd->GetNewDoubleValue(newValue));
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
