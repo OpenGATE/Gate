@@ -86,8 +86,10 @@ protected:
   bool mIsDoseImageEnabled;
   bool mIsDoseSquaredImageEnabled;
   bool mIsDoseUncertaintyImageEnabled;
+
   bool mIsDoseCorrectionEnabled;
   bool mIsDoseCorrectionTLEEnabled;
+
   bool mIsLastHitEventImageEnabled;
   bool mIsKermaFactorDumped;
   bool mIsKillSecondaryEnabled;

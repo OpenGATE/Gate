@@ -28,7 +28,10 @@ GateNTLEDoseActor::GateNTLEDoseActor(G4String name, G4int depth):
   mIsDoseImageEnabled            = false;
   mIsDoseSquaredImageEnabled     = false;
   mIsDoseUncertaintyImageEnabled = false;
+
   mIsDoseCorrectionEnabled       = false;
+  mIsDoseCorrectionTLEEnabled    = false;
+
   mIsLastHitEventImageEnabled    = false;
   mIsKermaFactorDumped           = false;
   mIsKillSecondaryEnabled        = false;
@@ -197,10 +200,12 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
     if (step->GetTrack()->GetDefinition()->GetParticleName() == "neutron") {
       dose = mKFHandler->GetDose();
       flux = mKFHandler->GetFlux();
+
       if (mIsDoseCorrectionEnabled)
         dose = mKFHandler->GetDoseCorrected();
     }
-    else
+    else if (step->GetTrack()->GetDefinition()->GetParticleName() == "gamma" &&
+             mIsDoseCorrectionTLEEnabled)
       dose = mKFHandler->GetDoseCorrectedTLE();
 
     bool sameEvent = true;
