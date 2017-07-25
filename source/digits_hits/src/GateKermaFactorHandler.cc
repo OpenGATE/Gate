@@ -65,8 +65,14 @@ void GateKermaFactorHandler::SetMaterial(const G4Material* eMaterial)
 
   const G4String name(m_material->GetName());
 
-  if (name == "G4_MUSCLE_STRIATED_ICRU" ||
-      name == "Muscle_Skeletal_ICRP_23")
+  if (name == "G4_H" ||
+      name == "Hydrogen")
+  {
+    kfTable = kerma_factor_table_hydrogen;
+    MuEnTable = MuEnTableHydrogen;
+  }
+  else if (name == "G4_MUSCLE_STRIATED_ICRU" ||
+           name == "Muscle_Skeletal_ICRP_23")
   {
     kfTable = kerma_factor_muscle_tableau;
     MuEnTable = MuEnMuscleTable;
@@ -185,7 +191,15 @@ double GateKermaFactorHandler::GetPhotonFactor(const G4Material* eMaterial)
 double GateKermaFactorHandler::GetKermaFactor(double eEnergy)
 {
   if (kfTable.size() == 0)
-    GateError("Kerma Factor table is empty !" << Gateendl);
+  {
+    GateError("GateKermaFactorHandler -- GetKermaFactor: Kerma Factor table is empty !" << Gateendl);
+    exit(EXIT_FAILURE);
+  }
+  else if (kfTable.size() != energy_tableau.size())
+  {
+    GateError("GateKermaFactorHandler -- GetKermaFactor: Cannot find an energy table with a good size !" << Gateendl);
+    exit(EXIT_FAILURE);
+  }
 
   if (eEnergy/MeV < energy_tableau[0] && eEnergy/MeV >= 1e-10)
   {
@@ -269,10 +283,25 @@ double GateKermaFactorHandler::GetMuEnOverRho()
 
   double unitCoef = cm2 / g;
 
-  if (MuEnTable.size() == energyTableTLE_ICRU44.size())
+  if (MuEnTable.size() == energyTableTLE.size())
+  {
+    unitCoef = cm2 / kg;
+    enTableTLE = energyTableTLE;
+  }
+  else if (MuEnTable.size() == energyTableTLE_ICRU44.size())
   {
     unitCoef = m2 / kg;
     enTableTLE = energyTableTLE_ICRU44;
+  }
+  else if (MuEnTable.size() == energyTableTLE_NIST.size())
+  {
+    unitCoef = cm2 / kg;
+    enTableTLE = energyTableTLE_NIST;
+  }
+  else
+  {
+    GateError("GateKermaFactorHandler -- GetMuEnOverRho: Cannot find an energy table with a good size !" << Gateendl);
+    exit(EXIT_FAILURE);
   }
 
   if (m_energy/MeV < enTableTLE[0])
