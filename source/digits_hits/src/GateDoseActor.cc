@@ -384,38 +384,45 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
       // G4HadronicProcessStore* store = G4HadronicProcessStore::Instance();
       // store->GetInelasticCrossSectionPerAtom(particle,e,elm);
 
-      double cut = DBL_MAX;
-      cut=1;
+      double cut = DBL_MAX; //why 1?
+      //~ cut=1;
       G4Material * material = step->GetPreStepPoint()->GetMaterial();
       static G4Material * water = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
-      double energy = step->GetPreStepPoint()->GetKineticEnergy();
-      double DEDX=0, DEDX_Water=0;
+      //~ if(material != water){ 
+		  double energy = step->GetPreStepPoint()->GetKineticEnergy();
+		  double DEDX=0, DEDX_Water=0;
 
-      // Dose to water: it could be possible to make this process more
-      // generic by choosing any material in place of water
-      double volume = mDoseToWaterImage.GetVoxelVolume();
+		  // Dose to water: it could be possible to make this process more
+		  // generic by choosing any material in place of water
+		  double volume = mDoseToWaterImage.GetVoxelVolume();
 
-      // Get current particle
-      const G4ParticleDefinition * p = step->GetTrack()->GetParticleDefinition();
-      if (p == G4Proton::Proton() or
-          p == G4Electron::Electron() or
-          p == G4Positron::Positron() or
-          p == G4Deuteron::Deuteron() or
-          p == G4Gamma::Gamma()) {
-        // For Gamma, we consider the DEDX from Electron
-        if (p == G4Gamma::Gamma()) p = G4Electron::Electron();
-        DEDX = emcalc->ComputeTotalDEDX(energy, p, material, cut);
-        DEDX_Water = emcalc->ComputeTotalDEDX(energy, p, water, cut);
-        doseToWater = edep/density/volume/gray*(DEDX_Water/1.0)/(DEDX/(density*e_SI));
-        if (DEDX_Water == 0 or DEDX == 0) doseToWater = 0.0; // to avoid inf or NaN
-      }
-      else {
-        if (mDose2WaterWarningFlag) {
-          GateMessage("Actor", 0, "WARNING: DoseToWater with a particle which is not proton/electron/positron/gamma/deuteron: results could be wrong." << G4endl);
-          mDose2WaterWarningFlag = false;
-        }
-      }
+		  // Get current particle
+		  const G4ParticleDefinition * partDefinition = step->GetTrack()->GetParticleDefinition();
+		  
+		  // For Gamma, we consider the DEDX from Electron
+			if (partDefinition == G4Gamma::Gamma()) partDefinition = G4Electron::Electron();
 
+			DEDX = emcalc->ComputeTotalDEDX(energy, partDefinition, material, cut);
+			DEDX_Water = emcalc->ComputeTotalDEDX(energy, partDefinition, water, cut);
+			
+			if (DEDX_Water == 0 or DEDX == 0) 
+			{
+				doseToWater = 0.0; // to avoid inf or NaN
+				GateWarning("DEDX = 0 in doseToWater, Edep ommited");
+				G4cout<<"PartName: "<< partDefinition->GetParticleName()<<" Edep: "<<edep/gray<<G4endl; 
+				doseToWater = 0.0;
+			}
+			else doseToWater = edep/density/volume/gray*(DEDX_Water/1.0)/(DEDX/(density*e_SI));
+		  //~ else {
+			//~ if (mDose2WaterWarningFlag) {
+			  //~ GateMessage("Actor", 0, "WARNING: DoseToWater with a particle which is not proton/electron/positron/gamma/deuteron: results could be wrong." << G4endl);
+			  //~ 
+			  //~ mDose2WaterWarningFlag = false;
+			//~ }
+		  
+		//~ }
+		//~ else	doseToWater=dose;
+		
       GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = "
                        << G4BestUnit(doseToWater, "Dose to water")
                        << " rho = "
