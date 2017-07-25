@@ -405,6 +405,12 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 			DEDX = emcalc->ComputeTotalDEDX(energy, partDefinition, material, cut);
 			DEDX_Water = emcalc->ComputeTotalDEDX(energy, partDefinition, water, cut);
 			
+			//if calculation for a given particle does not work using DEDX (neutron etc, use an electron instead)
+			if(DEDX == 0) {
+				DEDX = emcalc->ComputeTotalDEDX(energy, G4Electron::Electron(), material, cut);
+				DEDX_Water = emcalc->ComputeTotalDEDX(energy, G4Electron::Electron(), water, cut);
+			}
+			
 			if (DEDX_Water == 0 or DEDX == 0) 
 			{
 				doseToWater = 0.0; // to avoid inf or NaN
