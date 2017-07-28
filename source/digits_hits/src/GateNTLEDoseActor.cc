@@ -25,20 +25,22 @@ GateNTLEDoseActor::GateNTLEDoseActor(G4String name, G4int depth):
   pMessenger = new GateNTLEDoseActorMessenger(this);
   mKFHandler = new GateKermaFactorHandler();
 
+  mIsLastHitEventImageEnabled    = false;
+
   mIsDoseImageEnabled            = false;
   mIsDoseSquaredImageEnabled     = false;
   mIsDoseUncertaintyImageEnabled = false;
 
-  mIsDoseCorrectionEnabled       = false;
-  mIsDoseCorrectionTLEEnabled    = false;
-
-  mIsLastHitEventImageEnabled    = false;
-  mIsKermaFactorDumped           = false;
-  mIsKillSecondaryEnabled        = false;
-
   mIsFluxImageEnabled            = false;
   mIsFluxSquaredImageEnabled     = false;
   mIsFluxUncertaintyImageEnabled = false;
+
+  mIsDoseCorrectionEnabled       = false;
+  mIsDoseCorrectionTLEEnabled    = false;
+
+  mIsKFExtrapolated              = false;
+  mIsKermaFactorDumped           = false;
+  mIsKillSecondaryEnabled        = false;
 }
 //-----------------------------------------------------------------------------
 
@@ -47,8 +49,7 @@ GateNTLEDoseActor::GateNTLEDoseActor(G4String name, G4int depth):
 GateNTLEDoseActor::~GateNTLEDoseActor() {
   delete pMessenger;
 
-  if(mIsKermaFactorDumped)
-    delete mg;
+  if(mIsKermaFactorDumped) delete mg;
 }
 //-----------------------------------------------------------------------------
 
@@ -82,9 +83,9 @@ void GateNTLEDoseActor::Construct() {
   }
 
   if (mIsDoseImageEnabled) {
-    mDoseImage.EnableSquaredImage(mIsDoseSquaredImageEnabled);
-    mDoseImage.EnableUncertaintyImage(mIsDoseUncertaintyImageEnabled);
-    mDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    mDoseImage.EnableSquaredImage       (mIsDoseSquaredImageEnabled);
+    mDoseImage.EnableUncertaintyImage   (mIsDoseUncertaintyImageEnabled);
+    mDoseImage.SetResolutionAndHalfSize (mResolution, mHalfSize, mPosition);
     mDoseImage.Allocate();
     mDoseImage.SetFilename(mDoseFilename);
     mDoseImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
@@ -92,9 +93,9 @@ void GateNTLEDoseActor::Construct() {
   }
 
   if (mIsFluxImageEnabled) {
-    mFluxImage.EnableSquaredImage    (mIsFluxSquaredImageEnabled);
-    mFluxImage.EnableUncertaintyImage(mIsFluxUncertaintyImageEnabled);
-    mFluxImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
+    mFluxImage.EnableSquaredImage       (mIsFluxSquaredImageEnabled);
+    mFluxImage.EnableUncertaintyImage   (mIsFluxUncertaintyImageEnabled);
+    mFluxImage.SetResolutionAndHalfSize (mResolution, mHalfSize, mPosition);
     mFluxImage.Allocate();
     mFluxImage.SetFilename(mFluxFilename);
     mFluxImage.SetOverWriteFilesFlag(mOverWriteFilesFlag);
@@ -107,18 +108,22 @@ void GateNTLEDoseActor::Construct() {
     mg->SetTitle(";Neutron energy [MeV];Kerma factor [Gy*m^{2}/neutron]");
   }
 
+  if (mIsKFExtrapolated) mKFHandler->SetKFExtrapolation();
+
   GateMessage("Actor", 1,
               "NTLE DoseActor    = '" << GetObjectName() << "'\n" <<
               "\tDose image        = " << mIsDoseImageEnabled << Gateendl <<
               "\tDose squared      = " << mIsDoseSquaredImageEnabled << Gateendl <<
               "\tDose uncertainty  = " << mIsDoseUncertaintyImageEnabled << Gateendl <<
-              "\tDose correction   = " << mIsDoseCorrectionEnabled << Gateendl <<
-              "\tDump kerma factor = " << mIsKermaFactorDumped << Gateendl <<
-              "\tDoseFilename      = " << mDoseFilename << Gateendl <<
+              "\tDose filename     = " << mDoseFilename << Gateendl <<
               "\tFlux image        = " << mIsFluxImageEnabled << Gateendl <<
               "\tFlux squared      = " << mIsFluxSquaredImageEnabled << Gateendl <<
               "\tFlux uncertainty  = " << mIsFluxUncertaintyImageEnabled << Gateendl <<
-              "\tFluxFilename      = " << mFluxFilename << Gateendl);
+              "\tFlux filename     = " << mFluxFilename << Gateendl <<
+              "\tDose correction   = " << mIsDoseCorrectionEnabled << Gateendl <<
+              "\tDose TLE corr.    = " << mIsDoseCorrectionTLEEnabled << Gateendl <<
+              "\tKerma factor dump = " << mIsKermaFactorDumped << Gateendl <<
+              "\tKF extrapolation  = " << mIsKFExtrapolated << Gateendl);
 
   ResetData();
 }
@@ -128,9 +133,11 @@ void GateNTLEDoseActor::Construct() {
 //-----------------------------------------------------------------------------
 void GateNTLEDoseActor::SaveData() {
   GateVActor::SaveData();
+
   if (mIsDoseImageEnabled) mDoseImage.SaveData(mCurrentEvent + 1, false);
   if (mIsFluxImageEnabled) mFluxImage.SaveData(mCurrentEvent + 1, false);
   if (mIsLastHitEventImageEnabled) mLastHitEventImage.Fill(-1);
+
   if(mIsKermaFactorDumped)
   {
     TCanvas* c = new TCanvas();

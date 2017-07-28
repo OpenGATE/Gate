@@ -34,14 +34,17 @@ class GateNTLEDoseActorMessenger : public GateImageActorMessenger
     G4UIcmdWithABool* pEnableDoseCmd;
     G4UIcmdWithABool* pEnableDoseSquaredCmd;
     G4UIcmdWithABool* pEnableDoseUncertaintyCmd;
-    G4UIcmdWithABool* pEnableDoseCorrectionCmd;
-    G4UIcmdWithABool* pEnableDoseCorrectionTLECmd;
-    G4UIcmdWithABool* pEnableKermaFactorDumpCmd;
-    G4UIcmdWithABool* pEnableKillSecondaryCmd;
 
     G4UIcmdWithABool* pEnableFluxCmd;
     G4UIcmdWithABool* pEnableFluxSquaredCmd;
     G4UIcmdWithABool* pEnableFluxUncertaintyCmd;
+
+    G4UIcmdWithABool* pEnableDoseCorrectionCmd;
+    G4UIcmdWithABool* pEnableDoseCorrectionTLECmd;
+
+    G4UIcmdWithABool* pEnableKFExtrapolationCmd;
+    G4UIcmdWithABool* pEnableKermaFactorDumpCmd;
+    G4UIcmdWithABool* pEnableKillSecondaryCmd;
 };
 
 #endif

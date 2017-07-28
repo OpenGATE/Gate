@@ -27,6 +27,8 @@ GateKermaFactorHandler::GateKermaFactorHandler()
   m_distance     = 0.;
   m_kerma_factor = 0.;
 
+  mKFExtrapolation = false;
+
   kfTable.clear();
   MuEnTable.clear();
 }
@@ -205,9 +207,7 @@ double GateKermaFactorHandler::GetKermaFactor(double eEnergy)
   {
     GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] Neutron energy (" << eEnergy/MeV << " MeV) is inferior to minimum energy of kfTable (" << energy_tableau[0] << " MeV) !" << Gateendl);
 
-    bool kfExtrapolation = false;
-
-    if (kfExtrapolation)
+    if (mKFExtrapolation)
     {
       GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] ===> Doing Kerma Factor Extrapolation !" << Gateendl);
 

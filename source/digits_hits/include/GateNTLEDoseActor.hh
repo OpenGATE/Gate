@@ -39,17 +39,20 @@ public:
   // Constructs the sensor
   virtual void Construct();
 
-  void EnableDoseImage            (bool b) { mIsDoseImageEnabled = b; }
-  void EnableDoseSquaredImage     (bool b) { mIsDoseSquaredImageEnabled = b; }
+  void EnableDoseImage            (bool b) { mIsDoseImageEnabled            = b; }
+  void EnableDoseSquaredImage     (bool b) { mIsDoseSquaredImageEnabled     = b; }
   void EnableDoseUncertaintyImage (bool b) { mIsDoseUncertaintyImageEnabled = b; }
-  void EnableDoseCorrection       (bool b) { mIsDoseCorrectionEnabled = b; }
-  void EnableDoseCorrectionTLE    (bool b) { mIsDoseCorrectionTLEEnabled = b; }
-  void EnableKermaFactorDump      (bool b) { mIsKermaFactorDumped = b; }
-  void EnableKillSecondary        (bool b) { mIsKillSecondaryEnabled = b; }
 
-  void EnableFluxImage            (bool b) { mIsFluxImageEnabled = b; }
-  void EnableFluxSquaredImage     (bool b) { mIsFluxSquaredImageEnabled = b; }
+  void EnableFluxImage            (bool b) { mIsFluxImageEnabled            = b; }
+  void EnableFluxSquaredImage     (bool b) { mIsFluxSquaredImageEnabled     = b; }
   void EnableFluxUncertaintyImage (bool b) { mIsFluxUncertaintyImageEnabled = b; }
+
+  void EnableDoseCorrection       (bool b) { mIsDoseCorrectionEnabled       = b; }
+  void EnableDoseCorrectionTLE    (bool b) { mIsDoseCorrectionTLEEnabled    = b; }
+
+  void EnableKFExtrapolation      (bool b) { mIsKFExtrapolated              = b; }
+  void EnableKermaFactorDump      (bool b) { mIsKermaFactorDumped           = b; }
+  void EnableKillSecondary        (bool b) { mIsKillSecondaryEnabled        = b; }
 
   virtual void BeginOfRunAction(const G4Run*);
   virtual void BeginOfEventAction(const G4Event*);
@@ -83,20 +86,22 @@ protected:
   G4String mDoseFilename;
   G4String mFluxFilename;
 
+  bool mIsLastHitEventImageEnabled;
+
   bool mIsDoseImageEnabled;
   bool mIsDoseSquaredImageEnabled;
   bool mIsDoseUncertaintyImageEnabled;
 
-  bool mIsDoseCorrectionEnabled;
-  bool mIsDoseCorrectionTLEEnabled;
-
-  bool mIsLastHitEventImageEnabled;
-  bool mIsKermaFactorDumped;
-  bool mIsKillSecondaryEnabled;
-
   bool mIsFluxImageEnabled;
   bool mIsFluxSquaredImageEnabled;
   bool mIsFluxUncertaintyImageEnabled;
+
+  bool mIsDoseCorrectionEnabled;
+  bool mIsDoseCorrectionTLEEnabled;
+
+  bool mIsKFExtrapolated;
+  bool mIsKermaFactorDumped;
+  bool mIsKillSecondaryEnabled;
 
   int mCurrentEvent;
 
