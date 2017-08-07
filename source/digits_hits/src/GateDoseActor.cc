@@ -114,7 +114,8 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mExportMassImage = "";
   mVolumeFilter = "";
   mMaterialFilter = "";
-
+  mTestFlag = false;
+  
   pMessenger = new GateDoseActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateDoseActor() -- end\n");
   emcalc = new G4EmCalculator;
@@ -555,6 +556,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 	//other material
      static G4Material * water = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
 
+
 	//Accounting for particles with dedx=0; i.e. gamma and neutrons
 	//For gamma we consider the dedx of electrons instead - testing with 1.3 MeV photon beam or 150 MeV protons or 1500 MeV carbon ion beam showed that the error induced is 0
 	//		when comparing dose and dosetowater in the material G4_WATER
@@ -572,14 +574,37 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
         else{
       	  doseToWater = dose*(DEDX_Water/1.0)/(DEDX/(density*e_SI));
         }
-//FIXME
-//remove this flag
+
+
+//------------------------------------
+//Alternative way of converting dose to water is to keep the dose from particles having dedx=0 equal to the dedx of electrons
+//------------------------------------
 /*
-        if (mDose2WaterWarningFlag) {
-          GateMessage("Actor", 0, "WARNING: DoseToWater with a particle which is not proton/electron/positron/gamma/deuteron: results could be wrong." << G4endl);
-          mDose2WaterWarningFlag = false;
-        }
+			//if calculation for a given particle does not work using DEDX (neutron etc, use an electron instead)
+			if(DEDX == 0) {
+				DEDX = emcalc->ComputeTotalDEDX(energy, G4Electron::Electron(), material, cut);
+				DEDX_Water = emcalc->ComputeTotalDEDX(energy, G4Electron::Electron(), water, cut);
+			}
+			
+			if (DEDX_Water == 0 or DEDX == 0) 
+			{
+				doseToWater = 0.0; // to avoid inf or NaN
+				GateWarning("DEDX = 0 in doseToWater, Edep ommited");
+				G4cout<<"PartName: "<< partDefinition->GetParticleName()<<" Edep: "<<edep/gray<<G4endl; 
+				doseToWater = 0.0;
+			}
+			else doseToWater = edep/density/volume/gray*(DEDX_Water/1.0)/(DEDX/(density*e_SI));
+		  //~ else {
+			//~ if (mDose2WaterWarningFlag) {
+			  //~ GateMessage("Actor", 0, "WARNING: DoseToWater with a particle which is not proton/electron/positron/gamma/deuteron: results could be wrong." << G4endl);
+			  //~ 
+			  //~ mDose2WaterWarningFlag = false;
+			//~ }
+		  
+		//~ }
+		//~ else	doseToWater=dose;
 */
+		
       GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = "
                        << G4BestUnit(doseToWater, "Dose to water")
                        << " rho = "
@@ -625,6 +650,26 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 	//other material
     static G4Material* OtherMaterial = G4Material::GetMaterial(mOtherMaterial,true);     
 
+
+if(mTestFlag){
+// DISPLAY parameters of particles having DEDX=0
+// Mainly gamma and neutron
+DEDX = emcalc->ComputeTotalDEDX(energy, p, current_material, cut);
+DEDX_OtherMaterial = emcalc->ComputeTotalDEDX(energy, p, OtherMaterial, cut);
+if(DEDX==0){
+      const G4ParticleDefinition* partname = step->GetTrack()->GetDefinition();//->GetParticleName();
+	 	G4cout<<"Particle : "<<partname->GetParticleName()<<"\t energy : "<<energy<<"\t current material : "<<current_material->GetName()<<"\t dedx : "<<DEDX<<"\t density : "<<current_density*e_SI<<"\t dose : "<<dose<<G4endl;
+	 	G4cout<<"Particle : "<<partname->GetParticleName()<<"\t energy : "<<energy<<"\t other material : "<<mOtherMaterial<<"\t dedx other : "<<DEDX_OtherMaterial<<"\t density other : "<<Density_OtherMaterial*e_SI<<"\t dose to other: "<<DoseToOtherMaterial<<G4endl; 
+
+// DISPLAY the process involved
+ G4ProcessVector* plist = partname->GetProcessManager()->GetProcessList();
+ for (G4int j = 0; j < plist->size(); j++)
+    {
+    	G4cout<<"Process type : "<<(*plist)[j]->GetProcessType()<<"\t process name : "<<(*plist)[j]->GetProcessName()<<G4endl;
+    }
+}
+}
+
 	//Accounting for particles with dedx=0; i.e. gamma and neutrons
 	//For gamma we consider the dedx of electrons instead - testing with 1.3 MeV photon beam or 150 MeV protons or 1500 MeV carbon ion beam showed that the error induced is 0
 	//		when comparing dose and dosetowater in the material G4_WATER
@@ -643,23 +688,6 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
       	  DoseToOtherMaterial = dose*(DEDX_OtherMaterial/(Density_OtherMaterial*e_SI))/(DEDX/(current_density*e_SI));
         }
       	  
-/*
-// DISPLAY parameters of particles having DEDX=0
-// Mainly gamma and neutron
-if(DEDX==0){
-      const G4ParticleDefinition* partname = step->GetTrack()->GetDefinition();//->GetParticleName();
-	 	G4cout<<"Particle : "<<partname->GetParticleName()<<"\t energy : "<<energy<<"\t current material : "<<current_material->GetName()<<"\t dedx : "<<DEDX<<"\t density : "<<current_density*e_SI<<"\t dose : "<<dose<<G4endl;
-	 	G4cout<<"Particle : "<<partname->GetParticleName()<<"\t energy : "<<energy<<"\t other material : "<<mOtherMaterial<<"\t dedx other : "<<DEDX_OtherMaterial<<"\t density other : "<<Density_OtherMaterial*e_SI<<"\t dose to other: "<<DoseToOtherMaterial<<G4endl; 
-
-// DISPLAY the process involved
- G4ProcessVector* plist = partname->GetProcessManager()->GetProcessList();
- for (G4int j = 0; j < plist->size(); j++)
-    {
-    	G4cout<<"Process type : "<<(*plist)[j]->GetProcessType()<<"\t process name : "<<(*plist)[j]->GetProcessName()<<G4endl;
-    }
-}
-*/
-
       GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to OtherMaterial = "
                        << G4BestUnit(DoseToOtherMaterial, "Dose to OtherMaterial")
                        << " rho = "
