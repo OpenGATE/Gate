@@ -33,6 +33,7 @@ class GateKermaFactorHandler
     void SetDistance(double);
     void SetMaterial(const G4Material*);
     void SetKFExtrapolation(const bool _KFExtrapolation = true) {mKFExtrapolation = _KFExtrapolation;}
+    void SetKFDA           (const bool _KFDA = true)            {mKFDA = _KFDA;}
 
     double GetDose();
     double GetDoseCorrected();
@@ -53,6 +54,7 @@ class GateKermaFactorHandler
     double m_kerma_factor;
 
     bool mKFExtrapolation;
+    bool mKFDA;
 
     const G4Material* m_material;
 

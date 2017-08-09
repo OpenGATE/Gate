@@ -28,6 +28,7 @@ GateKermaFactorHandler::GateKermaFactorHandler()
   m_kerma_factor = 0.;
 
   mKFExtrapolation = false;
+  mKFDA            = false;
 
   kfTable.clear();
   MuEnTable.clear();
@@ -76,7 +77,11 @@ void GateKermaFactorHandler::SetMaterial(const G4Material* eMaterial)
   else if (name == "G4_MUSCLE_STRIATED_ICRU" ||
            name == "Muscle_Skeletal_ICRP_23")
   {
-    kfTable = kerma_factor_muscle_tableau;
+    if (mKFDA)
+      kfTable = kerma_factor_table_muscle_DA;
+    else
+      kfTable = kerma_factor_muscle_tableau;
+
     MuEnTable = MuEnMuscleTable;
   }
   else if (name == "G4_LUNG_ICRP" ||
@@ -197,15 +202,22 @@ double GateKermaFactorHandler::GetKermaFactor(double eEnergy)
     GateError("GateKermaFactorHandler -- GetKermaFactor: Kerma Factor table is empty !" << Gateendl);
     exit(EXIT_FAILURE);
   }
-  else if (kfTable.size() != energy_tableau.size())
+
+  std::vector<double> energyTable;
+
+  if (kfTable.size() == energy_tableau.size())
+    energyTable = energy_tableau;
+  else if (kfTable.size() == energy_table_DA.size())
+    energyTable = energy_table_DA;
+  else
   {
     GateError("GateKermaFactorHandler -- GetKermaFactor: Cannot find an energy table with a good size !" << Gateendl);
     exit(EXIT_FAILURE);
   }
 
-  if (eEnergy/MeV < energy_tableau[0] && eEnergy/MeV >= 1e-10)
+  if (eEnergy/MeV < energyTable[0] && eEnergy/MeV >= 1e-10)
   {
-    GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] Neutron energy (" << eEnergy/MeV << " MeV) is inferior to minimum energy of kfTable (" << energy_tableau[0] << " MeV) !" << Gateendl);
+    GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] Neutron energy (" << eEnergy/MeV << " MeV) is inferior to minimum energy of kfTable (" << energyTable[0] << " MeV) !" << Gateendl);
 
     if (mKFExtrapolation)
     {
@@ -215,17 +227,17 @@ double GateKermaFactorHandler::GetKermaFactor(double eEnergy)
     }
     else
     {
-      GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] ===> Returning " << energy_tableau[0] << " MeV Kerma Factor ! (" << kfTable[0] << ")" << Gateendl);
+      GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] ===> Returning " << energyTable[0] << " MeV Kerma Factor ! (" << kfTable[0] << ")" << Gateendl);
 
       return kfTable[0];
     }
   }
 
-  for (size_t i=1; i<energy_tableau.size(); i++)
-    if (eEnergy/MeV >= energy_tableau[i-1] && eEnergy/MeV < energy_tableau[i])
+  for (size_t i=1; i<energyTable.size(); i++)
+    if (eEnergy/MeV >= energyTable[i-1] && eEnergy/MeV < energyTable[i])
     {
-      const double s_diff_energy = (eEnergy/MeV) - (energy_tableau[i-1]);
-      const double b_diff_energy = energy_tableau[i] - energy_tableau[i-1];
+      const double s_diff_energy = (eEnergy/MeV) - (energyTable[i-1]);
+      const double b_diff_energy = energyTable[i] - energyTable[i-1];
       const double diff_kerma_factor = kfTable[i] - kfTable[i-1];
 
       return ((s_diff_energy * diff_kerma_factor) / b_diff_energy) + kfTable[i-1];

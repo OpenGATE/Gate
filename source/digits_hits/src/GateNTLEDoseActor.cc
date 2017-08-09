@@ -39,6 +39,7 @@ GateNTLEDoseActor::GateNTLEDoseActor(G4String name, G4int depth):
   mIsDoseCorrectionTLEEnabled    = false;
 
   mIsKFExtrapolated              = false;
+  mIsKFDA                        = false;
   mIsKermaFactorDumped           = false;
   mIsKillSecondaryEnabled        = false;
 }
@@ -109,6 +110,7 @@ void GateNTLEDoseActor::Construct() {
   }
 
   if (mIsKFExtrapolated) mKFHandler->SetKFExtrapolation();
+  if (mIsKFDA)           mKFHandler->SetKFDA();
 
   GateMessage("Actor", 1,
               "NTLE DoseActor    = '" << GetObjectName() << "'\n" <<
@@ -123,6 +125,7 @@ void GateNTLEDoseActor::Construct() {
               "\tDose correction   = " << mIsDoseCorrectionEnabled << Gateendl <<
               "\tDose TLE corr.    = " << mIsDoseCorrectionTLEEnabled << Gateendl <<
               "\tKerma factor dump = " << mIsKermaFactorDumped << Gateendl <<
+              "\tKerma factor DA   = " << mIsKFDA << Gateendl <<
               "\tKF extrapolation  = " << mIsKFExtrapolated << Gateendl);
 
   ResetData();

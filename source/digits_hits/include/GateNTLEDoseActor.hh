@@ -51,6 +51,7 @@ public:
   void EnableDoseCorrectionTLE    (bool b) { mIsDoseCorrectionTLEEnabled    = b; }
 
   void EnableKFExtrapolation      (bool b) { mIsKFExtrapolated              = b; }
+  void EnableKFDA                 (bool b) { mIsKFDA                        = b; }
   void EnableKermaFactorDump      (bool b) { mIsKermaFactorDumped           = b; }
   void EnableKillSecondary        (bool b) { mIsKillSecondaryEnabled        = b; }
 
@@ -100,6 +101,7 @@ protected:
   bool mIsDoseCorrectionTLEEnabled;
 
   bool mIsKFExtrapolated;
+  bool mIsKFDA;
   bool mIsKermaFactorDumped;
   bool mIsKillSecondaryEnabled;
 

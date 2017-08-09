@@ -29,6 +29,7 @@ GateNTLEDoseActorMessenger::GateNTLEDoseActorMessenger(GateNTLEDoseActor* sensor
   pEnableDoseCorrectionTLECmd = 0;
 
   pEnableKFExtrapolationCmd   = 0;
+  pEnableKFDACmd              = 0;
   pEnableKermaFactorDumpCmd   = 0;
   pEnableKillSecondaryCmd     = 0;
 
@@ -52,6 +53,7 @@ GateNTLEDoseActorMessenger::~GateNTLEDoseActorMessenger()
   if(pEnableDoseCorrectionTLECmd) delete pEnableDoseCorrectionTLECmd;
 
   if(pEnableKFExtrapolationCmd)   delete pEnableKFExtrapolationCmd;
+  if(pEnableKFDACmd)              delete pEnableKFDACmd;
   if(pEnableKermaFactorDumpCmd)   delete pEnableKermaFactorDumpCmd;
   if(pEnableKillSecondaryCmd)     delete pEnableKillSecondaryCmd;
 }
@@ -109,6 +111,11 @@ void GateNTLEDoseActorMessenger::BuildCommands(G4String base)
   guid = G4String("Enable kerma factor extrapolation under 0.025 eV");
   pEnableKFExtrapolationCmd->SetGuidance(guid);
 
+  n = base+"/enableKermaFactorDA";
+  pEnableKFDACmd = new G4UIcmdWithABool(n, this);
+  guid = G4String("Enable kerma factor generated from DoseActor");
+  pEnableKFDACmd->SetGuidance(guid);
+
   n = base+"/enableKermaFactorDump";
   pEnableKermaFactorDumpCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable kerma factor graph dump");
@@ -137,6 +144,7 @@ void GateNTLEDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue
   if (cmd == pEnableDoseCorrectionTLECmd) pDoseActor->EnableDoseCorrectionTLE(pEnableDoseCorrectionTLECmd->GetNewBoolValue(newValue));
 
   if (cmd == pEnableKFExtrapolationCmd)   pDoseActor->EnableKFExtrapolation(pEnableKFExtrapolationCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableKFDACmd)              pDoseActor->EnableKFDA(pEnableKFDACmd->GetNewBoolValue(newValue));
   if (cmd == pEnableKermaFactorDumpCmd)   pDoseActor->EnableKermaFactorDump(pEnableKermaFactorDumpCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableKillSecondaryCmd)     pDoseActor->EnableKillSecondary(pEnableKillSecondaryCmd->GetNewBoolValue(newValue));
 
