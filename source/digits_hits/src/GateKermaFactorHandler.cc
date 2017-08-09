@@ -297,7 +297,7 @@ double GateKermaFactorHandler::GetMuEnOverRho()
 
   if (MuEnTable.size() == energyTableTLE.size())
   {
-    unitCoef = cm2 / kg;
+    unitCoef = cm2 / g;
     enTableTLE = energyTableTLE;
   }
   else if (MuEnTable.size() == energyTableTLE_ICRU44.size())
@@ -307,7 +307,7 @@ double GateKermaFactorHandler::GetMuEnOverRho()
   }
   else if (MuEnTable.size() == energyTableTLE_NIST.size())
   {
-    unitCoef = cm2 / kg;
+    unitCoef = cm2 / g;
     enTableTLE = energyTableTLE_NIST;
   }
   else
