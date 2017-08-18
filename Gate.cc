@@ -435,6 +435,9 @@ int main( int argc, char* argv[] )
   delete myRecords;
 #endif
   delete verbosity;
+  
+  //TODO: figure out why runmanager can't and isn't deleted.
+  //delete runManager;
 
   return 0;
 }
