@@ -1,6 +1,5 @@
 /*----------------------
    Copyright (C): OpenGATE Collaboration
-
 This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
@@ -40,6 +39,8 @@ protected:
 
   G4UIcmdWithAString* pAddParticleCmd;
   G4UIcmdWithAnInteger* pAddParticleZCmd;
+  G4UIcmdWithAnInteger* pAddParticleACmd;
+  G4UIcmdWithAnInteger* pAddParticlePDGCmd;
   G4UIcmdWithAString* pAddParentParticleCmd;
   G4UIcmdWithAString* pAddDirectParentParticleCmd;
 };

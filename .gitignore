@@ -4,3 +4,15 @@ tmp/
 *.a
 gjs
 *.swp
+/.DS_Store
+/.gitignore.save
+/.gitignore~
+*raw
+*~
+/save/
+GPATH
+GRTAGS
+GTAGS
+*bidon*
+*docx
+*save*

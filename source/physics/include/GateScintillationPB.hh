@@ -13,8 +13,6 @@ See GATE/LICENSE.txt for further details
 
 #include "GateVProcess.hh"
 
-#include "G4Scintillation.hh"
-
 MAKE_PROCESS_AUTO_CREATOR(GateScintillationPB)
 
 #endif

@@ -226,7 +226,7 @@ void GateMacfileParser::InsertAliases()
 	nAliases = (G4int)(listOfAliases.size());
 	for (G4int i=1;i<nAliases;i+=2)
 	{
-		if (macline.contains("{"+listOfAliases[i]+"}"))
+		while (macline.contains("{"+aliases[i]+"}"))
 		{
 			insert=listOfAliases[i-1];
 			G4int position=macline.find("{"+listOfAliases[i]+"}",0);
@@ -970,6 +970,13 @@ void GateMacfileParser::FormatMacline()
 		macline=temp;
 	}
 
+	//remove "\t"
+        while (macline.contains("\t"))
+        {
+               position = macline.find("\t");
+               macline.replace(position,1," ");
+        }
+	
 	//remove trailing spaces
 	size=macline.length();
 	subString=macline(size-1);
