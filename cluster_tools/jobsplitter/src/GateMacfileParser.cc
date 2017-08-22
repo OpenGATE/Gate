@@ -221,7 +221,7 @@ void GateMacfileParser::InsertAliases()
 	G4String insert;
 	for (G4int i=1;i<nAliases;i+=2)
 	{
-		if (macline.contains("{"+aliases[i]+"}"))
+		while (macline.contains("{"+aliases[i]+"}"))
 		{
 			insert=aliases[i-1];
 			G4int position=macline.find("{"+aliases[i]+"}",0);
