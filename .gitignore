@@ -1,0 +1,6 @@
+tmp/
+*.o
+*.so
+*.a
+gjs
+*.swp
