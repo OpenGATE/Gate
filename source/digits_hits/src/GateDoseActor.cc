@@ -231,7 +231,26 @@ void GateDoseActor::Construct() {
         !IsEqual(mDoseByRegionsLabelImage.GetOrigin(), mOrigin, tol)) {
       GateError("The DoseByRegions labels image must have the same size than the dose image.");
     }
-    GateRegionDoseStat::ComputeRegionVolumes(mDoseByRegionsLabelImage, mMapOfRegionStat);
+    GateRegionDoseStat::ComputeRegionVolumes(mDoseByRegionsLabelImage, mMapLabelSingleRegion);
+    DD(mMapLabelSingleRegion.size());
+    for(auto & m:mMapLabelSingleRegion) {
+      mMapLabelSeveralRegions[m.first].push_back(m.second);
+    }
+    DD(mMapLabelSeveralRegions.size());
+    std::vector<int> l;
+    l.push_back(1);
+    l.push_back(5);
+    l.push_back(25);
+    l.push_back(32);
+    GateRegionDoseStat::AddAggregatedRegion(mMapLabelSingleRegion, mMapLabelSeveralRegions, l);
+    for(auto p:mMapLabelSeveralRegions) {
+      if (p.second.size() > 1) {
+        DD(p.first);
+        for(auto r:p.second) {
+          DD(r->ToString());
+        }
+      }
+    }
   }
 
 
@@ -244,6 +263,7 @@ void GateDoseActor::Construct() {
               "\tDose to water image        = " << mIsDoseToWaterImageEnabled << Gateendl <<
               "\tDose to water squared      = " << mIsDoseToWaterSquaredImageEnabled << Gateendl <<
               "\tDose to water uncertainty  = " << mIsDoseToWaterUncertaintyImageEnabled << Gateendl <<
+              "\tDose by region    = " << mDoseByRegionsFlag << Gateendl <<
               "\tEdep image        = " << mIsEdepImageEnabled << Gateendl <<
               "\tEdep squared      = " << mIsEdepSquaredImageEnabled << Gateendl <<
               "\tEdep uncertainty  = " << mIsEdepUncertaintyImageEnabled << Gateendl <<
@@ -257,7 +277,7 @@ void GateDoseActor::Construct() {
               "\tDoseByRegions     = " << mDoseByRegionsFlag << Gateendl <<
               "\tDoseByRegionsInput  = " << mDoseByRegionsInputFilename << Gateendl <<
               "\tDoseByRegionsOutput = " << mDoseByRegionsOutputFilename << Gateendl <<
-              "\tScaling factor    = " << mScalingFactor << Gateendl << 
+              "\tScaling factor    = " << mScalingFactor << Gateendl <<
               "\tNb Hits filename  = " << mNbOfHitsFilename << Gateendl);
 
   ResetData();
@@ -297,36 +317,46 @@ void GateDoseActor::SaveData() {
   if (mDoseByRegionsFlag) {
 
     // Finish unfinished squared dose
-    for (auto & m:mMapOfRegionStat)
-      m.second.Update(mCurrentEvent, 0.0, 0.0);
+    for (auto & m:mMapLabelSeveralRegions)
+      for(auto & r:m.second)
+        r->Update(mCurrentEvent, 0.0, 0.0);
 
     // Compute std and write results
     double N = mCurrentEvent+1;
     std::ofstream os(mDoseByRegionsOutputFilename);
     os << "#id \tvol(mm3) \tedep(MeV) \tstd_edep \tsq_edep \tdose(Gy) \tstd_dose \tsq_dose \tn_hit \tn_event_roi" << std::endl;
-    for(auto m:mMapOfRegionStat) {
-      auto & region = m.second;
-      double edep = region.sum_edep;
-      double sq_edep = region.sum_squared_edep;
+
+    // List of regions (use map to avoid duplicate)
+    std::map<int, std::shared_ptr<GateRegionDoseStat>> regions;
+    for(auto m:mMapLabelSeveralRegions)
+      for(auto region:m.second)
+        regions[region->id] = region;
+    DD(regions.size());
+
+    // Loop over regions to print information
+    for(auto p:regions) {
+      auto region = p.second;
+      double edep = region->sum_edep;
+      double sq_edep = region->sum_squared_edep;
       double std_edep = sqrt( (1.0/(N-1))*(sq_edep/N - pow(edep/N, 2)) )/(edep/N);
       if( edep == 0.0 || N == 1 || sq_edep == 0 )
         std_edep = 1.0; // relative uncertainty of 100%
-      double dose = region.sum_dose;
-      double sq_dose = region.sum_squared_dose;
+      double dose = region->sum_dose;
+      double sq_dose = region->sum_squared_dose;
       double std_dose = sqrt( (1.0/(N-1))*(sq_dose/N - pow(dose/N, 2)) )/(dose/N);
       if( dose == 0.0 || N == 1 || sq_dose == 0 )
         std_dose = 1.0; // relative uncertainty of 100%
       os.precision(10);
-      os << m.first << "\t"
-         << region.volume << "\t"
+      os << region->id << "\t"
+         << region->volume << "\t"
          << edep*mScalingFactor << "\t"
          << std_edep << "\t"
          << sq_edep*mScalingFactor*mScalingFactor << "\t"
          << dose*mScalingFactor << "\t"
          << std_dose << "\t"
          << sq_dose*mScalingFactor*mScalingFactor << "\t"
-         << region.nb_hits << "\t"
-         << region.nb_event_hits << std::endl;
+         << region->nb_hits << "\t"
+         << region->nb_event_hits << std::endl;
     }
     os.close();
   }
@@ -529,9 +559,12 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
   //---------------------------------------------------------------------------------
   if (mDoseByRegionsFlag) {
+    // Update simple region
     int label = mDoseByRegionsLabelImage.GetValue(index);
-    auto & region = mMapOfRegionStat[label];
-    region.Update(mCurrentEvent, edep, density);
+    // auto & region = mMapOfRegionStat[label];
+    // region.Update(mCurrentEvent, edep, density);
+    auto & regions = mMapLabelSeveralRegions[label];
+    for(auto & r:regions) r->Update(mCurrentEvent, edep, density);
   }
 
   //---------------------------------------------------------------------------------
@@ -567,4 +600,3 @@ void GateDoseActor::SetOutputScalingFactor(double s)
   mScalingFactor = s;
 }
 //-----------------------------------------------------------------------------
-

@@ -9,7 +9,7 @@
 #include "GateRegionDoseStat.hh"
 
 //-----------------------------------------------------------------------------
-GateRegionDoseStat::GateRegionDoseStat()
+GateRegionDoseStat::GateRegionDoseStat(int i):id(i)
 {
   sum_edep = 0.0;
   sum_squared_edep = 0.0;
@@ -28,7 +28,8 @@ GateRegionDoseStat::GateRegionDoseStat()
 std::string GateRegionDoseStat::ToString()
 {
   std::ostringstream oss;
-  oss << sum_edep << " " << sum_squared_edep << " " << sum_temp_edep
+  oss << id << " "
+      << sum_edep << " " << sum_squared_edep << " " << sum_temp_edep
       << sum_dose << " " << sum_squared_dose << " " << sum_temp_dose
       << " last_event=" << last_event_id << " nb_hits=" << nb_hits
       << " nb_e_hits = " << nb_event_hits << " vol=" << volume;
@@ -62,17 +63,47 @@ void GateRegionDoseStat::Update(long event_id, double edep, double density)
 
 
 //-----------------------------------------------------------------------------
+// Static
 void GateRegionDoseStat::ComputeRegionVolumes(GateImageFloat & image,
-                                              std::map<int, GateRegionDoseStat> & mMapOfRegionStat)
+                                              LabelToSingleRegionMapType & map)
 {
   GateImageFloat::const_iterator pi = image.begin();
   while (pi != image.end()) {
     int label = *pi;
-    mMapOfRegionStat[label].volume += 1.0;
+    auto it = map.find(label);
+    if (it == map.end()) {
+      auto region = std::make_shared<GateRegionDoseStat>(label);
+      map[label] = region;
+    }
+    map[label]->volume += 1.0;
     ++pi;
- }
-  for(auto &m:mMapOfRegionStat) {
-    m.second.volume *= image.GetVoxelVolume();
+  }
+  for(auto &m:map) {
+    m.second->volume *= image.GetVoxelVolume();
   }
 }
 //-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+// Static
+void GateRegionDoseStat::AddAggregatedRegion(LabelToSingleRegionMapType & map,
+                                             LabelToSeveralRegionsMapType & regionsMap,
+                                             std::vector<int> & labels)
+{
+  DD("AddAggregatedRegion");
+  // Create region
+  static int id=1000;
+  auto region = std::make_shared<GateRegionDoseStat>(id); // FIXME ID !!
+  region->volume = 0;
+  // Update region and set in the map
+  for(auto label:labels) {
+    DD(label);
+    region->volume += map[label]->volume;
+    regionsMap[label].push_back(region);
+  }
+  DD(region->ToString());
+  ++id;
+}
+//-----------------------------------------------------------------------------
+

@@ -17,13 +17,20 @@ class GateRegionDoseStat {
 
 public:
 
-  GateRegionDoseStat();
+  GateRegionDoseStat(int id);
   std::string ToString();
   void Update(long event_id, double edep, double density);
 
-  static void ComputeRegionVolumes(GateImageFloat & image,
-                                   std::map<int, GateRegionDoseStat> & mMapOfRegionStat);
+  typedef std::map<int, std::shared_ptr<GateRegionDoseStat>> LabelToSingleRegionMapType;
+  typedef std::map<int, std::vector<std::shared_ptr<GateRegionDoseStat>>> LabelToSeveralRegionsMapType;
 
+  static void ComputeRegionVolumes(GateImageFloat & image,
+                                   LabelToSingleRegionMapType & mMapOfRegionStat);
+  static void AddAggregatedRegion(LabelToSingleRegionMapType & map,
+                                  LabelToSeveralRegionsMapType & regionsMap,
+                                  std::vector<int> & labels);
+
+  int id;
   double sum_edep;
   double sum_squared_edep;
   double sum_temp_edep;
