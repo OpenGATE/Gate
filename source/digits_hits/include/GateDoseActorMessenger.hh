@@ -51,9 +51,6 @@ protected:
   G4UIcmdWithABool * pEnableDoseToWaterCmd;
   G4UIcmdWithABool * pEnableDoseToWaterSquaredCmd;
   G4UIcmdWithABool * pEnableDoseToWaterUncertaintyCmd;
-  G4UIcmdWithABool * pEnableEdepCmd;
-  G4UIcmdWithABool * pEnableEdepSquaredCmd;
-  G4UIcmdWithABool * pEnableEdepUncertaintyCmd;
   G4UIcmdWithABool * pEnableDoseToWaterNormToMaxCmd;
   G4UIcmdWithABool * pEnableDoseToWaterNormToIntegralCmd;
     //DoseToOtherMaterial
@@ -65,9 +62,6 @@ protected:
   G4UIcmdWithAString * pSetOtherMaterialCmd;
   //Others
   G4UIcmdWithABool * pEnableNumberOfHitsCmd;
-  G4UIcmdWithABool * pEnableDoseNormToMaxCmd;
-  G4UIcmdWithABool * pEnableDoseNormToIntegralCmd;
-  G4UIcmdWithABool * pEnableDoseToWaterNormCmd;
   G4UIcmdWithAString * pSetDoseAlgorithmCmd;
   G4UIcmdWithAString * pImportMassImageCmd;
   G4UIcmdWithAString * pExportMassImageCmd;

@@ -126,8 +126,6 @@ protected:
   bool mIsDoseToWaterImageEnabled;
   bool mIsDoseToWaterSquaredImageEnabled;
   bool mIsDoseToWaterUncertaintyImageEnabled;
-  bool mIsNumberOfHitsImageEnabled;
-  bool mIsDoseNormalisationEnabled;
   bool mIsDoseToWaterNormalisationEnabled;
   bool mDose2WaterWarningFlag;
   //DoseToOtherMaterial
@@ -166,10 +164,6 @@ protected:
   std::map<int, GateRegionDoseStat> mMapOfRegionStat;
   double mScalingFactor;
 
-  G4String mEdepFilename;
-  G4String mDoseFilename;
-  G4String mDoseToWaterFilename;
-  G4String mNbOfHitsFilename;
   G4String mDoseAlgorithmType;
   G4String mImportMassImage;
   G4String mExportMassImage;

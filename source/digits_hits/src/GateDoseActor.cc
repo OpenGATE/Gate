@@ -51,6 +51,7 @@ typename std::vector<T> parse_N_values_of_type_T(std::string line,int lineno, co
     throw std::runtime_error(errMsg.str());
   }
   return vecT;
+}
 //-----------------------------------------------------------------------------
 bool IsEqual(double a, double b, double tol)
 {
@@ -65,6 +66,7 @@ bool IsEqual(G4ThreeVector a, G4ThreeVector b, double tol)
   return (IsEqual(a.x(), b.x(), tol) &&
           IsEqual(a.y(), b.y(), tol) &&
           IsEqual(a.z(), b.z(), tol));
+}
 //------------------------------------------------------------------------------------------------------
 // Function to read the next content line
 // * skip all comment lines (lines string with a '#')
