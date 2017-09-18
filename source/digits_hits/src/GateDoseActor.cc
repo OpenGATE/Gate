@@ -436,7 +436,11 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   GateDebugMessageInc("Actor", 4, "enedepo = " << step->GetTotalEnergyDeposit() << Gateendl);
   GateDebugMessageInc("Actor", 4, "weight = " <<  step->GetTrack()->GetWeight() << Gateendl);
   const double weight = step->GetTrack()->GetWeight();
-  const double edep = step->GetTotalEnergyDeposit()*weight;//*step->GetTrack()->GetWeight();
+  const double edep = step->GetTotalEnergyDeposit()*weight;//*step->GetTrack()->GetWeight();  
+  //current material     
+  G4Material * current_material = step->GetPreStepPoint()->GetMaterial();
+  //Get current particle
+  const G4ParticleDefinition *p = step->GetTrack()->GetParticleDefinition();
 
   // if no energy is deposited or energy is deposited outside image => do nothing
   if (edep == 0) {
@@ -453,7 +457,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   if (mVolumeFilter != "" && mVolumeFilter+"_phys" != step->GetPreStepPoint()->GetPhysicalVolume()->GetName())
     return;
 
-  if (mMaterialFilter != "" && mMaterialFilter != step->GetPreStepPoint()->GetMaterial()->GetName())
+  if (mMaterialFilter != "" && mMaterialFilter != current_material->GetName())
     return;
 
   // compute sameEvent
@@ -469,7 +473,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
   //---------------------------------------------------------------------------------
   // Volume weighting
-  double density = step->GetPreStepPoint()->GetMaterial()->GetDensity();
+  double density = current_material->GetDensity();
   //---------------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------------
@@ -491,6 +495,17 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
                      << " volume name          = " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << Gateendl
                      << " Dose scored inside volume filtered volume !" << Gateendl);
   }
+  
+  
+  //calculate values once to save time
+  double energy;
+  if (mIsDoseImageEnabled || mIsDoseToWaterImageEnabled || mIsDoseToOtherMaterialImageEnabled) {
+	  //get the energy
+	  double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
+	  double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
+	  energy=(energy1+energy2)/2;
+  }
+  
 
   //Edep
   if (mIsEdepImageEnabled) {
@@ -499,16 +514,16 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   
   //Dose
   double dose=0.;
-  if (mIsDoseImageEnabled) {
+  if (mIsDoseImageEnabled || mIsDoseToWaterImageEnabled || mIsDoseToOtherMaterialImageEnabled) {
     // ------------------------------------
     // Convert deposited energy into Gray
     dose = edep/density/mDoseImage.GetVoxelVolume()/gray;
     // ------------------------------------
     
     if(mIsDoseEfficiencyEnabled){
-		 double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
-		 double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
-		 double energy=(energy1+energy2)/2;
+		 //~ double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
+		 //~ double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
+		 //~ double energy=(energy1+energy2)/2;
 		 double efficiency=1;
 		 for (unsigned int k=0; k<mDoseEnergy.size(); k++){
 		 	if(mDoseEnergy[k]>energy){
@@ -520,11 +535,11 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 		 	}
 		 }
 		 if(mTestFlag){
-			const G4ParticleDefinition* partname = step->GetTrack()->GetDefinition();//->GetParticleName();
-			const G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName();
-			G4double dedx = emcalc->ComputeElectronicDEDX(energy, partname, material);
+			//~ const G4ParticleDefinition* p = step->GetTrack()->GetDefinition();//->GetParticleName();
+			//~ const G4Material* current_material = step->GetPreStepPoint()->GetMaterial();//->GetName();
+			G4double dedx = emcalc->ComputeElectronicDEDX(energy, p, current_material);
 			
-		 	G4cout<<"Particle : "<<partname->GetParticleName()<<"\t energy : "<<energy<<"\t material : "<<material->GetName()<<"\t dedx : "<<dedx<<"\t efficiency : "<<efficiency<<"\t dose : "<<dose; 
+		 	G4cout<<"Particle : "<<p->GetParticleName()<<"\t energy : "<<energy<<"\t material : "<<current_material->GetName()<<"\t dedx : "<<dedx<<"\t efficiency : "<<efficiency<<"\t dose : "<<dose; 
 		 }
 		 dose*=efficiency;
 		 if(mTestFlag){G4cout<<"\t effective dose : "<<dose<<G4endl;} 
@@ -542,17 +557,17 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   if (mIsDoseToWaterImageEnabled)
     {
      double cut = DBL_MAX;
-	//get the energy
-	  double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
-	  double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
-	  double energy=(energy1+energy2)/2;
-	//Get current particle
-     const G4ParticleDefinition * p = step->GetTrack()->GetParticleDefinition();
+	//~ //get the energy
+	  //~ double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
+	  //~ double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
+	  //~ double energy=(energy1+energy2)/2;
+	//~ //Get current particle
+     //~ const G4ParticleDefinition * p = step->GetTrack()->GetParticleDefinition();
 	// dedx
      double DEDX=0, DEDX_Water=0;
-	//current material     
-	  G4Material * material = step->GetPreStepPoint()->GetMaterial();
-     double density = material->GetDensity();
+	//~ //current material     
+	  //~ G4Material * current_material = step->GetPreStepPoint()->GetMaterial();
+     //~ double density = current_material->GetDensity();
 	//other material
      static G4Material * water = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
 
@@ -562,10 +577,8 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 	//		when comparing dose and dosetowater in the material G4_WATER
 	//For neutrons the dose is neglected - testing with 1.3 MeV photon beam or 150 MeV protons or 1500 MeV carbon ion beam showed that the error induced is < 0.01%
 	//		when comparing dose and dosetowater in the material G4_WATER (we are systematically missing a little bit of dose of course with this solution)
-		if (p == G4Gamma::Gamma()) {
-      	  p = G4Electron::Electron();
-        }
-        DEDX = emcalc->ComputeTotalDEDX(energy, p, material, cut);
+		if (p == G4Gamma::Gamma())  p = G4Electron::Electron();
+        DEDX = emcalc->ComputeTotalDEDX(energy, p, current_material, cut);
         DEDX_Water = emcalc->ComputeTotalDEDX(energy, p, water, cut);
 	//In current implementation, dose deposited directly by neutrons is neglected - the below lines prevent "inf or NaN" 	    
       if (DEDX==0 || DEDX_Water==0){
@@ -582,7 +595,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 /*
 			//if calculation for a given particle does not work using DEDX (neutron etc, use an electron instead)
 			if(DEDX == 0) {
-				DEDX = emcalc->ComputeTotalDEDX(energy, G4Electron::Electron(), material, cut);
+				DEDX = emcalc->ComputeTotalDEDX(energy, G4Electron::Electron(), current_material, cut);
 				DEDX_Water = emcalc->ComputeTotalDEDX(energy, G4Electron::Electron(), water, cut);
 			}
 			
@@ -590,7 +603,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 			{
 				doseToWater = 0.0; // to avoid inf or NaN
 				GateWarning("DEDX = 0 in doseToWater, Edep ommited");
-				G4cout<<"PartName: "<< partDefinition->GetParticleName()<<" Edep: "<<edep/gray<<G4endl; 
+				G4cout<<"PartName: "<< p->GetParticleName()<<" Edep: "<<edep/gray<<G4endl; 
 				doseToWater = 0.0;
 			}
 			else doseToWater = edep/density/volume/gray*(DEDX_Water/1.0)/(DEDX/(density*e_SI));
@@ -635,18 +648,25 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 			//CREATE THE MISSING MATERIAL (look into the Gate db)
 			GateError("Material not defined - abort simulation");
 		}
+		
 
-	//get the energy
-	  double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
-	  double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
-	  double energy=(energy1+energy2)/2;
-	//Get current particle
-     const G4ParticleDefinition * p = step->GetTrack()->GetParticleDefinition();
+	  //deterimine density ratio for dose to other material	
+	  //in case geometric and scoring voxels are not the same
+	  double densityRatio=	density/current_material->GetDensity();
+	  Density_OtherMaterial/=densityRatio;
+
+	//~ //get the energy
+	  //~ double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
+	  //~ double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
+	  //~ double energy=(energy1+energy2)/2;
+	//~ //Get current particle
+     //~ const G4ParticleDefinition * p = step->GetTrack()->GetParticleDefinition();
 	// dedx
      double DEDX=0, DEDX_OtherMaterial=0;
-	//current material     
-     G4Material * current_material = step->GetPreStepPoint()->GetMaterial();
-     double current_density = current_material->GetDensity();
+	//~ //current material     
+     //~ G4Material * current_material = step->GetPreStepPoint()->GetMaterial();
+     double current_density = density;
+
 	//other material
     static G4Material* OtherMaterial = G4Material::GetMaterial(mOtherMaterial,true);     
 
@@ -657,12 +677,12 @@ if(mTestFlag){
 DEDX = emcalc->ComputeTotalDEDX(energy, p, current_material, cut);
 DEDX_OtherMaterial = emcalc->ComputeTotalDEDX(energy, p, OtherMaterial, cut);
 if(DEDX==0){
-      const G4ParticleDefinition* partname = step->GetTrack()->GetDefinition();//->GetParticleName();
-	 	G4cout<<"Particle : "<<partname->GetParticleName()<<"\t energy : "<<energy<<"\t current material : "<<current_material->GetName()<<"\t dedx : "<<DEDX<<"\t density : "<<current_density*e_SI<<"\t dose : "<<dose<<G4endl;
-	 	G4cout<<"Particle : "<<partname->GetParticleName()<<"\t energy : "<<energy<<"\t other material : "<<mOtherMaterial<<"\t dedx other : "<<DEDX_OtherMaterial<<"\t density other : "<<Density_OtherMaterial*e_SI<<"\t dose to other: "<<DoseToOtherMaterial<<G4endl; 
+      //~ const G4ParticleDefinition* p = step->GetTrack()->GetDefinition();//->GetParticleName();
+	 	G4cout<<"Particle : "<<p->GetParticleName()<<"\t energy : "<<energy<<"\t current material : "<<current_material->GetName()<<"\t dedx : "<<DEDX<<"\t density : "<<current_density*e_SI<<"\t dose : "<<dose<<G4endl;
+	 	G4cout<<"Particle : "<<p->GetParticleName()<<"\t energy : "<<energy<<"\t other material : "<<mOtherMaterial<<"\t dedx other : "<<DEDX_OtherMaterial<<"\t density other : "<<Density_OtherMaterial*e_SI<<"\t dose to other: "<<DoseToOtherMaterial<<G4endl; 
 
 // DISPLAY the process involved
- G4ProcessVector* plist = partname->GetProcessManager()->GetProcessList();
+ G4ProcessVector* plist = p->GetProcessManager()->GetProcessList();
  for (G4int j = 0; j < plist->size(); j++)
     {
     	G4cout<<"Process type : "<<(*plist)[j]->GetProcessType()<<"\t process name : "<<(*plist)[j]->GetProcessName()<<G4endl;
@@ -675,9 +695,7 @@ if(DEDX==0){
 	//		when comparing dose and dosetowater in the material G4_WATER
 	//For neutrons the dose is neglected - testing with 1.3 MeV photon beam or 150 MeV protons or 1500 MeV carbon ion beam showed that the error induced is < 0.01%
 	//		we are systematically missing a little bit of dose of course with this solution
-		if (p == G4Gamma::Gamma()) {
-      	  p = G4Electron::Electron();
-        }
+		if (p == G4Gamma::Gamma())  p = G4Electron::Electron();
       DEDX = emcalc->ComputeTotalDEDX(energy, p, current_material, cut);
       DEDX_OtherMaterial = emcalc->ComputeTotalDEDX(energy, p, OtherMaterial, cut);
 	//In current implementation, dose deposited directly by neutrons is neglected - the below lines prevent "inf or NaN" 	    
