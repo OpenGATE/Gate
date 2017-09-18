@@ -16,8 +16,12 @@ See GATE/LICENSE.txt for further details
 #ifndef GATEDOSEACTORMESSENGER_HH
 #define GATEDOSEACTORMESSENGER_HH
 
+// g4
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithADouble.hh"
+
+// gate
 #include "GateImageActorMessenger.hh"
 
 class GateDoseActor;
@@ -47,6 +51,9 @@ protected:
   G4UIcmdWithABool * pEnableDoseToWaterCmd;
   G4UIcmdWithABool * pEnableDoseToWaterSquaredCmd;
   G4UIcmdWithABool * pEnableDoseToWaterUncertaintyCmd;
+  G4UIcmdWithABool * pEnableEdepCmd;
+  G4UIcmdWithABool * pEnableEdepSquaredCmd;
+  G4UIcmdWithABool * pEnableEdepUncertaintyCmd;
   G4UIcmdWithABool * pEnableDoseToWaterNormToMaxCmd;
   G4UIcmdWithABool * pEnableDoseToWaterNormToIntegralCmd;
     //DoseToOtherMaterial
@@ -58,11 +65,20 @@ protected:
   G4UIcmdWithAString * pSetOtherMaterialCmd;
   //Others
   G4UIcmdWithABool * pEnableNumberOfHitsCmd;
+  G4UIcmdWithABool * pEnableDoseNormToMaxCmd;
+  G4UIcmdWithABool * pEnableDoseNormToIntegralCmd;
+  G4UIcmdWithABool * pEnableDoseToWaterNormCmd;
   G4UIcmdWithAString * pSetDoseAlgorithmCmd;
   G4UIcmdWithAString * pImportMassImageCmd;
   G4UIcmdWithAString * pExportMassImageCmd;
+
   G4UIcmdWithAString * pVolumeFilterCmd;
   G4UIcmdWithAString * pMaterialFilterCmd;
+
+  G4UIcmdWithAString * pDoseRegionInputCmd;
+  G4UIcmdWithAString * pDoseRegionOutputCmd;
+
+  G4UIcmdWithADouble * pScaleOutputCmd;
   G4UIcmdWithABool * pTestFlagCmd;
 };
 

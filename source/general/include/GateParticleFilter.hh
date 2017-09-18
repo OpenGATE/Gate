@@ -1,6 +1,5 @@
 /*----------------------
    Copyright (C): OpenGATE Collaboration
-
 This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
 See GATE/LICENSE.txt for further details
@@ -40,6 +39,8 @@ public:
 
   void Add(const G4String &particleName);
   void AddZ(const G4int &particleZ);
+  void AddA(const G4int &particleA);
+  void AddPDG(const G4int &particlePDG);
   void AddParent(const G4String &particleName);
   void AddDirectParent(const G4String &particleName);
   // add the particle into acceptable particle list.
@@ -49,6 +50,8 @@ public:
 private:
   std::vector<G4String> thePdef;
   std::vector<G4int> thePdefZ;
+  std::vector<G4int> thePdefA;
+  std::vector<G4int> thePdefPDG;
   std::vector<G4String> theParentPdef;
   std::vector<G4String> theDirectParentPdef;
   GateParticleFilterMessenger *pPartMessenger;
