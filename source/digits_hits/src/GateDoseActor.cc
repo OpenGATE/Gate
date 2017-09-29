@@ -436,7 +436,7 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
   GateDebugMessageInc("Actor", 4, "enedepo = " << step->GetTotalEnergyDeposit() << Gateendl);
   GateDebugMessageInc("Actor", 4, "weight = " <<  step->GetTrack()->GetWeight() << Gateendl);
   const double weight = step->GetTrack()->GetWeight();
-  const double edep = step->GetTotalEnergyDeposit()*weight;
+  const double edep = step->GetTotalEnergyDeposit()*weight;//*step->GetTrack()->GetWeight();  
   //current material     
   G4Material * current_material = step->GetPreStepPoint()->GetMaterial();
   //Get current particle

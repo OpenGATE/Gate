@@ -30,7 +30,6 @@ See GATE/LICENSE.txt for further details
 #include "GateDoseActorMessenger.hh"
 #include "GateImageWithStatistic.hh"
 #include "GateVoxelizedMass.hh"
-#include "GateRegionDoseStat.hh"
 
 class G4EmCalculator;
 
@@ -76,17 +75,10 @@ class GateDoseActor : public GateVImageActor
   void SetDoseAlgorithmType(G4String b) { mDoseAlgorithmType = b; }
   void ImportMassImage(G4String b) { mImportMassImage = b; }
   void ExportMassImage(G4String b) { mExportMassImage = b; }
-
   void VolumeFilter(G4String b) { mVolumeFilter = b; }
   void MaterialFilter(G4String b) { mMaterialFilter = b; }
   void setTestFlag(bool b) { mTestFlag = b; }
   
-
-  void SetDoseByRegionsInputFilename(std::string f);
-  void SetDoseByRegionsOutputFilename(std::string f);
-
-  void SetOutputScalingFactor(double s);
-
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
 
@@ -136,7 +128,6 @@ protected:
   //Others  
   bool mIsNumberOfHitsImageEnabled;
   bool mTestFlag;
-  bool mDoseByRegionsFlag;
 
   //Edep
   G4String mEdepFilename;
@@ -160,16 +151,9 @@ protected:
   GateImageInt mLastHitEventImage;
   //Others
   GateImageDouble mMassImage;
-  GateImageFloat mDoseByRegionsLabelImage;
-  std::map<int, GateRegionDoseStat> mMapOfRegionStat;
-  double mScalingFactor;
-
   G4String mDoseAlgorithmType;
   G4String mImportMassImage;
   G4String mExportMassImage;
-  G4String mDoseByRegionsInputFilename;
-  G4String mDoseByRegionsOutputFilename;
-
   G4String mVolumeFilter;
   G4String mMaterialFilter;
 
