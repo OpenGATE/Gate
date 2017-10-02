@@ -1,22 +1,22 @@
 /*----------------------
-  Copyright (C): OpenGATE Collaboration
+   Copyright (C): OpenGATE Collaboration
 
-  This software is distributed under the terms
-  of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
-  ----------------------*/
+This software is distributed under the terms
+of the GNU Lesser General  Public Licence (LGPL)
+See GATE/LICENSE.txt for further details
+----------------------*/
 
 
 /*!
   \class  GateDoseActor
   \author thibault.frisson@creatis.insa-lyon.fr
-  laurent.guigues@creatis.insa-lyon.fr
-  david.sarrut@creatis.insa-lyon.fr
+          laurent.guigues@creatis.insa-lyon.fr
+          david.sarrut@creatis.insa-lyon.fr
   \date	March 2011
 
-  - DoseToWater option added by Loïc Grevillot
-  - Dose calculation in inhomogeneous volume added by Thomas Deschler (thomas.deschler@iphc.cnrs.fr)
-*/
+	  - DoseToWater option added by Loïc Grevillot
+	  - Dose calculation in inhomogeneous volume added by Thomas Deschler (thomas.deschler@iphc.cnrs.fr)
+ */
 
 
 #ifndef GATEDOSEACTOR_HH
@@ -30,13 +30,12 @@
 #include "GateDoseActorMessenger.hh"
 #include "GateImageWithStatistic.hh"
 #include "GateVoxelizedMass.hh"
-#include "GateRegionDoseStat.hh"
 
 class G4EmCalculator;
 
 class GateDoseActor : public GateVImageActor
 {
-public:
+ public:
 
   //-----------------------------------------------------------------------------
   // Actor name
@@ -47,32 +46,39 @@ public:
   //-----------------------------------------------------------------------------
   // Constructs the sensor
   virtual void Construct();
-
+  //Edep
   void EnableEdepImage(bool b) { mIsEdepImageEnabled = b; }
   void EnableEdepSquaredImage(bool b) { mIsEdepSquaredImageEnabled = b; }
   void EnableEdepUncertaintyImage(bool b) { mIsEdepUncertaintyImageEnabled = b; }
+  //Dose  
   void EnableDoseImage(bool b) { mIsDoseImageEnabled = b; }
   void EnableDoseSquaredImage(bool b) { mIsDoseSquaredImageEnabled = b; }
   void EnableDoseUncertaintyImage(bool b) { mIsDoseUncertaintyImageEnabled = b; }
+  void EnableDoseNormalisationToMax(bool b);
+  void EnableDoseNormalisationToIntegral(bool b);
+  void SetEfficiencyFile(G4String b);
+  //DoseToWater
   void EnableDoseToWaterImage(bool b) { mIsDoseToWaterImageEnabled = b; }
   void EnableDoseToWaterSquaredImage(bool b) { mIsDoseToWaterSquaredImageEnabled = b; }
   void EnableDoseToWaterUncertaintyImage(bool b) { mIsDoseToWaterUncertaintyImageEnabled = b; }
-  void EnableNumberOfHitsImage(bool b) { mIsNumberOfHitsImageEnabled = b; }
-  void EnableDoseNormalisationToMax(bool b);
-  void EnableDoseNormalisationToIntegral(bool b);
-  void EnableDoseToWaterNormalisation(bool b) { mIsDoseToWaterNormalisationEnabled = b; mDoseToWaterImage.SetScaleFactor(1.0); }
+  void EnableDoseToWaterNormalisationToMax(bool b);
+  void EnableDoseToWaterNormalisationToIntegral(bool b);
+  //DoseToOtherMaterial
+  void EnableDoseToOtherMaterialImage(bool b) { mIsDoseToOtherMaterialImageEnabled = b; }
+  void EnableDoseToOtherMaterialSquaredImage(bool b) { mIsDoseToOtherMaterialSquaredImageEnabled = b; }
+  void EnableDoseToOtherMaterialUncertaintyImage(bool b) { mIsDoseToOtherMaterialUncertaintyImageEnabled = b; }
+  void EnableDoseToOtherMaterialNormalisationToMax(bool b);
+  void EnableDoseToOtherMaterialNormalisationToIntegral(bool b);
+  void SetOtherMaterial(G4String b) { mOtherMaterial = b; }
+  //Others
+  void EnableNumberOfHitsImage(bool b) { mIsNumberOfHitsImageEnabled = b; }  
   void SetDoseAlgorithmType(G4String b) { mDoseAlgorithmType = b; }
   void ImportMassImage(G4String b) { mImportMassImage = b; }
   void ExportMassImage(G4String b) { mExportMassImage = b; }
-
   void VolumeFilter(G4String b) { mVolumeFilter = b; }
   void MaterialFilter(G4String b) { mMaterialFilter = b; }
-
-  void SetDoseByRegionsInputFilename(std::string f);
-  void SetDoseByRegionsOutputFilename(std::string f);
-
-  void SetOutputScalingFactor(double s);
-
+  void setTestFlag(bool b) { mTestFlag = b; }
+  
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
 
@@ -97,45 +103,62 @@ protected:
   StepHitType mUserStepHitType;
 
   bool mIsLastHitEventImageEnabled;
+
+  //Edep  
   bool mIsEdepImageEnabled;
   bool mIsEdepSquaredImageEnabled;
   bool mIsEdepUncertaintyImageEnabled;
+  //Dose
   bool mIsDoseImageEnabled;
   bool mIsDoseSquaredImageEnabled;
   bool mIsDoseUncertaintyImageEnabled;
+  bool mIsDoseNormalisationEnabled;
+  bool mIsDoseEfficiencyEnabled;
+  //DoseToWater
   bool mIsDoseToWaterImageEnabled;
   bool mIsDoseToWaterSquaredImageEnabled;
   bool mIsDoseToWaterUncertaintyImageEnabled;
-  bool mIsNumberOfHitsImageEnabled;
-  bool mIsDoseNormalisationEnabled;
   bool mIsDoseToWaterNormalisationEnabled;
   bool mDose2WaterWarningFlag;
-  bool mDoseByRegionsFlag;
+  //DoseToOtherMaterial
+  bool mIsDoseToOtherMaterialImageEnabled;
+  bool mIsDoseToOtherMaterialSquaredImageEnabled;
+  bool mIsDoseToOtherMaterialUncertaintyImageEnabled;
+  bool mIsDoseToOtherMaterialNormalisationEnabled;
+  //Others  
+  bool mIsNumberOfHitsImageEnabled;
+  bool mTestFlag;
 
+  //Edep
+  G4String mEdepFilename;
   GateImageWithStatistic mEdepImage;
+  //Dose
+  G4String mDoseFilename;
   GateImageWithStatistic mDoseImage;
+  G4String mDoseEfficiencyFile;
+  std::vector<double> mDoseEnergy;
+  std::vector<double> mDoseEfficiency;
+  //DoseToWater
+  G4String mDoseToWaterFilename;
   GateImageWithStatistic mDoseToWaterImage;
+  //DoseToOtherMaterial
+  G4String mDoseToOtherMaterialFilename;
+  GateImageWithStatistic mDoseToOtherMaterialImage;
+  G4String mOtherMaterial;
+  //Hits
+  G4String mNbOfHitsFilename;
   GateImageInt mNumberOfHitsImage;
   GateImageInt mLastHitEventImage;
+  //Others
   GateImageDouble mMassImage;
-  GateImageFloat mDoseByRegionsLabelImage;
-  std::map<int, GateRegionDoseStat> mMapOfRegionStat;
-  double mScalingFactor;
-
-  G4String mEdepFilename;
-  G4String mDoseFilename;
-  G4String mDoseToWaterFilename;
-  G4String mNbOfHitsFilename;
   G4String mDoseAlgorithmType;
   G4String mImportMassImage;
   G4String mExportMassImage;
-  G4String mDoseByRegionsInputFilename;
-  G4String mDoseByRegionsOutputFilename;
-
   G4String mVolumeFilter;
   G4String mMaterialFilter;
 
   G4EmCalculator* emcalc;
+  
 };
 
 MAKE_AUTO_CREATOR_ACTOR(DoseActor,GateDoseActor)
