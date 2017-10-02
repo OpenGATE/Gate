@@ -1,6 +1,0 @@
-[Elements]
-Hydrogen:   S= H   ; Z=  1. ; A=   1.01  g/mole  
-
-[Materials]
-Vacuum: d=0.000001 mg/cm3 ; n=1 
-	+el: name=Hydrogen ; n=1

@@ -38,7 +38,7 @@ public:
      m_dir=getenv("GC_DOT_GATE_DIR");
      if (m_dir.substr(m_dir.length()-1,m_dir.length())=="/") m_dir=m_dir+".Gate/";
      else m_dir=m_dir+"/.Gate/";
-     ifstream dirstream(m_dir.c_str());
+     std::ifstream dirstream(m_dir.c_str());
      if (!dirstream) {
         std::cout<<"Failed to open .Gate directory"<<std::endl;
         exit(1);

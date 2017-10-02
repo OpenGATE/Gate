@@ -7,7 +7,7 @@ See GATE/LICENSE.txt for further details
 ----------------------*/
 
 /*! Updated on 2012/07/24  by vesna.cuplov@gmail.com
-    A warning message is added in case the simulation doesn't load the Materials.xml file.
+    A warning message is added in case the simulation doesn't load the Materials.xml or Surfaces.xml file.
     I/O warning: This is only a problem when OPTICAL PHOTONS are transported in your simulation.
 */
 
@@ -41,13 +41,8 @@ GateXMLDocument::GateXMLDocument(const G4String& filename) :
 //
 // SJ COMMENTS## : read the file by using a messenger mechanism
 //
-{ 
-  std::cout << "===== XML PATH ====: " << filename.c_str() << std::endl;
-
+{
   m_doc = xmlParseFile(filename.c_str());
-  //m_doc = xmlParseFile("simple.xml");
-
-  std::cout << "===== XML PATH ====: " << m_doc << std::endl;
 
   if (m_doc)
   {
@@ -58,7 +53,7 @@ GateXMLDocument::GateXMLDocument(const G4String& filename) :
   else
   {
     std::cout << "I/O warning: Discard the previous warning if your simulation doesn't transport OPTICAL PHOTONS. \n";
-    std::cout << "Otherwise, please copy the Materials.xml file from the gate-source directory in the directory where you run your main macro.\n";
+    std::cout << "Otherwise, please copy the "<< filename << " file from the gate-source directory in the directory where you run your main macro.\n";
   }
 }
 

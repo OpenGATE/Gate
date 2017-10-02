@@ -20,6 +20,28 @@
 #include <G4VoxelLimits.hh>
 #include <G4NistManager.hh>
 #include <G4PhysicalConstants.hh>
+#include <G4Gamma.hh>
+#include <G4Proton.hh>
+#include <G4Positron.hh>
+#include <G4Deuteron.hh>
+#include <G4Electron.hh>
+
+//-----------------------------------------------------------------------------
+bool IsEqual(double a, double b, double tol)
+{
+  double d = fabs(a-b);
+  return d<tol;
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+bool IsEqual(G4ThreeVector a, G4ThreeVector b, double tol)
+{
+  return (IsEqual(a.x(), b.x(), tol) &&
+          IsEqual(a.y(), b.y(), tol) &&
+          IsEqual(a.z(), b.z(), tol));
+}
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 GateDoseActor::GateDoseActor(G4String name, G4int depth):
@@ -43,9 +65,13 @@ GateDoseActor::GateDoseActor(G4String name, G4int depth):
   mDoseAlgorithmType = "VolumeWeighting";
   mImportMassImage = "";
   mExportMassImage = "";
-
+  mDoseByRegionsFlag = false;
+  mDoseByRegionsInputFilename = "";
+  mDoseByRegionsOutputFilename = "DoseByRegions.txt";
   mVolumeFilter = "";
   mMaterialFilter = "";
+  mDose2WaterWarningFlag = true;
+  mScalingFactor = 1.0;
 
   pMessenger = new GateDoseActorMessenger(this);
   GateDebugMessageDec("Actor",4,"GateDoseActor() -- end\n");
@@ -123,6 +149,13 @@ void GateDoseActor::Construct() {
   SetOriginTransformAndFlagToImage(mDoseToWaterImage);
   SetOriginTransformAndFlagToImage(mMassImage);
 
+  // Scaling ?
+  if (mScalingFactor != 1.0) {
+    mEdepImage.SetScaleFactor(mScalingFactor);
+    mDoseImage.SetScaleFactor(mScalingFactor);
+    mDoseToWaterImage.SetScaleFactor(mScalingFactor);
+  }
+
   // Resize and allocate images
   if (mIsEdepSquaredImageEnabled || mIsEdepUncertaintyImageEnabled ||
       mIsDoseSquaredImageEnabled || mIsDoseUncertaintyImageEnabled ||
@@ -132,7 +165,6 @@ void GateDoseActor::Construct() {
     mIsLastHitEventImageEnabled = true;
   }
   if (mIsEdepImageEnabled) {
-    //  mEdepImage.SetLastHitEventImage(&mLastHitEventImage);
     mEdepImage.EnableSquaredImage(mIsEdepSquaredImageEnabled);
     mEdepImage.EnableUncertaintyImage(mIsEdepUncertaintyImageEnabled);
     // Force the computation of squared image if uncertainty is enabled
@@ -142,15 +174,11 @@ void GateDoseActor::Construct() {
     mEdepImage.SetFilename(mEdepFilename);
   }
   if (mIsDoseImageEnabled) {
-    // mDoseImage.SetLastHitEventImage(&mLastHitEventImage);
     mDoseImage.EnableSquaredImage(mIsDoseSquaredImageEnabled);
     mDoseImage.EnableUncertaintyImage(mIsDoseUncertaintyImageEnabled);
     mDoseImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
     // Force the computation of squared image if uncertainty is enabled
     if (mIsDoseUncertaintyImageEnabled) mDoseImage.EnableSquaredImage(true);
-
-    // DD(mDoseImage.GetVoxelVolume());
-    //mDoseImage.SetScaleFactor(1e12/mDoseImage.GetVoxelVolume());
     mDoseImage.Allocate();
     mDoseImage.SetFilename(mDoseFilename);
   }
@@ -179,9 +207,7 @@ void GateDoseActor::Construct() {
     if (mExportMassImage != "") {
       mMassImage.SetResolutionAndHalfSize(mResolution, mHalfSize, mPosition);
       mMassImage.Allocate();
-
       mVoxelizedMass.UpdateImage(&mMassImage);
-
       mMassImage.Write(mExportMassImage);
     }
   }
@@ -196,8 +222,21 @@ void GateDoseActor::Construct() {
       GateWarning("importMassImage command is only compatible with MassWeighting algorithm. Ignored. ");
   }
 
+  if (mDoseByRegionsFlag) {
+    mDoseByRegionsLabelImage.Read(mDoseByRegionsInputFilename);
+    SetOriginTransformAndFlagToImage(mDoseByRegionsLabelImage);
+    double tol = 0.00000001;
+    if (!IsEqual(mDoseByRegionsLabelImage.GetResolution(), mResolution, tol) ||
+        !IsEqual(mDoseByRegionsLabelImage.GetVoxelSize(), mVoxelSize, tol) ||
+        !IsEqual(mDoseByRegionsLabelImage.GetOrigin(), mOrigin, tol)) {
+      GateError("The DoseByRegions labels image must have the same size than the dose image.");
+    }
+    GateRegionDoseStat::ComputeRegionVolumes(mDoseByRegionsLabelImage, mMapOfRegionStat);
+  }
+
+
   // Print information
-  GateMessage("Actor", 1,
+  GateMessage("Actor", 0,
               "Dose DoseActor    = '" << GetObjectName() << "'\n" <<
               "\tDose image        = " << mIsDoseImageEnabled << Gateendl <<
               "\tDose squared      = " << mIsDoseSquaredImageEnabled << Gateendl <<
@@ -215,6 +254,10 @@ void GateDoseActor::Construct() {
               "\tMass image (export) = " << mExportMassImage << Gateendl <<
               "\tEdepFilename      = " << mEdepFilename << Gateendl <<
               "\tDoseFilename      = " << mDoseFilename << Gateendl <<
+              "\tDoseByRegions     = " << mDoseByRegionsFlag << Gateendl <<
+              "\tDoseByRegionsInput  = " << mDoseByRegionsInputFilename << Gateendl <<
+              "\tDoseByRegionsOutput = " << mDoseByRegionsOutputFilename << Gateendl <<
+              "\tScaling factor    = " << mScalingFactor << Gateendl << 
               "\tNb Hits filename  = " << mNbOfHitsFilename << Gateendl);
 
   ResetData();
@@ -250,6 +293,43 @@ void GateDoseActor::SaveData() {
   if (mIsNumberOfHitsImageEnabled) {
     mNumberOfHitsImage.Write(mNbOfHitsFilename);
   }
+
+  if (mDoseByRegionsFlag) {
+
+    // Finish unfinished squared dose
+    for (auto & m:mMapOfRegionStat)
+      m.second.Update(mCurrentEvent, 0.0, 0.0);
+
+    // Compute std and write results
+    double N = mCurrentEvent+1;
+    std::ofstream os(mDoseByRegionsOutputFilename);
+    os << "#id \tvol(mm3) \tedep(MeV) \tstd_edep \tsq_edep \tdose(Gy) \tstd_dose \tsq_dose \tn_hit \tn_event_roi" << std::endl;
+    for(auto m:mMapOfRegionStat) {
+      auto & region = m.second;
+      double edep = region.sum_edep;
+      double sq_edep = region.sum_squared_edep;
+      double std_edep = sqrt( (1.0/(N-1))*(sq_edep/N - pow(edep/N, 2)) )/(edep/N);
+      if( edep == 0.0 || N == 1 || sq_edep == 0 )
+        std_edep = 1.0; // relative uncertainty of 100%
+      double dose = region.sum_dose;
+      double sq_dose = region.sum_squared_dose;
+      double std_dose = sqrt( (1.0/(N-1))*(sq_dose/N - pow(dose/N, 2)) )/(dose/N);
+      if( dose == 0.0 || N == 1 || sq_dose == 0 )
+        std_dose = 1.0; // relative uncertainty of 100%
+      os.precision(10);
+      os << m.first << "\t"
+         << region.volume << "\t"
+         << edep*mScalingFactor << "\t"
+         << std_edep << "\t"
+         << sq_edep*mScalingFactor*mScalingFactor << "\t"
+         << dose*mScalingFactor << "\t"
+         << std_dose << "\t"
+         << sq_dose*mScalingFactor*mScalingFactor << "\t"
+         << region.nb_hits << "\t"
+         << region.nb_event_hits << std::endl;
+    }
+    os.close();
+  }
 }
 //-----------------------------------------------------------------------------
 
@@ -269,8 +349,8 @@ void GateDoseActor::ResetData() {
 void GateDoseActor::BeginOfRunAction(const G4Run * r) {
   GateVActor::BeginOfRunAction(r);
   GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Run\n");
+  mDose2WaterWarningFlag = true;
   // ResetData(); // Do no reset here !! (when multiple run);
-  //
 }
 //-----------------------------------------------------------------------------
 
@@ -280,7 +360,7 @@ void GateDoseActor::BeginOfRunAction(const G4Run * r) {
 void GateDoseActor::BeginOfEventAction(const G4Event * e) {
   GateVActor::BeginOfEventAction(e);
   mCurrentEvent++;
-  GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Event: "<<mCurrentEvent << Gateendl);
+  GateDebugMessage("Actor", 3, "GateDoseActor -- Begin of Event: "<< mCurrentEvent << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
@@ -288,7 +368,7 @@ void GateDoseActor::BeginOfEventAction(const G4Event * e) {
 //-----------------------------------------------------------------------------
 void GateDoseActor::UserPreTrackActionInVoxel(const int /*index*/, const G4Track* track)
 {
-  if(track->GetDefinition()->GetParticleName() == "gamma") { mStepHitType = PostStepHitType; }
+  if(track->GetDefinition() == G4Gamma::Gamma()) { mStepHitType = PostStepHitType; }
   else { mStepHitType = mUserStepHitType; }
 }
 //-----------------------------------------------------------------------------
@@ -344,16 +424,16 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
   if (mMaterialFilter != "") {
     GateDebugMessage("Actor", 3,  "GateDoseActor -- UserSteppingActionInVoxel: material filter debug = " << Gateendl
-		     << " material name        = " << step->GetPreStepPoint()->GetMaterial()->GetName() << Gateendl
-		     << " density              = " << G4BestUnit(mVoxelizedMass.GetPartialMassWithMatName(index)/mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volumic Mass") << Gateendl
-		     << " dosel cubic volume   = " << G4BestUnit(mDoseImage.GetVoxelVolume(), "Volume") << Gateendl
-		     << " partial cubic volume = " << G4BestUnit(mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volume") << Gateendl);
+                     << " material name        = " << step->GetPreStepPoint()->GetMaterial()->GetName() << Gateendl
+                     << " density              = " << G4BestUnit(mVoxelizedMass.GetPartialMassWithMatName(index)/mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volumic Mass") << Gateendl
+                     << " dosel cubic volume   = " << G4BestUnit(mDoseImage.GetVoxelVolume(), "Volume") << Gateendl
+                     << " partial cubic volume = " << G4BestUnit(mVoxelizedMass.GetPartialVolumeWithMatName(index), "Volume") << Gateendl);
   }
 
   if (mVolumeFilter != "") {
     GateDebugMessage("Actor", 3,  "GateDoseActor -- UserSteppingActionInVoxel: volume filter debug = " << Gateendl
-		     << " volume name          = " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << Gateendl
-		     << " Dose scored inside volume filtered volume !" << Gateendl);
+                     << " volume name          = " << step->GetPreStepPoint()->GetPhysicalVolume()->GetName() << Gateendl
+                     << " Dose scored inside volume filtered volume !" << Gateendl);
   }
 
   double dose=0.;
@@ -364,9 +444,9 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     // ------------------------------------
 
     GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose = "
-		     << G4BestUnit(dose, "Dose")
-		     << " rho = "
-		     << G4BestUnit(density, "Volumic Mass")<< Gateendl );
+                     << G4BestUnit(dose, "Dose")
+                     << " rho = "
+                     << G4BestUnit(density, "Volumic Mass")<< Gateendl );
   }
 
   double doseToWater = 0;
@@ -379,29 +459,34 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
       double cut = DBL_MAX;
       cut=1;
-      G4String material = step->GetPreStepPoint()->GetMaterial()->GetName();
-      double Energy = step->GetPreStepPoint()->GetKineticEnergy();
-      G4String PartName = step->GetTrack()->GetDefinition()->GetParticleName();
+      G4Material * material = step->GetPreStepPoint()->GetMaterial();
+      static G4Material * water = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
+      double energy = step->GetPreStepPoint()->GetKineticEnergy();
       double DEDX=0, DEDX_Water=0;
 
       // Dose to water: it could be possible to make this process more
       // generic by choosing any material in place of water
-      double Volume = mDoseToWaterImage.GetVoxelVolume();
+      double volume = mDoseToWaterImage.GetVoxelVolume();
 
-      // Other particles should be taken into account (Helium etc), but bug ? FIXME
-      if (PartName== "proton" || PartName== "e-" || PartName== "e+" || PartName== "deuteron") {
-        //if (PartName != "O16[0.0]" && PartName != "alpha" && PartName != "Be7[0.0]" && PartName != "C12[0.0]"){
-
-        DEDX = emcalc->ComputeTotalDEDX(Energy, PartName, material, cut);
-        DEDX_Water = emcalc->ComputeTotalDEDX(Energy, PartName, "G4_WATER", cut);
-        doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
-        if (DEDX_Water == 0 || DEDX == 0) doseToWater = 0.0; // to avoid inf or NaN
+      // Get current particle
+      const G4ParticleDefinition * p = step->GetTrack()->GetParticleDefinition();
+      if (p == G4Proton::Proton() or
+          p == G4Electron::Electron() or
+          p == G4Positron::Positron() or
+          p == G4Deuteron::Deuteron() or
+          p == G4Gamma::Gamma()) {
+        // For Gamma, we consider the DEDX from Electron
+        if (p == G4Gamma::Gamma()) p = G4Electron::Electron();
+        DEDX = emcalc->ComputeTotalDEDX(energy, p, material, cut);
+        DEDX_Water = emcalc->ComputeTotalDEDX(energy, p, water, cut);
+        doseToWater = edep/density/volume/gray*(DEDX_Water/1.0)/(DEDX/(density*e_SI));
+        if (DEDX_Water == 0 or DEDX == 0) doseToWater = 0.0; // to avoid inf or NaN
       }
       else {
-        DEDX = emcalc->ComputeTotalDEDX(100, "proton", material, cut);
-        DEDX_Water = emcalc->ComputeTotalDEDX(100, "proton", "G4_WATER", cut);
-        doseToWater=edep/density/Volume/gray*(DEDX_Water/1.)/(DEDX/(density*e_SI));
-        if (DEDX_Water == 0 || DEDX == 0) doseToWater = 0.0; // to avoid inf or NaN
+        if (mDose2WaterWarningFlag) {
+          GateMessage("Actor", 0, "WARNING: DoseToWater with a particle which is not proton/electron/positron/gamma/deuteron: results could be wrong." << G4endl);
+          mDose2WaterWarningFlag = false;
+        }
       }
 
       GateDebugMessage("Actor", 2,  "GateDoseActor -- UserSteppingActionInVoxel:\tdose to water = "
@@ -414,42 +499,72 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
     GateDebugMessage("Actor", 2, "GateDoseActor -- UserSteppingActionInVoxel:\tedep = " << G4BestUnit(edep, "Energy") << Gateendl);
   }
 
-  if (mIsDoseImageEnabled)
-    {
-      if (mIsDoseUncertaintyImageEnabled || mIsDoseSquaredImageEnabled)
-        {
-          if (sameEvent) mDoseImage.AddTempValue(index, dose);
-          else mDoseImage.AddValueAndUpdate(index, dose);
-        }
-      else mDoseImage.AddValue(index, dose);
+  if (mIsDoseImageEnabled) {
+    if (mIsDoseUncertaintyImageEnabled || mIsDoseSquaredImageEnabled) {
+      if (sameEvent) mDoseImage.AddTempValue(index, dose);
+      else mDoseImage.AddValueAndUpdate(index, dose);
     }
+    else mDoseImage.AddValue(index, dose);
+  }
 
-  if (mIsDoseToWaterImageEnabled)
-    {
-      if (mIsDoseToWaterUncertaintyImageEnabled || mIsDoseToWaterSquaredImageEnabled)
-        {
-          if (sameEvent) mDoseToWaterImage.AddTempValue(index, doseToWater);
-          else mDoseToWaterImage.AddValueAndUpdate(index, doseToWater);
-        }
-      else mDoseToWaterImage.AddValue(index, doseToWater);
+  if (mIsDoseToWaterImageEnabled) {
+    if (mIsDoseToWaterUncertaintyImageEnabled || mIsDoseToWaterSquaredImageEnabled) {
+      if (sameEvent) mDoseToWaterImage.AddTempValue(index, doseToWater);
+      else mDoseToWaterImage.AddValueAndUpdate(index, doseToWater);
     }
+    else mDoseToWaterImage.AddValue(index, doseToWater);
+  }
 
-  if (mIsEdepImageEnabled)
-    {
-      if (mIsEdepUncertaintyImageEnabled || mIsEdepSquaredImageEnabled)
-        {
-          if (sameEvent) mEdepImage.AddTempValue(index, edep);
-          else mEdepImage.AddValueAndUpdate(index, edep);
-        }
-      else
-        {
-          mEdepImage.AddValue(index, edep);
-
-	}
+  if (mIsEdepImageEnabled) {
+    if (mIsEdepUncertaintyImageEnabled || mIsEdepSquaredImageEnabled) {
+      if (sameEvent) mEdepImage.AddTempValue(index, edep);
+      else mEdepImage.AddValueAndUpdate(index, edep);
     }
+    else {
+      mEdepImage.AddValue(index, edep);
+    }
+  }
 
   if (mIsNumberOfHitsImageEnabled) mNumberOfHitsImage.AddValue(index, weight);
+
+  //---------------------------------------------------------------------------------
+  if (mDoseByRegionsFlag) {
+    int label = mDoseByRegionsLabelImage.GetValue(index);
+    auto & region = mMapOfRegionStat[label];
+    region.Update(mCurrentEvent, edep, density);
+  }
+
+  //---------------------------------------------------------------------------------
 
   GateDebugMessageDec("Actor", 4, "GateDoseActor -- UserSteppingActionInVoxel -- end\n");
 }
 //-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDoseActor::SetDoseByRegionsInputFilename(std::string f)
+{
+  mDoseByRegionsFlag = true;
+  mIsDoseImageEnabled = true;
+  mDoseByRegionsInputFilename = f;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDoseActor::SetDoseByRegionsOutputFilename(std::string f)
+{
+  mDoseByRegionsFlag = true;
+  mIsDoseImageEnabled = true;
+  mDoseByRegionsOutputFilename = f;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDoseActor::SetOutputScalingFactor(double s)
+{
+  mScalingFactor = s;
+}
+//-----------------------------------------------------------------------------
+

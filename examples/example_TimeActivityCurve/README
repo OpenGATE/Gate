@@ -1,9 +1,0 @@
-----------
-
-This example "mainMacro.mac" shows How To Use with Gate a voxelized phantom
-including motions (volumes - organs) and How To associate Time Activity Curves
-(TAC) to reproduce the organ activity variations during the scan.
-
------------
-
-See the UsersGuide for details.

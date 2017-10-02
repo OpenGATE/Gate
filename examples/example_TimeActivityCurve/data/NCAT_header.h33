@@ -1,9 +1,0 @@
-!matrix size [1] := 128
-!matrix size [2] := 128
-!name of data file := data/NCAT_atn_1.bin
-!number format := unsigned integer
-scaling factor (mm/pixel) [1] := +3.125000e+00
-scaling factor (mm/pixel) [2] := +3.125000e+00
-!number of slices := 128
-slice thickness (pixels) := +3.125000e+00
-

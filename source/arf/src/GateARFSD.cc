@@ -105,10 +105,11 @@ G4bool GateARFSD::ProcessHits(G4Step*step, G4TouchableHistory*)
     {
     G4Track* track = static_cast<G4Track*>(step->GetTrack());
     /* TODO Check if necessary */
-    if (track->GetParentID() != 0)
-      {
-      return false;
-      }
+    /*if (track->GetParentID() != 0)
+     {
+     return false;
+     }
+     */
     track->SetTrackStatus(fKillTrackAndSecondaries);
     /* Get the step-points */
     G4StepPoint *preStepPoint = step->GetPreStepPoint();
@@ -136,7 +137,7 @@ G4bool GateARFSD::ProcessHits(G4Step*step, G4TouchableHistory*)
                   "Could not get the volume ID! Aborting!");
       }
 
-    /* now we compute the position in the current frame to be able to extract the angles theta and phi */
+    /* Now we compute the position in the current frame to be able to extract the angles theta and phi */
     G4ThreeVector localPosition = volumeID.MoveToBottomVolumeFrame(track->GetPosition());
     G4ThreeVector vertexPosition = volumeID.MoveToBottomVolumeFrame(step->GetPreStepPoint()->GetPosition());
     G4ThreeVector direction = localPosition - vertexPosition;
@@ -237,11 +238,25 @@ void GateARFSD::computeTables()
 
     for (G4int i = 0; i < mEnergyWindowsNumberOfPrimaries[numberOfWindows]; i++)
       {
-      if (i > 0)
+      if (mEnergyWindowsNumberOfPrimaries[numberOfWindows] > 1)
         {
         std::stringstream s;
         s << i;
-        rootName = mEnergyWindows[numberOfWindows] + "_" + s.str() + ".root";
+        if (mEnergyWindowsNumberOfPrimaries[numberOfWindows] <= 10)
+          {
+          rootName = mEnergyWindows[numberOfWindows] + "_" + s.str() + ".root";
+          }
+        else if (mEnergyWindowsNumberOfPrimaries[numberOfWindows] <= 100)
+          {
+          if (i < 10)
+            {
+            rootName = mEnergyWindows[numberOfWindows] + "_0" + s.str() + ".root";
+            }
+          else
+            {
+            rootName = mEnergyWindows[numberOfWindows] + "_" + s.str() + ".root";
+            }
+          }
         }
       if (mFile != 0)
         {
@@ -360,10 +375,9 @@ void GateARFSD::ComputeProjectionSet(const G4ThreeVector & position,
    deltaX is the dimension of the detector on the Ox axis
    all these coordinates are relative to the detector frame where the origin of the detector is a t the center */
 
-  G4double t = (mDetectorXDepth - position.x()) / direction.x();
+  G4double t = (position.x() - mDetectorXDepth) / direction.x();
   G4double xP = position.z() + t * direction.z();
   G4double yP = position.y() + t * direction.y();
-
   /* now store projection with the GateProjectionSet Module though its method GateProjectionSet::Fill */
 
   if (mProjectionSet == 0)
@@ -380,10 +394,12 @@ void GateARFSD::ComputeProjectionSet(const G4ThreeVector & position,
     mProjectionSet = projectionSet->GetProjectionSet();
     }
   mProjectionSet->FillARF(mHeadID, yP, -xP, arfValue * weight, addEmToArfCount);
+
   if (mShortcutARF)
     {
     mProjectionSet->FillARF(newHead, yP, -xP, arfValue * weight, false);
     }
+
   }
 
 #endif

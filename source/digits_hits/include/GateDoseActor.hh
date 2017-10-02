@@ -1,22 +1,22 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 /*!
   \class  GateDoseActor
   \author thibault.frisson@creatis.insa-lyon.fr
-          laurent.guigues@creatis.insa-lyon.fr
-          david.sarrut@creatis.insa-lyon.fr
+  laurent.guigues@creatis.insa-lyon.fr
+  david.sarrut@creatis.insa-lyon.fr
   \date	March 2011
 
-	  - DoseToWater option added by Loïc Grevillot
-	  - Dose calculation in inhomogeneous volume added by Thomas Deschler (thomas.deschler@iphc.cnrs.fr)
- */
+  - DoseToWater option added by Loïc Grevillot
+  - Dose calculation in inhomogeneous volume added by Thomas Deschler (thomas.deschler@iphc.cnrs.fr)
+*/
 
 
 #ifndef GATEDOSEACTOR_HH
@@ -30,12 +30,13 @@ See GATE/LICENSE.txt for further details
 #include "GateDoseActorMessenger.hh"
 #include "GateImageWithStatistic.hh"
 #include "GateVoxelizedMass.hh"
+#include "GateRegionDoseStat.hh"
 
 class G4EmCalculator;
 
 class GateDoseActor : public GateVImageActor
 {
- public:
+public:
 
   //-----------------------------------------------------------------------------
   // Actor name
@@ -66,6 +67,11 @@ class GateDoseActor : public GateVImageActor
 
   void VolumeFilter(G4String b) { mVolumeFilter = b; }
   void MaterialFilter(G4String b) { mMaterialFilter = b; }
+
+  void SetDoseByRegionsInputFilename(std::string f);
+  void SetDoseByRegionsOutputFilename(std::string f);
+
+  void SetOutputScalingFactor(double s);
 
   virtual void BeginOfRunAction(const G4Run*r);
   virtual void BeginOfEventAction(const G4Event * event);
@@ -103,6 +109,8 @@ protected:
   bool mIsNumberOfHitsImageEnabled;
   bool mIsDoseNormalisationEnabled;
   bool mIsDoseToWaterNormalisationEnabled;
+  bool mDose2WaterWarningFlag;
+  bool mDoseByRegionsFlag;
 
   GateImageWithStatistic mEdepImage;
   GateImageWithStatistic mDoseImage;
@@ -110,6 +118,9 @@ protected:
   GateImageInt mNumberOfHitsImage;
   GateImageInt mLastHitEventImage;
   GateImageDouble mMassImage;
+  GateImageFloat mDoseByRegionsLabelImage;
+  std::map<int, GateRegionDoseStat> mMapOfRegionStat;
+  double mScalingFactor;
 
   G4String mEdepFilename;
   G4String mDoseFilename;
@@ -118,6 +129,8 @@ protected:
   G4String mDoseAlgorithmType;
   G4String mImportMassImage;
   G4String mExportMassImage;
+  G4String mDoseByRegionsInputFilename;
+  G4String mDoseByRegionsOutputFilename;
 
   G4String mVolumeFilter;
   G4String mMaterialFilter;
