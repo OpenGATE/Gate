@@ -255,7 +255,8 @@ void GateToImageCT::RecordBeginOfAcquisition()
 
   //Define the number of the first frame, and check the multiplicity of the
   //frame
-  if( fmod( GetTotalDuration(), GetFrameDuration() ) != 0 )
+  G4double fsliceNumber = GetTotalDuration() / GetFrameDuration();
+  if ( fabs(fsliceNumber -rint(fsliceNumber)) >= 1.e-5 )
     {
       G4cerr << "[GateToImageCT::RecordBeginOfAcquisition] : \n"
              << "The study duration ( "
