@@ -81,7 +81,6 @@ SET(GATE_USE_ROOT ON)
 SET(GATE_ANALYSIS_USE_GENERAL ON)
 SET(GATE_ANALYSIS_USE_FILE ON)
 
-OPTION(GATE_USE_STDC11 "Use the c++11 standard in the compilation" ON)
 OPTION(GATE_USE_OPTICAL "Gate use optical photon" OFF)
 OPTION(GATE_USE_DAVIS "Gate use Davis LUT model" OFF)
 OPTION(GATE_USE_LMF "Gate use LMF" OFF)
@@ -264,11 +263,10 @@ ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA)
 
 #=========================================================
 # We remove the warning option "shadow", because there are tons of
-# such warning related to clhep/g4 system of units.
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
-IF(GATE_USE_STDC11)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-ENDIF(GATE_USE_STDC11)
+# such warning related to clhep/g4 system of units. Additionally,
+# we force the c++11 std. This is mandatory for Geant4 >= 10.2.
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 #=========================================================
 
 #=========================================================
