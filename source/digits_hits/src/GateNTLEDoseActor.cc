@@ -22,26 +22,29 @@
 GateNTLEDoseActor::GateNTLEDoseActor(G4String name, G4int depth):
   GateVImageActor(name, depth) {
   mCurrentEvent = -1;
+
   pMessenger = new GateNTLEDoseActorMessenger(this);
   mKFHandler = new GateKermaFactorHandler();
 
-  mIsLastHitEventImageEnabled    = false;
+  mIsLastHitEventImageEnabled     = false;
 
-  mIsDoseImageEnabled            = false;
-  mIsDoseSquaredImageEnabled     = false;
-  mIsDoseUncertaintyImageEnabled = false;
+  mIsDoseImageEnabled             = false;
+  mIsDoseSquaredImageEnabled      = false;
+  mIsDoseUncertaintyImageEnabled  = false;
 
-  mIsFluxImageEnabled            = false;
-  mIsFluxSquaredImageEnabled     = false;
-  mIsFluxUncertaintyImageEnabled = false;
+  mIsFluxImageEnabled             = false;
+  mIsFluxSquaredImageEnabled      = false;
+  mIsFluxUncertaintyImageEnabled  = false;
 
-  mIsDoseCorrectionEnabled       = false;
-  mIsDoseCorrectionTLEEnabled    = false;
+  mIsDoseCorrectionEnabled        = false;
+  mIsDoseCorrectionTLEEnabled     = false;
 
-  mIsKFExtrapolated              = false;
-  mIsKFDA                        = false;
-  mIsKermaFactorDumped           = false;
-  mIsKillSecondaryEnabled        = false;
+  mIsKFExtrapolated               = false;
+  mIsKFDA                         = false;
+  mIsKermaFactorDumped            = false;
+  mIsKillSecondaryEnabled         = false;
+
+  mIsKermaEquivalentFactorEnabled = false;
 }
 //-----------------------------------------------------------------------------
 
@@ -111,6 +114,7 @@ void GateNTLEDoseActor::Construct() {
 
   if (mIsKFExtrapolated) mKFHandler->SetKFExtrapolation();
   if (mIsKFDA)           mKFHandler->SetKFDA();
+  if (mIsKermaEquivalentFactorEnabled) mKFHandler->SetKermaEquivalentFactor();
 
   GateMessage("Actor", 1,
               "NTLE DoseActor    = '" << GetObjectName() << "'\n" <<
@@ -124,6 +128,7 @@ void GateNTLEDoseActor::Construct() {
               "\tFlux filename     = " << mFluxFilename << Gateendl <<
               "\tDose correction   = " << mIsDoseCorrectionEnabled << Gateendl <<
               "\tDose TLE corr.    = " << mIsDoseCorrectionTLEEnabled << Gateendl <<
+              "\tKerma Equ. factor = " << mIsKermaEquivalentFactorEnabled << Gateendl <<
               "\tKerma factor dump = " << mIsKermaFactorDumped << Gateendl <<
               "\tKerma factor DA   = " << mIsKFDA << Gateendl <<
               "\tKF extrapolation  = " << mIsKFExtrapolated << Gateendl);

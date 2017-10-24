@@ -27,8 +27,9 @@ GateKermaFactorHandler::GateKermaFactorHandler()
   m_distance     = 0.;
   m_kerma_factor = 0.;
 
-  mKFExtrapolation = false;
-  mKFDA            = false;
+  mKFExtrapolation       = false;
+  mKFDA                  = false;
+  mKermaEquivalentFactor = false;
 
   kfTable.clear();
   MuEnTable.clear();
@@ -74,11 +75,20 @@ void GateKermaFactorHandler::SetMaterial(const G4Material* eMaterial)
     kfTable = kerma_factor_table_hydrogen;
     MuEnTable = MuEnTableHydrogen;
   }
+  else if (name == "G4_TISSUE_SOFT_ICRU-4" ||
+           name == "Soft_Tissue_ICRU")
+  {
+    if (mKermaEquivalentFactor)
+      kfTable = kerma_equivalent_factor_ICRU_Soft_Tissue; // Sv.m²
+    else
+      kfTable = kerma_factor_ICRU_Soft_Tissue; // Gy.m²
+    MuEnTable = MuEn_ICRU_Soft_Tissue_NIST; // cm²/g
+  }
   else if (name == "G4_MUSCLE_STRIATED_ICRU" ||
            name == "Muscle_Skeletal_ICRP_23")
   {
     if (mKFDA)
-      kfTable = kerma_factor_table_muscle_DA;
+      kfTable = kerma_factor_table_muscle_DA; // Gy.m²
     else
       kfTable = kerma_factor_muscle_tableau;
 
@@ -208,7 +218,9 @@ double GateKermaFactorHandler::GetKermaFactor(double eEnergy)
   if (kfTable.size() == energy_tableau.size())
     energyTable = energy_tableau;
   else if (kfTable.size() == energy_table_DA.size())
-    energyTable = energy_table_DA;
+    energyTable = energy_table_DA; // MeV
+  else if (kfTable.size() == energy_table_KermaEquivalentFactor.size())
+    energyTable = energy_table_KermaEquivalentFactor; // MeV
   else
   {
     GateError("GateKermaFactorHandler -- GetKermaFactor: Cannot find an energy table with a good size !" << Gateendl);

@@ -39,23 +39,25 @@ public:
   // Constructs the sensor
   virtual void Construct();
 
-  void EnableDoseImage            (bool b) { mIsDoseImageEnabled            = b; }
-  void EnableDoseSquaredImage     (bool b) { mIsDoseSquaredImageEnabled     = b; }
-  void EnableDoseUncertaintyImage (bool b) { mIsDoseUncertaintyImageEnabled = b; }
+  void EnableDoseImage            (bool b) { mIsDoseImageEnabled              = b; }
+  void EnableDoseSquaredImage     (bool b) { mIsDoseSquaredImageEnabled       = b; }
+  void EnableDoseUncertaintyImage (bool b) { mIsDoseUncertaintyImageEnabled   = b; }
 
-  void EnableFluxImage            (bool b) { mIsFluxImageEnabled            = b; }
-  void EnableFluxSquaredImage     (bool b) { mIsFluxSquaredImageEnabled     = b; }
-  void EnableFluxUncertaintyImage (bool b) { mIsFluxUncertaintyImageEnabled = b; }
+  void EnableFluxImage            (bool b) { mIsFluxImageEnabled              = b; }
+  void EnableFluxSquaredImage     (bool b) { mIsFluxSquaredImageEnabled       = b; }
+  void EnableFluxUncertaintyImage (bool b) { mIsFluxUncertaintyImageEnabled   = b; }
 
-  void EnableDoseCorrection       (bool b) { mIsDoseCorrectionEnabled       = b; }
-  void EnableDoseCorrectionTLE    (bool b) { mIsDoseCorrectionTLEEnabled    = b; }
+  void EnableDoseCorrection       (bool b) { mIsDoseCorrectionEnabled         = b; }
+  void EnableDoseCorrectionTLE    (bool b) { mIsDoseCorrectionTLEEnabled      = b; }
 
-  void EnableKFExtrapolation      (bool b) { mIsKFExtrapolated              = b; }
-  void EnableKFDA                 (bool b) { mIsKFDA                        = b; }
-  void EnableKermaFactorDump      (bool b) { mIsKermaFactorDumped           = b; }
-  void EnableKillSecondary        (bool b) { mIsKillSecondaryEnabled        = b; }
+  void EnableKFExtrapolation      (bool b) { mIsKFExtrapolated                = b; }
+  void EnableKFDA                 (bool b) { mIsKFDA                          = b; }
+  void EnableKermaFactorDump      (bool b) { mIsKermaFactorDumped             = b; }
+  void EnableKillSecondary        (bool b) { mIsKillSecondaryEnabled          = b; }
 
-  virtual void BeginOfRunAction(const G4Run*);
+  void EnableKermaEquivalentFactor(bool b) { mIsKermaEquivalentFactorEnabled = b; }
+
+  virtual void BeginOfRunAction  (const G4Run*);
   virtual void BeginOfEventAction(const G4Event*);
 
   virtual void UserSteppingAction(const GateVVolume*, const G4Step*);
@@ -104,6 +106,8 @@ protected:
   bool mIsKFDA;
   bool mIsKermaFactorDumped;
   bool mIsKillSecondaryEnabled;
+
+  bool mIsKermaEquivalentFactorEnabled;
 
   int mCurrentEvent;
 
