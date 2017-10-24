@@ -132,7 +132,7 @@ void GateNTLEDoseActorMessenger::BuildCommands(G4String base)
 
 
   pEnableKermaEquivalentFactorCmd = new G4UIcmdWithABool(G4String(base+"/enableKermaEquivalentFactor"), this);
-  pEnableKermaEquivalentFactorCmd->SetGuidance(G4String("Enable the killing of secondary particles"));
+  pEnableKermaEquivalentFactorCmd->SetGuidance(G4String("Enable usage of kerma equivalent factors instead of kerma factors"));
 }
 //-----------------------------------------------------------------------------
 
