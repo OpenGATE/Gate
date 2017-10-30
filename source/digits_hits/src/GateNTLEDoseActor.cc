@@ -220,8 +220,10 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
         dose = mKFHandler->GetDoseCorrected();
     }
     else if (step->GetTrack()->GetDefinition()->GetParticleName() == "gamma" &&
-             mIsDoseCorrectionTLEEnabled)
+             mIsDoseCorrectionTLEEnabled) {
       dose = mKFHandler->GetDoseCorrectedTLE();
+      flux = mKFHandler->GetFlux();
+    }
 
     bool sameEvent = true;
 
@@ -232,6 +234,7 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
       }
     }
 
+
     GateMessage("Actor", 2,  "GateNTLEDoseActor -- UserSteppingActionInVoxel:" << Gateendl
          << " Dosel index    = " << index << Gateendl
          << " Dosel volume   = " << G4BestUnit(GetDoselVolume(), "Volume") << Gateendl
@@ -240,7 +243,7 @@ void GateNTLEDoseActor::UserSteppingActionInVoxel(const int index, const G4Step*
          << " KinEnergy      = " << G4BestUnit(step->GetPreStepPoint()->GetKineticEnergy(), "Energy") << Gateendl
          << " Distance       = " << G4BestUnit(step->GetStepLength(), "Length") << Gateendl
          << " Dose           = " << G4BestUnit(dose, "Dose") << Gateendl
-         << " Flux           = " << flux << " neutrons/m⁻²" << Gateendl);
+         << " Flux           = " << flux << " part./m²" << Gateendl);
 
 
     if (mIsDoseImageEnabled) {
