@@ -111,9 +111,12 @@ void GateVImageVolume::UpdatePositionWithIsoCenter()
     GateMessage("Volume",3,"TransformMatrix = " << mTransformMatrix << Gateendl);
 
     // Compute translation
-    G4ThreeVector q = mIsoCenter - GetOrigin();
-    q -= mTransformMatrix*GetHalfSize();
-    q = tcurrent - q;
+    G4ThreeVector q = mIsoCenter - GetOrigin(); // translation from the image corner
+    q -= GetHalfSize(); // translation from the image center
+    q = tcurrent - q; // add to previous translation
+
+    // Apply rotation if isocenter is given, consider rotation from this isocenter
+    q = mTransformMatrix*q;
     GetVolumePlacement()->SetTranslation(q);
   }
 }
