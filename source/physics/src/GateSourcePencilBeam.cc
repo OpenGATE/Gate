@@ -87,13 +87,6 @@ GateSourcePencilBeam::~GateSourcePencilBeam()
   delete mGaussianEnergy;
   delete mGaussian2DXTheta;
   delete mGaussian2DYPhi;
-  //FIXME segfault when uncommented
-  //if (mGaussian2DXTheta) delete mGaussian2DXTheta;
-  //if (mGaussian2DYPhi) delete mGaussian2DYPhi;
-  //if (mGaussianEnergy) delete mGaussianEnergy;
-  // not initialized in this class
-  //  delete mEngineXTheta;
-  //  delete mEngineYPhi;
 }
 
 //------------------------------------------------------------------------------------------------------
@@ -169,8 +162,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
 
     delete mGaussianEnergy;
     mGaussianEnergy = new RandGauss(*engine, mEnergy, mSigmaEnergy);
-    //GateMessage("Beam",0,< "A.Resch 2016: mGaussianEnergy " << mGaussianEnergy<<G4endl<<G4endl<<G4endl<<G4endl<<G4endl);
-	
+  	
     // Notations & Calculations based on Transport code - Beam Phase Space Notations - P35
     double alpha, beta, gamma, epsilon;
     //==============================================================
@@ -201,7 +193,6 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
     delete mGaussian2DXTheta;
     mGaussian2DXTheta = new RandMultiGauss(*engine,mUXTheta,mSXTheta);
 
-    //GateMessage("Beam",0,< "A.Resch 2016: mGaussian2DXThetay " << mGaussian2DXTheta<<G4endl);
     //==============================================================
     // Y Phi Phase Space Ellipse
     epsilon=mEllipseYPhiArea/pi;
@@ -273,8 +264,6 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
 
   // config test direction
   if (mTestFlag){
-    //Pos[0]=1; Pos[1]=2; Pos[2]=1000;
-    //Dir[0]=0; Dir[1]=0; Dir[2]=1;
     GateMessage("Beam",0,"===================" << Gateendl);
     GateMessage("Beam",0,"--SPOT GENERATION--" << Gateendl);
     GateMessage("Beam",0,"°Initial Position        "<<Pos[0]<<"  "<<Pos[1]<<"  "<<Pos[2]<< Gateendl);
@@ -315,27 +304,7 @@ void GateSourcePencilBeam::GenerateVertex( G4Event* aEvent )
   //=======================================================
 
   //-------- PARTICLE GENERATION - START------------------
-  /*
-    G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-    G4ParticleDefinition* particle_definition;
-
-    string parttype=mParticleType;
-    if ( parttype == "GenericIon" ){
-    particle_definition=  particleTable->GetIon( mAtomicNumber, mAtomicMass, mIonExciteEnergy);
-    //GateMessage("Beam",0, Gateendl<< Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  GenericIon\n");
-    //GateMessage("Beam",0,mAtomicNumber<<"  "<<mAtomicMass<<"  "<<mIonCharge<<"  "<<mIonExciteEnergy<< Gateendl);
-    }
-    else{
-    particle_definition = particleTable->FindParticle(mParticleType);
-    //GateMessage("Beam",0, Gateendl<< Gateendl<<"mParticleType  "<<mParticleType<<"     selected loop  other\n");
-    }
-
-    if(particle_definition==0) return;
-  */
-
   G4PrimaryVertex* vertex;
-  //  G4ThreeVector particle_position = G4ThreeVector(Pos[0]*mm, Pos[1]*mm, Pos[2]*mm);
-  //  vertex = new G4PrimaryVertex(particle_position,mparticle_time);
   vertex = new G4PrimaryVertex(Pos, mparticle_time);
   vertex->SetWeight(mWeight);
 
@@ -376,21 +345,4 @@ G4int GateSourcePencilBeam::GeneratePrimaries( G4Event* event )
   numVertices++;
   return numVertices;
 }
-
-//------------------------------------------------------------------------------------------------------
-/*
-  G4ThreeVector GateSourcePencilBeam::SetRotation(G4ThreeVector v, double theta, double phi){
-  G4double a,b;
-  a=v[0]*cos(theta)-v[2]*sin(theta);
-  b=v[0]*sin(theta)+v[2]*cos(theta);
-  v[0]=a; v[2]=b;
-
-  a=v[1]*cos(phi)-v[2]*sin(phi);
-  b=v[1]*sin(phi)+v[2]*cos(phi);
-  v[1]=a; v[2]=b;
-
-  return v;
-  }
-*/
-
 // vim: ai sw=2 ts=2 et

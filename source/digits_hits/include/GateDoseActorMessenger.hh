@@ -18,7 +18,6 @@ See GATE/LICENSE.txt for further details
 
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithAString.hh"
-
 #include "GateImageActorMessenger.hh"
 
 class GateDoseActor;
@@ -33,26 +32,38 @@ public:
 
 protected:
   GateDoseActor * pDoseActor;
-
-  G4UIcmdWithABool * pEnableDoseCmd;
-  G4UIcmdWithABool * pEnableDoseSquaredCmd;
-  G4UIcmdWithABool * pEnableDoseUncertaintyCmd;
-  G4UIcmdWithABool * pEnableDoseToWaterCmd;
-  G4UIcmdWithABool * pEnableDoseToWaterSquaredCmd;
-  G4UIcmdWithABool * pEnableDoseToWaterUncertaintyCmd;
+  //Edep
   G4UIcmdWithABool * pEnableEdepCmd;
   G4UIcmdWithABool * pEnableEdepSquaredCmd;
   G4UIcmdWithABool * pEnableEdepUncertaintyCmd;
-  G4UIcmdWithABool * pEnableNumberOfHitsCmd;
+  //Dose
+  G4UIcmdWithABool * pEnableDoseCmd;
+  G4UIcmdWithABool * pEnableDoseSquaredCmd;
+  G4UIcmdWithABool * pEnableDoseUncertaintyCmd;
   G4UIcmdWithABool * pEnableDoseNormToMaxCmd;
   G4UIcmdWithABool * pEnableDoseNormToIntegralCmd;
-  G4UIcmdWithABool * pEnableDoseToWaterNormCmd;
-
+  G4UIcmdWithAString * pSetDoseEfficiencyCmd;
+  //DoseToWater
+  G4UIcmdWithABool * pEnableDoseToWaterCmd;
+  G4UIcmdWithABool * pEnableDoseToWaterSquaredCmd;
+  G4UIcmdWithABool * pEnableDoseToWaterUncertaintyCmd;
+  G4UIcmdWithABool * pEnableDoseToWaterNormToMaxCmd;
+  G4UIcmdWithABool * pEnableDoseToWaterNormToIntegralCmd;
+    //DoseToOtherMaterial
+  G4UIcmdWithABool * pEnableDoseToOtherMaterialCmd;
+  G4UIcmdWithABool * pEnableDoseToOtherMaterialSquaredCmd;
+  G4UIcmdWithABool * pEnableDoseToOtherMaterialUncertaintyCmd;
+  G4UIcmdWithABool * pEnableDoseToOtherMaterialNormToMaxCmd;
+  G4UIcmdWithABool * pEnableDoseToOtherMaterialNormToIntegralCmd;
+  G4UIcmdWithAString * pSetOtherMaterialCmd;
+  //Others
+  G4UIcmdWithABool * pEnableNumberOfHitsCmd;
   G4UIcmdWithAString * pSetDoseAlgorithmCmd;
   G4UIcmdWithAString * pImportMassImageCmd;
   G4UIcmdWithAString * pExportMassImageCmd;
   G4UIcmdWithAString * pVolumeFilterCmd;
   G4UIcmdWithAString * pMaterialFilterCmd;
+  G4UIcmdWithABool * pTestFlagCmd;
 };
 
 #endif /* end #define GATEDOSEACTORMESSENGER_HH*/

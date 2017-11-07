@@ -1,5 +1,6 @@
 #=========================================================
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
+CMAKE_POLICY(SET CMP0025 NEW)
 
 #=========================================================
 PROJECT(Gate)
@@ -80,7 +81,6 @@ SET(GATE_USE_ROOT ON)
 SET(GATE_ANALYSIS_USE_GENERAL ON)
 SET(GATE_ANALYSIS_USE_FILE ON)
 
-OPTION(GATE_USE_STDC11 "Use the c++11 standard in the compilation" ON)
 OPTION(GATE_USE_OPTICAL "Gate use optical photon" OFF)
 OPTION(GATE_USE_DAVIS "Gate use Davis LUT model" OFF)
 OPTION(GATE_USE_LMF "Gate use LMF" OFF)
@@ -233,7 +233,7 @@ ENDIF()
 #=========================================================
 # Add the executable, and link it to the Geant4/ROOT/CLHEP/ITK libraries
 IF(GATE_USE_GPU AND CUDA_FOUND)
-  SET(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20;-gencode arch=compute_21,code=sm_21;-gencode arch=compute_30,code=sm_30;-gencode arch=compute_32,code=sm_32;-gencode arch=compute_35,code=sm_35;-gencode arch=compute_37,code=sm_37;-gencode arch=compute_50,code=sm_50;-gencode arch=compute_52,code=sm_52;-gencode arch=compute_53,code=sm_53;-gencode arch=compute_60,code=sm_60;-gencode arch=compute_61,code=sm_61;-use_fast_math;-w;--ptxas-options=-v")
+  SET(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20;-gencode arch=compute_20,code=sm_21;-gencode arch=compute_30,code=sm_30;-gencode arch=compute_32,code=sm_32;-gencode arch=compute_35,code=sm_35;-gencode arch=compute_37,code=sm_37;-gencode arch=compute_50,code=sm_50;-gencode arch=compute_52,code=sm_52;-gencode arch=compute_53,code=sm_53;-gencode arch=compute_60,code=sm_60;-gencode arch=compute_61,code=sm_61;-use_fast_math;-w;--ptxas-options=-v")
   CUDA_ADD_EXECUTABLE(Gate Gate.cc ${sources} ${sourcesGPU} ${headers})
 ELSE(GATE_USE_GPU AND CUDA_FOUND)
   ADD_EXECUTABLE(Gate Gate.cc ${sources} ${headers})
@@ -263,11 +263,10 @@ ENDIF(GATE_DOWNLOAD_BENCHMARKS_DATA)
 
 #=========================================================
 # We remove the warning option "shadow", because there are tons of
-# such warning related to clhep/g4 system of units.
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
-IF(GATE_USE_STDC11)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-ENDIF(GATE_USE_STDC11)
+# such warning related to clhep/g4 system of units. Additionally,
+# we force the c++11 std. This is mandatory for Geant4 >= 10.2.
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shadow")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 #=========================================================
 
 #=========================================================

@@ -138,6 +138,10 @@ void GateFixedForcedDetectionActor::TestSource(GateSourceMgr * sm)
         {
         GateError("Error: forced detection only supports focused distributions for plane sources.");
         }
+      if (mSource->GetPosDist()->GetPosDisShape() != "Rectangle")
+        {
+        GateError("Error: forced detection only supports rectangle plane sources.");
+        }
       }
     }
   else if (mSourceType == "isotropic" or mSourceType == "isotropicWoP")

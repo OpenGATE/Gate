@@ -9,6 +9,7 @@ See GATE/LICENSE.txt for further details
 
 #include "GateScintillationPB.hh"
 
+#include "GateScintillation.hh"
 #include "GateEMStandardProcessMessenger.hh"
 
 //-----------------------------------------------------------------------------
@@ -42,7 +43,7 @@ GateScintillationPB::GateScintillationPB():GateVProcess("Scintillation")
 //-----------------------------------------------------------------------------
 G4VProcess* GateScintillationPB::CreateProcess(G4ParticleDefinition *)
 {
-  G4Scintillation* scintillation = new G4Scintillation(GetG4ProcessName());
+  GateScintillation* scintillation = new GateScintillation(GetG4ProcessName());
   scintillation->SetTrackSecondariesFirst(true);
   scintillation->SetScintillationYieldFactor(1);
   scintillation->SetScintillationExcitationRatio(0.0);

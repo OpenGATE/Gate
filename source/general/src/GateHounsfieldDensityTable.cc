@@ -49,7 +49,7 @@ double GateHounsfieldDensityTable::FindMaxDensityDifference(double HMin, double 
   int j=0;
   while (j<n && HMax>mH[j]) j++;
   j--;
-  for(int x=i; x<j; x++) {
+  for(int x=i; x<=j; x++) {
     // DD(G4BestUnit(mD[x], "Volumic Mass"));
     if (mD[x] < dMin) dMin = mD[x];
     if (mD[x] > dMax) dMax = mD[x];

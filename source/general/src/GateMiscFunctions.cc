@@ -672,6 +672,20 @@ G4String GetSaveCurrentFilename(G4String & mSaveFilename) {
   G4String mSaveCurrentFilename = G4String(removeExtension(mSaveFilename))+oss.str()+extension;
   return mSaveCurrentFilename;
 }
+//------------------------------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------------------------------
+std::string ReadNextContentLine( std::istream& input, int& lineno, const std::string& fname ) {
+  while ( input ){
+    std::string line;
+    std::getline(input,line);
+    ++lineno;
+    if (line.empty()) continue;
+    if (line[0]=='#') continue;
+    return line;
+  }
+  throw std::runtime_error(std::string("reached end of file '")+fname+std::string("' unexpectedly."));
+}
 //-----------------------------------------------------------------------------
 
 #endif // GATEMISCFUNCTIONS_CC
