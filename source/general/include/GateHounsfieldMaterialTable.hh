@@ -31,8 +31,8 @@ public:
   struct mMaterials
   {
     G4Material* mMaterial;
-    int mH1;
-    int mH2;
+    double mH1;
+    double mH2;
     double md1;
     G4String mName;
   };

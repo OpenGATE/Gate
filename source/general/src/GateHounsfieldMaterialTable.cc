@@ -56,7 +56,7 @@ void GateHounsfieldMaterialTable::AddMaterial(double H1, double H2, double d,
   mat.mMaterial = new G4Material(mat.mName, d, p->GetNumberOfElements());
 
   // Material's elements
-  for(int i=0; i<p->GetNumberOfElements(); i++) {
+  for (int i=0; i<p->GetNumberOfElements(); i++) {
     mat.mMaterial->AddElement(p->GetElements(i), p->GetElementsFraction(i));
   }
 
@@ -101,7 +101,7 @@ void GateHounsfieldMaterialTable::WriteMaterial(G4Material * m, std::ofstream & 
   os << m->GetName() << ": d=" << G4BestUnit(m->GetDensity(),"Volumic Mass")
      << "; n=" << m->GetNumberOfElements()
      << "; \n";
-  for(unsigned int j=0; j<m->GetNumberOfElements(); j++) {
+  for (unsigned int j=0; j<m->GetNumberOfElements(); j++) {
     os << "+el: name=" << m->GetElement(j)->GetName()
        << "; f=" << m->GetFractionVector()[j] << Gateendl;
   }
@@ -137,7 +137,8 @@ void GateHounsfieldMaterialTable::Reset()
 //-----------------------------------------------------------------------------
 void GateHounsfieldMaterialTable::MapLabelToMaterial(LabelToMaterialNameType & m)
 {
-  m.clear();int i = 0;
+  m.clear();
+  int i = 0;
   for (std::vector<mMaterials>::iterator it = mMaterialsVector.begin(); it != mMaterialsVector.end(); it++, i++)
     {
       // GateMessage("Core", 0,
