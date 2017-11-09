@@ -31,53 +31,6 @@
 #include "G4ParticleDefinition.hh"
 #include "G4ProcessManager.hh"
 
-//------------------------------------------------------------------------------------------------------
-//  try get N values of type T from a given input line
-// * throw exception with informative error message in case of trouble.
-// * NOTE that while this catches some common errors, it is not yet fool proof.
-template<typename T, int N>
-typename std::vector<T> parse_N_values_of_type_T(std::string line,int lineno, const std::string& fname){
-  GateMessage("Beam", 5, "[DoseActor] trying to parse line " << lineno << " from file " << fname << Gateendl );
-  std::istringstream iss(line);
-  typename std::istream_iterator<T> iss_end;
-  typename std::istream_iterator<T> isiT(iss);
-  typename std::vector<T> vecT;
-  while (isiT != iss_end) vecT.push_back(*(isiT++));
-  int nread = vecT.size();
-  if (nread != N){
-    std::ostringstream errMsg;
-    errMsg << "wrong number of values (" << nread << ") on line " << lineno << " of " << fname
-           << ", expected " << N << " value(s) of type " << typeid(T).name() << std::endl;
-    throw std::runtime_error(errMsg.str());
-  }
-  return vecT;
-}
-//------------------------------------------------------------------------------------------------------
-// Function to read the next content line
-// * skip all comment lines (lines string with a '#')
-// * skip empty
-// * throw exception with informative error message in case of missing data
-std::string ReadNextLine( std::istream& input, int& lineno, const std::string& fname ) {
-  while ( input ){
-    std::string line;
-    std::getline(input,line);
-    ++lineno;
-    if (line.empty()) continue;
-    if (line[0]=='#') continue;
-    return line;
-  }
-  throw std::runtime_error(std::string("reached end of file '")+fname+std::string("' unexpectedly."));
-}
-//------------------------------------------------------------------------------------------------------
-// Function to read AND parse the next content line
-// * check that we really get N values of type T from the current line
-template<typename T, int N>
-typename std::vector<T>  ParseNextLine( std::istream& input, int& lineno, const std::string& fname ) {
-  std::string line = ReadNextLine(input,lineno,fname);
-  return parse_N_values_of_type_T<T,N>(line,lineno,fname);
-}
-//------------------------------------------------------------------------------------------------------
-
 //-----------------------------------------------------------------------------
 GateDoseActor::GateDoseActor(G4String name, G4int depth):
   GateVImageActor(name,depth) {
@@ -280,11 +233,11 @@ void GateDoseActor::Construct() {
    std::vector<double> mDoseEfficiencyParameters;
    std::string line;
    int lineno = 0;
-   int NbLines = ParseNextLine<int,1>(inFile,lineno,mDoseEfficiencyFile)[0];
+   int NbLines = ParseNextContentLine<int,1>(inFile,lineno,mDoseEfficiencyFile)[0];
 //   std::cout<<NbLines<<std::endl;
    for (int k = 0; k < NbLines; k++) {
 //    std::cout<<k<<std::endl;
-    mDoseEfficiencyParameters = ParseNextLine<double,2>(inFile,lineno,mDoseEfficiencyFile);
+    mDoseEfficiencyParameters = ParseNextContentLine<double,2>(inFile,lineno,mDoseEfficiencyFile);
   	 mDoseEnergy.push_back(mDoseEfficiencyParameters[0]);
     mDoseEfficiency.push_back(mDoseEfficiencyParameters[1]);
     GateMessage("Actor", 5, "[DoseActor] mDoseEfficiencyParameters: "<<mDoseEfficiencyParameters[0]<<"\t"<<mDoseEfficiencyParameters[1]<< Gateendl);

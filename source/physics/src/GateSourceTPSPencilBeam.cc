@@ -20,60 +20,12 @@
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
-#include <iterator>
-#include <exception>
 #include <sstream>
 #include "GateSourceTPSPencilBeam.hh"
 #include "G4Proton.hh"
 #include "GateMiscFunctions.hh"
 #include "GateApplicationMgr.hh"
 
-//------------------------------------------------------------------------------------------------------
-//  try get N values of type T from a given input line
-// * throw exception with informative error message in case of trouble.
-// * NOTE that while this catches some common errors, it is not yet fool proof.
-template<typename T, int N>
-typename std::vector<T> parse_N_values_of_type_T(std::string line,int lineno, const std::string& fname){
-  GateMessage("Beam", 5, "[TPSPencilBeam] trying to parse line " << lineno << " from file " << fname << Gateendl );
-  std::istringstream iss(line);
-  typename std::istream_iterator<T> iss_end;
-  typename std::istream_iterator<T> isiT(iss);
-  typename std::vector<T> vecT;
-  while (isiT != iss_end) vecT.push_back(*(isiT++));
-  int nread = vecT.size();
-  if (nread != N){
-    std::ostringstream errMsg;
-    errMsg << "wrong number of values (" << nread << ") on line " << lineno << " of " << fname
-           << ", expected " << N << " value(s) of type " << typeid(T).name() << std::endl;
-    throw std::runtime_error(errMsg.str());
-  }
-  return vecT;
-}
-//------------------------------------------------------------------------------------------------------
-// Function to read the next content line
-// * skip all comment lines (lines string with a '#')
-// * skip empty
-// * throw exception with informative error message in case of missing data
-std::string ReadNextContentLine( std::istream& input, int& lineno, const std::string& fname ) {
-  while ( input ){
-    std::string line;
-    std::getline(input,line);
-    ++lineno;
-    if (line.empty()) continue;
-    if (line[0]=='#') continue;
-    return line;
-  }
-  throw std::runtime_error(std::string("reached end of file '")+fname+std::string("' unexpectedly."));
-}
-//------------------------------------------------------------------------------------------------------
-// Function to read AND parse the next content line
-// * check that we really get N values of type T from the current line
-template<typename T, int N>
-typename std::vector<T>  ParseNextContentLine( std::istream& input, int& lineno, const std::string& fname ) {
-  std::string line = ReadNextContentLine(input,lineno,fname);
-  return parse_N_values_of_type_T<T,N>(line,lineno,fname);
-}
-//------------------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------------------------------
 GateSourceTPSPencilBeam::GateSourceTPSPencilBeam(G4String name ):GateVSource( name ), mPencilBeam(NULL), mDistriGeneral(NULL)
