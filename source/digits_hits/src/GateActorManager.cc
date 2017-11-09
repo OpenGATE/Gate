@@ -48,6 +48,7 @@ GateActorManager::~GateActorManager()
       // remove it from the list
       theListOfActors.erase(theListOfActors.begin());
 
+      GateMessage("Actor", 4, "~GateActorManager -- delete actor: " << actor->GetObjectName() << Gateendl );
       // delete the pointer
       delete actor;
     }
