@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #include "GateAngularRepeaterMessenger.hh"
@@ -23,7 +23,7 @@ See GATE/LICENSE.txt for further details
 //---------------------------------------------------------------------------------------------------
 GateAngularRepeaterMessenger::GateAngularRepeaterMessenger(GateAngularRepeater* itsAngularRepeater)
   :GateObjectRepeaterMessenger(itsAngularRepeater)
-{ 
+{
   G4String cmdName;
 
   cmdName = GetDirectoryName()+"setRepeatNumber";
@@ -31,17 +31,17 @@ GateAngularRepeaterMessenger::GateAngularRepeaterMessenger(GateAngularRepeater* 
   SetRepeatNumberCmd->SetGuidance("Set the number of copies of the object.");
   SetRepeatNumberCmd->SetParameterName("N",false);
   SetRepeatNumberCmd->SetRange("N >= 1");
-  
+
   cmdName = GetDirectoryName()+"setPoint1";
   Point1Cmd = new G4UIcmdWith3Vector(cmdName,this);
   Point1Cmd->SetGuidance("Set the first point defining the repeater axis.");
   Point1Cmd->SetParameterName("X1","Y1","Z1",false);
-  
+
   cmdName = GetDirectoryName()+"setPoint2";
   Point2Cmd = new G4UIcmdWith3Vector(cmdName,this);
   Point2Cmd->SetGuidance("Set the second point defining the repeater axis.");
   Point2Cmd->SetParameterName("X2","Y2","Z2",false);
-  
+
   cmdName = GetDirectoryName()+"enableAutoRotation";
   EnableAutoRotationCmd = new G4UIcmdWithABool(cmdName,this);
   EnableAutoRotationCmd->SetGuidance("Enable the object auto-rotation option.");
@@ -66,11 +66,11 @@ GateAngularRepeaterMessenger::GateAngularRepeaterMessenger(GateAngularRepeater* 
   AngularSpanCmd->SetParameterName("Dphi",false);
   AngularSpanCmd->SetUnitCategory("Angle");
 
-//    cmdName = GetDirectoryName()+"setAngularPitch";
-//    AngularPitchCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
-//    AngularPitchCmd->SetGuidance("Set the rotation angle difference between two adjacent copies.");
-//    AngularPitchCmd->SetParameterName("dphi",false);
-//    AngularPitchCmd->SetUnitCategory("Angle");
+  //    cmdName = GetDirectoryName()+"setAngularPitch";
+  //    AngularPitchCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
+  //    AngularPitchCmd->SetGuidance("Set the rotation angle difference between two adjacent copies.");
+  //    AngularPitchCmd->SetParameterName("dphi",false);
+  //    AngularPitchCmd->SetUnitCategory("Angle");
 
   cmdName = GetDirectoryName()+"setModuloNumber";// Modulo
   SetModuloNumberCmd = new G4UIcmdWithAnInteger(cmdName,this);
@@ -84,13 +84,13 @@ GateAngularRepeaterMessenger::GateAngularRepeaterMessenger(GateAngularRepeater* 
   Shift1Cmd->SetParameterName("Z",false);
   Shift1Cmd->SetUnitCategory("Length");
 
-  cmdName = GetDirectoryName()+"setZShift2";// Shift2Cmd;    
+  cmdName = GetDirectoryName()+"setZShift2";// Shift2Cmd;
   Shift2Cmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   Shift2Cmd->SetGuidance("Set the Z shift of modulo object 2");
   Shift2Cmd->SetParameterName("Z",false);
   Shift2Cmd->SetUnitCategory("Length");
 
-  cmdName = GetDirectoryName()+"setZShift3";    
+  cmdName = GetDirectoryName()+"setZShift3";
   Shift3Cmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   Shift3Cmd->SetGuidance("Set the Z shift of modulo object 3");
   Shift3Cmd->SetParameterName("Z",false);
@@ -133,64 +133,64 @@ GateAngularRepeaterMessenger::GateAngularRepeaterMessenger(GateAngularRepeater* 
 //---------------------------------------------------------------------------------------------------
 GateAngularRepeaterMessenger::~GateAngularRepeaterMessenger()
 {
-    
-    delete AngularSpanCmd;
-    delete FirstAngleCmd;
-    delete EnableAutoRotationCmd;
-    delete DisableAutoRotationCmd;
-    delete Point1Cmd;
-    delete Point2Cmd;
-    delete SetRepeatNumberCmd;
-    delete SetModuloNumberCmd;       
-    delete Shift1Cmd;
-    delete Shift2Cmd;
-    delete Shift3Cmd;
-    delete Shift4Cmd;
-    delete Shift5Cmd;
-    delete Shift6Cmd;
-    delete Shift7Cmd;
-    delete Shift8Cmd;
-    
+
+  delete AngularSpanCmd;
+  delete FirstAngleCmd;
+  delete EnableAutoRotationCmd;
+  delete DisableAutoRotationCmd;
+  delete Point1Cmd;
+  delete Point2Cmd;
+  delete SetRepeatNumberCmd;
+  delete SetModuloNumberCmd;
+  delete Shift1Cmd;
+  delete Shift2Cmd;
+  delete Shift3Cmd;
+  delete Shift4Cmd;
+  delete Shift5Cmd;
+  delete Shift6Cmd;
+  delete Shift7Cmd;
+  delete Shift8Cmd;
+
 }
 //---------------------------------------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------------------------------------
 void GateAngularRepeaterMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
-   if( command==Point1Cmd )
-     { GetAngularRepeater()->SetPoint1(Point1Cmd->GetNew3VectorValue(newValue));}   
-   else if( command==Point2Cmd )
-     { GetAngularRepeater()->SetPoint2(Point2Cmd->GetNew3VectorValue(newValue));}   
-   else if( command==SetRepeatNumberCmd )
-     { GetAngularRepeater()->SetRepeatNumber(SetRepeatNumberCmd->GetNewIntValue(newValue));}   
-   else if ( command==EnableAutoRotationCmd )
-     { GetAngularRepeater()->SetAutoRotation(EnableAutoRotationCmd->GetNewBoolValue(newValue));}   
-   else if ( command==DisableAutoRotationCmd )
-     { GetAngularRepeater()->SetAutoRotation(!(DisableAutoRotationCmd->GetNewBoolValue(newValue)));} 
-   else if ( command==FirstAngleCmd )
-     { GetAngularRepeater()->SetFirstAngle( FirstAngleCmd->GetNewDoubleValue(newValue)) ;}   
-   else if ( command==AngularSpanCmd )
-     { GetAngularRepeater()->SetAngularSpan( AngularSpanCmd->GetNewDoubleValue(newValue)) ;}   
-   else if ( command==SetModuloNumberCmd)
-     { GetAngularRepeater()->SetModuloNumber( SetModuloNumberCmd->GetNewIntValue(newValue)) ;}   
-   else if ( command==Shift1Cmd)
-     { GetAngularRepeater()->SetZShift1(Shift1Cmd->GetNewDoubleValue(newValue)) ;}
-   else if ( command==Shift2Cmd)
-     { GetAngularRepeater()->SetZShift2(Shift2Cmd->GetNewDoubleValue(newValue)) ;}
-   else if ( command==Shift3Cmd)
-     { GetAngularRepeater()->SetZShift3(Shift3Cmd->GetNewDoubleValue(newValue)) ;}
-   else if ( command==Shift4Cmd)
-     { GetAngularRepeater()->SetZShift4(Shift4Cmd->GetNewDoubleValue(newValue)) ;}
-   else if ( command==Shift5Cmd)
-     { GetAngularRepeater()->SetZShift5(Shift5Cmd->GetNewDoubleValue(newValue)) ;}
-   else if ( command==Shift6Cmd)
-     { GetAngularRepeater()->SetZShift6(Shift6Cmd->GetNewDoubleValue(newValue)) ;}
-   else if ( command==Shift7Cmd)
-     { GetAngularRepeater()->SetZShift7(Shift7Cmd->GetNewDoubleValue(newValue)) ;}
-   else if ( command==Shift8Cmd)
-     { GetAngularRepeater()->SetZShift8(Shift8Cmd->GetNewDoubleValue(newValue)) ;}
-   else
-     {G4cout << "\n GateAngularRepeaterMesenger says: no cmd associated with :" << command <<"\n";}
+{
+  if( command==Point1Cmd )
+    { GetAngularRepeater()->SetPoint1(Point1Cmd->GetNew3VectorValue(newValue));}
+  else if( command==Point2Cmd )
+    { GetAngularRepeater()->SetPoint2(Point2Cmd->GetNew3VectorValue(newValue));}
+  else if( command==SetRepeatNumberCmd )
+    { GetAngularRepeater()->SetRepeatNumber(SetRepeatNumberCmd->GetNewIntValue(newValue));}
+  else if ( command==EnableAutoRotationCmd )
+    { GetAngularRepeater()->SetAutoRotation(EnableAutoRotationCmd->GetNewBoolValue(newValue));}
+  else if ( command==DisableAutoRotationCmd )
+    { GetAngularRepeater()->SetAutoRotation(!(DisableAutoRotationCmd->GetNewBoolValue(newValue)));}
+  else if ( command==FirstAngleCmd )
+    { GetAngularRepeater()->SetFirstAngle( FirstAngleCmd->GetNewDoubleValue(newValue)) ;}
+  else if ( command==AngularSpanCmd )
+    { GetAngularRepeater()->SetAngularSpan( AngularSpanCmd->GetNewDoubleValue(newValue)) ;}
+  else if ( command==SetModuloNumberCmd)
+    { GetAngularRepeater()->SetModuloNumber( SetModuloNumberCmd->GetNewIntValue(newValue)) ;}
+  else if ( command==Shift1Cmd)
+    { GetAngularRepeater()->SetZShift1(Shift1Cmd->GetNewDoubleValue(newValue)) ;}
+  else if ( command==Shift2Cmd)
+    { GetAngularRepeater()->SetZShift2(Shift2Cmd->GetNewDoubleValue(newValue)) ;}
+  else if ( command==Shift3Cmd)
+    { GetAngularRepeater()->SetZShift3(Shift3Cmd->GetNewDoubleValue(newValue)) ;}
+  else if ( command==Shift4Cmd)
+    { GetAngularRepeater()->SetZShift4(Shift4Cmd->GetNewDoubleValue(newValue)) ;}
+  else if ( command==Shift5Cmd)
+    { GetAngularRepeater()->SetZShift5(Shift5Cmd->GetNewDoubleValue(newValue)) ;}
+  else if ( command==Shift6Cmd)
+    { GetAngularRepeater()->SetZShift6(Shift6Cmd->GetNewDoubleValue(newValue)) ;}
+  else if ( command==Shift7Cmd)
+    { GetAngularRepeater()->SetZShift7(Shift7Cmd->GetNewDoubleValue(newValue)) ;}
+  else if ( command==Shift8Cmd)
+    { GetAngularRepeater()->SetZShift8(Shift8Cmd->GetNewDoubleValue(newValue)) ;}
+  else
+    {G4cout << "\n GateAngularRepeaterMesenger says: no cmd associated with :" << command <<"\n";}
 }
 //---------------------------------------------------------------------------------------------------
