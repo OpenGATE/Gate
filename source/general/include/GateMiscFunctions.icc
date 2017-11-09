@@ -24,4 +24,31 @@ bool ConvertFromString( const std::string & Str, T & Dest )
   return iss >> Dest != 0;
 }
 
+//------------------------------------------------------------------------------------------------------
+template<typename T, int N>
+typename std::vector<T> parse_N_values_of_type_T(std::string line,int lineno, const std::string& fname){
+  GateMessage("Beam", 5, "[TPSPencilBeam] trying to parse line " << lineno << " from file " << fname << Gateendl );
+  std::istringstream iss(line);
+  typename std::istream_iterator<T> iss_end;
+  typename std::istream_iterator<T> isiT(iss);
+  typename std::vector<T> vecT;
+  while (isiT != iss_end) vecT.push_back(*(isiT++));
+  int nread = vecT.size();
+  if (nread != N){
+    std::ostringstream errMsg;
+    errMsg << "wrong number of values (" << nread << ") on line " << lineno << " of " << fname
+           << ", expected " << N << " value(s) of type " << typeid(T).name() << std::endl;
+    throw std::runtime_error(errMsg.str());
+  }
+  return vecT;
+}
+
+//------------------------------------------------------------------------------------------------------
+template<typename T, int N>
+typename std::vector<T>  ParseNextContentLine( std::istream& input, int& lineno, const std::string& fname ) {
+  std::string line = ReadNextContentLine(input,lineno,fname);
+  return parse_N_values_of_type_T<T,N>(line,lineno,fname);
+}
+//------------------------------------------------------------------------------------------------------
+
 #endif // GATEMISCFUNCTIONS_ICC
