@@ -22,6 +22,7 @@ See GATE/LICENSE.txt for further details
 #include <sstream>
 #include <iterator>
 #include <exception>
+#include <typeinfo>
 
 #include "G4UIcommand.hh"
 #include "G4VSolid.hh"
