@@ -71,6 +71,7 @@ private:
   G4UIcmdWithADoubleAndUnit*  Shift6Cmd;
   G4UIcmdWithADoubleAndUnit*  Shift7Cmd;
   G4UIcmdWithADoubleAndUnit*  Shift8Cmd;
+  G4UIcmdWithABool*           CombineWithRotationFirstCmd;
 };
 
 #endif

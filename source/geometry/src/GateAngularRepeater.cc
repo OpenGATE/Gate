@@ -53,6 +53,7 @@ GateAngularRepeater::GateAngularRepeater(GateVVolume* itsObjectInserter,
   m_zShift8(itsZShift8),
   m_Messenger(0)
 {
+  m_flagCombineWithRotationFirst = false;
   m_Messenger = new GateAngularRepeaterMessenger(this);
 }
 //-----------------------------------------------------------------------------------------------
@@ -106,18 +107,26 @@ void GateAngularRepeater::PushMyPlacements(const G4RotationMatrix& currentRotati
   for ( G4int i=0 ; i < GetRepeatNumber() ; i++) {
     G4RotationMatrix newRotationMatrix = currentRotationMatrix;
     G4Point3D m_shift = G4ThreeVector(0., 0., Zshift_vector[i%m_moduloNumber]); // Pick up right value
-
     G4Point3D newPosition = currentPosition + m_shift;
-
     G4double angle = m_firstAngle + dphi*i;
-
     newPosition = HepGeom::Rotate3D(angle,m_point1,m_point2) * newPosition;
 
-    if (m_flagAutoRotation)
-      newRotationMatrix.rotate(-angle, axis);
+    //  When a rotation is attached to the volume, it is sometimes convenient to
+    //  apply this rotation *before* the rotation from the repeater. This is
+    //  controled by the flag m_flagCombineWithRotationFirst. By default it is
+    //  false, to stay compatible with previous version.
+    if (m_flagAutoRotation) {
+      if (m_flagCombineWithRotationFirst) {
+        G4RotationMatrix r;
+        r.rotate(-angle, axis);
+        newRotationMatrix = newRotationMatrix*r;
+      }
+      else {
+        newRotationMatrix.rotate(-angle, axis);
+      }
+    }
     PushBackPlacement(newRotationMatrix,newPosition);
   }
-
 }
 //-----------------------------------------------------------------------------------------------
 

@@ -126,6 +126,12 @@ GateAngularRepeaterMessenger::GateAngularRepeaterMessenger(GateAngularRepeater* 
   Shift8Cmd->SetParameterName("Z",false);
   Shift8Cmd->SetUnitCategory("Length");
 
+  cmdName = GetDirectoryName()+"combineWithRotationFirst";
+  CombineWithRotationFirstCmd = new G4UIcmdWithABool(cmdName,this);
+  CombineWithRotationFirstCmd->SetGuidance("Determine the order of the volume and repeater rotations: if set to true, volume rotation is first. Else repeater rotation is first.");
+  CombineWithRotationFirstCmd->SetParameterName("flag", false);
+  CombineWithRotationFirstCmd->SetDefaultValue(false);
+
 }
 //---------------------------------------------------------------------------------------------------
 
@@ -135,7 +141,7 @@ GateAngularRepeaterMessenger::~GateAngularRepeaterMessenger()
 {
 
   delete AngularSpanCmd;
-  delete FirstAngleCmd;
+  delete CombineWithRotationFirstCmd;
   delete EnableAutoRotationCmd;
   delete DisableAutoRotationCmd;
   delete Point1Cmd;
@@ -188,6 +194,8 @@ void GateAngularRepeaterMessenger::SetNewValue(G4UIcommand* command,G4String new
     { GetAngularRepeater()->SetZShift6(Shift6Cmd->GetNewDoubleValue(newValue)) ;}
   else if ( command==Shift7Cmd)
     { GetAngularRepeater()->SetZShift7(Shift7Cmd->GetNewDoubleValue(newValue)) ;}
+  else if ( command==CombineWithRotationFirstCmd )
+    { GetAngularRepeater()->SetCombineWithRotationFirstFlag(CombineWithRotationFirstCmd->GetNewBoolValue(newValue));}
   else if ( command==Shift8Cmd)
     { GetAngularRepeater()->SetZShift8(Shift8Cmd->GetNewDoubleValue(newValue)) ;}
   else
