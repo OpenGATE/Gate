@@ -57,8 +57,8 @@ const G4String GateVVolume::mThePhysicalVolumeNameTag  = "_phys";
 //---------------------------------------------------------------------------------------
 //Constucteur
 GateVVolume::GateVVolume(const G4String& itsName,
-			 G4bool acceptsChildren,
-			 G4int /*depth*/)
+                         G4bool acceptsChildren,
+                         G4int /*depth*/)
   : GateClockDependent(itsName, acceptsChildren),
     mSolidName(MakeSolidName(itsName)),
     pOwnMaterial(0),
@@ -281,7 +281,7 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
     if (pQueue->size()!=theListOfOwnPhysVolume.size()) {
       G4cout  << "[GateVVolume('" << GetObjectName() << "')::ConstructOwnPhysicalVolume]:\n"
       	      << "The size of the placement queue (" << pQueue->size() << ") is different from \n"
-	      << "the number of physical volumes to update (" << theListOfOwnPhysVolume.size() << ")!!!\n";
+              << "the number of physical volumes to update (" << theListOfOwnPhysVolume.size() << ")!!!\n";
       G4Exception( "GateVVolume::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Can not complete placement update.");
     }
   }
@@ -322,43 +322,41 @@ void GateVVolume::ConstructOwnPhysicalVolume(G4bool flagUpdateOnly)
       G4Exception( "GateVVolume::ConstructOwnPhysicalVolume", "ConstructOwnPhysicalVolume", FatalException, "Failed to construct the volume!");
     }
 
-    if (flagUpdateOnly)
-      {
-	// Update physical volume
-	//----------------------------------------------------------------
-	pOwnPhys = GetPhysicalVolume(copyNumber);
+    if (flagUpdateOnly) {
+      // Update physical volume
+      //----------------------------------------------------------------
+      pOwnPhys = GetPhysicalVolume(copyNumber);
 
-	// Set the translation vector for this physical volume
-	pOwnPhys->SetTranslation(position);
+      // Set the translation vector for this physical volume
+      pOwnPhys->SetTranslation(position);
 
-	// Set the rotation matrix for this physical volume
-	if (pOwnPhys->GetRotation())
-	  delete pOwnPhys->GetRotation();
+      // Set the rotation matrix for this physical volume
+      if (pOwnPhys->GetRotation())
+        delete pOwnPhys->GetRotation();
 
-	pOwnPhys->SetRotation(newRotationMatrix);
+      pOwnPhys->SetRotation(newRotationMatrix);
 
-	GateMessage("Geometry", 6, GetPhysicalVolumeName() << "[" << copyNumber << "] has been updated.\n";);
+      GateMessage("Geometry", 6, GetPhysicalVolumeName() << "[" << copyNumber << "] has been updated.\n";);
 
-      }
-    else
-      {
+    }
+    else {
 
-	// Place new physical volume
-	//---------------------------------------------------------------
-	pOwnPhys = new G4PVPlacement(newRotationMatrix,        // rotation with respect to its mother volume
-				     position,            // traslation with respect to its mother volume
-				     pOwnLog,                  // the assiated logical volume
-				     GetPhysicalVolumeName(),  // physical volume name
-				     pMotherLogicalVolume,    // the mother logical volume
-				     false,                    // for future use,, can be set to false
-				     copyNumber,                        // copy number
-				     false);                  // false/true = no/yes overlap check triggered
+      // Place new physical volume
+      //---------------------------------------------------------------
+      pOwnPhys = new G4PVPlacement(newRotationMatrix,        // rotation with respect to its mother volume
+                                   position,                 // translation with respect to its mother volume
+                                   pOwnLog,                  // the assiated logical volume
+                                   GetPhysicalVolumeName(),  // physical volume name
+                                   pMotherLogicalVolume,     // the mother logical volume
+                                   false,                    // for future use,, can be set to false
+                                   copyNumber,               // copy number
+                                   false);                   // false/true = no/yes overlap check triggered
 
-	PushPhysicalVolume(pOwnPhys);
+      PushPhysicalVolume(pOwnPhys);
 
-	GateMessage("Geometry", 6, GetPhysicalVolumeName() << "[" << copyNumber << "] has been constructed.\n";);
+      GateMessage("Geometry", 6, GetPhysicalVolumeName() << "[" << copyNumber << "] has been constructed.\n";);
 
-      }
+    }
 
   }//end for
 
@@ -386,7 +384,7 @@ void GateVVolume::AttachCrystalSD()
   // Check whether this attachement is allowed or forbidden
   if (crystalSD->PrepareCreatorAttachment(this)) {
     G4cout  << "[GateVVolume::AttachCrystalSD]:\n"
-	    << "Can not attach crystalSD!\n";
+            << "Can not attach crystalSD!\n";
     return;
   }
 
@@ -429,9 +427,9 @@ G4bool GateVVolume::CheckOutputExistence()
   for(sit= theList.begin(); sit!=theList.end(); ++sit)
     {
       if ((*sit)->GetObjectName() == "output")
-	{
-	  return true;
-	}
+        {
+          return true;
+        }
     }
 
   return false;
@@ -452,10 +450,10 @@ void GateVVolume::AttachOutputToVolume()
   for(sit= theList.begin(); sit!=theList.end(); ++sit)
     {
       if ((*sit)->GetObjectName() == "output")
-	{
-	  (*sit)->GateVActor::SetVolumeName(GetObjectName());
-	  (*sit)->GateVActor::AttachToVolume(GetObjectName());
-	}
+        {
+          (*sit)->GateVActor::SetVolumeName(GetObjectName());
+          (*sit)->GateVActor::AttachToVolume(GetObjectName());
+        }
     }
 
 }
@@ -477,11 +475,11 @@ void GateVVolume::DestroyGeometry()
       n = lastVolume->GetCopyNo();
 
       if (GetMotherLogicalVolume())
-	GetMotherLogicalVolume()->RemoveDaughter(lastVolume);
+        GetMotherLogicalVolume()->RemoveDaughter(lastVolume);
 
       // Destroy the volume rotation if required
       if (lastVolume->GetRotation())
-	delete lastVolume->GetRotation();
+        delete lastVolume->GetRotation();
 
       // Destroy the physical volume
       delete lastVolume;
@@ -514,11 +512,11 @@ void GateVVolume::DestroyOwnPhysicalVolumes()
       G4VPhysicalVolume* lastVolume = theListOfOwnPhysVolume.back();
 
       if (GetMotherLogicalVolume())
-	GetMotherLogicalVolume()->RemoveDaughter(lastVolume);
+        GetMotherLogicalVolume()->RemoveDaughter(lastVolume);
 
       // Destroy the volume rotation if required
       if (lastVolume->GetRotation())
-	delete lastVolume->GetRotation();
+        delete lastVolume->GetRotation();
 
       // Destroy the physical volume
       delete lastVolume;
@@ -613,7 +611,7 @@ void GateVVolume::Describe(size_t indent)
   if (m_repeaterList)
     m_repeaterList->DescribeRepeaters(indent);
   G4cout << GateTools::Indent(indent) << "-----------------------------------------------"
-	 << Gateendl  << Gateendl;
+         << Gateendl  << Gateendl;
 }
 //------------------------------------------------------------------------------------------
 
@@ -628,7 +626,7 @@ void GateVVolume::AttachARFSD()
   // Check whether this attachement is allowed or forbidden
   if (arfSD->PrepareCreatorAttachment(this)) {
     G4cout  << "[GateVObjectCreator::AttachARFSD]:\n"
-	    << "Can not attach ARFSD!\n";
+            << "Can not attach ARFSD!\n";
     return;
   }
 
