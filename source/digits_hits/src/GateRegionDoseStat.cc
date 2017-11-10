@@ -64,8 +64,8 @@ void GateRegionDoseStat::Update(long event_id, double edep, double density)
 
 //-----------------------------------------------------------------------------
 // Static
-void GateRegionDoseStat::ComputeRegionVolumes(GateImageFloat & image,
-                                              LabelToSingleRegionMapType & map)
+void GateRegionDoseStat::InitRegions(GateImageFloat & image,
+                                     LabelToSingleRegionMapType & map)
 {
   GateImageFloat::const_iterator pi = image.begin();
   while (pi != image.end()) {
