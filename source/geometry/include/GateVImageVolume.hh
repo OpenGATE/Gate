@@ -1,18 +1,18 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 /*! \file
   \class GateVImageVolume :
   \brief Base (abstract) class for volumes which represent the data provided by a 3D image of labels and a label to material correspondence table
   \author thibault.frisson@creatis.insa-lyon.fr
-          laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
+  laurent.guigues@creatis.insa-lyon.fr
+  david.sarrut@creatis.insa-lyon.fr
 */
 
 #ifndef __GateVImageVolume__hh__
@@ -94,6 +94,7 @@ public:
   //-----------------------------------------------------------------------------
   void SetIsoCenter(const G4ThreeVector & i);
   G4ThreeVector GetIsoCenter() const { return mIsoCenter; }
+  void SetIsoCenterRotationFlag(G4bool b) { mIsoCenterRotationFlag = b; }
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
@@ -135,7 +136,7 @@ public:
 
   typedef std::map<G4Material*, G4VisAttributes*>          GateVoxelAttributesTranslationMap;
   GateVoxelAttributesTranslationMap                        m_voxelAttributesTranslation;
-  
+
   //-----------------------------------------------------------------------------
   /// Builds a label to material map
   void BuildLabelToG4MaterialVector( std::vector<G4Material*>& );
@@ -152,7 +153,7 @@ public:
   //-----------------------------------------------------------------------------
   // Used by the navigator
   int GetNextVoxel(const G4ThreeVector& position,
-				   const G4ThreeVector& direction);
+                   const G4ThreeVector& direction);
 
   virtual void GetPhysVolForAVoxel(const G4int, const G4VTouchable &, G4VPhysicalVolume **, G4NavigationHistory &) const {}
   //-----------------------------------------------------------------------------
@@ -181,8 +182,8 @@ protected:
   G4String mRangeToImageMaterialTableFilename;
   bool mLoadImageMaterialsFromHounsfieldTable;
   bool mLoadImageMaterialsFromLabelTable;
-  GateHounsfieldMaterialTable mHounsfieldMaterialTable; 
-  GateRangeMaterialTable mRangeMaterialTable; 
+  GateHounsfieldMaterialTable mHounsfieldMaterialTable;
+  GateRangeMaterialTable mRangeMaterialTable;
   //-----------------------------------------------------------------------------
 
   //-----------------------------------------------------------------------------
@@ -232,9 +233,10 @@ protected:
 
   //-----------------------------------------------------------------------------
   /// IsoCenter
-  G4ThreeVector mIsoCenter;
-  G4bool        mIsoCenterIsSetByUser;
-  G4ThreeVector mInitialTranslation;
+  G4ThreeVector    mIsoCenter;
+  G4bool           mIsoCenterIsSetByUser;
+  G4bool           mIsoCenterRotationFlag;
+  G4ThreeVector    mInitialTranslation;
   G4RotationMatrix mTransformMatrix;
   //-----------------------------------------------------------------------------
 
