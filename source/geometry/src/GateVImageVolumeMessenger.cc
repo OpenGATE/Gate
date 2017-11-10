@@ -1,15 +1,15 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 /*! \file
   \brief Implementation of GateVImageVolumeMessenger
- */
+*/
 #include "GateVImageVolumeMessenger.hh"
 #include "GateVImageVolume.hh"
 
@@ -64,6 +64,12 @@ GateVImageVolumeMessenger::GateVImageVolumeMessenger(GateVImageVolume* volume)
   pIsoCenterCmd = new G4UIcmdWith3VectorAndUnit(n,this);
   pIsoCenterCmd->SetGuidance("translate the image so that its center is at the given isocenter coordinate (given according to the 3D image coordinate, in mm)");
 
+  n = dir +"/setRotationAroundPixelIsoCenter";
+  pIsoCenterRotationFlagCmd = 0;
+  pIsoCenterRotationFlagCmd = new G4UIcmdWithABool(n,this);
+  pIsoCenterRotationFlagCmd->SetParameterName(n, false); // not omittable
+  pIsoCenterRotationFlagCmd->SetGuidance("If a rotation is applied to the volume, consider around the pixel isocenter.");
+
   n = dir +"/setOrigin";
   pSetOriginCmd = 0;
   pSetOriginCmd = new G4UIcmdWith3VectorAndUnit(n,this);
@@ -107,16 +113,17 @@ GateVImageVolumeMessenger::~GateVImageVolumeMessenger()
   delete pBuildLabeledImageCmd;
   delete pBuildDensityImageCmd;
   delete pDoNotBuildVoxelsCmd;
+  delete pIsoCenterRotationFlagCmd;
 }
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
 void GateVImageVolumeMessenger::SetNewValue(G4UIcommand* command,
-					    G4String newValue)
+                                            G4String newValue)
 {
   GateMessage("Volume",5,"GateVImageVolumeMessenger::SetNewValue "
-	      << command->GetCommandPath()
-	      << " newValue=" << newValue << Gateendl);
+              << command->GetCommandPath()
+              << " newValue=" << newValue << Gateendl);
 
   if (command == pImageFileNameCmd || command == pImageFileNameCmdDeprecated) {
     pVImageVolume->SetImageFilename(newValue);
@@ -146,6 +153,9 @@ void GateVImageVolumeMessenger::SetNewValue(G4UIcommand* command,
   }
   else if (command == pDoNotBuildVoxelsCmd) {
     pVImageVolume->EnableBoundingBoxOnly(pDoNotBuildVoxelsCmd->GetNewBoolValue(newValue));
+  }
+  else if (command == pIsoCenterRotationFlagCmd) {
+    pVImageVolume->SetIsoCenterRotationFlag(pIsoCenterRotationFlagCmd->GetNewBoolValue(newValue));
   }
   // It is necessary to call GateVolumeMessenger::SetNewValue if the command
   // is not recognized
