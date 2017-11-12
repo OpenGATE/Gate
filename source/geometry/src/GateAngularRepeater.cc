@@ -19,22 +19,22 @@
 
 //-----------------------------------------------------------------------------------------------
 GateAngularRepeater::GateAngularRepeater(GateVVolume* itsObjectInserter,
-					 const G4String& itsName,
-					 G4int itsRepeatNumber,
-					 const G4Point3D& itsPoint1,
-					 const G4Point3D& itsPoint2,
-					 G4bool   itsFlagAutoRotation,
-					 G4double itsFirstAngle,
-					 G4double itsAngularSpan,
-					 G4int    itsModuloNumber,
-					 G4double itsZShift1,
-					 G4double itsZShift2,
-					 G4double itsZShift3,
-					 G4double itsZShift4,
-					 G4double itsZShift5,
-					 G4double itsZShift6,
-					 G4double itsZShift7,
-					 G4double itsZShift8)
+                                         const G4String& itsName,
+                                         G4int itsRepeatNumber,
+                                         const G4Point3D& itsPoint1,
+                                         const G4Point3D& itsPoint2,
+                                         G4bool   itsFlagAutoRotation,
+                                         G4double itsFirstAngle,
+                                         G4double itsAngularSpan,
+                                         G4int    itsModuloNumber,
+                                         G4double itsZShift1,
+                                         G4double itsZShift2,
+                                         G4double itsZShift3,
+                                         G4double itsZShift4,
+                                         G4double itsZShift5,
+                                         G4double itsZShift6,
+                                         G4double itsZShift7,
+                                         G4double itsZShift8)
 : GateVGlobalPlacement(itsObjectInserter,itsName),
   m_repeatNumber(itsRepeatNumber),
   m_point1(itsPoint1),
@@ -69,8 +69,8 @@ GateAngularRepeater::~GateAngularRepeater()
 
 //-----------------------------------------------------------------------------------------------
 void GateAngularRepeater::PushMyPlacements(const G4RotationMatrix& currentRotationMatrix,
-					   const G4ThreeVector& currentPosition,
-					   G4double )
+                                           const G4ThreeVector& currentPosition,
+                                           G4double )
 {
   G4double dphi ;
   if ( m_angularSpan < 360.0005*deg && m_angularSpan > 359.9995*deg)
@@ -104,22 +104,17 @@ void GateAngularRepeater::PushMyPlacements(const G4RotationMatrix& currentRotati
   //      "\n for bigger values, please change #define ModuloMax [max]\n in file GateAngularRepeater.h\n";}
 
   for ( G4int i=0 ; i < GetRepeatNumber() ; i++) {
-
     G4RotationMatrix newRotationMatrix = currentRotationMatrix;
     G4Point3D m_shift = G4ThreeVector(0., 0., Zshift_vector[i%m_moduloNumber]); // Pick up right value
 
-
     G4Point3D newPosition = currentPosition + m_shift;
 
-
     G4double angle = m_firstAngle + dphi*i;
-
 
     newPosition = HepGeom::Rotate3D(angle,m_point1,m_point2) * newPosition;
 
     if (m_flagAutoRotation)
       newRotationMatrix.rotate(-angle, axis);
-
     PushBackPlacement(newRotationMatrix,newPosition);
   }
 
