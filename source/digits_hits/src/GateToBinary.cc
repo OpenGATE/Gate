@@ -262,12 +262,27 @@ void GateToBinary::RecordEndOfEvent( G4Event const* event )
 							sizeof( G4int ) );
 						m_outFileHits.write( reinterpret_cast< char* >( &phRayleigh ),
 							sizeof( G4int ) );
-						m_outFileHits.write( reinterpret_cast< char* >( &processName ),
-							sizeof( G4String ) );
-						m_outFileHits.write( reinterpret_cast< char* >( &compVolName ),
-							sizeof( G4String ) );
-						m_outFileHits.write( reinterpret_cast< char* >( &rayVolName ),
-							sizeof( G4String ) );
+
+                        // Previous versions of GATE unintentionally wrote the
+                        // structure of G4String (which is std::string) to disk
+                        // rather than the string itself.  This was 8 bytes on
+                        // most platforms, and referenced as 8 bytes in the
+                        // documentaiton.  For this reason we limit the strings
+                        // to 8 bytes, or 7 characters with a null terminator.
+                        const size_t strFieldWidth = 8;
+                        const size_t strMaxLen = strFieldWidth - 1;
+                        G4String processNameTrunc = FixedWidthZeroPaddedString(
+                                processName, strMaxLen);
+                        G4String compVolNameTrunc = FixedWidthZeroPaddedString(
+                                compVolName, strMaxLen);
+                        G4String rayVolNameTrunc = FixedWidthZeroPaddedString(
+                                rayVolName, strMaxLen);
+						m_outFileHits.write( processNameTrunc.c_str(),
+                                strFieldWidth);
+						m_outFileHits.write( compVolNameTrunc.c_str(),
+                                strFieldWidth);
+						m_outFileHits.write( rayVolNameTrunc.c_str(),
+                                strFieldWidth);
 					}
 				}
 			}
@@ -819,22 +834,52 @@ void GateToBinary::SingleOutputChannel::RecordDigitizer()
 					sizeof( G4int ) );
 				}
 
+				// Previous versions of GATE unintentionally wrote the
+				// structure of G4String (which is std::string) to disk
+				// rather than the string itself.  This was 8 bytes on
+				// most platforms, and referenced as 8 bytes in the
+				// documentaiton.  For this reason we limit the strings
+				// to 8 bytes, or 7 characters with a null terminator.
+				const size_t strFieldWidth = 8;
+				const size_t strMaxLen = strFieldWidth - 1;
+
 				if ( GateSingleDigi::GetSingleASCIIMask( 16 ) )
 				{
 					compVolName = (*SDC)[ iDigi ]->GetComptonVolumeName();
-					m_outputFile.write( reinterpret_cast< char* >( &compVolName ),
-					sizeof( G4String ) );
+					G4String compVolNameTrunc = FixedWidthZeroPaddedString(
+							compVolName, strMaxLen);
+					m_outputFile.write( compVolNameTrunc.c_str(),
+							strFieldWidth);
 				}
 
 				if ( GateSingleDigi::GetSingleASCIIMask( 17 ) )
 				{
 					rayVolName = (*SDC)[ iDigi ]->GetRayleighVolumeName();
-					m_outputFile.write( reinterpret_cast< char* >( &rayVolName ),
-					sizeof( G4String ) );
+					G4String rayVolNameTrunc = FixedWidthZeroPaddedString(
+							rayVolName, strMaxLen);
+					m_outputFile.write( rayVolNameTrunc.c_str(),
+							strFieldWidth);
 				}
 			}
 		}
 	}
+}
+
+/*!
+ * \brief Truncates or pads a string with '\0' for a fixed size
+ *
+ * Creates a string of a fixed width by truncating it down to the fixed size if
+ * necessary, or padding it with a null terminator character, '\0'. This is used
+ * to create strings of a fixed width so the event size written out by
+ * GateToBinary is fixed.
+ *
+ * \param full The full string to be referenced
+ * \param length The fixed width of the string to be returned.
+ */
+G4String GateToBinary::FixedWidthZeroPaddedString(const G4String & full, size_t length) {
+    G4String trunc = full.substr(0, length);
+    trunc += std::string(length - trunc.size(), '\0');
+    return (trunc);
 }
 
 #endif

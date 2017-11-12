@@ -398,6 +398,9 @@ protected:
 
 	std::ofstream m_outFileRun; /*!< outfile for run */
   std::ofstream m_outFileHits; /*!< outfile for hits */
+
+private:
+    static G4String FixedWidthZeroPaddedString(const G4String & full, size_t length);
 };
 
 #endif
