@@ -62,11 +62,11 @@ void GateSourceVoxelImageReader::ReadFile(G4String filename)
   for (G4int iz=0; iz<nz; iz++) {
     for (G4int iy=0; iy<ny; iy++) {
       for (G4int ix=0; ix<nx; ix++) {
-	PixelType imageValue = image->GetValue(ix, iy, iz);
-	activity = m_voxelTranslator->TranslateToActivity(imageValue);
-	if (activity > 0) {
-	  AddVoxel(ix, iy, iz, activity);
-	}
+        PixelType imageValue = image->GetValue(ix, iy, iz);
+        activity = m_voxelTranslator->TranslateToActivity(imageValue);
+        if (activity > 0) {
+          AddVoxel(ix, iy, iz, activity);
+        }
       }
     }
   }
