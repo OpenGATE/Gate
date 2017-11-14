@@ -236,9 +236,12 @@ double GateKermaFactorHandler::GetKermaFactor(double eEnergy)
 
     if (mKFExtrapolation)
     {
-      GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] ===> Doing Kerma Factor Extrapolation !" << Gateendl);
+      //OLD//const double extrapolatedKF = 7.011e-21 * std::pow(eEnergy/MeV, -0.466);
+      const double extrapolatedKF = kfTable[0] * sqrt(energyTable[0]/(eEnergy/MeV));
 
-      return 7.011e-21 * std::pow(eEnergy/MeV, -0.466);
+      GateMessage("Actor", 10, "[GateKermaFactorHandler::" << __FUNCTION__ << "] ===> Doing Kerma Factor Extrapolation ! (Energy: " << eEnergy/MeV << " MeV, ExtrapolatedKF: " << extrapolatedKF << ")" << Gateendl);
+
+      return extrapolatedKF;
     }
     else
     {
