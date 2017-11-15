@@ -59,6 +59,7 @@ protected:
 
   G4UIcmdWithAString * pDoseRegionInputCmd;
   G4UIcmdWithAString * pDoseRegionOutputCmd;
+  G4UIcmdWithAString * pDoseRegionAddRegionCmd;
 
   G4UIcmdWithADouble * pScaleOutputCmd;
 };

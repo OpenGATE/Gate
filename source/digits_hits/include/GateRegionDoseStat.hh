@@ -11,6 +11,7 @@
 
 #include "GateMiscFunctions.hh"
 #include "GateImage.hh"
+#include <memory>
 
 //-----------------------------------------------------------------------------
 class GateRegionDoseStat {
@@ -21,14 +22,16 @@ public:
   std::string ToString();
   void Update(long event_id, double edep, double density);
 
-  typedef std::map<int, std::shared_ptr<GateRegionDoseStat>> LabelToSingleRegionMapType;
+  typedef std::map<int, std::shared_ptr<GateRegionDoseStat>> IdToSingleRegionMapType;
   typedef std::map<int, std::vector<std::shared_ptr<GateRegionDoseStat>>> LabelToSeveralRegionsMapType;
+  typedef std::map<int, std::vector<int>> IdToLabelsMapType;
 
-  static void ComputeRegionVolumes(GateImageFloat & image,
-                                   LabelToSingleRegionMapType & mMapOfRegionStat);
-  static void AddAggregatedRegion(LabelToSingleRegionMapType & map,
+  static void InitRegions(GateImageFloat & image,
+                          IdToSingleRegionMapType & regionMap,
+                          LabelToSeveralRegionsMapType & regionsMap);
+  static void AddAggregatedRegion(IdToSingleRegionMapType & regionMap,
                                   LabelToSeveralRegionsMapType & regionsMap,
-                                  std::vector<int> & labels);
+                                  IdToLabelsMapType & labelsMap);
 
   int id;
   double sum_edep;

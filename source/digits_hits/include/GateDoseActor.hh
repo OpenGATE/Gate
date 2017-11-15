@@ -70,6 +70,7 @@ public:
 
   void SetDoseByRegionsInputFilename(std::string f);
   void SetDoseByRegionsOutputFilename(std::string f);
+  void AddRegion(std::string str);
 
   void SetOutputScalingFactor(double s);
 
@@ -119,8 +120,9 @@ protected:
   GateImageInt mLastHitEventImage;
   GateImageDouble mMassImage;
   GateImageFloat mDoseByRegionsLabelImage;
-  GateRegionDoseStat::LabelToSingleRegionMapType mMapLabelSingleRegion;
-  GateRegionDoseStat::LabelToSeveralRegionsMapType mMapLabelSeveralRegions;
+  GateRegionDoseStat::IdToSingleRegionMapType mMapIdToSingleRegion;
+  GateRegionDoseStat::LabelToSeveralRegionsMapType mMapLabelToSeveralRegions;
+  GateRegionDoseStat::IdToLabelsMapType mMapIdToLabels;
   double mScalingFactor;
 
   G4String mEdepFilename;
