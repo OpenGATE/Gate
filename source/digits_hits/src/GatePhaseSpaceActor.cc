@@ -34,7 +34,8 @@
 
 // --------------------------------------------------------------------
 GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
-  GateVActor(name, depth) {
+  GateVActor(name, depth)
+{
   GateDebugMessageInc("Actor", 4, "GatePhaseSpaceActor() -- begin\n");
 
   pMessenger = new GatePhaseSpaceActorMessenger(this);
@@ -78,7 +79,7 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   pIAEAheader = 0;
   mFileSize = 0;
   GateDebugMessageDec("Actor", 4, "GatePhaseSpaceActor() -- end\n");
-  
+
   emcalc = new G4EmCalculator;
 }
 // --------------------------------------------------------------------
@@ -86,7 +87,8 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
 
 // --------------------------------------------------------------------
 /// Destructor
-GatePhaseSpaceActor::~GatePhaseSpaceActor() {
+GatePhaseSpaceActor::~GatePhaseSpaceActor()
+{
   GateDebugMessageInc("Actor", 4, "~GatePhaseSpaceActor() -- begin\n");
   // if(pIAEAFile) fclose(pIAEAFile);
   //  pIAEAFile = 0;
@@ -101,7 +103,8 @@ GatePhaseSpaceActor::~GatePhaseSpaceActor() {
 
 // --------------------------------------------------------------------
 /// Construct
-void GatePhaseSpaceActor::Construct() {
+void GatePhaseSpaceActor::Construct()
+{
   GateVActor::Construct();
   // Enable callbacks
   EnableBeginOfRunAction(false);
@@ -118,7 +121,7 @@ void GatePhaseSpaceActor::Construct() {
   if (extension == "root") mFileType = "rootFile";
   else if (extension == "IAEAphsp" || extension == "IAEAheader" ) mFileType = "IAEAFile";
   else GateError( "Unknow phase space file extension. Knowns extensions are : "
-                    << Gateendl << ".IAEAphsp (or IAEAheader), .root\n");
+                  << Gateendl << ".IAEAphsp (or IAEAheader), .root\n");
 
   if (mFileType == "rootFile") {
 
@@ -132,7 +135,7 @@ void GatePhaseSpaceActor::Construct() {
     if (EnableElectronicDEDX) pListeVar->Branch("StepLength", &stepLength, "stepLength/F");
     if (EnableElectronicDEDX) pListeVar->Branch("Edep", &edep, "Edep/F");
     if (EnableTotalDEDX) pListeVar->Branch("TotalDEDX", &totalDEDX, "totalDEDX/F");
-    
+
     if (EnableEkine) pListeVar->Branch("Ekine", &e, "Ekine/F");
     if (EnableElectronicDEDX) pListeVar->Branch("Ekpost", &ekPost, "Ekpost/F");
     if (EnableElectronicDEDX) pListeVar->Branch("Ekpre", &ekPre, "Ekpre/F");
@@ -149,7 +152,7 @@ void GatePhaseSpaceActor::Construct() {
     if (EnableProdVol && bEnableCompact == false) pListeVar->Branch("ProductionVolume", vol, "ProductionVolume/C");
     if (EnableProdProcess && bEnableCompact == false) pListeVar->Branch("CreatorProcess", creator_process, "CreatorProcess/C");
     if (EnableProdProcess && bEnableCompact == false) pListeVar->Branch("ProcessDefinedStep", pro_step, "ProcessDefinedStep/C");
-    if (bEnableCompact == false) pListeVar->Branch("TrackID", &trackid, "TrackID/I");   
+    if (bEnableCompact == false) pListeVar->Branch("TrackID", &trackid, "TrackID/I");
     if (bEnableCompact == false) pListeVar->Branch("ParentID", &parentid, "ParentID/I");
     if (bEnableCompact == false) pListeVar->Branch("EventID", &eventid, "EventID/I");
     if (bEnableCompact == false) pListeVar->Branch("RunID", &runid, "RunID/I");
@@ -196,33 +199,28 @@ void GatePhaseSpaceActor::Construct() {
 
 
 // --------------------------------------------------------------------
-void GatePhaseSpaceActor::PreUserTrackingAction(const GateVVolume * /*v*/, const G4Track * t) {
+void GatePhaseSpaceActor::PreUserTrackingAction(const GateVVolume * /*v*/, const G4Track * t)
+{
   mIsFistStep = true;
-
   if (bEnableEmissionPoint) {
     bEmissionPointX = t->GetVertexPosition().x();
     bEmissionPointY = t->GetVertexPosition().y();
     bEmissionPointZ = t->GetVertexPosition().z();
   }
-
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e) {
-  //mNevent++;
-
-  //----------------------- Set Primary Energy ------------------------
+void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e)
+{
+  // Set Primary Energy
   bPrimaryEnergy = e->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy(); //GetInitialEnergy oid.
-  //-------------------------------------------------------------------
 
-  //----------------------- Set SourceID ------------------------
-
+  // Set SourceID
   if (GetIsSpotIDEnabled()) {
-    GateSourceTPSPencilBeam *tpspencilsource = dynamic_cast<GateSourceTPSPencilBeam *>(GateSourceMgr::GetInstance()->GetSourceByName(bSpotIDFromSource));
-    //GateSourceTPSPencilBeam * tpspencilsource = dynamic_cast<GateSourceTPSPencilBeam*>(GateSourceMgr::GetInstance()->GetSource(0));
-    //if (tpspencilsource == null) GateError("Please select a TPSPencilBeamSource if you want to store SpotIDs.");
+    GateSourceTPSPencilBeam *tpspencilsource =
+      dynamic_cast<GateSourceTPSPencilBeam *>(GateSourceMgr::GetInstance()->GetSourceByName(bSpotIDFromSource));
     bSpotID = tpspencilsource->GetCurrentSpotID();
   }
   //-------------------------------------------------------------------
@@ -231,7 +229,8 @@ void GatePhaseSpaceActor::BeginOfEventAction(const G4Event *e) {
 
 
 // --------------------------------------------------------------------
-void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *step) {
+void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *step)
+{
 
   //----------- ??? -------------
   //FIXME: Document what mIsFistStep is/does.
@@ -288,10 +287,10 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   /*if(mStoreOutPart && step->GetTrack()->GetVolume()!=mVolume->GetPhysicalVolume() ){
     GateVVolume *parent = mVolume->GetParentVolume();
     while(parent){
-      if(parent==mVolume) return;
-      parent = parent->GetParentVolume();
+    if(parent==mVolume) return;
+    parent = parent->GetParentVolume();
     }
-  }
+    }
   */
 
   //-----------Write name of the particles presents at the simulation-------------
@@ -388,8 +387,6 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   dy = localMomentum.y();
   dz = localMomentum.z();
 
-
-
   //-------------Write weight of the steps presents at the simulation-------------
   w = stepPoint->GetWeight();
 
@@ -416,25 +413,25 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
   Za = step->GetTrack()->GetDefinition()->GetAtomicNumber();//std::floor(stepPoint->GetCharge()+0.1);  //floor & +0.1 to avoid round off error
   m = step->GetTrack()->GetDefinition()->GetAtomicMass();
-  
-  if (EnableElectronicDEDX || EnableTotalDEDX) 
-  {
-	  G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName();
-	  G4double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
-	  G4double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
-	  G4double energy=(energy1+energy2)/2;
-	  G4ParticleDefinition* partname = step->GetTrack()->GetDefinition();//->GetParticleName();
-	  
-	  elecDEDX = emcalc->ComputeElectronicDEDX(energy, partname, material);
-	  stepLength=step->GetStepLength();
-		  
-	  edep = step->GetTotalEnergyDeposit()*w;
-	  totalDEDX = emcalc->ComputeTotalDEDX(energy, partname, material);
-  }
-  
+
+  if (EnableElectronicDEDX || EnableTotalDEDX)
+    {
+      G4Material* material = step->GetPreStepPoint()->GetMaterial();//->GetName();
+      G4double energy1 = step->GetPreStepPoint()->GetKineticEnergy();
+      G4double energy2 = step->GetPostStepPoint()->GetKineticEnergy();
+      G4double energy=(energy1+energy2)/2;
+      G4ParticleDefinition* partname = step->GetTrack()->GetDefinition();//->GetParticleName();
+
+      elecDEDX = emcalc->ComputeElectronicDEDX(energy, partname, material);
+      stepLength=step->GetStepLength();
+
+      edep = step->GetTotalEnergyDeposit()*w;
+      totalDEDX = emcalc->ComputeTotalDEDX(energy, partname, material);
+    }
+
   //elecDEDX= 1.;
   //totalDEDX=2.;
-  
+
   //G4cout << st << " " << step->GetTrack()->GetDefinition()->GetAtomicMass() << " " << step->GetTrack()->GetDefinition()->GetPDGMass() << Gateendl;
 
   //----------Process name at origin Track--------------------
@@ -491,8 +488,8 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
 
 
 // --------------------------------------------------------------------
-/// Save data
-void GatePhaseSpaceActor::SaveData() {
+void GatePhaseSpaceActor::SaveData()
+{
   GateVActor::SaveData();
 
   if (mFileType == "rootFile") {
@@ -517,8 +514,12 @@ void GatePhaseSpaceActor::SaveData() {
     fclose(pIAEARecordType->p_file);
   }
 }
+// --------------------------------------------------------------------
 
-void GatePhaseSpaceActor::ResetData() {
+
+// --------------------------------------------------------------------
+void GatePhaseSpaceActor::ResetData()
+{
   if (mFileType == "rootFile") {
     pListeVar->Reset();
     return;
