@@ -305,7 +305,7 @@ void GateDoseActor::SaveData() {
     // Write results
     double N = mCurrentEvent+1;
     std::ofstream os(mDoseByRegionsOutputFilename);
-    os << "#id \tvol(mm3) \tedep(MeV) \tstd_edep \tsq_edep \tdose(Gy) \tstd_dose \tsq_dose \tn_hit \tn_event_roi" << std::endl;
+    os << "#id \tvol(mm3) \tedep(MeV) \tstd_edep \tsq_edep \tdose(Gy) \tstd_dose \tsq_dose \tn_hits \tn_event_hits" << std::endl;
     // Loop over regions, compute std and print information
     for(auto p:mMapIdToSingleRegion) {
       auto region = p.second;
@@ -319,7 +319,7 @@ void GateDoseActor::SaveData() {
       double std_dose = sqrt( (1.0/(N-1))*(sq_dose/N - pow(dose/N, 2)) )/(dose/N);
       if( dose == 0.0 || N == 1 || sq_dose == 0 )
         std_dose = 1.0; // relative uncertainty of 100%
-      os.precision(10);
+      os.precision(15);
       os << region->id << "\t"
          << region->volume << "\t"
          << edep*mScalingFactor << "\t"
