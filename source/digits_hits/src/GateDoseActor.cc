@@ -231,54 +231,35 @@ void GateDoseActor::Construct() {
         !IsEqual(mDoseByRegionsLabelImage.GetOrigin(), mOrigin, tol)) {
       GateError("The DoseByRegions labels image must have the same size than the dose image.");
     }
-    GateRegionDoseStat::ComputeRegionVolumes(mDoseByRegionsLabelImage, mMapLabelSingleRegion);
-    DD(mMapLabelSingleRegion.size());
-    for(auto & m:mMapLabelSingleRegion) {
-      mMapLabelSeveralRegions[m.first].push_back(m.second);
-    }
-    DD(mMapLabelSeveralRegions.size());
-    std::vector<int> l;
-    l.push_back(1);
-    l.push_back(5);
-    l.push_back(25);
-    l.push_back(32);
-    GateRegionDoseStat::AddAggregatedRegion(mMapLabelSingleRegion, mMapLabelSeveralRegions, l);
-    for(auto p:mMapLabelSeveralRegions) {
-      if (p.second.size() > 1) {
-        DD(p.first);
-        for(auto r:p.second) {
-          DD(r->ToString());
-        }
-      }
-    }
+    GateRegionDoseStat::InitRegions(mDoseByRegionsLabelImage, mMapIdToSingleRegion, mMapLabelToSeveralRegions);
+    GateRegionDoseStat::AddAggregatedRegion(mMapIdToSingleRegion, mMapLabelToSeveralRegions, mMapIdToLabels);
   }
-
 
   // Print information
   GateMessage("Actor", 0,
-              "Dose DoseActor    = '" << GetObjectName() << "'\n" <<
-              "\tDose image        = " << mIsDoseImageEnabled << Gateendl <<
-              "\tDose squared      = " << mIsDoseSquaredImageEnabled << Gateendl <<
-              "\tDose uncertainty  = " << mIsDoseUncertaintyImageEnabled << Gateendl <<
-              "\tDose to water image        = " << mIsDoseToWaterImageEnabled << Gateendl <<
-              "\tDose to water squared      = " << mIsDoseToWaterSquaredImageEnabled << Gateendl <<
-              "\tDose to water uncertainty  = " << mIsDoseToWaterUncertaintyImageEnabled << Gateendl <<
-              "\tDose by region    = " << mDoseByRegionsFlag << Gateendl <<
-              "\tEdep image        = " << mIsEdepImageEnabled << Gateendl <<
-              "\tEdep squared      = " << mIsEdepSquaredImageEnabled << Gateendl <<
-              "\tEdep uncertainty  = " << mIsEdepUncertaintyImageEnabled << Gateendl <<
-              "\tNumber of hit     = " << mIsNumberOfHitsImageEnabled << Gateendl <<
-              "\t     (last hit)   = " << mIsLastHitEventImageEnabled << Gateendl <<
-              "\tDose algorithm    = " << mDoseAlgorithmType << Gateendl <<
-              "\tMass image (import) = " << mImportMassImage << Gateendl <<
-              "\tMass image (export) = " << mExportMassImage << Gateendl <<
-              "\tEdepFilename      = " << mEdepFilename << Gateendl <<
-              "\tDoseFilename      = " << mDoseFilename << Gateendl <<
-              "\tDoseByRegions     = " << mDoseByRegionsFlag << Gateendl <<
-              "\tDoseByRegionsInput  = " << mDoseByRegionsInputFilename << Gateendl <<
-              "\tDoseByRegionsOutput = " << mDoseByRegionsOutputFilename << Gateendl <<
-              "\tScaling factor    = " << mScalingFactor << Gateendl <<
-              "\tNb Hits filename  = " << mNbOfHitsFilename << Gateendl);
+              "Dose DoseActor          = '" << GetObjectName() << "'\n" <<
+              "\tDose image                = " << mIsDoseImageEnabled << Gateendl <<
+              "\tDose squared              = " << mIsDoseSquaredImageEnabled << Gateendl <<
+              "\tDose uncertainty          = " << mIsDoseUncertaintyImageEnabled << Gateendl <<
+              "\tDose to water image       = " << mIsDoseToWaterImageEnabled << Gateendl <<
+              "\tDose to water squared     = " << mIsDoseToWaterSquaredImageEnabled << Gateendl <<
+              "\tDose to water uncertainty = " << mIsDoseToWaterUncertaintyImageEnabled << Gateendl <<
+              "\tEdep image                = " << mIsEdepImageEnabled << Gateendl <<
+              "\tEdep squared              = " << mIsEdepSquaredImageEnabled << Gateendl <<
+              "\tEdep uncertainty          = " << mIsEdepUncertaintyImageEnabled << Gateendl <<
+              "\tNumber of hit             = " << mIsNumberOfHitsImageEnabled << Gateendl <<
+              "\t     (last hit)           = " << mIsLastHitEventImageEnabled << Gateendl <<
+              "\tDose algorithm            = " << mDoseAlgorithmType << Gateendl <<
+              "\tMass image (import)       = " << mImportMassImage << Gateendl <<
+              "\tMass image (export)       = " << mExportMassImage << Gateendl <<
+              "\tEdepFilename              = " << mEdepFilename << Gateendl <<
+              "\tDoseFilename              = " << mDoseFilename << Gateendl <<
+              "\tDose by regions           = " << mDoseByRegionsFlag << Gateendl <<
+              "\tDoseByRegionsInput        = " << mDoseByRegionsInputFilename << Gateendl <<
+              "\tDoseByRegionsOutput       = " << mDoseByRegionsOutputFilename << Gateendl <<
+              "\tNumber of regions         = " << mMapIdToSingleRegion.size() << Gateendl <<
+              "\tScaling factor            = " << mScalingFactor << Gateendl <<
+              "\tNb Hits filename          = " << mNbOfHitsFilename << Gateendl);
 
   ResetData();
   GateMessageDec("Actor", 4, "GateDoseActor -- Construct - end\n");
@@ -317,24 +298,16 @@ void GateDoseActor::SaveData() {
   if (mDoseByRegionsFlag) {
 
     // Finish unfinished squared dose
-    for (auto & m:mMapLabelSeveralRegions)
+    for (auto & m:mMapLabelToSeveralRegions)
       for(auto & r:m.second)
         r->Update(mCurrentEvent, 0.0, 0.0);
 
-    // Compute std and write results
+    // Write results
     double N = mCurrentEvent+1;
     std::ofstream os(mDoseByRegionsOutputFilename);
-    os << "#id \tvol(mm3) \tedep(MeV) \tstd_edep \tsq_edep \tdose(Gy) \tstd_dose \tsq_dose \tn_hit \tn_event_roi" << std::endl;
-
-    // List of regions (use map to avoid duplicate)
-    std::map<int, std::shared_ptr<GateRegionDoseStat>> regions;
-    for(auto m:mMapLabelSeveralRegions)
-      for(auto region:m.second)
-        regions[region->id] = region;
-    DD(regions.size());
-
-    // Loop over regions to print information
-    for(auto p:regions) {
+    os << "#id \tvol(mm3) \tedep(MeV) \tstd_edep \tsq_edep \tdose(Gy) \tstd_dose \tsq_dose \tn_hits \tn_event_hits" << std::endl;
+    // Loop over regions, compute std and print information
+    for(auto p:mMapIdToSingleRegion) {
       auto region = p.second;
       double edep = region->sum_edep;
       double sq_edep = region->sum_squared_edep;
@@ -346,7 +319,7 @@ void GateDoseActor::SaveData() {
       double std_dose = sqrt( (1.0/(N-1))*(sq_dose/N - pow(dose/N, 2)) )/(dose/N);
       if( dose == 0.0 || N == 1 || sq_dose == 0 )
         std_dose = 1.0; // relative uncertainty of 100%
-      os.precision(10);
+      os.precision(15);
       os << region->id << "\t"
          << region->volume << "\t"
          << edep*mScalingFactor << "\t"
@@ -559,11 +532,9 @@ void GateDoseActor::UserSteppingActionInVoxel(const int index, const G4Step* ste
 
   //---------------------------------------------------------------------------------
   if (mDoseByRegionsFlag) {
-    // Update simple region
+    // Update the regions based on the image label
     int label = mDoseByRegionsLabelImage.GetValue(index);
-    // auto & region = mMapOfRegionStat[label];
-    // region.Update(mCurrentEvent, edep, density);
-    auto & regions = mMapLabelSeveralRegions[label];
+    auto & regions = mMapLabelToSeveralRegions[label];
     for(auto & r:regions) r->Update(mCurrentEvent, edep, density);
   }
 
@@ -590,6 +561,37 @@ void GateDoseActor::SetDoseByRegionsOutputFilename(std::string f)
   mDoseByRegionsFlag = true;
   mIsDoseImageEnabled = true;
   mDoseByRegionsOutputFilename = f;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateDoseActor::AddRegion(std::string str)
+{
+  mDoseByRegionsFlag = true;
+  mIsDoseImageEnabled = true;
+
+  std::stringstream ss(str);
+  int i;
+  int id = -1;
+
+  while (ss >> i) {
+    if (ss.peek() == ':') {
+      id = i;
+      ss.ignore();
+      for (auto l:mMapIdToLabels) {
+        if (id == l.first)
+          throw std::runtime_error("[GATE] the label "+std::to_string(id)+" for the new region has already been added.");
+      }
+    } else {
+      if (id > -1) {
+        mMapIdToLabels[id].push_back(i);
+      } else 
+        throw std::runtime_error("[GATE] syntax error in macro command addRegion.");
+    }
+    while (!std::isdigit(ss.peek()) && ss.good() )
+      ss.ignore();
+  }
 }
 //-----------------------------------------------------------------------------
 

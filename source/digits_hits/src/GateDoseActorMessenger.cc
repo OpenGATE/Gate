@@ -37,6 +37,7 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
   pExportMassImageCmd = 0;
   pDoseRegionInputCmd = 0;
   pDoseRegionOutputCmd = 0;
+  pDoseRegionAddRegionCmd = 0;
   pVolumeFilterCmd = 0;
   pMaterialFilterCmd = 0;
   pScaleOutputCmd = 0;
@@ -69,6 +70,7 @@ GateDoseActorMessenger::~GateDoseActorMessenger()
   if(pMaterialFilterCmd) delete pMaterialFilterCmd;
   if(pDoseRegionOutputCmd) delete pDoseRegionOutputCmd;
   if(pDoseRegionInputCmd) delete pDoseRegionInputCmd;
+  if(pDoseRegionAddRegionCmd) delete pDoseRegionAddRegionCmd;
   if(pScaleOutputCmd) delete pScaleOutputCmd;
 }
 //-----------------------------------------------------------------------------
@@ -185,6 +187,12 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   pDoseRegionOutputCmd->SetGuidance(guid);
   pDoseRegionOutputCmd->SetParameterName("Filename (txt)",false);
 
+  n = base+"/addRegion";
+  pDoseRegionAddRegionCmd = new G4UIcmdWithAString(n, this);
+  pDoseRegionAddRegionCmd->SetGuidance("Add a new region composed of image labels to store dose.");
+  pDoseRegionAddRegionCmd->SetGuidance("newRegionLabel: imageLabel, imageLabel, ...");
+  pDoseRegionAddRegionCmd->SetParameterName("New region",false);
+
   n = base+"/setScalingFactor";
   pScaleOutputCmd = new G4UIcmdWithADouble(n, this);
   guid = G4String("Scale the output by a value");
@@ -222,6 +230,7 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
 
   if (cmd == pDoseRegionInputCmd) pDoseActor->SetDoseByRegionsInputFilename(newValue);
   if (cmd == pDoseRegionOutputCmd) pDoseActor->SetDoseByRegionsOutputFilename(newValue);
+  if (cmd == pDoseRegionAddRegionCmd) pDoseActor->AddRegion(newValue);
 
   if (cmd == pScaleOutputCmd) pDoseActor->SetOutputScalingFactor(pScaleOutputCmd->GetNewDoubleValue(newValue));
 
