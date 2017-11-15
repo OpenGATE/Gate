@@ -30,7 +30,7 @@ class G4EmCalculator;
 //====================================================================
 class GatePhaseSpaceActor : public GateVActor
 {
- public:
+public:
 
   virtual ~GatePhaseSpaceActor();
 
