@@ -7,6 +7,7 @@
   ----------------------*/
 
 #include "GatePhaseSpaceActor.hh"
+
 #ifdef G4ANALYSIS_USE_ROOT
 
 /*
@@ -17,20 +18,17 @@
   brent.huisman@insa-lyon.fr
 */
 
-#include "G4VProcess.hh"
+#include <G4VProcess.hh>
+#include <G4Run.hh>
+#include <G4EmCalculator.hh>
+#include <G4ParticleTable.hh>
 #include "GateRunManager.hh"
-#include "G4Run.hh"
-
 #include "GateMiscFunctions.hh"
 #include "GateObjectStore.hh"
 #include "GateIAEAHeader.h"
 #include "GateIAEARecord.h"
 #include "GateIAEAUtilities.h"
 #include "GateSourceMgr.hh"
-
-#include <G4EmCalculator.hh>
-
-#include "G4ParticleTable.hh"
 
 // --------------------------------------------------------------------
 GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
@@ -61,6 +59,10 @@ GatePhaseSpaceActor::GatePhaseSpaceActor(G4String name, G4int depth):
   mUseVolFrame = false;
   mStoreOutPart = false;
   SetIsAllStep(false);
+
+  mSphereProjectionFlag = false;
+  mSphereProjectionCenter = G4ThreeVector(0);
+  mSphereProjectionRadius = 0.0;
 
   bEnableCoordFrame = false;
   bEnablePrimaryEnergy = false;
@@ -378,14 +380,50 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
     volumeToWorld = volumeToWorld.NetRotation();
     G4AffineTransform worldToVolume = volumeToWorld.Inverse();
 
-    //old crap:
-    //const G4AffineTransform transformation = GateObjectStore::GetInstance()->FindCreator(GetCoordFrame())->GetPhysicalVolume()->GetTouchable()->GetHistory()->GetTopTransform();
     localMomentum = worldToVolume.TransformAxis(localMomentum);
   }
 
   dx = localMomentum.x();
   dy = localMomentum.y();
   dz = localMomentum.z();
+
+
+  //------------- Option to project position on a sphere
+
+  /* Sometimes it is useful to store the particle position on a different
+     position than the one where it has been detected. The option
+     ''SphereProjection' change the particle position: it compute the projeciton
+     on a sphere. */
+  if (mSphereProjectionFlag) {
+    // Project point position on the use sphere
+    // https://en.wikipedia.org/wiki/Line–sphere_intersection
+
+    // Use the notation of wikipedia (wikipedia rocks!)
+    G4ThreeVector c = mSphereProjectionCenter;
+    G4ThreeVector o(x,y,z);
+    G4ThreeVector l(dx,dy,dz);
+    double r = mSphereProjectionRadius;
+
+    // Split equation in three parts A,B,C
+    G4ThreeVector diff = o-c;
+    double r2 = r*r;
+    double A = -2*(l.dot(o-c));
+    double B = pow(2*(l.dot(o-c)), 2) - 4*l.dot(l)*(diff.dot(diff)-r2);
+    double C = 2*l.dot(l);
+
+    // How many intersection ? 0,1 or 2 ?
+    // If no intersection, we ignore this hit
+    if (B<0) return;
+
+    // else we consider the closest one
+    double d1 = (A+sqrt(B))/C;
+    double d2 = (A-sqrt(B))/C;
+    double d = d1;
+    if (fabs(d2)<fabs(d1)) d = d2;
+    x = x+dx*d;
+    y = y+dy*d;
+    z = z+dz*d;
+  }
 
   //-------------Write weight of the steps presents at the simulation-------------
   w = stepPoint->GetWeight();
@@ -449,7 +487,8 @@ void GatePhaseSpaceActor::UserSteppingAction(const GateVVolume *, const G4Step *
   if (mFileType == "rootFile") {
     if (GetMaxFileSize() != 0) pListeVar->SetMaxTreeSize(GetMaxFileSize());
     pListeVar->Fill();
-  } else if (mFileType == "IAEAFile") {
+  }
+  else if (mFileType == "IAEAFile") {
 
     const G4Track *aTrack = step->GetTrack();
     int pdg = aTrack->GetDefinition()->GetPDGEncoding();

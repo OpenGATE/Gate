@@ -133,7 +133,9 @@ void GateSourcePhaseSpace::Initialize()
     T->SetBranchAddress("dX",&dx);
     T->SetBranchAddress("dY",&dy);
     T->SetBranchAddress("dZ",&dz);
-    T->SetBranchAddress("Weight",&weight);
+    if (T->GetListOfBranches()->FindObject("Weight")) {
+      T->SetBranchAddress("Weight",&weight);
+    }
     if (T->GetListOfBranches()->FindObject("Time")) {
       T->SetBranchAddress("Time",&t);
     }
