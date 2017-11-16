@@ -40,8 +40,13 @@ GatePulseProcessorChain::GatePulseProcessorChain( GateDigitizer* itsDigitizer,
 
 
 GatePulseProcessorChain::~GatePulseProcessorChain()
-{  
-    delete m_messenger;
+{
+  for (auto processor = theListOfNamedObject.begin(); processor != theListOfNamedObject.end(); ++processor)
+  {
+    GateMessage("Core", 5, "~GatePulseProcessorChain -- delete module: " << (*processor)->GetObjectName() << Gateendl );
+    delete (*processor);
+  }
+  delete m_messenger;
 }
 
 
