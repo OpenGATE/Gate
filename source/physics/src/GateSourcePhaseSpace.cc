@@ -39,6 +39,7 @@ GateSourcePhaseSpace::GateSourcePhaseSpace(G4String name ):GateVSource( name )
   mLastPartIndex = 0;
   mParticleTypeNameGivenByUser = "none";
   mUseNbOfParticleAsIntensity = false;
+  mStartingParticleId = 0;
 
   mCurrentRunNumber = -1;
   mLoop = 0;
@@ -285,11 +286,11 @@ G4int GateSourcePhaseSpace::GeneratePrimaries( G4Event* event )
   double timeSlice = 0.;
   G4RotationMatrix rotation;
 
-  if (mCurrentRunNumber<GateUserActions::GetUserActions()->GetCurrentRun()->GetRunID()){
+  if (mCurrentRunNumber<GateUserActions::GetUserActions()->GetCurrentRun()->GetRunID()) {
     mCurrentRunNumber=GateUserActions::GetUserActions()->GetCurrentRun()->GetRunID();
     mCurrentUse=0;
     mLoopFile=0;
-    mCurrentParticleNumberInFile=0;
+    mCurrentParticleNumberInFile= mStartingParticleId;
     mRequestedNumberOfParticlesPerRun = 0.;
     mLastPartIndex = mCurrentParticleNumber;
 
