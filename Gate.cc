@@ -428,7 +428,6 @@ int main( int argc, char* argv[] )
 
   delete sourceMgr;
   delete appMgr;
-  delete UImanager;
   delete randomEngine;
   delete controlMessenger;
 #ifdef G4ANALYSIS_USE_ROOT
@@ -436,8 +435,8 @@ int main( int argc, char* argv[] )
 #endif
   delete verbosity;
   
-  //TODO: figure out why runmanager can't and isn't deleted.
-  //delete runManager;
+
+  delete runManager;
 
   return 0;
 }
