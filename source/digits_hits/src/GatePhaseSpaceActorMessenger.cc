@@ -58,6 +58,9 @@ GatePhaseSpaceActorMessenger::~GatePhaseSpaceActorMessenger()
   delete bEnableCompactCmd;
   delete bEnableEmissionPointCmd;
   delete bEnablePDGCodeCmd;
+  delete bEnableSphereProjection;
+  delete bSetSphereProjectionCenter;
+  delete bSetSphereProjectionRadius;
 }
 //-----------------------------------------------------------------------------
 
