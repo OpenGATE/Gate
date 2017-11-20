@@ -580,14 +580,16 @@ void GateDoseActor::AddRegion(std::string str)
       id = i;
       ss.ignore();
       for (auto l:mMapIdToLabels) {
-        if (id == l.first)
-          throw std::runtime_error("[GATE] the label "+std::to_string(id)+" for the new region has already been added.");
+        if (id == l.first) {
+          GateError("[GATE] the label "+std::to_string(id)+" for the new region already exist.");
+        }
       }
     } else {
       if (id > -1) {
         mMapIdToLabels[id].push_back(i);
-      } else 
-        throw std::runtime_error("[GATE] syntax error in macro command addRegion.");
+      } else {
+        GateError("[GATE] syntax error in macro command addRegion. Use a ':' after the new label id. For example \n /gate/actor/dose3D/addRegion  142: 0 10 14 ");
+      }
     }
     while (!std::isdigit(ss.peek()) && ss.good() )
       ss.ignore();
