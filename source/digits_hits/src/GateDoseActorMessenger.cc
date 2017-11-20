@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #ifndef GATEDOSEACTORMESSENGER_CC
@@ -16,7 +16,7 @@ See GATE/LICENSE.txt for further details
 //-----------------------------------------------------------------------------
 GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
   :GateImageActorMessenger(sensor),
-  pDoseActor(sensor)
+   pDoseActor(sensor)
 {
   //Edep
   pEnableEdepCmd= 0;
@@ -49,7 +49,11 @@ GateDoseActorMessenger::GateDoseActorMessenger(GateDoseActor* sensor)
   pVolumeFilterCmd= 0;
   pMaterialFilterCmd= 0;
   pTestFlagCmd= 0;
-  
+  //Dose in regions
+  pDoseRegionInputCmd = 0;
+  pDoseRegionOutputCmd = 0;
+  pDoseRegionAddRegionCmd = 0;
+
   BuildCommands(baseName+sensor->GetObjectName());
 }
 //-----------------------------------------------------------------------------
@@ -90,6 +94,10 @@ GateDoseActorMessenger::~GateDoseActorMessenger()
 
   if(pVolumeFilterCmd) delete pVolumeFilterCmd;
   if(pMaterialFilterCmd) delete pMaterialFilterCmd;
+
+  if(pDoseRegionOutputCmd) delete pDoseRegionOutputCmd;
+  if(pDoseRegionInputCmd) delete pDoseRegionInputCmd;
+  if(pDoseRegionAddRegionCmd) delete pDoseRegionAddRegionCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -163,7 +171,7 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   pEnableDoseToWaterUncertaintyCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Enable uncertainty dose to water computation");
   pEnableDoseToWaterUncertaintyCmd->SetGuidance(guid);
-  
+
   //DoseToOtherMaterial
   n = base+"/enableDoseToOtherMaterial";
   pEnableDoseToOtherMaterialCmd = new G4UIcmdWithABool(n, this);
@@ -189,7 +197,7 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   pSetOtherMaterialCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Set Other Material Name");
   pSetOtherMaterialCmd->SetGuidance(guid);
-  
+
   //Others
   n = base+"/enableNumberOfHits";
   pEnableNumberOfHitsCmd = new G4UIcmdWithABool(n, this);
@@ -226,10 +234,29 @@ void GateDoseActorMessenger::BuildCommands(G4String base)
   guid = G4String("Material filter");
   pMaterialFilterCmd->SetGuidance(guid);
   pMaterialFilterCmd->SetParameterName("Material filter",false);
+
   n = base+"/setTestFlag";
   pTestFlagCmd = new G4UIcmdWithABool(n, this);
   guid = G4String("Set Test Flag for debug/validation purposes");
-  pTestFlagCmd->SetGuidance(guid);  
+  pTestFlagCmd->SetGuidance(guid);
+
+  n = base+"/inputDoseByRegions";
+  pDoseRegionInputCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Image filename to read the region labels.");
+  pDoseRegionInputCmd->SetGuidance(guid);
+  pDoseRegionInputCmd->SetParameterName("Image filename",false);
+
+  n = base+"/outputDoseByRegions";
+  pDoseRegionOutputCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Filename to store dose by regions.");
+  pDoseRegionOutputCmd->SetGuidance(guid);
+  pDoseRegionOutputCmd->SetParameterName("Filename (txt)",false);
+
+  n = base+"/addRegion";
+  pDoseRegionAddRegionCmd = new G4UIcmdWithAString(n, this);
+  pDoseRegionAddRegionCmd->SetGuidance("Add a new region composed of image labels to store dose.");
+  pDoseRegionAddRegionCmd->SetGuidance("newRegionLabel: imageLabel, imageLabel, ...");
+  pDoseRegionAddRegionCmd->SetParameterName("New region",false);
 
 }
 //-----------------------------------------------------------------------------
@@ -263,18 +290,16 @@ void GateDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue)
   if (cmd == pSetOtherMaterialCmd) pDoseActor->SetOtherMaterial(newValue);
   //Others
   if (cmd == pEnableNumberOfHitsCmd) pDoseActor->EnableNumberOfHitsImage(pEnableNumberOfHitsCmd->GetNewBoolValue(newValue));
-
-  if (cmd == pEnableDoseNormToMaxCmd) pDoseActor->EnableDoseNormalisationToMax(pEnableDoseNormToMaxCmd->GetNewBoolValue(newValue));
-  if (cmd == pEnableDoseNormToIntegralCmd) pDoseActor->EnableDoseNormalisationToIntegral(pEnableDoseNormToIntegralCmd->GetNewBoolValue(newValue));
-
   if (cmd == pSetDoseAlgorithmCmd) pDoseActor->SetDoseAlgorithmType(newValue);
   if (cmd == pImportMassImageCmd) pDoseActor->ImportMassImage(newValue);
   if (cmd == pExportMassImageCmd) pDoseActor->ExportMassImage(newValue);
-
   if (cmd == pVolumeFilterCmd) pDoseActor->VolumeFilter(newValue);
   if (cmd == pMaterialFilterCmd) pDoseActor->MaterialFilter(newValue);
-
   if (cmd ==pTestFlagCmd) pDoseActor->setTestFlag(pTestFlagCmd->GetNewBoolValue(newValue));
+  //Regions
+  if (cmd == pDoseRegionInputCmd) pDoseActor->SetDoseByRegionsInputFilename(newValue);
+  if (cmd == pDoseRegionOutputCmd) pDoseActor->SetDoseByRegionsOutputFilename(newValue);
+  if (cmd == pDoseRegionAddRegionCmd) pDoseActor->AddRegion(newValue);
 
   GateImageActorMessenger::SetNewValue( cmd, newValue);
 }
