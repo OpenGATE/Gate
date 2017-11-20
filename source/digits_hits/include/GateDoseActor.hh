@@ -12,10 +12,10 @@
   \author thibault.frisson@creatis.insa-lyon.fr
   laurent.guigues@creatis.insa-lyon.fr
   david.sarrut@creatis.insa-lyon.fr
-  \date	March 2011
 
   - DoseToWater option added by Loïc Grevillot
   - Dose calculation in inhomogeneous volume added by Thomas Deschler (thomas.deschler@iphc.cnrs.fr)
+  - Dose in Regions (Maxime Chauvin, David Sarrut)
 */
 
 
@@ -23,13 +23,13 @@
 #define GATEDOSEACTOR_HH
 
 #include <G4NistManager.hh>
-
+#include <G4UnitsTable.hh>
 #include "GateVImageActor.hh"
 #include "GateActorManager.hh"
-#include "G4UnitsTable.hh"
 #include "GateDoseActorMessenger.hh"
 #include "GateImageWithStatistic.hh"
 #include "GateVoxelizedMass.hh"
+#include "GateRegionDoseStat.hh"
 
 class G4EmCalculator;
 
@@ -156,15 +156,13 @@ protected:
   //Others
   GateImageDouble mMassImage;
   //Regions
+  bool mDoseByRegionsFlag;
   GateImageFloat mDoseByRegionsLabelImage;
   GateRegionDoseStat::IdToSingleRegionMapType mMapIdToSingleRegion;
   GateRegionDoseStat::LabelToSeveralRegionsMapType mMapLabelToSeveralRegions;
   GateRegionDoseStat::IdToLabelsMapType mMapIdToLabels;
-
-  G4String mEdepFilename;
-  G4String mDoseFilename;
-  G4String mDoseToWaterFilename;
-  G4String mNbOfHitsFilename;
+  G4String mDoseByRegionsInputFilename;
+  G4String mDoseByRegionsOutputFilename;
 
   G4String mDoseAlgorithmType;
   G4String mImportMassImage;

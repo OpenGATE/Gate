@@ -85,6 +85,25 @@ GateDoseActor::~GateDoseActor()  {
 
 
 //-----------------------------------------------------------------------------
+bool IsEqual(double a, double b, double tol)
+{
+  double d = fabs(a-b);
+  return d<tol;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+bool IsEqual(G4ThreeVector a, G4ThreeVector b, double tol)
+{
+  return (IsEqual(a.x(), b.x(), tol) &&
+          IsEqual(a.y(), b.y(), tol) &&
+          IsEqual(a.z(), b.z(), tol));
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 void GateDoseActor::EnableDoseNormalisationToMax(bool b) {
   mIsDoseNormalisationEnabled = b;
   mDoseImage.SetNormalizeToMax(b);
