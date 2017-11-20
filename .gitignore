@@ -31,3 +31,4 @@ benchmarks/benchImageNavigators/rt/output/*raw
 /benchmarks/benchSPECT/gate.sin
 /benchmarks/benchSPECT/benchSPECT.root
 /benchmarks/benchRT/output/graph_ouput.root
+source/externals/itk-mhd/src/tests/
