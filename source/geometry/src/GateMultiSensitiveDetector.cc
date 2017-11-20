@@ -29,9 +29,8 @@ GateMultiSensitiveDetector::GateMultiSensitiveDetector(G4String name)
 GateMultiSensitiveDetector::~GateMultiSensitiveDetector()
 {
 
-  //if (pSensitiveDetector != 0) delete pSensitiveDetector; //already delete by G4
-  // if (pMultiFunctionalDetector != 0) delete pMultiFunctionalDetector;
-  // pMultiFunctionalDetector = 0;
+  // if (pSensitiveDetector != 0) delete pSensitiveDetector; //already delete by G4
+  if (pMultiFunctionalDetector != 0) delete pMultiFunctionalDetector;
 }
 //-----------------------------------------------------------------------------
 

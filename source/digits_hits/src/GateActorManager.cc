@@ -38,29 +38,28 @@ GateActorManager::~GateActorManager()
   theListOfActorsEnabledForPreUserTrackingAction.clear();
   theListOfActorsEnabledForPostUserTrackingAction.clear();
   theListOfActorsEnabledForUserSteppingAction.clear();
-
-  GateVActor* actor;
-  while(!theListOfActors.empty())
-    {
-      // get first 'element'
-      actor = theListOfActors.front();
-
-      // remove it from the list
-      theListOfActors.erase(theListOfActors.begin());
-
-      GateMessage("Actor", 4, "~GateActorManager -- delete actor: " << actor->GetObjectName() << Gateendl );
-      // delete the pointer
-      delete actor;
-    }
-
   delete pActorManagerMessenger;
 
   GateDebugMessageDec("Actor",4,"~GateActormanager() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
-void GateActorManager::SetResetAfterSaving(bool reset) { resetAfterSaving = reset; }
-bool GateActorManager::GetResetAfterSaving() const { return resetAfterSaving; }
+
+//-----------------------------------------------------------------------------
+void GateActorManager::SetResetAfterSaving(bool reset)
+{
+  resetAfterSaving = reset;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+bool GateActorManager::GetResetAfterSaving() const
+{
+  return resetAfterSaving;
+}
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateActorManager::AddActor(G4String actorType, G4String actorName, int depth)
