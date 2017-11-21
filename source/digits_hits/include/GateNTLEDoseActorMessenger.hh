@@ -48,6 +48,7 @@ class GateNTLEDoseActorMessenger : public GateImageActorMessenger
     G4UIcmdWithABool* pEnableKillSecondaryCmd;
 
     G4UIcmdWithABool* pEnableKermaEquivalentFactorCmd;
+    G4UIcmdWithABool* pEnablePhotonKermaEquivalentFactorCmd;
 };
 
 #endif

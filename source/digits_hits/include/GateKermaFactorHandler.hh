@@ -35,6 +35,7 @@ class GateKermaFactorHandler
     void SetKFExtrapolation(const bool _KFExtrapolation = true) {mKFExtrapolation = _KFExtrapolation;}
     void SetKFDA           (const bool _KFDA = true)            {mKFDA = _KFDA;}
     void SetKermaEquivalentFactor(const bool _KermaEquivalentFactor = true) {mKermaEquivalentFactor = _KermaEquivalentFactor;}
+    void SetPhotonKermaEquivalentFactor(const bool _PhotonKermaEquivalentFactor = true) {mPhotonKermaEquivalentFactor = _PhotonKermaEquivalentFactor;}
 
     double GetDose();
     double GetDoseCorrected();
@@ -57,6 +58,7 @@ class GateKermaFactorHandler
     bool mKFExtrapolation;
     bool mKFDA;
     bool mKermaEquivalentFactor;
+    bool mPhotonKermaEquivalentFactor;
 
     const G4Material* m_material;
 

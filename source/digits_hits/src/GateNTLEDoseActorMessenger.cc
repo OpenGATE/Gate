@@ -17,23 +17,24 @@ GateNTLEDoseActorMessenger::GateNTLEDoseActorMessenger(GateNTLEDoseActor* sensor
   :GateImageActorMessenger(sensor),
    pDoseActor(sensor)
 {
-  pEnableDoseCmd                  = 0;
-  pEnableDoseSquaredCmd           = 0;
-  pEnableDoseUncertaintyCmd       = 0;
+  pEnableDoseCmd                        = 0;
+  pEnableDoseSquaredCmd                 = 0;
+  pEnableDoseUncertaintyCmd             = 0;
 
-  pEnableFluxCmd                  = 0;
-  pEnableFluxSquaredCmd           = 0;
-  pEnableFluxUncertaintyCmd       = 0;
+  pEnableFluxCmd                        = 0;
+  pEnableFluxSquaredCmd                 = 0;
+  pEnableFluxUncertaintyCmd             = 0;
 
-  pEnableDoseCorrectionCmd        = 0;
-  pEnableDoseCorrectionTLECmd     = 0;
+  pEnableDoseCorrectionCmd              = 0;
+  pEnableDoseCorrectionTLECmd           = 0;
 
-  pEnableKFExtrapolationCmd       = 0;
-  pEnableKFDACmd                  = 0;
-  pEnableKermaFactorDumpCmd       = 0;
-  pEnableKillSecondaryCmd         = 0;
+  pEnableKFExtrapolationCmd             = 0;
+  pEnableKFDACmd                        = 0;
+  pEnableKermaFactorDumpCmd             = 0;
+  pEnableKillSecondaryCmd               = 0;
 
-  pEnableKermaEquivalentFactorCmd = 0;
+  pEnableKermaEquivalentFactorCmd       = 0;
+  pEnablePhotonKermaEquivalentFactorCmd = 0;
 
   BuildCommands(baseName+sensor->GetObjectName());
 }
@@ -59,7 +60,8 @@ GateNTLEDoseActorMessenger::~GateNTLEDoseActorMessenger()
   if(pEnableKermaFactorDumpCmd)       delete pEnableKermaFactorDumpCmd;
   if(pEnableKillSecondaryCmd)         delete pEnableKillSecondaryCmd;
 
-  if(pEnableKermaEquivalentFactorCmd) delete pEnableKermaEquivalentFactorCmd;
+  if(pEnableKermaEquivalentFactorCmd)       delete pEnableKermaEquivalentFactorCmd;
+  if(pEnablePhotonKermaEquivalentFactorCmd) delete pEnablePhotonKermaEquivalentFactorCmd;
 }
 //-----------------------------------------------------------------------------
 
@@ -132,7 +134,10 @@ void GateNTLEDoseActorMessenger::BuildCommands(G4String base)
 
 
   pEnableKermaEquivalentFactorCmd = new G4UIcmdWithABool(G4String(base+"/enableKermaEquivalentFactor"), this);
-  pEnableKermaEquivalentFactorCmd->SetGuidance(G4String("Enable usage of kerma equivalent factors instead of kerma factors"));
+  pEnableKermaEquivalentFactorCmd->SetGuidance(G4String("Enable usage of neutron kerma equivalent factors instead of kerma factors"));
+
+  pEnablePhotonKermaEquivalentFactorCmd = new G4UIcmdWithABool(G4String(base+"/enablePhotonKermaEquivalentFactor"), this);
+  pEnablePhotonKermaEquivalentFactorCmd->SetGuidance(G4String("Enable usage of photon kerma equivalent factors instead of MuEn"));
 }
 //-----------------------------------------------------------------------------
 
@@ -156,7 +161,8 @@ void GateNTLEDoseActorMessenger::SetNewValue(G4UIcommand* cmd, G4String newValue
   if (cmd == pEnableKermaFactorDumpCmd)       pDoseActor->EnableKermaFactorDump(pEnableKermaFactorDumpCmd->GetNewBoolValue(newValue));
   if (cmd == pEnableKillSecondaryCmd)         pDoseActor->EnableKillSecondary(pEnableKillSecondaryCmd->GetNewBoolValue(newValue));
 
-  if (cmd == pEnableKermaEquivalentFactorCmd) pDoseActor->EnableKermaEquivalentFactor(pEnableKermaEquivalentFactorCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnableKermaEquivalentFactorCmd)       pDoseActor->EnableKermaEquivalentFactor(pEnableKermaEquivalentFactorCmd->GetNewBoolValue(newValue));
+  if (cmd == pEnablePhotonKermaEquivalentFactorCmd) pDoseActor->EnablePhotonKermaEquivalentFactor(pEnablePhotonKermaEquivalentFactorCmd->GetNewBoolValue(newValue));
 
   GateImageActorMessenger::SetNewValue(cmd, newValue);
 }

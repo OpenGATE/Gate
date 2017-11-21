@@ -83,7 +83,10 @@ void GateKermaFactorHandler::SetMaterial(const G4Material* eMaterial)
       kfTable = kerma_equivalent_factor_ICRU33_Soft_Tissue_ICRP60; // Sv.m²
     else
       kfTable = kerma_factor_ICRU33_Soft_Tissue; // Gy.m²
-    MuEnTable = MuEn_ICRU_Soft_Tissue_NIST; // cm²/g
+    if (mPhotonKermaEquivalentFactor)
+      MuEnTable = KEF_ICRUSoftTissue; // Sv.m²
+    else
+      MuEnTable = MuEn_ICRU_Soft_Tissue_NIST; // cm²/g
   }
   else if (name == "G4_MUSCLE_STRIATED_ICRU" ||
            name == "Muscle_Skeletal_ICRP_23")
@@ -277,7 +280,7 @@ double GateKermaFactorHandler::GetFlux()
 //-----------------------------------------------------------------------------
 double GateKermaFactorHandler::GetDose()
 {
-  return GetKermaFactor(m_energy) * m_distance / m_cubicVolume /m*m3;
+  return GetKermaFactor(m_energy) * m_distance / m_cubicVolume / m * m3;
 }
 //-----------------------------------------------------------------------------
 
@@ -296,7 +299,11 @@ double GateKermaFactorHandler::GetDoseCorrected()
 //-----------------------------------------------------------------------------
 double GateKermaFactorHandler::GetDoseCorrectedTLE()
 {
-  const double dose = m_energy * GetMuEnOverRho() * m_distance / m_cubicVolume / gray;
+  double dose = m_energy * GetMuEnOverRho() * m_distance / m_cubicVolume / gray;
+
+  if (mPhotonKermaEquivalentFactor)
+    dose = GetMuEnOverRho() * m_distance / m_cubicVolume / m * m3;
+
   GateMessage("Actor", 10, "GetDoseCorrectedTLE dose: " << dose << " Gy" << Gateendl);
   return dose;
 }
@@ -328,6 +335,11 @@ double GateKermaFactorHandler::GetMuEnOverRho()
     unitCoef = cm2 / g;
     enTableTLE = energyTableTLE_NIST;
   }
+  else if (MuEnTable.size() == energyTableKEF.size())
+  {
+    unitCoef = 1.; // Sv.m²
+    enTableTLE = energyTableKEF; //MeV
+  }
   else
   {
     GateError("GateKermaFactorHandler -- GetMuEnOverRho: Cannot find an energy table with a good size !" << Gateendl);
@@ -335,7 +347,12 @@ double GateKermaFactorHandler::GetMuEnOverRho()
   }
 
   if (m_energy/MeV < enTableTLE[0])
-    return 0.;
+  {
+    if (mPhotonKermaEquivalentFactor)
+      return MuEnTable[0];
+    else
+      return 0.;
+  }
 
   for (size_t i=1; i<enTableTLE.size(); i++)
     if (m_energy/MeV >= enTableTLE[i-1] &&

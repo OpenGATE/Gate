@@ -55,7 +55,8 @@ public:
   void EnableKermaFactorDump      (bool b) { mIsKermaFactorDumped             = b; }
   void EnableKillSecondary        (bool b) { mIsKillSecondaryEnabled          = b; }
 
-  void EnableKermaEquivalentFactor(bool b) { mIsKermaEquivalentFactorEnabled = b; }
+  void EnableKermaEquivalentFactor      (bool b) { mIsKermaEquivalentFactorEnabled       = b; }
+  void EnablePhotonKermaEquivalentFactor(bool b) { mIsPhotonKermaEquivalentFactorEnabled = b; }
 
   virtual void BeginOfRunAction  (const G4Run*);
   virtual void BeginOfEventAction(const G4Event*);
@@ -108,6 +109,7 @@ protected:
   bool mIsKillSecondaryEnabled;
 
   bool mIsKermaEquivalentFactorEnabled;
+  bool mIsPhotonKermaEquivalentFactorEnabled;
 
   int mCurrentEvent;
 
