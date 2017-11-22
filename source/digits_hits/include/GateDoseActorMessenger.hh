@@ -1,16 +1,16 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 /*
   \class  GateDoseActorMessenger
   \author thibault.frisson@creatis.insa-lyon.fr
-          laurent.guigues@creatis.insa-lyon.fr
-          david.sarrut@creatis.insa-lyon.fr
+  laurent.guigues@creatis.insa-lyon.fr
+  david.sarrut@creatis.insa-lyon.fr
 */
 
 #ifndef GATEDOSEACTORMESSENGER_HH
@@ -49,7 +49,7 @@ protected:
   G4UIcmdWithABool * pEnableDoseToWaterUncertaintyCmd;
   G4UIcmdWithABool * pEnableDoseToWaterNormToMaxCmd;
   G4UIcmdWithABool * pEnableDoseToWaterNormToIntegralCmd;
-    //DoseToOtherMaterial
+  //DoseToOtherMaterial
   G4UIcmdWithABool * pEnableDoseToOtherMaterialCmd;
   G4UIcmdWithABool * pEnableDoseToOtherMaterialSquaredCmd;
   G4UIcmdWithABool * pEnableDoseToOtherMaterialUncertaintyCmd;
@@ -64,6 +64,10 @@ protected:
   G4UIcmdWithAString * pVolumeFilterCmd;
   G4UIcmdWithAString * pMaterialFilterCmd;
   G4UIcmdWithABool * pTestFlagCmd;
+  //Regions
+  G4UIcmdWithAString * pDoseRegionInputCmd;
+  G4UIcmdWithAString * pDoseRegionOutputCmd;
+  G4UIcmdWithAString * pDoseRegionAddRegionCmd;
 };
 
 #endif /* end #define GATEDOSEACTORMESSENGER_HH*/

@@ -14,13 +14,16 @@ See GATE/LICENSE.txt for further details
 #define GATEMISCFUNCTIONS_ICC
 
 
+#include <typeinfo>
+
+
 template<typename T>
 bool ConvertFromString( const std::string & Str, T & Dest )
 {
   // http://c.developpez.com/faq/cpp/?page=strings#STRINGS_convert_to
-  // créer un flux à partir de la chaîne donnée
+  // create a stream from string
   std::istringstream iss( Str );
-  // tenter la conversion vers Dest
+  // attempt to convert into Dest
   return iss >> Dest != 0;
 }
 
