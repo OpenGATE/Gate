@@ -176,14 +176,16 @@ bool GateVoxelizedMass::IsLVParameterized(const G4LogicalVolume* LV)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateVoxelizedMass::GetDoselMass(int index)
+double GateVoxelizedMass::GetDoselMass(const int index)
 {
   GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
 
   if (mHasSameResolution) {
-    GateMessage("Actor", 11,  "[GateVoxelizedMass::" << __FUNCTION__ << "] Volume and actor resolution are the same ! I will simply read the mass of the voxel." << Gateendl);
+    GateMessage("Actor", 10,  "[GateVoxelizedMass::" << __FUNCTION__ << "] Volume and actor resolution are the same ! I will simply read the mass of the voxel." << Gateendl);
 
-    return theMaterialDatabase.GetMaterial((G4String)imageVolume->GetMaterialNameFromLabel(imageVoxel->GetValue(index)))->GetDensity()*imageVoxel->GetVoxelVolume();
+    imageVoxel  = imageVolume->GetImage();
+
+    return theMaterialDatabase.GetMaterial((G4String)imageVolume->GetMaterialNameFromLabel(imageVoxel->GetValue(index)))->GetDensity() * imageVoxel->GetVoxelVolume();
   }
 
   // Case of imported mass image
