@@ -53,12 +53,13 @@ GateVoxelizedMass::GateVoxelizedMass()
   doselReconstructedMass.clear();
   doselExternalMass     .clear();
 
-  imageVoxel = 0;
+  imageVolume = 0;
+  imageVoxel  = 0;
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateVoxelizedMass::Initialize(G4String _mVolumeName, const GateVImage* _mImage)
+void GateVoxelizedMass::Initialize(const G4String _mVolumeName, const GateVImage* _mImage)
 {
   GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
 
@@ -183,9 +184,7 @@ double GateVoxelizedMass::GetDoselMass(const int index)
   if (mHasSameResolution) {
     GateMessage("Actor", 10,  "[GateVoxelizedMass::" << __FUNCTION__ << "] Volume and actor resolution are the same ! I will simply read the mass of the voxel." << Gateendl);
 
-    imageVoxel  = imageVolume->GetImage();
-
-    return theMaterialDatabase.GetMaterial((G4String)imageVolume->GetMaterialNameFromLabel(imageVoxel->GetValue(index)))->GetDensity() * imageVoxel->GetVoxelVolume();
+    return theMaterialDatabase.GetMaterial((G4String)imageVolume->GetMaterialNameFromLabel(imageVolume->GetImage()->GetValue(index)))->GetDensity() * imageVolume->GetImage()->GetVoxelVolume();
   }
 
   // Case of imported mass image
@@ -399,9 +398,9 @@ void GateVoxelizedMass::GenerateVoxels()
 
   for (signed long int i=0; i < imageVoxel->GetNumberOfValues(); i++)
   {
-    const long unsigned int xVoxel(round((DABox->GetXHalfLength()+imageVoxel->GetVoxelCenterFromIndex(i).x()-imageVoxel->GetVoxelSize().x()/2.)/imageVoxel->GetVoxelSize().x()));
-    const long unsigned int yVoxel(round((DABox->GetYHalfLength()+imageVoxel->GetVoxelCenterFromIndex(i).y()-imageVoxel->GetVoxelSize().y()/2.)/imageVoxel->GetVoxelSize().y()));
-    const long unsigned int zVoxel(round((DABox->GetZHalfLength()+imageVoxel->GetVoxelCenterFromIndex(i).z()-imageVoxel->GetVoxelSize().z()/2.)/imageVoxel->GetVoxelSize().z()));
+    const unsigned long int xVoxel(round((DABox->GetXHalfLength()+imageVoxel->GetVoxelCenterFromIndex(i).x()-imageVoxel->GetVoxelSize().x()/2.)/imageVoxel->GetVoxelSize().x()));
+    const unsigned long int yVoxel(round((DABox->GetYHalfLength()+imageVoxel->GetVoxelCenterFromIndex(i).y()-imageVoxel->GetVoxelSize().y()/2.)/imageVoxel->GetVoxelSize().y()));
+    const unsigned long int zVoxel(round((DABox->GetZHalfLength()+imageVoxel->GetVoxelCenterFromIndex(i).z()-imageVoxel->GetVoxelSize().z()/2.)/imageVoxel->GetVoxelSize().z()));
 
     //G4cout<<G4endl;
     //G4cout<<"Index="<<i<<G4endl;
@@ -427,27 +426,39 @@ void GateVoxelizedMass::GenerateVoxels()
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-G4String GateVoxelizedMass::GetVoxelMatName(int x, int y, int z)
+G4String GateVoxelizedMass::GetVoxelMatName(const unsigned long int x, const unsigned long int y, const unsigned long int z)
 {
- return G4String(imageVolume->GetMaterialNameFromLabel(imageVoxel->GetValue(x,y,z)));
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
+
+  const G4String voxelMatName = imageVolume->GetMaterialNameFromLabel(imageVolume->GetImage()->GetValue(x,y,z));
+
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Ended" << Gateendl);
+
+  return voxelMatName;
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 G4double GateVoxelizedMass::GetVoxelVolume()
 {
-  const G4double volume = imageVoxel->GetVoxelVolume();
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
+
+  const G4double volume = imageVolume->GetImage()->GetVoxelVolume();
 
   if (volume <= 0.)
-    GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: Voxels cubic volume is less or equal to zero ! (volume: " << volume << ")" << Gateendl);
+    GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: Voxel cubic volume is less or equal to zero ! (volume: " << volume << ")" << Gateendl);
+
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Ended" << Gateendl);
 
   return volume;
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-G4double GateVoxelizedMass::GetVoxelMass(int x, int y, int z)
+G4double GateVoxelizedMass::GetVoxelMass(const unsigned long int x, const unsigned long int y, const unsigned long int z)
 {
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
+
   const G4double density = theMaterialDatabase.GetMaterial(GetVoxelMatName(x,y,z))->GetDensity();
   const G4double mass    = density * GetVoxelVolume();
 
@@ -457,32 +468,60 @@ G4double GateVoxelizedMass::GetVoxelMass(int x, int y, int z)
     exit(EXIT_FAILURE);
   }
 
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Ended" << Gateendl);
+
   return mass;
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateVoxelizedMass::GenerateDosels(int index)
+void GateVoxelizedMass::GenerateDosels(const int index)
 {
   GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
   // INFO : Dimension of the vectors : x = 0, y = 1, z = 2
 
   doselMin.resize(3,-1.);
-  doselMin[0]=(DABox->GetXHalfLength()+mImage->GetVoxelCenterFromIndex(index).getX()-mImage->GetVoxelSize().getX()/2.0)/imageVoxel->GetVoxelSize().x();
-  doselMin[1]=(DABox->GetYHalfLength()+mImage->GetVoxelCenterFromIndex(index).getY()-mImage->GetVoxelSize().getY()/2.0)/imageVoxel->GetVoxelSize().y();
-  doselMin[2]=(DABox->GetZHalfLength()+mImage->GetVoxelCenterFromIndex(index).getZ()-mImage->GetVoxelSize().getZ()/2.0)/imageVoxel->GetVoxelSize().z();
+  doselMin[0]=(DABox->GetXHalfLength()+mImage->GetVoxelCenterFromIndex(index).getX()-mImage->GetVoxelSize().getX()/2.)/imageVolume->GetImage()->GetVoxelSize().x();
+  doselMin[1]=(DABox->GetYHalfLength()+mImage->GetVoxelCenterFromIndex(index).getY()-mImage->GetVoxelSize().getY()/2.)/imageVolume->GetImage()->GetVoxelSize().y();
+  doselMin[2]=(DABox->GetZHalfLength()+mImage->GetVoxelCenterFromIndex(index).getZ()-mImage->GetVoxelSize().getZ()/2.)/imageVolume->GetImage()->GetVoxelSize().z();
+
+  const double sensibility (1e8);
+
+  if (doselMin[0] < 0 && doselMin[0] > -sensibility)
+    doselMin[0] = 0.;
+  else if (doselMin[0] < 0)
+  {
+    GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR : doselMin[0] < 0 ! (doselMin[0]: " << doselMin[0] << ", index: " << index << ")" << Gateendl);
+    exit(EXIT_FAILURE);
+  }
+
+  if (doselMin[1] < 0 && doselMin[1] > -sensibility)
+    doselMin[1] = 0.;
+  else if (doselMin[1] < 0)
+  {
+    GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR : doselMin[1] < 0 ! (doselMin[1]: " << doselMin[1] << ", index: " << index << ")" << Gateendl);
+    exit(EXIT_FAILURE);
+  }
+
+  if (doselMin[2] < 0 && doselMin[2] > -sensibility)
+    doselMin[2] = 0.;
+  else if (doselMin[2] < 0)
+  {
+    GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR : doselMin[2] < 0 ! (doselMin[2]: " << doselMin[2] << ", index: " << index << ")" << Gateendl);
+    exit(EXIT_FAILURE);
+  }
 
   doselMax.resize(3,-1.);
-  doselMax[0]=(DABox->GetXHalfLength()+mImage->GetVoxelCenterFromIndex(index).getX()+mImage->GetVoxelSize().getX()/2.0)/imageVoxel->GetVoxelSize().x();
-  doselMax[1]=(DABox->GetYHalfLength()+mImage->GetVoxelCenterFromIndex(index).getY()+mImage->GetVoxelSize().getY()/2.0)/imageVoxel->GetVoxelSize().y();
-  doselMax[2]=(DABox->GetZHalfLength()+mImage->GetVoxelCenterFromIndex(index).getZ()+mImage->GetVoxelSize().getZ()/2.0)/imageVoxel->GetVoxelSize().z();
+  doselMax[0]=(DABox->GetXHalfLength()+mImage->GetVoxelCenterFromIndex(index).getX()+mImage->GetVoxelSize().getX()/2.)/imageVolume->GetImage()->GetVoxelSize().x();
+  doselMax[1]=(DABox->GetYHalfLength()+mImage->GetVoxelCenterFromIndex(index).getY()+mImage->GetVoxelSize().getY()/2.)/imageVolume->GetImage()->GetVoxelSize().y();
+  doselMax[2]=(DABox->GetZHalfLength()+mImage->GetVoxelCenterFromIndex(index).getZ()+mImage->GetVoxelSize().getZ()/2.)/imageVolume->GetImage()->GetVoxelSize().z();
 
   GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Ended" << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-pair<double,double> GateVoxelizedMass::ParameterizedVolume(int index)
+pair<double,double> GateVoxelizedMass::ParameterizedVolume(const int index)
 {
   GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
 
@@ -491,27 +530,39 @@ pair<double,double> GateVoxelizedMass::ParameterizedVolume(int index)
   G4double doselReconstructedVolume = 0.;
   doselReconstructedMass[index]     = 0.;
 
-  for(int x=round(doselMin[0]);x<round(doselMax[0]);x++)
-    for(int y=round(doselMin[1]);y<round(doselMax[1]);y++)
-      for(int z=round(doselMin[2]);z<round(doselMax[2]);z++)
+  //GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: doselMin[0]: " << doselMin[0] << ", doselMax[0]: " << doselMax[0] <<
+  //                                                                          ", doselMin[1]: " << doselMin[1] << ", doselMax[1]: " << doselMax[1] <<
+  //                                                                          ", doselMin[2]: " << doselMin[2] << ", doselMax[2]: " << doselMax[2] << Gateendl);
+
+  //GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: round(doselMin[0]): " << round(doselMin[0]) << ", round(doselMax[0]): " << round(doselMax[0]) <<
+  //                                                                          ", round(doselMin[1]): " << round(doselMin[1]) << ", round(doselMax[1]): " << round(doselMax[1]) <<
+  //                                                                          ", round(doselMin[2]): " << round(doselMin[2]) << ", round(doselMax[2]): " << round(doselMax[2]) << Gateendl);
+
+  for(unsigned long int x = round(doselMin[0]); x < round(doselMax[0]); x++)
+    for(unsigned long int y = round(doselMin[1]); y < round(doselMax[1]); y++)
+      for(unsigned long int z = round(doselMin[2]); z < round(doselMax[2]); z++)
       {
         std::vector<bool> isMin(3,false),isMax(3,false);
-        std::vector<int>  origCoord(3,-1);
-        std::vector<std::vector<int> >    coord(3);
-        std::vector<std::vector<double> > coef(3);
+        std::vector<unsigned long int>               origCoord(3,-1);
+        std::vector<std::vector<unsigned long int> > coord(3);
+        std::vector<std::vector<double> >            coef (3);
 
-        origCoord[0]=x; origCoord[1]=y; origCoord[2]=z;
+        origCoord[0] = x;
+        origCoord[1] = y;
+        origCoord[2] = z;
 
-        for(int dim=0;dim<3;dim++)
+        //GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: origCoord[0]: " << origCoord[0] << ", origCoord[1]: " << origCoord[1] << ", origCoord[2]: " << origCoord[2] << Gateendl);
+
+        for(size_t dim=0; dim < 3; dim++)
         {
           if(origCoord[dim]==round(doselMin[dim])&&fmod(doselMin[dim],1)>1e-8)
             isMin[dim]=true;
           if(origCoord[dim]==round(doselMax[dim])-1&&fmod(doselMax[dim],1)>1e-8)
             isMax[dim]=true;
 
-          if(isMin[dim]&&isMax[dim])
+          if(isMin[dim] && isMax[dim])
           {
-            if(fmod(doselMin[dim],1)>=0.5&&fmod(doselMax[dim],1)<0.5)
+            if(fmod(doselMin[dim],1) >= 0.5 && fmod(doselMax[dim],1) < 0.5)
             {
               coord[dim].push_back(origCoord[dim]-1);
               coord[dim].push_back(origCoord[dim]);
@@ -580,13 +631,19 @@ pair<double,double> GateVoxelizedMass::ParameterizedVolume(int index)
             coord[dim].push_back(origCoord[dim]);
             coef[dim].push_back(1);
           }
-          if(coord[dim].size()!=coef[dim].size())
-            GateError("!!! ERROR : Size of coord and coef are not the same !"<<Gateendl);
+          if(coord[dim].size() != coef[dim].size())
+          {
+            GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR : Size of coord and coef are not the same !" << Gateendl);
+            exit(EXIT_FAILURE);
+          }
         }
 
-        for(size_t xVox=0;xVox<coord[0].size();xVox++)
-          for(size_t yVox=0;yVox<coord[1].size();yVox++)
-            for(size_t zVox=0;zVox<coord[2].size();zVox++)
+        for(size_t xVox = 0; xVox < coord[0].size(); xVox++)
+          for(size_t yVox = 0; yVox < coord[1].size(); yVox++)
+            for(size_t zVox = 0; zVox < coord[2].size(); zVox++)
+            {
+              //GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] DEBUG: coord[0][xVox]: " << coord[0][xVox] << ", coord[1][xVox]: " << coord[1][yVox] << ", coord[2][xVox]: " << coord[2][zVox] << Gateendl);
+
               if (mMaterialFilter == "" ||
                   mMaterialFilter == GetVoxelMatName(coord[0][xVox], coord[1][yVox], coord[2][zVox]))
               {
@@ -609,6 +666,7 @@ pair<double,double> GateVoxelizedMass::ParameterizedVolume(int index)
                           <<"            Voxel Mass: " << GetVoxelMass(coord[0][xVox], coord[1][yVox], coord[2][zVox]) << Gateendl
                           <<"            coefVox= " << coefVox << Gateendl);
               }
+            }
       }
 
   if(doselReconstructedMass[index] < 0.)
@@ -633,7 +691,7 @@ pair<double,double> GateVoxelizedMass::VoxelIteration(const G4VPhysicalVolume* m
 
     // IMPORTANT WARNING
     if (motherPV->GetLogicalVolume()->GetSolid()->GetEntityType() != "G4Box")
-      GateMessage("Actor", 0, "[GateVoxelizedMass::VoxelIteration] WARNING: Attaching a DoseActor to a volume with another geometry than a box can lead to a wrong dose calculation ! Please verify that the volume of the dosel is correctly reconstructed !" << Gateendl);
+      GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] WARNING: Attaching a DoseActor to a volume with another geometry than a box can lead to a wrong dose calculation ! Please verify that the volume of the dosel is correctly reconstructed !" << Gateendl);
 
     GateMessage("Actor", 2, Gateendl << "[GateVoxelizedMass::" << __FUNCTION__ << "] Dosel n°" << index << ":" << Gateendl);
 

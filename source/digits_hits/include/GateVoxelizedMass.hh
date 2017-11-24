@@ -38,8 +38,8 @@ class GateVoxelizedMass
 
   std::vector<double> GetDoselMassVector();
 
-  G4String GetVoxelMatName(int x, int y, int z);
-  G4double GetVoxelMass(int x, int y, int z);
+  G4String GetVoxelMatName(const unsigned long int x, const unsigned long int y, const unsigned long int z);
+  G4double GetVoxelMass   (const unsigned long int x, const unsigned long int y, const unsigned long int z);
   G4double GetVoxelVolume();
 
   G4double GetDoselMass(int index);
