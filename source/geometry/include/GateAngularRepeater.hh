@@ -104,66 +104,69 @@ public:
   //@{
 
   //! Get the number of repetitions
-  inline G4int GetRepeatNumber() const      	  { return m_repeatNumber;}
+  G4int GetRepeatNumber() const      	  { return m_repeatNumber;}
   //! Get the starting point of the repetition axis
-  inline const G4Point3D& GetPoint1() const 	  { return m_point1 ;}
+  const G4Point3D& GetPoint1() const 	  { return m_point1 ;}
   //! Get the end point of the repetition axis
-  inline const G4Point3D& GetPoint2() const 	  { return m_point2 ;}
+  const G4Point3D& GetPoint2() const 	  { return m_point2 ;}
   //! Get the value of the auto-rotation flag
-  inline G4bool GetAutoRotation() const     	  { return m_flagAutoRotation;}
+  G4bool GetAutoRotation() const     	  { return m_flagAutoRotation;}
   //! Get the angle for the first copy
-  inline G4double GetFirstAngle() const           { return m_firstAngle;}
+  G4double GetFirstAngle() const           { return m_firstAngle;}
   //! Get the total angular span
-  inline G4double GetAngularSpan() const          { return m_angularSpan;}
+  G4double GetAngularSpan() const          { return m_angularSpan;}
   //! Get the angular pitch between copies
-  inline G4double  GetAngularPitch_1() const        { return m_angularSpan/m_repeatNumber;}
-  inline G4double  GetAngularPitch_2() const        { return m_angularSpan/(m_repeatNumber-1);}
+  G4double  GetAngularPitch_1() const        { return m_angularSpan/m_repeatNumber;}
+  G4double  GetAngularPitch_2() const        { return m_angularSpan/(m_repeatNumber-1);}
   //! Get the periodicity of shift or the number of copies in sequence
-  inline G4int GetAngularModuloNumber() const  { return m_moduloNumber;}
+  G4int GetAngularModuloNumber() const  { return m_moduloNumber;}
   //! Get the total Z shift 1 .. 8 in a sequence
-  inline G4double GetZShift1() const { return m_zShift1;}
-  inline G4double GetZShift2() const { return m_zShift2;}
-  inline G4double GetZShift3() const { return m_zShift3;}
-  inline G4double GetZShift4() const { return m_zShift4;}
-  inline G4double GetZShift5() const { return m_zShift5;}
-  inline G4double GetZShift6() const { return m_zShift6;}
-  inline G4double GetZShift7() const { return m_zShift7;}
-  inline G4double GetZShift8() const { return m_zShift8;}
+  G4double GetZShift1() const { return m_zShift1;}
+  G4double GetZShift2() const { return m_zShift2;}
+  G4double GetZShift3() const { return m_zShift3;}
+  G4double GetZShift4() const { return m_zShift4;}
+  G4double GetZShift5() const { return m_zShift5;}
+  G4double GetZShift6() const { return m_zShift6;}
+  G4double GetZShift7() const { return m_zShift7;}
+  G4double GetZShift8() const { return m_zShift8;}
 
   //! Get the Z shift pitch between copies
-  //  inline G4double GetZShiftPitch() const { return m_zShiftSpan/((m_moduloNumber<2) ? 1; m_moduloNumber-1);} /* take 1 if<2 */
+  //  G4double GetZShiftPitch() const { return m_zShiftSpan/((m_moduloNumber<2) ? 1; m_moduloNumber-1);} /* take 1 if<2 */
 
   //! Set the number of repetitions
-  inline void SetRepeatNumber(G4int val)
+  void SetRepeatNumber(G4int val)
   { m_repeatNumber = val;  }
   //! Set the starting point of the repetition axis
-  inline void SetPoint1(const G4Point3D& val)
+  void SetPoint1(const G4Point3D& val)
   { m_point1 = val;  }
   //! Set the end point of the repetition axis
-  inline void SetPoint2(const G4Point3D& val)
+  void SetPoint2(const G4Point3D& val)
   { m_point2 = val;  }
   //! Set the value of the auto-rotation flag
-  inline void SetAutoRotation(G4bool val)
+  void SetAutoRotation(G4bool val)
   { m_flagAutoRotation = val;  }
   //! Set the angle for the first copy
-  inline void SetFirstAngle(G4double val)
+  void SetFirstAngle(G4double val)
   { m_firstAngle = val;  }
   //! Set the total angular span
-  inline void SetAngularSpan(G4double val)
+  void SetAngularSpan(G4double val)
   { m_angularSpan = val;   }
   //! Set the periodicity of shift or the number of copies in sequence
-  inline void SetModuloNumber(G4int val)
+  void SetModuloNumber(G4int val)
   { m_moduloNumber = val;}
 
+  //! Set if the volume rotation is applied before or after the angular repeater rotation
+  void SetCombineWithRotationFirstFlag(G4bool b) { m_flagCombineWithRotationFirst = b; }
+
   //! Set the total modulo Z shift Span of a sector (accept 8 shift max.)
-  inline void SetZShift1(G4double val)  { m_zShift1 = val;}
-  inline void SetZShift2(G4double val)  { m_zShift2 = val;}
-  inline void SetZShift3(G4double val)  { m_zShift3 = val;}
-  inline void SetZShift4(G4double val)  { m_zShift4 = val;}
-  inline void SetZShift5(G4double val)  { m_zShift5 = val;}
-  inline void SetZShift6(G4double val)  { m_zShift6 = val;}
-  inline void SetZShift7(G4double val)  { m_zShift7 = val;}
-  inline void SetZShift8(G4double val)  { m_zShift8 = val;}
+  void SetZShift1(G4double val)  { m_zShift1 = val;}
+  void SetZShift2(G4double val)  { m_zShift2 = val;}
+  void SetZShift3(G4double val)  { m_zShift3 = val;}
+  void SetZShift4(G4double val)  { m_zShift4 = val;}
+  void SetZShift5(G4double val)  { m_zShift5 = val;}
+  void SetZShift6(G4double val)  { m_zShift6 = val;}
+  void SetZShift7(G4double val)  { m_zShift7 = val;}
+  void SetZShift8(G4double val)  { m_zShift8 = val;}
 
   //@}
 
@@ -171,21 +174,21 @@ private:
   //! \name repeater parameters
   //@{
   G4int         m_repeatNumber;     	//!< Number of repetitions
-  G4Point3D 	  m_point1;     	//!< starting point of the repetition axis
-  G4Point3D 	  m_point2;     	//!< end point of the repetition axis
-  G4bool  	  m_flagAutoRotation; 	//!< Auto-rotation flag
+  G4Point3D 	  m_point1;     	      //!< starting point of the repetition axis
+  G4Point3D 	  m_point2;     	      //!< end point of the repetition axis
+  G4bool  	    m_flagAutoRotation; 	//!< Auto-rotation flag
   G4double  	  m_firstAngle;       	//!< Angle for the first copy
   G4double  	  m_angularSpan;      	//!< Total angular span
-  G4int         m_moduloNumber;	//!< Total angular span
-  G4double      m_zShift1;	        //!< Shift Span for module 1
-  G4double      m_zShift2;	        //!< Shift Span for module 2
-  G4double      m_zShift3;	        //!< Shift Span for module 3
-  G4double      m_zShift4;	        //!< Shift Span for module 4
-  G4double      m_zShift5;	        //!< Shift Span for module 5
-  G4double      m_zShift6;	        //!< Shift Span for module 6
-  G4double      m_zShift7;	        //!< Shift Span for module 7
-  G4double      m_zShift8;	        //!< Shift Span for module 8
-
+  G4int         m_moduloNumber;	      //!< Total angular span
+  G4double      m_zShift1;	          //!< Shift Span for module 1
+  G4double      m_zShift2;	          //!< Shift Span for module 2
+  G4double      m_zShift3;	          //!< Shift Span for module 3
+  G4double      m_zShift4;	          //!< Shift Span for module 4
+  G4double      m_zShift5;	          //!< Shift Span for module 5
+  G4double      m_zShift6;	          //!< Shift Span for module 6
+  G4double      m_zShift7;	          //!< Shift Span for module 7
+  G4double      m_zShift8;	          //!< Shift Span for module 8
+  G4bool        m_flagCombineWithRotationFirst; //!< Flag for rotation order
   //@}
 
   //! Messenger

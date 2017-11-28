@@ -43,25 +43,25 @@ GateVSourceVoxelReader::~GateVSourceVoxelReader()
 void GateVSourceVoxelReader::Dump(G4int level)
 {
   G4cout << "  Voxel reader ----------> " << m_type << Gateendl
-	 << "  number of voxels       : " << m_sourceVoxelActivities.size() << Gateendl
-	 << "  total activity (Bq)    : " << GetTotalActivity()/becquerel << Gateendl
-	 << "  position  (mm)         : "
-	 << GetPosition().x()/mm << " "
-	 << GetPosition().y()/mm << " "
-	 << GetPosition().z()/mm << Gateendl
-	 << "  voxel size  (mm)       : "
-	 << GetVoxelSize().x()/mm << " "
-	 << GetVoxelSize().y()/mm << " "
-	 << GetVoxelSize().z()/mm << Gateendl;
+         << "  number of voxels       : " << m_sourceVoxelActivities.size() << Gateendl
+         << "  total activity (Bq)    : " << GetTotalActivity()/becquerel << Gateendl
+         << "  position  (mm)         : "
+         << GetPosition().x()/mm << " "
+         << GetPosition().y()/mm << " "
+         << GetPosition().z()/mm << Gateendl
+         << "  voxel size  (mm)       : "
+         << GetVoxelSize().x()/mm << " "
+         << GetVoxelSize().y()/mm << " "
+         << GetVoxelSize().z()/mm << Gateendl;
 
   if (level > 2) {
     GateSourceActivityMap::iterator voxel;
     for (voxel = m_sourceVoxelActivities.begin(); voxel != m_sourceVoxelActivities.end(); voxel++) {
       G4cout << "   Index"
-	     << " " << (*voxel).first[0]
-	     << " " << (*voxel).first[1]
-	     << " " << (*voxel).first[2]
-	     << " Activity (Bq) " << (*voxel).second / becquerel << Gateendl;
+             << " " << (*voxel).first[0]
+             << " " << (*voxel).first[1]
+             << " " << (*voxel).first[2]
+             << " Activity (Bq) " << (*voxel).second / becquerel << Gateendl;
     }
   }
 }
@@ -89,10 +89,10 @@ std::vector<G4int> GateVSourceVoxelReader::GetNextSource()
 
   if (nVerboseLevel>1)
     G4cout << "GateVSourceVoxelReader::GetNextSource : source chosen : "
-	   << " " << firstSource[0]
-	   << " " << firstSource[1]
-	   << " " << firstSource[2]
-	   << Gateendl;
+           << " " << firstSource[0]
+           << " " << firstSource[1]
+           << " " << firstSource[2]
+           << Gateendl;
 
   return firstSource;
 }
@@ -125,7 +125,7 @@ void GateVSourceVoxelReader::AddVoxel(G4int ix, G4int iy, G4int iz, G4double act
     for (voxel = m_sourceVoxelActivities.begin(); voxel != m_sourceVoxelActivities.end(); voxel++) {
       G4double iterActivity = (*voxel).second;
       if (iterActivity > m_activityMax) {
-	m_activityMax = iterActivity;
+        m_activityMax = iterActivity;
       }
     }
 
@@ -216,10 +216,10 @@ void GateVSourceVoxelReader::PrepareIntegratedActivityMap()
     for (intVoxel = m_sourceVoxelIntegratedActivities.begin(); intVoxel != m_sourceVoxelIntegratedActivities.end(); intVoxel++, voxel++) {
       nVoxels++;
       G4cout << "[GateVSourceVoxelReader::PrepareIntegratedActivityMap] "
-	     << "   voxel: " << ((*voxel).first)[0] << " " << ((*voxel).first)[1] << " " << ((*voxel).first)[2]
-	     << "   activity : (Bq) " << ((*voxel).second) / becquerel
-	     << "   intVoxel: " << ((*intVoxel).second)[0] << " " << ((*intVoxel).second)[1] << " " << ((*intVoxel).second)[2]
-	     << "   integrated: (Bq) " << ((*intVoxel).first)  / becquerel << Gateendl;
+             << "   voxel: " << ((*voxel).first)[0] << " " << ((*voxel).first)[1] << " " << ((*voxel).first)[2]
+             << "   activity : (Bq) " << ((*voxel).second) / becquerel
+             << "   intVoxel: " << ((*intVoxel).second)[0] << " " << ((*intVoxel).second)[1] << " " << ((*intVoxel).second)[2]
+             << "   integrated: (Bq) " << ((*intVoxel).first)  / becquerel << Gateendl;
     }
   }
   m_tactivityTotal = m_activityTotal;  // added by I. Martinez-Rovira (immamartinez@gmail.com)

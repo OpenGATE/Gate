@@ -20,38 +20,38 @@ class GateTessellatedMessenger;
 
 class GateTessellated : public GateVVolume
 {
-  public:
-    GateTessellated( G4String const& itsName, G4bool acceptsChildren = true, G4int depth = 0 );
-    GateTessellated( G4String const& itsName, G4String const& itsMaterialName );
+public:
+  GateTessellated( G4String const& itsName, G4bool acceptsChildren = true, G4int depth = 0 );
+  GateTessellated( G4String const& itsName, G4String const& itsMaterialName );
 
-    virtual ~GateTessellated();
+  virtual ~GateTessellated();
 
-    FCT_FOR_AUTO_CREATOR_VOLUME(GateTessellated)
+  FCT_FOR_AUTO_CREATOR_VOLUME(GateTessellated)
 
-    virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume( G4Material*, G4bool );
-    virtual void DestroyOwnSolidAndLogicalVolume();
+  virtual G4LogicalVolume* ConstructOwnSolidAndLogicalVolume( G4Material*, G4bool );
+  virtual void DestroyOwnSolidAndLogicalVolume();
 
-    // Declaration of pure virtual method
-    inline virtual G4double GetHalfDimension( size_t ) { return 0.; }
+  // Declaration of pure virtual method
+  inline virtual G4double GetHalfDimension( size_t ) { return 0.; }
 
-    void SetPathToSTLFile( G4String );
+  void SetPathToSTLFile( G4String );
 
-  private:
-    void ReadSTL_ASCII();
-    void ReadSTL_Binary();
-    void DescribeMyself(size_t);
-    G4double ComputeMyOwnVolume() const;
+private:
+  void ReadSTL_ASCII();
+  void ReadSTL_Binary();
+  void DescribeMyself(size_t);
+  G4double ComputeMyOwnVolume() const;
 
-  private:
-    G4TessellatedSolid*     m_tessellated_solid;
-    G4LogicalVolume*        m_tessellated_log;
-    G4VPhysicalVolume*      m_tessellated_phys;
+private:
+  G4TessellatedSolid*     m_tessellated_solid;
+  G4LogicalVolume*        m_tessellated_log;
+  // G4VPhysicalVolume*      m_tessellated_phys; not used 
 
-  private:
-    G4String m_PathToSTLFile;
-    GateTessellatedMessenger* m_Messenger;
-    G4String FacetType;
-    unsigned long nbFacets;
+private:
+  G4String m_PathToSTLFile;
+  GateTessellatedMessenger* m_Messenger;
+  G4String FacetType;
+  unsigned long nbFacets;
 };
 
 MAKE_AUTO_CREATOR_VOLUME(tessellated,GateTessellated)
