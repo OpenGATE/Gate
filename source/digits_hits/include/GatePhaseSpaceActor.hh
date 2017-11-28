@@ -30,7 +30,7 @@ class G4EmCalculator;
 //====================================================================
 class GatePhaseSpaceActor : public GateVActor
 {
- public:
+public:
 
   virtual ~GatePhaseSpaceActor();
 
@@ -69,12 +69,11 @@ class GatePhaseSpaceActor : public GateVActor
   void SetIsMassEnabled(bool b){EnableMass = b;}
   void SetIsSecStored(bool b){EnableSec = b;}
   void SetIsAllStep(bool b){EnableAllStep = b;}
-  //_______________________________________________
+
   void SetIsChargeEnabled(bool b){EnableCharge = b;}
   void SetIsElectronicDEDXEnabled(bool b) {EnableElectronicDEDX = b;}
   void SetIsTotalDEDXEnabled(bool b) {EnableTotalDEDX = b;}
-  //_______________________________________________
-  
+
   void SetUseVolumeFrame(bool b){mUseVolFrame=b;}
   bool GetUseVolumeFrame(){return mUseVolFrame;}
 
@@ -97,6 +96,10 @@ class GatePhaseSpaceActor : public GateVActor
   void SetEnabledCompact(bool b){bEnableCompact = b;}
   void SetEnablePDGCode(bool b){bEnablePDGCode = b;}
 
+  void SetEnabledSphereProjection(bool b) { mSphereProjectionFlag = b; }
+  void SetSphereProjectionCenter(G4ThreeVector c) { mSphereProjectionCenter = c; }
+  void SetSphereProjectionRadius(double r) { mSphereProjectionRadius = r; }
+
 protected:
   GatePhaseSpaceActor(G4String name, G4int depth=0);
 
@@ -105,7 +108,7 @@ protected:
 
   TFile * pFile;
   TTree * pListeVar;
-  
+
   bool EnableCharge;
   bool EnableElectronicDEDX;
   bool EnableTotalDEDX;
@@ -128,6 +131,10 @@ protected:
   bool mUseVolFrame;
   bool mStoreOutPart;
 
+  bool mSphereProjectionFlag;
+  G4ThreeVector mSphereProjectionCenter;
+  double mSphereProjectionRadius;
+
   bool bEnableCoordFrame;
   G4String bCoordFrame;
   bool bEnablePrimaryEnergy;
@@ -148,13 +155,13 @@ protected:
   bool mIsFistStep;
 
   Char_t  pname[256];
-  
+
   G4int Za;
   float elecDEDX;
   float totalDEDX;
   float stepLength;
   float edep;
-  
+
   float x;
   float y;
   float z;
@@ -176,7 +183,7 @@ protected:
   int parentid;
   int eventid;
   int runid;
- 
+
 
   G4EmCalculator * emcalc;
   GatePhaseSpaceActorMessenger* pMessenger;

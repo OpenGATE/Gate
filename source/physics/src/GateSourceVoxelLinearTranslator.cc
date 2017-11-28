@@ -1,24 +1,24 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See GATE/LICENSE.txt for further details
+  ----------------------*/
 
 
 #include "GateSourceVoxelLinearTranslator.hh"
 #include "GateSourceVoxelLinearTranslatorMessenger.hh"
 
-GateSourceVoxelLinearTranslator::GateSourceVoxelLinearTranslator(GateVSourceVoxelReader* voxelReader) 
+GateSourceVoxelLinearTranslator::GateSourceVoxelLinearTranslator(GateVSourceVoxelReader* voxelReader)
   : GateVSourceVoxelTranslator(voxelReader)
 {
   m_name = G4String("linearTranslator");
-  m_valueToActivityScale = 0.;
+  m_valueToActivityScale = 1.0;
   m_messenger = new GateSourceVoxelLinearTranslatorMessenger(this);
 }
 
-GateSourceVoxelLinearTranslator::~GateSourceVoxelLinearTranslator() 
+GateSourceVoxelLinearTranslator::~GateSourceVoxelLinearTranslator()
 {
   delete m_messenger;
 }

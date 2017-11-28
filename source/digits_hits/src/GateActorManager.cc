@@ -38,34 +38,34 @@ GateActorManager::~GateActorManager()
   theListOfActorsEnabledForPreUserTrackingAction.clear();
   theListOfActorsEnabledForPostUserTrackingAction.clear();
   theListOfActorsEnabledForUserSteppingAction.clear();
-
-  GateVActor* actor;
-  while(!theListOfActors.empty())
-    {
-      // get first 'element'
-      actor = theListOfActors.front();
-
-      // remove it from the list
-      theListOfActors.erase(theListOfActors.begin());
-
-      // delete the pointer
-      delete actor;
-    }
-
   delete pActorManagerMessenger;
 
   GateDebugMessageDec("Actor",4,"~GateActormanager() -- end\n");
 }
 //-----------------------------------------------------------------------------
 
-void GateActorManager::SetResetAfterSaving(bool reset) { resetAfterSaving = reset; }
-bool GateActorManager::GetResetAfterSaving() const { return resetAfterSaving; }
+
+//-----------------------------------------------------------------------------
+void GateActorManager::SetResetAfterSaving(bool reset)
+{
+  resetAfterSaving = reset;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+bool GateActorManager::GetResetAfterSaving() const
+{
+  return resetAfterSaving;
+}
+//-----------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------
 void GateActorManager::AddActor(G4String actorType, G4String actorName, int depth)
 {
   GateDebugMessageInc("Actor",5,"Actor Manager -- AddActor(): "<<actorName<<" -- begin\n");
-  if(GateActorManager::theListOfActorPrototypes[actorType])
+  if (GateActorManager::theListOfActorPrototypes[actorType])
     theListOfActors.push_back(GateActorManager::theListOfActorPrototypes[actorType](actorName,depth));
   else GateWarning("Actor type: "<<actorType<<" does not exist!");
   GateDebugMessageDec("Actor",5,"Actor Manager -- AddActor(): "<<actorName<<" -- end\n\n");
@@ -86,54 +86,32 @@ GateVActor*  GateActorManager::GetActor(const G4String &actorType, const G4Strin
 //-----------------------------------------------------------------------------
 void GateActorManager::CreateListsOfEnabledActors()
 {
-  // if(IsInitialized>1)
-  // {
-  //   GateWarning("Actor Manager -- CreateListsOfEnabledActors(): Actor Manager already initialized");
-  //  return;
-  // }
-
   std::vector<GateVActor*>::iterator sit;
-  for(sit= theListOfActors.begin(); sit!=theListOfActors.end(); ++sit)
-    {
-      //if ((*sit)->GetObjectName() == "output") (*sit) = GateOutputMgr::GetInstance();
-      //GateMessage("Core", 0, "Actor = " << (*sit)->GetObjectName() << Gateendl);
+  for (sit= theListOfActors.begin(); sit!=theListOfActors.end(); ++sit) {
+    //if ((*sit)->GetObjectName() == "output") (*sit) = GateOutputMgr::GetInstance();
+    //GateMessage("Core", 0, "Actor = " << (*sit)->GetObjectName() << Gateendl);
 
-      (*sit)->Construct();
-      if((*sit)->IsBeginOfRunActionEnabled()       && IsInitialized<2) theListOfActorsEnabledForBeginOfRun.push_back( (*sit) );
-      if((*sit)->IsEndOfRunActionEnabled()         && IsInitialized<2) theListOfActorsEnabledForEndOfRun.push_back( (*sit) );
-      if((*sit)->IsBeginOfEventActionEnabled()     && IsInitialized<2) theListOfActorsEnabledForBeginOfEvent.push_back( (*sit) );
-      if((*sit)->IsEndOfEventActionEnabled()       && IsInitialized<2) theListOfActorsEnabledForEndOfEvent.push_back( (*sit) );
-      if((*sit)->IsPreUserTrackingActionEnabled()  && IsInitialized<2) theListOfActorsEnabledForPreUserTrackingAction.push_back( (*sit) );
-      if((*sit)->IsPostUserTrackingActionEnabled() && IsInitialized<2) theListOfActorsEnabledForPostUserTrackingAction.push_back( (*sit) );
+    (*sit)->Construct();
+    if ((*sit)->IsBeginOfRunActionEnabled()       && IsInitialized<2) theListOfActorsEnabledForBeginOfRun.push_back( (*sit) );
+    if ((*sit)->IsEndOfRunActionEnabled()         && IsInitialized<2) theListOfActorsEnabledForEndOfRun.push_back( (*sit) );
+    if ((*sit)->IsBeginOfEventActionEnabled()     && IsInitialized<2) theListOfActorsEnabledForBeginOfEvent.push_back( (*sit) );
+    if ((*sit)->IsEndOfEventActionEnabled()       && IsInitialized<2) theListOfActorsEnabledForEndOfEvent.push_back( (*sit) );
+    if ((*sit)->IsPreUserTrackingActionEnabled()  && IsInitialized<2) theListOfActorsEnabledForPreUserTrackingAction.push_back( (*sit) );
+    if ((*sit)->IsPostUserTrackingActionEnabled() && IsInitialized<2) theListOfActorsEnabledForPostUserTrackingAction.push_back( (*sit) );
 
-      //GateMessage("Core", 0, "IsUserSteppingActionEnabled = " << (*sit)->IsUserSteppingActionEnabled() << Gateendl);
+    //GateMessage("Core", 0, "IsUserSteppingActionEnabled = " << (*sit)->IsUserSteppingActionEnabled() << Gateendl);
 
-      if((*sit)->IsUserSteppingActionEnabled())
-	{
-          if( (*sit)->GetVolumeName()=="" )
-	    {
-	      if(IsInitialized<2) theListOfActorsEnabledForUserSteppingAction.push_back( (*sit) );
-	    }
-	  else
-	    {
-	      SetMultiFunctionalDetector((*sit),(*sit)->GetVolume());
-	    }
-	}
+    if ((*sit)->IsUserSteppingActionEnabled()) {
+      if ( (*sit)->GetVolumeName()=="" ) {
+        if (IsInitialized<2) theListOfActorsEnabledForUserSteppingAction.push_back( (*sit) );
+      }
+      else {
+        SetMultiFunctionalDetector((*sit),(*sit)->GetVolume());
+      }
     }
+  }
 
   IsInitialized++;
-
-  /* for(sit= theListOfActors.begin(); sit!=theListOfActors.end(); ++sit)
-     {
-     if((*sit)->IsUserSteppingActionEnabled())
-     {
-     if( (*sit)->GetVolumeName()!="" )
-     {
-     // SetMultiFunctionalDetector((*sit));
-
-     }
-     }
-     }*/
 }
 //-----------------------------------------------------------------------------
 
@@ -152,7 +130,7 @@ void GateActorManager::PrintListOfActorTypes() const
 void GateActorManager::PrintListOfActors() const
 {
   std::vector<GateVActor*>::const_iterator sit;
-  for(sit= theListOfActors.begin(); sit!=theListOfActors.end(); ++sit)
+  for (sit= theListOfActors.begin(); sit!=theListOfActors.end(); ++sit)
     {
       GateMessage("Actor", 1,"Name = "<<  (*sit)->GetObjectName() <<"  Volume name = " << (*sit)->GetVolumeName() << Gateendl);
     }
@@ -172,7 +150,7 @@ void GateActorManager::BeginOfRunAction(const G4Run* run)
   std::vector<GateVActor*>::iterator sit;
 
   //GateMessage("Core", 0, "Run " << run->GetRunID() << " is starting.\n");
-  for(sit = theListOfActorsEnabledForBeginOfRun.begin(); sit!=theListOfActorsEnabledForBeginOfRun.end(); ++sit)
+  for (sit = theListOfActorsEnabledForBeginOfRun.begin(); sit!=theListOfActorsEnabledForBeginOfRun.end(); ++sit)
     (*sit)->BeginOfRunAction(run);
 
 }
@@ -182,7 +160,7 @@ void GateActorManager::BeginOfRunAction(const G4Run* run)
 void GateActorManager::EndOfRunAction(const G4Run* run)
 {
   std::vector<GateVActor*>::iterator sit;
-  for(sit = theListOfActorsEnabledForEndOfRun.begin(); sit!=theListOfActorsEnabledForEndOfRun.end(); ++sit)
+  for (sit = theListOfActorsEnabledForEndOfRun.begin(); sit!=theListOfActorsEnabledForEndOfRun.end(); ++sit)
     (*sit)->EndOfRunAction(run);
   //GateMessage("Core", 0, "Run " << run->GetRunID() << " is ending.\n");
 }
@@ -193,7 +171,7 @@ void GateActorManager::BeginOfEventAction(const G4Event* evt)
 {
   if (evt) mCurrentEventId = evt->GetEventID();
   std::vector<GateVActor*>::iterator sit;
-  for(sit = theListOfActorsEnabledForBeginOfEvent.begin(); sit!=theListOfActorsEnabledForBeginOfEvent.end(); ++sit)
+  for (sit = theListOfActorsEnabledForBeginOfEvent.begin(); sit!=theListOfActorsEnabledForBeginOfEvent.end(); ++sit)
     (*sit)->BeginOfEventAction(evt);
 }
 //-----------------------------------------------------------------------------
@@ -202,7 +180,7 @@ void GateActorManager::BeginOfEventAction(const G4Event* evt)
 void GateActorManager::EndOfEventAction(const G4Event* evt)
 {
   std::vector<GateVActor*>::iterator sit;
-  for(sit = theListOfActorsEnabledForEndOfEvent.begin(); sit!=theListOfActorsEnabledForEndOfEvent.end(); ++sit)
+  for (sit = theListOfActorsEnabledForEndOfEvent.begin(); sit!=theListOfActorsEnabledForEndOfEvent.end(); ++sit)
     (*sit)->EndOfEventAction(evt);
 }
 //-----------------------------------------------------------------------------
@@ -213,10 +191,10 @@ void GateActorManager::PreUserTrackingAction(const G4Track* track)
   // GateDebugMessage("Actor", 1, "listtrack= " << theListOfActorsEnabledForPreUserTrackingAction.size()
   //                    << Gateendl);
   std::vector<GateVActor*>::iterator sit;
-  for(sit = theListOfActorsEnabledForPreUserTrackingAction.begin(); sit!=theListOfActorsEnabledForPreUserTrackingAction.end(); ++sit)
+  for (sit = theListOfActorsEnabledForPreUserTrackingAction.begin(); sit!=theListOfActorsEnabledForPreUserTrackingAction.end(); ++sit)
     {
-      if((*sit)->GetNumberOfFilters()!=0)
-	if(!(*sit)->GetFilterManager()->Accept(track) ) continue;
+      if ((*sit)->GetNumberOfFilters()!=0)
+        if (!(*sit)->GetFilterManager()->Accept(track) ) continue;
       (*sit)->PreUserTrackingAction(0,track);
     }
 }
@@ -226,10 +204,10 @@ void GateActorManager::PreUserTrackingAction(const G4Track* track)
 void GateActorManager::PostUserTrackingAction(const G4Track* track)
 {
   std::vector<GateVActor*>::iterator sit;
-  for(sit = theListOfActorsEnabledForPostUserTrackingAction.begin(); sit!=theListOfActorsEnabledForPostUserTrackingAction.end(); ++sit)
+  for (sit = theListOfActorsEnabledForPostUserTrackingAction.begin(); sit!=theListOfActorsEnabledForPostUserTrackingAction.end(); ++sit)
     {
-      if((*sit)->GetNumberOfFilters()!=0)
-	if(!(*sit)->GetFilterManager()->Accept(track) ) continue;
+      if ((*sit)->GetNumberOfFilters()!=0)
+        if (!(*sit)->GetFilterManager()->Accept(track) ) continue;
       (*sit)->PostUserTrackingAction(0,track);
     }
 }
@@ -240,11 +218,11 @@ void GateActorManager::UserSteppingAction(const G4Step* step)
 {
   std::vector<GateVActor*>::iterator sit;
   // GateDebugMessage("Actor", 1, "list = " << theListOfActorsEnabledForUserSteppingAction.size() << Gateendl);
-  for(sit = theListOfActorsEnabledForUserSteppingAction.begin(); sit!=theListOfActorsEnabledForUserSteppingAction.end(); ++sit)
+  for (sit = theListOfActorsEnabledForUserSteppingAction.begin(); sit!=theListOfActorsEnabledForUserSteppingAction.end(); ++sit)
     {
       // GateDebugMessage("Actor", 1, "Step for " << (*sit)->GetObjectName());
-      if((*sit)->GetNumberOfFilters()!=0){
-	if(!(*sit)->GetFilterManager()->Accept(step) ) continue;
+      if ((*sit)->GetNumberOfFilters()!=0){
+        if (!(*sit)->GetFilterManager()->Accept(step) ) continue;
       }
       (*sit)->UserSteppingAction(0, step);
     }
@@ -256,7 +234,7 @@ void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolum
 {
   GateDebugMessageInc("Actor",4,"Actor Manager -- SetMFD -- begin "<<volume->GetLogicalVolume()<< Gateendl);
 
-  if(!volume->GetLogicalVolume()->GetSensitiveDetector())
+  if (!volume->GetLogicalVolume()->GetSensitiveDetector())
     {
       GateDebugMessage("Actor",5,"SetMFD -- Add new MSD - Attach to: "<<volume->GetLogicalVolume()->GetName()<< Gateendl);
 
@@ -276,7 +254,7 @@ void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolum
       msd->SetActor(actor);
       theListOfMultiSensitiveDetector.push_back(msd );
     }
-  else if(volume->GetLogicalVolume()->GetSensitiveDetector()->GetName().contains("MSD") )
+  else if (volume->GetLogicalVolume()->GetSensitiveDetector()->GetName().contains("MSD") )
     {
       GateDebugMessage("Actor",5,"SetMFD -- MSD already attached to: "<<volume->GetLogicalVolume()->GetName()<< Gateendl);
       dynamic_cast<GateMultiSensitiveDetector*>(volume->GetLogicalVolume()->GetSensitiveDetector())->SetActor(actor);
@@ -284,7 +262,7 @@ void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolum
   else
     {
       GateDebugMessage("Actor",5,"SetMFD -- SD already attached to: "<<volume->GetLogicalVolume()->GetName()
-		       <<" - Reaplace it by a MSD\n");
+                       <<" - Reaplace it by a MSD\n");
 
       G4int nActor = theListOfMultiSensitiveDetector.size();
       std::ostringstream num;
@@ -303,7 +281,7 @@ void GateActorManager::SetMultiFunctionalDetector(GateVActor * actor, GateVVolum
     }
 
   GateObjectChildList * listOfChild = volume->GetTheChildList();
-  for(size_t i =0;i<listOfChild->size();i++)
+  for (size_t i =0;i<listOfChild->size();i++)
     {
       GateVVolume*  vol =  listOfChild->GetVolume(i) ;
       SetMultiFunctionalDetector(actor, vol);
@@ -324,12 +302,12 @@ G4bool GateActorManager::AddFilter(G4String filterType, G4String actorName )
 {
   GateDebugMessageDec("Actor",4,"AddFilter() -- begin\n");
   int nActor = -1;
-  for(unsigned int i = 0;i<theListOfActors.size();i++)
-    if(theListOfActors[i]->GetObjectName() == actorName) nActor = i;
+  for (unsigned int i = 0;i<theListOfActors.size();i++)
+    if (theListOfActors[i]->GetObjectName() == actorName) nActor = i;
 
-  if(nActor==-1) GateError("Actor "<<actorName<<" not found!");
+  if (nActor==-1) GateError("Actor "<<actorName<<" not found!");
 
-  if(GateActorManager::theListOfFilterPrototypes[filterType])
+  if (GateActorManager::theListOfFilterPrototypes[filterType])
     {
       theListOfActors[nActor]->GetFilterManager()->AddFilter(GateActorManager::theListOfFilterPrototypes[filterType]("/gate/actor/"+theListOfActors[nActor]->GetObjectName()+"/"+filterType));
       theListOfActors[nActor]->IncNumberOfFilters();

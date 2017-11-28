@@ -46,7 +46,7 @@ class GateSourcePhaseSpace : public GateVSource
 public:
   GateSourcePhaseSpace( G4String name);
   ~GateSourcePhaseSpace();
-	
+
   void Initialize();
   void GenerateROOTVertex( G4Event* );
   void GenerateIAEAVertex( G4Event* );
@@ -79,34 +79,37 @@ public:
 
   void SetRmax(float r){mRmax = r;}
 
+  void SetStartingParticleId(long id) { mStartingParticleId = id; }
+
 protected:
 
   TChain *T;
   //TEntryList
   std::vector<unsigned int> pListOfSelectedEvents;
 
-  G4int mCurrentParticleNumber;
-  G4int mCurrentParticleNumberInFile;
-  G4int mNumberOfParticlesInFile;
-  G4int mTotalNumberOfParticles;
+  G4long mCurrentParticleNumber;
+  G4long mCurrentParticleNumberInFile;
+  G4long mStartingParticleId;
+  G4long mNumberOfParticlesInFile;
+  G4long mTotalNumberOfParticles;
   G4int mCurrentRunNumber;
   double mTotalSimuTime;
   double mRequestedNumberOfParticlesPerRun;
-  G4int mLoop;
-  G4int mLoopFile;
-  G4int mCurrentUse;
-  G4int mResidu;
+  G4long mLoop;
+  G4long mLoopFile;
+  G4long mCurrentUse;
+  G4long mResidu;
   double mResiduRun;
-  G4int mLastPartIndex;
+  G4long mLastPartIndex;
   unsigned int mCurrentParticleInIAEAFiles;
-  G4int mCurrentUsedParticleInIAEAFiles;
+  G4long mCurrentUsedParticleInIAEAFiles;
   bool mInitialized;
   G4String mFileType;
 
   float energy;
   float x, y, z;
-  float dx, dy, dz, t; 
-  float weight; 
+  float dx, dy, dz, t;
+  float weight;
   //  char volumeName;
   char particleName[64];
   G4String mParticleTypeNameGivenByUser;
@@ -143,7 +146,7 @@ protected:
   bool mUseRegularSymmetry;
   bool mUseRandomSymmetry;
   double mAngle;
-  
+
   bool mUseNbOfParticleAsIntensity;
 
 };
