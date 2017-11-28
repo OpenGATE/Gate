@@ -51,6 +51,7 @@ public:
   virtual G4double GetActivity()           { return m_activity; }
 
   virtual void SetStartTime(G4double value) { m_startTime = value; }
+  virtual void SetStopTime(G4double value) { m_stopTime = value; }
   virtual G4double GetStartTime()           { return m_startTime; }
 
   virtual void SetTime(G4double value) { m_time = value; }
@@ -159,6 +160,7 @@ protected:
   G4int      m_sourceID;     // source progressive number
   G4double   m_activity;     // activity of the source (e.g. # becquerel)
   G4double   m_startTime;
+  G4double   m_stopTime;    // Added by Y. Lemaréchal
   G4double   m_time;
   G4bool     m_needInit;
   G4int      nVerboseLevel;

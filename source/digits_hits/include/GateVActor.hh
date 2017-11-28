@@ -109,6 +109,7 @@ public:
   void EnableSaveEveryNSeconds(int n) { mSaveEveryNSeconds = n; }
   void SetOverWriteFilesFlag(bool b) { mOverWriteFilesFlag = b; }
   void EnableResetDataAtEachRun(bool b) { mResetDataAtEachRun = b; }
+  bool GetResetDataAtEachRunFlag() const {return mResetDataAtEachRun; }
   //-----------------------------------------------------------------------------
 
   G4String GetVolumeName(){return mVolumeName;}

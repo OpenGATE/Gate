@@ -1,0 +1,16 @@
+# ===============================================================================
+[Elements] 
+Hydrogen  Carbon Nitrogen Oxygen Sodium Magnesium Phosphor Sulfur 
+Chlorine Argon Potassium Calcium 
+Titanium Copper Zinc  Silver Tin  
+[/Elements]
+# ===============================================================================
+# HU      H    C    N    O   Na  Mg   P   S   Cl  Ar  K   Ca  Ti  Cu Zn  Ag  Sn
+# ===============================================================================
+ -1050    0    0  75.5 23.2  0   0    0   0   0  1.3  0    0  0    0  0  0   0  Air       
+  -950  10.3 10.5  3.1 74.9 0.2  0   0.2 0.3 0.3  0  0.2   0  0    0  0  0   0  Lung
+   19   10.3 13.4  3.0 72.3 0.2  0   0.2 0.2 0.2  0  0.2   0  0    0  0  0   0  SoftTissus   
+  200    5.6 26.5  3.6 40.5 0.1 0.2  7.3 0.3  0   0   0  15.9 0    0  0  0   0  Bone
+  1640   0   0     0   0    0   0   0    0    0   0   0    0  0    4  2  65  29  AmalgamTooth
+  2300   0   0     0   0    0   0   0    0    0   0   0    0  100  0  0  0   0  MetallImplants
+  3000   0   0     0   0    0   0   0    0    0   0   0    0  100  0  0  0   0  MetallImplants

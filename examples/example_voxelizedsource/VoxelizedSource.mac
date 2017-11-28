@@ -1,0 +1,60 @@
+#
+#
+# V O X E L   S O U R C E   B A S E D  O N   T H E   H O F F M A N   B R A I N   P H A N T O M
+
+/gate/source/addSource voxel_brain voxel
+
+/gate/source/voxel_brain/reader/insert image
+/gate/source/voxel_brain/imageReader/translator/insert range
+/gate/source/voxel_brain/imageReader/rangeTranslator/readTable activity_range_brain.dat
+/gate/source/voxel_brain/imageReader/rangeTranslator/describe 1
+
+/gate/source/voxel_brain/imageReader/readFile  volume.mhd 
+/gate/source/voxel_brain/imageReader/verbose   1
+
+/gate/source/voxel_brain/setPosition   -144.000000 -144.000000 -88.000000 mm
+
+/gate/source/voxel_brain/setType backtoback
+/gate/source/voxel_brain/setStartTime 0. s
+/gate/source/voxel_brain/setStopTime .3 s
+/gate/source/voxel_brain/gps/particle gamma
+/gate/source/voxel_brain/setForcedUnstableFlag true
+/gate/source/voxel_brain/setForcedHalfLife 6586.2 s
+/gate/source/voxel_brain/gps/energytype Mono
+/gate/source/voxel_brain/gps/monoenergy 0.0511 MeV
+/gate/source/voxel_brain/gps/confine NULL
+/gate/source/voxel_brain/gps/angtype iso
+/gate/source/voxel_brain/dump 1
+
+####################################################################
+/gate/source/addSource voxel_brain2 voxel
+
+/gate/source/voxel_brain2/reader/insert image
+/gate/source/voxel_brain2/imageReader/translator/insert range
+/gate/source/voxel_brain2/imageReader/rangeTranslator/readTable activity_range_brain.dat
+/gate/source/voxel_brain2/imageReader/rangeTranslator/describe 1
+
+/gate/source/voxel_brain2/imageReader/readFile volume2.mhd 
+/gate/source/voxel_brain2/imageReader/verbose  1
+
+/gate/source/voxel_brain2/setPosition   -144.000000 -144.000000 -88.000000 mm
+
+/gate/source/voxel_brain2/setType backtoback
+/gate/source/voxel_brain2/setStartTime 0.3 s
+/gate/source/voxel_brain2/setStopTime 1.0 s
+/gate/source/voxel_brain2/gps/particle gamma
+/gate/source/voxel_brain2/setForcedUnstableFlag true
+/gate/source/voxel_brain2/setForcedHalfLife 6586.2 s
+/gate/source/voxel_brain2/gps/energytype Mono
+/gate/source/voxel_brain2/gps/monoenergy 0.0511 MeV
+/gate/source/voxel_brain2/gps/confine NULL
+/gate/source/voxel_brain2/gps/angtype iso
+/gate/source/voxel_brain2/dump 1
+
+#####################################################
+
+
+
+/gate/source/list
+
+

@@ -45,6 +45,7 @@ protected:
 //    G4UIdirectory*                       GateSourceDir;
   G4UIcmdWithADoubleAndUnit*           ActivityCmd;
   G4UIcmdWithADoubleAndUnit*           StartTimeCmd;
+  G4UIcmdWithADoubleAndUnit*           StopTimeCmd;
   G4UIcmdWithAString*                  TypeCmd;
   G4UIcmdWithAnInteger*                DumpCmd;
   //G4UIcmdWithAnInteger*                NbrOfParticlesCmd;

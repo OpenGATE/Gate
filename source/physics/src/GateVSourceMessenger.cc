@@ -58,6 +58,12 @@ GateVSourceMessenger::GateVSourceMessenger(GateVSource* source)
   StartTimeCmd->SetParameterName("time",false);
   StartTimeCmd->SetUnitCategory("Time");
 
+  cmdName = GetDirectoryName()+"setStopTime";
+  StopTimeCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
+  StopTimeCmd->SetGuidance("Set source stop time");
+  StopTimeCmd->SetParameterName("time",false);
+  StopTimeCmd->SetUnitCategory("Time");
+  
   cmdName = GetDirectoryName()+"setType";
   TypeCmd = new G4UIcmdWithAString(cmdName,this);
   TypeCmd->SetGuidance("Set source type (backtoback/fastI124/phaseSpace/voxel)");
@@ -163,6 +169,7 @@ GateVSourceMessenger::~GateVSourceMessenger()
 {
   delete ActivityCmd;
   delete StartTimeCmd;
+  delete StopTimeCmd;
   delete TypeCmd;
   delete DumpCmd;
   delete VerboseCmd;
@@ -195,6 +202,8 @@ void GateVSourceMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     m_source->SetActivity(ActivityCmd->GetNewDoubleValue(newValue));
   } else if( command == StartTimeCmd ) {
     m_source->SetStartTime(StartTimeCmd->GetNewDoubleValue(newValue));
+  } else if( command == StopTimeCmd ) {
+    m_source->SetStopTime(StopTimeCmd->GetNewDoubleValue(newValue));
   } else if( command == TypeCmd ) {
     m_source->SetType(newValue);
   } else if( command == DumpCmd ) {
