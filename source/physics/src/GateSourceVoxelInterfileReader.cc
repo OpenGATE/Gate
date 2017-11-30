@@ -22,6 +22,7 @@ See GATE/LICENSE.txt for further details
 GateSourceVoxelInterfileReader::GateSourceVoxelInterfileReader(GateVSource* source)
   : GateVSourceVoxelReader(source), GateInterfileHeader()
 {
+  GateError("GateSourceVoxelInterfileReader is obsolete, use GateSourceVoxelImageReader instead!");
   nVerboseLevel = 0;
   m_name = G4String("interfileReader");
   m_type = G4String("interfile");
