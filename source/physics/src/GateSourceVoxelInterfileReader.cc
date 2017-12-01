@@ -72,6 +72,7 @@ void GateSourceVoxelInterfileReader::ReadFile(G4String headerFileName)
   dz = m_planeThickness;
 
   SetVoxelSize( G4ThreeVector(dx, dy, dz) * mm );
+  SetArraySize(G4ThreeVector(nx, ny, nz));
 
   for (G4int iz=0; iz<nz; iz++) {
       for (G4int iy=0; iy<ny; iy++) {
@@ -130,6 +131,7 @@ void GateSourceVoxelInterfileReader::ReadRTFile(G4String headerFileName, G4Strin
   dz = m_planeThickness;
 
   SetVoxelSize( G4ThreeVector(dx, dy, dz) * mm );
+  SetArraySize(G4ThreeVector(nx, ny, nz));
 
   for (G4int iz=0; iz<nz; iz++) {
       for (G4int iy=0; iy<ny; iy++) {
@@ -137,7 +139,7 @@ void GateSourceVoxelInterfileReader::ReadRTFile(G4String headerFileName, G4Strin
 	      imageValue = buffer[ix+nx*iy+nx*ny*iz];
 	      activity = m_voxelTranslator->TranslateToActivity(imageValue);
 	      if (activity > 0.)
-		AddVoxel_FAST(ix, iy, iz, activity);
+	    	  AddVoxel(ix, iy, iz, activity);
 	  }
       }
   }
