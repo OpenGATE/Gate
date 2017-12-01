@@ -12,6 +12,7 @@
 
 #include <vector>
 #include "GateVImageVolume.hh"
+#include "GateVSourceVoxelReader.hh"
 
 #ifndef __CUDACC__
 #ifndef FLOAT3
@@ -211,7 +212,6 @@ struct GateGPUIO_Output
 
 
 //----------------------------------------------------------
-typedef std::map<std::vector<int>,double> ActivityMap;
 void GateGPUIO_Particle_Print(const GateGPUIO_Particle & p);
 GateGPUIO_Input* GateGPUIO_Input_new();
 void GateGPUIO_Input_delete(GateGPUIO_Input* input);
@@ -219,7 +219,7 @@ void GateGPUIO_Input_Print_mat(GateGPUIO_Input * input, int i);
 void GateGPUIO_Input_Init_Materials(GateGPUIO_Input* input, 
                                     std::vector<G4Material*> & m, 
                                     G4String & name);
-void GateGPUIO_Input_parse_activities(const ActivityMap& activities, 
+void GateGPUIO_Input_parse_activities(const GateVSourceVoxelReader::GateSourceActivityMap& activities,
                                       GateGPUIO_Input * input);
 GateGPUIO_Output* GateGPUIO_Output_new();
 void GateGPUIO_Output_delete(GateGPUIO_Output* output);
