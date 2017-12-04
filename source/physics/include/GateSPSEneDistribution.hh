@@ -23,48 +23,48 @@ See LICENSE.md for further details
 #ifndef GateSPSEneDistribution_h
 #define GateSPSEneDistribution_h 1
 
-#include "G4PhysicsOrderedFreeVector.hh"
-#include "G4ParticleMomentum.hh"
-#include "G4ParticleDefinition.hh"
-#include "G4DataInterpolation.hh"
+#include <vector>
 
-#include "G4SPSEneDistribution.hh"
+#include <G4Types.hh>
+#include <G4String.hh>
+#include <G4ParticleDefinition.hh>
+
+#include <G4SPSEneDistribution.hh>
+
 
 class GateSPSEneDistribution : public G4SPSEneDistribution
 {
+  public:
+    GateSPSEneDistribution();
 
- public :
+    void GenerateFluor18();
+    void GenerateOxygen15();
+    void GenerateCarbon11();
+    void GenerateRangeEnergy();
 
-  GateSPSEneDistribution () ;
-  ~GateSPSEneDistribution () ;
+    // Shoot an energy in previously created probability tables
+    void GenerateFromUserSpectrum();
 
-  void GenerateFluor18() ;
-  void GenerateOxygen15() ;
-  void GenerateCarbon11() ;
-  void GenerateRangeEnergy();
+    // Create probability tables
+    void BuildUserSpectrum(G4String fileName);
 
-  // Create probability tables
-  void GenerateFromUserSpectrum();
-  // Shoot an energy in previously created probability tables
-  void BuildUserSpectrum(G4String FileName);
+    G4double GenerateOne(G4ParticleDefinition*);
 
-  G4double GenerateOne( G4ParticleDefinition* ) ;
-  inline void SetMinEnergy( G4double E ){ m_Emin = E;};
-  inline void SetEnergyRange( G4double r ){ m_EnergyRange = r; };
+    inline void SetMinEnergy(G4double E) { mEmin = E; }
+    inline void SetEnergyRange(G4double r) { mEnergyRange = r; }
 
- private :
+  private:
+    G4double  mParticleEnergy;
+    G4double  mEmin;
+    G4double  mEnergyRange;
 
-  G4double particle_energy ;
-  G4double m_Emin;
-  G4double m_EnergyRange;
+    G4int     mMode;
+    G4int     mDimSpectrum;
+    G4double  mSumProba;
 
-  G4int      m_mode;
-  G4int      m_dim_spectrum;
-  G4double   m_sum_proba;
-  G4double*  m_tab_proba;
-  G4double*  m_tab_sumproba;
-  G4double*  m_tab_energy;
+    std::vector<G4double> mTabProba;
+    std::vector<G4double> mTabSumProba;
+    std::vector<G4double> mTabEnergy;
+};
 
-} ;
-
-#endif
+#endif  // GateSPSEneDistribution_h
