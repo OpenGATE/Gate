@@ -2,7 +2,7 @@
   Copyright (C): OpenGATE Collaboration
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -64,7 +64,7 @@ void GateParticleFilterMessenger::BuildCommands(G4String base)
   guidance = "Add particles by PDG number";
   pAddParticlePDGCmd->SetGuidance(guidance);
   pAddParticlePDGCmd->SetParameterName("Particles PDG number",false);
-  
+
   bb = base+"/addParentParticle";
   pAddParentParticleCmd = new G4UIcmdWithAString(bb,this);
   guidance = "Add parent particle";
