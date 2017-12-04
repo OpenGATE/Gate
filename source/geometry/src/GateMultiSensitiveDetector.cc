@@ -30,7 +30,7 @@ GateMultiSensitiveDetector::~GateMultiSensitiveDetector()
 {
 
   // if (pSensitiveDetector != 0) delete pSensitiveDetector; //already delete by G4
-  if (pMultiFunctionalDetector != 0) delete pMultiFunctionalDetector;
+  // if (pMultiFunctionalDetector != 0) delete pMultiFunctionalDetector;
 }
 //-----------------------------------------------------------------------------
 
