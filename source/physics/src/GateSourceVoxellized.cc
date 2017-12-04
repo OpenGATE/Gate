@@ -49,7 +49,7 @@ G4double GateSourceVoxellized::GetNextTime(G4double timeNow)
   G4double firstTime = GateVSource::GetNextTime(timeNow);
 
   if (nVerboseLevel>1)
-    G4cout << "GateSourceVoxellized::GetNextSource : firstTime (s) " << firstTime/s << Gateendl;
+    G4cout << "GateSourceVoxellized::GetNextTime : firstTime (s) " << firstTime/s << Gateendl;
 
   return firstTime;
 }
@@ -92,8 +92,8 @@ G4int GateSourceVoxellized::GeneratePrimaries(G4Event* event)
     return 0;
   }
   // ask to the voxel reader to provide the active voxel for this event
-  std::vector<G4int> firstSource = m_voxelReader->GetNextSource();
-
+  G4int nextSource = m_voxelReader->GetNextSource();
+  G4ThreeVector firstSource = m_voxelReader->GetVoxelIndices(nextSource);
   // move the centre to the chosen voxel:
   // to the relative position and then to the global absolute position taking into account
   // the rotation of the voxel matrix both for the position and for the orientation of the active voxel
