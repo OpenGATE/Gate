@@ -27,7 +27,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 GateSPSEneDistribution::GateSPSEneDistribution()
   : G4SPSEneDistribution(), mParticleEnergy(),
-    mEmin(), mEnergyRange(), mMode(), mDimSpectrum(),
+    mEnergyRange(), mMode(), mDimSpectrum(),
     mSumProba(), mTabProba(), mTabSumProba(), mTabEnergy()
 {
 }
@@ -52,7 +52,7 @@ void GateSPSEneDistribution::GenerateFluor18()
       E = G4RandFlat::shoot(0.511, 1.144);  // Emin = 0.511 ; Emax = 1.144
       u = G4RandFlat::shoot(0.5209);  // Nmin = 0 ; Nmax = 0.5209
       energyF18 = E;
-    } 
+    }
   while ( u > a*E*E*E + b*E*E + c*E + d );
 
   G4double energyFluor = energyF18 - 0.511;
@@ -120,17 +120,12 @@ void GateSPSEneDistribution::GenerateCarbon11()
 //-----------------------------------------------------------------------------
 G4double GateSPSEneDistribution::GenerateOne( G4ParticleDefinition* a )
 {
-  if( GetEnergyDisType() == "Fluor18" )
-    GenerateFluor18();
-  else if( GetEnergyDisType() == "Oxygen15" )
-    GenerateOxygen15();
-  else if( GetEnergyDisType() == "Carbon11" )
-    GenerateCarbon11();
-  else if(GetEnergyDisType() == "Range")
-    GenerateRangeEnergy();
-  else if(GetEnergyDisType() == "UserSpectrum")
-    GenerateFromUserSpectrum();
-  else mParticleEnergy = G4SPSEneDistribution::GenerateOne( a );
+  if (GetEnergyDisType() == "Fluor18")           GenerateFluor18();
+  else if (GetEnergyDisType() == "Oxygen15")     GenerateOxygen15();
+  else if (GetEnergyDisType() == "Carbon11")     GenerateCarbon11();
+  else if (GetEnergyDisType() == "Range")        GenerateRangeEnergy();
+  else if (GetEnergyDisType() == "UserSpectrum") GenerateFromUserSpectrum();
+  else mParticleEnergy = G4SPSEneDistribution::GenerateOne(a);
 
   return mParticleEnergy;
 }
@@ -138,10 +133,10 @@ G4double GateSPSEneDistribution::GenerateOne( G4ParticleDefinition* a )
 
 
 //-----------------------------------------------------------------------------
-//PY.Descourt 08/09/2009
 void GateSPSEneDistribution::GenerateRangeEnergy()
 {
-  mParticleEnergy = (mEmin  + G4UniformRand() * mEnergyRange);
+  mEnergyRange = GetEmax()-GetEmin();
+  mParticleEnergy = (GetEmin()  + G4UniformRand() * mEnergyRange);
 }
 //-----------------------------------------------------------------------------
 
@@ -163,7 +158,9 @@ void GateSPSEneDistribution::BuildUserSpectrum(G4String fileName)
     G4double energyRead;
 
     inputFile >> mMode;
-    inputFile >> mEmin;
+    G4double emin;
+    inputFile >> emin;
+    SetEmin(emin);
 
     G4int cursorPosition = inputFile.tellg();  // tellg() save file cursor position
 
@@ -208,7 +205,7 @@ void GateSPSEneDistribution::BuildUserSpectrum(G4String fileName)
     case 2:  // probability table to create histogram
       GateMessage("Beam", 2, "Reading UserSpectrum: type is 2=Histogram." << Gateendl);
       mTabSumProba.resize(mDimSpectrum);
-      mSumProba = mTabProba[0] * (mTabEnergy[0] - mEmin);
+      mSumProba = mTabProba[0] * (mTabEnergy[0] - GetEmin());
       mTabSumProba[0] = mSumProba;
       for(nline = 1; nline < mDimSpectrum; nline++) {
         mSumProba += (mTabEnergy[nline] - mTabEnergy[nline - 1]) * mTabProba[nline];
@@ -266,7 +263,7 @@ void GateSPSEneDistribution::GenerateFromUserSpectrum()
     // histogram spectrum:
     // sample from uniform sub-distribution of the intervall
     if(i == 0) {
-      pEnergy = G4RandFlat::shoot(mEmin, mTabEnergy[0]);
+      pEnergy = G4RandFlat::shoot(GetEmin(), mTabEnergy[0]);
     } else {
       pEnergy = G4RandFlat::shoot(mTabEnergy[i - 1], mTabEnergy[i]);
     }

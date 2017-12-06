@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See LICENSE.md for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
 /* ---------------------------------------------------------------------------- *
  *                                                                              *
@@ -28,43 +28,41 @@ See LICENSE.md for further details
 #include <G4Types.hh>
 #include <G4String.hh>
 #include <G4ParticleDefinition.hh>
-
 #include <G4SPSEneDistribution.hh>
 
 
 class GateSPSEneDistribution : public G4SPSEneDistribution
 {
-  public:
-    GateSPSEneDistribution();
+public:
+  GateSPSEneDistribution();
 
-    void GenerateFluor18();
-    void GenerateOxygen15();
-    void GenerateCarbon11();
-    void GenerateRangeEnergy();
+  void GenerateFluor18();
+  void GenerateOxygen15();
+  void GenerateCarbon11();
+  void GenerateRangeEnergy();
 
-    // Shoot an energy in previously created probability tables
-    void GenerateFromUserSpectrum();
+  // Shoot an energy in previously created probability tables
+  void GenerateFromUserSpectrum();
 
-    // Create probability tables
-    void BuildUserSpectrum(G4String fileName);
+  // Create probability tables
+  void BuildUserSpectrum(G4String fileName);
 
-    G4double GenerateOne(G4ParticleDefinition*);
+  G4double GenerateOne(G4ParticleDefinition*);
 
-    inline void SetMinEnergy(G4double E) { mEmin = E; }
-    inline void SetEnergyRange(G4double r) { mEnergyRange = r; }
+  void SetEnergyRange(G4double r) { mEnergyRange = r; }
 
-  private:
-    G4double  mParticleEnergy;
-    G4double  mEmin;
-    G4double  mEnergyRange;
+private:
+  G4double  mParticleEnergy;
+  G4double  mEmin;
+  G4double  mEnergyRange;
 
-    G4int     mMode;
-    G4int     mDimSpectrum;
-    G4double  mSumProba;
+  G4int     mMode;
+  G4int     mDimSpectrum;
+  G4double  mSumProba;
 
-    std::vector<G4double> mTabProba;
-    std::vector<G4double> mTabSumProba;
-    std::vector<G4double> mTabEnergy;
+  std::vector<G4double> mTabProba;
+  std::vector<G4double> mTabSumProba;
+  std::vector<G4double> mTabEnergy;
 };
 
 #endif  // GateSPSEneDistribution_h
