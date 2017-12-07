@@ -226,7 +226,7 @@ LYSO:   d=7.36 g/cm3; n=4 ; state=Solid
         +el: name=Silicon; f=0.063714272
         +el: name=Oxygen; f=0.181479788
  
- +LYSOold:   d=5.37 g/cm3; n=4 ; state=Solid
+ LYSOold:   d=5.37 g/cm3; n=4 ; state=Solid
         +el: name=Lutetium   ; f=0.31101534
         +el: name=Yttrium    ; f=0.368765605
         +el: name=Silicon    ; f=0.083209699
