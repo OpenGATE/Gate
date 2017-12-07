@@ -127,11 +127,7 @@ void GateTetMeshDoseActor::InitData()
   GateTetMeshBox* tetMeshBox = dynamic_cast<GateTetMeshBox*>(GateVActor::mVolume);
 
   std::size_t nTetrahedra = tetMeshBox->GetNumberOfTetrahedra();
-  Estimators initialEstimates = {
-    .dose = 0.0,
-    .sumOfSquaredDose = 0.0,
-    .relativeUncertainty = std::numeric_limits<G4double>::infinity(),
-  };
+  Estimators initialEstimates{0.0, 0.0, std::numeric_limits<G4double>::infinity()};
   
   mRunData.clear();
   mRunData.resize(nTetrahedra, initialEstimates);
@@ -172,12 +168,7 @@ void GateTetMeshDoseActor::SaveData()
 
 void GateTetMeshDoseActor::ResetData()
 {
-  Estimators initialEstimates = {
-    .dose = 0.0,
-    .sumOfSquaredDose = 0.0,
-    .relativeUncertainty = std::numeric_limits<G4double>::infinity(),
-  };
-  
+  Estimators initialEstimates{0.0, 0.0, std::numeric_limits<G4double>::infinity()};
   std::fill(mRunData.begin(), mRunData.end(), initialEstimates);
 }
 
