@@ -53,7 +53,6 @@ public:
 
 private:
   G4double  mParticleEnergy;
-  G4double  mEmin;
   G4double  mEnergyRange;
 
   G4int     mMode;
