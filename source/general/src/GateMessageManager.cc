@@ -6,7 +6,7 @@ of the GNU Lesser General  Public Licence (LGPL)
 See LICENSE.md for further details
 ----------------------*/
 
- 
+
 //-----------------------------------------------------------
 /**
  * \file
@@ -47,7 +47,7 @@ GateMessageManager::GateMessageManager()
   mMessageLevel[key] = 0;
   mMessageHelp[key] = "Messages related to images";
   if (mMaxMessageLength<key.length()) mMaxMessageLength = key.length();
-  
+
   key ="Actions";
   mMessageLevel[key] = 0;
   mMessageHelp[key] = "Messages related to user actions";
@@ -107,7 +107,7 @@ GateMessageManager::GateMessageManager()
   mMessageLevel[key] = 0;
   mMessageHelp[key] = "Geometry construction messages";
   if (mMaxMessageLength<key.length()) mMaxMessageLength = key.length();
-    
+
   key = "Beam";
   mMessageLevel[key] = 0;
   mMessageHelp[key] = "Beam related messages";
@@ -154,39 +154,39 @@ GateMessageManager::GateMessageManager()
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
-GateMessageManager* GateMessageManager::GetInstance() 
-{ 
+GateMessageManager* GateMessageManager::GetInstance()
+{
   static GateMessageManager* m = 0;
   if (!m) m = new GateMessageManager();
-  return m; 
+  return m;
 }
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
-void GateMessageManager::RegisterMessageType(std::string key, 
+void GateMessageManager::RegisterMessageType(std::string key,
 					     std::string help,
-					     unsigned char default_level) 
+					     unsigned char default_level)
 {
   GetInstance()->mMessageLevel[key] = default_level;
   GetInstance()->mMessageHelp[key] = help;
-  if (GetInstance()->mMaxMessageLength<key.length()) 
+  if (GetInstance()->mMaxMessageLength<key.length())
     GetInstance()->mMaxMessageLength = key.length();
 }
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
-void GateMessageManager::SetMessageLevel(std::string key, 
-					 unsigned char level) 
+void GateMessageManager::SetMessageLevel(std::string key,
+					 unsigned char level)
 {
   std::map<std::string,int>::iterator i;
   if (key==std::string("All")) {
     GetInstance()->mAllLevel = level;
-      
+
     for (i=GetInstance()->mMessageLevel.begin();
 	 i!=GetInstance()->mMessageLevel.end();
-	 ++i) 
+	 ++i)
       (*i).second = level;
-      
+
   }
   else {
     i = GetInstance()->mMessageLevel.find(key);
@@ -202,32 +202,32 @@ void GateMessageManager::SetMessageLevel(std::string key,
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
-int GateMessageManager::GetMessageLevel(std::string key) 
+int GateMessageManager::GetMessageLevel(std::string key)
 {
   int l = GetInstance()->mAllLevel;
-  std::map<std::string,int>::iterator i = 
+  std::map<std::string,int>::iterator i =
     GetInstance()->mMessageLevel.find(key);
   if (i!=GetInstance()->mMessageLevel.end()) {
-    if ( (*i).second > l ) l = (*i).second;      
+    if ( (*i).second > l ) l = (*i).second;
   }
   return l;
 }
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
-void GateMessageManager::PrintInfo() 
+void GateMessageManager::PrintInfo()
 {
-  GateMessage("Help",1,"-----------------------------------------------------------------------------" 
+  GateMessage("Help",1,"-----------------------------------------------------------------------------"
 	      << Gateendl);
   GateMessage("Help",1, "Category");
   for (int k=0;
        k<(int)(GetInstance()->mMaxMessageLength-8);
        k++) {
-    GateMessageCont("Help",1," "); 
+    GateMessageCont("Help",1," ");
   }
   GateMessageCont("Help",1,"Level  Nature\n");
   std::map<std::string,int>::iterator i;
-  std::map<std::string,std::string>::iterator j;  
+  std::map<std::string,std::string>::iterator j;
   for (i=GetInstance()->mMessageLevel.begin(),
 	 j=GetInstance()->mMessageHelp.begin();
        i!=GetInstance()->mMessageLevel.end();++i,++j) {
@@ -237,16 +237,16 @@ void GateMessageManager::PrintInfo()
 	 k++) {
       GateMessageCont("Help",1," ");
     }
-    GateMessageCont("Help",1, (*i).second << "\t" 
+    GateMessageCont("Help",1, (*i).second << "\t"
 		    << (*j).second << Gateendl);
   }
-  GateMessage("Help",1,"-----------------------------------------------------------------------------" 
+  GateMessage("Help",1,"-----------------------------------------------------------------------------"
 	      << Gateendl);
 }
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
-void GateMessageManager::EnableG4Messages(bool b) 
+void GateMessageManager::EnableG4Messages(bool b)
 {
   mEnableG4Message = b;
 }
@@ -255,33 +255,33 @@ void GateMessageManager::EnableG4Messages(bool b)
 //-----------------------------------------------------------
 #ifdef Geant496_COMPATIBILITY
 G4int GateMessageManager::ReceiveG4cout (const G4String& s)
-{ 
+{
   if (mEnableG4Message) std::cout << "[G4] " << s;
   return 0;
 }
 #else
 G4int GateMessageManager::ReceiveG4cout (G4String s)
-{ 
+{
   if (mEnableG4Message) std::cout << "[G4] " << s;
   return 0;
-} 
+}
 #endif
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
-std::string GateMessageManager::GetSpace(int n) 
-{ 
-  std::string s; 
-  for (int i=0; i<n; i++) s.insert(0," "); 
-  return s; 
+std::string GateMessageManager::GetSpace(int n)
+{
+  std::string s;
+  for (int i=0; i<n; i++) s.insert(0," ");
+  return s;
 }
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
 #ifdef Geant496_COMPATIBILITY
 G4int GateMessageManager::ReceiveG4cerr (const G4String& s)
-{ 
-  std::cerr << "\t[G4-cerr] " << s; 
+{
+  std::cerr << "\t[G4-cerr] " << s;
   // Check if this error is 'command not found' (or related) to stop Gate
   bool isMacroError = false;
   std::string::size_type i = s.find("***** COMMAND NOT FOUND <", 0);
@@ -292,17 +292,17 @@ G4int GateMessageManager::ReceiveG4cerr (const G4String& s)
   isMacroError = isMacroError || (i != std::string::npos);
   i = s.find("***** Can not open a macro file <", 0);
   isMacroError = isMacroError || (i != std::string::npos);
-  if (isMacroError) { 
+  if (isMacroError) {
     std::cerr << "[Gate] Sorry, error in a macro command : abort.\n";
     exit(-1);
-  }      
+  }
   // Ciao
   return 0;
 }
 #else
 G4int GateMessageManager::ReceiveG4cerr (G4String s)
-{ 
-  std::cerr << "\t[G4-cerr] " << s; 
+{
+  std::cerr << "\t[G4-cerr] " << s;
   // Check if this error is 'command not found' (or related) to stop Gate
   bool isMacroError = false;
   std::string::size_type i = s.find("***** COMMAND NOT FOUND <", 0);
@@ -313,10 +313,10 @@ G4int GateMessageManager::ReceiveG4cerr (G4String s)
   isMacroError = isMacroError || (i != std::string::npos);
   i = s.find("***** Can not open a macro file <", 0);
   isMacroError = isMacroError || (i != std::string::npos);
-  if (isMacroError) { 
+  if (isMacroError) {
     std::cerr << "[Gate] Sorry, error in a macro command : abort.\n";
     exit(-1);
-  }      
+  }
   // Ciao
   return 0;
 }
