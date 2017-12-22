@@ -32,6 +32,7 @@ struct DetectorInOutData {
   // Output parameters
   double u;
   double v;
+  double w; // windows id (-1 if outside)
 };
 //-----------------------------------------------------------------------------
 
@@ -53,6 +54,7 @@ public:
   // Parameters
   void SetInputPlaneName(std::string & name);
   void SetOutputSystemName(std::string & name);
+  void SetOutputWindowNames(std::string & names);
 
   // Callbacks
   virtual void BeginOfRunAction(const G4Run *);
@@ -73,6 +75,8 @@ protected:
   std::vector<DetectorInOutData> mData;
   bool mEventIsAlreadyStored;
   DetectorInOutData mCurrentData;
+  std::vector<G4String> mListOfWindowNames;
+  std::vector<int> mListOfWindowIds;
 };
 
 // Macro to auto declare actor

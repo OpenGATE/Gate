@@ -39,6 +39,11 @@ void GateDetectorInOutActorMessenger::BuildCommands(G4String base)
   pSetOutputSystemNameCmd = new G4UIcmdWithAString(n, this);
   guid = G4String("Set the name of the output system");
   pSetOutputSystemNameCmd->SetGuidance(guid);
+
+  n = base + "/setOutputWindowNames";
+  pSetOutputWindowNamesCmd = new G4UIcmdWithAString(n, this);
+  guid = G4String("Set the names of the energy windows to output");
+  pSetOutputWindowNamesCmd->SetGuidance(guid);
 }
 //-----------------------------------------------------------------------------
 
@@ -48,6 +53,7 @@ void GateDetectorInOutActorMessenger::SetNewValue(G4UIcommand* cmd, G4String new
 {
   if (cmd == pSetInputPlaneCmd) pDIOActor->SetInputPlaneName(newValue);
   if (cmd == pSetOutputSystemNameCmd) pDIOActor->SetOutputSystemName(newValue);
+  if (cmd == pSetOutputWindowNamesCmd) pDIOActor->SetOutputWindowNames(newValue);
 
   GateActorMessenger::SetNewValue(cmd, newValue);
 }
