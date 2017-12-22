@@ -50,6 +50,18 @@ void GateDetectorInOutActor::SetOutputSystemName(std::string & name)
 
 
 //-----------------------------------------------------------------------------
+void GateDetectorInOutActor::SetOutputWindowNames(std::string & names)
+{
+  DDF();
+  DD(names);
+  std::vector<std::string> words;
+  GetWords(words, names);
+  for(auto w:words) mListOfWindowNames.push_back(w);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
 void GateDetectorInOutActor::Construct()
 {
   DDF();
@@ -101,6 +113,16 @@ void GateDetectorInOutActor::BeginOfRunAction(const G4Run * r)
   DDF();
   DD(mOutputSystemName);
 
+ G4DigiManager * fDM = G4DigiManager::GetDMpointer();
+ for(auto name:mListOfWindowNames) {
+   DD(name);
+   auto id = fDM->GetDigiCollectionID(name);
+   DD(id);
+   if (id == -1) {
+     GateError("Cannot find the energy window named: " << name);
+   }
+   mListOfWindowIds.push_back(id);
+ }
 }
 //-----------------------------------------------------------------------------
 
@@ -118,36 +140,25 @@ void GateDetectorInOutActor::BeginOfEventAction(const G4Event * e)
 void GateDetectorInOutActor::EndOfEventAction(const G4Event * e)
 {
   GateVActor::EndOfEventAction(e);
-
-
-  // need m_energyWindowNb
-  // need m_inputDataChannelIDList
-  int digi_id = 2;
-
   G4DigiManager * fDM = G4DigiManager::GetDMpointer();
-  DD(fDM->GetModuleCapacity());
-  DD(fDM->GetCollectionCapacity());
-
-  const GateSingleDigiCollection * SDC;
-  SDC = dynamic_cast<const GateSingleDigiCollection*>(fDM->GetDigiCollection(digi_id));
-  if (!SDC) {
-    DD("no digi collection");
-    return; // nothing stored
-  }
-  DD(const_cast<GateSingleDigiCollection*>(SDC)->GetName());
-  G4int n_digi = SDC->entries();
-  DD(n_digi);
-  for (G4int i = 0; i < n_digi; i++) { // nb head ()
-    DD(i);
-    // G4int headID = 0;//m_system->GetMainComponentID((*SDC)[i]->GetPulse());
-    G4double xProj = (*SDC)[i]->GetLocalPos()[0]; // X FIXME
-    G4double yProj = (*SDC)[i]->GetLocalPos()[2]; // Z FIXME
-    DD(xProj);
-    DD(yProj);
+  bool isIn = false;
+  int i=-1;
+  for(auto id:mListOfWindowIds) {
+    ++i;
+    auto SDC = dynamic_cast<const GateSingleDigiCollection*>(fDM->GetDigiCollection(id));
+    if (!SDC) continue;
+    G4double xProj = (*SDC)[0]->GetLocalPos()[0]; // X FIXME ?
+    G4double yProj = (*SDC)[0]->GetLocalPos()[1]; // Z FIXME ?
     mCurrentData.u = xProj;
     mCurrentData.v = yProj;
+    mCurrentData.w = i;
+    isIn = true;
   }
-
+  if (!isIn) {
+    mCurrentData.u = 0;
+    mCurrentData.v = 0;
+    mCurrentData.w = i;
+  }
   mData.push_back(mCurrentData);
 }
 //-----------------------------------------------------------------------------
@@ -167,7 +178,6 @@ void GateDetectorInOutActor::UserSteppingAction(const GateVVolume * /* v */, con
   // which dimension ?? ask SPECThead system
   auto theta = acos(dir.x()/l)/degree;
   auto phi = acos(dir.z()/l)/degree;
-  DD(p);
 
   // Input
   mCurrentData.x = p.x();

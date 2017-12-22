@@ -32,6 +32,7 @@ protected:
   GateDetectorInOutActor * pDIOActor;
   G4UIcmdWithAString * pSetInputPlaneCmd;
   G4UIcmdWithAString * pSetOutputSystemNameCmd;
+  G4UIcmdWithAString * pSetOutputWindowNamesCmd;
 };
 //-----------------------------------------------------------------------------
 
