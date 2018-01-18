@@ -77,4 +77,5 @@ Spokesperson:
 ------------
 
    Christian MOREL (UNIL/EPFL) 2002-2005
-   Irène Buvat (IMNC/CNRS) 2005-
+   Irène Buvat (IMNC/CNRS) 2005-2017
+   Uwe Pietrzyk (IME) 2017-
