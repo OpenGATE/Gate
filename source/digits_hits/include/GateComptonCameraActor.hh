@@ -102,6 +102,10 @@ public:
 
   //Hay que pasarlas a privadas Temporal
   double* edepInEachLayerEvt;
+
+   double* xPos_InEachLayerEvt;
+    double* yPos_InEachLayerEvt;
+     double* zPos_InEachLayerEvt;
   std::vector<G4String> layerNames;
    std::vector<std::unique_ptr<TTree>> pSingles2;
 
@@ -144,9 +148,11 @@ G4String attachPhysVolumeName;
   bool newEvt;
   bool newTrack;
   double sumNi;
-  double sumM1;
-  double sumM2;
-  double sumM3;
+
+
+  G4ThreeVector hitPostPos;
+  G4ThreeVector hitPrePos;
+   double edepStep;
 
   double edep;
   double tof;

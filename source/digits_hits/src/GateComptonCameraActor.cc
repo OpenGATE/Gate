@@ -45,9 +45,7 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
   newTrack = true;
   sumNi=0.;
   nTrack=0;
-  sumM1=0.;
-  sumM2=0.;
-  sumM3=0.;
+
   edep = 0.;
   //nDaughterBB=0;
   counterConstructF=0;
@@ -57,15 +55,7 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
   emcalc = new G4EmCalculator;
 
 
-  //This first line ok
-  //GateVVolume * attachVolume =GetVolume();
-  //This line makes segmentation fault
-  //I wanted to know the number of childs
-  //attachVolume->GetLogicalVolume();
-  //This line makes segmentation fault
- // nDaughterBB=attachVolume->GetLogicalVolume()->GetNoDaughters();
-  //std::cout<< attachVolume->GetLogicalVolume()->GetNoDaughters()<<std::endl;
-  //nDaughterBB=mVolume->GetLogicalVolume()->GetNoDaughters();
+
 
   pMessenger = new GateComptonCameraActorMessenger(this);
 
@@ -111,6 +101,9 @@ void GateComptonCameraActor::Construct()
 
 
     edepInEachLayerEvt=new double [nDaughterBB];
+    xPos_InEachLayerEvt=new double [nDaughterBB];
+   yPos_InEachLayerEvt=new double [nDaughterBB];
+      zPos_InEachLayerEvt=new double [nDaughterBB];
 
        for ( unsigned int i=0; i < nDaughterBB; i++) {
            edepInEachLayerEvt[i]=0.0;
@@ -132,8 +125,20 @@ void GateComptonCameraActor::Construct()
        for(unsigned int i=0; i<nDaughterBB;i++){
            pSingles2.emplace_back(new TTree(layerNames.at(i), "Singles tree"));
           pSingles2.at(i)->Branch("edepEvt",&edepInEachLayerEvt[i],"edepEvt/D");
+           pSingles2.at(i)->Branch("xPosEvt",&xPos_InEachLayerEvt[i],"xPosEvt/D");
+           pSingles2.at(i)->Branch("yPosEvt",&yPos_InEachLayerEvt[i],"yPosEvt/D");
+           pSingles2.at(i)->Branch("zPosEvt",&zPos_InEachLayerEvt[i],"zPosEvt/D");
+
+            //This line does not work I do not know how to put the units
+            //pSingles2.at(i)->GetBranch("xPosEvt")->SetTitle(" xPosEvt (cm)");
+
 
        }
+
+/*TTree* p=new TTree("f", "Singles treed");
+
+p->Branch("yPosEvt",&yPos_InEachLayerEvt[0],"yPosEvt/D");
+p->GetBranch("yPosEvt")->SetTitle();*/
 
 
 
@@ -194,6 +199,8 @@ void GateComptonCameraActor::ResetData()
   pVolumeName->Reset();
   nEvent = 0;
  //Ravisar si algo mas que reeset if(edeplayer) delete [] edepInEachLayerEvt
+  //Si hago delete segementation fault
+  //if(edepInEachLayerEvt) delete[]edepInEachLayerEvt;
 }
 //-----------------------------------------------------------------------------
 
@@ -221,6 +228,9 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event*)
   //edepInEachLayerEvt.assign(nDaughterBB,0.0);
   for(unsigned int i=0;i<nDaughterBB;i++){
       edepInEachLayerEvt[i]=0.0;
+      xPos_InEachLayerEvt[i]=0.0;
+      yPos_InEachLayerEvt[i]=0.0;
+      zPos_InEachLayerEvt[i]=0.0;
 
   }
   edptempAb=0;
@@ -241,6 +251,15 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event*)
 
   //pEdepAbs->Fill(edepInEachLayerEvt[0]);
   //G4cout<<"edepAbs="<< edptempAb<<"edepAbs layer="<< edepInEachLayerEvt[0]<<G4endl;
+  //Look how to use find to avoid the loop 
+  for(unsigned int i=0; i<nDaughterBB; i++){
+       //I let divide by zero because it gives me null value for the position in the layer when there is no energy deposition
+       //if(edepInEachLayerEvt[i]!=0){
+          xPos_InEachLayerEvt[i]=xPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
+          yPos_InEachLayerEvt[i]=yPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
+          zPos_InEachLayerEvt[i]=zPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
+      // }
+   }
 
         for(unsigned int i=0;i<nDaughterBB;i++){
            pSingles2.at(i)->Fill();
@@ -286,17 +305,31 @@ void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4S
   assert(step->GetTrack()->GetWeight() == 1.); // edep doesnt handle weight
 
 
-  G4TouchableHandle touchable=step->GetPostStepPoint()->GetTouchableHandle();
+  G4TouchableHandle touchable=step->GetPreStepPoint()->GetTouchableHandle();
   VolNameStep=touchable->GetVolume(0)->GetName();
   pVolumeName->Fill(VolNameStep,1);
+
+
+  //Define it in .hh to avoid creating the object every time
+ hitPostPos = step->GetPostStepPoint()->GetPosition()/cm;
+  hitPrePos = step->GetPreStepPoint()->GetPosition()/cm;
+   edepStep=step->GetTotalEnergyDeposit()/MeV;
+   //G4cout<< " sdep="<<step->GetTotalEnergyDeposit()<<"  edpe/MeV="<<step->GetTotalEnergyDeposit()/MeV<<G4endl;
+  //To check if  step ends in the  boundary
+ // step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary
 
   for(unsigned int i=0; i<nDaughterBB;i++){
       //A este nivel las energias estan bien
       //G4cout<<"Volume name step= "<<VolNameStep<<"   layer= "<<layerNames.at(i)<<"  energ="<<step->GetTotalEnergyDeposit()<<"  energy (Mev)"<<step->GetTotalEnergyDeposit()/MeV<<G4endl;
      if(VolNameStep==layerNames.at(i)){
 
-        edepInEachLayerEvt[i] += step->GetTotalEnergyDeposit()/MeV;
-        if (i==0) edptempAb+=step->GetTotalEnergyDeposit()/MeV;
+        edepInEachLayerEvt[i] +=edepStep;
+        xPos_InEachLayerEvt[i]+= edepStep*(hitPrePos.getX()+hitPostPos.getX())/2;
+        yPos_InEachLayerEvt[i]+= edepStep*(hitPrePos.getY()+hitPostPos.getY())/2;
+        zPos_InEachLayerEvt[i]+= edepStep*(hitPrePos.getZ()+hitPostPos.getZ())/2;
+
+           // step->GetPostStepPoint()->GetPosition().x;
+        //if (i==0) edptempAb+=step->GetTotalEnergyDeposit()/MeV;
         break;
      }
   }
