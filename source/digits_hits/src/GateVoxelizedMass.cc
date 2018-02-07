@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 /*
@@ -35,121 +35,206 @@
 //-----------------------------------------------------------------------------
 GateVoxelizedMass::GateVoxelizedMass()
 {
-  mIsInitialized=false;
-  mIsParameterised=false;
-  mIsVecGenerated=false;
+  mIsInitialized        = false;
+  mIsParameterised      = false;
+  mIsVecGenerated       = false;
+  mHasFilter            = false;
+  mHasExternalMassImage = false;
+  mHasSameResolution    = false;
+
+  mMassFile       = "";
+  mMaterialFilter = "";
+
+  mCubicVolume.clear();
+  mMass       .clear();
+  mEdep       .clear();
+
+  doselReconstructedMass.clear();
+  doselExternalMass     .clear();
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateVoxelizedMass::Initialize(const G4String mExtVolumeName, const GateImageDouble mExtImage,const G4String mExtMassFile)
+void GateVoxelizedMass::Initialize(G4String _mVolumeName, const GateVImage* _mImage)
 {
-  mMassFile=mExtMassFile;
-  mVolumeName=mExtVolumeName;
-  mImage=mExtImage;
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
 
-  mIsParameterised=false;
-  mIsVecGenerated=false;
+  mIsVecGenerated    = false;
+  mHasSameResolution = false;
 
-  mCubicVolume.resize(mImage.GetNumberOfValues());
-  mMass.resize(mImage.GetNumberOfValues());
-  mEdep.resize(mImage.GetNumberOfValues());
-  for(int index=0 ; index<mImage.GetNumberOfValues() ; index++)
-  {
-    mCubicVolume[index].clear();
-    mMass[index].clear();
-    mEdep[index].clear();
+  mVolumeName = _mVolumeName;
+  mImage      = _mImage;
+
+  DAPV = G4PhysicalVolumeStore::GetInstance()->GetVolume(mVolumeName+"_phys");
+  DALV = DAPV->GetLogicalVolume();
+
+  mIsParameterised = IsLVParameterized(DALV);
+
+  GateMessage("Actor", 1, "[GateVoxelizedMass::" << __FUNCTION__ << "] Is parameterised ? " <<  mIsParameterised << Gateendl);
+
+  if (!mIsParameterised) {
+    mCubicVolume.resize(mImage->GetNumberOfValues());
+    mMass       .resize(mImage->GetNumberOfValues());
+    mEdep       .resize(mImage->GetNumberOfValues());
+
+    for(signed long int index=0; index < mImage->GetNumberOfValues(); index++) {
+      mCubicVolume[index].clear();
+      mMass       [index].clear();
+      mEdep       [index].clear();
+    }
+
+    doselSV=new G4Box("DoselSV",
+                      mImage->GetVoxelSize().getX()/2.0,
+                      mImage->GetVoxelSize().getY()/2.0,
+                      mImage->GetVoxelSize().getZ()/2.0);
   }
 
   doselExternalMass.clear();
-  if(mMassFile!="")
+  if (mHasExternalMassImage && mMassFile != "")
   {
-    mMassImage.Read(mMassFile);
+    mMassImage = new GateImageDouble();
+    mMassImage->Read(mMassFile);
 
-    if (mMassImage.GetResolution() != mImage.GetResolution())
+    if (mMassImage->GetResolution() != mImage->GetResolution())
       GateError("Error: " << mMassFile << " hasn't the right resolution !" << Gateendl <<
-                "   Actor resolution: " << mImage.GetResolution() << Gateendl <<
-                "   " << mMassFile << " resolution: " << mMassImage.GetResolution() << Gateendl);
+                "   Actor resolution: " << mImage->GetResolution() << Gateendl <<
+                "   " << mMassFile << " resolution: " << mMassImage->GetResolution() << Gateendl);
 
-    if (mMassImage.GetNumberOfValues() != mImage.GetNumberOfValues())
+    if (mMassImage->GetNumberOfValues() != mImage->GetNumberOfValues())
       GateError("Error: " << mMassFile << " hasn't the right number of dosels !" << Gateendl <<
-                "   Actor number of dosels: " << mImage.GetNumberOfValues() << Gateendl <<
-                "   " << mMassFile << " number of dosels: " << mMassImage.GetNumberOfValues() << Gateendl);
+                "   Actor number of dosels: " << mImage->GetNumberOfValues() << Gateendl <<
+                "   " << mMassFile << " number of dosels: " << mMassImage->GetNumberOfValues() << Gateendl);
 
-    double diff((mMassImage.GetVoxelVolume()-mImage.GetVoxelVolume())*100/mImage.GetVoxelVolume());
+    double diff((mMassImage->GetVoxelVolume()-mImage->GetVoxelVolume())*100/mImage->GetVoxelVolume());
     double substractionError(0.5);
 
     if (std::abs(diff) > substractionError)
       GateError("Error: " << mMassFile << " hasn't the right dosel cubic volume !" << Gateendl <<
-                "   Actor dosel cubic volume: " << G4BestUnit(mImage.GetVoxelVolume(),"Volume") << Gateendl <<
-                "   " << mMassFile << " dosel cubic volume: " << G4BestUnit(mMassImage.GetVoxelVolume(),"Volume") << Gateendl <<
+                "   Actor dosel cubic volume: " << G4BestUnit(mImage->GetVoxelVolume(),"Volume") << Gateendl <<
+                "   " << mMassFile << " dosel cubic volume: " << G4BestUnit(mMassImage->GetVoxelVolume(),"Volume") << Gateendl <<
                 "   Difference: " << diff << Gateendl);
 
-    doselExternalMass.resize(mMassImage.GetNumberOfValues(),-1.);
-    for(int i=0;i<mMassImage.GetNumberOfValues();i++)
-      doselExternalMass[i]=mMassImage.GetValue(i)*kg;
+    doselExternalMass.resize(mMassImage->GetNumberOfValues(),-1.);
+
+    for(signed long int i=0; i < mMassImage->GetNumberOfValues(); i++)
+      doselExternalMass[i]=mMassImage->GetValue(i)*kg;
   }
 
-  DAPV=G4PhysicalVolumeStore::GetInstance()->GetVolume(mVolumeName+"_phys");
-  DALV=DAPV->GetLogicalVolume();
+  //vectorSV.clear();
 
-  vectorSV.clear();
-  doselReconstructedMass.clear();
-  doselReconstructedCubicVolume.clear();
-  doselReconstructedMass.resize(mImage.GetNumberOfValues(),0.);
-  doselReconstructedCubicVolume.resize(mImage.GetNumberOfValues(),0.);
 
-  doselSV=new G4Box("DoselSV",
-                    mImage.GetVoxelSize().getX()/2.0,
-                    mImage.GetVoxelSize().getY()/2.0,
-                    mImage.GetVoxelSize().getZ()/2.0);
+  if (mIsParameterised) {
+    imageVolume = dynamic_cast<GateVImageVolume*>(GateObjectStore::GetInstance()->FindVolumeCreator(G4PhysicalVolumeStore::GetInstance()->GetVolume(mVolumeName+"_phys")));
 
-  if (DALV->GetNoDaughters()==1)
-    if (DALV->GetDaughter(0)->IsParameterised() ||
-       (DALV->GetDaughter(0)->GetName().find("voxel_phys_Y")!=std::string::npos &&
-       DALV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_X")!=std::string::npos &&
-       DALV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_Z")!=std::string::npos))
-    {
-      imageVolume=dynamic_cast<GateVImageVolume*>(GateObjectStore::GetInstance()->FindVolumeCreator(DAPV));
+    if (doselExternalMass.size() == 0)
+      GenerateVoxels();
+  }
 
-      mIsParameterised=true;
+  GateMessage("Actor", 1,  "[GateVoxelizedMass::" << __FUNCTION__ << "] Has same resolution ? " << mHasSameResolution << Gateendl);
 
-      if(doselExternalMass.size()==0)
-        GateVoxelizedMass::GenerateVoxels();
+  if (!mHasSameResolution) {
+    doselReconstructedMass.clear();
+    doselReconstructedMass.resize(mImage->GetNumberOfValues(),-1.);
+  }
+
+  if (mHasFilter) {
+    if (mIsParameterised && mVolumeFilter != "") {
+      GateError( "[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: volume filter is not compatible with parameterised volumes !" << Gateendl);
+      exit(EXIT_FAILURE);
     }
+    else if (!mIsParameterised && mMaterialFilter != "") {
+      GateError( "[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: material filter is only compatible with parameterised volumes !" << Gateendl);
+      exit(EXIT_FAILURE);
+    }
+  }
 
   mIsInitialized=true;
+
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Ended" << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateVoxelizedMass::GetVoxelMass(const int index)
+bool GateVoxelizedMass::IsLVParameterized(const G4LogicalVolume* LV)
 {
-  if(doselExternalMass.size()>0)
-    return doselExternalMass[index];
+  if (LV->GetNoDaughters()==1)
+    if (LV->GetDaughter(0)->IsParameterised() ||
+       (LV->GetDaughter(0)->GetName().find("voxel_phys_Y")!=std::string::npos &&
+       LV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_X")!=std::string::npos &&
+       LV->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetLogicalVolume()->GetDaughter(0)->GetName().find("voxel_phys_Z")!=std::string::npos))
+      return true;
 
-  if(doselReconstructedMass[index]==-1.)
-  {
-    if(mIsParameterised)
-      doselReconstructedData=ParameterizedVolume(index);
-    else
-      doselReconstructedData=VoxelIteration(DAPV,0,DAPV->GetObjectRotationValue(),DAPV->GetObjectTranslation(),index);
+  return false;
+}
+//-----------------------------------------------------------------------------
 
-    doselReconstructedMass[index]=doselReconstructedData.first;
-    doselReconstructedCubicVolume[index]=doselReconstructedData.second;
+//-----------------------------------------------------------------------------
+double GateVoxelizedMass::GetDoselMass(int index)
+{
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
+
+  if (mHasSameResolution) {
+    GateMessage("Actor", 11,  "[GateVoxelizedMass::" << __FUNCTION__ << "] Volume and actor resolution are the same ! I will simply read the mass of the voxel." << Gateendl);
+
+    return theMaterialDatabase.GetMaterial((G4String)imageVolume->GetMaterialNameFromLabel(imageVolume->GetImage()->GetValue(index)))->GetDensity()*imageVolume->GetImage()->GetVoxelVolume();
   }
+
+  // Case of imported mass image
+  if (mHasExternalMassImage)
+  {
+    if (doselExternalMass.size() > 0.)
+      return doselExternalMass[index];
+    else
+      GateError( "[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: initialization of doselExternalMass is incorrect !" << Gateendl);
+  }
+
+  if (doselReconstructedMass.size()        == 0) {
+    doselReconstructedMass.clear();
+    doselReconstructedMass.resize(mImage->GetNumberOfValues(),-1.);
+  }
+
+  if(doselReconstructedMass[index] < 0.)
+  {
+    GateMessage("Actor", 11,  "[GateVoxelizedMass::" << __FUNCTION__ << "] I don't have the mass of this voxel (index: " << index << ")" << Gateendl);
+
+    if (mIsParameterised)
+      doselReconstructedData = ParameterizedVolume(index);
+    else
+      doselReconstructedData = VoxelIteration(DAPV,
+                                              0,
+                                              DAPV->GetObjectRotationValue(),
+                                              DAPV->GetObjectTranslation(),
+                                              index);
+
+    doselReconstructedMass[index]        = doselReconstructedData.first;
+  }
+
+  GateMessage("Actor", 11,  "[GateVoxelizedMass::" << __FUNCTION__ << "] Computed mass of voxel (index: " << index << "):" << doselReconstructedMass[index] << Gateendl);
+
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Ended" << Gateendl);
 
   return doselReconstructedMass[index];
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-std::vector<double> GateVoxelizedMass::GetVoxelMassVector()
+double GateVoxelizedMass::GetDoselVolume()
 {
-  if(doselExternalMass.size()>0)
+  if (mHasSameResolution)
+    return imageVolume->GetImage()->GetVoxelVolume();
+
+  return mImage->GetVoxelVolume();
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+std::vector<double> GateVoxelizedMass::GetDoselMassVector()
+{
+  if (doselExternalMass.size() > 0)
     return doselExternalMass;
 
-  if(!mIsVecGenerated) GenerateVectors();
+  if (!mIsVecGenerated)
+    GenerateVectors();
 
   return doselReconstructedMass;
 }
@@ -158,40 +243,48 @@ std::vector<double> GateVoxelizedMass::GetVoxelMassVector()
 //-----------------------------------------------------------------------------
 void GateVoxelizedMass::GenerateVectors()
 {
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
+
+  GateMessage("Actor", 0,  "[GateVoxelizedMass::" << __FUNCTION__ << "] Total voxelized mass calculation in progress, please wait ... " << Gateendl);
+
+  GateMessage("Actor", 1, "[GateVoxelizedMass::" << __FUNCTION__ << "] Number of values in the images: " <<  mImage->GetNumberOfValues() << Gateendl);
+
   time_t timer1,timer2,timer3,timer4;
   time(&timer1);
 
-  GateMessage("Actor", 0,  "[GateVoxelizedMass] Total voxelized mass calculation for in progress, please wait ... " << Gateendl);
+  if (doselReconstructedMass.size()        == 0) {
+    doselReconstructedMass.clear();
+    doselReconstructedMass.resize(mImage->GetNumberOfValues(),-1.);
+  }
 
-  doselReconstructedTotalCubicVolume=0.;
-  doselReconstructedTotalMass=0.;
+  doselReconstructedTotalCubicVolume = 0.;
+  doselReconstructedTotalMass        = 0.;
 
-  GateMessage("Actor", 1, "[GateVoxelizedMass] Number of values in the images: " <<  mImage.GetNumberOfValues() << Gateendl);
-  GateMessage("Actor", 1, "[GateVoxelizedMass] Is parameterised ? " <<  mIsParameterised << Gateendl);
-
-  for(long int i=0;i<mImage.GetNumberOfValues();i++)
+  for(signed long int i=0; i < mImage->GetNumberOfValues(); i++)
   {
     time(&timer3);
 
     if(mIsParameterised)
-      doselReconstructedData=ParameterizedVolume(i);
+      doselReconstructedData = ParameterizedVolume(i);
     else
-      doselReconstructedData=VoxelIteration(DAPV,0,DAPV->GetObjectRotationValue(),DAPV->GetObjectTranslation(),i);
+      doselReconstructedData = VoxelIteration(DAPV,
+                                              0,
+                                              DAPV->GetObjectRotationValue(),
+                                              DAPV->GetObjectTranslation(),
+                                              i);
 
-    doselReconstructedMass[i]=doselReconstructedData.first;
-    doselReconstructedCubicVolume[i]=doselReconstructedData.second;
+    doselReconstructedMass[i]        = doselReconstructedData.first;
 
-    doselReconstructedTotalMass+=doselReconstructedMass[i];
-    doselReconstructedTotalCubicVolume+=doselReconstructedCubicVolume[i];
+    doselReconstructedTotalMass        += doselReconstructedMass[i];
+    doselReconstructedTotalCubicVolume += doselReconstructedData.second;
 
     time(&timer4);
     seconds=difftime(timer4,timer1);
 
-    if(difftime(timer4,timer1)>=60&&i%100==0)
-    {
-      std::cout<<" "<<i*100/mImage.GetNumberOfValues()<<"% (time elapsed : "<<seconds/60<<"min"<<seconds%60<<"s)      \r"<<std::flush;
+    if (difftime(timer4,timer1) >= 60 && i%100 == 0) {
+      std::cout<<" "<<i*100/mImage->GetNumberOfValues()<<"% (time elapsed : "<<seconds/60<<"min"<<seconds%60<<"s)      \r"<<std::flush;
       // Experimental
-      /*seconds=(mImage.GetNumberOfValues()-i)*difftime(timer4,timer3);
+      /*seconds=(mImage->GetNumberOfValues()-i)*difftime(timer4,timer3);
       if(seconds!=0.) std::cout<<"Estimated remaining time : "<<seconds/60<<"min"<<seconds%60<<"s ("<<seconds<<"s)                \r"<<std::flush;*/
     }
   }
@@ -202,31 +295,34 @@ void GateVoxelizedMass::GenerateVectors()
   G4String s="\n";
   if (mIsParameterised)
     s = "\tNumber of voxels : "+DoubletoString(imageVolume->GetImage()->GetNumberOfValues())+'\n';
+
   GateMessage("Actor", 1,
               "[GateVoxelizedMass] Summary: mass calculation for voxelized volume :" << G4endl
               <<"\tTime elapsed : " << seconds/60 << "min" << seconds%60 << "s (" << seconds << "s)" << G4endl
               << s
-              << "\tNumber of dosels : " << mImage.GetNumberOfValues() << G4endl
+              << "\tNumber of dosels : " << mImage->GetNumberOfValues() << G4endl
               << "\tDosels reconstructed total mass : " << G4BestUnit(doselReconstructedTotalMass,"Mass") << G4endl
               << "\tDosels reconstructed total cubic volume : "
               << G4BestUnit(doselReconstructedTotalCubicVolume,"Volume") << G4endl);
+
   mIsVecGenerated=true;
+
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Ended" << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 void GateVoxelizedMass::GenerateVoxels()
 {
+  const int nxVoxel = imageVolume->GetImage()->GetResolution().x(),
+            nyVoxel = imageVolume->GetImage()->GetResolution().y(),
+            nzVoxel = imageVolume->GetImage()->GetResolution().z();
 
-  const int nxVoxel=imageVolume->GetImage()->GetResolution().x(),
-            nyVoxel=imageVolume->GetImage()->GetResolution().y(),
-            nzVoxel=imageVolume->GetImage()->GetResolution().z();
+  DABox = (G4Box*)DALV->GetSolid();
 
-  DABox=(G4Box*)DALV->GetSolid();
-
-  const int nxDosel=round(DABox->GetXHalfLength()/(mImage.GetVoxelSize().x()/2.)),
-            nyDosel=round(DABox->GetYHalfLength()/(mImage.GetVoxelSize().y()/2.)),
-            nzDosel=round(DABox->GetZHalfLength()/(mImage.GetVoxelSize().z()/2.));
+  const int nxDosel = round(DABox->GetXHalfLength()/(mImage->GetVoxelSize().x()/2.)),
+            nyDosel = round(DABox->GetYHalfLength()/(mImage->GetVoxelSize().y()/2.)),
+            nzDosel = round(DABox->GetZHalfLength()/(mImage->GetVoxelSize().z()/2.));
 
   //G4cout<<"nxVoxel="<<nxVoxel<<G4endl;
   //G4cout<<"nyVoxel="<<nyVoxel<<G4endl;
@@ -236,23 +332,27 @@ void GateVoxelizedMass::GenerateVoxels()
   //G4cout<<"nyDosel="<<nyDosel<<G4endl;
   //G4cout<<"nzDosel="<<nzDosel<<G4endl;
 
-  if(nxDosel>nxVoxel||nyDosel>nyVoxel||nzDosel>nzVoxel)
-      GateError("!!! ERROR : The dosel resolution is smaller than the voxel resolution !!!"<<Gateendl);
+  if ( nxDosel == nxVoxel &&
+       nyDosel == nyVoxel &&
+       nzDosel == nzVoxel ) {
+    mHasSameResolution = true;
 
-  voxelMass.resize(nxVoxel);
-  for(int x=0;x<nxVoxel;x++)
-  {
-    voxelMass[x].resize(nyVoxel);
-    for(int y=0;y<nyVoxel;y++)
-      voxelMass[x][y].resize(nzVoxel,-1.);
+    GateMessage("Actor", 2, "[GateVoxelizedMass::" << __FUNCTION__ << "] Resolution of voxels and dosels are the same !" << Gateendl);
+
+    return;
   }
 
-  voxelCubicVolume=imageVolume->GetImage()->GetVoxelVolume();
-  if(voxelCubicVolume<=0.)
-    GateError("!!! ERROR : Voxels cubic volume is less or equal to zero !!! (cubic volume="<<voxelCubicVolume<<")"<<Gateendl);
 
-  for(signed long int i=0;i<imageVolume->GetImage()->GetNumberOfValues();i++)
+  if (nxDosel > nxVoxel ||
+      nyDosel > nyVoxel ||
+      nzDosel > nzVoxel)
   {
+      GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR : The dosel resolution is smaller than the voxel resolution !" << Gateendl);
+      exit(EXIT_FAILURE);
+  }
+
+
+  for (signed long int i=0; i < imageVolume->GetImage()->GetNumberOfValues(); i++) {
     const int xVoxel(round((DABox->GetXHalfLength()+imageVolume->GetImage()->GetVoxelCenterFromIndex(i).x()-imageVolume->GetImage()->GetVoxelSize().x()/2.)/imageVolume->GetImage()->GetVoxelSize().x())),
               yVoxel(round((DABox->GetYHalfLength()+imageVolume->GetImage()->GetVoxelCenterFromIndex(i).y()-imageVolume->GetImage()->GetVoxelSize().y()/2.)/imageVolume->GetImage()->GetVoxelSize().y())),
               zVoxel(round((DABox->GetZHalfLength()+imageVolume->GetImage()->GetVoxelCenterFromIndex(i).z()-imageVolume->GetImage()->GetVoxelSize().z()/2.)/imageVolume->GetImage()->GetVoxelSize().z()));
@@ -263,44 +363,91 @@ void GateVoxelizedMass::GenerateVoxels()
     //G4cout<<"yVoxel="<<yVoxel<<G4endl;
     //G4cout<<"zVoxel="<<zVoxel<<G4endl;
 
-    if(xVoxel>=nxVoxel||yVoxel>=nyVoxel||zVoxel>=nzVoxel)
-      GateError("!!! ERROR : Too many voxels !!! (xVoxel="<<xVoxel<<",yVoxel="<<yVoxel<<",zVoxel="<<zVoxel<<")"<<Gateendl);
+    if (imageVolume->GetImage()->GetValue(i) != imageVolume->GetImage()->GetValue(xVoxel,yVoxel,zVoxel))
+    {
+      GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: Reconstructed coordinates of voxels don't correspond to index ! (index: " << i << ", coord: " << xVoxel << "," << yVoxel << "," << zVoxel << ")" << Gateendl);
+      exit(EXIT_FAILURE);
+    }
 
-    //G4cout<<"imageVolume->GetImage()->GetValue(i)="<<imageVolume->GetImage()->GetValue(i)<<G4endl;
-    //G4cout<<"imageVolume->GetMaterialNameFromLabel((LabelType)imageVolume->GetImage()->GetValue(i))="<<imageVolume->GetMaterialNameFromLabel(imageVolume->GetImage()->GetValue(i))<<G4endl;
-    //
-    double density(theMaterialDatabase.GetMaterial((G4String)imageVolume->GetMaterialNameFromLabel(imageVolume->GetImage()->GetValue(i)))->GetDensity());
-    //G4cout<<"density="<<density/(gram/cm3)<<G4endl;
-
-    voxelMass[xVoxel][yVoxel][zVoxel]=density*voxelCubicVolume;
-
-    if(voxelMass[xVoxel][yVoxel][zVoxel]<=0.)
-      GateError("!!! ERROR : Voxel (index : "<<i<<") mass is less or equal to zero !!! (mass="<<voxelMass[xVoxel][yVoxel][zVoxel]<<")"<<Gateendl);
+    if (xVoxel >= nxVoxel ||
+        yVoxel >= nyVoxel ||
+        zVoxel >= nzVoxel)
+    {
+      GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: Too many voxels ! (xVoxel = " << xVoxel << ", yVoxel = " << yVoxel << ", zVoxel = " << zVoxel << ")" << Gateendl);
+      exit(EXIT_FAILURE);
+    }
   }
 }
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
-void GateVoxelizedMass::GenerateDosels(const int index)
+G4String GateVoxelizedMass::GetVoxelMatName(int x, int y, int z)
 {
+ return G4String(imageVolume->GetMaterialNameFromLabel(imageVolume->GetImage()->GetValue(x,y,z)));
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+G4double GateVoxelizedMass::GetVoxelVolume()
+{
+  const G4double volume = imageVolume->GetImage()->GetVoxelVolume();
+
+  if (volume <= 0.)
+    GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: Voxels cubic volume is less or equal to zero ! (volume: " << volume << ")" << Gateendl);
+
+  return volume;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+G4double GateVoxelizedMass::GetVoxelMass(int x, int y, int z)
+{
+  const G4double density = theMaterialDatabase.GetMaterial(GetVoxelMatName(x,y,z))->GetDensity();
+  const G4double mass    = density * GetVoxelVolume();
+
+  if (mass <= 0.)
+  {
+    GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: Voxel (coord: " << x << "," << y << "," << z <<") mass is less or equal to zero ! (mass: "<< mass << ")" << Gateendl);
+    exit(EXIT_FAILURE);
+  }
+
+  return mass;
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateVoxelizedMass::GenerateDosels(int index)
+{
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
   // INFO : Dimension of the vectors : x = 0, y = 1, z = 2
 
   doselMin.resize(3,-1.);
-  doselMin[0]=(DABox->GetXHalfLength()+mImage.GetVoxelCenterFromIndex(index).getX()-mImage.GetVoxelSize().getX()/2.0)/imageVolume->GetImage()->GetVoxelSize().x();
-  doselMin[1]=(DABox->GetYHalfLength()+mImage.GetVoxelCenterFromIndex(index).getY()-mImage.GetVoxelSize().getY()/2.0)/imageVolume->GetImage()->GetVoxelSize().y();
-  doselMin[2]=(DABox->GetZHalfLength()+mImage.GetVoxelCenterFromIndex(index).getZ()-mImage.GetVoxelSize().getZ()/2.0)/imageVolume->GetImage()->GetVoxelSize().z();
+  doselMin[0]=(DABox->GetXHalfLength()+mImage->GetVoxelCenterFromIndex(index).getX()-mImage->GetVoxelSize().getX()/2.0)/imageVolume->GetImage()->GetVoxelSize().x();
+  doselMin[1]=(DABox->GetYHalfLength()+mImage->GetVoxelCenterFromIndex(index).getY()-mImage->GetVoxelSize().getY()/2.0)/imageVolume->GetImage()->GetVoxelSize().y();
+  doselMin[2]=(DABox->GetZHalfLength()+mImage->GetVoxelCenterFromIndex(index).getZ()-mImage->GetVoxelSize().getZ()/2.0)/imageVolume->GetImage()->GetVoxelSize().z();
 
   doselMax.resize(3,-1.);
-  doselMax[0]=(DABox->GetXHalfLength()+mImage.GetVoxelCenterFromIndex(index).getX()+mImage.GetVoxelSize().getX()/2.0)/imageVolume->GetImage()->GetVoxelSize().x();
-  doselMax[1]=(DABox->GetYHalfLength()+mImage.GetVoxelCenterFromIndex(index).getY()+mImage.GetVoxelSize().getY()/2.0)/imageVolume->GetImage()->GetVoxelSize().y();
-  doselMax[2]=(DABox->GetZHalfLength()+mImage.GetVoxelCenterFromIndex(index).getZ()+mImage.GetVoxelSize().getZ()/2.0)/imageVolume->GetImage()->GetVoxelSize().z();
+  doselMax[0]=(DABox->GetXHalfLength()+mImage->GetVoxelCenterFromIndex(index).getX()+mImage->GetVoxelSize().getX()/2.0)/imageVolume->GetImage()->GetVoxelSize().x();
+  doselMax[1]=(DABox->GetYHalfLength()+mImage->GetVoxelCenterFromIndex(index).getY()+mImage->GetVoxelSize().getY()/2.0)/imageVolume->GetImage()->GetVoxelSize().y();
+  doselMax[2]=(DABox->GetZHalfLength()+mImage->GetVoxelCenterFromIndex(index).getZ()+mImage->GetVoxelSize().getZ()/2.0)/imageVolume->GetImage()->GetVoxelSize().z();
+
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Ended" << Gateendl);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-std::pair<double,double> GateVoxelizedMass::ParameterizedVolume(const int index)
+std::pair<double,double> GateVoxelizedMass::ParameterizedVolume(int index)
 {
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Started" << Gateendl);
+
   GenerateDosels(index);
+
+  G4double doselReconstructedVolume = 0.;
+  doselReconstructedMass[index]     = 0.;
 
   for(int x=round(doselMin[0]);x<round(doselMax[0]);x++)
     for(int y=round(doselMin[1]);y<round(doselMax[1]);y++)
@@ -398,50 +545,61 @@ std::pair<double,double> GateVoxelizedMass::ParameterizedVolume(const int index)
         for(size_t xVox=0;xVox<coord[0].size();xVox++)
           for(size_t yVox=0;yVox<coord[1].size();yVox++)
             for(size_t zVox=0;zVox<coord[2].size();zVox++)
-            {
-              double coefVox(coef[0][xVox]*coef[1][yVox]*coef[2][zVox]);
+              if (mMaterialFilter == "" ||
+                  mMaterialFilter == GetVoxelMatName(coord[0][xVox], coord[1][yVox], coord[2][zVox]))
+              {
+                const double coefVox(coef[0][xVox] * coef[1][yVox] * coef[2][zVox]);
 
-              doselReconstructedCubicVolume[index]+=voxelCubicVolume*coefVox;
-              doselReconstructedMass[index]+=voxelMass[coord[0][xVox]][coord[1][yVox]][coord[2][zVox]]*coefVox;
+                doselReconstructedVolume      += GetVoxelVolume() * coefVox;
+                doselReconstructedMass[index] += GetVoxelMass(coord[0][xVox], coord[1][yVox], coord[2][zVox]) * coefVox;
 
-              if(doselReconstructedCubicVolume[index]<0.)
-                GateError("!!! ERROR : doselReconstructedCubicVolume is negative !"<<Gateendl
-                        <<"     More informations :"<<Gateendl
-                        <<"            doselReconstructedCubicVolume["<<index<<"]="<<doselReconstructedCubicVolume[index]<<Gateendl
-                        <<"            voxelCubicVolume="<<voxelCubicVolume<<Gateendl
-                        <<"            coefVox="<<coefVox<<Gateendl);
+                if(doselReconstructedVolume < 0.)
+                  GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR : doselReconstructedVolume is negative !" << Gateendl
+                          <<"     More informations :" << Gateendl
+                          <<"            doselReconstructedVolume=" << doselReconstructedVolume << Gateendl
+                          <<"            Voxel Volume: " << GetVoxelVolume() << Gateendl
+                          <<"            coefVox=" << coefVox <<Gateendl);
 
-              if(doselReconstructedMass[index]<0.)
-                GateError("!!! ERROR : doselReconstructedMass is negative !"<<Gateendl
-                        <<"     More informations :"<<Gateendl
-                        <<"            doselReconstructedMass["<<index<<"]="<<doselReconstructedMass[index]<<Gateendl
-                        <<"            voxelMass="<<voxelMass[coord[0][xVox]][coord[1][yVox]][coord[2][zVox]]<<Gateendl
-                        <<"            coefVox="<<coefVox<<Gateendl);
-            }
+                if(doselReconstructedMass[index] < 0.)
+                  GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR : doselReconstructedMass is negative !" << Gateendl
+                          <<"     More informations:" << Gateendl
+                          <<"            doselReconstructedMass[" << index << "]=" << doselReconstructedMass[index] << Gateendl
+                          <<"            Voxel Mass: " << GetVoxelMass(coord[0][xVox], coord[1][yVox], coord[2][zVox]) << Gateendl
+                          <<"            coefVox= " << coefVox << Gateendl);
+              }
       }
-  if(doselReconstructedMass[index]<0.)
-    GateError("!!! ERROR : doselReconstructedMass is negative ! (doselReconstructedMass["<<index<<"]="<<doselReconstructedMass[index]<<")"<<Gateendl);
-  if(doselReconstructedCubicVolume[index]<0.)
-    GateError("!!! ERROR : doselReconstructedCubicVolume is negative ! (doselReconstructedCubicVolume["<<index<<"]="<<doselReconstructedCubicVolume[index]<<")"<<Gateendl);
 
-  return std::make_pair(doselReconstructedMass[index],doselReconstructedCubicVolume[index]);
+  if(doselReconstructedMass[index] < 0.)
+    GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: doselReconstructedMass is negative ! (doselReconstructedMass["<<index<<"] = "<<doselReconstructedMass[index]<<")"<<Gateendl);
+  if(doselReconstructedVolume < 0.)
+    GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: doselReconstructedVolume is negative ! (doselReconstructedVolume = "<<doselReconstructedVolume<<")"<<Gateendl);
+
+  GateMessage("Actor", 10, "[GateVoxelizedMass::" << __FUNCTION__ << "] Ended" << Gateendl);
+
+  return std::make_pair(doselReconstructedMass[index],doselReconstructedVolume);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* motherPV,const int Generation,G4RotationMatrix motherRotation,G4ThreeVector motherTranslation,const int index)
+std::pair<double,double> GateVoxelizedMass::VoxelIteration(const G4VPhysicalVolume* motherPV,int Generation,G4RotationMatrix motherRotation,G4ThreeVector motherTranslation,int index)
 {
-  //FIXME : Doesn't work with daughter overlapping its mother.
-
   if (Generation==0) {
-    GateMessage("Actor", 2, Gateendl);
-    GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] Dosel n°" << index << ":" << Gateendl);
+    if (IsLVParameterized(motherPV->GetLogicalVolume()))
+      GateError("The volume " << motherPV->GetName() << " is parameterized !" << Gateendl
+          << "Please attach the DoseActor directly on this volume !" << Gateendl);
+
+    // IMPORTANT WARNING
+    if (motherPV->GetLogicalVolume()->GetSolid()->GetEntityType() != "G4Box")
+      GateMessage("Actor", 0, "[GateVoxelizedMass::VoxelIteration] WARNING: Attaching a DoseActor to a volume with another geometry than a box can lead to a wrong dose calculation ! Please verify that the volume of the dosel is correctly reconstructed !" << Gateendl);
+
+    GateMessage("Actor", 2, Gateendl << "[GateVoxelizedMass::VoxelIteration] Dosel n°" << index << ":" << Gateendl);
+
+    mFilteredVolumeMass = 0.;
+    mFilteredVolumeCubicVolume = 0.;
+    mIsFilteredVolumeProcessed = false;
   }
 
   GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] Generation n°" << Generation << " (motherPV: " <<  motherPV->GetName() << ") :" << Gateendl);
-
-  if(motherPV->IsParameterised())
-    GateError("The volume " << motherPV->GetName() << " is parameterized !" <<Gateendl<< "Please attach the Actor directly on this volume !" << Gateendl);
 
   G4LogicalVolume* motherLV(motherPV->GetLogicalVolume());
   G4VSolid*        motherSV(motherLV->GetSolid());
@@ -454,15 +612,14 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
     GateError("Error: motherSV->GetCubicVolume() is null ! (motherPhysicalVolume : "<<motherPV->GetName()<<")"<<Gateendl);
 
   // Dosel absolute rotation and translation
-  G4RotationMatrix doselAbsoluteRotation    = mImage.GetTransformMatrix();
-  G4ThreeVector    doselAbsoluteTranslation = mImage.GetVoxelCenterFromIndex(index);
+  G4RotationMatrix doselAbsoluteRotation    = mImage->GetTransformMatrix();
+  G4ThreeVector    doselAbsoluteTranslation = mImage->GetVoxelCenterFromIndex(index);
 
   // Mother absolute rotation and translation
   G4RotationMatrix motherAbsoluteRotation    = motherRotation;
   G4ThreeVector    motherAbsoluteTranslation = motherTranslation;
 
-  if(Generation==0)
-  {
+  if(Generation==0) {
     motherAbsoluteRotation.   set(0.,0.,0.);
     motherAbsoluteTranslation.set(0.,0.,0.);
   }
@@ -481,12 +638,22 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
                                   motherDoselRelativeTranslation);
 
   // If the mother's doesn't intersects the dosel
-  if(motherSV->GetCubicVolume()==0.) {
-    GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] " <<  motherPV->GetName() << " is not contained inside the dosel n°" << index << Gateendl);
-    return std::make_pair(0.,0.);
+  double ratio(motherSV->GetCubicVolume()*100./doselSV->GetCubicVolume());
+  double tolerance(1.);
+  if(ratio<tolerance) {
+    GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] WARNING: " <<  motherPV->GetName() << " is not contained inside the dosel n°" << index << Gateendl
+      << "     diff overlap Dosel-Mother: " << ratio << "%" << Gateendl
+      << "     diff overlap tolerance   : " << tolerance << "%" << Gateendl);
+    return std::make_pair(0.,-1.);
   }
 
   GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] "<< motherPV->GetName() <<" (after overlap mother-dosel)  : " << G4BestUnit(motherSV->GetCubicVolume(),"Volume") << Gateendl);
+
+  if (IsLVParameterized(motherLV)) {
+    GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] WARNING: " << motherPV->GetName() << " is parameterized !" << Gateendl
+        << " ==> Returning null mass ! " << Gateendl);
+    return std::make_pair(0.,motherSV->GetCubicVolume());
+  }
 
   // Calculation for daughter(s) ///////////////////////////////////////////
   if(motherLV->GetNoDaughters()>0)
@@ -518,6 +685,9 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
 
       if(motherCubicVolumeBefore>0.)
       {
+        // Creating a backup of motherSV before the substraction
+        G4VSolid* motherBeforeSubSV(motherSV->Clone());
+
         // Substraction Dosel-Daughter
         motherSV=new G4SubtractionSolid(motherSV->GetName(),
                                         motherSV,
@@ -528,22 +698,62 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
         GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] "<<motherPV->GetName()<<" (after sub. mother-daughter)  : " << G4BestUnit(motherSV->GetCubicVolume(),"Volume") << " (daughterPV : "<<daughterPV->GetName()<<")"<< Gateendl);
 
         double diff((motherSV->GetCubicVolume()-motherCubicVolumeBefore)*100/motherCubicVolumeBefore);
-        double substractionError(0.1);
+        double substractionError(1.);
 
-        if(diff>substractionError)
-          GateError("Error: CubicVolume after substraction is bigger than before !" << Gateendl << " difference: " << diff << "%" << Gateendl);
-        else if(diff<=-substractionError)
+        if(diff>substractionError) {
+          GateMessage("Actor", 0, "[GateVoxelizedMass] WARNING: " << daughterPV->GetName() << " seems to be outside the dosel n°" << index << " !" << Gateendl);
+          GateMessage("Actor", 1, " => Volume of " << motherPV->GetName() << " after substraction with " << daughterPV->GetName() << " is bigger than before !" << Gateendl
+              << "     diff substraction Mother-Daughter: " << diff << "%" << Gateendl
+              << "     diff substraction tolerance      : ±" << substractionError << "%" << Gateendl);
+            GateMessage("Actor", 0, " ===> " << daughterPV->GetName() << " ignored for the dosel n°" << index << " !" << Gateendl);
+            motherSV=motherBeforeSubSV;
+        }
+        else if(diff<-substractionError)
         {
-          std::pair<double,double> daughterIteration(VoxelIteration(daughterPV,Generation+1,daughterAbsoluteRotation,daughterAbsoluteTranslation,index)); // OK
+          std::pair<double,double> daughterIteration(VoxelIteration(daughterPV,Generation+1,daughterAbsoluteRotation,daughterAbsoluteTranslation,index));
+          double daughterCubicVolume(daughterIteration.second);
 
-          if(daughterIteration.first==0.)
-            GateError("Error: daughterIteration.first is null ! (daughterPhysicalVolume : "<<daughterPV->GetName()<<")"<<Gateendl);
-          if(daughterIteration.second==0.)
-            GateError("Error: daughterIteration.second is null ! (motherPhysicalVolume : "<<daughterPV->GetName()<<")"<<Gateendl);
+          if (daughterIteration.first == 0. && !mHasFilter)
+            GateMessage("Actor", 2, "[GateVoxelizedMass] WARNING: daughterIteration.first (mass) is null ! (daughterPV: " << daughterPV->GetName() << ")" << Gateendl
+                << " => Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl);
+
+
+          if (daughterCubicVolume == -1.) {
+            GateMessage("Actor", 0, "[GateVoxelizedMass] WARNING: " << daughterPV->GetName() << " seems to be outside the dosel n°" << index << " !" << Gateendl);
+            GateMessage("Actor", 1, " => GEANT4 has trouble to compute soustraction between " << daughterPV->GetName() << " and its mother " << motherPV->GetName() << " !" << Gateendl);
+            GateMessage("Actor", 1, " => It can be related to the geometry of " << daughterPV->GetName() << " (" << daughterSV->GetEntityType() << ")" << Gateendl
+                        << "     diff substraction Mother-Daughter: " << diff << "%" << Gateendl
+                        << "     diff substraction tolerance      : ±" << substractionError << "%" << Gateendl);
+            GateMessage("Actor", 0, " ===> " << daughterPV->GetName() << " ignored for the dosel n°" << index << " !" << Gateendl);
+            motherSV=motherBeforeSubSV;
+          }
+          else if (daughterCubicVolume == 0.)
+            GateError("ERROR: " << daughterPV->GetName() << " cubic volume is null in the dosel n°" << index << " !" << Gateendl
+                << "  => Maybe " << daughterPV->GetName() << " is (partially) outside " << motherPV->GetName() << "." << Gateendl
+                << "     diff substraction Mother-Daughter: " << diff << "%" << Gateendl
+                << "     diff substraction tolerance      : ±" << substractionError << "%" << Gateendl);
+
+          double diffVol((daughterCubicVolume-(motherBeforeSubSV->GetCubicVolume()-motherSV->GetCubicVolume()))*100./(motherBeforeSubSV->GetCubicVolume()-motherSV->GetCubicVolume()));
+          double diffVolTolerance(1.);
+          if (std::abs(diffVol)>diffVolTolerance) {
+            GateMessage("Actor", 0, "[GateVoxelizedMass] WARNING: Volume of " << daughterPV->GetName() << " is not correctly calculated in the dosel n°" << index << " !" << Gateendl);
+            GateMessage("Actor", 1, "Informations:" << Gateendl
+                << "     Daughter volume (theorical)    : " << G4BestUnit(motherBeforeSubSV->GetCubicVolume()-motherSV->GetCubicVolume(),"Volume") << Gateendl
+                << "     Daughter volume (reconstructed): " << G4BestUnit(daughterCubicVolume,"Volume") << Gateendl
+                << "     diff                           : " << diffVol << "%" << Gateendl
+                << "     diff tolerance                 : ±" << diffVolTolerance << "%" << Gateendl);
+            GateMessage("Actor", 0, " ===> Using theorical volume for " << daughterPV->GetName()<< Gateendl);
+            daughterCubicVolume=motherBeforeSubSV->GetCubicVolume()-motherSV->GetCubicVolume();
+            }
 
           motherProgenyMass+=daughterIteration.first;
-          motherProgenyCubicVolume+=daughterIteration.second;
+          motherProgenyCubicVolume+=daughterCubicVolume;
         }
+        else if (std::abs(diff)<=substractionError) {
+          GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] " << daughterPV->GetName() << " is not contained inside dosel n°" << index << Gateendl);
+          motherSV=motherBeforeSubSV;
+        }
+        GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] " << motherPV->GetName() << " volume: " << G4BestUnit(motherSV->GetCubicVolume(),"Volume") << Gateendl);
       }
     }
   }
@@ -565,25 +775,47 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
   mMass[index].push_back       (std::make_pair(motherSV->GetName(),motherMass));
   //////////////////////////////////////////////////////////////////////////
 
+  if (mHasFilter && mVolumeFilter != "" && motherSV->GetName() == mVolumeFilter) {
+    GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] VolumeFilter: Filtered volume " <<  motherSV->GetName() << " finded ! (Generation n°" << Generation << ")" << Gateendl);
+    mFilteredVolumeMass        = motherMass;
+    mFilteredVolumeCubicVolume = motherCubicVolume;
+    mIsFilteredVolumeProcessed = true;
+  }
+
   if(motherProgenyMass==0.)
     GateError("Error: motherProgenyMass is null ! (motherPhysicalVolume : "<<motherPV->GetName()<<")"<<Gateendl);
   if(motherProgenyCubicVolume==0.)
     GateError("Error: motherProgenyCubicVolume is null ! (motherPhysicalVolume : "<<motherPV->GetName()<<")"<<Gateendl);
 
-  if (Generation==0)
+  if (Generation == 0)
   {
-    double diff((motherProgenyCubicVolume-doselSV->GetCubicVolume())*100/doselSV->GetCubicVolume());
-    double substractionError(0.5);
+    double diff(0.);
+    double substractionError(1.);
 
-    if(std::abs(diff)>substractionError)
+    if (motherPV->GetLogicalVolume()->GetSolid()->GetEntityType() == "G4Box")
+      diff = (motherProgenyCubicVolume - doselSV->GetCubicVolume()) * 100. / doselSV->GetCubicVolume();
+    else
+      GateMessage("Actor", 0, "[GateVoxelizedMass::VoxelIteration] WARNING: The volume attached to this DoseActor is a " << motherPV->GetLogicalVolume()->GetSolid()->GetEntityType() << ". The reconstruted volume of the dosel is " << G4BestUnit(motherProgenyCubicVolume,"Volume") << ". Please verify it is correct !" << Gateendl);
+
+
+    if (std::abs(diff) > substractionError)
       GateError("Error: Dosel n°" << index << " is wrongly reconstructed !" << Gateendl <<
+                "                            SV geometry type      = " << motherPV->GetLogicalVolume()->GetSolid()->GetEntityType() << Gateendl <<
                 "                            dosel (theorical)     = " << G4BestUnit(doselSV->GetCubicVolume(),"Volume") << Gateendl <<
                 "                            dosel (reconstructed) = " << G4BestUnit(motherProgenyCubicVolume,"Volume") << Gateendl <<
-                "                            difference            = " << diff << "%" << Gateendl );
+                "                            difference            = " << diff << "%" << Gateendl <<
+                "                            difference tolerance  = ±" << substractionError << "%" <<Gateendl );
 
     GateMessage("Actor", 2, "[GateVoxelizedMass::VoxelIteration] Dosel n°"<< index << " informations :" << Gateendl <<
                             "                                     motherProgenyMass        = " << G4BestUnit(motherProgenyMass,"Mass") << Gateendl <<
                             "                                     motherProgenyCubicVolume = " << G4BestUnit(motherProgenyCubicVolume,"Volume") << Gateendl);
+
+    if (mHasFilter && mVolumeFilter != "") {
+      if (mIsFilteredVolumeProcessed)
+        return std::make_pair(mFilteredVolumeMass,mFilteredVolumeCubicVolume);
+      else
+        return std::make_pair(0.,0.);
+    }
   }
 
   return std::make_pair(motherProgenyMass,motherProgenyCubicVolume);
@@ -591,10 +823,15 @@ std::pair<double,double> GateVoxelizedMass::VoxelIteration(G4VPhysicalVolume* mo
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateVoxelizedMass::GetPartialVolume(const int index,const G4String SVName)
+double GateVoxelizedMass::GetPartialVolumeWithSV(int index,G4String SVName)
 {
+  if (mIsParameterised) {
+    GateError("Error: GateVoxelizedMass::GetPartialVolumeWithSV: This method doesn't work with voxelized volumes !"<<Gateendl);
+    exit(EXIT_FAILURE);
+  }
+
   if(mCubicVolume[index].empty())
-    GetVoxelMass(index);
+    GetDoselMass(index);
 
   for(size_t i=0;i<mCubicVolume[index].size();i++)
     if(mCubicVolume[index][i].first==SVName)
@@ -606,10 +843,15 @@ double GateVoxelizedMass::GetPartialVolume(const int index,const G4String SVName
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateVoxelizedMass::GetPartialMass(const int index,const G4String SVName)
+double GateVoxelizedMass::GetPartialMassWithSV(int index,G4String SVName)
 {
+  if (mIsParameterised) {
+    GateError("Error: GateVoxelizedMass::GetPartialMassWithSV: This method doesn't work with voxelized volumes !"<<Gateendl);
+    exit(EXIT_FAILURE);
+  }
+
   if(mMass[index].empty())
-    GetVoxelMass(index);
+    GetDoselMass(index);
 
   for(size_t i=0;i<mMass[index].size();i++)
     if(mMass[index][i].first==SVName)
@@ -621,7 +863,30 @@ double GateVoxelizedMass::GetPartialMass(const int index,const G4String SVName)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-int GateVoxelizedMass::GetNumberOfVolumes(const int index)
+//double GateVoxelizedMass::GetPartialVolumeWithMatName(int index)
+//{
+//  if(mMaterialFilter=="")
+//    GateError("Error: GateVoxelizedMass::GetPartialVolumeWithMatName: No material filter defined !"<<Gateendl);
+//
+//  if(!mIsParameterised)
+//    GateError("Error: GateVoxelizedMass::GetPartialVolumeWithMatName: This method only work with voxelized volumes !"<<Gateendl);
+//
+//  if(!mIsVecGenerated)
+//    GenerateVectors();
+//
+//  return;
+//}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+double GateVoxelizedMass::GetPartialMassWithMatName(int index)
+{
+  return GetDoselMass(index);
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+int GateVoxelizedMass::GetNumberOfVolumes(int index)
 {
  return mMass[index].size();
 }
@@ -630,12 +895,12 @@ int GateVoxelizedMass::GetNumberOfVolumes(const int index)
 //-----------------------------------------------------------------------------
 double GateVoxelizedMass::GetTotalVolume()
 {
-  return mImage.GetVoxelVolume();
+  return mImage->GetVoxelVolume();
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-void GateVoxelizedMass::SetEdep(const int index,const G4String SVName,const double edep)
+void GateVoxelizedMass::SetEdep(int index,G4String SVName,double edep)
 {
   bool ok(false);
   for(size_t i=0;i<mEdep[index].size();i++)
@@ -651,7 +916,7 @@ void GateVoxelizedMass::SetEdep(const int index,const G4String SVName,const doub
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-double GateVoxelizedMass::GetMaxDose(const int index)
+double GateVoxelizedMass::GetMaxDose(int index)
 {
   double edepmax(0.);
   G4String SVName("");
@@ -663,22 +928,71 @@ double GateVoxelizedMass::GetMaxDose(const int index)
       edepmax=mEdep[index][i].second;
     }
 
-  return edepmax/GetPartialMass(index,SVName);
+  return edepmax/GetPartialMassWithSV(index,SVName);
 }
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-GateImageDouble GateVoxelizedMass::UpdateImage(GateImageDouble image)
+void GateVoxelizedMass::UpdateImage(GateImageDouble* image)
 {
-  if(mIsInitialized)
-  {
-    std::vector<double> vector;
-    vector.clear();
-    vector=GetVoxelMassVector();
+  if (mIsInitialized) {
+    const std::vector<double> vector = GetDoselMassVector();
 
-    for(size_t i=0;i<vector.size();i++)
-      image.AddValue(i,vector[i]/kg);
+    for (size_t i=0; i<vector.size(); i++)
+      image->AddValue(i, vector[i]/kg);
   }
-  return image;
+  else
+    GateMessage("Actor", 0, "[GateVoxelizedMass::" << __FUNCTION__ << "] WARNING: VoxelizedMass is not initialized. Image update ignored !" << Gateendl);
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateVoxelizedMass::SetMaterialFilter(G4String MatName)
+{
+  if (MatName != "") {
+    if (mHasFilter)
+      GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: material filter is not compatible with other filters !" << Gateendl);
+    else if (mHasExternalMassImage)
+      GateError("[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: mass image importation is not compatible with filters !" << Gateendl);
+    else {
+      mMaterialFilter = MatName;
+      mHasFilter = true;
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateVoxelizedMass::SetVolumeFilter(G4String VolName)
+{
+  if (VolName == "world")
+    GateError( "[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: DoseActor doesn't work when attached to world !" << Gateendl);
+  if (VolName != "") {
+    if (mHasFilter)
+      GateError( "[GateVoxelizedMass::" << __FUNCTION__ << "] ERROR: volume filter is not compatible with other filters !" << Gateendl);
+    //else if (mHasExternalMassImage)
+    //  GateError( "Error: GateVoxelizedMass::SetVolumeFilter: mass image importation is not compatible with filters !" << Gateendl);
+    else {
+      mVolumeFilter=VolName+"_solid";
+      mHasFilter=true;
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+void GateVoxelizedMass::SetExternalMassImage(G4String extMassFile)
+{
+  if(extMassFile != "")
+  {
+    mMassFile=extMassFile;
+    mHasExternalMassImage=true;
+
+    //if(mHasFilter)
+    //  GateError( "Error: GateVoxelizedMass::SetExternalMassImage: mass image importation is not compatible with filters !" << Gateendl);
+  }
 }
 //-----------------------------------------------------------------------------

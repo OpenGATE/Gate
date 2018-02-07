@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
 
 #include "GateClockDependentMessenger.hh"
@@ -28,8 +28,8 @@ See GATE/LICENSE.txt for further details
 // Constructor
 // The flags are passed to the base-class GateNamedObjectMessenger
 GateClockDependentMessenger::GateClockDependentMessenger(GateClockDependent* itsClockDependent,
-    			     				 const G4String& itsDirectoryName)
-: GateNamedObjectMessenger(itsClockDependent,itsDirectoryName)
+                                                         const G4String& itsDirectoryName)
+  : GateNamedObjectMessenger(itsClockDependent,itsDirectoryName)
 { 
   G4String guidance;
   G4String cmdName;
@@ -50,7 +50,7 @@ GateClockDependentMessenger::GateClockDependentMessenger(GateClockDependent* its
     pDisableCmd->SetParameterName("flag",true);
     pDisableCmd->SetDefaultValue(true);
   }
- ARFcmd = 0;
+  ARFcmd = 0;
 }
 //----------------------------------------------------------------------------------------------------------
 
@@ -61,11 +61,11 @@ GateClockDependentMessenger::~GateClockDependentMessenger()
   if (GetClockDependent()->CanBeDisabled()) {
     delete pEnableCmd;
     delete pDisableCmd;
-  if ( ARFcmd != 0 )
-   {
-   	 delete ARFcmd;
-   	 delete AttachARFSDcmd;
-   }
+    if ( ARFcmd != 0 )
+      {
+        delete ARFcmd;
+        delete AttachARFSDcmd;
+      }
 
 
   }
@@ -73,14 +73,12 @@ GateClockDependentMessenger::~GateClockDependentMessenger()
 //----------------------------------------------------------------------------------------------------------
 void GateClockDependentMessenger::SetARFCommands()
 {
- G4String cmdName;
- cmdName = GetDirectoryName()+"arf/setARFStage";
- ARFcmd = new G4UIcmdWithAString(cmdName,this);
+  G4String cmdName;
+  cmdName = GetDirectoryName()+"arf/setARFStage";
+  ARFcmd = new G4UIcmdWithAString(cmdName,this);
 
-G4cout << " created command " << cmdName << Gateendl;
-
- cmdName = GetDirectoryName() +"attachToARFSD";
- AttachARFSDcmd = new G4UIcmdWithoutParameter(cmdName,this);
+  cmdName = GetDirectoryName() +"attachToARFSD";
+  AttachARFSDcmd = new G4UIcmdWithoutParameter(cmdName,this);
 
 }
 
@@ -93,19 +91,19 @@ void GateClockDependentMessenger::SetNewValue(G4UIcommand* command,G4String newV
   else if ( command==pDisableCmd )
     { GetClockDependent()->Enable( !(pDisableCmd->GetNewBoolValue(newValue)) );}     
   else if ( command == ARFcmd )
-   { 
-   	GateSPECTHeadSystem* theS = dynamic_cast<GateSPECTHeadSystem*>( GetClockDependent() );
-    theS->setARFStage( newValue );return;
-   }
+    { 
+      GateSPECTHeadSystem* theS = dynamic_cast<GateSPECTHeadSystem*>( GetClockDependent() );
+      theS->setARFStage( newValue );return;
+    }
   else if ( command == AttachARFSDcmd )
     {
-     GateVVolume* creator = GateObjectStore::GetInstance()->FindCreator("SPECThead");
-     if ( creator != 0 ) creator->AttachARFSD();
-     else {
-     	   G4cout << " GateObjectCreatorStore : could not find ' "<< GetClockDependent()->GetObjectName()<<" ' \n";
-     	   G4Exception( "GateClockDependentMessenger::SetNewValue", "SetNewValue", FatalException, "Aborting...");
-     	  }
-     return;
+      GateVVolume* creator = GateObjectStore::GetInstance()->FindCreator("SPECThead");
+      if ( creator != 0 ) creator->AttachARFSD();
+      else {
+        G4cout << " GateObjectCreatorStore : could not find ' "<< GetClockDependent()->GetObjectName()<<" ' \n";
+        G4Exception( "GateClockDependentMessenger::SetNewValue", "SetNewValue", FatalException, "Aborting...");
+      }
+      return;
     }
 	else GateNamedObjectMessenger::SetNewValue(command,newValue);
 	

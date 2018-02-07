@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 #include "GateConfiguration.h"
@@ -85,7 +85,8 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
   //unsigned int order = 0;
   //G4String scatterProcess = "";
 
-  if(process->GetProcessName() == G4String("Compton")) {
+  if(process->GetProcessName() == G4String("Compton") ||
+     process->GetProcessName() == G4String("compt")) {
 
     GateScatterOrderTrackInformation * scatterTracking = dynamic_cast<GateScatterOrderTrackInformation*>(step->GetTrack()->GetUserInformation());
     if(scatterTracking!=NULL)
@@ -96,7 +97,8 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
       scatterTracking->SetScatterProcess(step->GetTrack());
     }
   }
-  else if(process->GetProcessName() == G4String("RayleighScattering")) {
+  else if(process->GetProcessName() == G4String("RayleighScattering") ||
+          process->GetProcessName() == G4String("Rayl")) {
 
     GateScatterOrderTrackInformation * scatterTracking = dynamic_cast<GateScatterOrderTrackInformation*>(step->GetTrack()->GetUserInformation());
     if(scatterTracking!=NULL)
@@ -107,7 +109,8 @@ void GateScatterOrderTrackInformationActor::UserSteppingAction(const GateVVolume
       scatterTracking->SetScatterProcess(step->GetTrack());
     }
   }
-  else if(process->GetProcessName() == G4String("PhotoElectric")) {
+  else if(process->GetProcessName() == G4String("PhotoElectric") ||
+          process->GetProcessName() == G4String("phot")) {
     const G4TrackVector * list = step->GetSecondary();
 
     for(unsigned short i=0; i<(*list).size(); i++)

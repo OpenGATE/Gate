@@ -3,7 +3,7 @@
 
  This software is distributed under the terms
  of the GNU Lesser General  Public Licence (LGPL)
- See GATE/LICENSE.txt for further details
+ See LICENSE.md for further details
  ----------------------*/
 
 #include "GateConfiguration.h"
@@ -25,37 +25,37 @@ class TH1D;
 class GateARFTable
   {
 private:
-  G4String mArfTableName; /* the name of the ARF Table */
-  G4int mArfTableIndex; /* the index of the AERF Table because many are defined for one simulation */
-  G4double* mArfTableVector; /* contains the probability for each cos(theta)_k, tan(phi)_k' as a single linearized index */
-  G4double* mDrfTableVector; /* contains the ARF table before normalization */
-  G4int m_drfdimx;
-  G4double mfDistSrc2Img;
-  G4int mAvgPixNum;
-  G4double mDrfBinSize;
-  G4double mLowX;
-  G4double mLowY;
-  G4int mDrfDimY;
-  G4int mNbOfCosTheta; /* the number of discretized values of cos(theta) */
-  G4int mNbOfTanPhi; /* the number of discretized values of tan(phi) */
-  G4int mTotalNbOfThetaPhi; /* the product of m_NbOfcosTheta by m_NbOftanPhi */
-  G4double mELow; /* the left end energy of the energy window */
-  G4double mEHigh; /* the right end energy of the energy window */
-  G4int mIsPrimary;
-  G4double mEnergyLowOut; /* window energy specified by the user */
-  G4double mEnergyHighOut; /* window energy specified by the user */
+  G4String _ArfTableName; /* the name of the ARF Table */
+  G4int _ArfTableIndex; /* the index of the ARF Table because many are defined for one simulation */
+  G4double* _ArfTableVector; /* contains the probability for each cos(theta)_k, tan(phi)_k' as a single linearized index */
+  G4double* _DrfTableVector; /* contains the ARF table before normalization */
+  G4int _DrfTableDimensionX;
+  G4int _DrfTableDimensionY;
+  G4double _DistanceSourceToImage;
+  G4int _AverageNumberOfPixels;
+  G4double _DrfBinSize;
+  G4double _LowX;
+  G4double _LowY;
 
-  G4double* mTheta;
-  G4double* mCosTheta;
-  G4double* mCosThetaI;
-  G4double* mTanPhi;
-  G4double* mTanPhiI;
+  G4int _NumberOfCosTheta; /* the number of discretized values of cos(theta) */
+  G4int _NumberOfTanPhi; /* the number of discretized values of tan(phi) */
+  G4int _TotalNumberbOfThetaPhi; /* the product of m_NbOfcosTheta by m_NbOftanPhi */
+  G4double _EnergyLow; /* the left end energy of the energy window */
+  G4double _EnergyHigh; /* the right end energy of the energy window */
+  G4int _IsPrimary;
+  G4double _EnergyLowUser; /* window energy specified by the user */
+  G4double _EnergyHighUser; /* window energy specified by the user */
+
+  G4double* _ThetaVector;
+  G4double* _CosThetaVector;
+  G4double* _CosThetaIVector;
+  G4double* _TanPhiVector;
   G4double* mPhi;
   G4double mStep1;
   G4double mStep2;
   G4double mStep3;
   G4double mStep4;
-  G4double mTanPhiStep; /* setpes parameters for the theta,phi grids */
+  G4double mTanPhiStep; /* Steps parameters for the theta,phi grids */
   G4double mBase1;
   G4double mBase2;
   G4double mBase3;
@@ -73,7 +73,7 @@ public:
   ~GateARFTable();
   G4String GetName()
     {
-    return mArfTableName;
+    return _ArfTableName;
     }
   ;
   void GetARFAsBinaryBuffer(G4double*&);
@@ -81,77 +81,79 @@ public:
 
   G4int GetPrimary()
     {
-    return mIsPrimary;
+    return _IsPrimary;
     }
   ;
   void SetPrimary()
     {
-    mIsPrimary = 1;
+    _IsPrimary = 1;
     }
   void SetNoPrimary()
     {
-    mIsPrimary = 0;
+    _IsPrimary = 0;
     }
   G4double GetEWlow()
     {
-    return mEnergyLowOut;
+    return _EnergyLowUser;
     }
   ;
   G4double GetEWhigh()
     {
-    return mEnergyHighOut;
+    return _EnergyHighUser;
     }
   ;
   void SetName(const G4String & aName)
     {
-    mArfTableName = aName;
+    _ArfTableName = aName;
     }
   ;
   G4int GetIndex()
     {
-    return mArfTableIndex;
+    return _ArfTableIndex;
     }
   ;
   void SetIndex(const G4int & aIndex)
     {
-    mArfTableIndex = aIndex;
+    _ArfTableIndex = aIndex;
     }
   ;
   G4int GetNbofTheta()
     {
-    return mNbOfCosTheta;
+    return _NumberOfCosTheta;
     }
   ;
   G4int GetNbofPhi()
     {
-    return mNbOfTanPhi;
+    return _NumberOfTanPhi;
     }
   ;
   G4int GetTotalNb()
     {
-    return mTotalNbOfThetaPhi;
+    return _TotalNumberbOfThetaPhi;
     }
   ;
   G4double GetElow()
     {
-    return mELow;
+    return _EnergyLow;
     }
   ;
   void SetElow(const G4double & aD)
     {
-    mELow = aD;
+    _EnergyLow = aD;
     }
   ;
   G4double GetEhigh()
     {
-    return mEHigh;
+    return _EnergyHigh;
     }
   ;
   void SetEhigh(const G4double & aD)
     {
-    mEHigh = aD;
+    _EnergyHigh = aD;
     }
   ;
+  void InitializePhi();
+  void InitializeCosTheta();
   void Describe();
   void Initialize(const G4double & energyLow, const G4double & energyHigh);
   G4int GetIndexes(const G4double & x, const G4double & y, G4int& theta, G4int& phi);
@@ -169,12 +171,14 @@ public:
     return mEnergyReference;
     }
   ;
+  G4int GetOneDimensionIndex(G4int  x, G4int y);
   void FillDRFTable(const G4double & meanE, const G4double & X, const G4double & Y);
   void convertDRF2ARF();
+
   G4double computeARFfromDRF(const G4double & xI, const G4double & yJ, const G4double & cosTheta);
   void SetDistanceFromSourceToDetector(const G4double & aD)
     {
-    mfDistSrc2Img = aD;
+    _DistanceSourceToImage = aD;
     }
   ;
   void SetNSimuPhotons(const G4double & N)

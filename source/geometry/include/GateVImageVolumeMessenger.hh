@@ -1,19 +1,19 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
 
-/*! 
-  \class GateVImageVolumeMessenger : 
+/*!
+  \class GateVImageVolumeMessenger :
   \brief Messenger of GateVImageVolume.
   \author thibault.frisson@creatis.insa-lyon.fr
-          laurent.guigues@creatis.insa-lyon.fr
-	  david.sarrut@creatis.insa-lyon.fr
- */
+  laurent.guigues@creatis.insa-lyon.fr
+  david.sarrut@creatis.insa-lyon.fr
+*/
 
 
 #ifndef __GateVImageVolumeMessenger__hh__
@@ -23,7 +23,6 @@ See GATE/LICENSE.txt for further details
 #include "globals.hh"
 
 class GateVImageVolume;
-
 class G4UIcmdWithAString;
 class G4UIcmdWith3VectorAndUnit;
 class G4UIcmdWithABool;
@@ -35,12 +34,11 @@ class GateVImageVolumeMessenger : public GateVolumeMessenger
 public:
   GateVImageVolumeMessenger(GateVImageVolume* volume);
   ~GateVImageVolumeMessenger();
-    
+
   void SetNewValue(G4UIcommand* cmd=0, G4String = " ");
 
 private:
-  GateVImageVolume * pVImageVolume; 
-
+  GateVImageVolume          * pVImageVolume;
   G4UIcmdWithAString        * pImageFileNameCmd;
   G4UIcmdWithAString        * pImageFileNameCmdDeprecated;
   G4UIcmdWithAString        * pLabelToMaterialFileNameCmd;
@@ -48,6 +46,7 @@ private:
   G4UIcmdWithAString        * pHUToMaterialFileNameCmdDeprecated;
   G4UIcmdWithAString        * pRangeMaterialFileNameCmd;
   G4UIcmdWith3VectorAndUnit * pIsoCenterCmd;
+  G4UIcmdWithABool          * pIsoCenterRotationFlagCmd;
   G4UIcmdWith3VectorAndUnit * pSetOriginCmd;
   G4UIcmdWithAString        * pBuildDistanceTransfoCmd;
   G4UIcmdWithAString        * pBuildLabeledImageCmd;
@@ -57,4 +56,3 @@ private:
 //-----------------------------------------------------------------------------
 
 #endif
-

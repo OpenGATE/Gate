@@ -225,7 +225,7 @@ class METAIO_EXPORT MetaObject
       //    Name(...)
       //       Optional Field
       //       Name of the current metaObject
-      void  Name(const char *_name);
+      void  Name(const char *_Name);
       const char  * Name(void) const;
 
       //    Color(...)
@@ -273,7 +273,7 @@ class METAIO_EXPORT MetaObject
 
       void ClearAdditionalFields(void);
 
-      bool InitializeEssential(int _nDims);
+      bool InitializeEssential(int m_NDims);
 
       //
       //

@@ -3,7 +3,7 @@
 
  This software is distributed under the terms
  of the GNU Lesser General  Public Licence (LGPL)
- See GATE/LICENSE.txt for further details
+ See LICENSE.md for further details
  ----------------------*/
 
 #ifndef GateToInterfile_H
@@ -82,6 +82,8 @@ public:
     void WriteGateScannerInfo();
     //! Write the GATE specific run information into the header
     void WriteGateRunInfo(G4int runNb);
+    void WriteGateEmEventsInfo(G4int runNb);
+
 
 private:
     GateToInterfileMessenger* m_asciiMessenger;

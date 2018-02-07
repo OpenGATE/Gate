@@ -3,7 +3,7 @@
 
 This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
+See LICENSE.md for further details
 ----------------------*/
 
 
@@ -466,8 +466,6 @@ void GateVImage::UpdateSizesFromResolutionAndVoxelSize() {
 		  -halfSize.z()+voxelSize.z()/2.0);
   lineSize = (int)lrint(resolution.x());
   planeSize = (int)lrint(resolution.x()*resolution.y());
-
-  PrintInfo();
 }
 //-----------------------------------------------------------------------------
 

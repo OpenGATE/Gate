@@ -8,7 +8,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 /*!
@@ -23,6 +23,7 @@
 #define GATETOIMAGECT_HH
 
 #include <vector>
+#include <cmath>
 
 #include "GateVOutputModule.hh"
 #include "GateApplicationMgr.hh"
@@ -111,7 +112,7 @@ public:
 
   G4int GetFrameID()
   {
-    return static_cast<G4int>( GetTimeStart() / GetFrameDuration() );
+    return static_cast<G4int>( rint(GetTimeStart() / GetFrameDuration()) );
   }
 
   //Transform the pixelID of GATE in Reconstruction and/or ImageJ

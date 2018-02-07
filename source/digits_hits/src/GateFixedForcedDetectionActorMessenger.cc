@@ -5,7 +5,7 @@
 
  This software is distributed under the terms
  of the GNU Lesser General  Public Licence (LGPL)
- See GATE/LICENSE.txt for further details
+ See LICENSE.md for further details
  ----------------------*/
 
 #include "GateConfiguration.h"
@@ -123,6 +123,12 @@ void GateFixedForcedDetectionActorMessenger::BuildCommands(G4String base)
   guidance = "Set the type of source.";
   pSetGeneratePhotonsCmd->SetGuidance(guidance);
 
+  bb = base + "/connectARF";
+  pSetARFCmd = new G4UIcmdWithAString(bb, this);
+  guidance = "Connect ARF.";
+  pSetARFCmd->SetGuidance(guidance);
+
+
   bb = base + "/secondaryFilename";
   pSetSecondaryFilenameCmd = new G4UIcmdWithAString(bb, this);
   guidance = "Set the file name for the scatter image (printf format with runId as a single parameter).";
@@ -237,6 +243,11 @@ void GateFixedForcedDetectionActorMessenger::SetNewValue(G4UIcommand* command, G
     {
     pActor->SetGeneratePhotons(param);
     }
+  if (command == pSetARFCmd)
+     {
+     pActor->SetARF(param);
+     }
+
   if (command == pSetSecondaryFilenameCmd)
     {
     pActor->SetSecondaryFilename(param);

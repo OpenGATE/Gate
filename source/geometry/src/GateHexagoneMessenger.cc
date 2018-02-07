@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
 
 #include "GateHexagoneMessenger.hh"
@@ -35,7 +35,6 @@ GateHexagoneMessenger::GateHexagoneMessenger(GateHexagone *itsCreator)
 
   
   cmdName = dir + "setHeight";
-  G4cout << " GetDirectoryName()+ setHeight = "  << cmdName << Gateendl;
   HexagoneHeightCmd = new G4UIcmdWithADoubleAndUnit(cmdName,this);
   HexagoneHeightCmd->SetGuidance("Set height of the hexagone.");
   HexagoneHeightCmd->SetParameterName("Height",false);
@@ -49,8 +48,8 @@ GateHexagoneMessenger::GateHexagoneMessenger(GateHexagone *itsCreator)
 
 GateHexagoneMessenger::~GateHexagoneMessenger()
 {
-    delete HexagoneHeightCmd;
-    delete HexagoneRadiusCmd;
+  delete HexagoneHeightCmd;
+  delete HexagoneRadiusCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....

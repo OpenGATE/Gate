@@ -3,12 +3,13 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 #ifndef GATEPHYSICSLIST_CC
 #define GATEPHYSICSLIST_CC
 
+#include "G4Version.hh"
 #include "GatePhysicsList.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4Hybridino.hh"
@@ -118,9 +119,13 @@ GatePhysicsList::~GatePhysicsList()
 
   // delete the transportation process (should be done in ~G4VUserPhysicsList())
   bool isTransportationDelete = false;
+#if G4VERSION_NUMBER >= 1030
+  auto theParticleIterator=GetParticleIterator();
+#else
   G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
   //G4ParticleTable::G4PTblDicIterator *
   theParticleIterator = theParticleTable->GetIterator();
+#endif
   theParticleIterator->reset();
   while( (*theParticleIterator)() ){//&& !isTransportationDelete){
     G4ParticleDefinition* particle = theParticleIterator->value();
@@ -500,7 +505,11 @@ void GatePhysicsList::Print(G4String name)
 
   if(name=="All")
     {
+#if G4VERSION_NUMBER >= 1030
+      auto theParticleIterator=GetParticleIterator();
+#else
       theParticleIterator = theParticleTable->GetIterator();
+#endif
       theParticleIterator -> reset();
       while( (*theParticleIterator)() ) {
 	particle = theParticleIterator->value();
@@ -660,7 +669,7 @@ void GatePhysicsList::PurgeIfFictitious()
 void GatePhysicsList::Write(G4String file)
 {
   G4ParticleDefinition* particle=0;
-  G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
+  //G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
   G4ProcessManager* manager = 0;
   G4ProcessVector * processvector = 0;
   //G4ParticleTable::G4PTblDicIterator *
@@ -674,8 +683,12 @@ void GatePhysicsList::Write(G4String file)
 
   os<<"List of particles with their associated processes\n\n";
   if(mLoadState<2)  os<<"<!> *** Warning *** <!>  Processes not yet initialized!\n\n";
-
+#if G4VERSION_NUMBER >= 1030
+  auto theParticleIterator=GetParticleIterator();
+#else
+  G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
   theParticleIterator = theParticleTable->GetIterator();
+#endif
   theParticleIterator -> reset();
   while( (*theParticleIterator)() ) {
     particle = theParticleIterator->value();
@@ -924,9 +937,13 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
   //FIXME
   //DD(mListOfStepLimiter.size());
   if (mListOfStepLimiter.size()!=0) {
+#if G4VERSION_NUMBER >= 1030
+    auto theParticleIterator=GetParticleIterator();
+#else
     G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
     //G4ParticleTable::G4PTblDicIterator *
     theParticleIterator = theParticleTable->GetIterator();
+#endif
     theParticleIterator->reset();
     while( (*theParticleIterator)() ){
       G4ParticleDefinition* particle = theParticleIterator->value();
@@ -943,9 +960,13 @@ void GatePhysicsList::DefineCuts(G4VUserPhysicsList * phys)
 
   //DD(mListOfG4UserSpecialCut.size());
   if (mListOfG4UserSpecialCut.size()!=0) {
+#if ( G4VERSION_NUMBER >= 1030 )
+    auto theParticleIterator=GetParticleIterator();
+#else
     G4ParticleTable* theParticleTable = G4ParticleTable::GetParticleTable();
     //G4ParticleTable::G4PTblDicIterator *
     theParticleIterator = theParticleTable->GetIterator();
+#endif
     theParticleIterator->reset();
     while( (*theParticleIterator)() ){
       G4ParticleDefinition* particle = theParticleIterator->value();

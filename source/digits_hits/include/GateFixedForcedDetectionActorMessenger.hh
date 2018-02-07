@@ -5,7 +5,7 @@
 
  This software is distributed under the terms
  of the GNU Lesser General  Public Licence (LGPL)
- See GATE/LICENSE.txt for further details
+ See LICENSE.md for further details
  ----------------------*/
 
 #include "GateConfiguration.h"
@@ -53,6 +53,7 @@ protected:
   G4UIcmdWithAString * pSetIsotropicPrimaryFilenameCmd;
   G4UIcmdWithAString * pSetSourceTypeCmd;
   G4UIcmdWithAString * pSetGeneratePhotonsCmd;
+  G4UIcmdWithAString * pSetARFCmd;
   G4UIcmdWithAString * pSetSecondaryFilenameCmd;
   G4UIcmdWithABool * pEnableSecondarySquaredCmd;
   G4UIcmdWithABool * pEnableSecondaryUncertaintyCmd;

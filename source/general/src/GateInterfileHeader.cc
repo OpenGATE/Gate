@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -172,11 +172,11 @@ void GateInterfileHeader::ReadKey(FILE* fp)
     if ( (strcmp(value,"float")==0) || (strcmp(value,"FLOAT")==0) )
       m_dataTypeName = "FLOAT";
     else if  ( (strcmp(value,"short float")==0) || (strcmp(value,"SHORT FLOAT")==0) ) {
-       m_dataTypeName = "FLOAT";
-       m_bytePerPixel = 4;
+      m_dataTypeName = "FLOAT";
+      m_bytePerPixel = 4;
     } else if ( (strcmp(value,"long float")==0) || (strcmp(value,"LONG FLOAT")==0) ) {
-       m_dataTypeName = "FLOAT";
-       m_bytePerPixel = 8;
+      m_dataTypeName = "FLOAT";
+      m_bytePerPixel = 8;
     }
     else if ( (strcmp(value,"unsigned integer")==0) || (strcmp(value,"UNSIGNED INTEGER")==0) )
       m_dataTypeName = "UNSIGNED INTEGER";
@@ -192,9 +192,9 @@ void GateInterfileHeader::ReadKey(FILE* fp)
     else
       G4cerr << "Unrecognized data byte order '" + G4String(value) + "', assuming default BIGENDIAN\n\n";
   } else if ( key ==  "number of bytes per pixel" ) {
-      sscanf(value,"%d",&m_bytePerPixel);
+    sscanf(value,"%d",&m_bytePerPixel);
   } else if ( key ==  "data offset in bytes" ) {
-      sscanf(value,"%d",&m_offset);
+    sscanf(value,"%d",&m_offset);
   } else {
     // G4cout << "Key not processed: '" << key << "'\n";
   }

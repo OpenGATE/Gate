@@ -3,11 +3,12 @@
 
 This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
+See LICENSE.md for further details
 ----------------------*/
 
 
 #include "GateDecayPB.hh"
+#include "G4SystemOfUnits.hh"
 
 //Even though the decay process may be assigned to neutrons, anti_neutrons, mu+ and mu-, these particles are treated as stable by G4Decay.
 //To make a particle unstable (with the correct lifetime) use the method SetPDGStable(false) of the particle.
