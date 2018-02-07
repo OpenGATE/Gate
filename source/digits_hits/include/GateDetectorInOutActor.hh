@@ -22,17 +22,27 @@
 
 
 //-----------------------------------------------------------------------------
-struct DetectorInOutData {
+struct DetectorInData {
   // Input parameters
   double x;     // in mm
   double y;     // in mm
   double theta; // radian along X
   double phi;   // radian along Y
   double E;     // in MeV
+  // Helper
+  void Print(std::ostream & os);
+};
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+struct DetectorOutData {
   // Output parameters
-  double u;
-  double v;
-  double w; // windows id (-1 if outside)
+  //double u;
+  //double v;
+  double w;     // windows id (0 if outside)
+  // Helper
+  void Print(std::ostream & os);
 };
 //-----------------------------------------------------------------------------
 
@@ -52,9 +62,10 @@ public:
   virtual void Construct();
 
   // Parameters
-  void SetInputPlaneName(std::string & name);
-  void SetOutputSystemName(std::string & name);
   void SetOutputWindowNames(std::string & names);
+  void SetOutputInDataOnlyFlag(bool b);
+  void SetMaxAngle(double a);
+  void SetRRFactor(int f);
 
   // Callbacks
   virtual void BeginOfRunAction(const G4Run *);
@@ -70,13 +81,20 @@ protected:
   GateDetectorInOutActor(G4String name, G4int depth = 0);
   GateDetectorInOutActorMessenger * pMessenger;
 
-  std::string mInputPlaneName;
-  std::string mOutputSystemName;
-  std::vector<DetectorInOutData> mData;
+  bool mOutputInDataOnlyFlag;
+  bool mIgnoreCurrentData;
+  std::vector<DetectorOutData> mOutData;
+  std::vector<DetectorInData> mInData;
   bool mEventIsAlreadyStored;
-  DetectorInOutData mCurrentData;
+  DetectorOutData mCurrentOutData;
+  DetectorInData mCurrentInData;
   std::vector<G4String> mListOfWindowNames;
   std::vector<int> mListOfWindowIds;
+  int mNumberOfDetectedEvent;
+  int mRRFactor;
+  double mMaxAngle;
+  double mThetaMax;
+  double mPhiMax;
 };
 
 // Macro to auto declare actor

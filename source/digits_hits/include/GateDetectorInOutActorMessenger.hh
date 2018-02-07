@@ -15,6 +15,8 @@
 #define GATEDETECTORINOUTMESSENGER_HH
 
 #include "GateActorMessenger.hh"
+#include "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4UIcmdWithAnInteger.hh"
 
 class GateDetectorInOutActor;
 
@@ -29,10 +31,11 @@ public:
   void SetNewValue(G4UIcommand*, G4String);
 
 protected:
-  GateDetectorInOutActor * pDIOActor;
-  G4UIcmdWithAString * pSetInputPlaneCmd;
-  G4UIcmdWithAString * pSetOutputSystemNameCmd;
-  G4UIcmdWithAString * pSetOutputWindowNamesCmd;
+  GateDetectorInOutActor    * pDIOActor;
+  G4UIcmdWithAString        * pSetOutputWindowNamesCmd;
+  G4UIcmdWithABool          * pSetOutputInDataOnlyFlagCmd;
+  G4UIcmdWithADoubleAndUnit * pSetMaxAngleCmd;
+  G4UIcmdWithAnInteger      * pSetRRFactorCmd;
 };
 //-----------------------------------------------------------------------------
 
