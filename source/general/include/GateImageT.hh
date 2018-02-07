@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -29,6 +29,7 @@
 #include "GateVImage.hh"
 #include "GateMachine.hh"
 #include "GateMHDImage.hh"
+#include "GateDICOMImage.hh"
 #include "GateMiscFunctions.hh"
 
 // root
@@ -121,6 +122,7 @@ protected:
   void ReadAnalyze(G4String filename);
   void ReadMHD(G4String filename);
   void ReadInterfile(G4String fileName);
+  void ReadDICOM(G4String fileName);
 
   void WriteVox(std::ofstream & os);
   void WriteAscii(std::ofstream & os, const G4String & comment);
@@ -128,6 +130,7 @@ protected:
   void WriteAnalyzeHeader(G4String filename);
   void WriteRoot(G4String filename);
   void WriteMHD(std::string filename);
+  void WriteDICOM(std::string filename);
 
 };
 

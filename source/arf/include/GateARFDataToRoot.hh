@@ -3,7 +3,7 @@
 
  This software is distributed under the terms
  of the GNU Lesser General  Public Licence (LGPL)
- See GATE/LICENSE.txt for further details
+ See LICENSE.md for further details
  ----------------------*/
 
 #ifndef GateARFDataToRoot_H
@@ -180,8 +180,6 @@ private:
   ULong64_t mNbofKilledInsideCamera;
   ULong64_t mNbofBornInsidePhotons;
   ULong64_t mNbofStoredPhotons;
-  G4int mGoingIn;
-  G4int mGoingOut; /* number of times a photons enters the ARFSimu SD */
   G4int mIsCounted;
   G4int mIsCountedOut; /* flag to know the in going photon has been counted or not */
   G4int mHeadID;

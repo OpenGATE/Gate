@@ -1,0 +1,51 @@
+/*----------------------
+  Copyright (C): OpenGATE Collaboration
+
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
+
+/*
+  \class  GateDICOMImage
+  \author Thomas DESCHLER (thomas@deschler.fr)
+  based on the work of
+          Jérôme Suhard (jerome@suhard.fr)
+          Albertine Dubois (adubois@imnc.in2p3.fr)
+  \date	April 2016
+*/
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateDICOMImage::GetPixels(std::vector<PixelType>& data)
+{
+  GateMessage("Image", 10, "[GateDICOMImage::GetPixels] data PixelType: " << typeid(PixelType).name() << Gateendl);
+
+  int i=0;
+  for(unsigned int z=0; z<image->GetLargestPossibleRegion().GetSize()[2]; z++)
+    for(unsigned int y=0; y<image->GetLargestPossibleRegion().GetSize()[1]; y++)
+	    for(unsigned int x=0; x<image->GetLargestPossibleRegion().GetSize()[0]; x++)
+      {
+        data[i]=image->GetPixel({{x,y,z}});
+        i++;
+      }
+}
+//-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+template<class PixelType>
+void GateDICOMImage::SetPixels(std::vector<PixelType>& data)
+{
+  GateMessage("Image", 10, "[GateDICOMImage::SetPixels] data PixelType: " << typeid(PixelType).name() << Gateendl);
+
+  int i=0;
+  for(unsigned int z=0; z<dicomIO->GetLargestPossibleRegion().GetSize()[2]; z++)
+    for(unsigned int y=0; y<dicomIO->GetLargestPossibleRegion().GetSize()[1]; y++)
+	    for(unsigned int x=0; x<dicomIO->GetLargestPossibleRegion().GetSize()[0]; x++)
+      {
+        dicomIO->SetPixel({{x,y,z}},(short int)data[i]);
+        i++;
+      }
+}
+//-----------------------------------------------------------------------------

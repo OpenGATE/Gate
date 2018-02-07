@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -261,6 +261,14 @@ void GateVImageActor::SetStepHitType(G4String t)
   if (t == "random") { mStepHitType = RandomStepHitType; return; }
 
   GateError("GateVImageActor -- SetStepHitType: StepHitType is set to '" << t << "' while I only know 'pre', 'post', 'random' or 'middle'.");
+}
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+/// Gets the voxel size (vc)
+G4ThreeVector GateVImageActor::GetVoxelSize() 
+{
+  return mVoxelSize;
 }
 //-----------------------------------------------------------------------------
 

@@ -3,7 +3,7 @@
 
 This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
+See LICENSE.md for further details
 ----------------------*/
 
 #ifndef GATEMISCFUNCTIONS_CC
@@ -671,6 +671,20 @@ G4String GetSaveCurrentFilename(G4String & mSaveFilename) {
   oss << "_E" << std::setfill('0') << std::setw(15) << ne;
   G4String mSaveCurrentFilename = G4String(removeExtension(mSaveFilename))+oss.str()+extension;
   return mSaveCurrentFilename;
+}
+//------------------------------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------------------------------
+std::string ReadNextContentLine( std::istream& input, int& lineno, const std::string& fname ) {
+  while ( input ){
+    std::string line;
+    std::getline(input,line);
+    ++lineno;
+    if (line.empty()) continue;
+    if (line[0]=='#') continue;
+    return line;
+  }
+  throw std::runtime_error(std::string("reached end of file '")+fname+std::string("' unexpectedly."));
 }
 //-----------------------------------------------------------------------------
 

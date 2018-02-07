@@ -1,10 +1,10 @@
 /*----------------------
-   Copyright (C): OpenGATE Collaboration
+  Copyright (C): OpenGATE Collaboration
 
-This software is distributed under the terms
-of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
-----------------------*/
+  This software is distributed under the terms
+  of the GNU Lesser General  Public Licence (LGPL)
+  See LICENSE.md for further details
+  ----------------------*/
 
 
 //-----------------------------------------------------------------------------
@@ -20,6 +20,10 @@ void GateMHDImage::ReadData(std::string filename, std::vector<PixelType> & data)
     GateError("MHD File <" << filename << "> is not 3D but " << m_MetaImage.NDims() << "D, abort.\n");
   }
 
+  // Convert to Int
+  if (typeid(PixelType) == typeid(int)) {
+    m_MetaImage.ConvertElementDataToIntensityData(MET_INT);
+  }
   // Convert to Float
   if (typeid(PixelType) == typeid(float)) {
     m_MetaImage.ConvertElementDataToIntensityData(MET_FLOAT);
@@ -37,7 +41,12 @@ void GateMHDImage::ReadData(std::string filename, std::vector<PixelType> & data)
 
 //-----------------------------------------------------------------------------
 template<class PixelType>
-void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * image, bool writeData,bool  changeExtension,bool isARF)
+void GateMHDImage::WriteHeader(std::string filename,
+                               GateImageT<PixelType> * image,
+                               bool writeData,
+                               bool changeExtension,
+                               bool isARF,
+                               int numberOfARFFFDHeads)
 {
   MetaImage m_MetaImage;
   int ds[3];
@@ -45,6 +54,11 @@ void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * ima
   ds[0] = image->GetResolution().x();
   ds[1] = image->GetResolution().y();
   ds[2] = image->GetResolution().z();
+  if(isARF)
+    {
+      ds[2]*=numberOfARFFFDHeads;
+    }
+
   es[0] = image->GetVoxelSize().x();
   es[1] = image->GetVoxelSize().y();
   es[2] = image->GetVoxelSize().z();
@@ -64,16 +78,16 @@ void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * ima
     m_MetaImage.InitializeEssential(3, ds, es, MET_INT);
     done=true;
   }
-    if (typeid(PixelType) == typeid(unsigned short) && isARF==false) {
+  if (typeid(PixelType) == typeid(unsigned short) && isARF==false) {
     m_MetaImage.InitializeEssential(3, ds, es, MET_USHORT);
     done=true;
   }
-  
-   if (isARF==true) {
+
+  if (isARF==true) {
     m_MetaImage.InitializeEssential(3, ds, es, MET_DOUBLE);
     done=true;
   }
-  
+
   if (!done) {
     GateError("Error could not create a MHD image of pixeltype = " << typeid(PixelType).name() << Gateendl);
   }
@@ -84,9 +98,20 @@ void GateMHDImage::WriteHeader(std::string filename, GateImageT<PixelType> * ima
   // Gate convention: origin is the corner of the first pixel
   // MHD / ITK convention: origin is the center of the first pixel
   // -> Add a half pixel
-  p[0] = image->GetOrigin().x() + image->GetVoxelSize().x()/2.0;
-  p[1] = image->GetOrigin().y() + image->GetVoxelSize().y()/2.0;
-  p[2] = image->GetOrigin().z() + image->GetVoxelSize().z()/2.0;
+  GateMessage("Image", 10, "[GateMHDImage::WriteHeader] GATE conventional origin: "
+              << image->GetOrigin().x() << ","
+              << image->GetOrigin().y() << ","
+              << image->GetOrigin().z() << Gateendl);
+
+  p[0] = round_to_digits(image->GetOrigin().x() + image->GetVoxelSize().x()/2.0, 6);
+  p[1] = round_to_digits(image->GetOrigin().y() + image->GetVoxelSize().y()/2.0, 6);
+  p[2] = round_to_digits(image->GetOrigin().z() + image->GetVoxelSize().z()/2.0, 6);
+
+  GateMessage("Image", 10, "[GateMHDImage::WriteHeader] ITK conventional origin: "
+              << p[0] << ","
+              << p[1] << ","
+              << p[2] << Gateendl);
+
   m_MetaImage.Position(p);
 
   // Transform

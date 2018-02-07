@@ -5,14 +5,15 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 /*!
   \class  GateSourceOfPromptGammaData
 
   Manage a 3D distribution of prompt gamma, with 1 energy spectrum at
-  each voxel.
+  each voxel, stored as TH1D. For voxels with yield==0, the TH1D is not
+  instantiated/allocated.
 
 */
 

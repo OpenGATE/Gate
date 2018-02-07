@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 
@@ -146,7 +146,7 @@ G4int GateOpticalBiolumGPU::GeneratePrimaries(G4Event* event)
   if (m_gpu_input->activity_index.empty())
     { // import activity to gpu
       m_gpu_input->firstInitialID = mCurrentTimeID;
-      ActivityMap activities = m_voxelReader->GetSourceActivityMap();
+      GateVSourceVoxelReader::GateSourceActivityMap activities = m_voxelReader->GetSourceActivityMap();
       GateGPUIO_Input_parse_activities(activities,m_gpu_input);
     }
 

@@ -3,7 +3,7 @@
 
  This software is distributed under the terms
  of the GNU Lesser General  Public Licence (LGPL)
- See GATE/LICENSE.txt for further details
+ See LICENSE.md for further details
  ----------------------*/
 
 #include "GateConfiguration.h"
@@ -127,11 +127,23 @@ public:
   void ComputeProjectionSet(const G4ThreeVector & position,
                             const G4ThreeVector & direction,
                             const G4double & energy,
-                            const G4double & weight);
+                            const G4double & weight,
+                            bool addEmToArfCount = false,
+                            unsigned int newHead = 1);
 
   void SetDepth(const G4double & aDepth)
     {
     mDetectorXDepth = aDepth;
+    }
+
+  G4double GetDepth()
+    {
+    return mDetectorXDepth;
+    }
+
+  void SetShortcutARF(const bool & boolean)
+    {
+    mShortcutARF = boolean;
     }
 
   G4int GetCopyNo()
@@ -194,6 +206,7 @@ private:
   std::vector<G4int> mEnergyWindowsNumberOfPrimaries;
   G4double mEnergyDepositionThreshold;
   G4int mArfStage;
+  bool mShortcutARF;
   };
 
 #endif

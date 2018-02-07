@@ -134,12 +134,12 @@ PointDim(void) const
 }
 
 void MetaBlob::
-NPoints(size_t npnt)
+NPoints(int npnt)
 {
   m_NPoints = npnt;
 }
 
-size_t MetaBlob::
+int MetaBlob::
 NPoints(void) const
 {
   return m_NPoints;
@@ -328,12 +328,12 @@ M_Read(void)
   {
     int elementSize;
     MET_SizeOfType(m_ElementType, &elementSize);
-    size_t readSize = m_NPoints*(m_NDims+4)*elementSize;
+    int readSize = m_NPoints*(m_NDims+4)*elementSize;
 
     char* _data = new char[readSize];
     m_ReadStream->read((char *)_data, readSize);
 
-    int gc = static_cast<int>(m_ReadStream->gcount());
+    int gc = m_ReadStream->gcount();
     if(gc != readSize)
     {
       METAIO_STREAM::cout << "MetaBlob: m_Read: data not read completely"
@@ -416,7 +416,7 @@ M_Read(void)
       char c = ' ';
       while( (c!='\n') && (!m_ReadStream->eof()))
         {
-        c = static_cast<char>(m_ReadStream->get());// to avoid unrecognize charactere
+        c = m_ReadStream->get();// to avoid unrecognize charactere
         }
       }
   }

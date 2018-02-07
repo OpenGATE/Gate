@@ -2,7 +2,7 @@
   Copyright (C): OpenGATE Collaboration
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 #include <fstream>
@@ -33,8 +33,8 @@
 
 //-------------------------------------------------------------------------------------------------
 GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
-( GateVSource* fPtclGun )
-  : GateMessenger( G4String("source/")+(fPtclGun->GetName()) + G4String("/gps") ),
+( GateVSource* fPtclGun)
+  : GateMessenger( G4String("source/")+(fPtclGun->GetName()) + G4String("/gps")),
     fParticleGun(fPtclGun),fShootIon(false)
 {
   histtype = "biasx";
@@ -517,12 +517,12 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
 
   // old ones
   cmdName = GetDirectoryName() + "angtype";
-  angtypeCmd = new G4UIcmdWithAString( cmdName,this ) ;
-  angtypeCmd->SetGuidance( "Sets angular source distribution type" ) ;
-  angtypeCmd->SetGuidance( "Possible variables are: iso, cos planar beam1d beam2d or user" ) ;
-  angtypeCmd->SetParameterName( "AngDis",true,true ) ;
-  angtypeCmd->SetDefaultValue( "iso" ) ;
-  angtypeCmd->SetCandidates( "iso cos planar beam1d beam2d user focused" ) ;
+  angtypeCmd = new G4UIcmdWithAString( cmdName,this) ;
+  angtypeCmd->SetGuidance( "Sets angular source distribution type") ;
+  angtypeCmd->SetGuidance( "Possible variables are: iso, cos planar beam1d beam2d or user") ;
+  angtypeCmd->SetParameterName( "AngDis",true,true) ;
+  angtypeCmd->SetDefaultValue( "iso") ;
+  angtypeCmd->SetCandidates( "iso cos planar beam1d beam2d user focused") ;
 
   cmdName = GetDirectoryName() + "angrot1";
   angrot1Cmd = new G4UIcmdWith3Vector(cmdName,this);
@@ -761,7 +761,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
 
 
 
- // Biasing + histograms in general
+  // Biasing + histograms in general
   cmdName = GetDirectoryName() + "hist/type";
   histnameCmd1 = new G4UIcmdWithAString(cmdName,this);
   histnameCmd1->SetGuidance("Sets histogram type");
@@ -831,6 +831,7 @@ GateSingleParticleSourceMessenger::GateSingleParticleSourceMessenger
 
 }
 //-------------------------------------------------------------------------------------------------
+
 
 //-------------------------------------------------------------------------------------------------
 GateSingleParticleSourceMessenger::~GateSingleParticleSourceMessenger()
@@ -960,594 +961,483 @@ GateSingleParticleSourceMessenger::~GateSingleParticleSourceMessenger()
   delete listCmd;
 
   delete positronRangeCmd;
-/////////////////////////////////////// Yann PERROT, Simon NICOLAS LPC Clermont-ferrand ///////////////////////////////////////////////
   delete setUserSpectrumCmd;
-/////////////////////////////////////// Yann PERROT, Simon NICOLAS LPC Clermont-ferrand ///////////////////////////////////////////////
-
 
   //delete particleTable;
 }
 //-------------------------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------------------------
-void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4String newValues )
-{
-    G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
 
-  if (command == relativePlacementCmd)
-    {
-      fParticleGun->SetRelativePlacementVolume(newValues);
-    }
-  else if (command == typeCmd )
-    {
-      fParticleGun->GetPosDist()->SetPosDisType( newValues ) ;
-    }
-  else if (command == shapeCmd )
-    {
-      fParticleGun->GetPosDist()->SetPosDisShape( newValues ) ;
-    }
-  else if (command == positronRangeCmd )
-    {
-      fParticleGun->GetPosDist()->SetPositronRange( newValues ) ;
-    }
-  else if (command == centreCmd )
-    {
-      fParticleGun->GetPosDist()->SetCentreCoords( centreCmd->GetNew3VectorValue( newValues ) ) ;
-      fParticleGun->SetCentreCoords( centreCmd->GetNew3VectorValue( newValues ) );
-    }
-  else if (command == posrot1Cmd )
-    {
-      fParticleGun->GetPosDist()->SetPosRot1( posrot1Cmd->GetNew3VectorValue( newValues ) ) ;
-      fParticleGun->SetPosRot1(posrot1Cmd->GetNew3VectorValue( newValues ));
-    }
-  else if (command == posrot2Cmd )
-    {
-      fParticleGun->GetPosDist()->SetPosRot2(posrot2Cmd->GetNew3VectorValue(newValues));
-      fParticleGun->SetPosRot2(posrot2Cmd->GetNew3VectorValue(newValues));
-    }
-  else if (command == halfxCmd )
-    {
-      fParticleGun->GetPosDist()->SetHalfX( halfxCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == halfyCmd )
-    {
-      fParticleGun->GetPosDist()->SetHalfY( halfyCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == halfzCmd )
-    {
-      fParticleGun->GetPosDist()->SetHalfZ( halfzCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == radiusCmd )
-    {
-      fParticleGun->GetPosDist()->SetRadius( radiusCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == radius0Cmd )
-    {
-      fParticleGun->GetPosDist()->SetRadius0( radius0Cmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == possigmarCmd )
-    {
-      fParticleGun->GetPosDist()->SetBeamSigmaInR( possigmarCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == possigmaxCmd )
-    {
-      fParticleGun->GetPosDist()->SetBeamSigmaInX( possigmaxCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == possigmayCmd )
-    {
-      fParticleGun->GetPosDist()->SetBeamSigmaInY( possigmayCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == paralpCmd )
-    {
-      fParticleGun->GetPosDist()->SetParAlpha(paralpCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == partheCmd )
-    {
-      fParticleGun->GetPosDist()->SetParTheta( partheCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == parphiCmd )
-    {
-      fParticleGun->GetPosDist()->SetParPhi( parphiCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == confineCmd )
-    {
-      // Modif DS: for all names exept NULL, we add the tag "_phys" at the end
-      // of the volume name when the user forgot to do it
-      if ( newValues != "NULL" ) {
-        if (newValues.substr( newValues.length()-5 ) != "_phys" )
-          newValues += "_phys";
-        G4cout << "Confirming confinement to volume '" << newValues << "'...\n" ;
+//-------------------------------------------------------------------------------------------------
+void GateSingleParticleSourceMessenger::SetNewValue( G4UIcommand* command, G4String newValues)
+{
+  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+
+  if (command == relativePlacementCmd) {
+    fParticleGun->SetRelativePlacementVolume(newValues);
+  }
+  else if (command == typeCmd) {
+    fParticleGun->GetPosDist()->SetPosDisType(newValues) ;
+  }
+  else if (command == shapeCmd) {
+    fParticleGun->GetPosDist()->SetPosDisShape(newValues) ;
+  }
+  else if (command == positronRangeCmd) {
+    fParticleGun->GetPosDist()->SetPositronRange(newValues) ;
+  }
+  else if (command == centreCmd) {
+    fParticleGun->GetPosDist()->SetCentreCoords( centreCmd->GetNew3VectorValue(newValues)) ;
+    fParticleGun->SetCentreCoords( centreCmd->GetNew3VectorValue(newValues));
+  }
+  else if (command == posrot1Cmd) {
+    fParticleGun->GetPosDist()->SetPosRot1( posrot1Cmd->GetNew3VectorValue(newValues)) ;
+    fParticleGun->SetPosRot1(posrot1Cmd->GetNew3VectorValue(newValues));
+  }
+  else if (command == posrot2Cmd) {
+    fParticleGun->GetPosDist()->SetPosRot2(posrot2Cmd->GetNew3VectorValue(newValues));
+    fParticleGun->SetPosRot2(posrot2Cmd->GetNew3VectorValue(newValues));
+  }
+  else if (command == halfxCmd) {
+    fParticleGun->GetPosDist()->SetHalfX( halfxCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == halfyCmd) {
+    fParticleGun->GetPosDist()->SetHalfY( halfyCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == halfzCmd) {
+    fParticleGun->GetPosDist()->SetHalfZ( halfzCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == radiusCmd) {
+    fParticleGun->GetPosDist()->SetRadius( radiusCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == radius0Cmd) {
+    fParticleGun->GetPosDist()->SetRadius0( radius0Cmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == possigmarCmd) {
+    fParticleGun->GetPosDist()->SetBeamSigmaInR( possigmarCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == possigmaxCmd) {
+    fParticleGun->GetPosDist()->SetBeamSigmaInX( possigmaxCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == possigmayCmd) {
+    fParticleGun->GetPosDist()->SetBeamSigmaInY( possigmayCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == paralpCmd) {
+    fParticleGun->GetPosDist()->SetParAlpha(paralpCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == partheCmd) {
+    fParticleGun->GetPosDist()->SetParTheta( partheCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == parphiCmd) {
+    fParticleGun->GetPosDist()->SetParPhi( parphiCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == confineCmd) {
+    // Modif DS/FS: for all names exept NULL, we add the tag "_phys" at the end
+    // of the volume name when the user forgot to do it
+    if ( newValues != "NULL")
+      {
+        bool test = false;
+        if (newValues.length() < 5) { test = true; }
+        else if (newValues.substr( newValues.length()-5) != "_phys") { test = true; }
+
+        if (test)
+          {
+            newValues += "_phys";
+            G4cout << "Confirming confinement to volume '" << newValues << "'...\n" ;
+          }
       }
-      fParticleGun->GetPosDist()->ConfineSourceToVolume( newValues ) ;
+    fParticleGun->GetPosDist()->ConfineSourceToVolume(newValues) ;
+  }
+  else if (command == ForbidCmd) {
+    if ( newValues != "NULL") {
+      if (newValues.substr( newValues.length()-5) != "_phys")
+        newValues += "_phys";
+      G4cout << "Confirming activity forbidden in volume '" << newValues << "'...\n";
     }
-  else if (command == ForbidCmd )
-    {
-      if ( newValues != "NULL") {
-        if (newValues.substr( newValues.length()-5 ) != "_phys" )
-          newValues += "_phys";
-        G4cout << "Confirming activity forbidden in volume '" << newValues << "'...\n";
-      }
-      fParticleGun->GetPosDist()->ForbidSourceToVolume(newValues);
+    fParticleGun->GetPosDist()->ForbidSourceToVolume(newValues);
+  }
+  else if (command == angtypeCmd) {
+    fParticleGun->GetAngDist()->SetAngDistType(newValues) ;
+  }
+  else if (command == angrot1Cmd) {
+    G4String a = "angref1";
+    fParticleGun->GetAngDist()->DefineAngRefAxes( a,angrot1Cmd->GetNew3VectorValue(newValues)) ;
+  }
+  else if (command == angrot2Cmd) {
+    G4String a = "angref2";
+    fParticleGun->GetAngDist()->DefineAngRefAxes( a,angrot2Cmd->GetNew3VectorValue(newValues)) ;
+  }
+  else if (command == minthetaCmd) {
+    fParticleGun->GetAngDist()->SetMinTheta( minthetaCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == minphiCmd) {
+    fParticleGun->GetAngDist()->SetMinPhi( minphiCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == maxthetaCmd) {
+    fParticleGun->GetAngDist()->SetMaxTheta( maxthetaCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == maxphiCmd) {
+    fParticleGun->GetAngDist()->SetMaxPhi( maxphiCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == angsigmarCmd) {
+    fParticleGun->GetAngDist()->SetBeamSigmaInAngR( angsigmarCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == angsigmaxCmd) {
+    fParticleGun->GetAngDist()->SetBeamSigmaInAngX( angsigmaxCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == angsigmayCmd) {
+    fParticleGun->GetAngDist()->SetBeamSigmaInAngY( angsigmayCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == useuserangaxisCmd) {
+    fParticleGun->GetAngDist()->SetUseUserAngAxis( useuserangaxisCmd->GetNewBoolValue(newValues)) ;
+  }
+  else if (command == surfnormCmd) {
+    fParticleGun->GetAngDist()->SetUserWRTSurface( surfnormCmd->GetNewBoolValue(newValues)) ;
+  }
+  else if (command == energytypeCmd) {
+    fParticleGun->GetEneDist()->SetEnergyDisType(newValues) ;
+  }
+  else if (command == eminCmd) {
+    fParticleGun->GetEneDist()->SetEmin( eminCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == emaxCmd) {
+    fParticleGun->GetEneDist()->SetEmax( emaxCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == monoenergyCmd) {
+    fParticleGun->GetEneDist()->SetMonoEnergy( monoenergyCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == engsigmaCmd) {
+    fParticleGun->GetEneDist()->SetBeamSigmaInE( engsigmaCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == alphaCmd) {
+    fParticleGun->GetEneDist()->SetAlpha( alphaCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == tempCmd) {
+    fParticleGun->GetEneDist()->SetTemp( tempCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == ezeroCmd) {
+    fParticleGun->GetEneDist()->SetEzero( ezeroCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == gradientCmd) {
+    fParticleGun->GetEneDist()->SetGradient( gradientCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == interceptCmd) {
+    fParticleGun->GetEneDist()->SetInterCept( interceptCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == calculateCmd) {
+    fParticleGun->GetEneDist()->Calculate() ;
+  }
+  else if (command == energyspecCmd) {
+    fParticleGun->GetEneDist()->InputEnergySpectra( energyspecCmd->GetNewBoolValue(newValues)) ;
+  }
+  else if (command == diffspecCmd) {
+    fParticleGun->GetEneDist()->InputDifferentialSpectra( diffspecCmd->GetNewBoolValue(newValues)) ;
+  }
+  else if (command == histnameCmd) {
+    histtype = newValues ;
+  }
+  else if (command == histpointCmd) {
+    if( histtype == "biasx")
+      fParticleGun->GetBiasRndm()->SetXBias( histpointCmd->GetNew3VectorValue(newValues)) ;
+    if( histtype == "biasy")
+      fParticleGun->GetBiasRndm()->SetYBias( histpointCmd->GetNew3VectorValue(newValues)) ;
+    if( histtype == "biasz")
+      fParticleGun->GetBiasRndm()->SetZBias( histpointCmd->GetNew3VectorValue(newValues)) ;
+    if( histtype == "biast")
+      fParticleGun->GetBiasRndm()->SetThetaBias( histpointCmd->GetNew3VectorValue(newValues)) ;
+    if( histtype == "biasp")
+      fParticleGun->GetBiasRndm()->SetPhiBias( histpointCmd->GetNew3VectorValue(newValues)) ;
+    if( histtype == "biase")
+      fParticleGun->GetBiasRndm()->SetEnergyBias( histpointCmd->GetNew3VectorValue(newValues)) ;
+    if( histtype == "theta")
+      fParticleGun->GetAngDist()->UserDefAngTheta( histpointCmd->GetNew3VectorValue(newValues)) ;
+    if( histtype == "phi")
+      fParticleGun->GetAngDist()->UserDefAngPhi( histpointCmd->GetNew3VectorValue(newValues)) ;
+    if( histtype == "energy")
+      fParticleGun->GetEneDist()->UserEnergyHisto( histpointCmd->GetNew3VectorValue(newValues)) ;
+    if( histtype == "arb")
+      fParticleGun->GetEneDist()->ArbEnergyHisto( histpointCmd->GetNew3VectorValue(newValues)) ;
+    if( histtype == "epn")
+      fParticleGun->GetEneDist()->EpnEnergyHisto( histpointCmd->GetNew3VectorValue(newValues)) ;
+  }
+  else if (command == resethistCmd) {
+    fParticleGun->GetAngDist()->ReSetHist(newValues) ;
+  }
+  else if (command == arbintCmd) {
+    fParticleGun->GetEneDist()->ArbInterpolate(newValues) ;
+  }
+  else if (command == verbosityCmd) {
+    fParticleGun->SetVerbosity( verbosityCmd->GetNewIntValue(newValues)) ;
+    fParticleGun->SetVerboseLevel( verbosityCmd->GetNewIntValue(newValues)) ;
+  }
+  else if (command == particleCmd) {
+    if (newValues == "ion") {
+      fShootIon = true ;
+    } else {
+      fShootIon = false ;
+      G4ParticleDefinition* pd = particleTable->FindParticle(newValues) ;
+      if( pd != NULL)
+        { fParticleGun->SetParticleDefinition( pd) ; }
     }
-  else if (command == angtypeCmd )
-    {
-      fParticleGun->GetAngDist()->SetAngDistType( newValues ) ;
-    }
-  else if (command == angrot1Cmd )
-    {
-      G4String a = "angref1";
-      fParticleGun->GetAngDist()->DefineAngRefAxes( a,angrot1Cmd->GetNew3VectorValue( newValues ) ) ;
-    }
-  else if (command == angrot2Cmd )
-    {
-      G4String a = "angref2";
-      fParticleGun->GetAngDist()->DefineAngRefAxes( a,angrot2Cmd->GetNew3VectorValue( newValues ) ) ;
-    }
-  else if (command == minthetaCmd )
-    {
-      fParticleGun->GetAngDist()->SetMinTheta( minthetaCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == minphiCmd )
-    {
-      fParticleGun->GetAngDist()->SetMinPhi( minphiCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == maxthetaCmd )
-    {
-      fParticleGun->GetAngDist()->SetMaxTheta( maxthetaCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == maxphiCmd )
-    {
-      fParticleGun->GetAngDist()->SetMaxPhi( maxphiCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == angsigmarCmd )
-    {
-      fParticleGun->GetAngDist()->SetBeamSigmaInAngR( angsigmarCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == angsigmaxCmd )
-    {
-      fParticleGun->GetAngDist()->SetBeamSigmaInAngX( angsigmaxCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == angsigmayCmd )
-    {
-      fParticleGun->GetAngDist()->SetBeamSigmaInAngY( angsigmayCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == useuserangaxisCmd )
-    {
-      fParticleGun->GetAngDist()->SetUseUserAngAxis( useuserangaxisCmd->GetNewBoolValue( newValues ) ) ;
-    }
-  else if (command == surfnormCmd )
-    {
-      fParticleGun->GetAngDist()->SetUserWRTSurface( surfnormCmd->GetNewBoolValue( newValues ) ) ;
-    }
-  else if (command == energytypeCmd )
-    {
-      fParticleGun->GetEneDist()->SetEnergyDisType( newValues ) ;
-    }
-  else if (command == eminCmd )
-    {
-      fParticleGun->GetEneDist()->SetEmin( eminCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == emaxCmd )
-    {
-      fParticleGun->GetEneDist()->SetEmax( emaxCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == monoenergyCmd )
-    {
-      fParticleGun->GetEneDist()->SetMonoEnergy( monoenergyCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == engsigmaCmd )
-    {
-      fParticleGun->GetEneDist()->SetBeamSigmaInE( engsigmaCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == alphaCmd )
-    {
-      fParticleGun->GetEneDist()->SetAlpha( alphaCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == tempCmd )
-    {
-      fParticleGun->GetEneDist()->SetTemp( tempCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == ezeroCmd )
-    {
-      fParticleGun->GetEneDist()->SetEzero( ezeroCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == gradientCmd )
-    {
-      fParticleGun->GetEneDist()->SetGradient( gradientCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == interceptCmd )
-    {
-      fParticleGun->GetEneDist()->SetInterCept( interceptCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == calculateCmd )
-    {
-      fParticleGun->GetEneDist()->Calculate() ;
-    }
-  else if (command == energyspecCmd )
-    {
-      fParticleGun->GetEneDist()->InputEnergySpectra( energyspecCmd->GetNewBoolValue( newValues ) ) ;
-    }
-  else if (command == diffspecCmd )
-    {
-      fParticleGun->GetEneDist()->InputDifferentialSpectra( diffspecCmd->GetNewBoolValue( newValues ) ) ;
-    }
-  else if (command == histnameCmd )
-    {
-      histtype = newValues ;
-    }
-  else if (command == histpointCmd )
-    {
-      if( histtype == "biasx" )
-	fParticleGun->GetBiasRndm()->SetXBias( histpointCmd->GetNew3VectorValue( newValues ) ) ;
-      if( histtype == "biasy" )
-	fParticleGun->GetBiasRndm()->SetYBias( histpointCmd->GetNew3VectorValue( newValues ) ) ;
-      if( histtype == "biasz" )
-	fParticleGun->GetBiasRndm()->SetZBias( histpointCmd->GetNew3VectorValue( newValues ) ) ;
-      if( histtype == "biast" )
-	fParticleGun->GetBiasRndm()->SetThetaBias( histpointCmd->GetNew3VectorValue( newValues ) ) ;
-      if( histtype == "biasp" )
-	fParticleGun->GetBiasRndm()->SetPhiBias( histpointCmd->GetNew3VectorValue( newValues ) ) ;
-      if( histtype == "biase" )
-	fParticleGun->GetBiasRndm()->SetEnergyBias( histpointCmd->GetNew3VectorValue( newValues ) ) ;
-      if( histtype == "theta" )
-	fParticleGun->GetAngDist()->UserDefAngTheta( histpointCmd->GetNew3VectorValue( newValues ) ) ;
-      if( histtype == "phi" )
-	fParticleGun->GetAngDist()->UserDefAngPhi( histpointCmd->GetNew3VectorValue( newValues ) ) ;
-      if( histtype == "energy" )
-	fParticleGun->GetEneDist()->UserEnergyHisto( histpointCmd->GetNew3VectorValue( newValues ) ) ;
-      if( histtype == "arb" )
-	fParticleGun->GetEneDist()->ArbEnergyHisto( histpointCmd->GetNew3VectorValue( newValues ) ) ;
-      if( histtype == "epn" )
-	fParticleGun->GetEneDist()->EpnEnergyHisto( histpointCmd->GetNew3VectorValue( newValues ) ) ;
-    }
-  else if (command == resethistCmd )
-    {
-      fParticleGun->GetAngDist()->ReSetHist( newValues ) ;
-    }
-  else if (command == arbintCmd )
-    {
-      fParticleGun->GetEneDist()->ArbInterpolate( newValues ) ;
-    }
-  else if (command == verbosityCmd )
-    {
-      fParticleGun->SetVerbosity( verbosityCmd->GetNewIntValue( newValues ) ) ;
-      fParticleGun->SetVerboseLevel( verbosityCmd->GetNewIntValue( newValues ) ) ;
-    }
-  else if (command == particleCmd )
-    {
-      if (newValues == "ion") {
-	fShootIon = true ;
-      } else {
-	fShootIon = false ;
-        G4ParticleDefinition* pd = particleTable->FindParticle( newValues ) ;
-        if( pd != NULL )
-          { fParticleGun->SetParticleDefinition( pd ) ; }
-      }
-    }
+  }
   //  else if(command == ionCmd)
   //    {
   //   fParticleGun->SetNucleus(ionCmd->GetNewNucleusValue(newValues));
   //  }
-  else if (command == timeCmd )
-    { fParticleGun->SetParticleTime( timeCmd->GetNewDoubleValue( newValues ) ) ; }
-  else if (command == polCmd )
-    { fParticleGun->SetParticlePolarization( polCmd->GetNew3VectorValue( newValues ) ) ; }
-  else if (command == numberCmd )
-    { fParticleGun->SetNumberOfParticles( numberCmd->GetNewIntValue( newValues ) ) ; }
-  else if (command == ionCmd )
-    { IonCommand(newValues) ; }
-  else if (command == listCmd )
-    { particleTable->DumpTable() ; }
-  else if (command == directionCmd )
-    {
-      fParticleGun->GetAngDist()->SetAngDistType( "planar" ) ;
-      fParticleGun->GetAngDist()->SetParticleMomentumDirection( directionCmd->GetNew3VectorValue( newValues ) ) ;
-    }
-  else if (command == energyCmd )
-    {
-      fParticleGun->GetEneDist()->SetEnergyDisType( "Mono" ) ;
-      fParticleGun->GetEneDist()->SetMonoEnergy( energyCmd->GetNewDoubleValue( newValues ) ) ;
-    }
-  else if (command == positionCmd )
-    {
-      fParticleGun->GetPosDist()->SetPosDisType( "Point" ) ;
-      fParticleGun->GetPosDist()->SetCentreCoords( positionCmd->GetNew3VectorValue( newValues ) ) ;
-    }
+  else if (command == timeCmd) { fParticleGun->SetParticleTime( timeCmd->GetNewDoubleValue(newValues)) ; }
+  else if (command == polCmd) { fParticleGun->SetParticlePolarization( polCmd->GetNew3VectorValue(newValues)) ; }
+  else if (command == numberCmd) { fParticleGun->SetNumberOfParticles( numberCmd->GetNewIntValue(newValues)) ; }
+  else if (command == ionCmd) { IonCommand(newValues) ; }
+  else if (command == listCmd) { particleTable->DumpTable() ; }
+  else if (command == directionCmd) {
+    fParticleGun->GetAngDist()->SetAngDistType( "planar") ;
+    fParticleGun->GetAngDist()->SetParticleMomentumDirection( directionCmd->GetNew3VectorValue(newValues)) ;
+  }
+  else if (command == energyCmd) {
+    fParticleGun->GetEneDist()->SetEnergyDisType( "Mono") ;
+    fParticleGun->GetEneDist()->SetMonoEnergy( energyCmd->GetNewDoubleValue(newValues)) ;
+  }
+  else if (command == positionCmd) {
+    fParticleGun->GetPosDist()->SetPosDisType( "Point") ;
+    fParticleGun->GetPosDist()->SetCentreCoords( positionCmd->GetNew3VectorValue(newValues)) ;
+  }
 	//
   // new implementations
   //
   //
-  else if (command == posrot1Cmd1 )
-    {
-      fParticleGun->GetPosDist()->SetPosRot1( posrot1Cmd1->GetNew3VectorValue( newValues ) ) ;
-      fParticleGun->SetPosRot1(posrot1Cmd1->GetNew3VectorValue( newValues ));
+  else if (command == posrot1Cmd1) {
+    fParticleGun->GetPosDist()->SetPosRot1( posrot1Cmd1->GetNew3VectorValue(newValues)) ;
+    fParticleGun->SetPosRot1(posrot1Cmd1->GetNew3VectorValue(newValues));
+  }
+  else if (command == posrot2Cmd1) {
+    fParticleGun->GetPosDist()->SetPosRot2(posrot2Cmd1->GetNew3VectorValue(newValues));
+    fParticleGun->SetPosRot2(posrot2Cmd1->GetNew3VectorValue(newValues));
+  }
+  else if(command == typeCmd1) {
+    fParticleGun->GetPosDist()->SetPosDisType(newValues);
+  }
+  else if(command == shapeCmd1) {
+    fParticleGun->GetPosDist()->SetPosDisShape(newValues);
+  }
+  else if(command == centreCmd1) {
+    fParticleGun->GetPosDist()->SetCentreCoords(centreCmd1->GetNew3VectorValue(newValues));
+    fParticleGun->SetCentreCoords( centreCmd1->GetNew3VectorValue(newValues));
+  }
+  else if(command == posrot1Cmd1) {
+    fParticleGun->GetPosDist()->SetPosRot1(posrot1Cmd1->GetNew3VectorValue(newValues));
+  }
+  else if(command == posrot2Cmd1) {
+    fParticleGun->GetPosDist()->SetPosRot2(posrot2Cmd1->GetNew3VectorValue(newValues));
+  }
+  else if(command == halfxCmd1) {
+    fParticleGun->GetPosDist()->SetHalfX(halfxCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == halfyCmd1) {
+    fParticleGun->GetPosDist()->SetHalfY(halfyCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == halfzCmd1) {
+    fParticleGun->GetPosDist()->SetHalfZ(halfzCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == radiusCmd1) {
+    fParticleGun->GetPosDist()->SetRadius(radiusCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == radius0Cmd1) {
+    fParticleGun->GetPosDist()->SetRadius0(radius0Cmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == possigmarCmd1) {
+    fParticleGun->GetPosDist()->SetBeamSigmaInR(possigmarCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == possigmaxCmd1) {
+    fParticleGun->GetPosDist()->SetBeamSigmaInX(possigmaxCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == possigmayCmd1) {
+    fParticleGun->GetPosDist()->SetBeamSigmaInY(possigmayCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == paralpCmd1) {
+    fParticleGun->GetPosDist()->SetParAlpha(paralpCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == partheCmd1) {
+    fParticleGun->GetPosDist()->SetParTheta(partheCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == parphiCmd1) {
+    fParticleGun->GetPosDist()->SetParPhi(parphiCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == confineCmd1) {
+    fParticleGun->GetPosDist()->ConfineSourceToVolume(newValues);
+  }
+  else if(command == setImageCmd1) {
+    fParticleGun->SetUserFluenceFilename(newValues);
+  }
+  else if(command == angtypeCmd1) {
+    if(newValues == "userFocused") {
+      fParticleGun->SetUserFocalShapeFlag(true);
+      fParticleGun->GetAngDist()->SetAngDistType("focused");
     }
-  else if (command == posrot2Cmd1 )
-    {
-      fParticleGun->GetPosDist()->SetPosRot2(posrot2Cmd1->GetNew3VectorValue(newValues));
-      fParticleGun->SetPosRot2(posrot2Cmd1->GetNew3VectorValue(newValues));
+    else {
+      fParticleGun->GetAngDist()->SetAngDistType(newValues);
     }
-  else if(command == typeCmd1)
-    {
-      fParticleGun->GetPosDist()->SetPosDisType(newValues);
-    }
-  else if(command == shapeCmd1)
-    {
-      fParticleGun->GetPosDist()->SetPosDisShape(newValues);
-    }
-  else if(command == centreCmd1)
-    {
-      fParticleGun->GetPosDist()->SetCentreCoords(centreCmd1->GetNew3VectorValue(newValues));
-      fParticleGun->SetCentreCoords( centreCmd1->GetNew3VectorValue( newValues ) );
-    }
-  else if(command == posrot1Cmd1)
-    {
-      fParticleGun->GetPosDist()->SetPosRot1(posrot1Cmd1->GetNew3VectorValue(newValues));
-    }
-  else if(command == posrot2Cmd1)
-    {
-      fParticleGun->GetPosDist()->SetPosRot2(posrot2Cmd1->GetNew3VectorValue(newValues));
-    }
-  else if(command == halfxCmd1)
-    {
-      fParticleGun->GetPosDist()->SetHalfX(halfxCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == halfyCmd1)
-    {
-      fParticleGun->GetPosDist()->SetHalfY(halfyCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == halfzCmd1)
-    {
-      fParticleGun->GetPosDist()->SetHalfZ(halfzCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == radiusCmd1)
-    {
-      fParticleGun->GetPosDist()->SetRadius(radiusCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == radius0Cmd1)
-    {
-      fParticleGun->GetPosDist()->SetRadius0(radius0Cmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == possigmarCmd1)
-    {
-      fParticleGun->GetPosDist()->SetBeamSigmaInR(possigmarCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == possigmaxCmd1)
-    {
-      fParticleGun->GetPosDist()->SetBeamSigmaInX(possigmaxCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == possigmayCmd1)
-    {
-      fParticleGun->GetPosDist()->SetBeamSigmaInY(possigmayCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == paralpCmd1)
-    {
-      fParticleGun->GetPosDist()->SetParAlpha(paralpCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == partheCmd1)
-    {
-      fParticleGun->GetPosDist()->SetParTheta(partheCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == parphiCmd1)
-    {
-      fParticleGun->GetPosDist()->SetParPhi(parphiCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == confineCmd1)
-    {
-      fParticleGun->GetPosDist()->ConfineSourceToVolume(newValues);
-    }
-  else if(command == setImageCmd1)
-    {
-      fParticleGun->SetUserFluenceFilename(newValues);
-    }
-  else if(command == angtypeCmd1)
-    {
-      if(newValues == "userFocused") {
-	fParticleGun->SetUserFocalShapeFlag(true);
-	fParticleGun->GetAngDist()->SetAngDistType("focused");
-      }
-      else {
-	fParticleGun->GetAngDist()->SetAngDistType(newValues);
-      }
-    }
-  else if(command == angradiusCmd1)
-    {
-      fParticleGun->GetUserFocalShape()->SetRadius(radiusCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == angcentreCmd1)
-    {
-      fParticleGun->GetUserFocalShape()->SetCentreCoords(centreCmd1->GetNew3VectorValue(newValues));
-    }
-  else if(command == angrot1Cmd1)
-    {
-      G4String a = "angref1";
-      fParticleGun->GetAngDist()->DefineAngRefAxes(a,angrot1Cmd1->GetNew3VectorValue(newValues));
-      fParticleGun->GetUserFocalShape()->SetPosRot1(angrot1Cmd1->GetNew3VectorValue(newValues));
-    }
-  else if(command == angrot2Cmd1)
-    {
-      G4String a = "angref2";
-      fParticleGun->GetAngDist()->DefineAngRefAxes(a,angrot2Cmd1->GetNew3VectorValue(newValues));
-      fParticleGun->GetUserFocalShape()->SetPosRot2(angrot2Cmd1->GetNew3VectorValue(newValues));
-    }
-
-  else if(command == minthetaCmd1)
-	{
-	  fParticleGun->GetAngDist()->SetMinTheta(minthetaCmd1->GetNewDoubleValue(newValues));
-	}
-  else if(command == minphiCmd1)
-	{
-	  fParticleGun->GetAngDist()->SetMinPhi(minphiCmd1->GetNewDoubleValue(newValues));
-	}
-  else if(command == maxthetaCmd1)
-	{
-	  fParticleGun->GetAngDist()->SetMaxTheta(maxthetaCmd1->GetNewDoubleValue(newValues));
-	}
-  else if(command == maxphiCmd1)
-	{
-	  fParticleGun->GetAngDist()->SetMaxPhi(maxphiCmd1->GetNewDoubleValue(newValues));
-	}
-  else if(command == angsigmarCmd1)
-	{
-	  fParticleGun->GetAngDist()->SetBeamSigmaInAngR(angsigmarCmd1->GetNewDoubleValue(newValues));
-	}
-  else if(command == angsigmaxCmd1)
-	{
-	  fParticleGun->GetAngDist()->SetBeamSigmaInAngX(angsigmaxCmd1->GetNewDoubleValue(newValues));
-	}
-  else if(command == angsigmayCmd1)
-	{
-	  fParticleGun->GetAngDist()->SetBeamSigmaInAngY(angsigmayCmd1->GetNewDoubleValue(newValues));
-	}
-  else if(command == angfocusCmd)
-	{
-	  fParticleGun->GetAngDist()->SetFocusPointCopy(angfocusCmd->GetNew3VectorValue(newValues));
-	  fParticleGun->GetAngDist()->SetFocusPoint(angfocusCmd->GetNew3VectorValue(newValues));
-	}
-  else if(command == useuserangaxisCmd1)
-	{
-	  fParticleGun->GetAngDist()->SetUseUserAngAxis(useuserangaxisCmd1->GetNewBoolValue(newValues));
-	}
-  else if(command == surfnormCmd1)
-	{
-	  fParticleGun->GetAngDist()->SetUserWRTSurface(surfnormCmd1->GetNewBoolValue(newValues));
-	}
-  else if(command == energytypeCmd1)
-    {
-      fParticleGun->GetEneDist()->SetEnergyDisType(newValues);
-    }
-  else if(command == eminCmd1)
-    {
-      fParticleGun->GetEneDist()->SetEmin(eminCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == emaxCmd1)
-    {
-      fParticleGun->GetEneDist()->SetEmax(emaxCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == monoenergyCmd1)
-    {
-      fParticleGun->GetEneDist()->SetMonoEnergy(monoenergyCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == engsigmaCmd1)
-    {
-      fParticleGun->GetEneDist()->SetBeamSigmaInE(engsigmaCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == alphaCmd1)
-    {
-      fParticleGun->GetEneDist()->SetAlpha(alphaCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == tempCmd1)
-    {
-      fParticleGun->GetEneDist()->SetTemp(tempCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == ezeroCmd1)
-    {
-      fParticleGun->GetEneDist()->SetEzero(ezeroCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == gradientCmd1)
-    {
-      fParticleGun->GetEneDist()->SetGradient(gradientCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == interceptCmd1)
-    {
-      fParticleGun->GetEneDist()->SetInterCept(interceptCmd1->GetNewDoubleValue(newValues));
-    }
-  else if(command == calculateCmd1)
-    {
-      fParticleGun->GetEneDist()->Calculate();
-    }
-  else if(command == energyspecCmd1)
-    {
-      fParticleGun->GetEneDist()->InputEnergySpectra(energyspecCmd1->GetNewBoolValue(newValues));
-    }
-  else if(command == diffspecCmd1)
-    {
-      fParticleGun->GetEneDist()->InputDifferentialSpectra(diffspecCmd1->GetNewBoolValue(newValues));
-    }
-  else if(command == histnameCmd1)
-    {
-      histtype = newValues;
-    }
-  else if(command == histpointCmd1)
-    {
-      if(histtype == "biasx")
-        fParticleGun->GetBiasRndm()->SetXBias(histpointCmd1->GetNew3VectorValue(newValues));
-      if(histtype == "biasy")
-        fParticleGun->GetBiasRndm()->SetYBias(histpointCmd1->GetNew3VectorValue(newValues));
-      if(histtype == "biasz")
-        fParticleGun->GetBiasRndm()->SetZBias(histpointCmd1->GetNew3VectorValue(newValues));
-      if(histtype == "biast")
-        fParticleGun->GetBiasRndm()->SetThetaBias(histpointCmd1->GetNew3VectorValue(newValues));
-      if(histtype == "biasp")
-        fParticleGun->GetBiasRndm()->SetPhiBias(histpointCmd1->GetNew3VectorValue(newValues));
-      if(histtype == "biaspt")
-        fParticleGun->GetBiasRndm()->SetPosThetaBias(histpointCmd1->GetNew3VectorValue(newValues));
-      if(histtype == "biaspp")
-        fParticleGun->GetBiasRndm()->SetPosPhiBias(histpointCmd1->GetNew3VectorValue(newValues));
-      if(histtype == "biase")
-        fParticleGun->GetBiasRndm()->SetEnergyBias(histpointCmd1->GetNew3VectorValue(newValues));
-      if(histtype == "theta")
-        fParticleGun->GetAngDist()->UserDefAngTheta(histpointCmd1->GetNew3VectorValue(newValues));
-      if(histtype == "phi")
-        fParticleGun->GetAngDist()->UserDefAngPhi(histpointCmd1->GetNew3VectorValue(newValues));
-      if(histtype == "energy")
-        fParticleGun->GetEneDist()->UserEnergyHisto(histpointCmd1->GetNew3VectorValue(newValues));
-      if(histtype == "arb")
-        fParticleGun->GetEneDist()->ArbEnergyHisto(histpointCmd1->GetNew3VectorValue(newValues));
-      if(histtype == "epn")
-        fParticleGun->GetEneDist()->EpnEnergyHisto(histpointCmd1->GetNew3VectorValue(newValues));
-    }
-  else if(command == resethistCmd1)
-    {
-      if(newValues == "theta" || newValues == "phi") {
-        fParticleGun->GetAngDist()->ReSetHist(newValues);
-      } else if (newValues == "energy" || newValues == "arb" || newValues == "epn") {
-        fParticleGun->GetEneDist()->ReSetHist(newValues);
-      } else {
-        fParticleGun->GetBiasRndm()->ReSetHist(newValues);
-      }
-    }
-  else if(command == arbintCmd1)
-    {
-      fParticleGun->GetEneDist()->ArbInterpolate(newValues);
-    }
-///////////////////////////////// Yann PERROT, Simon NICOLAS LPC Clermont-ferrand ////////////////////////////////////////////////
-
-  else if (command == setUserSpectrumCmd)
-  {
-      GateSPSEneDistribution* speEn =  fParticleGun->GetEneDist(); //->ContructUserSpectrum(newValues);
-      speEn->BuildUserSpectrum(newValues);
-      // fParticleGun->GetEneDist()->ContructUserSpectrum(newValues);
+  }
+  else if(command == angradiusCmd1) {
+    fParticleGun->GetUserFocalShape()->SetRadius(radiusCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == angcentreCmd1) {
+    fParticleGun->GetUserFocalShape()->SetCentreCoords(centreCmd1->GetNew3VectorValue(newValues));
+  }
+  else if(command == angrot1Cmd1) {
+    G4String a = "angref1";
+    fParticleGun->GetAngDist()->DefineAngRefAxes(a,angrot1Cmd1->GetNew3VectorValue(newValues));
+    fParticleGun->GetUserFocalShape()->SetPosRot1(angrot1Cmd1->GetNew3VectorValue(newValues));
+  }
+  else if(command == angrot2Cmd1) {
+    G4String a = "angref2";
+    fParticleGun->GetAngDist()->DefineAngRefAxes(a,angrot2Cmd1->GetNew3VectorValue(newValues));
+    fParticleGun->GetUserFocalShape()->SetPosRot2(angrot2Cmd1->GetNew3VectorValue(newValues));
   }
 
-///////////////////////////////// Yann PERROT, Simon NICOLAS LPC Clermont-ferrand ////////////////////////////////////////////////
-  else
-    {
-      G4cout << "Error entering command\n";
+  else if(command == minthetaCmd1) {
+    fParticleGun->GetAngDist()->SetMinTheta(minthetaCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == minphiCmd1) {
+    fParticleGun->GetAngDist()->SetMinPhi(minphiCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == maxthetaCmd1) {
+    fParticleGun->GetAngDist()->SetMaxTheta(maxthetaCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == maxphiCmd1) {
+    fParticleGun->GetAngDist()->SetMaxPhi(maxphiCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == angsigmarCmd1) {
+    fParticleGun->GetAngDist()->SetBeamSigmaInAngR(angsigmarCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == angsigmaxCmd1) {
+    fParticleGun->GetAngDist()->SetBeamSigmaInAngX(angsigmaxCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == angsigmayCmd1) {
+    fParticleGun->GetAngDist()->SetBeamSigmaInAngY(angsigmayCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == angfocusCmd) {
+    fParticleGun->GetAngDist()->SetFocusPointCopy(angfocusCmd->GetNew3VectorValue(newValues));
+    fParticleGun->GetAngDist()->SetFocusPoint(angfocusCmd->GetNew3VectorValue(newValues));
+  }
+  else if(command == useuserangaxisCmd1) {
+    fParticleGun->GetAngDist()->SetUseUserAngAxis(useuserangaxisCmd1->GetNewBoolValue(newValues));
+  }
+  else if(command == surfnormCmd1) {
+    fParticleGun->GetAngDist()->SetUserWRTSurface(surfnormCmd1->GetNewBoolValue(newValues));
+  }
+  else if(command == energytypeCmd1) {
+    fParticleGun->GetEneDist()->SetEnergyDisType(newValues);
+  }
+  else if(command == eminCmd1) {
+    fParticleGun->GetEneDist()->SetEmin(eminCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == emaxCmd1) {
+    fParticleGun->GetEneDist()->SetEmax(emaxCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == monoenergyCmd1) {
+    fParticleGun->GetEneDist()->SetMonoEnergy(monoenergyCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == engsigmaCmd1) {
+    fParticleGun->GetEneDist()->SetBeamSigmaInE(engsigmaCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == alphaCmd1) {
+    fParticleGun->GetEneDist()->SetAlpha(alphaCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == tempCmd1) {
+    fParticleGun->GetEneDist()->SetTemp(tempCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == ezeroCmd1) {
+    fParticleGun->GetEneDist()->SetEzero(ezeroCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == gradientCmd1) {
+    fParticleGun->GetEneDist()->SetGradient(gradientCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == interceptCmd1) {
+    fParticleGun->GetEneDist()->SetInterCept(interceptCmd1->GetNewDoubleValue(newValues));
+  }
+  else if(command == calculateCmd1) {
+    fParticleGun->GetEneDist()->Calculate();
+  }
+  else if(command == energyspecCmd1) {
+    fParticleGun->GetEneDist()->InputEnergySpectra(energyspecCmd1->GetNewBoolValue(newValues));
+  }
+  else if(command == diffspecCmd1) {
+    fParticleGun->GetEneDist()->InputDifferentialSpectra(diffspecCmd1->GetNewBoolValue(newValues));
+  }
+  else if(command == histnameCmd1) {
+    histtype = newValues;
+  }
+  else if(command == histpointCmd1) {
+    if(histtype == "biasx")
+      fParticleGun->GetBiasRndm()->SetXBias(histpointCmd1->GetNew3VectorValue(newValues));
+    if(histtype == "biasy")
+      fParticleGun->GetBiasRndm()->SetYBias(histpointCmd1->GetNew3VectorValue(newValues));
+    if(histtype == "biasz")
+      fParticleGun->GetBiasRndm()->SetZBias(histpointCmd1->GetNew3VectorValue(newValues));
+    if(histtype == "biast")
+      fParticleGun->GetBiasRndm()->SetThetaBias(histpointCmd1->GetNew3VectorValue(newValues));
+    if(histtype == "biasp")
+      fParticleGun->GetBiasRndm()->SetPhiBias(histpointCmd1->GetNew3VectorValue(newValues));
+    if(histtype == "biaspt")
+      fParticleGun->GetBiasRndm()->SetPosThetaBias(histpointCmd1->GetNew3VectorValue(newValues));
+    if(histtype == "biaspp")
+      fParticleGun->GetBiasRndm()->SetPosPhiBias(histpointCmd1->GetNew3VectorValue(newValues));
+    if(histtype == "biase")
+      fParticleGun->GetBiasRndm()->SetEnergyBias(histpointCmd1->GetNew3VectorValue(newValues));
+    if(histtype == "theta")
+      fParticleGun->GetAngDist()->UserDefAngTheta(histpointCmd1->GetNew3VectorValue(newValues));
+    if(histtype == "phi")
+      fParticleGun->GetAngDist()->UserDefAngPhi(histpointCmd1->GetNew3VectorValue(newValues));
+    if(histtype == "energy")
+      fParticleGun->GetEneDist()->UserEnergyHisto(histpointCmd1->GetNew3VectorValue(newValues));
+    if(histtype == "arb")
+      fParticleGun->GetEneDist()->ArbEnergyHisto(histpointCmd1->GetNew3VectorValue(newValues));
+    if(histtype == "epn")
+      fParticleGun->GetEneDist()->EpnEnergyHisto(histpointCmd1->GetNew3VectorValue(newValues));
+  }
+  else if(command == resethistCmd1) {
+    if(newValues == "theta" || newValues == "phi") {
+      fParticleGun->GetAngDist()->ReSetHist(newValues);
+    } else if (newValues == "energy" || newValues == "arb" || newValues == "epn") {
+      fParticleGun->GetEneDist()->ReSetHist(newValues);
+    } else {
+      fParticleGun->GetBiasRndm()->ReSetHist(newValues);
     }
+  }
+  else if(command == arbintCmd1) {
+    fParticleGun->GetEneDist()->ArbInterpolate(newValues);
+  }
+  else if (command == setUserSpectrumCmd) {
+    GateSPSEneDistribution* speEn =  fParticleGun->GetEneDist(); //->ContructUserSpectrum(newValues);
+    speEn->BuildUserSpectrum(newValues);
+    // fParticleGun->GetEneDist()->ContructUserSpectrum(newValues);
+  }
+  else {
+    G4cout << "Error entering command\n";
+  }
 
 
 
 }
 //-------------------------------------------------------------------------------------------------
 
+
 //-------------------------------------------------------------------------------------------------
-G4String GateSingleParticleSourceMessenger::GetCurrentValue( G4UIcommand* )
+G4String GateSingleParticleSourceMessenger::GetCurrentValue( G4UIcommand*)
 {
   G4String cv ;
 
-  //  if (command == directionCmd )
-  //  { cv = directionCmd->ConvertToString( fParticleGun->GetParticleMomentumDirection() ) ; }
-  //  else if (command == energyCmd )
-  //  { cv = energyCmd->ConvertToString( fParticleGun->GetParticleEnergy(),"GeV" ) ; }
-  //  else if (command == positionCmd )
-  //  { cv = positionCmd->ConvertToString( fParticleGun->GetParticlePosition(),"cm" ) ; }
-  //  else if (command == timeCmd )
-  //  { cv = timeCmd->ConvertToString( fParticleGun->GetParticleTime(),"ns" ) ; }
-  //  else if (command == polCmd )
-  //  { cv = polCmd->ConvertToString( fParticleGun->GetParticlePolarization() ) ; }
-  //  else if (command == numberCmd )
-  //  { cv = numberCmd->ConvertToString( fParticleGun->GetNumberOfParticles() ) ; }
+  //  if (command == directionCmd)
+  //  { cv = directionCmd->ConvertToString( fParticleGun->GetParticleMomentumDirection()) ; }
+  //  else if (command == energyCmd)
+  //  { cv = energyCmd->ConvertToString( fParticleGun->GetParticleEnergy(),"GeV") ; }
+  //  else if (command == positionCmd)
+  //  { cv = positionCmd->ConvertToString( fParticleGun->GetParticlePosition(),"cm") ; }
+  //  else if (command == timeCmd)
+  //  { cv = timeCmd->ConvertToString( fParticleGun->GetParticleTime(),"ns") ; }
+  //  else if (command == polCmd)
+  //  { cv = polCmd->ConvertToString( fParticleGun->GetParticlePolarization()) ; }
+  //  else if (command == numberCmd)
+  //  { cv = numberCmd->ConvertToString( fParticleGun->GetNumberOfParticles()) ; }
 
   cv = "Not implemented yet" ;
 
@@ -1555,54 +1445,53 @@ G4String GateSingleParticleSourceMessenger::GetCurrentValue( G4UIcommand* )
 }
 //-------------------------------------------------------------------------------------------------
 
+
 //-------------------------------------------------------------------------------------------------
-void GateSingleParticleSourceMessenger::IonCommand( G4String newValues )
+void GateSingleParticleSourceMessenger::IonCommand( G4String newValues)
 {
 
-// DEBUG SJAN G4 10.1
+  // DEBUG SJAN G4 10.1
   //G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   G4IonTable* ionTable = G4IonTable::GetIonTable();
-  if( fShootIon )
-    {
-      G4Tokenizer next( newValues ) ;
-      // check argument
-      fAtomicNumber = StoI( next() ) ;
-      fAtomicMass = StoI( next() ) ;
-      G4String sQ = next() ;
-      if( sQ.isNull() )
-        {
-          fIonCharge = fAtomicNumber ;
-        }
-      else
-        {
-          fIonCharge = StoI( sQ ) ;
-          sQ = next() ;
-          if( sQ.isNull() )
-            {
-              fIonExciteEnergy = 0.0;
-            }
-          else
-            {
-              fIonExciteEnergy = StoD( sQ ) * keV ;
-            }
-        }
-      G4ParticleDefinition* ion ;
-      ion =  ionTable->GetIon( fAtomicNumber, fAtomicMass, fIonExciteEnergy ) ;
-      if( ion==0 )
-        {
-          G4cout << "Ion with Z=" << fAtomicNumber ;
-          G4cout << " A=" << fAtomicMass << "is not be defined\n" ;
-        }
-      else
-        {
-          fParticleGun->SetParticleDefinition(ion) ;
-          fParticleGun->SetParticleCharge( fIonCharge* eplus ) ;
-        }
-    }
-  else
-    {
-      G4cout << "Set /gps/particle to ion before using /gps/ion command" ;
-      G4cout << Gateendl ;
-    }
+  if( fShootIon) {
+    G4Tokenizer next(newValues) ;
+    // check argument
+    fAtomicNumber = StoI( next()) ;
+    fAtomicMass = StoI( next()) ;
+    G4String sQ = next() ;
+    if( sQ.isNull())
+      {
+        fIonCharge = fAtomicNumber ;
+      }
+    else
+      {
+        fIonCharge = StoI( sQ) ;
+        sQ = next() ;
+        if( sQ.isNull())
+          {
+            fIonExciteEnergy = 0.0;
+          }
+        else
+          {
+            fIonExciteEnergy = StoD( sQ) * keV ;
+          }
+      }
+    G4ParticleDefinition* ion ;
+    ion =  ionTable->GetIon( fAtomicNumber, fAtomicMass, fIonExciteEnergy) ;
+    if( ion==0)
+      {
+        G4cout << "Ion with Z=" << fAtomicNumber ;
+        G4cout << " A=" << fAtomicMass << "is not be defined\n" ;
+      }
+    else
+      {
+        fParticleGun->SetParticleDefinition(ion) ;
+        fParticleGun->SetParticleCharge( fIonCharge* eplus) ;
+      }
+  }
+  else {
+    G4cout << "Set /gps/particle to ion before using /gps/ion command" ;
+    G4cout << Gateendl ;
+  }
 }
 //-------------------------------------------------------------------------------------------------

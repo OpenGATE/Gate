@@ -26,6 +26,11 @@
 
 /gate/physics/addProcess RadioactiveDecay
 
+/gate/physics/addAtomDeexcitation
+#/process/em/fluo  false
+#/process/em/auger false
+#/process/em/pixe  false
+
 /gate/physics/processList Enabled
 /gate/physics/processList Initialized
 

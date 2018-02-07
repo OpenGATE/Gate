@@ -52,3 +52,4 @@ bool MET_ImageModalityToString(MET_ImageModalityEnumType _type,
 #if (METAIO_USE_NAMESPACE)
 };
 #endif
+

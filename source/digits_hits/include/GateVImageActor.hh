@@ -3,7 +3,7 @@
 
 This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
+See LICENSE.md for further details
 ----------------------*/
 
 /*!
@@ -62,6 +62,9 @@ public :
   //-----------------------------------------------------------------------------
 
   double GetDoselVolume(){return mVoxelSize.x()*mVoxelSize.y()*mVoxelSize.z();}
+
+  // Retreive the image voxel size (vc)
+  G4ThreeVector GetVoxelSize();
 
   //-----------------------------------------------------------------------------
   /// Computes the voxel in which to store the data and invokes

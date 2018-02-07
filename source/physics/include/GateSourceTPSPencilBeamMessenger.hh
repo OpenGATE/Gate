@@ -3,7 +3,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 #ifndef GateSourceTPSPencilBeamMessenger_h
@@ -30,9 +30,7 @@ class G4UIcmdWithABool;
 class G4UIcmdWithoutParameter;
 class GateVSource;
 
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
+//----------------------------------------------------------------------------------------
 class GateSourceTPSPencilBeamMessenger: public GateVSourceMessenger
 {
   public:
@@ -45,29 +43,34 @@ class GateSourceTPSPencilBeamMessenger: public GateVSourceMessenger
 
     //Particle Type
     G4UIcmdWithAString * pParticleTypeCmd;
-    //Configuration of tests
+    //Particle Properties If GenericIon
+    G4UIcommand * pIonCmd;
+    //Set the test Flag for debugging (verbosity)
     G4UIcmdWithABool* pTestCmd;
-    //Configuration of vertex generation method
-    G4UIcmdWithABool* pOldStyleCmd;
-    //Treatment Plan file
+    //Configuration of vertex generation method (random by default)
+    G4UIcmdWithABool* pSortedSpotGenerationCmd;
+    //Configuration of absolute/relative energy spread specification (relative by default)
+    G4UIcmdWithABool* pSigmaEnergyInMeVCmd;
+    //Treatment Plan file ("plan description file")
     G4UIcmdWithAString * pPlanCmd;
     //FlatGenerationFlag
     G4UIcmdWithABool * pFlatGeneFlagCmd;
-    //Not allowed fieldID
+    //Not allowed fieldID (all fields allowed by default)
     G4UIcmdWithAnInteger * pNotAllowedFieldCmd;
     //Allowed fieldID
     G4UIcmdWithAnInteger * pAllowedFieldCmd;
     //Source description file
     G4UIcmdWithAString * pSourceFileCmd;
-    //Configuration of spot intensity
+    //Configuration of spot intensity as number of ions or MU (MU by default)
     G4UIcmdWithABool * pSpotIntensityCmd;
-    //Convergent or divergent beam model
+    //Convergent or divergent beam model (divergent by default)
     G4UIcmdWithABool* pDivergenceCmd;
+    G4UIcmdWithABool* pDivergenceXThetaCmd;
+	 G4UIcmdWithABool* pDivergenceYPhiCmd;
     //Selection of one layer
     G4UIcmdWithAnInteger * pSelectLayerIDCmd;
     //Selection of one spot
     G4UIcmdWithAnInteger * pSelectSpotCmd;
 };
-
 // vim: ai sw=2 ts=2 et
 #endif

@@ -5,13 +5,9 @@
  * Compile this file with -DNO_GZCOMPRESS to avoid the compression code.
  */
 
-/* @(#) $Id: gzio.c,v 1.2 2007-08-14 14:02:42 seanmcbride Exp $ */
+/* @(#) Id */
 
 #include <stdio.h>
-
-#ifdef _MSC_VER
-#pragma warning(disable:4996)
-#endif
 
 #include "zutil.h"
 

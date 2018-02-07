@@ -5,7 +5,7 @@
 
   This software is distributed under the terms
   of the GNU Lesser General  Public Licence (LGPL)
-  See GATE/LICENSE.txt for further details
+  See LICENSE.md for further details
   ----------------------*/
 
 #include "GatePromptGammaData.hh"
@@ -95,6 +95,10 @@ void GatePromptGammaData::Read(std::string & filename)
 {
   mFilename = filename;
   pTfile = new TFile(filename.c_str(),"READ");
+  //ROOT does halt if a file doesnt exist, so we must test
+  if (pTfile->IsZombie()) {
+      GateError("Prompt Gamma database file '" << filename << "' not found. Aborting...");
+  }
 
   // How many material in this file
   TList * l = pTfile->GetListOfKeys();

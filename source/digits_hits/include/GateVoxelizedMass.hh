@@ -3,7 +3,7 @@
 
 This software is distributed under the terms
 of the GNU Lesser General  Public Licence (LGPL)
-See GATE/LICENSE.txt for further details
+See LICENSE.md for further details
 ----------------------*/
 
 /*!
@@ -31,31 +31,52 @@ class GateVoxelizedMass
   GateVoxelizedMass();
   virtual ~GateVoxelizedMass() {}
 
-  void Initialize(const G4String mExtVolumeName, const GateImageDouble mExtImage,const G4String mExtMassFile="");
+  void Initialize(G4String, const GateVImage*);
 
-  double GetVoxelMass(const int index);
-  std::vector<double> GetVoxelMassVector();
+  void UpdateImage(GateImageDouble*);
 
-  virtual void GenerateVectors();
-  virtual void GenerateVoxels();
-  virtual void GenerateDosels(const int index);
-  virtual std::pair<double,double> ParameterizedVolume(const int index);
-  virtual std::pair<double,double> VoxelIteration(G4VPhysicalVolume* motherPV,const int Generation,G4RotationMatrix MotherRotation,G4ThreeVector MotherTranslation,const int index);
-  double GetPartialVolume(const int index,const G4String SVName);
-  double GetTotalVolume();
-  double GetPartialMass(const int index,const G4String SVName);
-  int GetNumberOfVolumes(const int index);
-  void SetEdep(const int index,const G4String SVName,const double Edep);
-  double GetMaxDose(const int index);
-  GateImageDouble UpdateImage(GateImageDouble image);
+  std::vector<double> GetDoselMassVector();
+
+  G4String GetVoxelMatName(int x, int y, int z);
+  G4double GetVoxelMass(int x, int y, int z);
+  G4double GetVoxelVolume();
+
+  G4double GetDoselMass(int index);
+  G4double GetDoselVolume();
+
+  double  GetPartialVolumeWithSV     (int index,G4String);
+  double  GetPartialMassWithSV       (int index,G4String);
+  //double  GetPartialVolumeWithMatName(int index);
+  double  GetPartialMassWithMatName  (int index);
+  double  GetTotalVolume();
+  int     GetNumberOfVolumes(int index);
+  double  GetMaxDose(int index);
+
+  void    SetEdep(int index,G4String,double);
+  void    SetMaterialFilter   (G4String);
+  void    SetVolumeFilter     (G4String);
+
+  void    SetExternalMassImage(G4String);
 
  protected:
 
+  bool IsLVParameterized(const G4LogicalVolume*);
+
+  void GenerateVectors();
+  void GenerateVoxels();
+  void GenerateDosels(int index);
+
+  std::pair<double,double> ParameterizedVolume(int index);
+  std::pair<double,double> VoxelIteration(const G4VPhysicalVolume*,int, G4RotationMatrix, G4ThreeVector,int index);
+
   GateVImageVolume* imageVolume;
-  G4VPhysicalVolume* DAPV;
-  G4LogicalVolume* DALV;
+  const G4VPhysicalVolume* DAPV;
+  const G4LogicalVolume* DALV;
   G4Box* doselSV;
-  G4Box* DABox;
+  const G4Box* DABox;
+
+  const GateVImage* mImage;
+  GateImageDouble* mMassImage;
 
   double doselReconstructedTotalCubicVolume;
   double doselReconstructedTotalMass;
@@ -66,26 +87,31 @@ class GateVoxelizedMass
   std::vector<std::vector<std::pair<G4String,double> > > mMass;
   std::vector<std::vector<std::pair<G4String,double> > > mEdep;
 
-  std::vector<double> doselReconstructedCubicVolume;
+  //std::vector<double> doselReconstructedCubicVolume;
   std::vector<double> doselReconstructedMass;
   std::vector<double> doselMin;
   std::vector<double> doselMax;
   std::vector<double> doselExternalMass;
 
-  std::vector<std::vector<std::vector<double> > > voxelMass;
   double voxelCubicVolume;
+  double mFilteredVolumeMass;
+  double mFilteredVolumeCubicVolume;
 
-  std::vector<G4VSolid*> vectorSV;
+  //std::vector<G4VSolid*> vectorSV;
 
-  GateImageDouble mImage;
-  GateImageDouble mMassImage;
 
   G4String mVolumeName;
   G4String mMassFile;
+  G4String mMaterialFilter;
+  G4String mVolumeFilter;
 
   bool mIsInitialized;
   bool mIsParameterised;
   bool mIsVecGenerated;
+  bool mIsFilteredVolumeProcessed;
+  bool mHasFilter;
+  bool mHasExternalMassImage;
+  bool mHasSameResolution;
 
   int seconds;
 };
