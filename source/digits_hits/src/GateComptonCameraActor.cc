@@ -1,67 +1,57 @@
+﻿
 
 #include "GateComptonCameraActor.hh"
-#ifdef G4ANALYSIS_USE_ROOT
-
 #include "GateComptonCameraActorMessenger.hh"
 #include "GateMiscFunctions.hh"
 
-// g4 // inserted 30 Jan 2016:
 #include <G4EmCalculator.hh>
 #include <G4VoxelLimits.hh>
 #include <G4NistManager.hh>
 #include <G4PhysicalConstants.hh>
+ #include "G4VProcess.hh"
+#include "GateDigitizer.hh"
 
+#include "G4DigiManager.hh"
+#include "GateSingleDigi.hh"
 
+  typedef std::pair<G4String,GatePulseList*> 	GatePulseListAlias;
 
+const G4String GateComptonCameraActor::theCrystalCollectionName="crystalCollection";
+const G4String GateComptonCameraActor::thedigitizerName="layers";
 //-----------------------------------------------------------------------------
 /// Constructors (Prototype)
 GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
   GateVActor(name,depth)
 {
-  GateDebugMessageInc("Actor",4,"GateComptonamerActor() -- begin\n");
+    GateDebugMessageInc("Actor",4,"GateComptonamerActor() -- begin\n");
 
-  G4cout<<"###########################CONSTRUCTOR of GATEComptonCameraActor#############################################"<<G4endl;
+    G4cout<<"###########################CONSTRUCTOR of GATEComptonCameraActor#############################################"<<G4endl;
+
+    m_hitsTree=0;
+
+    Ei = 0.;
+    Ef = 0.;
+    newEvt = true;
+    newTrack = true;
+
+    nTrack=0;
+    edepEvt = 0.;
+    slayerID=-1;
 
 
+    pMessenger = new GateComptonCameraActorMessenger(this);
 
-  mEmin = 0.;
-  mEmax = 50.;
-  mENBins = 100;
+    emcalc = new G4EmCalculator;
+    m_digitizer =    GateDigitizer::GetInstance();
 
-
-   mVolmin=0;
-   mVolmax=6;
-   mVolNBins=6;
-  
-
-
-  mEdepmin = 0.;
-  mEdepmax = 50.;
-  mEdepNBins = 100;
-
-  Ei = 0.;
-  Ef = 0.;
-  newEvt = true;
-  newTrack = true;
-  sumNi=0.;
-  nTrack=0;
-
-  edep = 0.;
-  //nDaughterBB=0;
-  counterConstructF=0;
-
-  mSaveAsTextFlag = true;
-  
-  emcalc = new G4EmCalculator;
+    //With this two lines I enable digitizer/layers chain. digitizer/Singles chain is already created in Gate.cc. within  if G4Analysis_use_general.
+    //digitizer() function applied independently both chains
+    chain=new GatePulseProcessorChain(m_digitizer, thedigitizerName);
+    m_digitizer->StoreNewPulseProcessorChain(chain);
 
 
 
-
-  pMessenger = new GateComptonCameraActorMessenger(this);
-
-
-
-  GateDebugMessageDec("Actor",4,"GateComptonCamera() -- end\n");
+    GateDebugMessageDec("Actor",4,"GateComptonCamera() -- end\n");
 
 
 }
@@ -73,6 +63,7 @@ GateComptonCameraActor::GateComptonCameraActor(G4String name, G4int depth):
 GateComptonCameraActor::~GateComptonCameraActor(){
   GateDebugMessageInc("Actor",4,"~GateComptonCameraActor() -- begin\n");
   GateDebugMessageDec("Actor",4,"~GateComptonCameraActor() -- end\n");
+    delete m_digitizer;
 }
 //-----------------------------------------------------------------------------
 
@@ -82,90 +73,74 @@ GateComptonCameraActor::~GateComptonCameraActor(){
 void GateComptonCameraActor::Construct()
 {
 
- //???I have to call it? What for?
- GateVActor::Construct();
 
-  // Enable callbacks
-  EnableBeginOfRunAction(true);
-  EnableBeginOfEventAction(true);
-  EnablePreUserTrackingAction(true);
-  EnablePostUserTrackingAction(true);
-  EnableUserSteppingAction(true);
-  EnableEndOfEventAction(true); // for save every n
+    //???I have to call it? What for?
+    GateVActor::Construct();
 
-
-
-  nDaughterBB=mVolume->GetLogicalVolume()->GetNoDaughters();
- // unsigned int numDaug=GetVolume()->GetLogicalVolume()->GetNoDaughters();
-  attachPhysVolumeName=mVolume->GetPhysicalVolumeName();
+    // Enable callbacks
+    EnableBeginOfRunAction(true);
+    EnableBeginOfEventAction(true);
+    EnablePreUserTrackingAction(true);
+    EnablePostUserTrackingAction(true);
+    EnableUserSteppingAction(true);
+    EnableEndOfEventAction(true); // for save every n
 
 
+
+    nDaughterBB=mVolume->GetLogicalVolume()->GetNoDaughters();
+    attachPhysVolumeName=mVolume->GetPhysicalVolumeName();
+
+   //Arrays created to test singles outputs
     edepInEachLayerEvt=new double [nDaughterBB];
     xPos_InEachLayerEvt=new double [nDaughterBB];
-   yPos_InEachLayerEvt=new double [nDaughterBB];
-      zPos_InEachLayerEvt=new double [nDaughterBB];
+    yPos_InEachLayerEvt=new double [nDaughterBB];
+    zPos_InEachLayerEvt=new double [nDaughterBB];
 
-       for ( unsigned int i=0; i < nDaughterBB; i++) {
-           edepInEachLayerEvt[i]=0.0;
-          layerNames.push_back( mVolume->GetLogicalVolume()->GetDaughter(i)->GetName());
-          //G4cout<<"layers names="<<layerNames.back()<<G4endl;
-       }
+    //Get the names of the physical volumes of the layers
+    int daughter_cpN=0;
+    for(unsigned int i=0; i < nDaughterBB; i++) {
+        edepInEachLayerEvt[i]=0.0;
+        daughter_cpN=mVolume->GetLogicalVolume()->GetDaughter(i)->GetCopyNo();
 
+        if(daughter_cpN==0){
+            layerNames.push_back(mVolume->GetLogicalVolume()->GetDaughter(i)->GetName());
+        }
+        else{
+            layerNames.push_back( mVolume->GetLogicalVolume()->GetDaughter(i)->GetName()+std::to_string(daughter_cpN) );
+        }
+    }
 
+    //############################3
+    //root file
+    pTfile = new TFile(mSaveFilename,"RECREATE");
+    //A tree for the hits
+    if(mSaveHitsTreeFlag){
+        m_hitsTree=new GateCCHitTree("hits");
+        m_hitsTree->Init(m_hitsBuffer);
 
+        m_hitsAbsTree=new GateCCHitTree("AbsorberHits");
+        m_hitsAbsTree->Init(m_hitsAbsBuffer);
+        m_hitsScatTree=new GateCCHitTree("ScattererHits");
+        m_hitsScatTree->Init(m_hitsScatBuffer);
+    }
+// singles tree
+    m_SingleTree=new GateCCSingleTree("singles");
+    m_SingleTree->Init(m_SinglesBuffer);
 
+    //output for the manual singles ree
+    //A tree for each layer
+    for(unsigned int i=0; i<nDaughterBB;i++){
+        pSingles.emplace_back(new TTree(layerNames.at(i), "Singles tree"));
+        pSingles.at(i)->Branch("edepEvt",&edepInEachLayerEvt[i],"edepEvt/D");
+        pSingles.at(i)->Branch("xPosEvt",&xPos_InEachLayerEvt[i],"xPosEvt/D");
+        pSingles.at(i)->Branch("yPosEvt",&yPos_InEachLayerEvt[i],"yPosEvt/D");
+        pSingles.at(i)->Branch("zPosEvt",&zPos_InEachLayerEvt[i],"zPosEvt/D");
 
-  //############################3
-  //root file
- // !!right know I do not know from where it takes Filename b
-  pTfile = new TFile(mSaveFilename,"RECREATE");
+        //This line does not work I do not know how to put the units in the histograms of the branch
+        //pSingles2.at(i)->GetBranch("xPosEvt")->SetTitle(" xPosEvt (mm)");
+    }
 
-  //A three for each layer!!! First try saving for one layer
-
-       for(unsigned int i=0; i<nDaughterBB;i++){
-           pSingles2.emplace_back(new TTree(layerNames.at(i), "Singles tree"));
-          pSingles2.at(i)->Branch("edepEvt",&edepInEachLayerEvt[i],"edepEvt/D");
-           pSingles2.at(i)->Branch("xPosEvt",&xPos_InEachLayerEvt[i],"xPosEvt/D");
-           pSingles2.at(i)->Branch("yPosEvt",&yPos_InEachLayerEvt[i],"yPosEvt/D");
-           pSingles2.at(i)->Branch("zPosEvt",&zPos_InEachLayerEvt[i],"zPosEvt/D");
-
-            //This line does not work I do not know how to put the units
-            //pSingles2.at(i)->GetBranch("xPosEvt")->SetTitle(" xPosEvt (cm)");
-
-
-       }
-
-/*TTree* p=new TTree("f", "Singles treed");
-
-p->Branch("yPosEvt",&yPos_InEachLayerEvt[0],"yPosEvt/D");
-p->GetBranch("yPosEvt")->SetTitle();*/
-
-
-
-  //pSingles.at(0)->Branch("edepEvt",&edptempAb,"edepEvt/F");
-  pEnergySpectrum = new TH1D("energySpectrum","Energy Spectrum",GetENBins(),GetEmin() ,GetEmax() );
-  pEnergySpectrum->SetXTitle("Energy (MeV)");
-  
-  pEdep  = new TH1D("edepHisto","Energy deposited per event",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
-  pEdep->SetXTitle("E_{dep} (MeV)");
-
-
-  pEdepTrack  = new TH1D("edepTrackHisto","Energy deposited per track",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
-  pEdepTrack->SetXTitle("E_{dep} (MeV)");
-
-
-
- pVolumeName  = new TH1D("volumeIDTrackHisto","volume ID per track",GetVolNBins(), GetVolIDmin(), GetVolIDmax()  );
-   pVolumeName->SetCanExtend(TH1::kAllAxes);
-  pVolumeName->SetXTitle("Volume Name");
-
- /* //TEST
-  pEdepAbs  = new TH1D("edepAHisto","Energy absorber deposited per event",GetEdepNBins(),GetEdepmin() ,GetEdepmax() );
-  pEdepAbs->SetXTitle("E_{dep} (MeV)");*/
-
-
-
-  ResetData();
+    ResetData();
 }
 //-----------------------------------------------------------------------------
 
@@ -174,57 +149,65 @@ p->GetBranch("yPosEvt")->SetTitle();*/
 /// Save data
 void GateComptonCameraActor::SaveData()
 {
-  GateVActor::SaveData();
-  pTfile->Write();
-  //pTfile->Close();
+    G4cout<<"######### GateComptonCameraActor::SaveData()  ###################################"<<G4endl;
 
-  // Also output data as txt if enabled
-  if (mSaveAsTextFlag) {
-    SaveAsText(pEnergySpectrum, mSaveFilename);
-    SaveAsText(pEdep, mSaveFilename);
-    SaveAsText(pEdepTrack, mSaveFilename);
-    SaveAsText(pVolumeName, mSaveFilename);
-   
-  }
+    // It seems that  Vactor calls by default to  the endofRun y default callback for EndOfRunAction allowing to call Save
+    GateVActor::SaveData();
+
+
+    pTfile->Write();
+
+    //pTfile->Close();
 }
 //-----------------------------------------------------------------------------
 
+void GateComptonCameraActor::EndOfEvent(G4HCofThisEvent*){
+     //G4cout<<"######START OF :endofevnt####################################"<<G4endl;
 
+}
+
+ void GateComptonCameraActor::Initialize(G4HCofThisEvent* ){
+     //G4cout<<"######STARTA OF : initialize####################################"<<G4endl;
+
+
+           //  In SD the hitCollection ID is stored intothe static variable HCID using  GetColectionID.
+          //I can not use it since I do not have a system or sensitive volume. Returns  MFD_e actorname notfound.
+          // Then in SD it add the hit collection to the G4HCofThisEvent
+}
+
+//-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::ResetData()
 {
-  pEnergySpectrum->Reset();
-  pEdep->Reset();
-  pEdepTrack->Reset();
-  pVolumeName->Reset();
-  nEvent = 0;
- //Ravisar si algo mas que reeset if(edeplayer) delete [] edepInEachLayerEvt
-  //Si hago delete segementation fault
-  //if(edepInEachLayerEvt) delete[]edepInEachLayerEvt;
+
+    nEvent = 0;
+    //If I do  delete segementation fault
+    //if(edepInEachLayerEvt) delete[edepInEachLayerEvt;
+
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GateComptonCameraActor::BeginOfRunAction(const G4Run *)
+void GateComptonCameraActor::BeginOfRunAction(const G4Run * run)
 {
-    G4cout<<"###########################BEGIN ACTION#############################################"<<G4endl;
+    //G4cout<<"###Start of BEGIN ACTION#############################################"<<G4endl;
 
-  GateDebugMessage("Actor", 3, "GateComptonCameraActor -- Begin of Run\n");
-  ResetData();
+    GateDebugMessage("Actor", 3, "GateComptonCameraActor -- Begin of Run\n");
+    ResetData();
 
-
+    runID=run->GetRunID();
 }
 //-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
-void GateComptonCameraActor::BeginOfEventAction(const G4Event*)
+void GateComptonCameraActor::BeginOfEventAction(const G4Event* evt)
 {
   GateDebugMessage("Actor", 3, "GateComptonCameraActor -- Begin of Event\n");
+   G4cout<<"######STARTA OF :begin OF EVENT ACTION####################################"<<G4endl;
   newEvt = true;
-  edep = 0.;
-  tof  = 0;
+  edepEvt = 0.;
   //edepInEachLayerEvt.assign(nDaughterBB,0.0);
   for(unsigned int i=0;i<nDaughterBB;i++){
       edepInEachLayerEvt[i]=0.0;
@@ -233,9 +216,20 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event*)
       zPos_InEachLayerEvt[i]=0.0;
 
   }
-  edptempAb=0;
+  if(crystalCollection){
+      crystalCollection=0;\
+      delete crystalCollection;
+  }
+  m_hitsBuffer.Clear();
+  m_hitsScatBuffer.Clear();
+  m_hitsAbsBuffer.Clear();
 
 
+
+ evtID = evt->GetEventID();
+ crystalCollection = new GateCrystalHitsCollection(attachPhysVolumeName,theCrystalCollectionName);
+
+ //G4cout<<"######end OF :begin OF EVENT ACTION####################################"<<G4endl;
 }
 //-----------------------------------------------------------------------------
 
@@ -243,30 +237,40 @@ void GateComptonCameraActor::BeginOfEventAction(const G4Event*)
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::EndOfEventAction(const G4Event*)
 {
-  GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Event\n");
-  if (edep > 0) {
-    pEdep->Fill(edep/MeV);
+    G4cout<<"######start of  :END OF EVENT ACTION####################################"<<G4endl;
+       GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Event\n");
+       if (edepEvt > 0) {
+
+           //Manually constructed singles
+           for(unsigned int i=0; i<nDaughterBB; i++){
+               //I let divide by zero because it gives me null value for the position in the layer when there is no energy deposition
+               if(edepInEachLayerEvt[i]!=0.){
+                   xPos_InEachLayerEvt[i]=xPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
+                   yPos_InEachLayerEvt[i]=yPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
+                   zPos_InEachLayerEvt[i]=zPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
+                   // }
+                   pSingles.at(i)->Fill();
+               }
+           }
 
 
 
-  //pEdepAbs->Fill(edepInEachLayerEvt[0]);
-  //G4cout<<"edepAbs="<< edptempAb<<"edepAbs layer="<< edepInEachLayerEvt[0]<<G4endl;
-  //Look how to use find to avoid the loop 
-  for(unsigned int i=0; i<nDaughterBB; i++){
-       //I let divide by zero because it gives me null value for the position in the layer when there is no energy deposition
-       //if(edepInEachLayerEvt[i]!=0){
-          xPos_InEachLayerEvt[i]=xPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
-          yPos_InEachLayerEvt[i]=yPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
-          zPos_InEachLayerEvt[i]=zPos_InEachLayerEvt[i]/edepInEachLayerEvt[i];
-      // }
-   }
 
-        for(unsigned int i=0;i<nDaughterBB;i++){
-           pSingles2.at(i)->Fill();
+           if(!crystalCollection)G4cout<<"problems with crystalCollection  pointer"<<G4endl;
+           G4cout<<"entries of CC before digitizer "<<crystalCollection->entries()<<G4endl;
+           m_digitizer->Digitize(crystalCollection);
+           processPulsesIntoSinglesTree();
 
-        }
-    }
-  nEvent++;
+
+
+           // crystalPulseList=GateHitConvertor::GetInstance()->ProcessHits(crystalCollection);
+           // const G4String adderName="adder";
+           // GatePulseList* pPulseFinalList=GatePulseAdder(chain,adderName).ProcessPulseList(crystalPulseList);
+           //readPulses(pPulseFinalList);
+
+       }
+       nEvent++;
+       //G4cout<<"######END OF :END OF EVENT ACTION####################################"<<G4endl;
 }
 //-----------------------------------------------------------------------------
 
@@ -274,12 +278,14 @@ void GateComptonCameraActor::EndOfEventAction(const G4Event*)
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::PreUserTrackingAction(const GateVVolume * , const G4Track* t)
 {
+    //G4cout<<"#####BEGIN OF :PreuserTrackingAction####################################"<<G4endl;
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- Begin of Track\n");
 
   newTrack = true;
   //AE  no hace nada con esto
   if (t->GetParentID()==1) nTrack++;
   edepTrack = 0.;
+  //G4cout<<"######END OF :PreuserTrackingAction####################################"<<G4endl;
 
 }
 //-----------------------------------------------------------------------------
@@ -288,13 +294,14 @@ void GateComptonCameraActor::PreUserTrackingAction(const GateVVolume * , const G
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::PostUserTrackingAction(const GateVVolume *, const G4Track* t)
 {
+      //G4cout<<"#####BEGIN OF :PostuserTrackingAction####################################"<<G4endl;
   GateDebugMessage("Actor", 3, "GateEnergySpectrumActor -- End of Track\n");
   //double eloss = Ei-Ef;
-  if (edepTrack > 0)  pEdepTrack->Fill(edepTrack/MeV,t->GetWeight() );
+  //if (edepTrack > 0)  pEdepTrack->Fill(edepTrack/MeV,t->GetWeight() );
 
 
 
-
+ //G4cout<<"######END OF :PostuserTrackingAction####################################"<<G4endl;
 }
 //-----------------------------------------------------------------------------
 
@@ -302,134 +309,246 @@ void GateComptonCameraActor::PostUserTrackingAction(const GateVVolume *, const G
 //-----------------------------------------------------------------------------
 void GateComptonCameraActor::UserSteppingAction(const GateVVolume *  , const G4Step* step)
 {
-  assert(step->GetTrack()->GetWeight() == 1.); // edep doesnt handle weight
+    //G4cout<<"######START OF :UserSteppingAction####################################"<<G4endl;
+        assert(step->GetTrack()->GetWeight() == 1.); // edep doesnt handle weight
+
+        //======================== info of the track ==========================
+        G4Track* aTrack = step->GetTrack();
+        trackID      = aTrack->GetTrackID();
+        parentID     = aTrack->GetParentID();
+        trackLength  = aTrack->GetTrackLength();
+        trackLocalTime = aTrack->GetLocalTime();
+
+        G4String partName = aTrack->GetDefinition()->GetParticleName();
+        G4int  PDGEncoding= aTrack->GetDefinition()->GetPDGEncoding();
 
 
-  G4TouchableHandle touchable=step->GetPreStepPoint()->GetTouchableHandle();
-  VolNameStep=touchable->GetVolume(0)->GetName();
-  pVolumeName->Fill(VolNameStep,1);
+        //============info of current step ======================================
+        hitPostPos = step->GetPostStepPoint()->GetPosition()/mm;
+        hitPrePos = step->GetPreStepPoint()->GetPosition()/mm;
+        hitEdep=step->GetTotalEnergyDeposit()/MeV;
+
+        //Volume name od the step
+        G4TouchableHandle touchable=step->GetPreStepPoint()->GetTouchableHandle();
+        int copyNumberStep=touchable->GetVolume(0)->GetCopyNo();
+        if(copyNumberStep==0){
+            VolNameStep=touchable->GetVolume(0)->GetName();
+        }
+        else{
+            VolNameStep=touchable->GetVolume(0)->GetName()+std::to_string(copyNumberStep);
+        }
+
+        const G4TouchableHistory*  touchableH = (const G4TouchableHistory*)(step->GetPreStepPoint()->GetTouchable() );
+        GateVolumeID volumeID(touchableH);
+        hitPreLocalPos=volumeID.MoveToBottomVolumeFrame(hitPrePos);
+
+        //========================track (step) =========================================
+        ///SD hit position from postStep
+        ///processName from posStep GetProccessDefinedStep (this works with post and pre step)
+        /// To do analyze difference trackcreatorProcess and  preStep/postStepProcessDefinedStep()
+        const G4VProcess* processTrack = aTrack->GetCreatorProcess();
+        // const G4VProcess* process=step->GetPreStepPoint()->GetProcessDefinedStep();
+        //const G4VProcess* process=step->GetPostStepPoint()->GetProcessDefinedStep();
+        G4String processName = ( (processTrack != NULL) ? processTrack->GetProcessName() : G4String() ) ;
+
+        //=================================================
+
+        //To check if  step ends in the  boundary
+        // step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary
 
 
-  //Define it in .hh to avoid creating the object every time
- hitPostPos = step->GetPostStepPoint()->GetPosition()/cm;
-  hitPrePos = step->GetPreStepPoint()->GetPosition()/cm;
-   edepStep=step->GetTotalEnergyDeposit()/MeV;
-   //G4cout<< " sdep="<<step->GetTotalEnergyDeposit()<<"  edpe/MeV="<<step->GetTotalEnergyDeposit()/MeV<<G4endl;
-  //To check if  step ends in the  boundary
- // step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary
+        //Manual singles
+        std::vector<G4String>::iterator it;
+        it = find (layerNames.begin(), layerNames.end(), VolNameStep);
+        int poslayer=-1;
+        if (it != layerNames.end()){
+            poslayer=std::distance(layerNames.begin(),it);
+            // std::cout << "Element found in myvector: " << *it <<"posicion="<<std::distance(layerNames.begin(),it)<<'\n';
+            if(hitEdep!=0.){
+                edepInEachLayerEvt[poslayer]+=hitEdep;
+                xPos_InEachLayerEvt[poslayer]+=hitEdep*(hitPrePos.getX()+hitPostPos.getX())/2;
+                yPos_InEachLayerEvt[poslayer]+=hitEdep*(hitPrePos.getY()+hitPostPos.getY())/2;
+                zPos_InEachLayerEvt[poslayer]+=hitEdep*(hitPrePos.getZ()+hitPostPos.getZ())/2;
+            }
+        }
 
-  for(unsigned int i=0; i<nDaughterBB;i++){
-      //A este nivel las energias estan bien
-      //G4cout<<"Volume name step= "<<VolNameStep<<"   layer= "<<layerNames.at(i)<<"  energ="<<step->GetTotalEnergyDeposit()<<"  energy (Mev)"<<step->GetTotalEnergyDeposit()/MeV<<G4endl;
-     if(VolNameStep==layerNames.at(i)){
 
-        edepInEachLayerEvt[i] +=edepStep;
-        xPos_InEachLayerEvt[i]+= edepStep*(hitPrePos.getX()+hitPostPos.getX())/2;
-        yPos_InEachLayerEvt[i]+= edepStep*(hitPrePos.getY()+hitPostPos.getY())/2;
-        zPos_InEachLayerEvt[i]+= edepStep*(hitPrePos.getZ()+hitPostPos.getZ())/2;
 
-           // step->GetPostStepPoint()->GetPosition().x;
-        //if (i==0) edptempAb+=step->GetTotalEnergyDeposit()/MeV;
-        break;
+        edepEvt += step->GetTotalEnergyDeposit();
+        //  edepTrack += step->GetTotalEnergyDeposit();
+
+        //  //First hit of a new event tof (time) and for the rest ltof
+        if (newEvt) {
+            //      double pretof = step->GetPreStepPoint()->GetGlobalTime();
+            //      double posttof = step->GetPostStepPoint()->GetGlobalTime();
+            //      tof = pretof + posttof;
+            //      tof /= 2;
+            //      //cout << "****************** new event tof=" << pretof << "/" << posttof << "/" << tof << " edep=" << edep << endl;
+            newEvt = false;
+        } else {
+            //      double pretof = step->GetPreStepPoint()->GetGlobalTime();
+            //      double posttof = step->GetPostStepPoint()->GetGlobalTime();
+            //      double ltof = pretof + posttof;
+            //      ltof /= 2;
+        }
+
+        //  //Energy of particles
+        //  Ef=step->GetPostStepPoint()->GetKineticEnergy();
+        if(newTrack){
+            //      Ei=step->GetPreStepPoint()->GetKineticEnergy();
+            newTrack=false;
+        }
+
+
+        if (hitEdep!=0.){
+            // Create a new crystal hit (maybe better an object hit
+            GateCrystalHit* aHit = new GateCrystalHit();
+            aHit->SetEdep(hitEdep);
+            aHit->SetGlobalPos(hitPrePos);
+            aHit->SetLocalPos(hitPreLocalPos);
+            //step->GetPreStepPoint()->GetGlobalTime()
+            /////Which time do I need to save. Prestep or the time of the track?
+            /// also possiblitiy of track local time.
+            /// Singles takes the time of the first hit
+            /// Track global time
+            aHit->SetTime(aTrack->GetGlobalTime());
+            aHit->SetTrackID(trackID );
+            aHit->SetParentID(parentID );
+            aHit->SetTrackLength(trackLength );
+            aHit->SetTrackLocalTime(trackLocalTime );
+            aHit->SetVolumeID(volumeID);
+            aHit->SetEventID(evtID);
+            aHit->SetRunID(runID);
+            aHit->SetPDGEncoding(PDGEncoding);
+            //track creator
+            aHit->SetProcess(processName);
+            aHit->SetStepLength(step->GetStepLength());
+            aHit->SetMomentumDir( aTrack->GetMomentumDirection());
+            //Except for this volume related information (volume, touchable, material, ...) the information kept by 'track' is same as one kept by 'PostStepPoint'.
+
+
+
+            //Only hits in the layer are saved
+            //if(aHit->GetProcess()!="Transportation"){
+            if (it != layerNames.end()){
+
+                //Maybe I need different collection for each layer to apply different digitization chains
+                crystalCollection->insert(aHit);
+                G4cout<<"inserting a hit"<<G4endl;
+                G4cout<<"layer+"<<VolNameStep<<G4endl;
+                m_hitsBuffer.Fill(aHit,VolNameStep);
+                m_hitsTree->Fill();
+                m_hitsBuffer.Clear();
+
+                //Test: create a separate output tree for the hit in the absorber and hits in the scatterer
+                if(nDaughterBB>1){
+                    if(poslayer==(signed int)nDaughterBB-1){
+                        // Mattia does not save hits in the absoreber without track processCreator. But that depend on the cuts
+                        //if(aHit->GetProcess()!=G4String()){
+                        m_hitsAbsBuffer.Fill(aHit,VolNameStep);
+                        m_hitsAbsTree->Fill();
+                        m_hitsAbsBuffer.Clear();
+                        // }
+
+                    }
+                    else{
+                        m_hitsScatBuffer.Fill(aHit,VolNameStep);
+                        m_hitsScatTree->Fill();
+                        m_hitsScatBuffer.Clear();
+                    }
+
+                }
+                else{
+                    G4cout<<"problems our CC has less than two layers"<<G4endl;
+                }
+            }
+
+        }
+// G4cout<<"######END OF :UserSteppingAction####################################"<<G4endl;
+}
+//-----------------------------------------------------------------------------
+
+
+
+//-----------------------------------------------------------------------------
+
+
+
+ void GateComptonCameraActor::readPulses(GatePulseList* pPulseList){
+     if(!pPulseList)G4cout<<"problems with the pPulseList"<<G4endl;
+     //size_t n_pulses = pPulseList->size();
+     // G4cout << "[" << GetObjectName() << "::ProcessPulseList]: processing input list with " << n_pulses << " entries\n";
+     GatePulseConstIterator iterIn;
+     for (iterIn = pPulseList->begin() ; iterIn != pPulseList->end() ; ++iterIn){
+         GatePulse* inputPulse = *iterIn;
+         G4cout << "volID"<<inputPulse->GetVolumeID()<<G4endl;
+         G4cout << "energy"<< inputPulse->GetEnergy()<<G4endl;
+         G4cout << " una lista eventID"<< inputPulse->GetEventID()<<G4endl;
      }
-  }
 
-  //Esta linea que cogia el puntero al volumen del input de la funcion me crea segmentation fault
-  //G4cout<< " number of daughter volumen ste"<<volStpA->GetLogicalVolume()->GetNoDaughters()<<"name ofmother log vol"<<volStpA->GetMotherLogicalVolume()<<G4endl;
+ }
 
 
-  //ACUMULATE THE EVENT IN THE volume  in whit preStep
+ void GateComptonCameraActor::processPulsesIntoSinglesTree(){
+     // G4cout <<  m_digitizer->m_pulseListAliasVector.size()<<G4endl;
+     //size of the vector related to the number of chains in out case one for Hits, another Singles other layers
+     //     for(int i=0;i<m_digitizer->m_pulseListAliasVector.size();i++){
+     //         G4cout <<  m_digitizer->m_pulseListAliasVector.at(i).first<<G4endl;
+
+     //     }
+
+     //Choose the pulses of the desired chain
+     GatePulseList* pPulseList=m_digitizer->FindPulseList("Singles");
+     //GatePulseList* pPulseList=m_digitizer->FindPulseList("layers");
+
+     GatePulseConstIterator iterIn;
+     for (iterIn = pPulseList->begin() ; iterIn != pPulseList->end() ; ++iterIn){
+         GatePulse* inputPulse = *iterIn;
+         GateSingleDigi* aSingleDigi=new GateSingleDigi(inputPulse);
+         // G4cout << "eventID"<< inputPulse->GetEventID()<<"singleDigi evtID="<<aSingleDigi->GetEventID()<<G4endl;
 
 
-  edep += step->GetTotalEnergyDeposit();
+         //Possible layer. Physical name Not info about copy (0+world, 1-BB, 2--layers, 3-sublayer (4 example segmented crys))
+         //G4cout << "vol name nivel 2"<<inputPulse->GetVolumeID().GetVolume(2)->GetName()<<G4endl;
+         // G4cout << "vol ID nivel 2="<<inputPulse->GetVolumeID().GetVolume(2)->GetCopyNo()<<G4endl;
+         ///This identification not good like that. It depends on the arbitrary name that I have given to the different layer.
+         /// Oblige    to use those names or maybe  better    insert the chosen names for the layers with macro commands so that I can load them using the messenger
+         if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="absorber_phys" && nDaughterBB>1){
+             slayerID=nDaughterBB-1;
+         }
+         else if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="scatterer_phys"){
+             slayerID=inputPulse->GetVolumeID().GetVolume(2)->GetCopyNo();
+         }
+         else{
+             G4cout << "problems of layer identification"<<G4endl;
+         }
 
- //AE Por que acumula tambien el track????????????????
-  edepTrack += step->GetTotalEnergyDeposit();
 
-  //cout << "--- " << step->GetTrack()->GetTrackID() << " " << step->GetTrack()->GetParentID() << endl;
-  if (newEvt) {
-    double pretof = step->GetPreStepPoint()->GetGlobalTime();
-    double posttof = step->GetPostStepPoint()->GetGlobalTime();
-    tof = pretof + posttof;
-    tof /= 2;
-    //cout << "****************** new event tof=" << pretof << "/" << posttof << "/" << tof << " edep=" << edep << endl;
-    newEvt = false;
-  } else {
-    double pretof = step->GetPreStepPoint()->GetGlobalTime();
-    double posttof = step->GetPostStepPoint()->GetGlobalTime();
-    double ltof = pretof + posttof;
-    ltof /= 2;
-    //cout << "****************** diff tof=" << ltof << " edep=" << edep << endl;
-// AE if the event is new save the value of the private varibale tof , but otherwise nothing happen?
-  }
 
-  
-  Ef=step->GetPostStepPoint()->GetKineticEnergy();
-  if(newTrack){
-    Ei=step->GetPreStepPoint()->GetKineticEnergy();
-    pEnergySpectrum->Fill(Ei/MeV,step->GetTrack()->GetWeight());
-    //AE Initial energy of new tracks
-    newTrack=false;
-  }
-  
-}
+         //if(inputPulse->GetVolumeID().GetVolume(2)->GetName()=="absorber_phys"){
+         m_SinglesBuffer.Fill(aSingleDigi,slayerID);
+         m_SingleTree->Fill();
+         m_SinglesBuffer.Clear();
+         //}
+
+
+     }
+
+
+
+ }
+
+
+
+
+
+
+
 //-----------------------------------------------------------------------------
 
 
 
-//-----------------------------------------------------------------------------
-void GateComptonCameraActor::SaveAsText(TH1D * histo, G4String initial_filename)
-{
-  // Compute new filename: remove extension, add name of the histo, add txt extension
-  std::string filename = removeExtension(initial_filename);
-  filename = filename + "_"+histo->GetName()+".txt";
 
-  // Create output file
-  std::ofstream oss;
-  OpenFileOutput(filename, oss);
+//---------------------------------------------------------------------------------------------------------------------------------
 
-  // FIXME
-  if (mSaveAsDiscreteSpectrumTextFlag) {
-    oss << "# First line is two numbers " << std::endl
-        << "#     First value is '1', it means 'discrete energy mode'" << std::endl
-        << "#     Second value is ignored" << std::endl
-        << "# Other lines : 2 columns. 1) energy 2) probability (nb divided by NbEvent)" << std::endl
-        << "# Number of bins = " << mDiscreteSpectrum.size() << std::endl
-        << "# Number of events: " << nEvent << std::endl
-        << "1 0" << std::endl;
-    for(int i=0; i<mDiscreteSpectrum.size(); i++) {
-      oss << mDiscreteSpectrum.GetEnergy(i) << " " << mDiscreteSpectrum.GetValue(i)/nEvent << std::endl;
-    }
-    oss.close();
-  }
-  else {
-    // write as text file with header and 2 columns: 1) energy 2) probability
-    // The header is two numbers:
-    ///    1 because it is mode 1 (see gps UserSpectrum)
-    //     Emin of the histo
-
-    // Root convention
-    // For all histogram types: nbins, xlow, xup
-    //         bin = 0;       underflow bin
-    //         bin = 1;       first bin with low-edge xlow INCLUDED
-    //         bin = nbins;   last bin with upper-edge xup EXCLUDED
-    //         bin = nbins+1; overflow bin
-    oss << "# First line is two numbers " << std::endl
-        << "#     First value is '2', it means 'histogram mode'" << std::endl
-        << "#     Second value is 'Emin' of the histogram" << std::endl
-        << "# Other lines : 2 columns. 1) energy 2) probability (nb divided by NbEvent)" << std::endl
-        << "# Number of bins = " << histo->GetNbinsX() << std::endl
-        << "# Content below the first bin: " << histo->GetBinContent(0) << std::endl
-        << "# Content above the last  bin: " << histo->GetBinContent(histo->GetNbinsX()+2) << std::endl
-        << "# Content above the last  bin: " << histo->GetBinContent(histo->GetNbinsX()+2) << std::endl
-        << "# Number of events: " << nEvent << std::endl
-        << "2 " << histo->GetBinLowEdge(1) << std::endl; // start at 1
-    for(int i=1; i<histo->GetNbinsX()+1; i++) {
-      oss << histo->GetBinLowEdge(i) + histo->GetBinWidth(i) << " " << histo->GetBinContent(i)/nEvent << std::endl;
-    }
-    oss.close();
-  }
-}
-//-----------------------------------------------------------------------------
-
-#endif
+//#endif

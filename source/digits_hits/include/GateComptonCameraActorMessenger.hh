@@ -1,7 +1,7 @@
 
 
 #include "GateConfiguration.h"
-#ifdef G4ANALYSIS_USE_ROOT
+//#ifdef G4ANALYSIS_USE_ROOT
 
 
 
@@ -38,18 +38,15 @@ protected:
   GateComptonCameraActor * pActor;
 
   /// Command objects (These are the parameters that I can include in my macros)
-  G4UIcmdWithADoubleAndUnit * pEmaxCmd;
-  G4UIcmdWithADoubleAndUnit * pEminCmd;
-  G4UIcmdWithAnInteger      * pNBinsCmd;
-  G4UIcmdWithADoubleAndUnit * pEdepmaxCmd;
-  G4UIcmdWithADoubleAndUnit * pEdepminCmd;
-  G4UIcmdWithAnInteger      * pEdepNBinsCmd;
-  G4UIcmdWithABool          * pSaveAsText;
-  G4UIcmdWithAnInteger      *pNVolCmd;
+
+  //G4UIcmdWithADoubleAndUnit * pEdepminCmd;
+ // G4UIcmdWithABool          * pSaveAsText;
+
+  G4UIcmdWithABool          * pSaveHitsTree;
 
 
 }; // end class GateComptonCameraActorMessenger
 //-----------------------------------------------------------------------------
 
 #endif /* end #define GATECOMPTONCAMERAACTORMESSENGER_HH */
-#endif
+//#endif
